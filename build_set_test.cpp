@@ -17138,7 +17138,6 @@ void cgra_flow_tests() {
   vector<prog> M1_test_programs = isca_programs();
   //vector<prog> M1_test_programs{pointwise()};
   test_codegen(M1_test_programs, compile_for_CGRA_M1_mem);
-  //assert(false);
 
   auto test_programs =
     all_cgra_programs();

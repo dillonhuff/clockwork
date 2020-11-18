@@ -146,10 +146,6 @@ affine_controller_ctrl pack_controller(affine_controller_ctrl& unpacked) {
           split_dims[di] = denom;
         }
       }
-      //int coeff = to_int(isl_aff_get_coefficient_val(aff, isl_dim_div, d));
-      //auto res = sum_term_numerators(def, a);
-      //auto val = mul(def, shiftr(def, res, 1), coeff);
-      //terms.push_back(val);
     }
 
 
@@ -165,6 +161,7 @@ affine_controller_ctrl pack_controller(affine_controller_ctrl& unpacked) {
     vector<int> ranges;
     vector<string> sched_terms;
     vector<string> extent_strs;
+    map<int, int> outer_replacements;
     int n = 0;
     for (int d = 0; d < num_in_dims(unpacked.access_function); d++) {
       if (!contains_key(d, split_dims)) {
@@ -182,6 +179,7 @@ affine_controller_ctrl pack_controller(affine_controller_ctrl& unpacked) {
         ranges.push_back(dom_extents.at(d) / 2);
         sched_terms.push_back(str(iis.back()) + "*" + dvars.back());
         extent_strs.push_back("0 <= " + dvars.back() + " < " + str(ranges.back()));
+        outer_replacements[d] = n;
         n++;
 
         dvars.push_back("d" + str(n));
@@ -204,8 +202,43 @@ affine_controller_ctrl pack_controller(affine_controller_ctrl& unpacked) {
     cout << "Packed sched: " << str(packed_sched) << endl;
     cout << "Orig dom    : " << str(unpacked.dom) << endl;
     cout << "Packed dom  : " << str(packed_dom) << endl;
-    assert(false);
 
+    int rconst = to_int(const_coeff(unpacked.access_function));
+    vector<string> terms;
+    terms.push_back(str(rconst));
+
+    for (int d = 0; d < num_div_dims(unpacked.access_function); d++) {
+      auto a = isl_aff_get_div(unpacked.access_function, d);
+      cout << tab(2) << "=== div: " << str(a) << endl;
+      int denom = to_int(isl_aff_get_denominator_val(a));
+      assert(denom == 2);
+      cout << tab(3) << "denom = " << denom << endl;
+      for (int di = 0; di < num_in_dims(a); di++) {
+        if (!is_zero(get_coeff(a, di))) {
+          auto rcoeff = get_coeff(a, di);
+          int v;
+          if (isl_val_is_int(rcoeff)) {
+            v = to_int(rcoeff);
+          } else {
+            v = isl_val_get_num_si(rcoeff);
+          }
+
+          terms.push_back(str(const_coeff(a)));
+          terms.push_back(str(v) + "*d" + str(outer_replacements[di]));
+          //split_dims[di] = denom;
+        }
+      }
+    }
+    //isl_aff* aff = rdaff(ctx(packed_dom),
+        //curlies(name(unpacked.dom) + bracket_list(dvars) + " -> " + sep_list(terms, "[(", ")]", " + "))
+        //);
+    //cout << "New acc: " << str(aff) << endl;
+    isl_aff* aff = rdaff(ctx(packed_dom),
+        "{ " + name(packed_dom) + "[root, y, yi, x, xi] -> [(64y + x)] }");
+    //assert(false);
+
+    // acc, sched, dom
+    return {aff, packed_sched, packed_dom};
   }
 
 }
@@ -2750,6 +2783,18 @@ void generate_coreir(CodegenOptions& options,
   if (options.rtl_options.target_tile == TARGET_TILE_M1 ||
       options.rtl_options.target_tile == TARGET_TILE_M3) {
     garnet_map_module(prg_mod);
+    Module* gmod = ns_new->getModule(prg.name);
+    cout << "=== Post mapping instances for " << prg.name << endl;
+    map<string, int> counts;
+    for (auto inst : gmod->getDef()->getInstances()) {
+      cout << tab(1) << inst.second->getModuleRef()->getName() << endl;
+      counts[inst.second->getModuleRef()->getName()]++;
+    }
+    cout << "Counts..." << endl;
+    for (auto c : counts) {
+      cout << tab(1) << c.first << " -> " << c.second << endl;
+    }
+    assert(false);
     if(!saveToFile(ns, prg.name + "_post_mapping.json", prg_mod)) {
       cout << "Could not save ubuffer coreir" << endl;
       context->die();
