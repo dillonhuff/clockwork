@@ -303,14 +303,17 @@ void instantiate_M3_verilog(CodegenOptions& options, const std::string& long_nam
   }
 
   *verilog_collateral_file << tab(1) << "always @(posedge clk) begin" << endl;
-  for (int i = 0; i < impl.bank_readers[b].size(); i++) {
+  //for (int i = 0; i < impl.bank_readers[b].size(); i++) {
+  for (int i = 0; i < (int) out_port_controllers.size(); i++) {
     string bn = buf.name + "_bank_rd_" + str(b) + "_" + str(i);
     string bundle_name = bn + ".valid" + " && " + bn + "_enable_this_port";
     //*verilog_collateral_file << tab(2) << "data_out_" << str(i) << "_tmp <= SRAM[read_addr_" << i << "];" << endl;
     *verilog_collateral_file << tab(2) << "data_out_" << str(i) << "_tmp <= SRAM[" << bn << "_ibo" << "];" << endl;
     out << tab(2) << "data_out_" + str(i) + "_valid <= " << bundle_name << ";" << endl;
   }
-  for (int i = 0; i < impl.bank_writers[b].size(); i++) {
+
+  //for (int i = 0; i < impl.bank_writers[b].size(); i++) {
+  for (int i = 0; i < (int) in_port_controllers.size(); i++) {
     string bn = buf.name + "_bank_" + str(b) + "_" + str(i);
     //*verilog_collateral_file << tab(2) << "if (wen_" << i << ") begin" << endl;
     string bundle_name = bn + ".valid" + " && " + bn + "_enable_this_port";
@@ -330,8 +333,10 @@ void instantiate_M3_verilog(CodegenOptions& options, const std::string& long_nam
     *verilog_collateral_file << tab(2) << "end" << endl;
   }
   *verilog_collateral_file << tab(1) << "end" << endl;
-  *verilog_collateral_file << tab(1) << "assign chain_data_out = " << "data_out_" << impl.bank_readers[b].size() - 1 << "_tmp;" << endl;
-  for (int i = 0; i < impl.bank_readers[b].size(); i++) {
+  //*verilog_collateral_file << tab(1) << "assign chain_data_out = " << "data_out_" << impl.bank_readers[b].size() - 1 << "_tmp;" << endl;
+  *verilog_collateral_file << tab(1) << "assign chain_data_out = 512;" << endl;
+  //for (int i = 0; i < impl.bank_readers[b].size(); i++) {
+  for (int i = 0; i < (int) out_port_controllers.size(); i++) {
     *verilog_collateral_file << tab(1) << "assign data_out_" << i << " = data_out_" << i << "_tmp;" << endl;
   }
   *verilog_collateral_file << "endmodule" << endl << endl;

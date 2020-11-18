@@ -529,7 +529,7 @@ module cgralib_Mem_amber__IDconv_stencil_0__has_external_addrgenFalse__has_flush
       SRAM[conv_stencil_bank_0_1_ibo] <= data_in_1;
     end
   end
-  assign chain_data_out = data_out_1_tmp;
+  assign chain_data_out = 512;
   assign data_out_0 = data_out_0_tmp;
   assign data_out_1 = data_out_1_tmp;
 endmodule
@@ -852,7 +852,7 @@ module cgralib_Mem_amber__IDconv_stencil_1__has_external_addrgenFalse__has_flush
       SRAM[conv_stencil_bank_1_1_ibo] <= data_in_1;
     end
   end
-  assign chain_data_out = data_out_1_tmp;
+  assign chain_data_out = 512;
   assign data_out_0 = data_out_0_tmp;
   assign data_out_1 = data_out_1_tmp;
 endmodule
@@ -1175,7 +1175,7 @@ module cgralib_Mem_amber__IDconv_stencil_2__has_external_addrgenFalse__has_flush
       SRAM[conv_stencil_bank_2_1_ibo] <= data_in_1;
     end
   end
-  assign chain_data_out = data_out_1_tmp;
+  assign chain_data_out = 512;
   assign data_out_0 = data_out_0_tmp;
   assign data_out_1 = data_out_1_tmp;
 endmodule
@@ -1349,7 +1349,7 @@ module cgralib_Mem_amber__IDhw_input_global_wrapper_stencil_0__has_external_addr
       SRAM[hw_input_global_wrapper_stencil_bank_0_0_ibo] <= data_in_0;
     end
   end
-  assign chain_data_out = data_out_0_tmp;
+  assign chain_data_out = 512;
   assign data_out_0 = data_out_0_tmp;
 endmodule
 
@@ -1522,7 +1522,7 @@ module cgralib_Mem_amber__IDhw_input_global_wrapper_stencil_1__has_external_addr
       SRAM[hw_input_global_wrapper_stencil_bank_1_0_ibo] <= data_in_0;
     end
   end
-  assign chain_data_out = data_out_0_tmp;
+  assign chain_data_out = 512;
   assign data_out_0 = data_out_0_tmp;
 endmodule
 
@@ -1695,7 +1695,7 @@ module cgralib_Mem_amber__IDhw_input_global_wrapper_stencil_2__has_external_addr
       SRAM[hw_input_global_wrapper_stencil_bank_2_0_ibo] <= data_in_0;
     end
   end
-  assign chain_data_out = data_out_0_tmp;
+  assign chain_data_out = 512;
   assign data_out_0 = data_out_0_tmp;
 endmodule
 
@@ -1868,7 +1868,7 @@ module cgralib_Mem_amber__IDhw_input_global_wrapper_stencil_3__has_external_addr
       SRAM[hw_input_global_wrapper_stencil_bank_3_0_ibo] <= data_in_0;
     end
   end
-  assign chain_data_out = data_out_0_tmp;
+  assign chain_data_out = 512;
   assign data_out_0 = data_out_0_tmp;
 endmodule
 
@@ -2041,7 +2041,7 @@ module cgralib_Mem_amber__IDhw_input_global_wrapper_stencil_4__has_external_addr
       SRAM[hw_input_global_wrapper_stencil_bank_4_0_ibo] <= data_in_0;
     end
   end
-  assign chain_data_out = data_out_0_tmp;
+  assign chain_data_out = 512;
   assign data_out_0 = data_out_0_tmp;
 endmodule
 
@@ -2214,7 +2214,7 @@ module cgralib_Mem_amber__IDhw_input_global_wrapper_stencil_5__has_external_addr
       SRAM[hw_input_global_wrapper_stencil_bank_5_0_ibo] <= data_in_0;
     end
   end
-  assign chain_data_out = data_out_0_tmp;
+  assign chain_data_out = 512;
   assign data_out_0 = data_out_0_tmp;
 endmodule
 
@@ -2387,7 +2387,7 @@ module cgralib_Mem_amber__IDhw_input_global_wrapper_stencil_6__has_external_addr
       SRAM[hw_input_global_wrapper_stencil_bank_6_0_ibo] <= data_in_0;
     end
   end
-  assign chain_data_out = data_out_0_tmp;
+  assign chain_data_out = 512;
   assign data_out_0 = data_out_0_tmp;
 endmodule
 
@@ -2560,7 +2560,7 @@ module cgralib_Mem_amber__IDhw_input_global_wrapper_stencil_7__has_external_addr
       SRAM[hw_input_global_wrapper_stencil_bank_7_0_ibo] <= data_in_0;
     end
   end
-  assign chain_data_out = data_out_0_tmp;
+  assign chain_data_out = 512;
   assign data_out_0 = data_out_0_tmp;
 endmodule
 
@@ -2751,7 +2751,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_0__has_external_add
       SRAM[hw_kernel_global_wrapper_stencil_bank_0_0_ibo] <= data_in_0;
     end
   end
-  assign chain_data_out = data_out_0_tmp;
+  assign chain_data_out = 512;
   assign data_out_0 = data_out_0_tmp;
 endmodule
 
@@ -2942,7 +2942,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_1__has_external_add
       SRAM[hw_kernel_global_wrapper_stencil_bank_1_0_ibo] <= data_in_0;
     end
   end
-  assign chain_data_out = data_out_0_tmp;
+  assign chain_data_out = 512;
   assign data_out_0 = data_out_0_tmp;
 endmodule
 
@@ -3133,7 +3133,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_2__has_external_add
       SRAM[hw_kernel_global_wrapper_stencil_bank_2_0_ibo] <= data_in_0;
     end
   end
-  assign chain_data_out = data_out_0_tmp;
+  assign chain_data_out = 512;
   assign data_out_0 = data_out_0_tmp;
 endmodule
 
@@ -3324,7 +3324,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_3__has_external_add
       SRAM[hw_kernel_global_wrapper_stencil_bank_3_0_ibo] <= data_in_0;
     end
   end
-  assign chain_data_out = data_out_0_tmp;
+  assign chain_data_out = 512;
   assign data_out_0 = data_out_0_tmp;
 endmodule
 
@@ -3515,7 +3515,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_4__has_external_add
       SRAM[hw_kernel_global_wrapper_stencil_bank_4_0_ibo] <= data_in_0;
     end
   end
-  assign chain_data_out = data_out_0_tmp;
+  assign chain_data_out = 512;
   assign data_out_0 = data_out_0_tmp;
 endmodule
 
@@ -3706,7 +3706,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_5__has_external_add
       SRAM[hw_kernel_global_wrapper_stencil_bank_5_0_ibo] <= data_in_0;
     end
   end
-  assign chain_data_out = data_out_0_tmp;
+  assign chain_data_out = 512;
   assign data_out_0 = data_out_0_tmp;
 endmodule
 
@@ -3897,7 +3897,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_6__has_external_add
       SRAM[hw_kernel_global_wrapper_stencil_bank_6_0_ibo] <= data_in_0;
     end
   end
-  assign chain_data_out = data_out_0_tmp;
+  assign chain_data_out = 512;
   assign data_out_0 = data_out_0_tmp;
 endmodule
 
@@ -4088,7 +4088,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_7__has_external_add
       SRAM[hw_kernel_global_wrapper_stencil_bank_7_0_ibo] <= data_in_0;
     end
   end
-  assign chain_data_out = data_out_0_tmp;
+  assign chain_data_out = 512;
   assign data_out_0 = data_out_0_tmp;
 endmodule
 
@@ -4279,7 +4279,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_8__has_external_add
       SRAM[hw_kernel_global_wrapper_stencil_bank_8_0_ibo] <= data_in_0;
     end
   end
-  assign chain_data_out = data_out_0_tmp;
+  assign chain_data_out = 512;
   assign data_out_0 = data_out_0_tmp;
 endmodule
 
@@ -4470,7 +4470,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_9__has_external_add
       SRAM[hw_kernel_global_wrapper_stencil_bank_9_0_ibo] <= data_in_0;
     end
   end
-  assign chain_data_out = data_out_0_tmp;
+  assign chain_data_out = 512;
   assign data_out_0 = data_out_0_tmp;
 endmodule
 
@@ -4661,7 +4661,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_10__has_external_ad
       SRAM[hw_kernel_global_wrapper_stencil_bank_10_0_ibo] <= data_in_0;
     end
   end
-  assign chain_data_out = data_out_0_tmp;
+  assign chain_data_out = 512;
   assign data_out_0 = data_out_0_tmp;
 endmodule
 
@@ -4852,7 +4852,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_11__has_external_ad
       SRAM[hw_kernel_global_wrapper_stencil_bank_11_0_ibo] <= data_in_0;
     end
   end
-  assign chain_data_out = data_out_0_tmp;
+  assign chain_data_out = 512;
   assign data_out_0 = data_out_0_tmp;
 endmodule
 
@@ -5043,7 +5043,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_12__has_external_ad
       SRAM[hw_kernel_global_wrapper_stencil_bank_12_0_ibo] <= data_in_0;
     end
   end
-  assign chain_data_out = data_out_0_tmp;
+  assign chain_data_out = 512;
   assign data_out_0 = data_out_0_tmp;
 endmodule
 
@@ -5234,7 +5234,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_13__has_external_ad
       SRAM[hw_kernel_global_wrapper_stencil_bank_13_0_ibo] <= data_in_0;
     end
   end
-  assign chain_data_out = data_out_0_tmp;
+  assign chain_data_out = 512;
   assign data_out_0 = data_out_0_tmp;
 endmodule
 
@@ -5425,7 +5425,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_14__has_external_ad
       SRAM[hw_kernel_global_wrapper_stencil_bank_14_0_ibo] <= data_in_0;
     end
   end
-  assign chain_data_out = data_out_0_tmp;
+  assign chain_data_out = 512;
   assign data_out_0 = data_out_0_tmp;
 endmodule
 
@@ -5616,7 +5616,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_15__has_external_ad
       SRAM[hw_kernel_global_wrapper_stencil_bank_15_0_ibo] <= data_in_0;
     end
   end
-  assign chain_data_out = data_out_0_tmp;
+  assign chain_data_out = 512;
   assign data_out_0 = data_out_0_tmp;
 endmodule
 
@@ -5807,7 +5807,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_16__has_external_ad
       SRAM[hw_kernel_global_wrapper_stencil_bank_16_0_ibo] <= data_in_0;
     end
   end
-  assign chain_data_out = data_out_0_tmp;
+  assign chain_data_out = 512;
   assign data_out_0 = data_out_0_tmp;
 endmodule
 
@@ -5998,7 +5998,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_17__has_external_ad
       SRAM[hw_kernel_global_wrapper_stencil_bank_17_0_ibo] <= data_in_0;
     end
   end
-  assign chain_data_out = data_out_0_tmp;
+  assign chain_data_out = 512;
   assign data_out_0 = data_out_0_tmp;
 endmodule
 
@@ -6189,7 +6189,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_18__has_external_ad
       SRAM[hw_kernel_global_wrapper_stencil_bank_18_0_ibo] <= data_in_0;
     end
   end
-  assign chain_data_out = data_out_0_tmp;
+  assign chain_data_out = 512;
   assign data_out_0 = data_out_0_tmp;
 endmodule
 
@@ -6380,7 +6380,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_19__has_external_ad
       SRAM[hw_kernel_global_wrapper_stencil_bank_19_0_ibo] <= data_in_0;
     end
   end
-  assign chain_data_out = data_out_0_tmp;
+  assign chain_data_out = 512;
   assign data_out_0 = data_out_0_tmp;
 endmodule
 
@@ -6571,7 +6571,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_20__has_external_ad
       SRAM[hw_kernel_global_wrapper_stencil_bank_20_0_ibo] <= data_in_0;
     end
   end
-  assign chain_data_out = data_out_0_tmp;
+  assign chain_data_out = 512;
   assign data_out_0 = data_out_0_tmp;
 endmodule
 
@@ -6762,7 +6762,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_21__has_external_ad
       SRAM[hw_kernel_global_wrapper_stencil_bank_21_0_ibo] <= data_in_0;
     end
   end
-  assign chain_data_out = data_out_0_tmp;
+  assign chain_data_out = 512;
   assign data_out_0 = data_out_0_tmp;
 endmodule
 
@@ -6953,7 +6953,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_22__has_external_ad
       SRAM[hw_kernel_global_wrapper_stencil_bank_22_0_ibo] <= data_in_0;
     end
   end
-  assign chain_data_out = data_out_0_tmp;
+  assign chain_data_out = 512;
   assign data_out_0 = data_out_0_tmp;
 endmodule
 
@@ -7144,7 +7144,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_23__has_external_ad
       SRAM[hw_kernel_global_wrapper_stencil_bank_23_0_ibo] <= data_in_0;
     end
   end
-  assign chain_data_out = data_out_0_tmp;
+  assign chain_data_out = 512;
   assign data_out_0 = data_out_0_tmp;
 endmodule
 
