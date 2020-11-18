@@ -49,7 +49,12 @@ using CoreIR::RecordType;
 static int fully_optimizable = 0;
 static int not_fully_optimizable = 0;
 
-void instantiate_M3_verilog(CodegenOptions& options, const std::string& long_name, const int b, ubuffer_impl& impl, UBuffer& buf, prog& prg,
+void instantiate_M3_verilog(CodegenOptions& options,
+    const std::string& long_name,
+    const int b,
+    ubuffer_impl& impl,
+    UBuffer& buf,
+    prog& prg,
     map<pair<string, int>, int> ubuffer_port_and_bank_to_bank_port,
     schedule_info& hwinfo) {
 
