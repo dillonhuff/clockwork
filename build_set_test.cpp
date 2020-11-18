@@ -13283,11 +13283,9 @@ void test_single_port_mem(bool gen_config_only, string dir="aha_garnet_design") 
 void generate_smt_stream_for_garnet_single_port_mem(prog& prg);
 void test_single_port_mem_smt_stream() {
   vector<prog> test_apps;
-  test_apps.push_back(conv_3_3());
-  test_apps.push_back(cascade());
-  test_apps.push_back(harris());
-  //test_apps.push_back(conv_1_2());
-  //test_apps.push_back(rom());
+  test_apps.push_back(conv_3_3(16, 16, "_SMT_16_16"));
+  test_apps.push_back(cascade(16, 16, "_SMT_16_16"));
+  test_apps.push_back(harris(14, 14, "_SMT_16_16"));
 
   for ( auto prg: test_apps) {
     cout << "====== Running CGRA Single Port test for " << prg.name << endl;
