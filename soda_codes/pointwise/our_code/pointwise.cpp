@@ -11,7 +11,7 @@ using namespace std;
 
 #include "hw_classes.h"
 
-struct hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_mult_stencil_3_cache {
+struct hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_4_to_hw_input_global_wrapper_stencil_op_hcompute_mult_stencil_1_cache {
 	// RAM Box: {[0, 63], [0, 63]}
 	// Capacity: 1
 	// # of read delays: 2
@@ -35,49 +35,49 @@ struct hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stenc
 
 struct hw_input_global_wrapper_stencil_cache {
   // # of banks: 1
-  hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_mult_stencil_3_cache hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_mult_stencil_3;
+  hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_4_to_hw_input_global_wrapper_stencil_op_hcompute_mult_stencil_1_cache hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_4_to_hw_input_global_wrapper_stencil_op_hcompute_mult_stencil_1;
 };
 
 
 
-inline void hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_write(hw_uint<16>& hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0, hw_input_global_wrapper_stencil_cache& hw_input_global_wrapper_stencil, int root, int hw_input_global_wrapper_s0_y, int hw_input_global_wrapper_s0_x, int dynamic_address) {
-  hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_mult_stencil_3.push(hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0);
+inline void hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_4_write(hw_uint<16>& hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_4, hw_input_global_wrapper_stencil_cache& hw_input_global_wrapper_stencil, int root, int hw_input_global_wrapper_s0_y, int hw_input_global_wrapper_s0_x, int dynamic_address) {
+  hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_4_to_hw_input_global_wrapper_stencil_op_hcompute_mult_stencil_1.push(hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_4);
 }
 
-inline hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_mult_stencil_3_select(hw_input_global_wrapper_stencil_cache& hw_input_global_wrapper_stencil, int root, int mult_s0_y, int mult_s0_x, int dynamic_address) {
+inline hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_mult_stencil_1_select(hw_input_global_wrapper_stencil_cache& hw_input_global_wrapper_stencil, int root, int mult_s0_y, int mult_s0_x, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // hw_input_global_wrapper_stencil_op_hcompute_mult_stencil_3 read pattern: { op_hcompute_mult_stencil[root = 0, mult_s0_y, mult_s0_x] -> hw_input_global_wrapper_stencil[mult_s0_y, mult_s0_x] : 0 <= mult_s0_y <= 63 and 0 <= mult_s0_x <= 63 }
+  // hw_input_global_wrapper_stencil_op_hcompute_mult_stencil_1 read pattern: { op_hcompute_mult_stencil[root = 0, mult_s0_y, mult_s0_x] -> hw_input_global_wrapper_stencil[mult_s0_y, mult_s0_x] : 0 <= mult_s0_y <= 63 and 0 <= mult_s0_x <= 63 }
   // Read schedule : { op_hcompute_mult_stencil[d0 = 0, d1, d2] -> [0, d1, d2, 1] : 0 <= d1 <= 63 and 0 <= d2 <= 63 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_stencil[d0 = 0, d1, d2] -> [0, d1, d2, 0] : 0 <= d1 <= 63 and 0 <= d2 <= 63 }
-  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_mult_stencil_3.peek(/* one reader or all rams */ 0);
-  return value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0;
+  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_4 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_4_to_hw_input_global_wrapper_stencil_op_hcompute_mult_stencil_1.peek(/* one reader or all rams */ 0);
+  return value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_4;
   return 0;
 }
 
 // # of bundles = 2
 // op_hcompute_hw_input_global_wrapper_stencil_write
-//	hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0
+//	hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_4
 inline void hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_write_bundle_write(hw_uint<16>& op_hcompute_hw_input_global_wrapper_stencil_write, hw_input_global_wrapper_stencil_cache& hw_input_global_wrapper_stencil, int root, int hw_input_global_wrapper_s0_y, int hw_input_global_wrapper_s0_x, int dynamic_address) {
-	hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_res = op_hcompute_hw_input_global_wrapper_stencil_write.extract<0, 15>();
-	hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_write(hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_res, hw_input_global_wrapper_stencil, root, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x, dynamic_address);
+	hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_4_res = op_hcompute_hw_input_global_wrapper_stencil_write.extract<0, 15>();
+	hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_4_write(hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_4_res, hw_input_global_wrapper_stencil, root, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x, dynamic_address);
 }
 
 // op_hcompute_mult_stencil_read
-//	hw_input_global_wrapper_stencil_op_hcompute_mult_stencil_3
+//	hw_input_global_wrapper_stencil_op_hcompute_mult_stencil_1
 inline hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_mult_stencil_read_bundle_read(hw_input_global_wrapper_stencil_cache& hw_input_global_wrapper_stencil, int root, int mult_s0_y, int mult_s0_x, int dynamic_address) {
   // # of ports in bundle: 1
-    // hw_input_global_wrapper_stencil_op_hcompute_mult_stencil_3
+    // hw_input_global_wrapper_stencil_op_hcompute_mult_stencil_1
 
 	hw_uint<16> result;
-	hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_mult_stencil_3_res = hw_input_global_wrapper_stencil_op_hcompute_mult_stencil_3_select(hw_input_global_wrapper_stencil, root, mult_s0_y, mult_s0_x, dynamic_address);
-	set_at<0, 16>(result, hw_input_global_wrapper_stencil_op_hcompute_mult_stencil_3_res);
+	hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_mult_stencil_1_res = hw_input_global_wrapper_stencil_op_hcompute_mult_stencil_1_select(hw_input_global_wrapper_stencil, root, mult_s0_y, mult_s0_x, dynamic_address);
+	set_at<0, 16>(result, hw_input_global_wrapper_stencil_op_hcompute_mult_stencil_1_res);
 	return result;
 }
 
 #include "hw_classes.h"
 
-struct mult_stencil_op_hcompute_mult_stencil_2_to_mult_stencil_op_hcompute_hw_output_stencil_5_cache {
+struct mult_stencil_op_hcompute_mult_stencil_0_to_mult_stencil_op_hcompute_hw_output_stencil_3_cache {
 	// RAM Box: {[0, 63], [0, 63]}
 	// Capacity: 1
 	// # of read delays: 2
@@ -101,44 +101,44 @@ struct mult_stencil_op_hcompute_mult_stencil_2_to_mult_stencil_op_hcompute_hw_ou
 
 struct mult_stencil_cache {
   // # of banks: 1
-  mult_stencil_op_hcompute_mult_stencil_2_to_mult_stencil_op_hcompute_hw_output_stencil_5_cache mult_stencil_op_hcompute_mult_stencil_2_to_mult_stencil_op_hcompute_hw_output_stencil_5;
+  mult_stencil_op_hcompute_mult_stencil_0_to_mult_stencil_op_hcompute_hw_output_stencil_3_cache mult_stencil_op_hcompute_mult_stencil_0_to_mult_stencil_op_hcompute_hw_output_stencil_3;
 };
 
 
 
-inline void mult_stencil_op_hcompute_mult_stencil_2_write(hw_uint<16>& mult_stencil_op_hcompute_mult_stencil_2, mult_stencil_cache& mult_stencil, int root, int mult_s0_y, int mult_s0_x, int dynamic_address) {
-  mult_stencil.mult_stencil_op_hcompute_mult_stencil_2_to_mult_stencil_op_hcompute_hw_output_stencil_5.push(mult_stencil_op_hcompute_mult_stencil_2);
+inline void mult_stencil_op_hcompute_mult_stencil_0_write(hw_uint<16>& mult_stencil_op_hcompute_mult_stencil_0, mult_stencil_cache& mult_stencil, int root, int mult_s0_y, int mult_s0_x, int dynamic_address) {
+  mult_stencil.mult_stencil_op_hcompute_mult_stencil_0_to_mult_stencil_op_hcompute_hw_output_stencil_3.push(mult_stencil_op_hcompute_mult_stencil_0);
 }
 
-inline hw_uint<16> mult_stencil_op_hcompute_hw_output_stencil_5_select(mult_stencil_cache& mult_stencil, int root, int hw_output_s0_y_yi, int hw_output_s0_x_xi, int dynamic_address) {
+inline hw_uint<16> mult_stencil_op_hcompute_hw_output_stencil_3_select(mult_stencil_cache& mult_stencil, int root, int hw_output_s0_y_yi, int hw_output_s0_x_xi, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // mult_stencil_op_hcompute_hw_output_stencil_5 read pattern: { op_hcompute_hw_output_stencil[root = 0, hw_output_s0_y_yi, hw_output_s0_x_xi] -> mult_stencil[hw_output_s0_y_yi, hw_output_s0_x_xi] : 0 <= hw_output_s0_y_yi <= 63 and 0 <= hw_output_s0_x_xi <= 63 }
+  // mult_stencil_op_hcompute_hw_output_stencil_3 read pattern: { op_hcompute_hw_output_stencil[root = 0, hw_output_s0_y_yi, hw_output_s0_x_xi] -> mult_stencil[hw_output_s0_y_yi, hw_output_s0_x_xi] : 0 <= hw_output_s0_y_yi <= 63 and 0 <= hw_output_s0_x_xi <= 63 }
   // Read schedule : { op_hcompute_hw_output_stencil[d0 = 0, d1, d2] -> [0, d1, d2, 2] : 0 <= d1 <= 63 and 0 <= d2 <= 63 }
   // Write schedule: { op_hcompute_mult_stencil[d0 = 0, d1, d2] -> [0, d1, d2, 1] : 0 <= d1 <= 63 and 0 <= d2 <= 63 }
-  auto value_mult_stencil_op_hcompute_mult_stencil_2 = mult_stencil.mult_stencil_op_hcompute_mult_stencil_2_to_mult_stencil_op_hcompute_hw_output_stencil_5.peek(/* one reader or all rams */ 0);
-  return value_mult_stencil_op_hcompute_mult_stencil_2;
+  auto value_mult_stencil_op_hcompute_mult_stencil_0 = mult_stencil.mult_stencil_op_hcompute_mult_stencil_0_to_mult_stencil_op_hcompute_hw_output_stencil_3.peek(/* one reader or all rams */ 0);
+  return value_mult_stencil_op_hcompute_mult_stencil_0;
   return 0;
 }
 
 // # of bundles = 2
 // op_hcompute_hw_output_stencil_read
-//	mult_stencil_op_hcompute_hw_output_stencil_5
+//	mult_stencil_op_hcompute_hw_output_stencil_3
 inline hw_uint<16> mult_stencil_op_hcompute_hw_output_stencil_read_bundle_read(mult_stencil_cache& mult_stencil, int root, int hw_output_s0_y_yi, int hw_output_s0_x_xi, int dynamic_address) {
   // # of ports in bundle: 1
-    // mult_stencil_op_hcompute_hw_output_stencil_5
+    // mult_stencil_op_hcompute_hw_output_stencil_3
 
 	hw_uint<16> result;
-	hw_uint<16> mult_stencil_op_hcompute_hw_output_stencil_5_res = mult_stencil_op_hcompute_hw_output_stencil_5_select(mult_stencil, root, hw_output_s0_y_yi, hw_output_s0_x_xi, dynamic_address);
-	set_at<0, 16>(result, mult_stencil_op_hcompute_hw_output_stencil_5_res);
+	hw_uint<16> mult_stencil_op_hcompute_hw_output_stencil_3_res = mult_stencil_op_hcompute_hw_output_stencil_3_select(mult_stencil, root, hw_output_s0_y_yi, hw_output_s0_x_xi, dynamic_address);
+	set_at<0, 16>(result, mult_stencil_op_hcompute_hw_output_stencil_3_res);
 	return result;
 }
 
 // op_hcompute_mult_stencil_write
-//	mult_stencil_op_hcompute_mult_stencil_2
+//	mult_stencil_op_hcompute_mult_stencil_0
 inline void mult_stencil_op_hcompute_mult_stencil_write_bundle_write(hw_uint<16>& op_hcompute_mult_stencil_write, mult_stencil_cache& mult_stencil, int root, int mult_s0_y, int mult_s0_x, int dynamic_address) {
-	hw_uint<16> mult_stencil_op_hcompute_mult_stencil_2_res = op_hcompute_mult_stencil_write.extract<0, 15>();
-	mult_stencil_op_hcompute_mult_stencil_2_write(mult_stencil_op_hcompute_mult_stencil_2_res, mult_stencil, root, mult_s0_y, mult_s0_x, dynamic_address);
+	hw_uint<16> mult_stencil_op_hcompute_mult_stencil_0_res = op_hcompute_mult_stencil_write.extract<0, 15>();
+	mult_stencil_op_hcompute_mult_stencil_0_write(mult_stencil_op_hcompute_mult_stencil_0_res, mult_stencil, root, mult_s0_y, mult_s0_x, dynamic_address);
 }
 
 // Total re-use buffer capacity: 0 bits

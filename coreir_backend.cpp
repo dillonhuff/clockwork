@@ -2,12 +2,12 @@
 #include "lake_target.h"
 
 #ifdef COREIR
-
 #include "cwlib.h"
 #include "cgralib.h"
-std::ostream* verilog_collateral_file;
 
 #include "coreir/passes/analysis/coreirjson.h"
+
+std::ostream* verilog_collateral_file;
 
 using CoreIR::Wireable;
 using CoreIR::CoreIRType;
@@ -21,6 +21,8 @@ using CoreIR::TypeGen;
 using CoreIR::Type;
 using CoreIR::Values;
 
+using CoreIR::Interface;
+using CoreIR::Select;
 using CoreIR::SelectPath;
 using CoreIR::join;
 using CoreIR::BitType;
@@ -42,12 +44,93 @@ using CoreIR::Generator;
 using CoreIR::ModuleDef;
 using CoreIR::Module;
 using CoreIR::RecordParams;
+using CoreIR::RecordType;
 
 static int fully_optimizable = 0;
 static int not_fully_optimizable = 0;
 
-static int DATAPATH_WIDTH = 16;
-static int CONTROLPATH_WIDTH = 16;
+Wireable* eqConst(ModuleDef* def, Wireable* val, const int b) {
+  auto c = def->getContext();
+  auto eq = def->addInstance("eq_const" + c->getUnique(), "coreir.eq", {{"width", COREMK(c, 16)}});
+  def->connect(eq->sel("in0"), val);
+  def->connect(eq->sel("in1"), mkConst(def, 16, b));
+  return eq->sel("out");
+}
+
+CoreIR::Module* affine_controller_def(CoreIR::Context* context, isl_set* dom, isl_aff* aff);
+
+bool is_register_file(UBuffer& buf, ubuffer_impl& impl) {
+  if (impl.partition_dims.size() < buf.logical_dimension()) {
+    return false;
+  }
+  assert(impl.partition_dims.size() == buf.logical_dimension());
+  return true;
+}
+
+ubuffer_impl build_buffer_impl(prog& prg, UBuffer& buf, schedule_info& hwinfo) {
+  cout << "Building implementation of " << buf.name << endl;
+  ubuffer_impl impl;
+
+  maybe<std::set<int> > embarassing_banking =
+    embarassing_partition(buf);
+  bool has_embarassing_partition = embarassing_banking.has_value();
+  assert(has_embarassing_partition);
+
+  if (embarassing_banking.get_value().size() == buf.logical_dimension()) {
+    cout << buf.name << " is really a register file" << endl;
+  }
+
+  impl.partition_dims = embarassing_banking.get_value();
+  vector<int> extents;
+  extents = extents_by_dimension(buf);
+  for (auto d : impl.partition_dims) {
+    impl.partitioned_dimension_extents[d] = extents.at(d);
+  }
+
+  int num_banks = 1;
+  for (auto ent : impl.partitioned_dimension_extents) {
+    num_banks *= ent.second;
+  }
+
+  // Creating a map from bank numbers to values that read them
+  int bank_stride = 1;
+  vector<string> dvs;
+  vector<string> coeffs;
+  for (int d = 0; d < buf.logical_dimension(); d++) {
+    dvs.push_back("d" + str(d));
+    if (elem(d, impl.partition_dims)) {
+      coeffs.push_back(str(bank_stride) + "*" + dvs.at(d));
+      bank_stride *= map_find(d, impl.partitioned_dimension_extents);
+    }
+  }
+
+  coeffs.push_back("0");
+  string bank_func = curlies(buf.name + bracket_list(dvs) + " -> Bank[" + sep_list(coeffs, "", "", " + ") + "]");
+
+  cout << "Bank map: " << bank_func << endl;
+  //assert(false);
+  isl_map* m = isl_map_read_from_str(prg.ctx, bank_func.c_str());
+  for (auto pt : buf.get_all_ports()) {
+    for (int b = 0; b < num_banks; b++) {
+      isl_set* bnk = isl_set_read_from_str(prg.ctx, curlies("Bank[" + str(b) + "]").c_str());
+      assert(!empty(bnk));
+
+      isl_map* bnk_map = dot(to_map(buf.access_map.at(pt)), m);
+      isl_set* accesses_to_bank = its(range(bnk_map), bnk);
+      if (!empty(accesses_to_bank)) {
+        if (buf.is_out_pt(pt)) {
+          impl.bank_readers[b].insert(pt);
+          impl.outpt_to_bank[pt].insert(b);
+        } else {
+          impl.bank_writers[b].insert(pt);
+          impl.inpt_to_bank[pt].insert(b);
+        }
+      }
+    }
+  }
+
+  return impl;
+}
 
 int wire_width(CoreIR::Wireable* w) {
   auto tp = w->getType();
@@ -57,19 +140,229 @@ int wire_width(CoreIR::Wireable* w) {
     cout << "Casting to array..." << endl;
 
     auto atp = static_cast<ArrayType*>(tp);
-    //auto elem_type = atp->getElemType();
-
-    //assert(isa<ArrayType>(elem_type));
-
-    //cout << "Getting array..." << endl;
-
-    //auto elem_arr =
-    //static_cast<ArrayType*>(elem_type);
-    //int elem_width = elem_arr->getLen();
     int len = atp->getLen();
     return len;
   }
   assert(false);
+}
+
+void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& prg, UBuffer& orig_buf, schedule_info& hwinfo);
+
+std::set<string> generate_M3_shift_registers(CodegenOptions& options, CoreIR::ModuleDef* def, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
+
+  map<string,pair<string,int>> shift_registered_outputs = determine_shift_reg_map(prg, buf, hwinfo);
+  vector<pair<string,pair<string,int>>> shift_registered_outputs_to_outputs = determine_output_shift_reg_map(prg, buf, hwinfo);
+
+  //map<string, std::set<string> > broadcast_groups;
+  //for (auto pt : shift_registered_outputs_to_outputs) {
+    //bool already_broadcast = false;
+    //for (auto other : broadcast_groups) {
+      //if (elem(pt, other.second)) {
+        //already_broadcast = true;
+        //break;
+      //}
+    //}
+    //if (!alread_broadcast) {
+
+    //}
+  //}
+
+  auto c = def->getContext();
+  std::set<string> done_outpt;
+  for (auto pt : shift_registered_outputs) {
+    string dst = pt.first;
+    string src = pt.second.first;
+    int delay = pt.second.second;
+    auto src_wire = def->sel("self." + buf.container_bundle(src) + "." + str(buf.bundle_offset(src)));
+    Wireable* delayed_src =
+      delay_by(def, "sr_end" + c->getUnique(), src_wire, delay);
+
+    def->connect(
+        def->sel("self." + buf.container_bundle(dst) + "." + str(buf.bundle_offset(dst))),
+        delayed_src);
+    done_outpt.insert(pt.first);
+  }
+
+  cout << "# of in to out shift registers..." << done_outpt.size() << endl;
+  for (auto pt : shift_registered_outputs_to_outputs) {
+    done_outpt.insert(pt.first);
+    if(done_outpt.find(pt.second.first) != done_outpt.end()) {
+      //continue;
+    }
+    if(done_outpt.find(pt.first)!=done_outpt.end())
+    {
+      //continue;
+    } else{
+      //string dst = pt.first;
+      //string src = pt.second.first;
+      //int delay = pt.second.second;
+      //auto src_wire = def->sel("self." + buf.container_bundle(src) + "." + str(buf.bundle_offset(src)));
+      //Wireable* delayed_src =
+        //delay_by(def, "sr_end" + c->getUnique(), src_wire, delay);
+
+      //def->connect(
+          //def->sel("self." + buf.container_bundle(dst) + "." + str(buf.bundle_offset(dst))),
+          //delayed_src);
+      //done_outpt.insert(pt.first);
+    }
+  }
+  return done_outpt;
+}
+
+
+
+void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& prg, UBuffer& orig_buf, schedule_info& hwinfo) {
+
+  CoreIR::Context* c = def->getContext();
+
+  std::set<string> done_outpt = generate_M3_shift_registers(options, def, prg, orig_buf, hwinfo);
+
+  UBuffer buf = delete_ports(done_outpt, orig_buf);
+
+  if (buf.num_out_ports() > 0) {
+    ubuffer_impl impl = build_buffer_impl(prg, buf, hwinfo);
+
+    if (is_register_file(buf, impl)) {
+      cout << buf.name << " is really a register file" << endl;
+    }
+
+    int num_banks = 1;
+    for (auto ent : impl.partitioned_dimension_extents) {
+      num_banks *= ent.second;
+    }
+
+    map<int, std::set<string> > bank_readers = impl.bank_readers;
+    map<int, std::set<string> > bank_writers = impl.bank_writers;
+    map<string, std::set<int>> outpt_to_bank = impl.outpt_to_bank;
+    map<string, std::set<int>> inpt_to_bank = impl.inpt_to_bank;
+
+    const int NUM_IN_PORTS_PER_BANK = 2;
+    const int NUM_OUT_PORTS_PER_BANK = 2;
+
+    cout << "Buffer = " << buf.name << endl;
+    cout << "Bank readers..." << endl;
+    for (auto b : bank_readers) {
+      cout << tab(1) << b.first << " -> ";
+      for (auto rd : b.second) {
+        cout << rd << ", ";
+      }
+      cout << endl;
+
+      assert(b.second.size() <= NUM_IN_PORTS_PER_BANK);
+    }
+
+    cout << "Bank writers..." << endl;
+    for (auto b : bank_writers) {
+      cout << tab(1) << b.first << " -> ";
+      for (auto rd : b.second) {
+        cout << rd << ", ";
+      }
+      cout << endl;
+
+      assert(b.second.size() <= NUM_OUT_PORTS_PER_BANK);
+    }
+
+
+    string chain_pt = "";
+    for (auto pt: outpt_to_bank)
+    {
+	    if(pt.second.size() > 1) {
+		    assert(chain_pt == "");
+	    	    chain_pt = pt.first;
+		    cout << pt.first << " needs chaining" << endl;
+	    }
+    }
+    for (auto pt: inpt_to_bank)
+    {
+	    if(pt.second.size() > 1) {
+	    	cout << pt.first << " needs broadcast" << endl;
+	    }
+    }
+
+    vector<int> banks;
+	    Select* one = def->addInstance("one_cst", "corebit.const", {{"value", COREMK(c, true)}})->sel("out");
+	    Select* zero = def->addInstance("zero_cst", "corebit.const", {{"value", COREMK(c, false)}})->sel("out");
+    for (int b = 0; b < num_banks; b++) {
+        //{"width", c->Int()}, // for m3 16
+        //{"num_inputs", c->Int()}, // the number of ports you *actually use in a given config*
+        //{"num_outputs", c->Int()}, // ''
+        //{"has_valid", c->Bool()},
+        //{"has_stencil_valid", c->Bool()},
+        //{"has_flush", c->Bool()},
+        //{"ID", c->String()},            //for codegen, TODO: remove after coreIR fix
+        //{"has_reset", c->Bool()}
+
+
+      Values tile_params{{"width", COREMK(c, 16)},
+        {"ID", COREMK(c, str(b))},
+        {"num_inputs",COREMK(c,bank_writers[b].size())},
+        {"num_outputs",COREMK(c,bank_readers[b].size() -  (b != 0 && chain_pt!=""))}};
+      CoreIR::Instance * currbank = def->addInstance("bank_" + str(b), "cgralib.Mem_amber", tile_params);
+      if (chain_pt != "") {
+        def->connect(currbank->sel("chain_chain_en"),one);
+      } else {
+        def->connect(currbank->sel("chain_chain_en"),zero);
+      }
+      assert(verilog_collateral_file != nullptr);
+
+      vector<string> port_decls = {};
+      port_decls.push_back("input clk");
+      port_decls.push_back("input rst_n");
+      port_decls.push_back("input clk_en");
+      port_decls.push_back("input chain_chain_en");
+      for(int i = 0; i < bank_writers[b].size(); i++)
+      {
+	      port_decls.push_back("input [15:0] data_in_" + str(i));
+      }
+      for(int i = 0; i < bank_readers[b].size(); i++)
+      {
+	      port_decls.push_back("input [15:0] data_out_" + str(i));
+      }
+      port_decls.push_back("input [15:0] chain_data_in");
+      port_decls.push_back("output [15:0] chain_data_out");
+
+      *verilog_collateral_file << "module " << currbank->getModuleRef()->getLongName() <<" ("<< sep_list(port_decls,"","",",") <<"); "<< endl;
+      *verilog_collateral_file << "endmodule" <<endl;
+      if(b == 0 && chain_pt != "") {
+      	def->connect(currbank->sel("data_out_1"),def->sel("self." + buf.container_bundle(chain_pt) + "." + str(buf.bundle_offset(chain_pt))));
+      }
+	def->connect(currbank->sel("clk_en"),one);
+
+
+
+      int count = 0;
+      for(auto pt : bank_readers[b])
+      {
+	      if(pt != chain_pt)
+	      {
+		      def->connect(currbank->sel("data_out_" + str(count)),def->sel("self." + buf.container_bundle(pt) + "." + str(buf.bundle_offset(pt))));
+          count++;
+	      }
+      }
+      count = 0;
+      for(auto pt : bank_writers[b])
+      {
+	      def->connect(currbank->sel("data_in_" + str(count)),def->sel("self." + buf.container_bundle(pt) + "." + str(buf.bundle_offset(pt))));
+	      count++;
+      }
+      def->connect(currbank->sel("rst_n"),def->sel("self.rst_n"));
+
+
+    }
+    //assert(false);
+    for (int b = 0; b < num_banks; b++) {
+
+      if(b != num_banks - 1){
+        def->connect(def->sel("bank_" + str(b) + ".chain_data_in"), def->sel("bank_" + str(b + 1) + ".chain_data_out"));
+
+      } else
+      {
+        def->connect(def->sel("bank_" + str(b) + ".chain_data_in"), mkConst(def,16,0));
+      }
+    }
+  }
+
+
 }
 
 CoreIR::Module* generate_coreir(CodegenOptions& options, CoreIR::Context* context, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
@@ -89,13 +382,16 @@ CoreIR::Module* generate_coreir(CodegenOptions& options, CoreIR::Context* contex
     assert(acc_maps.size() > 0);
     int control_dimension = num_in_dims(pick(acc_maps));
     if (buf.is_input_bundle(b.first)) {
-      if (options.rtl_options.use_external_controllers) {
+      if (options.rtl_options.target_tile == TARGET_TILE_M3) {
+      } else if (options.rtl_options.use_external_controllers) {
         ub_field.push_back(make_pair(name + "_wen", context->BitIn()));
         ub_field.push_back(make_pair(name + "_ctrl_vars", context->BitIn()->Arr(CONTROLPATH_WIDTH)->Arr(control_dimension)));
       }
       ub_field.push_back(make_pair(name, context->BitIn()->Arr(pt_width)->Arr(bd_width)));
     } else {
-      if (options.rtl_options.use_external_controllers) {
+      if (options.rtl_options.target_tile == TARGET_TILE_M3) {
+        //ub_field.push_back(make_pair(name + "_valid", context->Bit()));
+      } else if (options.rtl_options.use_external_controllers) {
         ub_field.push_back(make_pair(name + "_ren", context->BitIn()));
         ub_field.push_back(make_pair(name + "_ctrl_vars", context->BitIn()->Arr(CONTROLPATH_WIDTH)->Arr(control_dimension)));
       }
@@ -107,8 +403,16 @@ CoreIR::Module* generate_coreir(CodegenOptions& options, CoreIR::Context* contex
   auto ub = ns->newModuleDecl(buf.name + "_ub", utp);
   auto def = ub->newModuleDef();
 
-  if (options.rtl_options.target_tile == TARGET_TILE_PLATONIC) {
-    generate_platonic_ubuffer(options, prg, buf, hwinfo);
+  if (options.rtl_options.target_tile == TARGET_TILE_PLATONIC ||
+      options.rtl_options.target_tile == TARGET_TILE_BRAM ||
+      options.rtl_options.target_tile == TARGET_TILE_GENERIC_SRAM) {
+    assert(verilog_collateral_file != nullptr);
+    cout << "Verilog collateral file = " << verilog_collateral_file << endl;
+    generate_platonic_ubuffer(*verilog_collateral_file, options, prg, buf, hwinfo);
+  } else if (options.rtl_options.target_tile == TARGET_TILE_M3) {
+    generate_M3_coreir(options, def, prg, buf, hwinfo);
+  } else if (options.rtl_options.target_tile == TARGET_TILE_M1) {
+    generate_M1_coreir(options, def, prg, buf, hwinfo);
   } else {
     generate_synthesizable_functional_model(options, buf, def, hwinfo);
   }
@@ -116,1101 +420,6 @@ CoreIR::Module* generate_coreir(CodegenOptions& options, CoreIR::Context* contex
   ub->setDef(def);
   return ub;
 }
-
-std::string codegen_verilog(const std::string& ctrl_vars, isl_aff* const aff) {
-  vector<string> terms;
-  if (!is_zero(const_coeff(aff))) {
-    terms.push_back(str(const_coeff(aff)));
-  }
-  for (int i = 0; i < num_in_dims(aff); i++) {
-    if (!is_zero(get_coeff(aff, i))) {
-      string cf = str(get_coeff(aff, i));
-      string rn = ctrl_vars + brackets(str(i));
-      terms.push_back(cf + "*" + rn);
-    }
-  }
-
-  for (int d = 0; d < num_div_dims(aff); d++) {
-    auto v = isl_aff_get_coefficient_val(aff, isl_dim_div, d);
-    if (!is_zero(v)) {
-
-      isl_aff * a = isl_aff_get_div(aff, d);
-      isl_val * denom = isl_aff_get_denominator_val(a);
-      int denom_int = to_int( denom);
-      auto denom_str = str(denom);
-      auto astr = codegen_verilog(ctrl_vars, isl_aff_scale_val(a, denom));
-
-      assert(isl_val_is_int(v));
-
-      if(ceil(log2(denom_int)) == log2(denom_int))
-      {
-      terms.push_back(parens(str(v) + "*" + "(" + astr + " >> " + str(log2(denom_int)) + ")"));
-
-
-      } else{
-      terms.push_back(parens(str(v) + "*" + "$rtoi($floor(" + astr + " / " + denom_str + "))"));
-
-      }
-    }
-  }
-  if (terms.size() == 0) {
-    return "0";
-  }
-  string res_str = sep_list(terms, "(", ")", " + ");
-  return parens(res_str);
-}
-
-vector<string> generate_verilog_addr_components(const std::string& pt, bank& bnk, UBuffer& buf) {
-  string ctrl_vars = buf.container_bundle(pt) + "_ctrl_vars_fsm_out";
-
-  vector<int> mins;
-  for (int i = 0; i < buf.logical_dimension(); i++) {
-    auto s = project_all_but(to_set(bnk.rddom), i);
-    auto min = to_int(lexminval(s));
-    mins.push_back(min);
-    //auto max = to_int(lexmaxval(s));
-    //int length = max - min + 1;
-    //lengths.push_back(length);
-  }
-
-
-  isl_map* m = to_map(buf.access_map.at(pt));
-  auto svec = isl_pw_multi_aff_from_map(m);
-  vector<pair<isl_set*, isl_multi_aff*> > pieces =
-    get_pieces(svec);
-  assert(pieces.size() == 1);
-
-  vector<string> domains;
-  vector<string> addr_vec_out;
-  for (auto piece : pieces) {
-    vector<string> addr_vec;
-    isl_multi_aff* ma = piece.second;
-    for (int d = 0; d < isl_multi_aff_dim(ma, isl_dim_set); d++) {
-      isl_aff* aff = isl_multi_aff_get_aff(ma, d);
-      addr_vec.push_back(codegen_verilog(ctrl_vars, aff));
-    }
-
-    for (int i = 0; i < buf.logical_dimension(); i++) {
-      string item = "(" + addr_vec.at(i) + " - " + str(mins.at(i)) + ")";
-      addr_vec_out.push_back(item);
-    }
-
-    string addr = sep_list(addr_vec_out, "", "", " + ");
-  }
-
-  return addr_vec_out;
-}
-
-string generate_linearized_verilog_inner_bank_offset(const std::string& pt, vector<int>& banking, bank& bnk, UBuffer& buf) {
-  auto comps = generate_verilog_addr_components(pt, bnk, buf);
-  assert(comps.size() == banking.size());
-  vector<int> lengths;
-  for (int i = 0; i < buf.logical_dimension(); i++) {
-    auto s = project_all_but(to_set(bnk.rddom), i);
-    auto max = to_int(lexmaxval(s));
-    auto min = to_int(lexminval(s));
-    int length = max - min + 1;
-    lengths.push_back(length);
-  }
-  auto strs = strides(lengths);
-
-  vector<string> terms;
-  for (int i = 0; i < comps.size(); i++) {
-    string comp = "(" + comps.at(i) + " / " + str(banking.at(i)) + ")";
-    string stride = str(strs.at(i));
-    terms.push_back(parens(comp + "*" + stride));
-  }
-  return sep_list(terms, "(", ")", " + ");
-}
-
-isl_aff* flatten(const std::vector<int>& bank_factors, isl_multi_aff* ma, isl_set* dom) {
-  vector<int> lengths;
-  vector<int> mins;
-  for (int i = 0; i < num_dims(dom); i++) {
-    auto s = project_all_but(dom, i);
-    auto min = to_int(lexminval(s));
-    mins.push_back(min);
-    auto max = to_int(lexmaxval(s));
-    int length = max - min + 1;
-    lengths.push_back(length);
-  }
-
-  assert(isl_multi_aff_dim(ma, isl_dim_set) == num_dims(dom));
-
-  vector<isl_aff*> addr_vec;
-  isl_aff* flat = constant_aff(
-      isl_multi_aff_get_aff(ma, 0),
-      0);
-
-  for (int d = 0; d < isl_multi_aff_dim(ma, isl_dim_set); d++) {
-    isl_aff* aff = isl_multi_aff_get_aff(ma, d);
-    cout << tab(1) << "aff: " << str(aff) << endl;
-    int length = 1;
-    for (int i = 0; i < d; i++) {
-      length *= lengths.at(i);
-    }
-    isl_aff* flt = mul(isl_aff_floor(div(sub(aff, mins.at(d)), bank_factors.at(d))), length);
-    //isl_aff* flt = mul(sub(aff, mins.at(d)), length);
-    flat = add(flat, flt);
-    cout << "flat: " << str(flat) << endl;
-  }
-
-  return flat;
-  //return isl_aff_floor(div(flat, 2));
-}
-
-isl_aff* flatten(isl_multi_aff* ma, isl_set* dom) {
-  vector<int> lengths;
-  vector<int> mins;
-  for (int i = 0; i < num_dims(dom); i++) {
-    auto s = project_all_but(dom, i);
-    auto min = to_int(lexminval(s));
-    mins.push_back(min);
-    auto max = to_int(lexmaxval(s));
-    int length = max - min + 1;
-    lengths.push_back(length);
-  }
-
-  assert(isl_multi_aff_dim(ma, isl_dim_set) == num_dims(dom));
-
-  vector<isl_aff*> addr_vec;
-  isl_aff* flat = constant_aff(
-      isl_multi_aff_get_aff(ma, 0),
-      0);
-
-  for (int d = 0; d < isl_multi_aff_dim(ma, isl_dim_set); d++) {
-    isl_aff* aff = isl_multi_aff_get_aff(ma, d);
-    cout << tab(1) << "aff: " << str(aff) << endl;
-    int length = 1;
-    for (int i = 0; i < d; i++) {
-      length *= lengths.at(i);
-    }
-    isl_aff* flt = mul(sub(aff, mins.at(d)), length);
-    flat = add(flat, flt);
-    cout << "flat: " << str(flat) << endl;
-  }
-
-  return flat;
-}
-
-
-string generate_linearized_verilog_addr(
-    const std::vector<int>& bank_factors,
-    const std::string& pt,
-    bank& bnk,
-    UBuffer& buf) {
-
-  isl_set* dom = to_set(bnk.rddom);
-
-  string ctrl_vars = buf.container_bundle(pt) + "_ctrl_vars";
-
-  isl_map* m = to_map(buf.access_map.at(pt));
-  isl_aff* flattened = flatten(bank_factors, get_multi_aff(m), dom);
-
-  return codegen_verilog(ctrl_vars, flattened);
-}
-
-string generate_linearized_verilog_addr(const std::string& pt, bank& bnk, UBuffer& buf) {
-  isl_set* dom = to_set(bnk.rddom);
-
-  string ctrl_vars = buf.container_bundle(pt) + "_ctrl_vars";
-
-  isl_map* m = to_map(buf.access_map.at(pt));
-  isl_aff* flattened = flatten(get_multi_aff(m), dom);
-
-  return codegen_verilog(ctrl_vars, flattened);
-}
-
-void generate_verilog_for_bank_storage(CodegenOptions& options,
-    std::ostream& out,
-    stack_bank& bank) {
-
-  auto name = bank.name;
-  auto pt_type_string = bank.pt_type_string;
-  auto read_delays = bank.read_delays;
-  auto num_readers = bank.num_readers;
-  auto maxdelay = bank.maxdelay;
-  auto layout = bank.extract_layout();
-
-  //out << "struct " << name << "_cache" <<  " {" << endl;
-  out << "\t// RAM Box: " << layout << endl;
-
-  //C array with read and write method
-  if (bank.tp == INNER_BANK_OFFSET_LINEAR) {
-    auto partitions =
-      bank.get_partitions();
-    int partition_size = partitions.size();
-    //add a ram capacity compute pass is different from stack bank
-    int capacity = 1;
-    auto dsets = get_sets(bank.rddom);
-    int dims = dsets.size() > 0 ? num_dims(pick(get_sets(bank.rddom))) : 0;
-    for (int i = 0; i < dims; i++) {
-      auto s = project_all_but(to_set(bank.rddom), i);
-      auto min = to_int(lexminval(s));
-      auto max = to_int(lexmaxval(s));
-      int length = max - min + 1;
-      capacity *= length;
-    }
-
-    out << "\t// Capacity: " << capacity << endl;
-    out << tab(1) << "logic [15:0] " << " RAM [" << capacity - 1 << ":0];" << endl;
-
-  } else {
-    assert(false);
-  }
-}
-
-void print_embarassing_banks_selector(std::ostream& out, const map<int, int>& partitioned_dimension_sizes, UBuffer& buf) {
-
-  out << endl;
-  vector<string> port_decls{"input logic [" + str(CONTROLPATH_WIDTH) + "*" + str(buf.logical_dimension()) + " - 1 :0] d", "output logic [" + str(CONTROLPATH_WIDTH - 1) + ":0] out"};
-  out << "module " << buf.name << "_embarassing_bank_selector(" << comma_list(port_decls) << ");" << endl;
-
-  map<int, string> bank_strides;
-  int stride = 1;
-  for (auto p : partitioned_dimension_sizes) {
-    bank_strides[p.first] = (str(stride));
-    stride *= p.second;
-  }
-
-  vector<string> terms;
-  for (auto p : partitioned_dimension_sizes) {
-    int i = p.first;
-    string var = "d[" + str((i + 1)*CONTROLPATH_WIDTH - 1) + ":" + str(i*CONTROLPATH_WIDTH) + "]";
-    out << tab(1) << "logic [" << CONTROLPATH_WIDTH - 1 << ":0] bank_index_" << i << ";" << endl;
-    out << tab(1) << "assign " << "bank_index_" << i << " = " << "(" << var << ");" << endl;
-    terms.push_back("bank_index_" + str(i) + "*" + map_find(i, bank_strides));
-  }
-
-  out << tab(1) << "assign out = " << sep_list(terms, "", "", "+") << ";" << endl << endl;
-
-  out << "endmodule" << endl << endl;
-}
-
-void print_cyclic_banks_selector(std::ostream& out, const vector<int>& bank_factors, UBuffer& buf) {
-
-  assert(bank_factors.size() == buf.logical_dimension());
-
-  vector<string> vars = {};
-  vector<string> vars1 = {};
-
-  out << endl;
-  vector<string> port_decls{"input logic [" + str(CONTROLPATH_WIDTH) + "*" + str(bank_factors.size()) + " - 1 :0] d", "output logic [" + str(CONTROLPATH_WIDTH - 1) + ":0] out"};
-  out << "module " << buf.name << "_bank_selector(" << comma_list(port_decls) << ");" << endl;
-
-  vector<string> bank_strides;
-  int stride = 1;
-  for (auto p : bank_factors) {
-    bank_strides.push_back(str(stride));
-    stride *= p;
-  }
-  int i = 0;
-  vector<string> terms;
-  for (auto p : bank_factors) {
-    string var = "d[" + str((i + 1)*CONTROLPATH_WIDTH - 1) + ":" + str(i*CONTROLPATH_WIDTH) + "]";
-    out << tab(1) << "logic [" << CONTROLPATH_WIDTH - 1 << ":0] bank_index_" << i << ";" << endl;
-    out << tab(1) << "assign " << "bank_index_" << i << " = " << "(" << var << " % " << p << ");" << endl;
-    terms.push_back("bank_index_" + str(i) + "*" + bank_strides.at(i));
-    i++;
-  }
-
-  out << tab(1) << "assign out = " << sep_list(terms, "", "", "+") << ";" << endl << endl;
-
-  out << "endmodule" << endl << endl;
-}
-
-string print_embarassing_banks_inner_bank_offset_func(UBuffer& buf, vector<string> vars, vector<int> capacities, map<int, int> partitioned_dimension_extents)
-{
- int capacity_prod = 1;
- vector<string> vars1;
-  for(int i = 0; i < buf.logical_dimension(); i++) {
-    if (!contains_key(i, partitioned_dimension_extents)) {
-      vars1.push_back("(" + vars[i] + ")*" + to_string(capacity_prod));
-      capacity_prod *= capacities[i];
-    }
-  }
-
-  string func = sep_list(vars1,"(",")","+");
-  cout << func << endl;
-  return func;
-
-}
-string print_cyclic_banks_inner_bank_offset_func(UBuffer& buf, vector<string> vars, vector<int> capacities, vector<int> bank_factors)
-{
- int capacity_prod = 1;
- vector<string> vars1;
-  for(int i = 0; i < buf.logical_dimension(); i ++)
-  {
-      if(ceil(log2(bank_factors[i])) == log2(bank_factors[i]))
-      {
-          cout << vars[i] << endl;
-      vars1.push_back("(" + vars[i] + ">>" + to_string((int)log2(bank_factors[i])) + ")*" + to_string(capacity_prod));
-      } else{
-      vars1.push_back("$rtoi($floor(" + vars[i] + "/ " + to_string(bank_factors[i]) + "))*" + to_string(capacity_prod));
-
-      }
-      capacity_prod *= capacities[i];
-  }
-          //assert(false);
-
-    string func = sep_list(vars1,"(",")","+");
-  cout << func << endl;
-  //assert(false);
-  return func;
-
-}
-
-void print_embarassing_banks(std::ostream& out, const map<int, int>& partitioned_dimension_extents, UBuffer& buf) {
-  bank bnk = buf.compute_bank_info();
-  int num_banks = 1;
-  for (auto ent : partitioned_dimension_extents) {
-    num_banks *= ent.second;
-  }
-  out << tab(1) << "// # of banks: " << num_banks << endl;
-
-  int capacity = 1;
-  auto dsets = get_sets(bnk.rddom);
-  int dims = dsets.size() > 0 ? num_dims(pick(get_sets(bnk.rddom))) : 0;
-  for (int i = 0; i < dims; i++) {
-    if (!contains_key(i, partitioned_dimension_extents)) {
-      auto s = project_all_but(to_set(bnk.rddom), i);
-      auto min = to_int(lexminval(s));
-      auto max = to_int(lexmaxval(s));
-      int length = max - min + 1;
-      capacity *= length;
-    }
-  }
-
-  for (int i = 0; i < num_banks; i++) {
-    out << tab(1) << "logic [" << CONTROLPATH_WIDTH - 1 << ":0] " << " bank_" << i << " [" << capacity << "];" << endl;
-  }
-}
-
-vector<int> print_cyclic_banks(std::ostream& out, const vector<int>& bank_factors, bank& bnk) {
-  int num_banks = card(bank_factors);
-  out << tab(1) << "// # of banks: " << num_banks << endl;
-
-  int capacity = 1;
-  vector<int> capacities;
-  auto dsets = get_sets(bnk.rddom);
-  int dims = dsets.size() > 0 ? num_dims(pick(get_sets(bnk.rddom))) : 0;
-  for (int i = 0; i < dims; i++) {
-    auto s = project_all_but(to_set(bnk.rddom), i);
-    auto min = to_int(lexminval(s));
-    auto max = to_int(lexmaxval(s));
-    int length = max - min + 1;
-    length = ((length - 1) / bank_factors[i]) + 1;
-    capacity *= length;
-    capacities.push_back(length);
-  }
-
-  vector<int> current_index;
-
-  for (int i = 0; i < num_banks; i++) {
-    out << tab(1) << "logic [" << CONTROLPATH_WIDTH - 1 << ":0] " << "bank_" << i << " [" << capacity << "];" << endl;
-  }
-
-  return capacities;
-}
-
-int total_capacity(UBuffer& buf) {
-  bank bank = buf.compute_bank_info();
-  int capacity = 1;
-  auto dsets = get_sets(bank.rddom);
-  int dims = dsets.size() > 0 ? num_dims(pick(get_sets(bank.rddom))) : 0;
-  for (int i = 0; i < dims; i++) {
-    auto s = project_all_but(to_set(bank.rddom), i);
-    auto min = to_int(lexminval(s));
-    auto max = to_int(lexmaxval(s));
-    int length = max - min + 1;
-    capacity *= length;
-  }
-  return capacity;
-}
-
-UBuffer latency_adjusted_buffer(
-    CodegenOptions& options,
-    prog& prg,
-    UBuffer& buf,
-    schedule_info& hwinfo) {
-  UBuffer cpy = buf;
-  cout << "Adjusted latencies" << endl;
-  for (auto l : hwinfo.compute_unit_latencies) {
-      cout << tab(1) << l.first << " -> " << l.second << endl;
-  }
-  for (auto pt : buf.get_in_ports()) {
-      string op_name = domain_name(pick(get_maps(buf.access_map.at(pt))));
-      cout << "latency adjustment for op name = " << op_name << endl;
-      op* op = prg.find_op(op_name);
-      int write_start = 0;
-      cout << "bumpbump" << op->func << endl;
-      if (contains_key(op->func, hwinfo.compute_unit_latencies)) {
-          write_start = map_find(op->func, hwinfo.compute_unit_latencies);
-          cout << "bumpbumpbump " << write_start << endl;
-
-      }
-
-    isl_aff* adjusted =
-      add(get_aff(buf.schedule.at(pt)), (int)write_start);
-    cpy.schedule[pt] =
-      //to_umap(to_map(adjusted));
-      its(to_umap(to_map(adjusted)),buf.domain.at(pt));
-  }
-//  for (auto pt : buf.get_out_ports()) {
-//    int read_start = 0;
-//    isl_aff* adjusted =
-//      add(get_aff(buf.schedule.at(pt)), read_start);
-//    cpy.schedule[pt] =
-//      to_umap(to_map(adjusted));
-//  }
-  cout << "---- Original" << endl;
-  cout << buf << endl;
-  cout << "---- Latency adjusted" << endl;
-  cout << cpy << endl;
-
-  // Now: How do we search for good bankings?
-  //  1. The basic object is the map from times to locations written for each port
-  cout << "Timing maps..." << endl;
-  for (auto pt : cpy.get_all_ports()) {
-    auto timing_map = dot(inv(cpy.schedule[pt]), cpy.access_map[pt]);
-    cout << pt << ": " << str(timing_map) << endl;
-  }
-  return cpy;
-}
-
-vector<int> cyclic_banking(prog& prg, UBuffer& buf, schedule_info& info) {
-  vector<int> bank_factors;
-  for (int i = 0; i < buf.logical_dimension(); i++) {
-    bank_factors.push_back(2);
-  }
-
-  return bank_factors;
-}
-
-isl_map* cyclic_function(isl_ctx* ctx, const std::string& name, const std::vector<int>& bank_factors) {
-  vector<string> dvs;
-  vector<string> bank_exprs;
-  for (int i = 0; i < (int) bank_factors.size(); i++) {
-    dvs.push_back("d" + str(i));
-    bank_exprs.push_back("d" + str(i) + " % " + str(bank_factors.at(i)));
-  }
-
-  string folded_output = "Bank" + brackets(sep_list(bank_exprs, "", "", ", "));
-
-  string bank_str = curlies(name + brackets(sep_list(dvs, "", "", ", ")) + " -> " + folded_output);
-  return isl_map_read_from_str(ctx, bank_str.c_str());
-}
-
-int bank_folding_factor(const vector<int>& bank_factors, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
-  isl_map* bank_func = cyclic_function(buf.ctx, buf.name, bank_factors);
-
-  bank bnk = buf.compute_bank_info();
-  vector<int> lengths;
-  for (int i = 0; i < buf.logical_dimension(); i++) {
-    auto s = project_all_but(to_set(bnk.rddom), i);
-    auto max = to_int(lexmaxval(s));
-    auto min = to_int(lexminval(s));
-    int length = max - min + 1;
-    lengths.push_back(length);
-  }
-  auto strs = strides(lengths);
-
-  cout << "Strides..." << endl;
-  for (auto s : strs) {
-    cout << tab(1) << s << endl;
-  }
-
-  cout << endl;
-  cout << "Terms" << endl;
-  vector<string> terms;
-  for (int i = 0; i < buf.logical_dimension(); i++) {
-    string var = "d" + str(i);
-    string fold = "floor(" + var + " / "  + str(bank_factors.at(i)) + ")" + "*" + str(strs.at(i));
-    cout << tab(1) << fold << endl;
-    terms.push_back(fold);
-  }
-  vector<string> dvs;
-  for (int i = 0; i < (int) bank_factors.size(); i++) {
-    dvs.push_back("d" + str(i));
-  }
-
-  string aff_str = curlies("Bank" + sep_list(dvs, "[", "]", ", ") + " -> " + brackets(parens(sep_list(terms, "", "", " + "))));
-  cout << "aff_str = " << aff_str << endl;
-  cout << "Bank func        : " << str(bank_func) << endl;
-  isl_map* aff = isl_map_read_from_str(buf.ctx, aff_str.c_str());
-  cout << "Inner bank offset: " << str(aff) << endl;
-
-  auto app = dot(bank_func, aff);
-  cout << endl << "Application: " << str(app) << endl;
-  //assert(false);
-  return 100000;
-}
-
-template <typename T>
-void print_shift_registers(
-    std::ostream& out,
-    const T& shift_registered_outputs,
-    CodegenOptions& options,
-    prog& prg,
-    UBuffer& buf,
-    schedule_info& hwinfo) {
-  for (auto sr : shift_registered_outputs) {
-    int delay = sr.second.second;
-    vector<string> port_decls{"input clk", "input flush", "input rst_n", "input logic [" + str(DATAPATH_WIDTH - 1) + ":0] in", "output logic [" + str(DATAPATH_WIDTH - 1) + ":0] out"};
-    out << "module " << buf.name << "_" << sr.first << "_to_" << sr.second.first << "_sr(" << comma_list(port_decls) << ");" << endl;
-
-    int addrwidth = ceil(log2(delay + 1));
-
-    out << tab(1) << "logic [15:0] storage [" << delay << ":0];" << endl << endl;
-
-    out << tab(1) << "reg [" + str(max(addrwidth - 1, 0)) + ":0] read_addr;" << endl;
-    out << tab(1) << "reg [" + str(max(addrwidth - 1, 0)) + ":0] write_addr;" << endl;
-
-    //out << tab(1) << "reg [15:0] read_addr;" << endl;
-    //out << tab(1) << "reg [15:0] write_addr;" << endl;
-
-    out << tab(1) << "always @(posedge clk or negedge rst_n) begin" << endl;
-    out << tab(2) << "if (~rst_n) begin" << endl;
-    out << tab(3) << "read_addr <= 0;" << endl;
-    out << tab(3) << "write_addr <= " << delay << ";" << endl;
-    out << tab(2) << "end else begin" << endl;
-    out << tab(3) << "storage[write_addr] <= in;" << endl;
-    out << tab(3) << "read_addr <= read_addr == " << delay << " ? 0 : read_addr + 1;" << endl;
-    out << tab(3) << "write_addr <= write_addr == " << delay << " ? 0 : write_addr + 1;" << endl;
-
-    out << tab(2) << "end" << endl << endl;
-    out << tab(1) << "end" << endl << endl;
-
-    out << tab(1) << "always @(*) begin" << endl;
-    out << tab(2) << "out = storage[read_addr];" << endl;
-    out << tab(1) << "end" << endl << endl;
-
-    out << "endmodule" << endl << endl;
-}
-}
-vector<pair<string, pair<string, int> >> determine_output_shift_reg_map(
-        prog& prg,
-    UBuffer& buf,
-    schedule_info& hwinfo)
-{
-  auto sc = buf.global_schedule();
-  bool any_reduce_ops_on_buffer = false;
-  vector<pair<string, pair<string, int> >> shift_registered_outputs;
-  for (auto op : prg.all_ops()) {
-    //if (intersection(op->buffers_read(), op->buffers_written()).size() != 0 ) {
-      if (elem(buf.name, op->buffers_read()) && elem(buf.name, op->buffers_written())) {
-        cout << buf.name << endl;
-
-          any_reduce_ops_on_buffer = true;
-        break;
-    }
-  }
-
-  if (!any_reduce_ops_on_buffer) {
-    for (auto outpt : buf.get_out_ports()) {
-      for (auto outpt_src : buf.get_out_ports()) {
-
-          if(outpt == outpt_src) {
-              continue;
-          }
-
-            auto reads = buf.access_map.at(outpt);
-              auto reads_src = buf.access_map.at(outpt_src);
-              cout << "reads: " << str(reads) << endl;
-              cout << "reads_src: " << str(reads_src) << endl;
-
-              auto outpt_read_data = range(reads);
-              auto outpt_src_read_data = range(reads_src);
-              if(num_in_dims(to_map(reads)) != num_in_dims(to_map(reads_src)))
-              {
-                continue;
-              }
-
-              if(!subset(outpt_read_data,outpt_src_read_data))
-              {
-                  continue;
-              }
-
-              cout << str(buf.schedule.at(outpt)) << endl;
-              cout << str(buf.schedule.at(outpt_src)) << endl;
-              isl_aff * outpt_sched = get_aff(buf.schedule.at(outpt));
-              isl_aff * outpt_src_sched = get_aff(buf.schedule.at(outpt_src));
-              outpt_sched = set_name(outpt_sched,"bump");
-              outpt_src_sched = set_name(outpt_src_sched,"bump");
-              isl_aff * diff = sub(outpt_sched,outpt_src_sched);
-              isl_aff * reads_aff = get_aff(reads);
-              isl_aff * reads_src_aff = get_aff(reads_src);
-              reads_aff = set_name(reads_aff,"bump");
-              reads_src_aff = set_name(reads_src_aff,"bump");
-              isl_aff * diff_loc = sub(reads_aff, reads_src_aff);
-
-              cout << str(diff) << endl;
-
-              if(!isl_aff_is_cst(diff) || to_int(const_coeff(diff)) < 0)
-              {
-                  continue;
-              }
-
-              if (!isl_aff_is_cst(diff_loc) || to_int(const_coeff(diff_loc)) < 0)
-              {
-                  continue;
-              }
-
-              auto time_to_read_src = dot(inv(sc), (reads_src));
-              auto time_to_read = dot(inv(sc), (reads));
-
-             shift_registered_outputs.push_back({outpt,{outpt_src, to_int(const_coeff(diff))-1}});
-        }
-
-    }
-  }
-  return shift_registered_outputs;
-}
-
-vector<string> verilog_port_decls(CodegenOptions& options, UBuffer& buf) {
-  vector<string> port_decls{"input clk", "input flush", "input rst_n"};
-
-  for (auto b : buf.port_bundles) {
-    int pt_width = buf.port_widths;
-    int bd_width = buf.lanes_in_bundle(b.first);
-    string name = b.first;
-    string pt_rep = pick(b.second);
-    auto acc_maps = get_maps(buf.access_map.at(pt_rep));
-    assert(acc_maps.size() > 0);
-    int control_dimension = num_in_dims(pick(acc_maps));
-    if (buf.is_input_bundle(b.first)) {
-      if (options.rtl_options.use_external_controllers) {
-        port_decls.push_back("input " + name + "_wen");
-        port_decls.push_back( "input [15:0] " + name + "_ctrl_vars [" + str(control_dimension - 1) + ":0] ");
-      }
-      port_decls.push_back( "input logic [" + str(pt_width - 1) + ":0] " + name + " [" + str(bd_width - 1) + ":0] ");
-    } else {
-      if (options.rtl_options.use_external_controllers) {
-        port_decls.push_back("input " + name + "_ren");
-        port_decls.push_back( "input [15:0] " + name + "_ctrl_vars [" + str(control_dimension - 1) + ":0] ");
-      }
-      port_decls.push_back( "output logic [" + str(pt_width - 1) + ":0] " + name + " [" + str(bd_width - 1) + ":0] ");
-    }
-  }
-
-  return port_decls;
-}
-
-
-void generate_platonic_ubuffer(
-    CodegenOptions& options,
-    prog& prg,
-    UBuffer& buf,
-    schedule_info& hwinfo) {
-  ostream& out = *verilog_collateral_file;
-
-  // prg.pretty_print();
-
-  vector<int> bank_factors = cyclic_banking(prg, buf, hwinfo);
-
-  auto shift_registered_outputs = determine_shift_reg_map(prg, buf,hwinfo);
-  auto shift_registered_outputs_to_outputs = determine_output_shift_reg_map(prg, buf,hwinfo);
-
-  if(buf.name == "hw_input_global_wrapper_stencil")
-  {
-          cout << buf;
-          cout << "Output to output srs..." << endl;
-          for (auto ent : shift_registered_outputs_to_outputs) {
-              cout << tab(1) << ent.first << " -> " << ent.second.first << ", " << ent.second.second << endl;
-          }
-  }
-
-
-  maybe<std::set<int> > embarassing_banking =
-    embarassing_partition(buf);
-  bool has_embarassing_partition = embarassing_banking.has_value();
-  //bool has_embarassing_partition = false;
-
-  if (has_embarassing_partition)  {
-    std::set<int> partition_dims = embarassing_banking.get_value();
-    vector<int> min_offsets = min_offsets_by_dimension(buf);
-    vector<int> max_offsets = max_offsets_by_dimension(buf);
-    vector<int> extents;
-    for (int i = 0; i < min_offsets.size(); i++) {
-      extents.push_back(max_offsets.at(i) - min_offsets.at(i) + 1);
-    }
-    cout << "Extents in selected dimensions..." << endl;
-    map<int, int> partitioned_dimension_extents;
-    for (auto d : partition_dims) {
-      cout << tab(1) << extents.at(d) << endl;
-      partitioned_dimension_extents[d] = extents.at(d);
-    }
-
-    print_embarassing_banks_selector(out, partitioned_dimension_extents, buf);
-  }
-
-  print_cyclic_banks_selector(out, bank_factors, buf);
-  print_shift_registers(out, shift_registered_outputs, options, prg, buf, hwinfo);
-  print_shift_registers(out, shift_registered_outputs_to_outputs, options, prg, buf, hwinfo);
-
-  // todo: print the fsm modules that get the ctrl_variables
-
-  unordered_set<string> done_ctrl_vars;
-
-  for(auto pt: buf.get_all_ports()){
-      string name = buf.container_bundle(pt);
-      string ctrl_vars = name + "_ctrl_vars";
-      string enable = (name.find("write") != string::npos) ? name + "_wen" : name + "_ren";
-      if(done_ctrl_vars.find(ctrl_vars) != done_ctrl_vars.end())
-      {
-          continue;
-      }
-      done_ctrl_vars.insert(ctrl_vars);
-      auto adjusted_buf = latency_adjusted_buffer( options, prg, buf, hwinfo);
-      cout << "adjusted buffer " << adjusted_buf << endl;
-      cout << "actual buffer " << buf << endl;
-      //auto adjusted_buf = buf;
-      assert(get_maps(adjusted_buf.schedule.at(pt)).size()==1);
-      auto aff = get_aff(get_maps(adjusted_buf.schedule.at(pt))[0]);
-      int dims = num_in_dims(aff);
-      isl_set * dom = domain(get_maps(adjusted_buf.schedule.at(pt))[0]);
-//        cout << "domain " << str(dom) << endl;
-//        cout << get_dim(dom) << endl;
-//        cout << get_dim_max(dom,0) << endl;
-//        cout << get_dim_min(dom,0) << endl;
-//        cout << get_dim_max(dom,1) << endl;
-//        cout << get_dim_min(dom,1) << endl;
-//        cout << get_dim_max(dom,2) << endl;
-//        cout << get_dim_min(dom,2) << endl;
-      out << "//" << str(get_maps(adjusted_buf.schedule.at(pt))[0]) << endl;
-//      cout << dims << endl;
-//      assert(false);
-
-      cout << to_int(const_coeff(aff)) << endl;
-      for(int i = 0; i < dims; i ++)
-      {
-            cout << str(get_coeff(aff,i)) << endl;
-
-      }
-      out << "module " << adjusted_buf.name << "_" <<  adjusted_buf.container_bundle(pt) << "_fsm(input clk, input flush, input rst_n, output logic [15:0] " << ctrl_vars << "[" << dims-1 << ":0], output " << enable << " );" << endl;
-      out << tab(1) << "logic [15:0] counter[" << dims << ":0];" << endl;
-      out << tab(1) << "logic on;" << endl;
-      out << tab(1) << "logic on2;" << endl;
-      out << tab(1) << "integer i;" << endl;
-      out << tab(1) << "integer dims = " << dims << ";" << endl;
-
-      string condition = "assign " + enable + " =(on && on2 && " + ctrl_vars + brackets(str(0)) + "==0";
-      for(int i =1; i< dims; i ++)
-      {
-        condition += " && " + ctrl_vars + brackets(str(i)) + "<=" + str(get_dim_max(dom,i));
-        //condition += " && " + ctrl_vars + brackets(str(i)) + ">=0";
-      }
-      condition += ");";
-      out << tab(1) << condition << endl;
-
-      out << tab(1) << "always @(posedge clk or negedge rst_n) begin" << endl;
-      out << tab(2) << "if (~rst_n) begin" << endl;
-      for(int i = 0; i < dims ;i ++) {
-      out << tab(3) <<  ctrl_vars << brackets(str(i)) << "<= 16'b1010101010101010;" << endl;
-      out << tab(3) <<  "counter" << brackets(str(i)) << " <= 16'b0;" << endl;
-      }
-      out << tab(3) << "on <=0;" << endl;
-      out << tab(3) << "on2 <= 0;" << endl;
-      out << tab(2) <<  "end else begin" << endl;
-      out << tab(3) <<   "if(counter[0] ==" << to_int(const_coeff(aff)) - 1 << ") begin" << endl;
-      out << tab(4) << "on <=1;" << endl;
-      out << tab(4) << "on2 <= 1;" << endl;
-      out << tab(4) <<  ctrl_vars << brackets(str(0)) << "<= 16'b0;" << endl;
-      out << tab(4) <<  "counter" << brackets(str(0)) << " <= counter" << brackets(str(0)) << "+1;" << endl;
-      for(int i = 1; i < dims ;i ++) {
-        out << tab(4) <<  ctrl_vars << brackets(str(i)) << "<= 16'b0;" << endl;
-        out << tab(4) <<  "counter " << brackets(str(i)) << " <= 16'b0;" << endl;
-      }
-
-      out << tab(3) <<  "end else begin" << endl;
-      out << tab(4) << "counter[0] <= counter[0] + 1;" << endl;
-      out << tab(4) << "if(counter[1] == " << to_int(get_coeff(aff,1)) - 1 << ") begin" << endl;
-      for(int i = 1; i < dims; i ++ ) {
-        out << tab(5) << "counter" << brackets(str(i)) << "<= 0;" << endl;
-      }
-      for(int i = 2; i < dims; i ++ ){
-        out << tab(5) << ctrl_vars << brackets(str(i)) << "<= 0;" << endl;
-      }
-      out << tab(5) << ctrl_vars << "[1] <= " << ctrl_vars << "[1] + 1;" << endl;
-      out << tab(5) << "on2 <= 1;" <<endl;
-      for(int i = 2; i < dims; i ++)
-      {
-            out << tab(4) << "end else if(counter[" << i << "] == " << to_int(get_coeff(aff,i)) - 1 << ") begin" << endl;
-            for(int j = 1; j< i; j ++ ) {
-                out << tab(5) << "counter" << brackets(str(j)) << " <= counter" << brackets(str(j)) << " + 1;" << endl;
-            }
-            for(int j = i; j < dims; j ++ ) {
-                out << tab(5) << "counter" << brackets(str(j)) << " <= 0;" << endl;
-            }
-            for(int j = i + 1; j < dims; j ++ ) {
-                out << tab(5) << ctrl_vars << brackets(str(j)) << "<= 0;" << endl;
-            }
-            out << tab(5) << ctrl_vars << "[" << i << "] <= " << ctrl_vars << "[" << i << "] + 1;" << endl;
-            out << tab(5) << "on2 <= 1;" << endl;
-      }
-      out << tab(4) << "end else begin" << endl;
-      for(int i = 1; i < dims; i ++ ) {
-        out << tab(5) << "counter" << brackets(str(i)) << " <= counter" << brackets(str(i)) << " + 1;" << endl;
-      }
-        out << tab(5) << "on2 <= 0;" << endl;
-      out << tab(4) << "end" << endl;
-      out << tab(3) << "end" << endl;
-       out << tab(2) << "end" << endl;
-       out << tab(1) << "end" << endl;
-    out << "endmodule" << endl;
-
-  }
-
-   //assert(false);
-
-
-
-  vector<string> port_decls = verilog_port_decls(options, buf);
-
-  out << "module " << buf.name << "_ub" << "(" << sep_list(port_decls, "\n\t", "", ",\n\t") << ");" << endl;
-  out << endl;
-
-  out << tab(1) << "// Storage capacity pre-banking: " << total_capacity(buf) << endl;
-
-  done_ctrl_vars.clear();
-  for(auto pt: buf.get_all_ports())
-  {
-      string name = buf.container_bundle(pt);
-      string ctrl_vars = name + "_ctrl_vars";
-      string enable = (name.find("write") != string::npos) ? name + "_wen" : name + "_ren";
-      if(done_ctrl_vars.find(ctrl_vars) != done_ctrl_vars.end())
-      {
-          continue;
-      }
-      done_ctrl_vars.insert(ctrl_vars);
-      auto aff = get_aff(get_maps(buf.schedule.at(pt))[0]);
-      int dims = num_in_dims(aff);
-
-      out << tab(1) << "logic [15:0]" << ctrl_vars << "_fsm_out[" << dims -1 << ":0];" << endl;
-     out << tab(1) << "logic " << enable << "_fsm_out;" << endl;
-
-      out << tab(1) << buf.name << "_" <<  buf.container_bundle(pt) << "_fsm " <<
-      buf.name << "_" <<  buf.container_bundle(pt) << "_fsm_inst "
-      << "(.clk(clk), .flush(flush), .rst_n(rst_n), ." << ctrl_vars << "( " + ctrl_vars << "_fsm_out), ." << enable << "("
-      << enable << "_fsm_out));" << endl;
-
-
-  }
-  //assert(false);
-
-  map<int, int> partitioned_dimension_extents;
-  if (has_embarassing_partition) {
-    std::set<int> partition_dims = embarassing_banking.get_value();
-    vector<int> min_offsets = min_offsets_by_dimension(buf);
-    vector<int> max_offsets = max_offsets_by_dimension(buf);
-    vector<int> extents;
-    for (int i = 0; i < min_offsets.size(); i++) {
-      extents.push_back(max_offsets.at(i) - min_offsets.at(i) + 1);
-    }
-    cout << "Extents in selected dimensions..." << endl;
-    for (auto d : partition_dims) {
-      cout << tab(1) << extents.at(d) << endl;
-      partitioned_dimension_extents[d] = extents.at(d);
-    }
-
-    print_embarassing_banks(out, partitioned_dimension_extents, buf);
-  }
-
-
-  bank bnk = buf.compute_bank_info();
-
-  vector<int> capacities;
-  if (!has_embarassing_partition) {
-    capacities = print_cyclic_banks(out, bank_factors, bnk);
-  } else {
-    std::set<int> partition_dims = embarassing_banking.get_value();
-    vector<int> min_offsets = min_offsets_by_dimension(buf);
-    vector<int> max_offsets = max_offsets_by_dimension(buf);
-    vector<int> extents;
-    for (int i = 0; i < min_offsets.size(); i++) {
-      extents.push_back(max_offsets.at(i) - min_offsets.at(i) + 1);
-    }
-    cout << "Extents in selected dimensions..." << endl;
-    for (auto d : partition_dims) {
-      cout << tab(1) << extents.at(d) << endl;
-      partitioned_dimension_extents[d] = extents.at(d);
-    }
-    capacities = extents;
-  }
-
-  out << "// Capacities in " << buf.name << endl;
-  for (auto c : capacities) {
-    out << tab(1) << "// " << c << endl;
-  }
-  out << endl;
-
-  for (auto in : buf.get_all_ports()) {
-    auto comps_raw =
-      generate_verilog_addr_components(in, bnk, buf);
-
-    vector<string> comps;
-    int i = 0;
-    for (auto c : comps_raw) {
-      out << tab(1) << "logic [15:0] " << buf.name << "_" << in << "_" << i << ";" << endl;
-      out << tab(1) << "assign " << buf.name << "_" << in << "_" << i << " = " << c << ";" << endl;
-      comps.push_back(buf.name + "_" + in + "_" + str(i));
-      i++;
-    }
-    reverse(comps);
-    if (has_embarassing_partition) {
-      out << buf.name << "_embarassing_bank_selector " << buf.name << "_" << in << "_bank_selector(.d(" << sep_list(comps, "{", "}", ",") << "));" << endl;
-    } else {
-      out << buf.name << "_bank_selector " << buf.name << "_" << in << "_bank_selector(.d(" << sep_list(comps, "{", "}", ",") << "));" << endl;
-    }
-  }
-
-  out << endl;
-
-  vector<pair<string,pair<string,int>>> sorted_shift_registered_outputs_to_outputs = shift_registered_outputs_to_outputs;
-  sort_lt(sorted_shift_registered_outputs_to_outputs,[](const pair<string,pair<string,int>> &x) {return x.second.second;});
-
-  unordered_set<string> done_outpt;
-  for (auto pt : shift_registered_outputs_to_outputs) {
-
-        if(done_outpt.find(pt.first)!=done_outpt.end())
-        {
-            continue;
-        } else{
-            done_outpt.insert(pt.first);
-        }
-
-        string dst = buf.container_bundle(pt.first) + brackets(str(buf.bundle_offset(pt.first)));
-
-    string src = buf.container_bundle(pt.second.first) + brackets(str(buf.bundle_offset(pt.second.first)));
-      out << tab(2) << buf.name << "_" << pt.first << "_to_" << pt.second.first << "_sr " << pt.first << "_delay(.clk(clk), .rst_n(rst_n), .flush(flush), .in(" + src + "), .out(" + dst + "));" << endl << endl;
-
-  }
-  for (auto in : buf.get_in_ports()) {
-    string src = buf.container_bundle(in) + brackets(str(buf.bundle_offset(in)));
-    for (auto pt : shift_registered_outputs) {
-      string dst = buf.container_bundle(pt.first) + brackets(str(buf.bundle_offset(pt.first)));
-      if (pt.second.first == in) {
-        if(done_outpt.find(pt.first)!=done_outpt.end()) {
-          continue;
-        } else
-        {
-          done_outpt.insert(pt.first);
-          out << tab(2) << buf.name << "_" << pt.first << "_to_" << pt.second.first << "_sr " << pt.first << "_delay(.clk(clk), .rst_n(rst_n), .flush(flush), .in(" + src + "), .out(" + dst + "));" << endl << endl;
-        }
-      }
-    }
-  }
-
-
-  out << endl;
-  int num_banks = card(bank_factors);
-  if (has_embarassing_partition) {
-    num_banks = 1;
-    for (auto ent : partitioned_dimension_extents) {
-      num_banks *= ent.second;
-    }
-  }
-
-  out << tab(1) << "always @(posedge clk) begin" << endl;
-  done_ctrl_vars.clear();
-  for(auto pt: buf.get_all_ports())
-  {
-      string name = buf.container_bundle(pt);
-
-      string ctrl_vars = name + "_ctrl_vars";
-      string enable = (name.find("write") == string::npos) ? name + "_ren" : name + "_wen";
-      if(done_ctrl_vars.find(ctrl_vars) != done_ctrl_vars.end())
-      {
-          continue;
-      }
-      done_ctrl_vars.insert(ctrl_vars);
-      auto aff = get_aff(get_maps(buf.schedule.at(pt))[0]);
-      int dims = num_in_dims(aff);
-      string gen_ctrl_vars = ctrl_vars + "_fsm_out";
-      out << tab(2) << "if(" << enable << ")begin" << endl;
-      out << tab(3) << "if(" << ctrl_vars << "!=" << gen_ctrl_vars << ") begin" << endl;
-      out << tab(4) << "$display(\"Different\");" << endl;
-//      out << tab(4) << "$display(" << ctrl_vars << "[1]);" << endl;
-//      out << tab(4) << "$display(" << gen_ctrl_vars << "[1]);" << endl;
-//      out << tab(4) << "$display(" << ctrl_vars << "[2]);" << endl;
-//      out << tab(4) << "$display(" << gen_ctrl_vars << "[2]);" << endl;
-//      out << tab(4) << "$display(" << ctrl_vars << "[0]);" << endl;
-//      out << tab(4) << "$display(" << gen_ctrl_vars << "[0]);" << endl;
-      //out << tab(4) << "$finish(-1);" << endl;
-      out << tab(3) << "end" << endl;
-      out << tab(2) << "end" << endl;
-  }
-  for (auto in : buf.get_in_ports()) {
-    string addr = print_cyclic_banks_inner_bank_offset_func(buf,generate_verilog_addr_components(in,bnk,buf),capacities,bank_factors);
-    if (has_embarassing_partition) {
-      addr = print_embarassing_banks_inner_bank_offset_func(buf,generate_verilog_addr_components(in,bnk,buf),capacities, partitioned_dimension_extents);
-    }
-
-    string bundle_wen = buf.container_bundle(in) + "_wen";
-    out << tab(2) << "if (" << bundle_wen << "!=" << bundle_wen << "_fsm_out) begin" << endl;
-    out << tab(4)<< "$display(" << bundle_wen << ");" << endl;
-      out << tab(4) << "$display("<< bundle_wen << "_fsm_out);" << endl;
-    out << tab(3) << "$finish(-1);" << endl;
-    out << tab(2) << "end" << endl;
-    out << tab(2) << "if (" << bundle_wen << "_fsm_out) begin" << endl;
-
-
-    out << tab(3) << "case( " << buf.name << "_" << in << "_bank_selector.out)" << endl;
-    for (int b = 0; b < num_banks; b++) {
-      string source_ram = "bank_" + str(b);
-      out << tab(4) << b << ":" << source_ram << "[" << addr << "]" << " <= " << buf.container_bundle(in) << "[" << buf.bundle_offset(in) << "]" << ";" << endl;
-    }
-    out << tab(4) << "default: $finish(-1);" << endl;
-    out << tab(3) << "endcase" << endl;
-    out << tab(2) << "end" << endl;
-  }
-  out << tab(1) << "end" << endl;
-
-
-  out << tab(1) << "always @(*) begin" << endl;
-  for (auto outpt : buf.get_out_ports()) {
-    if (done_outpt.find(outpt) == done_outpt.end()) {
-      string addr =
-        print_cyclic_banks_inner_bank_offset_func(buf, generate_verilog_addr_components(outpt, bnk, buf), capacities, bank_factors);
-
-      if (has_embarassing_partition) {
-        addr =
-          print_embarassing_banks_inner_bank_offset_func(buf, generate_verilog_addr_components(outpt, bnk, buf), capacities, partitioned_dimension_extents);
-      }
-
-    string bundle_ren = buf.container_bundle(outpt) + "_ren";
-    out << tab(2) << "if (" << bundle_ren << "!=" << bundle_ren << "_fsm_out) begin" << endl;
-    out << tab(4)<< "$display(" << bundle_ren << ");" << endl;
-      out << tab(4) << "$display("<< bundle_ren << "_fsm_out);" << endl;
-    out << tab(3) << "$finish(-1);" << endl;
-    out << tab(2) << "end" << endl;
-    out << tab(2) << "if (" << bundle_ren << ") begin" << endl;
-      out << tab(3) << "case( " << buf.name << "_" << outpt << "_bank_selector.out)" << endl;
-      for (int b = 0; b < num_banks; b++) {
-        string source_ram = "bank_" + str(b);
-        out << tab(4) << b << ":" << buf.container_bundle(outpt) << "[" << buf.bundle_offset(outpt) << "]" << " = " << source_ram << "[" << addr << "]" << ";" << endl;
-      }
-      out << tab(4) << "default: $finish(-1);" << endl;
-      out << tab(3) << "endcase" << endl;
-      out << tab(2) << "end" << endl;
-    }
-  }
-
-  out << tab(1) << "end" << endl;
-
-  out << endl;
-
-  if (!has_embarassing_partition &&
-      done_outpt.size() < buf.get_out_ports().size()) {
-    cout << "BUFFER: " << buf.name << " cannot be fully optimized by shift registers and embarassing partitioning" << endl;
-    not_fully_optimizable++;
-  } else {
-    fully_optimizable++;
-  }
-  cout << "FULLY OPTIMIZABLE: " << fully_optimizable << " / " << (fully_optimizable + not_fully_optimizable) << endl;
-  out << "endmodule" << endl << endl;
-}
-
 
 //Assumes common has been loaded
 void load_mem_ext(Context* c) {
@@ -1655,14 +864,6 @@ std::string cu_name(const std::string& n) {
   return "cu_" + n;
 }
 
-std::string pg(const std::string& buf, const std::string& bundle) {
-  return buf + "_" + bundle;
-}
-
-std::string pg(const pair<string, string>& b) {
-  return pg(b.first, b.second);
-}
-
   CoreIR::Wireable* wire(CoreIR::ModuleDef* bdef,
       const int width,
       const std::string& name,
@@ -1848,7 +1049,11 @@ void generate_coreir_compute_unit(CodegenOptions& options, bool found_compute,
       if (hwinfo.use_dse_compute) {
         halide_cu = def->addInstance("inner_compute", ns->getModule(op->func + "_mapped"));
       } else {
-        halide_cu = def->addInstance("inner_compute", ns->getModule(op->func));
+        if (options.rtl_options.use_pipelined_compute_units) {
+          halide_cu = def->addInstance("inner_compute", ns->getModule(op->func + "_pipelined"));
+        } else {
+          halide_cu = def->addInstance("inner_compute", ns->getModule(op->func));
+        }
       }
       assert(halide_cu != nullptr);
 
@@ -1858,6 +1063,7 @@ void generate_coreir_compute_unit(CodegenOptions& options, bool found_compute,
 
       for (pair<string, string> bundle : incoming_bundles(op, buffers, prg)) {
         auto buf = map_find(bundle.first, buffers);
+        cout << "Looking for connection for " << buf.name << "." << bundle.second << endl;
 
         bool found = false;
         cout << "# of selects = " << halide_cu->getSelects().size() << endl;
@@ -1972,14 +1178,17 @@ Wireable* write_start_wire(ModuleDef* def, const std::string& opname) {
 
 void connect_op_control_wires(CodegenOptions& options, ModuleDef* def, op* op, schedule_info& hwinfo, Instance* controller) {
   cout << "Find compute" << endl;
-  int op_latency = map_find(op->name, hwinfo.op_compute_unit_latencies);
+  //int op_latency = map_find(op->name, hwinfo.op_compute_unit_latencies);
+  int op_latency = hwinfo.compute_latency(op);
+  //map_find(op->name, hwinfo.op_compute_unit_latencies);
   int read_latency =
     op->buffers_read().size() == 0 ? 0 :
-    map_find(pick(op->buffers_read()), hwinfo.buffer_load_latencies);
+    hwinfo.load_latency(pick(op->buffers_read()));
+    //map_find(pick(op->buffers_read()), hwinfo.buffer_load_latencies);
     cout << "Done Finding compute , op Latency : " << op_latency
         << ", read Latency: " << read_latency << endl;
 
-  if (options.rtl_options.use_external_controllers) {
+  if (options.rtl_options.use_external_controllers || op->index_variables_needed_by_compute.size()) {
     Wireable* op_start_wire = controller->sel("valid");
     Wireable* op_start_loop_vars = controller->sel("d");
 
@@ -2057,7 +1266,7 @@ void emit_lake_config2csv(json data, ofstream& out) {
           int cnt = 0;
           for (auto data_it : data_domain) {
             //cout << tab(2) << "\""+key+"_"+to_string(cnt)+"\"," << data_it << ",0"<< endl;
-            if (data_domain.size() == 1)
+            if (data_domain.size() == 1 && contains(key, "starting_addr" ))
               out << "\""+key+"\"," << data_it << ",0"<< endl;
             else
               out << "\""+key+"_"+to_string(cnt)+"\"," << data_it << ",0"<< endl;
@@ -2109,9 +1318,7 @@ void generate_lake_tile_verilog(CodegenOptions& options, Instance* buf) {
   run_lake_verilog_codegen(options, v_name, ub_ins_name);
 }
 
-//Add CodegenOptions, if we do not use extra control,
-//we will use lake tile to generate affine controller
-Instance* generate_coreir_op_controller(CodegenOptions& options, ModuleDef* def, op* op, vector<isl_map*>& sched_maps, schedule_info& hwinfo) {
+Instance* generate_coreir_op_controller_verilog(CodegenOptions& options, ModuleDef* def, op* op, vector<isl_map*>& sched_maps, schedule_info& hwinfo) {
   auto c = def->getContext();
 
   isl_map* sched = nullptr;
@@ -2135,10 +1342,82 @@ Instance* generate_coreir_op_controller(CodegenOptions& options, ModuleDef* def,
   cout << "sched = " << str(saff) << endl;
   cout << tab(1) << "dom = " << str(dom) << endl;
 
+
   // TODO: Assert multi size == 1
   auto aff = isl_multi_aff_get_aff(saff, 0);
   Instance* controller;
   if (options.rtl_options.use_external_controllers) {
+    auto aff_c = affine_controller_def(c, dom, aff);
+    aff_c->print();
+    controller = def->addInstance(controller_name(op->name), aff_c);
+  } else {
+    assert(false);
+    controller = affine_controller_use_lake_tile(
+            def, c, dom, aff,
+            controller_name(op->name));
+    //generate verilog collateral
+    generate_lake_tile_verilog(options, controller);
+  }
+
+  assert(verilog_collateral_file != nullptr);
+  generate_fsm(*verilog_collateral_file, options, controller->getModuleRef()->getName(), "d", "valid", aff, dom);
+
+  def->connect(controller->sel("rst_n"), def->sel("self.rst_n"));
+  def->connect(controller->sel("flush"), def->sel("self.flush"));
+
+  json tile_config;
+  for (int d = 0; d < num_in_dims(aff); d++) {
+    tile_config["coeff_" + str(d)] = to_int(get_coeff(aff, d));
+  }
+  tile_config["const"] = to_int(const_coeff(aff));
+  int d = 0;
+  for (auto e : extents(dom)) {
+    tile_config["extent_" + str(d)] = e;
+    d++;
+  }
+  controller->getMetaData()["config"] =
+    tile_config;
+
+  connect_op_control_wires(options, def, op, hwinfo, controller);
+  return controller;
+}
+
+//Add CodegenOptions, if we do not use extra control,
+//we will use lake tile to generate affine controller
+Instance* generate_coreir_op_controller(CodegenOptions& options, ModuleDef* def, op* op, vector<isl_map*>& sched_maps, schedule_info& hwinfo) {
+  auto c = def->getContext();
+
+  isl_map* sched = nullptr;
+  for (auto s : sched_maps) {
+    if (domain_name(s) == op->name) {
+      sched = s;
+      break;
+    }
+  }
+  assert(sched != nullptr);
+
+  cout << "Schedule to generate affine controller: " << str(sched) << endl;
+
+  auto svec = isl_pw_multi_aff_from_map(sched);
+  cout << "pma: " << str(svec) << endl;
+
+  vector<pair<isl_set*, isl_multi_aff*> > pieces =
+    get_pieces(svec);
+  assert(pieces.size() == 1);
+
+  auto saff = pieces.at(0).second;
+  auto dom = pieces.at(0).first;
+
+  cout << "sched = " << str(saff) << endl;
+  cout << tab(1) << "dom = " << str(dom) << endl;
+
+  // TODO: Assert multi size == 1
+  auto aff = isl_multi_aff_get_aff(saff, 0);
+  Instance* controller;
+
+  //For those op need loop index we need this controller
+  bool need_index = op->index_variables_needed_by_compute.size() > 0;
+  if (options.rtl_options.use_external_controllers || need_index) {
     auto aff_c = affine_controller(c, dom, aff);
     aff_c->print();
     controller = def->addInstance(controller_name(op->name), aff_c);
@@ -2154,40 +1433,6 @@ Instance* generate_coreir_op_controller(CodegenOptions& options, ModuleDef* def,
   return controller;
 }
 
-//CoreIR::Module* create_prog_declaration(CodegenOptions& options,
-    //map<string, UBuffer>& buffers,
-    //prog& prg,
-    //umap* schedmap,
-    //CoreIR::Context* context) {
-  //auto ns = context->getNamespace("global");
-  //vector<pair<string, CoreIR::Type*> >
-    //ub_field{{"clk", context->Named("coreir.clkIn")}, {"rst_n", context->BitIn()}};
-  //ub_field.push_back({"rst_n", context->BitIn()});
-  //ub_field.push_back({"flush", context->BitIn()});
-
-  //for (auto eb : edge_buffers(buffers, prg)) {
-    //string out_rep = eb.first;
-    //string out_bundle = eb.second;
-
-    //UBuffer out_buf = map_find(out_rep, buffers);
-
-    //int pixel_width = out_buf.port_widths;
-    //int pix_per_burst =
-      //out_buf.lanes_in_bundle(out_bundle);
-
-    //if (prg.is_input(out_rep)) {
-      //ub_field.push_back(make_pair(pg(out_rep, out_bundle) + "_valid", context->Bit()));
-      //ub_field.push_back(make_pair(pg(out_rep, out_bundle), context->BitIn()->Arr(pixel_width)->Arr(pix_per_burst)));
-    //} else {
-      //ub_field.push_back(make_pair(pg(out_rep, out_bundle) + "_en", context->Bit()));
-      //ub_field.push_back(make_pair(pg(out_rep, out_bundle), context->Bit()->Arr(pixel_width)->Arr(pix_per_burst)));
-    //}
-  //}
-
-  //CoreIR::RecordType* utp = context->Record(ub_field);
-  //auto ub = ns->newModuleDecl(prg.name, utp);
-  //return ub;
-//}
 
 CoreIR::Module* generate_dual_port_addrgen_buf(CodegenOptions& options, CoreIR::Context* context, UBuffer& buf) {
 
@@ -2318,6 +1563,33 @@ bool app_contains_memory_tiles(map<string, UBuffer> &buffers) {
   return false;
 }
 
+bool load_compute_file(CodegenOptions& options,
+    map<string, UBuffer>& buffers,
+    prog& prg,
+    umap* schedmap,
+    CoreIR::Context* context,
+    schedule_info& hwinfo) {
+  bool found_compute = true;
+  //string compute_file = "./coreir_compute/" + prg.name + "_compute.json";
+  string compute_file = "./coreir_compute/" + prg.name + "_compute_pipelined.json";
+  if (hwinfo.use_dse_compute) {
+    compute_file = "./dse_compute/" + prg.name + "_mapped.json";
+  }
+  ifstream cfile(compute_file);
+  if (!cfile.good()) {
+    cout << "No compute unit file: " << compute_file << endl;
+  }
+  if (!loadFromFile(context, compute_file)) {
+    found_compute = false;
+    cout << "Could not load compute file for: " << prg.name << ", file name = " << compute_file << endl;
+    if (hwinfo.use_dse_compute) {
+      assert(false);
+    }
+  }
+
+  return found_compute;
+}
+
 CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
     map<string, UBuffer>& buffers,
     prog& prg,
@@ -2374,10 +1646,15 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
 
   //this is the flag to wire stencil valid signal
   bool need_pass_valid = false;
+  maybe<string> last_producer_buf_with_tile;
 
   for (auto op : ops_dft) {
     cout << "Visit op: " << op->name << endl;
     vector<string> surrounding = surrounding_vars(op, prg);
+    //Genertea op controller for the op need index varibale
+    if (op->index_variables_needed_by_compute.size() > 0) {
+      generate_coreir_op_controller(options, def, op, sched_maps, hwinfo);
+    }
     for (auto var : op->index_variables_needed_by_compute) {
       int level = map_find(var, levels);
       auto var_wire = exe_start_control_vars(def, op->name)->sel(level);
@@ -2429,6 +1706,12 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
 
       assert(buf.is_output_bundle(bundle.second));
 
+      if (last_producer_buf_with_tile.has_value()) {
+        if (buf_name != last_producer_buf_with_tile.get_value()) {
+          need_pass_valid = false;
+        }
+      }
+
       if (prg.is_input(buf_name)) {
 
         //create the op controller for input will remove for garnet test
@@ -2466,10 +1749,11 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
                     (!contains(buf_name, "clkwrk_dsa"))){
                def->connect(buf_name + "." + bundle_name +"_extra_ctrl", op->name + ".valid_pass_in" );
             }
-          }
-          //Stop at the ubuffer with memory tile inside
-          if (buffers.at(buf_name).contain_memory_tile) {
-            need_pass_valid = false;
+            //Stop at the ubuffer with memory tile inside
+            if (buffers.at(buf_name).contain_memory_tile && !last_producer_buf_with_tile.has_value()) {
+              cout << "Stop wiring stencil valid up from buf: " << buf_name << endl;
+              last_producer_buf_with_tile = buf_name;
+            }
           }
         }
         //def->connect(def->sel(buf_name + "." + bundle_name + "_ren"),
@@ -2494,112 +1778,32 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
 
 }
 
-void generate_micro_op_controllers(CodegenOptions& options,
-    ModuleDef* def,
+void instantiate_controllers(CodegenOptions& options,
+    map<string, UBuffer>& buffers,
     prog& prg,
+    umap* schedmap,
+    CoreIR::ModuleDef* def,
     schedule_info& hwinfo) {
-  auto c = def->getContext();
-
-  cout << "Buffer load latencies..." << endl;
-  for (auto bl : hwinfo.buffer_load_latencies) {
-    cout << tab(1) << bl.first << " -> " << bl.second << endl;
-  }
-
-  cout << "Buffer store latencies..." << endl;
-  for (auto bl : hwinfo.buffer_store_latencies) {
-    cout << tab(1) << bl.first << " -> " << bl.second << endl;
-  }
-
-  auto start_times = op_start_times(hwinfo, prg);
-  auto end_times = op_end_times(hwinfo, prg);
-  auto domains = op_start_times_domains(prg);
-  for (auto d : domains) {
-    cout << d.first << " -> " << str(d.second) << endl;
-  }
-
-  map<string, Wireable*> micro_op_enables;
-  cout << "Micro-op breakdown" << endl;
-  for (auto op : prg.all_ops()) {
-    auto start_time_aff = map_find(op, start_times);
-    auto domain = map_find("start_" + op->name, domains);
-    int compute_latency = op->func == "" ? 0 : map_find(op->func, hwinfo.compute_unit_latencies);
-    cout << tab(1) << "--- " << op->name << endl;
-    cout << tab(2) << "Start: " << str(map_find(op, start_times)) << endl;
-    cout << tab(2) << "End  : " << str(map_find(op, end_times)) << endl;
-    cout << tab(2) << "Dom  : " << str(domain) << endl;
-    for (auto b : op->buffers_read()) {
-      int l = map_find(b, hwinfo.buffer_load_latencies);
-      auto cst_aff = constant_aff(start_time_aff, l);
-      cout << "cst_aff = " << str(cst_aff) << endl;
-
-      isl_aff* offset = sub(start_time_aff, cst_aff);
-
-      auto start_controller = def->addInstance(controller_name(op->name) + c->getUnique(),
-        affine_controller(c, domain, offset));
-      auto end_controller = def->addInstance(
-          controller_name(op->name) + c->getUnique(),
-          affine_controller(c, domain, start_time_aff));
-
-      string rd_start = op->name + "_ISSUE_Read_" + b;
-      string rd_end = op->name + "_RCV_Read_" + b;
-
-      micro_op_enables[rd_start] = start_controller;
-      micro_op_enables[rd_end] = end_controller;
-
-      cout << tab(2) << op->name << " (Issue) Read  " << b << " at " << -1*l << endl;
-      cout << tab(2) << op->name << " (Rcv)   Read  " << b << " at " << 0 << endl;
+  auto sched_maps = get_maps(schedmap);
+  if (options.rtl_options.target_tile == TARGET_TILE_M3) {
+    for (auto op : prg.all_ops()) {
+      bool needs_controller = false;
+      for (auto b : op->buffers_referenced()) {
+        if (prg.is_boundary(b) || op->index_variables_needed_by_compute.size() > 0) {
+          needs_controller = true;
+          break;
+        }
+      }
+      if (needs_controller) {
+        generate_coreir_op_controller_verilog(options, def, op, sched_maps, hwinfo);
+      }
     }
-
-
-    string rd_start = op->name + "_ISSUE_exe";
-    string rd_end = op->name + "_RCV_exe";
-
-    isl_aff* offset = add(start_time_aff, compute_latency);
-
-    auto start_controller = def->addInstance(controller_name(op->name) + c->getUnique(),
-        affine_controller(c, domain, start_time_aff));
-    auto end_controller = def->addInstance(
-        controller_name(op->name) + c->getUnique(),
-        affine_controller(c, domain, offset));
-
-    micro_op_enables[rd_start] = start_controller;
-    micro_op_enables[rd_end] = end_controller;
-
-    if (op->func != "") {
-      cout << tab(2) << op->name << " (Issue) Exe   " << op->func << " at " << 0 << endl;
-      cout << tab(2) << op->name << " (Rcv)   Exe   " << op->func << " at " << compute_latency << endl;
-    } else {
-      cout << tab(2) << op->name << " (Issue) Exe   " << "NONE" << " at " << 0 << endl;
-      cout << tab(2) << op->name << " (Rcv)   Exe   " << "NONE" << " at " << compute_latency << endl;
-    }
-
-    for (auto b : op->buffers_written()) {
-      int l = map_find(b, hwinfo.buffer_store_latencies);
-      auto start_write_aff = add(start_time_aff, compute_latency);
-      auto end_write_aff = add(start_time_aff, l + compute_latency);
-
-      string rd_start = op->name + "_ISSUE_Write_" + b;
-      string rd_end = op->name + "_RCV_Write_" + b;
-
-      auto start_controller = def->addInstance(controller_name(op->name) + c->getUnique(),
-          affine_controller(c, domain, start_write_aff));
-      auto end_controller = def->addInstance(
-          controller_name(op->name) + c->getUnique(),
-          affine_controller(c, domain, end_write_aff));
-      micro_op_enables[rd_start] = start_controller;
-      micro_op_enables[rd_end] = end_controller;
-
-      cout << tab(2) << op->name << " (Issue) Write " << b << " at " << compute_latency << endl;
-      cout << tab(2) << op->name << " (Rcv)   Write " << b << " at " << compute_latency + l << endl;
+  } else if (options.rtl_options.use_external_controllers) {
+    for (auto op : prg.all_ops()) {
+      generate_coreir_op_controller_verilog(options, def, op, sched_maps, hwinfo);
     }
   }
 
-  cout << "Ops..." << endl;
-  for (auto op : micro_op_enables) {
-    cout << tab(1) << op.first << endl;
-    assert(op.second != nullptr);
-  }
-  //assert(false);
 }
 
 CoreIR::Module* generate_coreir(CodegenOptions& options,
@@ -2609,38 +1813,26 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
     CoreIR::Context* context,
     schedule_info& hwinfo) {
 
-
   ofstream verilog_collateral(prg.name + "_verilog_collateral.sv");
   verilog_collateral_file = &verilog_collateral;
+
+  assert(verilog_collateral_file != nullptr);
+
+  bool found_compute = load_compute_file(options, buffers, prg, schedmap, context, hwinfo);
+
   Module* ub = coreir_moduledef(options, buffers, prg, schedmap, context, hwinfo);
-
-  bool found_compute = true;
-  string compute_file = "./coreir_compute/" + prg.name + "_compute.json";
-  if (hwinfo.use_dse_compute) {
-    compute_file = "./dse_compute/" + prg.name + "_mapped.json";
-  }
-  ifstream cfile(compute_file);
-  if (!cfile.good()) {
-    cout << "No compute unit file: " << compute_file << endl;
-  }
-  if (!loadFromFile(context, compute_file)) {
-    found_compute = false;
-    cout << "Could not load compute file for: " << prg.name << ", file name = " << compute_file << endl;
-    if (hwinfo.use_dse_compute) {
-      assert(false);
-    }
-  }
-
   auto def = ub->newModuleDef();
-  //generate_micro_op_controllers(options, def, prg, hwinfo);
 
-  auto sched_maps = get_maps(schedmap);
   for (auto op : prg.all_ops()) {
-    if (options.rtl_options.use_external_controllers) {
-      generate_coreir_op_controller(options, def, op, sched_maps, hwinfo);
-    }
     generate_coreir_compute_unit(options, found_compute, def, op, prg, buffers, hwinfo);
   }
+
+  instantiate_controllers(options,
+      buffers,
+      prg,
+      schedmap,
+      def,
+      hwinfo);
 
   for (auto& buf : buffers) {
     if (!prg.is_boundary(buf.first)) {
@@ -2654,8 +1846,12 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
   }
 
   auto levels = get_variable_levels(prg);
+
   // Connect compute units to buffers
   for (auto op : prg.all_ops()) {
+
+    // Demosaic (and other?) applications need control
+    // variable values. Wire them up here
     vector<string> surrounding = surrounding_vars(op, prg);
     for (auto var : op->index_variables_needed_by_compute) {
       assert(options.rtl_options.use_external_controllers);
@@ -2663,7 +1859,9 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
       auto var_wire = exe_start_control_vars(def, op->name)->sel(level);
       def->connect(def->sel(op->name)->sel(var), var_wire);
     }
+  }
 
+  for (auto op : prg.all_ops()) {
     for (pair<string, string> bundle : outgoing_bundles(op, buffers, prg)) {
       string buf_name = bundle.first;
       string bundle_name = bundle.second;
@@ -2678,15 +1876,18 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
           def->connect(def->sel(output_en),
               write_start_wire(def, op->name));
         }
+
         def->connect("self." + pg(buf_name, bundle_name), op->name + "." + pg(buf_name, bundle_name));
       } else {
-        def->connect(buf_name + "." + bundle_name, op->name + "." + pg(buf_name, bundle_name));
-        if (options.rtl_options.use_external_controllers) {
+        if (options.rtl_options.target_tile == TARGET_TILE_M3) {
+        } else if (options.rtl_options.use_external_controllers) {
           def->connect(def->sel(buf_name + "." + bundle_name + "_wen"),
               write_start_wire(def, op->name));
           def->connect(def->sel(buf_name + "." + bundle_name + "_ctrl_vars"),
               write_start_control_vars(def, op->name));
         }
+
+        def->connect(buf_name + "." + bundle_name, op->name + "." + pg(buf_name, bundle_name));
       }
     }
 
@@ -2701,21 +1902,24 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
         auto output_valid = "self." + pg(buf_name, bundle_name) + "_en";
         auto input_bus = "self." + pg(buf_name, bundle_name);
 
-        def->connect(def->sel(input_bus),
-            def->sel(op->name + "." + pg(buf_name, bundle_name)));
-
         if (options.rtl_options.use_external_controllers) {
           def->connect(def->sel(output_valid),
               read_start_wire(def, op->name));
         }
+
+        def->connect(def->sel(input_bus),
+            def->sel(op->name + "." + pg(buf_name, bundle_name)));
+
       } else {
-        def->connect(buf_name + "." + bundle_name, op->name + "." + pg(buf_name, bundle_name));
-        if (options.rtl_options.use_external_controllers) {
+        if (options.rtl_options.target_tile == TARGET_TILE_M3) {
+        } else if (options.rtl_options.use_external_controllers) {
           def->connect(def->sel(buf_name + "." + bundle_name + "_ren"),
               read_start_wire(def, op->name));
           def->connect(def->sel(buf_name + "." + bundle_name + "_ctrl_vars"),
               read_start_control_vars(def, op->name));
         }
+
+        def->connect(buf_name + "." + bundle_name, op->name + "." + pg(buf_name, bundle_name));
       }
     }
   }
@@ -2725,7 +1929,6 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
   ub->print();
 
   connect_signal("reset", ub);
-  //connect_signal("rst_n", ub);
   context->runPasses({"rungenerators", "wireclocks-clk"});
 
   verilog_collateral.close();
@@ -2733,11 +1936,6 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
 
   return ub;
 }
-
-//void add_cgralib(CoreIR::Context* context) {
-//
-//}
-
 
 typedef struct {
   vector<SelectPath> IO16;
@@ -2762,9 +1960,13 @@ void getAllIOPaths(Wireable* w, IOpaths& paths) {
     }
   }
   else if (isa<BitType>(t)) {
+    if (w->getConnectedWireables().size() == 0)
+        return;
     paths.IO1.push_back(w->getSelectPath());
   }
   else if (isa<BitInType>(t)) {
+    if (w->getConnectedWireables().size() == 0)
+        return;
     paths.IO1in.push_back(w->getSelectPath());
   }
   else {
@@ -2980,8 +2182,7 @@ void MapperPasses::ConstDuplication::setVisitorInfo() {
 
 }
 
-void disconnect_input_enable(Module* top) {
-  Context* c = top->getContext();
+void disconnect_input_enable(Context* c, Module* top) {
   ModuleDef* def = top->getDef();
   for (auto it: def->sel("self")->getSelects()) {
       string port = it.first;
@@ -3004,7 +2205,7 @@ void garnet_map_module(Module* top) {
   LoadDefinition_cgralib(c);
 
   //A new pass to remove input enable signal affine controller
-  disconnect_input_enable(top);
+  disconnect_input_enable(c, top);
   c->runPasses({"deletedeadinstances"});
 
   c->runPasses({"cullgraph"});
@@ -3066,6 +2267,8 @@ void generate_coreir(CodegenOptions& options,
     prog& prg,
     umap* schedmap,
     schedule_info& hwinfo) {
+  //pipeline_compute_units(prg);
+
   CoreIR::Context* context = CoreIR::newContext();
   CoreIRLoadLibrary_commonlib(context);
   CoreIRLoadLibrary_cgralib(context);
@@ -3091,13 +2294,16 @@ void generate_coreir(CodegenOptions& options,
     context->die();
   }
 
-  garnet_map_module(prg_mod);
-  context->runPasses({"rungenerators", "flatten", "removewires", "cullgraph"});
+  //Garnet pass
+  if (options.rtl_options.use_prebuilt_memory) {
+    garnet_map_module(prg_mod);
+    context->runPasses({"rungenerators", "flatten", "removewires", "cullgraph"});
 
-  auto ns_new = context->getNamespace("global");
-  if(!saveToFile(ns_new,  options.dir + prg.name+ "_garnet.json", prg_mod)) {
-    cout << "Could not save ubuffer coreir" << endl;
-    context->die();
+    auto ns_new = context->getNamespace("global");
+    if(!saveToFile(ns_new,  options.dir + prg.name+ "_garnet.json", prg_mod)) {
+      cout << "Could not save ubuffer coreir" << endl;
+      context->die();
+    }
   }
 
   //garnet_map_module(prg_mod);
@@ -3142,18 +2348,23 @@ CoreIR::Wireable* delaybit(CoreIR::ModuleDef* bdef,
 
       auto atp = static_cast<ArrayType*>(tp);
       auto elem_type = atp->getElemType();
+      cout << "Type of " << w->toString() << ": " << elem_type->toString() << endl;
+      if (isa<ArrayType>(elem_type)) {
+        assert(isa<ArrayType>(elem_type));
 
-      assert(isa<ArrayType>(elem_type));
+        cout << "Getting array..." << endl;
 
-      cout << "Getting array..." << endl;
-
-      auto elem_arr =
-        static_cast<ArrayType*>(elem_type);
-      int elem_width = elem_arr->getLen();
-      int len = atp->getLen();
-      cout << "Width = " << elem_width << endl;
-      cout << "Len   = " << len << endl;
-      return delay_array(bdef, w, elem_width, len);
+        auto elem_arr =
+          static_cast<ArrayType*>(elem_type);
+        int elem_width = elem_arr->getLen();
+        int len = atp->getLen();
+        cout << "Width = " << elem_width << endl;
+        cout << "Len   = " << len << endl;
+        return delay_array(bdef, w, elem_width, len);
+      } else {
+        return delay(bdef, bdef->getContext()->getUnique(), w, atp->getLen());
+        //assert(false);
+      }
     } else {
       cout << "Unsupported type: " << tp->toString() << endl;
       assert(false);
@@ -3366,51 +2577,11 @@ CoreIR::Module* coreir_for_aff(CoreIR::Context* context, isl_aff* aff) {
     auto res = sum_term_numerators(def, a);
     auto val = mul(def, shiftr(def, res, 1), coeff);
     terms.push_back(val);
-    //if (coeff != 0) {
-      //for (int k = 0; k < num_in_dims(a); k++) {
-        //auto inner_coeff = get_coeff(a, k);
-        //cout << tab(3) << str(inner_coeff) << endl;
-      //}
-      //cout << tab(3) << "coeff = " << coeff << endl;
-      //auto term_aff = def->addInstance("div_aff_" + context->getUnique(), coreir_for_aff(context, a));
-      //def->connect(term_aff->sel("d"), self->sel("d"));
-      //// Replace with shift by 1
-      ////terms.push_back(term_aff->sel("out"));
-    //}
   }
-  //assert(num_div_dims(aff) == 0);
 
   auto outr = sum_term_numerators(def, aff);
   terms.push_back(outr);
   auto out = addList(def, terms);
-  //for (int d = 0; d < dims; d++) {
-    //auto rcoeff = get_coeff(aff, d);
-    //cout << "raw coeff: " << str(rcoeff) << endl;
-    //int v = to_int(get_coeff(aff, d));
-    //cout << "coeff: " << v << endl;
-    //auto constant = def->addInstance(
-        //"coeff_" + str(d),
-        ////context->getUnique(),
-        //"coreir.const",
-      //{{"width", CoreIR::Const::make(c, width)}},
-      //{{"value", CoreIR::Const::make(c, BitVector(width, v))}});
-    //auto m = def->addInstance(
-        //"mul_d" + str(d) + "_" + context->getUnique(),
-        //"coreir.mul",
-        //{{"width", CoreIR::Const::make(c, width)}});
-    //def->connect(m->sel("in0"), constant->sel("out"));
-    //def->connect(m->sel("in1"), def->sel("self")->sel("d")->sel(d));
-    //terms.push_back(m->sel("out"));
-  //}
-  //int v = to_int(const_coeff(aff));
-  //cout << "coeff: " << v << endl;
-  //auto constant = def->addInstance(
-      //"const_term",
-      //"coreir.const",
-      //{{"width", CoreIR::Const::make(c, width)}},
-      //{{"value", CoreIR::Const::make(c, BitVector(width, v))}});
-  //terms.push_back(constant->sel("out"));
-  //auto out = addList(def, terms);
   def->connect(def->sel("self.out"), out);
   m->setDef(def);
 
@@ -3441,30 +2612,6 @@ CoreIR::Module* coreir_for_multi_aff(CoreIR::Context* context, isl_multi_aff* af
 
   auto c = context;
 
-  //vector<CoreIR::Wireable*> terms;
-  //for (int d = 0; d < dims; d++) {
-    //int v = to_int(get_coeff(aff, d));
-    //cout << "coeff: " << v << endl;
-    //auto constant = def->addInstance(context->getUnique(),
-        //"coreir.const",
-      //{{"width", CoreIR::Const::make(c, width)}},
-      //{{"value", CoreIR::Const::make(c, BitVector(width, v))}});
-    //auto m = def->addInstance(context->getUnique(),
-        //"coreir.mul",
-        //{{"width", CoreIR::Const::make(c, width)}});
-    //def->connect(m->sel("in0"), constant->sel("out"));
-    //def->connect(m->sel("in1"), def->sel("self")->sel("d")->sel(d));
-    //terms.push_back(m->sel("out"));
-  //}
-  //int v = to_int(const_coeff(aff));
-  //cout << "coeff: " << v << endl;
-  //auto constant = def->addInstance(context->getUnique(),
-      //"coreir.const",
-      //{{"width", CoreIR::Const::make(c, width)}},
-      //{{"value", CoreIR::Const::make(c, BitVector(width, v))}});
-  //terms.push_back(constant->sel("out"));
-  //auto out = addList(def, terms);
-  //def->connect(def->sel("self.out"), out);
   m->setDef(def);
 
   return m;
@@ -3545,6 +2692,26 @@ CoreIR::Module* coreir_for_set(CoreIR::Context* context, isl_set* dom) {
   auto in_set = orList(def, bset_outs);
   def->connect(in_set, def->sel("self.valid"));
   m->setDef(def);
+  return m;
+}
+
+CoreIR::Module* affine_controller_def(CoreIR::Context* context, isl_set* dom, isl_aff* aff) {
+  cout << tab(1) << "dom = " << str(dom) << endl;
+
+  auto ns = context->getNamespace("global");
+  auto c = context;
+
+  int width = CONTROLPATH_WIDTH;
+  vector<pair<string, CoreIR::Type*> >
+    ub_field{{"clk", c->Named("coreir.clkIn")},
+      {"rst_n", c->BitIn()},
+      {"flush", c->BitIn()},
+      {"valid", c->Bit()}};
+  int dims = num_in_dims(aff);
+  ub_field.push_back({"d", context->Bit()->Arr(16)->Arr(dims)});
+
+  CoreIR::RecordType* utp = context->Record(ub_field);
+  auto m = ns->newModuleDecl("affine_controller_" + context->getUnique(), utp);
   return m;
 }
 
@@ -4155,6 +3322,8 @@ void mini_sram_garnet_test() {
   auto addr_zero = mkConst(def, 16, 0);
   auto one =
     def->addInstance("c1","corebit.const",{{"value",Const::make(c,true)}})->sel("out");
+  auto zero =
+    def->addInstance("c1","corebit.const",{{"value",Const::make(c,false)}})->sel("out");
   //auto zero =
     //def->addInstance("c1","corebit.const",{{"value",Const::make(c,true)}});
 
@@ -4216,237 +3385,861 @@ CoreIR::Instance* cmux(CoreIR::ModuleDef* def,
   return next_val;
 }
 
+Wireable* base(Wireable* w) {
+  if (isa<Select>(w)) {
+    //return static_cast<Select*>(w)->getParent();
+    return static_cast<Select*>(w)->getTopParent();
+  }
+  return w;
+}
 
-//void generate_platonic_ubuffer(
-//    CodegenOptions& options,
-//    prog& prg,
-//    UBuffer& buf,
-//    schedule_info& hwinfo) {
-//  ostream& out = *verilog_collateral_file;
-//
-//  prg.pretty_print();
-//
-//  vector<int> bank_factors = cyclic_banking(prg, buf, hwinfo);
-//
-//  auto shift_registered_outputs = determine_shift_reg_map(prg, buf,hwinfo);
-//  auto shift_registered_outputs_to_outputs = determine_output_shift_reg_map(prg, buf,hwinfo);
-//
-//  if(buf.name == "hw_input_global_wrapper_stencil")
-//  {
-//          cout << buf;
-//          cout << "Output to output srs..." << endl;
-//          for (auto ent : shift_registered_outputs_to_outputs) {
-//              cout << tab(1) << ent.first << " -> " << ent.second.first << ", " << ent.second.second << endl;
-//          }
-//  }
-//
-//
-//  maybe<std::set<int> > embarassing_banking =
-//    embarassing_partition(buf, hwinfo);
-//  bool has_embarassing_partition = embarassing_banking.has_value();
-//  //bool has_embarassing_partition = false;
-//
-//  if (has_embarassing_partition)  {
-//    std::set<int> partition_dims = embarassing_banking.get_value();
-//    vector<int> min_offsets = min_offsets_by_dimension(buf);
-//    vector<int> max_offsets = max_offsets_by_dimension(buf);
-//    vector<int> extents;
-//    for (int i = 0; i < min_offsets.size(); i++) {
-//      extents.push_back(max_offsets.at(i) - min_offsets.at(i) + 1);
-//    }
-//    cout << "Extents in selected dimensions..." << endl;
-//    map<int, int> partitioned_dimension_extents;
-//    for (auto d : partition_dims) {
-//      cout << tab(1) << extents.at(d) << endl;
-//      partitioned_dimension_extents[d] = extents.at(d);
-//    }
-//
-//    print_embarassing_banks_selector(out, partitioned_dimension_extents, buf);
-//  }
-//
-//  print_cyclic_banks_selector(out, bank_factors, buf);
-//  print_shift_registers(out, shift_registered_outputs, options, prg, buf, hwinfo);
-//  print_shift_registers(out, shift_registered_outputs_to_outputs, options, prg, buf, hwinfo);
-//
-//  vector<string> port_decls = verilog_port_decls(options, buf);
-//  out << "module " << buf.name << "_ub" << "(" << sep_list(port_decls, "\n\t", "", ",\n\t") << ");" << endl;
-//  out << endl;
-//
-//  out << tab(1) << "// Storage capacity pre-banking: " << total_capacity(buf) << endl;
-//
-//  map<int, int> partitioned_dimension_extents;
-//  if (has_embarassing_partition) {
-//    std::set<int> partition_dims = embarassing_banking.get_value();
-//    vector<int> min_offsets = min_offsets_by_dimension(buf);
-//    vector<int> max_offsets = max_offsets_by_dimension(buf);
-//    vector<int> extents;
-//    for (int i = 0; i < min_offsets.size(); i++) {
-//      extents.push_back(max_offsets.at(i) - min_offsets.at(i) + 1);
-//    }
-//    cout << "Extents in selected dimensions..." << endl;
-//    for (auto d : partition_dims) {
-//      cout << tab(1) << extents.at(d) << endl;
-//      partitioned_dimension_extents[d] = extents.at(d);
-//    }
-//
-//    print_embarassing_banks(out, partitioned_dimension_extents, buf);
-//  }
-//
-//
-//  bank bnk = buf.compute_bank_info();
-//
-//  vector<int> capacities;
-//  if (!has_embarassing_partition) {
-//    capacities = print_cyclic_banks(out, bank_factors, bnk);
-//  } else {
-//    std::set<int> partition_dims = embarassing_banking.get_value();
-//    vector<int> min_offsets = min_offsets_by_dimension(buf);
-//    vector<int> max_offsets = max_offsets_by_dimension(buf);
-//    vector<int> extents;
-//    for (int i = 0; i < min_offsets.size(); i++) {
-//      extents.push_back(max_offsets.at(i) - min_offsets.at(i) + 1);
-//    }
-//    cout << "Extents in selected dimensions..." << endl;
-//    for (auto d : partition_dims) {
-//      cout << tab(1) << extents.at(d) << endl;
-//      partitioned_dimension_extents[d] = extents.at(d);
-//    }
-//    capacities = extents;
-//  }
-//
-//  out << "// Capacities in " << buf.name << endl;
-//  for (auto c : capacities) {
-//    out << tab(1) << "// " << c << endl;
-//  }
-//  out << endl;
-//
-//  for (auto in : buf.get_all_ports()) {
-//    auto comps_raw =
-//      generate_verilog_addr_components(in, bnk, buf);
-//
-//    vector<string> comps;
-//    int i = 0;
-//    for (auto c : comps_raw) {
-//      out << tab(1) << "logic [15:0] " << buf.name << "_" << in << "_" << i << ";" << endl;
-//      out << tab(1) << "assign " << buf.name << "_" << in << "_" << i << " = " << c << ";" << endl;
-//      comps.push_back(buf.name + "_" + in + "_" + str(i));
-//      i++;
-//    }
-//    reverse(comps);
-//    if (has_embarassing_partition) {
-//      out << buf.name << "_embarassing_bank_selector " << buf.name << "_" << in << "_bank_selector(.d(" << sep_list(comps, "{", "}", ",") << "));" << endl;
-//    } else {
-//      out << buf.name << "_bank_selector " << buf.name << "_" << in << "_bank_selector(.d(" << sep_list(comps, "{", "}", ",") << "));" << endl;
-//    }
-//  }
-//
-//  out << endl;
-//
-//  vector<pair<string,pair<string,int>>> sorted_shift_registered_outputs_to_outputs = shift_registered_outputs_to_outputs;
-//  sort_lt(sorted_shift_registered_outputs_to_outputs,[](const pair<string,pair<string,int>> &x) {return x.second.second;});
-//
-//  unordered_set<string> done_outpt;
-//  for (auto pt : shift_registered_outputs_to_outputs) {
-//
-//        if(done_outpt.find(pt.first)!=done_outpt.end())
-//        {
-//            continue;
-//        } else{
-//            done_outpt.insert(pt.first);
-//        }
-//
-//        string dst = buf.container_bundle(pt.first) + brackets(str(buf.bundle_offset(pt.first)));
-//
-//    string src = buf.container_bundle(pt.second.first) + brackets(str(buf.bundle_offset(pt.second.first)));
-//      out << tab(2) << buf.name << "_" << pt.first << "_to_" << pt.second.first << "_sr " << pt.first << "_delay(.clk(clk), .rst_n(rst_n), .flush(flush), .in(" + src + "), .out(" + dst + "));" << endl << endl;
-//
-//  }
-//  for (auto in : buf.get_in_ports()) {
-//    string src = buf.container_bundle(in) + brackets(str(buf.bundle_offset(in)));
-//    for (auto pt : shift_registered_outputs) {
-//      string dst = buf.container_bundle(pt.first) + brackets(str(buf.bundle_offset(pt.first)));
-//      if (pt.second.first == in) {
-//        if(done_outpt.find(pt.first)!=done_outpt.end()) {
-//          continue;
-//        } else
-//        {
-//          done_outpt.insert(pt.first);
-//          out << tab(2) << buf.name << "_" << pt.first << "_to_" << pt.second.first << "_sr " << pt.first << "_delay(.clk(clk), .rst_n(rst_n), .flush(flush), .in(" + src + "), .out(" + dst + "));" << endl << endl;
-//        }
-//      }
-//    }
-//  }
-//
-//
-//  out << endl;
-//  int num_banks = card(bank_factors);
-//  if (has_embarassing_partition) {
-//    num_banks = 1;
-//    for (auto ent : partitioned_dimension_extents) {
-//      num_banks *= ent.second;
-//    }
-//  }
-//
-//  out << tab(1) << "always @(posedge clk) begin" << endl;
-//  for (auto in : buf.get_in_ports()) {
-//    string addr = print_cyclic_banks_inner_bank_offset_func(buf,generate_verilog_addr_components(in,bnk,buf),capacities,bank_factors);
-//    if (has_embarassing_partition) {
-//      addr = print_embarassing_banks_inner_bank_offset_func(buf,generate_verilog_addr_components(in,bnk,buf),capacities, partitioned_dimension_extents);
-//    }
-//
-//    string bundle_wen = buf.container_bundle(in) + "_wen";
-//    out << tab(2) << "if (" << bundle_wen << ") begin" << endl;
-//
-//
-//    out << tab(3) << "case( " << buf.name << "_" << in << "_bank_selector.out)" << endl;
-//    for (int b = 0; b < num_banks; b++) {
-//      string source_ram = "bank_" + str(b);
-//      out << tab(4) << b << ":" << source_ram << "[" << addr << "]" << " <= " << buf.container_bundle(in) << "[" << buf.bundle_offset(in) << "]" << ";" << endl;
-//    }
-//    out << tab(4) << "default: $finish(-1);" << endl;
-//    out << tab(3) << "endcase" << endl;
-//    out << tab(2) << "end" << endl;
-//  }
-//  out << tab(1) << "end" << endl;
-//
-//
-//  out << tab(1) << "always @(*) begin" << endl;
-//  for (auto outpt : buf.get_out_ports()) {
-//    if (done_outpt.find(outpt) == done_outpt.end()) {
-//      string addr =
-//        print_cyclic_banks_inner_bank_offset_func(buf, generate_verilog_addr_components(outpt, bnk, buf), capacities, bank_factors);
-//
-//      if (has_embarassing_partition) {
-//        addr =
-//          print_embarassing_banks_inner_bank_offset_func(buf, generate_verilog_addr_components(outpt, bnk, buf), capacities, partitioned_dimension_extents);
-//      }
-//
-//
-//      out << tab(3) << "case( " << buf.name << "_" << outpt << "_bank_selector.out)" << endl;
-//      for (int b = 0; b < num_banks; b++) {
-//        string source_ram = "bank_" + str(b);
-//        out << tab(4) << b << ":" << buf.container_bundle(outpt) << "[" << buf.bundle_offset(outpt) << "]" << " = " << source_ram << "[" << addr << "]" << ";" << endl;
-//      }
-//      out << tab(4) << "default: $finish(-1);" << endl;
-//      out << tab(3) << "endcase" << endl;
-//    }
-//  }
-//
-//  out << tab(1) << "end" << endl;
-//
-//  out << endl;
-//
-//  if (!has_embarassing_partition &&
-//      done_outpt.size() < buf.get_out_ports().size()) {
-//    cout << "BUFFER: " << buf.name << " cannot be fully optimized by shift registers and embarassing partitioning" << endl;
-//    not_fully_optimizable++;
-//  } else {
-//    fully_optimizable++;
-//  }
-//  cout << "FULLY OPTIMIZABLE: " << fully_optimizable << " / " << (fully_optimizable + not_fully_optimizable) << endl;
-//  out << "endmodule" << endl << endl;
-//}
+Wireable* copy_wireable(map<Instance*, Instance*>& instance_map, Wireable* w0, ModuleDef* copy_def) {
+  if (isa<Interface>(w0)) {
+    return copy_def->sel("self");
+  }
 
+  if (isa<Instance>(w0)) {
+    return instance_map[static_cast<Instance*>(w0)];
+  }
+  if (isa<Select>(w0)) {
+    auto wc = static_cast<Select*>(w0);
+    return copy_wireable(instance_map, wc->getParent(), copy_def)->sel(wc->getSelStr());
+  }
+  cout << "Error: Cannot copy: " << w0->toString() << endl;
+  assert(false);
+}
+
+int stage_num(vector<std::set<Instance*> >& stages,
+    Wireable* w0) {
+  if (stages.size() == 0) {
+    return 0;
+  }
+
+  if (!isa<Instance>(base(w0))) {
+    assert(isa<Interface>(base(w0)));
+    int d = w0->getType()->isOutput() ? 0 : stages.size() - 1;
+    cout << "Stage for " << w0->toString() << " = " << d << endl;
+    return d;
+  }
+  int i = 0;
+  for (auto& s : stages) {
+    if (dbhc::elem(static_cast<Instance*>(base(w0)), s)) {
+      return i;
+    }
+    i++;
+  }
+  assert(false);
+}
+
+void copy_and_pipeline_connection(vector<std::set<Instance*> >& stages, map<Instance*, Instance*>& instance_map, Wireable* w0, Wireable* w1, ModuleDef* copy_def) {
+
+  cout << "w0 = " << w0->toString() << ": " << w0->getType()->toString() << endl;
+  cout << "w1 = " << w1->toString() << ": " << w1->getType()->toString() << endl;
+
+  Wireable* src = nullptr;
+  Wireable* dst = nullptr;
+  if (w0->getType()->isOutput()) {
+    //assert(w0->getType()->isInput());
+
+    src = w0;
+    dst = w1;
+  } else {
+    //assert(w0->getType()->isInput());
+
+    src = w1;
+    dst = w0;
+  }
+  assert(src != nullptr);
+  assert(dst != nullptr);
+
+  int src_stage = stage_num(stages, src);
+  int dst_stage = stage_num(stages, dst);
+
+  cout << "Src : " << src->toString() << " at " << src_stage << endl;
+  cout << "Dst stage: " << dst->toString() << " at " << dst_stage << endl;
+
+  assert(src_stage >= 0);
+  assert(dst_stage >= 0);
+  assert(dst_stage >= src_stage);
+
+  int delay = dst_stage - src_stage;
+
+  Wireable* wc0 = copy_wireable(instance_map, w0, copy_def);
+  Wireable* wc1 = copy_wireable(instance_map, w1, copy_def);
+
+  auto context = wc0->getContext();
+
+  if (wc0->getType()->isOutput()) {
+    wc0 = delay_by(copy_def, context->getUnique(), wc0, delay);
+  }
+  if (wc1->getType()->isOutput()) {
+    wc1 = delay_by(copy_def, context->getUnique(), wc1, delay);
+  }
+  copy_def->connect(wc0, wc1);
+}
+
+void pipeline_compute_units(prog& prg, schedule_info& hwinfo) {
+  CoreIR::Context* context = CoreIR::newContext();
+  CoreIRLoadLibrary_commonlib(context);
+  CoreIRLoadLibrary_cgralib(context);
+  CoreIRLoadLibrary_cwlib(context);
+  add_delay_tile_generator(context);
+  add_raw_quad_port_memtile_generator(context);
+  add_tahoe_memory_generator(context);
+  auto c = context;
+
+
+  bool found_compute = true;
+  string compute_file = "./coreir_compute/" + prg.name + "_compute.json";
+  ifstream cfile(compute_file);
+  if (!cfile.good()) {
+    cout << "No compute unit file: " << compute_file << endl;
+    return;
+    //assert(false);
+  }
+  if (!loadFromFile(context, compute_file)) {
+    found_compute = false;
+    cout << "Could not load compute file for: " << prg.name << ", file name = " << compute_file << endl;
+    return;
+    //assert(false);
+  }
+
+  auto ns = c->getNamespace("global");
+  for (auto op : prg.all_ops()) {
+    if (op->func != "") {
+      string compute_name = op->func;
+      auto mod = ns->getModule(compute_name);
+      vector<Instance*> instances;
+      map<Instance*, std::set<Instance*> > instance_connections_dst_to_src;
+      for (auto inst : mod->getDef()->getInstances()) {
+        instances.push_back(inst.second);
+      }
+      cout << "# of instances: " << instances.size() << endl;
+      for (auto c : mod->getDef()->getConnections()) {
+        Wireable* base0 = base(c.first);
+        Wireable* base1 = base(c.second);
+        if (isa<Instance>(base0) && isa<Instance>(base1)) {
+          Instance* src = nullptr;
+          Instance* dst = nullptr;
+          cout << tab(1) << "Instance connection between " << base0->toString() << " and " << base1->toString() << endl;
+          cout << tab(2) << c.first->getType()->isInput() << endl;
+
+          if (c.first->getType()->isInput()) {
+            dst = static_cast<Instance*>(base0);
+            src = static_cast<Instance*>(base1);
+          } else {
+            dst = static_cast<Instance*>(base1);
+            src = static_cast<Instance*>(base0);
+          }
+
+          assert(src != nullptr);
+          assert(dst != nullptr);
+
+          instance_connections_dst_to_src[dst].insert(src);
+        }
+      }
+      cout << "Instance connections..." << endl;
+      for (auto i : instance_connections_dst_to_src) {
+        cout << tab(1) << i.first->toString() << endl;
+        for (auto c : i.second) {
+          cout << tab(2) << c->toString() << endl;
+        }
+      }
+
+      vector<std::set<Instance*> > schedule;
+      int num_scheduled = 0;
+      std::set<Instance*> unscheduled;
+      for (auto i : instances) {
+        unscheduled.insert(i);
+      }
+      while (unscheduled.size() > 0) {
+        Instance* next_sched = nullptr;
+        for (Instance* i : unscheduled) {
+          bool all_deps_scheduled = true;
+          for (auto d : instance_connections_dst_to_src[i]) {
+            if (dbhc::elem(d, unscheduled)) {
+              all_deps_scheduled = false;
+              break;
+            }
+          }
+
+          if (all_deps_scheduled) {
+            next_sched = i;
+            break;
+          }
+        }
+        assert(next_sched != nullptr);
+        unscheduled.erase(next_sched);
+        schedule.push_back({next_sched});
+        num_scheduled++;
+      }
+      assert(num_scheduled == instances.size());
+
+      cout << "Final schedule size: " << schedule.size() << endl;
+      for (auto f : schedule) {
+        cout << "Level..." << endl;
+        for (auto l : f) {
+          cout << tab(1) << l->toString() << endl;
+        }
+      }
+
+      auto mod_tp = mod->getType();
+      auto copy = ns->newModuleDecl(mod->getName() + "_pipelined", mod_tp);
+      auto copy_def = copy->newModuleDef();
+      map<Instance*, Instance*> instance_map;
+      for (auto inst : instances) {
+        instance_map[inst] = copy_def->addInstance(inst, inst->getInstname());
+      }
+
+      for (auto c : mod->getDef()->getConnections()) {
+        Wireable* base0 = base(c.first);
+        Wireable* base1 = base(c.second);
+        copy_and_pipeline_connection(schedule, instance_map, c.first, c.second, copy_def);
+      }
+      copy->setDef(copy_def);
+
+      //hwinfo.op_compute_unit_latencies[op->func + "_pipelined"] =
+        //std::max(0, ((int)schedule.size()) - 1);
+      hwinfo.compute_unit_latencies[op->func + "_pipelined"] =
+        std::max(0, ((int)schedule.size()) - 1);
+    }
+  }
+
+  if(!saveToFile(ns, "./coreir_compute/" + prg.name + "_compute_pipelined.json")) {
+    cout << "Could not save ubuffer coreir" << endl;
+    context->die();
+  }
+  deleteContext(context);
+  //assert(false);
+}
+
+void generate_script(const std::string& script_name, const std::vector<string>& cmds) {
+  ofstream out(script_name);
+  for (auto c : cmds) {
+    out << c << endl;
+  }
+  out.close();
+  cmd("chmod +x " + script_name);
+}
+
+void move_to_compute_regression_folder(const std::string& app_name, const std::string& compute_name) {
+
+  cmd("mkdir -p ./compute_unit_regressions/");
+  string app_folder = "./compute_unit_regressions/" + app_name;
+  cmd("mkdir -p " + app_folder + "/");
+  string dst_folder = app_folder + "/" + compute_name;
+  cmd("mkdir -p " + dst_folder + "/");
+
+  cmd("cp static_quad_value_bit_vector.h " + dst_folder);
+  cmd("cp hw_classes.h " + dst_folder);
+  cmd("cp clockwork_standard_compute_units.h " + dst_folder);
+  cmd("cp " + app_name + "_compute.h " + dst_folder);
+
+  //cmd("mv " + compute_name + "_compute.json " + dst_folder);
+  cmd("mv " + app_name + "_compute.json " + dst_folder);
+  cmd("mv " + compute_name + ".v " + dst_folder);
+  cmd("mv " + compute_name + "_compute_tb.cpp " + dst_folder);
+  cmd("mv run_" + compute_name + "_regression.sh " + dst_folder);
+}
+
+int generate_compute_unit_regression_tb(op* op, prog& prg) {
+  assert(op->func != "");
+
+  CoreIR::Context* context = CoreIR::newContext();
+  CoreIRLoadLibrary_commonlib(context);
+  CoreIRLoadLibrary_cgralib(context);
+  CoreIRLoadLibrary_cwlib(context);
+  add_delay_tile_generator(context);
+
+  string compute_file = "./coreir_compute/" + prg.name + "_compute.json";
+  auto ns = context->getNamespace("global");
+  if (!loadFromFile(context, compute_file)) {
+    cout << "Could not load compute file for: " << prg.name << ", file name = " << compute_file << endl;
+    context->die();
+  }
+
+  Module* compute_mod = ns->getModule(op->func);
+
+  string name = prg.name;
+  string compute_name = op->func;
+
+  if(!saveToFile(ns, prg.name + "_compute.json", compute_mod)) {
+    cout << "Could not save ubuffer coreir" << endl;
+    context->die();
+    assert(false);
+  }
+
+
+  int compute_to_verilog_res = cmd("${COREIR_PATH}/bin/coreir --inline --load_libs commonlib,cgralib --input ./" + name + "_compute.json --output " + compute_name + ".v -p \"rungenerators; wireclocks-arst; wireclocks-clk\"");
+  assert(compute_to_verilog_res == 0);
+
+  ofstream rgtb(op->func + "_compute_tb.cpp");
+  rgtb << "#include \"hw_classes.h\"" << endl;
+  rgtb << "#include <fstream>" << endl;
+  rgtb << "#include \"verilated.h\"" << endl;
+  rgtb << "#include \"V" << compute_name << ".h\"" << endl << endl;
+  rgtb << "#include \"" << prg.name << "_compute" << ".h\"" << endl << endl;
+
+
+  rgtb << "int main() {" << endl;
+  rgtb << tab(1) << "cout << \"\\tStarting compute unit test\" << endl;" << endl;
+  rgtb << tab(1) << "V" << compute_name << " dut;" << endl;
+
+  rgtb << tab(1) << "srand(1);" << endl;
+
+  int num_trials = 10000;
+  int upper_bound = 256*256;
+  rgtb << tab(1) << "for (int i = 0; i < " << num_trials << "; i++) {" << endl;
+  RecordType* tp = compute_mod->getType();
+  vector<string> in_args;
+  vector<string> input_value_printouts;
+  for (auto fd : tp->getRecord()) {
+    assert(isa<ArrayType>(fd.second));
+    auto atp = static_cast<ArrayType*>(fd.second);
+    int len = atp->getLen();
+    auto inner_tp = atp->getElemType();
+
+    if (fd.second->isInput()) {
+      assert(isa<ArrayType>(inner_tp));
+      auto inner_atp = static_cast<ArrayType*>(inner_tp);
+      int num_lanes = len;
+      vector<string> lanes;
+      for (int l = 0; l < num_lanes; l++) {
+        string name = fd.first + "_" + str(l);
+        rgtb << tab(2) << "int " << name << " = rand() % " << upper_bound << ";" << endl;
+        rgtb << tab(2) << "hw_uint<16> " << name << "_hwint = hw_uint<16>(" + name + ");" << endl;
+        lanes.push_back(name + "_hwint");
+        rgtb << tab(2) << "(dut." << fd.first << ")[" << l << "] = " << name << ";" << endl;
+        input_value_printouts.push_back(tab(2) + "cout << \"" + fd.first + "[" + str(l) + "] -> \" << " + name + " << endl;");
+        input_value_printouts.push_back(tab(2) + "cout << \"" + fd.first + "[" + str(l) + "] -> \" << " + name + "_hwint << endl;");
+      }
+
+      string packed_arg = fd.first + "_packed";
+      pack_bv(2, rgtb, packed_arg, lanes, 16);
+      in_args.push_back(packed_arg);
+    }
+
+    rgtb << tab(2) << "dut.eval();" << endl;
+
+    if (fd.second->isOutput()) {
+      rgtb << tab(2) << "int coreir_result = " << "dut." << fd.first << ";" << endl;
+      rgtb << tab(2) << "int cpp_result = " << compute_name << sep_list(in_args, "(", ")", ", ") << ".to_int();" << endl;
+      rgtb << tab(2) << "if (coreir_result != cpp_result) {" << endl;
+      rgtb << tab(3) << "cout << \"ERROR in compute unit: " << compute_name << "\" << endl;" << endl;
+      for (auto inp : input_value_printouts) {
+        rgtb << inp << endl;
+      }
+      rgtb << tab(3) << "cout << \"\\tcoreir_result: \" << coreir_result << endl;" << endl;
+      rgtb << tab(3) << "cout << \"\\tcpp_result   : \" << cpp_result << endl;" << endl;
+      rgtb << tab(3) << "return -1;" << endl;
+      rgtb << tab(2) << "}" << endl;
+      rgtb << tab(2) << "assert(coreir_result == cpp_result);" << endl;
+    }
+  }
+  rgtb << tab(1) << "}" << endl << endl;
+
+
+  rgtb << tab(1) << "return 0;" << endl;
+  rgtb << "}" << endl;
+  rgtb.close();
+
+  string top_module = compute_name;
+  string tb_file = compute_name + "_compute_tb.cpp";
+  vector<string> verilog_files{compute_name + ".v"};
+  int verilator_build = cmd("verilator -Wall --cc " + sep_list(verilog_files, "", "", " ") + " --exe --build " + tb_file + " --top-module " + top_module + " -Wno-UNUSED -Wno-WIDTH -Wno-PINMISSING -Wno-DECLFILENAME");
+  assert(verilator_build == 0);
+
+  int verilator_run = cmd("./obj_dir/V" + top_module);
+  deleteContext(context);
+
+  vector<string> commands;
+  commands.push_back("verilator -Wall --cc " + sep_list(verilog_files, "", "", " ") + " --exe --build " + tb_file + " --top-module " + top_module + " -Wno-UNUSED -Wno-WIDTH -Wno-PINMISSING -Wno-DECLFILENAME");
+  commands.push_back("./obj_dir/V" + top_module);
+
+  generate_script("run_" + compute_name + "_regression.sh", commands);
+
+  move_to_compute_regression_folder(prg.name, compute_name);
+
+  return verilator_run;
+}
+
+struct dgraph {
+  std::set<string> nodes;
+  map<string, std::set<string> > out_edges;
+  map<pair<string, string>, int> weights;
+
+  void add_edge(const std::string& src, const std::string& dst, const int weight) {
+    nodes.insert(dst);
+    nodes.insert(src);
+    out_edges[src].insert(dst);
+    weights[{src, dst}] = weight;
+  }
+
+  int weight(const std::string& src, const std::string& dst) {
+    return weights[{src, dst}];
+  }
+};
+
+std::ostream& operator<<(std::ostream& out, dgraph& dg) {
+  out << "# nodes: " << dg.nodes.size() << endl;
+  out << "# edges: " << dg.weights.size() << endl;
+  for (auto e : dg.out_edges) {
+    for (auto dst : e.second) {
+      out << tab(1) << e.first << " -> (" << dg.weight(e.first, dst) << ") " << dst << endl;
+    }
+  }
+  return out;
+}
+
+
+std::set<string> generate_M1_shift_registers(CodegenOptions& options, CoreIR::ModuleDef* def, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
+
+  map<string,pair<string,int>> shift_registered_outputs = determine_shift_reg_map(prg, buf, hwinfo);
+  vector<pair<string,pair<string,int>>> shift_registered_outputs_to_outputs = determine_output_shift_reg_map(prg, buf, hwinfo);
+
+  cout << "out -> out srs: " << shift_registered_outputs_to_outputs.size() << endl;
+
+  dgraph dg;
+  for (auto pt : shift_registered_outputs) {
+    dg.add_edge(pt.second.first, pt.first, pt.second.second);
+  }
+  for (auto pt : shift_registered_outputs_to_outputs) {
+    dg.add_edge(pt.second.first, pt.first, pt.second.second);
+  }
+
+  cout << "DG: ..." << endl;
+  cout << dg << endl;
+
+  dgraph shift_registers;
+  for (auto e : dg.out_edges) {
+    string src = e.first;
+    for (auto dst : e.second) {
+      if (!elem(dst, shift_registers.nodes)) {
+        shift_registers.add_edge(src, dst, dg.weight(src, dst));
+      }
+    }
+  }
+
+  cout << "SRC shift registers" << endl;
+  cout << shift_registers << endl;
+  auto c = def->getContext();
+  std::set<string> done_outpt;
+  for (auto w : shift_registers.weights) {
+    string src = w.first.first;
+    string dst = w.first.second;
+    int delay = w.second;
+
+    Wireable* src_wire = nullptr;
+    if (buf.is_out_pt(src)) {
+      src_wire = def->sel(src + "_net.out");
+    } else {
+      assert(buf.is_in_pt(src));
+      src_wire = def->sel("self." + buf.container_bundle(src) + "." + str(buf.bundle_offset(src)));
+    }
+    assert(src_wire != nullptr);
+
+    Wireable* delayed_src =
+      delay_by(def, "sr_end" + c->getUnique(), src_wire, delay);
+
+    def->connect(
+        //def->sel("self." + buf.container_bundle(dst) + "." + str(buf.bundle_offset(dst))),
+        def->sel(dst + "_net.in"),
+        delayed_src);
+    done_outpt.insert(dst);
+  }
+
+  if (buf.name == "hw_input_global_wrapper_stencil") {
+    //assert(false);
+  }
+
+  return done_outpt;
+}
+
+void M1_sanity_check_port_counts(ubuffer_impl& impl) {
+
+    map<int, std::set<string> > bank_readers = impl.bank_readers;
+    map<int, std::set<string> > bank_writers = impl.bank_writers;
+    map<string, std::set<int>> outpt_to_bank = impl.outpt_to_bank;
+    map<string, std::set<int>> inpt_to_bank = impl.inpt_to_bank;
+
+
+    const int NUM_IN_PORTS_PER_BANK = 2;
+    const int NUM_OUT_PORTS_PER_BANK = 2;
+
+    //cout << "Buffer = " << buf.name << endl;
+    cout << "Bank readers..." << endl;
+    for (auto b : bank_readers) {
+      cout << tab(1) << b.first << " -> ";
+      for (auto rd : b.second) {
+        cout << rd << ", ";
+      }
+      cout << endl;
+
+      assert(b.second.size() <= NUM_IN_PORTS_PER_BANK);
+    }
+
+    cout << "Bank writers..." << endl;
+    for (auto b : bank_writers) {
+      cout << tab(1) << b.first << " -> ";
+      for (auto rd : b.second) {
+        cout << rd << ", ";
+      }
+      cout << endl;
+
+      assert(b.second.size() <= NUM_OUT_PORTS_PER_BANK);
+    }
+
+    string chain_pt = "";
+    for (auto pt: outpt_to_bank)
+    {
+      if(pt.second.size() > 1) {
+        assert(chain_pt == "");
+        chain_pt = pt.first;
+        cout << pt.first << " needs chaining" << endl;
+      }
+    }
+    for (auto pt: inpt_to_bank)
+    {
+      if(pt.second.size() > 1) {
+        cout << pt.first << " needs broadcast" << endl;
+      }
+    }
+}
+
+void instantiate_M1_verilog(const std::string& long_name, const int b, ubuffer_impl& impl, UBuffer& buf) {
+    assert(verilog_collateral_file != nullptr);
+
+    vector<string> port_decls = {};
+    port_decls.push_back("input clk");
+    port_decls.push_back("input rst_n");
+    port_decls.push_back("input clk_en");
+    port_decls.push_back("input chain_chain_en");
+    for(int i = 0; i < impl.bank_writers[b].size(); i++)
+    {
+      port_decls.push_back("input [15:0] data_in_" + str(i));
+      port_decls.push_back("input [15:0] write_addr_" + str(i));
+      port_decls.push_back("input wen_" + str(i));
+    }
+    for(int i = 0; i < impl.bank_readers[b].size(); i++)
+    {
+      port_decls.push_back("output logic [15:0] data_out_" + str(i));
+      port_decls.push_back("input [15:0] read_addr_" + str(i));
+      port_decls.push_back("input ren_" + str(i));
+    }
+    port_decls.push_back("input [15:0] chain_data_in");
+    port_decls.push_back("output [15:0] chain_data_out");
+
+    //*verilog_collateral_file << "module " << currbank->getModuleRef()->getLongName() <<" ("<< sep_list(port_decls,"","",",") <<"); "<< endl;
+    *verilog_collateral_file << "module " << long_name <<" ("<< sep_list(port_decls,"","",",") <<"); "<< endl;
+    *verilog_collateral_file << tab(1) << "logic [15:0] SRAM [50000:0];" << endl;
+    *verilog_collateral_file << tab(1) << "logic chain_ren;" << endl << endl;
+    for (int i = 0; i < impl.bank_readers[b].size(); i++) {
+      *verilog_collateral_file << tab(1) << "logic [15:0] data_out_" << i << "_tmp;" << endl;
+    }
+
+    *verilog_collateral_file << tab(1) << "always @(posedge clk) begin" << endl;
+    *verilog_collateral_file << tab(2) << "chain_ren <= " << "ren_" << impl.bank_readers[b].size() - 1 << ";" << endl;
+    for (int i = 0; i < impl.bank_readers[b].size(); i++) {
+      *verilog_collateral_file << tab(2) << "data_out_" << str(i) << "_tmp <= SRAM[read_addr_" << i << "];" << endl;
+    }
+    for (int i = 0; i < impl.bank_writers[b].size(); i++) {
+      *verilog_collateral_file << tab(2) << "if (wen_" << i << ") begin" << endl;
+      *verilog_collateral_file << tab(3) << "SRAM[write_addr_" << i << "] <= " << "data_in_" << str(i) << ";" << endl;
+      *verilog_collateral_file << tab(2) << "end" << endl;
+    }
+    *verilog_collateral_file << tab(1) << "end" << endl;
+    //*verilog_collateral_file << tab(1) << "assign chain_data_out = chain_ren ? " << "data_out_" << bank_readers[b].size() - 1 << "_tmp : chain_data_in;" << endl;
+    *verilog_collateral_file << tab(1) << "assign chain_data_out = chain_ren ? " << "data_out_" << impl.bank_readers[b].size() - 1 << "_tmp : 512;" << endl;
+    for (int i = 0; i < impl.bank_readers[b].size(); i++) {
+      if (i == impl.bank_readers[b].size() - 1) {
+        *verilog_collateral_file << tab(1) << "assign data_out_" << i << " = chain_data_out;" << endl;
+      } else {
+        *verilog_collateral_file << tab(1) << "assign data_out_" << i << " = data_out_" << i << "_tmp;" << endl;
+      }
+    }
+    *verilog_collateral_file << "endmodule" << endl << endl;
+}
+
+void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& prg, UBuffer& orig_buf, schedule_info& hwinfo) {
+
+  CoreIR::Context* c = def->getContext();
+  for (auto out : orig_buf.get_out_ports()) {
+    auto w = def->addInstance(out + "_net", "coreir.wire", {{"width", COREMK(c, 16)}});
+    def->connect(
+        w->sel("out"),
+        def->sel("self." + orig_buf.container_bundle(out) + "." + str(orig_buf.bundle_offset(out))));
+  }
+
+  std::set<string> done_outpt = generate_M1_shift_registers(options, def, prg, orig_buf, hwinfo);
+  //std::set<string> done_outpt = {};
+
+  UBuffer buf = delete_ports(done_outpt, orig_buf);
+
+  if (buf.num_out_ports() > 0) {
+    ubuffer_impl impl = build_buffer_impl(prg, buf, hwinfo);
+
+    int num_banks = 1;
+    for (auto ent : impl.partitioned_dimension_extents) {
+      num_banks *= ent.second;
+    }
+
+    M1_sanity_check_port_counts(impl);
+
+    map<int, std::set<string> > bank_readers = impl.bank_readers;
+    map<int, std::set<string> > bank_writers = impl.bank_writers;
+    map<string, std::set<int>> outpt_to_bank = impl.outpt_to_bank;
+    map<string, std::set<int>> inpt_to_bank = impl.inpt_to_bank;
+
+    string chain_pt = "";
+    for (auto pt: outpt_to_bank)
+    {
+      if(pt.second.size() > 1) {
+        assert(chain_pt == "");
+        chain_pt = pt.first;
+        cout << pt.first << " needs chaining" << endl;
+      }
+    }
+
+    Select* one = def->addInstance("one_cst", "corebit.const", {{"value", COREMK(c, true)}})->sel("out");
+    Select* zero = def->addInstance("zero_cst", "corebit.const", {{"value", COREMK(c, false)}})->sel("out");
+
+    map<int, Instance*> bank_map;
+    for (int b = 0; b < num_banks; b++) {
+      Values tile_params{{"width", COREMK(c, 16)},
+        {"ID", COREMK(c, buf.name + "_" + str(b))},
+        {"has_external_addrgen", COREMK(c, true)},
+        {"num_inputs",COREMK(c,bank_writers[b].size())},
+        {"num_outputs",COREMK(c,bank_readers[b].size())}};
+
+      CoreIR::Instance * currbank = def->addInstance("bank_" + str(b), "cgralib.Mem_amber", tile_params);
+
+      if (chain_pt != "") {
+        def->connect(currbank->sel("chain_chain_en"),one);
+      } else {
+        def->connect(currbank->sel("chain_chain_en"),zero);
+      }
+
+      instantiate_M1_verilog(currbank->getModuleRef()->getLongName(), b, impl, buf);
+      bank_map[b] = currbank;
+      def->connect(currbank->sel("clk_en"),one);
+      def->connect(currbank->sel("rst_n"),def->sel("self.rst_n"));
+      def->connect(def->sel("bank_" + str(b) + ".chain_data_in"), mkConst(def,16,0));
+    }
+
+    map<string, Instance*> ubuffer_port_agens;
+    map<string, Wireable*> ubuffer_port_bank_selectors;
+    for (auto pt : buf.get_all_ports()) {
+      if (buf.is_in_pt(pt)) {
+        auto adjusted_buf = write_latency_adjusted_buffer(options, prg, buf, hwinfo);
+        auto agen = build_addrgen(pt, adjusted_buf, def);
+        def->connect(agen->sel("d"),
+            control_vars(def, pt, adjusted_buf));
+        ubuffer_port_agens[pt] = agen;
+      } else {
+        auto agen = build_addrgen(pt, buf, def);
+        def->connect(agen->sel("d"),
+            control_vars(def, pt, buf));
+        ubuffer_port_agens[pt] = agen;
+
+        if (impl.outpt_to_bank[pt].size() > 1) {
+          auto bank_sel = build_bank_selector(pt, buf, impl, def);
+          def->connect(bank_sel->sel("d"),
+              control_vars(def, pt, buf));
+          const int READ_LATENCY = 1;
+          ubuffer_port_bank_selectors[pt] = delay_by(def, bank_sel->sel("out"), READ_LATENCY);
+          //assert(false);
+        }
+      }
+    }
+
+    map<pair<string, int>, int> ubuffer_port_and_bank_to_bank_port;
+    map<int, int> bank_to_next_available_out_port;
+    for (int b = 0; b < num_banks; b++) {
+      bank_to_next_available_out_port[b] = 0;
+    }
+    for (auto pt_srcs : impl.outpt_to_bank) {
+      string pt = pt_srcs.first;
+      for (int b : pt_srcs.second) {
+        ubuffer_port_and_bank_to_bank_port[{pt, b}] =
+          map_find(b, bank_to_next_available_out_port);
+        bank_to_next_available_out_port[b]++;
+      }
+    }
+    for (auto bp : bank_to_next_available_out_port) {
+      cout << tab(1) << bp.first << " -> " << bp.second << endl;
+      assert(bp.second <= 2);
+    }
+
+    for (int b = 0; b < num_banks; b++) {
+      auto currbank = bank_map[b];
+
+      for(auto pt : bank_readers[b])
+      {
+        int count = map_find({pt, b}, ubuffer_port_and_bank_to_bank_port);
+        auto agen = ubuffer_port_agens[pt];
+        def->connect(agen->sel("out"), currbank->sel("read_addr_" + str(count)));
+        def->connect(currbank->sel("ren_" + str(count)),
+            control_en(def, pt, buf));
+      }
+    }
+
+    map<string, std::vector<Wireable*> > ubuffer_ports_to_bank_wires;
+    map<string, std::vector<Wireable*> > ubuffer_ports_to_bank_condition_wires;
+    for (int b = 0; b < num_banks; b++) {
+      auto currbank = bank_map[b];
+      //if(b == 0 && chain_pt != "") {
+        //ubuffer_ports_to_bank_wires[chain_pt].push_back(currbank->sel("data_out_1"));
+      //}
+
+      for(auto pt : bank_readers[b])
+      {
+        int count = map_find({pt, b}, ubuffer_port_and_bank_to_bank_port);
+        //if(pt != chain_pt)
+        //{
+          ubuffer_ports_to_bank_wires[pt].push_back(currbank->sel("data_out_" + str(count)));
+          if (impl.outpt_to_bank[pt].size() > 1) {
+            ubuffer_ports_to_bank_condition_wires[pt].push_back(eqConst(def, ubuffer_port_bank_selectors[pt], b));
+          } else {
+            ubuffer_ports_to_bank_condition_wires[pt].push_back(one);
+          }
+          //if (b == 0) {
+          //} else {
+            //ubuffer_ports_to_bank_condition_wires[pt].push_back(zero);
+          //}
+        //}
+      }
+    }
+
+    for (auto conn : ubuffer_ports_to_bank_wires) {
+      vector<Wireable*> conds = ubuffer_ports_to_bank_condition_wires[conn.first];
+      vector<Wireable*> vals = conn.second;
+      assert(conds.size() == vals.size());
+
+      if (conds.size() == 1) {
+        def->connect(def->sel(conn.first + "_net.in"), pick(conn.second));
+      } else {
+        assert(conds.size() == 3);
+        Wireable* out = def->sel(conn.first + "_net.in");
+
+        auto snd_mux =
+          def->addInstance("chain_mux" + c->getUnique(), "coreir.mux", {{"width", CoreIR::Const::make(c, 16)}});
+        def->connect(snd_mux->sel("in0"), vals[1]);
+        def->connect(snd_mux->sel("in1"), vals[2]);
+        def->connect(snd_mux->sel("sel"), conds[2]);
+
+        auto last_mux =
+          def->addInstance("chain_mux" + c->getUnique(), "coreir.mux", {{"width", CoreIR::Const::make(c, 16)}});
+        def->connect(last_mux->sel("in0"), snd_mux->sel("out"));
+        def->connect(last_mux->sel("in1"), vals[0]);
+        def->connect(last_mux->sel("sel"), conds[0]);
+
+        def->connect(last_mux->sel("out"), out);
+      }
+    }
+
+    for (int b = 0; b < num_banks; b++) {
+      auto currbank = bank_map[b];
+      int count = 0;
+      for(auto pt : bank_writers[b])
+      {
+        auto adjusted_buf = write_latency_adjusted_buffer(options, prg, buf, hwinfo);
+        auto agen = ubuffer_port_agens[pt];
+        def->connect(agen->sel("out"), currbank->sel("write_addr_" + str(count)));
+        def->connect(currbank->sel("wen_" + str(count)),
+            control_en(def, pt, adjusted_buf));
+
+        def->connect(
+            currbank->sel("data_in_" + str(count)),
+            def->sel("self." + buf.container_bundle(pt) + "." + str(buf.bundle_offset(pt))));
+        count++;
+      }
+    }
+
+  }
+
+
+}
+
+CoreIR::Instance* build_bank_selector(const std::string& reader, UBuffer& buf, ubuffer_impl& impl, CoreIR::ModuleDef* def) {
+  int bank_stride = 1;
+  vector<string> dvs;
+  vector<string> coeffs;
+  for (int d = 0; d < buf.logical_dimension(); d++) {
+    dvs.push_back("d" + str(d));
+    if (elem(d, impl.partition_dims)) {
+      coeffs.push_back(str(bank_stride) + "*" + dvs.at(d));
+      bank_stride *= map_find(d, impl.partitioned_dimension_extents);
+    }
+  }
+
+  coeffs.push_back("0");
+  string bank_func = curlies(buf.name + bracket_list(dvs) + " -> Bank[" + sep_list(coeffs, "", "", " + ") + "]");
+  auto bank_map = isl_map_read_from_str(buf.ctx, bank_func.c_str());
+
+  auto c = def->getContext();
+
+  cout << "Building addrgen for " << reader << endl;
+  //isl_union_set* rddom = isl_union_set_read_from_str(buf.ctx, "{}");
+  //for (auto inpt : buf.get_in_ports()) {
+    //rddom = unn(rddom, range(buf.access_map.at(inpt)));
+  //}
+  //for (auto inpt : buf.get_out_ports()) {
+    //rddom = unn(rddom, range(buf.access_map.at(inpt)));
+  //}
+  auto acc_map = to_map(buf.access_map.at(reader));
+  //cout << tab(1) << "=== acc_map = " << str(acc_map) << endl;
+  //auto acc_aff = get_aff(acc_map);
+  //cout << tab(2) << "=== acc aff = " << str(acc_aff) << endl;
+  //auto reduce_map = linear_address_map(to_set(rddom));
+  //auto addr_expr = dot(acc_map, reduce_map);
+  //auto addr_expr_aff = get_aff(addr_expr);
+  //cout << tab(3) << "==== addr expr aff: " << str(addr_expr_aff) << endl;
+
+  auto addr_expr_aff = get_aff(dot(acc_map, bank_map));
+  auto aff_gen_mod = coreir_for_aff(c, addr_expr_aff);
+  auto agen = def->addInstance("bank_selector_" + reader + c->getUnique(), aff_gen_mod);
+  return agen;
+}
+
+CoreIR::Instance* build_addrgen(const std::string& reader, UBuffer& buf, CoreIR::ModuleDef* def) {
+  auto c = def->getContext();
+
+  cout << "Building addrgen for " << reader << endl;
+  isl_union_set* rddom = isl_union_set_read_from_str(buf.ctx, "{}");
+  for (auto inpt : buf.get_in_ports()) {
+    rddom = unn(rddom, range(buf.access_map.at(inpt)));
+  }
+  for (auto inpt : buf.get_out_ports()) {
+    rddom = unn(rddom, range(buf.access_map.at(inpt)));
+  }
+  auto acc_map = to_map(buf.access_map.at(reader));
+  cout << tab(1) << "=== acc_map = " << str(acc_map) << endl;
+  auto acc_aff = get_aff(acc_map);
+  cout << tab(2) << "=== acc aff = " << str(acc_aff) << endl;
+  auto reduce_map = linear_address_map(to_set(rddom));
+  auto addr_expr = dot(acc_map, reduce_map);
+  auto addr_expr_aff = get_aff(addr_expr);
+  cout << tab(3) << "==== addr expr aff: " << str(addr_expr_aff) << endl;
+
+  auto aff_gen_mod = coreir_for_aff(c, addr_expr_aff);
+  auto agen = def->addInstance("addrgen_" + reader + c->getUnique(), aff_gen_mod);
+  return agen;
+}
+
+CoreIR::Wireable* control_vars(CoreIR::ModuleDef* def, const std::string& reader, UBuffer& buf) {
+  //return def->sel(controller_name(reader))->sel("d");
+  string bundle = buf.container_bundle(reader);
+  return def->sel("self." + bundle + "_ctrl_vars");
+}
+
+CoreIR::Wireable* control_en(CoreIR::ModuleDef* def, const std::string& reader, UBuffer& buf) {
+  string bundle = buf.container_bundle(reader);
+  if (buf.is_in_pt(reader)) {
+    return def->sel("self." + bundle + "_wen");
+  } else {
+    return def->sel("self." + bundle + "_ren");
+  }
+}
 #endif
 
 

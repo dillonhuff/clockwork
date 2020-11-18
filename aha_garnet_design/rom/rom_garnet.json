@@ -499,10 +499,6 @@
             "genargs":{"width":["Int",16]},
             "modargs":{"mode":["String","in"]}
           },
-          "io1_hw_input_stencil_op_hcompute_hw_input_global_wrapper_stencil_read_en":{
-            "modref":"cgralib.BitIO",
-            "modargs":{"mode":["String","out"]}
-          },
           "io1_hw_output_stencil_op_hcompute_hw_output_stencil_write_valid":{
             "modref":"cgralib.BitIO",
             "modargs":{"mode":["String","out"]}
@@ -581,7 +577,7 @@
           "op_hcompute_hw_output_stencil_port_controller_garnet":{
             "genref":"cgralib.Mem",
             "genargs":{"ID":["String","_U0"], "has_flush":["Bool",true], "has_reset":["Bool",false], "has_stencil_valid":["Bool",true], "has_valid":["Bool",false], "num_inputs":["Int",0], "num_outputs":["Int",0], "width":["Int",16]},
-            "modargs":{"config":["Json",{"stencil_valid":{"cycle_starting_addr":[1],"cycle_stride":[1,64,0],"dimensionality":3,"extent":[64,64,1]}}], "mode":["String","lake"]}
+            "modargs":{"config":["Json",{"stencil_valid":{"cycle_starting_addr":[1],"cycle_stride":[1,64],"dimensionality":2,"extent":[64,64]}}], "mode":["String","lake"]}
           }
         },
         "connections":[

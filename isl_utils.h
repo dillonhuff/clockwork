@@ -113,10 +113,13 @@ int dim(isl_space* const s);
 
 bool equal(isl_space* const l, isl_space* const r);
 bool equal(isl_set* const l, isl_set* const r);
+bool equal(isl_map* const l, isl_map* const r);
+bool equal(isl_aff* const l, isl_aff* const r);
 bool equal(uset* const l, uset* const r);
 bool equal(umap* const l, umap* const r);
 
 bool empty(umap* const s);
+bool empty(isl_map* const s);
 bool empty(isl_basic_set* const s);
 bool empty(uset* const s);
 bool empty(isl_set* const s);
@@ -148,6 +151,7 @@ std::string range_name(isl_map* const m);
 isl_map* set_range_name(isl_map* const m, string new_name);
 
 isl_map* set_domain_name(isl_map* const m, string new_name);
+umap* set_domain_name(umap* const m, string new_name);
 
 isl_map* add_range_suffix(isl_map* const m, string suffix);
 isl_map* add_domain_suffix(isl_map* const m, string suffix);
@@ -182,8 +186,8 @@ std::string str(isl_union_pw_multi_aff* const pma);
 std::string str(isl_multi_union_pw_aff* const pma);
 
 isl_map* linear_address_map(isl_set* s);
-isl_map* linear_address_map_lake(isl_set* s);
-isl_map* linear_address_map_with_index(isl_set* s, vector<int> index);
+isl_map* linear_address_map_lake(isl_set* s, int fetch_width);
+isl_map* linear_address_map_with_index(isl_set* s, vector<int> index, int fetch_width);
 
 vector<vector<int> > get_access_matrix_from_map(isl_map* acc_map);
 
@@ -220,6 +224,7 @@ int get_dim_min(isl_set* const m, int pos);
 
 
 int get_dim_max(isl_set* const m, int pos);
+int get_dim_extent(isl_set* const m, int pos);
 
 int get_dim_min(isl_map* const m, int pos);
 
@@ -379,6 +384,8 @@ isl_union_map* flatten_umap_domain(isl_ctx* ctx, isl_union_map* const um, map<st
 isl_union_map* remove_dep_domain_name(umap* um, string name);
 
 
+umap* flatten_set_trans_with_dim(isl_set* dom, int dim_from_inner);
+umap* flatten_set_trans_with_dim_set(isl_set* dom, std::set<int> dim_id);
 umap* flatten_umap_domain_with_dim_from_outer(umap* um, int dim_from_outer);
 isl_stat flatten_map_domain(isl_map* s, void* user);
 umap* flatten_map_domain_with_ii(isl_map* s, int ii);
@@ -396,12 +403,14 @@ isl_map* delay_schedule_inner_most(isl_map* s, int delay);
 isl_map* delay_schedule_domain_dim(isl_map* s, int dom_dim, int delay);
 vector<bool> relation_map(isl_map* m);
 int get_involve_dim(isl_map* m, int out_dim);
+vector<int> out_involve_dim(isl_map* m, int in_dim);
+vector<int> in_involve_dim(isl_map* m, int in_dim);
 isl_map* peel_schedule_domain_dim(isl_map* m, int dom_dim, int delay);
 int get_peel_schedule_domain_dim(isl_map* m, int dom_dim);
 
 //some map transformation from reconstruct constraints
 isl_map* pad_to_domain_map(isl_map* s, int depth);
-isl_map* pad_to_domain_ubuf_map(isl_map* s, int depth);
+isl_map* pad_to_domain_ubuf_map(isl_map* s, int dom_dim_id, int depth);
 isl_map* shift_domain_map(isl_map* s, vector<int> shift_depth);
 isl_map* shift_range_map(isl_map* s, vector<int> shift_depth);
 isl_map* assign_domain_to_map(isl_map* s, isl_set* new_domain);
@@ -445,6 +454,11 @@ isl_map* dot(isl_map* const m0, isl_map* const m1);
 
 isl_set* simplify(isl_set* const m);
 isl_union_set* simplify(uset* const m);
+
+bool single_valued(isl_map* const m0);
+
+isl_map* coalesce_if_single_valued(isl_map* const m0);
+
 isl_union_pw_qpolynomial* coalesce(isl_union_pw_qpolynomial* const m);
 
 isl_map* simplify(isl_map* const m);
@@ -457,6 +471,7 @@ isl_union_pw_qpolynomial* coalesce(isl_union_pw_qpolynomial* const m);
 isl_union_set* coalesce(isl_union_set* const m0);
 
 isl_union_map* coalesce(isl_union_map* const m0);
+isl_map* coalesce(isl_map* const m0);
 
 isl_union_map* dot_domain(isl_union_map* const m0, isl_union_map* const m1);
 
@@ -474,6 +489,8 @@ isl_union_set* range(isl_union_map* const m);
 isl_union_set* domain(isl_union_map* const m);
 
 int stride_in_dim(isl_set* const s, size_t dim);
+
+int stride_in_dim(isl_map* const m, size_t dim);
 
 isl_set* range(isl_map* const m);
 
@@ -678,3 +695,13 @@ std::vector<isl_aff*> get_affs(isl_multi_aff* saff);
 std::map<int, isl_val*> constant_components(isl_multi_aff* access);
 isl_multi_aff* rdmultiaff(isl_ctx* ctx, const std::string& str);
 isl_val* constant(isl_aff* a);
+
+umap* to_umap(const vector<isl_aff*>& hs);
+
+isl_aff* flatten(isl_multi_aff* ma, isl_set* dom);
+
+isl_aff* flatten(const std::vector<int>& bank_factors, isl_multi_aff* ma, isl_set* dom);
+
+isl_map* cyclic_function(isl_ctx* ctx, const std::string& name, const std::vector<int>& bank_factors);
+
+vector<int> extents(isl_set* s);

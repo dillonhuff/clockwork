@@ -18,16 +18,20 @@ int main(int argc, char **argv) {
   std::cout << "num_epochs = " << num_epochs << std::endl;
 
   size_t total_size_bytes = 0;
+  size_t total_size_bytes_read = 0;
+  size_t total_size_bytes_written = 0;
   const int op_hcompute_hw_output_stencil_write_DATA_SIZE = num_epochs*0;
   const int op_hcompute_hw_output_stencil_write_BYTES_PER_PIXEL = 16 / 8;
   size_t op_hcompute_hw_output_stencil_write_size_bytes = op_hcompute_hw_output_stencil_write_BYTES_PER_PIXEL * op_hcompute_hw_output_stencil_write_DATA_SIZE;
 
   total_size_bytes += op_hcompute_hw_output_stencil_write_size_bytes;
+  total_size_bytes_written += op_hcompute_hw_output_stencil_write_size_bytes;
   const int op_hcompute_hw_input_stencil_read_DATA_SIZE = num_epochs*0;
   const int op_hcompute_hw_input_stencil_read_BYTES_PER_PIXEL = 16 / 8;
   size_t op_hcompute_hw_input_stencil_read_size_bytes = op_hcompute_hw_input_stencil_read_BYTES_PER_PIXEL * op_hcompute_hw_input_stencil_read_DATA_SIZE;
 
   total_size_bytes += op_hcompute_hw_input_stencil_read_size_bytes;
+  total_size_bytes_read += op_hcompute_hw_input_stencil_read_size_bytes;
 
   cl_int err;
   cl::Context context;
