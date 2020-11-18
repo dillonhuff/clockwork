@@ -246,7 +246,7 @@ void instantiate_M3_verilog(CodegenOptions& options, const std::string& long_nam
 
   for(auto pt : impl.bank_writers[b]) {
     int count = map_find({pt, b}, ubuffer_port_and_bank_to_bank_port);
-    string bundle_name = buf.name + "_bank_" + str(b) + "_" + str(count);
+    //string bundle_name = buf.name + "_bank_" + str(b) + "_" + str(count);
     string port_rep = pt;
     string op_rep_name = domain_name(to_map(buf.access_map.at(port_rep)));
     op* rep = prg.find_op(op_rep_name);
@@ -281,20 +281,25 @@ void instantiate_M3_verilog(CodegenOptions& options, const std::string& long_nam
     }
     string dom_str = curlies(name(restricted_dom) + bracket_list(dvs) + " : " + sep_list(range_constraints, "", "", " and "));
     isl_set* normed_dom = rdset(prg.ctx, dom_str);
+    in_port_controllers[count] = {ibo, normed_sched, normed_dom};
+  }
 
+  for (int count = 0; count < (int) in_port_controllers.size(); count++) {
+    string bundle_name = buf.name + "_bank_" + str(b) + "_" + str(count);
     generate_fsm(*verilog_collateral_file,
         options,
         bundle_name + "_ctrl",
         "d",
         "valid",
-        normed_sched,
-        normed_dom);
-    in_port_controllers[count] = {ibo, normed_sched, normed_dom};
+        in_port_controllers[count].sched,
+        in_port_controllers[count].dom);
+        //normed_sched,
+        //normed_dom);
   }
 
   for(auto pt : impl.bank_readers[b]) {
     int count = map_find({pt, b}, ubuffer_port_and_bank_to_bank_port);
-    string bundle_name = buf.name + "_bank_rd_" + str(b) + "_" + str(count);
+    //string bundle_name = buf.name + "_bank_rd_" + str(b) + "_" + str(count);
     string port_rep = pt;
     string op_rep_name = domain_name(to_map(buf.access_map.at(port_rep)));
     op* rep = prg.find_op(op_rep_name);
@@ -327,14 +332,20 @@ void instantiate_M3_verilog(CodegenOptions& options, const std::string& long_nam
     string dom_str = curlies(name(restricted_dom) + bracket_list(dvs) + " : " + sep_list(range_constraints, "", "", " and "));
     isl_set* normed_dom = rdset(prg.ctx, dom_str);
 
+    out_port_controllers[count] = {ibo, normed_sched, normed_dom};
+  }
+
+  for (int count = 0; count < out_port_controllers.size(); count++) {
+    string bundle_name = buf.name + "_bank_rd_" + str(b) + "_" + str(count);
     generate_fsm(*verilog_collateral_file,
         options,
         bundle_name + "_ctrl",
         "d",
         "valid",
-        normed_sched,
-        normed_dom);
-    out_port_controllers[count] = {ibo, normed_sched, normed_dom};
+        out_port_controllers[count].sched,
+        out_port_controllers[count].dom);
+        //normed_sched,
+        //normed_dom);
   }
 
   instantiate_M3_verilog(
