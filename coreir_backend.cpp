@@ -195,63 +195,68 @@ void instantiate_M3_verilog_sreg(CodegenOptions& options, const std::string& lon
 
   map<int, affine_controller_ctrl> in_pts{{0, {identity_addr, identity, dom}}};
   map<int, affine_controller_ctrl> out_pts{{0, {shifted_identity_addr, shifted_identity, dom}}};
-
-  generate_fsm(*verilog_collateral_file,
+  instantiate_M3_verilog(
       options,
-      long_name + "_fsm_write_ctrl",
-      "d",
-      "valid",
-      identity,
-      dom);
+      long_name,
+      in_pts,
+      out_pts);
 
-  generate_fsm(*verilog_collateral_file,
-      options,
-      long_name + "_fsm_read_ctrl",
-      "d",
-      "valid",
-      shifted_identity,
-      dom);
+  //generate_fsm(*verilog_collateral_file,
+      //options,
+      //long_name + "_fsm_write_ctrl",
+      //"d",
+      //"valid",
+      //identity,
+      //dom);
 
-  vector<string> port_decls = {};
-  port_decls.push_back("input clk");
-  port_decls.push_back("input rst_n");
-  port_decls.push_back("input clk_en");
-  port_decls.push_back("input chain_chain_en");
-  port_decls.push_back("input [15:0] data_in_0");
-  port_decls.push_back("output logic [15:0] data_out_0" );
-  port_decls.push_back("output data_out_0_valid");
-  port_decls.push_back("input [15:0] chain_data_in");
-  port_decls.push_back("output [15:0] chain_data_out");
+  //generate_fsm(*verilog_collateral_file,
+      //options,
+      //long_name + "_fsm_read_ctrl",
+      //"d",
+      //"valid",
+      //shifted_identity,
+      //dom);
 
-  *verilog_collateral_file << "module " << long_name <<" ("<< sep_list(port_decls,"","",",") <<"); "<< endl;
+  //vector<string> port_decls = {};
+  //port_decls.push_back("input clk");
+  //port_decls.push_back("input rst_n");
+  //port_decls.push_back("input clk_en");
+  //port_decls.push_back("input chain_chain_en");
+  //port_decls.push_back("input [15:0] data_in_0");
+  //port_decls.push_back("output logic [15:0] data_out_0" );
+  //port_decls.push_back("output data_out_0_valid");
+  //port_decls.push_back("input [15:0] chain_data_in");
+  //port_decls.push_back("output [15:0] chain_data_out");
 
-  string write_name = long_name + "_fsm_write";
-  out << tab(1) << write_name + "_ctrl "<< write_name  << "(.clk(clk), .rst_n(rst_n));" << endl;
+  //*verilog_collateral_file << "module " << long_name <<" ("<< sep_list(port_decls,"","",",") <<"); "<< endl;
 
-  string read_name = long_name + "_fsm_read";
-  out << tab(1) << read_name + "_ctrl " << read_name  << "(.clk(clk), .rst_n(rst_n));" << endl;
+  //string write_name = long_name + "_fsm_write";
+  //out << tab(1) << write_name + "_ctrl "<< write_name  << "(.clk(clk), .rst_n(rst_n));" << endl;
 
-  *verilog_collateral_file << endl;
+  //string read_name = long_name + "_fsm_read";
+  //out << tab(1) << read_name + "_ctrl " << read_name  << "(.clk(clk), .rst_n(rst_n));" << endl;
 
-  *verilog_collateral_file << tab(1) << "logic [15:0] SRAM [1023:0];" << endl;
-  *verilog_collateral_file << tab(1) << "logic [15:0] data_out_0_tmp;" << endl;
+  //*verilog_collateral_file << endl;
 
-  *verilog_collateral_file << tab(1) << "always @(posedge clk) begin" << endl;
+  //*verilog_collateral_file << tab(1) << "logic [15:0] SRAM [1023:0];" << endl;
+  //*verilog_collateral_file << tab(1) << "logic [15:0] data_out_0_tmp;" << endl;
 
-  string bundle_name = read_name + ".valid" ;
-  *verilog_collateral_file << tab(2) << "data_out_0_tmp <= SRAM[" << read_name << ".d[1]" << "];" << endl;
-  out << tab(2) << "data_out_0_valid <= " << bundle_name << ";" << endl;
+  //*verilog_collateral_file << tab(1) << "always @(posedge clk) begin" << endl;
 
-  bundle_name = write_name + ".valid" ;
-  *verilog_collateral_file << tab(2) << "if (" << bundle_name << ") begin" << endl;
-  *verilog_collateral_file << tab(3) << "SRAM[" << write_name + ".d[1]" << "] <= " << "data_in_0;" << endl;
-  *verilog_collateral_file << tab(2) << "end" << endl;
+  //string bundle_name = read_name + ".valid" ;
+  //*verilog_collateral_file << tab(2) << "data_out_0_tmp <= SRAM[" << read_name << ".d[1]" << "];" << endl;
+  //out << tab(2) << "data_out_0_valid <= " << bundle_name << ";" << endl;
 
-  *verilog_collateral_file << tab(1) << "end" << endl;
-  *verilog_collateral_file << tab(1) << "assign data_out_0 = data_out_0_tmp;" << endl;
-  *verilog_collateral_file << tab(1) << "assign chain_data_out = 16'b0;" << endl;
+  //bundle_name = write_name + ".valid" ;
+  //*verilog_collateral_file << tab(2) << "if (" << bundle_name << ") begin" << endl;
+  //*verilog_collateral_file << tab(3) << "SRAM[" << write_name + ".d[1]" << "] <= " << "data_in_0;" << endl;
+  //*verilog_collateral_file << tab(2) << "end" << endl;
 
-  *verilog_collateral_file << "endmodule" << endl << endl;
+  //*verilog_collateral_file << tab(1) << "end" << endl;
+  //*verilog_collateral_file << tab(1) << "assign data_out_0 = data_out_0_tmp;" << endl;
+  //*verilog_collateral_file << tab(1) << "assign chain_data_out = 16'b0;" << endl;
+
+  //*verilog_collateral_file << "endmodule" << endl << endl;
 }
 
 
