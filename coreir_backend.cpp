@@ -4292,6 +4292,16 @@ struct dgraph {
   int weight(const std::string& src, const std::string& dst) {
     return weights[{src, dst}];
   }
+
+  vector<pair<string, int> > in_edges(const std::string& dst) {
+    vector<pair<string, int> > ed;
+    for (auto w : out_edges) {
+      if (elem(dst, w.second)) {
+        ed.push_back({w.first, weight(w.first, dst)});
+      }
+    }
+    return ed;
+  }
 };
 
 std::ostream& operator<<(std::ostream& out, dgraph& dg) {
@@ -4319,6 +4329,7 @@ dgraph build_shift_register_graph(CodegenOptions& options, CoreIR::ModuleDef* de
     dg.add_edge(pt.second.first, pt.first, pt.second.second);
   }
 
+  // Compute the transitive closer of ins -> outs
   for (auto pt0 : shift_registered_outputs) {
     for (auto pt1 : shift_registered_outputs) {
       string dst0 = pt0.first;
@@ -4368,28 +4379,33 @@ dgraph build_shift_registers(CodegenOptions& options, CoreIR::ModuleDef* def, pr
     for (auto dst : e.second) {
       if (buf.is_out_pt(src) &&
           buf.is_out_pt(dst) &&
+          dg.weight(src, dst) == 1 &&
           //dg.out_edges[dst].size() == 0 &&
           !elem(dst, shift_registers.nodes)) {
-        assert(false);
         shift_registers.add_edge(src, dst, dg.weight(src, dst));
+        cout << "Adding out -> out sr: " << src << " -> " << dst << dg.weight(src,dst) << endl;
       }
     }
   }
 
-  if (dg.weights.size() > 1) {
-    assert(false);
-  }
+  cout << endl << endl;
 
   // Make sure all in -> out srs are included
   for (auto e : dg.out_edges) {
     string src = e.first;
     for (auto dst : e.second) {
-      if (buf.is_in_pt(src) && !elem(dst, shift_registers.nodes)) {
+      if (buf.is_in_pt(src) &&
+          shift_registers.in_edges(dst).size() == 0) {
+          //!elem(dst, shift_registers.nodes)) {
         shift_registers.add_edge(src, dst, dg.weight(src, dst));
-        cout << dg.weight(src,dst) << endl;
+        cout << "Adding in -> out sr: " << src << " -> " << dst << dg.weight(src,dst) << endl;
       }
     }
   }
+  //if (dg.weights.size() > 1) {
+    //assert(false);
+  //}
+
   for (auto e : dg.out_edges) {
     string src = e.first;
     for (auto dst : e.second) {
