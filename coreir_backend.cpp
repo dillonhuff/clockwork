@@ -178,7 +178,7 @@ void instantiate_M3_verilog(
 
 }
 
-void instantiate_M3_verilog_sreg(CodegenOptions& options, const std::string& long_name, int delay, prog& prg,schedule_info& hwinfo) {
+M3_config instantiate_M3_verilog_sreg(CodegenOptions& options, const std::string& long_name, int delay, prog& prg,schedule_info& hwinfo) {
 
   assert(verilog_collateral_file != nullptr);
 
@@ -200,6 +200,8 @@ void instantiate_M3_verilog_sreg(CodegenOptions& options, const std::string& lon
       long_name,
       in_pts,
       out_pts);
+
+  return {in_pts, out_pts};
 
   //generate_fsm(*verilog_collateral_file,
       //options,
@@ -4536,7 +4538,8 @@ std::set<string> generate_M1_shift_registers(CodegenOptions& options, CoreIR::Mo
               def->connect(sreg->sel("data_in_0"),src_wire);
               delayed_src = sreg->sel("data_out_0");
 
-              instantiate_M3_verilog_sreg(options, sreg->getModuleRef()->getLongName(), min(delay,maxd), prg, hwinfo);
+              auto config = instantiate_M3_verilog_sreg(options, sreg->getModuleRef()->getLongName(), min(delay,maxd), prg, hwinfo);
+              attach_M3_bank_config_metadata(sreg, config);
 
               src_wire = delayed_src;
 
