@@ -17131,14 +17131,16 @@ void fpga_asplos_tests() {
 }
 
 void cgra_flow_tests() {
+  //vector<prog> M1_test_programs = isca_programs();
+  vector<prog> M1_test_programs{pointwise()};
+  test_codegen(M1_test_programs, compile_for_CGRA_M1_mem);
+  assert(false);
 
-  vector<prog> M3_test_programs{resnet()};
-  //vector<prog> M3_test_programs = isca_programs();
+  //vector<prog> M3_test_programs{resnet()};
+  vector<prog> M3_test_programs = isca_programs();
   test_codegen(M3_test_programs, compile_for_CGRA_M3_mem);
   assert(false);
 
-  vector<prog> M1_test_programs = isca_programs();
-  test_codegen(M1_test_programs, compile_for_CGRA_M1_mem);
 
   auto test_programs =
     all_cgra_programs();
@@ -18943,6 +18945,12 @@ void test_if_construction() {
 }
 
 void dhuff_playground() {
+  {
+    prog prg = resnet_unrolled();
+    vector<prog> test_prgs{prg};
+    test_codegen(test_prgs, compile_for_FPGA_BRAM_mem);
+    assert(false);
+  }
   {
     prog prg = harris();
     prg.pretty_print();

@@ -2117,7 +2117,8 @@ void instantiate_controllers(CodegenOptions& options,
     }
   } else if (options.rtl_options.use_external_controllers) {
     for (auto op : prg.all_ops()) {
-      generate_coreir_op_controller_verilog(options, def, op, sched_maps, hwinfo);
+      //generate_coreir_op_controller_verilog(options, def, op, sched_maps, hwinfo);
+      generate_coreir_op_controller(options, def, op, sched_maps, hwinfo);
     }
   }
 
@@ -2611,7 +2612,7 @@ void generate_coreir(CodegenOptions& options,
     }
     assert(false);
   }
-  //prg_mod->print();
+  prg_mod->print();
   //assert(false);
 
   deleteContext(context);
