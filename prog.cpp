@@ -5021,6 +5021,12 @@ void generate_garnet_verilator_tb(prog& prg,
   rgtb << "dut.clk = 1;" << endl;
   rgtb << "dut.eval();" << endl;
 
+  //Add a posedge during  reset
+  rgtb << "dut.clk = 0;" << endl;
+  rgtb << "dut.eval();" << endl;
+  rgtb << "dut.clk = 1;" << endl;
+  rgtb << "dut.eval();" << endl;
+
   rgtb << "dut.reset= 0;" << endl;
   rgtb << "dut.clk = 0;" << endl;
   rgtb << "dut.eval();" << endl;
@@ -6898,9 +6904,9 @@ void generate_vivado_rtl_tb(
       out_buf.lanes_in_bundle(out_bundle);
 
     if (prg.is_input(out_rep)) {
-      string en_name = 
+      string en_name =
         pg(out_rep, out_bundle) + "_en";
-      string data_name = 
+      string data_name =
         pg(out_rep, out_bundle);
 
       rgtb << tab(1) << "logic " << en_name << ";" << endl;
@@ -6912,9 +6918,9 @@ void generate_vivado_rtl_tb(
       //rgtb << tab(1) << "logic [" << pixel_width - 1 << ":0] " << data_name << "_in" << ";" << endl;
 
     } else {
-      string en_name = 
+      string en_name =
         pg(out_rep, out_bundle) + "_valid";
-      string data_name = 
+      string data_name =
         pg(out_rep, out_bundle);
 
       rgtb << tab(1) << "logic " << en_name << ";" << endl;
@@ -6944,9 +6950,9 @@ void generate_vivado_rtl_tb(
       out_buf.lanes_in_bundle(out_bundle);
 
     if (prg.is_input(out_rep)) {
-      string en_name = 
+      string en_name =
         pg(out_rep, out_bundle) + "_en";
-      string data_name = 
+      string data_name =
         pg(out_rep, out_bundle);
 
       rgtb << tab(3) << data_name << "[0] = 0;" << endl;
@@ -6981,9 +6987,9 @@ void generate_vivado_rtl_tb(
       out_buf.lanes_in_bundle(out_bundle);
 
     if (prg.is_input(out_rep)) {
-      string en_name = 
+      string en_name =
         pg(out_rep, out_bundle) + "_en";
-      string data_name = 
+      string data_name =
         pg(out_rep, out_bundle);
       string data_in_name = data_name;
 
@@ -6992,9 +6998,9 @@ void generate_vivado_rtl_tb(
       rgtb << tab(2) << "end" << endl;
 
     } else {
-      string en_name = 
+      string en_name =
         pg(out_rep, out_bundle) + "_valid";
-      string data_name = 
+      string data_name =
         pg(out_rep, out_bundle);
 
       rgtb << tab(2) << "if (" << en_name << ") begin" << endl;
@@ -7004,7 +7010,7 @@ void generate_vivado_rtl_tb(
   }
 
   rgtb << tab(1) << "end" << endl;
-  
+
   rgtb << "endmodule";
   rgtb.close();
 
@@ -7064,7 +7070,7 @@ vector<int> analyze_memory_demands(prog& prg, UBuffer& buf, schedule_info& hwinf
       auto read_times = dot(inv(op_reads), sched);
       //auto simul_reads = dot(read_times, inv(read_times));
       // Set of simultaneous reads to different locations
-      auto simul_reads_umap = 
+      auto simul_reads_umap =
         diff(dot(read_times, inv(read_times)), read_id);
       cout << "Simultaneous reads..." << str(simul_reads_umap) << endl;
       if (empty(simul_reads_umap)) {

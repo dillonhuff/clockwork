@@ -1191,6 +1191,9 @@ void connect_op_control_wires(CodegenOptions& options, ModuleDef* def, op* op, s
   if (options.rtl_options.use_external_controllers || op->index_variables_needed_by_compute.size()) {
     Wireable* op_start_wire = controller->sel("valid");
     Wireable* op_start_loop_vars = controller->sel("d");
+    if (!options.rtl_options.use_external_controllers) {
+        def->connect(controller->sel("rst_n"), def->sel("self.reset"));
+    }
 
     cout << "Delaying read" << endl;
     Wireable* read_start_wire =
@@ -1771,7 +1774,7 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
   //connect_signal("reset", ub);
   //context->runPasses({"wireclocks-coreir"});
   //context->runPasses({"rungenerators", "wireclocks-coreir"});
-  context->runPasses({"rungenerators", "wireclocks-clk"});
+  context->runPasses({ "wireclocks-clk", "rungenerators"});
 
   return ub;
   //assert(false);
@@ -2696,6 +2699,23 @@ CoreIR::Module* affine_controller_def(CoreIR::Context* context, isl_set* dom, is
   return m;
 }
 
+CoreIR::Instance* build_counter(CoreIR::ModuleDef* def,
+        string name,
+        const int width,
+        const int min_val,
+        const int max_val,
+        const int inc_val) {
+    auto c = def->getContext();
+    CoreIR::Values args = {
+        {"width", CoreIR::Const::make(c, width)},
+        {"min", CoreIR::Const::make(c, min_val)},
+        {"max", CoreIR::Const::make(c, max_val)},
+        {"inc", CoreIR::Const::make(c, inc_val)},
+    };
+    auto ins = def->addInstance(name, "commonlib.counter", args);
+    return ins;
+}
+
 CoreIR::Module* affine_controller_primitive(CoreIR::Context* context, isl_set* dom, isl_aff* aff) {
   cout << tab(1) << "dom = " << str(dom) << endl;
 
@@ -2705,6 +2725,7 @@ CoreIR::Module* affine_controller_primitive(CoreIR::Context* context, isl_set* d
   int width = CONTROLPATH_WIDTH;
   vector<pair<string, CoreIR::Type*> >
     ub_field{{"clk", c->Named("coreir.clkIn")},
+      {"rst_n", c->BitIn()},
       {"valid", c->Bit()}};
   int dims = num_in_dims(aff);
   ub_field.push_back({"d", context->Bit()->Arr(16)->Arr(dims)});
@@ -2716,22 +2737,29 @@ CoreIR::Module* affine_controller_primitive(CoreIR::Context* context, isl_set* d
   auto aff_func = def->addInstance("affine_func", aff_mod);
 
 
-  auto cycle_time_reg = def->addInstance("cycle_time", "mantle.reg",
-      {{"width", CoreIR::Const::make(context, width)},
-      {"has_en", CoreIR::Const::make(context, false)}});
+  //auto cycle_time_reg = def->addInstance("cycle_time", "mantle.reg",
+  //    {{"width", CoreIR::Const::make(context, width)},
+  //    {"has_en", CoreIR::Const::make(context, false)}});
+
+  auto cycle_time_reg = build_counter(def, "cycle_time", 16, 0, 65535, 1);
+  def->connect(cycle_time_reg->sel("reset"), def->sel("self.rst_n"));
 
   auto one = def->addInstance(context->getUnique(),
       "coreir.const",
       {{"width", CoreIR::Const::make(c, width)}},
       {{"value", CoreIR::Const::make(c, BitVector(width, 1))}});
 
-  auto inc_time = def->addInstance("inc_time", "coreir.add", {{"width", CoreIR::Const::make(c, width)}});
-  def->connect(inc_time->sel("in0"), cycle_time_reg->sel("out"));
-  def->connect(inc_time->sel("in1"), one->sel("out"));
-  def->connect(inc_time->sel("out"), cycle_time_reg->sel("in"));
+  //auto inc_time = def->addInstance("inc_time", "coreir.add", {{"width", CoreIR::Const::make(c, width)}});
+  //def->connect(inc_time->sel("in0"), cycle_time_reg->sel("out"));
+  //def->connect(inc_time->sel("in1"), one->sel("out"));
+  //def->connect(inc_time->sel("out"), cycle_time_reg->sel("in"));
+  auto tinc = def->addInstance("true",
+    "corebit.const",
+    {{"value", CoreIR::Const::make(c, true)}});
 
   auto diff = def->addInstance("time_diff", "coreir.sub", {{"width", CoreIR::Const::make(c, width)}});
   def->connect(cycle_time_reg->sel("out"), diff->sel("in1"));
+  def->connect(cycle_time_reg->sel("en"), tinc->sel("out"));
   def->connect(aff_func->sel("out"), diff->sel("in0"));
 
   auto zero = def->addInstance(context->getUnique(),
@@ -2770,9 +2798,6 @@ CoreIR::Module* affine_controller_primitive(CoreIR::Context* context, isl_set* d
     domain_at_max.push_back(atmax->sel("out"));
   }
 
-  auto tinc = def->addInstance("true",
-      "corebit.const",
-      {{"value", CoreIR::Const::make(c, true)}});
   for (int d = 0; d < num_dims(dom); d++) {
     string df = "d_" + str(d);
     auto inc = def->addInstance(df + "_inc", "coreir.add", {{"width", CoreIR::Const::make(c, width)}});

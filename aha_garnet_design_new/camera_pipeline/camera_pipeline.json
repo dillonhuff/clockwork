@@ -206,6 +206,7 @@
       "affine_controller__U43":{
         "type":["Record",[
           ["clk",["Named","coreir.clkIn"]],
+          ["rst_n","BitIn"],
           ["valid","Bit"],
           ["d",["Array",3,["Array",16,"Bit"]]]
         ]],
@@ -228,9 +229,8 @@
             "genargs":{"width":["Int",16]}
           },
           "cycle_time":{
-            "genref":"mantle.reg",
-            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
-            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+            "genref":"commonlib.counter",
+            "genargs":{"inc":["Int",1], "max":["Int",65535], "min":["Int",0], "width":["Int",16]}
           },
           "d_0_am__U57":{
             "modref":"corebit.and"
@@ -334,10 +334,6 @@
             "genargs":{"has_clr":["Bool",false], "has_en":["Bool",true], "has_rst":["Bool",false], "width":["Int",16]},
             "modargs":{"init":[["BitVector",16],"16'h0000"]}
           },
-          "inc_time":{
-            "genref":"coreir.add",
-            "genargs":{"width":["Int",16]}
-          },
           "time_diff":{
             "genref":"coreir.sub",
             "genargs":{"width":["Int",16]}
@@ -351,7 +347,6 @@
           ["d_0_inc.in1","_U55.out"],
           ["d_1_inc.in1","_U55.out"],
           ["d_2_inc.in1","_U55.out"],
-          ["inc_time.in1","_U55.out"],
           ["cmp_time.in1","_U56.out"],
           ["d_0_reg.out","affine_func.d.0"],
           ["d_1_reg.out","affine_func.d.1"],
@@ -362,10 +357,9 @@
           ["d_1_reg.en","cmp_time.out"],
           ["d_2_reg.en","cmp_time.out"],
           ["self.valid","cmp_time.out"],
-          ["self.clk","cycle_time.clk"],
-          ["inc_time.out","cycle_time.in"],
-          ["inc_time.in0","cycle_time.out"],
+          ["true.out","cycle_time.en"],
           ["time_diff.in1","cycle_time.out"],
+          ["self.rst_n","cycle_time.reset"],
           ["true.out","d_0_am__U57.in0"],
           ["d_1_at_max.out","d_0_am__U57.in1"],
           ["d_0_am__U58.in0","d_0_am__U57.out"],
@@ -413,6 +407,7 @@
       "affine_controller__U66":{
         "type":["Record",[
           ["clk",["Named","coreir.clkIn"]],
+          ["rst_n","BitIn"],
           ["valid","Bit"],
           ["d",["Array",3,["Array",16,"Bit"]]]
         ]],
@@ -435,9 +430,8 @@
             "genargs":{"width":["Int",16]}
           },
           "cycle_time":{
-            "genref":"mantle.reg",
-            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
-            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+            "genref":"commonlib.counter",
+            "genargs":{"inc":["Int",1], "max":["Int",65535], "min":["Int",0], "width":["Int",16]}
           },
           "d_0_am__U80":{
             "modref":"corebit.and"
@@ -541,10 +535,6 @@
             "genargs":{"has_clr":["Bool",false], "has_en":["Bool",true], "has_rst":["Bool",false], "width":["Int",16]},
             "modargs":{"init":[["BitVector",16],"16'h0000"]}
           },
-          "inc_time":{
-            "genref":"coreir.add",
-            "genargs":{"width":["Int",16]}
-          },
           "time_diff":{
             "genref":"coreir.sub",
             "genargs":{"width":["Int",16]}
@@ -558,7 +548,6 @@
           ["d_0_inc.in1","_U78.out"],
           ["d_1_inc.in1","_U78.out"],
           ["d_2_inc.in1","_U78.out"],
-          ["inc_time.in1","_U78.out"],
           ["cmp_time.in1","_U79.out"],
           ["d_0_reg.out","affine_func.d.0"],
           ["d_1_reg.out","affine_func.d.1"],
@@ -569,10 +558,9 @@
           ["d_1_reg.en","cmp_time.out"],
           ["d_2_reg.en","cmp_time.out"],
           ["self.valid","cmp_time.out"],
-          ["self.clk","cycle_time.clk"],
-          ["inc_time.out","cycle_time.in"],
-          ["inc_time.in0","cycle_time.out"],
+          ["true.out","cycle_time.en"],
           ["time_diff.in1","cycle_time.out"],
+          ["self.rst_n","cycle_time.reset"],
           ["true.out","d_0_am__U80.in0"],
           ["d_1_at_max.out","d_0_am__U80.in1"],
           ["d_0_am__U81.in0","d_0_am__U80.out"],
@@ -620,6 +608,7 @@
       "affine_controller__U89":{
         "type":["Record",[
           ["clk",["Named","coreir.clkIn"]],
+          ["rst_n","BitIn"],
           ["valid","Bit"],
           ["d",["Array",3,["Array",16,"Bit"]]]
         ]],
@@ -642,9 +631,8 @@
             "genargs":{"width":["Int",16]}
           },
           "cycle_time":{
-            "genref":"mantle.reg",
-            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
-            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+            "genref":"commonlib.counter",
+            "genargs":{"inc":["Int",1], "max":["Int",65535], "min":["Int",0], "width":["Int",16]}
           },
           "d_0_am__U103":{
             "modref":"corebit.and"
@@ -748,10 +736,6 @@
             "genargs":{"has_clr":["Bool",false], "has_en":["Bool",true], "has_rst":["Bool",false], "width":["Int",16]},
             "modargs":{"init":[["BitVector",16],"16'h0000"]}
           },
-          "inc_time":{
-            "genref":"coreir.add",
-            "genargs":{"width":["Int",16]}
-          },
           "time_diff":{
             "genref":"coreir.sub",
             "genargs":{"width":["Int",16]}
@@ -765,7 +749,6 @@
           ["d_0_inc.in1","_U101.out"],
           ["d_1_inc.in1","_U101.out"],
           ["d_2_inc.in1","_U101.out"],
-          ["inc_time.in1","_U101.out"],
           ["cmp_time.in1","_U102.out"],
           ["d_0_reg.out","affine_func.d.0"],
           ["d_1_reg.out","affine_func.d.1"],
@@ -776,10 +759,9 @@
           ["d_1_reg.en","cmp_time.out"],
           ["d_2_reg.en","cmp_time.out"],
           ["self.valid","cmp_time.out"],
-          ["self.clk","cycle_time.clk"],
-          ["inc_time.out","cycle_time.in"],
-          ["inc_time.in0","cycle_time.out"],
+          ["true.out","cycle_time.en"],
           ["time_diff.in1","cycle_time.out"],
+          ["self.rst_n","cycle_time.reset"],
           ["true.out","d_0_am__U103.in0"],
           ["d_1_at_max.out","d_0_am__U103.in1"],
           ["d_0_am__U104.in0","d_0_am__U103.out"],
@@ -1090,6 +1072,7 @@
           ["self.clk","op_hcompute_demosaicked_1_stencil_1_port_controller.clk"],
           ["op_hcompute_demosaicked_1_stencil_1_read_start_control_vars.in","op_hcompute_demosaicked_1_stencil_1_port_controller.d"],
           ["op_hcompute_demosaicked_1_stencil_1_write_start_control_vars.in","op_hcompute_demosaicked_1_stencil_1_port_controller.d"],
+          ["self.reset","op_hcompute_demosaicked_1_stencil_1_port_controller.rst_n"],
           ["op_hcompute_demosaicked_1_stencil_1_read_start.in","op_hcompute_demosaicked_1_stencil_1_port_controller.valid"],
           ["op_hcompute_demosaicked_1_stencil_1_write_start.in","op_hcompute_demosaicked_1_stencil_1_port_controller.valid"],
           ["self.clk","op_hcompute_demosaicked_1_stencil_2.clk"],
@@ -1100,6 +1083,7 @@
           ["self.clk","op_hcompute_demosaicked_1_stencil_2_port_controller.clk"],
           ["op_hcompute_demosaicked_1_stencil_2_read_start_control_vars.in","op_hcompute_demosaicked_1_stencil_2_port_controller.d"],
           ["op_hcompute_demosaicked_1_stencil_2_write_start_control_vars.in","op_hcompute_demosaicked_1_stencil_2_port_controller.d"],
+          ["self.reset","op_hcompute_demosaicked_1_stencil_2_port_controller.rst_n"],
           ["op_hcompute_demosaicked_1_stencil_2_read_start.in","op_hcompute_demosaicked_1_stencil_2_port_controller.valid"],
           ["op_hcompute_demosaicked_1_stencil_2_write_start.in","op_hcompute_demosaicked_1_stencil_2_port_controller.valid"],
           ["op_hcompute_demosaicked_1_stencil_port_controller.valid","op_hcompute_demosaicked_1_stencil_exe_start.in"],
@@ -1107,6 +1091,7 @@
           ["self.clk","op_hcompute_demosaicked_1_stencil_port_controller.clk"],
           ["op_hcompute_demosaicked_1_stencil_read_start_control_vars.in","op_hcompute_demosaicked_1_stencil_port_controller.d"],
           ["op_hcompute_demosaicked_1_stencil_write_start_control_vars.in","op_hcompute_demosaicked_1_stencil_port_controller.d"],
+          ["self.reset","op_hcompute_demosaicked_1_stencil_port_controller.rst_n"],
           ["op_hcompute_demosaicked_1_stencil_read_start.in","op_hcompute_demosaicked_1_stencil_port_controller.valid"],
           ["op_hcompute_demosaicked_1_stencil_write_start.in","op_hcompute_demosaicked_1_stencil_port_controller.valid"],
           ["self.clk","op_hcompute_denoised_1_stencil.clk"],

@@ -11401,7 +11401,7 @@ int run_verilator_on(const std::string& top_module,
   //int verilator_build = cmd("verilator -Wall --cc " + sep_list(verilog_files, "", "", " ") + " --exe --build " + tb_file + " --top-module " + top_module + " -Wno-lint");
   int verilator_build = 0;
   if (extra_flag) {
-      verilator_build = cmd("verilator -Wall --cc " + sep_list(verilog_files, "", "", " ") + " --exe --build " + tb_file + " --top-module " + top_module + " -Wno-UNUSED -Wno-PINMISSING -Wno-DECLFILENAME -Wno-WIDTH -Wno-UNDRIVEN -Wno-CASEINCOMPLETE -Wno-MODDUP -Wno-UNOPTFLAT");
+      verilator_build = cmd("verilator -Wall --cc " + sep_list(verilog_files, "", "", " ") + " --exe --build " + tb_file + " --top-module " + top_module + " -Wno-UNUSED -Wno-PINMISSING -Wno-DECLFILENAME -Wno-WIDTH -Wno-UNDRIVEN -Wno-CASEINCOMPLETE -Wno-MODDUP -Wno-UNOPTFLAT -Wno-CMPCONST");
   } else {
       verilator_build = cmd("verilator -Wall --cc " + sep_list(verilog_files, "", "", " ") + " --exe --build " + tb_file + " --top-module " + top_module + " -Wno-UNUSED -Wno-WIDTH -Wno-PINMISSING -Wno-DECLFILENAME");
   }
@@ -15886,7 +15886,7 @@ void garnet_single_port_ram_schedule(schedule_info& sched, op* root, prog& prg) 
 
     //Hack for rom, Rom need to be conservative
     //because the affine controller output on cycle of flush is undeterministic
-    if (prg.name == "rom") {
+    if (prg.name == "rom" ) {
       adjust_schedule_forward(sched, prg, 1);
     } else {
       adjust_schedule_forward(sched, prg, 0);
