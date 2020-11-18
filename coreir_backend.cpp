@@ -2610,7 +2610,7 @@ void generate_coreir(CodegenOptions& options,
       cout << "Could not save ubuffer coreir" << endl;
       context->die();
     }
-    assert(false);
+    //assert(false);
   }
   prg_mod->print();
   //assert(false);

@@ -16748,10 +16748,10 @@ vector<prog> harris_variants() {
 vector<prog> isca_programs() {
   vector<prog> test_programs;
 
+  test_programs.push_back(unsharp());
   test_programs.push_back(pointwise());
   test_programs.push_back(down_sample());
   test_programs.push_back(harris());
-  //test_programs.push_back(unsharp());
   test_programs.push_back(mobilenet_unrolled());
   test_programs.push_back(resnet());
 
@@ -16807,6 +16807,7 @@ void cpy_app_to_folder(const std::string& app_type, const std::string& prg_name)
   cmd("mkdir -p ./coreir_apps/" + app_type + "/" + prg_name);
   //cmd("mv LakeWrapper.v ./coreir_apps/coreir_apps/" + app_type +"/" + prg_name + "/");
   cmd("mv " + prg_name + ".json ./coreir_apps/" + app_type + "/" + prg_name + "/");
+  cmd("mv " + prg_name + "_post_mapping.json ./coreir_apps/" + app_type + "/" + prg_name + "/");
   cmd("mv " + prg_name + ".v ./coreir_apps/" + app_type + "/" + prg_name + "/");
   cmd("mv " + prg_name + "_verilog_collateral.sv ./coreir_apps/" + app_type + "/" + prg_name + "/");
   cmd("mv " + prg_name + "_compute.v ./coreir_apps/" + app_type + "/" + prg_name + "/");
@@ -17131,10 +17132,10 @@ void fpga_asplos_tests() {
 }
 
 void cgra_flow_tests() {
-  //vector<prog> M1_test_programs = isca_programs();
-  vector<prog> M1_test_programs{pointwise()};
+  vector<prog> M1_test_programs = isca_programs();
+  //vector<prog> M1_test_programs{pointwise()};
   test_codegen(M1_test_programs, compile_for_CGRA_M1_mem);
-  assert(false);
+  //assert(false);
 
   //vector<prog> M3_test_programs{resnet()};
   vector<prog> M3_test_programs = isca_programs();
