@@ -22,6 +22,45 @@ bool schedule_bounds_fit_controller_bitwidth(const int bitwidth, schedule_info& 
 
 void blur_example();
 
+
+void break_up_multi_channel_outputs(prog& prg) {
+  std::set<string> to_erase;
+  for (auto out : prg.outs) {
+    std::set<op*> writers = find_writers(out, prg);
+    if (writers.size() > 1) {
+      for (auto wr : writers) {
+        string replacement = prg.un(out + "_clkwrk_");
+        wr->replace_writes_to(out, replacement);
+        prg.outs.insert(replacement);
+        prg.buffer_port_widths[replacement] = prg.buffer_port_width(out);
+      }
+      to_erase.insert(out);
+    }
+  }
+  for (auto e : to_erase) {
+    prg.outs.erase(e);
+  }
+}
+
+void break_up_multi_channel_inputs(prog& prg) {
+  std::set<string> to_erase;
+  for (auto in : prg.ins) {
+    std::set<op*> readers = find_readers(in, prg);
+    if (readers.size() > 1) {
+      for (auto rd : readers) {
+        string replacement = prg.un(in + "_clkwrk_");
+        rd->replace_reads_from(in, replacement);
+        prg.ins.insert(replacement);
+        prg.buffer_port_widths[replacement] = prg.buffer_port_width(in);
+      }
+      to_erase.insert(in);
+    }
+  }
+  for (auto e : to_erase) {
+    prg.ins.erase(e);
+  }
+}
+
 prog resnet_hc_multitile() {
   prog prg;
   prg.compute_unit_file = "resnet_compute.h";
@@ -13219,7 +13258,7 @@ void cpy_app_to_folder(const std::string& app_type, const std::string& prg_name)
 void test_single_port_mem(bool gen_config_only, string dir="aha_garnet_design") {
   vector<prog> test_apps;
   //test_apps.push_back(conv_3_3());
-  test_apps.push_back(resnet_layer_gen());
+  test_apps.push_back(resnet());
   //test_apps.push_back(cascade());
   // test_apps.push_back(harris());
   //test_apps.push_back(conv_1_2());
@@ -13237,8 +13276,9 @@ void test_single_port_mem(bool gen_config_only, string dir="aha_garnet_design") 
   for ( auto prg: test_apps) {
     cout << "====== Running CGRA Single Port test for " << prg.name << endl;
     // //prg.pretty_print();
-    // prg.sanity_check();
-
+    break_up_multi_channel_inputs(prg);
+    break_up_multi_channel_outputs(prg);
+    prg.sanity_check();
     dsa_writers(prg);
     // //prg.pretty_print();
     auto cpu = unoptimized_result(prg);
@@ -15046,7 +15086,7 @@ void lake_tests() {
   //lake_agg_sram_tb_config_test();
   //union_test();
   //assert(false);
-  test_single_port_mem(false);
+  test_single_port_mem(true);
   assert(false);
   lake_conv33_autovec_aha_test();
   //double_buffer_test();
