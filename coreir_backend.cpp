@@ -141,34 +141,20 @@ void instantiate_M3_verilog(CodegenOptions& options, const std::string& long_nam
 
     isl_aff* ibo = inner_bank_offset_aff(pt, adjusted_buf, impl);
     isl_aff* bank_selector = bank_offset_aff(pt, adjusted_buf, impl);
-    //cout << "Conv stencil bank: " << b << endl;
-    //cout << tab(1) << "sched: " << str(sched_aff) << endl;
-    //cout << tab(1) << "ibo  : " << str(ibo) << endl;
-    //cout << tab(1) << "sel  : " << str(bank_selector) << endl;
-    //cout << tab(1) << "bnk  : " << b << endl;
-    //cout << tab(1) << "dom  : " << str(dom) << endl;
 
     isl_map* sel_map = its(to_map(bank_selector), dom);
-    //cout << tab(1) << "sel map: " << str(sel_map) << endl;
     isl_map* ms = isl_map_fix_si(sel_map, isl_dim_out, 0, b);
-    //cout << tab(1) << "sel map after fixing bank # " << str(sel_map) << endl;
     isl_set* restricted_dom = domain(ms);
-    //cout << tab(1) << "restricted dom: " << str(restricted_dom) << endl;
 
     vector<int> lens = extents(restricted_dom);
     vector<int> min_vals = mins(restricted_dom);
     isl_point* lmin = lexminpt(restricted_dom);
-    //cout << "lexmin point: " << str(lmin) << endl;
-    //cout << "sched aff   : " << str(sched_aff) << endl;
     int offset = 0;
     for (int d = 0; d < num_dims(restricted_dom); d++) {
       int min = min_vals.at(d);
-      //cout << "Min: " << min << endl;
       offset += min*to_int(get_coeff(sched_aff, d));
     }
-    //cout << "Offset: " << offset << endl;
     isl_aff* normed_sched = add(sched_aff, offset);
-    //cout << "Normed sched: " << str(normed_sched) << endl;
     vector<string> dvs;
     vector<string> range_constraints;
     for (int d = 0; d < num_dims(restricted_dom); d++) {
@@ -185,15 +171,6 @@ void instantiate_M3_verilog(CodegenOptions& options, const std::string& long_nam
         "valid",
         normed_sched,
         normed_dom);
-        //sched_aff,
-        //restricted_dom);
-        //dom);
-
-    //if (buf.name == "conv_stencil") {
-      //assert(false);
-    //}
-
-
   }
 
   for(auto pt : impl.bank_readers[b]) {
@@ -207,36 +184,21 @@ void instantiate_M3_verilog(CodegenOptions& options, const std::string& long_nam
     isl_aff* sched_aff =
       get_aff(buf.schedule.at(pt));
 
-    //isl_aff* ibo = inner_bank_offset_aff(pt, buf, impl);
+    isl_aff* ibo = inner_bank_offset_aff(pt, buf, impl);
     isl_aff* bank_selector = bank_offset_aff(pt, buf, impl);
-    //cout << "Conv stencil bank: " << b << endl;
-    //cout << tab(1) << "sched: " << str(sched_aff) << endl;
-    //cout << tab(1) << "ibo  : " << str(ibo) << endl;
-    //cout << tab(1) << "sel  : " << str(bank_selector) << endl;
-    //cout << tab(1) << "bnk  : " << b << endl;
-    //cout << tab(1) << "dom  : " << str(dom) << endl;
 
     isl_map* sel_map = its(to_map(bank_selector), dom);
-    //cout << tab(1) << "sel map: " << str(sel_map) << endl;
     isl_map* ms = isl_map_fix_si(sel_map, isl_dim_out, 0, b);
-    //cout << tab(1) << "sel map after fixing bank # " << str(ms) << endl;
     isl_set* restricted_dom = domain(ms);
-    //cout << endl;
-    //cout << tab(1) << "restricted dom: " << str(restricted_dom) << endl;
     vector<int> lens = extents(restricted_dom);
     vector<int> min_vals = mins(restricted_dom);
     isl_point* lmin = lexminpt(restricted_dom);
-    //cout << "lexmin point: " << str(lmin) << endl;
-    //cout << "sched aff   : " << str(sched_aff) << endl;
     int offset = 0;
     for (int d = 0; d < num_dims(restricted_dom); d++) {
       int min = min_vals.at(d);
-      //cout << "Min: " << min << endl;
       offset += min*to_int(get_coeff(sched_aff, d));
     }
-    //cout << "Offset: " << offset << endl;
     isl_aff* normed_sched = add(sched_aff, offset);
-    //cout << "Normed sched: " << str(normed_sched) << endl;
     vector<string> dvs;
     vector<string> range_constraints;
     for (int d = 0; d < num_dims(restricted_dom); d++) {
@@ -253,9 +215,6 @@ void instantiate_M3_verilog(CodegenOptions& options, const std::string& long_nam
         "valid",
         normed_sched,
         normed_dom);
-        //sched_aff,
-        //restricted_dom);
-        //dom);
   }
 
   vector<string> port_decls = {};
@@ -279,10 +238,10 @@ void instantiate_M3_verilog(CodegenOptions& options, const std::string& long_nam
   for(auto pt : impl.bank_readers[b]) {
     int count = map_find({pt, b}, ubuffer_port_and_bank_to_bank_port);
     string bundle_name = buf.name + "_bank_rd_" + str(b) + "_" + str(count);
-    string port_rep = pt;
-    string op_rep_name = domain_name(to_map(buf.access_map.at(port_rep)));
-    op* rep = prg.find_op(op_rep_name);
-    isl_set* dom = to_set(domain(buf.access_map.at(port_rep)));
+    //string port_rep = pt;
+    //string op_rep_name = domain_name(to_map(buf.access_map.at(port_rep)));
+    //op* rep = prg.find_op(op_rep_name);
+    //isl_set* dom = to_set(domain(buf.access_map.at(port_rep)));
 
 
     auto adjusted_buf = write_latency_adjusted_buffer(options, prg, buf, hwinfo);
@@ -305,14 +264,14 @@ void instantiate_M3_verilog(CodegenOptions& options, const std::string& long_nam
     out << tab(1) << "assign " << bundle_name << "_enable_this_port = 1;" << endl;
     //out << tab(1) << "assign " << bundle_name << "_enable_this_port = " << bnk << " == " << b << ";" << endl;
   }
+
   for(auto pt : impl.bank_writers[b]) {
     int count = map_find({pt, b}, ubuffer_port_and_bank_to_bank_port);
     string bundle_name = buf.name + "_bank_" + str(b) + "_" + str(count);
-    string port_rep = pt;
-    string op_rep_name = domain_name(to_map(buf.access_map.at(port_rep)));
-    op* rep = prg.find_op(op_rep_name);
-    isl_set* dom = to_set(domain(buf.access_map.at(port_rep)));
-
+    //string port_rep = pt;
+    //string op_rep_name = domain_name(to_map(buf.access_map.at(port_rep)));
+    //op* rep = prg.find_op(op_rep_name);
+    //isl_set* dom = to_set(domain(buf.access_map.at(port_rep)));
 
     auto adjusted_buf = write_latency_adjusted_buffer(options, prg, buf, hwinfo);
 
@@ -332,7 +291,6 @@ void instantiate_M3_verilog(CodegenOptions& options, const std::string& long_nam
 
     out << tab(1) << "assign " << bundle_name << "_ibo = " << ibo_str << ";" << endl;
     out << tab(1) << "assign " << bundle_name << "_enable_this_port = 1;" << endl;
-    //out << tab(1) << "assign " << bundle_name << "_enable_this_port = " << bnk << " == " << b << ";" << endl;
   }
 
   *verilog_collateral_file << endl;
