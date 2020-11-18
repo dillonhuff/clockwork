@@ -2278,9 +2278,9 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
 
     //Wrappers for generate coreir
     //original memory generation for memory tile with enable and valid
-    void generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def);
+    void generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, schedule_info& info);
     //ubuffer coreir generation for tahoe memory tile
-    void generate_coreir_without_ctrl(CodegenOptions& options, CoreIR::ModuleDef* def);
+    void generate_coreir_without_ctrl(CodegenOptions& options, CoreIR::ModuleDef* def, schedule_info& info);
     Json generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> rewrite_buffer);
 
     void generate_stencil_valid_config(CodegenOptions& options, string bk_name);

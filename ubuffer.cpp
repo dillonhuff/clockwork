@@ -790,13 +790,11 @@ isl_union_set* retrive_domain_from_buffers(const map<string, UBuffer> &buffers) 
 #ifdef COREIR
 
 
-void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
-  schedule_info info;
-  generate_coreir(options, def, info);
+void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, schedule_info & info) {
+  generate_coreir(options, def, info, true);
 }
 
-void UBuffer::generate_coreir_without_ctrl(CodegenOptions& options, CoreIR::ModuleDef* def) {
-  schedule_info info;
+void UBuffer::generate_coreir_without_ctrl(CodegenOptions& options, CoreIR::ModuleDef* def, schedule_info & info) {
   generate_coreir(options, def, info, false);
 }
 
@@ -1631,15 +1629,26 @@ void UBuffer::generate_coreir(CodegenOptions& options,
         }
       }
     } else if (bk.maxdelay <= options.merge_threshold) {
-      //TODO: support dilation conv, register information is in maxdelay
-      //add register, wire valid from ubuffer
+      //Must be a chain of register
+      assert(inpts.size() == 1);
+      assert(outpts.size() == 1);
+
+      //TODO: Need to move this to shift register optimization
+      auto op_latency = info.compute_latency(pick(get_write_ops()));
+      int reg_delay_length = bk.maxdelay;
+      if(is_in_pt(pick(inpts)) && (op_latency != 0)) {
+        reg_delay_length -= op_latency;
+        cout << "\t reduce delay for OP : " << pick(get_read_ops()) << endl;
+      }
+      if (reg_delay_length == 0) {
+          def->connect(pt2wire.at(pick(inpts)), pt2wire.at(pick(outpts)));
+      }
+
       CoreIR::Wireable* last_out;
-      for (size_t i = 0; i < bk.maxdelay; i ++) {
+      for (size_t i = 0; i < reg_delay_length; i ++) {
         auto reg = def->addInstance("d_reg_"+context->getUnique(), "mantle.reg",
             {{"width", CoreIR::Const::make(context, port_widths)},
             {"has_en", CoreIR::Const::make(context, false)}});
-        assert(inpts.size() == 1);
-        assert(outpts.size() == 1);
         //do not wire input for the first pass
         //Wire the shift register chain
         if (i == 0) {
@@ -1651,7 +1660,7 @@ void UBuffer::generate_coreir(CodegenOptions& options,
         } else {
           def->connect(reg->sel("in"), last_out);
         }
-        if (i == bk.maxdelay - 1) {
+        if (i == reg_delay_length - 1) {
           def->connect(reg->sel("out"), pt2wire.at(pick(outpts)));
           wire2out[pick(outpts)] = reg->sel("out");
         } else {
@@ -2654,7 +2663,7 @@ bool build_delay_map(UBuffer& buf, map<string, vector<pair<string, int> > >& del
     if (false) {
       generate_synthesizable_functional_model(options, buf, def, hwinfo);
     } else {
-      buf.generate_coreir_without_ctrl(options, def);
+      buf.generate_coreir_without_ctrl(options, def, hwinfo);
     }
 
     ub->setDef(def);
