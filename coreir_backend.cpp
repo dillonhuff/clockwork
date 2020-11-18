@@ -1888,6 +1888,31 @@ Instance* generate_coreir_op_controller_verilog(CodegenOptions& options, ModuleD
   return controller;
 }
 
+Instance* generate_controller_coreir(CodegenOptions& options, ModuleDef* def, const std::string& name, isl_aff* aff, isl_set* dom) {
+  auto c = def->getContext();
+
+
+  //cout << "sched = " << str(saff) << endl;
+  cout << tab(1) << "dom = " << str(dom) << endl;
+
+  // TODO: Assert multi size == 1
+  //auto aff = isl_multi_aff_get_aff(aff, 0);
+  Instance* controller;
+  if (options.rtl_options.use_external_controllers) {
+    auto aff_c = affine_controller(c, dom, aff);
+    aff_c->print();
+    controller = def->addInstance(name, aff_c);
+  } else {
+    controller = affine_controller_use_lake_tile(
+            def, c, dom, aff,
+            name);
+    //generate verilog collateral
+    generate_lake_tile_verilog(options, controller);
+  }
+
+  return controller;
+}
+
 //Add CodegenOptions, if we do not use extra control,
 //we will use lake tile to generate affine controller
 Instance* generate_coreir_op_controller(CodegenOptions& options, ModuleDef* def, op* op, vector<isl_map*>& sched_maps, schedule_info& hwinfo) {
@@ -4375,8 +4400,8 @@ std::set<string> generate_M1_shift_registers(CodegenOptions& options, CoreIR::Mo
               isl_aff * identity = rdaff(buf.ctx,"{[root,t] -> [( root + t + 1 )]}");
               isl_aff * shifted_identity = rdaff(buf.ctx, "{[root,t] -> [(root+t + " + str(min(delay,maxd)  ) + ")]}");
               isl_set * domain = rdset(buf.ctx,"{[root,t] : root = 0 and 0 <= t <= 65355 }");
-              Instance* write_fsm = generate_controller(options, def, "sr_write_fsm" + c->getUnique(), identity , domain);
-              Instance* read_fsm = generate_controller(options, def, "sr_read_fsm" + c->getUnique(), shifted_identity , domain);
+              Instance* write_fsm = generate_controller_coreir(options, def, "sr_write_fsm" + c->getUnique(), identity , domain);
+              Instance* read_fsm = generate_controller_coreir(options, def, "sr_read_fsm" + c->getUnique(), shifted_identity , domain);
               //Instance* write_fsm = generate_controller_verilog(options, def, "sr_write_fsm" + c->getUnique(), identity , domain);
               //Instance* read_fsm = generate_controller_verilog(options, def, "sr_read_fsm" + c->getUnique(), shifted_identity , domain);
               def->connect(write_fsm->sel("d")->sel(1),sreg->sel("write_addr_0"));

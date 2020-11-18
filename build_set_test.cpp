@@ -16370,6 +16370,7 @@ void compile_cycle_accurate_hw(CodegenOptions& options, schedule_info& sched, pr
     sched);
   generate_verilator_tb(options, prg, hw_sched, buffers);
   generate_vivado_rtl_tb(options, prg, hw_sched, buffers);
+  generate_deepak_power_flow_rtl_tb(options, prg, hw_sched, buffers);
 
 #endif
 }
@@ -16811,6 +16812,7 @@ void cpy_app_to_folder(const std::string& app_type, const std::string& prg_name)
   cmd("mv cycle_accurate_regression_result_" + prg_name + ".csv ./coreir_apps/" + app_type + "/" + prg_name + "/");
   cmd("mv " + prg_name + "_verilog_tb.cpp ./coreir_apps/" + app_type + "/" + prg_name + "/");
   cmd("mv " + prg_name + "_vivado_verilog_tb.sv ./coreir_apps/" + app_type + "/" + prg_name + "/");
+  cmd("mv " + prg_name + "_deepak_power_flow_tb.sv ./coreir_apps/" + app_type + "/" + prg_name + "/");
 }
 
 template<typename CodegenFunction>
@@ -17129,6 +17131,10 @@ void fpga_asplos_tests() {
 }
 
 void cgra_flow_tests() {
+  vector<prog> bram_test_programs{pointwise(), gaussian(), harris(), resnet()};
+  test_codegen(bram_test_programs, compile_for_FPGA_BRAM_mem);
+  assert(false);
+
   vector<prog> M1_test_programs = isca_programs();
   //vector<prog> M1_test_programs{pointwise()};
   test_codegen(M1_test_programs, compile_for_CGRA_M1_mem);
@@ -17144,8 +17150,6 @@ void cgra_flow_tests() {
     all_cgra_programs();
   test_platonic_codegen(test_programs);
 
-  vector<prog> bram_test_programs{pointwise(), resnet()};
-  test_codegen(bram_test_programs, compile_for_FPGA_BRAM_mem);
   //assert(false);
 
   vector<prog> sram_test_programs{pointwise(), camera_pipeline(), resnet()};
