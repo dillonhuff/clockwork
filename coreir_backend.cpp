@@ -2790,11 +2790,11 @@ void generate_coreir(CodegenOptions& options,
       cout << tab(1) << inst.second->getModuleRef()->getName() << endl;
       counts[inst.second->getModuleRef()->getName()]++;
     }
-    cout << "Counts..." << endl;
+    cout << prg.name << " Post Mapping Resource Counts..." << endl;
     for (auto c : counts) {
       cout << tab(1) << c.first << " -> " << c.second << endl;
     }
-    assert(false);
+    //assert(false);
     if(!saveToFile(ns, prg.name + "_post_mapping.json", prg_mod)) {
       cout << "Could not save ubuffer coreir" << endl;
       context->die();
@@ -4375,8 +4375,10 @@ std::set<string> generate_M1_shift_registers(CodegenOptions& options, CoreIR::Mo
               isl_aff * identity = rdaff(buf.ctx,"{[root,t] -> [( root + t + 1 )]}");
               isl_aff * shifted_identity = rdaff(buf.ctx, "{[root,t] -> [(root+t + " + str(min(delay,maxd)  ) + ")]}");
               isl_set * domain = rdset(buf.ctx,"{[root,t] : root = 0 and 0 <= t <= 65355 }");
-              Instance* write_fsm = generate_controller_verilog(options, def, "sr_write_fsm" + c->getUnique(), identity , domain);
-              Instance* read_fsm = generate_controller_verilog(options, def, "sr_read_fsm" + c->getUnique(), shifted_identity , domain);
+              Instance* write_fsm = generate_controller(options, def, "sr_write_fsm" + c->getUnique(), identity , domain);
+              Instance* read_fsm = generate_controller(options, def, "sr_read_fsm" + c->getUnique(), shifted_identity , domain);
+              //Instance* write_fsm = generate_controller_verilog(options, def, "sr_write_fsm" + c->getUnique(), identity , domain);
+              //Instance* read_fsm = generate_controller_verilog(options, def, "sr_read_fsm" + c->getUnique(), shifted_identity , domain);
               def->connect(write_fsm->sel("d")->sel(1),sreg->sel("write_addr_0"));
               def->connect(read_fsm->sel("d")->sel(1),sreg->sel("read_addr_0"));
               //def->connect(write_fsm->sel("valid"),sreg->sel("wen_0"));

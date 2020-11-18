@@ -16748,8 +16748,8 @@ vector<prog> harris_variants() {
 vector<prog> isca_programs() {
   vector<prog> test_programs;
 
-  test_programs.push_back(up_sample());
   test_programs.push_back(resnet());
+  test_programs.push_back(up_sample());
   test_programs.push_back(mobilenet_unrolled());
   test_programs.push_back(gaussian());
   test_programs.push_back(unsharp());
@@ -17129,15 +17129,16 @@ void fpga_asplos_tests() {
 }
 
 void cgra_flow_tests() {
+  vector<prog> M1_test_programs = isca_programs();
+  //vector<prog> M1_test_programs{pointwise()};
+  test_codegen(M1_test_programs, compile_for_CGRA_M1_mem);
+  assert(false);
 
   vector<prog> M3_test_programs = isca_programs();
   //vector<prog> M3_test_programs{up_sample(), resnet()};
   test_codegen(M3_test_programs, compile_for_CGRA_M3_mem);
   assert(false);
   
-  vector<prog> M1_test_programs = isca_programs();
-  //vector<prog> M1_test_programs{pointwise()};
-  test_codegen(M1_test_programs, compile_for_CGRA_M1_mem);
 
   auto test_programs =
     all_cgra_programs();
