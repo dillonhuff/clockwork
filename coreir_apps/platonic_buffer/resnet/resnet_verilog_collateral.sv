@@ -1,5 +1,70 @@
+// { op_hcompute_hw_input_global_wrapper_stencil[root, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x, hw_input_global_wrapper_s0_z] -> [(1 + 240hw_input_global_wrapper_s0_y + 8hw_input_global_wrapper_s0_x + hw_input_global_wrapper_s0_z)] }
+module affine_controller__U0(input clk, input flush, input rst_n, output logic [15:0] d[3:0], output valid );
+  logic [15:0] counter[4:0];
+  logic on;
+  logic on2;
+  integer i;
+  integer dims = 4;
+  assign valid =(on && on2 && d[0]==0 && d[1]<=29 && d[2]<=29 && d[3]<=7);
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      d[0]<= 16'b1010101010101010;
+      counter[0] <= 16'b0;
+      d[1]<= 16'b1010101010101010;
+      counter[1] <= 16'b0;
+      d[2]<= 16'b1010101010101010;
+      counter[2] <= 16'b0;
+      d[3]<= 16'b1010101010101010;
+      counter[3] <= 16'b0;
+      on <=0;
+      on2 <= 0;
+    end else begin
+      if(counter[0] ==0) begin
+        on <=1;
+        on2 <= 1;
+        d[0]<= 16'b0;
+        counter[0] <= counter[0]+1;
+        d[1]<= 16'b0;
+        counter [1] <= 16'b0;
+        d[2]<= 16'b0;
+        counter [2] <= 16'b0;
+        d[3]<= 16'b0;
+        counter [3] <= 16'b0;
+      end else begin
+        counter[0] <= counter[0] + 1;
+        if(counter[1] == 239) begin
+          counter[1]<= 0;
+          counter[2]<= 0;
+          counter[3]<= 0;
+          d[2]<= 0;
+          d[3]<= 0;
+          d[1] <= d[1] + 1;
+          on2 <= 1;
+        end else if(counter[2] == 7) begin
+          counter[1] <= counter[1] + 1;
+          counter[2] <= 0;
+          counter[3] <= 0;
+          d[3]<= 0;
+          d[2] <= d[2] + 1;
+          on2 <= 1;
+        end else if(counter[3] == 0) begin
+          counter[1] <= counter[1] + 1;
+          counter[2] <= counter[2] + 1;
+          counter[3] <= 0;
+          d[3] <= d[3] + 1;
+          on2 <= 1;
+        end else begin
+          counter[1] <= counter[1] + 1;
+          counter[2] <= counter[2] + 1;
+          counter[3] <= counter[3] + 1;
+          on2 <= 0;
+        end
+      end
+    end
+  end
+endmodule
 // { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(2 + 72hw_kernel_global_wrapper_s0_y + 24hw_kernel_global_wrapper_s0_x + 8hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
-module affine_controller__U0(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
+module affine_controller__U7(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
@@ -75,71 +140,6 @@ module affine_controller__U0(input clk, input flush, input rst_n, output logic [
           counter[2] <= counter[2] + 1;
           counter[3] <= counter[3] + 1;
           counter[4] <= counter[4] + 1;
-          on2 <= 0;
-        end
-      end
-    end
-  end
-endmodule
-// { op_hcompute_hw_input_global_wrapper_stencil[root, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x, hw_input_global_wrapper_s0_z] -> [(1 + 240hw_input_global_wrapper_s0_y + 8hw_input_global_wrapper_s0_x + hw_input_global_wrapper_s0_z)] }
-module affine_controller__U7(input clk, input flush, input rst_n, output logic [15:0] d[3:0], output valid );
-  logic [15:0] counter[4:0];
-  logic on;
-  logic on2;
-  integer i;
-  integer dims = 4;
-  assign valid =(on && on2 && d[0]==0 && d[1]<=29 && d[2]<=29 && d[3]<=7);
-  always @(posedge clk or negedge rst_n) begin
-    if (~rst_n) begin
-      d[0]<= 16'b1010101010101010;
-      counter[0] <= 16'b0;
-      d[1]<= 16'b1010101010101010;
-      counter[1] <= 16'b0;
-      d[2]<= 16'b1010101010101010;
-      counter[2] <= 16'b0;
-      d[3]<= 16'b1010101010101010;
-      counter[3] <= 16'b0;
-      on <=0;
-      on2 <= 0;
-    end else begin
-      if(counter[0] ==0) begin
-        on <=1;
-        on2 <= 1;
-        d[0]<= 16'b0;
-        counter[0] <= counter[0]+1;
-        d[1]<= 16'b0;
-        counter [1] <= 16'b0;
-        d[2]<= 16'b0;
-        counter [2] <= 16'b0;
-        d[3]<= 16'b0;
-        counter [3] <= 16'b0;
-      end else begin
-        counter[0] <= counter[0] + 1;
-        if(counter[1] == 239) begin
-          counter[1]<= 0;
-          counter[2]<= 0;
-          counter[3]<= 0;
-          d[2]<= 0;
-          d[3]<= 0;
-          d[1] <= d[1] + 1;
-          on2 <= 1;
-        end else if(counter[2] == 7) begin
-          counter[1] <= counter[1] + 1;
-          counter[2] <= 0;
-          counter[3] <= 0;
-          d[3]<= 0;
-          d[2] <= d[2] + 1;
-          on2 <= 1;
-        end else if(counter[3] == 0) begin
-          counter[1] <= counter[1] + 1;
-          counter[2] <= counter[2] + 1;
-          counter[3] <= 0;
-          d[3] <= d[3] + 1;
-          on2 <= 1;
-        end else begin
-          counter[1] <= counter[1] + 1;
-          counter[2] <= counter[2] + 1;
-          counter[3] <= counter[3] + 1;
           on2 <= 0;
         end
       end
