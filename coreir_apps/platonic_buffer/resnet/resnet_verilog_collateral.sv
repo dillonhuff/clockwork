@@ -434,7 +434,7 @@ module conv_stencil_bank_rd_0_1_ctrl(input clk, input flush, input rst_n, output
   logic on2;
   integer i;
   integer dims = 4;
-  assign valid =(on && on2 && d[0]==0 && d[1]<=2 && d[2]<=27 && d[3]<=27);
+  assign valid =(on && on2 && d[0]==0 && d[1]<=0 && d[2]<=27 && d[3]<=27);
   always @(posedge clk or negedge rst_n) begin
     if (~rst_n) begin
       d[0]<= 16'b1010101010101010;
@@ -757,7 +757,7 @@ module conv_stencil_bank_rd_1_1_ctrl(input clk, input flush, input rst_n, output
   logic on2;
   integer i;
   integer dims = 4;
-  assign valid =(on && on2 && d[0]==0 && d[1]<=2 && d[2]<=27 && d[3]<=27);
+  assign valid =(on && on2 && d[0]==0 && d[1]<=1 && d[2]<=27 && d[3]<=27);
   always @(posedge clk or negedge rst_n) begin
     if (~rst_n) begin
       d[0]<= 16'b1010101010101010;
