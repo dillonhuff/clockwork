@@ -337,6 +337,13 @@ void instantiate_M3_verilog(CodegenOptions& options, const std::string& long_nam
     out_port_controllers[count] = {ibo, normed_sched, normed_dom};
   }
 
+  instantiate_M3_verilog(
+      long_name,
+      buf,
+      b,
+      in_port_controllers,
+      out_port_controllers);
+
 }
 
 Instance* generate_controller_verilog(CodegenOptions& options, ModuleDef* def, const std::string& name, isl_aff* aff, isl_set* dom) {
