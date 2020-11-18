@@ -678,26 +678,32 @@ build_ubuffer_to_bank_binding(ubuffer_impl& impl) {
   return ubuffer_port_and_bank_to_bank_port;
 }
 
+json controller_metadata(affine_controller_ctrl& ctrl) {
+    json port_config;
+    vector<int> dom_lens = extents(ctrl.dom);
+    for (int d = 0; d < (int) dom_lens.size(); d++) {
+      port_config["extent_" + str(d)] = dom_lens.at(d);
+      int ii = to_int(get_coeff(ctrl.sched, d));
+      port_config["ii_" + str(d)] = ii;
+
+      int stride = to_int(get_coeff(ctrl.access_function, d));
+      port_config["stride_" + str(d)] = ii;
+    }
+    port_config["sched_offset"] = to_int(const_coeff(ctrl.sched));
+    port_config["stride_offset"] = to_int(const_coeff(ctrl.access_function));
+    return port_config;
+
+}
+
 void attach_M3_bank_config_metadata(Instance* currbank, M3_config& bank_config) {
   json tile_config;
   for (auto pt : bank_config.in_port_controllers) {
-    json port_config;
-    vector<int> dom_lens = extents(pt.second.dom);
-    for (int d = 0; d < (int) dom_lens.size(); d++) {
-      port_config["extent_" + str(d)] = dom_lens.at(d);
-      int ii = to_int(get_coeff(pt.second.sched, d));
-      port_config["ii_" + str(d)] = ii;
-
-      int stride = to_int(get_coeff(pt.second.access_function, d));
-      port_config["stride_" + str(d)] = ii;
-    }
-    port_config["sched_offset"] = to_int(const_coeff(pt.second.sched));
-    port_config["stride_offset"] = to_int(const_coeff(pt.second.access_function));
-
+    json port_config = controller_metadata(pt.second);
     tile_config["in_port_" + str(pt.first)] = port_config;
   }
   for (auto pt : bank_config.out_port_controllers) {
-    //tile_config[pt.second] = 1;
+    json port_config = controller_metadata(pt.second);
+    tile_config["out_port_" + str(pt.first)] = port_config;
   }
   currbank->getMetaData()["config"] = tile_config;
 }
