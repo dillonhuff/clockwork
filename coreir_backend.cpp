@@ -4319,6 +4319,26 @@ dgraph build_shift_register_graph(CodegenOptions& options, CoreIR::ModuleDef* de
     dg.add_edge(pt.second.first, pt.first, pt.second.second);
   }
 
+  for (auto pt0 : shift_registered_outputs) {
+    for (auto pt1 : shift_registered_outputs) {
+      string dst0 = pt0.first;
+      string dst1 = pt1.first;
+
+      string src0 = pt0.second.first;
+      string src1 = pt1.second.first;
+
+      int dst0_delay = pt0.second.second;
+      int dst1_delay = pt1.second.second;
+
+      if (src0 == src1) {
+        if (dst0 != dst1 && dst0_delay < dst1_delay) {
+          dg.add_edge(dst0, dst1, dst1_delay - dst0_delay);
+        }
+
+      }
+    }
+  }
+
   cout << "DG: ..." << endl;
   cout << dg << endl;
   return dg;
