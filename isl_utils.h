@@ -113,6 +113,7 @@ int dim(isl_space* const s);
 
 bool equal(isl_space* const l, isl_space* const r);
 bool equal(isl_set* const l, isl_set* const r);
+bool equal(isl_point* const l, isl_point* const r);
 bool equal(isl_map* const l, isl_map* const r);
 bool equal(isl_aff* const l, isl_aff* const r);
 bool equal(uset* const l, uset* const r);
@@ -174,6 +175,7 @@ map<string, isl_map*> get_maps_in_map(isl_union_map* m);
 vector<isl_set*> get_sets(isl_union_set* m);
 map<string, isl_set*> get_sets_in_map(isl_union_set* m);
 vector<isl_basic_map*> get_basic_maps(isl_map* m);
+isl_basic_map* get_basic_map(isl_map* m);
 vector<isl_basic_set*> get_basic_sets(isl_set* m);
 isl_basic_set* to_bset(isl_set* m);
 

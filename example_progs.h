@@ -20,6 +20,7 @@ prog resnet(); //reduce
 //prog mini_conv_halide_fixed();
 prog camera_pipeline(); //stencil
 prog up_sample();
+prog up_sample_exp();
 prog down_sample();
 prog conv_layer(); //reduce
 prog camera_pipeline_dse_1();

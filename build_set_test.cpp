@@ -13279,6 +13279,8 @@ void lake_conv33_recipe_test() {
 
 void dsa_writers(prog& prg);
 void dsa_readers(prog& prg);
+void break_up_multi_channel_outputs(prog& prg);
+void break_up_multi_channel_inputs(prog& prg);
 
 void compile_for_garnet_single_port_mem(prog & prg, string dir, bool gen_smt_stream, bool gen_config_only,bool multi_accessor );
 void cpy_app_to_folder(const std::string& app_type, const std::string& prg_name);
@@ -13292,16 +13294,17 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   test_apps.push_back(resnet());
   test_apps.push_back(rom());
   test_apps.push_back(conv_1_2());
+  //test_apps.push_back(mobilenet_unrolled());
+  //test_apps.push_back(unsharp());
   test_apps.push_back(camera_pipeline());
+  test_apps.push_back(up_sample());
 
   //test_apps.push_back(conv_3_3_wide());
   //TODO: break in the middle of vectorization
   //test_apps.push_back(down_sample());
-  //test_apps.push_back(up_sample());
 
   //test_apps.push_back(camera_pipeline());
   //test_apps.push_back(unsharp());
-  //test_apps.push_back(mobilenet_unrolled());
   //TODO:has issue  with multiple input
   //test_apps.push_back(demosaic_complex());
 
@@ -13311,6 +13314,8 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
     prg.pretty_print();
     prg.sanity_check();
 
+    break_up_multi_channel_inputs(prg);
+    break_up_multi_channel_outputs(prg);
     dsa_writers(prg);
     prg.pretty_print();
     auto cpu = unoptimized_result(prg);
@@ -15474,23 +15479,47 @@ void relax_delays_after_vectorization(schedule_info& sched, prog& prg) {
         d ++;
 
     sched.op_offset_within_parent[lp] = 10000 * d;
-    //int old_delay = map_find(lp, sched.op_offset_within_parent);
-    //int try_delay = 1;
-    //bool found_smaller_delay = false;
-    //while (try_delay < old_delay) {
-    //  sched.op_offset_within_parent[lp] = try_delay;
-    //  if (no_violated_cycle_accurate_dependencies(sched, prg)) {
-    //    found_smaller_delay = true;
-    //    break;
-    //  }
-    //  try_delay = max(try_delay * 2, try_delay + 1000);
-    //  //try_delay = min(try_delay * 2, try_delay + 1000);
-    //  //try_delay *= 2;
-    //}
+  }
+}
 
-    //if (!found_smaller_delay) {
-    //  sched.op_offset_within_parent[lp] = old_delay;
-    //}
+void relax_delays_rate_matched(schedule_info& sched, prog& prg) {
+  cout << "Adjusting delays of " << prg.name << endl;
+  int d = 0;
+  auto start_times = op_start_times(sched, prg);
+  auto domains = prg.domains();
+  for (auto name : topologically_sort_kernels(prg)) {
+    auto lp = prg.find_loop(name);
+    auto cons_op_vec = lp->all_ops();
+    if (cons_op_vec.size() > 1)
+        continue;
+    cout << "Adjusting delay of " << lp->name << endl;
+    for(auto prod: get_producers(name, prg)){
+        auto prod_loop = prg.find_loop(prod);
+        auto prod_op_vec = prod_loop->all_ops();
+        //Assume we only have one op under loop nest
+        assert(prod_op_vec.size() == 1);
+        auto prod_op_name = pick(prod_op_vec)->name;
+        auto cons_op_name = pick(cons_op_vec)->name;
+        auto prod_dom = domains.at(pick(prod_op_vec));
+        auto cons_dom = domains.at(pick(cons_op_vec));
+        auto prod_sched = to_map(start_times.at(pick(prod_op_vec)));
+        auto cons_sched = to_map(start_times.at(pick(cons_op_vec)));
+
+        cout << tab(2) << "Producers: " << prod_op_name << endl;
+        cout << tab(2) << "sched: " << str(prod_sched) << endl;
+
+        cout << tab(2) << "Consumers: " << cons_op_name << endl;
+        cout << tab(2) << "sched: " << str(cons_sched) << endl;
+
+        auto equal_start_time =
+        equal(lexminpt(range(its(prod_sched, prod_dom))),
+                lexminpt(range(its(cons_sched, cons_dom))));
+        bool equal_rng = equal(range(prod_sched), range(cons_sched));
+        cout << tab(4) << "Start cycle Is equal: " << equal_start_time << endl;
+        cout << tab(4) << "domain is same: " << equal_rng << endl;
+        if (equal_start_time && !equal_rng)
+            assert(false);
+    }
   }
 }
 
@@ -15767,40 +15796,12 @@ vector<int> garnet_fuse_ii_level(prog& prg) {
 }
 
 void sanity_check_hw_schedule(schedule_info& sched, prog& prg);
+void pad_to_single_depth(schedule_info& sched, op* root, prog& prg);
 void garnet_single_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
   if (is_rate_matchable(prg)) {
     prg.pretty_print();
-    bool single_depth = all_loop_nests_same_depth(prg);
-    int max_depth = max_loop_depth(prg);
 
-
-    if (!single_depth) {
-      map<string, vector<int> > pad_indexes;
-      for (auto k : get_kernels(prg)) {
-        auto lp = prg.find_loop(k);
-        for (auto rep : lp->descendant_ops()) {
-          int depth_m = loop_depth(prg.find_loop(k));
-          vector<int> inds;
-          inds.push_back(0);
-          for (int p = 0; p < max_depth - depth_m; p++) {
-            inds.push_back(-1);
-          }
-          for (int d = 1; d < depth_m + 1; d++) {
-            inds.push_back(d);
-          }
-
-          pad_indexes[rep->name] = inds;
-        }
-      }
-      cout << "Pad inds..." << endl;
-      for (auto p : pad_indexes) {
-        cout << tab(1) << p.first << ": " << comma_list(p.second) << endl;
-      }
-      insert_pad_loops(prg, pad_indexes);
-    }
-    prg.pretty_print();
-    single_depth = all_loop_nests_same_depth(prg);
-    assert(single_depth);
+    pad_to_single_depth(sched, root, prg);
 
     prg.pretty_print();
     cout << prg.name << " is a stencil pipeline" << endl;
@@ -15891,6 +15892,9 @@ void garnet_single_port_ram_schedule(schedule_info& sched, op* root, prog& prg) 
     } else {
       adjust_schedule_forward(sched, prg, 0);
     }
+    relax_delays_rate_matched(sched, prg);
+    auto op_sched = op_start_times_map(sched, prg);
+    cout << "Final schedule after relax: " << str(op_sched)  << endl;
     return;
   }
 
@@ -16211,7 +16215,7 @@ CodegenOptions garnet_codegen_single_port_with_addrgen_options(prog& prg, string
   CodegenOptions options;
   options.rtl_options.target_tile = TARGET_TILE_WIDE_FETCH_WITH_ADDRGEN;
   options.conditional_merge = true;
-  options.merge_threshold = 4;
+  options.merge_threshold = 10;
   options.iis = {1};
   options.rtl_options.max_inpt = 2;
   options.rtl_options.max_outpt = 2;

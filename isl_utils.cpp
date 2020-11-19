@@ -178,6 +178,10 @@ bool equal(isl_space* const l, isl_space* const r) {
   return isl_space_is_equal(l, r);
 }
 
+bool equal(isl_point* const l, isl_point* const r) {
+  return isl_set_is_equal(to_set(l), to_set(r));
+}
+
 bool equal(isl_set* const l, isl_set* const r) {
   return isl_set_is_equal(l, r);
 }
@@ -435,6 +439,16 @@ vector<isl_basic_map*> get_basic_maps(isl_map* m) {
   isl_map_foreach_basic_map(m, get_basic_map, &map_vec);
 
   return map_vec;
+}
+
+isl_basic_map* get_basic_map(isl_map* m) {
+  assert(m != nullptr);
+
+  vector<isl_basic_map*> map_vec;
+  isl_map_foreach_basic_map(m, get_basic_map, &map_vec);
+  assert(map_vec.size() == 1);
+
+  return pick(map_vec);
 }
 
 isl_stat get_point(isl_point* m, void* user) {
