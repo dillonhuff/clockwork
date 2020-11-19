@@ -13426,9 +13426,9 @@ void lake_identity_stream_autovec_test() {
   int app_target_II = 1;
 
   //corresponding to the aggI/O, sramI/O, TBI/O latency
-  map<pair<string, string>, int> latency({{{"in2buf", "in2buf_vec"}, 1},
-          {{"in2buf_vec", "buf2out_vec"}, 2},
-          {{"buf2out_vec", "buf2out"}, 1}});
+  map<pair<string, string>, int> latency({{{"in2buf", "in2buf_agg2sram"}, 1},
+          {{"in2buf_agg2sram", "buf2out_sram2tb"}, 2},
+          {{"buf2out_sram2tb", "buf2out"}, 1}});
 
   auto in2buf = lake_agg.add_nest("a1", 0, 8, "a0", 0, 8)->add_op("in2buf");
   in2buf->add_load("in", "a1, a0");
@@ -13453,6 +13453,12 @@ void lake_identity_stream_autovec_test() {
   //check_lake_config(op_vec, "./lake_controllers/identity_stream/", "./lake_gold/identity_stream/");
   //cmd("mkdir -p ./lake_stream/identity_stream/");
   //emit_lake_stream(buffers_opt, hsh, "./lake_stream/identity_stream/");
+  CodegenOptions options;
+  UBuffer tmp;
+  options.mem_tile.multi_sram_accessor = true;
+  options.dir = "./lake_controllers/";
+  auto config = tmp.generate_ubuf_args(options, buffers_opt);
+  emit_lake_config_collateral(options, "buf", config);
 
 
 }
@@ -13489,8 +13495,6 @@ void lake_dual_port_test() {
   //check_lake_config(op_vec, "./lake_controllers/identity_stream/", "./lake_gold/identity_stream/");
   //cmd("mkdir -p ./lake_stream/identity_stream/");
   //emit_lake_stream(buffers_opt, hsh, "./lake_stream/identity_stream/");
-
-
 }
 
 void lake_identity_stream_SMT_test(int x, int y, string suffix) {
@@ -15055,12 +15059,13 @@ void lake_tests() {
   //lake_agg_sram_tb_config_test();
   //union_test();
   //assert(false);
+  lake_identity_stream_autovec_test();
+  assert(false);
   test_single_port_mem(false);
   assert(false);
   lake_conv33_autovec_aha_test();
   //double_buffer_test();
   //playground();
-  //lake_identity_stream_autovec_test();
   lake_gaussian_autovec_test();
   //lake_dual_port_test();
   lake_cascade_autovec_test();
