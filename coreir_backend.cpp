@@ -761,93 +761,60 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
     map<pair<int, int>, Wireable*> bank_and_port_output_data_valid;
     map<pair<int, int>, Wireable*> bank_and_port_input_data_valid;
 
-    //map<pair<int, int>, Wireable*> bank_and_port_to_enable;
     map<pair<int, int>, Wireable*> bank_and_port_to_agen;
 
     map<pair<int, int>, Wireable*> bank_and_port_to_read_enable;
     map<pair<int, int>, Wireable*> bank_and_port_to_read_agen;
 
-    for (int b = 0; b < num_banks; b++) {
-      for(auto pt : bank_writers[b]) {
-        //string bundle_name = "bank_" + str(b) + "_" + pt;
-        //string port_rep = pt;
-        //string op_rep_name = domain_name(to_map(buf.access_map.at(port_rep)));
-        //op* rep = prg.find_op(op_rep_name);
-        //isl_set* dom = to_set(domain(buf.access_map.at(port_rep)));
+    //for (int b = 0; b < num_banks; b++) {
+      //for(auto pt : bank_writers[b]) {
 
-        //int count = map_find({pt, b}, ubuffer_port_and_bank_to_bank_port);
-        //auto adjusted_buf = write_latency_adjusted_buffer(options, prg, buf, hwinfo);
-        //isl_aff* sched_aff =
-          //get_aff(adjusted_buf.schedule.at(pt));
-        //auto controller = generate_controller_verilog(options, def, bundle_name + "_ctrl", sched_aff, dom);
-        //auto en = controller->sel("valid");
-        //auto ctrl = controller->sel("d");
+          ////enable =
+            ////andList(def,
+                ////{
+                ////en,
+                ////bank_is_selected});
+        ////} else {
+          ////enable = en;
+        ////}
+        ////assert(enable != nullptr);
+        ////bank_and_port_to_enable[{b, count}] = enable;
+      //}
 
-        //auto agen = build_inner_bank_offset(pt, adjusted_buf, impl, def);
-        //def->connect(agen->sel("d"),
-            //ctrl);
+      //for(auto pt : bank_readers[b]) {
+        ////string bundle_name = "bank_" + str(b) + "_" + pt;
+        ////string port_rep = pt;
+        ////string op_rep_name = domain_name(to_map(buf.access_map.at(port_rep)));
+        ////op* rep = prg.find_op(op_rep_name);
+        ////isl_set* dom = to_set(domain(buf.access_map.at(port_rep)));
 
-        //auto bank_sel = build_bank_selector(pt, adjusted_buf, impl, def);
-        //def->connect(bank_sel->sel("d"),
-            //ctrl);
+        ////int count = ubuffer_port_and_bank_to_bank_port[{pt, b}];
 
-        //auto ubuffer_port_bank_selector  = delay_by(def, bank_sel->sel("out"), 0);
-          //bank_and_port_input_addrgen[{b, count}] = agen;
-          //bank_and_port_input_data_valid[{b, count}] =
-            //eqConst(def, ubuffer_port_bank_selector, b);
-        //bank_and_port_to_agen[{b, count}] = agen->sel("out");
+        ////isl_aff* sched_aff =
+          ////get_aff(buf.schedule.at(pt));
+        ////auto controller = generate_controller_verilog(options, def, bundle_name + "_ctrl", sched_aff, dom);
+        ////auto en = controller->sel("valid");
+        ////auto ctrl = controller->sel("d");
 
-        //Wireable* enable = nullptr;
-        //if (inpt_to_bank[pt].size() > 1) {
-          //Wireable* bank_is_selected =
-            //bank_and_port_input_data_valid[{b, count}];
+        ////auto agen = build_inner_bank_offset(pt, buf, impl, def);
+        ////def->connect(agen->sel("d"),
+            ////ctrl);
 
-          //enable =
-            //andList(def,
-                //{
-                //en,
-                //bank_is_selected});
-        //} else {
-          //enable = en;
-        //}
-        //assert(enable != nullptr);
-        //bank_and_port_to_enable[{b, count}] = enable;
-      }
+        ////auto bank_sel = build_bank_selector(pt, buf, impl, def);
+        ////def->connect(bank_sel->sel("d"),
+            ////ctrl);
 
-      for(auto pt : bank_readers[b]) {
-        //string bundle_name = "bank_" + str(b) + "_" + pt;
-        //string port_rep = pt;
-        //string op_rep_name = domain_name(to_map(buf.access_map.at(port_rep)));
-        //op* rep = prg.find_op(op_rep_name);
-        //isl_set* dom = to_set(domain(buf.access_map.at(port_rep)));
+        ////const int READ_LATENCY = 1;
+        ////auto ubuffer_port_bank_selector = delay_by(def, bank_sel->sel("out"), READ_LATENCY);
+          ////bank_and_port_output_addrgen[{b, count}] = agen;
+          ////bank_and_port_output_data_valid[{b, count}] =
+            ////eqConst(def, ubuffer_port_bank_selector, b);
 
-        //int count = ubuffer_port_and_bank_to_bank_port[{pt, b}];
-
-        //isl_aff* sched_aff =
-          //get_aff(buf.schedule.at(pt));
-        //auto controller = generate_controller_verilog(options, def, bundle_name + "_ctrl", sched_aff, dom);
-        //auto en = controller->sel("valid");
-        //auto ctrl = controller->sel("d");
-
-        //auto agen = build_inner_bank_offset(pt, buf, impl, def);
-        //def->connect(agen->sel("d"),
-            //ctrl);
-
-        //auto bank_sel = build_bank_selector(pt, buf, impl, def);
-        //def->connect(bank_sel->sel("d"),
-            //ctrl);
-
-        //const int READ_LATENCY = 1;
-        //auto ubuffer_port_bank_selector = delay_by(def, bank_sel->sel("out"), READ_LATENCY);
-          //bank_and_port_output_addrgen[{b, count}] = agen;
-          //bank_and_port_output_data_valid[{b, count}] =
-            //eqConst(def, ubuffer_port_bank_selector, b);
-
-        //bank_and_port_to_read_enable[{b, count}] = en;
-        //bank_and_port_to_read_agen[{b, count}] =
-          //agen->sel("out");
-      }
-    }
+        ////bank_and_port_to_read_enable[{b, count}] = en;
+        ////bank_and_port_to_read_agen[{b, count}] =
+          ////agen->sel("out");
+      //}
+    //}
 
 
     Select* one = def->addInstance("one_cst", "corebit.const", {{"value", COREMK(c, true)}})->sel("out");
@@ -908,6 +875,8 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
 
       assert(conds.size() == values.size());
       Wireable* out = def->sel(pt + "_net.in");
+
+      cout << "Making onehot for " << pt << " on " << buf.name << endl;
       def->connect(out, mkOneHot(def, conds, values));
     }
   }

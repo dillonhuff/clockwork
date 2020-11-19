@@ -16738,9 +16738,9 @@ vector<prog> harris_variants() {
   //test_programs.push_back(harris_sch4_1pp3c());
 
   // Works
-  test_programs.push_back(harris_sch5_1ppc());
-  test_programs.push_back(harris_sch6_2ppc());
-  test_programs.push_back(harris_sch7_bigtile());
+  //test_programs.push_back(harris_sch5_1ppc());
+  //test_programs.push_back(harris_sch6_2ppc());
+  //test_programs.push_back(harris_sch7_bigtile());
   test_programs.push_back(harris_sch8_endcim());
 
   return test_programs;
@@ -17131,12 +17131,20 @@ void fpga_asplos_tests() {
 }
 
 void cgra_flow_tests() {
-  vector<prog> M3_test_programs = isca_programs();
+  //vector<prog> M3_test_programs = isca_programs();
+  vector<prog> M3_test_programs = harris_variants();
   //vector<prog> M3_test_programs{up_sample(), resnet()};
   //vector<prog> M3_test_programs{resnet()};
   //vector<prog> M3_test_programs{unsharp()};
   test_codegen(M3_test_programs, compile_for_CGRA_M3_mem);
-  //assert(false);
+  assert(false);
+  
+  //auto test_programs =
+    //all_cgra_programs();
+  vector<prog> test_programs{mobilenet_unrolled()};
+  test_platonic_codegen(test_programs);
+  assert(false);
+
 
   vector<prog> M1_test_programs = isca_programs();
   //vector<prog> M1_test_programs{gaussian()};
@@ -17149,9 +17157,6 @@ void cgra_flow_tests() {
   test_codegen(bram_test_programs, compile_for_FPGA_BRAM_mem);
   //assert(false);
 
-  auto test_programs =
-    all_cgra_programs();
-  test_platonic_codegen(test_programs);
 
   //assert(false);
 
@@ -18950,6 +18955,34 @@ void test_if_construction() {
 }
 
 void dhuff_playground() {
+  {
+    for (auto prg : isca_programs()) {
+      auto options = generic_SRAM_codegen_options(prg);
+      schedule_info sched = garnet_schedule_info(options, prg);
+      compile_cycle_accurate_hw(options, sched, prg);
+      normalize_bounds(prg);
+      sequential_schedule(sched, prg.root, prg);
+      
+      auto hw_sched = its(op_times_map(sched, prg), prg.whole_iteration_domain());
+
+      auto buffers = build_buffers(prg, hw_sched);
+
+
+      int total_capacity = 0;
+      for (auto b : buffers) {
+        if (!prg.is_boundary(b.first)) {
+          total_capacity += card(extents_by_dimension(b.second));
+        }
+      }
+      cout << tab(1) << "=== SRAM bytes for " << prg.name << total_capacity << endl;
+    }
+    assert(false);
+  }
+  {
+    prog prg = mobilenet_unrolled();
+    prg.pretty_print();
+    assert(false);
+  }
   {
     isl_ctx* ctx = isl_ctx_alloc();
     isl_map* addr = isl_map_read_from_str(ctx, "{ [c, x, y] -> [c, x, y] }");
