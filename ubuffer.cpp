@@ -5788,8 +5788,10 @@ pair<std::map<string, UBuffer>, vector<string> >
 
         auto am = to_map(access_map.at(out_pt_name));
         //FIX the sliding window cross fetch_width boundary
+        //TODO: move this into a function
         bool pad_schedule = false;
         if (in_involve_dim(am, dim_id).size() > 1) {
+            //Case one has sliding window
             auto proj_map = isl_map_project_out(am, isl_dim_in, 0, num_in_dims(am)-1);
             auto domain_pt = to_set(sample(::domain(proj_map)));
             auto proj_map_sample = its(proj_map, domain_pt);
@@ -5803,6 +5805,18 @@ pair<std::map<string, UBuffer>, vector<string> >
                 access_map.at(out_pt_name) =
                     to_umap(pad_to_domain_ubuf_map(am, num_in_dims(am) - 1, 1));
                 pad_schedule = true;
+            }
+        } else {
+            //Case two do not slide but just start from middle of the fetchwidth
+            int min_vec_dim = get_dim_min(range(am), dim_id);
+            int max_vec_dim = get_dim_max(range(am), dim_id);
+            if ( (min_vec_dim % fetch_width != 0) &&
+                    (max_vec_dim % fetch_width != 0) ) {
+                access_map.at(out_pt_name) =
+                    to_umap(pad_to_domain_ubuf_map(am, num_in_dims(am) - 1, 1));
+                pad_schedule = true;
+                cout << "\t\tbefore pad :" << str(am) << endl;
+                cout << "\t\tAfter pad :" << str(access_map.at(out_pt_name)) << endl;
             }
         }
 

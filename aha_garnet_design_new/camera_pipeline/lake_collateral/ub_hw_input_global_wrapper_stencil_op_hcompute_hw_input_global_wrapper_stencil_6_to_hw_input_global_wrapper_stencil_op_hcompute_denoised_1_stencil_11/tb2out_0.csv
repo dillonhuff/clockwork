@@ -9,4 +9,4 @@
 "read_data_starting_addr",2,0
 "read_data_stride_0",1,0
 "read_data_stride_1",4,0
-"read_data_stride_2",12,0
+"read_data_stride_2",0,0
