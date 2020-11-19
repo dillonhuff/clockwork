@@ -6885,7 +6885,8 @@ void generate_deepak_power_flow_rtl_tb(
   rgtb << "`define RUN_TIME 10000" << endl;
 
   //rgtb << "`timescale 1ns / 1ps" << endl;
-  rgtb << "module " << prg.name << "_tb;" << endl;
+  rgtb << endl;
+  rgtb << "module " << "TB;" << endl;
 
   rgtb << tab(1) << "logic clk;" << endl;
   rgtb << tab(1) << "logic rst;" << endl;
@@ -6893,7 +6894,8 @@ void generate_deepak_power_flow_rtl_tb(
 
   rgtb << endl << endl;
 
-  rgtb <<"always #(`CLK_PERIOD/2) clk = ~clk;" << endl;
+  rgtb << tab(1) << "always #(`CLK_PERIOD/2) clk = ~clk;" << endl << endl;
+
   rgtb << "initial begin" << endl;
   rgtb << "        rst = 1'b1;" << endl;
   rgtb << "        flush = 1'b0;" << endl;
@@ -6915,7 +6917,7 @@ void generate_deepak_power_flow_rtl_tb(
   rgtb << "      $toggle_start();" << endl;
   rgtb << "      #(`RUN_TIME);" << endl;
   rgtb << "      $toggle_stop();" << endl;
-  rgtb << "      $toggle_report(\"outputs/run.saif\", 1e-9, TB);" << endl;
+  rgtb << "      $toggle_report(\"run.saif\", 1e-9, TB);" << endl;
   rgtb << "      $finish(2);" << endl;
   rgtb << "    end" << endl << endl;
 
@@ -6961,44 +6963,44 @@ void generate_deepak_power_flow_rtl_tb(
     }
   }
 
-  rgtb << prg.name << " dut(\n\t" << sep_list(port_decls, "\n\t", "\n\t", ",\n\t") << ");" << endl;
+  rgtb << tab(1) << prg.name << " dut(\n\t\t" << sep_list(port_decls, "\n\t\t", "\n\t\t", ",\n\t\t") << ");" << endl;
 
-  rgtb << tab(1) << "initial begin" << endl;
-  rgtb << "clk = 0;" << endl;
-  rgtb << "rst = 0;" << endl;
-  rgtb << "flush = 0;" << endl;
-  for (auto eb : edge_buffers(buffers, prg)) {
-    string out_rep = eb.first;
-    string out_bundle = eb.second;
+  //rgtb << tab(1) << "initial begin" << endl;
+  //rgtb << "clk = 0;" << endl;
+  //rgtb << "rst = 0;" << endl;
+  //rgtb << "flush = 0;" << endl;
+  //for (auto eb : edge_buffers(buffers, prg)) {
+    //string out_rep = eb.first;
+    //string out_bundle = eb.second;
 
-    UBuffer out_buf = map_find(out_rep, buffers);
+    //UBuffer out_buf = map_find(out_rep, buffers);
 
-    int pixel_width = out_buf.port_widths;
-    int pix_per_burst =
-      out_buf.lanes_in_bundle(out_bundle);
+    //int pixel_width = out_buf.port_widths;
+    //int pix_per_burst =
+      //out_buf.lanes_in_bundle(out_bundle);
 
-    if (prg.is_input(out_rep)) {
-      string en_name = 
-        pg(out_rep, out_bundle) + "_en";
-      string data_name = 
-        pg(out_rep, out_bundle);
+    //if (prg.is_input(out_rep)) {
+      //string en_name = 
+        //pg(out_rep, out_bundle) + "_en";
+      //string data_name = 
+        //pg(out_rep, out_bundle);
 
-      rgtb << tab(3) << data_name << "[0] = 0;" << endl;
+      //rgtb << tab(3) << data_name << "[0] = 0;" << endl;
 
-    } else {
-    }
-  }
-  rgtb << tab(1) << "end" << endl;
-  rgtb << tab(1) << "always #5 clk = ~clk;" << endl;
+    //} else {
+    //}
+  //}
+  //rgtb << tab(1) << "end" << endl;
+  //rgtb << tab(1) << "always #5 clk = ~clk;" << endl;
 
-  rgtb << "initial begin" << endl;
-  rgtb << "#2;" << endl;
-  rgtb << "rst = 1;" << endl;
-  rgtb << "flush = 1;" << endl;
-  rgtb << "#10;" << endl;
-  rgtb << "flush = 0;" << endl;
+  //rgtb << "initial begin" << endl;
+  //rgtb << "#2;" << endl;
+  //rgtb << "rst = 1;" << endl;
+  //rgtb << "flush = 1;" << endl;
+  //rgtb << "#10;" << endl;
+  //rgtb << "flush = 0;" << endl;
 
-  rgtb << "end" << endl;
+  //rgtb << "end" << endl;
 
   rgtb << endl << endl;
 
