@@ -13288,17 +13288,17 @@ void cpy_app_to_folder(const std::string& app_type, const std::string& prg_name)
 void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, string dir="aha_garnet_design") {
   vector<prog> test_apps;
   test_apps.push_back(conv_3_3());
-  test_apps.push_back(camera_pipeline_trunc());
   test_apps.push_back(gaussian());
   test_apps.push_back(cascade());
   test_apps.push_back(harris());
   test_apps.push_back(resnet());
   test_apps.push_back(rom());
   test_apps.push_back(conv_1_2());
-  //test_apps.push_back(mobilenet_unrolled());
-  //test_apps.push_back(unsharp());
   test_apps.push_back(camera_pipeline());
   test_apps.push_back(up_sample());
+
+  ////test_apps.push_back(mobilenet_unrolled());
+  ////test_apps.push_back(unsharp());
 
   //test_apps.push_back(conv_3_3_wide());
   //TODO: break in the middle of vectorization
@@ -15486,6 +15486,7 @@ void relax_delays_after_vectorization(schedule_info& sched, prog& prg) {
 void relax_delays_rate_matched(schedule_info& sched, prog& prg) {
   cout << "Adjusting delays of " << prg.name << endl;
   int d = 0;
+  int fetch_width = 4;
   auto start_times = op_start_times(sched, prg);
   auto domains = prg.domains();
   for (auto name : topologically_sort_kernels(prg)) {
@@ -15518,9 +15519,13 @@ void relax_delays_rate_matched(schedule_info& sched, prog& prg) {
         bool equal_rng = equal(range(prod_sched), range(cons_sched));
         cout << tab(4) << "Start cycle Is equal: " << equal_start_time << endl;
         cout << tab(4) << "domain is same: " << equal_rng << endl;
-        if (equal_start_time && !equal_rng)
-            assert(false);
+        if (equal_start_time && !equal_rng) {
+            int prod_ii = sched.II(pick(prod_op_vec)->parent);
+            cout << "\t\top " << prod_op_name << " has ii: " << prod_ii << endl;
+            d += prod_ii * fetch_width + 2;
+        }
     }
+    sched.op_offset_within_parent[lp] += d;
   }
 }
 

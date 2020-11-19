@@ -6289,7 +6289,7 @@ maybe<int> UBuffer::dependence_distance_max(const string& inpt, const string& ou
   if (!empty(dds)) {
     auto ddc = to_set(dds);
 
-    int dd = to_int(lexminval(ddc));
+    int dd = to_int(lexmaxval(ddc));
     cout << "DD           : " << dd << endl;
     return {dd};
   } else {
