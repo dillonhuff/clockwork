@@ -1643,11 +1643,13 @@ std::vector<op*> get_ordered_inner_loops(prog& prg);
 isl_set* iteration_domain(op* loop, prog& prg);
 
 isl_map* consumer_map(op* loop, const std::string& b, prog& prg);
+isl_map* producer_map(op* loop, const std::string& b, prog& prg);
 
 umap* read_at(const std::string& level, const std::string& buffer, prog& prg);
 umap* read_at(const std::string& level, prog& prg);
 
 umap* written_at(const std::string& level, const std::string& buffer, prog& prg);
+umap* written_at(const std::string& level, prog& prg);
 
 umap* first_iteration_reads(umap* reads, const std::string& level, prog& prg);
 isl_map* get_initial_data(const std::string& level, const std::string& buffer, prog& prg);
@@ -1660,7 +1662,15 @@ vector<string> reduce_vars(prog& prg);
 
 void sanity_check_all_reads_defined(prog& prg);
 
-void generate_verilator_tb(prog& prg,
+void generate_vivado_rtl_tb(
+    CodegenOptions& options,
+    prog& prg,
+    umap* hw_sched,
+    map<string, UBuffer>& buffers);
+
+void generate_verilator_tb(
+    CodegenOptions& options,
+    prog& prg,
     umap* hw_sched,
     map<string, UBuffer>& buffers);
 
@@ -1701,7 +1711,8 @@ struct schedule_info {
   map<string, int> buffer_load_latencies;
   map<string, int> buffer_store_latencies;
   map<string, int> compute_unit_latencies;
-  map<string, int> op_compute_unit_latencies;
+  map<string, string> op_compute_unit_names;
+  //map<string, int> op_compute_unit_latencies;
 
   // Resource constraints
   map<string, int> resource_quantities;
@@ -1712,16 +1723,11 @@ struct schedule_info {
 
   // Schedule offsets
   map<string, int> loop_iis;
-  map<op*, int> instance_latencies;
+  //map<op*, int> instance_latencies;
   map<op*, int> op_offset_within_parent;
 
-  int compute_latency(op* op) {
-    if (op->func == "") {
-      return 0;
-    }
-    assert(contains_key(op->func, compute_unit_latencies));
-    return map_find(op->func, compute_unit_latencies);
-  }
+  int compute_latency(const std::string& op_name);
+  int compute_latency(op* op);
 
   int store_latency(const std::string& buf) {
     assert(contains_key(buf, buffer_store_latencies));
@@ -1750,13 +1756,7 @@ struct schedule_info {
     return last_delay;
   }
 
-  int total_latency(op* op) {
-    if (!op->is_loop()) {
-      assert(contains_key(op, instance_latencies));
-      return map_find(op, instance_latencies);
-    }
-    return II(op)*(op->trip_count() - 1) + instance_latency(op);
-  }
+  int total_latency(op* op);
 
   int instance_latency(op* op);
 
@@ -1849,6 +1849,53 @@ void add_reuse_buffer_no_delta(const std::string& level, const std::string& buff
 op* find_coarse_grained_pipeline_loop(op* lp);
 
 vector<pair<string, pair<string, int> >> determine_output_shift_reg_map(
+    prog& prg,
+    UBuffer& buf,
+    schedule_info& hwinfo);
+
+void sanity_check_iis(schedule_info& sched);
+
+int logical_dimension(const std::string& buf, prog& prg);
+
+
+vector<op*> fully_scheduled_nodes(schedule_info& sched, prog& prg);
+
+void print_partial_schedule(schedule_info& sched, prog& prg);
+
+void fuse_sequentially(const vector<op*>& outer, schedule_info& sched, prog& prg);
+
+vector<op*> unscheduled_nodes(schedule_info& sched, prog& prg);
+
+bool all_ops_scheduled(schedule_info& sched, prog& prg);
+
+int op_latency(op* op, schedule_info& hwinfo);
+
+void adjust_outer_delays(schedule_info& sched, prog& prg);
+
+void adjust_outer_pipeline_delays(schedule_info& sched, prog& prg);
+
+bool no_violated_cycle_accurate_dependencies(schedule_info& sched, prog& prg);
+
+bool schedule_bounds_fit_controller_bitwidth(const int bitwidth, schedule_info& sched, prog& prg);
+
+void adjust_inner_iis(schedule_info& sched, prog& prg);
+
+vector<int> analyze_memory_demands(prog& prg, UBuffer& buf, schedule_info& hwinfo);
+
+void pad_top_level_ops_with_loops(prog& prg);
+
+int max_loop_depth(prog& prg);
+
+void dsa_writers(prog& prg);
+void dsa_readers(prog& prg);
+
+
+int buffer_store_latency(CodegenOptions& options);
+int buffer_load_latency(CodegenOptions& options);
+
+
+UBuffer write_latency_adjusted_buffer(
+    CodegenOptions& options,
     prog& prg,
     UBuffer& buf,
     schedule_info& hwinfo);

@@ -25,10 +25,10 @@ int main() {
 
   const uint64_t transfer_cols = ncols / pixels_per_burst;
   ap_uint<BURST_WIDTH>* hw_output_stencil = (ap_uint<BURST_WIDTH>*) malloc(sizeof(ap_uint<BURST_WIDTH>)*num_transfers);
-  ap_uint<BURST_WIDTH>* input_copy_stencil = (ap_uint<BURST_WIDTH>*) malloc(sizeof(ap_uint<BURST_WIDTH>)*num_transfers);
-  fill_array_decimal<bits_per_pixel>("input_copy_stencil_input_pixel.csv", input_copy_stencil, nrows, ncols, transfer_cols);
-  gaussian_kernel(hw_output_stencil, input_copy_stencil, num_transfers);
+  ap_uint<BURST_WIDTH>* hw_input_stencil = (ap_uint<BURST_WIDTH>*) malloc(sizeof(ap_uint<BURST_WIDTH>)*num_transfers);
+  fill_array_decimal<bits_per_pixel>("hw_input_stencil_input_pixel.csv", hw_input_stencil, nrows, ncols, transfer_cols);
+  gaussian_kernel(hw_output_stencil, hw_input_stencil, num_transfers);
   write_results_decimal<bits_per_pixel>("soda_gaussian_regression_result.csv", hw_output_stencil, nrows, ncols, transfer_cols);
-  free(input_copy_stencil);
+  free(hw_input_stencil);
   free(hw_output_stencil);
 }

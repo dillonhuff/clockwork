@@ -34,17 +34,18 @@ prog three_level_memory();
 prog resnet_unrolled();
 prog resnet_coarse_pipeline_loop();
 prog mobilenet_unrolled();
-prog harris_sch1();
-prog harris_sch2();
-prog harris_sch3();
-prog harris_sch4();
-prog harris_sch5();
-prog harris_sch6();
-prog harris_sch7();
-prog harris_sch8();
+prog harris_sch1_onebuf();
+prog harris_sch2_fourbuf();
+prog harris_sch3_1pp9c();
+prog harris_sch4_1pp3c();
+prog harris_sch5_1ppc();
+prog harris_sch6_2ppc();
+prog harris_sch7_bigtile();
+prog harris_sch8_endcim();
 prog three_level_memory_two();
 
 //SMT test
 prog conv_3_3(int32_t, int32_t, string);
 prog cascade(int32_t, int32_t, string);
 prog harris(int32_t, int32_t, string);
+prog resnet_full_layer();

@@ -789,6 +789,8 @@ extract_div_free_linear_rational_approximation(isl_aff* aff_bound) {
 
 pair<isl_val*, isl_val*>
 extract_linear_rational_approximation(isl_aff* aff_bound) {
+  cout << "Extracting linear rational approximation: " << str(aff_bound) << endl;
+
   int in_dims = num_in_dims(aff_bound);
   int out_dims = num_out_dims(aff_bound);
   int div_dims = num_div_dims(aff_bound);

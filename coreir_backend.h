@@ -11,6 +11,19 @@ std::string controller_name(const std::string& n) {
   return n + "_port_controller";
 }
 
+struct ubuffer_impl {
+  map<int, int> partitioned_dimension_extents;
+  std::set<int> partition_dims;
+
+  map<int, std::set<string> > bank_readers;
+  map<int, std::set<string> > bank_writers;
+  map<string, std::set<int>> outpt_to_bank;
+  map<string, std::set<int>> inpt_to_bank;
+
+  map<string,pair<string,int>> shift_registered_outputs;
+  vector<pair<string,pair<string,int>>> shift_registered_outputs_to_outputs;
+};
+
 CoreIR::Wireable* mkConst(CoreIR::ModuleDef* def, const int width, const int val);
 CoreIR::Wireable* addList(CoreIR::ModuleDef* def, const std::vector<CoreIR::Wireable*>& vals);
 CoreIR::Wireable* orList(CoreIR::ModuleDef* def, const std::vector<CoreIR::Wireable*>& vals);
@@ -143,6 +156,18 @@ void generate_platonic_ubuffer(
     prog& prg,
     UBuffer& buf,
     schedule_info& hwinfo);
+
+void pipeline_compute_units(prog& prg, schedule_info& hwinfo);
+
+int generate_compute_unit_regression_tb(op* op, prog& prg);
+
+CoreIR::Instance* build_addrgen(const std::string& reader, UBuffer& buf, CoreIR::ModuleDef* def);
+
+CoreIR::Wireable* control_vars(CoreIR::ModuleDef* def, const std::string& reader, UBuffer& buf);
+
+CoreIR::Wireable* control_en(CoreIR::ModuleDef* def, const std::string& reader, UBuffer& buf);
+
+CoreIR::Instance* build_bank_selector(const std::string& reader, UBuffer& buf, ubuffer_impl& impl, CoreIR::ModuleDef* def);
 
 #endif
 

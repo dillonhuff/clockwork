@@ -21,6 +21,11 @@ T pop(deque<T>& d) {
 string isl_sanitize(const std::string& str);
 
 static inline
+int round_up_to_multiple_of(int in, int factor) {
+    return (in + factor - 1) / factor * factor;
+}
+
+static inline
 string c_sanitize(const std::string& str) {
   string res = "";
   for (auto c : str) {
@@ -471,3 +476,14 @@ void compare(const std::string& name,
 vector<string> get_files(const std::string& path);
 
 int run_sw_bmp_test_harness(const std::string& app_name);
+
+static
+std::string pg(const std::string& buf, const std::string& bundle) {
+  return buf + "_" + bundle;
+}
+
+static
+std::string pg(const pair<string, string>& b) {
+  return pg(b.first, b.second);
+}
+
