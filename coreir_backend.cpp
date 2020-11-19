@@ -869,7 +869,6 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
       for (auto b : src_banks) {
         int count = map_find({pt, b}, ubuffer_port_and_bank_to_bank_port);
         conds.push_back(bank_map[b]->sel("data_out_" + str(count) + "_valid"));
-        //conds.push_back(bank_and_port_output_data_valid[{b, count}]);
         values.push_back(def->sel("bank_" + str(b) + ".data_out_" + str(count)));
       }
 

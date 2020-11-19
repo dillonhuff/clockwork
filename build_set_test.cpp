@@ -16728,7 +16728,7 @@ vector<prog> harris_variants() {
 
   // 1. At least two mapper passes fail
   // 2. Final output is wrong
-  //test_programs.push_back(harris_sch1_onebuf());
+  test_programs.push_back(harris_sch1_onebuf());
 
   // 2. Final output is wrong
   //test_programs.push_back(harris_sch2_fourbuf());
@@ -17131,20 +17131,17 @@ void fpga_asplos_tests() {
 }
 
 void cgra_flow_tests() {
-  //vector<prog> M3_test_programs = isca_programs();
-  vector<prog> M3_test_programs = harris_variants();
+  vector<prog> M3_test_programs = isca_programs();
+  //vector<prog> M3_test_programs = harris_variants();
   //vector<prog> M3_test_programs{up_sample(), resnet()};
   //vector<prog> M3_test_programs{resnet()};
   //vector<prog> M3_test_programs{unsharp()};
   test_codegen(M3_test_programs, compile_for_CGRA_M3_mem);
-  assert(false);
+  //assert(false);
   
-  //auto test_programs =
-    //all_cgra_programs();
-  vector<prog> test_programs{mobilenet_unrolled()};
+  auto test_programs =
+    all_cgra_programs();
   test_platonic_codegen(test_programs);
-  assert(false);
-
 
   vector<prog> M1_test_programs = isca_programs();
   //vector<prog> M1_test_programs{gaussian()};
