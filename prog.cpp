@@ -6879,8 +6879,12 @@ void generate_deepak_power_flow_rtl_tb(
     umap* hw_sched,
     map<string, UBuffer>& buffers) {
   ofstream rgtb(prg.name + "_deepak_power_flow_tb.sv");
+  rgtb << "`define ASSIGNMENT_DELAY 0.1" << endl;
+  rgtb << "`define CONFIG_TIME 4096" << endl;
+  rgtb << "`define CLK_PERIOD 10" << endl;
+  rgtb << "`define RUN_TIME 10000" << endl;
 
-  rgtb << "`timescale 1ns / 1ps" << endl;
+  //rgtb << "`timescale 1ns / 1ps" << endl;
   rgtb << "module " << prg.name << "_tb;" << endl;
 
   rgtb << tab(1) << "logic clk;" << endl;
@@ -6888,6 +6892,33 @@ void generate_deepak_power_flow_rtl_tb(
   rgtb << tab(1) << "logic flush;" << endl;
 
   rgtb << endl << endl;
+
+  rgtb <<"always #(`CLK_PERIOD/2) clk = ~clk;" << endl;
+  rgtb << "initial begin" << endl;
+  rgtb << "        rst = 1'b1;" << endl;
+  rgtb << "        flush = 1'b0;" << endl;
+  rgtb <<"        #`CLK_PERIOD" << endl;
+  rgtb << "        #`CLK_PERIOD" << endl;
+  rgtb << "        rst = 1'b0;" << endl;
+  rgtb << tab(1) << "end" << endl << endl;
+
+  rgtb << "    initial begin" << endl;
+  rgtb << "      clk <= 0;" << endl;
+  rgtb << "    end" << endl << endl;
+
+  rgtb << "    initial begin" << endl;
+  rgtb << "      $vcdplusfile(\"dump.vpd\");" << endl;
+  rgtb << "      $vcdplusmemon();" << endl;
+  rgtb << "      $vcdpluson(0, TB);" << endl;
+  rgtb << "      $set_toggle_region(TB);" << endl;
+  rgtb << "      #(`CONFIG_TIME);" << endl;
+  rgtb << "      $toggle_start();" << endl;
+  rgtb << "      #(`RUN_TIME);" << endl;
+  rgtb << "      $toggle_stop();" << endl;
+  rgtb << "      $toggle_report(\"outputs/run.saif\", 1e-9, TB);" << endl;
+  rgtb << "      $finish(2);" << endl;
+  rgtb << "    end" << endl << endl;
+
   vector<string> port_decls{".clk(clk)", ".flush(flush)", ".rst_n(rst)"};
 
   for (auto eb : edge_buffers(buffers, prg)) {
@@ -6989,20 +7020,21 @@ void generate_deepak_power_flow_rtl_tb(
       string data_name = 
         pg(out_rep, out_bundle);
       string data_in_name = data_name;
+        //inputs0[15:0] <= #`ASSIGNMENT_DELAY $urandom;
 
-      rgtb << tab(2) << "if (" << en_name << ") begin" << endl;
-      rgtb << tab(3) << data_in_name << "[0] <= " << data_in_name << "[0] + 1;" << endl;
-      rgtb << tab(2) << "end" << endl;
+      rgtb << tab(3) << data_in_name << "[0] <= #`ASSIGNMENT_DELAY $urandom;" << endl;
+      //rgtb << tab(2) << "if (" << en_name << ") begin" << endl;
+      //rgtb << tab(3) << data_in_name << "[0] <= " << data_in_name << "[0] + 1;" << endl;
+      //rgtb << tab(2) << "end" << endl;
 
     } else {
-      string en_name = 
-        pg(out_rep, out_bundle) + "_valid";
-      string data_name = 
-        pg(out_rep, out_bundle);
-
-      rgtb << tab(2) << "if (" << en_name << ") begin" << endl;
-      rgtb << tab(3) << "$display(\"Got data %d from dut." << en_name << "\", " << data_name << "[0]" << ");" << endl;
-      rgtb << tab(2) << "end" << endl;
+      //string en_name = 
+        //pg(out_rep, out_bundle) + "_valid";
+      //string data_name = 
+        //pg(out_rep, out_bundle);
+      //rgtb << tab(2) << "if (" << en_name << ") begin" << endl;
+      //rgtb << tab(3) << "$display(\"Got data %d from dut." << en_name << "\", " << data_name << "[0]" << ");" << endl;
+      //rgtb << tab(2) << "end" << endl;
     }
   }
 

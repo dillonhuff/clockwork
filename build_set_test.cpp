@@ -1,6 +1,7 @@
 #include "coreir_backend.h"
 #ifdef COREIR
 #include "cwlib.h"
+#include "cgralib.h"
 #endif
 #include "app.h"
 #include "prog_splitting_test.h"
@@ -16728,7 +16729,7 @@ vector<prog> harris_variants() {
 
   // 1. At least two mapper passes fail
   // 2. Final output is wrong
-  test_programs.push_back(harris_sch1_onebuf());
+  //test_programs.push_back(harris_sch1_onebuf());
 
   // 2. Final output is wrong
   //test_programs.push_back(harris_sch2_fourbuf());
@@ -17131,6 +17132,10 @@ void fpga_asplos_tests() {
 }
 
 void cgra_flow_tests() {
+  vector<prog> bram_test_programs{pointwise(), gaussian(), harris(), resnet()};
+  test_codegen(bram_test_programs, compile_for_FPGA_BRAM_mem);
+  assert(false);
+
   vector<prog> M3_test_programs = isca_programs();
   //vector<prog> M3_test_programs = harris_variants();
   //vector<prog> M3_test_programs{up_sample(), resnet()};
@@ -17150,9 +17155,6 @@ void cgra_flow_tests() {
 
   cout << "====== DONE with M1, starting M3..." << endl;
   
-  vector<prog> bram_test_programs{pointwise(), gaussian(), harris(), resnet()};
-  test_codegen(bram_test_programs, compile_for_FPGA_BRAM_mem);
-  //assert(false);
 
 
   //assert(false);
@@ -18952,6 +18954,37 @@ void test_if_construction() {
 }
 
 void dhuff_playground() {
+  {
+#ifdef COREIR
+    for (auto prg : harris_variants()) {
+      int PEs_used = 0;
+      for (auto op : prg.all_ops()) {
+        if (op->func != "") {
+          CoreIR::Context* context = CoreIR::newContext();
+          CoreIRLoadLibrary_commonlib(context);
+          CoreIRLoadLibrary_cgralib(context);
+          string compute_file = "./coreir_compute/" + prg.name + "_compute.json";
+          if (!loadFromFile(context, compute_file)) {
+            cout << "Could not load compute file for: " << prg.name << ", file name = " << compute_file << endl;
+            assert(false);
+          }
+          auto ns = context->getNamespace("global");
+          CoreIR::Module* cu = ns->getModule(op->func);
+          garnet_map_module(cu);
+          map<string, int> counts;
+          for (auto inst : cu->getDef()->getInstances()) {
+            cout << tab(1) << inst.second->getModuleRef()->getName() << endl;
+            counts[inst.second->getModuleRef()->getName()]++;
+          }
+          PEs_used += counts["PE"];
+          deleteContext(context);
+        }
+      }
+      cout << "# of PEs in " << prg.name << " = " << PEs_used << endl;
+    }
+    assert(false);
+#endif 
+  }
   {
     for (auto prg : isca_programs()) {
       auto options = generic_SRAM_codegen_options(prg);

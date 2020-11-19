@@ -182,5 +182,7 @@ isl_aff* inner_bank_offset_aff(const std::string& reader, UBuffer& buf, ubuffer_
 
 isl_aff* bank_offset_aff(const std::string& reader, UBuffer& buf, ubuffer_impl& impl);
 
+void garnet_map_module(CoreIR::Module* top);
+
 #endif
 

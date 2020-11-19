@@ -1,9 +1,37 @@
+`define ASSIGNMENT_DELAY 0.1
+`define CONFIG_TIME 4096
+`define RUN_TIME 4096
 `timescale 1ns / 1ps
 module pointwise_tb;
   logic clk;
   logic rst;
   logic flush;
 
+
+always #(`CLK_PERIOD/2) CLK = ~CLK;
+initial begin
+        ASYNCRESET = 1'b1;
+        #`CLK_PERIOD
+        #`CLK_PERIOD
+        ASYNCRESET = 1'b0;
+  end
+
+    initial begin
+      CLK <= 0;
+    end
+
+    initial begin
+      $vcdplusfile("dump.vpd");
+      $vcdplusmemon();
+      $vcdpluson(0, TB);
+      $set_toggle_region(TB);
+      #(`CONFIG_TIME);
+      $toggle_start();
+      #(`RUN_TIME);
+      $toggle_stop();
+      $toggle_report("outputs/run.saif", 1e-9, TB);
+      $finish(2);
+    end
 
   logic hw_input_stencil_op_hcompute_hw_input_global_wrapper_stencil_read_en;
   logic [15:0] hw_input_stencil_op_hcompute_hw_input_global_wrapper_stencil_read [0 :0];
@@ -36,11 +64,6 @@ end
 
 
   always @(negedge clk) begin
-    if (hw_input_stencil_op_hcompute_hw_input_global_wrapper_stencil_read_en) begin
-      hw_input_stencil_op_hcompute_hw_input_global_wrapper_stencil_read[0] <= hw_input_stencil_op_hcompute_hw_input_global_wrapper_stencil_read[0] + 1;
-    end
-    if (hw_output_stencil_op_hcompute_hw_output_stencil_write_valid) begin
-      $display("Got data %d from dut.hw_output_stencil_op_hcompute_hw_output_stencil_write_valid", hw_output_stencil_op_hcompute_hw_output_stencil_write[0]);
-    end
+      hw_input_stencil_op_hcompute_hw_input_global_wrapper_stencil_read[0] <= #`ASSIGNMENT_DELAY $urandom;
   end
 endmodule

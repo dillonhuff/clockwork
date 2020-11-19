@@ -633,6 +633,7 @@ Wireable* mkOneHot(ModuleDef* def, vector<Wireable*>& conds, vector<Wireable*>& 
     //def->connect(def->sel(conn.first + "_net.in"), pick(conn.second));
     return vals.at(0);
   } else {
+    cout << "Conds size = " << conds.size() << endl;
     assert(conds.size() == 3);
     //Wireable* out = def->sel(conn.first + "_net.in");
 
@@ -873,6 +874,9 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
       }
 
       assert(conds.size() == values.size());
+      if (conds.size() == 0) {
+        continue;
+      }
       Wireable* out = def->sel(pt + "_net.in");
 
       cout << "Making onehot for " << pt << " on " << buf.name << endl;
@@ -2777,6 +2781,52 @@ void generate_coreir(CodegenOptions& options,
   generate_coreir(options, buffers, prg, schedmap, info);
 }
 
+void count_memory_tiles(Module* top) {
+  auto c = top->getContext();
+
+  top->print();
+
+  LoadDefinition_cgralib(c);
+
+  //A new pass to remove input enable signal affine controller
+  disconnect_input_enable(c, top);
+  c->runPasses({"deletedeadinstances"});
+
+  c->runPasses({"cullgraph"});
+  c->runPasses({"removewires"});
+  addIOs(c,top);
+  c->runPasses({"cullgraph"});
+  c->addPass(new CustomFlatten);
+  c->runPasses({"customflatten"});
+  //c->addPass(new MapperPasses::ConstDuplication);
+  //c->runPasses({"constduplication"});
+  //c->addPass(new MapperPasses::MemConst);
+  //c->runPasses({"memconst"});
+  //c->addPass(new MapperPasses::MemSubstitute);
+  //c->runPasses({"memsubstitute"});
+
+  c->runPasses({"cullgraph"});
+  c->getPassManager()->printLog();
+  cout << "Trying to save" << endl;
+  c->runPasses({"coreirjson"},{"global","commonlib","mantle"});
+  map<string, int> counts;
+  for (auto inst : top->getDef()->getInstances()) {
+    cout << tab(1) << inst.second->getModuleRef()->getName() << endl;
+    counts[inst.second->getModuleRef()->getName()]++;
+  }
+  cout << top->getName() << " Post Mapping Resource Counts..." << endl;
+  for (auto c : counts) {
+    cout << tab(1) << c.first << " -> " << c.second << endl;
+  }
+  assert(false);
+
+  //auto jpass = static_cast<CoreIR::Passes::CoreIRJson*>(c->getPassManager()->getAnalysisPass("coreirjson"));
+  //string postmap = "after_mapping_" + top->getName() + ".json";
+  //////Create file here.
+  //std::ofstream file(postmap);
+  //jpass->writeToStream(file,top->getRefName());
+}
+
 //This is the top_level coreIR generation function
 void generate_coreir(CodegenOptions& options,
     map<string, UBuffer>& buffers,
@@ -2819,23 +2869,24 @@ void generate_coreir(CodegenOptions& options,
 
   if (options.rtl_options.target_tile == TARGET_TILE_M1 ||
       options.rtl_options.target_tile == TARGET_TILE_M3) {
-    garnet_map_module(prg_mod);
-    Module* gmod = ns_new->getModule(prg.name);
-    cout << "=== Post mapping instances for " << prg.name << endl;
-    map<string, int> counts;
-    for (auto inst : gmod->getDef()->getInstances()) {
-      cout << tab(1) << inst.second->getModuleRef()->getName() << endl;
-      counts[inst.second->getModuleRef()->getName()]++;
-    }
-    cout << prg.name << " Post Mapping Resource Counts..." << endl;
-    for (auto c : counts) {
-      cout << tab(1) << c.first << " -> " << c.second << endl;
-    }
-    //assert(false);
-    if(!saveToFile(ns, prg.name + "_post_mapping.json", prg_mod)) {
-      cout << "Could not save ubuffer coreir" << endl;
-      context->die();
-    }
+    //count_memory_tiles(prg_mod);
+    //garnet_map_module(prg_mod);
+    //Module* gmod = ns_new->getModule(prg.name);
+    //cout << "=== Post mapping instances for " << prg.name << endl;
+    //map<string, int> counts;
+    //for (auto inst : gmod->getDef()->getInstances()) {
+      //cout << tab(1) << inst.second->getModuleRef()->getName() << endl;
+      //counts[inst.second->getModuleRef()->getName()]++;
+    //}
+    //cout << prg.name << " Post Mapping Resource Counts..." << endl;
+    //for (auto c : counts) {
+      //cout << tab(1) << c.first << " -> " << c.second << endl;
+    //}
+    ////assert(false);
+    //if(!saveToFile(ns, prg.name + "_post_mapping.json", prg_mod)) {
+      //cout << "Could not save ubuffer coreir" << endl;
+      //context->die();
+    //}
     //assert(false);
   }
   prg_mod->print();
