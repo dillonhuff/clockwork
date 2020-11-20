@@ -571,7 +571,19 @@
               ["out",["Array",16,"Bit"]]
             ]],
             "modparams":{"init":["BitVector",16]},
-            "defaultmodargs":{"init":[["BitVector",16],"16'h0000"]}
+            "defaultmodargs":{"init":[["BitVector",16],"16'h0000"]},
+            "instances":{
+              "reg0":{
+                "genref":"coreir.reg",
+                "genargs":{"width":["Int",16]},
+                "modargs":{"clk_posedge":["Bool",true], "init":[["BitVector",16],"Arg","init"]}
+              }
+            },
+            "connections":[
+              ["self.clk","reg0.clk"],
+              ["self.in","reg0.in"],
+              ["self.out","reg0.out"]
+            ]
           }]
         ],
         "defaultgenargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false]}

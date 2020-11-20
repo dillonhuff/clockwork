@@ -1329,8 +1329,8 @@
           }
         },
         "connections":[
-          ["ub_hw_input_global_wrapper_stencil_cyclic_0_0_2.chain_chain_en","chain_disen_const_U12.out"],
-          ["ub_hw_input_global_wrapper_stencil_cyclic_0_0_3.chain_chain_en","chain_disen_const_U121.out"],
+          ["ub_hw_input_global_wrapper_stencil_cyclic_0_0_3.chain_chain_en","chain_disen_const_U12.out"],
+          ["ub_hw_input_global_wrapper_stencil_cyclic_0_0_2.chain_chain_en","chain_disen_const_U121.out"],
           ["ub_hw_input_global_wrapper_stencil_cyclic_0_0_4.chain_chain_en","chain_disen_const_U122.out"],
           ["ub_hw_input_global_wrapper_stencil_cyclic_0_0_6.chain_chain_en","chain_disen_const_U123.out"],
           ["ub_hw_input_global_wrapper_stencil_cyclic_0_0_7.chain_chain_en","chain_disen_const_U124.out"],
@@ -3000,15 +3000,15 @@
           ["conv_stencil$ub_conv_stencil_cyclic_2_0_0.chain_data_in_1","conv_stencil$ub_conv_stencil_cyclic_1_0_0.data_out_1"],
           ["io1in_reset.out","conv_stencil$ub_conv_stencil_cyclic_1_0_0.flush"],
           ["conv_stencil$ub_conv_stencil_cyclic_1_0_0_clk_en_const.out","conv_stencil$ub_conv_stencil_cyclic_1_0_0.rst_n"],
-          ["conv_stencil$ub_conv_stencil_cyclic_2_0_0_clk_en_const.out","conv_stencil$ub_conv_stencil_cyclic_2_0_0.clk_en"],
+          ["conv_stencil$ub_conv_stencil_cyclic_2_0_0_clk_en_const1.out","conv_stencil$ub_conv_stencil_cyclic_2_0_0.clk_en"],
           ["op_hcompute_conv_stencil_2$inner_compute$const_p0__673.out","conv_stencil$ub_conv_stencil_cyclic_2_0_0.data_in_0"],
           ["op_hcompute_conv_stencil_5$inner_compute$add_825_839_840$binop.data.out","conv_stencil$ub_conv_stencil_cyclic_2_0_0.data_in_1"],
           ["op_hcompute_conv_stencil_5$inner_compute$add_conv_stencil_3_838_839$binop.data.in.0","conv_stencil$ub_conv_stencil_cyclic_2_0_0.data_out_0"],
           ["io16_hw_output_stencil_op_hcompute_hw_output_stencil_write_0.in","conv_stencil$ub_conv_stencil_cyclic_2_0_0.data_out_1"],
           ["io1in_reset.out","conv_stencil$ub_conv_stencil_cyclic_2_0_0.flush"],
-          ["conv_stencil$ub_conv_stencil_cyclic_2_0_0_clk_en_const1.out","conv_stencil$ub_conv_stencil_cyclic_2_0_0.rst_n"],
-          ["hw_input_global_wrapper_stencil$ub_hw_input_global_wrapper_stencil_cyclic_0_0_2.chain_chain_en","hw_input_global_wrapper_stencil$chain_disen_const_U12.out"],
-          ["hw_input_global_wrapper_stencil$ub_hw_input_global_wrapper_stencil_cyclic_0_0_3.chain_chain_en","hw_input_global_wrapper_stencil$chain_disen_const_U121.out"],
+          ["conv_stencil$ub_conv_stencil_cyclic_2_0_0_clk_en_const.out","conv_stencil$ub_conv_stencil_cyclic_2_0_0.rst_n"],
+          ["hw_input_global_wrapper_stencil$ub_hw_input_global_wrapper_stencil_cyclic_0_0_3.chain_chain_en","hw_input_global_wrapper_stencil$chain_disen_const_U12.out"],
+          ["hw_input_global_wrapper_stencil$ub_hw_input_global_wrapper_stencil_cyclic_0_0_2.chain_chain_en","hw_input_global_wrapper_stencil$chain_disen_const_U121.out"],
           ["hw_input_global_wrapper_stencil$ub_hw_input_global_wrapper_stencil_cyclic_0_0_4.chain_chain_en","hw_input_global_wrapper_stencil$chain_disen_const_U122.out"],
           ["hw_input_global_wrapper_stencil$ub_hw_input_global_wrapper_stencil_cyclic_0_0_6.chain_chain_en","hw_input_global_wrapper_stencil$chain_disen_const_U123.out"],
           ["hw_input_global_wrapper_stencil$ub_hw_input_global_wrapper_stencil_cyclic_0_0_7.chain_chain_en","hw_input_global_wrapper_stencil$chain_disen_const_U124.out"],
@@ -3315,7 +3315,19 @@
               ["out",["Array",16,"Bit"]]
             ]],
             "modparams":{"init":["BitVector",16]},
-            "defaultmodargs":{"init":[["BitVector",16],"16'h0000"]}
+            "defaultmodargs":{"init":[["BitVector",16],"16'h0000"]},
+            "instances":{
+              "reg0":{
+                "genref":"coreir.reg",
+                "genargs":{"width":["Int",16]},
+                "modargs":{"clk_posedge":["Bool",true], "init":[["BitVector",16],"Arg","init"]}
+              }
+            },
+            "connections":[
+              ["self.clk","reg0.clk"],
+              ["self.in","reg0.in"],
+              ["self.out","reg0.out"]
+            ]
           }]
         ],
         "defaultgenargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false]}

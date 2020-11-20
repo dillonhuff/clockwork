@@ -2795,6 +2795,7 @@ void garnet_map_module(Module* top) {
   //load_cgramapping(c);
   LoadDefinition_cgralib(c);
 
+  c->runPasses({"rungenerators"});
   //A new pass to remove input enable signal affine controller
   disconnect_input_enable(c, top);
   c->runPasses({"deletedeadinstances"});
