@@ -184,7 +184,7 @@ void instantiate_M3_verilog(
 
 
     string bn = long_name + "_rd_" + str(i);
-    string bundle_name = bn + ".valid" + " && " + bn + "_enable_this_port";
+    string bundle_name = bn + ".valid";
     *verilog_collateral_file << tab(2) << "data_out_" << str(i) << "_tmp <= SRAM[" << bn << "_ibo" << "];" << endl;
     out << tab(2) << "data_out_" + str(i) + "_valid <= " << bundle_name << ";" << endl;
   }
@@ -206,7 +206,7 @@ void instantiate_M3_verilog(
 
 
     string bn = long_name + "_wr_" + str(i);
-    string bundle_name = bn + ".valid" + " && " + bn + "_enable_this_port";
+    string bundle_name = bn + ".valid";
     *verilog_collateral_file << tab(2) << "if (" << bundle_name << ") begin" << endl;
     *verilog_collateral_file << tab(3) << "SRAM[" << bn + "_ibo" << "] <= " << "data_in_" << str(i) << ";" << endl;
     *verilog_collateral_file << tab(2) << "end" << endl;
