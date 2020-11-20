@@ -18962,6 +18962,11 @@ void test_if_construction() {
   //assert(false);
 }
 
+struct power_analysis_opcounts {
+  map<string, map<string, int> > PE_optype_counts;
+
+};
+
 void dhuff_playground() {
   //{
     //prog prg = mobilenet_unrolled();
@@ -18974,7 +18979,7 @@ void dhuff_playground() {
     //for (auto prg : harris_variants()) {
     for (auto prg : {resnet()}) {
       int PEs_used = 0;
-      map<string, int> PE_optype_counts;
+      power_analysis_opcounts power_stats;
       for (auto op : prg.all_ops()) {
         if (op->func != "") {
           CoreIR::Context* context = CoreIR::newContext();
@@ -18993,7 +18998,7 @@ void dhuff_playground() {
             cout << tab(1) << inst.second->getModuleRef()->getName() << endl;
             counts[inst.second->getModuleRef()->getName()]++;
             if (inst.second->getModuleRef()->getName() == "PE") {
-              PE_optype_counts[inst.second->getModArgs().at("alu_op")->get<string>()]++;
+              power_stats.PE_optype_counts[op->name][inst.second->getModArgs().at("alu_op")->get<string>()]++;
             }
           }
           cu->print();
@@ -19003,9 +19008,21 @@ void dhuff_playground() {
       }
       cout << "# of PEs in " << prg.name << " = " << PEs_used << endl;
       cout << "PE op counts..." << endl;
-      for (auto op : PE_optype_counts) {
-        cout << tab(1) << op.first << " -> " << op.second << endl;
+      const int COST_PER_PE_MUL_PJ = 1.0;
+      const int COST_PER_PE_ADD_PJ = 1.0;
+      map<string, int> alu_op_energy_costs;
+      alu_op_energy_costs["mult_0"] = COST_PER_PE_MUL_PJ;
+      alu_op_energy_costs["add"] = COST_PER_PE_ADD_PJ;
+
+      double energy_cost = 0.0;
+      for (auto p : prg.all_ops()) {
+        for (auto op : power_stats.PE_optype_counts[p->name]) {
+          cout << tab(1) << op.first << " -> " << op.second << endl;
+          energy_cost += ((double) map_find(op.first, alu_op_energy_costs)) * ((double)op.second);
+          cout << "Total PE energy cost: " << energy_cost << endl;
+        }
       }
+      cout << "Total PE energy cost: " << energy_cost << endl;
     }
     assert(false);
 #endif 
