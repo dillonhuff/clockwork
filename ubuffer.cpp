@@ -5688,6 +5688,7 @@ pair<std::map<string, UBuffer>, vector<string> >
       agg_buf.hardware.out_port_width = fetch_width;
       cout << "Vectorize input port bundle: " << bd_name << endl;
       for (auto in_pt_name : port_bundles.at(bd_name) ) {
+
         cout << "\tvectorize input port: " << in_pt_name << endl;
         auto acc_pattern = AccessPattern(
             to_map(access_map.at(in_pt_name)), ctx);
@@ -5787,6 +5788,59 @@ pair<std::map<string, UBuffer>, vector<string> >
         cout << "\tVectorize output port: " << out_pt_name << endl;
 
         auto am = to_map(access_map.at(out_pt_name));
+
+
+        //map from input dim to denominator
+        map<int, int> split_dims;
+        for (auto aff : get_aff_vec(am)) {
+          cout << "\taff : " << str(aff) << endl;
+          cout << "\tdiv dim: " << num_div_dims(aff) << endl;
+          for (int d = 0; d < num_div_dims(aff); d++) {
+            auto a = isl_aff_get_div(aff, d);
+            cout << tab(2) << "=== div: " << str(a) << endl;
+            int denom = to_int(isl_aff_get_denominator_val(a));
+            assert(denom == 2);
+            cout << tab(3) << "denom = " << denom << endl;
+            for (int di = 0; di < num_in_dims(a); di++) {
+              if (!is_zero(get_coeff(a, di))) {
+                split_dims[di] = denom;
+              }
+            }
+          }
+        }
+        if (split_dims.size()) {
+            for (auto it: split_dims)
+                cout << "\tDim: " << it.first << " denom: " << it.second << endl;
+            vector<string> dvars;
+            vector<string> origin_vars;
+            for (int d = 0; d < num_in_dims(am); d ++) {
+                if (contains_key(d, split_dims)) {
+                    int denom = split_dims.at(d);
+                    dvars.push_back("floor(d" + str(d) + "/" + str(denom) + ")");
+                    dvars.push_back("d"+str(d) + "%" + str(denom));
+                } else {
+                    dvars.push_back("d" + str(d));
+                }
+                origin_vars.push_back("d" + str(d));
+            }
+            string trans_str =
+                curlies(
+                        ::domain_name(am) +  bracket_list(origin_vars)
+                        + "->" +
+                        ::domain_name(am) + bracket_list(dvars)
+                        );
+            cout << "\tTrans str" << trans_str << endl;
+            auto trans_map = isl_map_read_from_str(ctx, trans_str.c_str());
+            auto stripmining_am = dot(inv(trans_map), am);
+            cout << "\t After strip mining: " << str(stripmining_am) << endl;
+            access_map.at(out_pt_name) = to_umap(stripmining_am);
+            auto sched = schedule.at(out_pt_name);
+            schedule.at(out_pt_name) = dot(inv(trans_map), sched);
+            domain.at(out_pt_name) = ::domain(stripmining_am);
+        }
+
+
+
         //FIX the sliding window cross fetch_width boundary
         //TODO: move this into a function
         bool pad_schedule = false;
@@ -5819,6 +5873,8 @@ pair<std::map<string, UBuffer>, vector<string> >
                 cout << "\t\tAfter pad :" << str(access_map.at(out_pt_name)) << endl;
             }
         }
+
+
 
         auto acc_pattern = AccessPattern(
             to_map(access_map.at(out_pt_name)), ctx);

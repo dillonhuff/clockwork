@@ -49,12 +49,6 @@ using CoreIR::RecordType;
 static int fully_optimizable = 0;
 static int not_fully_optimizable = 0;
 
-struct affine_controller_ctrl {
-  isl_aff* access_function;
-  isl_aff* sched;
-  isl_set* dom;
-};
-
 struct block_sreg
 {
 	int init_delay;

@@ -11,6 +11,12 @@ std::string controller_name(const std::string& n) {
   return n + "_port_controller";
 }
 
+struct affine_controller_ctrl {
+  isl_aff* access_function;
+  isl_aff* sched;
+  isl_set* dom;
+};
+
 struct ubuffer_impl {
   map<int, int> partitioned_dimension_extents;
   std::set<int> partition_dims;
@@ -38,6 +44,8 @@ CoreIR::Module* coreir_for_basic_set(CoreIR::Context* context, isl_basic_set* do
 CoreIR::Module* coreir_for_set(CoreIR::Context* context, isl_set* dom);
 
 CoreIR::Module* affine_controller(CoreIR::Context* context, isl_set* dom, isl_aff* aff);
+
+affine_controller_ctrl pack_controller(affine_controller_ctrl& unpacked);
 
 void generate_coreir_addrgen_in_tile(CodegenOptions& options,
     map<string, UBuffer>& buffers,
