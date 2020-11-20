@@ -752,24 +752,28 @@ void attach_M3_bank_config_metadata(Instance* currbank, M3_config& bank_config) 
   json tile_config;
   int min_addr = INT_MAX;
   int max_addr = INT_MIN;
+  int num_accesses = 0;
   for (auto pt : bank_config.in_port_controllers) {
     json port_config = controller_metadata(pt.second);
     tile_config["in_port_" + str(pt.first)] = port_config;
     min_addr = min(min_addr, min_address(pt.second));
     max_addr = max(min_addr, max_address(pt.second));
+    num_accesses += card(extents(pt.second.dom));
   }
   for (auto pt : bank_config.out_port_controllers) {
     json port_config = controller_metadata(pt.second);
     tile_config["out_port_" + str(pt.first)] = port_config;
     min_addr = min(min_addr, min_address(pt.second));
     max_addr = max(min_addr, max_address(pt.second));
+    num_accesses += card(extents(pt.second.dom));
   }
   cout << "Min address of ctrl: " << min_addr << endl;
   cout << "Max address of ctrl: " << max_addr << endl;
   tile_config["min_addr"] = min_addr;
   tile_config["max_addr"] = max_addr;
+  tile_config["num_accesses"] = num_accesses;
   currbank->getMetaData()["config"] = tile_config;
-  assert(false);
+  //assert(false);
 }
 
 void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& prg, UBuffer& orig_buf, schedule_info& hwinfo) {
@@ -2810,6 +2814,45 @@ void count_memory_tiles(Module* top) {
   //jpass->writeToStream(file,top->getRefName());
 }
 
+void count_post_mapped_memory_accesses(Module* gmod) {
+  int accesses = 0;
+  for (auto inst : gmod->getDef()->getInstances()) {
+    if (inst.second->getModuleRef()->getName() == "Mem_amber") {
+      cout << "Metadata..." << inst.second->getMetaData()["config"] << endl;
+      cout << "# accesses in = " << inst.second->getMetaData()["config"]["num_accesses"] << endl;
+      accesses += inst.second->getMetaData()["config"]["num_accesses"].get<int>();
+
+      //assert(false);
+    }
+  }
+
+  const double ENERGY_PER_ACCESS_PJ = 1.0;
+  cout << "Total # accesses: " << accesses << endl;
+  assert(false);
+}
+
+void analyze_post_mapped_app(CodegenOptions& options, prog& prg, map<string, UBuffer>& buffers, Module* gmod) {
+  count_post_mapped_memory_accesses(gmod);
+  auto context = gmod->getContext();
+  auto ns = context->getNamespace("global");
+  //cout << "=== Post mapping instances for " << prg.name << endl;
+  map<string, int> counts;
+  for (auto inst : gmod->getDef()->getInstances()) {
+    //cout << tab(1) << inst.second->getModuleRef()->getName() << endl;
+    counts[inst.second->getModuleRef()->getName()]++;
+  }
+  cout << prg.name << " Post Mapping Resource Counts..." << endl;
+  for (auto c : counts) {
+    cout << tab(1) << c.first << " -> " << c.second << endl;
+  }
+  //assert(false);
+  if(!saveToFile(ns, prg.name + "_post_mapping.json", gmod)) {
+    cout << "Could not save ubuffer coreir" << endl;
+    context->die();
+  }
+  //assert(false);
+}
+
 //This is the top_level coreIR generation function
 void generate_coreir(CodegenOptions& options,
     map<string, UBuffer>& buffers,
@@ -2855,22 +2898,7 @@ void generate_coreir(CodegenOptions& options,
     //count_memory_tiles(prg_mod);
     garnet_map_module(prg_mod);
     Module* gmod = ns_new->getModule(prg.name);
-    //cout << "=== Post mapping instances for " << prg.name << endl;
-    map<string, int> counts;
-    for (auto inst : gmod->getDef()->getInstances()) {
-      //cout << tab(1) << inst.second->getModuleRef()->getName() << endl;
-      counts[inst.second->getModuleRef()->getName()]++;
-    }
-    cout << prg.name << " Post Mapping Resource Counts..." << endl;
-    for (auto c : counts) {
-      cout << tab(1) << c.first << " -> " << c.second << endl;
-    }
-    //assert(false);
-    if(!saveToFile(ns, prg.name + "_post_mapping.json", prg_mod)) {
-      cout << "Could not save ubuffer coreir" << endl;
-      context->die();
-    }
-    //assert(false);
+    analyze_post_mapped_app(options, prg, buffers, gmod);
   }
   prg_mod->print();
   //assert(false);
