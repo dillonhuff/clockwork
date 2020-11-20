@@ -61,7 +61,6 @@ struct block_sreg
 	int difference;
 	string inpt;
 	vector<string> chain_starts;
-        vector<vector<string>> output_chains;
 };
 
 struct M3_config {
@@ -4389,38 +4388,37 @@ dgraph build_shift_registers(CodegenOptions& options, CoreIR::ModuleDef* def, pr
     int min_d = 5;
     string mysrc = "";
     for(auto src: buf.get_out_ports()) {
-    	if(dg.weight(src,dst) > 0 && dg.weight(src,dst) < min_d && shift_registers.in_edges(dst).size()== 0 ){
-		min_d = dg.weight(src,dst);
-		mysrc = src;
-	}
+      if(dg.weight(src,dst) > 0 && dg.weight(src,dst) < min_d && shift_registers.in_edges(dst).size()== 0 ){
+        min_d = dg.weight(src,dst);
+        mysrc = src;
+      }
     }
     if(mysrc != ""){
-    	shift_registers.add_edge(mysrc, dst, dg.weight(mysrc, dst));
-    	cout << "Adding out -> out sr: " << mysrc << " -> " << dst << " " << dg.weight(mysrc,dst) << endl;
-    	bool found = false;
-	for(int i = 0; i < output_chains.size(); i ++)
-	{
-		if(find(output_chains[i].begin(), output_chains[i].end(), mysrc) != output_chains[i].end())
-		{
-			output_chains[i].insert(find(output_chains[i].begin(), output_chains[i].end(), mysrc) +1,dst);
-			found = true;
-			continue;
-		}
-		if(find(output_chains[i].begin(), output_chains[i].end(), dst) != output_chains[i].end())
-		{
-			output_chains[i].insert(find(output_chains[i].begin(), output_chains[i].end(), dst) ,mysrc);
-			found = true;
-		}
-	}
-	if(found == false)
-	{
-		output_chains.push_back({mysrc,dst});
-	}
+      shift_registers.add_edge(mysrc, dst, dg.weight(mysrc, dst));
+      cout << "Adding out -> out sr: " << mysrc << " -> " << dst << " " << dg.weight(mysrc,dst) << endl;
+      bool found = false;
+      for(int i = 0; i < output_chains.size(); i ++)
+      {
+        if(find(output_chains[i].begin(), output_chains[i].end(), mysrc) != output_chains[i].end())
+        {
+          output_chains[i].insert(find(output_chains[i].begin(), output_chains[i].end(), mysrc) +1,dst);
+          found = true;
+          continue;
+        }
+        if(find(output_chains[i].begin(), output_chains[i].end(), dst) != output_chains[i].end())
+        {
+          output_chains[i].insert(find(output_chains[i].begin(), output_chains[i].end(), dst) ,mysrc);
+          found = true;
+        }
+      }
+      if(found == false)
+      {
+        output_chains.push_back({mysrc,dst});
+      }
     }
   }
 
   cout << output_chains <<endl;
-  b->output_chains = output_chains;
   cout << endl << endl;
 
   // Make sure all in -> out srs are included
@@ -4429,17 +4427,16 @@ dgraph build_shift_registers(CodegenOptions& options, CoreIR::ModuleDef* def, pr
     for (auto dst : e.second) {
       if (buf.is_in_pt(src) &&
           shift_registers.in_edges(dst).size() == 0) {
-          //!elem(dst, shift_registers.nodes)) {
         shift_registers.add_edge(src, dst, dg.weight(src, dst));
         cout << "Adding in -> out sr: " << src << " -> " << dst << " " << dg.weight(src,dst) << endl;
       }
     }
   }
-    /*
-  if (dg.weights.size() > 1) {
-    assert(false);
-  }*/
 
+  if (buf.get_out_ports().size() == 27) {
+    cout << buf.name << " has " << buf.get_out_ports().size() << " out ports" << endl;
+    //assert(false);
+  }
   for (auto e : dg.out_edges) {
     string src = e.first;
     for (auto dst : e.second) {
@@ -4466,11 +4463,10 @@ bool allow_packed_sr(dgraph& shift_registers, UBuffer & buf, block_sreg * b)
 		inpt = buf.get_in_ports()[0];
 		b->inpt = inpt;
 	}
-  //if (buf.get_out_ports().size() == 27)
-  //{
-    //cout << buf.name << " has " << buf.get_out_ports().size() << " out ports" << endl;
-    //return false;
-  //}
+  if (buf.get_out_ports().size() == 27) {
+    cout << buf.name << " has " << buf.get_out_ports().size() << " out ports" << endl;
+    return false;
+  }
 	cout << inpt << endl;
 	vector<pair<string,int>> outpts;
 	for(auto outpt: shift_registers.out_edges[inpt]){
@@ -4996,7 +4992,6 @@ void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
         def->connect(agen->sel("out"), currbank->sel("write_addr_" + str(count)));
         def->connect(currbank->sel("wen_" + str(count)),
             enable);
-            //control_en(def, pt, adjusted_buf));
 
         def->connect(
             currbank->sel("data_in_" + str(count)),
@@ -5026,15 +5021,10 @@ isl_aff* bank_offset_aff(const std::string& reader, UBuffer& buf, ubuffer_impl& 
   string bank_func = curlies(buf.name + bracket_list(dvs) + " -> Bank[" + sep_list(coeffs, "", "", " + ") + "]");
   auto bank_map = isl_map_read_from_str(buf.ctx, bank_func.c_str());
 
-  //auto c = def->getContext();
-
   auto acc_map = to_map(buf.access_map.at(reader));
 
   auto addr_expr_aff = get_aff(dot(acc_map, bank_map));
   return addr_expr_aff;
-  //auto aff_gen_mod = coreir_for_aff(c, addr_expr_aff);
-  //auto agen = def->addInstance("bank_selector_" + reader + c->getUnique(), aff_gen_mod);
-  //return agen;
 }
 
 CoreIR::Instance* build_bank_selector(const std::string& reader, UBuffer& buf, ubuffer_impl& impl, CoreIR::ModuleDef* def) {
@@ -5084,10 +5074,8 @@ isl_aff* inner_bank_offset_aff(const std::string& reader, UBuffer& buf, ubuffer_
 
   auto addr_expr_aff = get_aff(dot(acc_map, bank_map));
   return addr_expr_aff;
-  //return get_aff(bank_map);
 }
 
-    //isl_aff* bank_selector = bank_offset_aff(pt, adjusted_buf, impl);
 CoreIR::Instance* build_inner_bank_offset(const std::string& reader, UBuffer& buf, ubuffer_impl& impl, CoreIR::ModuleDef* def) {
   vector<int> extents = extents_by_dimension(buf);
   int bank_stride = 1;
