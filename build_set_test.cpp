@@ -16752,9 +16752,9 @@ vector<prog> isca_programs() {
   vector<prog> test_programs;
 
 
-  test_programs.push_back(gaussian());
-  test_programs.push_back(camera_pipeline());
   test_programs.push_back(unsharp());
+  test_programs.push_back(camera_pipeline());
+  test_programs.push_back(gaussian());
   test_programs.push_back(harris());
   test_programs.push_back(mini_conv_halide_fixed());
   test_programs.push_back(strided_conv());
@@ -17154,7 +17154,7 @@ void cgra_flow_tests() {
   //vector<prog> M3_test_programs{resnet()};
   //vector<prog> M3_test_programs{gaussian()};
   test_codegen(M3_test_programs, compile_for_CGRA_M3_mem);
-  assert(false);
+  //assert(false);
   
   auto test_programs =
     all_cgra_programs();

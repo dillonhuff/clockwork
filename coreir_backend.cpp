@@ -4547,10 +4547,12 @@ bool allow_packed_sr(dgraph& shift_registers, UBuffer & buf, block_sreg * b)
 		inpt = buf.get_in_ports()[0];
 		b->inpt = inpt;
 	}
-	//if(buf.get_out_ports().size()!=9)
-	//{
-		//return false;
-	//}
+  //if(buf.get_out_ports().size()!=9 &&
+  if (buf.get_out_ports().size() == 27)
+  {
+    cout << buf.name << " has " << buf.get_out_ports().size() << " out ports" << endl;
+    return false;
+  }
 	cout << inpt << endl;
 	vector<pair<string,int>> outpts;
 	for(auto outpt: shift_registers.out_edges[inpt]){
@@ -4575,6 +4577,10 @@ bool allow_packed_sr(dgraph& shift_registers, UBuffer & buf, block_sreg * b)
 	}
 	cout << "diff = " << diff << endl;
 	b->difference = diff;
+  const int TILE_BANK_CAPACITY = 512;
+  if (b->difference > TILE_BANK_CAPACITY - 10) {
+    return false;
+  }
 
 	return true;
 }
@@ -4602,29 +4608,34 @@ std::set<string> generate_M1_shift_registers(CodegenOptions& options, CoreIR::Mo
       cout << tab(2) << b << endl;
     }
     assert(b_sreg.chain_starts.size() == 3);
+    assert(b_sreg.chain_starts.size() % 2 == 1);
 
-    Values tile_params{{"width", COREMK(c, 16)},
-      {"ID", COREMK(c, "sreg_" + c->getUnique())},
-      {"has_external_addrgen", COREMK(c, false)},
-      {"num_inputs",COREMK(c,1)},
-      {"num_outputs",COREMK(c,2)}};
-    CoreIR::Instance * sreg = def->addInstance("sreg_" + c->getUnique(), "cgralib.Mem_amber", tile_params);
-    def->connect(sreg->sel("clk"),def->sel("self.clk"));
-    def->connect(sreg->sel("clk_en"),one);
-    def->connect(sreg->sel("chain_chain_en"),zero);
-    def->connect(sreg->sel("chain_data_in"),mkConst(def,16,0));
-    def->connect(sreg->sel("rst_n"),def->sel("self.rst_n"));
-    def->connect(sreg->sel("data_in_0"),delayed_src);
+    for (int i = 0; i < (int) b_sreg.chain_starts.size() / 2; i++) {
+      Values tile_params{{"width", COREMK(c, 16)},
+        {"ID", COREMK(c, "sreg_" + c->getUnique())},
+        {"has_external_addrgen", COREMK(c, false)},
+        {"num_inputs",COREMK(c,1)},
+        {"num_outputs",COREMK(c,2)}};
+      CoreIR::Instance * sreg = def->addInstance("sreg_" + c->getUnique(), "cgralib.Mem_amber", tile_params);
+      def->connect(sreg->sel("clk"),def->sel("self.clk"));
+      def->connect(sreg->sel("clk_en"),one);
+      def->connect(sreg->sel("chain_chain_en"),zero);
+      def->connect(sreg->sel("chain_data_in"),mkConst(def,16,0));
+      def->connect(sreg->sel("rst_n"),def->sel("self.rst_n"));
+      def->connect(sreg->sel("data_in_0"),delayed_src);
 
-    Wireable * chain_start_1 = def->sel(b_sreg.chain_starts.at(1) + "_net.in");
-    Wireable * chain_start_2 = def->sel(b_sreg.chain_starts.at(2) + "_net.in");
-    def->connect(chain_start_1, sreg->sel("data_out_0"));
-    def->connect(chain_start_2, sreg->sel("data_out_1"));
+      Wireable * chain_start_1 = def->sel(b_sreg.chain_starts.at(2*i + 1) + "_net.in");
+      Wireable * chain_start_2 = def->sel(b_sreg.chain_starts.at(2*i + 2) + "_net.in");
+      def->connect(chain_start_1, sreg->sel("data_out_0"));
+      def->connect(chain_start_2, sreg->sel("data_out_1"));
 
-    M3_config config = instantiate_M3_verilog_sreg_block(options, sreg->getModuleRef()->getLongName(), b_sreg.difference, prg,hwinfo, b_sreg, buf);
-    attach_M3_bank_config_metadata(sreg, config);
+      M3_config config = instantiate_M3_verilog_sreg_block(options, sreg->getModuleRef()->getLongName(), b_sreg.difference, prg,hwinfo, b_sreg, buf);
+      attach_M3_bank_config_metadata(sreg, config);
+    }
 
+    //cout << "chain starts: " << b_
 
+    //assert(b_sreg.chain_starts.size() == 3);
     for (auto w : shift_registers.weights) {
       string src = w.first.first;
       string dst = w.first.second;
