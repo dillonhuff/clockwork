@@ -4436,7 +4436,8 @@ dgraph build_shift_registers(CodegenOptions& options, CoreIR::ModuleDef* def, pr
       cout << tab(1) << out.second << ": " << out.first << endl;
     }
 
-    assert(false);
+    // TODO: Assemble short chains
+    //assert(false);
   }
   for (auto e : dg.out_edges) {
     string src = e.first;
