@@ -732,7 +732,7 @@ class AccessPattern {
           auto origin_vars = sep_list(origin_var_list, "[", "]", "," );
           auto constraints = sep_list(trans_constraints, "", "", " and ");
           cout <<"OP name: " << op_name << endl;
-          isl_set* slice = (rdset(ctx, string("{ " + op_name +origin_vars + " : " + constraints + "}").c_str()));
+          isl_set* slice = (rdset(ctx, string("{ " + op_name + origin_vars + " : " + constraints + "}").c_str()));
           return slice;
       }
 

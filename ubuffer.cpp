@@ -5837,6 +5837,10 @@ pair<std::map<string, UBuffer>, vector<string> >
             auto sched = schedule.at(out_pt_name);
             schedule.at(out_pt_name) = dot(inv(trans_map), sched);
             domain.at(out_pt_name) = ::domain(stripmining_am);
+            string dom_name = domain_name(am) + "_sram2tb";
+            string o_dom_name = domain_name(am);
+            new_sched.at(dom_name) = dot(inv(trans_map), new_sched.at(dom_name));
+            new_sched.at(o_dom_name) = dot(inv(trans_map), new_sched.at(o_dom_name));
         }
 
 
@@ -5907,9 +5911,10 @@ pair<std::map<string, UBuffer>, vector<string> >
             << "\t\tpadded and batched buf2out : "<< str(rewrite_buf2op) << endl;
         auto new_op_domain = pick(get_sets(range(rewrite_buf2op)));
 
+
+
         //Slice the iteration domain for the last step,
         //also need to mask the reaccess by its sched domain
-
         isl_map* op_sched;
         //if (is_self_loop(out_pt_name)) {
         //    op_sched = new_sched.at(::name(new_op_domain));
