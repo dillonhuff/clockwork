@@ -4620,7 +4620,6 @@ std::set<string> generate_M1_shift_registers(CodegenOptions& options, CoreIR::Mo
 */
 
 
-      assert(false);
 	 return shift_registers.nodes;
   }
 
