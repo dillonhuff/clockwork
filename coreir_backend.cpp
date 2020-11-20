@@ -424,7 +424,7 @@ CoreIR::Module* generate_coreir(CodegenOptions& options, CoreIR::Context* contex
 //Assumes common has been loaded
 void load_mem_ext(Context* c) {
   //Specialized extensions
-  Generator* lbmem = c->getGenerator("memory.rowbuffer");
+  /*Generator* lbmem = c->getGenerator("memory.rowbuffer");
   lbmem->setGeneratorDefFromFun([](Context* c, Values args, ModuleDef* def) {
     uint width = args.at("width")->get<int>();
     uint depth = args.at("depth")->get<int>();
@@ -508,20 +508,23 @@ void load_mem_ext(Context* c) {
     def->connect("self.raddr","cgramem.addr");
     def->connect("self.wdata","cgramem.wdata");
     def->connect("self.wen","cgramem.wen");
-  });
+  });*/
 
   Generator* rom = c->getGenerator("memory.rom2");
   rom->setGeneratorDefFromFun([](Context* c, Values args, ModuleDef* def) {
     uint width = args.at("width")->get<int>();
-    Values rbGenargs({{"width",Const::make(c,width)},{"total_depth",Const::make(c,1024)}});
-    def->addInstance("cgramem","cgralib.Mem",
-      rbGenargs,
-      {{"mode",Const::make(c,"sram")}, {"init", def->getModule()->getArg("init")}});
-    def->addInstance("c1","corebit.const",{{"value",Const::make(c,true)}});
-    def->addInstance("c0","corebit.const",{{"value",Const::make(c,false)}});
-    def->connect("self.rdata","cgramem.rdata");
-    def->connect("self.ren","cgramem.ren");
-    def->connect("self.raddr", "cgramem.addr");
+    Values rbGenargs({{"width",Const::make(c,width)}, {"is_rom", Const::make(c,true)}});
+    Json config;
+    config["mode"] = "sram";
+    def->addInstance("cgramem","cgralib.Mem", rbGenargs,
+      {{"mode", Const::make(c,"lake")},
+      {"init", def->getModule()->getArg("init")},
+      {"config", Const::make(c, config)}});
+    //def->addInstance("c1","corebit.const",{{"value",Const::make(c,true)}});
+    //def->addInstance("c0","corebit.const",{{"value",Const::make(c,false)}});
+    def->connect("self.rdata","cgramem.data_out_0");
+    def->connect("self.ren","cgramem.ren_in");
+    def->connect("self.raddr", "cgramem.addr_in");
   });
 }
 
@@ -829,7 +832,7 @@ void load_cgramapping(Context* c) {
 
 void LoadDefinition_cgralib(Context* c) {
 
-  //load_mem_ext(c);
+  load_mem_ext(c);
   load_commonlib_ext(c);
   load_opsubstitution(c);
   load_corebit2lut(c);
@@ -1774,7 +1777,7 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
   //connect_signal("reset", ub);
   //context->runPasses({"wireclocks-coreir"});
   //context->runPasses({"rungenerators", "wireclocks-coreir"});
-  context->runPasses({ "wireclocks-clk", "rungenerators"});
+  context->runPasses({ "wireclocks-clk"});
 
   return ub;
   //assert(false);
