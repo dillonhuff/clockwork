@@ -17152,7 +17152,7 @@ void cgra_flow_tests() {
   //vector<prog> M3_test_programs = harris_variants();
   //vector<prog> M3_test_programs{up_sample(), resnet()};
   //vector<prog> M3_test_programs{resnet()};
-  //vector<prog> M3_test_programs{unsharp()};
+  //vector<prog> M3_test_programs{gaussian()};
   test_codegen(M3_test_programs, compile_for_CGRA_M3_mem);
   //assert(false);
   
