@@ -18963,16 +18963,18 @@ void test_if_construction() {
 }
 
 void dhuff_playground() {
-  {
-    prog prg = mobilenet_unrolled();
-    prg.pretty_print();
-    assert(false);
-  }
+  //{
+    //prog prg = mobilenet_unrolled();
+    //prg.pretty_print();
+    //assert(false);
+  //}
 
   {
 #ifdef COREIR
-    for (auto prg : harris_variants()) {
+    //for (auto prg : harris_variants()) {
+    for (auto prg : {resnet()}) {
       int PEs_used = 0;
+      map<string, int> PE_optype_counts;
       for (auto op : prg.all_ops()) {
         if (op->func != "") {
           CoreIR::Context* context = CoreIR::newContext();
@@ -18990,12 +18992,20 @@ void dhuff_playground() {
           for (auto inst : cu->getDef()->getInstances()) {
             cout << tab(1) << inst.second->getModuleRef()->getName() << endl;
             counts[inst.second->getModuleRef()->getName()]++;
+            if (inst.second->getModuleRef()->getName() == "PE") {
+              PE_optype_counts[inst.second->getModArgs().at("alu_op")->get<string>()]++;
+            }
           }
+          cu->print();
           PEs_used += counts["PE"];
           deleteContext(context);
         }
       }
       cout << "# of PEs in " << prg.name << " = " << PEs_used << endl;
+      cout << "PE op counts..." << endl;
+      for (auto op : PE_optype_counts) {
+        cout << tab(1) << op.first << " -> " << op.second << endl;
+      }
     }
     assert(false);
 #endif 

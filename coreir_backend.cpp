@@ -2821,8 +2821,6 @@ void count_post_mapped_memory_accesses(Module* gmod) {
       cout << "Metadata..." << inst.second->getMetaData()["config"] << endl;
       cout << "# accesses in = " << inst.second->getMetaData()["config"]["num_accesses"] << endl;
       accesses += inst.second->getMetaData()["config"]["num_accesses"].get<int>();
-
-      //assert(false);
     }
   }
 
