@@ -55,6 +55,24 @@ struct affine_controller_ctrl {
   isl_set* dom;
 };
 
+int min_address(affine_controller_ctrl& ctrl) {
+  isl_map* acc =
+    set_range_name(set_domain_name(to_map(ctrl.access_function), "dom"), "addr");
+  isl_set* dom = set_name(cpy(ctrl.dom), "dom");
+  return to_int(lexminval(range(its(acc, dom))));
+}
+
+int max_address(affine_controller_ctrl& ctrl) {
+  isl_map* acc =
+    set_range_name(set_domain_name(to_map(ctrl.access_function), "dom"), "addr");
+  isl_set* dom = set_name(cpy(ctrl.dom), "dom");
+  cout << "acc = " << str(acc) << endl;
+  cout << "dom = " << str(dom) << endl;
+  isl_set* addrs = range(its(acc, dom));
+  cout << "add = " << str(addrs) << endl;
+  return to_int(lexmaxval(addrs));
+}
+
 struct block_sreg
 {
 	int init_delay;
@@ -732,15 +750,26 @@ json controller_metadata(affine_controller_ctrl& ctrl) {
 
 void attach_M3_bank_config_metadata(Instance* currbank, M3_config& bank_config) {
   json tile_config;
+  int min_addr = INT_MAX;
+  int max_addr = INT_MIN;
   for (auto pt : bank_config.in_port_controllers) {
     json port_config = controller_metadata(pt.second);
     tile_config["in_port_" + str(pt.first)] = port_config;
+    min_addr = min(min_addr, min_address(pt.second));
+    max_addr = max(min_addr, max_address(pt.second));
   }
   for (auto pt : bank_config.out_port_controllers) {
     json port_config = controller_metadata(pt.second);
     tile_config["out_port_" + str(pt.first)] = port_config;
+    min_addr = min(min_addr, min_address(pt.second));
+    max_addr = max(min_addr, max_address(pt.second));
   }
+  cout << "Min address of ctrl: " << min_addr << endl;
+  cout << "Max address of ctrl: " << max_addr << endl;
+  tile_config["min_addr"] = min_addr;
+  tile_config["max_addr"] = max_addr;
   currbank->getMetaData()["config"] = tile_config;
+  assert(false);
 }
 
 void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& prg, UBuffer& orig_buf, schedule_info& hwinfo) {

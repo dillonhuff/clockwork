@@ -18964,6 +18964,12 @@ void test_if_construction() {
 
 void dhuff_playground() {
   {
+    prog prg = mobilenet_unrolled();
+    prg.pretty_print();
+    assert(false);
+  }
+
+  {
 #ifdef COREIR
     for (auto prg : harris_variants()) {
       int PEs_used = 0;
