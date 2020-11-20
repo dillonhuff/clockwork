@@ -174,7 +174,7 @@ void instantiate_M3_verilog(
     string bundle_name = bn + ".valid" + " && " + bn + "_enable_this_port";
 
     *verilog_collateral_file << tab(2) << "if (" << bundle_name << ") begin" << endl;
-    
+
     *verilog_collateral_file << tab(3) << "SRAM[" << bn + "_ibo" << "] <= " << "data_in_" << str(i) << ";" << endl;
     *verilog_collateral_file << tab(2) << "end" << endl;
   }
@@ -1080,8 +1080,8 @@ void load_mem_ext(Context* c) {
     //def->addInstance("c1","corebit.const",{{"value",Const::make(c,true)}});
     //def->addInstance("c0","corebit.const",{{"value",Const::make(c,false)}});
     def->connect("self.rdata","cgramem.data_out_0");
-    def->connect("self.ren","cgramem.ren_in");
-    def->connect("self.raddr", "cgramem.addr_in");
+    def->connect("self.ren","cgramem.ren_in_0");
+    def->connect("self.raddr", "cgramem.addr_in_0");
   });
 }
 
@@ -4632,20 +4632,20 @@ std::set<string> generate_M1_shift_registers(CodegenOptions& options, CoreIR::Mo
   auto c = def->getContext();
     Select* one = def->addInstance("one_" + c->getUnique(), "corebit.const", {{"value", COREMK(c, true)}})->sel("out");
     Select* zero = def->addInstance("zero_" + c->getUnique(), "corebit.const", {{"value", COREMK(c, false)}})->sel("out");
-  
+
     block_sreg b_sreg;
   dgraph shift_registers = build_shift_registers(options, def, prg, buf, hwinfo, &b_sreg);
   auto packed_sr = allow_packed_sr(shift_registers, buf,& b_sreg);
-  
+
   if(packed_sr == true)
   {
-	
-	string src = b_sreg.inpt;     
+
+	string src = b_sreg.inpt;
         Wireable * src_wire = def->sel("self." + buf.container_bundle(src) + "." + str(buf.bundle_offset(src)));
        	Wireable * delayed_src = delay_by(def, "sr_ito_all_" + c->getUnique(), src_wire, b_sreg.init_delay);
         def->connect(def->sel(b_sreg.chain_starts.at(0) + "_net.in"), delayed_src);
-	  
-    
+
+
         assert(b_sreg.chain_starts.size() == 3);
 
        	Values tile_params{{"width", COREMK(c, 16)},
@@ -4660,7 +4660,7 @@ std::set<string> generate_M1_shift_registers(CodegenOptions& options, CoreIR::Mo
       def->connect(sreg->sel("chain_data_in"),mkConst(def,16,0));
       def->connect(sreg->sel("rst_n"),def->sel("self.rst_n"));
       def->connect(sreg->sel("data_in_0"),delayed_src);
-      
+
       Wireable * chain_start_1 = def->sel(b_sreg.chain_starts.at(1) + "_net.in");
       Wireable * chain_start_2 = def->sel(b_sreg.chain_starts.at(2) + "_net.in");
       def->connect(chain_start_1, sreg->sel("data_out_0"));
@@ -4693,7 +4693,7 @@ std::set<string> generate_M1_shift_registers(CodegenOptions& options, CoreIR::Mo
        			delayed_src = delay_by(def, "sr_oto_" + c->getUnique(), src_wire, delay);
 		}
 
-	}	
+	}
 */
 
 
@@ -4793,9 +4793,9 @@ std::set<string> generate_M1_shift_registers(CodegenOptions& options, CoreIR::Mo
 
           }
         }
-      
-    
-    
+
+
+
     }
     else{
        delayed_src = delay_by(def, "sr_end" + c->getUnique(), src_wire, delay);

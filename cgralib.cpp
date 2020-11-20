@@ -383,9 +383,9 @@ CoreIR::Namespace* CoreIRLoadLibrary_cgralib(Context* c) {
             bool is_rom  = genargs.at("is_rom")->get<bool>();
 
             if (is_rom) {
-              recordparams.push_back({"wen_in", c->BitIn()});
-              recordparams.push_back({"ren_in", c->BitIn()});
-              recordparams.push_back({"addr_in", c->BitIn()->Arr(width)});
+              recordparams.push_back({"wen_in_0", c->BitIn()});
+              recordparams.push_back({"ren_in_0", c->BitIn()});
+              recordparams.push_back({"addr_in_0", c->BitIn()->Arr(width)});
             }
 
             if (has_valid) {

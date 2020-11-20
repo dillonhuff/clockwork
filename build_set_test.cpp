@@ -17165,7 +17165,7 @@ void cgra_flow_tests() {
   //vector<prog> M3_test_programs{unsharp()};
   test_codegen(M3_test_programs, compile_for_CGRA_M3_mem);
   //assert(false);
-  
+
   auto test_programs =
     all_cgra_programs();
   test_platonic_codegen(test_programs);
@@ -19002,7 +19002,7 @@ void dhuff_playground() {
       cout << "# of PEs in " << prg.name << " = " << PEs_used << endl;
     }
     assert(false);
-#endif 
+#endif
   }
   {
     for (auto prg : isca_programs()) {
@@ -19011,7 +19011,7 @@ void dhuff_playground() {
       compile_cycle_accurate_hw(options, sched, prg);
       normalize_bounds(prg);
       sequential_schedule(sched, prg.root, prg);
-      
+
       auto hw_sched = its(op_times_map(sched, prg), prg.whole_iteration_domain());
 
       auto buffers = build_buffers(prg, hw_sched);
