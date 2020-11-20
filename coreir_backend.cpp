@@ -4383,7 +4383,7 @@ dgraph build_shift_registers(CodegenOptions& options, CoreIR::ModuleDef* def, pr
 
   dgraph shift_registers;
 
-  vector<vector<string>> output_chains;
+  //vector<vector<string>> output_chains;
   for (auto dst: buf.get_out_ports()) {
     int min_d = 5;
     string mysrc = "";
@@ -4400,29 +4400,9 @@ dgraph build_shift_registers(CodegenOptions& options, CoreIR::ModuleDef* def, pr
       shift_registers.add_edge(mysrc, dst, dg.weight(mysrc, dst));
       cout << "Adding out -> out sr: " << mysrc << " -> " << dst << " " << dg.weight(mysrc,dst) << endl;
     }
-      //bool found = false;
-      //for(int i = 0; i < output_chains.size(); i ++)
-      //{
-        //if(find(output_chains[i].begin(), output_chains[i].end(), mysrc) != output_chains[i].end())
-        //{
-          //output_chains[i].insert(find(output_chains[i].begin(), output_chains[i].end(), mysrc) +1,dst);
-          //found = true;
-          //continue;
-        //}
-        //if(find(output_chains[i].begin(), output_chains[i].end(), dst) != output_chains[i].end())
-        //{
-          //output_chains[i].insert(find(output_chains[i].begin(), output_chains[i].end(), dst) ,mysrc);
-          //found = true;
-        //}
-      //}
-      //if(found == false)
-      //{
-        //output_chains.push_back({mysrc,dst});
-      //}
-    //}
   }
 
-  cout << output_chains <<endl;
+  //cout << output_chains <<endl;
   cout << endl << endl;
 
   // Make sure all in -> out srs are included
@@ -4438,8 +4418,25 @@ dgraph build_shift_registers(CodegenOptions& options, CoreIR::ModuleDef* def, pr
   }
 
   if (buf.get_out_ports().size() == 27) {
+    cout << buf.name << " has " << buf.get_in_ports().size() <<  " in ports" << endl;
     cout << buf.name << " has " << buf.get_out_ports().size() << " out ports" << endl;
-    //assert(false);
+    vector<pair<string,int>> outpts;
+    for (auto e : dg.out_edges) {
+      string src = e.first;
+      for (auto dst : e.second) {
+        if (buf.is_in_pt(src)) {
+          cout << tab(1) << "In to out sr: " << src << " -(" << dg.weight(src, dst) << ")-> " << dst << endl;
+        }
+        outpts.push_back({dst, dg.weight(src, dst)});
+      }
+    }
+    sort_lt(outpts,[](const pair<string,int> &x){return x.second;});
+    cout << "Sorted in -> out" << endl;
+    for (auto out : outpts) {
+      cout << tab(1) << out.second << ": " << out.first << endl;
+    }
+
+    assert(false);
   }
   for (auto e : dg.out_edges) {
     string src = e.first;
@@ -4468,6 +4465,7 @@ bool allow_packed_sr(dgraph& shift_registers, UBuffer & buf, block_sreg * b)
 		b->inpt = inpt;
 	}
   if (buf.get_out_ports().size() == 27) {
+    cout << buf.name << " has " << buf.get_in_ports().size() <<  " in ports" << endl;
     cout << buf.name << " has " << buf.get_out_ports().size() << " out ports" << endl;
     return false;
   }
