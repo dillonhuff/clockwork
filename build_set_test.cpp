@@ -13289,13 +13289,13 @@ void cpy_app_to_folder(const std::string& app_type, const std::string& prg_name)
 void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, string dir="aha_garnet_design") {
   vector<prog> test_apps;
   test_apps.push_back(conv_3_3());
-  //test_apps.push_back(gaussian());
-  //test_apps.push_back(cascade());
-  //test_apps.push_back(harris());
-  //test_apps.push_back(resnet());
-  //test_apps.push_back(rom());
-  //test_apps.push_back(conv_1_2());
-  //test_apps.push_back(camera_pipeline());
+  test_apps.push_back(gaussian());
+  test_apps.push_back(cascade());
+  test_apps.push_back(harris());
+  test_apps.push_back(resnet());
+  test_apps.push_back(rom());
+  test_apps.push_back(conv_1_2());
+  test_apps.push_back(camera_pipeline());
   test_apps.push_back(up_sample());
 
   ////test_apps.push_back(mobilenet_unrolled());
@@ -13338,7 +13338,7 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
       bool extra_flag_for_lake = true;
       int res = run_verilator_on(name, name + "_verilog_tb.cpp", verilog_files, extra_flag_for_lake);
       assert(res == 0);
-      //cmd("rm LakeWrapper.v");
+      cmd("rm LakeWrapper.v");
 
       auto verilator_res = verilator_results(prg.name);
       compare("cgra_" + prg.name + "_cpu_vs_verilog_comparison", verilator_res, cpu);
@@ -15523,7 +15523,8 @@ void relax_delays_rate_matched(schedule_info& sched, prog& prg) {
         if (equal_start_time && !equal_rng) {
             int prod_ii = sched.II(pick(prod_op_vec)->parent);
             cout << "\t\top " << prod_op_name << " has ii: " << prod_ii << endl;
-            d += prod_ii * fetch_width + 2;
+            //6 is a magic number which make upsample work
+            d += prod_ii * fetch_width + 6;
         }
     }
     sched.op_offset_within_parent[lp] += d;

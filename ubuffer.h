@@ -668,7 +668,7 @@ class AccessPattern {
           vector<int> & stride_in_target = access_matrix[dim_id];
           int inner_most = get_inner_most_related_dom_dim();
           cout << "trans op dim: " << inner_most << endl;
-          vector<string> var_list(var_dim-1);
+          vector<string> var_list;//(var_dim-1);
           vector<string> origin_var_list(var_dim-1);
           //var_list.front() = "root";
           //origin_var_list.front() = "root";
@@ -683,13 +683,13 @@ class AccessPattern {
                   int factor = fetch_width / stride_in_target[it.second];
                   string trans = "floor("+ it.first + "/" + to_string(factor) + ")";
                   string rems = it.first + "%" + to_string(factor);
-                  var_list[id] = trans;
+                  var_list.push_back(trans);
                   var_list.push_back(rems);
                   origin_var_list[id] = it.first;
               }
               else {
                   //if (id <= inner_most)
-                  var_list[id] = it.first;
+                  var_list.push_back(it.first);
                   origin_var_list[id] = it.first;
               }
           }
