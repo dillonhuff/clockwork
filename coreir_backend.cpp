@@ -4353,7 +4353,11 @@ struct dgraph {
   }
 
   int weight(const std::string& src, const std::string& dst) {
-    return weights[{src, dst}];
+    if(weights.find({src,dst}) == weights.end()){
+    	 return -1;
+    } else{
+	 return  weights[{src, dst}];
+    }
   }
 
   vector<pair<string, int> > in_edges(const std::string& dst) {
@@ -4418,23 +4422,57 @@ dgraph build_shift_register_graph(CodegenOptions& options, CoreIR::ModuleDef* de
   return dg;
 }
 
-dgraph build_shift_registers(CodegenOptions& options, CoreIR::ModuleDef* def, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
+struct block_sreg
+{
+	int init_delay;
+	int difference;
+	string inpt;
+	vector<string> chain_starts;
+        vector<vector<string>> output_chains;
+};
+
+dgraph build_shift_registers(CodegenOptions& options, CoreIR::ModuleDef* def, prog& prg, UBuffer& buf, schedule_info& hwinfo,block_sreg * b ) {
   dgraph dg = build_shift_register_graph(options, def, prg, buf, hwinfo);
 
   dgraph shift_registers;
-  for (auto e : dg.out_edges) {
-    string src = e.first;
-    for (auto dst : e.second) {
-      if (buf.is_out_pt(src) &&
-          buf.is_out_pt(dst) &&
-          dg.weight(src, dst) == 1 &&
-          shift_registers.in_edges(dst).size() == 0) {
-        shift_registers.add_edge(src, dst, dg.weight(src, dst));
-        cout << "Adding out -> out sr: " << src << " -> " << dst << dg.weight(src,dst) << endl;
-      }
+
+  vector<vector<string>> output_chains;
+  for (auto dst: buf.get_out_ports()) {
+    int min_d = 5;
+    string mysrc = "";
+    for(auto src: buf.get_out_ports()) {
+    	if(dg.weight(src,dst) > 0 && dg.weight(src,dst) < min_d && shift_registers.in_edges(dst).size()== 0 ){
+		min_d = dg.weight(src,dst);
+		mysrc = src;
+	}
+    }
+    if(mysrc != ""){
+    	shift_registers.add_edge(mysrc, dst, dg.weight(mysrc, dst));
+    	cout << "Adding out -> out sr: " << mysrc << " -> " << dst << " " << dg.weight(mysrc,dst) << endl;
+    	bool found = false;
+	for(int i = 0; i < output_chains.size(); i ++)
+	{
+		if(find(output_chains[i].begin(), output_chains[i].end(), mysrc) != output_chains[i].end())
+		{
+			output_chains[i].insert(find(output_chains[i].begin(), output_chains[i].end(), mysrc) +1,dst);
+			found = true;
+			continue;
+		}
+		if(find(output_chains[i].begin(), output_chains[i].end(), dst) != output_chains[i].end())
+		{
+			output_chains[i].insert(find(output_chains[i].begin(), output_chains[i].end(), dst) ,mysrc);
+			found = true;
+		}
+	}
+	if(found == false)
+	{
+		output_chains.push_back({mysrc,dst});
+	}
     }
   }
 
+  cout << output_chains <<endl;
+  b->output_chains = output_chains;
   cout << endl << endl;
 
   // Make sure all in -> out srs are included
@@ -4445,13 +4483,14 @@ dgraph build_shift_registers(CodegenOptions& options, CoreIR::ModuleDef* def, pr
           shift_registers.in_edges(dst).size() == 0) {
           //!elem(dst, shift_registers.nodes)) {
         shift_registers.add_edge(src, dst, dg.weight(src, dst));
-        cout << "Adding in -> out sr: " << src << " -> " << dst << dg.weight(src,dst) << endl;
+        cout << "Adding in -> out sr: " << src << " -> " << dst << " " << dg.weight(src,dst) << endl;
       }
     }
   }
-  //if (dg.weights.size() > 1) {
-    //assert(false);
-  //}
+    /*
+  if (dg.weights.size() > 1) {
+    assert(false);
+  }*/
 
   for (auto e : dg.out_edges) {
     string src = e.first;
@@ -4467,16 +4506,128 @@ dgraph build_shift_registers(CodegenOptions& options, CoreIR::ModuleDef* def, pr
 
 
 
+bool allow_packed_sr(dgraph& shift_registers, UBuffer & buf, block_sreg * b)
+{
+	string inpt;
+	if(buf.get_in_ports().size()!=1)
+	{
+		return false;
+	}
+	else
+	{
+		inpt = buf.get_in_ports()[0];
+		b->inpt = inpt;
+	}
+	if(buf.get_out_ports().size()!=9)
+	{
+		return false;
+	}
+	cout << inpt << endl;
+	vector<pair<string,int>> outpts;
+	for(auto outpt: shift_registers.out_edges[inpt]){
+		outpts.push_back({outpt,shift_registers.weight(inpt,outpt)});
+	}
+	if(outpts.size() < 3)
+	{
+		return false;
+	}
+
+	sort_lt(outpts,[](const pair<string,int> &x){return x.second;});
+	int diff = outpts[1].second - outpts[0].second;
+	b->chain_starts = {outpts[0].first,outpts[1].first};
+	b->init_delay = outpts[0].second;
+	for(int i = 2; i < outpts.size(); i ++)
+	{
+		if (outpts[i].second - outpts[i-1].second != diff)
+		{
+			return false;
+		}
+		b->chain_starts.push_back(outpts[i].first);
+	}
+	cout << "diff = " << diff << endl;
+	b->difference = diff;
+
+	return true;
+}
+
 std::set<string> generate_M1_shift_registers(CodegenOptions& options, CoreIR::ModuleDef* def, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
 
-
-
-  dgraph shift_registers = build_shift_registers(options, def, prg, buf, hwinfo);
-  cout << "SRC shift registers" << endl;
-  cout << shift_registers << endl;
   auto c = def->getContext();
     Select* one = def->addInstance("one_" + c->getUnique(), "corebit.const", {{"value", COREMK(c, true)}})->sel("out");
     Select* zero = def->addInstance("zero_" + c->getUnique(), "corebit.const", {{"value", COREMK(c, false)}})->sel("out");
+  
+    block_sreg b_sreg;
+  dgraph shift_registers = build_shift_registers(options, def, prg, buf, hwinfo, &b_sreg);
+  auto packed_sr = allow_packed_sr(shift_registers, buf,& b_sreg);
+  
+  if(packed_sr == true)
+  {
+	
+	string src = b_sreg.inpt;     
+        Wireable * src_wire = def->sel("self." + buf.container_bundle(src) + "." + str(buf.bundle_offset(src)));
+       	Wireable * delayed_src = delay_by(def, "sr_ito_all_" + c->getUnique(), src_wire, b_sreg.init_delay);
+        def->connect(def->sel(b_sreg.chain_starts.at(0) + "_net.in"), delayed_src);
+	  
+    
+        assert(b_sreg.chain_starts.size() == 3);
+
+       	Values tile_params{{"width", COREMK(c, 16)},
+	{"ID", COREMK(c, "sreg_" + c->getUnique())},
+	{"has_external_addrgen", COREMK(c, false)},
+	{"num_inputs",COREMK(c,1)},
+	{"num_outputs",COREMK(c,2)}};
+      CoreIR::Instance * sreg = def->addInstance("sreg_" + c->getUnique(), "cgralib.Mem_amber", tile_params);
+      def->connect(sreg->sel("clk"),def->sel("self.clk"));
+      def->connect(sreg->sel("clk_en"),one);
+      def->connect(sreg->sel("chain_chain_en"),zero);
+      def->connect(sreg->sel("chain_data_in"),mkConst(def,16,0));
+      def->connect(sreg->sel("rst_n"),def->sel("self.rst_n"));
+      def->connect(sreg->sel("data_in_0"),delayed_src);
+      
+      Wireable * chain_start_1 = def->sel(b_sreg.chain_starts.at(1) + "_net.in");
+      Wireable * chain_start_2 = def->sel(b_sreg.chain_starts.at(2) + "_net.in");
+      def->connect(chain_start_1, sreg->sel("data_out_0"));
+      def->connect(chain_start_2, sreg->sel("data_out_1"));
+
+
+      for (auto w : shift_registers.weights) {
+	      string src = w.first.first;
+	      string dst = w.first.second;
+	      int delay = w.second;
+	    if (buf.is_out_pt(src) && buf.is_out_pt(dst)) {
+		    Wireable* src_wire = def->sel(src + "_net.out");
+		    Wireable* dst_wire = def->sel(dst + "_net.in");
+		    Wireable* delayed_src =
+			    delay_by(def, "sr_oto_" + c->getUnique(), src_wire, delay);
+		    cout << "wiring " << src << " to " << dst << endl;
+		    def->connect(dst_wire, delayed_src);
+		   }
+      }
+
+      //auto config = instantiate_M3_verilog_sreg(options, sreg->getModuleRef()->getLongName(), min(delay,maxd), prg, hwinfo);
+      //attach_M3_bank_config_metadata(sreg, config);
+/*
+	auto output_chains = b_sreg->output_chains;
+	for(auto chain: output_chains)
+	{
+
+		for()
+		{
+       			delayed_src = delay_by(def, "sr_oto_" + c->getUnique(), src_wire, delay);
+		}
+
+	}	
+*/
+
+
+      assert(false);
+	 return shift_registers.nodes;
+  }
+
+
+  cout << "SRC shift registers" << endl;
+  cout << shift_registers << endl;
+
   std::set<string> done_outpt;
   for (auto w : shift_registers.weights) {
     string src = w.first.first;

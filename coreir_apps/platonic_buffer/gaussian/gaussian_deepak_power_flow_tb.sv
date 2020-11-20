@@ -3,7 +3,7 @@
 `define CLK_PERIOD 10
 `define RUN_TIME 10000
 
-module gaussian_tb;
+module TB;
   logic clk;
   logic rst;
   logic flush;
