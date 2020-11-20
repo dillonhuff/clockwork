@@ -55,6 +55,15 @@ struct affine_controller_ctrl {
   isl_set* dom;
 };
 
+struct block_sreg
+{
+	int init_delay;
+	int difference;
+	string inpt;
+	vector<string> chain_starts;
+        vector<vector<string>> output_chains;
+};
+
 struct M3_config {
   map<int, affine_controller_ctrl> in_port_controllers;
   map<int, affine_controller_ctrl> out_port_controllers;
@@ -178,6 +187,70 @@ void instantiate_M3_verilog(
 
 }
 
+void instantiate_M3_verilog_sreg_block(CodegenOptions& options, const std::string& long_name, int delay, prog& prg,schedule_info& hwinfo,  block_sreg & b_sreg, UBuffer & buf)
+{
+   assert(verilog_collateral_file != nullptr);
+  std::ostream& out = *verilog_collateral_file;
+
+   isl_aff * write_aff = rdaff(prg.ctx,"{[root,t] -> [( root + t + 1 )]}");
+  isl_aff * read_aff2  = rdaff(prg.ctx, "{[root,t] -> [(root+t + " + str(delay *2  ) + ")]}");
+  isl_aff * read_aff = rdaff(prg.ctx, "{[root,t] -> [(root+t + " + str(delay  ) + ")]}");
+  isl_set * dom = rdset(prg.ctx,"{[root,t] : root = 0 and 0 <= t <= 65355 }");
+
+  generate_fsm(*verilog_collateral_file, options, long_name + "_read_ctrl_2_fsm", "d", "valid",read_aff2, dom);
+  generate_fsm(*verilog_collateral_file, options, long_name + "_read_ctrl_fsm", "d", "valid", read_aff , dom);
+  generate_fsm(*verilog_collateral_file, options, long_name + "_write_ctrl_fsm", "d", "valid", write_aff, dom);
+
+
+    vector<string> port_decls = {};
+      port_decls.push_back("input clk");
+      port_decls.push_back("input rst_n");
+      port_decls.push_back("input clk_en");
+      port_decls.push_back("input chain_chain_en");
+
+        port_decls.push_back("input [15:0] data_in_0");
+
+
+        port_decls.push_back("output logic [15:0] data_out_0");
+        //port_decls.push_back("output data_out_0_valid");
+      port_decls.push_back("output logic [15:0] data_out_1");
+        //port_decls.push_back("output data_out_1_valid");
+      port_decls.push_back("input [15:0] chain_data_in");
+      port_decls.push_back("output [15:0] chain_data_out");
+
+      *verilog_collateral_file << "module " << long_name <<" ("<< sep_list(port_decls,"","",",") <<"); "<< endl;
+
+      *verilog_collateral_file << "logic [15:0] SRAM [50000:0];" << endl;
+          out << tab(1) << long_name + "_read_ctrl_2_fsm " << long_name + "_read_ctrl_2_fsm_ctrl" << "(.clk(clk), .rst_n(rst_n));" << endl;
+    out << tab(1) << long_name + "_read_ctrl_fsm " << long_name + "_read_ctrl_fsm_ctrl" << "(.clk(clk), .rst_n(rst_n));" << endl;
+    out << tab(1) << long_name + "_write_ctrl_fsm " << long_name + "_write_ctrl_fsm_ctrl" << "(.clk(clk), .rst_n(rst_n));" << endl;
+
+    *verilog_collateral_file << tab(1) << "logic [15:0] data_out_0_tmp;" << endl;
+      *verilog_collateral_file << tab(1) << "logic [15:0] data_out_1_tmp;" << endl;
+
+
+  *verilog_collateral_file << tab(1) << "always @(posedge clk) begin" << endl;
+
+    *verilog_collateral_file << tab(2) << "if(" <<  long_name + "_read_ctrl_2_fsm_ctrl.valid" << ") begin" << endl;
+    *verilog_collateral_file << tab(3) << "data_out_1_tmp <= SRAM[" << long_name + "_read_ctrl_2_fsm_ctrl.d[1]];" << endl;
+  *verilog_collateral_file << tab(2) << "end" << endl;
+    *verilog_collateral_file << tab(2) << "if(" <<  long_name + "_read_ctrl_fsm_ctrl.valid" << ") begin" << endl;
+        *verilog_collateral_file << tab(3) << "data_out_0_tmp <= SRAM[" << long_name + "_read_ctrl_fsm_ctrl.d[1]];" << endl;
+  *verilog_collateral_file << tab(2) << "end" << endl;
+    *verilog_collateral_file << tab(2) << "if(" <<  long_name + "_write_ctrl_fsm_ctrl.valid" << ") begin" << endl;
+    *verilog_collateral_file << tab(3) << "SRAM[" << long_name + "_write_ctrl_fsm_ctrl.d[1]" << "] <= data_in_0;" <<endl;
+  *verilog_collateral_file << tab(2) << "end" << endl;
+
+  *verilog_collateral_file << tab(1) << "end" << endl;
+  *verilog_collateral_file << tab(1) << "assign chain_data_out = 512;" << endl;
+  for (int i = 0; i < 2; i++) {
+    *verilog_collateral_file << tab(1) << "assign data_out_" << i << " = data_out_" << i << "_tmp;" << endl;
+  }
+
+        *verilog_collateral_file << "endmodule "<< endl;
+
+}
+
 M3_config instantiate_M3_verilog_sreg(CodegenOptions& options, const std::string& long_name, int delay, prog& prg,schedule_info& hwinfo) {
 
   assert(verilog_collateral_file != nullptr);
@@ -203,62 +276,6 @@ M3_config instantiate_M3_verilog_sreg(CodegenOptions& options, const std::string
 
   return {in_pts, out_pts};
 
-  //generate_fsm(*verilog_collateral_file,
-      //options,
-      //long_name + "_fsm_write_ctrl",
-      //"d",
-      //"valid",
-      //identity,
-      //dom);
-
-  //generate_fsm(*verilog_collateral_file,
-      //options,
-      //long_name + "_fsm_read_ctrl",
-      //"d",
-      //"valid",
-      //shifted_identity,
-      //dom);
-
-  //vector<string> port_decls = {};
-  //port_decls.push_back("input clk");
-  //port_decls.push_back("input rst_n");
-  //port_decls.push_back("input clk_en");
-  //port_decls.push_back("input chain_chain_en");
-  //port_decls.push_back("input [15:0] data_in_0");
-  //port_decls.push_back("output logic [15:0] data_out_0" );
-  //port_decls.push_back("output data_out_0_valid");
-  //port_decls.push_back("input [15:0] chain_data_in");
-  //port_decls.push_back("output [15:0] chain_data_out");
-
-  //*verilog_collateral_file << "module " << long_name <<" ("<< sep_list(port_decls,"","",",") <<"); "<< endl;
-
-  //string write_name = long_name + "_fsm_write";
-  //out << tab(1) << write_name + "_ctrl "<< write_name  << "(.clk(clk), .rst_n(rst_n));" << endl;
-
-  //string read_name = long_name + "_fsm_read";
-  //out << tab(1) << read_name + "_ctrl " << read_name  << "(.clk(clk), .rst_n(rst_n));" << endl;
-
-  //*verilog_collateral_file << endl;
-
-  //*verilog_collateral_file << tab(1) << "logic [15:0] SRAM [1023:0];" << endl;
-  //*verilog_collateral_file << tab(1) << "logic [15:0] data_out_0_tmp;" << endl;
-
-  //*verilog_collateral_file << tab(1) << "always @(posedge clk) begin" << endl;
-
-  //string bundle_name = read_name + ".valid" ;
-  //*verilog_collateral_file << tab(2) << "data_out_0_tmp <= SRAM[" << read_name << ".d[1]" << "];" << endl;
-  //out << tab(2) << "data_out_0_valid <= " << bundle_name << ";" << endl;
-
-  //bundle_name = write_name + ".valid" ;
-  //*verilog_collateral_file << tab(2) << "if (" << bundle_name << ") begin" << endl;
-  //*verilog_collateral_file << tab(3) << "SRAM[" << write_name + ".d[1]" << "] <= " << "data_in_0;" << endl;
-  //*verilog_collateral_file << tab(2) << "end" << endl;
-
-  //*verilog_collateral_file << tab(1) << "end" << endl;
-  //*verilog_collateral_file << tab(1) << "assign data_out_0 = data_out_0_tmp;" << endl;
-  //*verilog_collateral_file << tab(1) << "assign chain_data_out = 16'b0;" << endl;
-
-  //*verilog_collateral_file << "endmodule" << endl << endl;
 }
 
 
@@ -4371,7 +4388,11 @@ struct dgraph {
   }
 
   int weight(const std::string& src, const std::string& dst) {
-    return weights[{src, dst}];
+    if(weights.find({src,dst}) == weights.end()){
+    	 return -1;
+    } else{
+	 return  weights[{src, dst}];
+    }
   }
 
   vector<pair<string, int> > in_edges(const std::string& dst) {
@@ -4436,23 +4457,50 @@ dgraph build_shift_register_graph(CodegenOptions& options, CoreIR::ModuleDef* de
   return dg;
 }
 
-dgraph build_shift_registers(CodegenOptions& options, CoreIR::ModuleDef* def, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
+
+
+dgraph build_shift_registers(CodegenOptions& options, CoreIR::ModuleDef* def, prog& prg, UBuffer& buf, schedule_info& hwinfo,block_sreg * b ) {
   dgraph dg = build_shift_register_graph(options, def, prg, buf, hwinfo);
 
   dgraph shift_registers;
-  for (auto e : dg.out_edges) {
-    string src = e.first;
-    for (auto dst : e.second) {
-      if (buf.is_out_pt(src) &&
-          buf.is_out_pt(dst) &&
-          dg.weight(src, dst) == 1 &&
-          shift_registers.in_edges(dst).size() == 0) {
-        shift_registers.add_edge(src, dst, dg.weight(src, dst));
-        cout << "Adding out -> out sr: " << src << " -> " << dst << dg.weight(src,dst) << endl;
-      }
+
+  vector<vector<string>> output_chains;
+  for (auto dst: buf.get_out_ports()) {
+    int min_d = 5;
+    string mysrc = "";
+    for(auto src: buf.get_out_ports()) {
+    	if(dg.weight(src,dst) > 0 && dg.weight(src,dst) < min_d && shift_registers.in_edges(dst).size()== 0 ){
+		min_d = dg.weight(src,dst);
+		mysrc = src;
+	}
+    }
+    if(mysrc != ""){
+    	shift_registers.add_edge(mysrc, dst, dg.weight(mysrc, dst));
+    	cout << "Adding out -> out sr: " << mysrc << " -> " << dst << " " << dg.weight(mysrc,dst) << endl;
+    	bool found = false;
+	for(int i = 0; i < output_chains.size(); i ++)
+	{
+		if(find(output_chains[i].begin(), output_chains[i].end(), mysrc) != output_chains[i].end())
+		{
+			output_chains[i].insert(find(output_chains[i].begin(), output_chains[i].end(), mysrc) +1,dst);
+			found = true;
+			continue;
+		}
+		if(find(output_chains[i].begin(), output_chains[i].end(), dst) != output_chains[i].end())
+		{
+			output_chains[i].insert(find(output_chains[i].begin(), output_chains[i].end(), dst) ,mysrc);
+			found = true;
+		}
+	}
+	if(found == false)
+	{
+		output_chains.push_back({mysrc,dst});
+	}
     }
   }
 
+  cout << output_chains <<endl;
+  b->output_chains = output_chains;
   cout << endl << endl;
 
   // Make sure all in -> out srs are included
@@ -4463,13 +4511,14 @@ dgraph build_shift_registers(CodegenOptions& options, CoreIR::ModuleDef* def, pr
           shift_registers.in_edges(dst).size() == 0) {
           //!elem(dst, shift_registers.nodes)) {
         shift_registers.add_edge(src, dst, dg.weight(src, dst));
-        cout << "Adding in -> out sr: " << src << " -> " << dst << dg.weight(src,dst) << endl;
+        cout << "Adding in -> out sr: " << src << " -> " << dst << " " << dg.weight(src,dst) << endl;
       }
     }
   }
-  //if (dg.weights.size() > 1) {
-    //assert(false);
-  //}
+    /*
+  if (dg.weights.size() > 1) {
+    assert(false);
+  }*/
 
   for (auto e : dg.out_edges) {
     string src = e.first;
@@ -4485,16 +4534,127 @@ dgraph build_shift_registers(CodegenOptions& options, CoreIR::ModuleDef* def, pr
 
 
 
+bool allow_packed_sr(dgraph& shift_registers, UBuffer & buf, block_sreg * b)
+{
+	string inpt;
+	if(buf.get_in_ports().size()!=1)
+	{
+		return false;
+	}
+	else
+	{
+		inpt = buf.get_in_ports()[0];
+		b->inpt = inpt;
+	}
+	if(buf.get_out_ports().size()!=9)
+	{
+		return false;
+	}
+	cout << inpt << endl;
+	vector<pair<string,int>> outpts;
+	for(auto outpt: shift_registers.out_edges[inpt]){
+		outpts.push_back({outpt,shift_registers.weight(inpt,outpt)});
+	}
+	if(outpts.size() < 3)
+	{
+		return false;
+	}
+
+	sort_lt(outpts,[](const pair<string,int> &x){return x.second;});
+	int diff = outpts[1].second - outpts[0].second;
+	b->chain_starts = {outpts[0].first,outpts[1].first};
+	b->init_delay = outpts[0].second;
+	for(int i = 2; i < outpts.size(); i ++)
+	{
+		if (outpts[i].second - outpts[i-1].second != diff)
+		{
+			return false;
+		}
+		b->chain_starts.push_back(outpts[i].first);
+	}
+	cout << "diff = " << diff << endl;
+	b->difference = diff;
+
+	return true;
+}
+
 std::set<string> generate_M1_shift_registers(CodegenOptions& options, CoreIR::ModuleDef* def, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
 
-
-
-  dgraph shift_registers = build_shift_registers(options, def, prg, buf, hwinfo);
-  cout << "SRC shift registers" << endl;
-  cout << shift_registers << endl;
   auto c = def->getContext();
     Select* one = def->addInstance("one_" + c->getUnique(), "corebit.const", {{"value", COREMK(c, true)}})->sel("out");
     Select* zero = def->addInstance("zero_" + c->getUnique(), "corebit.const", {{"value", COREMK(c, false)}})->sel("out");
+  
+    block_sreg b_sreg;
+  dgraph shift_registers = build_shift_registers(options, def, prg, buf, hwinfo, &b_sreg);
+  auto packed_sr = allow_packed_sr(shift_registers, buf,& b_sreg);
+  
+  if(packed_sr == true)
+  {
+	
+	string src = b_sreg.inpt;     
+        Wireable * src_wire = def->sel("self." + buf.container_bundle(src) + "." + str(buf.bundle_offset(src)));
+       	Wireable * delayed_src = delay_by(def, "sr_ito_all_" + c->getUnique(), src_wire, b_sreg.init_delay);
+        def->connect(def->sel(b_sreg.chain_starts.at(0) + "_net.in"), delayed_src);
+	  
+    
+        assert(b_sreg.chain_starts.size() == 3);
+
+       	Values tile_params{{"width", COREMK(c, 16)},
+	{"ID", COREMK(c, "sreg_" + c->getUnique())},
+	{"has_external_addrgen", COREMK(c, false)},
+	{"num_inputs",COREMK(c,1)},
+	{"num_outputs",COREMK(c,2)}};
+      CoreIR::Instance * sreg = def->addInstance("sreg_" + c->getUnique(), "cgralib.Mem_amber", tile_params);
+      def->connect(sreg->sel("clk"),def->sel("self.clk"));
+      def->connect(sreg->sel("clk_en"),one);
+      def->connect(sreg->sel("chain_chain_en"),zero);
+      def->connect(sreg->sel("chain_data_in"),mkConst(def,16,0));
+      def->connect(sreg->sel("rst_n"),def->sel("self.rst_n"));
+      def->connect(sreg->sel("data_in_0"),delayed_src);
+      
+      Wireable * chain_start_1 = def->sel(b_sreg.chain_starts.at(1) + "_net.in");
+      Wireable * chain_start_2 = def->sel(b_sreg.chain_starts.at(2) + "_net.in");
+      def->connect(chain_start_1, sreg->sel("data_out_0"));
+      def->connect(chain_start_2, sreg->sel("data_out_1"));
+
+
+      for (auto w : shift_registers.weights) {
+	      string src = w.first.first;
+	      string dst = w.first.second;
+	      int delay = w.second;
+	    if (buf.is_out_pt(src) && buf.is_out_pt(dst)) {
+		    Wireable* src_wire = def->sel(src + "_net.out");
+		    Wireable* dst_wire = def->sel(dst + "_net.in");
+		    Wireable* delayed_src =
+			    delay_by(def, "sr_oto_" + c->getUnique(), src_wire, delay);
+		    cout << "wiring " << src << " to " << dst << endl;
+		    def->connect(dst_wire, delayed_src);
+		   }
+      }
+
+      instantiate_M3_verilog_sreg_block(options, sreg->getModuleRef()->getLongName(), b_sreg.difference, prg,hwinfo, b_sreg, buf);
+      //attach_M3_bank_config_metadata(sreg, config);
+/*
+	auto output_chains = b_sreg->output_chains;
+	for(auto chain: output_chains)
+	{
+
+		for()
+		{
+       			delayed_src = delay_by(def, "sr_oto_" + c->getUnique(), src_wire, delay);
+		}
+
+	}	
+*/
+
+
+	 return shift_registers.nodes;
+  }
+
+
+  cout << "SRC shift registers" << endl;
+  cout << shift_registers << endl;
+
   std::set<string> done_outpt;
   for (auto w : shift_registers.weights) {
     string src = w.first.first;
