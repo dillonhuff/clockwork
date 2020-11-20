@@ -567,12 +567,12 @@ pair<ubuffer_impl,isl_map*> build_buffer_impl(prog& prg, UBuffer& buf, schedule_
     cout << buf.name << " is really a register file" << endl;
   }
 
-  if (buf.get_out_ports().size() > 0 &&
-      is_register_file(buf) &&
-      && all_constant_accesses(buf)) {
-    cout << buf.name << " has all constant accesses" << endl;
-    //assert(false);
-  }
+  //if (buf.get_out_ports().size() > 0 &&
+      //is_register_file(buf) &&
+      //&& all_constant_accesses(buf)) {
+    //cout << buf.name << " has all constant accesses" << endl;
+    ////assert(false);
+  //}
 
   impl.partition_dims = embarassing_banking.get_value();
   vector<int> extents;
