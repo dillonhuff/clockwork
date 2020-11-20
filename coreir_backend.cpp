@@ -4388,34 +4388,38 @@ dgraph build_shift_registers(CodegenOptions& options, CoreIR::ModuleDef* def, pr
     int min_d = 5;
     string mysrc = "";
     for(auto src: buf.get_out_ports()) {
-      if(dg.weight(src,dst) > 0 && dg.weight(src,dst) < min_d && shift_registers.in_edges(dst).size()== 0 ){
+      if(dg.weight(src,dst) > 0 &&
+          dg.weight(src,dst) < min_d &&
+          shift_registers.in_edges(dst).size() == 0) {
         min_d = dg.weight(src,dst);
         mysrc = src;
       }
     }
+
     if(mysrc != ""){
       shift_registers.add_edge(mysrc, dst, dg.weight(mysrc, dst));
       cout << "Adding out -> out sr: " << mysrc << " -> " << dst << " " << dg.weight(mysrc,dst) << endl;
-      bool found = false;
-      for(int i = 0; i < output_chains.size(); i ++)
-      {
-        if(find(output_chains[i].begin(), output_chains[i].end(), mysrc) != output_chains[i].end())
-        {
-          output_chains[i].insert(find(output_chains[i].begin(), output_chains[i].end(), mysrc) +1,dst);
-          found = true;
-          continue;
-        }
-        if(find(output_chains[i].begin(), output_chains[i].end(), dst) != output_chains[i].end())
-        {
-          output_chains[i].insert(find(output_chains[i].begin(), output_chains[i].end(), dst) ,mysrc);
-          found = true;
-        }
-      }
-      if(found == false)
-      {
-        output_chains.push_back({mysrc,dst});
-      }
     }
+      //bool found = false;
+      //for(int i = 0; i < output_chains.size(); i ++)
+      //{
+        //if(find(output_chains[i].begin(), output_chains[i].end(), mysrc) != output_chains[i].end())
+        //{
+          //output_chains[i].insert(find(output_chains[i].begin(), output_chains[i].end(), mysrc) +1,dst);
+          //found = true;
+          //continue;
+        //}
+        //if(find(output_chains[i].begin(), output_chains[i].end(), dst) != output_chains[i].end())
+        //{
+          //output_chains[i].insert(find(output_chains[i].begin(), output_chains[i].end(), dst) ,mysrc);
+          //found = true;
+        //}
+      //}
+      //if(found == false)
+      //{
+        //output_chains.push_back({mysrc,dst});
+      //}
+    //}
   }
 
   cout << output_chains <<endl;
@@ -4752,7 +4756,6 @@ void instantiate_M1_verilog(const std::string& long_name, const int b, ubuffer_i
     port_decls.push_back("input [15:0] chain_data_in");
     port_decls.push_back("output [15:0] chain_data_out");
 
-    //*verilog_collateral_file << "module " << currbank->getModuleRef()->getLongName() <<" ("<< sep_list(port_decls,"","",",") <<"); "<< endl;
     *verilog_collateral_file << "module " << long_name <<" ("<< sep_list(port_decls,"","",",") <<"); "<< endl;
     *verilog_collateral_file << tab(1) << "logic [15:0] SRAM [1023:0];" << endl;
     *verilog_collateral_file << tab(1) << "logic chain_ren;" << endl << endl;
