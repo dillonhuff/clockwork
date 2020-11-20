@@ -5621,7 +5621,7 @@ pair<std::map<string, UBuffer>, vector<string> >
     sram.port_widths = port_widths;
     sram.hardware.in_port_width = fetch_width;
     sram.hardware.out_port_width = fetch_width;
-    sram.hardware.vectorization_dim = maybe(dim_id);
+    sram.hardware.vectorization_dim = maybe<int>(dim_id);
     vector<string> in_bundle = get_in_bundles();
     vector<string> out_bundle = get_out_bundles();
 

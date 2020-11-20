@@ -1668,6 +1668,12 @@ void generate_vivado_rtl_tb(
     umap* hw_sched,
     map<string, UBuffer>& buffers);
 
+void generate_deepak_power_flow_rtl_tb(
+    CodegenOptions& options,
+    prog& prg,
+    umap* hw_sched,
+    map<string, UBuffer>& buffers);
+
 void generate_verilator_tb(
     CodegenOptions& options,
     prog& prg,

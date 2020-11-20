@@ -1,6 +1,7 @@
 #include "coreir_backend.h"
 #ifdef COREIR
 #include "cwlib.h"
+#include "cgralib.h"
 #endif
 #include "app.h"
 #include "prog_splitting_test.h"
@@ -16380,6 +16381,7 @@ void compile_cycle_accurate_hw(CodegenOptions& options, schedule_info& sched, pr
     sched);
   generate_verilator_tb(options, prg, hw_sched, buffers);
   generate_vivado_rtl_tb(options, prg, hw_sched, buffers);
+  generate_deepak_power_flow_rtl_tb(options, prg, hw_sched, buffers);
 
 #endif
 }
@@ -16739,7 +16741,8 @@ vector<prog> harris_variants() {
   // 2. Final output is wrong
   //test_programs.push_back(harris_sch1_onebuf());
 
-  // 2. Final output is wrong
+  // 2. Final output is wrong,
+  // 3. Schedule violates dependencies?
   //test_programs.push_back(harris_sch2_fourbuf());
 
   // Now: They also have an error in the ROMs
@@ -16751,6 +16754,41 @@ vector<prog> harris_variants() {
   test_programs.push_back(harris_sch6_2ppc());
   test_programs.push_back(harris_sch7_bigtile());
   test_programs.push_back(harris_sch8_endcim());
+
+  return test_programs;
+}
+
+vector<prog> isca_programs() {
+  vector<prog> test_programs;
+
+
+  test_programs.push_back(gaussian());
+  test_programs.push_back(camera_pipeline());
+  test_programs.push_back(unsharp());
+  test_programs.push_back(harris());
+  test_programs.push_back(mini_conv_halide_fixed());
+  test_programs.push_back(strided_conv());
+  test_programs.push_back(cascade());
+
+
+  test_programs.push_back(down_sample());
+
+  test_programs.push_back(up_sample());
+
+  test_programs.push_back(resnet());
+
+
+  test_programs.push_back(mobilenet_unrolled());
+
+  test_programs.push_back(pointwise());
+
+
+
+
+
+
+
+
 
   return test_programs;
 }
@@ -16793,12 +16831,14 @@ void cpy_app_to_folder(const std::string& app_type, const std::string& prg_name)
   cmd("mkdir -p ./coreir_apps/" + app_type + "/" + prg_name);
   //cmd("mv LakeWrapper.v ./coreir_apps/coreir_apps/" + app_type +"/" + prg_name + "/");
   cmd("mv " + prg_name + ".json ./coreir_apps/" + app_type + "/" + prg_name + "/");
+  cmd("mv " + prg_name + "_post_mapping.json ./coreir_apps/" + app_type + "/" + prg_name + "/");
   cmd("mv " + prg_name + ".v ./coreir_apps/" + app_type + "/" + prg_name + "/");
   cmd("mv " + prg_name + "_verilog_collateral.sv ./coreir_apps/" + app_type + "/" + prg_name + "/");
   cmd("mv " + prg_name + "_compute.v ./coreir_apps/" + app_type + "/" + prg_name + "/");
   cmd("mv cycle_accurate_regression_result_" + prg_name + ".csv ./coreir_apps/" + app_type + "/" + prg_name + "/");
   cmd("mv " + prg_name + "_verilog_tb.cpp ./coreir_apps/" + app_type + "/" + prg_name + "/");
   cmd("mv " + prg_name + "_vivado_verilog_tb.sv ./coreir_apps/" + app_type + "/" + prg_name + "/");
+  cmd("mv " + prg_name + "_deepak_power_flow_tb.sv ./coreir_apps/" + app_type + "/" + prg_name + "/");
 }
 
 template<typename CodegenFunction>
@@ -17117,28 +17157,30 @@ void fpga_asplos_tests() {
 }
 
 void cgra_flow_tests() {
+
+  vector<prog> M3_test_programs = isca_programs();
+  //vector<prog> M3_test_programs = harris_variants();
+  //vector<prog> M3_test_programs{up_sample(), resnet()};
+  //vector<prog> M3_test_programs{resnet()};
+  //vector<prog> M3_test_programs{unsharp()};
+  test_codegen(M3_test_programs, compile_for_CGRA_M3_mem);
+  //assert(false);
+  
   auto test_programs =
     all_cgra_programs();
   test_platonic_codegen(test_programs);
 
-  //vector<prog> M1_test_programs{pointwise(), resnet()};
-  //vector<prog> M1_test_programs{pointwise()};
-  vector<prog> M1_test_programs{resnet()};
+  vector<prog> M1_test_programs = isca_programs();
+  //vector<prog> M1_test_programs{gaussian()};
   test_codegen(M1_test_programs, compile_for_CGRA_M1_mem);
-
-  //vector<prog> M3_test_programs{resnet(), pointwise(), camera_pipeline(), harris()};
-  vector<prog> M3_test_programs{pointwise(), camera_pipeline(), harris()};
-  //vector<prog> M3_test_programs{mobilenet_unrolled(), pointwise()};
-  test_codegen(M3_test_programs, compile_for_CGRA_M3_mem);
-  //assert(false);
-
-  vector<prog> bram_test_programs{pointwise(), resnet()};
-  test_codegen(bram_test_programs, compile_for_FPGA_BRAM_mem);
   //assert(false);
 
   vector<prog> sram_test_programs{pointwise(), camera_pipeline(), resnet()};
   test_codegen(sram_test_programs, compile_for_generic_SRAM_mem);
 
+  vector<prog> bram_test_programs{pointwise(), gaussian(), harris(), resnet()};
+  test_codegen(bram_test_programs, compile_for_FPGA_BRAM_mem);
+  //assert(false);
 }
 
 void dse_flow_tests() {
@@ -18931,6 +18973,84 @@ void test_if_construction() {
 }
 
 void dhuff_playground() {
+  {
+#ifdef COREIR
+    for (auto prg : harris_variants()) {
+      int PEs_used = 0;
+      for (auto op : prg.all_ops()) {
+        if (op->func != "") {
+          CoreIR::Context* context = CoreIR::newContext();
+          CoreIRLoadLibrary_commonlib(context);
+          CoreIRLoadLibrary_cgralib(context);
+          string compute_file = "./coreir_compute/" + prg.name + "_compute.json";
+          if (!loadFromFile(context, compute_file)) {
+            cout << "Could not load compute file for: " << prg.name << ", file name = " << compute_file << endl;
+            assert(false);
+          }
+          auto ns = context->getNamespace("global");
+          CoreIR::Module* cu = ns->getModule(op->func);
+          garnet_map_module(cu);
+          map<string, int> counts;
+          for (auto inst : cu->getDef()->getInstances()) {
+            cout << tab(1) << inst.second->getModuleRef()->getName() << endl;
+            counts[inst.second->getModuleRef()->getName()]++;
+          }
+          PEs_used += counts["PE"];
+          deleteContext(context);
+        }
+      }
+      cout << "# of PEs in " << prg.name << " = " << PEs_used << endl;
+    }
+    assert(false);
+#endif 
+  }
+  {
+    for (auto prg : isca_programs()) {
+      auto options = generic_SRAM_codegen_options(prg);
+      schedule_info sched = garnet_schedule_info(options, prg);
+      compile_cycle_accurate_hw(options, sched, prg);
+      normalize_bounds(prg);
+      sequential_schedule(sched, prg.root, prg);
+      
+      auto hw_sched = its(op_times_map(sched, prg), prg.whole_iteration_domain());
+
+      auto buffers = build_buffers(prg, hw_sched);
+
+
+      int total_capacity = 0;
+      for (auto b : buffers) {
+        if (!prg.is_boundary(b.first)) {
+          total_capacity += card(extents_by_dimension(b.second));
+        }
+      }
+      cout << tab(1) << "=== SRAM bytes for " << prg.name << total_capacity << endl;
+    }
+    assert(false);
+  }
+  {
+    prog prg = mobilenet_unrolled();
+    prg.pretty_print();
+    assert(false);
+  }
+  {
+    isl_ctx* ctx = isl_ctx_alloc();
+    isl_map* addr = isl_map_read_from_str(ctx, "{ [c, x, y] -> [c, x, y] }");
+    isl_map* ibo = isl_map_read_from_str(ctx, "{ [c, x, y] -> [x, y] }");
+    isl_map* bank_sel = isl_map_read_from_str(ctx, "{ [c, x, y] -> [c] }");
+    isl_map* sched = isl_map_read_from_str(ctx, "{ [c, x, y] -> [256*c + 28*x + y] : 0 <= c <= 2 and 0 <= x <= 4 and 0 <= y <= 27 }");
+
+    // What is the problem that needs to be solved?
+    // Given: Original address, and schedule and a banking scheme, and a bank ID
+    // Produce: An address domain and schedule for the given bank that fits
+    // an affine controller
+    assert(false);
+  }
+  {
+    prog prg = resnet_unrolled();
+    vector<prog> test_prgs{prg};
+    test_codegen(test_prgs, compile_for_FPGA_BRAM_mem);
+    assert(false);
+  }
   {
     prog prg = harris();
     prg.pretty_print();

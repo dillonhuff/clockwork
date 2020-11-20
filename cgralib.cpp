@@ -188,7 +188,8 @@ CoreIR::Namespace* CoreIRLoadLibrary_cgralib(Context* c) {
         {"ID", c->String()},            //for codegen, TODO: remove after coreIR fix
         {"has_external_addrgen", c->Bool()},
         {"use_prebuilt_mem", c->Bool()},
-        {"has_reset", c->Bool()}
+        {"has_reset", c->Bool()},
+        {"has_read_valid", c->Bool()}
     });
 
   cgralib->newTypeGen(
@@ -218,6 +219,8 @@ CoreIR::Namespace* CoreIRLoadLibrary_cgralib(Context* c) {
                         //c->Bit()->Arr(width)});
             //}
 
+            bool has_read_valid = genargs.at("has_read_valid")->get<bool>();
+
             bool has_external_addrgen = genargs.at("has_external_addrgen")->get<bool>();
             bool use_prebuilt_mem = genargs.at("use_prebuilt_mem")->get<bool>();
             if (!use_prebuilt_mem) {
@@ -243,6 +246,11 @@ CoreIR::Namespace* CoreIRLoadLibrary_cgralib(Context* c) {
             for (size_t i = 0; i < num_output; i ++) {
                 recordparams.push_back({"data_out_" + std::to_string(i),
                         c->Bit()->Arr(width)});
+
+                if (has_read_valid) {
+                  recordparams.push_back({"data_out_" + std::to_string(i) + "_valid",
+                      c->Bit()});
+                }
 
                 if (has_external_addrgen) {
                   recordparams.push_back({"read_addr_" + std::to_string(i),
@@ -285,6 +293,7 @@ CoreIR::Namespace* CoreIRLoadLibrary_cgralib(Context* c) {
   cgralib_mem_amber_gen->addDefaultGenArgs({{"has_reset", Const::make(c, false)}});
   cgralib_mem_amber_gen->addDefaultGenArgs({{"has_external_addrgen", Const::make(c, false)}});
   cgralib_mem_amber_gen->addDefaultGenArgs({{"use_prebuilt_mem", Const::make(c, false)}});
+  cgralib_mem_amber_gen->addDefaultGenArgs({{"has_read_valid", Const::make(c, false)}});
 
 
   auto CGRALibMemAmberModParamFun = [](Context* c,Values genargs) -> std::pair<Params,Values> {
@@ -314,7 +323,8 @@ CoreIR::Namespace* CoreIRLoadLibrary_cgralib(Context* c) {
         {"ID", c->String()},            //for codegen, TODO: remove after coreIR fix
         {"has_reset", c->Bool()},
         {"has_external_addrgen", c->Bool()},
-        {"use_prebuilt_mem", c->Bool()}
+        {"use_prebuilt_mem", c->Bool()},
+        {"has_read_valid", c->Bool()},
     });
 
   cgralib->newTypeGen(
@@ -347,10 +357,17 @@ CoreIR::Namespace* CoreIRLoadLibrary_cgralib(Context* c) {
                       c->BitIn()});
                 }
             }
+
+
+            bool has_read_valid = genargs.at("has_read_valid")->get<bool>();
             for (size_t i = 0; i < num_output; i ++) {
                 recordparams.push_back({"data_out_" + std::to_string(i),
                         c->Bit()->Arr(width)});
 
+                if (has_read_valid) {
+                  recordparams.push_back({"data_out_" + std::to_string(i) + "_valid",
+                      c->Bit()});
+                }
                 if (has_external_addrgen) {
                   recordparams.push_back({"read_addr_" + std::to_string(i),
                       c->BitIn()->Arr(16)});
@@ -400,6 +417,8 @@ CoreIR::Namespace* CoreIRLoadLibrary_cgralib(Context* c) {
   cgralib_mem_gen->addDefaultGenArgs({{"has_external_addrgen", Const::make(c, false)}});
   cgralib_mem_gen->addDefaultGenArgs({{"has_flush", Const::make(c, false)}});
   cgralib_mem_gen->addDefaultGenArgs({{"has_reset", Const::make(c, false)}});
+  cgralib_mem_gen->addDefaultGenArgs({{"has_external_addrgen", Const::make(c, false)}});
+  cgralib_mem_gen->addDefaultGenArgs({{"has_read_valid", Const::make(c, false)}});
 
 
   auto CGRALibMemModParamFun = [](Context* c,Values genargs) -> std::pair<Params,Values> {

@@ -6551,11 +6551,14 @@ vector<pair<string, pair<string, int> >> determine_output_shift_reg_map(
       cout << buf.name << endl;
 
       any_reduce_ops_on_buffer = true;
+      cout << "Found reduce op on " << buf.name << endl;
       break;
     }
   }
 
   if (!any_reduce_ops_on_buffer) {
+    cout << "Out -> Out shift registers for " << buf.name << endl;
+
     for (auto outpt : buf.get_out_ports()) {
       for (auto outpt_src : buf.get_out_ports()) {
 
@@ -6876,6 +6879,180 @@ void adjust_inner_iis(schedule_info& sched, prog& prg) {
       sched.loop_iis[lp->name] = old_ii;
     }
   }
+}
+
+void generate_deepak_power_flow_rtl_tb(
+    CodegenOptions& options,
+    prog& prg,
+    umap* hw_sched,
+    map<string, UBuffer>& buffers) {
+  ofstream rgtb(prg.name + "_deepak_power_flow_tb.sv");
+  rgtb << "`define ASSIGNMENT_DELAY 0.1" << endl;
+  rgtb << "`define CONFIG_TIME 4096" << endl;
+  rgtb << "`define CLK_PERIOD 10" << endl;
+  rgtb << "`define RUN_TIME 10000" << endl;
+
+  //rgtb << "`timescale 1ns / 1ps" << endl;
+  rgtb << endl;
+  rgtb << "module " << "TB;" << endl;
+
+  rgtb << tab(1) << "logic clk;" << endl;
+  rgtb << tab(1) << "logic rst;" << endl;
+  rgtb << tab(1) << "logic flush;" << endl;
+
+  rgtb << endl << endl;
+
+  rgtb << tab(1) << "always #(`CLK_PERIOD/2) clk = ~clk;" << endl << endl;
+
+  rgtb << "initial begin" << endl;
+  rgtb << "        rst = 1'b1;" << endl;
+  rgtb << "        flush = 1'b0;" << endl;
+  rgtb <<"        #`CLK_PERIOD" << endl;
+  rgtb << "        #`CLK_PERIOD" << endl;
+  rgtb << "        rst = 1'b0;" << endl;
+  rgtb << tab(1) << "end" << endl << endl;
+
+  rgtb << "    initial begin" << endl;
+  rgtb << "      clk <= 0;" << endl;
+  rgtb << "    end" << endl << endl;
+
+  rgtb << "    initial begin" << endl;
+  rgtb << "      $vcdplusfile(\"dump.vpd\");" << endl;
+  rgtb << "      $vcdplusmemon();" << endl;
+  rgtb << "      $vcdpluson(0, TB);" << endl;
+  rgtb << "      $set_toggle_region(TB);" << endl;
+  rgtb << "      #(`CONFIG_TIME);" << endl;
+  rgtb << "      $toggle_start();" << endl;
+  rgtb << "      #(`RUN_TIME);" << endl;
+  rgtb << "      $toggle_stop();" << endl;
+  rgtb << "      $toggle_report(\"run.saif\", 1e-9, TB);" << endl;
+  rgtb << "      $finish(2);" << endl;
+  rgtb << "    end" << endl << endl;
+
+  vector<string> port_decls{".clk(clk)", ".flush(flush)", ".rst_n(rst)"};
+
+  for (auto eb : edge_buffers(buffers, prg)) {
+    string out_rep = eb.first;
+    string out_bundle = eb.second;
+
+    UBuffer out_buf = map_find(out_rep, buffers);
+
+    int pixel_width = out_buf.port_widths;
+    int pix_per_burst =
+      out_buf.lanes_in_bundle(out_bundle);
+
+    if (prg.is_input(out_rep)) {
+      string en_name = 
+        pg(out_rep, out_bundle) + "_en";
+      string data_name = 
+        pg(out_rep, out_bundle);
+
+      rgtb << tab(1) << "logic " << en_name << ";" << endl;
+      port_decls.push_back("." + en_name + "(" + en_name + ")");
+
+      int pix_w = pixel_width;
+      rgtb << tab(1) << "logic [" << pixel_width - 1 << ":0] " << data_name << " [" << pix_per_burst - 1 << " :0];" << endl;
+      port_decls.push_back("." + data_name + "(" + data_name + ")");
+      //rgtb << tab(1) << "logic [" << pixel_width - 1 << ":0] " << data_name << "_in" << ";" << endl;
+
+    } else {
+      string en_name = 
+        pg(out_rep, out_bundle) + "_valid";
+      string data_name = 
+        pg(out_rep, out_bundle);
+
+      rgtb << tab(1) << "logic " << en_name << ";" << endl;
+      port_decls.push_back("." + en_name + "(" + en_name + ")");
+
+      int pix_w = pixel_width;
+      rgtb << tab(1) << "logic [" << pixel_width - 1 << ":0] " << data_name << " [" << pix_per_burst - 1 << " :0];" << endl;
+
+      port_decls.push_back("." + data_name + "(" + data_name + ")");
+    }
+  }
+
+  rgtb << tab(1) << prg.name << " dut(\n\t\t" << sep_list(port_decls, "\n\t\t", "\n\t\t", ",\n\t\t") << ");" << endl;
+
+  //rgtb << tab(1) << "initial begin" << endl;
+  //rgtb << "clk = 0;" << endl;
+  //rgtb << "rst = 0;" << endl;
+  //rgtb << "flush = 0;" << endl;
+  //for (auto eb : edge_buffers(buffers, prg)) {
+    //string out_rep = eb.first;
+    //string out_bundle = eb.second;
+
+    //UBuffer out_buf = map_find(out_rep, buffers);
+
+    //int pixel_width = out_buf.port_widths;
+    //int pix_per_burst =
+      //out_buf.lanes_in_bundle(out_bundle);
+
+    //if (prg.is_input(out_rep)) {
+      //string en_name = 
+        //pg(out_rep, out_bundle) + "_en";
+      //string data_name = 
+        //pg(out_rep, out_bundle);
+
+      //rgtb << tab(3) << data_name << "[0] = 0;" << endl;
+
+    //} else {
+    //}
+  //}
+  //rgtb << tab(1) << "end" << endl;
+  //rgtb << tab(1) << "always #5 clk = ~clk;" << endl;
+
+  //rgtb << "initial begin" << endl;
+  //rgtb << "#2;" << endl;
+  //rgtb << "rst = 1;" << endl;
+  //rgtb << "flush = 1;" << endl;
+  //rgtb << "#10;" << endl;
+  //rgtb << "flush = 0;" << endl;
+
+  //rgtb << "end" << endl;
+
+  rgtb << endl << endl;
+
+  //rgtb << tab(1) << "always @(posedge clk) begin" << endl;
+  rgtb << tab(1) << "always @(negedge clk) begin" << endl;
+  for (auto eb : edge_buffers(buffers, prg)) {
+    string out_rep = eb.first;
+    string out_bundle = eb.second;
+
+    UBuffer out_buf = map_find(out_rep, buffers);
+
+    int pixel_width = out_buf.port_widths;
+    int pix_per_burst =
+      out_buf.lanes_in_bundle(out_bundle);
+
+    if (prg.is_input(out_rep)) {
+      string en_name = 
+        pg(out_rep, out_bundle) + "_en";
+      string data_name = 
+        pg(out_rep, out_bundle);
+      string data_in_name = data_name;
+        //inputs0[15:0] <= #`ASSIGNMENT_DELAY $urandom;
+
+      rgtb << tab(3) << data_in_name << "[0] <= #`ASSIGNMENT_DELAY $urandom;" << endl;
+      //rgtb << tab(2) << "if (" << en_name << ") begin" << endl;
+      //rgtb << tab(3) << data_in_name << "[0] <= " << data_in_name << "[0] + 1;" << endl;
+      //rgtb << tab(2) << "end" << endl;
+
+    } else {
+      //string en_name = 
+        //pg(out_rep, out_bundle) + "_valid";
+      //string data_name = 
+        //pg(out_rep, out_bundle);
+      //rgtb << tab(2) << "if (" << en_name << ") begin" << endl;
+      //rgtb << tab(3) << "$display(\"Got data %d from dut." << en_name << "\", " << data_name << "[0]" << ");" << endl;
+      //rgtb << tab(2) << "end" << endl;
+    }
+  }
+
+  rgtb << tab(1) << "end" << endl;
+  
+  rgtb << "endmodule";
+  rgtb.close();
+
 }
 
 void generate_vivado_rtl_tb(

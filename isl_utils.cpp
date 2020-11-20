@@ -3599,6 +3599,8 @@ isl_val* get_coeff(isl_constraint* c, enum isl_dim_type type, int pos) {
 }
 
 isl_val* eval(isl_aff* a, isl_point* p) {
+  //assert(false);
+  //return isl_aff_eval(cpy(a), cpy(p));
   auto ct = ctx(a);
   isl_val* val = zero(ct);
   return val;
@@ -4039,6 +4041,24 @@ isl_map* cyclic_function(isl_ctx* ctx, const std::string& name, const std::vecto
   return isl_map_read_from_str(ctx, bank_str.c_str());
 }
 
+vector<int> maxs(isl_set* s) {
+  vector<int> exts;
+  for (int d = 0; d < num_dims(s); d++) {
+    auto pr = project_all_but(s, d);
+    exts.push_back(to_int(lexmaxval(pr)));
+  }
+  return exts;
+}
+
+vector<int> mins(isl_set* s) {
+  vector<int> exts;
+  for (int d = 0; d < num_dims(s); d++) {
+    auto pr = project_all_but(s, d);
+    exts.push_back(to_int(lexminval(pr)));
+  }
+  return exts;
+}
+
 vector<int> extents(isl_set* s) {
   vector<int> exts;
   for (int d = 0; d < num_dims(s); d++) {
@@ -4046,4 +4066,13 @@ vector<int> extents(isl_set* s) {
     exts.push_back(to_int(lexmaxval(pr)) - to_int(lexminval(pr)) + 1);
   }
   return exts;
+}
+
+bool is_cst(isl_multi_aff* ma) {
+  assert(false);
+  return false;
+}
+
+bool is_cst(isl_aff* aff) {
+  return isl_aff_is_cst(aff);
 }
