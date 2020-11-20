@@ -128,12 +128,12 @@ void instantiate_M3_verilog(
     isl_aff* ibo = out_port_controllers[count].access_function;
 
     out << tab(1) << "logic [15:0] " << bundle_name << "_ibo;" << endl;
-    out << tab(1) << "logic " << bundle_name << "_enable_this_port;" << endl;
+    //out << tab(1) << "logic " << bundle_name << "_enable_this_port;" << endl;
 
     std::string ibo_str = codegen_verilog(bundle_name + ".d", ibo);
 
     out << tab(1) << "assign " << bundle_name << "_ibo = " << ibo_str << ";" << endl;
-    out << tab(1) << "assign " << bundle_name << "_enable_this_port = 1;" << endl;
+    //out << tab(1) << "assign " << bundle_name << "_enable_this_port = 1;" << endl;
   }
 
   for (int count = 0; count < (int) in_port_controllers.size(); count++) {
@@ -146,12 +146,12 @@ void instantiate_M3_verilog(
     isl_aff* ibo = in_port_controllers[count].access_function;
 
     out << tab(1) << "logic [15:0] " << bundle_name << "_ibo;" << endl;
-    out << tab(1) << "logic " << bundle_name << "_enable_this_port;" << endl;
+    //out << tab(1) << "logic " << bundle_name << "_enable_this_port;" << endl;
 
     std::string ibo_str = codegen_verilog(bundle_name + ".d", ibo);
 
     out << tab(1) << "assign " << bundle_name << "_ibo = " << ibo_str << ";" << endl;
-    out << tab(1) << "assign " << bundle_name << "_enable_this_port = 1;" << endl;
+    //out << tab(1) << "assign " << bundle_name << "_enable_this_port = 1;" << endl;
   }
 
   *verilog_collateral_file << endl;
@@ -162,54 +162,54 @@ void instantiate_M3_verilog(
 
   const int BANK_CAPACITY = CAPACITY / 2;
 
-  //*verilog_collateral_file << tab(1) << "logic [15:0] SRAM_BANK_0 [" << BANK_CAPACITY << ":0];" << endl;
-  //*verilog_collateral_file << tab(1) << "logic [15:0] SRAM_BANK_1 [" << BANK_CAPACITY << ":0];" << endl;
+  *verilog_collateral_file << tab(1) << "logic [15:0] SRAM_BANK_0 [" << BANK_CAPACITY << ":0];" << endl;
+  *verilog_collateral_file << tab(1) << "logic [15:0] SRAM_BANK_1 [" << BANK_CAPACITY << ":0];" << endl;
 
-  *verilog_collateral_file << tab(1) << "logic [15:0] SRAM [1023:0];" << endl;
+  //*verilog_collateral_file << tab(1) << "logic [15:0] SRAM [1023:0];" << endl;
   for (int i = 0; i < (int) out_port_controllers.size(); i++) {
     *verilog_collateral_file << tab(1) << "logic [15:0] data_out_" << i << "_tmp;" << endl;
   }
 
   *verilog_collateral_file << tab(1) << "always @(posedge clk) begin" << endl;
   for (int i = 0; i < (int) out_port_controllers.size(); i++) {
-    //string bn = long_name + "_rd_" + str(i);
-    //string bundle_name = bn + ".valid";
-    //out << tab(2) << "if (" << bn << "_ibo[15]) begin" << endl;
-    //out << tab(2) << "data_out_" << str(i) << "_tmp <= SRAM_BANK_0[" << bn << "_ibo[14:0]" << "];" << endl;
-    //out << tab(2) << "end else begin" << endl;
-    //out << tab(2) << "data_out_" << str(i) << "_tmp <= SRAM_BANK_1[" << bn << "_ibo[14:0]" << "];" << endl;
-    //out << tab(2) << "end" << endl;
-    //out << tab(2) << "data_out_" + str(i) + "_valid <= " << bundle_name << ";" << endl;
-
-
-
     string bn = long_name + "_rd_" + str(i);
     string bundle_name = bn + ".valid";
-    *verilog_collateral_file << tab(2) << "data_out_" << str(i) << "_tmp <= SRAM[" << bn << "_ibo" << "];" << endl;
+    out << tab(2) << "if (" << bn << "_ibo[9]) begin" << endl;
+    out << tab(2) << "data_out_" << str(i) << "_tmp <= SRAM_BANK_0[" << bn << "_ibo[8:0]" << "];" << endl;
+    out << tab(2) << "end else begin" << endl;
+    out << tab(2) << "data_out_" << str(i) << "_tmp <= SRAM_BANK_1[" << bn << "_ibo[8:0]" << "];" << endl;
+    out << tab(2) << "end" << endl;
     out << tab(2) << "data_out_" + str(i) + "_valid <= " << bundle_name << ";" << endl;
+
+
+
+    //string bn = long_name + "_rd_" + str(i);
+    //string bundle_name = bn + ".valid";
+    //*verilog_collateral_file << tab(2) << "data_out_" << str(i) << "_tmp <= SRAM[" << bn << "_ibo" << "];" << endl;
+    //out << tab(2) << "data_out_" + str(i) + "_valid <= " << bundle_name << ";" << endl;
   }
 
   for (int i = 0; i < (int) in_port_controllers.size(); i++) {
-    //string bn = long_name + "_wr_" + str(i);
-    //string bundle_name = bn + ".valid";
-    //*verilog_collateral_file << tab(2) << "if (" << bundle_name << ") begin" << endl;
-
-
-    //out << tab(3) << "if (" << bn << "_ibo[15]) begin" << endl;
-    //out << tab(4) << "SRAM_BANK_0[" << bn + "_ibo[14:0]" << "] <= " << "data_in_" << str(i) << ";" << endl;
-    //out << tab(3) << "end else begin" << endl;
-    //out << tab(4) << "SRAM_BANK_1[" << bn + "_ibo[14:0]" << "] <= " << "data_in_" << str(i) << ";" << endl;
-    //out << tab(3) << "end" << endl;
-
-
-    //*verilog_collateral_file << tab(2) << "end" << endl;
-
-
     string bn = long_name + "_wr_" + str(i);
     string bundle_name = bn + ".valid";
     *verilog_collateral_file << tab(2) << "if (" << bundle_name << ") begin" << endl;
-    *verilog_collateral_file << tab(3) << "SRAM[" << bn + "_ibo" << "] <= " << "data_in_" << str(i) << ";" << endl;
+
+
+    out << tab(3) << "if (" << bn << "_ibo[9]) begin" << endl;
+    out << tab(4) << "SRAM_BANK_0[" << bn + "_ibo[8:0]" << "] <= " << "data_in_" << str(i) << ";" << endl;
+    out << tab(3) << "end else begin" << endl;
+    out << tab(4) << "SRAM_BANK_1[" << bn + "_ibo[8:0]" << "] <= " << "data_in_" << str(i) << ";" << endl;
+    out << tab(3) << "end" << endl;
+
+
     *verilog_collateral_file << tab(2) << "end" << endl;
+
+
+    //string bn = long_name + "_wr_" + str(i);
+    //string bundle_name = bn + ".valid";
+    //*verilog_collateral_file << tab(2) << "if (" << bundle_name << ") begin" << endl;
+    //*verilog_collateral_file << tab(3) << "SRAM[" << bn + "_ibo" << "] <= " << "data_in_" << str(i) << ";" << endl;
+    //*verilog_collateral_file << tab(2) << "end" << endl;
   }
   *verilog_collateral_file << tab(1) << "end" << endl;
 
