@@ -17154,7 +17154,7 @@ void cgra_flow_tests() {
   //vector<prog> M3_test_programs{resnet()};
   //vector<prog> M3_test_programs{gaussian()};
   test_codegen(M3_test_programs, compile_for_CGRA_M3_mem);
-  assert(false);
+  //assert(false);
   
   auto test_programs =
     all_cgra_programs();

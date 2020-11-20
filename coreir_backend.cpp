@@ -215,64 +215,6 @@ M3_config instantiate_M3_verilog_sreg_block(CodegenOptions& options, const std::
       out_pts);
 
   return {in_pts, out_pts};
-
-  //isl_aff * write_aff = rdaff(prg.ctx,"{[root,t] -> [( root + t + 1 )]}");
-  //isl_aff * read_aff2  = rdaff(prg.ctx, "{[root,t] -> [(root+t + " + str(delay *2  ) + ")]}");
-  //isl_aff * read_aff = rdaff(prg.ctx, "{[root,t] -> [(root+t + " + str(delay  ) + ")]}");
-  //isl_set * dom = rdset(prg.ctx,"{[root,t] : root = 0 and 0 <= t <= 65355 }");
-
-
-  //generate_fsm(*verilog_collateral_file, options, long_name + "_read_ctrl_2_fsm", "d", "valid",read_aff2, dom);
-  //generate_fsm(*verilog_collateral_file, options, long_name + "_read_ctrl_fsm", "d", "valid", read_aff , dom);
-  //generate_fsm(*verilog_collateral_file, options, long_name + "_write_ctrl_fsm", "d", "valid", write_aff, dom);
-
-
-  //vector<string> port_decls = {};
-  //port_decls.push_back("input clk");
-  //port_decls.push_back("input rst_n");
-  //port_decls.push_back("input clk_en");
-  //port_decls.push_back("input chain_chain_en");
-
-  //port_decls.push_back("input [15:0] data_in_0");
-
-
-  //port_decls.push_back("output logic [15:0] data_out_0");
-  //port_decls.push_back("output logic [15:0] data_out_1");
-  //port_decls.push_back("input [15:0] chain_data_in");
-  //port_decls.push_back("output [15:0] chain_data_out");
-
-  //*verilog_collateral_file << "module " << long_name <<" ("<< sep_list(port_decls,"","",",") <<"); "<< endl;
-
-  ///[>verilog_collateral_file << "logic [15:0] SRAM [50000:0];" << endl;
-  //*verilog_collateral_file << "logic [15:0] SRAM [1023:0];" << endl;
-  //out << tab(1) << long_name + "_read_ctrl_2_fsm " << long_name + "_read_ctrl_2_fsm_ctrl" << "(.clk(clk), .rst_n(rst_n));" << endl;
-  //out << tab(1) << long_name + "_read_ctrl_fsm " << long_name + "_read_ctrl_fsm_ctrl" << "(.clk(clk), .rst_n(rst_n));" << endl;
-  //out << tab(1) << long_name + "_write_ctrl_fsm " << long_name + "_write_ctrl_fsm_ctrl" << "(.clk(clk), .rst_n(rst_n));" << endl;
-
-  //*verilog_collateral_file << tab(1) << "logic [15:0] data_out_0_tmp;" << endl;
-  //*verilog_collateral_file << tab(1) << "logic [15:0] data_out_1_tmp;" << endl;
-
-
-  //*verilog_collateral_file << tab(1) << "always @(posedge clk) begin" << endl;
-
-  //*verilog_collateral_file << tab(2) << "if(" <<  long_name + "_read_ctrl_2_fsm_ctrl.valid" << ") begin" << endl;
-  //*verilog_collateral_file << tab(3) << "data_out_1_tmp <= SRAM[" << long_name + "_read_ctrl_2_fsm_ctrl.d[1]];" << endl;
-  //*verilog_collateral_file << tab(2) << "end" << endl;
-  //*verilog_collateral_file << tab(2) << "if(" <<  long_name + "_read_ctrl_fsm_ctrl.valid" << ") begin" << endl;
-  //*verilog_collateral_file << tab(3) << "data_out_0_tmp <= SRAM[" << long_name + "_read_ctrl_fsm_ctrl.d[1]];" << endl;
-  //*verilog_collateral_file << tab(2) << "end" << endl;
-  //*verilog_collateral_file << tab(2) << "if(" <<  long_name + "_write_ctrl_fsm_ctrl.valid" << ") begin" << endl;
-  //*verilog_collateral_file << tab(3) << "SRAM[" << long_name + "_write_ctrl_fsm_ctrl.d[1]" << "] <= data_in_0;" <<endl;
-  //*verilog_collateral_file << tab(2) << "end" << endl;
-
-  //*verilog_collateral_file << tab(1) << "end" << endl;
-  //*verilog_collateral_file << tab(1) << "assign chain_data_out = 512;" << endl;
-  //for (int i = 0; i < 2; i++) {
-    //*verilog_collateral_file << tab(1) << "assign data_out_" << i << " = data_out_" << i << "_tmp;" << endl;
-  //}
-
-  //*verilog_collateral_file << "endmodule "<< endl;
-
 }
 
 M3_config instantiate_M3_verilog_sreg(CodegenOptions& options, const std::string& long_name, int delay, prog& prg,schedule_info& hwinfo) {
@@ -4656,8 +4598,8 @@ std::set<string> generate_M1_shift_registers(CodegenOptions& options, CoreIR::Mo
 		   }
       }
 
-      instantiate_M3_verilog_sreg_block(options, sreg->getModuleRef()->getLongName(), b_sreg.difference, prg,hwinfo, b_sreg, buf);
-      //attach_M3_bank_config_metadata(sreg, config);
+      M3_config config = instantiate_M3_verilog_sreg_block(options, sreg->getModuleRef()->getLongName(), b_sreg.difference, prg,hwinfo, b_sreg, buf);
+      attach_M3_bank_config_metadata(sreg, config);
 /*
 	auto output_chains = b_sreg->output_chains;
 	for(auto chain: output_chains)
