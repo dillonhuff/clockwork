@@ -2726,7 +2726,7 @@ std::string MapperPasses::MemSubstitute::ID = "memsubstitute";
 void MapperPasses::MemSubstitute::setVisitorInfo() {
   Context* c = this->getContext();
   if (c->hasGenerator("cgralib.Mem_amber")) {
-    //addVisitorFunction(c->getGenerator("cgralib.Mem_amber"), MemtileReplace);
+    addVisitorFunction(c->getGenerator("cgralib.Mem_amber"), MemtileReplace);
   }
 
 }
@@ -2795,7 +2795,6 @@ void garnet_map_module(Module* top) {
   //load_cgramapping(c);
   LoadDefinition_cgralib(c);
 
-  c->runPasses({"rungenerators"});
   //A new pass to remove input enable signal affine controller
   disconnect_input_enable(c, top);
   c->runPasses({"deletedeadinstances"});
