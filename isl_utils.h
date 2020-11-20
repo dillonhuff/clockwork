@@ -707,3 +707,6 @@ isl_map* cyclic_function(isl_ctx* ctx, const std::string& name, const std::vecto
 vector<int> mins(isl_set* s);
 vector<int> maxs(isl_set* s);
 vector<int> extents(isl_set* s);
+
+bool is_cst(isl_multi_aff* ma);
+bool is_cst(isl_aff* aff);

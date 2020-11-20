@@ -543,6 +543,17 @@ bool is_register_file(UBuffer& buf, ubuffer_impl& impl) {
   return true;
 }
 
+bool all_constant_accesses(UBuffer& buf) {
+  for (auto pt : buf.get_all_ports()) {
+    cout << "Port: " << pt << endl;
+    isl_multi_aff* acc = get_multi_aff(buf.access_map.at(pt));
+    if (!is_cst(acc)) {
+      return false;
+    }
+  }
+  return true;
+}
+
 pair<ubuffer_impl,isl_map*> build_buffer_impl(prog& prg, UBuffer& buf, schedule_info& hwinfo) {
   cout << "Building implementation of " << buf.name << endl;
   ubuffer_impl impl;
@@ -554,6 +565,13 @@ pair<ubuffer_impl,isl_map*> build_buffer_impl(prog& prg, UBuffer& buf, schedule_
 
   if (embarassing_banking.get_value().size() == buf.logical_dimension()) {
     cout << buf.name << " is really a register file" << endl;
+  }
+
+  if (buf.get_out_ports().size() > 0 &&
+      is_register_file(buf) &&
+      && all_constant_accesses(buf)) {
+    cout << buf.name << " has all constant accesses" << endl;
+    //assert(false);
   }
 
   impl.partition_dims = embarassing_banking.get_value();

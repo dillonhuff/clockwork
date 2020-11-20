@@ -16731,7 +16731,8 @@ vector<prog> harris_variants() {
   // 2. Final output is wrong
   //test_programs.push_back(harris_sch1_onebuf());
 
-  // 2. Final output is wrong
+  // 2. Final output is wrong,
+  // 3. Schedule violates dependencies?
   //test_programs.push_back(harris_sch2_fourbuf());
 
   // Now: They also have an error in the ROMs
@@ -16739,9 +16740,9 @@ vector<prog> harris_variants() {
   //test_programs.push_back(harris_sch4_1pp3c());
 
   // Works
-  //test_programs.push_back(harris_sch5_1ppc());
-  //test_programs.push_back(harris_sch6_2ppc());
-  //test_programs.push_back(harris_sch7_bigtile());
+  test_programs.push_back(harris_sch5_1ppc());
+  test_programs.push_back(harris_sch6_2ppc());
+  test_programs.push_back(harris_sch7_bigtile());
   test_programs.push_back(harris_sch8_endcim());
 
   return test_programs;
@@ -17132,12 +17133,9 @@ void fpga_asplos_tests() {
 }
 
 void cgra_flow_tests() {
-  vector<prog> bram_test_programs{pointwise(), gaussian(), harris(), resnet()};
-  test_codegen(bram_test_programs, compile_for_FPGA_BRAM_mem);
-  assert(false);
 
-  vector<prog> M3_test_programs = isca_programs();
-  //vector<prog> M3_test_programs = harris_variants();
+  //vector<prog> M3_test_programs = isca_programs();
+  vector<prog> M3_test_programs = harris_variants();
   //vector<prog> M3_test_programs{up_sample(), resnet()};
   //vector<prog> M3_test_programs{resnet()};
   //vector<prog> M3_test_programs{unsharp()};
@@ -17153,15 +17151,12 @@ void cgra_flow_tests() {
   test_codegen(M1_test_programs, compile_for_CGRA_M1_mem);
   //assert(false);
 
-  cout << "====== DONE with M1, starting M3..." << endl;
-  
-
-
-  //assert(false);
-
   vector<prog> sram_test_programs{pointwise(), camera_pipeline(), resnet()};
   test_codegen(sram_test_programs, compile_for_generic_SRAM_mem);
 
+  vector<prog> bram_test_programs{pointwise(), gaussian(), harris(), resnet()};
+  test_codegen(bram_test_programs, compile_for_FPGA_BRAM_mem);
+  //assert(false);
 }
 
 void dse_flow_tests() {

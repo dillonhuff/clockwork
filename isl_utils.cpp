@@ -4054,3 +4054,11 @@ vector<int> extents(isl_set* s) {
   return exts;
 }
 
+bool is_cst(isl_multi_aff* ma) {
+  assert(false);
+  return false;
+}
+
+bool is_cst(isl_aff* aff) {
+  return isl_aff_is_cst(aff);
+}
