@@ -146,12 +146,10 @@ void instantiate_M3_verilog(
     isl_aff* ibo = in_port_controllers[count].access_function;
 
     out << tab(1) << "logic [15:0] " << bundle_name << "_ibo;" << endl;
-    //out << tab(1) << "logic " << bundle_name << "_enable_this_port;" << endl;
 
     std::string ibo_str = codegen_verilog(bundle_name + ".d", ibo);
 
     out << tab(1) << "assign " << bundle_name << "_ibo = " << ibo_str << ";" << endl;
-    //out << tab(1) << "assign " << bundle_name << "_enable_this_port = 1;" << endl;
   }
 
   *verilog_collateral_file << endl;
@@ -165,7 +163,6 @@ void instantiate_M3_verilog(
   *verilog_collateral_file << tab(1) << "logic [15:0] SRAM_BANK_0 [" << BANK_CAPACITY << ":0];" << endl;
   *verilog_collateral_file << tab(1) << "logic [15:0] SRAM_BANK_1 [" << BANK_CAPACITY << ":0];" << endl;
 
-  //*verilog_collateral_file << tab(1) << "logic [15:0] SRAM [1023:0];" << endl;
   for (int i = 0; i < (int) out_port_controllers.size(); i++) {
     *verilog_collateral_file << tab(1) << "logic [15:0] data_out_" << i << "_tmp;" << endl;
   }
@@ -183,10 +180,6 @@ void instantiate_M3_verilog(
 
 
 
-    //string bn = long_name + "_rd_" + str(i);
-    //string bundle_name = bn + ".valid";
-    //*verilog_collateral_file << tab(2) << "data_out_" << str(i) << "_tmp <= SRAM[" << bn << "_ibo" << "];" << endl;
-    //out << tab(2) << "data_out_" + str(i) + "_valid <= " << bundle_name << ";" << endl;
   }
 
   for (int i = 0; i < (int) in_port_controllers.size(); i++) {
@@ -203,13 +196,6 @@ void instantiate_M3_verilog(
 
 
     *verilog_collateral_file << tab(2) << "end" << endl;
-
-
-    //string bn = long_name + "_wr_" + str(i);
-    //string bundle_name = bn + ".valid";
-    //*verilog_collateral_file << tab(2) << "if (" << bundle_name << ") begin" << endl;
-    //*verilog_collateral_file << tab(3) << "SRAM[" << bn + "_ibo" << "] <= " << "data_in_" << str(i) << ";" << endl;
-    //*verilog_collateral_file << tab(2) << "end" << endl;
   }
   *verilog_collateral_file << tab(1) << "end" << endl;
 
@@ -412,7 +398,6 @@ M3_config instantiate_M3_verilog(CodegenOptions& options, const std::string& lon
 
   for(auto pt : impl.bank_writers[b]) {
     int count = map_find({pt, b}, ubuffer_port_and_bank_to_bank_port);
-    //string bundle_name = buf.name + "_bank_" + str(b) + "_" + str(count);
     string port_rep = pt;
     string op_rep_name = domain_name(to_map(buf.access_map.at(port_rep)));
     op* rep = prg.find_op(op_rep_name);
@@ -453,7 +438,6 @@ M3_config instantiate_M3_verilog(CodegenOptions& options, const std::string& lon
 
   for(auto pt : impl.bank_readers[b]) {
     int count = map_find({pt, b}, ubuffer_port_and_bank_to_bank_port);
-    //string bundle_name = buf.name + "_bank_rd_" + str(b) + "_" + str(count);
     string port_rep = pt;
     string op_rep_name = domain_name(to_map(buf.access_map.at(port_rep)));
     op* rep = prg.find_op(op_rep_name);
@@ -803,57 +787,6 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
     map<pair<int, int>, Wireable*> bank_and_port_to_read_enable;
     map<pair<int, int>, Wireable*> bank_and_port_to_read_agen;
 
-    //for (int b = 0; b < num_banks; b++) {
-      //for(auto pt : bank_writers[b]) {
-
-          ////enable =
-            ////andList(def,
-                ////{
-                ////en,
-                ////bank_is_selected});
-        ////} else {
-          ////enable = en;
-        ////}
-        ////assert(enable != nullptr);
-        ////bank_and_port_to_enable[{b, count}] = enable;
-      //}
-
-      //for(auto pt : bank_readers[b]) {
-        ////string bundle_name = "bank_" + str(b) + "_" + pt;
-        ////string port_rep = pt;
-        ////string op_rep_name = domain_name(to_map(buf.access_map.at(port_rep)));
-        ////op* rep = prg.find_op(op_rep_name);
-        ////isl_set* dom = to_set(domain(buf.access_map.at(port_rep)));
-
-        ////int count = ubuffer_port_and_bank_to_bank_port[{pt, b}];
-
-        ////isl_aff* sched_aff =
-          ////get_aff(buf.schedule.at(pt));
-        ////auto controller = generate_controller_verilog(options, def, bundle_name + "_ctrl", sched_aff, dom);
-        ////auto en = controller->sel("valid");
-        ////auto ctrl = controller->sel("d");
-
-        ////auto agen = build_inner_bank_offset(pt, buf, impl, def);
-        ////def->connect(agen->sel("d"),
-            ////ctrl);
-
-        ////auto bank_sel = build_bank_selector(pt, buf, impl, def);
-        ////def->connect(bank_sel->sel("d"),
-            ////ctrl);
-
-        ////const int READ_LATENCY = 1;
-        ////auto ubuffer_port_bank_selector = delay_by(def, bank_sel->sel("out"), READ_LATENCY);
-          ////bank_and_port_output_addrgen[{b, count}] = agen;
-          ////bank_and_port_output_data_valid[{b, count}] =
-            ////eqConst(def, ubuffer_port_bank_selector, b);
-
-        ////bank_and_port_to_read_enable[{b, count}] = en;
-        ////bank_and_port_to_read_agen[{b, count}] =
-          ////agen->sel("out");
-      //}
-    //}
-
-
     Select* one = def->addInstance("one_cst", "corebit.const", {{"value", COREMK(c, true)}})->sel("out");
     Select* zero = def->addInstance("zero_cst", "corebit.const", {{"value", COREMK(c, false)}})->sel("out");
 
@@ -886,17 +819,6 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
             currbank->sel("data_in_" + str(count)),
             def->sel("self." + buf.container_bundle(pt) + "." + str(buf.bundle_offset(pt))));
       }
-
-      //for(auto pt : bank_readers[b]) {
-        //int count = map_find({pt, b}, ubuffer_port_and_bank_to_bank_port);
-        ////auto agen = bank_and_port_output_addrgen[{b, count}];
-        ////def->connect(
-            ////bank_and_port_to_read_agen[{b, count}],
-            ////currbank->sel("read_addr_" + str(count)));
-
-        ////def->connect(currbank->sel("ren_" + str(count)),
-            ////bank_and_port_to_read_enable[{b, count}]);
-      //}
     }
 
     for (auto pt : buf.get_out_ports()) {
@@ -939,7 +861,6 @@ CoreIR::Module* generate_coreir(CodegenOptions& options, CoreIR::Context* contex
     int control_dimension = num_in_dims(pick(acc_maps));
     if (buf.is_input_bundle(b.first)) {
       if (options.rtl_options.target_tile == TARGET_TILE_M3) {
-      //if (false) {
       } else if (options.rtl_options.use_external_controllers) {
         ub_field.push_back(make_pair(name + "_wen", context->BitIn()));
         ub_field.push_back(make_pair(name + "_ctrl_vars", context->BitIn()->Arr(CONTROLPATH_WIDTH)->Arr(control_dimension)));
@@ -947,8 +868,6 @@ CoreIR::Module* generate_coreir(CodegenOptions& options, CoreIR::Context* contex
       ub_field.push_back(make_pair(name, context->BitIn()->Arr(pt_width)->Arr(bd_width)));
     } else {
       if (options.rtl_options.target_tile == TARGET_TILE_M3) {
-      //if (false) {
-        //ub_field.push_back(make_pair(name + "_valid", context->Bit()));
       } else if (options.rtl_options.use_external_controllers) {
         ub_field.push_back(make_pair(name + "_ren", context->BitIn()));
         ub_field.push_back(make_pair(name + "_ctrl_vars", context->BitIn()->Arr(CONTROLPATH_WIDTH)->Arr(control_dimension)));
@@ -4547,19 +4466,17 @@ bool allow_packed_sr(dgraph& shift_registers, UBuffer & buf, block_sreg * b)
 		inpt = buf.get_in_ports()[0];
 		b->inpt = inpt;
 	}
-  //if(buf.get_out_ports().size()!=9 &&
-  if (buf.get_out_ports().size() == 27)
-  {
-    cout << buf.name << " has " << buf.get_out_ports().size() << " out ports" << endl;
-    return false;
-  }
+  //if (buf.get_out_ports().size() == 27)
+  //{
+    //cout << buf.name << " has " << buf.get_out_ports().size() << " out ports" << endl;
+    //return false;
+  //}
 	cout << inpt << endl;
 	vector<pair<string,int>> outpts;
 	for(auto outpt: shift_registers.out_edges[inpt]){
 		outpts.push_back({outpt,shift_registers.weight(inpt,outpt)});
 	}
-	if(outpts.size() < 3)
-	{
+	if(outpts.size() < 3) {
 		return false;
 	}
 
