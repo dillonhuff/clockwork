@@ -2817,21 +2817,31 @@ void count_memory_tiles(Module* top) {
 
 void count_post_mapped_memory_accesses(Module* gmod) {
   int accesses = 0;
+  int non_config_reg_tiles = 0;
+  int total_tiles = 0;
   for (auto inst : gmod->getDef()->getInstances()) {
     if (inst.second->getModuleRef()->getName() == "Mem_amber") {
       cout << "Metadata..." << inst.second->getMetaData()["config"] << endl;
       cout << "# accesses in = " << inst.second->getMetaData()["config"]["num_accesses"] << endl;
+      auto config = inst.second->getMetaData()["config"];
       accesses += inst.second->getMetaData()["config"]["num_accesses"].get<int>();
+      int acc_range = config["max_addr"].get<int>() - config["min_addr"].get<int>() + 1;
+      total_tiles++;
+      if (acc_range > 1) {
+        non_config_reg_tiles++;
+      }
     }
   }
 
   const double ENERGY_PER_ACCESS_PJ = 1.0;
-  cout << "Total # accesses: " << accesses << endl;
+  cout << "Total # accesses    : " << accesses << endl;
+  cout << "Non config reg tiles: " << non_config_reg_tiles << endl;
+  cout << "Total # tiles       : " << total_tiles << endl;
   //assert(false);
 }
 
 void analyze_post_mapped_app(CodegenOptions& options, prog& prg, map<string, UBuffer>& buffers, Module* gmod) {
-  count_post_mapped_memory_accesses(gmod);
+  //count_post_mapped_memory_accesses(gmod);
   auto context = gmod->getContext();
   auto ns = context->getNamespace("global");
   //cout << "=== Post mapping instances for " << prg.name << endl;
@@ -4433,13 +4443,80 @@ dgraph build_shift_register_graph(CodegenOptions& options, CoreIR::ModuleDef* de
 }
 
 
+dgraph build_shift_registers_io(CodegenOptions& options, CoreIR::ModuleDef* def, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
+  dgraph dg = build_shift_register_graph(options, def, prg, buf, hwinfo);
+
+  dgraph shift_registers;
+
+  bool got_one_input = true;
+  for (auto e : dg.out_edges) {
+    string src = e.first;
+    if (buf.is_in_pt(src)) {
+      vector<pair<string, int> > pairs;
+      for (auto dst : e.second) {
+        pairs.push_back({dst, dg.weight(src, dst)});
+      }
+      sort_lt(pairs, [](const pair<string, int>& pt) {
+          return pt.second;
+          });
+      if (pairs.size() > 0) {
+        string dst = pairs.at(0).first;
+        if (shift_registers.in_edges(dst).size() == 0) {
+          shift_registers.add_edge(src, dst, dg.weight(src, dst));
+        }
+      }
+    }
+  }
+
+  for (auto e : dg.out_edges) {
+    string src = e.first;
+    if (buf.is_out_pt(src)) {
+      vector<pair<string, int> > pairs;
+      for (auto dst : e.second) {
+        pairs.push_back({dst, dg.weight(src, dst)});
+      }
+      sort_lt(pairs, [](const pair<string, int>& pt) {
+          return pt.second;
+          });
+      if (pairs.size() > 0) {
+        string dst = pairs.at(0).first;
+        if (shift_registers.in_edges(dst).size() == 0) {
+          shift_registers.add_edge(src, dst, dg.weight(src, dst));
+        }
+      }
+    }
+  }
+
+  //cout << shift_registers << endl;
+  //if (buf.name == "padded16_global_wrapper_stencil") {
+    //assert(false);
+  //}
+  return shift_registers;
+}
+
+template<typename T, typename Q>
+void sort_lt_snd(vector<pair<T, Q> >& outputs) {
+  sort_lt(outputs, [](const pair<T,Q> &x){return x.second;});
+}
+
+dgraph build_in_to_out_shift_register_graph(CodegenOptions& options, CoreIR::ModuleDef* def, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
+  map<string,pair<string,int>> shift_registered_outputs = determine_shift_reg_map(prg, buf, hwinfo);
+
+  dgraph dg;
+  for (auto pt : shift_registered_outputs) {
+    dg.add_edge(pt.second.first, pt.first, pt.second.second);
+  }
+
+  cout << "DG: ..." << endl;
+  cout << dg << endl;
+  return dg;
+}
 
 dgraph build_shift_registers(CodegenOptions& options, CoreIR::ModuleDef* def, prog& prg, UBuffer& buf, schedule_info& hwinfo,block_sreg * b ) {
   dgraph dg = build_shift_register_graph(options, def, prg, buf, hwinfo);
 
   dgraph shift_registers;
 
-  //vector<vector<string>> output_chains;
   for (auto dst: buf.get_out_ports()) {
     int min_d = 5;
     string mysrc = "";
@@ -4458,7 +4535,6 @@ dgraph build_shift_registers(CodegenOptions& options, CoreIR::ModuleDef* def, pr
     }
   }
 
-  //cout << output_chains <<endl;
   cout << endl << endl;
 
   // Make sure all in -> out srs are included
@@ -4491,9 +4567,6 @@ dgraph build_shift_registers(CodegenOptions& options, CoreIR::ModuleDef* def, pr
     for (auto out : outpts) {
       cout << tab(1) << out.second << ": " << out.first << endl;
     }
-
-    // TODO: Assemble short chains
-    //assert(false);
   }
   for (auto e : dg.out_edges) {
     string src = e.first;
@@ -4569,16 +4642,58 @@ std::set<string> generate_M1_shift_registers(CodegenOptions& options, CoreIR::Mo
 
   block_sreg b_sreg;
   dgraph shift_registers = build_shift_registers(options, def, prg, buf, hwinfo, &b_sreg);
+
+  cout << shift_registers << endl;
+  if (buf.name == "padded16_global_wrapper_stencil") {
+    //dgraph shift_registers = build_shift_registers_io(options, def, prg, buf, hwinfo);
+    dgraph shift_registers = build_in_to_out_shift_register_graph(options, def, prg, buf, hwinfo);
+
+    cout << "Shift registers..." << endl;
+    cout << shift_registers << endl;
+
+    vector<pair<string, int> > vals;
+    string inpt = pick(buf.get_in_ports());
+    for (auto v : shift_registers.out_edges.at(inpt)) {
+      vals.push_back({v, shift_registers.weight(inpt, v)});
+    }
+    sort_lt_snd(vals);
+    for (auto v : vals) {
+      cout << tab(1) << v.first << " -(" << v.second << ")-> " << v.second << endl;
+    }
+
+    vector<vector<pair<string, int> > > reg_chains;
+    split_by(vals, reg_chains, [](const pair<string, int>& a, const pair<string, int>& b) {
+        return abs(a.second - b.second) < 20;
+        });
+
+    cout << "Groups..." << endl;
+    for (auto g : reg_chains) {
+      cout << tab(1) << "Group..." << endl;
+      for (auto e : g) {
+        cout << tab(2) << e.first << " -> " << e.second << endl;
+      }
+      cout << endl;
+    }
+
+    assert(false);
+  }
+
+  // the dgraph output and the final shift registers are getting coupled.
+  // I want to have a shift register analysis that decides whether the
+  // SR is a candidate for blocking or whether it is not.
+
+  cout << "Shift registers for " << buf.name << endl;
+  cout << shift_registers << endl;
+
   auto packed_sr = allow_packed_sr(shift_registers, buf,& b_sreg);
 
   if(packed_sr) {
-
+    cout << tab(1) << "!!! Allowing packed sr for " << buf.name << endl;
     string src = b_sreg.inpt;     
     Wireable * src_wire = def->sel("self." + buf.container_bundle(src) + "." + str(buf.bundle_offset(src)));
     Wireable * delayed_src = delay_by(def, "sr_ito_all_" + c->getUnique(), src_wire, b_sreg.init_delay);
     def->connect(def->sel(b_sreg.chain_starts.at(0) + "_net.in"), delayed_src);
 
-    //cout << "Banking camera pipeline SR..." << endl;
     cout << tab(1) << b_sreg.difference << endl;
     for (auto b : b_sreg.chain_starts) {
       cout << tab(2) << b << endl;
@@ -4630,11 +4745,13 @@ std::set<string> generate_M1_shift_registers(CodegenOptions& options, CoreIR::Mo
   }
 
 
-  cout << "SRC shift registers" << endl;
+  cout << "Not using packed SR for " << buf.name << ", instead... SRC shift registers" << endl;
   cout << shift_registers << endl;
 
   std::set<string> done_outpt;
+  int num_ram_tiles = 0;
   for (auto w : shift_registers.weights) {
+
     string src = w.first.first;
     string dst = w.first.second;
     int delay = w.second;
@@ -4649,9 +4766,9 @@ std::set<string> generate_M1_shift_registers(CodegenOptions& options, CoreIR::Mo
     assert(src_wire != nullptr);
 
     Wireable* delayed_src = nullptr;
-    //  delay_by(def, "sr_end" + c->getUnique(), src_wire, delay);
 
-    const int SREG_SRAM_THRES = 10;
+    //const int SREG_SRAM_THRES = 10;
+    const int SREG_SRAM_THRES = 20;
 
     const int maxd = 1000;
 
@@ -4678,12 +4795,8 @@ std::set<string> generate_M1_shift_registers(CodegenOptions& options, CoreIR::Mo
           isl_set * domain = rdset(buf.ctx,"{[root,t] : root = 0 and 0 <= t <= 65355 }");
           Instance* write_fsm = generate_controller_coreir(options, def, "sr_write_fsm" + c->getUnique(), identity , domain);
           Instance* read_fsm = generate_controller_coreir(options, def, "sr_read_fsm" + c->getUnique(), shifted_identity , domain);
-          //Instance* write_fsm = generate_controller_verilog(options, def, "sr_write_fsm" + c->getUnique(), identity , domain);
-          //Instance* read_fsm = generate_controller_verilog(options, def, "sr_read_fsm" + c->getUnique(), shifted_identity , domain);
           def->connect(write_fsm->sel("d")->sel(1),sreg->sel("write_addr_0"));
           def->connect(read_fsm->sel("d")->sel(1),sreg->sel("read_addr_0"));
-          //def->connect(write_fsm->sel("valid"),sreg->sel("wen_0"));
-          //def->connect(read_fsm->sel("valid"),sreg->sel("ren_0"));
           def->connect(one,sreg->sel("wen_0"));
           def->connect(one,sreg->sel("ren_0"));
           ubuffer_impl impl;
@@ -4698,6 +4811,7 @@ std::set<string> generate_M1_shift_registers(CodegenOptions& options, CoreIR::Mo
       } else {
         while(delay > 0)
         {
+          num_ram_tiles++;
 
           Values tile_params{{"width", COREMK(c, 16)},
             {"ID", COREMK(c, "sreg_" + c->getUnique())},
@@ -4722,9 +4836,6 @@ std::set<string> generate_M1_shift_registers(CodegenOptions& options, CoreIR::Mo
 
         }
       }
-
-
-
     }
     else{
       delayed_src = delay_by(def, "sr_end" + c->getUnique(), src_wire, delay);
@@ -4732,12 +4843,12 @@ std::set<string> generate_M1_shift_registers(CodegenOptions& options, CoreIR::Mo
 
     assert(delayed_src != nullptr);
     def->connect(
-        //def->sel("self." + buf.container_bundle(dst) + "." + str(buf.bundle_offset(dst))),
         def->sel(dst + "_net.in"),
         delayed_src);
     done_outpt.insert(dst);
   }
 
+  cout << "### finished shift registers Used " << num_ram_tiles << " in SR for " << buf.name << endl;
   return done_outpt;
 }
 

@@ -16741,9 +16741,9 @@ vector<prog> harris_variants() {
   //test_programs.push_back(harris_sch4_1pp3c());
 
   // Works
-  test_programs.push_back(harris_sch5_1ppc());
-  test_programs.push_back(harris_sch6_2ppc());
-  test_programs.push_back(harris_sch7_bigtile());
+  //test_programs.push_back(harris_sch5_1ppc());
+  //test_programs.push_back(harris_sch6_2ppc());
+  //test_programs.push_back(harris_sch7_bigtile());
   test_programs.push_back(harris_sch8_endcim());
 
   return test_programs;
@@ -16752,15 +16752,14 @@ vector<prog> harris_variants() {
 vector<prog> isca_programs() {
   vector<prog> test_programs;
 
-
+  test_programs.push_back(harris());
   test_programs.push_back(unsharp());
+  test_programs.push_back(mobilenet_unrolled());
   test_programs.push_back(gaussian());
   test_programs.push_back(camera_pipeline());
   test_programs.push_back(resnet());
-  test_programs.push_back(harris());
   test_programs.push_back(cascade());
   test_programs.push_back(down_sample());
-  test_programs.push_back(mobilenet_unrolled());
   test_programs.push_back(up_sample());
 
   return test_programs;
@@ -17130,23 +17129,25 @@ void fpga_asplos_tests() {
 }
 
 void cgra_flow_tests() {
-  auto test_programs =
-    all_cgra_programs();
-  test_platonic_codegen(test_programs);
-
-
   vector<prog> M3_test_programs = isca_programs();
   //vector<prog> M3_test_programs = harris_variants();
   //vector<prog> M3_test_programs{up_sample(), resnet()};
   //vector<prog> M3_test_programs{resnet()};
   //vector<prog> M3_test_programs{gaussian()};
   test_codegen(M3_test_programs, compile_for_CGRA_M3_mem);
-  //assert(false);
+  assert(false);
   
   vector<prog> M1_test_programs = isca_programs();
   //vector<prog> M1_test_programs{gaussian()};
   test_codegen(M1_test_programs, compile_for_CGRA_M1_mem);
-  //assert(false);
+
+  
+  auto test_programs =
+    all_cgra_programs();
+  test_platonic_codegen(test_programs);
+
+
+  
 
   vector<prog> sram_test_programs{pointwise(), camera_pipeline(), resnet()};
   test_codegen(sram_test_programs, compile_for_generic_SRAM_mem);
