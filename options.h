@@ -161,3 +161,16 @@ struct CodegenOptions {
 
 };
 
+struct power_analysis_params {
+  int routing_hop_cost;
+  int memtile_op_cost;
+  map<string, double> alu_op_energy_costs;
+};
+
+struct power_analysis_info {
+
+  map<string, map<string, int> > PE_optype_counts;
+  map<string, int> op_counts;
+
+};
+
