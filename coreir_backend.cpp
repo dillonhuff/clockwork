@@ -4554,6 +4554,10 @@ bool allow_packed_sr(dgraph& shift_registers, UBuffer & buf, block_sreg * b)
     return false;
   }
 
+  if (b->chain_starts.size() % 2 != 1) {
+    return false;
+  }
+
 	return true;
 }
 
@@ -4574,7 +4578,7 @@ std::set<string> generate_M1_shift_registers(CodegenOptions& options, CoreIR::Mo
     Wireable * delayed_src = delay_by(def, "sr_ito_all_" + c->getUnique(), src_wire, b_sreg.init_delay);
     def->connect(def->sel(b_sreg.chain_starts.at(0) + "_net.in"), delayed_src);
 
-    cout << "Banking camera pipeline SR..." << endl;
+    //cout << "Banking camera pipeline SR..." << endl;
     cout << tab(1) << b_sreg.difference << endl;
     for (auto b : b_sreg.chain_starts) {
       cout << tab(2) << b << endl;
