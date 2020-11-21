@@ -16702,6 +16702,8 @@ vector<prog> stencil_programs() {
   vector<prog> test_programs;
   //test_programs.push_back(rom());
 
+  test_programs.push_back(unsharp());
+
   test_programs.push_back(harris());
   test_programs.push_back(pointwise());
   test_programs.push_back(camera_pipeline());
@@ -16710,7 +16712,6 @@ vector<prog> stencil_programs() {
   // Fails with dual port tile?
   test_programs.push_back(strided_conv());
   test_programs.push_back(mini_conv_halide_fixed());
-  test_programs.push_back(unsharp());
   test_programs.push_back(down_sample());
   test_programs.push_back(cascade());
 
@@ -16787,6 +16788,7 @@ vector<prog> all_cgra_programs() {
 
   vector<prog> test_programs;
 
+  concat(test_programs, stencil_programs());
   test_programs.push_back(mobilenet_unrolled());
   test_programs.push_back(resnet());
   test_programs.push_back(conv_multi());
@@ -16797,7 +16799,6 @@ vector<prog> all_cgra_programs() {
   test_programs.push_back(resnet_coarse_pipeline_loop());
 
 
-  concat(test_programs, stencil_programs());
 
   concat(test_programs, harris_variants());
 
@@ -17147,6 +17148,10 @@ void fpga_asplos_tests() {
 }
 
 void cgra_flow_tests() {
+  auto test_programs =
+    all_cgra_programs();
+  test_platonic_codegen(test_programs);
+
 
   vector<prog> M3_test_programs = isca_programs();
   //vector<prog> M3_test_programs = harris_variants();
@@ -17156,10 +17161,6 @@ void cgra_flow_tests() {
   test_codegen(M3_test_programs, compile_for_CGRA_M3_mem);
   //assert(false);
   
-  auto test_programs =
-    all_cgra_programs();
-  test_platonic_codegen(test_programs);
-
   vector<prog> M1_test_programs = isca_programs();
   //vector<prog> M1_test_programs{gaussian()};
   test_codegen(M1_test_programs, compile_for_CGRA_M1_mem);
@@ -18964,26 +18965,57 @@ void test_if_construction() {
 
 void dhuff_playground() {
   {
-    prog prg = unsharp();
-    prg.pretty_print();
-    assert(false);
-  }
-
-  {
 #ifdef COREIR
-    //for (auto prg : harris_variants()) {
     power_analysis_params power_params;
     power_analysis_info power_stats;
     const double COST_PER_PE_MUL_PJ = 0.1;
     const double COST_PER_PE_ADD_PJ = 0.1;
+    const double COST_PER_PE_SUB_PJ = 0.1;
+    const double COST_PER_PE_SHIFT_PJ = 0.05;
+    const double COST_PER_PE_LOGIC_BINOP_PJ = 0.05;
+    const double COST_PER_PE_EQ_PJ = 0.05;
+    const double COST_PER_PE_MUX_PJ = 1.0;
+    const double COST_PER_PE_CMP_PJ = 0.2;
     power_params.alu_op_energy_costs["mult_0"] = COST_PER_PE_MUL_PJ;
     power_params.alu_op_energy_costs["add"] = COST_PER_PE_ADD_PJ;
+    power_params.alu_op_energy_costs["rshft"] = COST_PER_PE_SHIFT_PJ;
+    power_params.alu_op_energy_costs["sub"] = COST_PER_PE_SUB_PJ;
+    power_params.alu_op_energy_costs["and"] = COST_PER_PE_LOGIC_BINOP_PJ;
+    power_params.alu_op_energy_costs["or"] = COST_PER_PE_LOGIC_BINOP_PJ;
+    power_params.alu_op_energy_costs["eq"] = COST_PER_PE_EQ_PJ;
+    power_params.alu_op_energy_costs["sel"] = COST_PER_PE_MUX_PJ;
+    power_params.alu_op_energy_costs["ult"] = COST_PER_PE_CMP_PJ;
+    power_params.alu_op_energy_costs["lt"] = COST_PER_PE_CMP_PJ;
+    power_params.alu_op_energy_costs["le"] = COST_PER_PE_CMP_PJ;
 
-    for (auto prg : {resnet()}) {
+    for (auto prg : isca_programs()) {
       PE_energy_cost(power_params, power_stats, prg);
     }
     assert(false);
 #endif 
+  }
+  {
+#ifdef COREIR
+    for (auto prg : {unsharp()}) {
+      prg.pretty_print();
+      for (auto op : prg.all_ops()) {
+        if (op->func != "") {
+          cout << op->func << endl;
+          int tb_res = generate_compute_unit_regression_tb(op, prg);
+          if (tb_res != 0) {
+            cout << "==== In prog: " << prg.name << " compute unit: " << op->func << " has a mismatch between C++ and coreir" << endl;
+            assert(false);
+          }
+        }
+      }
+    }
+    assert(false);
+#endif
+  }
+  {
+    prog prg = unsharp();
+    prg.pretty_print();
+    assert(false);
   }
 
   {
@@ -19039,24 +19071,6 @@ void dhuff_playground() {
     assert(false);
     generate_unoptimized_code(prg);
     assert(false);
-  }
-  {
-#ifdef COREIR
-    for (auto prg : harris_variants()) {
-      prg.pretty_print();
-      for (auto op : prg.all_ops()) {
-        if (op->func != "") {
-          cout << op->func << endl;
-          int tb_res = generate_compute_unit_regression_tb(op, prg);
-          if (tb_res != 0) {
-            cout << "==== In prog: " << prg.name << " compute unit: " << op->func << " has a mismatch between C++ and coreir" << endl;
-            assert(false);
-          }
-        }
-      }
-    }
-    assert(false);
-#endif
   }
 
   {

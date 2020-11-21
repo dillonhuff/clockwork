@@ -5210,6 +5210,9 @@ CoreIR::Wireable* control_en(CoreIR::ModuleDef* def, const std::string& reader, 
 }
 
 double PE_energy_cost(power_analysis_params& power_params, power_analysis_info& power_stats, prog& prg) {
+
+  cout << "Computing PE energy cost for " << prg.name << endl;
+
   int PEs_used = 0;
   for (auto op : prg.all_ops()) {
     if (op->func != "") {
@@ -5238,7 +5241,10 @@ double PE_energy_cost(power_analysis_params& power_params, power_analysis_info& 
         cout << tab(1) << inst.second->getModuleRef()->getName() << endl;
         counts[inst.second->getModuleRef()->getName()]++;
         if (inst.second->getModuleRef()->getName() == "PE") {
-          power_stats.PE_optype_counts[op->name][inst.second->getModArgs().at("alu_op")->get<string>()]++;
+          auto modargs = inst.second->getModArgs();
+          if (modargs.find("alu_op") != end(modargs)) {
+            power_stats.PE_optype_counts[op->name][inst.second->getModArgs().at("alu_op")->get<string>()]++;
+          }
         }
       }
       cu->print();
@@ -5259,7 +5265,7 @@ double PE_energy_cost(power_analysis_params& power_params, power_analysis_info& 
       cout << "Total PE energy cost: " << energy_cost << endl;
     }
   }
-  cout << "Total PE energy cost: " << energy_cost << endl;
+  cout << "Total PE energy cost for " << prg.name << ": " << energy_cost << endl;
 
   return energy_cost;
 }
