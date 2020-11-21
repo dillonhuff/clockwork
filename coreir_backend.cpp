@@ -4513,6 +4513,63 @@ dgraph build_in_to_out_shift_register_graph(CodegenOptions& options, CoreIR::Mod
 }
 
 dgraph build_shift_registers(CodegenOptions& options, CoreIR::ModuleDef* def, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
+  if (buf.name == "padded16_global_wrapper_stencil") {
+    dgraph shift_registers = build_in_to_out_shift_register_graph(options, def, prg, buf, hwinfo);
+
+    cout << "Shift registers..." << endl;
+    cout << shift_registers << endl;
+
+    vector<pair<string, int> > vals;
+    string inpt = pick(buf.get_in_ports());
+    for (auto v : shift_registers.out_edges.at(inpt)) {
+      vals.push_back({v, shift_registers.weight(inpt, v)});
+    }
+    sort_lt_snd(vals);
+    for (auto v : vals) {
+      cout << tab(1) << v.first << " -(" << v.second << ")-> " << v.second << endl;
+    }
+
+    vector<vector<pair<string, int> > > reg_chains;
+    split_by(vals, reg_chains, [](const pair<string, int>& a, const pair<string, int>& b) {
+        return abs(a.second - b.second) < 20;
+        });
+
+    dgraph dg;
+    cout << "Groups..." << endl;
+    for (auto g : reg_chains) {
+      cout << tab(1) << "Group..." << endl;
+      dg.add_edge(inpt, g.at(0).first, shift_registers.weight(inpt, g.at(0).first));
+      for (int i = 1; i < g.size(); i++) {
+        dg.add_edge(g.at(i - 1).first, g.at(i).first, g.at(i).second - g.at(i - 1).second);
+      }
+      //for (auto e : g) {
+        //cout << tab(2) << e.first << " -> " << e.second << endl;
+      //}
+      //cout << endl;
+    }
+    cout << dg << endl;
+    //assert(false);
+
+    return dg;
+
+    //// Analyze shift diff
+    //if (reg_chains.size() >= 3) {
+      //int diff = reg_chains.at(1).at(0).second - reg_chains.at(0).at(0).second;
+      //cout << "Diff = " << diff << endl;
+      //for (int i = 1; i < (int) reg_chains.size(); i++) {
+        //int dd = reg_chains.at(i).at(0).second - reg_chains.at(i - 1).at(0).second;
+        //if (diff != dd) {
+          //even_diffs = false;
+        //}
+      //}
+      //cout << "Diff = " << diff << endl;
+
+      //dgraph dg;
+
+    //}
+
+  }
+
 
   dgraph dg = build_shift_register_graph(options, def, prg, buf, hwinfo);
 
@@ -4645,49 +4702,6 @@ std::set<string> generate_M1_shift_registers(CodegenOptions& options, CoreIR::Mo
   dgraph shift_registers = build_shift_registers(options, def, prg, buf, hwinfo);
 
   cout << shift_registers << endl;
-  if (buf.name == "padded16_global_wrapper_stencil") {
-    dgraph shift_registers = build_in_to_out_shift_register_graph(options, def, prg, buf, hwinfo);
-
-    cout << "Shift registers..." << endl;
-    cout << shift_registers << endl;
-
-    vector<pair<string, int> > vals;
-    string inpt = pick(buf.get_in_ports());
-    for (auto v : shift_registers.out_edges.at(inpt)) {
-      vals.push_back({v, shift_registers.weight(inpt, v)});
-    }
-    sort_lt_snd(vals);
-    for (auto v : vals) {
-      cout << tab(1) << v.first << " -(" << v.second << ")-> " << v.second << endl;
-    }
-
-    vector<vector<pair<string, int> > > reg_chains;
-    split_by(vals, reg_chains, [](const pair<string, int>& a, const pair<string, int>& b) {
-        return abs(a.second - b.second) < 20;
-        });
-
-    cout << "Groups..." << endl;
-    for (auto g : reg_chains) {
-      cout << tab(1) << "Group..." << endl;
-      for (auto e : g) {
-        cout << tab(2) << e.first << " -> " << e.second << endl;
-      }
-      cout << endl;
-    }
-
-    // Analyze shift diff
-    if (reg_chains.size() >= 3) {
-      int diff = reg_chains.at(1).at(0).second - reg_chains.at(0).at(0).second;
-      cout << "Diff = " << diff << endl;
-      for (int i = 1; i < (int) reg_chains.size(); i++) {
-        int dd = reg_chains.at(i).at(0).second - reg_chains.at(i - 1).at(0).second;
-        assert(diff == dd);
-      }
-      cout << "Diff = " << diff << endl;
-    }
-
-  }
-
   cout << "Shift registers for " << buf.name << endl;
   cout << shift_registers << endl;
 
