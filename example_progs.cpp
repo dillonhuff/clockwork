@@ -685,6 +685,7 @@ prog accumulation() {
   return prg;
 }
 
+
 prog unsharp() {
   prog prg;
   prg.compute_unit_file = "unsharp_compute.h";
@@ -700,14 +701,25 @@ prog unsharp() {
 ////producing hw_input_global_wrapper.stencil
   auto hw_input_global_wrapper_s0_y = prg.add_loop("hw_input_global_wrapper_s0_y", -2, 62);
   auto hw_input_global_wrapper_s0_x = hw_input_global_wrapper_s0_y->add_loop("hw_input_global_wrapper_s0_x", -2, 62);
-  auto hw_input_global_wrapper_s0_c = hw_input_global_wrapper_s0_x->add_loop("hw_input_global_wrapper_s0_c", 0, 3);
 
-//store is: hw_input_global_wrapper.stencil(hw_input_global_wrapper_s0_c, hw_input_global_wrapper_s0_x, hw_input_global_wrapper_s0_y) = hw_input.stencil(hw_input_global_wrapper_s0_c, hw_input_global_wrapper_s0_x, hw_input_global_wrapper_s0_y)
-  auto hcompute_hw_input_global_wrapper_stencil = hw_input_global_wrapper_s0_c->add_op("op_hcompute_hw_input_global_wrapper_stencil");
+//store is: hw_input_global_wrapper.stencil(0, hw_input_global_wrapper_s0_x, hw_input_global_wrapper_s0_y) = hw_input.stencil(0, hw_input_global_wrapper_s0_x, hw_input_global_wrapper_s0_y)
+  auto hcompute_hw_input_global_wrapper_stencil = hw_input_global_wrapper_s0_x->add_op("op_hcompute_hw_input_global_wrapper_stencil");
   hcompute_hw_input_global_wrapper_stencil->add_function("hcompute_hw_input_global_wrapper_stencil");
-  hcompute_hw_input_global_wrapper_stencil->add_load("hw_input_stencil", "hw_input_global_wrapper_s0_y", "hw_input_global_wrapper_s0_x", "hw_input_global_wrapper_s0_c");
+  hcompute_hw_input_global_wrapper_stencil->add_load("hw_input_stencil", "hw_input_global_wrapper_s0_y", "hw_input_global_wrapper_s0_x", "0");
   prg.buffer_port_widths["hw_input_global_wrapper_stencil"] = 16;
-  hcompute_hw_input_global_wrapper_stencil->add_store("hw_input_global_wrapper_stencil", "hw_input_global_wrapper_s0_y", "hw_input_global_wrapper_s0_x", "hw_input_global_wrapper_s0_c");
+  hcompute_hw_input_global_wrapper_stencil->add_store("hw_input_global_wrapper_stencil", "hw_input_global_wrapper_s0_y", "hw_input_global_wrapper_s0_x", "0");
+
+//store is: hw_input_global_wrapper.stencil(1, hw_input_global_wrapper_s0_x, hw_input_global_wrapper_s0_y) = hw_input.stencil(1, hw_input_global_wrapper_s0_x, hw_input_global_wrapper_s0_y)
+  auto hcompute_hw_input_global_wrapper_stencil_1 = hw_input_global_wrapper_s0_x->add_op("op_hcompute_hw_input_global_wrapper_stencil_1");
+  hcompute_hw_input_global_wrapper_stencil_1->add_function("hcompute_hw_input_global_wrapper_stencil_1");
+  hcompute_hw_input_global_wrapper_stencil_1->add_load("hw_input_stencil", "hw_input_global_wrapper_s0_y", "hw_input_global_wrapper_s0_x", "1");
+  hcompute_hw_input_global_wrapper_stencil_1->add_store("hw_input_global_wrapper_stencil", "hw_input_global_wrapper_s0_y", "hw_input_global_wrapper_s0_x", "1");
+
+//store is: hw_input_global_wrapper.stencil(2, hw_input_global_wrapper_s0_x, hw_input_global_wrapper_s0_y) = hw_input.stencil(2, hw_input_global_wrapper_s0_x, hw_input_global_wrapper_s0_y)
+  auto hcompute_hw_input_global_wrapper_stencil_2 = hw_input_global_wrapper_s0_x->add_op("op_hcompute_hw_input_global_wrapper_stencil_2");
+  hcompute_hw_input_global_wrapper_stencil_2->add_function("hcompute_hw_input_global_wrapper_stencil_2");
+  hcompute_hw_input_global_wrapper_stencil_2->add_load("hw_input_stencil", "hw_input_global_wrapper_s0_y", "hw_input_global_wrapper_s0_x", "2");
+  hcompute_hw_input_global_wrapper_stencil_2->add_store("hw_input_global_wrapper_stencil", "hw_input_global_wrapper_s0_y", "hw_input_global_wrapper_s0_x", "2");
 
 //consuming hw_input_global_wrapper.stencil
 ////producing gray.stencil
@@ -773,14 +785,27 @@ prog unsharp() {
 //consuming ratio.stencil
   auto hw_output_s0_y_yi = prg.add_loop("hw_output_s0_y_yi", 0, 60);
   auto hw_output_s0_x_xi = hw_output_s0_y_yi->add_loop("hw_output_s0_x_xi", 0, 60);
-  auto hw_output_s0_c = hw_output_s0_x_xi->add_loop("hw_output_s0_c", 0, 3);
 
-//store is: hw_output.stencil(hw_output_s0_c, hw_output_s0_x_xi, hw_output_s0_y_yi) = uint8(min(((hw_input_global_wrapper.stencil(hw_output_s0_c, hw_output_s0_x_xi, hw_output_s0_y_yi)*uint16(ratio.stencil(hw_output_s0_x_xi, hw_output_s0_y_yi)))/(uint16)32), (uint16)255))
-  auto hcompute_hw_output_stencil = hw_output_s0_c->add_op("op_hcompute_hw_output_stencil");
+//store is: hw_output.stencil(0, hw_output_s0_x_xi, hw_output_s0_y_yi) = uint8(min(((hw_input_global_wrapper.stencil(0, hw_output_s0_x_xi, hw_output_s0_y_yi)*uint16(ratio.stencil(hw_output_s0_x_xi, hw_output_s0_y_yi)))/(uint16)32), (uint16)255))
+  auto hcompute_hw_output_stencil = hw_output_s0_x_xi->add_op("op_hcompute_hw_output_stencil");
   hcompute_hw_output_stencil->add_function("hcompute_hw_output_stencil");
-  hcompute_hw_output_stencil->add_load("hw_input_global_wrapper_stencil", "hw_output_s0_y_yi", "hw_output_s0_x_xi", "hw_output_s0_c");
+  hcompute_hw_output_stencil->add_load("hw_input_global_wrapper_stencil", "hw_output_s0_y_yi", "hw_output_s0_x_xi", "0");
   hcompute_hw_output_stencil->add_load("ratio_stencil", "hw_output_s0_y_yi", "hw_output_s0_x_xi");
-  hcompute_hw_output_stencil->add_store("hw_output_stencil", "hw_output_s0_y_yi", "hw_output_s0_x_xi", "hw_output_s0_c");
+  hcompute_hw_output_stencil->add_store("hw_output_stencil", "hw_output_s0_y_yi", "hw_output_s0_x_xi", "0");
+
+//store is: hw_output.stencil(1, hw_output_s0_x_xi, hw_output_s0_y_yi) = uint8(min(((hw_input_global_wrapper.stencil(1, hw_output_s0_x_xi, hw_output_s0_y_yi)*uint16(ratio.stencil(hw_output_s0_x_xi, hw_output_s0_y_yi)))/(uint16)32), (uint16)255))
+  auto hcompute_hw_output_stencil_1 = hw_output_s0_x_xi->add_op("op_hcompute_hw_output_stencil_1");
+  hcompute_hw_output_stencil_1->add_function("hcompute_hw_output_stencil_1");
+  hcompute_hw_output_stencil_1->add_load("hw_input_global_wrapper_stencil", "hw_output_s0_y_yi", "hw_output_s0_x_xi", "1");
+  hcompute_hw_output_stencil_1->add_load("ratio_stencil", "hw_output_s0_y_yi", "hw_output_s0_x_xi");
+  hcompute_hw_output_stencil_1->add_store("hw_output_stencil", "hw_output_s0_y_yi", "hw_output_s0_x_xi", "1");
+
+//store is: hw_output.stencil(2, hw_output_s0_x_xi, hw_output_s0_y_yi) = uint8(min(((hw_input_global_wrapper.stencil(2, hw_output_s0_x_xi, hw_output_s0_y_yi)*uint16(ratio.stencil(hw_output_s0_x_xi, hw_output_s0_y_yi)))/(uint16)32), (uint16)255))
+  auto hcompute_hw_output_stencil_2 = hw_output_s0_x_xi->add_op("op_hcompute_hw_output_stencil_2");
+  hcompute_hw_output_stencil_2->add_function("hcompute_hw_output_stencil_2");
+  hcompute_hw_output_stencil_2->add_load("hw_input_global_wrapper_stencil", "hw_output_s0_y_yi", "hw_output_s0_x_xi", "2");
+  hcompute_hw_output_stencil_2->add_load("ratio_stencil", "hw_output_s0_y_yi", "hw_output_s0_x_xi");
+  hcompute_hw_output_stencil_2->add_store("hw_output_stencil", "hw_output_s0_y_yi", "hw_output_s0_x_xi", "2");
 
   return prg;
 }
