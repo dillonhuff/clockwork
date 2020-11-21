@@ -18964,12 +18964,13 @@ void test_if_construction() {
 
 struct power_analysis_opcounts {
   map<string, map<string, int> > PE_optype_counts;
+  map<string, int> op_counts;
 
 };
 
 void dhuff_playground() {
   //{
-    //prog prg = mobilenet_unrolled();
+    //prog prg = unsharp();
     //prg.pretty_print();
     //assert(false);
   //}
@@ -18982,6 +18983,13 @@ void dhuff_playground() {
       power_analysis_opcounts power_stats;
       for (auto op : prg.all_ops()) {
         if (op->func != "") {
+          vector<string> surrounding = surrounding_vars(op, prg);
+          vector<int> bounds;
+          for (auto l : surrounding) {
+            bounds.push_back(prg.find_loop(l)->trip_count());
+          }
+          int bnds = card(bounds);
+          power_stats.op_counts[op->name] = bnds;
           CoreIR::Context* context = CoreIR::newContext();
           CoreIRLoadLibrary_commonlib(context);
           CoreIRLoadLibrary_cgralib(context);
@@ -19018,7 +19026,7 @@ void dhuff_playground() {
       for (auto p : prg.all_ops()) {
         for (auto op : power_stats.PE_optype_counts[p->name]) {
           cout << tab(1) << op.first << " -> " << op.second << endl;
-          energy_cost += ((double) map_find(op.first, alu_op_energy_costs)) * ((double)op.second);
+          energy_cost += map_find(p->name, power_stats.op_counts) * ((double) map_find(op.first, alu_op_energy_costs)) * ((double)op.second);
           cout << "Total PE energy cost: " << energy_cost << endl;
         }
       }
@@ -19027,6 +19035,7 @@ void dhuff_playground() {
     assert(false);
 #endif 
   }
+
   {
     for (auto prg : isca_programs()) {
       auto options = generic_SRAM_codegen_options(prg);
