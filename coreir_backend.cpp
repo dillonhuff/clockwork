@@ -4692,20 +4692,40 @@ bool allow_packed_sr(dgraph& shift_registers, UBuffer & buf, block_sreg * b)
 	return true;
 }
 
+Instance* instantiate_coreir_M3(ModuleDef* def, const std::string& name, const int num_writers, const int num_readers) {
+  auto c = def->getContext();
+  Select* one = def->addInstance("one_cst", "corebit.const", {{"value", COREMK(c, true)}})->sel("out");
+  Select* zero = def->addInstance("zero_cst", "corebit.const", {{"value", COREMK(c, false)}})->sel("out");
+  Values tile_params{{"width", COREMK(c, 16)},
+    {"ID", COREMK(c, "sreg_" + c->getUnique())},
+    {"has_external_addrgen", COREMK(c, false)},
+    {"num_inputs",COREMK(c,num_writers)},
+    {"num_outputs",COREMK(c,num_readers)}};
+  //CoreIR::Instance * sreg = def->addInstance("sreg_" + c->getUnique(), "cgralib.Mem_amber", tile_params);
+  CoreIR::Instance * sreg = def->addInstance(name, "cgralib.Mem_amber", tile_params);
+  def->connect(sreg->sel("clk"),def->sel("self.clk"));
+  def->connect(sreg->sel("clk_en"),one);
+  def->connect(sreg->sel("chain_chain_en"),zero);
+  def->connect(sreg->sel("chain_data_in"),mkConst(def,16,0));
+  def->connect(sreg->sel("rst_n"),def->sel("self.rst_n"));
+
+  return sreg;
+}
+
 std::set<string> generate_M1_shift_registers(CodegenOptions& options, CoreIR::ModuleDef* def, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
+
+  dgraph shift_registers = build_shift_registers(options, def, prg, buf, hwinfo);
+
+  //cout << shift_registers << endl;
+  //cout << "Shift registers for " << buf.name << endl;
+  //cout << shift_registers << endl;
+
+  block_sreg b_sreg;
+  auto packed_sr = allow_packed_sr(shift_registers, buf,& b_sreg);
 
   auto c = def->getContext();
   Select* one = def->addInstance("one_" + c->getUnique(), "corebit.const", {{"value", COREMK(c, true)}})->sel("out");
   Select* zero = def->addInstance("zero_" + c->getUnique(), "corebit.const", {{"value", COREMK(c, false)}})->sel("out");
-
-  block_sreg b_sreg;
-  dgraph shift_registers = build_shift_registers(options, def, prg, buf, hwinfo);
-
-  cout << shift_registers << endl;
-  cout << "Shift registers for " << buf.name << endl;
-  cout << shift_registers << endl;
-
-  auto packed_sr = allow_packed_sr(shift_registers, buf,& b_sreg);
 
   if(packed_sr) {
     cout << tab(1) << "!!! Allowing packed sr for " << buf.name << endl;
@@ -4722,18 +4742,20 @@ std::set<string> generate_M1_shift_registers(CodegenOptions& options, CoreIR::Mo
     assert(b_sreg.chain_starts.size() % 2 == 1);
 
     for (int i = 0; i < (int) b_sreg.chain_starts.size() / 2; i++) {
-      Values tile_params{{"width", COREMK(c, 16)},
-        {"ID", COREMK(c, "sreg_" + c->getUnique())},
-        {"has_external_addrgen", COREMK(c, false)},
-        {"num_inputs",COREMK(c,1)},
-        {"num_outputs",COREMK(c,2)}};
-      CoreIR::Instance * sreg = def->addInstance("sreg_" + c->getUnique(), "cgralib.Mem_amber", tile_params);
-      def->connect(sreg->sel("clk"),def->sel("self.clk"));
-      def->connect(sreg->sel("clk_en"),one);
-      def->connect(sreg->sel("chain_chain_en"),zero);
-      def->connect(sreg->sel("chain_data_in"),mkConst(def,16,0));
-      def->connect(sreg->sel("rst_n"),def->sel("self.rst_n"));
+      Instance* sreg = instantiate_coreir_M3(def, "sreg_" + c->getUnique(), 1, 2);
       def->connect(sreg->sel("data_in_0"),delayed_src);
+      //Values tile_params{{"width", COREMK(c, 16)},
+        //{"ID", COREMK(c, "sreg_" + c->getUnique())},
+        //{"has_external_addrgen", COREMK(c, false)},
+        //{"num_inputs",COREMK(c,1)},
+        //{"num_outputs",COREMK(c,2)}};
+      //CoreIR::Instance * sreg = def->addInstance("sreg_" + c->getUnique(), "cgralib.Mem_amber", tile_params);
+      //def->connect(sreg->sel("clk"),def->sel("self.clk"));
+      //def->connect(sreg->sel("clk_en"),one);
+      //def->connect(sreg->sel("chain_chain_en"),zero);
+      //def->connect(sreg->sel("chain_data_in"),mkConst(def,16,0));
+      //def->connect(sreg->sel("rst_n"),def->sel("self.rst_n"));
+      //def->connect(sreg->sel("data_in_0"),delayed_src);
 
       Wireable * chain_start_1 = def->sel(b_sreg.chain_starts.at(2*i + 1) + "_net.in");
       Wireable * chain_start_2 = def->sel(b_sreg.chain_starts.at(2*i + 2) + "_net.in");
@@ -4744,9 +4766,6 @@ std::set<string> generate_M1_shift_registers(CodegenOptions& options, CoreIR::Mo
       attach_M3_bank_config_metadata(sreg, config);
     }
 
-    //cout << "chain starts: " << b_
-
-    //assert(b_sreg.chain_starts.size() == 3);
     for (auto w : shift_registers.weights) {
       string src = w.first.first;
       string dst = w.first.second;
