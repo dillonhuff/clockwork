@@ -2795,6 +2795,7 @@ void garnet_map_module(Module* top) {
   //load_cgramapping(c);
   LoadDefinition_cgralib(c);
 
+  c->runPasses({"rungenerators"});
   //A new pass to remove input enable signal affine controller
   disconnect_input_enable(c, top);
   c->runPasses({"deletedeadinstances"});
@@ -2805,12 +2806,12 @@ void garnet_map_module(Module* top) {
   c->runPasses({"cullgraph"});
   c->addPass(new CustomFlatten);
   c->runPasses({"customflatten"});
+  c->addPass(new MapperPasses::MemSubstitute);
+  c->runPasses({"memsubstitute"});
   c->addPass(new MapperPasses::ConstDuplication);
   c->runPasses({"constduplication"});
   c->addPass(new MapperPasses::MemConst);
   c->runPasses({"memconst"});
-  c->addPass(new MapperPasses::MemSubstitute);
-  c->runPasses({"memsubstitute"});
 
   c->runPasses({"cullgraph"});
   c->getPassManager()->printLog();

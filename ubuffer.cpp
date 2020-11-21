@@ -4391,6 +4391,11 @@ lakeStream emit_top_address_stream(string fname,
         //    cout << "last bank rddom: "<< last_bank_IO.first << last_bank_IO.second <<"\t" << str(last_bank_rddom);
         //}
         //cout << "\n current bank rddom: " << bk.name << "\t" << str(bk.rddom) << endl;
+        pt_vec = bk.get_out_ports();
+        for (auto it : bk.get_sort_delay_map()) {
+            cout << "Bank: "<< bk.name << "'s port:'" << it.first << " has delay: " << it.second << endl;
+        }
+
         if (last_bank_IO.first == "") {
           inpt_set.insert(input);
           bank_input = input;
@@ -4400,13 +4405,10 @@ lakeStream emit_top_address_stream(string fname,
           bank_input = input;
         }
         else {
-          //cout << "Substitute the output port: " << last_bank_IO.second << "to the input : " << input << endl;
+          cout << "\tSubstitute the output port: " << last_bank_IO.second << "to the input : " << input << endl;
           bank_input = last_bank_IO.second;
           inpt_set.insert(bank_input);
-        }
-        pt_vec = bk.get_out_ports();
-        for (auto it : bk.get_sort_delay_map()) {
-            //cout << "Bank: "<< bk.name << "'s port:'" << it.first << " has delay: " << it.second << endl;
+          //delay_map[bank_input] = bk.delay_map.at(bank_input);
         }
 
         //sort the output port vec with the largest access in beginning
@@ -4454,7 +4456,7 @@ lakeStream emit_top_address_stream(string fname,
           inpt_set.clear();
           outpt_set.clear();
           outpt_merge.clear();
-          delay_map.clear();
+          //delay_map.clear();
           back_edge.clear();
         } else if (bk.onlySR()) {
           last_bank_rddom = create_subbank_branch(inpt_set, outpt_set, delay_map, outpt_merge, back_edge);
@@ -4501,6 +4503,12 @@ lakeStream emit_top_address_stream(string fname,
    *  This functional will return the read domain of the supper bank
    * */
   string find_origin(vector<pair<string, string> > edges, map<string, int> & delay_map, string source) {
+      for (auto it : delay_map) {
+          cout << "\tDelay map: " << it.first << ": " << it.second << endl;
+      }
+      for (auto it: edges) {
+          cout << it.first << "->" << it.second << endl;
+      }
     for (auto edge : edges) {
       string in = edge.second;
       string out = edge.first;
@@ -4560,7 +4568,7 @@ lakeStream emit_top_address_stream(string fname,
     outpt_set.clear();
     outpt_merge.clear();
     back_edge.clear();
-    delay_map.clear();
+    //delay_map.clear();
     return super_bk.rddom;
   }
 

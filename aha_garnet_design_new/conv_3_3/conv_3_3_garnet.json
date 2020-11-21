@@ -378,8 +378,8 @@
           ["hw_input_global_wrapper_stencil$d_reg__U6$reg0.in","hw_input_global_wrapper_stencil$d_reg__U5$reg0.out"],
           ["op_hcompute_conv_stencil_1$inner_compute$mul_hw_input_global_wrapper_stencil_2_289_290$binop.data.in.0","hw_input_global_wrapper_stencil$d_reg__U5$reg0.out"],
           ["op_hcompute_conv_stencil_1$inner_compute$mul_hw_input_global_wrapper_stencil_1_287_288$binop.data.in.0","hw_input_global_wrapper_stencil$d_reg__U6$reg0.out"],
-          ["hw_input_global_wrapper_stencil$ub_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_11_garnet.rst_n","hw_input_global_wrapper_stencil$ub_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_11_clk_en_const.out"],
-          ["hw_input_global_wrapper_stencil$ub_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_11_garnet.clk_en","hw_input_global_wrapper_stencil$ub_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_11_clk_en_const1.out"],
+          ["hw_input_global_wrapper_stencil$ub_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_11_garnet.clk_en","hw_input_global_wrapper_stencil$ub_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_11_clk_en_const.out"],
+          ["hw_input_global_wrapper_stencil$ub_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_11_garnet.rst_n","hw_input_global_wrapper_stencil$ub_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_11_clk_en_const1.out"],
           ["io16in_hw_input_stencil_op_hcompute_hw_input_global_wrapper_stencil_read_0.out","hw_input_global_wrapper_stencil$ub_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_11_garnet.data_in_0"],
           ["op_hcompute_conv_stencil_1$inner_compute$mul_hw_input_global_wrapper_stencil_3_291_292$binop.data.in.0","hw_input_global_wrapper_stencil$ub_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_11_garnet.data_out_0"],
           ["op_hcompute_conv_stencil_1$inner_compute$mul_hw_input_global_wrapper_stencil_6_297_298$binop.data.in.0","hw_input_global_wrapper_stencil$ub_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_11_garnet.data_out_1"],
@@ -415,8 +415,8 @@
           ["op_hcompute_conv_stencil_1$inner_compute$mul_hw_input_global_wrapper_stencil_6_297_298$binop.data.in.1","op_hcompute_conv_stencil_1$inner_compute$const_p18__297.out"],
           ["op_hcompute_conv_stencil_1$inner_compute$mul_hw_input_global_wrapper_stencil_8_301_302$binop.data.in.1","op_hcompute_conv_stencil_1$inner_compute$const_p19__301.out"],
           ["op_hcompute_conv_stencil_1$inner_compute$mul_hw_input_global_wrapper_stencil_5_295_296$binop.data.in.1","op_hcompute_conv_stencil_1$inner_compute$const_p255__295.out"],
-          ["op_hcompute_hw_output_stencil_port_controller_garnet.clk_en","op_hcompute_hw_output_stencil_port_controller_clk_en_const.out"],
-          ["op_hcompute_hw_output_stencil_port_controller_garnet.rst_n","op_hcompute_hw_output_stencil_port_controller_clk_en_const1.out"]
+          ["op_hcompute_hw_output_stencil_port_controller_garnet.rst_n","op_hcompute_hw_output_stencil_port_controller_clk_en_const.out"],
+          ["op_hcompute_hw_output_stencil_port_controller_garnet.clk_en","op_hcompute_hw_output_stencil_port_controller_clk_en_const1.out"]
         ]
       },
       "conv_stencil_clkwrk_dsa0_ub":{
@@ -1090,7 +1090,19 @@
               ["out",["Array",16,"Bit"]]
             ]],
             "modparams":{"init":["BitVector",16]},
-            "defaultmodargs":{"init":[["BitVector",16],"16'h0000"]}
+            "defaultmodargs":{"init":[["BitVector",16],"16'h0000"]},
+            "instances":{
+              "reg0":{
+                "genref":"coreir.reg",
+                "genargs":{"width":["Int",16]},
+                "modargs":{"clk_posedge":["Bool",true], "init":[["BitVector",16],"Arg","init"]}
+              }
+            },
+            "connections":[
+              ["self.clk","reg0.clk"],
+              ["self.in","reg0.in"],
+              ["self.out","reg0.out"]
+            ]
           }]
         ],
         "defaultgenargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false]}
