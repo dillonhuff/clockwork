@@ -4578,7 +4578,7 @@ std::set<string> generate_M1_shift_registers(CodegenOptions& options, CoreIR::Mo
     for (auto b : b_sreg.chain_starts) {
       cout << tab(2) << b << endl;
     }
-    assert(b_sreg.chain_starts.size() == 3);
+    //assert(b_sreg.chain_starts.size() == 3);
     assert(b_sreg.chain_starts.size() % 2 == 1);
 
     for (int i = 0; i < (int) b_sreg.chain_starts.size() / 2; i++) {
