@@ -18962,8 +18962,13 @@ void test_if_construction() {
   //assert(false);
 }
 
-struct power_analysis_info {
+struct power_analysis_params {
+  int routing_hop_cost;
+  int memtile_op_cost;
   map<string, double> alu_op_energy_costs;
+};
+
+struct power_analysis_info {
 
   map<string, map<string, int> > PE_optype_counts;
   map<string, int> op_counts;
@@ -18982,11 +18987,12 @@ void dhuff_playground() {
     //for (auto prg : harris_variants()) {
     for (auto prg : {resnet()}) {
       int PEs_used = 0;
+      power_analysis_params power_params;
       power_analysis_info power_stats;
       const double COST_PER_PE_MUL_PJ = 0.1;
       const double COST_PER_PE_ADD_PJ = 0.1;
-      power_stats.alu_op_energy_costs["mult_0"] = COST_PER_PE_MUL_PJ;
-      power_stats.alu_op_energy_costs["add"] = COST_PER_PE_ADD_PJ;
+      power_params.alu_op_energy_costs["mult_0"] = COST_PER_PE_MUL_PJ;
+      power_params.alu_op_energy_costs["add"] = COST_PER_PE_ADD_PJ;
       for (auto op : prg.all_ops()) {
         if (op->func != "") {
           vector<string> surrounding = surrounding_vars(op, prg);
@@ -19030,7 +19036,7 @@ void dhuff_playground() {
         for (auto op : power_stats.PE_optype_counts[p->name]) {
           cout << tab(1) << op.first << " -> " << op.second << endl;
           energy_cost += map_find(p->name, power_stats.op_counts) *
-            ((double) map_find(op.first, power_stats.alu_op_energy_costs)) *
+            ((double) map_find(op.first, power_params.alu_op_energy_costs)) *
             ((double)op.second);
           cout << "Total PE energy cost: " << energy_cost << endl;
         }
