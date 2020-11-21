@@ -16758,28 +16758,10 @@ vector<prog> isca_programs() {
   test_programs.push_back(camera_pipeline());
   test_programs.push_back(resnet());
   test_programs.push_back(harris());
-  test_programs.push_back(mini_conv_halide_fixed());
-  test_programs.push_back(strided_conv());
   test_programs.push_back(cascade());
-
-
   test_programs.push_back(down_sample());
-
-  test_programs.push_back(up_sample());
-
-
-
   test_programs.push_back(mobilenet_unrolled());
-
-  test_programs.push_back(pointwise());
-
-
-
-
-
-
-
-
+  test_programs.push_back(up_sample());
 
   return test_programs;
 }
@@ -18968,14 +18950,21 @@ void dhuff_playground() {
 #ifdef COREIR
     power_analysis_params power_params;
     power_analysis_info power_stats;
-    const double COST_PER_PE_MUL_PJ = 0.1;
-    const double COST_PER_PE_ADD_PJ = 0.1;
-    const double COST_PER_PE_SUB_PJ = 0.1;
-    const double COST_PER_PE_SHIFT_PJ = 0.05;
-    const double COST_PER_PE_LOGIC_BINOP_PJ = 0.05;
-    const double COST_PER_PE_EQ_PJ = 0.05;
-    const double COST_PER_PE_MUX_PJ = 1.0;
-    const double COST_PER_PE_CMP_PJ = 0.2;
+    // Interpolated from MAC cost in Xuans paper Interstellar
+    //const double COST_PER_PE_MUL_PJ = 0.04;
+    //const double COST_PER_PE_ADD_PJ = 0.035;
+
+    // From Dalys discussion of arithmetic
+    const double COST_PER_PE_MUL_PJ = 40 / 1000;
+    const double COST_PER_PE_ADD_PJ = 20 / 1000;
+
+    const double COST_PER_PE_SUB_PJ = 0.035;
+    const double COST_PER_PE_SHIFT_PJ = 0.01;
+    const double COST_PER_PE_LOGIC_BINOP_PJ = 0.01;
+    const double COST_PER_PE_EQ_PJ = 0.01;
+    const double COST_PER_PE_MUX_PJ = 0.5;
+    const double COST_PER_PE_CMP_PJ = 0.035;
+
     power_params.alu_op_energy_costs["mult_0"] = COST_PER_PE_MUL_PJ;
     power_params.alu_op_energy_costs["add"] = COST_PER_PE_ADD_PJ;
     power_params.alu_op_energy_costs["rshft"] = COST_PER_PE_SHIFT_PJ;
@@ -18988,8 +18977,10 @@ void dhuff_playground() {
     power_params.alu_op_energy_costs["lt"] = COST_PER_PE_CMP_PJ;
     power_params.alu_op_energy_costs["le"] = COST_PER_PE_CMP_PJ;
 
+    CodegenOptions options;
     for (auto prg : isca_programs()) {
       PE_energy_cost(power_params, power_stats, prg);
+      MEM_energy_cost(options, power_params, power_stats, prg);
     }
     assert(false);
 #endif 

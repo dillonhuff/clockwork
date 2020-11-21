@@ -185,6 +185,7 @@ isl_aff* bank_offset_aff(const std::string& reader, UBuffer& buf, ubuffer_impl& 
 void garnet_map_module(CoreIR::Module* top);
 
 double PE_energy_cost(power_analysis_params& power_params, power_analysis_info& power_stats, prog& prg);
+double MEM_energy_cost(CodegenOptions& options, power_analysis_params& power_params, power_analysis_info& power_stats, prog& prg);
 
 #endif
 

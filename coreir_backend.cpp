@@ -5231,7 +5231,7 @@ double PE_energy_cost(power_analysis_params& power_params, power_analysis_info& 
       string compute_file = "./coreir_compute/" + prg.name + "_compute.json";
       if (!loadFromFile(context, compute_file)) {
         cout << "Could not load compute file for: " << prg.name << ", file name = " << compute_file << endl;
-        assert(false);
+        //assert(false);
       }
       auto ns = context->getNamespace("global");
       CoreIR::Module* cu = ns->getModule(op->func);
@@ -5266,6 +5266,67 @@ double PE_energy_cost(power_analysis_params& power_params, power_analysis_info& 
     }
   }
   cout << "Total PE energy cost for " << prg.name << ": " << energy_cost << endl;
+
+  return energy_cost;
+}
+
+double MEM_energy_cost(CodegenOptions& options, power_analysis_params& power_params, power_analysis_info& power_stats, prog& prg) {
+
+  cout << "Computing MEM energy cost for " << prg.name << endl;
+
+  //int PEs_used = 0;
+  //for (auto op : prg.all_ops()) {
+    //if (op->func != "") {
+      //vector<string> surrounding = surrounding_vars(op, prg);
+      //vector<int> bounds;
+      //for (auto l : surrounding) {
+        //bounds.push_back(prg.find_loop(l)->trip_count());
+      //}
+      //int bnds = card(bounds);
+      //power_stats.op_counts[op->name] = bnds;
+
+      //CoreIR::Context* context = CoreIR::newContext();
+      //CoreIRLoadLibrary_commonlib(context);
+      //CoreIRLoadLibrary_cgralib(context);
+
+      //string compute_file = "./coreir_compute/" + prg.name + "_compute.json";
+      //if (!loadFromFile(context, compute_file)) {
+        //cout << "Could not load compute file for: " << prg.name << ", file name = " << compute_file << endl;
+        //assert(false);
+      //}
+      //auto ns = context->getNamespace("global");
+      //CoreIR::Module* cu = ns->getModule(op->func);
+      //garnet_map_module(cu);
+      //map<string, int> counts;
+      //for (auto inst : cu->getDef()->getInstances()) {
+        //cout << tab(1) << inst.second->getModuleRef()->getName() << endl;
+        //counts[inst.second->getModuleRef()->getName()]++;
+        //if (inst.second->getModuleRef()->getName() == "PE") {
+          //auto modargs = inst.second->getModArgs();
+          //if (modargs.find("alu_op") != end(modargs)) {
+            //power_stats.PE_optype_counts[op->name][inst.second->getModArgs().at("alu_op")->get<string>()]++;
+          //}
+        //}
+      //}
+      //cu->print();
+      //PEs_used += counts["PE"];
+      //deleteContext(context);
+    //}
+  //}
+  //cout << "# of PEs in " << prg.name << " = " << PEs_used << endl;
+  //cout << "PE op counts..." << endl;
+
+  double energy_cost = 0.0;
+  //for (auto p : prg.all_ops()) {
+    //for (auto op : power_stats.PE_optype_counts[p->name]) {
+      //cout << tab(1) << op.first << " -> " << op.second << endl;
+      //energy_cost += map_find(p->name, power_stats.op_counts) *
+        //((double) map_find(op.first, power_params.alu_op_energy_costs)) *
+        //((double)op.second);
+      //cout << "Total PE energy cost: " << energy_cost << endl;
+    //}
+  //}
+  //cout << "Total PE energy cost for " << prg.name << ": " << energy_cost << endl;
 
   return energy_cost;
 }
