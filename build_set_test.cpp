@@ -18963,7 +18963,7 @@ void test_if_construction() {
 }
 
 struct power_analysis_info {
-  map<string, int> alu_op_energy_costs;
+  map<string, double> alu_op_energy_costs;
 
   map<string, map<string, int> > PE_optype_counts;
   map<string, int> op_counts;
@@ -18983,8 +18983,8 @@ void dhuff_playground() {
     for (auto prg : {resnet()}) {
       int PEs_used = 0;
       power_analysis_info power_stats;
-      const int COST_PER_PE_MUL_PJ = 1.0;
-      const int COST_PER_PE_ADD_PJ = 1.0;
+      const double COST_PER_PE_MUL_PJ = 0.1;
+      const double COST_PER_PE_ADD_PJ = 0.1;
       power_stats.alu_op_energy_costs["mult_0"] = COST_PER_PE_MUL_PJ;
       power_stats.alu_op_energy_costs["add"] = COST_PER_PE_ADD_PJ;
       for (auto op : prg.all_ops()) {
@@ -18996,9 +18996,11 @@ void dhuff_playground() {
           }
           int bnds = card(bounds);
           power_stats.op_counts[op->name] = bnds;
+
           CoreIR::Context* context = CoreIR::newContext();
           CoreIRLoadLibrary_commonlib(context);
           CoreIRLoadLibrary_cgralib(context);
+
           string compute_file = "./coreir_compute/" + prg.name + "_compute.json";
           if (!loadFromFile(context, compute_file)) {
             cout << "Could not load compute file for: " << prg.name << ", file name = " << compute_file << endl;
