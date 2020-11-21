@@ -4512,7 +4512,8 @@ dgraph build_in_to_out_shift_register_graph(CodegenOptions& options, CoreIR::Mod
   return dg;
 }
 
-dgraph build_shift_registers(CodegenOptions& options, CoreIR::ModuleDef* def, prog& prg, UBuffer& buf, schedule_info& hwinfo,block_sreg * b ) {
+dgraph build_shift_registers(CodegenOptions& options, CoreIR::ModuleDef* def, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
+
   dgraph dg = build_shift_register_graph(options, def, prg, buf, hwinfo);
 
   dgraph shift_registers;
@@ -4641,7 +4642,7 @@ std::set<string> generate_M1_shift_registers(CodegenOptions& options, CoreIR::Mo
   Select* zero = def->addInstance("zero_" + c->getUnique(), "corebit.const", {{"value", COREMK(c, false)}})->sel("out");
 
   block_sreg b_sreg;
-  dgraph shift_registers = build_shift_registers(options, def, prg, buf, hwinfo, &b_sreg);
+  dgraph shift_registers = build_shift_registers(options, def, prg, buf, hwinfo);
 
   cout << shift_registers << endl;
   if (buf.name == "padded16_global_wrapper_stencil") {
@@ -4685,12 +4686,7 @@ std::set<string> generate_M1_shift_registers(CodegenOptions& options, CoreIR::Mo
       cout << "Diff = " << diff << endl;
     }
 
-    assert(false);
   }
-
-  // the dgraph output and the final shift registers are getting coupled.
-  // I want to have a shift register analysis that decides whether the
-  // SR is a candidate for blocking or whether it is not.
 
   cout << "Shift registers for " << buf.name << endl;
   cout << shift_registers << endl;
