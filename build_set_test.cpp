@@ -13288,16 +13288,15 @@ void cpy_app_to_folder(const std::string& app_type, const std::string& prg_name)
 
 void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, string dir="aha_garnet_design") {
   vector<prog> test_apps;
-  test_apps.push_back(rom());
   test_apps.push_back(conv_3_3());
-  //test_apps.push_back(gaussian());
-  //test_apps.push_back(cascade());
-  //test_apps.push_back(harris());
-  //test_apps.push_back(resnet());
-  //test_apps.push_back(rom());
-  //test_apps.push_back(conv_1_2());
-  //test_apps.push_back(camera_pipeline());
-  //test_apps.push_back(up_sample());
+  test_apps.push_back(gaussian());
+  test_apps.push_back(cascade());
+  test_apps.push_back(harris());
+  test_apps.push_back(resnet());
+  test_apps.push_back(rom());
+  test_apps.push_back(conv_1_2());
+  test_apps.push_back(camera_pipeline());
+  test_apps.push_back(up_sample());
   test_apps.push_back(unsharp());
 
   ////test_apps.push_back(mobilenet_unrolled());
@@ -16554,13 +16553,10 @@ void compile_for_garnet_single_port_mem(prog& prg,
     cout << "\tGenerate bank for buffer: " << b.first << endl << b.second << endl;
     if (b.second.num_in_ports() == 0 || b.second.num_out_ports() == 0)
         continue;
-    if (is_rate_matchable(prg)) {
-      b.second.generate_banks_and_merge(options);
-      b.second.port_group2bank(options);
-    } else {
+    auto partition = embarassing_partition(b.second);
+    //if (is_rate_matchable(prg)) {
+    if (partition.has_value()){
       //TODO: put this into a method
-      auto partition = embarassing_partition(b.second);
-      assert(partition.has_value());
       cout << tab(1) << "Found partition: " << endl;
       std::set<int> partition_dim = partition.get_value();
       vector<int> cyclic_partition_factor;
@@ -16580,6 +16576,9 @@ void compile_for_garnet_single_port_mem(prog& prg,
       }
       cout << "number of banks = " << card(cyclic_partition_factor) << endl;
       options.banking_strategies[b.first] = {"cyclic", cyclic_partition_factor};
+      b.second.generate_banks_and_merge(options);
+      b.second.port_group2bank(options);
+    } else {
       b.second.generate_banks_and_merge(options);
       b.second.port_group2bank(options);
     }
