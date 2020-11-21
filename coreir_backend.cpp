@@ -2841,7 +2841,7 @@ void count_post_mapped_memory_accesses(Module* gmod) {
 }
 
 void analyze_post_mapped_app(CodegenOptions& options, prog& prg, map<string, UBuffer>& buffers, Module* gmod) {
-  //count_post_mapped_memory_accesses(gmod);
+  count_post_mapped_memory_accesses(gmod);
   auto context = gmod->getContext();
   auto ns = context->getNamespace("global");
   //cout << "=== Post mapping instances for " << prg.name << endl;
@@ -2906,8 +2906,8 @@ void generate_coreir(CodegenOptions& options,
       options.rtl_options.target_tile == TARGET_TILE_M3) {
     //count_memory_tiles(prg_mod);
     garnet_map_module(prg_mod);
-    Module* gmod = ns_new->getModule(prg.name);
-    analyze_post_mapped_app(options, prg, buffers, gmod);
+    //Module* gmod = ns_new->getModule(prg.name);
+    //analyze_post_mapped_app(options, prg, buffers, gmod);
   }
   prg_mod->print();
   //assert(false);
