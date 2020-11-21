@@ -4743,6 +4743,57 @@ Instance* instantiate_coreir_M3(ModuleDef* def, const std::string& name, const i
   return sreg;
 }
 
+std::set<string> generate_block_shift_register(CodegenOptions& options, CoreIR::ModuleDef* def, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
+  dgraph shift_registers = build_shift_registers(options, def, prg, buf, hwinfo);
+
+  block_sreg b_sreg;
+  auto packed_sr = allow_packed_sr(shift_registers, buf,& b_sreg);
+
+  auto c = def->getContext();
+
+  assert(packed_sr);
+  cout << tab(1) << "!!! Allowing packed sr for " << buf.name << endl;
+  string src = b_sreg.inpt;     
+  Wireable * src_wire = def->sel("self." + buf.container_bundle(src) + "." + str(buf.bundle_offset(src)));
+  Wireable * delayed_src = delay_by(def, "sr_ito_all_" + c->getUnique(), src_wire, b_sreg.init_delay);
+  def->connect(def->sel(b_sreg.chain_starts.at(0) + "_net.in"), delayed_src);
+
+  cout << tab(1) << b_sreg.difference << endl;
+  for (auto b : b_sreg.chain_starts) {
+    cout << tab(2) << b << endl;
+  }
+  assert(b_sreg.chain_starts.size() % 2 == 1);
+
+  for (int i = 0; i < (int) b_sreg.chain_starts.size() / 2; i++) {
+    Instance* sreg = instantiate_coreir_M3(def, "sreg_" + c->getUnique(), 1, 2);
+    def->connect(sreg->sel("data_in_0"),delayed_src);
+
+    Wireable * chain_start_1 = def->sel(b_sreg.chain_starts.at(2*i + 1) + "_net.in");
+    Wireable * chain_start_2 = def->sel(b_sreg.chain_starts.at(2*i + 2) + "_net.in");
+    def->connect(chain_start_1, sreg->sel("data_out_0"));
+    def->connect(chain_start_2, sreg->sel("data_out_1"));
+
+    M3_config config = instantiate_M3_verilog_sreg_block(options, sreg->getModuleRef()->getLongName(), b_sreg.difference, prg,hwinfo, b_sreg, buf);
+    attach_M3_bank_config_metadata(sreg, config);
+  }
+
+  for (auto w : shift_registers.weights) {
+    string src = w.first.first;
+    string dst = w.first.second;
+    int delay = w.second;
+    if (buf.is_out_pt(src) && buf.is_out_pt(dst)) {
+      Wireable* src_wire = def->sel(src + "_net.out");
+      Wireable* dst_wire = def->sel(dst + "_net.in");
+      Wireable* delayed_src =
+        delay_by(def, "sr_oto_" + c->getUnique(), src_wire, delay);
+      cout << "wiring " << src << " to " << dst << endl;
+      def->connect(dst_wire, delayed_src);
+    }
+
+  }
+  return shift_registers.nodes;
+}
+
 std::set<string> generate_M1_shift_registers(CodegenOptions& options, CoreIR::ModuleDef* def, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
 
   dgraph shift_registers = build_shift_registers(options, def, prg, buf, hwinfo);
@@ -4753,46 +4804,47 @@ std::set<string> generate_M1_shift_registers(CodegenOptions& options, CoreIR::Mo
   auto c = def->getContext();
 
   if(packed_sr) {
-    cout << tab(1) << "!!! Allowing packed sr for " << buf.name << endl;
-    string src = b_sreg.inpt;     
-    Wireable * src_wire = def->sel("self." + buf.container_bundle(src) + "." + str(buf.bundle_offset(src)));
-    Wireable * delayed_src = delay_by(def, "sr_ito_all_" + c->getUnique(), src_wire, b_sreg.init_delay);
-    def->connect(def->sel(b_sreg.chain_starts.at(0) + "_net.in"), delayed_src);
+    return generate_block_shift_register(options, def, prg, buf, hwinfo);
+    //cout << tab(1) << "!!! Allowing packed sr for " << buf.name << endl;
+    //string src = b_sreg.inpt;     
+    //Wireable * src_wire = def->sel("self." + buf.container_bundle(src) + "." + str(buf.bundle_offset(src)));
+    //Wireable * delayed_src = delay_by(def, "sr_ito_all_" + c->getUnique(), src_wire, b_sreg.init_delay);
+    //def->connect(def->sel(b_sreg.chain_starts.at(0) + "_net.in"), delayed_src);
 
-    cout << tab(1) << b_sreg.difference << endl;
-    for (auto b : b_sreg.chain_starts) {
-      cout << tab(2) << b << endl;
-    }
-    assert(b_sreg.chain_starts.size() % 2 == 1);
+    //cout << tab(1) << b_sreg.difference << endl;
+    //for (auto b : b_sreg.chain_starts) {
+      //cout << tab(2) << b << endl;
+    //}
+    //assert(b_sreg.chain_starts.size() % 2 == 1);
 
-    for (int i = 0; i < (int) b_sreg.chain_starts.size() / 2; i++) {
-      Instance* sreg = instantiate_coreir_M3(def, "sreg_" + c->getUnique(), 1, 2);
-      def->connect(sreg->sel("data_in_0"),delayed_src);
+    //for (int i = 0; i < (int) b_sreg.chain_starts.size() / 2; i++) {
+      //Instance* sreg = instantiate_coreir_M3(def, "sreg_" + c->getUnique(), 1, 2);
+      //def->connect(sreg->sel("data_in_0"),delayed_src);
 
-      Wireable * chain_start_1 = def->sel(b_sreg.chain_starts.at(2*i + 1) + "_net.in");
-      Wireable * chain_start_2 = def->sel(b_sreg.chain_starts.at(2*i + 2) + "_net.in");
-      def->connect(chain_start_1, sreg->sel("data_out_0"));
-      def->connect(chain_start_2, sreg->sel("data_out_1"));
+      //Wireable * chain_start_1 = def->sel(b_sreg.chain_starts.at(2*i + 1) + "_net.in");
+      //Wireable * chain_start_2 = def->sel(b_sreg.chain_starts.at(2*i + 2) + "_net.in");
+      //def->connect(chain_start_1, sreg->sel("data_out_0"));
+      //def->connect(chain_start_2, sreg->sel("data_out_1"));
 
-      M3_config config = instantiate_M3_verilog_sreg_block(options, sreg->getModuleRef()->getLongName(), b_sreg.difference, prg,hwinfo, b_sreg, buf);
-      attach_M3_bank_config_metadata(sreg, config);
-    }
+      //M3_config config = instantiate_M3_verilog_sreg_block(options, sreg->getModuleRef()->getLongName(), b_sreg.difference, prg,hwinfo, b_sreg, buf);
+      //attach_M3_bank_config_metadata(sreg, config);
+    //}
 
-    for (auto w : shift_registers.weights) {
-      string src = w.first.first;
-      string dst = w.first.second;
-      int delay = w.second;
-      if (buf.is_out_pt(src) && buf.is_out_pt(dst)) {
-        Wireable* src_wire = def->sel(src + "_net.out");
-        Wireable* dst_wire = def->sel(dst + "_net.in");
-        Wireable* delayed_src =
-          delay_by(def, "sr_oto_" + c->getUnique(), src_wire, delay);
-        cout << "wiring " << src << " to " << dst << endl;
-        def->connect(dst_wire, delayed_src);
-      }
-    }
+    //for (auto w : shift_registers.weights) {
+      //string src = w.first.first;
+      //string dst = w.first.second;
+      //int delay = w.second;
+      //if (buf.is_out_pt(src) && buf.is_out_pt(dst)) {
+        //Wireable* src_wire = def->sel(src + "_net.out");
+        //Wireable* dst_wire = def->sel(dst + "_net.in");
+        //Wireable* delayed_src =
+          //delay_by(def, "sr_oto_" + c->getUnique(), src_wire, delay);
+        //cout << "wiring " << src << " to " << dst << endl;
+        //def->connect(dst_wire, delayed_src);
+      //}
+    //}
 
-    return shift_registers.nodes;
+    //return shift_registers.nodes;
   }
 
 
