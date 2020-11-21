@@ -15502,7 +15502,8 @@ void relax_delays_rate_matched(schedule_info& sched, prog& prg) {
         auto prod_loop = prg.find_loop(prod);
         auto prod_op_vec = prod_loop->all_ops();
         //Assume we only have one op under loop nest
-        assert(prod_op_vec.size() == 1);
+        if (prod_op_vec.size() > 1)
+            continue;
         auto prod_op_name = pick(prod_op_vec)->name;
         auto cons_op_name = pick(cons_op_vec)->name;
         auto prod_dom = domains.at(pick(prod_op_vec));
@@ -16765,9 +16766,10 @@ vector<prog> isca_programs() {
   vector<prog> test_programs;
 
 
-  test_programs.push_back(gaussian());
+  //test_programs.push_back(unsharp());
+  test_programs.push_back(resnet());
   test_programs.push_back(camera_pipeline());
-  test_programs.push_back(unsharp());
+  test_programs.push_back(gaussian());
   test_programs.push_back(harris());
   test_programs.push_back(mini_conv_halide_fixed());
   test_programs.push_back(strided_conv());
@@ -16778,7 +16780,6 @@ vector<prog> isca_programs() {
 
   test_programs.push_back(up_sample());
 
-  test_programs.push_back(resnet());
 
 
   test_programs.push_back(mobilenet_unrolled());
@@ -17165,9 +17166,9 @@ void cgra_flow_tests() {
   //vector<prog> M3_test_programs = harris_variants();
   //vector<prog> M3_test_programs{up_sample(), resnet()};
   //vector<prog> M3_test_programs{resnet()};
-  //vector<prog> M3_test_programs{unsharp()};
+  //vector<prog> M3_test_programs{gaussian()};
   test_codegen(M3_test_programs, compile_for_CGRA_M3_mem);
-  //assert(false);
+  assert(false);
 
   auto test_programs =
     all_cgra_programs();
@@ -18976,37 +18977,29 @@ void test_if_construction() {
 }
 
 void dhuff_playground() {
+  //{
+    //prog prg = unsharp();
+    //prg.pretty_print();
+    //assert(false);
+  //}
+
   {
 #ifdef COREIR
-    for (auto prg : harris_variants()) {
-      int PEs_used = 0;
-      for (auto op : prg.all_ops()) {
-        if (op->func != "") {
-          CoreIR::Context* context = CoreIR::newContext();
-          CoreIRLoadLibrary_commonlib(context);
-          CoreIRLoadLibrary_cgralib(context);
-          string compute_file = "./coreir_compute/" + prg.name + "_compute.json";
-          if (!loadFromFile(context, compute_file)) {
-            cout << "Could not load compute file for: " << prg.name << ", file name = " << compute_file << endl;
-            assert(false);
-          }
-          auto ns = context->getNamespace("global");
-          CoreIR::Module* cu = ns->getModule(op->func);
-          garnet_map_module(cu);
-          map<string, int> counts;
-          for (auto inst : cu->getDef()->getInstances()) {
-            cout << tab(1) << inst.second->getModuleRef()->getName() << endl;
-            counts[inst.second->getModuleRef()->getName()]++;
-          }
-          PEs_used += counts["PE"];
-          deleteContext(context);
-        }
-      }
-      cout << "# of PEs in " << prg.name << " = " << PEs_used << endl;
+    //for (auto prg : harris_variants()) {
+    power_analysis_params power_params;
+    power_analysis_info power_stats;
+    const double COST_PER_PE_MUL_PJ = 0.1;
+    const double COST_PER_PE_ADD_PJ = 0.1;
+    power_params.alu_op_energy_costs["mult_0"] = COST_PER_PE_MUL_PJ;
+    power_params.alu_op_energy_costs["add"] = COST_PER_PE_ADD_PJ;
+
+    for (auto prg : {resnet()}) {
+      PE_energy_cost(power_params, power_stats, prg);
     }
     assert(false);
 #endif
   }
+
   {
     for (auto prg : isca_programs()) {
       auto options = generic_SRAM_codegen_options(prg);
