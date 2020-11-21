@@ -16753,8 +16753,8 @@ vector<prog> isca_programs() {
 
 
   //test_programs.push_back(unsharp());
-  test_programs.push_back(resnet());
   test_programs.push_back(camera_pipeline());
+  test_programs.push_back(resnet());
   test_programs.push_back(gaussian());
   test_programs.push_back(harris());
   test_programs.push_back(mini_conv_halide_fixed());
