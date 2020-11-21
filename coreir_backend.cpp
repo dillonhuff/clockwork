@@ -4692,10 +4692,22 @@ bool allow_packed_sr(dgraph& shift_registers, UBuffer & buf, block_sreg * b)
 	return true;
 }
 
+Select* get_zero(ModuleDef* def) {
+  auto c = def->getContext();
+  return def->addInstance("one_cst" + def->getContext()->getUnique(), "corebit.const", {{"value", COREMK(c, false)}})->sel("out");
+}
+
+Select* get_one(ModuleDef* def) {
+  auto c = def->getContext();
+  return def->addInstance("zero_cst" + def->getContext()->getUnique(), "corebit.const", {{"value", COREMK(c, true)}})->sel("out");
+}
+
 Instance* instantiate_coreir_M3(ModuleDef* def, const std::string& name, const int num_writers, const int num_readers) {
   auto c = def->getContext();
-  Select* one = def->addInstance("one_cst", "corebit.const", {{"value", COREMK(c, true)}})->sel("out");
-  Select* zero = def->addInstance("zero_cst", "corebit.const", {{"value", COREMK(c, false)}})->sel("out");
+  Select* one = get_one(def);
+  //def->addInstance("one_cst", "corebit.const", {{"value", COREMK(c, true)}})->sel("out");
+  Select* zero = get_zero(def);
+  //def->addInstance("zero_cst", "corebit.const", {{"value", COREMK(c, false)}})->sel("out");
   Values tile_params{{"width", COREMK(c, 16)},
     {"ID", COREMK(c, "sreg_" + c->getUnique())},
     {"has_external_addrgen", COREMK(c, false)},
@@ -4744,18 +4756,6 @@ std::set<string> generate_M1_shift_registers(CodegenOptions& options, CoreIR::Mo
     for (int i = 0; i < (int) b_sreg.chain_starts.size() / 2; i++) {
       Instance* sreg = instantiate_coreir_M3(def, "sreg_" + c->getUnique(), 1, 2);
       def->connect(sreg->sel("data_in_0"),delayed_src);
-      //Values tile_params{{"width", COREMK(c, 16)},
-        //{"ID", COREMK(c, "sreg_" + c->getUnique())},
-        //{"has_external_addrgen", COREMK(c, false)},
-        //{"num_inputs",COREMK(c,1)},
-        //{"num_outputs",COREMK(c,2)}};
-      //CoreIR::Instance * sreg = def->addInstance("sreg_" + c->getUnique(), "cgralib.Mem_amber", tile_params);
-      //def->connect(sreg->sel("clk"),def->sel("self.clk"));
-      //def->connect(sreg->sel("clk_en"),one);
-      //def->connect(sreg->sel("chain_chain_en"),zero);
-      //def->connect(sreg->sel("chain_data_in"),mkConst(def,16,0));
-      //def->connect(sreg->sel("rst_n"),def->sel("self.rst_n"));
-      //def->connect(sreg->sel("data_in_0"),delayed_src);
 
       Wireable * chain_start_1 = def->sel(b_sreg.chain_starts.at(2*i + 1) + "_net.in");
       Wireable * chain_start_2 = def->sel(b_sreg.chain_starts.at(2*i + 2) + "_net.in");
@@ -4851,18 +4851,19 @@ std::set<string> generate_M1_shift_registers(CodegenOptions& options, CoreIR::Mo
         while(delay > 0)
         {
           num_ram_tiles++;
+          Instance* sreg = instantiate_coreir_M3(def, "sreg_" + c->getUnique(), 1, 1);
 
-          Values tile_params{{"width", COREMK(c, 16)},
-            {"ID", COREMK(c, "sreg_" + c->getUnique())},
-            {"has_external_addrgen", COREMK(c, false)},
-            {"num_inputs",COREMK(c,1)},
-            {"num_outputs",COREMK(c,1)}};
-          CoreIR::Instance * sreg = def->addInstance("sreg_" + c->getUnique(), "cgralib.Mem_amber", tile_params);
-          def->connect(sreg->sel("clk"),def->sel("self.clk"));
-          def->connect(sreg->sel("clk_en"),one);
-          def->connect(sreg->sel("chain_chain_en"),zero);
-          def->connect(sreg->sel("chain_data_in"),mkConst(def,16,0));
-          def->connect(sreg->sel("rst_n"),def->sel("self.rst_n"));
+          //Values tile_params{{"width", COREMK(c, 16)},
+            //{"ID", COREMK(c, "sreg_" + c->getUnique())},
+            //{"has_external_addrgen", COREMK(c, false)},
+            //{"num_inputs",COREMK(c,1)},
+            //{"num_outputs",COREMK(c,1)}};
+          //CoreIR::Instance * sreg = def->addInstance("sreg_" + c->getUnique(), "cgralib.Mem_amber", tile_params);
+          //def->connect(sreg->sel("clk"),def->sel("self.clk"));
+          //def->connect(sreg->sel("clk_en"),one);
+          //def->connect(sreg->sel("chain_chain_en"),zero);
+          //def->connect(sreg->sel("chain_data_in"),mkConst(def,16,0));
+          //def->connect(sreg->sel("rst_n"),def->sel("self.rst_n"));
           def->connect(sreg->sel("data_in_0"),src_wire);
           delayed_src = sreg->sel("data_out_0");
 
