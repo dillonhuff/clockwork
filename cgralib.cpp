@@ -429,7 +429,7 @@ CoreIR::Namespace* CoreIRLoadLibrary_cgralib(Context* c) {
     p["config"] = CoreIR::JsonType::make(c);
     p["init"] = CoreIR::JsonType::make(c);
     Json jdata;
-    jdata = {0};
+    jdata = {};
     d["init"] = Const::make(c,jdata);
 
     //p["depth"] = c->Int();

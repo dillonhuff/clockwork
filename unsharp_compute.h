@@ -122,8 +122,8 @@ hw_uint<16> hcompute_blur_unnormalized_stencil_1(hw_uint<16>& blur_unnormalized_
   return _478;
 }
 
-//store is: ratio.stencil(ratio_s0_x, ratio_s0_y) = uint8(min(((uint16(uint8(min(((gray.stencil(ratio_s0_x, ratio_s0_y)*(uint16)2) - uint16(uint8((blur_unnormalized.stencil(ratio_s0_x, ratio_s0_y)/(int16)256)))), (uint16)255)))*(uint16)32)/max(gray.stencil(ratio_s0_x, ratio_s0_y), (uint16)1)), (uint16)255))
-hw_uint<8> hcompute_ratio_stencil(hw_uint<16>& blur_unnormalized_stencil, hw_uint<16>& gray_stencil) {
+//store is: ratio.stencil(ratio_s0_x, ratio_s0_y) = min(((min(((gray.stencil(ratio_s0_x, ratio_s0_y)*(uint16)2) - uint16((blur_unnormalized.stencil(ratio_s0_x, ratio_s0_y)/(int16)256))), (uint16)255)*(uint16)32)/max(gray.stencil(ratio_s0_x, ratio_s0_y), (uint16)1)), (uint16)255)
+hw_uint<16> hcompute_ratio_stencil(hw_uint<16>& blur_unnormalized_stencil, hw_uint<16>& gray_stencil) {
   int16_t _blur_unnormalized_stencil_2 = (int16_t) blur_unnormalized_stencil.extract<0, 15>();
 
   uint16_t _gray_stencil_16 = (uint16_t) gray_stencil.extract<0, 15>();
@@ -132,68 +132,58 @@ hw_uint<8> hcompute_ratio_stencil(hw_uint<16>& blur_unnormalized_stencil, hw_uin
   uint16_t _602 = _gray_stencil_16 * _601;
   int16_t _603 = (int16_t)(8);
   int16_t _604 = _blur_unnormalized_stencil_2 >> _603;
-  uint8_t _605 = (uint8_t)(_604);
-  uint16_t _606 = (uint16_t)(_605);
-  uint16_t _607 = _602 - _606;
-  uint16_t _608 = (uint16_t)(255);
-  uint16_t _609 = min(_607, _608);
-  uint8_t _610 = (uint8_t)(_609);
-  uint16_t _611 = (uint16_t)(_610);
-  uint16_t _612 = (uint16_t)(32);
-  uint16_t _613 = _611 * _612;
-  uint16_t _614 = (uint16_t)(1);
-  uint16_t _615 = max(_gray_stencil_16, _614);
-  uint16_t _616 = _613 / _615;
-  uint16_t _617 = min(_616, _608);
-  uint8_t _618 = (uint8_t)(_617);
-  return _618;
+  uint16_t _605 = (uint16_t)(_604);
+  uint16_t _606 = _602 - _605;
+  uint16_t _607 = (uint16_t)(255);
+  uint16_t _608 = min(_606, _607);
+  uint16_t _609 = (uint16_t)(32);
+  uint16_t _610 = _608 * _609;
+  uint16_t _611 = (uint16_t)(1);
+  uint16_t _612 = max(_gray_stencil_16, _611);
+  uint16_t _613 = _610 / _612;
+  uint16_t _614 = min(_613, _607);
+  return _614;
 }
 
-//store is: hw_output.stencil(0, hw_output_s0_x_xi, hw_output_s0_y_yi) = uint8(min(((hw_input_global_wrapper.stencil(0, hw_output_s0_x_xi, hw_output_s0_y_yi)*uint16(ratio.stencil(hw_output_s0_x_xi, hw_output_s0_y_yi)))/(uint16)32), (uint16)255))
-hw_uint<8> hcompute_hw_output_stencil(hw_uint<16>& hw_input_global_wrapper_stencil, hw_uint<8>& ratio_stencil) {
+//store is: hw_output.stencil(0, hw_output_s0_x_xi, hw_output_s0_y_yi) = min(((ratio.stencil(hw_output_s0_x_xi, hw_output_s0_y_yi)*hw_input_global_wrapper.stencil(0, hw_output_s0_x_xi, hw_output_s0_y_yi))/(uint16)32), (uint16)255)
+hw_uint<16> hcompute_hw_output_stencil(hw_uint<16>& hw_input_global_wrapper_stencil, hw_uint<16>& ratio_stencil) {
   uint16_t _hw_input_global_wrapper_stencil_4 = (uint16_t) hw_input_global_wrapper_stencil.extract<0, 15>();
 
-  uint8_t _ratio_stencil_1 = (uint8_t) ratio_stencil.extract<0, 7>();
+  uint16_t _ratio_stencil_1 = (uint16_t) ratio_stencil.extract<0, 15>();
 
-  uint16_t _657 = (uint16_t)(_ratio_stencil_1);
-  uint16_t _658 = _hw_input_global_wrapper_stencil_4 * _657;
-  uint16_t _659 = (uint16_t)(5);
-  uint16_t _660 = _658 >> _659;
-  uint16_t _661 = (uint16_t)(255);
-  uint16_t _662 = min(_660, _661);
-  uint8_t _663 = (uint8_t)(_662);
-  return _663;
+  uint16_t _645 = _ratio_stencil_1 * _hw_input_global_wrapper_stencil_4;
+  uint16_t _646 = (uint16_t)(5);
+  uint16_t _647 = _645 >> _646;
+  uint16_t _648 = (uint16_t)(255);
+  uint16_t _649 = min(_647, _648);
+  return _649;
 }
 
-//store is: hw_output.stencil(1, hw_output_s0_x_xi, hw_output_s0_y_yi) = uint8(min(((hw_input_global_wrapper.stencil(1, hw_output_s0_x_xi, hw_output_s0_y_yi)*uint16(ratio.stencil(hw_output_s0_x_xi, hw_output_s0_y_yi)))/(uint16)32), (uint16)255))
-hw_uint<8> hcompute_hw_output_stencil_1(hw_uint<16>& hw_input_global_wrapper_stencil, hw_uint<8>& ratio_stencil) {
+//store is: hw_output.stencil(1, hw_output_s0_x_xi, hw_output_s0_y_yi) = min(((ratio.stencil(hw_output_s0_x_xi, hw_output_s0_y_yi)*hw_input_global_wrapper.stencil(1, hw_output_s0_x_xi, hw_output_s0_y_yi))/(uint16)32), (uint16)255)
+hw_uint<16> hcompute_hw_output_stencil_1(hw_uint<16>& hw_input_global_wrapper_stencil, hw_uint<16>& ratio_stencil) {
   uint16_t _hw_input_global_wrapper_stencil_5 = (uint16_t) hw_input_global_wrapper_stencil.extract<0, 15>();
 
-  uint8_t _ratio_stencil_2 = (uint8_t) ratio_stencil.extract<0, 7>();
+  uint16_t _ratio_stencil_2 = (uint16_t) ratio_stencil.extract<0, 15>();
 
-  uint16_t _680 = (uint16_t)(_ratio_stencil_2);
-  uint16_t _681 = _hw_input_global_wrapper_stencil_5 * _680;
-  uint16_t _682 = (uint16_t)(5);
-  uint16_t _683 = _681 >> _682;
-  uint16_t _684 = (uint16_t)(255);
-  uint16_t _685 = min(_683, _684);
-  uint8_t _686 = (uint8_t)(_685);
-  return _686;
+  uint16_t _662 = _ratio_stencil_2 * _hw_input_global_wrapper_stencil_5;
+  uint16_t _663 = (uint16_t)(5);
+  uint16_t _664 = _662 >> _663;
+  uint16_t _665 = (uint16_t)(255);
+  uint16_t _666 = min(_664, _665);
+  return _666;
 }
 
-//store is: hw_output.stencil(2, hw_output_s0_x_xi, hw_output_s0_y_yi) = uint8(min(((hw_input_global_wrapper.stencil(2, hw_output_s0_x_xi, hw_output_s0_y_yi)*uint16(ratio.stencil(hw_output_s0_x_xi, hw_output_s0_y_yi)))/(uint16)32), (uint16)255))
-hw_uint<8> hcompute_hw_output_stencil_2(hw_uint<16>& hw_input_global_wrapper_stencil, hw_uint<8>& ratio_stencil) {
+//store is: hw_output.stencil(2, hw_output_s0_x_xi, hw_output_s0_y_yi) = min(((ratio.stencil(hw_output_s0_x_xi, hw_output_s0_y_yi)*hw_input_global_wrapper.stencil(2, hw_output_s0_x_xi, hw_output_s0_y_yi))/(uint16)32), (uint16)255)
+hw_uint<16> hcompute_hw_output_stencil_2(hw_uint<16>& hw_input_global_wrapper_stencil, hw_uint<16>& ratio_stencil) {
   uint16_t _hw_input_global_wrapper_stencil_6 = (uint16_t) hw_input_global_wrapper_stencil.extract<0, 15>();
 
-  uint8_t _ratio_stencil_3 = (uint8_t) ratio_stencil.extract<0, 7>();
+  uint16_t _ratio_stencil_3 = (uint16_t) ratio_stencil.extract<0, 15>();
 
-  uint16_t _703 = (uint16_t)(_ratio_stencil_3);
-  uint16_t _704 = _hw_input_global_wrapper_stencil_6 * _703;
-  uint16_t _705 = (uint16_t)(5);
-  uint16_t _706 = _704 >> _705;
-  uint16_t _707 = (uint16_t)(255);
-  uint16_t _708 = min(_706, _707);
-  uint8_t _709 = (uint8_t)(_708);
-  return _709;
+  uint16_t _679 = _ratio_stencil_3 * _hw_input_global_wrapper_stencil_6;
+  uint16_t _680 = (uint16_t)(5);
+  uint16_t _681 = _679 >> _680;
+  uint16_t _682 = (uint16_t)(255);
+  uint16_t _683 = min(_681, _682);
+  return _683;
 }
 
