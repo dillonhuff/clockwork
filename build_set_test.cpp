@@ -16752,7 +16752,7 @@ vector<prog> isca_programs() {
   vector<prog> test_programs;
 
 
-  test_programs.push_back(unsharp());
+  //test_programs.push_back(unsharp());
   test_programs.push_back(resnet());
   test_programs.push_back(camera_pipeline());
   test_programs.push_back(gaussian());
