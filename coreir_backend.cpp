@@ -2826,7 +2826,7 @@ void count_post_mapped_memory_accesses(Module* gmod) {
 
   const double ENERGY_PER_ACCESS_PJ = 1.0;
   cout << "Total # accesses: " << accesses << endl;
-  assert(false);
+  //assert(false);
 }
 
 void analyze_post_mapped_app(CodegenOptions& options, prog& prg, map<string, UBuffer>& buffers, Module* gmod) {
