@@ -4551,23 +4551,6 @@ dgraph build_shift_registers(CodegenOptions& options, CoreIR::ModuleDef* def, pr
     //assert(false);
 
     return dg;
-
-    //// Analyze shift diff
-    //if (reg_chains.size() >= 3) {
-      //int diff = reg_chains.at(1).at(0).second - reg_chains.at(0).at(0).second;
-      //cout << "Diff = " << diff << endl;
-      //for (int i = 1; i < (int) reg_chains.size(); i++) {
-        //int dd = reg_chains.at(i).at(0).second - reg_chains.at(i - 1).at(0).second;
-        //if (diff != dd) {
-          //even_diffs = false;
-        //}
-      //}
-      //cout << "Diff = " << diff << endl;
-
-      //dgraph dg;
-
-    //}
-
   }
 
 
@@ -4607,25 +4590,25 @@ dgraph build_shift_registers(CodegenOptions& options, CoreIR::ModuleDef* def, pr
     }
   }
 
-  if (buf.get_out_ports().size() == 27) {
-    cout << buf.name << " has " << buf.get_in_ports().size() <<  " in ports" << endl;
-    cout << buf.name << " has " << buf.get_out_ports().size() << " out ports" << endl;
-    vector<pair<string,int>> outpts;
-    for (auto e : dg.out_edges) {
-      string src = e.first;
-      for (auto dst : e.second) {
-        if (buf.is_in_pt(src)) {
-          cout << tab(1) << "In to out sr: " << src << " -(" << dg.weight(src, dst) << ")-> " << dst << endl;
-        }
-        outpts.push_back({dst, dg.weight(src, dst)});
-      }
-    }
-    sort_lt(outpts,[](const pair<string,int> &x){return x.second;});
-    cout << "Sorted in -> out" << endl;
-    for (auto out : outpts) {
-      cout << tab(1) << out.second << ": " << out.first << endl;
-    }
-  }
+  //if (buf.get_out_ports().size() == 27) {
+    //cout << buf.name << " has " << buf.get_in_ports().size() <<  " in ports" << endl;
+    //cout << buf.name << " has " << buf.get_out_ports().size() << " out ports" << endl;
+    //vector<pair<string,int>> outpts;
+    //for (auto e : dg.out_edges) {
+      //string src = e.first;
+      //for (auto dst : e.second) {
+        //if (buf.is_in_pt(src)) {
+          //cout << tab(1) << "In to out sr: " << src << " -(" << dg.weight(src, dst) << ")-> " << dst << endl;
+        //}
+        //outpts.push_back({dst, dg.weight(src, dst)});
+      //}
+    //}
+    //sort_lt(outpts,[](const pair<string,int> &x){return x.second;});
+    //cout << "Sorted in -> out" << endl;
+    //for (auto out : outpts) {
+      //cout << tab(1) << out.second << ": " << out.first << endl;
+    //}
+  //}
   for (auto e : dg.out_edges) {
     string src = e.first;
     for (auto dst : e.second) {
