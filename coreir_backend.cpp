@@ -2750,6 +2750,7 @@ void garnet_map_module(Module* top) {
   c->getPassManager()->printLog();
   cout << "Trying to save" << endl;
   c->runPasses({"coreirjson"},{"global","commonlib","mantle"});
+  c->runPasses({"removewires"});
 
   auto jpass = static_cast<CoreIR::Passes::CoreIRJson*>(c->getPassManager()->getAnalysisPass("coreirjson"));
   string postmap = "after_mapping_" + top->getName() + ".json";
