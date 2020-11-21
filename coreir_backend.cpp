@@ -4645,7 +4645,6 @@ std::set<string> generate_M1_shift_registers(CodegenOptions& options, CoreIR::Mo
 
   cout << shift_registers << endl;
   if (buf.name == "padded16_global_wrapper_stencil") {
-    //dgraph shift_registers = build_shift_registers_io(options, def, prg, buf, hwinfo);
     dgraph shift_registers = build_in_to_out_shift_register_graph(options, def, prg, buf, hwinfo);
 
     cout << "Shift registers..." << endl;
@@ -4673,6 +4672,17 @@ std::set<string> generate_M1_shift_registers(CodegenOptions& options, CoreIR::Mo
         cout << tab(2) << e.first << " -> " << e.second << endl;
       }
       cout << endl;
+    }
+
+    // Analyze shift diff
+    if (reg_chains.size() >= 3) {
+      int diff = reg_chains.at(1).at(0).second - reg_chains.at(0).at(0).second;
+      cout << "Diff = " << diff << endl;
+      for (int i = 1; i < (int) reg_chains.size(); i++) {
+        int dd = reg_chains.at(i).at(0).second - reg_chains.at(i - 1).at(0).second;
+        assert(diff == dd);
+      }
+      cout << "Diff = " << diff << endl;
     }
 
     assert(false);
