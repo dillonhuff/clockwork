@@ -18963,11 +18963,11 @@ void test_if_construction() {
 }
 
 void dhuff_playground() {
-  //{
-    //prog prg = unsharp();
-    //prg.pretty_print();
-    //assert(false);
-  //}
+  {
+    prog prg = unsharp();
+    prg.pretty_print();
+    assert(false);
+  }
 
   {
 #ifdef COREIR
