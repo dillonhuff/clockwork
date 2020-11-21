@@ -18948,6 +18948,12 @@ void test_if_construction() {
 void dhuff_playground() {
   {
 #ifdef COREIR
+
+
+#endif
+  }
+  {
+#ifdef COREIR
     power_analysis_params power_params;
     power_analysis_info power_stats;
     // Interpolated from MAC cost in Xuans paper Interstellar
