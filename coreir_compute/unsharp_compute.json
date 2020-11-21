@@ -363,37 +363,37 @@
           ["in1_ratio_stencil",["Array",1,["Array",16,"BitIn"]]]
         ]],
         "instances":{
-          "const_p255__654$1":{
+          "const_p255__653":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
             "modargs":{"value":[["BitVector",16],"16'h00ff"]}
           },
-          "const_p5__652":{
+          "const_p5__651":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
             "modargs":{"value":[["BitVector",16],"16'h0005"]}
           },
-          "lshr_651_652_653":{
+          "lshr_650_651_652":{
             "genref":"coreir.lshr",
             "genargs":{"width":["Int",16]}
           },
-          "mul_ratio_stencil_1_hw_input_global_wrapper_stencil_4_651":{
+          "mul_ratio_stencil_1_hw_input_global_wrapper_stencil_4_650":{
             "genref":"coreir.mul",
             "genargs":{"width":["Int",16]}
           },
-          "umin_653_654_655":{
+          "umin_652_653_654":{
             "genref":"commonlib.umin",
             "genargs":{"width":["Int",16]}
           }
         },
         "connections":[
-          ["umin_653_654_655.in1","const_p255__654$1.out"],
-          ["lshr_651_652_653.in1","const_p5__652.out"],
-          ["mul_ratio_stencil_1_hw_input_global_wrapper_stencil_4_651.out","lshr_651_652_653.in0"],
-          ["umin_653_654_655.in0","lshr_651_652_653.out"],
-          ["self.in1_ratio_stencil.0","mul_ratio_stencil_1_hw_input_global_wrapper_stencil_4_651.in0"],
-          ["self.in0_hw_input_global_wrapper_stencil.0","mul_ratio_stencil_1_hw_input_global_wrapper_stencil_4_651.in1"],
-          ["umin_653_654_655.out","self.out_hw_output_stencil"]
+          ["umin_652_653_654.in1","const_p255__653.out"],
+          ["lshr_650_651_652.in1","const_p5__651.out"],
+          ["mul_ratio_stencil_1_hw_input_global_wrapper_stencil_4_650.out","lshr_650_651_652.in0"],
+          ["umin_652_653_654.in0","lshr_650_651_652.out"],
+          ["self.in1_ratio_stencil.0","mul_ratio_stencil_1_hw_input_global_wrapper_stencil_4_650.in0"],
+          ["self.in0_hw_input_global_wrapper_stencil.0","mul_ratio_stencil_1_hw_input_global_wrapper_stencil_4_650.in1"],
+          ["umin_652_653_654.out","self.out_hw_output_stencil"]
         ]
       },
       "hcompute_hw_output_stencil_1":{
@@ -403,37 +403,37 @@
           ["in1_ratio_stencil",["Array",1,["Array",16,"BitIn"]]]
         ]],
         "instances":{
-          "const_p255__674":{
+          "const_p255__670":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
             "modargs":{"value":[["BitVector",16],"16'h00ff"]}
           },
-          "const_p5__672":{
+          "const_p5__668":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
             "modargs":{"value":[["BitVector",16],"16'h0005"]}
           },
-          "lshr_671_672_673":{
+          "lshr_667_668_669":{
             "genref":"coreir.lshr",
             "genargs":{"width":["Int",16]}
           },
-          "mul_ratio_stencil_2_hw_input_global_wrapper_stencil_5_671":{
+          "mul_ratio_stencil_2_hw_input_global_wrapper_stencil_5_667":{
             "genref":"coreir.mul",
             "genargs":{"width":["Int",16]}
           },
-          "umin_673_674_675":{
+          "umin_669_670_671":{
             "genref":"commonlib.umin",
             "genargs":{"width":["Int",16]}
           }
         },
         "connections":[
-          ["umin_673_674_675.in1","const_p255__674.out"],
-          ["lshr_671_672_673.in1","const_p5__672.out"],
-          ["mul_ratio_stencil_2_hw_input_global_wrapper_stencil_5_671.out","lshr_671_672_673.in0"],
-          ["umin_673_674_675.in0","lshr_671_672_673.out"],
-          ["self.in1_ratio_stencil.0","mul_ratio_stencil_2_hw_input_global_wrapper_stencil_5_671.in0"],
-          ["self.in0_hw_input_global_wrapper_stencil.0","mul_ratio_stencil_2_hw_input_global_wrapper_stencil_5_671.in1"],
-          ["umin_673_674_675.out","self.out_hw_output_stencil"]
+          ["umin_669_670_671.in1","const_p255__670.out"],
+          ["lshr_667_668_669.in1","const_p5__668.out"],
+          ["mul_ratio_stencil_2_hw_input_global_wrapper_stencil_5_667.out","lshr_667_668_669.in0"],
+          ["umin_669_670_671.in0","lshr_667_668_669.out"],
+          ["self.in1_ratio_stencil.0","mul_ratio_stencil_2_hw_input_global_wrapper_stencil_5_667.in0"],
+          ["self.in0_hw_input_global_wrapper_stencil.0","mul_ratio_stencil_2_hw_input_global_wrapper_stencil_5_667.in1"],
+          ["umin_669_670_671.out","self.out_hw_output_stencil"]
         ]
       },
       "hcompute_hw_output_stencil_2":{
@@ -443,37 +443,37 @@
           ["in1_ratio_stencil",["Array",1,["Array",16,"BitIn"]]]
         ]],
         "instances":{
-          "const_p255__694":{
+          "const_p255__687":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
             "modargs":{"value":[["BitVector",16],"16'h00ff"]}
           },
-          "const_p5__692":{
+          "const_p5__685":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
             "modargs":{"value":[["BitVector",16],"16'h0005"]}
           },
-          "lshr_691_692_693":{
+          "lshr_684_685_686":{
             "genref":"coreir.lshr",
             "genargs":{"width":["Int",16]}
           },
-          "mul_ratio_stencil_3_hw_input_global_wrapper_stencil_6_691":{
+          "mul_ratio_stencil_3_hw_input_global_wrapper_stencil_6_684":{
             "genref":"coreir.mul",
             "genargs":{"width":["Int",16]}
           },
-          "umin_693_694_695":{
+          "umin_686_687_688":{
             "genref":"commonlib.umin",
             "genargs":{"width":["Int",16]}
           }
         },
         "connections":[
-          ["umin_693_694_695.in1","const_p255__694.out"],
-          ["lshr_691_692_693.in1","const_p5__692.out"],
-          ["mul_ratio_stencil_3_hw_input_global_wrapper_stencil_6_691.out","lshr_691_692_693.in0"],
-          ["umin_693_694_695.in0","lshr_691_692_693.out"],
-          ["self.in1_ratio_stencil.0","mul_ratio_stencil_3_hw_input_global_wrapper_stencil_6_691.in0"],
-          ["self.in0_hw_input_global_wrapper_stencil.0","mul_ratio_stencil_3_hw_input_global_wrapper_stencil_6_691.in1"],
-          ["umin_693_694_695.out","self.out_hw_output_stencil"]
+          ["umin_686_687_688.in1","const_p255__687.out"],
+          ["lshr_684_685_686.in1","const_p5__685.out"],
+          ["mul_ratio_stencil_3_hw_input_global_wrapper_stencil_6_684.out","lshr_684_685_686.in0"],
+          ["umin_686_687_688.in0","lshr_684_685_686.out"],
+          ["self.in1_ratio_stencil.0","mul_ratio_stencil_3_hw_input_global_wrapper_stencil_6_684.in0"],
+          ["self.in0_hw_input_global_wrapper_stencil.0","mul_ratio_stencil_3_hw_input_global_wrapper_stencil_6_684.in1"],
+          ["umin_686_687_688.out","self.out_hw_output_stencil"]
         ]
       },
       "hcompute_ratio_stencil":{
