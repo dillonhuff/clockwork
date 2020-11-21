@@ -16752,8 +16752,8 @@ vector<prog> isca_programs() {
   vector<prog> test_programs;
 
 
-  test_programs.push_back(resnet());
   test_programs.push_back(unsharp());
+  test_programs.push_back(resnet());
   test_programs.push_back(camera_pipeline());
   test_programs.push_back(gaussian());
   test_programs.push_back(harris());
@@ -17154,7 +17154,7 @@ void cgra_flow_tests() {
   //vector<prog> M3_test_programs{resnet()};
   //vector<prog> M3_test_programs{gaussian()};
   test_codegen(M3_test_programs, compile_for_CGRA_M3_mem);
-  //assert(false);
+  assert(false);
   
   auto test_programs =
     all_cgra_programs();
@@ -18962,7 +18962,9 @@ void test_if_construction() {
   //assert(false);
 }
 
-struct power_analysis_opcounts {
+struct power_analysis_info {
+  map<string, int> alu_op_energy_costs;
+
   map<string, map<string, int> > PE_optype_counts;
   map<string, int> op_counts;
 
@@ -18980,7 +18982,11 @@ void dhuff_playground() {
     //for (auto prg : harris_variants()) {
     for (auto prg : {resnet()}) {
       int PEs_used = 0;
-      power_analysis_opcounts power_stats;
+      power_analysis_info power_stats;
+      const int COST_PER_PE_MUL_PJ = 1.0;
+      const int COST_PER_PE_ADD_PJ = 1.0;
+      power_stats.alu_op_energy_costs["mult_0"] = COST_PER_PE_MUL_PJ;
+      power_stats.alu_op_energy_costs["add"] = COST_PER_PE_ADD_PJ;
       for (auto op : prg.all_ops()) {
         if (op->func != "") {
           vector<string> surrounding = surrounding_vars(op, prg);
@@ -19016,17 +19022,14 @@ void dhuff_playground() {
       }
       cout << "# of PEs in " << prg.name << " = " << PEs_used << endl;
       cout << "PE op counts..." << endl;
-      const int COST_PER_PE_MUL_PJ = 1.0;
-      const int COST_PER_PE_ADD_PJ = 1.0;
-      map<string, int> alu_op_energy_costs;
-      alu_op_energy_costs["mult_0"] = COST_PER_PE_MUL_PJ;
-      alu_op_energy_costs["add"] = COST_PER_PE_ADD_PJ;
 
       double energy_cost = 0.0;
       for (auto p : prg.all_ops()) {
         for (auto op : power_stats.PE_optype_counts[p->name]) {
           cout << tab(1) << op.first << " -> " << op.second << endl;
-          energy_cost += map_find(p->name, power_stats.op_counts) * ((double) map_find(op.first, alu_op_energy_costs)) * ((double)op.second);
+          energy_cost += map_find(p->name, power_stats.op_counts) *
+            ((double) map_find(op.first, power_stats.alu_op_energy_costs)) *
+            ((double)op.second);
           cout << "Total PE energy cost: " << energy_cost << endl;
         }
       }
