@@ -4590,25 +4590,6 @@ dgraph build_shift_registers(CodegenOptions& options, CoreIR::ModuleDef* def, pr
     }
   }
 
-  //if (buf.get_out_ports().size() == 27) {
-    //cout << buf.name << " has " << buf.get_in_ports().size() <<  " in ports" << endl;
-    //cout << buf.name << " has " << buf.get_out_ports().size() << " out ports" << endl;
-    //vector<pair<string,int>> outpts;
-    //for (auto e : dg.out_edges) {
-      //string src = e.first;
-      //for (auto dst : e.second) {
-        //if (buf.is_in_pt(src)) {
-          //cout << tab(1) << "In to out sr: " << src << " -(" << dg.weight(src, dst) << ")-> " << dst << endl;
-        //}
-        //outpts.push_back({dst, dg.weight(src, dst)});
-      //}
-    //}
-    //sort_lt(outpts,[](const pair<string,int> &x){return x.second;});
-    //cout << "Sorted in -> out" << endl;
-    //for (auto out : outpts) {
-      //cout << tab(1) << out.second << ": " << out.first << endl;
-    //}
-  //}
   for (auto e : dg.out_edges) {
     string src = e.first;
     for (auto dst : e.second) {
@@ -4777,29 +4758,9 @@ std::set<string> generate_block_shift_register(CodegenOptions& options, CoreIR::
   return shift_registers.nodes;
 }
 
-std::set<string> generate_M1_shift_registers(CodegenOptions& options, CoreIR::ModuleDef* def, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
-
-  dgraph shift_registers = build_shift_registers(options, def, prg, buf, hwinfo);
-
-  block_sreg b_sreg;
-  auto packed_sr = allow_packed_sr(shift_registers, buf,& b_sreg);
-
+void instantiate_one_to_one_sreg(CodegenOptions& options, ModuleDef* def, UBuffer& buf, prog& prg, schedule_info& hwinfo, const std::string& src, const std::string& dst, const int delay_d) {
   auto c = def->getContext();
-
-  if(packed_sr) {
-    return generate_block_shift_register(options, def, prg, buf, hwinfo);
-  }
-
-  cout << "Not using packed SR for " << buf.name << ", instead... SRC shift registers" << endl;
-  cout << shift_registers << endl;
-
-  std::set<string> done_outpt;
-  int num_ram_tiles = 0;
-  for (auto w : shift_registers.weights) {
-
-    string src = w.first.first;
-    string dst = w.first.second;
-    int delay = w.second;
+  int delay = delay_d;
 
     Wireable* src_wire = nullptr;
     if (buf.is_out_pt(src)) {
@@ -4823,7 +4784,6 @@ std::set<string> generate_M1_shift_registers(CodegenOptions& options, CoreIR::Mo
       if(options.rtl_options.target_tile == TARGET_TILE_M1) {
         while(delay > 0)
         {
-
           Instance* sreg = instantiate_coreir_M1(def, "sreg_" + c->getUnique(), 1, 1);
           def->connect(sreg->sel("data_in_0"),src_wire);
           delayed_src = sreg->sel("data_out_0");
@@ -4848,7 +4808,7 @@ std::set<string> generate_M1_shift_registers(CodegenOptions& options, CoreIR::Mo
       } else {
         while(delay > 0)
         {
-          num_ram_tiles++;
+          //num_ram_tiles++;
           Instance* sreg = instantiate_coreir_M3(def, "sreg_" + c->getUnique(), 1, 1);
           def->connect(sreg->sel("data_in_0"),src_wire);
           delayed_src = sreg->sel("data_out_0");
@@ -4871,10 +4831,39 @@ std::set<string> generate_M1_shift_registers(CodegenOptions& options, CoreIR::Mo
     def->connect(
         def->sel(dst + "_net.in"),
         delayed_src);
+
+}
+
+std::set<string> generate_M1_shift_registers(CodegenOptions& options, CoreIR::ModuleDef* def, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
+
+  dgraph shift_registers = build_shift_registers(options, def, prg, buf, hwinfo);
+
+  block_sreg b_sreg;
+  auto packed_sr = allow_packed_sr(shift_registers, buf,& b_sreg);
+
+  auto c = def->getContext();
+
+  if(packed_sr) {
+    return generate_block_shift_register(options, def, prg, buf, hwinfo);
+  }
+
+  cout << "Not using packed SR for " << buf.name << ", instead... SRC shift registers" << endl;
+  cout << shift_registers << endl;
+
+  std::set<string> done_outpt;
+  //int num_ram_tiles = 0;
+  for (auto w : shift_registers.weights) {
+
+    string src = w.first.first;
+    string dst = w.first.second;
+    int delay = w.second;
+
+    instantiate_one_to_one_sreg(options, def, buf, prg, hwinfo, src, dst, delay);
+
     done_outpt.insert(dst);
   }
 
-  cout << "### finished shift registers Used " << num_ram_tiles << " in SR for " << buf.name << endl;
+  //cout << "### finished shift registers Used " << num_ram_tiles << " in SR for " << buf.name << endl;
   return done_outpt;
 }
 
