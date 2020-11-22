@@ -1223,6 +1223,7 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> r
             auto in_acc_umap = buf.consumer_map();
             for (auto in_acc_map: get_maps(in_acc_umap)) {
                 if (domain_name(in_acc_map) == op_name) {
+                    in_acc_map = simplify(in_acc_map);
                     op2read_buf[op_name] = it.first;
                     map_insert(op2read_map, op_name, to_umap(in_acc_map));
                     op2read_bank[op_name] =
@@ -3767,6 +3768,7 @@ lakeStream emit_top_address_stream(string fname,
     if (inpt_set.size() == 1) {
       vector<pair<string, int> > pt_delay;
       for (auto it: delay_map) {
+          cout << "\tDelay : " << it.first << "-> " << it.second << endl;
         pt_delay.push_back(it);
       }
       sort(pt_delay.begin(), pt_delay.end(),
@@ -3778,7 +3780,9 @@ lakeStream emit_top_address_stream(string fname,
       for (auto i = 0; i < pt_delay.size() - 1; i ++) {
         auto s_in = pt_delay.at(i).first;
         auto s_out = pt_delay.at(i+1).first;
-        auto delay_info = dependence_distance_singleton(s_in, s_out, true);
+        bool decouple = isl_map_is_injective(to_map(access_map.at(s_in))) &&
+            isl_map_is_injective(to_map(access_map.at(s_out)));
+        auto delay_info = dependence_distance_singleton(s_in, s_out, !decouple);
         if (delay_info.has_value()) {
           delay_map.at(s_out) = delay_info.get_value();
         } else {
@@ -4145,7 +4149,22 @@ lakeStream emit_top_address_stream(string fname,
           auto acc_map = access_map.at(outpt);
           //cout << str(range(acc_map)) << endl;
           cout << "\t output port: " << outpt << ", " << empty(its(range(this_bank_rddom), range(acc_map))) << endl;
+
+
           if (empty(its(range(this_bank_rddom), range(acc_map))) == 0) {
+            //Check if we could simplify as a register
+            if (inpt_vec.size() == 1) {
+              auto inpt = pick(inpt_vec);
+              auto dd_info = dependence_distance_singleton(inpt, outpt, false);
+              if (dd_info.has_value()) {
+                  int dd = dd_info.get_value();
+                  if (options.conditional_merge && (dd < options.merge_threshold)) {
+                      bank tmp = compute_bank_info(inpt, outpt, dd);
+                      add_bank_between(inpt, outpt, tmp);
+                      continue;
+                  }
+              }
+            }
             outpt_vec.insert(outpt);
           }
         }
@@ -5178,7 +5197,7 @@ vector<string> buffer_vectorization(vector<string> buf_name_vec, int dim_id, int
 
 
     for (auto it : new_sched) {
-        cout << "\tvectorized sched ule for op: " << it.first << endl << str(it.second);
+        cout << "\tvectorized schedule for op: " << it.first << endl << str(it.second) << endl;
     }
 
     return new_sched;
@@ -6252,6 +6271,26 @@ isl_multi_aff* embarassing_partition_function(UBuffer& buf, const std::set<int>&
   }
   string bs = curlies(buf.name + sep_list(vars, "[", "]", ", ") + " -> " + "Bank" + sep_list(outs, "[", "]", ", "));
   return rdmultiaff(buf.ctx, bs);
+}
+
+vector<int> get_cyclic_partition_factor_from_embarassing_partition(UBuffer& buf, std::set<int> & partition_dim) {
+    cout << tab(1) << "Found partition: " << endl;
+    vector<int> cyclic_partition_factor;
+    vector<int> min_addr, max_addr;
+    min_addr = min_offsets_by_dimension(buf);
+    max_addr = max_offsets_by_dimension(buf);
+    for (int d = 0; d < buf.logical_dimension(); d ++) {
+        if (elem(d, partition_dim)) {
+          cyclic_partition_factor.push_back(max_addr.at(d) - min_addr.at(d) + 1);
+        } else {
+          cyclic_partition_factor.push_back(1);
+          //cyclic_partition_factor.push_back(max_addr.at(d) - min_addr.at(d) + 1);
+        }
+    }
+    for (auto dim : partition_dim) {
+        cout << tab(2) << "Partition: " << dim << endl;
+    }
+    return cyclic_partition_factor;
 }
 
 maybe<std::set<int> > embarassing_partition(UBuffer& buf) {

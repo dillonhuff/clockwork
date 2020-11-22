@@ -1860,7 +1860,12 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
     isl_union_map* consumer_map() {
       umap* s = isl_union_map_read_from_str(ctx, "{ }");
       for (auto pt: get_out_ports()) {
+        cout << "Add consumer map for pt:: " << pt << endl << str(access_map.at(pt)) << endl;
+        for (auto bmap: get_basic_maps(simplify(to_map(access_map.at(pt))))) {
+            cout << "\tBasic map : " << str(bmap) << endl;
+        }
         s = unn(s, access_map.at(pt));
+        cout << "Umap producer: " << str(s) << endl;
       }
       return s;
     }
@@ -2518,6 +2523,7 @@ maybe<int> dependence_distance_singleton(UBuffer& buf, const string& inpt, const
 
 maybe<std::set<int> > embarassing_partition(UBuffer& buf);
 vector<vector<string> > overlapping_large_io_port_groups(UBuffer& buf, const int ports_per_direction);
+vector<int> get_cyclic_partition_factor_from_embarassing_partition(UBuffer & buf, std::set<int> & partition);
 
 int total_capacity(UBuffer& buf);
 vector<int> min_offsets_by_dimension(UBuffer& buf);

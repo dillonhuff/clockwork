@@ -13289,14 +13289,14 @@ void cpy_app_to_folder(const std::string& app_type, const std::string& prg_name)
 void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, string dir="aha_garnet_design") {
   vector<prog> test_apps;
   test_apps.push_back(conv_3_3());
-  test_apps.push_back(gaussian());
-  test_apps.push_back(cascade());
-  test_apps.push_back(harris());
-  test_apps.push_back(resnet());
-  test_apps.push_back(rom());
-  test_apps.push_back(conv_1_2());
-  test_apps.push_back(camera_pipeline());
-  test_apps.push_back(up_sample());
+  //test_apps.push_back(gaussian());
+  //test_apps.push_back(cascade());
+  //test_apps.push_back(harris());
+  //test_apps.push_back(resnet());
+  //test_apps.push_back(rom());
+  //test_apps.push_back(conv_1_2());
+  //test_apps.push_back(camera_pipeline());
+  //test_apps.push_back(up_sample());
   test_apps.push_back(unsharp());
 
   ////test_apps.push_back(mobilenet_unrolled());
@@ -16554,34 +16554,17 @@ void compile_for_garnet_single_port_mem(prog& prg,
     if (b.second.num_in_ports() == 0 || b.second.num_out_ports() == 0)
         continue;
     auto partition = embarassing_partition(b.second);
-    //if (is_rate_matchable(prg)) {
-    if (partition.has_value()){
-      //TODO: put this into a method
-      cout << tab(1) << "Found partition: " << endl;
-      std::set<int> partition_dim = partition.get_value();
-      vector<int> cyclic_partition_factor;
-      vector<int> min_addr, max_addr;
-      min_addr = min_offsets_by_dimension(b.second);
-      max_addr = max_offsets_by_dimension(b.second);
-      for (int d = 0; d < b.second.logical_dimension(); d ++) {
-          if (elem(d, partition_dim)) {
-            cyclic_partition_factor.push_back(max_addr.at(d) - min_addr.at(d) + 1);
-          } else {
-            cyclic_partition_factor.push_back(1);
-            //cyclic_partition_factor.push_back(max_addr.at(d) - min_addr.at(d) + 1);
-          }
+    if (partition.has_value()) {
+      auto partition_dim = partition.get_value();
+      auto cyclic_partition_factor =
+          get_cyclic_partition_factor_from_embarassing_partition(b.second, partition_dim);
+      if (card(cyclic_partition_factor) > 1) {
+        cout << "Use cyclic banking, number of banks = " << card(cyclic_partition_factor) << endl;
+        options.banking_strategies[b.first] = {"cyclic", cyclic_partition_factor};
       }
-      for (auto dim : partition_dim) {
-          cout << tab(2) << "Partition: " << dim << endl;
-      }
-      cout << "number of banks = " << card(cyclic_partition_factor) << endl;
-      options.banking_strategies[b.first] = {"cyclic", cyclic_partition_factor};
-      b.second.generate_banks_and_merge(options);
-      b.second.port_group2bank(options);
-    } else {
-      b.second.generate_banks_and_merge(options);
-      b.second.port_group2bank(options);
     }
+    b.second.generate_banks_and_merge(options);
+    b.second.port_group2bank(options);
   }
 
 #ifdef COREIR
