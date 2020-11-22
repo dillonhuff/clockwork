@@ -15122,8 +15122,8 @@ void dual_port_lake_test();
 
 void lake_smt_tests() {
   lake_identity_stream_config_gen(8, 8, "8x8");
-  assert(false);
   test_single_port_mem_smt_stream();
+  assert(false);
   //lake_identity_stream_SMT_test(20, 20, "20x20");
   //lake_identity_stream_SMT_test(128, 128, "128x128");
   //lake_identity_stream_SMT_test(64, 64, "64x64");
