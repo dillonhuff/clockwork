@@ -2906,8 +2906,8 @@ void generate_coreir(CodegenOptions& options,
       options.rtl_options.target_tile == TARGET_TILE_M3) {
     //count_memory_tiles(prg_mod);
     garnet_map_module(prg_mod);
-    //Module* gmod = ns_new->getModule(prg.name);
-    //analyze_post_mapped_app(options, prg, buffers, gmod);
+    Module* gmod = ns_new->getModule(prg.name);
+    analyze_post_mapped_app(options, prg, buffers, gmod);
   }
   prg_mod->print();
   //assert(false);
@@ -4739,6 +4739,7 @@ std::set<string> generate_block_shift_register(CodegenOptions& options, CoreIR::
 
     M3_config config = instantiate_M3_verilog_sreg_block(options, sreg->getModuleRef()->getLongName(), b_sreg.difference, prg,hwinfo, b_sreg, buf);
     attach_M3_bank_config_metadata(sreg, config);
+    sreg->getMetaData()["config"]["BLOCK_SREG_DELAY"] = b_sreg.difference;
   }
 
   for (auto w : shift_registers.weights) {
@@ -4800,6 +4801,7 @@ void instantiate_one_to_one_sreg(CodegenOptions& options, ModuleDef* def, UBuffe
           impl.bank_readers[0] = {"test"};
           impl.bank_writers[0] = {"test_writer"};
           instantiate_M1_verilog(sreg->getModuleRef()->getLongName(), 0, impl, buf);
+          sreg->getMetaData()["config"]["LINEAR_SREG_DELAY"] = min(delay, maxd);
           src_wire = delayed_src;
 
           delay -= maxd;
@@ -4815,6 +4817,7 @@ void instantiate_one_to_one_sreg(CodegenOptions& options, ModuleDef* def, UBuffe
 
           auto config = instantiate_M3_verilog_sreg(options, sreg->getModuleRef()->getLongName(), min(delay,maxd), prg, hwinfo);
           attach_M3_bank_config_metadata(sreg, config);
+          sreg->getMetaData()["config"]["LINEAR_SREG_DELAY"] = min(delay, maxd);
 
           src_wire = delayed_src;
 
@@ -5333,6 +5336,68 @@ CoreIR::Wireable* control_en(CoreIR::ModuleDef* def, const std::string& reader, 
   } else {
     return def->sel("self." + bundle + "_ren");
   }
+}
+
+double PE_energy_cost_instance_model(power_analysis_params& power_params, power_analysis_info& power_stats, prog& prg) {
+  cout << "Computing Instance level PE energy cost for " << prg.name << endl;
+
+  double PE_energy_cost = 0.0;
+  for (auto op : prg.all_ops()) {
+    if (op->func != "") {
+      vector<string> surrounding = surrounding_vars(op, prg);
+      vector<int> bounds;
+      for (auto l : surrounding) {
+        bounds.push_back(prg.find_loop(l)->trip_count());
+      }
+      int bnds = card(bounds);
+      power_stats.op_counts[op->name] = bnds;
+
+      CoreIR::Context* context = CoreIR::newContext();
+      CoreIRLoadLibrary_commonlib(context);
+      CoreIRLoadLibrary_cgralib(context);
+
+      string compute_file = "./coreir_compute/" + prg.name + "_compute.json";
+      if (!loadFromFile(context, compute_file)) {
+        cout << "Could not load compute file for: " << prg.name << ", file name = " << compute_file << endl;
+        //assert(false);
+      }
+      auto ns = context->getNamespace("global");
+      CoreIR::Module* cu = ns->getModule(op->func);
+      garnet_map_module(cu);
+      map<string, int> counts;
+      for (auto inst : cu->getDef()->getInstances()) {
+        cout << tab(1) << inst.first << endl;
+        cout << tab(1) << "Possible power costs..." << endl;
+        for (auto pp : power_params.instance_energy_costs) {
+          cout << tab(2) << pp.first << endl;
+        }
+        //counts[inst.second->getModuleRef()->getName()]++;
+        //if (inst.second->getModuleRef()->getName() == "PE") {
+          //auto modargs = inst.second->getModArgs();
+          //if (modargs.find("alu_op") != end(modargs)) {
+            //power_stats.PE_optype_counts[op->name][inst.second->getModArgs().at("alu_op")->get<string>()]++;
+          //}
+        //}
+      }
+      //cu->print();
+      deleteContext(context);
+    }
+  }
+
+  double energy_cost = 0.0;
+  for (auto p : prg.all_ops()) {
+    //for (auto op : power_stats.PE_optype_counts[p->name]) {
+      //cout << tab(1) << op.first << " -> " << op.second << endl;
+      //energy_cost += map_find(p->name, power_stats.op_counts) *
+        //((double) map_find(op.first, power_params.alu_op_energy_costs)) *
+        //((double)op.second);
+      //cout << "Total PE energy cost: " << energy_cost << endl;
+    //}
+  }
+  cout << "Total PE energy cost for " << prg.name << ": " << energy_cost << endl;
+
+  assert(false);
+  return energy_cost;
 }
 
 double PE_energy_cost(power_analysis_params& power_params, power_analysis_info& power_stats, prog& prg) {

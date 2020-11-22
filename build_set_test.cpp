@@ -16613,6 +16613,19 @@ void sanity_check_negative_starts(schedule_info& sched, prog& prg) {
   assert(min >= 0);
 }
 
+int max_completion_time(schedule_info& sched, prog& prg) {
+  auto start_times =
+    its(op_start_times_map(sched, prg), op_start_times_domain(prg));
+
+  int done_time = INT_MIN;
+
+  for (auto s : get_sets(range(start_times))) {
+    int max_dim = to_int(lexmaxval(s));
+    done_time = max(max_dim, done_time);
+  }
+  return done_time;
+}
+
 bool schedule_bounds_fit_controller_bitwidth(const int bitwidth, schedule_info& sched, prog& prg) {
   int max_val = pow(2, bitwidth);
 
@@ -16752,10 +16765,10 @@ vector<prog> harris_variants() {
 vector<prog> isca_programs() {
   vector<prog> test_programs;
 
+  test_programs.push_back(gaussian());
   test_programs.push_back(mobilenet_unrolled());
   test_programs.push_back(harris());
   test_programs.push_back(unsharp());
-  test_programs.push_back(gaussian());
   test_programs.push_back(camera_pipeline());
   test_programs.push_back(resnet());
   test_programs.push_back(cascade());
@@ -17129,9 +17142,6 @@ void fpga_asplos_tests() {
 }
 
 void cgra_flow_tests() {
-  vector<prog> M1_test_programs = isca_programs();
-  //vector<prog> M1_test_programs{gaussian()};
-  test_codegen(M1_test_programs, compile_for_CGRA_M1_mem);
 
   vector<prog> M3_test_programs = isca_programs();
   //vector<prog> M3_test_programs = harris_variants();
@@ -17139,9 +17149,12 @@ void cgra_flow_tests() {
   //vector<prog> M3_test_programs{resnet()};
   //vector<prog> M3_test_programs{gaussian()};
   test_codegen(M3_test_programs, compile_for_CGRA_M3_mem);
+  assert(false);
   
 
-  assert(false);
+  vector<prog> M1_test_programs = isca_programs();
+  //vector<prog> M1_test_programs{gaussian()};
+  test_codegen(M1_test_programs, compile_for_CGRA_M1_mem);
   
   auto test_programs =
     all_cgra_programs();
@@ -18947,13 +18960,57 @@ void test_if_construction() {
   //assert(false);
 }
 
+void load_pe_power_stats(power_analysis_params& power_params, const std::string& file) {
+  cout << "File = " << file << endl;
+  ifstream input(file);
+  for( std::string line; getline( input, line );) {
+    cout << "Line = " << line << endl;
+    vector<string> comps = split_at(line, " ");
+    assert(comps.size() == 2);
+    string instance = comps.at(0);
+    double energy_cost = stod(comps.at(1));
+    power_params.instance_energy_costs[instance] = energy_cost;
+    //cout << tab(1) << instance << ": " << energy_cost << endl;
+  }
+  //assert(false);
+}
+
+
 void dhuff_playground() {
   {
-#ifdef COREIR
+    for (auto prg : isca_programs()) {
+      auto options = CGRA_M3_codegen_options(prg);
+      schedule_info sched = garnet_schedule_info(options, prg);
+      normalize_bounds(prg);
+      garnet_dual_port_ram_schedule(sched, prg.root, prg);
+
+      auto hw_sched = its(op_times_map(sched, prg), prg.whole_iteration_domain());
+
+      //sequential_schedule(sched, prg.root, prg);
+      int time = max_completion_time(sched, prg);
+
+      cout << tab(1) << "=== Completion time for optimized sched: " << prg.name << " = " << time << endl;
+      //auto hw_sched = its(op_times_map(sched, prg), prg.whole_iteration_domain());
+
+      //auto buffers = build_buffers(prg, hw_sched);
 
 
-#endif
+      //int total_capacity = 0;
+      //for (auto b : buffers) {
+        //if (!prg.is_boundary(b.first)) {
+          //total_capacity += card(extents_by_dimension(b.second));
+        //}
+      //}
+      //cout << tab(1) << "=== SRAM bytes for " << prg.name << total_capacity << endl;
+    }
+    assert(false);
   }
+  //{
+//#ifdef COREIR
+
+
+//#endif
+  //}
   {
 #ifdef COREIR
     power_analysis_params power_params;
@@ -18985,10 +19042,12 @@ void dhuff_playground() {
     power_params.alu_op_energy_costs["lt"] = COST_PER_PE_CMP_PJ;
     power_params.alu_op_energy_costs["le"] = COST_PER_PE_CMP_PJ;
 
+    load_pe_power_stats(power_params, "./power_models/conv_3_3/PEs.txt");
+
     CodegenOptions options;
-    for (auto prg : isca_programs()) {
-      PE_energy_cost(power_params, power_stats, prg);
-      MEM_energy_cost(options, power_params, power_stats, prg);
+    for (auto prg : {gaussian()}) {
+      PE_energy_cost_instance_model(power_params, power_stats, prg);
+      //MEM_energy_cost(options, power_params, power_stats, prg);
     }
     assert(false);
 #endif 
