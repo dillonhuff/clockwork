@@ -781,6 +781,11 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
   }
 
   std::set<string> done_outpt = generate_M1_shift_registers(options, def, prg, orig_buf, hwinfo);
+  if (orig_buf.name == "padded16_global_wrapper_stencil") {
+    cout << "# of out ports: " << orig_buf.get_out_ports().size() << endl;
+    cout << "# of shift registered ports: " << done_outpt.size() << endl;
+    //assert(false);
+  }
 
   UBuffer buf = delete_ports(done_outpt, orig_buf);
 
@@ -2835,23 +2840,61 @@ void count_memory_tiles(Module* top) {
   //jpass->writeToStream(file,top->getRefName());
 }
 
+void count_post_mapped_memory_use(Module* gmod) {
+  int total_words_used = 0;
+  for (auto inst : gmod->getDef()->getInstances()) {
+    if (inst.second->getModuleRef()->getName() == "Mem_amber") {
+      auto config = inst.second->getMetaData()["config"];
+
+      cout << "Metadata..." << config << endl;
+      if (config.find("BLOCK_SREG_DELAY") != config.end()) {
+        cout << tab(1) << "Block sreg of length: " << config["BLOCK_SREG_DELAY"].get<int>() << endl;
+        total_words_used +=
+          2*config["BLOCK_SREG_DELAY"].get<int>();
+      } else if (config.find("LINEAR_SREG_DELAY") != config.end()) {
+        cout << tab(1) << "Linear sreg of length: " << config["LINEAR_SREG_DELAY"].get<int>() << endl;
+        total_words_used +=
+          config["LINEAR_SREG_DELAY"].get<int>();
+        //assert(false);
+      } else {
+        int acc_range = config["max_addr"].get<int>() - config["min_addr"].get<int>() + 1;
+        total_words_used += acc_range;
+      }
+    }
+  }
+
+  cout << "Total words used by " << gmod->getName() << ": " << total_words_used << endl;
+  //assert(false);
+}
+
 void count_post_mapped_memory_accesses(Module* gmod) {
   int accesses = 0;
+  int non_config_reg_tiles = 0;
+  int total_tiles = 0;
   for (auto inst : gmod->getDef()->getInstances()) {
     if (inst.second->getModuleRef()->getName() == "Mem_amber") {
       cout << "Metadata..." << inst.second->getMetaData()["config"] << endl;
       cout << "# accesses in = " << inst.second->getMetaData()["config"]["num_accesses"] << endl;
+      auto config = inst.second->getMetaData()["config"];
       accesses += inst.second->getMetaData()["config"]["num_accesses"].get<int>();
+      int acc_range = config["max_addr"].get<int>() - config["min_addr"].get<int>() + 1;
+      total_tiles++;
+      if (acc_range > 1) {
+        non_config_reg_tiles++;
+      }
     }
   }
 
   const double ENERGY_PER_ACCESS_PJ = 1.0;
-  cout << "Total # accesses: " << accesses << endl;
+  cout << "Total # accesses    : " << accesses << endl;
+  cout << "Non config reg tiles: " << non_config_reg_tiles << endl;
+  cout << "Total # tiles       : " << total_tiles << endl;
   //assert(false);
 }
 
 void analyze_post_mapped_app(CodegenOptions& options, prog& prg, map<string, UBuffer>& buffers, Module* gmod) {
-  count_post_mapped_memory_accesses(gmod);
+  //count_post_mapped_memory_use(gmod);
+  //count_post_mapped_memory_accesses(gmod);
   auto context = gmod->getContext();
   auto ns = context->getNamespace("global");
   //cout << "=== Post mapping instances for " << prg.name << endl;
@@ -4478,13 +4521,122 @@ dgraph build_shift_register_graph(CodegenOptions& options, CoreIR::ModuleDef* de
 }
 
 
-
-dgraph build_shift_registers(CodegenOptions& options, CoreIR::ModuleDef* def, prog& prg, UBuffer& buf, schedule_info& hwinfo,block_sreg * b ) {
+dgraph build_shift_registers_io(CodegenOptions& options, CoreIR::ModuleDef* def, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
   dgraph dg = build_shift_register_graph(options, def, prg, buf, hwinfo);
 
   dgraph shift_registers;
 
-  //vector<vector<string>> output_chains;
+  bool got_one_input = true;
+  for (auto e : dg.out_edges) {
+    string src = e.first;
+    if (buf.is_in_pt(src)) {
+      vector<pair<string, int> > pairs;
+      for (auto dst : e.second) {
+        pairs.push_back({dst, dg.weight(src, dst)});
+      }
+      sort_lt(pairs, [](const pair<string, int>& pt) {
+          return pt.second;
+          });
+      if (pairs.size() > 0) {
+        string dst = pairs.at(0).first;
+        if (shift_registers.in_edges(dst).size() == 0) {
+          shift_registers.add_edge(src, dst, dg.weight(src, dst));
+        }
+      }
+    }
+  }
+
+  for (auto e : dg.out_edges) {
+    string src = e.first;
+    if (buf.is_out_pt(src)) {
+      vector<pair<string, int> > pairs;
+      for (auto dst : e.second) {
+        pairs.push_back({dst, dg.weight(src, dst)});
+      }
+      sort_lt(pairs, [](const pair<string, int>& pt) {
+          return pt.second;
+          });
+      if (pairs.size() > 0) {
+        string dst = pairs.at(0).first;
+        if (shift_registers.in_edges(dst).size() == 0) {
+          shift_registers.add_edge(src, dst, dg.weight(src, dst));
+        }
+      }
+    }
+  }
+
+  //cout << shift_registers << endl;
+  //if (buf.name == "padded16_global_wrapper_stencil") {
+    //assert(false);
+  //}
+  return shift_registers;
+}
+
+template<typename T, typename Q>
+void sort_lt_snd(vector<pair<T, Q> >& outputs) {
+  sort_lt(outputs, [](const pair<T,Q> &x){return x.second;});
+}
+
+dgraph build_in_to_out_shift_register_graph(CodegenOptions& options, CoreIR::ModuleDef* def, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
+  map<string,pair<string,int>> shift_registered_outputs = determine_shift_reg_map(prg, buf, hwinfo);
+
+  dgraph dg;
+  for (auto pt : shift_registered_outputs) {
+    dg.add_edge(pt.second.first, pt.first, pt.second.second);
+  }
+
+  cout << "DG: ..." << endl;
+  cout << dg << endl;
+  return dg;
+}
+
+dgraph build_shift_registers(CodegenOptions& options, CoreIR::ModuleDef* def, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
+  if (buf.name == "padded16_global_wrapper_stencil") {
+    dgraph shift_registers = build_in_to_out_shift_register_graph(options, def, prg, buf, hwinfo);
+
+    cout << "Shift registers..." << endl;
+    cout << shift_registers << endl;
+
+    dgraph dg;
+    for (auto inpt : buf.get_in_ports()) {
+      vector<pair<string, int> > vals;
+      for (auto v : shift_registers.out_edges.at(inpt)) {
+        vals.push_back({v, shift_registers.weight(inpt, v)});
+      }
+      sort_lt_snd(vals);
+      for (auto v : vals) {
+        cout << tab(1) << v.first << " -(" << v.second << ")-> " << v.second << endl;
+      }
+
+      vector<vector<pair<string, int> > > reg_chains;
+      split_by(vals, reg_chains, [](const pair<string, int>& a, const pair<string, int>& b) {
+          return abs(a.second - b.second) < 20;
+          });
+
+      cout << "Groups..." << endl;
+      for (auto g : reg_chains) {
+        cout << tab(1) << "Group..." << endl;
+        dg.add_edge(inpt, g.at(0).first, shift_registers.weight(inpt, g.at(0).first));
+        for (int i = 1; i < g.size(); i++) {
+          dg.add_edge(g.at(i - 1).first, g.at(i).first, g.at(i).second - g.at(i - 1).second);
+        }
+        //for (auto e : g) {
+        //cout << tab(2) << e.first << " -> " << e.second << endl;
+        //}
+        //cout << endl;
+      }
+    }
+    cout << dg << endl;
+    //assert(false);
+
+    return dg;
+  }
+
+
+  dgraph dg = build_shift_register_graph(options, def, prg, buf, hwinfo);
+
+  dgraph shift_registers;
+
   for (auto dst: buf.get_out_ports()) {
     int min_d = 5;
     string mysrc = "";
@@ -4503,7 +4655,6 @@ dgraph build_shift_registers(CodegenOptions& options, CoreIR::ModuleDef* def, pr
     }
   }
 
-  //cout << output_chains <<endl;
   cout << endl << endl;
 
   // Make sure all in -> out srs are included
@@ -4518,28 +4669,6 @@ dgraph build_shift_registers(CodegenOptions& options, CoreIR::ModuleDef* def, pr
     }
   }
 
-  if (buf.get_out_ports().size() == 27) {
-    cout << buf.name << " has " << buf.get_in_ports().size() <<  " in ports" << endl;
-    cout << buf.name << " has " << buf.get_out_ports().size() << " out ports" << endl;
-    vector<pair<string,int>> outpts;
-    for (auto e : dg.out_edges) {
-      string src = e.first;
-      for (auto dst : e.second) {
-        if (buf.is_in_pt(src)) {
-          cout << tab(1) << "In to out sr: " << src << " -(" << dg.weight(src, dst) << ")-> " << dst << endl;
-        }
-        outpts.push_back({dst, dg.weight(src, dst)});
-      }
-    }
-    sort_lt(outpts,[](const pair<string,int> &x){return x.second;});
-    cout << "Sorted in -> out" << endl;
-    for (auto out : outpts) {
-      cout << tab(1) << out.second << ": " << out.first << endl;
-    }
-
-    // TODO: Assemble short chains
-    //assert(false);
-  }
   for (auto e : dg.out_edges) {
     string src = e.first;
     for (auto dst : e.second) {
@@ -4606,83 +4735,119 @@ bool allow_packed_sr(dgraph& shift_registers, UBuffer & buf, block_sreg * b)
 	return true;
 }
 
-std::set<string> generate_M1_shift_registers(CodegenOptions& options, CoreIR::ModuleDef* def, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
-
+Select* get_zero(ModuleDef* def) {
   auto c = def->getContext();
-  Select* one = def->addInstance("one_" + c->getUnique(), "corebit.const", {{"value", COREMK(c, true)}})->sel("out");
-  Select* zero = def->addInstance("zero_" + c->getUnique(), "corebit.const", {{"value", COREMK(c, false)}})->sel("out");
+  return def->addInstance("one_cst" + def->getContext()->getUnique(), "corebit.const", {{"value", COREMK(c, false)}})->sel("out");
+}
+
+Select* get_one(ModuleDef* def) {
+  auto c = def->getContext();
+  return def->addInstance("zero_cst" + def->getContext()->getUnique(), "corebit.const", {{"value", COREMK(c, true)}})->sel("out");
+}
+
+Instance* instantiate_coreir_M1(ModuleDef* def, const std::string& name, const int num_writers, const int num_readers) {
+  auto c = def->getContext();
+  Select* one = get_one(def);
+  Select* zero = get_zero(def);
+  Values tile_params{{"width", COREMK(c, 16)},
+    {"ID", COREMK(c, "sreg_" + c->getUnique())},
+    {"has_external_addrgen", COREMK(c, true)},
+    {"num_inputs",COREMK(c,num_writers)},
+    {"num_outputs",COREMK(c,num_readers)}};
+  CoreIR::Instance * sreg = def->addInstance(name, "cgralib.Mem_amber", tile_params);
+  def->connect(sreg->sel("clk"),def->sel("self.clk"));
+  def->connect(sreg->sel("clk_en"),one);
+  def->connect(sreg->sel("chain_chain_en"),zero);
+  def->connect(sreg->sel("chain_data_in"),mkConst(def,16,0));
+  def->connect(sreg->sel("rst_n"),def->sel("self.rst_n"));
+
+  return sreg;
+}
+
+Instance* instantiate_coreir_M3(ModuleDef* def, const std::string& name, const int num_writers, const int num_readers) {
+  auto c = def->getContext();
+  Select* one = get_one(def);
+  //def->addInstance("one_cst", "corebit.const", {{"value", COREMK(c, true)}})->sel("out");
+  Select* zero = get_zero(def);
+  //def->addInstance("zero_cst", "corebit.const", {{"value", COREMK(c, false)}})->sel("out");
+  Values tile_params{{"width", COREMK(c, 16)},
+    {"ID", COREMK(c, "sreg_" + c->getUnique())},
+    {"has_external_addrgen", COREMK(c, false)},
+    {"num_inputs",COREMK(c,num_writers)},
+    {"num_outputs",COREMK(c,num_readers)}};
+  //CoreIR::Instance * sreg = def->addInstance("sreg_" + c->getUnique(), "cgralib.Mem_amber", tile_params);
+  CoreIR::Instance * sreg = def->addInstance(name, "cgralib.Mem_amber", tile_params);
+  def->connect(sreg->sel("clk"),def->sel("self.clk"));
+  def->connect(sreg->sel("clk_en"),one);
+  def->connect(sreg->sel("chain_chain_en"),zero);
+  def->connect(sreg->sel("chain_data_in"),mkConst(def,16,0));
+  def->connect(sreg->sel("rst_n"),def->sel("self.rst_n"));
+
+  return sreg;
+}
+
+std::set<string> generate_block_shift_register(CodegenOptions& options, CoreIR::ModuleDef* def, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
+  dgraph shift_registers = build_shift_registers(options, def, prg, buf, hwinfo);
 
   block_sreg b_sreg;
-  dgraph shift_registers = build_shift_registers(options, def, prg, buf, hwinfo, &b_sreg);
   auto packed_sr = allow_packed_sr(shift_registers, buf,& b_sreg);
 
-  if(packed_sr) {
+  auto c = def->getContext();
 
-    string src = b_sreg.inpt;
-    Wireable * src_wire = def->sel("self." + buf.container_bundle(src) + "." + str(buf.bundle_offset(src)));
-    Wireable * delayed_src = delay_by(def, "sr_ito_all_" + c->getUnique(), src_wire, b_sreg.init_delay);
-    def->connect(def->sel(b_sreg.chain_starts.at(0) + "_net.in"), delayed_src);
+  assert(packed_sr);
+  string src = b_sreg.inpt;
+  Wireable * src_wire = def->sel("self." + buf.container_bundle(src) + "." + str(buf.bundle_offset(src)));
+  Wireable * delayed_src = delay_by(def, "sr_ito_all_" + c->getUnique(), src_wire, b_sreg.init_delay);
+  def->connect(def->sel(b_sreg.chain_starts.at(0) + "_net.in"), delayed_src);
 
-    //cout << "Banking camera pipeline SR..." << endl;
-    cout << tab(1) << b_sreg.difference << endl;
-    for (auto b : b_sreg.chain_starts) {
-      cout << tab(2) << b << endl;
-    }
-    //assert(b_sreg.chain_starts.size() == 3);
-    assert(b_sreg.chain_starts.size() % 2 == 1);
+  cout << tab(1) << b_sreg.difference << endl;
+  for (auto b : b_sreg.chain_starts) {
+    cout << tab(2) << b << endl;
+  }
+  assert(b_sreg.chain_starts.size() % 2 == 1);
 
-    for (int i = 0; i < (int) b_sreg.chain_starts.size() / 2; i++) {
-      Values tile_params{{"width", COREMK(c, 16)},
-        {"ID", COREMK(c, "sreg_" + c->getUnique())},
-        {"has_external_addrgen", COREMK(c, false)},
-        {"num_inputs",COREMK(c,1)},
-        {"num_outputs",COREMK(c,2)}};
-      CoreIR::Instance * sreg = def->addInstance("sreg_" + c->getUnique(), "cgralib.Mem_amber", tile_params);
-      def->connect(sreg->sel("clk"),def->sel("self.clk"));
-      def->connect(sreg->sel("clk_en"),one);
-      def->connect(sreg->sel("chain_chain_en"),zero);
-      def->connect(sreg->sel("chain_data_in"),mkConst(def,16,0));
-      def->connect(sreg->sel("rst_n"),def->sel("self.rst_n"));
-      def->connect(sreg->sel("data_in_0"),delayed_src);
+  for (int i = 0; i < (int) b_sreg.chain_starts.size() / 2; i++) {
+    Instance* sreg = instantiate_coreir_M3(def, "sreg_" + c->getUnique(), 1, 2);
+    def->connect(sreg->sel("data_in_0"),delayed_src);
 
-      Wireable * chain_start_1 = def->sel(b_sreg.chain_starts.at(2*i + 1) + "_net.in");
-      Wireable * chain_start_2 = def->sel(b_sreg.chain_starts.at(2*i + 2) + "_net.in");
-      def->connect(chain_start_1, sreg->sel("data_out_0"));
-      def->connect(chain_start_2, sreg->sel("data_out_1"));
+    Wireable * chain_start_1 = def->sel(b_sreg.chain_starts.at(2*i + 1) + "_net.in");
+    Wireable * chain_start_2 = def->sel(b_sreg.chain_starts.at(2*i + 2) + "_net.in");
+    def->connect(chain_start_1, sreg->sel("data_out_0"));
+    def->connect(chain_start_2, sreg->sel("data_out_1"));
 
-      M3_config config = instantiate_M3_verilog_sreg_block(options, sreg->getModuleRef()->getLongName(), b_sreg.difference, prg,hwinfo, b_sreg, buf);
-      attach_M3_bank_config_metadata(sreg, config);
-    }
+    M3_config config = instantiate_M3_verilog_sreg_block(options, sreg->getModuleRef()->getLongName(), b_sreg.difference, prg,hwinfo, b_sreg, buf);
+    attach_M3_bank_config_metadata(sreg, config);
+    sreg->getMetaData()["config"]["BLOCK_SREG_DELAY"] = b_sreg.difference;
 
-    //cout << "chain starts: " << b_
+    int num_writes = card(extents(to_set(domain(buf.access_map.at(b_sreg.inpt)))));
+    sreg->getMetaData()["config"]["BLOCK_SREG_WRITES"] = num_writes;
 
-    //assert(b_sreg.chain_starts.size() == 3);
-    for (auto w : shift_registers.weights) {
-      string src = w.first.first;
-      string dst = w.first.second;
-      int delay = w.second;
-      if (buf.is_out_pt(src) && buf.is_out_pt(dst)) {
-        Wireable* src_wire = def->sel(src + "_net.out");
-        Wireable* dst_wire = def->sel(dst + "_net.in");
-        Wireable* delayed_src =
-          delay_by(def, "sr_oto_" + c->getUnique(), src_wire, delay);
-        cout << "wiring " << src << " to " << dst << endl;
-        def->connect(dst_wire, delayed_src);
-      }
-    }
-
-    return shift_registers.nodes;
+    int num_reads = card(extents(to_set(domain(buf.access_map.at(b_sreg.chain_starts.at(2*i + 1))))));
+    num_reads +=
+      card(extents(to_set(domain(buf.access_map.at(b_sreg.chain_starts.at(2*i + 2))))));
+    sreg->getMetaData()["config"]["BLOCK_SREG_READS"] = num_reads;
   }
 
-
-  cout << "SRC shift registers" << endl;
-  cout << shift_registers << endl;
-
-  std::set<string> done_outpt;
   for (auto w : shift_registers.weights) {
     string src = w.first.first;
     string dst = w.first.second;
     int delay = w.second;
+    if (buf.is_out_pt(src) && buf.is_out_pt(dst)) {
+      Wireable* src_wire = def->sel(src + "_net.out");
+      Wireable* dst_wire = def->sel(dst + "_net.in");
+      Wireable* delayed_src =
+        delay_by(def, "sr_oto_" + c->getUnique(), src_wire, delay);
+      cout << "wiring " << src << " to " << dst << endl;
+      def->connect(dst_wire, delayed_src);
+    }
+
+  }
+  return shift_registers.nodes;
+}
+
+void instantiate_one_to_one_sreg(CodegenOptions& options, ModuleDef* def, UBuffer& buf, prog& prg, schedule_info& hwinfo, const std::string& src, const std::string& dst, const int delay_d) {
+  auto c = def->getContext();
+  int delay = delay_d;
 
     Wireable* src_wire = nullptr;
     if (buf.is_out_pt(src)) {
@@ -4694,28 +4859,19 @@ std::set<string> generate_M1_shift_registers(CodegenOptions& options, CoreIR::Mo
     assert(src_wire != nullptr);
 
     Wireable* delayed_src = nullptr;
-    //  delay_by(def, "sr_end" + c->getUnique(), src_wire, delay);
 
-    const int SREG_SRAM_THRES = 10;
+    //const int SREG_SRAM_THRES = 10;
+    const int SREG_SRAM_THRES = 20;
 
     const int maxd = 1000;
 
+    Select* one = get_one(def);
+    Select* zero = get_zero(def);
     if(delay > SREG_SRAM_THRES) {
       if(options.rtl_options.target_tile == TARGET_TILE_M1) {
         while(delay > 0)
         {
-
-          Values tile_params{{"width", COREMK(c, 16)},
-            {"ID", COREMK(c, "sreg_" + c->getUnique())},
-            {"has_external_addrgen", COREMK(c, true)},
-            {"num_inputs",COREMK(c,1)},
-            {"num_outputs",COREMK(c,1)}};
-          CoreIR::Instance * sreg = def->addInstance("sreg_" + c->getUnique(), "cgralib.Mem_amber", tile_params);
-          def->connect(sreg->sel("clk"),def->sel("self.clk"));
-          def->connect(sreg->sel("clk_en"),one);
-          def->connect(sreg->sel("chain_chain_en"),zero);
-          def->connect(sreg->sel("chain_data_in"),mkConst(def,16,0));
-          def->connect(sreg->sel("rst_n"),def->sel("self.rst_n"));
+          Instance* sreg = instantiate_coreir_M1(def, "sreg_" + c->getUnique(), 1, 1);
           def->connect(sreg->sel("data_in_0"),src_wire);
           delayed_src = sreg->sel("data_out_0");
           isl_aff * identity = rdaff(buf.ctx,"{[root,t] -> [( root + t + 1 )]}");
@@ -4723,18 +4879,22 @@ std::set<string> generate_M1_shift_registers(CodegenOptions& options, CoreIR::Mo
           isl_set * domain = rdset(buf.ctx,"{[root,t] : root = 0 and 0 <= t <= 65355 }");
           Instance* write_fsm = generate_controller_coreir(options, def, "sr_write_fsm" + c->getUnique(), identity , domain);
           Instance* read_fsm = generate_controller_coreir(options, def, "sr_read_fsm" + c->getUnique(), shifted_identity , domain);
-          //Instance* write_fsm = generate_controller_verilog(options, def, "sr_write_fsm" + c->getUnique(), identity , domain);
-          //Instance* read_fsm = generate_controller_verilog(options, def, "sr_read_fsm" + c->getUnique(), shifted_identity , domain);
           def->connect(write_fsm->sel("d")->sel(1),sreg->sel("write_addr_0"));
           def->connect(read_fsm->sel("d")->sel(1),sreg->sel("read_addr_0"));
-          //def->connect(write_fsm->sel("valid"),sreg->sel("wen_0"));
-          //def->connect(read_fsm->sel("valid"),sreg->sel("ren_0"));
           def->connect(one,sreg->sel("wen_0"));
           def->connect(one,sreg->sel("ren_0"));
           ubuffer_impl impl;
           impl.bank_readers[0] = {"test"};
           impl.bank_writers[0] = {"test_writer"};
           instantiate_M1_verilog(sreg->getModuleRef()->getLongName(), 0, impl, buf);
+          sreg->getMetaData()["config"]["LINEAR_SREG_DELAY"] = min(delay, maxd);
+
+          int num_reads = card(extents(to_set(::domain(buf.access_map.at(dst)))));
+          sreg->getMetaData()["config"]["LINEAR_SREG_READS"] = num_reads;
+
+          int num_writes = card(extents(to_set(::domain(buf.access_map.at(src)))));
+          sreg->getMetaData()["config"]["LINEAR_SREG_WRITES"] = num_writes;
+
           src_wire = delayed_src;
 
           delay -= maxd;
@@ -4743,23 +4903,20 @@ std::set<string> generate_M1_shift_registers(CodegenOptions& options, CoreIR::Mo
       } else {
         while(delay > 0)
         {
-
-          Values tile_params{{"width", COREMK(c, 16)},
-            {"ID", COREMK(c, "sreg_" + c->getUnique())},
-            {"has_external_addrgen", COREMK(c, false)},
-            {"num_inputs",COREMK(c,1)},
-            {"num_outputs",COREMK(c,1)}};
-          CoreIR::Instance * sreg = def->addInstance("sreg_" + c->getUnique(), "cgralib.Mem_amber", tile_params);
-          def->connect(sreg->sel("clk"),def->sel("self.clk"));
-          def->connect(sreg->sel("clk_en"),one);
-          def->connect(sreg->sel("chain_chain_en"),zero);
-          def->connect(sreg->sel("chain_data_in"),mkConst(def,16,0));
-          def->connect(sreg->sel("rst_n"),def->sel("self.rst_n"));
+          //num_ram_tiles++;
+          Instance* sreg = instantiate_coreir_M3(def, "sreg_" + c->getUnique(), 1, 1);
           def->connect(sreg->sel("data_in_0"),src_wire);
           delayed_src = sreg->sel("data_out_0");
 
           auto config = instantiate_M3_verilog_sreg(options, sreg->getModuleRef()->getLongName(), min(delay,maxd), prg, hwinfo);
           attach_M3_bank_config_metadata(sreg, config);
+          sreg->getMetaData()["config"]["LINEAR_SREG_DELAY"] = min(delay, maxd);
+
+          int num_reads = card(extents(to_set(domain(buf.access_map.at(dst)))));
+          sreg->getMetaData()["config"]["LINEAR_SREG_READS"] = num_reads;
+
+          int num_writes = card(extents(to_set(domain(buf.access_map.at(src)))));
+          sreg->getMetaData()["config"]["LINEAR_SREG_WRITES"] = num_writes;
 
           src_wire = delayed_src;
 
@@ -4767,9 +4924,6 @@ std::set<string> generate_M1_shift_registers(CodegenOptions& options, CoreIR::Mo
 
         }
       }
-
-
-
     }
     else{
       delayed_src = delay_by(def, "sr_end" + c->getUnique(), src_wire, delay);
@@ -4777,12 +4931,41 @@ std::set<string> generate_M1_shift_registers(CodegenOptions& options, CoreIR::Mo
 
     assert(delayed_src != nullptr);
     def->connect(
-        //def->sel("self." + buf.container_bundle(dst) + "." + str(buf.bundle_offset(dst))),
         def->sel(dst + "_net.in"),
         delayed_src);
+
+}
+
+std::set<string> generate_M1_shift_registers(CodegenOptions& options, CoreIR::ModuleDef* def, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
+
+  dgraph shift_registers = build_shift_registers(options, def, prg, buf, hwinfo);
+
+  block_sreg b_sreg;
+  auto packed_sr = allow_packed_sr(shift_registers, buf,& b_sreg);
+
+  auto c = def->getContext();
+
+  if(packed_sr) {
+    return generate_block_shift_register(options, def, prg, buf, hwinfo);
+  }
+
+  cout << "Not using packed SR for " << buf.name << ", instead... SRC shift registers" << endl;
+  cout << shift_registers << endl;
+
+  std::set<string> done_outpt;
+  //int num_ram_tiles = 0;
+  for (auto w : shift_registers.weights) {
+
+    string src = w.first.first;
+    string dst = w.first.second;
+    int delay = w.second;
+
+    instantiate_one_to_one_sreg(options, def, buf, prg, hwinfo, src, dst, delay);
+
     done_outpt.insert(dst);
   }
 
+  //cout << "### finished shift registers Used " << num_ram_tiles << " in SR for " << buf.name << endl;
   return done_outpt;
 }
 
@@ -5254,7 +5437,71 @@ CoreIR::Wireable* control_en(CoreIR::ModuleDef* def, const std::string& reader, 
   }
 }
 
+double PE_energy_cost_instance_model(power_analysis_params& power_params, power_analysis_info& power_stats, prog& prg) {
+  cout << "Computing Instance level PE energy cost for " << prg.name << endl;
+
+  double energy_cost = 0.0;
+  for (auto op : prg.all_ops()) {
+    if (op->func != "") {
+      vector<string> surrounding = surrounding_vars(op, prg);
+      vector<int> bounds;
+      for (auto l : surrounding) {
+        bounds.push_back(prg.find_loop(l)->trip_count());
+      }
+      int bnds = card(bounds);
+      power_stats.op_counts[op->name] = bnds;
+
+      CoreIR::Context* context = CoreIR::newContext();
+      CoreIRLoadLibrary_commonlib(context);
+      CoreIRLoadLibrary_cgralib(context);
+
+      string compute_file = "./coreir_compute/" + prg.name + "_compute.json";
+      if (!loadFromFile(context, compute_file)) {
+        cout << "Could not load compute file for: " << prg.name << ", file name = " << compute_file << endl;
+        //assert(false);
+      }
+      auto ns = context->getNamespace("global");
+      CoreIR::Module* cu = ns->getModule(op->func);
+      garnet_map_module(cu);
+      map<string, int> counts;
+      for (auto inst : cu->getDef()->getInstances()) {
+        cout << tab(1) << inst.first << endl;
+        //cout << tab(1) << "Possible power costs..." << endl;
+        cout << tab(2) << inst.second->getModuleRef()->getName() << endl;
+        if (inst.second->getModuleRef()->getName() == "PE") {
+          bool found_power = false;
+          for (auto pp : power_params.instance_energy_costs) {
+            //cout << tab(2) << pp.first << endl;
+            vector<string> pps = split_at(pp.first, "$");
+            assert(pps.size() > 2);
+
+            if (pps.at(0) == op->name && pps.at(2) + "$" + pps.at(3) == inst.first) {
+              //cout << tab(3) << "Power cost: " << pp.second << endl;
+              energy_cost +=
+                power_stats.op_counts[op->name] *
+                pp.second;
+              found_power = true;
+              break;
+              //assert(false);
+            }
+          }
+          assert(found_power);
+        }
+      }
+      deleteContext(context);
+    }
+  }
+
+  cout << "Total PE energy cost for " << prg.name << ": " << energy_cost * 1e12 << " (pJ)" << endl;
+
+  assert(false);
+  return energy_cost * 1e12;
+}
+
 double PE_energy_cost(power_analysis_params& power_params, power_analysis_info& power_stats, prog& prg) {
+
+  cout << "Computing PE energy cost for " << prg.name << endl;
+
   int PEs_used = 0;
   for (auto op : prg.all_ops()) {
     if (op->func != "") {
@@ -5273,7 +5520,7 @@ double PE_energy_cost(power_analysis_params& power_params, power_analysis_info& 
       string compute_file = "./coreir_compute/" + prg.name + "_compute.json";
       if (!loadFromFile(context, compute_file)) {
         cout << "Could not load compute file for: " << prg.name << ", file name = " << compute_file << endl;
-        assert(false);
+        //assert(false);
       }
       auto ns = context->getNamespace("global");
       CoreIR::Module* cu = ns->getModule(op->func);
@@ -5283,7 +5530,10 @@ double PE_energy_cost(power_analysis_params& power_params, power_analysis_info& 
         cout << tab(1) << inst.second->getModuleRef()->getName() << endl;
         counts[inst.second->getModuleRef()->getName()]++;
         if (inst.second->getModuleRef()->getName() == "PE") {
-          power_stats.PE_optype_counts[op->name][inst.second->getModArgs().at("alu_op")->get<string>()]++;
+          auto modargs = inst.second->getModArgs();
+          if (modargs.find("alu_op") != end(modargs)) {
+            power_stats.PE_optype_counts[op->name][inst.second->getModArgs().at("alu_op")->get<string>()]++;
+          }
         }
       }
       cu->print();
@@ -5304,7 +5554,34 @@ double PE_energy_cost(power_analysis_params& power_params, power_analysis_info& 
       cout << "Total PE energy cost: " << energy_cost << endl;
     }
   }
-  cout << "Total PE energy cost: " << energy_cost << endl;
+  cout << "Total PE energy cost for " << prg.name << ": " << energy_cost << endl;
+
+  return energy_cost;
+}
+
+double MEM_energy_cost(CodegenOptions& options, power_analysis_params& power_params, power_analysis_info& power_stats, prog& prg) {
+
+  cout << "Computing MEM energy cost for " << prg.name << endl;
+
+  const int SRAM_SIZE_BITS = 2048*16;
+  double daly_access_cost_pj = (50 + 0.022 * sqrt(SRAM_SIZE_BITS)) / 1000;
+  double energy_cost = 0.0;
+  for (auto op : prg.all_ops()) {
+    if (op->func != "") {
+      vector<string> surrounding = surrounding_vars(op, prg);
+      vector<int> bounds;
+      for (auto l : surrounding) {
+        bounds.push_back(prg.find_loop(l)->trip_count());
+      }
+      int bnds = card(bounds);
+      power_stats.op_counts[op->name] = bnds;
+
+      double num_accesses_per_op = op->consumes_pair().size() + op->produces_pair().size();
+      energy_cost += num_accesses_per_op * daly_access_cost_pj * bnds;
+    }
+  }
+
+  cout << "Total MEM energy cost for " << prg.name << ": " << energy_cost << endl;
 
   return energy_cost;
 }

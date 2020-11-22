@@ -16609,6 +16609,19 @@ void sanity_check_negative_starts(schedule_info& sched, prog& prg) {
   assert(min >= 0);
 }
 
+int max_completion_time(schedule_info& sched, prog& prg) {
+  auto start_times =
+    its(op_start_times_map(sched, prg), op_start_times_domain(prg));
+
+  int done_time = INT_MIN;
+
+  for (auto s : get_sets(range(start_times))) {
+    int max_dim = to_int(lexmaxval(s));
+    done_time = max(max_dim, done_time);
+  }
+  return done_time;
+}
+
 bool schedule_bounds_fit_controller_bitwidth(const int bitwidth, schedule_info& sched, prog& prg) {
   int max_val = pow(2, bitwidth);
 
@@ -16698,6 +16711,8 @@ vector<prog> stencil_programs() {
   vector<prog> test_programs;
   //test_programs.push_back(rom());
 
+  //test_programs.push_back(unsharp());
+
   test_programs.push_back(harris());
   test_programs.push_back(pointwise());
   test_programs.push_back(camera_pipeline());
@@ -16706,7 +16721,6 @@ vector<prog> stencil_programs() {
   // Fails with dual port tile?
   test_programs.push_back(strided_conv());
   test_programs.push_back(mini_conv_halide_fixed());
-  test_programs.push_back(unsharp());
   test_programs.push_back(down_sample());
   test_programs.push_back(cascade());
 
@@ -16736,45 +16750,28 @@ vector<prog> harris_variants() {
   //test_programs.push_back(harris_sch4_1pp3c());
 
   // Works
-  test_programs.push_back(harris_sch5_1ppc());
-  test_programs.push_back(harris_sch6_2ppc());
+  //test_programs.push_back(harris_sch5_1ppc());
+  //test_programs.push_back(harris_sch6_2ppc());
   test_programs.push_back(harris_sch7_bigtile());
-  test_programs.push_back(harris_sch8_endcim());
+  //test_programs.push_back(harris_sch8_endcim());
 
   return test_programs;
 }
 
 vector<prog> isca_programs() {
   vector<prog> test_programs;
+  //test_programs.push_back(harris_sch6_2ppc());
+  //test_programs.back().pretty_print();
 
-
-  test_programs.push_back(unsharp());
   test_programs.push_back(gaussian());
+  test_programs.push_back(mobilenet_unrolled());
+  test_programs.push_back(harris());
+  test_programs.push_back(unsharp());
   test_programs.push_back(camera_pipeline());
   test_programs.push_back(resnet());
-  test_programs.push_back(harris());
-  test_programs.push_back(mini_conv_halide_fixed());
-  test_programs.push_back(strided_conv());
   test_programs.push_back(cascade());
-
-
   test_programs.push_back(down_sample());
-
   test_programs.push_back(up_sample());
-
-
-
-  test_programs.push_back(mobilenet_unrolled());
-
-  test_programs.push_back(pointwise());
-
-
-
-
-
-
-
-
 
   return test_programs;
 }
@@ -16783,6 +16780,7 @@ vector<prog> all_cgra_programs() {
 
   vector<prog> test_programs;
 
+  concat(test_programs, stencil_programs());
   test_programs.push_back(mobilenet_unrolled());
   test_programs.push_back(resnet());
   test_programs.push_back(conv_multi());
@@ -16793,7 +16791,6 @@ vector<prog> all_cgra_programs() {
   test_programs.push_back(resnet_coarse_pipeline_loop());
 
 
-  concat(test_programs, stencil_programs());
 
   concat(test_programs, harris_variants());
 
@@ -17150,14 +17147,18 @@ void cgra_flow_tests() {
   //vector<prog> M3_test_programs{resnet()};
   //vector<prog> M3_test_programs{gaussian()};
   test_codegen(M3_test_programs, compile_for_CGRA_M3_mem);
-  auto test_programs =
-    all_cgra_programs();
-  test_platonic_codegen(test_programs);
+  //assert(false);
 
   vector<prog> M1_test_programs = isca_programs();
   //vector<prog> M1_test_programs{gaussian()};
   test_codegen(M1_test_programs, compile_for_CGRA_M1_mem);
-  //assert(false);
+
+  auto test_programs =
+    all_cgra_programs();
+  test_platonic_codegen(test_programs);
+
+
+
 
   vector<prog> sram_test_programs{pointwise(), camera_pipeline(), resnet()};
   test_codegen(sram_test_programs, compile_for_generic_SRAM_mem);
@@ -18956,28 +18957,165 @@ void test_if_construction() {
   //assert(false);
 }
 
+void load_pe_power_stats(power_analysis_params& power_params, const std::string& file) {
+  cout << "File = " << file << endl;
+  ifstream input(file);
+  for( std::string line; getline( input, line );) {
+    cout << "Line = " << line << endl;
+    vector<string> comps = split_at(line, " ");
+    assert(comps.size() == 2);
+    string instance = comps.at(0);
+    double energy_cost = stod(comps.at(1));
+    power_params.instance_energy_costs[instance] = energy_cost;
+    //cout << tab(1) << instance << ": " << energy_cost << endl;
+  }
+  //assert(false);
+}
+
+std::set<op*> find_users(const std::string& buf, prog& prg) {
+  std::set<op*> rds = find_readers(buf, prg);
+  for (auto p : find_writers(buf, prg)) {
+    rds.insert(p);
+  }
+  return rds;
+}
+
 void dhuff_playground() {
+  {
+    prog prg = harris_sch6_2ppc();
+    dsa_writers(prg);
+    prg.pretty_print();
+
+    for (auto b : all_buffers(prg)) {
+      auto users = find_users(b, prg);
+      cout << "Users of " << b << endl;
+      bool all_const = true;
+      for (auto u : users) {
+        cout << tab(1) << u->name << endl;
+        for (auto rda : read_addrs(u, b, prg)) {
+          cout << tab(2) << str(rda) << endl;
+          if (!is_cst(rda)) {
+            all_const = false;
+            break;
+          }
+        }
+        for (auto rda : write_addrs(u, b, prg)) {
+          cout << tab(2) << str(rda) << endl;
+          if (!is_cst(rda)) {
+            all_const = false;
+            break;
+          }
+        }
+      }
+      if (all_const) {
+        cout << "All references to " << b << " are constant" << endl;
+        assert(false);
+      }
+    }
+
+    //for (auto op : get_dft_ops(prg)) {
+      //op->pretty_print();
+    //}
+
+    assert(false);
+  }
+  //{
+    //for (auto prg : isca_programs()) {
+      //auto options = CGRA_M3_codegen_options(prg);
+      //schedule_info sched = garnet_schedule_info(options, prg);
+      //normalize_bounds(prg);
+      //garnet_dual_port_ram_schedule(sched, prg.root, prg);
+
+      //auto hw_sched = its(op_times_map(sched, prg), prg.whole_iteration_domain());
+
+      ////sequential_schedule(sched, prg.root, prg);
+      //int time = max_completion_time(sched, prg);
+
+      //cout << tab(1) << "=== Completion time for optimized sched: " << prg.name << " = " << time << endl;
+      ////auto hw_sched = its(op_times_map(sched, prg), prg.whole_iteration_domain());
+
+      ////auto buffers = build_buffers(prg, hw_sched);
+
+
+      ////int total_capacity = 0;
+      ////for (auto b : buffers) {
+        ////if (!prg.is_boundary(b.first)) {
+          ////total_capacity += card(extents_by_dimension(b.second));
+        ////}
+      ////}
+      ////cout << tab(1) << "=== SRAM bytes for " << prg.name << total_capacity << endl;
+    //}
+    //assert(false);
+  //}
+  //{
+//#ifdef COREIR
+
+
+//#endif
+  //}
+  {
+#ifdef COREIR
+    power_analysis_params power_params;
+    power_analysis_info power_stats;
+    // Interpolated from MAC cost in Xuans paper Interstellar
+    //const double COST_PER_PE_MUL_PJ = 0.04;
+    //const double COST_PER_PE_ADD_PJ = 0.035;
+
+    // From Dalys discussion of arithmetic
+    const double COST_PER_PE_MUL_PJ = 40 / 1000;
+    const double COST_PER_PE_ADD_PJ = 20 / 1000;
+
+    const double COST_PER_PE_SUB_PJ = 0.035;
+    const double COST_PER_PE_SHIFT_PJ = 0.01;
+    const double COST_PER_PE_LOGIC_BINOP_PJ = 0.01;
+    const double COST_PER_PE_EQ_PJ = 0.01;
+    const double COST_PER_PE_MUX_PJ = 0.5;
+    const double COST_PER_PE_CMP_PJ = 0.035;
+
+    power_params.alu_op_energy_costs["mult_0"] = COST_PER_PE_MUL_PJ;
+    power_params.alu_op_energy_costs["add"] = COST_PER_PE_ADD_PJ;
+    power_params.alu_op_energy_costs["rshft"] = COST_PER_PE_SHIFT_PJ;
+    power_params.alu_op_energy_costs["sub"] = COST_PER_PE_SUB_PJ;
+    power_params.alu_op_energy_costs["and"] = COST_PER_PE_LOGIC_BINOP_PJ;
+    power_params.alu_op_energy_costs["or"] = COST_PER_PE_LOGIC_BINOP_PJ;
+    power_params.alu_op_energy_costs["eq"] = COST_PER_PE_EQ_PJ;
+    power_params.alu_op_energy_costs["sel"] = COST_PER_PE_MUX_PJ;
+    power_params.alu_op_energy_costs["ult"] = COST_PER_PE_CMP_PJ;
+    power_params.alu_op_energy_costs["lt"] = COST_PER_PE_CMP_PJ;
+    power_params.alu_op_energy_costs["le"] = COST_PER_PE_CMP_PJ;
+
+    load_pe_power_stats(power_params, "./power_models/conv_3_3/PEs.txt");
+
+    CodegenOptions options;
+    for (auto prg : {conv_3_3()}) {
+      PE_energy_cost_instance_model(power_params, power_stats, prg);
+      //MEM_energy_cost(options, power_params, power_stats, prg);
+    }
+    assert(false);
+#endif
+  }
+  {
+#ifdef COREIR
+    for (auto prg : {unsharp()}) {
+      prg.pretty_print();
+      for (auto op : prg.all_ops()) {
+        if (op->func != "") {
+          cout << op->func << endl;
+          int tb_res = generate_compute_unit_regression_tb(op, prg);
+          if (tb_res != 0) {
+            cout << "==== In prog: " << prg.name << " compute unit: " << op->func << " has a mismatch between C++ and coreir" << endl;
+            assert(false);
+          }
+        }
+      }
+    }
+    assert(false);
+#endif
+  }
   {
     prog prg = unsharp();
     prg.pretty_print();
     assert(false);
-  }
-
-  {
-#ifdef COREIR
-    //for (auto prg : harris_variants()) {
-    power_analysis_params power_params;
-    power_analysis_info power_stats;
-    const double COST_PER_PE_MUL_PJ = 0.1;
-    const double COST_PER_PE_ADD_PJ = 0.1;
-    power_params.alu_op_energy_costs["mult_0"] = COST_PER_PE_MUL_PJ;
-    power_params.alu_op_energy_costs["add"] = COST_PER_PE_ADD_PJ;
-
-    for (auto prg : {resnet()}) {
-      PE_energy_cost(power_params, power_stats, prg);
-    }
-    assert(false);
-#endif
   }
 
   {
@@ -19033,24 +19171,6 @@ void dhuff_playground() {
     assert(false);
     generate_unoptimized_code(prg);
     assert(false);
-  }
-  {
-#ifdef COREIR
-    for (auto prg : harris_variants()) {
-      prg.pretty_print();
-      for (auto op : prg.all_ops()) {
-        if (op->func != "") {
-          cout << op->func << endl;
-          int tb_res = generate_compute_unit_regression_tb(op, prg);
-          if (tb_res != 0) {
-            cout << "==== In prog: " << prg.name << " compute unit: " << op->func << " has a mismatch between C++ and coreir" << endl;
-            assert(false);
-          }
-        }
-      }
-    }
-    assert(false);
-#endif
   }
 
   {

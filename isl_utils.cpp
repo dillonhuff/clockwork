@@ -2102,7 +2102,7 @@ isl_set* rdset(isl_ctx* ctx, const std::string& str) {
 isl_multi_aff* rdmultiaff(isl_ctx* ctx, const std::string& str) {
   auto res = isl_multi_aff_read_from_str(ctx, str.c_str());
   if (res == nullptr) {
-    cout << "Error: Bad string for isl_aff: " << str << endl;
+    cout << "Error: Bad string for isl_multi_aff: " << str << endl;
     assert(false);
   }
   return res;
