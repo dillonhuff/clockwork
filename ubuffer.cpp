@@ -787,6 +787,19 @@ isl_union_set* retrive_domain_from_buffers(const map<string, UBuffer> &buffers) 
     return global_dom;
 }
 
+int UBuffer::get_vectorized_dim(int fetch_width) {
+  vector<int> extent_dim =  extents_by_dimension(*this);
+  cout << "Ext by dim: " << extent_dim << endl;
+  for (auto it = extent_dim.rbegin(); it != extent_dim.rend(); it++) {
+    if (*it > fetch_width - 1)
+        return extent_dim.rend() - it - 1;
+  }
+  //TODO: maybe need dimension fuse in the future
+  cout << "Could not find vectorization dimension" << endl;
+  assert(false);
+}
+
+
 #ifdef COREIR
 
 
@@ -1499,18 +1512,6 @@ void UBuffer::generate_stencil_valid_config(CodegenOptions& options, string bank
   auto sched = get_aff(outpt_sched_1D);
   auto stencil_valid = generate_accessor_config_from_aff_expr(::domain(outpt_sched_1D), sched);
   add_lake_config(config_file, stencil_valid, num_in_dims(sched), "stencil_valid");
-}
-
-int UBuffer::get_vectorized_dim(int fetch_width) {
-  vector<int> extent_dim =  extents_by_dimension(*this);
-  cout << "Ext by dim: " << extent_dim << endl;
-  for (auto it = extent_dim.rbegin(); it != extent_dim.rend(); it++) {
-    if (*it > fetch_width - 1)
-        return extent_dim.rend() - it - 1;
-  }
-  //TODO: maybe need dimension fuse in the future
-  cout << "Could not find vectorization dimension" << endl;
-  assert(false);
 }
 
 

@@ -13345,9 +13345,9 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
 void generate_smt_stream_for_garnet_single_port_mem(prog& prg);
 void test_single_port_mem_smt_stream() {
   vector<prog> test_apps;
-  test_apps.push_back(conv_3_3(16, 16, "_SMT_16_16"));
-  test_apps.push_back(cascade(16, 16, "_SMT_16_16"));
-  test_apps.push_back(harris(14, 14, "_SMT_16_16"));
+  test_apps.push_back(conv_3_3(28, 28, "_SMT_28_28"));
+  test_apps.push_back(cascade(28, 28, "_SMT_28_28"));
+  test_apps.push_back(harris(26, 26, "_SMT_28_28"));
 
   for ( auto prg: test_apps) {
     cout << "====== Running CGRA Single Port test for " << prg.name << endl;
@@ -13533,9 +13533,10 @@ void lake_identity_stream_config_gen(int x, int y, string suffix) {
           rewrite_buffers.insert(it);
       }
   }
+#ifdef COREIR
   auto config = tmp.generate_ubuf_args(options, rewrite_buffers);
   emit_lake_config_collateral(options, "buf_" + suffix, config);
-
+#endif
 
 }
 
