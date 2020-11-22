@@ -4716,7 +4716,6 @@ std::set<string> generate_block_shift_register(CodegenOptions& options, CoreIR::
   auto c = def->getContext();
 
   assert(packed_sr);
-  cout << tab(1) << "!!! Allowing packed sr for " << buf.name << endl;
   string src = b_sreg.inpt;     
   Wireable * src_wire = def->sel("self." + buf.container_bundle(src) + "." + str(buf.bundle_offset(src)));
   Wireable * delayed_src = delay_by(def, "sr_ito_all_" + c->getUnique(), src_wire, b_sreg.init_delay);
@@ -4740,6 +4739,11 @@ std::set<string> generate_block_shift_register(CodegenOptions& options, CoreIR::
     M3_config config = instantiate_M3_verilog_sreg_block(options, sreg->getModuleRef()->getLongName(), b_sreg.difference, prg,hwinfo, b_sreg, buf);
     attach_M3_bank_config_metadata(sreg, config);
     sreg->getMetaData()["config"]["BLOCK_SREG_DELAY"] = b_sreg.difference;
+
+    int num_reads = card(extents(to_set(domain(buf.access_map.at(b_sreg.chain_starts.at(2*i + 1))))));
+    num_reads +=
+      card(extents(to_set(domain(buf.access_map.at(b_sreg.chain_starts.at(2*i + 2))))));
+    sreg->getMetaData()["config"]["BLOCK_SREG_READS"] = num_reads;
   }
 
   for (auto w : shift_registers.weights) {
