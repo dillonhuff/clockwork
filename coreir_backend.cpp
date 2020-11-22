@@ -5361,7 +5361,7 @@ CoreIR::Wireable* control_en(CoreIR::ModuleDef* def, const std::string& reader, 
 double PE_energy_cost_instance_model(power_analysis_params& power_params, power_analysis_info& power_stats, prog& prg) {
   cout << "Computing Instance level PE energy cost for " << prg.name << endl;
 
-  double PE_energy_cost = 0.0;
+  double energy_cost = 0.0;
   for (auto op : prg.all_ops()) {
     if (op->func != "") {
       vector<string> surrounding = surrounding_vars(op, prg);
@@ -5387,44 +5387,36 @@ double PE_energy_cost_instance_model(power_analysis_params& power_params, power_
       map<string, int> counts;
       for (auto inst : cu->getDef()->getInstances()) {
         cout << tab(1) << inst.first << endl;
-        cout << tab(1) << "Possible power costs..." << endl;
-        for (auto pp : power_params.instance_energy_costs) {
-          cout << tab(2) << pp.first << endl;
-          vector<string> pps = split_at(pp.first, "$");
-          assert(pps.size() > 2);
+        //cout << tab(1) << "Possible power costs..." << endl;
+        cout << tab(2) << inst.second->getModuleRef()->getName() << endl;
+        if (inst.second->getModuleRef()->getName() == "PE") {
+          bool found_power = false;
+          for (auto pp : power_params.instance_energy_costs) {
+            //cout << tab(2) << pp.first << endl;
+            vector<string> pps = split_at(pp.first, "$");
+            assert(pps.size() > 2);
 
-          if (pps.at(0) == op->name && pps.at(2) + "$" + pps.at(3) == inst.first) {
-            cout << tab(3) << "Power cost: " << pp.second << endl;
-            assert(false);
+            if (pps.at(0) == op->name && pps.at(2) + "$" + pps.at(3) == inst.first) {
+              //cout << tab(3) << "Power cost: " << pp.second << endl;
+              energy_cost +=
+                power_stats.op_counts[op->name] *
+                pp.second;
+              found_power = true;
+              break;
+              //assert(false);
+            }
           }
+          assert(found_power);
         }
-        //counts[inst.second->getModuleRef()->getName()]++;
-        //if (inst.second->getModuleRef()->getName() == "PE") {
-          //auto modargs = inst.second->getModArgs();
-          //if (modargs.find("alu_op") != end(modargs)) {
-            //power_stats.PE_optype_counts[op->name][inst.second->getModArgs().at("alu_op")->get<string>()]++;
-          //}
-        //}
       }
-      //cu->print();
       deleteContext(context);
     }
   }
 
-  double energy_cost = 0.0;
-  for (auto p : prg.all_ops()) {
-    //for (auto op : power_stats.PE_optype_counts[p->name]) {
-      //cout << tab(1) << op.first << " -> " << op.second << endl;
-      //energy_cost += map_find(p->name, power_stats.op_counts) *
-        //((double) map_find(op.first, power_params.alu_op_energy_costs)) *
-        //((double)op.second);
-      //cout << "Total PE energy cost: " << energy_cost << endl;
-    //}
-  }
-  cout << "Total PE energy cost for " << prg.name << ": " << energy_cost << endl;
+  cout << "Total PE energy cost for " << prg.name << ": " << energy_cost * 1e12 << " (pJ)" << endl;
 
   assert(false);
-  return energy_cost;
+  return energy_cost * 1e12;
 }
 
 double PE_energy_cost(power_analysis_params& power_params, power_analysis_info& power_stats, prog& prg) {
