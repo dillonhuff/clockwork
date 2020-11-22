@@ -664,10 +664,6 @@ map<string, UBuffer> UBuffer::generate_ubuffer(CodegenOptions& options) {
   map<string, UBuffer> buffers;
   for (auto b : get_banks_and_sort()) {
     cout << "Bank: " << b.name << " has max delay: " << b.maxdelay << endl;
-    if (get_bank_outputs(b.name).size() == 0 ||
-        get_bank_inputs(b.name).size() == 0) {
-      continue;
-    }
     //fiter out those node will implemented as a shift register and wire
     if (options.conditional_merge) {
       if (b.maxdelay <= options.merge_threshold) {
@@ -678,9 +674,9 @@ map<string, UBuffer> UBuffer::generate_ubuffer(CodegenOptions& options) {
     //  //TODO: find a better way to filter out shift register
     //  continue;
     //}
-    if (is_bank_SR(b.name)) {
-        continue;
-    }
+    //if (is_bank_SR(b.name)) {
+    //    continue;
+    //}
     UBuffer buf;
     string bname = b.name + "_ubuf";
     buf.name = bname;
@@ -1675,7 +1671,7 @@ void UBuffer::generate_coreir(CodegenOptions& options,
       //if we has memory tile we will generate stencil valid
       has_stencil_valid = true;
 
-      string ub_ins_name = "ub_"+bk.name;
+      string ub_ins_name = "ub_" + bk.name;
       map<string, UBuffer> vectorized_buf;
       vectorized_buf.insert(
               {bk.name + "_ubuf", rewrite_buffer.at(bk.name + "_ubuf")});
@@ -3684,7 +3680,7 @@ lakeStream emit_top_address_stream(string fname,
 
     map<string, int> delay_map;
     for (auto inpt: inpt_set) {
-      if (isIn.at(inpt)){
+      //if (isIn.at(inpt)){
       for (auto outpt: outpt_set) {
         auto delay_info =
             dependence_distance_max(inpt, outpt);
@@ -3695,7 +3691,7 @@ lakeStream emit_top_address_stream(string fname,
           cout << "Compute max delay : " << maxdelay << endl;
         }
       }
-      }
+      //}
     }
     //cout << "compute max delay for super bank =  " << maxdelay << endl;
 
@@ -3777,7 +3773,7 @@ lakeStream emit_top_address_stream(string fname,
               });
 
       //shift register optimization
-      for (auto i = 0; i < pt_delay.size() - 1; i ++) {
+      for (int i = 0; i < pt_delay.size() - 1; i ++) {
         auto s_in = pt_delay.at(i).first;
         auto s_out = pt_delay.at(i+1).first;
         bool decouple = isl_map_is_injective(to_map(access_map.at(s_in))) &&
@@ -4168,8 +4164,10 @@ lakeStream emit_top_address_stream(string fname,
             outpt_vec.insert(outpt);
           }
         }
-        bank tmp = compute_bank_info(range(this_bank_rddom), bankID, inpt_vec, outpt_vec);
-        add_bank_between(inpt_vec, outpt_vec, tmp);
+        if (outpt_vec.size()) {
+          bank tmp = compute_bank_info(range(this_bank_rddom), bankID, inpt_vec, outpt_vec);
+          add_bank_between(inpt_vec, outpt_vec, tmp);
+        }
       }
 
       /*bank bnk = compute_bank_info();
@@ -4383,6 +4381,7 @@ lakeStream emit_top_address_stream(string fname,
       }
 
       //First check if this bank already have saturized the hardware memory
+      //TODO: this may not make sense, rewrite this code
       if (get_bank_inputs(bk.name).size() == in_port_width) {
           bank_pool.pop();
           continue;
@@ -4425,8 +4424,8 @@ lakeStream emit_top_address_stream(string fname,
         }
         else {
           cout << "\tSubstitute the output port: " << last_bank_IO.second << "to the input : " << input << endl;
-          bank_input = last_bank_IO.second;
-          inpt_set.insert(bank_input);
+          //bank_input = last_bank_IO.second;
+          inpt_set.insert(input);
           //delay_map[bank_input] = bk.delay_map.at(bank_input);
         }
 
@@ -4478,6 +4477,11 @@ lakeStream emit_top_address_stream(string fname,
           //delay_map.clear();
           back_edge.clear();
         } else if (bk.onlySR()) {
+        cout << tab(2) << "Create subbranch SR!" << endl;
+        cout << tab(2)<< "Input: " << pick(inpt_set) << endl;
+        for (auto outpt: outpt_set) {
+            cout << tab(2) << "Outpt: " << outpt << endl;
+        }
           last_bank_rddom = create_subbank_branch(inpt_set, outpt_set, delay_map, outpt_merge, back_edge);
           cout << "Reset Counter for shift reg" << endl;
           group_in_port_width = 0;
@@ -4492,6 +4496,11 @@ lakeStream emit_top_address_stream(string fname,
         //update the input port
         last_bank_IO.first = input;
         last_bank_IO.second = pt_vec.front();
+        cout << tab(2) << "Create subbranch full!" << endl;
+        cout << tab(2)<< "Input: " << pick(inpt_set) << endl;
+        for (auto outpt: outpt_set) {
+            cout << tab(2) << "Outpt: " << outpt << endl;
+        }
         last_bank_rddom = create_subbank_branch(inpt_set, outpt_set, delay_map, outpt_merge, back_edge);
 
         //reset the grouping counter
@@ -4502,6 +4511,11 @@ lakeStream emit_top_address_stream(string fname,
     }
     //chances are that we have some leftover
     if (!inpt_set.empty()) {
+        cout << tab(2) << "Create subbranch leftover!" << endl;
+        cout << tab(2)<< "Input: " << pick(inpt_set) << endl;
+        for (auto outpt: outpt_set) {
+            cout << tab(2) << "Outpt: " << outpt << endl;
+        }
       create_subbank_branch(inpt_set, outpt_set, delay_map, outpt_merge, back_edge);
     }
   }
@@ -4573,6 +4587,11 @@ lakeStream emit_top_address_stream(string fname,
         outpt_set.insert(read);
       }
     }
+        cout << tab(2) << "Create super bank!" << endl;
+        cout << tab(2)<< "Input: " << pick(inpt_set) << endl;
+        for (auto outpt: outpt_set) {
+            cout << tab(2) << "Outpt: " << outpt << endl;
+        }
     //create a supper bank between inpt_set and outpt_set
     stack_bank super_bk = compute_bank_info(inpt_set, outpt_set);
     for (auto inpt: inpt_set) {
@@ -5818,6 +5837,7 @@ pair<std::map<string, UBuffer>, vector<string> >
 
 
         //map from input dim to denominator
+        //TODO: move this into a function
         map<int, int> split_dims;
         for (auto aff : get_aff_vec(am)) {
           cout << "\taff : " << str(aff) << endl;
@@ -5894,7 +5914,8 @@ pair<std::map<string, UBuffer>, vector<string> >
         } else {
             //Case two do not slide but just start from middle of the fetchwidth
             int min_vec_dim = get_dim_min(range(am), dim_id);
-            int max_vec_dim = get_dim_max(range(am), dim_id);
+            int max_vec_dim = get_dim_max(range(am), dim_id) + 1;
+            cout << "\tmin: " << min_vec_dim << endl << "\tmax: " << max_vec_dim << endl;
             if ( (min_vec_dim % fetch_width != 0) &&
                     (max_vec_dim % fetch_width != 0) ) {
                 access_map.at(out_pt_name) =
