@@ -1852,7 +1852,7 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
     isl_union_map* producer_map() {
       umap* s = isl_union_map_read_from_str(ctx, "{ }");
       for (auto pt: get_in_ports()) {
-        s = unn(s, access_map.at(pt));
+        s = unn(s, coalesce(access_map.at(pt)));
       }
       return s;
     }
@@ -1860,12 +1860,7 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
     isl_union_map* consumer_map() {
       umap* s = isl_union_map_read_from_str(ctx, "{ }");
       for (auto pt: get_out_ports()) {
-        cout << "Add consumer map for pt:: " << pt << endl << str(access_map.at(pt)) << endl;
-        for (auto bmap: get_basic_maps(simplify(to_map(access_map.at(pt))))) {
-            cout << "\tBasic map : " << str(bmap) << endl;
-        }
-        s = unn(s, access_map.at(pt));
-        cout << "Umap producer: " << str(s) << endl;
+        s = unn(s, coalesce(access_map.at(pt)));
       }
       return s;
     }
