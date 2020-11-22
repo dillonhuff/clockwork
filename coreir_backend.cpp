@@ -786,6 +786,11 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
   }
 
   std::set<string> done_outpt = generate_M1_shift_registers(options, def, prg, orig_buf, hwinfo);
+  if (orig_buf.name == "padded16_global_wrapper_stencil") {
+    cout << "# of out ports: " << orig_buf.get_out_ports().size() << endl;
+    cout << "# of shift registered ports: " << done_outpt.size() << endl;
+    //assert(false);
+  }
 
   UBuffer buf = delete_ports(done_outpt, orig_buf);
 
@@ -2841,7 +2846,7 @@ void count_post_mapped_memory_accesses(Module* gmod) {
 }
 
 void analyze_post_mapped_app(CodegenOptions& options, prog& prg, map<string, UBuffer>& buffers, Module* gmod) {
-  count_post_mapped_memory_accesses(gmod);
+  //count_post_mapped_memory_accesses(gmod);
   auto context = gmod->getContext();
   auto ns = context->getNamespace("global");
   //cout << "=== Post mapping instances for " << prg.name << endl;
@@ -4519,33 +4524,34 @@ dgraph build_shift_registers(CodegenOptions& options, CoreIR::ModuleDef* def, pr
     cout << "Shift registers..." << endl;
     cout << shift_registers << endl;
 
-    vector<pair<string, int> > vals;
-    string inpt = pick(buf.get_in_ports());
-    for (auto v : shift_registers.out_edges.at(inpt)) {
-      vals.push_back({v, shift_registers.weight(inpt, v)});
-    }
-    sort_lt_snd(vals);
-    for (auto v : vals) {
-      cout << tab(1) << v.first << " -(" << v.second << ")-> " << v.second << endl;
-    }
-
-    vector<vector<pair<string, int> > > reg_chains;
-    split_by(vals, reg_chains, [](const pair<string, int>& a, const pair<string, int>& b) {
-        return abs(a.second - b.second) < 20;
-        });
-
     dgraph dg;
-    cout << "Groups..." << endl;
-    for (auto g : reg_chains) {
-      cout << tab(1) << "Group..." << endl;
-      dg.add_edge(inpt, g.at(0).first, shift_registers.weight(inpt, g.at(0).first));
-      for (int i = 1; i < g.size(); i++) {
-        dg.add_edge(g.at(i - 1).first, g.at(i).first, g.at(i).second - g.at(i - 1).second);
+    for (auto inpt : buf.get_in_ports()) {
+      vector<pair<string, int> > vals;
+      for (auto v : shift_registers.out_edges.at(inpt)) {
+        vals.push_back({v, shift_registers.weight(inpt, v)});
       }
-      //for (auto e : g) {
+      sort_lt_snd(vals);
+      for (auto v : vals) {
+        cout << tab(1) << v.first << " -(" << v.second << ")-> " << v.second << endl;
+      }
+
+      vector<vector<pair<string, int> > > reg_chains;
+      split_by(vals, reg_chains, [](const pair<string, int>& a, const pair<string, int>& b) {
+          return abs(a.second - b.second) < 20;
+          });
+
+      cout << "Groups..." << endl;
+      for (auto g : reg_chains) {
+        cout << tab(1) << "Group..." << endl;
+        dg.add_edge(inpt, g.at(0).first, shift_registers.weight(inpt, g.at(0).first));
+        for (int i = 1; i < g.size(); i++) {
+          dg.add_edge(g.at(i - 1).first, g.at(i).first, g.at(i).second - g.at(i - 1).second);
+        }
+        //for (auto e : g) {
         //cout << tab(2) << e.first << " -> " << e.second << endl;
-      //}
-      //cout << endl;
+        //}
+        //cout << endl;
+      }
     }
     cout << dg << endl;
     //assert(false);
