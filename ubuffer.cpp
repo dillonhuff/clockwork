@@ -4916,7 +4916,7 @@ vector<string> buffer_vectorization(vector<int> iis,
       //Input must be take care
       //need to first pad the buffer output to the multiplier of
       target_buffer.merge_small_dim(fetch_width);
-      target_buffer.pad_read_dom_inner_most(fetch_width);
+      //target_buffer.pad_read_dom_inner_most(fetch_width);
       target_buffer.pad_write_dom_inner_most(fetch_width);
 
       int dim_id = target_buffer.get_vectorized_dim(fetch_width);
@@ -5214,9 +5214,30 @@ vector<string> buffer_vectorization(vector<string> buf_name_vec, int dim_id, int
       out_bd_cnt ++;
     }
 
-
+    //Resolve the SRAM collision
+    map<string, isl_map*> sram_wr, sram_rd;
     for (auto it : new_sched) {
         cout << "\tvectorized schedule for op: " << it.first << endl << str(it.second) << endl;
+        if (contains(it.first, "agg2sram"))
+            sram_wr.insert(it);
+        else if (contains(it.first, "sram2tb"))
+            sram_rd.insert(it);
+    }
+    for (auto it_rd: sram_rd) {
+        for (auto it_wr: sram_wr) {
+            auto rd_sched = it_rd.second;
+            auto wr_sched = it_wr.second;
+            cout << "\t\t rd sched: " << str(rd_sched) << endl;
+            cout << "\t\t wt sched: " << str(wr_sched) << endl;
+            int rd_start = pick(parse_pt(lexminpt(range(rd_sched))));
+            int wr_start = pick(parse_pt(lexminpt(range(wr_sched))));
+            if ((rd_start - wr_start) % fetch_width == 0) {
+                auto new_rd_sched = linear_schedule(rd_sched, {1, 0}, -1, false);
+                new_rd_sched = pad_one_more_dim_to_sched_map_innermost(new_rd_sched, 0);
+                new_sched.at(it_rd.first) = new_rd_sched;
+                break;
+            }
+        }
     }
 
     return new_sched;

@@ -734,8 +734,8 @@
           }
         },
         "connections":[
-          ["inner_compute$umin_669_670_671$ucomp$compop.data.in.1","inner_compute$const_p255__670.out"],
-          ["inner_compute$umin_669_670_671$min_mux$mux.data.in.1","inner_compute$const_p255__6701.out"],
+          ["inner_compute$umin_669_670_671$min_mux$mux.data.in.1","inner_compute$const_p255__670.out"],
+          ["inner_compute$umin_669_670_671$ucomp$compop.data.in.1","inner_compute$const_p255__6701.out"],
           ["inner_compute$lshr_667_668_669$binop.data.in.1","inner_compute$const_p5__668.out"],
           ["inner_compute$mul_ratio_stencil_2_hw_input_global_wrapper_stencil_5_667$binop.data.out","inner_compute$lshr_667_668_669$binop.data.in.0"],
           ["inner_compute$umin_669_670_671$min_mux$mux.data.in.0","inner_compute$lshr_667_668_669$binop.data.out"],
@@ -912,8 +912,8 @@
           ["inner_compute$const_p8__617.out","inner_compute$ashr_blur_unnormalized_stencil_2_617_618$binop.data.in.1"],
           ["inner_compute$sub_616_619_620$binop.data.in.1","inner_compute$ashr_blur_unnormalized_stencil_2_617_618$binop.data.out"],
           ["inner_compute$umax_gray_stencil_16_625_626$cgramax.data.in.1","inner_compute$const_p1__625.out"],
-          ["inner_compute$umin_627_621_628$ucomp$compop.data.in.1","inner_compute$const_p255__621$1.out"],
-          ["inner_compute$umin_627_621_628$min_mux$mux.data.in.1","inner_compute$const_p255__621$11.out"],
+          ["inner_compute$umin_627_621_628$min_mux$mux.data.in.1","inner_compute$const_p255__621$1.out"],
+          ["inner_compute$umin_627_621_628$ucomp$compop.data.in.1","inner_compute$const_p255__621$11.out"],
           ["inner_compute$umin_620_621_622$ucomp$compop.data.in.1","inner_compute$const_p255__621.out"],
           ["inner_compute$umin_620_621_622$min_mux$mux.data.in.1","inner_compute$const_p255__6211.out"],
           ["inner_compute$mul_gray_stencil_16_615_616$binop.data.in.1","inner_compute$const_p2__615.out"],
@@ -1025,7 +1025,7 @@
           "ub_gray_stencil_op_hcompute_gray_stencil_18_to_gray_stencil_op_hcompute_blur_unnormalized_stencil_1_26_garnet":{
             "genref":"cgralib.Mem",
             "genargs":{"ID":["String","_U1"], "has_external_addrgen":["Bool",false], "has_flush":["Bool",true], "has_read_valid":["Bool",false], "has_reset":["Bool",false], "has_stencil_valid":["Bool",false], "has_valid":["Bool",false], "is_rom":["Bool",false], "num_inputs":["Int",1], "num_outputs":["Int",2], "use_prebuilt_mem":["Bool",true], "width":["Int",16]},
-            "modargs":{"config":["Json",{"agg2sram_0":{"cycle_starting_addr":[4],"cycle_stride":[4,64],"dimensionality":2,"extent":[16,64],"read_data_starting_addr":[0],"read_data_stride":[1,0],"write_data_starting_addr":[0],"write_data_stride":[1,16]},"in2agg_0":{"cycle_starting_addr":[0],"cycle_stride":[1,4,64],"dimensionality":3,"extent":[4,16,64],"write_data_starting_addr":[0],"write_data_stride":[1,4,0]},"sram2tb_0":{"cycle_starting_addr":[252],"cycle_stride":[4,64],"dimensionality":2,"extent":[16,60],"read_data_starting_addr":[32],"read_data_stride":[1,16],"write_data_starting_addr":[0],"write_data_stride":[1,0]},"sram2tb_1":{"cycle_starting_addr":[254],"cycle_stride":[4,64],"dimensionality":2,"extent":[16,60],"read_data_starting_addr":[48],"read_data_stride":[1,16],"write_data_starting_addr":[0],"write_data_stride":[1,0]},"tb2out_0":{"cycle_starting_addr":[257],"cycle_stride":[1,4,64],"dimensionality":3,"extent":[4,16,60],"read_data_starting_addr":[1],"read_data_stride":[1,4,0]},"tb2out_1":{"cycle_starting_addr":[257],"cycle_stride":[1,4,64],"dimensionality":3,"extent":[4,16,60],"read_data_starting_addr":[1],"read_data_stride":[1,4,0]}}], "init":["Json",null], "mode":["String","lake"]}
+            "modargs":{"config":["Json",{"agg2sram_0":{"cycle_starting_addr":[4],"cycle_stride":[4,64],"dimensionality":2,"extent":[16,64],"read_data_starting_addr":[0],"read_data_stride":[1,0],"write_data_starting_addr":[0],"write_data_stride":[1,16]},"in2agg_0":{"cycle_starting_addr":[0],"cycle_stride":[1,4,64],"dimensionality":3,"extent":[4,16,64],"write_data_starting_addr":[0],"write_data_stride":[1,4,0]},"sram2tb_0":{"cycle_starting_addr":[251],"cycle_stride":[4,64],"dimensionality":2,"extent":[16,60],"read_data_starting_addr":[32],"read_data_stride":[1,16],"write_data_starting_addr":[0],"write_data_stride":[1,0]},"sram2tb_1":{"cycle_starting_addr":[253],"cycle_stride":[4,64],"dimensionality":2,"extent":[16,60],"read_data_starting_addr":[48],"read_data_stride":[1,16],"write_data_starting_addr":[0],"write_data_stride":[1,0]},"tb2out_0":{"cycle_starting_addr":[257],"cycle_stride":[1,4,64],"dimensionality":3,"extent":[4,16,60],"read_data_starting_addr":[1],"read_data_stride":[1,4,0]},"tb2out_1":{"cycle_starting_addr":[257],"cycle_stride":[1,4,64],"dimensionality":3,"extent":[4,16,60],"read_data_starting_addr":[1],"read_data_stride":[1,4,0]}}], "init":["Json",null], "mode":["String","lake"]}
           },
           "ub_gray_stencil_op_hcompute_gray_stencil_18_to_gray_stencil_op_hcompute_blur_unnormalized_stencil_1_32_clk_en_const1_lutcnst":{
             "genref":"cgralib.PE",
@@ -1755,8 +1755,8 @@
           ["const_p8__617.out","ashr_blur_unnormalized_stencil_2_617_618$binop.data.in.1"],
           ["sub_616_619_620$binop.data.in.1","ashr_blur_unnormalized_stencil_2_617_618$binop.data.out"],
           ["umax_gray_stencil_16_625_626$cgramax.data.in.1","const_p1__625.out"],
-          ["umin_627_621_628$ucomp$compop.data.in.1","const_p255__621$1.out"],
-          ["umin_627_621_628$min_mux$mux.data.in.1","const_p255__621$11.out"],
+          ["umin_627_621_628$min_mux$mux.data.in.1","const_p255__621$1.out"],
+          ["umin_627_621_628$ucomp$compop.data.in.1","const_p255__621$11.out"],
           ["umin_620_621_622$ucomp$compop.data.in.1","const_p255__621.out"],
           ["umin_620_621_622$min_mux$mux.data.in.1","const_p255__6211.out"],
           ["mul_gray_stencil_16_615_616$binop.data.in.1","const_p2__615.out"],
@@ -2167,7 +2167,7 @@
           "gray_stencil$ub_gray_stencil_op_hcompute_gray_stencil_18_to_gray_stencil_op_hcompute_blur_unnormalized_stencil_1_26_garnet":{
             "genref":"cgralib.Mem",
             "genargs":{"ID":["String","_U1"], "has_external_addrgen":["Bool",false], "has_flush":["Bool",true], "has_read_valid":["Bool",false], "has_reset":["Bool",false], "has_stencil_valid":["Bool",false], "has_valid":["Bool",false], "is_rom":["Bool",false], "num_inputs":["Int",1], "num_outputs":["Int",2], "use_prebuilt_mem":["Bool",true], "width":["Int",16]},
-            "modargs":{"config":["Json",{"agg2sram_0":{"cycle_starting_addr":[4],"cycle_stride":[4,64],"dimensionality":2,"extent":[16,64],"read_data_starting_addr":[0],"read_data_stride":[1,0],"write_data_starting_addr":[0],"write_data_stride":[1,16]},"in2agg_0":{"cycle_starting_addr":[0],"cycle_stride":[1,4,64],"dimensionality":3,"extent":[4,16,64],"write_data_starting_addr":[0],"write_data_stride":[1,4,0]},"sram2tb_0":{"cycle_starting_addr":[252],"cycle_stride":[4,64],"dimensionality":2,"extent":[16,60],"read_data_starting_addr":[32],"read_data_stride":[1,16],"write_data_starting_addr":[0],"write_data_stride":[1,0]},"sram2tb_1":{"cycle_starting_addr":[254],"cycle_stride":[4,64],"dimensionality":2,"extent":[16,60],"read_data_starting_addr":[48],"read_data_stride":[1,16],"write_data_starting_addr":[0],"write_data_stride":[1,0]},"tb2out_0":{"cycle_starting_addr":[257],"cycle_stride":[1,4,64],"dimensionality":3,"extent":[4,16,60],"read_data_starting_addr":[1],"read_data_stride":[1,4,0]},"tb2out_1":{"cycle_starting_addr":[257],"cycle_stride":[1,4,64],"dimensionality":3,"extent":[4,16,60],"read_data_starting_addr":[1],"read_data_stride":[1,4,0]}}], "init":["Json",null], "mode":["String","lake"]}
+            "modargs":{"config":["Json",{"agg2sram_0":{"cycle_starting_addr":[4],"cycle_stride":[4,64],"dimensionality":2,"extent":[16,64],"read_data_starting_addr":[0],"read_data_stride":[1,0],"write_data_starting_addr":[0],"write_data_stride":[1,16]},"in2agg_0":{"cycle_starting_addr":[0],"cycle_stride":[1,4,64],"dimensionality":3,"extent":[4,16,64],"write_data_starting_addr":[0],"write_data_stride":[1,4,0]},"sram2tb_0":{"cycle_starting_addr":[251],"cycle_stride":[4,64],"dimensionality":2,"extent":[16,60],"read_data_starting_addr":[32],"read_data_stride":[1,16],"write_data_starting_addr":[0],"write_data_stride":[1,0]},"sram2tb_1":{"cycle_starting_addr":[253],"cycle_stride":[4,64],"dimensionality":2,"extent":[16,60],"read_data_starting_addr":[48],"read_data_stride":[1,16],"write_data_starting_addr":[0],"write_data_stride":[1,0]},"tb2out_0":{"cycle_starting_addr":[257],"cycle_stride":[1,4,64],"dimensionality":3,"extent":[4,16,60],"read_data_starting_addr":[1],"read_data_stride":[1,4,0]},"tb2out_1":{"cycle_starting_addr":[257],"cycle_stride":[1,4,64],"dimensionality":3,"extent":[4,16,60],"read_data_starting_addr":[1],"read_data_stride":[1,4,0]}}], "init":["Json",null], "mode":["String","lake"]}
           },
           "gray_stencil$ub_gray_stencil_op_hcompute_gray_stencil_18_to_gray_stencil_op_hcompute_blur_unnormalized_stencil_1_32_clk_en_const1_lutcnst":{
             "genref":"cgralib.PE",
@@ -2791,8 +2791,8 @@
           }
         },
         "connections":[
-          ["gray_stencil$ub_gray_stencil_op_hcompute_gray_stencil_18_to_gray_stencil_op_hcompute_blur_unnormalized_stencil_1_26_garnet.chain_chain_en","gray_stencil$chain_disen_const_U131_lutcnst.bit.out"],
-          ["gray_stencil$ub_gray_stencil_op_hcompute_gray_stencil_18_to_gray_stencil_op_hcompute_blur_unnormalized_stencil_1_32_garnet.chain_chain_en","gray_stencil$chain_disen_const_U13_lutcnst.bit.out"],
+          ["gray_stencil$ub_gray_stencil_op_hcompute_gray_stencil_18_to_gray_stencil_op_hcompute_blur_unnormalized_stencil_1_32_garnet.chain_chain_en","gray_stencil$chain_disen_const_U131_lutcnst.bit.out"],
+          ["gray_stencil$ub_gray_stencil_op_hcompute_gray_stencil_18_to_gray_stencil_op_hcompute_blur_unnormalized_stencil_1_26_garnet.chain_chain_en","gray_stencil$chain_disen_const_U13_lutcnst.bit.out"],
           ["gray_stencil$d_reg__U9$reg0.out","gray_stencil$d_reg__U10$reg0.in"],
           ["op_hcompute_blur_unnormalized_stencil_1$inner_compute$add_487_488_489$binop.data.in.1","gray_stencil$d_reg__U10$reg0.out"],
           ["gray_stencil$ub_gray_stencil_op_hcompute_gray_stencil_18_to_gray_stencil_op_hcompute_blur_unnormalized_stencil_1_32_garnet.data_out_0","gray_stencil$d_reg__U11$reg0.in"],
@@ -2823,8 +2823,8 @@
           ["op_hcompute_blur_unnormalized_stencil_1$inner_compute$mul_gray_stencil_7_498_499$binop.data.in.0","gray_stencil$ub_gray_stencil_op_hcompute_gray_stencil_18_to_gray_stencil_op_hcompute_blur_unnormalized_stencil_1_26_garnet.data_out_0"],
           ["op_hcompute_blur_unnormalized_stencil_1$inner_compute$mul_gray_stencil_11_512_513$binop.data.in.0","gray_stencil$ub_gray_stencil_op_hcompute_gray_stencil_18_to_gray_stencil_op_hcompute_blur_unnormalized_stencil_1_26_garnet.data_out_1"],
           ["io1in_reset.out","gray_stencil$ub_gray_stencil_op_hcompute_gray_stencil_18_to_gray_stencil_op_hcompute_blur_unnormalized_stencil_1_26_garnet.flush"],
-          ["gray_stencil$ub_gray_stencil_op_hcompute_gray_stencil_18_to_gray_stencil_op_hcompute_blur_unnormalized_stencil_1_32_garnet.clk_en","gray_stencil$ub_gray_stencil_op_hcompute_gray_stencil_18_to_gray_stencil_op_hcompute_blur_unnormalized_stencil_1_32_clk_en_const1_lutcnst.bit.out"],
-          ["gray_stencil$ub_gray_stencil_op_hcompute_gray_stencil_18_to_gray_stencil_op_hcompute_blur_unnormalized_stencil_1_32_garnet.rst_n","gray_stencil$ub_gray_stencil_op_hcompute_gray_stencil_18_to_gray_stencil_op_hcompute_blur_unnormalized_stencil_1_32_clk_en_const_lutcnst.bit.out"],
+          ["gray_stencil$ub_gray_stencil_op_hcompute_gray_stencil_18_to_gray_stencil_op_hcompute_blur_unnormalized_stencil_1_32_garnet.rst_n","gray_stencil$ub_gray_stencil_op_hcompute_gray_stencil_18_to_gray_stencil_op_hcompute_blur_unnormalized_stencil_1_32_clk_en_const1_lutcnst.bit.out"],
+          ["gray_stencil$ub_gray_stencil_op_hcompute_gray_stencil_18_to_gray_stencil_op_hcompute_blur_unnormalized_stencil_1_32_garnet.clk_en","gray_stencil$ub_gray_stencil_op_hcompute_gray_stencil_18_to_gray_stencil_op_hcompute_blur_unnormalized_stencil_1_32_clk_en_const_lutcnst.bit.out"],
           ["op_hcompute_gray_stencil$inner_compute$lshr_410_411_412$binop.data.out","gray_stencil$ub_gray_stencil_op_hcompute_gray_stencil_18_to_gray_stencil_op_hcompute_blur_unnormalized_stencil_1_32_garnet.data_in_0"],
           ["op_hcompute_blur_unnormalized_stencil_1$inner_compute$mul_gray_stencil_3_481_485$binop.data.in.0","gray_stencil$ub_gray_stencil_op_hcompute_gray_stencil_18_to_gray_stencil_op_hcompute_blur_unnormalized_stencil_1_32_garnet.data_out_0"],
           ["io1in_reset.out","gray_stencil$ub_gray_stencil_op_hcompute_gray_stencil_18_to_gray_stencil_op_hcompute_blur_unnormalized_stencil_1_32_garnet.flush"],
@@ -2918,16 +2918,16 @@
           ["op_hcompute_hw_output_stencil$inner_compute$umin_652_653_654$ucomp$compop.data.in.0","op_hcompute_hw_output_stencil$inner_compute$lshr_650_651_652$binop.data.out"],
           ["op_hcompute_ratio_stencil$inner_compute$umin_627_621_628$min_mux$mux.data.out","op_hcompute_hw_output_stencil$inner_compute$mul_ratio_stencil_1_hw_input_global_wrapper_stencil_4_650$binop.data.in.0"],
           ["op_hcompute_hw_output_stencil$inner_compute$umin_652_653_654$ucomp$compop.bit.out","op_hcompute_hw_output_stencil$inner_compute$umin_652_653_654$min_mux$mux.bit.in.0"],
-          ["op_hcompute_hw_output_stencil_1$inner_compute$umin_669_670_671$ucomp$compop.data.in.1","op_hcompute_hw_output_stencil_1$inner_compute$const_p255__670.out"],
-          ["op_hcompute_hw_output_stencil_1$inner_compute$umin_669_670_671$min_mux$mux.data.in.1","op_hcompute_hw_output_stencil_1$inner_compute$const_p255__6701.out"],
+          ["op_hcompute_hw_output_stencil_1$inner_compute$umin_669_670_671$min_mux$mux.data.in.1","op_hcompute_hw_output_stencil_1$inner_compute$const_p255__670.out"],
+          ["op_hcompute_hw_output_stencil_1$inner_compute$umin_669_670_671$ucomp$compop.data.in.1","op_hcompute_hw_output_stencil_1$inner_compute$const_p255__6701.out"],
           ["op_hcompute_hw_output_stencil_1$inner_compute$lshr_667_668_669$binop.data.in.1","op_hcompute_hw_output_stencil_1$inner_compute$const_p5__668.out"],
           ["op_hcompute_hw_output_stencil_1$inner_compute$mul_ratio_stencil_2_hw_input_global_wrapper_stencil_5_667$binop.data.out","op_hcompute_hw_output_stencil_1$inner_compute$lshr_667_668_669$binop.data.in.0"],
           ["op_hcompute_hw_output_stencil_1$inner_compute$umin_669_670_671$min_mux$mux.data.in.0","op_hcompute_hw_output_stencil_1$inner_compute$lshr_667_668_669$binop.data.out"],
           ["op_hcompute_hw_output_stencil_1$inner_compute$umin_669_670_671$ucomp$compop.data.in.0","op_hcompute_hw_output_stencil_1$inner_compute$lshr_667_668_669$binop.data.out"],
           ["op_hcompute_ratio_stencil$inner_compute$umin_627_621_628$min_mux$mux.data.out","op_hcompute_hw_output_stencil_1$inner_compute$mul_ratio_stencil_2_hw_input_global_wrapper_stencil_5_667$binop.data.in.0"],
           ["op_hcompute_hw_output_stencil_1$inner_compute$umin_669_670_671$ucomp$compop.bit.out","op_hcompute_hw_output_stencil_1$inner_compute$umin_669_670_671$min_mux$mux.bit.in.0"],
-          ["op_hcompute_hw_output_stencil_1_port_controller_garnet.rst_n","op_hcompute_hw_output_stencil_1_port_controller_clk_en_const1_lutcnst.bit.out"],
-          ["op_hcompute_hw_output_stencil_1_port_controller_garnet.clk_en","op_hcompute_hw_output_stencil_1_port_controller_clk_en_const_lutcnst.bit.out"],
+          ["op_hcompute_hw_output_stencil_1_port_controller_garnet.clk_en","op_hcompute_hw_output_stencil_1_port_controller_clk_en_const1_lutcnst.bit.out"],
+          ["op_hcompute_hw_output_stencil_1_port_controller_garnet.rst_n","op_hcompute_hw_output_stencil_1_port_controller_clk_en_const_lutcnst.bit.out"],
           ["op_hcompute_hw_output_stencil_2$inner_compute$umin_686_687_688$ucomp$compop.data.in.1","op_hcompute_hw_output_stencil_2$inner_compute$const_p255__687.out"],
           ["op_hcompute_hw_output_stencil_2$inner_compute$umin_686_687_688$min_mux$mux.data.in.1","op_hcompute_hw_output_stencil_2$inner_compute$const_p255__6871.out"],
           ["op_hcompute_hw_output_stencil_2$inner_compute$lshr_684_685_686$binop.data.in.1","op_hcompute_hw_output_stencil_2$inner_compute$const_p5__685.out"],
@@ -2943,8 +2943,8 @@
           ["op_hcompute_ratio_stencil$inner_compute$const_p8__617.out","op_hcompute_ratio_stencil$inner_compute$ashr_blur_unnormalized_stencil_2_617_618$binop.data.in.1"],
           ["op_hcompute_ratio_stencil$inner_compute$sub_616_619_620$binop.data.in.1","op_hcompute_ratio_stencil$inner_compute$ashr_blur_unnormalized_stencil_2_617_618$binop.data.out"],
           ["op_hcompute_ratio_stencil$inner_compute$umax_gray_stencil_16_625_626$cgramax.data.in.1","op_hcompute_ratio_stencil$inner_compute$const_p1__625.out"],
-          ["op_hcompute_ratio_stencil$inner_compute$umin_627_621_628$ucomp$compop.data.in.1","op_hcompute_ratio_stencil$inner_compute$const_p255__621$1.out"],
-          ["op_hcompute_ratio_stencil$inner_compute$umin_627_621_628$min_mux$mux.data.in.1","op_hcompute_ratio_stencil$inner_compute$const_p255__621$11.out"],
+          ["op_hcompute_ratio_stencil$inner_compute$umin_627_621_628$min_mux$mux.data.in.1","op_hcompute_ratio_stencil$inner_compute$const_p255__621$1.out"],
+          ["op_hcompute_ratio_stencil$inner_compute$umin_627_621_628$ucomp$compop.data.in.1","op_hcompute_ratio_stencil$inner_compute$const_p255__621$11.out"],
           ["op_hcompute_ratio_stencil$inner_compute$umin_620_621_622$ucomp$compop.data.in.1","op_hcompute_ratio_stencil$inner_compute$const_p255__621.out"],
           ["op_hcompute_ratio_stencil$inner_compute$umin_620_621_622$min_mux$mux.data.in.1","op_hcompute_ratio_stencil$inner_compute$const_p255__6211.out"],
           ["op_hcompute_ratio_stencil$inner_compute$mul_gray_stencil_16_615_616$binop.data.in.1","op_hcompute_ratio_stencil$inner_compute$const_p2__615.out"],
