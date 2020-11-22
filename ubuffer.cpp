@@ -1512,6 +1512,38 @@ int UBuffer::get_vectorized_dim(int fetch_width) {
   assert(false);
 }
 
+void generate_access_cnt(CodegenOptions& options,
+        string ub_ins_name,
+        map<string, UBuffer> & rewrite_buffer,
+        mem_access_cnt& acc_cnt) {
+    map<string, int> ubuf_rd, ubuf_wr;
+    for (auto it: rewrite_buffer) {
+        string buf_name = it.first;
+        string micro_buf_name = split_at(buf_name, "_").back();
+        auto buf_component = it.second;
+        int rd_cnts = buf_component.global_read_count();
+        int wr_cnts = buf_component.global_write_count();
+
+        cout << "\t\tSub Buffer: " << buf_name << endl;
+        cout << "\t\tRead Count: " << rd_cnts<< endl;
+        cout << "\t\tWriteCount: " << wr_cnts<< endl;
+
+        if (ubuf_rd.count(micro_buf_name)) {
+            ubuf_rd.at(micro_buf_name) += rd_cnts;
+        } else {
+            ubuf_rd[micro_buf_name] = rd_cnts;
+        }
+
+        if (ubuf_wr.count(micro_buf_name)) {
+            ubuf_wr.at(micro_buf_name) += wr_cnts;
+        } else {
+            ubuf_wr[micro_buf_name] = wr_cnts;
+        }
+    }
+    acc_cnt.read_cnt.insert(make_pair(ub_ins_name, ubuf_rd));
+    acc_cnt.write_cnt.insert(make_pair(ub_ins_name, ubuf_wr));
+}
+
 
 //generate/realize the rewrite structure inside ubuffer node
 void UBuffer::generate_coreir(CodegenOptions& options,
@@ -2704,6 +2736,41 @@ void UBuffer::generate_smt_stream(CodegenOptions& options) {
       //Generate SMT stream if needed
       if (options.emit_smt_stream) {
         generate_lake_stream(options, vec_buf, global_schedule_from_buffers(vec_buf));
+      }
+    }
+  }
+}
+
+void UBuffer::collect_memory_cnt(CodegenOptions& options, mem_access_cnt& mem_access) {
+
+  //sort the bank by delay first
+  auto bank_list = get_banks_and_sort();
+
+  //generate all the ubuffer for internal vectorization
+  auto rewrite_buffer = generate_ubuffer(options);
+
+  for (auto bk : bank_list) {
+    //assert(false);
+    std::set<string> inpts = get_bank_inputs(bk.name);
+    std::set<string> outpts = get_bank_outputs(bk.name);
+    auto buf_inpts = get_in_ports();
+    cout << "Bank:" << bk.name << " has max_delay: " << bk.maxdelay << endl;
+    if (bk.maxdelay == 0) {
+      continue;
+    } else if (bk.maxdelay <= options.merge_threshold) {
+      continue;
+    } else {
+      string ub_ins_name = "ub_"+bk.name;
+
+      map<string, UBuffer> vec_buf = {{bk.name + "_ubuf", rewrite_buffer.at(bk.name + "_ubuf")}};
+
+      //vectorization pass for lake tile
+      if (options.rtl_options.target_tile == TARGET_TILE_WIDE_FETCH_WITH_ADDRGEN) {
+        buffer_vectorization(options.iis, {bk.name + "_ubuf"},
+                options.mem_tile.fetch_width,
+                vec_buf);
+                //rewrite_buffer);
+        generate_access_cnt(options, ub_ins_name+"_ubuf", vec_buf, mem_access);
       }
     }
   }

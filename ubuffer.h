@@ -1799,6 +1799,44 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
       return s;
     }
 
+
+    isl_union_set* global_write_domain() {
+      uset* s = isl_union_set_read_from_str(ctx, "{ }");
+      auto wr_ops = get_write_ops();
+      for (auto dm: domain) {
+        string dm_name = ::name(dm.second);
+        if (wr_ops.count(dm_name)) {
+          s = unn(s, to_uset(cpy(dm.second)));
+        }
+      }
+      return s;
+    }
+
+    isl_union_set* global_read_domain() {
+      uset* s = isl_union_set_read_from_str(ctx, "{ }");
+      auto rd_ops = get_read_ops();
+      for (auto dm: domain) {
+        string dm_name = ::name(dm.second);
+        if (rd_ops.count(dm_name)) {
+          s = unn(s, to_uset(cpy(dm.second)));
+        }
+      }
+      return s;
+    }
+
+    int global_write_count() {
+      int cnt = 0;
+      uset* wr_dom = global_write_domain();
+      return int_upper_bound(card(wr_dom));
+    }
+
+    int global_read_count() {
+      int cnt = 0;
+      uset* rd_dom = global_read_domain();
+      return  int_upper_bound(card(rd_dom));
+
+    }
+
     isl_union_set* global_retrive_domain() {
       uset* s = isl_union_set_read_from_str(ctx, "{ }");
       for (auto other : retrive_domain) {
@@ -2270,6 +2308,7 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
 
     //smt stream generation
     void generate_smt_stream(CodegenOptions& options);
+    void collect_memory_cnt(CodegenOptions& options, mem_access_cnt& mem_access);
 #ifdef COREIR
     CoreIR::Module* affine_controller(CoreIR::Context* context, isl_set* dom, isl_aff* aff);
 

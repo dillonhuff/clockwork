@@ -11508,6 +11508,15 @@ void generate_smt_stream(CodegenOptions& options, map<string, UBuffer>& buffers,
   }
 }
 
+void Mem_access_count(CodegenOptions& options, map<string, UBuffer>& buffers, mem_access_cnt& mem_access, prog& prg) {
+  for (auto & buf: buffers) {
+    if (!prg.is_boundary(buf.first)) {
+      //generate stream with the rewrite buffer
+      buf.second.collect_memory_cnt(options, mem_access);
+    }
+  }
+}
+
 
 void identity_stream_through_mem_coreir_test() {
   prog prg("identity_stream_through_mem");
@@ -13299,7 +13308,7 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   test_apps.push_back(up_sample());
   test_apps.push_back(unsharp());
 
-  test_apps.push_back(mobilenet_unrolled());
+  //test_apps.push_back(mobilenet_unrolled());
   ////test_apps.push_back(unsharp());
 
   //test_apps.push_back(conv_3_3_wide());
@@ -16504,6 +16513,33 @@ void generate_smt_stream_for_garnet_single_port_mem(prog& prg) {
   generate_smt_stream(options, buffers_opt, prg);
 }
 
+void emit_mem_access_count_to_csv(string dir, CodegenOptions& options, mem_access_cnt& acc_cnt) {
+
+    cmd("mkdir -p "+dir);
+    ofstream rd(dir +"/" + "memory_read.csv");
+    ofstream wr(dir +"/" + "memory_write.csv");
+    cout << "\tGenerate Memory Count Collateral for : " << tab(1) << dir << endl;
+    for (auto it: acc_cnt.read_cnt) {
+        string buf_name = it.first;
+        cout << tab(2) << "Emit Memory Access Count for Buffer: " << buf_name << endl;
+        rd << buf_name << ",";
+        for (auto sub_buf: it.second) {
+            cout << tab(4) << "Sub buf read: " << sub_buf.first << ": " << sub_buf.second << endl;
+            rd << sub_buf.first << ", " << sub_buf.second << ",";
+        }
+        rd << endl;
+
+        wr << buf_name << ",";
+        for (auto sub_buf: acc_cnt.write_cnt.at(buf_name)) {
+            cout << tab(4) << "Sub buf write: " << sub_buf.first << ": " << sub_buf.second << endl;
+            wr << sub_buf.first << ", " << sub_buf.second<< ",";
+        }
+        wr << endl;
+    }
+    rd.close();
+    wr.close();
+}
+
 void compile_for_garnet_single_port_mem(prog& prg,
         string dir,
         bool gen_smt_stream,
@@ -16566,6 +16602,9 @@ void compile_for_garnet_single_port_mem(prog& prg,
     b.second.generate_banks_and_merge(options);
     b.second.port_group2bank(options);
   }
+  mem_access_cnt mem_access;
+  Mem_access_count(options, buffers_opt, mem_access, prg);
+  emit_mem_access_count_to_csv(dir + "/MemCount/" + prg.name, options, mem_access);
 
 #ifdef COREIR
   generate_garnet_coreir(buffers_opt, prg, options, sched);

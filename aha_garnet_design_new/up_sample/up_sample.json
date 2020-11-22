@@ -10,8 +10,14 @@
           ["input_copy_stencil_op_hcompute_hw_input_stencil_read",["Array",1,["Array",16,"BitIn"]]],
           ["hw_input_stencil_op_hcompute_hw_input_stencil_write",["Array",1,["Array",16,"Bit"]]]
         ]],
+        "instances":{
+          "inner_compute":{
+            "modref":"global.hcompute_hw_input_stencil"
+          }
+        },
         "connections":[
-          ["self.input_copy_stencil_op_hcompute_hw_input_stencil_read.0","self.hw_input_stencil_op_hcompute_hw_input_stencil_write.0"],
+          ["self.input_copy_stencil_op_hcompute_hw_input_stencil_read.0","inner_compute.in0_input_copy_stencil.0"],
+          ["self.hw_input_stencil_op_hcompute_hw_input_stencil_write.0","inner_compute.out_hw_input_stencil"],
           ["self.valid_pass_out","self.valid_pass_in"]
         ]
       },
@@ -23,8 +29,14 @@
           ["nearest_neighbor_stencil_op_hcompute_hw_output_stencil_read",["Array",1,["Array",16,"BitIn"]]],
           ["hw_output_stencil_op_hcompute_hw_output_stencil_write",["Array",1,["Array",16,"Bit"]]]
         ]],
+        "instances":{
+          "inner_compute":{
+            "modref":"global.hcompute_hw_output_stencil"
+          }
+        },
         "connections":[
-          ["self.nearest_neighbor_stencil_op_hcompute_hw_output_stencil_read.0","self.hw_output_stencil_op_hcompute_hw_output_stencil_write.0"],
+          ["self.nearest_neighbor_stencil_op_hcompute_hw_output_stencil_read.0","inner_compute.in0_nearest_neighbor_stencil.0"],
+          ["self.hw_output_stencil_op_hcompute_hw_output_stencil_write.0","inner_compute.out_hw_output_stencil"],
           ["self.valid_pass_out","self.valid_pass_in"]
         ]
       },
@@ -36,9 +48,42 @@
           ["hw_input_stencil_op_hcompute_nearest_neighbor_stencil_read",["Array",1,["Array",16,"BitIn"]]],
           ["nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_write",["Array",1,["Array",16,"Bit"]]]
         ]],
+        "instances":{
+          "inner_compute":{
+            "modref":"global.hcompute_nearest_neighbor_stencil"
+          }
+        },
         "connections":[
-          ["self.nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_write.0","self.hw_input_stencil_op_hcompute_nearest_neighbor_stencil_read.0"],
+          ["self.hw_input_stencil_op_hcompute_nearest_neighbor_stencil_read.0","inner_compute.in0_hw_input_stencil.0"],
+          ["self.nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_write.0","inner_compute.out_nearest_neighbor_stencil"],
           ["self.valid_pass_out","self.valid_pass_in"]
+        ]
+      },
+      "hcompute_hw_input_stencil":{
+        "type":["Record",[
+          ["out_hw_input_stencil",["Array",16,"Bit"]],
+          ["in0_input_copy_stencil",["Array",1,["Array",16,"BitIn"]]]
+        ]],
+        "connections":[
+          ["self.out_hw_input_stencil","self.in0_input_copy_stencil.0"]
+        ]
+      },
+      "hcompute_hw_output_stencil":{
+        "type":["Record",[
+          ["out_hw_output_stencil",["Array",16,"Bit"]],
+          ["in0_nearest_neighbor_stencil",["Array",1,["Array",16,"BitIn"]]]
+        ]],
+        "connections":[
+          ["self.out_hw_output_stencil","self.in0_nearest_neighbor_stencil.0"]
+        ]
+      },
+      "hcompute_nearest_neighbor_stencil":{
+        "type":["Record",[
+          ["out_nearest_neighbor_stencil",["Array",16,"Bit"]],
+          ["in0_hw_input_stencil",["Array",1,["Array",16,"BitIn"]]]
+        ]],
+        "connections":[
+          ["self.out_nearest_neighbor_stencil","self.in0_hw_input_stencil.0"]
         ]
       },
       "hw_input_stencil_ub":{

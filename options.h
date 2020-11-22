@@ -175,3 +175,8 @@ struct power_analysis_info {
 
 };
 
+struct mem_access_cnt {
+  map<string, map<string, int> > read_cnt;
+  map<string, map<string, int> > write_cnt;
+};
+
