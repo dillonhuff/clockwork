@@ -2820,6 +2820,33 @@ void count_memory_tiles(Module* top) {
   //jpass->writeToStream(file,top->getRefName());
 }
 
+void count_post_mapped_memory_use(Module* gmod) {
+  int total_words_used = 0;
+  for (auto inst : gmod->getDef()->getInstances()) {
+    if (inst.second->getModuleRef()->getName() == "Mem_amber") {
+      auto config = inst.second->getMetaData()["config"];
+
+      cout << "Metadata..." << config << endl;
+      if (config.find("BLOCK_SREG_DELAY") != config.end()) {
+        cout << tab(1) << "Block sreg of length: " << config["BLOCK_SREG_DELAY"].get<int>() << endl;
+        total_words_used +=
+          2*config["BLOCK_SREG_DELAY"].get<int>();
+      } else if (config.find("LINEAR_SREG_DELAY") != config.end()) {
+        cout << tab(1) << "Linear sreg of length: " << config["LINEAR_SREG_DELAY"].get<int>() << endl;
+        total_words_used +=
+          config["LINEAR_SREG_DELAY"].get<int>();
+        //assert(false);
+      } else {
+        int acc_range = config["max_addr"].get<int>() - config["min_addr"].get<int>() + 1;
+        total_words_used += acc_range;
+      }
+    }
+  }
+
+  cout << "Total words used by " << gmod->getName() << ": " << total_words_used << endl;
+  //assert(false);
+}
+
 void count_post_mapped_memory_accesses(Module* gmod) {
   int accesses = 0;
   int non_config_reg_tiles = 0;
@@ -2846,6 +2873,7 @@ void count_post_mapped_memory_accesses(Module* gmod) {
 }
 
 void analyze_post_mapped_app(CodegenOptions& options, prog& prg, map<string, UBuffer>& buffers, Module* gmod) {
+  //count_post_mapped_memory_use(gmod);
   //count_post_mapped_memory_accesses(gmod);
   auto context = gmod->getContext();
   auto ns = context->getNamespace("global");

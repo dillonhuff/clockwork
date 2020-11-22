@@ -4784,6 +4784,30 @@ isl_map* consumer_map(op* loop, const std::string& b, prog& prg) {
   return m;
 }
 
+vector<isl_multi_aff*> write_addrs(op* op, const std::string& buf, prog& prg) {
+  assert(!op->is_loop() && !op->is_if());
+  auto surrounding = surrounding_vars(op, prg);
+
+  vector<string> aff_terms;
+  return {rdmultiaff(prg.ctx, curlies(op->name + bracket_list(surrounding) + " -> " + buf + sep_list(aff_terms, "[", "]", ", ")))};
+}
+
+vector<isl_multi_aff*> read_addrs(op* op, const std::string& buf, prog& prg) {
+  assert(!op->is_loop() && !op->is_if());
+  auto surrounding = surrounding_vars(op, prg);
+
+  vector<isl_multi_aff*> affs;
+  for (auto cp : op->consumes_pair()) {
+    if (cp.first == buf) {
+      assert(cp.second.size() == 1);
+      vector<string> aff_terms{cp.second.at(0).second};
+      auto aff = rdmultiaff(prg.ctx, curlies(op->name + bracket_list(surrounding) + " -> " + sep_list(aff_terms, "[", "]", ", ")));
+
+    }
+  }
+  return affs;
+}
+
 umap* written_at(const std::string& level, const std::string& buffer, prog& prg) {
   auto loop = prg.find_loop(level);
   auto read_maps = get_maps(prg.producer_map(buffer));

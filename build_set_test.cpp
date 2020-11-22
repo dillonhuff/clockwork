@@ -16766,7 +16766,6 @@ vector<prog> isca_programs() {
   vector<prog> test_programs;
   //test_programs.push_back(harris_sch6_2ppc());
   //test_programs.back().pretty_print();
-  //assert(false);
 
   test_programs.push_back(gaussian());
   test_programs.push_back(mobilenet_unrolled());
@@ -18978,8 +18977,37 @@ void load_pe_power_stats(power_analysis_params& power_params, const std::string&
   //assert(false);
 }
 
+std::set<op*> find_users(const std::string& buf, prog& prg) {
+  std::set<op*> rds = find_readers(buf, prg);
+  for (auto p : find_writers(buf, prg)) {
+    rds.insert(p);
+  }
+  return rds;
+}
 
 void dhuff_playground() {
+  {
+    prog prg = harris_sch6_2ppc();
+    dsa_writers(prg);
+    prg.pretty_print();
+
+    for (auto b : all_buffers(prg)) {
+      auto users = find_users(b, prg);
+      cout << "Users of " << b << endl;
+      for (auto u : users) {
+        cout << tab(1) << u->name << endl;
+        for (auto rda : read_addrs(u, b, prg)) {
+          cout << tab(2) << str(rda) << endl;
+        }
+      }
+    }
+
+    //for (auto op : get_dft_ops(prg)) {
+      //op->pretty_print();
+    //}
+
+    assert(false);
+  }
   //{
     //for (auto prg : isca_programs()) {
       //auto options = CGRA_M3_codegen_options(prg);
