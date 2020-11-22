@@ -18994,11 +18994,27 @@ void dhuff_playground() {
     for (auto b : all_buffers(prg)) {
       auto users = find_users(b, prg);
       cout << "Users of " << b << endl;
+      bool all_const = true;
       for (auto u : users) {
         cout << tab(1) << u->name << endl;
         for (auto rda : read_addrs(u, b, prg)) {
           cout << tab(2) << str(rda) << endl;
+          if (!is_cst(rda)) {
+            all_const = false;
+            break;
+          }
         }
+        for (auto rda : write_addrs(u, b, prg)) {
+          cout << tab(2) << str(rda) << endl;
+          if (!is_cst(rda)) {
+            all_const = false;
+            break;
+          }
+        }
+      }
+      if (all_const) {
+        cout << "All references to " << b << " are constant" << endl;
+        assert(false);
       }
     }
 
