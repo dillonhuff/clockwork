@@ -13299,7 +13299,7 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   test_apps.push_back(up_sample());
   test_apps.push_back(unsharp());
 
-  ////test_apps.push_back(mobilenet_unrolled());
+  test_apps.push_back(mobilenet_unrolled());
   ////test_apps.push_back(unsharp());
 
   //test_apps.push_back(conv_3_3_wide());

@@ -5578,8 +5578,11 @@ vector<string> buffer_vectorization(vector<string> buf_name_vec, int dim_id, int
 
   int get_inner_most_dom_pad_dim(isl_map* m) {
      int dim_id = num_in_dims(m) - 1;
-     while(get_dim_extent(::domain(m), dim_id) == 1){
-         dim_id --;
+     while( (dim_id>=0)){
+        if (get_dim_extent(::domain(m), dim_id) == 1 )
+          dim_id --;
+        else
+          break;
      }
      cout << "\t original range input access map: " << str(m) << endl;
      cout << "\t dim id: " << dim_id << endl;
@@ -5599,6 +5602,8 @@ bool UBuffer::merge_small_dim(int fetch_width) {
             auto dom = domain.at(pt);
             auto sched = schedule.at(pt);
             int dim_id = get_inner_most_dom_pad_dim(am);
+            if (dim_id < 0)
+                continue;
             if (get_dim_extent(dom, dim_id) < fetch_width) {
                 //This dimension is smaller than fetch_width
                 //try to merge with the upper one
@@ -5638,6 +5643,8 @@ void UBuffer::pad_write_dom_inner_most(int fetch_width) {
             auto am = to_map(access_map.at(pt));
             auto sched = schedule.at(pt);
             int dim_id = get_inner_most_dom_pad_dim(am);
+            if (dim_id < 0)
+                continue;
             int rem = get_pad_remainder(am, dim_id, fetch_width);
             if (rem) {
                 //need padding
@@ -5660,6 +5667,8 @@ void UBuffer::pad_read_dom_inner_most(int fetch_width) {
             auto am = to_map(access_map.at(pt));
             auto sched = schedule.at(pt);
             int dim_id = get_inner_most_dom_pad_dim(am);
+            if (dim_id < 0)
+                continue;
             int rem = get_pad_remainder(am, dim_id, fetch_width);
             if (rem) {
                 //need padding
