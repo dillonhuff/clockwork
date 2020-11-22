@@ -4740,6 +4740,9 @@ std::set<string> generate_block_shift_register(CodegenOptions& options, CoreIR::
     attach_M3_bank_config_metadata(sreg, config);
     sreg->getMetaData()["config"]["BLOCK_SREG_DELAY"] = b_sreg.difference;
 
+    int num_writes = card(extents(to_set(domain(buf.access_map.at(b_sreg.inpt)))));
+    sreg->getMetaData()["config"]["BLOCK_SREG_WRITES"] = num_writes;
+
     int num_reads = card(extents(to_set(domain(buf.access_map.at(b_sreg.chain_starts.at(2*i + 1))))));
     num_reads +=
       card(extents(to_set(domain(buf.access_map.at(b_sreg.chain_starts.at(2*i + 2))))));
@@ -4806,6 +4809,13 @@ void instantiate_one_to_one_sreg(CodegenOptions& options, ModuleDef* def, UBuffe
           impl.bank_writers[0] = {"test_writer"};
           instantiate_M1_verilog(sreg->getModuleRef()->getLongName(), 0, impl, buf);
           sreg->getMetaData()["config"]["LINEAR_SREG_DELAY"] = min(delay, maxd);
+
+          int num_reads = card(extents(to_set(::domain(buf.access_map.at(dst)))));
+          sreg->getMetaData()["config"]["LINEAR_SREG_READS"] = num_reads;
+
+          int num_writes = card(extents(to_set(::domain(buf.access_map.at(src)))));
+          sreg->getMetaData()["config"]["LINEAR_SREG_WRITES"] = num_writes;
+
           src_wire = delayed_src;
 
           delay -= maxd;
@@ -4822,6 +4832,12 @@ void instantiate_one_to_one_sreg(CodegenOptions& options, ModuleDef* def, UBuffe
           auto config = instantiate_M3_verilog_sreg(options, sreg->getModuleRef()->getLongName(), min(delay,maxd), prg, hwinfo);
           attach_M3_bank_config_metadata(sreg, config);
           sreg->getMetaData()["config"]["LINEAR_SREG_DELAY"] = min(delay, maxd);
+
+          int num_reads = card(extents(to_set(domain(buf.access_map.at(dst)))));
+          sreg->getMetaData()["config"]["LINEAR_SREG_READS"] = num_reads;
+
+          int num_writes = card(extents(to_set(domain(buf.access_map.at(src)))));
+          sreg->getMetaData()["config"]["LINEAR_SREG_WRITES"] = num_writes;
 
           src_wire = delayed_src;
 
