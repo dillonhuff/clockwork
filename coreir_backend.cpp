@@ -5390,6 +5390,13 @@ double PE_energy_cost_instance_model(power_analysis_params& power_params, power_
         cout << tab(1) << "Possible power costs..." << endl;
         for (auto pp : power_params.instance_energy_costs) {
           cout << tab(2) << pp.first << endl;
+          vector<string> pps = split_at(pp.first, "$");
+          assert(pps.size() > 2);
+
+          if (pps.at(0) == op->name && pps.at(2) + "$" + pps.at(3) == inst.first) {
+            cout << tab(3) << "Power cost: " << pp.second << endl;
+            assert(false);
+          }
         }
         //counts[inst.second->getModuleRef()->getName()]++;
         //if (inst.second->getModuleRef()->getName() == "PE") {

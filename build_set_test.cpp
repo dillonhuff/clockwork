@@ -18977,34 +18977,34 @@ void load_pe_power_stats(power_analysis_params& power_params, const std::string&
 
 
 void dhuff_playground() {
-  {
-    for (auto prg : isca_programs()) {
-      auto options = CGRA_M3_codegen_options(prg);
-      schedule_info sched = garnet_schedule_info(options, prg);
-      normalize_bounds(prg);
-      garnet_dual_port_ram_schedule(sched, prg.root, prg);
+  //{
+    //for (auto prg : isca_programs()) {
+      //auto options = CGRA_M3_codegen_options(prg);
+      //schedule_info sched = garnet_schedule_info(options, prg);
+      //normalize_bounds(prg);
+      //garnet_dual_port_ram_schedule(sched, prg.root, prg);
 
-      auto hw_sched = its(op_times_map(sched, prg), prg.whole_iteration_domain());
-
-      //sequential_schedule(sched, prg.root, prg);
-      int time = max_completion_time(sched, prg);
-
-      cout << tab(1) << "=== Completion time for optimized sched: " << prg.name << " = " << time << endl;
       //auto hw_sched = its(op_times_map(sched, prg), prg.whole_iteration_domain());
 
-      //auto buffers = build_buffers(prg, hw_sched);
+      ////sequential_schedule(sched, prg.root, prg);
+      //int time = max_completion_time(sched, prg);
+
+      //cout << tab(1) << "=== Completion time for optimized sched: " << prg.name << " = " << time << endl;
+      ////auto hw_sched = its(op_times_map(sched, prg), prg.whole_iteration_domain());
+
+      ////auto buffers = build_buffers(prg, hw_sched);
 
 
-      //int total_capacity = 0;
-      //for (auto b : buffers) {
-        //if (!prg.is_boundary(b.first)) {
-          //total_capacity += card(extents_by_dimension(b.second));
-        //}
-      //}
-      //cout << tab(1) << "=== SRAM bytes for " << prg.name << total_capacity << endl;
-    }
-    assert(false);
-  }
+      ////int total_capacity = 0;
+      ////for (auto b : buffers) {
+        ////if (!prg.is_boundary(b.first)) {
+          ////total_capacity += card(extents_by_dimension(b.second));
+        ////}
+      ////}
+      ////cout << tab(1) << "=== SRAM bytes for " << prg.name << total_capacity << endl;
+    //}
+    //assert(false);
+  //}
   //{
 //#ifdef COREIR
 
@@ -19045,7 +19045,7 @@ void dhuff_playground() {
     load_pe_power_stats(power_params, "./power_models/conv_3_3/PEs.txt");
 
     CodegenOptions options;
-    for (auto prg : {gaussian()}) {
+    for (auto prg : {conv_3_3()}) {
       PE_energy_cost_instance_model(power_params, power_stats, prg);
       //MEM_energy_cost(options, power_params, power_stats, prg);
     }
