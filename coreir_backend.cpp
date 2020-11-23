@@ -5548,6 +5548,7 @@ double PE_energy_cost(power_analysis_params& power_params, power_analysis_info& 
   for (auto p : prg.all_ops()) {
     for (auto op : power_stats.PE_optype_counts[p->name]) {
       cout << tab(1) << op.first << " -> " << op.second << endl;
+      cout << tab(1) << "op_energy_cost : " << map_find(op.first, power_params.alu_op_energy_costs) << endl;
       energy_cost += map_find(p->name, power_stats.op_counts) *
         ((double) map_find(op.first, power_params.alu_op_energy_costs)) *
         ((double)op.second);

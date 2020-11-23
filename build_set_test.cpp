@@ -13291,6 +13291,41 @@ void dsa_writers(prog& prg);
 void dsa_readers(prog& prg);
 void break_up_multi_channel_outputs(prog& prg);
 void break_up_multi_channel_inputs(prog& prg);
+void load_pe_power_stats(power_analysis_params& power_params, const std::string& file);
+
+void Init_PE_energy_cost(power_analysis_params& power_params)  {
+    const double COST_PER_PE_MUL_PJ = 40.0 / 1000;
+    const double COST_PER_PE_ADD_PJ = 20.0 / 1000;
+
+    const double COST_PER_PE_SUB_PJ = 0.035;
+    const double COST_PER_PE_SHIFT_PJ = 0.01;
+    const double COST_PER_PE_LOGIC_BINOP_PJ = 0.01;
+    const double COST_PER_PE_EQ_PJ = 0.01;
+    const double COST_PER_PE_MUX_PJ = 0.5;
+    const double COST_PER_PE_CMP_PJ = 0.035;
+
+    power_params.alu_op_energy_costs["mult_0"] = COST_PER_PE_MUL_PJ;
+    power_params.alu_op_energy_costs["add"] = COST_PER_PE_ADD_PJ;
+    power_params.alu_op_energy_costs["rshft"] = COST_PER_PE_SHIFT_PJ;
+    power_params.alu_op_energy_costs["sub"] = COST_PER_PE_SUB_PJ;
+    power_params.alu_op_energy_costs["and"] = COST_PER_PE_LOGIC_BINOP_PJ;
+    power_params.alu_op_energy_costs["or"] = COST_PER_PE_LOGIC_BINOP_PJ;
+    power_params.alu_op_energy_costs["eq"] = COST_PER_PE_EQ_PJ;
+    power_params.alu_op_energy_costs["sel"] = COST_PER_PE_MUX_PJ;
+    power_params.alu_op_energy_costs["ult"] = COST_PER_PE_CMP_PJ;
+    power_params.alu_op_energy_costs["lt"] = COST_PER_PE_CMP_PJ;
+    power_params.alu_op_energy_costs["le"] = COST_PER_PE_CMP_PJ;
+    power_params.alu_op_energy_costs["ule"] = COST_PER_PE_CMP_PJ;
+    //Currently does not have
+    power_params.alu_op_energy_costs["max"] = COST_PER_PE_CMP_PJ + COST_PER_PE_MUX_PJ;
+    power_params.alu_op_energy_costs["umax"] = COST_PER_PE_CMP_PJ + COST_PER_PE_MUX_PJ;
+    power_params.alu_op_energy_costs["abs"] = COST_PER_PE_SUB_PJ;
+
+    //load_pe_power_stats(power_params, "./power_models/conv_3_3/PEs.txt");
+
+
+}
+
 
 void compile_for_garnet_single_port_mem(prog & prg, string dir, bool gen_smt_stream, bool gen_config_only,bool multi_accessor );
 void cpy_app_to_folder(const std::string& app_type, const std::string& prg_name);
@@ -16606,7 +16641,14 @@ void compile_for_garnet_single_port_mem(prog& prg,
   Mem_access_count(options, buffers_opt, mem_access, prg);
   emit_mem_access_count_to_csv(dir + "/MemCount/" + prg.name, options, mem_access);
 
+  power_analysis_params power_params;
+  power_analysis_info power_stats;
+  Init_PE_energy_cost(power_params);
+
 #ifdef COREIR
+  //PE_energy_cost_instance_model(power_params, power_stats, prg);
+  PE_energy_cost(power_params, power_stats, prg);
+
   generate_garnet_coreir(buffers_opt, prg, options, sched);
   if (!options.config_gen_only) {
     generate_garnet_verilog_top(options, prg.name);
