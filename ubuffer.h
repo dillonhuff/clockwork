@@ -591,8 +591,8 @@ class AccessPattern {
       }
 
       int get_inner_most_related_dom_dim() {
-        int inner_most_address_related_dim_id = 0;
-        for (size_t i = rel_map.size() - 1; i >= 0; i -- ) {
+        int inner_most_address_related_dim_id = rel_map.size() - 1;
+        for (int i = rel_map.size() - 1; i >= 0; i -- ) {
           if (rel_map.at(i) != 0) {
             inner_most_address_related_dim_id = i;
             break;
@@ -2360,6 +2360,8 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
     maybe<int> dependence_distance_singleton(const string& inpt, const string& outpt, bool decouple=false);
     maybe<int> dependence_distance_max(const string& inpt, const string& outpt);
 
+    //Hack for single pixel input
+    std::map<string, UBuffer> vectorization_single_pixel(int fetch_width);
 
 };
 

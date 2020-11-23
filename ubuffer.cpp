@@ -1507,6 +1507,7 @@ int UBuffer::get_vectorized_dim(int fetch_width) {
     if (*it > fetch_width - 1)
         return extent_dim.rend() - it - 1;
   }
+  return -1;
   //TODO: maybe need dimension fuse in the future
   cout << "Could not find vectorization dimension" << endl;
   assert(false);
@@ -4987,19 +4988,26 @@ vector<string> buffer_vectorization(vector<int> iis,
       target_buffer.pad_write_dom_inner_most(fetch_width);
 
       int dim_id = target_buffer.get_vectorized_dim(fetch_width);
-      cout << tab(1) << "buffer_vectorization Vectorizing: " << target_buffer.name << endl
-          << tab(1)<< " On addr dim: " << dim_id << ", fetch_width: " << fetch_width
-          << endl;
-      cout << target_buffer << endl;
+      if (dim_id == -1) {
+        auto ret = target_buffer.vectorization_single_pixel(fetch_width);
+        for (auto itr: ret) {
+          buffers.insert(itr);
+        }
+      } else {
+        cout << tab(1) << "buffer_vectorization Vectorizing: " << target_buffer.name << endl
+            << tab(1)<< " On addr dim: " << dim_id << ", fetch_width: " << fetch_width
+            << endl;
+        cout << target_buffer << endl;
 
-
-      //ret is a pair of vectorized_buffer and the dependency need to be removed
-      auto ret = target_buffer.vectorization(dim_id, fetch_width, iis);
-      for (auto itr: ret.first) {
-        buffers[itr.first] = itr.second;
-      }
-      for (auto deps: ret.second) {
-        rem_deps.push_back(deps);
+        //TODO: remove the rem-dependency
+        //ret is a pair of vectorized_buffer and the dependency need to be removed
+        auto ret = target_buffer.vectorization(dim_id, fetch_width, iis);
+        for (auto itr: ret.first) {
+          buffers[itr.first] = itr.second;
+        }
+        for (auto deps: ret.second) {
+          rem_deps.push_back(deps);
+        }
       }
     }
   }
@@ -5711,7 +5719,7 @@ void UBuffer::pad_write_dom_inner_most(int fetch_width) {
             auto sched = schedule.at(pt);
             int dim_id = get_inner_most_dom_pad_dim(am);
             if (dim_id < 0)
-                continue;
+                dim_id = num_out_dims(am) - 1;
             int rem = get_pad_remainder(am, dim_id, fetch_width);
             if (rem) {
                 //need padding
@@ -5750,6 +5758,133 @@ void UBuffer::pad_read_dom_inner_most(int fetch_width) {
         }
     }
 
+}
+
+std::map<string, UBuffer> UBuffer::vectorization_single_pixel(int fetch_width) {
+    std::map<string, UBuffer> ret;
+    auto inpts = get_in_ports();
+    auto outpts = get_out_ports();
+    assert(inpts.size() == 1);
+    assert(outpts.size() == 1);
+    string inpt = pick(inpts);
+    auto in_bd = get_bundle(inpt);
+    string outpt = pick(outpts);
+    auto out_bd = get_bundle(outpt);
+
+    auto in_dom = domain.at(inpt);
+    auto out_dom = domain.at(outpt);
+
+    auto sched = to_map(schedule.at(inpt));
+    auto sched_out = to_map(schedule.at(outpt));
+    auto am = to_map(access_map.at(inpt));
+    auto am_out = to_map(access_map.at(outpt));
+
+    auto aff = get_aff(sched);
+    auto agg2sram_sched = to_map(add(aff, 1));
+    agg2sram_sched = its(agg2sram_sched, in_dom);
+    agg2sram_sched = set_domain_name(agg2sram_sched, domain_name(sched) + "_agg2sram");
+    auto sram2tb_sched = to_map(add(aff, 4));
+    sram2tb_sched = its(sram2tb_sched, in_dom);
+    sram2tb_sched = set_domain_name(sram2tb_sched, domain_name(sched) + "_sram2tb");
+    cout << "\tinput pt schedule: " << str(aff) << endl;
+    cout << "\tagg2sram schedule: " << str(agg2sram_sched) << endl;
+    cout << "\tsram2tb schedule: " << str(sram2tb_sched) << endl;
+
+    auto am_aff = get_aff(am);
+    cout << "\tinput pt access map: " << str(am_aff) << endl;
+    auto agg_in_am = to_map(am_aff);
+    agg_in_am = set_range_name(agg_in_am, range_name(am) + "_0_agg");
+    vector<isl_map*> inpt_vec_am;
+    vector<isl_map*> inpt_sram_am;
+    for (int i = 0; i < fetch_width; i ++) {
+        auto new_am = its(to_map(add(am_aff, i)), in_dom);
+        auto new_am_agg = set_range_name(cpy(new_am), range_name(am) + "_0_agg");
+        auto new_am_sram = set_range_name(cpy(new_am), range_name(am) + "_sram");
+        new_am_agg = set_domain_name(new_am_agg, domain_name(am) + "_agg2sram");
+        new_am_sram = set_domain_name(new_am_sram, domain_name(am) + "_agg2sram");
+        cout << "\t\t rewrite agg am: " << str(new_am) << endl;
+        inpt_vec_am.push_back(new_am_agg);
+        inpt_sram_am.push_back(new_am_sram);
+    }
+
+    vector<isl_map*> outpt_vec_am;
+    vector<isl_map*> outpt_sram_am;
+    for (int i = 0; i < fetch_width; i ++) {
+        auto new_am = its(to_map(add(am_aff, i)), in_dom);
+        auto new_am_sram= set_range_name(cpy(new_am), range_name(am) + "_sram");
+        auto new_am_tb = set_range_name(cpy(new_am), range_name(am) + "_0_tb");
+        new_am_tb = set_domain_name(new_am_tb, domain_name(am) + "_sram2tb");
+        new_am_sram = set_domain_name(new_am_sram, domain_name(am) + "_sram2tb");
+        cout << "\t\t rewrite agg am: " << str(new_am) << endl;
+        outpt_vec_am.push_back(new_am_tb);
+        outpt_sram_am.push_back(new_am_sram);
+    }
+
+    UBuffer agg;
+    agg.name = name + "_0_agg";
+    agg.ctx = ctx;
+    agg.port_widths = port_widths;
+    agg.add_in_pt(inpt + "_in", in_dom, its(agg_in_am, in_dom), sched);
+    agg.port_bundles[in_bd + "_in"].push_back(inpt + "_in");
+    {
+    int cnt = 0;
+    for (auto inpt_am: inpt_vec_am) {
+      agg.add_out_pt(outpt + "_out_" + str(cnt),
+              ::domain(agg2sram_sched), inpt_am, agg2sram_sched);
+      agg.port_bundles[in_bd + "_out"].push_back(outpt + "_out_" + str(cnt));
+      cnt ++;
+    }
+    cout << agg << endl;
+    ret[agg.name] = agg;
+    }
+
+    UBuffer sram;
+    sram.name = name + "_sram";
+    sram.ctx = ctx;
+    sram.port_widths = port_widths;
+    {
+    int cnt = 0;
+    for (auto inpt_am: inpt_sram_am) {
+      sram.add_in_pt(inpt+"_in_" + str(cnt),
+              ::domain(agg2sram_sched), inpt_am, agg2sram_sched);
+      sram.port_bundles[in_bd + "_in"].push_back(inpt + "_in_" + str(cnt));
+      cnt ++;
+    }
+    cnt = 0;
+    for (auto outpt_am: outpt_sram_am) {
+      sram.add_out_pt(outpt+"_out_" + str(cnt),
+              ::domain(sram2tb_sched), outpt_am, sram2tb_sched);
+      sram.port_bundles[out_bd + "_out"].push_back(outpt + "_out_" + str(cnt));
+      cnt ++;
+    }
+    cout << sram << endl;
+    ret[sram.name] = sram;
+
+    }
+
+    auto am_aff_out = get_aff(am_out);
+    cout << "\toutput pt access map: " << str(am_aff_out) << endl;
+    auto tb_out_am = to_map(am_aff_out);
+    tb_out_am = set_range_name(tb_out_am, range_name(am) + "_0_tb");
+
+    UBuffer tb;
+    tb.name = name + "_0_tb";
+    tb.ctx = ctx;
+    tb.port_widths = port_widths;
+    {
+    int cnt = 0;
+    for (auto outpt_am: outpt_vec_am) {
+      tb.add_in_pt(outpt+"_in_" + str(cnt),
+              ::domain(sram2tb_sched), outpt_am, sram2tb_sched);
+      tb.port_bundles[out_bd + "_in"].push_back(outpt + "_in_" + str(cnt));
+      cnt ++;
+    }
+    tb.add_out_pt(outpt + "_out", out_dom, its(tb_out_am, out_dom), sched_out);
+    tb.port_bundles[out_bd + "_out"].push_back(outpt+"_out");
+    cout << tb << endl;
+    ret[tb.name] = tb;
+    }
+    return ret;
 }
 
 pair<std::map<string, UBuffer>, vector<string> >
