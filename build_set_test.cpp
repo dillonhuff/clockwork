@@ -16764,7 +16764,7 @@ vector<prog> harris_variants() {
 
 vector<prog> isca_programs() {
   vector<prog> test_programs;
-  //test_programs.push_back(harris_sch6_2ppc());
+  test_programs.push_back(harris_sch6_2ppc());
   //test_programs.back().pretty_print();
 
   test_programs.push_back(gaussian());
