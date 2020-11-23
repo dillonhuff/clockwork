@@ -16743,7 +16743,7 @@ vector<prog> harris_variants() {
 
   // 1. At least two mapper passes fail
   // 2. Final output is wrong
-  //test_programs.push_back(harris_sch1_onebuf());
+  test_programs.push_back(harris_sch1_onebuf());
 
   // 2. Final output is wrong,
   // 3. Schedule violates dependencies?
@@ -16754,10 +16754,10 @@ vector<prog> harris_variants() {
   //test_programs.push_back(harris_sch4_1pp3c());
 
   // Works
-  //test_programs.push_back(harris_sch5_1ppc());
-  //test_programs.push_back(harris_sch6_2ppc());
+  test_programs.push_back(harris_sch5_1ppc());
+  test_programs.push_back(harris_sch6_2ppc());
   test_programs.push_back(harris_sch7_bigtile());
-  //test_programs.push_back(harris_sch8_endcim());
+  test_programs.push_back(harris_sch8_endcim());
 
   return test_programs;
 }
@@ -18986,6 +18986,37 @@ std::set<op*> find_users(const std::string& buf, prog& prg) {
 }
 
 void dhuff_playground() {
+  {
+    for (auto prg : harris_variants()) {
+      break_up_multi_channel_inputs(prg);
+      break_up_multi_channel_outputs(prg);
+      dsa_writers(prg);
+      auto options = CGRA_M3_codegen_options(prg);
+      schedule_info sched = garnet_schedule_info(options, prg);
+      normalize_bounds(prg);
+
+      garnet_dual_port_ram_schedule(sched, prg.root, prg);
+
+      auto hw_sched = its(op_times_map(sched, prg), prg.whole_iteration_domain());
+
+      sanity_check_hw_schedule(sched, prg);
+
+      int time = max_completion_time(sched, prg);
+
+      cout << tab(1) << "=== Completion time for optimized sched: " << prg.name << " = " << time << endl;
+      //auto buffers = build_buffers(prg, hw_sched);
+
+
+      prg.pretty_print();
+      prg.sanity_check();
+    }
+    assert(false);
+  }
+  {
+    prog prg = mobilenet_unrolled();
+    prg.pretty_print();
+    assert(false);
+  }
   {
     prog prg = harris_sch6_2ppc();
     dsa_writers(prg);

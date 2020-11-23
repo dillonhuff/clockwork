@@ -6421,3 +6421,14 @@ UBuffer delete_ports(std::set<string>& sr_ports, UBuffer& buf) {
   return cpy;
 }
 
+std::ostream& operator<<(std::ostream& out, dgraph& dg) {
+  out << "# nodes: " << dg.nodes.size() << endl;
+  out << "# edges: " << dg.weights.size() << endl;
+  for (auto e : dg.out_edges) {
+    for (auto dst : e.second) {
+      out << tab(1) << e.first << " -> (" << dg.weight(e.first, dst) << ") " << dst << endl;
+    }
+  }
+  return out;
+}
+
