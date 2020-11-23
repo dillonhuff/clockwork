@@ -18985,6 +18985,23 @@ std::set<op*> find_users(const std::string& buf, prog& prg) {
   return rds;
 }
 
+dgraph possible_shift_registers(prog& prg, UBuffer& buf, schedule_info& hwinfo) {
+  map<string,pair<string,int>> shift_registered_outputs = determine_shift_reg_map(prg, buf, hwinfo);
+  vector<pair<string,pair<string,int>>> shift_registered_outputs_to_outputs = determine_output_shift_reg_map(prg, buf, hwinfo);
+
+  cout << "out -> out srs: " << shift_registered_outputs_to_outputs.size() << endl;
+
+  dgraph dg;
+  for (auto pt : shift_registered_outputs) {
+    dg.add_edge(pt.second.first, pt.first, pt.second.second);
+  }
+  for (auto pt : shift_registered_outputs_to_outputs) {
+    dg.add_edge(pt.second.first, pt.first, pt.second.second);
+  }
+
+  return dg;
+}
+
 void dhuff_playground() {
   {
     for (auto prg : harris_variants()) {
@@ -19004,8 +19021,15 @@ void dhuff_playground() {
       int time = max_completion_time(sched, prg);
 
       cout << tab(1) << "=== Completion time for optimized sched: " << prg.name << " = " << time << endl;
-      //auto buffers = build_buffers(prg, hw_sched);
-
+      auto buffers = build_buffers(prg, hw_sched);
+      for (auto b : buffers) {
+        if (!prg.is_boundary(b.first)) {
+          dgraph sr_edges = possible_shift_registers(prg, b.second, sched);
+          cout << sr_edges << endl;
+          UBuffer del = delete_ports(sr_edges.nodes, b.second);
+          assert(del.get_out_ports().size() == 0);
+        }
+      }
 
       prg.pretty_print();
       prg.sanity_check();
