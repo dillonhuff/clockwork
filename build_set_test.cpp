@@ -16060,57 +16060,30 @@ void cycle_accurate_clockwork_schedule(schedule_info& sched, op* root, prog& prg
     }
   }
 
-  //vector<vector<op*> > op_levels;
-  //std::set<op*> unsorted;
-  //std::set<string> already_written;
-  //while (unsorted.size() > 0) {
-    //for (auto op : unsorted) {
-      //auto read = op->buffers_read();
-      //if (intersection(read, written).size() == 0) {
-        //unsorted.erase(op);
-        //break;
-      //}
-    //}
-  //}
-  //assert(false);
-
-  //vector<op*> inners = inner_ops(prg);
-  //vector<op*> scheduled;
-  ////int total_latency = 0;
-  //std::set<string> written;
-  //for (auto op : inner_ops(prg)) {
-    //auto read = op->buffers_read();
-
-    //if (intersection(read, written).size() == read.size()) {
-      //sched.op_offset_within_parent[op] = total_latency;
-    //} else {
-      //op* last_writer = nullptr;
-      //for () {
-
-      //}
-      //assert(last_writer != nullptr);
-
-      //sched.op_offset_within_parent[op] =
-        //sched.op_offset_within_parent[last_writer] + op_latency(last_writer, sched);
-      ////sched.op_offset_within_parent[op] = total_latency;
-    //}
-
-
-    //for (auto b : op->buffers_written()) {
-      //written.insert(b);
-    //}
-    //scheduled.push_back(op);
-  //}
-
-  // Compute the innermost fused pipeline layout
   int total_latency = 0;
+  vector<op*> scheduled;
   for (auto op : inner_ops(prg)) {
     cout << "inner ops: " << op->name << endl;
-    sched.op_offset_within_parent[op] = total_latency;
-    total_latency += op_latency(op, sched);
-    //total_latency += 0;
-    //op_latency(op, sched);
+    auto read = op->buffers_read();
+    int offset = 0;
+    for (auto other : scheduled) {
+      if (intersection(other->buffers_written(), read).size() > 0) {
+        offset = max(offset, sched.op_offset_within_parent[other] + op_latency(other, sched));
+      }
+    }
+    sched.op_offset_within_parent[op] = offset;
+    //sched.op_offset_within_parent[op] = total_latency;
+    //total_latency += op_latency(op, sched);
+    scheduled.push_back(op);
   }
+
+  // Compute the innermost fused pipeline layout
+  //int total_latency = 0;
+  //for (auto op : inner_ops(prg)) {
+    //cout << "inner ops: " << op->name << endl;
+    //sched.op_offset_within_parent[op] = total_latency;
+    //total_latency += op_latency(op, sched);
+  //}
 
   //assert(no_violated_cycle_accurate_dependencies(sched, prg));
 }
@@ -16806,7 +16779,7 @@ vector<prog> harris_variants() {
 
   // 2. Final output is wrong,
   // 3. Schedule violates dependencies?
-  //test_programs.push_back(harris_sch2_fourbuf());
+  test_programs.push_back(harris_sch2_fourbuf());
 
   // Now: They also have an error in the ROMs
   //test_programs.push_back(harris_sch3_1pp9c());
