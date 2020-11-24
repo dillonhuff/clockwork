@@ -1708,6 +1708,40 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
       return {id_candidate};
     }
 
+    //A ubuffer rewrite pass before vectorization remove the redundant dimension
+    bool simplify_address_space() {
+        auto consumer_rem_dim = get_consumer_bank_dim_id();
+        auto producer_rem_dim = get_producer_bank_dim_id();
+        if(consumer_rem_dim.has_value() && producer_rem_dim.has_value()) {
+            auto cons_rem = consumer_rem_dim.get_value();
+            auto prod_rem = producer_rem_dim.get_value();
+            vector<int> rem;
+            //std::set_intersection(cons_rem.begin(), cons_rem.end(),
+            //        prod_rem.begin(), prod_rem.end(),
+            //        rem.begin());
+            for (auto i : cons_rem) {
+                if (std::find(prod_rem.begin(), prod_rem.end(), i) != prod_rem.end()) {
+                    rem.push_back(i);
+                }
+            }
+            cout << tab(2) << "cons rem: " << cons_rem << endl;
+            cout << tab(2) << "prod rem: " << prod_rem << endl;
+            cout << tab(2) << "its: " << rem << endl;
+            for (auto rem_dim: rem) {
+                for (auto & it : access_map) {
+                    auto acc_map = to_map(it.second);
+                    if (num_out_dims(acc_map) == 1)
+                        continue;
+                    cout <<tab(2) << "Dim:" << rem_dim << " will be project out: " << str(acc_map) << endl;
+                    it.second = to_umap(project_out(acc_map, rem_dim));
+                }
+            }
+            return rem.size();
+        }
+        return false;
+    }
+
+
     int lanes_in_bundle(const std::string& bn) {
       assert(contains_key(bn, port_bundles));
       return map_find(bn, port_bundles).size();

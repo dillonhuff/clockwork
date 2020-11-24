@@ -730,9 +730,10 @@ map<string, UBuffer> UBuffer::generate_ubuffer(CodegenOptions& options) {
       usuffix ++;
     }
     //buf.merge_out_bundle();
-    buffers[bname] = buf;
+    bool simplified = buf.simplify_address_space();
     cout << "\t\tNeed for vectorization: \n" << buf << endl;
     cout << "\t\tTotal capacity: " << buf.capacity() << endl;
+    buffers[bname] = buf;
   }
   return buffers;
 }
@@ -938,6 +939,9 @@ isl_set* get_memtile_bank_range(CodegenOptions& options, UBuffer & buf, isl_map*
     if (project_dim.has_value()) {
       cout << "before project: " << str(range_per_bank) << endl;
       for (int proj_dim : project_dim.get_value()) {
+        //This is the single dimension case
+        if (num_dims(range_per_bank) == 1)
+            break;
         cout << "project out dim : " << proj_dim << endl;
         range_per_bank = project_out(range_per_bank, proj_dim);
       }
@@ -997,7 +1001,7 @@ pair<int, int> process_mux_info(CodegenOptions options, string op_name, bool is_
           cout << "acc map: " << str(to_map(pick(bmap_vec))) << endl;
           cout << "project dim: : " << project_dim.get_value() << endl;
           vector<int> project_dim_val = project_dim.get_value();
-          assert(project_dim_val.size() == 1);
+          //assert(project_dim_val.size() == 1);
           domain_project_dim = get_involve_dim(to_map(pick(bmap_vec)), pick(project_dim_val));
       }
     }
@@ -1099,8 +1103,11 @@ vector<ConfigMap> emit_lake_addrgen_config(CodegenOptions options, string op_nam
         isl_map* project_access_map;
         if (project_dim.has_value()) {
           project_access_map = to_map(bmap);
-          for (auto proj_dim: project_dim.get_value())
+          for (auto proj_dim: project_dim.get_value()) {
+            if (num_out_dims(project_access_map) == 1)
+                break;
             project_access_map = project_out(project_access_map, proj_dim);
+          }
         } else {
           project_access_map = to_map(bmap);
         }
@@ -4217,24 +4224,35 @@ lakeStream emit_top_address_stream(string fname,
 
           if (empty(its(range(this_bank_rddom), range(acc_map))) == 0) {
             //Check if we could simplify as a register
-            if (inpt_vec.size() == 1) {
+            outpt_vec.insert(outpt);
+          }
+        }
+        std::set<string> outpt_vec_rem;
+        if (inpt_vec.size() == 1) {
+            //FIXME: this is extremely hack, checkout dillon's sr optimization after deadline
+            for (auto outpt: outpt_vec) {
               auto inpt = pick(inpt_vec);
               auto dd_info = dependence_distance_singleton(inpt, outpt, false);
               if (dd_info.has_value()) {
                   int dd = dd_info.get_value();
-                  if (options.conditional_merge && (dd < options.merge_threshold)) {
+                  //If it's constant delay we will put it into a separate bank
+                  //if (options.conditional_merge) {
+                  if (options.conditional_merge &&
+                          (outpt_vec.size() > options.rtl_options.max_outpt
+                           || dd < options.merge_threshold)) {
                       bank tmp = compute_bank_info(inpt, outpt, dd);
                       add_bank_between(inpt, outpt, tmp);
                       continue;
                   }
               }
+              outpt_vec_rem.insert(outpt);
             }
-            outpt_vec.insert(outpt);
-          }
+        } else {
+            outpt_vec_rem = outpt_vec;
         }
-        if (outpt_vec.size()) {
-          bank tmp = compute_bank_info(range(this_bank_rddom), bankID, inpt_vec, outpt_vec);
-          add_bank_between(inpt_vec, outpt_vec, tmp);
+        if (outpt_vec_rem.size()) {
+          bank tmp = compute_bank_info(range(this_bank_rddom), bankID, inpt_vec, outpt_vec_rem);
+          add_bank_between(inpt_vec, outpt_vec_rem, tmp);
         }
       }
 
@@ -4307,7 +4325,7 @@ lakeStream emit_top_address_stream(string fname,
   void UBuffer::generate_banks_and_merge(CodegenOptions& options) {
     generate_banks(options);
 
-    if (banking.partition == "exhaustive") {
+    if (banking.partition == "exhaustive" || banking.partition == "cyclic") {
       for (auto inpt : get_in_ports()) {
         // try to turn the banks for this inpt into one big linebuffer
         vector<stack_bank> receivers = receiver_banks(inpt);
