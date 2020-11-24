@@ -2222,16 +2222,19 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
       auto stmt2bd = get_stmt2bd();
 
       //if it's not one of the buffer's op
+      cout << "find bd for op :" << op_name << endl;
       if (stmt2bd.count(op_name) == 0)
           return false;
 
       //if it is, we still need to check the bundle numbers
       auto bd_vec = stmt2bd.at(op_name);
+      for (auto it: bd_vec)
+          cout << "\tfind candidate: " << it << endl;
       int in_bd = 0, out_bd = 0;
       for (auto bd: bd_vec) {
         if (is_input_bundle(bd))
           in_bd ++;
-        else
+        if (is_output_bundle(bd))
           out_bd ++;
       }
       return in_bd && out_bd;

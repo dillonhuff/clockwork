@@ -800,10 +800,14 @@ vector<isl_set*> get_multi_bank_domain_set(isl_map* origin_map, int project_out_
     vector<isl_set*> ret;
     string name = domain_name(origin_map);
     int dim = num_in_dims(origin_map);
-    vector<int> min_pts = parse_pt(lexminpt(::domain(origin_map)));
-    vector<int> max_pts = parse_pt(lexmaxpt(::domain(origin_map)));
-    int bank_factor = max_pts.at(project_out_domain) -
-        min_pts.at(project_out_domain) + 1;
+    cout << "Domain: "  <<str(::domain(origin_map)) << endl;
+    //vector<int> min_pts = parse_pt(lexminpt(::domain(origin_map)));
+    //vector<int> max_pts = parse_pt(lexmaxpt(::domain(origin_map)));
+    //cout << "\tmin pt: " << min_pts << endl;
+    //cout << "\tmax pt: " << max_pts << endl;
+    int bank_factor = get_dim_extent(::domain(origin_map), project_out_domain);
+    //int bank_factor = abs(max_pts.at(project_out_domain) -
+    //    min_pts.at(project_out_domain)) + 1;
     for (int offset = 0; offset < bank_factor; offset ++) {
         vector<string> dvs;
         vector<string> addrs;
@@ -953,6 +957,7 @@ isl_set* get_memtile_bank_range(CodegenOptions& options, UBuffer & buf, isl_map*
 pair<int, int> process_mux_info(CodegenOptions options, string op_name, bool is_read,
         UBuffer& buf, umap* tmp ) {
 
+    cout << "Is read: " << is_read << endl;
     cout << "Generate mux and project id: " << op_name << endl;
     auto map = to_map(tmp);
     cout << "access map: " << str(map) << endl;
@@ -1001,7 +1006,7 @@ pair<int, int> process_mux_info(CodegenOptions options, string op_name, bool is_
           cout << "acc map: " << str(to_map(pick(bmap_vec))) << endl;
           cout << "project dim: : " << project_dim.get_value() << endl;
           vector<int> project_dim_val = project_dim.get_value();
-          //assert(project_dim_val.size() == 1);
+          assert(project_dim_val.size() == 1);
           domain_project_dim = get_involve_dim(to_map(pick(bmap_vec)), pick(project_dim_val));
       }
     }
@@ -1038,13 +1043,15 @@ vector<ConfigMap> emit_lake_addrgen_config(CodegenOptions options, string op_nam
     //int project_dim;
     auto project_dim = get_project_dim(buf, is_read);
     auto range_per_bank =
-        get_memtile_bank_range(options, buf, map, project_dim, is_read);
+        get_memtile_bank_range(options, buf, coalesce(map), project_dim, is_read);
 
     //get the reduce map for this subbuffer structure
     auto reduce_map = linear_address_map_lake(range_per_bank, options.mem_tile.fetch_width);
+    cout << "\tbank range:" << str(range_per_bank) << endl;
 
     //get mux information
     bool need_mux = check_need_mux(options, buf, op_name, micro_buf_name, bk_num, is_read);
+    cout << "\tNeed mux: " << need_mux  << ",in project dim: " << in_project_dim << endl;
 
     for (int i = 0; i < bk_num; i ++)
     {
@@ -1116,6 +1123,7 @@ vector<ConfigMap> emit_lake_addrgen_config(CodegenOptions options, string op_nam
             << tab(1) << "project access map" << str(project_access_map) << endl;
         auto addr_expr_map = dot(project_access_map, reduce_map);
         //cout << str(reduce_map) << endl << str(addr_expr_map) << endl;
+        cout << tab(1) << "AFter reduce : " << str(addr_expr_map) << endl;
 
         //Project the input dimension out
         if ((in_project_dim != -1)
@@ -1304,12 +1312,16 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> r
                 }
 
                 vector<ConfigMap> read_addr_config, write_addr_config;
+                cout << "\tgenerate accessor for OP: " << op_name << endl;
+                cout << "\tread side: " << op2read_map.count(op_name) << endl;
+                cout << "\twrite side: " << op2write_map.count(op_name) << endl;
 
                 if (op2read_map.count(op_name)) {
                     auto read_map = op2read_map.at(op_name);
                     string producer_buf_name = op2read_buf.at(op_name);
                     //tmp.read = producer_buf_name;
                     for (auto tmp: read_map) {
+                        cout << "\tgenerate access on read " << endl;
                         concat( read_addr_config,
                                 emit_lake_addrgen_config(options, op_name, true,
                                     op2read_bank.at(op_name).first, op2read_bank.at(op_name).second,
@@ -1322,6 +1334,7 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> r
                     string consumer_buf_name = op2write_buf.at(op_name);
                     //tmp.write = consumer_buf_name;
                     for (auto tmp: write_map) {
+                        cout << "\tgenerate access on write " << endl;
                         concat( write_addr_config,
                                 emit_lake_addrgen_config(options, op_name, false,
                                     op2write_bank.at(op_name).first, op2write_bank.at(op_name).second,
