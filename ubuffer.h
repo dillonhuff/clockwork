@@ -845,6 +845,8 @@ struct MemConnSch {
         dim ++;
     }
     dimensionality -= remove_dims.size();
+    if (dimensionality == 0)
+        dimensionality = 1;
     std::reverse(begin(remove_dims), end(remove_dims));
     for (auto rem_dim: remove_dims) {
         for (auto& it: vals) {
