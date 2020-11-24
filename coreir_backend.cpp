@@ -4485,11 +4485,6 @@ dgraph build_shift_registers_io(CodegenOptions& options, CoreIR::ModuleDef* def,
   return shift_registers;
 }
 
-template<typename T, typename Q>
-void sort_lt_snd(vector<pair<T, Q> >& outputs) {
-  sort_lt(outputs, [](const pair<T,Q> &x){return x.second;});
-}
-
 dgraph build_in_to_out_shift_register_graph(CodegenOptions& options, CoreIR::ModuleDef* def, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
   map<string,pair<string,int>> shift_registered_outputs = determine_shift_reg_map(prg, buf, hwinfo);
 

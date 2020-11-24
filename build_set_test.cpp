@@ -15976,6 +15976,9 @@ void pad_to_single_depth(schedule_info& sched, op* root, prog& prg) {
 }
 
 void cycle_accurate_clockwork_schedule(schedule_info& sched, op* root, prog& prg) {
+  prg.pretty_print();
+  //assert(false);
+
   pad_to_single_depth(sched, root, prg);
 
   auto valid = prg.validity_deps();
@@ -16056,12 +16059,23 @@ void cycle_accurate_clockwork_schedule(schedule_info& sched, op* root, prog& prg
     }
   }
 
+  //vector<op*> inners = inner_ops(prg);
+  //vector<op*> scheduled;
+  //int total_latency = 0;
+  //for (auto op : inner_ops(prg)) {
+    //if (scheduled.size() == 0 || ) {
+
+    //}
+    //scheduled.push_back(op);
+  //}
+
   // Compute the innermost fused pipeline layout
   int total_latency = 0;
   for (auto op : inner_ops(prg)) {
     cout << "inner ops: " << op->name << endl;
     sched.op_offset_within_parent[op] = total_latency;
     //sched.instance_latencies[op] = op_latency(op, sched);
+    //total_latency += max(10, op_latency(op, sched));
     total_latency += op_latency(op, sched);
   }
 
@@ -16682,6 +16696,17 @@ bool no_violated_cycle_accurate_dependencies(schedule_info& sched, prog& prg) {
   cout << tab(1) << "Violated deps: " << str(violated) << endl;
   bool safe = empty(violated);
 
+  if (!safe) {
+    cout << "Schedule..." << endl;
+    for (auto s : get_maps(start_times)) {
+      cout << str(s) << endl << endl;
+    }
+    cout << endl;
+    cout << "Violated deps..." << endl;
+    for (auto m : get_maps(violated)) {
+      cout << str(m) << endl << endl;
+    }
+  }
   release(violated);
   release(earlier);
   release(start_times);
@@ -16743,11 +16768,11 @@ vector<prog> harris_variants() {
 
   // 1. At least two mapper passes fail
   // 2. Final output is wrong
-  test_programs.push_back(harris_sch1_onebuf());
+  //test_programs.push_back(harris_sch1_onebuf());
 
   // 2. Final output is wrong,
   // 3. Schedule violates dependencies?
-  //test_programs.push_back(harris_sch2_fourbuf());
+  test_programs.push_back(harris_sch2_fourbuf());
 
   // Now: They also have an error in the ROMs
   //test_programs.push_back(harris_sch3_1pp9c());
@@ -17125,7 +17150,8 @@ void generate_fpga_clockwork_code(prog& prg) {
 
 void fpga_asplos_tests() {
 
-  auto test_programs = stencil_programs();
+  //auto test_programs = stencil_programs();
+  auto test_programs = {mobilenet_unrolled()};
   for (auto prg : test_programs) {
     cout << "==== FPGA clockwork code for " << prg.name << endl;
     dsa_writers(prg);
@@ -18985,6 +19011,22 @@ std::set<op*> find_users(const std::string& buf, prog& prg) {
   return rds;
 }
 
+vector<dgraph> possible_in_to_out_shift_registers(prog& prg, UBuffer& buf, schedule_info& sched) {
+  map<string,pair<string,int>> shift_registered_outputs = determine_shift_reg_map(prg, buf, sched);
+
+  vector<dgraph> dgs;
+  for (auto inpt : buf.get_in_ports()) {
+    dgraph dg;
+    for (auto pt : shift_registered_outputs) {
+      if (pt.second.first == inpt) {
+        dg.add_edge(pt.second.first, pt.first, pt.second.second);
+      }
+    }
+    dgs.push_back(dg);
+  }
+  return dgs;
+}
+
 dgraph possible_shift_registers(prog& prg, UBuffer& buf, schedule_info& hwinfo) {
   map<string,pair<string,int>> shift_registered_outputs = determine_shift_reg_map(prg, buf, hwinfo);
   vector<pair<string,pair<string,int>>> shift_registered_outputs_to_outputs = determine_output_shift_reg_map(prg, buf, hwinfo);
@@ -19002,12 +19044,30 @@ dgraph possible_shift_registers(prog& prg, UBuffer& buf, schedule_info& hwinfo) 
   return dg;
 }
 
+
+template<typename T, typename Q>
+void sort_lt_snd(std::vector<std::pair<T, Q> >& outputs) {
+  sort_lt(outputs, [](const std::pair<T,Q> &x){return x.second;});
+}
 void dhuff_playground() {
   {
-    for (auto prg : harris_variants()) {
+    //vector<prog> hrs{harris()};
+    //vector<prog> hrs{camera_pipeline()};
+    vector<prog> hrs;
+    //{harris()};
+    concat(hrs, harris_variants());
+    for (auto prg : hrs) {
       break_up_multi_channel_inputs(prg);
       break_up_multi_channel_outputs(prg);
       dsa_writers(prg);
+
+      //unroll_reduce_loops(prg);
+      //merge_basic_block_ops(prg);
+
+      prg.pretty_print();
+      prg.sanity_check();
+      //assert(false);
+
       auto options = CGRA_M3_codegen_options(prg);
       schedule_info sched = garnet_schedule_info(options, prg);
       normalize_bounds(prg);
@@ -19022,17 +19082,43 @@ void dhuff_playground() {
 
       cout << tab(1) << "=== Completion time for optimized sched: " << prg.name << " = " << time << endl;
       auto buffers = build_buffers(prg, hw_sched);
+      int total_tiles = 0;
       for (auto b : buffers) {
+
         if (!prg.is_boundary(b.first)) {
           dgraph sr_edges = possible_shift_registers(prg, b.second, sched);
           cout << sr_edges << endl;
           UBuffer del = delete_ports(sr_edges.nodes, b.second);
           assert(del.get_out_ports().size() == 0);
+          vector<dgraph> in_to_out_srs = possible_in_to_out_shift_registers(prg, b.second, sched);
+          cout << tab(2) << b.first << " can be broken into " << in_to_out_srs.size() << " shift registers" << endl;
+          for (auto sr : in_to_out_srs) {
+            cout << sr << endl;
+          }
+
+          for (auto sr : in_to_out_srs) {
+            assert(sr.nodes.size() > 0);
+            string inpt = pick(sr.out_edges).first;
+            vector<pair<string, int> > vals;
+            for (auto v : sr.out_edges.at(inpt)) {
+              vals.push_back({v, sr.weight(inpt, v)});
+            }
+            sort_lt_snd(vals);
+            for (auto v : vals) {
+              cout << tab(1) << v.first << " -(" << v.second << ")-> " << v.second << endl;
+            }
+
+            vector<vector<pair<string, int> > > reg_chains;
+            split_by(vals, reg_chains, [](const pair<string, int>& a, const pair<string, int>& b) {
+                return abs(a.second - b.second) < 30;
+                });
+            cout << tab(3) << "# of reg chains: " << reg_chains.size() << endl;
+            total_tiles += reg_chains.size() / 2 + (reg_chains.size() % 2 == 0);
+          }
         }
       }
 
-      prg.pretty_print();
-      prg.sanity_check();
+      cout << "Total tiles in " << prg.name << ": " << total_tiles << endl;
     }
     assert(false);
   }
