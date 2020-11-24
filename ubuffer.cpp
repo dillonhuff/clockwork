@@ -694,12 +694,16 @@ map<string, UBuffer> UBuffer::generate_ubuffer(CodegenOptions& options) {
               });
 
     int usuffix = 0;
+    auto sr_opt =
+        contains(domain_name(access_map.at(pick(pt_vec))), "_s2");
     for (auto inpt: inpts) {
       auto acc_map = to_map(access_map.at(inpt));
-      if (banking.partition == "cyclic") {
+      //Need to separate banking and shift register optimization
+      if (banking.partition == "cyclic"
+              && !sr_opt) {
         cout << "\tread domain: " << str(b.rddom) << endl;
         cout << "\tread map: " << str(acc_map) << endl;
-        acc_map = its_range(acc_map, to_set(b.rddom));
+        acc_map = coalesce(its_range(acc_map, to_set(b.rddom)));
       }
       acc_map = set_range_name(acc_map, bname);
       auto dom = ::domain(acc_map);
@@ -716,7 +720,7 @@ map<string, UBuffer> UBuffer::generate_ubuffer(CodegenOptions& options) {
       if (banking.partition == "cyclic") {
         cout << "\tread domain: " << str(b.rddom) << endl;
         cout << "\tread map: " << str(acc_map) << endl;
-        acc_map = its_range(acc_map, to_set(b.rddom));
+        acc_map = coalesce(its_range(acc_map, to_set(b.rddom)));
       }
       acc_map = set_range_name(acc_map, bname);
       auto dom = ::domain(acc_map);

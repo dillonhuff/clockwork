@@ -1714,7 +1714,7 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
     bool simplify_address_space() {
         auto consumer_rem_dim = get_consumer_bank_dim_id();
         auto producer_rem_dim = get_producer_bank_dim_id();
-        if(consumer_rem_dim.has_value() && producer_rem_dim.has_value()) {
+        if (consumer_rem_dim.has_value() && producer_rem_dim.has_value()) {
             auto cons_rem = consumer_rem_dim.get_value();
             auto prod_rem = producer_rem_dim.get_value();
             vector<int> rem;
