@@ -13332,17 +13332,17 @@ void cpy_app_to_folder(const std::string& app_type, const std::string& prg_name)
 
 void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, string dir="aha_garnet_design") {
   vector<prog> test_apps;
-  test_apps.push_back(conv_3_3());
-  test_apps.push_back(gaussian());
-  test_apps.push_back(cascade());
-  test_apps.push_back(harris());
-  test_apps.push_back(rom());
-  test_apps.push_back(conv_1_2());
-  test_apps.push_back(camera_pipeline());
-  test_apps.push_back(up_sample());
+  //test_apps.push_back(conv_3_3());
+  //test_apps.push_back(gaussian());
+  //test_apps.push_back(cascade());
+  //test_apps.push_back(harris());
+  //test_apps.push_back(rom());
+  //test_apps.push_back(conv_1_2());
+  //test_apps.push_back(camera_pipeline());
+  //test_apps.push_back(up_sample());
 
-  test_apps.push_back(unsharp());
-  test_apps.push_back(resnet());
+  //test_apps.push_back(unsharp());
+  //test_apps.push_back(resnet());
   test_apps.push_back(mobilenet_unrolled());
   ////test_apps.push_back(unsharp());
 
@@ -15627,6 +15627,71 @@ void adjust_outer_pipeline_delays(schedule_info& sched, prog& prg) {
   }
 }
 
+void asap_input_iis(schedule_info& sched, prog& prg) {
+
+    //Looks for buffer all reading location is constant localtion
+    //lower the ii to be one
+    std::set<string> config_buffers;
+    for (auto b : all_buffers(prg)) {
+        if (prg.is_boundary(b)) {
+            continue;
+        }
+        bool all_write_from_offchip = true;
+        for (auto op_in : find_writers(b, prg)) {
+            bool all_read_offchip = true;
+            for (auto rdbuf : op_in->buffers_read()) {
+                if (!prg.is_boundary(rdbuf)) {
+                    all_read_offchip = false;
+                    break;
+                }
+            }
+            if (!all_read_offchip) {
+                all_write_from_offchip = false;
+                break;
+            }
+
+        }
+        if (all_write_from_offchip) {
+            config_buffers.insert(b);
+        }
+    }
+    //FIXME: fix this hack
+    std::set<string> filter_buffers;
+    for ( auto b : config_buffers ) {
+        cout << tab(2) << "Find buffers need to be rewritten: " << b << endl;
+        if (contains(b, "hw_filter")) {
+            filter_buffers.insert(b);
+        }
+    }
+    cout << "\nFilter buffers...\n" << endl;
+    for (auto b : filter_buffers) {
+        cout << tab(2) << "Left: " << b << endl;
+        for (auto op: find_writers(b, prg)) {
+            auto write_rep = op;
+            vector<string> loop_vars = surrounding_vars(write_rep, prg);
+            for (auto l_var: loop_vars) {
+                cout << tab(2) << "loop index var: " << l_var << endl;
+            }
+            assert(loop_vars.size() >= 1);
+            int ii = 1;
+            for (int it = loop_vars.size() - 1; it > 0; it --) {
+                string loop_name = loop_vars.at(it);
+                cout << "loop name: " << loop_name << endl;
+                cout << "original delay within parent: " <<
+                    sched.op_offset_within_parent[prg.find_loop(loop_name)] << endl;
+                sched.op_offset_within_parent[prg.find_loop(loop_name)] = 0;
+                sched.loop_iis[loop_name] = ii;
+                ii *= prg.find_loop(loop_name)->trip_count() + 1;
+            }
+        //    op->pretty_print();
+        //    cout << "\tOP delay: " << sched.op_offset_within_parent[op] << endl;
+
+        }
+    }
+
+
+}
+
 void adjust_inner_iis(schedule_info& sched, prog& prg) {
   cout << "Adjusting iis of " << prg.name << endl;
   for (auto lp : get_inner_loops(prg)) {
@@ -15946,7 +16011,11 @@ void garnet_single_port_ram_schedule(schedule_info& sched, op* root, prog& prg) 
     } else {
       adjust_schedule_forward(sched, prg, 0);
     }
+    //Add delay for identity stream
     relax_delays_rate_matched(sched, prg);
+
+    //Make input as fast as possible
+    asap_input_iis(sched, prg);
     auto op_sched = op_start_times_map(sched, prg);
     cout << "Final schedule after relax: " << str(op_sched)  << endl;
     return;

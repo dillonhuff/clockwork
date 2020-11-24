@@ -6974,9 +6974,9 @@ void generate_deepak_power_flow_rtl_tb(
       out_buf.lanes_in_bundle(out_bundle);
 
     if (prg.is_input(out_rep)) {
-      string en_name = 
+      string en_name =
         pg(out_rep, out_bundle) + "_en";
-      string data_name = 
+      string data_name =
         pg(out_rep, out_bundle);
 
       rgtb << tab(1) << "logic " << en_name << ";" << endl;
@@ -6988,9 +6988,9 @@ void generate_deepak_power_flow_rtl_tb(
       //rgtb << tab(1) << "logic [" << pixel_width - 1 << ":0] " << data_name << "_in" << ";" << endl;
 
     } else {
-      string en_name = 
+      string en_name =
         pg(out_rep, out_bundle) + "_valid";
-      string data_name = 
+      string data_name =
         pg(out_rep, out_bundle);
 
       rgtb << tab(1) << "logic " << en_name << ";" << endl;
@@ -7020,9 +7020,9 @@ void generate_deepak_power_flow_rtl_tb(
       //out_buf.lanes_in_bundle(out_bundle);
 
     //if (prg.is_input(out_rep)) {
-      //string en_name = 
+      //string en_name =
         //pg(out_rep, out_bundle) + "_en";
-      //string data_name = 
+      //string data_name =
         //pg(out_rep, out_bundle);
 
       //rgtb << tab(3) << data_name << "[0] = 0;" << endl;
@@ -7057,9 +7057,9 @@ void generate_deepak_power_flow_rtl_tb(
       out_buf.lanes_in_bundle(out_bundle);
 
     if (prg.is_input(out_rep)) {
-      string en_name = 
+      string en_name =
         pg(out_rep, out_bundle) + "_en";
-      string data_name = 
+      string data_name =
         pg(out_rep, out_bundle);
       string data_in_name = data_name;
         //inputs0[15:0] <= #`ASSIGNMENT_DELAY $urandom;
@@ -7070,9 +7070,9 @@ void generate_deepak_power_flow_rtl_tb(
       //rgtb << tab(2) << "end" << endl;
 
     } else {
-      //string en_name = 
+      //string en_name =
         //pg(out_rep, out_bundle) + "_valid";
-      //string data_name = 
+      //string data_name =
         //pg(out_rep, out_bundle);
       //rgtb << tab(2) << "if (" << en_name << ") begin" << endl;
       //rgtb << tab(3) << "$display(\"Got data %d from dut." << en_name << "\", " << data_name << "[0]" << ");" << endl;
@@ -7081,7 +7081,7 @@ void generate_deepak_power_flow_rtl_tb(
   }
 
   rgtb << tab(1) << "end" << endl;
-  
+
   rgtb << "endmodule";
   rgtb.close();
 
@@ -7536,10 +7536,11 @@ int buffer_store_latency(CodegenOptions& options) {
 }
 
 int buffer_load_latency(CodegenOptions& options) {
-  if (options.rtl_options.target_tile == TARGET_TILE_REGISTERS ||
-      options.rtl_options.target_tile == TARGET_TILE_WIDE_FETCH_WITH_ADDRGEN
-      ) {
+  if (options.rtl_options.target_tile == TARGET_TILE_REGISTERS ) {
     return 0;
+
+  } else if (options.rtl_options.target_tile == TARGET_TILE_WIDE_FETCH_WITH_ADDRGEN ) {
+      return 0;
   } else if(options.rtl_options.target_tile == TARGET_TILE_PLATONIC)
   {
       return 0;
