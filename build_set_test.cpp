@@ -16056,15 +16056,48 @@ void cycle_accurate_clockwork_schedule(schedule_info& sched, op* root, prog& prg
       int delay = to_int(int_const_coeff(map_find(op->name, cs).at(level)));
       sched.loop_iis[var] = qfactor*fused_level_iis.at(level);
       sched.op_offset_within_parent[container] = delay*fused_level_iis.at(level);
+      //sched.op_offset_within_parent[container] = (delay + 2)*fused_level_iis.at(level);
     }
   }
 
+  //vector<vector<op*> > op_levels;
+  //std::set<op*> unsorted;
+  //std::set<string> already_written;
+  //while (unsorted.size() > 0) {
+    //for (auto op : unsorted) {
+      //auto read = op->buffers_read();
+      //if (intersection(read, written).size() == 0) {
+        //unsorted.erase(op);
+        //break;
+      //}
+    //}
+  //}
+  //assert(false);
+
   //vector<op*> inners = inner_ops(prg);
   //vector<op*> scheduled;
-  //int total_latency = 0;
+  ////int total_latency = 0;
+  //std::set<string> written;
   //for (auto op : inner_ops(prg)) {
-    //if (scheduled.size() == 0 || ) {
+    //auto read = op->buffers_read();
 
+    //if (intersection(read, written).size() == read.size()) {
+      //sched.op_offset_within_parent[op] = total_latency;
+    //} else {
+      //op* last_writer = nullptr;
+      //for () {
+
+      //}
+      //assert(last_writer != nullptr);
+
+      //sched.op_offset_within_parent[op] =
+        //sched.op_offset_within_parent[last_writer] + op_latency(last_writer, sched);
+      ////sched.op_offset_within_parent[op] = total_latency;
+    //}
+
+
+    //for (auto b : op->buffers_written()) {
+      //written.insert(b);
     //}
     //scheduled.push_back(op);
   //}
@@ -16074,11 +16107,12 @@ void cycle_accurate_clockwork_schedule(schedule_info& sched, op* root, prog& prg
   for (auto op : inner_ops(prg)) {
     cout << "inner ops: " << op->name << endl;
     sched.op_offset_within_parent[op] = total_latency;
-    //sched.instance_latencies[op] = op_latency(op, sched);
-    //total_latency += max(10, op_latency(op, sched));
     total_latency += op_latency(op, sched);
+    //total_latency += 0;
+    //op_latency(op, sched);
   }
 
+  //assert(no_violated_cycle_accurate_dependencies(sched, prg));
 }
 
 void coarse_pipeline_schedule(schedule_info& sched, op* root, prog& prg) {
@@ -16772,14 +16806,14 @@ vector<prog> harris_variants() {
 
   // 2. Final output is wrong,
   // 3. Schedule violates dependencies?
-  test_programs.push_back(harris_sch2_fourbuf());
+  //test_programs.push_back(harris_sch2_fourbuf());
 
   // Now: They also have an error in the ROMs
   //test_programs.push_back(harris_sch3_1pp9c());
   //test_programs.push_back(harris_sch4_1pp3c());
 
   // Works
-  test_programs.push_back(harris_sch5_1ppc());
+  //test_programs.push_back(harris_sch5_1ppc());
   test_programs.push_back(harris_sch6_2ppc());
   test_programs.push_back(harris_sch7_bigtile());
   test_programs.push_back(harris_sch8_endcim());
@@ -17154,6 +17188,8 @@ void fpga_asplos_tests() {
   auto test_programs = {mobilenet_unrolled()};
   for (auto prg : test_programs) {
     cout << "==== FPGA clockwork code for " << prg.name << endl;
+    break_up_multi_channel_inputs(prg);
+    break_up_multi_channel_outputs(prg);
     dsa_writers(prg);
     pad_to_single_depth(prg);
     std::vector<string> no_opt =
