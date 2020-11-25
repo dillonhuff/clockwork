@@ -19133,8 +19133,9 @@ std::set<op*> find_users(const std::string& buf, prog& prg) {
 void dhuff_playground() {
   {
     vector<prog> apps;
-    apps.push_back(camera_pipeline());
-    apps.push_back(mobilenet_unrolled());
+    //apps.push_back(camera_pipeline());
+    //apps.push_back(mobilenet_unrolled());
+    apps.push_back(harris());
     for (auto app: apps) {
         auto pe_op_count = get_PE_optype_count(app);
 
