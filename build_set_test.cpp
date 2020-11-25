@@ -19132,6 +19132,17 @@ std::set<op*> find_users(const std::string& buf, prog& prg) {
 
 void dhuff_playground() {
   {
+    prog prg = camera_pipeline();
+    auto pe_op_count = get_PE_optype_count(prg);
+
+    ofstream out("aha_garnet_design_new/"+ prg.name +"/pe_count.csv");
+    for (auto it: pe_op_count) {
+        out << it.first << "," << it.second << endl;
+    }
+    assert(false);
+
+  }
+  {
     prog prg = harris_sch6_2ppc();
     dsa_writers(prg);
     prg.pretty_print();

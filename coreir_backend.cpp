@@ -5560,6 +5560,53 @@ double PE_energy_cost(power_analysis_params& power_params, power_analysis_info& 
   return energy_cost;
 }
 
+map<string, int> get_PE_optype_count(prog& prg) {
+
+  cout << "Computing PE energy cost for " << prg.name << endl;
+  map<string, int> PE_op_count;
+
+  for (auto op : prg.all_ops()) {
+    if (op->func != "") {
+      vector<string> surrounding = surrounding_vars(op, prg);
+      vector<int> bounds;
+      for (auto l : surrounding) {
+        bounds.push_back(prg.find_loop(l)->trip_count());
+      }
+
+      CoreIR::Context* context = CoreIR::newContext();
+      CoreIRLoadLibrary_commonlib(context);
+      CoreIRLoadLibrary_cgralib(context);
+
+      string compute_file = "./coreir_compute/" + prg.name + "_compute.json";
+      if (!loadFromFile(context, compute_file)) {
+        cout << "Could not load compute file for: " << prg.name << ", file name = " << compute_file << endl;
+        //assert(false);
+      }
+      auto ns = context->getNamespace("global");
+      CoreIR::Module* cu = ns->getModule(op->func);
+      garnet_map_module(cu);
+      map<string, int> counts;
+      for (auto inst : cu->getDef()->getInstances()) {
+        cout << tab(1) << inst.second->getModuleRef()->getName() << endl;
+        counts[inst.second->getModuleRef()->getName()]++;
+        if (inst.second->getModuleRef()->getName() == "PE") {
+          auto modargs = inst.second->getModArgs();
+          if (modargs.find("alu_op") != end(modargs)) {
+            //power_stats.PE_optype_counts[op->name][inst.second->getModArgs().at("alu_op")->get<string>()]++;
+
+            PE_op_count[inst.second->getModArgs().at("alu_op")->get<string>()]++;
+          }
+        }
+      }
+      cu->print();
+      deleteContext(context);
+    }
+  }
+  //cout << "# of PEs in " << prg.name << " = " << PEs_used << endl;
+
+  return PE_op_count;
+}
+
 double MEM_energy_cost(CodegenOptions& options, power_analysis_params& power_params, power_analysis_info& power_stats, prog& prg) {
 
   cout << "Computing MEM energy cost for " << prg.name << endl;
