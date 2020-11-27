@@ -7911,6 +7911,8 @@ app_dag partition_application(const std::map<std::string, std::set<std::string> 
 
       string broadcast = prg.un(b.first + "_to_" + group_name);
       prog& pp = dag.fusion_group_progs.at(dag.producer_group(b.first));
+      //vector<int> level_permutation =
+        //access_permutation(b.first, pp);
 
       auto readers = find_writers(b.first, pp);
       op* reader = pick(readers);
