@@ -18407,362 +18407,6 @@ void test_outer_strip_mine() {
   compare("outer_strip_mine_" + prg.name + "_vs_unopt", strip_mined, unopt);
 }
 
-struct app_dag {
-  prog prg;
-  map<string, std::set<string> > fusion_groups;
-
-  // This is constructed later.
-  map<string, prog> fusion_group_progs;
-  map<string, int> channel_sizes;
-
-  vector<string> sorted_fusion_groups() {
-    assert(fusion_groups.size() == fusion_group_progs.size());
-
-    vector<string> sorted;
-    std::set<string> finished_buffers;
-    for (auto b : prg.ins) {
-      finished_buffers.insert(b);
-    }
-
-    while (sorted.size() < fusion_groups.size()) {
-      for (auto& g : fusion_group_progs) {
-        if (!elem(g.first, sorted)) {
-          bool all_deps_done = true;
-          for (auto b : g.second.ins) {
-            if (!elem(b, finished_buffers)) {
-              all_deps_done = false;
-              break;
-            }
-          }
-
-          if (all_deps_done) {
-            for (auto b : g.second.outs) {
-              finished_buffers.insert(b);
-            }
-            sorted.push_back(g.first);
-          }
-        }
-      }
-
-    }
-    return sorted;
-  }
-
-  bool is_boundary(const std::string& buf) {
-    return prg.is_boundary(buf);
-  }
-
-  string producer_group(const std::string& buf) {
-    assert(fusion_groups.size() == fusion_group_progs.size());
-
-    for (auto& gp : fusion_group_progs) {
-      if (elem(buf, buffers_written(gp.second))) {
-        return gp.first;
-      }
-    }
-    cout << "Error: No producer group for: " << buf << endl;
-    cout << "Program..." << endl;
-    prg.pretty_print();
-    cout << endl;
-
-    cout << "Fusion group progs..." << endl;
-    for (auto& gp : fusion_group_progs) {
-      gp.second.pretty_print();
-      cout << endl;
-    }
-    assert(false);
-  }
-
-  bool in_group(op* op, const std::string& group_name) {
-    for (std::string g : map_find(group_name, fusion_groups)) {
-      //cout << "checking if " << op->name << " is in " << g << endl;
-      auto lp = prg.find_loop(g);
-      //lp->pretty_print();
-      if (lp == op || elem(op, lp->descendant_ops())) {
-        return true;
-      }
-    }
-    return false;
-  }
-};
-
-bool all_kernel_inputs_are_program_inputs(app_dag& dag) {
-  for (auto& g : dag.fusion_group_progs) {
-    auto& gp = g.second;
-    for (auto buf : buffers_read(gp)) {
-      if ((dag.is_boundary(buf) || dag.producer_group(buf) != g.first) &&
-          !elem(buf, gp.ins)) {
-        cout << buf << " is not an in of " << endl;
-        gp.pretty_print();
-        return false;
-      }
-    }
-  }
-  return true;
-}
-
-bool all_kernel_outputs_have_fanout_one(app_dag& dag) {
-  for (auto& g : dag.fusion_groups) {
-    assert(contains_key(g.first, dag.fusion_group_progs));
-    for (auto out : dag.fusion_group_progs.at(g.first).outs) {
-      int num_receivers = 0;
-      for (auto& other : dag.fusion_group_progs) {
-        for (auto in : other.second.ins) {
-          if (out == in) {
-            num_receivers++;
-          }
-        }
-      }
-      if (num_receivers >= 2) {
-        cout << out << " has " << num_receivers << " readers" << endl;
-        return false;
-      }
-    }
-  }
-  return true;
-}
-
-void generate_app_code(CodegenOptions& options,
-    app_dag& dag) {
-
-  // Dummy interface for the application
-  auto sched = dag.prg.unoptimized_schedule();
-  auto buffers = build_buffers(dag.prg, dag.prg.unoptimized_schedule());
-
-  ofstream conv_out(dag.prg.name + ".cpp");
-  generate_app_prefix(options, conv_out, dag.prg);
-
-  for (auto& gp : dag.fusion_group_progs) {
-    auto sched = gp.second.optimized_codegen();
-
-    auto domains = gp.second.domains();
-    map<string, isl_set*> domain_map;
-    for (auto d : domains) {
-      domain_map[d.first->name] = d.second;
-    }
-    auto buffers = build_buffers(gp.second, sched);
-    generate_app_code_body(options,
-        conv_out,
-        buffers,
-        gp.second,
-        sched,
-        domain_map);
-  }
-
-  generate_driver_function_prefix(options, conv_out, buffers, dag.prg);
-
-  conv_out << endl;
-  open_synth_scope(conv_out);
-  conv_out << "#pragma HLS dataflow" << endl;
-  close_synth_scope(conv_out);
-  conv_out << endl;
-
-  std::set<std::string> done;
-  for (auto& buf : dag.prg.boundary_buffers()) {
-    done.insert(buf);
-  }
-
-  for (auto& gp : dag.fusion_group_progs) {
-    for (auto& buf : gp.second.boundary_buffers()) {
-      if (!elem(buf, done)) {
-        conv_out << tab(1) << "HWStream<hw_uint<32> > " << buf << ";" << endl;
-        open_synth_scope(conv_out);
-        int depth = 1;
-        conv_out << "#pragma HLS stream variable=" << buf << ".values depth=" << depth << endl;
-        close_synth_scope(conv_out);
-        done.insert(buf);
-      }
-    }
-  }
-
-  conv_out << endl << endl;
-
-  for (auto& gpn : dag.sorted_fusion_groups()) {
-    auto& gp = dag.fusion_group_progs.at(gpn);
-    vector<string> args;
-    for (auto in : gp.ins) {
-      args.push_back(in);
-    }
-    for (auto out : gp.outs) {
-      args.push_back(out);
-    }
-    conv_out << tab(1) << gp.name << sep_list(args, "(", ")", ", ") << ";" << endl;
-  }
-
-  conv_out << endl;
-
-  generate_driver_function_suffix(options, conv_out, buffers, dag.prg);
-
-  {
-    vector<string> arg_buf_list = get_args(buffers, dag.prg);
-    vector<string> ls = arg_buf_list;
-    ls.push_back("const int num_epochs");
-    string outer_arg_buffers = sep_list(ls, "(", ")", ", ");
-    conv_out << "void " << dag.prg.name << "_wrapper" << outer_arg_buffers << " {" << endl << endl;
-    vector<string> arg_strings = get_arg_names(buffers, dag.prg);
-    conv_out << tab(1) << "for (int epoch = 0; epoch < num_epochs; epoch++) {" << endl;
-    conv_out << tab(2) << dag.prg.name << sep_list(arg_strings, "(", ")", ", ") << ";" << endl;
-    conv_out << tab(1) << "}" << endl;
-    conv_out << "}" << endl;
-  }
-
-  generate_app_collateral(options, conv_out, buffers, dag.prg, sched);
-}
-
-app_dag partition_application(const std::map<std::string, std::set<std::string> >& fusion_groups, prog& prg) {
-
-  // Problem: I want to be able to read in buffers
-  // produced by other kernels in the "order" of the
-  // producer and consumer. But this is currently
-  // not done. read_in_no_dsa, and write_out_no_dsa
-  // do not take in the scan order, they just
-  // iterate over the data in a fixed order
-
-  app_dag dag{prg, fusion_groups};
-  for (auto& g : dag.fusion_groups) {
-    dag.fusion_group_progs[g.first] =
-      extract_group_to_separate_prog(g.second, dag.prg);
-  }
-
-  // Map from buffers to the kernels they read
-  map<string, vector<string> > kernel_broadcasts;
-  for (auto gp : dag.fusion_groups) {
-    auto produced = get_produced_buffers(gp.second, prg);
-    for (auto other_gp : fusion_groups) {
-      if (gp != other_gp) {
-        auto consumed = get_consumed_buffers(other_gp.second, prg);
-        for (auto buf : consumed) {
-          if (elem(buf, produced)) {
-            kernel_broadcasts[buf].push_back(other_gp.first);
-          }
-        }
-      }
-    }
-  }
-  cout << "===== Cross kernel deps" << endl;
-  for (auto b : kernel_broadcasts) {
-    cout << tab(1) << b.first << " is used by " << sep_list(b.second, "[", "]", ", ") << endl;
-    auto consumers = prg.consumer_maps(b.first);
-    for (auto group_name : b.second) {
-      vector<isl_set*> read;
-      for (auto m : consumers) {
-        if (m.second != nullptr && dag.in_group(m.first, group_name)) {
-          auto dom = range(m.second);
-          cout << tab(2) << group_name << " reads " << str(dom) << endl;
-          read.push_back(dom);
-        }
-      }
-
-
-      isl_set* s = unn(read);
-      cout << tab(2) << "Read: " << str(lexmin(s)) << " to " << str(lexmax(s)) << endl;
-      assert(contains_key(group_name, dag.fusion_group_progs));
-      prog& gp = dag.fusion_group_progs.at(group_name);
-
-      auto readers = find_readers(b.first, gp);
-      cout << "=== Readers..." << endl;
-      for (auto reader : readers) {
-        cout << tab(1) << reader->name << endl;
-      }
-      op* reader = pick(readers);
-      auto addr_rep = pick(read_addrs(reader, b.first, gp));
-      cout << tab(1) << "Addr rep: " << str(addr_rep) << endl;
-      auto levels = get_variable_levels(gp);
-      vector<int> level_permutation;
-      level_permutation.resize(isl_multi_aff_dim(addr_rep, isl_dim_set));
-      for (int i = 0; i < isl_multi_aff_dim(addr_rep, isl_dim_set); i++) {
-        isl_aff* addr_comp = isl_multi_aff_get_aff(addr_rep, i);
-        cout << tab(2) << str(addr_comp) << endl;
-        for (int d = 0; d < num_in_dims(addr_comp); d++) {
-          if (!is_zero(get_coeff(addr_comp, d))) {
-            string var = surrounding_vars(reader, gp).at(d);
-            int lvl = map_find(var, levels) - 1;
-            cout << tab(3) << "var: " << var << endl;
-            cout << tab(3) << "lvl: " << map_find(var, levels) << endl;
-            assert(lvl >= 0);
-            cout << tab(3) << "address component " << i << " of " << b.first << " should be loaded at level " << lvl << endl;
-            level_permutation[i] = lvl;
-          }
-        }
-      }
-      cout << "Level permutation: " << bracket_list(level_permutation) << endl;
-      gp.pretty_print();
-      //assert(false);
-
-      string replacement = prg.un(b.first + "_FIFO_buf");
-      gp.root->replace_reads_from(b.first, replacement);
-      read_in_no_dsa(gp.root, s, level_permutation, replacement, gp);
-
-      gp.pretty_print();
-      //assert(false);
-    }
-  }
-
-  for (auto b : kernel_broadcasts) {
-    cout << tab(1) << b.first << " is used by " << sep_list(b.second, "[", "]", ", ") << endl;
-    auto consumers = prg.consumer_maps(b.first);
-    for (auto group_name : b.second) {
-      vector<isl_set*> read;
-      for (auto m : consumers) {
-        if (m.second != nullptr && dag.in_group(m.first, group_name)) {
-          auto dom = range(m.second);
-          cout << tab(2) << group_name << " reads " << str(dom) << endl;
-          read.push_back(dom);
-        }
-      }
-
-      isl_set* s = unn(read);
-
-
-      string broadcast = prg.un(b.first + "_to_" + group_name);
-      prog& pp = dag.fusion_group_progs.at(dag.producer_group(b.first));
-
-      auto readers = find_writers(b.first, pp);
-      op* reader = pick(readers);
-      auto addr_rep = pick(write_addrs(reader, b.first, pp));
-      cout << tab(1) << "Addr rep: " << str(addr_rep) << endl;
-      auto levels = get_variable_levels(pp);
-      vector<int> level_permutation;
-      level_permutation.resize(isl_multi_aff_dim(addr_rep, isl_dim_set));
-      for (int i = 0; i < isl_multi_aff_dim(addr_rep, isl_dim_set); i++) {
-        isl_aff* addr_comp = isl_multi_aff_get_aff(addr_rep, i);
-        cout << tab(2) << str(addr_comp) << endl;
-        for (int d = 0; d < num_in_dims(addr_comp); d++) {
-          if (!is_zero(get_coeff(addr_comp, d))) {
-            string var = surrounding_vars(reader, pp).at(d);
-            int lvl = map_find(var, levels) - 1;
-            cout << tab(3) << "var: " << var << endl;
-            cout << tab(3) << "lvl: " << map_find(var, levels) << endl;
-            assert(lvl >= 0);
-            cout << tab(3) << "address component " << i << " of " << b.first << " should be loaded at level " << lvl << endl;
-            level_permutation[i] = lvl;
-          }
-        }
-      }
-      cout << "Level permutation: " << bracket_list(level_permutation) << endl;
-      pp.outs.insert(broadcast);
-
-      write_out_no_dsa(pp.root, s, level_permutation, broadcast, pp);
-      pp.pretty_print();
-
-      assert(contains_key(group_name, dag.fusion_group_progs));
-      prog& gp = dag.fusion_group_progs.at(group_name);
-      gp.root->replace_reads_from(b.first, broadcast);
-      gp.ins.erase(b.first);
-      gp.ins.insert(broadcast);
-
-      gp.pretty_print();
-
-      pp.outs.erase(b.first);
-    }
-  }
-
-  assert(all_kernel_outputs_have_fanout_one(dag));
-  assert(all_kernel_inputs_are_program_inputs(dag));
-
-  return dag;
-}
-
 void test_multi_kernel_design() {
   int num_pyramid_levels = 3;
 
@@ -18892,7 +18536,6 @@ void test_multi_kernel_unsharp() {
   auto diff = prg.add_nest("x", 0, 1, "y", 0, 1)->add_op("diff");
   diff->add_load("gray_diff", "x", "y");
   diff->add_load("blurred", "x", "y");
-  diff->add_load("blurred", "x", "y + 1");
   diff->add_store("out", "x", "y");
   diff->add_function("diff");
 
@@ -18915,57 +18558,57 @@ void test_multi_kernel_unsharp() {
 
   //assert(false);
 
-  for (auto b : all_buffers(prg)) {
-    auto r = prg.consumer_map(b);
-    auto w = prg.producer_map(b);
-    if (!prg.is_boundary(b)) {
-      cout << "========= " << b << endl;
-      cout << tab(1) << str(r) << endl;
-      cout << tab(1) << str(w) << endl;
+  //for (auto b : all_buffers(prg)) {
+    //auto r = prg.consumer_map(b);
+    //auto w = prg.producer_map(b);
+    //if (!prg.is_boundary(b)) {
+      //cout << "========= " << b << endl;
+      //cout << tab(1) << str(r) << endl;
+      //cout << tab(1) << str(w) << endl;
 
-      auto write_times = lexmin(dot(inv(w), sched));
-      auto read_times = lexmin(dot(inv(r), sched));
+      //auto write_times = lexmin(dot(inv(w), sched));
+      //auto read_times = lexmin(dot(inv(r), sched));
 
-      auto op_times = unn(write_times, read_times);
+      //auto op_times = unn(write_times, read_times);
 
-      //auto written_before = lex_gt(write_times, write_times);
-      auto written_before = lex_gt(op_times, write_times);
-      cout << "written before: " << str(written_before) << endl;
-      auto times_to_written_before =
-        //to_map(unn(dot(inv(write_times), written_before), inv(write_times)));
-        to_map(unn(dot(inv(op_times), written_before), inv(write_times)));
-      cout << "Values written before time: " << str(times_to_written_before) << endl;
-      //cout << "Size = " << str(card(times_to_written_before)) << endl;
-      //cout << "Bound = " << str(int_upper_bound(card(times_to_written_before))) << endl;
+      ////auto written_before = lex_gt(write_times, write_times);
+      //auto written_before = lex_gt(op_times, write_times);
+      //cout << "written before: " << str(written_before) << endl;
+      //auto times_to_written_before =
+        ////to_map(unn(dot(inv(write_times), written_before), inv(write_times)));
+        //to_map(unn(dot(inv(op_times), written_before), inv(write_times)));
+      //cout << "Values written before time: " << str(times_to_written_before) << endl;
+      ////cout << "Size = " << str(card(times_to_written_before)) << endl;
+      ////cout << "Bound = " << str(int_upper_bound(card(times_to_written_before))) << endl;
 
-      //auto read_after = lex_lt(read_times, read_times);
-      auto read_after = lex_lt(op_times, read_times);
-      auto times_to_read_after =
-        to_map(unn(dot(inv(op_times), read_after), inv(read_times)));
-      cout << "Values read after time: " << str(times_to_read_after) << endl;
-      //cout << "Size = " << str(card(times_to_read_after)) << endl;
-      //cout << "Bound = " << str(int_upper_bound(card(times_to_read_after))) << endl;
+      ////auto read_after = lex_lt(read_times, read_times);
+      //auto read_after = lex_lt(op_times, read_times);
+      //auto times_to_read_after =
+        //to_map(unn(dot(inv(op_times), read_after), inv(read_times)));
+      //cout << "Values read after time: " << str(times_to_read_after) << endl;
+      ////cout << "Size = " << str(card(times_to_read_after)) << endl;
+      ////cout << "Bound = " << str(int_upper_bound(card(times_to_read_after))) << endl;
 
-      auto live = coalesce(simplify(its(times_to_read_after, times_to_written_before)));
-      cout << "live: " << str(live) << endl;
-      cout << "Size = " << str(card(live)) << endl;
-      cout << "Bound = " << str(int_upper_bound(card(to_umap(live)))) << endl;
+      //auto live = coalesce(simplify(its(times_to_read_after, times_to_written_before)));
+      //cout << "live: " << str(live) << endl;
+      //cout << "Size = " << str(card(live)) << endl;
+      //cout << "Bound = " << str(int_upper_bound(card(to_umap(live)))) << endl;
 
-      //auto times_to_writes = dot(inv(sched), w);
-      //auto times_to_reads = dot(inv(sched), r);
+      ////auto times_to_writes = dot(inv(sched), w);
+      ////auto times_to_reads = dot(inv(sched), r);
 
-      //cout << "times to writes: " << str(times_to_writes) << endl;
-      //cout << "times to reads : " << str(times_to_reads) << endl;
+      ////cout << "times to writes: " << str(times_to_writes) << endl;
+      ////cout << "times to reads : " << str(times_to_reads) << endl;
 
-      // What am I trying to construct?
-      //   An expression for max(#Writes(t) - #Reads(t))
-      // Need: #(Data written at time t that has not yet been read)
-      // Need: A map from times to the set of locations that have been written but not read
-      //   A map from times to the set of locations that have been written
-      //   A map from times to the set of locations that have not been read yet but will be
-    }
-  }
-  assert(false);
+      //// What am I trying to construct?
+      ////   An expression for max(#Writes(t) - #Reads(t))
+      //// Need: #(Data written at time t that has not yet been read)
+      //// Need: A map from times to the set of locations that have been written but not read
+      ////   A map from times to the set of locations that have been written
+      ////   A map from times to the set of locations that have not been read yet but will be
+    //}
+  //}
+  //assert(false);
 
   auto unopt_postprocessed = unoptimized_result(prg);
 
@@ -18997,6 +18640,7 @@ void test_multi_kernel_unsharp() {
   vector<string> multi_kernel_res = run_regression_tb(dag.prg);
 
   compare("multi_kernel_" + prg.name + "_vs_unopt", multi_kernel_res, unopt_postprocessed);
+  assert(false);
   move_to_benchmarks_folder(dag.prg.name);
 }
 
@@ -19183,6 +18827,9 @@ prog stencil_chain(const std::string& name) {
 }
 
 void dhuff_playground() {
+  llf_test();
+  assert(false);
+  //test_multi_kernel_unsharp();
   {
     auto prg = stencil_chain("sc_stat");
     generate_optimized_code(prg);

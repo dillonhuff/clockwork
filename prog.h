@@ -1912,3 +1912,92 @@ vector<isl_multi_aff*> write_addrs(op* op, const std::string& buf, prog& prg);
 
 vector<isl_multi_aff*> read_addrs(op* op, const std::string& buf, prog& prg);
 
+struct app_dag {
+  prog prg;
+  map<string, std::set<string> > fusion_groups;
+
+  // This is constructed later.
+  map<string, prog> fusion_group_progs;
+  map<string, int> channel_sizes;
+
+  vector<string> sorted_fusion_groups() {
+    assert(fusion_groups.size() == fusion_group_progs.size());
+
+    vector<string> sorted;
+    std::set<string> finished_buffers;
+    for (auto b : prg.ins) {
+      finished_buffers.insert(b);
+    }
+
+    while (sorted.size() < fusion_groups.size()) {
+      for (auto& g : fusion_group_progs) {
+        if (!elem(g.first, sorted)) {
+          bool all_deps_done = true;
+          for (auto b : g.second.ins) {
+            if (!elem(b, finished_buffers)) {
+              all_deps_done = false;
+              break;
+            }
+          }
+
+          if (all_deps_done) {
+            for (auto b : g.second.outs) {
+              finished_buffers.insert(b);
+            }
+            sorted.push_back(g.first);
+          }
+        }
+      }
+
+    }
+    return sorted;
+  }
+
+  bool is_boundary(const std::string& buf) {
+    return prg.is_boundary(buf);
+  }
+
+  string producer_group(const std::string& buf) {
+    assert(fusion_groups.size() == fusion_group_progs.size());
+
+    for (auto& gp : fusion_group_progs) {
+      if (elem(buf, buffers_written(gp.second))) {
+        return gp.first;
+      }
+    }
+    cout << "Error: No producer group for: " << buf << endl;
+    cout << "Program..." << endl;
+    prg.pretty_print();
+    cout << endl;
+
+    cout << "Fusion group progs..." << endl;
+    for (auto& gp : fusion_group_progs) {
+      gp.second.pretty_print();
+      cout << endl;
+    }
+    assert(false);
+  }
+
+  bool in_group(op* op, const std::string& group_name) {
+    for (std::string g : map_find(group_name, fusion_groups)) {
+      //cout << "checking if " << op->name << " is in " << g << endl;
+      auto lp = prg.find_loop(g);
+      //lp->pretty_print();
+      if (lp == op || elem(op, lp->descendant_ops())) {
+        return true;
+      }
+    }
+    return false;
+  }
+};
+
+
+bool all_kernel_inputs_are_program_inputs(app_dag& dag);
+
+bool all_kernel_outputs_have_fanout_one(app_dag& dag);
+
+void generate_app_code(CodegenOptions& options,
+    app_dag& dag);
+
+app_dag partition_application(const std::map<std::string, std::set<std::string> >& fusion_groups, prog& prg);
+
