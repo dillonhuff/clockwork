@@ -18601,6 +18601,14 @@ void generate_app_code(CodegenOptions& options,
 }
 
 app_dag partition_application(const std::map<std::string, std::set<std::string> >& fusion_groups, prog& prg) {
+
+  // Problem: I want to be able to read in buffers
+  // produced by other kernels in the "order" of the
+  // producer and consumer. But this is currently
+  // not done. read_in_no_dsa, and write_out_no_dsa
+  // do not take in the scan order, they just
+  // iterate over the data in a fixed order
+
   app_dag dag{prg, fusion_groups};
   for (auto& g : dag.fusion_groups) {
     dag.fusion_group_progs[g.first] =
@@ -18636,15 +18644,48 @@ app_dag partition_application(const std::map<std::string, std::set<std::string> 
         }
       }
 
+
       isl_set* s = unn(read);
       cout << tab(2) << "Read: " << str(lexmin(s)) << " to " << str(lexmax(s)) << endl;
       assert(contains_key(group_name, dag.fusion_group_progs));
       prog& gp = dag.fusion_group_progs.at(group_name);
+
+      auto readers = find_readers(b.first, gp);
+      cout << "=== Readers..." << endl;
+      for (auto reader : readers) {
+        cout << tab(1) << reader->name << endl;
+      }
+      op* reader = pick(readers);
+      auto addr_rep = pick(read_addrs(reader, b.first, gp));
+      cout << tab(1) << "Addr rep: " << str(addr_rep) << endl;
+      auto levels = get_variable_levels(gp);
+      vector<int> level_permutation;
+      level_permutation.resize(isl_multi_aff_dim(addr_rep, isl_dim_set));
+      for (int i = 0; i < isl_multi_aff_dim(addr_rep, isl_dim_set); i++) {
+        isl_aff* addr_comp = isl_multi_aff_get_aff(addr_rep, i);
+        cout << tab(2) << str(addr_comp) << endl;
+        for (int d = 0; d < num_in_dims(addr_comp); d++) {
+          if (!is_zero(get_coeff(addr_comp, d))) {
+            string var = surrounding_vars(reader, gp).at(d);
+            int lvl = map_find(var, levels) - 1;
+            cout << tab(3) << "var: " << var << endl;
+            cout << tab(3) << "lvl: " << map_find(var, levels) << endl;
+            assert(lvl >= 0);
+            cout << tab(3) << "address component " << i << " of " << b.first << " should be loaded at level " << lvl << endl;
+            level_permutation[d] = i;
+          }
+        }
+      }
+      cout << "Level permutation: " << bracket_list(level_permutation) << endl;
+      gp.pretty_print();
+      assert(false);
+
       string replacement = prg.un(b.first + "_FIFO_buf");
       gp.root->replace_reads_from(b.first, replacement);
       read_in_no_dsa(gp.root, s, replacement, gp);
 
       gp.pretty_print();
+      assert(false);
     }
   }
 
@@ -19116,7 +19157,6 @@ void dhuff_playground() {
       gp.second.pretty_print();
       cout << endl;
     }
-    assert(false);
 
     generate_regression_testbench(dag.prg);
 

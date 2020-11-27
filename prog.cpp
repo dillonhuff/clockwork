@@ -6197,10 +6197,6 @@ void read_in_no_dsa(op* loop, isl_set* read_data, const std::string& rb_name, pr
   op* next_lp = loop;
   vector<string> load_addrs;
   vector<string> store_addrs;
-  //for (auto v : surrounding_vars(loop, prg)) {
-    //store_addrs.push_back(v);
-  //}
-  //store_addrs.push_back(loop->name);
 
   for (int d = 0; d < num_dims(read_data); d++) {
     auto ps = project_all_but(read_data, d);
@@ -6392,7 +6388,6 @@ void write_out_no_dsa(op* loop, isl_set* read_data, const std::string& rb_name, 
   auto ld = next_lp->add_op(prg.unique_name("store_to_" + rb_name));
   ld->add_load(buf, comma_list(load_addrs));
   ld->add_store(rb_name, comma_list(store_addrs));
-
 }
 
 void ir_node::pretty_print(std::ostream& out, int level) const {
