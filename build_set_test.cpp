@@ -18672,20 +18672,20 @@ app_dag partition_application(const std::map<std::string, std::set<std::string> 
             cout << tab(3) << "lvl: " << map_find(var, levels) << endl;
             assert(lvl >= 0);
             cout << tab(3) << "address component " << i << " of " << b.first << " should be loaded at level " << lvl << endl;
-            level_permutation[d] = i;
+            level_permutation[i] = lvl;
           }
         }
       }
       cout << "Level permutation: " << bracket_list(level_permutation) << endl;
       gp.pretty_print();
-      assert(false);
+      //assert(false);
 
       string replacement = prg.un(b.first + "_FIFO_buf");
       gp.root->replace_reads_from(b.first, replacement);
       read_in_no_dsa(gp.root, s, replacement, gp);
 
       gp.pretty_print();
-      assert(false);
+      //assert(false);
     }
   }
 
