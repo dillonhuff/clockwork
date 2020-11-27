@@ -6194,7 +6194,10 @@ void read_in_no_dsa(
     op* loop,
     isl_set* read_data,
     const std::vector<int>& loop_order,
-    const std::string& rb_name, prog& prg) {
+    const std::string& rb_name,
+    prog& prg) {
+
+  prg.pretty_print();
 
   assert(loop->is_loop());
   assert(loop_order.size() == num_dims(read_data));
@@ -6224,17 +6227,21 @@ void read_in_no_dsa(
 
   op* next_lp = loop;
   for (int d = 0; d < num_dims(read_data); d++) {
-    int lb = loop_bounds.at((d)).first;
-    int ub = loop_bounds.at((d)).second;
-    next_lp = next_lp->add_loop_front(load_addrs.at((d)), lb, ub);
-    //int lb = loop_bounds.at(loop_order.at(d)).first;
-    //int ub = loop_bounds.at(loop_order.at(d)).second;
-    //next_lp = next_lp->add_loop_front(load_addrs.at(loop_order.at(d)), lb, ub);
+    //int lb = loop_bounds.at((d)).first;
+    //int ub = loop_bounds.at((d)).second;
+    //next_lp = next_lp->add_loop_front(load_addrs.at((d)), lb, ub);
+    int lb = loop_bounds.at(loop_order.at(d)).first;
+    int ub = loop_bounds.at(loop_order.at(d)).second;
+    next_lp = next_lp->add_loop_front(load_addrs.at(loop_order.at(d)), lb, ub);
   }
 
   auto ld = next_lp->add_op(prg.unique_name("load_to_" + rb_name));
   ld->add_load(buf, comma_list(load_addrs));
   ld->add_store(rb_name, comma_list(store_addrs));
+
+  prg.pretty_print();
+  assert(false);
+
 }
 
 isl_set* data_demands(const int start_of_inner_loops, isl_map* m) {
