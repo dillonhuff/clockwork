@@ -7781,14 +7781,22 @@ void generate_app_code(CodegenOptions& options,
   generate_app_collateral(options, conv_out, buffers, dag.prg, sched);
 }
 
-app_dag partition_application(const std::map<std::string, std::set<std::string> >& fusion_groups, prog& prg) {
+isl_set* read_by_group(const std::string& buf, const std::string& group_name, app_dag& dag) {
+  auto consumers = dag.prg.consumer_maps(buf);
+  vector<isl_set*> read;
+  for (auto m : consumers) {
+    if (m.second != nullptr && dag.in_group(m.first, group_name)) {
+      auto dom = range(m.second);
+      read.push_back(dom);
+    }
+  }
 
-  // Problem: I want to be able to read in buffers
-  // produced by other kernels in the "order" of the
-  // producer and consumer. But this is currently
-  // not done. read_in_no_dsa, and write_out_no_dsa
-  // do not take in the scan order, they just
-  // iterate over the data in a fixed order
+  isl_set* s = unn(read);
+  return s;
+}
+
+
+app_dag partition_application(const std::map<std::string, std::set<std::string> >& fusion_groups, prog& prg) {
 
   app_dag dag{prg, fusion_groups};
   for (auto& g : dag.fusion_groups) {
@@ -7866,7 +7874,6 @@ app_dag partition_application(const std::map<std::string, std::set<std::string> 
       read_in_no_dsa(gp.root, s, level_permutation, replacement, gp);
 
       gp.pretty_print();
-      //assert(false);
     }
   }
 

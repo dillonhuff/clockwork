@@ -18552,9 +18552,9 @@ void test_multi_kernel_unsharp() {
   prg.pretty_print();
   prg.sanity_check();
 
-  cout << "Channel sizes" << endl;
-  auto sched = prg.optimized_codegen();
-  cout << "Optimized schedule: " << str(sched) << endl;
+  //cout << "Channel sizes" << endl;
+  //auto sched = prg.optimized_codegen();
+  //cout << "Optimized schedule: " << str(sched) << endl;
 
   //assert(false);
 
@@ -18640,7 +18640,6 @@ void test_multi_kernel_unsharp() {
   vector<string> multi_kernel_res = run_regression_tb(dag.prg);
 
   compare("multi_kernel_" + prg.name + "_vs_unopt", multi_kernel_res, unopt_postprocessed);
-  assert(false);
   move_to_benchmarks_folder(dag.prg.name);
 }
 
@@ -19434,8 +19433,9 @@ void dhuff_playground() {
 }
 
 void travis_tests() {
-  test_if_construction();
+  //test_multi_kernel_unsharp();
   test_multi_kernel_design();
+  test_if_construction();
   test_time_sharing_gaussian_pyramid();
   jacobi_2d_2_test();
   register_file_test();
