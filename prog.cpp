@@ -6210,16 +6210,18 @@ void read_in_no_dsa(
     int ub = to_int(lexmaxval(ps)) + 1;
     loop_bounds.push_back({lb, ub});
     string lname = prg.unique_name(buf + "_ld");
-    //next_lp = next_lp->add_loop_front(lname, lb, ub);
     load_addrs.push_back(lname);
     store_addrs.push_back(lname);
   }
 
   op* next_lp = loop;
   for (int d = 0; d < num_dims(read_data); d++) {
-    int lb = loop_bounds.at(loop_order.at(d)).first;
-    int ub = loop_bounds.at(loop_order.at(d)).second;
-    next_lp = next_lp->add_loop_front(load_addrs.at(loop_order.at(d)), lb, ub);
+    int lb = loop_bounds.at((d)).first;
+    int ub = loop_bounds.at((d)).second;
+    next_lp = next_lp->add_loop_front(load_addrs.at((d)), lb, ub);
+    //int lb = loop_bounds.at(loop_order.at(d)).first;
+    //int ub = loop_bounds.at(loop_order.at(d)).second;
+    //next_lp = next_lp->add_loop_front(load_addrs.at(loop_order.at(d)), lb, ub);
   }
 
   auto ld = next_lp->add_op(prg.unique_name("load_to_" + rb_name));
