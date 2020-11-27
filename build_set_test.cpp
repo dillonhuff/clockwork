@@ -19067,25 +19067,27 @@ void dhuff_playground() {
     cpy("in", "in_oc", 2, prg);
 
     string last_level = "in";
+    string current_level = "";
+    for (int i = 0; i < 5; i++) {
+      current_level = "stencil_" + str(i);
+      string y = prg.unique_name(current_level);
+      string x = prg.unique_name(current_level);
+      string yi = prg.unique_name(current_level);
+      string xi = prg.unique_name(current_level);
 
-    string pr = "stencil_0";
-    string current_level = pr;
-    string y = prg.unique_name(pr);
-    string x = prg.unique_name(pr);
-    string yi = prg.unique_name(pr);
-    string xi = prg.unique_name(pr);
+      auto ol = prg.add_nest(y, 0, 1, x, 0, 1);
+      auto init = ol->add_op(prg.un("init"));
+      init->add_function("llf_set_zero_float_32");
+      init->add_store(current_level, x, y);
+      auto il = ol->add_nest(yi, -1, 2, xi, -1, 2);
 
-    auto ol = prg.add_nest(y, 0, 1, x, 0, 1);
-    auto init = ol->add_op(prg.un("init"));
-    init->add_function("llf_set_zero_float_32");
-    init->add_store(current_level, x, y);
-    auto il = ol->add_nest(yi, -1, 2, xi, -1, 2);
-
-    auto update = il->add_op(prg.un("update"));
-    update->add_function("llf_add_float_32");
-    update->add_load(current_level, x, y);
-    update->add_load(last_level, x + " + " + xi, y + " + " + yi);
-    update->add_store(current_level, x, y);
+      auto update = il->add_op(prg.un("update"));
+      update->add_function("llf_add_float_32");
+      update->add_load(current_level, x, y);
+      update->add_load(last_level, x + " + " + xi, y + " + " + yi);
+      update->add_store(current_level, x, y);
+      last_level = current_level;
+    }
 
     cpy("out", current_level, 2, prg);
 
