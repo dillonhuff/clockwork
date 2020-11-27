@@ -6190,7 +6190,11 @@ void read_in_after(op* loop, isl_map* read_data, const std::string& rb_name, pro
   ld->add_store(rb_name, comma_list(store_addrs));
 }
 
-void read_in_no_dsa(op* loop, isl_set* read_data, const std::string& rb_name, prog& prg) {
+void read_in_no_dsa(
+    op* loop,
+    isl_set* read_data,
+    const std::vector<int>& scan_order,
+    const std::string& rb_name, prog& prg) {
   assert(loop->is_loop());
 
   string buf = name(read_data);

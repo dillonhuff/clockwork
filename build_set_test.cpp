@@ -18682,7 +18682,7 @@ app_dag partition_application(const std::map<std::string, std::set<std::string> 
 
       string replacement = prg.un(b.first + "_FIFO_buf");
       gp.root->replace_reads_from(b.first, replacement);
-      read_in_no_dsa(gp.root, s, replacement, gp);
+      read_in_no_dsa(gp.root, s, level_permutation, replacement, gp);
 
       gp.pretty_print();
       //assert(false);
