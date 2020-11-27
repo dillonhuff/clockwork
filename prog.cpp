@@ -6199,6 +6199,14 @@ void read_in_no_dsa(
   assert(loop->is_loop());
   assert(loop_order.size() == num_dims(read_data));
 
+  std::set<int> loops;
+  for (auto l : loop_order) {
+    loops.insert(l);
+    assert(l >= 0);
+    assert(l < loop_order.size());
+  }
+  assert(loops.size() == loop_order.size());
+
   string buf = name(read_data);
   vector<string> load_addrs;
   vector<string> store_addrs;
