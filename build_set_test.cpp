@@ -19146,7 +19146,7 @@ void dhuff_playground() {
 
     string last_level = "in";
     string current_level = "";
-    const int NUM_STAGES = 5;
+    const int NUM_STAGES = 60;
     for (int i = 0; i < NUM_STAGES; i++) {
       current_level = "stencil_" + str(i);
       string y = prg.unique_name(current_level);
