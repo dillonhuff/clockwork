@@ -19061,6 +19061,7 @@ void sort_lt_snd(std::vector<std::pair<T, Q> >& outputs) {
 void dhuff_playground() {
   {
     prog prg("stencil_chain");
+    prg.compute_unit_file = "local_laplacian_filters_compute.h";
     prg.add_input("in_oc");
     prg.add_output("out");
 
@@ -19099,6 +19100,37 @@ void dhuff_playground() {
     normalize_address_offsets(prg);
 
     prg.pretty_print();
+    prg.sanity_check();
+
+    auto unopt_postprocessed = unoptimized_result(prg);
+    map<std::string, std::set<string> > fusion_groups;
+    int i = 0;
+    for (auto gp : get_kernels(prg)) {
+      fusion_groups["gp_" + str(i)] = {gp};
+      i++;
+    }
+    app_dag dag = partition_application(fusion_groups, prg);
+    for (auto& gp : dag.fusion_group_progs) {
+      cout << "============================" << endl;
+      gp.second.pretty_print();
+      cout << endl;
+    }
+
+    generate_regression_testbench(dag.prg);
+
+    CodegenOptions options;
+    options.internal = true;
+    options.all_rams = true;
+    all_unbanked(prg, options);
+    for (auto& gp : dag.fusion_group_progs) {
+      all_unbanked(gp.second, options);
+    }
+    options.inner_bank_offset_mode =
+      INNER_BANK_OFFSET_MULTILINEAR;
+    generate_app_code(options, dag);
+    vector<string> multi_kernel_res = run_regression_tb(dag.prg);
+
+    compare("multi_kernel_" + prg.name + "_vs_unopt", multi_kernel_res, unopt_postprocessed);
 
     assert(false);
   }
