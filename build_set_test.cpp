@@ -16775,7 +16775,7 @@ vector<prog> harris_variants() {
 
   // 1. At least two mapper passes fail
   // 2. Final output is wrong
-  //test_programs.push_back(harris_sch1_onebuf());
+  test_programs.push_back(harris_sch1_onebuf());
 
   // 2. Final output is wrong,
   // 3. Schedule violates dependencies?
@@ -16786,7 +16786,7 @@ vector<prog> harris_variants() {
   //test_programs.push_back(harris_sch4_1pp3c());
 
   // Works
-  //test_programs.push_back(harris_sch5_1ppc());
+  test_programs.push_back(harris_sch5_1ppc());
   test_programs.push_back(harris_sch6_2ppc());
   test_programs.push_back(harris_sch7_bigtile());
   test_programs.push_back(harris_sch8_endcim());
@@ -19059,6 +19059,53 @@ void sort_lt_snd(std::vector<std::pair<T, Q> >& outputs) {
   sort_lt(outputs, [](const std::pair<T,Q> &x){return x.second;});
 }
 void dhuff_playground() {
+  {
+    prog prg("stencil_chain");
+    prg.add_input("in_oc");
+    prg.add_output("out");
+
+    cpy("in", "in_oc", 2, prg);
+
+    string last_level = "in";
+
+    string pr = "stencil_0";
+    string current_level = pr;
+    string y = prg.unique_name(pr);
+    string x = prg.unique_name(pr);
+    string yi = prg.unique_name(pr);
+    string xi = prg.unique_name(pr);
+
+    auto ol = prg.add_nest(y, 0, 1, x, 0, 1);
+    auto init = ol->add_op(prg.un("init"));
+    init->add_function("llf_set_zero_float_32");
+    init->add_store(current_level, x, y);
+    auto il = ol->add_nest(yi, -1, 2, xi, -1, 2);
+
+    auto update = il->add_op(prg.un("update"));
+    update->add_function("llf_add_float_32");
+    update->add_load(current_level, x, y);
+    update->add_load(last_level, x + " + " + xi, y + " + " + yi);
+    update->add_store(current_level, x, y);
+
+    cpy("out", current_level, 2, prg);
+
+    infer_bounds("out", {4, 4}, prg);
+
+    unroll_reduce_loops(prg);
+    merge_basic_block_ops(prg);
+    normalize_bounds(prg);
+    normalize_address_offsets(prg);
+
+    prg.pretty_print();
+
+    assert(false);
+  }
+
+  {
+    auto prg = mobilenet_unrolled();
+    prg.pretty_print();
+    assert(false);
+  }
   {
     //vector<prog> hrs{harris()};
     //vector<prog> hrs{camera_pipeline()};
