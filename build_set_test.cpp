@@ -19146,7 +19146,7 @@ void dhuff_playground() {
 
     string last_level = "in";
     string current_level = "";
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < 60; i++) {
       current_level = "stencil_" + str(i);
       string y = prg.unique_name(current_level);
       string x = prg.unique_name(current_level);
@@ -19169,7 +19169,7 @@ void dhuff_playground() {
 
     cpy("out", current_level, 2, prg);
 
-    infer_bounds("out", {4, 4}, prg);
+    infer_bounds("out", {128, 128}, prg);
 
     unroll_reduce_loops(prg);
     merge_basic_block_ops(prg);
@@ -19179,7 +19179,11 @@ void dhuff_playground() {
     prg.pretty_print();
     prg.sanity_check();
 
-    auto unopt_postprocessed = unoptimized_result(prg);
+    generate_optimized_code(prg);
+    generate_regression_testbench(prg);
+    auto unopt_postprocessed = run_regression_tb(prg);
+
+
     map<std::string, std::set<string> > fusion_groups;
     int i = 0;
     for (auto gp : get_kernels(prg)) {
