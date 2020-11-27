@@ -18567,7 +18567,7 @@ void generate_app_code(CodegenOptions& options,
       if (!elem(buf, done)) {
         conv_out << tab(1) << "HWStream<hw_uint<32> > " << buf << ";" << endl;
         open_synth_scope(conv_out);
-        int depth = 32;
+        int depth = 1;
         conv_out << "#pragma HLS stream variable=" << buf << ".values depth=" << depth << endl;
         close_synth_scope(conv_out);
         done.insert(buf);
@@ -19137,7 +19137,7 @@ void sort_lt_snd(std::vector<std::pair<T, Q> >& outputs) {
 
 void dhuff_playground() {
   {
-    prog prg("stencil_chain");
+    prog prg("stencil_chain_static_schedule");
     prg.compute_unit_file = "clockwork_standard_compute_units.h";
     prg.add_input("in_oc");
     prg.add_output("out");
@@ -19147,7 +19147,7 @@ void dhuff_playground() {
     string last_level = "in";
     string current_level = "";
     const int NUM_STAGES = 5;
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < NUM_STAGES; i++) {
       current_level = "stencil_" + str(i);
       string y = prg.unique_name(current_level);
       string x = prg.unique_name(current_level);
@@ -19183,6 +19183,8 @@ void dhuff_playground() {
     generate_optimized_code(prg);
     generate_regression_testbench(prg);
     auto unopt_postprocessed = run_regression_tb(prg);
+    move_to_benchmarks_folder(prg.name);
+    prg.name = "stencil_chain_dynamic_schedule";
 
 
     map<std::string, std::set<string> > fusion_groups;
@@ -19206,6 +19208,7 @@ void dhuff_playground() {
 
     compare("multi_kernel_" + prg.name + "_vs_unopt", multi_kernel_res, unopt_postprocessed);
 
+    move_to_benchmarks_folder(dag.prg.name);
     assert(false);
   }
 
