@@ -19058,6 +19058,7 @@ template<typename T, typename Q>
 void sort_lt_snd(std::vector<std::pair<T, Q> >& outputs) {
   sort_lt(outputs, [](const std::pair<T,Q> &x){return x.second;});
 }
+
 void dhuff_playground() {
   {
     prog prg("stencil_chain");
