@@ -7795,6 +7795,38 @@ isl_set* read_by_group(const std::string& buf, const std::string& group_name, ap
   return s;
 }
 
+vector<int> access_permutation(const std::string& buf, prog& gp) {
+  vector<int> level_permutation;
+
+  auto readers = find_readers(buf, gp);
+  //cout << "=== Readers..." << endl;
+  //for (auto reader : readers) {
+  //cout << tab(1) << reader->name << endl;
+  //}
+  op* reader = pick(readers);
+  auto addr_rep = pick(read_addrs(reader, buf, gp));
+  //cout << tab(1) << "Addr rep: " << str(addr_rep) << endl;
+  auto levels = get_variable_levels(gp);
+  //vector<int> level_permutation;
+  level_permutation.resize(isl_multi_aff_dim(addr_rep, isl_dim_set));
+  for (int i = 0; i < isl_multi_aff_dim(addr_rep, isl_dim_set); i++) {
+    isl_aff* addr_comp = isl_multi_aff_get_aff(addr_rep, i);
+    //cout << tab(2) << str(addr_comp) << endl;
+    for (int d = 0; d < num_in_dims(addr_comp); d++) {
+      if (!is_zero(get_coeff(addr_comp, d))) {
+        string var = surrounding_vars(reader, gp).at(d);
+        int lvl = map_find(var, levels) - 1;
+        //cout << tab(3) << "var: " << var << endl;
+        //cout << tab(3) << "lvl: " << map_find(var, levels) << endl;
+        assert(lvl >= 0);
+        //cout << tab(3) << "address component " << i << " of " << b.first << " should be loaded at level " << lvl << endl;
+        level_permutation[i] = lvl;
+      }
+    }
+  }
+  return level_permutation;
+}
+
 
 app_dag partition_application(const std::map<std::string, std::set<std::string> >& fusion_groups, prog& prg) {
 
@@ -7819,55 +7851,48 @@ app_dag partition_application(const std::map<std::string, std::set<std::string> 
       }
     }
   }
-  cout << "===== Cross kernel deps" << endl;
+  //cout << "===== Cross kernel deps" << endl;
   for (auto b : kernel_broadcasts) {
-    cout << tab(1) << b.first << " is used by " << sep_list(b.second, "[", "]", ", ") << endl;
+    //cout << tab(1) << b.first << " is used by " << sep_list(b.second, "[", "]", ", ") << endl;
     auto consumers = prg.consumer_maps(b.first);
     for (auto group_name : b.second) {
       isl_set* s = read_by_group(b.first, group_name, dag);
-      //vector<isl_set*> read;
-      //for (auto m : consumers) {
-        //if (m.second != nullptr && dag.in_group(m.first, group_name)) {
-          //auto dom = range(m.second);
-          //cout << tab(2) << group_name << " reads " << str(dom) << endl;
-          //read.push_back(dom);
-        //}
-      //}
 
-
-      //isl_set* s = unn(read);
-      cout << tab(2) << "Read: " << str(lexmin(s)) << " to " << str(lexmax(s)) << endl;
+      //cout << tab(2) << "Read: " << str(lexmin(s)) << " to " << str(lexmax(s)) << endl;
       assert(contains_key(group_name, dag.fusion_group_progs));
       prog& gp = dag.fusion_group_progs.at(group_name);
 
-      auto readers = find_readers(b.first, gp);
-      cout << "=== Readers..." << endl;
-      for (auto reader : readers) {
-        cout << tab(1) << reader->name << endl;
-      }
-      op* reader = pick(readers);
-      auto addr_rep = pick(read_addrs(reader, b.first, gp));
-      cout << tab(1) << "Addr rep: " << str(addr_rep) << endl;
-      auto levels = get_variable_levels(gp);
-      vector<int> level_permutation;
-      level_permutation.resize(isl_multi_aff_dim(addr_rep, isl_dim_set));
-      for (int i = 0; i < isl_multi_aff_dim(addr_rep, isl_dim_set); i++) {
-        isl_aff* addr_comp = isl_multi_aff_get_aff(addr_rep, i);
-        cout << tab(2) << str(addr_comp) << endl;
-        for (int d = 0; d < num_in_dims(addr_comp); d++) {
-          if (!is_zero(get_coeff(addr_comp, d))) {
-            string var = surrounding_vars(reader, gp).at(d);
-            int lvl = map_find(var, levels) - 1;
-            cout << tab(3) << "var: " << var << endl;
-            cout << tab(3) << "lvl: " << map_find(var, levels) << endl;
-            assert(lvl >= 0);
-            cout << tab(3) << "address component " << i << " of " << b.first << " should be loaded at level " << lvl << endl;
-            level_permutation[i] = lvl;
-          }
-        }
-      }
-      cout << "Level permutation: " << bracket_list(level_permutation) << endl;
-      gp.pretty_print();
+      vector<int> level_permutation =
+        access_permutation(b.first, gp);
+
+      //auto readers = find_readers(b.first, gp);
+      ////cout << "=== Readers..." << endl;
+      ////for (auto reader : readers) {
+        ////cout << tab(1) << reader->name << endl;
+      ////}
+      //op* reader = pick(readers);
+      //auto addr_rep = pick(read_addrs(reader, b.first, gp));
+      ////cout << tab(1) << "Addr rep: " << str(addr_rep) << endl;
+      //auto levels = get_variable_levels(gp);
+      //vector<int> level_permutation;
+      //level_permutation.resize(isl_multi_aff_dim(addr_rep, isl_dim_set));
+      //for (int i = 0; i < isl_multi_aff_dim(addr_rep, isl_dim_set); i++) {
+        //isl_aff* addr_comp = isl_multi_aff_get_aff(addr_rep, i);
+        ////cout << tab(2) << str(addr_comp) << endl;
+        //for (int d = 0; d < num_in_dims(addr_comp); d++) {
+          //if (!is_zero(get_coeff(addr_comp, d))) {
+            //string var = surrounding_vars(reader, gp).at(d);
+            //int lvl = map_find(var, levels) - 1;
+            ////cout << tab(3) << "var: " << var << endl;
+            ////cout << tab(3) << "lvl: " << map_find(var, levels) << endl;
+            //assert(lvl >= 0);
+            ////cout << tab(3) << "address component " << i << " of " << b.first << " should be loaded at level " << lvl << endl;
+            //level_permutation[i] = lvl;
+          //}
+        //}
+      //}
+      //cout << "Level permutation: " << bracket_list(level_permutation) << endl;
+      //gp.pretty_print();
       //assert(false);
 
       string replacement = prg.un(b.first + "_FIFO_buf");
@@ -7882,17 +7907,7 @@ app_dag partition_application(const std::map<std::string, std::set<std::string> 
     cout << tab(1) << b.first << " is used by " << sep_list(b.second, "[", "]", ", ") << endl;
     auto consumers = prg.consumer_maps(b.first);
     for (auto group_name : b.second) {
-      vector<isl_set*> read;
-      for (auto m : consumers) {
-        if (m.second != nullptr && dag.in_group(m.first, group_name)) {
-          auto dom = range(m.second);
-          cout << tab(2) << group_name << " reads " << str(dom) << endl;
-          read.push_back(dom);
-        }
-      }
-
-      isl_set* s = unn(read);
-
+      isl_set* s = read_by_group(b.first, group_name, dag);
 
       string broadcast = prg.un(b.first + "_to_" + group_name);
       prog& pp = dag.fusion_group_progs.at(dag.producer_group(b.first));
