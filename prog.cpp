@@ -6193,23 +6193,33 @@ void read_in_after(op* loop, isl_map* read_data, const std::string& rb_name, pro
 void read_in_no_dsa(
     op* loop,
     isl_set* read_data,
-    const std::vector<int>& scan_order,
+    const std::vector<int>& loop_order,
     const std::string& rb_name, prog& prg) {
+
   assert(loop->is_loop());
+  assert(loop_order.size() == num_dims(read_data));
 
   string buf = name(read_data);
-  op* next_lp = loop;
   vector<string> load_addrs;
   vector<string> store_addrs;
+  vector<pair<int, int> > loop_bounds;
 
   for (int d = 0; d < num_dims(read_data); d++) {
     auto ps = project_all_but(read_data, d);
     int lb = to_int(lexminval(ps));
     int ub = to_int(lexmaxval(ps)) + 1;
+    loop_bounds.push_back({lb, ub});
     string lname = prg.unique_name(buf + "_ld");
-    next_lp = next_lp->add_loop_front(lname, lb, ub);
+    //next_lp = next_lp->add_loop_front(lname, lb, ub);
     load_addrs.push_back(lname);
     store_addrs.push_back(lname);
+  }
+
+  op* next_lp = loop;
+  for (int d = 0; d < num_dims(read_data); d++) {
+    int lb = loop_bounds.at(loop_order.at(d)).first;
+    int ub = loop_bounds.at(loop_order.at(d)).second;
+    next_lp = next_lp->add_loop_front(load_addrs.at(loop_order.at(d)), lb, ub);
   }
 
   auto ld = next_lp->add_op(prg.unique_name("load_to_" + rb_name));
