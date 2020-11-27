@@ -19116,6 +19116,7 @@ void dhuff_playground() {
       gp.second.pretty_print();
       cout << endl;
     }
+    assert(false);
 
     generate_regression_testbench(dag.prg);
 
