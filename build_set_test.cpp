@@ -18913,7 +18913,7 @@ void test_multi_kernel_unsharp() {
   auto sched = prg.optimized_codegen();
   cout << "Optimized schedule: " << str(sched) << endl;
 
-  assert(false);
+  //assert(false);
 
   for (auto b : all_buffers(prg)) {
     auto r = prg.consumer_map(b);
@@ -19135,57 +19135,62 @@ void sort_lt_snd(std::vector<std::pair<T, Q> >& outputs) {
   sort_lt(outputs, [](const std::pair<T,Q> &x){return x.second;});
 }
 
+prog stencil_chain(const std::string& name) {
+  prog prg(name);
+  prg.compute_unit_file = "clockwork_standard_compute_units.h";
+  prg.add_input("in_oc");
+  prg.add_output("out");
+
+  cpy("in", "in_oc", 2, prg);
+
+  string last_level = "in";
+  string current_level = "";
+  const int NUM_STAGES = 60;
+  for (int i = 0; i < NUM_STAGES; i++) {
+    current_level = "stencil_" + str(i);
+    string y = prg.unique_name(current_level);
+    string x = prg.unique_name(current_level);
+    string yi = prg.unique_name(current_level);
+    string xi = prg.unique_name(current_level);
+
+    auto ol = prg.add_nest(y, 0, 1, x, 0, 1);
+    auto init = ol->add_op(prg.un("init"));
+    init->add_function("set_zero_32");
+    init->add_store(current_level, x, y);
+    auto il = ol->add_nest(yi, -1, 2, xi, -1, 2);
+
+    auto update = il->add_op(prg.un("update"));
+    update->add_function("add");
+    update->add_load(current_level, x, y);
+    update->add_load(last_level, x + " + " + xi, y + " + " + yi);
+    update->add_store(current_level, x, y);
+    last_level = current_level;
+  }
+
+  cpy("out", current_level, 2, prg);
+
+  infer_bounds("out", {128, 128}, prg);
+
+  unroll_reduce_loops(prg);
+  merge_basic_block_ops(prg);
+  normalize_bounds(prg);
+  normalize_address_offsets(prg);
+
+  prg.pretty_print();
+  prg.sanity_check();
+
+  return prg;
+}
+
 void dhuff_playground() {
   {
-    prog prg("stencil_chain_static_schedule");
-    prg.compute_unit_file = "clockwork_standard_compute_units.h";
-    prg.add_input("in_oc");
-    prg.add_output("out");
-
-    cpy("in", "in_oc", 2, prg);
-
-    string last_level = "in";
-    string current_level = "";
-    const int NUM_STAGES = 60;
-    for (int i = 0; i < NUM_STAGES; i++) {
-      current_level = "stencil_" + str(i);
-      string y = prg.unique_name(current_level);
-      string x = prg.unique_name(current_level);
-      string yi = prg.unique_name(current_level);
-      string xi = prg.unique_name(current_level);
-
-      auto ol = prg.add_nest(y, 0, 1, x, 0, 1);
-      auto init = ol->add_op(prg.un("init"));
-      init->add_function("set_zero_32");
-      init->add_store(current_level, x, y);
-      auto il = ol->add_nest(yi, -1, 2, xi, -1, 2);
-
-      auto update = il->add_op(prg.un("update"));
-      update->add_function("add");
-      update->add_load(current_level, x, y);
-      update->add_load(last_level, x + " + " + xi, y + " + " + yi);
-      update->add_store(current_level, x, y);
-      last_level = current_level;
-    }
-
-    cpy("out", current_level, 2, prg);
-
-    infer_bounds("out", {128, 128}, prg);
-
-    unroll_reduce_loops(prg);
-    merge_basic_block_ops(prg);
-    normalize_bounds(prg);
-    normalize_address_offsets(prg);
-
-    prg.pretty_print();
-    prg.sanity_check();
-
+    auto prg = stencil_chain("sc_stat");
     generate_optimized_code(prg);
     generate_regression_testbench(prg);
     auto unopt_postprocessed = run_regression_tb(prg);
     move_to_benchmarks_folder(prg.name);
-    prg.name = "stencil_chain_dynamic_schedule";
 
+    prg = stencil_chain("sc_dyn");
 
     map<std::string, std::set<string> > fusion_groups;
     int i = 0;
@@ -19717,7 +19722,6 @@ void dhuff_playground() {
 
   //assert(false);
 
-  //test_multi_kernel_unsharp();
   //{
     //prog prg = resnet_unrolled();
     //prg.pretty_print();
