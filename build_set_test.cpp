@@ -19138,7 +19138,7 @@ void sort_lt_snd(std::vector<std::pair<T, Q> >& outputs) {
 void dhuff_playground() {
   {
     prog prg("stencil_chain");
-    prg.compute_unit_file = "local_laplacian_filters_compute.h";
+    prg.compute_unit_file = "clockwork_standard_compute_units.h";
     prg.add_input("in_oc");
     prg.add_output("out");
 
@@ -19146,7 +19146,8 @@ void dhuff_playground() {
 
     string last_level = "in";
     string current_level = "";
-    for (int i = 0; i < 60; i++) {
+    const int NUM_STAGES = 5;
+    for (int i = 0; i < 5; i++) {
       current_level = "stencil_" + str(i);
       string y = prg.unique_name(current_level);
       string x = prg.unique_name(current_level);
@@ -19155,12 +19156,12 @@ void dhuff_playground() {
 
       auto ol = prg.add_nest(y, 0, 1, x, 0, 1);
       auto init = ol->add_op(prg.un("init"));
-      init->add_function("llf_set_zero_float_32");
+      init->add_function("set_zero_32");
       init->add_store(current_level, x, y);
       auto il = ol->add_nest(yi, -1, 2, xi, -1, 2);
 
       auto update = il->add_op(prg.un("update"));
-      update->add_function("llf_add_float_32");
+      update->add_function("add");
       update->add_load(current_level, x, y);
       update->add_load(last_level, x + " + " + xi, y + " + " + yi);
       update->add_store(current_level, x, y);
@@ -19200,14 +19201,6 @@ void dhuff_playground() {
     generate_regression_testbench(dag.prg);
 
     CodegenOptions options;
-    //options.internal = true;
-    //options.all_rams = true;
-    //all_unbanked(prg, options);
-    //for (auto& gp : dag.fusion_group_progs) {
-      //all_unbanked(gp.second, options);
-    //}
-    //options.inner_bank_offset_mode =
-      //INNER_BANK_OFFSET_MULTILINEAR;
     generate_app_code(options, dag);
     vector<string> multi_kernel_res = run_regression_tb(dag.prg);
 
