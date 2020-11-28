@@ -18539,10 +18539,11 @@ void test_multi_kernel_unsharp() {
   diff->add_store("out", "x", "y");
   diff->add_function("diff");
 
-  prg.pretty_print();
-  prg.sanity_check();
 
   infer_bounds("out", {64, 64}, prg);
+
+  prg.pretty_print();
+  prg.sanity_check();
 
   unroll_reduce_loops(prg);
   merge_basic_block_ops(prg);
@@ -18788,7 +18789,8 @@ prog stencil_chain(const std::string& name) {
 
   string last_level = "in";
   string current_level = "";
-  const int NUM_STAGES = 60;
+  const int NUM_STAGES = 5;
+  const int UNROLL_FACTOR = 4;
   for (int i = 0; i < NUM_STAGES; i++) {
     current_level = "stencil_" + str(i);
     string y = prg.unique_name(current_level);
@@ -18812,23 +18814,24 @@ prog stencil_chain(const std::string& name) {
 
   cpy("out", current_level, 2, prg);
 
-  infer_bounds("out", {128, 128}, prg);
+  //infer_bounds("out", {128, 128}, prg);
+  infer_bounds_and_unroll("out", {128, 128}, UNROLL_FACTOR, prg);
 
-  unroll_reduce_loops(prg);
-  merge_basic_block_ops(prg);
-  normalize_bounds(prg);
-  normalize_address_offsets(prg);
+  //normalize_bounds(prg);
+  //normalize_address_offsets(prg);
 
   prg.pretty_print();
   prg.sanity_check();
+
+  //assert(false);
 
   return prg;
 }
 
 void dhuff_playground() {
-  llf_test();
-  assert(false);
   //test_multi_kernel_unsharp();
+  //llf_test();
+  //assert(false);
   {
     auto prg = stencil_chain("sc_stat");
     generate_optimized_code(prg);

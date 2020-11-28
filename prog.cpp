@@ -7891,36 +7891,6 @@ app_dag partition_application(const std::map<std::string, std::set<std::string> 
       vector<int> level_permutation =
         read_permutation(b.first, gp);
 
-      //auto readers = find_readers(b.first, gp);
-      ////cout << "=== Readers..." << endl;
-      ////for (auto reader : readers) {
-        ////cout << tab(1) << reader->name << endl;
-      ////}
-      //op* reader = pick(readers);
-      //auto addr_rep = pick(read_addrs(reader, b.first, gp));
-      ////cout << tab(1) << "Addr rep: " << str(addr_rep) << endl;
-      //auto levels = get_variable_levels(gp);
-      //vector<int> level_permutation;
-      //level_permutation.resize(isl_multi_aff_dim(addr_rep, isl_dim_set));
-      //for (int i = 0; i < isl_multi_aff_dim(addr_rep, isl_dim_set); i++) {
-        //isl_aff* addr_comp = isl_multi_aff_get_aff(addr_rep, i);
-        ////cout << tab(2) << str(addr_comp) << endl;
-        //for (int d = 0; d < num_in_dims(addr_comp); d++) {
-          //if (!is_zero(get_coeff(addr_comp, d))) {
-            //string var = surrounding_vars(reader, gp).at(d);
-            //int lvl = map_find(var, levels) - 1;
-            ////cout << tab(3) << "var: " << var << endl;
-            ////cout << tab(3) << "lvl: " << map_find(var, levels) << endl;
-            //assert(lvl >= 0);
-            ////cout << tab(3) << "address component " << i << " of " << b.first << " should be loaded at level " << lvl << endl;
-            //level_permutation[i] = lvl;
-          //}
-        //}
-      //}
-      //cout << "Level permutation: " << bracket_list(level_permutation) << endl;
-      //gp.pretty_print();
-      //assert(false);
-
       string replacement = prg.un(b.first + "_FIFO_buf");
       gp.root->replace_reads_from(b.first, replacement);
       read_in_no_dsa(gp.root, s, level_permutation, replacement, gp);
@@ -7940,29 +7910,6 @@ app_dag partition_application(const std::map<std::string, std::set<std::string> 
       vector<int> level_permutation =
         write_permutation(b.first, prg);
 
-      //auto readers = find_writers(b.first, pp);
-      //op* reader = pick(readers);
-      //auto addr_rep = pick(write_addrs(reader, b.first, pp));
-      //cout << tab(1) << "Addr rep: " << str(addr_rep) << endl;
-      //auto levels = get_variable_levels(pp);
-      //vector<int> level_permutation;
-      //level_permutation.resize(isl_multi_aff_dim(addr_rep, isl_dim_set));
-      //for (int i = 0; i < isl_multi_aff_dim(addr_rep, isl_dim_set); i++) {
-        //isl_aff* addr_comp = isl_multi_aff_get_aff(addr_rep, i);
-        //cout << tab(2) << str(addr_comp) << endl;
-        //for (int d = 0; d < num_in_dims(addr_comp); d++) {
-          //if (!is_zero(get_coeff(addr_comp, d))) {
-            //string var = surrounding_vars(reader, pp).at(d);
-            //int lvl = map_find(var, levels) - 1;
-            //cout << tab(3) << "var: " << var << endl;
-            //cout << tab(3) << "lvl: " << map_find(var, levels) << endl;
-            //assert(lvl >= 0);
-            //cout << tab(3) << "address component " << i << " of " << b.first << " should be loaded at level " << lvl << endl;
-            //level_permutation[i] = lvl;
-          //}
-        //}
-      //}
-      //cout << "Level permutation: " << bracket_list(level_permutation) << endl;
       pp.outs.insert(broadcast);
 
       write_out_no_dsa(pp.root, s, level_permutation, broadcast, pp);
