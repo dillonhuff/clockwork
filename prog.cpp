@@ -2557,6 +2557,15 @@ void regression_test(CodegenOptions& options,
   compare(prg.name, optimized_res, unoptimized_res);
 }
 
+std::vector<std::string> get_kernels_in_order(prog& prg) {
+  std::vector<string> kernels;
+  for (auto child : prg.root->children) {
+    if (child->is_loop()) {
+      kernels.push_back(child->name);
+    }
+  }
+  return kernels;
+}
 std::set<std::string> get_kernels(prog& prg) {
   std::set<string> kernels;
   for (auto child : prg.root->children) {
@@ -3732,7 +3741,8 @@ void extend_bounds_to_multiple_of(const int factor, const std::string& buf, prog
   vector<int> int_bounds = extend_bounds_to_multiple(factor, buf, prg);
   prg.buffer_bounds[buf] = int_bounds;
 
-  std::vector<string> kernels = topologically_sort_kernels(prg);
+  //std::vector<string> kernels = topologically_sort_kernels(prg);
+  std::vector<string> kernels = get_kernels_in_order(prg);
   reverse(kernels);
   cout << "Reverse order kernels..." << endl;
   for (auto k : kernels) {
@@ -3905,7 +3915,8 @@ void extend_bounds_to_multiple_of(const int factor, const std::string& buf, prog
 void infer_bounds(const std::string& buf, const std::vector<int>& int_bounds, prog& prg) {
   prg.buffer_bounds[buf] = int_bounds;
 
-  std::vector<string> kernels = topologically_sort_kernels(prg);
+  //std::vector<string> kernels = topologically_sort_kernels(prg);
+  std::vector<string> kernels = get_kernels_in_order(prg);
   reverse(kernels);
   cout << "Reverse order kernels..." << endl;
   for (auto k : kernels) {

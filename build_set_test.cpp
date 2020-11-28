@@ -7958,7 +7958,7 @@ void generate_app_benchmark(
   options.use_custom_code_string = true;
   app.realize(options, name, mini_dimensions, 1);
   int bmp_res = run_sw_bmp_test_harness(name + "_opt");
-  assert(false);
+  //assert(false);
   {
     CodegenOptions options;
     options.internal = true;
@@ -17853,8 +17853,8 @@ void histogram_2d_test() {
 void application_tests() {
   //lake_tests();
   //cnn_test();
-  iccad_tests();
-  exposure_fusion_iccad_apps("ef_cc_10_level");
+  //iccad_tests();
+  //exposure_fusion_iccad_apps("ef_cc_10_level");
   histogram_2d_test();
 
   // Possibly failing
@@ -18816,6 +18816,7 @@ prog stencil_chain(const std::string& name) {
   cpy("out", current_level, 2, prg);
 
   //infer_bounds("out", {128, 128}, prg);
+  cout << "==== DONE BUILDING PROGRAM, STARTING BOUNDS INFERENCE" << endl;
   infer_bounds_and_unroll("out", {1920, 1080}, UNROLL_FACTOR, prg);
 
   //normalize_bounds(prg);
@@ -18824,7 +18825,7 @@ prog stencil_chain(const std::string& name) {
   prg.pretty_print();
   prg.sanity_check();
 
-  //assert(false);
+  assert(false);
 
   return prg;
 }

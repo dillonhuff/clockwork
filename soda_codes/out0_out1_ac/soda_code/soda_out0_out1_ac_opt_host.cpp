@@ -18,26 +18,32 @@ int main(int argc, char **argv) {
   std::cout << "num_epochs = " << num_epochs << std::endl;
 
   size_t total_size_bytes = 0;
+  size_t total_size_bytes_read = 0;
+  size_t total_size_bytes_written = 0;
   const int in0_update_0_read_DATA_SIZE = num_epochs*2088960;
   const int in0_update_0_read_BYTES_PER_PIXEL = 16 / 8;
   size_t in0_update_0_read_size_bytes = in0_update_0_read_BYTES_PER_PIXEL * in0_update_0_read_DATA_SIZE;
 
   total_size_bytes += in0_update_0_read_size_bytes;
+  total_size_bytes_read += in0_update_0_read_size_bytes;
   const int in1_update_0_read_DATA_SIZE = num_epochs*2088960;
   const int in1_update_0_read_BYTES_PER_PIXEL = 16 / 8;
   size_t in1_update_0_read_size_bytes = in1_update_0_read_BYTES_PER_PIXEL * in1_update_0_read_DATA_SIZE;
 
   total_size_bytes += in1_update_0_read_size_bytes;
+  total_size_bytes_read += in1_update_0_read_size_bytes;
   const int out0_update_0_write_DATA_SIZE = num_epochs*2088960;
   const int out0_update_0_write_BYTES_PER_PIXEL = 16 / 8;
   size_t out0_update_0_write_size_bytes = out0_update_0_write_BYTES_PER_PIXEL * out0_update_0_write_DATA_SIZE;
 
   total_size_bytes += out0_update_0_write_size_bytes;
+  total_size_bytes_written += out0_update_0_write_size_bytes;
   const int out1_ac_update_0_write_DATA_SIZE = num_epochs*2088960;
   const int out1_ac_update_0_write_BYTES_PER_PIXEL = 16 / 8;
   size_t out1_ac_update_0_write_size_bytes = out1_ac_update_0_write_BYTES_PER_PIXEL * out1_ac_update_0_write_DATA_SIZE;
 
   total_size_bytes += out1_ac_update_0_write_size_bytes;
+  total_size_bytes_written += out1_ac_update_0_write_size_bytes;
 
   cl_int err;
   cl::Context context;
