@@ -18642,6 +18642,7 @@ void test_multi_kernel_unsharp() {
 
   compare("multi_kernel_" + prg.name + "_vs_unopt", multi_kernel_res, unopt_postprocessed);
   move_to_benchmarks_folder(dag.prg.name);
+  assert(false);
 }
 
 void test_gaussian_pyramid_shared_pes() {
@@ -18789,8 +18790,8 @@ prog stencil_chain(const std::string& name) {
 
   string last_level = "in";
   string current_level = "";
-  const int NUM_STAGES = 5;
-  const int UNROLL_FACTOR = 4;
+  const int NUM_STAGES = 200;
+  const int UNROLL_FACTOR = 32;
   for (int i = 0; i < NUM_STAGES; i++) {
     current_level = "stencil_" + str(i);
     string y = prg.unique_name(current_level);
@@ -18815,7 +18816,7 @@ prog stencil_chain(const std::string& name) {
   cpy("out", current_level, 2, prg);
 
   //infer_bounds("out", {128, 128}, prg);
-  infer_bounds_and_unroll("out", {128, 128}, UNROLL_FACTOR, prg);
+  infer_bounds_and_unroll("out", {1920, 1080}, UNROLL_FACTOR, prg);
 
   //normalize_bounds(prg);
   //normalize_address_offsets(prg);
@@ -18829,17 +18830,17 @@ prog stencil_chain(const std::string& name) {
 }
 
 void dhuff_playground() {
-  //test_multi_kernel_unsharp();
+  test_multi_kernel_unsharp();
   //llf_test();
   //assert(false);
   {
-    auto prg = stencil_chain("sc_stat");
-    generate_optimized_code(prg);
-    generate_regression_testbench(prg);
-    auto unopt_postprocessed = run_regression_tb(prg);
-    move_to_benchmarks_folder(prg.name);
+    //auto prg = stencil_chain("sc_stat");
+    //generate_optimized_code(prg);
+    //generate_regression_testbench(prg);
+    //auto unopt_postprocessed = run_regression_tb(prg);
+    //move_to_benchmarks_folder(prg.name);
 
-    prg = stencil_chain("sc_dyn");
+    prog prg = stencil_chain("sc_dyn_200_32");
 
     map<std::string, std::set<string> > fusion_groups;
     int i = 0;
@@ -18858,9 +18859,9 @@ void dhuff_playground() {
 
     CodegenOptions options;
     generate_app_code(options, dag);
-    vector<string> multi_kernel_res = run_regression_tb(dag.prg);
 
-    compare("multi_kernel_" + prg.name + "_vs_unopt", multi_kernel_res, unopt_postprocessed);
+    //vector<string> multi_kernel_res = run_regression_tb(dag.prg);
+    //compare("multi_kernel_" + prg.name + "_vs_unopt", multi_kernel_res, unopt_postprocessed);
 
     move_to_benchmarks_folder(dag.prg.name);
     assert(false);
