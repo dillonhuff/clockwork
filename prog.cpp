@@ -7893,12 +7893,13 @@ app_dag partition_application(const std::map<std::string, std::set<std::string> 
       assert(contains_key(group_name, dag.fusion_group_progs));
       prog& gp = dag.fusion_group_progs.at(group_name);
 
-      vector<int> level_permutation =
-        read_permutation(b.first, gp);
+      //vector<int> level_permutation =
+        //read_permutation(b.first, gp);
 
       string replacement = prg.un(b.first + "_FIFO_buf");
       gp.root->replace_reads_from(b.first, replacement);
-      read_in_no_dsa(gp.root, s, level_permutation, replacement, gp);
+      //read_in_no_dsa(gp.root, s, level_permutation, replacement, gp);
+      read_in_no_dsa(gp.root, s, map_find(b.first, kernel_orders), replacement, gp);
 
       gp.pretty_print();
     }
@@ -7912,12 +7913,13 @@ app_dag partition_application(const std::map<std::string, std::set<std::string> 
 
       string broadcast = prg.un(b.first + "_to_" + group_name);
       prog& pp = dag.fusion_group_progs.at(dag.producer_group(b.first));
-      vector<int> level_permutation =
-        write_permutation(b.first, prg);
+      //vector<int> level_permutation =
+        //write_permutation(b.first, prg);
 
       pp.outs.insert(broadcast);
 
-      write_out_no_dsa(pp.root, s, level_permutation, broadcast, pp);
+      //write_out_no_dsa(pp.root, s, level_permutation, broadcast, pp);
+      write_out_no_dsa(pp.root, s, map_find(b.first, kernel_orders), broadcast, pp);
       pp.pretty_print();
 
       assert(contains_key(group_name, dag.fusion_group_progs));
