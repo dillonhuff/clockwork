@@ -320,6 +320,23 @@ inline void load_to_gray_FIFO_buf172(HWStream<hw_uint<32> >& /* buffer_args num 
 
 }
 
+inline void store_to_gray_diff_to_gp_4275(gray_diff_cache& gray_diff, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */gray_diff_to_gp_427, int root, int gray_diff_ld4, int gray_diff_ld3) {
+  // Dynamic address computation
+
+	// Consume: gray_diff
+	auto gray_diff_gray_diff_ld3_c__gray_diff_ld4_value = gray_diff_store_to_gray_diff_to_gp_4275_read_bundle_read(gray_diff/* source_delay */, root, gray_diff_ld4, gray_diff_ld3, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	// Produce: gray_diff_to_gp_427
+	gray_diff_to_gp_427.write(gray_diff_gray_diff_ld3_c__gray_diff_ld4_value);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
 inline void pw_math_gray1215(gray_FIFO_buf17_cache& gray_FIFO_buf17, gray_diff_cache& gray_diff, int root, int pw_math_gray1213, int pw_math_gray1214) {
   // Dynamic address computation
 
@@ -332,23 +349,6 @@ inline void pw_math_gray1215(gray_FIFO_buf17_cache& gray_FIFO_buf17, gray_diff_c
 	auto compute_result = id(gray_FIFO_buf17_pw_math_gray1214_p_0_c___pw_math_gray1213_p_0_value);
 	// Produce: gray_diff
 	gray_diff_pw_math_gray1215_write_bundle_write(/* arg names */compute_result, gray_diff, root, pw_math_gray1213, pw_math_gray1214, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void store_to_gray_diff_to_gp_4275(gray_diff_cache& gray_diff, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */gray_diff_to_gp_427, int root, int gray_diff_ld4, int gray_diff_ld3) {
-  // Dynamic address computation
-
-	// Consume: gray_diff
-	auto gray_diff_gray_diff_ld3_c__gray_diff_ld4_value = gray_diff_store_to_gray_diff_to_gp_4275_read_bundle_read(gray_diff/* source_delay */, root, gray_diff_ld4, gray_diff_ld3, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	// Produce: gray_diff_to_gp_427
-	gray_diff_to_gp_427.write(gray_diff_gray_diff_ld3_c__gray_diff_ld4_value);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -543,19 +543,6 @@ inline void pw_math_gray47(gray_FIFO_buf18_cache& gray_FIFO_buf18, gray_blur_cac
 
 }
 
-inline void load_to_gray_FIFO_buf182(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */gray_to_gp_224, gray_FIFO_buf18_cache& gray_FIFO_buf18, int root, int gray_ld1, int gray_ld0) {
-  // Dynamic address computation
-
-	// Consume: gray_to_gp_224
-	auto gray_to_gp_224_gray_ld0_c__gray_ld1_value = gray_to_gp_224.read();
-	// Produce: gray_FIFO_buf18
-	gray_FIFO_buf18_load_to_gray_FIFO_buf182_write_bundle_write(/* arg names */gray_to_gp_224_gray_ld0_c__gray_ld1_value, gray_FIFO_buf18, root, gray_ld1, gray_ld0, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
 inline void store_to_gray_blur_to_gp_3255(gray_blur_cache& gray_blur, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */gray_blur_to_gp_325, int root, int gray_blur_ld4, int gray_blur_ld3) {
   // Dynamic address computation
 
@@ -567,6 +554,19 @@ inline void store_to_gray_blur_to_gp_3255(gray_blur_cache& gray_blur, HWStream<h
 
 	// Produce: gray_blur_to_gp_325
 	gray_blur_to_gp_325.write(gray_blur_gray_blur_ld3_c__gray_blur_ld4_value);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void load_to_gray_FIFO_buf182(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */gray_to_gp_224, gray_FIFO_buf18_cache& gray_FIFO_buf18, int root, int gray_ld1, int gray_ld0) {
+  // Dynamic address computation
+
+	// Consume: gray_to_gp_224
+	auto gray_to_gp_224_gray_ld0_c__gray_ld1_value = gray_to_gp_224.read();
+	// Produce: gray_FIFO_buf18
+	gray_FIFO_buf18_load_to_gray_FIFO_buf182_write_bundle_write(/* arg names */gray_to_gp_224_gray_ld0_c__gray_ld1_value, gray_FIFO_buf18, root, gray_ld1, gray_ld0, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__

@@ -18830,7 +18830,7 @@ prog stencil_chain(const std::string& name) {
 }
 
 void dhuff_playground() {
-  test_multi_kernel_unsharp();
+  //test_multi_kernel_unsharp();
   //llf_test();
   //assert(false);
   {
@@ -18842,6 +18842,7 @@ void dhuff_playground() {
 
     prog prg = stencil_chain("sc_dyn_200_32");
 
+    cout << "==== DONE PRODUCING PROGRAM, STARTING PARTITIONING" << endl;
     map<std::string, std::set<string> > fusion_groups;
     int i = 0;
     for (auto gp : get_kernels(prg)) {
@@ -18849,13 +18850,14 @@ void dhuff_playground() {
       i++;
     }
     app_dag dag = partition_application(fusion_groups, prg);
+    cout << "==== DONE PARTITIONING PROGRAM, STARTING CODEGEN" << endl;
     for (auto& gp : dag.fusion_group_progs) {
       cout << "============================" << endl;
       gp.second.pretty_print();
       cout << endl;
     }
 
-    generate_regression_testbench(dag.prg);
+    //generate_regression_testbench(dag.prg);
 
     CodegenOptions options;
     generate_app_code(options, dag);
@@ -18863,6 +18865,7 @@ void dhuff_playground() {
     //vector<string> multi_kernel_res = run_regression_tb(dag.prg);
     //compare("multi_kernel_" + prg.name + "_vs_unopt", multi_kernel_res, unopt_postprocessed);
 
+    cout << "==== DONE CODEGENING PROGRAM, STARTING MOVE TO BENCHMARKS" << endl;
     move_to_benchmarks_folder(dag.prg.name);
     assert(false);
   }

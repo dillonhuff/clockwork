@@ -6605,8 +6605,9 @@ op* find_coarse_grained_pipeline_loop(op* lp) {
 
 umap* prog::validity_deps() {
   umap* naive_sched = unoptimized_schedule();
-  cout << "Naive sched: " << str(naive_sched) << endl;
+  cout << "Naive sched for validity deps: " << str(naive_sched) << endl;
 
+  cout << "Getting lex_lt for schedule..." << endl;
   auto before = lex_lt(naive_sched, naive_sched);
 
   cout << "Getting iteration domain..."<< endl;
