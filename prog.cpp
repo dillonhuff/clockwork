@@ -6605,28 +6605,32 @@ op* find_coarse_grained_pipeline_loop(op* lp) {
 
 umap* prog::validity_deps() {
 
-  umap* naive_sched = unoptimized_schedule();
+  //umap* naive_sched = unoptimized_schedule();
   //auto domain = whole_iteration_domain();
 
   map<op*, isl_set*> domains = this->domains();
+  map<op*, isl_map*> schedules = this->schedules();
   vector<umap*> validity_dep_maps;
   for (auto b : all_buffers(*this)) {
+    cout << "Computing validity deps for " << b << endl;
 
     vector<uset*> user_domains;
+    vector<umap*> user_schedules;
     for (auto op : find_readers(b, *this)) {
       user_domains.push_back(to_uset(map_find(op, domains)));
+      user_schedules.push_back(to_umap(map_find(op, schedules)));
     }
     for (auto op : find_writers(b, *this)) {
       user_domains.push_back(to_uset(map_find(op, domains)));
+      user_schedules.push_back(to_umap(map_find(op, schedules)));
     }
     uset* domain = unn(user_domains);
+    umap* naive_sched = unn(user_schedules);
 
     auto writes =
       its(producer_map(b), domain);
-
     auto reads =
       its(consumer_map(b), domain);
-
 
     auto writers_to_readers = dot(writes, inv(reads));
 
