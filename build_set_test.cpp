@@ -18642,7 +18642,7 @@ void test_multi_kernel_unsharp() {
 
   compare("multi_kernel_" + prg.name + "_vs_unopt", multi_kernel_res, unopt_postprocessed);
   move_to_benchmarks_folder(dag.prg.name);
-  assert(false);
+  //assert(false);
 }
 
 void test_gaussian_pyramid_shared_pes() {
@@ -19437,7 +19437,7 @@ void dhuff_playground() {
 }
 
 void travis_tests() {
-  //test_multi_kernel_unsharp();
+  test_multi_kernel_unsharp();
   test_multi_kernel_design();
   test_if_construction();
   test_time_sharing_gaussian_pyramid();
