@@ -7862,8 +7862,11 @@ app_dag partition_application(const std::map<std::string, std::set<std::string> 
       extract_group_to_separate_prog(g.second, dag.prg);
   }
 
+
   // Map from buffers to the kernels they read
   map<string, vector<string> > kernel_broadcasts;
+  map<string, vector<int> > kernel_orders;
+
   for (auto gp : dag.fusion_groups) {
     auto produced = get_produced_buffers(gp.second, prg);
     for (auto other_gp : fusion_groups) {
@@ -7872,6 +7875,8 @@ app_dag partition_application(const std::map<std::string, std::set<std::string> 
         for (auto buf : consumed) {
           if (elem(buf, produced)) {
             kernel_broadcasts[buf].push_back(other_gp.first);
+            kernel_orders[buf] =
+              write_permutation(buf, prg);
           }
         }
       }
