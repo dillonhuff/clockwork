@@ -6604,36 +6604,97 @@ op* find_coarse_grained_pipeline_loop(op* lp) {
 }
 
 umap* prog::validity_deps() {
+
   umap* naive_sched = unoptimized_schedule();
-  cout << "Naive sched for validity deps: " << str(naive_sched) << endl;
+  //auto domain = whole_iteration_domain();
 
-  cout << "Getting lex_lt for schedule..." << endl;
-  auto before = lex_lt(naive_sched, naive_sched);
+  map<op*, isl_set*> domains = this->domains();
+  vector<umap*> validity_dep_maps;
+  for (auto b : all_buffers(*this)) {
 
-  cout << "Getting iteration domain..."<< endl;
+    vector<uset*> user_domains;
+    for (auto op : find_readers(b, *this)) {
+      user_domains.push_back(to_uset(map_find(op, domains)));
+    }
+    for (auto op : find_writers(b, *this)) {
+      user_domains.push_back(to_uset(map_find(op, domains)));
+    }
+    uset* domain = unn(user_domains);
 
-  auto domain = whole_iteration_domain();
+    auto writes =
+      its(producer_map(b), domain);
 
-  cout << "Got domain..." << endl;
+    auto reads =
+      its(consumer_map(b), domain);
 
-  auto writes =
-    its(producer_map(), domain);
 
-  auto reads =
-    its(consumer_map(), domain);
+    auto writers_to_readers = dot(writes, inv(reads));
 
-  cout << "Got producer / consumer maps" << endl;
-  auto writers_to_readers = dot(writes, inv(reads));
-  cout << "Writers to readers: " << endl;
-  for (auto m : get_maps(writers_to_readers)) {
-    cout << tab(1) << str(m) << endl;
+    umap* user_sched = its(naive_sched, domain);
+    auto before = lex_lt(user_sched, user_sched);
+    auto validity =
+      its(writers_to_readers, before);
+
+    validity_dep_maps.push_back(validity);
   }
-  //assert(false);
-  auto validity =
-    its(writers_to_readers, before);
-    //its(dot(writes, inv(reads)), before);
 
-  return validity;
+  auto valid = unn(validity_dep_maps);
+  assert(valid != nullptr);
+  return valid;
+
+  //cout << "Got domain..." << endl;
+
+  //auto writes =
+    //its(producer_map(), domain);
+
+  //auto reads =
+    //its(consumer_map(), domain);
+
+  //cout << "Got producer / consumer maps" << endl;
+  //auto writers_to_readers = dot(writes, inv(reads));
+  //cout << "Writers to readers: " << endl;
+  //for (auto m : get_maps(writers_to_readers)) {
+    //cout << tab(1) << str(m) << endl;
+  //}
+  ////assert(false);
+  //auto validity =
+    //its(writers_to_readers, before);
+    ////its(dot(writes, inv(reads)), before);
+
+  //return validity;
+
+
+  // Old version
+  //umap* naive_sched = unoptimized_schedule();
+  //cout << "Naive sched for validity deps: " << str(naive_sched) << endl;
+
+  //cout << "Getting lex_lt for schedule..." << endl;
+  //auto before = lex_lt(naive_sched, naive_sched);
+
+  //cout << "Getting iteration domain..."<< endl;
+
+  //auto domain = whole_iteration_domain();
+
+  //cout << "Got domain..." << endl;
+
+  //auto writes =
+    //its(producer_map(), domain);
+
+  //auto reads =
+    //its(consumer_map(), domain);
+
+  //cout << "Got producer / consumer maps" << endl;
+  //auto writers_to_readers = dot(writes, inv(reads));
+  //cout << "Writers to readers: " << endl;
+  //for (auto m : get_maps(writers_to_readers)) {
+    //cout << tab(1) << str(m) << endl;
+  //}
+  ////assert(false);
+  //auto validity =
+    //its(writers_to_readers, before);
+    ////its(dot(writes, inv(reads)), before);
+
+  //return validity;
 }
 
 vector<pair<string, pair<string, int> >> determine_output_shift_reg_map(

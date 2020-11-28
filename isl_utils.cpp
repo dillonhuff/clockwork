@@ -1450,6 +1450,31 @@ isl_map* inv(isl_map* const m0) {
   return isl_map_reverse(cpy(m0));
 }
 
+uset* unn(const std::vector<uset*>& sets) {
+  uset* res = nullptr;
+  for (auto s : sets) {
+    if (res == nullptr) {
+      res = cpy(s);
+    } else {
+      res = unn(res, s);
+    }
+  }
+  return res;
+}
+
+umap* unn(const std::vector<umap*>& sets) {
+  umap* res = nullptr;
+  for (auto s : sets) {
+    if (res == nullptr) {
+      res = cpy(s);
+    } else {
+      res = unn(res, s);
+    }
+  }
+  return res;
+}
+
+
 isl_set* unn(const std::vector<isl_set*>& sets) {
   isl_set* res = nullptr;
   for (auto s : sets) {

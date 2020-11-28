@@ -373,6 +373,8 @@ isl_map* inv(isl_map* const m0);
 
 isl_set* unn(isl_set* const m0, isl_set* const m1);
 isl_set* unn(const std::vector<isl_set*>& sets);
+uset* unn(const std::vector<uset*>& sets);
+umap* unn(const std::vector<umap*>& sets);
 
 isl_union_set* unn(isl_union_set* const m0, isl_union_set* const m1);
 
