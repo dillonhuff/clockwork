@@ -4200,7 +4200,8 @@ prog extract_group_to_separate_prog(const std::set<std::string>& group, prog& or
 	}
 	extracted.name = prg_name;
 
-	for(auto kernel : topologically_sort_kernels(original)){
+	//for(auto kernel : topologically_sort_kernels(original)){
+	for(auto kernel : get_kernels_in_order(original)){
 		if(elem(kernel, group)){
 			op* kernel_copy = extracted.add_loop(kernel, original.start(kernel), original.end_exclusive(kernel));
 			for(auto child : original.find_loop(kernel)->children){
@@ -7935,6 +7936,7 @@ vector<int> read_permutation(const std::string& buf, prog& gp) {
 
 app_dag partition_application(const std::map<std::string, std::set<std::string> >& fusion_groups, prog& prg) {
 
+  cout << "=== Extracting groups..." << endl;
   app_dag dag{prg, fusion_groups};
   for (auto& g : dag.fusion_groups) {
     dag.fusion_group_progs[g.first] =
@@ -7946,6 +7948,7 @@ app_dag partition_application(const std::map<std::string, std::set<std::string> 
   map<string, vector<string> > kernel_broadcasts;
   map<string, vector<int> > kernel_orders;
 
+  cout << "=== Crating broadcast data structures..." << endl;
   for (auto gp : dag.fusion_groups) {
     auto produced = get_produced_buffers(gp.second, prg);
     for (auto other_gp : fusion_groups) {
@@ -7961,28 +7964,28 @@ app_dag partition_application(const std::map<std::string, std::set<std::string> 
       }
     }
   }
-  //cout << "===== Cross kernel deps" << endl;
+
+
+  cout << "===== Cross kernel deps" << endl;
   for (auto b : kernel_broadcasts) {
-    //cout << tab(1) << b.first << " is used by " << sep_list(b.second, "[", "]", ", ") << endl;
+    cout << tab(1) << b.first << " is used by " << sep_list(b.second, "[", "]", ", ") << endl;
     auto consumers = prg.consumer_maps(b.first);
     for (auto group_name : b.second) {
       isl_set* s = read_by_group(b.first, group_name, dag);
 
-      //cout << tab(2) << "Read: " << str(lexmin(s)) << " to " << str(lexmax(s)) << endl;
+      cout << tab(2) << "Read: " << str(lexmin(s)) << " to " << str(lexmax(s)) << endl;
       assert(contains_key(group_name, dag.fusion_group_progs));
       prog& gp = dag.fusion_group_progs.at(group_name);
 
-      //vector<int> level_permutation =
-        //read_permutation(b.first, gp);
-
       string replacement = prg.un(b.first + "_FIFO_buf");
       gp.root->replace_reads_from(b.first, replacement);
-      //read_in_no_dsa(gp.root, s, level_permutation, replacement, gp);
       read_in_no_dsa(gp.root, s, map_find(b.first, kernel_orders), replacement, gp);
 
       gp.pretty_print();
     }
   }
+
+  cout << "===== Adding broadcast expressions" << endl;
 
   for (auto b : kernel_broadcasts) {
     cout << tab(1) << b.first << " is used by " << sep_list(b.second, "[", "]", ", ") << endl;

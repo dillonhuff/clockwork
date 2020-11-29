@@ -18827,7 +18827,7 @@ prog stencil_chain(const std::string& name) {
   prg.pretty_print();
   prg.sanity_check();
 
-  assert(false);
+  //assert(false);
 
   return prg;
 }
