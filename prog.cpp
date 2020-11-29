@@ -4307,19 +4307,21 @@ pair<std::string, std::string> remove_whitespace(const pair<std::string, std::st
 void infer_bounds_and_unroll(const std::string& out, const std::vector<int>& bounds, const int unroll_factor, prog& prg) {
 
   infer_bounds(out, bounds, prg);
+  prg.reset_context();
+
   //cout << "After first bounds inference" << endl;
   //prg.pretty_print();
   //assert(false);
   extend_bounds_to_multiple_of(unroll_factor, out, prg);
   unroll_reduce_loops(prg);
   cout << "Sanity checking after unrolling reduce loops..." << endl;
-  sanity_check_all_reads_defined(prg);
+  //sanity_check_all_reads_defined(prg);
   normalize_bounds(prg);
-  unroll_producer_matching(out, unroll_factor, prg);
-  cout << "Sanity checking after unrolling strip mined loops..." << endl;
-  sanity_check_all_reads_defined(prg);
   merge_basic_block_ops(prg);
-  sanity_check_all_reads_defined(prg);
+  unroll_producer_matching(out, unroll_factor, prg);
+  //cout << "Sanity checking after unrolling strip mined loops..." << endl;
+  //sanity_check_all_reads_defined(prg);
+  //sanity_check_all_reads_defined(prg);
 }
 
 void normalize_bounds(prog& prg) {
@@ -8015,4 +8017,9 @@ app_dag partition_application(const std::map<std::string, std::set<std::string> 
   assert(all_kernel_inputs_are_program_inputs(dag));
 
   return dag;
+}
+
+void prog::reset_context() {
+  isl_ctx_free(ctx);
+  ctx = isl_ctx_alloc();
 }

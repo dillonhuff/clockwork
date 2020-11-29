@@ -871,6 +871,8 @@ struct prog {
 
   map<string, vector<int> > buffer_bounds;
 
+  void reset_context();
+
   void sanity_check();
 
   op* parent(op* p);
