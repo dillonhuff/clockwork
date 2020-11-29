@@ -18,26 +18,32 @@ int main(int argc, char **argv) {
   std::cout << "num_epochs = " << num_epochs << std::endl;
 
   size_t total_size_bytes = 0;
+  size_t total_size_bytes_read = 0;
+  size_t total_size_bytes_written = 0;
   const int af320_update_0_write_DATA_SIZE = num_epochs*1036800;
   const int af320_update_0_write_BYTES_PER_PIXEL = 16 / 8;
   size_t af320_update_0_write_size_bytes = af320_update_0_write_BYTES_PER_PIXEL * af320_update_0_write_DATA_SIZE;
 
   total_size_bytes += af320_update_0_write_size_bytes;
+  total_size_bytes_written += af320_update_0_write_size_bytes;
   const int af321_update_0_write_DATA_SIZE = num_epochs*1036800;
   const int af321_update_0_write_BYTES_PER_PIXEL = 16 / 8;
   size_t af321_update_0_write_size_bytes = af321_update_0_write_BYTES_PER_PIXEL * af321_update_0_write_DATA_SIZE;
 
   total_size_bytes += af321_update_0_write_size_bytes;
+  total_size_bytes_written += af321_update_0_write_size_bytes;
   const int in_off_chip0_update_0_read_DATA_SIZE = num_epochs*1036800;
   const int in_off_chip0_update_0_read_BYTES_PER_PIXEL = 16 / 8;
   size_t in_off_chip0_update_0_read_size_bytes = in_off_chip0_update_0_read_BYTES_PER_PIXEL * in_off_chip0_update_0_read_DATA_SIZE;
 
   total_size_bytes += in_off_chip0_update_0_read_size_bytes;
+  total_size_bytes_read += in_off_chip0_update_0_read_size_bytes;
   const int in_off_chip1_update_0_read_DATA_SIZE = num_epochs*1036800;
   const int in_off_chip1_update_0_read_BYTES_PER_PIXEL = 16 / 8;
   size_t in_off_chip1_update_0_read_size_bytes = in_off_chip1_update_0_read_BYTES_PER_PIXEL * in_off_chip1_update_0_read_DATA_SIZE;
 
   total_size_bytes += in_off_chip1_update_0_read_size_bytes;
+  total_size_bytes_read += in_off_chip1_update_0_read_size_bytes;
 
   cl_int err;
   cl::Context context;

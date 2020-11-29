@@ -17855,6 +17855,65 @@ void application_tests() {
   //cnn_test();
   //iccad_tests();
   //exposure_fusion_iccad_apps("ef_cc_10_level");
+  tricky_shift_register_reconvergence_test();
+
+  mmul_outer_prod_test();
+  grayscale_conversion_test();
+  //print_test();
+  //manual_unroll_test();
+
+  compute_unit_with_index_variables_test();
+
+  //pyr_1d_conv_test();
+  halide_dnn_test();
+  //conv_1d_bc_test();
+
+  conv_1d_test();
+
+  jacobi2d_app_test();
+  downsample2d_test();
+  up_stencil_down_test();
+  downsample_and_blur_test();
+
+  updown_merge_test();
+  harris_unrolled_test();
+
+
+  identity_stream_coreir_test();
+  weight_streaming_test();
+
+  identity_stream_through_mem_coreir_test();
+  reduce_stream_coreir_test();
+
+  us_unroll_test();
+  ds_unroll_test();
+  prg_unroll_test();
+  lchannel_test();
+  gf_test();
+
+  halide_frontend_test();
+  halide_up_sample_test();
+  halide_conv_layer_3D_test();
+  conv_3_3_halide_test();
+
+  async_add_test();
+  lake_agg_sram_tb_config_test();
+  seidel2d_test();
+  add_four_channels();
+  weight_add_psef();
+
+  two_stage_psef();
+  psef_multi_output_test();
+
+  non_rate_matched_ds_test();
+
+  //two_input_denoise_pipeline_test();
+  //synth_wire_test();
+  //synth_sr_boundary_condition_test();
+  //synth_lb_test();
+  //conv_app_rolled_reduce_test();
+  //up_stencil_down_unrolled_test();
+  //laplacian_pyramid_app_test();
   histogram_2d_test();
 
   // Possibly failing
@@ -17864,7 +17923,7 @@ void application_tests() {
 
   resnet_test();
 
-  coreir_tests();
+  //coreir_tests();
   multi_output_app_test();
 
   sobel_test();
@@ -17890,7 +17949,7 @@ void application_tests() {
   //assert(false);
 
   //unet_conv_3_3_test();
-  cyclic_banked_conv_test();
+  //cyclic_banked_conv_test();
   //register_file_optimization_test();
 
   // Does not work with register files?
@@ -17922,7 +17981,9 @@ void application_tests() {
 
   //remove_reduce_inits_test();
 
-  reuse_buffered_conv_test();
+  //reuse_buffered_conv_test();
+ 
+  // Got past this
   infer_uneven_bounds_test();
   llf_pyramid_test();
   infer_bounds_unrolled_test();
@@ -18003,69 +18064,10 @@ void application_tests() {
 
   histogram_test();
   //assert(false);
-  halide_cascade_test();
+  //halide_cascade_test();
 
   //mmul_outer_prod_test();
 
-  tricky_shift_register_reconvergence_test();
-
-  mmul_outer_prod_test();
-  grayscale_conversion_test();
-  //print_test();
-  //manual_unroll_test();
-
-  compute_unit_with_index_variables_test();
-
-  //pyr_1d_conv_test();
-  halide_dnn_test();
-  //conv_1d_bc_test();
-
-  conv_1d_test();
-
-  jacobi2d_app_test();
-  downsample2d_test();
-  up_stencil_down_test();
-  downsample_and_blur_test();
-
-  updown_merge_test();
-  harris_unrolled_test();
-
-
-  identity_stream_coreir_test();
-  weight_streaming_test();
-
-  identity_stream_through_mem_coreir_test();
-  reduce_stream_coreir_test();
-
-  us_unroll_test();
-  ds_unroll_test();
-  prg_unroll_test();
-  lchannel_test();
-  gf_test();
-
-  halide_frontend_test();
-  halide_up_sample_test();
-  halide_conv_layer_3D_test();
-  conv_3_3_halide_test();
-
-  async_add_test();
-  lake_agg_sram_tb_config_test();
-  seidel2d_test();
-  add_four_channels();
-  weight_add_psef();
-
-  two_stage_psef();
-  psef_multi_output_test();
-
-  non_rate_matched_ds_test();
-
-  //two_input_denoise_pipeline_test();
-  //synth_wire_test();
-  //synth_sr_boundary_condition_test();
-  //synth_lb_test();
-  //conv_app_rolled_reduce_test();
-  //up_stencil_down_unrolled_test();
-  //laplacian_pyramid_app_test();
 }
 
 void affine_controller_test() {
