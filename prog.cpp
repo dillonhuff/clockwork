@@ -7948,14 +7948,24 @@ app_dag partition_application(const std::map<std::string, std::set<std::string> 
   map<string, vector<string> > kernel_broadcasts;
   map<string, vector<int> > kernel_orders;
 
+  map<string, std::set<string> > produced_bufs;
+  map<string, std::set<string> > consumed_bufs;
+  for (auto gp : dag.fusion_groups) {
+    cout << "GP..." << endl;
+    produced_bufs[gp.first] = get_produced_buffers(gp.second, prg);
+    consumed_bufs[gp.first]= get_consumed_buffers(gp.second, prg);
+  }
+
   cout << "=== Creating broadcast data structures..." << endl;
   for (auto gp : dag.fusion_groups) {
     cout << "GP..." << endl;
-    auto produced = get_produced_buffers(gp.second, prg);
+    //auto produced = get_produced_buffers(gp.second, prg);
+    auto produced = map_find(gp.first, produced_bufs);
     for (auto other_gp : fusion_groups) {
       cout << "OtherGP GP..." << endl;
       if (gp != other_gp) {
-        auto consumed = get_consumed_buffers(other_gp.second, prg);
+        //auto consumed = get_consumed_buffers(other_gp.second, prg);
+        auto consumed = map_find(other_gp.first, consumed_bufs);
         for (auto buf : consumed) {
           if (elem(buf, produced)) {
             kernel_broadcasts[buf].push_back(other_gp.first);
