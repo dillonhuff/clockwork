@@ -8134,7 +8134,6 @@ app_dag partition_application(const std::map<std::string, std::set<std::string> 
 
   map<string, isl_set*> read_by_gp;
   for (auto b : kernel_broadcasts) {
-    //cout << tab(1) << b.first << " is used by " << sep_list(b.second, "[", "]", ", ") << endl;
     auto consumers = prg.consumer_maps(b.first);
     for (auto group_name : b.second) {
       isl_set* s = read_by_group(b.first, map_find(group_name, fusion_groups), prg);
@@ -8147,65 +8146,49 @@ app_dag partition_application(const std::map<std::string, std::set<std::string> 
   prg.pretty_print();
 
   map<string, std::set<string> > fresh_groups = fusion_groups;
-  //cout << "===== Cross kernel deps" << endl;
+  map<pair<string, string>, string> group_buffer_channels;
   for (auto b : kernel_broadcasts) {
-    //cout << tab(1) << b.first << " is used by " << sep_list(b.second, "[", "]", ", ") << endl;
     auto consumers = prg.consumer_maps(b.first);
     for (auto group_name : b.second) {
       isl_set* s = map_find(group_name, read_by_gp);
-      //isl_set* s = read_by_group(b.first, map_find(group_name, fusion_groups), prg);
 
-      //cout << tab(2) << "Read: " << str(lexmin(s)) << " to " << str(lexmax(s)) << endl;
-      //assert(contains_key(group_name, dag.fusion_group_progs));
-      //prog& gp = dag.fusion_group_progs.at(group_name);
+      string broadcast = prg.un(b.first + "_to_" + group_name);
+      string producer_group = map_find(b.first, producer_groups);
+
+      op* copy_loop = copy_after(prg.root, prg.find_loop(map_find(producer_group, group_ends)), s, map_find(b.first, kernel_orders), broadcast, prg);
+      fresh_groups[producer_group].insert(copy_loop->name);
+
+      group_buffer_channels[{group_name, b.first}] = broadcast;
+      //for (auto kernel : map_find(group_name, fusion_groups)) {
+        //prg.find_loop(kernel)->replace_reads_from(b.first, broadcast);
+      //}
+    }
+  }
+
+  cout << "After adding copy buffers..." << endl;
+  prg.pretty_print();
+
+  for (auto b : kernel_broadcasts) {
+    auto consumers = prg.consumer_maps(b.first);
+    for (auto group_name : b.second) {
+      isl_set* s = map_find(group_name, read_by_gp);
+      string incoming_channel = group_buffer_channels[{group_name, b.first}];
+      s = set_name(s, incoming_channel);
 
       string replacement = prg.un(b.first + "_FIFO_buf");
       for (auto kernel : map_find(group_name, fusion_groups)) {
         prg.find_loop(kernel)->replace_reads_from(b.first, replacement);
       }
-      //prg.root->replace_reads_from(b.first, replacement);
       
       op* copy_loop = copy_before(prg.root, prg.find_loop(map_find(group_name, group_starts)), s, map_find(b.first, kernel_orders), replacement, prg);
       fresh_groups[group_name].insert(copy_loop->name);
     }
   }
 
-  cout << "After adding _FIFO_buf..." << endl;
-  prg.pretty_print();
-  //cout << "===== Adding broadcast expressions" << endl;
-  for (auto b : kernel_broadcasts) {
-    //cout << tab(1) << b.first << " is used by " << sep_list(b.second, "[", "]", ", ") << endl;
-    auto consumers = prg.consumer_maps(b.first);
-    for (auto group_name : b.second) {
-      isl_set* s = map_find(group_name, read_by_gp);
-      //isl_set* s = read_by_group(b.first, map_find(group_name, fusion_groups), prg);
-
-      string broadcast = prg.un(b.first + "_to_" + group_name);
-      string producer_group = map_find(b.first, producer_groups);
-
-      //prog& pp = dag.fusion_group_progs.at(producer_group);
-
-      //pp.outs.insert(broadcast);
-
-      op* copy_loop = copy_after(prg.root, prg.find_loop(map_find(producer_group, group_ends)), s, map_find(b.first, kernel_orders), broadcast, prg);
-      fresh_groups[producer_group].insert(copy_loop->name);
-
-      //assert(contains_key(group_name, dag.fusion_group_progs));
-
-      //prog& gp = dag.fusion_group_progs.at(group_name);
-      for (auto kernel : map_find(group_name, fusion_groups)) {
-        prg.find_loop(kernel)->replace_reads_from(b.first, broadcast);
-      }
-      //gp.root->replace_reads_from(b.first, broadcast);
-
-      //gp.ins.erase(b.first);
-      //gp.ins.insert(broadcast);
-      //pp.outs.erase(b.first);
-    }
-  }
 
   cout << "After adding distributors..." << endl;
   prg.pretty_print();
+  assert(false);
 
   cout << "=== Extracting groups..." << endl;
   //app_dag dag{prg, fusion_groups};
