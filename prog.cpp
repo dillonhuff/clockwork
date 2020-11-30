@@ -7937,36 +7937,25 @@ vector<int> read_permutation(const std::string& buf, prog& gp) {
 
 
 app_dag partition_application(const std::map<std::string, std::set<std::string> >& fusion_groups, prog& prg) {
-
-  cout << "=== Extracting groups..." << endl;
-  app_dag dag{prg, fusion_groups};
-  for (auto& g : dag.fusion_groups) {
-    dag.fusion_group_progs[g.first] =
-      extract_group_to_separate_prog(g.second, dag.prg);
-  }
-
-
   // Map from buffers to the kernels they read
   map<string, vector<string> > kernel_broadcasts;
   map<string, vector<int> > kernel_orders;
 
   map<string, std::set<string> > produced_bufs;
   map<string, std::set<string> > consumed_bufs;
-  for (auto gp : dag.fusion_groups) {
+  for (auto gp : fusion_groups) {
     cout << "GP..." << endl;
     produced_bufs[gp.first] = get_produced_buffers(gp.second, prg);
     consumed_bufs[gp.first]= get_consumed_buffers(gp.second, prg);
   }
 
   cout << "=== Creating broadcast data structures..." << endl;
-  for (auto gp : dag.fusion_groups) {
+  for (auto gp : fusion_groups) {
     cout << "GP..." << endl;
-    //auto produced = get_produced_buffers(gp.second, prg);
     auto produced = map_find(gp.first, produced_bufs);
     for (auto other_gp : fusion_groups) {
       cout << "OtherGP GP..." << endl;
       if (gp != other_gp) {
-        //auto consumed = get_consumed_buffers(other_gp.second, prg);
         auto consumed = map_find(other_gp.first, consumed_bufs);
         for (auto buf : consumed) {
           if (elem(buf, produced)) {
@@ -7981,6 +7970,13 @@ app_dag partition_application(const std::map<std::string, std::set<std::string> 
     }
   }
 
+  cout << "=== Extracting groups..." << endl;
+  app_dag dag{prg, fusion_groups};
+
+  for (auto& g : dag.fusion_groups) {
+    dag.fusion_group_progs[g.first] =
+      extract_group_to_separate_prog(g.second, dag.prg);
+  }
 
   cout << "===== Cross kernel deps" << endl;
   for (auto b : kernel_broadcasts) {
@@ -8002,7 +7998,6 @@ app_dag partition_application(const std::map<std::string, std::set<std::string> 
   }
 
   cout << "===== Adding broadcast expressions" << endl;
-
   for (auto b : kernel_broadcasts) {
     cout << tab(1) << b.first << " is used by " << sep_list(b.second, "[", "]", ", ") << endl;
     auto consumers = prg.consumer_maps(b.first);
@@ -8011,12 +8006,9 @@ app_dag partition_application(const std::map<std::string, std::set<std::string> 
 
       string broadcast = prg.un(b.first + "_to_" + group_name);
       prog& pp = dag.fusion_group_progs.at(dag.producer_group(b.first));
-      //vector<int> level_permutation =
-        //write_permutation(b.first, prg);
 
       pp.outs.insert(broadcast);
 
-      //write_out_no_dsa(pp.root, s, level_permutation, broadcast, pp);
       write_out_no_dsa(pp.root, s, map_find(b.first, kernel_orders), broadcast, pp);
       pp.pretty_print();
 
