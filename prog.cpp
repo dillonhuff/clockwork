@@ -8188,7 +8188,7 @@ app_dag partition_application(const std::map<std::string, std::set<std::string> 
 
   cout << "After adding distributors..." << endl;
   prg.pretty_print();
-  assert(false);
+  //assert(false);
 
   cout << "=== Extracting groups..." << endl;
   //app_dag dag{prg, fusion_groups};
