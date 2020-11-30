@@ -6206,7 +6206,7 @@ void read_in_after(op* loop, isl_map* read_data, const std::string& rb_name, pro
   ld->add_store(rb_name, comma_list(store_addrs));
 }
 
-void copy_after(
+op* copy_after(
     op* loop,
     op* location,
     isl_set* read_data,
@@ -6243,11 +6243,13 @@ void copy_after(
   }
 
   op* next_lp = loop;
+  op* kernel = nullptr;
   for (int d = 0; d < num_dims(read_data); d++) {
     int lb = loop_bounds.at(loop_order.at(d)).first;
     int ub = loop_bounds.at(loop_order.at(d)).second;
     if (d == 0) {
       next_lp = next_lp->add_loop_after(location, load_addrs.at(loop_order.at(d)), lb, ub);
+      kernel = next_lp;
     } else {
       next_lp = next_lp->add_loop_front(load_addrs.at(loop_order.at(d)), lb, ub);
     }
@@ -6258,9 +6260,10 @@ void copy_after(
   ld->add_store(rb_name, comma_list(store_addrs));
 
   prg.pretty_print();
+  return kernel;
 }
 
-void copy_before(
+op* copy_before(
     op* loop,
     op* location,
     isl_set* read_data,
@@ -6297,11 +6300,13 @@ void copy_before(
   }
 
   op* next_lp = loop;
+  op* kernel = nullptr;
   for (int d = 0; d < num_dims(read_data); d++) {
     int lb = loop_bounds.at(loop_order.at(d)).first;
     int ub = loop_bounds.at(loop_order.at(d)).second;
     if (d == 0) {
       next_lp = next_lp->add_loop_before(location, load_addrs.at(loop_order.at(d)), lb, ub);
+      kernel = next_lp;
     } else {
       next_lp = next_lp->add_loop_front(load_addrs.at(loop_order.at(d)), lb, ub);
     }
@@ -6312,6 +6317,8 @@ void copy_before(
   ld->add_store(rb_name, comma_list(store_addrs));
 
   prg.pretty_print();
+
+  return kernel;
 }
 
 void read_in_no_dsa(
@@ -8080,6 +8087,8 @@ app_dag partition_application(const std::map<std::string, std::set<std::string> 
       extract_group_to_separate_prog(g.second, dag.prg);
   }
 
+  map<string, std::set<string> > fresh_groups = fusion_groups;
+
   cout << "===== Cross kernel deps" << endl;
   for (auto b : kernel_broadcasts) {
     cout << tab(1) << b.first << " is used by " << sep_list(b.second, "[", "]", ", ") << endl;
@@ -8093,8 +8102,8 @@ app_dag partition_application(const std::map<std::string, std::set<std::string> 
 
       string replacement = prg.un(b.first + "_FIFO_buf");
       gp.root->replace_reads_from(b.first, replacement);
-      //read_in_no_dsa(gp.root, s, map_find(b.first, kernel_orders), replacement, gp);
-      copy_before(gp.root, gp.root->children.front(), s, map_find(b.first, kernel_orders), replacement, gp);
+      op* copy_loop = copy_before(gp.root, gp.root->children.front(), s, map_find(b.first, kernel_orders), replacement, gp);
+      fresh_groups[group_name].insert(copy_loop->name);
 
       gp.pretty_print();
     }
@@ -8112,8 +8121,8 @@ app_dag partition_application(const std::map<std::string, std::set<std::string> 
 
       pp.outs.insert(broadcast);
 
-      //write_out_no_dsa(pp.root, s, map_find(b.first, kernel_orders), broadcast, pp);
-      copy_after(pp.root, pp.root->children.back(), s, map_find(b.first, kernel_orders), broadcast, pp);
+      op* copy_loop = copy_after(pp.root, pp.root->children.back(), s, map_find(b.first, kernel_orders), broadcast, pp);
+      fresh_groups[group_name].insert(copy_loop->name);
       pp.pretty_print();
 
       assert(contains_key(group_name, dag.fusion_group_progs));
