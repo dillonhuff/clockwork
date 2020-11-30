@@ -8081,6 +8081,15 @@ app_dag partition_application(const std::map<std::string, std::set<std::string> 
     for (auto kernel : get_kernels_in_order(prg)) {
       if (elem(kernel, gp.second)) {
         group_starts[gp.first] = kernel;
+        break;
+      }
+    }
+    vector<string> rev_kernels = get_kernels_in_order(prg);
+    reverse(rev_kernels);
+    for (auto kernel : rev_kernels) {
+      if (elem(kernel, gp.second)) {
+        group_ends[gp.first] = kernel;
+        break;
       }
     }
   }
@@ -8159,7 +8168,8 @@ app_dag partition_application(const std::map<std::string, std::set<std::string> 
 
       pp.outs.insert(broadcast);
 
-      op* copy_loop = copy_after(pp.root, pp.root->children.back(), s, map_find(b.first, kernel_orders), broadcast, pp);
+      op* copy_loop = copy_after(pp.root, pp.find_loop(map_find(dag.producer_group(b.first), group_ends)), s, map_find(b.first, kernel_orders), broadcast, pp);
+      //op* copy_loop = copy_after(pp.root, pp.root->children.back(), s, map_find(b.first, kernel_orders), broadcast, pp);
       fresh_groups[group_name].insert(copy_loop->name);
 
       assert(contains_key(group_name, dag.fusion_group_progs));
