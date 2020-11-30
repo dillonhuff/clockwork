@@ -7972,6 +7972,20 @@ void generate_app_code(CodegenOptions& options,
   generate_app_collateral(options, conv_out, buffers, dag.prg, sched);
 }
 
+isl_set* read_by_group(const std::string& buf, const std::set<string>& group, prog& prg) {
+  auto consumers = prg.consumer_maps(buf);
+  vector<isl_set*> read;
+  for (auto m : consumers) {
+    if (m.second != nullptr && elem(m.first, group)) {
+      auto dom = range(m.second);
+      read.push_back(dom);
+    }
+  }
+
+  isl_set* s = unn(read);
+  return s;
+}
+
 isl_set* read_by_group(const std::string& buf, const std::string& group_name, app_dag& dag) {
   auto consumers = dag.prg.consumer_maps(buf);
   vector<isl_set*> read;
@@ -8094,7 +8108,9 @@ app_dag partition_application(const std::map<std::string, std::set<std::string> 
     cout << tab(1) << b.first << " is used by " << sep_list(b.second, "[", "]", ", ") << endl;
     auto consumers = prg.consumer_maps(b.first);
     for (auto group_name : b.second) {
-      isl_set* s = read_by_group(b.first, group_name, dag);
+      //isl_set* s = read_by_group(b.first, group_name, dag);
+      
+      isl_set* s = read_by_group(b.first, map_find(group_name, fusion_groups), prg);
 
       cout << tab(2) << "Read: " << str(lexmin(s)) << " to " << str(lexmax(s)) << endl;
       assert(contains_key(group_name, dag.fusion_group_progs));
@@ -8114,7 +8130,8 @@ app_dag partition_application(const std::map<std::string, std::set<std::string> 
     cout << tab(1) << b.first << " is used by " << sep_list(b.second, "[", "]", ", ") << endl;
     auto consumers = prg.consumer_maps(b.first);
     for (auto group_name : b.second) {
-      isl_set* s = read_by_group(b.first, group_name, dag);
+      //isl_set* s = read_by_group(b.first, group_name, dag);
+      isl_set* s = read_by_group(b.first, map_find(group_name, fusion_groups), prg);
 
       string broadcast = prg.un(b.first + "_to_" + group_name);
       prog& pp = dag.fusion_group_progs.at(dag.producer_group(b.first));
