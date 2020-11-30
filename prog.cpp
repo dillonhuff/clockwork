@@ -8256,7 +8256,7 @@ app_dag partition_application(const std::map<std::string, std::set<std::string> 
   //}
 
   for (auto prg : dag.fusion_group_progs) {
-    sanity_check_all_reads_defined(prg.second);
+    assert(sanity_check_all_reads_defined(prg.second));
   }
 
   assert(all_kernel_outputs_have_fanout_one(dag));
