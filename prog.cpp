@@ -8188,6 +8188,14 @@ app_dag partition_application(const std::map<std::string, std::set<std::string> 
 
   cout << "After adding distributors..." << endl;
   prg.pretty_print();
+  cout << "Groups..." << endl;
+  for (auto gp : fresh_groups) {
+    cout << tab(1) << gp.first << endl;
+    for (auto k : gp.second) {
+      cout << tab(2) << k << endl;
+    }
+    cout << endl;
+  }
   //assert(false);
 
   cout << "=== Extracting groups..." << endl;
