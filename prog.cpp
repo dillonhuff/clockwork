@@ -7849,6 +7849,45 @@ UBuffer write_latency_adjusted_buffer(
   return cpy;
 }
 
+bool all_kernel_inputs_are_outputs_of_another_kernel(app_dag& dag) {
+  for (auto& g : dag.fusion_group_progs) {
+    for (auto in : g.second.ins) {
+      bool found_in = false;
+      if (elem(in, dag.prg.ins)) {
+        found_in = true;
+      } else {
+        for (auto& other : dag.fusion_group_progs) {
+          if (other.first != g.first) {
+            for (auto out : other.second.outs) {
+              if (out == in) {
+                found_in = true;
+                break;
+              }
+            }
+          }
+        }
+      }
+
+      if (!found_in) {
+        dag.prg.pretty_print();
+
+        cout << endl;
+
+        g.second.pretty_print();
+        cout << "Error: " << in << " on kernel " << g.first << " is not an output of any other kernel" << endl;
+        cout << "progs..." << endl;
+        for (auto gp : dag.fusion_group_progs) {
+          gp.second.pretty_print();
+        }
+        return false;
+      }
+
+    }
+  }
+
+  return true;
+}
+
 bool all_kernel_inputs_are_program_inputs(app_dag& dag) {
   for (auto& g : dag.fusion_group_progs) {
     auto& gp = g.second;
@@ -8159,9 +8198,6 @@ app_dag partition_application(const std::map<std::string, std::set<std::string> 
       fresh_groups[producer_group].insert(copy_loop->name);
 
       group_buffer_channels[{group_name, b.first}] = broadcast;
-      //for (auto kernel : map_find(group_name, fusion_groups)) {
-        //prg.find_loop(kernel)->replace_reads_from(b.first, broadcast);
-      //}
     }
   }
 
@@ -8256,11 +8292,12 @@ app_dag partition_application(const std::map<std::string, std::set<std::string> 
   //}
 
   for (auto prg : dag.fusion_group_progs) {
-    assert(sanity_check_all_reads_defined(prg.second));
+    sanity_check_all_reads_defined(prg.second);
   }
 
   assert(all_kernel_outputs_have_fanout_one(dag));
   assert(all_kernel_inputs_are_program_inputs(dag));
+  assert(all_kernel_inputs_are_outputs_of_another_kernel(dag));
 
   return dag;
 }
@@ -8284,9 +8321,11 @@ vector<string> app_dag::sorted_fusion_groups() {
     bool found_sorted = false;
     for (auto& g : fusion_group_progs) {
       if (!elem(g.first, sorted)) {
+        cout << tab(1) << g.first << " is not sorted" << endl;
         bool all_deps_done = true;
         for (auto b : g.second.ins) {
           if (!elem(b, finished_buffers)) {
+            cout << tab(2) << "Dependency: " << b << " is not in finished buffers" << endl;
             all_deps_done = false;
             break;
           }
@@ -8299,6 +8338,13 @@ vector<string> app_dag::sorted_fusion_groups() {
           sorted.push_back(g.first);
           found_sorted = true;
         }
+      }
+    }
+    if (!found_sorted) {
+      for (auto pg : fusion_group_progs) {
+        cout << "Program for " << pg.first << "..." << endl;
+        pg.second.pretty_print();
+        cout << endl;
       }
     }
     assert(found_sorted);
