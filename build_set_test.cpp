@@ -17850,11 +17850,33 @@ void histogram_2d_test() {
   //assert(false);
 }
 
+void infer_bounds_tests() {
+  infer_uneven_bounds_test();
+  infer_bounds_unrolled_test();
+  infer_bounds_multiple_inputs();
+  infer_bounds_16_stage_5x5_conv_test();
+  infer_bounds_multi_5x1_stage_negative_conv_test();
+  infer_bounds_multi_5x5_stage_negative_conv_test();
+  infer_bounds_multi_stage_negative_conv_test();
+  //infer_bounds_color_downsample_test();
+  infer_bounds_multi_stage_negative_conv1d_test();
+  infer_bounds_three_stage_negative_conv_test();
+
+  infer_bounds_single_stage_negative_conv_test();
+  infer_bounds_negative_conv_test();
+
+
+}
+
 void application_tests() {
   //lake_tests();
   //cnn_test();
   //iccad_tests();
   //exposure_fusion_iccad_apps("ef_cc_10_level");
+  
+  
+  infer_bounds_tests();
+  
   tricky_shift_register_reconvergence_test();
 
   mmul_outer_prod_test();
@@ -17897,7 +17919,7 @@ void application_tests() {
   conv_3_3_halide_test();
 
   async_add_test();
-  lake_agg_sram_tb_config_test();
+  //lake_agg_sram_tb_config_test();
   seidel2d_test();
   add_four_channels();
   weight_add_psef();
@@ -17984,9 +18006,7 @@ void application_tests() {
   //reuse_buffered_conv_test();
  
   // Got past this
-  infer_uneven_bounds_test();
   llf_pyramid_test();
-  infer_bounds_unrolled_test();
   llf_test();
   blur_example();
   //assert(false);
@@ -18021,17 +18041,6 @@ void application_tests() {
   //raw_memtile_verilog_test();
   //raw_memtile_verilog_as_delay_test();
 
-  infer_bounds_multiple_inputs();
-  infer_bounds_16_stage_5x5_conv_test();
-  infer_bounds_multi_5x1_stage_negative_conv_test();
-  infer_bounds_multi_5x5_stage_negative_conv_test();
-  infer_bounds_multi_stage_negative_conv_test();
-  //infer_bounds_color_downsample_test();
-  infer_bounds_multi_stage_negative_conv1d_test();
-  infer_bounds_three_stage_negative_conv_test();
-
-  infer_bounds_single_stage_negative_conv_test();
-  infer_bounds_negative_conv_test();
 
 
   sum_diffs_test();

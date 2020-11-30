@@ -4318,7 +4318,7 @@ void infer_bounds_and_unroll(const std::string& out, const std::vector<int>& bou
   cout << "Sanity checking after unrolling reduce loops..." << endl;
   //sanity_check_all_reads_defined(prg);
   normalize_bounds(prg);
-  merge_basic_block_ops(prg);
+  //merge_basic_block_ops(prg);
   unroll_producer_matching(out, unroll_factor, prg);
   merge_basic_block_ops(prg);
   //cout << "Sanity checking after unrolling strip mined loops..." << endl;
