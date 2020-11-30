@@ -8108,62 +8108,7 @@ app_dag partition_application(const std::map<std::string, std::set<std::string> 
     }
   }
 
-  //map<string, std::set<string> > fresh_groups = fusion_groups;
-
-  //cout << "===== Cross kernel deps" << endl;
-  //for (auto b : kernel_broadcasts) {
-    //cout << tab(1) << b.first << " is used by " << sep_list(b.second, "[", "]", ", ") << endl;
-    //auto consumers = prg.consumer_maps(b.first);
-    //for (auto group_name : b.second) {
-      //isl_set* s = read_by_group(b.first, map_find(group_name, fusion_groups), prg);
-
-      //cout << tab(2) << "Read: " << str(lexmin(s)) << " to " << str(lexmax(s)) << endl;
-      ////assert(contains_key(group_name, dag.fusion_group_progs));
-      ////prog& gp = dag.fusion_group_progs.at(group_name);
-
-      //string replacement = prg.un(b.first + "_FIFO_buf");
-      ////gp.root->replace_reads_from(b.first, replacement);
-      //std::set<string> group_kernels = map_find(group_name, fusion_groups);
-      //for (auto gp : group_kernels) {
-        //prg.find_loop(gp)->replace_reads_from(b.first, replacement);
-      //}
-      //op* copy_loop = copy_before(prg.root, prg.find_loop(pick(group_kernels)), s, map_find(b.first, kernel_orders), replacement, prg);
-      //fresh_groups[group_name].insert(copy_loop->name);
-    //}
-  //}
-
-  //cout << "===== Adding broadcast expressions" << endl;
-  //for (auto b : kernel_broadcasts) {
-    //cout << tab(1) << b.first << " is used by " << sep_list(b.second, "[", "]", ", ") << endl;
-    //auto consumers = prg.consumer_maps(b.first);
-    //for (auto group_name : b.second) {
-      //isl_set* s = read_by_group(b.first, map_find(group_name, fusion_groups), prg);
-
-      //string broadcast = prg.un(b.first + "_to_" + group_name);
-
-      ////prog& pp = dag.fusion_group_progs.at(dag.producer_group(b.first));
-      ////pp.outs.insert(broadcast);
-
-      ////std::set<string> group_kernels = map_find(group_name, fusion_groups);
-      ////for (auto gp : group_kernels) {
-        ////prg.find_loop(gp)->replace_reads_from(b.first, broadcast);
-      ////}
-      //op* copy_loop = copy_after(prg.root, prg.find_loop(pick(group_kernels)), s, map_find(b.first, kernel_orders), broadcast, prg);
-
-      //fresh_groups[group_name].insert(copy_loop->name);
-
-      ////assert(contains_key(group_name, dag.fusion_group_progs));
-
-      ////prog& gp = dag.fusion_group_progs.at(group_name);
-      ////gp.root->replace_reads_from(b.first, broadcast);
-
-      ////gp.ins.erase(b.first);
-      ////gp.ins.insert(broadcast);
-      ////pp.outs.erase(b.first);
-    //}
-  //}
   cout << "=== Extracting groups..." << endl;
-  //app_dag dag{prg, fusion_groups};
   app_dag dag{prg, fusion_groups};
 
   for (auto& g : dag.fusion_groups) {
@@ -8178,8 +8123,6 @@ app_dag partition_application(const std::map<std::string, std::set<std::string> 
     cout << tab(1) << b.first << " is used by " << sep_list(b.second, "[", "]", ", ") << endl;
     auto consumers = prg.consumer_maps(b.first);
     for (auto group_name : b.second) {
-      //isl_set* s = read_by_group(b.first, group_name, dag);
-      
       isl_set* s = read_by_group(b.first, map_find(group_name, fusion_groups), prg);
 
       cout << tab(2) << "Read: " << str(lexmin(s)) << " to " << str(lexmax(s)) << endl;
@@ -8191,7 +8134,7 @@ app_dag partition_application(const std::map<std::string, std::set<std::string> 
       op* copy_loop = copy_before(gp.root, gp.root->children.front(), s, map_find(b.first, kernel_orders), replacement, gp);
       fresh_groups[group_name].insert(copy_loop->name);
 
-      gp.pretty_print();
+      //gp.pretty_print();
     }
   }
 
@@ -8200,7 +8143,6 @@ app_dag partition_application(const std::map<std::string, std::set<std::string> 
     cout << tab(1) << b.first << " is used by " << sep_list(b.second, "[", "]", ", ") << endl;
     auto consumers = prg.consumer_maps(b.first);
     for (auto group_name : b.second) {
-      //isl_set* s = read_by_group(b.first, group_name, dag);
       isl_set* s = read_by_group(b.first, map_find(group_name, fusion_groups), prg);
 
       string broadcast = prg.un(b.first + "_to_" + group_name);
@@ -8210,16 +8152,15 @@ app_dag partition_application(const std::map<std::string, std::set<std::string> 
 
       op* copy_loop = copy_after(pp.root, pp.root->children.back(), s, map_find(b.first, kernel_orders), broadcast, pp);
       fresh_groups[group_name].insert(copy_loop->name);
-      pp.pretty_print();
+      //pp.pretty_print();
 
       assert(contains_key(group_name, dag.fusion_group_progs));
       prog& gp = dag.fusion_group_progs.at(group_name);
       gp.root->replace_reads_from(b.first, broadcast);
+
       gp.ins.erase(b.first);
       gp.ins.insert(broadcast);
-
-      gp.pretty_print();
-
+      //gp.pretty_print();
       pp.outs.erase(b.first);
     }
   }
