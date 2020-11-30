@@ -33,48 +33,48 @@ struct gray_cache {
 
 
 
-inline void gray_oc_load_in03_2_write(hw_uint<32> & gray_oc_load_in03_2, gray_cache& gray, int root, int oc_load_in01, int oc_load_in02, int dynamic_address) {
-  gray.gray_all_inputs_to_all_outputs.write(gray_oc_load_in03_2, oc_load_in02 - 0, oc_load_in01 - 0);
+inline void gray_oc_load_in03_0_write(hw_uint<32> & gray_oc_load_in03_0, gray_cache& gray, int root, int oc_load_in01, int oc_load_in02, int dynamic_address) {
+  gray.gray_all_inputs_to_all_outputs.write(gray_oc_load_in03_0, oc_load_in02 - 0, oc_load_in01 - 0);
 }
 
-inline hw_uint<32>  gray_store_to_gray_to_gp_192_1_select(gray_cache& gray, int root, int gray_ld1, int gray_ld0, int dynamic_address) {
+inline hw_uint<32>  gray_load_to_gray_to_gp_192_3_select(gray_cache& gray, int root, int gray_ld1, int gray_ld0, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // gray_store_to_gray_to_gp_192_1 read pattern: { store_to_gray_to_gp_192[root = 0, gray_ld1, gray_ld0] -> gray[gray_ld0, gray_ld1] : 0 <= gray_ld1 <= 3 and 0 <= gray_ld0 <= 3 }
-  auto value_gray_oc_load_in03_2 = gray.gray_all_inputs_to_all_outputs.read(gray_ld0 - 0, gray_ld1 - 0);
-  return value_gray_oc_load_in03_2;
+  // gray_load_to_gray_to_gp_192_3 read pattern: { load_to_gray_to_gp_192[root = 0, gray_ld1, gray_ld0] -> gray[gray_ld0, gray_ld1] : 0 <= gray_ld1 <= 3 and 0 <= gray_ld0 <= 3 }
+  auto value_gray_oc_load_in03_0 = gray.gray_all_inputs_to_all_outputs.read(gray_ld0 - 0, gray_ld1 - 0);
+  return value_gray_oc_load_in03_0;
   return 0;
 }
 
 // # of bundles = 2
-// oc_load_in03_write
-//	gray_oc_load_in03_2
-inline void gray_oc_load_in03_write_bundle_write(hw_uint<32>& oc_load_in03_write, gray_cache& gray, int root, int oc_load_in01, int oc_load_in02, int dynamic_address) {
-	hw_uint<32>  gray_oc_load_in03_2_res = oc_load_in03_write.extract<0, 31>();
-	gray_oc_load_in03_2_write(gray_oc_load_in03_2_res, gray, root, oc_load_in01, oc_load_in02, dynamic_address);
-}
-
-// store_to_gray_to_gp_192_read
-//	gray_store_to_gray_to_gp_192_1
-inline hw_uint<32> gray_store_to_gray_to_gp_192_read_bundle_read(gray_cache& gray, int root, int gray_ld1, int gray_ld0, int dynamic_address) {
+// load_to_gray_to_gp_192_read
+//	gray_load_to_gray_to_gp_192_3
+inline hw_uint<32> gray_load_to_gray_to_gp_192_read_bundle_read(gray_cache& gray, int root, int gray_ld1, int gray_ld0, int dynamic_address) {
   // # of ports in bundle: 1
-    // gray_store_to_gray_to_gp_192_1
+    // gray_load_to_gray_to_gp_192_3
 
 	hw_uint<32> result;
-	hw_uint<32>  gray_store_to_gray_to_gp_192_1_res = gray_store_to_gray_to_gp_192_1_select(gray, root, gray_ld1, gray_ld0, dynamic_address);
-	set_at<0, 32>(result, gray_store_to_gray_to_gp_192_1_res);
+	hw_uint<32>  gray_load_to_gray_to_gp_192_3_res = gray_load_to_gray_to_gp_192_3_select(gray, root, gray_ld1, gray_ld0, dynamic_address);
+	set_at<0, 32>(result, gray_load_to_gray_to_gp_192_3_res);
 	return result;
+}
+
+// oc_load_in03_write
+//	gray_oc_load_in03_0
+inline void gray_oc_load_in03_write_bundle_write(hw_uint<32>& oc_load_in03_write, gray_cache& gray, int root, int oc_load_in01, int oc_load_in02, int dynamic_address) {
+	hw_uint<32>  gray_oc_load_in03_0_res = oc_load_in03_write.extract<0, 31>();
+	gray_oc_load_in03_0_write(gray_oc_load_in03_0_res, gray, root, oc_load_in01, oc_load_in02, dynamic_address);
 }
 
 // Total re-use buffer capacity: 512 bits
 
 
 // Operation logic
-inline void store_to_gray_to_gp_192(gray_cache& gray, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */gray_to_gp_19, int root, int gray_ld1, int gray_ld0) {
+inline void load_to_gray_to_gp_192(gray_cache& gray, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */gray_to_gp_19, int root, int gray_ld1, int gray_ld0) {
   // Dynamic address computation
 
 	// Consume: gray
-	auto gray_gray_ld0_c__gray_ld1_value = gray_store_to_gray_to_gp_192_read_bundle_read(gray/* source_delay */, root, gray_ld1, gray_ld0, 0);
+	auto gray_gray_ld0_c__gray_ld1_value = gray_load_to_gray_to_gp_192_read_bundle_read(gray/* source_delay */, root, gray_ld1, gray_ld0, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -114,24 +114,24 @@ void Extracted_oc_load_in01_(HWStream<hw_uint<32> >& /* no bundle get_args num p
 #pragma HLS inline recursive
 #endif // __VIVADO_SYNTH__
 
-// schedule: { oc_load_in03[root = 0, oc_load_in01, oc_load_in02] -> [oc_load_in01, oc_load_in02, 0] : 0 <= oc_load_in01 <= 3 and 0 <= oc_load_in02 <= 3; store_to_gray_to_gp_192[root = 0, gray_ld1, gray_ld0] -> [gray_ld1, gray_ld0, 1] : 0 <= gray_ld1 <= 3 and 0 <= gray_ld0 <= 3 }
+// schedule: { oc_load_in03[root = 0, oc_load_in01, oc_load_in02] -> [oc_load_in01, oc_load_in02, 0] : 0 <= oc_load_in01 <= 3 and 0 <= oc_load_in02 <= 3; load_to_gray_to_gp_192[root = 0, gray_ld1, gray_ld0] -> [gray_ld1, gray_ld0, 1] : 0 <= gray_ld1 <= 3 and 0 <= gray_ld0 <= 3 }
 //   { oc_load_in03[root = 0, oc_load_in01, oc_load_in02] -> [oc_load_in01, oc_load_in02, 0] : 0 <= oc_load_in01 <= 3 and 0 <= oc_load_in02 <= 3 }
 // Condition for oc_load_in03(((i2 == 0) && (i0 >= 0) && (3 - i0 >= 0) && (i1 >= 0) && (3 - i1 >= 0)))
-//   { store_to_gray_to_gp_192[root = 0, gray_ld1, gray_ld0] -> [gray_ld1, gray_ld0, 1] : 0 <= gray_ld1 <= 3 and 0 <= gray_ld0 <= 3 }
-// Condition for store_to_gray_to_gp_192(((-1 + i2 == 0) && (i0 >= 0) && (3 - i0 >= 0) && (i1 >= 0) && (3 - i1 >= 0)))
+//   { load_to_gray_to_gp_192[root = 0, gray_ld1, gray_ld0] -> [gray_ld1, gray_ld0, 1] : 0 <= gray_ld1 <= 3 and 0 <= gray_ld0 <= 3 }
+// Condition for load_to_gray_to_gp_192(((-1 + i2 == 0) && (i0 >= 0) && (3 - i0 >= 0) && (i1 >= 0) && (3 - i1 >= 0)))
 
   /*
 for (int c0 = 0; c0 <= 3; c0 += 1)
   for (int c1 = 0; c1 <= 3; c1 += 1) {
     oc_load_in03(0, c0, c1);
-    store_to_gray_to_gp_192(0, c0, c1);
+    load_to_gray_to_gp_192(0, c0, c1);
   }
 
   */
 	for (int c0 = 0; c0 <= 3; c0 += 1)
 	  for (int c1 = 0; c1 <= 3; c1 += 1) {
 	    oc_load_in03(in /* buf name */, gray, 0, c0, c1);
-	    store_to_gray_to_gp_192(gray /* buf name */, gray_to_gp_19, 0, c0, c1);
+	    load_to_gray_to_gp_192(gray /* buf name */, gray_to_gp_19, 0, c0, c1);
 	  }
 	
 #ifndef __VIVADO_SYNTH__
