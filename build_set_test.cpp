@@ -19443,9 +19443,9 @@ void dhuff_playground() {
 }
 
 void travis_tests() {
-  infer_bounds_tests();
   test_multi_kernel_unsharp();
   test_multi_kernel_design();
+  infer_bounds_tests();
   test_if_construction();
   test_time_sharing_gaussian_pyramid();
   jacobi_2d_2_test();

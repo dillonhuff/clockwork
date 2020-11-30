@@ -20,13 +20,13 @@ int main(int argc, char **argv) {
   size_t total_size_bytes = 0;
   size_t total_size_bytes_read = 0;
   size_t total_size_bytes_written = 0;
-  const int oc_load_in03_read_DATA_SIZE = num_epochs*4096;
+  const int oc_load_in03_read_DATA_SIZE = num_epochs*4356;
   const int oc_load_in03_read_BYTES_PER_PIXEL = 32 / 8;
   size_t oc_load_in03_read_size_bytes = oc_load_in03_read_BYTES_PER_PIXEL * oc_load_in03_read_DATA_SIZE;
 
   total_size_bytes += oc_load_in03_read_size_bytes;
   total_size_bytes_read += oc_load_in03_read_size_bytes;
-  const int diff_write_DATA_SIZE = num_epochs*4096;
+  const int diff_write_DATA_SIZE = num_epochs*4356;
   const int diff_write_BYTES_PER_PIXEL = 32 / 8;
   size_t diff_write_size_bytes = diff_write_BYTES_PER_PIXEL * diff_write_DATA_SIZE;
 
@@ -88,7 +88,7 @@ int main(int argc, char **argv) {
   OCL_CHECK(err, cl::Buffer oc_load_in03_read_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_WRITE_ONLY, oc_load_in03_read_size_bytes, oc_load_in03_read.data(), &err));
   OCL_CHECK(err, err = krnl_vector_add.setArg(1, oc_load_in03_read_ocl_buf));
 
-  uint64_t transfer_size = num_epochs*(4096 / 1);
+  uint64_t transfer_size = num_epochs*(4356 / 1);
   OCL_CHECK(err, err = krnl_vector_add.setArg(2, transfer_size));
 
   std::cout << "Migrating memory" << std::endl;
