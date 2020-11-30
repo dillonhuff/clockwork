@@ -8171,12 +8171,12 @@ app_dag partition_application(const std::map<std::string, std::set<std::string> 
     }
   }
 
-  map<string, isl_set*> read_by_gp;
+  map<pair<string, string>, isl_set*> read_by_gp;
   for (auto b : kernel_broadcasts) {
     auto consumers = prg.consumer_maps(b.first);
     for (auto group_name : b.second) {
       isl_set* s = read_by_group(b.first, map_find(group_name, fusion_groups), prg);
-      read_by_gp[group_name] = s;
+      read_by_gp[{group_name, b.first}] = s;
     }
   }
 
@@ -8189,7 +8189,7 @@ app_dag partition_application(const std::map<std::string, std::set<std::string> 
   for (auto b : kernel_broadcasts) {
     auto consumers = prg.consumer_maps(b.first);
     for (auto group_name : b.second) {
-      isl_set* s = map_find(group_name, read_by_gp);
+      isl_set* s = map_find({group_name, b.first}, read_by_gp);
 
       string broadcast = prg.un(b.first + "_to_" + group_name);
       string producer_group = map_find(b.first, producer_groups);
@@ -8207,7 +8207,7 @@ app_dag partition_application(const std::map<std::string, std::set<std::string> 
   for (auto b : kernel_broadcasts) {
     auto consumers = prg.consumer_maps(b.first);
     for (auto group_name : b.second) {
-      isl_set* s = map_find(group_name, read_by_gp);
+      isl_set* s = map_find({group_name, b.first}, read_by_gp);
       string incoming_channel = group_buffer_channels[{group_name, b.first}];
       s = set_name(s, incoming_channel);
 
