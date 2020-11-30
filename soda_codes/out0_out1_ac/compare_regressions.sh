@@ -1,4 +1,4 @@
-app_name=out0_out1_ac_opt
+app_name=reduce_1d
 cd soda_code
 ./run_tb.sh || { echo 'soda compilation failed'; exit 1; }
 cd ..

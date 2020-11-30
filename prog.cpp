@@ -8169,7 +8169,7 @@ app_dag partition_application(const std::map<std::string, std::set<std::string> 
 
       string broadcast = prg.un(b.first + "_to_" + group_name);
       //string producer_group = dag.producer_group(b.first);
-      string producer_group = map_find(b.first, produce_groups);
+      string producer_group = map_find(b.first, producer_groups);
 
       prog& pp = dag.fusion_group_progs.at(producer_group);
 

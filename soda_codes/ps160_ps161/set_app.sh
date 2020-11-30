@@ -1,1 +1,1 @@
-export app=ps160_ps161_opt
+export app=unoptimized_time_sharing_gauss_pyramid_tiled
