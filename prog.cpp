@@ -4318,7 +4318,7 @@ void infer_bounds_and_unroll(const std::string& out, const std::vector<int>& bou
   cout << "Sanity checking after unrolling reduce loops..." << endl;
   //sanity_check_all_reads_defined(prg);
   normalize_bounds(prg);
-  //merge_basic_block_ops(prg);
+  merge_basic_block_ops(prg);
   unroll_producer_matching(out, unroll_factor, prg);
   merge_basic_block_ops(prg);
   //cout << "Sanity checking after unrolling strip mined loops..." << endl;
@@ -4545,7 +4545,8 @@ compute_unit_internals compound_compute_unit(op* loop, prog& prg) {
 void merge_basic_block_ops(prog& prg) {
   std::set<op*> inner_loops = get_inner_loops(prg);
 
-  string new_compute_file = prg.name + "_merged_compute_units.h";
+  //string new_compute_file = prg.name + "_merged_compute_units.h";
+  string new_compute_file = prg.compute_unit_file + "_merged_compute_units.h";
 
   ofstream out(new_compute_file);
   out << "#include \"" << prg.compute_unit_file << "\"" << endl << endl;

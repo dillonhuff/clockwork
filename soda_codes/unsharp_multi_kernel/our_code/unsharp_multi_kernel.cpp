@@ -6,8 +6,8 @@ using namespace std;
   ofstream* global_debug_handle;
 
 #endif //__VIVADO_SYNTH__
-// compute file: unsharp_multi_kernel_merged_compute_units.h
-#include "unsharp_multi_kernel_merged_compute_units.h"
+// compute file: clockwork_standard_compute_units.h_merged_compute_units.h
+#include "clockwork_standard_compute_units.h_merged_compute_units.h"
 
 #include "hw_classes.h"
 
@@ -961,6 +961,19 @@ inline void gray_diff_FIFO_buf21_load_to_gray_diff_FIFO_buf215_write_bundle_writ
 
 
 // Operation logic
+inline void load_to_blurred_FIFO_buf162(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */blurred_to_gp_422, blurred_FIFO_buf16_cache& blurred_FIFO_buf16, int root, int blurred_ld0, int blurred_ld1) {
+  // Dynamic address computation
+
+	// Consume: blurred_to_gp_422
+	auto blurred_to_gp_422_blurred_ld0_c__blurred_ld1_value = blurred_to_gp_422.read();
+	// Produce: blurred_FIFO_buf16
+	blurred_FIFO_buf16_load_to_blurred_FIFO_buf162_write_bundle_write(/* arg names */blurred_to_gp_422_blurred_ld0_c__blurred_ld1_value, blurred_FIFO_buf16, root, blurred_ld0, blurred_ld1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
 inline void diff(gray_diff_FIFO_buf21_cache& gray_diff_FIFO_buf21, blurred_FIFO_buf16_cache& blurred_FIFO_buf16, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */out, int root, int x, int y) {
   // Dynamic address computation
 
@@ -979,19 +992,6 @@ inline void diff(gray_diff_FIFO_buf21_cache& gray_diff_FIFO_buf21, blurred_FIFO_
 	auto compute_result = diff(gray_diff_FIFO_buf21_x_p_0_c___y_p_0_value, blurred_FIFO_buf16_x_p_0_c___y_p_0_value);
 	// Produce: out
 	out.write(compute_result);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void load_to_blurred_FIFO_buf162(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */blurred_to_gp_422, blurred_FIFO_buf16_cache& blurred_FIFO_buf16, int root, int blurred_ld0, int blurred_ld1) {
-  // Dynamic address computation
-
-	// Consume: blurred_to_gp_422
-	auto blurred_to_gp_422_blurred_ld0_c__blurred_ld1_value = blurred_to_gp_422.read();
-	// Produce: blurred_FIFO_buf16
-	blurred_FIFO_buf16_load_to_blurred_FIFO_buf162_write_bundle_write(/* arg names */blurred_to_gp_422_blurred_ld0_c__blurred_ld1_value, blurred_FIFO_buf16, root, blurred_ld0, blurred_ld1, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__

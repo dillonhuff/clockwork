@@ -6,8 +6,8 @@ using namespace std;
   ofstream* global_debug_handle;
 
 #endif //__VIVADO_SYNTH__
-// compute file: multi_kernel_design_merged_compute_units.h
-#include "multi_kernel_design_merged_compute_units.h"
+// compute file: local_laplacian_filters_compute.h_merged_compute_units.h
+#include "local_laplacian_filters_compute.h_merged_compute_units.h"
 
 #include "hw_classes.h"
 

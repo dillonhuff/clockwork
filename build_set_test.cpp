@@ -18009,22 +18009,14 @@ void application_tests() {
   llf_pyramid_test();
   llf_test();
   blur_example();
-  //assert(false);
-  //halide_camera_pipeline_test();
   register_file_test();
 
-
-  //assert(false);
 
   // Failing?
   two_in_window_test();
   jacobi_2d_2_test();
   soda_blur_test();
   two_in_conv2d_test();
-  //assert(false);
-
-  //parse_denoise3d_test();
-  //app added for cnn
 
 
   sobel_16_stage_x_app_test();
@@ -18038,8 +18030,6 @@ void application_tests() {
   denoise2d_test();
 
   brighten_blur_asplos_example();
-  //raw_memtile_verilog_test();
-  //raw_memtile_verilog_as_delay_test();
 
 
 
@@ -18060,21 +18050,19 @@ void application_tests() {
   up_unrolled_4_test();
   reduce_rows_test();
   reaccess_no_hierarchy_test();
-  //playground();
 
   up_unrolled_test();
-
-  //adobe_meeting_apps();
   sum_denoise_test();
-  //assert(false);
-
   up_down_unrolled_test();
-
-
   histogram_test();
-  //assert(false);
-  //halide_cascade_test();
 
+  //playground();
+  //parse_denoise3d_test();
+  //halide_camera_pipeline_test();
+  //raw_memtile_verilog_test();
+  //raw_memtile_verilog_as_delay_test();
+  //adobe_meeting_apps();
+  //halide_cascade_test();
   //mmul_outer_prod_test();
 
 }
@@ -19455,6 +19443,7 @@ void dhuff_playground() {
 }
 
 void travis_tests() {
+  infer_bounds_tests();
   test_multi_kernel_unsharp();
   test_multi_kernel_design();
   test_if_construction();
