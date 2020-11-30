@@ -8100,10 +8100,14 @@ app_dag partition_application(const std::map<std::string, std::set<std::string> 
 
   map<string, std::set<string> > produced_bufs;
   map<string, std::set<string> > consumed_bufs;
+  map<string, string> producer_groups;
   for (auto gp : fusion_groups) {
     cout << "GP..." << endl;
     produced_bufs[gp.first] = get_produced_buffers(gp.second, prg);
     consumed_bufs[gp.first]= get_consumed_buffers(gp.second, prg);
+    for (auto b : produced_bufs[gp.first]) {
+      producer_groups[b] = gp.first;
+    }
   }
 
   cout << "=== Creating broadcast data structures..." << endl;
@@ -8164,11 +8168,14 @@ app_dag partition_application(const std::map<std::string, std::set<std::string> 
       isl_set* s = read_by_group(b.first, map_find(group_name, fusion_groups), prg);
 
       string broadcast = prg.un(b.first + "_to_" + group_name);
-      prog& pp = dag.fusion_group_progs.at(dag.producer_group(b.first));
+      //string producer_group = dag.producer_group(b.first);
+      string producer_group = map_find(b.first, produce_groups);
+
+      prog& pp = dag.fusion_group_progs.at(producer_group);
 
       pp.outs.insert(broadcast);
 
-      op* copy_loop = copy_after(pp.root, pp.find_loop(map_find(dag.producer_group(b.first), group_ends)), s, map_find(b.first, kernel_orders), broadcast, pp);
+      op* copy_loop = copy_after(pp.root, pp.find_loop(map_find(producer_group, group_ends)), s, map_find(b.first, kernel_orders), broadcast, pp);
       //op* copy_loop = copy_after(pp.root, pp.root->children.back(), s, map_find(b.first, kernel_orders), broadcast, pp);
       fresh_groups[group_name].insert(copy_loop->name);
 
