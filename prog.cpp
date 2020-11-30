@@ -8075,6 +8075,16 @@ vector<int> read_permutation(const std::string& buf, prog& gp) {
 
 
 app_dag partition_application(const std::map<std::string, std::set<std::string> >& fusion_groups, prog& prg) {
+  map<string, string> group_starts;
+  map<string, string> group_ends;
+  for (auto gp : fusion_groups) {
+    for (auto kernel : get_kernels_in_order(prg)) {
+      if (elem(kernel, gp.second)) {
+        group_starts[gp.first] = kernel;
+      }
+    }
+  }
+
   // Map from buffers to the kernels they read
   map<string, vector<string> > kernel_broadcasts;
   map<string, vector<int> > kernel_orders;
@@ -8131,10 +8141,9 @@ app_dag partition_application(const std::map<std::string, std::set<std::string> 
 
       string replacement = prg.un(b.first + "_FIFO_buf");
       gp.root->replace_reads_from(b.first, replacement);
-      op* copy_loop = copy_before(gp.root, gp.root->children.front(), s, map_find(b.first, kernel_orders), replacement, gp);
+      //op* copy_loop = copy_before(gp.root, gp.root->children.front(), s, map_find(b.first, kernel_orders), replacement, gp);
+      op* copy_loop = copy_before(gp.root, gp.find_loop(map_find(group_name, group_starts)), s, map_find(b.first, kernel_orders), replacement, gp);
       fresh_groups[group_name].insert(copy_loop->name);
-
-      //gp.pretty_print();
     }
   }
 
@@ -8152,15 +8161,14 @@ app_dag partition_application(const std::map<std::string, std::set<std::string> 
 
       op* copy_loop = copy_after(pp.root, pp.root->children.back(), s, map_find(b.first, kernel_orders), broadcast, pp);
       fresh_groups[group_name].insert(copy_loop->name);
-      //pp.pretty_print();
 
       assert(contains_key(group_name, dag.fusion_group_progs));
+
       prog& gp = dag.fusion_group_progs.at(group_name);
       gp.root->replace_reads_from(b.first, broadcast);
 
       gp.ins.erase(b.first);
       gp.ins.insert(broadcast);
-      //gp.pretty_print();
       pp.outs.erase(b.first);
     }
   }

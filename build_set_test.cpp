@@ -17901,12 +17901,14 @@ void application_tests() {
   harris_unrolled_test();
 
 
+  cout << "at identity_stream_coreir_test" << endl;
   identity_stream_coreir_test();
   weight_streaming_test();
 
   identity_stream_through_mem_coreir_test();
   reduce_stream_coreir_test();
 
+  cout << "at us_unroll_test" << endl;
   us_unroll_test();
   ds_unroll_test();
   prg_unroll_test();
@@ -17929,13 +17931,6 @@ void application_tests() {
 
   non_rate_matched_ds_test();
 
-  //two_input_denoise_pipeline_test();
-  //synth_wire_test();
-  //synth_sr_boundary_condition_test();
-  //synth_lb_test();
-  //conv_app_rolled_reduce_test();
-  //up_stencil_down_unrolled_test();
-  //laplacian_pyramid_app_test();
   histogram_2d_test();
 
   // Possibly failing
@@ -17958,6 +17953,7 @@ void application_tests() {
 
   sum_float_test();
 
+  cout << "at sobel_mag_y_test" << endl;
   sobel_mag_y_test();
   sobel_app_test();
   sobel_mag_x_test();
@@ -18004,7 +18000,8 @@ void application_tests() {
   //remove_reduce_inits_test();
 
   //reuse_buffered_conv_test();
- 
+
+  cout << "past blur_x_test" << endl;
   // Got past this
   llf_pyramid_test();
   llf_test();
@@ -18019,6 +18016,7 @@ void application_tests() {
   two_in_conv2d_test();
 
 
+  cout << "past sobel_16_stage_x_app_test" << endl;
   sobel_16_stage_x_app_test();
 
   up_stencil_test();
@@ -18044,6 +18042,7 @@ void application_tests() {
   ram_addr_unit_test();
 
 
+  cout << "past upsample2d_test" << endl;
   upsample2d_test();
   upsample_stencil_2d_test();
   upsample_stencil_1d_test();
@@ -18057,6 +18056,13 @@ void application_tests() {
   histogram_test();
 
   //playground();
+  //two_input_denoise_pipeline_test();
+  //synth_wire_test();
+  //synth_sr_boundary_condition_test();
+  //synth_lb_test();
+  //conv_app_rolled_reduce_test();
+  //up_stencil_down_unrolled_test();
+  //laplacian_pyramid_app_test();
   //parse_denoise3d_test();
   //halide_camera_pipeline_test();
   //raw_memtile_verilog_test();

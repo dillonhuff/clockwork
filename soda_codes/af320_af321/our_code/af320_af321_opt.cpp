@@ -9655,20 +9655,6 @@ inline void in_off_chip0_update_0(HWStream<hw_uint<512> >& /* buffer_args num po
 
 }
 
-inline void in_off_chip1_update_0(HWStream<hw_uint<512> >& /* buffer_args num ports = 32 */in_off_chip1_oc, in_off_chip1_cache& in_off_chip1, int d0, int d1) {
-  // Dynamic address computation
-
-	// Consume: in_off_chip1_oc
-	auto in_off_chip1_oc_0_c__0_value = in_off_chip1_oc.read();
-	auto compute_result = id_unrolled_32(in_off_chip1_oc_0_c__0_value);
-	// Produce: in_off_chip1
-	in_off_chip1_in_off_chip1_update_0_write_bundle_write(/* arg names */compute_result, in_off_chip1, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
 inline void in_off_chip0_oc_in_off_chip1_oc_update_0(in_off_chip0_cache& in_off_chip0, in_off_chip1_cache& in_off_chip1, in_off_chip0_oc_in_off_chip1_oc_cache& in_off_chip0_oc_in_off_chip1_oc, int d0, int d1) {
   // Dynamic address computation
 
@@ -9687,6 +9673,20 @@ inline void in_off_chip0_oc_in_off_chip1_oc_update_0(in_off_chip0_cache& in_off_
 	auto compute_result = interleave_unrolled_64(in_off_chip0_0_c__0_value, in_off_chip1_0_c__0_value, d0);
 	// Produce: in_off_chip0_oc_in_off_chip1_oc
 	in_off_chip0_oc_in_off_chip1_oc_in_off_chip0_oc_in_off_chip1_oc_update_0_write_bundle_write(/* arg names */compute_result, in_off_chip0_oc_in_off_chip1_oc, d0, d1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void in_off_chip1_update_0(HWStream<hw_uint<512> >& /* buffer_args num ports = 32 */in_off_chip1_oc, in_off_chip1_cache& in_off_chip1, int d0, int d1) {
+  // Dynamic address computation
+
+	// Consume: in_off_chip1_oc
+	auto in_off_chip1_oc_0_c__0_value = in_off_chip1_oc.read();
+	auto compute_result = id_unrolled_32(in_off_chip1_oc_0_c__0_value);
+	// Produce: in_off_chip1
+	in_off_chip1_in_off_chip1_update_0_write_bundle_write(/* arg names */compute_result, in_off_chip1, d0, d1, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
