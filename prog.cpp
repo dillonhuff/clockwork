@@ -7972,11 +7972,26 @@ void generate_app_code(CodegenOptions& options,
   generate_app_collateral(options, conv_out, buffers, dag.prg, sched);
 }
 
+bool in_group(op* op, const std::set<string>& group, prog& prg) {
+  for (auto g : group) {
+    auto lp = prg.find_loop(g);
+    if (op == lp) {
+      return true;
+    }
+    for (auto d : lp->descendant_ops()) {
+      if (d == op) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
 isl_set* read_by_group(const std::string& buf, const std::set<string>& group, prog& prg) {
   auto consumers = prg.consumer_maps(buf);
   vector<isl_set*> read;
   for (auto m : consumers) {
-    if (m.second != nullptr && elem(m.first, group)) {
+    if (m.second != nullptr && in_group(m.first, group, prg)) {
       auto dom = range(m.second);
       read.push_back(dom);
     }
