@@ -8112,9 +8112,8 @@ vector<int> read_permutation(const std::string& buf, prog& gp) {
   return level_permutation;
 }
 
-
-app_dag partition_application(const std::map<std::string, std::set<std::string> >& fusion_groups, prog& prg) {
-
+std::map<std::string, std::set<std::string> >
+insert_inter_group_buffers(const std::map<std::string, std::set<std::string> >& fusion_groups, prog& prg) {
   map<string, string> group_starts;
   map<string, string> group_ends;
   for (auto gp : fusion_groups) {
@@ -8232,8 +8231,13 @@ app_dag partition_application(const std::map<std::string, std::set<std::string> 
     }
     cout << endl;
   }
+  return fresh_groups;
   //assert(false);
+}
 
+app_dag partition_application(const std::map<std::string, std::set<std::string> >& fusion_groups, prog& prg) {
+
+  auto fresh_groups = insert_inter_group_buffers(fusion_groups, prg);
   cout << "=== Extracting groups..." << endl;
   //app_dag dag{prg, fusion_groups};
   app_dag dag{prg, fresh_groups};

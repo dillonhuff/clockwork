@@ -7078,15 +7078,6 @@ prog halide_dnn_conv() {
   return prg;
 }
 
-void halide_harris_test() {
-  prog prg = halide_harris();
-  cout << "Created program..." << endl;
-  prg.pretty_print();
-  //generate_optimized_code(prg);
-
-  regression_test(prg);
-}
-
 void halide_dnn_test() {
   prog prg = halide_dnn_conv();
   cout << "Created program..." << endl;
@@ -17868,180 +17859,7 @@ void infer_bounds_tests() {
 
 }
 
-void application_tests() {
-  //lake_tests();
-  //cnn_test();
-  //iccad_tests();
-  //exposure_fusion_iccad_apps("ef_cc_10_level");
-  
-  
-  infer_bounds_tests();
-  
-  tricky_shift_register_reconvergence_test();
-
-  mmul_outer_prod_test();
-  grayscale_conversion_test();
-  //print_test();
-  //manual_unroll_test();
-
-  compute_unit_with_index_variables_test();
-
-  //pyr_1d_conv_test();
-  halide_dnn_test();
-  //conv_1d_bc_test();
-
-  conv_1d_test();
-
-  jacobi2d_app_test();
-  downsample2d_test();
-  up_stencil_down_test();
-  downsample_and_blur_test();
-
-  updown_merge_test();
-  harris_unrolled_test();
-
-
-  cout << "at identity_stream_coreir_test" << endl;
-  identity_stream_coreir_test();
-  weight_streaming_test();
-
-  identity_stream_through_mem_coreir_test();
-  reduce_stream_coreir_test();
-
-  cout << "at us_unroll_test" << endl;
-  us_unroll_test();
-  ds_unroll_test();
-  prg_unroll_test();
-  lchannel_test();
-  gf_test();
-
-  halide_frontend_test();
-  halide_up_sample_test();
-  halide_conv_layer_3D_test();
-  conv_3_3_halide_test();
-
-  async_add_test();
-  //lake_agg_sram_tb_config_test();
-  seidel2d_test();
-  add_four_channels();
-  weight_add_psef();
-
-  two_stage_psef();
-  psef_multi_output_test();
-
-  non_rate_matched_ds_test();
-
-  histogram_2d_test();
-
-  // Possibly failing
-  //halide_harris_test();
-  conv_test();
-  //conv_2d_bc_test();
-
-  resnet_test();
-
-  //coreir_tests();
-  multi_output_app_test();
-
-  sobel_test();
-  jacobi_2d_test();
-
-  reaccess_no_hierarchy_rolled_test();
-
-  two_input_mag_test();
-  one_input_mag_test();
-
-  sum_float_test();
-
-  cout << "at sobel_mag_y_test" << endl;
-  sobel_mag_y_test();
-  sobel_app_test();
-  sobel_mag_x_test();
-  heat_3d_test();
-
-  upsample_reduce_test();
-
-  pointwise_test();
-
-  stencil_3d_test();
-  //assert(false);
-
-  //unet_conv_3_3_test();
-  //cyclic_banked_conv_test();
-  //register_file_optimization_test();
-
-  // Does not work with register files?
-
-  neg_stencil_test();
-
-  gaussian_pyramid_test();
-  warp_and_upsample_test();
-
-  //conv_1d_rolled_test();
-  //synth_upsample_test();
-  unsharp_test();
-  //conv_2d_rolled_test();
-  //mobilenet_test();
-  pyramid_2d_test();
-  pyramid_test();
-
-  up_stencil_auto_unrolled_test();
-  up_down_auto_unrolled_test();
-  up_stencil_down_auto_unrolled_test();
-  conv3x3_app_unrolled_test();
-  conv3x3_app_test();
-  conv3x3_app_unrolled_uneven_test();
-
-  jacobi2d_app_test();
-
-  up_stencil_test();
-  blur_x_test();
-
-  //remove_reduce_inits_test();
-
-  //reuse_buffered_conv_test();
-
-  cout << "past blur_x_test" << endl;
-  // Got past this
-  llf_pyramid_test();
-  llf_test();
-  blur_example();
-  register_file_test();
-
-
-  // Failing?
-  two_in_window_test();
-  jacobi_2d_2_test();
-  soda_blur_test();
-  two_in_conv2d_test();
-
-
-  cout << "past sobel_16_stage_x_app_test" << endl;
-  sobel_16_stage_x_app_test();
-
-  up_stencil_test();
-  blur_x_test();
-
-  dummy_app_test();
-
-  blur_and_downsample_test();
-  denoise2d_test();
-
-  brighten_blur_asplos_example();
-
-
-
-  sum_diffs_test();
-  denoise3d_reconvergence_test();
-  tricky_shift_register_reconvergence_test();
-  mismatched_stencil_test();
-  gaussian_pyramid_app_test("gp64x64");
-
-  reduce_1d_test();
-  reduce_2d_test();
-  ram_addr_unit_test();
-
-
+void up_to_hist_tests() {
   cout << "past upsample2d_test" << endl;
   upsample2d_test();
   upsample_stencil_2d_test();
@@ -18055,22 +17873,182 @@ void application_tests() {
   up_down_unrolled_test();
   histogram_test();
 
-  //playground();
-  //two_input_denoise_pipeline_test();
-  //synth_wire_test();
-  //synth_sr_boundary_condition_test();
-  //synth_lb_test();
-  //conv_app_rolled_reduce_test();
-  //up_stencil_down_unrolled_test();
-  //laplacian_pyramid_app_test();
-  //parse_denoise3d_test();
-  //halide_camera_pipeline_test();
-  //raw_memtile_verilog_test();
-  //raw_memtile_verilog_as_delay_test();
-  //adobe_meeting_apps();
-  //halide_cascade_test();
-  //mmul_outer_prod_test();
+  cout << "past histogram test" << endl;
+}
 
+void up_to_id_stream_tests() {
+  tricky_shift_register_reconvergence_test();
+  mmul_outer_prod_test();
+  grayscale_conversion_test();
+  compute_unit_with_index_variables_test();
+  halide_dnn_test();
+
+  //conv_1d_bc_test();
+  //print_test();
+  //manual_unroll_test();
+  //pyr_1d_conv_test();
+
+  conv_1d_test();
+  jacobi2d_app_test();
+  downsample2d_test();
+  up_stencil_down_test();
+  downsample_and_blur_test();
+  updown_merge_test();
+  harris_unrolled_test();
+
+
+  cout << "at identity_stream_coreir_test" << endl;
+}
+
+void up_to_weight_add_psef() {
+  identity_stream_coreir_test();
+  weight_streaming_test();
+
+  identity_stream_through_mem_coreir_test();
+  reduce_stream_coreir_test();
+
+  us_unroll_test();
+  ds_unroll_test();
+  prg_unroll_test();
+  lchannel_test();
+  gf_test();
+
+  halide_frontend_test();
+  halide_up_sample_test();
+  halide_conv_layer_3D_test();
+  conv_3_3_halide_test();
+
+  async_add_test();
+  seidel2d_test();
+  add_four_channels();
+  weight_add_psef();
+  cout << "at weight add psef" << endl;
+}
+
+void up_to_sobel_mag_y_test() {
+
+  two_stage_psef();
+  psef_multi_output_test();
+  non_rate_matched_ds_test();
+  histogram_2d_test();
+  // Possibly failing
+  conv_test();
+  resnet_test();
+  multi_output_app_test();
+  sobel_test();
+  jacobi_2d_test();
+  reaccess_no_hierarchy_rolled_test();
+  two_input_mag_test();
+  one_input_mag_test();
+  sum_float_test();
+  sobel_mag_y_test();
+  cout << "at sobel_mag_y_test" << endl;
+
+}
+
+void up_to_pyramid_test() {
+
+  sobel_app_test();
+  sobel_mag_x_test();
+  heat_3d_test();
+  upsample_reduce_test();
+  pointwise_test();
+  stencil_3d_test();
+  neg_stencil_test();
+  gaussian_pyramid_test();
+  warp_and_upsample_test();
+  unsharp_test();
+  pyramid_2d_test();
+  pyramid_test();
+
+}
+
+void up_to_register_file_test() {
+  up_stencil_auto_unrolled_test();
+  up_down_auto_unrolled_test();
+  up_stencil_down_auto_unrolled_test();
+  conv3x3_app_unrolled_test();
+  conv3x3_app_test();
+  conv3x3_app_unrolled_uneven_test();
+  jacobi2d_app_test();
+  up_stencil_test();
+  blur_x_test();
+  // Got past this
+  llf_pyramid_test();
+  llf_test();
+  blur_example();
+  register_file_test();
+
+  cout << "past register file test" << endl;
+}
+
+void up_to_ram_addr_unit_test() {
+  two_in_window_test();
+  jacobi_2d_2_test();
+  soda_blur_test();
+  two_in_conv2d_test();
+  sobel_16_stage_x_app_test();
+  up_stencil_test();
+  blur_x_test();
+  dummy_app_test();
+  blur_and_downsample_test();
+  denoise2d_test();
+  brighten_blur_asplos_example();
+  sum_diffs_test();
+  denoise3d_reconvergence_test();
+  tricky_shift_register_reconvergence_test();
+  mismatched_stencil_test();
+  gaussian_pyramid_app_test("gp64x64");
+  reduce_1d_test();
+  reduce_2d_test();
+  ram_addr_unit_test();
+  cout << "past sobel_16_stage_x_app_test" << endl;
+
+}
+
+void misc_tests() {
+  conv_2d_bc_test();
+  conv_1d_rolled_test();
+  synth_upsample_test();
+  conv_2d_rolled_test();
+  unet_conv_3_3_test();
+  cyclic_banked_conv_test();
+  register_file_optimization_test();
+  reuse_buffered_conv_test();
+
+  two_input_denoise_pipeline_test();
+  synth_wire_test();
+  synth_sr_boundary_condition_test();
+  synth_lb_test();
+  conv_app_rolled_reduce_test();
+  up_stencil_down_unrolled_test();
+  laplacian_pyramid_app_test();
+  parse_denoise3d_test();
+  halide_camera_pipeline_test();
+  raw_memtile_verilog_test();
+  raw_memtile_verilog_as_delay_test();
+  adobe_meeting_apps();
+  halide_cascade_test();
+  mmul_outer_prod_test();
+  playground();
+  coreir_tests();
+  cnn_test();
+  lake_agg_sram_tb_config_test();
+  lake_tests();
+  iccad_tests();
+  exposure_fusion_iccad_apps("ef_cc_10_level");
+
+}
+
+void application_tests() {
+  up_to_id_stream_tests();
+  up_to_ram_addr_unit_test();
+  up_to_register_file_test();
+  up_to_pyramid_test();
+  up_to_sobel_mag_y_test();
+  up_to_weight_add_psef();
+  up_to_hist_tests();
+  infer_bounds_tests();
 }
 
 void affine_controller_test() {

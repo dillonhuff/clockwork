@@ -1,4 +1,4 @@
-app_name=unoptimized_time_sharing_gauss_pyramid_tiled
+app_name=ps160_ps161_opt
 cd soda_code
 ./run_tb.sh || { echo 'soda compilation failed'; exit 1; }
 cd ..
