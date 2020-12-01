@@ -18776,8 +18776,8 @@ prog stencil_chain(const std::string& name) {
   //const int NUM_STAGES = 200;
   //const int UNROLL_FACTOR = 32;
 
-  const int NUM_STAGES = 100;
-  const int UNROLL_FACTOR = 16;
+  const int NUM_STAGES = 8;
+  const int UNROLL_FACTOR = 2;
   for (int i = 0; i < NUM_STAGES; i++) {
     current_level = "stencil_" + str(i);
     string y = prg.unique_name(current_level);
