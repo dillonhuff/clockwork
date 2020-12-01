@@ -3731,6 +3731,8 @@ int nearest_larger_multiple_of(const int factor, const int val) {
   return mult;
 }
 vector<int> extend_bounds_to_multiple(const int factor, const std::string& buf, prog& prg) {
+  assert(contains_key(buf, prg.buffer_bounds));
+
   vector<int> bounds = map_find(buf, prg.buffer_bounds);
   vector<int> new_bounds = bounds;
   new_bounds[0] = nearest_larger_multiple_of(factor, bounds[0]);

@@ -18776,8 +18776,8 @@ prog stencil_chain(const std::string& name) {
   //const int NUM_STAGES = 200;
   //const int UNROLL_FACTOR = 32;
 
-  const int NUM_STAGES = 8;
-  const int UNROLL_FACTOR = 2;
+  const int NUM_STAGES = 5;
+  //const int UNROLL_FACTOR = 16;
   for (int i = 0; i < NUM_STAGES; i++) {
     current_level = "stencil_" + str(i);
     string y = prg.unique_name(current_level);
@@ -18827,6 +18827,8 @@ void dhuff_playground() {
     //auto unopt_postprocessed = run_regression_tb(prg);
     //move_to_benchmarks_folder(prg.name);
 
+    vector<int> bounds = {1920, 1080};
+    const int unroll_factor = 16;
     prog prg = stencil_chain("sc_dyn_200_32");
     map<std::string, std::set<string> > fusion_groups;
     int i = 0;
@@ -18835,19 +18837,19 @@ void dhuff_playground() {
       i++;
     }
 
-    vector<int> bounds = {1920, 1080};
-    const int unroll_factor = 2;
 
     infer_bounds("out", bounds, prg);
-    prg.reset_context();
 
-    extend_bounds_to_multiple_of(unroll_factor, "out", prg);
+    unroll_reduce_loops(prg);
+    merge_basic_block_ops(prg);
+
+    prg.reset_context();
 
     auto fresh_groups = insert_inter_group_buffers(fusion_groups, prg);
 
-    unroll_reduce_loops(prg);
+    extend_bounds_to_multiple_of(unroll_factor, "out", prg);
+
     normalize_bounds(prg);
-    merge_basic_block_ops(prg);
     unroll_producer_matching("out", unroll_factor, prg);
     merge_basic_block_ops(prg);
 
