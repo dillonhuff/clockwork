@@ -1971,5 +1971,9 @@ bool all_kernel_outputs_have_fanout_one(app_dag& dag);
 void generate_app_code(CodegenOptions& options,
     app_dag& dag);
 
+app_dag partition_groups(const std::map<std::string, std::set<std::string> >& fresh_groups, prog& prg);
+
 app_dag partition_application(const std::map<std::string, std::set<std::string> >& fusion_groups, prog& prg);
 
+std::map<std::string, std::set<std::string> >
+insert_inter_group_buffers(const std::map<std::string, std::set<std::string> >& fusion_groups, prog& prg);

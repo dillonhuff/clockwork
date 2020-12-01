@@ -18803,7 +18803,7 @@ prog stencil_chain(const std::string& name) {
 
   //infer_bounds("out", {128, 128}, prg);
   cout << "==== DONE BUILDING PROGRAM, STARTING BOUNDS INFERENCE" << endl;
-  infer_bounds_and_unroll("out", {1920, 1080}, UNROLL_FACTOR, prg);
+  //infer_bounds_and_unroll("out", {1920, 1080}, UNROLL_FACTOR, prg);
 
   //normalize_bounds(prg);
   //normalize_address_offsets(prg);
@@ -18828,15 +18828,32 @@ void dhuff_playground() {
     //move_to_benchmarks_folder(prg.name);
 
     prog prg = stencil_chain("sc_dyn_200_32");
-
-    cout << "==== DONE PRODUCING PROGRAM, STARTING PARTITIONING" << endl;
     map<std::string, std::set<string> > fusion_groups;
     int i = 0;
     for (auto gp : get_kernels(prg)) {
       fusion_groups["gp_" + str(i)] = {gp};
       i++;
     }
-    app_dag dag = partition_application(fusion_groups, prg);
+
+    vector<int> bounds = {1920, 1080};
+    const int unroll_factor = 2;
+
+    infer_bounds("out", bounds, prg);
+    prg.reset_context();
+
+    extend_bounds_to_multiple_of(unroll_factor, "out", prg);
+
+    auto fresh_groups = insert_inter_group_buffers(fusion_groups, prg);
+
+    unroll_reduce_loops(prg);
+    normalize_bounds(prg);
+    merge_basic_block_ops(prg);
+    unroll_producer_matching("out", unroll_factor, prg);
+    merge_basic_block_ops(prg);
+
+    cout << "==== DONE PRODUCING PROGRAM, STARTING PARTITIONING" << endl;
+    app_dag dag = partition_groups(fresh_groups, prg);
+
     cout << "==== DONE PARTITIONING PROGRAM, STARTING CODEGEN" << endl;
     for (auto& gp : dag.fusion_group_progs) {
       cout << "============================" << endl;
