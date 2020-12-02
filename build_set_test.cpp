@@ -18776,7 +18776,7 @@ prog stencil_chain(const std::string& name) {
   //const int NUM_STAGES = 200;
   //const int UNROLL_FACTOR = 32;
 
-  const int NUM_STAGES = 5;
+  const int NUM_STAGES = 100;
   //const int UNROLL_FACTOR = 16;
   for (int i = 0; i < NUM_STAGES; i++) {
     current_level = "stencil_" + str(i);
@@ -18837,7 +18837,6 @@ void dhuff_playground() {
       i++;
     }
 
-
     infer_bounds("out", bounds, prg);
 
     unroll_reduce_loops(prg);
@@ -18848,7 +18847,6 @@ void dhuff_playground() {
     auto fresh_groups = insert_inter_group_buffers(fusion_groups, prg);
 
     extend_bounds_to_multiple_of(unroll_factor, "out", prg);
-
     normalize_bounds(prg);
     unroll_producer_matching("out", unroll_factor, prg);
     merge_basic_block_ops(prg);

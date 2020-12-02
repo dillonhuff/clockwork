@@ -7938,7 +7938,8 @@ bool all_kernel_outputs_have_fanout_one(app_dag& dag) {
   return true;
 }
 
-void generate_app_code(CodegenOptions& options,
+void generate_app_code(
+    CodegenOptions& options,
     app_dag& dag) {
 
   // Dummy interface for the application
@@ -7948,6 +7949,7 @@ void generate_app_code(CodegenOptions& options,
   ofstream conv_out(dag.prg.name + ".cpp");
   generate_app_prefix(options, conv_out, dag.prg);
 
+  map<string, UBuffer> reps;
   for (auto& gp : dag.fusion_group_progs) {
     auto sched = gp.second.optimized_codegen();
 
@@ -7957,6 +7959,12 @@ void generate_app_code(CodegenOptions& options,
       domain_map[d.first->name] = d.second;
     }
     auto buffers = build_buffers(gp.second, sched);
+    for (auto& buf : buffers) {
+      if (gp.second.is_boundary(buf.second.name)) {
+        reps[buf.second.name] = buf.second;
+      }
+    }
+
     generate_app_code_body(options,
         conv_out,
         buffers,
@@ -7981,7 +7989,12 @@ void generate_app_code(CodegenOptions& options,
   for (auto& gp : dag.fusion_group_progs) {
     for (auto& buf : gp.second.boundary_buffers()) {
       if (!elem(buf, done)) {
-        conv_out << tab(1) << "HWStream<hw_uint<32> > " << buf << ";" << endl;
+        UBuffer rep_buf = map_find(buf, reps);
+        assert(rep_buf.port_bundles.size() > 0);
+
+        string bundle = pick(rep_buf.port_bundles).first;
+        string tp = rep_buf.bundle_type_string(bundle);
+        conv_out << tab(1) << "HWStream< " << tp << " > " << buf << ";" << endl;
         open_synth_scope(conv_out);
         int depth = 1;
         conv_out << "#pragma HLS stream variable=" << buf << ".values depth=" << depth << endl;
