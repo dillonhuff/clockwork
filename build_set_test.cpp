@@ -18776,7 +18776,7 @@ prog stencil_chain(const std::string& name) {
   //const int NUM_STAGES = 200;
   //const int UNROLL_FACTOR = 32;
 
-  const int NUM_STAGES = 10;
+  const int NUM_STAGES = 200;
   //const int UNROLL_FACTOR = 16;
   for (int i = 0; i < NUM_STAGES; i++) {
     current_level = "stencil_" + str(i);
@@ -18828,7 +18828,7 @@ void dhuff_playground() {
     //move_to_benchmarks_folder(prg.name);
 
     vector<int> bounds = {1920, 1080};
-    const int unroll_factor = 4;
+    const int unroll_factor = 16;
     prog prg = stencil_chain("sc_dyn_200_32");
     map<std::string, std::set<string> > fusion_groups;
     int i = 0;

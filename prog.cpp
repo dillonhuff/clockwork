@@ -3861,6 +3861,7 @@ void extend_bounds_to_multiple_of(const int factor, const std::string& buf, prog
       }
     }
 
+    // Optimize this call?
     auto cm = prg.consumer_maps();
     for (auto op : prg.find_loop(next_kernel)->descendant_ops()) {
       auto data_read = map_find(op, cm);
