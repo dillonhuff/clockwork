@@ -6244,6 +6244,12 @@ op* copy_after(
     store_addrs.push_back(lname);
   }
 
+  vector<int> bounds;
+  for (auto b : loop_bounds) {
+    bounds.push_back(b.second - b.first + 1);
+  }
+  prg.buffer_bounds[rb_name] = bounds;
+
   op* next_lp = loop;
   op* kernel = nullptr;
   for (int d = 0; d < num_dims(read_data); d++) {
@@ -6300,6 +6306,12 @@ op* copy_before(
     load_addrs.push_back(lname);
     store_addrs.push_back(lname);
   }
+
+  vector<int> bounds;
+  for (auto b : loop_bounds) {
+    bounds.push_back(b.second - b.first + 1);
+  }
+  prg.buffer_bounds[rb_name] = bounds;
 
   op* next_lp = loop;
   op* kernel = nullptr;
