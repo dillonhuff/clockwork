@@ -195,6 +195,7 @@ void garnet_map_module(CoreIR::Module* top);
 double PE_energy_cost(power_analysis_params& power_params, power_analysis_info& power_stats, prog& prg);
 
 map<string, int> get_PE_optype_count(prog& prg);
+map<string, int> get_PE_optype_count_garnet(prog& prg);
 
 double PE_energy_cost_instance_model(power_analysis_params& power_params, power_analysis_info& power_stats, prog& prg);
 

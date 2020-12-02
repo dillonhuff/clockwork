@@ -19133,13 +19133,13 @@ std::set<op*> find_users(const std::string& buf, prog& prg) {
 void dhuff_playground() {
   {
     vector<prog> apps;
-    //apps.push_back(camera_pipeline());
+    apps.push_back(camera_pipeline());
     //apps.push_back(mobilenet_unrolled());
-    apps.push_back(harris());
+    //apps.push_back(harris());
     for (auto app: apps) {
-        auto pe_op_count = get_PE_optype_count(app);
+        auto pe_op_count = get_PE_optype_count_garnet(app);
 
-        ofstream out("aha_garnet_design_new/"+ app.name +"/pe_count.csv");
+        ofstream out("aha_garnet_design_new/"+ app.name +"/pe_count_garnet.csv");
         for (auto it: pe_op_count) {
             out << it.first << "," << it.second << endl;
         }
