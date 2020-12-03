@@ -4438,37 +4438,6 @@ int generate_compute_unit_regression_tb(op* op, prog& prg) {
   return verilator_run;
 }
 
-struct dgraph {
-  std::set<string> nodes;
-  map<string, std::set<string> > out_edges;
-  map<pair<string, string>, int> weights;
-
-  void add_edge(const std::string& src, const std::string& dst, const int weight) {
-    nodes.insert(dst);
-    nodes.insert(src);
-    out_edges[src].insert(dst);
-    weights[{src, dst}] = weight;
-  }
-
-  int weight(const std::string& src, const std::string& dst) {
-    if(weights.find({src,dst}) == weights.end()){
-    	 return -1;
-    } else{
-	 return  weights[{src, dst}];
-    }
-  }
-
-  vector<pair<string, int> > in_edges(const std::string& dst) {
-    vector<pair<string, int> > ed;
-    for (auto w : out_edges) {
-      if (elem(dst, w.second)) {
-        ed.push_back({w.first, weight(w.first, dst)});
-      }
-    }
-    return ed;
-  }
-};
-
 std::ostream& operator<<(std::ostream& out, dgraph& dg) {
   out << "# nodes: " << dg.nodes.size() << endl;
   out << "# edges: " << dg.weights.size() << endl;
@@ -4480,7 +4449,7 @@ std::ostream& operator<<(std::ostream& out, dgraph& dg) {
   return out;
 }
 
-dgraph build_shift_register_graph(CodegenOptions& options, CoreIR::ModuleDef* def, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
+dgraph build_shift_register_graph(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
   map<string,pair<string,int>> shift_registered_outputs = determine_shift_reg_map(prg, buf, hwinfo);
   vector<pair<string,pair<string,int>>> shift_registered_outputs_to_outputs = determine_output_shift_reg_map(prg, buf, hwinfo);
 
@@ -4522,7 +4491,7 @@ dgraph build_shift_register_graph(CodegenOptions& options, CoreIR::ModuleDef* de
 
 
 dgraph build_shift_registers_io(CodegenOptions& options, CoreIR::ModuleDef* def, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
-  dgraph dg = build_shift_register_graph(options, def, prg, buf, hwinfo);
+  dgraph dg = build_shift_register_graph(options, prg, buf, hwinfo);
 
   dgraph shift_registers;
 
@@ -4577,7 +4546,7 @@ void sort_lt_snd(vector<pair<T, Q> >& outputs) {
   sort_lt(outputs, [](const pair<T,Q> &x){return x.second;});
 }
 
-dgraph build_in_to_out_shift_register_graph(CodegenOptions& options, CoreIR::ModuleDef* def, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
+dgraph build_in_to_out_shift_register_graph(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
   map<string,pair<string,int>> shift_registered_outputs = determine_shift_reg_map(prg, buf, hwinfo);
 
   dgraph dg;
@@ -4590,9 +4559,121 @@ dgraph build_in_to_out_shift_register_graph(CodegenOptions& options, CoreIR::Mod
   return dg;
 }
 
+void port_group2bank(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
+    int in_port_width = options.rtl_options.max_inpt;
+    int out_port_width = options.rtl_options.max_outpt;
+    auto sr_graph = build_shift_registers(options, prg, buf, hwinfo);
+
+    if (!sr_graph.has_nodes())
+      return;
+
+    //Currently only group output port
+    //TODO: support input port grouping in the future
+    for (auto src: buf.get_in_ports()) {
+        vector<pair<string, int> > out_delays;
+        for (auto dst: sr_graph.out_edges.at(src)) {
+            cout << "edge: " << src << "=>" << dst << ", w=" << sr_graph.weight(src, dst) << endl;
+            out_delays.push_back({dst, sr_graph.weight(src, dst)});
+        }
+        sort(out_delays.begin(), out_delays.end(),
+                [](const pair<string, int>& l,const pair<string, int>& r) {
+                    return l.second > r.second;
+                });
+        for (auto it: out_delays) {
+            cout << "after sort: outpt->" <<it.first << ", w=" << it.second << endl;
+        }
+
+        //The data structure that carry the port and delay informations
+        std::set<string> out_pts;
+        map<string, int> read_delay;
+        while(out_delays.size()) {
+            auto pt_delay_pair = out_delays.back();
+            out_delays.pop_back();
+            string pt_name = pt_delay_pair.first;
+            int delay = pt_delay_pair.second;
+
+            //Rewrite the ubuffer prepare for vectorization
+            int depth = sr_graph.max_delay_to_leaf(pt_name);
+            if (depth > 0) {
+                auto outpt_info = buf.get_shift_pt_access_with_sched(pt_name, depth);
+                auto new_access_map = outpt_info.first;
+                auto new_sched = outpt_info.second;
+                buf.replace_pt(pt_name, new_access_map, new_sched);
+            }
+
+            if (pt_delay_pair.second <= options.merge_threshold) {
+                //add new sr only chain
+                //Rewrite the access map and schedule
+                auto sr_bank = buf.compute_bank_info(src, pt_name, delay);
+                buf.add_bank_between(src, pt_name, sr_bank);
+            } else {
+                out_pts.insert(pt_name);
+                read_delay.insert(pt_delay_pair);
+                if (out_pts.size() == out_port_width) {
+                    //add the bank that require memory tile
+                    auto super_bank = buf.compute_bank_info({src}, out_pts, read_delay);
+                    for (auto out_pt: out_pts) {
+                        buf.add_bank_between(src, out_pt, super_bank);
+                    }
+                    read_delay.clear();
+                    out_pts.clear();
+                }
+            }
+        }
+
+    }
+    buf.print_bank_info();
+
+    //Add a visit pass on the sr graph for all input, take the data use the threshold
+}
+
+dgraph build_shift_registers(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
+  dgraph shift_registers = build_in_to_out_shift_register_graph(options, prg, buf, hwinfo);
+
+  cout << "Shift registers..." << endl;
+  cout << shift_registers << endl;
+
+  dgraph dg;
+  if (!shift_registers.has_nodes()) {
+    return dg;
+  }
+  for (auto inpt : buf.get_in_ports()) {
+    vector<pair<string, int> > vals;
+    for (auto v : shift_registers.out_edges.at(inpt)) {
+      vals.push_back({v, shift_registers.weight(inpt, v)});
+    }
+    sort_lt_snd(vals);
+    for (auto v : vals) {
+      cout << tab(1) << v.first << " -(" << v.second << ")-> " << v.second << endl;
+    }
+
+    vector<vector<pair<string, int> > > reg_chains;
+    split_by(vals, reg_chains, [](const pair<string, int>& a, const pair<string, int>& b) {
+        return abs(a.second - b.second) < 20;
+        });
+
+    cout << "Groups..." << endl;
+    for (auto g : reg_chains) {
+      cout << tab(1) << "Group..." << endl;
+      dg.add_edge(inpt, g.at(0).first, shift_registers.weight(inpt, g.at(0).first));
+      for (int i = 1; i < g.size(); i++) {
+        dg.add_edge(g.at(i - 1).first, g.at(i).first, g.at(i).second - g.at(i - 1).second);
+      }
+      //for (auto e : g) {
+      //cout << tab(2) << e.first << " -> " << e.second << endl;
+      //}
+      //cout << endl;
+    }
+  }
+  cout << dg << endl;
+  //assert(false);
+
+  return dg;
+}
+
 dgraph build_shift_registers(CodegenOptions& options, CoreIR::ModuleDef* def, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
   if (buf.name == "padded16_global_wrapper_stencil") {
-    dgraph shift_registers = build_in_to_out_shift_register_graph(options, def, prg, buf, hwinfo);
+    dgraph shift_registers = build_in_to_out_shift_register_graph(options, prg, buf, hwinfo);
 
     cout << "Shift registers..." << endl;
     cout << shift_registers << endl;
@@ -4633,7 +4714,7 @@ dgraph build_shift_registers(CodegenOptions& options, CoreIR::ModuleDef* def, pr
   }
 
 
-  dgraph dg = build_shift_register_graph(options, def, prg, buf, hwinfo);
+  dgraph dg = build_shift_register_graph(options, prg, buf, hwinfo);
 
   dgraph shift_registers;
 

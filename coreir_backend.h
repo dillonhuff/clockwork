@@ -104,6 +104,65 @@ vector<pair<string, pair<string, int> >> determine_output_shift_reg_map(
     UBuffer& buf,
     schedule_info& hwinfo);
 
+struct dgraph {
+  std::set<string> nodes;
+  map<string, std::set<string> > out_edges;
+  map<pair<string, string>, int> weights;
+
+  void add_edge(const std::string& src, const std::string& dst, const int weight) {
+    nodes.insert(dst);
+    nodes.insert(src);
+    out_edges[src].insert(dst);
+    weights[{src, dst}] = weight;
+  }
+
+  int weight(const std::string& src, const std::string& dst) {
+    if(weights.find({src,dst}) == weights.end()){
+    	 return -1;
+    } else{
+	 return  weights[{src, dst}];
+    }
+  }
+
+  vector<pair<string, int> > in_edges(const std::string& dst) {
+    vector<pair<string, int> > ed;
+    for (auto w : out_edges) {
+      if (elem(dst, w.second)) {
+        ed.push_back({w.first, weight(w.first, dst)});
+      }
+    }
+    return ed;
+  }
+
+  int max_delay_to_leaf(string outpt) {
+    //this is leaf
+    if (out_edges.count(outpt) == 0) {
+      return 0;
+    }
+
+    int max_child_delay = -1;
+    for (string dst: out_edges.at(outpt)) {
+      int w = weight(outpt, dst);
+      max_child_delay = max(w + max_delay_to_leaf(dst), max_child_delay);
+    }
+    assert(max_child_delay >= 0);
+    cout << "\tdelay of " << outpt << " = " << max_child_delay << endl;
+    return max_child_delay;
+  }
+
+
+  bool has_nodes() const {
+    return nodes.size();
+  }
+};
+
+std::ostream& operator<<(std::ostream& out, dgraph& dg);
+
+dgraph build_shift_register_graph(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_info& hwinfo);
+dgraph build_shift_registers(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_info& hwinfo);
+
+void port_group2bank(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_info& hwinfo);
+
 //CoreIR::Namespace* CoreIRLoadLibrary_cgralib(CoreIR::Context* c);
 
 void add_raw_dual_port_sram_generator(CoreIR::Context* c);

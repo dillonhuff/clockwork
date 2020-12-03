@@ -2336,6 +2336,10 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
     bank compute_bank_info(CodegenOptions& options, const std::string& inpt, const std::string& outpt);
     bank compute_bank_info(std::set<string> inpt, std::set<string> outpt);
     bank compute_bank_info(const std::string& inpt, const std::string& outpt, int depth);
+    bank compute_bank_info(
+          std::set<string> inpt_set,
+          std::set<string> outpt_set,
+          map<string, int> delay_map);
 
     void merge_bank(CodegenOptions& options, string inpt, vector<bank> mergeable);
 

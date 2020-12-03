@@ -16675,18 +16675,21 @@ void compile_for_garnet_single_port_mem(prog& prg,
           prg.whole_iteration_domain());
   cout << "result schedule: " << str(hw_sched) << endl;
   auto buffers_opt = build_buffers(prg, hw_sched);
-  //for (auto b: buffers_opt) {
-  //    cout << "create shift register for " << b.first << endl;
+  for (auto & b: buffers_opt) {
+      cout << "create shift register for " << b.first << endl;
 
-  //  //compare out2in
-  //  auto shift_registered_outputs = determine_shift_reg_map(prg, b.second, sched);
-  //  //compare out2out
-  //  auto o2o = determine_output_shift_reg_map(prg, b.second, sched);
-  //  cout << o2o.size() << endl;
-  //  for (auto it: shift_registered_outputs) {
-  //    cout << it.first << " -> " << it.second.first << ", depth = " << it.second.second << endl;
-  //  }
-  //}
+    ////compare out2in
+    //auto shift_registered_outputs = determine_shift_reg_map(prg, b.second, sched);
+    ////compare out2out
+    //auto o2o = determine_output_shift_reg_map(prg, b.second, sched);
+    //cout << o2o.size() << endl;
+    //for (auto it: shift_registered_outputs) {
+    //  cout << it.first << " -> " << it.second.first << ", depth = " << it.second.second << endl;
+    //}
+    //auto dg = build_shift_registers(options, prg, b.second, sched);
+    port_group2bank(options, prg, b.second, sched);
+  }
+  assert(false);
   ////auto sched = global_schedule_from_buffers(buffers_opt);
 
   for (auto& b : buffers_opt) {

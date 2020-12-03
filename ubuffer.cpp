@@ -3738,6 +3738,35 @@ lakeStream emit_top_address_stream(string fname,
     }
   }
 
+  //New method after refactor, create bank for garnet memory tile
+  bank UBuffer::compute_bank_info(
+          std::set<string> inpt_set,
+          std::set<string> outpt_set,
+          map<string, int> delay_map) {
+    auto rddom = isl_union_set_empty(
+            get_space(range(access_map.at(pick(inpt_set)))));
+    for (auto inpt : inpt_set) {
+      for (auto outpt: outpt_set) {
+        //get the rddom for the supper bank
+        auto local_rddom = its(range(access_map.at(inpt)), range(access_map.at(outpt)));
+        rddom = unn(rddom, local_rddom);
+      }
+    }
+    vector<int> read_delays;
+    int max_delay = -1;
+    for (auto it: delay_map) {
+        read_delays.push_back(it.second);
+        max_delay = max(max_delay, it.second);
+    }
+
+    string name = pick(inpt_set) + "_to_" + pick(outpt_set);
+    int num_readers = outpt_set.size();
+    string pt_type_string = port_type_string();
+    stack_bank bank{name, INNER_BANK_OFFSET_STACK, pt_type_string, read_delays, num_readers, max_delay, rddom, delay_map};
+
+    return bank;
+  }
+
   bank UBuffer::compute_bank_info(
       std::set<string> inpt_set,
       std::set<string> outpt_set) {
@@ -4152,19 +4181,16 @@ lakeStream emit_top_address_stream(string fname,
   void UBuffer::print_bank_info() {
     //find the lexmin of all out port
     for (auto itr: get_banks()) {
-      cout << itr.name << endl;
+      cout << tab(2) << itr.name << endl;
+      cout<< "max delay = " << itr.maxdelay << endl;
       for (auto it: banks_to_inputs.at(itr.name)) {
-          cout << "\tinpt: " << it << endl;
+          cout << "\t\tinpt: " << it << endl;
       }
 
       for (auto it: banks_to_outputs.at(itr.name)) {
-          cout << "\toutpt: " << it << endl;
+          cout << "\t\toutpt: " << it << endl;
       }
       cout << endl;
-      //string inpt = itr.first.first;
-      //string outpt = itr.first.second;
-      //cout << "\tpt: [" << outpt << "] -> pt:[" << inpt
-        //<< "] has delay = " << itr.second.maxdelay << endl ;
     }
   }
 
