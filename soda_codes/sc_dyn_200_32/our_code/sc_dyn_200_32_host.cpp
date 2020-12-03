@@ -18,24 +18,24 @@ int main(int argc, char **argv) {
   std::cout << "num_epochs = " << num_epochs << std::endl;
 
   size_t total_size_bytes = 0;
-  const int pw_math_in_oc02_merged29356_read_pipe0_DATA_SIZE = num_epochs*7577600;
-  const int pw_math_in_oc02_merged29356_read_pipe0_BYTES_PER_PIXEL = 32 / 8;
-  size_t pw_math_in_oc02_merged29356_read_pipe0_size_bytes = pw_math_in_oc02_merged29356_read_pipe0_BYTES_PER_PIXEL * pw_math_in_oc02_merged29356_read_pipe0_DATA_SIZE;
+  const int pw_math_in_oc02_merged28765_read_pipe0_DATA_SIZE = num_epochs*7577600;
+  const int pw_math_in_oc02_merged28765_read_pipe0_BYTES_PER_PIXEL = 32 / 8;
+  size_t pw_math_in_oc02_merged28765_read_pipe0_size_bytes = pw_math_in_oc02_merged28765_read_pipe0_BYTES_PER_PIXEL * pw_math_in_oc02_merged28765_read_pipe0_DATA_SIZE;
 
-  total_size_bytes += pw_math_in_oc02_merged29356_read_pipe0_size_bytes;
-  const int pw_math_stencil_19912041206_merged29959_write_pipe0_DATA_SIZE = num_epochs*2073600;
-  const int pw_math_stencil_19912041206_merged29959_write_pipe0_BYTES_PER_PIXEL = 32 / 8;
-  size_t pw_math_stencil_19912041206_merged29959_write_pipe0_size_bytes = pw_math_stencil_19912041206_merged29959_write_pipe0_BYTES_PER_PIXEL * pw_math_stencil_19912041206_merged29959_write_pipe0_DATA_SIZE;
+  total_size_bytes += pw_math_in_oc02_merged28765_read_pipe0_size_bytes;
+  const int pw_math_stencil_19912041206_merged29368_write_pipe0_DATA_SIZE = num_epochs*2073600;
+  const int pw_math_stencil_19912041206_merged29368_write_pipe0_BYTES_PER_PIXEL = 32 / 8;
+  size_t pw_math_stencil_19912041206_merged29368_write_pipe0_size_bytes = pw_math_stencil_19912041206_merged29368_write_pipe0_BYTES_PER_PIXEL * pw_math_stencil_19912041206_merged29368_write_pipe0_DATA_SIZE;
 
-  total_size_bytes += pw_math_stencil_19912041206_merged29959_write_pipe0_size_bytes;
+  total_size_bytes += pw_math_stencil_19912041206_merged29368_write_pipe0_size_bytes;
 
   cl_int err;
   cl::Context context;
   cl::Kernel krnl_vector_add;
   cl::CommandQueue q;
 
-  std::vector<uint8_t, aligned_allocator<uint8_t> > pw_math_in_oc02_merged29356_read_pipe0(pw_math_in_oc02_merged29356_read_pipe0_size_bytes);
-  std::vector<uint8_t, aligned_allocator<uint8_t> > pw_math_stencil_19912041206_merged29959_write_pipe0(pw_math_stencil_19912041206_merged29959_write_pipe0_size_bytes);
+  std::vector<uint8_t, aligned_allocator<uint8_t> > pw_math_in_oc02_merged28765_read_pipe0(pw_math_in_oc02_merged28765_read_pipe0_size_bytes);
+  std::vector<uint8_t, aligned_allocator<uint8_t> > pw_math_stencil_19912041206_merged29368_write_pipe0(pw_math_stencil_19912041206_merged29368_write_pipe0_size_bytes);
 
   // TODO: POPULATE BUFFERS FOR EACH PIPELINE
   auto devices = xcl::get_xil_devices();
@@ -67,17 +67,17 @@ int main(int argc, char **argv) {
     exit(EXIT_FAILURE);
   }
 
-  OCL_CHECK(err, cl::Buffer pw_math_in_oc02_merged29356_read_pipe0_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_WRITE_ONLY, pw_math_in_oc02_merged29356_read_pipe0_size_bytes, pw_math_in_oc02_merged29356_read_pipe0.data(), &err));
-  OCL_CHECK(err, err = krnl_vector_add.setArg(0, pw_math_in_oc02_merged29356_read_pipe0_ocl_buf));
+  OCL_CHECK(err, cl::Buffer pw_math_in_oc02_merged28765_read_pipe0_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_WRITE_ONLY, pw_math_in_oc02_merged28765_read_pipe0_size_bytes, pw_math_in_oc02_merged28765_read_pipe0.data(), &err));
+  OCL_CHECK(err, err = krnl_vector_add.setArg(0, pw_math_in_oc02_merged28765_read_pipe0_ocl_buf));
 
-  OCL_CHECK(err, cl::Buffer pw_math_stencil_19912041206_merged29959_write_pipe0_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_READ_ONLY, pw_math_stencil_19912041206_merged29959_write_pipe0_size_bytes, pw_math_stencil_19912041206_merged29959_write_pipe0.data(), &err));
-  OCL_CHECK(err, err = krnl_vector_add.setArg(1, pw_math_stencil_19912041206_merged29959_write_pipe0_ocl_buf));
+  OCL_CHECK(err, cl::Buffer pw_math_stencil_19912041206_merged29368_write_pipe0_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_READ_ONLY, pw_math_stencil_19912041206_merged29368_write_pipe0_size_bytes, pw_math_stencil_19912041206_merged29368_write_pipe0.data(), &err));
+  OCL_CHECK(err, err = krnl_vector_add.setArg(1, pw_math_stencil_19912041206_merged29368_write_pipe0_ocl_buf));
 
 
   OCL_CHECK(err, err = krnl_vector_add.setArg(2, num_epochs));
 
   std::cout << "Migrating memory" << std::endl;
-  OCL_CHECK(err, err = q.enqueueMigrateMemObjects({pw_math_in_oc02_merged29356_read_pipe0_ocl_buf}, 0));
+  OCL_CHECK(err, err = q.enqueueMigrateMemObjects({pw_math_in_oc02_merged28765_read_pipe0_ocl_buf}, 0));
 
 unsigned long start, end, nsduration;
 cl::Event event;
@@ -90,7 +90,7 @@ OCL_CHECK(err, event.getProfilingInfo<CL_PROFILING_COMMAND_END>(&err));
 start = OCL_CHECK(err,
 event.getProfilingInfo<CL_PROFILING_COMMAND_START>(&err));
 nsduration = end - start;
-  OCL_CHECK(err, err = q.enqueueMigrateMemObjects({pw_math_stencil_19912041206_merged29959_write_pipe0_ocl_buf}, CL_MIGRATE_MEM_OBJECT_HOST));
+  OCL_CHECK(err, err = q.enqueueMigrateMemObjects({pw_math_stencil_19912041206_merged29368_write_pipe0_ocl_buf}, CL_MIGRATE_MEM_OBJECT_HOST));
 
   q.finish();
 
@@ -104,9 +104,9 @@ nsduration = end - start;
   std::cout << "GB / sec    = " << gbpersec << std::endl;
   printf("Execution time = %f (sec) \n", dsduration);
 {
-    std::ofstream regression_result("pw_math_stencil_19912041206_merged29959_write_pipe0_accel_result.csv");
-    for (int i = 0; i < pw_math_stencil_19912041206_merged29959_write_pipe0_DATA_SIZE; i++) {
-      regression_result << ((uint32_t*) (pw_math_stencil_19912041206_merged29959_write_pipe0.data()))[i] << std::endl;
+    std::ofstream regression_result("pw_math_stencil_19912041206_merged29368_write_pipe0_accel_result.csv");
+    for (int i = 0; i < pw_math_stencil_19912041206_merged29368_write_pipe0_DATA_SIZE; i++) {
+      regression_result << ((uint32_t*) (pw_math_stencil_19912041206_merged29368_write_pipe0.data()))[i] << std::endl;
     }
 }
 

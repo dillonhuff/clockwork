@@ -7,8 +7,8 @@
 
 int main(int argc, char **argv) {
   bitmap_image input("./images/taxi_slice_256.bmp");
-  HWStream<hw_uint<512> > pw_math_in_oc02_merged29356_read_channel;
-  HWStream<hw_uint<512> > pw_math_stencil_19912041206_merged29959_write_channel;
+  HWStream<hw_uint<512> > pw_math_in_oc02_merged28765_read_channel;
+  HWStream<hw_uint<512> > pw_math_stencil_19912041206_merged29368_write_channel;
   // In lanes = 16
   for (int r = 0; r < 1480; r++) {
     for (int cl = 0; cl < 5120 / 16; cl++) {
@@ -189,14 +189,14 @@ int main(int argc, char **argv) {
         set_at<480, 512, 32>(packed, 0);
       }
       }
-        pw_math_in_oc02_merged29356_read_channel.write(packed);
+        pw_math_in_oc02_merged28765_read_channel.write(packed);
     }
   }
-  sc_dyn_200_32(pw_math_in_oc02_merged29356_read_channel, pw_math_stencil_19912041206_merged29959_write_channel);
+  sc_dyn_200_32(pw_math_in_oc02_merged28765_read_channel, pw_math_stencil_19912041206_merged29368_write_channel);
   bitmap_image output(1920, 1080);
   for (int r = 0; r < 1080; r++) {
     for (int cl = 0; cl < 1920 / 16; cl++) {
-      auto packed_val = pw_math_stencil_19912041206_merged29959_write_channel.read();
+      auto packed_val = pw_math_stencil_19912041206_merged29368_write_channel.read();
       hw_uint<32> packed_val_lane_0;
       set_at<0, 32, 32>(packed_val_lane_0, packed_val.extract<0, 31>());
       hw_uint<32> packed_val_lane_1;
