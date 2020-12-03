@@ -3934,7 +3934,6 @@ void infer_bounds(const std::string& buf, const std::vector<int>& int_bounds, pr
   auto m = prg.producer_maps_no_domain();
 
   while (bounds.size() > 0) {
-    isl_set* bound_set = nullptr;
 
     bool all_inputs = true;
     for (auto b : bounds) {
@@ -3948,6 +3947,7 @@ void infer_bounds(const std::string& buf, const std::vector<int>& int_bounds, pr
       break;
     }
 
+    isl_set* bound_set = nullptr;
     string next_kernel = "";
     bool found = false;
     for (auto k : kernels) {
@@ -4014,7 +4014,14 @@ void infer_bounds(const std::string& buf, const std::vector<int>& int_bounds, pr
 
     cout << "Got consumer maps" << endl;
     for (auto op : prg.find_loop(next_kernel)->descendant_ops()) {
-      auto data_read = map_find(op, cm);
+      //auto data_read = map_find(op, cm);
+      auto data_read =
+        consumer_umap(op, prg);
+      cout << "op: " << endl;
+      op->pretty_print(cout, 1);
+      cout << "consumer map: " << str(map_find(op, cm)) << endl;
+      assert(data_read != nullptr);
+
       cout << tab(1) << "Getting op " << op->name << endl;
       cout << tab(1) << "op: " << op->name << " reads: " << str(data_read) << endl;
       auto ms = coalesce(range(data_read));
@@ -4062,14 +4069,6 @@ void infer_bounds(const std::string& buf, const std::vector<int>& int_bounds, pr
     prg.buffer_bounds[name(bound_set)] = int_bounds_for_s;
   }
 
-  //prg.pretty_print();
-  //assert(false);
-  //auto ms = prg.consumer_maps();
-  //cout << "Consumer maps..." << endl;
-  //for (auto m : ms) {
-  //cout << tab(1) << m.first->name << "-> " << str(m.second) << endl;
-  //}
-  //assert(false);
 }
 
 isl_schedule* prog::optimized_schedule() {
@@ -4783,6 +4782,27 @@ isl_map* producer_map(op* loop, const std::string& b, prog& prg) {
   return m;
 }
 
+umap* consumer_umap(op* op, prog& prg) {
+  vector<umap*> maps;
+  umap* res = isl_union_map_read_from_str(prg.ctx, "{}");
+  maps.push_back(res);
+  for (auto m : read_addrs(op, prg)) {
+    maps.push_back(to_umap(to_map(m)));
+  }
+
+  auto vars = surrounding_vars(op, prg);
+  vector<string> constraints;
+  for (int d = 0; d < vars.size(); d++) {
+    auto lp = prg.find_loop(vars.at(d));
+    int tc = lp->trip_count();
+    constraints.push_back(
+        "0 <= " + vars.at(d) + " < " + str(tc));
+  }
+
+  isl_set* dom = rdset(prg.ctx, curlies(op->name + bracket_list(vars) + " : " + sep_list(constraints, "", "", " and ")));
+  return its(unn(maps), to_uset(dom));
+}
+
 isl_map* consumer_map(op* loop, const std::string& b, prog& prg) {
   auto reads = read_at(loop->name, b, prg);
   isl_map* m = nullptr;
@@ -4815,6 +4835,20 @@ vector<isl_multi_aff*> write_addrs(op* op, const std::string& buf, prog& prg) {
       auto aff = rdmultiaff(prg.ctx, curlies(op->name + bracket_list(surrounding) + " -> " + sep_list(aff_terms, "[", "]", ", ")));
       affs.push_back(aff);
     }
+  }
+  return affs;
+}
+
+vector<isl_multi_aff*> read_addrs(op* op, prog& prg) {
+  assert(!op->is_loop() && !op->is_if());
+  auto surrounding = surrounding_vars(op, prg);
+
+  vector<isl_multi_aff*> affs;
+  for (auto cp : op->consumes_pair()) {
+    assert(cp.second.size() == 1);
+    vector<string> aff_terms{cp.second.at(0).second};
+    auto aff = rdmultiaff(prg.ctx, curlies(op->name + bracket_list(surrounding) + " -> " + cp.first + sep_list(aff_terms, "[", "]", ", ")));
+    affs.push_back(aff);
   }
   return affs;
 }

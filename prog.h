@@ -1644,6 +1644,8 @@ std::vector<op*> get_ordered_inner_loops(prog& prg);
 
 isl_set* iteration_domain(op* loop, prog& prg);
 
+umap* consumer_umap(op* loop, prog& prg);
+
 isl_map* consumer_map(op* loop, const std::string& b, prog& prg);
 isl_map* producer_map(op* loop, const std::string& b, prog& prg);
 
@@ -1912,6 +1914,7 @@ UBuffer write_latency_adjusted_buffer(
 
 vector<isl_multi_aff*> write_addrs(op* op, const std::string& buf, prog& prg);
 
+vector<isl_multi_aff*> read_addrs(op* op, prog& prg);
 vector<isl_multi_aff*> read_addrs(op* op, const std::string& buf, prog& prg);
 
 struct app_dag {
