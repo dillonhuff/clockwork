@@ -32,8 +32,7 @@ int main(int argc, char **argv) {
   for (int r = 0; r < 64; r++) {
     for (int cl = 0; cl < 64 / 1; cl++) {
       auto packed_val = diff_write_channel.read();
-      hw_uint<32> packed_val_lane_0;
-      set_at<0, 32, 32>(packed_val_lane_0, packed_val.extract<0, 31>());
+      hw_uint<32> packed_val_lane_0 = packed_val.extract<0, 31>();
       {
       hw_uint<32> packed;
       int c = 1*cl + 0;

@@ -144,9 +144,12 @@ split_bv(const int indent,
     string ln = value + "_lane_" + str(i);
     int base = i*lane_width;
     int end = (i + 1)*lane_width- 1;
-    conv_out << tab(indent) << "hw_uint<" << lane_width << "> " << ln << ";" << endl;
-    conv_out << tab(indent)
-      << "set_at<0, " << lane_width << ", " << lane_width << ">(" << ln << ", " << value << ".extract<" << base << ", " << end << ">());" << endl;
+    conv_out << tab(indent) << "hw_uint<" << lane_width << "> " << ln << " = " <<
+      value << ".extract<" << base << ", " << end << ">();" << endl;
+
+    //conv_out << tab(indent) << "hw_uint<" << lane_width << "> " << ln << ";" << endl;
+    //conv_out << tab(indent)
+      //<< "set_at<0, " << lane_width << ", " << lane_width << ">(" << ln << ", " << value << ".extract<" << base << ", " << end << ">());" << endl;
 
     lanes.push_back(ln);
   }
@@ -4588,12 +4591,6 @@ void merge_basic_block_ops(prog& prg) {
           }
         }
 
-        //cout << "got args" << endl;
-
-        //if (next.size() > 0) {
-          //arg_groups.push_back(next);
-        //}
-
         for (vector<cu_val> ag : arg_groups) {
           assert(ag.size() > 0);
 
@@ -4609,10 +4606,6 @@ void merge_basic_block_ops(prog& prg) {
           arg_names.push_back(ag.back().str() + "_pack");
         }
 
-
-        //for (auto entry : map_find(c, compute_unit.arg_names)) {
-          //arg_names.push_back(entry.str());
-        //}
 
         cc << "auto " << map_find(c, compute_unit.result_names) << " = " << c->func << "(" << comma_list(arg_names) << ");" << endl;
         child_calls.push_back(cc.str());
