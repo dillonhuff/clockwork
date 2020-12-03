@@ -4563,78 +4563,92 @@ void merge_basic_block_ops(prog& prg) {
     if (loop->children.size() > 1) {
       auto compute_unit = compound_compute_unit(loop, prg);
 
-      vector<string> args;
-      for (auto r : compute_unit.buffers_read()) {
-        args.push_back("hw_uint<32*" + str(compute_unit.num_lanes(r)) + ">& " + r);
+      bool all_ops_cpy = true;
+      for (auto op : compute_unit.operations) {
+        if (op->func != "") {
+          all_ops_cpy = false;
+          break;
+        }
       }
 
-      vector<string> child_calls;
-      string last_res = "";
-      for (auto c : compute_unit.operations) {
-        ostringstream cc;
-        vector<string> arg_names;
-
-        vector<cu_val> args = map_find(c, compute_unit.arg_names);
-        vector<vector<cu_val> > arg_groups;
-
-        if (args.size() > 0) {
-          arg_groups.push_back({args.at(0)});
+      if (all_ops_cpy) {
+        assert(false);
+      } else {
+        vector<string> args;
+        for (auto r : compute_unit.buffers_read()) {
+          args.push_back("hw_uint<32*" + str(compute_unit.num_lanes(r)) + ">& " + r);
         }
 
-        for (int i = 1; i < (int) args.size(); i++) {
-          cu_val a = arg_groups.back().back();
-          cu_val b = args.at(i);
-          if ((a.is_arg || b.is_arg) && a.name == b.name) {
-            arg_groups.back().push_back(b);
-          } else {
-            arg_groups.push_back({b});
+        vector<string> child_calls;
+        string last_res = "";
+        for (auto c : compute_unit.operations) {
+          ostringstream cc;
+          vector<string> arg_names;
+
+          vector<cu_val> args = map_find(c, compute_unit.arg_names);
+          vector<vector<cu_val> > arg_groups;
+
+          if (args.size() > 0) {
+            arg_groups.push_back({args.at(0)});
           }
-        }
 
-        for (vector<cu_val> ag : arg_groups) {
-          assert(ag.size() > 0);
-
-          vector<string> lanes;
-          for (auto v : ag) {
-            lanes.push_back(v.str());
+          for (int i = 1; i < (int) args.size(); i++) {
+            cu_val a = arg_groups.back().back();
+            cu_val b = args.at(i);
+            if ((a.is_arg || b.is_arg) && a.name == b.name) {
+              arg_groups.back().push_back(b);
+            } else {
+              arg_groups.push_back({b});
+            }
           }
-          pack_bv(1,
-              cc,
-              ag.back().str() + "_pack",
-              lanes,
-              32);
-          arg_names.push_back(ag.back().str() + "_pack");
+
+          for (vector<cu_val> ag : arg_groups) {
+            assert(ag.size() > 0);
+
+            vector<string> lanes;
+            for (auto v : ag) {
+              lanes.push_back(v.str());
+            }
+            pack_bv(1,
+                cc,
+                ag.back().str() + "_pack",
+                lanes,
+                32);
+            arg_names.push_back(ag.back().str() + "_pack");
+          }
+
+
+          cc << "auto " << map_find(c, compute_unit.result_names) << " = " << c->func << "(" << comma_list(arg_names) << ");" << endl;
+          child_calls.push_back(cc.str());
+          last_res = map_find(c, compute_unit.result_names);
         }
 
+        vector<string> prods;
+        for (auto prod : compute_unit.output_producers) {
+          prods.push_back(map_find(prod, compute_unit.result_names));
+        }
 
-        cc << "auto " << map_find(c, compute_unit.result_names) << " = " << c->func << "(" << comma_list(arg_names) << ");" << endl;
-        child_calls.push_back(cc.str());
-        last_res = map_find(c, compute_unit.result_names);
+        string rname = prg.un("return_value");
+        assert(last_res != "");
+
+        int write_width = 0;
+        for (auto w : compute_unit.waddrs) {
+          write_width += prg.buffer_port_width(w.first);
+        }
+
+        out << "hw_uint<" << write_width << "> " << compute_unit.name << "(" << comma_list(args) << ") {" << endl;
+        for (auto r : compute_unit.buffers_read()) {
+          split_bv(1, out, r, prg.buffer_port_width(r), compute_unit.num_lanes(r));
+        }
+
+        out << "\n\t" << endl;
+        out << sep_list(child_calls, "", "", "\n\t");
+        pack_bv(1, out, rname, prods, 32);
+        out << tab(1) << "return " << rname << ";" << endl;
+        out << endl;
+
       }
 
-      vector<string> prods;
-      for (auto prod : compute_unit.output_producers) {
-        prods.push_back(map_find(prod, compute_unit.result_names));
-      }
-
-      string rname = prg.un("return_value");
-      assert(last_res != "");
-
-      int write_width = 0;
-      for (auto w : compute_unit.waddrs) {
-        write_width += prg.buffer_port_width(w.first);
-      }
-
-      out << "hw_uint<" << write_width << "> " << compute_unit.name << "(" << comma_list(args) << ") {" << endl;
-      for (auto r : compute_unit.buffers_read()) {
-        split_bv(1, out, r, prg.buffer_port_width(r), compute_unit.num_lanes(r));
-      }
-
-      out << "\n\t" << endl;
-      out << sep_list(child_calls, "", "", "\n\t");
-      pack_bv(1, out, rname, prods, 32);
-      out << tab(1) << "return " << rname << ";" << endl;
-      out << endl;
       out << "}" << endl << endl;
 
       for (auto c : compute_unit.operations) {
