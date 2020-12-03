@@ -18773,10 +18773,9 @@ prog stencil_chain(const std::string& name) {
 
   string last_level = "in";
   string current_level = "";
-  //const int NUM_STAGES = 200;
-  //const int UNROLL_FACTOR = 32;
 
-  const int NUM_STAGES = 20;
+  const int NUM_STAGES = 2;
+  //const int NUM_STAGES = 200;
   //const int UNROLL_FACTOR = 16;
   for (int i = 0; i < NUM_STAGES; i++) {
     current_level = "stencil_" + str(i);
@@ -18786,16 +18785,26 @@ prog stencil_chain(const std::string& name) {
     string xi = prg.unique_name(current_level);
 
     auto ol = prg.add_nest(y, 0, 1, x, 0, 1);
-    auto init = ol->add_op(prg.un("init"));
-    init->add_function("set_zero_32");
+    auto init = ol->add_op(prg.un("conv"));
+    init->add_function("conv_3_3");
+    for (int i = -1; i < 2; i++) {
+      for (int j = -1; j < 2; j++) {
+        init->add_load(last_level, x + " + " + str(i), y + " + " + str(j));
+      }
+    }
     init->add_store(current_level, x, y);
-    auto il = ol->add_nest(yi, -1, 2, xi, -1, 2);
+    
+    //auto init = ol->add_op(prg.un("init"));
+    //init->add_function("set_zero_32");
+    //init->add_store(current_level, x, y);
 
-    auto update = il->add_op(prg.un("update"));
-    update->add_function("add");
-    update->add_load(current_level, x, y);
-    update->add_load(last_level, x + " + " + xi, y + " + " + yi);
-    update->add_store(current_level, x, y);
+    //auto il = ol->add_nest(yi, -1, 2, xi, -1, 2);
+
+    //auto update = il->add_op(prg.un("update"));
+    //update->add_function("add");
+    //update->add_load(current_level, x, y);
+    //update->add_load(last_level, x + " + " + xi, y + " + " + yi);
+    //update->add_store(current_level, x, y);
     last_level = current_level;
   }
 
