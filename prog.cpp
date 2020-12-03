@@ -3862,9 +3862,12 @@ void extend_bounds_to_multiple_of(const int factor, const std::string& buf, prog
     }
 
     // Optimize this call?
-    auto cm = prg.consumer_maps();
+    //auto cm = prg.consumer_maps();
     for (auto op : prg.find_loop(next_kernel)->descendant_ops()) {
-      auto data_read = map_find(op, cm);
+      //auto data_read = map_find(op, cm);
+      auto data_read =
+        consumer_umap(op, prg);
+      assert(data_read != nullptr);
       cout << tab(1) << "op: " << op->name << " reads: " << str(data_read) << endl;
       auto ms = coalesce(range(data_read));
       cout << tab(1) << "dom  : " << str(domain(data_read)) << endl;
@@ -4010,16 +4013,16 @@ void infer_bounds(const std::string& buf, const std::vector<int>& int_bounds, pr
 
     cout << "Got bounds..." << endl;
 
-    auto cm = prg.consumer_maps();
+    //auto cm = prg.consumer_maps();
 
     cout << "Got consumer maps" << endl;
     for (auto op : prg.find_loop(next_kernel)->descendant_ops()) {
       //auto data_read = map_find(op, cm);
       auto data_read =
         consumer_umap(op, prg);
-      cout << "op: " << endl;
-      op->pretty_print(cout, 1);
-      cout << "consumer map: " << str(map_find(op, cm)) << endl;
+      //cout << "op: " << endl;
+      //op->pretty_print(cout, 1);
+      //cout << "consumer map: " << str(map_find(op, cm)) << endl;
       assert(data_read != nullptr);
 
       cout << tab(1) << "Getting op " << op->name << endl;
