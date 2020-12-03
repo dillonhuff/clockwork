@@ -4571,13 +4571,24 @@ void merge_basic_block_ops(prog& prg) {
         }
       }
 
+      vector<string> args;
+      for (auto r : compute_unit.buffers_read()) {
+        args.push_back("hw_uint<32*" + str(compute_unit.num_lanes(r)) + ">& " + r);
+      }
+      int write_width = 0;
+      for (auto w : compute_unit.waddrs) {
+        write_width += prg.buffer_port_width(w.first);
+      }
+
       if (all_ops_cpy) {
-        assert(false);
+        assert(compute_unit.buffers_read().size() == 1);
+        out << "hw_uint<" << write_width << "> " << compute_unit.name << "(" << comma_list(args) << ") {" << endl;
+        out << tab(1) << "return " << pick(compute_unit.buffers_read()) << ";" << endl;
       } else {
-        vector<string> args;
-        for (auto r : compute_unit.buffers_read()) {
-          args.push_back("hw_uint<32*" + str(compute_unit.num_lanes(r)) + ">& " + r);
-        }
+        //vector<string> args;
+        //for (auto r : compute_unit.buffers_read()) {
+          //args.push_back("hw_uint<32*" + str(compute_unit.num_lanes(r)) + ">& " + r);
+        //}
 
         vector<string> child_calls;
         string last_res = "";
@@ -4630,11 +4641,6 @@ void merge_basic_block_ops(prog& prg) {
 
         string rname = prg.un("return_value");
         assert(last_res != "");
-
-        int write_width = 0;
-        for (auto w : compute_unit.waddrs) {
-          write_width += prg.buffer_port_width(w.first);
-        }
 
         out << "hw_uint<" << write_width << "> " << compute_unit.name << "(" << comma_list(args) << ") {" << endl;
         for (auto r : compute_unit.buffers_read()) {
