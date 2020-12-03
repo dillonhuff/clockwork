@@ -4797,9 +4797,8 @@ umap* consumer_umap(op* op, prog& prg) {
   vector<string> constraints;
   for (int d = 0; d < vars.size(); d++) {
     auto lp = prg.find_loop(vars.at(d));
-    int tc = lp->trip_count();
     constraints.push_back(
-        "0 <= " + vars.at(d) + " < " + str(tc));
+        str(lp->start) + " <= " + vars.at(d) + " < " + str(lp->end_exclusive));
   }
 
   isl_set* dom = rdset(prg.ctx, curlies(op->name + bracket_list(vars) + " : " + sep_list(constraints, "", "", " and ")));
