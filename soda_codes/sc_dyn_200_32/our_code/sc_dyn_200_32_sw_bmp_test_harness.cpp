@@ -7,11 +7,11 @@
 
 int main(int argc, char **argv) {
   bitmap_image input("./images/taxi_slice_256.bmp");
-  HWStream<hw_uint<512> > pw_math_in_oc02_merged28765_read_channel;
-  HWStream<hw_uint<512> > pw_math_stencil_19912041206_merged29368_write_channel;
+  HWStream<hw_uint<512> > pw_math_in_oc02_merged2950_read_channel;
+  HWStream<hw_uint<512> > pw_math_stencil_19124126_merged3013_write_channel;
   // In lanes = 16
-  for (int r = 0; r < 1480; r++) {
-    for (int cl = 0; cl < 5120 / 16; cl++) {
+  for (int r = 0; r < 1120; r++) {
+    for (int cl = 0; cl < 2240 / 16; cl++) {
       hw_uint<512> packed;
       {
       int c = 16*cl + 0;
@@ -189,46 +189,30 @@ int main(int argc, char **argv) {
         set_at<480, 512, 32>(packed, 0);
       }
       }
-        pw_math_in_oc02_merged28765_read_channel.write(packed);
+        pw_math_in_oc02_merged2950_read_channel.write(packed);
     }
   }
-  sc_dyn_200_32(pw_math_in_oc02_merged28765_read_channel, pw_math_stencil_19912041206_merged29368_write_channel);
+  sc_dyn_200_32(pw_math_in_oc02_merged2950_read_channel, pw_math_stencil_19124126_merged3013_write_channel);
   bitmap_image output(1920, 1080);
   for (int r = 0; r < 1080; r++) {
     for (int cl = 0; cl < 1920 / 16; cl++) {
-      auto packed_val = pw_math_stencil_19912041206_merged29368_write_channel.read();
-      hw_uint<32> packed_val_lane_0;
-      set_at<0, 32, 32>(packed_val_lane_0, packed_val.extract<0, 31>());
-      hw_uint<32> packed_val_lane_1;
-      set_at<0, 32, 32>(packed_val_lane_1, packed_val.extract<32, 63>());
-      hw_uint<32> packed_val_lane_2;
-      set_at<0, 32, 32>(packed_val_lane_2, packed_val.extract<64, 95>());
-      hw_uint<32> packed_val_lane_3;
-      set_at<0, 32, 32>(packed_val_lane_3, packed_val.extract<96, 127>());
-      hw_uint<32> packed_val_lane_4;
-      set_at<0, 32, 32>(packed_val_lane_4, packed_val.extract<128, 159>());
-      hw_uint<32> packed_val_lane_5;
-      set_at<0, 32, 32>(packed_val_lane_5, packed_val.extract<160, 191>());
-      hw_uint<32> packed_val_lane_6;
-      set_at<0, 32, 32>(packed_val_lane_6, packed_val.extract<192, 223>());
-      hw_uint<32> packed_val_lane_7;
-      set_at<0, 32, 32>(packed_val_lane_7, packed_val.extract<224, 255>());
-      hw_uint<32> packed_val_lane_8;
-      set_at<0, 32, 32>(packed_val_lane_8, packed_val.extract<256, 287>());
-      hw_uint<32> packed_val_lane_9;
-      set_at<0, 32, 32>(packed_val_lane_9, packed_val.extract<288, 319>());
-      hw_uint<32> packed_val_lane_10;
-      set_at<0, 32, 32>(packed_val_lane_10, packed_val.extract<320, 351>());
-      hw_uint<32> packed_val_lane_11;
-      set_at<0, 32, 32>(packed_val_lane_11, packed_val.extract<352, 383>());
-      hw_uint<32> packed_val_lane_12;
-      set_at<0, 32, 32>(packed_val_lane_12, packed_val.extract<384, 415>());
-      hw_uint<32> packed_val_lane_13;
-      set_at<0, 32, 32>(packed_val_lane_13, packed_val.extract<416, 447>());
-      hw_uint<32> packed_val_lane_14;
-      set_at<0, 32, 32>(packed_val_lane_14, packed_val.extract<448, 479>());
-      hw_uint<32> packed_val_lane_15;
-      set_at<0, 32, 32>(packed_val_lane_15, packed_val.extract<480, 511>());
+      auto packed_val = pw_math_stencil_19124126_merged3013_write_channel.read();
+      hw_uint<32> packed_val_lane_0 = packed_val.extract<0, 31>();
+      hw_uint<32> packed_val_lane_1 = packed_val.extract<32, 63>();
+      hw_uint<32> packed_val_lane_2 = packed_val.extract<64, 95>();
+      hw_uint<32> packed_val_lane_3 = packed_val.extract<96, 127>();
+      hw_uint<32> packed_val_lane_4 = packed_val.extract<128, 159>();
+      hw_uint<32> packed_val_lane_5 = packed_val.extract<160, 191>();
+      hw_uint<32> packed_val_lane_6 = packed_val.extract<192, 223>();
+      hw_uint<32> packed_val_lane_7 = packed_val.extract<224, 255>();
+      hw_uint<32> packed_val_lane_8 = packed_val.extract<256, 287>();
+      hw_uint<32> packed_val_lane_9 = packed_val.extract<288, 319>();
+      hw_uint<32> packed_val_lane_10 = packed_val.extract<320, 351>();
+      hw_uint<32> packed_val_lane_11 = packed_val.extract<352, 383>();
+      hw_uint<32> packed_val_lane_12 = packed_val.extract<384, 415>();
+      hw_uint<32> packed_val_lane_13 = packed_val.extract<416, 447>();
+      hw_uint<32> packed_val_lane_14 = packed_val.extract<448, 479>();
+      hw_uint<32> packed_val_lane_15 = packed_val.extract<480, 511>();
       {
       hw_uint<512> packed;
       int c = 16*cl + 0;
