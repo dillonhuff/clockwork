@@ -4559,6 +4559,22 @@ dgraph build_in_to_out_shift_register_graph(CodegenOptions& options, prog& prg, 
   return dg;
 }
 
+//helper function to create all the shfit registered port
+void create_subbranch(const std::string& out_pt, dgraph& sr_graph, UBuffer& buf) {
+    auto src2dst = sr_graph.get_sub_branch(out_pt);
+    cout << "\tsubbranch size: " << src2dst.size() << endl;
+    for (auto io_pair: src2dst) {
+        string inpt = io_pair.first;
+        string outpt = io_pair.second;
+        int delay = sr_graph.weight(inpt, outpt);
+        if (delay == 0) {
+            inpt = sr_graph.find_origin(inpt);
+        }
+        auto bk = buf.compute_bank_info(inpt, outpt, delay);
+        buf.add_bank_between(inpt, outpt, bk);
+    }
+}
+
 void port_group2bank(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
     int in_port_width = options.rtl_options.max_inpt;
     int out_port_width = options.rtl_options.max_outpt;
@@ -4606,6 +4622,7 @@ void port_group2bank(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_
                 //Rewrite the access map and schedule
                 auto sr_bank = buf.compute_bank_info(src, pt_name, delay);
                 buf.add_bank_between(src, pt_name, sr_bank);
+                create_subbranch(pt_name, sr_graph, buf);
             } else {
                 out_pts.insert(pt_name);
                 read_delay.insert(pt_delay_pair);
@@ -4614,6 +4631,7 @@ void port_group2bank(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_
                     auto super_bank = buf.compute_bank_info({src}, out_pts, read_delay);
                     for (auto out_pt: out_pts) {
                         buf.add_bank_between(src, out_pt, super_bank);
+                        create_subbranch(out_pt, sr_graph, buf);
                     }
                     read_delay.clear();
                     out_pts.clear();

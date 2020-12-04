@@ -124,6 +124,16 @@ struct dgraph {
     }
   }
 
+  vector<string> get_out_edges(const std::string& src) {
+    vector<string> ret;
+    if (out_edges.count(src)) {
+        auto dsts = out_edges.at(src);
+        return vector<string>(dsts.begin(), dsts.end());
+    } else {
+        return ret;
+    }
+  }
+
   vector<pair<string, int> > in_edges(const std::string& dst) {
     vector<pair<string, int> > ed;
     for (auto w : out_edges) {
@@ -132,6 +142,25 @@ struct dgraph {
       }
     }
     return ed;
+  }
+
+  //process the zero delay node, make sure they come out from the same port
+  string find_origin(const std::string& dst) {
+    auto in_eds = in_edges(dst);
+    for (auto it: in_eds) {
+      if (it.second == 0)
+        return find_origin(it.first);
+    }
+    return dst;
+  }
+
+  vector<pair<string, string>> get_sub_branch(const std::string& out_pt) {
+    vector<pair<string, string> > ret;
+    for (auto dst: get_out_edges(out_pt)) {
+      ret.push_back({out_pt, dst});
+      concat(ret, get_sub_branch(dst));
+    }
+    return ret;
   }
 
   int max_delay_to_leaf(string outpt) {
