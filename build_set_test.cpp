@@ -18774,8 +18774,8 @@ prog stencil_chain(const std::string& name) {
   string last_level = "in";
   string current_level = "";
 
-  const int NUM_STAGES = 2;
-  //const int NUM_STAGES = 200;
+  //const int NUM_STAGES = 2;
+  const int NUM_STAGES = 200;
   //const int UNROLL_FACTOR = 16;
   for (int i = 0; i < NUM_STAGES; i++) {
     current_level = "stencil_" + str(i);
@@ -18876,6 +18876,7 @@ void dhuff_playground() {
     generate_app_code(options, dag);
 
     //vector<string> multi_kernel_res = run_regression_tb(dag.prg);
+    //cout << "# lines in multi kernel res = " << multi_kernel_res.size() << endl;
     //compare("multi_kernel_" + prg.name + "_vs_unopt", multi_kernel_res, unopt_postprocessed);
 
     cout << "==== DONE CODEGENING PROGRAM, STARTING MOVE TO BENCHMARKS" << endl;
