@@ -7993,7 +7993,8 @@ void generate_app_code(
     app_dag& dag) {
 
   // Dummy interface for the application
-  auto sched = dag.prg.unoptimized_schedule();
+  //auto sched = dag.prg.unoptimized_schedule();
+  auto global_sched = dag.prg.unoptimized_schedule();
   auto buffers = build_buffers(dag.prg, dag.prg.unoptimized_schedule());
 
   ofstream conv_out(dag.prg.name + ".cpp");
@@ -8001,7 +8002,23 @@ void generate_app_code(
 
   map<string, UBuffer> reps;
   for (auto& gp : dag.fusion_group_progs) {
-    auto sched = gp.second.optimized_codegen();
+    //auto sched = gp.second.optimized_codegen();
+
+    vector<umap*> sched_maps;
+    umap* emp = isl_union_map_read_from_str(gp.second.ctx, "{}");
+    sched_maps.push_back(emp);
+    std::set<string> opnames;
+    for (auto n : gp.second.all_ops()) {
+      opnames.insert(n->name);
+    }
+    for (auto m : get_maps(global_sched)) {
+      if (elem(domain_name(m), opnames)) {
+        sched_maps.push_back(to_umap(m));
+      } else {
+        release(m);
+      }
+    }
+    auto sched = unn(sched_maps);
 
     auto domains = gp.second.domains();
     map<string, isl_set*> domain_map;
@@ -8015,27 +8032,11 @@ void generate_app_code(
       }
     }
 
-    vector<umap*> sched_maps;
-    umap* emp = isl_union_map_read_from_str(gp.second.ctx, "{}");
-    sched_maps.push_back(emp);
-    std::set<string> opnames;
-    for (auto n : gp.second.all_ops()) {
-      opnames.insert(n->name);
-    }
-    for (auto m : get_maps(sched)) {
-      if (elem(domain_name(m), opnames)) {
-        sched_maps.push_back(to_umap(m));
-      } else {
-        release(m);
-      }
-    }
-
     generate_app_code_body(options,
         conv_out,
         buffers,
         gp.second,
-        unn(sched_maps),
-        //sched,
+        sched,
         domain_map);
   }
 
@@ -8101,7 +8102,7 @@ void generate_app_code(
     conv_out << "}" << endl;
   }
 
-  generate_app_collateral(options, conv_out, buffers, dag.prg, sched);
+  generate_app_collateral(options, conv_out, buffers, dag.prg, global_sched);
 }
 
 bool in_group(op* op, const std::set<string>& group, prog& prg) {
