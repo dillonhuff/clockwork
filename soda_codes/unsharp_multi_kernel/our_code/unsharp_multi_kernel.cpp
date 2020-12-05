@@ -91,23 +91,6 @@ inline void gray_oc_load_in03_write_bundle_write(hw_uint<32>& oc_load_in03_write
 
 
 // Operation logic
-inline void load_to_gray_to_gp_12023(gray_cache& gray, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */gray_to_gp_120, int root, int gray_ld22, int gray_ld21) {
-  // Dynamic address computation
-
-	// Consume: gray
-	auto gray_gray_ld21_c__gray_ld22_value = gray_load_to_gray_to_gp_12023_read_bundle_read(gray/* source_delay */, root, gray_ld22, gray_ld21, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	// Produce: gray_to_gp_120
-	gray_to_gp_120.write(gray_gray_ld21_c__gray_ld22_value);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
 inline void oc_load_in03(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */in, gray_cache& gray, int root, int oc_load_in01, int oc_load_in02) {
   // Dynamic address computation
 
@@ -138,6 +121,23 @@ inline void load_to_gray_to_gp_22427(gray_cache& gray, HWStream<hw_uint<32> >& /
 
 }
 
+inline void load_to_gray_to_gp_12023(gray_cache& gray, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */gray_to_gp_120, int root, int gray_ld22, int gray_ld21) {
+  // Dynamic address computation
+
+	// Consume: gray
+	auto gray_gray_ld21_c__gray_ld22_value = gray_load_to_gray_to_gp_12023_read_bundle_read(gray/* source_delay */, root, gray_ld22, gray_ld21, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	// Produce: gray_to_gp_120
+	gray_to_gp_120.write(gray_gray_ld21_c__gray_ld22_value);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
 // Driver function
 void Extracted_gray_ld22_gray_ld26_oc_load_in01_(HWStream<hw_uint<32> >& /* no bundle get_args num ports = 1 */in, HWStream<hw_uint<32> >& /* no bundle get_args num ports = 1 */gray_to_gp_120, HWStream<hw_uint<32> >& /* no bundle get_args num ports = 1 */gray_to_gp_224) {
 
@@ -152,39 +152,37 @@ void Extracted_gray_ld22_gray_ld26_oc_load_in01_(HWStream<hw_uint<32> >& /* no b
 #pragma HLS inline recursive
 #endif // __VIVADO_SYNTH__
 
-// schedule: { load_to_gray_to_gp_12023[root = 0, gray_ld22, gray_ld21] -> [0, 0, 2, gray_ld22, 0, gray_ld21, 0] : 0 <= gray_ld22 <= 63 and 0 <= gray_ld21 <= 63; oc_load_in03[root = 0, oc_load_in01, oc_load_in02] -> [0, 0, 0, oc_load_in01, 0, oc_load_in02, 0] : 0 <= oc_load_in01 <= 65 and 0 <= oc_load_in02 <= 65; load_to_gray_to_gp_22427[root = 0, gray_ld26, gray_ld25] -> [0, 0, 1, gray_ld26, 0, gray_ld25, 0] : 0 <= gray_ld26 <= 65 and 0 <= gray_ld25 <= 65 }
-//   { load_to_gray_to_gp_12023[root = 0, gray_ld22, gray_ld21] -> [0, 0, 2, gray_ld22, 0, gray_ld21, 0] : 0 <= gray_ld22 <= 63 and 0 <= gray_ld21 <= 63 }
-// Condition for load_to_gray_to_gp_12023(((i6 == 0) && (i4 == 0) && (-2 + i2 == 0) && (i1 == 0) && (i0 == 0) && (i3 >= 0) && (63 - i3 >= 0) && (i5 >= 0) && (63 - i5 >= 0)))
-//   { oc_load_in03[root = 0, oc_load_in01, oc_load_in02] -> [0, 0, 0, oc_load_in01, 0, oc_load_in02, 0] : 0 <= oc_load_in01 <= 65 and 0 <= oc_load_in02 <= 65 }
-// Condition for oc_load_in03(((i6 == 0) && (i4 == 0) && (i2 == 0) && (i1 == 0) && (i0 == 0) && (i3 >= 0) && (65 - i3 >= 0) && (i5 >= 0) && (65 - i5 >= 0)))
-//   { load_to_gray_to_gp_22427[root = 0, gray_ld26, gray_ld25] -> [0, 0, 1, gray_ld26, 0, gray_ld25, 0] : 0 <= gray_ld26 <= 65 and 0 <= gray_ld25 <= 65 }
-// Condition for load_to_gray_to_gp_22427(((i6 == 0) && (i4 == 0) && (-1 + i2 == 0) && (i1 == 0) && (i0 == 0) && (i3 >= 0) && (65 - i3 >= 0) && (i5 >= 0) && (65 - i5 >= 0)))
+// schedule: { oc_load_in03[root = 0, oc_load_in01, oc_load_in02] -> [oc_load_in01, 45 + oc_load_in02, 2, 0] : 0 <= oc_load_in01 <= 65 and 0 <= oc_load_in02 <= 65; load_to_gray_to_gp_12023[root = 0, gray_ld22, gray_ld21] -> [gray_ld22, 45 + gray_ld21, 2, 1] : 0 <= gray_ld22 <= 63 and 0 <= gray_ld21 <= 63; load_to_gray_to_gp_22427[root = 0, gray_ld26, gray_ld25] -> [gray_ld26, 47 + gray_ld25, 3, 0] : 0 <= gray_ld26 <= 65 and 0 <= gray_ld25 <= 65 }
+//   { oc_load_in03[root = 0, oc_load_in01, oc_load_in02] -> [oc_load_in01, 45 + oc_load_in02, 2, 0] : 0 <= oc_load_in01 <= 65 and 0 <= oc_load_in02 <= 65 }
+// Condition for oc_load_in03(((i3 == 0) && (-2 + i2 == 0) && (i0 >= 0) && (65 - i0 >= 0) && (-45 + i1 >= 0) && (110 - i1 >= 0)))
+//   { load_to_gray_to_gp_12023[root = 0, gray_ld22, gray_ld21] -> [gray_ld22, 45 + gray_ld21, 2, 1] : 0 <= gray_ld22 <= 63 and 0 <= gray_ld21 <= 63 }
+// Condition for load_to_gray_to_gp_12023(((-1 + i3 == 0) && (-2 + i2 == 0) && (i0 >= 0) && (63 - i0 >= 0) && (-45 + i1 >= 0) && (108 - i1 >= 0)))
+//   { load_to_gray_to_gp_22427[root = 0, gray_ld26, gray_ld25] -> [gray_ld26, 47 + gray_ld25, 3, 0] : 0 <= gray_ld26 <= 65 and 0 <= gray_ld25 <= 65 }
+// Condition for load_to_gray_to_gp_22427(((i3 == 0) && (-3 + i2 == 0) && (i0 >= 0) && (65 - i0 >= 0) && (-47 + i1 >= 0) && (112 - i1 >= 0)))
 
   /*
-{
-  for (int c3 = 0; c3 <= 65; c3 += 1)
-    for (int c5 = 0; c5 <= 65; c5 += 1)
-      oc_load_in03(0, c3, c5);
-  for (int c3 = 0; c3 <= 65; c3 += 1)
-    for (int c5 = 0; c5 <= 65; c5 += 1)
-      load_to_gray_to_gp_22427(0, c3, c5);
-  for (int c3 = 0; c3 <= 63; c3 += 1)
-    for (int c5 = 0; c5 <= 63; c5 += 1)
-      load_to_gray_to_gp_12023(0, c3, c5);
-}
+for (int c0 = 0; c0 <= 65; c0 += 1)
+  for (int c1 = 45; c1 <= 112; c1 += 1) {
+    if (c1 <= 110) {
+      oc_load_in03(0, c0, c1 - 45);
+      if (c0 <= 63 && c1 <= 108)
+        load_to_gray_to_gp_12023(0, c0, c1 - 45);
+    }
+    if (c1 >= 47)
+      load_to_gray_to_gp_22427(0, c0, c1 - 47);
+  }
 
   */
-	{
-	  for (int c3 = 0; c3 <= 65; c3 += 1)
-	    for (int c5 = 0; c5 <= 65; c5 += 1)
-	      oc_load_in03(in /* buf name */, gray, 0, c3, c5);
-	  for (int c3 = 0; c3 <= 65; c3 += 1)
-	    for (int c5 = 0; c5 <= 65; c5 += 1)
-	      load_to_gray_to_gp_22427(gray /* buf name */, gray_to_gp_224, 0, c3, c5);
-	  for (int c3 = 0; c3 <= 63; c3 += 1)
-	    for (int c5 = 0; c5 <= 63; c5 += 1)
-	      load_to_gray_to_gp_12023(gray /* buf name */, gray_to_gp_120, 0, c3, c5);
-	}
+	for (int c0 = 0; c0 <= 65; c0 += 1)
+	  for (int c1 = 45; c1 <= 112; c1 += 1) {
+	    if (c1 <= 110) {
+	      oc_load_in03(in /* buf name */, gray, 0, c0, c1 - 45);
+	      if (c0 <= 63 && c1 <= 108)
+	        load_to_gray_to_gp_12023(gray /* buf name */, gray_to_gp_120, 0, c0, c1 - 45);
+	    }
+	    if (c1 >= 47)
+	      load_to_gray_to_gp_22427(gray /* buf name */, gray_to_gp_224, 0, c0, c1 - 47);
+	  }
 	
 #ifndef __VIVADO_SYNTH__
   debug_file.close();
@@ -380,39 +378,29 @@ void Extracted_gray_diff_ld38_gray_to_gp_120_ld46_pw_math_gray1213_(HWStream<hw_
 #pragma HLS inline recursive
 #endif // __VIVADO_SYNTH__
 
-// schedule: { pw_math_gray1215[root = 0, pw_math_gray1213, pw_math_gray1214] -> [0, 0, 13, pw_math_gray1213, 0, pw_math_gray1214, 0] : 0 <= pw_math_gray1213 <= 63 and 0 <= pw_math_gray1214 <= 63; load_to_gray_diff_to_gp_43639[root = 0, gray_diff_ld38, gray_diff_ld37] -> [0, 0, 14, gray_diff_ld38, 0, gray_diff_ld37, 0] : 0 <= gray_diff_ld38 <= 63 and 0 <= gray_diff_ld37 <= 63; load_to_gray_FIFO_buf4447[root = 0, gray_to_gp_120_ld46, gray_to_gp_120_ld45] -> [0, 0, 12, gray_to_gp_120_ld46, 0, gray_to_gp_120_ld45, 0] : 0 <= gray_to_gp_120_ld46 <= 63 and 0 <= gray_to_gp_120_ld45 <= 63 }
-//   { pw_math_gray1215[root = 0, pw_math_gray1213, pw_math_gray1214] -> [0, 0, 13, pw_math_gray1213, 0, pw_math_gray1214, 0] : 0 <= pw_math_gray1213 <= 63 and 0 <= pw_math_gray1214 <= 63 }
-// Condition for pw_math_gray1215(((i6 == 0) && (i4 == 0) && (-13 + i2 == 0) && (i1 == 0) && (i0 == 0) && (i3 >= 0) && (63 - i3 >= 0) && (i5 >= 0) && (63 - i5 >= 0)))
-//   { load_to_gray_diff_to_gp_43639[root = 0, gray_diff_ld38, gray_diff_ld37] -> [0, 0, 14, gray_diff_ld38, 0, gray_diff_ld37, 0] : 0 <= gray_diff_ld38 <= 63 and 0 <= gray_diff_ld37 <= 63 }
-// Condition for load_to_gray_diff_to_gp_43639(((i6 == 0) && (i4 == 0) && (-14 + i2 == 0) && (i1 == 0) && (i0 == 0) && (i3 >= 0) && (63 - i3 >= 0) && (i5 >= 0) && (63 - i5 >= 0)))
-//   { load_to_gray_FIFO_buf4447[root = 0, gray_to_gp_120_ld46, gray_to_gp_120_ld45] -> [0, 0, 12, gray_to_gp_120_ld46, 0, gray_to_gp_120_ld45, 0] : 0 <= gray_to_gp_120_ld46 <= 63 and 0 <= gray_to_gp_120_ld45 <= 63 }
-// Condition for load_to_gray_FIFO_buf4447(((i6 == 0) && (i4 == 0) && (-12 + i2 == 0) && (i1 == 0) && (i0 == 0) && (i3 >= 0) && (63 - i3 >= 0) && (i5 >= 0) && (63 - i5 >= 0)))
+// schedule: { load_to_gray_FIFO_buf4447[root = 0, gray_to_gp_120_ld46, gray_to_gp_120_ld45] -> [gray_to_gp_120_ld46, 45 + gray_to_gp_120_ld45, 2, 2] : 0 <= gray_to_gp_120_ld46 <= 63 and 0 <= gray_to_gp_120_ld45 <= 63; load_to_gray_diff_to_gp_43639[root = 0, gray_diff_ld38, gray_diff_ld37] -> [gray_diff_ld38, 45 + gray_diff_ld37, 2, 4] : 0 <= gray_diff_ld38 <= 63 and 0 <= gray_diff_ld37 <= 63; pw_math_gray1215[root = 0, pw_math_gray1213, pw_math_gray1214] -> [pw_math_gray1213, 45 + pw_math_gray1214, 2, 3] : 0 <= pw_math_gray1213 <= 63 and 0 <= pw_math_gray1214 <= 63 }
+//   { load_to_gray_FIFO_buf4447[root = 0, gray_to_gp_120_ld46, gray_to_gp_120_ld45] -> [gray_to_gp_120_ld46, 45 + gray_to_gp_120_ld45, 2, 2] : 0 <= gray_to_gp_120_ld46 <= 63 and 0 <= gray_to_gp_120_ld45 <= 63 }
+// Condition for load_to_gray_FIFO_buf4447(((-2 + i3 == 0) && (-2 + i2 == 0) && (i0 >= 0) && (63 - i0 >= 0) && (-45 + i1 >= 0) && (108 - i1 >= 0)))
+//   { load_to_gray_diff_to_gp_43639[root = 0, gray_diff_ld38, gray_diff_ld37] -> [gray_diff_ld38, 45 + gray_diff_ld37, 2, 4] : 0 <= gray_diff_ld38 <= 63 and 0 <= gray_diff_ld37 <= 63 }
+// Condition for load_to_gray_diff_to_gp_43639(((-4 + i3 == 0) && (-2 + i2 == 0) && (i0 >= 0) && (63 - i0 >= 0) && (-45 + i1 >= 0) && (108 - i1 >= 0)))
+//   { pw_math_gray1215[root = 0, pw_math_gray1213, pw_math_gray1214] -> [pw_math_gray1213, 45 + pw_math_gray1214, 2, 3] : 0 <= pw_math_gray1213 <= 63 and 0 <= pw_math_gray1214 <= 63 }
+// Condition for pw_math_gray1215(((-3 + i3 == 0) && (-2 + i2 == 0) && (i0 >= 0) && (63 - i0 >= 0) && (-45 + i1 >= 0) && (108 - i1 >= 0)))
 
   /*
-{
-  for (int c3 = 0; c3 <= 63; c3 += 1)
-    for (int c5 = 0; c5 <= 63; c5 += 1)
-      load_to_gray_FIFO_buf4447(0, c3, c5);
-  for (int c3 = 0; c3 <= 63; c3 += 1)
-    for (int c5 = 0; c5 <= 63; c5 += 1)
-      pw_math_gray1215(0, c3, c5);
-  for (int c3 = 0; c3 <= 63; c3 += 1)
-    for (int c5 = 0; c5 <= 63; c5 += 1)
-      load_to_gray_diff_to_gp_43639(0, c3, c5);
-}
+for (int c0 = 0; c0 <= 63; c0 += 1)
+  for (int c1 = 45; c1 <= 108; c1 += 1) {
+    load_to_gray_FIFO_buf4447(0, c0, c1 - 45);
+    pw_math_gray1215(0, c0, c1 - 45);
+    load_to_gray_diff_to_gp_43639(0, c0, c1 - 45);
+  }
 
   */
-	{
-	  for (int c3 = 0; c3 <= 63; c3 += 1)
-	    for (int c5 = 0; c5 <= 63; c5 += 1)
-	      load_to_gray_FIFO_buf4447(gray_to_gp_120 /* buf name */, gray_FIFO_buf44, 0, c3, c5);
-	  for (int c3 = 0; c3 <= 63; c3 += 1)
-	    for (int c5 = 0; c5 <= 63; c5 += 1)
-	      pw_math_gray1215(gray_FIFO_buf44 /* buf name */, gray_diff, 0, c3, c5);
-	  for (int c3 = 0; c3 <= 63; c3 += 1)
-	    for (int c5 = 0; c5 <= 63; c5 += 1)
-	      load_to_gray_diff_to_gp_43639(gray_diff /* buf name */, gray_diff_to_gp_436, 0, c3, c5);
-	}
+	for (int c0 = 0; c0 <= 63; c0 += 1)
+	  for (int c1 = 45; c1 <= 108; c1 += 1) {
+	    load_to_gray_FIFO_buf4447(gray_to_gp_120 /* buf name */, gray_FIFO_buf44, 0, c0, c1 - 45);
+	    pw_math_gray1215(gray_FIFO_buf44 /* buf name */, gray_diff, 0, c0, c1 - 45);
+	    load_to_gray_diff_to_gp_43639(gray_diff /* buf name */, gray_diff_to_gp_436, 0, c0, c1 - 45);
+	  }
 	
 #ifndef __VIVADO_SYNTH__
   debug_file.close();
@@ -608,39 +596,35 @@ void Extracted_gray_blur_ld30_gray_to_gp_224_ld50_pw_math_gray45_(HWStream<hw_ui
 #pragma HLS inline recursive
 #endif // __VIVADO_SYNTH__
 
-// schedule: { load_to_gray_FIFO_buf4851[root = 0, gray_to_gp_224_ld50, gray_to_gp_224_ld49] -> [0, 0, 3, gray_to_gp_224_ld50, 0, gray_to_gp_224_ld49, 0] : 0 <= gray_to_gp_224_ld50 <= 65 and 0 <= gray_to_gp_224_ld49 <= 65; load_to_gray_blur_to_gp_32831[root = 0, gray_blur_ld30, gray_blur_ld29] -> [0, 0, 5, gray_blur_ld30, 0, gray_blur_ld29, 0] : 0 <= gray_blur_ld30 <= 65 and 0 <= gray_blur_ld29 <= 65; pw_math_gray47[root = 0, pw_math_gray45, pw_math_gray46] -> [0, 0, 4, pw_math_gray45, 0, pw_math_gray46, 0] : 0 <= pw_math_gray45 <= 65 and 0 <= pw_math_gray46 <= 65 }
-//   { load_to_gray_FIFO_buf4851[root = 0, gray_to_gp_224_ld50, gray_to_gp_224_ld49] -> [0, 0, 3, gray_to_gp_224_ld50, 0, gray_to_gp_224_ld49, 0] : 0 <= gray_to_gp_224_ld50 <= 65 and 0 <= gray_to_gp_224_ld49 <= 65 }
-// Condition for load_to_gray_FIFO_buf4851(((i6 == 0) && (i4 == 0) && (-3 + i2 == 0) && (i1 == 0) && (i0 == 0) && (i3 >= 0) && (65 - i3 >= 0) && (i5 >= 0) && (65 - i5 >= 0)))
-//   { load_to_gray_blur_to_gp_32831[root = 0, gray_blur_ld30, gray_blur_ld29] -> [0, 0, 5, gray_blur_ld30, 0, gray_blur_ld29, 0] : 0 <= gray_blur_ld30 <= 65 and 0 <= gray_blur_ld29 <= 65 }
-// Condition for load_to_gray_blur_to_gp_32831(((i6 == 0) && (i4 == 0) && (-5 + i2 == 0) && (i1 == 0) && (i0 == 0) && (i3 >= 0) && (65 - i3 >= 0) && (i5 >= 0) && (65 - i5 >= 0)))
-//   { pw_math_gray47[root = 0, pw_math_gray45, pw_math_gray46] -> [0, 0, 4, pw_math_gray45, 0, pw_math_gray46, 0] : 0 <= pw_math_gray45 <= 65 and 0 <= pw_math_gray46 <= 65 }
-// Condition for pw_math_gray47(((i6 == 0) && (i4 == 0) && (-4 + i2 == 0) && (i1 == 0) && (i0 == 0) && (i3 >= 0) && (65 - i3 >= 0) && (i5 >= 0) && (65 - i5 >= 0)))
+// schedule: { pw_math_gray47[root = 0, pw_math_gray45, pw_math_gray46] -> [pw_math_gray45, 51 + pw_math_gray46, 8, 0] : 0 <= pw_math_gray45 <= 65 and 0 <= pw_math_gray46 <= 65; load_to_gray_FIFO_buf4851[root = 0, gray_to_gp_224_ld50, gray_to_gp_224_ld49] -> [gray_to_gp_224_ld50, 49 + gray_to_gp_224_ld49, 6, 0] : 0 <= gray_to_gp_224_ld50 <= 65 and 0 <= gray_to_gp_224_ld49 <= 65; load_to_gray_blur_to_gp_32831[root = 0, gray_blur_ld30, gray_blur_ld29] -> [gray_blur_ld30, 53 + gray_blur_ld29, 7, 0] : 0 <= gray_blur_ld30 <= 65 and 0 <= gray_blur_ld29 <= 65 }
+//   { pw_math_gray47[root = 0, pw_math_gray45, pw_math_gray46] -> [pw_math_gray45, 51 + pw_math_gray46, 8, 0] : 0 <= pw_math_gray45 <= 65 and 0 <= pw_math_gray46 <= 65 }
+// Condition for pw_math_gray47(((i3 == 0) && (-8 + i2 == 0) && (i0 >= 0) && (65 - i0 >= 0) && (-51 + i1 >= 0) && (116 - i1 >= 0)))
+//   { load_to_gray_FIFO_buf4851[root = 0, gray_to_gp_224_ld50, gray_to_gp_224_ld49] -> [gray_to_gp_224_ld50, 49 + gray_to_gp_224_ld49, 6, 0] : 0 <= gray_to_gp_224_ld50 <= 65 and 0 <= gray_to_gp_224_ld49 <= 65 }
+// Condition for load_to_gray_FIFO_buf4851(((i3 == 0) && (-6 + i2 == 0) && (i0 >= 0) && (65 - i0 >= 0) && (-49 + i1 >= 0) && (114 - i1 >= 0)))
+//   { load_to_gray_blur_to_gp_32831[root = 0, gray_blur_ld30, gray_blur_ld29] -> [gray_blur_ld30, 53 + gray_blur_ld29, 7, 0] : 0 <= gray_blur_ld30 <= 65 and 0 <= gray_blur_ld29 <= 65 }
+// Condition for load_to_gray_blur_to_gp_32831(((i3 == 0) && (-7 + i2 == 0) && (i0 >= 0) && (65 - i0 >= 0) && (-53 + i1 >= 0) && (118 - i1 >= 0)))
 
   /*
-{
-  for (int c3 = 0; c3 <= 65; c3 += 1)
-    for (int c5 = 0; c5 <= 65; c5 += 1)
-      load_to_gray_FIFO_buf4851(0, c3, c5);
-  for (int c3 = 0; c3 <= 65; c3 += 1)
-    for (int c5 = 0; c5 <= 65; c5 += 1)
-      pw_math_gray47(0, c3, c5);
-  for (int c3 = 0; c3 <= 65; c3 += 1)
-    for (int c5 = 0; c5 <= 65; c5 += 1)
-      load_to_gray_blur_to_gp_32831(0, c3, c5);
-}
+for (int c0 = 0; c0 <= 65; c0 += 1)
+  for (int c1 = 49; c1 <= 118; c1 += 1) {
+    if (c1 <= 114)
+      load_to_gray_FIFO_buf4851(0, c0, c1 - 49);
+    if (c1 >= 53)
+      load_to_gray_blur_to_gp_32831(0, c0, c1 - 53);
+    if (c1 >= 51 && c1 <= 116)
+      pw_math_gray47(0, c0, c1 - 51);
+  }
 
   */
-	{
-	  for (int c3 = 0; c3 <= 65; c3 += 1)
-	    for (int c5 = 0; c5 <= 65; c5 += 1)
-	      load_to_gray_FIFO_buf4851(gray_to_gp_224 /* buf name */, gray_FIFO_buf48, 0, c3, c5);
-	  for (int c3 = 0; c3 <= 65; c3 += 1)
-	    for (int c5 = 0; c5 <= 65; c5 += 1)
-	      pw_math_gray47(gray_FIFO_buf48 /* buf name */, gray_blur, 0, c3, c5);
-	  for (int c3 = 0; c3 <= 65; c3 += 1)
-	    for (int c5 = 0; c5 <= 65; c5 += 1)
-	      load_to_gray_blur_to_gp_32831(gray_blur /* buf name */, gray_blur_to_gp_328, 0, c3, c5);
-	}
+	for (int c0 = 0; c0 <= 65; c0 += 1)
+	  for (int c1 = 49; c1 <= 118; c1 += 1) {
+	    if (c1 <= 114)
+	      load_to_gray_FIFO_buf4851(gray_to_gp_224 /* buf name */, gray_FIFO_buf48, 0, c0, c1 - 49);
+	    if (c1 >= 53)
+	      load_to_gray_blur_to_gp_32831(gray_blur /* buf name */, gray_blur_to_gp_328, 0, c0, c1 - 53);
+	    if (c1 >= 51 && c1 <= 116)
+	      pw_math_gray47(gray_FIFO_buf48 /* buf name */, gray_blur, 0, c0, c1 - 51);
+	  }
 	
 #ifndef __VIVADO_SYNTH__
   debug_file.close();
@@ -836,39 +820,35 @@ void Extracted_gray_blur_cache_ld34_gray_blur_to_gp_328_ld54_pw_math_gray_blur89
 #pragma HLS inline recursive
 #endif // __VIVADO_SYNTH__
 
-// schedule: { load_to_gray_blur_cache_to_gp_53235[root = 0, gray_blur_cache_ld34, gray_blur_cache_ld33] -> [0, 0, 8, gray_blur_cache_ld34, 0, gray_blur_cache_ld33, 0] : 0 <= gray_blur_cache_ld34 <= 65 and 0 <= gray_blur_cache_ld33 <= 65; pw_math_gray_blur811[root = 0, pw_math_gray_blur89, pw_math_gray_blur810] -> [0, 0, 7, pw_math_gray_blur89, 0, pw_math_gray_blur810, 0] : 0 <= pw_math_gray_blur89 <= 65 and 0 <= pw_math_gray_blur810 <= 65; load_to_gray_blur_FIFO_buf5255[root = 0, gray_blur_to_gp_328_ld54, gray_blur_to_gp_328_ld53] -> [0, 0, 6, gray_blur_to_gp_328_ld54, 0, gray_blur_to_gp_328_ld53, 0] : 0 <= gray_blur_to_gp_328_ld54 <= 65 and 0 <= gray_blur_to_gp_328_ld53 <= 65 }
-//   { load_to_gray_blur_cache_to_gp_53235[root = 0, gray_blur_cache_ld34, gray_blur_cache_ld33] -> [0, 0, 8, gray_blur_cache_ld34, 0, gray_blur_cache_ld33, 0] : 0 <= gray_blur_cache_ld34 <= 65 and 0 <= gray_blur_cache_ld33 <= 65 }
-// Condition for load_to_gray_blur_cache_to_gp_53235(((i6 == 0) && (i4 == 0) && (-8 + i2 == 0) && (i1 == 0) && (i0 == 0) && (i3 >= 0) && (65 - i3 >= 0) && (i5 >= 0) && (65 - i5 >= 0)))
-//   { pw_math_gray_blur811[root = 0, pw_math_gray_blur89, pw_math_gray_blur810] -> [0, 0, 7, pw_math_gray_blur89, 0, pw_math_gray_blur810, 0] : 0 <= pw_math_gray_blur89 <= 65 and 0 <= pw_math_gray_blur810 <= 65 }
-// Condition for pw_math_gray_blur811(((i6 == 0) && (i4 == 0) && (-7 + i2 == 0) && (i1 == 0) && (i0 == 0) && (i3 >= 0) && (65 - i3 >= 0) && (i5 >= 0) && (65 - i5 >= 0)))
-//   { load_to_gray_blur_FIFO_buf5255[root = 0, gray_blur_to_gp_328_ld54, gray_blur_to_gp_328_ld53] -> [0, 0, 6, gray_blur_to_gp_328_ld54, 0, gray_blur_to_gp_328_ld53, 0] : 0 <= gray_blur_to_gp_328_ld54 <= 65 and 0 <= gray_blur_to_gp_328_ld53 <= 65 }
-// Condition for load_to_gray_blur_FIFO_buf5255(((i6 == 0) && (i4 == 0) && (-6 + i2 == 0) && (i1 == 0) && (i0 == 0) && (i3 >= 0) && (65 - i3 >= 0) && (i5 >= 0) && (65 - i5 >= 0)))
+// schedule: { pw_math_gray_blur811[root = 0, pw_math_gray_blur89, pw_math_gray_blur810] -> [pw_math_gray_blur89, 57 + pw_math_gray_blur810, 5, 0] : 0 <= pw_math_gray_blur89 <= 65 and 0 <= pw_math_gray_blur810 <= 65; load_to_gray_blur_FIFO_buf5255[root = 0, gray_blur_to_gp_328_ld54, gray_blur_to_gp_328_ld53] -> [gray_blur_to_gp_328_ld54, 55 + gray_blur_to_gp_328_ld53, 0, 0] : 0 <= gray_blur_to_gp_328_ld54 <= 65 and 0 <= gray_blur_to_gp_328_ld53 <= 65; load_to_gray_blur_cache_to_gp_53235[root = 0, gray_blur_cache_ld34, gray_blur_cache_ld33] -> [gray_blur_cache_ld34, 59 + gray_blur_cache_ld33, 4, 0] : 0 <= gray_blur_cache_ld34 <= 65 and 0 <= gray_blur_cache_ld33 <= 65 }
+//   { pw_math_gray_blur811[root = 0, pw_math_gray_blur89, pw_math_gray_blur810] -> [pw_math_gray_blur89, 57 + pw_math_gray_blur810, 5, 0] : 0 <= pw_math_gray_blur89 <= 65 and 0 <= pw_math_gray_blur810 <= 65 }
+// Condition for pw_math_gray_blur811(((i3 == 0) && (-5 + i2 == 0) && (i0 >= 0) && (65 - i0 >= 0) && (-57 + i1 >= 0) && (122 - i1 >= 0)))
+//   { load_to_gray_blur_FIFO_buf5255[root = 0, gray_blur_to_gp_328_ld54, gray_blur_to_gp_328_ld53] -> [gray_blur_to_gp_328_ld54, 55 + gray_blur_to_gp_328_ld53, 0, 0] : 0 <= gray_blur_to_gp_328_ld54 <= 65 and 0 <= gray_blur_to_gp_328_ld53 <= 65 }
+// Condition for load_to_gray_blur_FIFO_buf5255(((i3 == 0) && (i2 == 0) && (i0 >= 0) && (65 - i0 >= 0) && (-55 + i1 >= 0) && (120 - i1 >= 0)))
+//   { load_to_gray_blur_cache_to_gp_53235[root = 0, gray_blur_cache_ld34, gray_blur_cache_ld33] -> [gray_blur_cache_ld34, 59 + gray_blur_cache_ld33, 4, 0] : 0 <= gray_blur_cache_ld34 <= 65 and 0 <= gray_blur_cache_ld33 <= 65 }
+// Condition for load_to_gray_blur_cache_to_gp_53235(((i3 == 0) && (-4 + i2 == 0) && (i0 >= 0) && (65 - i0 >= 0) && (-59 + i1 >= 0) && (124 - i1 >= 0)))
 
   /*
-{
-  for (int c3 = 0; c3 <= 65; c3 += 1)
-    for (int c5 = 0; c5 <= 65; c5 += 1)
-      load_to_gray_blur_FIFO_buf5255(0, c3, c5);
-  for (int c3 = 0; c3 <= 65; c3 += 1)
-    for (int c5 = 0; c5 <= 65; c5 += 1)
-      pw_math_gray_blur811(0, c3, c5);
-  for (int c3 = 0; c3 <= 65; c3 += 1)
-    for (int c5 = 0; c5 <= 65; c5 += 1)
-      load_to_gray_blur_cache_to_gp_53235(0, c3, c5);
-}
+for (int c0 = 0; c0 <= 65; c0 += 1)
+  for (int c1 = 55; c1 <= 124; c1 += 1) {
+    if (c1 <= 120)
+      load_to_gray_blur_FIFO_buf5255(0, c0, c1 - 55);
+    if (c1 >= 59)
+      load_to_gray_blur_cache_to_gp_53235(0, c0, c1 - 59);
+    if (c1 >= 57 && c1 <= 122)
+      pw_math_gray_blur811(0, c0, c1 - 57);
+  }
 
   */
-	{
-	  for (int c3 = 0; c3 <= 65; c3 += 1)
-	    for (int c5 = 0; c5 <= 65; c5 += 1)
-	      load_to_gray_blur_FIFO_buf5255(gray_blur_to_gp_328 /* buf name */, gray_blur_FIFO_buf52, 0, c3, c5);
-	  for (int c3 = 0; c3 <= 65; c3 += 1)
-	    for (int c5 = 0; c5 <= 65; c5 += 1)
-	      pw_math_gray_blur811(gray_blur_FIFO_buf52 /* buf name */, gray_blur_cache, 0, c3, c5);
-	  for (int c3 = 0; c3 <= 65; c3 += 1)
-	    for (int c5 = 0; c5 <= 65; c5 += 1)
-	      load_to_gray_blur_cache_to_gp_53235(gray_blur_cache /* buf name */, gray_blur_cache_to_gp_532, 0, c3, c5);
-	}
+	for (int c0 = 0; c0 <= 65; c0 += 1)
+	  for (int c1 = 55; c1 <= 124; c1 += 1) {
+	    if (c1 <= 120)
+	      load_to_gray_blur_FIFO_buf5255(gray_blur_to_gp_328 /* buf name */, gray_blur_FIFO_buf52, 0, c0, c1 - 55);
+	    if (c1 >= 59)
+	      load_to_gray_blur_cache_to_gp_53235(gray_blur_cache /* buf name */, gray_blur_cache_to_gp_532, 0, c0, c1 - 59);
+	    if (c1 >= 57 && c1 <= 122)
+	      pw_math_gray_blur811(gray_blur_FIFO_buf52 /* buf name */, gray_blur_cache, 0, c0, c1 - 57);
+	  }
 	
 #ifndef __VIVADO_SYNTH__
   debug_file.close();
@@ -1066,38 +1046,36 @@ void Extracted_blurred_to_gp_416_ld41_gray_diff_to_gp_436_ld62_x_(HWStream<hw_ui
 #pragma HLS inline recursive
 #endif // __VIVADO_SYNTH__
 
-// schedule: { diff[root = 0, x, y] -> [0, 0, 17, x, 0, y, 0] : 0 <= x <= 63 and 0 <= y <= 63; load_to_blurred_FIFO_buf4043[root = 0, blurred_to_gp_416_ld41, blurred_to_gp_416_ld42] -> [0, 0, 15, blurred_to_gp_416_ld41, 0, blurred_to_gp_416_ld42, 0] : 0 <= blurred_to_gp_416_ld41 <= 63 and 0 <= blurred_to_gp_416_ld42 <= 63; load_to_gray_diff_FIFO_buf6063[root = 0, gray_diff_to_gp_436_ld62, gray_diff_to_gp_436_ld61] -> [0, 0, 16, gray_diff_to_gp_436_ld62, 0, gray_diff_to_gp_436_ld61, 0] : 0 <= gray_diff_to_gp_436_ld62 <= 63 and 0 <= gray_diff_to_gp_436_ld61 <= 63 }
-//   { diff[root = 0, x, y] -> [0, 0, 17, x, 0, y, 0] : 0 <= x <= 63 and 0 <= y <= 63 }
-// Condition for diff(((i6 == 0) && (i4 == 0) && (-17 + i2 == 0) && (i1 == 0) && (i0 == 0) && (i3 >= 0) && (63 - i3 >= 0) && (i5 >= 0) && (63 - i5 >= 0)))
-//   { load_to_blurred_FIFO_buf4043[root = 0, blurred_to_gp_416_ld41, blurred_to_gp_416_ld42] -> [0, 0, 15, blurred_to_gp_416_ld41, 0, blurred_to_gp_416_ld42, 0] : 0 <= blurred_to_gp_416_ld41 <= 63 and 0 <= blurred_to_gp_416_ld42 <= 63 }
-// Condition for load_to_blurred_FIFO_buf4043(((i6 == 0) && (i4 == 0) && (-15 + i2 == 0) && (i1 == 0) && (i0 == 0) && (i3 >= 0) && (63 - i3 >= 0) && (i5 >= 0) && (63 - i5 >= 0)))
-//   { load_to_gray_diff_FIFO_buf6063[root = 0, gray_diff_to_gp_436_ld62, gray_diff_to_gp_436_ld61] -> [0, 0, 16, gray_diff_to_gp_436_ld62, 0, gray_diff_to_gp_436_ld61, 0] : 0 <= gray_diff_to_gp_436_ld62 <= 63 and 0 <= gray_diff_to_gp_436_ld61 <= 63 }
-// Condition for load_to_gray_diff_FIFO_buf6063(((i6 == 0) && (i4 == 0) && (-16 + i2 == 0) && (i1 == 0) && (i0 == 0) && (i3 >= 0) && (63 - i3 >= 0) && (i5 >= 0) && (63 - i5 >= 0)))
+// schedule: { load_to_gray_diff_FIFO_buf6063[root = 0, gray_diff_to_gp_436_ld62, gray_diff_to_gp_436_ld61] -> [gray_diff_to_gp_436_ld62, 45 + gray_diff_to_gp_436_ld61, 2, 5] : 0 <= gray_diff_to_gp_436_ld62 <= 63 and 0 <= gray_diff_to_gp_436_ld61 <= 63; load_to_blurred_FIFO_buf4043[root = 0, blurred_to_gp_416_ld41, blurred_to_gp_416_ld42] -> [65 + blurred_to_gp_416_ld41, blurred_to_gp_416_ld42, 1, 3] : 0 <= blurred_to_gp_416_ld41 <= 63 and 0 <= blurred_to_gp_416_ld42 <= 63; diff[root = 0, x, y] -> [65 + x, y, 1, 4] : 0 <= x <= 63 and 0 <= y <= 63 }
+//   { load_to_gray_diff_FIFO_buf6063[root = 0, gray_diff_to_gp_436_ld62, gray_diff_to_gp_436_ld61] -> [gray_diff_to_gp_436_ld62, 45 + gray_diff_to_gp_436_ld61, 2, 5] : 0 <= gray_diff_to_gp_436_ld62 <= 63 and 0 <= gray_diff_to_gp_436_ld61 <= 63 }
+// Condition for load_to_gray_diff_FIFO_buf6063(((-5 + i3 == 0) && (-2 + i2 == 0) && (i0 >= 0) && (63 - i0 >= 0) && (-45 + i1 >= 0) && (108 - i1 >= 0)))
+//   { load_to_blurred_FIFO_buf4043[root = 0, blurred_to_gp_416_ld41, blurred_to_gp_416_ld42] -> [65 + blurred_to_gp_416_ld41, blurred_to_gp_416_ld42, 1, 3] : 0 <= blurred_to_gp_416_ld41 <= 63 and 0 <= blurred_to_gp_416_ld42 <= 63 }
+// Condition for load_to_blurred_FIFO_buf4043(((-3 + i3 == 0) && (-1 + i2 == 0) && (-65 + i0 >= 0) && (128 - i0 >= 0) && (i1 >= 0) && (63 - i1 >= 0)))
+//   { diff[root = 0, x, y] -> [65 + x, y, 1, 4] : 0 <= x <= 63 and 0 <= y <= 63 }
+// Condition for diff(((-4 + i3 == 0) && (-1 + i2 == 0) && (-65 + i0 >= 0) && (128 - i0 >= 0) && (i1 >= 0) && (63 - i1 >= 0)))
 
   /*
 {
-  for (int c3 = 0; c3 <= 63; c3 += 1)
-    for (int c5 = 0; c5 <= 63; c5 += 1)
-      load_to_blurred_FIFO_buf4043(0, c3, c5);
-  for (int c3 = 0; c3 <= 63; c3 += 1)
-    for (int c5 = 0; c5 <= 63; c5 += 1)
-      load_to_gray_diff_FIFO_buf6063(0, c3, c5);
-  for (int c3 = 0; c3 <= 63; c3 += 1)
-    for (int c5 = 0; c5 <= 63; c5 += 1)
-      diff(0, c3, c5);
+  for (int c0 = 0; c0 <= 63; c0 += 1)
+    for (int c1 = 45; c1 <= 108; c1 += 1)
+      load_to_gray_diff_FIFO_buf6063(0, c0, c1 - 45);
+  for (int c0 = 65; c0 <= 128; c0 += 1)
+    for (int c1 = 0; c1 <= 63; c1 += 1) {
+      load_to_blurred_FIFO_buf4043(0, c0 - 65, c1);
+      diff(0, c0 - 65, c1);
+    }
 }
 
   */
 	{
-	  for (int c3 = 0; c3 <= 63; c3 += 1)
-	    for (int c5 = 0; c5 <= 63; c5 += 1)
-	      load_to_blurred_FIFO_buf4043(blurred_to_gp_416 /* buf name */, blurred_FIFO_buf40, 0, c3, c5);
-	  for (int c3 = 0; c3 <= 63; c3 += 1)
-	    for (int c5 = 0; c5 <= 63; c5 += 1)
-	      load_to_gray_diff_FIFO_buf6063(gray_diff_to_gp_436 /* buf name */, gray_diff_FIFO_buf60, 0, c3, c5);
-	  for (int c3 = 0; c3 <= 63; c3 += 1)
-	    for (int c5 = 0; c5 <= 63; c5 += 1)
-	      diff(gray_diff_FIFO_buf60 /* buf name */, blurred_FIFO_buf40 /* buf name */, out, 0, c3, c5);
+	  for (int c0 = 0; c0 <= 63; c0 += 1)
+	    for (int c1 = 45; c1 <= 108; c1 += 1)
+	      load_to_gray_diff_FIFO_buf6063(gray_diff_to_gp_436 /* buf name */, gray_diff_FIFO_buf60, 0, c0, c1 - 45);
+	  for (int c0 = 65; c0 <= 128; c0 += 1)
+	    for (int c1 = 0; c1 <= 63; c1 += 1) {
+	      load_to_blurred_FIFO_buf4043(blurred_to_gp_416 /* buf name */, blurred_FIFO_buf40, 0, c0 - 65, c1);
+	      diff(gray_diff_FIFO_buf60 /* buf name */, blurred_FIFO_buf40 /* buf name */, out, 0, c0 - 65, c1);
+	    }
 	}
 	
 #ifndef __VIVADO_SYNTH__
@@ -1398,38 +1376,48 @@ void Extracted_blurred_ld17_gray_blur_cache_to_gp_532_ld58_xb_(HWStream<hw_uint<
 #pragma HLS inline recursive
 #endif // __VIVADO_SYNTH__
 
-// schedule: { load_to_blurred_to_gp_41619[root = 0, blurred_ld17, blurred_ld18] -> [0, 0, 11, blurred_ld17, 0, blurred_ld18, 0] : 0 <= blurred_ld17 <= 63 and 0 <= blurred_ld18 <= 63; load_to_gray_blur_cache_FIFO_buf5659[root = 0, gray_blur_cache_to_gp_532_ld58, gray_blur_cache_to_gp_532_ld57] -> [0, 0, 9, gray_blur_cache_to_gp_532_ld58, 0, gray_blur_cache_to_gp_532_ld57, 0] : 0 <= gray_blur_cache_to_gp_532_ld58 <= 65 and 0 <= gray_blur_cache_to_gp_532_ld57 <= 65; blur[root = 0, xb, yb] -> [0, 0, 10, xb, 0, yb, 0] : 0 <= xb <= 63 and 0 <= yb <= 63 }
-//   { load_to_blurred_to_gp_41619[root = 0, blurred_ld17, blurred_ld18] -> [0, 0, 11, blurred_ld17, 0, blurred_ld18, 0] : 0 <= blurred_ld17 <= 63 and 0 <= blurred_ld18 <= 63 }
-// Condition for load_to_blurred_to_gp_41619(((i6 == 0) && (i4 == 0) && (-11 + i2 == 0) && (i1 == 0) && (i0 == 0) && (i3 >= 0) && (63 - i3 >= 0) && (i5 >= 0) && (63 - i5 >= 0)))
-//   { load_to_gray_blur_cache_FIFO_buf5659[root = 0, gray_blur_cache_to_gp_532_ld58, gray_blur_cache_to_gp_532_ld57] -> [0, 0, 9, gray_blur_cache_to_gp_532_ld58, 0, gray_blur_cache_to_gp_532_ld57, 0] : 0 <= gray_blur_cache_to_gp_532_ld58 <= 65 and 0 <= gray_blur_cache_to_gp_532_ld57 <= 65 }
-// Condition for load_to_gray_blur_cache_FIFO_buf5659(((i6 == 0) && (i4 == 0) && (-9 + i2 == 0) && (i1 == 0) && (i0 == 0) && (i3 >= 0) && (65 - i3 >= 0) && (i5 >= 0) && (65 - i5 >= 0)))
-//   { blur[root = 0, xb, yb] -> [0, 0, 10, xb, 0, yb, 0] : 0 <= xb <= 63 and 0 <= yb <= 63 }
-// Condition for blur(((i6 == 0) && (i4 == 0) && (-10 + i2 == 0) && (i1 == 0) && (i0 == 0) && (i3 >= 0) && (63 - i3 >= 0) && (i5 >= 0) && (63 - i5 >= 0)))
+// schedule: { load_to_gray_blur_cache_FIFO_buf5659[root = 0, gray_blur_cache_to_gp_532_ld58, gray_blur_cache_to_gp_532_ld57] -> [gray_blur_cache_to_gp_532_ld58, 61 + gray_blur_cache_to_gp_532_ld57, 1, 0] : 0 <= gray_blur_cache_to_gp_532_ld58 <= 65 and 0 <= gray_blur_cache_to_gp_532_ld57 <= 65; blur[root = 0, xb, yb] -> [65 + xb, yb, 1, 1] : 0 <= xb <= 63 and 0 <= yb <= 63; load_to_blurred_to_gp_41619[root = 0, blurred_ld17, blurred_ld18] -> [65 + blurred_ld17, blurred_ld18, 1, 2] : 0 <= blurred_ld17 <= 63 and 0 <= blurred_ld18 <= 63 }
+//   { load_to_gray_blur_cache_FIFO_buf5659[root = 0, gray_blur_cache_to_gp_532_ld58, gray_blur_cache_to_gp_532_ld57] -> [gray_blur_cache_to_gp_532_ld58, 61 + gray_blur_cache_to_gp_532_ld57, 1, 0] : 0 <= gray_blur_cache_to_gp_532_ld58 <= 65 and 0 <= gray_blur_cache_to_gp_532_ld57 <= 65 }
+// Condition for load_to_gray_blur_cache_FIFO_buf5659(((i3 == 0) && (-1 + i2 == 0) && (i0 >= 0) && (65 - i0 >= 0) && (-61 + i1 >= 0) && (126 - i1 >= 0)))
+//   { blur[root = 0, xb, yb] -> [65 + xb, yb, 1, 1] : 0 <= xb <= 63 and 0 <= yb <= 63 }
+// Condition for blur(((-1 + i3 == 0) && (-1 + i2 == 0) && (-65 + i0 >= 0) && (128 - i0 >= 0) && (i1 >= 0) && (63 - i1 >= 0)))
+//   { load_to_blurred_to_gp_41619[root = 0, blurred_ld17, blurred_ld18] -> [65 + blurred_ld17, blurred_ld18, 1, 2] : 0 <= blurred_ld17 <= 63 and 0 <= blurred_ld18 <= 63 }
+// Condition for load_to_blurred_to_gp_41619(((-2 + i3 == 0) && (-1 + i2 == 0) && (-65 + i0 >= 0) && (128 - i0 >= 0) && (i1 >= 0) && (63 - i1 >= 0)))
 
   /*
-{
-  for (int c3 = 0; c3 <= 65; c3 += 1)
-    for (int c5 = 0; c5 <= 65; c5 += 1)
-      load_to_gray_blur_cache_FIFO_buf5659(0, c3, c5);
-  for (int c3 = 0; c3 <= 63; c3 += 1)
-    for (int c5 = 0; c5 <= 63; c5 += 1)
-      blur(0, c3, c5);
-  for (int c3 = 0; c3 <= 63; c3 += 1)
-    for (int c5 = 0; c5 <= 63; c5 += 1)
-      load_to_blurred_to_gp_41619(0, c3, c5);
+for (int c0 = 0; c0 <= 128; c0 += 1) {
+  if (c0 >= 65) {
+    for (int c1 = 0; c1 <= 63; c1 += 1) {
+      if (c0 == 65 && c1 >= 61)
+        load_to_gray_blur_cache_FIFO_buf5659(0, 65, c1 - 61);
+      blur(0, c0 - 65, c1);
+      load_to_blurred_to_gp_41619(0, c0 - 65, c1);
+    }
+    if (c0 == 65)
+      for (int c1 = 64; c1 <= 126; c1 += 1)
+        load_to_gray_blur_cache_FIFO_buf5659(0, 65, c1 - 61);
+  } else {
+    for (int c1 = 61; c1 <= 126; c1 += 1)
+      load_to_gray_blur_cache_FIFO_buf5659(0, c0, c1 - 61);
+  }
 }
 
   */
-	{
-	  for (int c3 = 0; c3 <= 65; c3 += 1)
-	    for (int c5 = 0; c5 <= 65; c5 += 1)
-	      load_to_gray_blur_cache_FIFO_buf5659(gray_blur_cache_to_gp_532 /* buf name */, gray_blur_cache_FIFO_buf56, 0, c3, c5);
-	  for (int c3 = 0; c3 <= 63; c3 += 1)
-	    for (int c5 = 0; c5 <= 63; c5 += 1)
-	      blur(gray_blur_cache_FIFO_buf56 /* buf name */, blurred, 0, c3, c5);
-	  for (int c3 = 0; c3 <= 63; c3 += 1)
-	    for (int c5 = 0; c5 <= 63; c5 += 1)
-	      load_to_blurred_to_gp_41619(blurred /* buf name */, blurred_to_gp_416, 0, c3, c5);
+	for (int c0 = 0; c0 <= 128; c0 += 1) {
+	  if (c0 >= 65) {
+	    for (int c1 = 0; c1 <= 63; c1 += 1) {
+	      if (c0 == 65 && c1 >= 61)
+	        load_to_gray_blur_cache_FIFO_buf5659(gray_blur_cache_to_gp_532 /* buf name */, gray_blur_cache_FIFO_buf56, 0, 65, c1 - 61);
+	      blur(gray_blur_cache_FIFO_buf56 /* buf name */, blurred, 0, c0 - 65, c1);
+	      load_to_blurred_to_gp_41619(blurred /* buf name */, blurred_to_gp_416, 0, c0 - 65, c1);
+	    }
+	    if (c0 == 65)
+	      for (int c1 = 64; c1 <= 126; c1 += 1)
+	        load_to_gray_blur_cache_FIFO_buf5659(gray_blur_cache_to_gp_532 /* buf name */, gray_blur_cache_FIFO_buf56, 0, 65, c1 - 61);
+	  } else {
+	    for (int c1 = 61; c1 <= 126; c1 += 1)
+	      load_to_gray_blur_cache_FIFO_buf5659(gray_blur_cache_to_gp_532 /* buf name */, gray_blur_cache_FIFO_buf56, 0, c0, c1 - 61);
+	  }
 	}
 	
 #ifndef __VIVADO_SYNTH__

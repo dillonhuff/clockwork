@@ -70,6 +70,19 @@ inline void gray_oc_load_in03_write_bundle_write(hw_uint<32>& oc_load_in03_write
 
 
 // Operation logic
+inline void oc_load_in03(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */in, gray_cache& gray, int root, int oc_load_in01, int oc_load_in02) {
+  // Dynamic address computation
+
+	// Consume: in
+	auto in_oc_load_in02_p_0_c___oc_load_in01_p_0_value = in.read();
+	// Produce: gray
+	gray_oc_load_in03_write_bundle_write(/* arg names */in_oc_load_in02_p_0_c___oc_load_in01_p_0_value, gray, root, oc_load_in01, oc_load_in02, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
 inline void load_to_gray_to_gp_1811(gray_cache& gray, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */gray_to_gp_18, int root, int gray_ld10, int gray_ld9) {
   // Dynamic address computation
 
@@ -81,19 +94,6 @@ inline void load_to_gray_to_gp_1811(gray_cache& gray, HWStream<hw_uint<32> >& /*
 
 	// Produce: gray_to_gp_18
 	gray_to_gp_18.write(gray_gray_ld9_c__gray_ld10_value);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void oc_load_in03(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */in, gray_cache& gray, int root, int oc_load_in01, int oc_load_in02) {
-  // Dynamic address computation
-
-	// Consume: in
-	auto in_oc_load_in02_p_0_c___oc_load_in01_p_0_value = in.read();
-	// Produce: gray
-	gray_oc_load_in03_write_bundle_write(/* arg names */in_oc_load_in02_p_0_c___oc_load_in01_p_0_value, gray, root, oc_load_in01, oc_load_in02, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -114,11 +114,11 @@ void Extracted_gray_ld10_oc_load_in01_(HWStream<hw_uint<32> >& /* no bundle get_
 #pragma HLS inline recursive
 #endif // __VIVADO_SYNTH__
 
-// schedule: { load_to_gray_to_gp_1811[root = 0, gray_ld10, gray_ld9] -> [gray_ld10, gray_ld9, 1] : 0 <= gray_ld10 <= 3 and 0 <= gray_ld9 <= 3; oc_load_in03[root = 0, oc_load_in01, oc_load_in02] -> [oc_load_in01, oc_load_in02, 0] : 0 <= oc_load_in01 <= 3 and 0 <= oc_load_in02 <= 3 }
-//   { load_to_gray_to_gp_1811[root = 0, gray_ld10, gray_ld9] -> [gray_ld10, gray_ld9, 1] : 0 <= gray_ld10 <= 3 and 0 <= gray_ld9 <= 3 }
-// Condition for load_to_gray_to_gp_1811(((-1 + i2 == 0) && (i0 >= 0) && (3 - i0 >= 0) && (i1 >= 0) && (3 - i1 >= 0)))
+// schedule: { oc_load_in03[root = 0, oc_load_in01, oc_load_in02] -> [oc_load_in01, oc_load_in02, 0] : 0 <= oc_load_in01 <= 3 and 0 <= oc_load_in02 <= 3; load_to_gray_to_gp_1811[root = 0, gray_ld10, gray_ld9] -> [gray_ld10, gray_ld9, 1] : 0 <= gray_ld10 <= 3 and 0 <= gray_ld9 <= 3 }
 //   { oc_load_in03[root = 0, oc_load_in01, oc_load_in02] -> [oc_load_in01, oc_load_in02, 0] : 0 <= oc_load_in01 <= 3 and 0 <= oc_load_in02 <= 3 }
 // Condition for oc_load_in03(((i2 == 0) && (i0 >= 0) && (3 - i0 >= 0) && (i1 >= 0) && (3 - i1 >= 0)))
+//   { load_to_gray_to_gp_1811[root = 0, gray_ld10, gray_ld9] -> [gray_ld10, gray_ld9, 1] : 0 <= gray_ld10 <= 3 and 0 <= gray_ld9 <= 3 }
+// Condition for load_to_gray_to_gp_1811(((-1 + i2 == 0) && (i0 >= 0) && (3 - i0 >= 0) && (i1 >= 0) && (3 - i1 >= 0)))
 
   /*
 for (int c0 = 0; c0 <= 3; c0 += 1)
@@ -251,11 +251,11 @@ void Extracted_gray_to_gp_18_ld14_pw_math_gray45_(HWStream<hw_uint<32> >& /* no 
 #pragma HLS inline recursive
 #endif // __VIVADO_SYNTH__
 
-// schedule: { pw_math_gray47[root = 0, pw_math_gray45, pw_math_gray46] -> [pw_math_gray45, pw_math_gray46, 1] : 0 <= pw_math_gray45 <= 3 and 0 <= pw_math_gray46 <= 3; load_to_gray_FIFO_buf1215[root = 0, gray_to_gp_18_ld14, gray_to_gp_18_ld13] -> [gray_to_gp_18_ld14, gray_to_gp_18_ld13, 0] : 0 <= gray_to_gp_18_ld14 <= 3 and 0 <= gray_to_gp_18_ld13 <= 3 }
-//   { pw_math_gray47[root = 0, pw_math_gray45, pw_math_gray46] -> [pw_math_gray45, pw_math_gray46, 1] : 0 <= pw_math_gray45 <= 3 and 0 <= pw_math_gray46 <= 3 }
-// Condition for pw_math_gray47(((-1 + i2 == 0) && (i0 >= 0) && (3 - i0 >= 0) && (i1 >= 0) && (3 - i1 >= 0)))
-//   { load_to_gray_FIFO_buf1215[root = 0, gray_to_gp_18_ld14, gray_to_gp_18_ld13] -> [gray_to_gp_18_ld14, gray_to_gp_18_ld13, 0] : 0 <= gray_to_gp_18_ld14 <= 3 and 0 <= gray_to_gp_18_ld13 <= 3 }
-// Condition for load_to_gray_FIFO_buf1215(((i2 == 0) && (i0 >= 0) && (3 - i0 >= 0) && (i1 >= 0) && (3 - i1 >= 0)))
+// schedule: { load_to_gray_FIFO_buf1215[root = 0, gray_to_gp_18_ld14, gray_to_gp_18_ld13] -> [gray_to_gp_18_ld14, gray_to_gp_18_ld13, 2] : 0 <= gray_to_gp_18_ld14 <= 3 and 0 <= gray_to_gp_18_ld13 <= 3; pw_math_gray47[root = 0, pw_math_gray45, pw_math_gray46] -> [pw_math_gray45, pw_math_gray46, 3] : 0 <= pw_math_gray45 <= 3 and 0 <= pw_math_gray46 <= 3 }
+//   { load_to_gray_FIFO_buf1215[root = 0, gray_to_gp_18_ld14, gray_to_gp_18_ld13] -> [gray_to_gp_18_ld14, gray_to_gp_18_ld13, 2] : 0 <= gray_to_gp_18_ld14 <= 3 and 0 <= gray_to_gp_18_ld13 <= 3 }
+// Condition for load_to_gray_FIFO_buf1215(((-2 + i2 == 0) && (i0 >= 0) && (3 - i0 >= 0) && (i1 >= 0) && (3 - i1 >= 0)))
+//   { pw_math_gray47[root = 0, pw_math_gray45, pw_math_gray46] -> [pw_math_gray45, pw_math_gray46, 3] : 0 <= pw_math_gray45 <= 3 and 0 <= pw_math_gray46 <= 3 }
+// Condition for pw_math_gray47(((-3 + i2 == 0) && (i0 >= 0) && (3 - i0 >= 0) && (i1 >= 0) && (3 - i1 >= 0)))
 
   /*
 for (int c0 = 0; c0 <= 3; c0 += 1)
