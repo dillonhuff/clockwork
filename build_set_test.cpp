@@ -18831,9 +18831,11 @@ prog stencil_chain(const std::string& name) {
 }
 
 void dhuff_playground() {
-  //test_multi_kernel_unsharp();
-  //llf_test();
-  //assert(false);
+  test_multi_kernel_unsharp();
+  assert(false);
+
+  llf_test();
+  assert(false);
   {
     //auto prg = stencil_chain("sc_stat");
     //generate_optimized_code(prg);
@@ -18847,12 +18849,6 @@ void dhuff_playground() {
 
     map<std::string, std::set<string> > fusion_groups =
       one_stage_per_group(prg);
-    //map<std::string, std::set<string> > fusion_groups;
-    //int i = 0;
-    //for (auto gp : get_kernels(prg)) {
-      //fusion_groups["gp_" + str(i)] = {gp};
-      //i++;
-    //}
 
     unroll_reduce_loops(prg);
     merge_basic_block_ops(prg);

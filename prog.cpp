@@ -8015,11 +8015,27 @@ void generate_app_code(
       }
     }
 
+    vector<umap*> sched_maps;
+    umap* emp = isl_union_map_read_from_str(gp.second.ctx, "{}");
+    sched_maps.push_back(emp);
+    std::set<string> opnames;
+    for (auto n : gp.second.all_ops()) {
+      opnames.insert(n->name);
+    }
+    for (auto m : get_maps(sched)) {
+      if (elem(domain_name(m), opnames)) {
+        sched_maps.push_back(to_umap(m));
+      } else {
+        release(m);
+      }
+    }
+
     generate_app_code_body(options,
         conv_out,
         buffers,
         gp.second,
-        sched,
+        unn(sched_maps),
+        //sched,
         domain_map);
   }
 
