@@ -18774,7 +18774,7 @@ prog stencil_chain(const std::string& name) {
   string last_level = "in";
   string current_level = "";
 
-  const int NUM_STAGES = 7;
+  const int NUM_STAGES = 4;
   //const int NUM_STAGES = 15;
   //const int NUM_STAGES = 2;
   //const int NUM_STAGES = 200;
@@ -18819,12 +18819,27 @@ prog stencil_chain(const std::string& name) {
   //normalize_bounds(prg);
   //normalize_address_offsets(prg);
 
+    vector<int> bounds = {1920, 1080};
+  infer_bounds("out", bounds, prg);
+
   prg.pretty_print();
   prg.sanity_check();
 
   //assert(false);
 
   return prg;
+}
+
+
+map<std::string, std::set<string> > one_stage_per_group(prog& prg) {
+  map<std::string, std::set<string> > fusion_groups;
+  int i = 0;
+  for (auto gp : get_kernels(prg)) {
+    fusion_groups["gp_" + str(i)] = {gp};
+    i++;
+  }
+
+  return fusion_groups;
 }
 
 void dhuff_playground() {
@@ -18841,14 +18856,15 @@ void dhuff_playground() {
     vector<int> bounds = {1920, 1080};
     const int unroll_factor = 16;
     prog prg = stencil_chain("sc_dyn_7_32");
-    map<std::string, std::set<string> > fusion_groups;
-    int i = 0;
-    for (auto gp : get_kernels(prg)) {
-      fusion_groups["gp_" + str(i)] = {gp};
-      i++;
-    }
 
-    infer_bounds("out", bounds, prg);
+    map<std::string, std::set<string> > fusion_groups =
+      one_stage_per_group(prg);
+    //map<std::string, std::set<string> > fusion_groups;
+    //int i = 0;
+    //for (auto gp : get_kernels(prg)) {
+      //fusion_groups["gp_" + str(i)] = {gp};
+      //i++;
+    //}
 
     unroll_reduce_loops(prg);
     merge_basic_block_ops(prg);
