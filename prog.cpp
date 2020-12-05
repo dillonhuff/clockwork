@@ -2010,6 +2010,7 @@ void generate_app_code_body(CodegenOptions& options,
     prog& prg,
     umap* schedmap,
     map<string, isl_set*>& domain_map) {
+
   for (auto& b : buffers) {
     if (!prg.is_boundary(b.first)) {
       generate_hls_code(options, conv_out, b.second);

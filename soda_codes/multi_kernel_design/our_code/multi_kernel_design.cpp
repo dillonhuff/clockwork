@@ -9,8 +9,6 @@ using namespace std;
 // compute file: local_laplacian_filters_compute.h_merged_compute_units.h
 #include "local_laplacian_filters_compute.h_merged_compute_units.h"
 
-#include "hw_classes.h"
-
 struct gray_all_inputs_to_all_outputs_cache {
 	// RAM Box: {[0, 3], [0, 3]}
   hw_uint<32>  RAM[4][4];
@@ -145,8 +143,6 @@ void Extracted_gray_ld10_oc_load_in01__wrapper(HWStream<hw_uint<32> >& /* no bun
     Extracted_gray_ld10_oc_load_in01_(in, gray_to_gp_18);
   }
 }
-#include "hw_classes.h"
-
 struct gray_FIFO_buf12_all_inputs_to_all_outputs_cache {
 	// RAM Box: {[0, 3], [0, 3]}
   hw_uint<32>  RAM[4][4];

@@ -2885,7 +2885,7 @@ lakeStream emit_top_address_stream(string fname,
     //banking and merge pass
     buf.generate_banks_and_merge(options);
 
-    out << "#include \"hw_classes.h\"" << endl << endl;
+    //out << "#include \"hw_classes.h\"" << endl << endl;
     for (auto b : buf.get_banks()) {
       generate_bank(options, out, b);
     }
