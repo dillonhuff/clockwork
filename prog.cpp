@@ -8388,3 +8388,15 @@ vector<string> app_dag::sorted_fusion_groups() {
   }
   return sorted;
 }
+
+map<std::string, std::set<string> > one_stage_per_group(prog& prg) {
+  map<std::string, std::set<string> > fusion_groups;
+  int i = 0;
+  for (auto gp : get_kernels(prg)) {
+    fusion_groups["gp_" + str(i)] = {gp};
+    i++;
+  }
+
+  return fusion_groups;
+}
+

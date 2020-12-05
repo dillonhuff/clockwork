@@ -18830,18 +18830,6 @@ prog stencil_chain(const std::string& name) {
   return prg;
 }
 
-
-map<std::string, std::set<string> > one_stage_per_group(prog& prg) {
-  map<std::string, std::set<string> > fusion_groups;
-  int i = 0;
-  for (auto gp : get_kernels(prg)) {
-    fusion_groups["gp_" + str(i)] = {gp};
-    i++;
-  }
-
-  return fusion_groups;
-}
-
 void dhuff_playground() {
   //test_multi_kernel_unsharp();
   //llf_test();
