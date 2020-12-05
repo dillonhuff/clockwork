@@ -187,12 +187,6 @@ for (int c0 = 0; c0 <= 65; c0 += 1)
 #endif //__VIVADO_SYNTH__
 }
 
-void Extracted_gray_ld22_gray_ld26_oc_load_in01__wrapper(HWStream<hw_uint<32> >& /* no bundle get_args num ports = 1 */in, HWStream<hw_uint<32> >& /* no bundle get_args num ports = 1 */gray_to_gp_120, HWStream<hw_uint<32> >& /* no bundle get_args num ports = 1 */gray_to_gp_224, const int num_epochs) {
-
-  for (int epoch = 0; epoch < num_epochs; epoch++) {
-    Extracted_gray_ld22_gray_ld26_oc_load_in01_(in, gray_to_gp_120, gray_to_gp_224);
-  }
-}
 struct gray_FIFO_buf44_all_inputs_to_all_outputs_cache {
 	// RAM Box: {[0, 63], [0, 63]}
   hw_uint<32>  RAM[64][64];
@@ -401,12 +395,6 @@ for (int c0 = 0; c0 <= 63; c0 += 1)
 #endif //__VIVADO_SYNTH__
 }
 
-void Extracted_gray_diff_ld38_gray_to_gp_120_ld46_pw_math_gray1213__wrapper(HWStream<hw_uint<32> >& /* no bundle get_args num ports = 1 */gray_to_gp_120, HWStream<hw_uint<32> >& /* no bundle get_args num ports = 1 */gray_diff_to_gp_436, const int num_epochs) {
-
-  for (int epoch = 0; epoch < num_epochs; epoch++) {
-    Extracted_gray_diff_ld38_gray_to_gp_120_ld46_pw_math_gray1213_(gray_to_gp_120, gray_diff_to_gp_436);
-  }
-}
 struct gray_FIFO_buf48_all_inputs_to_all_outputs_cache {
 	// RAM Box: {[0, 65], [0, 65]}
   hw_uint<32>  RAM[66][66];
@@ -621,12 +609,6 @@ for (int c0 = 0; c0 <= 65; c0 += 1)
 #endif //__VIVADO_SYNTH__
 }
 
-void Extracted_gray_blur_ld30_gray_to_gp_224_ld50_pw_math_gray45__wrapper(HWStream<hw_uint<32> >& /* no bundle get_args num ports = 1 */gray_to_gp_224, HWStream<hw_uint<32> >& /* no bundle get_args num ports = 1 */gray_blur_to_gp_328, const int num_epochs) {
-
-  for (int epoch = 0; epoch < num_epochs; epoch++) {
-    Extracted_gray_blur_ld30_gray_to_gp_224_ld50_pw_math_gray45_(gray_to_gp_224, gray_blur_to_gp_328);
-  }
-}
 struct gray_blur_FIFO_buf52_all_inputs_to_all_outputs_cache {
 	// RAM Box: {[0, 65], [0, 65]}
   hw_uint<32>  RAM[66][66];
@@ -741,6 +723,19 @@ inline void gray_blur_cache_pw_math_gray_blur811_write_bundle_write(hw_uint<32>&
 
 
 // Operation logic
+inline void load_to_gray_blur_FIFO_buf5255(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */gray_blur_to_gp_328, gray_blur_FIFO_buf52_cache& gray_blur_FIFO_buf52, int root, int gray_blur_to_gp_328_ld54, int gray_blur_to_gp_328_ld53) {
+  // Dynamic address computation
+
+	// Consume: gray_blur_to_gp_328
+	auto gray_blur_to_gp_328_gray_blur_to_gp_328_ld53_c__gray_blur_to_gp_328_ld54_value = gray_blur_to_gp_328.read();
+	// Produce: gray_blur_FIFO_buf52
+	gray_blur_FIFO_buf52_load_to_gray_blur_FIFO_buf5255_write_bundle_write(/* arg names */gray_blur_to_gp_328_gray_blur_to_gp_328_ld53_c__gray_blur_to_gp_328_ld54_value, gray_blur_FIFO_buf52, root, gray_blur_to_gp_328_ld54, gray_blur_to_gp_328_ld53, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
 inline void pw_math_gray_blur811(gray_blur_FIFO_buf52_cache& gray_blur_FIFO_buf52, gray_blur_cache_cache& gray_blur_cache, int root, int pw_math_gray_blur89, int pw_math_gray_blur810) {
   // Dynamic address computation
 
@@ -770,19 +765,6 @@ inline void load_to_gray_blur_cache_to_gp_53235(gray_blur_cache_cache& gray_blur
 
 	// Produce: gray_blur_cache_to_gp_532
 	gray_blur_cache_to_gp_532.write(gray_blur_cache_gray_blur_cache_ld33_c__gray_blur_cache_ld34_value);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void load_to_gray_blur_FIFO_buf5255(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */gray_blur_to_gp_328, gray_blur_FIFO_buf52_cache& gray_blur_FIFO_buf52, int root, int gray_blur_to_gp_328_ld54, int gray_blur_to_gp_328_ld53) {
-  // Dynamic address computation
-
-	// Consume: gray_blur_to_gp_328
-	auto gray_blur_to_gp_328_gray_blur_to_gp_328_ld53_c__gray_blur_to_gp_328_ld54_value = gray_blur_to_gp_328.read();
-	// Produce: gray_blur_FIFO_buf52
-	gray_blur_FIFO_buf52_load_to_gray_blur_FIFO_buf5255_write_bundle_write(/* arg names */gray_blur_to_gp_328_gray_blur_to_gp_328_ld53_c__gray_blur_to_gp_328_ld54_value, gray_blur_FIFO_buf52, root, gray_blur_to_gp_328_ld54, gray_blur_to_gp_328_ld53, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -841,12 +823,6 @@ for (int c0 = 0; c0 <= 65; c0 += 1)
 #endif //__VIVADO_SYNTH__
 }
 
-void Extracted_gray_blur_cache_ld34_gray_blur_to_gp_328_ld54_pw_math_gray_blur89__wrapper(HWStream<hw_uint<32> >& /* no bundle get_args num ports = 1 */gray_blur_to_gp_328, HWStream<hw_uint<32> >& /* no bundle get_args num ports = 1 */gray_blur_cache_to_gp_532, const int num_epochs) {
-
-  for (int epoch = 0; epoch < num_epochs; epoch++) {
-    Extracted_gray_blur_cache_ld34_gray_blur_to_gp_328_ld54_pw_math_gray_blur89_(gray_blur_to_gp_328, gray_blur_cache_to_gp_532);
-  }
-}
 struct blurred_FIFO_buf40_all_inputs_to_all_outputs_cache {
 	// RAM Box: {[0, 63], [0, 63]}
   hw_uint<32>  RAM[64][64];
@@ -1065,12 +1041,6 @@ void Extracted_blurred_to_gp_416_ld41_gray_diff_to_gp_436_ld62_x_(HWStream<hw_ui
 #endif //__VIVADO_SYNTH__
 }
 
-void Extracted_blurred_to_gp_416_ld41_gray_diff_to_gp_436_ld62_x__wrapper(HWStream<hw_uint<32> >& /* no bundle get_args num ports = 1 */blurred_to_gp_416, HWStream<hw_uint<32> >& /* no bundle get_args num ports = 1 */gray_diff_to_gp_436, HWStream<hw_uint<32> >& /* no bundle get_args num ports = 1 */out, const int num_epochs) {
-
-  for (int epoch = 0; epoch < num_epochs; epoch++) {
-    Extracted_blurred_to_gp_416_ld41_gray_diff_to_gp_436_ld62_x_(blurred_to_gp_416, gray_diff_to_gp_436, out);
-  }
-}
 struct blurred_all_inputs_to_all_outputs_cache {
 	// RAM Box: {[0, 63], [0, 63]}
   hw_uint<32>  RAM[64][64];
@@ -1403,12 +1373,6 @@ for (int c0 = 0; c0 <= 128; c0 += 1) {
 #endif //__VIVADO_SYNTH__
 }
 
-void Extracted_blurred_ld17_gray_blur_cache_to_gp_532_ld58_xb__wrapper(HWStream<hw_uint<32> >& /* no bundle get_args num ports = 1 */gray_blur_cache_to_gp_532, HWStream<hw_uint<32> >& /* no bundle get_args num ports = 1 */blurred_to_gp_416, const int num_epochs) {
-
-  for (int epoch = 0; epoch < num_epochs; epoch++) {
-    Extracted_blurred_ld17_gray_blur_cache_to_gp_532_ld58_xb_(gray_blur_cache_to_gp_532, blurred_to_gp_416);
-  }
-}
 // Driver function
 void unsharp_multi_kernel(HWStream<hw_uint<32> >& /* no bundle get_args num ports = 1 */in, HWStream<hw_uint<32> >& /* no bundle get_args num ports = 1 */out) {
 
