@@ -18831,11 +18831,11 @@ prog stencil_chain(const std::string& name) {
 }
 
 void dhuff_playground() {
-  test_multi_kernel_unsharp();
-  assert(false);
+  //test_multi_kernel_unsharp();
+  //assert(false);
 
-  llf_test();
-  assert(false);
+  //llf_test();
+  //assert(false);
   {
     //auto prg = stencil_chain("sc_stat");
     //generate_optimized_code(prg);
