@@ -4053,6 +4053,8 @@ lakeStream emit_top_address_stream(string fname,
 
   void UBuffer::generate_banks(CodegenOptions& options) {
     cout << "generating banks for buffer: " << name << endl;
+    assert(all_schedules_defined(*this));
+
     if (options.debug_options.expect_all_linebuffers) {
       assert(dynamic_ports.size() == 0);
     }
@@ -4153,7 +4155,6 @@ lakeStream emit_top_address_stream(string fname,
         cout << "Generating banks for port: " << outpt << " on buffer " << name << endl;
         cout << tab(1) << "access map: " << str(access_map.at(outpt)) << endl;
         cout << endl << endl << *this << endl << endl;
-        assert(!empty(schedule.at(outpt)));
         umap* reads_to_sources = get_lexmax_events(outpt);
         cout << tab(1) << "lexmax events: " << str(reads_to_sources) << endl;
         uset* producers_for_outpt = range(reads_to_sources);
@@ -6430,3 +6431,13 @@ std::ostream& operator<<(std::ostream& out, dgraph& dg) {
   return out;
 }
 
+bool all_schedules_defined(UBuffer& buf) {
+  for (auto pt : buf.get_all_ports()) {
+    if (!empty(buf.domain.at(pt))) {
+      if (empty(buf.schedule.at(pt))) {
+        return false;
+      }
+    }
+  }
+  return true;
+}

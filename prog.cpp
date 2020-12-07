@@ -2022,7 +2022,8 @@ void generate_driver_function_suffix(CodegenOptions& options, ostream& conv_out,
   conv_out << "}" << endl << endl;
 }
 
-void generate_app_code_body(CodegenOptions& options,
+void generate_app_code_body(
+    CodegenOptions& options,
     ostream& conv_out,
     map<string, UBuffer>& buffers,
     prog& prg,
@@ -8014,6 +8015,7 @@ void generate_app_code(
   cout << "Generating code for " << dag.prg.name << endl;
   for (auto b : buffers) {
     cout << endl << b.second << endl;
+    assert(all_schedules_defined(b.second));
   }
   //assert(false);
 
@@ -8050,6 +8052,7 @@ void generate_app_code(
       if (gp.second.is_boundary(buf.second.name)) {
         reps[buf.second.name] = buf.second;
       }
+      assert(all_schedules_defined(buf.second));
     }
 
     generate_app_code_body(options,
