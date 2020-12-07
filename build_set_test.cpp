@@ -18774,7 +18774,7 @@ prog stencil_chain(const std::string& name) {
   string last_level = "in";
   string current_level = "";
 
-  const int NUM_STAGES = 0;
+  const int NUM_STAGES = 1;
   //const int NUM_STAGES = 15;
   //const int NUM_STAGES = 2;
   //const int NUM_STAGES = 200;
@@ -18796,21 +18796,10 @@ prog stencil_chain(const std::string& name) {
     }
     init->add_store(current_level, x, y);
     
-    //auto init = ol->add_op(prg.un("init"));
-    //init->add_function("set_zero_32");
-    //init->add_store(current_level, x, y);
-
-    //auto il = ol->add_nest(yi, -1, 2, xi, -1, 2);
-
-    //auto update = il->add_op(prg.un("update"));
-    //update->add_function("add");
-    //update->add_load(current_level, x, y);
-    //update->add_load(last_level, x + " + " + xi, y + " + " + yi);
-    //update->add_store(current_level, x, y);
     last_level = current_level;
   }
 
-  cpy("out", last_level, 2, prg);
+  cpy("out", current_level, 2, prg);
 
   //infer_bounds("out", {128, 128}, prg);
   cout << "==== DONE BUILDING PROGRAM, STARTING BOUNDS INFERENCE" << endl;
@@ -18819,7 +18808,7 @@ prog stencil_chain(const std::string& name) {
   //normalize_bounds(prg);
   //normalize_address_offsets(prg);
 
-    vector<int> bounds = {1920, 1080};
+  vector<int> bounds = {128, 128};
   infer_bounds("out", bounds, prg);
 
   prg.pretty_print();
