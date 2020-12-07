@@ -19445,32 +19445,21 @@ void dhuff_playground() {
 }
 
 void stencil_chain_multi_kernel_test() {
-  //auto prg = stencil_chain("sc_stat");
-  //generate_optimized_code(prg);
-  //generate_regression_testbench(prg);
-  //auto unopt_postprocessed = run_regression_tb(prg);
-  //move_to_benchmarks_folder(prg.name);
+  auto prgs = stencil_chain("sc_stat");
+  generate_optimized_code(prgs);
+  generate_regression_testbench(prgs);
+  auto unopt_postprocessed = run_regression_tb(prgs);
+  move_to_benchmarks_folder(prgs.name);
 
-  vector<int> bounds = {1920, 1080};
-  const int unroll_factor = 16;
   prog prg = stencil_chain("sc_dyn_7_32");
 
   map<std::string, std::set<string> > fusion_groups =
     one_stage_per_group(prg);
 
-  //unroll_reduce_loops(prg);
-  //merge_basic_block_ops(prg);
-
   prg.reset_context();
 
   auto fresh_groups = insert_inter_group_buffers(fusion_groups, prg);
   prg.pretty_print();
-  //assert(false);
-
-  //extend_bounds_to_multiple_of(unroll_factor, "out", prg);
-  //normalize_bounds(prg);
-  //unroll_producer_matching("out", unroll_factor, prg);
-  //merge_basic_block_ops(prg);
 
   cout << "==== DONE PRODUCING PROGRAM, STARTING PARTITIONING" << endl;
   app_dag dag = partition_groups(fresh_groups, prg);
@@ -19483,14 +19472,14 @@ void stencil_chain_multi_kernel_test() {
   }
   //assert(false);
 
-  //generate_regression_testbench(dag.prg);
+  generate_regression_testbench(dag.prg);
 
   CodegenOptions options;
   generate_app_code(options, dag);
 
-  //vector<string> multi_kernel_res = run_regression_tb(dag.prg);
-  //cout << "# lines in multi kernel res = " << multi_kernel_res.size() << endl;
-  //compare("multi_kernel_" + prg.name + "_vs_unopt", multi_kernel_res, unopt_postprocessed);
+  vector<string> multi_kernel_res = run_regression_tb(dag.prg);
+  cout << "# lines in multi kernel res = " << multi_kernel_res.size() << endl;
+  compare("multi_kernel_" + prg.name + "_vs_unopt", multi_kernel_res, unopt_postprocessed);
 
   cout << "==== DONE CODEGENING PROGRAM, STARTING MOVE TO BENCHMARKS" << endl;
   move_to_benchmarks_folder(dag.prg.name);

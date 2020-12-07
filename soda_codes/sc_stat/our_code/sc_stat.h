@@ -3,4 +3,4 @@
 
 #include "hw_classes.h"
 
-void sc_stat(HWStream<hw_uint<128> >& /* no bundle get_args num ports = 4 */in_oc, HWStream<hw_uint<128> >& /* no bundle get_args num ports = 4 */out);
+void sc_stat(HWStream<hw_uint<32> >& /* no bundle get_args num ports = 1 */in_oc, HWStream<hw_uint<32> >& /* no bundle get_args num ports = 1 */out);
