@@ -122,8 +122,10 @@ umap* schedule_guard(umap* sched, bool is_rd) {
 umap* get_lexmax_events(const std::string& outpt, UBuffer& buf) {
   umap* src_map = nullptr;
   for (auto inpt : buf.get_in_ports()) {
-    auto beforeAcc = lex_gt(schedule_guard(buf.schedule.at(outpt), true),
-            schedule_guard(buf.schedule.at(inpt),false));
+    auto beforeAcc = lex_gt(buf.schedule.at(outpt),
+        buf.schedule.at(inpt));
+    //auto beforeAcc = lex_gt(schedule_guard(buf.schedule.at(outpt), true),
+            //schedule_guard(buf.schedule.at(inpt),false));
     if (src_map == nullptr) {
       auto outmap = buf.access_map.at(outpt);
       auto inmap = buf.access_map.at(inpt);
@@ -145,7 +147,8 @@ umap* get_lexmax_events(const std::string& outpt, UBuffer& buf) {
   }
   assert(src_map != nullptr);
 
-  auto sched = buf.global_schedule_with_guard();
+  //auto sched = buf.global_schedule_with_guard();
+  auto sched = buf.global_schedule();
   auto after = lex_gt(sched, sched);
 
   src_map = its(src_map, after);
@@ -2066,16 +2069,9 @@ void UBuffer::generate_coreir(CodegenOptions& options,
     auto c = def->getContext();
     auto ns = c->getNamespace("global");
 
-    // Caught between a few issues, one is:
-    // Q: How do we model a quad-port tile with the primitives we have in an easy way?
-    // Q: How do we assign operations to ports? Do we assume they are uniform? IOW
-    //    can any port access any memory location?
-
     int readers = buf.get_out_ports().size();
     int writers = buf.get_in_ports().size();
 
-    //cout << "Generating banks for..." << endl;
-    //cout << buf << endl;
     if (readers == 1 && writers == 1) {
       string reader = pick(buf.get_out_ports());
       auto t = def->addInstance(buf.name + "_bank", "global.raw_dual_port_sram_tile", {{"depth", COREMK(c, 2048)}});
@@ -3431,8 +3427,10 @@ lakeStream emit_top_address_stream(string fname,
     cout << "Buffer = " << name << endl;
     assert(get_in_ports().size() > 0);
     for (auto inpt : get_in_ports()) {
-      auto beforeAcc = lex_gt(schedule_guard(schedule.at(outpt), true),
-              schedule_guard(schedule.at(inpt), false));
+      auto beforeAcc = lex_gt(schedule.at(outpt),
+          schedule.at(inpt));
+      //auto beforeAcc = lex_gt(schedule_guard(schedule.at(outpt), true),
+              //schedule_guard(schedule.at(inpt), false));
       if (src_map == nullptr) {
         auto outmap = access_map.at(outpt);
         auto inmap = access_map.at(inpt);
@@ -3458,7 +3456,8 @@ lakeStream emit_top_address_stream(string fname,
     assert(src_map != nullptr);
 
     //cout << "src map done: " << str(src_map) << endl;
-    auto sched = global_schedule_with_guard();
+    //auto sched = global_schedule_with_guard();
+    auto sched = global_schedule();
     auto after = lex_gt(sched, sched);
 
     src_map = its(src_map, after);
@@ -4053,7 +4052,7 @@ lakeStream emit_top_address_stream(string fname,
   }
 
   void UBuffer::generate_banks(CodegenOptions& options) {
-    cout << "generating banks for " << name << endl;
+    cout << "generating banks for buffer: " << name << endl;
     if (options.debug_options.expect_all_linebuffers) {
       assert(dynamic_ports.size() == 0);
     }
@@ -4151,11 +4150,8 @@ lakeStream emit_top_address_stream(string fname,
 
       // Use naive banking that reaches target throughput
       for (auto outpt : get_out_ports()) {
-      //for (auto outptg : unique_outs) {
-        //string outpt = outptg.first;
-
-
-        cout << "Generating banks for " << outpt << endl;
+        cout << "Generating banks for port: " << outpt << " on buffer " << name << endl;
+        cout << tab(1) << "access map: " << str(access_map.at(outpt)) << endl;
         umap* reads_to_sources = get_lexmax_events(outpt);
         cout << tab(1) << "lexmax events: " << str(reads_to_sources) << endl;
         uset* producers_for_outpt = range(reads_to_sources);

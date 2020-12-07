@@ -19458,17 +19458,19 @@ void stencil_chain_multi_kernel_test() {
   map<std::string, std::set<string> > fusion_groups =
     one_stage_per_group(prg);
 
-  unroll_reduce_loops(prg);
-  merge_basic_block_ops(prg);
+  //unroll_reduce_loops(prg);
+  //merge_basic_block_ops(prg);
 
   prg.reset_context();
 
   auto fresh_groups = insert_inter_group_buffers(fusion_groups, prg);
+  prg.pretty_print();
+  //assert(false);
 
-  extend_bounds_to_multiple_of(unroll_factor, "out", prg);
-  normalize_bounds(prg);
-  unroll_producer_matching("out", unroll_factor, prg);
-  merge_basic_block_ops(prg);
+  //extend_bounds_to_multiple_of(unroll_factor, "out", prg);
+  //normalize_bounds(prg);
+  //unroll_producer_matching("out", unroll_factor, prg);
+  //merge_basic_block_ops(prg);
 
   cout << "==== DONE PRODUCING PROGRAM, STARTING PARTITIONING" << endl;
   app_dag dag = partition_groups(fresh_groups, prg);
@@ -19479,6 +19481,7 @@ void stencil_chain_multi_kernel_test() {
     gp.second.pretty_print();
     cout << endl;
   }
+  //assert(false);
 
   //generate_regression_testbench(dag.prg);
 
