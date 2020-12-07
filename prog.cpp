@@ -1269,6 +1269,12 @@ map<string, UBuffer> build_buffers(prog& prg, umap* opt_sched) {
         if (::name(dset) == op->name) {
           isl_space* dspace = get_space(dset);
           isl_space* other_dspace = get_space(domains.at(op));
+
+          isl_id* dspace_id = isl_space_get_tuple_id(dspace, isl_dim_set);
+          cout << tab(1) << "dspace_id = " << str(dspace_id) << endl;
+          isl_id* other_dspace_id = isl_space_get_tuple_id(other_dspace, isl_dim_set);
+          cout << tab(1) << "other_dspace_id = " << str(other_dspace_id) << endl;
+
           assert(isl_space_has_equal_params(dspace, other_dspace));
           assert(isl_space_has_equal_tuples(dspace, other_dspace));
           assert(isl_space_is_equal(dspace, other_dspace));
