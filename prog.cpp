@@ -1275,6 +1275,7 @@ map<string, UBuffer> build_buffers(prog& prg, umap* opt_sched) {
           isl_id* other_dspace_id = isl_space_get_tuple_id(other_dspace, isl_dim_set);
           cout << tab(1) << "other_dspace_id = " << str(other_dspace_id) << endl;
 
+          assert(dspace_id == other_dspace_id);
           assert(isl_space_has_equal_params(dspace, other_dspace));
           assert(isl_space_has_equal_tuples(dspace, other_dspace));
           assert(isl_space_is_equal(dspace, other_dspace));
