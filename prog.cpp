@@ -1271,7 +1271,7 @@ map<string, UBuffer> build_buffers(prog& prg, umap* opt_sched) {
           isl_space* other_dspace = get_space(domains.at(op));
 
           isl_id* dspace_id = isl_space_get_tuple_id(dspace, isl_dim_set);
-          cout << tab(1) << "dspace_id = " << str(dspace_id) << endl;
+          cout << tab(1) << "dspace_id       = " << str(dspace_id) << endl;
           isl_id* other_dspace_id = isl_space_get_tuple_id(other_dspace, isl_dim_set);
           cout << tab(1) << "other_dspace_id = " << str(other_dspace_id) << endl;
 
