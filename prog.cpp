@@ -8040,6 +8040,25 @@ void generate_app_code(
         release(m);
       }
     }
+
+    cout << "Sched maps size: " << sched_maps.size() << endl;
+    cout << "Opnames size   : " << opnames.size() << endl;
+    cout << "Opnames..." << endl;
+    for (auto op : opnames) {
+      cout << tab(1) << op << endl;
+    }
+    cout << endl;
+
+    cout << "Schedules..." << endl;
+    for (auto op : sched_maps) {
+      cout << tab(1) << str(op) << endl;
+    }
+    cout << endl;
+
+    // There is one schedule map for each op, plus
+    // a default empty schedule map
+    assert(sched_maps.size() == opnames.size() + 1);
+
     auto sched = unn(sched_maps);
 
     auto domains = gp.second.domains();
