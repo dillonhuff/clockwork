@@ -18774,7 +18774,7 @@ prog stencil_chain(const std::string& name) {
   string last_level = "in";
   string current_level = "";
 
-  const int NUM_STAGES = 1;
+  const int NUM_STAGES = 0;
   //const int NUM_STAGES = 15;
   //const int NUM_STAGES = 2;
   //const int NUM_STAGES = 200;
@@ -18799,7 +18799,7 @@ prog stencil_chain(const std::string& name) {
     last_level = current_level;
   }
 
-  cpy("out", current_level, 2, prg);
+  cpy("out", last_level, 2, prg);
 
   //infer_bounds("out", {128, 128}, prg);
   cout << "==== DONE BUILDING PROGRAM, STARTING BOUNDS INFERENCE" << endl;
@@ -19452,6 +19452,8 @@ void stencil_chain_multi_kernel_test() {
   move_to_benchmarks_folder(prgs.name);
 
   prog prg = stencil_chain("sc_dyn_7_32");
+  prg.pretty_print();
+  assert(false);
 
   map<std::string, std::set<string> > fusion_groups =
     one_stage_per_group(prg);
