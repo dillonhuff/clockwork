@@ -122,10 +122,10 @@ umap* schedule_guard(umap* sched, bool is_rd) {
 umap* get_lexmax_events(const std::string& outpt, UBuffer& buf) {
   umap* src_map = nullptr;
   for (auto inpt : buf.get_in_ports()) {
-    auto beforeAcc = lex_gt(buf.schedule.at(outpt),
-        buf.schedule.at(inpt));
-    //auto beforeAcc = lex_gt(schedule_guard(buf.schedule.at(outpt), true),
-            //schedule_guard(buf.schedule.at(inpt),false));
+    //auto beforeAcc = lex_gt(buf.schedule.at(outpt),
+        //buf.schedule.at(inpt));
+    auto beforeAcc = lex_gt(schedule_guard(buf.schedule.at(outpt), true),
+            schedule_guard(buf.schedule.at(inpt),false));
     if (src_map == nullptr) {
       auto outmap = buf.access_map.at(outpt);
       auto inmap = buf.access_map.at(inpt);
@@ -147,8 +147,8 @@ umap* get_lexmax_events(const std::string& outpt, UBuffer& buf) {
   }
   assert(src_map != nullptr);
 
-  //auto sched = buf.global_schedule_with_guard();
-  auto sched = buf.global_schedule();
+  auto sched = buf.global_schedule_with_guard();
+  //auto sched = buf.global_schedule();
   auto after = lex_gt(sched, sched);
 
   src_map = its(src_map, after);
@@ -3427,10 +3427,10 @@ lakeStream emit_top_address_stream(string fname,
     cout << "Buffer = " << name << endl;
     assert(get_in_ports().size() > 0);
     for (auto inpt : get_in_ports()) {
-      auto beforeAcc = lex_gt(schedule.at(outpt),
-          schedule.at(inpt));
-      //auto beforeAcc = lex_gt(schedule_guard(schedule.at(outpt), true),
-              //schedule_guard(schedule.at(inpt), false));
+      //auto beforeAcc = lex_gt(schedule.at(outpt),
+          //schedule.at(inpt));
+      auto beforeAcc = lex_gt(schedule_guard(schedule.at(outpt), true),
+              schedule_guard(schedule.at(inpt), false));
       if (src_map == nullptr) {
         auto outmap = access_map.at(outpt);
         auto inmap = access_map.at(inpt);
@@ -3456,8 +3456,8 @@ lakeStream emit_top_address_stream(string fname,
     assert(src_map != nullptr);
 
     //cout << "src map done: " << str(src_map) << endl;
-    //auto sched = global_schedule_with_guard();
-    auto sched = global_schedule();
+    auto sched = global_schedule_with_guard();
+    //auto sched = global_schedule();
     auto after = lex_gt(sched, sched);
 
     src_map = its(src_map, after);
@@ -4152,6 +4152,7 @@ lakeStream emit_top_address_stream(string fname,
       for (auto outpt : get_out_ports()) {
         cout << "Generating banks for port: " << outpt << " on buffer " << name << endl;
         cout << tab(1) << "access map: " << str(access_map.at(outpt)) << endl;
+        cout << endl << endl << *this << endl << endl;
         umap* reads_to_sources = get_lexmax_events(outpt);
         cout << tab(1) << "lexmax events: " << str(reads_to_sources) << endl;
         uset* producers_for_outpt = range(reads_to_sources);

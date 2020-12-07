@@ -8008,9 +8008,14 @@ void generate_app_code(
   //auto sched = dag.prg.unoptimized_schedule();
   //auto global_sched = dag.prg.unoptimized_schedule();
   //auto buffers = build_buffers(dag.prg, dag.prg.unoptimized_schedule());
-  
+ 
   auto global_sched = dag.prg.optimized_codegen();
   auto buffers = build_buffers(dag.prg, global_sched);
+  cout << "Generating code for " << dag.prg.name << endl;
+  for (auto b : buffers) {
+    cout << endl << b.second << endl;
+  }
+  assert(false);
 
   ofstream conv_out(dag.prg.name + ".cpp");
   generate_app_prefix(options, conv_out, dag.prg);

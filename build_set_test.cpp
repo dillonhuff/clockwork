@@ -19453,7 +19453,7 @@ void stencil_chain_multi_kernel_test() {
 
   prog prg = stencil_chain("sc_dyn_7_32");
   prg.pretty_print();
-  assert(false);
+  //assert(false);
 
   map<std::string, std::set<string> > fusion_groups =
     one_stage_per_group(prg);
