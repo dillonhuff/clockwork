@@ -4153,6 +4153,7 @@ lakeStream emit_top_address_stream(string fname,
         cout << "Generating banks for port: " << outpt << " on buffer " << name << endl;
         cout << tab(1) << "access map: " << str(access_map.at(outpt)) << endl;
         cout << endl << endl << *this << endl << endl;
+        assert(!empty(schedule.at(outpt)));
         umap* reads_to_sources = get_lexmax_events(outpt);
         cout << tab(1) << "lexmax events: " << str(reads_to_sources) << endl;
         uset* producers_for_outpt = range(reads_to_sources);

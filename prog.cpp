@@ -8015,7 +8015,7 @@ void generate_app_code(
   for (auto b : buffers) {
     cout << endl << b.second << endl;
   }
-  assert(false);
+  //assert(false);
 
   ofstream conv_out(dag.prg.name + ".cpp");
   generate_app_prefix(options, conv_out, dag.prg);
