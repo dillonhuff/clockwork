@@ -1385,12 +1385,12 @@ std::string str(isl_basic_set* const m) {
   return r;
 }
 
-std::string str(isl_set* const m) {
-  assert(m != nullptr);
-  auto ctx = isl_set_get_ctx(m);
+std::string str(isl_set* const s) {
+  assert(s != nullptr);
+  auto ctx = isl_set_get_ctx(s);
   isl_printer *p;
   p = isl_printer_to_str(ctx);
-  p = isl_printer_print_set(p, cpy(m));
+  p = isl_printer_print_set(p, cpy(s));
   char* rs = isl_printer_get_str(p);
   isl_printer_free(p);
   std::string r(rs);

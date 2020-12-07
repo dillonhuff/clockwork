@@ -1264,6 +1264,19 @@ map<string, UBuffer> build_buffers(prog& prg, umap* opt_sched) {
       cout << "Dom ITS  : " << str(domain_its) << endl;
       cout << "Dom UNN  : " << str(unn(sched_dom, to_uset(domains.at(op)))) << endl;
 
+      cout << "Per group..." << endl;
+      for (auto dset : get_sets(sched_dom)) {
+        if (::name(dset) == op->name) {
+          isl_space* dspace = get_space(dset);
+          isl_space* other_dspace = get_space(domains.at(op));
+          assert(isl_space_has_equal_params(dspace, other_dspace));
+          assert(isl_space_has_equal_tuples(dspace, other_dspace));
+          assert(isl_space_is_equal(dspace, other_dspace));
+          cout << tab(1) << "Schedule domain set: " << str(dset) << endl;
+          cout << tab(1) << "Domain set from prg: " << str(domains.at(op)) << endl;
+          cout << tab(1) << "ITS: " << str(its(dset, domains.at(op))) << endl;
+        }
+      }
       auto op_sched_its = its(opt_sched, to_uset(domains.at(op)));
       cout << "ITS      : " << str(op_sched_its) << endl;
       cout << "sched ctx: " << ctx(opt_sched) << endl;
