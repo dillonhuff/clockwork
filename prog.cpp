@@ -1158,6 +1158,7 @@ map<string, UBuffer> build_buffers(prog& prg, umap* opt_sched) {
   std::sort(all_op_vec.begin(), all_op_vec.end(), [](op* l, op* r){return l->name > r->name;});
 
   for (auto op : all_op_vec) {
+
     for (auto consumed : op->produce_locs) {
       string name = consumed.first;
 
@@ -1254,6 +1255,22 @@ map<string, UBuffer> build_buffers(prog& prg, umap* opt_sched) {
 
       cout << "\tAdding output port: " << pt_name << endl;
       cout << "\t\tConsumed: " << str(consumed_here) << endl;
+      cout << "Opt sched: " << str(opt_sched) << endl;
+      cout << "Dom      : " << str(domains.at(op)) << endl;
+      auto sched_dom = domain(opt_sched);
+      cout << "SDom     : " << str(sched_dom) << endl;
+
+      auto domain_its = its(sched_dom, to_uset(domains.at(op)));
+      cout << "Dom ITS  : " << str(domain_its) << endl;
+      cout << "Dom UNN  : " << str(unn(sched_dom, to_uset(domains.at(op)))) << endl;
+
+      auto op_sched_its = its(opt_sched, to_uset(domains.at(op)));
+      cout << "ITS      : " << str(op_sched_its) << endl;
+      cout << "sched ctx: " << ctx(opt_sched) << endl;
+      cout << "dom   ctx: " << ctx(domains.at(op)) << endl;
+
+      assert(ctx(opt_sched) == ctx(domains.at(op)));
+
       buf.add_out_pt(pt_name, domains.at(op), consumed_here, its(opt_sched, domains.at(op)));
 
       if (op->dynamic_reads(name)) {
@@ -8071,6 +8088,8 @@ void generate_app_code(
       if (gp.second.is_boundary(buf.second.name)) {
         reps[buf.second.name] = buf.second;
       }
+      cout << buf.second << endl;
+      cout << "sched = " << str(sched) << endl;
       assert(all_schedules_defined(buf.second));
     }
 
