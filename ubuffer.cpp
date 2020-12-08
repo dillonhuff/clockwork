@@ -1688,15 +1688,15 @@ void UBuffer::generate_coreir(CodegenOptions& options,
       assert(outpts.size() == 1);
 
       //TODO: Need to move this to shift register optimization
-      auto op_latency = info.compute_latency(pick(get_write_ops()));
+      //auto op_latency = info.compute_latency(pick(get_write_ops()));
       int reg_delay_length = bk.maxdelay;
-      if(is_in_pt(pick(inpts)) && (op_latency != 0)) {
-        reg_delay_length -= op_latency;
-        cout << "\t reduce delay for OP : " << pick(get_read_ops()) << endl;
-      }
-      if (reg_delay_length == 0) {
-          def->connect(pt2wire.at(pick(inpts)), pt2wire.at(pick(outpts)));
-      }
+      //if(is_in_pt(pick(inpts)) && (op_latency != 0)) {
+      //  reg_delay_length -= op_latency;
+      //  cout << "\t reduce delay for OP : " << pick(get_read_ops()) << endl;
+      //}
+      //if (reg_delay_length == 0) {
+      //    def->connect(pt2wire.at(pick(inpts)), pt2wire.at(pick(outpts)));
+      //}
 
       CoreIR::Wireable* last_out;
       for (size_t i = 0; i < reg_delay_length; i ++) {
