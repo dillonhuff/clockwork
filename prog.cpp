@@ -8064,6 +8064,7 @@ void generate_app_code(
     //auto sched = gp.second.optimized_codegen();
 
     vector<umap*> sched_maps;
+    map<op*, isl_set*> domains;
     umap* emp = isl_union_map_read_from_str(gp.second.ctx, "{}");
     sched_maps.push_back(emp);
     std::set<string> opnames;
@@ -8073,6 +8074,7 @@ void generate_app_code(
     for (auto m : get_maps(global_sched)) {
       if (elem(domain_name(m), opnames)) {
         sched_maps.push_back(to_umap(m));
+        domains[gp.second.find_op(domain_name(m))] = domain(m);
       } else {
         release(m);
       }
@@ -8098,7 +8100,7 @@ void generate_app_code(
 
     auto sched = unn(sched_maps);
 
-    auto domains = gp.second.domains();
+    //auto domains = gp.second.domains();
     map<string, isl_set*> domain_map;
     for (auto d : domains) {
       domain_map[d.first->name] = d.second;
