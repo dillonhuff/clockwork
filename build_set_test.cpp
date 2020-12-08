@@ -16689,6 +16689,7 @@ void compile_for_garnet_single_port_mem(prog& prg,
     //auto dg = build_shift_registers(options, prg, b.second, sched);
     port_group2bank(options, prg, b.second, sched);
   }
+  /*
   assert(false);
   ////auto sched = global_schedule_from_buffers(buffers_opt);
 
@@ -16715,11 +16716,11 @@ void compile_for_garnet_single_port_mem(prog& prg,
 
   power_analysis_params power_params;
   power_analysis_info power_stats;
-  Init_PE_energy_cost(power_params);
+  Init_PE_energy_cost(power_params);*/
 
 #ifdef COREIR
   //PE_energy_cost_instance_model(power_params, power_stats, prg);
-  PE_energy_cost(power_params, power_stats, prg);
+  //PE_energy_cost(power_params, power_stats, prg);
 
   generate_garnet_coreir(buffers_opt, prg, options, sched);
   if (!options.config_gen_only) {

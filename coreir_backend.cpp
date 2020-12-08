@@ -4559,7 +4559,7 @@ dgraph build_in_to_out_shift_register_graph(CodegenOptions& options, prog& prg, 
   return dg;
 }
 
-//helper function to create all the shfit registered port
+//helper function to create all the shift registered port
 void create_subbranch(const std::string& out_pt, dgraph& sr_graph, UBuffer& buf) {
     auto src2dst = sr_graph.get_sub_branch(out_pt);
     cout << "\tsubbranch size: " << src2dst.size() << endl;
