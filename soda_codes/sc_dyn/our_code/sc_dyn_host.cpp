@@ -13,7 +13,7 @@ int main(int argc, char **argv) {
 
   std::string binaryFile = argv[1];
 
-  int num_epochs = 1;
+  int num_epochs = 1000;
 
   std::cout << "num_epochs = " << num_epochs << std::endl;
 
@@ -35,6 +35,9 @@ int main(int argc, char **argv) {
   cl::CommandQueue q;
 
   std::vector<uint8_t, aligned_allocator<uint8_t> > pw_math_in_oc03_read_pipe0(pw_math_in_oc03_read_pipe0_size_bytes);
+  for (int i = 0; i < 61504; i++) {
+    pw_math_in_oc03_read_pipe0[i] = i;
+  }
   std::vector<uint8_t, aligned_allocator<uint8_t> > pw_math_stencil_59364367_write_pipe0(pw_math_stencil_59364367_write_pipe0_size_bytes);
 
   // TODO: POPULATE BUFFERS FOR EACH PIPELINE
