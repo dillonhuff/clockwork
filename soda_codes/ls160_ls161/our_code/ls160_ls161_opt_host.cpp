@@ -18,12 +18,12 @@ int main(int argc, char **argv) {
   std::cout << "num_epochs = " << num_epochs << std::endl;
 
   size_t total_size_bytes = 0;
-  const int in_off_chip0_update_0_read_pipe0_DATA_SIZE = num_epochs*1055056;
+  const int in_off_chip0_update_0_read_pipe0_DATA_SIZE = num_epochs*1072352;
   const int in_off_chip0_update_0_read_pipe0_BYTES_PER_PIXEL = 16 / 8;
   size_t in_off_chip0_update_0_read_pipe0_size_bytes = in_off_chip0_update_0_read_pipe0_BYTES_PER_PIXEL * in_off_chip0_update_0_read_pipe0_DATA_SIZE;
 
   total_size_bytes += in_off_chip0_update_0_read_pipe0_size_bytes;
-  const int in_off_chip1_update_0_read_pipe0_DATA_SIZE = num_epochs*1055056;
+  const int in_off_chip1_update_0_read_pipe0_DATA_SIZE = num_epochs*1072352;
   const int in_off_chip1_update_0_read_pipe0_BYTES_PER_PIXEL = 16 / 8;
   size_t in_off_chip1_update_0_read_pipe0_size_bytes = in_off_chip1_update_0_read_pipe0_BYTES_PER_PIXEL * in_off_chip1_update_0_read_pipe0_DATA_SIZE;
 
@@ -118,11 +118,7 @@ nsduration = end - start;
   double dbytes = total_size_bytes;
   double bpersec = (dbytes / dsduration);
   double gbpersec = bpersec / ((double)1024 * 1024 * 1024);
-<<<<<<< HEAD
-  std::cout << "byts = " << dbytes << std::endl;
-=======
   std::cout << "bytes       = " << dbytes << std::endl;
->>>>>>> af96302a199aa4af6ca5d6af777f72b0cead8cbb
   std::cout << "bytes / sec = " << bpersec << std::endl;
   std::cout << "GB / sec    = " << gbpersec << std::endl;
   printf("Execution time = %f (sec) \n", dsduration);

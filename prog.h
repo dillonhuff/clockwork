@@ -871,6 +871,8 @@ struct prog {
 
   map<string, vector<int> > buffer_bounds;
 
+  void reset_context();
+
   void sanity_check();
 
   op* parent(op* p);
@@ -1642,6 +1644,8 @@ std::vector<op*> get_ordered_inner_loops(prog& prg);
 
 isl_set* iteration_domain(op* loop, prog& prg);
 
+umap* consumer_umap(op* loop, prog& prg);
+
 isl_map* consumer_map(op* loop, const std::string& b, prog& prg);
 isl_map* producer_map(op* loop, const std::string& b, prog& prg);
 
@@ -1910,5 +1914,71 @@ UBuffer write_latency_adjusted_buffer(
 
 vector<isl_multi_aff*> write_addrs(op* op, const std::string& buf, prog& prg);
 
+vector<isl_multi_aff*> read_addrs(op* op, prog& prg);
 vector<isl_multi_aff*> read_addrs(op* op, const std::string& buf, prog& prg);
 
+struct app_dag {
+  prog prg;
+  map<string, std::set<string> > fusion_groups;
+
+  // This is constructed later.
+  map<string, prog> fusion_group_progs;
+  map<string, int> channel_sizes;
+
+
+  vector<string> sorted_fusion_groups();
+
+  bool is_boundary(const std::string& buf) {
+    return prg.is_boundary(buf);
+  }
+
+  string producer_group(const std::string& buf) {
+    assert(fusion_groups.size() == fusion_group_progs.size());
+
+    for (auto& gp : fusion_group_progs) {
+      if (elem(buf, buffers_written(gp.second))) {
+        return gp.first;
+      }
+    }
+    cout << "Error: No producer group for: " << buf << endl;
+    cout << "Program..." << endl;
+    prg.pretty_print();
+    cout << endl;
+
+    cout << "Fusion group progs..." << endl;
+    for (auto& gp : fusion_group_progs) {
+      gp.second.pretty_print();
+      cout << endl;
+    }
+    assert(false);
+  }
+
+  bool in_group(op* op, const std::string& group_name) {
+    for (std::string g : map_find(group_name, fusion_groups)) {
+      //cout << "checking if " << op->name << " is in " << g << endl;
+      auto lp = prg.find_loop(g);
+      //lp->pretty_print();
+      if (lp == op || elem(op, lp->descendant_ops())) {
+        return true;
+      }
+    }
+    return false;
+  }
+};
+
+
+bool all_kernel_inputs_are_program_inputs(app_dag& dag);
+
+bool all_kernel_outputs_have_fanout_one(app_dag& dag);
+
+void generate_app_code(CodegenOptions& options,
+    app_dag& dag);
+
+app_dag partition_groups(const std::map<std::string, std::set<std::string> >& fresh_groups, prog& prg);
+
+app_dag partition_application(const std::map<std::string, std::set<std::string> >& fusion_groups, prog& prg);
+
+std::map<std::string, std::set<std::string> >
+insert_inter_group_buffers(const std::map<std::string, std::set<std::string> >& fusion_groups, prog& prg);
+
+map<std::string, std::set<string> > one_stage_per_group(prog& prg);

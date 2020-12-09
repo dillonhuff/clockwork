@@ -1385,12 +1385,12 @@ std::string str(isl_basic_set* const m) {
   return r;
 }
 
-std::string str(isl_set* const m) {
-  assert(m != nullptr);
-  auto ctx = isl_set_get_ctx(m);
+std::string str(isl_set* const s) {
+  assert(s != nullptr);
+  auto ctx = isl_set_get_ctx(s);
   isl_printer *p;
   p = isl_printer_to_str(ctx);
-  p = isl_printer_print_set(p, cpy(m));
+  p = isl_printer_print_set(p, cpy(s));
   char* rs = isl_printer_get_str(p);
   isl_printer_free(p);
   std::string r(rs);
@@ -1449,6 +1449,31 @@ isl_map* lexmax(isl_map* const m0) {
 isl_map* inv(isl_map* const m0) {
   return isl_map_reverse(cpy(m0));
 }
+
+uset* unn(const std::vector<uset*>& sets) {
+  uset* res = nullptr;
+  for (auto s : sets) {
+    if (res == nullptr) {
+      res = cpy(s);
+    } else {
+      res = unn(res, s);
+    }
+  }
+  return res;
+}
+
+umap* unn(const std::vector<umap*>& sets) {
+  umap* res = nullptr;
+  for (auto s : sets) {
+    if (res == nullptr) {
+      res = cpy(s);
+    } else {
+      res = unn(res, s);
+    }
+  }
+  return res;
+}
+
 
 isl_set* unn(const std::vector<isl_set*>& sets) {
   isl_set* res = nullptr;

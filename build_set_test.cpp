@@ -7078,15 +7078,6 @@ prog halide_dnn_conv() {
   return prg;
 }
 
-void halide_harris_test() {
-  prog prg = halide_harris();
-  cout << "Created program..." << endl;
-  prg.pretty_print();
-  //generate_optimized_code(prg);
-
-  regression_test(prg);
-}
-
 void halide_dnn_test() {
   prog prg = halide_dnn_conv();
   cout << "Created program..." << endl;
@@ -7958,7 +7949,7 @@ void generate_app_benchmark(
   options.use_custom_code_string = true;
   app.realize(options, name, mini_dimensions, 1);
   int bmp_res = run_sw_bmp_test_harness(name + "_opt");
-  assert(false);
+  //assert(false);
   {
     CodegenOptions options;
     options.internal = true;
@@ -8713,6 +8704,41 @@ void exposure_fusion_iccad_sizes(const std::string& prefix) {
     assert(naive == optimized);
     move_to_benchmarks_folder(name + "_opt");
   }
+}
+
+App stencil_chain_iccad(const std::string& out_name) {
+  App lp;
+  lp.set_default_pixel_width(16);
+  lp.func2d("in_off_chip");
+
+  // The temporary buffer we store the input image in
+  lp.func2d("in", "id", pt("in_off_chip"));
+
+  int levels = 4;
+  string last = "in";
+
+  //auto dark_weight_pyramid = gauss_pyramid(pyramid_levels, "in", lp);
+
+  lp.func2d(out_name, "id", pt(last));
+
+  return lp;
+}
+void stencil_chain_iccad_apps(const std::string& prefix) {
+  //vector<int> throughputs{1, 2, 4, 8, 16};
+  vector<int> throughputs{1};
+  for (auto throughput : throughputs) {
+    string name = prefix + "_" + str(throughput);
+    App lp = stencil_chain_iccad(name);
+    int rows = 1080;
+    int cols = 1920;
+    CodegenOptions options;
+    options.internal = true;
+    options.use_custom_code_string = true;
+    lp.realize(options, name, {cols, rows}, "in", throughput);
+
+    move_to_benchmarks_folder(name + "_opt");
+  }
+  assert(false);
 }
 
 void gauss_pyramid_iccad_apps(const std::string& prefix) {
@@ -17850,116 +17876,9 @@ void histogram_2d_test() {
   //assert(false);
 }
 
-void application_tests() {
-  //lake_tests();
-  //cnn_test();
-  iccad_tests();
-  exposure_fusion_iccad_apps("ef_cc_10_level");
-  histogram_2d_test();
-
-  // Possibly failing
-  //halide_harris_test();
-  conv_test();
-  //conv_2d_bc_test();
-
-  resnet_test();
-
-  coreir_tests();
-  multi_output_app_test();
-
-  sobel_test();
-  jacobi_2d_test();
-
-  reaccess_no_hierarchy_rolled_test();
-
-  two_input_mag_test();
-  one_input_mag_test();
-
-  sum_float_test();
-
-  sobel_mag_y_test();
-  sobel_app_test();
-  sobel_mag_x_test();
-  heat_3d_test();
-
-  upsample_reduce_test();
-
-  pointwise_test();
-
-  stencil_3d_test();
-  //assert(false);
-
-  //unet_conv_3_3_test();
-  cyclic_banked_conv_test();
-  //register_file_optimization_test();
-
-  // Does not work with register files?
-
-  neg_stencil_test();
-
-  gaussian_pyramid_test();
-  warp_and_upsample_test();
-
-  //conv_1d_rolled_test();
-  //synth_upsample_test();
-  unsharp_test();
-  //conv_2d_rolled_test();
-  //mobilenet_test();
-  pyramid_2d_test();
-  pyramid_test();
-
-  up_stencil_auto_unrolled_test();
-  up_down_auto_unrolled_test();
-  up_stencil_down_auto_unrolled_test();
-  conv3x3_app_unrolled_test();
-  conv3x3_app_test();
-  conv3x3_app_unrolled_uneven_test();
-
-  jacobi2d_app_test();
-
-  up_stencil_test();
-  blur_x_test();
-
-  //remove_reduce_inits_test();
-
-  reuse_buffered_conv_test();
+void infer_bounds_tests() {
   infer_uneven_bounds_test();
-  llf_pyramid_test();
   infer_bounds_unrolled_test();
-  llf_test();
-  blur_example();
-  //assert(false);
-  //halide_camera_pipeline_test();
-  register_file_test();
-
-
-  //assert(false);
-
-  // Failing?
-  two_in_window_test();
-  jacobi_2d_2_test();
-  soda_blur_test();
-  two_in_conv2d_test();
-  //assert(false);
-
-  //parse_denoise3d_test();
-  //app added for cnn
-
-
-  sobel_16_stage_x_app_test();
-
-  up_stencil_test();
-  blur_x_test();
-
-  dummy_app_test();
-
-  blur_and_downsample_test();
-  denoise2d_test();
-
-  brighten_blur_asplos_example();
-  //raw_memtile_verilog_test();
-  //raw_memtile_verilog_as_delay_test();
-
   infer_bounds_multiple_inputs();
   infer_bounds_16_stage_5x5_conv_test();
   infer_bounds_multi_5x1_stage_negative_conv_test();
@@ -17973,64 +17892,50 @@ void application_tests() {
   infer_bounds_negative_conv_test();
 
 
-  sum_diffs_test();
-  denoise3d_reconvergence_test();
-  tricky_shift_register_reconvergence_test();
-  mismatched_stencil_test();
-  gaussian_pyramid_app_test("gp64x64");
+}
 
-  reduce_1d_test();
-  reduce_2d_test();
-  ram_addr_unit_test();
-
-
+void up_to_hist_tests() {
+  cout << "past upsample2d_test" << endl;
   upsample2d_test();
   upsample_stencil_2d_test();
   upsample_stencil_1d_test();
   up_unrolled_4_test();
   reduce_rows_test();
   reaccess_no_hierarchy_test();
-  //playground();
 
   up_unrolled_test();
-
-  //adobe_meeting_apps();
   sum_denoise_test();
-  //assert(false);
-
   up_down_unrolled_test();
-
-
   histogram_test();
-  //assert(false);
-  halide_cascade_test();
 
-  //mmul_outer_prod_test();
+  cout << "past histogram test" << endl;
+}
 
+void up_to_id_stream_tests() {
   tricky_shift_register_reconvergence_test();
-
   mmul_outer_prod_test();
   grayscale_conversion_test();
+  compute_unit_with_index_variables_test();
+  halide_dnn_test();
+
+  //conv_1d_bc_test();
   //print_test();
   //manual_unroll_test();
-
-  compute_unit_with_index_variables_test();
-
   //pyr_1d_conv_test();
-  halide_dnn_test();
-  //conv_1d_bc_test();
 
   conv_1d_test();
-
   jacobi2d_app_test();
   downsample2d_test();
   up_stencil_down_test();
   downsample_and_blur_test();
-
   updown_merge_test();
   harris_unrolled_test();
 
 
+  cout << "at identity_stream_coreir_test" << endl;
+}
+
+void up_to_weight_add_psef() {
   identity_stream_coreir_test();
   weight_streaming_test();
 
@@ -18049,23 +17954,137 @@ void application_tests() {
   conv_3_3_halide_test();
 
   async_add_test();
-  lake_agg_sram_tb_config_test();
   seidel2d_test();
   add_four_channels();
   weight_add_psef();
+  cout << "at weight add psef" << endl;
+}
+
+void up_to_sobel_mag_y_test() {
 
   two_stage_psef();
   psef_multi_output_test();
-
   non_rate_matched_ds_test();
+  histogram_2d_test();
+  // Possibly failing
+  conv_test();
+  resnet_test();
+  multi_output_app_test();
+  sobel_test();
+  jacobi_2d_test();
+  reaccess_no_hierarchy_rolled_test();
+  two_input_mag_test();
+  one_input_mag_test();
+  sum_float_test();
+  sobel_mag_y_test();
+  cout << "at sobel_mag_y_test" << endl;
 
-  //two_input_denoise_pipeline_test();
-  //synth_wire_test();
-  //synth_sr_boundary_condition_test();
-  //synth_lb_test();
-  //conv_app_rolled_reduce_test();
-  //up_stencil_down_unrolled_test();
-  //laplacian_pyramid_app_test();
+}
+
+void up_to_pyramid_test() {
+
+  sobel_app_test();
+  sobel_mag_x_test();
+  heat_3d_test();
+  upsample_reduce_test();
+  pointwise_test();
+  stencil_3d_test();
+  neg_stencil_test();
+  gaussian_pyramid_test();
+  warp_and_upsample_test();
+  unsharp_test();
+  pyramid_2d_test();
+  pyramid_test();
+
+}
+
+void up_to_register_file_test() {
+  up_stencil_auto_unrolled_test();
+  up_down_auto_unrolled_test();
+  up_stencil_down_auto_unrolled_test();
+  conv3x3_app_unrolled_test();
+  conv3x3_app_test();
+  conv3x3_app_unrolled_uneven_test();
+  jacobi2d_app_test();
+  up_stencil_test();
+  blur_x_test();
+  // Got past this
+  llf_pyramid_test();
+  llf_test();
+  blur_example();
+  register_file_test();
+
+  cout << "past register file test" << endl;
+}
+
+void up_to_ram_addr_unit_test() {
+  two_in_window_test();
+  jacobi_2d_2_test();
+  soda_blur_test();
+  two_in_conv2d_test();
+  sobel_16_stage_x_app_test();
+  up_stencil_test();
+  blur_x_test();
+  dummy_app_test();
+  blur_and_downsample_test();
+  denoise2d_test();
+  brighten_blur_asplos_example();
+  sum_diffs_test();
+  denoise3d_reconvergence_test();
+  tricky_shift_register_reconvergence_test();
+  mismatched_stencil_test();
+  gaussian_pyramid_app_test("gp64x64");
+  reduce_1d_test();
+  reduce_2d_test();
+  ram_addr_unit_test();
+  cout << "past sobel_16_stage_x_app_test" << endl;
+
+}
+
+void misc_tests() {
+  conv_2d_bc_test();
+  conv_1d_rolled_test();
+  synth_upsample_test();
+  conv_2d_rolled_test();
+  unet_conv_3_3_test();
+  cyclic_banked_conv_test();
+  register_file_optimization_test();
+  reuse_buffered_conv_test();
+
+  two_input_denoise_pipeline_test();
+  synth_wire_test();
+  synth_sr_boundary_condition_test();
+  synth_lb_test();
+  conv_app_rolled_reduce_test();
+  up_stencil_down_unrolled_test();
+  laplacian_pyramid_app_test();
+  parse_denoise3d_test();
+  halide_camera_pipeline_test();
+  raw_memtile_verilog_test();
+  raw_memtile_verilog_as_delay_test();
+  adobe_meeting_apps();
+  halide_cascade_test();
+  mmul_outer_prod_test();
+  playground();
+  coreir_tests();
+  cnn_test();
+  lake_agg_sram_tb_config_test();
+  lake_tests();
+  iccad_tests();
+  exposure_fusion_iccad_apps("ef_cc_10_level");
+
+}
+
+void application_tests() {
+  stencil_chain_iccad_apps("icsc");
+  up_to_id_stream_tests();
+  up_to_ram_addr_unit_test();
+  up_to_register_file_test();
+  up_to_pyramid_test();
+  up_to_sobel_mag_y_test();
+  up_to_weight_add_psef();
+  up_to_hist_tests();
+  infer_bounds_tests();
 }
 
 void affine_controller_test() {
@@ -18407,362 +18426,6 @@ void test_outer_strip_mine() {
   compare("outer_strip_mine_" + prg.name + "_vs_unopt", strip_mined, unopt);
 }
 
-struct app_dag {
-  prog prg;
-  map<string, std::set<string> > fusion_groups;
-
-  // This is constructed later.
-  map<string, prog> fusion_group_progs;
-  map<string, int> channel_sizes;
-
-  vector<string> sorted_fusion_groups() {
-    assert(fusion_groups.size() == fusion_group_progs.size());
-
-    vector<string> sorted;
-    std::set<string> finished_buffers;
-    for (auto b : prg.ins) {
-      finished_buffers.insert(b);
-    }
-
-    while (sorted.size() < fusion_groups.size()) {
-      for (auto& g : fusion_group_progs) {
-        if (!elem(g.first, sorted)) {
-          bool all_deps_done = true;
-          for (auto b : g.second.ins) {
-            if (!elem(b, finished_buffers)) {
-              all_deps_done = false;
-              break;
-            }
-          }
-
-          if (all_deps_done) {
-            for (auto b : g.second.outs) {
-              finished_buffers.insert(b);
-            }
-            sorted.push_back(g.first);
-          }
-        }
-      }
-
-    }
-    return sorted;
-  }
-
-  bool is_boundary(const std::string& buf) {
-    return prg.is_boundary(buf);
-  }
-
-  string producer_group(const std::string& buf) {
-    assert(fusion_groups.size() == fusion_group_progs.size());
-
-    for (auto& gp : fusion_group_progs) {
-      if (elem(buf, buffers_written(gp.second))) {
-        return gp.first;
-      }
-    }
-    cout << "Error: No producer group for: " << buf << endl;
-    cout << "Program..." << endl;
-    prg.pretty_print();
-    cout << endl;
-
-    cout << "Fusion group progs..." << endl;
-    for (auto& gp : fusion_group_progs) {
-      gp.second.pretty_print();
-      cout << endl;
-    }
-    assert(false);
-  }
-
-  bool in_group(op* op, const std::string& group_name) {
-    for (std::string g : map_find(group_name, fusion_groups)) {
-      //cout << "checking if " << op->name << " is in " << g << endl;
-      auto lp = prg.find_loop(g);
-      //lp->pretty_print();
-      if (lp == op || elem(op, lp->descendant_ops())) {
-        return true;
-      }
-    }
-    return false;
-  }
-};
-
-bool all_kernel_inputs_are_program_inputs(app_dag& dag) {
-  for (auto& g : dag.fusion_group_progs) {
-    auto& gp = g.second;
-    for (auto buf : buffers_read(gp)) {
-      if ((dag.is_boundary(buf) || dag.producer_group(buf) != g.first) &&
-          !elem(buf, gp.ins)) {
-        cout << buf << " is not an in of " << endl;
-        gp.pretty_print();
-        return false;
-      }
-    }
-  }
-  return true;
-}
-
-bool all_kernel_outputs_have_fanout_one(app_dag& dag) {
-  for (auto& g : dag.fusion_groups) {
-    assert(contains_key(g.first, dag.fusion_group_progs));
-    for (auto out : dag.fusion_group_progs.at(g.first).outs) {
-      int num_receivers = 0;
-      for (auto& other : dag.fusion_group_progs) {
-        for (auto in : other.second.ins) {
-          if (out == in) {
-            num_receivers++;
-          }
-        }
-      }
-      if (num_receivers >= 2) {
-        cout << out << " has " << num_receivers << " readers" << endl;
-        return false;
-      }
-    }
-  }
-  return true;
-}
-
-void generate_app_code(CodegenOptions& options,
-    app_dag& dag) {
-
-  // Dummy interface for the application
-  auto sched = dag.prg.unoptimized_schedule();
-  auto buffers = build_buffers(dag.prg, dag.prg.unoptimized_schedule());
-
-  ofstream conv_out(dag.prg.name + ".cpp");
-  generate_app_prefix(options, conv_out, dag.prg);
-
-  for (auto& gp : dag.fusion_group_progs) {
-    auto sched = gp.second.optimized_codegen();
-
-    auto domains = gp.second.domains();
-    map<string, isl_set*> domain_map;
-    for (auto d : domains) {
-      domain_map[d.first->name] = d.second;
-    }
-    auto buffers = build_buffers(gp.second, sched);
-    generate_app_code_body(options,
-        conv_out,
-        buffers,
-        gp.second,
-        sched,
-        domain_map);
-  }
-
-  generate_driver_function_prefix(options, conv_out, buffers, dag.prg);
-
-  conv_out << endl;
-  open_synth_scope(conv_out);
-  conv_out << "#pragma HLS dataflow" << endl;
-  close_synth_scope(conv_out);
-  conv_out << endl;
-
-  std::set<std::string> done;
-  for (auto& buf : dag.prg.boundary_buffers()) {
-    done.insert(buf);
-  }
-
-  for (auto& gp : dag.fusion_group_progs) {
-    for (auto& buf : gp.second.boundary_buffers()) {
-      if (!elem(buf, done)) {
-        conv_out << tab(1) << "HWStream<hw_uint<32> > " << buf << ";" << endl;
-        open_synth_scope(conv_out);
-        int depth = 1;
-        conv_out << "#pragma HLS stream variable=" << buf << ".values depth=" << depth << endl;
-        close_synth_scope(conv_out);
-        done.insert(buf);
-      }
-    }
-  }
-
-  conv_out << endl << endl;
-
-  for (auto& gpn : dag.sorted_fusion_groups()) {
-    auto& gp = dag.fusion_group_progs.at(gpn);
-    vector<string> args;
-    for (auto in : gp.ins) {
-      args.push_back(in);
-    }
-    for (auto out : gp.outs) {
-      args.push_back(out);
-    }
-    conv_out << tab(1) << gp.name << sep_list(args, "(", ")", ", ") << ";" << endl;
-  }
-
-  conv_out << endl;
-
-  generate_driver_function_suffix(options, conv_out, buffers, dag.prg);
-
-  {
-    vector<string> arg_buf_list = get_args(buffers, dag.prg);
-    vector<string> ls = arg_buf_list;
-    ls.push_back("const int num_epochs");
-    string outer_arg_buffers = sep_list(ls, "(", ")", ", ");
-    conv_out << "void " << dag.prg.name << "_wrapper" << outer_arg_buffers << " {" << endl << endl;
-    vector<string> arg_strings = get_arg_names(buffers, dag.prg);
-    conv_out << tab(1) << "for (int epoch = 0; epoch < num_epochs; epoch++) {" << endl;
-    conv_out << tab(2) << dag.prg.name << sep_list(arg_strings, "(", ")", ", ") << ";" << endl;
-    conv_out << tab(1) << "}" << endl;
-    conv_out << "}" << endl;
-  }
-
-  generate_app_collateral(options, conv_out, buffers, dag.prg, sched);
-}
-
-app_dag partition_application(const std::map<std::string, std::set<std::string> >& fusion_groups, prog& prg) {
-
-  // Problem: I want to be able to read in buffers
-  // produced by other kernels in the "order" of the
-  // producer and consumer. But this is currently
-  // not done. read_in_no_dsa, and write_out_no_dsa
-  // do not take in the scan order, they just
-  // iterate over the data in a fixed order
-
-  app_dag dag{prg, fusion_groups};
-  for (auto& g : dag.fusion_groups) {
-    dag.fusion_group_progs[g.first] =
-      extract_group_to_separate_prog(g.second, dag.prg);
-  }
-
-  // Map from buffers to the kernels they read
-  map<string, vector<string> > kernel_broadcasts;
-  for (auto gp : dag.fusion_groups) {
-    auto produced = get_produced_buffers(gp.second, prg);
-    for (auto other_gp : fusion_groups) {
-      if (gp != other_gp) {
-        auto consumed = get_consumed_buffers(other_gp.second, prg);
-        for (auto buf : consumed) {
-          if (elem(buf, produced)) {
-            kernel_broadcasts[buf].push_back(other_gp.first);
-          }
-        }
-      }
-    }
-  }
-  cout << "===== Cross kernel deps" << endl;
-  for (auto b : kernel_broadcasts) {
-    cout << tab(1) << b.first << " is used by " << sep_list(b.second, "[", "]", ", ") << endl;
-    auto consumers = prg.consumer_maps(b.first);
-    for (auto group_name : b.second) {
-      vector<isl_set*> read;
-      for (auto m : consumers) {
-        if (m.second != nullptr && dag.in_group(m.first, group_name)) {
-          auto dom = range(m.second);
-          cout << tab(2) << group_name << " reads " << str(dom) << endl;
-          read.push_back(dom);
-        }
-      }
-
-
-      isl_set* s = unn(read);
-      cout << tab(2) << "Read: " << str(lexmin(s)) << " to " << str(lexmax(s)) << endl;
-      assert(contains_key(group_name, dag.fusion_group_progs));
-      prog& gp = dag.fusion_group_progs.at(group_name);
-
-      auto readers = find_readers(b.first, gp);
-      cout << "=== Readers..." << endl;
-      for (auto reader : readers) {
-        cout << tab(1) << reader->name << endl;
-      }
-      op* reader = pick(readers);
-      auto addr_rep = pick(read_addrs(reader, b.first, gp));
-      cout << tab(1) << "Addr rep: " << str(addr_rep) << endl;
-      auto levels = get_variable_levels(gp);
-      vector<int> level_permutation;
-      level_permutation.resize(isl_multi_aff_dim(addr_rep, isl_dim_set));
-      for (int i = 0; i < isl_multi_aff_dim(addr_rep, isl_dim_set); i++) {
-        isl_aff* addr_comp = isl_multi_aff_get_aff(addr_rep, i);
-        cout << tab(2) << str(addr_comp) << endl;
-        for (int d = 0; d < num_in_dims(addr_comp); d++) {
-          if (!is_zero(get_coeff(addr_comp, d))) {
-            string var = surrounding_vars(reader, gp).at(d);
-            int lvl = map_find(var, levels) - 1;
-            cout << tab(3) << "var: " << var << endl;
-            cout << tab(3) << "lvl: " << map_find(var, levels) << endl;
-            assert(lvl >= 0);
-            cout << tab(3) << "address component " << i << " of " << b.first << " should be loaded at level " << lvl << endl;
-            level_permutation[i] = lvl;
-          }
-        }
-      }
-      cout << "Level permutation: " << bracket_list(level_permutation) << endl;
-      gp.pretty_print();
-      //assert(false);
-
-      string replacement = prg.un(b.first + "_FIFO_buf");
-      gp.root->replace_reads_from(b.first, replacement);
-      read_in_no_dsa(gp.root, s, level_permutation, replacement, gp);
-
-      gp.pretty_print();
-      //assert(false);
-    }
-  }
-
-  for (auto b : kernel_broadcasts) {
-    cout << tab(1) << b.first << " is used by " << sep_list(b.second, "[", "]", ", ") << endl;
-    auto consumers = prg.consumer_maps(b.first);
-    for (auto group_name : b.second) {
-      vector<isl_set*> read;
-      for (auto m : consumers) {
-        if (m.second != nullptr && dag.in_group(m.first, group_name)) {
-          auto dom = range(m.second);
-          cout << tab(2) << group_name << " reads " << str(dom) << endl;
-          read.push_back(dom);
-        }
-      }
-
-      isl_set* s = unn(read);
-
-
-      string broadcast = prg.un(b.first + "_to_" + group_name);
-      prog& pp = dag.fusion_group_progs.at(dag.producer_group(b.first));
-
-      auto readers = find_writers(b.first, pp);
-      op* reader = pick(readers);
-      auto addr_rep = pick(write_addrs(reader, b.first, pp));
-      cout << tab(1) << "Addr rep: " << str(addr_rep) << endl;
-      auto levels = get_variable_levels(pp);
-      vector<int> level_permutation;
-      level_permutation.resize(isl_multi_aff_dim(addr_rep, isl_dim_set));
-      for (int i = 0; i < isl_multi_aff_dim(addr_rep, isl_dim_set); i++) {
-        isl_aff* addr_comp = isl_multi_aff_get_aff(addr_rep, i);
-        cout << tab(2) << str(addr_comp) << endl;
-        for (int d = 0; d < num_in_dims(addr_comp); d++) {
-          if (!is_zero(get_coeff(addr_comp, d))) {
-            string var = surrounding_vars(reader, pp).at(d);
-            int lvl = map_find(var, levels) - 1;
-            cout << tab(3) << "var: " << var << endl;
-            cout << tab(3) << "lvl: " << map_find(var, levels) << endl;
-            assert(lvl >= 0);
-            cout << tab(3) << "address component " << i << " of " << b.first << " should be loaded at level " << lvl << endl;
-            level_permutation[i] = lvl;
-          }
-        }
-      }
-      cout << "Level permutation: " << bracket_list(level_permutation) << endl;
-      pp.outs.insert(broadcast);
-
-      write_out_no_dsa(pp.root, s, level_permutation, broadcast, pp);
-      pp.pretty_print();
-
-      assert(contains_key(group_name, dag.fusion_group_progs));
-      prog& gp = dag.fusion_group_progs.at(group_name);
-      gp.root->replace_reads_from(b.first, broadcast);
-      gp.ins.erase(b.first);
-      gp.ins.insert(broadcast);
-
-      gp.pretty_print();
-
-      pp.outs.erase(b.first);
-    }
-  }
-
-  assert(all_kernel_outputs_have_fanout_one(dag));
-  assert(all_kernel_inputs_are_program_inputs(dag));
-
-  return dag;
-}
-
 void test_multi_kernel_design() {
   int num_pyramid_levels = 3;
 
@@ -18892,14 +18555,14 @@ void test_multi_kernel_unsharp() {
   auto diff = prg.add_nest("x", 0, 1, "y", 0, 1)->add_op("diff");
   diff->add_load("gray_diff", "x", "y");
   diff->add_load("blurred", "x", "y");
-  diff->add_load("blurred", "x", "y + 1");
   diff->add_store("out", "x", "y");
   diff->add_function("diff");
 
-  prg.pretty_print();
-  prg.sanity_check();
 
   infer_bounds("out", {64, 64}, prg);
+
+  prg.pretty_print();
+  prg.sanity_check();
 
   unroll_reduce_loops(prg);
   merge_basic_block_ops(prg);
@@ -18909,63 +18572,63 @@ void test_multi_kernel_unsharp() {
   prg.pretty_print();
   prg.sanity_check();
 
-  cout << "Channel sizes" << endl;
-  auto sched = prg.optimized_codegen();
-  cout << "Optimized schedule: " << str(sched) << endl;
+  //cout << "Channel sizes" << endl;
+  //auto sched = prg.optimized_codegen();
+  //cout << "Optimized schedule: " << str(sched) << endl;
 
   //assert(false);
 
-  for (auto b : all_buffers(prg)) {
-    auto r = prg.consumer_map(b);
-    auto w = prg.producer_map(b);
-    if (!prg.is_boundary(b)) {
-      cout << "========= " << b << endl;
-      cout << tab(1) << str(r) << endl;
-      cout << tab(1) << str(w) << endl;
+  //for (auto b : all_buffers(prg)) {
+    //auto r = prg.consumer_map(b);
+    //auto w = prg.producer_map(b);
+    //if (!prg.is_boundary(b)) {
+      //cout << "========= " << b << endl;
+      //cout << tab(1) << str(r) << endl;
+      //cout << tab(1) << str(w) << endl;
 
-      auto write_times = lexmin(dot(inv(w), sched));
-      auto read_times = lexmin(dot(inv(r), sched));
+      //auto write_times = lexmin(dot(inv(w), sched));
+      //auto read_times = lexmin(dot(inv(r), sched));
 
-      auto op_times = unn(write_times, read_times);
+      //auto op_times = unn(write_times, read_times);
 
-      //auto written_before = lex_gt(write_times, write_times);
-      auto written_before = lex_gt(op_times, write_times);
-      cout << "written before: " << str(written_before) << endl;
-      auto times_to_written_before =
-        //to_map(unn(dot(inv(write_times), written_before), inv(write_times)));
-        to_map(unn(dot(inv(op_times), written_before), inv(write_times)));
-      cout << "Values written before time: " << str(times_to_written_before) << endl;
-      //cout << "Size = " << str(card(times_to_written_before)) << endl;
-      //cout << "Bound = " << str(int_upper_bound(card(times_to_written_before))) << endl;
+      ////auto written_before = lex_gt(write_times, write_times);
+      //auto written_before = lex_gt(op_times, write_times);
+      //cout << "written before: " << str(written_before) << endl;
+      //auto times_to_written_before =
+        ////to_map(unn(dot(inv(write_times), written_before), inv(write_times)));
+        //to_map(unn(dot(inv(op_times), written_before), inv(write_times)));
+      //cout << "Values written before time: " << str(times_to_written_before) << endl;
+      ////cout << "Size = " << str(card(times_to_written_before)) << endl;
+      ////cout << "Bound = " << str(int_upper_bound(card(times_to_written_before))) << endl;
 
-      //auto read_after = lex_lt(read_times, read_times);
-      auto read_after = lex_lt(op_times, read_times);
-      auto times_to_read_after =
-        to_map(unn(dot(inv(op_times), read_after), inv(read_times)));
-      cout << "Values read after time: " << str(times_to_read_after) << endl;
-      //cout << "Size = " << str(card(times_to_read_after)) << endl;
-      //cout << "Bound = " << str(int_upper_bound(card(times_to_read_after))) << endl;
+      ////auto read_after = lex_lt(read_times, read_times);
+      //auto read_after = lex_lt(op_times, read_times);
+      //auto times_to_read_after =
+        //to_map(unn(dot(inv(op_times), read_after), inv(read_times)));
+      //cout << "Values read after time: " << str(times_to_read_after) << endl;
+      ////cout << "Size = " << str(card(times_to_read_after)) << endl;
+      ////cout << "Bound = " << str(int_upper_bound(card(times_to_read_after))) << endl;
 
-      auto live = coalesce(simplify(its(times_to_read_after, times_to_written_before)));
-      cout << "live: " << str(live) << endl;
-      cout << "Size = " << str(card(live)) << endl;
-      cout << "Bound = " << str(int_upper_bound(card(to_umap(live)))) << endl;
+      //auto live = coalesce(simplify(its(times_to_read_after, times_to_written_before)));
+      //cout << "live: " << str(live) << endl;
+      //cout << "Size = " << str(card(live)) << endl;
+      //cout << "Bound = " << str(int_upper_bound(card(to_umap(live)))) << endl;
 
-      //auto times_to_writes = dot(inv(sched), w);
-      //auto times_to_reads = dot(inv(sched), r);
+      ////auto times_to_writes = dot(inv(sched), w);
+      ////auto times_to_reads = dot(inv(sched), r);
 
-      //cout << "times to writes: " << str(times_to_writes) << endl;
-      //cout << "times to reads : " << str(times_to_reads) << endl;
+      ////cout << "times to writes: " << str(times_to_writes) << endl;
+      ////cout << "times to reads : " << str(times_to_reads) << endl;
 
-      // What am I trying to construct?
-      //   An expression for max(#Writes(t) - #Reads(t))
-      // Need: #(Data written at time t that has not yet been read)
-      // Need: A map from times to the set of locations that have been written but not read
-      //   A map from times to the set of locations that have been written
-      //   A map from times to the set of locations that have not been read yet but will be
-    }
-  }
-  assert(false);
+      //// What am I trying to construct?
+      ////   An expression for max(#Writes(t) - #Reads(t))
+      //// Need: #(Data written at time t that has not yet been read)
+      //// Need: A map from times to the set of locations that have been written but not read
+      ////   A map from times to the set of locations that have been written
+      ////   A map from times to the set of locations that have not been read yet but will be
+    //}
+  //}
+  //assert(false);
 
   auto unopt_postprocessed = unoptimized_result(prg);
 
@@ -18998,6 +18661,7 @@ void test_multi_kernel_unsharp() {
 
   compare("multi_kernel_" + prg.name + "_vs_unopt", multi_kernel_res, unopt_postprocessed);
   move_to_benchmarks_folder(dag.prg.name);
+  //assert(false);
 }
 
 void test_gaussian_pyramid_shared_pes() {
@@ -19145,7 +18809,12 @@ prog stencil_chain(const std::string& name) {
 
   string last_level = "in";
   string current_level = "";
-  const int NUM_STAGES = 60;
+
+  const int NUM_STAGES = 0;
+  //const int NUM_STAGES = 15;
+  //const int NUM_STAGES = 2;
+  //const int NUM_STAGES = 200;
+  //const int UNROLL_FACTOR = 16;
   for (int i = 0; i < NUM_STAGES; i++) {
     current_level = "stencil_" + str(i);
     string y = prg.unique_name(current_level);
@@ -19154,65 +18823,90 @@ prog stencil_chain(const std::string& name) {
     string xi = prg.unique_name(current_level);
 
     auto ol = prg.add_nest(y, 0, 1, x, 0, 1);
-    auto init = ol->add_op(prg.un("init"));
-    init->add_function("set_zero_32");
+    auto init = ol->add_op(prg.un("conv"));
+    init->add_function("conv_3_3");
+    for (int i = -1; i < 2; i++) {
+      for (int j = -1; j < 2; j++) {
+        init->add_load(last_level, x + " + " + str(i), y + " + " + str(j));
+      }
+    }
     init->add_store(current_level, x, y);
-    auto il = ol->add_nest(yi, -1, 2, xi, -1, 2);
-
-    auto update = il->add_op(prg.un("update"));
-    update->add_function("add");
-    update->add_load(current_level, x, y);
-    update->add_load(last_level, x + " + " + xi, y + " + " + yi);
-    update->add_store(current_level, x, y);
+    
     last_level = current_level;
   }
 
-  cpy("out", current_level, 2, prg);
+  cpy("out", last_level, 2, prg);
 
-  infer_bounds("out", {128, 128}, prg);
+  //infer_bounds("out", {128, 128}, prg);
+  cout << "==== DONE BUILDING PROGRAM, STARTING BOUNDS INFERENCE" << endl;
+  //infer_bounds_and_unroll("out", {1920, 1080}, UNROLL_FACTOR, prg);
 
-  unroll_reduce_loops(prg);
-  merge_basic_block_ops(prg);
-  normalize_bounds(prg);
-  normalize_address_offsets(prg);
+  //normalize_bounds(prg);
+  //normalize_address_offsets(prg);
+
+  vector<int> bounds = {128, 128};
+  infer_bounds("out", bounds, prg);
 
   prg.pretty_print();
   prg.sanity_check();
+
+  //assert(false);
 
   return prg;
 }
 
 void dhuff_playground() {
+  //test_multi_kernel_unsharp();
+  //assert(false);
+
+  //llf_test();
+  //assert(false);
   {
-    auto prg = stencil_chain("sc_stat");
-    generate_optimized_code(prg);
-    generate_regression_testbench(prg);
-    auto unopt_postprocessed = run_regression_tb(prg);
-    move_to_benchmarks_folder(prg.name);
+    //auto prg = stencil_chain("sc_stat");
+    //generate_optimized_code(prg);
+    //generate_regression_testbench(prg);
+    //auto unopt_postprocessed = run_regression_tb(prg);
+    //move_to_benchmarks_folder(prg.name);
 
-    prg = stencil_chain("sc_dyn");
+    vector<int> bounds = {1920, 1080};
+    const int unroll_factor = 16;
+    prog prg = stencil_chain("sc_dyn_7_32");
 
-    map<std::string, std::set<string> > fusion_groups;
-    int i = 0;
-    for (auto gp : get_kernels(prg)) {
-      fusion_groups["gp_" + str(i)] = {gp};
-      i++;
-    }
-    app_dag dag = partition_application(fusion_groups, prg);
+    map<std::string, std::set<string> > fusion_groups =
+      one_stage_per_group(prg);
+
+    unroll_reduce_loops(prg);
+    merge_basic_block_ops(prg);
+
+    prg.reset_context();
+
+    auto fresh_groups = insert_inter_group_buffers(fusion_groups, prg);
+
+    extend_bounds_to_multiple_of(unroll_factor, "out", prg);
+    normalize_bounds(prg);
+    unroll_producer_matching("out", unroll_factor, prg);
+    merge_basic_block_ops(prg);
+
+    cout << "==== DONE PRODUCING PROGRAM, STARTING PARTITIONING" << endl;
+    app_dag dag = partition_groups(fresh_groups, prg);
+
+    cout << "==== DONE PARTITIONING PROGRAM, STARTING CODEGEN" << endl;
     for (auto& gp : dag.fusion_group_progs) {
       cout << "============================" << endl;
       gp.second.pretty_print();
       cout << endl;
     }
 
-    generate_regression_testbench(dag.prg);
+    //generate_regression_testbench(dag.prg);
 
     CodegenOptions options;
     generate_app_code(options, dag);
-    vector<string> multi_kernel_res = run_regression_tb(dag.prg);
 
-    compare("multi_kernel_" + prg.name + "_vs_unopt", multi_kernel_res, unopt_postprocessed);
+    //vector<string> multi_kernel_res = run_regression_tb(dag.prg);
+    //cout << "# lines in multi kernel res = " << multi_kernel_res.size() << endl;
+    //compare("multi_kernel_" + prg.name + "_vs_unopt", multi_kernel_res, unopt_postprocessed);
 
+    cout << "==== DONE CODEGENING PROGRAM, STARTING MOVE TO BENCHMARKS" << endl;
     move_to_benchmarks_folder(dag.prg.name);
     assert(false);
   }
@@ -19786,9 +19480,57 @@ void dhuff_playground() {
 
 }
 
+void stencil_chain_multi_kernel_test() {
+  auto prgs = stencil_chain("sc_stat");
+  generate_optimized_code(prgs);
+  generate_regression_testbench(prgs);
+  auto unopt_postprocessed = run_regression_tb(prgs);
+  move_to_benchmarks_folder(prgs.name);
+
+  prog prg = stencil_chain("sc_dyn_7_32");
+  prg.pretty_print();
+  //assert(false);
+
+  map<std::string, std::set<string> > fusion_groups =
+    one_stage_per_group(prg);
+
+  prg.reset_context();
+
+  auto fresh_groups = insert_inter_group_buffers(fusion_groups, prg);
+  prg.pretty_print();
+
+  cout << "==== DONE PRODUCING PROGRAM, STARTING PARTITIONING" << endl;
+  app_dag dag = partition_groups(fresh_groups, prg);
+
+  cout << "==== DONE PARTITIONING PROGRAM, STARTING CODEGEN" << endl;
+  for (auto& gp : dag.fusion_group_progs) {
+    cout << "============================" << endl;
+    gp.second.pretty_print();
+    cout << endl;
+  }
+  //assert(false);
+
+  generate_regression_testbench(dag.prg);
+
+  CodegenOptions options;
+  generate_app_code(options, dag);
+
+  vector<string> multi_kernel_res = run_regression_tb(dag.prg);
+  cout << "# lines in multi kernel res = " << multi_kernel_res.size() << endl;
+  compare("multi_kernel_" + prg.name + "_vs_unopt", multi_kernel_res, unopt_postprocessed);
+
+  cout << "==== DONE CODEGENING PROGRAM, STARTING MOVE TO BENCHMARKS" << endl;
+  move_to_benchmarks_folder(dag.prg.name);
+  assert(false);
+
+}
+
 void travis_tests() {
-  test_if_construction();
   test_multi_kernel_design();
+  test_multi_kernel_unsharp();
+  stencil_chain_multi_kernel_test();
+  infer_bounds_tests();
+  test_if_construction();
   test_time_sharing_gaussian_pyramid();
   jacobi_2d_2_test();
   register_file_test();

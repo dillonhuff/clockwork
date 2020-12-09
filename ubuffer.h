@@ -2546,3 +2546,5 @@ struct ubuffer_impl {
   map<string,pair<string,int>> shift_registered_outputs;
   vector<pair<string,pair<string,int>>> shift_registered_outputs_to_outputs;
 };
+
+bool all_schedules_defined(UBuffer& buf);

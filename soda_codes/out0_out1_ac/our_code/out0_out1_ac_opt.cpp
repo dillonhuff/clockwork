@@ -2935,6 +2935,20 @@ inline hw_uint<512> in1_out1_ac_update_0_read_bundle_read(in1_cache& in1, int d0
 
 
 // Operation logic
+inline void in1_update_0(HWStream<hw_uint<512> >& /* buffer_args num ports = 32 */in1_oc, in1_cache& in1, int d0, int d1) {
+  // Dynamic address computation
+
+	// Consume: in1_oc
+	auto in1_oc_0_c__0_value = in1_oc.read();
+	auto compute_result = id_unrolled_32(in1_oc_0_c__0_value);
+	// Produce: in1
+	in1_in1_update_0_write_bundle_write(/* arg names */compute_result, in1, d0, d1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
 inline void in0_update_0(HWStream<hw_uint<512> >& /* buffer_args num ports = 32 */in0_oc, in0_cache& in0, int d0, int d1) {
   // Dynamic address computation
 
@@ -2943,24 +2957,6 @@ inline void in0_update_0(HWStream<hw_uint<512> >& /* buffer_args num ports = 32 
 	auto compute_result = id_unrolled_32(in0_oc_0_c__0_value);
 	// Produce: in0
 	in0_in0_update_0_write_bundle_write(/* arg names */compute_result, in0, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void out0_update_0(in0_cache& in0, HWStream<hw_uint<512> >& /* buffer_args num ports = 32 */out0, int d0, int d1) {
-  // Dynamic address computation
-
-	// Consume: in0
-	auto in0_0_c__0_value = in0_out0_update_0_read_bundle_read(in0/* source_delay */, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = id_unrolled_32(in0_0_c__0_value);
-	// Produce: out0
-	out0.write(compute_result);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -2985,14 +2981,18 @@ inline void out1_ac_update_0(in1_cache& in1, HWStream<hw_uint<512> >& /* buffer_
 
 }
 
-inline void in1_update_0(HWStream<hw_uint<512> >& /* buffer_args num ports = 32 */in1_oc, in1_cache& in1, int d0, int d1) {
+inline void out0_update_0(in0_cache& in0, HWStream<hw_uint<512> >& /* buffer_args num ports = 32 */out0, int d0, int d1) {
   // Dynamic address computation
 
-	// Consume: in1_oc
-	auto in1_oc_0_c__0_value = in1_oc.read();
-	auto compute_result = id_unrolled_32(in1_oc_0_c__0_value);
-	// Produce: in1
-	in1_in1_update_0_write_bundle_write(/* arg names */compute_result, in1, d0, d1, 0);
+	// Consume: in0
+	auto in0_0_c__0_value = in0_out0_update_0_read_bundle_read(in0/* source_delay */, d0, d1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = id_unrolled_32(in0_0_c__0_value);
+	// Produce: out0
+	out0.write(compute_result);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
