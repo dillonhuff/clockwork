@@ -8,10 +8,10 @@
 int main(int argc, char **argv) {
   bitmap_image input("./images/taxi_slice_256.bmp");
   HWStream<hw_uint<32> > pw_math_in_oc03_read_channel;
-  HWStream<hw_uint<32> > pw_math_stencil_0912_write_channel;
+  HWStream<hw_uint<32> > pw_math_in47_write_channel;
   // In lanes = 1
-  for (int r = 0; r < 130; r++) {
-    for (int cl = 0; cl < 130 / 1; cl++) {
+  for (int r = 0; r < 128; r++) {
+    for (int cl = 0; cl < 128 / 1; cl++) {
       hw_uint<32> packed;
       {
       int c = 1*cl + 0;
@@ -27,11 +27,11 @@ int main(int argc, char **argv) {
         pw_math_in_oc03_read_channel.write(packed);
     }
   }
-  sc_dyn_7_32(pw_math_in_oc03_read_channel, pw_math_stencil_0912_write_channel);
+  sc_dyn_7_32(pw_math_in_oc03_read_channel, pw_math_in47_write_channel);
   bitmap_image output(128, 128);
   for (int r = 0; r < 128; r++) {
     for (int cl = 0; cl < 128 / 1; cl++) {
-      auto packed_val = pw_math_stencil_0912_write_channel.read();
+      auto packed_val = pw_math_in47_write_channel.read();
       hw_uint<32> packed_val_lane_0 = packed_val.extract<0, 31>();
       {
       hw_uint<32> packed;
