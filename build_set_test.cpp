@@ -8706,6 +8706,41 @@ void exposure_fusion_iccad_sizes(const std::string& prefix) {
   }
 }
 
+App stencil_chain_iccad(const std::string& out_name) {
+  App lp;
+  lp.set_default_pixel_width(16);
+  lp.func2d("in_off_chip");
+
+  // The temporary buffer we store the input image in
+  lp.func2d("in", "id", pt("in_off_chip"));
+
+  int levels = 4;
+  string last = "in";
+
+  //auto dark_weight_pyramid = gauss_pyramid(pyramid_levels, "in", lp);
+
+  lp.func2d(out_name, "id", pt(last));
+
+  return lp;
+}
+void stencil_chain_iccad_apps(const std::string& prefix) {
+  //vector<int> throughputs{1, 2, 4, 8, 16};
+  vector<int> throughputs{1};
+  for (auto throughput : throughputs) {
+    string name = prefix + "_" + str(throughput);
+    App lp = stencil_chain_iccad(name);
+    int rows = 1080;
+    int cols = 1920;
+    CodegenOptions options;
+    options.internal = true;
+    options.use_custom_code_string = true;
+    lp.realize(options, name, {cols, rows}, "in", throughput);
+
+    move_to_benchmarks_folder(name + "_opt");
+  }
+  assert(false);
+}
+
 void gauss_pyramid_iccad_apps(const std::string& prefix) {
   vector<int> throughputs{1, 2, 4, 8, 16};
   for (auto throughput : throughputs) {
@@ -18041,6 +18076,7 @@ void misc_tests() {
 }
 
 void application_tests() {
+  stencil_chain_iccad_apps("icsc");
   up_to_id_stream_tests();
   up_to_ram_addr_unit_test();
   up_to_register_file_test();
