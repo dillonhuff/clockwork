@@ -2063,9 +2063,9 @@ void generate_buffer_code(
     CodegenOptions& options,
     ostream& conv_out,
     map<string, UBuffer>& buffers,
-    prog& prg,
-    umap* schedmap,
-    map<string, isl_set*>& domain_map) {
+    prog& prg) {
+    //umap* schedmap,
+    //map<string, isl_set*>& domain_map) {
 
   for (auto& b : buffers) {
     if (!prg.is_boundary(b.first)) {
@@ -2087,21 +2087,13 @@ void generate_buffer_code(
   conv_out << endl << endl;
 }
 
-void generate_app_code_body(
+void generate_app_code_op_logic(
     CodegenOptions& options,
     ostream& conv_out,
     map<string, UBuffer>& buffers,
     prog& prg,
     umap* schedmap,
     map<string, isl_set*>& domain_map) {
-
-  generate_buffer_code(
-    options,
-    conv_out,
-    buffers,
-    prg,
-    schedmap,
-    domain_map);
 
   conv_out << "// Operation logic" << endl;
   for (auto op : prg.all_ops()) {
@@ -2172,6 +2164,31 @@ void generate_app_code_body(
   conv_out << code_string << endl;
 
   generate_driver_function_suffix(options, conv_out, buffers, prg);
+}
+
+void generate_app_code_body(
+    CodegenOptions& options,
+    ostream& conv_out,
+    map<string, UBuffer>& buffers,
+    prog& prg,
+    umap* schedmap,
+    map<string, isl_set*>& domain_map) {
+
+  generate_buffer_code(
+    options,
+    conv_out,
+    buffers,
+    prg);
+    //schedmap,
+    //domain_map);
+
+  generate_app_code_op_logic(
+    options,
+    conv_out,
+    buffers,
+    prg,
+    schedmap,
+    domain_map);
 
 }
 
