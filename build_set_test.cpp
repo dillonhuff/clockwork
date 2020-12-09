@@ -8748,7 +8748,7 @@ void stencil_chain_iccad_apps(const std::string& prefix) {
 
     move_to_benchmarks_folder(name + "_opt");
   }
-  assert(false);
+  //assert(false);
 }
 
 void gauss_pyramid_iccad_apps(const std::string& prefix) {
@@ -19536,9 +19536,9 @@ void stencil_chain_multi_kernel_test() {
 }
 
 void travis_tests() {
-  test_multi_kernel_design();
-  test_multi_kernel_unsharp();
-  stencil_chain_multi_kernel_test();
+  //test_multi_kernel_design();
+  //test_multi_kernel_unsharp();
+  //stencil_chain_multi_kernel_test();
   infer_bounds_tests();
   test_if_construction();
   test_time_sharing_gaussian_pyramid();

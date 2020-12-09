@@ -2059,7 +2059,7 @@ void generate_driver_function_suffix(CodegenOptions& options, ostream& conv_out,
   conv_out << "}" << endl << endl;
 }
 
-void generate_app_code_body(
+void generate_buffer_code(
     CodegenOptions& options,
     ostream& conv_out,
     map<string, UBuffer>& buffers,
@@ -2085,6 +2085,24 @@ void generate_app_code_body(
   cout << "Prog: " << prg.name << endl;
 
   conv_out << endl << endl;
+}
+
+void generate_app_code_body(
+    CodegenOptions& options,
+    ostream& conv_out,
+    map<string, UBuffer>& buffers,
+    prog& prg,
+    umap* schedmap,
+    map<string, isl_set*>& domain_map) {
+
+  generate_buffer_code(
+    options,
+    conv_out,
+    buffers,
+    prg,
+    schedmap,
+    domain_map);
+
   conv_out << "// Operation logic" << endl;
   for (auto op : prg.all_ops()) {
     generate_compute_op(conv_out, prg, op, buffers, domain_map);
