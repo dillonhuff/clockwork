@@ -19531,7 +19531,7 @@ void stencil_chain_multi_kernel_test() {
 
   cout << "==== DONE CODEGENING PROGRAM, STARTING MOVE TO BENCHMARKS" << endl;
   move_to_benchmarks_folder(dag.prg.name);
-  assert(false);
+  //assert(false);
 
 }
 
