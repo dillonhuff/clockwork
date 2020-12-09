@@ -186,9 +186,11 @@ struct dgraph {
 };
 
 std::ostream& operator<<(std::ostream& out, dgraph& dg);
+std::ostream& operator<<(std::ostream& out, ubuffer_impl& impl);
 
 dgraph build_shift_register_graph(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_info& hwinfo);
 dgraph build_shift_registers(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_info& hwinfo);
+pair<ubuffer_impl,isl_map*> build_buffer_impl(prog& prg, UBuffer& buf, schedule_info& hwinfo);
 
 void port_group2bank(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_info& hwinfo);
 

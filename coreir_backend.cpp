@@ -4449,6 +4449,25 @@ std::ostream& operator<<(std::ostream& out, dgraph& dg) {
   return out;
 }
 
+std::ostream& operator<<(std::ostream& out, ubuffer_impl& impl) {
+  out << "Partition dim : " << impl.partition_dims << endl;
+  out << "Partition dim extent: " << endl;
+  for (auto it: impl.partitioned_dimension_extents) {
+    out << "\t" << it.first << ": " << it.second << endl;
+  }
+  out << "Bank writers: " << endl;
+  for (auto it: impl.bank_writers) {
+    out << "\t bank NO." << it.first << endl;
+    out << "\t\twriters: " << it.second << endl;
+  }
+  out << "Bank readers: " << endl;
+  for (auto it: impl.bank_readers) {
+    out << "\t bank NO." << it.first << endl;
+    out << "\t\treaders: " << it.second << endl;
+  }
+  return out;
+}
+
 dgraph build_shift_register_graph(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
   map<string,pair<string,int>> shift_registered_outputs = determine_shift_reg_map(prg, buf, hwinfo);
   vector<pair<string,pair<string,int>>> shift_registered_outputs_to_outputs = determine_output_shift_reg_map(prg, buf, hwinfo);

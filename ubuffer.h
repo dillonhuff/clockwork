@@ -1244,6 +1244,26 @@ class UBuffer {
       return false;
     }
 
+    bool is_bank_output(const string& name) const{
+      for (auto bk: bank_list) {
+        if (elem(name, banks_to_outputs.at(bk.name))) {
+          return true;
+        }
+      }
+      return false;
+    }
+
+    vector<string> unbanking_outpts() const {
+      vector<string> cand;
+      for (auto outpt: get_out_ports()) {
+        if (!is_bank_output(outpt)) {
+          cand.push_back(outpt);
+        }
+      }
+      return cand;
+    }
+
+
     vector<stack_bank> receiver_banks(const std::string& inpt) {
       vector<stack_bank> bnks;
       for (auto b : bank_list) {

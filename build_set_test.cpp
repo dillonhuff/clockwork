@@ -16676,7 +16676,9 @@ void compile_for_garnet_single_port_mem(prog& prg,
   cout << "result schedule: " << str(hw_sched) << endl;
   auto buffers_opt = build_buffers(prg, hw_sched);
   for (auto & b: buffers_opt) {
-      cout << "create shift register for " << b.first << endl;
+    cout << "create shift register for " << b.first << endl;
+    if (b.second.num_in_ports() == 0 || b.second.num_out_ports() == 0)
+        continue;
 
     ////compare out2in
     //auto shift_registered_outputs = determine_shift_reg_map(prg, b.second, sched);
@@ -16687,9 +16689,42 @@ void compile_for_garnet_single_port_mem(prog& prg,
     //  cout << it.first << " -> " << it.second.first << ", depth = " << it.second.second << endl;
     //}
     //auto dg = build_shift_registers(options, prg, b.second, sched);
+    auto& buf = b.second;
     port_group2bank(options, prg, b.second, sched);
+    auto pt_need_to_banking = buf.unbanking_outpts();
+    cout << "\t\tafter sr opt: " << pt_need_to_banking << endl;
+    if (pt_need_to_banking.size() == 0) {
+        continue;
+    }
+    auto implm = build_buffer_impl(prg, b.second, sched);
+    ubuffer_impl impl = implm.first;
+    cout << impl << endl;
+    cout << "bank func: " << str(implm.second) << endl;
+    //take the ubuffer implementation add bank to ubuffer
+    for (auto it: impl.bank_writers) {
+      int bank_id = it.first;
+      isl_set* bnk = isl_set_read_from_str(prg.ctx, curlies("Bank["+str(bank_id) + "]").c_str());
+      auto rddom = to_uset(domain(its_range(implm.second, bnk)));
+      rddom = its(rddom, buf.global_range());
+      cout << "rddom: " << str(rddom) << endl;
+      bool not_insert = true;
+      for (auto wr_pt: it.second) {
+        if (buf.is_bank_input(wr_pt)) {
+          not_insert = false;
+          break;
+        }
+      }
+      if (not_insert) {
+        auto point = pick(get_points(bnk));
+        cout << "ADD BANK!\n Bank id: " << str(point) << endl;
+        std::set<string> input_sets = it.second;
+        std::set<string> output_sets = impl.bank_readers.at(bank_id);
+        auto bnk_info = buf.compute_bank_info(rddom, point, input_sets, output_sets);
+        buf.add_bank_between(input_sets, output_sets, bnk_info);
+      }
+    }
+
   }
-  assert(false);
   /*
   assert(false);
   ////auto sched = global_schedule_from_buffers(buffers_opt);
