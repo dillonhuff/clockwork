@@ -4645,7 +4645,8 @@ void port_group2bank(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_
             } else {
                 out_pts.insert(pt_name);
                 read_delay.insert(pt_delay_pair);
-                if (out_pts.size() == out_port_width) {
+                //saturize the output ports or the last remaining port
+                if ((out_pts.size() == out_port_width) || (out_delays.size() == 0)) {
                     //add the bank that require memory tile
                     auto super_bank = buf.compute_bank_info({src}, out_pts, read_delay);
                     for (auto out_pt: out_pts) {

@@ -13332,13 +13332,13 @@ void cpy_app_to_folder(const std::string& app_type, const std::string& prg_name)
 
 void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, string dir="aha_garnet_design") {
   vector<prog> test_apps;
-  //test_apps.push_back(conv_3_3());
-  //test_apps.push_back(gaussian());
-  //test_apps.push_back(cascade());
-  //test_apps.push_back(harris());
-  //test_apps.push_back(rom());
-  //test_apps.push_back(conv_1_2());
-  //test_apps.push_back(camera_pipeline());
+  test_apps.push_back(conv_3_3());
+  test_apps.push_back(gaussian());
+  test_apps.push_back(cascade());
+  test_apps.push_back(harris());
+  test_apps.push_back(rom());
+  test_apps.push_back(conv_1_2());
+  test_apps.push_back(camera_pipeline());
   test_apps.push_back(up_sample());
 
   test_apps.push_back(unsharp());
@@ -16696,37 +16696,32 @@ void compile_for_garnet_single_port_mem(prog& prg,
     if (pt_need_to_banking.size() == 0) {
         continue;
     }
+
+    //a hack for access pattern rewrite
+    buf.banking.partition = "cyclic";
     auto implm = build_buffer_impl(prg, b.second, sched);
     ubuffer_impl impl = implm.first;
     cout << impl << endl;
     cout << "bank func: " << str(implm.second) << endl;
     //take the ubuffer implementation add bank to ubuffer
-    for (auto it: impl.bank_writers) {
-      int bank_id = it.first;
+    for (int bank_id = 0; bank_id < impl.get_bank_num(); bank_id ++) {
       isl_set* bnk = isl_set_read_from_str(prg.ctx, curlies("Bank["+str(bank_id) + "]").c_str());
       auto rddom = to_uset(domain(its_range(implm.second, bnk)));
-      rddom = its(rddom, buf.global_range());
-      cout << "rddom: " << str(rddom) << endl;
-      bool not_insert = true;
-      for (auto wr_pt: it.second) {
-        if (buf.is_bank_input(wr_pt)) {
-          not_insert = false;
-          break;
-        }
-      }
-      if (not_insert) {
+      cout << "rddom before its: " << str(rddom) << endl;
+      rddom = coalesce(its(rddom, buf.global_range()));
+      cout << "rddom after its: " << str(rddom) << endl;
+      //if (not_insert) {
         auto point = pick(get_points(bnk));
         cout << "ADD BANK!\n Bank id: " << str(point) << endl;
-        std::set<string> input_sets = it.second;
+        std::set<string> input_sets = impl.bank_writers.at(bank_id);
         std::set<string> output_sets = impl.bank_readers.at(bank_id);
         auto bnk_info = buf.compute_bank_info(rddom, point, input_sets, output_sets);
         buf.add_bank_between(input_sets, output_sets, bnk_info);
-      }
+      //}
     }
 
   }
   /*
-  assert(false);
   ////auto sched = global_schedule_from_buffers(buffers_opt);
 
   for (auto& b : buffers_opt) {

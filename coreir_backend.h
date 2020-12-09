@@ -28,6 +28,14 @@ struct ubuffer_impl {
 
   map<string,pair<string,int>> shift_registered_outputs;
   vector<pair<string,pair<string,int>>> shift_registered_outputs_to_outputs;
+
+  int get_bank_num() const {
+    int bank_num = 1;
+    for (auto it: partitioned_dimension_extents) {
+      bank_num *= it.second;
+    }
+    return bank_num;
+  }
 };
 
 CoreIR::Wireable* mkConst(CoreIR::ModuleDef* def, const int width, const int val);
