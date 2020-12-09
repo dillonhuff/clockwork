@@ -8712,14 +8712,14 @@ App stencil_chain_iccad(const std::string& out_name) {
   lp.func2d("in_off_chip");
 
   // The temporary buffer we store the input image in
-  lp.func2d("in", "id", pt("in_off_chip"));
+  lp.func2d("in", v("in_off_chip"));
 
   int levels = 4;
   string last = "in";
 
   //auto dark_weight_pyramid = gauss_pyramid(pyramid_levels, "in", lp);
 
-  lp.func2d(out_name, "id", pt(last));
+  lp.func2d(out_name, v(last));
 
   return lp;
 }

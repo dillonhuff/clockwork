@@ -82,7 +82,7 @@ inline void in_update_0(HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */i
 
 	// Consume: in_off_chip
 	auto in_off_chip_0_c__0_value = in_off_chip.read();
-	auto compute_result = id_unrolled_1(in_off_chip_0_c__0_value);
+	auto compute_result = in_generated_compute_unrolled_1(in_off_chip_0_c__0_value);
 	// Produce: in
 	in_in_update_0_write_bundle_write(/* arg names */compute_result, in, d0, d1, 0);
 
@@ -100,7 +100,7 @@ inline void icsc_1_update_0(in_cache& in, HWStream<hw_uint<16> >& /* buffer_args
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 
-	auto compute_result = id_unrolled_1(in_0_c__0_value);
+	auto compute_result = icsc_1_generated_compute_unrolled_1(in_0_c__0_value);
 	// Produce: icsc_1
 	icsc_1.write(compute_result);
 
