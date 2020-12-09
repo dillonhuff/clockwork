@@ -31,41 +31,93 @@ struct gray_cache {
 
 
 
-inline void gray_oc_load_in03_0_write(hw_uint<32> & gray_oc_load_in03_0, gray_cache& gray, int root, int oc_load_in01, int oc_load_in02, int dynamic_address) {
-  gray.gray_all_inputs_to_all_outputs.write(gray_oc_load_in03_0, oc_load_in02 - 0, oc_load_in01 - 0);
+inline void gray_oc_load_in03_2_write(hw_uint<32> & gray_oc_load_in03_2, gray_cache& gray, int root, int oc_load_in01, int oc_load_in02, int dynamic_address) {
+  gray.gray_all_inputs_to_all_outputs.write(gray_oc_load_in03_2, oc_load_in02 - 0, oc_load_in01 - 0);
 }
 
-inline hw_uint<32>  gray_load_to_gray_to_gp_1811_3_select(gray_cache& gray, int root, int gray_ld10, int gray_ld9, int dynamic_address) {
+inline hw_uint<32>  gray_load_to_gray_to_gp_1811_5_select(gray_cache& gray, int root, int gray_ld10, int gray_ld9, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // gray_load_to_gray_to_gp_1811_3 read pattern: { load_to_gray_to_gp_1811[root = 0, gray_ld10, gray_ld9] -> gray[gray_ld9, gray_ld10] : 0 <= gray_ld10 <= 3 and 0 <= gray_ld9 <= 3 }
-  auto value_gray_oc_load_in03_0 = gray.gray_all_inputs_to_all_outputs.read(gray_ld9 - 0, gray_ld10 - 0);
-  return value_gray_oc_load_in03_0;
+  // gray_load_to_gray_to_gp_1811_5 read pattern: { load_to_gray_to_gp_1811[root = 0, gray_ld10, gray_ld9] -> gray[gray_ld9, gray_ld10] : 0 <= gray_ld10 <= 3 and 0 <= gray_ld9 <= 3 }
+  auto value_gray_oc_load_in03_2 = gray.gray_all_inputs_to_all_outputs.read(gray_ld9 - 0, gray_ld10 - 0);
+  return value_gray_oc_load_in03_2;
   return 0;
 }
 
 // # of bundles = 2
 // load_to_gray_to_gp_1811_read
-//	gray_load_to_gray_to_gp_1811_3
+//	gray_load_to_gray_to_gp_1811_5
 inline hw_uint<32> gray_load_to_gray_to_gp_1811_read_bundle_read(gray_cache& gray, int root, int gray_ld10, int gray_ld9, int dynamic_address) {
   // # of ports in bundle: 1
-    // gray_load_to_gray_to_gp_1811_3
+    // gray_load_to_gray_to_gp_1811_5
 
 	hw_uint<32> result;
-	hw_uint<32>  gray_load_to_gray_to_gp_1811_3_res = gray_load_to_gray_to_gp_1811_3_select(gray, root, gray_ld10, gray_ld9, dynamic_address);
-	set_at<0, 32>(result, gray_load_to_gray_to_gp_1811_3_res);
+	hw_uint<32>  gray_load_to_gray_to_gp_1811_5_res = gray_load_to_gray_to_gp_1811_5_select(gray, root, gray_ld10, gray_ld9, dynamic_address);
+	set_at<0, 32>(result, gray_load_to_gray_to_gp_1811_5_res);
 	return result;
 }
 
 // oc_load_in03_write
-//	gray_oc_load_in03_0
+//	gray_oc_load_in03_2
 inline void gray_oc_load_in03_write_bundle_write(hw_uint<32>& oc_load_in03_write, gray_cache& gray, int root, int oc_load_in01, int oc_load_in02, int dynamic_address) {
-	hw_uint<32>  gray_oc_load_in03_0_res = oc_load_in03_write.extract<0, 31>();
-	gray_oc_load_in03_0_write(gray_oc_load_in03_0_res, gray, root, oc_load_in01, oc_load_in02, dynamic_address);
+	hw_uint<32>  gray_oc_load_in03_2_res = oc_load_in03_write.extract<0, 31>();
+	gray_oc_load_in03_2_write(gray_oc_load_in03_2_res, gray, root, oc_load_in01, oc_load_in02, dynamic_address);
 }
 
-// Total re-use buffer capacity: 512 bits
+struct gray_FIFO_buf12_all_inputs_to_all_outputs_cache {
+	// RAM Box: {[0, 3], [0, 3]}
+  hw_uint<32>  RAM[4][4];
+  inline hw_uint<32>  read(int d0, int d1) {
+    return RAM[d0][d1];
+  }
 
+
+
+	inline void write(const hw_uint<32>  value, int d0, int d1) {
+    RAM[d0][d1] = value;
+  }
+
+};
+
+struct gray_FIFO_buf12_cache {
+  // # of banks: 1
+  gray_FIFO_buf12_all_inputs_to_all_outputs_cache gray_FIFO_buf12_all_inputs_to_all_outputs;
+};
+
+
+
+inline void gray_FIFO_buf12_load_to_gray_FIFO_buf1215_6_write(hw_uint<32> & gray_FIFO_buf12_load_to_gray_FIFO_buf1215_6, gray_FIFO_buf12_cache& gray_FIFO_buf12, int root, int gray_to_gp_18_ld14, int gray_to_gp_18_ld13, int dynamic_address) {
+  gray_FIFO_buf12.gray_FIFO_buf12_all_inputs_to_all_outputs.write(gray_FIFO_buf12_load_to_gray_FIFO_buf1215_6, gray_to_gp_18_ld13 - 0, gray_to_gp_18_ld14 - 0);
+}
+
+inline hw_uint<32>  gray_FIFO_buf12_pw_math_gray47_1_select(gray_FIFO_buf12_cache& gray_FIFO_buf12, int root, int pw_math_gray45, int pw_math_gray46, int dynamic_address) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // gray_FIFO_buf12_pw_math_gray47_1 read pattern: { pw_math_gray47[root = 0, pw_math_gray45, pw_math_gray46] -> gray_FIFO_buf12[pw_math_gray46, pw_math_gray45] : 0 <= pw_math_gray45 <= 3 and 0 <= pw_math_gray46 <= 3 }
+  auto value_gray_FIFO_buf12_load_to_gray_FIFO_buf1215_6 = gray_FIFO_buf12.gray_FIFO_buf12_all_inputs_to_all_outputs.read(pw_math_gray46 - 0, pw_math_gray45 - 0);
+  return value_gray_FIFO_buf12_load_to_gray_FIFO_buf1215_6;
+  return 0;
+}
+
+// # of bundles = 2
+// load_to_gray_FIFO_buf1215_write
+//	gray_FIFO_buf12_load_to_gray_FIFO_buf1215_6
+inline void gray_FIFO_buf12_load_to_gray_FIFO_buf1215_write_bundle_write(hw_uint<32>& load_to_gray_FIFO_buf1215_write, gray_FIFO_buf12_cache& gray_FIFO_buf12, int root, int gray_to_gp_18_ld14, int gray_to_gp_18_ld13, int dynamic_address) {
+	hw_uint<32>  gray_FIFO_buf12_load_to_gray_FIFO_buf1215_6_res = load_to_gray_FIFO_buf1215_write.extract<0, 31>();
+	gray_FIFO_buf12_load_to_gray_FIFO_buf1215_6_write(gray_FIFO_buf12_load_to_gray_FIFO_buf1215_6_res, gray_FIFO_buf12, root, gray_to_gp_18_ld14, gray_to_gp_18_ld13, dynamic_address);
+}
+
+// pw_math_gray47_read
+//	gray_FIFO_buf12_pw_math_gray47_1
+inline hw_uint<32> gray_FIFO_buf12_pw_math_gray47_read_bundle_read(gray_FIFO_buf12_cache& gray_FIFO_buf12, int root, int pw_math_gray45, int pw_math_gray46, int dynamic_address) {
+  // # of ports in bundle: 1
+    // gray_FIFO_buf12_pw_math_gray47_1
+
+	hw_uint<32> result;
+	hw_uint<32>  gray_FIFO_buf12_pw_math_gray47_1_res = gray_FIFO_buf12_pw_math_gray47_1_select(gray_FIFO_buf12, root, pw_math_gray45, pw_math_gray46, dynamic_address);
+	set_at<0, 32>(result, gray_FIFO_buf12_pw_math_gray47_1_res);
+	return result;
+}
 
 // Operation logic
 inline void oc_load_in03(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */in, gray_cache& gray, int root, int oc_load_in01, int oc_load_in02) {
@@ -136,64 +188,6 @@ for (int c0 = 0; c0 <= 3; c0 += 1)
   debug_file.close();
 #endif //__VIVADO_SYNTH__
 }
-
-struct gray_FIFO_buf12_all_inputs_to_all_outputs_cache {
-	// RAM Box: {[0, 3], [0, 3]}
-  hw_uint<32>  RAM[4][4];
-  inline hw_uint<32>  read(int d0, int d1) {
-    return RAM[d0][d1];
-  }
-
-
-
-	inline void write(const hw_uint<32>  value, int d0, int d1) {
-    RAM[d0][d1] = value;
-  }
-
-};
-
-struct gray_FIFO_buf12_cache {
-  // # of banks: 1
-  gray_FIFO_buf12_all_inputs_to_all_outputs_cache gray_FIFO_buf12_all_inputs_to_all_outputs;
-};
-
-
-
-inline void gray_FIFO_buf12_load_to_gray_FIFO_buf1215_2_write(hw_uint<32> & gray_FIFO_buf12_load_to_gray_FIFO_buf1215_2, gray_FIFO_buf12_cache& gray_FIFO_buf12, int root, int gray_to_gp_18_ld14, int gray_to_gp_18_ld13, int dynamic_address) {
-  gray_FIFO_buf12.gray_FIFO_buf12_all_inputs_to_all_outputs.write(gray_FIFO_buf12_load_to_gray_FIFO_buf1215_2, gray_to_gp_18_ld13 - 0, gray_to_gp_18_ld14 - 0);
-}
-
-inline hw_uint<32>  gray_FIFO_buf12_pw_math_gray47_1_select(gray_FIFO_buf12_cache& gray_FIFO_buf12, int root, int pw_math_gray45, int pw_math_gray46, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-  // gray_FIFO_buf12_pw_math_gray47_1 read pattern: { pw_math_gray47[root = 0, pw_math_gray45, pw_math_gray46] -> gray_FIFO_buf12[pw_math_gray46, pw_math_gray45] : 0 <= pw_math_gray45 <= 3 and 0 <= pw_math_gray46 <= 3 }
-  auto value_gray_FIFO_buf12_load_to_gray_FIFO_buf1215_2 = gray_FIFO_buf12.gray_FIFO_buf12_all_inputs_to_all_outputs.read(pw_math_gray46 - 0, pw_math_gray45 - 0);
-  return value_gray_FIFO_buf12_load_to_gray_FIFO_buf1215_2;
-  return 0;
-}
-
-// # of bundles = 2
-// load_to_gray_FIFO_buf1215_write
-//	gray_FIFO_buf12_load_to_gray_FIFO_buf1215_2
-inline void gray_FIFO_buf12_load_to_gray_FIFO_buf1215_write_bundle_write(hw_uint<32>& load_to_gray_FIFO_buf1215_write, gray_FIFO_buf12_cache& gray_FIFO_buf12, int root, int gray_to_gp_18_ld14, int gray_to_gp_18_ld13, int dynamic_address) {
-	hw_uint<32>  gray_FIFO_buf12_load_to_gray_FIFO_buf1215_2_res = load_to_gray_FIFO_buf1215_write.extract<0, 31>();
-	gray_FIFO_buf12_load_to_gray_FIFO_buf1215_2_write(gray_FIFO_buf12_load_to_gray_FIFO_buf1215_2_res, gray_FIFO_buf12, root, gray_to_gp_18_ld14, gray_to_gp_18_ld13, dynamic_address);
-}
-
-// pw_math_gray47_read
-//	gray_FIFO_buf12_pw_math_gray47_1
-inline hw_uint<32> gray_FIFO_buf12_pw_math_gray47_read_bundle_read(gray_FIFO_buf12_cache& gray_FIFO_buf12, int root, int pw_math_gray45, int pw_math_gray46, int dynamic_address) {
-  // # of ports in bundle: 1
-    // gray_FIFO_buf12_pw_math_gray47_1
-
-	hw_uint<32> result;
-	hw_uint<32>  gray_FIFO_buf12_pw_math_gray47_1_res = gray_FIFO_buf12_pw_math_gray47_1_select(gray_FIFO_buf12, root, pw_math_gray45, pw_math_gray46, dynamic_address);
-	set_at<0, 32>(result, gray_FIFO_buf12_pw_math_gray47_1_res);
-	return result;
-}
-
-// Total re-use buffer capacity: 512 bits
-
 
 // Operation logic
 inline void pw_math_gray47(gray_FIFO_buf12_cache& gray_FIFO_buf12, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */out, int root, int pw_math_gray45, int pw_math_gray46) {

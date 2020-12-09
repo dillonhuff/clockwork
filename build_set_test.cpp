@@ -8714,9 +8714,19 @@ App stencil_chain_iccad(const std::string& out_name) {
   // The temporary buffer we store the input image in
   lp.func2d("in", v("in_off_chip"));
 
-  int levels = 4;
+  int levels = 10;
   string last = "in";
-
+  for (int i = 0; i < levels; i++) {
+    string current = "stg" + str(i);
+    lp.func2d(current,
+      div(add({
+        v(last, 0, 1),
+        v(last, 1, 0),
+        v(last, 0, 0),
+        v(last, -1, 0),
+        v(last, 0, 1)}), 5));
+    last = current;
+  }
   //auto dark_weight_pyramid = gauss_pyramid(pyramid_levels, "in", lp);
 
   lp.func2d(out_name, v(last));
@@ -8724,8 +8734,8 @@ App stencil_chain_iccad(const std::string& out_name) {
   return lp;
 }
 void stencil_chain_iccad_apps(const std::string& prefix) {
-  //vector<int> throughputs{1, 2, 4, 8, 16};
-  vector<int> throughputs{1};
+  vector<int> throughputs{1, 16, 32};
+  //vector<int> throughputs{1};
   for (auto throughput : throughputs) {
     string name = prefix + "_" + str(throughput);
     App lp = stencil_chain_iccad(name);
@@ -8738,7 +8748,7 @@ void stencil_chain_iccad_apps(const std::string& prefix) {
 
     move_to_benchmarks_folder(name + "_opt");
   }
-  assert(false);
+  //assert(false);
 }
 
 void gauss_pyramid_iccad_apps(const std::string& prefix) {
@@ -19521,7 +19531,7 @@ void stencil_chain_multi_kernel_test() {
 
   cout << "==== DONE CODEGENING PROGRAM, STARTING MOVE TO BENCHMARKS" << endl;
   move_to_benchmarks_folder(dag.prg.name);
-  assert(false);
+  //assert(false);
 
 }
 

@@ -2059,13 +2059,13 @@ void generate_driver_function_suffix(CodegenOptions& options, ostream& conv_out,
   conv_out << "}" << endl << endl;
 }
 
-void generate_app_code_body(
+void generate_buffer_code(
     CodegenOptions& options,
     ostream& conv_out,
     map<string, UBuffer>& buffers,
-    prog& prg,
-    umap* schedmap,
-    map<string, isl_set*>& domain_map) {
+    prog& prg) {
+    //umap* schedmap,
+    //map<string, isl_set*>& domain_map) {
 
   for (auto& b : buffers) {
     if (!prg.is_boundary(b.first)) {
@@ -2082,9 +2082,18 @@ void generate_app_code_body(
 
 
   conv_out << "// Total re-use buffer capacity: " << capacity << " bits" << endl;
-  cout << "Prog: " << prg.name << endl;
 
   conv_out << endl << endl;
+}
+
+void generate_app_code_op_logic(
+    CodegenOptions& options,
+    ostream& conv_out,
+    map<string, UBuffer>& buffers,
+    prog& prg,
+    umap* schedmap,
+    map<string, isl_set*>& domain_map) {
+
   conv_out << "// Operation logic" << endl;
   for (auto op : prg.all_ops()) {
     generate_compute_op(conv_out, prg, op, buffers, domain_map);
@@ -2154,6 +2163,31 @@ void generate_app_code_body(
   conv_out << code_string << endl;
 
   generate_driver_function_suffix(options, conv_out, buffers, prg);
+}
+
+void generate_app_code_body(
+    CodegenOptions& options,
+    ostream& conv_out,
+    map<string, UBuffer>& buffers,
+    prog& prg,
+    umap* schedmap,
+    map<string, isl_set*>& domain_map) {
+
+  generate_buffer_code(
+    options,
+    conv_out,
+    buffers,
+    prg);
+
+  cout << "Prog: " << prg.name << endl;
+
+  generate_app_code_op_logic(
+    options,
+    conv_out,
+    buffers,
+    prg,
+    schedmap,
+    domain_map);
 
 }
 
@@ -8047,19 +8081,38 @@ void generate_app_code(
   //auto global_sched = dag.prg.unoptimized_schedule();
   //auto buffers = build_buffers(dag.prg, dag.prg.unoptimized_schedule());
  
+  std::set<string> boundary_bufs;
+  for (auto& gp : dag.fusion_group_progs) {
+    for (auto b : gp.second.boundary_buffers()) {
+      boundary_bufs.insert(b);
+    }
+  }
+
   auto global_sched = dag.prg.optimized_codegen();
   auto buffers = build_buffers(dag.prg, global_sched);
   cout << "Generating code for " << dag.prg.name << endl;
+  map<string, UBuffer> reps;
   for (auto b : buffers) {
     cout << endl << b.second << endl;
     assert(all_schedules_defined(b.second));
+    if (elem(b.first, boundary_bufs)) {
+      reps[b.first] = b.second;
+    }
   }
   //assert(false);
 
   ofstream conv_out(dag.prg.name + ".cpp");
   generate_app_prefix(options, conv_out, dag.prg);
 
-  map<string, UBuffer> reps;
+  for (auto& b : buffers) {
+    //if (!prg.is_boundary(b.first)) {
+    if (!elem(b.first, boundary_bufs)) {
+      generate_hls_code(options, conv_out, b.second);
+    }
+  }
+
+  //assert(false);
+
   for (auto& gp : dag.fusion_group_progs) {
     //auto sched = gp.second.optimized_codegen();
 
@@ -8105,19 +8158,27 @@ void generate_app_code(
     for (auto d : domains) {
       domain_map[d.first->name] = d.second;
     }
-    auto buffers = build_buffers(gp.second, sched);
-    for (auto& buf : buffers) {
-      if (gp.second.is_boundary(buf.second.name)) {
-        reps[buf.second.name] = buf.second;
-      }
-      cout << buf.second << endl;
-      cout << "sched = " << str(sched) << endl;
-      assert(all_schedules_defined(buf.second));
-    }
+    //auto buffers = build_buffers(gp.second, sched);
+    //for (auto& buf : buffers) {
+      //if (gp.second.is_boundary(buf.second.name)) {
+        //reps[buf.second.name] = buf.second;
+      //}
+      //cout << buf.second << endl;
+      //cout << "sched = " << str(sched) << endl;
+      //assert(all_schedules_defined(buf.second));
+    //}
 
-    generate_app_code_body(options,
+    //generate_app_code_body(options,
+
+    map<string, UBuffer> local_buffers;
+    for (auto& buf : buffers) {
+      if (elem(buf.first, all_buffers(gp.second))) {
+        local_buffers[buf.first] = buf.second;
+      }
+    }
+    generate_app_code_op_logic(options,
         conv_out,
-        buffers,
+        local_buffers,
         gp.second,
         sched,
         domain_map);
