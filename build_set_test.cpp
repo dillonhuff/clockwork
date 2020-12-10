@@ -8733,9 +8733,10 @@ App stencil_chain_iccad(const std::string& out_name) {
 
   return lp;
 }
+
 void stencil_chain_iccad_apps(const std::string& prefix) {
-  vector<int> throughputs{1, 16, 32};
-  //vector<int> throughputs{1};
+  //vector<int> throughputs{1, 16, 32};
+  vector<int> throughputs{1};
   for (auto throughput : throughputs) {
     string name = prefix + "_" + str(throughput);
     App lp = stencil_chain_iccad(name);
