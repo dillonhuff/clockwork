@@ -8706,6 +8706,19 @@ void exposure_fusion_iccad_sizes(const std::string& prefix) {
   }
 }
 
+App increment_iccad(const std::string& out_name) {
+  App lp;
+  lp.set_default_pixel_width(16);
+  lp.func2d("in_off_chip");
+
+  // The temporary buffer we store the input image in
+  lp.func2d("in", v("in_off_chip"));
+
+  lp.func2d(out_name, add(v("in"), 1));
+
+  return lp;
+}
+
 App identity_stream_iccad(const std::string& out_name) {
   App lp;
   lp.set_default_pixel_width(16);
@@ -8745,6 +8758,24 @@ App stencil_chain_iccad(const std::string& out_name) {
   lp.func2d(out_name, v(last));
 
   return lp;
+}
+
+void increment_iccad_apps(const std::string& prefix) {
+  //vector<int> throughputs{1, 16, 32};
+  vector<int> throughputs{1};
+  for (auto throughput : throughputs) {
+    string name = prefix + "_" + str(throughput);
+    App lp = increment_iccad(name);
+    int rows = 1080;
+    int cols = 1920;
+    CodegenOptions options;
+    options.internal = true;
+    options.use_custom_code_string = true;
+    lp.realize(options, name, {cols, rows}, "in", throughput);
+
+    move_to_benchmarks_folder(name + "_opt");
+  }
+  assert(false);
 }
 
 void identity_stream_iccad_apps(const std::string& prefix) {
@@ -18125,6 +18156,7 @@ void misc_tests() {
 }
 
 void application_tests() {
+  increment_iccad_apps("inc");
   identity_stream_iccad_apps("idstream");
   stencil_chain_iccad_apps("icsc");
   up_to_id_stream_tests();
