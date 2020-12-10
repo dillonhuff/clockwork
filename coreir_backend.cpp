@@ -2312,7 +2312,6 @@ void instantiate_controllers(CodegenOptions& options,
     schedule_info& hwinfo) {
   auto sched_maps = get_maps(schedmap);
   if (options.rtl_options.target_tile == TARGET_TILE_M3) {
-  //if (false) {
     for (auto op : prg.all_ops()) {
       bool needs_controller = false;
       for (auto b : op->buffers_referenced()) {
@@ -2887,7 +2886,7 @@ void analyze_post_mapped_app(CodegenOptions& options, prog& prg, map<string, UBu
   for (auto c : counts) {
     cout << tab(1) << c.first << " -> " << c.second << endl;
   }
-  //assert(false);
+  assert(false);
   if(!saveToFile(ns, prg.name + "_post_mapping.json", gmod)) {
     cout << "Could not save ubuffer coreir" << endl;
     context->die();

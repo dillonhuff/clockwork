@@ -671,15 +671,15 @@ void generate_xilinx_accel_soda_host(CodegenOptions& options, map<string, UBuffe
 
   int arg_pos = 0;
   for (auto in_bundle : out_bundles(buffers, prg)) {
-    out << tab(1) << "OCL_CHECK(err, cl::Buffer " << in_bundle << "_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_READ_ONLY, " << in_bundle << "_size_bytes, " << in_bundle << ".data(), &err));" << endl;
-    out << tab(1) << "OCL_CHECK(err, err = krnl_vector_add.setArg(" << arg_pos << ", " << in_bundle << "_ocl_buf));" << endl << endl;
+    out << tab(1) << "OCL_CHECK(err, cl::Buffer " << in_bundle << "pipe0_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_READ_ONLY, " << in_bundle << "_size_bytes, " << in_bundle << ".data(), &err));" << endl;
+    out << tab(1) << "OCL_CHECK(err, err = krnl_vector_add.setArg(" << arg_pos << ", " << in_bundle << "pipe0_ocl_buf));" << endl << endl;
     arg_pos++;
   }
 
   for (auto in_bundle : in_bundles(buffers, prg)) {
-    out << tab(1) << "OCL_CHECK(err, cl::Buffer " << in_bundle << "_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_WRITE_ONLY, " << in_bundle << "_size_bytes, " << in_bundle << ".data(), &err));" << endl;
+    out << tab(1) << "OCL_CHECK(err, cl::Buffer " << in_bundle << "pipe0_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_WRITE_ONLY, " << in_bundle << "_size_bytes, " << in_bundle << ".data(), &err));" << endl;
 
-    out << tab(1) << "OCL_CHECK(err, err = krnl_vector_add.setArg(" << arg_pos << ", " << in_bundle << "_ocl_buf));" << endl << endl;
+    out << tab(1) << "OCL_CHECK(err, err = krnl_vector_add.setArg(" << arg_pos << ", " << in_bundle << "pipe0_ocl_buf));" << endl << endl;
     arg_pos++;
   }
 
@@ -687,7 +687,6 @@ void generate_xilinx_accel_soda_host(CodegenOptions& options, map<string, UBuffe
   out << tab(1) << "OCL_CHECK(err, err = krnl_vector_add.setArg(" << arg_pos << ", " << "transfer_size));" << endl << endl;
 
   run_kernel(options, out, buffers, prg);
-
 
   for (auto output : outputs(buffers, prg)) {
     auto buf = output.first;
@@ -697,12 +696,6 @@ void generate_xilinx_accel_soda_host(CodegenOptions& options, map<string, UBuffe
     out << tab(2) << "regression_result << ((" << vanilla_c_pixel_type_string(buf, buffers) << "*) (" << out_bundle << ".data()))[i] << std::endl;" << endl;
     out << tab(1) << "}" << endl;
   }
-  /*for (auto out_bundle: out_bundles(buffers, prg)) {*/
-    //out << tab(1) << "std::ofstream regression_result(\"" << out_bundle << "_accel_result.csv\");" << endl;
-    //out << tab(1) << "for (int i = 0; i < " << out_bundle << "_DATA_SIZE; i++) {" << endl;
-    //out << tab(2) << "regression_result << ((uint16_t*) (" << out_bundle << ".data()))[i] << std::endl;;" << endl;
-    //out << tab(1) << "}" << endl;
-  /*}*/
   out << endl;
 
 
@@ -8076,11 +8069,6 @@ void generate_app_code(
     CodegenOptions& options,
     app_dag& dag) {
 
-  // Dummy interface for the application
-  //auto sched = dag.prg.unoptimized_schedule();
-  //auto global_sched = dag.prg.unoptimized_schedule();
-  //auto buffers = build_buffers(dag.prg, dag.prg.unoptimized_schedule());
- 
   std::set<string> boundary_bufs;
   for (auto& gp : dag.fusion_group_progs) {
     for (auto b : gp.second.boundary_buffers()) {
@@ -8099,25 +8087,19 @@ void generate_app_code(
       reps[b.first] = b.second;
     }
   }
-  //assert(false);
 
   ofstream conv_out(dag.prg.name + ".cpp");
   generate_app_prefix(options, conv_out, dag.prg);
 
   for (auto& b : buffers) {
-    //if (!prg.is_boundary(b.first)) {
     if (!elem(b.first, boundary_bufs)) {
       generate_hls_code(options, conv_out, b.second);
     }
   }
 
-  //assert(false);
-
   for (auto& gp : dag.fusion_group_progs) {
-    //auto sched = gp.second.optimized_codegen();
-
     vector<umap*> sched_maps;
-    map<op*, isl_set*> domains;
+    map<string, isl_set*> domains;
     umap* emp = isl_union_map_read_from_str(gp.second.ctx, "{}");
     sched_maps.push_back(emp);
     std::set<string> opnames;
@@ -8127,48 +8109,17 @@ void generate_app_code(
     for (auto m : get_maps(global_sched)) {
       if (elem(domain_name(m), opnames)) {
         sched_maps.push_back(to_umap(m));
-        domains[gp.second.find_op(domain_name(m))] = domain(m);
+        domains[gp.second.find_op(domain_name(m))->name] = domain(m);
       } else {
         release(m);
       }
     }
-
-    cout << "Sched maps size: " << sched_maps.size() << endl;
-    cout << "Opnames size   : " << opnames.size() << endl;
-    cout << "Opnames..." << endl;
-    for (auto op : opnames) {
-      cout << tab(1) << op << endl;
-    }
-    cout << endl;
-
-    cout << "Schedules..." << endl;
-    for (auto op : sched_maps) {
-      cout << tab(1) << str(op) << endl;
-    }
-    cout << endl;
 
     // There is one schedule map for each op, plus
     // a default empty schedule map
     assert(sched_maps.size() == opnames.size() + 1);
 
     auto sched = unn(sched_maps);
-
-    //auto domains = gp.second.domains();
-    map<string, isl_set*> domain_map;
-    for (auto d : domains) {
-      domain_map[d.first->name] = d.second;
-    }
-    //auto buffers = build_buffers(gp.second, sched);
-    //for (auto& buf : buffers) {
-      //if (gp.second.is_boundary(buf.second.name)) {
-        //reps[buf.second.name] = buf.second;
-      //}
-      //cout << buf.second << endl;
-      //cout << "sched = " << str(sched) << endl;
-      //assert(all_schedules_defined(buf.second));
-    //}
-
-    //generate_app_code_body(options,
 
     map<string, UBuffer> local_buffers;
     for (auto& buf : buffers) {
@@ -8181,7 +8132,7 @@ void generate_app_code(
         local_buffers,
         gp.second,
         sched,
-        domain_map);
+        domains);
   }
 
   generate_driver_function_prefix(options, conv_out, buffers, dag.prg);
