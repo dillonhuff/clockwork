@@ -864,32 +864,34 @@ extract_schedule_params(const vector<isl_map*>& deps) {
 
   vector<isl_map*> consumed_data;
   for (auto d : deps) {
-    //cout << tab(1) << str(d) << endl;
+    cout << tab(1) << str(d) << endl;
     consumed_data.push_back(inv(d));
   }
 
-  //cout << "Consumed data..." << endl;
+  cout << "Consumed data..." << endl;
   map<isl_map*, vector<pair<isl_val*, isl_val*> > > schedule_params;
   for (auto c : consumed_data) {
+    cout << tab(1) << str(c) << endl;
     auto lm = isl_map_lexmax_pw_multi_aff(cpy(c));
-    //cout << tab(1) << str(c) << endl;
     //cout << tab(2) << "lexmax: " << str(lm) << endl;
     vector<pair<isl_set*, isl_multi_aff*> > pieces =
       get_pieces(lm);
     //assert(pieces.size() <= 1);
     for (auto piece : pieces) {
       isl_multi_aff* bound = piece.second;
-      //cout << "bound: " << str(bound) << endl;
+      cout << "bound: " << str(bound) << endl;
       assert(get_size(bound) == 1);
       isl_aff* aff_bound =
         isl_multi_aff_get_aff(bound, 0);
-      //cout << tab(2) << "affine upper bound on data needed: " << str(aff_bound) << endl;
-      //cout << tab(3) << "domain of bound: " << str(pieces.at(0).first) << endl;
+      cout << tab(2) << "affine upper bound on data needed: " << str(aff_bound) << endl;
+      cout << tab(3) << "domain of bound: " << str(pieces.at(0).first) << endl;
       pair<isl_val*, isl_val*> kb =
         extract_linear_rational_approximation(aff_bound);
       schedule_params[c].push_back(kb);
     }
   }
+
+  cout << "Extracted sched params" << endl;
   return schedule_params;
 }
 
@@ -952,12 +954,15 @@ map<string, isl_val*> compute_qfactors(map<isl_map*, vector<pair<isl_val*, isl_v
 
 map<string, isl_val*>
 compute_qfactors(const vector<isl_map*>& deps) {
+  cout << "=== STARTING TO EXTRACT SCHEDULE PARAMS" << endl;
   auto schedule_params =
     extract_schedule_params(deps);
 
+  cout << "=== STARTING TO COMPUTE QFACTORS FROM SCHEDULE PARAMS" << endl;
   map<string, isl_val*> qfactors =
     compute_qfactors(schedule_params);
 
+  cout << "=== DONE COMPUTING QFACTORS" << endl;
   return qfactors;
 }
 

@@ -10,8 +10,8 @@ int main(int argc, char **argv) {
   HWStream<hw_uint<32> > oc_load_in03_read_channel;
   HWStream<hw_uint<32> > diff_write_channel;
   // In lanes = 1
-  for (int r = 0; r < 6; r++) {
-    for (int cl = 0; cl < 6 / 1; cl++) {
+  for (int r = 0; r < 66; r++) {
+    for (int cl = 0; cl < 66 / 1; cl++) {
       hw_uint<32> packed;
       {
       int c = 1*cl + 0;
@@ -28,12 +28,11 @@ int main(int argc, char **argv) {
     }
   }
   unsharp_multi_kernel(oc_load_in03_read_channel, diff_write_channel);
-  bitmap_image output(4, 4);
-  for (int r = 0; r < 4; r++) {
-    for (int cl = 0; cl < 4 / 1; cl++) {
+  bitmap_image output(64, 64);
+  for (int r = 0; r < 64; r++) {
+    for (int cl = 0; cl < 64 / 1; cl++) {
       auto packed_val = diff_write_channel.read();
-      hw_uint<32> packed_val_lane_0;
-      set_at<0, 32, 32>(packed_val_lane_0, packed_val.extract<0, 31>());
+      hw_uint<32> packed_val_lane_0 = packed_val.extract<0, 31>();
       {
       hw_uint<32> packed;
       int c = 1*cl + 0;

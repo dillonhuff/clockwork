@@ -18,12 +18,12 @@ int main(int argc, char **argv) {
   std::cout << "num_epochs = " << num_epochs << std::endl;
 
   size_t total_size_bytes = 0;
-  const int oc_load_in03_read_pipe0_DATA_SIZE = num_epochs*36;
+  const int oc_load_in03_read_pipe0_DATA_SIZE = num_epochs*4356;
   const int oc_load_in03_read_pipe0_BYTES_PER_PIXEL = 32 / 8;
   size_t oc_load_in03_read_pipe0_size_bytes = oc_load_in03_read_pipe0_BYTES_PER_PIXEL * oc_load_in03_read_pipe0_DATA_SIZE;
 
   total_size_bytes += oc_load_in03_read_pipe0_size_bytes;
-  const int diff_write_pipe0_DATA_SIZE = num_epochs*16;
+  const int diff_write_pipe0_DATA_SIZE = num_epochs*4096;
   const int diff_write_pipe0_BYTES_PER_PIXEL = 32 / 8;
   size_t diff_write_pipe0_size_bytes = diff_write_pipe0_BYTES_PER_PIXEL * diff_write_pipe0_DATA_SIZE;
 

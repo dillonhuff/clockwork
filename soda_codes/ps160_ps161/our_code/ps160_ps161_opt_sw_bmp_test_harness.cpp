@@ -13,7 +13,7 @@ int main(int argc, char **argv) {
   HWStream<hw_uint<256> > ps161_update_0_write_channel;
   // In lanes = 16
   for (int r = 0; r < 1087; r++) {
-    for (int cl = 0; cl < 1008 / 16; cl++) {
+    for (int cl = 0; cl < 1056 / 16; cl++) {
       hw_uint<256> packed;
       {
       int c = 16*cl + 0;

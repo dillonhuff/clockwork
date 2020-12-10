@@ -2501,3 +2501,50 @@ vector<int> extents_by_dimension(UBuffer& buf);
 
 UBuffer delete_ports(std::set<string>& sr_ports, UBuffer& buf);
 
+struct dgraph {
+  std::set<string> nodes;
+  map<string, std::set<string> > out_edges;
+  map<pair<string, string>, int> weights;
+
+  void add_edge(const std::string& src, const std::string& dst, const int weight) {
+    nodes.insert(dst);
+    nodes.insert(src);
+    out_edges[src].insert(dst);
+    weights[{src, dst}] = weight;
+  }
+
+  int weight(const std::string& src, const std::string& dst) {
+    if(weights.find({src,dst}) == weights.end()){
+    	 return -1;
+    } else{
+	 return  weights[{src, dst}];
+    }
+  }
+
+  vector<pair<string, int> > in_edges(const std::string& dst) {
+    vector<pair<string, int> > ed;
+    for (auto w : out_edges) {
+      if (elem(dst, w.second)) {
+        ed.push_back({w.first, weight(w.first, dst)});
+      }
+    }
+    return ed;
+  }
+};
+
+std::ostream& operator<<(std::ostream& out, dgraph& dg);
+
+struct ubuffer_impl {
+  map<int, int> partitioned_dimension_extents;
+  std::set<int> partition_dims;
+
+  map<int, std::set<string> > bank_readers;
+  map<int, std::set<string> > bank_writers;
+  map<string, std::set<int>> outpt_to_bank;
+  map<string, std::set<int>> inpt_to_bank;
+
+  map<string,pair<string,int>> shift_registered_outputs;
+  vector<pair<string,pair<string,int>>> shift_registered_outputs_to_outputs;
+};
+
+bool all_schedules_defined(UBuffer& buf);

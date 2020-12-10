@@ -1298,20 +1298,6 @@ inline hw_uint<512> in_mpr16b_32_16_update_0_read_bundle_read(in_cache& in, int 
 
 
 // Operation logic
-inline void in_update_0(HWStream<hw_uint<256> >& /* buffer_args num ports = 16 */in_oc, in_cache& in, int d0, int d1, int d2) {
-  // Dynamic address computation
-
-	// Consume: in_oc
-	auto in_oc_0_c__0_value = in_oc.read();
-	auto compute_result = id_unrolled_16(in_oc_0_c__0_value);
-	// Produce: in
-	in_in_update_0_write_bundle_write(/* arg names */compute_result, in, d0, d1, d2, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
 inline void mpr16b_32_16_update_0(in_cache& in, HWStream<hw_uint<128> >& /* buffer_args num ports = 8 */mpr16b_32_16, int d0, int d1, int d2) {
   // Dynamic address computation
 
@@ -1324,6 +1310,20 @@ inline void mpr16b_32_16_update_0(in_cache& in, HWStream<hw_uint<128> >& /* buff
 	auto compute_result = max_pool_2x2_unrolled_8(in_0_c__0_value);
 	// Produce: mpr16b_32_16
 	mpr16b_32_16.write(compute_result);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void in_update_0(HWStream<hw_uint<256> >& /* buffer_args num ports = 16 */in_oc, in_cache& in, int d0, int d1, int d2) {
+  // Dynamic address computation
+
+	// Consume: in_oc
+	auto in_oc_0_c__0_value = in_oc.read();
+	auto compute_result = id_unrolled_16(in_oc_0_c__0_value);
+	// Produce: in
+	in_in_update_0_write_bundle_write(/* arg names */compute_result, in, d0, d1, d2, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__

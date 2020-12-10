@@ -4392,48 +4392,6 @@ int generate_compute_unit_regression_tb(op* op, prog& prg) {
   return verilator_run;
 }
 
-struct dgraph {
-  std::set<string> nodes;
-  map<string, std::set<string> > out_edges;
-  map<pair<string, string>, int> weights;
-
-  void add_edge(const std::string& src, const std::string& dst, const int weight) {
-    nodes.insert(dst);
-    nodes.insert(src);
-    out_edges[src].insert(dst);
-    weights[{src, dst}] = weight;
-  }
-
-  int weight(const std::string& src, const std::string& dst) {
-    if(weights.find({src,dst}) == weights.end()){
-    	 return -1;
-    } else{
-	 return  weights[{src, dst}];
-    }
-  }
-
-  vector<pair<string, int> > in_edges(const std::string& dst) {
-    vector<pair<string, int> > ed;
-    for (auto w : out_edges) {
-      if (elem(dst, w.second)) {
-        ed.push_back({w.first, weight(w.first, dst)});
-      }
-    }
-    return ed;
-  }
-};
-
-std::ostream& operator<<(std::ostream& out, dgraph& dg) {
-  out << "# nodes: " << dg.nodes.size() << endl;
-  out << "# edges: " << dg.weights.size() << endl;
-  for (auto e : dg.out_edges) {
-    for (auto dst : e.second) {
-      out << tab(1) << e.first << " -> (" << dg.weight(e.first, dst) << ") " << dst << endl;
-    }
-  }
-  return out;
-}
-
 dgraph build_shift_register_graph(CodegenOptions& options, CoreIR::ModuleDef* def, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
   map<string,pair<string,int>> shift_registered_outputs = determine_shift_reg_map(prg, buf, hwinfo);
   vector<pair<string,pair<string,int>>> shift_registered_outputs_to_outputs = determine_output_shift_reg_map(prg, buf, hwinfo);
@@ -4524,11 +4482,6 @@ dgraph build_shift_registers_io(CodegenOptions& options, CoreIR::ModuleDef* def,
     //assert(false);
   //}
   return shift_registers;
-}
-
-template<typename T, typename Q>
-void sort_lt_snd(vector<pair<T, Q> >& outputs) {
-  sort_lt(outputs, [](const pair<T,Q> &x){return x.second;});
 }
 
 dgraph build_in_to_out_shift_register_graph(CodegenOptions& options, CoreIR::ModuleDef* def, prog& prg, UBuffer& buf, schedule_info& hwinfo) {

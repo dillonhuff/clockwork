@@ -1,0 +1,1 @@
+export app=stencil_chain_static_schedule
