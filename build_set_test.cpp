@@ -16756,7 +16756,7 @@ vector<prog> harris_variants() {
   // Works
   //test_programs.push_back(harris_sch5_1ppc());
   //test_programs.push_back(harris_sch6_2ppc());
-  test_programs.push_back(harris_sch7_bigtile());
+  //test_programs.push_back(harris_sch7_bigtile());
   //test_programs.push_back(harris_sch8_endcim());
 
   return test_programs;
@@ -16764,14 +16764,17 @@ vector<prog> harris_variants() {
 
 vector<prog> isca_programs() {
   vector<prog> test_programs;
-  test_programs.push_back(harris_sch6_2ppc());
+  //test_programs.push_back(harris_sch5_1ppc());
+  //test_programs.push_back(harris());
+  //test_programs.push_back(harris_sch6_2ppc());
+  //test_programs.push_back(harris_sch7_bigtile());
+  //test_programs.push_back(harris_sch8_endcim());
   //test_programs.back().pretty_print();
 
+  test_programs.push_back(camera_pipeline());
   test_programs.push_back(gaussian());
   test_programs.push_back(mobilenet_unrolled());
-  test_programs.push_back(harris());
   test_programs.push_back(unsharp());
-  test_programs.push_back(camera_pipeline());
   test_programs.push_back(resnet());
   test_programs.push_back(cascade());
   test_programs.push_back(down_sample());
