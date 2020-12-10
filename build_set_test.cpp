@@ -8748,7 +8748,7 @@ void stencil_chain_iccad_apps(const std::string& prefix) {
 
     move_to_benchmarks_folder(name + "_opt");
   }
-  //assert(false);
+  assert(false);
 }
 
 void gauss_pyramid_iccad_apps(const std::string& prefix) {
