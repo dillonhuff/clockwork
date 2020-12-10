@@ -757,6 +757,7 @@ void generate_xilinx_accel_host(CodegenOptions& options, map<string, UBuffer>& b
   }
 
   out << tab(1) << "// TODO: POPULATE BUFFERS FOR EACH PIPELINE" << endl;
+  out << "#ifdef __POPULATE_HOST_INPUTS__" << endl;
   for (auto edge_in : inputs(buffers, prg)) {
     populate_input(out, edge_in.second, vanilla_c_pixel_type_string(edge_in.first, buffers));
   }
@@ -768,6 +769,7 @@ void generate_xilinx_accel_host(CodegenOptions& options, map<string, UBuffer>& b
     out << tab(2) << "((" << vanilla_c_pixel_type_string(buf, buffers) << "*) (" << edge_bundle << ".data()))[i] = 0;" << endl;
     out << tab(1) << "}" << endl << endl;
   }
+  out << "#endif // __POPULATE_HOST_INPUTS__" << endl;
 
   ocl_program_device(out, prg, "_accel");
 
