@@ -4465,7 +4465,6 @@ dgraph build_shift_registers_io(CodegenOptions& options, CoreIR::ModuleDef* def,
 }
 
 
-
 dgraph build_shift_registers(CodegenOptions& options, CoreIR::ModuleDef* def, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
   if (buf.name == "padded16_global_wrapper_stencil") {
     dgraph shift_registers = build_in_to_out_shift_register_graph(options, prg, buf, hwinfo);
