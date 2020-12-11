@@ -16680,68 +16680,17 @@ void compile_for_garnet_single_port_mem(prog& prg,
     if (b.second.num_in_ports() == 0 || b.second.num_out_ports() == 0)
         continue;
 
-    ////compare out2in
-    //auto shift_registered_outputs = determine_shift_reg_map(prg, b.second, sched);
-    ////compare out2out
-    //auto o2o = determine_output_shift_reg_map(prg, b.second, sched);
-    //cout << o2o.size() << endl;
-    //for (auto it: shift_registered_outputs) {
-    //  cout << it.first << " -> " << it.second.first << ", depth = " << it.second.second << endl;
-    //}
-    //auto dg = build_shift_registers(options, prg, b.second, sched);
     auto& buf = b.second;
     auto impl = port_group2bank(options, prg, b.second, sched);
-    //auto pt_need_to_banking = buf.unbanking_outpts();
-    //cout << "\t\tafter sr opt: " << pt_need_to_banking << endl;
-    //if (pt_need_to_banking.size() == 0) {
-    //    continue;
-    //}
-    cout << impl << endl;
+
+    cout << "After shift register optimization: " << impl << endl;
     if (impl.is_pure_shift_register(buf.get_out_ports()))
       continue;
 
-    //a hack for access pattern rewrite
-    buf.banking.partition = "cyclic";
-    auto bank_func = build_buffer_impl(prg, b.second, sched, impl);
-    cout << impl << endl;
-    cout << "bank func: " << str(bank_func) << endl;
-
-    //take the ubuffer implementation add bank to ubuffer
-    for (int bank_id = 0; bank_id < impl.get_bank_num(); bank_id ++) {
-      isl_set* bnk = isl_set_read_from_str(prg.ctx, curlies("Bank["+str(bank_id) + "]").c_str());
-      auto rddom = to_uset(domain(its_range(bank_func, bnk)));
-      cout << "rddom before its: " << str(rddom) << endl;
-      rddom = coalesce(its(rddom, buf.global_range()));
-      cout << "rddom after its: " << str(rddom) << endl;
-      auto point = pick(get_points(bnk));
-      cout << "ADD BANK!\n Bank id: " << str(point) << endl;
-      std::set<string> input_sets = impl.bank_writers.at(bank_id);
-      std::set<string> output_sets = impl.bank_readers.at(bank_id);
-      auto bnk_info = buf.compute_bank_info(rddom, point, input_sets, output_sets);
-      buf.add_bank_between(input_sets, output_sets, bnk_info);
-    }
-
+    generate_banks_garnet(options, prg, buf, impl, sched);
   }
+  //FIXME: put into separate pass for power analysis
   /*
-  ////auto sched = global_schedule_from_buffers(buffers_opt);
-
-  for (auto& b : buffers_opt) {
-    cout << "\tGenerate bank for buffer: " << b.first << endl << b.second << endl;
-    if (b.second.num_in_ports() == 0 || b.second.num_out_ports() == 0)
-        continue;
-    auto partition = embarassing_partition(b.second);
-    if (partition.has_value()) {
-      auto partition_dim = partition.get_value();
-      auto cyclic_partition_factor =
-          get_cyclic_partition_factor_from_embarassing_partition(b.second, partition_dim);
-      if (card(cyclic_partition_factor) > 1) {
-        cout << "Use cyclic banking, number of banks = " << card(cyclic_partition_factor) << endl;
-        options.banking_strategies[b.first] = {"cyclic", cyclic_partition_factor};
-      }
-    }
-    b.second.generate_banks_and_merge(options);
-    b.second.port_group2bank(options);
-  }
   mem_access_cnt mem_access;
   Mem_access_count(options, buffers_opt, mem_access, prg);
   emit_mem_access_count_to_csv(dir + "/MemCount/" + prg.name, options, mem_access);

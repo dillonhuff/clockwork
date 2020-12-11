@@ -4691,6 +4691,32 @@ ubuffer_impl port_group2bank(CodegenOptions& options, prog& prg, UBuffer& buf, s
     //Add a visit pass on the sr graph for all input, take the data use the threshold
 }
 
+void generate_banks_garnet(CodegenOptions& options, prog& prg, UBuffer& buf, ubuffer_impl& impl, schedule_info& hw_info) {
+
+    //TODO: implement more banking strategies
+    buf.banking.partition = "cyclic";
+    auto bank_func = build_buffer_impl(prg, buf, hw_info, impl);
+
+    cout << "bank func: " << str(bank_func) << endl;
+    cout << "After banking: " << impl << endl;
+
+    //take the ubuffer implementation add bank to ubuffer
+    for (int bank_id = 0; bank_id < impl.get_bank_num(); bank_id ++) {
+      isl_set* bnk = isl_set_read_from_str(prg.ctx, curlies("Bank["+str(bank_id) + "]").c_str());
+      auto rddom = to_uset(domain(its_range(bank_func, bnk)));
+      cout << "rddom before its: " << str(rddom) << endl;
+      rddom = coalesce(its(rddom, buf.global_range()));
+      cout << "rddom after its: " << str(rddom) << endl;
+      auto point = pick(get_points(bnk));
+      cout << "ADD BANK!\n Bank id: " << str(point) << endl;
+      std::set<string> input_sets = impl.bank_writers.at(bank_id);
+      std::set<string> output_sets = impl.bank_readers.at(bank_id);
+      auto bnk_info = buf.compute_bank_info(rddom, point, input_sets, output_sets);
+      buf.add_bank_between(input_sets, output_sets, bnk_info);
+    }
+}
+
+
 dgraph build_shift_registers(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
   dgraph shift_registers = build_in_to_out_shift_register_graph(options, prg, buf, hwinfo);
 
