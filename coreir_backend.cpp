@@ -569,8 +569,13 @@ bool all_constant_accesses(UBuffer& buf) {
 }
 
 pair<ubuffer_impl,isl_map*> build_buffer_impl(prog& prg, UBuffer& buf, schedule_info& hwinfo) {
-  cout << "Building implementation of " << buf.name << endl;
   ubuffer_impl impl;
+  auto bank_map = build_buffer_impl(prg, buf, hwinfo, impl);
+  return {impl, bank_map};
+}
+
+isl_map* build_buffer_impl(prog& prg, UBuffer& buf, schedule_info& hwinfo, ubuffer_impl& impl) {
+  cout << "Building implementation of " << buf.name << endl;
 
   maybe<std::set<int> > embarassing_banking =
     embarassing_partition(buf);
@@ -637,7 +642,7 @@ pair<ubuffer_impl,isl_map*> build_buffer_impl(prog& prg, UBuffer& buf, schedule_
     }
   }
 
-  return {impl,m};
+  return m;
 }
 
 int wire_width(CoreIR::Wireable* w) {
@@ -4465,6 +4470,16 @@ std::ostream& operator<<(std::ostream& out, ubuffer_impl& impl) {
     out << "\t bank NO." << it.first << endl;
     out << "\t\treaders: " << it.second << endl;
   }
+  out << "Shift Register Output: " << endl;
+  out << "\tmemtiles IO:: " << endl;
+  for (auto it: impl.shift_registered_outputs) {
+      out << "\t\t " << it.second.first << "->" << it.first << ", delay = " << it.second.second << endl;
+  }
+
+  out << "\tregister IO:: " << endl;
+  for (auto it: impl.shift_registered_outputs_to_outputs) {
+      out << "\t\t " << it.second.first << "->" << it.first << ", delay = " << it.second.second << endl;
+  }
   return out;
 }
 
@@ -4579,7 +4594,7 @@ dgraph build_in_to_out_shift_register_graph(CodegenOptions& options, prog& prg, 
 }
 
 //helper function to create all the shift registered port
-void create_subbranch(const std::string& out_pt, dgraph& sr_graph, UBuffer& buf) {
+void create_subbranch(const std::string& out_pt, dgraph& sr_graph, UBuffer& buf, ubuffer_impl &impl) {
     auto src2dst = sr_graph.get_sub_branch(out_pt);
     cout << "\tsubbranch size: " << src2dst.size() << endl;
     for (auto io_pair: src2dst) {
@@ -4591,16 +4606,19 @@ void create_subbranch(const std::string& out_pt, dgraph& sr_graph, UBuffer& buf)
         }
         auto bk = buf.compute_bank_info(inpt, outpt, delay);
         buf.add_bank_between(inpt, outpt, bk);
+        impl.add_o2o_info(inpt, outpt, delay);
     }
 }
 
-void port_group2bank(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
+ubuffer_impl port_group2bank(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
+    ubuffer_impl impl;
+
     int in_port_width = options.rtl_options.max_inpt;
     int out_port_width = options.rtl_options.max_outpt;
     auto sr_graph = build_shift_registers(options, prg, buf, hwinfo);
 
     if (!sr_graph.has_nodes())
-      return;
+      return impl;
 
     //Currently only group output port
     //TODO: support input port grouping in the future
@@ -4641,7 +4659,10 @@ void port_group2bank(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_
                 //Rewrite the access map and schedule
                 auto sr_bank = buf.compute_bank_info(src, pt_name, delay);
                 buf.add_bank_between(src, pt_name, sr_bank);
-                create_subbranch(pt_name, sr_graph, buf);
+                create_subbranch(pt_name, sr_graph, buf, impl);
+
+                //TODO: use ubuffer_impl to substite bank in ubuffer
+                impl.add_i2o_info(src, pt_name, delay);
             } else {
                 out_pts.insert(pt_name);
                 read_delay.insert(pt_delay_pair);
@@ -4651,7 +4672,10 @@ void port_group2bank(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_
                     auto super_bank = buf.compute_bank_info({src}, out_pts, read_delay);
                     for (auto out_pt: out_pts) {
                         buf.add_bank_between(src, out_pt, super_bank);
-                        create_subbranch(out_pt, sr_graph, buf);
+                        create_subbranch(out_pt, sr_graph, buf, impl);
+
+                        //TODO: use ubuffer_impl to substite bank in ubuffer
+                        impl.add_i2o_info(src, out_pt, delay);
                     }
                     read_delay.clear();
                     out_pts.clear();
@@ -4661,6 +4685,8 @@ void port_group2bank(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_
 
     }
     buf.print_bank_info();
+
+    return impl;
 
     //Add a visit pass on the sr graph for all input, take the data use the threshold
 }

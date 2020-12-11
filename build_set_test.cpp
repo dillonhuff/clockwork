@@ -16690,34 +16690,35 @@ void compile_for_garnet_single_port_mem(prog& prg,
     //}
     //auto dg = build_shift_registers(options, prg, b.second, sched);
     auto& buf = b.second;
-    port_group2bank(options, prg, b.second, sched);
-    auto pt_need_to_banking = buf.unbanking_outpts();
-    cout << "\t\tafter sr opt: " << pt_need_to_banking << endl;
-    if (pt_need_to_banking.size() == 0) {
-        continue;
-    }
+    auto impl = port_group2bank(options, prg, b.second, sched);
+    //auto pt_need_to_banking = buf.unbanking_outpts();
+    //cout << "\t\tafter sr opt: " << pt_need_to_banking << endl;
+    //if (pt_need_to_banking.size() == 0) {
+    //    continue;
+    //}
+    cout << impl << endl;
+    if (impl.is_pure_shift_register(buf.get_out_ports()))
+      continue;
 
     //a hack for access pattern rewrite
     buf.banking.partition = "cyclic";
-    auto implm = build_buffer_impl(prg, b.second, sched);
-    ubuffer_impl impl = implm.first;
+    auto bank_func = build_buffer_impl(prg, b.second, sched, impl);
     cout << impl << endl;
-    cout << "bank func: " << str(implm.second) << endl;
+    cout << "bank func: " << str(bank_func) << endl;
+
     //take the ubuffer implementation add bank to ubuffer
     for (int bank_id = 0; bank_id < impl.get_bank_num(); bank_id ++) {
       isl_set* bnk = isl_set_read_from_str(prg.ctx, curlies("Bank["+str(bank_id) + "]").c_str());
-      auto rddom = to_uset(domain(its_range(implm.second, bnk)));
+      auto rddom = to_uset(domain(its_range(bank_func, bnk)));
       cout << "rddom before its: " << str(rddom) << endl;
       rddom = coalesce(its(rddom, buf.global_range()));
       cout << "rddom after its: " << str(rddom) << endl;
-      //if (not_insert) {
-        auto point = pick(get_points(bnk));
-        cout << "ADD BANK!\n Bank id: " << str(point) << endl;
-        std::set<string> input_sets = impl.bank_writers.at(bank_id);
-        std::set<string> output_sets = impl.bank_readers.at(bank_id);
-        auto bnk_info = buf.compute_bank_info(rddom, point, input_sets, output_sets);
-        buf.add_bank_between(input_sets, output_sets, bnk_info);
-      //}
+      auto point = pick(get_points(bnk));
+      cout << "ADD BANK!\n Bank id: " << str(point) << endl;
+      std::set<string> input_sets = impl.bank_writers.at(bank_id);
+      std::set<string> output_sets = impl.bank_readers.at(bank_id);
+      auto bnk_info = buf.compute_bank_info(rddom, point, input_sets, output_sets);
+      buf.add_bank_between(input_sets, output_sets, bnk_info);
     }
 
   }

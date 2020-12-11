@@ -29,6 +29,41 @@ struct ubuffer_impl {
   map<string,pair<string,int>> shift_registered_outputs;
   vector<pair<string,pair<string,int>>> shift_registered_outputs_to_outputs;
 
+  void add_o2o_info(const string& inpt, const string& outpt, const int& delay) {
+      shift_registered_outputs_to_outputs.push_back(
+              {outpt, {inpt, delay}}
+              );
+  }
+
+  void add_i2o_info(const string& inpt, const string& outpt, const int& delay) {
+      shift_registered_outputs[outpt] = make_pair(inpt, delay);
+  }
+
+  std::set<string> get_sr_outpts() const {
+    std::set<string> outpts;
+    for (auto it: shift_registered_outputs_to_outputs) {
+      outpts.insert(it.first);
+    }
+
+    for (auto it: shift_registered_outputs) {
+      outpts.insert(it.first);
+    }
+
+    return outpts;
+  }
+
+  bool is_pure_shift_register(vector<string> outpts) {
+    auto sr_outpts = get_sr_outpts();
+    cout <<"SR outputs: " << sr_outpts << endl;
+    cout <<"BUF outputs: " << outpts << endl;
+    for (string pt: outpts) {
+        if (sr_outpts.find(pt) == sr_outpts.end()) {
+            return false;
+        }
+    }
+    return true;
+  }
+
   int get_bank_num() const {
     int bank_num = 1;
     for (auto it: partitioned_dimension_extents) {
@@ -199,8 +234,9 @@ std::ostream& operator<<(std::ostream& out, ubuffer_impl& impl);
 dgraph build_shift_register_graph(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_info& hwinfo);
 dgraph build_shift_registers(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_info& hwinfo);
 pair<ubuffer_impl,isl_map*> build_buffer_impl(prog& prg, UBuffer& buf, schedule_info& hwinfo);
+isl_map* build_buffer_impl(prog& prg, UBuffer& buf, schedule_info& hwinfo, ubuffer_impl& impl);
 
-void port_group2bank(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_info& hwinfo);
+ubuffer_impl port_group2bank(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_info& hwinfo);
 
 //CoreIR::Namespace* CoreIRLoadLibrary_cgralib(CoreIR::Context* c);
 
