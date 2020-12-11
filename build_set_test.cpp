@@ -13397,12 +13397,9 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
 void generate_smt_stream_for_garnet_single_port_mem(prog& prg);
 void test_single_port_mem_smt_stream() {
   vector<prog> test_apps;
-  //test_apps.push_back(conv_3_3());
-  //test_apps.push_back(cascade());
-  //test_apps.push_back(harris());
-  test_apps.push_back(resnet());
-  //test_apps.push_back(conv_1_2());
-  //test_apps.push_back(rom());
+  test_apps.push_back(conv_3_3(28, 28, "_SMT_28_28"));
+  test_apps.push_back(cascade(28, 28, "_SMT_28_28"));
+  test_apps.push_back(harris(26, 26, "_SMT_28_28"));
 
   for ( auto prg: test_apps) {
     cout << "====== Running CGRA Single Port test for " << prg.name << endl;
@@ -13535,7 +13532,7 @@ void lake_conv33_autovec_test() {
 
 }
 
-void lake_identity_stream_autovec_test() {
+void lake_identity_stream_config_gen(int x, int y, string suffix) {
   prog lake_agg("lake_agg_test");
   lake_agg.add_input("in");
   lake_agg.add_output("out");
@@ -13543,15 +13540,15 @@ void lake_identity_stream_autovec_test() {
   int app_target_II = 1;
 
   //corresponding to the aggI/O, sramI/O, TBI/O latency
-  map<pair<string, string>, int> latency({{{"in2buf", "in2buf_vec"}, 1},
-          {{"in2buf_vec", "buf2out_vec"}, 2},
-          {{"buf2out_vec", "buf2out"}, 1}});
+  map<pair<string, string>, int> latency({{{"in2buf", "in2buf_agg2sram"}, 1},
+          {{"in2buf_agg2sram", "buf2out_sram2tb"}, 2},
+          {{"buf2out_sram2tb", "buf2out"}, 1}});
 
-  auto in2buf = lake_agg.add_nest("a1", 0, 8, "a0", 0, 8)->add_op("in2buf");
+  auto in2buf = lake_agg.add_nest("a1", 0, y, "a0", 0, x)->add_op("in2buf");
   in2buf->add_load("in", "a1, a0");
   in2buf->add_store("buf", "a1, a0");
 
-  auto buf2out= lake_agg.add_nest("b1", 0, 8, "b0", 0, 8)->add_op("buf2out");
+  auto buf2out= lake_agg.add_nest("b1", 0, y, "b0", 0, x)->add_op("buf2out");
   buf2out->add_load("buf", "b1, b0");
   buf2out->add_store("out", "b1, b0");
 
@@ -13570,7 +13567,28 @@ void lake_identity_stream_autovec_test() {
   //check_lake_config(op_vec, "./lake_controllers/identity_stream/", "./lake_gold/identity_stream/");
   //cmd("mkdir -p ./lake_stream/identity_stream/");
   //emit_lake_stream(buffers_opt, hsh, "./lake_stream/identity_stream/");
-
+  CodegenOptions options;
+  UBuffer tmp;
+  options.mem_tile.multi_sram_accessor = true;
+  options.dir = "./lake_controllers/identity_stream/";
+  map<string, UBuffer> rewrite_buffers;
+  auto sched_map = get_maps_in_map(hsh);
+  for ( auto it: buffers_opt ){
+      if (it.second.num_out_ports() != 0 && it.second.num_in_ports() != 0) {
+          auto & buf = it.second;
+          for (string pt : buf.get_all_ports()) {
+            auto dom = buf.domain.at(pt);
+            auto hw_sched = sched_map.at(::name(dom));
+            hw_sched = retrive_map_domain_with_dim(hw_sched, dom);
+            buf.schedule.at(pt) = to_umap(hw_sched);
+          }
+          rewrite_buffers.insert(it);
+      }
+  }
+#ifdef COREIR
+  auto config = tmp.generate_ubuf_args(options, rewrite_buffers);
+  emit_lake_config_collateral(options, "buf_" + suffix, config);
+#endif
 
 }
 
@@ -13606,8 +13624,6 @@ void lake_dual_port_test() {
   //check_lake_config(op_vec, "./lake_controllers/identity_stream/", "./lake_gold/identity_stream/");
   //cmd("mkdir -p ./lake_stream/identity_stream/");
   //emit_lake_stream(buffers_opt, hsh, "./lake_stream/identity_stream/");
-
-
 }
 
 void lake_identity_stream_SMT_test(int x, int y, string suffix) {
@@ -15158,8 +15174,10 @@ void union_test() {
 void dual_port_lake_test();
 
 void lake_smt_tests() {
-  test_single_port_mem_smt_stream();
-  //lake_identity_stream_SMT_test(20, 20, "20x20");
+  lake_identity_stream_SMT_test(28, 28, "28x28");
+  //lake_identity_stream_config_gen(28, 28, "28x28");
+  //test_single_port_mem_smt_stream();
+  assert(false);
   //lake_identity_stream_SMT_test(128, 128, "128x128");
   //lake_identity_stream_SMT_test(64, 64, "64x64");
   //lake_identity_stream_SMT_test(32, 32, "32x32");
@@ -15176,7 +15194,6 @@ void lake_tests() {
   test_single_port_mem(false, true, "aha_garnet_design_new");
   //test_single_port_mem(false, false, "aha_garnet_design");
   assert(false);
-  lake_conv33_autovec_aha_test();
   //double_buffer_test();
   //lake_identity_stream_autovec_test();
   lake_gaussian_autovec_test();

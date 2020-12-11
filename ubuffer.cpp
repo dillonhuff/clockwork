@@ -788,6 +788,7 @@ isl_union_set* retrive_domain_from_buffers(const map<string, UBuffer> &buffers) 
     return global_dom;
 }
 
+
 #ifdef COREIR
 
 
@@ -983,6 +984,7 @@ pair<int, int> process_mux_info(CodegenOptions options, string op_name, bool is_
     //get pt number, take the lake information
     int bk_num;
     if (is_read) {
+        cout << micro_buf_name << endl;
         bk_num = max(port_width / options.mem_tile.out_port_width.at(micro_buf_name), 1);
     } else {
         bk_num = max(port_width / options.mem_tile.in_port_width.at(micro_buf_name), 1);

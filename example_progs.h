@@ -45,4 +45,9 @@ prog harris_sch6_2ppc();
 prog harris_sch7_bigtile();
 prog harris_sch8_endcim();
 prog three_level_memory_two();
+
+//SMT test
+prog conv_3_3(int32_t, int32_t, string);
+prog cascade(int32_t, int32_t, string);
+prog harris(int32_t, int32_t, string);
 prog resnet_full_layer();

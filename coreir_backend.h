@@ -248,6 +248,7 @@ CoreIR::Module* lake_rf(CoreIR::Context* c, const int width, const int depth);
 
 void ram_module(CoreIR::Context* c, const int width, const int depth);
 
+void emit_lake_config_collateral(CodegenOptions options, string tile_name, json config_file);
 
 void mini_sram_garnet_test();
 
