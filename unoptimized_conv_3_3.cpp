@@ -288,6 +288,18 @@ inline void hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_
 
 
 // Operation logic
+inline void op_hcompute_conv_stencil(conv_stencil_clkwrk_dsa0_cache& conv_stencil_clkwrk_dsa0, int root, int hw_output_s0_y_yi, int hw_output_s0_x_xi) {
+  // Dynamic address computation
+
+	auto compute_result = hcompute_conv_stencil();
+	// Produce: conv_stencil_clkwrk_dsa0
+	conv_stencil_clkwrk_dsa0_op_hcompute_conv_stencil_write_bundle_write(/* arg names */compute_result, conv_stencil_clkwrk_dsa0, root, hw_output_s0_y_yi, hw_output_s0_x_xi, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
 inline void op_hcompute_hw_input_global_wrapper_stencil(HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */hw_input_stencil, hw_input_global_wrapper_stencil_cache& hw_input_global_wrapper_stencil, int root, int hw_input_global_wrapper_s0_y, int hw_input_global_wrapper_s0_x) {
   // Dynamic address computation
 
@@ -296,18 +308,6 @@ inline void op_hcompute_hw_input_global_wrapper_stencil(HWStream<hw_uint<16> >& 
 	auto compute_result = hcompute_hw_input_global_wrapper_stencil(hw_input_stencil_hw_input_global_wrapper_s0_y_c__hw_input_global_wrapper_s0_x_value);
 	// Produce: hw_input_global_wrapper_stencil
 	hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_write_bundle_write(/* arg names */compute_result, hw_input_global_wrapper_stencil, root, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void op_hcompute_conv_stencil(conv_stencil_clkwrk_dsa0_cache& conv_stencil_clkwrk_dsa0, int root, int hw_output_s0_y_yi, int hw_output_s0_x_xi) {
-  // Dynamic address computation
-
-	auto compute_result = hcompute_conv_stencil();
-	// Produce: conv_stencil_clkwrk_dsa0
-	conv_stencil_clkwrk_dsa0_op_hcompute_conv_stencil_write_bundle_write(/* arg names */compute_result, conv_stencil_clkwrk_dsa0, root, hw_output_s0_y_yi, hw_output_s0_x_xi, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__

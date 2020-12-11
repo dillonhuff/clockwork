@@ -148,6 +148,20 @@ inline hw_uint<48> I_out_blur_30_read_bundle_read(I_cache& I, int root, int d1, 
 
 
 // Operation logic
+inline void I_id0(HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */in, I_cache& I, int root, int id1, int id0) {
+  // Dynamic address computation
+
+	// Consume: in
+	auto in_id0_c__id1_value = in.read();
+	auto compute_result = id(in_id0_c__id1_value);
+	// Produce: I
+	I_I_id0_write_bundle_write(/* arg names */compute_result, I, root, id1, id0, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
 inline void out_blur_30(I_cache& I, HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */out, int root, int d1, int d0) {
   // Dynamic address computation
 
@@ -160,20 +174,6 @@ inline void out_blur_30(I_cache& I, HWStream<hw_uint<16> >& /* buffer_args num p
 	auto compute_result = blur_3(I_d0__p__0_c__d1__p__0_value);
 	// Produce: out
 	out.write(compute_result);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void I_id0(HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */in, I_cache& I, int root, int id1, int id0) {
-  // Dynamic address computation
-
-	// Consume: in
-	auto in_id0_c__id1_value = in.read();
-	auto compute_result = id(in_id0_c__id1_value);
-	// Produce: I
-	I_I_id0_write_bundle_write(/* arg names */compute_result, I, root, id1, id0, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__

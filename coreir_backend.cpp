@@ -2336,7 +2336,6 @@ void instantiate_controllers(CodegenOptions& options,
     schedule_info& hwinfo) {
   auto sched_maps = get_maps(schedmap);
   if (options.rtl_options.target_tile == TARGET_TILE_M3) {
-  //if (false) {
     for (auto op : prg.all_ops()) {
       bool needs_controller = false;
       for (auto b : op->buffers_referenced()) {
@@ -2912,7 +2911,7 @@ void analyze_post_mapped_app(CodegenOptions& options, prog& prg, map<string, UBu
   for (auto c : counts) {
     cout << tab(1) << c.first << " -> " << c.second << endl;
   }
-  //assert(false);
+  assert(false);
   if(!saveToFile(ns, prg.name + "_post_mapping.json", gmod)) {
     cout << "Could not save ubuffer coreir" << endl;
     context->die();
@@ -4441,46 +4440,6 @@ int generate_compute_unit_regression_tb(op* op, prog& prg) {
   move_to_compute_regression_folder(prg.name, compute_name);
 
   return verilator_run;
-}
-
-std::ostream& operator<<(std::ostream& out, dgraph& dg) {
-  out << "# nodes: " << dg.nodes.size() << endl;
-  out << "# edges: " << dg.weights.size() << endl;
-  for (auto e : dg.out_edges) {
-    for (auto dst : e.second) {
-      out << tab(1) << e.first << " -> (" << dg.weight(e.first, dst) << ") " << dst << endl;
-    }
-  }
-  return out;
-}
-
-std::ostream& operator<<(std::ostream& out, ubuffer_impl& impl) {
-  out << "Partition dim : " << impl.partition_dims << endl;
-  out << "Partition dim extent: " << endl;
-  for (auto it: impl.partitioned_dimension_extents) {
-    out << "\t" << it.first << ": " << it.second << endl;
-  }
-  out << "Bank writers: " << endl;
-  for (auto it: impl.bank_writers) {
-    out << "\t bank NO." << it.first << endl;
-    out << "\t\twriters: " << it.second << endl;
-  }
-  out << "Bank readers: " << endl;
-  for (auto it: impl.bank_readers) {
-    out << "\t bank NO." << it.first << endl;
-    out << "\t\treaders: " << it.second << endl;
-  }
-  out << "Shift Register Output: " << endl;
-  out << "\tmemtiles IO:: " << endl;
-  for (auto it: impl.shift_registered_outputs) {
-      out << "\t\t " << it.second.first << "->" << it.first << ", delay = " << it.second.second << endl;
-  }
-
-  out << "\tregister IO:: " << endl;
-  for (auto it: impl.shift_registered_outputs_to_outputs) {
-      out << "\t\t " << it.second.first << "->" << it.first << ", delay = " << it.second.second << endl;
-  }
-  return out;
 }
 
 dgraph build_shift_register_graph(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_info& hwinfo) {

@@ -263,106 +263,29 @@ hw_uint<16> hcompute_dw_conv_stencil_7(hw_uint<16>& dw_conv_stencil, hw_uint<144
   return _998;
 }
 
-//store is: hw_filter_pw_global_wrapper.stencil(0, 0) = hw_filter_pw.stencil(0, 0)
+//store is: hw_filter_pw_global_wrapper.stencil(hw_filter_pw_global_wrapper_s0_k, hw_filter_pw_global_wrapper_s0_c) = hw_filter_pw.stencil(hw_filter_pw_global_wrapper_s0_k, hw_filter_pw_global_wrapper_s0_c)
 hw_uint<16> hcompute_hw_filter_pw_global_wrapper_stencil(hw_uint<16>& hw_filter_pw_stencil) {
   int16_t _hw_filter_pw_stencil_1 = (int16_t) hw_filter_pw_stencil.extract<0, 15>();
 
   return _hw_filter_pw_stencil_1;
 }
 
-//store is: hw_filter_pw_global_wrapper.stencil(1, 0) = hw_filter_pw.stencil(1, 0)
-hw_uint<16> hcompute_hw_filter_pw_global_wrapper_stencil_1(hw_uint<16>& hw_filter_pw_stencil) {
-  int16_t _hw_filter_pw_stencil_2 = (int16_t) hw_filter_pw_stencil.extract<0, 15>();
-
-  return _hw_filter_pw_stencil_2;
-}
-
-//store is: hw_filter_pw_global_wrapper.stencil(2, 0) = hw_filter_pw.stencil(2, 0)
-hw_uint<16> hcompute_hw_filter_pw_global_wrapper_stencil_2(hw_uint<16>& hw_filter_pw_stencil) {
-  int16_t _hw_filter_pw_stencil_3 = (int16_t) hw_filter_pw_stencil.extract<0, 15>();
-
-  return _hw_filter_pw_stencil_3;
-}
-
-//store is: hw_filter_pw_global_wrapper.stencil(0, 1) = hw_filter_pw.stencil(0, 1)
-hw_uint<16> hcompute_hw_filter_pw_global_wrapper_stencil_3(hw_uint<16>& hw_filter_pw_stencil) {
-  int16_t _hw_filter_pw_stencil_4 = (int16_t) hw_filter_pw_stencil.extract<0, 15>();
-
-  return _hw_filter_pw_stencil_4;
-}
-
-//store is: hw_filter_pw_global_wrapper.stencil(1, 1) = hw_filter_pw.stencil(1, 1)
-hw_uint<16> hcompute_hw_filter_pw_global_wrapper_stencil_4(hw_uint<16>& hw_filter_pw_stencil) {
-  int16_t _hw_filter_pw_stencil_5 = (int16_t) hw_filter_pw_stencil.extract<0, 15>();
-
-  return _hw_filter_pw_stencil_5;
-}
-
-//store is: hw_filter_pw_global_wrapper.stencil(2, 1) = hw_filter_pw.stencil(2, 1)
-hw_uint<16> hcompute_hw_filter_pw_global_wrapper_stencil_5(hw_uint<16>& hw_filter_pw_stencil) {
-  int16_t _hw_filter_pw_stencil_6 = (int16_t) hw_filter_pw_stencil.extract<0, 15>();
-
-  return _hw_filter_pw_stencil_6;
-}
-
-//store is: hw_filter_pw_global_wrapper.stencil(0, 2) = hw_filter_pw.stencil(0, 2)
-hw_uint<16> hcompute_hw_filter_pw_global_wrapper_stencil_6(hw_uint<16>& hw_filter_pw_stencil) {
-  int16_t _hw_filter_pw_stencil_7 = (int16_t) hw_filter_pw_stencil.extract<0, 15>();
-
-  return _hw_filter_pw_stencil_7;
-}
-
-//store is: hw_filter_pw_global_wrapper.stencil(1, 2) = hw_filter_pw.stencil(1, 2)
-hw_uint<16> hcompute_hw_filter_pw_global_wrapper_stencil_7(hw_uint<16>& hw_filter_pw_stencil) {
-  int16_t _hw_filter_pw_stencil_8 = (int16_t) hw_filter_pw_stencil.extract<0, 15>();
-
-  return _hw_filter_pw_stencil_8;
-}
-
-//store is: hw_filter_pw_global_wrapper.stencil(2, 2) = hw_filter_pw.stencil(2, 2)
-hw_uint<16> hcompute_hw_filter_pw_global_wrapper_stencil_8(hw_uint<16>& hw_filter_pw_stencil) {
-  int16_t _hw_filter_pw_stencil_9 = (int16_t) hw_filter_pw_stencil.extract<0, 15>();
-
-  return _hw_filter_pw_stencil_9;
-}
-
-//store is: hw_filter_pw_global_wrapper.stencil(0, 3) = hw_filter_pw.stencil(0, 3)
-hw_uint<16> hcompute_hw_filter_pw_global_wrapper_stencil_9(hw_uint<16>& hw_filter_pw_stencil) {
-  int16_t _hw_filter_pw_stencil_10 = (int16_t) hw_filter_pw_stencil.extract<0, 15>();
-
-  return _hw_filter_pw_stencil_10;
-}
-
-//store is: hw_filter_pw_global_wrapper.stencil(1, 3) = hw_filter_pw.stencil(1, 3)
-hw_uint<16> hcompute_hw_filter_pw_global_wrapper_stencil_10(hw_uint<16>& hw_filter_pw_stencil) {
-  int16_t _hw_filter_pw_stencil_11 = (int16_t) hw_filter_pw_stencil.extract<0, 15>();
-
-  return _hw_filter_pw_stencil_11;
-}
-
-//store is: hw_filter_pw_global_wrapper.stencil(2, 3) = hw_filter_pw.stencil(2, 3)
-hw_uint<16> hcompute_hw_filter_pw_global_wrapper_stencil_11(hw_uint<16>& hw_filter_pw_stencil) {
-  int16_t _hw_filter_pw_stencil_12 = (int16_t) hw_filter_pw_stencil.extract<0, 15>();
-
-  return _hw_filter_pw_stencil_12;
-}
-
 //store is: pw_conv_reduction.stencil(0, pw_conv_reduction_s0_x, pw_conv_reduction_s0_y) = (int16)0
 hw_uint<16> hcompute_pw_conv_reduction_stencil() {
-  int16_t _1070 = (int16_t)(0);
-  return _1070;
+  int16_t _1059 = (int16_t)(0);
+  return _1059;
 }
 
 //store is: pw_conv_reduction.stencil(1, pw_conv_reduction_s0_x, pw_conv_reduction_s0_y) = (int16)0
 hw_uint<16> hcompute_pw_conv_reduction_stencil_1() {
-  int16_t _1073 = (int16_t)(0);
-  return _1073;
+  int16_t _1062 = (int16_t)(0);
+  return _1062;
 }
 
 //store is: pw_conv_reduction.stencil(2, pw_conv_reduction_s0_x, pw_conv_reduction_s0_y) = (int16)0
 hw_uint<16> hcompute_pw_conv_reduction_stencil_2() {
-  int16_t _1076 = (int16_t)(0);
-  return _1076;
+  int16_t _1065 = (int16_t)(0);
+  return _1065;
 }
 
 //store is: pw_conv_reduction.stencil(0, pw_conv_reduction_s1_x, pw_conv_reduction_s1_y) = ((hw_filter_pw_global_wrapper.stencil(0, 0)*dw_conv.stencil(0, pw_conv_reduction_s1_x, pw_conv_reduction_s1_y)) + (pw_conv_reduction.stencil(0, pw_conv_reduction_s1_x, pw_conv_reduction_s1_y) + ((hw_filter_pw_global_wrapper.stencil(0, 1)*dw_conv.stencil(1, pw_conv_reduction_s1_x, pw_conv_reduction_s1_y)) + ((hw_filter_pw_global_wrapper.stencil(0, 3)*dw_conv.stencil(3, pw_conv_reduction_s1_x, pw_conv_reduction_s1_y)) + (hw_filter_pw_global_wrapper.stencil(0, 2)*dw_conv.stencil(2, pw_conv_reduction_s1_x, pw_conv_reduction_s1_y))))))
@@ -379,15 +302,15 @@ hw_uint<16> hcompute_pw_conv_reduction_stencil_3(hw_uint<64>& dw_conv_stencil, h
 
   int16_t _pw_conv_reduction_stencil_1 = (int16_t) pw_conv_reduction_stencil.extract<0, 15>();
 
-  int16_t _1079 = _hw_filter_pw_global_wrapper_stencil_1 * _dw_conv_stencil_5;
-  int16_t _1080 = _hw_filter_pw_global_wrapper_stencil_2 * _dw_conv_stencil_6;
-  int16_t _1081 = _hw_filter_pw_global_wrapper_stencil_3 * _dw_conv_stencil_7;
-  int16_t _1082 = _hw_filter_pw_global_wrapper_stencil_4 * _dw_conv_stencil_8;
-  int16_t _1083 = _1081 + _1082;
-  int16_t _1084 = _1080 + _1083;
-  int16_t _1085 = _pw_conv_reduction_stencil_1 + _1084;
-  int16_t _1086 = _1079 + _1085;
-  return _1086;
+  int16_t _1068 = _hw_filter_pw_global_wrapper_stencil_1 * _dw_conv_stencil_5;
+  int16_t _1069 = _hw_filter_pw_global_wrapper_stencil_2 * _dw_conv_stencil_6;
+  int16_t _1070 = _hw_filter_pw_global_wrapper_stencil_3 * _dw_conv_stencil_7;
+  int16_t _1071 = _hw_filter_pw_global_wrapper_stencil_4 * _dw_conv_stencil_8;
+  int16_t _1072 = _1070 + _1071;
+  int16_t _1073 = _1069 + _1072;
+  int16_t _1074 = _pw_conv_reduction_stencil_1 + _1073;
+  int16_t _1075 = _1068 + _1074;
+  return _1075;
 }
 
 //store is: pw_conv_reduction.stencil(1, pw_conv_reduction_s1_x, pw_conv_reduction_s1_y) = ((hw_filter_pw_global_wrapper.stencil(1, 0)*dw_conv.stencil(0, pw_conv_reduction_s1_x, pw_conv_reduction_s1_y)) + (pw_conv_reduction.stencil(1, pw_conv_reduction_s1_x, pw_conv_reduction_s1_y) + ((hw_filter_pw_global_wrapper.stencil(1, 1)*dw_conv.stencil(1, pw_conv_reduction_s1_x, pw_conv_reduction_s1_y)) + ((hw_filter_pw_global_wrapper.stencil(1, 3)*dw_conv.stencil(3, pw_conv_reduction_s1_x, pw_conv_reduction_s1_y)) + (hw_filter_pw_global_wrapper.stencil(1, 2)*dw_conv.stencil(2, pw_conv_reduction_s1_x, pw_conv_reduction_s1_y))))))
@@ -404,15 +327,15 @@ hw_uint<16> hcompute_pw_conv_reduction_stencil_4(hw_uint<64>& dw_conv_stencil, h
 
   int16_t _pw_conv_reduction_stencil_2 = (int16_t) pw_conv_reduction_stencil.extract<0, 15>();
 
-  int16_t _1112 = _hw_filter_pw_global_wrapper_stencil_5 * _dw_conv_stencil_9;
-  int16_t _1113 = _hw_filter_pw_global_wrapper_stencil_6 * _dw_conv_stencil_10;
-  int16_t _1114 = _hw_filter_pw_global_wrapper_stencil_7 * _dw_conv_stencil_11;
-  int16_t _1115 = _hw_filter_pw_global_wrapper_stencil_8 * _dw_conv_stencil_12;
-  int16_t _1116 = _1114 + _1115;
-  int16_t _1117 = _1113 + _1116;
-  int16_t _1118 = _pw_conv_reduction_stencil_2 + _1117;
-  int16_t _1119 = _1112 + _1118;
-  return _1119;
+  int16_t _1101 = _hw_filter_pw_global_wrapper_stencil_5 * _dw_conv_stencil_9;
+  int16_t _1102 = _hw_filter_pw_global_wrapper_stencil_6 * _dw_conv_stencil_10;
+  int16_t _1103 = _hw_filter_pw_global_wrapper_stencil_7 * _dw_conv_stencil_11;
+  int16_t _1104 = _hw_filter_pw_global_wrapper_stencil_8 * _dw_conv_stencil_12;
+  int16_t _1105 = _1103 + _1104;
+  int16_t _1106 = _1102 + _1105;
+  int16_t _1107 = _pw_conv_reduction_stencil_2 + _1106;
+  int16_t _1108 = _1101 + _1107;
+  return _1108;
 }
 
 //store is: pw_conv_reduction.stencil(2, pw_conv_reduction_s1_x, pw_conv_reduction_s1_y) = ((hw_filter_pw_global_wrapper.stencil(2, 0)*dw_conv.stencil(0, pw_conv_reduction_s1_x, pw_conv_reduction_s1_y)) + (pw_conv_reduction.stencil(2, pw_conv_reduction_s1_x, pw_conv_reduction_s1_y) + ((hw_filter_pw_global_wrapper.stencil(2, 1)*dw_conv.stencil(1, pw_conv_reduction_s1_x, pw_conv_reduction_s1_y)) + ((hw_filter_pw_global_wrapper.stencil(2, 3)*dw_conv.stencil(3, pw_conv_reduction_s1_x, pw_conv_reduction_s1_y)) + (hw_filter_pw_global_wrapper.stencil(2, 2)*dw_conv.stencil(2, pw_conv_reduction_s1_x, pw_conv_reduction_s1_y))))))
@@ -429,15 +352,15 @@ hw_uint<16> hcompute_pw_conv_reduction_stencil_5(hw_uint<64>& dw_conv_stencil, h
 
   int16_t _pw_conv_reduction_stencil_3 = (int16_t) pw_conv_reduction_stencil.extract<0, 15>();
 
-  int16_t _1145 = _hw_filter_pw_global_wrapper_stencil_9 * _dw_conv_stencil_13;
-  int16_t _1146 = _hw_filter_pw_global_wrapper_stencil_10 * _dw_conv_stencil_14;
-  int16_t _1147 = _hw_filter_pw_global_wrapper_stencil_11 * _dw_conv_stencil_15;
-  int16_t _1148 = _hw_filter_pw_global_wrapper_stencil_12 * _dw_conv_stencil_16;
-  int16_t _1149 = _1147 + _1148;
-  int16_t _1150 = _1146 + _1149;
-  int16_t _1151 = _pw_conv_reduction_stencil_3 + _1150;
-  int16_t _1152 = _1145 + _1151;
-  return _1152;
+  int16_t _1134 = _hw_filter_pw_global_wrapper_stencil_9 * _dw_conv_stencil_13;
+  int16_t _1135 = _hw_filter_pw_global_wrapper_stencil_10 * _dw_conv_stencil_14;
+  int16_t _1136 = _hw_filter_pw_global_wrapper_stencil_11 * _dw_conv_stencil_15;
+  int16_t _1137 = _hw_filter_pw_global_wrapper_stencil_12 * _dw_conv_stencil_16;
+  int16_t _1138 = _1136 + _1137;
+  int16_t _1139 = _1135 + _1138;
+  int16_t _1140 = _pw_conv_reduction_stencil_3 + _1139;
+  int16_t _1141 = _1134 + _1140;
+  return _1141;
 }
 
 //store is: hw_output.stencil(0, hw_output_s0_x_xi, hw_output_s0_y_yi) = pw_conv_reduction.stencil(0, hw_output_s0_x_xi, hw_output_s0_y_yi)

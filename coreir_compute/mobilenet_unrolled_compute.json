@@ -591,105 +591,6 @@
           ["self.out_hw_filter_pw_global_wrapper_stencil","self.in0_hw_filter_pw_stencil.0"]
         ]
       },
-      "hcompute_hw_filter_pw_global_wrapper_stencil_1":{
-        "type":["Record",[
-          ["out_hw_filter_pw_global_wrapper_stencil",["Array",16,"Bit"]],
-          ["in0_hw_filter_pw_stencil",["Array",1,["Array",16,"BitIn"]]]
-        ]],
-        "connections":[
-          ["self.out_hw_filter_pw_global_wrapper_stencil","self.in0_hw_filter_pw_stencil.0"]
-        ]
-      },
-      "hcompute_hw_filter_pw_global_wrapper_stencil_10":{
-        "type":["Record",[
-          ["out_hw_filter_pw_global_wrapper_stencil",["Array",16,"Bit"]],
-          ["in0_hw_filter_pw_stencil",["Array",1,["Array",16,"BitIn"]]]
-        ]],
-        "connections":[
-          ["self.out_hw_filter_pw_global_wrapper_stencil","self.in0_hw_filter_pw_stencil.0"]
-        ]
-      },
-      "hcompute_hw_filter_pw_global_wrapper_stencil_11":{
-        "type":["Record",[
-          ["out_hw_filter_pw_global_wrapper_stencil",["Array",16,"Bit"]],
-          ["in0_hw_filter_pw_stencil",["Array",1,["Array",16,"BitIn"]]]
-        ]],
-        "connections":[
-          ["self.out_hw_filter_pw_global_wrapper_stencil","self.in0_hw_filter_pw_stencil.0"]
-        ]
-      },
-      "hcompute_hw_filter_pw_global_wrapper_stencil_2":{
-        "type":["Record",[
-          ["out_hw_filter_pw_global_wrapper_stencil",["Array",16,"Bit"]],
-          ["in0_hw_filter_pw_stencil",["Array",1,["Array",16,"BitIn"]]]
-        ]],
-        "connections":[
-          ["self.out_hw_filter_pw_global_wrapper_stencil","self.in0_hw_filter_pw_stencil.0"]
-        ]
-      },
-      "hcompute_hw_filter_pw_global_wrapper_stencil_3":{
-        "type":["Record",[
-          ["out_hw_filter_pw_global_wrapper_stencil",["Array",16,"Bit"]],
-          ["in0_hw_filter_pw_stencil",["Array",1,["Array",16,"BitIn"]]]
-        ]],
-        "connections":[
-          ["self.out_hw_filter_pw_global_wrapper_stencil","self.in0_hw_filter_pw_stencil.0"]
-        ]
-      },
-      "hcompute_hw_filter_pw_global_wrapper_stencil_4":{
-        "type":["Record",[
-          ["out_hw_filter_pw_global_wrapper_stencil",["Array",16,"Bit"]],
-          ["in0_hw_filter_pw_stencil",["Array",1,["Array",16,"BitIn"]]]
-        ]],
-        "connections":[
-          ["self.out_hw_filter_pw_global_wrapper_stencil","self.in0_hw_filter_pw_stencil.0"]
-        ]
-      },
-      "hcompute_hw_filter_pw_global_wrapper_stencil_5":{
-        "type":["Record",[
-          ["out_hw_filter_pw_global_wrapper_stencil",["Array",16,"Bit"]],
-          ["in0_hw_filter_pw_stencil",["Array",1,["Array",16,"BitIn"]]]
-        ]],
-        "connections":[
-          ["self.out_hw_filter_pw_global_wrapper_stencil","self.in0_hw_filter_pw_stencil.0"]
-        ]
-      },
-      "hcompute_hw_filter_pw_global_wrapper_stencil_6":{
-        "type":["Record",[
-          ["out_hw_filter_pw_global_wrapper_stencil",["Array",16,"Bit"]],
-          ["in0_hw_filter_pw_stencil",["Array",1,["Array",16,"BitIn"]]]
-        ]],
-        "connections":[
-          ["self.out_hw_filter_pw_global_wrapper_stencil","self.in0_hw_filter_pw_stencil.0"]
-        ]
-      },
-      "hcompute_hw_filter_pw_global_wrapper_stencil_7":{
-        "type":["Record",[
-          ["out_hw_filter_pw_global_wrapper_stencil",["Array",16,"Bit"]],
-          ["in0_hw_filter_pw_stencil",["Array",1,["Array",16,"BitIn"]]]
-        ]],
-        "connections":[
-          ["self.out_hw_filter_pw_global_wrapper_stencil","self.in0_hw_filter_pw_stencil.0"]
-        ]
-      },
-      "hcompute_hw_filter_pw_global_wrapper_stencil_8":{
-        "type":["Record",[
-          ["out_hw_filter_pw_global_wrapper_stencil",["Array",16,"Bit"]],
-          ["in0_hw_filter_pw_stencil",["Array",1,["Array",16,"BitIn"]]]
-        ]],
-        "connections":[
-          ["self.out_hw_filter_pw_global_wrapper_stencil","self.in0_hw_filter_pw_stencil.0"]
-        ]
-      },
-      "hcompute_hw_filter_pw_global_wrapper_stencil_9":{
-        "type":["Record",[
-          ["out_hw_filter_pw_global_wrapper_stencil",["Array",16,"Bit"]],
-          ["in0_hw_filter_pw_stencil",["Array",1,["Array",16,"BitIn"]]]
-        ]],
-        "connections":[
-          ["self.out_hw_filter_pw_global_wrapper_stencil","self.in0_hw_filter_pw_stencil.0"]
-        ]
-      },
       "hcompute_hw_input_global_wrapper_stencil":{
         "type":["Record",[
           ["out_hw_input_global_wrapper_stencil",["Array",16,"Bit"]],
@@ -758,14 +659,14 @@
           ["out_pw_conv_reduction_stencil",["Array",16,"Bit"]]
         ]],
         "instances":{
-          "const_p0__1071":{
+          "const_p0__1060":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
             "modargs":{"value":[["BitVector",16],"16'h0000"]}
           }
         },
         "connections":[
-          ["self.out_pw_conv_reduction_stencil","const_p0__1071.out"]
+          ["self.out_pw_conv_reduction_stencil","const_p0__1060.out"]
         ]
       },
       "hcompute_pw_conv_reduction_stencil_1":{
@@ -773,14 +674,14 @@
           ["out_pw_conv_reduction_stencil",["Array",16,"Bit"]]
         ]],
         "instances":{
-          "const_p0__1074":{
+          "const_p0__1063":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
             "modargs":{"value":[["BitVector",16],"16'h0000"]}
           }
         },
         "connections":[
-          ["self.out_pw_conv_reduction_stencil","const_p0__1074.out"]
+          ["self.out_pw_conv_reduction_stencil","const_p0__1063.out"]
         ]
       },
       "hcompute_pw_conv_reduction_stencil_2":{
@@ -788,14 +689,14 @@
           ["out_pw_conv_reduction_stencil",["Array",16,"Bit"]]
         ]],
         "instances":{
-          "const_p0__1077":{
+          "const_p0__1066":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
             "modargs":{"value":[["BitVector",16],"16'h0000"]}
           }
         },
         "connections":[
-          ["self.out_pw_conv_reduction_stencil","const_p0__1077.out"]
+          ["self.out_pw_conv_reduction_stencil","const_p0__1066.out"]
         ]
       },
       "hcompute_pw_conv_reduction_stencil_3":{
@@ -806,57 +707,57 @@
           ["in2_pw_conv_reduction_stencil",["Array",1,["Array",16,"BitIn"]]]
         ]],
         "instances":{
-          "add_1087_1093_1094":{
+          "add_1076_1082_1083":{
             "genref":"coreir.add",
             "genargs":{"width":["Int",16]}
           },
-          "add_1088_1091_1092":{
+          "add_1077_1080_1081":{
             "genref":"coreir.add",
             "genargs":{"width":["Int",16]}
           },
-          "add_1089_1090_1091":{
+          "add_1078_1079_1080":{
             "genref":"coreir.add",
             "genargs":{"width":["Int",16]}
           },
-          "add_pw_conv_reduction_stencil_1_1092_1093":{
+          "add_pw_conv_reduction_stencil_1_1081_1082":{
             "genref":"coreir.add",
             "genargs":{"width":["Int",16]}
           },
-          "mul_hw_filter_pw_global_wrapper_stencil_1_dw_conv_stencil_5_1087":{
+          "mul_hw_filter_pw_global_wrapper_stencil_1_dw_conv_stencil_5_1076":{
             "genref":"coreir.mul",
             "genargs":{"width":["Int",16]}
           },
-          "mul_hw_filter_pw_global_wrapper_stencil_2_dw_conv_stencil_6_1088":{
+          "mul_hw_filter_pw_global_wrapper_stencil_2_dw_conv_stencil_6_1077":{
             "genref":"coreir.mul",
             "genargs":{"width":["Int",16]}
           },
-          "mul_hw_filter_pw_global_wrapper_stencil_3_dw_conv_stencil_7_1089":{
+          "mul_hw_filter_pw_global_wrapper_stencil_3_dw_conv_stencil_7_1078":{
             "genref":"coreir.mul",
             "genargs":{"width":["Int",16]}
           },
-          "mul_hw_filter_pw_global_wrapper_stencil_4_dw_conv_stencil_8_1090":{
+          "mul_hw_filter_pw_global_wrapper_stencil_4_dw_conv_stencil_8_1079":{
             "genref":"coreir.mul",
             "genargs":{"width":["Int",16]}
           }
         },
         "connections":[
-          ["mul_hw_filter_pw_global_wrapper_stencil_1_dw_conv_stencil_5_1087.out","add_1087_1093_1094.in0"],
-          ["add_pw_conv_reduction_stencil_1_1092_1093.out","add_1087_1093_1094.in1"],
-          ["self.out_pw_conv_reduction_stencil","add_1087_1093_1094.out"],
-          ["mul_hw_filter_pw_global_wrapper_stencil_2_dw_conv_stencil_6_1088.out","add_1088_1091_1092.in0"],
-          ["add_1089_1090_1091.out","add_1088_1091_1092.in1"],
-          ["add_pw_conv_reduction_stencil_1_1092_1093.in1","add_1088_1091_1092.out"],
-          ["mul_hw_filter_pw_global_wrapper_stencil_3_dw_conv_stencil_7_1089.out","add_1089_1090_1091.in0"],
-          ["mul_hw_filter_pw_global_wrapper_stencil_4_dw_conv_stencil_8_1090.out","add_1089_1090_1091.in1"],
-          ["self.in2_pw_conv_reduction_stencil.0","add_pw_conv_reduction_stencil_1_1092_1093.in0"],
-          ["self.in1_hw_filter_pw_global_wrapper_stencil.0","mul_hw_filter_pw_global_wrapper_stencil_1_dw_conv_stencil_5_1087.in0"],
-          ["self.in0_dw_conv_stencil.0","mul_hw_filter_pw_global_wrapper_stencil_1_dw_conv_stencil_5_1087.in1"],
-          ["self.in1_hw_filter_pw_global_wrapper_stencil.1","mul_hw_filter_pw_global_wrapper_stencil_2_dw_conv_stencil_6_1088.in0"],
-          ["self.in0_dw_conv_stencil.1","mul_hw_filter_pw_global_wrapper_stencil_2_dw_conv_stencil_6_1088.in1"],
-          ["self.in1_hw_filter_pw_global_wrapper_stencil.2","mul_hw_filter_pw_global_wrapper_stencil_3_dw_conv_stencil_7_1089.in0"],
-          ["self.in0_dw_conv_stencil.2","mul_hw_filter_pw_global_wrapper_stencil_3_dw_conv_stencil_7_1089.in1"],
-          ["self.in1_hw_filter_pw_global_wrapper_stencil.3","mul_hw_filter_pw_global_wrapper_stencil_4_dw_conv_stencil_8_1090.in0"],
-          ["self.in0_dw_conv_stencil.3","mul_hw_filter_pw_global_wrapper_stencil_4_dw_conv_stencil_8_1090.in1"]
+          ["mul_hw_filter_pw_global_wrapper_stencil_1_dw_conv_stencil_5_1076.out","add_1076_1082_1083.in0"],
+          ["add_pw_conv_reduction_stencil_1_1081_1082.out","add_1076_1082_1083.in1"],
+          ["self.out_pw_conv_reduction_stencil","add_1076_1082_1083.out"],
+          ["mul_hw_filter_pw_global_wrapper_stencil_2_dw_conv_stencil_6_1077.out","add_1077_1080_1081.in0"],
+          ["add_1078_1079_1080.out","add_1077_1080_1081.in1"],
+          ["add_pw_conv_reduction_stencil_1_1081_1082.in1","add_1077_1080_1081.out"],
+          ["mul_hw_filter_pw_global_wrapper_stencil_3_dw_conv_stencil_7_1078.out","add_1078_1079_1080.in0"],
+          ["mul_hw_filter_pw_global_wrapper_stencil_4_dw_conv_stencil_8_1079.out","add_1078_1079_1080.in1"],
+          ["self.in2_pw_conv_reduction_stencil.0","add_pw_conv_reduction_stencil_1_1081_1082.in0"],
+          ["self.in1_hw_filter_pw_global_wrapper_stencil.0","mul_hw_filter_pw_global_wrapper_stencil_1_dw_conv_stencil_5_1076.in0"],
+          ["self.in0_dw_conv_stencil.0","mul_hw_filter_pw_global_wrapper_stencil_1_dw_conv_stencil_5_1076.in1"],
+          ["self.in1_hw_filter_pw_global_wrapper_stencil.1","mul_hw_filter_pw_global_wrapper_stencil_2_dw_conv_stencil_6_1077.in0"],
+          ["self.in0_dw_conv_stencil.1","mul_hw_filter_pw_global_wrapper_stencil_2_dw_conv_stencil_6_1077.in1"],
+          ["self.in1_hw_filter_pw_global_wrapper_stencil.2","mul_hw_filter_pw_global_wrapper_stencil_3_dw_conv_stencil_7_1078.in0"],
+          ["self.in0_dw_conv_stencil.2","mul_hw_filter_pw_global_wrapper_stencil_3_dw_conv_stencil_7_1078.in1"],
+          ["self.in1_hw_filter_pw_global_wrapper_stencil.3","mul_hw_filter_pw_global_wrapper_stencil_4_dw_conv_stencil_8_1079.in0"],
+          ["self.in0_dw_conv_stencil.3","mul_hw_filter_pw_global_wrapper_stencil_4_dw_conv_stencil_8_1079.in1"]
         ]
       },
       "hcompute_pw_conv_reduction_stencil_4":{
@@ -867,57 +768,57 @@
           ["in2_pw_conv_reduction_stencil",["Array",1,["Array",16,"BitIn"]]]
         ]],
         "instances":{
-          "add_1120_1126_1127":{
+          "add_1109_1115_1116":{
             "genref":"coreir.add",
             "genargs":{"width":["Int",16]}
           },
-          "add_1121_1124_1125":{
+          "add_1110_1113_1114":{
             "genref":"coreir.add",
             "genargs":{"width":["Int",16]}
           },
-          "add_1122_1123_1124":{
+          "add_1111_1112_1113":{
             "genref":"coreir.add",
             "genargs":{"width":["Int",16]}
           },
-          "add_pw_conv_reduction_stencil_2_1125_1126":{
+          "add_pw_conv_reduction_stencil_2_1114_1115":{
             "genref":"coreir.add",
             "genargs":{"width":["Int",16]}
           },
-          "mul_hw_filter_pw_global_wrapper_stencil_5_dw_conv_stencil_9_1120":{
+          "mul_hw_filter_pw_global_wrapper_stencil_5_dw_conv_stencil_9_1109":{
             "genref":"coreir.mul",
             "genargs":{"width":["Int",16]}
           },
-          "mul_hw_filter_pw_global_wrapper_stencil_6_dw_conv_stencil_10_1121":{
+          "mul_hw_filter_pw_global_wrapper_stencil_6_dw_conv_stencil_10_1110":{
             "genref":"coreir.mul",
             "genargs":{"width":["Int",16]}
           },
-          "mul_hw_filter_pw_global_wrapper_stencil_7_dw_conv_stencil_11_1122":{
+          "mul_hw_filter_pw_global_wrapper_stencil_7_dw_conv_stencil_11_1111":{
             "genref":"coreir.mul",
             "genargs":{"width":["Int",16]}
           },
-          "mul_hw_filter_pw_global_wrapper_stencil_8_dw_conv_stencil_12_1123":{
+          "mul_hw_filter_pw_global_wrapper_stencil_8_dw_conv_stencil_12_1112":{
             "genref":"coreir.mul",
             "genargs":{"width":["Int",16]}
           }
         },
         "connections":[
-          ["mul_hw_filter_pw_global_wrapper_stencil_5_dw_conv_stencil_9_1120.out","add_1120_1126_1127.in0"],
-          ["add_pw_conv_reduction_stencil_2_1125_1126.out","add_1120_1126_1127.in1"],
-          ["self.out_pw_conv_reduction_stencil","add_1120_1126_1127.out"],
-          ["mul_hw_filter_pw_global_wrapper_stencil_6_dw_conv_stencil_10_1121.out","add_1121_1124_1125.in0"],
-          ["add_1122_1123_1124.out","add_1121_1124_1125.in1"],
-          ["add_pw_conv_reduction_stencil_2_1125_1126.in1","add_1121_1124_1125.out"],
-          ["mul_hw_filter_pw_global_wrapper_stencil_7_dw_conv_stencil_11_1122.out","add_1122_1123_1124.in0"],
-          ["mul_hw_filter_pw_global_wrapper_stencil_8_dw_conv_stencil_12_1123.out","add_1122_1123_1124.in1"],
-          ["self.in2_pw_conv_reduction_stencil.0","add_pw_conv_reduction_stencil_2_1125_1126.in0"],
-          ["self.in1_hw_filter_pw_global_wrapper_stencil.0","mul_hw_filter_pw_global_wrapper_stencil_5_dw_conv_stencil_9_1120.in0"],
-          ["self.in0_dw_conv_stencil.3","mul_hw_filter_pw_global_wrapper_stencil_5_dw_conv_stencil_9_1120.in1"],
-          ["self.in1_hw_filter_pw_global_wrapper_stencil.1","mul_hw_filter_pw_global_wrapper_stencil_6_dw_conv_stencil_10_1121.in0"],
-          ["self.in0_dw_conv_stencil.0","mul_hw_filter_pw_global_wrapper_stencil_6_dw_conv_stencil_10_1121.in1"],
-          ["self.in1_hw_filter_pw_global_wrapper_stencil.2","mul_hw_filter_pw_global_wrapper_stencil_7_dw_conv_stencil_11_1122.in0"],
-          ["self.in0_dw_conv_stencil.1","mul_hw_filter_pw_global_wrapper_stencil_7_dw_conv_stencil_11_1122.in1"],
-          ["self.in1_hw_filter_pw_global_wrapper_stencil.3","mul_hw_filter_pw_global_wrapper_stencil_8_dw_conv_stencil_12_1123.in0"],
-          ["self.in0_dw_conv_stencil.2","mul_hw_filter_pw_global_wrapper_stencil_8_dw_conv_stencil_12_1123.in1"]
+          ["mul_hw_filter_pw_global_wrapper_stencil_5_dw_conv_stencil_9_1109.out","add_1109_1115_1116.in0"],
+          ["add_pw_conv_reduction_stencil_2_1114_1115.out","add_1109_1115_1116.in1"],
+          ["self.out_pw_conv_reduction_stencil","add_1109_1115_1116.out"],
+          ["mul_hw_filter_pw_global_wrapper_stencil_6_dw_conv_stencil_10_1110.out","add_1110_1113_1114.in0"],
+          ["add_1111_1112_1113.out","add_1110_1113_1114.in1"],
+          ["add_pw_conv_reduction_stencil_2_1114_1115.in1","add_1110_1113_1114.out"],
+          ["mul_hw_filter_pw_global_wrapper_stencil_7_dw_conv_stencil_11_1111.out","add_1111_1112_1113.in0"],
+          ["mul_hw_filter_pw_global_wrapper_stencil_8_dw_conv_stencil_12_1112.out","add_1111_1112_1113.in1"],
+          ["self.in2_pw_conv_reduction_stencil.0","add_pw_conv_reduction_stencil_2_1114_1115.in0"],
+          ["self.in1_hw_filter_pw_global_wrapper_stencil.0","mul_hw_filter_pw_global_wrapper_stencil_5_dw_conv_stencil_9_1109.in0"],
+          ["self.in0_dw_conv_stencil.3","mul_hw_filter_pw_global_wrapper_stencil_5_dw_conv_stencil_9_1109.in1"],
+          ["self.in1_hw_filter_pw_global_wrapper_stencil.1","mul_hw_filter_pw_global_wrapper_stencil_6_dw_conv_stencil_10_1110.in0"],
+          ["self.in0_dw_conv_stencil.0","mul_hw_filter_pw_global_wrapper_stencil_6_dw_conv_stencil_10_1110.in1"],
+          ["self.in1_hw_filter_pw_global_wrapper_stencil.2","mul_hw_filter_pw_global_wrapper_stencil_7_dw_conv_stencil_11_1111.in0"],
+          ["self.in0_dw_conv_stencil.1","mul_hw_filter_pw_global_wrapper_stencil_7_dw_conv_stencil_11_1111.in1"],
+          ["self.in1_hw_filter_pw_global_wrapper_stencil.3","mul_hw_filter_pw_global_wrapper_stencil_8_dw_conv_stencil_12_1112.in0"],
+          ["self.in0_dw_conv_stencil.2","mul_hw_filter_pw_global_wrapper_stencil_8_dw_conv_stencil_12_1112.in1"]
         ]
       },
       "hcompute_pw_conv_reduction_stencil_5":{
@@ -928,57 +829,57 @@
           ["in2_pw_conv_reduction_stencil",["Array",1,["Array",16,"BitIn"]]]
         ]],
         "instances":{
-          "add_1153_1159_1160":{
+          "add_1142_1148_1149":{
             "genref":"coreir.add",
             "genargs":{"width":["Int",16]}
           },
-          "add_1154_1157_1158":{
+          "add_1143_1146_1147":{
             "genref":"coreir.add",
             "genargs":{"width":["Int",16]}
           },
-          "add_1155_1156_1157":{
+          "add_1144_1145_1146":{
             "genref":"coreir.add",
             "genargs":{"width":["Int",16]}
           },
-          "add_pw_conv_reduction_stencil_3_1158_1159":{
+          "add_pw_conv_reduction_stencil_3_1147_1148":{
             "genref":"coreir.add",
             "genargs":{"width":["Int",16]}
           },
-          "mul_hw_filter_pw_global_wrapper_stencil_10_dw_conv_stencil_14_1154":{
+          "mul_hw_filter_pw_global_wrapper_stencil_10_dw_conv_stencil_14_1143":{
             "genref":"coreir.mul",
             "genargs":{"width":["Int",16]}
           },
-          "mul_hw_filter_pw_global_wrapper_stencil_11_dw_conv_stencil_15_1155":{
+          "mul_hw_filter_pw_global_wrapper_stencil_11_dw_conv_stencil_15_1144":{
             "genref":"coreir.mul",
             "genargs":{"width":["Int",16]}
           },
-          "mul_hw_filter_pw_global_wrapper_stencil_12_dw_conv_stencil_16_1156":{
+          "mul_hw_filter_pw_global_wrapper_stencil_12_dw_conv_stencil_16_1145":{
             "genref":"coreir.mul",
             "genargs":{"width":["Int",16]}
           },
-          "mul_hw_filter_pw_global_wrapper_stencil_9_dw_conv_stencil_13_1153":{
+          "mul_hw_filter_pw_global_wrapper_stencil_9_dw_conv_stencil_13_1142":{
             "genref":"coreir.mul",
             "genargs":{"width":["Int",16]}
           }
         },
         "connections":[
-          ["mul_hw_filter_pw_global_wrapper_stencil_9_dw_conv_stencil_13_1153.out","add_1153_1159_1160.in0"],
-          ["add_pw_conv_reduction_stencil_3_1158_1159.out","add_1153_1159_1160.in1"],
-          ["self.out_pw_conv_reduction_stencil","add_1153_1159_1160.out"],
-          ["mul_hw_filter_pw_global_wrapper_stencil_10_dw_conv_stencil_14_1154.out","add_1154_1157_1158.in0"],
-          ["add_1155_1156_1157.out","add_1154_1157_1158.in1"],
-          ["add_pw_conv_reduction_stencil_3_1158_1159.in1","add_1154_1157_1158.out"],
-          ["mul_hw_filter_pw_global_wrapper_stencil_11_dw_conv_stencil_15_1155.out","add_1155_1156_1157.in0"],
-          ["mul_hw_filter_pw_global_wrapper_stencil_12_dw_conv_stencil_16_1156.out","add_1155_1156_1157.in1"],
-          ["self.in2_pw_conv_reduction_stencil.0","add_pw_conv_reduction_stencil_3_1158_1159.in0"],
-          ["self.in1_hw_filter_pw_global_wrapper_stencil.0","mul_hw_filter_pw_global_wrapper_stencil_10_dw_conv_stencil_14_1154.in0"],
-          ["self.in0_dw_conv_stencil.1","mul_hw_filter_pw_global_wrapper_stencil_10_dw_conv_stencil_14_1154.in1"],
-          ["self.in1_hw_filter_pw_global_wrapper_stencil.1","mul_hw_filter_pw_global_wrapper_stencil_11_dw_conv_stencil_15_1155.in0"],
-          ["self.in0_dw_conv_stencil.2","mul_hw_filter_pw_global_wrapper_stencil_11_dw_conv_stencil_15_1155.in1"],
-          ["self.in1_hw_filter_pw_global_wrapper_stencil.2","mul_hw_filter_pw_global_wrapper_stencil_12_dw_conv_stencil_16_1156.in0"],
-          ["self.in0_dw_conv_stencil.3","mul_hw_filter_pw_global_wrapper_stencil_12_dw_conv_stencil_16_1156.in1"],
-          ["self.in1_hw_filter_pw_global_wrapper_stencil.3","mul_hw_filter_pw_global_wrapper_stencil_9_dw_conv_stencil_13_1153.in0"],
-          ["self.in0_dw_conv_stencil.0","mul_hw_filter_pw_global_wrapper_stencil_9_dw_conv_stencil_13_1153.in1"]
+          ["mul_hw_filter_pw_global_wrapper_stencil_9_dw_conv_stencil_13_1142.out","add_1142_1148_1149.in0"],
+          ["add_pw_conv_reduction_stencil_3_1147_1148.out","add_1142_1148_1149.in1"],
+          ["self.out_pw_conv_reduction_stencil","add_1142_1148_1149.out"],
+          ["mul_hw_filter_pw_global_wrapper_stencil_10_dw_conv_stencil_14_1143.out","add_1143_1146_1147.in0"],
+          ["add_1144_1145_1146.out","add_1143_1146_1147.in1"],
+          ["add_pw_conv_reduction_stencil_3_1147_1148.in1","add_1143_1146_1147.out"],
+          ["mul_hw_filter_pw_global_wrapper_stencil_11_dw_conv_stencil_15_1144.out","add_1144_1145_1146.in0"],
+          ["mul_hw_filter_pw_global_wrapper_stencil_12_dw_conv_stencil_16_1145.out","add_1144_1145_1146.in1"],
+          ["self.in2_pw_conv_reduction_stencil.0","add_pw_conv_reduction_stencil_3_1147_1148.in0"],
+          ["self.in1_hw_filter_pw_global_wrapper_stencil.0","mul_hw_filter_pw_global_wrapper_stencil_10_dw_conv_stencil_14_1143.in0"],
+          ["self.in0_dw_conv_stencil.1","mul_hw_filter_pw_global_wrapper_stencil_10_dw_conv_stencil_14_1143.in1"],
+          ["self.in1_hw_filter_pw_global_wrapper_stencil.1","mul_hw_filter_pw_global_wrapper_stencil_11_dw_conv_stencil_15_1144.in0"],
+          ["self.in0_dw_conv_stencil.2","mul_hw_filter_pw_global_wrapper_stencil_11_dw_conv_stencil_15_1144.in1"],
+          ["self.in1_hw_filter_pw_global_wrapper_stencil.2","mul_hw_filter_pw_global_wrapper_stencil_12_dw_conv_stencil_16_1145.in0"],
+          ["self.in0_dw_conv_stencil.3","mul_hw_filter_pw_global_wrapper_stencil_12_dw_conv_stencil_16_1145.in1"],
+          ["self.in1_hw_filter_pw_global_wrapper_stencil.3","mul_hw_filter_pw_global_wrapper_stencil_9_dw_conv_stencil_13_1142.in0"],
+          ["self.in0_dw_conv_stencil.0","mul_hw_filter_pw_global_wrapper_stencil_9_dw_conv_stencil_13_1142.in1"]
         ]
       }
     }
