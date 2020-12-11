@@ -238,8 +238,8 @@
           ["op_hcompute_conv_stencil_1$inner_compute$mul_hw_input_global_wrapper_stencil_2_264_265$binop.data.out","op_hcompute_conv_stencil_1$inner_compute$add_conv_stencil_1_265_266$binop.data.in.1"],
           ["op_hcompute_conv_stencil_1$inner_compute$add_hw_input_global_wrapper_stencil_1_266_267$binop.data.in.1","op_hcompute_conv_stencil_1$inner_compute$add_conv_stencil_1_265_266$binop.data.out"],
           ["op_hcompute_conv_stencil_1$inner_compute$mul_hw_input_global_wrapper_stencil_2_264_265$binop.data.in.1","op_hcompute_conv_stencil_1$inner_compute$const_p3__264.out"],
-          ["op_hcompute_hw_output_stencil_port_controller_garnet.clk_en","op_hcompute_hw_output_stencil_port_controller_clk_en_const1_lutcnst.bit.out"],
-          ["op_hcompute_hw_output_stencil_port_controller_garnet.rst_n","op_hcompute_hw_output_stencil_port_controller_clk_en_const_lutcnst.bit.out"]
+          ["op_hcompute_hw_output_stencil_port_controller_garnet.rst_n","op_hcompute_hw_output_stencil_port_controller_clk_en_const1_lutcnst.bit.out"],
+          ["op_hcompute_hw_output_stencil_port_controller_garnet.clk_en","op_hcompute_hw_output_stencil_port_controller_clk_en_const_lutcnst.bit.out"]
         ]
       },
       "conv_stencil_clkwrk_dsa0_ub":{

@@ -82,11 +82,11 @@ int main(int argc, char **argv) {
     exit(EXIT_FAILURE);
   }
 
-  OCL_CHECK(err, cl::Buffer pw_math_gray47_write_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_READ_ONLY, pw_math_gray47_write_size_bytes, pw_math_gray47_write.data(), &err));
-  OCL_CHECK(err, err = krnl_vector_add.setArg(0, pw_math_gray47_write_ocl_buf));
+  OCL_CHECK(err, cl::Buffer pw_math_gray47_write_pipe0_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_READ_ONLY, pw_math_gray47_write_size_bytes, pw_math_gray47_write.data(), &err));
+  OCL_CHECK(err, err = krnl_vector_add.setArg(0, pw_math_gray47_write_pipe0_ocl_buf));
 
-  OCL_CHECK(err, cl::Buffer oc_load_in03_read_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_WRITE_ONLY, oc_load_in03_read_size_bytes, oc_load_in03_read.data(), &err));
-  OCL_CHECK(err, err = krnl_vector_add.setArg(1, oc_load_in03_read_ocl_buf));
+  OCL_CHECK(err, cl::Buffer oc_load_in03_read_pipe0_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_WRITE_ONLY, oc_load_in03_read_size_bytes, oc_load_in03_read.data(), &err));
+  OCL_CHECK(err, err = krnl_vector_add.setArg(1, oc_load_in03_read_pipe0_ocl_buf));
 
   uint64_t transfer_size = num_epochs*(16 / 1);
   OCL_CHECK(err, err = krnl_vector_add.setArg(2, transfer_size));

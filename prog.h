@@ -1816,11 +1816,6 @@ bool is_op_scheduled(op* op, schedule_info& sched, prog& prg);
 bool no_violated_resource_assignments(schedule_info& sched, prog& prg);
 
 
-map<string, pair<string, int> > determine_shift_reg_map(
-        prog& prg,
-    UBuffer& buf,
-    schedule_info& hwinfo);
-
 void add_reuse_buffer(const std::string& level, const std::string& buffer, prog& prg);
 
 void read_in(op* loop, isl_set* read_data, const std::string& rb_name, prog& prg);
@@ -1864,6 +1859,20 @@ vector<pair<string, pair<string, int> >> determine_output_shift_reg_map(
     prog& prg,
     UBuffer& buf,
     schedule_info& hwinfo);
+
+map<string, pair<string, int> > determine_shift_reg_map(
+        prog& prg,
+    UBuffer& buf,
+    schedule_info& hwinfo);
+
+dgraph build_in_to_out_shift_register_graph(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_info& hwinfo);
+dgraph build_shift_registers(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_info& hwinfo);
+ubuffer_impl port_group2bank(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_info& hwinfo);
+
+isl_map* build_buffer_impl(prog& prg, UBuffer& buf, schedule_info& hwinfo, ubuffer_impl& impl);
+
+void generate_banks_garnet(CodegenOptions& options, prog& prg, UBuffer& buf, ubuffer_impl& impl, schedule_info& hw_info);
+
 
 void sanity_check_iis(schedule_info& sched);
 

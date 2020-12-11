@@ -1529,50 +1529,6 @@ void UBuffer::generate_stencil_valid_config(CodegenOptions& options, string bank
   add_lake_config(config_file, stencil_valid, num_in_dims(sched), "stencil_valid");
 }
 
-int UBuffer::get_vectorized_dim(int fetch_width) {
-  vector<int> extent_dim =  extents_by_dimension(*this);
-  cout << "Ext by dim: " << extent_dim << endl;
-  for (auto it = extent_dim.rbegin(); it != extent_dim.rend(); it++) {
-    if (*it > fetch_width - 1)
-        return extent_dim.rend() - it - 1;
-  }
-  return -1;
-  //TODO: maybe need dimension fuse in the future
-  cout << "Could not find vectorization dimension" << endl;
-  assert(false);
-}
-
-void generate_access_cnt(CodegenOptions& options,
-        string ub_ins_name,
-        map<string, UBuffer> & rewrite_buffer,
-        mem_access_cnt& acc_cnt) {
-    map<string, int> ubuf_rd, ubuf_wr;
-    for (auto it: rewrite_buffer) {
-        string buf_name = it.first;
-        string micro_buf_name = split_at(buf_name, "_").back();
-        auto buf_component = it.second;
-        int rd_cnts = buf_component.global_read_count();
-        int wr_cnts = buf_component.global_write_count();
-
-        cout << "\t\tSub Buffer: " << buf_name << endl;
-        cout << "\t\tRead Count: " << rd_cnts<< endl;
-        cout << "\t\tWriteCount: " << wr_cnts<< endl;
-
-        if (ubuf_rd.count(micro_buf_name)) {
-            ubuf_rd.at(micro_buf_name) += rd_cnts;
-        } else {
-            ubuf_rd[micro_buf_name] = rd_cnts;
-        }
-
-        if (ubuf_wr.count(micro_buf_name)) {
-            ubuf_wr.at(micro_buf_name) += wr_cnts;
-        } else {
-            ubuf_wr[micro_buf_name] = wr_cnts;
-        }
-    }
-    acc_cnt.read_cnt.insert(make_pair(ub_ins_name, ubuf_rd));
-    acc_cnt.write_cnt.insert(make_pair(ub_ins_name, ubuf_wr));
-}
 
 
 //generate/realize the rewrite structure inside ubuffer node
@@ -2764,6 +2720,52 @@ void UBuffer::generate_smt_stream(CodegenOptions& options) {
   }
 }
 
+int UBuffer::get_vectorized_dim(int fetch_width) {
+  vector<int> extent_dim =  extents_by_dimension(*this);
+  cout << "Ext by dim: " << extent_dim << endl;
+  for (auto it = extent_dim.rbegin(); it != extent_dim.rend(); it++) {
+    if (*it > fetch_width - 1)
+        return extent_dim.rend() - it - 1;
+  }
+  return -1;
+  //TODO: maybe need dimension fuse in the future
+  cout << "Could not find vectorization dimension" << endl;
+  assert(false);
+}
+
+
+void generate_access_cnt(CodegenOptions& options,
+        string ub_ins_name,
+        map<string, UBuffer> & rewrite_buffer,
+        mem_access_cnt& acc_cnt) {
+    map<string, int> ubuf_rd, ubuf_wr;
+    for (auto it: rewrite_buffer) {
+        string buf_name = it.first;
+        string micro_buf_name = split_at(buf_name, "_").back();
+        auto buf_component = it.second;
+        int rd_cnts = buf_component.global_read_count();
+        int wr_cnts = buf_component.global_write_count();
+
+        cout << "\t\tSub Buffer: " << buf_name << endl;
+        cout << "\t\tRead Count: " << rd_cnts<< endl;
+        cout << "\t\tWriteCount: " << wr_cnts<< endl;
+
+        if (ubuf_rd.count(micro_buf_name)) {
+            ubuf_rd.at(micro_buf_name) += rd_cnts;
+        } else {
+            ubuf_rd[micro_buf_name] = rd_cnts;
+        }
+
+        if (ubuf_wr.count(micro_buf_name)) {
+            ubuf_wr.at(micro_buf_name) += wr_cnts;
+        } else {
+            ubuf_wr[micro_buf_name] = wr_cnts;
+        }
+    }
+    acc_cnt.read_cnt.insert(make_pair(ub_ins_name, ubuf_rd));
+    acc_cnt.write_cnt.insert(make_pair(ub_ins_name, ubuf_wr));
+}
+
 void UBuffer::collect_memory_cnt(CodegenOptions& options, mem_access_cnt& mem_access) {
 
   //sort the bank by delay first
@@ -2798,6 +2800,8 @@ void UBuffer::collect_memory_cnt(CodegenOptions& options, mem_access_cnt& mem_ac
     }
   }
 }
+
+
 
 void lattice_schedule_buf(UBuffer& buffer, umap* opt_sched) {
 

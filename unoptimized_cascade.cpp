@@ -9,8 +9,6 @@ using namespace std;
 // compute file: cascade_compute.h
 #include "cascade_compute.h"
 
-#include "hw_classes.h"
-
 struct conv1_stencil_all_inputs_to_all_outputs_cache {
 	// RAM Box: {[0, 61], [0, 61]}
   hw_uint<16> RAM[62][62];
@@ -170,8 +168,6 @@ inline hw_uint<144> conv1_stencil_op_hcompute_conv2_stencil_1_read_bundle_read(c
 	return result;
 }
 
-#include "hw_classes.h"
-
 struct conv1_stencil_clkwrk_dsa0_all_inputs_to_all_outputs_cache {
 	// RAM Box: {[0, 61], [0, 61]}
   hw_uint<16> RAM[62][62];
@@ -226,8 +222,6 @@ inline void conv1_stencil_clkwrk_dsa0_op_hcompute_conv1_stencil_write_bundle_wri
 	hw_uint<16> conv1_stencil_clkwrk_dsa0_op_hcompute_conv1_stencil_27_res = op_hcompute_conv1_stencil_write.extract<0, 15>();
 	conv1_stencil_clkwrk_dsa0_op_hcompute_conv1_stencil_27_write(conv1_stencil_clkwrk_dsa0_op_hcompute_conv1_stencil_27_res, conv1_stencil_clkwrk_dsa0, root, conv1_s0_y, conv1_s0_x, dynamic_address);
 }
-
-#include "hw_classes.h"
 
 struct conv2_stencil_all_inputs_to_all_outputs_cache {
 	// RAM Box: {[0, 59], [0, 59]}
@@ -284,8 +278,6 @@ inline hw_uint<16> conv2_stencil_op_hcompute_hw_output_stencil_read_bundle_read(
 	return result;
 }
 
-#include "hw_classes.h"
-
 struct conv2_stencil_clkwrk_dsa1_all_inputs_to_all_outputs_cache {
 	// RAM Box: {[0, 59], [0, 59]}
   hw_uint<16> RAM[60][60];
@@ -340,8 +332,6 @@ inline void conv2_stencil_clkwrk_dsa1_op_hcompute_conv2_stencil_write_bundle_wri
 	hw_uint<16> conv2_stencil_clkwrk_dsa1_op_hcompute_conv2_stencil_15_res = op_hcompute_conv2_stencil_write.extract<0, 15>();
 	conv2_stencil_clkwrk_dsa1_op_hcompute_conv2_stencil_15_write(conv2_stencil_clkwrk_dsa1_op_hcompute_conv2_stencil_15_res, conv2_stencil_clkwrk_dsa1, root, conv2_s0_y, conv2_s0_x, dynamic_address);
 }
-
-#include "hw_classes.h"
 
 struct hw_input_global_wrapper_stencil_all_inputs_to_all_outputs_cache {
 	// RAM Box: {[0, 63], [0, 63]}
