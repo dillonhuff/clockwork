@@ -375,6 +375,14 @@ std::ostream& operator<<(std::ostream& out, vector<T>& v) {
   return out;
 }
 
+template<typename T>
+static inline
+std::ostream& operator<<(std::ostream& out, std::set<T>& v) {
+  vector<T> vv(v.begin(), v.end());
+  out << sep_list(vv, "{", "}", ", ");
+  return out;
+}
+
 static inline
 string str(const int i) {
   return to_string(i);

@@ -1,0 +1,2 @@
+ub_denoised_1_stencil_op_hcompute_denoised_1_stencil_8_to_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_26_ubuf,agg, 3600,sram, 900,tb, 1740,
+ub_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_6_to_hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_11_ubuf,agg, 4096,sram, 1024,tb, 1920,

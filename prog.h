@@ -1668,6 +1668,12 @@ void generate_vivado_rtl_tb(
     umap* hw_sched,
     map<string, UBuffer>& buffers);
 
+void generate_deepak_power_flow_rtl_tb(
+    CodegenOptions& options,
+    prog& prg,
+    umap* hw_sched,
+    map<string, UBuffer>& buffers);
+
 void generate_verilator_tb(
     CodegenOptions& options,
     prog& prg,
@@ -1899,3 +1905,8 @@ UBuffer write_latency_adjusted_buffer(
     prog& prg,
     UBuffer& buf,
     schedule_info& hwinfo);
+
+vector<isl_multi_aff*> write_addrs(op* op, const std::string& buf, prog& prg);
+
+vector<isl_multi_aff*> read_addrs(op* op, const std::string& buf, prog& prg);
+

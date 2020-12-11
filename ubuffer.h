@@ -591,8 +591,8 @@ class AccessPattern {
       }
 
       int get_inner_most_related_dom_dim() {
-        int inner_most_address_related_dim_id = 0;
-        for (size_t i = rel_map.size() - 1; i >= 0; i -- ) {
+        int inner_most_address_related_dim_id = rel_map.size() - 1;
+        for (int i = rel_map.size() - 1; i >= 0; i -- ) {
           if (rel_map.at(i) != 0) {
             inner_most_address_related_dim_id = i;
             break;
@@ -668,7 +668,7 @@ class AccessPattern {
           vector<int> & stride_in_target = access_matrix[dim_id];
           int inner_most = get_inner_most_related_dom_dim();
           cout << "trans op dim: " << inner_most << endl;
-          vector<string> var_list(var_dim-1);
+          vector<string> var_list;//(var_dim-1);
           vector<string> origin_var_list(var_dim-1);
           //var_list.front() = "root";
           //origin_var_list.front() = "root";
@@ -683,13 +683,13 @@ class AccessPattern {
                   int factor = fetch_width / stride_in_target[it.second];
                   string trans = "floor("+ it.first + "/" + to_string(factor) + ")";
                   string rems = it.first + "%" + to_string(factor);
-                  var_list[id] = trans;
+                  var_list.push_back(trans);
                   var_list.push_back(rems);
                   origin_var_list[id] = it.first;
               }
               else {
                   //if (id <= inner_most)
-                  var_list[id] = it.first;
+                  var_list.push_back(it.first);
                   origin_var_list[id] = it.first;
               }
           }
@@ -732,7 +732,7 @@ class AccessPattern {
           auto origin_vars = sep_list(origin_var_list, "[", "]", "," );
           auto constraints = sep_list(trans_constraints, "", "", " and ");
           cout <<"OP name: " << op_name << endl;
-          isl_set* slice = (rdset(ctx, string("{ " + op_name +origin_vars + " : " + constraints + "}").c_str()));
+          isl_set* slice = (rdset(ctx, string("{ " + op_name + origin_vars + " : " + constraints + "}").c_str()));
           return slice;
       }
 
@@ -845,6 +845,8 @@ struct MemConnSch {
         dim ++;
     }
     dimensionality -= remove_dims.size();
+    if (dimensionality == 0)
+        dimensionality = 1;
     std::reverse(begin(remove_dims), end(remove_dims));
     for (auto rem_dim: remove_dims) {
         for (auto& it: vals) {
@@ -1241,6 +1243,26 @@ class UBuffer {
       }
       return false;
     }
+
+    bool is_bank_output(const string& name) const{
+      for (auto bk: bank_list) {
+        if (elem(name, banks_to_outputs.at(bk.name))) {
+          return true;
+        }
+      }
+      return false;
+    }
+
+    vector<string> unbanking_outpts() const {
+      vector<string> cand;
+      for (auto outpt: get_out_ports()) {
+        if (!is_bank_output(outpt)) {
+          cand.push_back(outpt);
+        }
+      }
+      return cand;
+    }
+
 
     vector<stack_bank> receiver_banks(const std::string& inpt) {
       vector<stack_bank> bnks;
@@ -1708,6 +1730,40 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
       return {id_candidate};
     }
 
+    //A ubuffer rewrite pass before vectorization remove the redundant dimension
+    bool simplify_address_space() {
+        auto consumer_rem_dim = get_consumer_bank_dim_id();
+        auto producer_rem_dim = get_producer_bank_dim_id();
+        if (consumer_rem_dim.has_value() && producer_rem_dim.has_value()) {
+            auto cons_rem = consumer_rem_dim.get_value();
+            auto prod_rem = producer_rem_dim.get_value();
+            vector<int> rem;
+            //std::set_intersection(cons_rem.begin(), cons_rem.end(),
+            //        prod_rem.begin(), prod_rem.end(),
+            //        rem.begin());
+            for (auto i : cons_rem) {
+                if (std::find(prod_rem.begin(), prod_rem.end(), i) != prod_rem.end()) {
+                    rem.push_back(i);
+                }
+            }
+            cout << tab(2) << "cons rem: " << cons_rem << endl;
+            cout << tab(2) << "prod rem: " << prod_rem << endl;
+            cout << tab(2) << "its: " << rem << endl;
+            for (auto rem_dim: rem) {
+                for (auto & it : access_map) {
+                    auto acc_map = to_map(it.second);
+                    if (num_out_dims(acc_map) == 1)
+                        continue;
+                    cout <<tab(2) << "Dim:" << rem_dim << " will be project out: " << str(acc_map) << endl;
+                    it.second = to_umap(project_out(acc_map, rem_dim));
+                }
+            }
+            return rem.size();
+        }
+        return false;
+    }
+
+
     int lanes_in_bundle(const std::string& bn) {
       assert(contains_key(bn, port_bundles));
       return map_find(bn, port_bundles).size();
@@ -1799,6 +1855,44 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
       return s;
     }
 
+
+    isl_union_set* global_write_domain() {
+      uset* s = isl_union_set_read_from_str(ctx, "{ }");
+      auto wr_ops = get_write_ops();
+      for (auto dm: domain) {
+        string dm_name = ::name(dm.second);
+        if (wr_ops.count(dm_name)) {
+          s = unn(s, to_uset(cpy(dm.second)));
+        }
+      }
+      return s;
+    }
+
+    isl_union_set* global_read_domain() {
+      uset* s = isl_union_set_read_from_str(ctx, "{ }");
+      auto rd_ops = get_read_ops();
+      for (auto dm: domain) {
+        string dm_name = ::name(dm.second);
+        if (rd_ops.count(dm_name)) {
+          s = unn(s, to_uset(cpy(dm.second)));
+        }
+      }
+      return s;
+    }
+
+    int global_write_count() {
+      int cnt = 0;
+      uset* wr_dom = global_write_domain();
+      return int_upper_bound(card(wr_dom));
+    }
+
+    int global_read_count() {
+      int cnt = 0;
+      uset* rd_dom = global_read_domain();
+      return  int_upper_bound(card(rd_dom));
+
+    }
+
     isl_union_set* global_retrive_domain() {
       uset* s = isl_union_set_read_from_str(ctx, "{ }");
       for (auto other : retrive_domain) {
@@ -1852,7 +1946,7 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
     isl_union_map* producer_map() {
       umap* s = isl_union_map_read_from_str(ctx, "{ }");
       for (auto pt: get_in_ports()) {
-        s = unn(s, access_map.at(pt));
+        s = unn(s, coalesce(access_map.at(pt)));
       }
       return s;
     }
@@ -1860,7 +1954,7 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
     isl_union_map* consumer_map() {
       umap* s = isl_union_map_read_from_str(ctx, "{ }");
       for (auto pt: get_out_ports()) {
-        s = unn(s, access_map.at(pt));
+        s = unn(s, coalesce(access_map.at(pt)));
       }
       return s;
     }
@@ -2148,16 +2242,19 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
       auto stmt2bd = get_stmt2bd();
 
       //if it's not one of the buffer's op
+      cout << "find bd for op :" << op_name << endl;
       if (stmt2bd.count(op_name) == 0)
           return false;
 
       //if it is, we still need to check the bundle numbers
       auto bd_vec = stmt2bd.at(op_name);
+      for (auto it: bd_vec)
+          cout << "\tfind candidate: " << it << endl;
       int in_bd = 0, out_bd = 0;
       for (auto bd: bd_vec) {
         if (is_input_bundle(bd))
           in_bd ++;
-        else
+        if (is_output_bundle(bd))
           out_bd ++;
       }
       return in_bd && out_bd;
@@ -2259,6 +2356,10 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
     bank compute_bank_info(CodegenOptions& options, const std::string& inpt, const std::string& outpt);
     bank compute_bank_info(std::set<string> inpt, std::set<string> outpt);
     bank compute_bank_info(const std::string& inpt, const std::string& outpt, int depth);
+    bank compute_bank_info(
+          std::set<string> inpt_set,
+          std::set<string> outpt_set,
+          map<string, int> delay_map);
 
     void merge_bank(CodegenOptions& options, string inpt, vector<bank> mergeable);
 
@@ -2270,6 +2371,7 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
 
     //smt stream generation
     void generate_smt_stream(CodegenOptions& options);
+    void collect_memory_cnt(CodegenOptions& options, mem_access_cnt& mem_access);
 #ifdef COREIR
     CoreIR::Module* affine_controller(CoreIR::Context* context, isl_set* dom, isl_aff* aff);
 
@@ -2278,9 +2380,9 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
 
     //Wrappers for generate coreir
     //original memory generation for memory tile with enable and valid
-    void generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def);
+    void generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, schedule_info& info);
     //ubuffer coreir generation for tahoe memory tile
-    void generate_coreir_without_ctrl(CodegenOptions& options, CoreIR::ModuleDef* def);
+    void generate_coreir_without_ctrl(CodegenOptions& options, CoreIR::ModuleDef* def, schedule_info& info);
     Json generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> rewrite_buffer);
 
     void generate_stencil_valid_config(CodegenOptions& options, string bk_name);
@@ -2321,6 +2423,8 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
     maybe<int> dependence_distance_singleton(const string& inpt, const string& outpt, bool decouple=false);
     maybe<int> dependence_distance_max(const string& inpt, const string& outpt);
 
+    //Hack for single pixel input
+    std::map<string, UBuffer> vectorization_single_pixel(int fetch_width);
 
 };
 
@@ -2518,6 +2622,7 @@ maybe<int> dependence_distance_singleton(UBuffer& buf, const string& inpt, const
 
 maybe<std::set<int> > embarassing_partition(UBuffer& buf);
 vector<vector<string> > overlapping_large_io_port_groups(UBuffer& buf, const int ports_per_direction);
+vector<int> get_cyclic_partition_factor_from_embarassing_partition(UBuffer & buf, std::set<int> & partition);
 
 int total_capacity(UBuffer& buf);
 vector<int> min_offsets_by_dimension(UBuffer& buf);

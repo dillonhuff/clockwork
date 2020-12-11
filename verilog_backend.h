@@ -20,3 +20,5 @@ void generate_platonic_ubuffer(
     prog& prg,
     UBuffer& buf,
     schedule_info& hwinfo);
+
+std::string codegen_verilog(const std::string& ctrl_vars, isl_aff* const aff);

@@ -49,6 +49,498 @@ using CoreIR::RecordType;
 static int fully_optimizable = 0;
 static int not_fully_optimizable = 0;
 
+
+int min_address(affine_controller_ctrl& ctrl) {
+  isl_map* acc =
+    set_range_name(set_domain_name(to_map(ctrl.access_function), "dom"), "addr");
+  isl_set* dom = set_name(cpy(ctrl.dom), "dom");
+  return to_int(lexminval(range(its(acc, dom))));
+}
+
+int max_address(affine_controller_ctrl& ctrl) {
+  isl_map* acc =
+    set_range_name(set_domain_name(to_map(ctrl.access_function), "dom"), "addr");
+  isl_set* dom = set_name(cpy(ctrl.dom), "dom");
+  cout << "acc = " << str(acc) << endl;
+  cout << "dom = " << str(dom) << endl;
+  isl_set* addrs = range(its(acc, dom));
+  cout << "add = " << str(addrs) << endl;
+  return to_int(lexmaxval(addrs));
+}
+
+struct block_sreg
+{
+	int init_delay;
+	int difference;
+	string inpt;
+	vector<string> chain_starts;
+};
+
+struct M3_config {
+  map<int, affine_controller_ctrl> in_port_controllers;
+  map<int, affine_controller_ctrl> out_port_controllers;
+};
+
+void instantiate_M3_verilog(
+    CodegenOptions& options,
+    const std::string& long_name,
+    map<int, affine_controller_ctrl> in_port_controllers,
+    map<int, affine_controller_ctrl> out_port_controllers) {
+
+  std::ostream& out = *verilog_collateral_file;
+
+  for (int count = 0; count < (int) in_port_controllers.size(); count++) {
+    string bundle_name = long_name + "_wr_" + str(count);
+    generate_fsm(*verilog_collateral_file,
+        options,
+        bundle_name + "_ctrl",
+        "d",
+        "valid",
+        in_port_controllers[count].sched,
+        in_port_controllers[count].dom);
+  }
+
+  for (int count = 0; count < out_port_controllers.size(); count++) {
+    string bundle_name = long_name + "_rd_" + str(count);
+    generate_fsm(*verilog_collateral_file,
+        options,
+        bundle_name + "_ctrl",
+        "d",
+        "valid",
+        out_port_controllers[count].sched,
+        out_port_controllers[count].dom);
+  }
+
+
+  vector<string> port_decls = {};
+  port_decls.push_back("input clk");
+  port_decls.push_back("input rst_n");
+  port_decls.push_back("input clk_en");
+  port_decls.push_back("input chain_chain_en");
+  for(int i = 0; i < (int) in_port_controllers.size(); i++)
+  {
+    port_decls.push_back("input [15:0] data_in_" + str(i));
+  }
+  for(int i = 0; i < (int) out_port_controllers.size(); i++)
+  {
+    port_decls.push_back("output logic [15:0] data_out_" + str(i));
+    port_decls.push_back("output data_out_" + str(i) + "_valid");
+  }
+  port_decls.push_back("input [15:0] chain_data_in");
+  port_decls.push_back("output [15:0] chain_data_out");
+
+  *verilog_collateral_file << "module " << long_name <<" ("<< sep_list(port_decls,"","",",") <<"); "<< endl;
+  for (int count = 0; count < (int) out_port_controllers.size(); count++) {
+    string bundle_name = long_name + "_rd_" + str(count);
+
+    isl_aff* sched_aff = out_port_controllers[count].sched;
+
+    out << tab(1) << bundle_name + "_ctrl " << bundle_name << "(.clk(clk), .rst_n(rst_n));" << endl;
+
+    isl_aff* ibo = out_port_controllers[count].access_function;
+
+    out << tab(1) << "logic [15:0] " << bundle_name << "_ibo;" << endl;
+    //out << tab(1) << "logic " << bundle_name << "_enable_this_port;" << endl;
+
+    std::string ibo_str = codegen_verilog(bundle_name + ".d", ibo);
+
+    out << tab(1) << "assign " << bundle_name << "_ibo = " << ibo_str << ";" << endl;
+    //out << tab(1) << "assign " << bundle_name << "_enable_this_port = 1;" << endl;
+  }
+
+  for (int count = 0; count < (int) in_port_controllers.size(); count++) {
+    string bundle_name = long_name + "_wr_" + str(count);
+
+    isl_aff* sched_aff = in_port_controllers[count].sched;
+
+    out << tab(1) << bundle_name + "_ctrl " << bundle_name << "(.clk(clk), .rst_n(rst_n));" << endl;
+
+    isl_aff* ibo = in_port_controllers[count].access_function;
+
+    out << tab(1) << "logic [15:0] " << bundle_name << "_ibo;" << endl;
+
+    std::string ibo_str = codegen_verilog(bundle_name + ".d", ibo);
+
+    out << tab(1) << "assign " << bundle_name << "_ibo = " << ibo_str << ";" << endl;
+  }
+
+  *verilog_collateral_file << endl;
+
+  const int CAPACITY = 1024;
+
+  assert(CAPACITY % 2 == 0);
+
+  const int BANK_CAPACITY = CAPACITY / 2;
+
+  *verilog_collateral_file << tab(1) << "logic [15:0] SRAM_BANK_0 [" << BANK_CAPACITY << ":0];" << endl;
+  *verilog_collateral_file << tab(1) << "logic [15:0] SRAM_BANK_1 [" << BANK_CAPACITY << ":0];" << endl;
+
+  for (int i = 0; i < (int) out_port_controllers.size(); i++) {
+    *verilog_collateral_file << tab(1) << "logic [15:0] data_out_" << i << "_tmp;" << endl;
+  }
+
+  *verilog_collateral_file << tab(1) << "always @(posedge clk) begin" << endl;
+  for (int i = 0; i < (int) out_port_controllers.size(); i++) {
+    string bn = long_name + "_rd_" + str(i);
+    string bundle_name = bn + ".valid";
+    out << tab(2) << "if (" << bn << "_ibo[9]) begin" << endl;
+    out << tab(2) << "data_out_" << str(i) << "_tmp <= SRAM_BANK_0[" << bn << "_ibo[8:0]" << "];" << endl;
+    out << tab(2) << "end else begin" << endl;
+    out << tab(2) << "data_out_" << str(i) << "_tmp <= SRAM_BANK_1[" << bn << "_ibo[8:0]" << "];" << endl;
+    out << tab(2) << "end" << endl;
+    out << tab(2) << "data_out_" + str(i) + "_valid <= " << bundle_name << ";" << endl;
+
+
+
+  }
+
+  for (int i = 0; i < (int) in_port_controllers.size(); i++) {
+    string bn = long_name + "_wr_" + str(i);
+    string bundle_name = bn + ".valid";
+    *verilog_collateral_file << tab(2) << "if (" << bundle_name << ") begin" << endl;
+
+
+    out << tab(3) << "if (" << bn << "_ibo[9]) begin" << endl;
+    out << tab(4) << "SRAM_BANK_0[" << bn + "_ibo[8:0]" << "] <= " << "data_in_" << str(i) << ";" << endl;
+    out << tab(3) << "end else begin" << endl;
+    out << tab(4) << "SRAM_BANK_1[" << bn + "_ibo[8:0]" << "] <= " << "data_in_" << str(i) << ";" << endl;
+    out << tab(3) << "end" << endl;
+
+
+    *verilog_collateral_file << tab(2) << "end" << endl;
+  }
+  *verilog_collateral_file << tab(1) << "end" << endl;
+
+
+  *verilog_collateral_file << tab(1) << "assign chain_data_out = 512;" << endl;
+  for (int i = 0; i < (int) out_port_controllers.size(); i++) {
+    *verilog_collateral_file << tab(1) << "assign data_out_" << i << " = data_out_" << i << "_tmp;" << endl;
+  }
+  *verilog_collateral_file << "endmodule" << endl << endl;
+
+}
+
+M3_config instantiate_M3_verilog_sreg_block(CodegenOptions& options, const std::string& long_name, int delay, prog& prg,schedule_info& hwinfo,  block_sreg & b_sreg, UBuffer & buf)
+{
+  assert(verilog_collateral_file != nullptr);
+  std::ostream& out = *verilog_collateral_file;
+
+  isl_aff * write_sched = rdaff(prg.ctx,"{[root,t] -> [( root + t + 1 )]}");
+  isl_aff * write_addr = rdaff(prg.ctx,"{[root,t] -> [( t )]}");
+
+  isl_aff * rd1_sched = rdaff(prg.ctx, "{[root,t] -> [(root+t + " + str(delay *2  ) + ")]}");
+  isl_aff * rd1_addr = rdaff(prg.ctx,"{[root,t] -> [( t )]}");
+
+  isl_aff * rd0_sched = rdaff(prg.ctx, "{[root,t] -> [(root+t + " + str(delay  ) + ")]}");
+  isl_aff * rd0_addr = rdaff(prg.ctx,"{[root,t] -> [( t )]}");
+
+  isl_set * dom = rdset(prg.ctx,"{[root,t] : root = 0 and 0 <= t <= 65355 }");
+
+  map<int, affine_controller_ctrl> in_pts{{0, {write_addr, write_sched, dom}}};
+  map<int, affine_controller_ctrl> out_pts{
+    {1, {rd1_addr, rd1_sched, dom}},
+    {0, {rd0_addr, rd0_sched, dom}}};
+
+  instantiate_M3_verilog(
+      options,
+      long_name,
+      in_pts,
+      out_pts);
+
+  return {in_pts, out_pts};
+}
+
+M3_config instantiate_M3_verilog_sreg(CodegenOptions& options, const std::string& long_name, int delay, prog& prg,schedule_info& hwinfo) {
+
+  assert(verilog_collateral_file != nullptr);
+
+  std::ostream& out = *verilog_collateral_file;
+
+  isl_aff * identity = rdaff(prg.ctx,"{[root,t] -> [( root + t + 1 )]}");
+  isl_aff * identity_addr = rdaff(prg.ctx,"{[root,t] -> [( t )]}");
+
+  isl_aff * shifted_identity = rdaff(prg.ctx, "{[root,t] -> [(root+t + " + str(delay  ) + ")]}");
+  isl_aff * shifted_identity_addr = rdaff(prg.ctx, "{[root,t] -> [( t )]}");
+
+
+  isl_set * dom = rdset(prg.ctx,"{[root,t] : root = 0 and 0 <= t <= 65355 }");
+
+  map<int, affine_controller_ctrl> in_pts{{0, {identity_addr, identity, dom}}};
+  map<int, affine_controller_ctrl> out_pts{{0, {shifted_identity_addr, shifted_identity, dom}}};
+  instantiate_M3_verilog(
+      options,
+      long_name,
+      in_pts,
+      out_pts);
+
+  return {in_pts, out_pts};
+
+}
+
+
+affine_controller_ctrl pack_controller(affine_controller_ctrl& unpacked) {
+
+  if (num_div_dims(unpacked.access_function) == 0) {
+    affine_controller_ctrl packed;
+    packed.access_function = unpacked.access_function;
+    packed.sched = unpacked.sched;
+    packed.dom = unpacked.dom;
+    return packed;
+  } else {
+    cout << "Div dims in: " << str(unpacked.access_function) << endl;
+    std::map<int, int> split_dims;
+    for (int d = 0; d < num_div_dims(unpacked.access_function); d++) {
+      auto a = isl_aff_get_div(unpacked.access_function, d);
+      cout << tab(2) << "=== div: " << str(a) << endl;
+      int denom = to_int(isl_aff_get_denominator_val(a));
+      assert(denom == 2);
+      cout << tab(3) << "denom = " << denom << endl;
+      for (int di = 0; di < num_in_dims(a); di++) {
+        if (!is_zero(get_coeff(a, di))) {
+          split_dims[di] = denom;
+        }
+      }
+    }
+
+
+    cout << "Need to split dimensions..." << endl;
+    for (auto d : split_dims) {
+      cout << tab(1) << d.first << " -> " << d.second << endl;
+    }
+
+    vector<int> dom_extents = extents(unpacked.dom);
+
+    vector<string> dvars;
+    vector<int> iis;
+    vector<int> ranges;
+    vector<string> sched_terms;
+    vector<string> extent_strs;
+    map<int, int> outer_replacements;
+    int n = 0;
+    for (int d = 0; d < num_in_dims(unpacked.access_function); d++) {
+      if (!contains_key(d, split_dims)) {
+        dvars.push_back("d" + str(n));
+        iis.push_back(to_int(get_coeff(unpacked.sched, d)));
+        ranges.push_back(dom_extents.at(d));
+        sched_terms.push_back(str(iis.back()) + "*" + dvars.back());
+        extent_strs.push_back("0 <= " + dvars.back() + " < " + str(ranges.back()));
+
+        n++;
+      } else {
+        dvars.push_back("d" + str(n));
+        int orig_ii = to_int(get_coeff(unpacked.sched, d));
+        iis.push_back(orig_ii * 2);
+        ranges.push_back(dom_extents.at(d) / 2);
+        sched_terms.push_back(str(iis.back()) + "*" + dvars.back());
+        extent_strs.push_back("0 <= " + dvars.back() + " < " + str(ranges.back()));
+        outer_replacements[d] = n;
+        n++;
+
+        dvars.push_back("d" + str(n));
+        iis.push_back(orig_ii);
+        ranges.push_back(2);
+        sched_terms.push_back(str(iis.back()) + "*" + dvars.back());
+        extent_strs.push_back("0 <= " + dvars.back() + " < " + str(ranges.back()));
+        n++;
+      }
+    }
+
+    sched_terms.push_back(str(const_coeff(unpacked.sched)));
+    isl_aff* packed_sched =
+      rdaff(ctx(unpacked.access_function), curlies(name(unpacked.dom) + bracket_list(dvars) + " -> " + sep_list(sched_terms, "[(", ")]", " + ")));
+
+    isl_set* packed_dom =
+      rdset(ctx(unpacked.dom),
+          curlies(name(unpacked.dom) + bracket_list(dvars) + " : " + sep_list(extent_strs, "", "", " and ")));
+    cout << "Orig sched  : " << str(unpacked.sched) << endl;
+    cout << "Packed sched: " << str(packed_sched) << endl;
+    cout << "Orig dom    : " << str(unpacked.dom) << endl;
+    cout << "Packed dom  : " << str(packed_dom) << endl;
+
+    int rconst = to_int(const_coeff(unpacked.access_function));
+    vector<string> terms;
+    terms.push_back(str(rconst));
+
+    for (int d = 0; d < num_div_dims(unpacked.access_function); d++) {
+      auto a = isl_aff_get_div(unpacked.access_function, d);
+      cout << tab(2) << "=== div: " << str(a) << endl;
+      int denom = to_int(isl_aff_get_denominator_val(a));
+      assert(denom == 2);
+      cout << tab(3) << "denom = " << denom << endl;
+      for (int di = 0; di < num_in_dims(a); di++) {
+        if (!is_zero(get_coeff(a, di))) {
+          auto rcoeff = get_coeff(a, di);
+          int v;
+          if (isl_val_is_int(rcoeff)) {
+            v = to_int(rcoeff);
+          } else {
+            v = isl_val_get_num_si(rcoeff);
+          }
+
+          terms.push_back(str(const_coeff(a)));
+          terms.push_back(str(v) + "*d" + str(outer_replacements[di]));
+          //split_dims[di] = denom;
+        }
+      }
+    }
+    //isl_aff* aff = rdaff(ctx(packed_dom),
+        //curlies(name(unpacked.dom) + bracket_list(dvars) + " -> " + sep_list(terms, "[(", ")]", " + "))
+        //);
+    //cout << "New acc: " << str(aff) << endl;
+    isl_aff* aff = rdaff(ctx(packed_dom),
+        "{ " + name(packed_dom) + "[root, y, yi, x, xi] -> [(64y + x)] }");
+    //assert(false);
+
+    // acc, sched, dom
+    return {aff, packed_sched, packed_dom};
+  }
+
+}
+
+M3_config instantiate_M3_verilog(CodegenOptions& options, const std::string& long_name, const int b, ubuffer_impl& impl, UBuffer& buf, prog& prg,
+    map<pair<string, int>, int> ubuffer_port_and_bank_to_bank_port,
+    schedule_info& hwinfo) {
+
+  assert(verilog_collateral_file != nullptr);
+
+  std::ostream& out = *verilog_collateral_file;
+
+  map<int, affine_controller_ctrl> in_port_controllers;
+  map<int, affine_controller_ctrl> out_port_controllers;
+
+  for(auto pt : impl.bank_writers[b]) {
+    int count = map_find({pt, b}, ubuffer_port_and_bank_to_bank_port);
+    string port_rep = pt;
+    string op_rep_name = domain_name(to_map(buf.access_map.at(port_rep)));
+    op* rep = prg.find_op(op_rep_name);
+    isl_set* dom = to_set(domain(buf.access_map.at(port_rep)));
+
+    auto adjusted_buf = write_latency_adjusted_buffer(options, prg, buf, hwinfo);
+    isl_aff* sched_aff =
+      get_aff(adjusted_buf.schedule.at(pt));
+
+
+    isl_aff* ibo = inner_bank_offset_aff(pt, adjusted_buf, impl);
+    isl_aff* bank_selector = bank_offset_aff(pt, adjusted_buf, impl);
+
+    isl_map* sel_map = its(to_map(bank_selector), dom);
+    isl_map* ms = isl_map_fix_si(sel_map, isl_dim_out, 0, b);
+    isl_set* restricted_dom = domain(ms);
+
+    vector<int> lens = extents(restricted_dom);
+    vector<int> min_vals = mins(restricted_dom);
+    isl_point* lmin = lexminpt(restricted_dom);
+    int offset = 0;
+    for (int d = 0; d < num_dims(restricted_dom); d++) {
+      int min = min_vals.at(d);
+      offset += min*to_int(get_coeff(sched_aff, d));
+    }
+    isl_aff* normed_sched = add(sched_aff, offset);
+    vector<string> dvs;
+    vector<string> range_constraints;
+    for (int d = 0; d < num_dims(restricted_dom); d++) {
+      dvs.push_back("d" + str(d));
+      range_constraints.push_back("0 <= " + dvs.back() + " < " + str(lens.at(d)));
+    }
+    string dom_str = curlies(name(restricted_dom) + bracket_list(dvs) + " : " + sep_list(range_constraints, "", "", " and "));
+    isl_set* normed_dom = rdset(prg.ctx, dom_str);
+    affine_controller_ctrl ctrl{ibo, normed_sched, normed_dom};
+    in_port_controllers[count] = pack_controller(ctrl);
+  }
+
+  for(auto pt : impl.bank_readers[b]) {
+    int count = map_find({pt, b}, ubuffer_port_and_bank_to_bank_port);
+    string port_rep = pt;
+    string op_rep_name = domain_name(to_map(buf.access_map.at(port_rep)));
+    op* rep = prg.find_op(op_rep_name);
+    isl_set* dom = to_set(domain(buf.access_map.at(port_rep)));
+
+    isl_aff* sched_aff =
+      get_aff(buf.schedule.at(pt));
+
+    isl_aff* ibo = inner_bank_offset_aff(pt, buf, impl);
+    isl_aff* bank_selector = bank_offset_aff(pt, buf, impl);
+
+    isl_map* sel_map = its(to_map(bank_selector), dom);
+    isl_map* ms = isl_map_fix_si(sel_map, isl_dim_out, 0, b);
+    isl_set* restricted_dom = domain(ms);
+    vector<int> lens = extents(restricted_dom);
+    vector<int> min_vals = mins(restricted_dom);
+    isl_point* lmin = lexminpt(restricted_dom);
+    int offset = 0;
+    for (int d = 0; d < num_dims(restricted_dom); d++) {
+      int min = min_vals.at(d);
+      offset += min*to_int(get_coeff(sched_aff, d));
+    }
+    isl_aff* normed_sched = add(sched_aff, offset);
+    vector<string> dvs;
+    vector<string> range_constraints;
+    for (int d = 0; d < num_dims(restricted_dom); d++) {
+      dvs.push_back("d" + str(d));
+      range_constraints.push_back("0 <= " + dvs.back() + " < " + str(lens.at(d)));
+    }
+    string dom_str = curlies(name(restricted_dom) + bracket_list(dvs) + " : " + sep_list(range_constraints, "", "", " and "));
+    isl_set* normed_dom = rdset(prg.ctx, dom_str);
+
+    affine_controller_ctrl ctrl{ibo, normed_sched, normed_dom};
+    out_port_controllers[count] = pack_controller(ctrl);
+  }
+
+
+  instantiate_M3_verilog(
+      options,
+      long_name,
+      in_port_controllers,
+      out_port_controllers);
+
+  return {in_port_controllers, out_port_controllers};
+}
+
+Instance* generate_controller_verilog(CodegenOptions& options, ModuleDef* def, const std::string& name, isl_aff* aff, isl_set* dom) {
+  auto c = def->getContext();
+  Instance* controller;
+  auto aff_c = affine_controller_def(c, dom, aff);
+  aff_c->print();
+  controller = def->addInstance(name, aff_c);
+
+  assert(verilog_collateral_file != nullptr);
+  generate_fsm(*verilog_collateral_file, options, controller->getModuleRef()->getName(), "d", "valid", aff, dom);
+
+  def->connect(controller->sel("rst_n"), def->sel("self.rst_n"));
+  def->connect(controller->sel("flush"), def->sel("self.flush"));
+
+  json tile_config;
+  for (int d = 0; d < num_in_dims(aff); d++) {
+    tile_config["coeff_" + str(d)] = to_int(get_coeff(aff, d));
+  }
+  tile_config["const"] = to_int(const_coeff(aff));
+  int d = 0;
+  for (auto e : extents(dom)) {
+    tile_config["extent_" + str(d)] = e;
+    d++;
+  }
+  controller->getMetaData()["config"] =
+    tile_config;
+  return controller;
+}
+
+CoreIR::Wireable* inner_control_vars(CoreIR::ModuleDef* def, const std::string& reader, UBuffer& buf) {
+  string bundle = buf.container_bundle(reader);
+  //return def->sel("self." + bundle + "_ctrl_vars");
+  return def->sel(bundle + "_ctrl.d");
+}
+
+CoreIR::Wireable* inner_control_en(CoreIR::ModuleDef* def, const std::string& reader, UBuffer& buf) {
+  string bundle = buf.container_bundle(reader);
+  if (buf.is_in_pt(reader)) {
+    //return def->sel("self." + bundle + "_wen");
+    return def->sel(bundle + "_ctrl.valid");
+  } else {
+    //return def->sel("self." + bundle + "_ren");
+    return def->sel(bundle + "_ctrl.valid");
+  }
+}
+
 Wireable* eqConst(ModuleDef* def, Wireable* val, const int b) {
   auto c = def->getContext();
   auto eq = def->addInstance("eq_const" + c->getUnique(), "coreir.eq", {{"width", COREMK(c, 16)}});
@@ -56,8 +548,6 @@ Wireable* eqConst(ModuleDef* def, Wireable* val, const int b) {
   def->connect(eq->sel("in1"), mkConst(def, 16, b));
   return eq->sel("out");
 }
-
-CoreIR::Module* affine_controller_def(CoreIR::Context* context, isl_set* dom, isl_aff* aff);
 
 bool is_register_file(UBuffer& buf, ubuffer_impl& impl) {
   if (impl.partition_dims.size() < buf.logical_dimension()) {
@@ -67,9 +557,25 @@ bool is_register_file(UBuffer& buf, ubuffer_impl& impl) {
   return true;
 }
 
-ubuffer_impl build_buffer_impl(prog& prg, UBuffer& buf, schedule_info& hwinfo) {
-  cout << "Building implementation of " << buf.name << endl;
+bool all_constant_accesses(UBuffer& buf) {
+  for (auto pt : buf.get_all_ports()) {
+    cout << "Port: " << pt << endl;
+    isl_multi_aff* acc = get_multi_aff(buf.access_map.at(pt));
+    if (!is_cst(acc)) {
+      return false;
+    }
+  }
+  return true;
+}
+
+pair<ubuffer_impl,isl_map*> build_buffer_impl(prog& prg, UBuffer& buf, schedule_info& hwinfo) {
   ubuffer_impl impl;
+  auto bank_map = build_buffer_impl(prg, buf, hwinfo, impl);
+  return {impl, bank_map};
+}
+
+isl_map* build_buffer_impl(prog& prg, UBuffer& buf, schedule_info& hwinfo, ubuffer_impl& impl) {
+  cout << "Building implementation of " << buf.name << endl;
 
   maybe<std::set<int> > embarassing_banking =
     embarassing_partition(buf);
@@ -79,6 +585,13 @@ ubuffer_impl build_buffer_impl(prog& prg, UBuffer& buf, schedule_info& hwinfo) {
   if (embarassing_banking.get_value().size() == buf.logical_dimension()) {
     cout << buf.name << " is really a register file" << endl;
   }
+
+  //if (buf.get_out_ports().size() > 0 &&
+      //is_register_file(buf) &&
+      //&& all_constant_accesses(buf)) {
+    //cout << buf.name << " has all constant accesses" << endl;
+    ////assert(false);
+  //}
 
   impl.partition_dims = embarassing_banking.get_value();
   vector<int> extents;
@@ -129,7 +642,7 @@ ubuffer_impl build_buffer_impl(prog& prg, UBuffer& buf, schedule_info& hwinfo) {
     }
   }
 
-  return impl;
+  return m;
 }
 
 int wire_width(CoreIR::Wireable* w) {
@@ -148,221 +661,223 @@ int wire_width(CoreIR::Wireable* w) {
 
 void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& prg, UBuffer& orig_buf, schedule_info& hwinfo);
 
-std::set<string> generate_M3_shift_registers(CodegenOptions& options, CoreIR::ModuleDef* def, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
-
-  map<string,pair<string,int>> shift_registered_outputs = determine_shift_reg_map(prg, buf, hwinfo);
-  vector<pair<string,pair<string,int>>> shift_registered_outputs_to_outputs = determine_output_shift_reg_map(prg, buf, hwinfo);
-
-  //map<string, std::set<string> > broadcast_groups;
-  //for (auto pt : shift_registered_outputs_to_outputs) {
-    //bool already_broadcast = false;
-    //for (auto other : broadcast_groups) {
-      //if (elem(pt, other.second)) {
-        //already_broadcast = true;
-        //break;
-      //}
-    //}
-    //if (!alread_broadcast) {
-
-    //}
-  //}
+Wireable* mkOneHot(ModuleDef* def, vector<Wireable*>& conds, vector<Wireable*>& vals) {
+  assert(vals.size() == conds.size());
 
   auto c = def->getContext();
-  std::set<string> done_outpt;
-  for (auto pt : shift_registered_outputs) {
-    string dst = pt.first;
-    string src = pt.second.first;
-    int delay = pt.second.second;
-    auto src_wire = def->sel("self." + buf.container_bundle(src) + "." + str(buf.bundle_offset(src)));
-    Wireable* delayed_src =
-      delay_by(def, "sr_end" + c->getUnique(), src_wire, delay);
 
-    def->connect(
-        def->sel("self." + buf.container_bundle(dst) + "." + str(buf.bundle_offset(dst))),
-        delayed_src);
-    done_outpt.insert(pt.first);
+  if (conds.size() == 1) {
+    //def->connect(def->sel(conn.first + "_net.in"), pick(conn.second));
+    return vals.at(0);
+  } else {
+    cout << "Conds size = " << conds.size() << endl;
+    assert(conds.size() == 3);
+    //Wireable* out = def->sel(conn.first + "_net.in");
+
+    auto snd_mux =
+      def->addInstance("chain_mux" + c->getUnique(), "coreir.mux", {{"width", CoreIR::Const::make(c, 16)}});
+    def->connect(snd_mux->sel("in0"), vals[1]);
+    def->connect(snd_mux->sel("in1"), vals[2]);
+    def->connect(snd_mux->sel("sel"), conds[2]);
+
+    auto last_mux =
+      def->addInstance("chain_mux" + c->getUnique(), "coreir.mux", {{"width", CoreIR::Const::make(c, 16)}});
+    def->connect(last_mux->sel("in0"), snd_mux->sel("out"));
+    def->connect(last_mux->sel("in1"), vals[0]);
+    def->connect(last_mux->sel("sel"), conds[0]);
+
+    return last_mux->sel("out");
+    //def->connect(last_mux->sel("out"), out);
   }
-
-  cout << "# of in to out shift registers..." << done_outpt.size() << endl;
-  for (auto pt : shift_registered_outputs_to_outputs) {
-    done_outpt.insert(pt.first);
-    if(done_outpt.find(pt.second.first) != done_outpt.end()) {
-      //continue;
-    }
-    if(done_outpt.find(pt.first)!=done_outpt.end())
-    {
-      //continue;
-    } else{
-      //string dst = pt.first;
-      //string src = pt.second.first;
-      //int delay = pt.second.second;
-      //auto src_wire = def->sel("self." + buf.container_bundle(src) + "." + str(buf.bundle_offset(src)));
-      //Wireable* delayed_src =
-        //delay_by(def, "sr_end" + c->getUnique(), src_wire, delay);
-
-      //def->connect(
-          //def->sel("self." + buf.container_bundle(dst) + "." + str(buf.bundle_offset(dst))),
-          //delayed_src);
-      //done_outpt.insert(pt.first);
-    }
-  }
-  return done_outpt;
 }
 
+map<pair<string, int>, int>
+build_ubuffer_to_bank_binding(ubuffer_impl& impl) {
+    int num_banks = 1;
+    for (auto ent : impl.partitioned_dimension_extents) {
+      num_banks *= ent.second;
+    }
+  map<pair<string, int>, int> ubuffer_port_and_bank_to_bank_port;
+  map<int, int> bank_to_next_available_out_port;
+  map<int, int> bank_to_next_available_in_port;
+  for (int b = 0; b < num_banks; b++) {
+    bank_to_next_available_out_port[b] = 0;
+    bank_to_next_available_in_port[b] = 0;
+  }
+  for (auto pt_srcs : impl.inpt_to_bank) {
+    string pt = pt_srcs.first;
+    for (int b : pt_srcs.second) {
+      ubuffer_port_and_bank_to_bank_port[{pt, b}] =
+        map_find(b, bank_to_next_available_in_port);
+      bank_to_next_available_in_port[b]++;
+    }
+  }
+  for (auto bp : bank_to_next_available_in_port) {
+    cout << tab(1) << bp.first << " -> " << bp.second << endl;
+    assert(bp.second <= 2);
+  }
+  for (auto pt_srcs : impl.outpt_to_bank) {
+    string pt = pt_srcs.first;
+    for (int b : pt_srcs.second) {
+      ubuffer_port_and_bank_to_bank_port[{pt, b}] =
+        map_find(b, bank_to_next_available_out_port);
+      bank_to_next_available_out_port[b]++;
+    }
+  }
+  for (auto bp : bank_to_next_available_out_port) {
+    cout << tab(1) << bp.first << " -> " << bp.second << endl;
+    assert(bp.second <= 2);
+  }
+  return ubuffer_port_and_bank_to_bank_port;
+}
 
+json controller_metadata(affine_controller_ctrl& ctrl) {
+    json port_config;
+    vector<int> dom_lens = extents(ctrl.dom);
+    for (int d = 0; d < (int) dom_lens.size(); d++) {
+      port_config["extent_" + str(d)] = dom_lens.at(d);
+      int ii = to_int(get_coeff(ctrl.sched, d));
+      port_config["ii_" + str(d)] = ii;
+
+      int stride = to_int(get_coeff(ctrl.access_function, d));
+      port_config["stride_" + str(d)] = ii;
+    }
+    port_config["sched_offset"] = to_int(const_coeff(ctrl.sched));
+    port_config["stride_offset"] = to_int(const_coeff(ctrl.access_function));
+    return port_config;
+
+}
+
+void attach_M3_bank_config_metadata(Instance* currbank, M3_config& bank_config) {
+  json tile_config;
+  int min_addr = INT_MAX;
+  int max_addr = INT_MIN;
+  int num_accesses = 0;
+  for (auto pt : bank_config.in_port_controllers) {
+    json port_config = controller_metadata(pt.second);
+    tile_config["in_port_" + str(pt.first)] = port_config;
+    min_addr = min(min_addr, min_address(pt.second));
+    max_addr = max(min_addr, max_address(pt.second));
+    num_accesses += card(extents(pt.second.dom));
+  }
+  for (auto pt : bank_config.out_port_controllers) {
+    json port_config = controller_metadata(pt.second);
+    tile_config["out_port_" + str(pt.first)] = port_config;
+    min_addr = min(min_addr, min_address(pt.second));
+    max_addr = max(min_addr, max_address(pt.second));
+    num_accesses += card(extents(pt.second.dom));
+  }
+  cout << "Min address of ctrl: " << min_addr << endl;
+  cout << "Max address of ctrl: " << max_addr << endl;
+  tile_config["min_addr"] = min_addr;
+  tile_config["max_addr"] = max_addr;
+  tile_config["num_accesses"] = num_accesses;
+  currbank->getMetaData()["config"] = tile_config;
+  //assert(false);
+}
 
 void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& prg, UBuffer& orig_buf, schedule_info& hwinfo) {
-
   CoreIR::Context* c = def->getContext();
+  for (auto out : orig_buf.get_out_ports()) {
+    auto w = def->addInstance(out + "_net", "coreir.wire", {{"width", COREMK(c, 16)}});
+    def->connect(
+        w->sel("out"),
+        def->sel("self." + orig_buf.container_bundle(out) + "." + str(orig_buf.bundle_offset(out))));
+  }
 
-  std::set<string> done_outpt = generate_M3_shift_registers(options, def, prg, orig_buf, hwinfo);
+  std::set<string> done_outpt = generate_M1_shift_registers(options, def, prg, orig_buf, hwinfo);
+  if (orig_buf.name == "padded16_global_wrapper_stencil") {
+    cout << "# of out ports: " << orig_buf.get_out_ports().size() << endl;
+    cout << "# of shift registered ports: " << done_outpt.size() << endl;
+    //assert(false);
+  }
 
   UBuffer buf = delete_ports(done_outpt, orig_buf);
 
   if (buf.num_out_ports() > 0) {
-    ubuffer_impl impl = build_buffer_impl(prg, buf, hwinfo);
+    auto implm = build_buffer_impl(prg, buf, hwinfo);
+    ubuffer_impl impl = implm.first;
 
-    if (is_register_file(buf, impl)) {
-      cout << buf.name << " is really a register file" << endl;
-    }
+    map<pair<string, int>, int> ubuffer_port_and_bank_to_bank_port =
+      build_ubuffer_to_bank_binding(impl);
 
     int num_banks = 1;
     for (auto ent : impl.partitioned_dimension_extents) {
       num_banks *= ent.second;
     }
 
+    M1_sanity_check_port_counts(impl);
+
     map<int, std::set<string> > bank_readers = impl.bank_readers;
     map<int, std::set<string> > bank_writers = impl.bank_writers;
     map<string, std::set<int>> outpt_to_bank = impl.outpt_to_bank;
     map<string, std::set<int>> inpt_to_bank = impl.inpt_to_bank;
 
-    const int NUM_IN_PORTS_PER_BANK = 2;
-    const int NUM_OUT_PORTS_PER_BANK = 2;
+    map<pair<int, int>, Instance*> bank_and_port_output_addrgen;
+    map<pair<int, int>, Instance*> bank_and_port_input_addrgen;
 
-    cout << "Buffer = " << buf.name << endl;
-    cout << "Bank readers..." << endl;
-    for (auto b : bank_readers) {
-      cout << tab(1) << b.first << " -> ";
-      for (auto rd : b.second) {
-        cout << rd << ", ";
-      }
-      cout << endl;
+    map<pair<int, int>, Wireable*> bank_and_port_output_data_valid;
+    map<pair<int, int>, Wireable*> bank_and_port_input_data_valid;
 
-      assert(b.second.size() <= NUM_IN_PORTS_PER_BANK);
-    }
+    map<pair<int, int>, Wireable*> bank_and_port_to_agen;
 
-    cout << "Bank writers..." << endl;
-    for (auto b : bank_writers) {
-      cout << tab(1) << b.first << " -> ";
-      for (auto rd : b.second) {
-        cout << rd << ", ";
-      }
-      cout << endl;
+    map<pair<int, int>, Wireable*> bank_and_port_to_read_enable;
+    map<pair<int, int>, Wireable*> bank_and_port_to_read_agen;
 
-      assert(b.second.size() <= NUM_OUT_PORTS_PER_BANK);
-    }
+    Select* one = def->addInstance("one_cst", "corebit.const", {{"value", COREMK(c, true)}})->sel("out");
+    Select* zero = def->addInstance("zero_cst", "corebit.const", {{"value", COREMK(c, false)}})->sel("out");
 
-
-    string chain_pt = "";
-    for (auto pt: outpt_to_bank)
-    {
-	    if(pt.second.size() > 1) {
-		    assert(chain_pt == "");
-	    	    chain_pt = pt.first;
-		    cout << pt.first << " needs chaining" << endl;
-	    }
-    }
-    for (auto pt: inpt_to_bank)
-    {
-	    if(pt.second.size() > 1) {
-	    	cout << pt.first << " needs broadcast" << endl;
-	    }
-    }
-
-    vector<int> banks;
-	    Select* one = def->addInstance("one_cst", "corebit.const", {{"value", COREMK(c, true)}})->sel("out");
-	    Select* zero = def->addInstance("zero_cst", "corebit.const", {{"value", COREMK(c, false)}})->sel("out");
+    map<int, Instance*> bank_map;
     for (int b = 0; b < num_banks; b++) {
-        //{"width", c->Int()}, // for m3 16
-        //{"num_inputs", c->Int()}, // the number of ports you *actually use in a given config*
-        //{"num_outputs", c->Int()}, // ''
-        //{"has_valid", c->Bool()},
-        //{"has_stencil_valid", c->Bool()},
-        //{"has_flush", c->Bool()},
-        //{"ID", c->String()},            //for codegen, TODO: remove after coreIR fix
-        //{"has_reset", c->Bool()}
-
-
       Values tile_params{{"width", COREMK(c, 16)},
-        {"ID", COREMK(c, str(b))},
+        {"ID", COREMK(c, buf.name + "_" + str(b))},
+        {"has_external_addrgen", COREMK(c, false)},
         {"num_inputs",COREMK(c,bank_writers[b].size())},
-        {"num_outputs",COREMK(c,bank_readers[b].size() -  (b != 0 && chain_pt!=""))}};
+        {"num_outputs",COREMK(c,bank_readers[b].size())},
+        {"has_read_valid", COREMK(c, true)}};
+
       CoreIR::Instance * currbank = def->addInstance("bank_" + str(b), "cgralib.Mem_amber", tile_params);
-      if (chain_pt != "") {
-        def->connect(currbank->sel("chain_chain_en"),one);
-      } else {
-        def->connect(currbank->sel("chain_chain_en"),zero);
-      }
-      assert(verilog_collateral_file != nullptr);
+      def->connect(currbank->sel("chain_chain_en"),zero);
 
-      vector<string> port_decls = {};
-      port_decls.push_back("input clk");
-      port_decls.push_back("input rst_n");
-      port_decls.push_back("input clk_en");
-      port_decls.push_back("input chain_chain_en");
-      for(int i = 0; i < bank_writers[b].size(); i++)
-      {
-	      port_decls.push_back("input [15:0] data_in_" + str(i));
-      }
-      for(int i = 0; i < bank_readers[b].size(); i++)
-      {
-	      port_decls.push_back("input [15:0] data_out_" + str(i));
-      }
-      port_decls.push_back("input [15:0] chain_data_in");
-      port_decls.push_back("output [15:0] chain_data_out");
+      auto bank_config = instantiate_M3_verilog(options, currbank->getModuleRef()->getLongName(), b, impl, buf, prg, ubuffer_port_and_bank_to_bank_port, hwinfo);
+      attach_M3_bank_config_metadata(currbank, bank_config);
 
-      *verilog_collateral_file << "module " << currbank->getModuleRef()->getLongName() <<" ("<< sep_list(port_decls,"","",",") <<"); "<< endl;
-      *verilog_collateral_file << "endmodule" <<endl;
-      if(b == 0 && chain_pt != "") {
-      	def->connect(currbank->sel("data_out_1"),def->sel("self." + buf.container_bundle(chain_pt) + "." + str(buf.bundle_offset(chain_pt))));
-      }
-	def->connect(currbank->sel("clk_en"),one);
-
-
-
-      int count = 0;
-      for(auto pt : bank_readers[b])
-      {
-	      if(pt != chain_pt)
-	      {
-		      def->connect(currbank->sel("data_out_" + str(count)),def->sel("self." + buf.container_bundle(pt) + "." + str(buf.bundle_offset(pt))));
-          count++;
-	      }
-      }
-      count = 0;
-      for(auto pt : bank_writers[b])
-      {
-	      def->connect(currbank->sel("data_in_" + str(count)),def->sel("self." + buf.container_bundle(pt) + "." + str(buf.bundle_offset(pt))));
-	      count++;
-      }
+      bank_map[b] = currbank;
+      def->connect(currbank->sel("clk_en"),one);
       def->connect(currbank->sel("rst_n"),def->sel("self.rst_n"));
-
-
+      def->connect(def->sel("bank_" + str(b) + ".chain_data_in"), mkConst(def,16,0));
     }
-    //assert(false);
+
     for (int b = 0; b < num_banks; b++) {
-
-      if(b != num_banks - 1){
-        def->connect(def->sel("bank_" + str(b) + ".chain_data_in"), def->sel("bank_" + str(b + 1) + ".chain_data_out"));
-
-      } else
-      {
-        def->connect(def->sel("bank_" + str(b) + ".chain_data_in"), mkConst(def,16,0));
+      auto currbank = bank_map[b];
+      for(auto pt : bank_writers[b]) {
+        int count = map_find({pt, b}, ubuffer_port_and_bank_to_bank_port);
+        def->connect(
+            currbank->sel("data_in_" + str(count)),
+            def->sel("self." + buf.container_bundle(pt) + "." + str(buf.bundle_offset(pt))));
       }
+    }
+
+    for (auto pt : buf.get_out_ports()) {
+      auto src_banks = impl.outpt_to_bank[pt];
+      vector<Wireable*> conds;
+      vector<Wireable*> values;
+      for (auto b : src_banks) {
+        int count = map_find({pt, b}, ubuffer_port_and_bank_to_bank_port);
+        conds.push_back(bank_map[b]->sel("data_out_" + str(count) + "_valid"));
+        values.push_back(def->sel("bank_" + str(b) + ".data_out_" + str(count)));
+      }
+
+      assert(conds.size() == values.size());
+      if (conds.size() == 0) {
+        continue;
+      }
+      Wireable* out = def->sel(pt + "_net.in");
+
+      cout << "Making onehot for " << pt << " on " << buf.name << endl;
+      def->connect(out, mkOneHot(def, conds, values));
     }
   }
-
-
 }
 
 CoreIR::Module* generate_coreir(CodegenOptions& options, CoreIR::Context* context, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
@@ -390,7 +905,6 @@ CoreIR::Module* generate_coreir(CodegenOptions& options, CoreIR::Context* contex
       ub_field.push_back(make_pair(name, context->BitIn()->Arr(pt_width)->Arr(bd_width)));
     } else {
       if (options.rtl_options.target_tile == TARGET_TILE_M3) {
-        //ub_field.push_back(make_pair(name + "_valid", context->Bit()));
       } else if (options.rtl_options.use_external_controllers) {
         ub_field.push_back(make_pair(name + "_ren", context->BitIn()));
         ub_field.push_back(make_pair(name + "_ctrl_vars", context->BitIn()->Arr(CONTROLPATH_WIDTH)->Arr(control_dimension)));
@@ -424,7 +938,7 @@ CoreIR::Module* generate_coreir(CodegenOptions& options, CoreIR::Context* contex
 //Assumes common has been loaded
 void load_mem_ext(Context* c) {
   //Specialized extensions
-  Generator* lbmem = c->getGenerator("memory.rowbuffer");
+  /*Generator* lbmem = c->getGenerator("memory.rowbuffer");
   lbmem->setGeneratorDefFromFun([](Context* c, Values args, ModuleDef* def) {
     uint width = args.at("width")->get<int>();
     uint depth = args.at("depth")->get<int>();
@@ -508,20 +1022,23 @@ void load_mem_ext(Context* c) {
     def->connect("self.raddr","cgramem.addr");
     def->connect("self.wdata","cgramem.wdata");
     def->connect("self.wen","cgramem.wen");
-  });
+  });*/
 
   Generator* rom = c->getGenerator("memory.rom2");
   rom->setGeneratorDefFromFun([](Context* c, Values args, ModuleDef* def) {
     uint width = args.at("width")->get<int>();
-    Values rbGenargs({{"width",Const::make(c,width)},{"total_depth",Const::make(c,1024)}});
-    def->addInstance("cgramem","cgralib.Mem",
-      rbGenargs,
-      {{"mode",Const::make(c,"sram")}, {"init", def->getModule()->getArg("init")}});
-    def->addInstance("c1","corebit.const",{{"value",Const::make(c,true)}});
-    def->addInstance("c0","corebit.const",{{"value",Const::make(c,false)}});
-    def->connect("self.rdata","cgramem.rdata");
-    def->connect("self.ren","cgramem.ren");
-    def->connect("self.raddr", "cgramem.addr");
+    Values rbGenargs({{"width",Const::make(c,width)}, {"is_rom", Const::make(c,true)}});
+    Json config;
+    config["mode"] = "sram";
+    def->addInstance("cgramem","cgralib.Mem", rbGenargs,
+      {{"mode", Const::make(c,"lake")},
+      {"init", def->getModule()->getArg("init")},
+      {"config", Const::make(c, config)}});
+    //def->addInstance("c1","corebit.const",{{"value",Const::make(c,true)}});
+    //def->addInstance("c0","corebit.const",{{"value",Const::make(c,false)}});
+    def->connect("self.rdata","cgramem.data_out_0");
+    def->connect("self.ren","cgramem.ren_in_0");
+    def->connect("self.raddr", "cgramem.addr_in_0");
   });
 }
 
@@ -829,7 +1346,7 @@ void load_cgramapping(Context* c) {
 
 void LoadDefinition_cgralib(Context* c) {
 
-  //load_mem_ext(c);
+  load_mem_ext(c);
   load_commonlib_ext(c);
   load_opsubstitution(c);
   load_corebit2lut(c);
@@ -1191,6 +1708,9 @@ void connect_op_control_wires(CodegenOptions& options, ModuleDef* def, op* op, s
   if (options.rtl_options.use_external_controllers || op->index_variables_needed_by_compute.size()) {
     Wireable* op_start_wire = controller->sel("valid");
     Wireable* op_start_loop_vars = controller->sel("d");
+    if (!options.rtl_options.use_external_controllers) {
+        def->connect(controller->sel("rst_n"), def->sel("self.reset"));
+    }
 
     cout << "Delaying read" << endl;
     Wireable* read_start_wire =
@@ -1382,6 +1902,31 @@ Instance* generate_coreir_op_controller_verilog(CodegenOptions& options, ModuleD
   return controller;
 }
 
+Instance* generate_controller_coreir(CodegenOptions& options, ModuleDef* def, const std::string& name, isl_aff* aff, isl_set* dom) {
+  auto c = def->getContext();
+
+
+  //cout << "sched = " << str(saff) << endl;
+  cout << tab(1) << "dom = " << str(dom) << endl;
+
+  // TODO: Assert multi size == 1
+  //auto aff = isl_multi_aff_get_aff(aff, 0);
+  Instance* controller;
+  if (options.rtl_options.use_external_controllers) {
+    auto aff_c = affine_controller(c, dom, aff);
+    aff_c->print();
+    controller = def->addInstance(name, aff_c);
+  } else {
+    controller = affine_controller_use_lake_tile(
+            def, c, dom, aff,
+            name);
+    //generate verilog collateral
+    generate_lake_tile_verilog(options, controller);
+  }
+
+  return controller;
+}
+
 //Add CodegenOptions, if we do not use extra control,
 //we will use lake tile to generate affine controller
 Instance* generate_coreir_op_controller(CodegenOptions& options, ModuleDef* def, op* op, vector<isl_map*>& sched_maps, schedule_info& hwinfo) {
@@ -1570,11 +2115,16 @@ bool load_compute_file(CodegenOptions& options,
     CoreIR::Context* context,
     schedule_info& hwinfo) {
   bool found_compute = true;
-  //string compute_file = "./coreir_compute/" + prg.name + "_compute.json";
-  string compute_file = "./coreir_compute/" + prg.name + "_compute_pipelined.json";
+  string compute_file = "";
+  if (options.rtl_options.use_pipelined_compute_units) {
+    compute_file = "./coreir_compute/" + prg.name + "_compute_pipelined.json";
+  } else {
+    compute_file = "./coreir_compute/" + prg.name + "_compute.json";
+  }
   if (hwinfo.use_dse_compute) {
     compute_file = "./dse_compute/" + prg.name + "_mapped.json";
   }
+  assert(compute_file != "");
   ifstream cfile(compute_file);
   if (!cfile.good()) {
     cout << "No compute unit file: " << compute_file << endl;
@@ -1673,17 +2223,17 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
       if (prg.is_output(buf_name)) {
         def->connect("self." + pg(buf_name, bundle_name), op->name + "." + pg(buf_name, bundle_name));
         if (options.pass_through_valid) {
-          if (app_contains_memory_tiles(buffers)) {
-            def->connect("self." + pg(buf_name, bundle_name) + "_valid", op->name + ".valid_pass_out");
-            need_pass_valid = true;
-          } else {
-            cout << "This app does not have memory tile!" << endl;
+            //def->connect("self." + pg(buf_name, bundle_name) + "_valid", op->name + ".valid_pass_out");
+            //need_pass_valid = true;
+          //} else {
+            //cout << "This app does not have memory tile!" << endl;
             //This is the situation does not have memory tile, we need to use affine generator
+
+            //Always use the output controller
             generate_coreir_op_controller(options, def, op, sched_maps, hwinfo);
             auto output_en = "self." + pg(buf_name, bundle_name) + "_valid";
             def->connect(def->sel(output_en),
                 write_start_wire(def, op->name));
-          }
         }
       } else {
         def->connect(buf_name + "." + bundle_name, op->name + "." + pg(buf_name, bundle_name));
@@ -1771,7 +2321,7 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
   //connect_signal("reset", ub);
   //context->runPasses({"wireclocks-coreir"});
   //context->runPasses({"rungenerators", "wireclocks-coreir"});
-  context->runPasses({"rungenerators", "wireclocks-clk"});
+  context->runPasses({ "wireclocks-clk"});
 
   return ub;
   //assert(false);
@@ -1786,6 +2336,7 @@ void instantiate_controllers(CodegenOptions& options,
     schedule_info& hwinfo) {
   auto sched_maps = get_maps(schedmap);
   if (options.rtl_options.target_tile == TARGET_TILE_M3) {
+  //if (false) {
     for (auto op : prg.all_ops()) {
       bool needs_controller = false;
       for (auto b : op->buffers_referenced()) {
@@ -1800,7 +2351,8 @@ void instantiate_controllers(CodegenOptions& options,
     }
   } else if (options.rtl_options.use_external_controllers) {
     for (auto op : prg.all_ops()) {
-      generate_coreir_op_controller_verilog(options, def, op, sched_maps, hwinfo);
+      //generate_coreir_op_controller_verilog(options, def, op, sched_maps, hwinfo);
+      generate_coreir_op_controller(options, def, op, sched_maps, hwinfo);
     }
   }
 
@@ -1880,6 +2432,7 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
         def->connect("self." + pg(buf_name, bundle_name), op->name + "." + pg(buf_name, bundle_name));
       } else {
         if (options.rtl_options.target_tile == TARGET_TILE_M3) {
+        //if (false) {
         } else if (options.rtl_options.use_external_controllers) {
           def->connect(def->sel(buf_name + "." + bundle_name + "_wen"),
               write_start_wire(def, op->name));
@@ -1912,6 +2465,7 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
 
       } else {
         if (options.rtl_options.target_tile == TARGET_TILE_M3) {
+        //if (false) {
         } else if (options.rtl_options.use_external_controllers) {
           def->connect(def->sel(buf_name + "." + bundle_name + "_ren"),
               read_start_wire(def, op->name));
@@ -2065,16 +2619,16 @@ bool ConstReplace(Instance* cnst) {
     return false;
   }
   ASSERT(conns.size()==1,"size: " + to_string(conns.size()));
-  for (auto conn : conns) {
-    if (auto conInst = dyn_cast<Instance>(conn->getTopParent())) {
-      cout << "  coninst= " << toString(conInst) << endl;
-      //cout << "  conn= " << toString(conn->getSelectPath()) << endl;
-      //if (conInst->getModuleRef()->getRefName() != "cgralib.Mem" || conn->getSelectPath().back()!="wen") {
-      if (conInst->getModuleRef()->getRefName() != "cgralib.Mem_jade") {
-        return false;
-      }
-    }
-  }
+  //for (auto conn : conns) {
+  //  if (auto conInst = dyn_cast<Instance>(conn->getTopParent())) {
+  //    cout << "  coninst= " << toString(conInst) << endl;
+  //    //cout << "  conn= " << toString(conn->getSelectPath()) << endl;
+  //    //if (conInst->getModuleRef()->getRefName() != "cgralib.Mem" || conn->getSelectPath().back()!="wen") {
+  //    if (conInst->getModuleRef()->getRefName() != "cgralib.Mem") {
+  //      return false;
+  //    }
+  //  }
+  //}
   cout << "REPLACING!" << endl;
   ModuleDef* def = cnst->getContainer();
   uint val = cnst->getModArgs().at("value")->get<bool>() ? 63 : 0;
@@ -2204,6 +2758,7 @@ void garnet_map_module(Module* top) {
   //load_cgramapping(c);
   LoadDefinition_cgralib(c);
 
+  c->runPasses({"rungenerators"});
   //A new pass to remove input enable signal affine controller
   disconnect_input_enable(c, top);
   c->runPasses({"deletedeadinstances"});
@@ -2214,17 +2769,18 @@ void garnet_map_module(Module* top) {
   c->runPasses({"cullgraph"});
   c->addPass(new CustomFlatten);
   c->runPasses({"customflatten"});
+  c->addPass(new MapperPasses::MemSubstitute);
+  c->runPasses({"memsubstitute"});
   c->addPass(new MapperPasses::ConstDuplication);
   c->runPasses({"constduplication"});
   c->addPass(new MapperPasses::MemConst);
   c->runPasses({"memconst"});
-  c->addPass(new MapperPasses::MemSubstitute);
-  c->runPasses({"memsubstitute"});
 
   c->runPasses({"cullgraph"});
   c->getPassManager()->printLog();
   cout << "Trying to save" << endl;
   c->runPasses({"coreirjson"},{"global","commonlib","mantle"});
+  c->runPasses({"removewires"});
 
   auto jpass = static_cast<CoreIR::Passes::CoreIRJson*>(c->getPassManager()->getAnalysisPass("coreirjson"));
   string postmap = "after_mapping_" + top->getName() + ".json";
@@ -2243,13 +2799,133 @@ void generate_coreir(CodegenOptions& options,
   generate_coreir(options, buffers, prg, schedmap, info);
 }
 
+void count_memory_tiles(Module* top) {
+  auto c = top->getContext();
+
+  top->print();
+
+  LoadDefinition_cgralib(c);
+
+  //A new pass to remove input enable signal affine controller
+  disconnect_input_enable(c, top);
+  c->runPasses({"deletedeadinstances"});
+
+  c->runPasses({"cullgraph"});
+  c->runPasses({"removewires"});
+  addIOs(c,top);
+  c->runPasses({"cullgraph"});
+  c->addPass(new CustomFlatten);
+  c->runPasses({"customflatten"});
+  //c->addPass(new MapperPasses::ConstDuplication);
+  //c->runPasses({"constduplication"});
+  //c->addPass(new MapperPasses::MemConst);
+  //c->runPasses({"memconst"});
+  //c->addPass(new MapperPasses::MemSubstitute);
+  //c->runPasses({"memsubstitute"});
+
+  c->runPasses({"cullgraph"});
+  c->getPassManager()->printLog();
+  cout << "Trying to save" << endl;
+  c->runPasses({"coreirjson"},{"global","commonlib","mantle"});
+  map<string, int> counts;
+  for (auto inst : top->getDef()->getInstances()) {
+    cout << tab(1) << inst.second->getModuleRef()->getName() << endl;
+    counts[inst.second->getModuleRef()->getName()]++;
+  }
+  cout << top->getName() << " Post Mapping Resource Counts..." << endl;
+  for (auto c : counts) {
+    cout << tab(1) << c.first << " -> " << c.second << endl;
+  }
+  assert(false);
+
+  //auto jpass = static_cast<CoreIR::Passes::CoreIRJson*>(c->getPassManager()->getAnalysisPass("coreirjson"));
+  //string postmap = "after_mapping_" + top->getName() + ".json";
+  //////Create file here.
+  //std::ofstream file(postmap);
+  //jpass->writeToStream(file,top->getRefName());
+}
+
+void count_post_mapped_memory_use(Module* gmod) {
+  int total_words_used = 0;
+  for (auto inst : gmod->getDef()->getInstances()) {
+    if (inst.second->getModuleRef()->getName() == "Mem_amber") {
+      auto config = inst.second->getMetaData()["config"];
+
+      cout << "Metadata..." << config << endl;
+      if (config.find("BLOCK_SREG_DELAY") != config.end()) {
+        cout << tab(1) << "Block sreg of length: " << config["BLOCK_SREG_DELAY"].get<int>() << endl;
+        total_words_used +=
+          2*config["BLOCK_SREG_DELAY"].get<int>();
+      } else if (config.find("LINEAR_SREG_DELAY") != config.end()) {
+        cout << tab(1) << "Linear sreg of length: " << config["LINEAR_SREG_DELAY"].get<int>() << endl;
+        total_words_used +=
+          config["LINEAR_SREG_DELAY"].get<int>();
+        //assert(false);
+      } else {
+        int acc_range = config["max_addr"].get<int>() - config["min_addr"].get<int>() + 1;
+        total_words_used += acc_range;
+      }
+    }
+  }
+
+  cout << "Total words used by " << gmod->getName() << ": " << total_words_used << endl;
+  //assert(false);
+}
+
+void count_post_mapped_memory_accesses(Module* gmod) {
+  int accesses = 0;
+  int non_config_reg_tiles = 0;
+  int total_tiles = 0;
+  for (auto inst : gmod->getDef()->getInstances()) {
+    if (inst.second->getModuleRef()->getName() == "Mem_amber") {
+      cout << "Metadata..." << inst.second->getMetaData()["config"] << endl;
+      cout << "# accesses in = " << inst.second->getMetaData()["config"]["num_accesses"] << endl;
+      auto config = inst.second->getMetaData()["config"];
+      accesses += inst.second->getMetaData()["config"]["num_accesses"].get<int>();
+      int acc_range = config["max_addr"].get<int>() - config["min_addr"].get<int>() + 1;
+      total_tiles++;
+      if (acc_range > 1) {
+        non_config_reg_tiles++;
+      }
+    }
+  }
+
+  const double ENERGY_PER_ACCESS_PJ = 1.0;
+  cout << "Total # accesses    : " << accesses << endl;
+  cout << "Non config reg tiles: " << non_config_reg_tiles << endl;
+  cout << "Total # tiles       : " << total_tiles << endl;
+  //assert(false);
+}
+
+void analyze_post_mapped_app(CodegenOptions& options, prog& prg, map<string, UBuffer>& buffers, Module* gmod) {
+  //count_post_mapped_memory_use(gmod);
+  //count_post_mapped_memory_accesses(gmod);
+  auto context = gmod->getContext();
+  auto ns = context->getNamespace("global");
+  //cout << "=== Post mapping instances for " << prg.name << endl;
+  map<string, int> counts;
+  for (auto inst : gmod->getDef()->getInstances()) {
+    //cout << tab(1) << inst.second->getModuleRef()->getName() << endl;
+    counts[inst.second->getModuleRef()->getName()]++;
+  }
+  cout << prg.name << " Post Mapping Resource Counts..." << endl;
+  for (auto c : counts) {
+    cout << tab(1) << c.first << " -> " << c.second << endl;
+  }
+  //assert(false);
+  if(!saveToFile(ns, prg.name + "_post_mapping.json", gmod)) {
+    cout << "Could not save ubuffer coreir" << endl;
+    context->die();
+  }
+  //assert(false);
+}
+
 //This is the top_level coreIR generation function
 void generate_coreir(CodegenOptions& options,
     map<string, UBuffer>& buffers,
     prog& prg,
     umap* schedmap,
     schedule_info& hwinfo) {
-  //pipeline_compute_units(prg);
 
   CoreIR::Context* context = CoreIR::newContext();
   CoreIRLoadLibrary_commonlib(context);
@@ -2275,25 +2951,26 @@ void generate_coreir(CodegenOptions& options,
     context->die();
   }
 
+  auto ns_new = context->getNamespace("global");
   //Garnet pass
   if (options.rtl_options.use_prebuilt_memory) {
     garnet_map_module(prg_mod);
     context->runPasses({"rungenerators", "flatten", "removewires", "cullgraph"});
 
-    auto ns_new = context->getNamespace("global");
     if(!saveToFile(ns_new,  options.dir + prg.name+ "_garnet.json", prg_mod)) {
       cout << "Could not save ubuffer coreir" << endl;
       context->die();
     }
   }
 
-  //garnet_map_module(prg_mod);
-  //if(!saveToFile(ns, prg.name + "_post_mapping.json", prg_mod)) {
-    //cout << "Could not save ubuffer coreir" << endl;
-    //context->die();
-  //}
-
-  //prg_mod->print();
+  if (options.rtl_options.target_tile == TARGET_TILE_M1 ||
+      options.rtl_options.target_tile == TARGET_TILE_M3) {
+    //count_memory_tiles(prg_mod);
+    garnet_map_module(prg_mod);
+    Module* gmod = ns_new->getModule(prg.name);
+    analyze_post_mapped_app(options, prg, buffers, gmod);
+  }
+  prg_mod->print();
   //assert(false);
 
   deleteContext(context);
@@ -2696,6 +3373,23 @@ CoreIR::Module* affine_controller_def(CoreIR::Context* context, isl_set* dom, is
   return m;
 }
 
+CoreIR::Instance* build_counter(CoreIR::ModuleDef* def,
+        string name,
+        const int width,
+        const int min_val,
+        const int max_val,
+        const int inc_val) {
+    auto c = def->getContext();
+    CoreIR::Values args = {
+        {"width", CoreIR::Const::make(c, width)},
+        {"min", CoreIR::Const::make(c, min_val)},
+        {"max", CoreIR::Const::make(c, max_val)},
+        {"inc", CoreIR::Const::make(c, inc_val)},
+    };
+    auto ins = def->addInstance(name, "commonlib.counter", args);
+    return ins;
+}
+
 CoreIR::Module* affine_controller_primitive(CoreIR::Context* context, isl_set* dom, isl_aff* aff) {
   cout << tab(1) << "dom = " << str(dom) << endl;
 
@@ -2705,6 +3399,7 @@ CoreIR::Module* affine_controller_primitive(CoreIR::Context* context, isl_set* d
   int width = CONTROLPATH_WIDTH;
   vector<pair<string, CoreIR::Type*> >
     ub_field{{"clk", c->Named("coreir.clkIn")},
+      {"rst_n", c->BitIn()},
       {"valid", c->Bit()}};
   int dims = num_in_dims(aff);
   ub_field.push_back({"d", context->Bit()->Arr(16)->Arr(dims)});
@@ -2716,22 +3411,29 @@ CoreIR::Module* affine_controller_primitive(CoreIR::Context* context, isl_set* d
   auto aff_func = def->addInstance("affine_func", aff_mod);
 
 
-  auto cycle_time_reg = def->addInstance("cycle_time", "mantle.reg",
-      {{"width", CoreIR::Const::make(context, width)},
-      {"has_en", CoreIR::Const::make(context, false)}});
+  //auto cycle_time_reg = def->addInstance("cycle_time", "mantle.reg",
+  //    {{"width", CoreIR::Const::make(context, width)},
+  //    {"has_en", CoreIR::Const::make(context, false)}});
+
+  auto cycle_time_reg = build_counter(def, "cycle_time", 16, 0, 65535, 1);
+  def->connect(cycle_time_reg->sel("reset"), def->sel("self.rst_n"));
 
   auto one = def->addInstance(context->getUnique(),
       "coreir.const",
       {{"width", CoreIR::Const::make(c, width)}},
       {{"value", CoreIR::Const::make(c, BitVector(width, 1))}});
 
-  auto inc_time = def->addInstance("inc_time", "coreir.add", {{"width", CoreIR::Const::make(c, width)}});
-  def->connect(inc_time->sel("in0"), cycle_time_reg->sel("out"));
-  def->connect(inc_time->sel("in1"), one->sel("out"));
-  def->connect(inc_time->sel("out"), cycle_time_reg->sel("in"));
+  //auto inc_time = def->addInstance("inc_time", "coreir.add", {{"width", CoreIR::Const::make(c, width)}});
+  //def->connect(inc_time->sel("in0"), cycle_time_reg->sel("out"));
+  //def->connect(inc_time->sel("in1"), one->sel("out"));
+  //def->connect(inc_time->sel("out"), cycle_time_reg->sel("in"));
+  auto tinc = def->addInstance("true",
+    "corebit.const",
+    {{"value", CoreIR::Const::make(c, true)}});
 
   auto diff = def->addInstance("time_diff", "coreir.sub", {{"width", CoreIR::Const::make(c, width)}});
   def->connect(cycle_time_reg->sel("out"), diff->sel("in1"));
+  def->connect(cycle_time_reg->sel("en"), tinc->sel("out"));
   def->connect(aff_func->sel("out"), diff->sel("in0"));
 
   auto zero = def->addInstance(context->getUnique(),
@@ -2770,9 +3472,6 @@ CoreIR::Module* affine_controller_primitive(CoreIR::Context* context, isl_set* d
     domain_at_max.push_back(atmax->sel("out"));
   }
 
-  auto tinc = def->addInstance("true",
-      "corebit.const",
-      {{"value", CoreIR::Const::make(c, true)}});
   for (int d = 0; d < num_dims(dom); d++) {
     string df = "d_" + str(d);
     auto inc = def->addInstance(df + "_inc", "coreir.add", {{"width", CoreIR::Const::make(c, width)}});
@@ -3744,23 +4443,6 @@ int generate_compute_unit_regression_tb(op* op, prog& prg) {
   return verilator_run;
 }
 
-struct dgraph {
-  std::set<string> nodes;
-  map<string, std::set<string> > out_edges;
-  map<pair<string, string>, int> weights;
-
-  void add_edge(const std::string& src, const std::string& dst, const int weight) {
-    nodes.insert(dst);
-    nodes.insert(src);
-    out_edges[src].insert(dst);
-    weights[{src, dst}] = weight;
-  }
-
-  int weight(const std::string& src, const std::string& dst) {
-    return weights[{src, dst}];
-  }
-};
-
 std::ostream& operator<<(std::ostream& out, dgraph& dg) {
   out << "# nodes: " << dg.nodes.size() << endl;
   out << "# edges: " << dg.weights.size() << endl;
@@ -3772,9 +4454,36 @@ std::ostream& operator<<(std::ostream& out, dgraph& dg) {
   return out;
 }
 
+std::ostream& operator<<(std::ostream& out, ubuffer_impl& impl) {
+  out << "Partition dim : " << impl.partition_dims << endl;
+  out << "Partition dim extent: " << endl;
+  for (auto it: impl.partitioned_dimension_extents) {
+    out << "\t" << it.first << ": " << it.second << endl;
+  }
+  out << "Bank writers: " << endl;
+  for (auto it: impl.bank_writers) {
+    out << "\t bank NO." << it.first << endl;
+    out << "\t\twriters: " << it.second << endl;
+  }
+  out << "Bank readers: " << endl;
+  for (auto it: impl.bank_readers) {
+    out << "\t bank NO." << it.first << endl;
+    out << "\t\treaders: " << it.second << endl;
+  }
+  out << "Shift Register Output: " << endl;
+  out << "\tmemtiles IO:: " << endl;
+  for (auto it: impl.shift_registered_outputs) {
+      out << "\t\t " << it.second.first << "->" << it.first << ", delay = " << it.second.second << endl;
+  }
 
-std::set<string> generate_M1_shift_registers(CodegenOptions& options, CoreIR::ModuleDef* def, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
+  out << "\tregister IO:: " << endl;
+  for (auto it: impl.shift_registered_outputs_to_outputs) {
+      out << "\t\t " << it.second.first << "->" << it.first << ", delay = " << it.second.second << endl;
+  }
+  return out;
+}
 
+dgraph build_shift_register_graph(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
   map<string,pair<string,int>> shift_registered_outputs = determine_shift_reg_map(prg, buf, hwinfo);
   vector<pair<string,pair<string,int>>> shift_registered_outputs_to_outputs = determine_output_shift_reg_map(prg, buf, hwinfo);
 
@@ -3788,10 +4497,349 @@ std::set<string> generate_M1_shift_registers(CodegenOptions& options, CoreIR::Mo
     dg.add_edge(pt.second.first, pt.first, pt.second.second);
   }
 
+  // Compute the transitive closer of ins -> outs
+  for (auto pt0 : shift_registered_outputs) {
+    for (auto pt1 : shift_registered_outputs) {
+      string dst0 = pt0.first;
+      string dst1 = pt1.first;
+
+      string src0 = pt0.second.first;
+      string src1 = pt1.second.first;
+
+      int dst0_delay = pt0.second.second;
+      int dst1_delay = pt1.second.second;
+
+      if (src0 == src1) {
+        if (dst0 != dst1 && dst0_delay < dst1_delay) {
+          dg.add_edge(dst0, dst1, dst1_delay - dst0_delay);
+        }
+
+      }
+    }
+  }
+
   cout << "DG: ..." << endl;
   cout << dg << endl;
+  return dg;
+}
+
+
+dgraph build_shift_registers_io(CodegenOptions& options, CoreIR::ModuleDef* def, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
+  dgraph dg = build_shift_register_graph(options, prg, buf, hwinfo);
 
   dgraph shift_registers;
+
+  bool got_one_input = true;
+  for (auto e : dg.out_edges) {
+    string src = e.first;
+    if (buf.is_in_pt(src)) {
+      vector<pair<string, int> > pairs;
+      for (auto dst : e.second) {
+        pairs.push_back({dst, dg.weight(src, dst)});
+      }
+      sort_lt(pairs, [](const pair<string, int>& pt) {
+          return pt.second;
+          });
+      if (pairs.size() > 0) {
+        string dst = pairs.at(0).first;
+        if (shift_registers.in_edges(dst).size() == 0) {
+          shift_registers.add_edge(src, dst, dg.weight(src, dst));
+        }
+      }
+    }
+  }
+
+  for (auto e : dg.out_edges) {
+    string src = e.first;
+    if (buf.is_out_pt(src)) {
+      vector<pair<string, int> > pairs;
+      for (auto dst : e.second) {
+        pairs.push_back({dst, dg.weight(src, dst)});
+      }
+      sort_lt(pairs, [](const pair<string, int>& pt) {
+          return pt.second;
+          });
+      if (pairs.size() > 0) {
+        string dst = pairs.at(0).first;
+        if (shift_registers.in_edges(dst).size() == 0) {
+          shift_registers.add_edge(src, dst, dg.weight(src, dst));
+        }
+      }
+    }
+  }
+
+  //cout << shift_registers << endl;
+  //if (buf.name == "padded16_global_wrapper_stencil") {
+    //assert(false);
+  //}
+  return shift_registers;
+}
+
+template<typename T, typename Q>
+void sort_lt_snd(vector<pair<T, Q> >& outputs) {
+  sort_lt(outputs, [](const pair<T,Q> &x){return x.second;});
+}
+
+dgraph build_in_to_out_shift_register_graph(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
+  map<string,pair<string,int>> shift_registered_outputs = determine_shift_reg_map(prg, buf, hwinfo);
+
+  dgraph dg;
+  for (auto pt : shift_registered_outputs) {
+    dg.add_edge(pt.second.first, pt.first, pt.second.second);
+  }
+
+  cout << "DG: ..." << endl;
+  cout << dg << endl;
+  return dg;
+}
+
+//helper function to create all the shift registered port
+void create_subbranch(const std::string& out_pt, dgraph& sr_graph, UBuffer& buf, ubuffer_impl &impl) {
+    auto src2dst = sr_graph.get_sub_branch(out_pt);
+    cout << "\tsubbranch size: " << src2dst.size() << endl;
+    for (auto io_pair: src2dst) {
+        string inpt = io_pair.first;
+        string outpt = io_pair.second;
+        int delay = sr_graph.weight(inpt, outpt);
+        if (delay == 0) {
+            inpt = sr_graph.find_origin(inpt);
+        }
+        auto bk = buf.compute_bank_info(inpt, outpt, delay);
+        buf.add_bank_between(inpt, outpt, bk);
+        impl.add_o2o_info(inpt, outpt, delay);
+    }
+}
+
+ubuffer_impl port_group2bank(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
+    ubuffer_impl impl;
+
+    int in_port_width = options.rtl_options.max_inpt;
+    int out_port_width = options.rtl_options.max_outpt;
+    auto sr_graph = build_shift_registers(options, prg, buf, hwinfo);
+
+    if (!sr_graph.has_nodes())
+      return impl;
+
+    //Currently only group output port
+    //TODO: support input port grouping in the future
+    for (auto src: buf.get_in_ports()) {
+        vector<pair<string, int> > out_delays;
+        for (auto dst: sr_graph.out_edges.at(src)) {
+            cout << "edge: " << src << "=>" << dst << ", w=" << sr_graph.weight(src, dst) << endl;
+            out_delays.push_back({dst, sr_graph.weight(src, dst)});
+        }
+        sort(out_delays.begin(), out_delays.end(),
+                [](const pair<string, int>& l,const pair<string, int>& r) {
+                    return l.second > r.second;
+                });
+        for (auto it: out_delays) {
+            cout << "after sort: outpt->" <<it.first << ", w=" << it.second << endl;
+        }
+
+        //The data structure that carry the port and delay informations
+        std::set<string> out_pts;
+        map<string, int> read_delay;
+        while(out_delays.size()) {
+            auto pt_delay_pair = out_delays.back();
+            out_delays.pop_back();
+            string pt_name = pt_delay_pair.first;
+            int delay = pt_delay_pair.second;
+
+            //Rewrite the ubuffer prepare for vectorization
+            int depth = sr_graph.max_delay_to_leaf(pt_name);
+            if (depth > 0) {
+                auto outpt_info = buf.get_shift_pt_access_with_sched(pt_name, depth);
+                auto new_access_map = outpt_info.first;
+                auto new_sched = outpt_info.second;
+                buf.replace_pt(pt_name, new_access_map, new_sched);
+            }
+
+            if (pt_delay_pair.second <= options.merge_threshold) {
+                //add new sr only chain
+                //Rewrite the access map and schedule
+                auto sr_bank = buf.compute_bank_info(src, pt_name, delay);
+                buf.add_bank_between(src, pt_name, sr_bank);
+                create_subbranch(pt_name, sr_graph, buf, impl);
+
+                //TODO: use ubuffer_impl to substite bank in ubuffer
+                impl.add_i2o_info(src, pt_name, delay);
+            } else {
+                out_pts.insert(pt_name);
+                read_delay.insert(pt_delay_pair);
+                //saturize the output ports or the last remaining port
+                if ((out_pts.size() == out_port_width) || (out_delays.size() == 0)) {
+                    //add the bank that require memory tile
+                    auto super_bank = buf.compute_bank_info({src}, out_pts, read_delay);
+                    for (auto out_pt: out_pts) {
+                        buf.add_bank_between(src, out_pt, super_bank);
+                        create_subbranch(out_pt, sr_graph, buf, impl);
+
+                        //TODO: use ubuffer_impl to substite bank in ubuffer
+                        impl.add_i2o_info(src, out_pt, delay);
+                    }
+                    read_delay.clear();
+                    out_pts.clear();
+                }
+            }
+        }
+
+    }
+    buf.print_bank_info();
+
+    return impl;
+
+    //Add a visit pass on the sr graph for all input, take the data use the threshold
+}
+
+void generate_banks_garnet(CodegenOptions& options, prog& prg, UBuffer& buf, ubuffer_impl& impl, schedule_info& hw_info) {
+
+    //TODO: implement more banking strategies
+    buf.banking.partition = "cyclic";
+    auto bank_func = build_buffer_impl(prg, buf, hw_info, impl);
+
+    cout << "bank func: " << str(bank_func) << endl;
+    cout << "After banking: " << impl << endl;
+
+    //take the ubuffer implementation add bank to ubuffer
+    for (int bank_id = 0; bank_id < impl.get_bank_num(); bank_id ++) {
+      isl_set* bnk = isl_set_read_from_str(prg.ctx, curlies("Bank["+str(bank_id) + "]").c_str());
+      auto rddom = to_uset(domain(its_range(bank_func, bnk)));
+      cout << "rddom before its: " << str(rddom) << endl;
+      rddom = coalesce(its(rddom, buf.global_range()));
+      cout << "rddom after its: " << str(rddom) << endl;
+      auto point = pick(get_points(bnk));
+      cout << "ADD BANK!\n Bank id: " << str(point) << endl;
+      std::set<string> input_sets = impl.bank_writers.at(bank_id);
+      std::set<string> output_sets = impl.bank_readers.at(bank_id);
+      auto bnk_info = buf.compute_bank_info(rddom, point, input_sets, output_sets);
+      buf.add_bank_between(input_sets, output_sets, bnk_info);
+    }
+}
+
+
+dgraph build_shift_registers(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
+  dgraph shift_registers = build_in_to_out_shift_register_graph(options, prg, buf, hwinfo);
+
+  cout << "Shift registers..." << endl;
+  cout << shift_registers << endl;
+
+  dgraph dg;
+  if (!shift_registers.has_nodes()) {
+    return dg;
+  }
+  for (auto inpt : buf.get_in_ports()) {
+    vector<pair<string, int> > vals;
+    for (auto v : shift_registers.out_edges.at(inpt)) {
+      vals.push_back({v, shift_registers.weight(inpt, v)});
+    }
+    sort_lt_snd(vals);
+    for (auto v : vals) {
+      cout << tab(1) << v.first << " -(" << v.second << ")-> " << v.second << endl;
+    }
+
+    vector<vector<pair<string, int> > > reg_chains;
+    split_by(vals, reg_chains, [](const pair<string, int>& a, const pair<string, int>& b) {
+        return abs(a.second - b.second) < 20;
+        });
+
+    cout << "Groups..." << endl;
+    for (auto g : reg_chains) {
+      cout << tab(1) << "Group..." << endl;
+      dg.add_edge(inpt, g.at(0).first, shift_registers.weight(inpt, g.at(0).first));
+      for (int i = 1; i < g.size(); i++) {
+        dg.add_edge(g.at(i - 1).first, g.at(i).first, g.at(i).second - g.at(i - 1).second);
+      }
+      //for (auto e : g) {
+      //cout << tab(2) << e.first << " -> " << e.second << endl;
+      //}
+      //cout << endl;
+    }
+  }
+  cout << dg << endl;
+  //assert(false);
+
+  return dg;
+}
+
+dgraph build_shift_registers(CodegenOptions& options, CoreIR::ModuleDef* def, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
+  if (buf.name == "padded16_global_wrapper_stencil") {
+    dgraph shift_registers = build_in_to_out_shift_register_graph(options, prg, buf, hwinfo);
+
+    cout << "Shift registers..." << endl;
+    cout << shift_registers << endl;
+
+    dgraph dg;
+    for (auto inpt : buf.get_in_ports()) {
+      vector<pair<string, int> > vals;
+      for (auto v : shift_registers.out_edges.at(inpt)) {
+        vals.push_back({v, shift_registers.weight(inpt, v)});
+      }
+      sort_lt_snd(vals);
+      for (auto v : vals) {
+        cout << tab(1) << v.first << " -(" << v.second << ")-> " << v.second << endl;
+      }
+
+      vector<vector<pair<string, int> > > reg_chains;
+      split_by(vals, reg_chains, [](const pair<string, int>& a, const pair<string, int>& b) {
+          return abs(a.second - b.second) < 20;
+          });
+
+      cout << "Groups..." << endl;
+      for (auto g : reg_chains) {
+        cout << tab(1) << "Group..." << endl;
+        dg.add_edge(inpt, g.at(0).first, shift_registers.weight(inpt, g.at(0).first));
+        for (int i = 1; i < g.size(); i++) {
+          dg.add_edge(g.at(i - 1).first, g.at(i).first, g.at(i).second - g.at(i - 1).second);
+        }
+        //for (auto e : g) {
+        //cout << tab(2) << e.first << " -> " << e.second << endl;
+        //}
+        //cout << endl;
+      }
+    }
+    cout << dg << endl;
+    //assert(false);
+
+    return dg;
+  }
+
+
+  dgraph dg = build_shift_register_graph(options, prg, buf, hwinfo);
+
+  dgraph shift_registers;
+
+  for (auto dst: buf.get_out_ports()) {
+    int min_d = 5;
+    string mysrc = "";
+    for(auto src: buf.get_out_ports()) {
+      if(dg.weight(src,dst) > 0 &&
+          dg.weight(src,dst) < min_d &&
+          shift_registers.in_edges(dst).size() == 0) {
+        min_d = dg.weight(src,dst);
+        mysrc = src;
+      }
+    }
+
+    if(mysrc != ""){
+      shift_registers.add_edge(mysrc, dst, dg.weight(mysrc, dst));
+      cout << "Adding out -> out sr: " << mysrc << " -> " << dst << " " << dg.weight(mysrc,dst) << endl;
+    }
+  }
+
+  cout << endl << endl;
+
+  // Make sure all in -> out srs are included
+  for (auto e : dg.out_edges) {
+    string src = e.first;
+    for (auto dst : e.second) {
+      if (buf.is_in_pt(src) &&
+          shift_registers.in_edges(dst).size() == 0) {
+        shift_registers.add_edge(src, dst, dg.weight(src, dst));
+        cout << "Adding in -> out sr: " << src << " -> " << dst << " " << dg.weight(src,dst) << endl;
+      }
+    }
+  }
+
   for (auto e : dg.out_edges) {
     string src = e.first;
     for (auto dst : e.second) {
@@ -3801,14 +4849,176 @@ std::set<string> generate_M1_shift_registers(CodegenOptions& options, CoreIR::Mo
     }
   }
 
-  cout << "SRC shift registers" << endl;
-  cout << shift_registers << endl;
+  return shift_registers;
+}
+
+
+
+bool allow_packed_sr(dgraph& shift_registers, UBuffer & buf, block_sreg * b)
+{
+	string inpt;
+	if(buf.get_in_ports().size()!=1)
+	{
+		return false;
+	}
+	else
+	{
+		inpt = buf.get_in_ports()[0];
+		b->inpt = inpt;
+	}
+  if (buf.get_out_ports().size() == 27) {
+    cout << buf.name << " has " << buf.get_in_ports().size() <<  " in ports" << endl;
+    cout << buf.name << " has " << buf.get_out_ports().size() << " out ports" << endl;
+    return false;
+  }
+	cout << inpt << endl;
+	vector<pair<string,int>> outpts;
+	for(auto outpt: shift_registers.out_edges[inpt]){
+		outpts.push_back({outpt,shift_registers.weight(inpt,outpt)});
+	}
+	if(outpts.size() < 3) {
+		return false;
+	}
+
+	sort_lt(outpts,[](const pair<string,int> &x){return x.second;});
+	int diff = outpts[1].second - outpts[0].second;
+	b->chain_starts = {outpts[0].first,outpts[1].first};
+	b->init_delay = outpts[0].second;
+	for(int i = 2; i < outpts.size(); i ++)
+	{
+		if (outpts[i].second - outpts[i-1].second != diff)
+		{
+			return false;
+		}
+		b->chain_starts.push_back(outpts[i].first);
+	}
+	cout << "diff = " << diff << endl;
+	b->difference = diff;
+  const int TILE_BANK_CAPACITY = 512;
+  if (b->difference > TILE_BANK_CAPACITY - 10) {
+    return false;
+  }
+
+  if (b->chain_starts.size() % 2 != 1) {
+    return false;
+  }
+
+	return true;
+}
+
+Select* get_zero(ModuleDef* def) {
   auto c = def->getContext();
-  std::set<string> done_outpt;
+  return def->addInstance("one_cst" + def->getContext()->getUnique(), "corebit.const", {{"value", COREMK(c, false)}})->sel("out");
+}
+
+Select* get_one(ModuleDef* def) {
+  auto c = def->getContext();
+  return def->addInstance("zero_cst" + def->getContext()->getUnique(), "corebit.const", {{"value", COREMK(c, true)}})->sel("out");
+}
+
+Instance* instantiate_coreir_M1(ModuleDef* def, const std::string& name, const int num_writers, const int num_readers) {
+  auto c = def->getContext();
+  Select* one = get_one(def);
+  Select* zero = get_zero(def);
+  Values tile_params{{"width", COREMK(c, 16)},
+    {"ID", COREMK(c, "sreg_" + c->getUnique())},
+    {"has_external_addrgen", COREMK(c, true)},
+    {"num_inputs",COREMK(c,num_writers)},
+    {"num_outputs",COREMK(c,num_readers)}};
+  CoreIR::Instance * sreg = def->addInstance(name, "cgralib.Mem_amber", tile_params);
+  def->connect(sreg->sel("clk"),def->sel("self.clk"));
+  def->connect(sreg->sel("clk_en"),one);
+  def->connect(sreg->sel("chain_chain_en"),zero);
+  def->connect(sreg->sel("chain_data_in"),mkConst(def,16,0));
+  def->connect(sreg->sel("rst_n"),def->sel("self.rst_n"));
+
+  return sreg;
+}
+
+Instance* instantiate_coreir_M3(ModuleDef* def, const std::string& name, const int num_writers, const int num_readers) {
+  auto c = def->getContext();
+  Select* one = get_one(def);
+  //def->addInstance("one_cst", "corebit.const", {{"value", COREMK(c, true)}})->sel("out");
+  Select* zero = get_zero(def);
+  //def->addInstance("zero_cst", "corebit.const", {{"value", COREMK(c, false)}})->sel("out");
+  Values tile_params{{"width", COREMK(c, 16)},
+    {"ID", COREMK(c, "sreg_" + c->getUnique())},
+    {"has_external_addrgen", COREMK(c, false)},
+    {"num_inputs",COREMK(c,num_writers)},
+    {"num_outputs",COREMK(c,num_readers)}};
+  //CoreIR::Instance * sreg = def->addInstance("sreg_" + c->getUnique(), "cgralib.Mem_amber", tile_params);
+  CoreIR::Instance * sreg = def->addInstance(name, "cgralib.Mem_amber", tile_params);
+  def->connect(sreg->sel("clk"),def->sel("self.clk"));
+  def->connect(sreg->sel("clk_en"),one);
+  def->connect(sreg->sel("chain_chain_en"),zero);
+  def->connect(sreg->sel("chain_data_in"),mkConst(def,16,0));
+  def->connect(sreg->sel("rst_n"),def->sel("self.rst_n"));
+
+  return sreg;
+}
+
+std::set<string> generate_block_shift_register(CodegenOptions& options, CoreIR::ModuleDef* def, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
+  dgraph shift_registers = build_shift_registers(options, def, prg, buf, hwinfo);
+
+  block_sreg b_sreg;
+  auto packed_sr = allow_packed_sr(shift_registers, buf,& b_sreg);
+
+  auto c = def->getContext();
+
+  assert(packed_sr);
+  string src = b_sreg.inpt;
+  Wireable * src_wire = def->sel("self." + buf.container_bundle(src) + "." + str(buf.bundle_offset(src)));
+  Wireable * delayed_src = delay_by(def, "sr_ito_all_" + c->getUnique(), src_wire, b_sreg.init_delay);
+  def->connect(def->sel(b_sreg.chain_starts.at(0) + "_net.in"), delayed_src);
+
+  cout << tab(1) << b_sreg.difference << endl;
+  for (auto b : b_sreg.chain_starts) {
+    cout << tab(2) << b << endl;
+  }
+  assert(b_sreg.chain_starts.size() % 2 == 1);
+
+  for (int i = 0; i < (int) b_sreg.chain_starts.size() / 2; i++) {
+    Instance* sreg = instantiate_coreir_M3(def, "sreg_" + c->getUnique(), 1, 2);
+    def->connect(sreg->sel("data_in_0"),delayed_src);
+
+    Wireable * chain_start_1 = def->sel(b_sreg.chain_starts.at(2*i + 1) + "_net.in");
+    Wireable * chain_start_2 = def->sel(b_sreg.chain_starts.at(2*i + 2) + "_net.in");
+    def->connect(chain_start_1, sreg->sel("data_out_0"));
+    def->connect(chain_start_2, sreg->sel("data_out_1"));
+
+    M3_config config = instantiate_M3_verilog_sreg_block(options, sreg->getModuleRef()->getLongName(), b_sreg.difference, prg,hwinfo, b_sreg, buf);
+    attach_M3_bank_config_metadata(sreg, config);
+    sreg->getMetaData()["config"]["BLOCK_SREG_DELAY"] = b_sreg.difference;
+
+    int num_writes = card(extents(to_set(domain(buf.access_map.at(b_sreg.inpt)))));
+    sreg->getMetaData()["config"]["BLOCK_SREG_WRITES"] = num_writes;
+
+    int num_reads = card(extents(to_set(domain(buf.access_map.at(b_sreg.chain_starts.at(2*i + 1))))));
+    num_reads +=
+      card(extents(to_set(domain(buf.access_map.at(b_sreg.chain_starts.at(2*i + 2))))));
+    sreg->getMetaData()["config"]["BLOCK_SREG_READS"] = num_reads;
+  }
+
   for (auto w : shift_registers.weights) {
     string src = w.first.first;
     string dst = w.first.second;
     int delay = w.second;
+    if (buf.is_out_pt(src) && buf.is_out_pt(dst)) {
+      Wireable* src_wire = def->sel(src + "_net.out");
+      Wireable* dst_wire = def->sel(dst + "_net.in");
+      Wireable* delayed_src =
+        delay_by(def, "sr_oto_" + c->getUnique(), src_wire, delay);
+      cout << "wiring " << src << " to " << dst << endl;
+      def->connect(dst_wire, delayed_src);
+    }
+
+  }
+  return shift_registers.nodes;
+}
+
+void instantiate_one_to_one_sreg(CodegenOptions& options, ModuleDef* def, UBuffer& buf, prog& prg, schedule_info& hwinfo, const std::string& src, const std::string& dst, const int delay_d) {
+  auto c = def->getContext();
+  int delay = delay_d;
 
     Wireable* src_wire = nullptr;
     if (buf.is_out_pt(src)) {
@@ -3819,52 +5029,146 @@ std::set<string> generate_M1_shift_registers(CodegenOptions& options, CoreIR::Mo
     }
     assert(src_wire != nullptr);
 
-    Wireable* delayed_src =
-      delay_by(def, "sr_end" + c->getUnique(), src_wire, delay);
+    Wireable* delayed_src = nullptr;
 
+    //const int SREG_SRAM_THRES = 10;
+    const int SREG_SRAM_THRES = 20;
+
+    const int maxd = 1000;
+
+    Select* one = get_one(def);
+    Select* zero = get_zero(def);
+    if(delay > SREG_SRAM_THRES) {
+      if(options.rtl_options.target_tile == TARGET_TILE_M1) {
+        while(delay > 0)
+        {
+          Instance* sreg = instantiate_coreir_M1(def, "sreg_" + c->getUnique(), 1, 1);
+          def->connect(sreg->sel("data_in_0"),src_wire);
+          delayed_src = sreg->sel("data_out_0");
+          isl_aff * identity = rdaff(buf.ctx,"{[root,t] -> [( root + t + 1 )]}");
+          isl_aff * shifted_identity = rdaff(buf.ctx, "{[root,t] -> [(root+t + " + str(min(delay,maxd)  ) + ")]}");
+          isl_set * domain = rdset(buf.ctx,"{[root,t] : root = 0 and 0 <= t <= 65355 }");
+          Instance* write_fsm = generate_controller_coreir(options, def, "sr_write_fsm" + c->getUnique(), identity , domain);
+          Instance* read_fsm = generate_controller_coreir(options, def, "sr_read_fsm" + c->getUnique(), shifted_identity , domain);
+          def->connect(write_fsm->sel("d")->sel(1),sreg->sel("write_addr_0"));
+          def->connect(read_fsm->sel("d")->sel(1),sreg->sel("read_addr_0"));
+          def->connect(one,sreg->sel("wen_0"));
+          def->connect(one,sreg->sel("ren_0"));
+          ubuffer_impl impl;
+          impl.bank_readers[0] = {"test"};
+          impl.bank_writers[0] = {"test_writer"};
+          instantiate_M1_verilog(sreg->getModuleRef()->getLongName(), 0, impl, buf);
+          sreg->getMetaData()["config"]["LINEAR_SREG_DELAY"] = min(delay, maxd);
+
+          int num_reads = card(extents(to_set(::domain(buf.access_map.at(dst)))));
+          sreg->getMetaData()["config"]["LINEAR_SREG_READS"] = num_reads;
+
+          int num_writes = card(extents(to_set(::domain(buf.access_map.at(src)))));
+          sreg->getMetaData()["config"]["LINEAR_SREG_WRITES"] = num_writes;
+
+          src_wire = delayed_src;
+
+          delay -= maxd;
+
+        }
+      } else {
+        while(delay > 0)
+        {
+          //num_ram_tiles++;
+          Instance* sreg = instantiate_coreir_M3(def, "sreg_" + c->getUnique(), 1, 1);
+          def->connect(sreg->sel("data_in_0"),src_wire);
+          delayed_src = sreg->sel("data_out_0");
+
+          auto config = instantiate_M3_verilog_sreg(options, sreg->getModuleRef()->getLongName(), min(delay,maxd), prg, hwinfo);
+          attach_M3_bank_config_metadata(sreg, config);
+          sreg->getMetaData()["config"]["LINEAR_SREG_DELAY"] = min(delay, maxd);
+
+          int num_reads = card(extents(to_set(domain(buf.access_map.at(dst)))));
+          sreg->getMetaData()["config"]["LINEAR_SREG_READS"] = num_reads;
+
+          int num_writes = card(extents(to_set(domain(buf.access_map.at(src)))));
+          sreg->getMetaData()["config"]["LINEAR_SREG_WRITES"] = num_writes;
+
+          src_wire = delayed_src;
+
+          delay -= maxd;
+
+        }
+      }
+    }
+    else{
+      delayed_src = delay_by(def, "sr_end" + c->getUnique(), src_wire, delay);
+    }
+
+    assert(delayed_src != nullptr);
     def->connect(
-        //def->sel("self." + buf.container_bundle(dst) + "." + str(buf.bundle_offset(dst))),
         def->sel(dst + "_net.in"),
         delayed_src);
+
+}
+
+std::set<string> generate_M1_shift_registers(CodegenOptions& options, CoreIR::ModuleDef* def, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
+
+  dgraph shift_registers = build_shift_registers(options, def, prg, buf, hwinfo);
+
+  block_sreg b_sreg;
+  auto packed_sr = allow_packed_sr(shift_registers, buf,& b_sreg);
+
+  auto c = def->getContext();
+
+  if(packed_sr) {
+    return generate_block_shift_register(options, def, prg, buf, hwinfo);
+  }
+
+  cout << "Not using packed SR for " << buf.name << ", instead... SRC shift registers" << endl;
+  cout << shift_registers << endl;
+
+  std::set<string> done_outpt;
+  //int num_ram_tiles = 0;
+  for (auto w : shift_registers.weights) {
+
+    string src = w.first.first;
+    string dst = w.first.second;
+    int delay = w.second;
+
+    instantiate_one_to_one_sreg(options, def, buf, prg, hwinfo, src, dst, delay);
+
     done_outpt.insert(dst);
   }
 
-  if (buf.name == "hw_input_global_wrapper_stencil") {
-    //assert(false);
-  }
-
+  //cout << "### finished shift registers Used " << num_ram_tiles << " in SR for " << buf.name << endl;
   return done_outpt;
 }
 
 void M1_sanity_check_port_counts(ubuffer_impl& impl) {
 
-    map<int, std::set<string> > bank_readers = impl.bank_readers;
-    map<int, std::set<string> > bank_writers = impl.bank_writers;
-    map<string, std::set<int>> outpt_to_bank = impl.outpt_to_bank;
-    map<string, std::set<int>> inpt_to_bank = impl.inpt_to_bank;
+  map<int, std::set<string> > bank_readers = impl.bank_readers;
+  map<int, std::set<string> > bank_writers = impl.bank_writers;
+  map<string, std::set<int>> outpt_to_bank = impl.outpt_to_bank;
+  map<string, std::set<int>> inpt_to_bank = impl.inpt_to_bank;
 
 
-    const int NUM_IN_PORTS_PER_BANK = 2;
-    const int NUM_OUT_PORTS_PER_BANK = 2;
+  const int NUM_IN_PORTS_PER_BANK = 2;
+  const int NUM_OUT_PORTS_PER_BANK = 2;
 
-    //cout << "Buffer = " << buf.name << endl;
-    cout << "Bank readers..." << endl;
-    for (auto b : bank_readers) {
-      cout << tab(1) << b.first << " -> ";
-      for (auto rd : b.second) {
-        cout << rd << ", ";
-      }
-      cout << endl;
-
-      assert(b.second.size() <= NUM_IN_PORTS_PER_BANK);
+  //cout << "Buffer = " << buf.name << endl;
+  cout << "Bank readers..." << endl;
+  for (auto b : bank_readers) {
+    cout << tab(1) << b.first << " -> ";
+    for (auto rd : b.second) {
+      cout << rd << ", ";
     }
+    cout << endl;
 
-    cout << "Bank writers..." << endl;
-    for (auto b : bank_writers) {
-      cout << tab(1) << b.first << " -> ";
-      for (auto rd : b.second) {
-        cout << rd << ", ";
-      }
+    assert(b.second.size() <= NUM_IN_PORTS_PER_BANK);
+  }
+
+  cout << "Bank writers..." << endl;
+  for (auto b : bank_writers) {
+    cout << tab(1) << b.first << " -> ";
+    for (auto rd : b.second) {
+      cout << rd << ", ";
+    }
       cout << endl;
 
       assert(b.second.size() <= NUM_OUT_PORTS_PER_BANK);
@@ -3910,9 +5214,8 @@ void instantiate_M1_verilog(const std::string& long_name, const int b, ubuffer_i
     port_decls.push_back("input [15:0] chain_data_in");
     port_decls.push_back("output [15:0] chain_data_out");
 
-    //*verilog_collateral_file << "module " << currbank->getModuleRef()->getLongName() <<" ("<< sep_list(port_decls,"","",",") <<"); "<< endl;
     *verilog_collateral_file << "module " << long_name <<" ("<< sep_list(port_decls,"","",",") <<"); "<< endl;
-    *verilog_collateral_file << tab(1) << "logic [15:0] SRAM [50000:0];" << endl;
+    *verilog_collateral_file << tab(1) << "logic [15:0] SRAM [1023:0];" << endl;
     *verilog_collateral_file << tab(1) << "logic chain_ren;" << endl << endl;
     for (int i = 0; i < impl.bank_readers[b].size(); i++) {
       *verilog_collateral_file << tab(1) << "logic [15:0] data_out_" << i << "_tmp;" << endl;
@@ -3952,12 +5255,12 @@ void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
   }
 
   std::set<string> done_outpt = generate_M1_shift_registers(options, def, prg, orig_buf, hwinfo);
-  //std::set<string> done_outpt = {};
 
   UBuffer buf = delete_ports(done_outpt, orig_buf);
 
   if (buf.num_out_ports() > 0) {
-    ubuffer_impl impl = build_buffer_impl(prg, buf, hwinfo);
+    auto implm = build_buffer_impl(prg, buf, hwinfo);
+    ubuffer_impl impl = implm.first;
 
     int num_banks = 1;
     for (auto ent : impl.partitioned_dimension_extents) {
@@ -4012,12 +5315,19 @@ void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
     for (auto pt : buf.get_all_ports()) {
       if (buf.is_in_pt(pt)) {
         auto adjusted_buf = write_latency_adjusted_buffer(options, prg, buf, hwinfo);
-        auto agen = build_addrgen(pt, adjusted_buf, def);
+        auto agen = build_inner_bank_offset(pt, adjusted_buf, impl, def);
         def->connect(agen->sel("d"),
             control_vars(def, pt, adjusted_buf));
         ubuffer_port_agens[pt] = agen;
+
+        if (impl.inpt_to_bank[pt].size() > 1) {
+          auto bank_sel = build_bank_selector(pt, adjusted_buf, impl, def);
+          def->connect(bank_sel->sel("d"),
+              control_vars(def, pt, adjusted_buf));
+          ubuffer_port_bank_selectors[pt] = delay_by(def, bank_sel->sel("out"), 0);
+        }
       } else {
-        auto agen = build_addrgen(pt, buf, def);
+        auto agen = build_inner_bank_offset(pt, buf, impl, def);
         def->connect(agen->sel("d"),
             control_vars(def, pt, buf));
         ubuffer_port_agens[pt] = agen;
@@ -4028,15 +5338,28 @@ void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
               control_vars(def, pt, buf));
           const int READ_LATENCY = 1;
           ubuffer_port_bank_selectors[pt] = delay_by(def, bank_sel->sel("out"), READ_LATENCY);
-          //assert(false);
         }
       }
     }
 
     map<pair<string, int>, int> ubuffer_port_and_bank_to_bank_port;
     map<int, int> bank_to_next_available_out_port;
+    map<int, int> bank_to_next_available_in_port;
     for (int b = 0; b < num_banks; b++) {
       bank_to_next_available_out_port[b] = 0;
+      bank_to_next_available_in_port[b] = 0;
+    }
+    for (auto pt_srcs : impl.inpt_to_bank) {
+      string pt = pt_srcs.first;
+      for (int b : pt_srcs.second) {
+        ubuffer_port_and_bank_to_bank_port[{pt, b}] =
+          map_find(b, bank_to_next_available_in_port);
+        bank_to_next_available_in_port[b]++;
+      }
+    }
+    for (auto bp : bank_to_next_available_in_port) {
+      cout << tab(1) << bp.first << " -> " << bp.second << endl;
+      assert(bp.second <= 2);
     }
     for (auto pt_srcs : impl.outpt_to_bank) {
       string pt = pt_srcs.first;
@@ -4068,26 +5391,16 @@ void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
     map<string, std::vector<Wireable*> > ubuffer_ports_to_bank_condition_wires;
     for (int b = 0; b < num_banks; b++) {
       auto currbank = bank_map[b];
-      //if(b == 0 && chain_pt != "") {
-        //ubuffer_ports_to_bank_wires[chain_pt].push_back(currbank->sel("data_out_1"));
-      //}
 
       for(auto pt : bank_readers[b])
       {
         int count = map_find({pt, b}, ubuffer_port_and_bank_to_bank_port);
-        //if(pt != chain_pt)
-        //{
-          ubuffer_ports_to_bank_wires[pt].push_back(currbank->sel("data_out_" + str(count)));
-          if (impl.outpt_to_bank[pt].size() > 1) {
-            ubuffer_ports_to_bank_condition_wires[pt].push_back(eqConst(def, ubuffer_port_bank_selectors[pt], b));
-          } else {
-            ubuffer_ports_to_bank_condition_wires[pt].push_back(one);
-          }
-          //if (b == 0) {
-          //} else {
-            //ubuffer_ports_to_bank_condition_wires[pt].push_back(zero);
-          //}
-        //}
+        ubuffer_ports_to_bank_wires[pt].push_back(currbank->sel("data_out_" + str(count)));
+        if (impl.outpt_to_bank[pt].size() > 1) {
+          ubuffer_ports_to_bank_condition_wires[pt].push_back(eqConst(def, ubuffer_port_bank_selectors[pt], b));
+        } else {
+          ubuffer_ports_to_bank_condition_wires[pt].push_back(one);
+        }
       }
     }
 
@@ -4123,11 +5436,23 @@ void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
       int count = 0;
       for(auto pt : bank_writers[b])
       {
+
         auto adjusted_buf = write_latency_adjusted_buffer(options, prg, buf, hwinfo);
         auto agen = ubuffer_port_agens[pt];
+
+        Wireable* enable = nullptr;
+        if (inpt_to_bank[pt].size() > 1) {
+          enable =
+            andList(def, {control_en(def, pt, adjusted_buf), eqConst(def, ubuffer_port_bank_selectors[pt], b)});
+        } else {
+          enable =
+            control_en(def, pt, adjusted_buf);
+        }
+        assert(enable != nullptr);
+
         def->connect(agen->sel("out"), currbank->sel("write_addr_" + str(count)));
         def->connect(currbank->sel("wen_" + str(count)),
-            control_en(def, pt, adjusted_buf));
+            enable);
 
         def->connect(
             currbank->sel("data_in_" + str(count)),
@@ -4139,6 +5464,28 @@ void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
   }
 
 
+}
+
+isl_aff* bank_offset_aff(const std::string& reader, UBuffer& buf, ubuffer_impl& impl) {
+  int bank_stride = 1;
+  vector<string> dvs;
+  vector<string> coeffs;
+  for (int d = 0; d < buf.logical_dimension(); d++) {
+    dvs.push_back("d" + str(d));
+    if (elem(d, impl.partition_dims)) {
+      coeffs.push_back(str(bank_stride) + "*" + dvs.at(d));
+      bank_stride *= map_find(d, impl.partitioned_dimension_extents);
+    }
+  }
+
+  coeffs.push_back("0");
+  string bank_func = curlies(buf.name + bracket_list(dvs) + " -> Bank[" + sep_list(coeffs, "", "", " + ") + "]");
+  auto bank_map = isl_map_read_from_str(buf.ctx, bank_func.c_str());
+
+  auto acc_map = to_map(buf.access_map.at(reader));
+
+  auto addr_expr_aff = get_aff(dot(acc_map, bank_map));
+  return addr_expr_aff;
 }
 
 CoreIR::Instance* build_bank_selector(const std::string& reader, UBuffer& buf, ubuffer_impl& impl, CoreIR::ModuleDef* def) {
@@ -4159,26 +5506,66 @@ CoreIR::Instance* build_bank_selector(const std::string& reader, UBuffer& buf, u
 
   auto c = def->getContext();
 
-  cout << "Building addrgen for " << reader << endl;
-  //isl_union_set* rddom = isl_union_set_read_from_str(buf.ctx, "{}");
-  //for (auto inpt : buf.get_in_ports()) {
-    //rddom = unn(rddom, range(buf.access_map.at(inpt)));
-  //}
-  //for (auto inpt : buf.get_out_ports()) {
-    //rddom = unn(rddom, range(buf.access_map.at(inpt)));
-  //}
   auto acc_map = to_map(buf.access_map.at(reader));
-  //cout << tab(1) << "=== acc_map = " << str(acc_map) << endl;
-  //auto acc_aff = get_aff(acc_map);
-  //cout << tab(2) << "=== acc aff = " << str(acc_aff) << endl;
-  //auto reduce_map = linear_address_map(to_set(rddom));
-  //auto addr_expr = dot(acc_map, reduce_map);
-  //auto addr_expr_aff = get_aff(addr_expr);
-  //cout << tab(3) << "==== addr expr aff: " << str(addr_expr_aff) << endl;
 
   auto addr_expr_aff = get_aff(dot(acc_map, bank_map));
   auto aff_gen_mod = coreir_for_aff(c, addr_expr_aff);
   auto agen = def->addInstance("bank_selector_" + reader + c->getUnique(), aff_gen_mod);
+  return agen;
+}
+
+isl_aff* inner_bank_offset_aff(const std::string& reader, UBuffer& buf, ubuffer_impl& impl) {
+  vector<int> extents = extents_by_dimension(buf);
+  int bank_stride = 1;
+  vector<string> dvs;
+  vector<string> coeffs;
+  for (int d = 0; d < buf.logical_dimension(); d++) {
+    dvs.push_back("d" + str(d));
+    if (!elem(d, impl.partition_dims)) {
+      coeffs.push_back(str(bank_stride) + "*" + dvs.at(d));
+      bank_stride *= extents.at(d);
+    }
+  }
+
+  coeffs.push_back("0");
+  string bank_func = curlies(buf.name + bracket_list(dvs) + " -> InnerBank[" + sep_list(coeffs, "", "", " + ") + "]");
+  auto bank_map = isl_map_read_from_str(buf.ctx, bank_func.c_str());
+  cout << "bank map for " << reader << ": " << str(bank_map) << endl;
+  auto acc_map = to_map(buf.access_map.at(reader));
+
+  auto addr_expr_aff = get_aff(dot(acc_map, bank_map));
+  return addr_expr_aff;
+}
+
+CoreIR::Instance* build_inner_bank_offset(const std::string& reader, UBuffer& buf, ubuffer_impl& impl, CoreIR::ModuleDef* def) {
+  vector<int> extents = extents_by_dimension(buf);
+  int bank_stride = 1;
+  vector<string> dvs;
+  vector<string> coeffs;
+  for (int d = 0; d < buf.logical_dimension(); d++) {
+    dvs.push_back("d" + str(d));
+    if (!elem(d, impl.partition_dims)) {
+      coeffs.push_back(str(bank_stride) + "*" + dvs.at(d));
+      bank_stride *= extents.at(d);
+    }
+  }
+
+  coeffs.push_back("0");
+  string bank_func = curlies(buf.name + bracket_list(dvs) + " -> InnerBank[" + sep_list(coeffs, "", "", " + ") + "]");
+  auto bank_map = isl_map_read_from_str(buf.ctx, bank_func.c_str());
+  cout << "bank map for " << reader << ": " << str(bank_map) << endl;
+
+  auto c = def->getContext();
+
+  auto acc_map = to_map(buf.access_map.at(reader));
+
+  auto addr_expr_aff = get_aff(dot(acc_map, bank_map));
+
+  cout << "addrgen for " << reader << ": " << str(addr_expr_aff) << endl;
+
+  auto aff_gen_mod = coreir_for_aff(c, addr_expr_aff);
+
+  auto agen = def->addInstance("inner_bank_offset" + reader + c->getUnique(), aff_gen_mod);
   return agen;
 }
 
@@ -4208,7 +5595,6 @@ CoreIR::Instance* build_addrgen(const std::string& reader, UBuffer& buf, CoreIR:
 }
 
 CoreIR::Wireable* control_vars(CoreIR::ModuleDef* def, const std::string& reader, UBuffer& buf) {
-  //return def->sel(controller_name(reader))->sel("d");
   string bundle = buf.container_bundle(reader);
   return def->sel("self." + bundle + "_ctrl_vars");
 }
@@ -4221,6 +5607,242 @@ CoreIR::Wireable* control_en(CoreIR::ModuleDef* def, const std::string& reader, 
     return def->sel("self." + bundle + "_ren");
   }
 }
+
+double PE_energy_cost_instance_model(power_analysis_params& power_params, power_analysis_info& power_stats, prog& prg) {
+  cout << "Computing Instance level PE energy cost for " << prg.name << endl;
+
+  double energy_cost = 0.0;
+  for (auto op : prg.all_ops()) {
+    if (op->func != "") {
+      vector<string> surrounding = surrounding_vars(op, prg);
+      vector<int> bounds;
+      for (auto l : surrounding) {
+        bounds.push_back(prg.find_loop(l)->trip_count());
+      }
+      int bnds = card(bounds);
+      power_stats.op_counts[op->name] = bnds;
+
+      CoreIR::Context* context = CoreIR::newContext();
+      CoreIRLoadLibrary_commonlib(context);
+      CoreIRLoadLibrary_cgralib(context);
+
+      string compute_file = "./coreir_compute/" + prg.name + "_compute.json";
+      if (!loadFromFile(context, compute_file)) {
+        cout << "Could not load compute file for: " << prg.name << ", file name = " << compute_file << endl;
+        //assert(false);
+      }
+      auto ns = context->getNamespace("global");
+      CoreIR::Module* cu = ns->getModule(op->func);
+      garnet_map_module(cu);
+      map<string, int> counts;
+      for (auto inst : cu->getDef()->getInstances()) {
+        cout << tab(1) << inst.first << endl;
+        //cout << tab(1) << "Possible power costs..." << endl;
+        cout << tab(2) << inst.second->getModuleRef()->getName() << endl;
+        if (inst.second->getModuleRef()->getName() == "PE") {
+          bool found_power = false;
+          for (auto pp : power_params.instance_energy_costs) {
+            //cout << tab(2) << pp.first << endl;
+            vector<string> pps = split_at(pp.first, "$");
+            assert(pps.size() > 2);
+
+            if (pps.at(0) == op->name && pps.at(2) + "$" + pps.at(3) == inst.first) {
+              //cout << tab(3) << "Power cost: " << pp.second << endl;
+              energy_cost +=
+                power_stats.op_counts[op->name] *
+                pp.second;
+              found_power = true;
+              break;
+              //assert(false);
+            }
+          }
+          assert(found_power);
+        }
+      }
+      deleteContext(context);
+    }
+  }
+
+  cout << "Total PE energy cost for " << prg.name << ": " << energy_cost * 1e12 << " (pJ)" << endl;
+
+  assert(false);
+  return energy_cost * 1e12;
+}
+
+double PE_energy_cost(power_analysis_params& power_params, power_analysis_info& power_stats, prog& prg) {
+
+  cout << "Computing PE energy cost for " << prg.name << endl;
+
+  int PEs_used = 0;
+  for (auto op : prg.all_ops()) {
+    if (op->func != "") {
+      vector<string> surrounding = surrounding_vars(op, prg);
+      vector<int> bounds;
+      for (auto l : surrounding) {
+        bounds.push_back(prg.find_loop(l)->trip_count());
+      }
+      int bnds = card(bounds);
+      power_stats.op_counts[op->name] = bnds;
+
+      CoreIR::Context* context = CoreIR::newContext();
+      CoreIRLoadLibrary_commonlib(context);
+      CoreIRLoadLibrary_cgralib(context);
+
+      string compute_file = "./coreir_compute/" + prg.name + "_compute.json";
+      if (!loadFromFile(context, compute_file)) {
+        cout << "Could not load compute file for: " << prg.name << ", file name = " << compute_file << endl;
+        //assert(false);
+      }
+      auto ns = context->getNamespace("global");
+      CoreIR::Module* cu = ns->getModule(op->func);
+      garnet_map_module(cu);
+      map<string, int> counts;
+      for (auto inst : cu->getDef()->getInstances()) {
+        cout << tab(1) << inst.second->getModuleRef()->getName() << endl;
+        counts[inst.second->getModuleRef()->getName()]++;
+        if (inst.second->getModuleRef()->getName() == "PE") {
+          auto modargs = inst.second->getModArgs();
+          if (modargs.find("alu_op") != end(modargs)) {
+            power_stats.PE_optype_counts[op->name][inst.second->getModArgs().at("alu_op")->get<string>()]++;
+          }
+        }
+      }
+      cu->print();
+      PEs_used += counts["PE"];
+      deleteContext(context);
+    }
+  }
+  cout << "# of PEs in " << prg.name << " = " << PEs_used << endl;
+  cout << "PE op counts..." << endl;
+
+  double energy_cost = 0.0;
+  for (auto p : prg.all_ops()) {
+    for (auto op : power_stats.PE_optype_counts[p->name]) {
+      cout << tab(1) << op.first << " -> " << op.second << endl;
+      cout << tab(1) << "op_energy_cost : " << map_find(op.first, power_params.alu_op_energy_costs) << endl;
+      energy_cost += map_find(p->name, power_stats.op_counts) *
+        ((double) map_find(op.first, power_params.alu_op_energy_costs)) *
+        ((double)op.second);
+      cout << "Total PE energy cost: " << energy_cost << endl;
+    }
+  }
+  cout << "Total PE energy cost for " << prg.name << ": " << energy_cost << endl;
+
+  return energy_cost;
+}
+
+map<string, int> get_PE_optype_count_garnet(prog& prg) {
+
+  cout << "Computing PE energy cost for " << prg.name << endl;
+  map<string, int> PE_op_count;
+
+      CoreIR::Context* context = CoreIR::newContext();
+      CoreIRLoadLibrary_commonlib(context);
+      CoreIRLoadLibrary_cgralib(context);
+
+      string garnet_file = "./aha_garnet_design_new/" + prg.name + "/" + prg.name +  "_garnet.json";
+      if (!loadFromFile(context, garnet_file)) {
+        cout << "Could not load compute file for: " << prg.name << ", file name = " << garnet_file << endl;
+        assert(false);
+      }
+      auto ns = context->getNamespace("global");
+      CoreIR::Module* cu = ns->getModule(prg.name);
+      map<string, int> counts;
+      for (auto inst : cu->getDef()->getInstances()) {
+        cout << tab(1) << inst.second->getModuleRef()->getName() << endl;
+        counts[inst.second->getModuleRef()->getName()]++;
+        if (inst.second->getModuleRef()->getName() == "PE") {
+          auto modargs = inst.second->getModArgs();
+          if (modargs.find("alu_op") != end(modargs)) {
+            //power_stats.PE_optype_counts[op->name][inst.second->getModArgs().at("alu_op")->get<string>()]++;
+
+            PE_op_count[inst.second->getModArgs().at("alu_op")->get<string>()]++;
+          } else {
+            PE_op_count["lut"]++;
+          }
+        }
+      }
+      cu->print();
+      deleteContext(context);
+  //cout << "# of PEs in " << prg.name << " = " << PEs_used << endl;
+
+  return PE_op_count;
+}
+
+map<string, int> get_PE_optype_count(prog& prg) {
+
+  cout << "Computing PE energy cost for " << prg.name << endl;
+  map<string, int> PE_op_count;
+
+  for (auto op : prg.all_ops()) {
+    if (op->func != "") {
+      vector<string> surrounding = surrounding_vars(op, prg);
+      vector<int> bounds;
+      for (auto l : surrounding) {
+        bounds.push_back(prg.find_loop(l)->trip_count());
+      }
+
+      CoreIR::Context* context = CoreIR::newContext();
+      CoreIRLoadLibrary_commonlib(context);
+      CoreIRLoadLibrary_cgralib(context);
+
+      string compute_file = "./coreir_compute/" + prg.name + "_compute.json";
+      if (!loadFromFile(context, compute_file)) {
+        cout << "Could not load compute file for: " << prg.name << ", file name = " << compute_file << endl;
+        //assert(false);
+      }
+      auto ns = context->getNamespace("global");
+      CoreIR::Module* cu = ns->getModule(op->func);
+      garnet_map_module(cu);
+      map<string, int> counts;
+      for (auto inst : cu->getDef()->getInstances()) {
+        cout << tab(1) << inst.second->getModuleRef()->getName() << endl;
+        counts[inst.second->getModuleRef()->getName()]++;
+        if (inst.second->getModuleRef()->getName() == "PE") {
+          auto modargs = inst.second->getModArgs();
+          if (modargs.find("alu_op") != end(modargs)) {
+            //power_stats.PE_optype_counts[op->name][inst.second->getModArgs().at("alu_op")->get<string>()]++;
+
+            PE_op_count[inst.second->getModArgs().at("alu_op")->get<string>()]++;
+          }
+        }
+      }
+      cu->print();
+      deleteContext(context);
+    }
+  }
+  //cout << "# of PEs in " << prg.name << " = " << PEs_used << endl;
+
+  return PE_op_count;
+}
+
+double MEM_energy_cost(CodegenOptions& options, power_analysis_params& power_params, power_analysis_info& power_stats, prog& prg) {
+
+  cout << "Computing MEM energy cost for " << prg.name << endl;
+
+  const int SRAM_SIZE_BITS = 2048*16;
+  double daly_access_cost_pj = (50 + 0.022 * sqrt(SRAM_SIZE_BITS)) / 1000;
+  double energy_cost = 0.0;
+  for (auto op : prg.all_ops()) {
+    if (op->func != "") {
+      vector<string> surrounding = surrounding_vars(op, prg);
+      vector<int> bounds;
+      for (auto l : surrounding) {
+        bounds.push_back(prg.find_loop(l)->trip_count());
+      }
+      int bnds = card(bounds);
+      power_stats.op_counts[op->name] = bnds;
+
+      double num_accesses_per_op = op->consumes_pair().size() + op->produces_pair().size();
+      energy_cost += num_accesses_per_op * daly_access_cost_pj * bnds;
+    }
+  }
+
+  cout << "Total MEM energy cost for " << prg.name << ": " << energy_cost << endl;
+
+  return energy_cost;
+}
+
 #endif
 
 
