@@ -1986,6 +1986,7 @@ void addIOs(Context* c, Module* top) {
   Instance* pt = addPassthrough(mdef->getInterface(),"_self");
   for (auto path : iopaths.IO16) {
     string ioname = "io16in_" + join(++path.begin(),path.end(),string("_"));
+    cout << ioname << endl;
     mdef->addInstance(ioname,"cgralib.IO",aWidth,{{"mode",Const::make(c,"in")}});
     path[0] = "in";
     path.insert(path.begin(),"_self");
@@ -1993,6 +1994,7 @@ void addIOs(Context* c, Module* top) {
   }
   for (auto path : iopaths.IO16in) {
     string ioname = "io16_" + join(++path.begin(),path.end(),string("_"));
+    cout << ioname << endl;
     mdef->addInstance(ioname,"cgralib.IO",aWidth,{{"mode",Const::make(c,"out")}});
     path[0] = "in";
     path.insert(path.begin(),"_self");
@@ -2000,6 +2002,7 @@ void addIOs(Context* c, Module* top) {
   }
   for (auto path : iopaths.IO1) {
     string ioname = "io1in_" + join(++path.begin(),path.end(),string("_"));
+    cout << ioname << endl;
     mdef->addInstance(ioname,"cgralib.BitIO",{{"mode",Const::make(c,"in")}});
     path[0] = "in";
     path.insert(path.begin(),"_self");
@@ -2007,6 +2010,7 @@ void addIOs(Context* c, Module* top) {
   }
   for (auto path : iopaths.IO1in) {
     string ioname = "io1_" + join(++path.begin(),path.end(),string("_"));
+    cout << ioname << endl;
     mdef->addInstance(ioname,"cgralib.BitIO",{{"mode",Const::make(c,"out")}});
     path[0] = "in";
     path.insert(path.begin(),"_self");
@@ -2070,18 +2074,22 @@ bool ConstReplace(Instance* cnst) {
       cout << "  coninst= " << toString(conInst) << endl;
       //cout << "  conn= " << toString(conn->getSelectPath()) << endl;
       //if (conInst->getModuleRef()->getRefName() != "cgralib.Mem" || conn->getSelectPath().back()!="wen") {
-      if (conInst->getModuleRef()->getRefName() != "cgralib.Mem_jade") {
-        return false;
-      }
+      // if (conInst->getModuleRef()->getRefName() != "cgralib.Mem_jade") {
+      //   return false;
+      // }
     }
   }
   cout << "REPLACING!" << endl;
   ModuleDef* def = cnst->getContainer();
-  uint val = cnst->getModArgs().at("value")->get<bool>() ? 63 : 0;
-  Values bitPEArgs({{"lut_value",Const::make(c,8,val)}});
-  Instance* lut = def->addInstance(cnst->getInstname()+"_lutcnst","cgralib.PE",{{"op_kind",Const::make(c,"bit")}},bitPEArgs);
+  uint val = cnst->getModArgs().at("value")->get<bool>() ? 1 : 0;
+  // Values bitPEArgs({{"lut_value",Const::make(c,8,val)}});
+  CoreIR::Values genargs = {
+      {"op", CoreIR::Const::make(c, "bitconst")},
+      {"val", CoreIR::Const::make(c, val)}
+  };
+  Instance* pe = def->addInstance(cnst->getInstname()+"_lutcnst"+ std::to_string(val),"global.WrappedPE");
   for (auto conn : conns) {
-    def->connect(lut->sel("bit")->sel("out"),conn);
+    def->connect(pe->sel("O1"),conn);
   }
   def->removeInstance(cnst);
   return true;
@@ -2210,17 +2218,8 @@ void garnet_map_module(Module* top) {
 
   c->runPasses({"cullgraph"});
   c->runPasses({"removewires"});
-  //addIOs(c,top);
+  addIOs(c,top);
   c->runPasses({"cullgraph"});
-  // c->addPass(new CustomFlatten);
-  // c->runPasses({"customflatten"});
-  // c->addPass(new MapperPasses::ConstDuplication);
-  // c->runPasses({"constduplication"});
-  // c->addPass(new MapperPasses::MemConst);
-  // c->runPasses({"memconst"});
-  c->addPass(new MapperPasses::MemSubstitute);
-  c->runPasses({"memsubstitute"});
-
   if (c->getGlobal()->hasModule("WrappedPE")) {
     auto pe_mod = c->getGlobal()->getModules()["WrappedPE"];
     pe_mod->print();
@@ -2237,6 +2236,17 @@ void garnet_map_module(Module* top) {
     cout << "Flattening!" << endl;
     c->runPasses({"flatten"});
   }
+  c->runPasses({"cullgraph"});
+  // c->addPass(new CustomFlatten);
+  // c->runPasses({"customflatten"});
+  c->addPass(new MapperPasses::ConstDuplication);
+  c->runPasses({"constduplication"});
+  c->addPass(new MapperPasses::MemConst);
+  c->runPasses({"memconst"});
+  c->addPass(new MapperPasses::MemSubstitute);
+  c->runPasses({"memsubstitute"});
+  c->runPasses({"cullgraph"});
+
   //c->runPassesOnAll({"cullgraph"});
   c->getPassManager()->printLog();
   cout << "Trying to save" << endl;
