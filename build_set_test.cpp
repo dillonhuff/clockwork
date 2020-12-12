@@ -16906,13 +16906,13 @@ vector<prog> isca_programs() {
   //test_programs.push_back(harris_sch8_endcim());
   //test_programs.back().pretty_print();
 
-  test_programs.push_back(camera_pipeline());
-  test_programs.push_back(gaussian());
-  test_programs.push_back(mobilenet_unrolled());
-  test_programs.push_back(unsharp());
-  test_programs.push_back(resnet());
-  test_programs.push_back(cascade());
-  test_programs.push_back(down_sample());
+  //test_programs.push_back(camera_pipeline());
+  //test_programs.push_back(gaussian());
+  //test_programs.push_back(mobilenet_unrolled());
+  //test_programs.push_back(unsharp());
+  //test_programs.push_back(resnet());
+  //test_programs.push_back(cascade());
+  //test_programs.push_back(down_sample());
   test_programs.push_back(up_sample());
 
   return test_programs;
@@ -17293,18 +17293,18 @@ void cgra_flow_tests() {
   //vector<prog> M3_test_programs{gaussian()};
   test_codegen(M3_test_programs, compile_for_CGRA_M3_mem);
   //assert(false);
-  
+
 
   vector<prog> M1_test_programs = isca_programs();
   //vector<prog> M1_test_programs{gaussian()};
   test_codegen(M1_test_programs, compile_for_CGRA_M1_mem);
-  
+
   auto test_programs =
     all_cgra_programs();
   test_platonic_codegen(test_programs);
 
 
-  
+
 
   vector<prog> sram_test_programs{pointwise(), camera_pipeline(), resnet()};
   test_codegen(sram_test_programs, compile_for_generic_SRAM_mem);
@@ -18913,7 +18913,7 @@ prog stencil_chain(const std::string& name) {
       }
     }
     init->add_store(current_level, x, y);
-    
+
     last_level = current_level;
   }
 
@@ -19186,7 +19186,7 @@ void dhuff_playground() {
       //MEM_energy_cost(options, power_params, power_stats, prg);
     }
     assert(false);
-#endif 
+#endif
   }
   {
 #ifdef COREIR
@@ -19219,7 +19219,7 @@ void dhuff_playground() {
       compile_cycle_accurate_hw(options, sched, prg);
       normalize_bounds(prg);
       sequential_schedule(sched, prg.root, prg);
-      
+
       auto hw_sched = its(op_times_map(sched, prg), prg.whole_iteration_domain());
 
       auto buffers = build_buffers(prg, hw_sched);

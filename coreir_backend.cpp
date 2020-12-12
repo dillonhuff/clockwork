@@ -2886,7 +2886,7 @@ void analyze_post_mapped_app(CodegenOptions& options, prog& prg, map<string, UBu
   for (auto c : counts) {
     cout << tab(1) << c.first << " -> " << c.second << endl;
   }
-  assert(false);
+  //assert(false);
   if(!saveToFile(ns, prg.name + "_post_mapping.json", gmod)) {
     cout << "Could not save ubuffer coreir" << endl;
     context->die();
@@ -4510,7 +4510,7 @@ dgraph build_shift_registers(CodegenOptions& options, CoreIR::ModuleDef* def, pr
       for (auto v : shift_registers.out_edges.at(inpt)) {
         vals.push_back({v, shift_registers.weight(inpt, v)});
       }
-      sort_lt_snd(vals);
+      sort_lt(vals, [](const pair<string, int> & v) {return v.second;});
       for (auto v : vals) {
         cout << tab(1) << v.first << " -(" << v.second << ")-> " << v.second << endl;
       }
@@ -4702,7 +4702,7 @@ std::set<string> generate_block_shift_register(CodegenOptions& options, CoreIR::
   auto c = def->getContext();
 
   assert(packed_sr);
-  string src = b_sreg.inpt;     
+  string src = b_sreg.inpt;
   Wireable * src_wire = def->sel("self." + buf.container_bundle(src) + "." + str(buf.bundle_offset(src)));
   Wireable * delayed_src = delay_by(def, "sr_ito_all_" + c->getUnique(), src_wire, b_sreg.init_delay);
   def->connect(def->sel(b_sreg.chain_starts.at(0) + "_net.in"), delayed_src);
