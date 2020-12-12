@@ -8760,6 +8760,33 @@ App stencil_chain_iccad(const std::string& out_name) {
   return lp;
 }
 
+App stencil_chain_no_dsp_long_iccad(const std::string& out_name) {
+  App lp;
+  lp.set_default_pixel_width(16);
+  lp.func2d("in_off_chip");
+
+  // The temporary buffer we store the input image in
+  lp.func2d("in", v("in_off_chip"));
+
+  int levels = 20;
+  string last = "in";
+  for (int i = 0; i < levels; i++) {
+    string current = "stg" + str(i);
+    lp.func2d(current,
+      add({
+        v(last, 0, 1),
+        v(last, 1, 0),
+        v(last, 0, 0),
+        v(last, -1, 0),
+        v(last, 0, 1)}));
+    last = current;
+  }
+
+  lp.func2d(out_name, v(last));
+
+  return lp;
+}
+
 App stencil_chain_no_dsp_iccad(const std::string& out_name) {
   App lp;
   lp.set_default_pixel_width(16);
@@ -8812,6 +8839,24 @@ void identity_stream_iccad_apps(const std::string& prefix) {
   for (auto throughput : throughputs) {
     string name = prefix + "_" + str(throughput);
     App lp = identity_stream_iccad(name);
+    int rows = 1080;
+    int cols = 1920;
+    CodegenOptions options;
+    options.internal = true;
+    options.use_custom_code_string = true;
+    lp.realize(options, name, {cols, rows}, "in", throughput);
+
+    move_to_benchmarks_folder(name + "_opt");
+  }
+  assert(false);
+}
+
+void stencil_chain_no_dsp_long_iccad_apps(const std::string& prefix) {
+  vector<int> throughputs{1, 16, 32};
+  //vector<int> throughputs{1};
+  for (auto throughput : throughputs) {
+    string name = prefix + "_" + str(throughput);
+    App lp = stencil_chain_no_dsp_long_iccad(name);
     int rows = 1080;
     int cols = 1920;
     CodegenOptions options;
@@ -18202,6 +18247,7 @@ void misc_tests() {
 }
 
 void application_tests() {
+  stencil_chain_no_dsp_long_iccad_apps("icsc_ndln");
   stencil_chain_no_dsp_iccad_apps("icsc_nd");
   increment_iccad_apps("inc");
   identity_stream_iccad_apps("idstream");
