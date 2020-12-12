@@ -1843,7 +1843,7 @@ Instance* generate_controller_coreir(CodegenOptions& options, ModuleDef* def, co
   //auto aff = isl_multi_aff_get_aff(aff, 0);
   Instance* controller;
   if (options.rtl_options.use_external_controllers) {
-    auto aff_c = affine_controller(c, dom, aff);
+    auto aff_c = affine_controller(options, c, dom, aff);
     aff_c->print();
     controller = def->addInstance(name, aff_c);
   } else {
@@ -1893,7 +1893,7 @@ Instance* generate_coreir_op_controller(CodegenOptions& options, ModuleDef* def,
   //For those op need loop index we need this controller
   bool need_index = op->index_variables_needed_by_compute.size() > 0;
   if (options.rtl_options.use_external_controllers || need_index) {
-    auto aff_c = affine_controller(c, dom, aff);
+    auto aff_c = affine_controller(options, c, dom, aff);
     aff_c->print();
     controller = def->addInstance(controller_name(op->name), aff_c);
   } else {
@@ -2679,7 +2679,7 @@ void disconnect_input_enable(Context* c, Module* top) {
   }
 }
 
-void garnet_map_module(Module* top) {
+void garnet_map_module(Module* top, bool garnet_syntax_trans = false) {
   auto c = top->getContext();
 
   top->print();
@@ -2698,8 +2698,10 @@ void garnet_map_module(Module* top) {
   c->runPasses({"cullgraph"});
   c->addPass(new CustomFlatten);
   c->runPasses({"customflatten"});
-  c->addPass(new MapperPasses::MemSubstitute);
-  c->runPasses({"memsubstitute"});
+  if (garnet_syntax_trans) {
+    c->addPass(new MapperPasses::MemSubstitute);
+    c->runPasses({"memsubstitute"});
+  }
   c->addPass(new MapperPasses::ConstDuplication);
   c->runPasses({"constduplication"});
   c->addPass(new MapperPasses::MemConst);
@@ -2841,7 +2843,7 @@ void analyze_post_mapped_app(CodegenOptions& options, prog& prg, map<string, UBu
   for (auto c : counts) {
     cout << tab(1) << c.first << " -> " << c.second << endl;
   }
-  assert(false);
+  //assert(false);
   if(!saveToFile(ns, prg.name + "_post_mapping.json", gmod)) {
     cout << "Could not save ubuffer coreir" << endl;
     context->die();
@@ -2883,7 +2885,7 @@ void generate_coreir(CodegenOptions& options,
   auto ns_new = context->getNamespace("global");
   //Garnet pass
   if (options.rtl_options.use_prebuilt_memory) {
-    garnet_map_module(prg_mod);
+    garnet_map_module(prg_mod, true);
     context->runPasses({"rungenerators", "flatten", "removewires", "cullgraph"});
 
     if(!saveToFile(ns_new,  options.dir + prg.name+ "_garnet.json", prg_mod)) {
@@ -3319,7 +3321,7 @@ CoreIR::Instance* build_counter(CoreIR::ModuleDef* def,
     return ins;
 }
 
-CoreIR::Module* affine_controller_primitive(CoreIR::Context* context, isl_set* dom, isl_aff* aff) {
+CoreIR::Module* affine_controller_primitive(CodegenOptions& options, CoreIR::Context* context, isl_set* dom, isl_aff* aff) {
   cout << tab(1) << "dom = " << str(dom) << endl;
 
   auto ns = context->getNamespace("global");
@@ -3328,10 +3330,12 @@ CoreIR::Module* affine_controller_primitive(CoreIR::Context* context, isl_set* d
   int width = CONTROLPATH_WIDTH;
   vector<pair<string, CoreIR::Type*> >
     ub_field{{"clk", c->Named("coreir.clkIn")},
-      {"rst_n", c->BitIn()},
       {"valid", c->Bit()}};
   int dims = num_in_dims(aff);
   ub_field.push_back({"d", context->Bit()->Arr(16)->Arr(dims)});
+  if (options.rtl_options.use_prebuilt_memory) {
+    ub_field.push_back({"rst_n", c->BitIn()});
+  }
 
   CoreIR::RecordType* utp = context->Record(ub_field);
   auto m = ns->newModuleDecl("affine_controller_" + context->getUnique(), utp);
@@ -3339,30 +3343,33 @@ CoreIR::Module* affine_controller_primitive(CoreIR::Context* context, isl_set* d
   auto aff_mod = coreir_for_aff(c, aff);
   auto aff_func = def->addInstance("affine_func", aff_mod);
 
-
-  //auto cycle_time_reg = def->addInstance("cycle_time", "mantle.reg",
-  //    {{"width", CoreIR::Const::make(context, width)},
-  //    {"has_en", CoreIR::Const::make(context, false)}});
-
-  auto cycle_time_reg = build_counter(def, "cycle_time", 16, 0, 65535, 1);
-  def->connect(cycle_time_reg->sel("reset"), def->sel("self.rst_n"));
-
   auto one = def->addInstance(context->getUnique(),
       "coreir.const",
       {{"width", CoreIR::Const::make(c, width)}},
       {{"value", CoreIR::Const::make(c, BitVector(width, 1))}});
 
-  //auto inc_time = def->addInstance("inc_time", "coreir.add", {{"width", CoreIR::Const::make(c, width)}});
-  //def->connect(inc_time->sel("in0"), cycle_time_reg->sel("out"));
-  //def->connect(inc_time->sel("in1"), one->sel("out"));
-  //def->connect(inc_time->sel("out"), cycle_time_reg->sel("in"));
   auto tinc = def->addInstance("true",
     "corebit.const",
     {{"value", CoreIR::Const::make(c, true)}});
 
+  CoreIR::Wireable* cycle_time_reg;
+  if (options.rtl_options.use_prebuilt_memory) {
+    cycle_time_reg = build_counter(def, "cycle_time", 16, 0, 65535, 1);
+    def->connect(cycle_time_reg->sel("reset"), def->sel("self.rst_n"));
+    def->connect(cycle_time_reg->sel("en"), tinc->sel("out"));
+  } else {
+    cycle_time_reg = def->addInstance("cycle_time", "mantle.reg",
+        {{"width", CoreIR::Const::make(context, width)},
+        {"has_en", CoreIR::Const::make(context, false)}});
+
+    auto inc_time = def->addInstance("inc_time", "coreir.add", {{"width", CoreIR::Const::make(c, width)}});
+    def->connect(inc_time->sel("in0"), cycle_time_reg->sel("out"));
+    def->connect(inc_time->sel("in1"), one->sel("out"));
+    def->connect(inc_time->sel("out"), cycle_time_reg->sel("in"));
+  }
+
   auto diff = def->addInstance("time_diff", "coreir.sub", {{"width", CoreIR::Const::make(c, width)}});
   def->connect(cycle_time_reg->sel("out"), diff->sel("in1"));
-  def->connect(cycle_time_reg->sel("en"), tinc->sel("out"));
   def->connect(aff_func->sel("out"), diff->sel("in0"));
 
   auto zero = def->addInstance(context->getUnique(),
@@ -3489,12 +3496,18 @@ addrgen(ModuleDef* def, isl_set* rddom, isl_aff* acc_aff) {
 }
 
 CoreIR::Module* affine_controller(CoreIR::Context* context, isl_set* dom, isl_aff* aff) {
-  return affine_controller_primitive(context, dom, aff);
+  CodegenOptions options;
+  options.rtl_options.use_prebuilt_memory = false;
+  return affine_controller_primitive(options, context, dom, aff);
 }
 
-CoreIR::Instance* affine_controller(CoreIR::ModuleDef* def, isl_set* dom, isl_aff* aff) {
+CoreIR::Module* affine_controller(CodegenOptions& options, CoreIR::Context* context, isl_set* dom, isl_aff* aff) {
+  return affine_controller_primitive(options, context, dom, aff);
+}
+
+CoreIR::Instance* affine_controller(CodegenOptions options, CoreIR::ModuleDef* def, isl_set* dom, isl_aff* aff) {
   auto c = def->getContext();
-  auto ctrl = def->addInstance("ctrl_" + c->getUnique(), affine_controller(c, dom, aff));
+  auto ctrl = def->addInstance("ctrl_" + c->getUnique(), affine_controller(options, c, dom, aff));
   return ctrl;
 }
 
@@ -3819,7 +3832,7 @@ CoreIR::Module* delay_module(CodegenOptions& options,
       cout << "--- Write addr after construction: " << str(write_addr) << endl;
       isl_set* write_dom = isl_set_read_from_str(ctx, ("{ wr[a] : 0 <= a <= " + str(max_depth) + " }").c_str());
 
-      auto write_ctrl = affine_controller(def, write_dom, write_sched);
+      auto write_ctrl = affine_controller(options, def, write_dom, write_sched);
       cout << "write addr before call: " << str(write_addr) << endl;
       auto write_addrgen = addrgen(def, write_addr);
       def->connect(write_addrgen->sel("d"), write_ctrl->sel("d"));
@@ -3827,7 +3840,7 @@ CoreIR::Module* delay_module(CodegenOptions& options,
       isl_aff* read_sched = rdaff(ctx, ("{ rd[a] -> [(a)] }"));
       isl_aff* read_addr = rdaff(ctx, ("{ rd[a] -> [(a)] }"));
       isl_set* read_dom = isl_set_read_from_str(ctx, ("{ rd[a] : 0 <= a <= " + str(max_depth) + " }").c_str());
-      auto read_ctrl = affine_controller(def, read_dom, read_sched);
+      auto read_ctrl = affine_controller(options, def, read_dom, read_sched);
       auto read_addrgen = addrgen(def, read_addr);
       def->connect(read_addrgen->sel("d"), read_ctrl->sel("d"));
 

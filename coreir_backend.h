@@ -31,6 +31,7 @@ CoreIR::Module* coreir_for_basic_set(CoreIR::Context* context, isl_basic_set* do
 
 CoreIR::Module* coreir_for_set(CoreIR::Context* context, isl_set* dom);
 
+CoreIR::Module* affine_controller(CodegenOptions& options, CoreIR::Context* context, isl_set* dom, isl_aff* aff);
 CoreIR::Module* affine_controller(CoreIR::Context* context, isl_set* dom, isl_aff* aff);
 
 affine_controller_ctrl pack_controller(affine_controller_ctrl& unpacked);
@@ -184,7 +185,7 @@ isl_aff* inner_bank_offset_aff(const std::string& reader, UBuffer& buf, ubuffer_
 
 isl_aff* bank_offset_aff(const std::string& reader, UBuffer& buf, ubuffer_impl& impl);
 
-void garnet_map_module(CoreIR::Module* top);
+void garnet_map_module(CoreIR::Module* top, bool garnet_syntax_trans);
 
 double PE_energy_cost(power_analysis_params& power_params, power_analysis_info& power_stats, prog& prg);
 

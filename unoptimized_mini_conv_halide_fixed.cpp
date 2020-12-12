@@ -9,8 +9,6 @@ using namespace std;
 // compute file: conv_3_3_compute.h
 #include "conv_3_3_compute.h"
 
-#include "hw_classes.h"
-
 struct conv_stencil_all_inputs_to_all_outputs_cache {
 	// RAM Box: {[0, 61]}
   hw_uint<16> RAM[62];
@@ -66,8 +64,6 @@ inline hw_uint<16> conv_stencil_hcompute_hw_output_stencil_read_bundle_read(conv
 	return result;
 }
 
-#include "hw_classes.h"
-
 struct conv_stencil_init_all_inputs_to_all_outputs_cache {
 	// RAM Box: {[0, 61]}
   hw_uint<16> RAM[62];
@@ -122,8 +118,6 @@ inline void conv_stencil_init_hcompute_conv_stencil_write_bundle_write(hw_uint<1
 	hw_uint<16> conv_stencil_init_hcompute_conv_stencil_7_res = hcompute_conv_stencil_write.extract<0, 15>();
 	conv_stencil_init_hcompute_conv_stencil_7_write(conv_stencil_init_hcompute_conv_stencil_7_res, conv_stencil_init, root, hw_output_s0_x_xo, dynamic_address);
 }
-
-#include "hw_classes.h"
 
 struct hw_input_copy_stencil_all_inputs_to_all_outputs_cache {
 	// RAM Box: {[0, 63]}
@@ -184,32 +178,6 @@ inline void hw_input_copy_stencil_hcompute_hw_input_copy_stencil_write_bundle_wr
 
 
 // Operation logic
-inline void hcompute_hw_input_copy_stencil(HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */hw_input_stencil, hw_input_copy_stencil_cache& hw_input_copy_stencil, int root, int hw_input_copy_s0_x) {
-  // Dynamic address computation
-
-	// Consume: hw_input_stencil
-	auto hw_input_stencil_hw_input_copy_s0_x_value = hw_input_stencil.read();
-	auto compute_result = hcompute_hw_input_copy_stencil(hw_input_stencil_hw_input_copy_s0_x_value);
-	// Produce: hw_input_copy_stencil
-	hw_input_copy_stencil_hcompute_hw_input_copy_stencil_write_bundle_write(/* arg names */compute_result, hw_input_copy_stencil, root, hw_input_copy_s0_x, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void hcompute_conv_stencil(conv_stencil_init_cache& conv_stencil_init, int root, int hw_output_s0_x_xo) {
-  // Dynamic address computation
-
-	auto compute_result = hcompute_conv_stencil();
-	// Produce: conv_stencil_init
-	conv_stencil_init_hcompute_conv_stencil_write_bundle_write(/* arg names */compute_result, conv_stencil_init, root, hw_output_s0_x_xo, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
 inline void hcompute_conv_stencil_1(conv_stencil_init_cache& conv_stencil_init, hw_input_copy_stencil_cache& hw_input_copy_stencil, conv_stencil_cache& conv_stencil, int root, int hw_output_s0_x_xo) {
   // Dynamic address computation
 
@@ -246,6 +214,32 @@ inline void hcompute_hw_output_stencil(conv_stencil_cache& conv_stencil, HWStrea
 	auto compute_result = hcompute_hw_output_stencil(conv_stencil_hw_output_s0_x_xo_value);
 	// Produce: hw_output_stencil
 	hw_output_stencil.write(compute_result);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void hcompute_hw_input_copy_stencil(HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */hw_input_stencil, hw_input_copy_stencil_cache& hw_input_copy_stencil, int root, int hw_input_copy_s0_x) {
+  // Dynamic address computation
+
+	// Consume: hw_input_stencil
+	auto hw_input_stencil_hw_input_copy_s0_x_value = hw_input_stencil.read();
+	auto compute_result = hcompute_hw_input_copy_stencil(hw_input_stencil_hw_input_copy_s0_x_value);
+	// Produce: hw_input_copy_stencil
+	hw_input_copy_stencil_hcompute_hw_input_copy_stencil_write_bundle_write(/* arg names */compute_result, hw_input_copy_stencil, root, hw_input_copy_s0_x, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void hcompute_conv_stencil(conv_stencil_init_cache& conv_stencil_init, int root, int hw_output_s0_x_xo) {
+  // Dynamic address computation
+
+	auto compute_result = hcompute_conv_stencil();
+	// Produce: conv_stencil_init
+	conv_stencil_init_hcompute_conv_stencil_write_bundle_write(/* arg names */compute_result, conv_stencil_init, root, hw_output_s0_x_xo, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__

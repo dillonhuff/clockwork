@@ -206,9 +206,9 @@
       "affine_controller__U40":{
         "type":["Record",[
           ["clk",["Named","coreir.clkIn"]],
-          ["rst_n","BitIn"],
           ["valid","Bit"],
-          ["d",["Array",3,["Array",16,"Bit"]]]
+          ["d",["Array",3,["Array",16,"Bit"]]],
+          ["rst_n","BitIn"]
         ]],
         "instances":{
           "_U52":{
@@ -407,9 +407,9 @@
       "affine_controller__U63":{
         "type":["Record",[
           ["clk",["Named","coreir.clkIn"]],
-          ["rst_n","BitIn"],
           ["valid","Bit"],
-          ["d",["Array",3,["Array",16,"Bit"]]]
+          ["d",["Array",3,["Array",16,"Bit"]]],
+          ["rst_n","BitIn"]
         ]],
         "instances":{
           "_U75":{
@@ -608,9 +608,9 @@
       "affine_controller__U86":{
         "type":["Record",[
           ["clk",["Named","coreir.clkIn"]],
-          ["rst_n","BitIn"],
           ["valid","Bit"],
-          ["d",["Array",3,["Array",16,"Bit"]]]
+          ["d",["Array",3,["Array",16,"Bit"]]],
+          ["rst_n","BitIn"]
         ]],
         "instances":{
           "_U98":{
