@@ -8941,8 +8941,8 @@ void stencil_chain_no_dsp_iccad_apps(const std::string& prefix) {
 }
 
 void stencil_chain_five_stage_iccad_apps(const std::string& prefix) {
-  //vector<int> throughputs{1, 16, 32};
-  vector<int> throughputs{1};
+  vector<int> throughputs{1, 16, 32};
+  //vector<int> throughputs{1};
   for (auto throughput : throughputs) {
     string name = prefix + "_" + str(throughput);
     App lp = stencil_chain_five_stage_iccad(name);
