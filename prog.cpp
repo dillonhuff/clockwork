@@ -634,9 +634,9 @@ void generate_xilinx_accel_soda_host(CodegenOptions& options, map<string, UBuffe
     string edge_bundle = eb.second;
     string buf = eb.first;
 
-    out << tab(1) << "const int " << edge_bundle << "_DATA_SIZE = num_epochs*" << max_buf_size << ";" << endl;
+    out << tab(1) << "const int " << edge_bundle << "_pipe0_DATA_SIZE = num_epochs*" << max_buf_size << ";" << endl;
     out << tab(1) << "const int " << edge_bundle << "_BYTES_PER_PIXEL = " << map_find(buf, buffers).bundle_lane_width(edge_bundle) << " / 8;" << endl;
-    out << tab(1) << "size_t " << edge_bundle << "_size_bytes = " << edge_bundle << "_BYTES_PER_PIXEL * " << edge_bundle << "_DATA_SIZE;" << endl << endl;
+    out << tab(1) << "size_t " << edge_bundle << "_size_bytes = " << edge_bundle << "_BYTES_PER_PIXEL * " << edge_bundle << "_pipe0_DATA_SIZE;" << endl << endl;
     out << tab(1) << "total_size_bytes += " << edge_bundle << "_size_bytes;" << endl;
     if (prg.is_output(buf)) {
       out << tab(1) << "total_size_bytes_written += " << edge_bundle << "_size_bytes;" << endl;
@@ -662,7 +662,7 @@ void generate_xilinx_accel_soda_host(CodegenOptions& options, map<string, UBuffe
   for (auto edge_out : outputs(buffers, prg)) {
     auto edge_bundle = edge_out.second;
     auto buf = edge_out.first;
-    out << tab(1) << "for (int i = 0; i < " << edge_bundle << "_DATA_SIZE; i++) {" << endl;
+    out << tab(1) << "for (int i = 0; i < " << edge_bundle << "_pipe0_DATA_SIZE; i++) {" << endl;
     out << tab(2) << "((" << vanilla_c_pixel_type_string(buf, buffers) << "*) (" << edge_bundle << "_pipe0.data()))[i] = 0;" << endl;
     out << tab(1) << "}" << endl << endl;
   }

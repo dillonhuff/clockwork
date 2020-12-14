@@ -20,15 +20,15 @@ int main(int argc, char **argv) {
   size_t total_size_bytes = 0;
   size_t total_size_bytes_read = 0;
   size_t total_size_bytes_written = 0;
-  const int in_update_0_read_DATA_SIZE = num_epochs*2073600;
+  const int in_update_0_read_pipe0_DATA_SIZE = num_epochs*2073600;
   const int in_update_0_read_BYTES_PER_PIXEL = 16 / 8;
-  size_t in_update_0_read_size_bytes = in_update_0_read_BYTES_PER_PIXEL * in_update_0_read_DATA_SIZE;
+  size_t in_update_0_read_size_bytes = in_update_0_read_BYTES_PER_PIXEL * in_update_0_read_pipe0_DATA_SIZE;
 
   total_size_bytes += in_update_0_read_size_bytes;
   total_size_bytes_read += in_update_0_read_size_bytes;
-  const int inc_1_update_0_write_DATA_SIZE = num_epochs*2073600;
+  const int inc_1_update_0_write_pipe0_DATA_SIZE = num_epochs*2073600;
   const int inc_1_update_0_write_BYTES_PER_PIXEL = 16 / 8;
-  size_t inc_1_update_0_write_size_bytes = inc_1_update_0_write_BYTES_PER_PIXEL * inc_1_update_0_write_DATA_SIZE;
+  size_t inc_1_update_0_write_size_bytes = inc_1_update_0_write_BYTES_PER_PIXEL * inc_1_update_0_write_pipe0_DATA_SIZE;
 
   total_size_bytes += inc_1_update_0_write_size_bytes;
   total_size_bytes_written += inc_1_update_0_write_size_bytes;
@@ -49,7 +49,7 @@ int main(int argc, char **argv) {
   }
 
   input_in_update_0_read.close();
-  for (int i = 0; i < inc_1_update_0_write_DATA_SIZE; i++) {
+  for (int i = 0; i < inc_1_update_0_write_pipe0_DATA_SIZE; i++) {
     ((uint16_t*) (inc_1_update_0_write_pipe0.data()))[i] = 0;
   }
 
