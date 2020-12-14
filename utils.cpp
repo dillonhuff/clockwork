@@ -128,8 +128,8 @@ void move_to_benchmarks_folder(const std::string& app_name) {
 
   system(("mv " + out_name + "*.ini " + synth_dir).c_str());
   system(("cp " + out_name + "*.cpp " + synth_dir).c_str());
+  system(("cp regression_tb_" + out_name + ".cpp " + synth_dir).c_str());
   system(("cp " + out_name + "*.h " + synth_dir).c_str());
-  //system(("mv regression_tb_" + out_name + ".cpp " + synth_dir).c_str());
 
   make_exe("run_tb_" + out_name + ".sh");
   system(("mv run_tb_" + out_name + ".sh " + synth_dir).c_str());

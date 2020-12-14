@@ -11041,9 +11041,9 @@ void naive_implementations() {
 
 void iccad_tests() {
 
-  camera_pipeline_test("cp_noinit_ln1c");
-  assert(false);
   increment_iccad_apps("inc");
+  assert(false);
+  camera_pipeline_test("cp_noinit_ln1c");
   sobel_16_app_test("sbl_ln");
   blur_xy_16_app_test("bxy_noinit_ln");
   assert(false);
