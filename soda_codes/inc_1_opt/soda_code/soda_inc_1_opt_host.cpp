@@ -38,8 +38,8 @@ int main(int argc, char **argv) {
   cl::Kernel krnl_vector_add;
   cl::CommandQueue q;
 
-  std::vector<uint8_t, aligned_allocator<uint8_t> > in_update_0_read(in_update_0_read_size_bytes);
-  std::vector<uint8_t, aligned_allocator<uint8_t> > inc_1_update_0_write(inc_1_update_0_write_size_bytes);
+  std::vector<uint8_t, aligned_allocator<uint8_t> > in_update_0_read_pipe0(in_update_0_read_size_bytes);
+  std::vector<uint8_t, aligned_allocator<uint8_t> > inc_1_update_0_write_pipe0(inc_1_update_0_write_size_bytes);
 
   std::ofstream input_in_update_0_read("in_update_0_read.csv");
   for (int i = 0; i < in_update_0_read_pipe0_DATA_SIZE; i++) {
@@ -119,8 +119,8 @@ nsduration = end - start;
   std::cout << "GB / sec    = " << gbpersec << std::endl;
   printf("Execution time = %f (sec) \n", dsduration);
   std::ofstream regression_result("inc_1_update_0_write_accel_result.csv");
-  for (int i = 0; i < inc_1_update_0_write_DATA_SIZE; i++) {
-    regression_result << ((uint16_t*) (inc_1_update_0_write.data()))[i] << std::endl;
+  for (int i = 0; i < inc_1_update_0_write_pipe0_DATA_SIZE; i++) {
+    regression_result << ((uint16_t*) (inc_1_update_0_write_pipe0.data()))[i] << std::endl;
   }
 
   return 0;

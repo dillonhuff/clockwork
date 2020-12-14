@@ -651,7 +651,7 @@ void generate_xilinx_accel_soda_host(CodegenOptions& options, map<string, UBuffe
   ocl_command_queue(out);
 
   for (auto edge_bundle : edge_bundles(buffers, prg)) {
-    out << tab(1) << "std::vector<uint8_t, aligned_allocator<uint8_t> > " << edge_bundle << "(" << edge_bundle << "_size_bytes);" << endl;
+    out << tab(1) << "std::vector<uint8_t, aligned_allocator<uint8_t> > " << edge_bundle << "_pipe0" << "(" << edge_bundle << "_size_bytes);" << endl;
   }
   out << endl;
 
@@ -692,8 +692,8 @@ void generate_xilinx_accel_soda_host(CodegenOptions& options, map<string, UBuffe
     auto buf = output.first;
     auto out_bundle = output.second;
     out << tab(1) << "std::ofstream regression_result(\"" << out_bundle << "_accel_result.csv\");" << endl;
-    out << tab(1) << "for (int i = 0; i < " << out_bundle << "_DATA_SIZE; i++) {" << endl;
-    out << tab(2) << "regression_result << ((" << vanilla_c_pixel_type_string(buf, buffers) << "*) (" << out_bundle << ".data()))[i] << std::endl;" << endl;
+    out << tab(1) << "for (int i = 0; i < " << out_bundle << "_pipe0_DATA_SIZE; i++) {" << endl;
+    out << tab(2) << "regression_result << ((" << vanilla_c_pixel_type_string(buf, buffers) << "*) (" << out_bundle << "_pipe0.data()))[i] << std::endl;" << endl;
     out << tab(1) << "}" << endl;
   }
   out << endl;
