@@ -47,7 +47,7 @@ int main(int argc, char **argv) {
   }
 
   input_in_update_0_read.close();
-  for (int i = 0; i < inc_1_update_0_write_DATA_SIZE; i++) {
+  for (int i = 0; i < inc_1_update_0_write_pipe0_DATA_SIZE; i++) {
     ((uint16_t*) (inc_1_update_0_write_pipe0.data()))[i] = 0;
   }
 
