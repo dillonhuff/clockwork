@@ -43,7 +43,8 @@ int main(int argc, char **argv) {
   for (int i = 0; i < in_update_0_read_pipe0_DATA_SIZE; i++) {
     uint16_t val = (rand() % 256);
     input_in_update_0_read << val << std::endl;
-    ((uint16_t*) (in_update_0_read_pipe0.data()))[i] = val;
+    //((uint16_t*) (in_update_0_read_pipe0.data()))[i] = val;
+    ((uint16_t*) (in_update_0_read_pipe0.data()))[i] = i;
   }
 
   input_in_update_0_read.close();
