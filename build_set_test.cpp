@@ -8038,39 +8038,40 @@ void camera_pipeline_all_adds_test(const std::string& prefix) {
 }
 
 void camera_pipeline_test(const std::string& prefix) {
-  string app_name = "camera_mini";
-  int mini_rows = 30;
-  int mini_cols = 100;
-  auto hmini = camera_pipeline(app_name);
-  hmini.realize_naive(app_name, mini_cols, mini_rows);
-  hmini.realize(app_name, mini_cols, mini_rows, 1);
+  //string app_name = "camera_mini";
+  //int mini_rows = 30;
+  //int mini_cols = 100;
+  //auto hmini = camera_pipeline(app_name);
+  //hmini.realize_naive(app_name, mini_cols, mini_rows);
+  //hmini.realize(app_name, mini_cols, mini_rows, 1);
 
-  std::vector<std::string> naive =
-    run_regression_tb(app_name + "_naive");
-  std::vector<std::string> optimized =
-    run_regression_tb(app_name + "_opt");
-  assert(naive == optimized);
-  move_to_benchmarks_folder(app_name + "_opt");
+  //std::vector<std::string> naive =
+    //run_regression_tb(app_name + "_naive");
+  //std::vector<std::string> optimized =
+    //run_regression_tb(app_name + "_opt");
+  //assert(naive == optimized);
+  //move_to_benchmarks_folder(app_name + "_opt");
 
 
-  //int rows = 1080;
-  //int cols = 1920;
+  int rows = 1080;
+  int cols = 1920;
   //vector<int> factors{1, 2, 4};
-  //for (int i = 0; i < (int) factors.size(); i++) {
-    //int unroll_factor = factors.at(i);
-    ////cout << tab(1) << "harris unroll factor: " << unroll_factor << endl;
-    //string out_name = prefix + "_" + str(unroll_factor);
+  vector<int> factors{1, 16, 32};
+  for (int i = 0; i < (int) factors.size(); i++) {
+    int unroll_factor = factors.at(i);
+    //cout << tab(1) << "harris unroll factor: " << unroll_factor << endl;
+    string out_name = prefix + "_" + str(unroll_factor);
 
-    //CodegenOptions options;
-    //options.internal = true;
-    //options.simplify_address_expressions = true;
-    //options.use_custom_code_string = true;
-    //options.debug_options.expect_all_linebuffers = true;
-    //options.num_input_epochs = 30;
-    //camera_pipeline(out_name).realize(options, out_name, cols, rows, unroll_factor);
+    CodegenOptions options;
+    options.internal = true;
+    options.simplify_address_expressions = true;
+    options.use_custom_code_string = true;
+    options.debug_options.expect_all_linebuffers = true;
+    options.num_input_epochs = 30;
+    camera_pipeline(out_name).realize(options, out_name, cols, rows, unroll_factor);
 
-    //move_to_benchmarks_folder(out_name + "_opt");
-  //}
+    move_to_benchmarks_folder(out_name + "_opt");
+  }
 }
 
 void different_path_latencies_test(const std::string& prefix) {
@@ -9412,12 +9413,7 @@ App sobel16(const std::string output_name) {
         sub(v("img", 1, 1), v("img", 1, -1))));
 
   sobel.func2d(output_name,
-      //add(square(v("mag_x")), square(v("mag_y"))));
-      //sub(65535, add(square(v("mag_x")), square(v("mag_y")))));
-      //sub(100, add(square(v("mag_x")), square(v("mag_y")))));
       add(square(v("mag_x")), square(v("mag_y"))));
-      //sub(65535, add(square(v("mag_x")), square(v("mag_y")))));
-
 
   return sobel;
 }
@@ -9430,7 +9426,6 @@ App sobel(const std::string output_name) {
       {{-1, -1}, {-1, 0}, {-1, 1}, {1, -1}, {1, 0}, {1, 1}});
   sobel.func2d("mag_y", "sobel_my", "img", {1, 1},
       {{-1, -1}, {-1, 1}, {0, -1}, {0, 1}, {1, -1}, {1, 1}});
-      //{{-1, 1}, {-1, -1}, {0, 1}, {0, - 1}, {1, 1}, {1, -1}});
 
   Window xwindow{"mag_x", {1, 1}, {{0, 0}}};
   Window ywindow{"mag_y", {1, 1}, {{0, 0}}};
@@ -9726,7 +9721,8 @@ void sobel_16_app_test(const std::string& prefix) {
 
   //int cols = 10;
   //int rows = 10;
-  vector<int> factors{1, 2, 4, 8};
+  //vector<int> factors{1, 2, 4, 8};
+  vector<int> factors{1, 16, 32};
   //for (int i = 0; i < 5; i++) {
   for (auto factor : factors) {
     int unroll_factor = factor;
@@ -9772,7 +9768,8 @@ void blur_xy_16_app_test(const std::string& prefix) {
   int cols = 1920;
   int rows = 1080;
 
-  vector<int> factors{1, 2, 4, 8};
+  //vector<int> factors{1, 2, 4, 8};
+  vector<int> factors{1, 16, 32};
   for (auto f : factors) {
     int unroll_factor = f;
     cout << tab(1) << "unroll factor: " << unroll_factor << endl;
@@ -11043,6 +11040,19 @@ void naive_implementations() {
 }
 
 void iccad_tests() {
+  camera_pipeline_test("cp_noinit_ln" + istr);
+  sobel_16_app_test("sbl_ln" + istr);
+  blur_xy_16_app_test("bxy_noinit_ln" + istr);
+  assert(false);
+
+  stencil_chain_five_stage_iccad_apps("icsc_5s");
+  stencil_chain_one_stage_iccad_apps("icsc_1s");
+  stencil_chain_no_dsp_long_iccad_apps("icsc_ndln");
+  stencil_chain_no_dsp_iccad_apps("icsc_nd");
+  increment_iccad_apps("inc");
+  identity_stream_iccad_apps("idstream");
+  stencil_chain_iccad_apps("icsc");
+
   //App ef = ef_cartoon("ef_sm");
   //generate_app_benchmark("ef_sm", ef, {1920, 1080}, 1);
   //assert(false);
@@ -11064,10 +11074,8 @@ void iccad_tests() {
   int index = 20;
   string istr = str(index);
 
-  camera_pipeline_test("cp_noinit_" + istr);
-  blur_xy_16_app_test("bxy_noinit_p2" + istr);
+
   harris16_test("hr" + istr);
-  sobel_16_app_test("sbl" + istr);
   different_path_latencies_test("dp");
   harris_test();
   pointwise_app_test();
@@ -18335,13 +18343,7 @@ void misc_tests() {
 }
 
 void application_tests() {
-  stencil_chain_five_stage_iccad_apps("icsc_5s");
-  stencil_chain_one_stage_iccad_apps("icsc_1s");
-  stencil_chain_no_dsp_long_iccad_apps("icsc_ndln");
-  stencil_chain_no_dsp_iccad_apps("icsc_nd");
-  increment_iccad_apps("inc");
-  identity_stream_iccad_apps("idstream");
-  stencil_chain_iccad_apps("icsc");
+  iccad_tests();
 
   up_to_id_stream_tests();
   up_to_ram_addr_unit_test();
