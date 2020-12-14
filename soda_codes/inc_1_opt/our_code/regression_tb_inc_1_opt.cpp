@@ -26,7 +26,7 @@ int main() {
     auto actual_lane_0 = actual.extract<0*16, 15>();
 #ifdef __INT_OUTPUT__
     fout << (int) actual_lane_0 << endl;
-#else
+#else // __INT_OUTPUT__
     fout << actual_lane_0 << endl;
 #endif // __INT_OUTPUT__
   }

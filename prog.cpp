@@ -2453,7 +2453,11 @@ void generate_regression_testbench(prog& prg, map<string, UBuffer>& buffers) {
         << " = actual.extract<" << p << "*" << port_width << ", "
         << (p + 1)*port_width - 1 << ">();" << endl;
 
+      rgtb << "#ifdef __INT_OUTPUT__" << endl;
+      rgtb << tab(2) << "fout << (int) actual_lane_" << p << " << endl;" << endl;
+      rgtb << "#else // __INT_OUTPUT__" << endl;
       rgtb << tab(2) << "fout << actual_lane_" << p << " << endl;" << endl;
+      rgtb << "#endif // __INT_OUTPUT__" << endl;
     }
 
     rgtb << tab(1) << "}" << endl << endl;

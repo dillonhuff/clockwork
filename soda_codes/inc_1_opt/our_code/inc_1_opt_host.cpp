@@ -38,7 +38,7 @@ int main(int argc, char **argv) {
   std::vector<uint8_t, aligned_allocator<uint8_t> > inc_1_update_0_write_pipe0(inc_1_update_0_write_pipe0_size_bytes);
 
   // TODO: POPULATE BUFFERS FOR EACH PIPELINE
-//#ifdef __POPULATE_HOST_INPUTS__
+#ifdef __POPULATE_HOST_INPUTS__
   std::ofstream input_in_update_0_read("in_update_0_read.csv");
   for (int i = 0; i < in_update_0_read_pipe0_DATA_SIZE; i++) {
     uint16_t val = (rand() % 256);
@@ -51,7 +51,7 @@ int main(int argc, char **argv) {
     ((uint16_t*) (inc_1_update_0_write_pipe0.data()))[i] = 0;
   }
 
-//#endif // __POPULATE_HOST_INPUTS__
+#endif // __POPULATE_HOST_INPUTS__
   auto devices = xcl::get_xil_devices();
   auto fileBuf = xcl::read_binary_file(binaryFile);
   cl::Program::Binaries bins{{fileBuf.data(), fileBuf.size()}};
