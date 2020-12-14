@@ -127,4 +127,4 @@ for c in rects:
     autolabel(c)
 
 plt.show()
-fig.savefig('clockwork_cpu_theoretical_peak_ppf.eps', format='eps')
+fig.savefig('clockwork_ppf.eps', format='eps')

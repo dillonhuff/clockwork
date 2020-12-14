@@ -124,6 +124,7 @@ void move_to_benchmarks_folder(const std::string& app_name) {
   system(("mv set_app.sh " + app_dir).c_str());
 
   system(("mv " + out_name + "_kernel.h " + soda_dir).c_str());
+  system(("mv " + out_name + ".soda " + soda_dir).c_str());
 
   system(("mv " + out_name + "*.ini " + synth_dir).c_str());
   system(("cp " + out_name + "*.cpp " + synth_dir).c_str());
