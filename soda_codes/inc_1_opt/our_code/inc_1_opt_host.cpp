@@ -48,7 +48,7 @@ int main(int argc, char **argv) {
 
   input_in_update_0_read.close();
   for (int i = 0; i < inc_1_update_0_write_DATA_SIZE; i++) {
-    ((uint16_t*) (inc_1_update_0_write.data()))[i] = 0;
+    ((uint16_t*) (inc_1_update_0_write_pipe0.data()))[i] = 0;
   }
 
 #endif // __POPULATE_HOST_INPUTS__
