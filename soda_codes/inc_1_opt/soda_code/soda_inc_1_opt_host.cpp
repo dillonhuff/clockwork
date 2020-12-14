@@ -82,10 +82,10 @@ int main(int argc, char **argv) {
     exit(EXIT_FAILURE);
   }
 
-  OCL_CHECK(err, cl::Buffer inc_1_update_0_write_pipe0_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_READ_ONLY, inc_1_update_0_write_size_bytes, inc_1_update_0_write.data(), &err));
+  OCL_CHECK(err, cl::Buffer inc_1_update_0_write_pipe0_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_READ_ONLY, inc_1_update_0_write_size_bytes, inc_1_update_0_write_pipe0.data(), &err));
   OCL_CHECK(err, err = krnl_vector_add.setArg(0, inc_1_update_0_write_pipe0_ocl_buf));
 
-  OCL_CHECK(err, cl::Buffer in_update_0_read_pipe0_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_WRITE_ONLY, in_update_0_read_size_bytes, in_update_0_read.data(), &err));
+  OCL_CHECK(err, cl::Buffer in_update_0_read_pipe0_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_WRITE_ONLY, in_update_0_read_size_bytes, in_update_0_read_pipe0.data(), &err));
   OCL_CHECK(err, err = krnl_vector_add.setArg(1, in_update_0_read_pipe0_ocl_buf));
 
   uint64_t transfer_size = num_epochs*(2073600 / 1);
