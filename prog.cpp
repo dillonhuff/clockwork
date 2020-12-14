@@ -405,10 +405,10 @@ void populate_input(std::ostream& out, const std::string& edge_bundle, const str
     "input_" + edge_bundle;
 
   out << tab(1) << "std::ofstream input_" << edge_bundle << "(\"" << edge_bundle << ".csv\");" << endl;
-  out << tab(1) << "for (int i = 0; i < " << edge_bundle << "_DATA_SIZE; i++) {" << endl;
+  out << tab(1) << "for (int i = 0; i < " << edge_bundle << "_pipe0_DATA_SIZE; i++) {" << endl;
   out << tab(2) << tp << " val = (rand() % 256);" << endl;
   out << tab(2) << "input_" << edge_bundle << " << val << std::endl;" << endl;
-  out << tab(2) << "((" << tp << "*) (" << edge_bundle << ".data()))[i] = val;" << endl;
+  out << tab(2) << "((" << tp << "*) (" << edge_bundle << "_pipe0.data()))[i] = val;" << endl;
   out << tab(1) << "}" << endl << endl;
   out << tab(1) << "input_" << edge_bundle << ".close();" << endl;
 }

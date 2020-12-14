@@ -11041,6 +11041,7 @@ void naive_implementations() {
 
 void iccad_tests() {
 
+  increment_iccad_apps("inc");
   camera_pipeline_test("cp_noinit_ln");
   sobel_16_app_test("sbl_ln");
   blur_xy_16_app_test("bxy_noinit_ln");
@@ -11050,7 +11051,6 @@ void iccad_tests() {
   stencil_chain_one_stage_iccad_apps("icsc_1s");
   stencil_chain_no_dsp_long_iccad_apps("icsc_ndln");
   stencil_chain_no_dsp_iccad_apps("icsc_nd");
-  increment_iccad_apps("inc");
   identity_stream_iccad_apps("idstream");
   stencil_chain_iccad_apps("icsc");
 
