@@ -663,7 +663,7 @@ void generate_xilinx_accel_soda_host(CodegenOptions& options, map<string, UBuffe
     auto edge_bundle = edge_out.second;
     auto buf = edge_out.first;
     out << tab(1) << "for (int i = 0; i < " << edge_bundle << "_DATA_SIZE; i++) {" << endl;
-    out << tab(2) << "((" << vanilla_c_pixel_type_string(buf, buffers) << "*) (" << edge_bundle << ".data()))[i] = 0;" << endl;
+    out << tab(2) << "((" << vanilla_c_pixel_type_string(buf, buffers) << "*) (" << edge_bundle << "_pipe0.data()))[i] = 0;" << endl;
     out << tab(1) << "}" << endl << endl;
   }
 
@@ -766,7 +766,7 @@ void generate_xilinx_accel_host(CodegenOptions& options, map<string, UBuffer>& b
     auto edge_bundle = edge_out.second;
     auto buf = edge_out.first;
     out << tab(1) << "for (int i = 0; i < " << edge_bundle << "_DATA_SIZE; i++) {" << endl;
-    out << tab(2) << "((" << vanilla_c_pixel_type_string(buf, buffers) << "*) (" << edge_bundle << ".data()))[i] = 0;" << endl;
+    out << tab(2) << "((" << vanilla_c_pixel_type_string(buf, buffers) << "*) (" << edge_bundle << "_pipe0.data()))[i] = 0;" << endl;
     out << tab(1) << "}" << endl << endl;
   }
   out << "#endif // __POPULATE_HOST_INPUTS__" << endl;
