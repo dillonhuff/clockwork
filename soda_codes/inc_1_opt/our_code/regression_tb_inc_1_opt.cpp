@@ -24,7 +24,11 @@ int main() {
   for (int i = 0; i < 2073600; i++) {
     hw_uint<16> actual = inc_1_update_0_write.read();
     auto actual_lane_0 = actual.extract<0*16, 15>();
+#ifdef __INT_OUTPUT__
+    fout << (int) actual_lane_0 << endl;
+#else // __INT_OUTPUT__
     fout << actual_lane_0 << endl;
+#endif // __INT_OUTPUT__
   }
 
   in_pix.close();
