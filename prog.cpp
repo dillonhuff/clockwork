@@ -671,13 +671,13 @@ void generate_xilinx_accel_soda_host(CodegenOptions& options, map<string, UBuffe
 
   int arg_pos = 0;
   for (auto in_bundle : out_bundles(buffers, prg)) {
-    out << tab(1) << "OCL_CHECK(err, cl::Buffer " << in_bundle << "_pipe0_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_READ_ONLY, " << in_bundle << "_size_bytes, " << in_bundle << ".data(), &err));" << endl;
+    out << tab(1) << "OCL_CHECK(err, cl::Buffer " << in_bundle << "_pipe0_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_READ_ONLY, " << in_bundle << "_size_bytes, " << in_bundle << "_pipe0.data(), &err));" << endl;
     out << tab(1) << "OCL_CHECK(err, err = krnl_vector_add.setArg(" << arg_pos << ", " << in_bundle << "_pipe0_ocl_buf));" << endl << endl;
     arg_pos++;
   }
 
   for (auto in_bundle : in_bundles(buffers, prg)) {
-    out << tab(1) << "OCL_CHECK(err, cl::Buffer " << in_bundle << "_pipe0_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_WRITE_ONLY, " << in_bundle << "_size_bytes, " << in_bundle << ".data(), &err));" << endl;
+    out << tab(1) << "OCL_CHECK(err, cl::Buffer " << in_bundle << "_pipe0_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_WRITE_ONLY, " << in_bundle << "_size_bytes, " << in_bundle << "_pipe0.data(), &err));" << endl;
 
     out << tab(1) << "OCL_CHECK(err, err = krnl_vector_add.setArg(" << arg_pos << ", " << in_bundle << "_pipe0_ocl_buf));" << endl << endl;
     arg_pos++;
