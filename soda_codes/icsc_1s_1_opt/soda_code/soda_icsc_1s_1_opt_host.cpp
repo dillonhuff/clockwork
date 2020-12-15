@@ -20,13 +20,13 @@ int main(int argc, char **argv) {
   size_t total_size_bytes = 0;
   size_t total_size_bytes_read = 0;
   size_t total_size_bytes_written = 0;
-  const int icsc_1s_1_update_0_write_pipe0_DATA_SIZE = num_epochs*2077682;
+  const int icsc_1s_1_update_0_write_pipe0_DATA_SIZE = num_epochs*2073600;
   const int icsc_1s_1_update_0_write_BYTES_PER_PIXEL = 16 / 8;
   size_t icsc_1s_1_update_0_write_size_bytes = icsc_1s_1_update_0_write_BYTES_PER_PIXEL * icsc_1s_1_update_0_write_pipe0_DATA_SIZE;
 
   total_size_bytes += icsc_1s_1_update_0_write_size_bytes;
   total_size_bytes_written += icsc_1s_1_update_0_write_size_bytes;
-  const int in_update_0_read_pipe0_DATA_SIZE = num_epochs*2077682;
+  const int in_update_0_read_pipe0_DATA_SIZE = num_epochs*2073600;
   const int in_update_0_read_BYTES_PER_PIXEL = 16 / 8;
   size_t in_update_0_read_size_bytes = in_update_0_read_BYTES_PER_PIXEL * in_update_0_read_pipe0_DATA_SIZE;
 
@@ -88,7 +88,7 @@ int main(int argc, char **argv) {
   OCL_CHECK(err, cl::Buffer in_update_0_read_pipe0_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_WRITE_ONLY, in_update_0_read_size_bytes, in_update_0_read_pipe0.data(), &err));
   OCL_CHECK(err, err = krnl_vector_add.setArg(1, in_update_0_read_pipe0_ocl_buf));
 
-  uint64_t transfer_size = num_epochs*(2077682 / 1);
+  uint64_t transfer_size = num_epochs*(2073600 / 1);
   OCL_CHECK(err, err = krnl_vector_add.setArg(2, transfer_size));
 
   std::cout << "Migrating memory" << std::endl;
