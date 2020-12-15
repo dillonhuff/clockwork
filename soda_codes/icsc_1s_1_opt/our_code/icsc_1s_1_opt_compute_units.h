@@ -8,7 +8,7 @@ hw_uint<16> in_generated_compute(hw_uint<16*1> in_off_chip) {
 }
 
 hw_uint<16> stg0_generated_compute(hw_uint<16*4> in) {
-  return uint16_t((((uint16_t(in.get<16, 2>()) + uint16_t(in.get<16, 3>())) + (uint16_t(in.get<16, 1>()) + (uint16_t(in.get<16, 0>()) + uint16_t(in.get<16, 2>())))) / 5));
+  return uint16_t(((uint16_t(in.get<16, 2>()) + uint16_t(in.get<16, 3>())) + (uint16_t(in.get<16, 1>()) + (uint16_t(in.get<16, 0>()) + uint16_t(in.get<16, 2>())))));
 }
 
 hw_uint<16> icsc_1s_1_generated_compute(hw_uint<16*1> stg0) {
