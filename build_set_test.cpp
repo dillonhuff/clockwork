@@ -8772,12 +8772,20 @@ App stencil_chain_one_stage_iccad(const std::string& out_name) {
   for (int i = 0; i < levels; i++) {
     string current = "stg" + str(i);
     lp.func2d(current,
-      (add({
+      //(add({
+        //v(last, 0, 1),
+        //v(last, 1, 0),
+        //v(last, 0, 0),
+        //v(last, -1, 0),
+        //v(last, 0, 1)})));
+
+      mul(add({
         v(last, 0, 1),
         v(last, 1, 0),
         v(last, 0, 0),
         v(last, -1, 0),
-        v(last, 0, 1)})));
+        v(last, 0, 1)}), 5));
+
       //div(add({
         //v(last, 0, 1),
         //v(last, 1, 0),
