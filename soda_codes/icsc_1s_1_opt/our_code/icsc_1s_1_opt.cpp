@@ -9,125 +9,46 @@ using namespace std;
 // compute file: icsc_1s_1_opt_compute_units.h
 #include "icsc_1s_1_opt_compute_units.h"
 
-struct in_in_update_0_write0_merged_banks_4_cache {
-	// RAM Box: {[-1, 1920], [0, 1079]}
-	// Capacity: 1925
-	// # of read delays: 5
-  // 0, 1, 1922, 1923, 1924
-	hw_uint<16> f0;
-	hw_uint<16> f2;
-	fifo<hw_uint<16>, 1920> f3;
-	hw_uint<16> f4;
-	hw_uint<16> f6;
-	hw_uint<16> f8;
-
-
-	inline hw_uint<16> peek_0() {
-		return f0;
-	}
-
-	inline hw_uint<16> peek_1() {
-		return f2;
-	}
-
-	inline hw_uint<16> peek_1921() {
+struct in_in_update_0_write0_to_stg0_rd0_cache {
+	// RAM Box: {[0, 1919], [0, 1079]}
+	// Capacity: 1
+	// # of read delays: 2
+  // 0, 0
+	fifo<hw_uint<16>, 1> f;
+	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-		return f3.back();
-	}
-
-	inline hw_uint<16> peek_1922() {
-		return f4;
-	}
-
-	inline hw_uint<16> peek_1923() {
-		return f6;
-	}
-
-	inline hw_uint<16> peek_1924() {
-		return f8;
-	}
+    return f.peek(0 - offset);
+  }
 
 
 
 	inline void push(const hw_uint<16> value) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 1 reading from capacity: 1
-    f8 = f6;
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    // cap: 1 reading from capacity: 1
-    f6 = f4;
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    // cap: 1 reading from capacity: 1920
-    f4 = f3.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    // cap: 1920 reading from capacity: 1
-    f3.push(f2);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    // cap: 1 reading from capacity: 1
-    f2 = f0;
-    // cap: 1
-    f0 = value;
-	}
+    return f.push(value);
+  }
 
 };
 
 struct in_cache {
   // # of banks: 1
-  in_in_update_0_write0_merged_banks_4_cache in_in_update_0_write0_merged_banks_4;
+  in_in_update_0_write0_to_stg0_rd0_cache in_in_update_0_write0_to_stg0_rd0;
 };
 
 
 
 inline void in_in_update_0_write0_write(hw_uint<16>& in_in_update_0_write0, in_cache& in, int d0, int d1, int dynamic_address) {
-  in.in_in_update_0_write0_merged_banks_4.push(in_in_update_0_write0);
+  in.in_in_update_0_write0_to_stg0_rd0.push(in_in_update_0_write0);
 }
 
 inline hw_uint<16> stg0_rd0_select(in_cache& in, int d0, int d1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // stg0_rd0 read pattern: { stg0_update_0[d0, d1] -> in[-1 + d0, d1] : 0 <= d0 <= 1919 and 0 <= d1 <= 1079 }
-  // Read schedule : { stg0_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : 0 <= d0 <= 1919 and 0 <= d1 <= 1079 }
-  // Write schedule: { in_update_0[d0, d1] -> [d1, d0, 1] : -1 <= d0 <= 1920 and 0 <= d1 <= 1080 }
-  auto value_in_in_update_0_write0 = in.in_in_update_0_write0_merged_banks_4.peek_1924();
-  return value_in_in_update_0_write0;
-  return 0;
-}
-
-inline hw_uint<16> stg0_rd1_select(in_cache& in, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-  // stg0_rd1 read pattern: { stg0_update_0[d0, d1] -> in[d0, d1] : 0 <= d0 <= 1919 and 0 <= d1 <= 1079 }
-  // Read schedule : { stg0_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : 0 <= d0 <= 1919 and 0 <= d1 <= 1079 }
-  // Write schedule: { in_update_0[d0, d1] -> [d1, d0, 1] : -1 <= d0 <= 1920 and 0 <= d1 <= 1080 }
-  auto value_in_in_update_0_write0 = in.in_in_update_0_write0_merged_banks_4.peek_1923();
-  return value_in_in_update_0_write0;
-  return 0;
-}
-
-inline hw_uint<16> stg0_rd2_select(in_cache& in, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-  // stg0_rd2 read pattern: { stg0_update_0[d0, d1] -> in[d0, 1 + d1] : 0 <= d0 <= 1919 and 0 <= d1 <= 1079 }
-  // Read schedule : { stg0_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : 0 <= d0 <= 1919 and 0 <= d1 <= 1079 }
-  // Write schedule: { in_update_0[d0, d1] -> [d1, d0, 1] : -1 <= d0 <= 1920 and 0 <= d1 <= 1080 }
-  auto value_in_in_update_0_write0 = in.in_in_update_0_write0_merged_banks_4.peek_1();
-  return value_in_in_update_0_write0;
-  return 0;
-}
-
-inline hw_uint<16> stg0_rd3_select(in_cache& in, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-  // stg0_rd3 read pattern: { stg0_update_0[d0, d1] -> in[1 + d0, d1] : 0 <= d0 <= 1919 and 0 <= d1 <= 1079 }
-  // Read schedule : { stg0_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : 0 <= d0 <= 1919 and 0 <= d1 <= 1079 }
-  // Write schedule: { in_update_0[d0, d1] -> [d1, d0, 1] : -1 <= d0 <= 1920 and 0 <= d1 <= 1080 }
-  auto value_in_in_update_0_write0 = in.in_in_update_0_write0_merged_banks_4.peek_1922();
+  // stg0_rd0 read pattern: { stg0_update_0[d0, d1] -> in[d0, d1] : 0 <= d0 <= 1919 and 0 <= d1 <= 1079 }
+  // Read schedule : { stg0_update_0[d0, d1] -> [d1, d0, 2] : 0 <= d0 <= 1919 and 0 <= d1 <= 1079 }
+  // Write schedule: { in_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 1919 and 0 <= d1 <= 1079 }
+  auto value_in_in_update_0_write0 = in.in_in_update_0_write0_to_stg0_rd0.peek(/* one reader or all rams */ 0);
   return value_in_in_update_0_write0;
   return 0;
 }
@@ -142,25 +63,13 @@ inline void in_in_update_0_write_bundle_write(hw_uint<16>& in_update_0_write, in
 
 // stg0_update_0_read
 //	stg0_rd0
-//	stg0_rd1
-//	stg0_rd2
-//	stg0_rd3
-inline hw_uint<64> in_stg0_update_0_read_bundle_read(in_cache& in, int d0, int d1, int dynamic_address) {
-  // # of ports in bundle: 4
+inline hw_uint<16> in_stg0_update_0_read_bundle_read(in_cache& in, int d0, int d1, int dynamic_address) {
+  // # of ports in bundle: 1
     // stg0_rd0
-    // stg0_rd1
-    // stg0_rd2
-    // stg0_rd3
 
-	hw_uint<64> result;
+	hw_uint<16> result;
 	hw_uint<16> stg0_rd0_res = stg0_rd0_select(in, d0, d1, dynamic_address);
-	set_at<0, 64>(result, stg0_rd0_res);
-	hw_uint<16> stg0_rd1_res = stg0_rd1_select(in, d0, d1, dynamic_address);
-	set_at<16, 64>(result, stg0_rd1_res);
-	hw_uint<16> stg0_rd2_res = stg0_rd2_select(in, d0, d1, dynamic_address);
-	set_at<32, 64>(result, stg0_rd2_res);
-	hw_uint<16> stg0_rd3_res = stg0_rd3_select(in, d0, d1, dynamic_address);
-	set_at<48, 64>(result, stg0_rd3_res);
+	set_at<0, 16>(result, stg0_rd0_res);
 	return result;
 }
 
@@ -201,8 +110,8 @@ inline hw_uint<16> icsc_1s_1_rd0_select(stg0_cache& stg0, int d0, int d1, int dy
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // icsc_1s_1_rd0 read pattern: { icsc_1s_1_update_0[d0, d1] -> stg0[d0, d1] : 0 <= d0 <= 1919 and 0 <= d1 <= 1079 }
-  // Read schedule : { icsc_1s_1_update_0[d0, d1] -> [1 + d1, 1 + d0, 3] : 0 <= d0 <= 1919 and 0 <= d1 <= 1079 }
-  // Write schedule: { stg0_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : 0 <= d0 <= 1919 and 0 <= d1 <= 1079 }
+  // Read schedule : { icsc_1s_1_update_0[d0, d1] -> [d1, d0, 3] : 0 <= d0 <= 1919 and 0 <= d1 <= 1079 }
+  // Write schedule: { stg0_update_0[d0, d1] -> [d1, d0, 2] : 0 <= d0 <= 1919 and 0 <= d1 <= 1079 }
   auto value_stg0_stg0_update_0_write0 = stg0.stg0_stg0_update_0_write0_to_icsc_1s_1_rd0.peek(/* one reader or all rams */ 0);
   return value_stg0_stg0_update_0_write0;
   return 0;
@@ -228,7 +137,7 @@ inline void stg0_stg0_update_0_write_bundle_write(hw_uint<16>& stg0_update_0_wri
 	stg0_stg0_update_0_write0_write(stg0_stg0_update_0_write0_res, stg0, d0, d1, dynamic_address);
 }
 
-// Total re-use buffer capacity: 30784 bits
+// Total re-use buffer capacity: 0 bits
 
 
 // Operation logic
@@ -299,37 +208,37 @@ void icsc_1s_1_opt(HWStream<hw_uint<16> >& /* get_args num ports = 1 */in_off_ch
 #pragma HLS inline recursive
 #endif // __VIVADO_SYNTH__
 
-// schedule: { in_update_0[d0, d1] -> [d1, d0, 1] : -1 <= d0 <= 1920 and 0 <= d1 <= 1080; icsc_1s_1_update_0[d0, d1] -> [1 + d1, 1 + d0, 3] : 0 <= d0 <= 1919 and 0 <= d1 <= 1079; stg0_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : 0 <= d0 <= 1919 and 0 <= d1 <= 1079 }
-//   { in_update_0[d0, d1] -> [d1, d0, 1] : -1 <= d0 <= 1920 and 0 <= d1 <= 1080 }
-// Condition for in_update_0(((-1 + i2 == 0) && (1 + i1 >= 0) && (1920 - i1 >= 0) && (i0 >= 0) && (1080 - i0 >= 0)))
-//   { icsc_1s_1_update_0[d0, d1] -> [1 + d1, 1 + d0, 3] : 0 <= d0 <= 1919 and 0 <= d1 <= 1079 }
-// Condition for icsc_1s_1_update_0(((-3 + i2 == 0) && (-1 + i1 >= 0) && (1920 - i1 >= 0) && (-1 + i0 >= 0) && (1080 - i0 >= 0)))
-//   { stg0_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : 0 <= d0 <= 1919 and 0 <= d1 <= 1079 }
-// Condition for stg0_update_0(((-2 + i2 == 0) && (-1 + i1 >= 0) && (1920 - i1 >= 0) && (-1 + i0 >= 0) && (1080 - i0 >= 0)))
+// schedule: { in_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 1919 and 0 <= d1 <= 1079; icsc_1s_1_update_0[d0, d1] -> [d1, d0, 3] : 0 <= d0 <= 1919 and 0 <= d1 <= 1079; stg0_update_0[d0, d1] -> [d1, d0, 2] : 0 <= d0 <= 1919 and 0 <= d1 <= 1079 }
+//   { in_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 1919 and 0 <= d1 <= 1079 }
+// Condition for in_update_0(((-1 + i2 == 0) && (i1 >= 0) && (1919 - i1 >= 0) && (i0 >= 0) && (1079 - i0 >= 0)))
+//   { icsc_1s_1_update_0[d0, d1] -> [d1, d0, 3] : 0 <= d0 <= 1919 and 0 <= d1 <= 1079 }
+// Condition for icsc_1s_1_update_0(((-3 + i2 == 0) && (i1 >= 0) && (1919 - i1 >= 0) && (i0 >= 0) && (1079 - i0 >= 0)))
+//   { stg0_update_0[d0, d1] -> [d1, d0, 2] : 0 <= d0 <= 1919 and 0 <= d1 <= 1079 }
+// Condition for stg0_update_0(((-2 + i2 == 0) && (i1 >= 0) && (1919 - i1 >= 0) && (i0 >= 0) && (1079 - i0 >= 0)))
 
   /*
   // Schedules...
-    // icsc_1s_1_update_0 -> [1*d1*1*1 + 1*1,1*d0*1*1 + 1*1,1*3]
+    // icsc_1s_1_update_0 -> [1*d1*1*1 + 1*0,1*d0*1*1 + 1*0,1*3]
     // in_off_chip_update_0 -> [1*d1*1*1 + 1*0,1*d0*1*1 + 1*0,1*0]
     // in_update_0 -> [1*d1*1*1 + 1*0,1*d0*1*1 + 1*0,1*1]
-    // stg0_update_0 -> [1*d1*1*1 + 1*1,1*d0*1*1 + 1*1,1*2]
-for (int c0 = 0; c0 <= 1080; c0++) {
-  for (int c1 = -1; c1 <= 1920; c1++) {
+    // stg0_update_0 -> [1*d1*1*1 + 1*0,1*d0*1*1 + 1*0,1*2]
+for (int c0 = 0; c0 <= 1079; c0++) {
+  for (int c1 = 0; c1 <= 1919; c1++) {
 
 #ifdef __VIVADO_SYNTH__
 #pragma HLS pipeline II=1
 #endif // __VIVADO_SYNTH__
 
-    if ((-1 <= c1 && c1 <= 1920) && ((c1 - 0) % 1 == 0) && (0 <= c0 && c0 <= 1080) && ((c0 - 0) % 1 == 0)) {
+    if ((0 <= c1 && c1 <= 1919) && ((c1 - 0) % 1 == 0) && (0 <= c0 && c0 <= 1079) && ((c0 - 0) % 1 == 0)) {
       in_update_0((c1 - 0) / 1, (c0 - 0) / 1);
     }
 
-    if ((1 <= c1 && c1 <= 1920) && ((c1 - 1) % 1 == 0) && (1 <= c0 && c0 <= 1080) && ((c0 - 1) % 1 == 0)) {
-      stg0_update_0((c1 - 1) / 1, (c0 - 1) / 1);
+    if ((0 <= c1 && c1 <= 1919) && ((c1 - 0) % 1 == 0) && (0 <= c0 && c0 <= 1079) && ((c0 - 0) % 1 == 0)) {
+      stg0_update_0((c1 - 0) / 1, (c0 - 0) / 1);
     }
 
-    if ((1 <= c1 && c1 <= 1920) && ((c1 - 1) % 1 == 0) && (1 <= c0 && c0 <= 1080) && ((c0 - 1) % 1 == 0)) {
-      icsc_1s_1_update_0((c1 - 1) / 1, (c0 - 1) / 1);
+    if ((0 <= c1 && c1 <= 1919) && ((c1 - 0) % 1 == 0) && (0 <= c0 && c0 <= 1079) && ((c0 - 0) % 1 == 0)) {
+      icsc_1s_1_update_0((c1 - 0) / 1, (c0 - 0) / 1);
     }
 
   }
@@ -337,27 +246,27 @@ for (int c0 = 0; c0 <= 1080; c0++) {
 
   */
 	  // Schedules...
-	    // icsc_1s_1_update_0 -> [1*d1*1*1 + 1*1,1*d0*1*1 + 1*1,1*3]
+	    // icsc_1s_1_update_0 -> [1*d1*1*1 + 1*0,1*d0*1*1 + 1*0,1*3]
 	    // in_off_chip_update_0 -> [1*d1*1*1 + 1*0,1*d0*1*1 + 1*0,1*0]
 	    // in_update_0 -> [1*d1*1*1 + 1*0,1*d0*1*1 + 1*0,1*1]
-	    // stg0_update_0 -> [1*d1*1*1 + 1*1,1*d0*1*1 + 1*1,1*2]
-	for (int c0 = 0; c0 <= 1080; c0++) {
-	  for (int c1 = -1; c1 <= 1920; c1++) {
+	    // stg0_update_0 -> [1*d1*1*1 + 1*0,1*d0*1*1 + 1*0,1*2]
+	for (int c0 = 0; c0 <= 1079; c0++) {
+	  for (int c1 = 0; c1 <= 1919; c1++) {
 	
 	#ifdef __VIVADO_SYNTH__
 	#pragma HLS pipeline II=1
 	#endif // __VIVADO_SYNTH__
 	
-	    if ((-1 <= c1 && c1 <= 1920) && ((c1 - 0) % 1 == 0) && (0 <= c0 && c0 <= 1080) && ((c0 - 0) % 1 == 0)) {
+	    if ((0 <= c1 && c1 <= 1919) && ((c1 - 0) % 1 == 0) && (0 <= c0 && c0 <= 1079) && ((c0 - 0) % 1 == 0)) {
 	      in_update_0(in_off_chip /* buf name */, in, (c1 - 0) / 1, (c0 - 0) / 1);
 	    }
 	
-	    if ((1 <= c1 && c1 <= 1920) && ((c1 - 1) % 1 == 0) && (1 <= c0 && c0 <= 1080) && ((c0 - 1) % 1 == 0)) {
-	      stg0_update_0(in /* buf name */, stg0, (c1 - 1) / 1, (c0 - 1) / 1);
+	    if ((0 <= c1 && c1 <= 1919) && ((c1 - 0) % 1 == 0) && (0 <= c0 && c0 <= 1079) && ((c0 - 0) % 1 == 0)) {
+	      stg0_update_0(in /* buf name */, stg0, (c1 - 0) / 1, (c0 - 0) / 1);
 	    }
 	
-	    if ((1 <= c1 && c1 <= 1920) && ((c1 - 1) % 1 == 0) && (1 <= c0 && c0 <= 1080) && ((c0 - 1) % 1 == 0)) {
-	      icsc_1s_1_update_0(stg0 /* buf name */, icsc_1s_1, (c1 - 1) / 1, (c0 - 1) / 1);
+	    if ((0 <= c1 && c1 <= 1919) && ((c1 - 0) % 1 == 0) && (0 <= c0 && c0 <= 1079) && ((c0 - 0) % 1 == 0)) {
+	      icsc_1s_1_update_0(stg0 /* buf name */, icsc_1s_1, (c1 - 0) / 1, (c0 - 0) / 1);
 	    }
 	
 	  }
@@ -377,8 +286,8 @@ void icsc_1s_1_opt_wrapper(HWStream<hw_uint<16> >& /* get_args num ports = 1 */i
 #ifdef __VIVADO_SYNTH__
   // { icsc_1s_1_update_0[root = 0, icsc_1s_1_0, icsc_1s_1_1] -> icsc_1s_1[0, 0] : 0 <= icsc_1s_1_0 <= 1919 and 0 <= icsc_1s_1_1 <= 1079 }
 const int icsc_1s_1_update_0_write_pipe0_num_transfers = 2073600;
-  // { in_update_0[root = 0, in_0, in_1] -> in_off_chip[0, 0] : -1 <= in_0 <= 1920 and 0 <= in_1 <= 1080 }
-const int in_update_0_read_pipe0_num_transfers = 2077682;
+  // { in_update_0[root = 0, in_0, in_1] -> in_off_chip[0, 0] : 0 <= in_0 <= 1919 and 0 <= in_1 <= 1079 }
+const int in_update_0_read_pipe0_num_transfers = 2073600;
 
 
 extern "C" {
