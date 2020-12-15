@@ -10,8 +10,8 @@ int main(int argc, char **argv) {
   HWStream<hw_uint<16> > in_update_0_read_channel;
   HWStream<hw_uint<16> > icsc_1s_1_update_0_write_channel;
   // In lanes = 1
-  for (int r = 0; r < 1080; r++) {
-    for (int cl = 0; cl < 1920 / 1; cl++) {
+  for (int r = 0; r < 1081; r++) {
+    for (int cl = 0; cl < 1922 / 1; cl++) {
       hw_uint<16> packed;
       {
       int c = 1*cl + 0;

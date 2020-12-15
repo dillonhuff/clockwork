@@ -9,10 +9,10 @@ int main() {
 
 
   // Loading input data
-  // cmap    : { in_update_0[root = 0, in_0, in_1] -> in_off_chip[0, 0] : 0 <= in_0 <= 1919 and 0 <= in_1 <= 1079 }
-  // read map: { in_off_chip[0, 0] -> in_update_0[root = 0, in_0, in_1] : 0 <= in_0 <= 1919 and 0 <= in_1 <= 1079 }
-  // rng     : { in_update_0[root = 0, in_0, in_1] : 0 <= in_0 <= 1919 and 0 <= in_1 <= 1079 }
-  for (int i = 0; i < 2073600; i++) {
+  // cmap    : { in_update_0[root = 0, in_0, in_1] -> in_off_chip[0, 0] : -1 <= in_0 <= 1920 and 0 <= in_1 <= 1080 }
+  // read map: { in_off_chip[0, 0] -> in_update_0[root = 0, in_0, in_1] : -1 <= in_0 <= 1920 and 0 <= in_1 <= 1080 }
+  // rng     : { in_update_0[root = 0, in_0, in_1] : -1 <= in_0 <= 1920 and 0 <= in_1 <= 1080 }
+  for (int i = 0; i < 2077682; i++) {
     hw_uint<16> in_val;
     set_at<0*16, 16, 16>(in_val, 1*i + 0);
     in_pix << in_val << endl;

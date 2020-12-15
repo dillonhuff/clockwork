@@ -8779,14 +8779,14 @@ App stencil_chain_one_stage_iccad(const std::string& out_name) {
         //v(last, -1, 0),
         //v(last, 0, 1)})));
 
-      mul(v(last, 0, 0), 5));
+      //mul(v(last, 0, 0), 5));
 
-      //mul(add({
-        //v(last, 0, 1),
-        //v(last, 1, 0),
-        //v(last, 0, 0),
-        //v(last, -1, 0),
-        //v(last, 0, 1)}), 5));
+      mul(add({
+        v(last, 0, 1),
+        v(last, 1, 0),
+        v(last, 0, 0),
+        v(last, -1, 0),
+        v(last, 0, 1)}), 5));
 
       //div(add({
         //v(last, 0, 1),
