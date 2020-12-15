@@ -1,4 +1,5 @@
 ../../../aws_collateral/rebuild_host.sh soda_${app}_host.cpp || { echo 'failed to build host'; exit 1; }
+./build_kernel.sh
 ../../../aws_collateral/soda_build_sw_sim.sh || { echo 'Could not build soda sw sim'; exit 1; }
 
 make check TARGET=sw_emu TARGET=$AWS_PLATFORM all
