@@ -14,8 +14,13 @@ int main() {
   // rng     : { in_update_0[root = 0, in_0, in_1] : -1 <= in_0 <= 1920 and 0 <= in_1 <= 1080 }
   for (int i = 0; i < 2077682; i++) {
     hw_uint<16> in_val;
-    set_at<0*16, 16, 16>(in_val, 1*i + 0);
+    //set_at<0*16, 16, 16>(in_val, 1*i + 0);
+    set_at<0*16, 16, 16>(in_val, 10);
+#ifdef __INT_OUTPUT__
+    in_pix << (int) in_val << endl;
+#else // __INT_OUTPUT__
     in_pix << in_val << endl;
+#endif // __INT_OUTPUT__
     in_update_0_read.write(in_val);
   }
 
