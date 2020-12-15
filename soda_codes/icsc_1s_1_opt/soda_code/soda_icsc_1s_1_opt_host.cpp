@@ -20,15 +20,15 @@ int main(int argc, char **argv) {
   size_t total_size_bytes = 0;
   size_t total_size_bytes_read = 0;
   size_t total_size_bytes_written = 0;
-  const int icsc_1s_1_update_0_write_DATA_SIZE = num_epochs*2077682;
+  const int icsc_1s_1_update_0_write_pipe0_DATA_SIZE = num_epochs*2077682;
   const int icsc_1s_1_update_0_write_BYTES_PER_PIXEL = 16 / 8;
-  size_t icsc_1s_1_update_0_write_size_bytes = icsc_1s_1_update_0_write_BYTES_PER_PIXEL * icsc_1s_1_update_0_write_DATA_SIZE;
+  size_t icsc_1s_1_update_0_write_size_bytes = icsc_1s_1_update_0_write_BYTES_PER_PIXEL * icsc_1s_1_update_0_write_pipe0_DATA_SIZE;
 
   total_size_bytes += icsc_1s_1_update_0_write_size_bytes;
   total_size_bytes_written += icsc_1s_1_update_0_write_size_bytes;
-  const int in_update_0_read_DATA_SIZE = num_epochs*2077682;
+  const int in_update_0_read_pipe0_DATA_SIZE = num_epochs*2077682;
   const int in_update_0_read_BYTES_PER_PIXEL = 16 / 8;
-  size_t in_update_0_read_size_bytes = in_update_0_read_BYTES_PER_PIXEL * in_update_0_read_DATA_SIZE;
+  size_t in_update_0_read_size_bytes = in_update_0_read_BYTES_PER_PIXEL * in_update_0_read_pipe0_DATA_SIZE;
 
   total_size_bytes += in_update_0_read_size_bytes;
   total_size_bytes_read += in_update_0_read_size_bytes;
@@ -38,19 +38,19 @@ int main(int argc, char **argv) {
   cl::Kernel krnl_vector_add;
   cl::CommandQueue q;
 
-  std::vector<uint8_t, aligned_allocator<uint8_t> > icsc_1s_1_update_0_write(icsc_1s_1_update_0_write_size_bytes);
-  std::vector<uint8_t, aligned_allocator<uint8_t> > in_update_0_read(in_update_0_read_size_bytes);
+  std::vector<uint8_t, aligned_allocator<uint8_t> > icsc_1s_1_update_0_write_pipe0(icsc_1s_1_update_0_write_size_bytes);
+  std::vector<uint8_t, aligned_allocator<uint8_t> > in_update_0_read_pipe0(in_update_0_read_size_bytes);
 
   std::ofstream input_in_update_0_read("in_update_0_read.csv");
-  for (int i = 0; i < in_update_0_read_DATA_SIZE; i++) {
+  for (int i = 0; i < in_update_0_read_pipe0_DATA_SIZE; i++) {
     uint16_t val = (rand() % 256);
     input_in_update_0_read << val << std::endl;
-    ((uint16_t*) (in_update_0_read.data()))[i] = val;
+    ((uint16_t*) (in_update_0_read_pipe0.data()))[i] = val;
   }
 
   input_in_update_0_read.close();
-  for (int i = 0; i < icsc_1s_1_update_0_write_DATA_SIZE; i++) {
-    ((uint16_t*) (icsc_1s_1_update_0_write.data()))[i] = 0;
+  for (int i = 0; i < icsc_1s_1_update_0_write_pipe0_DATA_SIZE; i++) {
+    ((uint16_t*) (icsc_1s_1_update_0_write_pipe0.data()))[i] = 0;
   }
 
   auto devices = xcl::get_xil_devices();
@@ -82,10 +82,10 @@ int main(int argc, char **argv) {
     exit(EXIT_FAILURE);
   }
 
-  OCL_CHECK(err, cl::Buffer icsc_1s_1_update_0_write_pipe0_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_READ_ONLY, icsc_1s_1_update_0_write_size_bytes, icsc_1s_1_update_0_write.data(), &err));
+  OCL_CHECK(err, cl::Buffer icsc_1s_1_update_0_write_pipe0_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_READ_ONLY, icsc_1s_1_update_0_write_size_bytes, icsc_1s_1_update_0_write_pipe0.data(), &err));
   OCL_CHECK(err, err = krnl_vector_add.setArg(0, icsc_1s_1_update_0_write_pipe0_ocl_buf));
 
-  OCL_CHECK(err, cl::Buffer in_update_0_read_pipe0_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_WRITE_ONLY, in_update_0_read_size_bytes, in_update_0_read.data(), &err));
+  OCL_CHECK(err, cl::Buffer in_update_0_read_pipe0_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_WRITE_ONLY, in_update_0_read_size_bytes, in_update_0_read_pipe0.data(), &err));
   OCL_CHECK(err, err = krnl_vector_add.setArg(1, in_update_0_read_pipe0_ocl_buf));
 
   uint64_t transfer_size = num_epochs*(2077682 / 1);
@@ -119,8 +119,8 @@ nsduration = end - start;
   std::cout << "GB / sec    = " << gbpersec << std::endl;
   printf("Execution time = %f (sec) \n", dsduration);
   std::ofstream regression_result("icsc_1s_1_update_0_write_accel_result.csv");
-  for (int i = 0; i < icsc_1s_1_update_0_write_DATA_SIZE; i++) {
-    regression_result << ((uint16_t*) (icsc_1s_1_update_0_write.data()))[i] << std::endl;
+  for (int i = 0; i < icsc_1s_1_update_0_write_pipe0_DATA_SIZE; i++) {
+    regression_result << ((uint16_t*) (icsc_1s_1_update_0_write_pipe0.data()))[i] << std::endl;
   }
 
   return 0;

@@ -11041,15 +11041,15 @@ void naive_implementations() {
 
 void iccad_tests() {
 
-  increment_iccad_apps("inc");
+  stencil_chain_one_stage_iccad_apps("icsc_1s");
   assert(false);
+  increment_iccad_apps("inc");
   camera_pipeline_test("cp_noinit_ln1c");
   sobel_16_app_test("sbl_ln");
   blur_xy_16_app_test("bxy_noinit_ln");
   assert(false);
 
   stencil_chain_five_stage_iccad_apps("icsc_5s");
-  stencil_chain_one_stage_iccad_apps("icsc_1s");
   stencil_chain_no_dsp_long_iccad_apps("icsc_ndln");
   stencil_chain_no_dsp_iccad_apps("icsc_nd");
   identity_stream_iccad_apps("idstream");
