@@ -20,15 +20,15 @@ int main(int argc, char **argv) {
   size_t total_size_bytes = 0;
   size_t total_size_bytes_read = 0;
   size_t total_size_bytes_written = 0;
-  const int oc_load_in03_read_DATA_SIZE = num_epochs*4096;
+  const int oc_load_in03_read_pipe0_DATA_SIZE = num_epochs*4356;
   const int oc_load_in03_read_BYTES_PER_PIXEL = 32 / 8;
-  size_t oc_load_in03_read_size_bytes = oc_load_in03_read_BYTES_PER_PIXEL * oc_load_in03_read_DATA_SIZE;
+  size_t oc_load_in03_read_size_bytes = oc_load_in03_read_BYTES_PER_PIXEL * oc_load_in03_read_pipe0_DATA_SIZE;
 
   total_size_bytes += oc_load_in03_read_size_bytes;
   total_size_bytes_read += oc_load_in03_read_size_bytes;
-  const int diff_write_DATA_SIZE = num_epochs*4096;
+  const int diff_write_pipe0_DATA_SIZE = num_epochs*4356;
   const int diff_write_BYTES_PER_PIXEL = 32 / 8;
-  size_t diff_write_size_bytes = diff_write_BYTES_PER_PIXEL * diff_write_DATA_SIZE;
+  size_t diff_write_size_bytes = diff_write_BYTES_PER_PIXEL * diff_write_pipe0_DATA_SIZE;
 
   total_size_bytes += diff_write_size_bytes;
   total_size_bytes_written += diff_write_size_bytes;
@@ -38,19 +38,19 @@ int main(int argc, char **argv) {
   cl::Kernel krnl_vector_add;
   cl::CommandQueue q;
 
-  std::vector<uint8_t, aligned_allocator<uint8_t> > diff_write(diff_write_size_bytes);
-  std::vector<uint8_t, aligned_allocator<uint8_t> > oc_load_in03_read(oc_load_in03_read_size_bytes);
+  std::vector<uint8_t, aligned_allocator<uint8_t> > diff_write_pipe0(diff_write_size_bytes);
+  std::vector<uint8_t, aligned_allocator<uint8_t> > oc_load_in03_read_pipe0(oc_load_in03_read_size_bytes);
 
   std::ofstream input_oc_load_in03_read("oc_load_in03_read.csv");
-  for (int i = 0; i < oc_load_in03_read_DATA_SIZE; i++) {
+  for (int i = 0; i < oc_load_in03_read_pipe0_DATA_SIZE; i++) {
     uint32_t val = (rand() % 256);
     input_oc_load_in03_read << val << std::endl;
-    ((uint32_t*) (oc_load_in03_read.data()))[i] = val;
+    ((uint32_t*) (oc_load_in03_read_pipe0.data()))[i] = val;
   }
 
   input_oc_load_in03_read.close();
-  for (int i = 0; i < diff_write_DATA_SIZE; i++) {
-    ((uint32_t*) (diff_write.data()))[i] = 0;
+  for (int i = 0; i < diff_write_pipe0_DATA_SIZE; i++) {
+    ((uint32_t*) (diff_write_pipe0.data()))[i] = 0;
   }
 
   auto devices = xcl::get_xil_devices();
@@ -82,13 +82,13 @@ int main(int argc, char **argv) {
     exit(EXIT_FAILURE);
   }
 
-  OCL_CHECK(err, cl::Buffer diff_write_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_READ_ONLY, diff_write_size_bytes, diff_write.data(), &err));
-  OCL_CHECK(err, err = krnl_vector_add.setArg(0, diff_write_ocl_buf));
+  OCL_CHECK(err, cl::Buffer diff_write_pipe0_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_READ_ONLY, diff_write_size_bytes, diff_write_pipe0.data(), &err));
+  OCL_CHECK(err, err = krnl_vector_add.setArg(0, diff_write_pipe0_ocl_buf));
 
-  OCL_CHECK(err, cl::Buffer oc_load_in03_read_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_WRITE_ONLY, oc_load_in03_read_size_bytes, oc_load_in03_read.data(), &err));
-  OCL_CHECK(err, err = krnl_vector_add.setArg(1, oc_load_in03_read_ocl_buf));
+  OCL_CHECK(err, cl::Buffer oc_load_in03_read_pipe0_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_WRITE_ONLY, oc_load_in03_read_size_bytes, oc_load_in03_read_pipe0.data(), &err));
+  OCL_CHECK(err, err = krnl_vector_add.setArg(1, oc_load_in03_read_pipe0_ocl_buf));
 
-  uint64_t transfer_size = num_epochs*(4096 / 1);
+  uint64_t transfer_size = num_epochs*(4356 / 1);
   OCL_CHECK(err, err = krnl_vector_add.setArg(2, transfer_size));
 
   std::cout << "Migrating memory" << std::endl;
@@ -119,8 +119,8 @@ nsduration = end - start;
   std::cout << "GB / sec    = " << gbpersec << std::endl;
   printf("Execution time = %f (sec) \n", dsduration);
   std::ofstream regression_result("diff_write_accel_result.csv");
-  for (int i = 0; i < diff_write_DATA_SIZE; i++) {
-    regression_result << ((uint32_t*) (diff_write.data()))[i] << std::endl;
+  for (int i = 0; i < diff_write_pipe0_DATA_SIZE; i++) {
+    regression_result << ((uint32_t*) (diff_write_pipe0.data()))[i] << std::endl;
   }
 
   return 0;
