@@ -50,6 +50,17 @@ static int fully_optimizable = 0;
 static int not_fully_optimizable = 0;
 
 
+template<typename T, typename Q>
+void sort_lt_snd_2(std::vector<std::pair<T, Q> >& outputs) {
+  sort_lt(outputs, [](const std::pair<T,Q> &x){return x.second;});
+}
+
+struct affine_controller_ctrl {
+  isl_aff* access_function;
+  isl_aff* sched;
+  isl_set* dom;
+};
+
 int min_address(affine_controller_ctrl& ctrl) {
   isl_map* acc =
     set_range_name(set_domain_name(to_map(ctrl.access_function), "dom"), "addr");
@@ -2897,9 +2908,9 @@ void generate_coreir(CodegenOptions& options,
   if (options.rtl_options.target_tile == TARGET_TILE_M1 ||
       options.rtl_options.target_tile == TARGET_TILE_M3) {
     //count_memory_tiles(prg_mod);
-    garnet_map_module(prg_mod);
-    Module* gmod = ns_new->getModule(prg.name);
-    analyze_post_mapped_app(options, prg, buffers, gmod);
+    //garnet_map_module(prg_mod);
+    //Module* gmod = ns_new->getModule(prg.name);
+    //analyze_post_mapped_app(options, prg, buffers, gmod);
   }
   prg_mod->print();
   //assert(false);
@@ -4491,7 +4502,7 @@ dgraph build_shift_registers(CodegenOptions& options, CoreIR::ModuleDef* def, pr
       for (auto v : shift_registers.out_edges.at(inpt)) {
         vals.push_back({v, shift_registers.weight(inpt, v)});
       }
-      sort_lt(vals, [](const pair<string,int> &x){return x.second;});
+      sort_lt(vals, [](const pair<string, int> & v) {return v.second;});
       for (auto v : vals) {
         cout << tab(1) << v.first << " -(" << v.second << ")-> " << v.second << endl;
       }

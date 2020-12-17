@@ -20,15 +20,15 @@ int main(int argc, char **argv) {
   size_t total_size_bytes = 0;
   size_t total_size_bytes_read = 0;
   size_t total_size_bytes_written = 0;
-  const int pw_math_in_oc03_read_DATA_SIZE = num_epochs*16384;
+  const int pw_math_in_oc03_read_pipe0_DATA_SIZE = num_epochs*16384;
   const int pw_math_in_oc03_read_BYTES_PER_PIXEL = 32 / 8;
-  size_t pw_math_in_oc03_read_size_bytes = pw_math_in_oc03_read_BYTES_PER_PIXEL * pw_math_in_oc03_read_DATA_SIZE;
+  size_t pw_math_in_oc03_read_size_bytes = pw_math_in_oc03_read_BYTES_PER_PIXEL * pw_math_in_oc03_read_pipe0_DATA_SIZE;
 
   total_size_bytes += pw_math_in_oc03_read_size_bytes;
   total_size_bytes_read += pw_math_in_oc03_read_size_bytes;
-  const int pw_math_in47_write_DATA_SIZE = num_epochs*16384;
+  const int pw_math_in47_write_pipe0_DATA_SIZE = num_epochs*16384;
   const int pw_math_in47_write_BYTES_PER_PIXEL = 32 / 8;
-  size_t pw_math_in47_write_size_bytes = pw_math_in47_write_BYTES_PER_PIXEL * pw_math_in47_write_DATA_SIZE;
+  size_t pw_math_in47_write_size_bytes = pw_math_in47_write_BYTES_PER_PIXEL * pw_math_in47_write_pipe0_DATA_SIZE;
 
   total_size_bytes += pw_math_in47_write_size_bytes;
   total_size_bytes_written += pw_math_in47_write_size_bytes;
@@ -38,19 +38,19 @@ int main(int argc, char **argv) {
   cl::Kernel krnl_vector_add;
   cl::CommandQueue q;
 
-  std::vector<uint8_t, aligned_allocator<uint8_t> > pw_math_in47_write(pw_math_in47_write_size_bytes);
-  std::vector<uint8_t, aligned_allocator<uint8_t> > pw_math_in_oc03_read(pw_math_in_oc03_read_size_bytes);
+  std::vector<uint8_t, aligned_allocator<uint8_t> > pw_math_in47_write_pipe0(pw_math_in47_write_size_bytes);
+  std::vector<uint8_t, aligned_allocator<uint8_t> > pw_math_in_oc03_read_pipe0(pw_math_in_oc03_read_size_bytes);
 
   std::ofstream input_pw_math_in_oc03_read("pw_math_in_oc03_read.csv");
-  for (int i = 0; i < pw_math_in_oc03_read_DATA_SIZE; i++) {
+  for (int i = 0; i < pw_math_in_oc03_read_pipe0_DATA_SIZE; i++) {
     uint32_t val = (rand() % 256);
     input_pw_math_in_oc03_read << val << std::endl;
-    ((uint32_t*) (pw_math_in_oc03_read.data()))[i] = val;
+    ((uint32_t*) (pw_math_in_oc03_read_pipe0.data()))[i] = val;
   }
 
   input_pw_math_in_oc03_read.close();
-  for (int i = 0; i < pw_math_in47_write_DATA_SIZE; i++) {
-    ((uint32_t*) (pw_math_in47_write.data()))[i] = 0;
+  for (int i = 0; i < pw_math_in47_write_pipe0_DATA_SIZE; i++) {
+    ((uint32_t*) (pw_math_in47_write_pipe0.data()))[i] = 0;
   }
 
   auto devices = xcl::get_xil_devices();
@@ -82,10 +82,10 @@ int main(int argc, char **argv) {
     exit(EXIT_FAILURE);
   }
 
-  OCL_CHECK(err, cl::Buffer pw_math_in47_write_pipe0_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_READ_ONLY, pw_math_in47_write_size_bytes, pw_math_in47_write.data(), &err));
+  OCL_CHECK(err, cl::Buffer pw_math_in47_write_pipe0_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_READ_ONLY, pw_math_in47_write_size_bytes, pw_math_in47_write_pipe0.data(), &err));
   OCL_CHECK(err, err = krnl_vector_add.setArg(0, pw_math_in47_write_pipe0_ocl_buf));
 
-  OCL_CHECK(err, cl::Buffer pw_math_in_oc03_read_pipe0_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_WRITE_ONLY, pw_math_in_oc03_read_size_bytes, pw_math_in_oc03_read.data(), &err));
+  OCL_CHECK(err, cl::Buffer pw_math_in_oc03_read_pipe0_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_WRITE_ONLY, pw_math_in_oc03_read_size_bytes, pw_math_in_oc03_read_pipe0.data(), &err));
   OCL_CHECK(err, err = krnl_vector_add.setArg(1, pw_math_in_oc03_read_pipe0_ocl_buf));
 
   uint64_t transfer_size = num_epochs*(16384 / 1);
@@ -119,8 +119,8 @@ nsduration = end - start;
   std::cout << "GB / sec    = " << gbpersec << std::endl;
   printf("Execution time = %f (sec) \n", dsduration);
   std::ofstream regression_result("pw_math_in47_write_accel_result.csv");
-  for (int i = 0; i < pw_math_in47_write_DATA_SIZE; i++) {
-    regression_result << ((uint32_t*) (pw_math_in47_write.data()))[i] << std::endl;
+  for (int i = 0; i < pw_math_in47_write_pipe0_DATA_SIZE; i++) {
+    regression_result << ((uint32_t*) (pw_math_in47_write_pipe0.data()))[i] << std::endl;
   }
 
   return 0;

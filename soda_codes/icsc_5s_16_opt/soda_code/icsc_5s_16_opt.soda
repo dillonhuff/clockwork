@@ -1,0 +1,22 @@
+kernel: icsc_5s_16_opt
+unroll factor: 16
+burst width: 256
+
+input uint16: in_off_chip(2080, *)
+
+local uint16: in(0, 0) = in_off_chip(0, 0)
+
+local uint16: stg0(0, 0) = (((in(0, 1) + in(1, 0)) + (in(0, 0) + (in(-1, 0) + in(0, 1)))) / 5)
+
+local uint16: stg1(0, 0) = (((stg0(0, 1) + stg0(1, 0)) + (stg0(0, 0) + (stg0(-1, 0) + stg0(0, 1)))) / 5)
+
+local uint16: stg2(0, 0) = (((stg1(0, 1) + stg1(1, 0)) + (stg1(0, 0) + (stg1(-1, 0) + stg1(0, 1)))) / 5)
+
+local uint16: stg3(0, 0) = (((stg2(0, 1) + stg2(1, 0)) + (stg2(0, 0) + (stg2(-1, 0) + stg2(0, 1)))) / 5)
+
+local uint16: stg4(0, 0) = (((stg3(0, 1) + stg3(1, 0)) + (stg3(0, 0) + (stg3(-1, 0) + stg3(0, 1)))) / 5)
+
+output uint16: icsc_5s_16(0, 0) = stg4(0, 0)
+
+
+iterate: 1
