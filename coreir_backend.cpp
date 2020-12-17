@@ -49,6 +49,12 @@ using CoreIR::RecordType;
 static int fully_optimizable = 0;
 static int not_fully_optimizable = 0;
 
+
+template<typename T, typename Q>
+void sort_lt_snd_2(std::vector<std::pair<T, Q> >& outputs) {
+  sort_lt(outputs, [](const std::pair<T,Q> &x){return x.second;});
+}
+
 struct affine_controller_ctrl {
   isl_aff* access_function;
   isl_aff* sched;
@@ -2886,7 +2892,7 @@ void analyze_post_mapped_app(CodegenOptions& options, prog& prg, map<string, UBu
   for (auto c : counts) {
     cout << tab(1) << c.first << " -> " << c.second << endl;
   }
-  assert(false);
+  //assert(false);
   if(!saveToFile(ns, prg.name + "_post_mapping.json", gmod)) {
     cout << "Could not save ubuffer coreir" << endl;
     context->die();
@@ -2937,9 +2943,9 @@ void generate_coreir(CodegenOptions& options,
   if (options.rtl_options.target_tile == TARGET_TILE_M1 ||
       options.rtl_options.target_tile == TARGET_TILE_M3) {
     //count_memory_tiles(prg_mod);
-    garnet_map_module(prg_mod);
-    Module* gmod = ns_new->getModule(prg.name);
-    analyze_post_mapped_app(options, prg, buffers, gmod);
+    //garnet_map_module(prg_mod);
+    //Module* gmod = ns_new->getModule(prg.name);
+    //analyze_post_mapped_app(options, prg, buffers, gmod);
   }
   prg_mod->print();
   //assert(false);
@@ -4510,7 +4516,7 @@ dgraph build_shift_registers(CodegenOptions& options, CoreIR::ModuleDef* def, pr
       for (auto v : shift_registers.out_edges.at(inpt)) {
         vals.push_back({v, shift_registers.weight(inpt, v)});
       }
-      sort_lt_snd(vals);
+      sort_lt_snd_2(vals);
       for (auto v : vals) {
         cout << tab(1) << v.first << " -(" << v.second << ")-> " << v.second << endl;
       }

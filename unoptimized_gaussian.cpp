@@ -9,8 +9,6 @@ using namespace std;
 // compute file: gaussian_compute.h
 #include "gaussian_compute.h"
 
-#include "hw_classes.h"
-
 struct blur_stencil_all_inputs_to_all_outputs_cache {
 	// RAM Box: {[0, 61], [0, 61]}
   hw_uint<16> RAM[62][62];
@@ -65,8 +63,6 @@ inline hw_uint<16> blur_stencil_op_hcompute_hw_output_stencil_read_bundle_read(b
 	set_at<0, 16>(result, blur_stencil_op_hcompute_hw_output_stencil_1_res);
 	return result;
 }
-
-#include "hw_classes.h"
 
 struct blur_unnormalized_stencil_all_inputs_to_all_outputs_cache {
 	// RAM Box: {[0, 61], [0, 61]}
@@ -123,8 +119,6 @@ inline void blur_unnormalized_stencil_op_hcompute_blur_unnormalized_stencil_1_wr
 	blur_unnormalized_stencil_op_hcompute_blur_unnormalized_stencil_1_4_write(blur_unnormalized_stencil_op_hcompute_blur_unnormalized_stencil_1_4_res, blur_unnormalized_stencil, root, blur_unnormalized_s1_y, blur_unnormalized_s1_x, dynamic_address);
 }
 
-#include "hw_classes.h"
-
 struct blur_unnormalized_stencil_clkwrk_dsa0_all_inputs_to_all_outputs_cache {
 	// RAM Box: {[0, 61], [0, 61]}
   hw_uint<16> RAM[62][62];
@@ -179,8 +173,6 @@ inline void blur_unnormalized_stencil_clkwrk_dsa0_op_hcompute_blur_unnormalized_
 	hw_uint<16> blur_unnormalized_stencil_clkwrk_dsa0_op_hcompute_blur_unnormalized_stencil_15_res = op_hcompute_blur_unnormalized_stencil_write.extract<0, 15>();
 	blur_unnormalized_stencil_clkwrk_dsa0_op_hcompute_blur_unnormalized_stencil_15_write(blur_unnormalized_stencil_clkwrk_dsa0_op_hcompute_blur_unnormalized_stencil_15_res, blur_unnormalized_stencil_clkwrk_dsa0, root, blur_unnormalized_s0_y, blur_unnormalized_s0_x, dynamic_address);
 }
-
-#include "hw_classes.h"
 
 struct hw_input_global_wrapper_stencil_all_inputs_to_all_outputs_cache {
 	// RAM Box: {[0, 63], [0, 63]}
