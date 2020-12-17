@@ -38,6 +38,20 @@ int main(int argc, char **argv) {
   std::vector<uint8_t, aligned_allocator<uint8_t> > pw_math_gray47_write_pipe0(pw_math_gray47_write_pipe0_size_bytes);
 
   // TODO: POPULATE BUFFERS FOR EACH PIPELINE
+#ifdef __POPULATE_HOST_INPUTS__
+  std::ofstream input_oc_load_in03_read("oc_load_in03_read.csv");
+  for (int i = 0; i < oc_load_in03_read_pipe0_DATA_SIZE; i++) {
+    uint32_t val = (rand() % 256);
+    input_oc_load_in03_read << val << std::endl;
+    ((uint32_t*) (oc_load_in03_read_pipe0.data()))[i] = val;
+  }
+
+  input_oc_load_in03_read.close();
+  for (int i = 0; i < pw_math_gray47_write_pipe0_DATA_SIZE; i++) {
+    ((uint32_t*) (pw_math_gray47_write_pipe0.data()))[i] = 0;
+  }
+
+#endif // __POPULATE_HOST_INPUTS__
   auto devices = xcl::get_xil_devices();
   auto fileBuf = xcl::read_binary_file(binaryFile);
   cl::Program::Binaries bins{{fileBuf.data(), fileBuf.size()}};

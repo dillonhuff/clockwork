@@ -13,7 +13,7 @@ int main(int argc, char **argv) {
 
   std::string binaryFile = argv[1];
 
-  int num_epochs = 1000;
+  int num_epochs = 1;
 
   std::cout << "num_epochs = " << num_epochs << std::endl;
 
@@ -36,15 +36,22 @@ int main(int argc, char **argv) {
 
   std::vector<uint8_t, aligned_allocator<uint8_t> > pw_math_in47_write_pipe0(pw_math_in47_write_pipe0_size_bytes);
   std::vector<uint8_t, aligned_allocator<uint8_t> > pw_math_in_oc03_read_pipe0(pw_math_in_oc03_read_pipe0_size_bytes);
-<<<<<<< HEAD
-  for (int i = 0; i < 61504; i++) {
-    pw_math_in_oc03_read_pipe0[i] = i;
-  }
-  std::vector<uint8_t, aligned_allocator<uint8_t> > pw_math_stencil_59364367_write_pipe0(pw_math_stencil_59364367_write_pipe0_size_bytes);
-=======
->>>>>>> 42dabd32a616eceb135dc86692b60535b67e6652
 
   // TODO: POPULATE BUFFERS FOR EACH PIPELINE
+#ifdef __POPULATE_HOST_INPUTS__
+  std::ofstream input_pw_math_in_oc03_read("pw_math_in_oc03_read.csv");
+  for (int i = 0; i < pw_math_in_oc03_read_pipe0_DATA_SIZE; i++) {
+    uint32_t val = (rand() % 256);
+    input_pw_math_in_oc03_read << val << std::endl;
+    ((uint32_t*) (pw_math_in_oc03_read_pipe0.data()))[i] = val;
+  }
+
+  input_pw_math_in_oc03_read.close();
+  for (int i = 0; i < pw_math_in47_write_pipe0_DATA_SIZE; i++) {
+    ((uint32_t*) (pw_math_in47_write_pipe0.data()))[i] = 0;
+  }
+
+#endif // __POPULATE_HOST_INPUTS__
   auto devices = xcl::get_xil_devices();
   auto fileBuf = xcl::read_binary_file(binaryFile);
   cl::Program::Binaries bins{{fileBuf.data(), fileBuf.size()}};
