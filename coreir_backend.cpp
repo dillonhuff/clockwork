@@ -55,12 +55,6 @@ void sort_lt_snd_2(std::vector<std::pair<T, Q> >& outputs) {
   sort_lt(outputs, [](const std::pair<T,Q> &x){return x.second;});
 }
 
-struct affine_controller_ctrl {
-  isl_aff* access_function;
-  isl_aff* sched;
-  isl_set* dom;
-};
-
 int min_address(affine_controller_ctrl& ctrl) {
   isl_map* acc =
     set_range_name(set_domain_name(to_map(ctrl.access_function), "dom"), "addr");

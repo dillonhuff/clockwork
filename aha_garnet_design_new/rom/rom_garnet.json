@@ -503,8 +503,8 @@
           ["op_hcompute_hw_output_stencil$inner_compute$rom_curvea0$1_ren_lutcnst.bit.out","op_hcompute_hw_output_stencil$inner_compute$rom_curvea0$1$cgramem.ren_in_0"],
           ["op_hcompute_hw_output_stencil$inner_compute$smin_hw_input_global_wrapper_stencil_1_775_776$min_mux$mux.data.out","op_hcompute_hw_output_stencil$inner_compute$smax_776_777_778$cgramax.data.in.0"],
           ["op_hcompute_hw_output_stencil$inner_compute$smin_hw_input_global_wrapper_stencil_1_775_776$scomp$compop.bit.out","op_hcompute_hw_output_stencil$inner_compute$smin_hw_input_global_wrapper_stencil_1_775_776$min_mux$mux.bit.in.0"],
-          ["op_hcompute_hw_output_stencil_port_controller_garnet.rst_n","op_hcompute_hw_output_stencil_port_controller_clk_en_const1_lutcnst.bit.out"],
-          ["op_hcompute_hw_output_stencil_port_controller_garnet.clk_en","op_hcompute_hw_output_stencil_port_controller_clk_en_const_lutcnst.bit.out"]
+          ["op_hcompute_hw_output_stencil_port_controller_garnet.clk_en","op_hcompute_hw_output_stencil_port_controller_clk_en_const1_lutcnst.bit.out"],
+          ["op_hcompute_hw_output_stencil_port_controller_garnet.rst_n","op_hcompute_hw_output_stencil_port_controller_clk_en_const_lutcnst.bit.out"]
         ]
       }
     },
