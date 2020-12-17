@@ -40,15 +40,15 @@ int main(int argc, char **argv) {
   // TODO: POPULATE BUFFERS FOR EACH PIPELINE
 #ifdef __POPULATE_HOST_INPUTS__
   std::ofstream input_in_update_0_read("in_update_0_read.csv");
-  for (int i = 0; i < in_update_0_read_DATA_SIZE; i++) {
+  for (int i = 0; i < in_update_0_read_pipe0_DATA_SIZE; i++) {
     uint16_t val = (rand() % 256);
     input_in_update_0_read << val << std::endl;
-    ((uint16_t*) (in_update_0_read.data()))[i] = val;
+    ((uint16_t*) (in_update_0_read_pipe0.data()))[i] = val;
   }
 
   input_in_update_0_read.close();
-  for (int i = 0; i < icsc_1_update_0_write_DATA_SIZE; i++) {
-    ((uint16_t*) (icsc_1_update_0_write.data()))[i] = 0;
+  for (int i = 0; i < icsc_1_update_0_write_pipe0_DATA_SIZE; i++) {
+    ((uint16_t*) (icsc_1_update_0_write_pipe0.data()))[i] = 0;
   }
 
 #endif // __POPULATE_HOST_INPUTS__

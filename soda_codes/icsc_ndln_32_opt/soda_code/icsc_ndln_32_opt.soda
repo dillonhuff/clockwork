@@ -1,0 +1,52 @@
+kernel: icsc_ndln_32_opt
+unroll factor: 32
+burst width: 512
+
+input uint16: in_off_chip(3200, *)
+
+local uint16: in(0, 0) = in_off_chip(0, 0)
+
+local uint16: stg0(0, 0) = ((in(0, 1) + in(1, 0)) + (in(0, 0) + (in(-1, 0) + in(0, 1))))
+
+local uint16: stg1(0, 0) = ((stg0(0, 1) + stg0(1, 0)) + (stg0(0, 0) + (stg0(-1, 0) + stg0(0, 1))))
+
+local uint16: stg2(0, 0) = ((stg1(0, 1) + stg1(1, 0)) + (stg1(0, 0) + (stg1(-1, 0) + stg1(0, 1))))
+
+local uint16: stg3(0, 0) = ((stg2(0, 1) + stg2(1, 0)) + (stg2(0, 0) + (stg2(-1, 0) + stg2(0, 1))))
+
+local uint16: stg4(0, 0) = ((stg3(0, 1) + stg3(1, 0)) + (stg3(0, 0) + (stg3(-1, 0) + stg3(0, 1))))
+
+local uint16: stg5(0, 0) = ((stg4(0, 1) + stg4(1, 0)) + (stg4(0, 0) + (stg4(-1, 0) + stg4(0, 1))))
+
+local uint16: stg6(0, 0) = ((stg5(0, 1) + stg5(1, 0)) + (stg5(0, 0) + (stg5(-1, 0) + stg5(0, 1))))
+
+local uint16: stg7(0, 0) = ((stg6(0, 1) + stg6(1, 0)) + (stg6(0, 0) + (stg6(-1, 0) + stg6(0, 1))))
+
+local uint16: stg8(0, 0) = ((stg7(0, 1) + stg7(1, 0)) + (stg7(0, 0) + (stg7(-1, 0) + stg7(0, 1))))
+
+local uint16: stg9(0, 0) = ((stg8(0, 1) + stg8(1, 0)) + (stg8(0, 0) + (stg8(-1, 0) + stg8(0, 1))))
+
+local uint16: stg10(0, 0) = ((stg9(0, 1) + stg9(1, 0)) + (stg9(0, 0) + (stg9(-1, 0) + stg9(0, 1))))
+
+local uint16: stg11(0, 0) = ((stg10(0, 1) + stg10(1, 0)) + (stg10(0, 0) + (stg10(-1, 0) + stg10(0, 1))))
+
+local uint16: stg12(0, 0) = ((stg11(0, 1) + stg11(1, 0)) + (stg11(0, 0) + (stg11(-1, 0) + stg11(0, 1))))
+
+local uint16: stg13(0, 0) = ((stg12(0, 1) + stg12(1, 0)) + (stg12(0, 0) + (stg12(-1, 0) + stg12(0, 1))))
+
+local uint16: stg14(0, 0) = ((stg13(0, 1) + stg13(1, 0)) + (stg13(0, 0) + (stg13(-1, 0) + stg13(0, 1))))
+
+local uint16: stg15(0, 0) = ((stg14(0, 1) + stg14(1, 0)) + (stg14(0, 0) + (stg14(-1, 0) + stg14(0, 1))))
+
+local uint16: stg16(0, 0) = ((stg15(0, 1) + stg15(1, 0)) + (stg15(0, 0) + (stg15(-1, 0) + stg15(0, 1))))
+
+local uint16: stg17(0, 0) = ((stg16(0, 1) + stg16(1, 0)) + (stg16(0, 0) + (stg16(-1, 0) + stg16(0, 1))))
+
+local uint16: stg18(0, 0) = ((stg17(0, 1) + stg17(1, 0)) + (stg17(0, 0) + (stg17(-1, 0) + stg17(0, 1))))
+
+local uint16: stg19(0, 0) = ((stg18(0, 1) + stg18(1, 0)) + (stg18(0, 0) + (stg18(-1, 0) + stg18(0, 1))))
+
+output uint16: icsc_ndln_32(0, 0) = stg19(0, 0)
+
+
+iterate: 1

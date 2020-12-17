@@ -49,6 +49,12 @@ using CoreIR::RecordType;
 static int fully_optimizable = 0;
 static int not_fully_optimizable = 0;
 
+
+template<typename T, typename Q>
+void sort_lt_snd_2(std::vector<std::pair<T, Q> >& outputs) {
+  sort_lt(outputs, [](const std::pair<T,Q> &x){return x.second;});
+}
+
 struct affine_controller_ctrl {
   isl_aff* access_function;
   isl_aff* sched;
@@ -2937,9 +2943,9 @@ void generate_coreir(CodegenOptions& options,
   if (options.rtl_options.target_tile == TARGET_TILE_M1 ||
       options.rtl_options.target_tile == TARGET_TILE_M3) {
     //count_memory_tiles(prg_mod);
-    garnet_map_module(prg_mod);
-    Module* gmod = ns_new->getModule(prg.name);
-    analyze_post_mapped_app(options, prg, buffers, gmod);
+    //garnet_map_module(prg_mod);
+    //Module* gmod = ns_new->getModule(prg.name);
+    //analyze_post_mapped_app(options, prg, buffers, gmod);
   }
   prg_mod->print();
   //assert(false);
