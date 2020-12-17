@@ -20002,6 +20002,92 @@ inline void stg9_stg9_update_0_write_bundle_write(hw_uint<256>& stg9_update_0_wr
 
 
 // Operation logic
+inline void stg2_update_0(stg1_cache& stg1, stg2_cache& stg2, int d0, int d1) {
+  // Dynamic address computation
+
+	// Consume: stg1
+	auto stg1_0_c__0_value = stg1_stg2_update_0_read_bundle_read(stg1/* source_delay */, d0, d1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = stg2_generated_compute_unrolled_16(stg1_0_c__0_value);
+	// Produce: stg2
+	stg2_stg2_update_0_write_bundle_write(/* arg names */compute_result, stg2, d0, d1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void stg3_update_0(stg2_cache& stg2, stg3_cache& stg3, int d0, int d1) {
+  // Dynamic address computation
+
+	// Consume: stg2
+	auto stg2_0_c__0_value = stg2_stg3_update_0_read_bundle_read(stg2/* source_delay */, d0, d1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = stg3_generated_compute_unrolled_16(stg2_0_c__0_value);
+	// Produce: stg3
+	stg3_stg3_update_0_write_bundle_write(/* arg names */compute_result, stg3, d0, d1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void in_update_0(HWStream<hw_uint<256> >& /* buffer_args num ports = 16 */in_off_chip, in_cache& in, int d0, int d1) {
+  // Dynamic address computation
+
+	// Consume: in_off_chip
+	auto in_off_chip_0_c__0_value = in_off_chip.read();
+	auto compute_result = in_generated_compute_unrolled_16(in_off_chip_0_c__0_value);
+	// Produce: in
+	in_in_update_0_write_bundle_write(/* arg names */compute_result, in, d0, d1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void stg1_update_0(stg0_cache& stg0, stg1_cache& stg1, int d0, int d1) {
+  // Dynamic address computation
+
+	// Consume: stg0
+	auto stg0_0_c__0_value = stg0_stg1_update_0_read_bundle_read(stg0/* source_delay */, d0, d1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = stg1_generated_compute_unrolled_16(stg0_0_c__0_value);
+	// Produce: stg1
+	stg1_stg1_update_0_write_bundle_write(/* arg names */compute_result, stg1, d0, d1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void stg5_update_0(stg4_cache& stg4, stg5_cache& stg5, int d0, int d1) {
+  // Dynamic address computation
+
+	// Consume: stg4
+	auto stg4_0_c__0_value = stg4_stg5_update_0_read_bundle_read(stg4/* source_delay */, d0, d1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = stg5_generated_compute_unrolled_16(stg4_0_c__0_value);
+	// Produce: stg5
+	stg5_stg5_update_0_write_bundle_write(/* arg names */compute_result, stg5, d0, d1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
 inline void stg6_update_0(stg5_cache& stg5, stg6_cache& stg6, int d0, int d1) {
   // Dynamic address computation
 
@@ -20074,32 +20160,18 @@ inline void stg9_update_0(stg8_cache& stg8, stg9_cache& stg9, int d0, int d1) {
 
 }
 
-inline void in_update_0(HWStream<hw_uint<256> >& /* buffer_args num ports = 16 */in_off_chip, in_cache& in, int d0, int d1) {
+inline void icsc_16_update_0(stg9_cache& stg9, HWStream<hw_uint<256> >& /* buffer_args num ports = 16 */icsc_16, int d0, int d1) {
   // Dynamic address computation
 
-	// Consume: in_off_chip
-	auto in_off_chip_0_c__0_value = in_off_chip.read();
-	auto compute_result = in_generated_compute_unrolled_16(in_off_chip_0_c__0_value);
-	// Produce: in
-	in_in_update_0_write_bundle_write(/* arg names */compute_result, in, d0, d1, 0);
+	// Consume: stg9
+	auto stg9_0_c__0_value = stg9_icsc_16_update_0_read_bundle_read(stg9/* source_delay */, d0, d1, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 
-}
-
-inline void stg5_update_0(stg4_cache& stg4, stg5_cache& stg5, int d0, int d1) {
-  // Dynamic address computation
-
-	// Consume: stg4
-	auto stg4_0_c__0_value = stg4_stg5_update_0_read_bundle_read(stg4/* source_delay */, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = stg5_generated_compute_unrolled_16(stg4_0_c__0_value);
-	// Produce: stg5
-	stg5_stg5_update_0_write_bundle_write(/* arg names */compute_result, stg5, d0, d1, 0);
+	auto compute_result = icsc_16_generated_compute_unrolled_16(stg9_0_c__0_value);
+	// Produce: icsc_16
+	icsc_16.write(compute_result);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -20124,60 +20196,6 @@ inline void stg0_update_0(in_cache& in, stg0_cache& stg0, int d0, int d1) {
 
 }
 
-inline void stg1_update_0(stg0_cache& stg0, stg1_cache& stg1, int d0, int d1) {
-  // Dynamic address computation
-
-	// Consume: stg0
-	auto stg0_0_c__0_value = stg0_stg1_update_0_read_bundle_read(stg0/* source_delay */, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = stg1_generated_compute_unrolled_16(stg0_0_c__0_value);
-	// Produce: stg1
-	stg1_stg1_update_0_write_bundle_write(/* arg names */compute_result, stg1, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void stg2_update_0(stg1_cache& stg1, stg2_cache& stg2, int d0, int d1) {
-  // Dynamic address computation
-
-	// Consume: stg1
-	auto stg1_0_c__0_value = stg1_stg2_update_0_read_bundle_read(stg1/* source_delay */, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = stg2_generated_compute_unrolled_16(stg1_0_c__0_value);
-	// Produce: stg2
-	stg2_stg2_update_0_write_bundle_write(/* arg names */compute_result, stg2, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void stg3_update_0(stg2_cache& stg2, stg3_cache& stg3, int d0, int d1) {
-  // Dynamic address computation
-
-	// Consume: stg2
-	auto stg2_0_c__0_value = stg2_stg3_update_0_read_bundle_read(stg2/* source_delay */, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = stg3_generated_compute_unrolled_16(stg2_0_c__0_value);
-	// Produce: stg3
-	stg3_stg3_update_0_write_bundle_write(/* arg names */compute_result, stg3, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
 inline void stg4_update_0(stg3_cache& stg3, stg4_cache& stg4, int d0, int d1) {
   // Dynamic address computation
 
@@ -20190,24 +20208,6 @@ inline void stg4_update_0(stg3_cache& stg3, stg4_cache& stg4, int d0, int d1) {
 	auto compute_result = stg4_generated_compute_unrolled_16(stg3_0_c__0_value);
 	// Produce: stg4
 	stg4_stg4_update_0_write_bundle_write(/* arg names */compute_result, stg4, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void icsc_16_update_0(stg9_cache& stg9, HWStream<hw_uint<256> >& /* buffer_args num ports = 16 */icsc_16, int d0, int d1) {
-  // Dynamic address computation
-
-	// Consume: stg9
-	auto stg9_0_c__0_value = stg9_icsc_16_update_0_read_bundle_read(stg9/* source_delay */, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = icsc_16_generated_compute_unrolled_16(stg9_0_c__0_value);
-	// Produce: icsc_16
-	icsc_16.write(compute_result);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__

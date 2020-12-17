@@ -405,10 +405,10 @@ void populate_input(std::ostream& out, const std::string& edge_bundle, const str
     "input_" + edge_bundle;
 
   out << tab(1) << "std::ofstream input_" << edge_bundle << "(\"" << edge_bundle << ".csv\");" << endl;
-  out << tab(1) << "for (int i = 0; i < " << edge_bundle << "_DATA_SIZE; i++) {" << endl;
+  out << tab(1) << "for (int i = 0; i < " << edge_bundle << "_pipe0_DATA_SIZE; i++) {" << endl;
   out << tab(2) << tp << " val = (rand() % 256);" << endl;
   out << tab(2) << "input_" << edge_bundle << " << val << std::endl;" << endl;
-  out << tab(2) << "((" << tp << "*) (" << edge_bundle << ".data()))[i] = val;" << endl;
+  out << tab(2) << "((" << tp << "*) (" << edge_bundle << "_pipe0.data()))[i] = val;" << endl;
   out << tab(1) << "}" << endl << endl;
   out << tab(1) << "input_" << edge_bundle << ".close();" << endl;
 }
@@ -634,9 +634,9 @@ void generate_xilinx_accel_soda_host(CodegenOptions& options, map<string, UBuffe
     string edge_bundle = eb.second;
     string buf = eb.first;
 
-    out << tab(1) << "const int " << edge_bundle << "_DATA_SIZE = num_epochs*" << max_buf_size << ";" << endl;
+    out << tab(1) << "const int " << edge_bundle << "_pipe0_DATA_SIZE = num_epochs*" << max_buf_size << ";" << endl;
     out << tab(1) << "const int " << edge_bundle << "_BYTES_PER_PIXEL = " << map_find(buf, buffers).bundle_lane_width(edge_bundle) << " / 8;" << endl;
-    out << tab(1) << "size_t " << edge_bundle << "_size_bytes = " << edge_bundle << "_BYTES_PER_PIXEL * " << edge_bundle << "_DATA_SIZE;" << endl << endl;
+    out << tab(1) << "size_t " << edge_bundle << "_size_bytes = " << edge_bundle << "_BYTES_PER_PIXEL * " << edge_bundle << "_pipe0_DATA_SIZE;" << endl << endl;
     out << tab(1) << "total_size_bytes += " << edge_bundle << "_size_bytes;" << endl;
     if (prg.is_output(buf)) {
       out << tab(1) << "total_size_bytes_written += " << edge_bundle << "_size_bytes;" << endl;
@@ -651,7 +651,7 @@ void generate_xilinx_accel_soda_host(CodegenOptions& options, map<string, UBuffe
   ocl_command_queue(out);
 
   for (auto edge_bundle : edge_bundles(buffers, prg)) {
-    out << tab(1) << "std::vector<uint8_t, aligned_allocator<uint8_t> > " << edge_bundle << "(" << edge_bundle << "_size_bytes);" << endl;
+    out << tab(1) << "std::vector<uint8_t, aligned_allocator<uint8_t> > " << edge_bundle << "_pipe0" << "(" << edge_bundle << "_size_bytes);" << endl;
   }
   out << endl;
 
@@ -662,8 +662,8 @@ void generate_xilinx_accel_soda_host(CodegenOptions& options, map<string, UBuffe
   for (auto edge_out : outputs(buffers, prg)) {
     auto edge_bundle = edge_out.second;
     auto buf = edge_out.first;
-    out << tab(1) << "for (int i = 0; i < " << edge_bundle << "_DATA_SIZE; i++) {" << endl;
-    out << tab(2) << "((" << vanilla_c_pixel_type_string(buf, buffers) << "*) (" << edge_bundle << ".data()))[i] = 0;" << endl;
+    out << tab(1) << "for (int i = 0; i < " << edge_bundle << "_pipe0_DATA_SIZE; i++) {" << endl;
+    out << tab(2) << "((" << vanilla_c_pixel_type_string(buf, buffers) << "*) (" << edge_bundle << "_pipe0.data()))[i] = 0;" << endl;
     out << tab(1) << "}" << endl << endl;
   }
 
@@ -671,15 +671,15 @@ void generate_xilinx_accel_soda_host(CodegenOptions& options, map<string, UBuffe
 
   int arg_pos = 0;
   for (auto in_bundle : out_bundles(buffers, prg)) {
-    out << tab(1) << "OCL_CHECK(err, cl::Buffer " << in_bundle << "_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_READ_ONLY, " << in_bundle << "_size_bytes, " << in_bundle << ".data(), &err));" << endl;
-    out << tab(1) << "OCL_CHECK(err, err = krnl_vector_add.setArg(" << arg_pos << ", " << in_bundle << "_ocl_buf));" << endl << endl;
+    out << tab(1) << "OCL_CHECK(err, cl::Buffer " << in_bundle << "_pipe0_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_READ_ONLY, " << in_bundle << "_size_bytes, " << in_bundle << "_pipe0.data(), &err));" << endl;
+    out << tab(1) << "OCL_CHECK(err, err = krnl_vector_add.setArg(" << arg_pos << ", " << in_bundle << "_pipe0_ocl_buf));" << endl << endl;
     arg_pos++;
   }
 
   for (auto in_bundle : in_bundles(buffers, prg)) {
-    out << tab(1) << "OCL_CHECK(err, cl::Buffer " << in_bundle << "_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_WRITE_ONLY, " << in_bundle << "_size_bytes, " << in_bundle << ".data(), &err));" << endl;
+    out << tab(1) << "OCL_CHECK(err, cl::Buffer " << in_bundle << "_pipe0_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_WRITE_ONLY, " << in_bundle << "_size_bytes, " << in_bundle << "_pipe0.data(), &err));" << endl;
 
-    out << tab(1) << "OCL_CHECK(err, err = krnl_vector_add.setArg(" << arg_pos << ", " << in_bundle << "_ocl_buf));" << endl << endl;
+    out << tab(1) << "OCL_CHECK(err, err = krnl_vector_add.setArg(" << arg_pos << ", " << in_bundle << "_pipe0_ocl_buf));" << endl << endl;
     arg_pos++;
   }
 
@@ -688,21 +688,14 @@ void generate_xilinx_accel_soda_host(CodegenOptions& options, map<string, UBuffe
 
   run_kernel(options, out, buffers, prg);
 
-
   for (auto output : outputs(buffers, prg)) {
     auto buf = output.first;
     auto out_bundle = output.second;
     out << tab(1) << "std::ofstream regression_result(\"" << out_bundle << "_accel_result.csv\");" << endl;
-    out << tab(1) << "for (int i = 0; i < " << out_bundle << "_DATA_SIZE; i++) {" << endl;
-    out << tab(2) << "regression_result << ((" << vanilla_c_pixel_type_string(buf, buffers) << "*) (" << out_bundle << ".data()))[i] << std::endl;" << endl;
+    out << tab(1) << "for (int i = 0; i < " << out_bundle << "_pipe0_DATA_SIZE; i++) {" << endl;
+    out << tab(2) << "regression_result << ((" << vanilla_c_pixel_type_string(buf, buffers) << "*) (" << out_bundle << "_pipe0.data()))[i] << std::endl;" << endl;
     out << tab(1) << "}" << endl;
   }
-  /*for (auto out_bundle: out_bundles(buffers, prg)) {*/
-    //out << tab(1) << "std::ofstream regression_result(\"" << out_bundle << "_accel_result.csv\");" << endl;
-    //out << tab(1) << "for (int i = 0; i < " << out_bundle << "_DATA_SIZE; i++) {" << endl;
-    //out << tab(2) << "regression_result << ((uint16_t*) (" << out_bundle << ".data()))[i] << std::endl;;" << endl;
-    //out << tab(1) << "}" << endl;
-  /*}*/
   out << endl;
 
 
@@ -764,17 +757,19 @@ void generate_xilinx_accel_host(CodegenOptions& options, map<string, UBuffer>& b
   }
 
   out << tab(1) << "// TODO: POPULATE BUFFERS FOR EACH PIPELINE" << endl;
-  //for (auto edge_in : inputs(buffers, prg)) {
-    //populate_input(out, edge_in.second, vanilla_c_pixel_type_string(edge_in.first, buffers));
-  //}
+  out << "#ifdef __POPULATE_HOST_INPUTS__" << endl;
+  for (auto edge_in : inputs(buffers, prg)) {
+    populate_input(out, edge_in.second, vanilla_c_pixel_type_string(edge_in.first, buffers));
+  }
 
-  //for (auto edge_out : outputs(buffers, prg)) {
-    //auto edge_bundle = edge_out.second;
-    //auto buf = edge_out.first;
-    //out << tab(1) << "for (int i = 0; i < " << edge_bundle << "_DATA_SIZE; i++) {" << endl;
-    //out << tab(2) << "((" << vanilla_c_pixel_type_string(buf, buffers) << "*) (" << edge_bundle << ".data()))[i] = 0;" << endl;
-    //out << tab(1) << "}" << endl << endl;
-  //}
+  for (auto edge_out : outputs(buffers, prg)) {
+    auto edge_bundle = edge_out.second;
+    auto buf = edge_out.first;
+    out << tab(1) << "for (int i = 0; i < " << edge_bundle << "_pipe0_DATA_SIZE; i++) {" << endl;
+    out << tab(2) << "((" << vanilla_c_pixel_type_string(buf, buffers) << "*) (" << edge_bundle << "_pipe0.data()))[i] = 0;" << endl;
+    out << tab(1) << "}" << endl << endl;
+  }
+  out << "#endif // __POPULATE_HOST_INPUTS__" << endl;
 
   ocl_program_device(out, prg, "_accel");
 
@@ -2458,7 +2453,11 @@ void generate_regression_testbench(prog& prg, map<string, UBuffer>& buffers) {
         << " = actual.extract<" << p << "*" << port_width << ", "
         << (p + 1)*port_width - 1 << ">();" << endl;
 
+      rgtb << "#ifdef __INT_OUTPUT__" << endl;
+      rgtb << tab(2) << "fout << (int) actual_lane_" << p << " << endl;" << endl;
+      rgtb << "#else // __INT_OUTPUT__" << endl;
       rgtb << tab(2) << "fout << actual_lane_" << p << " << endl;" << endl;
+      rgtb << "#endif // __INT_OUTPUT__" << endl;
     }
 
     rgtb << tab(1) << "}" << endl << endl;
@@ -8076,11 +8075,6 @@ void generate_app_code(
     CodegenOptions& options,
     app_dag& dag) {
 
-  // Dummy interface for the application
-  //auto sched = dag.prg.unoptimized_schedule();
-  //auto global_sched = dag.prg.unoptimized_schedule();
-  //auto buffers = build_buffers(dag.prg, dag.prg.unoptimized_schedule());
- 
   std::set<string> boundary_bufs;
   for (auto& gp : dag.fusion_group_progs) {
     for (auto b : gp.second.boundary_buffers()) {
@@ -8099,25 +8093,19 @@ void generate_app_code(
       reps[b.first] = b.second;
     }
   }
-  //assert(false);
 
   ofstream conv_out(dag.prg.name + ".cpp");
   generate_app_prefix(options, conv_out, dag.prg);
 
   for (auto& b : buffers) {
-    //if (!prg.is_boundary(b.first)) {
     if (!elem(b.first, boundary_bufs)) {
       generate_hls_code(options, conv_out, b.second);
     }
   }
 
-  //assert(false);
-
   for (auto& gp : dag.fusion_group_progs) {
-    //auto sched = gp.second.optimized_codegen();
-
     vector<umap*> sched_maps;
-    map<op*, isl_set*> domains;
+    map<string, isl_set*> domains;
     umap* emp = isl_union_map_read_from_str(gp.second.ctx, "{}");
     sched_maps.push_back(emp);
     std::set<string> opnames;
@@ -8127,48 +8115,17 @@ void generate_app_code(
     for (auto m : get_maps(global_sched)) {
       if (elem(domain_name(m), opnames)) {
         sched_maps.push_back(to_umap(m));
-        domains[gp.second.find_op(domain_name(m))] = domain(m);
+        domains[gp.second.find_op(domain_name(m))->name] = domain(m);
       } else {
         release(m);
       }
     }
-
-    cout << "Sched maps size: " << sched_maps.size() << endl;
-    cout << "Opnames size   : " << opnames.size() << endl;
-    cout << "Opnames..." << endl;
-    for (auto op : opnames) {
-      cout << tab(1) << op << endl;
-    }
-    cout << endl;
-
-    cout << "Schedules..." << endl;
-    for (auto op : sched_maps) {
-      cout << tab(1) << str(op) << endl;
-    }
-    cout << endl;
 
     // There is one schedule map for each op, plus
     // a default empty schedule map
     assert(sched_maps.size() == opnames.size() + 1);
 
     auto sched = unn(sched_maps);
-
-    //auto domains = gp.second.domains();
-    map<string, isl_set*> domain_map;
-    for (auto d : domains) {
-      domain_map[d.first->name] = d.second;
-    }
-    //auto buffers = build_buffers(gp.second, sched);
-    //for (auto& buf : buffers) {
-      //if (gp.second.is_boundary(buf.second.name)) {
-        //reps[buf.second.name] = buf.second;
-      //}
-      //cout << buf.second << endl;
-      //cout << "sched = " << str(sched) << endl;
-      //assert(all_schedules_defined(buf.second));
-    //}
-
-    //generate_app_code_body(options,
 
     map<string, UBuffer> local_buffers;
     for (auto& buf : buffers) {
@@ -8181,7 +8138,7 @@ void generate_app_code(
         local_buffers,
         gp.second,
         sched,
-        domain_map);
+        domains);
   }
 
   generate_driver_function_prefix(options, conv_out, buffers, dag.prg);

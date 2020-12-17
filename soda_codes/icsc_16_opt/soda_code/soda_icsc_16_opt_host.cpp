@@ -13,7 +13,7 @@ int main(int argc, char **argv) {
 
   std::string binaryFile = argv[1];
 
-  int num_epochs = 1;
+  int num_epochs = 20;
 
   std::cout << "num_epochs = " << num_epochs << std::endl;
 
@@ -82,11 +82,11 @@ int main(int argc, char **argv) {
     exit(EXIT_FAILURE);
   }
 
-  OCL_CHECK(err, cl::Buffer icsc_16_update_0_write_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_READ_ONLY, icsc_16_update_0_write_size_bytes, icsc_16_update_0_write.data(), &err));
-  OCL_CHECK(err, err = krnl_vector_add.setArg(0, icsc_16_update_0_write_ocl_buf));
+  OCL_CHECK(err, cl::Buffer icsc_16_update_0_write_pipe0_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_READ_ONLY, icsc_16_update_0_write_size_bytes, icsc_16_update_0_write.data(), &err));
+  OCL_CHECK(err, err = krnl_vector_add.setArg(0, icsc_16_update_0_write_pipe0_ocl_buf));
 
-  OCL_CHECK(err, cl::Buffer in_update_0_read_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_WRITE_ONLY, in_update_0_read_size_bytes, in_update_0_read.data(), &err));
-  OCL_CHECK(err, err = krnl_vector_add.setArg(1, in_update_0_read_ocl_buf));
+  OCL_CHECK(err, cl::Buffer in_update_0_read_pipe0_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_WRITE_ONLY, in_update_0_read_size_bytes, in_update_0_read.data(), &err));
+  OCL_CHECK(err, err = krnl_vector_add.setArg(1, in_update_0_read_pipe0_ocl_buf));
 
   uint64_t transfer_size = num_epochs*(2441600 / 16);
   OCL_CHECK(err, err = krnl_vector_add.setArg(2, transfer_size));

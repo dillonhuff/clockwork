@@ -8038,39 +8038,40 @@ void camera_pipeline_all_adds_test(const std::string& prefix) {
 }
 
 void camera_pipeline_test(const std::string& prefix) {
-  string app_name = "camera_mini";
-  int mini_rows = 30;
-  int mini_cols = 100;
-  auto hmini = camera_pipeline(app_name);
-  hmini.realize_naive(app_name, mini_cols, mini_rows);
-  hmini.realize(app_name, mini_cols, mini_rows, 1);
+  //string app_name = "camera_mini";
+  //int mini_rows = 30;
+  //int mini_cols = 100;
+  //auto hmini = camera_pipeline(app_name);
+  //hmini.realize_naive(app_name, mini_cols, mini_rows);
+  //hmini.realize(app_name, mini_cols, mini_rows, 1);
 
-  std::vector<std::string> naive =
-    run_regression_tb(app_name + "_naive");
-  std::vector<std::string> optimized =
-    run_regression_tb(app_name + "_opt");
-  assert(naive == optimized);
-  move_to_benchmarks_folder(app_name + "_opt");
+  //std::vector<std::string> naive =
+    //run_regression_tb(app_name + "_naive");
+  //std::vector<std::string> optimized =
+    //run_regression_tb(app_name + "_opt");
+  //assert(naive == optimized);
+  //move_to_benchmarks_folder(app_name + "_opt");
 
 
-  //int rows = 1080;
-  //int cols = 1920;
+  int rows = 1080;
+  int cols = 1920;
   //vector<int> factors{1, 2, 4};
-  //for (int i = 0; i < (int) factors.size(); i++) {
-    //int unroll_factor = factors.at(i);
-    ////cout << tab(1) << "harris unroll factor: " << unroll_factor << endl;
-    //string out_name = prefix + "_" + str(unroll_factor);
+  vector<int> factors{1, 16, 32};
+  for (int i = 0; i < (int) factors.size(); i++) {
+    int unroll_factor = factors.at(i);
+    //cout << tab(1) << "harris unroll factor: " << unroll_factor << endl;
+    string out_name = prefix + "_" + str(unroll_factor);
 
-    //CodegenOptions options;
-    //options.internal = true;
-    //options.simplify_address_expressions = true;
-    //options.use_custom_code_string = true;
-    //options.debug_options.expect_all_linebuffers = true;
-    //options.num_input_epochs = 30;
-    //camera_pipeline(out_name).realize(options, out_name, cols, rows, unroll_factor);
+    CodegenOptions options;
+    options.internal = true;
+    options.simplify_address_expressions = true;
+    options.use_custom_code_string = true;
+    options.debug_options.expect_all_linebuffers = true;
+    options.num_input_epochs = 30;
+    camera_pipeline(out_name).realize(options, out_name, cols, rows, unroll_factor);
 
-    //move_to_benchmarks_folder(out_name + "_opt");
-  //}
+    move_to_benchmarks_folder(out_name + "_opt");
+  }
 }
 
 void different_path_latencies_test(const std::string& prefix) {
@@ -8706,6 +8707,101 @@ void exposure_fusion_iccad_sizes(const std::string& prefix) {
   }
 }
 
+App increment_iccad(const std::string& out_name) {
+  App lp;
+  lp.set_default_pixel_width(16);
+  lp.func2d("in_off_chip");
+
+  // The temporary buffer we store the input image in
+  lp.func2d("in", v("in_off_chip"));
+
+  lp.func2d(out_name, add(v("in"), 1));
+
+  return lp;
+}
+
+App identity_stream_iccad(const std::string& out_name) {
+  App lp;
+  lp.set_default_pixel_width(16);
+  lp.func2d("in_off_chip");
+
+  // The temporary buffer we store the input image in
+  lp.func2d("in", v("in_off_chip"));
+
+  lp.func2d(out_name, v("in"));
+
+  return lp;
+}
+
+App stencil_chain_five_stage_iccad(const std::string& out_name) {
+  App lp;
+  lp.set_default_pixel_width(16);
+  lp.func2d("in_off_chip");
+
+  // The temporary buffer we store the input image in
+  lp.func2d("in", v("in_off_chip"));
+
+  int levels = 5;
+  string last = "in";
+  for (int i = 0; i < levels; i++) {
+    string current = "stg" + str(i);
+    lp.func2d(current,
+      div(add({
+        v(last, 0, 1),
+        v(last, 1, 0),
+        v(last, 0, 0),
+        v(last, -1, 0),
+        v(last, 0, 1)}), 5));
+    last = current;
+  }
+
+  lp.func2d(out_name, v(last));
+
+  return lp;
+}
+App stencil_chain_one_stage_iccad(const std::string& out_name) {
+  App lp;
+  lp.set_default_pixel_width(16);
+  lp.func2d("in_off_chip");
+
+  // The temporary buffer we store the input image in
+  lp.func2d("in", v("in_off_chip"));
+
+  int levels = 1;
+  string last = "in";
+  for (int i = 0; i < levels; i++) {
+    string current = "stg" + str(i);
+    lp.func2d(current,
+      //(add({
+        //v(last, 0, 1),
+        //v(last, 1, 0),
+        //v(last, 0, 0),
+        //v(last, -1, 0),
+        //v(last, 0, 1)})));
+
+      //mul(v(last, 0, 0), 5));
+
+      mul(add({
+        v(last, 0, 1),
+        v(last, 1, 0),
+        v(last, 0, 0),
+        v(last, -1, 0),
+        v(last, 0, 1)}), 5));
+
+      //div(add({
+        //v(last, 0, 1),
+        //v(last, 1, 0),
+        //v(last, 0, 0),
+        //v(last, -1, 0),
+        //v(last, 0, 1)}), 5));
+    last = current;
+  }
+
+  lp.func2d(out_name, v(last));
+
+  return lp;
+}
+
 App stencil_chain_iccad(const std::string& out_name) {
   App lp;
   lp.set_default_pixel_width(16);
@@ -8733,9 +8829,172 @@ App stencil_chain_iccad(const std::string& out_name) {
 
   return lp;
 }
-void stencil_chain_iccad_apps(const std::string& prefix) {
+
+App stencil_chain_no_dsp_long_iccad(const std::string& out_name) {
+  App lp;
+  lp.set_default_pixel_width(16);
+  lp.func2d("in_off_chip");
+
+  // The temporary buffer we store the input image in
+  lp.func2d("in", v("in_off_chip"));
+
+  int levels = 20;
+  string last = "in";
+  for (int i = 0; i < levels; i++) {
+    string current = "stg" + str(i);
+    lp.func2d(current,
+      add({
+        v(last, 0, 1),
+        v(last, 1, 0),
+        v(last, 0, 0),
+        v(last, -1, 0),
+        v(last, 0, 1)}));
+    last = current;
+  }
+
+  lp.func2d(out_name, v(last));
+
+  return lp;
+}
+
+App stencil_chain_no_dsp_iccad(const std::string& out_name) {
+  App lp;
+  lp.set_default_pixel_width(16);
+  lp.func2d("in_off_chip");
+
+  // The temporary buffer we store the input image in
+  lp.func2d("in", v("in_off_chip"));
+
+  int levels = 10;
+  string last = "in";
+  for (int i = 0; i < levels; i++) {
+    string current = "stg" + str(i);
+    lp.func2d(current,
+      add({
+        v(last, 0, 1),
+        v(last, 1, 0),
+        v(last, 0, 0),
+        v(last, -1, 0),
+        v(last, 0, 1)}));
+    last = current;
+  }
+  //auto dark_weight_pyramid = gauss_pyramid(pyramid_levels, "in", lp);
+
+  lp.func2d(out_name, v(last));
+
+  return lp;
+}
+
+void increment_iccad_apps(const std::string& prefix) {
+  //vector<int> throughputs{1, 16, 32};
+  vector<int> throughputs{1};
+  for (auto throughput : throughputs) {
+    string name = prefix + "_" + str(throughput);
+    App lp = increment_iccad(name);
+    int rows = 1080;
+    int cols = 1920;
+    CodegenOptions options;
+    options.internal = true;
+    options.use_custom_code_string = true;
+    lp.realize(options, name, {cols, rows}, "in", throughput);
+
+    move_to_benchmarks_folder(name + "_opt");
+  }
+  assert(false);
+}
+
+void identity_stream_iccad_apps(const std::string& prefix) {
+  //vector<int> throughputs{1, 16, 32};
+  vector<int> throughputs{1};
+  for (auto throughput : throughputs) {
+    string name = prefix + "_" + str(throughput);
+    App lp = identity_stream_iccad(name);
+    int rows = 1080;
+    int cols = 1920;
+    CodegenOptions options;
+    options.internal = true;
+    options.use_custom_code_string = true;
+    lp.realize(options, name, {cols, rows}, "in", throughput);
+
+    move_to_benchmarks_folder(name + "_opt");
+  }
+  assert(false);
+}
+
+void stencil_chain_no_dsp_long_iccad_apps(const std::string& prefix) {
   vector<int> throughputs{1, 16, 32};
   //vector<int> throughputs{1};
+  for (auto throughput : throughputs) {
+    string name = prefix + "_" + str(throughput);
+    App lp = stencil_chain_no_dsp_long_iccad(name);
+    int rows = 1080;
+    int cols = 1920;
+    CodegenOptions options;
+    options.internal = true;
+    options.use_custom_code_string = true;
+    lp.realize(options, name, {cols, rows}, "in", throughput);
+
+    move_to_benchmarks_folder(name + "_opt");
+  }
+  assert(false);
+}
+
+void stencil_chain_no_dsp_iccad_apps(const std::string& prefix) {
+  vector<int> throughputs{1, 16, 32};
+  //vector<int> throughputs{1};
+  for (auto throughput : throughputs) {
+    string name = prefix + "_" + str(throughput);
+    App lp = stencil_chain_no_dsp_iccad(name);
+    int rows = 1080;
+    int cols = 1920;
+    CodegenOptions options;
+    options.internal = true;
+    options.use_custom_code_string = true;
+    lp.realize(options, name, {cols, rows}, "in", throughput);
+
+    move_to_benchmarks_folder(name + "_opt");
+  }
+  assert(false);
+}
+
+void stencil_chain_five_stage_iccad_apps(const std::string& prefix) {
+  vector<int> throughputs{1, 16, 32};
+  //vector<int> throughputs{1};
+  for (auto throughput : throughputs) {
+    string name = prefix + "_" + str(throughput);
+    App lp = stencil_chain_five_stage_iccad(name);
+    int rows = 1080;
+    int cols = 1920;
+    CodegenOptions options;
+    options.internal = true;
+    options.use_custom_code_string = true;
+    lp.realize(options, name, {cols, rows}, "in", throughput);
+
+    move_to_benchmarks_folder(name + "_opt");
+  }
+  assert(false);
+}
+void stencil_chain_one_stage_iccad_apps(const std::string& prefix) {
+  //vector<int> throughputs{1, 16, 32};
+  vector<int> throughputs{1};
+  for (auto throughput : throughputs) {
+    string name = prefix + "_" + str(throughput);
+    App lp = stencil_chain_one_stage_iccad(name);
+    int rows = 1080;
+    int cols = 1920;
+    CodegenOptions options;
+    options.internal = true;
+    options.use_custom_code_string = true;
+    lp.realize(options, name, {cols, rows}, "in", throughput);
+
+    move_to_benchmarks_folder(name + "_opt");
+  }
+  assert(false);
+}
+
+void stencil_chain_iccad_apps(const std::string& prefix) {
+  //vector<int> throughputs{1, 16, 32};
+  vector<int> throughputs{1};
   for (auto throughput : throughputs) {
     string name = prefix + "_" + str(throughput);
     App lp = stencil_chain_iccad(name);
@@ -8748,7 +9007,7 @@ void stencil_chain_iccad_apps(const std::string& prefix) {
 
     move_to_benchmarks_folder(name + "_opt");
   }
-  //assert(false);
+  assert(false);
 }
 
 void gauss_pyramid_iccad_apps(const std::string& prefix) {
@@ -9170,12 +9429,7 @@ App sobel16(const std::string output_name) {
         sub(v("img", 1, 1), v("img", 1, -1))));
 
   sobel.func2d(output_name,
-      //add(square(v("mag_x")), square(v("mag_y"))));
-      //sub(65535, add(square(v("mag_x")), square(v("mag_y")))));
-      //sub(100, add(square(v("mag_x")), square(v("mag_y")))));
       add(square(v("mag_x")), square(v("mag_y"))));
-      //sub(65535, add(square(v("mag_x")), square(v("mag_y")))));
-
 
   return sobel;
 }
@@ -9188,7 +9442,6 @@ App sobel(const std::string output_name) {
       {{-1, -1}, {-1, 0}, {-1, 1}, {1, -1}, {1, 0}, {1, 1}});
   sobel.func2d("mag_y", "sobel_my", "img", {1, 1},
       {{-1, -1}, {-1, 1}, {0, -1}, {0, 1}, {1, -1}, {1, 1}});
-      //{{-1, 1}, {-1, -1}, {0, 1}, {0, - 1}, {1, 1}, {1, -1}});
 
   Window xwindow{"mag_x", {1, 1}, {{0, 0}}};
   Window ywindow{"mag_y", {1, 1}, {{0, 0}}};
@@ -9484,7 +9737,8 @@ void sobel_16_app_test(const std::string& prefix) {
 
   //int cols = 10;
   //int rows = 10;
-  vector<int> factors{1, 2, 4, 8};
+  //vector<int> factors{1, 2, 4, 8};
+  vector<int> factors{1, 16, 32};
   //for (int i = 0; i < 5; i++) {
   for (auto factor : factors) {
     int unroll_factor = factor;
@@ -9530,7 +9784,8 @@ void blur_xy_16_app_test(const std::string& prefix) {
   int cols = 1920;
   int rows = 1080;
 
-  vector<int> factors{1, 2, 4, 8};
+  //vector<int> factors{1, 2, 4, 8};
+  vector<int> factors{1, 16, 32};
   for (auto f : factors) {
     int unroll_factor = f;
     cout << tab(1) << "unroll factor: " << unroll_factor << endl;
@@ -10801,6 +11056,21 @@ void naive_implementations() {
 }
 
 void iccad_tests() {
+
+  stencil_chain_one_stage_iccad_apps("icsc_1s");
+  assert(false);
+  increment_iccad_apps("inc");
+  camera_pipeline_test("cp_noinit_ln1c");
+  sobel_16_app_test("sbl_ln");
+  blur_xy_16_app_test("bxy_noinit_ln");
+  assert(false);
+
+  stencil_chain_five_stage_iccad_apps("icsc_5s");
+  stencil_chain_no_dsp_long_iccad_apps("icsc_ndln");
+  stencil_chain_no_dsp_iccad_apps("icsc_nd");
+  identity_stream_iccad_apps("idstream");
+  stencil_chain_iccad_apps("icsc");
+
   //App ef = ef_cartoon("ef_sm");
   //generate_app_benchmark("ef_sm", ef, {1920, 1080}, 1);
   //assert(false);
@@ -10822,10 +11092,8 @@ void iccad_tests() {
   int index = 20;
   string istr = str(index);
 
-  camera_pipeline_test("cp_noinit_" + istr);
-  blur_xy_16_app_test("bxy_noinit_p2" + istr);
+
   harris16_test("hr" + istr);
-  sobel_16_app_test("sbl" + istr);
   different_path_latencies_test("dp");
   harris_test();
   pointwise_app_test();
@@ -18093,7 +18361,8 @@ void misc_tests() {
 }
 
 void application_tests() {
-  stencil_chain_iccad_apps("icsc");
+  iccad_tests();
+
   up_to_id_stream_tests();
   up_to_ram_addr_unit_test();
   up_to_register_file_test();

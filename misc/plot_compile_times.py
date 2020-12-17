@@ -71,8 +71,8 @@ width = 0.5       # the width of the bars: can also be len(x) sequence
 fig, ax = plt.subplots()
 
 ax.bar(labels, hls_pnr_times, width,
-       label='HLS+PnR')
-ax.bar(labels, cw_times, width, bottom=hls_pnr_times, label='CW')
+       label='HLS+PnR Time')
+# ax.bar(labels, cw_times, width, bottom=hls_pnr_times, label='CW')
 
 ax.set_ylabel('Total Compile Time (sec)')
 plt.setp(ax.get_xticklabels(), rotation=45, horizontalalignment='right')
