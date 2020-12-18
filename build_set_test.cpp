@@ -11526,7 +11526,6 @@ void generate_garnet_coreir(std::map<string, UBuffer> buffers_opt, prog prg, Cod
   CoreIRLoadLibrary_commonlib(context);
   CoreIRLoadLibrary_cwlib(context);
   //schedule_info hwinfo;
-  hwinfo.use_dse_compute = true;
 
   //TODO: add lake memory tile configuration here
 
@@ -13319,12 +13318,12 @@ void lake_conv33_recipe_test() {
 void dsa_writers(prog& prg);
 void dsa_readers(prog& prg);
 
-void compile_for_garnet_single_port_mem(prog & prg, string dir, bool gen_smt_stream, bool gen_config_only,bool multi_accessor );
+void compile_for_garnet_single_port_mem(prog & prg, string dir, bool gen_smt_stream, bool gen_config_only, bool multi_accessor, bool use_dse_compute);
 void cpy_app_to_folder(const std::string& app_type, const std::string& prg_name);
 
 void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, string dir="aha_garnet_design") {
   vector<prog> test_apps;
-  test_apps.push_back(conv_3_3());
+  test_apps.push_back(gaussian());
   //test_apps.push_back(resnet_layer_gen());
   //test_apps.push_back(cascade());
   // test_apps.push_back(harris());
@@ -13355,7 +13354,7 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
     auto cpu = unoptimized_result(prg);
 
     //compile_for_garnet_platonic_mem(prg);
-    compile_for_garnet_single_port_mem(prg, dir, false, gen_config_only, multi_accessor);
+    compile_for_garnet_single_port_mem(prg, dir, false, gen_config_only, multi_accessor, false);
     generate_regression_testbench(prg);
 
     cout << "Output name: " << prg.name << endl;
@@ -16153,10 +16152,9 @@ void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
   sanity_check_iis(sched);
 }
 
-schedule_info garnet_schedule_info(CodegenOptions& options, prog& prg) {
+schedule_info garnet_schedule_info(CodegenOptions& options, prog& prg, bool use_dse_compute) {
   schedule_info sched;
-  sched.use_dse_compute = true;
-  //sched.use_dse_compute = true;
+  sched.use_dse_compute = use_dse_compute;
   for (auto op : prg.all_ops()) {
     if (op->func != "") {
       sched.resource_requirements[op] = op->func;
@@ -16379,19 +16377,19 @@ void compile_cycle_accurate_hw(CodegenOptions& options, schedule_info& sched, pr
 
 void compile_for_generic_SRAM_mem(prog& prg) {
   auto options = generic_SRAM_codegen_options(prg);
-  schedule_info sched = garnet_schedule_info(options, prg);
+  schedule_info sched = garnet_schedule_info(options, prg, false);
   compile_cycle_accurate_hw(options, sched, prg);
 }
 
 void compile_for_CGRA_M1_mem(prog& prg) {
   auto options = CGRA_M1_codegen_options(prg);
-  schedule_info sched = garnet_schedule_info(options, prg);
+  schedule_info sched = garnet_schedule_info(options, prg, false);
   compile_cycle_accurate_hw(options, sched, prg);
 }
 
 void compile_for_CGRA_M3_mem(prog& prg) {
   auto options = CGRA_M3_codegen_options(prg);
-  schedule_info sched = garnet_schedule_info(options, prg);
+  schedule_info sched = garnet_schedule_info(options, prg, false);
   compile_cycle_accurate_hw(options, sched, prg);
 }
 
@@ -16399,20 +16397,20 @@ void compile_for_FPGA_BRAM_mem(prog& prg) {
   auto options = FPGA_BRAM_codegen_options(prg);
   options.rtl_options.use_pipelined_compute_units = true;
   //options.rtl_options.global_signals.synchronous_reset = true;
-  schedule_info sched = garnet_schedule_info(options, prg);
+  schedule_info sched = garnet_schedule_info(options, prg, false);
   compile_cycle_accurate_hw(options, sched, prg);
 }
 
 void compile_for_garnet_platonic_mem(prog& prg) {
   auto options = garnet_codegen_options(prg);
   //options.rtl_options.use_pipelined_compute_units = true;
-  schedule_info sched = garnet_schedule_info(options, prg);
+  schedule_info sched = garnet_schedule_info(options, prg, false);
   compile_cycle_accurate_hw(options, sched, prg);
 }
 
 void compile_for_garnet_dual_port_mem(prog& prg) {
   auto options = garnet_codegen_dual_port_with_addrgen_options(prg);
-  schedule_info sched = garnet_schedule_info(options, prg);
+  schedule_info sched = garnet_schedule_info(options, prg, false);
   compile_cycle_accurate_hw(options, sched, prg);
 }
 
@@ -16433,7 +16431,7 @@ void generate_smt_stream_for_garnet_single_port_mem(prog& prg) {
 
   CodegenOptions options = garnet_codegen_single_port_with_addrgen_options(prg, "aha_garnet_design");
   options.emit_smt_stream = true;
-  schedule_info sched = garnet_schedule_info(options, prg);
+  schedule_info sched = garnet_schedule_info(options, prg, false);
   garnet_single_port_ram_schedule(sched, prg.root, prg);
   auto sched_map = op_times_map(sched, prg);
   auto hw_sched = its(sched_map,
@@ -16496,7 +16494,8 @@ void compile_for_garnet_single_port_mem(prog& prg,
         string dir,
         bool gen_smt_stream,
         bool config_gen_only,
-        bool multi_sram) {
+        bool multi_sram,
+        bool use_dse_compute) {
 
   //make sure the loop bound and address is positive
   normalize_bounds(prg);
@@ -16516,7 +16515,7 @@ void compile_for_garnet_single_port_mem(prog& prg,
   options.config_gen_only = config_gen_only;
   if (multi_sram)
       options.mem_tile.multi_sram_accessor = true;
-  schedule_info sched = garnet_schedule_info(options, prg);
+  schedule_info sched = garnet_schedule_info(options, prg, use_dse_compute);
   garnet_single_port_ram_schedule(sched, prg.root, prg);
   auto sched_map = op_times_map(sched, prg);
   auto hw_sched = its(sched_map,
@@ -16684,7 +16683,7 @@ void test_schedules(vector<prog>& test_programs) {
   for (auto& prg : test_programs) {
     CodegenOptions options;
     schedule_info sched =
-      garnet_schedule_info(options, prg);
+      garnet_schedule_info(options, prg, false);
     garnet_dual_port_ram_schedule(sched, prg.root, prg);
     cout << "Checking " << prg.name << " schedule" << endl;
     //prg.pretty_print();
@@ -17134,34 +17133,59 @@ void cgra_flow_tests() {
 
 }
 
-void dse_flow_tests() {
+void dse_flow_tests(string app_name, bool use_dse) {
+  cout << "start" << endl;
+  std::map<string,prog (*)()> func_map;
 
+  func_map["camera_pipeline"] = camera_pipeline;
+  func_map["unsharp"] = unsharp;
+  func_map["gaussian"] = gaussian;
+  func_map["pointwise"] = pointwise;
+  func_map["harris"] = harris;
+  func_map["down_sample"] = down_sample;
+  func_map["cascade"] = cascade;
+  func_map["stereo"] = stereo;
+  func_map["resnet"] = resnet;
+  func_map["resnet_layer_gen"] = resnet_layer_gen;
+  
+  cout << "func_map created" << endl;
   vector<prog> test_programs;
 
-  // test_programs.push_back(camera_pipeline());
-  //test_programs.push_back(unsharp());
-  // test_programs.push_back(gaussian());
-  // test_programs.push_back(pointwise());
-  test_programs.push_back(harris()); 
-  // test_programs.push_back(down_sample());
-  // test_programs.push_back(cascade());
-  //test_programs.push_back(stereo());
+  auto prg_ptr = func_map[app_name];
+  auto prg = prg_ptr();
 
-  // Delayed incorrectly?
+  cout << "func_map used" << endl;
+  bool gen_config_only = true;
+  bool multi_accessor = false;
+  string dir = "dse_garnet_designs";
+  cout << "====== Running CGRA DSE test for " << prg.name << endl;
+  break_up_multi_channel_inputs(prg);
+  break_up_multi_channel_outputs(prg);
+  prg.sanity_check();
+  dsa_writers(prg);
+  auto cpu = unoptimized_result(prg);
 
-  // Compute units gone?
-  //test_programs.push_back(rom());
-  //test_programs.push_back(mini_conv_halide_fixed());
-  //test_programs.push_back(strided_conv());
+  compile_for_garnet_single_port_mem(prg, dir, false, gen_config_only, multi_accessor, true);
+  generate_regression_testbench(prg);
 
+  cout << "Output name: " << prg.name << endl;
+  
+  if (!gen_config_only) {
+    string name = prg.name;
+    auto verilog_files = get_files("./" + dir + "/"+name+"/verilog/");
+    verilog_files.push_back(name + ".v");
+    verilog_files.push_back("LakeWrapper.v");
+    bool extra_flag_for_lake = true;
+    int res = run_verilator_on(name, name + "_verilog_tb.cpp", verilog_files, extra_flag_for_lake);
+    assert(res == 0);
+    cmd("rm LakeWrapper.v");
 
-
-
-
-  test_platonic_codegen(test_programs);
-  //test_schedules(test_programs);
-
-  assert(false);
+    auto verilator_res = verilator_results(prg.name);
+    compare("cgra_" + prg.name + "_cpu_vs_verilog_comparison", verilator_res, cpu);
+    //string app_type = "dualwithaddr";
+    string app_type = "single_port_buffer";
+    cpy_app_to_folder(app_type, prg.name);
+  }
 }
 
 void dual_port_lake_test() {
@@ -17752,7 +17776,7 @@ void brighten_blur_asplos_example() {
   //auto buffers = build_buffers(prg, sched);
 
   CodegenOptions options;
-  schedule_info hwsched = garnet_schedule_info(options, prg);
+  schedule_info hwsched = garnet_schedule_info(options, prg, false);
   garnet_dual_port_ram_schedule(hwsched, prg.root, prg);
   auto sts = op_start_times_map(hwsched, prg);
   for (auto m : get_maps(sts)) {
@@ -19105,7 +19129,7 @@ void dhuff_playground() {
     //prg.pretty_print();
     //prg.sanity_check();
     //auto options = garnet_codegen_options(prg);
-    //schedule_info sched = garnet_schedule_info(options, prg);
+    //schedule_info sched = garnet_schedule_info(options, prg, false);
     //normalize_bounds(prg);
 
     //garnet_dual_port_ram_schedule(sched, prg.root, prg);
@@ -19287,8 +19311,17 @@ void travis_tests() {
 int main(int argc, char** argv) {
 
   if (argc > 1) {
-    assert(argc == 2);
     string cmd = argv[1];
+
+    if (cmd == "dse-flow") {      
+      assert(argc == 4);
+      string app_name = argv[2];
+      string use_dse_str = argv[3];
+      bool use_dse = use_dse_str == "dse";
+      dse_flow_tests(app_name, use_dse);
+      return 0;
+    }
+    assert(argc == 2);
 
     if (cmd == "dhuff-playground") {
       dhuff_playground();
@@ -19311,10 +19344,6 @@ int main(int argc, char** argv) {
     }
 
 
-    if (cmd == "dse-flow") {
-      dse_flow_tests();
-      return 0;
-    }
 
     if (cmd == "asplos-examples") {
       generate_asplos_examples();

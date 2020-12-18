@@ -2039,7 +2039,7 @@ class CustomFlatten : public CoreIR::InstanceGraphPass {
            continue;
          }
        } else {
-         if (m->getName() == "WrappedPE_wrapped") {
+         if (m->getName() == "WrappedPE") {
            continue;
          }
        }
@@ -2228,21 +2228,13 @@ void garnet_map_module(Module* top) {
     cout << "Flattening!" << endl;
     c->runPasses({"flatten"});
   }
-  if (c->getGlobal()->hasModule("WrappedPE_wrapped")) {
-    auto pe_mod = c->getGlobal()->getModules()["WrappedPE_wrapped"];
-    pe_mod->print();
-    pe_mod->unlinkDef();
-    cout << "Unlinked!" << endl;
-    cout << "Flattening!" << endl;
-    c->runPasses({"flatten"});
-  }
   c->runPasses({"cullgraph"});
   // c->addPass(new CustomFlatten);
   // c->runPasses({"customflatten"});
-  c->addPass(new MapperPasses::ConstDuplication);
-  c->runPasses({"constduplication"});
-  c->addPass(new MapperPasses::MemConst);
-  c->runPasses({"memconst"});
+  // c->addPass(new MapperPasses::ConstDuplication);
+  // c->runPasses({"constduplication"});
+  // c->addPass(new MapperPasses::MemConst);
+  // c->runPasses({"memconst"});
   c->addPass(new MapperPasses::MemSubstitute);
   c->runPasses({"memsubstitute"});
   c->runPasses({"cullgraph"});

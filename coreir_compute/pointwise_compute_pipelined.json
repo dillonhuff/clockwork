@@ -29,7 +29,7 @@
           ["self.out","self.in"]
         ]
       },
-      "_U5_pt__U6":{
+      "_U4_pt__U5":{
         "type":["Record",[
           ["in",["Array",16,"BitIn"]],
           ["out",["Array",16,"Bit"]]
@@ -38,7 +38,7 @@
           ["self.out","self.in"]
         ]
       },
-      "_U8_pt__U9":{
+      "_U7_pt__U8":{
         "type":["Record",[
           ["in",["Array",16,"BitIn"]],
           ["out",["Array",16,"Bit"]]
@@ -127,20 +127,20 @@
             "modref":"global._U2_pt__U3"
           },
           "_U4":{
+            "modref":"global._U4_pt__U5"
+          },
+          "_U6":{
             "genref":"mantle.reg",
             "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
             "modargs":{"init":[["BitVector",16],"16'h0000"]}
-          },
-          "_U5":{
-            "modref":"global._U5_pt__U6"
           },
           "_U7":{
+            "modref":"global._U7_pt__U8"
+          },
+          "_U9":{
             "genref":"mantle.reg",
             "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
             "modargs":{"init":[["BitVector",16],"16'h0000"]}
-          },
-          "_U8":{
-            "modref":"global._U8_pt__U9"
           },
           "const_p2__259":{
             "genref":"coreir.const",
@@ -153,14 +153,14 @@
           }
         },
         "connections":[
-          ["_U4.out","_U2.in"],
-          ["mul_hw_input_global_wrapper_stencil_1_259_260.in1","_U2.out"],
-          ["const_p2__259.out","_U4.in"],
-          ["_U7.out","_U5.in"],
-          ["mul_hw_input_global_wrapper_stencil_1_259_260.in0","_U5.out"],
-          ["self.in0_hw_input_global_wrapper_stencil.0","_U7.in"],
-          ["mul_hw_input_global_wrapper_stencil_1_259_260.out","_U8.in"],
-          ["self.out_mult_stencil","_U8.out"]
+          ["mul_hw_input_global_wrapper_stencil_1_259_260.out","_U2.in"],
+          ["self.out_mult_stencil","_U2.out"],
+          ["_U6.out","_U4.in"],
+          ["mul_hw_input_global_wrapper_stencil_1_259_260.in0","_U4.out"],
+          ["self.in0_hw_input_global_wrapper_stencil.0","_U6.in"],
+          ["_U9.out","_U7.in"],
+          ["mul_hw_input_global_wrapper_stencil_1_259_260.in1","_U7.out"],
+          ["const_p2__259.out","_U9.in"]
         ]
       }
     },
