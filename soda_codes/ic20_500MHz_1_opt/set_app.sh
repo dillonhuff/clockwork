@@ -1,0 +1,2 @@
+export app=ic20_500MHz_1_opt
+export HLS_CLOCK_FREQUENCY=500000000
