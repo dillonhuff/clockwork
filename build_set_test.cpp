@@ -11174,6 +11174,7 @@ void naive_implementations() {
 
 void iccad_tests() {
 
+  stencil_chain_iccad_apps("icsc_500MHz");
   stencil_chain_fan_out_iccad_apps("icfo");
   stencil_chain_eight_stage_iccad_apps("icsc_8s");
   stencil_chain_one_stage_iccad_apps("icsc_1s");
@@ -11187,7 +11188,6 @@ void iccad_tests() {
   stencil_chain_no_dsp_long_iccad_apps("icsc_ndln");
   stencil_chain_no_dsp_iccad_apps("icsc_nd");
   identity_stream_iccad_apps("idstream");
-  stencil_chain_iccad_apps("icsc");
 
   //App ef = ef_cartoon("ef_sm");
   //generate_app_benchmark("ef_sm", ef, {1920, 1080}, 1);

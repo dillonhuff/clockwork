@@ -1,0 +1,1 @@
+export app=icsc_500MHz_1_opt
