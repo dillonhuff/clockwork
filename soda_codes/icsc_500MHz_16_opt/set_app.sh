@@ -1,2 +1,2 @@
-export app=icsc_500MHz_1_opt
+export app=icsc_500MHz_16_opt
 export HLS_CLOCK_FREQUENCY=500000000
