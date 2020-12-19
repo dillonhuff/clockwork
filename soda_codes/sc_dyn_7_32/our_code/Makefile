@@ -69,6 +69,7 @@ CLFLAGS += -D__VIVADO_SYNTH__ -I ../../../ -t $(TARGET) --platform $(DEVICE) --s
 ifneq ($(TARGET), hw)
 	CLFLAGS += -g
 endif
+CLFLAGS += --hls.clock $(HLS_CLOCK_FREQUENCY):$(APP_NAME)_accel
 
 
 

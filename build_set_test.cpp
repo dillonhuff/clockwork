@@ -9137,9 +9137,60 @@ void stencil_chain_one_stage_iccad_apps(const std::string& prefix) {
   assert(false);
 }
 
-void stencil_chain_20_stage_iccad_apps(const std::string& prefix) {
+App heat_3d_iccad(const std::string& name) {
+  App dn;
+  dn.set_default_num_type(NUM_TYPE_FLOAT);
+
+  dn.func2d("in");
+
+  dn.func2d(name, v("in"));
+
+  //dn.func2d("g", div(fc("1.0f"), func("sqrt", add({sq("diff_qwe"), sq("diff_d"), sq("diff_l"), sq("diff_r")}))));
+  //dn.func2d("r0", "comp_r02d", {pt("u"), pt("f")});
+  //dn.func2d("r1", "r1_comp2d", pt("r0"));
+  //dn.func2d(name,
+      //"out_comp_dn2d",
+      //{pt("r1"),
+      //pt("f"),
+      //win("u", {
+          //{-1, 0},
+          //{0, -1},
+          //{0, 0},
+          //{1, 0}
+          //}),
+      //win("g", {
+          //{-1, 0},
+          //{0, -1},
+          //{0, 1},
+          //{1, 0}
+          //})});
+
+  return dn;
+}
+
+void heat_3d_iccad_apps(const std::string& prefix) {
   //vector<int> throughputs{1, 16, 32};
   vector<int> throughputs{1};
+  for (auto throughput : throughputs) {
+    string name = prefix + "_" + str(throughput);
+    App lp = heat_3d_iccad(name);
+    int rows = 64;
+    int cols = 64;
+    CodegenOptions options;
+    options.internal = true;
+    options.use_custom_code_string = true;
+    options.rtl_options.hls_clock_target_Hz = 300000000;
+    lp.realize(options, name, {cols, rows}, "in", throughput);
+
+    move_to_benchmarks_folder(name + "_opt");
+  }
+  assert(false);
+
+}
+
+void stencil_chain_20_stage_iccad_apps(const std::string& prefix) {
+  vector<int> throughputs{1, 16, 32};
+  //vector<int> throughputs{1};
   for (auto throughput : throughputs) {
     string name = prefix + "_" + str(throughput);
     App lp = stencil_chain_20_stage_iccad(name);
@@ -11222,6 +11273,7 @@ void naive_implementations() {
 
 void iccad_tests() {
 
+  heat_3d_iccad_apps("h3_300MHz");
   //stencil_chain_iccad_apps("icsc_500MHz");
   //stencil_chain_20_stage_iccad_apps("ic20_500MHz");
   //stencil_chain_20_stage_iccad_apps("ic20_400MHz");

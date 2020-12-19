@@ -1,1 +1,2 @@
 export app=multi_kernel_design
+export HLS_CLOCK_FREQUENCY=250000000
