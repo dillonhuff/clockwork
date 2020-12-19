@@ -23,3 +23,4 @@ for l in lines:
   assert(x)
   print("Id = ", x.group(1))
   os.system("aws ec2 delete-fpga-image --fpga-image-id {0}".format(x.group(1)))
+
