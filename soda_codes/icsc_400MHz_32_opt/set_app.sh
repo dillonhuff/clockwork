@@ -1,0 +1,2 @@
+export app=icsc_400MHz_32_opt
+export HLS_CLOCK_FREQUENCY=400000000
