@@ -1555,7 +1555,7 @@ void generate_soda_tb(CodegenOptions& options, map<string, UBuffer>& buffers, pr
   }
 }
 
-void generate_tb_compare_scripts(map<string, UBuffer>& buffers, prog& prg) {
+void generate_tb_compare_scripts(CodegenOptions& options, map<string, UBuffer>& buffers, prog& prg) {
   {
     ofstream of(prg.name + "_kernel.h");
     of << "#include \"ap_int.h\"" << endl << endl;
@@ -1590,6 +1590,7 @@ void generate_tb_compare_scripts(map<string, UBuffer>& buffers, prog& prg) {
   {
     ofstream of("set_app.sh");
     of << "export app=" << prg.name << endl;
+    of << "export HLS_CLOCK_FREQUENCY=" << options.rtl_options.hls_clock_target_Hz << endl;
     of.close();
   }
 
@@ -2027,7 +2028,7 @@ void generate_app_collateral(CodegenOptions& options,
   generate_xilinx_accel_soda_host(options, buffers, prg);
   generate_xilinx_accel_host(options, buffers, prg);
   generate_tb_run_scripts(prg);
-  generate_tb_compare_scripts(buffers, prg);
+  generate_tb_compare_scripts(options, buffers, prg);
 
 }
 

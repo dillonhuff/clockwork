@@ -6,8 +6,8 @@ using namespace std;
   ofstream* global_debug_handle;
 
 #endif //__VIVADO_SYNTH__
-// compute file: icsc_500MHz_1_opt_compute_units.h
-#include "icsc_500MHz_1_opt_compute_units.h"
+// compute file: icsc_300MHz_1_opt_compute_units.h
+#include "icsc_300MHz_1_opt_compute_units.h"
 
 struct in_in_update_0_write0_merged_banks_4_cache {
 	// RAM Box: {[-10, 1929], [0, 1088]}
@@ -1559,7 +1559,7 @@ inline hw_uint<64> stg8_stg9_update_0_read_bundle_read(stg8_cache& stg8, int d0,
 	return result;
 }
 
-struct stg9_stg9_update_0_write0_to_icsc_500MHz_1_rd0_cache {
+struct stg9_stg9_update_0_write0_to_icsc_300MHz_1_rd0_cache {
 	// RAM Box: {[0, 1919], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
@@ -1583,36 +1583,36 @@ struct stg9_stg9_update_0_write0_to_icsc_500MHz_1_rd0_cache {
 
 struct stg9_cache {
   // # of banks: 1
-  stg9_stg9_update_0_write0_to_icsc_500MHz_1_rd0_cache stg9_stg9_update_0_write0_to_icsc_500MHz_1_rd0;
+  stg9_stg9_update_0_write0_to_icsc_300MHz_1_rd0_cache stg9_stg9_update_0_write0_to_icsc_300MHz_1_rd0;
 };
 
 
 
 inline void stg9_stg9_update_0_write0_write(hw_uint<16>& stg9_stg9_update_0_write0, stg9_cache& stg9, int d0, int d1, int dynamic_address) {
-  stg9.stg9_stg9_update_0_write0_to_icsc_500MHz_1_rd0.push(stg9_stg9_update_0_write0);
+  stg9.stg9_stg9_update_0_write0_to_icsc_300MHz_1_rd0.push(stg9_stg9_update_0_write0);
 }
 
-inline hw_uint<16> icsc_500MHz_1_rd0_select(stg9_cache& stg9, int d0, int d1, int dynamic_address) {
+inline hw_uint<16> icsc_300MHz_1_rd0_select(stg9_cache& stg9, int d0, int d1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // icsc_500MHz_1_rd0 read pattern: { icsc_500MHz_1_update_0[d0, d1] -> stg9[d0, d1] : 0 <= d0 <= 1919 and 0 <= d1 <= 1079 }
-  // Read schedule : { icsc_500MHz_1_update_0[d0, d1] -> [10 + d1, 10 + d0, 12] : 0 <= d0 <= 1919 and 0 <= d1 <= 1079 }
+  // icsc_300MHz_1_rd0 read pattern: { icsc_300MHz_1_update_0[d0, d1] -> stg9[d0, d1] : 0 <= d0 <= 1919 and 0 <= d1 <= 1079 }
+  // Read schedule : { icsc_300MHz_1_update_0[d0, d1] -> [10 + d1, 10 + d0, 12] : 0 <= d0 <= 1919 and 0 <= d1 <= 1079 }
   // Write schedule: { stg9_update_0[d0, d1] -> [10 + d1, 10 + d0, 11] : 0 <= d0 <= 1919 and 0 <= d1 <= 1079 }
-  auto value_stg9_stg9_update_0_write0 = stg9.stg9_stg9_update_0_write0_to_icsc_500MHz_1_rd0.peek(/* one reader or all rams */ 0);
+  auto value_stg9_stg9_update_0_write0 = stg9.stg9_stg9_update_0_write0_to_icsc_300MHz_1_rd0.peek(/* one reader or all rams */ 0);
   return value_stg9_stg9_update_0_write0;
   return 0;
 }
 
 // # of bundles = 2
-// icsc_500MHz_1_update_0_read
-//	icsc_500MHz_1_rd0
-inline hw_uint<16> stg9_icsc_500MHz_1_update_0_read_bundle_read(stg9_cache& stg9, int d0, int d1, int dynamic_address) {
+// icsc_300MHz_1_update_0_read
+//	icsc_300MHz_1_rd0
+inline hw_uint<16> stg9_icsc_300MHz_1_update_0_read_bundle_read(stg9_cache& stg9, int d0, int d1, int dynamic_address) {
   // # of ports in bundle: 1
-    // icsc_500MHz_1_rd0
+    // icsc_300MHz_1_rd0
 
 	hw_uint<16> result;
-	hw_uint<16> icsc_500MHz_1_rd0_res = icsc_500MHz_1_rd0_select(stg9, d0, d1, dynamic_address);
-	set_at<0, 16>(result, icsc_500MHz_1_rd0_res);
+	hw_uint<16> icsc_300MHz_1_rd0_res = icsc_300MHz_1_rd0_select(stg9, d0, d1, dynamic_address);
+	set_at<0, 16>(result, icsc_300MHz_1_rd0_res);
 	return result;
 }
 
@@ -1627,6 +1627,24 @@ inline void stg9_stg9_update_0_write_bundle_write(hw_uint<16>& stg9_update_0_wri
 
 
 // Operation logic
+inline void stg0_update_0(in_cache& in, stg0_cache& stg0, int d0, int d1) {
+  // Dynamic address computation
+
+	// Consume: in
+	auto in_0_c__0_value = in_stg0_update_0_read_bundle_read(in/* source_delay */, d0, d1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = stg0_generated_compute_unrolled_1(in_0_c__0_value);
+	// Produce: stg0
+	stg0_stg0_update_0_write_bundle_write(/* arg names */compute_result, stg0, d0, d1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
 inline void stg3_update_0(stg2_cache& stg2, stg3_cache& stg3, int d0, int d1) {
   // Dynamic address computation
 
@@ -1681,18 +1699,36 @@ inline void stg7_update_0(stg6_cache& stg6, stg7_cache& stg7, int d0, int d1) {
 
 }
 
-inline void stg9_update_0(stg8_cache& stg8, stg9_cache& stg9, int d0, int d1) {
+inline void stg8_update_0(stg7_cache& stg7, stg8_cache& stg8, int d0, int d1) {
   // Dynamic address computation
 
-	// Consume: stg8
-	auto stg8_0_c__0_value = stg8_stg9_update_0_read_bundle_read(stg8/* source_delay */, d0, d1, 0);
+	// Consume: stg7
+	auto stg7_0_c__0_value = stg7_stg8_update_0_read_bundle_read(stg7/* source_delay */, d0, d1, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 
-	auto compute_result = stg9_generated_compute_unrolled_1(stg8_0_c__0_value);
-	// Produce: stg9
-	stg9_stg9_update_0_write_bundle_write(/* arg names */compute_result, stg9, d0, d1, 0);
+	auto compute_result = stg8_generated_compute_unrolled_1(stg7_0_c__0_value);
+	// Produce: stg8
+	stg8_stg8_update_0_write_bundle_write(/* arg names */compute_result, stg8, d0, d1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void icsc_300MHz_1_update_0(stg9_cache& stg9, HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */icsc_300MHz_1, int d0, int d1) {
+  // Dynamic address computation
+
+	// Consume: stg9
+	auto stg9_0_c__0_value = stg9_icsc_300MHz_1_update_0_read_bundle_read(stg9/* source_delay */, d0, d1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = icsc_300MHz_1_generated_compute_unrolled_1(stg9_0_c__0_value);
+	// Produce: icsc_300MHz_1
+	icsc_300MHz_1.write(compute_result);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -1707,24 +1743,6 @@ inline void in_update_0(HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */i
 	auto compute_result = in_generated_compute_unrolled_1(in_off_chip_0_c__0_value);
 	// Produce: in
 	in_in_update_0_write_bundle_write(/* arg names */compute_result, in, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void stg0_update_0(in_cache& in, stg0_cache& stg0, int d0, int d1) {
-  // Dynamic address computation
-
-	// Consume: in
-	auto in_0_c__0_value = in_stg0_update_0_read_bundle_read(in/* source_delay */, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = stg0_generated_compute_unrolled_1(in_0_c__0_value);
-	// Produce: stg0
-	stg0_stg0_update_0_write_bundle_write(/* arg names */compute_result, stg0, d0, d1, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -1803,36 +1821,18 @@ inline void stg6_update_0(stg5_cache& stg5, stg6_cache& stg6, int d0, int d1) {
 
 }
 
-inline void stg8_update_0(stg7_cache& stg7, stg8_cache& stg8, int d0, int d1) {
+inline void stg9_update_0(stg8_cache& stg8, stg9_cache& stg9, int d0, int d1) {
   // Dynamic address computation
 
-	// Consume: stg7
-	auto stg7_0_c__0_value = stg7_stg8_update_0_read_bundle_read(stg7/* source_delay */, d0, d1, 0);
+	// Consume: stg8
+	auto stg8_0_c__0_value = stg8_stg9_update_0_read_bundle_read(stg8/* source_delay */, d0, d1, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 
-	auto compute_result = stg8_generated_compute_unrolled_1(stg7_0_c__0_value);
-	// Produce: stg8
-	stg8_stg8_update_0_write_bundle_write(/* arg names */compute_result, stg8, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void icsc_500MHz_1_update_0(stg9_cache& stg9, HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */icsc_500MHz_1, int d0, int d1) {
-  // Dynamic address computation
-
-	// Consume: stg9
-	auto stg9_0_c__0_value = stg9_icsc_500MHz_1_update_0_read_bundle_read(stg9/* source_delay */, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = icsc_500MHz_1_generated_compute_unrolled_1(stg9_0_c__0_value);
-	// Produce: icsc_500MHz_1
-	icsc_500MHz_1.write(compute_result);
+	auto compute_result = stg9_generated_compute_unrolled_1(stg8_0_c__0_value);
+	// Produce: stg9
+	stg9_stg9_update_0_write_bundle_write(/* arg names */compute_result, stg9, d0, d1, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -1840,10 +1840,10 @@ inline void icsc_500MHz_1_update_0(stg9_cache& stg9, HWStream<hw_uint<16> >& /* 
 }
 
 // Driver function
-void icsc_500MHz_1_opt(HWStream<hw_uint<16> >& /* get_args num ports = 1 */in_off_chip, HWStream<hw_uint<16> >& /* get_args num ports = 1 */icsc_500MHz_1) {
+void icsc_300MHz_1_opt(HWStream<hw_uint<16> >& /* get_args num ports = 1 */in_off_chip, HWStream<hw_uint<16> >& /* get_args num ports = 1 */icsc_300MHz_1) {
 
 #ifndef __VIVADO_SYNTH__
-  ofstream debug_file("icsc_500MHz_1_opt_debug.csv");
+  ofstream debug_file("icsc_300MHz_1_opt_debug.csv");
   global_debug_handle = &debug_file;
 #endif //__VIVADO_SYNTH__
   in_cache in;
@@ -1883,15 +1883,15 @@ void icsc_500MHz_1_opt(HWStream<hw_uint<16> >& /* get_args num ports = 1 */in_of
 #pragma HLS inline recursive
 #endif // __VIVADO_SYNTH__
 
-// schedule: { stg7_update_0[d0, d1] -> [8 + d1, 8 + d0, 9] : -2 <= d0 <= 1921 and 0 <= d1 <= 1081; stg8_update_0[d0, d1] -> [9 + d1, 9 + d0, 10] : -1 <= d0 <= 1920 and 0 <= d1 <= 1080; stg5_update_0[d0, d1] -> [6 + d1, 6 + d0, 7] : -4 <= d0 <= 1923 and 0 <= d1 <= 1083; icsc_500MHz_1_update_0[d0, d1] -> [10 + d1, 10 + d0, 12] : 0 <= d0 <= 1919 and 0 <= d1 <= 1079; stg9_update_0[d0, d1] -> [10 + d1, 10 + d0, 11] : 0 <= d0 <= 1919 and 0 <= d1 <= 1079; stg3_update_0[d0, d1] -> [4 + d1, 4 + d0, 5] : -6 <= d0 <= 1925 and 0 <= d1 <= 1085; stg2_update_0[d0, d1] -> [3 + d1, 3 + d0, 4] : -7 <= d0 <= 1926 and 0 <= d1 <= 1086; stg6_update_0[d0, d1] -> [7 + d1, 7 + d0, 8] : -3 <= d0 <= 1922 and 0 <= d1 <= 1082; stg4_update_0[d0, d1] -> [5 + d1, 5 + d0, 6] : -5 <= d0 <= 1924 and 0 <= d1 <= 1084; stg0_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : -9 <= d0 <= 1928 and 0 <= d1 <= 1088; stg1_update_0[d0, d1] -> [2 + d1, 2 + d0, 3] : -8 <= d0 <= 1927 and 0 <= d1 <= 1087; in_update_0[d0, d1] -> [d1, d0, 1] : -10 <= d0 <= 1929 and 0 <= d1 <= 1089 }
+// schedule: { stg7_update_0[d0, d1] -> [8 + d1, 8 + d0, 9] : -2 <= d0 <= 1921 and 0 <= d1 <= 1081; stg8_update_0[d0, d1] -> [9 + d1, 9 + d0, 10] : -1 <= d0 <= 1920 and 0 <= d1 <= 1080; icsc_300MHz_1_update_0[d0, d1] -> [10 + d1, 10 + d0, 12] : 0 <= d0 <= 1919 and 0 <= d1 <= 1079; stg5_update_0[d0, d1] -> [6 + d1, 6 + d0, 7] : -4 <= d0 <= 1923 and 0 <= d1 <= 1083; stg9_update_0[d0, d1] -> [10 + d1, 10 + d0, 11] : 0 <= d0 <= 1919 and 0 <= d1 <= 1079; stg3_update_0[d0, d1] -> [4 + d1, 4 + d0, 5] : -6 <= d0 <= 1925 and 0 <= d1 <= 1085; stg2_update_0[d0, d1] -> [3 + d1, 3 + d0, 4] : -7 <= d0 <= 1926 and 0 <= d1 <= 1086; stg6_update_0[d0, d1] -> [7 + d1, 7 + d0, 8] : -3 <= d0 <= 1922 and 0 <= d1 <= 1082; stg4_update_0[d0, d1] -> [5 + d1, 5 + d0, 6] : -5 <= d0 <= 1924 and 0 <= d1 <= 1084; stg0_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : -9 <= d0 <= 1928 and 0 <= d1 <= 1088; stg1_update_0[d0, d1] -> [2 + d1, 2 + d0, 3] : -8 <= d0 <= 1927 and 0 <= d1 <= 1087; in_update_0[d0, d1] -> [d1, d0, 1] : -10 <= d0 <= 1929 and 0 <= d1 <= 1089 }
 //   { stg7_update_0[d0, d1] -> [8 + d1, 8 + d0, 9] : -2 <= d0 <= 1921 and 0 <= d1 <= 1081 }
 // Condition for stg7_update_0(((-9 + i2 == 0) && (-6 + i1 >= 0) && (1929 - i1 >= 0) && (-8 + i0 >= 0) && (1089 - i0 >= 0)))
 //   { stg8_update_0[d0, d1] -> [9 + d1, 9 + d0, 10] : -1 <= d0 <= 1920 and 0 <= d1 <= 1080 }
 // Condition for stg8_update_0(((-10 + i2 == 0) && (-8 + i1 >= 0) && (1929 - i1 >= 0) && (-9 + i0 >= 0) && (1089 - i0 >= 0)))
+//   { icsc_300MHz_1_update_0[d0, d1] -> [10 + d1, 10 + d0, 12] : 0 <= d0 <= 1919 and 0 <= d1 <= 1079 }
+// Condition for icsc_300MHz_1_update_0(((-12 + i2 == 0) && (-10 + i1 >= 0) && (1929 - i1 >= 0) && (-10 + i0 >= 0) && (1089 - i0 >= 0)))
 //   { stg5_update_0[d0, d1] -> [6 + d1, 6 + d0, 7] : -4 <= d0 <= 1923 and 0 <= d1 <= 1083 }
 // Condition for stg5_update_0(((-7 + i2 == 0) && (-2 + i1 >= 0) && (1929 - i1 >= 0) && (-6 + i0 >= 0) && (1089 - i0 >= 0)))
-//   { icsc_500MHz_1_update_0[d0, d1] -> [10 + d1, 10 + d0, 12] : 0 <= d0 <= 1919 and 0 <= d1 <= 1079 }
-// Condition for icsc_500MHz_1_update_0(((-12 + i2 == 0) && (-10 + i1 >= 0) && (1929 - i1 >= 0) && (-10 + i0 >= 0) && (1089 - i0 >= 0)))
 //   { stg9_update_0[d0, d1] -> [10 + d1, 10 + d0, 11] : 0 <= d0 <= 1919 and 0 <= d1 <= 1079 }
 // Condition for stg9_update_0(((-11 + i2 == 0) && (-10 + i1 >= 0) && (1929 - i1 >= 0) && (-10 + i0 >= 0) && (1089 - i0 >= 0)))
 //   { stg3_update_0[d0, d1] -> [4 + d1, 4 + d0, 5] : -6 <= d0 <= 1925 and 0 <= d1 <= 1085 }
@@ -1911,7 +1911,7 @@ void icsc_500MHz_1_opt(HWStream<hw_uint<16> >& /* get_args num ports = 1 */in_of
 
   /*
   // Schedules...
-    // icsc_500MHz_1_update_0 -> [1*d1*1*1 + 1*10,1*d0*1*1 + 1*10,1*12]
+    // icsc_300MHz_1_update_0 -> [1*d1*1*1 + 1*10,1*d0*1*1 + 1*10,1*12]
     // in_off_chip_update_0 -> [1*d1*1*1 + 1*0,1*d0*1*1 + 1*0,1*0]
     // in_update_0 -> [1*d1*1*1 + 1*0,1*d0*1*1 + 1*0,1*1]
     // stg0_update_0 -> [1*d1*1*1 + 1*1,1*d0*1*1 + 1*1,1*2]
@@ -1976,7 +1976,7 @@ for (int c0 = 0; c0 <= 1089; c0++) {
     }
 
     if ((10 <= c1 && c1 <= 1929) && ((c1 - 10) % 1 == 0) && (10 <= c0 && c0 <= 1089) && ((c0 - 10) % 1 == 0)) {
-      icsc_500MHz_1_update_0((c1 - 10) / 1, (c0 - 10) / 1);
+      icsc_300MHz_1_update_0((c1 - 10) / 1, (c0 - 10) / 1);
     }
 
   }
@@ -1984,7 +1984,7 @@ for (int c0 = 0; c0 <= 1089; c0++) {
 
   */
 	  // Schedules...
-	    // icsc_500MHz_1_update_0 -> [1*d1*1*1 + 1*10,1*d0*1*1 + 1*10,1*12]
+	    // icsc_300MHz_1_update_0 -> [1*d1*1*1 + 1*10,1*d0*1*1 + 1*10,1*12]
 	    // in_off_chip_update_0 -> [1*d1*1*1 + 1*0,1*d0*1*1 + 1*0,1*0]
 	    // in_update_0 -> [1*d1*1*1 + 1*0,1*d0*1*1 + 1*0,1*1]
 	    // stg0_update_0 -> [1*d1*1*1 + 1*1,1*d0*1*1 + 1*1,1*2]
@@ -2049,7 +2049,7 @@ for (int c0 = 0; c0 <= 1089; c0++) {
 	    }
 	
 	    if ((10 <= c1 && c1 <= 1929) && ((c1 - 10) % 1 == 0) && (10 <= c0 && c0 <= 1089) && ((c0 - 10) % 1 == 0)) {
-	      icsc_500MHz_1_update_0(stg9 /* buf name */, icsc_500MHz_1, (c1 - 10) / 1, (c0 - 10) / 1);
+	      icsc_300MHz_1_update_0(stg9 /* buf name */, icsc_300MHz_1, (c1 - 10) / 1, (c0 - 10) / 1);
 	    }
 	
 	  }
@@ -2060,57 +2060,57 @@ for (int c0 = 0; c0 <= 1089; c0++) {
 #endif //__VIVADO_SYNTH__
 }
 
-void icsc_500MHz_1_opt_wrapper(HWStream<hw_uint<16> >& /* get_args num ports = 1 */in_off_chip, HWStream<hw_uint<16> >& /* get_args num ports = 1 */icsc_500MHz_1, const int num_epochs) {
+void icsc_300MHz_1_opt_wrapper(HWStream<hw_uint<16> >& /* get_args num ports = 1 */in_off_chip, HWStream<hw_uint<16> >& /* get_args num ports = 1 */icsc_300MHz_1, const int num_epochs) {
 
   for (int epoch = 0; epoch < num_epochs; epoch++) {
-    icsc_500MHz_1_opt(in_off_chip, icsc_500MHz_1);
+    icsc_300MHz_1_opt(in_off_chip, icsc_300MHz_1);
   }
 }
 #ifdef __VIVADO_SYNTH__
-  // { icsc_500MHz_1_update_0[root = 0, icsc_500MHz_1_0, icsc_500MHz_1_1] -> icsc_500MHz_1[0, 0] : 0 <= icsc_500MHz_1_0 <= 1919 and 0 <= icsc_500MHz_1_1 <= 1079 }
-const int icsc_500MHz_1_update_0_write_pipe0_num_transfers = 2073600;
+  // { icsc_300MHz_1_update_0[root = 0, icsc_300MHz_1_0, icsc_300MHz_1_1] -> icsc_300MHz_1[0, 0] : 0 <= icsc_300MHz_1_0 <= 1919 and 0 <= icsc_300MHz_1_1 <= 1079 }
+const int icsc_300MHz_1_update_0_write_pipe0_num_transfers = 2073600;
   // { in_update_0[root = 0, in_0, in_1] -> in_off_chip[0, 0] : -10 <= in_0 <= 1929 and 0 <= in_1 <= 1089 }
 const int in_update_0_read_pipe0_num_transfers = 2114600;
 
 
 extern "C" {
 
-void icsc_500MHz_1_opt_accel(hw_uint<16>* in_update_0_read_pipe0, hw_uint<16>* icsc_500MHz_1_update_0_write_pipe0, const int size) { 
+void icsc_300MHz_1_opt_accel(hw_uint<16>* in_update_0_read_pipe0, hw_uint<16>* icsc_300MHz_1_update_0_write_pipe0, const int size) { 
 #pragma HLS dataflow
 #pragma HLS INTERFACE m_axi port = in_update_0_read_pipe0 offset = slave depth = 65536 bundle = gmem0
-#pragma HLS INTERFACE m_axi port = icsc_500MHz_1_update_0_write_pipe0 offset = slave depth = 65536 bundle = gmem1
+#pragma HLS INTERFACE m_axi port = icsc_300MHz_1_update_0_write_pipe0 offset = slave depth = 65536 bundle = gmem1
 
 #pragma HLS INTERFACE s_axilite port = in_update_0_read_pipe0 bundle = control
-#pragma HLS INTERFACE s_axilite port = icsc_500MHz_1_update_0_write_pipe0 bundle = control
+#pragma HLS INTERFACE s_axilite port = icsc_300MHz_1_update_0_write_pipe0 bundle = control
 #pragma HLS INTERFACE s_axilite port = size bundle = control
 #pragma HLS INTERFACE s_axilite port = return bundle = control
 
 
   // Pipeline # 0
   static HWStream<hw_uint<16> > in_update_0_read_pipe0_channel;
-  static HWStream<hw_uint<16> > icsc_500MHz_1_update_0_write_pipe0_channel;
+  static HWStream<hw_uint<16> > icsc_300MHz_1_update_0_write_pipe0_channel;
 
   burst_read<16>(in_update_0_read_pipe0, in_update_0_read_pipe0_channel, in_update_0_read_pipe0_num_transfers*size);
 
-  icsc_500MHz_1_opt_wrapper(in_update_0_read_pipe0_channel, icsc_500MHz_1_update_0_write_pipe0_channel, size);
+  icsc_300MHz_1_opt_wrapper(in_update_0_read_pipe0_channel, icsc_300MHz_1_update_0_write_pipe0_channel, size);
 
-  burst_write<16>(icsc_500MHz_1_update_0_write_pipe0, icsc_500MHz_1_update_0_write_pipe0_channel, icsc_500MHz_1_update_0_write_pipe0_num_transfers*size);
+  burst_write<16>(icsc_300MHz_1_update_0_write_pipe0, icsc_300MHz_1_update_0_write_pipe0_channel, icsc_300MHz_1_update_0_write_pipe0_num_transfers*size);
 }
 
 }
 extern "C" {
 
-void icsc_500MHz_1_opt_rdai(HWStream<hw_uint<16> >& in_update_0_read_pipe0, HWStream<hw_uint<16> >&  icsc_500MHz_1_update_0_write_pipe0) { 
+void icsc_300MHz_1_opt_rdai(HWStream<hw_uint<16> >& in_update_0_read_pipe0, HWStream<hw_uint<16> >&  icsc_300MHz_1_update_0_write_pipe0) { 
 #pragma HLS dataflow
 #pragma HLS INTERFACE axis register port = in_update_0_read_pipe0
-#pragma HLS INTERFACE axis register port = icsc_500MHz_1_update_0_write_pipe0
+#pragma HLS INTERFACE axis register port = icsc_300MHz_1_update_0_write_pipe0
 
 #pragma HLS INTERFACE ap_ctrl_none port = return
 
 
   // Pipeline # 0
 
-  icsc_500MHz_1_opt(in_update_0_read_pipe0, icsc_500MHz_1_update_0_write_pipe0);
+  icsc_300MHz_1_opt(in_update_0_read_pipe0, icsc_300MHz_1_update_0_write_pipe0);
 
 }
 
