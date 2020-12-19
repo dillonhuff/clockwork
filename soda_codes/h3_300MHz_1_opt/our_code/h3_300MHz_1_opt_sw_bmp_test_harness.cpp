@@ -7,11 +7,11 @@
 
 int main(int argc, char **argv) {
   bitmap_image input("./images/taxi_slice_256.bmp");
-  HWStream<hw_uint<32> > h3_300MHz_1_update_0_read_channel;
+  HWStream<hw_uint<32> > in_cc_update_0_read_channel;
   HWStream<hw_uint<32> > h3_300MHz_1_update_0_write_channel;
   // In lanes = 1
-  for (int r = 0; r < 64; r++) {
-    for (int cl = 0; cl < 64 / 1; cl++) {
+  for (int r = 0; r < 66; r++) {
+    for (int cl = 0; cl < 66 / 1; cl++) {
       hw_uint<32> packed;
       {
       int c = 1*cl + 0;
@@ -24,10 +24,10 @@ int main(int argc, char **argv) {
         set_at<0, 32, 32>(packed, 0);
       }
       }
-        h3_300MHz_1_update_0_read_channel.write(packed);
+        in_cc_update_0_read_channel.write(packed);
     }
   }
-  h3_300MHz_1_opt(h3_300MHz_1_update_0_read_channel, h3_300MHz_1_update_0_write_channel);
+  h3_300MHz_1_opt(in_cc_update_0_read_channel, h3_300MHz_1_update_0_write_channel);
   bitmap_image output(64, 64);
   for (int r = 0; r < 64; r++) {
     for (int cl = 0; cl < 64 / 1; cl++) {

@@ -20,35 +20,35 @@ int main(int argc, char **argv) {
   size_t total_size_bytes = 0;
   size_t total_size_bytes_read = 0;
   size_t total_size_bytes_written = 0;
-  const int h3_300MHz_1_update_0_write_pipe0_DATA_SIZE = num_epochs*4096;
+  const int h3_300MHz_1_update_0_write_pipe0_DATA_SIZE = num_epochs*4356;
   const int h3_300MHz_1_update_0_write_BYTES_PER_PIXEL = 32 / 8;
   size_t h3_300MHz_1_update_0_write_size_bytes = h3_300MHz_1_update_0_write_BYTES_PER_PIXEL * h3_300MHz_1_update_0_write_pipe0_DATA_SIZE;
 
   total_size_bytes += h3_300MHz_1_update_0_write_size_bytes;
   total_size_bytes_written += h3_300MHz_1_update_0_write_size_bytes;
-  const int h3_300MHz_1_update_0_read_pipe0_DATA_SIZE = num_epochs*4096;
-  const int h3_300MHz_1_update_0_read_BYTES_PER_PIXEL = 32 / 8;
-  size_t h3_300MHz_1_update_0_read_size_bytes = h3_300MHz_1_update_0_read_BYTES_PER_PIXEL * h3_300MHz_1_update_0_read_pipe0_DATA_SIZE;
+  const int in_cc_update_0_read_pipe0_DATA_SIZE = num_epochs*4356;
+  const int in_cc_update_0_read_BYTES_PER_PIXEL = 32 / 8;
+  size_t in_cc_update_0_read_size_bytes = in_cc_update_0_read_BYTES_PER_PIXEL * in_cc_update_0_read_pipe0_DATA_SIZE;
 
-  total_size_bytes += h3_300MHz_1_update_0_read_size_bytes;
-  total_size_bytes_read += h3_300MHz_1_update_0_read_size_bytes;
+  total_size_bytes += in_cc_update_0_read_size_bytes;
+  total_size_bytes_read += in_cc_update_0_read_size_bytes;
 
   cl_int err;
   cl::Context context;
   cl::Kernel krnl_vector_add;
   cl::CommandQueue q;
 
-  std::vector<uint8_t, aligned_allocator<uint8_t> > h3_300MHz_1_update_0_read_pipe0(h3_300MHz_1_update_0_read_size_bytes);
   std::vector<uint8_t, aligned_allocator<uint8_t> > h3_300MHz_1_update_0_write_pipe0(h3_300MHz_1_update_0_write_size_bytes);
+  std::vector<uint8_t, aligned_allocator<uint8_t> > in_cc_update_0_read_pipe0(in_cc_update_0_read_size_bytes);
 
-  std::ofstream input_h3_300MHz_1_update_0_read("h3_300MHz_1_update_0_read.csv");
-  for (int i = 0; i < h3_300MHz_1_update_0_read_pipe0_DATA_SIZE; i++) {
+  std::ofstream input_in_cc_update_0_read("in_cc_update_0_read.csv");
+  for (int i = 0; i < in_cc_update_0_read_pipe0_DATA_SIZE; i++) {
     uint32_t val = (rand() % 256);
-    input_h3_300MHz_1_update_0_read << val << std::endl;
-    ((uint32_t*) (h3_300MHz_1_update_0_read_pipe0.data()))[i] = val;
+    input_in_cc_update_0_read << val << std::endl;
+    ((uint32_t*) (in_cc_update_0_read_pipe0.data()))[i] = val;
   }
 
-  input_h3_300MHz_1_update_0_read.close();
+  input_in_cc_update_0_read.close();
   for (int i = 0; i < h3_300MHz_1_update_0_write_pipe0_DATA_SIZE; i++) {
     ((uint32_t*) (h3_300MHz_1_update_0_write_pipe0.data()))[i] = 0;
   }
@@ -85,14 +85,14 @@ int main(int argc, char **argv) {
   OCL_CHECK(err, cl::Buffer h3_300MHz_1_update_0_write_pipe0_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_READ_ONLY, h3_300MHz_1_update_0_write_size_bytes, h3_300MHz_1_update_0_write_pipe0.data(), &err));
   OCL_CHECK(err, err = krnl_vector_add.setArg(0, h3_300MHz_1_update_0_write_pipe0_ocl_buf));
 
-  OCL_CHECK(err, cl::Buffer h3_300MHz_1_update_0_read_pipe0_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_WRITE_ONLY, h3_300MHz_1_update_0_read_size_bytes, h3_300MHz_1_update_0_read_pipe0.data(), &err));
-  OCL_CHECK(err, err = krnl_vector_add.setArg(1, h3_300MHz_1_update_0_read_pipe0_ocl_buf));
+  OCL_CHECK(err, cl::Buffer in_cc_update_0_read_pipe0_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_WRITE_ONLY, in_cc_update_0_read_size_bytes, in_cc_update_0_read_pipe0.data(), &err));
+  OCL_CHECK(err, err = krnl_vector_add.setArg(1, in_cc_update_0_read_pipe0_ocl_buf));
 
-  uint64_t transfer_size = num_epochs*(4096 / 1);
+  uint64_t transfer_size = num_epochs*(4356 / 1);
   OCL_CHECK(err, err = krnl_vector_add.setArg(2, transfer_size));
 
   std::cout << "Migrating memory" << std::endl;
-  OCL_CHECK(err, err = q.enqueueMigrateMemObjects({h3_300MHz_1_update_0_read_pipe0_ocl_buf}, 0));
+  OCL_CHECK(err, err = q.enqueueMigrateMemObjects({in_cc_update_0_read_pipe0_ocl_buf}, 0));
 
 unsigned long start, end, nsduration;
 cl::Event event;

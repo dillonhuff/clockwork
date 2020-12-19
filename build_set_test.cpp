@@ -9143,27 +9143,16 @@ App heat_3d_iccad(const std::string& name) {
 
   dn.func2d("in");
 
-  dn.func2d(name, v("in"));
+  dn.func2d("in_cc", v("in"));
 
-  //dn.func2d("g", div(fc("1.0f"), func("sqrt", add({sq("diff_qwe"), sq("diff_d"), sq("diff_l"), sq("diff_r")}))));
-  //dn.func2d("r0", "comp_r02d", {pt("u"), pt("f")});
-  //dn.func2d("r1", "r1_comp2d", pt("r0"));
-  //dn.func2d(name,
-      //"out_comp_dn2d",
-      //{pt("r1"),
-      //pt("f"),
-      //win("u", {
-          //{-1, 0},
-          //{0, -1},
-          //{0, 0},
-          //{1, 0}
-          //}),
-      //win("g", {
-          //{-1, 0},
-          //{0, -1},
-          //{0, 1},
-          //{1, 0}
-          //})});
+  dn.func2d(name,
+      add({
+        mul(fc("0.125f"), v("in_cc", 1, 0)),
+        mul(fc("0.125f"), v("in_cc", -1, 0)),
+        mul(fc("0.125f"), v("in_cc", 0, 1)),
+        mul(fc("0.125f"), v("in_cc", 0, -1)),
+        mul(fc("0.25"), v("in_cc", 0, 0))
+        }));
 
   return dn;
 }
