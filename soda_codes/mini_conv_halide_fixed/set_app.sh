@@ -1,0 +1,1 @@
+export app=mini_conv_halide_fixed

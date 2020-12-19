@@ -1,0 +1,10 @@
+kernel: h3_300MHz_1_opt
+unroll factor: 1
+burst width: 32
+
+input float: in(64, *)
+
+output float: h3_300MHz_1(0, 0) = in(0, 0)
+
+
+iterate: 1

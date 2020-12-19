@@ -1,0 +1,12 @@
+kernel: sobel_16_stage_x_unrolled_1_opt
+unroll factor: 1
+burst width: 16
+
+input uint16: off_chip_img(32, *)
+
+local uint16: img(0, 0) = off_chip_img(0, 0)
+
+output uint16: sobel_16_stage_x_unrolled_1(0, 0) = ((img(1, -1) - img(-1, -1)) + (((img(1, 0) - img(-1, 0)) * 3) + (img(1, 1) - img(-1, 1))))
+
+
+iterate: 1
