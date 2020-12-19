@@ -1,8 +1,8 @@
-kernel: h3_300MHz_1_opt
-unroll factor: 1
-burst width: 32
+kernel: h10_32_300MHz_32_opt
+unroll factor: 32
+burst width: 1024
 
-input float: in(1044, *)
+input float: in(1664, *)
 
 local float: in_cc(0, 0) = in(0, 0)
 
@@ -26,7 +26,7 @@ local float: h3_8(0, 0) = (((0.125f * h3_7(1, 0)) + (0.125f * h3_7(-1, 0))) + ((
 
 local float: h3_9(0, 0) = (((0.125f * h3_8(1, 0)) + (0.125f * h3_8(-1, 0))) + ((0.125f * h3_8(0, 1)) + ((0.125f * h3_8(0, -1)) + (0.25 * h3_8(0, 0)))))
 
-output float: h3_300MHz_1(0, 0) = h3_9(0, 0)
+output float: h10_32_300MHz_32(0, 0) = h3_9(0, 0)
 
 
 iterate: 1

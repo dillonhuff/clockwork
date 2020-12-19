@@ -18,12 +18,12 @@ int main(int argc, char **argv) {
   std::cout << "num_epochs = " << num_epochs << std::endl;
 
   size_t total_size_bytes = 0;
-  const int h3_300MHz_1_update_0_write_pipe0_DATA_SIZE = num_epochs*4096;
+  const int h3_300MHz_1_update_0_write_pipe0_DATA_SIZE = num_epochs*1048576;
   const int h3_300MHz_1_update_0_write_pipe0_BYTES_PER_PIXEL = 32 / 8;
   size_t h3_300MHz_1_update_0_write_pipe0_size_bytes = h3_300MHz_1_update_0_write_pipe0_BYTES_PER_PIXEL * h3_300MHz_1_update_0_write_pipe0_DATA_SIZE;
 
   total_size_bytes += h3_300MHz_1_update_0_write_pipe0_size_bytes;
-  const int in_cc_update_0_read_pipe0_DATA_SIZE = num_epochs*4356;
+  const int in_cc_update_0_read_pipe0_DATA_SIZE = num_epochs*1089936;
   const int in_cc_update_0_read_pipe0_BYTES_PER_PIXEL = 32 / 8;
   size_t in_cc_update_0_read_pipe0_size_bytes = in_cc_update_0_read_pipe0_BYTES_PER_PIXEL * in_cc_update_0_read_pipe0_DATA_SIZE;
 

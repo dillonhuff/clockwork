@@ -9145,26 +9145,35 @@ App heat_3d_iccad(const std::string& name) {
 
   dn.func2d("in_cc", v("in"));
 
-  dn.func2d(name,
-      add({
-        mul(fc("0.125f"), v("in_cc", 1, 0)),
-        mul(fc("0.125f"), v("in_cc", -1, 0)),
-        mul(fc("0.125f"), v("in_cc", 0, 1)),
-        mul(fc("0.125f"), v("in_cc", 0, -1)),
-        mul(fc("0.25"), v("in_cc", 0, 0))
-        }));
+  int num_stages = 10;
+  string last = "in_cc";
+  for (int i = 0; i < num_stages; i++) {
+    string current = "h3_" + str(i);
+    dn.func2d(current,
+        add({
+          mul(fc("0.125f"), v(last, 1, 0)),
+          mul(fc("0.125f"), v(last, -1, 0)),
+          mul(fc("0.125f"), v(last, 0, 1)),
+          mul(fc("0.125f"), v(last, 0, -1)),
+          mul(fc("0.25"), v(last, 0, 0))
+          }));
+    last = current;
+  }
+
+  dn.func2d(name, v(last));
 
   return dn;
 }
 
 void heat_3d_iccad_apps(const std::string& prefix) {
   //vector<int> throughputs{1, 16, 32};
-  vector<int> throughputs{1};
+  //vector<int> throughputs{1};
+  vector<int> throughputs{32};
   for (auto throughput : throughputs) {
     string name = prefix + "_" + str(throughput);
     App lp = heat_3d_iccad(name);
-    int rows = 64;
-    int cols = 64;
+    int rows = 1024;
+    int cols = 1024;
     CodegenOptions options;
     options.internal = true;
     options.use_custom_code_string = true;
@@ -11262,7 +11271,7 @@ void naive_implementations() {
 
 void iccad_tests() {
 
-  heat_3d_iccad_apps("h3_300MHz");
+  heat_3d_iccad_apps("h10_32_300MHz");
   //stencil_chain_iccad_apps("icsc_500MHz");
   //stencil_chain_20_stage_iccad_apps("ic20_500MHz");
   //stencil_chain_20_stage_iccad_apps("ic20_400MHz");

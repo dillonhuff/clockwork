@@ -20,13 +20,13 @@ int main(int argc, char **argv) {
   size_t total_size_bytes = 0;
   size_t total_size_bytes_read = 0;
   size_t total_size_bytes_written = 0;
-  const int h3_300MHz_1_update_0_write_pipe0_DATA_SIZE = num_epochs*1089936;
-  const int h3_300MHz_1_update_0_write_BYTES_PER_PIXEL = 32 / 8;
-  size_t h3_300MHz_1_update_0_write_size_bytes = h3_300MHz_1_update_0_write_BYTES_PER_PIXEL * h3_300MHz_1_update_0_write_pipe0_DATA_SIZE;
+  const int h10_32_300MHz_32_update_0_write_pipe0_DATA_SIZE = num_epochs*1737216;
+  const int h10_32_300MHz_32_update_0_write_BYTES_PER_PIXEL = 32 / 8;
+  size_t h10_32_300MHz_32_update_0_write_size_bytes = h10_32_300MHz_32_update_0_write_BYTES_PER_PIXEL * h10_32_300MHz_32_update_0_write_pipe0_DATA_SIZE;
 
-  total_size_bytes += h3_300MHz_1_update_0_write_size_bytes;
-  total_size_bytes_written += h3_300MHz_1_update_0_write_size_bytes;
-  const int in_cc_update_0_read_pipe0_DATA_SIZE = num_epochs*1089936;
+  total_size_bytes += h10_32_300MHz_32_update_0_write_size_bytes;
+  total_size_bytes_written += h10_32_300MHz_32_update_0_write_size_bytes;
+  const int in_cc_update_0_read_pipe0_DATA_SIZE = num_epochs*1737216;
   const int in_cc_update_0_read_BYTES_PER_PIXEL = 32 / 8;
   size_t in_cc_update_0_read_size_bytes = in_cc_update_0_read_BYTES_PER_PIXEL * in_cc_update_0_read_pipe0_DATA_SIZE;
 
@@ -38,7 +38,7 @@ int main(int argc, char **argv) {
   cl::Kernel krnl_vector_add;
   cl::CommandQueue q;
 
-  std::vector<uint8_t, aligned_allocator<uint8_t> > h3_300MHz_1_update_0_write_pipe0(h3_300MHz_1_update_0_write_size_bytes);
+  std::vector<uint8_t, aligned_allocator<uint8_t> > h10_32_300MHz_32_update_0_write_pipe0(h10_32_300MHz_32_update_0_write_size_bytes);
   std::vector<uint8_t, aligned_allocator<uint8_t> > in_cc_update_0_read_pipe0(in_cc_update_0_read_size_bytes);
 
   std::ofstream input_in_cc_update_0_read("in_cc_update_0_read.csv");
@@ -49,8 +49,8 @@ int main(int argc, char **argv) {
   }
 
   input_in_cc_update_0_read.close();
-  for (int i = 0; i < h3_300MHz_1_update_0_write_pipe0_DATA_SIZE; i++) {
-    ((uint32_t*) (h3_300MHz_1_update_0_write_pipe0.data()))[i] = 0;
+  for (int i = 0; i < h10_32_300MHz_32_update_0_write_pipe0_DATA_SIZE; i++) {
+    ((uint32_t*) (h10_32_300MHz_32_update_0_write_pipe0.data()))[i] = 0;
   }
 
   auto devices = xcl::get_xil_devices();
@@ -72,7 +72,7 @@ int main(int argc, char **argv) {
       << "] with xclbin file!\n";
     } else {
       std::cout << "Device[" << i << "]: program successful!\n";
-      OCL_CHECK(err, krnl_vector_add = cl::Kernel(program, "h3_300MHz_1_opt_kernel", &err));
+      OCL_CHECK(err, krnl_vector_add = cl::Kernel(program, "h10_32_300MHz_32_opt_kernel", &err));
       valid_device++;
       break;
     }
@@ -82,13 +82,13 @@ int main(int argc, char **argv) {
     exit(EXIT_FAILURE);
   }
 
-  OCL_CHECK(err, cl::Buffer h3_300MHz_1_update_0_write_pipe0_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_READ_ONLY, h3_300MHz_1_update_0_write_size_bytes, h3_300MHz_1_update_0_write_pipe0.data(), &err));
-  OCL_CHECK(err, err = krnl_vector_add.setArg(0, h3_300MHz_1_update_0_write_pipe0_ocl_buf));
+  OCL_CHECK(err, cl::Buffer h10_32_300MHz_32_update_0_write_pipe0_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_READ_ONLY, h10_32_300MHz_32_update_0_write_size_bytes, h10_32_300MHz_32_update_0_write_pipe0.data(), &err));
+  OCL_CHECK(err, err = krnl_vector_add.setArg(0, h10_32_300MHz_32_update_0_write_pipe0_ocl_buf));
 
   OCL_CHECK(err, cl::Buffer in_cc_update_0_read_pipe0_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_WRITE_ONLY, in_cc_update_0_read_size_bytes, in_cc_update_0_read_pipe0.data(), &err));
   OCL_CHECK(err, err = krnl_vector_add.setArg(1, in_cc_update_0_read_pipe0_ocl_buf));
 
-  uint64_t transfer_size = num_epochs*(1089936 / 1);
+  uint64_t transfer_size = num_epochs*(1737216 / 32);
   OCL_CHECK(err, err = krnl_vector_add.setArg(2, transfer_size));
 
   std::cout << "Migrating memory" << std::endl;
@@ -105,7 +105,7 @@ OCL_CHECK(err, event.getProfilingInfo<CL_PROFILING_COMMAND_END>(&err));
 start = OCL_CHECK(err,
 event.getProfilingInfo<CL_PROFILING_COMMAND_START>(&err));
 nsduration = end - start;
-  OCL_CHECK(err, err = q.enqueueMigrateMemObjects({h3_300MHz_1_update_0_write_pipe0_ocl_buf}, CL_MIGRATE_MEM_OBJECT_HOST));
+  OCL_CHECK(err, err = q.enqueueMigrateMemObjects({h10_32_300MHz_32_update_0_write_pipe0_ocl_buf}, CL_MIGRATE_MEM_OBJECT_HOST));
 
   q.finish();
 
@@ -118,9 +118,9 @@ nsduration = end - start;
   std::cout << "bytes / sec = " << bpersec << std::endl;
   std::cout << "GB / sec    = " << gbpersec << std::endl;
   printf("Execution time = %f (sec) \n", dsduration);
-  std::ofstream regression_result("h3_300MHz_1_update_0_write_accel_result.csv");
-  for (int i = 0; i < h3_300MHz_1_update_0_write_pipe0_DATA_SIZE; i++) {
-    regression_result << ((uint32_t*) (h3_300MHz_1_update_0_write_pipe0.data()))[i] << std::endl;
+  std::ofstream regression_result("h10_32_300MHz_32_update_0_write_accel_result.csv");
+  for (int i = 0; i < h10_32_300MHz_32_update_0_write_pipe0_DATA_SIZE; i++) {
+    regression_result << ((uint32_t*) (h10_32_300MHz_32_update_0_write_pipe0.data()))[i] << std::endl;
   }
 
   return 0;
