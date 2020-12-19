@@ -9167,9 +9167,9 @@ App heat_3d_iccad(const std::string& name) {
 
 void heat_3d_iccad_apps(const std::string& prefix) {
   //vector<int> throughputs{1, 16, 32};
-  //vector<int> throughputs{1};
+  vector<int> throughputs{1};
   //vector<int> throughputs{32};
-  vector<int> throughputs{16};
+  //vector<int> throughputs{16};
   for (auto throughput : throughputs) {
     string name = prefix + "_" + str(throughput);
     App lp = heat_3d_iccad(name);
@@ -11272,7 +11272,7 @@ void naive_implementations() {
 
 void iccad_tests() {
 
-  heat_3d_iccad_apps("h10_16_300MHz");
+  heat_3d_iccad_apps("h10_1_300MHz");
   //stencil_chain_iccad_apps("icsc_500MHz");
   //stencil_chain_20_stage_iccad_apps("ic20_500MHz");
   //stencil_chain_20_stage_iccad_apps("ic20_400MHz");
