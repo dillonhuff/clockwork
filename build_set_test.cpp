@@ -9110,8 +9110,8 @@ void stencil_chain_one_stage_iccad_apps(const std::string& prefix) {
 }
 
 void stencil_chain_iccad_apps(const std::string& prefix) {
-  //vector<int> throughputs{1, 16, 32};
-  vector<int> throughputs{1};
+  vector<int> throughputs{1, 16, 32};
+  //vector<int> throughputs{1};
   for (auto throughput : throughputs) {
     string name = prefix + "_" + str(throughput);
     App lp = stencil_chain_iccad(name);
@@ -9120,7 +9120,7 @@ void stencil_chain_iccad_apps(const std::string& prefix) {
     CodegenOptions options;
     options.internal = true;
     options.use_custom_code_string = true;
-    options.rtl_options.hls_clock_target_Hz = 300000000;
+    options.rtl_options.hls_clock_target_Hz = 400000000;
     lp.realize(options, name, {cols, rows}, "in", throughput);
 
     move_to_benchmarks_folder(name + "_opt");
@@ -11176,7 +11176,7 @@ void naive_implementations() {
 void iccad_tests() {
 
   //stencil_chain_iccad_apps("icsc_500MHz");
-  stencil_chain_iccad_apps("icsc_300MHz");
+  stencil_chain_iccad_apps("icsc_400MHz");
   stencil_chain_fan_out_iccad_apps("icfo");
   stencil_chain_eight_stage_iccad_apps("icsc_8s");
   stencil_chain_one_stage_iccad_apps("icsc_1s");
