@@ -22,7 +22,7 @@ deleted = False
 for image in fpga_strings["FpgaImages"]:
   # print(image)
   if "Name" in image and image["Name"] == target_image:
-    os.system("aws ec2 delete-fpga-image --fpga-image-id {0}".format(sys.stderr.write(image["FpgaImageId"])))
+    os.system("aws ec2 delete-fpga-image --fpga-image-id {0}".format((image["FpgaImageId"])))
     deleted = True
     break
 
