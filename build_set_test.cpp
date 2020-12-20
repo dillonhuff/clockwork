@@ -9137,9 +9137,59 @@ void stencil_chain_one_stage_iccad_apps(const std::string& prefix) {
   assert(false);
 }
 
-void stencil_chain_20_stage_iccad_apps(const std::string& prefix) {
+App heat_3d_iccad(const std::string& name) {
+  App dn;
+  dn.set_default_num_type(NUM_TYPE_FLOAT);
+
+  dn.func2d("in");
+
+  dn.func2d("in_cc", v("in"));
+
+  int num_stages = 10;
+  string last = "in_cc";
+  for (int i = 0; i < num_stages; i++) {
+    string current = "h3_" + str(i);
+    dn.func2d(current,
+        add({
+          mul(fc("0.125f"), v(last, 1, 0)),
+          mul(fc("0.125f"), v(last, -1, 0)),
+          mul(fc("0.125f"), v(last, 0, 1)),
+          mul(fc("0.125f"), v(last, 0, -1)),
+          mul(fc("0.25"), v(last, 0, 0))
+          }));
+    last = current;
+  }
+
+  dn.func2d(name, v(last));
+
+  return dn;
+}
+
+void heat_3d_iccad_apps(const std::string& prefix) {
   //vector<int> throughputs{1, 16, 32};
   vector<int> throughputs{1};
+  //vector<int> throughputs{32};
+  //vector<int> throughputs{16};
+  for (auto throughput : throughputs) {
+    string name = prefix + "_" + str(throughput);
+    App lp = heat_3d_iccad(name);
+    int rows = 1024;
+    int cols = 1024;
+    CodegenOptions options;
+    options.internal = true;
+    options.use_custom_code_string = true;
+    options.rtl_options.hls_clock_target_Hz = 300000000;
+    lp.realize(options, name, {cols, rows}, "in", throughput);
+
+    move_to_benchmarks_folder(name + "_opt");
+  }
+  assert(false);
+
+}
+
+void stencil_chain_20_stage_iccad_apps(const std::string& prefix) {
+  vector<int> throughputs{1, 16, 32};
+  //vector<int> throughputs{1};
   for (auto throughput : throughputs) {
     string name = prefix + "_" + str(throughput);
     App lp = stencil_chain_20_stage_iccad(name);
@@ -11222,6 +11272,7 @@ void naive_implementations() {
 
 void iccad_tests() {
 
+  heat_3d_iccad_apps("h10_1_300MHz");
   //stencil_chain_iccad_apps("icsc_500MHz");
   //stencil_chain_20_stage_iccad_apps("ic20_500MHz");
   //stencil_chain_20_stage_iccad_apps("ic20_400MHz");

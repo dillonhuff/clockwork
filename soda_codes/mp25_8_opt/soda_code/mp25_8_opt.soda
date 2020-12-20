@@ -1,0 +1,12 @@
+kernel: mp25_8_opt
+unroll factor: 8
+burst width: 256
+
+input uint32: in_oc(128, 128, *)
+
+local uint32: in(0, 0, 0) = <NULLPTR FOR SODA COMPUTE STRING>
+
+output uint32: mp25_8(0, 0, 0) = <NULLPTR FOR SODA COMPUTE STRING>
+
+
+iterate: 1

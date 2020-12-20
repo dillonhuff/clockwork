@@ -1,0 +1,16 @@
+kernel: sobel_unrolled_1_opt
+unroll factor: 1
+burst width: 32
+
+input uint32: off_chip_img(1922, *)
+
+local uint32: img(0, 0) = <NULLPTR FOR SODA COMPUTE STRING>
+
+local uint32: mag_y(0, 0) = <NULLPTR FOR SODA COMPUTE STRING>
+
+local uint32: mag_x(0, 0) = <NULLPTR FOR SODA COMPUTE STRING>
+
+output uint32: sobel_unrolled_1(0, 0) = <NULLPTR FOR SODA COMPUTE STRING>
+
+
+iterate: 1

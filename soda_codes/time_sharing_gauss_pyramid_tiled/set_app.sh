@@ -1,0 +1,2 @@
+export app=unoptimized_time_sharing_gauss_pyramid_tiled
+export HLS_CLOCK_FREQUENCY=250000000
