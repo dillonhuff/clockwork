@@ -2534,6 +2534,7 @@ void generate_regression_testbench(prog& prg) {
     vector<string> inds;
     for (int i = 0; i < unroll; i++) {
       inds.push_back("rand() % 256");
+      //inds.push_back("(i) % 256");
       //inds.push_back(str(unroll) + "*i + " + str(i));
     }
     pack_bv(2, rgtb, "value", inds, lane_width);
@@ -5140,6 +5141,7 @@ void generate_verilator_tb_in_streams(
     for (int i = 0; i < unroll; i++) {
       if (options.debug_options.test_inputs.tp == TEST_DATA_INPUT_STREAM_TYPE_RANDOM) {
         inds.push_back("rand() % 256");
+        //inds.push_back("(i) % 256");
       } else {
         assert(options.debug_options.test_inputs.tp == TEST_DATA_INPUT_STREAM_TYPE_INCREMENTING);
         inds.push_back(str(unroll) + "*i + " + str(i));
@@ -5202,6 +5204,12 @@ void generate_garnet_verilator_tb(prog& prg,
   rgtb << "dut.eval();" << endl;
 
   rgtb << "dut.reset= 1;" << endl;
+  rgtb << "dut.clk = 1;" << endl;
+  rgtb << "dut.eval();" << endl;
+
+  //Add a posedge during  reset
+  rgtb << "dut.clk = 0;" << endl;
+  rgtb << "dut.eval();" << endl;
   rgtb << "dut.clk = 1;" << endl;
   rgtb << "dut.eval();" << endl;
 
@@ -7059,6 +7067,261 @@ vector<pair<string, pair<string, int> >> determine_output_shift_reg_map(
   return shift_registered_outputs;
 }
 
+
+dgraph build_in_to_out_shift_register_graph(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
+  map<string,pair<string,int>> shift_registered_outputs = determine_shift_reg_map(prg, buf, hwinfo);
+
+  dgraph dg;
+  for (auto pt : shift_registered_outputs) {
+    dg.add_edge(pt.second.first, pt.first, pt.second.second);
+  }
+
+  cout << "DG: ..." << endl;
+  cout << dg << endl;
+  return dg;
+}
+
+//helper function to create all the shift registered port
+void create_subbranch(const std::string& out_pt, dgraph& sr_graph, UBuffer& buf, ubuffer_impl &impl) {
+    auto src2dst = sr_graph.get_sub_branch(out_pt);
+    cout << "\tsubbranch size: " << src2dst.size() << endl;
+    for (auto io_pair: src2dst) {
+        string inpt = io_pair.first;
+        string outpt = io_pair.second;
+        int delay = sr_graph.weight(inpt, outpt);
+        if (delay == 0) {
+            inpt = sr_graph.find_origin(inpt);
+        }
+        auto bk = buf.compute_bank_info(inpt, outpt, delay);
+        buf.add_bank_between(inpt, outpt, bk);
+        impl.add_o2o_info(inpt, outpt, delay);
+    }
+}
+
+dgraph build_shift_registers(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
+  dgraph shift_registers = build_in_to_out_shift_register_graph(options, prg, buf, hwinfo);
+
+  cout << "Shift registers..." << endl;
+  cout << shift_registers << endl;
+
+  dgraph dg;
+  if (!shift_registers.has_nodes()) {
+    return dg;
+  }
+  for (auto inpt : buf.get_in_ports()) {
+    vector<pair<string, int> > vals;
+    for (auto v : shift_registers.out_edges.at(inpt)) {
+      vals.push_back({v, shift_registers.weight(inpt, v)});
+    }
+    sort_lt(vals, [](const pair<string, int> & data) {return data.second;});
+    for (auto v : vals) {
+      cout << tab(1) << v.first << " -(" << v.second << ")-> " << v.second << endl;
+    }
+
+    vector<vector<pair<string, int> > > reg_chains;
+    split_by(vals, reg_chains, [](const pair<string, int>& a, const pair<string, int>& b) {
+        return abs(a.second - b.second) < 20;
+        });
+
+    cout << "Groups..." << endl;
+    for (auto g : reg_chains) {
+      cout << tab(1) << "Group..." << endl;
+      dg.add_edge(inpt, g.at(0).first, shift_registers.weight(inpt, g.at(0).first));
+      for (int i = 1; i < g.size(); i++) {
+        dg.add_edge(g.at(i - 1).first, g.at(i).first, g.at(i).second - g.at(i - 1).second);
+      }
+      //for (auto e : g) {
+      //cout << tab(2) << e.first << " -> " << e.second << endl;
+      //}
+      //cout << endl;
+    }
+  }
+  cout << dg << endl;
+  //assert(false);
+
+  return dg;
+}
+
+
+ubuffer_impl port_group2bank(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
+    ubuffer_impl impl;
+
+    int in_port_width = options.rtl_options.max_inpt;
+    int out_port_width = options.rtl_options.max_outpt;
+    auto sr_graph = build_shift_registers(options, prg, buf, hwinfo);
+
+    if (!sr_graph.has_nodes())
+      return impl;
+
+    //Currently only group output port
+    //TODO: support input port grouping in the future
+    for (auto src: buf.get_in_ports()) {
+        vector<pair<string, int> > out_delays;
+        for (auto dst: sr_graph.out_edges.at(src)) {
+            cout << "edge: " << src << "=>" << dst << ", w=" << sr_graph.weight(src, dst) << endl;
+            out_delays.push_back({dst, sr_graph.weight(src, dst)});
+        }
+        sort(out_delays.begin(), out_delays.end(),
+                [](const pair<string, int>& l,const pair<string, int>& r) {
+                    return l.second > r.second;
+                });
+        for (auto it: out_delays) {
+            cout << "after sort: outpt->" <<it.first << ", w=" << it.second << endl;
+        }
+
+        //The data structure that carry the port and delay informations
+        std::set<string> out_pts;
+        map<string, int> read_delay;
+        while(out_delays.size()) {
+            auto pt_delay_pair = out_delays.back();
+            out_delays.pop_back();
+            string pt_name = pt_delay_pair.first;
+            int delay = pt_delay_pair.second;
+
+            //Rewrite the ubuffer prepare for vectorization
+            int depth = sr_graph.max_delay_to_leaf(pt_name);
+            if (depth > 0) {
+                auto outpt_info = buf.get_shift_pt_access_with_sched(pt_name, depth);
+                auto new_access_map = outpt_info.first;
+                auto new_sched = outpt_info.second;
+                buf.replace_pt(pt_name, new_access_map, new_sched);
+            }
+
+            if (pt_delay_pair.second <= options.merge_threshold) {
+                //add new sr only chain
+                //Rewrite the access map and schedule
+                auto sr_bank = buf.compute_bank_info(src, pt_name, delay);
+                buf.add_bank_between(src, pt_name, sr_bank);
+                create_subbranch(pt_name, sr_graph, buf, impl);
+
+                //TODO: use ubuffer_impl to substite bank in ubuffer
+                impl.add_i2o_info(src, pt_name, delay);
+            } else {
+                out_pts.insert(pt_name);
+                read_delay.insert(pt_delay_pair);
+                //saturize the output ports or the last remaining port
+                if ((out_pts.size() == out_port_width) || (out_delays.size() == 0)) {
+                    //add the bank that require memory tile
+                    auto super_bank = buf.compute_bank_info({src}, out_pts, read_delay);
+                    for (auto out_pt: out_pts) {
+                        buf.add_bank_between(src, out_pt, super_bank);
+                        create_subbranch(out_pt, sr_graph, buf, impl);
+
+                        //TODO: use ubuffer_impl to substite bank in ubuffer
+                        impl.add_i2o_info(src, out_pt, delay);
+                    }
+                    read_delay.clear();
+                    out_pts.clear();
+                }
+            }
+        }
+
+    }
+    buf.print_bank_info();
+
+    return impl;
+
+    //Add a visit pass on the sr graph for all input, take the data use the threshold
+}
+
+isl_map* build_buffer_impl(prog& prg, UBuffer& buf, schedule_info& hwinfo, ubuffer_impl& impl) {
+  cout << "Building implementation of " << buf.name << endl;
+
+  maybe<std::set<int> > embarassing_banking =
+    embarassing_partition(buf);
+  bool has_embarassing_partition = embarassing_banking.has_value();
+  assert(has_embarassing_partition);
+
+  if (embarassing_banking.get_value().size() == buf.logical_dimension()) {
+    cout << buf.name << " is really a register file" << endl;
+  }
+
+  //if (buf.get_out_ports().size() > 0 &&
+      //is_register_file(buf) &&
+      //&& all_constant_accesses(buf)) {
+    //cout << buf.name << " has all constant accesses" << endl;
+    ////assert(false);
+  //}
+
+  impl.partition_dims = embarassing_banking.get_value();
+  vector<int> extents;
+  extents = extents_by_dimension(buf);
+  for (auto d : impl.partition_dims) {
+    impl.partitioned_dimension_extents[d] = extents.at(d);
+  }
+
+  int num_banks = 1;
+  for (auto ent : impl.partitioned_dimension_extents) {
+    num_banks *= ent.second;
+  }
+
+  // Creating a map from bank numbers to values that read them
+  int bank_stride = 1;
+  vector<string> dvs;
+  vector<string> coeffs;
+  for (int d = 0; d < buf.logical_dimension(); d++) {
+    dvs.push_back("d" + str(d));
+    if (elem(d, impl.partition_dims)) {
+      coeffs.push_back(str(bank_stride) + "*" + dvs.at(d));
+      bank_stride *= map_find(d, impl.partitioned_dimension_extents);
+    }
+  }
+
+  coeffs.push_back("0");
+  string bank_func = curlies(buf.name + bracket_list(dvs) + " -> Bank[" + sep_list(coeffs, "", "", " + ") + "]");
+
+  cout << "Bank map: " << bank_func << endl;
+  //assert(false);
+  isl_map* m = isl_map_read_from_str(prg.ctx, bank_func.c_str());
+  for (auto pt : buf.get_all_ports()) {
+    for (int b = 0; b < num_banks; b++) {
+      isl_set* bnk = isl_set_read_from_str(prg.ctx, curlies("Bank[" + str(b) + "]").c_str());
+      assert(!empty(bnk));
+
+      isl_map* bnk_map = dot(to_map(buf.access_map.at(pt)), m);
+      isl_set* accesses_to_bank = its(range(bnk_map), bnk);
+      if (!empty(accesses_to_bank)) {
+        if (buf.is_out_pt(pt)) {
+          impl.bank_readers[b].insert(pt);
+          impl.outpt_to_bank[pt].insert(b);
+        } else {
+          impl.bank_writers[b].insert(pt);
+          impl.inpt_to_bank[pt].insert(b);
+        }
+      }
+    }
+  }
+
+  return m;
+}
+
+
+void generate_banks_garnet(CodegenOptions& options, prog& prg, UBuffer& buf, ubuffer_impl& impl, schedule_info& hw_info) {
+
+    //TODO: implement more banking strategies
+    buf.banking.partition = "cyclic";
+    auto bank_func = build_buffer_impl(prg, buf, hw_info, impl);
+
+    cout << "bank func: " << str(bank_func) << endl;
+    cout << "After banking: " << impl << endl;
+
+    //take the ubuffer implementation add bank to ubuffer
+    for (int bank_id = 0; bank_id < impl.get_bank_num(); bank_id ++) {
+      isl_set* bnk = isl_set_read_from_str(prg.ctx, curlies("Bank["+str(bank_id) + "]").c_str());
+      auto rddom = to_uset(domain(its_range(bank_func, bnk)));
+      cout << "rddom before its: " << str(rddom) << endl;
+      rddom = coalesce(its(rddom, buf.global_range()));
+      cout << "rddom after its: " << str(rddom) << endl;
+      auto point = pick(get_points(bnk));
+      cout << "ADD BANK!\n Bank id: " << str(point) << endl;
+      std::set<string> input_sets = impl.bank_writers.at(bank_id);
+      std::set<string> output_sets = impl.bank_readers.at(bank_id);
+      auto bnk_info = buf.compute_bank_info(rddom, point, input_sets, output_sets);
+      buf.add_bank_between(input_sets, output_sets, bnk_info);
+    }
+}
+
+
 void sanity_check_iis(schedule_info& sched) {
   for (auto lii : sched.loop_iis) {
     if (!(lii.second > 0)) {
@@ -7378,9 +7641,9 @@ void generate_deepak_power_flow_rtl_tb(
       out_buf.lanes_in_bundle(out_bundle);
 
     if (prg.is_input(out_rep)) {
-      string en_name = 
+      string en_name =
         pg(out_rep, out_bundle) + "_en";
-      string data_name = 
+      string data_name =
         pg(out_rep, out_bundle);
 
       rgtb << tab(1) << "logic " << en_name << ";" << endl;
@@ -7392,9 +7655,9 @@ void generate_deepak_power_flow_rtl_tb(
       //rgtb << tab(1) << "logic [" << pixel_width - 1 << ":0] " << data_name << "_in" << ";" << endl;
 
     } else {
-      string en_name = 
+      string en_name =
         pg(out_rep, out_bundle) + "_valid";
-      string data_name = 
+      string data_name =
         pg(out_rep, out_bundle);
 
       rgtb << tab(1) << "logic " << en_name << ";" << endl;
@@ -7424,9 +7687,9 @@ void generate_deepak_power_flow_rtl_tb(
       //out_buf.lanes_in_bundle(out_bundle);
 
     //if (prg.is_input(out_rep)) {
-      //string en_name = 
+      //string en_name =
         //pg(out_rep, out_bundle) + "_en";
-      //string data_name = 
+      //string data_name =
         //pg(out_rep, out_bundle);
 
       //rgtb << tab(3) << data_name << "[0] = 0;" << endl;
@@ -7461,9 +7724,9 @@ void generate_deepak_power_flow_rtl_tb(
       out_buf.lanes_in_bundle(out_bundle);
 
     if (prg.is_input(out_rep)) {
-      string en_name = 
+      string en_name =
         pg(out_rep, out_bundle) + "_en";
-      string data_name = 
+      string data_name =
         pg(out_rep, out_bundle);
       string data_in_name = data_name;
         //inputs0[15:0] <= #`ASSIGNMENT_DELAY $urandom;
@@ -7474,9 +7737,9 @@ void generate_deepak_power_flow_rtl_tb(
       //rgtb << tab(2) << "end" << endl;
 
     } else {
-      //string en_name = 
+      //string en_name =
         //pg(out_rep, out_bundle) + "_valid";
-      //string data_name = 
+      //string data_name =
         //pg(out_rep, out_bundle);
       //rgtb << tab(2) << "if (" << en_name << ") begin" << endl;
       //rgtb << tab(3) << "$display(\"Got data %d from dut." << en_name << "\", " << data_name << "[0]" << ");" << endl;
@@ -7485,7 +7748,7 @@ void generate_deepak_power_flow_rtl_tb(
   }
 
   rgtb << tab(1) << "end" << endl;
-  
+
   rgtb << "endmodule";
   rgtb.close();
 
@@ -7519,9 +7782,9 @@ void generate_vivado_rtl_tb(
       out_buf.lanes_in_bundle(out_bundle);
 
     if (prg.is_input(out_rep)) {
-      string en_name = 
+      string en_name =
         pg(out_rep, out_bundle) + "_en";
-      string data_name = 
+      string data_name =
         pg(out_rep, out_bundle);
 
       rgtb << tab(1) << "logic " << en_name << ";" << endl;
@@ -7533,9 +7796,9 @@ void generate_vivado_rtl_tb(
       //rgtb << tab(1) << "logic [" << pixel_width - 1 << ":0] " << data_name << "_in" << ";" << endl;
 
     } else {
-      string en_name = 
+      string en_name =
         pg(out_rep, out_bundle) + "_valid";
-      string data_name = 
+      string data_name =
         pg(out_rep, out_bundle);
 
       rgtb << tab(1) << "logic " << en_name << ";" << endl;
@@ -7565,9 +7828,9 @@ void generate_vivado_rtl_tb(
       out_buf.lanes_in_bundle(out_bundle);
 
     if (prg.is_input(out_rep)) {
-      string en_name = 
+      string en_name =
         pg(out_rep, out_bundle) + "_en";
-      string data_name = 
+      string data_name =
         pg(out_rep, out_bundle);
 
       rgtb << tab(3) << data_name << "[0] = 0;" << endl;
@@ -7602,9 +7865,9 @@ void generate_vivado_rtl_tb(
       out_buf.lanes_in_bundle(out_bundle);
 
     if (prg.is_input(out_rep)) {
-      string en_name = 
+      string en_name =
         pg(out_rep, out_bundle) + "_en";
-      string data_name = 
+      string data_name =
         pg(out_rep, out_bundle);
       string data_in_name = data_name;
 
@@ -7613,9 +7876,9 @@ void generate_vivado_rtl_tb(
       rgtb << tab(2) << "end" << endl;
 
     } else {
-      string en_name = 
+      string en_name =
         pg(out_rep, out_bundle) + "_valid";
-      string data_name = 
+      string data_name =
         pg(out_rep, out_bundle);
 
       rgtb << tab(2) << "if (" << en_name << ") begin" << endl;
@@ -7625,7 +7888,7 @@ void generate_vivado_rtl_tb(
   }
 
   rgtb << tab(1) << "end" << endl;
-  
+
   rgtb << "endmodule";
   rgtb.close();
 
@@ -7685,7 +7948,7 @@ vector<int> analyze_memory_demands(prog& prg, UBuffer& buf, schedule_info& hwinf
       auto read_times = dot(inv(op_reads), sched);
       //auto simul_reads = dot(read_times, inv(read_times));
       // Set of simultaneous reads to different locations
-      auto simul_reads_umap = 
+      auto simul_reads_umap =
         diff(dot(read_times, inv(read_times)), read_id);
       cout << "Simultaneous reads..." << str(simul_reads_umap) << endl;
       if (empty(simul_reads_umap)) {
@@ -7940,10 +8203,11 @@ int buffer_store_latency(CodegenOptions& options) {
 }
 
 int buffer_load_latency(CodegenOptions& options) {
-  if (options.rtl_options.target_tile == TARGET_TILE_REGISTERS ||
-      options.rtl_options.target_tile == TARGET_TILE_WIDE_FETCH_WITH_ADDRGEN
-      ) {
+  if (options.rtl_options.target_tile == TARGET_TILE_REGISTERS ) {
     return 0;
+
+  } else if (options.rtl_options.target_tile == TARGET_TILE_WIDE_FETCH_WITH_ADDRGEN ) {
+      return 0;
   } else if(options.rtl_options.target_tile == TARGET_TILE_PLATONIC)
   {
       return 0;
@@ -8410,7 +8674,7 @@ insert_inter_group_buffers(const std::map<std::string, std::set<std::string> >& 
       for (auto kernel : map_find(group_name, fusion_groups)) {
         prg.find_loop(kernel)->replace_reads_from(b.first, replacement);
       }
-      
+
       op* copy_loop = copy_before(prg.root, prg.find_loop(map_find(group_name, group_starts)), s, map_find(b.first, kernel_orders), replacement, prg);
       fresh_groups[group_name].insert(copy_loop->name);
     }

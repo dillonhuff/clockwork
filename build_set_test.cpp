@@ -11929,7 +11929,7 @@ int run_verilator_on(const std::string& top_module,
   //int verilator_build = cmd("verilator -Wall --cc " + sep_list(verilog_files, "", "", " ") + " --exe --build " + tb_file + " --top-module " + top_module + " -Wno-lint");
   int verilator_build = 0;
   if (extra_flag) {
-      verilator_build = cmd("verilator -Wall --cc " + sep_list(verilog_files, "", "", " ") + " --exe --build " + tb_file + " --top-module " + top_module + " -Wno-UNUSED -Wno-PINMISSING -Wno-DECLFILENAME -Wno-WIDTH -Wno-UNDRIVEN -Wno-CASEINCOMPLETE -Wno-MODDUP -Wno-UNOPTFLAT");
+      verilator_build = cmd("verilator -Wall --cc " + sep_list(verilog_files, "", "", " ") + " --exe --build " + tb_file + " --top-module " + top_module + " -Wno-UNUSED -Wno-PINMISSING -Wno-DECLFILENAME -Wno-WIDTH -Wno-UNDRIVEN -Wno-CASEINCOMPLETE -Wno-MODDUP -Wno-UNOPTFLAT -Wno-CMPCONST");
   } else {
       verilator_build = cmd("verilator -Wall --cc " + sep_list(verilog_files, "", "", " ") + " --exe --build " + tb_file + " --top-module " + top_module + " -Wno-UNUSED -Wno-WIDTH -Wno-PINMISSING -Wno-DECLFILENAME");
   }
@@ -12031,6 +12031,15 @@ void generate_smt_stream(CodegenOptions& options, map<string, UBuffer>& buffers,
     if (!prg.is_boundary(buf.first)) {
       //generate stream with the rewrite buffer
       buf.second.generate_smt_stream(options);
+    }
+  }
+}
+
+void Mem_access_count(CodegenOptions& options, map<string, UBuffer>& buffers, mem_access_cnt& mem_access, prog& prg) {
+  for (auto & buf: buffers) {
+    if (!prg.is_boundary(buf.first)) {
+      //generate stream with the rewrite buffer
+      buf.second.collect_memory_cnt(options, mem_access);
     }
   }
 }
@@ -13807,6 +13816,43 @@ void lake_conv33_recipe_test() {
 
 void dsa_writers(prog& prg);
 void dsa_readers(prog& prg);
+void break_up_multi_channel_outputs(prog& prg);
+void break_up_multi_channel_inputs(prog& prg);
+void load_pe_power_stats(power_analysis_params& power_params, const std::string& file);
+
+void Init_PE_energy_cost(power_analysis_params& power_params)  {
+    const double COST_PER_PE_MUL_PJ = 40.0 / 1000;
+    const double COST_PER_PE_ADD_PJ = 20.0 / 1000;
+
+    const double COST_PER_PE_SUB_PJ = 0.035;
+    const double COST_PER_PE_SHIFT_PJ = 0.01;
+    const double COST_PER_PE_LOGIC_BINOP_PJ = 0.01;
+    const double COST_PER_PE_EQ_PJ = 0.01;
+    const double COST_PER_PE_MUX_PJ = 0.5;
+    const double COST_PER_PE_CMP_PJ = 0.035;
+
+    power_params.alu_op_energy_costs["mult_0"] = COST_PER_PE_MUL_PJ;
+    power_params.alu_op_energy_costs["add"] = COST_PER_PE_ADD_PJ;
+    power_params.alu_op_energy_costs["rshft"] = COST_PER_PE_SHIFT_PJ;
+    power_params.alu_op_energy_costs["sub"] = COST_PER_PE_SUB_PJ;
+    power_params.alu_op_energy_costs["and"] = COST_PER_PE_LOGIC_BINOP_PJ;
+    power_params.alu_op_energy_costs["or"] = COST_PER_PE_LOGIC_BINOP_PJ;
+    power_params.alu_op_energy_costs["eq"] = COST_PER_PE_EQ_PJ;
+    power_params.alu_op_energy_costs["sel"] = COST_PER_PE_MUX_PJ;
+    power_params.alu_op_energy_costs["ult"] = COST_PER_PE_CMP_PJ;
+    power_params.alu_op_energy_costs["lt"] = COST_PER_PE_CMP_PJ;
+    power_params.alu_op_energy_costs["le"] = COST_PER_PE_CMP_PJ;
+    power_params.alu_op_energy_costs["ule"] = COST_PER_PE_CMP_PJ;
+    //Currently does not have
+    power_params.alu_op_energy_costs["max"] = COST_PER_PE_CMP_PJ + COST_PER_PE_MUX_PJ;
+    power_params.alu_op_energy_costs["umax"] = COST_PER_PE_CMP_PJ + COST_PER_PE_MUX_PJ;
+    power_params.alu_op_energy_costs["abs"] = COST_PER_PE_SUB_PJ;
+
+    //load_pe_power_stats(power_params, "./power_models/conv_3_3/PEs.txt");
+
+
+}
+
 
 void compile_for_garnet_single_port_mem(prog & prg, string dir, bool gen_smt_stream, bool gen_config_only,bool multi_accessor );
 void cpy_app_to_folder(const std::string& app_type, const std::string& prg_name);
@@ -13814,22 +13860,25 @@ void cpy_app_to_folder(const std::string& app_type, const std::string& prg_name)
 void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, string dir="aha_garnet_design") {
   vector<prog> test_apps;
   test_apps.push_back(conv_3_3());
-  test_apps.push_back(resnet());
   test_apps.push_back(gaussian());
   test_apps.push_back(cascade());
   test_apps.push_back(harris());
-  test_apps.push_back(conv_1_2());
   test_apps.push_back(rom());
-  //test_apps.push_back(resnet());
+  test_apps.push_back(conv_1_2());
+  test_apps.push_back(camera_pipeline());
+  test_apps.push_back(up_sample());
+
+  test_apps.push_back(unsharp());
+  test_apps.push_back(resnet());
+  test_apps.push_back(mobilenet_unrolled());
+  ////test_apps.push_back(unsharp());
 
   //test_apps.push_back(conv_3_3_wide());
   //TODO: break in the middle of vectorization
   //test_apps.push_back(down_sample());
-  //test_apps.push_back(up_sample());
 
   //test_apps.push_back(camera_pipeline());
   //test_apps.push_back(unsharp());
-  //test_apps.push_back(mobilenet_unrolled());
   //TODO:has issue  with multiple input
   //test_apps.push_back(demosaic_complex());
 
@@ -13839,6 +13888,8 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
     prg.pretty_print();
     prg.sanity_check();
 
+    break_up_multi_channel_inputs(prg);
+    break_up_multi_channel_outputs(prg);
     dsa_writers(prg);
     prg.pretty_print();
     auto cpu = unoptimized_result(prg);
@@ -13873,12 +13924,9 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
 void generate_smt_stream_for_garnet_single_port_mem(prog& prg);
 void test_single_port_mem_smt_stream() {
   vector<prog> test_apps;
-  //test_apps.push_back(conv_3_3());
-  //test_apps.push_back(cascade());
-  //test_apps.push_back(harris());
-  test_apps.push_back(resnet());
-  //test_apps.push_back(conv_1_2());
-  //test_apps.push_back(rom());
+  test_apps.push_back(conv_3_3(28, 28, "_SMT_28_28"));
+  test_apps.push_back(cascade(28, 28, "_SMT_28_28"));
+  test_apps.push_back(harris(26, 26, "_SMT_28_28"));
 
   for ( auto prg: test_apps) {
     cout << "====== Running CGRA Single Port test for " << prg.name << endl;
@@ -14011,7 +14059,7 @@ void lake_conv33_autovec_test() {
 
 }
 
-void lake_identity_stream_autovec_test() {
+void lake_identity_stream_config_gen(int x, int y, string suffix) {
   prog lake_agg("lake_agg_test");
   lake_agg.add_input("in");
   lake_agg.add_output("out");
@@ -14019,15 +14067,15 @@ void lake_identity_stream_autovec_test() {
   int app_target_II = 1;
 
   //corresponding to the aggI/O, sramI/O, TBI/O latency
-  map<pair<string, string>, int> latency({{{"in2buf", "in2buf_vec"}, 1},
-          {{"in2buf_vec", "buf2out_vec"}, 2},
-          {{"buf2out_vec", "buf2out"}, 1}});
+  map<pair<string, string>, int> latency({{{"in2buf", "in2buf_agg2sram"}, 1},
+          {{"in2buf_agg2sram", "buf2out_sram2tb"}, 2},
+          {{"buf2out_sram2tb", "buf2out"}, 1}});
 
-  auto in2buf = lake_agg.add_nest("a1", 0, 8, "a0", 0, 8)->add_op("in2buf");
+  auto in2buf = lake_agg.add_nest("a1", 0, y, "a0", 0, x)->add_op("in2buf");
   in2buf->add_load("in", "a1, a0");
   in2buf->add_store("buf", "a1, a0");
 
-  auto buf2out= lake_agg.add_nest("b1", 0, 8, "b0", 0, 8)->add_op("buf2out");
+  auto buf2out= lake_agg.add_nest("b1", 0, y, "b0", 0, x)->add_op("buf2out");
   buf2out->add_load("buf", "b1, b0");
   buf2out->add_store("out", "b1, b0");
 
@@ -14046,7 +14094,28 @@ void lake_identity_stream_autovec_test() {
   //check_lake_config(op_vec, "./lake_controllers/identity_stream/", "./lake_gold/identity_stream/");
   //cmd("mkdir -p ./lake_stream/identity_stream/");
   //emit_lake_stream(buffers_opt, hsh, "./lake_stream/identity_stream/");
-
+  CodegenOptions options;
+  UBuffer tmp;
+  options.mem_tile.multi_sram_accessor = true;
+  options.dir = "./lake_controllers/identity_stream/";
+  map<string, UBuffer> rewrite_buffers;
+  auto sched_map = get_maps_in_map(hsh);
+  for ( auto it: buffers_opt ){
+      if (it.second.num_out_ports() != 0 && it.second.num_in_ports() != 0) {
+          auto & buf = it.second;
+          for (string pt : buf.get_all_ports()) {
+            auto dom = buf.domain.at(pt);
+            auto hw_sched = sched_map.at(::name(dom));
+            hw_sched = retrive_map_domain_with_dim(hw_sched, dom);
+            buf.schedule.at(pt) = to_umap(hw_sched);
+          }
+          rewrite_buffers.insert(it);
+      }
+  }
+#ifdef COREIR
+  auto config = tmp.generate_ubuf_args(options, rewrite_buffers);
+  emit_lake_config_collateral(options, "buf_" + suffix, config);
+#endif
 
 }
 
@@ -14082,8 +14151,6 @@ void lake_dual_port_test() {
   //check_lake_config(op_vec, "./lake_controllers/identity_stream/", "./lake_gold/identity_stream/");
   //cmd("mkdir -p ./lake_stream/identity_stream/");
   //emit_lake_stream(buffers_opt, hsh, "./lake_stream/identity_stream/");
-
-
 }
 
 void lake_identity_stream_SMT_test(int x, int y, string suffix) {
@@ -15634,8 +15701,9 @@ void union_test() {
 void dual_port_lake_test();
 
 void lake_smt_tests() {
+  lake_identity_stream_SMT_test(28, 28, "28x28");
+  lake_identity_stream_config_gen(28, 28, "28x28");
   test_single_port_mem_smt_stream();
-  //lake_identity_stream_SMT_test(20, 20, "20x20");
   //lake_identity_stream_SMT_test(128, 128, "128x128");
   //lake_identity_stream_SMT_test(64, 64, "64x64");
   //lake_identity_stream_SMT_test(32, 32, "32x32");
@@ -15652,7 +15720,6 @@ void lake_tests() {
   test_single_port_mem(false, true, "aha_garnet_design_new");
   //test_single_port_mem(false, false, "aha_garnet_design");
   assert(false);
-  lake_conv33_autovec_aha_test();
   //double_buffer_test();
   //lake_identity_stream_autovec_test();
   lake_gaussian_autovec_test();
@@ -16002,23 +16069,54 @@ void relax_delays_after_vectorization(schedule_info& sched, prog& prg) {
         d ++;
 
     sched.op_offset_within_parent[lp] = 10000 * d;
-    //int old_delay = map_find(lp, sched.op_offset_within_parent);
-    //int try_delay = 1;
-    //bool found_smaller_delay = false;
-    //while (try_delay < old_delay) {
-    //  sched.op_offset_within_parent[lp] = try_delay;
-    //  if (no_violated_cycle_accurate_dependencies(sched, prg)) {
-    //    found_smaller_delay = true;
-    //    break;
-    //  }
-    //  try_delay = max(try_delay * 2, try_delay + 1000);
-    //  //try_delay = min(try_delay * 2, try_delay + 1000);
-    //  //try_delay *= 2;
-    //}
+  }
+}
 
-    //if (!found_smaller_delay) {
-    //  sched.op_offset_within_parent[lp] = old_delay;
-    //}
+void relax_delays_rate_matched(schedule_info& sched, prog& prg) {
+  cout << "Adjusting delays of " << prg.name << endl;
+  int d = 0;
+  int fetch_width = 4;
+  auto start_times = op_start_times(sched, prg);
+  auto domains = prg.domains();
+  for (auto name : topologically_sort_kernels(prg)) {
+    auto lp = prg.find_loop(name);
+    auto cons_op_vec = lp->all_ops();
+    if (cons_op_vec.size() > 1)
+        continue;
+    cout << "Adjusting delay of " << lp->name << endl;
+    for(auto prod: get_producers(name, prg)){
+        auto prod_loop = prg.find_loop(prod);
+        auto prod_op_vec = prod_loop->all_ops();
+        //Assume we only have one op under loop nest
+        if (prod_op_vec.size() > 1)
+            continue;
+        auto prod_op_name = pick(prod_op_vec)->name;
+        auto cons_op_name = pick(cons_op_vec)->name;
+        auto prod_dom = domains.at(pick(prod_op_vec));
+        auto cons_dom = domains.at(pick(cons_op_vec));
+        auto prod_sched = to_map(start_times.at(pick(prod_op_vec)));
+        auto cons_sched = to_map(start_times.at(pick(cons_op_vec)));
+
+        cout << tab(2) << "Producers: " << prod_op_name << endl;
+        cout << tab(2) << "sched: " << str(prod_sched) << endl;
+
+        cout << tab(2) << "Consumers: " << cons_op_name << endl;
+        cout << tab(2) << "sched: " << str(cons_sched) << endl;
+
+        auto equal_start_time =
+        equal(lexminpt(range(its(prod_sched, prod_dom))),
+                lexminpt(range(its(cons_sched, cons_dom))));
+        bool equal_rng = equal(range(prod_sched), range(cons_sched));
+        cout << tab(4) << "Start cycle Is equal: " << equal_start_time << endl;
+        cout << tab(4) << "domain is same: " << equal_rng << endl;
+        if (equal_start_time && !equal_rng) {
+            int prod_ii = sched.II(pick(prod_op_vec)->parent);
+            cout << "\t\top " << prod_op_name << " has ii: " << prod_ii << endl;
+            //6 is a magic number which make upsample work
+            d += prod_ii * fetch_width + 6;
+        }
+    }
+    sched.op_offset_within_parent[lp] += d;
   }
 }
 
@@ -16070,6 +16168,71 @@ void adjust_outer_pipeline_delays(schedule_info& sched, prog& prg) {
       sched.op_offset_within_parent[lp] = old_delay;
     }
   }
+}
+
+void asap_input_iis(schedule_info& sched, prog& prg) {
+
+    //Looks for buffer all reading location is constant localtion
+    //lower the ii to be one
+    std::set<string> config_buffers;
+    for (auto b : all_buffers(prg)) {
+        if (prg.is_boundary(b)) {
+            continue;
+        }
+        bool all_write_from_offchip = true;
+        for (auto op_in : find_writers(b, prg)) {
+            bool all_read_offchip = true;
+            for (auto rdbuf : op_in->buffers_read()) {
+                if (!prg.is_boundary(rdbuf)) {
+                    all_read_offchip = false;
+                    break;
+                }
+            }
+            if (!all_read_offchip) {
+                all_write_from_offchip = false;
+                break;
+            }
+
+        }
+        if (all_write_from_offchip) {
+            config_buffers.insert(b);
+        }
+    }
+    //FIXME: fix this hack
+    std::set<string> filter_buffers;
+    for ( auto b : config_buffers ) {
+        cout << tab(2) << "Find buffers need to be rewritten: " << b << endl;
+        if (contains(b, "hw_filter")) {
+            filter_buffers.insert(b);
+        }
+    }
+    cout << "\nFilter buffers...\n" << endl;
+    for (auto b : filter_buffers) {
+        cout << tab(2) << "Left: " << b << endl;
+        for (auto op: find_writers(b, prg)) {
+            auto write_rep = op;
+            vector<string> loop_vars = surrounding_vars(write_rep, prg);
+            for (auto l_var: loop_vars) {
+                cout << tab(2) << "loop index var: " << l_var << endl;
+            }
+            assert(loop_vars.size() >= 1);
+            int ii = 1;
+            for (int it = loop_vars.size() - 1; it > 0; it --) {
+                string loop_name = loop_vars.at(it);
+                cout << "loop name: " << loop_name << endl;
+                cout << "original delay within parent: " <<
+                    sched.op_offset_within_parent[prg.find_loop(loop_name)] << endl;
+                sched.op_offset_within_parent[prg.find_loop(loop_name)] = 0;
+                sched.loop_iis[loop_name] = ii;
+                ii *= prg.find_loop(loop_name)->trip_count() + 1;
+            }
+        //    op->pretty_print();
+        //    cout << "\tOP delay: " << sched.op_offset_within_parent[op] << endl;
+
+        }
+    }
+
+
 }
 
 void adjust_inner_iis(schedule_info& sched, prog& prg) {
@@ -16295,40 +16458,12 @@ vector<int> garnet_fuse_ii_level(prog& prg) {
 }
 
 void sanity_check_hw_schedule(schedule_info& sched, prog& prg);
+void pad_to_single_depth(schedule_info& sched, op* root, prog& prg);
 void garnet_single_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
   if (is_rate_matchable(prg)) {
     prg.pretty_print();
-    bool single_depth = all_loop_nests_same_depth(prg);
-    int max_depth = max_loop_depth(prg);
 
-
-    if (!single_depth) {
-      map<string, vector<int> > pad_indexes;
-      for (auto k : get_kernels(prg)) {
-        auto lp = prg.find_loop(k);
-        for (auto rep : lp->descendant_ops()) {
-          int depth_m = loop_depth(prg.find_loop(k));
-          vector<int> inds;
-          inds.push_back(0);
-          for (int p = 0; p < max_depth - depth_m; p++) {
-            inds.push_back(-1);
-          }
-          for (int d = 1; d < depth_m + 1; d++) {
-            inds.push_back(d);
-          }
-
-          pad_indexes[rep->name] = inds;
-        }
-      }
-      cout << "Pad inds..." << endl;
-      for (auto p : pad_indexes) {
-        cout << tab(1) << p.first << ": " << comma_list(p.second) << endl;
-      }
-      insert_pad_loops(prg, pad_indexes);
-    }
-    prg.pretty_print();
-    single_depth = all_loop_nests_same_depth(prg);
-    assert(single_depth);
+    pad_to_single_depth(sched, root, prg);
 
     prg.pretty_print();
     cout << prg.name << " is a stencil pipeline" << endl;
@@ -16414,11 +16549,18 @@ void garnet_single_port_ram_schedule(schedule_info& sched, op* root, prog& prg) 
 
     //Hack for rom, Rom need to be conservative
     //because the affine controller output on cycle of flush is undeterministic
-    if (prg.name == "rom") {
+    if (prg.name == "rom" ) {
       adjust_schedule_forward(sched, prg, 1);
     } else {
       adjust_schedule_forward(sched, prg, 0);
     }
+    //Add delay for identity stream
+    relax_delays_rate_matched(sched, prg);
+
+    //Make input as fast as possible
+    asap_input_iis(sched, prg);
+    auto op_sched = op_start_times_map(sched, prg);
+    cout << "Final schedule after relax: " << str(op_sched)  << endl;
     return;
   }
 
@@ -16760,7 +16902,7 @@ CodegenOptions garnet_codegen_single_port_with_addrgen_options(prog& prg, string
   CodegenOptions options;
   options.rtl_options.target_tile = TARGET_TILE_WIDE_FETCH_WITH_ADDRGEN;
   options.conditional_merge = true;
-  options.merge_threshold = 4;
+  options.merge_threshold = 10;
   options.iis = {1};
   options.rtl_options.max_inpt = 2;
   options.rtl_options.max_outpt = 2;
@@ -17039,6 +17181,33 @@ void generate_smt_stream_for_garnet_single_port_mem(prog& prg) {
   generate_smt_stream(options, buffers_opt, prg);
 }
 
+void emit_mem_access_count_to_csv(string dir, CodegenOptions& options, mem_access_cnt& acc_cnt) {
+
+    cmd("mkdir -p "+dir);
+    ofstream rd(dir +"/" + "memory_read.csv");
+    ofstream wr(dir +"/" + "memory_write.csv");
+    cout << "\tGenerate Memory Count Collateral for : " << tab(1) << dir << endl;
+    for (auto it: acc_cnt.read_cnt) {
+        string buf_name = it.first;
+        cout << tab(2) << "Emit Memory Access Count for Buffer: " << buf_name << endl;
+        rd << buf_name << ",";
+        for (auto sub_buf: it.second) {
+            cout << tab(4) << "Sub buf read: " << sub_buf.first << ": " << sub_buf.second << endl;
+            rd << sub_buf.first << ", " << sub_buf.second << ",";
+        }
+        rd << endl;
+
+        wr << buf_name << ",";
+        for (auto sub_buf: acc_cnt.write_cnt.at(buf_name)) {
+            cout << tab(4) << "Sub buf write: " << sub_buf.first << ": " << sub_buf.second << endl;
+            wr << sub_buf.first << ", " << sub_buf.second<< ",";
+        }
+        wr << endl;
+    }
+    rd.close();
+    wr.close();
+}
+
 void compile_for_garnet_single_port_mem(prog& prg,
         string dir,
         bool gen_smt_stream,
@@ -17070,56 +17239,34 @@ void compile_for_garnet_single_port_mem(prog& prg,
           prg.whole_iteration_domain());
   cout << "result schedule: " << str(hw_sched) << endl;
   auto buffers_opt = build_buffers(prg, hw_sched);
-  //for (auto b: buffers_opt) {
-  //    cout << "create shift register for " << b.first << endl;
-
-  //  //compare out2in
-  //  auto shift_registered_outputs = determine_shift_reg_map(prg, b.second, sched);
-  //  //compare out2out
-  //  auto o2o = determine_output_shift_reg_map(prg, b.second, sched);
-  //  cout << o2o.size() << endl;
-  //  for (auto it: shift_registered_outputs) {
-  //    cout << it.first << " -> " << it.second.first << ", depth = " << it.second.second << endl;
-  //  }
-  //}
-  ////auto sched = global_schedule_from_buffers(buffers_opt);
-
-  for (auto& b : buffers_opt) {
-    cout << "\tGenerate bank for buffer: " << b.first << endl << b.second << endl;
+  for (auto & b: buffers_opt) {
+    cout << "create shift register for " << b.first << endl;
     if (b.second.num_in_ports() == 0 || b.second.num_out_ports() == 0)
         continue;
-    if (is_rate_matchable(prg)) {
-      b.second.generate_banks_and_merge(options);
-      b.second.port_group2bank(options);
-    } else {
-      //TODO: put this into a method
-      auto partition = embarassing_partition(b.second);
-      assert(partition.has_value());
-      cout << tab(1) << "Found partition: " << endl;
-      std::set<int> partition_dim = partition.get_value();
-      vector<int> cyclic_partition_factor;
-      vector<int> min_addr, max_addr;
-      min_addr = min_offsets_by_dimension(b.second);
-      max_addr = max_offsets_by_dimension(b.second);
-      for (int d = 0; d < b.second.logical_dimension(); d ++) {
-          if (elem(d, partition_dim)) {
-            cyclic_partition_factor.push_back(max_addr.at(d) - min_addr.at(d) + 1);
-          } else {
-            cyclic_partition_factor.push_back(1);
-            //cyclic_partition_factor.push_back(max_addr.at(d) - min_addr.at(d) + 1);
-          }
-      }
-      for (auto dim : partition_dim) {
-          cout << tab(2) << "Partition: " << dim << endl;
-      }
-      cout << "number of banks = " << card(cyclic_partition_factor) << endl;
-      options.banking_strategies[b.first] = {"cyclic", cyclic_partition_factor};
-      b.second.generate_banks_and_merge(options);
-      b.second.port_group2bank(options);
-    }
+
+    auto& buf = b.second;
+    auto impl = port_group2bank(options, prg, b.second, sched);
+
+    cout << "After shift register optimization: " << impl << endl;
+    if (impl.is_pure_shift_register(buf.get_out_ports()))
+      continue;
+
+    generate_banks_garnet(options, prg, buf, impl, sched);
   }
+  //FIXME: put into separate pass for power analysis
+  /*
+  mem_access_cnt mem_access;
+  Mem_access_count(options, buffers_opt, mem_access, prg);
+  emit_mem_access_count_to_csv(dir + "/MemCount/" + prg.name, options, mem_access);
+
+  power_analysis_params power_params;
+  power_analysis_info power_stats;
+  Init_PE_energy_cost(power_params);*/
 
 #ifdef COREIR
+  //PE_energy_cost_instance_model(power_params, power_stats, prg);
+  //PE_energy_cost(power_params, power_stats, prg);
+
   generate_garnet_coreir(buffers_opt, prg, options, sched);
   if (!options.config_gen_only) {
     generate_garnet_verilog_top(options, prg.name);
@@ -17334,11 +17481,12 @@ vector<prog> isca_programs() {
   //test_programs.push_back(harris_sch8_endcim());
   //test_programs.back().pretty_print();
 
-  test_programs.push_back(up_sample());
+  //FIXME: not work for M1 and M3
+  //test_programs.push_back(up_sample());
+  //test_programs.push_back(unsharp());
   test_programs.push_back(camera_pipeline());
   test_programs.push_back(gaussian());
   test_programs.push_back(mobilenet_unrolled());
-  test_programs.push_back(unsharp());
   test_programs.push_back(resnet());
   test_programs.push_back(cascade());
   test_programs.push_back(down_sample());
@@ -17721,18 +17869,17 @@ void cgra_flow_tests() {
   //vector<prog> M3_test_programs{gaussian()};
   test_codegen(M3_test_programs, compile_for_CGRA_M3_mem);
   //assert(false);
-  
 
   vector<prog> M1_test_programs = isca_programs();
   //vector<prog> M1_test_programs{gaussian()};
   test_codegen(M1_test_programs, compile_for_CGRA_M1_mem);
-  
+
   auto test_programs =
     all_cgra_programs();
   test_platonic_codegen(test_programs);
 
 
-  
+
 
   vector<prog> sram_test_programs{pointwise(), camera_pipeline(), resnet()};
   test_codegen(sram_test_programs, compile_for_generic_SRAM_mem);
@@ -19340,7 +19487,7 @@ prog stencil_chain(const std::string& name) {
       }
     }
     init->add_store(current_level, x, y);
-    
+
     last_level = current_level;
   }
 
@@ -19520,6 +19667,24 @@ void dhuff_playground() {
     prg.pretty_print();
     assert(false);
   }
+#ifdef COREIR
+  {
+    vector<prog> apps;
+    apps.push_back(camera_pipeline());
+    //apps.push_back(mobilenet_unrolled());
+    //apps.push_back(harris());
+    for (auto app: apps) {
+        auto pe_op_count = get_PE_optype_count_garnet(app);
+
+        ofstream out("aha_garnet_design_new/"+ app.name +"/pe_count_garnet.csv");
+        for (auto it: pe_op_count) {
+            out << it.first << "," << it.second << endl;
+        }
+    }
+    assert(false);
+
+  }
+#endif
   {
     prog prg = harris_sch6_2ppc();
     dsa_writers(prg);
@@ -19631,7 +19796,7 @@ void dhuff_playground() {
       //MEM_energy_cost(options, power_params, power_stats, prg);
     }
     assert(false);
-#endif 
+#endif
   }
   {
 #ifdef COREIR
@@ -19664,7 +19829,7 @@ void dhuff_playground() {
       compile_cycle_accurate_hw(options, sched, prg);
       normalize_bounds(prg);
       sequential_schedule(sched, prg.root, prg);
-      
+
       auto hw_sched = its(op_times_map(sched, prg), prg.whole_iteration_domain());
 
       auto buffers = build_buffers(prg, hw_sched);

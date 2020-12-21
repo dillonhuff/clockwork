@@ -80,8 +80,7 @@ dut.eval();
   assert(hw_kernel_stencil.is_empty());
   for (int i = 0; i < 2352; i++) {
     auto actual = hw_output_stencil.read();
-    hw_uint<16> actual_lane_0;
-    set_at<0, 16, 16>(actual_lane_0, actual.extract<0, 15>());
+    hw_uint<16> actual_lane_0 = actual.extract<0, 15>();
     fout << actual_lane_0 << endl;
   }
 

@@ -9,8 +9,6 @@ using namespace std;
 // compute file: conv_3_3_compute.h
 #include "conv_3_3_compute.h"
 
-#include "hw_classes.h"
-
 struct conv_stencil_all_inputs_to_all_outputs_cache {
 	// RAM Box: {[0, 61]}
   hw_uint<16> RAM[62];
@@ -66,8 +64,6 @@ inline hw_uint<16> conv_stencil_hcompute_hw_output_stencil_read_bundle_read(conv
 	return result;
 }
 
-#include "hw_classes.h"
-
 struct conv_stencil_init_all_inputs_to_all_outputs_cache {
 	// RAM Box: {[0, 61]}
   hw_uint<16> RAM[62];
@@ -122,8 +118,6 @@ inline void conv_stencil_init_hcompute_conv_stencil_write_bundle_write(hw_uint<1
 	hw_uint<16> conv_stencil_init_hcompute_conv_stencil_7_res = hcompute_conv_stencil_write.extract<0, 15>();
 	conv_stencil_init_hcompute_conv_stencil_7_write(conv_stencil_init_hcompute_conv_stencil_7_res, conv_stencil_init, root, hw_output_s0_x_xo, dynamic_address);
 }
-
-#include "hw_classes.h"
 
 struct hw_input_copy_stencil_all_inputs_to_all_outputs_cache {
 	// RAM Box: {[0, 63]}

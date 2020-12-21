@@ -103,7 +103,7 @@
           "const_p255__295":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
-            "modargs":{"value":[["BitVector",16],"16'h00ff"]}
+            "modargs":{"value":[["BitVector",16],"16'h0000"]}
           },
           "mul_hw_input_global_wrapper_stencil_1_287_288":{
             "genref":"coreir.mul",

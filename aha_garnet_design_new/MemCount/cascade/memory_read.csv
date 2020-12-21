@@ -1,0 +1,2 @@
+ub_conv1_stencil_op_hcompute_conv1_stencil_1_16_to_conv1_stencil_op_hcompute_conv2_stencil_1_11_ubuf,agg, 992,sram, 1920,tb, 3720,
+ub_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2_to_hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_24_ubuf,agg, 1024,sram, 1984,tb, 3968,
