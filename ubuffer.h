@@ -1909,6 +1909,11 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
       return s;
     }
 
+    string buf_range_name() {
+      auto am = pick(access_map);
+      return range_name(to_map(am.second));
+    }
+
     void normalize_access_range() {
       auto rng = to_set(global_range());
       vector<int> start_locs(num_dims());
@@ -2368,6 +2373,9 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
 
     //from bank to ubuffer
     map<string, UBuffer> generate_ubuffer(CodegenOptions& opt);
+
+    //for chaining and create subbank
+    vector<UBuffer> decouple_ubuffer_from_bank_map(isl_map* bank_map);
 
     //smt stream generation
     void generate_smt_stream(CodegenOptions& options);

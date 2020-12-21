@@ -2680,6 +2680,112 @@ bool build_delay_map(UBuffer& buf, map<string, vector<pair<string, int> > >& del
 
 #endif
 
+string get_buf_type(string buf_name) {
+    if (contains(buf_name, "agg")) {
+        return "agg";
+    } else if (contains(buf_name, "tb")) {
+        return "tb";
+    } else if (contains(buf_name, "sram")) {
+        return "sram";
+    } else {
+        cout << "Sub buffer name not recognized!" << endl;
+        assert(false);
+    }
+}
+
+map<string, UBuffer> decouple_multi_tile_ubuffer(CodegenOptions& options, map<string, UBuffer> & vec_buf) {
+  for (auto it: vec_buf) {
+    maybe<vector<int>> project_id;
+    if (get_buf_type(it.first) == "tb") {
+      project_id = get_project_dim(it.second, true);
+    } else if (get_buf_type(it.first) == "agg") {
+      project_id = get_project_dim(it.second, false);
+    }
+    if (project_id.has_value()) {
+      cout << "Subbuf type: " << get_buf_type(it.first) << endl;
+      cout << "Project ID: " << project_id.get_value() << endl;
+      auto parition_factors = project_id.get_value();
+      auto buf = it.second;
+      vector<int> cyclic_partition_factor;
+      vector<int> min_addr, max_addr;
+      min_addr = min_offsets_by_dimension(buf);
+      max_addr = max_offsets_by_dimension(buf);
+      for (int d = 0; d < buf.logical_dimension(); d ++) {
+          if (elem(d, parition_factors)) {
+            cyclic_partition_factor.push_back(max_addr.at(d) - min_addr.at(d) + 1);
+          } else {
+            cyclic_partition_factor.push_back(1);
+          }
+      }
+      cout << "number of banks = " << card(cyclic_partition_factor) << endl;
+      banking_strategy b_s = {"cyclic", cyclic_partition_factor};
+      auto range2bank = bank_map(buf.ctx, buf.buf_range_name(), b_s);
+      cout << "range2bank: " << str(range2bank) << endl;
+      //get a map from data range to bankID
+      vector<UBuffer> decoupled_buffers = buf.decouple_ubuffer_from_bank_map(range2bank);
+      assert(false);
+    }
+  }
+}
+
+vector<UBuffer> UBuffer::decouple_ubuffer_from_bank_map(isl_map* bank_map) {
+  vector<UBuffer> ret;
+  auto range2bank = its(to_umap(bank_map), global_range());
+  cout << "\tglobal range of bank: " << str(range2bank) << endl;
+
+  auto bankID_list = get_points(range(bank_map));
+  int ubuf_cnt = 0;
+  for (auto bankID : bankID_list) {
+    int usuffix = 0;
+    auto id_set = to_set(bankID);
+    auto this_bank_rddom = coalesce(its(inv(range2bank), id_set));
+    cout << "\t" << str(id_set) << " this bank rddom: " << str(this_bank_rddom) << endl;
+    /*
+    UBuffer buf;
+    string bname = this->name + "_" + str(ubuf_cnt);
+    buf.name = bname;
+    buf.ctx = ctx;
+    buf.port_widths = port_widths;
+    for (auto inpt: get_in_ports()) {
+      auto acc_map = to_map(access_map.at(inpt));
+      //Need to separate banking and shift register optimization
+      cout << "\tread map: " << str(acc_map) << endl;
+      acc_map = coalesce(its_range(acc_map, to_set(this_bank_rddom)));
+      cout << "\tread map after decouple: " << str(acc_map) << endl;
+      acc_map = set_range_name(acc_map, bname);
+      auto dom = ::domain(acc_map);
+      if (empty(dom))
+        continue;
+
+      string pt_name = bname + "_" + ::name(dom) + "_" + to_string(usuffix);
+      buf.port_bundles[::name(dom) + "_write"].push_back(pt_name);
+      buf.add_in_pt(pt_name, dom, acc_map, its(schedule.at(inpt), dom));
+      usuffix ++;
+    }
+
+    //Check if we could merge them into same bundle
+    for (auto outpt: get_out_ports()) {
+      auto acc_map = to_map(access_map.at(outpt));
+      if (banking.partition == "cyclic") {
+        cout << "\tread domain: " << str(b.rddom) << endl;
+        cout << "\tread map: " << str(acc_map) << endl;
+        acc_map = coalesce(its_range(acc_map, to_set(b.rddom)));
+      }
+      acc_map = set_range_name(acc_map, bname);
+      auto dom = ::domain(acc_map);
+      string pt_name = bname + "_" + ::name(dom) + "_" + to_string(usuffix);
+      //string pt_name = outpt;
+      buf.port_bundles[::name(dom) + "_read"].push_back(pt_name);
+      buf.add_out_pt(pt_name, dom, acc_map, its(schedule.at(outpt), dom));
+      if (sv_map.count(outpt)) {
+        buf.sv_map[pt_name] = sv_map.at(outpt);
+      }
+      usuffix ++;
+    }*/
+  }
+  return ret;
+}
+
 //This the smt stream generation pass without coreIR generation
 void UBuffer::generate_smt_stream(CodegenOptions& options) {
 
@@ -2714,6 +2820,10 @@ void UBuffer::generate_smt_stream(CodegenOptions& options) {
       }
       //Generate SMT stream if needed
       if (options.emit_smt_stream) {
+        //TODO: merge this pass into vectorization
+        //TODO: reuse this pass in chaining
+
+        vec_buf = decouple_multi_tile_ubuffer(options, vec_buf);
         generate_lake_stream(options, vec_buf, global_schedule_from_buffers(vec_buf));
       }
     }
@@ -2896,18 +3006,6 @@ pair<int, int> get_stream_vector_size(CodegenOptions &options, string buf_name) 
     }
 }
 
-string get_buf_type(string buf_name) {
-    if (contains(buf_name, "agg")) {
-        return "agg";
-    } else if (contains(buf_name, "tb")) {
-        return "tb";
-    } else if (contains(buf_name, "sram")) {
-        return "sram";
-    } else {
-        cout << "Sub buffer name not recognized!" << endl;
-        assert(false);
-    }
-}
 
 map<string, vector<string>> classify_buffers(map<string, UBuffer> buffers_opt) {
   map<string, vector<string>> ret;
