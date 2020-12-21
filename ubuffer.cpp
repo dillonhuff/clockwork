@@ -2870,7 +2870,8 @@ void generate_lake_stream(CodegenOptions & options,
   string dir = options.dir + "lake_stream/";
   cout << "Generating lake smt stream!" << endl;
   cmd("mkdir -p " + dir);
-  emit_lake_address_stream2file(options, buffers_opt, dir);
+  //emit_lake_address_stream2file(options, buffers_opt, dir);
+  emit_lake_address_stream2file_new(options, buffers_opt, dir);
 }
 
 pair<int, int> get_stream_vector_size(CodegenOptions &options, string buf_name) {
@@ -2894,6 +2895,29 @@ pair<int, int> get_stream_vector_size(CodegenOptions &options, string buf_name) 
         assert(false);
     }
 }
+
+string get_buf_type(string buf_name) {
+    if (contains(buf_name, "agg")) {
+        return "agg";
+    } else if (contains(buf_name, "tb")) {
+        return "tb";
+    } else if (contains(buf_name, "sram")) {
+        return "sram";
+    } else {
+        cout << "Sub buffer name not recognized!" << endl;
+        assert(false);
+    }
+}
+
+map<string, vector<string>> classify_buffers(map<string, UBuffer> buffers_opt) {
+  map<string, vector<string>> ret;
+  for(auto it: buffers_opt) {
+    string tp = get_buf_type(it.first);
+    map_insert(ret, tp, it.first);
+  }
+  return ret;
+}
+
 
 void emit_lake_address_stream2file(CodegenOptions &options,
         map<string, UBuffer> buffers_opt, string dir) {
@@ -2924,6 +2948,100 @@ void emit_lake_address_stream2file(CodegenOptions &options,
     lakeStream top(agg_tb_pair.first, agg_tb_pair.second);
     top.emit_csv(dir + "/" + it.first + "_top");
   }
+}
+
+string toBracketList(const vector<vector<int>> & data) {
+  if (data.size() == 1) {
+    return sep_list(pick(data), "[", "]", " ");
+  } else {
+    vector<string> in;
+    for (auto bk_data : data) {
+      in.push_back(sep_list(bk_data, "[", "]", " "));
+    }
+    return sep_list(in, "[", "]", " ");
+  }
+}
+
+vector<StreamData> emit_top_address_stream(
+        CodegenOptions& options, string fname, vector<UBuffer> & buffers) {
+  //ofstream out(fname+"_SMT.csv");
+  cout << "fname: " << fname << endl;
+  string subbuf = get_buf_type(fname);
+  auto lake_info = options.mem_tile;
+  int input_width = lake_info.in_port_width.at(subbuf);
+  int output_width = lake_info.out_port_width.at(subbuf);
+  int pt_num = lake_info.bank_num.at(subbuf);
+  //StreamData tmp(input_width, output_width, pt_num);
+
+  vector<StreamData> ret;
+
+  vector<int> read_cycle;
+  vector<int> write_cycle;
+  vector<vector<int> > read_addr;
+  vector<vector<int> > write_addr;
+
+  int cycle = 0;
+  //create a vector of rd/wr iter for different buffer
+  vector<int> rd_itr_vec = vector<int>(pt_num, 0);
+  vector<int> wr_itr_vec = vector<int>(pt_num, 0);
+  //out << "data_in, valid_in, data_out, valid_out" << endl;
+
+  //out address has memory
+  auto addr_out = vector<vector<int>>(pt_num, vector<int>(output_width, 0));
+
+  bool finished;
+  while (true) {
+    finished = true;
+    StreamData tmp(input_width, output_width, pt_num);
+    for (int buf_cnt = 0; buf_cnt < buffers.size(); buf_cnt++) {
+      int& rd_itr = rd_itr_vec.at(buf_cnt);
+      int& wr_itr = wr_itr_vec.at(buf_cnt);
+      auto read_cycle = buffers.at(buf_cnt).read_cycle;
+      auto write_cycle = buffers.at(buf_cnt).write_cycle;
+      auto read_addr = buffers.at(buf_cnt).read_addr;
+      auto write_addr = buffers.at(buf_cnt).write_addr;
+
+      auto addr_in = vector<vector<int>>(pt_num, vector<int>(input_width, 0));
+      if (rd_itr < read_cycle.size()) {
+        if (read_cycle.at(rd_itr) == cycle) {
+          tmp.out_valid.at(buf_cnt) = true;
+          cout << "buf count: " << buf_cnt << endl;
+          cout << "pt num: : " << pt_num << endl;
+          cout << "rd iter: " << rd_itr << endl;
+          cout << "read addr size: " << read_addr.size() << endl;
+          cout << "output width: " << output_width << endl;
+          cout << "addr width: " << pick(read_addr).size() << endl;
+          for (size_t i = 0; i < read_addr.at(rd_itr).size(); i ++)
+            addr_out.at(buf_cnt).at(i) = read_addr.at(rd_itr).at(i);
+
+          //cout << cycle << tab(1) << "rd" << tab(1) << addr_out << endl;
+          //out << "rd@" << cycle << tab(1) << ",data=" <<sep_list(addr_out, "[", "]", " ") << endl;
+          rd_itr ++;
+        }
+      }
+      if (wr_itr < write_cycle.size()) {
+        if (write_cycle.at(wr_itr) == cycle) {
+          tmp.in_valid.at(buf_cnt) = true;
+          for (size_t i = 0; i < write_addr.at(wr_itr).size(); i ++)
+            tmp.in_data.at(buf_cnt).at(i) = write_addr.at(wr_itr).at(i);
+          //cout << cycle << tab(1) << "wr" << tab(1) << addr_in << endl;
+          //out << "wr@" << cycle << tab(1) << ",data="<< sep_list(addr_in, "[", "]", " ") << endl;
+          //out << cycle << tab(1) << "wr"  << endl;
+          wr_itr ++;
+        }
+      }
+      finished &= (wr_itr == write_cycle.size());
+      finished &= (rd_itr == read_cycle.size());
+
+    }
+    tmp.out_data = addr_out;
+    ret.push_back(tmp);
+
+    cycle ++;
+    if (finished)
+        break;
+  }
+  return ret;
 }
 
 lakeStream emit_top_address_stream(string fname,
@@ -2991,6 +3109,30 @@ lakeStream emit_top_address_stream(string fname,
   }
   out.close();
   return ret;
+}
+
+void emit_lake_address_stream2file_new(CodegenOptions &options,
+        map<string, UBuffer> buffers_opt, string dir) {
+  map<string, vector<string> > type2ubuf = classify_buffers(buffers_opt);
+  for (auto it: type2ubuf) {
+    string tp_name = it.first;
+    string buf_name = take_until_str(pick(it.second), "_ubuf");
+    vector<UBuffer> buffers;
+    for (auto name: it.second) {
+      buffers.push_back(buffers_opt.at(name));
+    }
+    cout << "generate SMT stream for buffer: " << buf_name << endl;
+    cout << "subbuf name: " << tp_name << endl;
+
+    //TB need separate buffer into mutiple ubuffer
+    if (tp_name == "tb")
+        continue;
+
+    auto stream_data = emit_top_address_stream(options, dir+"/"+buf_name + "_buf_" + tp_name, buffers);
+    for (auto cycle_data: stream_data) {
+      cycle_data.print_info();
+    }
+  }
 }
 
   void generate_code_prefix(CodegenOptions& options,

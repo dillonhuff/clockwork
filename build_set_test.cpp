@@ -13747,8 +13747,8 @@ void generate_smt_stream_for_garnet_single_port_mem(prog& prg);
 void test_single_port_mem_smt_stream() {
   vector<prog> test_apps;
   test_apps.push_back(conv_3_3(28, 28, "_SMT_28_28"));
-  test_apps.push_back(cascade(28, 28, "_SMT_28_28"));
-  test_apps.push_back(harris(26, 26, "_SMT_28_28"));
+  //test_apps.push_back(cascade(28, 28, "_SMT_28_28"));
+  //test_apps.push_back(harris(26, 26, "_SMT_28_28"));
 
   for ( auto prg: test_apps) {
     cout << "====== Running CGRA Single Port test for " << prg.name << endl;
@@ -15523,8 +15523,8 @@ void union_test() {
 void dual_port_lake_test();
 
 void lake_smt_tests() {
-  lake_identity_stream_SMT_test(28, 28, "28x28");
-  lake_identity_stream_config_gen(28, 28, "28x28");
+  //lake_identity_stream_SMT_test(28, 28, "28x28");
+  //lake_identity_stream_config_gen(28, 28, "28x28");
   test_single_port_mem_smt_stream();
   //lake_identity_stream_SMT_test(128, 128, "128x128");
   //lake_identity_stream_SMT_test(64, 64, "64x64");

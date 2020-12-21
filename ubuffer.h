@@ -2428,6 +2428,44 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
 
 };
 
+string toBracketList(const vector<vector<int>> & data);
+
+struct StreamData {
+    vector<vector<int> > in_data;
+    vector<vector<int> > out_data;
+    vector<bool> in_valid;
+    vector<bool> out_valid;
+    int in_port_width, out_port_width;
+    int port_num;
+
+    StreamData(int inpt_width, int outpt_width, int pt_num):
+        in_port_width(inpt_width),
+        out_port_width(outpt_width),
+        port_num(pt_num) {
+            in_data = vector<vector<int>>(port_num, vector<int>(in_port_width, 0));
+            out_data = vector<vector<int>>(port_num, vector<int>(out_port_width, 0));
+            in_valid = vector<bool>(port_num, false);
+            out_valid = vector<bool>(port_num, false);
+        }
+
+    void print_info() {
+      cout << "in_data: " << endl;
+      cout << toBracketList(in_data);
+      cout << endl;
+
+      cout << "out_data: " << endl;
+      cout << toBracketList(out_data);
+      cout << endl;
+
+      cout << "In valid: " << endl;
+      cout << sep_list(in_valid, "[", "]", " ");
+      cout << endl;
+
+      cout << "Out valid: " << endl;
+      cout << sep_list(out_valid, "[", "]", " ");
+      cout << endl;
+    }
+};
 
 //Data structure to append top level stream and generate
 struct lakeStream {
@@ -2498,6 +2536,7 @@ void generate_lake_stream(CodegenOptions & options,
         map<string, UBuffer>& buffers_opt,
         umap* hardware_schedule);
 void emit_lake_address_stream2file(CodegenOptions& options, map<string, UBuffer> buffers_opt, string dir);
+void emit_lake_address_stream2file_new(CodegenOptions &options, map<string, UBuffer> buffers_opt, string dir);
 lakeStream emit_top_address_stream(string fname, vector<int> read_cycle, vector<int> write_cycle,
         vector<vector<int> > read_addr, vector<vector<int> > write_addr, int input_width, int output_width);
 
