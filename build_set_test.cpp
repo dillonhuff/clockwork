@@ -17303,8 +17303,8 @@ vector<prog> isca_programs() {
   //test_programs.push_back(harris_sch8_endcim());
   //test_programs.back().pretty_print();
 
-  test_programs.push_back(unsharp());
   test_programs.push_back(up_sample());
+  test_programs.push_back(unsharp());
   test_programs.push_back(camera_pipeline());
   test_programs.push_back(gaussian());
   test_programs.push_back(mobilenet_unrolled());
