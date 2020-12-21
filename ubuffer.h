@@ -2465,6 +2465,14 @@ struct StreamData {
       cout << sep_list(out_valid, "[", "]", " ");
       cout << endl;
     }
+
+    void emit_csv(ofstream& out) {
+      out << toBracketList(in_data) << ", "
+          << sep_list(in_valid, "[", "]", " ") << ", "
+          << toBracketList(out_data) << ", "
+          << sep_list(out_valid, "[", "]", " ") << endl;
+
+    }
 };
 
 //Data structure to append top level stream and generate

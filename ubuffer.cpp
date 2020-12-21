@@ -2963,10 +2963,9 @@ string toBracketList(const vector<vector<int>> & data) {
 }
 
 vector<StreamData> emit_top_address_stream(
-        CodegenOptions& options, string fname, vector<UBuffer> & buffers) {
+        CodegenOptions& options, string subbuf, vector<UBuffer> & buffers) {
   //ofstream out(fname+"_SMT.csv");
-  cout << "fname: " << fname << endl;
-  string subbuf = get_buf_type(fname);
+  //cout << "fname: " << fname << endl;
   auto lake_info = options.mem_tile;
   int input_width = lake_info.in_port_width.at(subbuf);
   int output_width = lake_info.out_port_width.at(subbuf);
@@ -3111,6 +3110,16 @@ lakeStream emit_top_address_stream(string fname,
   return ret;
 }
 
+void emit_lake_streamdata_to_file(const vector<StreamData> & buf_stream, const string& fname) {
+  ofstream out(fname+"_SMT.csv");
+  cout << "fname: " << fname << endl;
+  out << "data_in, valid_in, data_out, valid_out" << endl;
+  for (auto cycle_data: buf_stream) {
+    cycle_data.emit_csv(out);
+  }
+  out.close();
+}
+
 void emit_lake_address_stream2file_new(CodegenOptions &options,
         map<string, UBuffer> buffers_opt, string dir) {
   map<string, vector<string> > type2ubuf = classify_buffers(buffers_opt);
@@ -3128,7 +3137,10 @@ void emit_lake_address_stream2file_new(CodegenOptions &options,
     if (tp_name == "tb")
         continue;
 
-    auto stream_data = emit_top_address_stream(options, dir+"/"+buf_name + "_buf_" + tp_name, buffers);
+    auto stream_data = emit_top_address_stream(options, tp_name, buffers);
+
+    string fname = dir+"/"+buf_name + "_buf_" + tp_name;
+    emit_lake_streamdata_to_file(stream_data, fname);
     for (auto cycle_data: stream_data) {
       cycle_data.print_info();
     }
