@@ -9145,7 +9145,7 @@ App heat_3d_iccad(const std::string& name) {
 
   dn.func2d("in_cc", v("in"));
 
-  int num_stages = 10;
+  int num_stages = 1;
   string last = "in_cc";
   for (int i = 0; i < num_stages; i++) {
     string current = "h3_" + str(i);
@@ -9167,15 +9167,15 @@ App heat_3d_iccad(const std::string& name) {
 
 void heat_3d_iccad_apps(const std::string& prefix) {
   //vector<int> throughputs{1, 16, 32};
-  //vector<int> throughputs{1};
+  vector<int> throughputs{1};
   //vector<int> throughputs{32};
   //vector<int> throughputs{16};
-  vector<int> throughputs{2, 4, 8, 12};
+  //vector<int> throughputs{2, 4, 8, 12};
   for (auto throughput : throughputs) {
     string name = prefix + "_" + str(throughput);
     App lp = heat_3d_iccad(name);
-    int rows = 1024;
-    int cols = 1024;
+    int rows = 32;
+    int cols = 32;
     CodegenOptions options;
     options.internal = true;
     options.use_custom_code_string = true;
@@ -11273,7 +11273,8 @@ void naive_implementations() {
 
 void iccad_tests() {
 
-  heat_3d_iccad_apps("h10_1_300MHz");
+  heat_3d_iccad_apps("heat2d_1");
+  //heat_3d_iccad_apps("h10_1_300MHz");
   //stencil_chain_iccad_apps("icsc_500MHz");
   //stencil_chain_20_stage_iccad_apps("ic20_500MHz");
   //stencil_chain_20_stage_iccad_apps("ic20_400MHz");
