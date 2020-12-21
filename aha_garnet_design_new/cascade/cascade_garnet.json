@@ -669,8 +669,8 @@
           ["ub_conv1_stencil_op_hcompute_conv1_stencil_1_16_to_conv1_stencil_op_hcompute_conv2_stencil_1_11_garnet.data_out_1","self.op_hcompute_conv2_stencil_1_read.6"],
           ["ub_conv1_stencil_op_hcompute_conv1_stencil_1_16_to_conv1_stencil_op_hcompute_conv2_stencil_1_11_garnet.stencil_valid","self.op_hcompute_conv2_stencil_1_read_extra_ctrl"],
           ["ub_conv1_stencil_op_hcompute_conv1_stencil_1_16_to_conv1_stencil_op_hcompute_conv2_stencil_1_11_garnet.flush","self.reset"],
-          ["ub_conv1_stencil_op_hcompute_conv1_stencil_1_16_to_conv1_stencil_op_hcompute_conv2_stencil_1_11_garnet.clk_en","ub_conv1_stencil_op_hcompute_conv1_stencil_1_16_to_conv1_stencil_op_hcompute_conv2_stencil_1_11_clk_en_const1_lutcnst.bit.out"],
-          ["ub_conv1_stencil_op_hcompute_conv1_stencil_1_16_to_conv1_stencil_op_hcompute_conv2_stencil_1_11_garnet.rst_n","ub_conv1_stencil_op_hcompute_conv1_stencil_1_16_to_conv1_stencil_op_hcompute_conv2_stencil_1_11_clk_en_const_lutcnst.bit.out"]
+          ["ub_conv1_stencil_op_hcompute_conv1_stencil_1_16_to_conv1_stencil_op_hcompute_conv2_stencil_1_11_garnet.rst_n","ub_conv1_stencil_op_hcompute_conv1_stencil_1_16_to_conv1_stencil_op_hcompute_conv2_stencil_1_11_clk_en_const1_lutcnst.bit.out"],
+          ["ub_conv1_stencil_op_hcompute_conv1_stencil_1_16_to_conv1_stencil_op_hcompute_conv2_stencil_1_11_garnet.clk_en","ub_conv1_stencil_op_hcompute_conv1_stencil_1_16_to_conv1_stencil_op_hcompute_conv2_stencil_1_11_clk_en_const_lutcnst.bit.out"]
         ]
       },
       "conv2_stencil_clkwrk_dsa1_ub":{
