@@ -2694,6 +2694,7 @@ string get_buf_type(string buf_name) {
 }
 
 map<string, UBuffer> decouple_multi_tile_ubuffer(CodegenOptions& options, map<string, UBuffer> & vec_buf) {
+  map<string, UBuffer> ubuf_candidates;
   for (auto it: vec_buf) {
     maybe<vector<int>> project_id;
     if (get_buf_type(it.first) == "tb") {
@@ -2723,9 +2724,15 @@ map<string, UBuffer> decouple_multi_tile_ubuffer(CodegenOptions& options, map<st
       cout << "range2bank: " << str(range2bank) << endl;
       //get a map from data range to bankID
       vector<UBuffer> decoupled_buffers = buf.decouple_ubuffer_from_bank_map(range2bank);
-      assert(false);
+      //assert(false);
+      for (auto buf: decoupled_buffers) {
+        ubuf_candidates.insert({buf.name, buf});
+      }
+    } else {
+      ubuf_candidates.insert(it);
     }
   }
+  return ubuf_candidates;
 }
 
 vector<UBuffer> UBuffer::decouple_ubuffer_from_bank_map(isl_map* bank_map) {
@@ -2738,9 +2745,10 @@ vector<UBuffer> UBuffer::decouple_ubuffer_from_bank_map(isl_map* bank_map) {
   for (auto bankID : bankID_list) {
     int usuffix = 0;
     auto id_set = to_set(bankID);
-    auto this_bank_rddom = coalesce(its(inv(range2bank), id_set));
+    auto this_bank_rddom = range(coalesce(its(inv(range2bank), id_set)));
     cout << "\t" << str(id_set) << " this bank rddom: " << str(this_bank_rddom) << endl;
-    /*
+
+    //pack the new bank information into ubuffer
     UBuffer buf;
     string bname = this->name + "_" + str(ubuf_cnt);
     buf.name = bname;
@@ -2748,11 +2756,10 @@ vector<UBuffer> UBuffer::decouple_ubuffer_from_bank_map(isl_map* bank_map) {
     buf.port_widths = port_widths;
     for (auto inpt: get_in_ports()) {
       auto acc_map = to_map(access_map.at(inpt));
-      //Need to separate banking and shift register optimization
-      cout << "\tread map: " << str(acc_map) << endl;
+      cout << "\twrite map: " << str(acc_map) << endl;
       acc_map = coalesce(its_range(acc_map, to_set(this_bank_rddom)));
-      cout << "\tread map after decouple: " << str(acc_map) << endl;
-      acc_map = set_range_name(acc_map, bname);
+      //acc_map = set_range_name(acc_map, bname);
+      cout << "\twrite map after decouple: " << str(acc_map) << endl;
       auto dom = ::domain(acc_map);
       if (empty(dom))
         continue;
@@ -2766,22 +2773,23 @@ vector<UBuffer> UBuffer::decouple_ubuffer_from_bank_map(isl_map* bank_map) {
     //Check if we could merge them into same bundle
     for (auto outpt: get_out_ports()) {
       auto acc_map = to_map(access_map.at(outpt));
-      if (banking.partition == "cyclic") {
-        cout << "\tread domain: " << str(b.rddom) << endl;
-        cout << "\tread map: " << str(acc_map) << endl;
-        acc_map = coalesce(its_range(acc_map, to_set(b.rddom)));
-      }
-      acc_map = set_range_name(acc_map, bname);
+      cout << "\tread map: " << str(acc_map) << endl;
+      acc_map = coalesce(its_range(acc_map, to_set(this_bank_rddom)));
+      //acc_map = set_range_name(acc_map, bname);
+      cout << "\tread map after decouple: " << str(acc_map) << endl;
       auto dom = ::domain(acc_map);
+      if (empty(dom))
+        continue;
+
       string pt_name = bname + "_" + ::name(dom) + "_" + to_string(usuffix);
       //string pt_name = outpt;
       buf.port_bundles[::name(dom) + "_read"].push_back(pt_name);
       buf.add_out_pt(pt_name, dom, acc_map, its(schedule.at(outpt), dom));
-      if (sv_map.count(outpt)) {
-        buf.sv_map[pt_name] = sv_map.at(outpt);
-      }
       usuffix ++;
-    }*/
+    }
+    cout << "decouple buffer no." << ubuf_cnt << endl << buf;
+    ubuf_cnt ++;
+    ret.push_back(buf);
   }
   return ret;
 }
@@ -3232,8 +3240,8 @@ void emit_lake_address_stream2file_new(CodegenOptions &options,
     cout << "subbuf name: " << tp_name << endl;
 
     //TB need separate buffer into mutiple ubuffer
-    if (tp_name == "tb")
-        continue;
+    //if (tp_name == "tb")
+    //    continue;
 
     auto stream_data = emit_top_address_stream(options, tp_name, buffers);
 

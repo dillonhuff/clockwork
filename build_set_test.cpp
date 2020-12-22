@@ -16937,12 +16937,12 @@ void generate_smt_stream_for_garnet_single_port_mem(prog& prg) {
 
 
   //optimized schedule
-  cmd("mkdir -p aha_garnet_design/" + prg.name);
+  cmd("mkdir -p aha_garnet_smt/" + prg.name);
 
   //auto iis = garnet_fuse_ii_level(prg);
   //auto buffers_opt = build_buffers(prg, clockwork_schedule(prg));
 
-  CodegenOptions options = garnet_codegen_single_port_with_addrgen_options(prg, "aha_garnet_design");
+  CodegenOptions options = garnet_codegen_single_port_with_addrgen_options(prg, "aha_garnet_smt");
   options.emit_smt_stream = true;
   schedule_info sched = garnet_schedule_info(options, prg);
   garnet_single_port_ram_schedule(sched, prg.root, prg);
