@@ -1026,10 +1026,19 @@ class UBuffer {
     }
 
     vector<int> get_linearization_vector() {
-        vector<int> ret;
-        auto b = extract_access_range();
-        for (size_t i = 0; i < b.dimension(); i ++) {
-            ret.push_back(b.r_cardinality(i));
+        vector<int> ret({1});
+        vector<int> lengths;
+        int ld = logical_dimension();
+        for (int i = 0; i < ld; i ++) {
+            auto s = project_all_but(to_set(global_range()), ld - i - 1);
+            auto min = to_int(lexminval(s));
+            auto max= to_int(lexmaxval(s));
+            int length = max - min + 1;
+            lengths.push_back(length);
+        }
+        for (int i = 0; i < logical_dimension()-1; i ++) {
+            int stride = ret.back();
+            ret.push_back(stride * lengths.at(i));
         }
         return ret;
     }
@@ -1079,9 +1088,6 @@ class UBuffer {
         sort(point_vec.begin(), point_vec.end(), lex_lt_pt);
         for (auto point:  point_vec) {
             auto b = get_linearization_vector();
-            //FIXME: hack the tb address
-            if (is_suffix(name, "tb"))
-                b.back() /= point_vec.size();
             auto a = parse_pt(point);
             int addr = std::inner_product(a.rbegin(), a.rend(), b.begin(), 0);
             ret.push(addr);
@@ -1096,9 +1102,6 @@ class UBuffer {
         sort(point_vec.begin(), point_vec.end(), lex_lt_pt);
         for (auto point:  point_vec) {
             auto b = get_linearization_vector();
-            //FIXME: hack the tb address
-            if (is_suffix(name, "tb"))
-                b.back() /= num_out_ports();
             auto a = parse_pt(point);
             int addr = std::inner_product(a.begin(), a.end(), b.rbegin(), 0);
             ret.push(addr);
@@ -1906,7 +1909,7 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
       for (auto other : access_map) {
         s = unn(s, (range(other.second)));
       }
-      return s;
+      return coalesce(s);
     }
 
     string buf_range_name() {
