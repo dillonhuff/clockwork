@@ -2470,9 +2470,12 @@ struct StreamData {
 
     void emit_csv(ofstream& out) {
       out << toBracketList(in_data) << ", "
-          << sep_list(in_valid, "[", "]", " ") << ", "
+          //<< sep_list(in_valid, "[", "]", " ") << ", "
+          << str(to_int(in_valid)) << ", "
           << toBracketList(out_data) << ", "
-          << sep_list(out_valid, "[", "]", " ") << endl;
+          //<< sep_list(out_valid, "[", "]", " ") << endl;
+          << str(to_int(out_valid)) << endl;
+
 
     }
 };

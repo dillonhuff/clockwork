@@ -18,6 +18,18 @@ T pop(deque<T>& d) {
   return v;
 }
 
+static inline
+int to_int(const vector<bool> & bit_vec) {
+    int cnt = 0;
+    int res = 0;
+    for(bool bit: bit_vec) {
+      if (bit)
+        res += 1 <<  cnt;
+      cnt ++;
+    }
+    return res;
+}
+
 string isl_sanitize(const std::string& str);
 
 static inline
