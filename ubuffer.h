@@ -1016,15 +1016,6 @@ class UBuffer {
         return pt_vec.size() / hardware.out_port_width;
     }
 
-    //TODO: put it into qexpr.h
-    Box extract_access_range() {
-        auto addr_range = isl_union_map_read_from_str(ctx, "{}");
-        for (auto pt: get_in_ports()) {
-            addr_range = unn(access_map.at(pt), addr_range);
-        }
-        return Box(addr_range);
-    }
-
     vector<int> get_linearization_vector() {
         vector<int> ret({1});
         vector<int> lengths;
