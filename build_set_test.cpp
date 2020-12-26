@@ -9172,7 +9172,7 @@ App float_add_iccad(const std::string& name) {
   dn.func2d("in");
 
   dn.func2d("in_cc", v("in"));
-  dn.func2d(name, add({fc("0.125f"), v("in_cc", 0, 0)}));
+  dn.func2d(name, add({fc("0.125"), v("in_cc", 0, 0)}));
 
   return dn;
 }
