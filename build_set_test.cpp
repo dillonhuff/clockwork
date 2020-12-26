@@ -9155,7 +9155,7 @@ App heat_3d_iccad(const std::string& name) {
           mul(fc("0.125f"), v(last, -1, 0)),
           mul(fc("0.125f"), v(last, 0, 1)),
           mul(fc("0.125f"), v(last, 0, -1)),
-          mul(fc("0.25"), v(last, 0, 0))
+          mul(fc("0.25f"), v(last, 0, 0))
           }));
     last = current;
   }
@@ -9172,7 +9172,7 @@ App float_add_iccad(const std::string& name) {
   dn.func2d("in");
 
   dn.func2d("in_cc", v("in"));
-  dn.func2d(name, add({fc("0.125"), v("in_cc", 0, 0)}));
+  dn.func2d(name, add({fc("0.125f"), v("in_cc", 0, 0)}));
 
   return dn;
 }
