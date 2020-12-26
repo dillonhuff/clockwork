@@ -2422,8 +2422,17 @@ void generate_regression_testbench(prog& prg, map<string, UBuffer>& buffers) {
     rgtb << tab(1) << "for (int i = 0; i < " << num_pushes << "; i++) {" << endl;
     rgtb << tab(2) << buf.bundle_type_string(bundle) << " in_val;" << endl;
     for (int p = 0; p < num_ports; p++) {
-      string next_val = str(num_ports) + "*i + " + str(p);
+      string next_val = parens(str(num_ports) + "*i + " + str(p));
+      //rgtb << tab(2) << "set_at<" << p << "*" << port_width << ", " << bundle_width << ", " << port_width << ">(in_val, " << next_val << ");" << endl;
+      rgtb << "#ifdef __INT_OUTPUT__" << endl;
       rgtb << tab(2) << "set_at<" << p << "*" << port_width << ", " << bundle_width << ", " << port_width << ">(in_val, " << next_val << ");" << endl;
+      rgtb << "#elif __FLOAT_OUTPUT__" << endl;
+      rgtb << tab(2) << "set_at<" << p << "*" << port_width << ", " << bundle_width << ", " << port_width << ">(in_val, " << parens("to_bits" + parens(parens("float") + next_val)) << ");" << endl;
+      //rgtb << tab(2) << "fout << to_float(actual_lane_" << p << ") << endl;" << endl;
+      rgtb << "#else // No specified output type" << endl;
+      rgtb << tab(2) << "set_at<" << p << "*" << port_width << ", " << bundle_width << ", " << port_width << ">(in_val, " << next_val << ");" << endl;
+      //rgtb << tab(2) << "fout << actual_lane_" << p << " << endl;" << endl;
+      rgtb << "#endif" << endl;
       rgtb << tab(2) << "in_pix << in_val << endl;" << endl;
     }
     rgtb << tab(2) << bundle << ".write(in_val);" << endl;
