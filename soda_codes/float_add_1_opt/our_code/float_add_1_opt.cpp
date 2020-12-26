@@ -77,20 +77,6 @@ inline void in_cc_in_cc_update_0_write_bundle_write(hw_uint<32>& in_cc_update_0_
 
 
 // Operation logic
-inline void in_cc_update_0(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */in, in_cc_cache& in_cc, int d0, int d1) {
-  // Dynamic address computation
-
-	// Consume: in
-	auto in_0_c__0_value = in.read();
-	auto compute_result = in_cc_generated_compute_unrolled_1(in_0_c__0_value);
-	// Produce: in_cc
-	in_cc_in_cc_update_0_write_bundle_write(/* arg names */compute_result, in_cc, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
 inline void float_add_1_update_0(in_cc_cache& in_cc, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */float_add_1, int d0, int d1) {
   // Dynamic address computation
 
@@ -103,6 +89,20 @@ inline void float_add_1_update_0(in_cc_cache& in_cc, HWStream<hw_uint<32> >& /* 
 	auto compute_result = float_add_1_generated_compute_unrolled_1(in_cc_0_c__0_value);
 	// Produce: float_add_1
 	float_add_1.write(compute_result);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void in_cc_update_0(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */in, in_cc_cache& in_cc, int d0, int d1) {
+  // Dynamic address computation
+
+	// Consume: in
+	auto in_0_c__0_value = in.read();
+	auto compute_result = in_cc_generated_compute_unrolled_1(in_0_c__0_value);
+	// Produce: in_cc
+	in_cc_in_cc_update_0_write_bundle_write(/* arg names */compute_result, in_cc, d0, d1, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__

@@ -8,7 +8,7 @@ hw_uint<32> in_cc_generated_compute(hw_uint<32*1> in) {
 }
 
 hw_uint<32> float_add_1_generated_compute(hw_uint<32*1> in_cc) {
-  return uint32_t(to_bits((((float)0.125) + to_float(in_cc.get<32, 0>()))));
+  return uint32_t(to_bits((((float)0.125f) + to_float(in_cc.get<32, 0>()))));
 }
 
 

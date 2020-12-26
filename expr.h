@@ -1,5 +1,12 @@
 #pragma once
 
+#include <string>
+#include <set>
+#include <vector>
+
+#include "utils.h"
+
+using namespace std;
 
 struct Token {
   string txt;
@@ -122,7 +129,6 @@ string soda_compute_string(const int pixel_width, Expr* def) {
     return parens(soda_compute_string(pixel_width, op->l) + " " + op->op + " " + soda_compute_string(pixel_width, op->r));
   } else if (def->is_float_const()) {
     auto fv = static_cast<FloatConst*>(def);
-    assert(false);
     return fv->val + "f";
   } else {
     assert(def->is_function_call());
