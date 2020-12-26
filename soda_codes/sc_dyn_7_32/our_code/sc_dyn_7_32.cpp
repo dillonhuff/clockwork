@@ -138,19 +138,6 @@ inline hw_uint<32> in_FIFO_buf12_pw_math_in47_read_bundle_read(in_FIFO_buf12_cac
 }
 
 // Operation logic
-inline void load_to_in_FIFO_buf1215(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */in_to_gp_08, in_FIFO_buf12_cache& in_FIFO_buf12, int root, int in_to_gp_08_ld14, int in_to_gp_08_ld13) {
-  // Dynamic address computation
-
-	// Consume: in_to_gp_08
-	auto in_to_gp_08_in_to_gp_08_ld13_c__in_to_gp_08_ld14_value = in_to_gp_08.read();
-	// Produce: in_FIFO_buf12
-	in_FIFO_buf12_load_to_in_FIFO_buf1215_write_bundle_write(/* arg names */in_to_gp_08_in_to_gp_08_ld13_c__in_to_gp_08_ld14_value, in_FIFO_buf12, root, in_to_gp_08_ld14, in_to_gp_08_ld13, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
 inline void pw_math_in47(in_FIFO_buf12_cache& in_FIFO_buf12, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */out, int root, int pw_math_in45, int pw_math_in46) {
   // Dynamic address computation
 
@@ -163,6 +150,19 @@ inline void pw_math_in47(in_FIFO_buf12_cache& in_FIFO_buf12, HWStream<hw_uint<32
 	auto compute_result = id(in_FIFO_buf12_pw_math_in46_c__pw_math_in45_value);
 	// Produce: out
 	out.write(compute_result);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void load_to_in_FIFO_buf1215(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */in_to_gp_08, in_FIFO_buf12_cache& in_FIFO_buf12, int root, int in_to_gp_08_ld14, int in_to_gp_08_ld13) {
+  // Dynamic address computation
+
+	// Consume: in_to_gp_08
+	auto in_to_gp_08_in_to_gp_08_ld13_c__in_to_gp_08_ld14_value = in_to_gp_08.read();
+	// Produce: in_FIFO_buf12
+	in_FIFO_buf12_load_to_in_FIFO_buf1215_write_bundle_write(/* arg names */in_to_gp_08_in_to_gp_08_ld13_c__in_to_gp_08_ld14_value, in_FIFO_buf12, root, in_to_gp_08_ld14, in_to_gp_08_ld13, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
