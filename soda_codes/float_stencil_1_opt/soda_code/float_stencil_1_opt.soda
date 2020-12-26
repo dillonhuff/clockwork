@@ -1,0 +1,12 @@
+kernel: float_stencil_1_opt
+unroll factor: 1
+burst width: 32
+
+input float: in(32, *)
+
+local float: in_cc(0, 0) = in(0, 0)
+
+output float: float_stencil_1(0, 0) = ((0.125f * in_cc(0, 0)) + (0.125f * in_cc(0, 0)))
+
+
+iterate: 1
