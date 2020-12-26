@@ -1,5 +1,12 @@
 #pragma once
 
+#include <string>
+#include <set>
+#include <vector>
+
+#include "utils.h"
+
+using namespace std;
 
 struct Token {
   string txt;
