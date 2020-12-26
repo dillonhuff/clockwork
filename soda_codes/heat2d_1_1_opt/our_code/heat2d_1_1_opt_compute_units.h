@@ -8,7 +8,7 @@ hw_uint<32> in_cc_generated_compute(hw_uint<32*1> in) {
 }
 
 hw_uint<32> h3_0_generated_compute(hw_uint<32*5> in_cc) {
-  return uint32_t(to_bits((((((float)0.125f) * to_float(in_cc.get<32, 4>())) + (((float)0.125f) * to_float(in_cc.get<32, 0>()))) + ((((float)0.125f) * to_float(in_cc.get<32, 3>())) + ((((float)0.125f) * to_float(in_cc.get<32, 1>())) + (((float)0.25) * to_float(in_cc.get<32, 2>())))))));
+  return uint32_t(to_bits((((((float)0.125) * to_float(in_cc.get<32, 4>())) + (((float)0.125) * to_float(in_cc.get<32, 0>()))) + ((((float)0.125) * to_float(in_cc.get<32, 3>())) + ((((float)0.125) * to_float(in_cc.get<32, 1>())) + (((float)0.25f) * to_float(in_cc.get<32, 2>())))))));
 }
 
 hw_uint<32> heat2d_1_1_generated_compute(hw_uint<32*1> h3_0) {
