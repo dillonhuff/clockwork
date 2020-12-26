@@ -9173,7 +9173,7 @@ App float_stencil_iccad(const std::string& name) {
 
   dn.func2d("in_cc", v("in"));
   dn.func2d(name, add({mul(fc("0.125"), v("in_cc", 0, 0)),
-        mul(fc("0.125"), v("in_cc", 0, 0))}));
+        mul(fc("0.125"), v("in_cc", 0, -1))}));
 
   return dn;
 }
