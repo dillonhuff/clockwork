@@ -43,17 +43,14 @@ int main(int argc, char **argv) {
 
   std::ofstream input_in_cc_update_0_read("in_cc_update_0_read.csv");
   for (int i = 0; i < in_cc_update_0_read_pipe0_DATA_SIZE; i++) {
-    //uint32_t val = (rand() % 256);
-    float value = i;
-    uint32_t ival = *((uint32_t*)((void*) &value));
-    //input_in_cc_update_0_read << ival << std::endl;
-    input_in_cc_update_0_read << value << std::endl;
-    ((uint32_t*) (in_cc_update_0_read_pipe0.data()))[i] = ival;
+    uint32_t val = (rand() % 256);
+    input_in_cc_update_0_read << val << std::endl;
+    ((uint32_t*) (in_cc_update_0_read_pipe0.data()))[i] = val;
   }
 
   input_in_cc_update_0_read.close();
   for (int i = 0; i < float_add_1_update_0_write_pipe0_DATA_SIZE; i++) {
-    ((uint32_t*) (float_add_1_update_0_write_pipe0.data()))[i] = 10;
+    ((uint32_t*) (float_add_1_update_0_write_pipe0.data()))[i] = 0;
   }
 
   auto devices = xcl::get_xil_devices();
@@ -97,17 +94,17 @@ int main(int argc, char **argv) {
   std::cout << "Migrating memory" << std::endl;
   OCL_CHECK(err, err = q.enqueueMigrateMemObjects({in_cc_update_0_read_pipe0_ocl_buf}, 0));
 
-  unsigned long start, end, nsduration;
-  cl::Event event;
+unsigned long start, end, nsduration;
+cl::Event event;
 
   std::cout << "Starting kernel" << std::endl;
   OCL_CHECK(err, err = q.enqueueTask(krnl_vector_add, NULL, &event));
   OCL_CHECK(err, err = event.wait());
   end =
-    OCL_CHECK(err, event.getProfilingInfo<CL_PROFILING_COMMAND_END>(&err));
-  start = OCL_CHECK(err,
-      event.getProfilingInfo<CL_PROFILING_COMMAND_START>(&err));
-  nsduration = end - start;
+OCL_CHECK(err, event.getProfilingInfo<CL_PROFILING_COMMAND_END>(&err));
+start = OCL_CHECK(err,
+event.getProfilingInfo<CL_PROFILING_COMMAND_START>(&err));
+nsduration = end - start;
   OCL_CHECK(err, err = q.enqueueMigrateMemObjects({float_add_1_update_0_write_pipe0_ocl_buf}, CL_MIGRATE_MEM_OBJECT_HOST));
 
   q.finish();
@@ -123,10 +120,7 @@ int main(int argc, char **argv) {
   printf("Execution time = %f (sec) \n", dsduration);
   std::ofstream regression_result("float_add_1_update_0_write_accel_result.csv");
   for (int i = 0; i < float_add_1_update_0_write_pipe0_DATA_SIZE; i++) {
-    uint32_t value = ((uint32_t*) (float_add_1_update_0_write_pipe0.data()))[i];
-    float fval = *((float*)((void*) &value));
-    //regression_result << ((uint32_t*) (float_add_1_update_0_write_pipe0.data()))[i] << std::endl;
-    regression_result << fval << std::endl;
+    regression_result << ((uint32_t*) (float_add_1_update_0_write_pipe0.data()))[i] << std::endl;
   }
 
   return 0;
