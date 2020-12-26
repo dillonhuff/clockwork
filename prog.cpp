@@ -406,9 +406,24 @@ void populate_input(std::ostream& out, const std::string& edge_bundle, const str
 
   out << tab(1) << "std::ofstream input_" << edge_bundle << "(\"" << edge_bundle << ".csv\");" << endl;
   out << tab(1) << "for (int i = 0; i < " << edge_bundle << "_pipe0_DATA_SIZE; i++) {" << endl;
+  out << "#ifdef __FLOAT_OUTPUT__" << endl;
+  out << tab(2) << "float " << " val = (rand() % 256);" << endl;
+  out << "#else // __FLOAT_OUTPUT__" << endl;
   out << tab(2) << tp << " val = (rand() % 256);" << endl;
+  out << "#endif // __FLOAT_OUTPUT__" << endl << endl;
+
+  out << "#ifdef __FLOAT_OUTPUT__" << endl;
   out << tab(2) << "input_" << edge_bundle << " << val << std::endl;" << endl;
+  out << "#else // __FLOAT_OUTPUT__" << endl;
+  out << tab(2) << "input_" << edge_bundle << " << val << std::endl;" << endl;
+  out << "#endif // __FLOAT_OUTPUT__" << endl << endl;
+
+
+  out << "#ifdef __FLOAT_OUTPUT__" << endl;
+  out << tab(2) << "((" << tp << "*) (" << edge_bundle << "_pipe0.data()))[i] = bitcast<" << tp << ", " << "float" << ">(val);" << endl;
+  out << "#else // __FLOAT_OUTPUT__" << endl;
   out << tab(2) << "((" << tp << "*) (" << edge_bundle << "_pipe0.data()))[i] = val;" << endl;
+  out << "#endif // __FLOAT_OUTPUT__" << endl;
   out << tab(1) << "}" << endl << endl;
   out << tab(1) << "input_" << edge_bundle << ".close();" << endl;
 }
@@ -611,6 +626,7 @@ void generate_sw_bmp_test_harness(map<string, UBuffer>& buffers, prog& prg) {
 void generate_xilinx_accel_soda_host(CodegenOptions& options, map<string, UBuffer>& buffers, prog& prg) {
   ofstream out("soda_" + prg.name + "_host.cpp");
   ocl_headers(out);
+  out << "#include \"clockwork_standard_compute_units.h\"" << endl << endl;
 
   out << "int main(int argc, char **argv) {" << endl;
 
@@ -663,7 +679,11 @@ void generate_xilinx_accel_soda_host(CodegenOptions& options, map<string, UBuffe
     auto edge_bundle = edge_out.second;
     auto buf = edge_out.first;
     out << tab(1) << "for (int i = 0; i < " << edge_bundle << "_pipe0_DATA_SIZE; i++) {" << endl;
+    out << "#ifdef __FLOAT_OUTPUT__" << endl;
     out << tab(2) << "((" << vanilla_c_pixel_type_string(buf, buffers) << "*) (" << edge_bundle << "_pipe0.data()))[i] = 0;" << endl;
+    out << "#else // __FLOAT_OUTPUT__" << endl;
+    out << tab(2) << "((" << vanilla_c_pixel_type_string(buf, buffers) << "*) (" << edge_bundle << "_pipe0.data()))[i] = 0;" << endl;
+    out << "#endif // __FLOAT_OUTPUT__" << endl;
     out << tab(1) << "}" << endl << endl;
   }
 
@@ -693,7 +713,11 @@ void generate_xilinx_accel_soda_host(CodegenOptions& options, map<string, UBuffe
     auto out_bundle = output.second;
     out << tab(1) << "std::ofstream regression_result(\"" << out_bundle << "_accel_result.csv\");" << endl;
     out << tab(1) << "for (int i = 0; i < " << out_bundle << "_pipe0_DATA_SIZE; i++) {" << endl;
+    out << "#ifdef __FLOAT_OUTPUT__" << endl;
+    out << tab(2) << "regression_result << bitcast<float, " << vanilla_c_pixel_type_string(buf, buffers) << ">(((" << vanilla_c_pixel_type_string(buf, buffers) << "*) (" << out_bundle << "_pipe0.data()))[i]) << std::endl;" << endl;
+    out << "#else // __FLOAT_OUTPUT__" << endl;
     out << tab(2) << "regression_result << ((" << vanilla_c_pixel_type_string(buf, buffers) << "*) (" << out_bundle << "_pipe0.data()))[i] << std::endl;" << endl;
+    out << "#endif // __FLOAT_OUTPUT__" << endl;
     out << tab(1) << "}" << endl;
   }
   out << endl;
