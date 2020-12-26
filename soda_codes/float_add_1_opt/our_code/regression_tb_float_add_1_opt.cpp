@@ -15,6 +15,7 @@ int main() {
   // rng     : { in_cc_update_0[root = 0, in_cc_0, in_cc_1] : 0 <= in_cc_0 <= 31 and 0 <= in_cc_1 <= 31 }
   for (int i = 0; i < 1024; i++) {
     hw_uint<32> in_val;
+<<<<<<< HEAD
 #ifdef __INT_OUTPUT__
     set_at<0*32, 32, 32>(in_val, (1*i + 0));
 #elif __FLOAT_OUTPUT__
@@ -22,6 +23,11 @@ int main() {
 #else // No specified output type
     set_at<0*32, 32, 32>(in_val, (1*i + 0));
 #endif
+=======
+    hw_uint<32> v = to_bits(((float) i));
+    //set_at<0*32, 32, 32>(in_val, 1*i + 0);
+    set_at<0*32, 32, 32>(in_val, v);
+>>>>>>> 0eeba37c34aa40779fa9a5439ac03cbd805a60eb
     in_pix << in_val << endl;
     in_cc_update_0_read.write(in_val);
   }
@@ -32,10 +38,16 @@ int main() {
     hw_uint<32> actual = float_add_1_update_0_write.read();
     auto actual_lane_0 = actual.extract<0*32, 31>();
 #ifdef __INT_OUTPUT__
+<<<<<<< HEAD
     fout << (int) actual_lane_0 << endl;
 #elif __FLOAT_OUTPUT__
     fout << to_float(actual_lane_0) << endl;
 #else // No specified output type
+=======
+    //fout << (int) actual_lane_0 << endl;
+    fout << to_float(actual_lane_0) << endl;
+#else // __INT_OUTPUT__
+>>>>>>> 0eeba37c34aa40779fa9a5439ac03cbd805a60eb
     fout << actual_lane_0 << endl;
 #endif
   }

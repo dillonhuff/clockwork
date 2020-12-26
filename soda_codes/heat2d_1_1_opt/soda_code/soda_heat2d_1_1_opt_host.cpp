@@ -43,7 +43,8 @@ int main(int argc, char **argv) {
 
   std::ofstream input_in_cc_update_0_read("in_cc_update_0_read.csv");
   for (int i = 0; i < in_cc_update_0_read_pipe0_DATA_SIZE; i++) {
-    uint32_t val = (rand() % 256);
+    //uint32_t val = (rand() % 256);
+    uint32_t val = i;
     input_in_cc_update_0_read << val << std::endl;
     ((uint32_t*) (in_cc_update_0_read_pipe0.data()))[i] = val;
   }
