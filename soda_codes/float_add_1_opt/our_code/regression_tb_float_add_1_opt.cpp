@@ -28,7 +28,8 @@ int main() {
     hw_uint<32> actual = float_add_1_update_0_write.read();
     auto actual_lane_0 = actual.extract<0*32, 31>();
 #ifdef __INT_OUTPUT__
-    fout << (int) actual_lane_0 << endl;
+    //fout << (int) actual_lane_0 << endl;
+    fout << to_float(actual_lane_0) << endl;
 #else // __INT_OUTPUT__
     fout << actual_lane_0 << endl;
 #endif // __INT_OUTPUT__
