@@ -41,9 +41,23 @@ int main(int argc, char **argv) {
 #ifdef __POPULATE_HOST_INPUTS__
   std::ofstream input_in_cc_update_0_read("in_cc_update_0_read.csv");
   for (int i = 0; i < in_cc_update_0_read_pipe0_DATA_SIZE; i++) {
+#ifdef __FLOAT_OUTPUT__
+    float  val = (rand() % 256);
+#else // __FLOAT_OUTPUT__
     uint32_t val = (rand() % 256);
+#endif // __FLOAT_OUTPUT__
+
+#ifdef __FLOAT_OUTPUT__
     input_in_cc_update_0_read << val << std::endl;
+#else // __FLOAT_OUTPUT__
+    input_in_cc_update_0_read << val << std::endl;
+#endif // __FLOAT_OUTPUT__
+
+#ifdef __FLOAT_OUTPUT__
+    ((uint32_t*) (in_cc_update_0_read_pipe0.data()))[i] = bitcast<uint32_t, float>(val);
+#else // __FLOAT_OUTPUT__
     ((uint32_t*) (in_cc_update_0_read_pipe0.data()))[i] = val;
+#endif // __FLOAT_OUTPUT__
   }
 
   input_in_cc_update_0_read.close();

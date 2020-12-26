@@ -5,6 +5,12 @@
 
 typedef int16_t int16;
 
+template<typename To, typename From>
+static inline
+To bitcast(From a) {
+  return *((To*)((void*) (&a)));
+}
+
 template<typename T>
 T clamp_val(const T& a, const T& lo, const T& hi) {
   if (a < lo) {
