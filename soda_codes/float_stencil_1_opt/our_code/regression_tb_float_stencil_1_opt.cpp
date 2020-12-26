@@ -10,10 +10,10 @@ int main() {
 
 
   // Loading input data
-  // cmap    : { in_cc_update_0[root = 0, in_cc_0, in_cc_1] -> in[0, 0] : 0 <= in_cc_0 <= 31 and 0 <= in_cc_1 <= 31 }
-  // read map: { in[0, 0] -> in_cc_update_0[root = 0, in_cc_0, in_cc_1] : 0 <= in_cc_0 <= 31 and 0 <= in_cc_1 <= 31 }
-  // rng     : { in_cc_update_0[root = 0, in_cc_0, in_cc_1] : 0 <= in_cc_0 <= 31 and 0 <= in_cc_1 <= 31 }
-  for (int i = 0; i < 1024; i++) {
+  // cmap    : { in_cc_update_0[root = 0, in_cc_0, in_cc_1] -> in[0, 0] : 0 <= in_cc_0 <= 31 and -1 <= in_cc_1 <= 31 }
+  // read map: { in[0, 0] -> in_cc_update_0[root = 0, in_cc_0, in_cc_1] : 0 <= in_cc_0 <= 31 and -1 <= in_cc_1 <= 31 }
+  // rng     : { in_cc_update_0[root = 0, in_cc_0, in_cc_1] : 0 <= in_cc_0 <= 31 and -1 <= in_cc_1 <= 31 }
+  for (int i = 0; i < 1056; i++) {
     hw_uint<32> in_val;
 #ifdef __INT_OUTPUT__
     set_at<0*32, 32, 32>(in_val, (1*i + 0));

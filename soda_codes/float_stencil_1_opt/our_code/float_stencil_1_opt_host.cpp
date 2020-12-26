@@ -23,7 +23,7 @@ int main(int argc, char **argv) {
   size_t float_stencil_1_update_0_write_pipe0_size_bytes = float_stencil_1_update_0_write_pipe0_BYTES_PER_PIXEL * float_stencil_1_update_0_write_pipe0_DATA_SIZE;
 
   total_size_bytes += float_stencil_1_update_0_write_pipe0_size_bytes;
-  const int in_cc_update_0_read_pipe0_DATA_SIZE = num_epochs*1024;
+  const int in_cc_update_0_read_pipe0_DATA_SIZE = num_epochs*1056;
   const int in_cc_update_0_read_pipe0_BYTES_PER_PIXEL = 32 / 8;
   size_t in_cc_update_0_read_pipe0_size_bytes = in_cc_update_0_read_pipe0_BYTES_PER_PIXEL * in_cc_update_0_read_pipe0_DATA_SIZE;
 

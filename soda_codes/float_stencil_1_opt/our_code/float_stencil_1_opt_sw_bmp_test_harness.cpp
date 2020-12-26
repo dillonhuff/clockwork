@@ -10,7 +10,7 @@ int main(int argc, char **argv) {
   HWStream<hw_uint<32> > in_cc_update_0_read_channel;
   HWStream<hw_uint<32> > float_stencil_1_update_0_write_channel;
   // In lanes = 1
-  for (int r = 0; r < 32; r++) {
+  for (int r = 0; r < 33; r++) {
     for (int cl = 0; cl < 32 / 1; cl++) {
       hw_uint<32> packed;
       {
