@@ -1,5 +1,6 @@
 #include <fstream>
 #include "float_add_1_opt.h"
+#include "clockwork_standard_compute_units.h"
 
 int main() {
   ofstream in_pix("input_pixels_regression_result_float_add_1_opt.txt");
@@ -14,7 +15,9 @@ int main() {
   // rng     : { in_cc_update_0[root = 0, in_cc_0, in_cc_1] : 0 <= in_cc_0 <= 31 and 0 <= in_cc_1 <= 31 }
   for (int i = 0; i < 1024; i++) {
     hw_uint<32> in_val;
-    set_at<0*32, 32, 32>(in_val, 1*i + 0);
+    hw_uint<32> v = to_bits(((float) i));
+    //set_at<0*32, 32, 32>(in_val, 1*i + 0);
+    set_at<0*32, 32, 32>(in_val, v);
     in_pix << in_val << endl;
     in_cc_update_0_read.write(in_val);
   }

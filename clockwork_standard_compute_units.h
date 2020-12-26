@@ -258,34 +258,42 @@ T inc(T& src, T& a0) {
   //return src + a0;
 //}
 
+static
 hw_uint<16> interleave(hw_uint<16>& src, hw_uint<16>& a0, const int column_index) {
   return (column_index % 2) == 0 ? src : a0;
 }
 
+static
 hw_uint<16> fmadd_16(hw_uint<16>& src, hw_uint<16>& a0) {
   return src + a0;
 }
 
+static
 hw_uint<32> fma_32(hw_uint<32>& src, hw_uint<32>& a0, hw_uint<32>& a1) {
   return src + a0*a1;
 }
 
+static
 int fma(int& src, int& a0, int& a1) {
   return src + a0*a1;
 }
 
+static
 hw_uint<16> set_zero_16() {
   return hw_uint<16>(0);
 }
 
+static
 hw_uint<32> set_zero_32() {
   return hw_uint<32>(0);
 }
 
+static
 int set_zero() {
   return 0;
 }
 
+static
 hw_uint<16> zero() {
   return 16;
 }
@@ -703,11 +711,14 @@ hw_uint<32> blur_2x2_32(const hw_uint<32*4>& in) {
 }
 
 template<typename A, typename B>
+static
 inline A reinterpret(const B &b) {
     A a;
     std::memcpy(&a, &b, sizeof(a));
     return a;
 }
+
+static
 inline float float_from_bits(uint32_t bits) {
     return reinterpret<float, uint32_t>(bits);
 }
