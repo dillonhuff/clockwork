@@ -1,5 +1,6 @@
 #include <fstream>
 #include "float_add_1_opt.h"
+#include "clockwork_standard_compute_units.h"
 
 int main() {
   ofstream in_pix("input_pixels_regression_result_float_add_1_opt.txt");
@@ -26,9 +27,11 @@ int main() {
     auto actual_lane_0 = actual.extract<0*32, 31>();
 #ifdef __INT_OUTPUT__
     fout << (int) actual_lane_0 << endl;
-#else // __INT_OUTPUT__
+#elif __FLOAT_OUTPUT__
+    fout << to_float(actual_lane_0) << endl;
+#else // No specified output type
     fout << actual_lane_0 << endl;
-#endif // __INT_OUTPUT__
+#endif
   }
 
   in_pix.close();

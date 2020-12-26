@@ -2367,7 +2367,8 @@ incoming_bundles(op* op,
 void generate_regression_testbench(prog& prg, map<string, UBuffer>& buffers) {
   ofstream rgtb("regression_tb_" + prg.name + ".cpp");
   rgtb << "#include <fstream>" << endl;
-  rgtb << "#include \"" << prg.name << ".h\"" << endl << endl;
+  rgtb << "#include \"" << prg.name << ".h\"" << endl;
+  rgtb << "#include \"clockwork_standard_compute_units.h\"" << endl << endl;
 
   rgtb << "int main() {" << endl;
   rgtb << tab(1) << "ofstream in_pix(\"" << "input_pixels_regression_result_" << prg.name << ".txt\");" << endl;
@@ -2456,9 +2457,11 @@ void generate_regression_testbench(prog& prg, map<string, UBuffer>& buffers) {
 
       rgtb << "#ifdef __INT_OUTPUT__" << endl;
       rgtb << tab(2) << "fout << (int) actual_lane_" << p << " << endl;" << endl;
-      rgtb << "#else // __INT_OUTPUT__" << endl;
+      rgtb << "#elif __FLOAT_OUTPUT__" << endl;
+      rgtb << tab(2) << "fout << to_float(actual_lane_" << p << ") << endl;" << endl;
+      rgtb << "#else // No specified output type" << endl;
       rgtb << tab(2) << "fout << actual_lane_" << p << " << endl;" << endl;
-      rgtb << "#endif // __INT_OUTPUT__" << endl;
+      rgtb << "#endif" << endl;
     }
 
     rgtb << tab(1) << "}" << endl << endl;
