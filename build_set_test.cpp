@@ -9151,10 +9151,10 @@ App heat_3d_iccad(const std::string& name) {
     string current = "h3_" + str(i);
     dn.func2d(current,
         add({
-          mul(fc("0.125f"), v(last, 1, 0)),
-          mul(fc("0.125f"), v(last, -1, 0)),
-          mul(fc("0.125f"), v(last, 0, 1)),
-          mul(fc("0.125f"), v(last, 0, -1)),
+          mul(fc("0.125"), v(last, 1, 0)),
+          mul(fc("0.125"), v(last, -1, 0)),
+          mul(fc("0.125"), v(last, 0, 1)),
+          mul(fc("0.125"), v(last, 0, -1)),
           mul(fc("0.25f"), v(last, 0, 0))
           }));
     last = current;
@@ -11344,9 +11344,9 @@ void naive_implementations() {
 
 void iccad_tests() {
 
+  heat_3d_iccad_apps("heat2d_1");
   float_stencil_iccad_apps("float_stencil");
   float_add_iccad_apps("float_add");
-  heat_3d_iccad_apps("heat2d_1");
   //heat_3d_iccad_apps("h10_1_300MHz");
   //stencil_chain_iccad_apps("icsc_500MHz");
   //stencil_chain_20_stage_iccad_apps("ic20_500MHz");
