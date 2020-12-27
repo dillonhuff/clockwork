@@ -48,7 +48,7 @@ int main(int argc, char **argv) {
 #ifdef __FLOAT_OUTPUT__
     float  val = (rand() % 256);
 #else // __FLOAT_OUTPUT__
-    uint16_t val = (rand() % 256);
+    uint16_t val = 10; //(rand() % 256);
 #endif // __FLOAT_OUTPUT__
 
 #ifdef __FLOAT_OUTPUT__

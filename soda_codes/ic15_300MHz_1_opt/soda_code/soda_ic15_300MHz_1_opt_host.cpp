@@ -45,23 +45,23 @@ int main(int argc, char **argv) {
 
   std::ofstream input_in_update_0_read("in_update_0_read.csv");
   for (int i = 0; i < in_update_0_read_pipe0_DATA_SIZE; i++) {
-#ifdef __FLOAT_OUTPUT__
-    float  val = (rand() % 256);
-#else // __FLOAT_OUTPUT__
-    uint16_t val = (rand() % 256);
-#endif // __FLOAT_OUTPUT__
+//#ifdef __FLOAT_OUTPUT__
+    //float  val = 10; //(rand() % 256);
+//#else // __FLOAT_OUTPUT__
+    uint16_t val = 10; //(rand() % 256);
+//#endif // __FLOAT_OUTPUT__
 
-#ifdef __FLOAT_OUTPUT__
+//#ifdef __FLOAT_OUTPUT__
+    //input_in_update_0_read << val << std::endl;
+//#else // __FLOAT_OUTPUT__
     input_in_update_0_read << val << std::endl;
-#else // __FLOAT_OUTPUT__
-    input_in_update_0_read << val << std::endl;
-#endif // __FLOAT_OUTPUT__
+//#endif // __FLOAT_OUTPUT__
 
-#ifdef __FLOAT_OUTPUT__
-    ((uint16_t*) (in_update_0_read_pipe0.data()))[i] = bitcast<uint16_t, float>(val);
-#else // __FLOAT_OUTPUT__
+//#ifdef __FLOAT_OUTPUT__
+    //((uint16_t*) (in_update_0_read_pipe0.data()))[i] = bitcast<uint16_t, float>(val);
+//#else // __FLOAT_OUTPUT__
     ((uint16_t*) (in_update_0_read_pipe0.data()))[i] = val;
-#endif // __FLOAT_OUTPUT__
+//#endif // __FLOAT_OUTPUT__
   }
 
   input_in_update_0_read.close();
@@ -140,11 +140,11 @@ nsduration = end - start;
   printf("Execution time = %f (sec) \n", dsduration);
   std::ofstream regression_result("ic15_300MHz_1_update_0_write_accel_result.csv");
   for (int i = 0; i < ic15_300MHz_1_update_0_write_pipe0_DATA_SIZE; i++) {
-#ifdef __FLOAT_OUTPUT__
-    regression_result << bitcast<float, uint16_t>(((uint16_t*) (ic15_300MHz_1_update_0_write_pipe0.data()))[i]) << std::endl;
-#else // __FLOAT_OUTPUT__
+//#ifdef __FLOAT_OUTPUT__
+    //regression_result << bitcast<float, uint16_t>(((uint16_t*) (ic15_300MHz_1_update_0_write_pipe0.data()))[i]) << std::endl;
+//#else // __FLOAT_OUTPUT__
     regression_result << ((uint16_t*) (ic15_300MHz_1_update_0_write_pipe0.data()))[i] << std::endl;
-#endif // __FLOAT_OUTPUT__
+//#endif // __FLOAT_OUTPUT__
   }
 
   return 0;
