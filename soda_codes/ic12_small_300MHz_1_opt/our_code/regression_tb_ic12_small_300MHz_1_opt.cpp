@@ -3,6 +3,7 @@
 #include "clockwork_standard_compute_units.h"
 
 int main() {
+  srand(234);
   ofstream in_pix("input_pixels_regression_result_ic12_small_300MHz_1_opt.txt");
   ofstream fout("regression_result_ic12_small_300MHz_1_opt.txt");
   HWStream<hw_uint<16> > in_update_0_read;
@@ -16,7 +17,10 @@ int main() {
   for (int i = 0; i < 946; i++) {
     hw_uint<16> in_val;
 #ifdef __INT_OUTPUT__
-    set_at<0*16, 16, 16>(in_val, (1*i + 0));
+
+    //uint16_t val = 10; //(rand() % 256);
+    set_at<0*16, 16, 16>(in_val, rand() % 256);
+    //set_at<0*16, 16, 16>(in_val, (1*i + 0));
     //set_at<0*16, 16, 16>(in_val, (10 + 0));
 #elif __FLOAT_OUTPUT__
     set_at<0*16, 16, 16>(in_val, (to_bits((float)(1*i + 0))));
