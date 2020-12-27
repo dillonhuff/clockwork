@@ -9286,13 +9286,15 @@ void heat_3d_iccad_apps(const std::string& prefix) {
 }
 
 void stencil_chain_12_stage_iccad_apps(const std::string& prefix) {
-  vector<int> throughputs{1, 16, 32};
-  //vector<int> throughputs{1};
+  //vector<int> throughputs{1, 16, 32};
+  vector<int> throughputs{1};
   for (auto throughput : throughputs) {
     string name = prefix + "_" + str(throughput);
     App lp = stencil_chain_stage_iccad(name, 12);
-    int rows = 1080;
-    int cols = 1920;
+    int rows = 10;
+    int cols = 19;
+    //int rows = 1080;
+    //int cols = 1920;
     CodegenOptions options;
     options.internal = true;
     options.use_custom_code_string = true;
@@ -11406,7 +11408,7 @@ void naive_implementations() {
 
 void iccad_tests() {
 
-  stencil_chain_12_stage_iccad_apps("ic12_300MHz");
+  stencil_chain_12_stage_iccad_apps("ic12_small_300MHz");
   stencil_chain_15_stage_iccad_apps("ic15_300MHz");
   heat_3d_iccad_apps("heat2d_1");
   float_stencil_iccad_apps("float_stencil");
