@@ -16,7 +16,8 @@ int main() {
   for (int i = 0; i < 946; i++) {
     hw_uint<16> in_val;
 #ifdef __INT_OUTPUT__
-    set_at<0*16, 16, 16>(in_val, (1*i + 0));
+    //set_at<0*16, 16, 16>(in_val, (1*i + 0));
+    set_at<0*16, 16, 16>(in_val, (10 + 0));
 #elif __FLOAT_OUTPUT__
     set_at<0*16, 16, 16>(in_val, (to_bits((float)(1*i + 0))));
 #else // No specified output type
