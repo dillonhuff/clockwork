@@ -18871,6 +18871,35 @@ void misc_tests() {
 }
 
 void generate_cuda_code(prog& prg) {
+
+  // What data structures do we need to
+  // map the code to a GPU?
+  // 1. We need a mapping from loop iterations
+  //    to block indexes
+  // 2. We need a mapping from loop iterations
+  //    to thread indexes
+  // 3. We need a mapping from loop groups
+  //    to kernel launches
+  // Q: Does it make sense to map a particular
+  // iteration of a loop to only a block, or
+  // to only a thread?
+  //
+  // A: I think the answer is no, if you
+  // only map a particular statement instance
+  // to a block then you are going to execute
+  // it on *every* thread that is mapped
+  // to that block, so each statement instance must
+  // be mapped to:
+  //  1. A kernel launch
+  //  2. A block
+  //  3. A thread
+  //
+  // What do we do with each of those indexes?
+  // 1. We need to create the kernel launch
+  // 2. We need to generate the loop structure of
+  //    the kernel program, as well as guards
+  //    inside of it to prevent un-mapped thread / block
+  //    indexes from doing anything
   ofstream out(prg.name + ".cu");
   vector<string> arg_decls;
   for (auto b : prg.boundary_buffers()) {
@@ -18883,6 +18912,16 @@ void generate_cuda_code(prog& prg) {
   out << endl;
 
   out << "void " << prg.name << "" << sep_list(arg_decls, "(", ")", ", ") << " {" << endl;
+  vector<string> kernel_args;
+  for (auto b : prg.boundary_buffers()) {
+    out << tab(1) << "float* " << b << "_cuda;" << endl;
+    out << tab(1) << "cudaMalloc(&" << b << "_cuda, 10);" << endl;
+    kernel_args.push_back(b + "_cuda");
+  }
+  out << tab(1) << prg.name << "_kernel<<<1, 1>>>" << sep_list(kernel_args, "(", ")", ", ") << ";" << endl;
+  for (auto b : prg.boundary_buffers()) {
+    out << tab(1) << "cudaFree(" << b << "_cuda);" << endl;
+  }
   out << "}" << endl;
   out.close();
 
