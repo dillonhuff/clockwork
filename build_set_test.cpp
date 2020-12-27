@@ -8911,6 +8911,32 @@ App stencil_chain_iccad(const std::string& out_name) {
   return lp;
 }
 
+App stencil_chain_stage_iccad(const std::string& out_name, const int levels) {
+  App lp;
+  lp.set_default_pixel_width(16);
+  lp.func2d("in_off_chip");
+
+  // The temporary buffer we store the input image in
+  lp.func2d("in", v("in_off_chip"));
+
+  string last = "in";
+  for (int i = 0; i < levels; i++) {
+    string current = "stg" + str(i);
+    lp.func2d(current,
+      div(add({
+        v(last, 0, 1),
+        v(last, 1, 0),
+        v(last, 0, 0),
+        v(last, -1, 0),
+        v(last, 0, 1)}), 5));
+    last = current;
+  }
+  //auto dark_weight_pyramid = gauss_pyramid(pyramid_levels, "in", lp);
+
+  lp.func2d(out_name, v(last));
+
+  return lp;
+}
 App stencil_chain_20_stage_iccad(const std::string& out_name) {
   App lp;
   lp.set_default_pixel_width(16);
@@ -9259,6 +9285,24 @@ void heat_3d_iccad_apps(const std::string& prefix) {
 
 }
 
+void stencil_chain_15_stage_iccad_apps(const std::string& prefix) {
+  vector<int> throughputs{1, 16, 32};
+  //vector<int> throughputs{1};
+  for (auto throughput : throughputs) {
+    string name = prefix + "_" + str(throughput);
+    App lp = stencil_chain_stage_iccad(name, 15);
+    int rows = 1080;
+    int cols = 1920;
+    CodegenOptions options;
+    options.internal = true;
+    options.use_custom_code_string = true;
+    options.rtl_options.hls_clock_target_Hz = 300000000;
+    lp.realize(options, name, {cols, rows}, "in", throughput);
+
+    move_to_benchmarks_folder(name + "_opt");
+  }
+  assert(false);
+}
 void stencil_chain_20_stage_iccad_apps(const std::string& prefix) {
   vector<int> throughputs{1, 16, 32};
   //vector<int> throughputs{1};
@@ -11344,6 +11388,7 @@ void naive_implementations() {
 
 void iccad_tests() {
 
+  stencil_chain_15_stage_iccad_apps("ic15_300MHz");
   heat_3d_iccad_apps("heat2d_1");
   float_stencil_iccad_apps("float_stencil");
   float_add_iccad_apps("float_add");
