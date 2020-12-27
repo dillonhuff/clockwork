@@ -145,7 +145,11 @@ nsduration = end - start;
   std::ofstream regression_result("heat2d_1_1_update_0_write_accel_result.csv");
   for (int i = 0; i < heat2d_1_1_update_0_write_pipe0_DATA_SIZE; i++) {
 #ifdef __FLOAT_OUTPUT__
-    regression_result << bitcast<float, uint32_t>(((uint32_t*) (heat2d_1_1_update_0_write_pipe0.data()))[i]) << std::endl;
+    //regression_result << bitcast<float, uint32_t>(((uint32_t*) (heat2d_1_1_update_0_write_pipe0.data()))[i]) << std::endl;
+    hw_uint<32> val(((uint32_t*) (heat2d_1_1_update_0_write_pipe0.data()))[i]);
+    regression_result << val << std::endl;
+    //regression_result << hw_uint<32>(((uint32_t*) (heat2d_1_1_update_0_write_pipe0.data()))[i]) << std::endl;
+    //assert(false);
 #else // __FLOAT_OUTPUT__
     regression_result << ((uint32_t*) (heat2d_1_1_update_0_write_pipe0.data()))[i] << std::endl;
 #endif // __FLOAT_OUTPUT__

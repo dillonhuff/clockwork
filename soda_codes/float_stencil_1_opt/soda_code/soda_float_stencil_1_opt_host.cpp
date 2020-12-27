@@ -145,7 +145,8 @@ nsduration = end - start;
   std::ofstream regression_result("float_stencil_1_update_0_write_accel_result.csv");
   for (int i = 0; i < float_stencil_1_update_0_write_pipe0_DATA_SIZE; i++) {
 #ifdef __FLOAT_OUTPUT__
-    regression_result << bitcast<float, uint32_t>(((uint32_t*) (float_stencil_1_update_0_write_pipe0.data()))[i]) << std::endl;
+    //regression_result << bitcast<float, uint32_t>(((uint32_t*) (float_stencil_1_update_0_write_pipe0.data()))[i]) << std::endl;
+    regression_result << hw_uint<32>(((uint32_t*) (float_stencil_1_update_0_write_pipe0.data()))[i]) << std::endl;
 #else // __FLOAT_OUTPUT__
     regression_result << ((uint32_t*) (float_stencil_1_update_0_write_pipe0.data()))[i] << std::endl;
 #endif // __FLOAT_OUTPUT__
