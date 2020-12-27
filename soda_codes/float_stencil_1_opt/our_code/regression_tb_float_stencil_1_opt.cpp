@@ -34,7 +34,8 @@ int main() {
 #ifdef __INT_OUTPUT__
     fout << (int) actual_lane_0 << endl;
 #elif __FLOAT_OUTPUT__
-    fout << to_float(actual_lane_0) << endl;
+    //fout << to_float(actual_lane_0) << endl;
+    fout << (actual_lane_0) << endl;
 #else // No specified output type
     fout << actual_lane_0 << endl;
 #endif

@@ -254,7 +254,8 @@ module_6_epoch:
       const bool fifo_ref_3_enable = ReadData(&fifo_ref_3, fifo_ld_3);
       const bool enabled = fifo_ref_0_enable && fifo_ref_1_enable && fifo_ref_2_enable && fifo_ref_3_enable;
       enable = enabled;
-      WriteData(fifo_st_0, uint16_t(((fifo_ref_0 + fifo_ref_1) + (fifo_ref_2 + (fifo_ref_3 + fifo_ref_0)) * 5)), enabled);
+      WriteData(fifo_st_0, uint16_t(
+            (fifo_ref_0 + fifo_ref_1 + fifo_ref_2 + fifo_ref_3 + fifo_ref_0) * 5), enabled);
     } // if not empty
   } // for module_6_epoch
 } // Module6Func
