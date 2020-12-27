@@ -22,8 +22,10 @@ def table_op(table_lines, func):
         if m:
             try:
                 values = m[1].split('&')
-                values = func(values)
-                res += ' & '.join(values) + ' \\\\' + '\n'
+                if is_float(values[1]):
+                    print(values)
+                # values = func(values)
+                # res += ' & '.join(values) + ' \\\\' + '\n'
             except:
                 res += l
         else:
@@ -46,6 +48,10 @@ def entry_to_int(values):
         return values
     return values
 
+# Q: What do I want to do with this file?
+# A: I want to build a bar chart comparing SODA
+# and clockworks resource use. That means
+# re-organizing the code to produce lists
+# of LUT, FF, BRAM use by system
 res = table_op(f, sum_double_entry)
-print(res)
-
+# print(res)
