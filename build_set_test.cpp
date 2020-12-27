@@ -18871,6 +18871,21 @@ void misc_tests() {
 }
 
 void generate_cuda_code(prog& prg) {
+  ofstream out(prg.name + ".cu");
+  vector<string> arg_decls;
+  for (auto b : prg.boundary_buffers()) {
+    arg_decls.push_back("float* " + b);
+  }
+  out << "__global__" << endl;
+  out << "void " << prg.name << "_kernel" << sep_list(arg_decls, "(", ")", ", ") << " {" << endl;
+  out << "}" << endl;
+
+  out << endl;
+
+  out << "void " << prg.name << "" << sep_list(arg_decls, "(", ")", ", ") << " {" << endl;
+  out << "}" << endl;
+  out.close();
+
   assert(false);
 }
 
