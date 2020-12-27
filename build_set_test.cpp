@@ -9155,7 +9155,7 @@ App heat_3d_iccad(const std::string& name) {
           mul(fc("0.125"), v(last, -1, 0)),
           mul(fc("0.125"), v(last, 0, 1)),
           mul(fc("0.125"), v(last, 0, -1)),
-          mul(fc("0.25f"), v(last, 0, 0))
+          mul(fc("0.25"), v(last, 0, 0))
           }));
     last = current;
   }

@@ -6,7 +6,7 @@ input float: in(34, *)
 
 local float: in_cc(0, 0) = in(0, 0)
 
-local float: h3_0(0, 0) = (((0.125f * in_cc(1, 0)) + (0.125f * in_cc(-1, 0))) + ((0.125f * in_cc(0, 1)) + ((0.125f * in_cc(0, -1)) + (0.25ff * in_cc(0, 0)))))
+local float: h3_0(0, 0) = (((0.125f * in_cc(1, 0)) + (0.125f * in_cc(-1, 0))) + ((0.125f * in_cc(0, 1)) + ((0.125f * in_cc(0, -1)) + (0.25f * in_cc(0, 0)))))
 
 output float: heat2d_1_1(0, 0) = h3_0(0, 0)
 
