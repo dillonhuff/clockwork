@@ -24,6 +24,9 @@ def table_op(table_lines, func):
                 values = m[1].split('&')
                 if is_float(values[1]):
                     print(values)
+                    lut_count = float(values[3])
+                    ff_count = float(values[5])
+                    bram_count = float(values[6])
                 # values = func(values)
                 # res += ' & '.join(values) + ' \\\\' + '\n'
             except:
