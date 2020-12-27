@@ -4,6 +4,8 @@
 #include <vector>
 #include <cstdlib>
 
+#include "clockwork_standard_compute_units.h"
+
 int main(int argc, char **argv) {
   srand(234);
   if (argc != 2) {
@@ -43,14 +45,32 @@ int main(int argc, char **argv) {
 
   std::ofstream input_oc_load_in03_read("oc_load_in03_read.csv");
   for (int i = 0; i < oc_load_in03_read_pipe0_DATA_SIZE; i++) {
+#ifdef __FLOAT_OUTPUT__
+    float  val = (rand() % 256);
+#else // __FLOAT_OUTPUT__
     uint32_t val = (rand() % 256);
+#endif // __FLOAT_OUTPUT__
+
+#ifdef __FLOAT_OUTPUT__
     input_oc_load_in03_read << val << std::endl;
+#else // __FLOAT_OUTPUT__
+    input_oc_load_in03_read << val << std::endl;
+#endif // __FLOAT_OUTPUT__
+
+#ifdef __FLOAT_OUTPUT__
+    ((uint32_t*) (oc_load_in03_read_pipe0.data()))[i] = bitcast<uint32_t, float>(val);
+#else // __FLOAT_OUTPUT__
     ((uint32_t*) (oc_load_in03_read_pipe0.data()))[i] = val;
+#endif // __FLOAT_OUTPUT__
   }
 
   input_oc_load_in03_read.close();
   for (int i = 0; i < pw_math_gray47_write_pipe0_DATA_SIZE; i++) {
+#ifdef __FLOAT_OUTPUT__
     ((uint32_t*) (pw_math_gray47_write_pipe0.data()))[i] = 0;
+#else // __FLOAT_OUTPUT__
+    ((uint32_t*) (pw_math_gray47_write_pipe0.data()))[i] = 0;
+#endif // __FLOAT_OUTPUT__
   }
 
   auto devices = xcl::get_xil_devices();
@@ -120,7 +140,11 @@ nsduration = end - start;
   printf("Execution time = %f (sec) \n", dsduration);
   std::ofstream regression_result("pw_math_gray47_write_accel_result.csv");
   for (int i = 0; i < pw_math_gray47_write_pipe0_DATA_SIZE; i++) {
+#ifdef __FLOAT_OUTPUT__
+    regression_result << bitcast<float, uint32_t>(((uint32_t*) (pw_math_gray47_write_pipe0.data()))[i]) << std::endl;
+#else // __FLOAT_OUTPUT__
     regression_result << ((uint32_t*) (pw_math_gray47_write_pipe0.data()))[i] << std::endl;
+#endif // __FLOAT_OUTPUT__
   }
 
   return 0;

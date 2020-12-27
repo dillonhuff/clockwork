@@ -18870,7 +18870,22 @@ void misc_tests() {
 
 }
 
+void generate_cuda_code(prog& prg) {
+  assert(false);
+}
+
+void gpu_codegen_test() {
+  prog prg("hello_gpu");
+  prg.add_input("x_dram");
+  prg.add_output("y_dram");
+
+  cpy("y_dram", "x_dram", 2, prg);
+
+  generate_cuda_code(prg);
+}
+
 void application_tests() {
+  gpu_codegen_test();
   iccad_tests();
 
   up_to_id_stream_tests();
