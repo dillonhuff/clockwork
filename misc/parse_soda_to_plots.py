@@ -15,6 +15,7 @@ def is_float(s):
         return False
 
 def table_op(table_lines, func):
+    apps_to_system_to_use = {}
     res = ''
     for l in table_lines:
         rm = "(.*)\\\\\\\\"
@@ -23,10 +24,14 @@ def table_op(table_lines, func):
             try:
                 values = m[1].split('&')
                 if is_float(values[1]):
-                    print(values)
+                    # print(values)
+                    system = values[2]
+                    app_name = values[0]
                     lut_count = float(values[3])
                     ff_count = float(values[5])
                     bram_count = float(values[6])
+                    print('system {0} used {1} LUTs {2} FFs {3} BRAMs'.format(system, lut_count, ff_count, bram_count))
+
                 # values = func(values)
                 # res += ' & '.join(values) + ' \\\\' + '\n'
             except:
