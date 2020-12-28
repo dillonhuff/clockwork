@@ -50,6 +50,7 @@ def table_op(table_lines, func):
 
     fig, ax = plt.subplots(3, 3)
 
+    fig.suptitle('Resource Utilization for SODA and Clockwork')
     i = 0
     for resource in resources:
         j = 0
