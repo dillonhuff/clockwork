@@ -1,0 +1,6 @@
+#include "ap_int.h"
+
+extern "C" {
+
+void heat3d_11_8_opt_kernel(ap_uint<256>* heat3d_11_8, ap_uint<256>* in, uint64_t coalesced_data_num);
+}

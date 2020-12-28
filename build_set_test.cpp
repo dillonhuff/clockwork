@@ -11464,7 +11464,7 @@ void naive_implementations() {
 
 void iccad_tests() {
 
-  heat_3d_real_iccad_apps("heat3d_1", 1);
+  heat_3d_real_iccad_apps("heat3d_11", 11);
 
   stencil_chain_15_stage_iccad_apps("ic15_fx");
   stencil_chain_12_stage_iccad_apps("ic12_small_300MHz");

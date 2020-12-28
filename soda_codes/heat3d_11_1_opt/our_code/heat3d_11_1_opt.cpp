@@ -3058,90 +3058,18 @@ inline void in_cc_in_cc_update_0_write_bundle_write(hw_uint<32>& in_cc_update_0_
 
 
 // Operation logic
-inline void h3_5_update_0(h3_4_cache& h3_4, h3_5_cache& h3_5, int d0, int d1, int d2) {
+inline void h3_2_update_0(h3_1_cache& h3_1, h3_2_cache& h3_2, int d0, int d1, int d2) {
   // Dynamic address computation
 
-	// Consume: h3_4
-	auto h3_4_0_c__0_value = h3_4_h3_5_update_0_read_bundle_read(h3_4/* source_delay */, d0, d1, d2, 0);
+	// Consume: h3_1
+	auto h3_1_0_c__0_value = h3_1_h3_2_update_0_read_bundle_read(h3_1/* source_delay */, d0, d1, d2, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 
-	auto compute_result = h3_5_generated_compute_unrolled_1(h3_4_0_c__0_value);
-	// Produce: h3_5
-	h3_5_h3_5_update_0_write_bundle_write(/* arg names */compute_result, h3_5, d0, d1, d2, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void h3_6_update_0(h3_5_cache& h3_5, h3_6_cache& h3_6, int d0, int d1, int d2) {
-  // Dynamic address computation
-
-	// Consume: h3_5
-	auto h3_5_0_c__0_value = h3_5_h3_6_update_0_read_bundle_read(h3_5/* source_delay */, d0, d1, d2, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = h3_6_generated_compute_unrolled_1(h3_5_0_c__0_value);
-	// Produce: h3_6
-	h3_6_h3_6_update_0_write_bundle_write(/* arg names */compute_result, h3_6, d0, d1, d2, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void h3_7_update_0(h3_6_cache& h3_6, h3_7_cache& h3_7, int d0, int d1, int d2) {
-  // Dynamic address computation
-
-	// Consume: h3_6
-	auto h3_6_0_c__0_value = h3_6_h3_7_update_0_read_bundle_read(h3_6/* source_delay */, d0, d1, d2, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = h3_7_generated_compute_unrolled_1(h3_6_0_c__0_value);
-	// Produce: h3_7
-	h3_7_h3_7_update_0_write_bundle_write(/* arg names */compute_result, h3_7, d0, d1, d2, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void h3_8_update_0(h3_7_cache& h3_7, h3_8_cache& h3_8, int d0, int d1, int d2) {
-  // Dynamic address computation
-
-	// Consume: h3_7
-	auto h3_7_0_c__0_value = h3_7_h3_8_update_0_read_bundle_read(h3_7/* source_delay */, d0, d1, d2, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = h3_8_generated_compute_unrolled_1(h3_7_0_c__0_value);
-	// Produce: h3_8
-	h3_8_h3_8_update_0_write_bundle_write(/* arg names */compute_result, h3_8, d0, d1, d2, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void h3_9_update_0(h3_8_cache& h3_8, h3_9_cache& h3_9, int d0, int d1, int d2) {
-  // Dynamic address computation
-
-	// Consume: h3_8
-	auto h3_8_0_c__0_value = h3_8_h3_9_update_0_read_bundle_read(h3_8/* source_delay */, d0, d1, d2, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = h3_9_generated_compute_unrolled_1(h3_8_0_c__0_value);
-	// Produce: h3_9
-	h3_9_h3_9_update_0_write_bundle_write(/* arg names */compute_result, h3_9, d0, d1, d2, 0);
+	auto compute_result = h3_2_generated_compute_unrolled_1(h3_1_0_c__0_value);
+	// Produce: h3_2
+	h3_2_h3_2_update_0_write_bundle_write(/* arg names */compute_result, h3_2, d0, d1, d2, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -3160,24 +3088,6 @@ inline void h3_3_update_0(h3_2_cache& h3_2, h3_3_cache& h3_3, int d0, int d1, in
 	auto compute_result = h3_3_generated_compute_unrolled_1(h3_2_0_c__0_value);
 	// Produce: h3_3
 	h3_3_h3_3_update_0_write_bundle_write(/* arg names */compute_result, h3_3, d0, d1, d2, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void h3_4_update_0(h3_3_cache& h3_3, h3_4_cache& h3_4, int d0, int d1, int d2) {
-  // Dynamic address computation
-
-	// Consume: h3_3
-	auto h3_3_0_c__0_value = h3_3_h3_4_update_0_read_bundle_read(h3_3/* source_delay */, d0, d1, d2, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = h3_4_generated_compute_unrolled_1(h3_3_0_c__0_value);
-	// Produce: h3_4
-	h3_4_h3_4_update_0_write_bundle_write(/* arg names */compute_result, h3_4, d0, d1, d2, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -3234,36 +3144,90 @@ inline void h3_1_update_0(h3_0_cache& h3_0, h3_1_cache& h3_1, int d0, int d1, in
 
 }
 
-inline void h3_2_update_0(h3_1_cache& h3_1, h3_2_cache& h3_2, int d0, int d1, int d2) {
+inline void h3_4_update_0(h3_3_cache& h3_3, h3_4_cache& h3_4, int d0, int d1, int d2) {
   // Dynamic address computation
 
-	// Consume: h3_1
-	auto h3_1_0_c__0_value = h3_1_h3_2_update_0_read_bundle_read(h3_1/* source_delay */, d0, d1, d2, 0);
+	// Consume: h3_3
+	auto h3_3_0_c__0_value = h3_3_h3_4_update_0_read_bundle_read(h3_3/* source_delay */, d0, d1, d2, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 
-	auto compute_result = h3_2_generated_compute_unrolled_1(h3_1_0_c__0_value);
-	// Produce: h3_2
-	h3_2_h3_2_update_0_write_bundle_write(/* arg names */compute_result, h3_2, d0, d1, d2, 0);
+	auto compute_result = h3_4_generated_compute_unrolled_1(h3_3_0_c__0_value);
+	// Produce: h3_4
+	h3_4_h3_4_update_0_write_bundle_write(/* arg names */compute_result, h3_4, d0, d1, d2, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 
 }
 
-inline void h3_10_update_0(h3_9_cache& h3_9, h3_10_cache& h3_10, int d0, int d1, int d2) {
+inline void h3_5_update_0(h3_4_cache& h3_4, h3_5_cache& h3_5, int d0, int d1, int d2) {
   // Dynamic address computation
 
-	// Consume: h3_9
-	auto h3_9_0_c__0_value = h3_9_h3_10_update_0_read_bundle_read(h3_9/* source_delay */, d0, d1, d2, 0);
+	// Consume: h3_4
+	auto h3_4_0_c__0_value = h3_4_h3_5_update_0_read_bundle_read(h3_4/* source_delay */, d0, d1, d2, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 
-	auto compute_result = h3_10_generated_compute_unrolled_1(h3_9_0_c__0_value);
-	// Produce: h3_10
-	h3_10_h3_10_update_0_write_bundle_write(/* arg names */compute_result, h3_10, d0, d1, d2, 0);
+	auto compute_result = h3_5_generated_compute_unrolled_1(h3_4_0_c__0_value);
+	// Produce: h3_5
+	h3_5_h3_5_update_0_write_bundle_write(/* arg names */compute_result, h3_5, d0, d1, d2, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void h3_6_update_0(h3_5_cache& h3_5, h3_6_cache& h3_6, int d0, int d1, int d2) {
+  // Dynamic address computation
+
+	// Consume: h3_5
+	auto h3_5_0_c__0_value = h3_5_h3_6_update_0_read_bundle_read(h3_5/* source_delay */, d0, d1, d2, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = h3_6_generated_compute_unrolled_1(h3_5_0_c__0_value);
+	// Produce: h3_6
+	h3_6_h3_6_update_0_write_bundle_write(/* arg names */compute_result, h3_6, d0, d1, d2, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void h3_7_update_0(h3_6_cache& h3_6, h3_7_cache& h3_7, int d0, int d1, int d2) {
+  // Dynamic address computation
+
+	// Consume: h3_6
+	auto h3_6_0_c__0_value = h3_6_h3_7_update_0_read_bundle_read(h3_6/* source_delay */, d0, d1, d2, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = h3_7_generated_compute_unrolled_1(h3_6_0_c__0_value);
+	// Produce: h3_7
+	h3_7_h3_7_update_0_write_bundle_write(/* arg names */compute_result, h3_7, d0, d1, d2, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void h3_9_update_0(h3_8_cache& h3_8, h3_9_cache& h3_9, int d0, int d1, int d2) {
+  // Dynamic address computation
+
+	// Consume: h3_8
+	auto h3_8_0_c__0_value = h3_8_h3_9_update_0_read_bundle_read(h3_8/* source_delay */, d0, d1, d2, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = h3_9_generated_compute_unrolled_1(h3_8_0_c__0_value);
+	// Produce: h3_9
+	h3_9_h3_9_update_0_write_bundle_write(/* arg names */compute_result, h3_9, d0, d1, d2, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -3282,6 +3246,42 @@ inline void heat3d_11_1_update_0(h3_10_cache& h3_10, HWStream<hw_uint<32> >& /* 
 	auto compute_result = heat3d_11_1_generated_compute_unrolled_1(h3_10_0_c__0_value);
 	// Produce: heat3d_11_1
 	heat3d_11_1.write(compute_result);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void h3_8_update_0(h3_7_cache& h3_7, h3_8_cache& h3_8, int d0, int d1, int d2) {
+  // Dynamic address computation
+
+	// Consume: h3_7
+	auto h3_7_0_c__0_value = h3_7_h3_8_update_0_read_bundle_read(h3_7/* source_delay */, d0, d1, d2, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = h3_8_generated_compute_unrolled_1(h3_7_0_c__0_value);
+	// Produce: h3_8
+	h3_8_h3_8_update_0_write_bundle_write(/* arg names */compute_result, h3_8, d0, d1, d2, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void h3_10_update_0(h3_9_cache& h3_9, h3_10_cache& h3_10, int d0, int d1, int d2) {
+  // Dynamic address computation
+
+	// Consume: h3_9
+	auto h3_9_0_c__0_value = h3_9_h3_10_update_0_read_bundle_read(h3_9/* source_delay */, d0, d1, d2, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = h3_10_generated_compute_unrolled_1(h3_9_0_c__0_value);
+	// Produce: h3_10
+	h3_10_h3_10_update_0_write_bundle_write(/* arg names */compute_result, h3_10, d0, d1, d2, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
