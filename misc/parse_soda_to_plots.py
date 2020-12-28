@@ -26,6 +26,14 @@ def table_op(table_lines, func):
                 stripped = [element.strip() for element in values]
                 lines.append(stripped)
     print(lines)
+    apps = {}
+    apps['blur']['SODA'] = []
+    apps['blur']['CW'] = []
+    for l in lines:
+        if l[0] == 'blur':
+            apps['blur'][l[2]].append(float(l[3]))
+    print('App luts: {0}'.format(apps))
+
 
 def sum_double_entry(values):
     rm = "\s*(\d+)\s+(\d+)\s*"
