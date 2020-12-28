@@ -9293,7 +9293,7 @@ void float_add_iccad_apps(const std::string& prefix) {
 
 }
 
-void heat_3d_real_iccad_apps(const std::string& prefix) {
+void heat_3d_real_iccad_apps(const std::string& prefix, const int num_stages) {
   //vector<int> throughputs{1, 16, 32};
   vector<int> throughputs{1};
   //vector<int> throughputs{32};
@@ -9301,7 +9301,7 @@ void heat_3d_real_iccad_apps(const std::string& prefix) {
   //vector<int> throughputs{2, 4, 8, 12};
   for (auto throughput : throughputs) {
     string name = prefix + "_" + str(throughput);
-    App lp = heat_3d_real_iccad(name, 11);
+    App lp = heat_3d_real_iccad(name, num_stages);
     int rows = 512;
     int cols = 512;
     int channels = 512;
@@ -11463,7 +11463,7 @@ void naive_implementations() {
 
 void iccad_tests() {
 
-  heat_3d_real_iccad_apps("heat3d_11");
+  heat_3d_real_iccad_apps("heat3d_1", 1);
 
   stencil_chain_15_stage_iccad_apps("ic15_fx");
   stencil_chain_12_stage_iccad_apps("ic12_small_300MHz");
