@@ -9163,6 +9163,37 @@ void stencil_chain_one_stage_iccad_apps(const std::string& prefix) {
   assert(false);
 }
 
+App heat_3d_real_iccad(const std::string& out_name, const int num_stages) {
+  App dn;
+  dn.set_default_num_type(NUM_TYPE_FLOAT);
+
+  dn.func3d("in");
+
+  dn.func3d("in_cc", v3("in", 0, 0, 0));
+
+  //int num_stages = 1;
+  string last = "in_cc";
+  for (int i = 0; i < num_stages; i++) {
+    string current = "h3_" + str(i);
+//.125f * (in(1, 0, 0) - 2.f * in(0, 0, 0) + in(-1,  0,  0)) + 
+    //.125f * (in(0, 1, 0) - 2.f * in(0, 0, 0) + in( 0, -1,  0)) + 
+    //.125f * (in(0, 0, 1) - 2.f * in(0, 0, 0) + in( 0,  0, -1)) + 
+    //in(0, 0, 0)
+    dn.func3d(current,
+        add({
+          mul(fc("0.125"), v3(last, 1, 0, 0)), mul(fc("-0.125"), v3(last, 0, 0, 0)), mul(fc("0.125"), v3(last, -1, 0, 0)),
+          mul(fc("0.125"), v3(last, 0, 1, 0)), mul(fc("-0.125"), v3(last, 0, 0, 0)), mul(fc("0.125"), v3(last, 0, -1, 0)),
+          mul(fc("0.125"), v3(last, 0, 0, 1)), mul(fc("-0.125"), v3(last, 0, 0, 0)), mul(fc("0.125"), v3(last, 0, 0, -1)),
+          v3(last, 0, 0, 0)
+          }));
+    last = current;
+  }
+
+  dn.func3d(out_name, v3(last, 0, 0, 0));
+
+  return dn;
+}
+
 App heat_3d_iccad(const std::string& name) {
   App dn;
   dn.set_default_num_type(NUM_TYPE_FLOAT);
@@ -18987,8 +19018,9 @@ void gpu_codegen_test() {
 }
 
 void application_tests() {
-  gpu_codegen_test();
   iccad_tests();
+
+  gpu_codegen_test();
 
   up_to_id_stream_tests();
   up_to_ram_addr_unit_test();
