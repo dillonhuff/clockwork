@@ -14,40 +14,18 @@ def is_float(s):
     except ValueError:
         return False
 
+
 def table_op(table_lines, func):
-    apps_to_system_to_use = {}
+    lines = []
     for l in table_lines:
         rm = "(.*)\\\\\\\\"
         m = re.match(rm, l)
         if m:
             values = m[1].split('&')
             if is_float(values[1]):
-                app_name = values[0]
-                apps_to_system_to_use[app_name] = {}
-
-    for l in table_lines:
-        rm = "(.*)\\\\\\\\"
-        m = re.match(rm, l)
-        if m:
-            values = m[1].split('&')
-            if is_float(values[1]):
-                system = values[2]
-                app_name = values[0]
-                apps_to_system_to_use[app_name][system] = {}
-
-    for l in table_lines:
-        rm = "(.*)\\\\\\\\"
-        m = re.match(rm, l)
-        if m:
-            values = m[1].split('&')
-            if is_float(values[1]):
-                system = values[2]
-                app_name = values[0]
-                luts = int(values[3])
-                ffs = int(values[5])
-                brams = int(values[6])
-                apps_to_system_to_use[app_name][system]['lut'] = luts
-    print(apps_to_system_to_use)
+                stripped = [element.strip() for element in values]
+                lines.append(stripped)
+    print(lines)
 
 def sum_double_entry(values):
     rm = "\s*(\d+)\s+(\d+)\s*"
