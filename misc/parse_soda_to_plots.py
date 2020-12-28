@@ -40,20 +40,6 @@ def table_op(table_lines, func):
             apps[resource][app] = {}
             for system in systems:
                 apps[resource][app][system] = []
-            # for resource in resources:
-                # apps[app][system][resource] = []
-
-    # apps['blur'] = {}
-    # apps['blur']['SODA'] = []
-    # apps['blur']['CW'] = []
-
-    # apps['cp'] = {}
-    # apps['cp']['SODA'] = []
-    # apps['cp']['CW'] = []
-
-    # apps['sobel'] = {}
-    # apps['sobel']['SODA'] = []
-    # apps['sobel']['CW'] = []
     
     for l in lines:
         apps['LUT'][l[0]][l[2]].append(float(l[3]))
@@ -62,7 +48,11 @@ def table_op(table_lines, func):
 
     print(apps)
 
+    fig, ax = plt.subplots(3, 3)
+
+    i = 0
     for resource in resources:
+        j = 0
         for app in app_names:
             print('resource = {0}'.format(resource))
             print('app      = {0}'.format(app))
@@ -75,22 +65,26 @@ def table_op(table_lines, func):
             ind = np.arange(N)  # the x locations for the groups
             width = 0.35       # the width of the bars
 
-            fig = plt.figure()
-            ax = fig.add_subplot(111)
-            rects1 = ax.bar(ind, menMeans, width)
+            # fig = plt.figure()
+            # ax[i, j] = fig.add_subplot(111)
+            rects1 = ax[i, j].bar(ind, menMeans, width)
 
             womenMeans= apps[resource][app]['CW']
-            rects2 = ax.bar(ind+width, womenMeans, width)
+            rects2 = ax[i, j].bar(ind+width, womenMeans, width)
 
             # add some
-            ax.set_ylabel('Counts')
-            ax.set_title('{0} count for {1} by throughput'.format(resource, app))
-            ax.set_xticks(ind + width / 2)
-            ax.set_xticklabels( ('{0} 1'.format(app), '{0} 2'.format(app), '{0} 4'.format(app)))
+            # ax[i, j].set_ylabel('Counts')
+            # ax[i, j].set_title('{0} count for {1} by throughput'.format(resource, app))
+            ax[i, j].set_xticks(ind + width / 2)
+            ax[i, j].set_xticklabels( ('{0} 1'.format(app), '{0} 2'.format(app), '{0} 4'.format(app)))
 
-            ax.legend( (rects1[0], rects2[0]), ('SODA', 'CW') )
+            ax[i, j].legend( (rects1[0], rects2[0]), ('SODA', 'CW') )
 
-            plt.show()
+            
+            j += 1
+        i += 1
+
+    plt.show()
 
 def sum_double_entry(values):
     rm = "\s*(\d+)\s+(\d+)\s*"
