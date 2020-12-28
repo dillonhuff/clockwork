@@ -41,9 +41,23 @@ int main(int argc, char **argv) {
 #ifdef __POPULATE_HOST_INPUTS__
   std::ofstream input_pw_math_in_oc03_read("pw_math_in_oc03_read.csv");
   for (int i = 0; i < pw_math_in_oc03_read_pipe0_DATA_SIZE; i++) {
+#ifdef __FLOAT_OUTPUT__
+    float  val = (rand() % 256);
+#else // __FLOAT_OUTPUT__
     uint32_t val = (rand() % 256);
+#endif // __FLOAT_OUTPUT__
+
+#ifdef __FLOAT_OUTPUT__
     input_pw_math_in_oc03_read << val << std::endl;
+#else // __FLOAT_OUTPUT__
+    input_pw_math_in_oc03_read << val << std::endl;
+#endif // __FLOAT_OUTPUT__
+
+#ifdef __FLOAT_OUTPUT__
+    ((uint32_t*) (pw_math_in_oc03_read_pipe0.data()))[i] = bitcast<uint32_t, float>(val);
+#else // __FLOAT_OUTPUT__
     ((uint32_t*) (pw_math_in_oc03_read_pipe0.data()))[i] = val;
+#endif // __FLOAT_OUTPUT__
   }
 
   input_pw_math_in_oc03_read.close();

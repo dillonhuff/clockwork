@@ -18870,7 +18870,124 @@ void misc_tests() {
 
 }
 
+void generate_cuda_code(prog& prg) {
+
+  // What data structures do we need to
+  // map the code to a GPU?
+  // 1. We need a mapping from loop iterations
+  //    to block indexes
+  // 2. We need a mapping from loop iterations
+  //    to thread indexes
+  // 3. We need a mapping from loop groups
+  //    to kernel launches
+  // Q: Does it make sense to map a particular
+  // iteration of a loop to only a block, or
+  // to only a thread?
+  //
+  // A: I think the answer is no, if you
+  // only map a particular statement instance
+  // to a block then you are going to execute
+  // it on *every* thread that is mapped
+  // to that block, so each statement instance must
+  // be mapped to:
+  //  1. A kernel launch
+  //  2. A block
+  //  3. A thread
+  //
+  // What do we do with each of those indexes?
+  // 1. We need to create the kernel launch
+  // 2. We need to generate the loop structure of
+  //    the kernel program, as well as guards
+  //    inside of it to prevent un-mapped thread / block
+  //    indexes from doing anything
+  ofstream out(prg.name + ".cu");
+  out << "#include <stdio.h>" << endl << endl;
+  vector<string> arg_decls;
+  for (auto b : prg.boundary_buffers()) {
+    arg_decls.push_back("float* " + b);
+  }
+  out << "__global__" << endl;
+  out << "void " << prg.name << "_kernel" << sep_list(arg_decls, "(", ")", ", ") << " {" << endl;
+  out << "}" << endl;
+
+  out << endl;
+
+  out << "void " << prg.name << "" << sep_list(arg_decls, "(", ")", ", ") << " {" << endl;
+  vector<string> kernel_args;
+  for (auto b : prg.boundary_buffers()) {
+    out << tab(1) << "float* " << b << "_cuda;" << endl;
+    string buf_size = str(prg.buffer_size(b));
+    out << tab(1) << "cudaMalloc(&" << b << "_cuda, sizeof(float)*" << buf_size << ");" << endl;
+    kernel_args.push_back(b + "_cuda");
+  }
+  for (auto b : prg.ins) {
+    string buf_size = str(prg.buffer_size(b));
+    out << tab(1) << "cudaMemcpy(" << b << ", " << b << "_cuda, sizeof(float)*" << buf_size << ", cudaMemcpyHostToDevice);" << endl;
+  }
+
+  out << endl;
+  out << tab(1) << prg.name << "_kernel<<<1, 1>>>" << sep_list(kernel_args, "(", ")", ", ") << ";" << endl;
+  out << endl;
+
+  for (auto b : prg.ins) {
+    string buf_size = str(prg.buffer_size(b));
+    out << tab(1) << "cudaMemcpy(" << b << "_cuda, " << b << ", sizeof(float)*" << buf_size << ", cudaMemcpyDeviceToHost);" << endl;
+  }
+  for (auto b : prg.boundary_buffers()) {
+    out << tab(1) << "cudaFree(" << b << "_cuda);" << endl;
+  }
+  out << "}" << endl;
+
+  out << endl;
+
+  out << "int main() {" << endl;
+  {
+    vector<string> args;
+    for (auto b : prg.boundary_buffers()) {
+      out << tab(1) << "float* " << b << ";" << endl;
+      string buf_size = str(prg.buffer_size(b));
+      out << tab(1) << b << " = (float*) malloc(sizeof(float)*" << buf_size << ");" << endl;
+      args.push_back(b);
+      if (elem(b, prg.ins)) {
+        out << tab(1) << "for (int i = 0; i < " << buf_size << "; i++) {" << endl;
+        out << tab(2) << b << "[i] = i;" << endl;
+        out << tab(1) << "}" << endl;
+      }
+    }
+
+    out << tab(1) << prg.name << sep_list(args, "(", ");", ", ") << endl;
+    for (auto b : prg.boundary_buffers()) {
+      string buf_size = str(prg.buffer_size(b));
+      if (elem(b, prg.outs)) {
+        out << tab(1) << "for (int i = 0; i < " << buf_size << "; i++) {" << endl;
+        out << tab(2) << "printf(\"" << b << "[%d] = %f\\n\", i, " << b << "[i]);" << endl;
+        out << tab(1) << "}" << endl;
+      }
+      out << tab(1) << "free(" << b << ");" << endl;
+    }
+  }
+
+  out << "}" << endl;
+  out.close();
+
+  assert(false);
+}
+
+void gpu_codegen_test() {
+  prog prg("hello_gpu");
+  prg.add_input("x_dram");
+  prg.add_output("y_dram");
+
+  cpy("y_dram", "x_dram", 2, prg);
+  infer_bounds("y_dram", {8, 8}, prg);
+
+  prg.pretty_print();
+
+  generate_cuda_code(prg);
+}
+
 void application_tests() {
+  gpu_codegen_test();
   iccad_tests();
 
   up_to_id_stream_tests();
