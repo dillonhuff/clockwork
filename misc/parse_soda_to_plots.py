@@ -1,4 +1,6 @@
 import re
+import matplotlib.pyplot as plt
+import numpy as np
 
 f = open('./misc/soda_resource_comparison_table.tex').readlines()
 
@@ -27,13 +29,41 @@ def table_op(table_lines, func):
                 lines.append(stripped)
     print(lines)
     apps = {}
+    apps['blur'] = {}
     apps['blur']['SODA'] = []
     apps['blur']['CW'] = []
     for l in lines:
         if l[0] == 'blur':
+            print(l[2])
             apps['blur'][l[2]].append(float(l[3]))
     print('App luts: {0}'.format(apps))
+    # N = 5
+    N = len(apps['blur']['SODA'])
+    menMeans = apps['blur']['SODA']
+    # menMeans = (20, 35, 30, 35, 27)
+    # menStd =   (2, 3, 4, 1, 2)
 
+    ind = np.arange(N)  # the x locations for the groups
+    width = 0.35       # the width of the bars
+
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+    rects1 = ax.bar(ind, menMeans, width, color='royalblue')
+
+    # womenMeans = (25, 32, 34, 20, 25)
+    womenMeans= apps['blur']['CW']
+    # womenStd =   (3, 5, 2, 3, 3)
+    rects2 = ax.bar(ind+width, womenMeans, width, color='seagreen')
+
+    # add some
+    ax.set_ylabel('Scores')
+    ax.set_title('Scores by group and gender')
+    ax.set_xticks(ind + width / 2)
+    ax.set_xticklabels( ('Blur 1', 'Blur 2', 'Blur 3', 'Blur 4', 'Blur 5') )
+
+    ax.legend( (rects1[0], rects2[0]), ('SODA', 'CW') )
+
+    plt.show()
 
 def sum_double_entry(values):
     rm = "\s*(\d+)\s+(\d+)\s*"
