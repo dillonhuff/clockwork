@@ -18915,13 +18915,46 @@ void generate_cuda_code(prog& prg) {
   vector<string> kernel_args;
   for (auto b : prg.boundary_buffers()) {
     out << tab(1) << "float* " << b << "_cuda;" << endl;
-    out << tab(1) << "cudaMalloc(&" << b << "_cuda, 10);" << endl;
+    string buf_size = str(prg.buffer_size(b));
+    out << tab(1) << "cudaMalloc(&" << b << "_cuda, sizeof(float)*" << buf_size << ");" << endl;
     kernel_args.push_back(b + "_cuda");
   }
+  for (auto b : prg.ins) {
+    string buf_size = str(prg.buffer_size(b));
+    out << tab(1) << "cudaMemcpy(" << b << ", " << b << "_cuda, sizeof(float)*" << buf_size << ", cudaMemcpyHostToDevice);" << endl;
+  }
+
+  out << endl;
   out << tab(1) << prg.name << "_kernel<<<1, 1>>>" << sep_list(kernel_args, "(", ")", ", ") << ";" << endl;
+  out << endl;
+
+  for (auto b : prg.ins) {
+    string buf_size = str(prg.buffer_size(b));
+    out << tab(1) << "cudaMemcpy(" << b << "_cuda, " << b << ", sizeof(float)*" << buf_size << ", cudaMemcpyDeviceToHost);" << endl;
+  }
   for (auto b : prg.boundary_buffers()) {
     out << tab(1) << "cudaFree(" << b << "_cuda);" << endl;
   }
+  out << "}" << endl;
+
+  out << endl;
+
+  out << "int main() {" << endl;
+  {
+    vector<string> args;
+    for (auto b : prg.boundary_buffers()) {
+      out << tab(1) << "float* " << b << ";" << endl;
+      string buf_size = str(prg.buffer_size(b));
+      out << tab(1) << b << " = (float*) malloc(sizeof(float)*" << buf_size << ");" << endl;
+      args.push_back(b);
+    }
+
+    out << tab(1) << prg.name << sep_list(args, "(", ");", ", ") << endl;
+    for (auto b : prg.boundary_buffers()) {
+      out << tab(1) << "free(" << b << ");" << endl;
+    }
+  }
+
   out << "}" << endl;
   out.close();
 
@@ -18934,6 +18967,9 @@ void gpu_codegen_test() {
   prg.add_output("y_dram");
 
   cpy("y_dram", "x_dram", 2, prg);
+  infer_bounds("y_dram", {63, 63}, prg);
+
+  prg.pretty_print();
 
   generate_cuda_code(prg);
 }
