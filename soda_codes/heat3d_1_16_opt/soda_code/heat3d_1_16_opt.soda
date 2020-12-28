@@ -1,0 +1,14 @@
+kernel: heat3d_1_16_opt
+unroll factor: 16
+burst width: 512
+
+input float: in(544, 514, *)
+
+local float: in_cc(0, 0, 0) = in(0, 0, 0)
+
+local float: h3_0(0, 0, 0) = ((((0.125f * in_cc(1, 0, 0)) + (-0.125f * in_cc(0, 0, 0))) + ((0.125f * in_cc(-1, 0, 0)) + ((0.125f * in_cc(0, 1, 0)) + (-0.125f * in_cc(0, 0, 0))))) + (((0.125f * in_cc(0, -1, 0)) + (0.125f * in_cc(0, 0, 1))) + ((-0.125f * in_cc(0, 0, 0)) + ((0.125f * in_cc(0, 0, -1)) + in_cc(0, 0, 0)))))
+
+output float: heat3d_1_16(0, 0, 0) = h3_0(0, 0, 0)
+
+
+iterate: 1

@@ -9295,10 +9295,11 @@ void float_add_iccad_apps(const std::string& prefix) {
 
 void heat_3d_real_iccad_apps(const std::string& prefix, const int num_stages) {
   //vector<int> throughputs{1, 16, 32};
-  vector<int> throughputs{1};
+  //vector<int> throughputs{1};
   //vector<int> throughputs{32};
   //vector<int> throughputs{16};
   //vector<int> throughputs{2, 4, 8, 12};
+  vector<int> throughputs{1, 8, 16};
   for (auto throughput : throughputs) {
     string name = prefix + "_" + str(throughput);
     App lp = heat_3d_real_iccad(name, num_stages);
