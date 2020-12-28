@@ -48,7 +48,7 @@ def table_op(table_lines, func):
 
     print(apps)
 
-    fig, ax = plt.subplots(3, 3)
+    fig, ax = plt.subplots(3, 3, sharex='col', sharey='row')
 
     fig.suptitle('Resource Utilization for SODA and Clockwork')
     i = 0
