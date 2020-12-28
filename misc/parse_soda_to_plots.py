@@ -16,29 +16,38 @@ def is_float(s):
 
 def table_op(table_lines, func):
     apps_to_system_to_use = {}
-    res = ''
     for l in table_lines:
         rm = "(.*)\\\\\\\\"
         m = re.match(rm, l)
         if m:
-            try:
-                values = m[1].split('&')
-                if is_float(values[1]):
-                    # print(values)
-                    system = values[2]
-                    app_name = values[0]
-                    lut_count = float(values[3])
-                    ff_count = float(values[5])
-                    bram_count = float(values[6])
-                    print('system {0} used {1} LUTs {2} FFs {3} BRAMs'.format(system, lut_count, ff_count, bram_count))
+            values = m[1].split('&')
+            if is_float(values[1]):
+                app_name = values[0]
+                apps_to_system_to_use[app_name] = {}
 
-                # values = func(values)
-                # res += ' & '.join(values) + ' \\\\' + '\n'
-            except:
-                res += l
-        else:
-            res += l
-    return res
+    for l in table_lines:
+        rm = "(.*)\\\\\\\\"
+        m = re.match(rm, l)
+        if m:
+            values = m[1].split('&')
+            if is_float(values[1]):
+                system = values[2]
+                app_name = values[0]
+                apps_to_system_to_use[app_name][system] = {}
+
+    for l in table_lines:
+        rm = "(.*)\\\\\\\\"
+        m = re.match(rm, l)
+        if m:
+            values = m[1].split('&')
+            if is_float(values[1]):
+                system = values[2]
+                app_name = values[0]
+                luts = int(values[3])
+                ffs = int(values[5])
+                brams = int(values[6])
+                apps_to_system_to_use[app_name][system]['lut'] = luts
+
 
 def sum_double_entry(values):
     rm = "\s*(\d+)\s+(\d+)\s*"
