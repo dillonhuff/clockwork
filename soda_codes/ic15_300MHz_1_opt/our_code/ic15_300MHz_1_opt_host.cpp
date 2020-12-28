@@ -4,6 +4,8 @@
 #include <vector>
 #include <cstdlib>
 
+#define __POPULATE_HOST_INPUTS__
+
 int main(int argc, char **argv) {
   srand(234);
   if (argc != 2) {
