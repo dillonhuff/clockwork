@@ -32,34 +32,42 @@ def table_op(table_lines, func):
     apps['blur'] = {}
     apps['blur']['SODA'] = []
     apps['blur']['CW'] = []
+
+    apps['cp'] = {}
+    apps['cp']['SODA'] = []
+    apps['cp']['CW'] = []
+
+    apps['sobel'] = {}
+    apps['sobel']['SODA'] = []
+    apps['sobel']['CW'] = []
     for l in lines:
-        if l[0] == 'blur':
-            print(l[2])
-            apps['blur'][l[2]].append(float(l[3]))
-    print('App luts: {0}'.format(apps))
+        # if l[0] == 'blur':
+            # print(l[2])
+        apps[l[0]][l[2]].append(float(l[3]))
 
-    N = len(apps['blur']['SODA'])
-    menMeans = apps['blur']['SODA']
+    for app in apps:
+        N = len(apps[app]['SODA'])
+        menMeans = apps[app]['SODA']
 
-    ind = np.arange(N)  # the x locations for the groups
-    width = 0.35       # the width of the bars
+        ind = np.arange(N)  # the x locations for the groups
+        width = 0.35       # the width of the bars
 
-    fig = plt.figure()
-    ax = fig.add_subplot(111)
-    rects1 = ax.bar(ind, menMeans, width)
+        fig = plt.figure()
+        ax = fig.add_subplot(111)
+        rects1 = ax.bar(ind, menMeans, width)
 
-    womenMeans= apps['blur']['CW']
-    rects2 = ax.bar(ind+width, womenMeans, width)
+        womenMeans= apps[app]['CW']
+        rects2 = ax.bar(ind+width, womenMeans, width)
 
-    # add some
-    ax.set_ylabel('Scores')
-    ax.set_title('Scores by group and gender')
-    ax.set_xticks(ind + width / 2)
-    ax.set_xticklabels( ('Blur 1', 'Blur 2', 'Blur 3', 'Blur 4', 'Blur 5') )
+        # add some
+        ax.set_ylabel('Scores')
+        ax.set_title('Scores by group and gender')
+        ax.set_xticks(ind + width / 2)
+        ax.set_xticklabels( ('{0} 1'.format(app), '{0} 2'.format(app), '{0} 3'.format(app)))
 
-    ax.legend( (rects1[0], rects2[0]), ('SODA', 'CW') )
+        ax.legend( (rects1[0], rects2[0]), ('SODA', 'CW') )
 
-    plt.show()
+        plt.show()
 
 def sum_double_entry(values):
     rm = "\s*(\d+)\s+(\d+)\s*"
