@@ -18960,7 +18960,7 @@ void generate_cuda_code(prog& prg) {
       string buf_size = str(prg.buffer_size(b));
       if (elem(b, prg.outs)) {
         out << tab(1) << "for (int i = 0; i < " << buf_size << "; i++) {" << endl;
-        out << tab(2) << "printf(\"" << b << "[i] = %f\\n\", " << b << "[i]);" << endl;
+        out << tab(2) << "printf(\"" << b << "[%d] = %f\\n\", i, " << b << "[i]);" << endl;
         out << tab(1) << "}" << endl;
       }
       out << tab(1) << "free(" << b << ");" << endl;
