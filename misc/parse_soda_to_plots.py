@@ -83,8 +83,8 @@ def table_op(table_lines, func):
             rects2 = ax.bar(ind+width, womenMeans, width)
 
             # add some
-            ax.set_ylabel('Scores')
-            ax.set_title('Scores by group and gender')
+            ax.set_ylabel('Counts')
+            ax.set_title('{0} count for {1} by throughput'.format(resource, app))
             ax.set_xticks(ind + width / 2)
             ax.set_xticklabels( ('{0} 1'.format(app), '{0} 2'.format(app), '{0} 4'.format(app)))
 
