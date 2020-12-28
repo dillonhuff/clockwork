@@ -37,23 +37,19 @@ def table_op(table_lines, func):
             print(l[2])
             apps['blur'][l[2]].append(float(l[3]))
     print('App luts: {0}'.format(apps))
-    # N = 5
+
     N = len(apps['blur']['SODA'])
     menMeans = apps['blur']['SODA']
-    # menMeans = (20, 35, 30, 35, 27)
-    # menStd =   (2, 3, 4, 1, 2)
 
     ind = np.arange(N)  # the x locations for the groups
     width = 0.35       # the width of the bars
 
     fig = plt.figure()
     ax = fig.add_subplot(111)
-    rects1 = ax.bar(ind, menMeans, width, color='royalblue')
+    rects1 = ax.bar(ind, menMeans, width)
 
-    # womenMeans = (25, 32, 34, 20, 25)
     womenMeans= apps['blur']['CW']
-    # womenStd =   (3, 5, 2, 3, 3)
-    rects2 = ax.bar(ind+width, womenMeans, width, color='seagreen')
+    rects2 = ax.bar(ind+width, womenMeans, width)
 
     # add some
     ax.set_ylabel('Scores')
