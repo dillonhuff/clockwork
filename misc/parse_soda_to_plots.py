@@ -28,46 +28,69 @@ def table_op(table_lines, func):
                 stripped = [element.strip() for element in values]
                 lines.append(stripped)
     print(lines)
+
+    app_names = ['blur', 'cp', 'sobel']
+    systems = ['SODA', 'CW']
+    resources = ['LUT', 'BRAM', 'FF']
+
     apps = {}
-    apps['blur'] = {}
-    apps['blur']['SODA'] = []
-    apps['blur']['CW'] = []
+    for resource in resources:
+        apps[resource] = {}
+        for app in app_names:
+            apps[resource][app] = {}
+            for system in systems:
+                apps[resource][app][system] = []
+            # for resource in resources:
+                # apps[app][system][resource] = []
 
-    apps['cp'] = {}
-    apps['cp']['SODA'] = []
-    apps['cp']['CW'] = []
+    # apps['blur'] = {}
+    # apps['blur']['SODA'] = []
+    # apps['blur']['CW'] = []
 
-    apps['sobel'] = {}
-    apps['sobel']['SODA'] = []
-    apps['sobel']['CW'] = []
+    # apps['cp'] = {}
+    # apps['cp']['SODA'] = []
+    # apps['cp']['CW'] = []
+
+    # apps['sobel'] = {}
+    # apps['sobel']['SODA'] = []
+    # apps['sobel']['CW'] = []
+    
     for l in lines:
-        # if l[0] == 'blur':
-            # print(l[2])
-        apps[l[0]][l[2]].append(float(l[3]))
+        apps['LUT'][l[0]][l[2]].append(float(l[3]))
+        apps['FF'][l[0]][l[2]].append(float(l[5]))
+        apps['BRAM'][l[0]][l[2]].append(float(l[6]))
 
-    for app in apps:
-        N = len(apps[app]['SODA'])
-        menMeans = apps[app]['SODA']
+    print(apps)
 
-        ind = np.arange(N)  # the x locations for the groups
-        width = 0.35       # the width of the bars
+    for resource in resources:
+        for app in app_names:
+            print('resource = {0}'.format(resource))
+            print('app      = {0}'.format(app))
+            print(apps[resource])
+            print(apps[resource][app])
+            assert(apps[resource] != None)
+            N = len(apps[resource][app]['SODA'])
+            menMeans = apps[resource][app]['SODA']
 
-        fig = plt.figure()
-        ax = fig.add_subplot(111)
-        rects1 = ax.bar(ind, menMeans, width)
+            ind = np.arange(N)  # the x locations for the groups
+            width = 0.35       # the width of the bars
 
-        womenMeans= apps[app]['CW']
-        rects2 = ax.bar(ind+width, womenMeans, width)
+            fig = plt.figure()
+            ax = fig.add_subplot(111)
+            rects1 = ax.bar(ind, menMeans, width)
 
-        # add some
-        ax.set_ylabel('Scores')
-        ax.set_title('Scores by group and gender')
-        ax.set_xticks(ind + width / 2)
-        ax.set_xticklabels( ('{0} 1'.format(app), '{0} 2'.format(app), '{0} 3'.format(app)))
+            womenMeans= apps[resource][app]['CW']
+            rects2 = ax.bar(ind+width, womenMeans, width)
 
-        ax.legend( (rects1[0], rects2[0]), ('SODA', 'CW') )
+            # add some
+            ax.set_ylabel('Scores')
+            ax.set_title('Scores by group and gender')
+            ax.set_xticks(ind + width / 2)
+            ax.set_xticklabels( ('{0} 1'.format(app), '{0} 2'.format(app), '{0} 4'.format(app)))
 
-        plt.show()
+            ax.legend( (rects1[0], rects2[0]), ('SODA', 'CW') )
+
+            plt.show()
 
 def sum_double_entry(values):
     rm = "\s*(\d+)\s+(\d+)\s*"
