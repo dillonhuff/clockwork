@@ -1,4 +1,6 @@
 import re
+import matplotlib.pyplot as plt
+import numpy as np
 
 f = open('./misc/soda_resource_comparison_table.tex').readlines()
 
@@ -14,31 +16,76 @@ def is_float(s):
     except ValueError:
         return False
 
+
 def table_op(table_lines, func):
-    apps_to_system_to_use = {}
-    res = ''
+    lines = []
     for l in table_lines:
         rm = "(.*)\\\\\\\\"
         m = re.match(rm, l)
         if m:
-            try:
-                values = m[1].split('&')
-                if is_float(values[1]):
-                    # print(values)
-                    system = values[2]
-                    app_name = values[0]
-                    lut_count = float(values[3])
-                    ff_count = float(values[5])
-                    bram_count = float(values[6])
-                    print('system {0} used {1} LUTs {2} FFs {3} BRAMs'.format(system, lut_count, ff_count, bram_count))
+            values = m[1].split('&')
+            if is_float(values[1]):
+                stripped = [element.strip() for element in values]
+                lines.append(stripped)
+    print(lines)
 
-                # values = func(values)
-                # res += ' & '.join(values) + ' \\\\' + '\n'
-            except:
-                res += l
-        else:
-            res += l
-    return res
+    app_names = ['blur', 'cp', 'sobel']
+    systems = ['SODA', 'CW']
+    resources = ['LUT', 'BRAM', 'FF']
+
+    apps = {}
+    for resource in resources:
+        apps[resource] = {}
+        for app in app_names:
+            apps[resource][app] = {}
+            for system in systems:
+                apps[resource][app][system] = []
+    
+    for l in lines:
+        apps['LUT'][l[0]][l[2]].append(float(l[3]))
+        apps['FF'][l[0]][l[2]].append(float(l[5]))
+        apps['BRAM'][l[0]][l[2]].append(float(l[6]))
+
+    print(apps)
+
+    fig, ax = plt.subplots(3, 3, sharex='col', sharey='row')
+
+    fig.suptitle('Resource Utilization for SODA and Clockwork')
+    i = 0
+    for resource in resources:
+        j = 0
+        for app in app_names:
+            print('resource = {0}'.format(resource))
+            print('app      = {0}'.format(app))
+            print(apps[resource])
+            print(apps[resource][app])
+            assert(apps[resource] != None)
+            N = len(apps[resource][app]['SODA'])
+            menMeans = apps[resource][app]['SODA']
+
+            ind = np.arange(N)  # the x locations for the groups
+            width = 0.35       # the width of the bars
+
+            # fig = plt.figure()
+            # ax[i, j] = fig.add_subplot(111)
+            rects1 = ax[i, j].bar(ind, menMeans, width)
+
+            womenMeans= apps[resource][app]['CW']
+            rects2 = ax[i, j].bar(ind+width, womenMeans, width)
+
+            # add some
+            # ax[i, j].set_ylabel('Counts')
+            # ax[i, j].set_title('{0} count for {1} by throughput'.format(resource, app))
+            ax[i, j].set_xticks(ind + width / 2)
+            ax[i, j].set_xticklabels( ('{0} 1'.format(app), '{0} 2'.format(app), '{0} 4'.format(app)))
+
+            ax[i, j].legend( (rects1[0], rects2[0]), ('SODA', 'CW') )
+
+            
+            j += 1
+        i += 1
+
+    plt.show()
 
 def sum_double_entry(values):
     rm = "\s*(\d+)\s+(\d+)\s*"

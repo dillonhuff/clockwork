@@ -1,0 +1,14 @@
+kernel: heat3d_1_8_opt
+unroll factor: 8
+burst width: 256
+
+input float: in(528, 514, *)
+
+local float: in_cc(0, 0, 0) = in(0, 0, 0)
+
+local float: h3_0(0, 0, 0) = ((((0.125f * in_cc(1, 0, 0)) + (-0.125f * in_cc(0, 0, 0))) + ((0.125f * in_cc(-1, 0, 0)) + ((0.125f * in_cc(0, 1, 0)) + (-0.125f * in_cc(0, 0, 0))))) + (((0.125f * in_cc(0, -1, 0)) + (0.125f * in_cc(0, 0, 1))) + ((-0.125f * in_cc(0, 0, 0)) + ((0.125f * in_cc(0, 0, -1)) + in_cc(0, 0, 0)))))
+
+output float: heat3d_1_8(0, 0, 0) = h3_0(0, 0, 0)
+
+
+iterate: 1

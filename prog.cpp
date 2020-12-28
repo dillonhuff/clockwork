@@ -111,6 +111,7 @@ void ocl_headers(ostream& out) {
   out << "#include <fstream>" << endl;
   out << "#include <vector>" << endl;
   out << "#include <cstdlib>" << endl << endl;
+  out << "#include \"clockwork_standard_compute_units.h\"" << endl << endl;
 }
 
 void
@@ -626,7 +627,6 @@ void generate_sw_bmp_test_harness(map<string, UBuffer>& buffers, prog& prg) {
 void generate_xilinx_accel_soda_host(CodegenOptions& options, map<string, UBuffer>& buffers, prog& prg) {
   ofstream out("soda_" + prg.name + "_host.cpp");
   ocl_headers(out);
-  out << "#include \"clockwork_standard_compute_units.h\"" << endl << endl;
 
   out << "int main(int argc, char **argv) {" << endl;
 
@@ -734,6 +734,8 @@ void generate_xilinx_accel_host(CodegenOptions& options, map<string, UBuffer>& b
   ofstream out(prg.name + "_host.cpp");
 
   ocl_headers(out);
+
+  out << "#define __POPULATE_HOST_INPUTS__" << endl << endl;
 
   out << "int main(int argc, char **argv) {" << endl;
 
