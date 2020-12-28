@@ -4,6 +4,11 @@
 #include <vector>
 #include <cstdlib>
 
+#include "clockwork_standard_compute_units.h"
+
+#define __FLOAT_OUTPUT__
+#define __POPULATE_HOST_INPUTS__
+
 int main(int argc, char **argv) {
   srand(234);
   if (argc != 2) {
@@ -42,7 +47,10 @@ int main(int argc, char **argv) {
   std::ofstream input_in_cc_update_0_read("in_cc_update_0_read.csv");
   for (int i = 0; i < in_cc_update_0_read_pipe0_DATA_SIZE; i++) {
 #ifdef __FLOAT_OUTPUT__
-    float  val = (rand() % 256);
+    assert(false);
+    float val = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+    //float  val = i;
+    //(rand() % 256);
 #else // __FLOAT_OUTPUT__
     uint32_t val = (rand() % 256);
 #endif // __FLOAT_OUTPUT__
@@ -134,7 +142,7 @@ nsduration = end - start;
 {
     std::ofstream regression_result("float_add_1_update_0_write_pipe0_accel_result.csv");
     for (int i = 0; i < float_add_1_update_0_write_pipe0_DATA_SIZE; i++) {
-      regression_result << ((uint32_t*) (float_add_1_update_0_write_pipe0.data()))[i] << std::endl;
+      regression_result << bitcast<float, uint32_t>(((uint32_t*) (float_add_1_update_0_write_pipe0.data()))[i]) << std::endl;
     }
 }
 
