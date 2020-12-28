@@ -47,7 +47,7 @@ def table_op(table_lines, func):
                 ffs = int(values[5])
                 brams = int(values[6])
                 apps_to_system_to_use[app_name][system]['lut'] = luts
-
+    print(apps_to_system_to_use)
 
 def sum_double_entry(values):
     rm = "\s*(\d+)\s+(\d+)\s*"
