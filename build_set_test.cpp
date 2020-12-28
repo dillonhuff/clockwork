@@ -18901,6 +18901,7 @@ void generate_cuda_code(prog& prg) {
   //    inside of it to prevent un-mapped thread / block
   //    indexes from doing anything
   ofstream out(prg.name + ".cu");
+  out << "#include <stdio.h>" << endl << endl;
   vector<string> arg_decls;
   for (auto b : prg.boundary_buffers()) {
     arg_decls.push_back("float* " + b);
@@ -18947,10 +18948,21 @@ void generate_cuda_code(prog& prg) {
       string buf_size = str(prg.buffer_size(b));
       out << tab(1) << b << " = (float*) malloc(sizeof(float)*" << buf_size << ");" << endl;
       args.push_back(b);
+      if (elem(b, prg.ins)) {
+        out << tab(1) << "for (int i = 0; i < " << buf_size << "; i++) {" << endl;
+        out << tab(2) << b << "[i] = i;" << endl;
+        out << tab(1) << "}" << endl;
+      }
     }
 
     out << tab(1) << prg.name << sep_list(args, "(", ");", ", ") << endl;
     for (auto b : prg.boundary_buffers()) {
+      string buf_size = str(prg.buffer_size(b));
+      if (elem(b, prg.outs)) {
+        out << tab(1) << "for (int i = 0; i < " << buf_size << "; i++) {" << endl;
+        out << tab(2) << "printf(\"" << b << "[i] = %f\\n\", " << b << "[i]);" << endl;
+        out << tab(1) << "}" << endl;
+      }
       out << tab(1) << "free(" << b << ");" << endl;
     }
   }
@@ -18967,7 +18979,7 @@ void gpu_codegen_test() {
   prg.add_output("y_dram");
 
   cpy("y_dram", "x_dram", 2, prg);
-  infer_bounds("y_dram", {63, 63}, prg);
+  infer_bounds("y_dram", {8, 8}, prg);
 
   prg.pretty_print();
 
