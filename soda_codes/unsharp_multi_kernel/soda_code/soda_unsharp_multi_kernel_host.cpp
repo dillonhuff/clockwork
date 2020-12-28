@@ -4,6 +4,8 @@
 #include <vector>
 #include <cstdlib>
 
+#include "clockwork_standard_compute_units.h"
+
 int main(int argc, char **argv) {
   srand(234);
   if (argc != 2) {
@@ -20,13 +22,13 @@ int main(int argc, char **argv) {
   size_t total_size_bytes = 0;
   size_t total_size_bytes_read = 0;
   size_t total_size_bytes_written = 0;
-  const int oc_load_in03_read_pipe0_DATA_SIZE = num_epochs*4096;
+  const int oc_load_in03_read_pipe0_DATA_SIZE = num_epochs*4356;
   const int oc_load_in03_read_BYTES_PER_PIXEL = 32 / 8;
   size_t oc_load_in03_read_size_bytes = oc_load_in03_read_BYTES_PER_PIXEL * oc_load_in03_read_pipe0_DATA_SIZE;
 
   total_size_bytes += oc_load_in03_read_size_bytes;
   total_size_bytes_read += oc_load_in03_read_size_bytes;
-  const int diff_write_pipe0_DATA_SIZE = num_epochs*4096;
+  const int diff_write_pipe0_DATA_SIZE = num_epochs*4356;
   const int diff_write_BYTES_PER_PIXEL = 32 / 8;
   size_t diff_write_size_bytes = diff_write_BYTES_PER_PIXEL * diff_write_pipe0_DATA_SIZE;
 
@@ -43,14 +45,32 @@ int main(int argc, char **argv) {
 
   std::ofstream input_oc_load_in03_read("oc_load_in03_read.csv");
   for (int i = 0; i < oc_load_in03_read_pipe0_DATA_SIZE; i++) {
+#ifdef __FLOAT_OUTPUT__
+    float  val = (rand() % 256);
+#else // __FLOAT_OUTPUT__
     uint32_t val = (rand() % 256);
+#endif // __FLOAT_OUTPUT__
+
+#ifdef __FLOAT_OUTPUT__
     input_oc_load_in03_read << val << std::endl;
+#else // __FLOAT_OUTPUT__
+    input_oc_load_in03_read << val << std::endl;
+#endif // __FLOAT_OUTPUT__
+
+#ifdef __FLOAT_OUTPUT__
+    ((uint32_t*) (oc_load_in03_read_pipe0.data()))[i] = bitcast<uint32_t, float>(val);
+#else // __FLOAT_OUTPUT__
     ((uint32_t*) (oc_load_in03_read_pipe0.data()))[i] = val;
+#endif // __FLOAT_OUTPUT__
   }
 
   input_oc_load_in03_read.close();
   for (int i = 0; i < diff_write_pipe0_DATA_SIZE; i++) {
+#ifdef __FLOAT_OUTPUT__
     ((uint32_t*) (diff_write_pipe0.data()))[i] = 0;
+#else // __FLOAT_OUTPUT__
+    ((uint32_t*) (diff_write_pipe0.data()))[i] = 0;
+#endif // __FLOAT_OUTPUT__
   }
 
   auto devices = xcl::get_xil_devices();
@@ -88,7 +108,7 @@ int main(int argc, char **argv) {
   OCL_CHECK(err, cl::Buffer oc_load_in03_read_pipe0_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_WRITE_ONLY, oc_load_in03_read_size_bytes, oc_load_in03_read_pipe0.data(), &err));
   OCL_CHECK(err, err = krnl_vector_add.setArg(1, oc_load_in03_read_pipe0_ocl_buf));
 
-  uint64_t transfer_size = num_epochs*(4096 / 1);
+  uint64_t transfer_size = num_epochs*(4356 / 1);
   OCL_CHECK(err, err = krnl_vector_add.setArg(2, transfer_size));
 
   std::cout << "Migrating memory" << std::endl;
@@ -120,7 +140,11 @@ nsduration = end - start;
   printf("Execution time = %f (sec) \n", dsduration);
   std::ofstream regression_result("diff_write_accel_result.csv");
   for (int i = 0; i < diff_write_pipe0_DATA_SIZE; i++) {
+#ifdef __FLOAT_OUTPUT__
+    regression_result << bitcast<float, uint32_t>(((uint32_t*) (diff_write_pipe0.data()))[i]) << std::endl;
+#else // __FLOAT_OUTPUT__
     regression_result << ((uint32_t*) (diff_write_pipe0.data()))[i] << std::endl;
+#endif // __FLOAT_OUTPUT__
   }
 
   return 0;
