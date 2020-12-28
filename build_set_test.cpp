@@ -9293,6 +9293,30 @@ void float_add_iccad_apps(const std::string& prefix) {
 
 }
 
+void heat_3d_real_iccad_apps(const std::string& prefix) {
+  //vector<int> throughputs{1, 16, 32};
+  vector<int> throughputs{1};
+  //vector<int> throughputs{32};
+  //vector<int> throughputs{16};
+  //vector<int> throughputs{2, 4, 8, 12};
+  for (auto throughput : throughputs) {
+    string name = prefix + "_" + str(throughput);
+    App lp = heat_3d_real_iccad(name, 11);
+    int rows = 512;
+    int cols = 512;
+    int channels = 512;
+    CodegenOptions options;
+    options.internal = true;
+    options.use_custom_code_string = true;
+    options.rtl_options.hls_clock_target_Hz = 300000000;
+    lp.realize(options, name, {cols, rows, channels}, "in", throughput);
+
+    move_to_benchmarks_folder(name + "_opt");
+  }
+  assert(false);
+
+}
+
 void heat_3d_iccad_apps(const std::string& prefix) {
   //vector<int> throughputs{1, 16, 32};
   vector<int> throughputs{1};
@@ -11438,6 +11462,8 @@ void naive_implementations() {
 }
 
 void iccad_tests() {
+
+  heat_3d_real_iccad_apps("heat3d_11");
 
   stencil_chain_15_stage_iccad_apps("ic15_fx");
   stencil_chain_12_stage_iccad_apps("ic12_small_300MHz");
