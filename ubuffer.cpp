@@ -3237,7 +3237,9 @@ void emit_lake_address_stream2file_new(CodegenOptions &options,
 
     auto stream_data = emit_top_address_stream(options, tp_name, buffers);
 
-    string fname = dir+"/"+buf_name + "_buf_" + tp_name;
+    string buf_dir = dir+"/"+buf_name + "/";
+    cmd("mkdir -p " + buf_dir);
+    string fname =  buf_dir + tp_name;
     emit_lake_streamdata_to_file(stream_data, fname);
   }
 }
