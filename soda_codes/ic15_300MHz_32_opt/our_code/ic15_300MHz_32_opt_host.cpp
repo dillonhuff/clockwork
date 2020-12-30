@@ -44,9 +44,13 @@ int main(int argc, char **argv) {
   std::ofstream input_in_update_0_read("in_update_0_read.csv");
   for (int i = 0; i < in_update_0_read_pipe0_DATA_SIZE; i++) {
 #ifdef __FLOAT_OUTPUT__
-    float  val = (rand() % 256);
+    assert(false);
+    //float  val = i;
+    //(rand() % 256);
 #else // __FLOAT_OUTPUT__
-    uint16_t val = (rand() % 256);
+    //uint16_t val = (rand() % 256);
+    uint16_t val = i;
+    //(rand() % 256);
 #endif // __FLOAT_OUTPUT__
 
 #ifdef __FLOAT_OUTPUT__
