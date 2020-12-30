@@ -1,0 +1,2 @@
+export app=heat3ds_1_8_opt
+export HLS_CLOCK_FREQUENCY=300000000

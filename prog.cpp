@@ -352,17 +352,17 @@ void run_kernel(CodegenOptions& options, std::ostream& out, map<string, UBuffer>
 
   out << tab(1) << "OCL_CHECK(err, err = q.enqueueMigrateMemObjects({" << comma_list(in_bufs) << "}, 0));" << endl << endl;
 
-  out << "unsigned long start, end, nsduration;" << endl;
-  out << "cl::Event event;" << endl << endl;
+  out << tab(1) << "unsigned long start, end, nsduration;" << endl;
+  out << tab(1) << "cl::Event event;" << endl << endl;
 
   out << tab(1) << "std::cout << \"Starting kernel\" << std::endl;" << endl;
   out << tab(1) << "OCL_CHECK(err, err = q.enqueueTask(krnl_vector_add, NULL, &event));" << endl;
   out << tab(1) << "OCL_CHECK(err, err = event.wait());" << endl;
   out << tab(1) << "end =" << endl;
-  out << "OCL_CHECK(err, event.getProfilingInfo<CL_PROFILING_COMMAND_END>(&err));" << endl;
-  out << "start = OCL_CHECK(err," << endl;
-  out << "event.getProfilingInfo<CL_PROFILING_COMMAND_START>(&err));" << endl;
-  out << "nsduration = end - start;" << endl;
+  out << tab(1) << "OCL_CHECK(err, event.getProfilingInfo<CL_PROFILING_COMMAND_END>(&err));" << endl;
+  out << tab(1) << "start = OCL_CHECK(err," << endl;
+  out << tab(1) << "event.getProfilingInfo<CL_PROFILING_COMMAND_START>(&err));" << endl;
+  out << tab(1) << "nsduration = end - start;" << endl;
 
   //out << tab(1) << "OCL_CHECK(err, err = q.enqueueTask(krnl_vector_add));" << endl << endl;
 
