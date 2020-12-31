@@ -1,0 +1,2 @@
+export app=flt_stencil_1_opt
+export HLS_CLOCK_FREQUENCY=300000000

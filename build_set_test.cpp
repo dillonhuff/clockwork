@@ -9222,7 +9222,7 @@ App heat_3d_iccad(const std::string& name) {
   return dn;
 }
 
-App float_big_stencil_iccad(const std::string& name) {
+App float_big_stencil_iccad(const std::string& name, const int num_stages) {
   App dn;
   dn.set_default_num_type(NUM_TYPE_FLOAT);
 
@@ -9309,22 +9309,21 @@ void float_add_iccad_apps(const std::string& prefix) {
 
 void float_big_stencil_iccad_apps(const std::string& prefix, const int num_stages) {
   //vector<int> throughputs{1, 16, 32};
-  //vector<int> throughputs{1};
+  vector<int> throughputs{1};
   //vector<int> throughputs{32};
   //vector<int> throughputs{16};
   //vector<int> throughputs{2, 4, 8, 12};
-  vector<int> throughputs{1, 8, 16};
+  //vector<int> throughputs{1, 8, 16};
   for (auto throughput : throughputs) {
     string name = prefix + "_" + str(throughput);
-    App lp = float_big_stencil(name, num_stages);
+    App lp = float_big_stencil_iccad(name, num_stages);
     int rows = 32;
     int cols = 32;
-    int channels = 32;
     CodegenOptions options;
     options.internal = true;
     options.use_custom_code_string = true;
     options.rtl_options.hls_clock_target_Hz = 300000000;
-    lp.realize(options, name, {cols, rows, channels}, "in", throughput);
+    lp.realize(options, name, {cols, rows}, "in", throughput);
 
     move_to_benchmarks_folder(name + "_opt");
   }
