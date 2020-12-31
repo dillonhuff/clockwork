@@ -1,6 +1,6 @@
 # Clockwork: Polyhedral Analysis for Hardware Accelerators
 
-Clockwork is a tool for compiling naive descriptions of hardware accelerators written as loop nests into high performance, staticall scheduled hardware.
+Clockwork is a tool for compiling naive descriptions of hardware accelerators written as loop nests into high performance, statically scheduled hardware.
 
 ![](./pictures/polyhedral_scheduling_figure_2.jpg)
 
