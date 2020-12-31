@@ -114,17 +114,17 @@ int main(int argc, char **argv) {
   std::cout << "Migrating memory" << std::endl;
   OCL_CHECK(err, err = q.enqueueMigrateMemObjects({oc_load_in03_read_pipe0_ocl_buf}, 0));
 
-unsigned long start, end, nsduration;
-cl::Event event;
+  unsigned long start, end, nsduration;
+  cl::Event event;
 
   std::cout << "Starting kernel" << std::endl;
   OCL_CHECK(err, err = q.enqueueTask(krnl_vector_add, NULL, &event));
   OCL_CHECK(err, err = event.wait());
   end =
-OCL_CHECK(err, event.getProfilingInfo<CL_PROFILING_COMMAND_END>(&err));
-start = OCL_CHECK(err,
-event.getProfilingInfo<CL_PROFILING_COMMAND_START>(&err));
-nsduration = end - start;
+  OCL_CHECK(err, event.getProfilingInfo<CL_PROFILING_COMMAND_END>(&err));
+  start = OCL_CHECK(err,
+  event.getProfilingInfo<CL_PROFILING_COMMAND_START>(&err));
+  nsduration = end - start;
   OCL_CHECK(err, err = q.enqueueMigrateMemObjects({pw_math_gray47_write_pipe0_ocl_buf}, CL_MIGRATE_MEM_OBJECT_HOST));
 
   q.finish();
