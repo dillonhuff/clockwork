@@ -39,7 +39,7 @@ not just take the latest release of NTL or barvinok.
 ### Miscellaneous Install Issues
 
 When installing barvinok you may get the error:
-
+```
     ./applications/testCompressParms.c:58:9: error: implicit declaration of function 'test_Constraints_Remove_parm_eqs' is invalid in C99
           [-Werror,-Wimplicit-function-declaration]
       TEST( test_Constraints_Remove_parm_eqs(A, B) )
@@ -113,6 +113,7 @@ When installing barvinok you may get the error:
     ./applications/testCompressParms.c:60:3: note: use '==' to turn this assignment into an equality comparison
     ./applications/testCompressParms.c:36:26: note: expanded from macro 'TEST'
 #define TEST(a) if (isOk = a) { \
+```
 
 If you get this error you can fix it by manually pasting the test function declarations above the main function in `testCompressParams.c`
   
