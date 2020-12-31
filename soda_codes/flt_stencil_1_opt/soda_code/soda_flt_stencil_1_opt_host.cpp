@@ -22,29 +22,29 @@ int main(int argc, char **argv) {
   size_t total_size_bytes = 0;
   size_t total_size_bytes_read = 0;
   size_t total_size_bytes_written = 0;
-  const int oc_load_in03_read_pipe0_DATA_SIZE = num_epochs*16;
-  const int oc_load_in03_read_BYTES_PER_PIXEL = 32 / 8;
-  size_t oc_load_in03_read_size_bytes = oc_load_in03_read_BYTES_PER_PIXEL * oc_load_in03_read_pipe0_DATA_SIZE;
+  const int flt_stencil_1_update_0_write_pipe0_DATA_SIZE = num_epochs*1088;
+  const int flt_stencil_1_update_0_write_BYTES_PER_PIXEL = 32 / 8;
+  size_t flt_stencil_1_update_0_write_size_bytes = flt_stencil_1_update_0_write_BYTES_PER_PIXEL * flt_stencil_1_update_0_write_pipe0_DATA_SIZE;
 
-  total_size_bytes += oc_load_in03_read_size_bytes;
-  total_size_bytes_read += oc_load_in03_read_size_bytes;
-  const int pw_math_gray47_write_pipe0_DATA_SIZE = num_epochs*16;
-  const int pw_math_gray47_write_BYTES_PER_PIXEL = 32 / 8;
-  size_t pw_math_gray47_write_size_bytes = pw_math_gray47_write_BYTES_PER_PIXEL * pw_math_gray47_write_pipe0_DATA_SIZE;
+  total_size_bytes += flt_stencil_1_update_0_write_size_bytes;
+  total_size_bytes_written += flt_stencil_1_update_0_write_size_bytes;
+  const int in_cc_update_0_read_pipe0_DATA_SIZE = num_epochs*1088;
+  const int in_cc_update_0_read_BYTES_PER_PIXEL = 32 / 8;
+  size_t in_cc_update_0_read_size_bytes = in_cc_update_0_read_BYTES_PER_PIXEL * in_cc_update_0_read_pipe0_DATA_SIZE;
 
-  total_size_bytes += pw_math_gray47_write_size_bytes;
-  total_size_bytes_written += pw_math_gray47_write_size_bytes;
+  total_size_bytes += in_cc_update_0_read_size_bytes;
+  total_size_bytes_read += in_cc_update_0_read_size_bytes;
 
   cl_int err;
   cl::Context context;
   cl::Kernel krnl_vector_add;
   cl::CommandQueue q;
 
-  std::vector<uint8_t, aligned_allocator<uint8_t> > oc_load_in03_read_pipe0(oc_load_in03_read_size_bytes);
-  std::vector<uint8_t, aligned_allocator<uint8_t> > pw_math_gray47_write_pipe0(pw_math_gray47_write_size_bytes);
+  std::vector<uint8_t, aligned_allocator<uint8_t> > flt_stencil_1_update_0_write_pipe0(flt_stencil_1_update_0_write_size_bytes);
+  std::vector<uint8_t, aligned_allocator<uint8_t> > in_cc_update_0_read_pipe0(in_cc_update_0_read_size_bytes);
 
-  std::ofstream input_oc_load_in03_read("oc_load_in03_read.csv");
-  for (int i = 0; i < oc_load_in03_read_pipe0_DATA_SIZE; i++) {
+  std::ofstream input_in_cc_update_0_read("in_cc_update_0_read.csv");
+  for (int i = 0; i < in_cc_update_0_read_pipe0_DATA_SIZE; i++) {
 #ifdef __FLOAT_OUTPUT__
     float  val = (rand() % 256);
 #else // __FLOAT_OUTPUT__
@@ -52,24 +52,24 @@ int main(int argc, char **argv) {
 #endif // __FLOAT_OUTPUT__
 
 #ifdef __FLOAT_OUTPUT__
-    input_oc_load_in03_read << val << std::endl;
+    input_in_cc_update_0_read << val << std::endl;
 #else // __FLOAT_OUTPUT__
-    input_oc_load_in03_read << val << std::endl;
+    input_in_cc_update_0_read << val << std::endl;
 #endif // __FLOAT_OUTPUT__
 
 #ifdef __FLOAT_OUTPUT__
-    ((uint32_t*) (oc_load_in03_read_pipe0.data()))[i] = bitcast<uint32_t, float>(val);
+    ((uint32_t*) (in_cc_update_0_read_pipe0.data()))[i] = bitcast<uint32_t, float>(val);
 #else // __FLOAT_OUTPUT__
-    ((uint32_t*) (oc_load_in03_read_pipe0.data()))[i] = val;
+    ((uint32_t*) (in_cc_update_0_read_pipe0.data()))[i] = val;
 #endif // __FLOAT_OUTPUT__
   }
 
-  input_oc_load_in03_read.close();
-  for (int i = 0; i < pw_math_gray47_write_pipe0_DATA_SIZE; i++) {
+  input_in_cc_update_0_read.close();
+  for (int i = 0; i < flt_stencil_1_update_0_write_pipe0_DATA_SIZE; i++) {
 #ifdef __FLOAT_OUTPUT__
-    ((uint32_t*) (pw_math_gray47_write_pipe0.data()))[i] = 0;
+    ((uint32_t*) (flt_stencil_1_update_0_write_pipe0.data()))[i] = 0;
 #else // __FLOAT_OUTPUT__
-    ((uint32_t*) (pw_math_gray47_write_pipe0.data()))[i] = 0;
+    ((uint32_t*) (flt_stencil_1_update_0_write_pipe0.data()))[i] = 0;
 #endif // __FLOAT_OUTPUT__
   }
 
@@ -92,7 +92,7 @@ int main(int argc, char **argv) {
       << "] with xclbin file!\n";
     } else {
       std::cout << "Device[" << i << "]: program successful!\n";
-      OCL_CHECK(err, krnl_vector_add = cl::Kernel(program, "multi_kernel_design_kernel", &err));
+      OCL_CHECK(err, krnl_vector_add = cl::Kernel(program, "flt_stencil_1_opt_kernel", &err));
       valid_device++;
       break;
     }
@@ -102,17 +102,17 @@ int main(int argc, char **argv) {
     exit(EXIT_FAILURE);
   }
 
-  OCL_CHECK(err, cl::Buffer pw_math_gray47_write_pipe0_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_READ_ONLY, pw_math_gray47_write_size_bytes, pw_math_gray47_write_pipe0.data(), &err));
-  OCL_CHECK(err, err = krnl_vector_add.setArg(0, pw_math_gray47_write_pipe0_ocl_buf));
+  OCL_CHECK(err, cl::Buffer flt_stencil_1_update_0_write_pipe0_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_READ_ONLY, flt_stencil_1_update_0_write_size_bytes, flt_stencil_1_update_0_write_pipe0.data(), &err));
+  OCL_CHECK(err, err = krnl_vector_add.setArg(0, flt_stencil_1_update_0_write_pipe0_ocl_buf));
 
-  OCL_CHECK(err, cl::Buffer oc_load_in03_read_pipe0_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_WRITE_ONLY, oc_load_in03_read_size_bytes, oc_load_in03_read_pipe0.data(), &err));
-  OCL_CHECK(err, err = krnl_vector_add.setArg(1, oc_load_in03_read_pipe0_ocl_buf));
+  OCL_CHECK(err, cl::Buffer in_cc_update_0_read_pipe0_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_WRITE_ONLY, in_cc_update_0_read_size_bytes, in_cc_update_0_read_pipe0.data(), &err));
+  OCL_CHECK(err, err = krnl_vector_add.setArg(1, in_cc_update_0_read_pipe0_ocl_buf));
 
-  uint64_t transfer_size = num_epochs*(16 / 1);
+  uint64_t transfer_size = num_epochs*(1088 / 1);
   OCL_CHECK(err, err = krnl_vector_add.setArg(2, transfer_size));
 
   std::cout << "Migrating memory" << std::endl;
-  OCL_CHECK(err, err = q.enqueueMigrateMemObjects({oc_load_in03_read_pipe0_ocl_buf}, 0));
+  OCL_CHECK(err, err = q.enqueueMigrateMemObjects({in_cc_update_0_read_pipe0_ocl_buf}, 0));
 
   unsigned long start, end, nsduration;
   cl::Event event;
@@ -125,7 +125,7 @@ int main(int argc, char **argv) {
   start = OCL_CHECK(err,
   event.getProfilingInfo<CL_PROFILING_COMMAND_START>(&err));
   nsduration = end - start;
-  OCL_CHECK(err, err = q.enqueueMigrateMemObjects({pw_math_gray47_write_pipe0_ocl_buf}, CL_MIGRATE_MEM_OBJECT_HOST));
+  OCL_CHECK(err, err = q.enqueueMigrateMemObjects({flt_stencil_1_update_0_write_pipe0_ocl_buf}, CL_MIGRATE_MEM_OBJECT_HOST));
 
   q.finish();
 
@@ -138,12 +138,12 @@ int main(int argc, char **argv) {
   std::cout << "bytes / sec = " << bpersec << std::endl;
   std::cout << "GB / sec    = " << gbpersec << std::endl;
   printf("Execution time = %f (sec) \n", dsduration);
-  std::ofstream regression_result("pw_math_gray47_write_accel_result.csv");
-  for (int i = 0; i < pw_math_gray47_write_pipe0_DATA_SIZE; i++) {
+  std::ofstream regression_result("flt_stencil_1_update_0_write_accel_result.csv");
+  for (int i = 0; i < flt_stencil_1_update_0_write_pipe0_DATA_SIZE; i++) {
 #ifdef __FLOAT_OUTPUT__
-    regression_result << bitcast<float, uint32_t>(((uint32_t*) (pw_math_gray47_write_pipe0.data()))[i]) << std::endl;
+    regression_result << bitcast<float, uint32_t>(((uint32_t*) (flt_stencil_1_update_0_write_pipe0.data()))[i]) << std::endl;
 #else // __FLOAT_OUTPUT__
-    regression_result << ((uint32_t*) (pw_math_gray47_write_pipe0.data()))[i] << std::endl;
+    regression_result << ((uint32_t*) (flt_stencil_1_update_0_write_pipe0.data()))[i] << std::endl;
 #endif // __FLOAT_OUTPUT__
   }
 

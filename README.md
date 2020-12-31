@@ -1,6 +1,6 @@
 # Clockwork: Polyhedral Analysis for Hardware Accelerators
 
-Clockwork is a tool for compiling naive descriptions of hardware accelerators written as loop nests into high performance, staticall scheduled hardware.
+Clockwork is a tool for compiling naive descriptions of hardware accelerators written as loop nests into high performance, statically scheduled hardware.
 
 ![](./pictures/polyhedral_scheduling_figure_2.jpg)
 
@@ -35,6 +35,88 @@ not just take the latest release of NTL or barvinok.
    * https://repo.or.cz/w/barvinok.git/blob/HEAD:/README - instructions for installing barvinok with ntl and GMP
    * note that linux users may need to manually add -lpthread to the LIBS field (change "LIBS = -lntl -lgmp", to "LIBS = -lpthread -lntl -lgmp")
 * *optional codegen backend* **CoreIR** - [github link](https://github.com/rdaly525/coreir.git), install script: [./misc/install\_coreir.sh](./misc/install_coreir.sh).
+
+### Miscellaneous Install Issues
+
+When installing barvinok you may get the error:
+```
+    ./applications/testCompressParms.c:58:9: error: implicit declaration of function 'test_Constraints_Remove_parm_eqs' is invalid in C99
+          [-Werror,-Wimplicit-function-declaration]
+      TEST( test_Constraints_Remove_parm_eqs(A, B) )
+            ^
+    ./applications/testCompressParms.c:58:9: note: did you mean 'Constraints_Remove_parm_eqs'?
+    ./include/polylib/compress_parms.h:73:10: note: 'Constraints_Remove_parm_eqs' declared here
+    Matrix * Constraints_Remove_parm_eqs(Matrix ** M, Matrix ** Ctxt, 
+             ^
+    ./applications/testCompressParms.c:58:3: warning: using the result of an assignment as a condition without parentheses [-Wparentheses]
+      TEST( test_Constraints_Remove_parm_eqs(A, B) )
+      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ./applications/testCompressParms.c:36:26: note: expanded from macro 'TEST'
+#define TEST(a) if (isOk = a) { \
+                        ~~~~~^~~
+    ./applications/testCompressParms.c:58:3: note: place parentheses around the assignment to silence this warning
+    ./applications/testCompressParms.c:36:26: note: expanded from macro 'TEST'
+#define TEST(a) if (isOk = a) { \
+                             ^
+    ./applications/testCompressParms.c:58:3: note: use '==' to turn this assignment into an equality comparison
+    ./applications/testCompressParms.c:36:26: note: expanded from macro 'TEST'
+#define TEST(a) if (isOk = a) { \
+                             ^
+    ./applications/testCompressParms.c:59:9: error: implicit declaration of function 'test_Polyhedron_Remove_parm_eqs' is invalid in C99
+          [-Werror,-Wimplicit-function-declaration]
+      TEST( test_Polyhedron_Remove_parm_eqs(A, B) )
+            ^
+    In file included from ./applications/testehrhart.c:35:
+    ./include/polylib/homogenization.h:19:9: warning: 'HOMOGENIZATION_H' is used as a header guard here, followed by #define of a different macro [-Wheader-guard]
+#ifndef HOMOGENIZATION_H
+            ^~~~~~~~~~~~~~~~
+    ./include/polylib/homogenization.h:20:9: note: 'HOMOGENIZATTON_H' is defined here; did you mean 'HOMOGENIZATION_H'?
+#define HOMOGENIZATTON_H
+            ^~~~~~~~~~~~~~~~
+            HOMOGENIZATION_H
+    ./applications/testCompressParms.c:59:9: note: did you mean 'Polyhedron_Remove_parm_eqs'?
+    ./include/polylib/compress_parms.h:97:14: note: 'Polyhedron_Remove_parm_eqs' declared here
+    Polyhedron * Polyhedron_Remove_parm_eqs(Polyhedron ** P, Polyhedron ** C, 
+                 ^
+    ./applications/testCompressParms.c:59:3: warning: using the result of an assignment as a condition without parentheses [-Wparentheses]
+      TEST( test_Polyhedron_Remove_parm_eqs(A, B) )
+      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ./applications/testCompressParms.c:36:26: note: expanded from macro 'TEST'
+#define TEST(a) if (isOk = a) { \
+                        ~~~~~^~~
+    ./applications/testCompressParms.c:59:3: note: place parentheses around the assignment to silence this warning
+    ./applications/testCompressParms.c:36:26: note: expanded from macro 'TEST'
+#define TEST(a) if (isOk = a) { \
+                             ^
+    ./applications/testCompressParms.c:59:3: note: use '==' to turn this assignment into an equality comparison
+    ./applications/testCompressParms.c:36:26: note: expanded from macro 'TEST'
+#define TEST(a) if (isOk = a) { \
+                             ^
+    ./applications/testCompressParms.c:60:9: error: implicit declaration of function 'test_Constraints_fullDimensionize' is invalid in C99
+          [-Werror,-Wimplicit-function-declaration]
+      TEST( test_Constraints_fullDimensionize(A, B, 4) )
+            ^
+    ./applications/testCompressParms.c:60:9: note: did you mean 'Constraints_fullDimensionize'?
+    ./include/polylib/compress_parms.h:65:6: note: 'Constraints_fullDimensionize' declared here
+    void Constraints_fullDimensionize(Matrix ** M, Matrix ** C, Matrix ** VL, 
+         ^
+    ./applications/testCompressParms.c:60:3: warning: using the result of an assignment as a condition without parentheses [-Wparentheses]
+      TEST( test_Constraints_fullDimensionize(A, B, 4) )
+      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ./applications/testCompressParms.c:36:26: note: expanded from macro 'TEST'
+#define TEST(a) if (isOk = a) { \
+                        ~~~~~^~~
+    ./applications/testCompressParms.c:60:3: note: place parentheses around the assignment to silence this warning
+    ./applications/testCompressParms.c:36:26: note: expanded from macro 'TEST'
+#define TEST(a) if (isOk = a) { \
+                             ^
+    ./applications/testCompressParms.c:60:3: note: use '==' to turn this assignment into an equality comparison
+    ./applications/testCompressParms.c:36:26: note: expanded from macro 'TEST'
+#define TEST(a) if (isOk = a) { \
+```
+
+If you get this error you can fix it by manually pasting the test function declarations above the main function in `testCompressParams.c`
+  
 
 ## Setting Your private\_settings.sh
 
