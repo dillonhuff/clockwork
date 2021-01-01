@@ -9342,7 +9342,7 @@ void heat_3d_real_iccad_apps(const std::string& prefix, const int num_stages) {
     App lp = heat_3d_real_iccad(name, num_stages);
     int rows = 32;
     int cols = 32;
-    int channels = 32;
+    int channels = 4;
     CodegenOptions options;
     options.internal = true;
     options.use_custom_code_string = true;
@@ -11500,8 +11500,8 @@ void naive_implementations() {
 }
 
 void iccad_tests() {
+  heat_3d_real_iccad_apps("heat3dsla_1", 1);
   float_big_stencil_iccad_apps("flt_stencil", 1);
-  heat_3d_real_iccad_apps("heat3ds_1", 1);
 
   stencil_chain_15_stage_iccad_apps("ic15_fx");
   stencil_chain_12_stage_iccad_apps("ic12_small_300MHz");
