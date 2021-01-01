@@ -7,6 +7,7 @@
 #include "clockwork_standard_compute_units.h"
 
 #define __POPULATE_HOST_INPUTS__
+#define __FLOAT_OUTPUT__ 
 
 int main(int argc, char **argv) {
   srand(234);
@@ -138,7 +139,7 @@ int main(int argc, char **argv) {
 {
     std::ofstream regression_result("heat3dsla_1_1_update_0_write_pipe0_accel_result.csv");
     for (int i = 0; i < heat3dsla_1_1_update_0_write_pipe0_DATA_SIZE; i++) {
-      regression_result << ((uint32_t*) (heat3dsla_1_1_update_0_write_pipe0.data()))[i] << std::endl;
+      regression_result << bitcast<float, uint32_t>(((uint32_t*) (heat3dsla_1_1_update_0_write_pipe0.data()))[i]) << std::endl;
     }
 }
 
