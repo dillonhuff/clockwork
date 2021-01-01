@@ -9332,11 +9332,11 @@ void float_big_stencil_iccad_apps(const std::string& prefix, const int num_stage
 }
 void heat_3d_real_iccad_apps(const std::string& prefix, const int num_stages) {
   //vector<int> throughputs{1, 16, 32};
-  //vector<int> throughputs{1};
+  vector<int> throughputs{1};
   //vector<int> throughputs{32};
   //vector<int> throughputs{16};
   //vector<int> throughputs{2, 4, 8, 12};
-  vector<int> throughputs{1, 8, 16};
+  //vector<int> throughputs{1, 8, 16};
   for (auto throughput : throughputs) {
     string name = prefix + "_" + str(throughput);
     App lp = heat_3d_real_iccad(name, num_stages);
@@ -9345,6 +9345,7 @@ void heat_3d_real_iccad_apps(const std::string& prefix, const int num_stages) {
     int channels = 32;
     CodegenOptions options;
     options.internal = true;
+    options.num_input_epochs = 1;
     options.use_custom_code_string = true;
     options.rtl_options.hls_clock_target_Hz = 300000000;
     lp.realize(options, name, {cols, rows, channels}, "in", throughput);
@@ -11500,7 +11501,8 @@ void naive_implementations() {
 }
 
 void iccad_tests() {
-  heat_3d_real_iccad_apps("heat3dla_8", 8);
+  heat_3d_real_iccad_apps("heat3dlafe_1", 1);
+  //heat_3d_real_iccad_apps("heat3dla_8", 8);
   float_big_stencil_iccad_apps("flt_stencil", 1);
 
   stencil_chain_15_stage_iccad_apps("ic15_fx");
