@@ -48,7 +48,8 @@ int main(int argc, char **argv) {
   std::ofstream input_in_cc_update_0_read("in_cc_update_0_read.csv");
   for (int i = 0; i < in_cc_update_0_read_pipe0_DATA_SIZE; i++) {
 #ifdef __FLOAT_OUTPUT__
-    float  val = i;
+    float val = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+    //float  val = i;
 #else // __FLOAT_OUTPUT__
     uint32_t val = i
 #endif // __FLOAT_OUTPUT__

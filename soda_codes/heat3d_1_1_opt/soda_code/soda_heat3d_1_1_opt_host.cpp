@@ -6,6 +6,8 @@
 
 #include "clockwork_standard_compute_units.h"
 
+#define __FLOAT_OUTPUT__
+
 int main(int argc, char **argv) {
   srand(234);
   if (argc != 2) {

@@ -48,7 +48,8 @@ int main(int argc, char **argv) {
   std::ofstream input_in_cc_update_0_read("in_cc_update_0_read.csv");
   for (int i = 0; i < in_cc_update_0_read_pipe0_DATA_SIZE; i++) {
 #ifdef __FLOAT_OUTPUT__
-    float  val = i;
+    float val = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+    //float  val = i;
     //(rand() % 256);
 #else // __FLOAT_OUTPUT__
     uint32_t val = i;
@@ -145,8 +146,8 @@ nsduration = end - start;
   std::ofstream regression_result("float_stencil_1_update_0_write_accel_result.csv");
   for (int i = 0; i < float_stencil_1_update_0_write_pipe0_DATA_SIZE; i++) {
 #ifdef __FLOAT_OUTPUT__
-    //regression_result << bitcast<float, uint32_t>(((uint32_t*) (float_stencil_1_update_0_write_pipe0.data()))[i]) << std::endl;
-    regression_result << hw_uint<32>(((uint32_t*) (float_stencil_1_update_0_write_pipe0.data()))[i]) << std::endl;
+    regression_result << bitcast<float, uint32_t>(((uint32_t*) (float_stencil_1_update_0_write_pipe0.data()))[i]) << std::endl;
+    //regression_result << hw_uint<32>(((uint32_t*) (float_stencil_1_update_0_write_pipe0.data()))[i]) << std::endl;
 #else // __FLOAT_OUTPUT__
     regression_result << ((uint32_t*) (float_stencil_1_update_0_write_pipe0.data()))[i] << std::endl;
 #endif // __FLOAT_OUTPUT__
