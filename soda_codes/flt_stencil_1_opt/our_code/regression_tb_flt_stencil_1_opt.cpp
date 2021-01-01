@@ -26,7 +26,7 @@ int main() {
 #ifdef __INT_OUTPUT__
     in_pix << in_val << endl;
 #elif defined(__FLOAT_OUTPUT__)
-    to_float(in_pix) << in_val << endl;
+    in_pix << to_float(in_val) << endl;
 #else // No specified output type
     in_pix << in_val << endl;
 #endif

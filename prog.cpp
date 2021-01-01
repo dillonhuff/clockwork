@@ -2468,7 +2468,7 @@ void generate_regression_testbench(prog& prg, map<string, UBuffer>& buffers) {
       rgtb << tab(2) << "in_pix << in_val << endl;" << endl;
       //rgtb << tab(2) << "set_at<" << p << "*" << port_width << ", " << bundle_width << ", " << port_width << ">(in_val, " << next_val << ");" << endl;
       rgtb << "#elif defined(__FLOAT_OUTPUT__)" << endl;
-      rgtb << tab(2) << "to_float(in_pix) << in_val << endl;" << endl;
+      rgtb << tab(2) << "in_pix << to_float(in_val) << endl;" << endl;
       //rgtb << tab(2) << "set_at<" << p << "*" << port_width << ", " << bundle_width << ", " << port_width << ">(in_val, " << parens("to_bits" + parens(parens("float") + next_val)) << ");" << endl;
       //rgtb << tab(2) << "fout << to_float(actual_lane_" << p << ") << endl;" << endl;
       rgtb << "#else // No specified output type" << endl;
