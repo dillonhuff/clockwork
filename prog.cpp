@@ -411,7 +411,6 @@ void populate_input(std::ostream& out, const std::string& edge_bundle, const str
   string fval = "static_cast <float> (rand()) / static_cast <float> (RAND_MAX)";
   out << tab(2) << "float " << " val = " << fval << ";" << endl;
   //out << tab(2) << "float " << " val = (rand() % 256);" << endl;
-  out << tab(2) << "float " << " val = (rand() % 256);" << endl;
   out << "#else // __FLOAT_OUTPUT__" << endl;
   out << tab(2) << tp << " val = (rand() % 256);" << endl;
   out << "#endif // __FLOAT_OUTPUT__" << endl << endl;
