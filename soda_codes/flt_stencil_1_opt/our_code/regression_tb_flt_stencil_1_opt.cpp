@@ -19,11 +19,17 @@ int main() {
 #ifdef __INT_OUTPUT__
     set_at<0*32, 32, 32>(in_val, (1*i + 0));
 #elif defined(__FLOAT_OUTPUT__)
-    set_at<0*32, 32, 32>(in_val, (to_bits((float)(1*i + 0))));
+    set_at<0*32, 32, 32>(in_val, (to_bits((float)static_cast <float> (rand()) / static_cast <float> (RAND_MAX))));
 #else // No specified output type
     set_at<0*32, 32, 32>(in_val, (1*i + 0));
 #endif
+#ifdef __INT_OUTPUT__
     in_pix << in_val << endl;
+#elif defined(__FLOAT_OUTPUT__)
+    to_float(in_pix) << in_val << endl;
+#else // No specified output type
+    in_pix << in_val << endl;
+#endif
     in_cc_update_0_read.write(in_val);
   }
 
