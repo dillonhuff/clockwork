@@ -2397,6 +2397,7 @@ void generate_regression_testbench(prog& prg, map<string, UBuffer>& buffers) {
   rgtb << "#include \"clockwork_standard_compute_units.h\"" << endl << endl;
 
   rgtb << "int main() {" << endl;
+  rgtb << tab(1) << "srand(234);" << endl;
   rgtb << tab(1) << "ofstream in_pix(\"" << "input_pixels_regression_result_" << prg.name << ".txt\");" << endl;
   rgtb << tab(1) << "ofstream fout(\"" << "regression_result_" << prg.name << ".txt\");" << endl;
 
@@ -2452,7 +2453,7 @@ void generate_regression_testbench(prog& prg, map<string, UBuffer>& buffers) {
       //rgtb << tab(2) << "set_at<" << p << "*" << port_width << ", " << bundle_width << ", " << port_width << ">(in_val, " << next_val << ");" << endl;
       rgtb << "#ifdef __INT_OUTPUT__" << endl;
       rgtb << tab(2) << "set_at<" << p << "*" << port_width << ", " << bundle_width << ", " << port_width << ">(in_val, " << next_val << ");" << endl;
-      rgtb << "#elif __FLOAT_OUTPUT__" << endl;
+      rgtb << "#elif defined(__FLOAT_OUTPUT__)" << endl;
       rgtb << tab(2) << "set_at<" << p << "*" << port_width << ", " << bundle_width << ", " << port_width << ">(in_val, " << parens("to_bits" + parens(parens("float") + next_val)) << ");" << endl;
       //rgtb << tab(2) << "fout << to_float(actual_lane_" << p << ") << endl;" << endl;
       rgtb << "#else // No specified output type" << endl;
@@ -2492,7 +2493,7 @@ void generate_regression_testbench(prog& prg, map<string, UBuffer>& buffers) {
 
       rgtb << "#ifdef __INT_OUTPUT__" << endl;
       rgtb << tab(2) << "fout << (int) actual_lane_" << p << " << endl;" << endl;
-      rgtb << "#elif __FLOAT_OUTPUT__" << endl;
+      rgtb << "#elif defined(__FLOAT_OUTPUT__)" << endl;
       rgtb << tab(2) << "fout << to_float(actual_lane_" << p << ") << endl;" << endl;
       rgtb << "#else // No specified output type" << endl;
       rgtb << tab(2) << "fout << actual_lane_" << p << " << endl;" << endl;
@@ -2515,6 +2516,7 @@ void generate_regression_testbench(prog& prg) {
   rgtb << "#include \"" << prg.name << ".h\"" << endl << endl;
 
   rgtb << "int main() {" << endl;
+  rgtb << tab(1) << "srand(234);" << endl;
   rgtb << tab(1) << "ofstream fout(\"" << "regression_result_" << prg.name << ".txt\");" << endl;
 
   vector<string> optimized_streams;
@@ -8275,6 +8277,7 @@ UBuffer write_latency_adjusted_buffer(
     prog& prg,
     UBuffer& buf,
     schedule_info& hwinfo) {
+
   UBuffer cpy = buf;
   cout << "Adjusted latencies" << endl;
   for (auto l : hwinfo.compute_unit_latencies) {

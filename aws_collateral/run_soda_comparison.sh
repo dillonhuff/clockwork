@@ -12,7 +12,8 @@ cd ./soda_codes/${APP}/soda_code/
 cd ../
 cd our_code
 
-g++ regression_tb_${APP}.cpp -I ../../../ -std=c++11 ${APP}.cpp -D__INT_OUTPUT__
+#g++ regression_tb_${APP}.cpp -I ../../../ -std=c++11 ${APP}.cpp -D__INT_OUTPUT__
+g++ regression_tb_${APP}.cpp -I ../../../ -std=c++11 ${APP}.cpp -D__FLOAT_OUTPUT__
 ./a.out || { echo 'Error: No SW testbench executable for our implementation'; exit 1; }
 
 cd ../../../
