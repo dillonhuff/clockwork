@@ -408,6 +408,9 @@ void populate_input(std::ostream& out, const std::string& edge_bundle, const str
   out << tab(1) << "std::ofstream input_" << edge_bundle << "(\"" << edge_bundle << ".csv\");" << endl;
   out << tab(1) << "for (int i = 0; i < " << edge_bundle << "_pipe0_DATA_SIZE; i++) {" << endl;
   out << "#ifdef __FLOAT_OUTPUT__" << endl;
+  string fval = "static_cast <float> (rand()) / static_cast <float> (RAND_MAX)";
+  out << tab(2) << "float " << " val = " << fval << ";" << endl;
+  //out << tab(2) << "float " << " val = (rand() % 256);" << endl;
   out << tab(2) << "float " << " val = (rand() % 256);" << endl;
   out << "#else // __FLOAT_OUTPUT__" << endl;
   out << tab(2) << tp << " val = (rand() % 256);" << endl;
