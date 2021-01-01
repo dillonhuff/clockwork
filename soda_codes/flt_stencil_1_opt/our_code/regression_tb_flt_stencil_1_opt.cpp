@@ -2,8 +2,6 @@
 #include "flt_stencil_1_opt.h"
 #include "clockwork_standard_compute_units.h"
 
-#define __FLOAT_OUTPUT__
-
 int main() {
   srand(234);
   ofstream in_pix("input_pixels_regression_result_flt_stencil_1_opt.txt");
@@ -21,13 +19,17 @@ int main() {
 #ifdef __INT_OUTPUT__
     set_at<0*32, 32, 32>(in_val, (1*i + 0));
 #elif defined(__FLOAT_OUTPUT__)
-    set_at<0*32, 32, 32>(in_val, (to_bits(
-      static_cast <float> (rand()) / static_cast <float> (RAND_MAX))));
-            //(float)(1*i + 0))));
+    set_at<0*32, 32, 32>(in_val, (to_bits((float)static_cast <float> (rand()) / static_cast <float> (RAND_MAX))));
 #else // No specified output type
     set_at<0*32, 32, 32>(in_val, (1*i + 0));
 #endif
+#ifdef __INT_OUTPUT__
     in_pix << in_val << endl;
+#elif defined(__FLOAT_OUTPUT__)
+    to_float(in_pix) << in_val << endl;
+#else // No specified output type
+    in_pix << in_val << endl;
+#endif
     in_cc_update_0_read.write(in_val);
   }
 
