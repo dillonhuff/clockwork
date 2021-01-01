@@ -3,6 +3,7 @@
 #include "clockwork_standard_compute_units.h"
 
 int main() {
+  srand(234);
   ofstream in_pix("input_pixels_regression_result_flt_stencil_1_opt.txt");
   ofstream fout("regression_result_flt_stencil_1_opt.txt");
   HWStream<hw_uint<32> > in_cc_update_0_read;
@@ -17,7 +18,7 @@ int main() {
     hw_uint<32> in_val;
 #ifdef __INT_OUTPUT__
     set_at<0*32, 32, 32>(in_val, (1*i + 0));
-#elif __FLOAT_OUTPUT__
+#elif defined(__FLOAT_OUTPUT__)
     set_at<0*32, 32, 32>(in_val, (to_bits((float)(1*i + 0))));
 #else // No specified output type
     set_at<0*32, 32, 32>(in_val, (1*i + 0));
@@ -33,7 +34,7 @@ int main() {
     auto actual_lane_0 = actual.extract<0*32, 31>();
 #ifdef __INT_OUTPUT__
     fout << (int) actual_lane_0 << endl;
-#elif __FLOAT_OUTPUT__
+#elif defined(__FLOAT_OUTPUT__)
     fout << to_float(actual_lane_0) << endl;
 #else // No specified output type
     fout << actual_lane_0 << endl;
