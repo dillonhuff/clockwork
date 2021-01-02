@@ -9410,7 +9410,8 @@ void stencil_chain_15_stage_iccad_apps(const std::string& prefix) {
     CodegenOptions options;
     options.internal = true;
     options.use_custom_code_string = true;
-    options.rtl_options.hls_clock_target_Hz = 300000000;
+    //options.rtl_options.hls_clock_target_Hz = 300000000;
+    options.rtl_options.hls_clock_target_Hz = 275000000;
     lp.realize(options, name, {cols, rows}, "in", throughput);
 
     move_to_benchmarks_folder(name + "_opt");
@@ -11503,6 +11504,9 @@ void naive_implementations() {
 }
 
 void iccad_tests() {
+  stencil_chain_15_stage_iccad_apps("ic15_275MHz");
+  assert(false);
+
   // exposure_fusion_app
   exposure_fusion_iccad_apps("ef_fpga_rerun");
 
@@ -11538,7 +11542,6 @@ void iccad_tests() {
   //heat_3d_real_iccad_apps("heat3dla_8", 8);
   float_big_stencil_iccad_apps("flt_stencil", 1);
 
-  stencil_chain_15_stage_iccad_apps("ic15_fx");
   stencil_chain_12_stage_iccad_apps("ic12_small_300MHz");
   stencil_chain_15_stage_iccad_apps("ic15_300MHz");
   heat_3d_iccad_apps("heat2d_1");
