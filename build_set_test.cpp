@@ -9473,7 +9473,9 @@ void gauss_pyramid_iccad_apps(const std::string& prefix) {
 }
 
 void exposure_fusion_iccad_apps(const std::string& prefix) {
-  vector<int> throughputs{1, 2, 4, 8, 16};
+  vector<int> throughputs{1};
+  //, 2, 4, 8, 16};
+  //vector<int> throughputs{1, 2, 4, 8, 16};
   //vector<int> throughputs{16};
   for (auto throughput : throughputs) {
     string name = prefix + "_" + str(throughput);
@@ -11501,6 +11503,17 @@ void naive_implementations() {
 }
 
 void iccad_tests() {
+  // exposure_fusion_app
+  exposure_fusion_iccad_apps("ef_fpga");
+  assert(false);
+
+  // ef_cartoon
+  ef_cartoon_test("ef_cartoon");
+
+
+  // exposure_fusion_app
+  exposure_fusion();
+  assert(false);
 
   // ef_cartoon
   string name = "ef_sm1";
@@ -11516,18 +11529,10 @@ void iccad_tests() {
   ef.realize(options, name, {cols, rows}, "in", throughput);
 
   move_to_benchmarks_folder(name + "_opt");
+
+
   assert(false);
 
-  // exposure_fusion_app
-  exposure_fusion_iccad_apps("ef_fpga");
-
-  // ef_cartoon
-  ef_cartoon_test("ef_cartoon");
-
-
-  // exposure_fusion_app
-  exposure_fusion();
-  assert(false);
 
   heat_3d_real_iccad_apps("heat3dlafe_1", 1);
   //heat_3d_real_iccad_apps("heat3dla_8", 8);

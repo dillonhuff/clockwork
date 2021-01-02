@@ -9,8 +9,6 @@ using namespace std;
 // compute file: ef_fpga_1_opt_compute_units.h
 #include "ef_fpga_1_opt_compute_units.h"
 
-#include "hw_classes.h"
-
 struct bright_bright_update_0_write0_to_bright_laplace_diff_0_rd0_cache {
 	// RAM Box: {[0, 1919], [0, 1079]}
 	// Capacity: 1929
@@ -358,8 +356,6 @@ inline hw_uint<16> bright_bright_weights_update_0_read_bundle_read(bright_cache&
 	return result;
 }
 
-#include "hw_classes.h"
-
 struct bright_gauss_blur_1_bright_gauss_blur_1_update_0_write0_to_bright_gauss_ds_1_rd0_cache {
 	// RAM Box: {[-6, 1918], [-6, 1078]}
 	// Capacity: 1
@@ -423,8 +419,6 @@ inline hw_uint<16> bright_gauss_blur_1_bright_gauss_ds_1_update_0_read_bundle_re
 	set_at<0, 16>(result, bright_gauss_ds_1_rd0_res);
 	return result;
 }
-
-#include "hw_classes.h"
 
 struct bright_gauss_blur_2_bright_gauss_blur_2_update_0_write0_to_bright_gauss_ds_2_rd0_cache {
 	// RAM Box: {[-2, 958], [-2, 538]}
@@ -490,8 +484,6 @@ inline hw_uint<16> bright_gauss_blur_2_bright_gauss_ds_2_update_0_read_bundle_re
 	return result;
 }
 
-#include "hw_classes.h"
-
 struct bright_gauss_blur_3_bright_gauss_blur_3_update_0_write0_to_bright_gauss_ds_3_rd0_cache {
 	// RAM Box: {[0, 478], [0, 268]}
 	// Capacity: 1
@@ -555,8 +547,6 @@ inline hw_uint<16> bright_gauss_blur_3_bright_gauss_ds_3_update_0_read_bundle_re
 	set_at<0, 16>(result, bright_gauss_ds_3_rd0_res);
 	return result;
 }
-
-#include "hw_classes.h"
 
 struct bright_gauss_ds_1_bright_gauss_ds_1_update_0_write0_to_bright_laplace_diff_1_rd0_cache {
 	// RAM Box: {[0, 959], [0, 539]}
@@ -929,8 +919,6 @@ inline hw_uint<16> bright_gauss_ds_1_bright_laplace_us_0_update_0_read_bundle_re
 	return result;
 }
 
-#include "hw_classes.h"
-
 struct bright_gauss_ds_2_bright_gauss_ds_2_update_0_write0_to_bright_laplace_diff_2_rd0_cache {
 	// RAM Box: {[0, 479], [0, 269]}
 	// Capacity: 483
@@ -1302,8 +1290,6 @@ inline hw_uint<16> bright_gauss_ds_2_bright_laplace_us_1_update_0_read_bundle_re
 	return result;
 }
 
-#include "hw_classes.h"
-
 struct bright_gauss_ds_3_bright_gauss_ds_3_update_0_write0_to_bright_laplace_us_2_rd0_cache {
 	// RAM Box: {[0, 239], [0, 134]}
 	// Capacity: 240
@@ -1415,8 +1401,6 @@ inline hw_uint<16> bright_gauss_ds_3_fused_level_3_update_0_read_bundle_read(bri
 	return result;
 }
 
-#include "hw_classes.h"
-
 struct bright_laplace_diff_0_bright_laplace_diff_0_update_0_write0_to_fused_level_0_rd0_cache {
 	// RAM Box: {[0, 1919], [0, 1079]}
 	// Capacity: 1
@@ -1480,8 +1464,6 @@ inline hw_uint<16> bright_laplace_diff_0_fused_level_0_update_0_read_bundle_read
 	set_at<0, 16>(result, fused_level_0_rd0_res);
 	return result;
 }
-
-#include "hw_classes.h"
 
 struct bright_laplace_diff_1_bright_laplace_diff_1_update_0_write0_to_fused_level_1_rd0_cache {
 	// RAM Box: {[0, 959], [0, 539]}
@@ -1547,8 +1529,6 @@ inline hw_uint<16> bright_laplace_diff_1_fused_level_1_update_0_read_bundle_read
 	return result;
 }
 
-#include "hw_classes.h"
-
 struct bright_laplace_diff_2_bright_laplace_diff_2_update_0_write0_to_fused_level_2_rd0_cache {
 	// RAM Box: {[0, 479], [0, 269]}
 	// Capacity: 1
@@ -1612,8 +1592,6 @@ inline hw_uint<16> bright_laplace_diff_2_fused_level_2_update_0_read_bundle_read
 	set_at<0, 16>(result, fused_level_2_rd0_res);
 	return result;
 }
-
-#include "hw_classes.h"
 
 struct bright_laplace_us_0_bright_laplace_us_0_update_0_write0_to_bright_laplace_diff_0_rd0_cache {
 	// RAM Box: {[0, 1919], [0, 1079]}
@@ -1679,8 +1657,6 @@ inline void bright_laplace_us_0_bright_laplace_us_0_update_0_write_bundle_write(
 	bright_laplace_us_0_bright_laplace_us_0_update_0_write0_write(bright_laplace_us_0_bright_laplace_us_0_update_0_write0_res, bright_laplace_us_0, d0, d1, dynamic_address);
 }
 
-#include "hw_classes.h"
-
 struct bright_laplace_us_1_bright_laplace_us_1_update_0_write0_to_bright_laplace_diff_1_rd0_cache {
 	// RAM Box: {[0, 959], [0, 539]}
 	// Capacity: 1
@@ -1745,8 +1721,6 @@ inline void bright_laplace_us_1_bright_laplace_us_1_update_0_write_bundle_write(
 	bright_laplace_us_1_bright_laplace_us_1_update_0_write0_write(bright_laplace_us_1_bright_laplace_us_1_update_0_write0_res, bright_laplace_us_1, d0, d1, dynamic_address);
 }
 
-#include "hw_classes.h"
-
 struct bright_laplace_us_2_bright_laplace_us_2_update_0_write0_to_bright_laplace_diff_2_rd0_cache {
 	// RAM Box: {[0, 479], [0, 269]}
 	// Capacity: 1
@@ -1810,8 +1784,6 @@ inline void bright_laplace_us_2_bright_laplace_us_2_update_0_write_bundle_write(
 	hw_uint<16> bright_laplace_us_2_bright_laplace_us_2_update_0_write0_res = bright_laplace_us_2_update_0_write.extract<0, 15>();
 	bright_laplace_us_2_bright_laplace_us_2_update_0_write0_write(bright_laplace_us_2_bright_laplace_us_2_update_0_write0_res, bright_laplace_us_2, d0, d1, dynamic_address);
 }
-
-#include "hw_classes.h"
 
 struct bright_weights_bright_weights_update_0_write0_merged_banks_2_cache {
 	// RAM Box: {[-7, 1919], [-7, 1079]}
@@ -1898,8 +1870,6 @@ inline hw_uint<16> bright_weights_weight_sums_update_0_read_bundle_read(bright_w
 	set_at<0, 16>(result, weight_sums_rd0_res);
 	return result;
 }
-
-#include "hw_classes.h"
 
 struct bright_weights_normed_bright_weights_normed_update_0_write0_to_fused_level_0_rd0_cache {
 	// RAM Box: {[0, 1919], [0, 1079]}
@@ -2225,8 +2195,6 @@ inline hw_uint<16> bright_weights_normed_fused_level_0_update_0_read_bundle_read
 	return result;
 }
 
-#include "hw_classes.h"
-
 struct bright_weights_normed_gauss_blur_1_bright_weights_normed_gauss_blur_1_update_0_write0_to_bright_weights_normed_gauss_ds_1_rd0_cache {
 	// RAM Box: {[-6, 1918], [-6, 1078]}
 	// Capacity: 1
@@ -2290,8 +2258,6 @@ inline hw_uint<16> bright_weights_normed_gauss_blur_1_bright_weights_normed_gaus
 	set_at<0, 16>(result, bright_weights_normed_gauss_ds_1_rd0_res);
 	return result;
 }
-
-#include "hw_classes.h"
 
 struct bright_weights_normed_gauss_blur_2_bright_weights_normed_gauss_blur_2_update_0_write0_to_bright_weights_normed_gauss_ds_2_rd0_cache {
 	// RAM Box: {[-2, 958], [-2, 538]}
@@ -2357,8 +2323,6 @@ inline hw_uint<16> bright_weights_normed_gauss_blur_2_bright_weights_normed_gaus
 	return result;
 }
 
-#include "hw_classes.h"
-
 struct bright_weights_normed_gauss_blur_3_bright_weights_normed_gauss_blur_3_update_0_write0_to_bright_weights_normed_gauss_ds_3_rd0_cache {
 	// RAM Box: {[0, 478], [0, 268]}
 	// Capacity: 1
@@ -2422,8 +2386,6 @@ inline hw_uint<16> bright_weights_normed_gauss_blur_3_bright_weights_normed_gaus
 	set_at<0, 16>(result, bright_weights_normed_gauss_ds_3_rd0_res);
 	return result;
 }
-
-#include "hw_classes.h"
 
 struct bright_weights_normed_gauss_ds_1_bright_weights_normed_gauss_ds_1_update_0_write0_to_fused_level_1_rd0_cache {
 	// RAM Box: {[0, 959], [0, 539]}
@@ -2749,8 +2711,6 @@ inline hw_uint<16> bright_weights_normed_gauss_ds_1_fused_level_1_update_0_read_
 	return result;
 }
 
-#include "hw_classes.h"
-
 struct bright_weights_normed_gauss_ds_2_bright_weights_normed_gauss_ds_2_update_0_write0_to_fused_level_2_rd0_cache {
 	// RAM Box: {[0, 479], [0, 269]}
 	// Capacity: 483
@@ -3075,8 +3035,6 @@ inline hw_uint<16> bright_weights_normed_gauss_ds_2_fused_level_2_update_0_read_
 	return result;
 }
 
-#include "hw_classes.h"
-
 struct bright_weights_normed_gauss_ds_3_bright_weights_normed_gauss_ds_3_update_0_write0_to_fused_level_3_rd0_cache {
 	// RAM Box: {[0, 239], [0, 134]}
 	// Capacity: 1
@@ -3140,8 +3098,6 @@ inline hw_uint<16> bright_weights_normed_gauss_ds_3_fused_level_3_update_0_read_
 	set_at<0, 16>(result, fused_level_3_rd0_res);
 	return result;
 }
-
-#include "hw_classes.h"
 
 struct dark_dark_update_0_write0_to_dark_laplace_diff_0_rd0_cache {
 	// RAM Box: {[0, 1919], [0, 1079]}
@@ -3490,8 +3446,6 @@ inline hw_uint<16> dark_dark_weights_update_0_read_bundle_read(dark_cache& dark,
 	return result;
 }
 
-#include "hw_classes.h"
-
 struct dark_gauss_blur_1_dark_gauss_blur_1_update_0_write0_to_dark_gauss_ds_1_rd0_cache {
 	// RAM Box: {[-6, 1918], [-6, 1078]}
 	// Capacity: 1
@@ -3555,8 +3509,6 @@ inline hw_uint<16> dark_gauss_blur_1_dark_gauss_ds_1_update_0_read_bundle_read(d
 	set_at<0, 16>(result, dark_gauss_ds_1_rd0_res);
 	return result;
 }
-
-#include "hw_classes.h"
 
 struct dark_gauss_blur_2_dark_gauss_blur_2_update_0_write0_to_dark_gauss_ds_2_rd0_cache {
 	// RAM Box: {[-2, 958], [-2, 538]}
@@ -3622,8 +3574,6 @@ inline hw_uint<16> dark_gauss_blur_2_dark_gauss_ds_2_update_0_read_bundle_read(d
 	return result;
 }
 
-#include "hw_classes.h"
-
 struct dark_gauss_blur_3_dark_gauss_blur_3_update_0_write0_to_dark_gauss_ds_3_rd0_cache {
 	// RAM Box: {[0, 478], [0, 268]}
 	// Capacity: 1
@@ -3687,8 +3637,6 @@ inline hw_uint<16> dark_gauss_blur_3_dark_gauss_ds_3_update_0_read_bundle_read(d
 	set_at<0, 16>(result, dark_gauss_ds_3_rd0_res);
 	return result;
 }
-
-#include "hw_classes.h"
 
 struct dark_gauss_ds_1_dark_gauss_ds_1_update_0_write0_to_dark_laplace_diff_1_rd0_cache {
 	// RAM Box: {[0, 959], [0, 539]}
@@ -4061,8 +4009,6 @@ inline hw_uint<16> dark_gauss_ds_1_dark_laplace_us_0_update_0_read_bundle_read(d
 	return result;
 }
 
-#include "hw_classes.h"
-
 struct dark_gauss_ds_2_dark_gauss_ds_2_update_0_write0_to_dark_laplace_diff_2_rd0_cache {
 	// RAM Box: {[0, 479], [0, 269]}
 	// Capacity: 483
@@ -4434,8 +4380,6 @@ inline hw_uint<16> dark_gauss_ds_2_dark_laplace_us_1_update_0_read_bundle_read(d
 	return result;
 }
 
-#include "hw_classes.h"
-
 struct dark_gauss_ds_3_dark_gauss_ds_3_update_0_write0_to_dark_laplace_us_2_rd0_cache {
 	// RAM Box: {[0, 239], [0, 134]}
 	// Capacity: 240
@@ -4547,8 +4491,6 @@ inline hw_uint<16> dark_gauss_ds_3_fused_level_3_update_0_read_bundle_read(dark_
 	return result;
 }
 
-#include "hw_classes.h"
-
 struct dark_laplace_diff_0_dark_laplace_diff_0_update_0_write0_to_fused_level_0_rd0_cache {
 	// RAM Box: {[0, 1919], [0, 1079]}
 	// Capacity: 1
@@ -4612,8 +4554,6 @@ inline hw_uint<16> dark_laplace_diff_0_fused_level_0_update_0_read_bundle_read(d
 	set_at<0, 16>(result, fused_level_0_rd0_res);
 	return result;
 }
-
-#include "hw_classes.h"
 
 struct dark_laplace_diff_1_dark_laplace_diff_1_update_0_write0_to_fused_level_1_rd0_cache {
 	// RAM Box: {[0, 959], [0, 539]}
@@ -4679,8 +4619,6 @@ inline hw_uint<16> dark_laplace_diff_1_fused_level_1_update_0_read_bundle_read(d
 	return result;
 }
 
-#include "hw_classes.h"
-
 struct dark_laplace_diff_2_dark_laplace_diff_2_update_0_write0_to_fused_level_2_rd0_cache {
 	// RAM Box: {[0, 479], [0, 269]}
 	// Capacity: 1
@@ -4744,8 +4682,6 @@ inline hw_uint<16> dark_laplace_diff_2_fused_level_2_update_0_read_bundle_read(d
 	set_at<0, 16>(result, fused_level_2_rd0_res);
 	return result;
 }
-
-#include "hw_classes.h"
 
 struct dark_laplace_us_0_dark_laplace_us_0_update_0_write0_to_dark_laplace_diff_0_rd0_cache {
 	// RAM Box: {[0, 1919], [0, 1079]}
@@ -4811,8 +4747,6 @@ inline void dark_laplace_us_0_dark_laplace_us_0_update_0_write_bundle_write(hw_u
 	dark_laplace_us_0_dark_laplace_us_0_update_0_write0_write(dark_laplace_us_0_dark_laplace_us_0_update_0_write0_res, dark_laplace_us_0, d0, d1, dynamic_address);
 }
 
-#include "hw_classes.h"
-
 struct dark_laplace_us_1_dark_laplace_us_1_update_0_write0_to_dark_laplace_diff_1_rd0_cache {
 	// RAM Box: {[0, 959], [0, 539]}
 	// Capacity: 1
@@ -4877,8 +4811,6 @@ inline void dark_laplace_us_1_dark_laplace_us_1_update_0_write_bundle_write(hw_u
 	dark_laplace_us_1_dark_laplace_us_1_update_0_write0_write(dark_laplace_us_1_dark_laplace_us_1_update_0_write0_res, dark_laplace_us_1, d0, d1, dynamic_address);
 }
 
-#include "hw_classes.h"
-
 struct dark_laplace_us_2_dark_laplace_us_2_update_0_write0_to_dark_laplace_diff_2_rd0_cache {
 	// RAM Box: {[0, 479], [0, 269]}
 	// Capacity: 1
@@ -4942,8 +4874,6 @@ inline void dark_laplace_us_2_dark_laplace_us_2_update_0_write_bundle_write(hw_u
 	hw_uint<16> dark_laplace_us_2_dark_laplace_us_2_update_0_write0_res = dark_laplace_us_2_update_0_write.extract<0, 15>();
 	dark_laplace_us_2_dark_laplace_us_2_update_0_write0_write(dark_laplace_us_2_dark_laplace_us_2_update_0_write0_res, dark_laplace_us_2, d0, d1, dynamic_address);
 }
-
-#include "hw_classes.h"
 
 struct dark_weights_dark_weights_update_0_write0_merged_banks_2_cache {
 	// RAM Box: {[-7, 1919], [-7, 1079]}
@@ -5030,8 +4960,6 @@ inline hw_uint<16> dark_weights_weight_sums_update_0_read_bundle_read(dark_weigh
 	set_at<0, 16>(result, weight_sums_rd0_res);
 	return result;
 }
-
-#include "hw_classes.h"
 
 struct dark_weights_normed_dark_weights_normed_update_0_write0_to_fused_level_0_rd0_cache {
 	// RAM Box: {[0, 1919], [0, 1079]}
@@ -5357,8 +5285,6 @@ inline hw_uint<16> dark_weights_normed_fused_level_0_update_0_read_bundle_read(d
 	return result;
 }
 
-#include "hw_classes.h"
-
 struct dark_weights_normed_gauss_blur_1_dark_weights_normed_gauss_blur_1_update_0_write0_to_dark_weights_normed_gauss_ds_1_rd0_cache {
 	// RAM Box: {[-6, 1918], [-6, 1078]}
 	// Capacity: 1
@@ -5422,8 +5348,6 @@ inline hw_uint<16> dark_weights_normed_gauss_blur_1_dark_weights_normed_gauss_ds
 	set_at<0, 16>(result, dark_weights_normed_gauss_ds_1_rd0_res);
 	return result;
 }
-
-#include "hw_classes.h"
 
 struct dark_weights_normed_gauss_blur_2_dark_weights_normed_gauss_blur_2_update_0_write0_to_dark_weights_normed_gauss_ds_2_rd0_cache {
 	// RAM Box: {[-2, 958], [-2, 538]}
@@ -5489,8 +5413,6 @@ inline hw_uint<16> dark_weights_normed_gauss_blur_2_dark_weights_normed_gauss_ds
 	return result;
 }
 
-#include "hw_classes.h"
-
 struct dark_weights_normed_gauss_blur_3_dark_weights_normed_gauss_blur_3_update_0_write0_to_dark_weights_normed_gauss_ds_3_rd0_cache {
 	// RAM Box: {[0, 478], [0, 268]}
 	// Capacity: 1
@@ -5554,8 +5476,6 @@ inline hw_uint<16> dark_weights_normed_gauss_blur_3_dark_weights_normed_gauss_ds
 	set_at<0, 16>(result, dark_weights_normed_gauss_ds_3_rd0_res);
 	return result;
 }
-
-#include "hw_classes.h"
 
 struct dark_weights_normed_gauss_ds_1_dark_weights_normed_gauss_ds_1_update_0_write0_to_fused_level_1_rd0_cache {
 	// RAM Box: {[0, 959], [0, 539]}
@@ -5881,8 +5801,6 @@ inline hw_uint<16> dark_weights_normed_gauss_ds_1_fused_level_1_update_0_read_bu
 	return result;
 }
 
-#include "hw_classes.h"
-
 struct dark_weights_normed_gauss_ds_2_dark_weights_normed_gauss_ds_2_update_0_write0_to_fused_level_2_rd0_cache {
 	// RAM Box: {[0, 479], [0, 269]}
 	// Capacity: 483
@@ -6207,8 +6125,6 @@ inline hw_uint<16> dark_weights_normed_gauss_ds_2_fused_level_2_update_0_read_bu
 	return result;
 }
 
-#include "hw_classes.h"
-
 struct dark_weights_normed_gauss_ds_3_dark_weights_normed_gauss_ds_3_update_0_write0_to_fused_level_3_rd0_cache {
 	// RAM Box: {[0, 239], [0, 134]}
 	// Capacity: 1
@@ -6272,8 +6188,6 @@ inline hw_uint<16> dark_weights_normed_gauss_ds_3_fused_level_3_update_0_read_bu
 	set_at<0, 16>(result, fused_level_3_rd0_res);
 	return result;
 }
-
-#include "hw_classes.h"
 
 struct final_merged_0_final_merged_0_update_0_write0_to_ef_fpga_1_rd0_cache {
 	// RAM Box: {[0, 1919], [0, 1079]}
@@ -6339,8 +6253,6 @@ inline void final_merged_0_final_merged_0_update_0_write_bundle_write(hw_uint<16
 	final_merged_0_final_merged_0_update_0_write0_write(final_merged_0_final_merged_0_update_0_write0_res, final_merged_0, d0, d1, dynamic_address);
 }
 
-#include "hw_classes.h"
-
 struct final_merged_1_final_merged_1_update_0_write0_to_final_merged_0_rd0_cache {
 	// RAM Box: {[0, 959], [0, 539]}
 	// Capacity: 960
@@ -6404,8 +6316,6 @@ inline void final_merged_1_final_merged_1_update_0_write_bundle_write(hw_uint<16
 	hw_uint<16> final_merged_1_final_merged_1_update_0_write0_res = final_merged_1_update_0_write.extract<0, 15>();
 	final_merged_1_final_merged_1_update_0_write0_write(final_merged_1_final_merged_1_update_0_write0_res, final_merged_1, d0, d1, dynamic_address);
 }
-
-#include "hw_classes.h"
 
 struct final_merged_2_final_merged_2_update_0_write0_to_final_merged_1_rd0_cache {
 	// RAM Box: {[0, 479], [0, 269]}
@@ -6471,8 +6381,6 @@ inline void final_merged_2_final_merged_2_update_0_write_bundle_write(hw_uint<16
 	final_merged_2_final_merged_2_update_0_write0_write(final_merged_2_final_merged_2_update_0_write0_res, final_merged_2, d0, d1, dynamic_address);
 }
 
-#include "hw_classes.h"
-
 struct fused_level_0_fused_level_0_update_0_write0_to_final_merged_0_rd0_cache {
 	// RAM Box: {[0, 1919], [0, 1079]}
 	// Capacity: 11527
@@ -6536,8 +6444,6 @@ inline void fused_level_0_fused_level_0_update_0_write_bundle_write(hw_uint<16>&
 	hw_uint<16> fused_level_0_fused_level_0_update_0_write0_res = fused_level_0_update_0_write.extract<0, 15>();
 	fused_level_0_fused_level_0_update_0_write0_write(fused_level_0_fused_level_0_update_0_write0_res, fused_level_0, d0, d1, dynamic_address);
 }
-
-#include "hw_classes.h"
 
 struct fused_level_1_fused_level_1_update_0_write0_to_final_merged_1_rd0_cache {
 	// RAM Box: {[0, 959], [0, 539]}
@@ -6603,8 +6509,6 @@ inline void fused_level_1_fused_level_1_update_0_write_bundle_write(hw_uint<16>&
 	fused_level_1_fused_level_1_update_0_write0_write(fused_level_1_fused_level_1_update_0_write0_res, fused_level_1, d0, d1, dynamic_address);
 }
 
-#include "hw_classes.h"
-
 struct fused_level_2_fused_level_2_update_0_write0_to_final_merged_2_rd0_cache {
 	// RAM Box: {[0, 479], [0, 269]}
 	// Capacity: 1
@@ -6669,8 +6573,6 @@ inline void fused_level_2_fused_level_2_update_0_write_bundle_write(hw_uint<16>&
 	fused_level_2_fused_level_2_update_0_write0_write(fused_level_2_fused_level_2_update_0_write0_res, fused_level_2, d0, d1, dynamic_address);
 }
 
-#include "hw_classes.h"
-
 struct fused_level_3_fused_level_3_update_0_write0_to_final_merged_2_rd0_cache {
 	// RAM Box: {[0, 239], [0, 134]}
 	// Capacity: 240
@@ -6734,8 +6636,6 @@ inline void fused_level_3_fused_level_3_update_0_write_bundle_write(hw_uint<16>&
 	hw_uint<16> fused_level_3_fused_level_3_update_0_write0_res = fused_level_3_update_0_write.extract<0, 15>();
 	fused_level_3_fused_level_3_update_0_write0_write(fused_level_3_fused_level_3_update_0_write0_res, fused_level_3, d0, d1, dynamic_address);
 }
-
-#include "hw_classes.h"
 
 struct in_in_update_0_write0_merged_banks_2_cache {
 	// RAM Box: {[-7, 1919], [-7, 1079]}
@@ -6822,8 +6722,6 @@ inline void in_in_update_0_write_bundle_write(hw_uint<16>& in_update_0_write, in
 	hw_uint<16> in_in_update_0_write0_res = in_update_0_write.extract<0, 15>();
 	in_in_update_0_write0_write(in_in_update_0_write0_res, in, d0, d1, dynamic_address);
 }
-
-#include "hw_classes.h"
 
 struct weight_sums_weight_sums_update_0_write0_merged_banks_2_cache {
 	// RAM Box: {[-7, 1919], [-7, 1079]}
@@ -6915,84 +6813,6 @@ inline void weight_sums_weight_sums_update_0_write_bundle_write(hw_uint<16>& wei
 
 
 // Operation logic
-inline void dark_gauss_blur_2_update_0(dark_gauss_ds_1_cache& dark_gauss_ds_1, dark_gauss_blur_2_cache& dark_gauss_blur_2, int d0, int d1) {
-  // Dynamic address computation
-
-	// Consume: dark_gauss_ds_1
-	auto dark_gauss_ds_1_0_c__0_value = dark_gauss_ds_1_dark_gauss_blur_2_update_0_read_bundle_read(dark_gauss_ds_1/* source_delay */, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = reduce_gauss_unrolled_1(dark_gauss_ds_1_0_c__0_value);
-	// Produce: dark_gauss_blur_2
-	dark_gauss_blur_2_dark_gauss_blur_2_update_0_write_bundle_write(/* arg names */compute_result, dark_gauss_blur_2, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void bright_weights_normed_gauss_blur_1_update_0(bright_weights_normed_cache& bright_weights_normed, bright_weights_normed_gauss_blur_1_cache& bright_weights_normed_gauss_blur_1, int d0, int d1) {
-  // Dynamic address computation
-
-	// Consume: bright_weights_normed
-	auto bright_weights_normed_0_c__0_value = bright_weights_normed_bright_weights_normed_gauss_blur_1_update_0_read_bundle_read(bright_weights_normed/* source_delay */, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = reduce_gauss_unrolled_1(bright_weights_normed_0_c__0_value);
-	// Produce: bright_weights_normed_gauss_blur_1
-	bright_weights_normed_gauss_blur_1_bright_weights_normed_gauss_blur_1_update_0_write_bundle_write(/* arg names */compute_result, bright_weights_normed_gauss_blur_1, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void bright_weights_normed_gauss_ds_1_update_0(bright_weights_normed_gauss_blur_1_cache& bright_weights_normed_gauss_blur_1, bright_weights_normed_gauss_ds_1_cache& bright_weights_normed_gauss_ds_1, int d0, int d1) {
-  // Dynamic address computation
-
-	// Consume: bright_weights_normed_gauss_blur_1
-	auto bright_weights_normed_gauss_blur_1_0_c__0_value = bright_weights_normed_gauss_blur_1_bright_weights_normed_gauss_ds_1_update_0_read_bundle_read(bright_weights_normed_gauss_blur_1/* source_delay */, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = id_unrolled_1(bright_weights_normed_gauss_blur_1_0_c__0_value);
-	// Produce: bright_weights_normed_gauss_ds_1
-	bright_weights_normed_gauss_ds_1_bright_weights_normed_gauss_ds_1_update_0_write_bundle_write(/* arg names */compute_result, bright_weights_normed_gauss_ds_1, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void bright_laplace_diff_1_update_0(bright_gauss_ds_1_cache& bright_gauss_ds_1, bright_laplace_us_1_cache& bright_laplace_us_1, bright_laplace_diff_1_cache& bright_laplace_diff_1, int d0, int d1) {
-  // Dynamic address computation
-
-	// Consume: bright_gauss_ds_1
-	auto bright_gauss_ds_1_0_c__0_value = bright_gauss_ds_1_bright_laplace_diff_1_update_0_read_bundle_read(bright_gauss_ds_1/* source_delay */, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	// Consume: bright_laplace_us_1
-	auto bright_laplace_us_1_0_c__0_value = bright_laplace_us_1_bright_laplace_diff_1_update_0_read_bundle_read(bright_laplace_us_1/* source_delay */, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = diff_unrolled_1(bright_gauss_ds_1_0_c__0_value, bright_laplace_us_1_0_c__0_value);
-	// Produce: bright_laplace_diff_1
-	bright_laplace_diff_1_bright_laplace_diff_1_update_0_write_bundle_write(/* arg names */compute_result, bright_laplace_diff_1, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
 inline void in_update_0(HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */in_off_chip, in_cache& in, int d0, int d1) {
   // Dynamic address computation
 
@@ -7223,6 +7043,42 @@ inline void dark_gauss_ds_1_update_0(dark_gauss_blur_1_cache& dark_gauss_blur_1,
 
 }
 
+inline void dark_gauss_blur_2_update_0(dark_gauss_ds_1_cache& dark_gauss_ds_1, dark_gauss_blur_2_cache& dark_gauss_blur_2, int d0, int d1) {
+  // Dynamic address computation
+
+	// Consume: dark_gauss_ds_1
+	auto dark_gauss_ds_1_0_c__0_value = dark_gauss_ds_1_dark_gauss_blur_2_update_0_read_bundle_read(dark_gauss_ds_1/* source_delay */, d0, d1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = reduce_gauss_unrolled_1(dark_gauss_ds_1_0_c__0_value);
+	// Produce: dark_gauss_blur_2
+	dark_gauss_blur_2_dark_gauss_blur_2_update_0_write_bundle_write(/* arg names */compute_result, dark_gauss_blur_2, d0, d1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void bright_weights_normed_gauss_blur_1_update_0(bright_weights_normed_cache& bright_weights_normed, bright_weights_normed_gauss_blur_1_cache& bright_weights_normed_gauss_blur_1, int d0, int d1) {
+  // Dynamic address computation
+
+	// Consume: bright_weights_normed
+	auto bright_weights_normed_0_c__0_value = bright_weights_normed_bright_weights_normed_gauss_blur_1_update_0_read_bundle_read(bright_weights_normed/* source_delay */, d0, d1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = reduce_gauss_unrolled_1(bright_weights_normed_0_c__0_value);
+	// Produce: bright_weights_normed_gauss_blur_1
+	bright_weights_normed_gauss_blur_1_bright_weights_normed_gauss_blur_1_update_0_write_bundle_write(/* arg names */compute_result, bright_weights_normed_gauss_blur_1, d0, d1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
 inline void bright_gauss_ds_1_update_0(bright_gauss_blur_1_cache& bright_gauss_blur_1, bright_gauss_ds_1_cache& bright_gauss_ds_1, int d0, int d1) {
   // Dynamic address computation
 
@@ -7325,6 +7181,132 @@ inline void dark_gauss_blur_3_update_0(dark_gauss_ds_2_cache& dark_gauss_ds_2, d
 	auto compute_result = reduce_gauss_unrolled_1(dark_gauss_ds_2_0_c__0_value);
 	// Produce: dark_gauss_blur_3
 	dark_gauss_blur_3_dark_gauss_blur_3_update_0_write_bundle_write(/* arg names */compute_result, dark_gauss_blur_3, d0, d1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void bright_weights_normed_gauss_ds_1_update_0(bright_weights_normed_gauss_blur_1_cache& bright_weights_normed_gauss_blur_1, bright_weights_normed_gauss_ds_1_cache& bright_weights_normed_gauss_ds_1, int d0, int d1) {
+  // Dynamic address computation
+
+	// Consume: bright_weights_normed_gauss_blur_1
+	auto bright_weights_normed_gauss_blur_1_0_c__0_value = bright_weights_normed_gauss_blur_1_bright_weights_normed_gauss_ds_1_update_0_read_bundle_read(bright_weights_normed_gauss_blur_1/* source_delay */, d0, d1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = id_unrolled_1(bright_weights_normed_gauss_blur_1_0_c__0_value);
+	// Produce: bright_weights_normed_gauss_ds_1
+	bright_weights_normed_gauss_ds_1_bright_weights_normed_gauss_ds_1_update_0_write_bundle_write(/* arg names */compute_result, bright_weights_normed_gauss_ds_1, d0, d1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void bright_weights_normed_gauss_blur_2_update_0(bright_weights_normed_gauss_ds_1_cache& bright_weights_normed_gauss_ds_1, bright_weights_normed_gauss_blur_2_cache& bright_weights_normed_gauss_blur_2, int d0, int d1) {
+  // Dynamic address computation
+
+	// Consume: bright_weights_normed_gauss_ds_1
+	auto bright_weights_normed_gauss_ds_1_0_c__0_value = bright_weights_normed_gauss_ds_1_bright_weights_normed_gauss_blur_2_update_0_read_bundle_read(bright_weights_normed_gauss_ds_1/* source_delay */, d0, d1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = reduce_gauss_unrolled_1(bright_weights_normed_gauss_ds_1_0_c__0_value);
+	// Produce: bright_weights_normed_gauss_blur_2
+	bright_weights_normed_gauss_blur_2_bright_weights_normed_gauss_blur_2_update_0_write_bundle_write(/* arg names */compute_result, bright_weights_normed_gauss_blur_2, d0, d1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void bright_gauss_ds_2_update_0(bright_gauss_blur_2_cache& bright_gauss_blur_2, bright_gauss_ds_2_cache& bright_gauss_ds_2, int d0, int d1) {
+  // Dynamic address computation
+
+	// Consume: bright_gauss_blur_2
+	auto bright_gauss_blur_2_0_c__0_value = bright_gauss_blur_2_bright_gauss_ds_2_update_0_read_bundle_read(bright_gauss_blur_2/* source_delay */, d0, d1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = id_unrolled_1(bright_gauss_blur_2_0_c__0_value);
+	// Produce: bright_gauss_ds_2
+	bright_gauss_ds_2_bright_gauss_ds_2_update_0_write_bundle_write(/* arg names */compute_result, bright_gauss_ds_2, d0, d1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void bright_gauss_blur_3_update_0(bright_gauss_ds_2_cache& bright_gauss_ds_2, bright_gauss_blur_3_cache& bright_gauss_blur_3, int d0, int d1) {
+  // Dynamic address computation
+
+	// Consume: bright_gauss_ds_2
+	auto bright_gauss_ds_2_0_c__0_value = bright_gauss_ds_2_bright_gauss_blur_3_update_0_read_bundle_read(bright_gauss_ds_2/* source_delay */, d0, d1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = reduce_gauss_unrolled_1(bright_gauss_ds_2_0_c__0_value);
+	// Produce: bright_gauss_blur_3
+	bright_gauss_blur_3_bright_gauss_blur_3_update_0_write_bundle_write(/* arg names */compute_result, bright_gauss_blur_3, d0, d1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void dark_weights_normed_gauss_ds_2_update_0(dark_weights_normed_gauss_blur_2_cache& dark_weights_normed_gauss_blur_2, dark_weights_normed_gauss_ds_2_cache& dark_weights_normed_gauss_ds_2, int d0, int d1) {
+  // Dynamic address computation
+
+	// Consume: dark_weights_normed_gauss_blur_2
+	auto dark_weights_normed_gauss_blur_2_0_c__0_value = dark_weights_normed_gauss_blur_2_dark_weights_normed_gauss_ds_2_update_0_read_bundle_read(dark_weights_normed_gauss_blur_2/* source_delay */, d0, d1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = id_unrolled_1(dark_weights_normed_gauss_blur_2_0_c__0_value);
+	// Produce: dark_weights_normed_gauss_ds_2
+	dark_weights_normed_gauss_ds_2_dark_weights_normed_gauss_ds_2_update_0_write_bundle_write(/* arg names */compute_result, dark_weights_normed_gauss_ds_2, d0, d1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void dark_weights_normed_gauss_blur_3_update_0(dark_weights_normed_gauss_ds_2_cache& dark_weights_normed_gauss_ds_2, dark_weights_normed_gauss_blur_3_cache& dark_weights_normed_gauss_blur_3, int d0, int d1) {
+  // Dynamic address computation
+
+	// Consume: dark_weights_normed_gauss_ds_2
+	auto dark_weights_normed_gauss_ds_2_0_c__0_value = dark_weights_normed_gauss_ds_2_dark_weights_normed_gauss_blur_3_update_0_read_bundle_read(dark_weights_normed_gauss_ds_2/* source_delay */, d0, d1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = reduce_gauss_unrolled_1(dark_weights_normed_gauss_ds_2_0_c__0_value);
+	// Produce: dark_weights_normed_gauss_blur_3
+	dark_weights_normed_gauss_blur_3_dark_weights_normed_gauss_blur_3_update_0_write_bundle_write(/* arg names */compute_result, dark_weights_normed_gauss_blur_3, d0, d1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void dark_gauss_ds_3_update_0(dark_gauss_blur_3_cache& dark_gauss_blur_3, dark_gauss_ds_3_cache& dark_gauss_ds_3, int d0, int d1) {
+  // Dynamic address computation
+
+	// Consume: dark_gauss_blur_3
+	auto dark_gauss_blur_3_0_c__0_value = dark_gauss_blur_3_dark_gauss_ds_3_update_0_read_bundle_read(dark_gauss_blur_3/* source_delay */, d0, d1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = id_unrolled_1(dark_gauss_blur_3_0_c__0_value);
+	// Produce: dark_gauss_ds_3
+	dark_gauss_ds_3_dark_gauss_ds_3_update_0_write_bundle_write(/* arg names */compute_result, dark_gauss_ds_3, d0, d1, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -7625,6 +7607,30 @@ inline void bright_laplace_diff_2_update_0(bright_gauss_ds_2_cache& bright_gauss
 
 }
 
+inline void bright_laplace_diff_1_update_0(bright_gauss_ds_1_cache& bright_gauss_ds_1, bright_laplace_us_1_cache& bright_laplace_us_1, bright_laplace_diff_1_cache& bright_laplace_diff_1, int d0, int d1) {
+  // Dynamic address computation
+
+	// Consume: bright_gauss_ds_1
+	auto bright_gauss_ds_1_0_c__0_value = bright_gauss_ds_1_bright_laplace_diff_1_update_0_read_bundle_read(bright_gauss_ds_1/* source_delay */, d0, d1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	// Consume: bright_laplace_us_1
+	auto bright_laplace_us_1_0_c__0_value = bright_laplace_us_1_bright_laplace_diff_1_update_0_read_bundle_read(bright_laplace_us_1/* source_delay */, d0, d1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = diff_unrolled_1(bright_gauss_ds_1_0_c__0_value, bright_laplace_us_1_0_c__0_value);
+	// Produce: bright_laplace_diff_1
+	bright_laplace_diff_1_bright_laplace_diff_1_update_0_write_bundle_write(/* arg names */compute_result, bright_laplace_diff_1, d0, d1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
 inline void bright_laplace_diff_0_update_0(bright_cache& bright, bright_laplace_us_0_cache& bright_laplace_us_0, bright_laplace_diff_0_cache& bright_laplace_diff_0, int d0, int d1) {
   // Dynamic address computation
 
@@ -7643,42 +7649,6 @@ inline void bright_laplace_diff_0_update_0(bright_cache& bright, bright_laplace_
 	auto compute_result = diff_unrolled_1(bright_0_c__0_value, bright_laplace_us_0_0_c__0_value);
 	// Produce: bright_laplace_diff_0
 	bright_laplace_diff_0_bright_laplace_diff_0_update_0_write_bundle_write(/* arg names */compute_result, bright_laplace_diff_0, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void fused_level_3_update_0(bright_gauss_ds_3_cache& bright_gauss_ds_3, dark_gauss_ds_3_cache& dark_gauss_ds_3, bright_weights_normed_gauss_ds_3_cache& bright_weights_normed_gauss_ds_3, dark_weights_normed_gauss_ds_3_cache& dark_weights_normed_gauss_ds_3, fused_level_3_cache& fused_level_3, int d0, int d1) {
-  // Dynamic address computation
-
-	// Consume: bright_gauss_ds_3
-	auto bright_gauss_ds_3_0_c__0_value = bright_gauss_ds_3_fused_level_3_update_0_read_bundle_read(bright_gauss_ds_3/* source_delay */, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	// Consume: dark_gauss_ds_3
-	auto dark_gauss_ds_3_0_c__0_value = dark_gauss_ds_3_fused_level_3_update_0_read_bundle_read(dark_gauss_ds_3/* source_delay */, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	// Consume: bright_weights_normed_gauss_ds_3
-	auto bright_weights_normed_gauss_ds_3_0_c__0_value = bright_weights_normed_gauss_ds_3_fused_level_3_update_0_read_bundle_read(bright_weights_normed_gauss_ds_3/* source_delay */, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	// Consume: dark_weights_normed_gauss_ds_3
-	auto dark_weights_normed_gauss_ds_3_0_c__0_value = dark_weights_normed_gauss_ds_3_fused_level_3_update_0_read_bundle_read(dark_weights_normed_gauss_ds_3/* source_delay */, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = merge_exposures_unrolled_1(bright_gauss_ds_3_0_c__0_value, dark_gauss_ds_3_0_c__0_value, bright_weights_normed_gauss_ds_3_0_c__0_value, dark_weights_normed_gauss_ds_3_0_c__0_value);
-	// Produce: fused_level_3
-	fused_level_3_fused_level_3_update_0_write_bundle_write(/* arg names */compute_result, fused_level_3, d0, d1, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -7715,6 +7685,42 @@ inline void fused_level_2_update_0(bright_laplace_diff_2_cache& bright_laplace_d
 	auto compute_result = merge_exposures_unrolled_1(bright_laplace_diff_2_0_c__0_value, dark_laplace_diff_2_0_c__0_value, bright_weights_normed_gauss_ds_2_0_c__0_value, dark_weights_normed_gauss_ds_2_0_c__0_value);
 	// Produce: fused_level_2
 	fused_level_2_fused_level_2_update_0_write_bundle_write(/* arg names */compute_result, fused_level_2, d0, d1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void fused_level_3_update_0(bright_gauss_ds_3_cache& bright_gauss_ds_3, dark_gauss_ds_3_cache& dark_gauss_ds_3, bright_weights_normed_gauss_ds_3_cache& bright_weights_normed_gauss_ds_3, dark_weights_normed_gauss_ds_3_cache& dark_weights_normed_gauss_ds_3, fused_level_3_cache& fused_level_3, int d0, int d1) {
+  // Dynamic address computation
+
+	// Consume: bright_gauss_ds_3
+	auto bright_gauss_ds_3_0_c__0_value = bright_gauss_ds_3_fused_level_3_update_0_read_bundle_read(bright_gauss_ds_3/* source_delay */, d0, d1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	// Consume: dark_gauss_ds_3
+	auto dark_gauss_ds_3_0_c__0_value = dark_gauss_ds_3_fused_level_3_update_0_read_bundle_read(dark_gauss_ds_3/* source_delay */, d0, d1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	// Consume: bright_weights_normed_gauss_ds_3
+	auto bright_weights_normed_gauss_ds_3_0_c__0_value = bright_weights_normed_gauss_ds_3_fused_level_3_update_0_read_bundle_read(bright_weights_normed_gauss_ds_3/* source_delay */, d0, d1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	// Consume: dark_weights_normed_gauss_ds_3
+	auto dark_weights_normed_gauss_ds_3_0_c__0_value = dark_weights_normed_gauss_ds_3_fused_level_3_update_0_read_bundle_read(dark_weights_normed_gauss_ds_3/* source_delay */, d0, d1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = merge_exposures_unrolled_1(bright_gauss_ds_3_0_c__0_value, dark_gauss_ds_3_0_c__0_value, bright_weights_normed_gauss_ds_3_0_c__0_value, dark_weights_normed_gauss_ds_3_0_c__0_value);
+	// Produce: fused_level_3
+	fused_level_3_fused_level_3_update_0_write_bundle_write(/* arg names */compute_result, fused_level_3, d0, d1, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -7877,114 +7883,6 @@ inline void ef_fpga_1_update_0(final_merged_0_cache& final_merged_0, HWStream<hw
 	auto compute_result = id_unrolled_1(final_merged_0_0_c__0_value);
 	// Produce: ef_fpga_1
 	ef_fpga_1.write(compute_result);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void dark_weights_normed_gauss_ds_2_update_0(dark_weights_normed_gauss_blur_2_cache& dark_weights_normed_gauss_blur_2, dark_weights_normed_gauss_ds_2_cache& dark_weights_normed_gauss_ds_2, int d0, int d1) {
-  // Dynamic address computation
-
-	// Consume: dark_weights_normed_gauss_blur_2
-	auto dark_weights_normed_gauss_blur_2_0_c__0_value = dark_weights_normed_gauss_blur_2_dark_weights_normed_gauss_ds_2_update_0_read_bundle_read(dark_weights_normed_gauss_blur_2/* source_delay */, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = id_unrolled_1(dark_weights_normed_gauss_blur_2_0_c__0_value);
-	// Produce: dark_weights_normed_gauss_ds_2
-	dark_weights_normed_gauss_ds_2_dark_weights_normed_gauss_ds_2_update_0_write_bundle_write(/* arg names */compute_result, dark_weights_normed_gauss_ds_2, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void dark_weights_normed_gauss_blur_3_update_0(dark_weights_normed_gauss_ds_2_cache& dark_weights_normed_gauss_ds_2, dark_weights_normed_gauss_blur_3_cache& dark_weights_normed_gauss_blur_3, int d0, int d1) {
-  // Dynamic address computation
-
-	// Consume: dark_weights_normed_gauss_ds_2
-	auto dark_weights_normed_gauss_ds_2_0_c__0_value = dark_weights_normed_gauss_ds_2_dark_weights_normed_gauss_blur_3_update_0_read_bundle_read(dark_weights_normed_gauss_ds_2/* source_delay */, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = reduce_gauss_unrolled_1(dark_weights_normed_gauss_ds_2_0_c__0_value);
-	// Produce: dark_weights_normed_gauss_blur_3
-	dark_weights_normed_gauss_blur_3_dark_weights_normed_gauss_blur_3_update_0_write_bundle_write(/* arg names */compute_result, dark_weights_normed_gauss_blur_3, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void dark_gauss_ds_3_update_0(dark_gauss_blur_3_cache& dark_gauss_blur_3, dark_gauss_ds_3_cache& dark_gauss_ds_3, int d0, int d1) {
-  // Dynamic address computation
-
-	// Consume: dark_gauss_blur_3
-	auto dark_gauss_blur_3_0_c__0_value = dark_gauss_blur_3_dark_gauss_ds_3_update_0_read_bundle_read(dark_gauss_blur_3/* source_delay */, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = id_unrolled_1(dark_gauss_blur_3_0_c__0_value);
-	// Produce: dark_gauss_ds_3
-	dark_gauss_ds_3_dark_gauss_ds_3_update_0_write_bundle_write(/* arg names */compute_result, dark_gauss_ds_3, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void bright_weights_normed_gauss_blur_2_update_0(bright_weights_normed_gauss_ds_1_cache& bright_weights_normed_gauss_ds_1, bright_weights_normed_gauss_blur_2_cache& bright_weights_normed_gauss_blur_2, int d0, int d1) {
-  // Dynamic address computation
-
-	// Consume: bright_weights_normed_gauss_ds_1
-	auto bright_weights_normed_gauss_ds_1_0_c__0_value = bright_weights_normed_gauss_ds_1_bright_weights_normed_gauss_blur_2_update_0_read_bundle_read(bright_weights_normed_gauss_ds_1/* source_delay */, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = reduce_gauss_unrolled_1(bright_weights_normed_gauss_ds_1_0_c__0_value);
-	// Produce: bright_weights_normed_gauss_blur_2
-	bright_weights_normed_gauss_blur_2_bright_weights_normed_gauss_blur_2_update_0_write_bundle_write(/* arg names */compute_result, bright_weights_normed_gauss_blur_2, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void bright_gauss_ds_2_update_0(bright_gauss_blur_2_cache& bright_gauss_blur_2, bright_gauss_ds_2_cache& bright_gauss_ds_2, int d0, int d1) {
-  // Dynamic address computation
-
-	// Consume: bright_gauss_blur_2
-	auto bright_gauss_blur_2_0_c__0_value = bright_gauss_blur_2_bright_gauss_ds_2_update_0_read_bundle_read(bright_gauss_blur_2/* source_delay */, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = id_unrolled_1(bright_gauss_blur_2_0_c__0_value);
-	// Produce: bright_gauss_ds_2
-	bright_gauss_ds_2_bright_gauss_ds_2_update_0_write_bundle_write(/* arg names */compute_result, bright_gauss_ds_2, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void bright_gauss_blur_3_update_0(bright_gauss_ds_2_cache& bright_gauss_ds_2, bright_gauss_blur_3_cache& bright_gauss_blur_3, int d0, int d1) {
-  // Dynamic address computation
-
-	// Consume: bright_gauss_ds_2
-	auto bright_gauss_ds_2_0_c__0_value = bright_gauss_ds_2_bright_gauss_blur_3_update_0_read_bundle_read(bright_gauss_ds_2/* source_delay */, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = reduce_gauss_unrolled_1(bright_gauss_ds_2_0_c__0_value);
-	// Produce: bright_gauss_blur_3
-	bright_gauss_blur_3_bright_gauss_blur_3_update_0_write_bundle_write(/* arg names */compute_result, bright_gauss_blur_3, d0, d1, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
