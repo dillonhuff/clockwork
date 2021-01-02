@@ -11501,6 +11501,13 @@ void naive_implementations() {
 }
 
 void iccad_tests() {
+  App ef = ef_cartoon("ef_sm");
+  generate_app_benchmark("ef_sm", ef, {1920, 1080}, 1);
+  exposure_fusion_iccad_apps("ef_fpga");
+  ef_cartoon_test("ef_cartoon");
+  exposure_fusion();
+  assert(false);
+
   heat_3d_real_iccad_apps("heat3dlafe_1", 1);
   //heat_3d_real_iccad_apps("heat3dla_8", 8);
   float_big_stencil_iccad_apps("flt_stencil", 1);
@@ -11531,10 +11538,7 @@ void iccad_tests() {
   stencil_chain_no_dsp_iccad_apps("icsc_nd");
   identity_stream_iccad_apps("idstream");
 
-  //App ef = ef_cartoon("ef_sm");
-  //generate_app_benchmark("ef_sm", ef, {1920, 1080}, 1);
-  //assert(false);
-  exposure_fusion_iccad_apps("ef_fpga");
+
   gauss_pyramid_iccad_apps("gp_fpga");
   gauss_pyramid_test("gp_fpga");
   max_pooling_test("mpr16b_32");
@@ -11544,10 +11548,8 @@ void iccad_tests() {
   generate_app_benchmark("gp_sm", gp, {64, 64}, 1);
 
   gauss_pyramid_fpga_test("gp_fpga");
-  ef_cartoon_test("ef_cartoon");
 
   gauss_pyramid_fpga_test("gp_fpga");
-  exposure_fusion();
 
   int index = 20;
   string istr = str(index);
