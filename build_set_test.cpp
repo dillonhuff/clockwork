@@ -11503,8 +11503,20 @@ void naive_implementations() {
 void iccad_tests() {
 
   // ef_cartoon
-  App ef = ef_cartoon("ef_sm");
-  generate_app_benchmark("ef_sm", ef, {1920, 1080}, 1);
+  string name = "ef_sm1";
+  App ef = ef_cartoon("ef_sm1");
+  CodegenOptions options;
+  options.internal = true;
+  options.num_input_epochs = 1;
+  options.use_custom_code_string = true;
+  options.rtl_options.hls_clock_target_Hz = 300000000;
+  int throughput = 1;
+  int rows = 1920;
+  int cols = 1080;
+  ef.realize(options, name, {cols, rows}, "in", throughput);
+
+  move_to_benchmarks_folder(name + "_opt");
+  assert(false);
 
   // exposure_fusion_app
   exposure_fusion_iccad_apps("ef_fpga");
