@@ -1,0 +1,2 @@
+export app=ef_sm1_rerun_opt
+export HLS_CLOCK_FREQUENCY=250000000

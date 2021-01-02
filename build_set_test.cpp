@@ -11504,7 +11504,24 @@ void naive_implementations() {
 
 void iccad_tests() {
   // exposure_fusion_app
-  exposure_fusion_iccad_apps("ef_fpga");
+  exposure_fusion_iccad_apps("ef_fpga_rerun");
+
+  // ef_cartoon
+  string name = "ef_sm1_rerun";
+  App ef = ef_cartoon(name);
+  CodegenOptions options;
+  options.internal = true;
+  options.num_input_epochs = 1;
+  options.use_custom_code_string = true;
+  //options.rtl_options.hls_clock_target_Hz = 250000000;
+  int throughput = 1;
+  int rows = 1920;
+  int cols = 1080;
+  ef.realize(options, name, {cols, rows}, "in", throughput);
+
+  move_to_benchmarks_folder(name + "_opt");
+  assert(false);
+
   assert(false);
 
   // ef_cartoon
@@ -11515,23 +11532,6 @@ void iccad_tests() {
   exposure_fusion();
   assert(false);
 
-  // ef_cartoon
-  string name = "ef_sm1";
-  App ef = ef_cartoon("ef_sm1");
-  CodegenOptions options;
-  options.internal = true;
-  options.num_input_epochs = 1;
-  options.use_custom_code_string = true;
-  options.rtl_options.hls_clock_target_Hz = 300000000;
-  int throughput = 1;
-  int rows = 1920;
-  int cols = 1080;
-  ef.realize(options, name, {cols, rows}, "in", throughput);
-
-  move_to_benchmarks_folder(name + "_opt");
-
-
-  assert(false);
 
 
   heat_3d_real_iccad_apps("heat3dlafe_1", 1);
