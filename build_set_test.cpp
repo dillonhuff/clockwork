@@ -11501,10 +11501,19 @@ void naive_implementations() {
 }
 
 void iccad_tests() {
+
+  // ef_cartoon
   App ef = ef_cartoon("ef_sm");
   generate_app_benchmark("ef_sm", ef, {1920, 1080}, 1);
+
+  // exposure_fusion_app
   exposure_fusion_iccad_apps("ef_fpga");
+
+  // ef_cartoon
   ef_cartoon_test("ef_cartoon");
+
+
+  // exposure_fusion_app
   exposure_fusion();
   assert(false);
 
