@@ -19164,10 +19164,19 @@ void generate_cuda_code(prog& prg, isl_map* gpu_sched) {
   vector<string> surrounding = surrounding_vars(op, prg);
   vector<string> args = buffer_arg_names(op, prg);
   for (int i = 0; i < (int) surrounding.size(); i++) {
+    auto comp = isl_multi_aff_get_aff(aff, i);
+    out << tab(2) << "// " << str(comp) << endl;
+    comp = isl_aff_set_dim_id(comp, isl_dim_in, 1, id(prg.ctx, "blockIdx.x"));
+    comp = isl_aff_set_dim_id(comp, isl_dim_in, 2, id(prg.ctx, "blockIdx.y"));
+    comp = isl_aff_set_dim_id(comp, isl_dim_in, 3, id(prg.ctx, "blockIdx.z"));
+    comp = isl_aff_set_dim_id(comp, isl_dim_in, 4, id(prg.ctx, "threadIdx.x"));
+    comp = isl_aff_set_dim_id(comp, isl_dim_in, 5, id(prg.ctx, "threadIdx.y"));
+    comp = isl_aff_set_dim_id(comp, isl_dim_in, 6, id(prg.ctx, "threadIdx.z"));
+    out << tab(2) << "int d" << str(i) << " = " << codegen_c(comp) << ";" << endl;
     args.push_back("d" + str(i));
   }
   string args_list = sep_list(args, "", "", ", ");
-  out << tab(3) << op->name << "(" << args_list << ");" << endl;
+  out << tab(2) << op->name << "(" << args_list << ");" << endl;
   out << tab(2) << "// " << str(aff) << endl;
   // Now: Execute all statement instances scheduled for this thread?
 
