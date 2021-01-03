@@ -19094,30 +19094,6 @@ void generate_cuda_code(prog& prg, isl_map* gpu_sched) {
   //
   // Q: How do we do code generation for the "rest" of the GPU schedule? The
   // time components that are not kernel launches?
-  ofstream out(prg.name + ".cu");
-  out << "#include <stdio.h>" << endl << endl;
-  vector<string> arg_decls;
-  for (auto b : prg.boundary_buffers()) {
-    arg_decls.push_back("float* " + b);
-  }
-  out << "__global__" << endl;
-  out << "void " << prg.name << "_kernel" << sep_list(arg_decls, "(", ")", ", ") << " {" << endl;
-  out << "}" << endl;
-
-  out << endl;
-
-  out << "void " << prg.name << "" << sep_list(arg_decls, "(", ")", ", ") << " {" << endl;
-  vector<string> kernel_args;
-  for (auto b : prg.boundary_buffers()) {
-    out << tab(1) << "float* " << b << "_cuda;" << endl;
-    string buf_size = str(prg.buffer_size(b));
-    out << tab(1) << "cudaMalloc(&" << b << "_cuda, sizeof(float)*" << buf_size << ");" << endl;
-    kernel_args.push_back(b + "_cuda");
-  }
-  for (auto b : prg.ins) {
-    string buf_size = str(prg.buffer_size(b));
-    out << tab(1) << "cudaMemcpy(" << b << ", " << b << "_cuda, sizeof(float)*" << buf_size << ", cudaMemcpyHostToDevice);" << endl;
-  }
 
   op* op = pick(prg.all_ops());
   isl_set* dom = map_find(op, prg.domains());
@@ -19128,10 +19104,6 @@ void generate_cuda_code(prog& prg, isl_map* gpu_sched) {
   cout << "bounded gpu schedule: " << str(gpu_sched_bounded) << endl;
   isl_set* gpu_launches = range(gpu_sched_bounded);
   cout << "gpu launches: " << str(gpu_launches) << endl;
-
-  // Q: What is the next thing I want to be able to print?
-  // A: Code for a kernel where each thread executes one statement
-  // instance?
 
   vector<int> k_mins = mins(gpu_launches);
   vector<int> k_maxs = maxs(gpu_launches);
@@ -19152,6 +19124,41 @@ void generate_cuda_code(prog& prg, isl_map* gpu_sched) {
 
   vector<int> blocks{block_xs, block_ys, block_zs};
   vector<int> threads{thread_xs, thread_ys, thread_zs};
+  ofstream out(prg.name + ".cu");
+  out << "#include <stdio.h>" << endl << endl;
+  vector<string> arg_decls;
+  for (auto b : prg.boundary_buffers()) {
+    arg_decls.push_back("float* " + b);
+  }
+  out << "__global__" << endl;
+  out << "void " << prg.name << "_kernel" << sep_list(arg_decls, "(", ")", ", ") << " {" << endl;
+
+  vector<string> conds;
+  conds.push_back("0 <= threadIdx.x < " + str(thread_xs));
+  conds.push_back("0 <= threadIdx.y < " + str(thread_ys));
+  conds.push_back("0 <= threadIdx.z < " + str(thread_zs));
+  out << tab(1) << "if (" << sep_list(conds, "", "", " & ") << ") {" << endl;
+  out << tab(1) << "}" << endl;
+  out << "}" << endl;
+
+  out << endl;
+
+  out << "void " << prg.name << "" << sep_list(arg_decls, "(", ")", ", ") << " {" << endl;
+  vector<string> kernel_args;
+  for (auto b : prg.boundary_buffers()) {
+    out << tab(1) << "float* " << b << "_cuda;" << endl;
+    string buf_size = str(prg.buffer_size(b));
+    out << tab(1) << "cudaMalloc(&" << b << "_cuda, sizeof(float)*" << buf_size << ");" << endl;
+    kernel_args.push_back(b + "_cuda");
+  }
+  for (auto b : prg.ins) {
+    string buf_size = str(prg.buffer_size(b));
+    out << tab(1) << "cudaMemcpy(" << b << ", " << b << "_cuda, sizeof(float)*" << buf_size << ", cudaMemcpyHostToDevice);" << endl;
+  }
+
+  // Q: What is the next thing I want to be able to print?
+  // A: Code for a kernel where each thread executes one statement
+  // instance?
   out << tab(1) << "dim3 blocks(" << comma_list(blocks) << ");" << endl;
   out << tab(1) << "dim3 threads(" << comma_list(threads) << ");" << endl;
   out << endl;
