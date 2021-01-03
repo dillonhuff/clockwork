@@ -19179,11 +19179,21 @@ void gpu_codegen_test() {
   op* op = pick(prg.all_ops());
   string name = op->name;
   op->pretty_print();
-  string gpu_schedule = curlies(name + "[x, y] -> [0, x, 0, 0, y, 0, 0]");
+  string gpu_schedule = curlies(name + "[root, x, y] -> [0, x, 0, 0, y, 0, 0]");
   cout << "GPU schedule:" << gpu_schedule << endl;
   isl_map* gpu_sched = isl_map_read_from_str(prg.ctx, gpu_schedule.c_str());
   cout << "gpu thread locs to instances: " << str(inv(gpu_sched)) << endl;
+  cout << tab(1) << "# statement instances per thread: " << str(card(inv(gpu_sched))) << endl;
+
+  isl_set* dom = map_find(op, prg.domains());
+  cout << "domain: " << str(dom) << endl;
+
+  // Q: What is the next thing I want to be able to print?
+  // A: Code for a kernel where each thread executes one statement
+  // instance?
+
   assert(false);
+
   generate_cuda_code(prg);
 }
 
