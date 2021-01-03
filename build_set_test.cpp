@@ -19131,9 +19131,13 @@ void generate_cuda_code(prog& prg, isl_map* gpu_sched) {
   out << endl;
   out << "// Operation logic" << endl;
   for (auto op : prg.all_ops()) {
+    vector<string> arg_decls;
+    for (auto b : buffer_arg_names(op, prg)) {
+      arg_decls.push_back("float* " + b);
+    }
     out << "__device__" << endl;
     out << "inline" << endl;
-    out << "void " << op->name << "() {" << endl;
+    out << "void " << op->name << sep_list(arg_decls, "(", ")", ", ") << " {" << endl;
     out << "}" << endl;
   }
   out << endl;
@@ -19155,7 +19159,8 @@ void generate_cuda_code(prog& prg, isl_map* gpu_sched) {
   out << tab(1) << "if (" << sep_list(conds, "", "", " && ") << ") {" << endl;
   isl_multi_aff* aff = get_multi_aff(inv(gpu_sched_bounded));
   // TODO: Handle loops inside the schedule
-  //out << tab(3) << op->name << "(" << comma_list(buffer_arg_names()));" << endl;
+  string args_list = sep_list(buffer_arg_names(op, prg), "", "", ", ");
+  out << tab(3) << op->name << "(" << args_list << ");" << endl;
   out << tab(2) << "// " << str(aff) << endl;
   // Now: Execute all statement instances scheduled for this thread?
 

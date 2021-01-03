@@ -1991,3 +1991,5 @@ std::map<std::string, std::set<std::string> >
 insert_inter_group_buffers(const std::map<std::string, std::set<std::string> >& fusion_groups, prog& prg);
 
 map<std::string, std::set<string> > one_stage_per_group(prog& prg);
+
+vector<string> buffer_arg_names(op* op, prog& prg);
