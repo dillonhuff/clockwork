@@ -19287,9 +19287,9 @@ void gpu_codegen_test() {
 }
 
 void application_tests() {
+  iccad_tests();
   gpu_codegen_test();
 
-  iccad_tests();
 
 
   up_to_id_stream_tests();
