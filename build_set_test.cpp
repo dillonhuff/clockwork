@@ -19091,6 +19091,9 @@ void generate_cuda_code(prog& prg) {
   //
   // There is also the issue of "special" dimensions such as threadId.x that is used to determine
   // whether addresses can be coalesced.
+  //
+  // Q: How do we do code generation for the "rest" of the GPU schedule? The
+  // time components that are not kernel launches?
   ofstream out(prg.name + ".cu");
   out << "#include <stdio.h>" << endl << endl;
   vector<string> arg_decls;
@@ -19173,7 +19176,14 @@ void gpu_codegen_test() {
   infer_bounds("y_dram", {8, 8}, prg);
 
   prg.pretty_print();
-
+  op* op = pick(prg.all_ops());
+  string name = op->name;
+  op->pretty_print();
+  string gpu_schedule = curlies(name + "[x, y] -> [0, x, 0, 0, y, 0, 0]");
+  cout << "GPU schedule:" << gpu_schedule << endl;
+  isl_map* gpu_sched = isl_map_read_from_str(prg.ctx, gpu_schedule.c_str());
+  cout << "gpu thread locs to instances: " << str(inv(gpu_sched)) << endl;
+  assert(false);
   generate_cuda_code(prg);
 }
 
