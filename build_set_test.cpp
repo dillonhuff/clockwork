@@ -19140,6 +19140,10 @@ void generate_cuda_code(prog& prg, isl_map* gpu_sched) {
     out << "__device__" << endl;
     out << "inline" << endl;
     out << "void " << op->name << sep_list(arg_decls, "(", ")", ", ") << " {" << endl;
+
+    for (auto loc : op->consume_locs_pair) {
+      out << tab(1) << "float " << loc.first << "_v = " << loc.first << "[0];" << endl;
+    }
     out << "}" << endl;
   }
   out << endl;
