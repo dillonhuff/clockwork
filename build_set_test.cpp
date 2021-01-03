@@ -18998,7 +18998,7 @@ void misc_tests() {
 
 }
 
-void generate_cuda_code(prog& prg) {
+void generate_cuda_code(prog& prg, isl_map* gpu_sched) {
 
   // What data structures do we need to
   // map the code to a GPU?
@@ -19119,8 +19119,41 @@ void generate_cuda_code(prog& prg) {
     out << tab(1) << "cudaMemcpy(" << b << ", " << b << "_cuda, sizeof(float)*" << buf_size << ", cudaMemcpyHostToDevice);" << endl;
   }
 
+  op* op = pick(prg.all_ops());
+  isl_set* dom = map_find(op, prg.domains());
+  cout << "domain: " << str(dom) << endl;
+
+  isl_map* gpu_sched_bounded = its(gpu_sched, dom);
+
+  cout << "bounded gpu schedule: " << str(gpu_sched_bounded) << endl;
+  isl_set* gpu_launches = range(gpu_sched_bounded);
+  cout << "gpu launches: " << str(gpu_launches) << endl;
+
+  // Q: What is the next thing I want to be able to print?
+  // A: Code for a kernel where each thread executes one statement
+  // instance?
+
+  vector<int> k_mins = mins(gpu_launches);
+  vector<int> k_maxs = maxs(gpu_launches);
+
+  cout << "kernel min: " << k_mins.at(0) << endl;
+  cout << "kernel max: " << k_maxs.at(0) << endl;
+
+  cout << "block x min: " << k_mins.at(1) << endl;
+  cout << "block x max: " << k_maxs.at(1) << endl;
+
+  int block_xs = k_maxs.at(1) - k_mins.at(1) + 1;
+  int block_ys = k_maxs.at(2) - k_mins.at(2) + 1;
+  int block_zs = k_maxs.at(3) - k_mins.at(3) + 1;
+
+  int thread_xs = k_maxs.at(4) - k_mins.at(4) + 1;
+  int thread_ys = k_maxs.at(5) - k_mins.at(5) + 1;
+  int thread_zs = k_maxs.at(6) - k_mins.at(6) + 1;
+
+  out << tab(1) << "dim3 blocks(" << comma_list({str(block_xs), str(block_ys), str(block_zs)}) << ");" << endl;
+  out << tab(1) << "dim3 threads(" << comma_list({str(thread_xs), str(thread_ys), str(thread_zs)}) << ");" << endl;
   out << endl;
-  out << tab(1) << prg.name << "_kernel<<<1, 1>>>" << sep_list(kernel_args, "(", ")", ", ") << ";" << endl;
+  out << tab(1) << prg.name << "_kernel<<<blocks, threads>>>" << sep_list(kernel_args, "(", ")", ", ") << ";" << endl;
   out << endl;
 
   for (auto b : prg.ins) {
@@ -19185,39 +19218,9 @@ void gpu_codegen_test() {
   cout << "gpu thread locs to instances: " << str(inv(gpu_sched)) << endl;
   cout << tab(1) << "# statement instances per thread: " << str(card(inv(gpu_sched))) << endl;
 
-  isl_set* dom = map_find(op, prg.domains());
-  cout << "domain: " << str(dom) << endl;
 
-  isl_map* gpu_sched_bounded = its(gpu_sched, dom);
 
-  cout << "bounded gpu schedule: " << str(gpu_sched_bounded) << endl;
-  isl_set* gpu_launches = range(gpu_sched_bounded);
-  cout << "gpu launches: " << str(gpu_launches) << endl;
-
-  // Q: What is the next thing I want to be able to print?
-  // A: Code for a kernel where each thread executes one statement
-  // instance?
-
-  vector<int> k_mins = mins(gpu_launches);
-  vector<int> k_maxs = maxs(gpu_launches);
-
-  cout << "kernel min: " << k_mins.at(0) << endl;
-  cout << "kernel max: " << k_maxs.at(0) << endl;
-
-  cout << "block x min: " << k_mins.at(1) << endl;
-  cout << "block x max: " << k_maxs.at(1) << endl;
-
-  int block_xs = k_maxs.at(1) - k_mins.at(1) + 1;
-  int block_ys = k_maxs.at(2) - k_mins.at(2) + 1;
-  int block_zs = k_maxs.at(3) - k_mins.at(3) + 1;
-
-  int thread_xs = k_maxs.at(4) - k_mins.at(4) + 1;
-  int thread_ys = k_maxs.at(5) - k_mins.at(5) + 1;
-  int thread_zs = k_maxs.at(6) - k_mins.at(6) + 1;
-
-  assert(false);
-
-  generate_cuda_code(prg);
+  generate_cuda_code(prg, gpu_sched);
 }
 
 void application_tests() {
