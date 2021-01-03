@@ -18997,7 +18997,7 @@ void misc_tests() {
 
 }
 
-void generate_cuda_code(prog& prg) {
+void generate_cuda_code(prog& prg, isl_map* gpu_sched) {
 
   // What data structures do we need to
   // map the code to a GPU?
@@ -19027,14 +19027,167 @@ void generate_cuda_code(prog& prg) {
   //    the kernel program, as well as guards
   //    inside of it to prevent un-mapped thread / block
   //    indexes from doing anything
+  //
+  // I see two possible ways to do code generation for each
+  // of these designs
+  //  1. Have a map from statement instances to [kernel number, <block x, y, z>, <thread x, y, z>]
+  //  2. Have directives that map specific variables in for loops to block indexes / kernels
+  //     a-la Halide scheduling
+  //
+  // The other challenge is that for (1.) there also needs to be a description of the schedule
+  // within a given block, thread combination if each of them contains more than one statement
+  // instance
+  // Q: Where is that schedule?
+  // A: Maybe it is the trailing components of the schedule vector for each design?
+  //
+  // This seems related to the issue of spatial vs temporal dimensions in scheduling.
+  //
+  // Q: Can schedules of the form [block id, thread id, temporal schedule components]
+  // accomodate all possible schedules, or do we need to allow things like [temporal components, block id, thread id]?
+  // Q: In other words does the order of interleaving of spatial and temporal components of a schedule matter?
+  // comment: A GPU schedule has 1 (kernel dimension) + 3 (block dimensions) + 3 (thread dimensions) + T time dimensions,
+  //
+  // A: I think the answer to this question and the below one is no, because the formula for comparing times
+  // is [s0, t0] >> [s1, t1] <-> t0 >> t1
+  // In other words when deciding on the *time* when something happens spatial dimensions are projected out
+  // of the vector.
+  //
+  // Q: For 2 time dimensions the order of the 2 dimensions in the vector determines which is more fine-grained, in
+  // other words which is the higher-order comparison in the lexicographic order formula. Does the order of two
+  // lexicographic space dimensions or the order of a space dimension and a time dimension have any meaning?
+  //
+  // Q: Can I map anything to thread 0 and anything to thread 1 without worrying about it?
+  //    Can any set of statement instances be mapped to thread 0 and any to thread 1 without
+  //    adding synchronization?
+  // A: No
+  //      for i in [0, 10]:
+  //        P: A[i] = A[i - 1]
+  //    Thread mapping:
+  //        P[i] -> T[i]
+  //    Means that there must be synchronization, thread 0 must run first, then thread 1 can run. Do GPUs support this
+  //    kind of synchronization? Even if they do it probably is not a good idea to use it
+  //
+  // Assumption: We will only consider schedules where the instances that are mapped to different threads are independent?
+  //
+  // Q: So in polyhedral scheduling if you assign a set of statement instances to a spatial dimension you
+  // have not actually carried any dependencies?
+  // A: I think so since all of the statements in each set that is assigned to a particular space location
+  // will execute at the same time anyway, so there are no new guarantees about execution order. In other
+  // words the order of statement instances in the schedule has not been refined
+  // 
+  // Q: Doesn't this create a problem for GPU scheduling, or in general for scheduling where
+  // it is not always possible to synchronize within spatial dimensions?
+  // comment: Suppose we are on an architecture where synchronization across threads is not possible.
+  // Then it must be the case that the sets of statement instances assigned to distinct threads
+  // must be embarassingly parallel
+  //
+  // idea: Schedule templates where you can flag dimensions as temporal, spatial without synchronization,
+  // spatial with synchronization.
+  //
+  // Q: What would a GPU kernel be?
+  // A: It would be temporal dimension. And I suppose it is distinguished by the high cost of communication
+  // across it? For a synchronization free dimension the cost of communication would be infinity
+  //
+  // There is also the issue of "special" dimensions such as threadId.x that is used to determine
+  // whether addresses can be coalesced.
+  //
+  // Q: How do we do code generation for the "rest" of the GPU schedule? The
+  // time components that are not kernel launches?
+
+  op* op = pick(prg.all_ops());
+  isl_set* dom = map_find(op, prg.domains());
+  cout << "domain: " << str(dom) << endl;
+
+  isl_map* gpu_sched_bounded = its(gpu_sched, dom);
+
+  cout << "bounded gpu schedule: " << str(gpu_sched_bounded) << endl;
+  isl_set* gpu_launches = range(gpu_sched_bounded);
+  cout << "gpu launches: " << str(gpu_launches) << endl;
+
+  vector<int> k_mins = mins(gpu_launches);
+  vector<int> k_maxs = maxs(gpu_launches);
+
+  cout << "kernel min: " << k_mins.at(0) << endl;
+  cout << "kernel max: " << k_maxs.at(0) << endl;
+
+  cout << "block x min: " << k_mins.at(1) << endl;
+  cout << "block x max: " << k_maxs.at(1) << endl;
+
+  int block_xs = k_maxs.at(1) - k_mins.at(1) + 1;
+  int block_ys = k_maxs.at(2) - k_mins.at(2) + 1;
+  int block_zs = k_maxs.at(3) - k_mins.at(3) + 1;
+
+  int thread_xs = k_maxs.at(4) - k_mins.at(4) + 1;
+  int thread_ys = k_maxs.at(5) - k_mins.at(5) + 1;
+  int thread_zs = k_maxs.at(6) - k_mins.at(6) + 1;
+
+  vector<int> blocks{block_xs, block_ys, block_zs};
+  vector<int> threads{thread_xs, thread_ys, thread_zs};
   ofstream out(prg.name + ".cu");
   out << "#include <stdio.h>" << endl << endl;
+  out << endl;
+  out << "// Operation logic" << endl;
+  for (auto op : prg.all_ops()) {
+    vector<string> arg_decls;
+    for (auto b : buffer_arg_names(op, prg)) {
+      arg_decls.push_back("float* " + b);
+    }
+    vector<string> surrounding = surrounding_vars(op, prg);
+    for (int i = 0; i < (int) surrounding.size(); i++) {
+      arg_decls.push_back("int d" + str(i));
+    }
+    out << "__device__" << endl;
+    out << "inline" << endl;
+    out << "void " << op->name << sep_list(arg_decls, "(", ")", ", ") << " {" << endl;
+
+    for (auto loc : op->consume_locs_pair) {
+      out << tab(1) << "float " << loc.first << "_v = " << loc.first << "[0];" << endl;
+    }
+    out << "}" << endl;
+  }
+  out << endl;
+
   vector<string> arg_decls;
   for (auto b : prg.boundary_buffers()) {
     arg_decls.push_back("float* " + b);
   }
   out << "__global__" << endl;
   out << "void " << prg.name << "_kernel" << sep_list(arg_decls, "(", ")", ", ") << " {" << endl;
+
+  vector<string> conds;
+  conds.push_back("threadIdx.x < " + str(thread_xs));
+  conds.push_back("threadIdx.y < " + str(thread_ys));
+  conds.push_back("threadIdx.z < " + str(thread_zs));
+  conds.push_back("blockIdx.x < " + str(block_xs));
+  conds.push_back("blockIdx.y < " + str(block_ys));
+  conds.push_back("blockIdx.z < " + str(block_zs));
+  out << tab(1) << "if (" << sep_list(conds, "", "", " && ") << ") {" << endl;
+  isl_multi_aff* aff = get_multi_aff(inv(gpu_sched_bounded));
+  // TODO: Handle loops inside the schedule
+  vector<string> surrounding = surrounding_vars(op, prg);
+  vector<string> args = buffer_arg_names(op, prg);
+  for (int i = 0; i < (int) surrounding.size(); i++) {
+    auto comp = isl_multi_aff_get_aff(aff, i);
+    out << tab(2) << "// " << str(comp) << endl;
+    comp = isl_aff_set_dim_id(comp, isl_dim_in, 1, id(prg.ctx, "blockIdx.x"));
+    comp = isl_aff_set_dim_id(comp, isl_dim_in, 2, id(prg.ctx, "blockIdx.y"));
+    comp = isl_aff_set_dim_id(comp, isl_dim_in, 3, id(prg.ctx, "blockIdx.z"));
+    comp = isl_aff_set_dim_id(comp, isl_dim_in, 4, id(prg.ctx, "threadIdx.x"));
+    comp = isl_aff_set_dim_id(comp, isl_dim_in, 5, id(prg.ctx, "threadIdx.y"));
+    comp = isl_aff_set_dim_id(comp, isl_dim_in, 6, id(prg.ctx, "threadIdx.z"));
+    out << tab(2) << "int d" << str(i) << " = " << codegen_c(comp) << ";" << endl;
+    args.push_back("d" + str(i));
+  }
+  string args_list = sep_list(args, "", "", ", ");
+  out << tab(2) << op->name << "(" << args_list << ");" << endl;
+  out << tab(2) << "// " << str(aff) << endl;
+  // Now: Execute all statement instances scheduled for this thread?
+
+  auto min_instances = get_multi_aff(lexmin(inv(gpu_sched_bounded)));
+  auto max_instances = get_multi_aff(lexmax(inv(gpu_sched_bounded)));
+  out << tab(2) << "// " << str(min_instances) << endl;
+  out << tab(2) << "// " << str(max_instances) << endl;
+  out << tab(1) << "}" << endl;
   out << "}" << endl;
 
   out << endl;
@@ -19052,8 +19205,13 @@ void generate_cuda_code(prog& prg) {
     out << tab(1) << "cudaMemcpy(" << b << ", " << b << "_cuda, sizeof(float)*" << buf_size << ", cudaMemcpyHostToDevice);" << endl;
   }
 
+  // Q: What is the next thing I want to be able to print?
+  // A: Code for a kernel where each thread executes one statement
+  // instance?
+  out << tab(1) << "dim3 blocks(" << comma_list(blocks) << ");" << endl;
+  out << tab(1) << "dim3 threads(" << comma_list(threads) << ");" << endl;
   out << endl;
-  out << tab(1) << prg.name << "_kernel<<<1, 1>>>" << sep_list(kernel_args, "(", ")", ", ") << ";" << endl;
+  out << tab(1) << prg.name << "_kernel<<<blocks, threads>>>" << sep_list(kernel_args, "(", ")", ", ") << ";" << endl;
   out << endl;
 
   for (auto b : prg.ins) {
@@ -19097,7 +19255,7 @@ void generate_cuda_code(prog& prg) {
   out << "}" << endl;
   out.close();
 
-  assert(false);
+  //assert(false);
 }
 
 void gpu_codegen_test() {
@@ -19109,14 +19267,30 @@ void gpu_codegen_test() {
   infer_bounds("y_dram", {8, 8}, prg);
 
   prg.pretty_print();
+  op* op = pick(prg.all_ops());
+  string name = op->name;
+  op->pretty_print();
+  string gpu_schedule = curlies(name + "[root, x, y] -> [0, x, 0, 0, y, 0, 0]");
+  cout << "GPU schedule:" << gpu_schedule << endl;
+  isl_map* gpu_sched = isl_map_read_from_str(prg.ctx, gpu_schedule.c_str());
+  cout << "gpu thread locs to instances: " << str(inv(gpu_sched)) << endl;
+  cout << tab(1) << "# statement instances per thread: " << str(card(inv(gpu_sched))) << endl;
 
-  generate_cuda_code(prg);
+
+
+  generate_cuda_code(prg, gpu_sched);
+
+  int res = cmd("nvcc -c hello_gpu.cu");
+  assert(res == 0);
+
+  assert(false);
 }
 
 void application_tests() {
+  gpu_codegen_test();
+
   iccad_tests();
 
-  gpu_codegen_test();
 
   up_to_id_stream_tests();
   up_to_ram_addr_unit_test();
