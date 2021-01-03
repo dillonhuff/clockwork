@@ -19126,14 +19126,16 @@ void generate_cuda_code(prog& prg, isl_map* gpu_sched) {
   vector<int> threads{thread_xs, thread_ys, thread_zs};
   ofstream out(prg.name + ".cu");
   out << "#include <stdio.h>" << endl << endl;
-  //out << "#include " << prg.compute_unit_file << endl << endl;
-  //
   out << endl;
   out << "// Operation logic" << endl;
   for (auto op : prg.all_ops()) {
     vector<string> arg_decls;
     for (auto b : buffer_arg_names(op, prg)) {
       arg_decls.push_back("float* " + b);
+    }
+    vector<string> surrounding = surrounding_vars(op, prg);
+    for (int i = 0; i < (int) surrounding.size(); i++) {
+      arg_decls.push_back("int d" + str(i));
     }
     out << "__device__" << endl;
     out << "inline" << endl;
@@ -19159,7 +19161,12 @@ void generate_cuda_code(prog& prg, isl_map* gpu_sched) {
   out << tab(1) << "if (" << sep_list(conds, "", "", " && ") << ") {" << endl;
   isl_multi_aff* aff = get_multi_aff(inv(gpu_sched_bounded));
   // TODO: Handle loops inside the schedule
-  string args_list = sep_list(buffer_arg_names(op, prg), "", "", ", ");
+  vector<string> surrounding = surrounding_vars(op, prg);
+  vector<string> args = buffer_arg_names(op, prg);
+  for (int i = 0; i < (int) surrounding.size(); i++) {
+    args.push_back("d" + str(i));
+  }
+  string args_list = sep_list(args, "", "", ", ");
   out << tab(3) << op->name << "(" << args_list << ");" << endl;
   out << tab(2) << "// " << str(aff) << endl;
   // Now: Execute all statement instances scheduled for this thread?
