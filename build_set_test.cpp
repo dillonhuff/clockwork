@@ -19134,10 +19134,13 @@ void generate_cuda_code(prog& prg, isl_map* gpu_sched) {
   out << "void " << prg.name << "_kernel" << sep_list(arg_decls, "(", ")", ", ") << " {" << endl;
 
   vector<string> conds;
-  conds.push_back("0 <= threadIdx.x < " + str(thread_xs));
-  conds.push_back("0 <= threadIdx.y < " + str(thread_ys));
-  conds.push_back("0 <= threadIdx.z < " + str(thread_zs));
-  out << tab(1) << "if (" << sep_list(conds, "", "", " & ") << ") {" << endl;
+  conds.push_back("threadIdx.x < " + str(thread_xs));
+  conds.push_back("threadIdx.y < " + str(thread_ys));
+  conds.push_back("threadIdx.z < " + str(thread_zs));
+  conds.push_back("blockIdx.x < " + str(block_xs));
+  conds.push_back("blockIdx.y < " + str(block_ys));
+  conds.push_back("blockIdx.z < " + str(block_zs));
+  out << tab(1) << "if (" << sep_list(conds, "", "", " && ") << ") {" << endl;
   out << tab(1) << "}" << endl;
   out << "}" << endl;
 
