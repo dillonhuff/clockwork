@@ -19150,8 +19150,10 @@ void generate_cuda_code(prog& prg, isl_map* gpu_sched) {
   int thread_ys = k_maxs.at(5) - k_mins.at(5) + 1;
   int thread_zs = k_maxs.at(6) - k_mins.at(6) + 1;
 
-  out << tab(1) << "dim3 blocks(" << comma_list({str(block_xs), str(block_ys), str(block_zs)}) << ");" << endl;
-  out << tab(1) << "dim3 threads(" << comma_list({str(thread_xs), str(thread_ys), str(thread_zs)}) << ");" << endl;
+  vector<int> blocks{block_xs, block_ys, block_zs};
+  vector<int> threads{thread_xs, thread_ys, thread_zs};
+  out << tab(1) << "dim3 blocks(" << comma_list(blocks) << ");" << endl;
+  out << tab(1) << "dim3 threads(" << comma_list(threads) << ");" << endl;
   out << endl;
   out << tab(1) << prg.name << "_kernel<<<blocks, threads>>>" << sep_list(kernel_args, "(", ")", ", ") << ";" << endl;
   out << endl;
@@ -19197,7 +19199,7 @@ void generate_cuda_code(prog& prg, isl_map* gpu_sched) {
   out << "}" << endl;
   out.close();
 
-  assert(false);
+  //assert(false);
 }
 
 void gpu_codegen_test() {
@@ -19221,6 +19223,11 @@ void gpu_codegen_test() {
 
 
   generate_cuda_code(prg, gpu_sched);
+
+  int res = cmd("nvcc -c hello_gpu.cu");
+  assert(res == 0);
+
+  assert(false);
 }
 
 void application_tests() {
