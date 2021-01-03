@@ -3,4 +3,4 @@
 
 #include "hw_classes.h"
 
-void ef_sm1_rerun_opt(HWStream<hw_uint<16> >& /* get_args num ports = 1 */in_off_chip, HWStream<hw_uint<16> >& /* get_args num ports = 1 */ef_sm1_rerun);
+void ef_sm1_rerun_opt(HWStream<hw_uint<512> >& /* get_args num ports = 32 */in_off_chip, HWStream<hw_uint<512> >& /* get_args num ports = 32 */ef_sm1_rerun);

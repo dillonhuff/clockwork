@@ -22,12 +22,12 @@ int main(int argc, char **argv) {
   std::cout << "num_epochs = " << num_epochs << std::endl;
 
   size_t total_size_bytes = 0;
-  const int ef_sm1_rerun_update_0_write_pipe0_DATA_SIZE = num_epochs*2073600;
+  const int ef_sm1_rerun_update_0_write_pipe0_DATA_SIZE = num_epochs*2088960;
   const int ef_sm1_rerun_update_0_write_pipe0_BYTES_PER_PIXEL = 16 / 8;
   size_t ef_sm1_rerun_update_0_write_pipe0_size_bytes = ef_sm1_rerun_update_0_write_pipe0_BYTES_PER_PIXEL * ef_sm1_rerun_update_0_write_pipe0_DATA_SIZE;
 
   total_size_bytes += ef_sm1_rerun_update_0_write_pipe0_size_bytes;
-  const int in_update_0_read_pipe0_DATA_SIZE = num_epochs*2094649;
+  const int in_update_0_read_pipe0_DATA_SIZE = num_epochs*2466560;
   const int in_update_0_read_pipe0_BYTES_PER_PIXEL = 16 / 8;
   size_t in_update_0_read_pipe0_size_bytes = in_update_0_read_pipe0_BYTES_PER_PIXEL * in_update_0_read_pipe0_DATA_SIZE;
 

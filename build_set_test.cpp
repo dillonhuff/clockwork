@@ -11504,21 +11504,16 @@ void naive_implementations() {
 }
 
 void iccad_tests() {
-  stencil_chain_15_stage_iccad_apps("ic15_275MHz");
-  assert(false);
-
-  // exposure_fusion_app
-  exposure_fusion_iccad_apps("ef_fpga_rerun");
 
   // ef_cartoon
-  string name = "ef_sm1_rerun";
+  int throughput = 32;
+  string name = "ef_sm" + str(throughput) + "_rerun";
   App ef = ef_cartoon(name);
   CodegenOptions options;
   options.internal = true;
   options.num_input_epochs = 1;
   options.use_custom_code_string = true;
-  //options.rtl_options.hls_clock_target_Hz = 250000000;
-  int throughput = 1;
+  options.rtl_options.hls_clock_target_Hz = 300000000;
   int rows = 1920;
   int cols = 1080;
   ef.realize(options, name, {cols, rows}, "in", throughput);
@@ -11526,6 +11521,10 @@ void iccad_tests() {
   move_to_benchmarks_folder(name + "_opt");
   assert(false);
 
+  // exposure_fusion_app
+  exposure_fusion_iccad_apps("ef_fpga_rerun");
+
+  stencil_chain_15_stage_iccad_apps("ic15_275MHz");
   assert(false);
 
   // ef_cartoon
