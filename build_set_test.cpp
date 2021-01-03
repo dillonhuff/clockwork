@@ -11507,13 +11507,13 @@ void iccad_tests() {
 
   // ef_cartoon
   int throughput = 32;
-  string name = "ef_sm" + str(throughput) + "_400_rerun";
+  string name = "ef_" + str(throughput) + "_500";
   App ef = ef_cartoon(name);
   CodegenOptions options;
   options.internal = true;
   options.num_input_epochs = 1;
   options.use_custom_code_string = true;
-  options.rtl_options.hls_clock_target_Hz = 400000000;
+  options.rtl_options.hls_clock_target_Hz = 500000000;
   int rows = 1920;
   int cols = 1080;
   ef.realize(options, name, {cols, rows}, "in", throughput);
