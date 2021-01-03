@@ -19141,6 +19141,16 @@ void generate_cuda_code(prog& prg, isl_map* gpu_sched) {
   conds.push_back("blockIdx.y < " + str(block_ys));
   conds.push_back("blockIdx.z < " + str(block_zs));
   out << tab(1) << "if (" << sep_list(conds, "", "", " && ") << ") {" << endl;
+  isl_multi_aff* aff = get_multi_aff(inv(gpu_sched_bounded));
+  // TODO: Handle loops inside the schedule
+  out << tab(3) << op->name << "();" << endl;
+  out << tab(2) << "// " << str(aff) << endl;
+  // Now: Execute all statement instances scheduled for this thread?
+
+  auto min_instances = get_multi_aff(lexmin(inv(gpu_sched_bounded)));
+  auto max_instances = get_multi_aff(lexmax(inv(gpu_sched_bounded)));
+  out << tab(2) << "// " << str(min_instances) << endl;
+  out << tab(2) << "// " << str(max_instances) << endl;
   out << tab(1) << "}" << endl;
   out << "}" << endl;
 
