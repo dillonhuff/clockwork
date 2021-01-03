@@ -19188,10 +19188,24 @@ void gpu_codegen_test() {
   isl_set* dom = map_find(op, prg.domains());
   cout << "domain: " << str(dom) << endl;
 
+  isl_map* gpu_sched_bounded = its(gpu_sched, dom);
+
+  cout << "bounded gpu schedule: " << str(gpu_sched_bounded) << endl;
+  isl_set* gpu_launches = range(gpu_sched_bounded);
+  cout << "gpu launches: " << str(gpu_launches) << endl;
+
   // Q: What is the next thing I want to be able to print?
   // A: Code for a kernel where each thread executes one statement
   // instance?
 
+  vector<int> k_mins = mins(gpu_launches);
+  vector<int> k_maxs = maxs(gpu_launches);
+
+  cout << "kernel min: " << k_mins.at(0) << endl;
+  cout << "kernel max: " << k_maxs.at(0) << endl;
+
+  cout << "block x min: " << k_mins.at(1) << endl;
+  cout << "block x max: " << k_maxs.at(1) << endl;
   assert(false);
 
   generate_cuda_code(prg);
