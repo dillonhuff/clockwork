@@ -19206,6 +19206,15 @@ void gpu_codegen_test() {
 
   cout << "block x min: " << k_mins.at(1) << endl;
   cout << "block x max: " << k_maxs.at(1) << endl;
+
+  int block_xs = k_maxs.at(1) - k_mins.at(1) + 1;
+  int block_ys = k_maxs.at(2) - k_mins.at(2) + 1;
+  int block_zs = k_maxs.at(3) - k_mins.at(3) + 1;
+
+  int thread_xs = k_maxs.at(4) - k_mins.at(4) + 1;
+  int thread_ys = k_maxs.at(5) - k_mins.at(5) + 1;
+  int thread_zs = k_maxs.at(6) - k_mins.at(6) + 1;
+
   assert(false);
 
   generate_cuda_code(prg);
