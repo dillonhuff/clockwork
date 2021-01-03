@@ -1696,7 +1696,8 @@ void generate_app_code_header(const map<string, UBuffer>& buffers, prog& prg) {
 }
 
 
-vector<string> buffer_arg_names(const map<string, UBuffer>& buffers, op* op, prog& prg) {
+//vector<string> buffer_arg_names(const map<string, UBuffer>& buffers, op* op, prog& prg) {
+vector<string> buffer_arg_names(op* op, prog& prg) {
   std::set<string> done;
   vector<string> buf_srcs;
 
@@ -2165,7 +2166,8 @@ void generate_app_code_op_logic(
 
   for (auto op : prg.all_ops()) {
     regex re("(\n\t\\s+)" + op->name + "\\((.*)\\);");
-    string args_list = sep_list(buffer_arg_names(buffers, op, prg), "", "", ", ");
+    //string args_list = sep_list(buffer_arg_names(buffers, op, prg), "", "", ", ");
+    string args_list = sep_list(buffer_arg_names(op, prg), "", "", ", ");
     //code_string = regex_replace(code_string, re, "\n\t" + op->name + "(" + args_list + ", $1);");
     code_string = regex_replace(code_string, re, "$1" + op->name + "(" + args_list + ", $2);");
   }
