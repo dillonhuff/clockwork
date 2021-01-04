@@ -19048,6 +19048,10 @@ void generate_cuda_code(prog& prg, isl_map* gpu_sched) {
     for (auto loc : op->consume_locs_pair) {
       out << tab(1) << "float " << loc.first << "_v = " << loc.first << "[0];" << endl;
     }
+
+    assert(op->produce_locs.size() == 1);
+    auto loc = pick(op->produce_locs);
+    out << tab(1) << loc.first << "[0] = 1234;" << endl;
     out << "}" << endl;
   }
   out << endl;
@@ -19107,7 +19111,12 @@ void generate_cuda_code(prog& prg, isl_map* gpu_sched) {
   }
   for (auto b : prg.ins) {
     string buf_size = str(prg.buffer_size(b));
-    out << tab(1) << "cudaMemcpy(" << b << ", " << b << "_cuda, sizeof(float)*" << buf_size << ", cudaMemcpyHostToDevice);" << endl;
+    out << tab(1) << "cudaMemcpy(" <<
+      b << "_cuda" <<
+      ", " <<
+      b <<
+      "," <<
+      "sizeof(float)*" << buf_size << ", cudaMemcpyHostToDevice);" << endl;
   }
 
   // Q: What is the next thing I want to be able to print?
@@ -19119,9 +19128,14 @@ void generate_cuda_code(prog& prg, isl_map* gpu_sched) {
   out << tab(1) << prg.name << "_kernel<<<blocks, threads>>>" << sep_list(kernel_args, "(", ")", ", ") << ";" << endl;
   out << endl;
 
-  for (auto b : prg.ins) {
+  for (auto b : prg.outs) {
     string buf_size = str(prg.buffer_size(b));
-    out << tab(1) << "cudaMemcpy(" << b << "_cuda, " << b << ", sizeof(float)*" << buf_size << ", cudaMemcpyDeviceToHost);" << endl;
+    out << tab(1) << "cudaMemcpy(" <<
+      b <<
+      ", " <<
+      b << "_cuda" <<
+      "," <<
+      "sizeof(float)*" << buf_size << ", cudaMemcpyDeviceToHost);" << endl;
   }
   for (auto b : prg.boundary_buffers()) {
     out << tab(1) << "cudaFree(" << b << "_cuda);" << endl;
@@ -19186,7 +19200,9 @@ void gpu_codegen_test() {
 
   generate_cuda_code(prg, gpu_sched);
 
-  int res = cmd("nvcc -c hello_gpu.cu");
+  int res = cmd("nvcc -o hg hello_gpu.cu");
+  assert(res == 0);
+  res = cmd("./hg");
   assert(res == 0);
 
   assert(false);
