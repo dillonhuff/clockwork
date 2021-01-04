@@ -19060,6 +19060,7 @@ void generate_cuda_code(prog& prg, isl_map* gpu_sched) {
       //out << tab(1) << "// " << str(write_addr) << endl;
       vector<int> dims = map_find(loc.first, prg.buffer_bounds);
       vector<int> strs = strides(dims);
+      reverse(strs);
       vector<string> components;
       for (int i = 0; i < isl_multi_aff_dim(write_addr, isl_dim_set); i++) {
         components.push_back(str(strs.at(i)) + "*" + codegen_c(isl_multi_aff_get_aff(write_addr, i)));
@@ -19074,6 +19075,7 @@ void generate_cuda_code(prog& prg, isl_map* gpu_sched) {
     //out << tab(1) << "// " << str(write_addr) << endl;
     vector<int> dims = map_find(loc.first, prg.buffer_bounds);
     vector<int> strs = strides(dims);
+    reverse(strs);
     vector<string> components;
     for (int i = 0; i < isl_multi_aff_dim(write_addr, isl_dim_set); i++) {
       components.push_back(str(strs.at(i)) + "*" + codegen_c(isl_multi_aff_get_aff(write_addr, i)));
@@ -19220,8 +19222,6 @@ void gpu_codegen_test() {
   isl_map* gpu_sched = isl_map_read_from_str(prg.ctx, gpu_schedule.c_str());
   cout << "gpu thread locs to instances: " << str(inv(gpu_sched)) << endl;
   cout << tab(1) << "# statement instances per thread: " << str(card(inv(gpu_sched))) << endl;
-
-
 
   generate_cuda_code(prg, gpu_sched);
 
