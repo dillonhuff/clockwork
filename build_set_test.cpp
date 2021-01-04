@@ -11504,7 +11504,6 @@ void naive_implementations() {
 }
 
 void iccad_tests() {
-
   // ef_cartoon
   int throughput = 32;
   string name = "ef_" + str(throughput) + "_500";
@@ -19029,6 +19028,7 @@ void generate_cuda_code(prog& prg, isl_map* gpu_sched) {
   vector<int> threads{thread_xs, thread_ys, thread_zs};
   ofstream out(prg.name + ".cu");
   out << "#include <stdio.h>" << endl << endl;
+  out << "#include <assert.h>" << endl << endl;
   out << "#include \"" << prg.compute_unit_file << "\"" << endl << endl;
   out << endl;
   out << "template<typename T>" << endl;
@@ -19184,30 +19184,47 @@ void generate_cuda_code(prog& prg, isl_map* gpu_sched) {
   out << "int main() {" << endl;
   {
     vector<string> args;
+    vector<string> cpu_args;
     for (auto b : prg.boundary_buffers()) {
-      out << tab(1) << "float* " << b << ";" << endl;
-      string buf_size = str(prg.buffer_size(b));
-      out << tab(1) << b << " = (float*) malloc(sizeof(float)*" << buf_size << ");" << endl;
-      args.push_back(b);
-      if (elem(b, prg.ins)) {
-        out << tab(1) << "for (int i = 0; i < " << buf_size << "; i++) {" << endl;
-        out << tab(2) << b << "[i] = i;" << endl;
-        out << tab(1) << "}" << endl;
+      {
+        out << tab(1) << "float* " << b << ";" << endl;
+        string buf_size = str(prg.buffer_size(b));
+        out << tab(1) << b << " = (float*) malloc(sizeof(float)*" << buf_size << ");" << endl;
+        args.push_back(b);
+        if (elem(b, prg.ins)) {
+          out << tab(1) << "for (int i = 0; i < " << buf_size << "; i++) {" << endl;
+          out << tab(2) << b << "[i] = i;" << endl;
+          out << tab(1) << "}" << endl;
+        }
+      }
+      {
+        out << tab(1) << "float* " << b << "_cpu_ref;" << endl;
+        string buf_size = str(prg.buffer_size(b));
+        out << tab(1) << b << "_cpu_ref = (float*) malloc(sizeof(float)*" << buf_size << ");" << endl;
+        cpu_args.push_back(b);
+        if (elem(b, prg.ins)) {
+          out << tab(1) << "for (int i = 0; i < " << buf_size << "; i++) {" << endl;
+          out << tab(2) << b << "_cpu_ref[i] = i;" << endl;
+          out << tab(1) << "}" << endl;
+        }
       }
     }
 
     out << endl;
     out << tab(1) << prg.name << sep_list(args, "(", ");", ", ") << endl;
-    out << tab(1) << prg.name << "_cpu_reference" << sep_list(args, "(", ");", ", ") << endl;
+    out << tab(1) << prg.name << "_cpu_reference" << sep_list(cpu_args, "(", ");", ", ") << endl;
     out << endl;
     for (auto b : prg.boundary_buffers()) {
       string buf_size = str(prg.buffer_size(b));
       if (elem(b, prg.outs)) {
         out << tab(1) << "for (int i = 0; i < " << buf_size << "; i++) {" << endl;
         out << tab(2) << "printf(\"" << b << "[%d] = %f\\n\", i, " << b << "[i]);" << endl;
+        out << tab(2) << "printf(\"" << b << "_cpu_ref[%d] = %f\\n\", i, " << b << "_cpu_ref[i]);" << endl;
+        out << tab(2) << "assert(" << b << "[i] == " << b << "_cpu_ref[i]);" << endl;
         out << tab(1) << "}" << endl;
       }
       out << tab(1) << "free(" << b << ");" << endl;
+      out << tab(1) << "free(" << b << "_cpu_ref);" << endl;
     }
   }
 
