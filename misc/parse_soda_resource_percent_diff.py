@@ -95,7 +95,7 @@ while i < len(res):
     ff_reductions.append(pct_reduction)
 
     print('SODA FFs  :', soda_ffs)
-    print('CW FFs    ::', cw_ffs)
+    print('CW FFs    :', cw_ffs)
     print('PCT Reduction:', pct_reduction)
     print()
     i += 2
