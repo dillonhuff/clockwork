@@ -18996,6 +18996,45 @@ void misc_tests() {
 
 }
 
+void generate_cpu_reference_body(const int level, ostream& out, op* op, prog& prg) {
+  if (op->is_loop()) {
+    out << tab(level) << "for (int " << op->name << " = 0; " << op->name << " < " << op->trip_count() << "; " << op->name << "++) {" << endl;
+    for (auto child : op->children) {
+      generate_cpu_reference_body(level + 1, out, child, prg);
+    }
+    out << tab(level) << "}" << endl;
+  } else {
+
+    vector<string> compute_inputs;
+    for (auto loc : op->consume_locs_pair) {
+      isl_multi_aff* write_addr = pick(read_addrs(op, loc.first, prg));
+      vector<int> dims = map_find(loc.first, prg.buffer_bounds);
+      vector<int> strs = strides(dims);
+      reverse(strs);
+      vector<string> components;
+      for (int i = 0; i < isl_multi_aff_dim(write_addr, isl_dim_set); i++) {
+        components.push_back(str(strs.at(i)) + "*" + codegen_c(isl_multi_aff_get_aff(write_addr, i)));
+      }
+      out << tab(1) << "float " << loc.first << "_v = " << loc.first << "[" << sep_list(components, "", "", " + ") << "];" << endl;
+      compute_inputs.push_back(loc.first + "_v");
+    }
+
+    assert(op->produce_locs.size() == 1);
+    auto loc = pick(op->produce_locs);
+    isl_multi_aff* write_addr = pick(write_addrs(op, loc.first, prg));
+    //out << tab(1) << "// " << str(write_addr) << endl;
+    vector<int> dims = map_find(loc.first, prg.buffer_bounds);
+    vector<int> strs = strides(dims);
+    reverse(strs);
+    vector<string> components;
+    for (int i = 0; i < isl_multi_aff_dim(write_addr, isl_dim_set); i++) {
+      components.push_back(str(strs.at(i)) + "*" + codegen_c(isl_multi_aff_get_aff(write_addr, i)));
+    }
+    out << tab(1) << loc.first << "[" << sep_list(components, "", "", " + ") << "] = " << op->func << sep_list(compute_inputs, "(", ")", ", ") << ";" << endl;
+  }
+
+}
+
 void generate_cuda_code(prog& prg, isl_map* gpu_sched) {
   op* op = pick(prg.all_ops());
   isl_set* dom = map_find(op, prg.domains());
@@ -19093,7 +19132,7 @@ void generate_cuda_code(prog& prg, isl_map* gpu_sched) {
   }
 
   out << "void " << prg.name << "_cpu_reference" << sep_list(arg_decls, "(", ")", ", ") << " {" << endl;
-  out << tab(1) << "// TODO: Generate CPU reference implementation" << endl;
+  generate_cpu_reference_body(1, out, prg.root, prg);
   out << "}" << endl;
   out << endl;
 
