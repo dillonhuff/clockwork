@@ -1,4 +1,5 @@
 import re
+import statistics
 
 f = open('./misc/soda_comparison_standalone_large.tex').readlines()
 
@@ -49,4 +50,45 @@ res = table_op(f, sum_double_entry)
 
 print(res)
 
-assert(len(res) = 3*2*3)
+assert(len(res) % 2 == 0)
+assert(len(res) == 4*2*3)
+
+lut_reductions = []
+bram_reductions = []
+i = 0
+while i < len(res):
+    soda_res = res[i]
+    cw_res = res[i + 1]
+
+    assert(soda_res[0] == cw_res[0])
+
+    assert(soda_res[2] == 'SODA')
+    assert(cw_res[2] == 'CW')
+
+    soda_luts = float(soda_res[3])
+    cw_luts = float(cw_res[3])
+
+    pct_reduction = 100.0 * ((soda_luts - cw_luts) / soda_luts)
+    lut_reductions.append(pct_reduction)
+
+    print('SODA LUTs    :', soda_luts)
+    print('CW LUTs      :', cw_luts)
+    print('PCT Reduction:', pct_reduction)
+    print()
+
+    soda_brams = float(soda_res[6])
+    cw_brams = float(cw_res[6])
+
+    pct_reduction = 100.0 * ((soda_brams - cw_brams) / soda_brams)
+    bram_reductions.append(pct_reduction)
+
+    print('SODA BRAMs:', soda_brams)
+    print('CW BRAMs  :', cw_brams)
+    print('PCT Reduction:', pct_reduction)
+    print()
+    i += 2
+
+print()
+print('Average LUT reduction :', statistics.mean(lut_reductions))
+print('Average BRAM reduction:', statistics.mean(bram_reductions))
+print('Done')
