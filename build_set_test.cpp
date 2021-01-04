@@ -19193,13 +19193,22 @@ void generate_cuda_code(prog& prg, isl_map* gpu_sched) {
       "sizeof(float)*" << buf_size << ", cudaMemcpyHostToDevice);" << endl;
   }
 
-  // Q: What is the next thing I want to be able to print?
-  // A: Code for a kernel where each thread executes one statement
-  // instance?
   out << tab(1) << "dim3 blocks(" << comma_list(blocks) << ");" << endl;
   out << tab(1) << "dim3 threads(" << comma_list(threads) << ");" << endl;
   out << endl;
+
+  out << tab(1) << "cudaEvent_t start, stop;" << endl;
+  out << tab(1) << "cudaEventCreate(&start);" << endl;
+  out << tab(1) << "cudaEventCreate(&stop);" << endl;
+  out << tab(1) << "cudaEventRecord(start);" << endl;
   out << tab(1) << prg.name << "_kernel<<<blocks, threads>>>" << sep_list(kernel_args, "(", ")", ", ") << ";" << endl;
+  out << tab(1) << "cudaEventRecord(stop);" << endl;
+  out << endl;
+  out << tab(1) << "cudaEventSynchronize(stop);" << endl;
+  out << tab(1) << "float milliseconds = 0;" << endl;
+  out << tab(1) << "cudaEventElapsedTime(&milliseconds, start, stop);" << endl;
+  out << tab(1) << "printf(\"GPU Exe time (ms): %f\\n\", milliseconds);" << endl;
+
   out << endl;
 
   for (auto b : prg.outs) {
@@ -19255,8 +19264,8 @@ void generate_cuda_code(prog& prg, isl_map* gpu_sched) {
       string buf_size = str(prg.buffer_size(b));
       if (elem(b, prg.outs)) {
         out << tab(1) << "for (int i = 0; i < " << buf_size << "; i++) {" << endl;
-        out << tab(2) << "printf(\"" << b << "[%d] = %f\\n\", i, " << b << "[i]);" << endl;
-        out << tab(2) << "printf(\"" << b << "_cpu_ref[%d] = %f\\n\", i, " << b << "_cpu_ref[i]);" << endl;
+        //out << tab(2) << "printf(\"" << b << "[%d] = %f\\n\", i, " << b << "[i]);" << endl;
+        //out << tab(2) << "printf(\"" << b << "_cpu_ref[%d] = %f\\n\", i, " << b << "_cpu_ref[i]);" << endl;
         out << tab(2) << "assert(" << b << "[i] == " << b << "_cpu_ref[i]);" << endl;
         out << tab(1) << "}" << endl;
       }
