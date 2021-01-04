@@ -19032,6 +19032,7 @@ void generate_cuda_code(prog& prg, isl_map* gpu_sched) {
   out << "#include \"" << prg.compute_unit_file << "\"" << endl << endl;
   out << endl;
   out << "template<typename T>" << endl;
+  out << "__host__" << endl;
   out << "__device__" << endl;
   out << "inline" << endl;
   out << "T id(const T& v) {" << endl;
@@ -19050,6 +19051,7 @@ void generate_cuda_code(prog& prg, isl_map* gpu_sched) {
     for (int i = 0; i < (int) surrounding.size(); i++) {
       arg_decls.push_back("int " + surrounding.at(i)); //"int d" + str(i));
     }
+    out << "__host__" << endl;
     out << "__device__" << endl;
     out << "inline" << endl;
     out << "void " << op->name << sep_list(arg_decls, "(", ")", ", ") << " {" << endl;
@@ -19089,6 +19091,12 @@ void generate_cuda_code(prog& prg, isl_map* gpu_sched) {
   for (auto b : prg.boundary_buffers()) {
     arg_decls.push_back("float* " + b);
   }
+
+  out << "void " << prg.name << "_cpu_reference" << sep_list(arg_decls, "(", ")", ", ") << " {" << endl;
+  out << tab(1) << "// TODO: Generate CPU reference implementation" << endl;
+  out << "}" << endl;
+  out << endl;
+
   out << "__global__" << endl;
   out << "void " << prg.name << "_kernel" << sep_list(arg_decls, "(", ")", ", ") << " {" << endl;
 
@@ -19188,7 +19196,10 @@ void generate_cuda_code(prog& prg, isl_map* gpu_sched) {
       }
     }
 
+    out << endl;
     out << tab(1) << prg.name << sep_list(args, "(", ");", ", ") << endl;
+    out << tab(1) << prg.name << "_cpu_reference" << sep_list(args, "(", ");", ", ") << endl;
+    out << endl;
     for (auto b : prg.boundary_buffers()) {
       string buf_size = str(prg.buffer_size(b));
       if (elem(b, prg.outs)) {
