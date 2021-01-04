@@ -23,7 +23,7 @@ def table_op(table_lines, func):
         if m:
             print(l)
             print(m[0])
-            values = m[1].split('&')
+            values = [e.strip() for e in m[1].split('&')]
             if is_float(values[1]):
                 # values = func(values)
                 # res += ' & '.join(values) + ' \\\\' + '\n'
