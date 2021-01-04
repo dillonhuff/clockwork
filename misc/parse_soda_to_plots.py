@@ -2,7 +2,8 @@ import re
 import matplotlib.pyplot as plt
 import numpy as np
 
-f = open('./misc/soda_resource_comparison_table.tex').readlines()
+# f = open('./misc/soda_resource_comparison_table.tex').readlines()
+f = open('./misc/soda_comparison_standalone_large.tex').readlines()
 
 def intersperse(lst, item):
     result = [item] * (len(lst) * 2 - 1)
@@ -29,7 +30,7 @@ def table_op(table_lines, func):
                 lines.append(stripped)
     print(lines)
 
-    app_names = ['blur', 'cp', 'sobel']
+    app_names = ['Blur', 'CP', 'Sobel', 'Jacobi']
     systems = ['SODA', 'CW']
     resources = ['LUT', 'BRAM', 'FF']
 
@@ -48,7 +49,9 @@ def table_op(table_lines, func):
 
     print(apps)
 
-    fig, ax = plt.subplots(3, 3, sharex='col', sharey='row')
+    NumApps = len(app_names)
+    N = len(apps[resource][app]['SODA'])
+    fig, ax = plt.subplots(NumApps, NumApps, sharex='col', sharey='row')
 
     fig.suptitle('Resource Utilization for SODA and Clockwork')
     i = 0
@@ -60,7 +63,6 @@ def table_op(table_lines, func):
             print(apps[resource])
             print(apps[resource][app])
             assert(apps[resource] != None)
-            N = len(apps[resource][app]['SODA'])
             menMeans = apps[resource][app]['SODA']
 
             ind = np.arange(N)  # the x locations for the groups
