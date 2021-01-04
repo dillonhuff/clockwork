@@ -19031,6 +19031,15 @@ void generate_cuda_code(prog& prg, isl_map* gpu_sched) {
   out << "#include <stdio.h>" << endl << endl;
   out << "#include \"" << prg.compute_unit_file << "\"" << endl << endl;
   out << endl;
+  out << "template<typename T>" << endl;
+  out << "__device__" << endl;
+  out << "inline" << endl;
+  out << "T id(const T& v) {" << endl;
+  out << "  return v;" << endl;
+  out << "}" << endl;
+
+  out << endl;
+
   out << "// Operation logic" << endl;
   for (auto op : prg.all_ops()) {
     vector<string> arg_decls;
@@ -19045,13 +19054,15 @@ void generate_cuda_code(prog& prg, isl_map* gpu_sched) {
     out << "inline" << endl;
     out << "void " << op->name << sep_list(arg_decls, "(", ")", ", ") << " {" << endl;
 
+    vector<string> compute_inputs;
     for (auto loc : op->consume_locs_pair) {
       out << tab(1) << "float " << loc.first << "_v = " << loc.first << "[0];" << endl;
+      compute_inputs.push_back(loc.first + "_v");
     }
 
     assert(op->produce_locs.size() == 1);
     auto loc = pick(op->produce_locs);
-    out << tab(1) << loc.first << "[0] = 1234;" << endl;
+    out << tab(1) << loc.first << "[0] = " << op->func << sep_list(compute_inputs, "(", ")", ", ") << ";" << endl;
     out << "}" << endl;
   }
   out << endl;
