@@ -19010,7 +19010,7 @@ void generate_cpu_reference_body(const int level, ostream& out, op* op, prog& pr
       isl_multi_aff* write_addr = pick(read_addrs(op, loc.first, prg));
       vector<int> dims = map_find(loc.first, prg.buffer_bounds);
       vector<int> strs = strides(dims);
-      reverse(strs);
+      //reverse(strs);
       vector<string> components;
       for (int i = 0; i < isl_multi_aff_dim(write_addr, isl_dim_set); i++) {
         components.push_back(str(strs.at(i)) + "*" + codegen_c(isl_multi_aff_get_aff(write_addr, i)));
@@ -19024,7 +19024,7 @@ void generate_cpu_reference_body(const int level, ostream& out, op* op, prog& pr
     isl_multi_aff* write_addr = pick(write_addrs(op, loc.first, prg));
     vector<int> dims = map_find(loc.first, prg.buffer_bounds);
     vector<int> strs = strides(dims);
-    reverse(strs);
+    //reverse(strs);
     vector<string> components;
     for (int i = 0; i < isl_multi_aff_dim(write_addr, isl_dim_set); i++) {
       components.push_back(str(strs.at(i)) + "*" + codegen_c(isl_multi_aff_get_aff(write_addr, i)));
@@ -19053,6 +19053,9 @@ void generate_cuda_code(prog& prg, isl_map* gpu_sched) {
 
   cout << "block x min: " << k_mins.at(1) << endl;
   cout << "block x max: " << k_maxs.at(1) << endl;
+
+  cout << "thread x min: " << k_mins.at(4) << endl;
+  cout << "thread x max: " << k_maxs.at(4) << endl;
 
   int block_xs = k_maxs.at(1) - k_mins.at(1) + 1;
   int block_ys = k_maxs.at(2) - k_mins.at(2) + 1;
@@ -19099,7 +19102,7 @@ void generate_cuda_code(prog& prg, isl_map* gpu_sched) {
       isl_multi_aff* write_addr = pick(read_addrs(op, loc.first, prg));
       vector<int> dims = map_find(loc.first, prg.buffer_bounds);
       vector<int> strs = strides(dims);
-      reverse(strs);
+      //reverse(strs);
       vector<string> components;
       for (int i = 0; i < isl_multi_aff_dim(write_addr, isl_dim_set); i++) {
         components.push_back(str(strs.at(i)) + "*" + codegen_c(isl_multi_aff_get_aff(write_addr, i)));
@@ -19114,7 +19117,7 @@ void generate_cuda_code(prog& prg, isl_map* gpu_sched) {
     //out << tab(1) << "// " << str(write_addr) << endl;
     vector<int> dims = map_find(loc.first, prg.buffer_bounds);
     vector<int> strs = strides(dims);
-    reverse(strs);
+    //reverse(strs);
     vector<string> components;
     for (int i = 0; i < isl_multi_aff_dim(write_addr, isl_dim_set); i++) {
       components.push_back(str(strs.at(i)) + "*" + codegen_c(isl_multi_aff_get_aff(write_addr, i)));
@@ -19257,8 +19260,9 @@ void generate_cuda_code(prog& prg, isl_map* gpu_sched) {
     }
 
     out << endl;
-    out << tab(1) << prg.name << sep_list(args, "(", ");", ", ") << endl;
     out << tab(1) << prg.name << "_cpu_reference" << sep_list(cpu_args, "(", ");", ", ") << endl;
+    out << tab(1) << "printf(\"Done with CPU reference\\n\");" << endl;
+    out << tab(1) << prg.name << sep_list(args, "(", ");", ", ") << endl;
     out << endl;
     for (auto b : prg.boundary_buffers()) {
       string buf_size = str(prg.buffer_size(b));
@@ -19285,7 +19289,7 @@ void gpu_codegen_test() {
   prg.add_output("y_dram");
 
   cpy("y_dram", "x_dram", 2, prg);
-  infer_bounds("y_dram", {8, 8}, prg);
+  infer_bounds("y_dram", {8, 64}, prg);
 
   prg.pretty_print();
   op* op = pick(prg.all_ops());
