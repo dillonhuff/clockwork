@@ -18998,102 +18998,6 @@ void misc_tests() {
 }
 
 void generate_cuda_code(prog& prg, isl_map* gpu_sched) {
-
-  // What data structures do we need to
-  // map the code to a GPU?
-  // 1. We need a mapping from loop iterations
-  //    to block indexes
-  // 2. We need a mapping from loop iterations
-  //    to thread indexes
-  // 3. We need a mapping from loop groups
-  //    to kernel launches
-  // Q: Does it make sense to map a particular
-  // iteration of a loop to only a block, or
-  // to only a thread?
-  //
-  // A: I think the answer is no, if you
-  // only map a particular statement instance
-  // to a block then you are going to execute
-  // it on *every* thread that is mapped
-  // to that block, so each statement instance must
-  // be mapped to:
-  //  1. A kernel launch
-  //  2. A block
-  //  3. A thread
-  //
-  // What do we do with each of those indexes?
-  // 1. We need to create the kernel launch
-  // 2. We need to generate the loop structure of
-  //    the kernel program, as well as guards
-  //    inside of it to prevent un-mapped thread / block
-  //    indexes from doing anything
-  //
-  // I see two possible ways to do code generation for each
-  // of these designs
-  //  1. Have a map from statement instances to [kernel number, <block x, y, z>, <thread x, y, z>]
-  //  2. Have directives that map specific variables in for loops to block indexes / kernels
-  //     a-la Halide scheduling
-  //
-  // The other challenge is that for (1.) there also needs to be a description of the schedule
-  // within a given block, thread combination if each of them contains more than one statement
-  // instance
-  // Q: Where is that schedule?
-  // A: Maybe it is the trailing components of the schedule vector for each design?
-  //
-  // This seems related to the issue of spatial vs temporal dimensions in scheduling.
-  //
-  // Q: Can schedules of the form [block id, thread id, temporal schedule components]
-  // accomodate all possible schedules, or do we need to allow things like [temporal components, block id, thread id]?
-  // Q: In other words does the order of interleaving of spatial and temporal components of a schedule matter?
-  // comment: A GPU schedule has 1 (kernel dimension) + 3 (block dimensions) + 3 (thread dimensions) + T time dimensions,
-  //
-  // A: I think the answer to this question and the below one is no, because the formula for comparing times
-  // is [s0, t0] >> [s1, t1] <-> t0 >> t1
-  // In other words when deciding on the *time* when something happens spatial dimensions are projected out
-  // of the vector.
-  //
-  // Q: For 2 time dimensions the order of the 2 dimensions in the vector determines which is more fine-grained, in
-  // other words which is the higher-order comparison in the lexicographic order formula. Does the order of two
-  // lexicographic space dimensions or the order of a space dimension and a time dimension have any meaning?
-  //
-  // Q: Can I map anything to thread 0 and anything to thread 1 without worrying about it?
-  //    Can any set of statement instances be mapped to thread 0 and any to thread 1 without
-  //    adding synchronization?
-  // A: No
-  //      for i in [0, 10]:
-  //        P: A[i] = A[i - 1]
-  //    Thread mapping:
-  //        P[i] -> T[i]
-  //    Means that there must be synchronization, thread 0 must run first, then thread 1 can run. Do GPUs support this
-  //    kind of synchronization? Even if they do it probably is not a good idea to use it
-  //
-  // Assumption: We will only consider schedules where the instances that are mapped to different threads are independent?
-  //
-  // Q: So in polyhedral scheduling if you assign a set of statement instances to a spatial dimension you
-  // have not actually carried any dependencies?
-  // A: I think so since all of the statements in each set that is assigned to a particular space location
-  // will execute at the same time anyway, so there are no new guarantees about execution order. In other
-  // words the order of statement instances in the schedule has not been refined
-  // 
-  // Q: Doesn't this create a problem for GPU scheduling, or in general for scheduling where
-  // it is not always possible to synchronize within spatial dimensions?
-  // comment: Suppose we are on an architecture where synchronization across threads is not possible.
-  // Then it must be the case that the sets of statement instances assigned to distinct threads
-  // must be embarassingly parallel
-  //
-  // idea: Schedule templates where you can flag dimensions as temporal, spatial without synchronization,
-  // spatial with synchronization.
-  //
-  // Q: What would a GPU kernel be?
-  // A: It would be temporal dimension. And I suppose it is distinguished by the high cost of communication
-  // across it? For a synchronization free dimension the cost of communication would be infinity
-  //
-  // There is also the issue of "special" dimensions such as threadId.x that is used to determine
-  // whether addresses can be coalesced.
-  //
-  // Q: How do we do code generation for the "rest" of the GPU schedule? The
-  // time components that are not kernel launches?
-
   op* op = pick(prg.all_ops());
   isl_set* dom = map_find(op, prg.domains());
   cout << "domain: " << str(dom) << endl;
@@ -19125,6 +19029,7 @@ void generate_cuda_code(prog& prg, isl_map* gpu_sched) {
   vector<int> threads{thread_xs, thread_ys, thread_zs};
   ofstream out(prg.name + ".cu");
   out << "#include <stdio.h>" << endl << endl;
+  out << "#include \"" << prg.compute_unit_file << "\"" << endl << endl;
   out << endl;
   out << "// Operation logic" << endl;
   for (auto op : prg.all_ops()) {
@@ -19260,6 +19165,7 @@ void generate_cuda_code(prog& prg, isl_map* gpu_sched) {
 
 void gpu_codegen_test() {
   prog prg("hello_gpu");
+  prg.compute_unit_file = "clockwork_cuda_standard_compute_units.h";
   prg.add_input("x_dram");
   prg.add_output("y_dram");
 
@@ -19287,10 +19193,9 @@ void gpu_codegen_test() {
 }
 
 void application_tests() {
-  iccad_tests();
   gpu_codegen_test();
 
-
+  iccad_tests();
 
   up_to_id_stream_tests();
   up_to_ram_addr_unit_test();
