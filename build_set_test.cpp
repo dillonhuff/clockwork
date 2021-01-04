@@ -19015,14 +19015,13 @@ void generate_cpu_reference_body(const int level, ostream& out, op* op, prog& pr
       for (int i = 0; i < isl_multi_aff_dim(write_addr, isl_dim_set); i++) {
         components.push_back(str(strs.at(i)) + "*" + codegen_c(isl_multi_aff_get_aff(write_addr, i)));
       }
-      out << tab(1) << "float " << loc.first << "_v = " << loc.first << "[" << sep_list(components, "", "", " + ") << "];" << endl;
+      out << tab(level) << "float " << loc.first << "_v = " << loc.first << "[" << sep_list(components, "", "", " + ") << "];" << endl;
       compute_inputs.push_back(loc.first + "_v");
     }
 
     assert(op->produce_locs.size() == 1);
     auto loc = pick(op->produce_locs);
     isl_multi_aff* write_addr = pick(write_addrs(op, loc.first, prg));
-    //out << tab(1) << "// " << str(write_addr) << endl;
     vector<int> dims = map_find(loc.first, prg.buffer_bounds);
     vector<int> strs = strides(dims);
     reverse(strs);
@@ -19030,7 +19029,7 @@ void generate_cpu_reference_body(const int level, ostream& out, op* op, prog& pr
     for (int i = 0; i < isl_multi_aff_dim(write_addr, isl_dim_set); i++) {
       components.push_back(str(strs.at(i)) + "*" + codegen_c(isl_multi_aff_get_aff(write_addr, i)));
     }
-    out << tab(1) << loc.first << "[" << sep_list(components, "", "", " + ") << "] = " << op->func << sep_list(compute_inputs, "(", ")", ", ") << ";" << endl;
+    out << tab(level) << loc.first << "[" << sep_list(components, "", "", " + ") << "] = " << op->func << sep_list(compute_inputs, "(", ")", ", ") << ";" << endl;
   }
 
 }
@@ -19098,7 +19097,6 @@ void generate_cuda_code(prog& prg, isl_map* gpu_sched) {
     vector<string> compute_inputs;
     for (auto loc : op->consume_locs_pair) {
       isl_multi_aff* write_addr = pick(read_addrs(op, loc.first, prg));
-      //out << tab(1) << "// " << str(write_addr) << endl;
       vector<int> dims = map_find(loc.first, prg.buffer_bounds);
       vector<int> strs = strides(dims);
       reverse(strs);
@@ -19240,7 +19238,7 @@ void generate_cuda_code(prog& prg, isl_map* gpu_sched) {
         out << tab(1) << "float* " << b << "_cpu_ref;" << endl;
         string buf_size = str(prg.buffer_size(b));
         out << tab(1) << b << "_cpu_ref = (float*) malloc(sizeof(float)*" << buf_size << ");" << endl;
-        cpu_args.push_back(b);
+        cpu_args.push_back(b + "_cpu_ref");
         if (elem(b, prg.ins)) {
           out << tab(1) << "for (int i = 0; i < " << buf_size << "; i++) {" << endl;
           out << tab(2) << b << "_cpu_ref[i] = i;" << endl;
