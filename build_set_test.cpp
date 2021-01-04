@@ -19048,7 +19048,7 @@ void generate_cuda_code(prog& prg, isl_map* gpu_sched) {
     }
     vector<string> surrounding = surrounding_vars(op, prg);
     for (int i = 0; i < (int) surrounding.size(); i++) {
-      arg_decls.push_back("int d" + str(i));
+      arg_decls.push_back("int " + surrounding.at(i)); //"int d" + str(i));
     }
     out << "__device__" << endl;
     out << "inline" << endl;
@@ -19056,13 +19056,29 @@ void generate_cuda_code(prog& prg, isl_map* gpu_sched) {
 
     vector<string> compute_inputs;
     for (auto loc : op->consume_locs_pair) {
-      out << tab(1) << "float " << loc.first << "_v = " << loc.first << "[0];" << endl;
+      isl_multi_aff* write_addr = pick(read_addrs(op, loc.first, prg));
+      //out << tab(1) << "// " << str(write_addr) << endl;
+      vector<int> dims = map_find(loc.first, prg.buffer_bounds);
+      vector<int> strs = strides(dims);
+      vector<string> components;
+      for (int i = 0; i < isl_multi_aff_dim(write_addr, isl_dim_set); i++) {
+        components.push_back(str(strs.at(i)) + "*" + codegen_c(isl_multi_aff_get_aff(write_addr, i)));
+      }
+      out << tab(1) << "float " << loc.first << "_v = " << loc.first << "[" << sep_list(components, "", "", " + ") << "];" << endl;
       compute_inputs.push_back(loc.first + "_v");
     }
 
     assert(op->produce_locs.size() == 1);
     auto loc = pick(op->produce_locs);
-    out << tab(1) << loc.first << "[0] = " << op->func << sep_list(compute_inputs, "(", ")", ", ") << ";" << endl;
+    isl_multi_aff* write_addr = pick(write_addrs(op, loc.first, prg));
+    //out << tab(1) << "// " << str(write_addr) << endl;
+    vector<int> dims = map_find(loc.first, prg.buffer_bounds);
+    vector<int> strs = strides(dims);
+    vector<string> components;
+    for (int i = 0; i < isl_multi_aff_dim(write_addr, isl_dim_set); i++) {
+      components.push_back(str(strs.at(i)) + "*" + codegen_c(isl_multi_aff_get_aff(write_addr, i)));
+    }
+    out << tab(1) << loc.first << "[" << sep_list(components, "", "", " + ") << "] = " << op->func << sep_list(compute_inputs, "(", ")", ", ") << ";" << endl;
     out << "}" << endl;
   }
   out << endl;
@@ -19184,8 +19200,6 @@ void generate_cuda_code(prog& prg, isl_map* gpu_sched) {
 
   out << "}" << endl;
   out.close();
-
-  //assert(false);
 }
 
 void gpu_codegen_test() {
