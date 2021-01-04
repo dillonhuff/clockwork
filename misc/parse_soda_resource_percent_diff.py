@@ -55,6 +55,7 @@ assert(len(res) == 4*2*3)
 
 lut_reductions = []
 bram_reductions = []
+ff_reductions = []
 i = 0
 while i < len(res):
     soda_res = res[i]
@@ -86,9 +87,25 @@ while i < len(res):
     print('CW BRAMs  :', cw_brams)
     print('PCT Reduction:', pct_reduction)
     print()
+
+    soda_ffs = float(soda_res[5])
+    cw_ffs = float(cw_res[5])
+
+    pct_reduction = 100.0 * ((soda_ffs - cw_ffs) / soda_ffs)
+    ff_reductions.append(pct_reduction)
+
+    print('SODA FFs  :', soda_ffs)
+    print('CW FFs    ::', cw_ffs)
+    print('PCT Reduction:', pct_reduction)
+    print()
     i += 2
 
 print()
 print('Average LUT reduction :', statistics.mean(lut_reductions))
+print('Average FF reduction:', statistics.mean(ff_reductions))
 print('Average BRAM reduction:', statistics.mean(bram_reductions))
-print('Done')
+print()
+# print('Geomean LUT reduction :', statistics.geometric_mean(lut_reductions))
+# print('Geomean FF reduction:', statistics.geometric_mean(ff_reductions))
+# print('Geomean BRAM reduction:', statistics.geometric_mean(bram_reductions))
+# print('Done')
