@@ -46,5 +46,7 @@ def entry_to_int(values):
     return values
 
 res = table_op(f, sum_double_entry)
+
 print(res)
 
+assert(len(res) = 3*2*3)
