@@ -30,6 +30,20 @@ def table_op(table_lines, func):
                 lines.append(stripped)
     print(lines)
 
+    last_HLS_runtime = None
+    for l in lines:
+        if l[1] == 'HLS':
+            last_HLS_runtime = float(l[7])
+        else:
+            rt = float(l[7])
+            factor_improvement = last_HLS_runtime / rt
+            print('\tHLS    :', last_HLS_runtime)
+            print('\tCW     :', rt)
+            print('\tSpeedup:', factor_improvement, 'x')
+            print()
+            # diff = 100.0 * ((last_HLS_runtime - rt) / last_HLS_runtime)
+            # print(diff)
+
     # app_names = ['Blur', 'CP', 'Sobel', 'Jacobi']
     # systems = ['SODA', 'CW']
     # resources = ['LUT', 'BRAM', 'FF']
