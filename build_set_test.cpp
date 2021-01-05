@@ -13895,14 +13895,14 @@ void lake_identity_stream_SMT_test(int x, int y, string suffix) {
 
   auto in2buf = lake_agg.add_nest("a1", 0, y, "a0", 0, x)->add_op("in2buf");
   in2buf->add_load("in", "a1, a0");
-  in2buf->add_store("buf", "a1, a0");
+  in2buf->add_store("buf_ubuf", "a1, a0");
 
   auto buf2out= lake_agg.add_nest("b1", 0, y, "b0", 0, x)->add_op("buf2out");
-  buf2out->add_load("buf", "b1, b0");
+  buf2out->add_load("buf_ubuf", "b1, b0");
   buf2out->add_store("out", "b1, b0");
 
   auto buffers_opt = build_buffers(lake_agg);
-  buffer_vectorization("buf", 1, 4, buffers_opt);
+  buffer_vectorization("buf_ubuf", 1, 4, buffers_opt);
   auto new_opt_sched = optimized_schedule_from_buffers_flatten(buffers_opt, false);
   cout << "\t optimized schedule map: " << str(new_opt_sched) << endl;
   cout << codegen_c(new_opt_sched) << endl;
@@ -15534,8 +15534,8 @@ void lake_smt_tests() {
   //identity stream has a separate stream generation pass,
   //because it will be optimized into a wire in ubuffer flow
   lake_identity_stream_SMT_test(28, 28, "28_28");
-  assert(false);
   test_single_port_mem_smt_stream();
+  assert(false);
   //assert (false);
 }
 
