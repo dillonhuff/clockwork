@@ -47,7 +47,8 @@ sram_smt["valid_in"] = agg_smt["valid_out"]
 # shift sram down by 1 row (data appears one cycle after ren)
 sram_adjust = sram_smt["data_out"][0:-1]
 sram_adjust.insert(0, sram_smt["data_out"][0])
-tb_smt["data_in"] = sram_adjust
+sram_smt["data_out"] = sram_adjust
+tb_smt["data_in"] = sram_smt["data_out"]
 
 dict2csv(dir_name, "agg", agg_smt)
 dict2csv(dir_name, "sram", sram_smt)
