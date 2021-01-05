@@ -13890,8 +13890,8 @@ void lake_identity_stream_SMT_test(int x, int y, string suffix) {
 
   //corresponding to the aggI/O, sramI/O, TBI/O latency
   map<pair<string, string>, int> latency({{{"in2buf", "in2buf_agg2sram"}, 1},
-          {{"in2buf_agg2sram", "buf2out_sram2tb"}, 2},
-          {{"buf2out_sram2tb", "buf2out"}, 1}});
+          {{"in2buf_agg2sram", "buf2out_sram2tb"}, 1},
+          {{"buf2out_sram2tb", "buf2out"}, 2}});
 
   auto in2buf = lake_agg.add_nest("a1", 0, y, "a0", 0, x)->add_op("in2buf");
   in2buf->add_load("in", "a1, a0");
@@ -15534,8 +15534,8 @@ void lake_smt_tests() {
   //identity stream has a separate stream generation pass,
   //because it will be optimized into a wire in ubuffer flow
   lake_identity_stream_SMT_test(28, 28, "28_28");
-  test_single_port_mem_smt_stream();
   assert(false);
+  test_single_port_mem_smt_stream();
   //assert (false);
 }
 
