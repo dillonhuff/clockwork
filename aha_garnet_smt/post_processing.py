@@ -14,12 +14,12 @@ def csv2dict(dir_name, buf_name):
         agg_stream_reader = csv.reader(agg_stream, delimiter=',')
         for row_cnt, row in enumerate(agg_stream_reader):
             if row_cnt == 0:
-                print(f'Column names are {", ".join(row)}')
+                # print(f'Column names are {", ".join(row)}')
                 for key in row:
                     agg_smt[key.strip()] = []
                     key_list.append(key.strip())
             else:
-                print(f'cycle {row_cnt} data is : {", ".join(row)}.')
+                # print(f'cycle {row_cnt} data is : {", ".join(row)}.')
                 for i, data in enumerate(row):
                     agg_smt[key_list[i]].append(data)
     return agg_smt
@@ -44,6 +44,16 @@ tb_smt = csv2dict(dir_name, "tb")
 
 sram_smt["data_in"] = agg_smt['data_out']
 sram_smt["valid_in"] = agg_smt["valid_out"]
+# shift sram down by 1 row (data appears one cycle after ren)
+sram_adjust = sram_smt["data_out"][0:-1]
+sram_adjust.insert(0, sram_smt["data_out"][0])
+# add X's till first valid data for sram data out for solver
+for i in range(len(sram_smt["valid_out"])):
+    sram_adjust[i] = ' [X X X X]'
+    valid = sram_smt["valid_out"][i]
+    if valid == ' 1':
+        break
+sram_smt["data_out"] = sram_adjust
 tb_smt["data_in"] = sram_smt["data_out"]
 
 dict2csv(dir_name, "agg", agg_smt)
