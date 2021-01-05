@@ -20800,7 +20800,7 @@ void stencil_chain_multi_kernel_test() {
 
 }
 
-void travis_tests() {
+void dhuff_tests() {
   test_multi_kernel_design();
   test_multi_kernel_unsharp();
   stencil_chain_multi_kernel_test();
@@ -20897,8 +20897,8 @@ int main(int argc, char** argv) {
       blur_example();
       return 0;
     }
-    if (cmd == "travis-tests") {
-      travis_tests();
+    if (cmd == "dhuff-tests") {
+      dhuff_tests();
       return 0;
     }
 
