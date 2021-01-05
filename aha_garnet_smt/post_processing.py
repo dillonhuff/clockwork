@@ -47,6 +47,7 @@ sram_smt["valid_in"] = agg_smt["valid_out"]
 # shift sram down by 1 row (data appears one cycle after ren)
 sram_adjust = sram_smt["data_out"][0:-1]
 sram_adjust.insert(0, sram_smt["data_out"][0])
+# add X's till first valid data for sram data out for solver
 for i in range(len(sram_smt["valid_out"])):
     sram_adjust[i] = ' [X X X X]'
     valid = sram_smt["valid_out"][i]
