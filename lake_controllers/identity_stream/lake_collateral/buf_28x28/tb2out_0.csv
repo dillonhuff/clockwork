@@ -1,0 +1,12 @@
+"cycle_starting_addr",7,0
+"cycle_stride_0",1,0
+"cycle_stride_1",4,0
+"cycle_stride_2",28,0
+"dimensionality",3,0
+"extent_0",4,0
+"extent_1",7,0
+"extent_2",28,0
+"read_data_starting_addr",0,0
+"read_data_stride_0",1,0
+"read_data_stride_1",4,0
+"read_data_stride_2",12,0

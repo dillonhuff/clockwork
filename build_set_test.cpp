@@ -15523,13 +15523,10 @@ void union_test() {
 void dual_port_lake_test();
 
 void lake_smt_tests() {
-  //lake_identity_stream_SMT_test(28, 28, "28x28");
-  //lake_identity_stream_config_gen(28, 28, "28x28");
+  lake_identity_stream_SMT_test(28, 28, "28x28");
+  lake_identity_stream_config_gen(28, 28, "28x28");
+  assert(false);
   test_single_port_mem_smt_stream();
-  //lake_identity_stream_SMT_test(128, 128, "128x128");
-  //lake_identity_stream_SMT_test(64, 64, "64x64");
-  //lake_identity_stream_SMT_test(32, 32, "32x32");
-  ////lake_identity_stream_SMT_test(16, 16, "16x16");
   //assert (false);
 }
 
