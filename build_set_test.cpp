@@ -11504,7 +11504,6 @@ void naive_implementations() {
 }
 
 void iccad_tests() {
-
   // ef_cartoon
   int throughput = 32;
   string name = "ef_" + str(throughput) + "_500";
@@ -18997,103 +18996,45 @@ void misc_tests() {
 
 }
 
+void generate_cpu_reference_body(const int level, ostream& out, op* op, prog& prg) {
+  if (op->is_loop()) {
+    out << tab(level) << "for (int " << op->name << " = 0; " << op->name << " < " << op->trip_count() << "; " << op->name << "++) {" << endl;
+    for (auto child : op->children) {
+      generate_cpu_reference_body(level + 1, out, child, prg);
+    }
+    out << tab(level) << "}" << endl;
+  } else {
+
+    vector<string> compute_inputs;
+    for (auto loc : op->consume_locs_pair) {
+      isl_multi_aff* write_addr = pick(read_addrs(op, loc.first, prg));
+      vector<int> dims = map_find(loc.first, prg.buffer_bounds);
+      vector<int> strs = strides(dims);
+      //reverse(strs);
+      vector<string> components;
+      for (int i = 0; i < isl_multi_aff_dim(write_addr, isl_dim_set); i++) {
+        components.push_back(str(strs.at(i)) + "*" + codegen_c(isl_multi_aff_get_aff(write_addr, i)));
+      }
+      out << tab(level) << "float " << loc.first << "_v = " << loc.first << "[" << sep_list(components, "", "", " + ") << "];" << endl;
+      compute_inputs.push_back(loc.first + "_v");
+    }
+
+    assert(op->produce_locs.size() == 1);
+    auto loc = pick(op->produce_locs);
+    isl_multi_aff* write_addr = pick(write_addrs(op, loc.first, prg));
+    vector<int> dims = map_find(loc.first, prg.buffer_bounds);
+    vector<int> strs = strides(dims);
+    //reverse(strs);
+    vector<string> components;
+    for (int i = 0; i < isl_multi_aff_dim(write_addr, isl_dim_set); i++) {
+      components.push_back(str(strs.at(i)) + "*" + codegen_c(isl_multi_aff_get_aff(write_addr, i)));
+    }
+    out << tab(level) << loc.first << "[" << sep_list(components, "", "", " + ") << "] = " << op->func << sep_list(compute_inputs, "(", ")", ", ") << ";" << endl;
+  }
+
+}
+
 void generate_cuda_code(prog& prg, isl_map* gpu_sched) {
-
-  // What data structures do we need to
-  // map the code to a GPU?
-  // 1. We need a mapping from loop iterations
-  //    to block indexes
-  // 2. We need a mapping from loop iterations
-  //    to thread indexes
-  // 3. We need a mapping from loop groups
-  //    to kernel launches
-  // Q: Does it make sense to map a particular
-  // iteration of a loop to only a block, or
-  // to only a thread?
-  //
-  // A: I think the answer is no, if you
-  // only map a particular statement instance
-  // to a block then you are going to execute
-  // it on *every* thread that is mapped
-  // to that block, so each statement instance must
-  // be mapped to:
-  //  1. A kernel launch
-  //  2. A block
-  //  3. A thread
-  //
-  // What do we do with each of those indexes?
-  // 1. We need to create the kernel launch
-  // 2. We need to generate the loop structure of
-  //    the kernel program, as well as guards
-  //    inside of it to prevent un-mapped thread / block
-  //    indexes from doing anything
-  //
-  // I see two possible ways to do code generation for each
-  // of these designs
-  //  1. Have a map from statement instances to [kernel number, <block x, y, z>, <thread x, y, z>]
-  //  2. Have directives that map specific variables in for loops to block indexes / kernels
-  //     a-la Halide scheduling
-  //
-  // The other challenge is that for (1.) there also needs to be a description of the schedule
-  // within a given block, thread combination if each of them contains more than one statement
-  // instance
-  // Q: Where is that schedule?
-  // A: Maybe it is the trailing components of the schedule vector for each design?
-  //
-  // This seems related to the issue of spatial vs temporal dimensions in scheduling.
-  //
-  // Q: Can schedules of the form [block id, thread id, temporal schedule components]
-  // accomodate all possible schedules, or do we need to allow things like [temporal components, block id, thread id]?
-  // Q: In other words does the order of interleaving of spatial and temporal components of a schedule matter?
-  // comment: A GPU schedule has 1 (kernel dimension) + 3 (block dimensions) + 3 (thread dimensions) + T time dimensions,
-  //
-  // A: I think the answer to this question and the below one is no, because the formula for comparing times
-  // is [s0, t0] >> [s1, t1] <-> t0 >> t1
-  // In other words when deciding on the *time* when something happens spatial dimensions are projected out
-  // of the vector.
-  //
-  // Q: For 2 time dimensions the order of the 2 dimensions in the vector determines which is more fine-grained, in
-  // other words which is the higher-order comparison in the lexicographic order formula. Does the order of two
-  // lexicographic space dimensions or the order of a space dimension and a time dimension have any meaning?
-  //
-  // Q: Can I map anything to thread 0 and anything to thread 1 without worrying about it?
-  //    Can any set of statement instances be mapped to thread 0 and any to thread 1 without
-  //    adding synchronization?
-  // A: No
-  //      for i in [0, 10]:
-  //        P: A[i] = A[i - 1]
-  //    Thread mapping:
-  //        P[i] -> T[i]
-  //    Means that there must be synchronization, thread 0 must run first, then thread 1 can run. Do GPUs support this
-  //    kind of synchronization? Even if they do it probably is not a good idea to use it
-  //
-  // Assumption: We will only consider schedules where the instances that are mapped to different threads are independent?
-  //
-  // Q: So in polyhedral scheduling if you assign a set of statement instances to a spatial dimension you
-  // have not actually carried any dependencies?
-  // A: I think so since all of the statements in each set that is assigned to a particular space location
-  // will execute at the same time anyway, so there are no new guarantees about execution order. In other
-  // words the order of statement instances in the schedule has not been refined
-  // 
-  // Q: Doesn't this create a problem for GPU scheduling, or in general for scheduling where
-  // it is not always possible to synchronize within spatial dimensions?
-  // comment: Suppose we are on an architecture where synchronization across threads is not possible.
-  // Then it must be the case that the sets of statement instances assigned to distinct threads
-  // must be embarassingly parallel
-  //
-  // idea: Schedule templates where you can flag dimensions as temporal, spatial without synchronization,
-  // spatial with synchronization.
-  //
-  // Q: What would a GPU kernel be?
-  // A: It would be temporal dimension. And I suppose it is distinguished by the high cost of communication
-  // across it? For a synchronization free dimension the cost of communication would be infinity
-  //
-  // There is also the issue of "special" dimensions such as threadId.x that is used to determine
-  // whether addresses can be coalesced.
-  //
-  // Q: How do we do code generation for the "rest" of the GPU schedule? The
-  // time components that are not kernel launches?
-
   op* op = pick(prg.all_ops());
   isl_set* dom = map_find(op, prg.domains());
   cout << "domain: " << str(dom) << endl;
@@ -19113,6 +19054,9 @@ void generate_cuda_code(prog& prg, isl_map* gpu_sched) {
   cout << "block x min: " << k_mins.at(1) << endl;
   cout << "block x max: " << k_maxs.at(1) << endl;
 
+  cout << "thread x min: " << k_mins.at(4) << endl;
+  cout << "thread x max: " << k_maxs.at(4) << endl;
+
   int block_xs = k_maxs.at(1) - k_mins.at(1) + 1;
   int block_ys = k_maxs.at(2) - k_mins.at(2) + 1;
   int block_zs = k_maxs.at(3) - k_mins.at(3) + 1;
@@ -19125,7 +19069,19 @@ void generate_cuda_code(prog& prg, isl_map* gpu_sched) {
   vector<int> threads{thread_xs, thread_ys, thread_zs};
   ofstream out(prg.name + ".cu");
   out << "#include <stdio.h>" << endl << endl;
+  out << "#include <assert.h>" << endl << endl;
+  out << "#include \"" << prg.compute_unit_file << "\"" << endl << endl;
   out << endl;
+  out << "template<typename T>" << endl;
+  out << "__host__" << endl;
+  out << "__device__" << endl;
+  out << "inline" << endl;
+  out << "T id(const T& v) {" << endl;
+  out << "  return v;" << endl;
+  out << "}" << endl;
+
+  out << endl;
+
   out << "// Operation logic" << endl;
   for (auto op : prg.all_ops()) {
     vector<string> arg_decls;
@@ -19134,15 +19090,39 @@ void generate_cuda_code(prog& prg, isl_map* gpu_sched) {
     }
     vector<string> surrounding = surrounding_vars(op, prg);
     for (int i = 0; i < (int) surrounding.size(); i++) {
-      arg_decls.push_back("int d" + str(i));
+      arg_decls.push_back("int " + surrounding.at(i)); //"int d" + str(i));
     }
+    out << "__host__" << endl;
     out << "__device__" << endl;
     out << "inline" << endl;
     out << "void " << op->name << sep_list(arg_decls, "(", ")", ", ") << " {" << endl;
 
+    vector<string> compute_inputs;
     for (auto loc : op->consume_locs_pair) {
-      out << tab(1) << "float " << loc.first << "_v = " << loc.first << "[0];" << endl;
+      isl_multi_aff* write_addr = pick(read_addrs(op, loc.first, prg));
+      vector<int> dims = map_find(loc.first, prg.buffer_bounds);
+      vector<int> strs = strides(dims);
+      //reverse(strs);
+      vector<string> components;
+      for (int i = 0; i < isl_multi_aff_dim(write_addr, isl_dim_set); i++) {
+        components.push_back(str(strs.at(i)) + "*" + codegen_c(isl_multi_aff_get_aff(write_addr, i)));
+      }
+      out << tab(1) << "float " << loc.first << "_v = " << loc.first << "[" << sep_list(components, "", "", " + ") << "];" << endl;
+      compute_inputs.push_back(loc.first + "_v");
     }
+
+    assert(op->produce_locs.size() == 1);
+    auto loc = pick(op->produce_locs);
+    isl_multi_aff* write_addr = pick(write_addrs(op, loc.first, prg));
+    //out << tab(1) << "// " << str(write_addr) << endl;
+    vector<int> dims = map_find(loc.first, prg.buffer_bounds);
+    vector<int> strs = strides(dims);
+    //reverse(strs);
+    vector<string> components;
+    for (int i = 0; i < isl_multi_aff_dim(write_addr, isl_dim_set); i++) {
+      components.push_back(str(strs.at(i)) + "*" + codegen_c(isl_multi_aff_get_aff(write_addr, i)));
+    }
+    out << tab(1) << loc.first << "[" << sep_list(components, "", "", " + ") << "] = " << op->func << sep_list(compute_inputs, "(", ")", ", ") << ";" << endl;
     out << "}" << endl;
   }
   out << endl;
@@ -19151,6 +19131,12 @@ void generate_cuda_code(prog& prg, isl_map* gpu_sched) {
   for (auto b : prg.boundary_buffers()) {
     arg_decls.push_back("float* " + b);
   }
+
+  out << "void " << prg.name << "_cpu_reference" << sep_list(arg_decls, "(", ")", ", ") << " {" << endl;
+  generate_cpu_reference_body(1, out, prg.root, prg);
+  out << "}" << endl;
+  out << endl;
+
   out << "__global__" << endl;
   out << "void " << prg.name << "_kernel" << sep_list(arg_decls, "(", ")", ", ") << " {" << endl;
 
@@ -19202,21 +19188,40 @@ void generate_cuda_code(prog& prg, isl_map* gpu_sched) {
   }
   for (auto b : prg.ins) {
     string buf_size = str(prg.buffer_size(b));
-    out << tab(1) << "cudaMemcpy(" << b << ", " << b << "_cuda, sizeof(float)*" << buf_size << ", cudaMemcpyHostToDevice);" << endl;
+    out << tab(1) << "cudaMemcpy(" <<
+      b << "_cuda" <<
+      ", " <<
+      b <<
+      "," <<
+      "sizeof(float)*" << buf_size << ", cudaMemcpyHostToDevice);" << endl;
   }
 
-  // Q: What is the next thing I want to be able to print?
-  // A: Code for a kernel where each thread executes one statement
-  // instance?
   out << tab(1) << "dim3 blocks(" << comma_list(blocks) << ");" << endl;
   out << tab(1) << "dim3 threads(" << comma_list(threads) << ");" << endl;
   out << endl;
+
+  out << tab(1) << "cudaEvent_t start, stop;" << endl;
+  out << tab(1) << "cudaEventCreate(&start);" << endl;
+  out << tab(1) << "cudaEventCreate(&stop);" << endl;
+  out << tab(1) << "cudaEventRecord(start);" << endl;
   out << tab(1) << prg.name << "_kernel<<<blocks, threads>>>" << sep_list(kernel_args, "(", ")", ", ") << ";" << endl;
+  out << tab(1) << "cudaEventRecord(stop);" << endl;
+  out << endl;
+  out << tab(1) << "cudaEventSynchronize(stop);" << endl;
+  out << tab(1) << "float milliseconds = 0;" << endl;
+  out << tab(1) << "cudaEventElapsedTime(&milliseconds, start, stop);" << endl;
+  out << tab(1) << "printf(\"GPU Exe time (ms): %f\\n\", milliseconds);" << endl;
+
   out << endl;
 
-  for (auto b : prg.ins) {
+  for (auto b : prg.outs) {
     string buf_size = str(prg.buffer_size(b));
-    out << tab(1) << "cudaMemcpy(" << b << "_cuda, " << b << ", sizeof(float)*" << buf_size << ", cudaMemcpyDeviceToHost);" << endl;
+    out << tab(1) << "cudaMemcpy(" <<
+      b <<
+      ", " <<
+      b << "_cuda" <<
+      "," <<
+      "sizeof(float)*" << buf_size << ", cudaMemcpyDeviceToHost);" << endl;
   }
   for (auto b : prg.boundary_buffers()) {
     out << tab(1) << "cudaFree(" << b << "_cuda);" << endl;
@@ -19228,43 +19233,63 @@ void generate_cuda_code(prog& prg, isl_map* gpu_sched) {
   out << "int main() {" << endl;
   {
     vector<string> args;
+    vector<string> cpu_args;
     for (auto b : prg.boundary_buffers()) {
-      out << tab(1) << "float* " << b << ";" << endl;
-      string buf_size = str(prg.buffer_size(b));
-      out << tab(1) << b << " = (float*) malloc(sizeof(float)*" << buf_size << ");" << endl;
-      args.push_back(b);
-      if (elem(b, prg.ins)) {
-        out << tab(1) << "for (int i = 0; i < " << buf_size << "; i++) {" << endl;
-        out << tab(2) << b << "[i] = i;" << endl;
-        out << tab(1) << "}" << endl;
+      {
+        out << tab(1) << "float* " << b << ";" << endl;
+        string buf_size = str(prg.buffer_size(b));
+        out << tab(1) << b << " = (float*) malloc(sizeof(float)*" << buf_size << ");" << endl;
+        args.push_back(b);
+        if (elem(b, prg.ins)) {
+          out << tab(1) << "for (int i = 0; i < " << buf_size << "; i++) {" << endl;
+          out << tab(2) << b << "[i] = i;" << endl;
+          out << tab(1) << "}" << endl;
+        }
+      }
+      {
+        out << tab(1) << "float* " << b << "_cpu_ref;" << endl;
+        string buf_size = str(prg.buffer_size(b));
+        out << tab(1) << b << "_cpu_ref = (float*) malloc(sizeof(float)*" << buf_size << ");" << endl;
+        cpu_args.push_back(b + "_cpu_ref");
+        if (elem(b, prg.ins)) {
+          out << tab(1) << "for (int i = 0; i < " << buf_size << "; i++) {" << endl;
+          out << tab(2) << b << "_cpu_ref[i] = i;" << endl;
+          out << tab(1) << "}" << endl;
+        }
       }
     }
 
+    out << endl;
+    out << tab(1) << prg.name << "_cpu_reference" << sep_list(cpu_args, "(", ");", ", ") << endl;
+    out << tab(1) << "printf(\"Done with CPU reference\\n\");" << endl;
     out << tab(1) << prg.name << sep_list(args, "(", ");", ", ") << endl;
+    out << endl;
     for (auto b : prg.boundary_buffers()) {
       string buf_size = str(prg.buffer_size(b));
       if (elem(b, prg.outs)) {
         out << tab(1) << "for (int i = 0; i < " << buf_size << "; i++) {" << endl;
-        out << tab(2) << "printf(\"" << b << "[%d] = %f\\n\", i, " << b << "[i]);" << endl;
+        //out << tab(2) << "printf(\"" << b << "[%d] = %f\\n\", i, " << b << "[i]);" << endl;
+        //out << tab(2) << "printf(\"" << b << "_cpu_ref[%d] = %f\\n\", i, " << b << "_cpu_ref[i]);" << endl;
+        out << tab(2) << "assert(" << b << "[i] == " << b << "_cpu_ref[i]);" << endl;
         out << tab(1) << "}" << endl;
       }
       out << tab(1) << "free(" << b << ");" << endl;
+      out << tab(1) << "free(" << b << "_cpu_ref);" << endl;
     }
   }
 
   out << "}" << endl;
   out.close();
-
-  //assert(false);
 }
 
 void gpu_codegen_test() {
   prog prg("hello_gpu");
+  prg.compute_unit_file = "clockwork_cuda_standard_compute_units.h";
   prg.add_input("x_dram");
   prg.add_output("y_dram");
 
   cpy("y_dram", "x_dram", 2, prg);
-  infer_bounds("y_dram", {8, 8}, prg);
+  infer_bounds("y_dram", {8, 64}, prg);
 
   prg.pretty_print();
   op* op = pick(prg.all_ops());
@@ -19276,21 +19301,20 @@ void gpu_codegen_test() {
   cout << "gpu thread locs to instances: " << str(inv(gpu_sched)) << endl;
   cout << tab(1) << "# statement instances per thread: " << str(card(inv(gpu_sched))) << endl;
 
-
-
   generate_cuda_code(prg, gpu_sched);
 
-  int res = cmd("nvcc -c hello_gpu.cu");
+  int res = cmd("nvcc -o hg hello_gpu.cu");
+  assert(res == 0);
+  res = cmd("./hg");
   assert(res == 0);
 
   assert(false);
 }
 
 void application_tests() {
-  iccad_tests();
   gpu_codegen_test();
 
-
+  iccad_tests();
 
   up_to_id_stream_tests();
   up_to_ram_addr_unit_test();
