@@ -13881,7 +13881,7 @@ void lake_conv33_autovec_test() {
 
 }
 
-void lake_identity_stream_config_gen(int x, int y, string suffix) {
+void lake_identity_stream_SMT_test(int x, int y, string suffix) {
   prog lake_agg("lake_agg_test");
   lake_agg.add_input("in");
   lake_agg.add_output("out");
@@ -13934,10 +13934,14 @@ void lake_identity_stream_config_gen(int x, int y, string suffix) {
           rewrite_buffers.insert(it);
       }
   }
+  //Generate configuration for identity stream
 #ifdef COREIR
   auto config = tmp.generate_ubuf_args(options, rewrite_buffers);
   emit_lake_config_collateral(options, "buf_" + suffix, config);
 #endif
+  //Generate stream for identity stream
+  options.dir = "./aha_garnet_smt/identity_stream_"+suffix+"/";
+  generate_lake_stream(options, rewrite_buffers, hsh);
 
 }
 
@@ -13974,7 +13978,7 @@ void lake_dual_port_test() {
   //cmd("mkdir -p ./lake_stream/identity_stream/");
   //emit_lake_stream(buffers_opt, hsh, "./lake_stream/identity_stream/");
 }
-
+/*
 void lake_identity_stream_SMT_test(int x, int y, string suffix) {
   prog lake_agg("lake_agg_test");
   lake_agg.add_input("in");
@@ -14005,9 +14009,13 @@ void lake_identity_stream_SMT_test(int x, int y, string suffix) {
   cout << str(hsh) << endl;
   cout << codegen_c(hsh) << endl;
 
-  cmd("mkdir -p ./lake_stream/identity_stream_"+suffix+"/");
-  emit_lake_stream(buffers_opt, hsh, "./lake_stream/identity_stream_"+suffix+"/");
-}
+  cmd("mkdir -p ./aha_garnet_design/identity_stream_"+suffix+"/");
+  //emit_lake_stream(buffers_opt, hsh, "./lake_stream/identity_stream_"+suffix+"/");
+  CodegenOptions options;
+  options.mem_tile.multi_sram_accessor = true;
+  options.dir = "./aha_garnet_smt/identity_stream_"+suffix+"/";
+  generate_lake_stream(options, buffers_opt, hsh);
+}*/
 
 void lake_agg_sram_tb_config_test() {
   prog lake_agg("lake_agg_test");
@@ -15523,8 +15531,9 @@ void union_test() {
 void dual_port_lake_test();
 
 void lake_smt_tests() {
-  lake_identity_stream_SMT_test(28, 28, "28x28");
-  lake_identity_stream_config_gen(28, 28, "28x28");
+  //identity stream has a separate stream generation pass,
+  //because it will be optimized into a wire in ubuffer flow
+  lake_identity_stream_SMT_test(28, 28, "28_28");
   assert(false);
   test_single_port_mem_smt_stream();
   //assert (false);

@@ -791,6 +791,13 @@ isl_union_set* retrive_domain_from_buffers(const map<string, UBuffer> &buffers) 
     return global_dom;
 }
 
+maybe<vector<int>> get_project_dim(UBuffer & buf, bool is_read) {
+    if (is_read){
+      return buf.get_consumer_bank_dim_id();
+    } else {
+      return buf.get_producer_bank_dim_id();
+    }
+}
 
 #ifdef COREIR
 
@@ -911,14 +918,6 @@ ConfigMap generate_addressor_config_from_aff_expr(isl_aff* addr,
     }
     std::reverse(vals.at(prefix+"data_stride").begin(), vals.at(prefix+"data_stride").end());
     return vals;
-}
-
-maybe<vector<int>> get_project_dim(UBuffer & buf, bool is_read) {
-    if (is_read){
-      return buf.get_consumer_bank_dim_id();
-    } else {
-      return buf.get_producer_bank_dim_id();
-    }
 }
 
 bool check_need_mux(CodegenOptions & options, UBuffer & buf,
