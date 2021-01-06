@@ -1951,14 +1951,15 @@ std::string perfect_loop_codegen(umap* schedmap) {
     upper_bounds.push_back(to_int(lmax));
   }
 
-  for (int i = 0; i < lower_bounds.size(); i++) {
+  //for (int i = 0; i < lower_bounds.size(); i++) {
+  for (int i = 0; i < lower_bounds.size() - 1; i++) {
     conv_out << tab(i) << "for (int i" << str(i) << " = " << lower_bounds.at(i) << "; i" << str(i) << " <= " << upper_bounds.at(i) << "; i" << i << "++) {" << endl;
     if (i == ((int) lower_bounds.size()) - 2) {
       conv_out << "#pragma HLS pipeline II=1" << endl;
     }
-    if (i == ((int) lower_bounds.size()) - 1) {
-      conv_out << "#pragma HLS unroll" << endl;
-    }
+    //if (i == ((int) lower_bounds.size()) - 1) {
+      //conv_out << "#pragma HLS unroll" << endl;
+    //}
   }
 
   map<string, int> order;
@@ -1974,6 +1975,9 @@ std::string perfect_loop_codegen(umap* schedmap) {
     if (is_cst(lda)) {
       cout << tab(1) << "Constant!" << endl;
       const_val = to_int(const_coeff(lda));
+    } else {
+      cout << "Error: Final schedule dimension: " << str(lda) << " is not constant" << endl;
+      assert(false);
     }
     assert(const_val >= 0);
     cout << tab(1) << "C = " << const_val << endl;
@@ -1987,7 +1991,11 @@ std::string perfect_loop_codegen(umap* schedmap) {
       });
 
   //for (auto time_to_val : get_maps(inv(schedmap))) {
-  for (auto time_to_val : maps) {
+  for (auto tv : maps) {
+    cout << tab(1) << "tv: " << str(tv) << endl;
+    cout << tab(2) << "start project out at: " << num_in_dims(tv) - 1 << endl;
+    auto time_to_val = isl_map_project_out(cpy(tv), isl_dim_in, num_in_dims(tv) - 1, 1);
+    cout << "time to val: " << str(time_to_val) << endl;
     auto pw = isl_pw_multi_aff_from_map(time_to_val);
     vector<pair<isl_set*, isl_multi_aff*> > pieces =
       get_pieces(pw);
@@ -2004,7 +2012,8 @@ std::string perfect_loop_codegen(umap* schedmap) {
 
   //assert(false);
 
-  for (int i = 0; i < lower_bounds.size(); i++) {
+  //for (int i = 0; i < lower_bounds.size(); i++) {
+  for (int i = 0; i < lower_bounds.size() - 1; i++) {
     conv_out << tab(lower_bounds.size() - 1 - i) << "}" << endl;
   }
 
