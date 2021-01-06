@@ -19823,6 +19823,7 @@ void test_multi_kernel_unsharp() {
   dag.prg.pretty_print();
 
   CodegenOptions options;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
   generate_app_code(options, dag);
 
   generate_regression_testbench(dag.prg);
