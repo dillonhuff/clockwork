@@ -20625,9 +20625,6 @@ void dhuff_playground() {
     //assert(false);
   //}
 
-  //test_multi_kernel_unsharp();
-  //assert(false);
-
   //test_multi_kernel_design();
   //test_time_sharing_gaussian_pyramid();
 
