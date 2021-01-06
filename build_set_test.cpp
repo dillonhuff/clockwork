@@ -19803,7 +19803,6 @@ void test_multi_kernel_unsharp() {
 
   prg.pretty_print();
   prg.sanity_check();
-  //assert(false);
 
   unroll_reduce_loops(prg);
   merge_basic_block_ops(prg);
@@ -19822,6 +19821,9 @@ void test_multi_kernel_unsharp() {
     gp.second.pretty_print();
     cout << endl;
   }
+
+  dag.prg.pretty_print();
+  assert(false);
 
   CodegenOptions options;
   generate_app_code(options, dag);
@@ -20726,8 +20728,8 @@ void stencil_chain_multi_kernel_test() {
 }
 
 void dhuff_tests() {
-  test_multi_kernel_design();
   test_multi_kernel_unsharp();
+  test_multi_kernel_design();
   stencil_chain_multi_kernel_test();
   infer_bounds_tests();
   test_if_construction();
