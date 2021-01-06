@@ -19823,7 +19823,6 @@ void test_multi_kernel_unsharp() {
   }
 
   dag.prg.pretty_print();
-  assert(false);
 
   CodegenOptions options;
   generate_app_code(options, dag);
@@ -19833,7 +19832,6 @@ void test_multi_kernel_unsharp() {
 
   compare("multi_kernel_" + prg.name + "_vs_unopt", multi_kernel_res, unopt_postprocessed);
   move_to_benchmarks_folder(dag.prg.name);
-  assert(false);
 }
 
 void test_gaussian_pyramid_shared_pes() {
