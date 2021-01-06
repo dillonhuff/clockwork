@@ -1977,7 +1977,9 @@ std::string perfect_loop_codegen(umap* schedmap) {
     assert(const_val >= 0);
     cout << tab(1) << "C = " << const_val << endl;
     cout << endl;
+  }
 
+  for (auto time_to_val : get_maps(inv(schedmap))) {
     auto pw = isl_pw_multi_aff_from_map(time_to_val);
     vector<pair<isl_set*, isl_multi_aff*> > pieces =
       get_pieces(pw);
