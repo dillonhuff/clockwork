@@ -19811,72 +19811,15 @@ void test_multi_kernel_unsharp() {
   prg.pretty_print();
   prg.sanity_check();
 
-  //cout << "Channel sizes" << endl;
-  //auto sched = prg.optimized_codegen();
-  //cout << "Optimized schedule: " << str(sched) << endl;
-
-  //assert(false);
-
-  //for (auto b : all_buffers(prg)) {
-    //auto r = prg.consumer_map(b);
-    //auto w = prg.producer_map(b);
-    //if (!prg.is_boundary(b)) {
-      //cout << "========= " << b << endl;
-      //cout << tab(1) << str(r) << endl;
-      //cout << tab(1) << str(w) << endl;
-
-      //auto write_times = lexmin(dot(inv(w), sched));
-      //auto read_times = lexmin(dot(inv(r), sched));
-
-      //auto op_times = unn(write_times, read_times);
-
-      ////auto written_before = lex_gt(write_times, write_times);
-      //auto written_before = lex_gt(op_times, write_times);
-      //cout << "written before: " << str(written_before) << endl;
-      //auto times_to_written_before =
-        ////to_map(unn(dot(inv(write_times), written_before), inv(write_times)));
-        //to_map(unn(dot(inv(op_times), written_before), inv(write_times)));
-      //cout << "Values written before time: " << str(times_to_written_before) << endl;
-      ////cout << "Size = " << str(card(times_to_written_before)) << endl;
-      ////cout << "Bound = " << str(int_upper_bound(card(times_to_written_before))) << endl;
-
-      ////auto read_after = lex_lt(read_times, read_times);
-      //auto read_after = lex_lt(op_times, read_times);
-      //auto times_to_read_after =
-        //to_map(unn(dot(inv(op_times), read_after), inv(read_times)));
-      //cout << "Values read after time: " << str(times_to_read_after) << endl;
-      ////cout << "Size = " << str(card(times_to_read_after)) << endl;
-      ////cout << "Bound = " << str(int_upper_bound(card(times_to_read_after))) << endl;
-
-      //auto live = coalesce(simplify(its(times_to_read_after, times_to_written_before)));
-      //cout << "live: " << str(live) << endl;
-      //cout << "Size = " << str(card(live)) << endl;
-      //cout << "Bound = " << str(int_upper_bound(card(to_umap(live)))) << endl;
-
-      ////auto times_to_writes = dot(inv(sched), w);
-      ////auto times_to_reads = dot(inv(sched), r);
-
-      ////cout << "times to writes: " << str(times_to_writes) << endl;
-      ////cout << "times to reads : " << str(times_to_reads) << endl;
-
-      //// What am I trying to construct?
-      ////   An expression for max(#Writes(t) - #Reads(t))
-      //// Need: #(Data written at time t that has not yet been read)
-      //// Need: A map from times to the set of locations that have been written but not read
-      ////   A map from times to the set of locations that have been written
-      ////   A map from times to the set of locations that have not been read yet but will be
-    //}
-  //}
-  //assert(false);
-
   auto unopt_postprocessed = unoptimized_result(prg);
 
-  map<std::string, std::set<string> > fusion_groups;
-  int i = 0;
-  for (auto gp : get_kernels(prg)) {
-    fusion_groups["gp_" + str(i)] = {gp};
-    i++;
-  }
+  auto fusion_groups = one_stage_per_group(prg);
+  //map<std::string, std::set<string> > fusion_groups;
+  //int i = 0;
+  //for (auto gp : get_kernels(prg)) {
+    //fusion_groups["gp_" + str(i)] = {gp};
+    //i++;
+  //}
   app_dag dag = partition_application(fusion_groups, prg);
   for (auto& gp : dag.fusion_group_progs) {
     cout << "============================" << endl;
