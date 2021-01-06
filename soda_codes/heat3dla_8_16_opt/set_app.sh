@@ -1,2 +1,0 @@
-export app=heat3dla_8_16_opt
-export HLS_CLOCK_FREQUENCY=300000000

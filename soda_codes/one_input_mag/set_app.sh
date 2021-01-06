@@ -1,1 +1,0 @@
-export app=one_input_mag_opt

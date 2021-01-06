@@ -1,1 +1,0 @@
-export app=sum_denoise2d_opt

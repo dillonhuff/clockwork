@@ -1,2 +1,0 @@
-export app=sc_dyn_7_32
-export HLS_CLOCK_FREQUENCY=250000000

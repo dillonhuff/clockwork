@@ -1,1 +1,0 @@
-export app=cp_noinit_ln_1_opt
