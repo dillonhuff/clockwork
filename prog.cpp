@@ -1941,7 +1941,6 @@ std::string perfect_loop_codegen(umap* schedmap) {
   conv_out << "// # sets: " << sets.size() << endl;
   assert(sets.size() == 1);
   isl_set* s = pick(get_sets(time_range));
-  //for (auto s : get_sets(time_range)) {
   vector<int> lower_bounds;
   vector<int> upper_bounds;
   for (int d = 0; d < num_dims(s); d++) {
@@ -1963,6 +1962,22 @@ std::string perfect_loop_codegen(umap* schedmap) {
   }
 
   for (auto time_to_val : get_maps(inv(schedmap))) {
+    cout << "Time to val: " << str(time_to_val) << endl;
+    auto val_to_time = inv(time_to_val);
+    cout << "Val to time: " << str(val_to_time) << endl;
+    auto last_dim = 
+      isl_map_project_out(cpy(val_to_time), isl_dim_out, 0, lower_bounds.size() - 1);
+    cout << "Val to last: " << str(last_dim) << endl;
+    isl_aff* lda = get_aff(last_dim);
+    int const_val = -1;
+    if (is_cst(lda)) {
+      cout << tab(1) << "Constant!" << endl;
+      const_val = to_int(const_coeff(lda));
+    }
+    assert(const_val >= 0);
+    cout << tab(1) << "C = " << const_val << endl;
+    cout << endl;
+
     auto pw = isl_pw_multi_aff_from_map(time_to_val);
     vector<pair<isl_set*, isl_multi_aff*> > pieces =
       get_pieces(pw);
@@ -1970,17 +1985,18 @@ std::string perfect_loop_codegen(umap* schedmap) {
 
     auto saff = pieces.at(0).second;
     auto dom = pieces.at(0).first;
+
     conv_out << tab(lower_bounds.size()) << "// " << str(dom) << endl;
     conv_out << tab(lower_bounds.size()) << "if (" << codegen_c(dom) << ") {" << endl;
     conv_out << tab(lower_bounds.size() + 1) << codegen_c(saff) << ";" << endl;
     conv_out << tab(lower_bounds.size()) << "}" << endl;
   }
 
+  assert(false);
+
   for (int i = 0; i < lower_bounds.size(); i++) {
     conv_out << tab(lower_bounds.size() - 1 - i) << "}" << endl;
   }
-
-  //}
 
   return conv_out.str();
 }
