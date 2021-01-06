@@ -120,19 +120,6 @@ inline hw_uint<32> gray_FIFO_buf12_pw_math_gray47_read_bundle_read(gray_FIFO_buf
 }
 
 // Operation logic
-inline void oc_load_in03(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */in, gray_cache& gray, int root, int oc_load_in01, int oc_load_in02) {
-  // Dynamic address computation
-
-	// Consume: in
-	auto in_oc_load_in02_p_0_c___oc_load_in01_p_0_value = in.read();
-	// Produce: gray
-	gray_oc_load_in03_write_bundle_write(/* arg names */in_oc_load_in02_p_0_c___oc_load_in01_p_0_value, gray, root, oc_load_in01, oc_load_in02, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
 inline void load_to_gray_to_gp_1811(gray_cache& gray, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */gray_to_gp_18, int root, int gray_ld10, int gray_ld9) {
   // Dynamic address computation
 
@@ -144,6 +131,19 @@ inline void load_to_gray_to_gp_1811(gray_cache& gray, HWStream<hw_uint<32> >& /*
 
 	// Produce: gray_to_gp_18
 	gray_to_gp_18.write(gray_gray_ld9_c__gray_ld10_value);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void oc_load_in03(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */in, gray_cache& gray, int root, int oc_load_in01, int oc_load_in02) {
+  // Dynamic address computation
+
+	// Consume: in
+	auto in_oc_load_in02_p_0_c___oc_load_in01_p_0_value = in.read();
+	// Produce: gray
+	gray_oc_load_in03_write_bundle_write(/* arg names */in_oc_load_in02_p_0_c___oc_load_in01_p_0_value, gray, root, oc_load_in01, oc_load_in02, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -171,18 +171,44 @@ void Extracted_gray_ld10_oc_load_in01_(HWStream<hw_uint<32> >& /* no bundle get_
 // Condition for load_to_gray_to_gp_1811(((-1 + i2 == 0) && (i0 >= 0) && (3 - i0 >= 0) && (i1 >= 0) && (3 - i1 >= 0)))
 
   /*
-for (int c0 = 0; c0 <= 3; c0 += 1)
-  for (int c1 = 0; c1 <= 3; c1 += 1) {
-    oc_load_in03(0, c0, c1);
-    load_to_gray_to_gp_1811(0, c0, c1);
+// time range: { [i0, i1, i2] : 0 <= i0 <= 3 and 0 <= i1 <= 3 and 0 <= i2 <= 1 }
+// # sets: 1
+for (int i0 = 0; i0 <= 3; i0++) {
+  for (int i1 = 0; i1 <= 3; i1++) {
+#pragma HLS pipeline II=1
+    for (int i2 = 0; i2 <= 1; i2++) {
+#pragma HLS unroll
+      // { [i0, i1, 1] : 0 <= i0 <= 3 and 0 <= i1 <= 3 }
+      if ((((-1 + i2 == 0) && (i0 >= 0) && (3 - i0 >= 0) && (i1 >= 0) && (3 - i1 >= 0)))) {
+        load_to_gray_to_gp_1811((0), (i0), (i1));
+      }
+      // { [i0, i1, 0] : 0 <= i0 <= 3 and 0 <= i1 <= 3 }
+      if ((((i2 == 0) && (i0 >= 0) && (3 - i0 >= 0) && (i1 >= 0) && (3 - i1 >= 0)))) {
+        oc_load_in03((0), (i0), (i1));
+      }
+    }
   }
+}
 
   */
-	for (int c0 = 0; c0 <= 3; c0 += 1)
-	  for (int c1 = 0; c1 <= 3; c1 += 1) {
-	    oc_load_in03(in /* buf name */, gray, 0, c0, c1);
-	    load_to_gray_to_gp_1811(gray /* buf name */, gray_to_gp_18, 0, c0, c1);
+	// time range: { [i0, i1, i2] : 0 <= i0 <= 3 and 0 <= i1 <= 3 and 0 <= i2 <= 1 }
+	// # sets: 1
+	for (int i0 = 0; i0 <= 3; i0++) {
+	  for (int i1 = 0; i1 <= 3; i1++) {
+	#pragma HLS pipeline II=1
+	    for (int i2 = 0; i2 <= 1; i2++) {
+	#pragma HLS unroll
+	      // { [i0, i1, 1] : 0 <= i0 <= 3 and 0 <= i1 <= 3 }
+	      if ((((-1 + i2 == 0) && (i0 >= 0) && (3 - i0 >= 0) && (i1 >= 0) && (3 - i1 >= 0)))) {
+	        load_to_gray_to_gp_1811(gray /* buf name */, gray_to_gp_18, (0), (i0), (i1));
+	      }
+	      // { [i0, i1, 0] : 0 <= i0 <= 3 and 0 <= i1 <= 3 }
+	      if ((((i2 == 0) && (i0 >= 0) && (3 - i0 >= 0) && (i1 >= 0) && (3 - i1 >= 0)))) {
+	        oc_load_in03(in /* buf name */, gray, (0), (i0), (i1));
+	      }
+	    }
 	  }
+	}
 	
 #ifndef __VIVADO_SYNTH__
   debug_file.close();
@@ -242,18 +268,44 @@ void Extracted_gray_to_gp_18_ld14_pw_math_gray45_(HWStream<hw_uint<32> >& /* no 
 // Condition for pw_math_gray47(((-3 + i2 == 0) && (i0 >= 0) && (3 - i0 >= 0) && (i1 >= 0) && (3 - i1 >= 0)))
 
   /*
-for (int c0 = 0; c0 <= 3; c0 += 1)
-  for (int c1 = 0; c1 <= 3; c1 += 1) {
-    load_to_gray_FIFO_buf1215(0, c0, c1);
-    pw_math_gray47(0, c0, c1);
+// time range: { [i0, i1, i2] : 0 <= i0 <= 3 and 0 <= i1 <= 3 and 2 <= i2 <= 3 }
+// # sets: 1
+for (int i0 = 0; i0 <= 3; i0++) {
+  for (int i1 = 0; i1 <= 3; i1++) {
+#pragma HLS pipeline II=1
+    for (int i2 = 2; i2 <= 3; i2++) {
+#pragma HLS unroll
+      // { [i0, i1, 3] : 0 <= i0 <= 3 and 0 <= i1 <= 3 }
+      if ((((-3 + i2 == 0) && (i0 >= 0) && (3 - i0 >= 0) && (i1 >= 0) && (3 - i1 >= 0)))) {
+        pw_math_gray47((0), (i0), (i1));
+      }
+      // { [i0, i1, 2] : 0 <= i0 <= 3 and 0 <= i1 <= 3 }
+      if ((((-2 + i2 == 0) && (i0 >= 0) && (3 - i0 >= 0) && (i1 >= 0) && (3 - i1 >= 0)))) {
+        load_to_gray_FIFO_buf1215((0), (i0), (i1));
+      }
+    }
   }
+}
 
   */
-	for (int c0 = 0; c0 <= 3; c0 += 1)
-	  for (int c1 = 0; c1 <= 3; c1 += 1) {
-	    load_to_gray_FIFO_buf1215(gray_to_gp_18 /* buf name */, gray_FIFO_buf12, 0, c0, c1);
-	    pw_math_gray47(gray_FIFO_buf12 /* buf name */, out, 0, c0, c1);
+	// time range: { [i0, i1, i2] : 0 <= i0 <= 3 and 0 <= i1 <= 3 and 2 <= i2 <= 3 }
+	// # sets: 1
+	for (int i0 = 0; i0 <= 3; i0++) {
+	  for (int i1 = 0; i1 <= 3; i1++) {
+	#pragma HLS pipeline II=1
+	    for (int i2 = 2; i2 <= 3; i2++) {
+	#pragma HLS unroll
+	      // { [i0, i1, 3] : 0 <= i0 <= 3 and 0 <= i1 <= 3 }
+	      if ((((-3 + i2 == 0) && (i0 >= 0) && (3 - i0 >= 0) && (i1 >= 0) && (3 - i1 >= 0)))) {
+	        pw_math_gray47(gray_FIFO_buf12 /* buf name */, out, (0), (i0), (i1));
+	      }
+	      // { [i0, i1, 2] : 0 <= i0 <= 3 and 0 <= i1 <= 3 }
+	      if ((((-2 + i2 == 0) && (i0 >= 0) && (3 - i0 >= 0) && (i1 >= 0) && (3 - i1 >= 0)))) {
+	        load_to_gray_FIFO_buf1215(gray_to_gp_18 /* buf name */, gray_FIFO_buf12, (0), (i0), (i1));
+	      }
+	    }
 	  }
+	}
 	
 #ifndef __VIVADO_SYNTH__
   debug_file.close();

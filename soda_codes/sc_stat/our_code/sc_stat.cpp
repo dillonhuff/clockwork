@@ -130,18 +130,44 @@ void sc_stat(HWStream<hw_uint<32> >& /* no bundle get_args num ports = 1 */in_oc
 // Condition for pw_math_in47(((-1 + i2 == 0) && (i0 >= 0) && (127 - i0 >= 0) && (i1 >= 0) && (127 - i1 >= 0)))
 
   /*
-for (int c0 = 0; c0 <= 127; c0 += 1)
-  for (int c1 = 0; c1 <= 127; c1 += 1) {
-    pw_math_in_oc03(0, c0, c1);
-    pw_math_in47(0, c0, c1);
+// time range: { [i0, i1, i2] : 0 <= i0 <= 127 and 0 <= i1 <= 127 and 0 <= i2 <= 1 }
+// # sets: 1
+for (int i0 = 0; i0 <= 127; i0++) {
+  for (int i1 = 0; i1 <= 127; i1++) {
+#pragma HLS pipeline II=1
+    for (int i2 = 0; i2 <= 1; i2++) {
+#pragma HLS unroll
+      // { [i0, i1, 0] : 0 <= i0 <= 127 and 0 <= i1 <= 127 }
+      if ((((i2 == 0) && (i0 >= 0) && (127 - i0 >= 0) && (i1 >= 0) && (127 - i1 >= 0)))) {
+        pw_math_in_oc03((0), (i0), (i1));
+      }
+      // { [i0, i1, 1] : 0 <= i0 <= 127 and 0 <= i1 <= 127 }
+      if ((((-1 + i2 == 0) && (i0 >= 0) && (127 - i0 >= 0) && (i1 >= 0) && (127 - i1 >= 0)))) {
+        pw_math_in47((0), (i0), (i1));
+      }
+    }
   }
+}
 
   */
-	for (int c0 = 0; c0 <= 127; c0 += 1)
-	  for (int c1 = 0; c1 <= 127; c1 += 1) {
-	    pw_math_in_oc03(in_oc /* buf name */, in, 0, c0, c1);
-	    pw_math_in47(in /* buf name */, out, 0, c0, c1);
+	// time range: { [i0, i1, i2] : 0 <= i0 <= 127 and 0 <= i1 <= 127 and 0 <= i2 <= 1 }
+	// # sets: 1
+	for (int i0 = 0; i0 <= 127; i0++) {
+	  for (int i1 = 0; i1 <= 127; i1++) {
+	#pragma HLS pipeline II=1
+	    for (int i2 = 0; i2 <= 1; i2++) {
+	#pragma HLS unroll
+	      // { [i0, i1, 0] : 0 <= i0 <= 127 and 0 <= i1 <= 127 }
+	      if ((((i2 == 0) && (i0 >= 0) && (127 - i0 >= 0) && (i1 >= 0) && (127 - i1 >= 0)))) {
+	        pw_math_in_oc03(in_oc /* buf name */, in, (0), (i0), (i1));
+	      }
+	      // { [i0, i1, 1] : 0 <= i0 <= 127 and 0 <= i1 <= 127 }
+	      if ((((-1 + i2 == 0) && (i0 >= 0) && (127 - i0 >= 0) && (i1 >= 0) && (127 - i1 >= 0)))) {
+	        pw_math_in47(in /* buf name */, out, (0), (i0), (i1));
+	      }
+	    }
 	  }
+	}
 	
 #ifndef __VIVADO_SYNTH__
   debug_file.close();

@@ -1953,6 +1953,12 @@ std::string perfect_loop_codegen(umap* schedmap) {
 
     for (int i = 0; i < lower_bounds.size(); i++) {
       conv_out << tab(i) << "for (int i" << str(i) << " = " << lower_bounds.at(i) << "; i" << str(i) << " <= " << upper_bounds.at(i) << "; i" << i << "++) {" << endl;
+      if (i == ((int) lower_bounds.size()) - 2) {
+        conv_out << "#pragma HLS pipeline II=1" << endl;
+      }
+      if (i == ((int) lower_bounds.size()) - 1) {
+        conv_out << "#pragma HLS unroll" << endl;
+      }
     }
 
     for (auto time_to_val : get_maps(inv(schedmap))) {
@@ -2153,8 +2159,8 @@ void generate_app_code_op_logic(
     //perfect_loop_codegen(schedmap);
     options.code_string;
   if (!options.use_custom_code_string) {
-    code_string = codegen_c(schedmap);
-    //code_string = perfect_loop_codegen(schedmap);
+    //code_string = codegen_c(schedmap);
+    code_string = perfect_loop_codegen(schedmap);
   } else {
     cout << "Code string = " << code_string << endl;
     //assert(false);
