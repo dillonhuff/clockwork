@@ -1961,6 +1961,7 @@ std::string perfect_loop_codegen(umap* schedmap) {
     }
   }
 
+  map<string, int> order;
   for (auto time_to_val : get_maps(inv(schedmap))) {
     cout << "Time to val: " << str(time_to_val) << endl;
     auto val_to_time = inv(time_to_val);
@@ -1977,9 +1978,16 @@ std::string perfect_loop_codegen(umap* schedmap) {
     assert(const_val >= 0);
     cout << tab(1) << "C = " << const_val << endl;
     cout << endl;
+    order[range_name(time_to_val)] = const_val;
   }
 
-  for (auto time_to_val : get_maps(inv(schedmap))) {
+  vector<isl_map*> maps = get_maps(inv(schedmap));
+  sort_lt(maps, [order](isl_map* x) {
+      return map_find(range_name(x), order);
+      });
+
+  //for (auto time_to_val : get_maps(inv(schedmap))) {
+  for (auto time_to_val : maps) {
     auto pw = isl_pw_multi_aff_from_map(time_to_val);
     vector<pair<isl_set*, isl_multi_aff*> > pieces =
       get_pieces(pw);
@@ -1994,7 +2002,7 @@ std::string perfect_loop_codegen(umap* schedmap) {
     conv_out << tab(lower_bounds.size()) << "}" << endl;
   }
 
-  assert(false);
+  //assert(false);
 
   for (int i = 0; i < lower_bounds.size(); i++) {
     conv_out << tab(lower_bounds.size() - 1 - i) << "}" << endl;
