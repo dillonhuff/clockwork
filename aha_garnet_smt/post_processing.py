@@ -60,5 +60,14 @@ dict2csv(dir_name, "agg", agg_smt)
 dict2csv(dir_name, "sram", sram_smt)
 dict2csv(dir_name, "tb", tb_smt)
 
+# convert conv33 2 output ports to just 1 output port for testing
+"""orig = csv2dict(dir_name, "tb")
+for i in range(len(orig["valid_out"])):
+    if orig["valid_out"][i] == '3':
+        orig["data_out"][i] = '  ' + orig["data_out"][i].split(" ")[1] + ' 0]'
+        orig["valid_out"][i] = '1'
+
+dict2csv(dir_name, "tb", orig)"""
+
 
 
