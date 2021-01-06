@@ -1696,7 +1696,8 @@ void generate_app_code_header(const map<string, UBuffer>& buffers, prog& prg) {
 }
 
 
-vector<string> buffer_arg_names(const map<string, UBuffer>& buffers, op* op, prog& prg) {
+//vector<string> buffer_arg_names(const map<string, UBuffer>& buffers, op* op, prog& prg) {
+vector<string> buffer_arg_names(op* op, prog& prg) {
   std::set<string> done;
   vector<string> buf_srcs;
 
@@ -1952,6 +1953,12 @@ std::string perfect_loop_codegen(umap* schedmap) {
 
     for (int i = 0; i < lower_bounds.size(); i++) {
       conv_out << tab(i) << "for (int i" << str(i) << " = " << lower_bounds.at(i) << "; i" << str(i) << " <= " << upper_bounds.at(i) << "; i" << i << "++) {" << endl;
+      if (i == ((int) lower_bounds.size()) - 2) {
+        conv_out << "#pragma HLS pipeline II=1" << endl;
+      }
+      if (i == ((int) lower_bounds.size()) - 1) {
+        conv_out << "#pragma HLS unroll" << endl;
+      }
     }
 
     for (auto time_to_val : get_maps(inv(schedmap))) {
@@ -2152,8 +2159,8 @@ void generate_app_code_op_logic(
     //perfect_loop_codegen(schedmap);
     options.code_string;
   if (!options.use_custom_code_string) {
-    code_string = codegen_c(schedmap);
-    //code_string = perfect_loop_codegen(schedmap);
+    //code_string = codegen_c(schedmap);
+    code_string = perfect_loop_codegen(schedmap);
   } else {
     cout << "Code string = " << code_string << endl;
     //assert(false);
@@ -2165,7 +2172,8 @@ void generate_app_code_op_logic(
 
   for (auto op : prg.all_ops()) {
     regex re("(\n\t\\s+)" + op->name + "\\((.*)\\);");
-    string args_list = sep_list(buffer_arg_names(buffers, op, prg), "", "", ", ");
+    //string args_list = sep_list(buffer_arg_names(buffers, op, prg), "", "", ", ");
+    string args_list = sep_list(buffer_arg_names(op, prg), "", "", ", ");
     //code_string = regex_replace(code_string, re, "\n\t" + op->name + "(" + args_list + ", $1);");
     code_string = regex_replace(code_string, re, "$1" + op->name + "(" + args_list + ", $2);");
   }
@@ -8487,7 +8495,7 @@ void generate_app_code(
         string tp = rep_buf.bundle_type_string(bundle);
         conv_out << tab(1) << "HWStream< " << tp << " > " << buf << ";" << endl;
         open_synth_scope(conv_out);
-        int depth = 1;
+        int depth = 2048;
         conv_out << "#pragma HLS stream variable=" << buf << ".values depth=" << depth << endl;
         close_synth_scope(conv_out);
         done.insert(buf);

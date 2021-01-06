@@ -2,6 +2,7 @@
 #include "sc_dyn_7_32.h"
 
 int main() {
+  srand(234);
   ofstream fout("regression_result_sc_dyn_7_32.txt");
   HWStream<hw_uint<32 > > in_oc;
   HWStream<hw_uint<32 > > out;

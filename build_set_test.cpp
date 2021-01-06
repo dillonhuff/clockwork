@@ -9410,7 +9410,8 @@ void stencil_chain_15_stage_iccad_apps(const std::string& prefix) {
     CodegenOptions options;
     options.internal = true;
     options.use_custom_code_string = true;
-    options.rtl_options.hls_clock_target_Hz = 300000000;
+    //options.rtl_options.hls_clock_target_Hz = 300000000;
+    options.rtl_options.hls_clock_target_Hz = 275000000;
     lp.realize(options, name, {cols, rows}, "in", throughput);
 
     move_to_benchmarks_folder(name + "_opt");
@@ -9473,7 +9474,9 @@ void gauss_pyramid_iccad_apps(const std::string& prefix) {
 }
 
 void exposure_fusion_iccad_apps(const std::string& prefix) {
-  vector<int> throughputs{1, 2, 4, 8, 16};
+  vector<int> throughputs{1};
+  //, 2, 4, 8, 16};
+  //vector<int> throughputs{1, 2, 4, 8, 16};
   //vector<int> throughputs{16};
   for (auto throughput : throughputs) {
     string name = prefix + "_" + str(throughput);
@@ -11501,11 +11504,42 @@ void naive_implementations() {
 }
 
 void iccad_tests() {
+  // ef_cartoon
+  int throughput = 32;
+  string name = "ef_" + str(throughput) + "_500";
+  App ef = ef_cartoon(name);
+  CodegenOptions options;
+  options.internal = true;
+  options.num_input_epochs = 1;
+  options.use_custom_code_string = true;
+  options.rtl_options.hls_clock_target_Hz = 500000000;
+  int rows = 1920;
+  int cols = 1080;
+  ef.realize(options, name, {cols, rows}, "in", throughput);
+
+  move_to_benchmarks_folder(name + "_opt");
+  assert(false);
+
+  // exposure_fusion_app
+  exposure_fusion_iccad_apps("ef_fpga_rerun");
+
+  stencil_chain_15_stage_iccad_apps("ic15_275MHz");
+  assert(false);
+
+  // ef_cartoon
+  ef_cartoon_test("ef_cartoon");
+
+
+  // exposure_fusion_app
+  exposure_fusion();
+  assert(false);
+
+
+
   heat_3d_real_iccad_apps("heat3dlafe_1", 1);
   //heat_3d_real_iccad_apps("heat3dla_8", 8);
   float_big_stencil_iccad_apps("flt_stencil", 1);
 
-  stencil_chain_15_stage_iccad_apps("ic15_fx");
   stencil_chain_12_stage_iccad_apps("ic12_small_300MHz");
   stencil_chain_15_stage_iccad_apps("ic15_300MHz");
   heat_3d_iccad_apps("heat2d_1");
@@ -11531,10 +11565,7 @@ void iccad_tests() {
   stencil_chain_no_dsp_iccad_apps("icsc_nd");
   identity_stream_iccad_apps("idstream");
 
-  //App ef = ef_cartoon("ef_sm");
-  //generate_app_benchmark("ef_sm", ef, {1920, 1080}, 1);
-  //assert(false);
-  exposure_fusion_iccad_apps("ef_fpga");
+
   gauss_pyramid_iccad_apps("gp_fpga");
   gauss_pyramid_test("gp_fpga");
   max_pooling_test("mpr16b_32");
@@ -11544,10 +11575,8 @@ void iccad_tests() {
   generate_app_benchmark("gp_sm", gp, {64, 64}, 1);
 
   gauss_pyramid_fpga_test("gp_fpga");
-  ef_cartoon_test("ef_cartoon");
 
   gauss_pyramid_fpga_test("gp_fpga");
-  exposure_fusion();
 
   int index = 20;
   string istr = str(index);
@@ -18967,44 +18996,184 @@ void misc_tests() {
 
 }
 
-void generate_cuda_code(prog& prg) {
+void generate_cpu_reference_body(const int level, ostream& out, op* op, prog& prg) {
+  if (op->is_loop()) {
+    out << tab(level) << "for (int " << op->name << " = 0; " << op->name << " < " << op->trip_count() << "; " << op->name << "++) {" << endl;
+    for (auto child : op->children) {
+      generate_cpu_reference_body(level + 1, out, child, prg);
+    }
+    out << tab(level) << "}" << endl;
+  } else {
 
-  // What data structures do we need to
-  // map the code to a GPU?
-  // 1. We need a mapping from loop iterations
-  //    to block indexes
-  // 2. We need a mapping from loop iterations
-  //    to thread indexes
-  // 3. We need a mapping from loop groups
-  //    to kernel launches
-  // Q: Does it make sense to map a particular
-  // iteration of a loop to only a block, or
-  // to only a thread?
-  //
-  // A: I think the answer is no, if you
-  // only map a particular statement instance
-  // to a block then you are going to execute
-  // it on *every* thread that is mapped
-  // to that block, so each statement instance must
-  // be mapped to:
-  //  1. A kernel launch
-  //  2. A block
-  //  3. A thread
-  //
-  // What do we do with each of those indexes?
-  // 1. We need to create the kernel launch
-  // 2. We need to generate the loop structure of
-  //    the kernel program, as well as guards
-  //    inside of it to prevent un-mapped thread / block
-  //    indexes from doing anything
+    vector<string> compute_inputs;
+    for (auto loc : op->consume_locs_pair) {
+      isl_multi_aff* write_addr = pick(read_addrs(op, loc.first, prg));
+      vector<int> dims = map_find(loc.first, prg.buffer_bounds);
+      vector<int> strs = strides(dims);
+      //reverse(strs);
+      vector<string> components;
+      for (int i = 0; i < isl_multi_aff_dim(write_addr, isl_dim_set); i++) {
+        components.push_back(str(strs.at(i)) + "*" + codegen_c(isl_multi_aff_get_aff(write_addr, i)));
+      }
+      out << tab(level) << "float " << loc.first << "_v = " << loc.first << "[" << sep_list(components, "", "", " + ") << "];" << endl;
+      compute_inputs.push_back(loc.first + "_v");
+    }
+
+    assert(op->produce_locs.size() == 1);
+    auto loc = pick(op->produce_locs);
+    isl_multi_aff* write_addr = pick(write_addrs(op, loc.first, prg));
+    vector<int> dims = map_find(loc.first, prg.buffer_bounds);
+    vector<int> strs = strides(dims);
+    //reverse(strs);
+    vector<string> components;
+    for (int i = 0; i < isl_multi_aff_dim(write_addr, isl_dim_set); i++) {
+      components.push_back(str(strs.at(i)) + "*" + codegen_c(isl_multi_aff_get_aff(write_addr, i)));
+    }
+    out << tab(level) << loc.first << "[" << sep_list(components, "", "", " + ") << "] = " << op->func << sep_list(compute_inputs, "(", ")", ", ") << ";" << endl;
+  }
+
+}
+
+void generate_cuda_code(prog& prg, isl_map* gpu_sched) {
+  op* op = pick(prg.all_ops());
+  isl_set* dom = map_find(op, prg.domains());
+  cout << "domain: " << str(dom) << endl;
+
+  isl_map* gpu_sched_bounded = its(gpu_sched, dom);
+
+  cout << "bounded gpu schedule: " << str(gpu_sched_bounded) << endl;
+  isl_set* gpu_launches = range(gpu_sched_bounded);
+  cout << "gpu launches: " << str(gpu_launches) << endl;
+
+  vector<int> k_mins = mins(gpu_launches);
+  vector<int> k_maxs = maxs(gpu_launches);
+
+  cout << "kernel min: " << k_mins.at(0) << endl;
+  cout << "kernel max: " << k_maxs.at(0) << endl;
+
+  cout << "block x min: " << k_mins.at(1) << endl;
+  cout << "block x max: " << k_maxs.at(1) << endl;
+
+  cout << "thread x min: " << k_mins.at(4) << endl;
+  cout << "thread x max: " << k_maxs.at(4) << endl;
+
+  int block_xs = k_maxs.at(1) - k_mins.at(1) + 1;
+  int block_ys = k_maxs.at(2) - k_mins.at(2) + 1;
+  int block_zs = k_maxs.at(3) - k_mins.at(3) + 1;
+
+  int thread_xs = k_maxs.at(4) - k_mins.at(4) + 1;
+  int thread_ys = k_maxs.at(5) - k_mins.at(5) + 1;
+  int thread_zs = k_maxs.at(6) - k_mins.at(6) + 1;
+
+  vector<int> blocks{block_xs, block_ys, block_zs};
+  vector<int> threads{thread_xs, thread_ys, thread_zs};
   ofstream out(prg.name + ".cu");
   out << "#include <stdio.h>" << endl << endl;
+  out << "#include <assert.h>" << endl << endl;
+  out << "#include \"" << prg.compute_unit_file << "\"" << endl << endl;
+  out << endl;
+  out << "template<typename T>" << endl;
+  out << "__host__" << endl;
+  out << "__device__" << endl;
+  out << "inline" << endl;
+  out << "T id(const T& v) {" << endl;
+  out << "  return v;" << endl;
+  out << "}" << endl;
+
+  out << endl;
+
+  out << "// Operation logic" << endl;
+  for (auto op : prg.all_ops()) {
+    vector<string> arg_decls;
+    for (auto b : buffer_arg_names(op, prg)) {
+      arg_decls.push_back("float* " + b);
+    }
+    vector<string> surrounding = surrounding_vars(op, prg);
+    for (int i = 0; i < (int) surrounding.size(); i++) {
+      arg_decls.push_back("int " + surrounding.at(i)); //"int d" + str(i));
+    }
+    out << "__host__" << endl;
+    out << "__device__" << endl;
+    out << "inline" << endl;
+    out << "void " << op->name << sep_list(arg_decls, "(", ")", ", ") << " {" << endl;
+
+    vector<string> compute_inputs;
+    for (auto loc : op->consume_locs_pair) {
+      isl_multi_aff* write_addr = pick(read_addrs(op, loc.first, prg));
+      vector<int> dims = map_find(loc.first, prg.buffer_bounds);
+      vector<int> strs = strides(dims);
+      //reverse(strs);
+      vector<string> components;
+      for (int i = 0; i < isl_multi_aff_dim(write_addr, isl_dim_set); i++) {
+        components.push_back(str(strs.at(i)) + "*" + codegen_c(isl_multi_aff_get_aff(write_addr, i)));
+      }
+      out << tab(1) << "float " << loc.first << "_v = " << loc.first << "[" << sep_list(components, "", "", " + ") << "];" << endl;
+      compute_inputs.push_back(loc.first + "_v");
+    }
+
+    assert(op->produce_locs.size() == 1);
+    auto loc = pick(op->produce_locs);
+    isl_multi_aff* write_addr = pick(write_addrs(op, loc.first, prg));
+    //out << tab(1) << "// " << str(write_addr) << endl;
+    vector<int> dims = map_find(loc.first, prg.buffer_bounds);
+    vector<int> strs = strides(dims);
+    //reverse(strs);
+    vector<string> components;
+    for (int i = 0; i < isl_multi_aff_dim(write_addr, isl_dim_set); i++) {
+      components.push_back(str(strs.at(i)) + "*" + codegen_c(isl_multi_aff_get_aff(write_addr, i)));
+    }
+    out << tab(1) << loc.first << "[" << sep_list(components, "", "", " + ") << "] = " << op->func << sep_list(compute_inputs, "(", ")", ", ") << ";" << endl;
+    out << "}" << endl;
+  }
+  out << endl;
+
   vector<string> arg_decls;
   for (auto b : prg.boundary_buffers()) {
     arg_decls.push_back("float* " + b);
   }
+
+  out << "void " << prg.name << "_cpu_reference" << sep_list(arg_decls, "(", ")", ", ") << " {" << endl;
+  generate_cpu_reference_body(1, out, prg.root, prg);
+  out << "}" << endl;
+  out << endl;
+
   out << "__global__" << endl;
   out << "void " << prg.name << "_kernel" << sep_list(arg_decls, "(", ")", ", ") << " {" << endl;
+
+  vector<string> conds;
+  conds.push_back("threadIdx.x < " + str(thread_xs));
+  conds.push_back("threadIdx.y < " + str(thread_ys));
+  conds.push_back("threadIdx.z < " + str(thread_zs));
+  conds.push_back("blockIdx.x < " + str(block_xs));
+  conds.push_back("blockIdx.y < " + str(block_ys));
+  conds.push_back("blockIdx.z < " + str(block_zs));
+  out << tab(1) << "if (" << sep_list(conds, "", "", " && ") << ") {" << endl;
+  isl_multi_aff* aff = get_multi_aff(inv(gpu_sched_bounded));
+  // TODO: Handle loops inside the schedule
+  vector<string> surrounding = surrounding_vars(op, prg);
+  vector<string> args = buffer_arg_names(op, prg);
+  for (int i = 0; i < (int) surrounding.size(); i++) {
+    auto comp = isl_multi_aff_get_aff(aff, i);
+    out << tab(2) << "// " << str(comp) << endl;
+    comp = isl_aff_set_dim_id(comp, isl_dim_in, 1, id(prg.ctx, "blockIdx.x"));
+    comp = isl_aff_set_dim_id(comp, isl_dim_in, 2, id(prg.ctx, "blockIdx.y"));
+    comp = isl_aff_set_dim_id(comp, isl_dim_in, 3, id(prg.ctx, "blockIdx.z"));
+    comp = isl_aff_set_dim_id(comp, isl_dim_in, 4, id(prg.ctx, "threadIdx.x"));
+    comp = isl_aff_set_dim_id(comp, isl_dim_in, 5, id(prg.ctx, "threadIdx.y"));
+    comp = isl_aff_set_dim_id(comp, isl_dim_in, 6, id(prg.ctx, "threadIdx.z"));
+    out << tab(2) << "int d" << str(i) << " = " << codegen_c(comp) << ";" << endl;
+    args.push_back("d" + str(i));
+  }
+  string args_list = sep_list(args, "", "", ", ");
+  out << tab(2) << op->name << "(" << args_list << ");" << endl;
+  out << tab(2) << "// " << str(aff) << endl;
+  // Now: Execute all statement instances scheduled for this thread?
+
+  auto min_instances = get_multi_aff(lexmin(inv(gpu_sched_bounded)));
+  auto max_instances = get_multi_aff(lexmax(inv(gpu_sched_bounded)));
+  out << tab(2) << "// " << str(min_instances) << endl;
+  out << tab(2) << "// " << str(max_instances) << endl;
+  out << tab(1) << "}" << endl;
   out << "}" << endl;
 
   out << endl;
@@ -19019,16 +19188,40 @@ void generate_cuda_code(prog& prg) {
   }
   for (auto b : prg.ins) {
     string buf_size = str(prg.buffer_size(b));
-    out << tab(1) << "cudaMemcpy(" << b << ", " << b << "_cuda, sizeof(float)*" << buf_size << ", cudaMemcpyHostToDevice);" << endl;
+    out << tab(1) << "cudaMemcpy(" <<
+      b << "_cuda" <<
+      ", " <<
+      b <<
+      "," <<
+      "sizeof(float)*" << buf_size << ", cudaMemcpyHostToDevice);" << endl;
   }
 
-  out << endl;
-  out << tab(1) << prg.name << "_kernel<<<1, 1>>>" << sep_list(kernel_args, "(", ")", ", ") << ";" << endl;
+  out << tab(1) << "dim3 blocks(" << comma_list(blocks) << ");" << endl;
+  out << tab(1) << "dim3 threads(" << comma_list(threads) << ");" << endl;
   out << endl;
 
-  for (auto b : prg.ins) {
+  out << tab(1) << "cudaEvent_t start, stop;" << endl;
+  out << tab(1) << "cudaEventCreate(&start);" << endl;
+  out << tab(1) << "cudaEventCreate(&stop);" << endl;
+  out << tab(1) << "cudaEventRecord(start);" << endl;
+  out << tab(1) << prg.name << "_kernel<<<blocks, threads>>>" << sep_list(kernel_args, "(", ")", ", ") << ";" << endl;
+  out << tab(1) << "cudaEventRecord(stop);" << endl;
+  out << endl;
+  out << tab(1) << "cudaEventSynchronize(stop);" << endl;
+  out << tab(1) << "float milliseconds = 0;" << endl;
+  out << tab(1) << "cudaEventElapsedTime(&milliseconds, start, stop);" << endl;
+  out << tab(1) << "printf(\"GPU Exe time (ms): %f\\n\", milliseconds);" << endl;
+
+  out << endl;
+
+  for (auto b : prg.outs) {
     string buf_size = str(prg.buffer_size(b));
-    out << tab(1) << "cudaMemcpy(" << b << "_cuda, " << b << ", sizeof(float)*" << buf_size << ", cudaMemcpyDeviceToHost);" << endl;
+    out << tab(1) << "cudaMemcpy(" <<
+      b <<
+      ", " <<
+      b << "_cuda" <<
+      "," <<
+      "sizeof(float)*" << buf_size << ", cudaMemcpyDeviceToHost);" << endl;
   }
   for (auto b : prg.boundary_buffers()) {
     out << tab(1) << "cudaFree(" << b << "_cuda);" << endl;
@@ -19040,53 +19233,88 @@ void generate_cuda_code(prog& prg) {
   out << "int main() {" << endl;
   {
     vector<string> args;
+    vector<string> cpu_args;
     for (auto b : prg.boundary_buffers()) {
-      out << tab(1) << "float* " << b << ";" << endl;
-      string buf_size = str(prg.buffer_size(b));
-      out << tab(1) << b << " = (float*) malloc(sizeof(float)*" << buf_size << ");" << endl;
-      args.push_back(b);
-      if (elem(b, prg.ins)) {
-        out << tab(1) << "for (int i = 0; i < " << buf_size << "; i++) {" << endl;
-        out << tab(2) << b << "[i] = i;" << endl;
-        out << tab(1) << "}" << endl;
+      {
+        out << tab(1) << "float* " << b << ";" << endl;
+        string buf_size = str(prg.buffer_size(b));
+        out << tab(1) << b << " = (float*) malloc(sizeof(float)*" << buf_size << ");" << endl;
+        args.push_back(b);
+        if (elem(b, prg.ins)) {
+          out << tab(1) << "for (int i = 0; i < " << buf_size << "; i++) {" << endl;
+          out << tab(2) << b << "[i] = i;" << endl;
+          out << tab(1) << "}" << endl;
+        }
+      }
+      {
+        out << tab(1) << "float* " << b << "_cpu_ref;" << endl;
+        string buf_size = str(prg.buffer_size(b));
+        out << tab(1) << b << "_cpu_ref = (float*) malloc(sizeof(float)*" << buf_size << ");" << endl;
+        cpu_args.push_back(b + "_cpu_ref");
+        if (elem(b, prg.ins)) {
+          out << tab(1) << "for (int i = 0; i < " << buf_size << "; i++) {" << endl;
+          out << tab(2) << b << "_cpu_ref[i] = i;" << endl;
+          out << tab(1) << "}" << endl;
+        }
       }
     }
 
+    out << endl;
+    out << tab(1) << prg.name << "_cpu_reference" << sep_list(cpu_args, "(", ");", ", ") << endl;
+    out << tab(1) << "printf(\"Done with CPU reference\\n\");" << endl;
     out << tab(1) << prg.name << sep_list(args, "(", ");", ", ") << endl;
+    out << endl;
     for (auto b : prg.boundary_buffers()) {
       string buf_size = str(prg.buffer_size(b));
       if (elem(b, prg.outs)) {
         out << tab(1) << "for (int i = 0; i < " << buf_size << "; i++) {" << endl;
-        out << tab(2) << "printf(\"" << b << "[%d] = %f\\n\", i, " << b << "[i]);" << endl;
+        //out << tab(2) << "printf(\"" << b << "[%d] = %f\\n\", i, " << b << "[i]);" << endl;
+        //out << tab(2) << "printf(\"" << b << "_cpu_ref[%d] = %f\\n\", i, " << b << "_cpu_ref[i]);" << endl;
+        out << tab(2) << "assert(" << b << "[i] == " << b << "_cpu_ref[i]);" << endl;
         out << tab(1) << "}" << endl;
       }
       out << tab(1) << "free(" << b << ");" << endl;
+      out << tab(1) << "free(" << b << "_cpu_ref);" << endl;
     }
   }
 
   out << "}" << endl;
   out.close();
-
-  assert(false);
 }
 
 void gpu_codegen_test() {
   prog prg("hello_gpu");
+  prg.compute_unit_file = "clockwork_cuda_standard_compute_units.h";
   prg.add_input("x_dram");
   prg.add_output("y_dram");
 
   cpy("y_dram", "x_dram", 2, prg);
-  infer_bounds("y_dram", {8, 8}, prg);
+  infer_bounds("y_dram", {8, 64}, prg);
 
   prg.pretty_print();
+  op* op = pick(prg.all_ops());
+  string name = op->name;
+  op->pretty_print();
+  string gpu_schedule = curlies(name + "[root, x, y] -> [0, x, 0, 0, y, 0, 0]");
+  cout << "GPU schedule:" << gpu_schedule << endl;
+  isl_map* gpu_sched = isl_map_read_from_str(prg.ctx, gpu_schedule.c_str());
+  cout << "gpu thread locs to instances: " << str(inv(gpu_sched)) << endl;
+  cout << tab(1) << "# statement instances per thread: " << str(card(inv(gpu_sched))) << endl;
 
-  generate_cuda_code(prg);
+  generate_cuda_code(prg, gpu_sched);
+
+  int res = cmd("nvcc -o hg hello_gpu.cu");
+  assert(res == 0);
+  res = cmd("./hg");
+  assert(res == 0);
+
+  assert(false);
 }
 
 void application_tests() {
-  iccad_tests();
-
   gpu_codegen_test();
+
+  iccad_tests();
 
   up_to_id_stream_tests();
   up_to_ram_addr_unit_test();
@@ -19544,7 +19772,7 @@ void test_time_sharing_gaussian_pyramid() {
 }
 
 void test_multi_kernel_unsharp() {
-  prog prg("unsharp_multi_kernel");
+  prog prg("us_mk2048");
   prg.add_input("in");
   prg.add_output("out");
 
@@ -19552,7 +19780,7 @@ void test_multi_kernel_unsharp() {
   cpy("gray_blur", "gray", 2, prg);
   cpy("gray_blur_cache", "gray_blur", 2, prg);
 
-  auto blurred = prg.add_nest("xb", 0, 1, "yb", 0, 1)->add_op("blur");
+  auto blurred = prg.add_nest("yb", 0, 1, "xb", 0, 1)->add_op("blur");
   for (int i = 0; i < 3; i++) {
     for (int j = 0; j < 3; j++) {
       blurred->add_load("gray_blur_cache", "xb + " + str(i), "yb + " + str(j));
@@ -19563,7 +19791,7 @@ void test_multi_kernel_unsharp() {
 
 
   cpy("gray_diff", "gray", 2, prg);
-  auto diff = prg.add_nest("x", 0, 1, "y", 0, 1)->add_op("diff");
+  auto diff = prg.add_nest("y", 0, 1, "x", 0, 1)->add_op("diff");
   diff->add_load("gray_diff", "x", "y");
   diff->add_load("blurred", "x", "y");
   diff->add_store("out", "x", "y");
@@ -19571,6 +19799,7 @@ void test_multi_kernel_unsharp() {
 
 
   infer_bounds("out", {64, 64}, prg);
+
 
   prg.pretty_print();
   prg.sanity_check();
@@ -19583,72 +19812,9 @@ void test_multi_kernel_unsharp() {
   prg.pretty_print();
   prg.sanity_check();
 
-  //cout << "Channel sizes" << endl;
-  //auto sched = prg.optimized_codegen();
-  //cout << "Optimized schedule: " << str(sched) << endl;
-
-  //assert(false);
-
-  //for (auto b : all_buffers(prg)) {
-    //auto r = prg.consumer_map(b);
-    //auto w = prg.producer_map(b);
-    //if (!prg.is_boundary(b)) {
-      //cout << "========= " << b << endl;
-      //cout << tab(1) << str(r) << endl;
-      //cout << tab(1) << str(w) << endl;
-
-      //auto write_times = lexmin(dot(inv(w), sched));
-      //auto read_times = lexmin(dot(inv(r), sched));
-
-      //auto op_times = unn(write_times, read_times);
-
-      ////auto written_before = lex_gt(write_times, write_times);
-      //auto written_before = lex_gt(op_times, write_times);
-      //cout << "written before: " << str(written_before) << endl;
-      //auto times_to_written_before =
-        ////to_map(unn(dot(inv(write_times), written_before), inv(write_times)));
-        //to_map(unn(dot(inv(op_times), written_before), inv(write_times)));
-      //cout << "Values written before time: " << str(times_to_written_before) << endl;
-      ////cout << "Size = " << str(card(times_to_written_before)) << endl;
-      ////cout << "Bound = " << str(int_upper_bound(card(times_to_written_before))) << endl;
-
-      ////auto read_after = lex_lt(read_times, read_times);
-      //auto read_after = lex_lt(op_times, read_times);
-      //auto times_to_read_after =
-        //to_map(unn(dot(inv(op_times), read_after), inv(read_times)));
-      //cout << "Values read after time: " << str(times_to_read_after) << endl;
-      ////cout << "Size = " << str(card(times_to_read_after)) << endl;
-      ////cout << "Bound = " << str(int_upper_bound(card(times_to_read_after))) << endl;
-
-      //auto live = coalesce(simplify(its(times_to_read_after, times_to_written_before)));
-      //cout << "live: " << str(live) << endl;
-      //cout << "Size = " << str(card(live)) << endl;
-      //cout << "Bound = " << str(int_upper_bound(card(to_umap(live)))) << endl;
-
-      ////auto times_to_writes = dot(inv(sched), w);
-      ////auto times_to_reads = dot(inv(sched), r);
-
-      ////cout << "times to writes: " << str(times_to_writes) << endl;
-      ////cout << "times to reads : " << str(times_to_reads) << endl;
-
-      //// What am I trying to construct?
-      ////   An expression for max(#Writes(t) - #Reads(t))
-      //// Need: #(Data written at time t that has not yet been read)
-      //// Need: A map from times to the set of locations that have been written but not read
-      ////   A map from times to the set of locations that have been written
-      ////   A map from times to the set of locations that have not been read yet but will be
-    //}
-  //}
-  //assert(false);
-
   auto unopt_postprocessed = unoptimized_result(prg);
 
-  map<std::string, std::set<string> > fusion_groups;
-  int i = 0;
-  for (auto gp : get_kernels(prg)) {
-    fusion_groups["gp_" + str(i)] = {gp};
-    i++;
-  }
+  auto fusion_groups = one_stage_per_group(prg);
   app_dag dag = partition_application(fusion_groups, prg);
   for (auto& gp : dag.fusion_group_progs) {
     cout << "============================" << endl;
@@ -19656,18 +19822,12 @@ void test_multi_kernel_unsharp() {
     cout << endl;
   }
 
-  generate_regression_testbench(dag.prg);
+  dag.prg.pretty_print();
 
   CodegenOptions options;
-  options.internal = true;
-  options.all_rams = true;
-  all_unbanked(prg, options);
-  for (auto& gp : dag.fusion_group_progs) {
-    all_unbanked(gp.second, options);
-  }
-  options.inner_bank_offset_mode =
-    INNER_BANK_OFFSET_MULTILINEAR;
   generate_app_code(options, dag);
+
+  generate_regression_testbench(dag.prg);
   vector<string> multi_kernel_res = run_regression_tb(dag.prg);
 
   compare("multi_kernel_" + prg.name + "_vs_unopt", multi_kernel_res, unopt_postprocessed);
@@ -19885,9 +20045,6 @@ void dhuff_playground() {
     assert(false);
 #endif
   }
-  //test_multi_kernel_unsharp();
-  //assert(false);
-
   //llf_test();
   //assert(false);
   {
@@ -20469,9 +20626,6 @@ void dhuff_playground() {
     //assert(false);
   //}
 
-  //test_multi_kernel_unsharp();
-  //assert(false);
-
   //test_multi_kernel_design();
   //test_time_sharing_gaussian_pyramid();
 
@@ -20572,9 +20726,9 @@ void stencil_chain_multi_kernel_test() {
 
 }
 
-void travis_tests() {
-  test_multi_kernel_design();
+void dhuff_tests() {
   test_multi_kernel_unsharp();
+  test_multi_kernel_design();
   stencil_chain_multi_kernel_test();
   infer_bounds_tests();
   test_if_construction();
@@ -20669,8 +20823,8 @@ int main(int argc, char** argv) {
       blur_example();
       return 0;
     }
-    if (cmd == "travis-tests") {
-      travis_tests();
+    if (cmd == "dhuff-tests") {
+      dhuff_tests();
       return 0;
     }
 

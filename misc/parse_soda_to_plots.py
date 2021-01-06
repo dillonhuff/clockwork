@@ -2,7 +2,8 @@ import re
 import matplotlib.pyplot as plt
 import numpy as np
 
-f = open('./misc/soda_resource_comparison_table.tex').readlines()
+# f = open('./misc/soda_resource_comparison_table.tex').readlines()
+f = open('./misc/soda_comparison_standalone_large.tex').readlines()
 
 def intersperse(lst, item):
     result = [item] * (len(lst) * 2 - 1)
@@ -29,7 +30,7 @@ def table_op(table_lines, func):
                 lines.append(stripped)
     print(lines)
 
-    app_names = ['blur', 'cp', 'sobel']
+    app_names = ['Blur', 'CP', 'Sobel', 'Jacobi']
     systems = ['SODA', 'CW']
     resources = ['LUT', 'BRAM', 'FF']
 
@@ -47,10 +48,13 @@ def table_op(table_lines, func):
         apps['BRAM'][l[0]][l[2]].append(float(l[6]))
 
     print(apps)
+    # assert(False)
 
-    fig, ax = plt.subplots(3, 3, sharex='col', sharey='row')
+    NumApps = len(app_names)
+    N = len(apps[resource][app]['SODA'])
+    fig, ax = plt.subplots(N, NumApps, sharex='col', sharey='row')
 
-    fig.suptitle('Resource Utilization for SODA and Clockwork')
+    # fig.suptitle('Resource Utilization for SODA and Clockwork (CW)')
     i = 0
     for resource in resources:
         j = 0
@@ -60,7 +64,6 @@ def table_op(table_lines, func):
             print(apps[resource])
             print(apps[resource][app])
             assert(apps[resource] != None)
-            N = len(apps[resource][app]['SODA'])
             menMeans = apps[resource][app]['SODA']
 
             ind = np.arange(N)  # the x locations for the groups
@@ -77,15 +80,31 @@ def table_op(table_lines, func):
             # ax[i, j].set_ylabel('Counts')
             # ax[i, j].set_title('{0} count for {1} by throughput'.format(resource, app))
             ax[i, j].set_xticks(ind + width / 2)
-            ax[i, j].set_xticklabels( ('{0} 1'.format(app), '{0} 2'.format(app), '{0} 4'.format(app)))
+            ax[i, j].set_xticklabels( ('{0} 1'.format(app), '{0} 16'.format(app), '{0} 32'.format(app)))
 
-            ax[i, j].legend( (rects1[0], rects2[0]), ('SODA', 'CW') )
+            if i == 0 and j == 0:
+                ax[i, j].legend( (rects1[0], rects2[0]), ('SODA', 'CW') )
 
-            
             j += 1
         i += 1
 
+    ax.flat[0].set(ylabel='LUT')
+    ax.flat[NumApps].set(ylabel='BRAM')
+    ax.flat[2*NumApps].set(ylabel='FF')
+    # ax.flat[1].set(ylabel='BRAM')
+    # ax.flat[2].set(ylabel='FF')
+    # i = 0
+    # for axi in ax.flat:
+        # print('axi =', i)
+        # axi.set(ylabel='LUT')
+        # i += 1
+
+    for axi in ax.flat:
+        axi.label_outer()
+
+    fig.set_size_inches(16, 10)
     plt.show()
+    fig.savefig('clockwork_soda_bar_charts.eps', format='eps')
 
 def sum_double_entry(values):
     rm = "\s*(\d+)\s+(\d+)\s*"

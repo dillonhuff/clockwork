@@ -1,0 +1,2 @@
+export app=us_mk2048
+export HLS_CLOCK_FREQUENCY=250000000

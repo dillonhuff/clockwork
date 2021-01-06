@@ -1,0 +1,2 @@
+export app=ef_32_500_opt
+export HLS_CLOCK_FREQUENCY=500000000

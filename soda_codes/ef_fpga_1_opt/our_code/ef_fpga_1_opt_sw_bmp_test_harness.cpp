@@ -32,8 +32,7 @@ int main(int argc, char **argv) {
   for (int r = 0; r < 1080; r++) {
     for (int cl = 0; cl < 1920 / 1; cl++) {
       auto packed_val = ef_fpga_1_update_0_write_channel.read();
-      hw_uint<16> packed_val_lane_0;
-      set_at<0, 16, 16>(packed_val_lane_0, packed_val.extract<0, 15>());
+      hw_uint<16> packed_val_lane_0 = packed_val.extract<0, 15>();
       {
       hw_uint<16> packed;
       int c = 1*cl + 0;

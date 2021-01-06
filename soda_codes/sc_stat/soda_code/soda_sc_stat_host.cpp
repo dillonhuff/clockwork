@@ -46,7 +46,7 @@ int main(int argc, char **argv) {
   std::ofstream input_pw_math_in_oc03_read("pw_math_in_oc03_read.csv");
   for (int i = 0; i < pw_math_in_oc03_read_pipe0_DATA_SIZE; i++) {
 #ifdef __FLOAT_OUTPUT__
-    float  val = (rand() % 256);
+    float  val = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
 #else // __FLOAT_OUTPUT__
     uint32_t val = (rand() % 256);
 #endif // __FLOAT_OUTPUT__
