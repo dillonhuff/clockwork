@@ -19811,7 +19811,7 @@ void test_multi_kernel_pyramid_collapsing() {
 
   compare("multi_kernel_" + prg.name + "_vs_unopt", multi_kernel_res, unopt_postprocessed);
   move_to_benchmarks_folder(dag.prg.name);
-  assert(false);
+  //assert(false);
 }
 
 void test_multi_kernel_unsharp() {
@@ -20770,9 +20770,8 @@ void stencil_chain_multi_kernel_test() {
 }
 
 void dhuff_tests() {
-  //test_multi_kernel_pyramid_collapsing();
+  test_multi_kernel_pyramid_collapsing();
   test_multi_kernel_unsharp();
-  assert(false);
   test_multi_kernel_design();
   stencil_chain_multi_kernel_test();
   infer_bounds_tests();
