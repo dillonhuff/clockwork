@@ -19772,7 +19772,7 @@ void test_time_sharing_gaussian_pyramid() {
 }
 
 void test_multi_kernel_unsharp() {
-  prog prg("unsharp_multi_kernel");
+  prog prg("us_multi_kernel");
   prg.add_input("in");
   prg.add_output("out");
 
@@ -19824,14 +19824,6 @@ void test_multi_kernel_unsharp() {
   }
 
   CodegenOptions options;
-  //options.internal = true;
-  //options.all_rams = true;
-  //all_unbanked(prg, options);
-  //for (auto& gp : dag.fusion_group_progs) {
-    //all_unbanked(gp.second, options);
-  //}
-  //options.inner_bank_offset_mode =
-    //INNER_BANK_OFFSET_MULTILINEAR;
   generate_app_code(options, dag);
 
   generate_regression_testbench(dag.prg);
@@ -19839,6 +19831,7 @@ void test_multi_kernel_unsharp() {
 
   compare("multi_kernel_" + prg.name + "_vs_unopt", multi_kernel_res, unopt_postprocessed);
   move_to_benchmarks_folder(dag.prg.name);
+  assert(false);
 }
 
 void test_gaussian_pyramid_shared_pes() {
