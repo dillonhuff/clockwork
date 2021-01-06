@@ -1,1 +1,0 @@
-export app=two_input_mag_opt

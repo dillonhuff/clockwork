@@ -1,1 +1,0 @@
-export app=sobel_unrolled_16_opt
