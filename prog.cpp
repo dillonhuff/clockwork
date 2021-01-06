@@ -2158,13 +2158,21 @@ void generate_app_code_op_logic(
   string code_string =
     //perfect_loop_codegen(schedmap);
     options.code_string;
-  if (!options.use_custom_code_string) {
-    //code_string = codegen_c(schedmap);
+  if (options.hls_loop_codegen == HLS_LOOP_CODEGEN_CUSTOM) {
+    // Do nothing, leave code string
+  } else if (options.hls_loop_codegen == HLS_LOOP_CODEGEN_PERFECT) {
     code_string = perfect_loop_codegen(schedmap);
   } else {
-    cout << "Code string = " << code_string << endl;
-    //assert(false);
+    assert(options.hls_loop_codegen == HLS_LOOP_CODEGEN_ISL);
+    code_string = codegen_c(schedmap);
   }
+  //if (!options.use_custom_code_string) {
+    ////code_string = codegen_c(schedmap);
+    //code_string = perfect_loop_codegen(schedmap);
+  //} else {
+    //cout << "Code string = " << code_string << endl;
+    ////assert(false);
+  //}
 
   string original_isl_code_string = code_string;
 

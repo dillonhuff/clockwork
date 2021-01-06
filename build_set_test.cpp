@@ -6704,7 +6704,7 @@ struct App {
     CodegenOptions options;
     options.internal = true;
     options.simplify_address_expressions = true;
-    options.use_custom_code_string = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
     realize(options, name, d0, d1);
   }
 
@@ -6762,7 +6762,6 @@ struct App {
     CodegenOptions options;
     options.internal = true;
     options.simplify_address_expressions = true;
-    //options.use_custom_code_string = true;
 
     realize(options, name, {d0, d1}, unroll_factor);
   }
@@ -7275,7 +7274,7 @@ void tricky_shift_register_reconvergence_test() {
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
-  options.use_custom_code_string = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
   options.debug_options.expect_all_linebuffers = true;
   sobel.realize(options, "D", size, 1, 1);
 
@@ -7306,7 +7305,7 @@ void mismatched_stencil_test() {
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
-  options.use_custom_code_string = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
   options.debug_options.expect_all_linebuffers = true;
   sobel.realize(options, "mismatched_stencils", size, 1, 1);
 
@@ -7816,7 +7815,7 @@ void harris_unrolled_test() {
     CodegenOptions options;
     options.internal = true;
     options.simplify_address_expressions = true;
-    options.use_custom_code_string = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
     options.debug_options.expect_all_linebuffers = true;
     h.realize(options, out_name, cols, rows, unroll_factor);
   }
@@ -7946,7 +7945,7 @@ void generate_app_benchmark(
   mini_dimensions.resize(dimensions.size(), 256);
 
   CodegenOptions options;
-  options.use_custom_code_string = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
   app.realize(options, name, mini_dimensions, 1);
   int bmp_res = run_sw_bmp_test_harness(name + "_opt");
   //assert(false);
@@ -8027,7 +8026,7 @@ void camera_pipeline_all_adds_test(const std::string& prefix) {
     //CodegenOptions options;
     //options.internal = true;
     //options.simplify_address_expressions = true;
-    ////options.use_custom_code_string = true;
+    ////options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
     //options.use_custom_code_string = false;
     //options.debug_options.expect_all_linebuffers = true;
     ////options.num_input_epochs = 30;
@@ -8065,7 +8064,7 @@ void camera_pipeline_test(const std::string& prefix) {
     CodegenOptions options;
     options.internal = true;
     options.simplify_address_expressions = true;
-    options.use_custom_code_string = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
     options.debug_options.expect_all_linebuffers = true;
     options.num_input_epochs = 30;
     camera_pipeline(out_name).realize(options, out_name, cols, rows, unroll_factor);
@@ -8114,7 +8113,7 @@ void harris16_test(const std::string& prefix) {
     //CodegenOptions options;
     //options.internal = true;
     //options.simplify_address_expressions = true;
-    //options.use_custom_code_string = true;
+    //options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
     //options.debug_options.expect_all_linebuffers = true;
     //options.num_input_epochs = 30;
     //harris16(out_name).realize(options, out_name, cols, rows, unroll_factor);
@@ -8148,7 +8147,7 @@ void harris_test() {
     //CodegenOptions options;
     //options.internal = true;
     //options.simplify_address_expressions = true;
-    //options.use_custom_code_string = true;
+    //options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
     //options.debug_options.expect_all_linebuffers = true;
     //harris(out_name).realize(options, out_name, cols, rows, unroll_factor);
 
@@ -8220,8 +8219,7 @@ void denoise3d_reconvergence_test() {
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
-  //options.use_custom_code_string = false;
-  options.use_custom_code_string = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
   //options.all_rams = true;
   //options.debug_options.expect_all_linebuffers = true;
   hmini.realize(options, name, {mini_size, mini_size, mini_size}, 1);
@@ -8242,7 +8240,7 @@ void denoise3d_test() {
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
-  options.use_custom_code_string = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
   //options.debug_options.expect_all_linebuffers = true;
   hmini.realize(options, "dn3d_mini", {mini_size, mini_size, mini_size}, 1);
 
@@ -8267,7 +8265,7 @@ void denoise3d_test() {
     CodegenOptions options;
     options.internal = true;
     options.simplify_address_expressions = true;
-    options.use_custom_code_string = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
     options.debug_options.expect_all_linebuffers = true;
     denoise3d(out_name).realize(options, out_name, {cols, rows, channels}, unroll_factor);
 
@@ -8297,7 +8295,7 @@ void max_pooling_test_sizes(const std::string& prefix) {
     CodegenOptions options;
     options.internal = true;
     options.simplify_address_expressions = true;
-    options.use_custom_code_string = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
     max_pooling(name).realize(options, name, {H, W, D}, "in", factor);
   }
   {
@@ -8326,7 +8324,7 @@ void gauss_pyramid_test(const std::string& prefix) {
     CodegenOptions options;
     options.internal = true;
     options.simplify_address_expressions = true;
-    options.use_custom_code_string = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
 
     gauss_pyramid_fpga(name).realize(options, name, {cols, rows}, "in", factor);
     move_to_benchmarks_folder(name + "_opt");
@@ -8357,7 +8355,7 @@ void max_pooling_test(const std::string& prefix) {
     CodegenOptions options;
     options.internal = true;
     options.simplify_address_expressions = true;
-    options.use_custom_code_string = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
 
     max_pooling(name).realize(options, name, {H, W, D}, "in", factor);
     move_to_benchmarks_folder(name + "_opt");
@@ -9030,7 +9028,7 @@ void increment_iccad_apps(const std::string& prefix) {
     int cols = 1920;
     CodegenOptions options;
     options.internal = true;
-    options.use_custom_code_string = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
     lp.realize(options, name, {cols, rows}, "in", throughput);
 
     move_to_benchmarks_folder(name + "_opt");
@@ -9048,7 +9046,7 @@ void identity_stream_iccad_apps(const std::string& prefix) {
     int cols = 1920;
     CodegenOptions options;
     options.internal = true;
-    options.use_custom_code_string = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
     lp.realize(options, name, {cols, rows}, "in", throughput);
 
     move_to_benchmarks_folder(name + "_opt");
@@ -9066,7 +9064,7 @@ void stencil_chain_no_dsp_long_iccad_apps(const std::string& prefix) {
     int cols = 1920;
     CodegenOptions options;
     options.internal = true;
-    options.use_custom_code_string = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
     lp.realize(options, name, {cols, rows}, "in", throughput);
 
     move_to_benchmarks_folder(name + "_opt");
@@ -9084,7 +9082,7 @@ void stencil_chain_no_dsp_iccad_apps(const std::string& prefix) {
     int cols = 1920;
     CodegenOptions options;
     options.internal = true;
-    options.use_custom_code_string = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
     lp.realize(options, name, {cols, rows}, "in", throughput);
 
     move_to_benchmarks_folder(name + "_opt");
@@ -9102,7 +9100,7 @@ void stencil_chain_fan_out_iccad_apps(const std::string& prefix) {
     int cols = 1920;
     CodegenOptions options;
     options.internal = true;
-    options.use_custom_code_string = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
     lp.realize(options, name, {cols, rows}, "in", throughput);
 
     move_to_benchmarks_folder(name + "_opt");
@@ -9119,7 +9117,7 @@ void stencil_chain_eight_stage_iccad_apps(const std::string& prefix) {
     int cols = 1920;
     CodegenOptions options;
     options.internal = true;
-    options.use_custom_code_string = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
     lp.realize(options, name, {cols, rows}, "in", throughput);
 
     move_to_benchmarks_folder(name + "_opt");
@@ -9137,7 +9135,7 @@ void stencil_chain_five_stage_iccad_apps(const std::string& prefix) {
     int cols = 1920;
     CodegenOptions options;
     options.internal = true;
-    options.use_custom_code_string = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
     lp.realize(options, name, {cols, rows}, "in", throughput);
 
     move_to_benchmarks_folder(name + "_opt");
@@ -9155,7 +9153,7 @@ void stencil_chain_one_stage_iccad_apps(const std::string& prefix) {
     int cols = 1920;
     CodegenOptions options;
     options.internal = true;
-    options.use_custom_code_string = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
     lp.realize(options, name, {cols, rows}, "in", throughput);
 
     move_to_benchmarks_folder(name + "_opt");
@@ -9274,7 +9272,7 @@ void float_stencil_iccad_apps(const std::string& prefix) {
     int cols = 32;
     CodegenOptions options;
     options.internal = true;
-    options.use_custom_code_string = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
     options.rtl_options.hls_clock_target_Hz = 300000000;
     lp.realize(options, name, {cols, rows}, "in", throughput);
 
@@ -9297,7 +9295,7 @@ void float_add_iccad_apps(const std::string& prefix) {
     int cols = 32;
     CodegenOptions options;
     options.internal = true;
-    options.use_custom_code_string = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
     options.rtl_options.hls_clock_target_Hz = 300000000;
     lp.realize(options, name, {cols, rows}, "in", throughput);
 
@@ -9321,7 +9319,7 @@ void float_big_stencil_iccad_apps(const std::string& prefix, const int num_stage
     int cols = 32;
     CodegenOptions options;
     options.internal = true;
-    options.use_custom_code_string = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
     options.rtl_options.hls_clock_target_Hz = 300000000;
     lp.realize(options, name, {cols, rows}, "in", throughput);
 
@@ -9346,7 +9344,7 @@ void heat_3d_real_iccad_apps(const std::string& prefix, const int num_stages) {
     CodegenOptions options;
     options.internal = true;
     options.num_input_epochs = 1;
-    options.use_custom_code_string = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
     options.rtl_options.hls_clock_target_Hz = 300000000;
     lp.realize(options, name, {cols, rows, channels}, "in", throughput);
 
@@ -9369,7 +9367,7 @@ void heat_3d_iccad_apps(const std::string& prefix) {
     int cols = 32;
     CodegenOptions options;
     options.internal = true;
-    options.use_custom_code_string = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
     options.rtl_options.hls_clock_target_Hz = 300000000;
     lp.realize(options, name, {cols, rows}, "in", throughput);
 
@@ -9391,7 +9389,7 @@ void stencil_chain_12_stage_iccad_apps(const std::string& prefix) {
     //int cols = 1920;
     CodegenOptions options;
     options.internal = true;
-    options.use_custom_code_string = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
     options.rtl_options.hls_clock_target_Hz = 300000000;
     lp.realize(options, name, {cols, rows}, "in", throughput);
 
@@ -9409,7 +9407,7 @@ void stencil_chain_15_stage_iccad_apps(const std::string& prefix) {
     int cols = 1920;
     CodegenOptions options;
     options.internal = true;
-    options.use_custom_code_string = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
     //options.rtl_options.hls_clock_target_Hz = 300000000;
     options.rtl_options.hls_clock_target_Hz = 275000000;
     lp.realize(options, name, {cols, rows}, "in", throughput);
@@ -9428,7 +9426,7 @@ void stencil_chain_20_stage_iccad_apps(const std::string& prefix) {
     int cols = 1920;
     CodegenOptions options;
     options.internal = true;
-    options.use_custom_code_string = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
     options.rtl_options.hls_clock_target_Hz = 300000000;
     lp.realize(options, name, {cols, rows}, "in", throughput);
 
@@ -9447,7 +9445,7 @@ void stencil_chain_iccad_apps(const std::string& prefix) {
     int cols = 1920;
     CodegenOptions options;
     options.internal = true;
-    options.use_custom_code_string = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
     options.rtl_options.hls_clock_target_Hz = 500000000;
     lp.realize(options, name, {cols, rows}, "in", throughput);
 
@@ -9465,7 +9463,7 @@ void gauss_pyramid_iccad_apps(const std::string& prefix) {
     int cols = 1920 / pow(2, 4 - 1);
     CodegenOptions options;
     options.internal = true;
-    options.use_custom_code_string = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
     lp.realize(options, name, {cols, rows}, "in", throughput);
 
     move_to_benchmarks_folder(name + "_opt");
@@ -9486,7 +9484,7 @@ void exposure_fusion_iccad_apps(const std::string& prefix) {
     CodegenOptions options;
     options.internal = true;
     options.simplify_address_expressions = true;
-    options.use_custom_code_string = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
     lp.realize(options, name, cols, rows, throughput);
 
     move_to_benchmarks_folder(name + "_opt");
@@ -9722,7 +9720,7 @@ void single_gaussian_pyramid_app_test() {
     CodegenOptions options;
     options.internal = true;
     options.simplify_address_expressions = true;
-    options.use_custom_code_string = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
     options.debug_options.expect_all_linebuffers = true;
     gp.realize(options, name, 4, 4, 2);
   }
@@ -9749,7 +9747,7 @@ void ef_cartoon_test(const std::string& out_name) {
     CodegenOptions options;
     options.internal = true;
     options.simplify_address_expressions = true;
-    options.use_custom_code_string = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
     gp.realize(options, out_name, {cols, rows}, "in", 32);
     move_naive_to_benchmarks_folder(out_name + "_opt");
   }
@@ -9774,7 +9772,7 @@ void gaussian_pyramid_app_test(const std::string& prefix) {
     CodegenOptions options;
     options.internal = true;
     options.simplify_address_expressions = true;
-    options.use_custom_code_string = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
     options.debug_options.expect_all_linebuffers = true;
     gp.realize(options, name, {size, size}, "in", 2);
   }
@@ -9802,7 +9800,7 @@ void gaussian_pyramid_app_test(const std::string& prefix) {
     CodegenOptions options;
     options.internal = true;
     options.simplify_address_expressions = true;
-    options.use_custom_code_string = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
 
     gaussian_pyramid_app(name, 4).realize(options, name, {64, 64}, "in", factor);
     move_to_benchmarks_folder(name + "_opt");
@@ -10196,7 +10194,7 @@ void sobel_16_app_test(const std::string& prefix) {
     CodegenOptions options;
     options.internal = true;
     options.simplify_address_expressions = true;
-    options.use_custom_code_string = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
     options.num_input_epochs = 30;
     options.debug_options.expect_all_linebuffers = true;
     sobel16(out_name).realize(options, out_name, cols, rows, unroll_factor);
@@ -10241,7 +10239,7 @@ void blur_xy_16_app_test(const std::string& prefix) {
     CodegenOptions options;
     options.internal = true;
     options.simplify_address_expressions = true;
-    options.use_custom_code_string = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
     //options.num_input_epochs = 30;
     options.debug_options.expect_all_linebuffers = true;
     blur_xy_16(out_name).realize(options, out_name, cols, rows, unroll_factor);
@@ -10293,7 +10291,7 @@ void jacobi2d_app_test() {
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
-  options.use_custom_code_string = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
   options.debug_options.expect_all_linebuffers = true;
   jac.realize(options, "t0", 32, 28, 1);
 
@@ -10316,7 +10314,7 @@ void jacobi2d_app_test() {
     CodegenOptions options;
     options.internal = true;
     options.simplify_address_expressions = true;
-    options.use_custom_code_string = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
     options.debug_options.expect_all_linebuffers = true;
     jacobi2d(out_name).realize(options, out_name, cols, rows, unroll_factor);
     std::vector<std::string> optimized =
@@ -10353,7 +10351,7 @@ void sum_diffs_test() {
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
-  options.use_custom_code_string = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
   options.debug_options.expect_all_linebuffers = true;
   dn.realize(options, out_name, size, size);
     std::vector<std::string> optimized =
@@ -10377,7 +10375,7 @@ void dummy_app_test() {
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
-  options.use_custom_code_string = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
   options.debug_options.expect_all_linebuffers = true;
   dn.realize(options, out_name, size, size);
   std::vector<std::string> optimized =
@@ -10418,7 +10416,7 @@ void two_input_denoise_pipeline_test() {
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
-  options.use_custom_code_string = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
   //options.debug_options.expect_all_linebuffers = true;
   dn.realize(options, out_name, size, size);
   std::vector<std::string> optimized =
@@ -10456,7 +10454,7 @@ void two_input_mag_test() {
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
-  options.use_custom_code_string = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
   options.debug_options.expect_all_linebuffers = true;
   dn.realize(options, out_name, size, size);
     std::vector<std::string> optimized =
@@ -10482,7 +10480,7 @@ void one_input_mag_test() {
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
-  options.use_custom_code_string = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
   options.debug_options.expect_all_linebuffers = true;
   dn.realize(options, out_name, size, size);
     std::vector<std::string> optimized =
@@ -10505,7 +10503,7 @@ void sum_float_test() {
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
-  options.use_custom_code_string = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
   options.debug_options.expect_all_linebuffers = true;
   dn.realize(options, out_name, size, size);
     std::vector<std::string> optimized =
@@ -10521,7 +10519,7 @@ void sum_denoise_test() {
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
-  options.use_custom_code_string = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
   options.debug_options.expect_all_linebuffers = true;
   dn.realize(options, "sum_denoise2d", size, size);
     std::vector<std::string> optimized =
@@ -10537,7 +10535,7 @@ void denoise2d_test() {
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
-  options.use_custom_code_string = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
   options.debug_options.expect_all_linebuffers = true;
   dn.realize(options, "denoise2d", size, size);
 
@@ -10600,7 +10598,7 @@ void conv3x3_app_unrolled_uneven_test() {
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
-  options.use_custom_code_string = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
   options.debug_options.expect_all_linebuffers = true;
   sobel.realize(options, "conv3x3_app_unrolled_uneven", 30, 30, 7);
 
@@ -10626,7 +10624,7 @@ void conv3x3_app_unrolled_test() {
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
-  options.use_custom_code_string = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
   options.debug_options.expect_all_linebuffers = true;
   sobel.realize(options, "conv3x3_app_unrolled", 30, 30, 2);
 
@@ -10654,7 +10652,7 @@ void conv3x3_app_test() {
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
-  options.use_custom_code_string = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
   options.debug_options.expect_all_linebuffers = true;
   sobel.realize(options, "conv3x3_app", 30, 30);
 
@@ -11511,7 +11509,7 @@ void iccad_tests() {
   CodegenOptions options;
   options.internal = true;
   options.num_input_epochs = 1;
-  options.use_custom_code_string = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
   options.rtl_options.hls_clock_target_Hz = 500000000;
   int rows = 1920;
   int cols = 1080;
@@ -13011,7 +13009,7 @@ void mmul_outer_prod_test() {
   CodegenOptions options;
   options.internal = true;
   options.all_rams = true;
-  options.use_custom_code_string = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
   options.banking_strategies["C"] = {"register_file"};
   options.inner_bank_offset_mode = INNER_BANK_OFFSET_LINEAR;
   generate_optimized_code(options, prg);
@@ -15311,7 +15309,7 @@ void two_stage_psef() {
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
-  options.use_custom_code_string = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
   lp.realize(options, {{out0, {cols, rows}}, {out1, {cols, rows}}}, out0, unroll);
 
   compile_compute(out0 + "_" + out1 + "_opt.cpp");
@@ -15339,7 +15337,7 @@ void psef_multi_output_test() {
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
-  options.use_custom_code_string = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
   lp.realize(options, {{out0, {cols, rows}}, {out1, {cols, rows}}}, out0, unroll);
 
   compile_compute(out0 + "_" + out1 + "_opt.cpp");
@@ -15367,7 +15365,7 @@ void async_add_test() {
 
     CodegenOptions options;
     options.internal = true;
-    options.use_custom_code_string = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
     options.num_pipelines = 1;
     lp.realize(options, {{output_image, {cols, rows}}}, output_image, unroll);
 
@@ -15399,7 +15397,7 @@ void add_four_channels() {
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
-  options.use_custom_code_string = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
   lp.realize(options, {{out0, {cols, rows}}, {out1, {cols, rows}}}, out0, unroll);
 
   compile_compute(out0 + "_" + out1 + "_opt.cpp");
@@ -15428,7 +15426,7 @@ void weight_add_psef() {
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
-  options.use_custom_code_string = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
   lp.realize(options, {{out0, {cols, rows}}, {out1, {cols, rows}}}, out0, unroll);
 
   compile_compute(out0 + "_" + out1 + "_opt.cpp");
@@ -18073,7 +18071,7 @@ void generate_fpga_clockwork_code(prog& prg) {
     << prg.compute_unit_file << endl;
   CodegenOptions options;
   options.internal = true;
-  //options.use_custom_code_string = true;
+  //options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
   //map<string, Box> compute_domains;
   //for (auto s : get_sets(dom)) {
     //ops.push_back(name(s));
@@ -19442,7 +19440,7 @@ void asplos_ds_test() {
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
-  options.use_custom_code_string = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
   options.debug_options.expect_all_linebuffers = true;
 
   string hblur = as_ds("in", ds);
@@ -19466,7 +19464,7 @@ void asplos_gp_test() {
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
-  options.use_custom_code_string = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
   options.debug_options.expect_all_linebuffers = true;
   ds.realize(options, hblur, 30, 30, 1);
 }
@@ -19487,7 +19485,7 @@ void asplos_lp_test() {
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
-  options.use_custom_code_string = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
   ds.realize(options, image, 30, 30, 1);
 }
 
@@ -19525,7 +19523,7 @@ void asplos_ef_test() {
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
-  options.use_custom_code_string = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
   ds.realize(options, image, 30, 30, 1);
 
 }
