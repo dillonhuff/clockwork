@@ -1940,46 +1940,47 @@ std::string perfect_loop_codegen(umap* schedmap) {
 
   conv_out << "// # sets: " << sets.size() << endl;
   assert(sets.size() == 1);
-  for (auto s : get_sets(time_range)) {
-    vector<int> lower_bounds;
-    vector<int> upper_bounds;
-    for (int d = 0; d < num_dims(s); d++) {
-      auto ds = project_all_but(s, d);
-      auto lm = lexminval(ds);
-      auto lmax = lexmaxval(ds);
-      lower_bounds.push_back(to_int(lm));
-      upper_bounds.push_back(to_int(lmax));
-    }
-
-    for (int i = 0; i < lower_bounds.size(); i++) {
-      conv_out << tab(i) << "for (int i" << str(i) << " = " << lower_bounds.at(i) << "; i" << str(i) << " <= " << upper_bounds.at(i) << "; i" << i << "++) {" << endl;
-      if (i == ((int) lower_bounds.size()) - 2) {
-        conv_out << "#pragma HLS pipeline II=1" << endl;
-      }
-      if (i == ((int) lower_bounds.size()) - 1) {
-        conv_out << "#pragma HLS unroll" << endl;
-      }
-    }
-
-    for (auto time_to_val : get_maps(inv(schedmap))) {
-      auto pw = isl_pw_multi_aff_from_map(time_to_val);
-      vector<pair<isl_set*, isl_multi_aff*> > pieces =
-        get_pieces(pw);
-      assert(pieces.size() == 1);
-
-      auto saff = pieces.at(0).second;
-      auto dom = pieces.at(0).first;
-      conv_out << tab(lower_bounds.size()) << "// " << str(dom) << endl;
-      conv_out << tab(lower_bounds.size()) << "if (" << codegen_c(dom) << ") {" << endl;
-      conv_out << tab(lower_bounds.size() + 1) << codegen_c(saff) << ";" << endl;
-      conv_out << tab(lower_bounds.size()) << "}" << endl;
-    }
-
-    for (int i = 0; i < lower_bounds.size(); i++) {
-      conv_out << tab(lower_bounds.size() - 1 - i) << "}" << endl;
-    }
-
+  isl_set* s = pick(get_sets(time_range));
+  //for (auto s : get_sets(time_range)) {
+  vector<int> lower_bounds;
+  vector<int> upper_bounds;
+  for (int d = 0; d < num_dims(s); d++) {
+    auto ds = project_all_but(s, d);
+    auto lm = lexminval(ds);
+    auto lmax = lexmaxval(ds);
+    lower_bounds.push_back(to_int(lm));
+    upper_bounds.push_back(to_int(lmax));
   }
+
+  for (int i = 0; i < lower_bounds.size(); i++) {
+    conv_out << tab(i) << "for (int i" << str(i) << " = " << lower_bounds.at(i) << "; i" << str(i) << " <= " << upper_bounds.at(i) << "; i" << i << "++) {" << endl;
+    if (i == ((int) lower_bounds.size()) - 2) {
+      conv_out << "#pragma HLS pipeline II=1" << endl;
+    }
+    if (i == ((int) lower_bounds.size()) - 1) {
+      conv_out << "#pragma HLS unroll" << endl;
+    }
+  }
+
+  for (auto time_to_val : get_maps(inv(schedmap))) {
+    auto pw = isl_pw_multi_aff_from_map(time_to_val);
+    vector<pair<isl_set*, isl_multi_aff*> > pieces =
+      get_pieces(pw);
+    assert(pieces.size() == 1);
+
+    auto saff = pieces.at(0).second;
+    auto dom = pieces.at(0).first;
+    conv_out << tab(lower_bounds.size()) << "// " << str(dom) << endl;
+    conv_out << tab(lower_bounds.size()) << "if (" << codegen_c(dom) << ") {" << endl;
+    conv_out << tab(lower_bounds.size() + 1) << codegen_c(saff) << ";" << endl;
+    conv_out << tab(lower_bounds.size()) << "}" << endl;
+  }
+
+  for (int i = 0; i < lower_bounds.size(); i++) {
+    conv_out << tab(lower_bounds.size() - 1 - i) << "}" << endl;
+  }
+
+  //}
 
   return conv_out.str();
 }
