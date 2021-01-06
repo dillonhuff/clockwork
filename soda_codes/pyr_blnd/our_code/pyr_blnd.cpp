@@ -3388,6 +3388,40 @@ inline hw_uint<32> lp_in_on_chip_2_buf32_reconstruct_lp52_buf55_us65_FIFO_buf336
 }
 
 // Operation logic
+inline void load_to_gp_in_on_chip_1_buf4_to_gp_5172175(gp_in_on_chip_1_buf4_cache& gp_in_on_chip_1_buf4, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */gp_in_on_chip_1_buf4_to_gp_5172, int root, int gp_in_on_chip_1_buf4_ld174, int gp_in_on_chip_1_buf4_ld173) {
+  // Dynamic address computation
+
+	// Consume: gp_in_on_chip_1_buf4
+	auto gp_in_on_chip_1_buf4_gp_in_on_chip_1_buf4_ld173_c__gp_in_on_chip_1_buf4_ld174_value = gp_in_on_chip_1_buf4_load_to_gp_in_on_chip_1_buf4_to_gp_5172175_read_bundle_read(gp_in_on_chip_1_buf4/* source_delay */, root, gp_in_on_chip_1_buf4_ld174, gp_in_on_chip_1_buf4_ld173, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	// Produce: gp_in_on_chip_1_buf4_to_gp_5172
+	gp_in_on_chip_1_buf4_to_gp_5172.write(gp_in_on_chip_1_buf4_gp_in_on_chip_1_buf4_ld173_c__gp_in_on_chip_1_buf4_ld174_value);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void load_to_gp_in_on_chip_1_buf4_to_gp_1164167(gp_in_on_chip_1_buf4_cache& gp_in_on_chip_1_buf4, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */gp_in_on_chip_1_buf4_to_gp_1164, int root, int gp_in_on_chip_1_buf4_ld166, int gp_in_on_chip_1_buf4_ld165) {
+  // Dynamic address computation
+
+	// Consume: gp_in_on_chip_1_buf4
+	auto gp_in_on_chip_1_buf4_gp_in_on_chip_1_buf4_ld165_c__gp_in_on_chip_1_buf4_ld166_value = gp_in_on_chip_1_buf4_load_to_gp_in_on_chip_1_buf4_to_gp_1164167_read_bundle_read(gp_in_on_chip_1_buf4/* source_delay */, root, gp_in_on_chip_1_buf4_ld166, gp_in_on_chip_1_buf4_ld165, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	// Produce: gp_in_on_chip_1_buf4_to_gp_1164
+	gp_in_on_chip_1_buf4_to_gp_1164.write(gp_in_on_chip_1_buf4_gp_in_on_chip_1_buf4_ld165_c__gp_in_on_chip_1_buf4_ld166_value);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
 inline void gp_in_on_chip_16_merged157(in_on_chip_FIFO_buf300_cache& in_on_chip_FIFO_buf300, gp_in_on_chip_1_buf4_cache& gp_in_on_chip_1_buf4, int root, int gp_in_on_chip_15, int gp_in_on_chip_16) {
   // Dynamic address computation
 
@@ -3419,23 +3453,6 @@ inline void load_to_in_on_chip_FIFO_buf300303(HWStream<hw_uint<32> >& /* buffer_
 
 }
 
-inline void load_to_gp_in_on_chip_1_buf4_to_gp_5172175(gp_in_on_chip_1_buf4_cache& gp_in_on_chip_1_buf4, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */gp_in_on_chip_1_buf4_to_gp_5172, int root, int gp_in_on_chip_1_buf4_ld174, int gp_in_on_chip_1_buf4_ld173) {
-  // Dynamic address computation
-
-	// Consume: gp_in_on_chip_1_buf4
-	auto gp_in_on_chip_1_buf4_gp_in_on_chip_1_buf4_ld173_c__gp_in_on_chip_1_buf4_ld174_value = gp_in_on_chip_1_buf4_load_to_gp_in_on_chip_1_buf4_to_gp_5172175_read_bundle_read(gp_in_on_chip_1_buf4/* source_delay */, root, gp_in_on_chip_1_buf4_ld174, gp_in_on_chip_1_buf4_ld173, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	// Produce: gp_in_on_chip_1_buf4_to_gp_5172
-	gp_in_on_chip_1_buf4_to_gp_5172.write(gp_in_on_chip_1_buf4_gp_in_on_chip_1_buf4_ld173_c__gp_in_on_chip_1_buf4_ld174_value);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
 inline void load_to_gp_in_on_chip_1_buf4_to_gp_11168171(gp_in_on_chip_1_buf4_cache& gp_in_on_chip_1_buf4, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */gp_in_on_chip_1_buf4_to_gp_11168, int root, int gp_in_on_chip_1_buf4_ld170, int gp_in_on_chip_1_buf4_ld169) {
   // Dynamic address computation
 
@@ -3447,23 +3464,6 @@ inline void load_to_gp_in_on_chip_1_buf4_to_gp_11168171(gp_in_on_chip_1_buf4_cac
 
 	// Produce: gp_in_on_chip_1_buf4_to_gp_11168
 	gp_in_on_chip_1_buf4_to_gp_11168.write(gp_in_on_chip_1_buf4_gp_in_on_chip_1_buf4_ld169_c__gp_in_on_chip_1_buf4_ld170_value);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void load_to_gp_in_on_chip_1_buf4_to_gp_1164167(gp_in_on_chip_1_buf4_cache& gp_in_on_chip_1_buf4, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */gp_in_on_chip_1_buf4_to_gp_1164, int root, int gp_in_on_chip_1_buf4_ld166, int gp_in_on_chip_1_buf4_ld165) {
-  // Dynamic address computation
-
-	// Consume: gp_in_on_chip_1_buf4
-	auto gp_in_on_chip_1_buf4_gp_in_on_chip_1_buf4_ld165_c__gp_in_on_chip_1_buf4_ld166_value = gp_in_on_chip_1_buf4_load_to_gp_in_on_chip_1_buf4_to_gp_1164167_read_bundle_read(gp_in_on_chip_1_buf4/* source_delay */, root, gp_in_on_chip_1_buf4_ld166, gp_in_on_chip_1_buf4_ld165, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	// Produce: gp_in_on_chip_1_buf4_to_gp_1164
-	gp_in_on_chip_1_buf4_to_gp_1164.write(gp_in_on_chip_1_buf4_gp_in_on_chip_1_buf4_ld165_c__gp_in_on_chip_1_buf4_ld166_value);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -3489,15 +3489,15 @@ void Extracted_gp_in_on_chip_15_gp_in_on_chip_1_buf4_ld166_gp_in_on_chip_1_buf4_
 
 // schedule: { load_to_gp_in_on_chip_1_buf4_to_gp_11168171[root = 0, gp_in_on_chip_1_buf4_ld170, gp_in_on_chip_1_buf4_ld169] -> [2 + 2gp_in_on_chip_1_buf4_ld170, 0, 2 + 2gp_in_on_chip_1_buf4_ld169, 46] : 3 <= gp_in_on_chip_1_buf4_ld170 <= 34 and 3 <= gp_in_on_chip_1_buf4_ld169 <= 34; load_to_gp_in_on_chip_1_buf4_to_gp_1164167[root = 0, gp_in_on_chip_1_buf4_ld166, gp_in_on_chip_1_buf4_ld165] -> [2 + 2gp_in_on_chip_1_buf4_ld166, 0, 2 + 2gp_in_on_chip_1_buf4_ld165, 4] : 0 <= gp_in_on_chip_1_buf4_ld166 <= 34 and 0 <= gp_in_on_chip_1_buf4_ld165 <= 34; load_to_in_on_chip_FIFO_buf300303[root = 0, in_on_chip_to_gp_0212_ld302, in_on_chip_to_gp_0212_ld301] -> [in_on_chip_to_gp_0212_ld302, 0, in_on_chip_to_gp_0212_ld301, 2] : 0 <= in_on_chip_to_gp_0212_ld302 <= 70 and 0 <= in_on_chip_to_gp_0212_ld301 <= 70; gp_in_on_chip_16_merged157[root = 0, gp_in_on_chip_15, gp_in_on_chip_16] -> [2 + 2gp_in_on_chip_15, 0, 2 + 2gp_in_on_chip_16, 3] : 0 <= gp_in_on_chip_15 <= 34 and 0 <= gp_in_on_chip_16 <= 34; load_to_gp_in_on_chip_1_buf4_to_gp_5172175[root = 0, gp_in_on_chip_1_buf4_ld174, gp_in_on_chip_1_buf4_ld173] -> [2 + 2gp_in_on_chip_1_buf4_ld174, 0, 2 + 2gp_in_on_chip_1_buf4_ld173, 32] : 3 <= gp_in_on_chip_1_buf4_ld174 <= 34 and 3 <= gp_in_on_chip_1_buf4_ld173 <= 34 }
 //   { load_to_gp_in_on_chip_1_buf4_to_gp_11168171[root = 0, gp_in_on_chip_1_buf4_ld170, gp_in_on_chip_1_buf4_ld169] -> [2 + 2gp_in_on_chip_1_buf4_ld170, 0, 2 + 2gp_in_on_chip_1_buf4_ld169, 46] : 3 <= gp_in_on_chip_1_buf4_ld170 <= 34 and 3 <= gp_in_on_chip_1_buf4_ld169 <= 34 }
-// Condition for load_to_gp_in_on_chip_1_buf4_to_gp_11168171(((-i0 + 2*floord(i0, 2) == 0) && (-i2 + 2*floord(i2, 2) == 0) && (-46 + i3 == 0) && (i1 == 0) && (-8 + i0 >= 0) && (70 - i0 >= 0) && (-8 + i2 >= 0) && (70 - i2 >= 0)))
+// Condition for load_to_gp_in_on_chip_1_buf4_to_gp_11168171(((-i0 + 2*floor((i0)/2) == 0) && (-i2 + 2*floor((i2)/2) == 0) && (-46 + i3 == 0) && (i1 == 0) && (-8 + i0 >= 0) && (70 - i0 >= 0) && (-8 + i2 >= 0) && (70 - i2 >= 0)))
 //   { load_to_gp_in_on_chip_1_buf4_to_gp_1164167[root = 0, gp_in_on_chip_1_buf4_ld166, gp_in_on_chip_1_buf4_ld165] -> [2 + 2gp_in_on_chip_1_buf4_ld166, 0, 2 + 2gp_in_on_chip_1_buf4_ld165, 4] : 0 <= gp_in_on_chip_1_buf4_ld166 <= 34 and 0 <= gp_in_on_chip_1_buf4_ld165 <= 34 }
-// Condition for load_to_gp_in_on_chip_1_buf4_to_gp_1164167(((-i0 + 2*floord(i0, 2) == 0) && (-i2 + 2*floord(i2, 2) == 0) && (-4 + i3 == 0) && (i1 == 0) && (-2 + i0 >= 0) && (70 - i0 >= 0) && (-2 + i2 >= 0) && (70 - i2 >= 0)))
+// Condition for load_to_gp_in_on_chip_1_buf4_to_gp_1164167(((-i0 + 2*floor((i0)/2) == 0) && (-i2 + 2*floor((i2)/2) == 0) && (-4 + i3 == 0) && (i1 == 0) && (-2 + i0 >= 0) && (70 - i0 >= 0) && (-2 + i2 >= 0) && (70 - i2 >= 0)))
 //   { load_to_in_on_chip_FIFO_buf300303[root = 0, in_on_chip_to_gp_0212_ld302, in_on_chip_to_gp_0212_ld301] -> [in_on_chip_to_gp_0212_ld302, 0, in_on_chip_to_gp_0212_ld301, 2] : 0 <= in_on_chip_to_gp_0212_ld302 <= 70 and 0 <= in_on_chip_to_gp_0212_ld301 <= 70 }
 // Condition for load_to_in_on_chip_FIFO_buf300303(((-2 + i3 == 0) && (i1 == 0) && (i0 >= 0) && (70 - i0 >= 0) && (i2 >= 0) && (70 - i2 >= 0)))
 //   { gp_in_on_chip_16_merged157[root = 0, gp_in_on_chip_15, gp_in_on_chip_16] -> [2 + 2gp_in_on_chip_15, 0, 2 + 2gp_in_on_chip_16, 3] : 0 <= gp_in_on_chip_15 <= 34 and 0 <= gp_in_on_chip_16 <= 34 }
-// Condition for gp_in_on_chip_16_merged157(((-i0 + 2*floord(i0, 2) == 0) && (-i2 + 2*floord(i2, 2) == 0) && (-3 + i3 == 0) && (i1 == 0) && (-2 + i0 >= 0) && (70 - i0 >= 0) && (-2 + i2 >= 0) && (70 - i2 >= 0)))
+// Condition for gp_in_on_chip_16_merged157(((-i0 + 2*floor((i0)/2) == 0) && (-i2 + 2*floor((i2)/2) == 0) && (-3 + i3 == 0) && (i1 == 0) && (-2 + i0 >= 0) && (70 - i0 >= 0) && (-2 + i2 >= 0) && (70 - i2 >= 0)))
 //   { load_to_gp_in_on_chip_1_buf4_to_gp_5172175[root = 0, gp_in_on_chip_1_buf4_ld174, gp_in_on_chip_1_buf4_ld173] -> [2 + 2gp_in_on_chip_1_buf4_ld174, 0, 2 + 2gp_in_on_chip_1_buf4_ld173, 32] : 3 <= gp_in_on_chip_1_buf4_ld174 <= 34 and 3 <= gp_in_on_chip_1_buf4_ld173 <= 34 }
-// Condition for load_to_gp_in_on_chip_1_buf4_to_gp_5172175(((-i0 + 2*floord(i0, 2) == 0) && (-i2 + 2*floord(i2, 2) == 0) && (-32 + i3 == 0) && (i1 == 0) && (-8 + i0 >= 0) && (70 - i0 >= 0) && (-8 + i2 >= 0) && (70 - i2 >= 0)))
+// Condition for load_to_gp_in_on_chip_1_buf4_to_gp_5172175(((-i0 + 2*floor((i0)/2) == 0) && (-i2 + 2*floor((i2)/2) == 0) && (-32 + i3 == 0) && (i1 == 0) && (-8 + i0 >= 0) && (70 - i0 >= 0) && (-8 + i2 >= 0) && (70 - i2 >= 0)))
 
   /*
 // time range: { [i0, 0, i2, i3] : (i0) mod 2 = 0 and (i2) mod 2 = 0 and 2 <= i0 <= 70 and 2 <= i2 <= 70 and 3 <= i3 <= 4; [i0, 0, i2, 46] : (i0) mod 2 = 0 and (i2) mod 2 = 0 and 8 <= i0 <= 70 and 8 <= i2 <= 70; [i0, 0, i2, 32] : (i0) mod 2 = 0 and (i2) mod 2 = 0 and 8 <= i0 <= 70 and 8 <= i2 <= 70; [i0, 0, i2, 2] : 0 <= i0 <= 70 and 0 <= i2 <= 70 }
@@ -3509,11 +3509,11 @@ for (int i0 = 0; i0 <= 70; i0++) {
       for (int i3 = 2; i3 <= 46; i3++) {
 #pragma HLS unroll
         // { [i0, 0, i2, 46] : (i2) mod 2 = 0 and (i0) mod 2 = 0 and 8 <= i0 <= 70 and 8 <= i2 <= 70 }
-        if ((((-i0 + 2*floord(i0, 2) == 0) && (-i2 + 2*floord(i2, 2) == 0) && (-46 + i3 == 0) && (i1 == 0) && (-8 + i0 >= 0) && (70 - i0 >= 0) && (-8 + i2 >= 0) && (70 - i2 >= 0)))) {
+        if ((((-i0 + 2*floor((i0)/2) == 0) && (-i2 + 2*floor((i2)/2) == 0) && (-46 + i3 == 0) && (i1 == 0) && (-8 + i0 >= 0) && (70 - i0 >= 0) && (-8 + i2 >= 0) && (70 - i2 >= 0)))) {
           load_to_gp_in_on_chip_1_buf4_to_gp_11168171((0), (-1 + floor((i0)/2)), (-1 + floor((i2)/2)));
         }
         // { [i0, 0, i2, 4] : (i2) mod 2 = 0 and (i0) mod 2 = 0 and 2 <= i0 <= 70 and 2 <= i2 <= 70 }
-        if ((((-i0 + 2*floord(i0, 2) == 0) && (-i2 + 2*floord(i2, 2) == 0) && (-4 + i3 == 0) && (i1 == 0) && (-2 + i0 >= 0) && (70 - i0 >= 0) && (-2 + i2 >= 0) && (70 - i2 >= 0)))) {
+        if ((((-i0 + 2*floor((i0)/2) == 0) && (-i2 + 2*floor((i2)/2) == 0) && (-4 + i3 == 0) && (i1 == 0) && (-2 + i0 >= 0) && (70 - i0 >= 0) && (-2 + i2 >= 0) && (70 - i2 >= 0)))) {
           load_to_gp_in_on_chip_1_buf4_to_gp_1164167((0), (-1 + floor((i0)/2)), (-1 + floor((i2)/2)));
         }
         // { [i0, 0, i2, 2] : 0 <= i0 <= 70 and 0 <= i2 <= 70 }
@@ -3521,11 +3521,11 @@ for (int i0 = 0; i0 <= 70; i0++) {
           load_to_in_on_chip_FIFO_buf300303((0), (i0), (i2));
         }
         // { [i0, 0, i2, 3] : (i2) mod 2 = 0 and (i0) mod 2 = 0 and 2 <= i0 <= 70 and 2 <= i2 <= 70 }
-        if ((((-i0 + 2*floord(i0, 2) == 0) && (-i2 + 2*floord(i2, 2) == 0) && (-3 + i3 == 0) && (i1 == 0) && (-2 + i0 >= 0) && (70 - i0 >= 0) && (-2 + i2 >= 0) && (70 - i2 >= 0)))) {
+        if ((((-i0 + 2*floor((i0)/2) == 0) && (-i2 + 2*floor((i2)/2) == 0) && (-3 + i3 == 0) && (i1 == 0) && (-2 + i0 >= 0) && (70 - i0 >= 0) && (-2 + i2 >= 0) && (70 - i2 >= 0)))) {
           gp_in_on_chip_16_merged157((0), (-1 + floor((i0)/2)), (-1 + floor((i2)/2)));
         }
         // { [i0, 0, i2, 32] : (i2) mod 2 = 0 and (i0) mod 2 = 0 and 8 <= i0 <= 70 and 8 <= i2 <= 70 }
-        if ((((-i0 + 2*floord(i0, 2) == 0) && (-i2 + 2*floord(i2, 2) == 0) && (-32 + i3 == 0) && (i1 == 0) && (-8 + i0 >= 0) && (70 - i0 >= 0) && (-8 + i2 >= 0) && (70 - i2 >= 0)))) {
+        if ((((-i0 + 2*floor((i0)/2) == 0) && (-i2 + 2*floor((i2)/2) == 0) && (-32 + i3 == 0) && (i1 == 0) && (-8 + i0 >= 0) && (70 - i0 >= 0) && (-8 + i2 >= 0) && (70 - i2 >= 0)))) {
           load_to_gp_in_on_chip_1_buf4_to_gp_5172175((0), (-1 + floor((i0)/2)), (-1 + floor((i2)/2)));
         }
       }
@@ -3543,11 +3543,11 @@ for (int i0 = 0; i0 <= 70; i0++) {
 	      for (int i3 = 2; i3 <= 46; i3++) {
 	#pragma HLS unroll
 	        // { [i0, 0, i2, 46] : (i2) mod 2 = 0 and (i0) mod 2 = 0 and 8 <= i0 <= 70 and 8 <= i2 <= 70 }
-	        if ((((-i0 + 2*floord(i0, 2) == 0) && (-i2 + 2*floord(i2, 2) == 0) && (-46 + i3 == 0) && (i1 == 0) && (-8 + i0 >= 0) && (70 - i0 >= 0) && (-8 + i2 >= 0) && (70 - i2 >= 0)))) {
+	        if ((((-i0 + 2*floor((i0)/2) == 0) && (-i2 + 2*floor((i2)/2) == 0) && (-46 + i3 == 0) && (i1 == 0) && (-8 + i0 >= 0) && (70 - i0 >= 0) && (-8 + i2 >= 0) && (70 - i2 >= 0)))) {
 	          load_to_gp_in_on_chip_1_buf4_to_gp_11168171(gp_in_on_chip_1_buf4 /* buf name */, gp_in_on_chip_1_buf4_to_gp_11168, (0), (-1 + floor((i0)/2)), (-1 + floor((i2)/2)));
 	        }
 	        // { [i0, 0, i2, 4] : (i2) mod 2 = 0 and (i0) mod 2 = 0 and 2 <= i0 <= 70 and 2 <= i2 <= 70 }
-	        if ((((-i0 + 2*floord(i0, 2) == 0) && (-i2 + 2*floord(i2, 2) == 0) && (-4 + i3 == 0) && (i1 == 0) && (-2 + i0 >= 0) && (70 - i0 >= 0) && (-2 + i2 >= 0) && (70 - i2 >= 0)))) {
+	        if ((((-i0 + 2*floor((i0)/2) == 0) && (-i2 + 2*floor((i2)/2) == 0) && (-4 + i3 == 0) && (i1 == 0) && (-2 + i0 >= 0) && (70 - i0 >= 0) && (-2 + i2 >= 0) && (70 - i2 >= 0)))) {
 	          load_to_gp_in_on_chip_1_buf4_to_gp_1164167(gp_in_on_chip_1_buf4 /* buf name */, gp_in_on_chip_1_buf4_to_gp_1164, (0), (-1 + floor((i0)/2)), (-1 + floor((i2)/2)));
 	        }
 	        // { [i0, 0, i2, 2] : 0 <= i0 <= 70 and 0 <= i2 <= 70 }
@@ -3555,11 +3555,11 @@ for (int i0 = 0; i0 <= 70; i0++) {
 	          load_to_in_on_chip_FIFO_buf300303(in_on_chip_to_gp_0212 /* buf name */, in_on_chip_FIFO_buf300, (0), (i0), (i2));
 	        }
 	        // { [i0, 0, i2, 3] : (i2) mod 2 = 0 and (i0) mod 2 = 0 and 2 <= i0 <= 70 and 2 <= i2 <= 70 }
-	        if ((((-i0 + 2*floord(i0, 2) == 0) && (-i2 + 2*floord(i2, 2) == 0) && (-3 + i3 == 0) && (i1 == 0) && (-2 + i0 >= 0) && (70 - i0 >= 0) && (-2 + i2 >= 0) && (70 - i2 >= 0)))) {
+	        if ((((-i0 + 2*floor((i0)/2) == 0) && (-i2 + 2*floor((i2)/2) == 0) && (-3 + i3 == 0) && (i1 == 0) && (-2 + i0 >= 0) && (70 - i0 >= 0) && (-2 + i2 >= 0) && (70 - i2 >= 0)))) {
 	          gp_in_on_chip_16_merged157(in_on_chip_FIFO_buf300 /* buf name */, gp_in_on_chip_1_buf4, (0), (-1 + floor((i0)/2)), (-1 + floor((i2)/2)));
 	        }
 	        // { [i0, 0, i2, 32] : (i2) mod 2 = 0 and (i0) mod 2 = 0 and 8 <= i0 <= 70 and 8 <= i2 <= 70 }
-	        if ((((-i0 + 2*floord(i0, 2) == 0) && (-i2 + 2*floord(i2, 2) == 0) && (-32 + i3 == 0) && (i1 == 0) && (-8 + i0 >= 0) && (70 - i0 >= 0) && (-8 + i2 >= 0) && (70 - i2 >= 0)))) {
+	        if ((((-i0 + 2*floor((i0)/2) == 0) && (-i2 + 2*floor((i2)/2) == 0) && (-32 + i3 == 0) && (i1 == 0) && (-8 + i0 >= 0) && (70 - i0 >= 0) && (-8 + i2 >= 0) && (70 - i2 >= 0)))) {
 	          load_to_gp_in_on_chip_1_buf4_to_gp_5172175(gp_in_on_chip_1_buf4 /* buf name */, gp_in_on_chip_1_buf4_to_gp_5172, (0), (-1 + floor((i0)/2)), (-1 + floor((i2)/2)));
 	        }
 	      }
@@ -3573,57 +3573,6 @@ for (int i0 = 0; i0 <= 70; i0++) {
 }
 
 // Operation logic
-inline void load_to_gp_in_on_chip_2_buf12_to_gp_7188191(gp_in_on_chip_2_buf12_cache& gp_in_on_chip_2_buf12, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */gp_in_on_chip_2_buf12_to_gp_7188, int root, int gp_in_on_chip_2_buf12_ld190, int gp_in_on_chip_2_buf12_ld189) {
-  // Dynamic address computation
-
-	// Consume: gp_in_on_chip_2_buf12
-	auto gp_in_on_chip_2_buf12_gp_in_on_chip_2_buf12_ld189_c__gp_in_on_chip_2_buf12_ld190_value = gp_in_on_chip_2_buf12_load_to_gp_in_on_chip_2_buf12_to_gp_7188191_read_bundle_read(gp_in_on_chip_2_buf12/* source_delay */, root, gp_in_on_chip_2_buf12_ld190, gp_in_on_chip_2_buf12_ld189, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	// Produce: gp_in_on_chip_2_buf12_to_gp_7188
-	gp_in_on_chip_2_buf12_to_gp_7188.write(gp_in_on_chip_2_buf12_gp_in_on_chip_2_buf12_ld189_c__gp_in_on_chip_2_buf12_ld190_value);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void load_to_gp_in_on_chip_2_buf12_to_gp_12180183(gp_in_on_chip_2_buf12_cache& gp_in_on_chip_2_buf12, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */gp_in_on_chip_2_buf12_to_gp_12180, int root, int gp_in_on_chip_2_buf12_ld182, int gp_in_on_chip_2_buf12_ld181) {
-  // Dynamic address computation
-
-	// Consume: gp_in_on_chip_2_buf12
-	auto gp_in_on_chip_2_buf12_gp_in_on_chip_2_buf12_ld181_c__gp_in_on_chip_2_buf12_ld182_value = gp_in_on_chip_2_buf12_load_to_gp_in_on_chip_2_buf12_to_gp_12180183_read_bundle_read(gp_in_on_chip_2_buf12/* source_delay */, root, gp_in_on_chip_2_buf12_ld182, gp_in_on_chip_2_buf12_ld181, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	// Produce: gp_in_on_chip_2_buf12_to_gp_12180
-	gp_in_on_chip_2_buf12_to_gp_12180.write(gp_in_on_chip_2_buf12_gp_in_on_chip_2_buf12_ld181_c__gp_in_on_chip_2_buf12_ld182_value);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void load_to_gp_in_on_chip_2_buf12_to_gp_2184187(gp_in_on_chip_2_buf12_cache& gp_in_on_chip_2_buf12, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */gp_in_on_chip_2_buf12_to_gp_2184, int root, int gp_in_on_chip_2_buf12_ld186, int gp_in_on_chip_2_buf12_ld185) {
-  // Dynamic address computation
-
-	// Consume: gp_in_on_chip_2_buf12
-	auto gp_in_on_chip_2_buf12_gp_in_on_chip_2_buf12_ld185_c__gp_in_on_chip_2_buf12_ld186_value = gp_in_on_chip_2_buf12_load_to_gp_in_on_chip_2_buf12_to_gp_2184187_read_bundle_read(gp_in_on_chip_2_buf12/* source_delay */, root, gp_in_on_chip_2_buf12_ld186, gp_in_on_chip_2_buf12_ld185, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	// Produce: gp_in_on_chip_2_buf12_to_gp_2184
-	gp_in_on_chip_2_buf12_to_gp_2184.write(gp_in_on_chip_2_buf12_gp_in_on_chip_2_buf12_ld185_c__gp_in_on_chip_2_buf12_ld186_value);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
 inline void load_to_gp_in_on_chip_1_buf4_FIFO_buf252255(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */gp_in_on_chip_1_buf4_to_gp_1164, gp_in_on_chip_1_buf4_FIFO_buf252_cache& gp_in_on_chip_1_buf4_FIFO_buf252, int root, int gp_in_on_chip_1_buf4_to_gp_1164_ld254, int gp_in_on_chip_1_buf4_to_gp_1164_ld253) {
   // Dynamic address computation
 
@@ -3655,6 +3604,57 @@ inline void gp_in_on_chip_214_merged160(gp_in_on_chip_1_buf4_FIFO_buf252_cache& 
 
 }
 
+inline void load_to_gp_in_on_chip_2_buf12_to_gp_7188191(gp_in_on_chip_2_buf12_cache& gp_in_on_chip_2_buf12, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */gp_in_on_chip_2_buf12_to_gp_7188, int root, int gp_in_on_chip_2_buf12_ld190, int gp_in_on_chip_2_buf12_ld189) {
+  // Dynamic address computation
+
+	// Consume: gp_in_on_chip_2_buf12
+	auto gp_in_on_chip_2_buf12_gp_in_on_chip_2_buf12_ld189_c__gp_in_on_chip_2_buf12_ld190_value = gp_in_on_chip_2_buf12_load_to_gp_in_on_chip_2_buf12_to_gp_7188191_read_bundle_read(gp_in_on_chip_2_buf12/* source_delay */, root, gp_in_on_chip_2_buf12_ld190, gp_in_on_chip_2_buf12_ld189, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	// Produce: gp_in_on_chip_2_buf12_to_gp_7188
+	gp_in_on_chip_2_buf12_to_gp_7188.write(gp_in_on_chip_2_buf12_gp_in_on_chip_2_buf12_ld189_c__gp_in_on_chip_2_buf12_ld190_value);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void load_to_gp_in_on_chip_2_buf12_to_gp_2184187(gp_in_on_chip_2_buf12_cache& gp_in_on_chip_2_buf12, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */gp_in_on_chip_2_buf12_to_gp_2184, int root, int gp_in_on_chip_2_buf12_ld186, int gp_in_on_chip_2_buf12_ld185) {
+  // Dynamic address computation
+
+	// Consume: gp_in_on_chip_2_buf12
+	auto gp_in_on_chip_2_buf12_gp_in_on_chip_2_buf12_ld185_c__gp_in_on_chip_2_buf12_ld186_value = gp_in_on_chip_2_buf12_load_to_gp_in_on_chip_2_buf12_to_gp_2184187_read_bundle_read(gp_in_on_chip_2_buf12/* source_delay */, root, gp_in_on_chip_2_buf12_ld186, gp_in_on_chip_2_buf12_ld185, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	// Produce: gp_in_on_chip_2_buf12_to_gp_2184
+	gp_in_on_chip_2_buf12_to_gp_2184.write(gp_in_on_chip_2_buf12_gp_in_on_chip_2_buf12_ld185_c__gp_in_on_chip_2_buf12_ld186_value);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void load_to_gp_in_on_chip_2_buf12_to_gp_12180183(gp_in_on_chip_2_buf12_cache& gp_in_on_chip_2_buf12, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */gp_in_on_chip_2_buf12_to_gp_12180, int root, int gp_in_on_chip_2_buf12_ld182, int gp_in_on_chip_2_buf12_ld181) {
+  // Dynamic address computation
+
+	// Consume: gp_in_on_chip_2_buf12
+	auto gp_in_on_chip_2_buf12_gp_in_on_chip_2_buf12_ld181_c__gp_in_on_chip_2_buf12_ld182_value = gp_in_on_chip_2_buf12_load_to_gp_in_on_chip_2_buf12_to_gp_12180183_read_bundle_read(gp_in_on_chip_2_buf12/* source_delay */, root, gp_in_on_chip_2_buf12_ld182, gp_in_on_chip_2_buf12_ld181, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	// Produce: gp_in_on_chip_2_buf12_to_gp_12180
+	gp_in_on_chip_2_buf12_to_gp_12180.write(gp_in_on_chip_2_buf12_gp_in_on_chip_2_buf12_ld181_c__gp_in_on_chip_2_buf12_ld182_value);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
 // Driver function
 void Extracted_gp_in_on_chip_1_buf4_to_gp_1164_ld254_gp_in_on_chip_213_gp_in_on_chip_2_buf12_ld182_gp_in_on_chip_2_buf12_ld186_gp_in_on_chip_2_buf12_ld190_(HWStream<hw_uint<32> >& /* no bundle get_args num ports = 1 */gp_in_on_chip_1_buf4_to_gp_1164, HWStream<hw_uint<32> >& /* no bundle get_args num ports = 1 */gp_in_on_chip_2_buf12_to_gp_12180, HWStream<hw_uint<32> >& /* no bundle get_args num ports = 1 */gp_in_on_chip_2_buf12_to_gp_2184, HWStream<hw_uint<32> >& /* no bundle get_args num ports = 1 */gp_in_on_chip_2_buf12_to_gp_7188) {
 
@@ -3674,15 +3674,15 @@ void Extracted_gp_in_on_chip_1_buf4_to_gp_1164_ld254_gp_in_on_chip_213_gp_in_on_
 
 // schedule: { load_to_gp_in_on_chip_1_buf4_FIFO_buf252255[root = 0, gp_in_on_chip_1_buf4_to_gp_1164_ld254, gp_in_on_chip_1_buf4_to_gp_1164_ld253] -> [2 + 2gp_in_on_chip_1_buf4_to_gp_1164_ld254, 0, 2 + 2gp_in_on_chip_1_buf4_to_gp_1164_ld253, 5] : 0 <= gp_in_on_chip_1_buf4_to_gp_1164_ld254 <= 34 and 0 <= gp_in_on_chip_1_buf4_to_gp_1164_ld253 <= 34; load_to_gp_in_on_chip_2_buf12_to_gp_12180183[root = 0, gp_in_on_chip_2_buf12_ld182, gp_in_on_chip_2_buf12_ld181] -> [22 + 3gp_in_on_chip_2_buf12_ld182, 0, 22 + 3gp_in_on_chip_2_buf12_ld181, 27] : 0 < gp_in_on_chip_2_buf12_ld182 <= 16 and 0 < gp_in_on_chip_2_buf12_ld181 <= 16; load_to_gp_in_on_chip_2_buf12_to_gp_7188191[root = 0, gp_in_on_chip_2_buf12_ld190, gp_in_on_chip_2_buf12_ld189] -> [22 + 3gp_in_on_chip_2_buf12_ld190, 0, 22 + 3gp_in_on_chip_2_buf12_ld189, 50] : 0 < gp_in_on_chip_2_buf12_ld190 <= 16 and 0 < gp_in_on_chip_2_buf12_ld189 <= 16; load_to_gp_in_on_chip_2_buf12_to_gp_2184187[root = 0, gp_in_on_chip_2_buf12_ld186, gp_in_on_chip_2_buf12_ld185] -> [22 + 3gp_in_on_chip_2_buf12_ld186, 0, 22 + 3gp_in_on_chip_2_buf12_ld185, 7] : 0 <= gp_in_on_chip_2_buf12_ld186 <= 16 and 0 <= gp_in_on_chip_2_buf12_ld185 <= 16; gp_in_on_chip_214_merged160[root = 0, gp_in_on_chip_213, gp_in_on_chip_214] -> [6 + 4gp_in_on_chip_213, 0, 6 + 4gp_in_on_chip_214, 6] : 0 <= gp_in_on_chip_213 <= 16 and 0 <= gp_in_on_chip_214 <= 16 }
 //   { load_to_gp_in_on_chip_1_buf4_FIFO_buf252255[root = 0, gp_in_on_chip_1_buf4_to_gp_1164_ld254, gp_in_on_chip_1_buf4_to_gp_1164_ld253] -> [2 + 2gp_in_on_chip_1_buf4_to_gp_1164_ld254, 0, 2 + 2gp_in_on_chip_1_buf4_to_gp_1164_ld253, 5] : 0 <= gp_in_on_chip_1_buf4_to_gp_1164_ld254 <= 34 and 0 <= gp_in_on_chip_1_buf4_to_gp_1164_ld253 <= 34 }
-// Condition for load_to_gp_in_on_chip_1_buf4_FIFO_buf252255(((-i0 + 2*floord(i0, 2) == 0) && (-i2 + 2*floord(i2, 2) == 0) && (-5 + i3 == 0) && (i1 == 0) && (-2 + i0 >= 0) && (70 - i0 >= 0) && (-2 + i2 >= 0) && (70 - i2 >= 0)))
+// Condition for load_to_gp_in_on_chip_1_buf4_FIFO_buf252255(((-i0 + 2*floor((i0)/2) == 0) && (-i2 + 2*floor((i2)/2) == 0) && (-5 + i3 == 0) && (i1 == 0) && (-2 + i0 >= 0) && (70 - i0 >= 0) && (-2 + i2 >= 0) && (70 - i2 >= 0)))
 //   { load_to_gp_in_on_chip_2_buf12_to_gp_12180183[root = 0, gp_in_on_chip_2_buf12_ld182, gp_in_on_chip_2_buf12_ld181] -> [22 + 3gp_in_on_chip_2_buf12_ld182, 0, 22 + 3gp_in_on_chip_2_buf12_ld181, 27] : 0 < gp_in_on_chip_2_buf12_ld182 <= 16 and 0 < gp_in_on_chip_2_buf12_ld181 <= 16 }
-// Condition for load_to_gp_in_on_chip_2_buf12_to_gp_12180183(((1 - i0 + 3*floord(-1 + i0, 3) == 0) && (1 - i2 + 3*floord(-1 + i2, 3) == 0) && (-27 + i3 == 0) && (i1 == 0) && (-25 + i0 >= 0) && (70 - i0 >= 0) && (-25 + i2 >= 0) && (70 - i2 >= 0)))
+// Condition for load_to_gp_in_on_chip_2_buf12_to_gp_12180183(((1 - i0 + 3*floor((-1 + i0)/3) == 0) && (1 - i2 + 3*floor((-1 + i2)/3) == 0) && (-27 + i3 == 0) && (i1 == 0) && (-25 + i0 >= 0) && (70 - i0 >= 0) && (-25 + i2 >= 0) && (70 - i2 >= 0)))
 //   { load_to_gp_in_on_chip_2_buf12_to_gp_7188191[root = 0, gp_in_on_chip_2_buf12_ld190, gp_in_on_chip_2_buf12_ld189] -> [22 + 3gp_in_on_chip_2_buf12_ld190, 0, 22 + 3gp_in_on_chip_2_buf12_ld189, 50] : 0 < gp_in_on_chip_2_buf12_ld190 <= 16 and 0 < gp_in_on_chip_2_buf12_ld189 <= 16 }
-// Condition for load_to_gp_in_on_chip_2_buf12_to_gp_7188191(((1 - i0 + 3*floord(-1 + i0, 3) == 0) && (1 - i2 + 3*floord(-1 + i2, 3) == 0) && (-50 + i3 == 0) && (i1 == 0) && (-25 + i0 >= 0) && (70 - i0 >= 0) && (-25 + i2 >= 0) && (70 - i2 >= 0)))
+// Condition for load_to_gp_in_on_chip_2_buf12_to_gp_7188191(((1 - i0 + 3*floor((-1 + i0)/3) == 0) && (1 - i2 + 3*floor((-1 + i2)/3) == 0) && (-50 + i3 == 0) && (i1 == 0) && (-25 + i0 >= 0) && (70 - i0 >= 0) && (-25 + i2 >= 0) && (70 - i2 >= 0)))
 //   { load_to_gp_in_on_chip_2_buf12_to_gp_2184187[root = 0, gp_in_on_chip_2_buf12_ld186, gp_in_on_chip_2_buf12_ld185] -> [22 + 3gp_in_on_chip_2_buf12_ld186, 0, 22 + 3gp_in_on_chip_2_buf12_ld185, 7] : 0 <= gp_in_on_chip_2_buf12_ld186 <= 16 and 0 <= gp_in_on_chip_2_buf12_ld185 <= 16 }
-// Condition for load_to_gp_in_on_chip_2_buf12_to_gp_2184187(((1 - i0 + 3*floord(-1 + i0, 3) == 0) && (1 - i2 + 3*floord(-1 + i2, 3) == 0) && (-7 + i3 == 0) && (i1 == 0) && (-22 + i0 >= 0) && (70 - i0 >= 0) && (-22 + i2 >= 0) && (70 - i2 >= 0)))
+// Condition for load_to_gp_in_on_chip_2_buf12_to_gp_2184187(((1 - i0 + 3*floor((-1 + i0)/3) == 0) && (1 - i2 + 3*floor((-1 + i2)/3) == 0) && (-7 + i3 == 0) && (i1 == 0) && (-22 + i0 >= 0) && (70 - i0 >= 0) && (-22 + i2 >= 0) && (70 - i2 >= 0)))
 //   { gp_in_on_chip_214_merged160[root = 0, gp_in_on_chip_213, gp_in_on_chip_214] -> [6 + 4gp_in_on_chip_213, 0, 6 + 4gp_in_on_chip_214, 6] : 0 <= gp_in_on_chip_213 <= 16 and 0 <= gp_in_on_chip_214 <= 16 }
-// Condition for gp_in_on_chip_214_merged160(((-2 - i0 + 4*floord(2 + i0, 4) == 0) && (-2 - i2 + 4*floord(2 + i2, 4) == 0) && (-6 + i3 == 0) && (i1 == 0) && (-6 + i0 >= 0) && (70 - i0 >= 0) && (-6 + i2 >= 0) && (70 - i2 >= 0)))
+// Condition for gp_in_on_chip_214_merged160(((-2 - i0 + 4*floor((2 + i0)/4) == 0) && (-2 - i2 + 4*floor((2 + i2)/4) == 0) && (-6 + i3 == 0) && (i1 == 0) && (-6 + i0 >= 0) && (70 - i0 >= 0) && (-6 + i2 >= 0) && (70 - i2 >= 0)))
 
   /*
 // time range: { [i0, 0, i2, 50] : (-1 + i0) mod 3 = 0 and (-1 + i2) mod 3 = 0 and 25 <= i0 <= 70 and 25 <= i2 <= 70; [i0, 0, i2, 27] : (-1 + i0) mod 3 = 0 and (-1 + i2) mod 3 = 0 and 25 <= i0 <= 70 and 25 <= i2 <= 70; [i0, 0, i2, 7] : (-1 + i0) mod 3 = 0 and (-1 + i2) mod 3 = 0 and 22 <= i0 <= 70 and 22 <= i2 <= 70; [i0, 0, i2, 6] : (2 + i0) mod 4 = 0 and (2 + i2) mod 4 = 0 and 6 <= i0 <= 70 and 6 <= i2 <= 70; [i0, 0, i2, 5] : (i0) mod 2 = 0 and (i2) mod 2 = 0 and 2 <= i0 <= 70 and 2 <= i2 <= 70 }
@@ -3694,23 +3694,23 @@ for (int i0 = 2; i0 <= 70; i0++) {
       for (int i3 = 5; i3 <= 50; i3++) {
 #pragma HLS unroll
         // { [i0, 0, i2, 7] : (-1 + i2) mod 3 = 0 and (-1 + i0) mod 3 = 0 and 22 <= i0 <= 70 and 22 <= i2 <= 70 }
-        if ((((1 - i0 + 3*floord(-1 + i0, 3) == 0) && (1 - i2 + 3*floord(-1 + i2, 3) == 0) && (-7 + i3 == 0) && (i1 == 0) && (-22 + i0 >= 0) && (70 - i0 >= 0) && (-22 + i2 >= 0) && (70 - i2 >= 0)))) {
+        if ((((1 - i0 + 3*floor((-1 + i0)/3) == 0) && (1 - i2 + 3*floor((-1 + i2)/3) == 0) && (-7 + i3 == 0) && (i1 == 0) && (-22 + i0 >= 0) && (70 - i0 >= 0) && (-22 + i2 >= 0) && (70 - i2 >= 0)))) {
           load_to_gp_in_on_chip_2_buf12_to_gp_2184187((0), (-7 + floor((-1 + i0)/3)), (-7 + floor((-1 + i2)/3)));
         }
         // { [i0, 0, i2, 27] : (-1 + i2) mod 3 = 0 and (-1 + i0) mod 3 = 0 and 25 <= i0 <= 70 and 25 <= i2 <= 70 }
-        if ((((1 - i0 + 3*floord(-1 + i0, 3) == 0) && (1 - i2 + 3*floord(-1 + i2, 3) == 0) && (-27 + i3 == 0) && (i1 == 0) && (-25 + i0 >= 0) && (70 - i0 >= 0) && (-25 + i2 >= 0) && (70 - i2 >= 0)))) {
+        if ((((1 - i0 + 3*floor((-1 + i0)/3) == 0) && (1 - i2 + 3*floor((-1 + i2)/3) == 0) && (-27 + i3 == 0) && (i1 == 0) && (-25 + i0 >= 0) && (70 - i0 >= 0) && (-25 + i2 >= 0) && (70 - i2 >= 0)))) {
           load_to_gp_in_on_chip_2_buf12_to_gp_12180183((0), (-7 + floor((-1 + i0)/3)), (-7 + floor((-1 + i2)/3)));
         }
         // { [i0, 0, i2, 6] : (2 + i2) mod 4 = 0 and (2 + i0) mod 4 = 0 and 6 <= i0 <= 70 and 6 <= i2 <= 70 }
-        if ((((-2 - i0 + 4*floord(2 + i0, 4) == 0) && (-2 - i2 + 4*floord(2 + i2, 4) == 0) && (-6 + i3 == 0) && (i1 == 0) && (-6 + i0 >= 0) && (70 - i0 >= 0) && (-6 + i2 >= 0) && (70 - i2 >= 0)))) {
+        if ((((-2 - i0 + 4*floor((2 + i0)/4) == 0) && (-2 - i2 + 4*floor((2 + i2)/4) == 0) && (-6 + i3 == 0) && (i1 == 0) && (-6 + i0 >= 0) && (70 - i0 >= 0) && (-6 + i2 >= 0) && (70 - i2 >= 0)))) {
           gp_in_on_chip_214_merged160((0), (-2 + floor((2 + i0)/4)), (-2 + floor((2 + i2)/4)));
         }
         // { [i0, 0, i2, 5] : (i2) mod 2 = 0 and (i0) mod 2 = 0 and 2 <= i0 <= 70 and 2 <= i2 <= 70 }
-        if ((((-i0 + 2*floord(i0, 2) == 0) && (-i2 + 2*floord(i2, 2) == 0) && (-5 + i3 == 0) && (i1 == 0) && (-2 + i0 >= 0) && (70 - i0 >= 0) && (-2 + i2 >= 0) && (70 - i2 >= 0)))) {
+        if ((((-i0 + 2*floor((i0)/2) == 0) && (-i2 + 2*floor((i2)/2) == 0) && (-5 + i3 == 0) && (i1 == 0) && (-2 + i0 >= 0) && (70 - i0 >= 0) && (-2 + i2 >= 0) && (70 - i2 >= 0)))) {
           load_to_gp_in_on_chip_1_buf4_FIFO_buf252255((0), (-1 + floor((i0)/2)), (-1 + floor((i2)/2)));
         }
         // { [i0, 0, i2, 50] : (-1 + i2) mod 3 = 0 and (-1 + i0) mod 3 = 0 and 25 <= i0 <= 70 and 25 <= i2 <= 70 }
-        if ((((1 - i0 + 3*floord(-1 + i0, 3) == 0) && (1 - i2 + 3*floord(-1 + i2, 3) == 0) && (-50 + i3 == 0) && (i1 == 0) && (-25 + i0 >= 0) && (70 - i0 >= 0) && (-25 + i2 >= 0) && (70 - i2 >= 0)))) {
+        if ((((1 - i0 + 3*floor((-1 + i0)/3) == 0) && (1 - i2 + 3*floor((-1 + i2)/3) == 0) && (-50 + i3 == 0) && (i1 == 0) && (-25 + i0 >= 0) && (70 - i0 >= 0) && (-25 + i2 >= 0) && (70 - i2 >= 0)))) {
           load_to_gp_in_on_chip_2_buf12_to_gp_7188191((0), (-7 + floor((-1 + i0)/3)), (-7 + floor((-1 + i2)/3)));
         }
       }
@@ -3728,23 +3728,23 @@ for (int i0 = 2; i0 <= 70; i0++) {
 	      for (int i3 = 5; i3 <= 50; i3++) {
 	#pragma HLS unroll
 	        // { [i0, 0, i2, 7] : (-1 + i2) mod 3 = 0 and (-1 + i0) mod 3 = 0 and 22 <= i0 <= 70 and 22 <= i2 <= 70 }
-	        if ((((1 - i0 + 3*floord(-1 + i0, 3) == 0) && (1 - i2 + 3*floord(-1 + i2, 3) == 0) && (-7 + i3 == 0) && (i1 == 0) && (-22 + i0 >= 0) && (70 - i0 >= 0) && (-22 + i2 >= 0) && (70 - i2 >= 0)))) {
+	        if ((((1 - i0 + 3*floor((-1 + i0)/3) == 0) && (1 - i2 + 3*floor((-1 + i2)/3) == 0) && (-7 + i3 == 0) && (i1 == 0) && (-22 + i0 >= 0) && (70 - i0 >= 0) && (-22 + i2 >= 0) && (70 - i2 >= 0)))) {
 	          load_to_gp_in_on_chip_2_buf12_to_gp_2184187(gp_in_on_chip_2_buf12 /* buf name */, gp_in_on_chip_2_buf12_to_gp_2184, (0), (-7 + floor((-1 + i0)/3)), (-7 + floor((-1 + i2)/3)));
 	        }
 	        // { [i0, 0, i2, 27] : (-1 + i2) mod 3 = 0 and (-1 + i0) mod 3 = 0 and 25 <= i0 <= 70 and 25 <= i2 <= 70 }
-	        if ((((1 - i0 + 3*floord(-1 + i0, 3) == 0) && (1 - i2 + 3*floord(-1 + i2, 3) == 0) && (-27 + i3 == 0) && (i1 == 0) && (-25 + i0 >= 0) && (70 - i0 >= 0) && (-25 + i2 >= 0) && (70 - i2 >= 0)))) {
+	        if ((((1 - i0 + 3*floor((-1 + i0)/3) == 0) && (1 - i2 + 3*floor((-1 + i2)/3) == 0) && (-27 + i3 == 0) && (i1 == 0) && (-25 + i0 >= 0) && (70 - i0 >= 0) && (-25 + i2 >= 0) && (70 - i2 >= 0)))) {
 	          load_to_gp_in_on_chip_2_buf12_to_gp_12180183(gp_in_on_chip_2_buf12 /* buf name */, gp_in_on_chip_2_buf12_to_gp_12180, (0), (-7 + floor((-1 + i0)/3)), (-7 + floor((-1 + i2)/3)));
 	        }
 	        // { [i0, 0, i2, 6] : (2 + i2) mod 4 = 0 and (2 + i0) mod 4 = 0 and 6 <= i0 <= 70 and 6 <= i2 <= 70 }
-	        if ((((-2 - i0 + 4*floord(2 + i0, 4) == 0) && (-2 - i2 + 4*floord(2 + i2, 4) == 0) && (-6 + i3 == 0) && (i1 == 0) && (-6 + i0 >= 0) && (70 - i0 >= 0) && (-6 + i2 >= 0) && (70 - i2 >= 0)))) {
+	        if ((((-2 - i0 + 4*floor((2 + i0)/4) == 0) && (-2 - i2 + 4*floor((2 + i2)/4) == 0) && (-6 + i3 == 0) && (i1 == 0) && (-6 + i0 >= 0) && (70 - i0 >= 0) && (-6 + i2 >= 0) && (70 - i2 >= 0)))) {
 	          gp_in_on_chip_214_merged160(gp_in_on_chip_1_buf4_FIFO_buf252 /* buf name */, gp_in_on_chip_2_buf12, (0), (-2 + floor((2 + i0)/4)), (-2 + floor((2 + i2)/4)));
 	        }
 	        // { [i0, 0, i2, 5] : (i2) mod 2 = 0 and (i0) mod 2 = 0 and 2 <= i0 <= 70 and 2 <= i2 <= 70 }
-	        if ((((-i0 + 2*floord(i0, 2) == 0) && (-i2 + 2*floord(i2, 2) == 0) && (-5 + i3 == 0) && (i1 == 0) && (-2 + i0 >= 0) && (70 - i0 >= 0) && (-2 + i2 >= 0) && (70 - i2 >= 0)))) {
+	        if ((((-i0 + 2*floor((i0)/2) == 0) && (-i2 + 2*floor((i2)/2) == 0) && (-5 + i3 == 0) && (i1 == 0) && (-2 + i0 >= 0) && (70 - i0 >= 0) && (-2 + i2 >= 0) && (70 - i2 >= 0)))) {
 	          load_to_gp_in_on_chip_1_buf4_FIFO_buf252255(gp_in_on_chip_1_buf4_to_gp_1164 /* buf name */, gp_in_on_chip_1_buf4_FIFO_buf252, (0), (-1 + floor((i0)/2)), (-1 + floor((i2)/2)));
 	        }
 	        // { [i0, 0, i2, 50] : (-1 + i2) mod 3 = 0 and (-1 + i0) mod 3 = 0 and 25 <= i0 <= 70 and 25 <= i2 <= 70 }
-	        if ((((1 - i0 + 3*floord(-1 + i0, 3) == 0) && (1 - i2 + 3*floord(-1 + i2, 3) == 0) && (-50 + i3 == 0) && (i1 == 0) && (-25 + i0 >= 0) && (70 - i0 >= 0) && (-25 + i2 >= 0) && (70 - i2 >= 0)))) {
+	        if ((((1 - i0 + 3*floor((-1 + i0)/3) == 0) && (1 - i2 + 3*floor((-1 + i2)/3) == 0) && (-50 + i3 == 0) && (i1 == 0) && (-25 + i0 >= 0) && (70 - i0 >= 0) && (-25 + i2 >= 0) && (70 - i2 >= 0)))) {
 	          load_to_gp_in_on_chip_2_buf12_to_gp_7188191(gp_in_on_chip_2_buf12 /* buf name */, gp_in_on_chip_2_buf12_to_gp_7188, (0), (-7 + floor((-1 + i0)/3)), (-7 + floor((-1 + i2)/3)));
 	        }
 	      }
@@ -3758,6 +3758,19 @@ for (int i0 = 2; i0 <= 70; i0++) {
 }
 
 // Operation logic
+inline void load_to_lp_in_on_chip_0_buf48_reconstruct_lp70_buf73_FIFO_buf312315(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */lp_in_on_chip_0_buf48_reconstruct_lp70_buf73_to_gp_10224, lp_in_on_chip_0_buf48_reconstruct_lp70_buf73_FIFO_buf312_cache& lp_in_on_chip_0_buf48_reconstruct_lp70_buf73_FIFO_buf312, int root, int lp_in_on_chip_0_buf48_reconstruct_lp70_buf73_to_gp_10224_ld314, int lp_in_on_chip_0_buf48_reconstruct_lp70_buf73_to_gp_10224_ld313) {
+  // Dynamic address computation
+
+	// Consume: lp_in_on_chip_0_buf48_reconstruct_lp70_buf73_to_gp_10224
+	auto lp_in_on_chip_0_buf48_reconstruct_lp70_buf73_to_gp_10224_lp_in_on_chip_0_buf48_reconstruct_lp70_buf73_to_gp_10224_ld313_c__lp_in_on_chip_0_buf48_reconstruct_lp70_buf73_to_gp_10224_ld314_value = lp_in_on_chip_0_buf48_reconstruct_lp70_buf73_to_gp_10224.read();
+	// Produce: lp_in_on_chip_0_buf48_reconstruct_lp70_buf73_FIFO_buf312
+	lp_in_on_chip_0_buf48_reconstruct_lp70_buf73_FIFO_buf312_load_to_lp_in_on_chip_0_buf48_reconstruct_lp70_buf73_FIFO_buf312315_write_bundle_write(/* arg names */lp_in_on_chip_0_buf48_reconstruct_lp70_buf73_to_gp_10224_lp_in_on_chip_0_buf48_reconstruct_lp70_buf73_to_gp_10224_ld313_c__lp_in_on_chip_0_buf48_reconstruct_lp70_buf73_to_gp_10224_ld314_value, lp_in_on_chip_0_buf48_reconstruct_lp70_buf73_FIFO_buf312, root, lp_in_on_chip_0_buf48_reconstruct_lp70_buf73_to_gp_10224_ld314, lp_in_on_chip_0_buf48_reconstruct_lp70_buf73_to_gp_10224_ld313, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
 inline void pw_math_lp_in_on_chip_0_buf48_reconstruct_lp70_buf737982(lp_in_on_chip_0_buf48_reconstruct_lp70_buf73_FIFO_buf312_cache& lp_in_on_chip_0_buf48_reconstruct_lp70_buf73_FIFO_buf312, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */out, int root, int pw_math_lp_in_on_chip_0_buf48_reconstruct_lp70_buf737980, int pw_math_lp_in_on_chip_0_buf48_reconstruct_lp70_buf737981) {
   // Dynamic address computation
 
@@ -3770,19 +3783,6 @@ inline void pw_math_lp_in_on_chip_0_buf48_reconstruct_lp70_buf737982(lp_in_on_ch
 	auto compute_result = id(lp_in_on_chip_0_buf48_reconstruct_lp70_buf73_FIFO_buf312_pw_math_lp_in_on_chip_0_buf48_reconstruct_lp70_buf737981_p_0_c___pw_math_lp_in_on_chip_0_buf48_reconstruct_lp70_buf737980_p_0_value);
 	// Produce: out
 	out.write(compute_result);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void load_to_lp_in_on_chip_0_buf48_reconstruct_lp70_buf73_FIFO_buf312315(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */lp_in_on_chip_0_buf48_reconstruct_lp70_buf73_to_gp_10224, lp_in_on_chip_0_buf48_reconstruct_lp70_buf73_FIFO_buf312_cache& lp_in_on_chip_0_buf48_reconstruct_lp70_buf73_FIFO_buf312, int root, int lp_in_on_chip_0_buf48_reconstruct_lp70_buf73_to_gp_10224_ld314, int lp_in_on_chip_0_buf48_reconstruct_lp70_buf73_to_gp_10224_ld313) {
-  // Dynamic address computation
-
-	// Consume: lp_in_on_chip_0_buf48_reconstruct_lp70_buf73_to_gp_10224
-	auto lp_in_on_chip_0_buf48_reconstruct_lp70_buf73_to_gp_10224_lp_in_on_chip_0_buf48_reconstruct_lp70_buf73_to_gp_10224_ld313_c__lp_in_on_chip_0_buf48_reconstruct_lp70_buf73_to_gp_10224_ld314_value = lp_in_on_chip_0_buf48_reconstruct_lp70_buf73_to_gp_10224.read();
-	// Produce: lp_in_on_chip_0_buf48_reconstruct_lp70_buf73_FIFO_buf312
-	lp_in_on_chip_0_buf48_reconstruct_lp70_buf73_FIFO_buf312_load_to_lp_in_on_chip_0_buf48_reconstruct_lp70_buf73_FIFO_buf312315_write_bundle_write(/* arg names */lp_in_on_chip_0_buf48_reconstruct_lp70_buf73_to_gp_10224_lp_in_on_chip_0_buf48_reconstruct_lp70_buf73_to_gp_10224_ld313_c__lp_in_on_chip_0_buf48_reconstruct_lp70_buf73_to_gp_10224_ld314_value, lp_in_on_chip_0_buf48_reconstruct_lp70_buf73_FIFO_buf312, root, lp_in_on_chip_0_buf48_reconstruct_lp70_buf73_to_gp_10224_ld314, lp_in_on_chip_0_buf48_reconstruct_lp70_buf73_to_gp_10224_ld313, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -3929,7 +3929,7 @@ void Extracted_gp_in_on_chip_1_buf4_to_gp_11168_ld258_gp_in_on_chip_1_buf4_us44_
 //   { load_to_gp_in_on_chip_1_buf4_us44_to_gp_3176179[root = 0, gp_in_on_chip_1_buf4_us44_ld178, gp_in_on_chip_1_buf4_us44_ld177] -> [8 + gp_in_on_chip_1_buf4_us44_ld178, 0, 8 + gp_in_on_chip_1_buf4_us44_ld177, 49] : 0 <= gp_in_on_chip_1_buf4_us44_ld178 <= 63 and 0 <= gp_in_on_chip_1_buf4_us44_ld177 <= 63 }
 // Condition for load_to_gp_in_on_chip_1_buf4_us44_to_gp_3176179(((-49 + i3 == 0) && (i1 == 0) && (-8 + i0 >= 0) && (71 - i0 >= 0) && (-8 + i2 >= 0) && (71 - i2 >= 0)))
 //   { load_to_gp_in_on_chip_1_buf4_FIFO_buf256259[root = 0, gp_in_on_chip_1_buf4_to_gp_11168_ld258, gp_in_on_chip_1_buf4_to_gp_11168_ld257] -> [2 + 2gp_in_on_chip_1_buf4_to_gp_11168_ld258, 0, 2 + 2gp_in_on_chip_1_buf4_to_gp_11168_ld257, 47] : 3 <= gp_in_on_chip_1_buf4_to_gp_11168_ld258 <= 34 and 3 <= gp_in_on_chip_1_buf4_to_gp_11168_ld257 <= 34 }
-// Condition for load_to_gp_in_on_chip_1_buf4_FIFO_buf256259(((-i0 + 2*floord(i0, 2) == 0) && (-i2 + 2*floord(i2, 2) == 0) && (-47 + i3 == 0) && (i1 == 0) && (-8 + i0 >= 0) && (70 - i0 >= 0) && (-8 + i2 >= 0) && (70 - i2 >= 0)))
+// Condition for load_to_gp_in_on_chip_1_buf4_FIFO_buf256259(((-i0 + 2*floor((i0)/2) == 0) && (-i2 + 2*floor((i2)/2) == 0) && (-47 + i3 == 0) && (i1 == 0) && (-8 + i0 >= 0) && (70 - i0 >= 0) && (-8 + i2 >= 0) && (70 - i2 >= 0)))
 
   /*
 // time range: { [i0, 0, i2, i3] : 8 <= i0 <= 71 and i2 <= 71 and i3 <= 49 and 2*floor((i0)/2) >= 47 + i0 - i3 and floor((i2)/2) >= 4 and 2*floor((i2)/2) >= 47 + i2 - i3 }
@@ -3941,7 +3941,7 @@ for (int i0 = 8; i0 <= 71; i0++) {
       for (int i3 = 47; i3 <= 49; i3++) {
 #pragma HLS unroll
         // { [i0, 0, i2, 47] : (i2) mod 2 = 0 and (i0) mod 2 = 0 and 8 <= i0 <= 70 and 8 <= i2 <= 70 }
-        if ((((-i0 + 2*floord(i0, 2) == 0) && (-i2 + 2*floord(i2, 2) == 0) && (-47 + i3 == 0) && (i1 == 0) && (-8 + i0 >= 0) && (70 - i0 >= 0) && (-8 + i2 >= 0) && (70 - i2 >= 0)))) {
+        if ((((-i0 + 2*floor((i0)/2) == 0) && (-i2 + 2*floor((i2)/2) == 0) && (-47 + i3 == 0) && (i1 == 0) && (-8 + i0 >= 0) && (70 - i0 >= 0) && (-8 + i2 >= 0) && (70 - i2 >= 0)))) {
           load_to_gp_in_on_chip_1_buf4_FIFO_buf256259((0), (-1 + floor((i0)/2)), (-1 + floor((i2)/2)));
         }
         // { [i0, 0, i2, 49] : 8 <= i0 <= 71 and 8 <= i2 <= 71 }
@@ -3967,7 +3967,7 @@ for (int i0 = 8; i0 <= 71; i0++) {
 	      for (int i3 = 47; i3 <= 49; i3++) {
 	#pragma HLS unroll
 	        // { [i0, 0, i2, 47] : (i2) mod 2 = 0 and (i0) mod 2 = 0 and 8 <= i0 <= 70 and 8 <= i2 <= 70 }
-	        if ((((-i0 + 2*floord(i0, 2) == 0) && (-i2 + 2*floord(i2, 2) == 0) && (-47 + i3 == 0) && (i1 == 0) && (-8 + i0 >= 0) && (70 - i0 >= 0) && (-8 + i2 >= 0) && (70 - i2 >= 0)))) {
+	        if ((((-i0 + 2*floor((i0)/2) == 0) && (-i2 + 2*floor((i2)/2) == 0) && (-47 + i3 == 0) && (i1 == 0) && (-8 + i0 >= 0) && (70 - i0 >= 0) && (-8 + i2 >= 0) && (70 - i2 >= 0)))) {
 	          load_to_gp_in_on_chip_1_buf4_FIFO_buf256259(gp_in_on_chip_1_buf4_to_gp_11168 /* buf name */, gp_in_on_chip_1_buf4_FIFO_buf256, (0), (-1 + floor((i0)/2)), (-1 + floor((i2)/2)));
 	        }
 	        // { [i0, 0, i2, 49] : 8 <= i0 <= 71 and 8 <= i2 <= 71 }
@@ -4055,11 +4055,11 @@ void Extracted_gp_in_on_chip_2_buf12_to_gp_12180_ld270_gp_in_on_chip_2_buf12_us3
 
 // schedule: { load_to_gp_in_on_chip_2_buf12_us36_to_gp_5192195[root = 0, gp_in_on_chip_2_buf12_us36_ld194, gp_in_on_chip_2_buf12_us36_ld193] -> [25 + 2gp_in_on_chip_2_buf12_us36_ld194, 0, 40 + gp_in_on_chip_2_buf12_us36_ld193, 30] : 0 <= gp_in_on_chip_2_buf12_us36_ld194 <= 31 and 0 <= gp_in_on_chip_2_buf12_us36_ld193 <= 31; load_to_gp_in_on_chip_2_buf12_FIFO_buf268271[root = 0, gp_in_on_chip_2_buf12_to_gp_12180_ld270, gp_in_on_chip_2_buf12_to_gp_12180_ld269] -> [21 + 4gp_in_on_chip_2_buf12_to_gp_12180_ld270, 0, 38 + 2gp_in_on_chip_2_buf12_to_gp_12180_ld269, 28] : 0 < gp_in_on_chip_2_buf12_to_gp_12180_ld270 <= 16 and 0 < gp_in_on_chip_2_buf12_to_gp_12180_ld269 <= 16; us39[root = 0, us_gp_in_on_chip_2_buf1237, us_gp_in_on_chip_2_buf1238] -> [25 + 2us_gp_in_on_chip_2_buf1237, 0, 40 + us_gp_in_on_chip_2_buf1238, 29] : 0 <= us_gp_in_on_chip_2_buf1237 <= 31 and 0 <= us_gp_in_on_chip_2_buf1238 <= 31 }
 //   { load_to_gp_in_on_chip_2_buf12_us36_to_gp_5192195[root = 0, gp_in_on_chip_2_buf12_us36_ld194, gp_in_on_chip_2_buf12_us36_ld193] -> [25 + 2gp_in_on_chip_2_buf12_us36_ld194, 0, 40 + gp_in_on_chip_2_buf12_us36_ld193, 30] : 0 <= gp_in_on_chip_2_buf12_us36_ld194 <= 31 and 0 <= gp_in_on_chip_2_buf12_us36_ld193 <= 31 }
-// Condition for load_to_gp_in_on_chip_2_buf12_us36_to_gp_5192195(((-1 - i0 + 2*floord(1 + i0, 2) == 0) && (-30 + i3 == 0) && (i1 == 0) && (-25 + i0 >= 0) && (87 - i0 >= 0) && (-40 + i2 >= 0) && (71 - i2 >= 0)))
+// Condition for load_to_gp_in_on_chip_2_buf12_us36_to_gp_5192195(((-1 - i0 + 2*floor((1 + i0)/2) == 0) && (-30 + i3 == 0) && (i1 == 0) && (-25 + i0 >= 0) && (87 - i0 >= 0) && (-40 + i2 >= 0) && (71 - i2 >= 0)))
 //   { load_to_gp_in_on_chip_2_buf12_FIFO_buf268271[root = 0, gp_in_on_chip_2_buf12_to_gp_12180_ld270, gp_in_on_chip_2_buf12_to_gp_12180_ld269] -> [21 + 4gp_in_on_chip_2_buf12_to_gp_12180_ld270, 0, 38 + 2gp_in_on_chip_2_buf12_to_gp_12180_ld269, 28] : 0 < gp_in_on_chip_2_buf12_to_gp_12180_ld270 <= 16 and 0 < gp_in_on_chip_2_buf12_to_gp_12180_ld269 <= 16 }
-// Condition for load_to_gp_in_on_chip_2_buf12_FIFO_buf268271(((1 - i0 + 4*floord(-1 + i0, 4) == 0) && (-i2 + 2*floord(i2, 2) == 0) && (-28 + i3 == 0) && (i1 == 0) && (-25 + i0 >= 0) && (85 - i0 >= 0) && (-40 + i2 >= 0) && (70 - i2 >= 0)))
+// Condition for load_to_gp_in_on_chip_2_buf12_FIFO_buf268271(((1 - i0 + 4*floor((-1 + i0)/4) == 0) && (-i2 + 2*floor((i2)/2) == 0) && (-28 + i3 == 0) && (i1 == 0) && (-25 + i0 >= 0) && (85 - i0 >= 0) && (-40 + i2 >= 0) && (70 - i2 >= 0)))
 //   { us39[root = 0, us_gp_in_on_chip_2_buf1237, us_gp_in_on_chip_2_buf1238] -> [25 + 2us_gp_in_on_chip_2_buf1237, 0, 40 + us_gp_in_on_chip_2_buf1238, 29] : 0 <= us_gp_in_on_chip_2_buf1237 <= 31 and 0 <= us_gp_in_on_chip_2_buf1238 <= 31 }
-// Condition for us39(((-1 - i0 + 2*floord(1 + i0, 2) == 0) && (-29 + i3 == 0) && (i1 == 0) && (-25 + i0 >= 0) && (87 - i0 >= 0) && (-40 + i2 >= 0) && (71 - i2 >= 0)))
+// Condition for us39(((-1 - i0 + 2*floor((1 + i0)/2) == 0) && (-29 + i3 == 0) && (i1 == 0) && (-25 + i0 >= 0) && (87 - i0 >= 0) && (-40 + i2 >= 0) && (71 - i2 >= 0)))
 
   /*
 // time range: { [i0, 0, i2, i3] : (1 + i0) mod 2 = 0 and 25 <= i0 <= 87 and 40 <= i2 <= 71 and 29 <= i3 <= 30; [i0, 0, i2, 28] : (-1 + i0) mod 4 = 0 and (i2) mod 2 = 0 and 25 <= i0 <= 85 and 40 <= i2 <= 70 }
@@ -4071,15 +4071,15 @@ for (int i0 = 25; i0 <= 87; i0++) {
       for (int i3 = 28; i3 <= 30; i3++) {
 #pragma HLS unroll
         // { [i0, 0, i2, 30] : (1 + i0) mod 2 = 0 and 25 <= i0 <= 87 and 40 <= i2 <= 71 }
-        if ((((-1 - i0 + 2*floord(1 + i0, 2) == 0) && (-30 + i3 == 0) && (i1 == 0) && (-25 + i0 >= 0) && (87 - i0 >= 0) && (-40 + i2 >= 0) && (71 - i2 >= 0)))) {
+        if ((((-1 - i0 + 2*floor((1 + i0)/2) == 0) && (-30 + i3 == 0) && (i1 == 0) && (-25 + i0 >= 0) && (87 - i0 >= 0) && (-40 + i2 >= 0) && (71 - i2 >= 0)))) {
           load_to_gp_in_on_chip_2_buf12_us36_to_gp_5192195((0), (-13 + floor((1 + i0)/2)), (-40 + i2));
         }
         // { [i0, 0, i2, 28] : (i2) mod 2 = 0 and (-1 + i0) mod 4 = 0 and 25 <= i0 <= 85 and 40 <= i2 <= 70 }
-        if ((((1 - i0 + 4*floord(-1 + i0, 4) == 0) && (-i2 + 2*floord(i2, 2) == 0) && (-28 + i3 == 0) && (i1 == 0) && (-25 + i0 >= 0) && (85 - i0 >= 0) && (-40 + i2 >= 0) && (70 - i2 >= 0)))) {
+        if ((((1 - i0 + 4*floor((-1 + i0)/4) == 0) && (-i2 + 2*floor((i2)/2) == 0) && (-28 + i3 == 0) && (i1 == 0) && (-25 + i0 >= 0) && (85 - i0 >= 0) && (-40 + i2 >= 0) && (70 - i2 >= 0)))) {
           load_to_gp_in_on_chip_2_buf12_FIFO_buf268271((0), (-5 + floor((-1 + i0)/4)), (-19 + floor((i2)/2)));
         }
         // { [i0, 0, i2, 29] : (1 + i0) mod 2 = 0 and 25 <= i0 <= 87 and 40 <= i2 <= 71 }
-        if ((((-1 - i0 + 2*floord(1 + i0, 2) == 0) && (-29 + i3 == 0) && (i1 == 0) && (-25 + i0 >= 0) && (87 - i0 >= 0) && (-40 + i2 >= 0) && (71 - i2 >= 0)))) {
+        if ((((-1 - i0 + 2*floor((1 + i0)/2) == 0) && (-29 + i3 == 0) && (i1 == 0) && (-25 + i0 >= 0) && (87 - i0 >= 0) && (-40 + i2 >= 0) && (71 - i2 >= 0)))) {
           us39((0), (-13 + floor((1 + i0)/2)), (-40 + i2));
         }
       }
@@ -4097,15 +4097,15 @@ for (int i0 = 25; i0 <= 87; i0++) {
 	      for (int i3 = 28; i3 <= 30; i3++) {
 	#pragma HLS unroll
 	        // { [i0, 0, i2, 30] : (1 + i0) mod 2 = 0 and 25 <= i0 <= 87 and 40 <= i2 <= 71 }
-	        if ((((-1 - i0 + 2*floord(1 + i0, 2) == 0) && (-30 + i3 == 0) && (i1 == 0) && (-25 + i0 >= 0) && (87 - i0 >= 0) && (-40 + i2 >= 0) && (71 - i2 >= 0)))) {
+	        if ((((-1 - i0 + 2*floor((1 + i0)/2) == 0) && (-30 + i3 == 0) && (i1 == 0) && (-25 + i0 >= 0) && (87 - i0 >= 0) && (-40 + i2 >= 0) && (71 - i2 >= 0)))) {
 	          load_to_gp_in_on_chip_2_buf12_us36_to_gp_5192195(gp_in_on_chip_2_buf12_us36 /* buf name */, gp_in_on_chip_2_buf12_us36_to_gp_5192, (0), (-13 + floor((1 + i0)/2)), (-40 + i2));
 	        }
 	        // { [i0, 0, i2, 28] : (i2) mod 2 = 0 and (-1 + i0) mod 4 = 0 and 25 <= i0 <= 85 and 40 <= i2 <= 70 }
-	        if ((((1 - i0 + 4*floord(-1 + i0, 4) == 0) && (-i2 + 2*floord(i2, 2) == 0) && (-28 + i3 == 0) && (i1 == 0) && (-25 + i0 >= 0) && (85 - i0 >= 0) && (-40 + i2 >= 0) && (70 - i2 >= 0)))) {
+	        if ((((1 - i0 + 4*floor((-1 + i0)/4) == 0) && (-i2 + 2*floor((i2)/2) == 0) && (-28 + i3 == 0) && (i1 == 0) && (-25 + i0 >= 0) && (85 - i0 >= 0) && (-40 + i2 >= 0) && (70 - i2 >= 0)))) {
 	          load_to_gp_in_on_chip_2_buf12_FIFO_buf268271(gp_in_on_chip_2_buf12_to_gp_12180 /* buf name */, gp_in_on_chip_2_buf12_FIFO_buf268, (0), (-5 + floor((-1 + i0)/4)), (-19 + floor((i2)/2)));
 	        }
 	        // { [i0, 0, i2, 29] : (1 + i0) mod 2 = 0 and 25 <= i0 <= 87 and 40 <= i2 <= 71 }
-	        if ((((-1 - i0 + 2*floord(1 + i0, 2) == 0) && (-29 + i3 == 0) && (i1 == 0) && (-25 + i0 >= 0) && (87 - i0 >= 0) && (-40 + i2 >= 0) && (71 - i2 >= 0)))) {
+	        if ((((-1 - i0 + 2*floor((1 + i0)/2) == 0) && (-29 + i3 == 0) && (i1 == 0) && (-25 + i0 >= 0) && (87 - i0 >= 0) && (-40 + i2 >= 0) && (71 - i2 >= 0)))) {
 	          us39(gp_in_on_chip_2_buf12_FIFO_buf268 /* buf name */, gp_in_on_chip_2_buf12_us36, (0), (-13 + floor((1 + i0)/2)), (-40 + i2));
 	        }
 	      }
@@ -4189,7 +4189,7 @@ void Extracted_gp_in_on_chip_3_buf20_to_gp_13196_ld286_gp_in_on_chip_3_buf20_us2
 //   { load_to_gp_in_on_chip_3_buf20_us28_to_gp_7204207[root = 0, gp_in_on_chip_3_buf20_us28_ld206, gp_in_on_chip_3_buf20_us28_ld205] -> [56 + gp_in_on_chip_3_buf20_us28_ld206, 0, 63 + gp_in_on_chip_3_buf20_us28_ld205, 41] : 0 <= gp_in_on_chip_3_buf20_us28_ld206 <= 15 and 0 <= gp_in_on_chip_3_buf20_us28_ld205 <= 15 }
 // Condition for load_to_gp_in_on_chip_3_buf20_us28_to_gp_7204207(((-41 + i3 == 0) && (i1 == 0) && (-56 + i0 >= 0) && (71 - i0 >= 0) && (-63 + i2 >= 0) && (78 - i2 >= 0)))
 //   { load_to_gp_in_on_chip_3_buf20_FIFO_buf284287[root = 0, gp_in_on_chip_3_buf20_to_gp_13196_ld286, gp_in_on_chip_3_buf20_to_gp_13196_ld285] -> [56 + 2gp_in_on_chip_3_buf20_to_gp_13196_ld286, 0, 63 + gp_in_on_chip_3_buf20_to_gp_13196_ld285, 39] : 0 <= gp_in_on_chip_3_buf20_to_gp_13196_ld286 <= 7 and 0 <= gp_in_on_chip_3_buf20_to_gp_13196_ld285 <= 7 }
-// Condition for load_to_gp_in_on_chip_3_buf20_FIFO_buf284287(((-i0 + 2*floord(i0, 2) == 0) && (-39 + i3 == 0) && (i1 == 0) && (-56 + i0 >= 0) && (70 - i0 >= 0) && (-63 + i2 >= 0) && (70 - i2 >= 0)))
+// Condition for load_to_gp_in_on_chip_3_buf20_FIFO_buf284287(((-i0 + 2*floor((i0)/2) == 0) && (-39 + i3 == 0) && (i1 == 0) && (-56 + i0 >= 0) && (70 - i0 >= 0) && (-63 + i2 >= 0) && (70 - i2 >= 0)))
 
   /*
 // time range: { [i0, 0, i2, i3] : 56 <= i0 <= 71 and 63 <= i2 <= 78 and 40 <= i3 <= 41; [i0, 0, i2, 39] : (i0) mod 2 = 0 and 56 <= i0 <= 70 and 63 <= i2 <= 70 }
@@ -4209,7 +4209,7 @@ for (int i0 = 56; i0 <= 71; i0++) {
           us31((0), (-56 + i0), (-63 + i2));
         }
         // { [i0, 0, i2, 39] : (i0) mod 2 = 0 and 56 <= i0 <= 70 and 63 <= i2 <= 70 }
-        if ((((-i0 + 2*floord(i0, 2) == 0) && (-39 + i3 == 0) && (i1 == 0) && (-56 + i0 >= 0) && (70 - i0 >= 0) && (-63 + i2 >= 0) && (70 - i2 >= 0)))) {
+        if ((((-i0 + 2*floor((i0)/2) == 0) && (-39 + i3 == 0) && (i1 == 0) && (-56 + i0 >= 0) && (70 - i0 >= 0) && (-63 + i2 >= 0) && (70 - i2 >= 0)))) {
           load_to_gp_in_on_chip_3_buf20_FIFO_buf284287((0), (-28 + floor((i0)/2)), (-63 + i2));
         }
       }
@@ -4235,7 +4235,7 @@ for (int i0 = 56; i0 <= 71; i0++) {
 	          us31(gp_in_on_chip_3_buf20_FIFO_buf284 /* buf name */, gp_in_on_chip_3_buf20_us28, (0), (-56 + i0), (-63 + i2));
 	        }
 	        // { [i0, 0, i2, 39] : (i0) mod 2 = 0 and 56 <= i0 <= 70 and 63 <= i2 <= 70 }
-	        if ((((-i0 + 2*floord(i0, 2) == 0) && (-39 + i3 == 0) && (i1 == 0) && (-56 + i0 >= 0) && (70 - i0 >= 0) && (-63 + i2 >= 0) && (70 - i2 >= 0)))) {
+	        if ((((-i0 + 2*floor((i0)/2) == 0) && (-39 + i3 == 0) && (i1 == 0) && (-56 + i0 >= 0) && (70 - i0 >= 0) && (-63 + i2 >= 0) && (70 - i2 >= 0)))) {
 	          load_to_gp_in_on_chip_3_buf20_FIFO_buf284287(gp_in_on_chip_3_buf20_to_gp_13196 /* buf name */, gp_in_on_chip_3_buf20_FIFO_buf284, (0), (-28 + floor((i0)/2)), (-63 + i2));
 	        }
 	      }
@@ -4445,7 +4445,7 @@ void Extracted_lp_in_on_chip_1_buf40_reconstruct_lp61_buf64_to_gp_15232_ld322_lp
 
 // schedule: { load_to_lp_in_on_chip_1_buf40_reconstruct_lp61_buf64_FIFO_buf320323[root = 0, lp_in_on_chip_1_buf40_reconstruct_lp61_buf64_to_gp_15232_ld322, lp_in_on_chip_1_buf40_reconstruct_lp61_buf64_to_gp_15232_ld321] -> [63 + 2lp_in_on_chip_1_buf40_reconstruct_lp61_buf64_to_gp_15232_ld322, 0, 63 + 2lp_in_on_chip_1_buf40_reconstruct_lp61_buf64_to_gp_15232_ld321, 23] : 0 <= lp_in_on_chip_1_buf40_reconstruct_lp61_buf64_to_gp_15232_ld322 <= 31 and 0 <= lp_in_on_chip_1_buf40_reconstruct_lp61_buf64_to_gp_15232_ld321 <= 31; us77[root = 0, us_lp_in_on_chip_1_buf40_reconstruct_lp61_buf6475, us_lp_in_on_chip_1_buf40_reconstruct_lp61_buf6476] -> [63 + us_lp_in_on_chip_1_buf40_reconstruct_lp61_buf6475, 0, 63 + us_lp_in_on_chip_1_buf40_reconstruct_lp61_buf6476, 24] : 0 <= us_lp_in_on_chip_1_buf40_reconstruct_lp61_buf6475 <= 63 and 0 <= us_lp_in_on_chip_1_buf40_reconstruct_lp61_buf6476 <= 63; load_to_lp_in_on_chip_1_buf40_reconstruct_lp61_buf64_us74_to_gp_4236239[root = 0, lp_in_on_chip_1_buf40_reconstruct_lp61_buf64_us74_ld238, lp_in_on_chip_1_buf40_reconstruct_lp61_buf64_us74_ld237] -> [63 + lp_in_on_chip_1_buf40_reconstruct_lp61_buf64_us74_ld238, 0, 63 + lp_in_on_chip_1_buf40_reconstruct_lp61_buf64_us74_ld237, 33] : 0 <= lp_in_on_chip_1_buf40_reconstruct_lp61_buf64_us74_ld238 <= 63 and 0 <= lp_in_on_chip_1_buf40_reconstruct_lp61_buf64_us74_ld237 <= 63 }
 //   { load_to_lp_in_on_chip_1_buf40_reconstruct_lp61_buf64_FIFO_buf320323[root = 0, lp_in_on_chip_1_buf40_reconstruct_lp61_buf64_to_gp_15232_ld322, lp_in_on_chip_1_buf40_reconstruct_lp61_buf64_to_gp_15232_ld321] -> [63 + 2lp_in_on_chip_1_buf40_reconstruct_lp61_buf64_to_gp_15232_ld322, 0, 63 + 2lp_in_on_chip_1_buf40_reconstruct_lp61_buf64_to_gp_15232_ld321, 23] : 0 <= lp_in_on_chip_1_buf40_reconstruct_lp61_buf64_to_gp_15232_ld322 <= 31 and 0 <= lp_in_on_chip_1_buf40_reconstruct_lp61_buf64_to_gp_15232_ld321 <= 31 }
-// Condition for load_to_lp_in_on_chip_1_buf40_reconstruct_lp61_buf64_FIFO_buf320323(((-1 - i0 + 2*floord(1 + i0, 2) == 0) && (-1 - i2 + 2*floord(1 + i2, 2) == 0) && (-23 + i3 == 0) && (i1 == 0) && (-63 + i0 >= 0) && (125 - i0 >= 0) && (-63 + i2 >= 0) && (125 - i2 >= 0)))
+// Condition for load_to_lp_in_on_chip_1_buf40_reconstruct_lp61_buf64_FIFO_buf320323(((-1 - i0 + 2*floor((1 + i0)/2) == 0) && (-1 - i2 + 2*floor((1 + i2)/2) == 0) && (-23 + i3 == 0) && (i1 == 0) && (-63 + i0 >= 0) && (125 - i0 >= 0) && (-63 + i2 >= 0) && (125 - i2 >= 0)))
 //   { us77[root = 0, us_lp_in_on_chip_1_buf40_reconstruct_lp61_buf6475, us_lp_in_on_chip_1_buf40_reconstruct_lp61_buf6476] -> [63 + us_lp_in_on_chip_1_buf40_reconstruct_lp61_buf6475, 0, 63 + us_lp_in_on_chip_1_buf40_reconstruct_lp61_buf6476, 24] : 0 <= us_lp_in_on_chip_1_buf40_reconstruct_lp61_buf6475 <= 63 and 0 <= us_lp_in_on_chip_1_buf40_reconstruct_lp61_buf6476 <= 63 }
 // Condition for us77(((-24 + i3 == 0) && (i1 == 0) && (-63 + i0 >= 0) && (126 - i0 >= 0) && (-63 + i2 >= 0) && (126 - i2 >= 0)))
 //   { load_to_lp_in_on_chip_1_buf40_reconstruct_lp61_buf64_us74_to_gp_4236239[root = 0, lp_in_on_chip_1_buf40_reconstruct_lp61_buf64_us74_ld238, lp_in_on_chip_1_buf40_reconstruct_lp61_buf64_us74_ld237] -> [63 + lp_in_on_chip_1_buf40_reconstruct_lp61_buf64_us74_ld238, 0, 63 + lp_in_on_chip_1_buf40_reconstruct_lp61_buf64_us74_ld237, 33] : 0 <= lp_in_on_chip_1_buf40_reconstruct_lp61_buf64_us74_ld238 <= 63 and 0 <= lp_in_on_chip_1_buf40_reconstruct_lp61_buf64_us74_ld237 <= 63 }
@@ -4461,7 +4461,7 @@ for (int i0 = 63; i0 <= 126; i0++) {
       for (int i3 = 23; i3 <= 33; i3++) {
 #pragma HLS unroll
         // { [i0, 0, i2, 23] : (1 + i2) mod 2 = 0 and (1 + i0) mod 2 = 0 and 63 <= i0 <= 125 and 63 <= i2 <= 125 }
-        if ((((-1 - i0 + 2*floord(1 + i0, 2) == 0) && (-1 - i2 + 2*floord(1 + i2, 2) == 0) && (-23 + i3 == 0) && (i1 == 0) && (-63 + i0 >= 0) && (125 - i0 >= 0) && (-63 + i2 >= 0) && (125 - i2 >= 0)))) {
+        if ((((-1 - i0 + 2*floor((1 + i0)/2) == 0) && (-1 - i2 + 2*floor((1 + i2)/2) == 0) && (-23 + i3 == 0) && (i1 == 0) && (-63 + i0 >= 0) && (125 - i0 >= 0) && (-63 + i2 >= 0) && (125 - i2 >= 0)))) {
           load_to_lp_in_on_chip_1_buf40_reconstruct_lp61_buf64_FIFO_buf320323((0), (-32 + floor((1 + i0)/2)), (-32 + floor((1 + i2)/2)));
         }
         // { [i0, 0, i2, 24] : 63 <= i0 <= 126 and 63 <= i2 <= 126 }
@@ -4487,7 +4487,7 @@ for (int i0 = 63; i0 <= 126; i0++) {
 	      for (int i3 = 23; i3 <= 33; i3++) {
 	#pragma HLS unroll
 	        // { [i0, 0, i2, 23] : (1 + i2) mod 2 = 0 and (1 + i0) mod 2 = 0 and 63 <= i0 <= 125 and 63 <= i2 <= 125 }
-	        if ((((-1 - i0 + 2*floord(1 + i0, 2) == 0) && (-1 - i2 + 2*floord(1 + i2, 2) == 0) && (-23 + i3 == 0) && (i1 == 0) && (-63 + i0 >= 0) && (125 - i0 >= 0) && (-63 + i2 >= 0) && (125 - i2 >= 0)))) {
+	        if ((((-1 - i0 + 2*floor((1 + i0)/2) == 0) && (-1 - i2 + 2*floor((1 + i2)/2) == 0) && (-23 + i3 == 0) && (i1 == 0) && (-63 + i0 >= 0) && (125 - i0 >= 0) && (-63 + i2 >= 0) && (125 - i2 >= 0)))) {
 	          load_to_lp_in_on_chip_1_buf40_reconstruct_lp61_buf64_FIFO_buf320323(lp_in_on_chip_1_buf40_reconstruct_lp61_buf64_to_gp_15232 /* buf name */, lp_in_on_chip_1_buf40_reconstruct_lp61_buf64_FIFO_buf320, (0), (-32 + floor((1 + i0)/2)), (-32 + floor((1 + i2)/2)));
 	        }
 	        // { [i0, 0, i2, 24] : 63 <= i0 <= 126 and 63 <= i2 <= 126 }
@@ -4575,11 +4575,11 @@ void Extracted_lp_in_on_chip_2_buf32_reconstruct_lp52_buf55_to_gp_16244_ld334_lp
 
 // schedule: { load_to_lp_in_on_chip_2_buf32_reconstruct_lp52_buf55_FIFO_buf332335[root = 0, lp_in_on_chip_2_buf32_reconstruct_lp52_buf55_to_gp_16244_ld334, lp_in_on_chip_2_buf32_reconstruct_lp52_buf55_to_gp_16244_ld333] -> [63 + 4lp_in_on_chip_2_buf32_reconstruct_lp52_buf55_to_gp_16244_ld334, 0, 63 + 4lp_in_on_chip_2_buf32_reconstruct_lp52_buf55_to_gp_16244_ld333, 17] : 0 <= lp_in_on_chip_2_buf32_reconstruct_lp52_buf55_to_gp_16244_ld334 <= 15 and 0 <= lp_in_on_chip_2_buf32_reconstruct_lp52_buf55_to_gp_16244_ld333 <= 15; load_to_lp_in_on_chip_2_buf32_reconstruct_lp52_buf55_us65_to_gp_6248251[root = 0, lp_in_on_chip_2_buf32_reconstruct_lp52_buf55_us65_ld250, lp_in_on_chip_2_buf32_reconstruct_lp52_buf55_us65_ld249] -> [63 + 2lp_in_on_chip_2_buf32_reconstruct_lp52_buf55_us65_ld250, 0, 63 + 2lp_in_on_chip_2_buf32_reconstruct_lp52_buf55_us65_ld249, 19] : 0 <= lp_in_on_chip_2_buf32_reconstruct_lp52_buf55_us65_ld250 <= 31 and 0 <= lp_in_on_chip_2_buf32_reconstruct_lp52_buf55_us65_ld249 <= 31; us68[root = 0, us_lp_in_on_chip_2_buf32_reconstruct_lp52_buf5566, us_lp_in_on_chip_2_buf32_reconstruct_lp52_buf5567] -> [63 + 2us_lp_in_on_chip_2_buf32_reconstruct_lp52_buf5566, 0, 63 + 2us_lp_in_on_chip_2_buf32_reconstruct_lp52_buf5567, 18] : 0 <= us_lp_in_on_chip_2_buf32_reconstruct_lp52_buf5566 <= 31 and 0 <= us_lp_in_on_chip_2_buf32_reconstruct_lp52_buf5567 <= 31 }
 //   { load_to_lp_in_on_chip_2_buf32_reconstruct_lp52_buf55_FIFO_buf332335[root = 0, lp_in_on_chip_2_buf32_reconstruct_lp52_buf55_to_gp_16244_ld334, lp_in_on_chip_2_buf32_reconstruct_lp52_buf55_to_gp_16244_ld333] -> [63 + 4lp_in_on_chip_2_buf32_reconstruct_lp52_buf55_to_gp_16244_ld334, 0, 63 + 4lp_in_on_chip_2_buf32_reconstruct_lp52_buf55_to_gp_16244_ld333, 17] : 0 <= lp_in_on_chip_2_buf32_reconstruct_lp52_buf55_to_gp_16244_ld334 <= 15 and 0 <= lp_in_on_chip_2_buf32_reconstruct_lp52_buf55_to_gp_16244_ld333 <= 15 }
-// Condition for load_to_lp_in_on_chip_2_buf32_reconstruct_lp52_buf55_FIFO_buf332335(((-1 - i0 + 4*floord(1 + i0, 4) == 0) && (-1 - i2 + 4*floord(1 + i2, 4) == 0) && (-17 + i3 == 0) && (i1 == 0) && (-63 + i0 >= 0) && (123 - i0 >= 0) && (-63 + i2 >= 0) && (123 - i2 >= 0)))
+// Condition for load_to_lp_in_on_chip_2_buf32_reconstruct_lp52_buf55_FIFO_buf332335(((-1 - i0 + 4*floor((1 + i0)/4) == 0) && (-1 - i2 + 4*floor((1 + i2)/4) == 0) && (-17 + i3 == 0) && (i1 == 0) && (-63 + i0 >= 0) && (123 - i0 >= 0) && (-63 + i2 >= 0) && (123 - i2 >= 0)))
 //   { load_to_lp_in_on_chip_2_buf32_reconstruct_lp52_buf55_us65_to_gp_6248251[root = 0, lp_in_on_chip_2_buf32_reconstruct_lp52_buf55_us65_ld250, lp_in_on_chip_2_buf32_reconstruct_lp52_buf55_us65_ld249] -> [63 + 2lp_in_on_chip_2_buf32_reconstruct_lp52_buf55_us65_ld250, 0, 63 + 2lp_in_on_chip_2_buf32_reconstruct_lp52_buf55_us65_ld249, 19] : 0 <= lp_in_on_chip_2_buf32_reconstruct_lp52_buf55_us65_ld250 <= 31 and 0 <= lp_in_on_chip_2_buf32_reconstruct_lp52_buf55_us65_ld249 <= 31 }
-// Condition for load_to_lp_in_on_chip_2_buf32_reconstruct_lp52_buf55_us65_to_gp_6248251(((-1 - i0 + 2*floord(1 + i0, 2) == 0) && (-1 - i2 + 2*floord(1 + i2, 2) == 0) && (-19 + i3 == 0) && (i1 == 0) && (-63 + i0 >= 0) && (125 - i0 >= 0) && (-63 + i2 >= 0) && (125 - i2 >= 0)))
+// Condition for load_to_lp_in_on_chip_2_buf32_reconstruct_lp52_buf55_us65_to_gp_6248251(((-1 - i0 + 2*floor((1 + i0)/2) == 0) && (-1 - i2 + 2*floor((1 + i2)/2) == 0) && (-19 + i3 == 0) && (i1 == 0) && (-63 + i0 >= 0) && (125 - i0 >= 0) && (-63 + i2 >= 0) && (125 - i2 >= 0)))
 //   { us68[root = 0, us_lp_in_on_chip_2_buf32_reconstruct_lp52_buf5566, us_lp_in_on_chip_2_buf32_reconstruct_lp52_buf5567] -> [63 + 2us_lp_in_on_chip_2_buf32_reconstruct_lp52_buf5566, 0, 63 + 2us_lp_in_on_chip_2_buf32_reconstruct_lp52_buf5567, 18] : 0 <= us_lp_in_on_chip_2_buf32_reconstruct_lp52_buf5566 <= 31 and 0 <= us_lp_in_on_chip_2_buf32_reconstruct_lp52_buf5567 <= 31 }
-// Condition for us68(((-1 - i0 + 2*floord(1 + i0, 2) == 0) && (-1 - i2 + 2*floord(1 + i2, 2) == 0) && (-18 + i3 == 0) && (i1 == 0) && (-63 + i0 >= 0) && (125 - i0 >= 0) && (-63 + i2 >= 0) && (125 - i2 >= 0)))
+// Condition for us68(((-1 - i0 + 2*floor((1 + i0)/2) == 0) && (-1 - i2 + 2*floor((1 + i2)/2) == 0) && (-18 + i3 == 0) && (i1 == 0) && (-63 + i0 >= 0) && (125 - i0 >= 0) && (-63 + i2 >= 0) && (125 - i2 >= 0)))
 
   /*
 // time range: { [i0, 0, i2, i3] : (1 + i0) mod 2 = 0 and (1 + i2) mod 2 = 0 and 63 <= i0 <= 125 and 63 <= i2 <= 125 and 18 <= i3 <= 19; [i0, 0, i2, 17] : (1 + i0) mod 4 = 0 and (1 + i2) mod 4 = 0 and 63 <= i0 <= 123 and 63 <= i2 <= 123 }
@@ -4591,15 +4591,15 @@ for (int i0 = 63; i0 <= 125; i0++) {
       for (int i3 = 17; i3 <= 19; i3++) {
 #pragma HLS unroll
         // { [i0, 0, i2, 17] : (1 + i2) mod 4 = 0 and (1 + i0) mod 4 = 0 and 63 <= i0 <= 123 and 63 <= i2 <= 123 }
-        if ((((-1 - i0 + 4*floord(1 + i0, 4) == 0) && (-1 - i2 + 4*floord(1 + i2, 4) == 0) && (-17 + i3 == 0) && (i1 == 0) && (-63 + i0 >= 0) && (123 - i0 >= 0) && (-63 + i2 >= 0) && (123 - i2 >= 0)))) {
+        if ((((-1 - i0 + 4*floor((1 + i0)/4) == 0) && (-1 - i2 + 4*floor((1 + i2)/4) == 0) && (-17 + i3 == 0) && (i1 == 0) && (-63 + i0 >= 0) && (123 - i0 >= 0) && (-63 + i2 >= 0) && (123 - i2 >= 0)))) {
           load_to_lp_in_on_chip_2_buf32_reconstruct_lp52_buf55_FIFO_buf332335((0), (-16 + floor((1 + i0)/4)), (-16 + floor((1 + i2)/4)));
         }
         // { [i0, 0, i2, 19] : (1 + i2) mod 2 = 0 and (1 + i0) mod 2 = 0 and 63 <= i0 <= 125 and 63 <= i2 <= 125 }
-        if ((((-1 - i0 + 2*floord(1 + i0, 2) == 0) && (-1 - i2 + 2*floord(1 + i2, 2) == 0) && (-19 + i3 == 0) && (i1 == 0) && (-63 + i0 >= 0) && (125 - i0 >= 0) && (-63 + i2 >= 0) && (125 - i2 >= 0)))) {
+        if ((((-1 - i0 + 2*floor((1 + i0)/2) == 0) && (-1 - i2 + 2*floor((1 + i2)/2) == 0) && (-19 + i3 == 0) && (i1 == 0) && (-63 + i0 >= 0) && (125 - i0 >= 0) && (-63 + i2 >= 0) && (125 - i2 >= 0)))) {
           load_to_lp_in_on_chip_2_buf32_reconstruct_lp52_buf55_us65_to_gp_6248251((0), (-32 + floor((1 + i0)/2)), (-32 + floor((1 + i2)/2)));
         }
         // { [i0, 0, i2, 18] : (1 + i2) mod 2 = 0 and (1 + i0) mod 2 = 0 and 63 <= i0 <= 125 and 63 <= i2 <= 125 }
-        if ((((-1 - i0 + 2*floord(1 + i0, 2) == 0) && (-1 - i2 + 2*floord(1 + i2, 2) == 0) && (-18 + i3 == 0) && (i1 == 0) && (-63 + i0 >= 0) && (125 - i0 >= 0) && (-63 + i2 >= 0) && (125 - i2 >= 0)))) {
+        if ((((-1 - i0 + 2*floor((1 + i0)/2) == 0) && (-1 - i2 + 2*floor((1 + i2)/2) == 0) && (-18 + i3 == 0) && (i1 == 0) && (-63 + i0 >= 0) && (125 - i0 >= 0) && (-63 + i2 >= 0) && (125 - i2 >= 0)))) {
           us68((0), (-32 + floor((1 + i0)/2)), (-32 + floor((1 + i2)/2)));
         }
       }
@@ -4617,15 +4617,15 @@ for (int i0 = 63; i0 <= 125; i0++) {
 	      for (int i3 = 17; i3 <= 19; i3++) {
 	#pragma HLS unroll
 	        // { [i0, 0, i2, 17] : (1 + i2) mod 4 = 0 and (1 + i0) mod 4 = 0 and 63 <= i0 <= 123 and 63 <= i2 <= 123 }
-	        if ((((-1 - i0 + 4*floord(1 + i0, 4) == 0) && (-1 - i2 + 4*floord(1 + i2, 4) == 0) && (-17 + i3 == 0) && (i1 == 0) && (-63 + i0 >= 0) && (123 - i0 >= 0) && (-63 + i2 >= 0) && (123 - i2 >= 0)))) {
+	        if ((((-1 - i0 + 4*floor((1 + i0)/4) == 0) && (-1 - i2 + 4*floor((1 + i2)/4) == 0) && (-17 + i3 == 0) && (i1 == 0) && (-63 + i0 >= 0) && (123 - i0 >= 0) && (-63 + i2 >= 0) && (123 - i2 >= 0)))) {
 	          load_to_lp_in_on_chip_2_buf32_reconstruct_lp52_buf55_FIFO_buf332335(lp_in_on_chip_2_buf32_reconstruct_lp52_buf55_to_gp_16244 /* buf name */, lp_in_on_chip_2_buf32_reconstruct_lp52_buf55_FIFO_buf332, (0), (-16 + floor((1 + i0)/4)), (-16 + floor((1 + i2)/4)));
 	        }
 	        // { [i0, 0, i2, 19] : (1 + i2) mod 2 = 0 and (1 + i0) mod 2 = 0 and 63 <= i0 <= 125 and 63 <= i2 <= 125 }
-	        if ((((-1 - i0 + 2*floord(1 + i0, 2) == 0) && (-1 - i2 + 2*floord(1 + i2, 2) == 0) && (-19 + i3 == 0) && (i1 == 0) && (-63 + i0 >= 0) && (125 - i0 >= 0) && (-63 + i2 >= 0) && (125 - i2 >= 0)))) {
+	        if ((((-1 - i0 + 2*floor((1 + i0)/2) == 0) && (-1 - i2 + 2*floor((1 + i2)/2) == 0) && (-19 + i3 == 0) && (i1 == 0) && (-63 + i0 >= 0) && (125 - i0 >= 0) && (-63 + i2 >= 0) && (125 - i2 >= 0)))) {
 	          load_to_lp_in_on_chip_2_buf32_reconstruct_lp52_buf55_us65_to_gp_6248251(lp_in_on_chip_2_buf32_reconstruct_lp52_buf55_us65 /* buf name */, lp_in_on_chip_2_buf32_reconstruct_lp52_buf55_us65_to_gp_6248, (0), (-32 + floor((1 + i0)/2)), (-32 + floor((1 + i2)/2)));
 	        }
 	        // { [i0, 0, i2, 18] : (1 + i2) mod 2 = 0 and (1 + i0) mod 2 = 0 and 63 <= i0 <= 125 and 63 <= i2 <= 125 }
-	        if ((((-1 - i0 + 2*floord(1 + i0, 2) == 0) && (-1 - i2 + 2*floord(1 + i2, 2) == 0) && (-18 + i3 == 0) && (i1 == 0) && (-63 + i0 >= 0) && (125 - i0 >= 0) && (-63 + i2 >= 0) && (125 - i2 >= 0)))) {
+	        if ((((-1 - i0 + 2*floor((1 + i0)/2) == 0) && (-1 - i2 + 2*floor((1 + i2)/2) == 0) && (-18 + i3 == 0) && (i1 == 0) && (-63 + i0 >= 0) && (125 - i0 >= 0) && (-63 + i2 >= 0) && (125 - i2 >= 0)))) {
 	          us68(lp_in_on_chip_2_buf32_reconstruct_lp52_buf55_FIFO_buf332 /* buf name */, lp_in_on_chip_2_buf32_reconstruct_lp52_buf55_us65, (0), (-32 + floor((1 + i0)/2)), (-32 + floor((1 + i2)/2)));
 	        }
 	      }
@@ -4723,13 +4723,13 @@ void Extracted_gp_in_on_chip_2_buf12_to_gp_2184_ld274_gp_in_on_chip_321_gp_in_on
 
 // schedule: { load_to_gp_in_on_chip_3_buf20_to_gp_13196199[root = 0, gp_in_on_chip_3_buf20_ld198, gp_in_on_chip_3_buf20_ld197] -> [56 + 2gp_in_on_chip_3_buf20_ld198, 0, 63 + gp_in_on_chip_3_buf20_ld197, 38] : 0 <= gp_in_on_chip_3_buf20_ld198 <= 7 and 0 <= gp_in_on_chip_3_buf20_ld197 <= 7; load_to_gp_in_on_chip_2_buf12_FIFO_buf272275[root = 0, gp_in_on_chip_2_buf12_to_gp_2184_ld274, gp_in_on_chip_2_buf12_to_gp_2184_ld273] -> [38 + 2gp_in_on_chip_2_buf12_to_gp_2184_ld274, 0, 38 + 2gp_in_on_chip_2_buf12_to_gp_2184_ld273, 8] : 0 <= gp_in_on_chip_2_buf12_to_gp_2184_ld274 <= 16 and 0 <= gp_in_on_chip_2_buf12_to_gp_2184_ld273 <= 16; load_to_gp_in_on_chip_3_buf20_to_gp_14200203[root = 0, gp_in_on_chip_3_buf20_ld202, gp_in_on_chip_3_buf20_ld201] -> [63 + gp_in_on_chip_3_buf20_ld202, 0, 63 + gp_in_on_chip_3_buf20_ld201, 10] : 0 <= gp_in_on_chip_3_buf20_ld202 <= 7 and 0 <= gp_in_on_chip_3_buf20_ld201 <= 7; gp_in_on_chip_322_merged163[root = 0, gp_in_on_chip_321, gp_in_on_chip_322] -> [49 + 3gp_in_on_chip_321, 0, 49 + 3gp_in_on_chip_322, 9] : 0 <= gp_in_on_chip_321 <= 7 and 0 <= gp_in_on_chip_322 <= 7 }
 //   { load_to_gp_in_on_chip_3_buf20_to_gp_13196199[root = 0, gp_in_on_chip_3_buf20_ld198, gp_in_on_chip_3_buf20_ld197] -> [56 + 2gp_in_on_chip_3_buf20_ld198, 0, 63 + gp_in_on_chip_3_buf20_ld197, 38] : 0 <= gp_in_on_chip_3_buf20_ld198 <= 7 and 0 <= gp_in_on_chip_3_buf20_ld197 <= 7 }
-// Condition for load_to_gp_in_on_chip_3_buf20_to_gp_13196199(((-i0 + 2*floord(i0, 2) == 0) && (-38 + i3 == 0) && (i1 == 0) && (-56 + i0 >= 0) && (70 - i0 >= 0) && (-63 + i2 >= 0) && (70 - i2 >= 0)))
+// Condition for load_to_gp_in_on_chip_3_buf20_to_gp_13196199(((-i0 + 2*floor((i0)/2) == 0) && (-38 + i3 == 0) && (i1 == 0) && (-56 + i0 >= 0) && (70 - i0 >= 0) && (-63 + i2 >= 0) && (70 - i2 >= 0)))
 //   { load_to_gp_in_on_chip_2_buf12_FIFO_buf272275[root = 0, gp_in_on_chip_2_buf12_to_gp_2184_ld274, gp_in_on_chip_2_buf12_to_gp_2184_ld273] -> [38 + 2gp_in_on_chip_2_buf12_to_gp_2184_ld274, 0, 38 + 2gp_in_on_chip_2_buf12_to_gp_2184_ld273, 8] : 0 <= gp_in_on_chip_2_buf12_to_gp_2184_ld274 <= 16 and 0 <= gp_in_on_chip_2_buf12_to_gp_2184_ld273 <= 16 }
-// Condition for load_to_gp_in_on_chip_2_buf12_FIFO_buf272275(((-i0 + 2*floord(i0, 2) == 0) && (-i2 + 2*floord(i2, 2) == 0) && (-8 + i3 == 0) && (i1 == 0) && (-38 + i0 >= 0) && (70 - i0 >= 0) && (-38 + i2 >= 0) && (70 - i2 >= 0)))
+// Condition for load_to_gp_in_on_chip_2_buf12_FIFO_buf272275(((-i0 + 2*floor((i0)/2) == 0) && (-i2 + 2*floor((i2)/2) == 0) && (-8 + i3 == 0) && (i1 == 0) && (-38 + i0 >= 0) && (70 - i0 >= 0) && (-38 + i2 >= 0) && (70 - i2 >= 0)))
 //   { load_to_gp_in_on_chip_3_buf20_to_gp_14200203[root = 0, gp_in_on_chip_3_buf20_ld202, gp_in_on_chip_3_buf20_ld201] -> [63 + gp_in_on_chip_3_buf20_ld202, 0, 63 + gp_in_on_chip_3_buf20_ld201, 10] : 0 <= gp_in_on_chip_3_buf20_ld202 <= 7 and 0 <= gp_in_on_chip_3_buf20_ld201 <= 7 }
 // Condition for load_to_gp_in_on_chip_3_buf20_to_gp_14200203(((-10 + i3 == 0) && (i1 == 0) && (-63 + i0 >= 0) && (70 - i0 >= 0) && (-63 + i2 >= 0) && (70 - i2 >= 0)))
 //   { gp_in_on_chip_322_merged163[root = 0, gp_in_on_chip_321, gp_in_on_chip_322] -> [49 + 3gp_in_on_chip_321, 0, 49 + 3gp_in_on_chip_322, 9] : 0 <= gp_in_on_chip_321 <= 7 and 0 <= gp_in_on_chip_322 <= 7 }
-// Condition for gp_in_on_chip_322_merged163(((1 - i0 + 3*floord(-1 + i0, 3) == 0) && (1 - i2 + 3*floord(-1 + i2, 3) == 0) && (-9 + i3 == 0) && (i1 == 0) && (-49 + i0 >= 0) && (70 - i0 >= 0) && (-49 + i2 >= 0) && (70 - i2 >= 0)))
+// Condition for gp_in_on_chip_322_merged163(((1 - i0 + 3*floor((-1 + i0)/3) == 0) && (1 - i2 + 3*floor((-1 + i2)/3) == 0) && (-9 + i3 == 0) && (i1 == 0) && (-49 + i0 >= 0) && (70 - i0 >= 0) && (-49 + i2 >= 0) && (70 - i2 >= 0)))
 
   /*
 // time range: { [i0, 0, i2, 10] : 63 <= i0 <= 70 and 63 <= i2 <= 70; [i0, 0, i2, 9] : (-1 + i0) mod 3 = 0 and (-1 + i2) mod 3 = 0 and 49 <= i0 <= 70 and 49 <= i2 <= 70; [i0, 0, i2, 8] : (i0) mod 2 = 0 and (i2) mod 2 = 0 and 38 <= i0 <= 70 and 38 <= i2 <= 70; [i0, 0, i2, 38] : (i0) mod 2 = 0 and 56 <= i0 <= 70 and 63 <= i2 <= 70 }
@@ -4741,15 +4741,15 @@ for (int i0 = 38; i0 <= 70; i0++) {
       for (int i3 = 8; i3 <= 38; i3++) {
 #pragma HLS unroll
         // { [i0, 0, i2, 8] : (i2) mod 2 = 0 and (i0) mod 2 = 0 and 38 <= i0 <= 70 and 38 <= i2 <= 70 }
-        if ((((-i0 + 2*floord(i0, 2) == 0) && (-i2 + 2*floord(i2, 2) == 0) && (-8 + i3 == 0) && (i1 == 0) && (-38 + i0 >= 0) && (70 - i0 >= 0) && (-38 + i2 >= 0) && (70 - i2 >= 0)))) {
+        if ((((-i0 + 2*floor((i0)/2) == 0) && (-i2 + 2*floor((i2)/2) == 0) && (-8 + i3 == 0) && (i1 == 0) && (-38 + i0 >= 0) && (70 - i0 >= 0) && (-38 + i2 >= 0) && (70 - i2 >= 0)))) {
           load_to_gp_in_on_chip_2_buf12_FIFO_buf272275((0), (-19 + floor((i0)/2)), (-19 + floor((i2)/2)));
         }
         // { [i0, 0, i2, 9] : (-1 + i2) mod 3 = 0 and (-1 + i0) mod 3 = 0 and 49 <= i0 <= 70 and 49 <= i2 <= 70 }
-        if ((((1 - i0 + 3*floord(-1 + i0, 3) == 0) && (1 - i2 + 3*floord(-1 + i2, 3) == 0) && (-9 + i3 == 0) && (i1 == 0) && (-49 + i0 >= 0) && (70 - i0 >= 0) && (-49 + i2 >= 0) && (70 - i2 >= 0)))) {
+        if ((((1 - i0 + 3*floor((-1 + i0)/3) == 0) && (1 - i2 + 3*floor((-1 + i2)/3) == 0) && (-9 + i3 == 0) && (i1 == 0) && (-49 + i0 >= 0) && (70 - i0 >= 0) && (-49 + i2 >= 0) && (70 - i2 >= 0)))) {
           gp_in_on_chip_322_merged163((0), (-16 + floor((-1 + i0)/3)), (-16 + floor((-1 + i2)/3)));
         }
         // { [i0, 0, i2, 38] : (i0) mod 2 = 0 and 56 <= i0 <= 70 and 63 <= i2 <= 70 }
-        if ((((-i0 + 2*floord(i0, 2) == 0) && (-38 + i3 == 0) && (i1 == 0) && (-56 + i0 >= 0) && (70 - i0 >= 0) && (-63 + i2 >= 0) && (70 - i2 >= 0)))) {
+        if ((((-i0 + 2*floor((i0)/2) == 0) && (-38 + i3 == 0) && (i1 == 0) && (-56 + i0 >= 0) && (70 - i0 >= 0) && (-63 + i2 >= 0) && (70 - i2 >= 0)))) {
           load_to_gp_in_on_chip_3_buf20_to_gp_13196199((0), (-28 + floor((i0)/2)), (-63 + i2));
         }
         // { [i0, 0, i2, 10] : 63 <= i0 <= 70 and 63 <= i2 <= 70 }
@@ -4771,15 +4771,15 @@ for (int i0 = 38; i0 <= 70; i0++) {
 	      for (int i3 = 8; i3 <= 38; i3++) {
 	#pragma HLS unroll
 	        // { [i0, 0, i2, 8] : (i2) mod 2 = 0 and (i0) mod 2 = 0 and 38 <= i0 <= 70 and 38 <= i2 <= 70 }
-	        if ((((-i0 + 2*floord(i0, 2) == 0) && (-i2 + 2*floord(i2, 2) == 0) && (-8 + i3 == 0) && (i1 == 0) && (-38 + i0 >= 0) && (70 - i0 >= 0) && (-38 + i2 >= 0) && (70 - i2 >= 0)))) {
+	        if ((((-i0 + 2*floor((i0)/2) == 0) && (-i2 + 2*floor((i2)/2) == 0) && (-8 + i3 == 0) && (i1 == 0) && (-38 + i0 >= 0) && (70 - i0 >= 0) && (-38 + i2 >= 0) && (70 - i2 >= 0)))) {
 	          load_to_gp_in_on_chip_2_buf12_FIFO_buf272275(gp_in_on_chip_2_buf12_to_gp_2184 /* buf name */, gp_in_on_chip_2_buf12_FIFO_buf272, (0), (-19 + floor((i0)/2)), (-19 + floor((i2)/2)));
 	        }
 	        // { [i0, 0, i2, 9] : (-1 + i2) mod 3 = 0 and (-1 + i0) mod 3 = 0 and 49 <= i0 <= 70 and 49 <= i2 <= 70 }
-	        if ((((1 - i0 + 3*floord(-1 + i0, 3) == 0) && (1 - i2 + 3*floord(-1 + i2, 3) == 0) && (-9 + i3 == 0) && (i1 == 0) && (-49 + i0 >= 0) && (70 - i0 >= 0) && (-49 + i2 >= 0) && (70 - i2 >= 0)))) {
+	        if ((((1 - i0 + 3*floor((-1 + i0)/3) == 0) && (1 - i2 + 3*floor((-1 + i2)/3) == 0) && (-9 + i3 == 0) && (i1 == 0) && (-49 + i0 >= 0) && (70 - i0 >= 0) && (-49 + i2 >= 0) && (70 - i2 >= 0)))) {
 	          gp_in_on_chip_322_merged163(gp_in_on_chip_2_buf12_FIFO_buf272 /* buf name */, gp_in_on_chip_3_buf20, (0), (-16 + floor((-1 + i0)/3)), (-16 + floor((-1 + i2)/3)));
 	        }
 	        // { [i0, 0, i2, 38] : (i0) mod 2 = 0 and 56 <= i0 <= 70 and 63 <= i2 <= 70 }
-	        if ((((-i0 + 2*floord(i0, 2) == 0) && (-38 + i3 == 0) && (i1 == 0) && (-56 + i0 >= 0) && (70 - i0 >= 0) && (-63 + i2 >= 0) && (70 - i2 >= 0)))) {
+	        if ((((-i0 + 2*floor((i0)/2) == 0) && (-38 + i3 == 0) && (i1 == 0) && (-56 + i0 >= 0) && (70 - i0 >= 0) && (-63 + i2 >= 0) && (70 - i2 >= 0)))) {
 	          load_to_gp_in_on_chip_3_buf20_to_gp_13196199(gp_in_on_chip_3_buf20 /* buf name */, gp_in_on_chip_3_buf20_to_gp_13196, (0), (-28 + floor((i0)/2)), (-63 + i2));
 	        }
 	        // { [i0, 0, i2, 10] : 63 <= i0 <= 70 and 63 <= i2 <= 70 }
@@ -5212,13 +5212,13 @@ void Extracted_gp_in_on_chip_1_buf4_to_gp_5172_ld262_gp_in_on_chip_2_buf12_us36_
 
 // schedule: { load_to_gp_in_on_chip_2_buf12_us36_FIFO_buf280283[root = 0, gp_in_on_chip_2_buf12_us36_to_gp_5192_ld282, gp_in_on_chip_2_buf12_us36_to_gp_5192_ld281] -> [25 + 2gp_in_on_chip_2_buf12_us36_to_gp_5192_ld282, 0, 40 + gp_in_on_chip_2_buf12_us36_to_gp_5192_ld281, 31] : 0 <= gp_in_on_chip_2_buf12_us36_to_gp_5192_ld282 <= 31 and 0 <= gp_in_on_chip_2_buf12_us36_to_gp_5192_ld281 <= 31; load_to_lp_in_on_chip_1_buf40_to_gp_6228231[root = 0, lp_in_on_chip_1_buf40_ld230, lp_in_on_chip_1_buf40_ld229] -> [31 + 2lp_in_on_chip_1_buf40_ld230, 2, lp_in_on_chip_1_buf40_ld229, 0] : 0 <= lp_in_on_chip_1_buf40_ld230 <= 31 and 0 <= lp_in_on_chip_1_buf40_ld229 <= 31; load_to_gp_in_on_chip_1_buf4_FIFO_buf260263[root = 0, gp_in_on_chip_1_buf4_to_gp_5172_ld262, gp_in_on_chip_1_buf4_to_gp_5172_ld261] -> [3 + 2gp_in_on_chip_1_buf4_to_gp_5172_ld262, 3, gp_in_on_chip_1_buf4_to_gp_5172_ld261, 0] : 3 <= gp_in_on_chip_1_buf4_to_gp_5172_ld262 <= 34 and 3 <= gp_in_on_chip_1_buf4_to_gp_5172_ld261 <= 34; diff43[root = 0, lp_in_on_chip_141, lp_in_on_chip_142] -> [25 + 2lp_in_on_chip_141, 0, 40 + lp_in_on_chip_142, 51] : 0 <= lp_in_on_chip_141 <= 31 and 0 <= lp_in_on_chip_142 <= 31 }
 //   { load_to_gp_in_on_chip_2_buf12_us36_FIFO_buf280283[root = 0, gp_in_on_chip_2_buf12_us36_to_gp_5192_ld282, gp_in_on_chip_2_buf12_us36_to_gp_5192_ld281] -> [25 + 2gp_in_on_chip_2_buf12_us36_to_gp_5192_ld282, 0, 40 + gp_in_on_chip_2_buf12_us36_to_gp_5192_ld281, 31] : 0 <= gp_in_on_chip_2_buf12_us36_to_gp_5192_ld282 <= 31 and 0 <= gp_in_on_chip_2_buf12_us36_to_gp_5192_ld281 <= 31 }
-// Condition for load_to_gp_in_on_chip_2_buf12_us36_FIFO_buf280283(((-1 - i0 + 2*floord(1 + i0, 2) == 0) && (-31 + i3 == 0) && (i1 == 0) && (-25 + i0 >= 0) && (87 - i0 >= 0) && (-40 + i2 >= 0) && (71 - i2 >= 0)))
+// Condition for load_to_gp_in_on_chip_2_buf12_us36_FIFO_buf280283(((-1 - i0 + 2*floor((1 + i0)/2) == 0) && (-31 + i3 == 0) && (i1 == 0) && (-25 + i0 >= 0) && (87 - i0 >= 0) && (-40 + i2 >= 0) && (71 - i2 >= 0)))
 //   { load_to_lp_in_on_chip_1_buf40_to_gp_6228231[root = 0, lp_in_on_chip_1_buf40_ld230, lp_in_on_chip_1_buf40_ld229] -> [31 + 2lp_in_on_chip_1_buf40_ld230, 2, lp_in_on_chip_1_buf40_ld229, 0] : 0 <= lp_in_on_chip_1_buf40_ld230 <= 31 and 0 <= lp_in_on_chip_1_buf40_ld229 <= 31 }
-// Condition for load_to_lp_in_on_chip_1_buf40_to_gp_6228231(((-1 - i0 + 2*floord(1 + i0, 2) == 0) && (i3 == 0) && (-2 + i1 == 0) && (-31 + i0 >= 0) && (93 - i0 >= 0) && (i2 >= 0) && (31 - i2 >= 0)))
+// Condition for load_to_lp_in_on_chip_1_buf40_to_gp_6228231(((-1 - i0 + 2*floor((1 + i0)/2) == 0) && (i3 == 0) && (-2 + i1 == 0) && (-31 + i0 >= 0) && (93 - i0 >= 0) && (i2 >= 0) && (31 - i2 >= 0)))
 //   { load_to_gp_in_on_chip_1_buf4_FIFO_buf260263[root = 0, gp_in_on_chip_1_buf4_to_gp_5172_ld262, gp_in_on_chip_1_buf4_to_gp_5172_ld261] -> [3 + 2gp_in_on_chip_1_buf4_to_gp_5172_ld262, 3, gp_in_on_chip_1_buf4_to_gp_5172_ld261, 0] : 3 <= gp_in_on_chip_1_buf4_to_gp_5172_ld262 <= 34 and 3 <= gp_in_on_chip_1_buf4_to_gp_5172_ld261 <= 34 }
-// Condition for load_to_gp_in_on_chip_1_buf4_FIFO_buf260263(((-1 - i0 + 2*floord(1 + i0, 2) == 0) && (i3 == 0) && (-3 + i1 == 0) && (-9 + i0 >= 0) && (71 - i0 >= 0) && (-3 + i2 >= 0) && (34 - i2 >= 0)))
+// Condition for load_to_gp_in_on_chip_1_buf4_FIFO_buf260263(((-1 - i0 + 2*floor((1 + i0)/2) == 0) && (i3 == 0) && (-3 + i1 == 0) && (-9 + i0 >= 0) && (71 - i0 >= 0) && (-3 + i2 >= 0) && (34 - i2 >= 0)))
 //   { diff43[root = 0, lp_in_on_chip_141, lp_in_on_chip_142] -> [25 + 2lp_in_on_chip_141, 0, 40 + lp_in_on_chip_142, 51] : 0 <= lp_in_on_chip_141 <= 31 and 0 <= lp_in_on_chip_142 <= 31 }
-// Condition for diff43(((-1 - i0 + 2*floord(1 + i0, 2) == 0) && (-51 + i3 == 0) && (i1 == 0) && (-25 + i0 >= 0) && (87 - i0 >= 0) && (-40 + i2 >= 0) && (71 - i2 >= 0)))
+// Condition for diff43(((-1 - i0 + 2*floor((1 + i0)/2) == 0) && (-51 + i3 == 0) && (i1 == 0) && (-25 + i0 >= 0) && (87 - i0 >= 0) && (-40 + i2 >= 0) && (71 - i2 >= 0)))
 
   /*
 // time range: { [i0, 3, i2, 0] : (1 + i0) mod 2 = 0 and 9 <= i0 <= 71 and 3 <= i2 <= 34; [i0, 2, i2, 0] : (1 + i0) mod 2 = 0 and 31 <= i0 <= 93 and 0 <= i2 <= 31; [i0, 0, i2, 51] : (1 + i0) mod 2 = 0 and 25 <= i0 <= 87 and 40 <= i2 <= 71; [i0, 0, i2, 31] : (1 + i0) mod 2 = 0 and 25 <= i0 <= 87 and 40 <= i2 <= 71 }
@@ -5230,19 +5230,19 @@ for (int i0 = 9; i0 <= 93; i0++) {
       for (int i3 = 0; i3 <= 51; i3++) {
 #pragma HLS unroll
         // { [i0, 2, i2, 0] : (1 + i0) mod 2 = 0 and 31 <= i0 <= 93 and 0 <= i2 <= 31 }
-        if ((((-1 - i0 + 2*floord(1 + i0, 2) == 0) && (i3 == 0) && (-2 + i1 == 0) && (-31 + i0 >= 0) && (93 - i0 >= 0) && (i2 >= 0) && (31 - i2 >= 0)))) {
+        if ((((-1 - i0 + 2*floor((1 + i0)/2) == 0) && (i3 == 0) && (-2 + i1 == 0) && (-31 + i0 >= 0) && (93 - i0 >= 0) && (i2 >= 0) && (31 - i2 >= 0)))) {
           load_to_lp_in_on_chip_1_buf40_to_gp_6228231((0), (-16 + floor((1 + i0)/2)), (i2));
         }
         // { [i0, 3, i2, 0] : (1 + i0) mod 2 = 0 and 9 <= i0 <= 71 and 3 <= i2 <= 34 }
-        if ((((-1 - i0 + 2*floord(1 + i0, 2) == 0) && (i3 == 0) && (-3 + i1 == 0) && (-9 + i0 >= 0) && (71 - i0 >= 0) && (-3 + i2 >= 0) && (34 - i2 >= 0)))) {
+        if ((((-1 - i0 + 2*floor((1 + i0)/2) == 0) && (i3 == 0) && (-3 + i1 == 0) && (-9 + i0 >= 0) && (71 - i0 >= 0) && (-3 + i2 >= 0) && (34 - i2 >= 0)))) {
           load_to_gp_in_on_chip_1_buf4_FIFO_buf260263((0), (-2 + floor((1 + i0)/2)), (i2));
         }
         // { [i0, 0, i2, 31] : (1 + i0) mod 2 = 0 and 25 <= i0 <= 87 and 40 <= i2 <= 71 }
-        if ((((-1 - i0 + 2*floord(1 + i0, 2) == 0) && (-31 + i3 == 0) && (i1 == 0) && (-25 + i0 >= 0) && (87 - i0 >= 0) && (-40 + i2 >= 0) && (71 - i2 >= 0)))) {
+        if ((((-1 - i0 + 2*floor((1 + i0)/2) == 0) && (-31 + i3 == 0) && (i1 == 0) && (-25 + i0 >= 0) && (87 - i0 >= 0) && (-40 + i2 >= 0) && (71 - i2 >= 0)))) {
           load_to_gp_in_on_chip_2_buf12_us36_FIFO_buf280283((0), (-13 + floor((1 + i0)/2)), (-40 + i2));
         }
         // { [i0, 0, i2, 51] : (1 + i0) mod 2 = 0 and 25 <= i0 <= 87 and 40 <= i2 <= 71 }
-        if ((((-1 - i0 + 2*floord(1 + i0, 2) == 0) && (-51 + i3 == 0) && (i1 == 0) && (-25 + i0 >= 0) && (87 - i0 >= 0) && (-40 + i2 >= 0) && (71 - i2 >= 0)))) {
+        if ((((-1 - i0 + 2*floor((1 + i0)/2) == 0) && (-51 + i3 == 0) && (i1 == 0) && (-25 + i0 >= 0) && (87 - i0 >= 0) && (-40 + i2 >= 0) && (71 - i2 >= 0)))) {
           diff43((0), (-13 + floor((1 + i0)/2)), (-40 + i2));
         }
       }
@@ -5260,19 +5260,19 @@ for (int i0 = 9; i0 <= 93; i0++) {
 	      for (int i3 = 0; i3 <= 51; i3++) {
 	#pragma HLS unroll
 	        // { [i0, 2, i2, 0] : (1 + i0) mod 2 = 0 and 31 <= i0 <= 93 and 0 <= i2 <= 31 }
-	        if ((((-1 - i0 + 2*floord(1 + i0, 2) == 0) && (i3 == 0) && (-2 + i1 == 0) && (-31 + i0 >= 0) && (93 - i0 >= 0) && (i2 >= 0) && (31 - i2 >= 0)))) {
+	        if ((((-1 - i0 + 2*floor((1 + i0)/2) == 0) && (i3 == 0) && (-2 + i1 == 0) && (-31 + i0 >= 0) && (93 - i0 >= 0) && (i2 >= 0) && (31 - i2 >= 0)))) {
 	          load_to_lp_in_on_chip_1_buf40_to_gp_6228231(lp_in_on_chip_1_buf40 /* buf name */, lp_in_on_chip_1_buf40_to_gp_6228, (0), (-16 + floor((1 + i0)/2)), (i2));
 	        }
 	        // { [i0, 3, i2, 0] : (1 + i0) mod 2 = 0 and 9 <= i0 <= 71 and 3 <= i2 <= 34 }
-	        if ((((-1 - i0 + 2*floord(1 + i0, 2) == 0) && (i3 == 0) && (-3 + i1 == 0) && (-9 + i0 >= 0) && (71 - i0 >= 0) && (-3 + i2 >= 0) && (34 - i2 >= 0)))) {
+	        if ((((-1 - i0 + 2*floor((1 + i0)/2) == 0) && (i3 == 0) && (-3 + i1 == 0) && (-9 + i0 >= 0) && (71 - i0 >= 0) && (-3 + i2 >= 0) && (34 - i2 >= 0)))) {
 	          load_to_gp_in_on_chip_1_buf4_FIFO_buf260263(gp_in_on_chip_1_buf4_to_gp_5172 /* buf name */, gp_in_on_chip_1_buf4_FIFO_buf260, (0), (-2 + floor((1 + i0)/2)), (i2));
 	        }
 	        // { [i0, 0, i2, 31] : (1 + i0) mod 2 = 0 and 25 <= i0 <= 87 and 40 <= i2 <= 71 }
-	        if ((((-1 - i0 + 2*floord(1 + i0, 2) == 0) && (-31 + i3 == 0) && (i1 == 0) && (-25 + i0 >= 0) && (87 - i0 >= 0) && (-40 + i2 >= 0) && (71 - i2 >= 0)))) {
+	        if ((((-1 - i0 + 2*floor((1 + i0)/2) == 0) && (-31 + i3 == 0) && (i1 == 0) && (-25 + i0 >= 0) && (87 - i0 >= 0) && (-40 + i2 >= 0) && (71 - i2 >= 0)))) {
 	          load_to_gp_in_on_chip_2_buf12_us36_FIFO_buf280283(gp_in_on_chip_2_buf12_us36_to_gp_5192 /* buf name */, gp_in_on_chip_2_buf12_us36_FIFO_buf280, (0), (-13 + floor((1 + i0)/2)), (-40 + i2));
 	        }
 	        // { [i0, 0, i2, 51] : (1 + i0) mod 2 = 0 and 25 <= i0 <= 87 and 40 <= i2 <= 71 }
-	        if ((((-1 - i0 + 2*floord(1 + i0, 2) == 0) && (-51 + i3 == 0) && (i1 == 0) && (-25 + i0 >= 0) && (87 - i0 >= 0) && (-40 + i2 >= 0) && (71 - i2 >= 0)))) {
+	        if ((((-1 - i0 + 2*floor((1 + i0)/2) == 0) && (-51 + i3 == 0) && (i1 == 0) && (-25 + i0 >= 0) && (87 - i0 >= 0) && (-40 + i2 >= 0) && (71 - i2 >= 0)))) {
 	          diff43(gp_in_on_chip_1_buf4_FIFO_buf260 /* buf name */, gp_in_on_chip_2_buf12_us36_FIFO_buf280 /* buf name */, lp_in_on_chip_1_buf40, (0), (-13 + floor((1 + i0)/2)), (-40 + i2));
 	        }
 	      }
@@ -5375,13 +5375,13 @@ void Extracted_lp_in_on_chip_1_buf40_reconstruct_lp6162_lp_in_on_chip_1_buf40_re
 
 // schedule: { load_to_lp_in_on_chip_1_buf40_reconstruct_lp61_buf64_to_gp_15232235[root = 0, lp_in_on_chip_1_buf40_reconstruct_lp61_buf64_ld234, lp_in_on_chip_1_buf40_reconstruct_lp61_buf64_ld233] -> [63 + 2lp_in_on_chip_1_buf40_reconstruct_lp61_buf64_ld234, 0, 63 + 2lp_in_on_chip_1_buf40_reconstruct_lp61_buf64_ld233, 22] : 0 <= lp_in_on_chip_1_buf40_reconstruct_lp61_buf64_ld234 <= 31 and 0 <= lp_in_on_chip_1_buf40_reconstruct_lp61_buf64_ld233 <= 31; rc69[root = 0, lp_in_on_chip_1_buf40_reconstruct_lp6162, lp_in_on_chip_1_buf40_reconstruct_lp6163] -> [63 + 2lp_in_on_chip_1_buf40_reconstruct_lp6162, 0, 63 + 2lp_in_on_chip_1_buf40_reconstruct_lp6163, 21] : 0 <= lp_in_on_chip_1_buf40_reconstruct_lp6162 <= 31 and 0 <= lp_in_on_chip_1_buf40_reconstruct_lp6163 <= 31; load_to_lp_in_on_chip_2_buf32_reconstruct_lp52_buf55_us65_FIFO_buf336339[root = 0, lp_in_on_chip_2_buf32_reconstruct_lp52_buf55_us65_to_gp_6248_ld338, lp_in_on_chip_2_buf32_reconstruct_lp52_buf55_us65_to_gp_6248_ld337] -> [63 + 2lp_in_on_chip_2_buf32_reconstruct_lp52_buf55_us65_to_gp_6248_ld338, 0, 63 + 2lp_in_on_chip_2_buf32_reconstruct_lp52_buf55_us65_to_gp_6248_ld337, 20] : 0 <= lp_in_on_chip_2_buf32_reconstruct_lp52_buf55_us65_to_gp_6248_ld338 <= 31 and 0 <= lp_in_on_chip_2_buf32_reconstruct_lp52_buf55_us65_to_gp_6248_ld337 <= 31; load_to_lp_in_on_chip_1_buf40_FIFO_buf316319[root = 0, lp_in_on_chip_1_buf40_to_gp_6228_ld318, lp_in_on_chip_1_buf40_to_gp_6228_ld317] -> [47 + 2lp_in_on_chip_1_buf40_to_gp_6228_ld318, 6, lp_in_on_chip_1_buf40_to_gp_6228_ld317, 0] : 0 <= lp_in_on_chip_1_buf40_to_gp_6228_ld318 <= 31 and 0 <= lp_in_on_chip_1_buf40_to_gp_6228_ld317 <= 31 }
 //   { load_to_lp_in_on_chip_1_buf40_reconstruct_lp61_buf64_to_gp_15232235[root = 0, lp_in_on_chip_1_buf40_reconstruct_lp61_buf64_ld234, lp_in_on_chip_1_buf40_reconstruct_lp61_buf64_ld233] -> [63 + 2lp_in_on_chip_1_buf40_reconstruct_lp61_buf64_ld234, 0, 63 + 2lp_in_on_chip_1_buf40_reconstruct_lp61_buf64_ld233, 22] : 0 <= lp_in_on_chip_1_buf40_reconstruct_lp61_buf64_ld234 <= 31 and 0 <= lp_in_on_chip_1_buf40_reconstruct_lp61_buf64_ld233 <= 31 }
-// Condition for load_to_lp_in_on_chip_1_buf40_reconstruct_lp61_buf64_to_gp_15232235(((-1 - i0 + 2*floord(1 + i0, 2) == 0) && (-1 - i2 + 2*floord(1 + i2, 2) == 0) && (-22 + i3 == 0) && (i1 == 0) && (-63 + i0 >= 0) && (125 - i0 >= 0) && (-63 + i2 >= 0) && (125 - i2 >= 0)))
+// Condition for load_to_lp_in_on_chip_1_buf40_reconstruct_lp61_buf64_to_gp_15232235(((-1 - i0 + 2*floor((1 + i0)/2) == 0) && (-1 - i2 + 2*floor((1 + i2)/2) == 0) && (-22 + i3 == 0) && (i1 == 0) && (-63 + i0 >= 0) && (125 - i0 >= 0) && (-63 + i2 >= 0) && (125 - i2 >= 0)))
 //   { rc69[root = 0, lp_in_on_chip_1_buf40_reconstruct_lp6162, lp_in_on_chip_1_buf40_reconstruct_lp6163] -> [63 + 2lp_in_on_chip_1_buf40_reconstruct_lp6162, 0, 63 + 2lp_in_on_chip_1_buf40_reconstruct_lp6163, 21] : 0 <= lp_in_on_chip_1_buf40_reconstruct_lp6162 <= 31 and 0 <= lp_in_on_chip_1_buf40_reconstruct_lp6163 <= 31 }
-// Condition for rc69(((-1 - i0 + 2*floord(1 + i0, 2) == 0) && (-1 - i2 + 2*floord(1 + i2, 2) == 0) && (-21 + i3 == 0) && (i1 == 0) && (-63 + i0 >= 0) && (125 - i0 >= 0) && (-63 + i2 >= 0) && (125 - i2 >= 0)))
+// Condition for rc69(((-1 - i0 + 2*floor((1 + i0)/2) == 0) && (-1 - i2 + 2*floor((1 + i2)/2) == 0) && (-21 + i3 == 0) && (i1 == 0) && (-63 + i0 >= 0) && (125 - i0 >= 0) && (-63 + i2 >= 0) && (125 - i2 >= 0)))
 //   { load_to_lp_in_on_chip_2_buf32_reconstruct_lp52_buf55_us65_FIFO_buf336339[root = 0, lp_in_on_chip_2_buf32_reconstruct_lp52_buf55_us65_to_gp_6248_ld338, lp_in_on_chip_2_buf32_reconstruct_lp52_buf55_us65_to_gp_6248_ld337] -> [63 + 2lp_in_on_chip_2_buf32_reconstruct_lp52_buf55_us65_to_gp_6248_ld338, 0, 63 + 2lp_in_on_chip_2_buf32_reconstruct_lp52_buf55_us65_to_gp_6248_ld337, 20] : 0 <= lp_in_on_chip_2_buf32_reconstruct_lp52_buf55_us65_to_gp_6248_ld338 <= 31 and 0 <= lp_in_on_chip_2_buf32_reconstruct_lp52_buf55_us65_to_gp_6248_ld337 <= 31 }
-// Condition for load_to_lp_in_on_chip_2_buf32_reconstruct_lp52_buf55_us65_FIFO_buf336339(((-1 - i0 + 2*floord(1 + i0, 2) == 0) && (-1 - i2 + 2*floord(1 + i2, 2) == 0) && (-20 + i3 == 0) && (i1 == 0) && (-63 + i0 >= 0) && (125 - i0 >= 0) && (-63 + i2 >= 0) && (125 - i2 >= 0)))
+// Condition for load_to_lp_in_on_chip_2_buf32_reconstruct_lp52_buf55_us65_FIFO_buf336339(((-1 - i0 + 2*floor((1 + i0)/2) == 0) && (-1 - i2 + 2*floor((1 + i2)/2) == 0) && (-20 + i3 == 0) && (i1 == 0) && (-63 + i0 >= 0) && (125 - i0 >= 0) && (-63 + i2 >= 0) && (125 - i2 >= 0)))
 //   { load_to_lp_in_on_chip_1_buf40_FIFO_buf316319[root = 0, lp_in_on_chip_1_buf40_to_gp_6228_ld318, lp_in_on_chip_1_buf40_to_gp_6228_ld317] -> [47 + 2lp_in_on_chip_1_buf40_to_gp_6228_ld318, 6, lp_in_on_chip_1_buf40_to_gp_6228_ld317, 0] : 0 <= lp_in_on_chip_1_buf40_to_gp_6228_ld318 <= 31 and 0 <= lp_in_on_chip_1_buf40_to_gp_6228_ld317 <= 31 }
-// Condition for load_to_lp_in_on_chip_1_buf40_FIFO_buf316319(((-1 - i0 + 2*floord(1 + i0, 2) == 0) && (i3 == 0) && (-6 + i1 == 0) && (-47 + i0 >= 0) && (109 - i0 >= 0) && (i2 >= 0) && (31 - i2 >= 0)))
+// Condition for load_to_lp_in_on_chip_1_buf40_FIFO_buf316319(((-1 - i0 + 2*floor((1 + i0)/2) == 0) && (i3 == 0) && (-6 + i1 == 0) && (-47 + i0 >= 0) && (109 - i0 >= 0) && (i2 >= 0) && (31 - i2 >= 0)))
 
   /*
 // time range: { [i0, 0, i2, i3] : (1 + i0) mod 2 = 0 and (1 + i2) mod 2 = 0 and 63 <= i0 <= 125 and 63 <= i2 <= 125 and 20 <= i3 <= 22; [i0, 6, i2, 0] : (1 + i0) mod 2 = 0 and 47 <= i0 <= 109 and 0 <= i2 <= 31 }
@@ -5393,19 +5393,19 @@ for (int i0 = 47; i0 <= 125; i0++) {
       for (int i3 = 0; i3 <= 22; i3++) {
 #pragma HLS unroll
         // { [i0, 0, i2, 22] : (1 + i2) mod 2 = 0 and (1 + i0) mod 2 = 0 and 63 <= i0 <= 125 and 63 <= i2 <= 125 }
-        if ((((-1 - i0 + 2*floord(1 + i0, 2) == 0) && (-1 - i2 + 2*floord(1 + i2, 2) == 0) && (-22 + i3 == 0) && (i1 == 0) && (-63 + i0 >= 0) && (125 - i0 >= 0) && (-63 + i2 >= 0) && (125 - i2 >= 0)))) {
+        if ((((-1 - i0 + 2*floor((1 + i0)/2) == 0) && (-1 - i2 + 2*floor((1 + i2)/2) == 0) && (-22 + i3 == 0) && (i1 == 0) && (-63 + i0 >= 0) && (125 - i0 >= 0) && (-63 + i2 >= 0) && (125 - i2 >= 0)))) {
           load_to_lp_in_on_chip_1_buf40_reconstruct_lp61_buf64_to_gp_15232235((0), (-32 + floor((1 + i0)/2)), (-32 + floor((1 + i2)/2)));
         }
         // { [i0, 0, i2, 21] : (1 + i2) mod 2 = 0 and (1 + i0) mod 2 = 0 and 63 <= i0 <= 125 and 63 <= i2 <= 125 }
-        if ((((-1 - i0 + 2*floord(1 + i0, 2) == 0) && (-1 - i2 + 2*floord(1 + i2, 2) == 0) && (-21 + i3 == 0) && (i1 == 0) && (-63 + i0 >= 0) && (125 - i0 >= 0) && (-63 + i2 >= 0) && (125 - i2 >= 0)))) {
+        if ((((-1 - i0 + 2*floor((1 + i0)/2) == 0) && (-1 - i2 + 2*floor((1 + i2)/2) == 0) && (-21 + i3 == 0) && (i1 == 0) && (-63 + i0 >= 0) && (125 - i0 >= 0) && (-63 + i2 >= 0) && (125 - i2 >= 0)))) {
           rc69((0), (-32 + floor((1 + i0)/2)), (-32 + floor((1 + i2)/2)));
         }
         // { [i0, 0, i2, 20] : (1 + i2) mod 2 = 0 and (1 + i0) mod 2 = 0 and 63 <= i0 <= 125 and 63 <= i2 <= 125 }
-        if ((((-1 - i0 + 2*floord(1 + i0, 2) == 0) && (-1 - i2 + 2*floord(1 + i2, 2) == 0) && (-20 + i3 == 0) && (i1 == 0) && (-63 + i0 >= 0) && (125 - i0 >= 0) && (-63 + i2 >= 0) && (125 - i2 >= 0)))) {
+        if ((((-1 - i0 + 2*floor((1 + i0)/2) == 0) && (-1 - i2 + 2*floor((1 + i2)/2) == 0) && (-20 + i3 == 0) && (i1 == 0) && (-63 + i0 >= 0) && (125 - i0 >= 0) && (-63 + i2 >= 0) && (125 - i2 >= 0)))) {
           load_to_lp_in_on_chip_2_buf32_reconstruct_lp52_buf55_us65_FIFO_buf336339((0), (-32 + floor((1 + i0)/2)), (-32 + floor((1 + i2)/2)));
         }
         // { [i0, 6, i2, 0] : (1 + i0) mod 2 = 0 and 47 <= i0 <= 109 and 0 <= i2 <= 31 }
-        if ((((-1 - i0 + 2*floord(1 + i0, 2) == 0) && (i3 == 0) && (-6 + i1 == 0) && (-47 + i0 >= 0) && (109 - i0 >= 0) && (i2 >= 0) && (31 - i2 >= 0)))) {
+        if ((((-1 - i0 + 2*floor((1 + i0)/2) == 0) && (i3 == 0) && (-6 + i1 == 0) && (-47 + i0 >= 0) && (109 - i0 >= 0) && (i2 >= 0) && (31 - i2 >= 0)))) {
           load_to_lp_in_on_chip_1_buf40_FIFO_buf316319((0), (-24 + floor((1 + i0)/2)), (i2));
         }
       }
@@ -5423,19 +5423,19 @@ for (int i0 = 47; i0 <= 125; i0++) {
 	      for (int i3 = 0; i3 <= 22; i3++) {
 	#pragma HLS unroll
 	        // { [i0, 0, i2, 22] : (1 + i2) mod 2 = 0 and (1 + i0) mod 2 = 0 and 63 <= i0 <= 125 and 63 <= i2 <= 125 }
-	        if ((((-1 - i0 + 2*floord(1 + i0, 2) == 0) && (-1 - i2 + 2*floord(1 + i2, 2) == 0) && (-22 + i3 == 0) && (i1 == 0) && (-63 + i0 >= 0) && (125 - i0 >= 0) && (-63 + i2 >= 0) && (125 - i2 >= 0)))) {
+	        if ((((-1 - i0 + 2*floor((1 + i0)/2) == 0) && (-1 - i2 + 2*floor((1 + i2)/2) == 0) && (-22 + i3 == 0) && (i1 == 0) && (-63 + i0 >= 0) && (125 - i0 >= 0) && (-63 + i2 >= 0) && (125 - i2 >= 0)))) {
 	          load_to_lp_in_on_chip_1_buf40_reconstruct_lp61_buf64_to_gp_15232235(lp_in_on_chip_1_buf40_reconstruct_lp61_buf64 /* buf name */, lp_in_on_chip_1_buf40_reconstruct_lp61_buf64_to_gp_15232, (0), (-32 + floor((1 + i0)/2)), (-32 + floor((1 + i2)/2)));
 	        }
 	        // { [i0, 0, i2, 21] : (1 + i2) mod 2 = 0 and (1 + i0) mod 2 = 0 and 63 <= i0 <= 125 and 63 <= i2 <= 125 }
-	        if ((((-1 - i0 + 2*floord(1 + i0, 2) == 0) && (-1 - i2 + 2*floord(1 + i2, 2) == 0) && (-21 + i3 == 0) && (i1 == 0) && (-63 + i0 >= 0) && (125 - i0 >= 0) && (-63 + i2 >= 0) && (125 - i2 >= 0)))) {
+	        if ((((-1 - i0 + 2*floor((1 + i0)/2) == 0) && (-1 - i2 + 2*floor((1 + i2)/2) == 0) && (-21 + i3 == 0) && (i1 == 0) && (-63 + i0 >= 0) && (125 - i0 >= 0) && (-63 + i2 >= 0) && (125 - i2 >= 0)))) {
 	          rc69(lp_in_on_chip_1_buf40_FIFO_buf316 /* buf name */, lp_in_on_chip_2_buf32_reconstruct_lp52_buf55_us65_FIFO_buf336 /* buf name */, lp_in_on_chip_1_buf40_reconstruct_lp61_buf64, (0), (-32 + floor((1 + i0)/2)), (-32 + floor((1 + i2)/2)));
 	        }
 	        // { [i0, 0, i2, 20] : (1 + i2) mod 2 = 0 and (1 + i0) mod 2 = 0 and 63 <= i0 <= 125 and 63 <= i2 <= 125 }
-	        if ((((-1 - i0 + 2*floord(1 + i0, 2) == 0) && (-1 - i2 + 2*floord(1 + i2, 2) == 0) && (-20 + i3 == 0) && (i1 == 0) && (-63 + i0 >= 0) && (125 - i0 >= 0) && (-63 + i2 >= 0) && (125 - i2 >= 0)))) {
+	        if ((((-1 - i0 + 2*floor((1 + i0)/2) == 0) && (-1 - i2 + 2*floor((1 + i2)/2) == 0) && (-20 + i3 == 0) && (i1 == 0) && (-63 + i0 >= 0) && (125 - i0 >= 0) && (-63 + i2 >= 0) && (125 - i2 >= 0)))) {
 	          load_to_lp_in_on_chip_2_buf32_reconstruct_lp52_buf55_us65_FIFO_buf336339(lp_in_on_chip_2_buf32_reconstruct_lp52_buf55_us65_to_gp_6248 /* buf name */, lp_in_on_chip_2_buf32_reconstruct_lp52_buf55_us65_FIFO_buf336, (0), (-32 + floor((1 + i0)/2)), (-32 + floor((1 + i2)/2)));
 	        }
 	        // { [i0, 6, i2, 0] : (1 + i0) mod 2 = 0 and 47 <= i0 <= 109 and 0 <= i2 <= 31 }
-	        if ((((-1 - i0 + 2*floord(1 + i0, 2) == 0) && (i3 == 0) && (-6 + i1 == 0) && (-47 + i0 >= 0) && (109 - i0 >= 0) && (i2 >= 0) && (31 - i2 >= 0)))) {
+	        if ((((-1 - i0 + 2*floor((1 + i0)/2) == 0) && (i3 == 0) && (-6 + i1 == 0) && (-47 + i0 >= 0) && (109 - i0 >= 0) && (i2 >= 0) && (31 - i2 >= 0)))) {
 	          load_to_lp_in_on_chip_1_buf40_FIFO_buf316319(lp_in_on_chip_1_buf40_to_gp_6228 /* buf name */, lp_in_on_chip_1_buf40_FIFO_buf316, (0), (-24 + floor((1 + i0)/2)), (i2));
 	        }
 	      }
@@ -5540,7 +5540,7 @@ void Extracted_gp_in_on_chip_2_buf12_to_gp_7188_ld278_gp_in_on_chip_3_buf20_us28
 //   { diff35[root = 0, lp_in_on_chip_233, lp_in_on_chip_234] -> [56 + lp_in_on_chip_233, 0, 63 + lp_in_on_chip_234, 43] : 0 <= lp_in_on_chip_233 <= 15 and 0 <= lp_in_on_chip_234 <= 15 }
 // Condition for diff35(((-43 + i3 == 0) && (i1 == 0) && (-56 + i0 >= 0) && (71 - i0 >= 0) && (-63 + i2 >= 0) && (78 - i2 >= 0)))
 //   { load_to_gp_in_on_chip_2_buf12_FIFO_buf276279[root = 0, gp_in_on_chip_2_buf12_to_gp_7188_ld278, gp_in_on_chip_2_buf12_to_gp_7188_ld277] -> [38 + 2gp_in_on_chip_2_buf12_to_gp_7188_ld278, 0, 38 + 2gp_in_on_chip_2_buf12_to_gp_7188_ld277, 52] : 0 < gp_in_on_chip_2_buf12_to_gp_7188_ld278 <= 16 and 0 < gp_in_on_chip_2_buf12_to_gp_7188_ld277 <= 16 }
-// Condition for load_to_gp_in_on_chip_2_buf12_FIFO_buf276279(((-i0 + 2*floord(i0, 2) == 0) && (-i2 + 2*floord(i2, 2) == 0) && (-52 + i3 == 0) && (i1 == 0) && (-40 + i0 >= 0) && (70 - i0 >= 0) && (-40 + i2 >= 0) && (70 - i2 >= 0)))
+// Condition for load_to_gp_in_on_chip_2_buf12_FIFO_buf276279(((-i0 + 2*floor((i0)/2) == 0) && (-i2 + 2*floor((i2)/2) == 0) && (-52 + i3 == 0) && (i1 == 0) && (-40 + i0 >= 0) && (70 - i0 >= 0) && (-40 + i2 >= 0) && (70 - i2 >= 0)))
 //   { load_to_lp_in_on_chip_2_buf32_to_gp_8240243[root = 0, lp_in_on_chip_2_buf32_ld242, lp_in_on_chip_2_buf32_ld241] -> [56 + lp_in_on_chip_2_buf32_ld242, 0, 63 + lp_in_on_chip_2_buf32_ld241, 44] : 0 <= lp_in_on_chip_2_buf32_ld242 <= 15 and 0 <= lp_in_on_chip_2_buf32_ld241 <= 15 }
 // Condition for load_to_lp_in_on_chip_2_buf32_to_gp_8240243(((-44 + i3 == 0) && (i1 == 0) && (-56 + i0 >= 0) && (71 - i0 >= 0) && (-63 + i2 >= 0) && (78 - i2 >= 0)))
 //   { load_to_gp_in_on_chip_3_buf20_us28_FIFO_buf292295[root = 0, gp_in_on_chip_3_buf20_us28_to_gp_7204_ld294, gp_in_on_chip_3_buf20_us28_to_gp_7204_ld293] -> [56 + gp_in_on_chip_3_buf20_us28_to_gp_7204_ld294, 0, 63 + gp_in_on_chip_3_buf20_us28_to_gp_7204_ld293, 42] : 0 <= gp_in_on_chip_3_buf20_us28_to_gp_7204_ld294 <= 15 and 0 <= gp_in_on_chip_3_buf20_us28_to_gp_7204_ld293 <= 15 }
@@ -5564,7 +5564,7 @@ for (int i0 = 40; i0 <= 71; i0++) {
           load_to_lp_in_on_chip_2_buf32_to_gp_8240243((0), (-56 + i0), (-63 + i2));
         }
         // { [i0, 0, i2, 52] : (i2) mod 2 = 0 and (i0) mod 2 = 0 and 40 <= i0 <= 70 and 40 <= i2 <= 70 }
-        if ((((-i0 + 2*floord(i0, 2) == 0) && (-i2 + 2*floord(i2, 2) == 0) && (-52 + i3 == 0) && (i1 == 0) && (-40 + i0 >= 0) && (70 - i0 >= 0) && (-40 + i2 >= 0) && (70 - i2 >= 0)))) {
+        if ((((-i0 + 2*floor((i0)/2) == 0) && (-i2 + 2*floor((i2)/2) == 0) && (-52 + i3 == 0) && (i1 == 0) && (-40 + i0 >= 0) && (70 - i0 >= 0) && (-40 + i2 >= 0) && (70 - i2 >= 0)))) {
           load_to_gp_in_on_chip_2_buf12_FIFO_buf276279((0), (-19 + floor((i0)/2)), (-19 + floor((i2)/2)));
         }
         // { [i0, 0, i2, 43] : 56 <= i0 <= 71 and 63 <= i2 <= 78 }
@@ -5594,7 +5594,7 @@ for (int i0 = 40; i0 <= 71; i0++) {
 	          load_to_lp_in_on_chip_2_buf32_to_gp_8240243(lp_in_on_chip_2_buf32 /* buf name */, lp_in_on_chip_2_buf32_to_gp_8240, (0), (-56 + i0), (-63 + i2));
 	        }
 	        // { [i0, 0, i2, 52] : (i2) mod 2 = 0 and (i0) mod 2 = 0 and 40 <= i0 <= 70 and 40 <= i2 <= 70 }
-	        if ((((-i0 + 2*floord(i0, 2) == 0) && (-i2 + 2*floord(i2, 2) == 0) && (-52 + i3 == 0) && (i1 == 0) && (-40 + i0 >= 0) && (70 - i0 >= 0) && (-40 + i2 >= 0) && (70 - i2 >= 0)))) {
+	        if ((((-i0 + 2*floor((i0)/2) == 0) && (-i2 + 2*floor((i2)/2) == 0) && (-52 + i3 == 0) && (i1 == 0) && (-40 + i0 >= 0) && (70 - i0 >= 0) && (-40 + i2 >= 0) && (70 - i2 >= 0)))) {
 	          load_to_gp_in_on_chip_2_buf12_FIFO_buf276279(gp_in_on_chip_2_buf12_to_gp_7188 /* buf name */, gp_in_on_chip_2_buf12_FIFO_buf276, (0), (-19 + floor((i0)/2)), (-19 + floor((i2)/2)));
 	        }
 	        // { [i0, 0, i2, 43] : 56 <= i0 <= 71 and 63 <= i2 <= 78 }
@@ -5703,9 +5703,9 @@ void Extracted_gp_in_on_chip_3_buf20_us56_to_gp_8208_ld298_lp_in_on_chip_2_buf32
 //   { load_to_gp_in_on_chip_3_buf20_us56_FIFO_buf296299[root = 0, gp_in_on_chip_3_buf20_us56_to_gp_8208_ld298, gp_in_on_chip_3_buf20_us56_to_gp_8208_ld297] -> [63 + gp_in_on_chip_3_buf20_us56_to_gp_8208_ld298, 0, 63 + gp_in_on_chip_3_buf20_us56_to_gp_8208_ld297, 14] : 0 <= gp_in_on_chip_3_buf20_us56_to_gp_8208_ld298 <= 15 and 0 <= gp_in_on_chip_3_buf20_us56_to_gp_8208_ld297 <= 15 }
 // Condition for load_to_gp_in_on_chip_3_buf20_us56_FIFO_buf296299(((-14 + i3 == 0) && (i1 == 0) && (-63 + i0 >= 0) && (78 - i0 >= 0) && (-63 + i2 >= 0) && (78 - i2 >= 0)))
 //   { rc60[root = 0, lp_in_on_chip_2_buf32_reconstruct_lp5253, lp_in_on_chip_2_buf32_reconstruct_lp5254] -> [63 + 2lp_in_on_chip_2_buf32_reconstruct_lp5253, 0, 63 + 2lp_in_on_chip_2_buf32_reconstruct_lp5254, 15] : 0 <= lp_in_on_chip_2_buf32_reconstruct_lp5253 <= 15 and 0 <= lp_in_on_chip_2_buf32_reconstruct_lp5254 <= 15 }
-// Condition for rc60(((-1 - i0 + 2*floord(1 + i0, 2) == 0) && (-1 - i2 + 2*floord(1 + i2, 2) == 0) && (-15 + i3 == 0) && (i1 == 0) && (-63 + i0 >= 0) && (93 - i0 >= 0) && (-63 + i2 >= 0) && (93 - i2 >= 0)))
+// Condition for rc60(((-1 - i0 + 2*floor((1 + i0)/2) == 0) && (-1 - i2 + 2*floor((1 + i2)/2) == 0) && (-15 + i3 == 0) && (i1 == 0) && (-63 + i0 >= 0) && (93 - i0 >= 0) && (-63 + i2 >= 0) && (93 - i2 >= 0)))
 //   { load_to_lp_in_on_chip_2_buf32_reconstruct_lp52_buf55_to_gp_16244247[root = 0, lp_in_on_chip_2_buf32_reconstruct_lp52_buf55_ld246, lp_in_on_chip_2_buf32_reconstruct_lp52_buf55_ld245] -> [63 + 3lp_in_on_chip_2_buf32_reconstruct_lp52_buf55_ld246, 0, 63 + 3lp_in_on_chip_2_buf32_reconstruct_lp52_buf55_ld245, 16] : 0 <= lp_in_on_chip_2_buf32_reconstruct_lp52_buf55_ld246 <= 15 and 0 <= lp_in_on_chip_2_buf32_reconstruct_lp52_buf55_ld245 <= 15 }
-// Condition for load_to_lp_in_on_chip_2_buf32_reconstruct_lp52_buf55_to_gp_16244247(((-i0 + 3*floord(i0, 3) == 0) && (-i2 + 3*floord(i2, 3) == 0) && (-16 + i3 == 0) && (i1 == 0) && (-63 + i0 >= 0) && (108 - i0 >= 0) && (-63 + i2 >= 0) && (108 - i2 >= 0)))
+// Condition for load_to_lp_in_on_chip_2_buf32_reconstruct_lp52_buf55_to_gp_16244247(((-i0 + 3*floor((i0)/3) == 0) && (-i2 + 3*floor((i2)/3) == 0) && (-16 + i3 == 0) && (i1 == 0) && (-63 + i0 >= 0) && (108 - i0 >= 0) && (-63 + i2 >= 0) && (108 - i2 >= 0)))
 //   { load_to_lp_in_on_chip_2_buf32_FIFO_buf328331[root = 0, lp_in_on_chip_2_buf32_to_gp_8240_ld330, lp_in_on_chip_2_buf32_to_gp_8240_ld329] -> [62 + lp_in_on_chip_2_buf32_to_gp_8240_ld330, 4, lp_in_on_chip_2_buf32_to_gp_8240_ld329, 0] : 0 <= lp_in_on_chip_2_buf32_to_gp_8240_ld330 <= 15 and 0 <= lp_in_on_chip_2_buf32_to_gp_8240_ld329 <= 15 }
 // Condition for load_to_lp_in_on_chip_2_buf32_FIFO_buf328331(((i3 == 0) && (-4 + i1 == 0) && (-62 + i0 >= 0) && (77 - i0 >= 0) && (i2 >= 0) && (15 - i2 >= 0)))
 
@@ -5723,11 +5723,11 @@ for (int i0 = 62; i0 <= 108; i0++) {
           load_to_gp_in_on_chip_3_buf20_us56_FIFO_buf296299((0), (-63 + i0), (-63 + i2));
         }
         // { [i0, 0, i2, 15] : (1 + i2) mod 2 = 0 and (1 + i0) mod 2 = 0 and 63 <= i0 <= 93 and 63 <= i2 <= 93 }
-        if ((((-1 - i0 + 2*floord(1 + i0, 2) == 0) && (-1 - i2 + 2*floord(1 + i2, 2) == 0) && (-15 + i3 == 0) && (i1 == 0) && (-63 + i0 >= 0) && (93 - i0 >= 0) && (-63 + i2 >= 0) && (93 - i2 >= 0)))) {
+        if ((((-1 - i0 + 2*floor((1 + i0)/2) == 0) && (-1 - i2 + 2*floor((1 + i2)/2) == 0) && (-15 + i3 == 0) && (i1 == 0) && (-63 + i0 >= 0) && (93 - i0 >= 0) && (-63 + i2 >= 0) && (93 - i2 >= 0)))) {
           rc60((0), (-32 + floor((1 + i0)/2)), (-32 + floor((1 + i2)/2)));
         }
         // { [i0, 0, i2, 16] : (i2) mod 3 = 0 and (i0) mod 3 = 0 and 63 <= i0 <= 108 and 63 <= i2 <= 108 }
-        if ((((-i0 + 3*floord(i0, 3) == 0) && (-i2 + 3*floord(i2, 3) == 0) && (-16 + i3 == 0) && (i1 == 0) && (-63 + i0 >= 0) && (108 - i0 >= 0) && (-63 + i2 >= 0) && (108 - i2 >= 0)))) {
+        if ((((-i0 + 3*floor((i0)/3) == 0) && (-i2 + 3*floor((i2)/3) == 0) && (-16 + i3 == 0) && (i1 == 0) && (-63 + i0 >= 0) && (108 - i0 >= 0) && (-63 + i2 >= 0) && (108 - i2 >= 0)))) {
           load_to_lp_in_on_chip_2_buf32_reconstruct_lp52_buf55_to_gp_16244247((0), (-21 + floor((i0)/3)), (-21 + floor((i2)/3)));
         }
         // { [i0, 4, i2, 0] : 62 <= i0 <= 77 and 0 <= i2 <= 15 }
@@ -5753,11 +5753,11 @@ for (int i0 = 62; i0 <= 108; i0++) {
 	          load_to_gp_in_on_chip_3_buf20_us56_FIFO_buf296299(gp_in_on_chip_3_buf20_us56_to_gp_8208 /* buf name */, gp_in_on_chip_3_buf20_us56_FIFO_buf296, (0), (-63 + i0), (-63 + i2));
 	        }
 	        // { [i0, 0, i2, 15] : (1 + i2) mod 2 = 0 and (1 + i0) mod 2 = 0 and 63 <= i0 <= 93 and 63 <= i2 <= 93 }
-	        if ((((-1 - i0 + 2*floord(1 + i0, 2) == 0) && (-1 - i2 + 2*floord(1 + i2, 2) == 0) && (-15 + i3 == 0) && (i1 == 0) && (-63 + i0 >= 0) && (93 - i0 >= 0) && (-63 + i2 >= 0) && (93 - i2 >= 0)))) {
+	        if ((((-1 - i0 + 2*floor((1 + i0)/2) == 0) && (-1 - i2 + 2*floor((1 + i2)/2) == 0) && (-15 + i3 == 0) && (i1 == 0) && (-63 + i0 >= 0) && (93 - i0 >= 0) && (-63 + i2 >= 0) && (93 - i2 >= 0)))) {
 	          rc60(lp_in_on_chip_2_buf32_FIFO_buf328 /* buf name */, gp_in_on_chip_3_buf20_us56_FIFO_buf296 /* buf name */, lp_in_on_chip_2_buf32_reconstruct_lp52_buf55, (0), (-32 + floor((1 + i0)/2)), (-32 + floor((1 + i2)/2)));
 	        }
 	        // { [i0, 0, i2, 16] : (i2) mod 3 = 0 and (i0) mod 3 = 0 and 63 <= i0 <= 108 and 63 <= i2 <= 108 }
-	        if ((((-i0 + 3*floord(i0, 3) == 0) && (-i2 + 3*floord(i2, 3) == 0) && (-16 + i3 == 0) && (i1 == 0) && (-63 + i0 >= 0) && (108 - i0 >= 0) && (-63 + i2 >= 0) && (108 - i2 >= 0)))) {
+	        if ((((-i0 + 3*floor((i0)/3) == 0) && (-i2 + 3*floor((i2)/3) == 0) && (-16 + i3 == 0) && (i1 == 0) && (-63 + i0 >= 0) && (108 - i0 >= 0) && (-63 + i2 >= 0) && (108 - i2 >= 0)))) {
 	          load_to_lp_in_on_chip_2_buf32_reconstruct_lp52_buf55_to_gp_16244247(lp_in_on_chip_2_buf32_reconstruct_lp52_buf55 /* buf name */, lp_in_on_chip_2_buf32_reconstruct_lp52_buf55_to_gp_16244, (0), (-21 + floor((i0)/3)), (-21 + floor((i2)/3)));
 	        }
 	        // { [i0, 4, i2, 0] : 62 <= i0 <= 77 and 0 <= i2 <= 15 }
