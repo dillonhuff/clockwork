@@ -19822,14 +19822,14 @@ void test_multi_kernel_unsharp() {
   }
 
   CodegenOptions options;
-  options.internal = true;
-  options.all_rams = true;
-  all_unbanked(prg, options);
-  for (auto& gp : dag.fusion_group_progs) {
-    all_unbanked(gp.second, options);
-  }
-  options.inner_bank_offset_mode =
-    INNER_BANK_OFFSET_MULTILINEAR;
+  //options.internal = true;
+  //options.all_rams = true;
+  //all_unbanked(prg, options);
+  //for (auto& gp : dag.fusion_group_progs) {
+    //all_unbanked(gp.second, options);
+  //}
+  //options.inner_bank_offset_mode =
+    //INNER_BANK_OFFSET_MULTILINEAR;
   generate_app_code(options, dag);
 
   generate_regression_testbench(dag.prg);
