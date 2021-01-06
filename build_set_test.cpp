@@ -19772,7 +19772,7 @@ void test_time_sharing_gaussian_pyramid() {
 }
 
 void test_multi_kernel_unsharp() {
-  prog prg("us_multi_kernel");
+  prog prg("us_mk2048");
   prg.add_input("in");
   prg.add_output("out");
 
