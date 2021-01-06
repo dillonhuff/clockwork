@@ -112,7 +112,7 @@ struct CodegenOptions {
   bool all_rams;
   bool add_dependence_pragmas;
   HLSLoopCodegen hls_loop_codegen;
-  bool use_custom_code_string;
+  //bool use_custom_code_string;
   string code_string;
   bool simplify_address_expressions;
   bool unroll_factors_as_pad;
@@ -150,7 +150,8 @@ struct CodegenOptions {
   LakeCollateral mem_tile;
 
   CodegenOptions() : internal(true), all_rams(false), add_dependence_pragmas(true),
-  use_custom_code_string(false), hls_loop_codegen(HLS_LOOP_CODEGEN_ISL), code_string(""), simplify_address_expressions(false),
+  //use_custom_code_string(false),
+  hls_loop_codegen(HLS_LOOP_CODEGEN_ISL), code_string(""), simplify_address_expressions(false),
   unroll_factors_as_pad(false), conditional_merge(false), merge_threshold(0),
   inline_vectorization(false), iis({}),
   pass_through_valid(false), emit_smt_stream(false), config_gen_only(false), dir(""),
