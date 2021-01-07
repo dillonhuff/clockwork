@@ -6942,3 +6942,17 @@ bool all_schedules_defined(UBuffer& buf) {
   }
   return true;
 }
+
+bool is_register(UBuffer& buf) {
+  string name = buf.name;
+  vector<string> dnames;
+  for (int i = 0; i < buf.logical_dimension(); i++) {
+    dnames.push_back("d" + str(i));
+  }
+  string ibo_str = curlies(arrow(name + bracket_list(dnames),
+        name + "_B[0]"));
+  isl_map* m = isl_map_read_from_str(buf.ctx, ibo_str.c_str());
+  bool legal = inner_bank_offset_is_legal(m, buf);
+  release(m);
+  return legal;
+}

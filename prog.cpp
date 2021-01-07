@@ -8464,21 +8464,9 @@ void generate_app_code(
     UBuffer& buf = b.second;
     cout << tab(1) << "# in ports : " << buf.get_in_ports().size() << endl;
     cout << tab(1) << "# out ports: " << buf.get_out_ports().size() << endl;
-    if (buf.get_all_ports().size() == 2) {
-      cout << tab(2) << "One in one out!" << endl;
-      string name = buf.name;
-      vector<string> dnames;
-      for (int i = 0; i < buf.logical_dimension(); i++) {
-        dnames.push_back("d" + str(i));
-      }
-      string ibo_str = curlies(arrow(name + bracket_list(dnames),
-            "B[0]"));
-      cout << tab(2) << "ibo str: " << ibo_str << endl;
-      isl_map* m = isl_map_read_from_str(buf.ctx, ibo_str.c_str());
-      bool legal = inner_bank_offset_is_legal(m, buf);
-      cout << tab(2) << "Legal? " << legal << endl;
+    if (is_register(buf)) {
+      cout << tab(2) << "Is a register!" << endl;
     }
-    cout << endl;
   }
   //assert(false);
 
