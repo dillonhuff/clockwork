@@ -32,6 +32,7 @@ struct in_pw_math_in_oc03_0_to_in_load_to_in_to_gp_0811_5_cache {
 };
 
 struct in_cache {
+  // Is register ? 1
   // # of banks: 1
   in_pw_math_in_oc03_0_to_in_load_to_in_to_gp_0811_5_cache in_pw_math_in_oc03_0_to_in_load_to_in_to_gp_0811_5;
 };
@@ -96,6 +97,7 @@ struct in_FIFO_buf12_load_to_in_FIFO_buf1215_6_to_in_FIFO_buf12_pw_math_in47_3_c
 };
 
 struct in_FIFO_buf12_cache {
+  // Is register ? 1
   // # of banks: 1
   in_FIFO_buf12_load_to_in_FIFO_buf1215_6_to_in_FIFO_buf12_pw_math_in47_3_cache in_FIFO_buf12_load_to_in_FIFO_buf1215_6_to_in_FIFO_buf12_pw_math_in47_3;
 };
