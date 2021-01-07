@@ -1163,6 +1163,19 @@ inline hw_uint<32> lp_in_on_chip_0_buf16_reconstruct_lp20_buf23_FIFO_buf120_pw_m
 }
 
 // Operation logic
+inline void load_to_in_on_chip_FIFO_buf108111(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */in_on_chip_to_gp_076, in_on_chip_FIFO_buf108_cache& in_on_chip_FIFO_buf108, int root, int in_on_chip_to_gp_076_ld110, int in_on_chip_to_gp_076_ld109) {
+  // Dynamic address computation
+
+	// Consume: in_on_chip_to_gp_076
+	auto in_on_chip_to_gp_076_in_on_chip_to_gp_076_ld109_c__in_on_chip_to_gp_076_ld110_value = in_on_chip_to_gp_076.read();
+	// Produce: in_on_chip_FIFO_buf108
+	in_on_chip_FIFO_buf108_load_to_in_on_chip_FIFO_buf108111_write_bundle_write(/* arg names */in_on_chip_to_gp_076_in_on_chip_to_gp_076_ld109_c__in_on_chip_to_gp_076_ld110_value, in_on_chip_FIFO_buf108, root, in_on_chip_to_gp_076_ld110, in_on_chip_to_gp_076_ld109, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
 inline void gp_in_on_chip_16_merged59(in_on_chip_FIFO_buf108_cache& in_on_chip_FIFO_buf108, gp_in_on_chip_1_buf4_cache& gp_in_on_chip_1_buf4, int root, int gp_in_on_chip_15, int gp_in_on_chip_16) {
   // Dynamic address computation
 
@@ -1175,19 +1188,6 @@ inline void gp_in_on_chip_16_merged59(in_on_chip_FIFO_buf108_cache& in_on_chip_F
 	auto compute_result = gp_in_on_chip_16_cu57(in_on_chip_FIFO_buf108_2_m_gp_in_on_chip_16__p___m_1_p_1_c_____2_m_gp_in_on_chip_15__p__1_p_1_value);
 	// Produce: gp_in_on_chip_1_buf4
 	gp_in_on_chip_1_buf4_gp_in_on_chip_16_merged59_write_bundle_write(/* arg names */compute_result, gp_in_on_chip_1_buf4, root, gp_in_on_chip_15, gp_in_on_chip_16, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void load_to_in_on_chip_FIFO_buf108111(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */in_on_chip_to_gp_076, in_on_chip_FIFO_buf108_cache& in_on_chip_FIFO_buf108, int root, int in_on_chip_to_gp_076_ld110, int in_on_chip_to_gp_076_ld109) {
-  // Dynamic address computation
-
-	// Consume: in_on_chip_to_gp_076
-	auto in_on_chip_to_gp_076_in_on_chip_to_gp_076_ld109_c__in_on_chip_to_gp_076_ld110_value = in_on_chip_to_gp_076.read();
-	// Produce: in_on_chip_FIFO_buf108
-	in_on_chip_FIFO_buf108_load_to_in_on_chip_FIFO_buf108111_write_bundle_write(/* arg names */in_on_chip_to_gp_076_in_on_chip_to_gp_076_ld109_c__in_on_chip_to_gp_076_ld110_value, in_on_chip_FIFO_buf108, root, in_on_chip_to_gp_076_ld110, in_on_chip_to_gp_076_ld109, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__

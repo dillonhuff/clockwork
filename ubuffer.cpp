@@ -3420,26 +3420,26 @@ lakeStream emit_top_address_stream(string fname,
       generate_broadcast(options, out, inpt, buf);
     }
 
-    map<string, std::set<string> > unique_outs =
-      get_unique_output_ports(buf);
+    //map<string, std::set<string> > unique_outs =
+      //get_unique_output_ports(buf);
 
-    //if (buf.banking.partition == "exhaustive") {
-    if (false) {
-      for (auto outptg : unique_outs) {
-        string outpt = outptg.first;
-        generate_select(options, out, outpt, buf);
+    ////if (buf.banking.partition == "exhaustive") {
+    //if (false) {
+      //for (auto outptg : unique_outs) {
+        //string outpt = outptg.first;
+        //generate_select(options, out, outpt, buf);
 
-        for (auto pt : outptg.second) {
-          if (pt != outpt) {
-            generate_duplicate_select(options, out, outpt, pt, buf);
-          }
-        }
-      }
-    } else {
+        //for (auto pt : outptg.second) {
+          //if (pt != outpt) {
+            //generate_duplicate_select(options, out, outpt, pt, buf);
+          //}
+        //}
+      //}
+    //} else {
       for (auto outpt : buf.get_out_ports()) {
         generate_select(options, out, outpt, buf);
       }
-    }
+    //}
 
     generate_bundles(options, out, buf);
   }

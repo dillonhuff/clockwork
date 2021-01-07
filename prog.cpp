@@ -8480,7 +8480,7 @@ void generate_app_code(
     }
     cout << endl;
   }
-  assert(false);
+  //assert(false);
 
   cout << "Generating code for " << dag.prg.name << endl;
   map<string, UBuffer> reps;
