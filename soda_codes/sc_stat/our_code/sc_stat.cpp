@@ -32,7 +32,8 @@ struct in_pw_math_in_oc03_0_to_in_pw_math_in47_3_cache {
 };
 
 struct in_cache {
-  // Is register ? 1
+  // Reader addrs...
+    // { pw_math_in47[root = 0, pw_math_in45, pw_math_in46] -> in[pw_math_in46, pw_math_in45] : 0 <= pw_math_in45 <= 127 and 0 <= pw_math_in46 <= 127 }
   // # of banks: 1
   in_pw_math_in_oc03_0_to_in_pw_math_in47_3_cache in_pw_math_in_oc03_0_to_in_pw_math_in47_3;
 };

@@ -25,7 +25,8 @@ struct gray_all_inputs_to_all_outputs_cache {
 };
 
 struct gray_cache {
-  // Is register ? 1
+  // Reader addrs...
+    // { load_to_gray_to_gp_1811[root = 0, gray_ld10, gray_ld9] -> gray[gray_ld9, gray_ld10] : 0 <= gray_ld10 <= 3 and 0 <= gray_ld9 <= 3 }
   // # of banks: 1
   gray_all_inputs_to_all_outputs_cache gray_all_inputs_to_all_outputs;
 };
@@ -81,7 +82,8 @@ struct gray_FIFO_buf12_all_inputs_to_all_outputs_cache {
 };
 
 struct gray_FIFO_buf12_cache {
-  // Is register ? 1
+  // Reader addrs...
+    // { pw_math_gray47[root = 0, pw_math_gray45, pw_math_gray46] -> gray_FIFO_buf12[pw_math_gray46, pw_math_gray45] : 0 <= pw_math_gray45 <= 3 and 0 <= pw_math_gray46 <= 3 }
   // # of banks: 1
   gray_FIFO_buf12_all_inputs_to_all_outputs_cache gray_FIFO_buf12_all_inputs_to_all_outputs;
 };
