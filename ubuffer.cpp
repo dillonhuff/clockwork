@@ -3007,6 +3007,10 @@ lakeStream emit_top_address_stream(string fname,
 
     out << "struct " << buf.name << "_cache {" << endl;
     out << tab(1) << "// Is register ? " << is_register(buf) << endl;
+    out << tab(1) << "// Reader addrs..." << endl;
+    for (auto outpt : buf.get_out_ports()) {
+      out << tab(2) << "// " << str(buf.access_map.at(outpt)) << endl;
+    }
     out << tab(1) << "// # of banks: " << buf.get_banks().size() << endl;
     for (auto b : buf.get_banks()) {
       out << tab(1)

@@ -19778,7 +19778,7 @@ void test_multi_kernel_pyramid_collapsing() {
 
   cpy("in_on_chip", "in", 2, prg);
 
-  const int num_pyramid_levels = 2;
+  const int num_pyramid_levels = 4;
   vector<string> lps = laplacian_pyramid("in_on_chip", num_pyramid_levels, prg);
 
   string reconstructed = reconstruct_gaussian(lps, prg);
@@ -19815,7 +19815,7 @@ void test_multi_kernel_pyramid_collapsing() {
 }
 
 void test_multi_kernel_unsharp() {
-  prog prg("us_mk2048");
+  prog prg("us_mk1_ii1");
   prg.add_input("in");
   prg.add_output("out");
 
@@ -19875,7 +19875,7 @@ void test_multi_kernel_unsharp() {
 
   compare("multi_kernel_" + prg.name + "_vs_unopt", multi_kernel_res, unopt_postprocessed);
   move_to_benchmarks_folder(dag.prg.name);
-  //assert(false);
+  assert(false);
 }
 
 void test_gaussian_pyramid_shared_pes() {
@@ -20770,8 +20770,8 @@ void stencil_chain_multi_kernel_test() {
 }
 
 void dhuff_tests() {
-  test_multi_kernel_pyramid_collapsing();
   test_multi_kernel_unsharp();
+  test_multi_kernel_pyramid_collapsing();
   test_multi_kernel_design();
   stencil_chain_multi_kernel_test();
   infer_bounds_tests();
