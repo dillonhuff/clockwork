@@ -8459,6 +8459,18 @@ void generate_app_code(
 
   auto global_sched = dag.prg.optimized_codegen();
   auto buffers = build_buffers(dag.prg, global_sched);
+
+  for (auto& b : buffers) {
+    UBuffer& buf = b.second;
+    cout << tab(1) << "# in ports : " << buf.get_in_ports().size() << endl;
+    cout << tab(1) << "# out ports: " << buf.get_out_ports().size() << endl;
+    if (buf.get_all_ports().size() == 2) {
+      cout << tab(2) << "One in one out!" << endl;
+    }
+    cout << endl;
+  }
+  assert(false);
+
   cout << "Generating code for " << dag.prg.name << endl;
   map<string, UBuffer> reps;
   for (auto b : buffers) {
