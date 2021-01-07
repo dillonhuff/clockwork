@@ -19771,7 +19771,7 @@ void test_time_sharing_gaussian_pyramid() {
 
 void test_multi_kernel_pyramid_collapsing() {
 
-  prog prg("pyr_blnd1c");
+  prog prg("pyr_blnd2048c");
   prg.compute_unit_file = "local_laplacian_filters_compute.h";
   prg.add_input("in");
   prg.add_output("out");
@@ -20771,6 +20771,7 @@ void stencil_chain_multi_kernel_test() {
 
 void dhuff_tests() {
   test_multi_kernel_pyramid_collapsing();
+  assert(false);
   test_multi_kernel_unsharp();
   test_multi_kernel_design();
   stencil_chain_multi_kernel_test();
