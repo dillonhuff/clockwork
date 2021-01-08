@@ -174,14 +174,6 @@ void Extracted_gray_ld10_oc_load_in01_(HWStream<hw_uint<32> >& /* no bundle get_
 //   { load_to_gray_to_gp_1811[d0 = 0, d1, d2] -> [0, d1, d2, 1] : 0 <= d1 <= 3 and 0 <= d2 <= 3 }
 // Condition for load_to_gray_to_gp_1811(((-1 + i3 == 0) && (i0 == 0) && (i1 >= 0) && (3 - i1 >= 0) && (i2 >= 0) && (3 - i2 >= 0)))
 
-  /*
-for (int c1 = 0; c1 <= 3; c1 += 1)
-  for (int c2 = 0; c2 <= 3; c2 += 1) {
-    oc_load_in03(0, c1, c2);
-    load_to_gray_to_gp_1811(0, c1, c2);
-  }
-
-  */
 	for (int c1 = 0; c1 <= 3; c1 += 1)
 	  for (int c2 = 0; c2 <= 3; c2 += 1) {
 	    oc_load_in03(in /* buf name */, gray, 0, c1, c2);
@@ -245,14 +237,6 @@ void Extracted_gray_to_gp_18_ld14_pw_math_gray45_(HWStream<hw_uint<32> >& /* no 
 //   { load_to_gray_FIFO_buf1215[d0 = 0, d1, d2] -> [0, d1, d2, 2] : 0 <= d1 <= 3 and 0 <= d2 <= 3 }
 // Condition for load_to_gray_FIFO_buf1215(((-2 + i3 == 0) && (i0 == 0) && (i1 >= 0) && (3 - i1 >= 0) && (i2 >= 0) && (3 - i2 >= 0)))
 
-  /*
-for (int c1 = 0; c1 <= 3; c1 += 1)
-  for (int c2 = 0; c2 <= 3; c2 += 1) {
-    load_to_gray_FIFO_buf1215(0, c1, c2);
-    pw_math_gray47(0, c1, c2);
-  }
-
-  */
 	for (int c1 = 0; c1 <= 3; c1 += 1)
 	  for (int c2 = 0; c2 <= 3; c2 += 1) {
 	    load_to_gray_FIFO_buf1215(gray_to_gp_18 /* buf name */, gray_FIFO_buf12, 0, c1, c2);

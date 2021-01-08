@@ -7337,13 +7337,6 @@ isl_map* build_buffer_impl(prog& prg, UBuffer& buf, schedule_info& hwinfo, ubuff
     cout << buf.name << " is really a register file" << endl;
   }
 
-  //if (buf.get_out_ports().size() > 0 &&
-      //is_register_file(buf) &&
-      //&& all_constant_accesses(buf)) {
-    //cout << buf.name << " has all constant accesses" << endl;
-    ////assert(false);
-  //}
-
   impl.partition_dims = embarassing_banking.get_value();
   vector<int> extents;
   extents = extents_by_dimension(buf);
@@ -8449,24 +8442,25 @@ void generate_app_code(
     }
   }
 
+  auto valid_deps = dag.prg.validity_deps();
   auto global_sched =
-    its(clockwork_schedule_umap_reversed(dag.prg.whole_iteration_domain(),
-        dag.prg.validity_deps(),
-        dag.prg.validity_deps()),
+    its(clockwork_schedule_umap_reversed(dag.prg.whole_iteration_domain(), valid_deps, valid_deps),
+        //dag.prg.validity_deps(),
+        //dag.prg.validity_deps()),
         dag.prg.whole_iteration_domain());
   cout << "Sched: " << str(global_sched) << endl;
   //assert(false);
   //auto global_sched = dag.prg.optimized_codegen();
   auto buffers = build_buffers(dag.prg, global_sched);
 
-  for (auto& b : buffers) {
-    UBuffer& buf = b.second;
-    cout << tab(1) << "# in ports : " << buf.get_in_ports().size() << endl;
-    cout << tab(1) << "# out ports: " << buf.get_out_ports().size() << endl;
-    if (is_register(buf)) {
-      cout << tab(2) << "Is a register!" << endl;
-    }
-  }
+  //for (auto& b : buffers) {
+    //UBuffer& buf = b.second;
+    //cout << tab(1) << "# in ports : " << buf.get_in_ports().size() << endl;
+    //cout << tab(1) << "# out ports: " << buf.get_out_ports().size() << endl;
+    //if (is_register(buf)) {
+      //cout << tab(2) << "Is a register!" << endl;
+    //}
+  //}
   //assert(false);
 
   cout << "Generating code for " << dag.prg.name << endl;
