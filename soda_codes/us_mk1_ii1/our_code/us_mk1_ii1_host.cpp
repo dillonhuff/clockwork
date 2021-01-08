@@ -17,7 +17,7 @@ int main(int argc, char **argv) {
 
   std::string binaryFile = argv[1];
 
-  int num_epochs = 2;
+  int num_epochs = 1;
 
   std::cout << "num_epochs = " << num_epochs << std::endl;
 
@@ -48,8 +48,7 @@ int main(int argc, char **argv) {
 #ifdef __FLOAT_OUTPUT__
     float  val = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
 #else // __FLOAT_OUTPUT__
-    //uint32_t val = (rand() % 256);
-    uint32_t val = i; //(rand() % 256);
+    uint32_t val = (rand() % 256);
 #endif // __FLOAT_OUTPUT__
 
 #ifdef __FLOAT_OUTPUT__
@@ -139,7 +138,7 @@ int main(int argc, char **argv) {
 {
     std::ofstream regression_result("diff_write_pipe0_accel_result.csv");
     for (int i = 0; i < diff_write_pipe0_DATA_SIZE; i++) {
-      regression_result << ((int*) (diff_write_pipe0.data()))[i] << std::endl;
+      regression_result << ((uint32_t*) (diff_write_pipe0.data()))[i] << std::endl;
     }
 }
 
