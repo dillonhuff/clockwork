@@ -8457,7 +8457,14 @@ void generate_app_code(
     }
   }
 
-  auto global_sched = dag.prg.optimized_codegen();
+  auto global_sched =
+    its(clockwork_schedule_umap_reversed(dag.prg.whole_iteration_domain(),
+        dag.prg.validity_deps(),
+        dag.prg.validity_deps()),
+        dag.prg.whole_iteration_domain());
+  cout << "Sched: " << str(global_sched) << endl;
+  //assert(false);
+  //auto global_sched = dag.prg.optimized_codegen();
   auto buffers = build_buffers(dag.prg, global_sched);
 
   for (auto& b : buffers) {
