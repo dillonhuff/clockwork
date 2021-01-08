@@ -2192,7 +2192,6 @@ void generate_app_code_op_logic(
 
 
   string code_string =
-    //perfect_loop_codegen(schedmap);
     options.code_string;
   if (options.hls_loop_codegen == HLS_LOOP_CODEGEN_CUSTOM) {
     // Do nothing, leave code string
@@ -2202,13 +2201,6 @@ void generate_app_code_op_logic(
     assert(options.hls_loop_codegen == HLS_LOOP_CODEGEN_ISL);
     code_string = codegen_c(schedmap);
   }
-  //if (!options.use_custom_code_string) {
-    ////code_string = codegen_c(schedmap);
-    //code_string = perfect_loop_codegen(schedmap);
-  //} else {
-    //cout << "Code string = " << code_string << endl;
-    ////assert(false);
-  //}
 
   string original_isl_code_string = code_string;
 
@@ -2233,9 +2225,9 @@ void generate_app_code_op_logic(
   }
   conv_out << endl;
 
-  conv_out << tab(1) << "/*" << endl;
-  conv_out << original_isl_code_string << endl;
-  conv_out << tab(1) << "*/" << endl;
+  //conv_out << tab(1) << "/*" << endl;
+  //conv_out << original_isl_code_string << endl;
+  //conv_out << tab(1) << "*/" << endl;
   conv_out << code_string << endl;
 
   generate_driver_function_suffix(options, conv_out, buffers, prg);
