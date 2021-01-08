@@ -3086,6 +3086,10 @@ isl_set* add_constraint(isl_set* s, isl_constraint* c) {
   return isl_set_add_constraint(cpy(s), cpy(c));
 }
 
+isl_set* gist(isl_set* base, isl_set* context) {
+  return isl_set_gist(cpy(base), cpy(context));
+}
+
 uset* gist(uset* base, uset* context) {
   return isl_union_set_gist(cpy(base), cpy(context));
 }

@@ -1941,6 +1941,7 @@ std::string perfect_loop_codegen(umap* schedmap) {
   conv_out << "// # sets: " << sets.size() << endl;
   assert(sets.size() == 1);
   isl_set* s = pick(get_sets(time_range));
+  isl_set* index_ranges = isl_set_project_out(cpy(s), isl_dim_set, num_dims(s) - 1, 1);
   vector<int> lower_bounds;
   vector<int> upper_bounds;
   for (int d = 0; d < num_dims(s); d++) {
@@ -1957,9 +1958,6 @@ std::string perfect_loop_codegen(umap* schedmap) {
     if (i == ((int) lower_bounds.size()) - 2) {
       conv_out << "#pragma HLS pipeline II=1" << endl;
     }
-    //if (i == ((int) lower_bounds.size()) - 1) {
-      //conv_out << "#pragma HLS unroll" << endl;
-    //}
   }
 
   map<string, int> order;
@@ -2003,8 +2001,17 @@ std::string perfect_loop_codegen(umap* schedmap) {
 
     auto saff = pieces.at(0).second;
     auto dom = pieces.at(0).first;
-
+    cout << "dom: " << str(dom) << endl;
+    cout << "irn: " << str(index_ranges) << endl;
+    dom = gist(dom, index_ranges);
+    //assert(false);
     conv_out << tab(lower_bounds.size()) << "// " << str(dom) << endl;
+    for (auto bs : get_basic_sets(dom)) {
+      conv_out << tab(lower_bounds.size()) << "// " << str(bs) << endl;
+      for (auto c : constraints(bs)) {
+        conv_out << tab(lower_bounds.size() + 1) << "// " << str(c) << endl;
+      }
+    }
     conv_out << tab(lower_bounds.size()) << "if (" << codegen_c(dom) << ") {" << endl;
     conv_out << tab(lower_bounds.size() + 1) << codegen_c(saff) << ";" << endl;
     conv_out << tab(lower_bounds.size()) << "}" << endl;
@@ -8442,26 +8449,16 @@ void generate_app_code(
     }
   }
 
-  auto valid_deps = dag.prg.validity_deps();
-  auto global_sched =
-    its(clockwork_schedule_umap_reversed(dag.prg.whole_iteration_domain(), valid_deps, valid_deps),
-        //dag.prg.validity_deps(),
-        //dag.prg.validity_deps()),
-        dag.prg.whole_iteration_domain());
-  cout << "Sched: " << str(global_sched) << endl;
-  //assert(false);
-  //auto global_sched = dag.prg.optimized_codegen();
+  //auto valid_deps = dag.prg.validity_deps();
+  //auto global_sched =
+    //its(clockwork_schedule_umap_reversed(dag.prg.whole_iteration_domain(), valid_deps, valid_deps),
+        ////dag.prg.validity_deps(),
+        ////dag.prg.validity_deps()),
+        //dag.prg.whole_iteration_domain());
+  //cout << "Sched: " << str(global_sched) << endl;
+  
+  auto global_sched = dag.prg.optimized_codegen();
   auto buffers = build_buffers(dag.prg, global_sched);
-
-  //for (auto& b : buffers) {
-    //UBuffer& buf = b.second;
-    //cout << tab(1) << "# in ports : " << buf.get_in_ports().size() << endl;
-    //cout << tab(1) << "# out ports: " << buf.get_out_ports().size() << endl;
-    //if (is_register(buf)) {
-      //cout << tab(2) << "Is a register!" << endl;
-    //}
-  //}
-  //assert(false);
 
   cout << "Generating code for " << dag.prg.name << endl;
   map<string, UBuffer> reps;
