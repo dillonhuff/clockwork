@@ -1033,7 +1033,7 @@ std::string codegen_c(isl_constraint* const bset) {
   auto ct = ctx(bset);
   isl_printer *p;
   p = isl_printer_to_str(ct);
-  //p = isl_printer_set_output_format(p, ISL_FORMAT_C);
+  p = isl_printer_set_output_format(p, ISL_FORMAT_C);
   p = isl_printer_print_constraint(p, cpy(bset));
 
   char* rs = isl_printer_get_str(p);
