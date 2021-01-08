@@ -8897,3 +8897,11 @@ map<std::string, std::set<string> > one_stage_per_group(prog& prg) {
   return fusion_groups;
 }
 
+bool sw_schedule_respects_deps(umap* schedule, umap* deps) {
+  auto before = lex_gt(schedule, schedule);
+  auto violated = its(before, deps);
+  return empty(violated);
+}
+
+
+
