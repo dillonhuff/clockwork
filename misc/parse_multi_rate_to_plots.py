@@ -31,18 +31,104 @@ def table_op(table_lines, func):
     print(lines)
 
     last_HLS_runtime = None
+    speedups = []
+    labels = []
+
+    lut_savings = []
+    ff_savings = []
+    bram_savings = []
+    dsp_savings = []
     for l in lines:
         if l[1] == 'HLS':
             last_HLS_runtime = float(l[7])
+            last_HLS_lut = float(l[2])
+            last_HLS_ff = float(l[4])
+            last_HLS_bram = float(l[5])
+            last_HLS_dsp = float(l[6])
         else:
             rt = float(l[7])
+            lut = float(l[2])
+            ff = float(l[4])
+            bram = float(l[5])
+            dsp = float(l[6])
+
             factor_improvement = last_HLS_runtime / rt
+            lut_factor_improvement = last_HLS_lut / lut
+            ff_factor_improvement = last_HLS_ff / ff 
+            bram_factor_improvement = last_HLS_bram / bram 
+            dsp_factor_improvement = 1 if dsp == 0 and last_HLS_dsp == 0 else last_HLS_dsp / dsp 
+
             print('\tHLS    :', last_HLS_runtime)
             print('\tCW     :', rt)
             print('\tSpeedup:', factor_improvement, 'x')
+            speedups.append(factor_improvement)
+            lut_savings.append(lut_factor_improvement)
+            bram_savings.append(bram_factor_improvement)
+            ff_savings.append(ff_factor_improvement)
+            dsp_savings.append(dsp_factor_improvement)
+            labels.append(l[0] + ' ' + l[1])
             print()
-            # diff = 100.0 * ((last_HLS_runtime - rt) / last_HLS_runtime)
-            # print(diff)
+
+    fig, ax = plt.subplots()
+    x_pos = [i for i, _ in enumerate(labels)]
+    ax.bar(x_pos, speedups, color='green')
+    plt.xlabel("Application and Throughput")
+    plt.ylabel("Speedup vs. HLS Implementation")
+    plt.title("Clockwork Speedup vs. HLS Baseline")
+    ax.set_yscale('log')
+    plt.xticks(x_pos, labels)
+
+    fig.set_size_inches(16, 10)
+    plt.show()
+    fig.savefig('clockwork_multi_rate_speedup.eps', format='eps')
+    
+    fig, ax = plt.subplots()
+    x_pos = [i for i, _ in enumerate(labels)]
+    ax.bar(x_pos, lut_savings, color='green')
+    plt.xlabel("Application and Throughput")
+    plt.ylabel("LUT use vs. HLS Implementation")
+    plt.title("Clockwork LUT Use vs. HLS Baseline")
+    plt.xticks(x_pos, labels)
+
+    fig.set_size_inches(16, 10)
+    plt.show()
+    fig.savefig('clockwork_multi_rate_lut.eps', format='eps')
+    
+    fig, ax = plt.subplots()
+    x_pos = [i for i, _ in enumerate(labels)]
+    ax.bar(x_pos, ff_savings, color='green')
+    plt.xlabel("Application and Throughput")
+    plt.ylabel("FF use vs. HLS Implementation")
+    plt.title("Clockwork FF Use vs. HLS Baseline")
+    plt.xticks(x_pos, labels)
+
+    fig.set_size_inches(16, 10)
+    plt.show()
+    fig.savefig('clockwork_multi_rate_ff.eps', format='eps')
+
+    fig, ax = plt.subplots()
+    x_pos = [i for i, _ in enumerate(labels)]
+    ax.bar(x_pos, bram_savings, color='green')
+    plt.xlabel("Application and Throughput")
+    plt.ylabel("BRAM use vs. HLS Implementation")
+    plt.title("Clockwork BRAM Use vs. HLS Baseline")
+    plt.xticks(x_pos, labels)
+
+    fig.set_size_inches(16, 10)
+    plt.show()
+    fig.savefig('clockwork_multi_rate_bram.eps', format='eps')
+
+    fig, ax = plt.subplots()
+    x_pos = [i for i, _ in enumerate(labels)]
+    ax.bar(x_pos, dsp_savings, color='green')
+    plt.xlabel("Application and Throughput")
+    plt.ylabel("DSP use vs. HLS Implementation")
+    plt.title("Clockwork DSP Use vs. HLS Baseline")
+    plt.xticks(x_pos, labels)
+
+    fig.set_size_inches(16, 10)
+    plt.show()
+    fig.savefig('clockwork_multi_rate_DSP.eps', format='eps')
 
     # app_names = ['Blur', 'CP', 'Sobel', 'Jacobi']
     # systems = ['SODA', 'CW']
