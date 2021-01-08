@@ -20770,7 +20770,7 @@ void stencil_chain_multi_kernel_test() {
 }
 
 void dhuff_tests() {
-  test_multi_kernel_pyramid_collapsing();
+  //test_multi_kernel_pyramid_collapsing();
   test_multi_kernel_unsharp();
   test_multi_kernel_design();
   stencil_chain_multi_kernel_test();
