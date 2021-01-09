@@ -2,6 +2,8 @@ import re
 import matplotlib.pyplot as plt
 import numpy as np
 
+plt.style.use('seaborn-pastel')
+
 # f = open('./misc/soda_resource_comparison_table.tex').readlines()
 f = open('./misc/multi_rate_standalone.tex').readlines()
 
@@ -71,7 +73,12 @@ def table_op(table_lines, func):
 
     fig, ax = plt.subplots()
     x_pos = [i for i, _ in enumerate(labels)]
-    ax.bar(x_pos, speedups, color='green')
+    barlist = ax.bar(x_pos, speedups, edgecolor='k')
+    # for i in range(6):
+        # barlist[i].set_color('C1')
+    # for i in range(6):
+        # barlist[6 + i].set_color('C2')
+    plt.axhline(y=1.0, linewidth=2, color='red')
     plt.xlabel("Application and Throughput")
     plt.ylabel("Speedup vs. HLS Implementation")
     plt.title("Clockwork Speedup vs. HLS Baseline")
@@ -84,7 +91,11 @@ def table_op(table_lines, func):
     
     fig, ax = plt.subplots()
     x_pos = [i for i, _ in enumerate(labels)]
-    ax.bar(x_pos, lut_savings, color='green')
+    barlist = ax.bar(x_pos, lut_savings)
+    for i in range(6):
+        barlist[i].set_color('C1')
+    for i in range(6):
+        barlist[6 + i].set_color('C2')
     plt.xlabel("Application and Throughput")
     plt.ylabel("LUT use vs. HLS Implementation")
     plt.title("Clockwork LUT Use vs. HLS Baseline")
@@ -96,7 +107,12 @@ def table_op(table_lines, func):
     
     fig, ax = plt.subplots()
     x_pos = [i for i, _ in enumerate(labels)]
-    ax.bar(x_pos, ff_savings, color='green')
+    barlist = ax.bar(x_pos, ff_savings)
+
+    for i in range(6):
+        barlist[i].set_color('C1')
+    for i in range(6):
+        barlist[6 + i].set_color('C2')
     plt.xlabel("Application and Throughput")
     plt.ylabel("FF use vs. HLS Implementation")
     plt.title("Clockwork FF Use vs. HLS Baseline")
@@ -108,7 +124,11 @@ def table_op(table_lines, func):
 
     fig, ax = plt.subplots()
     x_pos = [i for i, _ in enumerate(labels)]
-    ax.bar(x_pos, bram_savings, color='green')
+    barlist = ax.bar(x_pos, bram_savings)
+    for i in range(6):
+        barlist[i].set_color('C1')
+    for i in range(6):
+        barlist[6 + i].set_color('C2')
     plt.xlabel("Application and Throughput")
     plt.ylabel("BRAM use vs. HLS Implementation")
     plt.title("Clockwork BRAM Use vs. HLS Baseline")
@@ -120,7 +140,11 @@ def table_op(table_lines, func):
 
     fig, ax = plt.subplots()
     x_pos = [i for i, _ in enumerate(labels)]
-    ax.bar(x_pos, dsp_savings, color='green')
+    barlist = ax.bar(x_pos, dsp_savings)
+    for i in range(6):
+        barlist[i].set_color('C1')
+    for i in range(6):
+        barlist[6 + i].set_color('C2')
     plt.xlabel("Application and Throughput")
     plt.ylabel("DSP use vs. HLS Implementation")
     plt.title("Clockwork DSP Use vs. HLS Baseline")
