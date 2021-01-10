@@ -170,9 +170,9 @@ void Extracted_gray_ld10_oc_load_in01_(HWStream<hw_uint<32> >& /* no bundle get_
 
 // schedule: { oc_load_in03[root = 0, oc_load_in01, oc_load_in02] -> [oc_load_in01, oc_load_in02, 0] : 0 <= oc_load_in01 <= 3 and 0 <= oc_load_in02 <= 3; load_to_gray_to_gp_1811[root = 0, gray_ld10, gray_ld9] -> [gray_ld10, gray_ld9, 1] : 0 <= gray_ld10 <= 3 and 0 <= gray_ld9 <= 3 }
 //   { oc_load_in03[root = 0, oc_load_in01, oc_load_in02] -> [oc_load_in01, oc_load_in02, 0] : 0 <= oc_load_in01 <= 3 and 0 <= oc_load_in02 <= 3 }
-// Condition for oc_load_in03(((i2 == 0) && (i0 >= 0) && (3 - i0 >= 0) && (i1 >= 0) && (3 - i1 >= 0)))
+// Condition for oc_load_in03(((((1*i2)) == 0) && (((1*i0)) >= 0) && (((3 + -1*i0)) >= 0) && (((1*i1)) >= 0) && (((3 + -1*i1)) >= 0)))
 //   { load_to_gray_to_gp_1811[root = 0, gray_ld10, gray_ld9] -> [gray_ld10, gray_ld9, 1] : 0 <= gray_ld10 <= 3 and 0 <= gray_ld9 <= 3 }
-// Condition for load_to_gray_to_gp_1811(((-1 + i2 == 0) && (i0 >= 0) && (3 - i0 >= 0) && (i1 >= 0) && (3 - i1 >= 0)))
+// Condition for load_to_gray_to_gp_1811(((((-1 + 1*i2)) == 0) && (((1*i0)) >= 0) && (((3 + -1*i0)) >= 0) && (((1*i1)) >= 0) && (((3 + -1*i1)) >= 0)))
 
 	for (int c0 = 0; c0 <= 3; c0 += 1)
 	  for (int c1 = 0; c1 <= 3; c1 += 1) {
@@ -233,9 +233,9 @@ void Extracted_gray_to_gp_18_ld14_pw_math_gray45_(HWStream<hw_uint<32> >& /* no 
 
 // schedule: { load_to_gray_FIFO_buf1215[root = 0, gray_to_gp_18_ld14, gray_to_gp_18_ld13] -> [gray_to_gp_18_ld14, gray_to_gp_18_ld13, 2] : 0 <= gray_to_gp_18_ld14 <= 3 and 0 <= gray_to_gp_18_ld13 <= 3; pw_math_gray47[root = 0, pw_math_gray45, pw_math_gray46] -> [pw_math_gray45, pw_math_gray46, 3] : 0 <= pw_math_gray45 <= 3 and 0 <= pw_math_gray46 <= 3 }
 //   { load_to_gray_FIFO_buf1215[root = 0, gray_to_gp_18_ld14, gray_to_gp_18_ld13] -> [gray_to_gp_18_ld14, gray_to_gp_18_ld13, 2] : 0 <= gray_to_gp_18_ld14 <= 3 and 0 <= gray_to_gp_18_ld13 <= 3 }
-// Condition for load_to_gray_FIFO_buf1215(((-2 + i2 == 0) && (i0 >= 0) && (3 - i0 >= 0) && (i1 >= 0) && (3 - i1 >= 0)))
+// Condition for load_to_gray_FIFO_buf1215(((((-2 + 1*i2)) == 0) && (((1*i0)) >= 0) && (((3 + -1*i0)) >= 0) && (((1*i1)) >= 0) && (((3 + -1*i1)) >= 0)))
 //   { pw_math_gray47[root = 0, pw_math_gray45, pw_math_gray46] -> [pw_math_gray45, pw_math_gray46, 3] : 0 <= pw_math_gray45 <= 3 and 0 <= pw_math_gray46 <= 3 }
-// Condition for pw_math_gray47(((-3 + i2 == 0) && (i0 >= 0) && (3 - i0 >= 0) && (i1 >= 0) && (3 - i1 >= 0)))
+// Condition for pw_math_gray47(((((-3 + 1*i2)) == 0) && (((1*i0)) >= 0) && (((3 + -1*i0)) >= 0) && (((1*i1)) >= 0) && (((3 + -1*i1)) >= 0)))
 
 	for (int c0 = 0; c0 <= 3; c0 += 1)
 	  for (int c1 = 0; c1 <= 3; c1 += 1) {

@@ -189,9 +189,9 @@ void Extracted_in_to_gp_08_ld14_pw_math_in45_(HWStream<hw_uint<32> >& /* no bund
 
 // schedule: { pw_math_in47[root = 0, pw_math_in45, pw_math_in46] -> [pw_math_in45, pw_math_in46, 3] : 0 <= pw_math_in45 <= 127 and 0 <= pw_math_in46 <= 127; load_to_in_FIFO_buf1215[root = 0, in_to_gp_08_ld14, in_to_gp_08_ld13] -> [in_to_gp_08_ld14, in_to_gp_08_ld13, 2] : 0 <= in_to_gp_08_ld14 <= 127 and 0 <= in_to_gp_08_ld13 <= 127 }
 //   { pw_math_in47[root = 0, pw_math_in45, pw_math_in46] -> [pw_math_in45, pw_math_in46, 3] : 0 <= pw_math_in45 <= 127 and 0 <= pw_math_in46 <= 127 }
-// Condition for pw_math_in47(((-3 + i2 == 0) && (i0 >= 0) && (127 - i0 >= 0) && (i1 >= 0) && (127 - i1 >= 0)))
+// Condition for pw_math_in47(((((-3 + 1*i2)) == 0) && (((1*i0)) >= 0) && (((127 + -1*i0)) >= 0) && (((1*i1)) >= 0) && (((127 + -1*i1)) >= 0)))
 //   { load_to_in_FIFO_buf1215[root = 0, in_to_gp_08_ld14, in_to_gp_08_ld13] -> [in_to_gp_08_ld14, in_to_gp_08_ld13, 2] : 0 <= in_to_gp_08_ld14 <= 127 and 0 <= in_to_gp_08_ld13 <= 127 }
-// Condition for load_to_in_FIFO_buf1215(((-2 + i2 == 0) && (i0 >= 0) && (127 - i0 >= 0) && (i1 >= 0) && (127 - i1 >= 0)))
+// Condition for load_to_in_FIFO_buf1215(((((-2 + 1*i2)) == 0) && (((1*i0)) >= 0) && (((127 + -1*i0)) >= 0) && (((1*i1)) >= 0) && (((127 + -1*i1)) >= 0)))
 
 	for (int c0 = 0; c0 <= 127; c0 += 1)
 	  for (int c1 = 0; c1 <= 127; c1 += 1) {
@@ -252,9 +252,9 @@ void Extracted_in_ld10_pw_math_in_oc01_(HWStream<hw_uint<32> >& /* no bundle get
 
 // schedule: { load_to_in_to_gp_0811[root = 0, in_ld10, in_ld9] -> [in_ld10, in_ld9, 1] : 0 <= in_ld10 <= 127 and 0 <= in_ld9 <= 127; pw_math_in_oc03[root = 0, pw_math_in_oc01, pw_math_in_oc02] -> [pw_math_in_oc01, pw_math_in_oc02, 0] : 0 <= pw_math_in_oc01 <= 127 and 0 <= pw_math_in_oc02 <= 127 }
 //   { load_to_in_to_gp_0811[root = 0, in_ld10, in_ld9] -> [in_ld10, in_ld9, 1] : 0 <= in_ld10 <= 127 and 0 <= in_ld9 <= 127 }
-// Condition for load_to_in_to_gp_0811(((-1 + i2 == 0) && (i0 >= 0) && (127 - i0 >= 0) && (i1 >= 0) && (127 - i1 >= 0)))
+// Condition for load_to_in_to_gp_0811(((((-1 + 1*i2)) == 0) && (((1*i0)) >= 0) && (((127 + -1*i0)) >= 0) && (((1*i1)) >= 0) && (((127 + -1*i1)) >= 0)))
 //   { pw_math_in_oc03[root = 0, pw_math_in_oc01, pw_math_in_oc02] -> [pw_math_in_oc01, pw_math_in_oc02, 0] : 0 <= pw_math_in_oc01 <= 127 and 0 <= pw_math_in_oc02 <= 127 }
-// Condition for pw_math_in_oc03(((i2 == 0) && (i0 >= 0) && (127 - i0 >= 0) && (i1 >= 0) && (127 - i1 >= 0)))
+// Condition for pw_math_in_oc03(((((1*i2)) == 0) && (((1*i0)) >= 0) && (((127 + -1*i0)) >= 0) && (((1*i1)) >= 0) && (((127 + -1*i1)) >= 0)))
 
 	for (int c0 = 0; c0 <= 127; c0 += 1)
 	  for (int c1 = 0; c1 <= 127; c1 += 1) {

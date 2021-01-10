@@ -1043,11 +1043,11 @@ void Extracted_gray_ld22_gray_ld26_oc_load_in01_(HWStream<hw_uint<32> >& /* no b
 
 // schedule: { oc_load_in03[root = 0, oc_load_in01, oc_load_in02] -> [oc_load_in01, oc_load_in02, 0] : 0 <= oc_load_in01 <= 65 and 0 <= oc_load_in02 <= 65; load_to_gray_to_gp_22427[root = 0, gray_ld26, gray_ld25] -> [gray_ld26, gray_ld25, 1] : 0 <= gray_ld26 <= 65 and 0 <= gray_ld25 <= 65; load_to_gray_to_gp_12023[root = 0, gray_ld22, gray_ld21] -> [gray_ld22, gray_ld21, 12] : 0 <= gray_ld22 <= 63 and 0 <= gray_ld21 <= 63 }
 //   { oc_load_in03[root = 0, oc_load_in01, oc_load_in02] -> [oc_load_in01, oc_load_in02, 0] : 0 <= oc_load_in01 <= 65 and 0 <= oc_load_in02 <= 65 }
-// Condition for oc_load_in03(((i2 == 0) && (i0 >= 0) && (65 - i0 >= 0) && (i1 >= 0) && (65 - i1 >= 0)))
+// Condition for oc_load_in03(((((1*i2)) == 0) && (((1*i0)) >= 0) && (((65 + -1*i0)) >= 0) && (((1*i1)) >= 0) && (((65 + -1*i1)) >= 0)))
 //   { load_to_gray_to_gp_22427[root = 0, gray_ld26, gray_ld25] -> [gray_ld26, gray_ld25, 1] : 0 <= gray_ld26 <= 65 and 0 <= gray_ld25 <= 65 }
-// Condition for load_to_gray_to_gp_22427(((-1 + i2 == 0) && (i0 >= 0) && (65 - i0 >= 0) && (i1 >= 0) && (65 - i1 >= 0)))
+// Condition for load_to_gray_to_gp_22427(((((-1 + 1*i2)) == 0) && (((1*i0)) >= 0) && (((65 + -1*i0)) >= 0) && (((1*i1)) >= 0) && (((65 + -1*i1)) >= 0)))
 //   { load_to_gray_to_gp_12023[root = 0, gray_ld22, gray_ld21] -> [gray_ld22, gray_ld21, 12] : 0 <= gray_ld22 <= 63 and 0 <= gray_ld21 <= 63 }
-// Condition for load_to_gray_to_gp_12023(((-12 + i2 == 0) && (i0 >= 0) && (63 - i0 >= 0) && (i1 >= 0) && (63 - i1 >= 0)))
+// Condition for load_to_gray_to_gp_12023(((((-12 + 1*i2)) == 0) && (((1*i0)) >= 0) && (((63 + -1*i0)) >= 0) && (((1*i1)) >= 0) && (((63 + -1*i1)) >= 0)))
 
 	// time range: { [i0, i1, i2] : 0 <= i0 <= 65 and 0 <= i1 <= 65 and 0 <= i2 <= 1; [i0, i1, 12] : 0 <= i0 <= 63 and 0 <= i1 <= 63 }
 	// # sets: 1
@@ -1068,7 +1068,7 @@ void Extracted_gray_ld22_gray_ld26_oc_load_in01_(HWStream<hw_uint<32> >& /* no b
 	      // { [i0, i1] : i0 <= 63 and i1 <= 63 }
 	        // { [i0, i1] : 63 - i0 >= 0 }
 	        // { [i0, i1] : 63 - i1 >= 0 }
-	      if ((((63 - i0 >= 0) && (63 - i1 >= 0)))) {
+	      if ((((((63 + -1*i0)) >= 0) && (((63 + -1*i1)) >= 0)))) {
 	        load_to_gray_to_gp_12023(gray /* buf name */, gray_to_gp_120, (0), (i0), (i1));
 	      }
 	    }
@@ -1147,11 +1147,11 @@ void Extracted_gray_diff_ld38_gray_to_gp_120_ld46_pw_math_gray1213_(HWStream<hw_
 
 // schedule: { load_to_gray_diff_to_gp_43639[root = 0, gray_diff_ld38, gray_diff_ld37] -> [gray_diff_ld38, gray_diff_ld37, 15] : 0 <= gray_diff_ld38 <= 63 and 0 <= gray_diff_ld37 <= 63; load_to_gray_FIFO_buf4447[root = 0, gray_to_gp_120_ld46, gray_to_gp_120_ld45] -> [gray_to_gp_120_ld46, gray_to_gp_120_ld45, 13] : 0 <= gray_to_gp_120_ld46 <= 63 and 0 <= gray_to_gp_120_ld45 <= 63; pw_math_gray1215[root = 0, pw_math_gray1213, pw_math_gray1214] -> [pw_math_gray1213, pw_math_gray1214, 14] : 0 <= pw_math_gray1213 <= 63 and 0 <= pw_math_gray1214 <= 63 }
 //   { load_to_gray_diff_to_gp_43639[root = 0, gray_diff_ld38, gray_diff_ld37] -> [gray_diff_ld38, gray_diff_ld37, 15] : 0 <= gray_diff_ld38 <= 63 and 0 <= gray_diff_ld37 <= 63 }
-// Condition for load_to_gray_diff_to_gp_43639(((-15 + i2 == 0) && (i0 >= 0) && (63 - i0 >= 0) && (i1 >= 0) && (63 - i1 >= 0)))
+// Condition for load_to_gray_diff_to_gp_43639(((((-15 + 1*i2)) == 0) && (((1*i0)) >= 0) && (((63 + -1*i0)) >= 0) && (((1*i1)) >= 0) && (((63 + -1*i1)) >= 0)))
 //   { load_to_gray_FIFO_buf4447[root = 0, gray_to_gp_120_ld46, gray_to_gp_120_ld45] -> [gray_to_gp_120_ld46, gray_to_gp_120_ld45, 13] : 0 <= gray_to_gp_120_ld46 <= 63 and 0 <= gray_to_gp_120_ld45 <= 63 }
-// Condition for load_to_gray_FIFO_buf4447(((-13 + i2 == 0) && (i0 >= 0) && (63 - i0 >= 0) && (i1 >= 0) && (63 - i1 >= 0)))
+// Condition for load_to_gray_FIFO_buf4447(((((-13 + 1*i2)) == 0) && (((1*i0)) >= 0) && (((63 + -1*i0)) >= 0) && (((1*i1)) >= 0) && (((63 + -1*i1)) >= 0)))
 //   { pw_math_gray1215[root = 0, pw_math_gray1213, pw_math_gray1214] -> [pw_math_gray1213, pw_math_gray1214, 14] : 0 <= pw_math_gray1213 <= 63 and 0 <= pw_math_gray1214 <= 63 }
-// Condition for pw_math_gray1215(((-14 + i2 == 0) && (i0 >= 0) && (63 - i0 >= 0) && (i1 >= 0) && (63 - i1 >= 0)))
+// Condition for pw_math_gray1215(((((-14 + 1*i2)) == 0) && (((1*i0)) >= 0) && (((63 + -1*i0)) >= 0) && (((1*i1)) >= 0) && (((63 + -1*i1)) >= 0)))
 
 	// time range: { [i0, i1, i2] : 0 <= i0 <= 63 and 0 <= i1 <= 63 and 13 <= i2 <= 15 }
 	// # sets: 1
@@ -1249,11 +1249,11 @@ void Extracted_gray_blur_ld30_gray_to_gp_224_ld50_pw_math_gray45_(HWStream<hw_ui
 
 // schedule: { load_to_gray_FIFO_buf4851[root = 0, gray_to_gp_224_ld50, gray_to_gp_224_ld49] -> [gray_to_gp_224_ld50, gray_to_gp_224_ld49, 2] : 0 <= gray_to_gp_224_ld50 <= 65 and 0 <= gray_to_gp_224_ld49 <= 65; pw_math_gray47[root = 0, pw_math_gray45, pw_math_gray46] -> [pw_math_gray45, pw_math_gray46, 3] : 0 <= pw_math_gray45 <= 65 and 0 <= pw_math_gray46 <= 65; load_to_gray_blur_to_gp_32831[root = 0, gray_blur_ld30, gray_blur_ld29] -> [gray_blur_ld30, gray_blur_ld29, 4] : 0 <= gray_blur_ld30 <= 65 and 0 <= gray_blur_ld29 <= 65 }
 //   { load_to_gray_FIFO_buf4851[root = 0, gray_to_gp_224_ld50, gray_to_gp_224_ld49] -> [gray_to_gp_224_ld50, gray_to_gp_224_ld49, 2] : 0 <= gray_to_gp_224_ld50 <= 65 and 0 <= gray_to_gp_224_ld49 <= 65 }
-// Condition for load_to_gray_FIFO_buf4851(((-2 + i2 == 0) && (i0 >= 0) && (65 - i0 >= 0) && (i1 >= 0) && (65 - i1 >= 0)))
+// Condition for load_to_gray_FIFO_buf4851(((((-2 + 1*i2)) == 0) && (((1*i0)) >= 0) && (((65 + -1*i0)) >= 0) && (((1*i1)) >= 0) && (((65 + -1*i1)) >= 0)))
 //   { pw_math_gray47[root = 0, pw_math_gray45, pw_math_gray46] -> [pw_math_gray45, pw_math_gray46, 3] : 0 <= pw_math_gray45 <= 65 and 0 <= pw_math_gray46 <= 65 }
-// Condition for pw_math_gray47(((-3 + i2 == 0) && (i0 >= 0) && (65 - i0 >= 0) && (i1 >= 0) && (65 - i1 >= 0)))
+// Condition for pw_math_gray47(((((-3 + 1*i2)) == 0) && (((1*i0)) >= 0) && (((65 + -1*i0)) >= 0) && (((1*i1)) >= 0) && (((65 + -1*i1)) >= 0)))
 //   { load_to_gray_blur_to_gp_32831[root = 0, gray_blur_ld30, gray_blur_ld29] -> [gray_blur_ld30, gray_blur_ld29, 4] : 0 <= gray_blur_ld30 <= 65 and 0 <= gray_blur_ld29 <= 65 }
-// Condition for load_to_gray_blur_to_gp_32831(((-4 + i2 == 0) && (i0 >= 0) && (65 - i0 >= 0) && (i1 >= 0) && (65 - i1 >= 0)))
+// Condition for load_to_gray_blur_to_gp_32831(((((-4 + 1*i2)) == 0) && (((1*i0)) >= 0) && (((65 + -1*i0)) >= 0) && (((1*i1)) >= 0) && (((65 + -1*i1)) >= 0)))
 
 	// time range: { [i0, i1, i2] : 0 <= i0 <= 65 and 0 <= i1 <= 65 and 2 <= i2 <= 4 }
 	// # sets: 1
@@ -1351,11 +1351,11 @@ void Extracted_gray_blur_cache_ld34_gray_blur_to_gp_328_ld54_pw_math_gray_blur89
 
 // schedule: { pw_math_gray_blur811[root = 0, pw_math_gray_blur89, pw_math_gray_blur810] -> [pw_math_gray_blur89, pw_math_gray_blur810, 6] : 0 <= pw_math_gray_blur89 <= 65 and 0 <= pw_math_gray_blur810 <= 65; load_to_gray_blur_FIFO_buf5255[root = 0, gray_blur_to_gp_328_ld54, gray_blur_to_gp_328_ld53] -> [gray_blur_to_gp_328_ld54, gray_blur_to_gp_328_ld53, 5] : 0 <= gray_blur_to_gp_328_ld54 <= 65 and 0 <= gray_blur_to_gp_328_ld53 <= 65; load_to_gray_blur_cache_to_gp_53235[root = 0, gray_blur_cache_ld34, gray_blur_cache_ld33] -> [gray_blur_cache_ld34, gray_blur_cache_ld33, 7] : 0 <= gray_blur_cache_ld34 <= 65 and 0 <= gray_blur_cache_ld33 <= 65 }
 //   { pw_math_gray_blur811[root = 0, pw_math_gray_blur89, pw_math_gray_blur810] -> [pw_math_gray_blur89, pw_math_gray_blur810, 6] : 0 <= pw_math_gray_blur89 <= 65 and 0 <= pw_math_gray_blur810 <= 65 }
-// Condition for pw_math_gray_blur811(((-6 + i2 == 0) && (i0 >= 0) && (65 - i0 >= 0) && (i1 >= 0) && (65 - i1 >= 0)))
+// Condition for pw_math_gray_blur811(((((-6 + 1*i2)) == 0) && (((1*i0)) >= 0) && (((65 + -1*i0)) >= 0) && (((1*i1)) >= 0) && (((65 + -1*i1)) >= 0)))
 //   { load_to_gray_blur_FIFO_buf5255[root = 0, gray_blur_to_gp_328_ld54, gray_blur_to_gp_328_ld53] -> [gray_blur_to_gp_328_ld54, gray_blur_to_gp_328_ld53, 5] : 0 <= gray_blur_to_gp_328_ld54 <= 65 and 0 <= gray_blur_to_gp_328_ld53 <= 65 }
-// Condition for load_to_gray_blur_FIFO_buf5255(((-5 + i2 == 0) && (i0 >= 0) && (65 - i0 >= 0) && (i1 >= 0) && (65 - i1 >= 0)))
+// Condition for load_to_gray_blur_FIFO_buf5255(((((-5 + 1*i2)) == 0) && (((1*i0)) >= 0) && (((65 + -1*i0)) >= 0) && (((1*i1)) >= 0) && (((65 + -1*i1)) >= 0)))
 //   { load_to_gray_blur_cache_to_gp_53235[root = 0, gray_blur_cache_ld34, gray_blur_cache_ld33] -> [gray_blur_cache_ld34, gray_blur_cache_ld33, 7] : 0 <= gray_blur_cache_ld34 <= 65 and 0 <= gray_blur_cache_ld33 <= 65 }
-// Condition for load_to_gray_blur_cache_to_gp_53235(((-7 + i2 == 0) && (i0 >= 0) && (65 - i0 >= 0) && (i1 >= 0) && (65 - i1 >= 0)))
+// Condition for load_to_gray_blur_cache_to_gp_53235(((((-7 + 1*i2)) == 0) && (((1*i0)) >= 0) && (((65 + -1*i0)) >= 0) && (((1*i1)) >= 0) && (((65 + -1*i1)) >= 0)))
 
 	// time range: { [i0, i1, i2] : 0 <= i0 <= 65 and 0 <= i1 <= 65 and 5 <= i2 <= 7 }
 	// # sets: 1
@@ -1455,11 +1455,11 @@ void Extracted_blurred_to_gp_416_ld42_gray_diff_to_gp_436_ld62_y_(HWStream<hw_ui
 
 // schedule: { load_to_blurred_FIFO_buf4043[root = 0, blurred_to_gp_416_ld42, blurred_to_gp_416_ld41] -> [2 + blurred_to_gp_416_ld42, 2 + blurred_to_gp_416_ld41, 11] : 0 <= blurred_to_gp_416_ld42 <= 63 and 0 <= blurred_to_gp_416_ld41 <= 63; diff[root = 0, y, x] -> [2 + y, 2 + x, 16] : 0 <= y <= 63 and 0 <= x <= 63; load_to_gray_diff_FIFO_buf6063[root = 0, gray_diff_to_gp_436_ld62, gray_diff_to_gp_436_ld61] -> [gray_diff_to_gp_436_ld62, gray_diff_to_gp_436_ld61, 17] : 0 <= gray_diff_to_gp_436_ld62 <= 63 and 0 <= gray_diff_to_gp_436_ld61 <= 63 }
 //   { load_to_blurred_FIFO_buf4043[root = 0, blurred_to_gp_416_ld42, blurred_to_gp_416_ld41] -> [2 + blurred_to_gp_416_ld42, 2 + blurred_to_gp_416_ld41, 11] : 0 <= blurred_to_gp_416_ld42 <= 63 and 0 <= blurred_to_gp_416_ld41 <= 63 }
-// Condition for load_to_blurred_FIFO_buf4043(((-11 + i2 == 0) && (-2 + i0 >= 0) && (65 - i0 >= 0) && (-2 + i1 >= 0) && (65 - i1 >= 0)))
+// Condition for load_to_blurred_FIFO_buf4043(((((-11 + 1*i2)) == 0) && (((-2 + 1*i0)) >= 0) && (((65 + -1*i0)) >= 0) && (((-2 + 1*i1)) >= 0) && (((65 + -1*i1)) >= 0)))
 //   { diff[root = 0, y, x] -> [2 + y, 2 + x, 16] : 0 <= y <= 63 and 0 <= x <= 63 }
-// Condition for diff(((-16 + i2 == 0) && (-2 + i0 >= 0) && (65 - i0 >= 0) && (-2 + i1 >= 0) && (65 - i1 >= 0)))
+// Condition for diff(((((-16 + 1*i2)) == 0) && (((-2 + 1*i0)) >= 0) && (((65 + -1*i0)) >= 0) && (((-2 + 1*i1)) >= 0) && (((65 + -1*i1)) >= 0)))
 //   { load_to_gray_diff_FIFO_buf6063[root = 0, gray_diff_to_gp_436_ld62, gray_diff_to_gp_436_ld61] -> [gray_diff_to_gp_436_ld62, gray_diff_to_gp_436_ld61, 17] : 0 <= gray_diff_to_gp_436_ld62 <= 63 and 0 <= gray_diff_to_gp_436_ld61 <= 63 }
-// Condition for load_to_gray_diff_FIFO_buf6063(((-17 + i2 == 0) && (i0 >= 0) && (63 - i0 >= 0) && (i1 >= 0) && (63 - i1 >= 0)))
+// Condition for load_to_gray_diff_FIFO_buf6063(((((-17 + 1*i2)) == 0) && (((1*i0)) >= 0) && (((63 + -1*i0)) >= 0) && (((1*i1)) >= 0) && (((63 + -1*i1)) >= 0)))
 
 	// time range: { [i0, i1, 17] : 0 <= i0 <= 63 and 0 <= i1 <= 63; [i0, i1, 16] : 2 <= i0 <= 65 and 2 <= i1 <= 65; [i0, i1, 11] : 2 <= i0 <= 65 and 2 <= i1 <= 65 }
 	// # sets: 1
@@ -1470,21 +1470,21 @@ void Extracted_blurred_to_gp_416_ld42_gray_diff_to_gp_436_ld62_y_(HWStream<hw_ui
 	      // { [i0, i1] : i0 >= 2 and i1 >= 2 }
 	        // { [i0, i1] : -2 + i0 >= 0 }
 	        // { [i0, i1] : -2 + i1 >= 0 }
-	      if ((((-2 + i0 >= 0) && (-2 + i1 >= 0)))) {
+	      if ((((((-2 + 1*i0)) >= 0) && (((-2 + 1*i1)) >= 0)))) {
 	        load_to_blurred_FIFO_buf4043(blurred_to_gp_416 /* buf name */, blurred_FIFO_buf40, (0), (-2 + i0), (-2 + i1));
 	      }
 	      // { [i0, i1] : i0 >= 2 and i1 >= 2 }
 	      // { [i0, i1] : i0 >= 2 and i1 >= 2 }
 	        // { [i0, i1] : -2 + i0 >= 0 }
 	        // { [i0, i1] : -2 + i1 >= 0 }
-	      if ((((-2 + i0 >= 0) && (-2 + i1 >= 0)))) {
+	      if ((((((-2 + 1*i0)) >= 0) && (((-2 + 1*i1)) >= 0)))) {
 	        diff(gray_diff_FIFO_buf60 /* buf name */, blurred_FIFO_buf40 /* buf name */, out, (0), (-2 + i0), (-2 + i1));
 	      }
 	      // { [i0, i1] : i0 <= 63 and i1 <= 63 }
 	      // { [i0, i1] : i0 <= 63 and i1 <= 63 }
 	        // { [i0, i1] : 63 - i0 >= 0 }
 	        // { [i0, i1] : 63 - i1 >= 0 }
-	      if ((((63 - i0 >= 0) && (63 - i1 >= 0)))) {
+	      if ((((((63 + -1*i0)) >= 0) && (((63 + -1*i1)) >= 0)))) {
 	        load_to_gray_diff_FIFO_buf6063(gray_diff_to_gp_436 /* buf name */, gray_diff_FIFO_buf60, (0), (i0), (i1));
 	      }
 	    }
@@ -1563,11 +1563,11 @@ void Extracted_blurred_ld18_gray_blur_cache_to_gp_532_ld58_yb_(HWStream<hw_uint<
 
 // schedule: { load_to_gray_blur_cache_FIFO_buf5659[root = 0, gray_blur_cache_to_gp_532_ld58, gray_blur_cache_to_gp_532_ld57] -> [gray_blur_cache_to_gp_532_ld58, gray_blur_cache_to_gp_532_ld57, 8] : 0 <= gray_blur_cache_to_gp_532_ld58 <= 65 and 0 <= gray_blur_cache_to_gp_532_ld57 <= 65; load_to_blurred_to_gp_41619[root = 0, blurred_ld18, blurred_ld17] -> [2 + blurred_ld18, 2 + blurred_ld17, 10] : 0 <= blurred_ld18 <= 63 and 0 <= blurred_ld17 <= 63; blur[root = 0, yb, xb] -> [2 + yb, 2 + xb, 9] : 0 <= yb <= 63 and 0 <= xb <= 63 }
 //   { load_to_gray_blur_cache_FIFO_buf5659[root = 0, gray_blur_cache_to_gp_532_ld58, gray_blur_cache_to_gp_532_ld57] -> [gray_blur_cache_to_gp_532_ld58, gray_blur_cache_to_gp_532_ld57, 8] : 0 <= gray_blur_cache_to_gp_532_ld58 <= 65 and 0 <= gray_blur_cache_to_gp_532_ld57 <= 65 }
-// Condition for load_to_gray_blur_cache_FIFO_buf5659(((-8 + i2 == 0) && (i0 >= 0) && (65 - i0 >= 0) && (i1 >= 0) && (65 - i1 >= 0)))
+// Condition for load_to_gray_blur_cache_FIFO_buf5659(((((-8 + 1*i2)) == 0) && (((1*i0)) >= 0) && (((65 + -1*i0)) >= 0) && (((1*i1)) >= 0) && (((65 + -1*i1)) >= 0)))
 //   { load_to_blurred_to_gp_41619[root = 0, blurred_ld18, blurred_ld17] -> [2 + blurred_ld18, 2 + blurred_ld17, 10] : 0 <= blurred_ld18 <= 63 and 0 <= blurred_ld17 <= 63 }
-// Condition for load_to_blurred_to_gp_41619(((-10 + i2 == 0) && (-2 + i0 >= 0) && (65 - i0 >= 0) && (-2 + i1 >= 0) && (65 - i1 >= 0)))
+// Condition for load_to_blurred_to_gp_41619(((((-10 + 1*i2)) == 0) && (((-2 + 1*i0)) >= 0) && (((65 + -1*i0)) >= 0) && (((-2 + 1*i1)) >= 0) && (((65 + -1*i1)) >= 0)))
 //   { blur[root = 0, yb, xb] -> [2 + yb, 2 + xb, 9] : 0 <= yb <= 63 and 0 <= xb <= 63 }
-// Condition for blur(((-9 + i2 == 0) && (-2 + i0 >= 0) && (65 - i0 >= 0) && (-2 + i1 >= 0) && (65 - i1 >= 0)))
+// Condition for blur(((((-9 + 1*i2)) == 0) && (((-2 + 1*i0)) >= 0) && (((65 + -1*i0)) >= 0) && (((-2 + 1*i1)) >= 0) && (((65 + -1*i1)) >= 0)))
 
 	// time range: { [i0, i1, i2] : 2 <= i0 <= 65 and 2 <= i1 <= 65 and 9 <= i2 <= 10; [i0, i1, 8] : 0 <= i0 <= 65 and 0 <= i1 <= 65 }
 	// # sets: 1
@@ -1583,14 +1583,14 @@ void Extracted_blurred_ld18_gray_blur_cache_to_gp_532_ld58_yb_(HWStream<hw_uint<
 	      // { [i0, i1] : i0 >= 2 and i1 >= 2 }
 	        // { [i0, i1] : -2 + i0 >= 0 }
 	        // { [i0, i1] : -2 + i1 >= 0 }
-	      if ((((-2 + i0 >= 0) && (-2 + i1 >= 0)))) {
+	      if ((((((-2 + 1*i0)) >= 0) && (((-2 + 1*i1)) >= 0)))) {
 	        blur(gray_blur_cache_FIFO_buf56 /* buf name */, blurred, (0), (-2 + i0), (-2 + i1));
 	      }
 	      // { [i0, i1] : i0 >= 2 and i1 >= 2 }
 	      // { [i0, i1] : i0 >= 2 and i1 >= 2 }
 	        // { [i0, i1] : -2 + i0 >= 0 }
 	        // { [i0, i1] : -2 + i1 >= 0 }
-	      if ((((-2 + i0 >= 0) && (-2 + i1 >= 0)))) {
+	      if ((((((-2 + 1*i0)) >= 0) && (((-2 + 1*i1)) >= 0)))) {
 	        load_to_blurred_to_gp_41619(blurred /* buf name */, blurred_to_gp_416, (0), (-2 + i0), (-2 + i1));
 	      }
 	    }

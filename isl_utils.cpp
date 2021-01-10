@@ -1037,7 +1037,7 @@ std::string codegen_c_v(isl_aff* const aff) {
     if (n != nullptr) {
       ctrl_vars.push_back(string(n));
     } else {
-      ctrl_vars.push_back("d" + str(i));
+      ctrl_vars.push_back("i" + str(i));
     }
   }
 
