@@ -19778,7 +19778,7 @@ void test_multi_kernel_pyramid_collapsing() {
 
   cpy("in_on_chip", "in", 2, prg);
 
-  const int num_pyramid_levels = 4;
+  const int num_pyramid_levels = 2;
   vector<string> lps = laplacian_pyramid("in_on_chip", num_pyramid_levels, prg);
 
   string reconstructed = reconstruct_gaussian(lps, prg);
@@ -20770,7 +20770,9 @@ void stencil_chain_multi_kernel_test() {
 }
 
 void dhuff_tests() {
-  //test_multi_kernel_pyramid_collapsing();
+  upsample2d_test();
+  up_stencil_down_test();
+  test_multi_kernel_pyramid_collapsing();
   test_multi_kernel_unsharp();
   test_multi_kernel_design();
   stencil_chain_multi_kernel_test();
@@ -20782,9 +20784,7 @@ void dhuff_tests() {
   reduce_1d_test();
   reduce_2d_test();
   compute_unit_with_index_variables_test();
-  upsample2d_test();
   downsample2d_test();
-  up_stencil_down_test();
   gaussian_pyramid_test();
 
   return;

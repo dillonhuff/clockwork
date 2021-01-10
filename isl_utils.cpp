@@ -1029,7 +1029,71 @@ std::string codegen_c(isl_multi_aff* const bset) {
   //return "(" + gp + ")";
 }
 
+std::string codegen_c_v(isl_aff* const aff) {
+  vector<string> ctrl_vars;
+  for (int i = 0; i < num_in_dims(aff); i++) {
+    cout << "cv i = " << i << endl;
+    const char* n = isl_aff_get_dim_name(aff, isl_dim_in, i);
+    if (n != nullptr) {
+      ctrl_vars.push_back(string(n));
+    } else {
+      ctrl_vars.push_back("d" + str(i));
+    }
+  }
+
+  vector<string> terms;
+  if (!is_zero(const_coeff(aff))) {
+    terms.push_back(str(const_coeff(aff)));
+  }
+  for (int i = 0; i < num_in_dims(aff); i++) {
+    if (!is_zero(get_coeff(aff, i))) {
+      string cf = str(get_coeff(aff, i));
+      string rn = ctrl_vars.at(i); // + brackets(str(i));
+      terms.push_back(cf + "*" + rn);
+    }
+  }
+
+  for (int d = 0; d < num_div_dims(aff); d++) {
+    auto v = isl_aff_get_coefficient_val(aff, isl_dim_div, d);
+    if (!is_zero(v)) {
+
+      isl_aff * a = isl_aff_get_div(aff, d);
+      isl_val * denom = isl_aff_get_denominator_val(a);
+      int denom_int = to_int( denom);
+      auto denom_str = str(denom);
+      auto astr = codegen_c_v(isl_aff_scale_val(a, denom));
+
+      assert(isl_val_is_int(v));
+
+      if(ceil(log2(denom_int)) == log2(denom_int))
+      {
+        terms.push_back(parens(str(v) + "*" + "(" + astr + " >> " + str(log2(denom_int)) + ")"));
+
+
+      } else{
+        terms.push_back(parens(str(v) + "*" + "$rtoi($floor(" + astr + " / " + denom_str + "))"));
+
+      }
+    }
+  }
+  if (terms.size() == 0) {
+    return "0";
+  }
+  string res_str = sep_list(terms, "(", ")", " + ");
+  return parens(res_str);
+}
+
 std::string codegen_c(isl_constraint* const bset) {
+  isl_aff* aff = isl_constraint_get_aff(bset);
+  //if (num_div_dims(aff) == 1) {
+    cout << "Constraint aff with div: " << str(aff) << endl;
+    string cg =  parens(codegen_c_v(aff) + (isl_constraint_is_equality(bset) ? " == " : " >= ") + "0");
+    cout << "cg = " << cg << endl;
+    return cg;
+    //assert(false);
+    //assert(false);
+  //}
+
   auto ct = ctx(bset);
   isl_printer *p;
   p = isl_printer_to_str(ct);

@@ -74,10 +74,12 @@ def table_op(table_lines, func):
     fig, ax = plt.subplots()
     x_pos = [i for i, _ in enumerate(labels)]
     barlist = ax.bar(x_pos, speedups, edgecolor='k')
-    # for i in range(6):
-        # barlist[i].set_color('C1')
-    # for i in range(6):
-        # barlist[6 + i].set_color('C2')
+    for i in range(6):
+        barlist[i].set_color('C1')
+        barlist[i].edgecolor = 'k'
+    for i in range(6):
+        barlist[6 + i].set_color('C2')
+        barlist[6 + i].edgecolor = 'k'
     plt.axhline(y=1.0, linewidth=2, color='red')
     plt.xlabel("Application and Throughput")
     plt.ylabel("Speedup vs. HLS Implementation")

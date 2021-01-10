@@ -1954,7 +1954,7 @@ std::string perfect_loop_codegen(umap* schedmap) {
 
   //for (int i = 0; i < lower_bounds.size(); i++) {
   for (int i = 0; i < lower_bounds.size() - 1; i++) {
-    conv_out << tab(i) << "for (int i" << str(i) << " = " << lower_bounds.at(i) << "; i" << str(i) << " <= " << upper_bounds.at(i) << "; i" << i << "++) {" << endl;
+    conv_out << tab(i) << "for (int d" << str(i) << " = " << lower_bounds.at(i) << "; d" << str(i) << " <= " << upper_bounds.at(i) << "; d" << i << "++) {" << endl;
     if (i == ((int) lower_bounds.size()) - 2) {
       conv_out << "#pragma HLS pipeline II=1" << endl;
     }
