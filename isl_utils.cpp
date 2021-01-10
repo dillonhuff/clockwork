@@ -1023,7 +1023,13 @@ std::string codegen_c(isl_multi_aff* const bset) {
 
   string range_name = match[3];
   string range_values = match[4];
-  return range_name + parens(range_values);
+  //return range_name + parens(range_values);
+
+  vector<string> aff_vals;
+  for (auto aff : get_affs(bset)) {
+    aff_vals.push_back(codegen_c(aff));
+  }
+  return range_name + sep_list(aff_vals, "(", ")", ", ");
 
   //string gp = match[3];
   //regex eqsign(" = ");
