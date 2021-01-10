@@ -1,6 +1,8 @@
 #include "isl_utils.h"
 #include "utils.h"
 
+std::string codegen_c_v(isl_aff* const aff);
+
 std::string dim_name(isl_set* const a, const int d) {
   string str(isl_set_get_dim_name(a, isl_dim_set, d));
   return str;
@@ -983,18 +985,19 @@ isl_ctx* ctx(isl_pw_qpolynomial* const m) {
 }
 
 std::string codegen_c(isl_aff* const bset) {
-  auto ct = ctx(bset);
-  isl_printer *p;
-  p = isl_printer_to_str(ct);
-  p = isl_printer_set_output_format(p, ISL_FORMAT_C);
-  p = isl_printer_print_aff(p, cpy(bset));
+  return codegen_c_v(bset);
+  //auto ct = ctx(bset);
+  //isl_printer *p;
+  //p = isl_printer_to_str(ct);
+  //p = isl_printer_set_output_format(p, ISL_FORMAT_C);
+  //p = isl_printer_print_aff(p, cpy(bset));
 
-  char* rs = isl_printer_get_str(p);
-  isl_printer_free(p);
-  std::string r(rs);
-  free(rs);
+  //char* rs = isl_printer_get_str(p);
+  //isl_printer_free(p);
+  //std::string r(rs);
+  //free(rs);
 
-  return r;
+  //return r;
 
   //string r = str(bset);
 

@@ -34,14 +34,14 @@ struct gray_cache {
 
 
 inline void gray_oc_load_in03_2_write(hw_uint<32> & gray_oc_load_in03_2, gray_cache& gray, int root, int oc_load_in01, int oc_load_in02, int dynamic_address) {
-  gray.gray_all_inputs_to_all_outputs.write(gray_oc_load_in03_2, oc_load_in02 - 0, oc_load_in01 - 0);
+  gray.gray_all_inputs_to_all_outputs.write(gray_oc_load_in03_2, ((1*oc_load_in02)) - 0, ((1*oc_load_in01)) - 0);
 }
 
 inline hw_uint<32>  gray_load_to_gray_to_gp_1811_5_select(gray_cache& gray, int root, int gray_ld10, int gray_ld9, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // gray_load_to_gray_to_gp_1811_5 read pattern: { load_to_gray_to_gp_1811[root = 0, gray_ld10, gray_ld9] -> gray[gray_ld9, gray_ld10] : 0 <= gray_ld10 <= 3 and 0 <= gray_ld9 <= 3 }
-  auto value_gray_oc_load_in03_2 = gray.gray_all_inputs_to_all_outputs.read(gray_ld9 - 0, gray_ld10 - 0);
+  auto value_gray_oc_load_in03_2 = gray.gray_all_inputs_to_all_outputs.read(((1*gray_ld9)) - 0, ((1*gray_ld10)) - 0);
   return value_gray_oc_load_in03_2;
   return 0;
 }
@@ -91,14 +91,14 @@ struct gray_FIFO_buf12_cache {
 
 
 inline void gray_FIFO_buf12_load_to_gray_FIFO_buf1215_6_write(hw_uint<32> & gray_FIFO_buf12_load_to_gray_FIFO_buf1215_6, gray_FIFO_buf12_cache& gray_FIFO_buf12, int root, int gray_to_gp_18_ld14, int gray_to_gp_18_ld13, int dynamic_address) {
-  gray_FIFO_buf12.gray_FIFO_buf12_all_inputs_to_all_outputs.write(gray_FIFO_buf12_load_to_gray_FIFO_buf1215_6, gray_to_gp_18_ld13 - 0, gray_to_gp_18_ld14 - 0);
+  gray_FIFO_buf12.gray_FIFO_buf12_all_inputs_to_all_outputs.write(gray_FIFO_buf12_load_to_gray_FIFO_buf1215_6, ((1*gray_to_gp_18_ld13)) - 0, ((1*gray_to_gp_18_ld14)) - 0);
 }
 
 inline hw_uint<32>  gray_FIFO_buf12_pw_math_gray47_1_select(gray_FIFO_buf12_cache& gray_FIFO_buf12, int root, int pw_math_gray45, int pw_math_gray46, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // gray_FIFO_buf12_pw_math_gray47_1 read pattern: { pw_math_gray47[root = 0, pw_math_gray45, pw_math_gray46] -> gray_FIFO_buf12[pw_math_gray46, pw_math_gray45] : 0 <= pw_math_gray45 <= 3 and 0 <= pw_math_gray46 <= 3 }
-  auto value_gray_FIFO_buf12_load_to_gray_FIFO_buf1215_6 = gray_FIFO_buf12.gray_FIFO_buf12_all_inputs_to_all_outputs.read(pw_math_gray46 - 0, pw_math_gray45 - 0);
+  auto value_gray_FIFO_buf12_load_to_gray_FIFO_buf1215_6 = gray_FIFO_buf12.gray_FIFO_buf12_all_inputs_to_all_outputs.read(((1*pw_math_gray46)) - 0, ((1*pw_math_gray45)) - 0);
   return value_gray_FIFO_buf12_load_to_gray_FIFO_buf1215_6;
   return 0;
 }
