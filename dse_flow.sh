@@ -5,8 +5,8 @@ make
 cd ../
 
 if [ $? -eq 0 ]; then
-  echo "Cmd: " $1 $2 $3
-  dse_flow/clockwork_dse_flow $1 $2 $3
+  echo "Cmd: clockwork_dse_flow " $@
+  dse_flow/clockwork_dse_flow $@
 else
   echo "Build FAILED"
 fi
