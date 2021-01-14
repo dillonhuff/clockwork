@@ -1339,23 +1339,6 @@ void Extracted_gp_in_on_chip_15_gp_in_on_chip_1_buf4_ld62_gp_in_on_chip_1_buf4_l
 }
 
 // Operation logic
-inline void load_to_lp_in_on_chip_0_buf16_to_gp_28487(lp_in_on_chip_0_buf16_cache& lp_in_on_chip_0_buf16, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */lp_in_on_chip_0_buf16_to_gp_284, int root, int lp_in_on_chip_0_buf16_ld86, int lp_in_on_chip_0_buf16_ld85) {
-  // Dynamic address computation
-
-	// Consume: lp_in_on_chip_0_buf16
-	auto lp_in_on_chip_0_buf16_lp_in_on_chip_0_buf16_ld85_c__lp_in_on_chip_0_buf16_ld86_value = lp_in_on_chip_0_buf16_load_to_lp_in_on_chip_0_buf16_to_gp_28487_read_bundle_read(lp_in_on_chip_0_buf16/* source_delay */, root, lp_in_on_chip_0_buf16_ld86, lp_in_on_chip_0_buf16_ld85, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	// Produce: lp_in_on_chip_0_buf16_to_gp_284
-	lp_in_on_chip_0_buf16_to_gp_284.write(lp_in_on_chip_0_buf16_lp_in_on_chip_0_buf16_ld85_c__lp_in_on_chip_0_buf16_ld86_value);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
 inline void load_to_gp_in_on_chip_1_buf4_us12_FIFO_buf100103(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */gp_in_on_chip_1_buf4_us12_to_gp_168, gp_in_on_chip_1_buf4_us12_FIFO_buf100_cache& gp_in_on_chip_1_buf4_us12_FIFO_buf100, int root, int gp_in_on_chip_1_buf4_us12_to_gp_168_ld102, int gp_in_on_chip_1_buf4_us12_to_gp_168_ld101) {
   // Dynamic address computation
 
@@ -1400,6 +1383,23 @@ inline void diff19(in_on_chip_FIFO_buf112_cache& in_on_chip_FIFO_buf112, gp_in_o
 	auto compute_result = llf_diff_float_32(in_on_chip_FIFO_buf112_lp_in_on_chip_018_p_1_c___lp_in_on_chip_017_p_1_value, gp_in_on_chip_1_buf4_us12_FIFO_buf100_lp_in_on_chip_018_p_0_c___lp_in_on_chip_017_p_0_value);
 	// Produce: lp_in_on_chip_0_buf16
 	lp_in_on_chip_0_buf16_diff19_write_bundle_write(/* arg names */compute_result, lp_in_on_chip_0_buf16, root, lp_in_on_chip_017, lp_in_on_chip_018, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void load_to_lp_in_on_chip_0_buf16_to_gp_28487(lp_in_on_chip_0_buf16_cache& lp_in_on_chip_0_buf16, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */lp_in_on_chip_0_buf16_to_gp_284, int root, int lp_in_on_chip_0_buf16_ld86, int lp_in_on_chip_0_buf16_ld85) {
+  // Dynamic address computation
+
+	// Consume: lp_in_on_chip_0_buf16
+	auto lp_in_on_chip_0_buf16_lp_in_on_chip_0_buf16_ld85_c__lp_in_on_chip_0_buf16_ld86_value = lp_in_on_chip_0_buf16_load_to_lp_in_on_chip_0_buf16_to_gp_28487_read_bundle_read(lp_in_on_chip_0_buf16/* source_delay */, root, lp_in_on_chip_0_buf16_ld86, lp_in_on_chip_0_buf16_ld85, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	// Produce: lp_in_on_chip_0_buf16_to_gp_284
+	lp_in_on_chip_0_buf16_to_gp_284.write(lp_in_on_chip_0_buf16_lp_in_on_chip_0_buf16_ld85_c__lp_in_on_chip_0_buf16_ld86_value);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -1888,23 +1888,6 @@ void Extracted_gp_in_on_chip_1_buf4_to_gp_560_ld94_gp_in_on_chip_1_buf4_us12_ld7
 }
 
 // Operation logic
-inline void load_to_gp_in_on_chip_1_buf4_us24_to_gp_27275(gp_in_on_chip_1_buf4_us24_cache& gp_in_on_chip_1_buf4_us24, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */gp_in_on_chip_1_buf4_us24_to_gp_272, int root, int gp_in_on_chip_1_buf4_us24_ld74, int gp_in_on_chip_1_buf4_us24_ld73) {
-  // Dynamic address computation
-
-	// Consume: gp_in_on_chip_1_buf4_us24
-	auto gp_in_on_chip_1_buf4_us24_gp_in_on_chip_1_buf4_us24_ld73_c__gp_in_on_chip_1_buf4_us24_ld74_value = gp_in_on_chip_1_buf4_us24_load_to_gp_in_on_chip_1_buf4_us24_to_gp_27275_read_bundle_read(gp_in_on_chip_1_buf4_us24/* source_delay */, root, gp_in_on_chip_1_buf4_us24_ld74, gp_in_on_chip_1_buf4_us24_ld73, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	// Produce: gp_in_on_chip_1_buf4_us24_to_gp_272
-	gp_in_on_chip_1_buf4_us24_to_gp_272.write(gp_in_on_chip_1_buf4_us24_gp_in_on_chip_1_buf4_us24_ld73_c__gp_in_on_chip_1_buf4_us24_ld74_value);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
 inline void load_to_gp_in_on_chip_1_buf4_FIFO_buf9699(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */gp_in_on_chip_1_buf4_to_gp_664, gp_in_on_chip_1_buf4_FIFO_buf96_cache& gp_in_on_chip_1_buf4_FIFO_buf96, int root, int gp_in_on_chip_1_buf4_to_gp_664_ld98, int gp_in_on_chip_1_buf4_to_gp_664_ld97) {
   // Dynamic address computation
 
@@ -1929,6 +1912,23 @@ inline void us27(gp_in_on_chip_1_buf4_FIFO_buf96_cache& gp_in_on_chip_1_buf4_FIF
 
 	// Produce: gp_in_on_chip_1_buf4_us24
 	gp_in_on_chip_1_buf4_us24_us27_write_bundle_write(/* arg names */gp_in_on_chip_1_buf4_FIFO_buf96_floor_lp_us_gp_in_on_chip_1_buf426__div__2_rp__p_0_c___floor_lp_us_gp_in_on_chip_1_buf425__div__2_rp__p_0_value, gp_in_on_chip_1_buf4_us24, root, us_gp_in_on_chip_1_buf425, us_gp_in_on_chip_1_buf426, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void load_to_gp_in_on_chip_1_buf4_us24_to_gp_27275(gp_in_on_chip_1_buf4_us24_cache& gp_in_on_chip_1_buf4_us24, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */gp_in_on_chip_1_buf4_us24_to_gp_272, int root, int gp_in_on_chip_1_buf4_us24_ld74, int gp_in_on_chip_1_buf4_us24_ld73) {
+  // Dynamic address computation
+
+	// Consume: gp_in_on_chip_1_buf4_us24
+	auto gp_in_on_chip_1_buf4_us24_gp_in_on_chip_1_buf4_us24_ld73_c__gp_in_on_chip_1_buf4_us24_ld74_value = gp_in_on_chip_1_buf4_us24_load_to_gp_in_on_chip_1_buf4_us24_to_gp_27275_read_bundle_read(gp_in_on_chip_1_buf4_us24/* source_delay */, root, gp_in_on_chip_1_buf4_us24_ld74, gp_in_on_chip_1_buf4_us24_ld73, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	// Produce: gp_in_on_chip_1_buf4_us24_to_gp_272
+	gp_in_on_chip_1_buf4_us24_to_gp_272.write(gp_in_on_chip_1_buf4_us24_gp_in_on_chip_1_buf4_us24_ld73_c__gp_in_on_chip_1_buf4_us24_ld74_value);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__

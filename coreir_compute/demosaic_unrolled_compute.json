@@ -1589,7 +1589,7 @@
       },
       "hcompute_hw_output_stencil":{
         "type":["Record",[
-          ["out_hw_output_stencil",["Array", 8,"Bit"]],
+          ["out_hw_output_stencil",["Array",16,"Bit"]],
           ["in0_demosaicked_1_stencil",["Array",1,["Array",16,"BitIn"]]]
         ]],
         "connections":[
@@ -1598,7 +1598,7 @@
       },
       "hcompute_hw_output_stencil_1":{
         "type":["Record",[
-          ["out_hw_output_stencil",["Array", 8,"Bit"]],
+          ["out_hw_output_stencil",["Array",16,"Bit"]],
           ["in0_demosaicked_1_stencil",["Array",1,["Array",16,"BitIn"]]]
         ]],
         "connections":[
@@ -1607,7 +1607,7 @@
       },
       "hcompute_hw_output_stencil_2":{
         "type":["Record",[
-          ["out_hw_output_stencil",["Array", 8,"Bit"]],
+          ["out_hw_output_stencil",["Array",16,"Bit"]],
           ["in0_demosaicked_1_stencil",["Array",1,["Array",16,"BitIn"]]]
         ]],
         "connections":[
