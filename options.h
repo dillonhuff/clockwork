@@ -73,12 +73,13 @@ struct RTLOptions {
   int max_inpt, max_outpt;
   TargetTile target_tile;
   global_signals_policy global_signals;
+  int hls_clock_target_Hz;
 
   RTLOptions() : use_external_controllers(true), pack_controllers_in_memtiles(false),
   use_pipelined_compute_units(false),
     max_inpt(1), max_outpt(1),
-    target_tile(TARGET_TILE_DUAL_SRAM_WITH_ADDRGEN), use_prebuilt_memory(false) {}
-  //RTLOptions() : use_external_controllers(true), pack_controllers_in_memtiles(false), use_prebuilt_memory(false), target_tile(TARGET_TILE_DUAL_SRAM_WITH_ADDRGEN) {}
+    target_tile(TARGET_TILE_DUAL_SRAM_WITH_ADDRGEN), use_prebuilt_memory(false),
+    hls_clock_target_Hz(250000000) {}
 };
 
 struct LakeCollateral {
@@ -100,11 +101,18 @@ struct LakeCollateral {
         capacity({{"agg", 16}, {"sram", 512}, {"tb", 16}}) {}
 };
 
+enum HLSLoopCodegen {
+  HLS_LOOP_CODEGEN_ISL,
+  HLS_LOOP_CODEGEN_PERFECT,
+  HLS_LOOP_CODEGEN_CUSTOM
+};
+
 struct CodegenOptions {
   bool internal;
   bool all_rams;
   bool add_dependence_pragmas;
-  bool use_custom_code_string;
+  HLSLoopCodegen hls_loop_codegen;
+  //bool use_custom_code_string;
   string code_string;
   bool simplify_address_expressions;
   bool unroll_factors_as_pad;
@@ -142,7 +150,8 @@ struct CodegenOptions {
   LakeCollateral mem_tile;
 
   CodegenOptions() : internal(true), all_rams(false), add_dependence_pragmas(true),
-  use_custom_code_string(false), code_string(""), simplify_address_expressions(false),
+  //use_custom_code_string(false),
+  hls_loop_codegen(HLS_LOOP_CODEGEN_ISL), code_string(""), simplify_address_expressions(false),
   unroll_factors_as_pad(false), conditional_merge(false), merge_threshold(0),
   inline_vectorization(false), iis({}),
   pass_through_valid(false), emit_smt_stream(false), config_gen_only(false), dir(""),

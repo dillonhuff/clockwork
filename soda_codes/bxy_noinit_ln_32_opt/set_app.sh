@@ -1,1 +1,0 @@
-export app=bxy_noinit_ln_32_opt

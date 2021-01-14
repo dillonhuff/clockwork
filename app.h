@@ -1069,6 +1069,11 @@ map<string, vector<int> >
 pad_insertion_indexes(uset* domain, umap* validity);
 
 umap*
+clockwork_schedule_umap_reversed(uset* domain,
+    umap* validity,
+    umap* proximity);
+
+umap*
 clockwork_schedule_umap(uset* domain,
     umap* validity,
     umap* proximity);

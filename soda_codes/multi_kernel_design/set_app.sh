@@ -1,1 +1,0 @@
-export app=multi_kernel_design

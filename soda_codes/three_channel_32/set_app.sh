@@ -1,1 +1,0 @@
-export app=three_channel_32_opt

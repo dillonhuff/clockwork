@@ -111,6 +111,7 @@ void ocl_headers(ostream& out) {
   out << "#include <fstream>" << endl;
   out << "#include <vector>" << endl;
   out << "#include <cstdlib>" << endl << endl;
+  out << "#include \"clockwork_standard_compute_units.h\"" << endl << endl;
 }
 
 void
@@ -351,17 +352,17 @@ void run_kernel(CodegenOptions& options, std::ostream& out, map<string, UBuffer>
 
   out << tab(1) << "OCL_CHECK(err, err = q.enqueueMigrateMemObjects({" << comma_list(in_bufs) << "}, 0));" << endl << endl;
 
-  out << "unsigned long start, end, nsduration;" << endl;
-  out << "cl::Event event;" << endl << endl;
+  out << tab(1) << "unsigned long start, end, nsduration;" << endl;
+  out << tab(1) << "cl::Event event;" << endl << endl;
 
   out << tab(1) << "std::cout << \"Starting kernel\" << std::endl;" << endl;
   out << tab(1) << "OCL_CHECK(err, err = q.enqueueTask(krnl_vector_add, NULL, &event));" << endl;
   out << tab(1) << "OCL_CHECK(err, err = event.wait());" << endl;
   out << tab(1) << "end =" << endl;
-  out << "OCL_CHECK(err, event.getProfilingInfo<CL_PROFILING_COMMAND_END>(&err));" << endl;
-  out << "start = OCL_CHECK(err," << endl;
-  out << "event.getProfilingInfo<CL_PROFILING_COMMAND_START>(&err));" << endl;
-  out << "nsduration = end - start;" << endl;
+  out << tab(1) << "OCL_CHECK(err, event.getProfilingInfo<CL_PROFILING_COMMAND_END>(&err));" << endl;
+  out << tab(1) << "start = OCL_CHECK(err," << endl;
+  out << tab(1) << "event.getProfilingInfo<CL_PROFILING_COMMAND_START>(&err));" << endl;
+  out << tab(1) << "nsduration = end - start;" << endl;
 
   //out << tab(1) << "OCL_CHECK(err, err = q.enqueueTask(krnl_vector_add));" << endl << endl;
 
@@ -406,9 +407,26 @@ void populate_input(std::ostream& out, const std::string& edge_bundle, const str
 
   out << tab(1) << "std::ofstream input_" << edge_bundle << "(\"" << edge_bundle << ".csv\");" << endl;
   out << tab(1) << "for (int i = 0; i < " << edge_bundle << "_pipe0_DATA_SIZE; i++) {" << endl;
+  out << "#ifdef __FLOAT_OUTPUT__" << endl;
+  string fval = "static_cast <float> (rand()) / static_cast <float> (RAND_MAX)";
+  out << tab(2) << "float " << " val = " << fval << ";" << endl;
+  //out << tab(2) << "float " << " val = (rand() % 256);" << endl;
+  out << "#else // __FLOAT_OUTPUT__" << endl;
   out << tab(2) << tp << " val = (rand() % 256);" << endl;
+  out << "#endif // __FLOAT_OUTPUT__" << endl << endl;
+
+  out << "#ifdef __FLOAT_OUTPUT__" << endl;
   out << tab(2) << "input_" << edge_bundle << " << val << std::endl;" << endl;
+  out << "#else // __FLOAT_OUTPUT__" << endl;
+  out << tab(2) << "input_" << edge_bundle << " << val << std::endl;" << endl;
+  out << "#endif // __FLOAT_OUTPUT__" << endl << endl;
+
+
+  out << "#ifdef __FLOAT_OUTPUT__" << endl;
+  out << tab(2) << "((" << tp << "*) (" << edge_bundle << "_pipe0.data()))[i] = bitcast<" << tp << ", " << "float" << ">(val);" << endl;
+  out << "#else // __FLOAT_OUTPUT__" << endl;
   out << tab(2) << "((" << tp << "*) (" << edge_bundle << "_pipe0.data()))[i] = val;" << endl;
+  out << "#endif // __FLOAT_OUTPUT__" << endl;
   out << tab(1) << "}" << endl << endl;
   out << tab(1) << "input_" << edge_bundle << ".close();" << endl;
 }
@@ -663,7 +681,11 @@ void generate_xilinx_accel_soda_host(CodegenOptions& options, map<string, UBuffe
     auto edge_bundle = edge_out.second;
     auto buf = edge_out.first;
     out << tab(1) << "for (int i = 0; i < " << edge_bundle << "_pipe0_DATA_SIZE; i++) {" << endl;
+    out << "#ifdef __FLOAT_OUTPUT__" << endl;
     out << tab(2) << "((" << vanilla_c_pixel_type_string(buf, buffers) << "*) (" << edge_bundle << "_pipe0.data()))[i] = 0;" << endl;
+    out << "#else // __FLOAT_OUTPUT__" << endl;
+    out << tab(2) << "((" << vanilla_c_pixel_type_string(buf, buffers) << "*) (" << edge_bundle << "_pipe0.data()))[i] = 0;" << endl;
+    out << "#endif // __FLOAT_OUTPUT__" << endl;
     out << tab(1) << "}" << endl << endl;
   }
 
@@ -693,7 +715,11 @@ void generate_xilinx_accel_soda_host(CodegenOptions& options, map<string, UBuffe
     auto out_bundle = output.second;
     out << tab(1) << "std::ofstream regression_result(\"" << out_bundle << "_accel_result.csv\");" << endl;
     out << tab(1) << "for (int i = 0; i < " << out_bundle << "_pipe0_DATA_SIZE; i++) {" << endl;
+    out << "#ifdef __FLOAT_OUTPUT__" << endl;
+    out << tab(2) << "regression_result << bitcast<float, " << vanilla_c_pixel_type_string(buf, buffers) << ">(((" << vanilla_c_pixel_type_string(buf, buffers) << "*) (" << out_bundle << "_pipe0.data()))[i]) << std::endl;" << endl;
+    out << "#else // __FLOAT_OUTPUT__" << endl;
     out << tab(2) << "regression_result << ((" << vanilla_c_pixel_type_string(buf, buffers) << "*) (" << out_bundle << "_pipe0.data()))[i] << std::endl;" << endl;
+    out << "#endif // __FLOAT_OUTPUT__" << endl;
     out << tab(1) << "}" << endl;
   }
   out << endl;
@@ -710,6 +736,8 @@ void generate_xilinx_accel_host(CodegenOptions& options, map<string, UBuffer>& b
   ofstream out(prg.name + "_host.cpp");
 
   ocl_headers(out);
+
+  out << "#define __POPULATE_HOST_INPUTS__" << endl << endl;
 
   out << "int main(int argc, char **argv) {" << endl;
 
@@ -1555,7 +1583,7 @@ void generate_soda_tb(CodegenOptions& options, map<string, UBuffer>& buffers, pr
   }
 }
 
-void generate_tb_compare_scripts(map<string, UBuffer>& buffers, prog& prg) {
+void generate_tb_compare_scripts(CodegenOptions& options, map<string, UBuffer>& buffers, prog& prg) {
   {
     ofstream of(prg.name + "_kernel.h");
     of << "#include \"ap_int.h\"" << endl << endl;
@@ -1590,6 +1618,7 @@ void generate_tb_compare_scripts(map<string, UBuffer>& buffers, prog& prg) {
   {
     ofstream of("set_app.sh");
     of << "export app=" << prg.name << endl;
+    of << "export HLS_CLOCK_FREQUENCY=" << options.rtl_options.hls_clock_target_Hz << endl;
     of.close();
   }
 
@@ -1667,7 +1696,8 @@ void generate_app_code_header(const map<string, UBuffer>& buffers, prog& prg) {
 }
 
 
-vector<string> buffer_arg_names(const map<string, UBuffer>& buffers, op* op, prog& prg) {
+//vector<string> buffer_arg_names(const map<string, UBuffer>& buffers, op* op, prog& prg) {
+vector<string> buffer_arg_names(op* op, prog& prg) {
   std::set<string> done;
   vector<string> buf_srcs;
 
@@ -1910,39 +1940,88 @@ std::string perfect_loop_codegen(umap* schedmap) {
 
   conv_out << "// # sets: " << sets.size() << endl;
   assert(sets.size() == 1);
-  for (auto s : get_sets(time_range)) {
-    vector<int> lower_bounds;
-    vector<int> upper_bounds;
-    for (int d = 0; d < num_dims(s); d++) {
-      auto ds = project_all_but(s, d);
-      auto lm = lexminval(ds);
-      auto lmax = lexmaxval(ds);
-      lower_bounds.push_back(to_int(lm));
-      upper_bounds.push_back(to_int(lmax));
+  isl_set* s = pick(get_sets(time_range));
+  isl_set* index_ranges = isl_set_project_out(cpy(s), isl_dim_set, num_dims(s) - 1, 1);
+  vector<int> lower_bounds;
+  vector<int> upper_bounds;
+  for (int d = 0; d < num_dims(s); d++) {
+    auto ds = project_all_but(s, d);
+    auto lm = lexminval(ds);
+    auto lmax = lexmaxval(ds);
+    lower_bounds.push_back(to_int(lm));
+    upper_bounds.push_back(to_int(lmax));
+  }
+
+  //for (int i = 0; i < lower_bounds.size(); i++) {
+  for (int i = 0; i < lower_bounds.size() - 1; i++) {
+    conv_out << tab(i) << "for (int i" << str(i) << " = " << lower_bounds.at(i) << "; i" << str(i) << " <= " << upper_bounds.at(i) << "; i" << i << "++) {" << endl;
+    if (i == ((int) lower_bounds.size()) - 2) {
+      conv_out << "#pragma HLS pipeline II=1" << endl;
     }
+  }
 
-    for (int i = 0; i < lower_bounds.size(); i++) {
-      conv_out << tab(i) << "for (int i" << str(i) << " = " << lower_bounds.at(i) << "; i" << str(i) << " <= " << upper_bounds.at(i) << "; i" << i << "++) {" << endl;
+  map<string, int> order;
+  for (auto time_to_val : get_maps(inv(schedmap))) {
+    cout << "Time to val: " << str(time_to_val) << endl;
+    auto val_to_time = inv(time_to_val);
+    cout << "Val to time: " << str(val_to_time) << endl;
+    auto last_dim = 
+      isl_map_project_out(cpy(val_to_time), isl_dim_out, 0, lower_bounds.size() - 1);
+    cout << "Val to last: " << str(last_dim) << endl;
+    isl_aff* lda = get_aff(last_dim);
+    int const_val = -1;
+    if (is_cst(lda)) {
+      cout << tab(1) << "Constant!" << endl;
+      const_val = to_int(const_coeff(lda));
+    } else {
+      cout << "Error: Final schedule dimension: " << str(lda) << " is not constant" << endl;
+      assert(false);
     }
+    assert(const_val >= 0);
+    cout << tab(1) << "C = " << const_val << endl;
+    cout << endl;
+    order[range_name(time_to_val)] = const_val;
+  }
 
-    for (auto time_to_val : get_maps(inv(schedmap))) {
-      auto pw = isl_pw_multi_aff_from_map(time_to_val);
-      vector<pair<isl_set*, isl_multi_aff*> > pieces =
-        get_pieces(pw);
-      assert(pieces.size() == 1);
+  vector<isl_map*> maps = get_maps(inv(schedmap));
+  sort_lt(maps, [order](isl_map* x) {
+      return map_find(range_name(x), order);
+      });
 
-      auto saff = pieces.at(0).second;
-      auto dom = pieces.at(0).first;
-      conv_out << tab(lower_bounds.size()) << "// " << str(dom) << endl;
-      conv_out << tab(lower_bounds.size()) << "if (" << codegen_c(dom) << ") {" << endl;
-      conv_out << tab(lower_bounds.size() + 1) << codegen_c(saff) << ";" << endl;
-      conv_out << tab(lower_bounds.size()) << "}" << endl;
+  //for (auto time_to_val : get_maps(inv(schedmap))) {
+  for (auto tv : maps) {
+    cout << tab(1) << "tv: " << str(tv) << endl;
+    cout << tab(2) << "start project out at: " << num_in_dims(tv) - 1 << endl;
+    auto time_to_val = isl_map_project_out(cpy(tv), isl_dim_in, num_in_dims(tv) - 1, 1);
+    cout << "time to val: " << str(time_to_val) << endl;
+    auto pw = isl_pw_multi_aff_from_map(time_to_val);
+    vector<pair<isl_set*, isl_multi_aff*> > pieces =
+      get_pieces(pw);
+    assert(pieces.size() == 1);
+
+    auto saff = pieces.at(0).second;
+    auto dom = pieces.at(0).first;
+    cout << "dom: " << str(dom) << endl;
+    cout << "irn: " << str(index_ranges) << endl;
+    dom = gist(dom, index_ranges);
+    //assert(false);
+    conv_out << tab(lower_bounds.size()) << "// " << str(dom) << endl;
+    for (auto bs : get_basic_sets(dom)) {
+      conv_out << tab(lower_bounds.size()) << "// " << str(bs) << endl;
+      for (auto c : constraints(bs)) {
+        conv_out << tab(lower_bounds.size() + 1) << "// " << str(c) << endl;
+      }
     }
+    conv_out << tab(lower_bounds.size()) << "if (" << codegen_c(dom) << ") {" << endl;
+    conv_out << tab(lower_bounds.size() + 1) << codegen_c(saff) << ";" << endl;
+    conv_out << tab(lower_bounds.size()) << "}" << endl;
+  }
 
-    for (int i = 0; i < lower_bounds.size(); i++) {
-      conv_out << tab(lower_bounds.size() - 1 - i) << "}" << endl;
-    }
+  //assert(false);
 
+  //for (int i = 0; i < lower_bounds.size(); i++) {
+  for (int i = 0; i < lower_bounds.size() - 1; i++) {
+    conv_out << tab(lower_bounds.size() - 1 - i) << "}" << endl;
   }
 
   return conv_out.str();
@@ -2027,7 +2106,7 @@ void generate_app_collateral(CodegenOptions& options,
   generate_xilinx_accel_soda_host(options, buffers, prg);
   generate_xilinx_accel_host(options, buffers, prg);
   generate_tb_run_scripts(prg);
-  generate_tb_compare_scripts(buffers, prg);
+  generate_tb_compare_scripts(options, buffers, prg);
 
 }
 
@@ -2120,14 +2199,14 @@ void generate_app_code_op_logic(
 
 
   string code_string =
-    //perfect_loop_codegen(schedmap);
     options.code_string;
-  if (!options.use_custom_code_string) {
-    code_string = codegen_c(schedmap);
-    //code_string = perfect_loop_codegen(schedmap);
+  if (options.hls_loop_codegen == HLS_LOOP_CODEGEN_CUSTOM) {
+    // Do nothing, leave code string
+  } else if (options.hls_loop_codegen == HLS_LOOP_CODEGEN_PERFECT) {
+    code_string = perfect_loop_codegen(schedmap);
   } else {
-    cout << "Code string = " << code_string << endl;
-    //assert(false);
+    assert(options.hls_loop_codegen == HLS_LOOP_CODEGEN_ISL);
+    code_string = codegen_c(schedmap);
   }
 
   string original_isl_code_string = code_string;
@@ -2136,7 +2215,8 @@ void generate_app_code_op_logic(
 
   for (auto op : prg.all_ops()) {
     regex re("(\n\t\\s+)" + op->name + "\\((.*)\\);");
-    string args_list = sep_list(buffer_arg_names(buffers, op, prg), "", "", ", ");
+    //string args_list = sep_list(buffer_arg_names(buffers, op, prg), "", "", ", ");
+    string args_list = sep_list(buffer_arg_names(op, prg), "", "", ", ");
     //code_string = regex_replace(code_string, re, "\n\t" + op->name + "(" + args_list + ", $1);");
     code_string = regex_replace(code_string, re, "$1" + op->name + "(" + args_list + ", $2);");
   }
@@ -2152,9 +2232,9 @@ void generate_app_code_op_logic(
   }
   conv_out << endl;
 
-  conv_out << tab(1) << "/*" << endl;
-  conv_out << original_isl_code_string << endl;
-  conv_out << tab(1) << "*/" << endl;
+  //conv_out << tab(1) << "/*" << endl;
+  //conv_out << original_isl_code_string << endl;
+  //conv_out << tab(1) << "*/" << endl;
   conv_out << code_string << endl;
 
   generate_driver_function_suffix(options, conv_out, buffers, prg);
@@ -2366,9 +2446,11 @@ incoming_bundles(op* op,
 void generate_regression_testbench(prog& prg, map<string, UBuffer>& buffers) {
   ofstream rgtb("regression_tb_" + prg.name + ".cpp");
   rgtb << "#include <fstream>" << endl;
-  rgtb << "#include \"" << prg.name << ".h\"" << endl << endl;
+  rgtb << "#include \"" << prg.name << ".h\"" << endl;
+  rgtb << "#include \"clockwork_standard_compute_units.h\"" << endl << endl;
 
   rgtb << "int main() {" << endl;
+  rgtb << tab(1) << "srand(234);" << endl;
   rgtb << tab(1) << "ofstream in_pix(\"" << "input_pixels_regression_result_" << prg.name << ".txt\");" << endl;
   rgtb << tab(1) << "ofstream fout(\"" << "regression_result_" << prg.name << ".txt\");" << endl;
 
@@ -2420,9 +2502,33 @@ void generate_regression_testbench(prog& prg, map<string, UBuffer>& buffers) {
     rgtb << tab(1) << "for (int i = 0; i < " << num_pushes << "; i++) {" << endl;
     rgtb << tab(2) << buf.bundle_type_string(bundle) << " in_val;" << endl;
     for (int p = 0; p < num_ports; p++) {
-      string next_val = str(num_ports) + "*i + " + str(p);
+      string next_val = parens(str(num_ports) + "*i + " + str(p));
+      //rgtb << tab(2) << "set_at<" << p << "*" << port_width << ", " << bundle_width << ", " << port_width << ">(in_val, " << next_val << ");" << endl;
+      rgtb << "#ifdef __INT_OUTPUT__" << endl;
       rgtb << tab(2) << "set_at<" << p << "*" << port_width << ", " << bundle_width << ", " << port_width << ">(in_val, " << next_val << ");" << endl;
+      rgtb << "#elif defined(__FLOAT_OUTPUT__)" << endl;
+      string fval = "static_cast <float> (rand()) / static_cast <float> (RAND_MAX)";
+      //rgtb << tab(2) << "set_at<" << p << "*" << port_width << ", " << bundle_width << ", " << port_width << ">(in_val, " << parens("to_bits" + parens(parens("float") + next_val)) << ");" << endl;
+      rgtb << tab(2) << "set_at<" << p << "*" << port_width << ", " << bundle_width << ", " << port_width << ">(in_val, " << parens("to_bits" + parens(parens("float") + fval)) << ");" << endl;
+      //rgtb << tab(2) << "fout << to_float(actual_lane_" << p << ") << endl;" << endl;
+      rgtb << "#else // No specified output type" << endl;
+      rgtb << tab(2) << "set_at<" << p << "*" << port_width << ", " << bundle_width << ", " << port_width << ">(in_val, " << next_val << ");" << endl;
+      //rgtb << tab(2) << "fout << actual_lane_" << p << " << endl;" << endl;
+      rgtb << "#endif" << endl;
+
+
+      rgtb << "#ifdef __INT_OUTPUT__" << endl;
       rgtb << tab(2) << "in_pix << in_val << endl;" << endl;
+      //rgtb << tab(2) << "set_at<" << p << "*" << port_width << ", " << bundle_width << ", " << port_width << ">(in_val, " << next_val << ");" << endl;
+      rgtb << "#elif defined(__FLOAT_OUTPUT__)" << endl;
+      rgtb << tab(2) << "in_pix << to_float(in_val) << endl;" << endl;
+      //rgtb << tab(2) << "set_at<" << p << "*" << port_width << ", " << bundle_width << ", " << port_width << ">(in_val, " << parens("to_bits" + parens(parens("float") + next_val)) << ");" << endl;
+      //rgtb << tab(2) << "fout << to_float(actual_lane_" << p << ") << endl;" << endl;
+      rgtb << "#else // No specified output type" << endl;
+      rgtb << tab(2) << "in_pix << in_val << endl;" << endl;
+      //rgtb << tab(2) << "set_at<" << p << "*" << port_width << ", " << bundle_width << ", " << port_width << ">(in_val, " << next_val << ");" << endl;
+      rgtb << "#endif" << endl;
+      //rgtb << tab(2) << "in_pix << in_val << endl;" << endl;
     }
     rgtb << tab(2) << bundle << ".write(in_val);" << endl;
     rgtb << tab(1) << "}" << endl << endl;
@@ -2455,9 +2561,11 @@ void generate_regression_testbench(prog& prg, map<string, UBuffer>& buffers) {
 
       rgtb << "#ifdef __INT_OUTPUT__" << endl;
       rgtb << tab(2) << "fout << (int) actual_lane_" << p << " << endl;" << endl;
-      rgtb << "#else // __INT_OUTPUT__" << endl;
+      rgtb << "#elif defined(__FLOAT_OUTPUT__)" << endl;
+      rgtb << tab(2) << "fout << to_float(actual_lane_" << p << ") << endl;" << endl;
+      rgtb << "#else // No specified output type" << endl;
       rgtb << tab(2) << "fout << actual_lane_" << p << " << endl;" << endl;
-      rgtb << "#endif // __INT_OUTPUT__" << endl;
+      rgtb << "#endif" << endl;
     }
 
     rgtb << tab(1) << "}" << endl << endl;
@@ -2476,6 +2584,7 @@ void generate_regression_testbench(prog& prg) {
   rgtb << "#include \"" << prg.name << ".h\"" << endl << endl;
 
   rgtb << "int main() {" << endl;
+  rgtb << tab(1) << "srand(234);" << endl;
   rgtb << tab(1) << "ofstream fout(\"" << "regression_result_" << prg.name << ".txt\");" << endl;
 
   vector<string> optimized_streams;
@@ -7235,13 +7344,6 @@ isl_map* build_buffer_impl(prog& prg, UBuffer& buf, schedule_info& hwinfo, ubuff
     cout << buf.name << " is really a register file" << endl;
   }
 
-  //if (buf.get_out_ports().size() > 0 &&
-      //is_register_file(buf) &&
-      //&& all_constant_accesses(buf)) {
-    //cout << buf.name << " has all constant accesses" << endl;
-    ////assert(false);
-  //}
-
   impl.partition_dims = embarassing_banking.get_value();
   vector<int> extents;
   extents = extents_by_dimension(buf);
@@ -8236,6 +8338,7 @@ UBuffer write_latency_adjusted_buffer(
     prog& prg,
     UBuffer& buf,
     schedule_info& hwinfo) {
+
   UBuffer cpy = buf;
   cout << "Adjusted latencies" << endl;
   for (auto l : hwinfo.compute_unit_latencies) {
@@ -8346,8 +8449,17 @@ void generate_app_code(
     }
   }
 
+  //auto valid_deps = dag.prg.validity_deps();
+  //auto global_sched =
+    //its(clockwork_schedule_umap_reversed(dag.prg.whole_iteration_domain(), valid_deps, valid_deps),
+        ////dag.prg.validity_deps(),
+        ////dag.prg.validity_deps()),
+        //dag.prg.whole_iteration_domain());
+  //cout << "Sched: " << str(global_sched) << endl;
+  
   auto global_sched = dag.prg.optimized_codegen();
   auto buffers = build_buffers(dag.prg, global_sched);
+
   cout << "Generating code for " << dag.prg.name << endl;
   map<string, UBuffer> reps;
   for (auto b : buffers) {
@@ -8428,7 +8540,7 @@ void generate_app_code(
         string tp = rep_buf.bundle_type_string(bundle);
         conv_out << tab(1) << "HWStream< " << tp << " > " << buf << ";" << endl;
         open_synth_scope(conv_out);
-        int depth = 1;
+        int depth = 2048;
         conv_out << "#pragma HLS stream variable=" << buf << ".values depth=" << depth << endl;
         close_synth_scope(conv_out);
         done.insert(buf);
@@ -8781,4 +8893,12 @@ map<std::string, std::set<string> > one_stage_per_group(prog& prg) {
 
   return fusion_groups;
 }
+
+bool sw_schedule_respects_deps(umap* schedule, umap* deps) {
+  auto before = lex_gt(schedule, schedule);
+  auto violated = its(before, deps);
+  return empty(violated);
+}
+
+
 

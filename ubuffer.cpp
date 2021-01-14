@@ -3256,6 +3256,11 @@ void emit_lake_address_stream2file_new(CodegenOptions &options,
     }
 
     out << "struct " << buf.name << "_cache {" << endl;
+    //out << tab(1) << "// Is register ? " << is_register(buf) << endl;
+    out << tab(1) << "// Reader addrs..." << endl;
+    for (auto outpt : buf.get_out_ports()) {
+      out << tab(2) << "// " << str(buf.access_map.at(outpt)) << endl;
+    }
     out << tab(1) << "// # of banks: " << buf.get_banks().size() << endl;
     for (auto b : buf.get_banks()) {
       out << tab(1)
@@ -3670,25 +3675,8 @@ void emit_lake_address_stream2file_new(CodegenOptions &options,
       generate_broadcast(options, out, inpt, buf);
     }
 
-    map<string, std::set<string> > unique_outs =
-      get_unique_output_ports(buf);
-
-    //if (buf.banking.partition == "exhaustive") {
-    if (false) {
-      for (auto outptg : unique_outs) {
-        string outpt = outptg.first;
-        generate_select(options, out, outpt, buf);
-
-        for (auto pt : outptg.second) {
-          if (pt != outpt) {
-            generate_duplicate_select(options, out, outpt, pt, buf);
-          }
-        }
-      }
-    } else {
-      for (auto outpt : buf.get_out_ports()) {
-        generate_select(options, out, outpt, buf);
-      }
+    for (auto outpt : buf.get_out_ports()) {
+      generate_select(options, out, outpt, buf);
     }
 
     generate_bundles(options, out, buf);
@@ -7191,4 +7179,18 @@ bool all_schedules_defined(UBuffer& buf) {
     }
   }
   return true;
+}
+
+bool is_register(UBuffer& buf) {
+  string name = buf.name;
+  vector<string> dnames;
+  for (int i = 0; i < buf.logical_dimension(); i++) {
+    dnames.push_back("d" + str(i));
+  }
+  string ibo_str = curlies(arrow(name + bracket_list(dnames),
+        name + "_B[0]"));
+  isl_map* m = isl_map_read_from_str(buf.ctx, ibo_str.c_str());
+  bool legal = inner_bank_offset_is_legal(m, buf);
+  release(m);
+  return legal;
 }

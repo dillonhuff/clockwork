@@ -1,1 +1,2 @@
 export app=ef_fpga_1_opt
+export HLS_CLOCK_FREQUENCY=250000000

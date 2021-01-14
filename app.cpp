@@ -1597,6 +1597,91 @@ umap* qschedule_to_map(isl_ctx* ctx, map<string, vector<QExpr> >& schedules) {
 }
 
 umap*
+clockwork_schedule_umap_reversed(uset* domain,
+    umap* validity,
+    umap* proximity) {
+  auto sched = clockwork_schedule(domain, validity, proximity);
+
+  map<string, vector<QExpr> > scheds;
+  for (auto s : sched) {
+    string name = s.first;
+    vector<isl_aff*> vals = s.second;
+
+    scheds[name] = {};
+    int i = 0;
+    for (auto v : vals) {
+      QExpr rate = qexpr("d" + str(i));
+      auto rate_coeff =
+        qexpr(int_coeff(v, 0));
+      auto delay =
+        qexpr(int_const_coeff(v));
+
+      QExpr expr =
+        rate_coeff*rate + delay;
+      scheds[name].push_back(expr);
+      i++;
+    }
+  }
+
+  vector<std::string> order = topological_sort(get_sets(domain), get_maps(validity));
+  int i = 0;
+  for (auto s : order) {
+    scheds[s].push_back(qexpr(i));
+    i++;
+  }
+  // schedule is dN, ..., d1, d0
+  //for (auto& s : scheds) {
+    //reverse(s.second);
+  //}
+
+  cout << "Final schedule..." << endl;
+  for (auto s : scheds) {
+    cout << tab(1) << s.first << endl;
+    for (auto v : s.second) {
+      cout << tab(2) << v << endl;
+    }
+    cout << endl;
+  }
+
+  //assert(false);
+
+  umap* m = rdmap(ctx(domain), "{}");
+  for (auto fn : scheds) {
+    string f = fn.first;
+    vector<QExpr> schedule = fn.second;
+    vector<string> sched_exprs;
+    vector<string> var_names;
+
+    assert(schedule.size() > 0);
+
+    for (int i = 0; i < (int) schedule.size() - 1; i++) {
+      string dv = "d" + to_string(i);
+      var_names.push_back(dv);
+    }
+    int i = 0;
+    for (auto v : map_find(f, scheds)) {
+      string dv = "d" + to_string(i);
+      sched_exprs.push_back(isl_str(v));
+      i++;
+    }
+    string map_str = "{ " + f + sep_list(var_names, "[", "]", ", ") + " -> " + sep_list(sched_exprs, "[", "]", ", ") + " }";
+
+    cout << "Map str: " << map_str << endl;
+    auto rm = rdmap(ctx(domain), map_str);
+    cout << "map got str" << endl;
+    m = unn(m, rm);
+    isl_union_map_free(rm);
+  }
+
+  umap* s = m; //qschedule_to_map_final_sort(ctx(domain), scheds);
+
+  cout << "M Final sched: " << str(s) << endl;
+  //assert(false);
+
+  return s;
+}
+
+umap*
 clockwork_schedule_umap(uset* domain,
     umap* validity,
     umap* proximity) {

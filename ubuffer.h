@@ -2826,3 +2826,5 @@ std::ostream& operator<<(std::ostream& out, dgraph& dg);
 std::ostream& operator<<(std::ostream& out, ubuffer_impl& impl);
 
 bool all_schedules_defined(UBuffer& buf);
+
+bool is_register(UBuffer& buf);

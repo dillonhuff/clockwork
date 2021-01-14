@@ -51,7 +51,7 @@ include $(ABS_COMMON_REPO)/common/includes/xcl2/xcl2.mk
 CXXFLAGS += $(xcl2_CXXFLAGS)
 LDFLAGS += $(xcl2_LDFLAGS)
 HOST_SRCS += $(xcl2_SRCS)
-CXXFLAGS += $(opencl_CXXFLAGS) -Wall -O0 -g -std=c++11
+CXXFLAGS += -I../../../ $(opencl_CXXFLAGS) -Wall -O0 -g -std=c++11
 LDFLAGS += $(opencl_LDFLAGS)
 
 HOST_SRCS += $(APP_NAME)_host.cpp
@@ -69,6 +69,7 @@ CLFLAGS += -D__VIVADO_SYNTH__ -I ../../../ -t $(TARGET) --platform $(DEVICE) --s
 ifneq ($(TARGET), hw)
 	CLFLAGS += -g
 endif
+CLFLAGS += --hls.clock $(HLS_CLOCK_FREQUENCY):$(APP_NAME)_accel
 
 
 

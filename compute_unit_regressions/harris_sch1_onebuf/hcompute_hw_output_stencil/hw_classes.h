@@ -11,7 +11,7 @@
 // can make Vivado HLS take a *very* long
 // time even for tiny designs. Avoid it
 // unless absolutely necessary.
-//#define AP_INT_MAX_W 32768
+#define AP_INT_MAX_W 32768
 #include "ap_int.h"
 
 #include "hls_stream.h"
@@ -231,7 +231,7 @@ class hw_uint {
     //hw_uint() : val(0) {}
 
     template<int S, int E_inclusive>
-      inline
+      //inline
     hw_uint<E_inclusive - S + 1> extract() const {
       hw_uint<E_inclusive - S + 1> extr;
       for (int i = S; i < E_inclusive + 1; i++) {
@@ -353,7 +353,8 @@ void set_at(hw_uint<Len>& i, const hw_uint<OtherLen>& value) {
 }
 
 template<int offset, int Len>
-static inline
+static
+//inline
 void set_at(int& i, const int value) {
 #ifdef __VIVADO_SYNTH__
 

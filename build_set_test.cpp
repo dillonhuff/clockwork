@@ -6704,7 +6704,7 @@ struct App {
     CodegenOptions options;
     options.internal = true;
     options.simplify_address_expressions = true;
-    options.use_custom_code_string = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
     realize(options, name, d0, d1);
   }
 
@@ -6762,7 +6762,6 @@ struct App {
     CodegenOptions options;
     options.internal = true;
     options.simplify_address_expressions = true;
-    //options.use_custom_code_string = true;
 
     realize(options, name, {d0, d1}, unroll_factor);
   }
@@ -7275,7 +7274,7 @@ void tricky_shift_register_reconvergence_test() {
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
-  options.use_custom_code_string = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
   options.debug_options.expect_all_linebuffers = true;
   sobel.realize(options, "D", size, 1, 1);
 
@@ -7306,7 +7305,7 @@ void mismatched_stencil_test() {
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
-  options.use_custom_code_string = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
   options.debug_options.expect_all_linebuffers = true;
   sobel.realize(options, "mismatched_stencils", size, 1, 1);
 
@@ -7816,7 +7815,7 @@ void harris_unrolled_test() {
     CodegenOptions options;
     options.internal = true;
     options.simplify_address_expressions = true;
-    options.use_custom_code_string = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
     options.debug_options.expect_all_linebuffers = true;
     h.realize(options, out_name, cols, rows, unroll_factor);
   }
@@ -7946,7 +7945,7 @@ void generate_app_benchmark(
   mini_dimensions.resize(dimensions.size(), 256);
 
   CodegenOptions options;
-  options.use_custom_code_string = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
   app.realize(options, name, mini_dimensions, 1);
   int bmp_res = run_sw_bmp_test_harness(name + "_opt");
   //assert(false);
@@ -8027,7 +8026,7 @@ void camera_pipeline_all_adds_test(const std::string& prefix) {
     //CodegenOptions options;
     //options.internal = true;
     //options.simplify_address_expressions = true;
-    ////options.use_custom_code_string = true;
+    ////options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
     //options.use_custom_code_string = false;
     //options.debug_options.expect_all_linebuffers = true;
     ////options.num_input_epochs = 30;
@@ -8065,7 +8064,7 @@ void camera_pipeline_test(const std::string& prefix) {
     CodegenOptions options;
     options.internal = true;
     options.simplify_address_expressions = true;
-    options.use_custom_code_string = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
     options.debug_options.expect_all_linebuffers = true;
     options.num_input_epochs = 30;
     camera_pipeline(out_name).realize(options, out_name, cols, rows, unroll_factor);
@@ -8114,7 +8113,7 @@ void harris16_test(const std::string& prefix) {
     //CodegenOptions options;
     //options.internal = true;
     //options.simplify_address_expressions = true;
-    //options.use_custom_code_string = true;
+    //options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
     //options.debug_options.expect_all_linebuffers = true;
     //options.num_input_epochs = 30;
     //harris16(out_name).realize(options, out_name, cols, rows, unroll_factor);
@@ -8148,7 +8147,7 @@ void harris_test() {
     //CodegenOptions options;
     //options.internal = true;
     //options.simplify_address_expressions = true;
-    //options.use_custom_code_string = true;
+    //options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
     //options.debug_options.expect_all_linebuffers = true;
     //harris(out_name).realize(options, out_name, cols, rows, unroll_factor);
 
@@ -8220,8 +8219,7 @@ void denoise3d_reconvergence_test() {
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
-  //options.use_custom_code_string = false;
-  options.use_custom_code_string = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
   //options.all_rams = true;
   //options.debug_options.expect_all_linebuffers = true;
   hmini.realize(options, name, {mini_size, mini_size, mini_size}, 1);
@@ -8242,7 +8240,7 @@ void denoise3d_test() {
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
-  options.use_custom_code_string = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
   //options.debug_options.expect_all_linebuffers = true;
   hmini.realize(options, "dn3d_mini", {mini_size, mini_size, mini_size}, 1);
 
@@ -8267,7 +8265,7 @@ void denoise3d_test() {
     CodegenOptions options;
     options.internal = true;
     options.simplify_address_expressions = true;
-    options.use_custom_code_string = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
     options.debug_options.expect_all_linebuffers = true;
     denoise3d(out_name).realize(options, out_name, {cols, rows, channels}, unroll_factor);
 
@@ -8297,7 +8295,7 @@ void max_pooling_test_sizes(const std::string& prefix) {
     CodegenOptions options;
     options.internal = true;
     options.simplify_address_expressions = true;
-    options.use_custom_code_string = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
     max_pooling(name).realize(options, name, {H, W, D}, "in", factor);
   }
   {
@@ -8326,7 +8324,7 @@ void gauss_pyramid_test(const std::string& prefix) {
     CodegenOptions options;
     options.internal = true;
     options.simplify_address_expressions = true;
-    options.use_custom_code_string = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
 
     gauss_pyramid_fpga(name).realize(options, name, {cols, rows}, "in", factor);
     move_to_benchmarks_folder(name + "_opt");
@@ -8357,7 +8355,7 @@ void max_pooling_test(const std::string& prefix) {
     CodegenOptions options;
     options.internal = true;
     options.simplify_address_expressions = true;
-    options.use_custom_code_string = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
 
     max_pooling(name).realize(options, name, {H, W, D}, "in", factor);
     move_to_benchmarks_folder(name + "_opt");
@@ -8733,6 +8731,60 @@ App identity_stream_iccad(const std::string& out_name) {
   return lp;
 }
 
+App stencil_chain_fan_out(const std::string& out_name) {
+  App lp;
+  lp.set_default_pixel_width(16);
+  lp.func2d("in_off_chip");
+
+  // The temporary buffer we store the input image in
+  lp.func2d("in", v("in_off_chip"));
+
+  int levels = 5;
+  string last0 = "in";
+  string last1 = "in";
+  string last2 = "in";
+  for (int i = 0; i < levels; i++) {
+    {
+      string current = "f0" + str(i);
+      lp.func2d(current,
+          div(add({
+              v(last0, 0, 1),
+              v(last0, 1, 0),
+              v(last0, 0, 0),
+              v(last0, -1, 0),
+              v(last0, 0, -1)}), 5));
+      last0 = current;
+    }
+    {
+      string current = "f1" + str(i);
+      lp.func2d(current,
+          div(add({
+              v(last1, 0, 1),
+              v(last1, 1, 0),
+              v(last1, 0, 0),
+              v(last1, -1, 0),
+              v(last1, 0, -1)}), 5));
+      last1 = current;
+    }
+    {
+      string current = "f2" + str(i);
+      lp.func2d(current,
+          div(add({
+              v(last2, 0, 1),
+              v(last2, 1, 0),
+              v(last2, 0, 0),
+              v(last2, -1, 0),
+              v(last2, 0, -1)}), 5));
+      last2 = current;
+    }
+  }
+
+  lp.func2d("final", div(add({v(last0, 0, 0), v(last1, 0, 0), v(last2, 0, 0)}), 3));
+  lp.func2d(out_name, v("final"));
+
+  return lp;
+}
+
 App stencil_chain_eight_stage_iccad(const std::string& out_name) {
   App lp;
   lp.set_default_pixel_width(16);
@@ -8857,6 +8909,60 @@ App stencil_chain_iccad(const std::string& out_name) {
   return lp;
 }
 
+App stencil_chain_stage_iccad(const std::string& out_name, const int levels) {
+  App lp;
+  lp.set_default_pixel_width(16);
+  lp.func2d("in_off_chip");
+
+  // The temporary buffer we store the input image in
+  lp.func2d("in", v("in_off_chip"));
+
+  string last = "in";
+  for (int i = 0; i < levels; i++) {
+    string current = "stg" + str(i);
+    lp.func2d(current,
+      div(add({
+        v(last, 0, 1),
+        v(last, 1, 0),
+        v(last, 0, 0),
+        v(last, -1, 0),
+        v(last, 0, 1)}), 5));
+    last = current;
+  }
+  //auto dark_weight_pyramid = gauss_pyramid(pyramid_levels, "in", lp);
+
+  lp.func2d(out_name, v(last));
+
+  return lp;
+}
+App stencil_chain_20_stage_iccad(const std::string& out_name) {
+  App lp;
+  lp.set_default_pixel_width(16);
+  lp.func2d("in_off_chip");
+
+  // The temporary buffer we store the input image in
+  lp.func2d("in", v("in_off_chip"));
+
+  int levels = 20;
+  string last = "in";
+  for (int i = 0; i < levels; i++) {
+    string current = "stg" + str(i);
+    lp.func2d(current,
+      div(add({
+        v(last, 0, 1),
+        v(last, 1, 0),
+        v(last, 0, 0),
+        v(last, -1, 0),
+        v(last, 0, 1)}), 5));
+    last = current;
+  }
+  //auto dark_weight_pyramid = gauss_pyramid(pyramid_levels, "in", lp);
+
+  lp.func2d(out_name, v(last));
+
+  return lp;
+}
+
 App stencil_chain_no_dsp_long_iccad(const std::string& out_name) {
   App lp;
   lp.set_default_pixel_width(16);
@@ -8922,7 +9028,7 @@ void increment_iccad_apps(const std::string& prefix) {
     int cols = 1920;
     CodegenOptions options;
     options.internal = true;
-    options.use_custom_code_string = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
     lp.realize(options, name, {cols, rows}, "in", throughput);
 
     move_to_benchmarks_folder(name + "_opt");
@@ -8940,7 +9046,7 @@ void identity_stream_iccad_apps(const std::string& prefix) {
     int cols = 1920;
     CodegenOptions options;
     options.internal = true;
-    options.use_custom_code_string = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
     lp.realize(options, name, {cols, rows}, "in", throughput);
 
     move_to_benchmarks_folder(name + "_opt");
@@ -8958,7 +9064,7 @@ void stencil_chain_no_dsp_long_iccad_apps(const std::string& prefix) {
     int cols = 1920;
     CodegenOptions options;
     options.internal = true;
-    options.use_custom_code_string = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
     lp.realize(options, name, {cols, rows}, "in", throughput);
 
     move_to_benchmarks_folder(name + "_opt");
@@ -8976,7 +9082,25 @@ void stencil_chain_no_dsp_iccad_apps(const std::string& prefix) {
     int cols = 1920;
     CodegenOptions options;
     options.internal = true;
-    options.use_custom_code_string = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
+    lp.realize(options, name, {cols, rows}, "in", throughput);
+
+    move_to_benchmarks_folder(name + "_opt");
+  }
+  assert(false);
+}
+
+void stencil_chain_fan_out_iccad_apps(const std::string& prefix) {
+  vector<int> throughputs{1, 16, 32};
+  //vector<int> throughputs{1};
+  for (auto throughput : throughputs) {
+    string name = prefix + "_" + str(throughput);
+    App lp = stencil_chain_fan_out(name);
+    int rows = 1080;
+    int cols = 1920;
+    CodegenOptions options;
+    options.internal = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
     lp.realize(options, name, {cols, rows}, "in", throughput);
 
     move_to_benchmarks_folder(name + "_opt");
@@ -8993,7 +9117,7 @@ void stencil_chain_eight_stage_iccad_apps(const std::string& prefix) {
     int cols = 1920;
     CodegenOptions options;
     options.internal = true;
-    options.use_custom_code_string = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
     lp.realize(options, name, {cols, rows}, "in", throughput);
 
     move_to_benchmarks_folder(name + "_opt");
@@ -9011,7 +9135,7 @@ void stencil_chain_five_stage_iccad_apps(const std::string& prefix) {
     int cols = 1920;
     CodegenOptions options;
     options.internal = true;
-    options.use_custom_code_string = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
     lp.realize(options, name, {cols, rows}, "in", throughput);
 
     move_to_benchmarks_folder(name + "_opt");
@@ -9029,7 +9153,281 @@ void stencil_chain_one_stage_iccad_apps(const std::string& prefix) {
     int cols = 1920;
     CodegenOptions options;
     options.internal = true;
-    options.use_custom_code_string = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
+    lp.realize(options, name, {cols, rows}, "in", throughput);
+
+    move_to_benchmarks_folder(name + "_opt");
+  }
+  assert(false);
+}
+
+App heat_3d_real_iccad(const std::string& out_name, const int num_stages) {
+  App dn;
+  dn.set_default_num_type(NUM_TYPE_FLOAT);
+
+  dn.func3d("in");
+
+  dn.func3d("in_cc", v3("in", 0, 0, 0));
+
+  //int num_stages = 1;
+  string last = "in_cc";
+  for (int i = 0; i < num_stages; i++) {
+    string current = "h3_" + str(i);
+//.125f * (in(1, 0, 0) - 2.f * in(0, 0, 0) + in(-1,  0,  0)) + 
+    //.125f * (in(0, 1, 0) - 2.f * in(0, 0, 0) + in( 0, -1,  0)) + 
+    //.125f * (in(0, 0, 1) - 2.f * in(0, 0, 0) + in( 0,  0, -1)) + 
+    //in(0, 0, 0)
+    dn.func3d(current,
+        add({
+          mul(fc("0.125"), v3(last, 1, 0, 0)), mul(fc("-0.125"), v3(last, 0, 0, 0)), mul(fc("0.125"), v3(last, -1, 0, 0)),
+          mul(fc("0.125"), v3(last, 0, 1, 0)), mul(fc("-0.125"), v3(last, 0, 0, 0)), mul(fc("0.125"), v3(last, 0, -1, 0)),
+          mul(fc("0.125"), v3(last, 0, 0, 1)), mul(fc("-0.125"), v3(last, 0, 0, 0)), mul(fc("0.125"), v3(last, 0, 0, -1)),
+          v3(last, 0, 0, 0)
+          }));
+    last = current;
+  }
+
+  dn.func3d(out_name, v3(last, 0, 0, 0));
+
+  return dn;
+}
+
+App heat_3d_iccad(const std::string& name) {
+  App dn;
+  dn.set_default_num_type(NUM_TYPE_FLOAT);
+
+  dn.func2d("in");
+
+  dn.func2d("in_cc", v("in"));
+
+  int num_stages = 1;
+  string last = "in_cc";
+  for (int i = 0; i < num_stages; i++) {
+    string current = "h3_" + str(i);
+    dn.func2d(current,
+        add({
+          mul(fc("0.125"), v(last, 1, 0)),
+          mul(fc("0.125"), v(last, -1, 0)),
+          mul(fc("0.125"), v(last, 0, 1)),
+          mul(fc("0.125"), v(last, 0, -1)),
+          mul(fc("0.25"), v(last, 0, 0))
+          }));
+    last = current;
+  }
+
+  dn.func2d(name, v(last));
+
+  return dn;
+}
+
+App float_big_stencil_iccad(const std::string& name, const int num_stages) {
+  App dn;
+  dn.set_default_num_type(NUM_TYPE_FLOAT);
+
+  dn.func2d("in");
+
+  dn.func2d("in_cc", v("in"));
+  dn.func2d(name, add({mul(fc("0.125"), v("in_cc", 0, 0)),
+        mul(fc("0.125"), v("in_cc", 0, -1)),
+        mul(fc("0.125"), v("in_cc", 0, -2))}));
+
+  return dn;
+}
+
+App float_stencil_iccad(const std::string& name) {
+  App dn;
+  dn.set_default_num_type(NUM_TYPE_FLOAT);
+
+  dn.func2d("in");
+
+  dn.func2d("in_cc", v("in"));
+  dn.func2d(name, add({mul(fc("0.125"), v("in_cc", 0, 0)),
+        mul(fc("0.125"), v("in_cc", 0, -1))}));
+
+  return dn;
+}
+
+App float_add_iccad(const std::string& name) {
+  App dn;
+  dn.set_default_num_type(NUM_TYPE_FLOAT);
+
+  dn.func2d("in");
+
+  dn.func2d("in_cc", v("in"));
+  dn.func2d(name, add({fc("0.125"), v("in_cc", 0, 0)}));
+
+  return dn;
+}
+
+void float_stencil_iccad_apps(const std::string& prefix) {
+  //vector<int> throughputs{1, 16, 32};
+  vector<int> throughputs{1};
+  //vector<int> throughputs{32};
+  //vector<int> throughputs{16};
+  //vector<int> throughputs{2, 4, 8, 12};
+  for (auto throughput : throughputs) {
+    string name = prefix + "_" + str(throughput);
+    App lp = float_stencil_iccad(name);
+    int rows = 32;
+    int cols = 32;
+    CodegenOptions options;
+    options.internal = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
+    options.rtl_options.hls_clock_target_Hz = 300000000;
+    lp.realize(options, name, {cols, rows}, "in", throughput);
+
+    move_to_benchmarks_folder(name + "_opt");
+  }
+  assert(false);
+
+}
+
+void float_add_iccad_apps(const std::string& prefix) {
+  //vector<int> throughputs{1, 16, 32};
+  vector<int> throughputs{1};
+  //vector<int> throughputs{32};
+  //vector<int> throughputs{16};
+  //vector<int> throughputs{2, 4, 8, 12};
+  for (auto throughput : throughputs) {
+    string name = prefix + "_" + str(throughput);
+    App lp = float_add_iccad(name);
+    int rows = 32;
+    int cols = 32;
+    CodegenOptions options;
+    options.internal = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
+    options.rtl_options.hls_clock_target_Hz = 300000000;
+    lp.realize(options, name, {cols, rows}, "in", throughput);
+
+    move_to_benchmarks_folder(name + "_opt");
+  }
+  assert(false);
+
+}
+
+void float_big_stencil_iccad_apps(const std::string& prefix, const int num_stages) {
+  //vector<int> throughputs{1, 16, 32};
+  vector<int> throughputs{1};
+  //vector<int> throughputs{32};
+  //vector<int> throughputs{16};
+  //vector<int> throughputs{2, 4, 8, 12};
+  //vector<int> throughputs{1, 8, 16};
+  for (auto throughput : throughputs) {
+    string name = prefix + "_" + str(throughput);
+    App lp = float_big_stencil_iccad(name, num_stages);
+    int rows = 32;
+    int cols = 32;
+    CodegenOptions options;
+    options.internal = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
+    options.rtl_options.hls_clock_target_Hz = 300000000;
+    lp.realize(options, name, {cols, rows}, "in", throughput);
+
+    move_to_benchmarks_folder(name + "_opt");
+  }
+  assert(false);
+
+}
+void heat_3d_real_iccad_apps(const std::string& prefix, const int num_stages) {
+  //vector<int> throughputs{1, 16, 32};
+  vector<int> throughputs{1};
+  //vector<int> throughputs{32};
+  //vector<int> throughputs{16};
+  //vector<int> throughputs{2, 4, 8, 12};
+  //vector<int> throughputs{1, 8, 16};
+  for (auto throughput : throughputs) {
+    string name = prefix + "_" + str(throughput);
+    App lp = heat_3d_real_iccad(name, num_stages);
+    int rows = 128;
+    int cols = 128;
+    int channels = 32;
+    CodegenOptions options;
+    options.internal = true;
+    options.num_input_epochs = 1;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
+    options.rtl_options.hls_clock_target_Hz = 300000000;
+    lp.realize(options, name, {cols, rows, channels}, "in", throughput);
+
+    move_to_benchmarks_folder(name + "_opt");
+  }
+  assert(false);
+
+}
+
+void heat_3d_iccad_apps(const std::string& prefix) {
+  //vector<int> throughputs{1, 16, 32};
+  vector<int> throughputs{1};
+  //vector<int> throughputs{32};
+  //vector<int> throughputs{16};
+  //vector<int> throughputs{2, 4, 8, 12};
+  for (auto throughput : throughputs) {
+    string name = prefix + "_" + str(throughput);
+    App lp = heat_3d_iccad(name);
+    int rows = 32;
+    int cols = 32;
+    CodegenOptions options;
+    options.internal = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
+    options.rtl_options.hls_clock_target_Hz = 300000000;
+    lp.realize(options, name, {cols, rows}, "in", throughput);
+
+    move_to_benchmarks_folder(name + "_opt");
+  }
+  assert(false);
+
+}
+
+void stencil_chain_12_stage_iccad_apps(const std::string& prefix) {
+  //vector<int> throughputs{1, 16, 32};
+  vector<int> throughputs{1};
+  for (auto throughput : throughputs) {
+    string name = prefix + "_" + str(throughput);
+    App lp = stencil_chain_stage_iccad(name, 12);
+    int rows = 10;
+    int cols = 19;
+    //int rows = 1080;
+    //int cols = 1920;
+    CodegenOptions options;
+    options.internal = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
+    options.rtl_options.hls_clock_target_Hz = 300000000;
+    lp.realize(options, name, {cols, rows}, "in", throughput);
+
+    move_to_benchmarks_folder(name + "_opt");
+  }
+  assert(false);
+}
+void stencil_chain_15_stage_iccad_apps(const std::string& prefix) {
+  vector<int> throughputs{1, 16, 32};
+  //vector<int> throughputs{1};
+  for (auto throughput : throughputs) {
+    string name = prefix + "_" + str(throughput);
+    App lp = stencil_chain_stage_iccad(name, 15);
+    int rows = 1080;
+    int cols = 1920;
+    CodegenOptions options;
+    options.internal = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
+    //options.rtl_options.hls_clock_target_Hz = 300000000;
+    options.rtl_options.hls_clock_target_Hz = 275000000;
+    lp.realize(options, name, {cols, rows}, "in", throughput);
+
+    move_to_benchmarks_folder(name + "_opt");
+  }
+  assert(false);
+}
+void stencil_chain_20_stage_iccad_apps(const std::string& prefix) {
+  vector<int> throughputs{1, 16, 32};
+  //vector<int> throughputs{1};
+  for (auto throughput : throughputs) {
+    string name = prefix + "_" + str(throughput);
+    App lp = stencil_chain_20_stage_iccad(name);
+    int rows = 1080;
+    int cols = 1920;
+    CodegenOptions options;
+    options.internal = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
+    options.rtl_options.hls_clock_target_Hz = 300000000;
     lp.realize(options, name, {cols, rows}, "in", throughput);
 
     move_to_benchmarks_folder(name + "_opt");
@@ -9038,8 +9436,8 @@ void stencil_chain_one_stage_iccad_apps(const std::string& prefix) {
 }
 
 void stencil_chain_iccad_apps(const std::string& prefix) {
-  //vector<int> throughputs{1, 16, 32};
-  vector<int> throughputs{1};
+  vector<int> throughputs{1, 16, 32};
+  //vector<int> throughputs{1};
   for (auto throughput : throughputs) {
     string name = prefix + "_" + str(throughput);
     App lp = stencil_chain_iccad(name);
@@ -9047,7 +9445,8 @@ void stencil_chain_iccad_apps(const std::string& prefix) {
     int cols = 1920;
     CodegenOptions options;
     options.internal = true;
-    options.use_custom_code_string = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
+    options.rtl_options.hls_clock_target_Hz = 500000000;
     lp.realize(options, name, {cols, rows}, "in", throughput);
 
     move_to_benchmarks_folder(name + "_opt");
@@ -9064,7 +9463,7 @@ void gauss_pyramid_iccad_apps(const std::string& prefix) {
     int cols = 1920 / pow(2, 4 - 1);
     CodegenOptions options;
     options.internal = true;
-    options.use_custom_code_string = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
     lp.realize(options, name, {cols, rows}, "in", throughput);
 
     move_to_benchmarks_folder(name + "_opt");
@@ -9073,7 +9472,9 @@ void gauss_pyramid_iccad_apps(const std::string& prefix) {
 }
 
 void exposure_fusion_iccad_apps(const std::string& prefix) {
-  vector<int> throughputs{1, 2, 4, 8, 16};
+  vector<int> throughputs{1};
+  //, 2, 4, 8, 16};
+  //vector<int> throughputs{1, 2, 4, 8, 16};
   //vector<int> throughputs{16};
   for (auto throughput : throughputs) {
     string name = prefix + "_" + str(throughput);
@@ -9083,7 +9484,7 @@ void exposure_fusion_iccad_apps(const std::string& prefix) {
     CodegenOptions options;
     options.internal = true;
     options.simplify_address_expressions = true;
-    options.use_custom_code_string = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
     lp.realize(options, name, cols, rows, throughput);
 
     move_to_benchmarks_folder(name + "_opt");
@@ -9319,7 +9720,7 @@ void single_gaussian_pyramid_app_test() {
     CodegenOptions options;
     options.internal = true;
     options.simplify_address_expressions = true;
-    options.use_custom_code_string = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
     options.debug_options.expect_all_linebuffers = true;
     gp.realize(options, name, 4, 4, 2);
   }
@@ -9346,7 +9747,7 @@ void ef_cartoon_test(const std::string& out_name) {
     CodegenOptions options;
     options.internal = true;
     options.simplify_address_expressions = true;
-    options.use_custom_code_string = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
     gp.realize(options, out_name, {cols, rows}, "in", 32);
     move_naive_to_benchmarks_folder(out_name + "_opt");
   }
@@ -9371,7 +9772,7 @@ void gaussian_pyramid_app_test(const std::string& prefix) {
     CodegenOptions options;
     options.internal = true;
     options.simplify_address_expressions = true;
-    options.use_custom_code_string = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
     options.debug_options.expect_all_linebuffers = true;
     gp.realize(options, name, {size, size}, "in", 2);
   }
@@ -9399,7 +9800,7 @@ void gaussian_pyramid_app_test(const std::string& prefix) {
     CodegenOptions options;
     options.internal = true;
     options.simplify_address_expressions = true;
-    options.use_custom_code_string = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
 
     gaussian_pyramid_app(name, 4).realize(options, name, {64, 64}, "in", factor);
     move_to_benchmarks_folder(name + "_opt");
@@ -9793,7 +10194,7 @@ void sobel_16_app_test(const std::string& prefix) {
     CodegenOptions options;
     options.internal = true;
     options.simplify_address_expressions = true;
-    options.use_custom_code_string = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
     options.num_input_epochs = 30;
     options.debug_options.expect_all_linebuffers = true;
     sobel16(out_name).realize(options, out_name, cols, rows, unroll_factor);
@@ -9838,7 +10239,7 @@ void blur_xy_16_app_test(const std::string& prefix) {
     CodegenOptions options;
     options.internal = true;
     options.simplify_address_expressions = true;
-    options.use_custom_code_string = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
     //options.num_input_epochs = 30;
     options.debug_options.expect_all_linebuffers = true;
     blur_xy_16(out_name).realize(options, out_name, cols, rows, unroll_factor);
@@ -9890,7 +10291,7 @@ void jacobi2d_app_test() {
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
-  options.use_custom_code_string = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
   options.debug_options.expect_all_linebuffers = true;
   jac.realize(options, "t0", 32, 28, 1);
 
@@ -9913,7 +10314,7 @@ void jacobi2d_app_test() {
     CodegenOptions options;
     options.internal = true;
     options.simplify_address_expressions = true;
-    options.use_custom_code_string = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
     options.debug_options.expect_all_linebuffers = true;
     jacobi2d(out_name).realize(options, out_name, cols, rows, unroll_factor);
     std::vector<std::string> optimized =
@@ -9950,7 +10351,7 @@ void sum_diffs_test() {
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
-  options.use_custom_code_string = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
   options.debug_options.expect_all_linebuffers = true;
   dn.realize(options, out_name, size, size);
     std::vector<std::string> optimized =
@@ -9974,7 +10375,7 @@ void dummy_app_test() {
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
-  options.use_custom_code_string = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
   options.debug_options.expect_all_linebuffers = true;
   dn.realize(options, out_name, size, size);
   std::vector<std::string> optimized =
@@ -10015,7 +10416,7 @@ void two_input_denoise_pipeline_test() {
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
-  options.use_custom_code_string = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
   //options.debug_options.expect_all_linebuffers = true;
   dn.realize(options, out_name, size, size);
   std::vector<std::string> optimized =
@@ -10053,7 +10454,7 @@ void two_input_mag_test() {
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
-  options.use_custom_code_string = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
   options.debug_options.expect_all_linebuffers = true;
   dn.realize(options, out_name, size, size);
     std::vector<std::string> optimized =
@@ -10079,7 +10480,7 @@ void one_input_mag_test() {
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
-  options.use_custom_code_string = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
   options.debug_options.expect_all_linebuffers = true;
   dn.realize(options, out_name, size, size);
     std::vector<std::string> optimized =
@@ -10102,7 +10503,7 @@ void sum_float_test() {
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
-  options.use_custom_code_string = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
   options.debug_options.expect_all_linebuffers = true;
   dn.realize(options, out_name, size, size);
     std::vector<std::string> optimized =
@@ -10118,7 +10519,7 @@ void sum_denoise_test() {
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
-  options.use_custom_code_string = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
   options.debug_options.expect_all_linebuffers = true;
   dn.realize(options, "sum_denoise2d", size, size);
     std::vector<std::string> optimized =
@@ -10134,7 +10535,7 @@ void denoise2d_test() {
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
-  options.use_custom_code_string = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
   options.debug_options.expect_all_linebuffers = true;
   dn.realize(options, "denoise2d", size, size);
 
@@ -10197,7 +10598,7 @@ void conv3x3_app_unrolled_uneven_test() {
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
-  options.use_custom_code_string = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
   options.debug_options.expect_all_linebuffers = true;
   sobel.realize(options, "conv3x3_app_unrolled_uneven", 30, 30, 7);
 
@@ -10223,7 +10624,7 @@ void conv3x3_app_unrolled_test() {
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
-  options.use_custom_code_string = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
   options.debug_options.expect_all_linebuffers = true;
   sobel.realize(options, "conv3x3_app_unrolled", 30, 30, 2);
 
@@ -10251,7 +10652,7 @@ void conv3x3_app_test() {
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
-  options.use_custom_code_string = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
   options.debug_options.expect_all_linebuffers = true;
   sobel.realize(options, "conv3x3_app", 30, 30);
 
@@ -11101,7 +11502,54 @@ void naive_implementations() {
 }
 
 void iccad_tests() {
+  // ef_cartoon
+  int throughput = 32;
+  string name = "ef_" + str(throughput) + "_500";
+  App ef = ef_cartoon(name);
+  CodegenOptions options;
+  options.internal = true;
+  options.num_input_epochs = 1;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
+  options.rtl_options.hls_clock_target_Hz = 500000000;
+  int rows = 1920;
+  int cols = 1080;
+  ef.realize(options, name, {cols, rows}, "in", throughput);
 
+  move_to_benchmarks_folder(name + "_opt");
+  assert(false);
+
+  // exposure_fusion_app
+  exposure_fusion_iccad_apps("ef_fpga_rerun");
+
+  stencil_chain_15_stage_iccad_apps("ic15_275MHz");
+  assert(false);
+
+  // ef_cartoon
+  ef_cartoon_test("ef_cartoon");
+
+
+  // exposure_fusion_app
+  exposure_fusion();
+  assert(false);
+
+
+
+  heat_3d_real_iccad_apps("heat3dlafe_1", 1);
+  //heat_3d_real_iccad_apps("heat3dla_8", 8);
+  float_big_stencil_iccad_apps("flt_stencil", 1);
+
+  stencil_chain_12_stage_iccad_apps("ic12_small_300MHz");
+  stencil_chain_15_stage_iccad_apps("ic15_300MHz");
+  heat_3d_iccad_apps("heat2d_1");
+  float_stencil_iccad_apps("float_stencil");
+  float_add_iccad_apps("float_add");
+  //heat_3d_iccad_apps("h10_1_300MHz");
+  //stencil_chain_iccad_apps("icsc_500MHz");
+  //stencil_chain_20_stage_iccad_apps("ic20_500MHz");
+  //stencil_chain_20_stage_iccad_apps("ic20_400MHz");
+  stencil_chain_20_stage_iccad_apps("ic20_300MHz");
+  stencil_chain_iccad_apps("icsc_500MHz");
+  stencil_chain_fan_out_iccad_apps("icfo");
   stencil_chain_eight_stage_iccad_apps("icsc_8s");
   stencil_chain_one_stage_iccad_apps("icsc_1s");
   increment_iccad_apps("inc");
@@ -11114,12 +11562,8 @@ void iccad_tests() {
   stencil_chain_no_dsp_long_iccad_apps("icsc_ndln");
   stencil_chain_no_dsp_iccad_apps("icsc_nd");
   identity_stream_iccad_apps("idstream");
-  stencil_chain_iccad_apps("icsc");
 
-  //App ef = ef_cartoon("ef_sm");
-  //generate_app_benchmark("ef_sm", ef, {1920, 1080}, 1);
-  //assert(false);
-  exposure_fusion_iccad_apps("ef_fpga");
+
   gauss_pyramid_iccad_apps("gp_fpga");
   gauss_pyramid_test("gp_fpga");
   max_pooling_test("mpr16b_32");
@@ -11129,10 +11573,8 @@ void iccad_tests() {
   generate_app_benchmark("gp_sm", gp, {64, 64}, 1);
 
   gauss_pyramid_fpga_test("gp_fpga");
-  ef_cartoon_test("ef_cartoon");
 
   gauss_pyramid_fpga_test("gp_fpga");
-  exposure_fusion();
 
   int index = 20;
   string istr = str(index);
@@ -12567,7 +13009,7 @@ void mmul_outer_prod_test() {
   CodegenOptions options;
   options.internal = true;
   options.all_rams = true;
-  options.use_custom_code_string = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
   options.banking_strategies["C"] = {"register_file"};
   options.inner_bank_offset_mode = INNER_BANK_OFFSET_LINEAR;
   generate_optimized_code(options, prg);
@@ -14875,7 +15317,7 @@ void two_stage_psef() {
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
-  options.use_custom_code_string = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
   lp.realize(options, {{out0, {cols, rows}}, {out1, {cols, rows}}}, out0, unroll);
 
   compile_compute(out0 + "_" + out1 + "_opt.cpp");
@@ -14903,7 +15345,7 @@ void psef_multi_output_test() {
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
-  options.use_custom_code_string = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
   lp.realize(options, {{out0, {cols, rows}}, {out1, {cols, rows}}}, out0, unroll);
 
   compile_compute(out0 + "_" + out1 + "_opt.cpp");
@@ -14931,7 +15373,7 @@ void async_add_test() {
 
     CodegenOptions options;
     options.internal = true;
-    options.use_custom_code_string = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
     options.num_pipelines = 1;
     lp.realize(options, {{output_image, {cols, rows}}}, output_image, unroll);
 
@@ -14963,7 +15405,7 @@ void add_four_channels() {
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
-  options.use_custom_code_string = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
   lp.realize(options, {{out0, {cols, rows}}, {out1, {cols, rows}}}, out0, unroll);
 
   compile_compute(out0 + "_" + out1 + "_opt.cpp");
@@ -14992,7 +15434,7 @@ void weight_add_psef() {
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
-  options.use_custom_code_string = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
   lp.realize(options, {{out0, {cols, rows}}, {out1, {cols, rows}}}, out0, unroll);
 
   compile_compute(out0 + "_" + out1 + "_opt.cpp");
@@ -17277,11 +17719,11 @@ vector<prog> harris_variants() {
 
   // 1. At least two mapper passes fail
   // 2. Final output is wrong
-  test_programs.push_back(harris_sch1_onebuf());
+  //test_programs.push_back(harris_sch1_onebuf());
 
   // 2. Final output is wrong,
   // 3. Schedule violates dependencies?
-  test_programs.push_back(harris_sch2_fourbuf());
+  //test_programs.push_back(harris_sch2_fourbuf());
 
   // Now: They also have an error in the ROMs
   //test_programs.push_back(harris_sch3_1pp9c());
@@ -17309,8 +17751,9 @@ vector<prog> isca_programs() {
   //test_programs.push_back(harris_sch8_endcim());
   //test_programs.back().pretty_print();
 
-  test_programs.push_back(unsharp());
-  test_programs.push_back(up_sample());
+  //FIXME: not work for M1 and M3
+  //test_programs.push_back(up_sample());
+  //test_programs.push_back(unsharp());
   test_programs.push_back(camera_pipeline());
   test_programs.push_back(gaussian());
   test_programs.push_back(mobilenet_unrolled());
@@ -17634,7 +18077,7 @@ void generate_fpga_clockwork_code(prog& prg) {
     << prg.compute_unit_file << endl;
   CodegenOptions options;
   options.internal = true;
-  //options.use_custom_code_string = true;
+  //options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
   //map<string, Box> compute_domains;
   //for (auto s : get_sets(dom)) {
     //ops.push_back(name(s));
@@ -18557,7 +19000,324 @@ void misc_tests() {
 
 }
 
+void generate_cpu_reference_body(const int level, ostream& out, op* op, prog& prg) {
+  if (op->is_loop()) {
+    out << tab(level) << "for (int " << op->name << " = 0; " << op->name << " < " << op->trip_count() << "; " << op->name << "++) {" << endl;
+    for (auto child : op->children) {
+      generate_cpu_reference_body(level + 1, out, child, prg);
+    }
+    out << tab(level) << "}" << endl;
+  } else {
+
+    vector<string> compute_inputs;
+    for (auto loc : op->consume_locs_pair) {
+      isl_multi_aff* write_addr = pick(read_addrs(op, loc.first, prg));
+      vector<int> dims = map_find(loc.first, prg.buffer_bounds);
+      vector<int> strs = strides(dims);
+      //reverse(strs);
+      vector<string> components;
+      for (int i = 0; i < isl_multi_aff_dim(write_addr, isl_dim_set); i++) {
+        components.push_back(str(strs.at(i)) + "*" + codegen_c(isl_multi_aff_get_aff(write_addr, i)));
+      }
+      out << tab(level) << "float " << loc.first << "_v = " << loc.first << "[" << sep_list(components, "", "", " + ") << "];" << endl;
+      compute_inputs.push_back(loc.first + "_v");
+    }
+
+    assert(op->produce_locs.size() == 1);
+    auto loc = pick(op->produce_locs);
+    isl_multi_aff* write_addr = pick(write_addrs(op, loc.first, prg));
+    vector<int> dims = map_find(loc.first, prg.buffer_bounds);
+    vector<int> strs = strides(dims);
+    //reverse(strs);
+    vector<string> components;
+    for (int i = 0; i < isl_multi_aff_dim(write_addr, isl_dim_set); i++) {
+      components.push_back(str(strs.at(i)) + "*" + codegen_c(isl_multi_aff_get_aff(write_addr, i)));
+    }
+    out << tab(level) << loc.first << "[" << sep_list(components, "", "", " + ") << "] = " << op->func << sep_list(compute_inputs, "(", ")", ", ") << ";" << endl;
+  }
+
+}
+
+void generate_cuda_code(prog& prg, isl_map* gpu_sched) {
+  op* op = pick(prg.all_ops());
+  isl_set* dom = map_find(op, prg.domains());
+  cout << "domain: " << str(dom) << endl;
+
+  isl_map* gpu_sched_bounded = its(gpu_sched, dom);
+
+  cout << "bounded gpu schedule: " << str(gpu_sched_bounded) << endl;
+  isl_set* gpu_launches = range(gpu_sched_bounded);
+  cout << "gpu launches: " << str(gpu_launches) << endl;
+
+  vector<int> k_mins = mins(gpu_launches);
+  vector<int> k_maxs = maxs(gpu_launches);
+
+  cout << "kernel min: " << k_mins.at(0) << endl;
+  cout << "kernel max: " << k_maxs.at(0) << endl;
+
+  cout << "block x min: " << k_mins.at(1) << endl;
+  cout << "block x max: " << k_maxs.at(1) << endl;
+
+  cout << "thread x min: " << k_mins.at(4) << endl;
+  cout << "thread x max: " << k_maxs.at(4) << endl;
+
+  int block_xs = k_maxs.at(1) - k_mins.at(1) + 1;
+  int block_ys = k_maxs.at(2) - k_mins.at(2) + 1;
+  int block_zs = k_maxs.at(3) - k_mins.at(3) + 1;
+
+  int thread_xs = k_maxs.at(4) - k_mins.at(4) + 1;
+  int thread_ys = k_maxs.at(5) - k_mins.at(5) + 1;
+  int thread_zs = k_maxs.at(6) - k_mins.at(6) + 1;
+
+  vector<int> blocks{block_xs, block_ys, block_zs};
+  vector<int> threads{thread_xs, thread_ys, thread_zs};
+  ofstream out(prg.name + ".cu");
+  out << "#include <stdio.h>" << endl << endl;
+  out << "#include <assert.h>" << endl << endl;
+  out << "#include \"" << prg.compute_unit_file << "\"" << endl << endl;
+  out << endl;
+  out << "template<typename T>" << endl;
+  out << "__host__" << endl;
+  out << "__device__" << endl;
+  out << "inline" << endl;
+  out << "T id(const T& v) {" << endl;
+  out << "  return v;" << endl;
+  out << "}" << endl;
+
+  out << endl;
+
+  out << "// Operation logic" << endl;
+  for (auto op : prg.all_ops()) {
+    vector<string> arg_decls;
+    for (auto b : buffer_arg_names(op, prg)) {
+      arg_decls.push_back("float* " + b);
+    }
+    vector<string> surrounding = surrounding_vars(op, prg);
+    for (int i = 0; i < (int) surrounding.size(); i++) {
+      arg_decls.push_back("int " + surrounding.at(i)); //"int d" + str(i));
+    }
+    out << "__host__" << endl;
+    out << "__device__" << endl;
+    out << "inline" << endl;
+    out << "void " << op->name << sep_list(arg_decls, "(", ")", ", ") << " {" << endl;
+
+    vector<string> compute_inputs;
+    for (auto loc : op->consume_locs_pair) {
+      isl_multi_aff* write_addr = pick(read_addrs(op, loc.first, prg));
+      vector<int> dims = map_find(loc.first, prg.buffer_bounds);
+      vector<int> strs = strides(dims);
+      //reverse(strs);
+      vector<string> components;
+      for (int i = 0; i < isl_multi_aff_dim(write_addr, isl_dim_set); i++) {
+        components.push_back(str(strs.at(i)) + "*" + codegen_c(isl_multi_aff_get_aff(write_addr, i)));
+      }
+      out << tab(1) << "float " << loc.first << "_v = " << loc.first << "[" << sep_list(components, "", "", " + ") << "];" << endl;
+      compute_inputs.push_back(loc.first + "_v");
+    }
+
+    assert(op->produce_locs.size() == 1);
+    auto loc = pick(op->produce_locs);
+    isl_multi_aff* write_addr = pick(write_addrs(op, loc.first, prg));
+    //out << tab(1) << "// " << str(write_addr) << endl;
+    vector<int> dims = map_find(loc.first, prg.buffer_bounds);
+    vector<int> strs = strides(dims);
+    //reverse(strs);
+    vector<string> components;
+    for (int i = 0; i < isl_multi_aff_dim(write_addr, isl_dim_set); i++) {
+      components.push_back(str(strs.at(i)) + "*" + codegen_c(isl_multi_aff_get_aff(write_addr, i)));
+    }
+    out << tab(1) << loc.first << "[" << sep_list(components, "", "", " + ") << "] = " << op->func << sep_list(compute_inputs, "(", ")", ", ") << ";" << endl;
+    out << "}" << endl;
+  }
+  out << endl;
+
+  vector<string> arg_decls;
+  for (auto b : prg.boundary_buffers()) {
+    arg_decls.push_back("float* " + b);
+  }
+
+  out << "void " << prg.name << "_cpu_reference" << sep_list(arg_decls, "(", ")", ", ") << " {" << endl;
+  generate_cpu_reference_body(1, out, prg.root, prg);
+  out << "}" << endl;
+  out << endl;
+
+  out << "__global__" << endl;
+  out << "void " << prg.name << "_kernel" << sep_list(arg_decls, "(", ")", ", ") << " {" << endl;
+
+  vector<string> conds;
+  conds.push_back("threadIdx.x < " + str(thread_xs));
+  conds.push_back("threadIdx.y < " + str(thread_ys));
+  conds.push_back("threadIdx.z < " + str(thread_zs));
+  conds.push_back("blockIdx.x < " + str(block_xs));
+  conds.push_back("blockIdx.y < " + str(block_ys));
+  conds.push_back("blockIdx.z < " + str(block_zs));
+  out << tab(1) << "if (" << sep_list(conds, "", "", " && ") << ") {" << endl;
+  isl_multi_aff* aff = get_multi_aff(inv(gpu_sched_bounded));
+  // TODO: Handle loops inside the schedule
+  vector<string> surrounding = surrounding_vars(op, prg);
+  vector<string> args = buffer_arg_names(op, prg);
+  for (int i = 0; i < (int) surrounding.size(); i++) {
+    auto comp = isl_multi_aff_get_aff(aff, i);
+    out << tab(2) << "// " << str(comp) << endl;
+    comp = isl_aff_set_dim_id(comp, isl_dim_in, 1, id(prg.ctx, "blockIdx.x"));
+    comp = isl_aff_set_dim_id(comp, isl_dim_in, 2, id(prg.ctx, "blockIdx.y"));
+    comp = isl_aff_set_dim_id(comp, isl_dim_in, 3, id(prg.ctx, "blockIdx.z"));
+    comp = isl_aff_set_dim_id(comp, isl_dim_in, 4, id(prg.ctx, "threadIdx.x"));
+    comp = isl_aff_set_dim_id(comp, isl_dim_in, 5, id(prg.ctx, "threadIdx.y"));
+    comp = isl_aff_set_dim_id(comp, isl_dim_in, 6, id(prg.ctx, "threadIdx.z"));
+    out << tab(2) << "int d" << str(i) << " = " << codegen_c(comp) << ";" << endl;
+    args.push_back("d" + str(i));
+  }
+  string args_list = sep_list(args, "", "", ", ");
+  out << tab(2) << op->name << "(" << args_list << ");" << endl;
+  out << tab(2) << "// " << str(aff) << endl;
+  // Now: Execute all statement instances scheduled for this thread?
+
+  auto min_instances = get_multi_aff(lexmin(inv(gpu_sched_bounded)));
+  auto max_instances = get_multi_aff(lexmax(inv(gpu_sched_bounded)));
+  out << tab(2) << "// " << str(min_instances) << endl;
+  out << tab(2) << "// " << str(max_instances) << endl;
+  out << tab(1) << "}" << endl;
+  out << "}" << endl;
+
+  out << endl;
+
+  out << "void " << prg.name << "" << sep_list(arg_decls, "(", ")", ", ") << " {" << endl;
+  vector<string> kernel_args;
+  for (auto b : prg.boundary_buffers()) {
+    out << tab(1) << "float* " << b << "_cuda;" << endl;
+    string buf_size = str(prg.buffer_size(b));
+    out << tab(1) << "cudaMalloc(&" << b << "_cuda, sizeof(float)*" << buf_size << ");" << endl;
+    kernel_args.push_back(b + "_cuda");
+  }
+  for (auto b : prg.ins) {
+    string buf_size = str(prg.buffer_size(b));
+    out << tab(1) << "cudaMemcpy(" <<
+      b << "_cuda" <<
+      ", " <<
+      b <<
+      "," <<
+      "sizeof(float)*" << buf_size << ", cudaMemcpyHostToDevice);" << endl;
+  }
+
+  out << tab(1) << "dim3 blocks(" << comma_list(blocks) << ");" << endl;
+  out << tab(1) << "dim3 threads(" << comma_list(threads) << ");" << endl;
+  out << endl;
+
+  out << tab(1) << "cudaEvent_t start, stop;" << endl;
+  out << tab(1) << "cudaEventCreate(&start);" << endl;
+  out << tab(1) << "cudaEventCreate(&stop);" << endl;
+  out << tab(1) << "cudaEventRecord(start);" << endl;
+  out << tab(1) << prg.name << "_kernel<<<blocks, threads>>>" << sep_list(kernel_args, "(", ")", ", ") << ";" << endl;
+  out << tab(1) << "cudaEventRecord(stop);" << endl;
+  out << endl;
+  out << tab(1) << "cudaEventSynchronize(stop);" << endl;
+  out << tab(1) << "float milliseconds = 0;" << endl;
+  out << tab(1) << "cudaEventElapsedTime(&milliseconds, start, stop);" << endl;
+  out << tab(1) << "printf(\"GPU Exe time (ms): %f\\n\", milliseconds);" << endl;
+
+  out << endl;
+
+  for (auto b : prg.outs) {
+    string buf_size = str(prg.buffer_size(b));
+    out << tab(1) << "cudaMemcpy(" <<
+      b <<
+      ", " <<
+      b << "_cuda" <<
+      "," <<
+      "sizeof(float)*" << buf_size << ", cudaMemcpyDeviceToHost);" << endl;
+  }
+  for (auto b : prg.boundary_buffers()) {
+    out << tab(1) << "cudaFree(" << b << "_cuda);" << endl;
+  }
+  out << "}" << endl;
+
+  out << endl;
+
+  out << "int main() {" << endl;
+  {
+    vector<string> args;
+    vector<string> cpu_args;
+    for (auto b : prg.boundary_buffers()) {
+      {
+        out << tab(1) << "float* " << b << ";" << endl;
+        string buf_size = str(prg.buffer_size(b));
+        out << tab(1) << b << " = (float*) malloc(sizeof(float)*" << buf_size << ");" << endl;
+        args.push_back(b);
+        if (elem(b, prg.ins)) {
+          out << tab(1) << "for (int i = 0; i < " << buf_size << "; i++) {" << endl;
+          out << tab(2) << b << "[i] = i;" << endl;
+          out << tab(1) << "}" << endl;
+        }
+      }
+      {
+        out << tab(1) << "float* " << b << "_cpu_ref;" << endl;
+        string buf_size = str(prg.buffer_size(b));
+        out << tab(1) << b << "_cpu_ref = (float*) malloc(sizeof(float)*" << buf_size << ");" << endl;
+        cpu_args.push_back(b + "_cpu_ref");
+        if (elem(b, prg.ins)) {
+          out << tab(1) << "for (int i = 0; i < " << buf_size << "; i++) {" << endl;
+          out << tab(2) << b << "_cpu_ref[i] = i;" << endl;
+          out << tab(1) << "}" << endl;
+        }
+      }
+    }
+
+    out << endl;
+    out << tab(1) << prg.name << "_cpu_reference" << sep_list(cpu_args, "(", ");", ", ") << endl;
+    out << tab(1) << "printf(\"Done with CPU reference\\n\");" << endl;
+    out << tab(1) << prg.name << sep_list(args, "(", ");", ", ") << endl;
+    out << endl;
+    for (auto b : prg.boundary_buffers()) {
+      string buf_size = str(prg.buffer_size(b));
+      if (elem(b, prg.outs)) {
+        out << tab(1) << "for (int i = 0; i < " << buf_size << "; i++) {" << endl;
+        //out << tab(2) << "printf(\"" << b << "[%d] = %f\\n\", i, " << b << "[i]);" << endl;
+        //out << tab(2) << "printf(\"" << b << "_cpu_ref[%d] = %f\\n\", i, " << b << "_cpu_ref[i]);" << endl;
+        out << tab(2) << "assert(" << b << "[i] == " << b << "_cpu_ref[i]);" << endl;
+        out << tab(1) << "}" << endl;
+      }
+      out << tab(1) << "free(" << b << ");" << endl;
+      out << tab(1) << "free(" << b << "_cpu_ref);" << endl;
+    }
+  }
+
+  out << "}" << endl;
+  out.close();
+}
+
+void gpu_codegen_test() {
+  prog prg("hello_gpu");
+  prg.compute_unit_file = "clockwork_cuda_standard_compute_units.h";
+  prg.add_input("x_dram");
+  prg.add_output("y_dram");
+
+  cpy("y_dram", "x_dram", 2, prg);
+  infer_bounds("y_dram", {8, 64}, prg);
+
+  prg.pretty_print();
+  op* op = pick(prg.all_ops());
+  string name = op->name;
+  op->pretty_print();
+  string gpu_schedule = curlies(name + "[root, x, y] -> [0, x, 0, 0, y, 0, 0]");
+  cout << "GPU schedule:" << gpu_schedule << endl;
+  isl_map* gpu_sched = isl_map_read_from_str(prg.ctx, gpu_schedule.c_str());
+  cout << "gpu thread locs to instances: " << str(inv(gpu_sched)) << endl;
+  cout << tab(1) << "# statement instances per thread: " << str(card(inv(gpu_sched))) << endl;
+
+  generate_cuda_code(prg, gpu_sched);
+
+  int res = cmd("nvcc -o hg hello_gpu.cu");
+  assert(res == 0);
+  res = cmd("./hg");
+  assert(res == 0);
+
+  assert(false);
+}
+
 void application_tests() {
+  gpu_codegen_test();
+
   iccad_tests();
 
   up_to_id_stream_tests();
@@ -18686,7 +19446,7 @@ void asplos_ds_test() {
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
-  options.use_custom_code_string = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
   options.debug_options.expect_all_linebuffers = true;
 
   string hblur = as_ds("in", ds);
@@ -18710,7 +19470,7 @@ void asplos_gp_test() {
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
-  options.use_custom_code_string = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
   options.debug_options.expect_all_linebuffers = true;
   ds.realize(options, hblur, 30, 30, 1);
 }
@@ -18731,7 +19491,7 @@ void asplos_lp_test() {
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
-  options.use_custom_code_string = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
   ds.realize(options, image, 30, 30, 1);
 }
 
@@ -18769,7 +19529,7 @@ void asplos_ef_test() {
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
-  options.use_custom_code_string = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
   ds.realize(options, image, 30, 30, 1);
 
 }
@@ -19015,8 +19775,53 @@ void test_time_sharing_gaussian_pyramid() {
   move_to_benchmarks_folder(prg.name);
 }
 
+void test_multi_kernel_pyramid_collapsing() {
+
+  prog prg("pyr_blndd2048_ii1");
+  prg.compute_unit_file = "local_laplacian_filters_compute.h";
+  prg.add_input("in");
+  prg.add_output("out");
+
+  cpy("in_on_chip", "in", 2, prg);
+
+  const int num_pyramid_levels = 4;
+  vector<string> lps = laplacian_pyramid("in_on_chip", num_pyramid_levels, prg);
+
+  string reconstructed = reconstruct_gaussian(lps, prg);
+  cpy("out", reconstructed, 2, prg);
+
+  infer_bounds("out", {64, 64}, prg);
+
+  prg.pretty_print();
+  prg.sanity_check();
+
+  unroll_reduce_loops(prg);
+  merge_basic_block_ops(prg);
+  normalize_bounds(prg);
+  normalize_address_offsets(prg);
+
+  prg.pretty_print();
+  prg.sanity_check();
+
+  auto unopt_postprocessed = unoptimized_result(prg);
+
+  auto fusion_groups = one_stage_per_group(prg);
+  app_dag dag = partition_application(fusion_groups, prg);
+
+  CodegenOptions options;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  generate_app_code(options, dag);
+
+  generate_regression_testbench(dag.prg);
+  vector<string> multi_kernel_res = run_regression_tb(dag.prg);
+
+  compare("multi_kernel_" + prg.name + "_vs_unopt", multi_kernel_res, unopt_postprocessed);
+  move_to_benchmarks_folder(dag.prg.name);
+  //assert(false);
+}
+
 void test_multi_kernel_unsharp() {
-  prog prg("unsharp_multi_kernel");
+  prog prg("us_mk1_ii1");
   prg.add_input("in");
   prg.add_output("out");
 
@@ -19024,7 +19829,7 @@ void test_multi_kernel_unsharp() {
   cpy("gray_blur", "gray", 2, prg);
   cpy("gray_blur_cache", "gray_blur", 2, prg);
 
-  auto blurred = prg.add_nest("xb", 0, 1, "yb", 0, 1)->add_op("blur");
+  auto blurred = prg.add_nest("yb", 0, 1, "xb", 0, 1)->add_op("blur");
   for (int i = 0; i < 3; i++) {
     for (int j = 0; j < 3; j++) {
       blurred->add_load("gray_blur_cache", "xb + " + str(i), "yb + " + str(j));
@@ -19035,7 +19840,7 @@ void test_multi_kernel_unsharp() {
 
 
   cpy("gray_diff", "gray", 2, prg);
-  auto diff = prg.add_nest("x", 0, 1, "y", 0, 1)->add_op("diff");
+  auto diff = prg.add_nest("y", 0, 1, "x", 0, 1)->add_op("diff");
   diff->add_load("gray_diff", "x", "y");
   diff->add_load("blurred", "x", "y");
   diff->add_store("out", "x", "y");
@@ -19055,72 +19860,9 @@ void test_multi_kernel_unsharp() {
   prg.pretty_print();
   prg.sanity_check();
 
-  //cout << "Channel sizes" << endl;
-  //auto sched = prg.optimized_codegen();
-  //cout << "Optimized schedule: " << str(sched) << endl;
-
-  //assert(false);
-
-  //for (auto b : all_buffers(prg)) {
-    //auto r = prg.consumer_map(b);
-    //auto w = prg.producer_map(b);
-    //if (!prg.is_boundary(b)) {
-      //cout << "========= " << b << endl;
-      //cout << tab(1) << str(r) << endl;
-      //cout << tab(1) << str(w) << endl;
-
-      //auto write_times = lexmin(dot(inv(w), sched));
-      //auto read_times = lexmin(dot(inv(r), sched));
-
-      //auto op_times = unn(write_times, read_times);
-
-      ////auto written_before = lex_gt(write_times, write_times);
-      //auto written_before = lex_gt(op_times, write_times);
-      //cout << "written before: " << str(written_before) << endl;
-      //auto times_to_written_before =
-        ////to_map(unn(dot(inv(write_times), written_before), inv(write_times)));
-        //to_map(unn(dot(inv(op_times), written_before), inv(write_times)));
-      //cout << "Values written before time: " << str(times_to_written_before) << endl;
-      ////cout << "Size = " << str(card(times_to_written_before)) << endl;
-      ////cout << "Bound = " << str(int_upper_bound(card(times_to_written_before))) << endl;
-
-      ////auto read_after = lex_lt(read_times, read_times);
-      //auto read_after = lex_lt(op_times, read_times);
-      //auto times_to_read_after =
-        //to_map(unn(dot(inv(op_times), read_after), inv(read_times)));
-      //cout << "Values read after time: " << str(times_to_read_after) << endl;
-      ////cout << "Size = " << str(card(times_to_read_after)) << endl;
-      ////cout << "Bound = " << str(int_upper_bound(card(times_to_read_after))) << endl;
-
-      //auto live = coalesce(simplify(its(times_to_read_after, times_to_written_before)));
-      //cout << "live: " << str(live) << endl;
-      //cout << "Size = " << str(card(live)) << endl;
-      //cout << "Bound = " << str(int_upper_bound(card(to_umap(live)))) << endl;
-
-      ////auto times_to_writes = dot(inv(sched), w);
-      ////auto times_to_reads = dot(inv(sched), r);
-
-      ////cout << "times to writes: " << str(times_to_writes) << endl;
-      ////cout << "times to reads : " << str(times_to_reads) << endl;
-
-      //// What am I trying to construct?
-      ////   An expression for max(#Writes(t) - #Reads(t))
-      //// Need: #(Data written at time t that has not yet been read)
-      //// Need: A map from times to the set of locations that have been written but not read
-      ////   A map from times to the set of locations that have been written
-      ////   A map from times to the set of locations that have not been read yet but will be
-    //}
-  //}
-  //assert(false);
-
   auto unopt_postprocessed = unoptimized_result(prg);
 
-  map<std::string, std::set<string> > fusion_groups;
-  int i = 0;
-  for (auto gp : get_kernels(prg)) {
-    fusion_groups["gp_" + str(i)] = {gp};
-    i++;
-  }
+  auto fusion_groups = one_stage_per_group(prg);
   app_dag dag = partition_application(fusion_groups, prg);
   for (auto& gp : dag.fusion_group_progs) {
     cout << "============================" << endl;
@@ -19128,18 +19870,13 @@ void test_multi_kernel_unsharp() {
     cout << endl;
   }
 
-  generate_regression_testbench(dag.prg);
+  dag.prg.pretty_print();
 
   CodegenOptions options;
-  options.internal = true;
-  options.all_rams = true;
-  all_unbanked(prg, options);
-  for (auto& gp : dag.fusion_group_progs) {
-    all_unbanked(gp.second, options);
-  }
-  options.inner_bank_offset_mode =
-    INNER_BANK_OFFSET_MULTILINEAR;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
   generate_app_code(options, dag);
+
+  generate_regression_testbench(dag.prg);
   vector<string> multi_kernel_res = run_regression_tb(dag.prg);
 
   compare("multi_kernel_" + prg.name + "_vs_unopt", multi_kernel_res, unopt_postprocessed);
@@ -19339,9 +20076,24 @@ prog stencil_chain(const std::string& name) {
 }
 
 void dhuff_playground() {
-  //test_multi_kernel_unsharp();
-  //assert(false);
-
+  {
+#ifdef COREIR
+    for (auto prg : harris_variants()) {
+      prg.pretty_print();
+      for (auto op : prg.all_ops()) {
+        if (op->func != "") {
+          cout << op->func << endl;
+          int tb_res = generate_compute_unit_regression_tb(op, prg);
+          if (tb_res != 0) {
+            cout << "==== In prog: " << prg.name << " compute unit: " << op->func << " has a mismatch between C++ and coreir" << endl;
+            assert(false);
+          }
+        }
+      }
+    }
+    assert(false);
+#endif
+  }
   //llf_test();
   //assert(false);
   {
@@ -19923,9 +20675,6 @@ void dhuff_playground() {
     //assert(false);
   //}
 
-  //test_multi_kernel_unsharp();
-  //assert(false);
-
   //test_multi_kernel_design();
   //test_time_sharing_gaussian_pyramid();
 
@@ -20026,9 +20775,10 @@ void stencil_chain_multi_kernel_test() {
 
 }
 
-void travis_tests() {
-  test_multi_kernel_design();
+void dhuff_tests() {
+  //test_multi_kernel_pyramid_collapsing();
   test_multi_kernel_unsharp();
+  test_multi_kernel_design();
   stencil_chain_multi_kernel_test();
   infer_bounds_tests();
   test_if_construction();
@@ -20123,8 +20873,8 @@ int main(int argc, char** argv) {
       blur_example();
       return 0;
     }
-    if (cmd == "travis-tests") {
-      travis_tests();
+    if (cmd == "dhuff-tests") {
+      dhuff_tests();
       return 0;
     }
 

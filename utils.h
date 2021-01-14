@@ -247,10 +247,10 @@ std::string sep_list(const std::vector<T>& vals, const std::string& ldelim, cons
   return sep_list(strs, ldelim, rdelim, sep);
 }
 
-static inline
-std::string comma_list(const std::vector<std::string>& strs) {
-  return sep_list(strs, "", "", ", ");
-}
+//static inline
+//std::string comma_list(const std::vector<std::string>& strs) {
+  //return sep_list(strs, "", "", ", ");
+//}
 
 static inline
 std::string bracket_list(const std::vector<std::string>& strs) {
