@@ -5043,8 +5043,8 @@
           ["op_hcompute_demosaicked_1_stencil$inner_compute$mux_483_512_562$mux.data.out","op_hcompute_corrected_stencil_2$inner_compute$mul_1299_1300_1301$binop.data.in.0"],
           ["op_hcompute_corrected_stencil_2$inner_compute$sub_1298_1301_1302$binop.data.in.1","op_hcompute_corrected_stencil_2$inner_compute$mul_1299_1300_1301$binop.data.out"],
           ["op_hcompute_corrected_stencil_2$inner_compute$sub_1298_1301_1302$binop.data.in.0","op_hcompute_corrected_stencil_2$inner_compute$sub_1294_1297_1298$binop.data.out"],
-          ["op_hcompute_curved_stencil$inner_compute$umin_corrected_stencil_1_1842_1843$ucomp$compop.data.in.1","op_hcompute_curved_stencil$inner_compute$const_p255__1842.out"],
-          ["op_hcompute_curved_stencil$inner_compute$umin_corrected_stencil_1_1842_1843$min_mux$mux.data.in.1","op_hcompute_curved_stencil$inner_compute$const_p255__18421.out"],
+          ["op_hcompute_curved_stencil$inner_compute$umin_corrected_stencil_1_1842_1843$min_mux$mux.data.in.1","op_hcompute_curved_stencil$inner_compute$const_p255__1842.out"],
+          ["op_hcompute_curved_stencil$inner_compute$umin_corrected_stencil_1_1842_1843$ucomp$compop.data.in.1","op_hcompute_curved_stencil$inner_compute$const_p255__18421.out"],
           ["op_hcompute_curved_stencil$inner_compute$umin_corrected_stencil_1_1842_1843$min_mux$mux.data.out","op_hcompute_curved_stencil$inner_compute$rom_curvea0$1$cgramem.addr_in_0"],
           ["op_hcompute_curved_stencil$inner_compute$rom_curvea0$1_ren_lutcnst.bit.out","op_hcompute_curved_stencil$inner_compute$rom_curvea0$1$cgramem.ren_in_0"],
           ["op_hcompute_curved_stencil$inner_compute$umin_corrected_stencil_1_1842_1843$ucomp$compop.bit.out","op_hcompute_curved_stencil$inner_compute$umin_corrected_stencil_1_1842_1843$min_mux$mux.bit.in.0"],
@@ -6008,8 +6008,8 @@
           }
         },
         "connections":[
-          ["inner_compute$umin_corrected_stencil_1_1842_1843$ucomp$compop.data.in.1","inner_compute$const_p255__1842.out"],
-          ["inner_compute$umin_corrected_stencil_1_1842_1843$min_mux$mux.data.in.1","inner_compute$const_p255__18421.out"],
+          ["inner_compute$umin_corrected_stencil_1_1842_1843$min_mux$mux.data.in.1","inner_compute$const_p255__1842.out"],
+          ["inner_compute$umin_corrected_stencil_1_1842_1843$ucomp$compop.data.in.1","inner_compute$const_p255__18421.out"],
           ["inner_compute$umin_corrected_stencil_1_1842_1843$min_mux$mux.data.out","inner_compute$rom_curvea0$1$cgramem.addr_in_0"],
           ["self.curved_stencil_op_hcompute_curved_stencil_write.0","inner_compute$rom_curvea0$1$cgramem.data_out_0"],
           ["inner_compute$rom_curvea0$1_ren_lutcnst.bit.out","inner_compute$rom_curvea0$1$cgramem.ren_in_0"],
@@ -8791,8 +8791,8 @@
           }
         },
         "connections":[
-          ["umin_corrected_stencil_1_1842_1843$min_mux$mux.data.in.1","const_p255__1842.out"],
-          ["umin_corrected_stencil_1_1842_1843$ucomp$compop.data.in.1","const_p255__18421.out"],
+          ["umin_corrected_stencil_1_1842_1843$ucomp$compop.data.in.1","const_p255__1842.out"],
+          ["umin_corrected_stencil_1_1842_1843$min_mux$mux.data.in.1","const_p255__18421.out"],
           ["umin_corrected_stencil_1_1842_1843$min_mux$mux.data.out","rom_curvea0$1$cgramem.addr_in_0"],
           ["self.out_curved_stencil","rom_curvea0$1$cgramem.data_out_0"],
           ["rom_curvea0$1_ren_lutcnst.bit.out","rom_curvea0$1$cgramem.ren_in_0"],

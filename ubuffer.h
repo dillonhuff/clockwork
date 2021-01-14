@@ -1016,20 +1016,20 @@ class UBuffer {
         return pt_vec.size() / hardware.out_port_width;
     }
 
-    //TODO: put it into qexpr.h
-    Box extract_access_range() {
-        auto addr_range = isl_union_map_read_from_str(ctx, "{}");
-        for (auto pt: get_in_ports()) {
-            addr_range = unn(access_map.at(pt), addr_range);
-        }
-        return Box(addr_range);
-    }
-
     vector<int> get_linearization_vector() {
-        vector<int> ret;
-        auto b = extract_access_range();
-        for (size_t i = 0; i < b.dimension(); i ++) {
-            ret.push_back(b.r_cardinality(i));
+        vector<int> ret({1});
+        vector<int> lengths;
+        int ld = logical_dimension();
+        for (int i = 0; i < ld; i ++) {
+            auto s = project_all_but(to_set(global_range()), ld - i - 1);
+            auto min = to_int(lexminval(s));
+            auto max= to_int(lexmaxval(s));
+            int length = max - min + 1;
+            lengths.push_back(length);
+        }
+        for (int i = 0; i < logical_dimension()-1; i ++) {
+            int stride = ret.back();
+            ret.push_back(stride * lengths.at(i));
         }
         return ret;
     }
@@ -1079,9 +1079,6 @@ class UBuffer {
         sort(point_vec.begin(), point_vec.end(), lex_lt_pt);
         for (auto point:  point_vec) {
             auto b = get_linearization_vector();
-            //FIXME: hack the tb address
-            if (is_suffix(name, "tb"))
-                b.back() /= point_vec.size();
             auto a = parse_pt(point);
             int addr = std::inner_product(a.rbegin(), a.rend(), b.begin(), 0);
             ret.push(addr);
@@ -1096,9 +1093,6 @@ class UBuffer {
         sort(point_vec.begin(), point_vec.end(), lex_lt_pt);
         for (auto point:  point_vec) {
             auto b = get_linearization_vector();
-            //FIXME: hack the tb address
-            if (is_suffix(name, "tb"))
-                b.back() /= num_out_ports();
             auto a = parse_pt(point);
             int addr = std::inner_product(a.begin(), a.end(), b.rbegin(), 0);
             ret.push(addr);
@@ -1909,6 +1903,11 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
       return s;
     }
 
+    string buf_range_name() {
+      auto am = pick(access_map);
+      return range_name(to_map(am.second));
+    }
+
     void normalize_access_range() {
       auto rng = to_set(global_range());
       vector<int> start_locs(num_dims());
@@ -2369,6 +2368,9 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
     //from bank to ubuffer
     map<string, UBuffer> generate_ubuffer(CodegenOptions& opt);
 
+    //for chaining and create subbank
+    vector<UBuffer> decouple_ubuffer_from_bank_map(isl_map* bank_map);
+
     //smt stream generation
     void generate_smt_stream(CodegenOptions& options);
     void collect_memory_cnt(CodegenOptions& options, mem_access_cnt& mem_access);
@@ -2428,6 +2430,55 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
 
 };
 
+string toBracketList(const vector<vector<int>> & data);
+
+struct StreamData {
+    vector<vector<int> > in_data;
+    vector<vector<int> > out_data;
+    vector<bool> in_valid;
+    vector<bool> out_valid;
+    int in_port_width, out_port_width;
+    int port_num;
+
+    StreamData(int inpt_width, int outpt_width, int pt_num):
+        in_port_width(inpt_width),
+        out_port_width(outpt_width),
+        port_num(pt_num) {
+            in_data = vector<vector<int>>(port_num, vector<int>(in_port_width, 0));
+            out_data = vector<vector<int>>(port_num, vector<int>(out_port_width, 0));
+            in_valid = vector<bool>(port_num, false);
+            out_valid = vector<bool>(port_num, false);
+        }
+
+    void print_info() {
+      cout << "in_data: " << endl;
+      cout << toBracketList(in_data);
+      cout << endl;
+
+      cout << "out_data: " << endl;
+      cout << toBracketList(out_data);
+      cout << endl;
+
+      cout << "In valid: " << endl;
+      cout << sep_list(in_valid, "[", "]", " ");
+      cout << endl;
+
+      cout << "Out valid: " << endl;
+      cout << sep_list(out_valid, "[", "]", " ");
+      cout << endl;
+    }
+
+    void emit_csv(ofstream& out) {
+      out << toBracketList(in_data) << ", "
+          //<< sep_list(in_valid, "[", "]", " ") << ", "
+          << str(to_int(in_valid)) << ", "
+          << toBracketList(out_data) << ", "
+          //<< sep_list(out_valid, "[", "]", " ") << endl;
+          << str(to_int(out_valid)) << endl;
+
+
+    }
+};
 
 //Data structure to append top level stream and generate
 struct lakeStream {
@@ -2498,6 +2549,7 @@ void generate_lake_stream(CodegenOptions & options,
         map<string, UBuffer>& buffers_opt,
         umap* hardware_schedule);
 void emit_lake_address_stream2file(CodegenOptions& options, map<string, UBuffer> buffers_opt, string dir);
+void emit_lake_address_stream2file_new(CodegenOptions &options, map<string, UBuffer> buffers_opt, string dir);
 lakeStream emit_top_address_stream(string fname, vector<int> read_cycle, vector<int> write_cycle,
         vector<vector<int> > read_addr, vector<vector<int> > write_addr, int input_width, int output_width);
 

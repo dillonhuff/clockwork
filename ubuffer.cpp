@@ -791,6 +791,13 @@ isl_union_set* retrive_domain_from_buffers(const map<string, UBuffer> &buffers) 
     return global_dom;
 }
 
+maybe<vector<int>> get_project_dim(UBuffer & buf, bool is_read) {
+    if (is_read){
+      return buf.get_consumer_bank_dim_id();
+    } else {
+      return buf.get_producer_bank_dim_id();
+    }
+}
 
 #ifdef COREIR
 
@@ -911,14 +918,6 @@ ConfigMap generate_addressor_config_from_aff_expr(isl_aff* addr,
     }
     std::reverse(vals.at(prefix+"data_stride").begin(), vals.at(prefix+"data_stride").end());
     return vals;
-}
-
-maybe<vector<int>> get_project_dim(UBuffer & buf, bool is_read) {
-    if (is_read){
-      return buf.get_consumer_bank_dim_id();
-    } else {
-      return buf.get_producer_bank_dim_id();
-    }
 }
 
 bool check_need_mux(CodegenOptions & options, UBuffer & buf,
@@ -2680,6 +2679,120 @@ bool build_delay_map(UBuffer& buf, map<string, vector<pair<string, int> > >& del
 
 #endif
 
+string get_buf_type(string buf_name) {
+    if (contains(buf_name, "agg")) {
+        return "agg";
+    } else if (contains(buf_name, "tb")) {
+        return "tb";
+    } else if (contains(buf_name, "sram")) {
+        return "sram";
+    } else {
+        cout << "Sub buffer name not recognized!" << endl;
+        assert(false);
+    }
+}
+
+map<string, UBuffer> decouple_multi_tile_ubuffer(CodegenOptions& options, map<string, UBuffer> & vec_buf) {
+  map<string, UBuffer> ubuf_candidates;
+  for (auto it: vec_buf) {
+    maybe<vector<int>> project_id;
+    if (get_buf_type(it.first) == "tb") {
+      project_id = get_project_dim(it.second, true);
+    } else if (get_buf_type(it.first) == "agg") {
+      project_id = get_project_dim(it.second, false);
+    }
+    if (project_id.has_value()) {
+      cout << "Subbuf type: " << get_buf_type(it.first) << endl;
+      cout << "Project ID: " << project_id.get_value() << endl;
+      auto parition_factors = project_id.get_value();
+      auto buf = it.second;
+      vector<int> cyclic_partition_factor;
+      vector<int> min_addr, max_addr;
+      min_addr = min_offsets_by_dimension(buf);
+      max_addr = max_offsets_by_dimension(buf);
+      for (int d = 0; d < buf.logical_dimension(); d ++) {
+          if (elem(d, parition_factors)) {
+            cyclic_partition_factor.push_back(max_addr.at(d) - min_addr.at(d) + 1);
+          } else {
+            cyclic_partition_factor.push_back(1);
+          }
+      }
+      cout << "number of banks = " << card(cyclic_partition_factor) << endl;
+      banking_strategy b_s = {"cyclic", cyclic_partition_factor};
+      auto range2bank = bank_map(buf.ctx, buf.buf_range_name(), b_s);
+      cout << "range2bank: " << str(range2bank) << endl;
+      //get a map from data range to bankID
+      vector<UBuffer> decoupled_buffers = buf.decouple_ubuffer_from_bank_map(range2bank);
+      //assert(false);
+      for (auto buf: decoupled_buffers) {
+        ubuf_candidates.insert({buf.name, buf});
+      }
+    } else {
+      ubuf_candidates.insert(it);
+    }
+  }
+  return ubuf_candidates;
+}
+
+vector<UBuffer> UBuffer::decouple_ubuffer_from_bank_map(isl_map* bank_map) {
+  vector<UBuffer> ret;
+  auto range2bank = its(to_umap(bank_map), global_range());
+  cout << "\tglobal range of bank: " << str(range2bank) << endl;
+
+  auto bankID_list = get_points(range(bank_map));
+  int ubuf_cnt = 0;
+  for (auto bankID : bankID_list) {
+    int usuffix = 0;
+    auto id_set = to_set(bankID);
+    auto this_bank_rddom = range(coalesce(its(inv(range2bank), id_set)));
+    cout << "\t" << str(id_set) << " this bank rddom: " << str(this_bank_rddom) << endl;
+
+    //pack the new bank information into ubuffer
+    UBuffer buf;
+    string bname = this->name + "_" + str(ubuf_cnt);
+    buf.name = bname;
+    buf.ctx = ctx;
+    buf.port_widths = port_widths;
+    for (auto inpt: get_in_ports()) {
+      auto acc_map = to_map(access_map.at(inpt));
+      cout << "\twrite map: " << str(acc_map) << endl;
+      acc_map = coalesce(its_range(acc_map, to_set(this_bank_rddom)));
+      //acc_map = set_range_name(acc_map, bname);
+      cout << "\twrite map after decouple: " << str(acc_map) << endl;
+      auto dom = ::domain(acc_map);
+      if (empty(dom))
+        continue;
+
+      string pt_name = bname + "_" + ::name(dom) + "_" + to_string(usuffix);
+      buf.port_bundles[::name(dom) + "_write"].push_back(pt_name);
+      buf.add_in_pt(pt_name, dom, acc_map, its(schedule.at(inpt), dom));
+      usuffix ++;
+    }
+
+    //Check if we could merge them into same bundle
+    for (auto outpt: get_out_ports()) {
+      auto acc_map = to_map(access_map.at(outpt));
+      cout << "\tread map: " << str(acc_map) << endl;
+      acc_map = coalesce(its_range(acc_map, to_set(this_bank_rddom)));
+      //acc_map = set_range_name(acc_map, bname);
+      cout << "\tread map after decouple: " << str(acc_map) << endl;
+      auto dom = ::domain(acc_map);
+      if (empty(dom))
+        continue;
+
+      string pt_name = bname + "_" + ::name(dom) + "_" + to_string(usuffix);
+      //string pt_name = outpt;
+      buf.port_bundles[::name(dom) + "_read"].push_back(pt_name);
+      buf.add_out_pt(pt_name, dom, acc_map, its(schedule.at(outpt), dom));
+      usuffix ++;
+    }
+    cout << "decouple buffer no." << ubuf_cnt << endl << buf;
+    ubuf_cnt ++;
+    ret.push_back(buf);
+  }
+  return ret;
+}
+
 //This the smt stream generation pass without coreIR generation
 void UBuffer::generate_smt_stream(CodegenOptions& options) {
 
@@ -2714,6 +2827,10 @@ void UBuffer::generate_smt_stream(CodegenOptions& options) {
       }
       //Generate SMT stream if needed
       if (options.emit_smt_stream) {
+        //TODO: merge this pass into vectorization
+        //TODO: reuse this pass in chaining
+
+        vec_buf = decouple_multi_tile_ubuffer(options, vec_buf);
         generate_lake_stream(options, vec_buf, global_schedule_from_buffers(vec_buf));
       }
     }
@@ -2870,7 +2987,8 @@ void generate_lake_stream(CodegenOptions & options,
   string dir = options.dir + "lake_stream/";
   cout << "Generating lake smt stream!" << endl;
   cmd("mkdir -p " + dir);
-  emit_lake_address_stream2file(options, buffers_opt, dir);
+  //emit_lake_address_stream2file(options, buffers_opt, dir);
+  emit_lake_address_stream2file_new(options, buffers_opt, dir);
 }
 
 pair<int, int> get_stream_vector_size(CodegenOptions &options, string buf_name) {
@@ -2894,6 +3012,17 @@ pair<int, int> get_stream_vector_size(CodegenOptions &options, string buf_name) 
         assert(false);
     }
 }
+
+
+map<string, vector<string>> classify_buffers(map<string, UBuffer> buffers_opt) {
+  map<string, vector<string>> ret;
+  for(auto it: buffers_opt) {
+    string tp = get_buf_type(it.first);
+    map_insert(ret, tp, it.first);
+  }
+  return ret;
+}
+
 
 void emit_lake_address_stream2file(CodegenOptions &options,
         map<string, UBuffer> buffers_opt, string dir) {
@@ -2924,6 +3053,91 @@ void emit_lake_address_stream2file(CodegenOptions &options,
     lakeStream top(agg_tb_pair.first, agg_tb_pair.second);
     top.emit_csv(dir + "/" + it.first + "_top");
   }
+}
+
+string toBracketList(const vector<vector<int>> & data) {
+  if (data.size() == 1) {
+    return sep_list(pick(data), "[", "]", " ");
+  } else {
+    vector<string> in;
+    for (auto bk_data : data) {
+      in.push_back(sep_list(bk_data, "[", "]", " "));
+    }
+    return sep_list(in, "[", "]", " ");
+  }
+}
+
+vector<StreamData> emit_top_address_stream(
+        CodegenOptions& options, string subbuf, vector<UBuffer> & buffers) {
+  auto lake_info = options.mem_tile;
+  int input_width = lake_info.in_port_width.at(subbuf);
+  int output_width = lake_info.out_port_width.at(subbuf);
+  int pt_num = lake_info.bank_num.at(subbuf);
+  //StreamData tmp(input_width, output_width, pt_num);
+
+  vector<StreamData> ret;
+
+  vector<int> read_cycle;
+  vector<int> write_cycle;
+  vector<vector<int> > read_addr;
+  vector<vector<int> > write_addr;
+
+  int cycle = 0;
+  //create a vector of rd/wr iter for different buffer
+  vector<int> rd_itr_vec = vector<int>(pt_num, 0);
+  vector<int> wr_itr_vec = vector<int>(pt_num, 0);
+  //out << "data_in, valid_in, data_out, valid_out" << endl;
+
+  //out address has memory
+  auto addr_out = vector<vector<int>>(pt_num, vector<int>(output_width, 0));
+
+  bool finished;
+  while (true) {
+    finished = true;
+    StreamData tmp(input_width, output_width, pt_num);
+    for (int buf_cnt = 0; buf_cnt < buffers.size(); buf_cnt++) {
+      int& rd_itr = rd_itr_vec.at(buf_cnt);
+      int& wr_itr = wr_itr_vec.at(buf_cnt);
+      auto read_cycle = buffers.at(buf_cnt).read_cycle;
+      auto write_cycle = buffers.at(buf_cnt).write_cycle;
+      auto read_addr = buffers.at(buf_cnt).read_addr;
+      auto write_addr = buffers.at(buf_cnt).write_addr;
+
+      auto addr_in = vector<vector<int>>(pt_num, vector<int>(input_width, 0));
+      if (rd_itr < read_cycle.size()) {
+        if (read_cycle.at(rd_itr) == cycle) {
+          tmp.out_valid.at(buf_cnt) = true;
+          for (size_t i = 0; i < read_addr.at(rd_itr).size(); i ++)
+            addr_out.at(buf_cnt).at(i) = read_addr.at(rd_itr).at(i);
+
+          //cout << cycle << tab(1) << "rd" << tab(1) << addr_out << endl;
+          //out << "rd@" << cycle << tab(1) << ",data=" <<sep_list(addr_out, "[", "]", " ") << endl;
+          rd_itr ++;
+        }
+      }
+      if (wr_itr < write_cycle.size()) {
+        if (write_cycle.at(wr_itr) == cycle) {
+          tmp.in_valid.at(buf_cnt) = true;
+          for (size_t i = 0; i < write_addr.at(wr_itr).size(); i ++)
+            tmp.in_data.at(buf_cnt).at(i) = write_addr.at(wr_itr).at(i);
+          //cout << cycle << tab(1) << "wr" << tab(1) << addr_in << endl;
+          //out << "wr@" << cycle << tab(1) << ",data="<< sep_list(addr_in, "[", "]", " ") << endl;
+          //out << cycle << tab(1) << "wr"  << endl;
+          wr_itr ++;
+        }
+      }
+      finished &= (wr_itr == write_cycle.size());
+      finished &= (rd_itr == read_cycle.size());
+
+    }
+    tmp.out_data = addr_out;
+    ret.push_back(tmp);
+
+    cycle ++;
+    if (finished)
+        break;
+  }
+  return ret;
 }
 
 lakeStream emit_top_address_stream(string fname,
@@ -2991,6 +3205,42 @@ lakeStream emit_top_address_stream(string fname,
   }
   out.close();
   return ret;
+}
+
+void emit_lake_streamdata_to_file(const vector<StreamData> & buf_stream, const string& fname) {
+  ofstream out(fname+"_SMT.csv");
+  cout << "fname: " << fname << endl;
+  out << "data_in, valid_in, data_out, valid_out" << endl;
+  for (auto cycle_data: buf_stream) {
+    cycle_data.emit_csv(out);
+  }
+  out.close();
+}
+
+void emit_lake_address_stream2file_new(CodegenOptions &options,
+        map<string, UBuffer> buffers_opt, string dir) {
+  map<string, vector<string> > type2ubuf = classify_buffers(buffers_opt);
+  for (auto it: type2ubuf) {
+    string tp_name = it.first;
+    string buf_name = take_until_str(pick(it.second), "_ubuf");
+    vector<UBuffer> buffers;
+    for (auto name: it.second) {
+      buffers.push_back(buffers_opt.at(name));
+    }
+    cout << "generate SMT stream for buffer: " << buf_name << endl;
+    cout << "subbuf name: " << tp_name << endl;
+
+    //TB need separate buffer into mutiple ubuffer
+    //if (tp_name == "tb")
+    //    continue;
+
+    auto stream_data = emit_top_address_stream(options, tp_name, buffers);
+
+    string buf_dir = dir+"/"+buf_name + "/";
+    cmd("mkdir -p " + buf_dir);
+    string fname =  buf_dir + tp_name;
+    emit_lake_streamdata_to_file(stream_data, fname);
+  }
 }
 
   void generate_code_prefix(CodegenOptions& options,

@@ -9173,9 +9173,9 @@ App heat_3d_real_iccad(const std::string& out_name, const int num_stages) {
   string last = "in_cc";
   for (int i = 0; i < num_stages; i++) {
     string current = "h3_" + str(i);
-//.125f * (in(1, 0, 0) - 2.f * in(0, 0, 0) + in(-1,  0,  0)) + 
-    //.125f * (in(0, 1, 0) - 2.f * in(0, 0, 0) + in( 0, -1,  0)) + 
-    //.125f * (in(0, 0, 1) - 2.f * in(0, 0, 0) + in( 0,  0, -1)) + 
+//.125f * (in(1, 0, 0) - 2.f * in(0, 0, 0) + in(-1,  0,  0)) +
+    //.125f * (in(0, 1, 0) - 2.f * in(0, 0, 0) + in( 0, -1,  0)) +
+    //.125f * (in(0, 0, 1) - 2.f * in(0, 0, 0) + in( 0,  0, -1)) +
     //in(0, 0, 0)
     dn.func3d(current,
         add({
@@ -14130,6 +14130,7 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   test_apps.push_back(harris());
   test_apps.push_back(rom());
   test_apps.push_back(conv_1_2());
+  test_apps.push_back(demosaic_unrolled());
   test_apps.push_back(camera_pipeline());
   test_apps.push_back(up_sample());
 
@@ -14324,7 +14325,7 @@ void lake_conv33_autovec_test() {
 
 }
 
-void lake_identity_stream_config_gen(int x, int y, string suffix) {
+void lake_identity_stream_SMT_test(int x, int y, string suffix) {
   prog lake_agg("lake_agg_test");
   lake_agg.add_input("in");
   lake_agg.add_output("out");
@@ -14333,19 +14334,19 @@ void lake_identity_stream_config_gen(int x, int y, string suffix) {
 
   //corresponding to the aggI/O, sramI/O, TBI/O latency
   map<pair<string, string>, int> latency({{{"in2buf", "in2buf_agg2sram"}, 1},
-          {{"in2buf_agg2sram", "buf2out_sram2tb"}, 2},
-          {{"buf2out_sram2tb", "buf2out"}, 1}});
+          {{"in2buf_agg2sram", "buf2out_sram2tb"}, 1},
+          {{"buf2out_sram2tb", "buf2out"}, 2}});
 
   auto in2buf = lake_agg.add_nest("a1", 0, y, "a0", 0, x)->add_op("in2buf");
   in2buf->add_load("in", "a1, a0");
-  in2buf->add_store("buf", "a1, a0");
+  in2buf->add_store("buf_ubuf", "a1, a0");
 
   auto buf2out= lake_agg.add_nest("b1", 0, y, "b0", 0, x)->add_op("buf2out");
-  buf2out->add_load("buf", "b1, b0");
+  buf2out->add_load("buf_ubuf", "b1, b0");
   buf2out->add_store("out", "b1, b0");
 
   auto buffers_opt = build_buffers(lake_agg);
-  buffer_vectorization("buf", 1, 4, buffers_opt);
+  buffer_vectorization("buf_ubuf", 1, 4, buffers_opt);
   auto new_opt_sched = optimized_schedule_from_buffers_flatten(buffers_opt, false);
   cout << "\t optimized schedule map: " << str(new_opt_sched) << endl;
   cout << codegen_c(new_opt_sched) << endl;
@@ -14377,10 +14378,14 @@ void lake_identity_stream_config_gen(int x, int y, string suffix) {
           rewrite_buffers.insert(it);
       }
   }
+  //Generate configuration for identity stream
 #ifdef COREIR
   auto config = tmp.generate_ubuf_args(options, rewrite_buffers);
   emit_lake_config_collateral(options, "buf_" + suffix, config);
 #endif
+  //Generate stream for identity stream
+  options.dir = "./aha_garnet_smt/identity_stream_"+suffix+"/";
+  generate_lake_stream(options, rewrite_buffers, hsh);
 
 }
 
@@ -14417,7 +14422,7 @@ void lake_dual_port_test() {
   //cmd("mkdir -p ./lake_stream/identity_stream/");
   //emit_lake_stream(buffers_opt, hsh, "./lake_stream/identity_stream/");
 }
-
+/*
 void lake_identity_stream_SMT_test(int x, int y, string suffix) {
   prog lake_agg("lake_agg_test");
   lake_agg.add_input("in");
@@ -14448,9 +14453,13 @@ void lake_identity_stream_SMT_test(int x, int y, string suffix) {
   cout << str(hsh) << endl;
   cout << codegen_c(hsh) << endl;
 
-  cmd("mkdir -p ./lake_stream/identity_stream_"+suffix+"/");
-  emit_lake_stream(buffers_opt, hsh, "./lake_stream/identity_stream_"+suffix+"/");
-}
+  cmd("mkdir -p ./aha_garnet_design/identity_stream_"+suffix+"/");
+  //emit_lake_stream(buffers_opt, hsh, "./lake_stream/identity_stream_"+suffix+"/");
+  CodegenOptions options;
+  options.mem_tile.multi_sram_accessor = true;
+  options.dir = "./aha_garnet_smt/identity_stream_"+suffix+"/";
+  generate_lake_stream(options, buffers_opt, hsh);
+}*/
 
 void lake_agg_sram_tb_config_test() {
   prog lake_agg("lake_agg_test");
@@ -15966,13 +15975,11 @@ void union_test() {
 void dual_port_lake_test();
 
 void lake_smt_tests() {
-  lake_identity_stream_SMT_test(28, 28, "28x28");
-  lake_identity_stream_config_gen(28, 28, "28x28");
+  //identity stream has a separate stream generation pass,
+  //because it will be optimized into a wire in ubuffer flow
+  lake_identity_stream_SMT_test(28, 28, "28_28");
   test_single_port_mem_smt_stream();
-  //lake_identity_stream_SMT_test(128, 128, "128x128");
-  //lake_identity_stream_SMT_test(64, 64, "64x64");
-  //lake_identity_stream_SMT_test(32, 32, "32x32");
-  ////lake_identity_stream_SMT_test(16, 16, "16x16");
+  assert(false);
   //assert (false);
 }
 
@@ -17379,12 +17386,12 @@ void generate_smt_stream_for_garnet_single_port_mem(prog& prg) {
 
 
   //optimized schedule
-  cmd("mkdir -p aha_garnet_design/" + prg.name);
+  cmd("mkdir -p aha_garnet_smt/" + prg.name);
 
   //auto iis = garnet_fuse_ii_level(prg);
   //auto buffers_opt = build_buffers(prg, clockwork_schedule(prg));
 
-  CodegenOptions options = garnet_codegen_single_port_with_addrgen_options(prg, "aha_garnet_design");
+  CodegenOptions options = garnet_codegen_single_port_with_addrgen_options(prg, "aha_garnet_smt");
   options.emit_smt_stream = true;
   schedule_info sched = garnet_schedule_info(options, prg);
   garnet_single_port_ram_schedule(sched, prg.root, prg);

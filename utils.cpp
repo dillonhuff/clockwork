@@ -21,6 +21,7 @@ vector<string> get_files(const std::string& path) {
     return file_list;
 }
 
+
 int run_sw_bmp_test_harness(const std::string& app_name) {
   int res = cmd("g++ -std=c++11 " + app_name + "_sw_bmp_test_harness.cpp " + app_name + ".cpp -I . -I ./aws_collateral");
   assert(res == 0);
