@@ -50,7 +50,8 @@ def set_size(w,h, ax=None):
 
 labels = ['MP', 'GP', 'SEF']
 
-cw_ppf = [0.782, 0.78, 0.53]
+# cw_ppf = [0.782, 0.78, 0.53]
+cw_ppf = [0.782, 0.78, 0.52]
 # cpu_ppf = [0.01, 0.064, 0.002]
 cpu_ppf = [0.12, 0.064, 0.002]
 # gpu_ppf = [2.24, 1.61, 0.22]
@@ -124,6 +125,7 @@ ax.set_xticks(x)
 ax.set_xticklabels(labels)
 # ax.legend(loc='center right')
 ax.legend(frameon=False, loc=(0.75, 0.45), edgecolor=None)
+# ax.legend(loc=(0.75, 0.45), edgecolor=None)
 
 # plt.yscale("log")
 
