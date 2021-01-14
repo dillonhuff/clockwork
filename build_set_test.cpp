@@ -11503,7 +11503,7 @@ void naive_implementations() {
 
 void iccad_tests() {
   // ef_cartoon
-  int throughput = 8;
+  int throughput = 1;
   //string name = "ef_" + str(throughput) + "_500";
   string name = "ef_" + str(throughput); // + "_500";
   App ef = ef_cartoon(name);
