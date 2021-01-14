@@ -127,9 +127,9 @@ void sc_stat(HWStream<hw_uint<32> >& /* no bundle get_args num ports = 1 */in_oc
 
 // schedule: { pw_math_in_oc03[root = 0, pw_math_in_oc01, pw_math_in_oc02] -> [pw_math_in_oc01, pw_math_in_oc02, 0] : 0 <= pw_math_in_oc01 <= 127 and 0 <= pw_math_in_oc02 <= 127; pw_math_in47[root = 0, pw_math_in45, pw_math_in46] -> [pw_math_in45, pw_math_in46, 1] : 0 <= pw_math_in45 <= 127 and 0 <= pw_math_in46 <= 127 }
 //   { pw_math_in_oc03[root = 0, pw_math_in_oc01, pw_math_in_oc02] -> [pw_math_in_oc01, pw_math_in_oc02, 0] : 0 <= pw_math_in_oc01 <= 127 and 0 <= pw_math_in_oc02 <= 127 }
-// Condition for pw_math_in_oc03(((i2 == 0) && (i0 >= 0) && (127 - i0 >= 0) && (i1 >= 0) && (127 - i1 >= 0)))
+// Condition for pw_math_in_oc03(((((1*i2)) == 0) && (((1*i0)) >= 0) && (((127 + -1*i0)) >= 0) && (((1*i1)) >= 0) && (((127 + -1*i1)) >= 0)))
 //   { pw_math_in47[root = 0, pw_math_in45, pw_math_in46] -> [pw_math_in45, pw_math_in46, 1] : 0 <= pw_math_in45 <= 127 and 0 <= pw_math_in46 <= 127 }
-// Condition for pw_math_in47(((-1 + i2 == 0) && (i0 >= 0) && (127 - i0 >= 0) && (i1 >= 0) && (127 - i1 >= 0)))
+// Condition for pw_math_in47(((((-1 + 1*i2)) == 0) && (((1*i0)) >= 0) && (((127 + -1*i0)) >= 0) && (((1*i1)) >= 0) && (((127 + -1*i1)) >= 0)))
 
 	for (int c0 = 0; c0 <= 127; c0 += 1)
 	  for (int c1 = 0; c1 <= 127; c1 += 1) {

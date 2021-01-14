@@ -4357,40 +4357,40 @@ std::set<op*> find_readers(const string& buff, prog& prg){
 }
 
 
-std::set<std::set<string>>group_kernels_for_compilation(prog& prg,map<string,int>& kernel_costs,const int max_area_cost_per_group){
+// std::set<std::set<string>>group_kernels_for_compilation(prog& prg,map<string,int>& kernel_costs,const int max_area_cost_per_group){
 
-	std::vector<string> topologically_sorted_kernels = topologically_sort_kernels(prg);
-	std::set<std::set<string>> groups;
-	std::set<string> current_group;
-	int current_group_cost = 0;
+// 	std::vector<string> topologically_sorted_kernels = topologically_sort_kernels(prg);
+// 	std::set<std::set<string>> groups;
+// 	std::set<string> current_group;
+// 	int current_group_cost = 0;
 
-	assert(topologically_sorted_kernels.size() == get_kernels(prg).size());
+// 	assert(topologically_sorted_kernels.size() == get_kernels(prg).size());
 
-	cout << "Topologically sorted kernels:" << endl;
-	for(auto kernel : topologically_sorted_kernels){
-		cout << kernel << endl;
-		if (current_group_cost + map_find(kernel, kernel_costs) > max_area_cost_per_group) {
-			groups.insert(current_group);
-			current_group = {kernel};
-			current_group_cost = map_find(kernel, kernel_costs);
-		} else {
-			current_group.insert({kernel});
-			current_group_cost += map_find(kernel, kernel_costs);
-		}
-	}
+// 	cout << "Topologically sorted kernels:" << endl;
+// 	for(auto kernel : topologically_sorted_kernels){
+// 		cout << kernel << endl;
+// 		if (current_group_cost + map_find(kernel, kernel_costs) > max_area_cost_per_group) {
+// 			groups.insert(current_group);
+// 			current_group = {kernel};
+// 			current_group_cost = map_find(kernel, kernel_costs);
+// 		} else {
+// 			current_group.insert({kernel});
+// 			current_group_cost += map_find(kernel, kernel_costs);
+// 		}
+// 	}
 
-	groups.insert(current_group);
+// 	groups.insert(current_group);
 
-	// Sanity check
-	int num_kernels_in_groups = 0;
-	for (auto g : groups) {
-		num_kernels_in_groups += g.size();
-	}
+// 	// Sanity check
+// 	int num_kernels_in_groups = 0;
+// 	for (auto g : groups) {
+// 		num_kernels_in_groups += g.size();
+// 	}
 
-	assert(num_kernels_in_groups == get_kernels(prg).size());
+// 	assert(num_kernels_in_groups == get_kernels(prg).size());
 
-	return groups;
-}
+// 	return groups;
+// }
 
 
 prog extract_group_to_separate_prog(const std::set<std::string>& group, prog& original) {
