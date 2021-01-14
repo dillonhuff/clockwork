@@ -12274,12 +12274,12 @@ void generate_cgra_tb(std::map<string, UBuffer> buffers_opt, prog prg, CodegenOp
   generate_verilog_tb(prg.name);
 }
 
-void generate_garnet_coreir(std::map<string, UBuffer> buffers_opt, prog prg, CodegenOptions& opt, schedule_info& hwinfo) {
+void generate_garnet_coreir(std::map<string, UBuffer> buffers_opt, prog prg, CodegenOptions& opt, schedule_info& hwinfo, bool use_dse_compute=false) {
   CoreIR::Context* context = CoreIR::newContext();
   CoreIRLoadLibrary_commonlib(context);
   CoreIRLoadLibrary_cwlib(context);
   //schedule_info hwinfo;
-  hwinfo.use_dse_compute = false;
+  hwinfo.use_dse_compute = use_dse_compute;
 
   //TODO: add lake memory tile configuration here
 
@@ -14118,7 +14118,7 @@ void Init_PE_energy_cost(power_analysis_params& power_params)  {
 }
 
 
-void compile_for_garnet_single_port_mem(prog & prg, string dir, bool gen_smt_stream, bool gen_config_only,bool multi_accessor );
+void compile_for_garnet_single_port_mem(prog & prg, string dir, bool gen_smt_stream, bool gen_config_only,bool multi_accessor, bool use_dse_compute);
 void cpy_app_to_folder(const std::string& app_type, const std::string& prg_name);
 
 void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, string dir="aha_garnet_design") {
@@ -14159,7 +14159,7 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
     auto cpu = unoptimized_result(prg);
 
     //compile_for_garnet_platonic_mem(prg);
-    compile_for_garnet_single_port_mem(prg, dir, false, gen_config_only, multi_accessor);
+    compile_for_garnet_single_port_mem(prg, dir, false, gen_config_only, multi_accessor, false);
     generate_regression_testbench(prg);
 
     cout << "Output name: " << prg.name << endl;
@@ -16384,55 +16384,55 @@ void relax_delays_rate_matched(schedule_info& sched, prog& prg) {
   }
 }
 
-void adjust_outer_delays(schedule_info& sched, prog& prg) {
-  cout << "Adjusting delays of " << prg.name << endl;
-  for (auto name : topologically_sort_kernels(prg)) {
-    auto lp = prg.find_loop(name);
-    cout << "Adjusting delay of " << lp->name << endl;
+// void adjust_outer_delays(schedule_info& sched, prog& prg) {
+//   cout << "Adjusting delays of " << prg.name << endl;
+//   for (auto name : topologically_sort_kernels(prg)) {
+//     auto lp = prg.find_loop(name);
+//     cout << "Adjusting delay of " << lp->name << endl;
 
-    int old_delay = map_find(lp, sched.op_offset_within_parent);
-    int try_delay = 1;
-    bool found_smaller_delay = false;
-    while (try_delay < old_delay) {
-      sched.op_offset_within_parent[lp] = try_delay;
-      if (no_violated_cycle_accurate_dependencies(sched, prg)) {
-        found_smaller_delay = true;
-        break;
-      }
-      try_delay = max(try_delay * 2, try_delay + 1000);
-      //try_delay = min(try_delay * 2, try_delay + 1000);
-      //try_delay *= 2;
-    }
+//     int old_delay = map_find(lp, sched.op_offset_within_parent);
+//     int try_delay = 1;
+//     bool found_smaller_delay = false;
+//     while (try_delay < old_delay) {
+//       sched.op_offset_within_parent[lp] = try_delay;
+//       if (no_violated_cycle_accurate_dependencies(sched, prg)) {
+//         found_smaller_delay = true;
+//         break;
+//       }
+//       try_delay = max(try_delay * 2, try_delay + 1000);
+//       //try_delay = min(try_delay * 2, try_delay + 1000);
+//       //try_delay *= 2;
+//     }
 
-    if (!found_smaller_delay) {
-      sched.op_offset_within_parent[lp] = old_delay;
-    }
-  }
-}
+//     if (!found_smaller_delay) {
+//       sched.op_offset_within_parent[lp] = old_delay;
+//     }
+//   }
+// }
 
-void adjust_outer_pipeline_delays(schedule_info& sched, prog& prg) {
-  cout << "Adjusting delays of " << prg.name << endl;
-  for (auto lp : find_coarse_grained_pipeline_loop(prg.root)->children) {
+// void adjust_outer_pipeline_delays(schedule_info& sched, prog& prg) {
+//   cout << "Adjusting delays of " << prg.name << endl;
+//   for (auto lp : find_coarse_grained_pipeline_loop(prg.root)->children) {
 
-    int old_delay = map_find(lp, sched.op_offset_within_parent);
-    int try_delay = 1;
-    bool found_smaller_delay = false;
-    while (try_delay < old_delay) {
-      sched.op_offset_within_parent[lp] = try_delay;
-      if (no_violated_cycle_accurate_dependencies(sched, prg)) {
-        found_smaller_delay = true;
-        break;
-      }
-      try_delay = max(try_delay * 2, try_delay + 1000);
-      //try_delay = min(try_delay * 2, try_delay + 1000);
-      //try_delay *= 2;
-    }
+//     int old_delay = map_find(lp, sched.op_offset_within_parent);
+//     int try_delay = 1;
+//     bool found_smaller_delay = false;
+//     while (try_delay < old_delay) {
+//       sched.op_offset_within_parent[lp] = try_delay;
+//       if (no_violated_cycle_accurate_dependencies(sched, prg)) {
+//         found_smaller_delay = true;
+//         break;
+//       }
+//       try_delay = max(try_delay * 2, try_delay + 1000);
+//       //try_delay = min(try_delay * 2, try_delay + 1000);
+//       //try_delay *= 2;
+//     }
 
-    if (!found_smaller_delay) {
-      sched.op_offset_within_parent[lp] = old_delay;
-    }
-  }
-}
+//     if (!found_smaller_delay) {
+//       sched.op_offset_within_parent[lp] = old_delay;
+//     }
+//   }
+// }
 
 void asap_input_iis(schedule_info& sched, prog& prg) {
 
@@ -16499,27 +16499,27 @@ void asap_input_iis(schedule_info& sched, prog& prg) {
 
 }
 
-void adjust_inner_iis(schedule_info& sched, prog& prg) {
-  cout << "Adjusting iis of " << prg.name << endl;
-  for (auto lp : get_inner_loops(prg)) {
-    cout << "Adjusting ii of " << lp->name << endl;
-    int old_ii = map_find(lp->name, sched.loop_iis);
-    int try_ii = 1;
-    bool found_smaller_ii = false;
-    while (try_ii < old_ii) {
-      sched.loop_iis[lp->name] = try_ii;
-      if (no_violated_cycle_accurate_dependencies(sched, prg)) {
-        found_smaller_ii = true;
-        break;
-      }
-      try_ii *= 2;
-    }
+// void adjust_inner_iis(schedule_info& sched, prog& prg) {
+//   cout << "Adjusting iis of " << prg.name << endl;
+//   for (auto lp : get_inner_loops(prg)) {
+//     cout << "Adjusting ii of " << lp->name << endl;
+//     int old_ii = map_find(lp->name, sched.loop_iis);
+//     int try_ii = 1;
+//     bool found_smaller_ii = false;
+//     while (try_ii < old_ii) {
+//       sched.loop_iis[lp->name] = try_ii;
+//       if (no_violated_cycle_accurate_dependencies(sched, prg)) {
+//         found_smaller_ii = true;
+//         break;
+//       }
+//       try_ii *= 2;
+//     }
 
-    if (!found_smaller_ii) {
-      sched.loop_iis[lp->name] = old_ii;
-    }
-  }
-}
+//     if (!found_smaller_ii) {
+//       sched.loop_iis[lp->name] = old_ii;
+//     }
+//   }
+// }
 
 void break_up_multi_channel_outputs(prog& prg) {
   std::set<string> to_erase;
@@ -17105,10 +17105,9 @@ void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
   sanity_check_iis(sched);
 }
 
-schedule_info garnet_schedule_info(CodegenOptions& options, prog& prg) {
+schedule_info garnet_schedule_info(CodegenOptions& options, prog& prg, bool use_dse_compute=false) {
   schedule_info sched;
-  sched.use_dse_compute = false;
-  //sched.use_dse_compute = true;
+  sched.use_dse_compute = use_dse_compute;
   for (auto op : prg.all_ops()) {
     if (op->func != "") {
       sched.resource_requirements[op] = op->func;
@@ -17287,15 +17286,15 @@ bool all_operations_assigned_to_resources(schedule_info& sched, prog& prg) {
   return true;
 }
 
-bool is_cst(isl_multi_aff* diff) {
-  for (auto aff : get_affs(diff)) {
-    if (!isl_aff_is_cst(aff)) {
-      return false;
-    }
-    release(aff);
-  }
-  return true;
-}
+// bool is_cst(isl_multi_aff* diff) {
+//   for (auto aff : get_affs(diff)) {
+//     if (!isl_aff_is_cst(aff)) {
+//       return false;
+//     }
+//     release(aff);
+//   }
+//   return true;
+// }
 
 void sanity_check_hw_schedule(schedule_info& sched, prog& prg) {
   assert(all_ops_scheduled(sched, prg));
@@ -17476,7 +17475,8 @@ void compile_for_garnet_single_port_mem(prog& prg,
         string dir,
         bool gen_smt_stream,
         bool config_gen_only,
-        bool multi_sram) {
+        bool multi_sram,
+        bool use_dse_compute) {
 
   //make sure the loop bound and address is positive
   normalize_bounds(prg);
@@ -17496,7 +17496,7 @@ void compile_for_garnet_single_port_mem(prog& prg,
   options.config_gen_only = config_gen_only;
   if (multi_sram)
       options.mem_tile.multi_sram_accessor = true;
-  schedule_info sched = garnet_schedule_info(options, prg);
+  schedule_info sched = garnet_schedule_info(options, prg, use_dse_compute);
   garnet_single_port_ram_schedule(sched, prg.root, prg);
   auto sched_map = op_times_map(sched, prg);
   auto hw_sched = its(sched_map,
@@ -17531,7 +17531,7 @@ void compile_for_garnet_single_port_mem(prog& prg,
   //PE_energy_cost_instance_model(power_params, power_stats, prg);
   //PE_energy_cost(power_params, power_stats, prg);
 
-  generate_garnet_coreir(buffers_opt, prg, options, sched);
+  generate_garnet_coreir(buffers_opt, prg, options, sched, use_dse_compute);
   if (!options.config_gen_only) {
     generate_garnet_verilog_top(options, prg.name);
     generate_garnet_verilator_tb(prg, hw_sched, buffers_opt);
