@@ -11503,14 +11503,15 @@ void naive_implementations() {
 
 void iccad_tests() {
   // ef_cartoon
-  int throughput = 32;
-  string name = "ef_" + str(throughput) + "_500";
+  int throughput = 8;
+  //string name = "ef_" + str(throughput) + "_500";
+  string name = "ef_" + str(throughput); // + "_500";
   App ef = ef_cartoon(name);
   CodegenOptions options;
   options.internal = true;
-  options.num_input_epochs = 1;
+  //options.num_input_epochs = 1;
   options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
-  options.rtl_options.hls_clock_target_Hz = 500000000;
+  //options.rtl_options.hls_clock_target_Hz = 500000000;
   int rows = 1920;
   int cols = 1080;
   ef.realize(options, name, {cols, rows}, "in", throughput);
@@ -19310,9 +19311,9 @@ void gpu_codegen_test() {
 }
 
 void application_tests() {
-  gpu_codegen_test();
-
   iccad_tests();
+
+  gpu_codegen_test();
 
   up_to_id_stream_tests();
   up_to_ram_addr_unit_test();
