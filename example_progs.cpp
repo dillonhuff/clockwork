@@ -3544,9 +3544,9 @@ prog demosaic_unrolled() {
 // Stencil<uint16_t, 64, 64> &hw_input_stencil = arg_0;
   prg.add_input("hw_input_stencil");
   prg.buffer_port_widths["hw_input_stencil"] = 16;
-// Stencil<uint8_t, 62, 62, 3> &hw_output_stencil = arg_1;
+// Stencil<uint16_t, 62, 62, 3> &hw_output_stencil = arg_1;
   prg.add_output("hw_output_stencil");
-  prg.buffer_port_widths["hw_output_stencil"] = 8;
+  prg.buffer_port_widths["hw_output_stencil"] = 16;
 
 ////producing hw_input_global_wrapper.stencil
   auto hw_input_global_wrapper_s0_y = prg.add_loop("hw_input_global_wrapper_s0_y", -1, 63);
@@ -3615,7 +3615,7 @@ prog demosaic_unrolled() {
   auto hw_output_s0_y_yi = prg.add_loop("hw_output_s0_y_yi", 0, 62);
   auto hw_output_s0_x_xi = hw_output_s0_y_yi->add_loop("hw_output_s0_x_xi", 0, 62);
 
-//store is: hw_output.stencil(hw_output_s0_x_xi, hw_output_s0_y_yi, 0) = uint8(demosaicked$1.stencil(hw_output_s0_x_xi, hw_output_s0_y_yi, 0))
+//store is: hw_output.stencil(hw_output_s0_x_xi, hw_output_s0_y_yi, 0) = demosaicked$1.stencil(hw_output_s0_x_xi, hw_output_s0_y_yi, 0)
   auto hcompute_hw_output_stencil = hw_output_s0_x_xi->add_op("op_hcompute_hw_output_stencil");
   hcompute_hw_output_stencil->add_function("hcompute_hw_output_stencil");
   hcompute_hw_output_stencil->add_load("demosaicked_1_stencil", "0", "hw_output_s0_y_yi", "hw_output_s0_x_xi");
@@ -3623,7 +3623,7 @@ prog demosaic_unrolled() {
   auto hw_output_s0_y_yi_1 = prg.add_loop("hw_output_s0_y_yi_1", 0, 62);
   auto hw_output_s0_x_xi_1 = hw_output_s0_y_yi_1->add_loop("hw_output_s0_x_xi_1", 0, 62);
 
-//store is: hw_output.stencil(hw_output_s0_x_xi_1, hw_output_s0_y_yi_1, 1) = uint8(demosaicked$1.stencil(hw_output_s0_x_xi_1, hw_output_s0_y_yi_1, 1))
+//store is: hw_output.stencil(hw_output_s0_x_xi_1, hw_output_s0_y_yi_1, 1) = demosaicked$1.stencil(hw_output_s0_x_xi_1, hw_output_s0_y_yi_1, 1)
   auto hcompute_hw_output_stencil_1 = hw_output_s0_x_xi_1->add_op("op_hcompute_hw_output_stencil_1");
   hcompute_hw_output_stencil_1->add_function("hcompute_hw_output_stencil_1");
   hcompute_hw_output_stencil_1->add_load("demosaicked_1_stencil", "1", "hw_output_s0_y_yi_1", "hw_output_s0_x_xi_1");
@@ -3631,7 +3631,7 @@ prog demosaic_unrolled() {
   auto hw_output_s0_y_yi_2 = prg.add_loop("hw_output_s0_y_yi_2", 0, 62);
   auto hw_output_s0_x_xi_2 = hw_output_s0_y_yi_2->add_loop("hw_output_s0_x_xi_2", 0, 62);
 
-//store is: hw_output.stencil(hw_output_s0_x_xi_2, hw_output_s0_y_yi_2, 2) = uint8(demosaicked$1.stencil(hw_output_s0_x_xi_2, hw_output_s0_y_yi_2, 2))
+//store is: hw_output.stencil(hw_output_s0_x_xi_2, hw_output_s0_y_yi_2, 2) = demosaicked$1.stencil(hw_output_s0_x_xi_2, hw_output_s0_y_yi_2, 2)
   auto hcompute_hw_output_stencil_2 = hw_output_s0_x_xi_2->add_op("op_hcompute_hw_output_stencil_2");
   hcompute_hw_output_stencil_2->add_function("hcompute_hw_output_stencil_2");
   hcompute_hw_output_stencil_2->add_load("demosaicked_1_stencil", "2", "hw_output_s0_y_yi_2", "hw_output_s0_x_xi_2");
