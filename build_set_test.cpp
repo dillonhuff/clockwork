@@ -15534,8 +15534,8 @@ void lake_smt_tests() {
   //identity stream has a separate stream generation pass,
   //because it will be optimized into a wire in ubuffer flow
   lake_identity_stream_SMT_test(28, 28, "28_28");
-  assert(false);
   test_single_port_mem_smt_stream();
+  assert(false);
   //assert (false);
 }
 

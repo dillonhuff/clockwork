@@ -1900,7 +1900,7 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
       for (auto other : access_map) {
         s = unn(s, (range(other.second)));
       }
-      return coalesce(s);
+      return s;
     }
 
     string buf_range_name() {
