@@ -345,27 +345,24 @@ hw_uint<16> hcompute_demosaicked_1_stencil_2(hw_uint<128>& hw_input_global_wrapp
   return _919;
 }
 
-//store is: hw_output.stencil(hw_output_s0_x_xi, hw_output_s0_y_yi, 0) = uint8(demosaicked$1.stencil(hw_output_s0_x_xi, hw_output_s0_y_yi, 0))
-hw_uint<8> hcompute_hw_output_stencil(hw_uint<16>& demosaicked_1_stencil) {
+//store is: hw_output.stencil(hw_output_s0_x_xi, hw_output_s0_y_yi, 0) = demosaicked$1.stencil(hw_output_s0_x_xi, hw_output_s0_y_yi, 0)
+hw_uint<16> hcompute_hw_output_stencil(hw_uint<16>& demosaicked_1_stencil) {
   uint16_t _demosaicked_1_stencil_1 = (uint16_t) demosaicked_1_stencil.extract<0, 15>();
 
-  uint8_t _1141 = (uint8_t)(_demosaicked_1_stencil_1);
-  return _1141;
+  return _demosaicked_1_stencil_1;
 }
 
-//store is: hw_output.stencil(hw_output_s0_x_xi_1, hw_output_s0_y_yi_1, 1) = uint8(demosaicked$1.stencil(hw_output_s0_x_xi_1, hw_output_s0_y_yi_1, 1))
-hw_uint<8> hcompute_hw_output_stencil_1(hw_uint<16>& demosaicked_1_stencil) {
+//store is: hw_output.stencil(hw_output_s0_x_xi_1, hw_output_s0_y_yi_1, 1) = demosaicked$1.stencil(hw_output_s0_x_xi_1, hw_output_s0_y_yi_1, 1)
+hw_uint<16> hcompute_hw_output_stencil_1(hw_uint<16>& demosaicked_1_stencil) {
   uint16_t _demosaicked_1_stencil_2 = (uint16_t) demosaicked_1_stencil.extract<0, 15>();
 
-  uint8_t _1145 = (uint8_t)(_demosaicked_1_stencil_2);
-  return _1145;
+  return _demosaicked_1_stencil_2;
 }
 
-//store is: hw_output.stencil(hw_output_s0_x_xi_2, hw_output_s0_y_yi_2, 2) = uint8(demosaicked$1.stencil(hw_output_s0_x_xi_2, hw_output_s0_y_yi_2, 2))
-hw_uint<8> hcompute_hw_output_stencil_2(hw_uint<16>& demosaicked_1_stencil) {
+//store is: hw_output.stencil(hw_output_s0_x_xi_2, hw_output_s0_y_yi_2, 2) = demosaicked$1.stencil(hw_output_s0_x_xi_2, hw_output_s0_y_yi_2, 2)
+hw_uint<16> hcompute_hw_output_stencil_2(hw_uint<16>& demosaicked_1_stencil) {
   uint16_t _demosaicked_1_stencil_3 = (uint16_t) demosaicked_1_stencil.extract<0, 15>();
 
-  uint8_t _1149 = (uint8_t)(_demosaicked_1_stencil_3);
-  return _1149;
+  return _demosaicked_1_stencil_3;
 }
 
