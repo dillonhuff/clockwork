@@ -11082,6 +11082,16 @@ void blur_and_downsample_test() {
 }
 
 void playground() {
+    {
+        isl_ctx* ctx = isl_ctx_alloc();
+        auto acc_0 = isl_map_read_from_str(ctx,"{ sram2tb[i0, i1]-> data[i0+i1, i0-i1]: 0<=i0<=2 and 0<=i1<=28}");
+        auto aff_vec = get_aff_vec(acc_0);
+        for (auto aff : aff_vec) {
+            cout << "\t AFF: " << str(aff) << endl;
+        }
+        assert(false);
+
+    }
     /*{
         isl_ctx* ctx = isl_ctx_alloc();
         auto sched_0 = isl_map_read_from_str(ctx,  "{sram2tb[i0, i1]->[123 + 64*i0 + i1]: 0<=i0<=63 and 0<=i1<=63}");
@@ -14190,9 +14200,9 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
 void generate_smt_stream_for_garnet_single_port_mem(prog& prg);
 void test_single_port_mem_smt_stream() {
   vector<prog> test_apps;
-  test_apps.push_back(conv_3_3(28, 28, "_SMT_28_28"));
-  test_apps.push_back(cascade(28, 28, "_SMT_28_28"));
-  test_apps.push_back(harris(26, 26, "_SMT_28_28"));
+  //test_apps.push_back(conv_3_3(28, 28, "_SMT_28_28"));
+  //test_apps.push_back(cascade(28, 28, "_SMT_28_28"));
+  test_apps.push_back(harris(14, 14, "_SMT_16_16"));
 
   for ( auto prg: test_apps) {
     cout << "====== Running CGRA Single Port test for " << prg.name << endl;
@@ -15977,7 +15987,7 @@ void dual_port_lake_test();
 void lake_smt_tests() {
   //identity stream has a separate stream generation pass,
   //because it will be optimized into a wire in ubuffer flow
-  lake_identity_stream_SMT_test(28, 28, "28_28");
+  //lake_identity_stream_SMT_test(28, 28, "28_28");
   test_single_port_mem_smt_stream();
   assert(false);
   //assert (false);
