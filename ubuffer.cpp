@@ -1416,6 +1416,70 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> r
     return create_lake_config(data);
 }
 
+CoreIR::Instance* affine_controller_use_lake_tile_counter(
+        CodegenOptions& options,
+        ModuleDef* def,
+        CoreIR::Context* context,
+        isl_set* dom,
+        isl_aff* aff,
+        string ub_ins_name) {
+
+  CoreIR::Instance* buf;
+  CoreIR::Values genargs = {
+    {"width", CoreIR::Const::make(context, 16)},
+    {"num_inputs", CoreIR::Const::make(context, 0)},
+    {"num_outputs", CoreIR::Const::make(context, 1)},
+    {"has_stencil_valid", CoreIR::Const::make(context, false)},
+    {"ID", CoreIR::Const::make(context, context->getUnique())},
+    {"has_flush",  CoreIR::Const::make(context, true)},
+    {"use_prebuilt_mem",  CoreIR::Const::make(context, true)}
+  };
+  //auto stencil_valid = generate_accessor_config_from_aff_expr(dom, aff);
+  auto accessor_tb2out = generate_accessor_config_from_aff_expr(dom, aff);
+  int word_width = options.mem_tile.word_width.at("tb");
+  int capacity = options.mem_tile.capacity.at("tb");
+  int port_width = options.mem_tile.out_port_width.at("tb");
+
+  //TODO: create the dummy address
+  //is_read = true, is_mux = false
+  //auto addressor_tb2out = generate_addressor_config_from_aff_expr(addr, true, false, word_width, capacity, port_width);
+
+  json config_file;
+  //add_lake_config(config_file, stencil_valid, num_in_dims(aff), "stencil_valid");
+  cout << "Use ub counter mode to be aff counter"  << endl;
+  cout << "\tAFF: " << str(aff) << endl;
+  cout << "\tAff in dim: " << num_in_dims(aff) << endl;
+
+  cout << "\t\tAff get const: " << int_const_coeff(aff) << endl;
+  for (int i = 0; i < num_in_dims(aff); i ++) {
+    cout << "\t\tAff get coeff: " << int_coeff(aff, i) << endl;
+  }
+
+  cout << "\tDom: " << str(dom) << endl;
+  auto min_dom_pt = lexminpt(dom);
+  auto max_dom_pt = lexmaxpt(dom);
+  for (int i = 0; i < num_dims(dom); i ++) {
+    cout << "\t\tDom range: " << to_int(coord(max_dom_pt, i)) - to_int(coord(min_dom_pt, i)) << endl;
+  }
+
+  buf = def->addInstance(ub_ins_name, "cgralib.Mem_amber", genargs);
+  buf->getMetaData()["config"] = config_file;
+  buf->getMetaData()["mode"] = "counter";
+
+  auto clk_en_const = def->addInstance(ub_ins_name+"_clk_en_const", "corebit.const",
+          {{"value", CoreIR::Const::make(context, true)}});
+
+  //garnet wire reset to flush of memory
+  def->connect(buf->sel("flush"), def->sel("self.reset"));
+  //def->connect(buf->sel("flush"), def->sel("self.flush"));
+  //def->connect(buf->sel("rst_n"), def->sel("self.rst_n"));
+  def->connect(buf->sel("clk"), def->sel("self.clk"));
+  def->connect(buf->sel("clk_en"), clk_en_const->sel("out"));
+  def->connect(buf->sel("rst_n"), clk_en_const->sel("out"));
+
+  return buf;
+}
+
 CoreIR::Instance* affine_controller_use_lake_tile(
         ModuleDef* def,
         CoreIR::Context* context,

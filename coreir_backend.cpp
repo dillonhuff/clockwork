@@ -1897,10 +1897,15 @@ Instance* generate_coreir_op_controller(CodegenOptions& options, ModuleDef* def,
 
   //For those op need loop index we need this controller
   bool need_index = op->index_variables_needed_by_compute.size() > 0;
-  if (options.rtl_options.use_external_controllers || need_index) {
+  if (options.rtl_options.use_external_controllers || need_index ) {
     auto aff_c = affine_controller(options, c, dom, aff);
     aff_c->print();
     controller = def->addInstance(controller_name(op->name), aff_c);
+  } else if (need_index) {
+    auto aff_c = affine_controller_use_lake_tile_counter(
+            options, def, c, dom, aff,
+            controller_name(op->name));
+    assert(false);
   } else {
     controller = affine_controller_use_lake_tile(
             def, c, dom, aff,
