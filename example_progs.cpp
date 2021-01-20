@@ -3457,7 +3457,7 @@ prog demosaic_complex() {
   prg.buffer_port_widths["hw_input_stencil"] = 16;
 // Stencil<uint8_t, 3, 62, 62> &hw_output_stencil = arg_1;
   prg.add_output("hw_output_stencil");
-  prg.buffer_port_widths["hw_output_stencil"] = 8;
+  prg.buffer_port_widths["hw_output_stencil"] = 16;
 
 ////producing hw_input_global_wrapper.stencil
   auto hw_input_global_wrapper_s0_y = prg.add_loop("hw_input_global_wrapper_s0_y", -1, 63);

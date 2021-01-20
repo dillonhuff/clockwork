@@ -14134,6 +14134,8 @@ void cpy_app_to_folder(const std::string& app_type, const std::string& prg_name)
 
 void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, string dir="aha_garnet_design") {
   vector<prog> test_apps;
+  //TODO:has issue  with multiple input
+  test_apps.push_back(demosaic_complex());
   test_apps.push_back(conv_3_3());
   test_apps.push_back(gaussian());
   test_apps.push_back(cascade());
@@ -14155,8 +14157,6 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
 
   //test_apps.push_back(camera_pipeline());
   //test_apps.push_back(unsharp());
-  //TODO:has issue  with multiple input
-  //test_apps.push_back(demosaic_complex());
 
   //test_apps.push_back(resnet());
   for ( auto prg: test_apps) {
