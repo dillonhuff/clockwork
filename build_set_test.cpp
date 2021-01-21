@@ -11084,11 +11084,34 @@ void blur_and_downsample_test() {
 void playground() {
     {
         isl_ctx* ctx = isl_ctx_alloc();
-        auto acc_0 = isl_map_read_from_str(ctx,"{ sram2tb[i0, i1]-> data[i0+i1, i0-i1]: 0<=i0<=2 and 0<=i1<=28}");
-        auto aff_vec = get_aff_vec(acc_0);
-        for (auto aff : aff_vec) {
-            cout << "\t AFF: " << str(aff) << endl;
+        auto acc_0 = isl_map_read_from_str(ctx,"{ sram2tb[i0, i1]-> data[130+64*i0+i1]: 0<=i0<=61 and 0<=i1<=61}");
+        for (int dom_dim = 0; dom_dim < num_in_dims(acc_0); dom_dim ++) {
+          auto trans = get_domain_trans(domain(acc_0), dom_dim, 4);
+          auto res = dot(trans, acc_0);
+          //project all the inner dim
+          for (int reset_dim = dom_dim+1; reset_dim < num_in_dims(acc_0); reset_dim ++) {
+              res = reset_domain_coeff(res, reset_dim, 0);
+              cout << "\treset: " << str(res) << endl;
+          }
+          if (dom_dim < num_in_dims(acc_0) - 1)
+              res = isl_map_project_out(cpy(res), isl_dim_in, dom_dim+1, num_in_dims(acc_0) - dom_dim - 1);
+          cout << "\tAfter trans: " << str(res) << endl;
         }
+        //take the map with the lexmin point
+        //auto sub_maps = get_basic_maps(res);
+        //isl_map* target;
+        //isl_point* min_pt;
+        //for (auto m: sub_maps) {
+        //    auto pt = lexminpt(range(to_map(m)));
+        //    if (pt) {
+        //        min_pt = pt;
+        //        target = to_map(m);
+        //    } else if(lex_gt_pt(pt, min_pt)){
+        //        min_pt = pt;
+        //        target = to_map(m);
+        //    }
+        //}
+        //cout << "Final trans: " << str(target) << endl;
         assert(false);
 
     }

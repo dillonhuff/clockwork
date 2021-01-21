@@ -1436,7 +1436,6 @@ CoreIR::Module* affine_controller_use_lake_tile_counter(
   auto m = ns->newModuleDecl("affine_controller_" + context->getUnique(), utp);
   auto def = m->newModuleDef();
 
-  //TODO: create the dummy address
   auto sp = get_space(dom);
   auto addr = its(isl_map_identity(isl_space_map_from_set(sp)), dom);
   auto clk_en_const = def->addInstance(ub_ins_name+"_clk_en_const", "corebit.const",
@@ -1478,6 +1477,26 @@ CoreIR::Module* affine_controller_use_lake_tile_counter(
     auto addressor_tb2out = generate_addressor_config_from_aff_expr(get_aff(index_addr), true, false, word_width, capacity, port_width);
     config_tb2out.merge(addressor_tb2out);
     add_lake_config(config_file, config_tb2out, num_dims(dom), "tb2out");
+
+    //generate sram2tb controller
+    //TODO: change 4 to fetch width
+    auto trans = get_domain_trans(dom, dim, 4);
+    auto acc_0 = its(to_map(aff), dom);
+    auto res = dot(trans, acc_0);
+    //project all the inner dim
+    for (int reset_dim = dim+1; reset_dim < num_in_dims(acc_0); reset_dim ++) {
+        res = reset_domain_coeff(res, reset_dim, 0);
+        cout << "\treset: " << str(res) << endl;
+    }
+    if (dim < num_in_dims(acc_0) - 1)
+        res = isl_map_project_out(cpy(res), isl_dim_in, dim+1, num_in_dims(acc_0) - dim - 1);
+    cout << "\tAfter trans: " << str(res) << endl;
+    auto config_sram2tb = generate_accessor_config_from_aff_expr(domain(res), get_aff(res));
+    add_lake_config(config_file, config_sram2tb, num_dims(domain(res)), "sram2tb");
+    //FIXME:
+    //1. shift the starting addr
+    //2. add addr information
+
     buf = def->addInstance(ub_ins_name + "_Counter_" + str(dim), "cgralib.Mem_amber", genargs);
     buf->getMetaData()["config"] = config_file;
     buf->getMetaData()["mode"] = "lake";
@@ -6074,9 +6093,6 @@ vector<string> buffer_vectorization(vector<string> buf_name_vec, int dim_id, int
      return dim_id;
   }
 
-  int get_pad_remainder(isl_map* am, int dim_id, int fetch_width) {
-    return (get_dim_max(::domain(am), dim_id) + 1) % fetch_width;
-  }
 
 bool UBuffer::merge_small_dim(int fetch_width) {
     //pad the domain for both input port and output port

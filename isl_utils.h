@@ -368,6 +368,8 @@ isl_val* lexminval(isl_set* const m0);
 isl_val* lexmaxval(isl_set* const m0);
 
 int get_domain_range(isl_set* const dom, int dim);
+//vectorization transformation
+isl_map* get_domain_trans(isl_set* dom, int pos, int fetch_width);
 
 umap* lexmax(umap* const m0);
 
@@ -415,6 +417,8 @@ isl_map* peel_schedule_domain_dim(isl_map* m, int dom_dim, int delay);
 int get_peel_schedule_domain_dim(isl_map* m, int dom_dim);
 
 //some map transformation from reconstruct constraints
+int get_pad_remainder(isl_map*, int, int);
+isl_map* reset_domain_coeff(isl_map* m, int dom_dim_id, int val);
 isl_map* pad_to_domain_map(isl_map* s, int depth);
 isl_map* pad_to_domain_ubuf_map(isl_map* s, int dom_dim_id, int depth);
 isl_map* shift_domain_map(isl_map* s, vector<int> shift_depth);
