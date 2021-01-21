@@ -1442,11 +1442,11 @@ CoreIR::Module* affine_controller_use_lake_tile_counter(
   auto clk_en_const = def->addInstance(ub_ins_name+"_clk_en_const", "corebit.const",
           {{"value", CoreIR::Const::make(context, true)}});
   //Loop through all the domain dimension, skip the root
-  for (int dim = 0; dim < num_dims(dom) - 1; dim ++) {
+  for (int dim = 1; dim < num_dims(dom); dim ++) {
     json config_file;
 
     bool has_stencil_valid = false;
-    if (dim == 0)
+    if (dim == 1)
       has_stencil_valid = true;
     CoreIR::Instance* buf;
     CoreIR::Values genargs = {
@@ -1481,6 +1481,12 @@ CoreIR::Module* affine_controller_use_lake_tile_counter(
     buf = def->addInstance(ub_ins_name + "_Counter_" + str(dim), "cgralib.Mem_amber", genargs);
     buf->getMetaData()["config"] = config_file;
     buf->getMetaData()["mode"] = "lake";
+
+    //assign the init value
+    //TODO change 4 to fetch width
+    std::vector<int> v(round_up_to_multiple_of(get_domain_range(dom, dim), 4));
+    std::iota(v.begin(), v.end(), 0);
+    buf->getMetaData()["init"] = v;
 
 
     //garnet wire reset to flush of memory

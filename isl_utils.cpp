@@ -3702,6 +3702,15 @@ isl_point* lexmaxpt(uset* const m0) {
   return sample(lexmax(m0));
 }
 
+int get_domain_range(isl_set* const dom, int dim) {
+  int dims = num_dims(dom);
+  assert(dim >= 0);
+  assert(dim < dims);
+  auto min_dom_pt = lexminpt(dom);
+  auto max_dom_pt = lexmaxpt(dom);
+  return to_int(coord(max_dom_pt, dim)) - to_int(coord(min_dom_pt, dim)) + 1;
+}
+
 isl_local_space* local_set_space(isl_ctx* ctx, const int dims) {
   return isl_local_space_from_space(set_space(ctx, dims));
 }

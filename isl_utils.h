@@ -367,6 +367,8 @@ isl_point* lexmaxpt(isl_set* const m0);
 isl_val* lexminval(isl_set* const m0);
 isl_val* lexmaxval(isl_set* const m0);
 
+int get_domain_range(isl_set* const dom, int dim);
+
 umap* lexmax(umap* const m0);
 
 isl_map* lexmax(isl_map* const m0);

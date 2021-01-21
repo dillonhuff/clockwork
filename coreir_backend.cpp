@@ -2612,8 +2612,10 @@ bool MemtileReplace(Instance* cnst) {
   ModuleDef* def = cnst->getContainer();
   auto genargs = cnst->getModuleRef()->getGenArgs();
   auto config_file = cnst->getMetaData()["config"];
+  auto init = cnst->getMetaData()["init"];
   CoreIR::Values modargs = {
       {"config", CoreIR::Const::make(c, config_file)},
+      {"init", CoreIR::Const::make(c, init)},
       {"mode", CoreIR::Const::make(c, "lake")}
   };
   auto pt = addPassthrough(cnst, cnst->getInstname()+"_tmp");
