@@ -592,6 +592,7 @@ uset* gist(uset* base, uset* context);
 isl_set* gist(isl_set* base, isl_set* context);
 
 isl_map* project_all_but(isl_map* const dmap, const int d);
+isl_map* project_all_out_but(isl_map* const dmap, const int d);
 isl_set* project_all_but(isl_set* const dmap, const int d);
 isl_set* project_out(isl_set* const dmap, const int d);
 isl_map* project_out(isl_map* const dmap, const int d);

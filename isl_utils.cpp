@@ -3285,6 +3285,31 @@ isl_map* project_all_but(isl_map* const dmap,
   return m;
 }
 
+isl_map* project_all_out_but(isl_map* const dmap,
+    const int d) {
+
+  auto m = cpy(dmap);
+  auto ct = ctx(dmap);
+
+  string dname = domain_name(m);
+  string rname = range_name(m);
+
+  if (d != 0) {
+    m = isl_map_project_out(m, isl_dim_out, 0, d);
+  }
+
+  int out_dim = num_out_dims(get_space(m));
+
+  m = isl_map_project_out(m, isl_dim_out, 1, out_dim - 1);
+
+  assert(num_out_dims(get_space(m)) == 1);
+
+  isl_map_set_tuple_id(m, isl_dim_in, id(ct, dname));
+  isl_map_set_tuple_id(m, isl_dim_out, id(ct, rname));
+
+  return m;
+}
+
 vector<int> parse_pt(isl_point* p) {
   assert(p != nullptr);
   return parse_pt(str(p));

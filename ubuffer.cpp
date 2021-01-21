@@ -1416,35 +1416,86 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> r
     return create_lake_config(data);
 }
 
-CoreIR::Instance* affine_controller_use_lake_tile_counter(
+CoreIR::Module* affine_controller_use_lake_tile_counter(
         CodegenOptions& options,
-        ModuleDef* def,
         CoreIR::Context* context,
         isl_set* dom,
         isl_aff* aff,
         string ub_ins_name) {
 
-  CoreIR::Instance* buf;
-  CoreIR::Values genargs = {
-    {"width", CoreIR::Const::make(context, 16)},
-    {"num_inputs", CoreIR::Const::make(context, 0)},
-    {"num_outputs", CoreIR::Const::make(context, 1)},
-    {"has_stencil_valid", CoreIR::Const::make(context, false)},
-    {"ID", CoreIR::Const::make(context, context->getUnique())},
-    {"has_flush",  CoreIR::Const::make(context, true)},
-    {"use_prebuilt_mem",  CoreIR::Const::make(context, true)}
-  };
-  //auto stencil_valid = generate_accessor_config_from_aff_expr(dom, aff);
-  auto accessor_tb2out = generate_accessor_config_from_aff_expr(dom, aff);
-  int word_width = options.mem_tile.word_width.at("tb");
-  int capacity = options.mem_tile.capacity.at("tb");
-  int port_width = options.mem_tile.out_port_width.at("tb");
+  //Create the coreIR submodule for affine controller
+  auto ns = context->getNamespace("global");
+  vector<pair<string, CoreIR::Type*> >
+    ub_field{{"clk", context->Named("coreir.clkIn")},
+      {"valid", context->Bit()}};
+  int dims = num_in_dims(aff);
+  ub_field.push_back({"d", context->Bit()->Arr(16)->Arr(dims)});
+  ub_field.push_back({"rst_n", context->BitIn()});
+
+  CoreIR::RecordType* utp = context->Record(ub_field);
+  auto m = ns->newModuleDecl("affine_controller_" + context->getUnique(), utp);
+  auto def = m->newModuleDef();
 
   //TODO: create the dummy address
-  //is_read = true, is_mux = false
-  //auto addressor_tb2out = generate_addressor_config_from_aff_expr(addr, true, false, word_width, capacity, port_width);
+  auto sp = get_space(dom);
+  auto addr = its(isl_map_identity(isl_space_map_from_set(sp)), dom);
+  auto clk_en_const = def->addInstance(ub_ins_name+"_clk_en_const", "corebit.const",
+          {{"value", CoreIR::Const::make(context, true)}});
+  //Loop through all the domain dimension, skip the root
+  for (int dim = 0; dim < num_dims(dom) - 1; dim ++) {
+    json config_file;
 
-  json config_file;
+    bool has_stencil_valid = false;
+    if (dim == 0)
+      has_stencil_valid = true;
+    CoreIR::Instance* buf;
+    CoreIR::Values genargs = {
+      {"width", CoreIR::Const::make(context, 16)},
+      {"num_inputs", CoreIR::Const::make(context, 0)},
+      {"num_outputs", CoreIR::Const::make(context, 1)},
+      {"has_stencil_valid", CoreIR::Const::make(context, has_stencil_valid)},
+      {"ID", CoreIR::Const::make(context, context->getUnique())},
+      {"has_flush",  CoreIR::Const::make(context, true)},
+      {"use_prebuilt_mem",  CoreIR::Const::make(context, true)}
+    };
+
+    //Add stencil valid for the first dimension
+    if (has_stencil_valid) {
+      auto stencil_valid = generate_accessor_config_from_aff_expr(dom, aff);
+      add_lake_config(config_file, stencil_valid, num_in_dims(aff), "stencil_valid");
+    }
+
+    //generate tb accessor
+    auto config_tb2out = generate_accessor_config_from_aff_expr(dom, aff);
+
+    //generate tb address
+    int word_width = options.mem_tile.word_width.at("tb");
+    int capacity = options.mem_tile.capacity.at("tb");
+    int port_width = options.mem_tile.out_port_width.at("tb");
+    auto index_addr = project_all_out_but(cpy(addr), dim);
+    cout << "Index address: " << str(index_addr) << endl;
+    //is_read = true, is_mux = false
+    auto addressor_tb2out = generate_addressor_config_from_aff_expr(get_aff(index_addr), true, false, word_width, capacity, port_width);
+    config_tb2out.merge(addressor_tb2out);
+    add_lake_config(config_file, config_tb2out, num_dims(dom), "tb2out");
+    buf = def->addInstance(ub_ins_name + "_Counter_" + str(dim), "cgralib.Mem_amber", genargs);
+    buf->getMetaData()["config"] = config_file;
+    buf->getMetaData()["mode"] = "lake";
+
+
+    //garnet wire reset to flush of memory
+    def->connect(buf->sel("flush"), def->sel("self.rst_n"));
+    def->connect(buf->sel("clk"), def->sel("self.clk"));
+    def->connect(buf->sel("clk_en"), clk_en_const->sel("out"));
+    def->connect(buf->sel("rst_n"), clk_en_const->sel("out"));
+    def->connect(buf->sel("data_out_0"), def->sel("self")->sel("d")->sel(dim));
+    if (has_stencil_valid) {
+      def->connect(buf->sel("stencil_valid"), def->sel("self.valid"));
+    }
+  }
+  m->setDef(def);
+
+
   //add_lake_config(config_file, stencil_valid, num_in_dims(aff), "stencil_valid");
   cout << "Use ub counter mode to be aff counter"  << endl;
   cout << "\tAFF: " << str(aff) << endl;
@@ -1462,22 +1513,7 @@ CoreIR::Instance* affine_controller_use_lake_tile_counter(
     cout << "\t\tDom range: " << to_int(coord(max_dom_pt, i)) - to_int(coord(min_dom_pt, i)) << endl;
   }
 
-  buf = def->addInstance(ub_ins_name, "cgralib.Mem_amber", genargs);
-  buf->getMetaData()["config"] = config_file;
-  buf->getMetaData()["mode"] = "counter";
-
-  auto clk_en_const = def->addInstance(ub_ins_name+"_clk_en_const", "corebit.const",
-          {{"value", CoreIR::Const::make(context, true)}});
-
-  //garnet wire reset to flush of memory
-  def->connect(buf->sel("flush"), def->sel("self.reset"));
-  //def->connect(buf->sel("flush"), def->sel("self.flush"));
-  //def->connect(buf->sel("rst_n"), def->sel("self.rst_n"));
-  def->connect(buf->sel("clk"), def->sel("self.clk"));
-  def->connect(buf->sel("clk_en"), clk_en_const->sel("out"));
-  def->connect(buf->sel("rst_n"), clk_en_const->sel("out"));
-
-  return buf;
+  return m;
 }
 
 CoreIR::Instance* affine_controller_use_lake_tile(
