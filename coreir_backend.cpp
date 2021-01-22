@@ -1897,9 +1897,16 @@ Instance* generate_coreir_op_controller(CodegenOptions& options, ModuleDef* def,
 
   //For those op need loop index we need this controller
   bool need_index = op->index_variables_needed_by_compute.size() > 0;
-  if (options.rtl_options.use_external_controllers || need_index) {
+  //if (options.rtl_options.use_external_controllers || need_index ) {
+  if (options.rtl_options.use_external_controllers) {
     auto aff_c = affine_controller(options, c, dom, aff);
     aff_c->print();
+    controller = def->addInstance(controller_name(op->name), aff_c);
+  } else if (need_index) {
+    auto aff_c = affine_controller_use_lake_tile_counter(
+            options, c, dom, aff,
+            controller_name(op->name));
+    cout << aff_c->toString() <<endl;
     controller = def->addInstance(controller_name(op->name), aff_c);
   } else {
     controller = affine_controller_use_lake_tile(
@@ -2133,6 +2140,7 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
   bool need_pass_valid = false;
   maybe<string> last_producer_buf_with_tile;
 
+  //TODO Clean the logic here
   for (auto op : ops_dft) {
     cout << "Visit op: " << op->name << endl;
     vector<string> surrounding = surrounding_vars(op, prg);
@@ -2164,8 +2172,9 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
             //cout << "This app does not have memory tile!" << endl;
             //This is the situation does not have memory tile, we need to use affine generator
 
-            //Always use the output controller
-            generate_coreir_op_controller(options, def, op, sched_maps, hwinfo);
+            //Always use the output controller, without index involve
+            if (op->index_variables_needed_by_compute.size() == 0)
+              generate_coreir_op_controller(options, def, op, sched_maps, hwinfo);
             auto output_en = "self." + pg(buf_name, bundle_name) + "_valid";
             def->connect(def->sel(output_en),
                 write_start_wire(def, op->name));
@@ -2605,8 +2614,10 @@ bool MemtileReplace(Instance* cnst) {
   ModuleDef* def = cnst->getContainer();
   auto genargs = cnst->getModuleRef()->getGenArgs();
   auto config_file = cnst->getMetaData()["config"];
+  auto init = cnst->getMetaData()["init"];
   CoreIR::Values modargs = {
       {"config", CoreIR::Const::make(c, config_file)},
+      {"init", CoreIR::Const::make(c, init)},
       {"mode", CoreIR::Const::make(c, "lake")}
   };
   auto pt = addPassthrough(cnst, cnst->getInstname()+"_tmp");

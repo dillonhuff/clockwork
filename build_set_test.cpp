@@ -11082,6 +11082,39 @@ void blur_and_downsample_test() {
 }
 
 void playground() {
+    {
+        isl_ctx* ctx = isl_ctx_alloc();
+        auto acc_0 = isl_map_read_from_str(ctx,"{ sram2tb[i0, i1]-> data[130+64*i0+i1]: 0<=i0<=61 and 0<=i1<=61}");
+        for (int dom_dim = 0; dom_dim < num_in_dims(acc_0); dom_dim ++) {
+          auto trans = get_domain_trans(domain(acc_0), dom_dim, 4);
+          auto res = dot(trans, acc_0);
+          //project all the inner dim
+          for (int reset_dim = dom_dim+1; reset_dim < num_in_dims(acc_0); reset_dim ++) {
+              res = reset_domain_coeff(res, reset_dim, 0);
+              cout << "\treset: " << str(res) << endl;
+          }
+          if (dom_dim < num_in_dims(acc_0) - 1)
+              res = isl_map_project_out(cpy(res), isl_dim_in, dom_dim+1, num_in_dims(acc_0) - dom_dim - 1);
+          cout << "\tAfter trans: " << str(res) << endl;
+        }
+        //take the map with the lexmin point
+        //auto sub_maps = get_basic_maps(res);
+        //isl_map* target;
+        //isl_point* min_pt;
+        //for (auto m: sub_maps) {
+        //    auto pt = lexminpt(range(to_map(m)));
+        //    if (pt) {
+        //        min_pt = pt;
+        //        target = to_map(m);
+        //    } else if(lex_gt_pt(pt, min_pt)){
+        //        min_pt = pt;
+        //        target = to_map(m);
+        //    }
+        //}
+        //cout << "Final trans: " << str(target) << endl;
+        assert(false);
+
+    }
     /*{
         isl_ctx* ctx = isl_ctx_alloc();
         auto sched_0 = isl_map_read_from_str(ctx,  "{sram2tb[i0, i1]->[123 + 64*i0 + i1]: 0<=i0<=63 and 0<=i1<=63}");
@@ -14124,19 +14157,22 @@ void cpy_app_to_folder(const std::string& app_type, const std::string& prg_name)
 
 void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, string dir="aha_garnet_design") {
   vector<prog> test_apps;
-  test_apps.push_back(conv_3_3());
-  test_apps.push_back(gaussian());
-  test_apps.push_back(cascade());
-  test_apps.push_back(harris());
-  test_apps.push_back(rom());
-  test_apps.push_back(conv_1_2());
+  //TODO:has issue  with multiple input
+  test_apps.push_back(counter());
   test_apps.push_back(demosaic_unrolled());
-  test_apps.push_back(camera_pipeline());
-  test_apps.push_back(up_sample());
+  //test_apps.push_back(conv_3_3());
+  //test_apps.push_back(gaussian());
+  //test_apps.push_back(cascade());
+  //test_apps.push_back(harris());
+  //test_apps.push_back(rom());
+  //test_apps.push_back(conv_1_2());
+  //test_apps.push_back(demosaic_unrolled());
+  //test_apps.push_back(camera_pipeline());
+  //test_apps.push_back(up_sample());
 
-  test_apps.push_back(unsharp());
-  test_apps.push_back(resnet());
-  test_apps.push_back(mobilenet_unrolled());
+  //test_apps.push_back(unsharp());
+  //test_apps.push_back(resnet());
+  //test_apps.push_back(mobilenet_unrolled());
   ////test_apps.push_back(unsharp());
 
   //test_apps.push_back(conv_3_3_wide());
@@ -14145,8 +14181,6 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
 
   //test_apps.push_back(camera_pipeline());
   //test_apps.push_back(unsharp());
-  //TODO:has issue  with multiple input
-  //test_apps.push_back(demosaic_complex());
 
   //test_apps.push_back(resnet());
   for ( auto prg: test_apps) {
@@ -14190,9 +14224,9 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
 void generate_smt_stream_for_garnet_single_port_mem(prog& prg);
 void test_single_port_mem_smt_stream() {
   vector<prog> test_apps;
-  test_apps.push_back(conv_3_3(28, 28, "_SMT_28_28"));
-  test_apps.push_back(cascade(28, 28, "_SMT_28_28"));
-  test_apps.push_back(harris(26, 26, "_SMT_28_28"));
+  //test_apps.push_back(conv_3_3(28, 28, "_SMT_28_28"));
+  //test_apps.push_back(cascade(28, 28, "_SMT_28_28"));
+  test_apps.push_back(harris(14, 14, "_SMT_16_16"));
 
   for ( auto prg: test_apps) {
     cout << "====== Running CGRA Single Port test for " << prg.name << endl;
@@ -15977,7 +16011,7 @@ void dual_port_lake_test();
 void lake_smt_tests() {
   //identity stream has a separate stream generation pass,
   //because it will be optimized into a wire in ubuffer flow
-  lake_identity_stream_SMT_test(28, 28, "28_28");
+  //lake_identity_stream_SMT_test(28, 28, "28_28");
   test_single_port_mem_smt_stream();
   assert(false);
   //assert (false);
@@ -16379,6 +16413,7 @@ void relax_delays_rate_matched(schedule_info& sched, prog& prg) {
         equal(lexminpt(range(its(prod_sched, prod_dom))),
                 lexminpt(range(its(cons_sched, cons_dom))));
         bool equal_rng = equal(range(prod_sched), range(cons_sched));
+        bool prod_need_index = pick(cons_op_vec)->index_variables_needed_by_compute.size();
         cout << tab(4) << "Start cycle Is equal: " << equal_start_time << endl;
         cout << tab(4) << "domain is same: " << equal_rng << endl;
         if (equal_start_time && !equal_rng) {
@@ -16386,6 +16421,8 @@ void relax_delays_rate_matched(schedule_info& sched, prog& prg) {
             cout << "\t\top " << prod_op_name << " has ii: " << prod_ii << endl;
             //6 is a magic number which make upsample work
             d += prod_ii * fetch_width + 6;
+        } else if (equal_start_time && prod_need_index){
+            d += 3;
         }
     }
     sched.op_offset_within_parent[lp] += d;

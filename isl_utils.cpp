@@ -2514,6 +2514,10 @@ isl_map* get_shift_map(isl_map* m) {
   return isl_map_from_basic_map(b_ret);
 }
 
+int get_pad_remainder(isl_map* am, int dim_id, int fetch_width) {
+  return (get_dim_max(::domain(am), dim_id) + 1) % fetch_width;
+}
+
 isl_map* pad_to_domain_ubuf_map(isl_map* m, int dom_dim_id, int depth) {
 
   auto c_vec = constraints(m);
@@ -2530,6 +2534,29 @@ isl_map* pad_to_domain_ubuf_map(isl_map* m, int dom_dim_id, int depth) {
       } else {
         if (isl_constraint_is_upper_bound(c, isl_dim_in, dom_dim_id))
           c = isl_constraint_set_constant_si(c , val+depth);
+      }
+    }
+  }
+  auto b_ret = isl_basic_map_universe(get_space(m));
+  for (auto c: c_vec) {
+      b_ret = isl_basic_map_add_constraint(b_ret, c);
+  }
+
+  return isl_map_from_basic_map(b_ret);
+}
+
+isl_map* reset_domain_coeff(isl_map* m, int dom_dim_id, int val) {
+
+  auto c_vec = constraints(m);
+  for (auto & c: c_vec) {
+
+    bool involve;
+    involve =  isl_constraint_involves_dims(c, isl_dim_in, dom_dim_id, 1);
+
+    //shift the constraint by 1
+    if (involve) {
+      if (isl_constraint_is_equality(c)) {
+          c = isl_constraint_set_coefficient_si(c, isl_dim_in, dom_dim_id, 0);
       }
     }
   }
@@ -3285,6 +3312,31 @@ isl_map* project_all_but(isl_map* const dmap,
   return m;
 }
 
+isl_map* project_all_out_but(isl_map* const dmap,
+    const int d) {
+
+  auto m = cpy(dmap);
+  auto ct = ctx(dmap);
+
+  string dname = domain_name(m);
+  string rname = range_name(m);
+
+  if (d != 0) {
+    m = isl_map_project_out(m, isl_dim_out, 0, d);
+  }
+
+  int out_dim = num_out_dims(get_space(m));
+
+  m = isl_map_project_out(m, isl_dim_out, 1, out_dim - 1);
+
+  assert(num_out_dims(get_space(m)) == 1);
+
+  isl_map_set_tuple_id(m, isl_dim_in, id(ct, dname));
+  isl_map_set_tuple_id(m, isl_dim_out, id(ct, rname));
+
+  return m;
+}
+
 vector<int> parse_pt(isl_point* p) {
   assert(p != nullptr);
   return parse_pt(str(p));
@@ -3676,6 +3728,35 @@ isl_point* lexmaxpt(isl_set* const m0) {
 isl_point* lexmaxpt(uset* const m0) {
   return sample(lexmax(m0));
 }
+
+int get_domain_range(isl_set* const dom, int dim) {
+  int dims = num_dims(dom);
+  assert(dim >= 0);
+  assert(dim < dims);
+  auto min_dom_pt = lexminpt(dom);
+  auto max_dom_pt = lexmaxpt(dom);
+  return to_int(coord(max_dom_pt, dim)) - to_int(coord(min_dom_pt, dim)) + 1;
+}
+
+isl_map* get_domain_trans(isl_set* dom, int pos, int fetch_width) {
+    string dom_name = name(dom);
+    int dim = num_dims(dom);
+    vector<string> var, rewrite_var;
+    for (int i = 0; i < dim; i ++) {
+        var.push_back("i"+str(i));
+        if (pos == i) {
+            //rewrite_var.push_back("i"+str(i) + "*" + str(fetch_width) + "+" + str(offset));
+            rewrite_var.push_back("i"+str(i) + "*" + str(fetch_width) );
+        } else {
+            rewrite_var.push_back("i"+str(i));
+        }
+    }
+    string map_str = "{"+dom_name + bracket_list(var) + "->" + dom_name +bracket_list(rewrite_var)+ "}";
+    auto trans = isl_map_read_from_str(ctx(dom), map_str.c_str());
+    cout << "Autogen trans:" << str(trans) << endl;
+    return trans;
+}
+
 
 isl_local_space* local_set_space(isl_ctx* ctx, const int dims) {
   return isl_local_space_from_space(set_space(ctx, dims));

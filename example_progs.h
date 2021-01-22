@@ -1,6 +1,7 @@
 #pragma once
 #include "prog.h"
 
+prog counter();
 prog conv_multi(); //multiple-tile-cnn
 prog strided_conv();
 prog accumulation(); //reduce
@@ -27,6 +28,7 @@ prog conv_layer(); //reduce
 prog camera_pipeline_dse_1();
 prog rom();
 prog demosaic_complex();
+prog demosaic_2x2();
 prog demosaic_unrolled();
 prog bilateral();
 prog stereo();

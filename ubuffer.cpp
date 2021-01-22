@@ -1416,6 +1416,160 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> r
     return create_lake_config(data);
 }
 
+CoreIR::Module* affine_controller_use_lake_tile_counter(
+        CodegenOptions& options,
+        CoreIR::Context* context,
+        isl_set* dom,
+        isl_aff* aff,
+        string ub_ins_name) {
+
+  //Create the coreIR submodule for affine controller
+  auto ns = context->getNamespace("global");
+  vector<pair<string, CoreIR::Type*> >
+    ub_field{{"clk", context->Named("coreir.clkIn")},
+      {"valid", context->Bit()}};
+  int dims = num_in_dims(aff);
+  ub_field.push_back({"d", context->Bit()->Arr(16)->Arr(dims)});
+  ub_field.push_back({"rst_n", context->BitIn()});
+
+  CoreIR::RecordType* utp = context->Record(ub_field);
+  auto m = ns->newModuleDecl("affine_controller_" + context->getUnique(), utp);
+  auto def = m->newModuleDef();
+
+  auto sp = get_space(dom);
+  auto addr = its(isl_map_identity(isl_space_map_from_set(sp)), dom);
+  auto clk_en_const = def->addInstance(ub_ins_name+"_clk_en_const", "corebit.const",
+          {{"value", CoreIR::Const::make(context, true)}});
+  //Loop through all the domain dimension, skip the root
+  for (int dim = 1; dim < num_dims(dom); dim ++) {
+    json config_file;
+
+    bool has_stencil_valid = false;
+    if (dim == 1)
+      has_stencil_valid = true;
+    CoreIR::Instance* buf;
+    CoreIR::Values genargs = {
+      {"width", CoreIR::Const::make(context, 16)},
+      {"num_inputs", CoreIR::Const::make(context, 0)},
+      {"num_outputs", CoreIR::Const::make(context, 1)},
+      {"has_stencil_valid", CoreIR::Const::make(context, has_stencil_valid)},
+      {"ID", CoreIR::Const::make(context, context->getUnique())},
+      {"has_flush",  CoreIR::Const::make(context, true)},
+      {"use_prebuilt_mem",  CoreIR::Const::make(context, true)}
+    };
+
+    //Add stencil valid for the first dimension
+    if (has_stencil_valid) {
+      auto stencil_valid = generate_accessor_config_from_aff_expr(dom, aff);
+      add_lake_config(config_file, stencil_valid, num_in_dims(aff), "stencil_valid");
+    }
+
+    //generate tb accessor
+    auto config_tb2out = generate_accessor_config_from_aff_expr(dom, aff);
+
+
+    //generate tb address
+    auto index_addr = project_all_out_but(cpy(addr), dim);
+    cout << "Index address: " << str(index_addr) << endl;
+    {
+      int word_width = options.mem_tile.word_width.at("tb");
+      int capacity = options.mem_tile.capacity.at("tb");
+      int port_width = options.mem_tile.out_port_width.at("tb");
+      //is_read = true, is_mux = false
+      auto addressor_tb2out = generate_addressor_config_from_aff_expr(get_aff(index_addr), true, false, word_width, capacity, port_width);
+      config_tb2out.merge(addressor_tb2out);
+    }
+    add_lake_config(config_file, config_tb2out, num_dims(dom), "tb2out");
+
+    //generate sram2tb controller
+    //TODO: change 4 to fetch width
+    auto trans = get_domain_trans(dom, dim, 4);
+    cout << "Vectorization Trans: " << str(trans) << endl;
+
+    //Apply the vectorization trans on both accessor and addressor
+    auto acc_0 = its(to_map(aff), dom);
+    auto res = dot(trans, acc_0);
+    auto vec_index_addr = dot(trans, index_addr);
+
+    //project all the inner dim
+    for (int reset_dim = dim+1; reset_dim < num_in_dims(acc_0); reset_dim ++) {
+        res = reset_domain_coeff(res, reset_dim, 0);
+        cout << "\treset: " << str(res) << endl;
+    }
+
+    if (dim < num_in_dims(acc_0) - 1) {
+       vec_index_addr = isl_map_project_out(cpy(vec_index_addr), isl_dim_in, dim+1, num_in_dims(acc_0) - dim - 1);
+       res = isl_map_project_out(cpy(res), isl_dim_in, dim+1, num_in_dims(acc_0) - dim - 1);
+    }
+    cout << "\tAfter trans: " << str(res) << endl;
+    cout << "\tVec index address: " << str(vec_index_addr) << endl;
+
+    //bring the sram2tb forward for 3 cycle
+    res = shift_range_map(res, {-3});
+    auto config_sram2tb = generate_accessor_config_from_aff_expr(domain(res), get_aff(res));
+
+    //Getthe addressor
+    {
+      int word_width = options.mem_tile.word_width.at("tb");
+      int capacity = options.mem_tile.capacity.at("tb");
+      int port_width = options.mem_tile.in_port_width.at("tb");
+      auto addressor_sram2tb_write = generate_addressor_config_from_aff_expr(get_aff(vec_index_addr), false, false, word_width, capacity, port_width);
+      config_sram2tb.merge(addressor_sram2tb_write);
+    }
+
+    {
+      int word_width = options.mem_tile.word_width.at("sram");
+      int capacity = options.mem_tile.capacity.at("sram");
+      int port_width = options.mem_tile.out_port_width.at("sram");
+      auto addressor_sram2tb_read = generate_addressor_config_from_aff_expr(get_aff(vec_index_addr), true, false, word_width, capacity, port_width);
+      config_sram2tb.merge(addressor_sram2tb_read);
+    }
+    add_lake_config(config_file, config_sram2tb, num_dims(domain(res)), "sram2tb");
+
+    buf = def->addInstance(ub_ins_name + "_Counter_" + str(dim), "cgralib.Mem_amber", genargs);
+    buf->getMetaData()["config"] = config_file;
+    buf->getMetaData()["mode"] = "lake";
+
+    //assign the init value
+    //TODO change 4 to fetch width
+    std::vector<int> v(round_up_to_multiple_of(get_domain_range(dom, dim), 4));
+    std::iota(v.begin(), v.end(), 0);
+    buf->getMetaData()["init"] = v;
+
+
+    //garnet wire reset to flush of memory
+    def->connect(buf->sel("flush"), def->sel("self.rst_n"));
+    def->connect(buf->sel("clk"), def->sel("self.clk"));
+    def->connect(buf->sel("clk_en"), clk_en_const->sel("out"));
+    def->connect(buf->sel("rst_n"), clk_en_const->sel("out"));
+    def->connect(buf->sel("data_out_0"), def->sel("self")->sel("d")->sel(dim));
+    if (has_stencil_valid) {
+      def->connect(buf->sel("stencil_valid"), def->sel("self.valid"));
+    }
+  }
+  m->setDef(def);
+
+
+  //add_lake_config(config_file, stencil_valid, num_in_dims(aff), "stencil_valid");
+  cout << "Use ub counter mode to be aff counter"  << endl;
+  cout << "\tAFF: " << str(aff) << endl;
+  cout << "\tAff in dim: " << num_in_dims(aff) << endl;
+
+  cout << "\t\tAff get const: " << int_const_coeff(aff) << endl;
+  for (int i = 0; i < num_in_dims(aff); i ++) {
+    cout << "\t\tAff get coeff: " << int_coeff(aff, i) << endl;
+  }
+
+  cout << "\tDom: " << str(dom) << endl;
+  auto min_dom_pt = lexminpt(dom);
+  auto max_dom_pt = lexmaxpt(dom);
+  for (int i = 0; i < num_dims(dom); i ++) {
+    cout << "\t\tDom range: " << to_int(coord(max_dom_pt, i)) - to_int(coord(min_dom_pt, i)) << endl;
+  }
+
+  return m;
+}
+
 CoreIR::Instance* affine_controller_use_lake_tile(
         ModuleDef* def,
         CoreIR::Context* context,
@@ -5968,9 +6122,6 @@ vector<string> buffer_vectorization(vector<string> buf_name_vec, int dim_id, int
      return dim_id;
   }
 
-  int get_pad_remainder(isl_map* am, int dim_id, int fetch_width) {
-    return (get_dim_max(::domain(am), dim_id) + 1) % fetch_width;
-  }
 
 bool UBuffer::merge_small_dim(int fetch_width) {
     //pad the domain for both input port and output port
