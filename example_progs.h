@@ -1,6 +1,7 @@
 #pragma once
 #include "prog.h"
 
+prog counter();
 prog conv_multi(); //multiple-tile-cnn
 prog strided_conv();
 prog accumulation(); //reduce

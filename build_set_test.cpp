@@ -14158,6 +14158,7 @@ void cpy_app_to_folder(const std::string& app_type, const std::string& prg_name)
 void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, string dir="aha_garnet_design") {
   vector<prog> test_apps;
   //TODO:has issue  with multiple input
+  test_apps.push_back(counter());
   test_apps.push_back(demosaic_unrolled());
   //test_apps.push_back(conv_3_3());
   //test_apps.push_back(gaussian());
@@ -16412,6 +16413,7 @@ void relax_delays_rate_matched(schedule_info& sched, prog& prg) {
         equal(lexminpt(range(its(prod_sched, prod_dom))),
                 lexminpt(range(its(cons_sched, cons_dom))));
         bool equal_rng = equal(range(prod_sched), range(cons_sched));
+        bool prod_need_index = pick(cons_op_vec)->index_variables_needed_by_compute.size();
         cout << tab(4) << "Start cycle Is equal: " << equal_start_time << endl;
         cout << tab(4) << "domain is same: " << equal_rng << endl;
         if (equal_start_time && !equal_rng) {
@@ -16419,6 +16421,8 @@ void relax_delays_rate_matched(schedule_info& sched, prog& prg) {
             cout << "\t\top " << prod_op_name << " has ii: " << prod_ii << endl;
             //6 is a magic number which make upsample work
             d += prod_ii * fetch_width + 6;
+        } else if (equal_start_time && prod_need_index){
+            d += 3;
         }
     }
     sched.op_offset_within_parent[lp] += d;

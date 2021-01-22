@@ -2140,6 +2140,7 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
   bool need_pass_valid = false;
   maybe<string> last_producer_buf_with_tile;
 
+  //TODO Clean the logic here
   for (auto op : ops_dft) {
     cout << "Visit op: " << op->name << endl;
     vector<string> surrounding = surrounding_vars(op, prg);
@@ -2171,8 +2172,9 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
             //cout << "This app does not have memory tile!" << endl;
             //This is the situation does not have memory tile, we need to use affine generator
 
-            //Always use the output controller
-            generate_coreir_op_controller(options, def, op, sched_maps, hwinfo);
+            //Always use the output controller, without index involve
+            if (op->index_variables_needed_by_compute.size() == 0)
+              generate_coreir_op_controller(options, def, op, sched_maps, hwinfo);
             auto output_en = "self." + pg(buf_name, bundle_name) + "_valid";
             def->connect(def->sel(output_en),
                 write_start_wire(def, op->name));
