@@ -4979,8 +4979,8 @@
           ["op_hcompute_denoised_1_stencil$inner_compute$umax_hw_input_global_wrapper_stencil_4_hw_input_global_wrapper_stencil_5_330$cgramax.data.in.0","hw_input_global_wrapper_stencil$d_reg__U26$reg0.out"],
           ["op_hcompute_denoised_1_stencil$inner_compute$umin_hw_input_global_wrapper_stencil_4_hw_input_global_wrapper_stencil_5_334$min_mux$mux.data.in.0","hw_input_global_wrapper_stencil$d_reg__U26$reg0.out"],
           ["op_hcompute_denoised_1_stencil$inner_compute$umin_hw_input_global_wrapper_stencil_4_hw_input_global_wrapper_stencil_5_334$ucomp$compop.data.in.0","hw_input_global_wrapper_stencil$d_reg__U26$reg0.out"],
-          ["hw_input_global_wrapper_stencil$ub_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_6_to_hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_11_garnet.rst_n","hw_input_global_wrapper_stencil$ub_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_6_to_hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_11_clk_en_const1_lutcnst.bit.out"],
-          ["hw_input_global_wrapper_stencil$ub_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_6_to_hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_11_garnet.clk_en","hw_input_global_wrapper_stencil$ub_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_6_to_hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_11_clk_en_const_lutcnst.bit.out"],
+          ["hw_input_global_wrapper_stencil$ub_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_6_to_hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_11_garnet.clk_en","hw_input_global_wrapper_stencil$ub_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_6_to_hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_11_clk_en_const1_lutcnst.bit.out"],
+          ["hw_input_global_wrapper_stencil$ub_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_6_to_hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_11_garnet.rst_n","hw_input_global_wrapper_stencil$ub_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_6_to_hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_11_clk_en_const_lutcnst.bit.out"],
           ["io16in_hw_input_stencil_op_hcompute_hw_input_global_wrapper_stencil_read_0.out","hw_input_global_wrapper_stencil$ub_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_6_to_hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_11_garnet.data_in_0"],
           ["op_hcompute_denoised_1_stencil$inner_compute$umax_hw_input_global_wrapper_stencil_3_330_331$cgramax.data.in.0","hw_input_global_wrapper_stencil$ub_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_6_to_hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_11_garnet.data_out_0"],
           ["op_hcompute_denoised_1_stencil$inner_compute$umin_hw_input_global_wrapper_stencil_3_334_335$min_mux$mux.data.in.0","hw_input_global_wrapper_stencil$ub_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_6_to_hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_11_garnet.data_out_0"],
@@ -5043,18 +5043,18 @@
           ["op_hcompute_demosaicked_1_stencil$inner_compute$mux_483_512_562$mux.data.out","op_hcompute_corrected_stencil_2$inner_compute$mul_1299_1300_1301$binop.data.in.0"],
           ["op_hcompute_corrected_stencil_2$inner_compute$sub_1298_1301_1302$binop.data.in.1","op_hcompute_corrected_stencil_2$inner_compute$mul_1299_1300_1301$binop.data.out"],
           ["op_hcompute_corrected_stencil_2$inner_compute$sub_1298_1301_1302$binop.data.in.0","op_hcompute_corrected_stencil_2$inner_compute$sub_1294_1297_1298$binop.data.out"],
-          ["op_hcompute_curved_stencil$inner_compute$umin_corrected_stencil_1_1842_1843$ucomp$compop.data.in.1","op_hcompute_curved_stencil$inner_compute$const_p255__1842.out"],
-          ["op_hcompute_curved_stencil$inner_compute$umin_corrected_stencil_1_1842_1843$min_mux$mux.data.in.1","op_hcompute_curved_stencil$inner_compute$const_p255__18421.out"],
+          ["op_hcompute_curved_stencil$inner_compute$umin_corrected_stencil_1_1842_1843$min_mux$mux.data.in.1","op_hcompute_curved_stencil$inner_compute$const_p255__1842.out"],
+          ["op_hcompute_curved_stencil$inner_compute$umin_corrected_stencil_1_1842_1843$ucomp$compop.data.in.1","op_hcompute_curved_stencil$inner_compute$const_p255__18421.out"],
           ["op_hcompute_curved_stencil$inner_compute$umin_corrected_stencil_1_1842_1843$min_mux$mux.data.out","op_hcompute_curved_stencil$inner_compute$rom_curvea0$1$cgramem.addr_in_0"],
           ["op_hcompute_curved_stencil$inner_compute$rom_curvea0$1_ren_lutcnst.bit.out","op_hcompute_curved_stencil$inner_compute$rom_curvea0$1$cgramem.ren_in_0"],
           ["op_hcompute_curved_stencil$inner_compute$umin_corrected_stencil_1_1842_1843$ucomp$compop.bit.out","op_hcompute_curved_stencil$inner_compute$umin_corrected_stencil_1_1842_1843$min_mux$mux.bit.in.0"],
-          ["op_hcompute_curved_stencil_1$inner_compute$umin_corrected_stencil_2_2111_2112$ucomp$compop.data.in.1","op_hcompute_curved_stencil_1$inner_compute$const_p255__2111.out"],
-          ["op_hcompute_curved_stencil_1$inner_compute$umin_corrected_stencil_2_2111_2112$min_mux$mux.data.in.1","op_hcompute_curved_stencil_1$inner_compute$const_p255__21111.out"],
+          ["op_hcompute_curved_stencil_1$inner_compute$umin_corrected_stencil_2_2111_2112$min_mux$mux.data.in.1","op_hcompute_curved_stencil_1$inner_compute$const_p255__2111.out"],
+          ["op_hcompute_curved_stencil_1$inner_compute$umin_corrected_stencil_2_2111_2112$ucomp$compop.data.in.1","op_hcompute_curved_stencil_1$inner_compute$const_p255__21111.out"],
           ["op_hcompute_curved_stencil_1$inner_compute$umin_corrected_stencil_2_2111_2112$min_mux$mux.data.out","op_hcompute_curved_stencil_1$inner_compute$rom_curvea0$3$cgramem.addr_in_0"],
           ["op_hcompute_curved_stencil_1$inner_compute$rom_curvea0$3_ren_lutcnst.bit.out","op_hcompute_curved_stencil_1$inner_compute$rom_curvea0$3$cgramem.ren_in_0"],
           ["op_hcompute_curved_stencil_1$inner_compute$umin_corrected_stencil_2_2111_2112$ucomp$compop.bit.out","op_hcompute_curved_stencil_1$inner_compute$umin_corrected_stencil_2_2111_2112$min_mux$mux.bit.in.0"],
-          ["op_hcompute_curved_stencil_2$inner_compute$umin_corrected_stencil_3_2380_2381$ucomp$compop.data.in.1","op_hcompute_curved_stencil_2$inner_compute$const_p255__2380.out"],
-          ["op_hcompute_curved_stencil_2$inner_compute$umin_corrected_stencil_3_2380_2381$min_mux$mux.data.in.1","op_hcompute_curved_stencil_2$inner_compute$const_p255__23801.out"],
+          ["op_hcompute_curved_stencil_2$inner_compute$umin_corrected_stencil_3_2380_2381$min_mux$mux.data.in.1","op_hcompute_curved_stencil_2$inner_compute$const_p255__2380.out"],
+          ["op_hcompute_curved_stencil_2$inner_compute$umin_corrected_stencil_3_2380_2381$ucomp$compop.data.in.1","op_hcompute_curved_stencil_2$inner_compute$const_p255__23801.out"],
           ["op_hcompute_curved_stencil_2$inner_compute$umin_corrected_stencil_3_2380_2381$min_mux$mux.data.out","op_hcompute_curved_stencil_2$inner_compute$rom_curvea0$5$cgramem.addr_in_0"],
           ["op_hcompute_curved_stencil_2$inner_compute$rom_curvea0$5_ren_lutcnst.bit.out","op_hcompute_curved_stencil_2$inner_compute$rom_curvea0$5$cgramem.ren_in_0"],
           ["op_hcompute_curved_stencil_2$inner_compute$umin_corrected_stencil_3_2380_2381$ucomp$compop.bit.out","op_hcompute_curved_stencil_2$inner_compute$umin_corrected_stencil_3_2380_2381$min_mux$mux.bit.in.0"],
@@ -5642,12 +5642,12 @@
           ["op_hcompute_denoised_1_stencil$inner_compute$umin_hw_input_global_wrapper_stencil_4_hw_input_global_wrapper_stencil_5_334$min_mux$mux.data.out","op_hcompute_denoised_1_stencil$inner_compute$umin_hw_input_global_wrapper_stencil_3_334_335$min_mux$mux.data.in.1"],
           ["op_hcompute_denoised_1_stencil$inner_compute$umin_hw_input_global_wrapper_stencil_4_hw_input_global_wrapper_stencil_5_334$min_mux$mux.data.out","op_hcompute_denoised_1_stencil$inner_compute$umin_hw_input_global_wrapper_stencil_3_334_335$ucomp$compop.data.in.1"],
           ["op_hcompute_denoised_1_stencil$inner_compute$umin_hw_input_global_wrapper_stencil_4_hw_input_global_wrapper_stencil_5_334$ucomp$compop.bit.out","op_hcompute_denoised_1_stencil$inner_compute$umin_hw_input_global_wrapper_stencil_4_hw_input_global_wrapper_stencil_5_334$min_mux$mux.bit.in.0"],
-          ["op_hcompute_hw_output_stencil_1_port_controller_garnet.clk_en","op_hcompute_hw_output_stencil_1_port_controller_clk_en_const1_lutcnst.bit.out"],
-          ["op_hcompute_hw_output_stencil_1_port_controller_garnet.rst_n","op_hcompute_hw_output_stencil_1_port_controller_clk_en_const_lutcnst.bit.out"],
+          ["op_hcompute_hw_output_stencil_1_port_controller_garnet.rst_n","op_hcompute_hw_output_stencil_1_port_controller_clk_en_const1_lutcnst.bit.out"],
+          ["op_hcompute_hw_output_stencil_1_port_controller_garnet.clk_en","op_hcompute_hw_output_stencil_1_port_controller_clk_en_const_lutcnst.bit.out"],
           ["op_hcompute_hw_output_stencil_2_port_controller_garnet.rst_n","op_hcompute_hw_output_stencil_2_port_controller_clk_en_const1_lutcnst.bit.out"],
           ["op_hcompute_hw_output_stencil_2_port_controller_garnet.clk_en","op_hcompute_hw_output_stencil_2_port_controller_clk_en_const_lutcnst.bit.out"],
-          ["op_hcompute_hw_output_stencil_port_controller_garnet.rst_n","op_hcompute_hw_output_stencil_port_controller_clk_en_const1_lutcnst.bit.out"],
-          ["op_hcompute_hw_output_stencil_port_controller_garnet.clk_en","op_hcompute_hw_output_stencil_port_controller_clk_en_const_lutcnst.bit.out"]
+          ["op_hcompute_hw_output_stencil_port_controller_garnet.clk_en","op_hcompute_hw_output_stencil_port_controller_clk_en_const1_lutcnst.bit.out"],
+          ["op_hcompute_hw_output_stencil_port_controller_garnet.rst_n","op_hcompute_hw_output_stencil_port_controller_clk_en_const_lutcnst.bit.out"]
         ]
       },
       "corrected_stencil_ub":{
@@ -6008,8 +6008,8 @@
           }
         },
         "connections":[
-          ["inner_compute$umin_corrected_stencil_1_1842_1843$ucomp$compop.data.in.1","inner_compute$const_p255__1842.out"],
-          ["inner_compute$umin_corrected_stencil_1_1842_1843$min_mux$mux.data.in.1","inner_compute$const_p255__18421.out"],
+          ["inner_compute$umin_corrected_stencil_1_1842_1843$min_mux$mux.data.in.1","inner_compute$const_p255__1842.out"],
+          ["inner_compute$umin_corrected_stencil_1_1842_1843$ucomp$compop.data.in.1","inner_compute$const_p255__18421.out"],
           ["inner_compute$umin_corrected_stencil_1_1842_1843$min_mux$mux.data.out","inner_compute$rom_curvea0$1$cgramem.addr_in_0"],
           ["self.curved_stencil_op_hcompute_curved_stencil_write.0","inner_compute$rom_curvea0$1$cgramem.data_out_0"],
           ["inner_compute$rom_curvea0$1_ren_lutcnst.bit.out","inner_compute$rom_curvea0$1$cgramem.ren_in_0"],
@@ -6060,8 +6060,8 @@
           }
         },
         "connections":[
-          ["inner_compute$umin_corrected_stencil_2_2111_2112$ucomp$compop.data.in.1","inner_compute$const_p255__2111.out"],
-          ["inner_compute$umin_corrected_stencil_2_2111_2112$min_mux$mux.data.in.1","inner_compute$const_p255__21111.out"],
+          ["inner_compute$umin_corrected_stencil_2_2111_2112$min_mux$mux.data.in.1","inner_compute$const_p255__2111.out"],
+          ["inner_compute$umin_corrected_stencil_2_2111_2112$ucomp$compop.data.in.1","inner_compute$const_p255__21111.out"],
           ["inner_compute$umin_corrected_stencil_2_2111_2112$min_mux$mux.data.out","inner_compute$rom_curvea0$3$cgramem.addr_in_0"],
           ["self.curved_stencil_op_hcompute_curved_stencil_1_write.0","inner_compute$rom_curvea0$3$cgramem.data_out_0"],
           ["inner_compute$rom_curvea0$3_ren_lutcnst.bit.out","inner_compute$rom_curvea0$3$cgramem.ren_in_0"],
@@ -8493,8 +8493,8 @@
           ["ub_denoised_1_stencil_op_hcompute_denoised_1_stencil_8_to_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_18_garnet.stencil_valid","self.op_hcompute_demosaicked_1_stencil_read_extra_ctrl"],
           ["ub_denoised_1_stencil_op_hcompute_denoised_1_stencil_8_to_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_18_garnet.data_in_0","self.op_hcompute_denoised_1_stencil_write.0"],
           ["ub_denoised_1_stencil_op_hcompute_denoised_1_stencil_8_to_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_18_garnet.flush","self.reset"],
-          ["ub_denoised_1_stencil_op_hcompute_denoised_1_stencil_8_to_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_18_garnet.clk_en","ub_denoised_1_stencil_op_hcompute_denoised_1_stencil_8_to_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_18_clk_en_const1_lutcnst.bit.out"],
-          ["ub_denoised_1_stencil_op_hcompute_denoised_1_stencil_8_to_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_18_garnet.rst_n","ub_denoised_1_stencil_op_hcompute_denoised_1_stencil_8_to_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_18_clk_en_const_lutcnst.bit.out"]
+          ["ub_denoised_1_stencil_op_hcompute_denoised_1_stencil_8_to_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_18_garnet.rst_n","ub_denoised_1_stencil_op_hcompute_denoised_1_stencil_8_to_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_18_clk_en_const1_lutcnst.bit.out"],
+          ["ub_denoised_1_stencil_op_hcompute_denoised_1_stencil_8_to_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_18_garnet.clk_en","ub_denoised_1_stencil_op_hcompute_denoised_1_stencil_8_to_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_18_clk_en_const_lutcnst.bit.out"]
         ]
       },
       "hcompute_corrected_stencil":{
@@ -8840,8 +8840,8 @@
           }
         },
         "connections":[
-          ["umin_corrected_stencil_2_2111_2112$ucomp$compop.data.in.1","const_p255__2111.out"],
-          ["umin_corrected_stencil_2_2111_2112$min_mux$mux.data.in.1","const_p255__21111.out"],
+          ["umin_corrected_stencil_2_2111_2112$min_mux$mux.data.in.1","const_p255__2111.out"],
+          ["umin_corrected_stencil_2_2111_2112$ucomp$compop.data.in.1","const_p255__21111.out"],
           ["umin_corrected_stencil_2_2111_2112$min_mux$mux.data.out","rom_curvea0$3$cgramem.addr_in_0"],
           ["self.out_curved_stencil","rom_curvea0$3$cgramem.data_out_0"],
           ["rom_curvea0$3_ren_lutcnst.bit.out","rom_curvea0$3$cgramem.ren_in_0"],
@@ -8889,8 +8889,8 @@
           }
         },
         "connections":[
-          ["umin_corrected_stencil_3_2380_2381$ucomp$compop.data.in.1","const_p255__2380.out"],
-          ["umin_corrected_stencil_3_2380_2381$min_mux$mux.data.in.1","const_p255__23801.out"],
+          ["umin_corrected_stencil_3_2380_2381$min_mux$mux.data.in.1","const_p255__2380.out"],
+          ["umin_corrected_stencil_3_2380_2381$ucomp$compop.data.in.1","const_p255__23801.out"],
           ["umin_corrected_stencil_3_2380_2381$min_mux$mux.data.out","rom_curvea0$5$cgramem.addr_in_0"],
           ["self.out_curved_stencil","rom_curvea0$5$cgramem.data_out_0"],
           ["rom_curvea0$5_ren_lutcnst.bit.out","rom_curvea0$5$cgramem.ren_in_0"],

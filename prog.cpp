@@ -1965,7 +1965,7 @@ std::string perfect_loop_codegen(umap* schedmap) {
     cout << "Time to val: " << str(time_to_val) << endl;
     auto val_to_time = inv(time_to_val);
     cout << "Val to time: " << str(val_to_time) << endl;
-    auto last_dim = 
+    auto last_dim =
       isl_map_project_out(cpy(val_to_time), isl_dim_out, 0, lower_bounds.size() - 1);
     cout << "Val to last: " << str(last_dim) << endl;
     isl_aff* lda = get_aff(last_dim);
@@ -8130,6 +8130,28 @@ void pad_top_level_ops_with_loops(prog& prg) {
 
 }
 
+void move_node(op* node_to_be_moved, op* dst, prog& prg) {
+    op* src = prg.parent(node_to_be_moved);
+    remove(node_to_be_moved, src->children);
+    dst->children.push_back(node_to_be_moved);
+    node_to_be_moved->parent = dst;
+}
+
+void pad_bottom_level_ops_with_loops(prog& prg) {
+    int max_depth = max_loop_depth(prg);
+    for (auto c : prg.all_ops()) {
+        auto surrounding_loops = surrounding_vars(c, prg);
+        if (surrounding_loops.size() < max_depth) {
+            cout << "\tOp name: " << c->name << " need to be padded" << endl;
+            //loop on top of the op
+            op* container_loop = prg.parent(c);
+            op* pad_loop = container_loop->add_loop(prg.un("pad_wrapper"), 0, 1);
+            move_node(c, pad_loop, prg);
+        }
+    }
+    prg.pretty_print();
+}
+
 int max_loop_depth(prog& prg) {
   int maxl = -1;
   for (auto op : prg.all_ops()) {
@@ -8456,7 +8478,7 @@ void generate_app_code(
         ////dag.prg.validity_deps()),
         //dag.prg.whole_iteration_domain());
   //cout << "Sched: " << str(global_sched) << endl;
-  
+
   auto global_sched = dag.prg.optimized_codegen();
   auto buffers = build_buffers(dag.prg, global_sched);
 

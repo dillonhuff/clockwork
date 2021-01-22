@@ -240,8 +240,8 @@
           ["ub_hw_input_stencil_cyclic_0_garnet.data_out_0","self.op_hcompute_nearest_neighbor_stencil_read.0"],
           ["ub_hw_input_stencil_cyclic_0_garnet.stencil_valid","self.op_hcompute_nearest_neighbor_stencil_read_extra_ctrl"],
           ["ub_hw_input_stencil_cyclic_0_garnet.flush","self.reset"],
-          ["ub_hw_input_stencil_cyclic_0_garnet.clk_en","ub_hw_input_stencil_cyclic_0_clk_en_const1_lutcnst.bit.out"],
-          ["ub_hw_input_stencil_cyclic_0_garnet.rst_n","ub_hw_input_stencil_cyclic_0_clk_en_const_lutcnst.bit.out"]
+          ["ub_hw_input_stencil_cyclic_0_garnet.rst_n","ub_hw_input_stencil_cyclic_0_clk_en_const1_lutcnst.bit.out"],
+          ["ub_hw_input_stencil_cyclic_0_garnet.clk_en","ub_hw_input_stencil_cyclic_0_clk_en_const_lutcnst.bit.out"]
         ]
       },
       "nearest_neighbor_stencil_ub":{
@@ -379,15 +379,15 @@
         },
         "connections":[
           ["hw_input_stencil$ub_hw_input_stencil_cyclic_0_garnet.chain_chain_en","hw_input_stencil$chain_disen_const_U1_lutcnst.bit.out"],
-          ["hw_input_stencil$ub_hw_input_stencil_cyclic_0_garnet.clk_en","hw_input_stencil$ub_hw_input_stencil_cyclic_0_clk_en_const1_lutcnst.bit.out"],
-          ["hw_input_stencil$ub_hw_input_stencil_cyclic_0_garnet.rst_n","hw_input_stencil$ub_hw_input_stencil_cyclic_0_clk_en_const_lutcnst.bit.out"],
+          ["hw_input_stencil$ub_hw_input_stencil_cyclic_0_garnet.rst_n","hw_input_stencil$ub_hw_input_stencil_cyclic_0_clk_en_const1_lutcnst.bit.out"],
+          ["hw_input_stencil$ub_hw_input_stencil_cyclic_0_garnet.clk_en","hw_input_stencil$ub_hw_input_stencil_cyclic_0_clk_en_const_lutcnst.bit.out"],
           ["io16in_input_copy_stencil_op_hcompute_hw_input_stencil_read_0.out","hw_input_stencil$ub_hw_input_stencil_cyclic_0_garnet.data_in_0"],
           ["io16_hw_output_stencil_op_hcompute_hw_output_stencil_write_0.in","hw_input_stencil$ub_hw_input_stencil_cyclic_0_garnet.data_out_0"],
           ["io1in_reset.out","hw_input_stencil$ub_hw_input_stencil_cyclic_0_garnet.flush"],
           ["op_hcompute_hw_output_stencil_port_controller_garnet.stencil_valid","io1_hw_output_stencil_op_hcompute_hw_output_stencil_write_valid.in"],
           ["op_hcompute_hw_output_stencil_port_controller_garnet.flush","io1in_reset.out"],
-          ["op_hcompute_hw_output_stencil_port_controller_garnet.rst_n","op_hcompute_hw_output_stencil_port_controller_clk_en_const1_lutcnst.bit.out"],
-          ["op_hcompute_hw_output_stencil_port_controller_garnet.clk_en","op_hcompute_hw_output_stencil_port_controller_clk_en_const_lutcnst.bit.out"]
+          ["op_hcompute_hw_output_stencil_port_controller_garnet.clk_en","op_hcompute_hw_output_stencil_port_controller_clk_en_const1_lutcnst.bit.out"],
+          ["op_hcompute_hw_output_stencil_port_controller_garnet.rst_n","op_hcompute_hw_output_stencil_port_controller_clk_en_const_lutcnst.bit.out"]
         ]
       }
     },
