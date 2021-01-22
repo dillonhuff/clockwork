@@ -1569,7 +1569,7 @@ void generate_coreir_compute_unit(CodegenOptions& options, bool found_compute,
         }
         assert(found);
       }
-
+      inlineInstance(halide_cu);
     } else {
       // Generate dummy compute logic
       cout << "generating dummy compute" << endl;
@@ -2508,7 +2508,7 @@ void addIOs(Context* c, Module* top) {
 class CustomFlatten : public CoreIR::InstanceGraphPass {
  public:
   static std::string ID;
-  CustomFlatten() : InstanceGraphPass("customflatten", "Flattens everything except the new time!") {}
+  CustomFlatten() : InstanceGraphPass("customflatten", "Flattens everything except the new tile!") {}
   bool runOnInstanceGraphNode(CoreIR::InstanceGraphNode& node) {
     bool changed = false;
     // int i = 0;
@@ -2683,6 +2683,41 @@ void disconnect_input_enable(Context* c, Module* top) {
     }
   }
 }
+
+// Pass to map Tahoe memory tile intended for metamapper
+void map_memory(Module* top) {
+  auto c = top->getContext();
+
+  // top->print();
+
+  // Maps ROMS to memories
+  load_mem_ext(c);
+
+  // c->runPasses({"rungenerators"});
+  //A new pass to remove input enable signal affine controller
+  // disconnect_input_enable(c, top);
+
+  // c->runPasses({"cullgraph"});
+  // c->runPasses({"removewires"});
+  // addIOs(c,top);
+  // c->runPasses({"cullgraph"});
+  // c->addPass(new CustomFlatten);
+  // c->runPasses({"customflatten"});
+  // if (garnet_syntax_trans) {
+  c->addPass(new MapperPasses::MemSubstitute);
+  c->runPasses({"memsubstitute"});
+  // }
+  // c->addPass(new MapperPasses::ConstDuplication);
+  // c->runPasses({"constduplication"});
+  // c->addPass(new MapperPasses::MemConst);
+  // c->runPasses({"memconst"});
+
+  // c->runPasses({"cullgraph"});
+  // c->getPassManager()->printLog();
+  // c->runPasses({"deletedeadinstances"});
+  // c->runPasses({"removewires"});
+}
+
 
 void garnet_map_module(Module* top, bool garnet_syntax_trans = false) {
   auto c = top->getContext();
@@ -2909,6 +2944,53 @@ void generate_coreir(CodegenOptions& options,
   prg_mod->print();
   //assert(false);
 
+  deleteContext(context);
+}
+
+void generate_coreir_for_metamapper(CodegenOptions& options,
+    map<string, UBuffer>& buffers,
+    prog& prg,
+    umap* schedmap,
+    schedule_info& hwinfo) {
+
+
+  CoreIR::Context* context = CoreIR::newContext();
+  CoreIRLoadLibrary_commonlib(context);
+  CoreIRLoadLibrary_cgralib(context);
+  CoreIRLoadLibrary_cwlib(context);
+  add_delay_tile_generator(context);
+  add_raw_quad_port_memtile_generator(context);
+  add_tahoe_memory_generator(context);
+  ram_module(context, DATAPATH_WIDTH, 2048);
+  
+
+  auto c = context;
+
+  CoreIR::Module* prg_mod;
+ 
+  prg_mod = generate_coreir_without_ctrl(options, buffers, prg, schedmap, context, hwinfo);
+
+
+  map_memory(prg_mod);
+
+  for (auto op : prg.all_ops()) {
+    cout << "Inlining " << op->name << endl;
+    CoreIR::Instance* kernel = prg_mod->getDef()->getInstances().at(op->name);
+    inlineInstance(kernel);
+  }
+
+  c->runPasses({"deletedeadinstances"});
+  c->runPasses({"removewires"});
+  c->runPasses({"coreirjson"},{"global"});
+
+  context->runPasses({"rungenerators", "removewires", "cullgraph"});
+
+  auto global = context->getNamespace("global");
+  if(!saveToFile(global,  options.dir + prg.name+ "_to_metamapper.json", prg_mod)) {
+    cout << "Could not save ubuffer coreir" << endl;
+    context->die();
+  }
+  
   deleteContext(context);
 }
 

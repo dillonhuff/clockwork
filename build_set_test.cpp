@@ -12275,7 +12275,7 @@ void generate_cgra_tb(std::map<string, UBuffer> buffers_opt, prog prg, CodegenOp
   generate_verilog_tb(prg.name);
 }
 
-void generate_garnet_coreir(std::map<string, UBuffer> buffers_opt, prog prg, CodegenOptions& opt, schedule_info& hwinfo, bool use_dse_compute=false) {
+void generate_garnet_coreir(std::map<string, UBuffer> buffers_opt, prog prg, CodegenOptions& opt, schedule_info& hwinfo, bool use_dse_compute, bool for_metamapper) {
   CoreIR::Context* context = CoreIR::newContext();
   CoreIRLoadLibrary_commonlib(context);
   CoreIRLoadLibrary_cwlib(context);
@@ -12285,8 +12285,11 @@ void generate_garnet_coreir(std::map<string, UBuffer> buffers_opt, prog prg, Cod
   //TODO: add lake memory tile configuration here
 
   auto sched = global_schedule_from_buffers(buffers_opt);
-  generate_coreir(opt, buffers_opt, prg, sched, hwinfo);
-
+  if (for_metamapper) {
+    generate_coreir_for_metamapper(opt, buffers_opt, prg, sched, hwinfo);
+  } else {
+    generate_coreir(opt, buffers_opt, prg, sched, hwinfo);
+  }
   //cmd("mv " + prg.name + ".v " + opt.dir + "verilog");
 }
 #endif
@@ -14119,7 +14122,7 @@ void Init_PE_energy_cost(power_analysis_params& power_params)  {
 }
 
 
-void compile_for_garnet_single_port_mem(prog & prg, string dir, bool gen_smt_stream, bool gen_config_only,bool multi_accessor, bool use_dse_compute);
+void compile_for_garnet_single_port_mem(prog & prg, string dir, bool gen_smt_stream, bool gen_config_only,bool multi_accessor, bool use_dse_compute, bool for_metamapper);
 void cpy_app_to_folder(const std::string& app_type, const std::string& prg_name);
 
 void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, string dir="aha_garnet_design") {
@@ -14161,7 +14164,7 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
     auto cpu = unoptimized_result(prg);
 
     //compile_for_garnet_platonic_mem(prg);
-    compile_for_garnet_single_port_mem(prg, dir, false, gen_config_only, multi_accessor, false);
+    compile_for_garnet_single_port_mem(prg, dir, false, gen_config_only, multi_accessor, false, false);
     generate_regression_testbench(prg);
 
     cout << "Output name: " << prg.name << endl;
@@ -17484,7 +17487,8 @@ void compile_for_garnet_single_port_mem(prog& prg,
         bool gen_smt_stream,
         bool config_gen_only,
         bool multi_sram,
-        bool use_dse_compute) {
+        bool use_dse_compute,
+        bool for_metamapper) {
 
   //make sure the loop bound and address is positive
   normalize_bounds(prg);
@@ -17539,7 +17543,7 @@ void compile_for_garnet_single_port_mem(prog& prg,
   //PE_energy_cost_instance_model(power_params, power_stats, prg);
   //PE_energy_cost(power_params, power_stats, prg);
 
-  generate_garnet_coreir(buffers_opt, prg, options, sched, use_dse_compute);
+  generate_garnet_coreir(buffers_opt, prg, options, sched, use_dse_compute, for_metamapper);
   if (!options.config_gen_only) {
     generate_garnet_verilog_top(options, prg.name);
     generate_garnet_verilator_tb(prg, hw_sched, buffers_opt);

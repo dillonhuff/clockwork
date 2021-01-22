@@ -59,7 +59,7 @@ int main(int argc, char** argv) {
 
     auto cpu = unoptimized_result(prg);
 
-    compile_for_garnet_single_port_mem(prg, dir, false, gen_config_only, multi_accessor, use_dse_compute);
+    compile_for_garnet_single_port_mem(prg, dir, false, gen_config_only, multi_accessor, use_dse_compute, true);
     generate_regression_testbench(prg);
 
     cout << "Output name: " << dir << "/" << prg.name << endl;
