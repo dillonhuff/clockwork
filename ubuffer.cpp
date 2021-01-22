@@ -1467,35 +1467,64 @@ CoreIR::Module* affine_controller_use_lake_tile_counter(
     //generate tb accessor
     auto config_tb2out = generate_accessor_config_from_aff_expr(dom, aff);
 
+
     //generate tb address
-    int word_width = options.mem_tile.word_width.at("tb");
-    int capacity = options.mem_tile.capacity.at("tb");
-    int port_width = options.mem_tile.out_port_width.at("tb");
     auto index_addr = project_all_out_but(cpy(addr), dim);
     cout << "Index address: " << str(index_addr) << endl;
-    //is_read = true, is_mux = false
-    auto addressor_tb2out = generate_addressor_config_from_aff_expr(get_aff(index_addr), true, false, word_width, capacity, port_width);
-    config_tb2out.merge(addressor_tb2out);
+    {
+      int word_width = options.mem_tile.word_width.at("tb");
+      int capacity = options.mem_tile.capacity.at("tb");
+      int port_width = options.mem_tile.out_port_width.at("tb");
+      //is_read = true, is_mux = false
+      auto addressor_tb2out = generate_addressor_config_from_aff_expr(get_aff(index_addr), true, false, word_width, capacity, port_width);
+      config_tb2out.merge(addressor_tb2out);
+    }
     add_lake_config(config_file, config_tb2out, num_dims(dom), "tb2out");
 
     //generate sram2tb controller
     //TODO: change 4 to fetch width
     auto trans = get_domain_trans(dom, dim, 4);
+    cout << "Vectorization Trans: " << str(trans) << endl;
+
+    //Apply the vectorization trans on both accessor and addressor
     auto acc_0 = its(to_map(aff), dom);
     auto res = dot(trans, acc_0);
+    auto vec_index_addr = dot(trans, index_addr);
+
     //project all the inner dim
     for (int reset_dim = dim+1; reset_dim < num_in_dims(acc_0); reset_dim ++) {
         res = reset_domain_coeff(res, reset_dim, 0);
         cout << "\treset: " << str(res) << endl;
     }
-    if (dim < num_in_dims(acc_0) - 1)
-        res = isl_map_project_out(cpy(res), isl_dim_in, dim+1, num_in_dims(acc_0) - dim - 1);
+
+    if (dim < num_in_dims(acc_0) - 1) {
+       vec_index_addr = isl_map_project_out(cpy(vec_index_addr), isl_dim_in, dim+1, num_in_dims(acc_0) - dim - 1);
+       res = isl_map_project_out(cpy(res), isl_dim_in, dim+1, num_in_dims(acc_0) - dim - 1);
+    }
     cout << "\tAfter trans: " << str(res) << endl;
+    cout << "\tVec index address: " << str(vec_index_addr) << endl;
+
+    //bring the sram2tb forward for 3 cycle
+    res = shift_range_map(res, {-3});
     auto config_sram2tb = generate_accessor_config_from_aff_expr(domain(res), get_aff(res));
+
+    //Getthe addressor
+    {
+      int word_width = options.mem_tile.word_width.at("tb");
+      int capacity = options.mem_tile.capacity.at("tb");
+      int port_width = options.mem_tile.in_port_width.at("tb");
+      auto addressor_sram2tb_write = generate_addressor_config_from_aff_expr(get_aff(vec_index_addr), false, false, word_width, capacity, port_width);
+      config_sram2tb.merge(addressor_sram2tb_write);
+    }
+
+    {
+      int word_width = options.mem_tile.word_width.at("sram");
+      int capacity = options.mem_tile.capacity.at("sram");
+      int port_width = options.mem_tile.out_port_width.at("sram");
+      auto addressor_sram2tb_read = generate_addressor_config_from_aff_expr(get_aff(vec_index_addr), true, false, word_width, capacity, port_width);
+      config_sram2tb.merge(addressor_sram2tb_read);
+    }
     add_lake_config(config_file, config_sram2tb, num_dims(domain(res)), "sram2tb");
-    //FIXME:
-    //1. shift the starting addr
-    //2. add addr information
 
     buf = def->addInstance(ub_ins_name + "_Counter_" + str(dim), "cgralib.Mem_amber", genargs);
     buf->getMetaData()["config"] = config_file;
