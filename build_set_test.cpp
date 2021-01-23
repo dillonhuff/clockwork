@@ -19856,8 +19856,8 @@ void test_multi_kernel_pyramid_collapsing() {
   //assert(false);
 
   CodegenOptions options;
-  //options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
-  options.hls_loop_codegen = HLS_LOOP_CODEGEN_ISL;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  //options.hls_loop_codegen = HLS_LOOP_CODEGEN_ISL;
   generate_app_code(options, dag);
 
   generate_regression_testbench(dag.prg);

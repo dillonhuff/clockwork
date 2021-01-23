@@ -1994,7 +1994,7 @@ std::string perfect_loop_codegen(umap* schedmap) {
     auto dom = pieces.at(0).first;
     cout << "dom: " << str(dom) << endl;
     cout << "irn: " << str(index_ranges) << endl;
-    dom = gist(dom, index_ranges);
+    //dom = gist(dom, index_ranges);
     //assert(false);
     conv_out << tab(lower_bounds.size()) << "// " << str(dom) << endl;
     for (auto bs : get_basic_sets(dom)) {
@@ -2129,8 +2129,6 @@ void generate_buffer_code(
     ostream& conv_out,
     map<string, UBuffer>& buffers,
     prog& prg) {
-    //umap* schedmap,
-    //map<string, isl_set*>& domain_map) {
 
   for (auto& b : buffers) {
     if (!prg.is_boundary(b.first)) {
