@@ -371,6 +371,8 @@ class HWStream {
   public:
 
 #ifdef __VIVADO_SYNTH__
+    HWStream() {}
+    HWStream(const std::string& n) {}
 
     hls::stream<T> values;
 
@@ -388,6 +390,12 @@ class HWStream {
 
 #else
 
+    HWStream() : name("default_name"), reads(0), writes(0) {}
+    HWStream(const std::string& n) : name(n), reads(0), writes(0) {}
+
+    std::string name;
+    int reads, writes;
+
     deque<T> values;
 
     int num_waiting() const {
@@ -400,13 +408,20 @@ class HWStream {
 
     void write(const T& v) {
       //cout << "Inserting: " << (hw_uint<64>) v << " into hwstream" << endl;
+      writes++;
       return values.push_front(v);
     }
 
     T read() {
+      if (values.size() == 0) {
+        std::cout << "Error: " << name << " is empty during read" << std::endl;
+        std::cout << "\tReads : " << reads << endl;
+        std::cout << "\tWrites: " << writes << endl;
+      }
       assert(values.size() > 0);
       T b = values.back();
       values.pop_back();
+      reads++;
       return b;
     }
 
