@@ -19849,14 +19849,15 @@ void test_multi_kernel_pyramid_collapsing() {
   string target = "gp_in_on_chip_1_buf4_to_gp_1112";
   dag.prg.pretty_print();
 
-  umap* reads = prg.consumer_map(target);
-  umap* writes = prg.producer_map(target);
-  cout << "Reads : " << str(reads) << endl;
-  cout << "Writes: " << str(writes) << endl;
-  assert(false);
+  //umap* reads = prg.consumer_map(target);
+  //umap* writes = prg.producer_map(target);
+  //cout << "Reads : " << str(reads) << endl;
+  //cout << "Writes: " << str(writes) << endl;
+  //assert(false);
 
   CodegenOptions options;
-  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  //options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_ISL;
   generate_app_code(options, dag);
 
   generate_regression_testbench(dag.prg);
