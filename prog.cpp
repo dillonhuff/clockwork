@@ -1787,7 +1787,6 @@ vector<string> buffer_args(const map<string, UBuffer>& buffers, op* op, prog& pr
   return buf_srcs;
 }
 
-//compute_kernel generate_compute_op(
 void generate_compute_op(
     ostream& conv_out,
     prog& prg,
@@ -1796,10 +1795,6 @@ void generate_compute_op(
     map<string, isl_set*>& domain_map) {
 
   cout << "Generating compute for: " << op->name << endl;
-
-  //compute_kernel kernel;
-  //kernel.name = op->name;
-  //kernel.functional_unit = op->func;
 
   vector<string> buf_srcs;
   concat(buf_srcs, buffer_args(buffers, op, prg));
@@ -1810,7 +1805,6 @@ void generate_compute_op(
   vector<string> dim_args;
   for (auto a : space_var_args(s)) {
     dim_args.push_back(a);
-    //kernel.iteration_variables.push_back(a);
   }
   dim_args.push_back("0");
 
@@ -1851,7 +1845,6 @@ void generate_compute_op(
     conv_out << "\tauto " << value_name << " = ";
 
     string bundle_name = op->name + "_read";
-    //kernel.input_buffers.push_back({in_buffer, bundle_name});
 
     if (prg.is_boundary(in_buffer)) {
       conv_out << in_buffer << ".read();" << endl;
@@ -1895,7 +1888,6 @@ void generate_compute_op(
   std::set<string> out_buffers;
   for (auto con : op->buffers_written()) {
     out_buffers.insert(con);
-    //out_buffers.insert(con.first);
   }
   if (!(out_buffers.size() == 1)) {
     cout << "Error: " << out_buffers.size() << " out_buffers in " << op->name << endl;
@@ -1906,7 +1898,6 @@ void generate_compute_op(
   conv_out << "\t// Produce: " << out_buffer << endl;
 
   string bundle_name = op->name + "_write";
-  //kernel.output_buffer = {out_buffer, bundle_name};
 
   cout << "Checking if program is a boundary" << endl;
 
@@ -8508,6 +8499,7 @@ void generate_app_code(
         local_buffers[buf.first] = buf.second;
       }
     }
+
     generate_app_code_op_logic(options,
         conv_out,
         local_buffers,
@@ -8654,27 +8646,17 @@ vector<int> read_permutation(const std::string& buf, prog& gp) {
   vector<int> level_permutation;
 
   auto readers = find_readers(buf, gp);
-  //cout << "=== Readers..." << endl;
-  //for (auto reader : readers) {
-  //cout << tab(1) << reader->name << endl;
-  //}
   op* reader = pick(readers);
   auto addr_rep = pick(read_addrs(reader, buf, gp));
-  //cout << tab(1) << "Addr rep: " << str(addr_rep) << endl;
   auto levels = get_variable_levels(gp);
-  //vector<int> level_permutation;
   level_permutation.resize(isl_multi_aff_dim(addr_rep, isl_dim_set));
   for (int i = 0; i < isl_multi_aff_dim(addr_rep, isl_dim_set); i++) {
     isl_aff* addr_comp = isl_multi_aff_get_aff(addr_rep, i);
-    //cout << tab(2) << str(addr_comp) << endl;
     for (int d = 0; d < num_in_dims(addr_comp); d++) {
       if (!is_zero(get_coeff(addr_comp, d))) {
         string var = surrounding_vars(reader, gp).at(d);
         int lvl = map_find(var, levels) - 1;
-        //cout << tab(3) << "var: " << var << endl;
-        //cout << tab(3) << "lvl: " << map_find(var, levels) << endl;
         assert(lvl >= 0);
-        //cout << tab(3) << "address component " << i << " of " << b.first << " should be loaded at level " << lvl << endl;
         level_permutation[i] = lvl;
       }
     }
