@@ -1938,13 +1938,17 @@ std::string perfect_loop_codegen(umap* schedmap) {
   vector<string> constraint_list;
   vector<string> dvs;
   for (int d = 0; d < num_dims(s); d++) {
-    string vn = "d" + str(d);
-    dvs.push_back(vn);
     auto ds = project_all_but(s, d);
     auto lm = lexminval(ds);
     auto lmax = lexmaxval(ds);
     lower_bounds.push_back(to_int(lm));
     upper_bounds.push_back(to_int(lmax));
+
+    if (d < num_dims(s) - 1) {
+      string vn = "d" + str(d);
+      dvs.push_back(vn);
+      constraint_list.push_back(str(lower_bounds.back()) + " <= " + vn + " <= " + str(upper_bounds.back()));
+    }
   }
 
 
