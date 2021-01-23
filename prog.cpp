@@ -8449,15 +8449,16 @@ void generate_app_code(
     }
   }
 
-  //auto valid_deps = dag.prg.validity_deps();
-  //auto global_sched =
-    //its(clockwork_schedule_umap_reversed(dag.prg.whole_iteration_domain(), valid_deps, valid_deps),
-        ////dag.prg.validity_deps(),
-        ////dag.prg.validity_deps()),
-        //dag.prg.whole_iteration_domain());
-  //cout << "Sched: " << str(global_sched) << endl;
+  auto valid_deps = dag.prg.validity_deps();
+  auto global_sched =
+    its(clockwork_schedule_umap_reversed(dag.prg.whole_iteration_domain(), valid_deps, valid_deps),
+        //dag.prg.validity_deps(),
+        //dag.prg.validity_deps()),
+        dag.prg.whole_iteration_domain());
+  cout << "Sched: " << str(global_sched) << endl;
   
-  auto global_sched = dag.prg.optimized_codegen();
+  //auto global_sched = dag.prg.optimized_codegen();
+
   auto buffers = build_buffers(dag.prg, global_sched);
 
   cout << "Generating code for " << dag.prg.name << endl;

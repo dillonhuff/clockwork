@@ -2,6 +2,8 @@ import re
 import matplotlib.pyplot as plt
 import numpy as np
 
+plt.style.use('seaborn-pastel')
+
 # f = open('./misc/soda_resource_comparison_table.tex').readlines()
 f = open('./misc/soda_comparison_standalone_large.tex').readlines()
 
@@ -71,10 +73,10 @@ def table_op(table_lines, func):
 
             # fig = plt.figure()
             # ax[i, j] = fig.add_subplot(111)
-            rects1 = ax[i, j].bar(ind, menMeans, width)
+            rects1 = ax[i, j].bar(ind, menMeans, width, edgecolor='k')
 
             womenMeans= apps[resource][app]['CW']
-            rects2 = ax[i, j].bar(ind+width, womenMeans, width)
+            rects2 = ax[i, j].bar(ind+width, womenMeans, width, edgecolor='k')
 
             # add some
             # ax[i, j].set_ylabel('Counts')
