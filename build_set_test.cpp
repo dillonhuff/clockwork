@@ -14160,7 +14160,7 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   //TODO:has issue  with multiple input
   //test_apps.push_back(counter());
   //test_apps.push_back(demosaic_unrolled());
-  test_apps.push_back(demosaic_complex());
+  //test_apps.push_back(demosaic_complex());
   //test_apps.push_back(conv_3_3());
   //test_apps.push_back(gaussian());
   //test_apps.push_back(cascade());
@@ -14171,7 +14171,7 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   //test_apps.push_back(up_sample());
 
   //test_apps.push_back(unsharp());
-  //test_apps.push_back(resnet());
+  test_apps.push_back(resnet());
   //test_apps.push_back(mobilenet_unrolled());
   ////test_apps.push_back(unsharp());
 
@@ -16421,8 +16421,8 @@ void relax_delays_rate_matched(schedule_info& sched, prog& prg) {
             cout << "\t\top " << prod_op_name << " has ii: " << prod_ii << endl;
             //6 is a magic number which make upsample work
             d += prod_ii * fetch_width + 6;
-        } else if (equal_start_time && prod_need_index){
-            d += 3;
+        //} else if (equal_start_time && prod_need_index){
+        //    d += 3;
         }
     }
     sched.op_offset_within_parent[lp] += d;
@@ -16877,7 +16877,6 @@ void garnet_single_port_ram_schedule(schedule_info& sched, op* root, prog& prg) 
 
   prg.pretty_print();
   cout << prg.name << " is not a stencil" << endl;
-  assert(false);
   //cout << tab(1) << "Perfect: " << perfect << endl;
   //cout << tab(1) << "# rvars: " << rvars.size() << endl;
   //for (auto rv : rvars) {
