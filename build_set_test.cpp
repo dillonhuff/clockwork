@@ -19846,6 +19846,14 @@ void test_multi_kernel_pyramid_collapsing() {
 
   auto fusion_groups = one_stage_per_group(prg);
   app_dag dag = partition_application(fusion_groups, prg);
+  string target = "gp_in_on_chip_1_buf4_to_gp_1112";
+  dag.prg.pretty_print();
+
+  umap* reads = prg.consumer_map(target);
+  umap* writes = prg.producer_map(target);
+  cout << "Reads : " << str(reads) << endl;
+  cout << "Writes: " << str(writes) << endl;
+  assert(false);
 
   CodegenOptions options;
   options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
