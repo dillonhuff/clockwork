@@ -19823,7 +19823,7 @@ void test_multi_kernel_pyramid_collapsing() {
 
   cpy("in_on_chip", "in", 2, prg);
 
-  const int num_pyramid_levels = 4;
+  const int num_pyramid_levels = 3;
   vector<string> lps = laplacian_pyramid("in_on_chip", num_pyramid_levels, prg);
 
   string reconstructed = reconstruct_gaussian(lps, prg);

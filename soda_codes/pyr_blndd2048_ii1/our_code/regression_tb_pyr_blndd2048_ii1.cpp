@@ -10,11 +10,11 @@ int main() {
 
   // Loading input data
   srand(1);
-  // cmap    : { pw_math_in03[root = 0, pw_math_in01, pw_math_in02] -> in[pw_math_in02, pw_math_in01] : 0 <= pw_math_in01 <= 70 and 0 <= pw_math_in02 <= 70 }
-  // read map: { in[i0, i1] -> pw_math_in03[root = 0, pw_math_in01 = i1, pw_math_in02 = i0] : 0 <= i0 <= 70 and 0 <= i1 <= 70 }
-  // rng     : { pw_math_in03[root = 0, pw_math_in01, pw_math_in02] : 0 <= pw_math_in01 <= 70 and 0 <= pw_math_in02 <= 70 }
-  // rng card: { 5041 }
-  for (int i = 0; i < 5041; i++) {
+  // cmap    : { pw_math_in03[root = 0, pw_math_in01, pw_math_in02] -> in[pw_math_in02, pw_math_in01] : 0 <= pw_math_in01 <= 66 and 0 <= pw_math_in02 <= 66 }
+  // read map: { in[i0, i1] -> pw_math_in03[root = 0, pw_math_in01 = i1, pw_math_in02 = i0] : 0 <= i0 <= 66 and 0 <= i1 <= 66 }
+  // rng     : { pw_math_in03[root = 0, pw_math_in01, pw_math_in02] : 0 <= pw_math_in01 <= 66 and 0 <= pw_math_in02 <= 66 }
+  // rng card: { 4489 }
+  for (int i = 0; i < 4489; i++) {
     hw_uint<32 > value;
     set_at<0, 32, 32>(value, rand() % 256);
     in.write(value);
