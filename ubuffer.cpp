@@ -421,6 +421,83 @@ void generate_multilinear_bank(CodegenOptions& options,
 
 }
 
+void generate_linear_bank(CodegenOptions& options,
+    std::ostream& out,
+    stack_bank& bank) {
+
+  auto name = bank.name;
+  auto pt_type_string = bank.pt_type_string;
+  auto read_delays = bank.read_delays;
+  auto num_readers = bank.num_readers;
+  auto maxdelay = bank.maxdelay;
+  auto layout = bank.extract_layout();
+
+  auto partitions =
+    bank.get_partitions();
+  int partition_size = partitions.size();
+  //add a ram capacity compute pass is different from stack bank
+  int capacity = 1;
+  auto dsets = get_sets(bank.rddom);
+  int dims = dsets.size() > 0 ? num_dims(pick(get_sets(bank.rddom))) : 0;
+  for (int i = 0; i < dims; i++) {
+    auto s = project_all_but(to_set(bank.rddom), i);
+    auto min = to_int(lexminval(s));
+    auto max = to_int(lexmaxval(s));
+    int length = max - min + 1;
+    capacity *= length;
+  }
+
+  //int_upper_bound(card(bank.rddom));
+  out << "\t// Capacity: " << capacity << endl;
+  open_synth_scope(out);
+  out << tab(1) << pt_type_string << " RAM[" << capacity << "];" << endl;
+  close_synth_scope(out);
+
+  open_debug_scope(out);
+  out << tab(1) << pt_type_string << "* RAM;" << endl;
+  out << tab(1) << name << "_cache()" <<  " {" << endl;
+  out << tab(2) << "RAM = (" << pt_type_string << "*) malloc(sizeof(" << pt_type_string << ")*" << capacity << ");" << endl;
+  out << tab(1) << "}" << endl;
+
+  out << tab(1) << "~" << name << "_cache()" <<  " {" << endl;
+  out << tab(2) << "free(RAM);" << endl;
+  out << tab(1) << "}" << endl;
+  close_debug_scope(out);
+
+  out << tab(1) << "inline " + pt_type_string + " read(const int addr) {" << endl;
+
+  open_debug_scope(out);
+  out << tab(2) << "if (addr < 0 || !(addr < " << capacity << ")) {" << endl;
+  out << tab(2) << "cout << \"Read error: Address \" << addr << \" is out of bounds\" << endl;" << endl;
+  out << tab(2) << "}" << endl;
+  out << tab(2) << "assert(addr < " << capacity << ");" << endl;
+  out << tab(2) << "assert(addr >= " << (int) 0 << ");" << endl;
+  close_debug_scope(out);
+
+  ignore_inter_deps(out, "RAM");
+  out << tab(2) << "return RAM[addr];" << endl;
+  out << tab(1) << "}" << endl << endl;
+
+  out << endl << endl;
+
+  out << "\tinline void write(const " + pt_type_string + " value, const int addr) {" << endl;
+  open_debug_scope(out);
+  out << tab(2) << "if (addr < 0 || !(addr < " << capacity << ")) {" << endl;
+  out << tab(2) << "cout << \"Write error: Address \" << addr << \" is out of bounds\" << endl;" << endl;
+  out << tab(2) << "}" << endl;
+  out << tab(2) << "assert(addr < " << capacity << ");" << endl;
+  out << tab(2) << "assert(addr >= " << (int) 0 << ");" << endl;
+  close_debug_scope(out);
+
+  if (options.add_dependence_pragmas) {
+    ignore_inter_deps(out, "RAM");
+  }
+  out << tab(2) << "RAM[addr] = value;" << endl;
+  out << tab(1) << "}" << endl << endl;
+
+  out << "};" << endl << endl;
+}
+
 void generate_bank(CodegenOptions& options,
     std::ostream& out,
     stack_bank& bank) {
@@ -437,70 +514,7 @@ void generate_bank(CodegenOptions& options,
 
   //C array with read and write method
   if (bank.tp == INNER_BANK_OFFSET_LINEAR) {
-    auto partitions =
-      bank.get_partitions();
-    int partition_size = partitions.size();
-    //add a ram capacity compute pass is different from stack bank
-    int capacity = 1;
-    auto dsets = get_sets(bank.rddom);
-    int dims = dsets.size() > 0 ? num_dims(pick(get_sets(bank.rddom))) : 0;
-    for (int i = 0; i < dims; i++) {
-      auto s = project_all_but(to_set(bank.rddom), i);
-      auto min = to_int(lexminval(s));
-      auto max = to_int(lexmaxval(s));
-      int length = max - min + 1;
-      capacity *= length;
-    }
-
-    //int_upper_bound(card(bank.rddom));
-    out << "\t// Capacity: " << capacity << endl;
-    open_synth_scope(out);
-    out << tab(1) << pt_type_string << " RAM[" << capacity << "];" << endl;
-    close_synth_scope(out);
-
-    open_debug_scope(out);
-    out << tab(1) << pt_type_string << "* RAM;" << endl;
-    out << tab(1) << name << "_cache()" <<  " {" << endl;
-    out << tab(2) << "RAM = (" << pt_type_string << "*) malloc(sizeof(" << pt_type_string << ")*" << capacity << ");" << endl;
-    out << tab(1) << "}" << endl;
-
-    out << tab(1) << "~" << name << "_cache()" <<  " {" << endl;
-    out << tab(2) << "free(RAM);" << endl;
-    out << tab(1) << "}" << endl;
-    close_debug_scope(out);
-
-    out << tab(1) << "inline " + pt_type_string + " read(const int addr) {" << endl;
-
-    open_debug_scope(out);
-    out << tab(2) << "if (addr < 0 || !(addr < " << capacity << ")) {" << endl;
-    out << tab(2) << "cout << \"Read error: Address \" << addr << \" is out of bounds\" << endl;" << endl;
-    out << tab(2) << "}" << endl;
-    out << tab(2) << "assert(addr < " << capacity << ");" << endl;
-    out << tab(2) << "assert(addr >= " << (int) 0 << ");" << endl;
-    close_debug_scope(out);
-
-    ignore_inter_deps(out, "RAM");
-    out << tab(2) << "return RAM[addr];" << endl;
-    out << tab(1) << "}" << endl << endl;
-
-    out << endl << endl;
-
-    out << "\tinline void write(const " + pt_type_string + " value, const int addr) {" << endl;
-    open_debug_scope(out);
-    out << tab(2) << "if (addr < 0 || !(addr < " << capacity << ")) {" << endl;
-    out << tab(2) << "cout << \"Write error: Address \" << addr << \" is out of bounds\" << endl;" << endl;
-    out << tab(2) << "}" << endl;
-    out << tab(2) << "assert(addr < " << capacity << ");" << endl;
-    out << tab(2) << "assert(addr >= " << (int) 0 << ");" << endl;
-    close_debug_scope(out);
-
-    if (options.add_dependence_pragmas) {
-      ignore_inter_deps(out, "RAM");
-    }
-    out << tab(2) << "RAM[addr] = value;" << endl;
-    out << tab(1) << "}" << endl << endl;
-
-    out << "};" << endl << endl;
+    generate_linear_bank(options, out, bank);
 
   } else if (bank.tp == INNER_BANK_OFFSET_MULTILINEAR) {
     generate_multilinear_bank(options, out, bank);
