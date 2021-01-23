@@ -1932,10 +1932,14 @@ std::string perfect_loop_codegen(umap* schedmap) {
   conv_out << "// # sets: " << sets.size() << endl;
   assert(sets.size() == 1);
   isl_set* s = pick(get_sets(time_range));
-  isl_set* index_ranges = isl_set_project_out(cpy(s), isl_dim_set, num_dims(s) - 1, 1);
+  //isl_set* index_ranges = isl_set_project_out(cpy(s), isl_dim_set, num_dims(s) - 1, 1);
   vector<int> lower_bounds;
   vector<int> upper_bounds;
+  vector<string> constraint_list;
+  vector<string> dvs;
   for (int d = 0; d < num_dims(s); d++) {
+    string vn = "d" + str(d);
+    dvs.push_back(vn);
     auto ds = project_all_but(s, d);
     auto lm = lexminval(ds);
     auto lmax = lexmaxval(ds);
@@ -1943,7 +1947,12 @@ std::string perfect_loop_codegen(umap* schedmap) {
     upper_bounds.push_back(to_int(lmax));
   }
 
-  //for (int i = 0; i < lower_bounds.size(); i++) {
+
+  string range_set =
+    curlies(bracket_list(dvs) + " : " + sep_list(constraint_list, "", "", " and "));
+  isl_set* index_ranges =
+    rdset(ctx(schedmap), range_set);
+
   for (int i = 0; i < lower_bounds.size() - 1; i++) {
     conv_out << tab(i) << "for (int i" << str(i) << " = " << lower_bounds.at(i) << "; i" << str(i) << " <= " << upper_bounds.at(i) << "; i" << i << "++) {" << endl;
     if (i == ((int) lower_bounds.size()) - 2) {
@@ -1994,7 +2003,8 @@ std::string perfect_loop_codegen(umap* schedmap) {
     auto dom = pieces.at(0).first;
     cout << "dom: " << str(dom) << endl;
     cout << "irn: " << str(index_ranges) << endl;
-    //dom = gist(dom, index_ranges);
+    dom = gist(dom, index_ranges);
+    cout << "ctx: " << str(dom) << endl;
     //assert(false);
     conv_out << tab(lower_bounds.size()) << "// " << str(dom) << endl;
     for (auto bs : get_basic_sets(dom)) {
