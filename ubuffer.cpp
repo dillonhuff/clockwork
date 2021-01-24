@@ -2172,8 +2172,6 @@ void UBuffer::generate_coreir(CodegenOptions& options,
     int width = buf.port_widths;
 
     cout << "====== creating select for " << outpt << " on buffer " << buf.name << endl;
-    //cout << buf << endl;
-    //cout << "====== end of buffer" << endl;
 
     map<string, isl_set*> in_ports_to_conditions =
       input_ports_to_conditions(outpt, buf);
@@ -4807,27 +4805,44 @@ void UBuffer::generate_banks(CodegenOptions& options) {
   void UBuffer::generate_banks_and_merge(CodegenOptions& options) {
     generate_banks(options);
 
-    if (banking.partition == "exhaustive" || banking.partition == "cyclic") {
-      for (auto inpt : get_in_ports()) {
-        // try to turn the banks for this inpt into one big linebuffer
-        vector<stack_bank> receivers = receiver_banks(inpt);
-        vector<stack_bank> mergeable;
-        for (auto bnk : receivers) {
 
-          if (options.debug_options.expect_all_linebuffers) {
-            assert(bnk.read_delays.size() == 2);
-          }
+    if (banking.partition == "exhaustive" || banking.partition == "cyclic") {
+      bool all_small_banks = true;
+      for (auto inpt : get_in_ports()) {
+        vector<stack_bank> receivers = receiver_banks(inpt);
+        for (auto bnk : receivers) {
           if (bnk.tp == INNER_BANK_OFFSET_STACK &&
               bnk.maxdelay > 2 &&
               bnk.read_delays.size() == 2) {
-            mergeable.push_back(bnk);
+            all_small_banks = false;
+            break;
+          }
+        }
+      }
+
+
+      if (!all_small_banks) {
+        for (auto inpt : get_in_ports()) {
+          // try to turn the banks for this inpt into one big linebuffer
+          vector<stack_bank> receivers = receiver_banks(inpt);
+          vector<stack_bank> mergeable;
+          for (auto bnk : receivers) {
+
+            if (options.debug_options.expect_all_linebuffers) {
+              assert(bnk.read_delays.size() == 2);
+            }
+            if (bnk.tp == INNER_BANK_OFFSET_STACK &&
+                bnk.read_delays.size() == 2) {
+              mergeable.push_back(bnk);
+            }
+
           }
 
+          if (mergeable.size() > 1) {
+            merge_bank(options, inpt, mergeable);
+          }
         }
 
-        if (mergeable.size() > 1) {
-          merge_bank(options, inpt, mergeable);
-        }
       }
     }
   }
