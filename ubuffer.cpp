@@ -1479,7 +1479,7 @@ CoreIR::Module* affine_controller_use_lake_tile_counter(
       auto addressor_tb2out = generate_addressor_config_from_aff_expr(get_aff(index_addr), true, false, word_width, capacity, port_width);
       config_tb2out.merge(addressor_tb2out);
     }
-    add_lake_config(config_file, config_tb2out, num_dims(dom), "tb2out");
+    add_lake_config(config_file, config_tb2out, num_dims(dom), "tb2out_0");
 
     //generate sram2tb controller
     //TODO: change 4 to fetch width
@@ -1524,7 +1524,7 @@ CoreIR::Module* affine_controller_use_lake_tile_counter(
       auto addressor_sram2tb_read = generate_addressor_config_from_aff_expr(get_aff(vec_index_addr), true, false, word_width, capacity, port_width);
       config_sram2tb.merge(addressor_sram2tb_read);
     }
-    add_lake_config(config_file, config_sram2tb, num_dims(domain(res)), "sram2tb");
+    add_lake_config(config_file, config_sram2tb, num_dims(domain(res)), "sram2tb_0");
 
     buf = def->addInstance(ub_ins_name + "_Counter_" + str(dim), "cgralib.Mem_amber", genargs);
     buf->getMetaData()["config"] = config_file;
