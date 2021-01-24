@@ -158,16 +158,6 @@
             "genargs":{"numbitports":["Int",3], "numdataports":["Int",2], "op_kind":["String","bit"], "width":["Int",16]},
             "modargs":{"bit0_mode":["String","BYPASS"], "bit0_value":["Bool",false], "bit1_mode":["String","BYPASS"], "bit1_value":["Bool",false], "bit2_mode":["String","BYPASS"], "bit2_value":["Bool",false], "flag_sel":["String","lut"], "lut_value":[["BitVector",8],"8'h3f"]}
           },
-          "op_hcompute_hw_output_stencil_port_controller_clk_en_const2_lutcnst":{
-            "genref":"cgralib.PE",
-            "genargs":{"numbitports":["Int",3], "numdataports":["Int",2], "op_kind":["String","bit"], "width":["Int",16]},
-            "modargs":{"bit0_mode":["String","BYPASS"], "bit0_value":["Bool",false], "bit1_mode":["String","BYPASS"], "bit1_value":["Bool",false], "bit2_mode":["String","BYPASS"], "bit2_value":["Bool",false], "flag_sel":["String","lut"], "lut_value":[["BitVector",8],"8'h3f"]}
-          },
-          "op_hcompute_hw_output_stencil_port_controller_clk_en_const3_lutcnst":{
-            "genref":"cgralib.PE",
-            "genargs":{"numbitports":["Int",3], "numdataports":["Int",2], "op_kind":["String","bit"], "width":["Int",16]},
-            "modargs":{"bit0_mode":["String","BYPASS"], "bit0_value":["Bool",false], "bit1_mode":["String","BYPASS"], "bit1_value":["Bool",false], "bit2_mode":["String","BYPASS"], "bit2_value":["Bool",false], "flag_sel":["String","lut"], "lut_value":[["BitVector",8],"8'h3f"]}
-          },
           "op_hcompute_hw_output_stencil_port_controller_clk_en_const_lutcnst":{
             "genref":"cgralib.PE",
             "genargs":{"numbitports":["Int",3], "numdataports":["Int",2], "op_kind":["String","bit"], "width":["Int",16]},
@@ -176,16 +166,14 @@
         },
         "connections":[
           ["self.clk","op_hcompute_hw_output_stencil_port_controller_Counter_1_garnet.clk"],
-          ["op_hcompute_hw_output_stencil_port_controller_clk_en_const1_lutcnst.bit.out","op_hcompute_hw_output_stencil_port_controller_Counter_1_garnet.clk_en"],
+          ["op_hcompute_hw_output_stencil_port_controller_clk_en_const_lutcnst.bit.out","op_hcompute_hw_output_stencil_port_controller_Counter_1_garnet.clk_en"],
           ["self.d.1","op_hcompute_hw_output_stencil_port_controller_Counter_1_garnet.data_out_0"],
           ["self.rst_n","op_hcompute_hw_output_stencil_port_controller_Counter_1_garnet.flush"],
-          ["op_hcompute_hw_output_stencil_port_controller_clk_en_const_lutcnst.bit.out","op_hcompute_hw_output_stencil_port_controller_Counter_1_garnet.rst_n"],
           ["self.valid","op_hcompute_hw_output_stencil_port_controller_Counter_1_garnet.stencil_valid"],
           ["self.clk","op_hcompute_hw_output_stencil_port_controller_Counter_2_garnet.clk"],
-          ["op_hcompute_hw_output_stencil_port_controller_clk_en_const3_lutcnst.bit.out","op_hcompute_hw_output_stencil_port_controller_Counter_2_garnet.clk_en"],
+          ["op_hcompute_hw_output_stencil_port_controller_clk_en_const1_lutcnst.bit.out","op_hcompute_hw_output_stencil_port_controller_Counter_2_garnet.clk_en"],
           ["self.d.2","op_hcompute_hw_output_stencil_port_controller_Counter_2_garnet.data_out_0"],
-          ["self.rst_n","op_hcompute_hw_output_stencil_port_controller_Counter_2_garnet.flush"],
-          ["op_hcompute_hw_output_stencil_port_controller_clk_en_const2_lutcnst.bit.out","op_hcompute_hw_output_stencil_port_controller_Counter_2_garnet.rst_n"]
+          ["self.rst_n","op_hcompute_hw_output_stencil_port_controller_Counter_2_garnet.flush"]
         ]
       },
       "counter":{
@@ -261,16 +249,6 @@
             "genargs":{"numbitports":["Int",3], "numdataports":["Int",2], "op_kind":["String","bit"], "width":["Int",16]},
             "modargs":{"bit0_mode":["String","BYPASS"], "bit0_value":["Bool",false], "bit1_mode":["String","BYPASS"], "bit1_value":["Bool",false], "bit2_mode":["String","BYPASS"], "bit2_value":["Bool",false], "flag_sel":["String","lut"], "lut_value":[["BitVector",8],"8'h3f"]}
           },
-          "op_hcompute_hw_output_stencil_port_controller$op_hcompute_hw_output_stencil_port_controller_clk_en_const2_lutcnst":{
-            "genref":"cgralib.PE",
-            "genargs":{"numbitports":["Int",3], "numdataports":["Int",2], "op_kind":["String","bit"], "width":["Int",16]},
-            "modargs":{"bit0_mode":["String","BYPASS"], "bit0_value":["Bool",false], "bit1_mode":["String","BYPASS"], "bit1_value":["Bool",false], "bit2_mode":["String","BYPASS"], "bit2_value":["Bool",false], "flag_sel":["String","lut"], "lut_value":[["BitVector",8],"8'h3f"]}
-          },
-          "op_hcompute_hw_output_stencil_port_controller$op_hcompute_hw_output_stencil_port_controller_clk_en_const3_lutcnst":{
-            "genref":"cgralib.PE",
-            "genargs":{"numbitports":["Int",3], "numdataports":["Int",2], "op_kind":["String","bit"], "width":["Int",16]},
-            "modargs":{"bit0_mode":["String","BYPASS"], "bit0_value":["Bool",false], "bit1_mode":["String","BYPASS"], "bit1_value":["Bool",false], "bit2_mode":["String","BYPASS"], "bit2_value":["Bool",false], "flag_sel":["String","lut"], "lut_value":[["BitVector",8],"8'h3f"]}
-          },
           "op_hcompute_hw_output_stencil_port_controller$op_hcompute_hw_output_stencil_port_controller_clk_en_const_lutcnst":{
             "genref":"cgralib.PE",
             "genargs":{"numbitports":["Int",3], "numdataports":["Int",2], "op_kind":["String","bit"], "width":["Int",16]},
@@ -291,10 +269,8 @@
           ["op_hcompute_hw_output_stencil$inner_compute$add_264_263_265$binop.data.in.0","op_hcompute_hw_output_stencil$inner_compute$add_262_263_264$binop.data.out"],
           ["op_hcompute_hw_output_stencil_port_controller$op_hcompute_hw_output_stencil_port_controller_Counter_2_garnet.data_out_0","op_hcompute_hw_output_stencil$inner_compute$add_hw_output_s0_x_xi_hw_output_s0_y_yi_262$binop.data.in.0"],
           ["op_hcompute_hw_output_stencil_port_controller$op_hcompute_hw_output_stencil_port_controller_Counter_1_garnet.data_out_0","op_hcompute_hw_output_stencil$inner_compute$add_hw_output_s0_x_xi_hw_output_s0_y_yi_262$binop.data.in.1"],
-          ["op_hcompute_hw_output_stencil_port_controller$op_hcompute_hw_output_stencil_port_controller_clk_en_const3_lutcnst.bit.out","op_hcompute_hw_output_stencil_port_controller$op_hcompute_hw_output_stencil_port_controller_Counter_1_garnet.clk_en"],
-          ["op_hcompute_hw_output_stencil_port_controller$op_hcompute_hw_output_stencil_port_controller_clk_en_const1_lutcnst.bit.out","op_hcompute_hw_output_stencil_port_controller$op_hcompute_hw_output_stencil_port_controller_Counter_1_garnet.rst_n"],
-          ["op_hcompute_hw_output_stencil_port_controller$op_hcompute_hw_output_stencil_port_controller_clk_en_const_lutcnst.bit.out","op_hcompute_hw_output_stencil_port_controller$op_hcompute_hw_output_stencil_port_controller_Counter_2_garnet.clk_en"],
-          ["op_hcompute_hw_output_stencil_port_controller$op_hcompute_hw_output_stencil_port_controller_clk_en_const2_lutcnst.bit.out","op_hcompute_hw_output_stencil_port_controller$op_hcompute_hw_output_stencil_port_controller_Counter_2_garnet.rst_n"]
+          ["op_hcompute_hw_output_stencil_port_controller$op_hcompute_hw_output_stencil_port_controller_clk_en_const1_lutcnst.bit.out","op_hcompute_hw_output_stencil_port_controller$op_hcompute_hw_output_stencil_port_controller_Counter_1_garnet.clk_en"],
+          ["op_hcompute_hw_output_stencil_port_controller$op_hcompute_hw_output_stencil_port_controller_clk_en_const_lutcnst.bit.out","op_hcompute_hw_output_stencil_port_controller$op_hcompute_hw_output_stencil_port_controller_Counter_2_garnet.clk_en"]
         ]
       },
       "cu_op_hcompute_hw_input_global_wrapper_stencil":{

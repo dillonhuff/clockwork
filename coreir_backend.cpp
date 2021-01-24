@@ -1897,8 +1897,8 @@ Instance* generate_coreir_op_controller(CodegenOptions& options, ModuleDef* def,
 
   //For those op need loop index we need this controller
   bool need_index = op->index_variables_needed_by_compute.size() > 0;
-  //if (options.rtl_options.use_external_controllers || need_index ) {
-  if (options.rtl_options.use_external_controllers) {
+  if (options.rtl_options.use_external_controllers || need_index ) {
+  //if (options.rtl_options.use_external_controllers) {
     auto aff_c = affine_controller(options, c, dom, aff);
     aff_c->print();
     controller = def->addInstance(controller_name(op->name), aff_c);
@@ -2634,6 +2634,13 @@ bool MemtileReplace(Instance* cnst) {
   assert(conns.size() == 1);
   auto conn = conns[0];
   def->disconnect(buf->sel("rst_n"),conn);
+
+  //remove chain_en
+  auto chain_en_conSet = buf->sel("chain_chain_en")->getConnectedWireables();
+  vector<Wireable*> conns_ce(chain_en_conSet.begin(), chain_en_conSet.end());
+  for (auto conn: conns_ce) {
+    def->disconnect(buf->sel("chain_chain_en"),conn);
+  }
 
   return true;
 }
