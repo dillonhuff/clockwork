@@ -498,6 +498,37 @@ void generate_linear_bank(CodegenOptions& options,
   out << "};" << endl << endl;
 }
 
+// There is a mismatch between this bank construction function
+// and the delay string. The sign of this is that sometimes
+// there is a compile error when compiling the generated C++
+// code for software simulation. The compile error complains
+// that peek(const int offset) is not defined for a buffer,
+// but that this function is used in one of the selects
+// for that buffer.
+//
+// In an earlier select function that reads values from
+// the same buffer the "peek_0" variant is used.
+//
+// I have a few concerns: The easiest way to fix this
+// in software would be to always generate the peek(const int offset)
+// variant, but that would not work in hardware for all
+// cases because it might not have high enough bandwidth if the
+// re-use buffer were large.
+//
+// The other possibility is to prevent bank-merging in this
+// case. After all the banks are all going to be very small
+// in this case anyway.
+//
+// Q: The code that detects whether to use constant underscore
+// functions or a computed offset is in delay_string, deep
+// within the code generation tool, but really it depends
+// on what was generated inside of this function. OTOH
+// this functions check for whether or not to use underscore
+// functions or an offset function is primitive (is there more than
+// one reader, or has the user said to use the one function option
+// explicity). And in practice what is generated here should
+// depend on the bandwidth requirements and how they are
+// serviced.
 void generate_bank(CodegenOptions& options,
     std::ostream& out,
     stack_bank& bank) {
@@ -515,7 +546,6 @@ void generate_bank(CodegenOptions& options,
   //C array with read and write method
   if (bank.tp == INNER_BANK_OFFSET_LINEAR) {
     generate_linear_bank(options, out, bank);
-
   } else if (bank.tp == INNER_BANK_OFFSET_MULTILINEAR) {
     generate_multilinear_bank(options, out, bank);
   } else {
@@ -4788,6 +4818,7 @@ void UBuffer::generate_banks(CodegenOptions& options) {
             assert(bnk.read_delays.size() == 2);
           }
           if (bnk.tp == INNER_BANK_OFFSET_STACK &&
+              bnk.maxdelay > 2 &&
               bnk.read_delays.size() == 2) {
             mergeable.push_back(bnk);
           }
