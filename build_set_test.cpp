@@ -19816,7 +19816,7 @@ void test_time_sharing_gaussian_pyramid() {
 
 void test_multi_kernel_pyramid_collapsing() {
 
-  prog prg("pyr_blndd2048_ii1");
+  prog prg("pyr_blndd256_ii1");
   prg.compute_unit_file = "local_laplacian_filters_compute.h";
   prg.add_input("in");
   prg.add_output("out");

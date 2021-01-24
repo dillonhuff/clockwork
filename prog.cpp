@@ -8543,7 +8543,7 @@ void generate_app_code(
         string tp = rep_buf.bundle_type_string(bundle);
         conv_out << tab(1) << "HWStream< " << tp << " > " << buf << "(\"" << buf << "\");" << endl;
         open_synth_scope(conv_out);
-        int depth = 2048;
+        int depth = 256;
         conv_out << "#pragma HLS stream variable=" << buf << ".values depth=" << depth << endl;
         close_synth_scope(conv_out);
         done.insert(buf);
