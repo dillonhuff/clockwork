@@ -27,8 +27,18 @@ using namespace std;
 
 #define MOD_INC(x, N) ((x) == ((N) - 1) ? 0 : (x) + 1)
 
+static inline
+int int_floor_div(const int num, const int denom) {
+  if (num >= 0) {
+    return num / denom;
+  } else {
+    return -1*(-num / denom);
+  }
+}
+
 // TODO: Replace this with something more sound
-#define floord(x, d) ((int) floor((x) / (float) (d)))
+//#define floord(x, d) ((int) floor((x) / (float) (d)))
+#define floord(x, d) int_floor_div((x), (d))
 //#define floord(x, d) ((x) / (d))
 
 template<int Depth>
