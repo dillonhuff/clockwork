@@ -7599,7 +7599,7 @@ void adjust_outer_delays(schedule_info& sched, prog& prg) {
     assert(latest_legal_delay >= earliest_possible_delay);
     while (latest_legal_delay - earliest_possible_delay > 100) {
       assert(latest_legal_delay >= earliest_possible_delay);
-      int try_delay = (latest_legal_delay - earliest_possible_delay) / 2;
+      int try_delay = (latest_legal_delay + earliest_possible_delay) / 2;
       sched.op_offset_within_parent[lp] = try_delay;
       if (no_violated_cycle_accurate_dependencies(sched, prg)) {
         latest_legal_delay = try_delay;

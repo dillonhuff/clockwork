@@ -420,8 +420,8 @@
           ["op_hcompute_conv_stencil_1$inner_compute$mul_hw_input_global_wrapper_stencil_6_297_298$binop.data.in.1","op_hcompute_conv_stencil_1$inner_compute$const_p18__297.out"],
           ["op_hcompute_conv_stencil_1$inner_compute$mul_hw_input_global_wrapper_stencil_8_301_302$binop.data.in.1","op_hcompute_conv_stencil_1$inner_compute$const_p19__301.out"],
           ["op_hcompute_conv_stencil_1$inner_compute$mul_hw_input_global_wrapper_stencil_5_295_296$binop.data.in.1","op_hcompute_conv_stencil_1$inner_compute$const_p255__295.out"],
-          ["op_hcompute_hw_output_stencil_port_controller_garnet.clk_en","op_hcompute_hw_output_stencil_port_controller_clk_en_const1_lutcnst.bit.out"],
-          ["op_hcompute_hw_output_stencil_port_controller_garnet.rst_n","op_hcompute_hw_output_stencil_port_controller_clk_en_const_lutcnst.bit.out"]
+          ["op_hcompute_hw_output_stencil_port_controller_garnet.rst_n","op_hcompute_hw_output_stencil_port_controller_clk_en_const1_lutcnst.bit.out"],
+          ["op_hcompute_hw_output_stencil_port_controller_garnet.clk_en","op_hcompute_hw_output_stencil_port_controller_clk_en_const_lutcnst.bit.out"]
         ]
       },
       "conv_stencil_clkwrk_dsa0_ub":{
@@ -991,8 +991,8 @@
           ["ub_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_11_garnet.stencil_valid","self.op_hcompute_conv_stencil_1_read_extra_ctrl"],
           ["ub_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_11_garnet.data_in_0","self.op_hcompute_hw_input_global_wrapper_stencil_write.0"],
           ["ub_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_11_garnet.flush","self.reset"],
-          ["ub_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_11_garnet.rst_n","ub_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_11_clk_en_const1_lutcnst.bit.out"],
-          ["ub_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_11_garnet.clk_en","ub_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_11_clk_en_const_lutcnst.bit.out"]
+          ["ub_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_11_garnet.clk_en","ub_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_11_clk_en_const1_lutcnst.bit.out"],
+          ["ub_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_11_garnet.rst_n","ub_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_11_clk_en_const_lutcnst.bit.out"]
         ]
       },
       "op_hcompute_hw_input_global_wrapper_stencil_exe_start_pt__U14":{
