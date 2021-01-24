@@ -1,4 +1,4 @@
-import csv, sys
+import csv, sys, copy
 
 args = sys.argv
 if len(args) != 2:
@@ -56,9 +56,14 @@ for i in range(len(sram_smt["valid_out"])):
 sram_smt["data_out"] = sram_adjust
 tb_smt["data_in"] = sram_smt["data_out"]
 
+top_smt = copy.deepcopy(agg_smt)
+top_smt["data_out"] = tb_smt["data_out"]
+top_smt["valid_out"] = tb_smt["valid_out"]
+
 dict2csv(dir_name, "agg", agg_smt)
 dict2csv(dir_name, "sram", sram_smt)
 dict2csv(dir_name, "tb", tb_smt)
+dict2csv(dir_name, "top", top_smt)
 
 # convert conv33 2 output ports to just 1 output port for testing
 """orig = csv2dict(dir_name, "tb")
