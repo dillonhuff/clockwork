@@ -8541,7 +8541,7 @@ void generate_app_code(
 
         string bundle = pick(rep_buf.port_bundles).first;
         string tp = rep_buf.bundle_type_string(bundle);
-        conv_out << tab(1) << "HWStream< " << tp << " > " << buf << "(\"" << buf << "\");" << endl;
+        conv_out << tab(1) << "HWStream< " << tp << " > " << buf << ";" << endl;
         open_synth_scope(conv_out);
         int depth = 1;
         conv_out << "#pragma HLS stream variable=" << buf << ".values depth=" << depth << endl;

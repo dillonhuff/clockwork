@@ -709,15 +709,15 @@ void art_dead(HWStream<hw_uint<32> >& /* no bundle get_args num ports = 1 */in, 
 #pragma HLS dataflow
 #endif //__VIVADO_SYNTH__
 
-  HWStream< hw_uint<32> > gray_to_gp_18("gray_to_gp_18");
+  HWStream< hw_uint<32> > gray_to_gp_18;
 #ifdef __VIVADO_SYNTH__
 #pragma HLS stream variable=gray_to_gp_18.values depth=1
 #endif //__VIVADO_SYNTH__
-  HWStream< hw_uint<32> > gray_to_gp_212("gray_to_gp_212");
+  HWStream< hw_uint<32> > gray_to_gp_212;
 #ifdef __VIVADO_SYNTH__
 #pragma HLS stream variable=gray_to_gp_212.values depth=1
 #endif //__VIVADO_SYNTH__
-  HWStream< hw_uint<32> > blurred_to_gp_14("blurred_to_gp_14");
+  HWStream< hw_uint<32> > blurred_to_gp_14;
 #ifdef __VIVADO_SYNTH__
 #pragma HLS stream variable=blurred_to_gp_14.values depth=1
 #endif //__VIVADO_SYNTH__

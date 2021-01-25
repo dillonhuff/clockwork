@@ -381,8 +381,6 @@ class HWStream {
   public:
 
 #ifdef __VIVADO_SYNTH__
-    HWStream() {}
-    HWStream(const std::string& n) {}
 
     hls::stream<T> values;
 
@@ -400,8 +398,6 @@ class HWStream {
 
 #else
 
-    HWStream() : name("default_name"), reads(0), writes(0) {}
-    HWStream(const std::string& n) : name(n), reads(0), writes(0) {}
 
     std::string name;
     int reads, writes;
