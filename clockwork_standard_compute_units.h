@@ -463,6 +463,15 @@ hw_uint<16> conv_3_3(hw_uint<16*9>& in) {
 }
 
 static inline
+hw_uint<32> conv_3_3_float_one(hw_uint<32>& in) {
+  hw_uint<32> v0 = in.extract<0, 31>();
+  float flt = to_float(v0);
+  double val = flt;
+
+  return ((int) (((234.0 + val*3.4) / 9.0) + (15.0 + val*2.1) / 17.2));
+}
+
+static inline
 hw_uint<32> conv_3_3_float(hw_uint<32*9>& in) {
   hw_uint<32> v0 = in.extract<0, 31>();
   hw_uint<32> v1 = in.extract<32, 63>();

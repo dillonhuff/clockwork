@@ -19875,13 +19875,9 @@ void test_artificial_deadlock() {
   load_input("in", "gray", 2, prg);
 
   auto blurred = prg.add_nest("yb", 0, 1, "xb", 0, 1)->add_op("blur");
-  for (int i = 0; i < 3; i++) {
-    for (int j = 0; j < 3; j++) {
-      blurred->add_load("gray", "xb + " + str(i), "yb + " + str(j));
-    }
-  }
+  blurred->add_load("gray", "xb", "yb");
   blurred->add_store("blurred", "xb", "yb");
-  blurred->add_function("conv_3_3_float");
+  blurred->add_function("conv_3_3_float_one");
 
 
   auto diff = prg.add_nest("y", 0, 1, "x", 0, 1)->add_op("diff");
