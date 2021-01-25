@@ -19867,6 +19867,67 @@ void test_multi_kernel_pyramid_collapsing() {
   move_to_benchmarks_folder(dag.prg.name);
 }
 
+void test_artificial_deadlock() {
+  prog prg("art_dead");
+  prg.add_input("in");
+  prg.add_output("out");
+
+  load_input("in", "gray", 2, prg);
+
+  auto blurred = prg.add_nest("yb", 0, 1, "xb", 0, 1)->add_op("blur");
+  for (int i = 0; i < 3; i++) {
+    for (int j = 0; j < 3; j++) {
+      blurred->add_load("gray", "xb + " + str(i), "yb + " + str(j));
+    }
+  }
+  blurred->add_store("blurred", "xb", "yb");
+  blurred->add_function("conv_3_3_float");
+
+
+  auto diff = prg.add_nest("y", 0, 1, "x", 0, 1)->add_op("diff");
+  diff->add_load("gray", "x", "y");
+  diff->add_load("blurred", "x", "y");
+  diff->add_store("out", "x", "y");
+  diff->add_function("diff");
+
+
+  infer_bounds("out", {64, 64}, prg);
+
+  prg.pretty_print();
+  prg.sanity_check();
+
+  unroll_reduce_loops(prg);
+  merge_basic_block_ops(prg);
+  normalize_bounds(prg);
+  normalize_address_offsets(prg);
+
+  prg.pretty_print();
+  prg.sanity_check();
+
+  auto unopt_postprocessed = unoptimized_result(prg);
+
+  auto fusion_groups = one_stage_per_group(prg);
+  app_dag dag = partition_application(fusion_groups, prg);
+  for (auto& gp : dag.fusion_group_progs) {
+    cout << "============================" << endl;
+    gp.second.pretty_print();
+    cout << endl;
+  }
+
+  dag.prg.pretty_print();
+
+  CodegenOptions options;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  generate_app_code(options, dag);
+
+  generate_regression_testbench(dag.prg);
+  vector<string> multi_kernel_res = run_regression_tb(dag.prg);
+
+  compare("multi_kernel_" + prg.name + "_vs_unopt", multi_kernel_res, unopt_postprocessed);
+  move_to_benchmarks_folder(dag.prg.name);
+  assert(false);
+}
+
 void test_multi_kernel_unsharp() {
   prog prg("us_mk1_ii1");
   prg.add_input("in");
@@ -20828,6 +20889,7 @@ void stencil_chain_multi_kernel_test() {
 }
 
 void dhuff_tests() {
+  test_artificial_deadlock();
   test_multi_kernel_pyramid_collapsing();
   upsample2d_test();
   up_stencil_down_test();
