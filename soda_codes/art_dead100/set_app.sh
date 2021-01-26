@@ -1,0 +1,2 @@
+export app=art_dead100
+export HLS_CLOCK_FREQUENCY=250000000

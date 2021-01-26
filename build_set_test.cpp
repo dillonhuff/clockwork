@@ -19868,7 +19868,7 @@ void test_multi_kernel_pyramid_collapsing() {
 }
 
 void test_artificial_deadlock() {
-  prog prg("art_dead");
+  prog prg("art_dead100");
   prg.add_input("in");
   prg.add_output("out");
 
