@@ -15959,6 +15959,9 @@ prog llf_float() {
   prg.pretty_print();
 
   unroll_reduce_loops(prg);
+  merge_basic_block_ops(prg);
+  normalize_bounds(prg);
+  normalize_address_offsets(prg);
 
   return prg;
 }
@@ -15971,7 +15974,7 @@ void llf_test() {
   cout << "========= After unrolling reduce loops" << endl;
   prg.pretty_print();
 
-  //assert(false);
+  assert(false);
 
   //auto valid = prg.validity_deps();
   //cout << "Got valid" << endl;
@@ -19821,6 +19824,28 @@ void test_time_sharing_gaussian_pyramid() {
   move_to_benchmarks_folder(prg.name);
 }
 
+void test_multi_kernel_llf() {
+  prog prg = llf_float();
+  //auto unopt_postprocessed = unoptimized_result(prg);
+
+  auto fusion_groups = one_stage_per_group(prg);
+  app_dag dag = partition_application(fusion_groups, prg);
+  string target = "gp_in_on_chip_1_buf4_to_gp_1112";
+  dag.prg.pretty_print();
+
+  CodegenOptions options;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  //options.hls_loop_codegen = HLS_LOOP_CODEGEN_ISL;
+  generate_app_code(options, dag);
+
+  generate_regression_testbench(dag.prg);
+  vector<string> multi_kernel_res = run_regression_tb(dag.prg);
+
+  //compare("multi_kernel_" + prg.name + "_vs_unopt", multi_kernel_res, unopt_postprocessed);
+  move_to_benchmarks_folder(dag.prg.name);
+  assert(false);
+}
+
 void test_multi_kernel_pyramid_collapsing() {
 
   prog prg("pyr_blndd256_ii1");
@@ -20886,7 +20911,7 @@ void stencil_chain_multi_kernel_test() {
 }
 
 void dhuff_tests() {
-  llf_test();
+  test_multi_kernel_llf();
 
   test_artificial_deadlock();
   test_multi_kernel_pyramid_collapsing();
