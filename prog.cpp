@@ -6462,6 +6462,8 @@ void read_in_after(op* loop, isl_map* read_data, const std::string& rb_name, pro
   ld->add_store(rb_name, comma_list(store_addrs));
 }
 
+// Q: Maybe I should re-factor away the "loop" and 
+// just get it from surrounding vars?
 op* copy_after(
     op* loop,
     op* location,
@@ -6481,6 +6483,9 @@ op* copy_after(
     assert(l >= 0);
     assert(l < loop_order.size());
   }
+
+  cout << "Read data: " << str(read_data) << endl;
+  cout << "Loops    : " << comma_list(loop_order) << endl;
   assert(loops.size() == loop_order.size());
 
   string buf = name(read_data);
@@ -8647,6 +8652,24 @@ isl_set* read_by_group(const std::string& buf, const std::string& group_name, ap
   return s;
 }
 
+bool is_permutation(const vector<int>& level_permutation) {
+  std::set<int> loops;
+  for (auto l : level_permutation) {
+    loops.insert(l);
+    if (l < 0) {
+      return false;
+    }
+    if (!(l < level_permutation.size())) {
+      return false;
+    }
+  }
+
+  if (level_permutation.size() != loops.size()) {
+    return false;
+  }
+  return true;
+}
+
 vector<int> write_permutation(const std::string& buf, prog& pp) {
   auto readers = find_writers(buf, pp);
   op* reader = pick(readers);
@@ -8670,6 +8693,9 @@ vector<int> write_permutation(const std::string& buf, prog& pp) {
       }
     }
   }
+
+  assert(is_permutation(level_permutation));
+
   return level_permutation;
 }
 
