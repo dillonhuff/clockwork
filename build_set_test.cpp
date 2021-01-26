@@ -15894,7 +15894,7 @@ void llf_pyramid_test() {
   //assert(false);
 }
 
-void llf_test() {
+prog llf_float() {
   int num_pyramid_levels = 4;
   int num_intensity_levels = 8;
 
@@ -15953,12 +15953,19 @@ void llf_test() {
 
   //assert(false);
 
-  infer_bounds("color_out", {3, 256, 256}, prg);
+  infer_bounds("color_out", {3, 23, 23}, prg);
 
   cout << "After bounds inference..." << endl;
   prg.pretty_print();
 
   unroll_reduce_loops(prg);
+
+  return prg;
+}
+
+void llf_test() {
+
+  prog prg = llf_float();
 
   cout << "======================================" << endl;
   cout << "========= After unrolling reduce loops" << endl;
@@ -15983,7 +15990,7 @@ void llf_test() {
   generate_unoptimized_code(prg);
   compile_compute("unoptimized_" + prg.name + ".cpp");
 
-  //assert(false);
+  assert(false);
 }
 
 void union_test() {
@@ -19849,12 +19856,6 @@ void test_multi_kernel_pyramid_collapsing() {
   string target = "gp_in_on_chip_1_buf4_to_gp_1112";
   dag.prg.pretty_print();
 
-  //umap* reads = prg.consumer_map(target);
-  //umap* writes = prg.producer_map(target);
-  //cout << "Reads : " << str(reads) << endl;
-  //cout << "Writes: " << str(writes) << endl;
-  //assert(false);
-
   CodegenOptions options;
   options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
   //options.hls_loop_codegen = HLS_LOOP_CODEGEN_ISL;
@@ -20885,6 +20886,8 @@ void stencil_chain_multi_kernel_test() {
 }
 
 void dhuff_tests() {
+  llf_test();
+
   test_artificial_deadlock();
   test_multi_kernel_pyramid_collapsing();
   upsample2d_test();
