@@ -19884,7 +19884,8 @@ void test_multi_kernel_mismatched_loop_depths() {
 
   cout << "After flattening..." << endl;
   prg.pretty_print();
-  assert(false);
+
+  assert(all_loop_nests_same_depth(prg));
 
   unroll_reduce_loops(prg);
   merge_basic_block_ops(prg);
