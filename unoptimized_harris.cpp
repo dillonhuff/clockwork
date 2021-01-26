@@ -1465,68 +1465,6 @@ inline void padded16_global_wrapper_stencil_op_hcompute_padded16_global_wrapper_
 
 
 // Operation logic
-inline void op_hcompute_padded16_global_wrapper_stencil(HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */padded16_stencil, padded16_global_wrapper_stencil_cache& padded16_global_wrapper_stencil, int root, int padded16_global_wrapper_s0_y, int padded16_global_wrapper_s0_x) {
-  // Dynamic address computation
-
-	// Consume: padded16_stencil
-	auto padded16_stencil_padded16_global_wrapper_s0_y_c__padded16_global_wrapper_s0_x_value = padded16_stencil.read();
-	auto compute_result = hcompute_padded16_global_wrapper_stencil(padded16_stencil_padded16_global_wrapper_s0_y_c__padded16_global_wrapper_s0_x_value);
-	// Produce: padded16_global_wrapper_stencil
-	padded16_global_wrapper_stencil_op_hcompute_padded16_global_wrapper_stencil_write_bundle_write(/* arg names */compute_result, padded16_global_wrapper_stencil, root, padded16_global_wrapper_s0_y, padded16_global_wrapper_s0_x, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void op_hcompute_grad_x_stencil(padded16_global_wrapper_stencil_cache& padded16_global_wrapper_stencil, grad_x_stencil_cache& grad_x_stencil, int root, int grad_x_s0_y, int grad_x_s0_x) {
-  // Dynamic address computation
-
-	// Consume: padded16_global_wrapper_stencil
-	auto padded16_global_wrapper_stencil__lp_grad_x_s0_y__p___m_1_rp__c___lp_grad_x_s0_x__p__1_rp__value = padded16_global_wrapper_stencil_op_hcompute_grad_x_stencil_read_bundle_read(padded16_global_wrapper_stencil/* source_delay */, root, grad_x_s0_y, grad_x_s0_x, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = hcompute_grad_x_stencil(padded16_global_wrapper_stencil__lp_grad_x_s0_y__p___m_1_rp__c___lp_grad_x_s0_x__p__1_rp__value);
-	// Produce: grad_x_stencil
-	grad_x_stencil_op_hcompute_grad_x_stencil_write_bundle_write(/* arg names */compute_result, grad_x_stencil, root, grad_x_s0_y, grad_x_s0_x, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void op_hcompute_lxx_stencil(grad_x_stencil_cache& grad_x_stencil, lxx_stencil_cache& lxx_stencil, int root, int lxx_s0_y, int lxx_s0_x) {
-  // Dynamic address computation
-
-	// Consume: grad_x_stencil
-	auto grad_x_stencil_lxx_s0_y_c__lxx_s0_x_value = grad_x_stencil_op_hcompute_lxx_stencil_read_bundle_read(grad_x_stencil/* source_delay */, root, lxx_s0_y, lxx_s0_x, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = hcompute_lxx_stencil(grad_x_stencil_lxx_s0_y_c__lxx_s0_x_value);
-	// Produce: lxx_stencil
-	lxx_stencil_op_hcompute_lxx_stencil_write_bundle_write(/* arg names */compute_result, lxx_stencil, root, lxx_s0_y, lxx_s0_x, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void op_hcompute_lgxx_stencil(lgxx_stencil_clkwrk_dsa0_cache& lgxx_stencil_clkwrk_dsa0, int root, int lgxx_s0_y, int lgxx_s0_x) {
-  // Dynamic address computation
-
-	auto compute_result = hcompute_lgxx_stencil();
-	// Produce: lgxx_stencil_clkwrk_dsa0
-	lgxx_stencil_clkwrk_dsa0_op_hcompute_lgxx_stencil_write_bundle_write(/* arg names */compute_result, lgxx_stencil_clkwrk_dsa0, root, lgxx_s0_y, lgxx_s0_x, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
 inline void op_hcompute_lgxx_stencil_1(lgxx_stencil_clkwrk_dsa0_cache& lgxx_stencil_clkwrk_dsa0, lxx_stencil_cache& lxx_stencil, lgxx_stencil_cache& lgxx_stencil, int root, int lgxx_s1_y, int lgxx_s1_x) {
   // Dynamic address computation
 
@@ -1551,78 +1489,26 @@ inline void op_hcompute_lgxx_stencil_1(lgxx_stencil_clkwrk_dsa0_cache& lgxx_sten
 
 }
 
-inline void op_hcompute_grad_y_stencil(padded16_global_wrapper_stencil_cache& padded16_global_wrapper_stencil, grad_y_stencil_cache& grad_y_stencil, int root, int grad_y_s0_y, int grad_y_s0_x) {
+inline void op_hcompute_lgxx_stencil(lgxx_stencil_clkwrk_dsa0_cache& lgxx_stencil_clkwrk_dsa0, int root, int lgxx_s0_y, int lgxx_s0_x) {
   // Dynamic address computation
 
-	// Consume: padded16_global_wrapper_stencil
-	auto padded16_global_wrapper_stencil__lp_grad_y_s0_y__p___m_1_rp__c___lp_grad_y_s0_x__p___m_1_rp__value = padded16_global_wrapper_stencil_op_hcompute_grad_y_stencil_read_bundle_read(padded16_global_wrapper_stencil/* source_delay */, root, grad_y_s0_y, grad_y_s0_x, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = hcompute_grad_y_stencil(padded16_global_wrapper_stencil__lp_grad_y_s0_y__p___m_1_rp__c___lp_grad_y_s0_x__p___m_1_rp__value);
-	// Produce: grad_y_stencil
-	grad_y_stencil_op_hcompute_grad_y_stencil_write_bundle_write(/* arg names */compute_result, grad_y_stencil, root, grad_y_s0_y, grad_y_s0_x, 0);
+	auto compute_result = hcompute_lgxx_stencil();
+	// Produce: lgxx_stencil_clkwrk_dsa0
+	lgxx_stencil_clkwrk_dsa0_op_hcompute_lgxx_stencil_write_bundle_write(/* arg names */compute_result, lgxx_stencil_clkwrk_dsa0, root, lgxx_s0_y, lgxx_s0_x, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 
 }
 
-inline void op_hcompute_lxy_stencil(grad_x_stencil_cache& grad_x_stencil, grad_y_stencil_cache& grad_y_stencil, lxy_stencil_cache& lxy_stencil, int root, int lxy_s0_y, int lxy_s0_x) {
+inline void op_hcompute_padded16_global_wrapper_stencil(HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */padded16_stencil, padded16_global_wrapper_stencil_cache& padded16_global_wrapper_stencil, int root, int padded16_global_wrapper_s0_y, int padded16_global_wrapper_s0_x) {
   // Dynamic address computation
 
-	// Consume: grad_x_stencil
-	auto grad_x_stencil_lxy_s0_y_c__lxy_s0_x_value = grad_x_stencil_op_hcompute_lxy_stencil_read_bundle_read(grad_x_stencil/* source_delay */, root, lxy_s0_y, lxy_s0_x, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	// Consume: grad_y_stencil
-	auto grad_y_stencil_lxy_s0_y_c__lxy_s0_x_value = grad_y_stencil_op_hcompute_lxy_stencil_read_bundle_read(grad_y_stencil/* source_delay */, root, lxy_s0_y, lxy_s0_x, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = hcompute_lxy_stencil(grad_x_stencil_lxy_s0_y_c__lxy_s0_x_value, grad_y_stencil_lxy_s0_y_c__lxy_s0_x_value);
-	// Produce: lxy_stencil
-	lxy_stencil_op_hcompute_lxy_stencil_write_bundle_write(/* arg names */compute_result, lxy_stencil, root, lxy_s0_y, lxy_s0_x, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void op_hcompute_lgxy_stencil(lgxy_stencil_clkwrk_dsa1_cache& lgxy_stencil_clkwrk_dsa1, int root, int lgxy_s0_y, int lgxy_s0_x) {
-  // Dynamic address computation
-
-	auto compute_result = hcompute_lgxy_stencil();
-	// Produce: lgxy_stencil_clkwrk_dsa1
-	lgxy_stencil_clkwrk_dsa1_op_hcompute_lgxy_stencil_write_bundle_write(/* arg names */compute_result, lgxy_stencil_clkwrk_dsa1, root, lgxy_s0_y, lgxy_s0_x, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void op_hcompute_lgxy_stencil_1(lgxy_stencil_clkwrk_dsa1_cache& lgxy_stencil_clkwrk_dsa1, lxy_stencil_cache& lxy_stencil, lgxy_stencil_cache& lgxy_stencil, int root, int lgxy_s1_y, int lgxy_s1_x) {
-  // Dynamic address computation
-
-	// Consume: lgxy_stencil_clkwrk_dsa1
-	auto lgxy_stencil_clkwrk_dsa1_lgxy_s1_y_c__lgxy_s1_x_value = lgxy_stencil_clkwrk_dsa1_op_hcompute_lgxy_stencil_1_read_bundle_read(lgxy_stencil_clkwrk_dsa1/* source_delay */, root, lgxy_s1_y, lgxy_s1_x, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	// Consume: lxy_stencil
-	auto lxy_stencil__lp_lgxy_s1_y__p___m_1_rp__c___lp_lgxy_s1_x__p___m_1_rp__value = lxy_stencil_op_hcompute_lgxy_stencil_1_read_bundle_read(lxy_stencil/* source_delay */, root, lgxy_s1_y, lgxy_s1_x, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = hcompute_lgxy_stencil_1(lgxy_stencil_clkwrk_dsa1_lgxy_s1_y_c__lgxy_s1_x_value, lxy_stencil__lp_lgxy_s1_y__p___m_1_rp__c___lp_lgxy_s1_x__p___m_1_rp__value);
-	// Produce: lgxy_stencil
-	lgxy_stencil_op_hcompute_lgxy_stencil_1_write_bundle_write(/* arg names */compute_result, lgxy_stencil, root, lgxy_s1_y, lgxy_s1_x, 0);
+	// Consume: padded16_stencil
+	auto padded16_stencil_padded16_global_wrapper_s0_y_c__padded16_global_wrapper_s0_x_value = padded16_stencil.read();
+	auto compute_result = hcompute_padded16_global_wrapper_stencil(padded16_stencil_padded16_global_wrapper_s0_y_c__padded16_global_wrapper_s0_x_value);
+	// Produce: padded16_global_wrapper_stencil
+	padded16_global_wrapper_stencil_op_hcompute_padded16_global_wrapper_stencil_write_bundle_write(/* arg names */compute_result, padded16_global_wrapper_stencil, root, padded16_global_wrapper_s0_y, padded16_global_wrapper_s0_x, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -1641,18 +1527,6 @@ inline void op_hcompute_lyy_stencil(grad_y_stencil_cache& grad_y_stencil, lyy_st
 	auto compute_result = hcompute_lyy_stencil(grad_y_stencil_lyy_s0_y_c__lyy_s0_x_value);
 	// Produce: lyy_stencil
 	lyy_stencil_op_hcompute_lyy_stencil_write_bundle_write(/* arg names */compute_result, lyy_stencil, root, lyy_s0_y, lyy_s0_x, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void op_hcompute_lgyy_stencil(lgyy_stencil_clkwrk_dsa2_cache& lgyy_stencil_clkwrk_dsa2, int root, int lgyy_s0_y, int lgyy_s0_x) {
-  // Dynamic address computation
-
-	auto compute_result = hcompute_lgyy_stencil();
-	// Produce: lgyy_stencil_clkwrk_dsa2
-	lgyy_stencil_clkwrk_dsa2_op_hcompute_lgyy_stencil_write_bundle_write(/* arg names */compute_result, lgyy_stencil_clkwrk_dsa2, root, lgyy_s0_y, lgyy_s0_x, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -1683,30 +1557,96 @@ inline void op_hcompute_lgyy_stencil_1(lgyy_stencil_clkwrk_dsa2_cache& lgyy_sten
 
 }
 
-inline void op_hcompute_cim_stencil(lgxx_stencil_cache& lgxx_stencil, lgxy_stencil_cache& lgxy_stencil, lgyy_stencil_cache& lgyy_stencil, cim_stencil_cache& cim_stencil, int root, int cim_s0_y, int cim_s0_x) {
+inline void op_hcompute_lgxy_stencil_1(lgxy_stencil_clkwrk_dsa1_cache& lgxy_stencil_clkwrk_dsa1, lxy_stencil_cache& lxy_stencil, lgxy_stencil_cache& lgxy_stencil, int root, int lgxy_s1_y, int lgxy_s1_x) {
   // Dynamic address computation
 
-	// Consume: lgxx_stencil
-	auto lgxx_stencil_cim_s0_y_c__cim_s0_x_value = lgxx_stencil_op_hcompute_cim_stencil_read_bundle_read(lgxx_stencil/* source_delay */, root, cim_s0_y, cim_s0_x, 0);
+	// Consume: lgxy_stencil_clkwrk_dsa1
+	auto lgxy_stencil_clkwrk_dsa1_lgxy_s1_y_c__lgxy_s1_x_value = lgxy_stencil_clkwrk_dsa1_op_hcompute_lgxy_stencil_1_read_bundle_read(lgxy_stencil_clkwrk_dsa1/* source_delay */, root, lgxy_s1_y, lgxy_s1_x, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 
-	// Consume: lgxy_stencil
-	auto lgxy_stencil_cim_s0_y_c__cim_s0_x_value = lgxy_stencil_op_hcompute_cim_stencil_read_bundle_read(lgxy_stencil/* source_delay */, root, cim_s0_y, cim_s0_x, 0);
+	// Consume: lxy_stencil
+	auto lxy_stencil__lp_lgxy_s1_y__p___m_1_rp__c___lp_lgxy_s1_x__p___m_1_rp__value = lxy_stencil_op_hcompute_lgxy_stencil_1_read_bundle_read(lxy_stencil/* source_delay */, root, lgxy_s1_y, lgxy_s1_x, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 
-	// Consume: lgyy_stencil
-	auto lgyy_stencil_cim_s0_y_c__cim_s0_x_value = lgyy_stencil_op_hcompute_cim_stencil_read_bundle_read(lgyy_stencil/* source_delay */, root, cim_s0_y, cim_s0_x, 0);
+	auto compute_result = hcompute_lgxy_stencil_1(lgxy_stencil_clkwrk_dsa1_lgxy_s1_y_c__lgxy_s1_x_value, lxy_stencil__lp_lgxy_s1_y__p___m_1_rp__c___lp_lgxy_s1_x__p___m_1_rp__value);
+	// Produce: lgxy_stencil
+	lgxy_stencil_op_hcompute_lgxy_stencil_1_write_bundle_write(/* arg names */compute_result, lgxy_stencil, root, lgxy_s1_y, lgxy_s1_x, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 
-	auto compute_result = hcompute_cim_stencil(lgxx_stencil_cim_s0_y_c__cim_s0_x_value, lgxy_stencil_cim_s0_y_c__cim_s0_x_value, lgyy_stencil_cim_s0_y_c__cim_s0_x_value);
-	// Produce: cim_stencil
-	cim_stencil_op_hcompute_cim_stencil_write_bundle_write(/* arg names */compute_result, cim_stencil, root, cim_s0_y, cim_s0_x, 0);
+}
+
+inline void op_hcompute_lxx_stencil(grad_x_stencil_cache& grad_x_stencil, lxx_stencil_cache& lxx_stencil, int root, int lxx_s0_y, int lxx_s0_x) {
+  // Dynamic address computation
+
+	// Consume: grad_x_stencil
+	auto grad_x_stencil_lxx_s0_y_c__lxx_s0_x_value = grad_x_stencil_op_hcompute_lxx_stencil_read_bundle_read(grad_x_stencil/* source_delay */, root, lxx_s0_y, lxx_s0_x, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = hcompute_lxx_stencil(grad_x_stencil_lxx_s0_y_c__lxx_s0_x_value);
+	// Produce: lxx_stencil
+	lxx_stencil_op_hcompute_lxx_stencil_write_bundle_write(/* arg names */compute_result, lxx_stencil, root, lxx_s0_y, lxx_s0_x, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void op_hcompute_lxy_stencil(grad_x_stencil_cache& grad_x_stencil, grad_y_stencil_cache& grad_y_stencil, lxy_stencil_cache& lxy_stencil, int root, int lxy_s0_y, int lxy_s0_x) {
+  // Dynamic address computation
+
+	// Consume: grad_x_stencil
+	auto grad_x_stencil_lxy_s0_y_c__lxy_s0_x_value = grad_x_stencil_op_hcompute_lxy_stencil_read_bundle_read(grad_x_stencil/* source_delay */, root, lxy_s0_y, lxy_s0_x, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	// Consume: grad_y_stencil
+	auto grad_y_stencil_lxy_s0_y_c__lxy_s0_x_value = grad_y_stencil_op_hcompute_lxy_stencil_read_bundle_read(grad_y_stencil/* source_delay */, root, lxy_s0_y, lxy_s0_x, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = hcompute_lxy_stencil(grad_x_stencil_lxy_s0_y_c__lxy_s0_x_value, grad_y_stencil_lxy_s0_y_c__lxy_s0_x_value);
+	// Produce: lxy_stencil
+	lxy_stencil_op_hcompute_lxy_stencil_write_bundle_write(/* arg names */compute_result, lxy_stencil, root, lxy_s0_y, lxy_s0_x, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void op_hcompute_lgyy_stencil(lgyy_stencil_clkwrk_dsa2_cache& lgyy_stencil_clkwrk_dsa2, int root, int lgyy_s0_y, int lgyy_s0_x) {
+  // Dynamic address computation
+
+	auto compute_result = hcompute_lgyy_stencil();
+	// Produce: lgyy_stencil_clkwrk_dsa2
+	lgyy_stencil_clkwrk_dsa2_op_hcompute_lgyy_stencil_write_bundle_write(/* arg names */compute_result, lgyy_stencil_clkwrk_dsa2, root, lgyy_s0_y, lgyy_s0_x, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void op_hcompute_grad_x_stencil(padded16_global_wrapper_stencil_cache& padded16_global_wrapper_stencil, grad_x_stencil_cache& grad_x_stencil, int root, int grad_x_s0_y, int grad_x_s0_x) {
+  // Dynamic address computation
+
+	// Consume: padded16_global_wrapper_stencil
+	auto padded16_global_wrapper_stencil__lp_grad_x_s0_y__p___m_1_rp__c___lp_grad_x_s0_x__p__1_rp__value = padded16_global_wrapper_stencil_op_hcompute_grad_x_stencil_read_bundle_read(padded16_global_wrapper_stencil/* source_delay */, root, grad_x_s0_y, grad_x_s0_x, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = hcompute_grad_x_stencil(padded16_global_wrapper_stencil__lp_grad_x_s0_y__p___m_1_rp__c___lp_grad_x_s0_x__p__1_rp__value);
+	// Produce: grad_x_stencil
+	grad_x_stencil_op_hcompute_grad_x_stencil_write_bundle_write(/* arg names */compute_result, grad_x_stencil, root, grad_x_s0_y, grad_x_s0_x, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -1731,6 +1671,18 @@ inline void op_hcompute_cim_output_stencil(cim_stencil_cache& cim_stencil, cim_o
 
 }
 
+inline void op_hcompute_lgxy_stencil(lgxy_stencil_clkwrk_dsa1_cache& lgxy_stencil_clkwrk_dsa1, int root, int lgxy_s0_y, int lgxy_s0_x) {
+  // Dynamic address computation
+
+	auto compute_result = hcompute_lgxy_stencil();
+	// Produce: lgxy_stencil_clkwrk_dsa1
+	lgxy_stencil_clkwrk_dsa1_op_hcompute_lgxy_stencil_write_bundle_write(/* arg names */compute_result, lgxy_stencil_clkwrk_dsa1, root, lgxy_s0_y, lgxy_s0_x, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
 inline void op_hcompute_hw_output_stencil(cim_output_stencil_cache& cim_output_stencil, HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */hw_output_stencil, int root, int hw_output_s0_y_yi, int hw_output_s0_x_xi) {
   // Dynamic address computation
 
@@ -1743,6 +1695,54 @@ inline void op_hcompute_hw_output_stencil(cim_output_stencil_cache& cim_output_s
 	auto compute_result = hcompute_hw_output_stencil(cim_output_stencil_hw_output_s0_y_yi_c__hw_output_s0_x_xi_value);
 	// Produce: hw_output_stencil
 	hw_output_stencil.write(compute_result);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void op_hcompute_grad_y_stencil(padded16_global_wrapper_stencil_cache& padded16_global_wrapper_stencil, grad_y_stencil_cache& grad_y_stencil, int root, int grad_y_s0_y, int grad_y_s0_x) {
+  // Dynamic address computation
+
+	// Consume: padded16_global_wrapper_stencil
+	auto padded16_global_wrapper_stencil__lp_grad_y_s0_y__p___m_1_rp__c___lp_grad_y_s0_x__p___m_1_rp__value = padded16_global_wrapper_stencil_op_hcompute_grad_y_stencil_read_bundle_read(padded16_global_wrapper_stencil/* source_delay */, root, grad_y_s0_y, grad_y_s0_x, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = hcompute_grad_y_stencil(padded16_global_wrapper_stencil__lp_grad_y_s0_y__p___m_1_rp__c___lp_grad_y_s0_x__p___m_1_rp__value);
+	// Produce: grad_y_stencil
+	grad_y_stencil_op_hcompute_grad_y_stencil_write_bundle_write(/* arg names */compute_result, grad_y_stencil, root, grad_y_s0_y, grad_y_s0_x, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void op_hcompute_cim_stencil(lgxx_stencil_cache& lgxx_stencil, lgxy_stencil_cache& lgxy_stencil, lgyy_stencil_cache& lgyy_stencil, cim_stencil_cache& cim_stencil, int root, int cim_s0_y, int cim_s0_x) {
+  // Dynamic address computation
+
+	// Consume: lgxx_stencil
+	auto lgxx_stencil_cim_s0_y_c__cim_s0_x_value = lgxx_stencil_op_hcompute_cim_stencil_read_bundle_read(lgxx_stencil/* source_delay */, root, cim_s0_y, cim_s0_x, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	// Consume: lgxy_stencil
+	auto lgxy_stencil_cim_s0_y_c__cim_s0_x_value = lgxy_stencil_op_hcompute_cim_stencil_read_bundle_read(lgxy_stencil/* source_delay */, root, cim_s0_y, cim_s0_x, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	// Consume: lgyy_stencil
+	auto lgyy_stencil_cim_s0_y_c__cim_s0_x_value = lgyy_stencil_op_hcompute_cim_stencil_read_bundle_read(lgyy_stencil/* source_delay */, root, cim_s0_y, cim_s0_x, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = hcompute_cim_stencil(lgxx_stencil_cim_s0_y_c__cim_s0_x_value, lgxy_stencil_cim_s0_y_c__cim_s0_x_value, lgyy_stencil_cim_s0_y_c__cim_s0_x_value);
+	// Produce: cim_stencil
+	cim_stencil_op_hcompute_cim_stencil_write_bundle_write(/* arg names */compute_result, cim_stencil, root, cim_s0_y, cim_s0_x, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -1802,9 +1802,9 @@ void unoptimized_harris(HWStream<hw_uint<16> >& /* no bundle get_args num ports 
 #pragma HLS inline recursive
 #endif // __VIVADO_SYNTH__
 
-// schedule: { op_hcompute_hw_output_stencil[root = 0, hw_output_s0_y_yi, hw_output_s0_x_xi] -> [0, 0, 14, hw_output_s0_y_yi, 0, hw_output_s0_x_xi, 0] : 0 <= hw_output_s0_y_yi <= 57 and 0 <= hw_output_s0_x_xi <= 57; op_hcompute_lgxy_stencil_1[root = 0, lgxy_s1_y, lgxy_s1_x] -> [0, 0, 8, lgxy_s1_y, 0, lgxy_s1_x, 0] : -1 <= lgxy_s1_y <= 58 and -1 <= lgxy_s1_x <= 58; op_hcompute_padded16_global_wrapper_stencil[root = 0, padded16_global_wrapper_s0_y, padded16_global_wrapper_s0_x] -> [0, 0, 0, padded16_global_wrapper_s0_y, 0, padded16_global_wrapper_s0_x, 0] : -3 <= padded16_global_wrapper_s0_y <= 60 and -3 <= padded16_global_wrapper_s0_x <= 60; op_hcompute_lxx_stencil[root = 0, lxx_s0_y, lxx_s0_x] -> [0, 0, 2, lxx_s0_y, 0, lxx_s0_x, 0] : -2 <= lxx_s0_y <= 59 and -2 <= lxx_s0_x <= 59; op_hcompute_lgxx_stencil_1[root = 0, lgxx_s1_y, lgxx_s1_x] -> [0, 0, 4, lgxx_s1_y, 0, lgxx_s1_x, 0] : -1 <= lgxx_s1_y <= 58 and -1 <= lgxx_s1_x <= 58; op_hcompute_lgyy_stencil[root = 0, lgyy_s0_y, lgyy_s0_x] -> [0, 0, 10, lgyy_s0_y, 0, lgyy_s0_x, 0] : -1 <= lgyy_s0_y <= 58 and -1 <= lgyy_s0_x <= 58; op_hcompute_grad_y_stencil[root = 0, grad_y_s0_y, grad_y_s0_x] -> [0, 0, 5, grad_y_s0_y, 0, grad_y_s0_x, 0] : -2 <= grad_y_s0_y <= 59 and -2 <= grad_y_s0_x <= 59; op_hcompute_lgxx_stencil[root = 0, lgxx_s0_y, lgxx_s0_x] -> [0, 0, 3, lgxx_s0_y, 0, lgxx_s0_x, 0] : -1 <= lgxx_s0_y <= 58 and -1 <= lgxx_s0_x <= 58; op_hcompute_grad_x_stencil[root = 0, grad_x_s0_y, grad_x_s0_x] -> [0, 0, 1, grad_x_s0_y, 0, grad_x_s0_x, 0] : -2 <= grad_x_s0_y <= 59 and -2 <= grad_x_s0_x <= 59; op_hcompute_lgyy_stencil_1[root = 0, lgyy_s1_y, lgyy_s1_x] -> [0, 0, 11, lgyy_s1_y, 0, lgyy_s1_x, 0] : -1 <= lgyy_s1_y <= 58 and -1 <= lgyy_s1_x <= 58; op_hcompute_lgxy_stencil[root = 0, lgxy_s0_y, lgxy_s0_x] -> [0, 0, 7, lgxy_s0_y, 0, lgxy_s0_x, 0] : -1 <= lgxy_s0_y <= 58 and -1 <= lgxy_s0_x <= 58; op_hcompute_lxy_stencil[root = 0, lxy_s0_y, lxy_s0_x] -> [0, 0, 6, lxy_s0_y, 0, lxy_s0_x, 0] : -2 <= lxy_s0_y <= 59 and -2 <= lxy_s0_x <= 59; op_hcompute_lyy_stencil[root = 0, lyy_s0_y, lyy_s0_x] -> [0, 0, 9, lyy_s0_y, 0, lyy_s0_x, 0] : -2 <= lyy_s0_y <= 59 and -2 <= lyy_s0_x <= 59; op_hcompute_cim_stencil[root = 0, cim_s0_y, cim_s0_x] -> [0, 0, 12, cim_s0_y, 0, cim_s0_x, 0] : -1 <= cim_s0_y <= 58 and -1 <= cim_s0_x <= 58; op_hcompute_cim_output_stencil[root = 0, cim_output_s0_y, cim_output_s0_x] -> [0, 0, 13, cim_output_s0_y, 0, cim_output_s0_x, 0] : 0 <= cim_output_s0_y <= 57 and 0 <= cim_output_s0_x <= 57 }
-//   { op_hcompute_hw_output_stencil[root = 0, hw_output_s0_y_yi, hw_output_s0_x_xi] -> [0, 0, 14, hw_output_s0_y_yi, 0, hw_output_s0_x_xi, 0] : 0 <= hw_output_s0_y_yi <= 57 and 0 <= hw_output_s0_x_xi <= 57 }
-// Condition for op_hcompute_hw_output_stencil(((((1*i6)) == 0) && (((1*i4)) == 0) && (((-14 + 1*i2)) == 0) && (((1*i1)) == 0) && (((1*i0)) == 0) && (((1*i3)) >= 0) && (((57 + -1*i3)) >= 0) && (((1*i5)) >= 0) && (((57 + -1*i5)) >= 0)))
+// schedule: { op_hcompute_cim_stencil[root = 0, cim_s0_y, cim_s0_x] -> [0, 0, 12, cim_s0_y, 0, cim_s0_x, 0] : -1 <= cim_s0_y <= 58 and -1 <= cim_s0_x <= 58; op_hcompute_lgxy_stencil_1[root = 0, lgxy_s1_y, lgxy_s1_x] -> [0, 0, 8, lgxy_s1_y, 0, lgxy_s1_x, 0] : -1 <= lgxy_s1_y <= 58 and -1 <= lgxy_s1_x <= 58; op_hcompute_padded16_global_wrapper_stencil[root = 0, padded16_global_wrapper_s0_y, padded16_global_wrapper_s0_x] -> [0, 0, 0, padded16_global_wrapper_s0_y, 0, padded16_global_wrapper_s0_x, 0] : -3 <= padded16_global_wrapper_s0_y <= 60 and -3 <= padded16_global_wrapper_s0_x <= 60; op_hcompute_lxx_stencil[root = 0, lxx_s0_y, lxx_s0_x] -> [0, 0, 2, lxx_s0_y, 0, lxx_s0_x, 0] : -2 <= lxx_s0_y <= 59 and -2 <= lxx_s0_x <= 59; op_hcompute_lgxx_stencil_1[root = 0, lgxx_s1_y, lgxx_s1_x] -> [0, 0, 4, lgxx_s1_y, 0, lgxx_s1_x, 0] : -1 <= lgxx_s1_y <= 58 and -1 <= lgxx_s1_x <= 58; op_hcompute_lgyy_stencil[root = 0, lgyy_s0_y, lgyy_s0_x] -> [0, 0, 10, lgyy_s0_y, 0, lgyy_s0_x, 0] : -1 <= lgyy_s0_y <= 58 and -1 <= lgyy_s0_x <= 58; op_hcompute_grad_y_stencil[root = 0, grad_y_s0_y, grad_y_s0_x] -> [0, 0, 5, grad_y_s0_y, 0, grad_y_s0_x, 0] : -2 <= grad_y_s0_y <= 59 and -2 <= grad_y_s0_x <= 59; op_hcompute_lgxx_stencil[root = 0, lgxx_s0_y, lgxx_s0_x] -> [0, 0, 3, lgxx_s0_y, 0, lgxx_s0_x, 0] : -1 <= lgxx_s0_y <= 58 and -1 <= lgxx_s0_x <= 58; op_hcompute_lgyy_stencil_1[root = 0, lgyy_s1_y, lgyy_s1_x] -> [0, 0, 11, lgyy_s1_y, 0, lgyy_s1_x, 0] : -1 <= lgyy_s1_y <= 58 and -1 <= lgyy_s1_x <= 58; op_hcompute_grad_x_stencil[root = 0, grad_x_s0_y, grad_x_s0_x] -> [0, 0, 1, grad_x_s0_y, 0, grad_x_s0_x, 0] : -2 <= grad_x_s0_y <= 59 and -2 <= grad_x_s0_x <= 59; op_hcompute_lgxy_stencil[root = 0, lgxy_s0_y, lgxy_s0_x] -> [0, 0, 7, lgxy_s0_y, 0, lgxy_s0_x, 0] : -1 <= lgxy_s0_y <= 58 and -1 <= lgxy_s0_x <= 58; op_hcompute_lxy_stencil[root = 0, lxy_s0_y, lxy_s0_x] -> [0, 0, 6, lxy_s0_y, 0, lxy_s0_x, 0] : -2 <= lxy_s0_y <= 59 and -2 <= lxy_s0_x <= 59; op_hcompute_lyy_stencil[root = 0, lyy_s0_y, lyy_s0_x] -> [0, 0, 9, lyy_s0_y, 0, lyy_s0_x, 0] : -2 <= lyy_s0_y <= 59 and -2 <= lyy_s0_x <= 59; op_hcompute_cim_output_stencil[root = 0, cim_output_s0_y, cim_output_s0_x] -> [0, 0, 13, cim_output_s0_y, 0, cim_output_s0_x, 0] : 0 <= cim_output_s0_y <= 57 and 0 <= cim_output_s0_x <= 57; op_hcompute_hw_output_stencil[root = 0, hw_output_s0_y_yi, hw_output_s0_x_xi] -> [0, 0, 14, hw_output_s0_y_yi, 0, hw_output_s0_x_xi, 0] : 0 <= hw_output_s0_y_yi <= 57 and 0 <= hw_output_s0_x_xi <= 57 }
+//   { op_hcompute_cim_stencil[root = 0, cim_s0_y, cim_s0_x] -> [0, 0, 12, cim_s0_y, 0, cim_s0_x, 0] : -1 <= cim_s0_y <= 58 and -1 <= cim_s0_x <= 58 }
+// Condition for op_hcompute_cim_stencil(((((1*i6)) == 0) && (((1*i4)) == 0) && (((-12 + 1*i2)) == 0) && (((1*i1)) == 0) && (((1*i0)) == 0) && (((1 + 1*i3)) >= 0) && (((58 + -1*i3)) >= 0) && (((1 + 1*i5)) >= 0) && (((58 + -1*i5)) >= 0)))
 //   { op_hcompute_lgxy_stencil_1[root = 0, lgxy_s1_y, lgxy_s1_x] -> [0, 0, 8, lgxy_s1_y, 0, lgxy_s1_x, 0] : -1 <= lgxy_s1_y <= 58 and -1 <= lgxy_s1_x <= 58 }
 // Condition for op_hcompute_lgxy_stencil_1(((((1*i6)) == 0) && (((1*i4)) == 0) && (((-8 + 1*i2)) == 0) && (((1*i1)) == 0) && (((1*i0)) == 0) && (((1 + 1*i3)) >= 0) && (((58 + -1*i3)) >= 0) && (((1 + 1*i5)) >= 0) && (((58 + -1*i5)) >= 0)))
 //   { op_hcompute_padded16_global_wrapper_stencil[root = 0, padded16_global_wrapper_s0_y, padded16_global_wrapper_s0_x] -> [0, 0, 0, padded16_global_wrapper_s0_y, 0, padded16_global_wrapper_s0_x, 0] : -3 <= padded16_global_wrapper_s0_y <= 60 and -3 <= padded16_global_wrapper_s0_x <= 60 }
@@ -1819,20 +1819,20 @@ void unoptimized_harris(HWStream<hw_uint<16> >& /* no bundle get_args num ports 
 // Condition for op_hcompute_grad_y_stencil(((((1*i6)) == 0) && (((1*i4)) == 0) && (((-5 + 1*i2)) == 0) && (((1*i1)) == 0) && (((1*i0)) == 0) && (((2 + 1*i3)) >= 0) && (((59 + -1*i3)) >= 0) && (((2 + 1*i5)) >= 0) && (((59 + -1*i5)) >= 0)))
 //   { op_hcompute_lgxx_stencil[root = 0, lgxx_s0_y, lgxx_s0_x] -> [0, 0, 3, lgxx_s0_y, 0, lgxx_s0_x, 0] : -1 <= lgxx_s0_y <= 58 and -1 <= lgxx_s0_x <= 58 }
 // Condition for op_hcompute_lgxx_stencil(((((1*i6)) == 0) && (((1*i4)) == 0) && (((-3 + 1*i2)) == 0) && (((1*i1)) == 0) && (((1*i0)) == 0) && (((1 + 1*i3)) >= 0) && (((58 + -1*i3)) >= 0) && (((1 + 1*i5)) >= 0) && (((58 + -1*i5)) >= 0)))
-//   { op_hcompute_grad_x_stencil[root = 0, grad_x_s0_y, grad_x_s0_x] -> [0, 0, 1, grad_x_s0_y, 0, grad_x_s0_x, 0] : -2 <= grad_x_s0_y <= 59 and -2 <= grad_x_s0_x <= 59 }
-// Condition for op_hcompute_grad_x_stencil(((((1*i6)) == 0) && (((1*i4)) == 0) && (((-1 + 1*i2)) == 0) && (((1*i1)) == 0) && (((1*i0)) == 0) && (((2 + 1*i3)) >= 0) && (((59 + -1*i3)) >= 0) && (((2 + 1*i5)) >= 0) && (((59 + -1*i5)) >= 0)))
 //   { op_hcompute_lgyy_stencil_1[root = 0, lgyy_s1_y, lgyy_s1_x] -> [0, 0, 11, lgyy_s1_y, 0, lgyy_s1_x, 0] : -1 <= lgyy_s1_y <= 58 and -1 <= lgyy_s1_x <= 58 }
 // Condition for op_hcompute_lgyy_stencil_1(((((1*i6)) == 0) && (((1*i4)) == 0) && (((-11 + 1*i2)) == 0) && (((1*i1)) == 0) && (((1*i0)) == 0) && (((1 + 1*i3)) >= 0) && (((58 + -1*i3)) >= 0) && (((1 + 1*i5)) >= 0) && (((58 + -1*i5)) >= 0)))
+//   { op_hcompute_grad_x_stencil[root = 0, grad_x_s0_y, grad_x_s0_x] -> [0, 0, 1, grad_x_s0_y, 0, grad_x_s0_x, 0] : -2 <= grad_x_s0_y <= 59 and -2 <= grad_x_s0_x <= 59 }
+// Condition for op_hcompute_grad_x_stencil(((((1*i6)) == 0) && (((1*i4)) == 0) && (((-1 + 1*i2)) == 0) && (((1*i1)) == 0) && (((1*i0)) == 0) && (((2 + 1*i3)) >= 0) && (((59 + -1*i3)) >= 0) && (((2 + 1*i5)) >= 0) && (((59 + -1*i5)) >= 0)))
 //   { op_hcompute_lgxy_stencil[root = 0, lgxy_s0_y, lgxy_s0_x] -> [0, 0, 7, lgxy_s0_y, 0, lgxy_s0_x, 0] : -1 <= lgxy_s0_y <= 58 and -1 <= lgxy_s0_x <= 58 }
 // Condition for op_hcompute_lgxy_stencil(((((1*i6)) == 0) && (((1*i4)) == 0) && (((-7 + 1*i2)) == 0) && (((1*i1)) == 0) && (((1*i0)) == 0) && (((1 + 1*i3)) >= 0) && (((58 + -1*i3)) >= 0) && (((1 + 1*i5)) >= 0) && (((58 + -1*i5)) >= 0)))
 //   { op_hcompute_lxy_stencil[root = 0, lxy_s0_y, lxy_s0_x] -> [0, 0, 6, lxy_s0_y, 0, lxy_s0_x, 0] : -2 <= lxy_s0_y <= 59 and -2 <= lxy_s0_x <= 59 }
 // Condition for op_hcompute_lxy_stencil(((((1*i6)) == 0) && (((1*i4)) == 0) && (((-6 + 1*i2)) == 0) && (((1*i1)) == 0) && (((1*i0)) == 0) && (((2 + 1*i3)) >= 0) && (((59 + -1*i3)) >= 0) && (((2 + 1*i5)) >= 0) && (((59 + -1*i5)) >= 0)))
 //   { op_hcompute_lyy_stencil[root = 0, lyy_s0_y, lyy_s0_x] -> [0, 0, 9, lyy_s0_y, 0, lyy_s0_x, 0] : -2 <= lyy_s0_y <= 59 and -2 <= lyy_s0_x <= 59 }
 // Condition for op_hcompute_lyy_stencil(((((1*i6)) == 0) && (((1*i4)) == 0) && (((-9 + 1*i2)) == 0) && (((1*i1)) == 0) && (((1*i0)) == 0) && (((2 + 1*i3)) >= 0) && (((59 + -1*i3)) >= 0) && (((2 + 1*i5)) >= 0) && (((59 + -1*i5)) >= 0)))
-//   { op_hcompute_cim_stencil[root = 0, cim_s0_y, cim_s0_x] -> [0, 0, 12, cim_s0_y, 0, cim_s0_x, 0] : -1 <= cim_s0_y <= 58 and -1 <= cim_s0_x <= 58 }
-// Condition for op_hcompute_cim_stencil(((((1*i6)) == 0) && (((1*i4)) == 0) && (((-12 + 1*i2)) == 0) && (((1*i1)) == 0) && (((1*i0)) == 0) && (((1 + 1*i3)) >= 0) && (((58 + -1*i3)) >= 0) && (((1 + 1*i5)) >= 0) && (((58 + -1*i5)) >= 0)))
 //   { op_hcompute_cim_output_stencil[root = 0, cim_output_s0_y, cim_output_s0_x] -> [0, 0, 13, cim_output_s0_y, 0, cim_output_s0_x, 0] : 0 <= cim_output_s0_y <= 57 and 0 <= cim_output_s0_x <= 57 }
 // Condition for op_hcompute_cim_output_stencil(((((1*i6)) == 0) && (((1*i4)) == 0) && (((-13 + 1*i2)) == 0) && (((1*i1)) == 0) && (((1*i0)) == 0) && (((1*i3)) >= 0) && (((57 + -1*i3)) >= 0) && (((1*i5)) >= 0) && (((57 + -1*i5)) >= 0)))
+//   { op_hcompute_hw_output_stencil[root = 0, hw_output_s0_y_yi, hw_output_s0_x_xi] -> [0, 0, 14, hw_output_s0_y_yi, 0, hw_output_s0_x_xi, 0] : 0 <= hw_output_s0_y_yi <= 57 and 0 <= hw_output_s0_x_xi <= 57 }
+// Condition for op_hcompute_hw_output_stencil(((((1*i6)) == 0) && (((1*i4)) == 0) && (((-14 + 1*i2)) == 0) && (((1*i1)) == 0) && (((1*i0)) == 0) && (((1*i3)) >= 0) && (((57 + -1*i3)) >= 0) && (((1*i5)) >= 0) && (((57 + -1*i5)) >= 0)))
 
 	{
 	  for (int c3 = -3; c3 <= 60; c3 += 1)

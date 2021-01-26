@@ -14159,8 +14159,8 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   vector<prog> test_apps;
   //TODO:has issue  with multiple input
   //test_apps.push_back(demosaic_complex());
-  //test_apps.push_back(counter());
-  //test_apps.push_back(demosaic_unrolled());
+  test_apps.push_back(counter());
+  test_apps.push_back(demosaic_unrolled());
   test_apps.push_back(conv_3_3());
   test_apps.push_back(gaussian());
   test_apps.push_back(cascade());

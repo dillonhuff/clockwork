@@ -2508,6 +2508,8 @@ void addIOs(Context* c, Module* top) {
     path[0] = "in";
     path.insert(path.begin(),"_self");
     mdef->connect({ioname,"in"},path);
+    //TODO: A hack to keep single valid should check with other apps
+    //break;
   }
   mdef->disconnect(mdef->getInterface());
   inlineInstance(pt);

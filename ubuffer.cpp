@@ -6124,7 +6124,7 @@ vector<string> buffer_vectorization(vector<string> buf_name_vec, int dim_id, int
 
 
 bool UBuffer::merge_small_dim(int fetch_width) {
-    //pad the domain for both input port and output port
+    //merge the domain for both input port and output port
     std::set<int> merge_dim;
     for (auto bd: get_in_bundles()) {
         for (auto pt: port_bundles.at(bd)) {
