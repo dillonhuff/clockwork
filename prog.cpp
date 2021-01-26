@@ -8441,6 +8441,22 @@ bool all_kernel_outputs_have_fanout_one(app_dag& dag) {
   return true;
 }
 
+void set_channel_depths_to_constant(const int constant, app_dag& dag) {
+  std::set<std::string> done;
+  for (auto& buf : dag.prg.boundary_buffers()) {
+    done.insert(buf);
+  }
+
+  for (auto& gp : dag.fusion_group_progs) {
+    for (auto& buf : gp.second.boundary_buffers()) {
+      if (!elem(buf, done)) {
+        int depth = constant;
+        dag.channel_sizes[buf] = depth;
+      }
+    }
+  }
+}
+
 void generate_app_code(
     CodegenOptions& options,
     app_dag& dag) {
@@ -8533,14 +8549,7 @@ void generate_app_code(
     done.insert(buf);
   }
 
-  for (auto& gp : dag.fusion_group_progs) {
-    for (auto& buf : gp.second.boundary_buffers()) {
-      if (!elem(buf, done)) {
-        int depth = 100;
-        dag.channel_sizes[buf] = depth;
-      }
-    }
-  }
+  set_channel_depths_to_constant(100, dag);
 
   for (auto& gp : dag.fusion_group_progs) {
     for (auto& buf : gp.second.boundary_buffers()) {
