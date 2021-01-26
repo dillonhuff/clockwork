@@ -19877,6 +19877,10 @@ void test_multi_kernel_mismatched_loop_depths() {
   auto fusion_groups = one_stage_per_group(prg);
   auto fresh_groups = insert_inter_group_buffers(fusion_groups, prg);
   unroll_mismatched_inner_loops(prg);
+
+  prg.pretty_print();
+  assert(false);
+
   prg.name = "mismatched_loops_plus_kernels";
   vector<string> multi_kernel_res = unoptimized_result(prg);
 
