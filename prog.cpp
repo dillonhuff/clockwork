@@ -8677,7 +8677,8 @@ vector<int> write_permutation(const std::string& buf, prog& pp) {
   cout << tab(1) << "Addr rep: " << str(addr_rep) << endl;
   auto levels = get_variable_levels(pp);
   vector<int> level_permutation;
-  level_permutation.resize(isl_multi_aff_dim(addr_rep, isl_dim_set));
+  level_permutation.resize(isl_multi_aff_dim(addr_rep, isl_dim_set), -1);
+  vector<int> constant_levels;
   for (int i = 0; i < isl_multi_aff_dim(addr_rep, isl_dim_set); i++) {
     isl_aff* addr_comp = isl_multi_aff_get_aff(addr_rep, i);
 
@@ -8698,10 +8699,24 @@ vector<int> write_permutation(const std::string& buf, prog& pp) {
         cout << tab(3) << "Address component is zero" << endl;
       }
     }
-    assert(found_addr);
+    if (!found_addr) {
+      constant_levels.push_back(i);
+    }
+  }
+
+  if (constant_levels.size() > 0) {
+    cout << "Components " << comma_list(constant_levels) << " of " << buf << " are only accessed at constant locations" << endl;
+    int total_comps = isl_multi_aff_dim(addr_rep, isl_dim_set);
+    int constant_comps = constant_levels.size();
+    int next_pad_level = max_e(level_permutation) + 1;
+    for (auto i : constant_levels) {
+      level_permutation[i] = next_pad_level;
+      next_pad_level++;
+    }
   }
 
   cout << "Permutation for " << buf << ": " << comma_list(level_permutation) << endl;
+  assert(level_permutation.size() == isl_multi_aff_dim(addr_rep, isl_dim_set));
   assert(is_permutation(level_permutation));
 
   return level_permutation;

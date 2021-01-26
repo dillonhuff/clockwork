@@ -21000,7 +21000,7 @@ void stencil_chain_multi_kernel_test() {
 void dhuff_tests() {
   //test_multi_kernel_llf();
 
-  //test_multi_kernel_mismatched_loop_depths();
+  test_multi_kernel_mismatched_loop_depths();
 
   test_artificial_deadlock();
   test_multi_kernel_pyramid_collapsing();
