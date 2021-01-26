@@ -19907,7 +19907,7 @@ void test_multi_kernel_mismatched_loop_depths() {
   compare("multi_kernel_" + prg.name + "_vs_unopt", multi_kernel_res, unopt_postprocessed);
   //move_to_benchmarks_folder(dag.prg.name);
 
-  assert(false);
+  //assert(false);
 }
 
 void test_multi_kernel_llf() {

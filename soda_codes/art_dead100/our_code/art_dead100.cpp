@@ -6,8 +6,8 @@ using namespace std;
   ofstream* global_debug_handle;
 
 #endif //__VIVADO_SYNTH__
-// compute file: clockwork_standard_compute_units.h_merged_compute_units.h
-#include "clockwork_standard_compute_units.h_merged_compute_units.h"
+// compute file: clockwork_standard_compute_units.h_merged_compute_units.h_merged_compute_units.h
+#include "clockwork_standard_compute_units.h_merged_compute_units.h_merged_compute_units.h"
 
 struct blurred_blur_17_to_blurred_load_to_blurred_to_gp_147_11_cache {
 	// RAM Box: {[0, 63], [0, 63]}

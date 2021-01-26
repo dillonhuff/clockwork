@@ -6,8 +6,8 @@ using namespace std;
   ofstream* global_debug_handle;
 
 #endif //__VIVADO_SYNTH__
-// compute file: local_laplacian_filters_compute.h_merged_compute_units.h
-#include "local_laplacian_filters_compute.h_merged_compute_units.h"
+// compute file: local_laplacian_filters_compute.h_merged_compute_units.h_merged_compute_units.h
+#include "local_laplacian_filters_compute.h_merged_compute_units.h_merged_compute_units.h"
 
 struct gray_all_inputs_to_all_outputs_cache {
 	// RAM Box: {[0, 3], [0, 3]}
