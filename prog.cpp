@@ -5754,6 +5754,7 @@ int loop_depth(op* op) {
   return d + max_child_depth;
 
 }
+
 bool all_loop_nests_same_depth(prog& prg) {
   auto ops = prg.all_ops();
 
