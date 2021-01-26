@@ -8674,26 +8674,34 @@ vector<int> write_permutation(const std::string& buf, prog& pp) {
   auto readers = find_writers(buf, pp);
   op* reader = pick(readers);
   auto addr_rep = pick(write_addrs(reader, buf, pp));
-  //cout << tab(1) << "Addr rep: " << str(addr_rep) << endl;
+  cout << tab(1) << "Addr rep: " << str(addr_rep) << endl;
   auto levels = get_variable_levels(pp);
   vector<int> level_permutation;
   level_permutation.resize(isl_multi_aff_dim(addr_rep, isl_dim_set));
   for (int i = 0; i < isl_multi_aff_dim(addr_rep, isl_dim_set); i++) {
     isl_aff* addr_comp = isl_multi_aff_get_aff(addr_rep, i);
-    //cout << tab(2) << str(addr_comp) << endl;
+
+    bool found_addr = false;
+    cout << tab(2) << str(addr_comp) << endl;
     for (int d = 0; d < num_in_dims(addr_comp); d++) {
       if (!is_zero(get_coeff(addr_comp, d))) {
         string var = surrounding_vars(reader, pp).at(d);
         int lvl = map_find(var, levels) - 1;
-        //cout << tab(3) << "var: " << var << endl;
-        //cout << tab(3) << "lvl: " << map_find(var, levels) << endl;
+        cout << tab(3) << "var: " << var << endl;
+        cout << tab(3) << "lvl: " << map_find(var, levels) << endl;
         assert(lvl >= 0);
         //cout << tab(3) << "address component " << i << " of " << b.first << " should be loaded at level " << lvl << endl;
         level_permutation[i] = lvl;
+        found_addr = true;
+        break;
+      } else {
+        cout << tab(3) << "Address component is zero" << endl;
       }
     }
+    assert(found_addr);
   }
 
+  cout << "Permutation for " << buf << ": " << comma_list(level_permutation) << endl;
   assert(is_permutation(level_permutation));
 
   return level_permutation;
