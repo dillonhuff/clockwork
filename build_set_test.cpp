@@ -19875,21 +19875,27 @@ void test_multi_kernel_mismatched_loop_depths() {
   auto unopt_postprocessed = unoptimized_result(prg);
 
   auto fusion_groups = one_stage_per_group(prg);
-  app_dag dag = partition_application(fusion_groups, prg);
-  string target = "gp_in_on_chip_1_buf4_to_gp_1112";
-  dag.prg.pretty_print();
+  auto fresh_groups = insert_inter_group_buffers(fusion_groups, prg);
+  unroll_mismatched_inner_loops(prg);
+  prg.name = "mismatched_loops_plus_kernels";
+  vector<string> multi_kernel_res = unoptimized_result(prg);
 
-  CodegenOptions options;
-  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
-  //options.hls_loop_codegen = HLS_LOOP_CODEGEN_ISL;
-  generate_app_code(options, dag);
+  //app_dag dag = partition_application(fusion_groups, prg);
+  //string target = "gp_in_on_chip_1_buf4_to_gp_1112";
+  //dag.prg.pretty_print();
 
-  generate_regression_testbench(dag.prg);
-  vector<string> multi_kernel_res = run_regression_tb(dag.prg);
+  //CodegenOptions options;
+  //options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  ////options.hls_loop_codegen = HLS_LOOP_CODEGEN_ISL;
+  //generate_app_code(options, dag);
+
+  //generate_regression_testbench(dag.prg);
+  //vector<string> multi_kernel_res = run_regression_tb(dag.prg);
 
   compare("multi_kernel_" + prg.name + "_vs_unopt", multi_kernel_res, unopt_postprocessed);
-  move_to_benchmarks_folder(dag.prg.name);
+  //move_to_benchmarks_folder(dag.prg.name);
 
+  assert(false);
 }
 
 void test_multi_kernel_llf() {
