@@ -19947,7 +19947,6 @@ void test_artificial_deadlock() {
 
   compare("multi_kernel_" + prg.name + "_vs_unopt", multi_kernel_res, unopt_postprocessed);
   move_to_benchmarks_folder(dag.prg.name);
-  assert(false);
 }
 
 void test_multi_kernel_unsharp() {
@@ -20911,7 +20910,7 @@ void stencil_chain_multi_kernel_test() {
 }
 
 void dhuff_tests() {
-  test_multi_kernel_llf();
+  //test_multi_kernel_llf();
 
   test_artificial_deadlock();
   test_multi_kernel_pyramid_collapsing();

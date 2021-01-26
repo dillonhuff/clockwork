@@ -260,9 +260,9 @@ void multi_kernel_design(HWStream<hw_uint<32> >& /* no bundle get_args num ports
 #pragma HLS dataflow
 #endif //__VIVADO_SYNTH__
 
-  HWStream< hw_uint<32> > gray_to_gp_18("gray_to_gp_18");
+  HWStream< hw_uint<32> > gray_to_gp_18;
 #ifdef __VIVADO_SYNTH__
-#pragma HLS stream variable=gray_to_gp_18.values depth=256
+#pragma HLS stream variable=gray_to_gp_18.values depth=100
 #endif //__VIVADO_SYNTH__
 
 

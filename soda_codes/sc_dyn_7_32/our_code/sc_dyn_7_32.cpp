@@ -279,9 +279,9 @@ void sc_dyn_7_32(HWStream<hw_uint<32> >& /* no bundle get_args num ports = 1 */i
 #pragma HLS dataflow
 #endif //__VIVADO_SYNTH__
 
-  HWStream< hw_uint<32> > in_to_gp_08("in_to_gp_08");
+  HWStream< hw_uint<32> > in_to_gp_08;
 #ifdef __VIVADO_SYNTH__
-#pragma HLS stream variable=in_to_gp_08.values depth=256
+#pragma HLS stream variable=in_to_gp_08.values depth=100
 #endif //__VIVADO_SYNTH__
 
 

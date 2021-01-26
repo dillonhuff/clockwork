@@ -8536,6 +8536,15 @@ void generate_app_code(
   for (auto& gp : dag.fusion_group_progs) {
     for (auto& buf : gp.second.boundary_buffers()) {
       if (!elem(buf, done)) {
+        int depth = 100;
+        dag.channel_sizes[buf] = depth;
+      }
+    }
+  }
+
+  for (auto& gp : dag.fusion_group_progs) {
+    for (auto& buf : gp.second.boundary_buffers()) {
+      if (!elem(buf, done)) {
         UBuffer rep_buf = map_find(buf, reps);
         assert(rep_buf.port_bundles.size() > 0);
 
@@ -8543,7 +8552,7 @@ void generate_app_code(
         string tp = rep_buf.bundle_type_string(bundle);
         conv_out << tab(1) << "HWStream< " << tp << " > " << buf << ";" << endl;
         open_synth_scope(conv_out);
-        int depth = 100;
+        int depth = map_find(buf, dag.channel_sizes);
         conv_out << "#pragma HLS stream variable=" << buf << ".values depth=" << depth << endl;
         close_synth_scope(conv_out);
         done.insert(buf);
