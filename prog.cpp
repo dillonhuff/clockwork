@@ -8474,13 +8474,13 @@ void generate_app_code(
     }
   }
 
-  //auto valid_deps = dag.prg.validity_deps();
-  //auto global_sched =
-    //its(clockwork_schedule_umap_reversed(dag.prg.whole_iteration_domain(), valid_deps, valid_deps),
-        //dag.prg.whole_iteration_domain());
-  //cout << "Sched: " << str(global_sched) << endl;
+  auto valid_deps = dag.prg.validity_deps();
+  auto global_sched =
+    its(clockwork_schedule_umap_reversed(dag.prg.whole_iteration_domain(), valid_deps, valid_deps),
+        dag.prg.whole_iteration_domain());
+  cout << "Sched: " << str(global_sched) << endl;
   
-  auto global_sched = dag.prg.optimized_codegen();
+  //auto global_sched = dag.prg.optimized_codegen();
 
   auto buffers = build_buffers(dag.prg, global_sched);
 
@@ -8873,6 +8873,7 @@ app_dag partition_application(const std::map<std::string, std::set<std::string> 
 
   auto fresh_groups = insert_inter_group_buffers(fusion_groups, prg);
   unroll_mismatched_inner_loops(prg);
+  merge_basic_block_ops(prg);
   return partition_groups(fresh_groups, prg);
 }
 
