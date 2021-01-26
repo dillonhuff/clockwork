@@ -8652,24 +8652,6 @@ isl_set* read_by_group(const std::string& buf, const std::string& group_name, ap
   return s;
 }
 
-bool is_permutation(const vector<int>& level_permutation) {
-  std::set<int> loops;
-  for (auto l : level_permutation) {
-    loops.insert(l);
-    if (l < 0) {
-      return false;
-    }
-    if (!(l < level_permutation.size())) {
-      return false;
-    }
-  }
-
-  if (level_permutation.size() != loops.size()) {
-    return false;
-  }
-  return true;
-}
-
 vector<int> write_permutation(const std::string& buf, prog& pp) {
   auto readers = find_writers(buf, pp);
   op* reader = pick(readers);
@@ -8890,6 +8872,7 @@ app_dag partition_groups(const std::map<std::string, std::set<std::string> >& fr
 app_dag partition_application(const std::map<std::string, std::set<std::string> >& fusion_groups, prog& prg) {
 
   auto fresh_groups = insert_inter_group_buffers(fusion_groups, prg);
+  unroll_mismatched_inner_loops(prg);
   return partition_groups(fresh_groups, prg);
 }
 
@@ -8963,3 +8946,27 @@ bool sw_schedule_respects_deps(umap* schedule, umap* deps) {
 
 
 
+void unroll_mismatched_inner_loops(prog& prg) {
+  if (!all_loop_nests_same_depth(prg)) {
+    cout << "Not all nests are the same depth!" << endl;
+    int min_depth = INT_MAX;
+    for (auto l : prg.all_ops()) {
+      int num_surrounding = surrounding_vars(l, prg).size();
+      if (num_surrounding < min_depth) {
+        min_depth = num_surrounding;
+      }
+    }
+    cout << "Min depth: " << min_depth << endl;
+
+    for (auto op : prg.all_ops()) {
+      auto surrounding = surrounding_vars(op, prg);
+      int num_surrounding = surrounding.size();
+      for (int v = min_depth; v < num_surrounding; v++) {
+        unroll(prg, surrounding.at(v));
+      }
+    }
+  }
+
+
+
+}

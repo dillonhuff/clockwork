@@ -1995,3 +1995,5 @@ map<std::string, std::set<string> > one_stage_per_group(prog& prg);
 vector<string> buffer_arg_names(op* op, prog& prg);
 
 void set_channel_depths_to_constant(const int constant, app_dag& dag);
+
+void unroll_mismatched_inner_loops(prog& prg);

@@ -19861,27 +19861,7 @@ void test_multi_kernel_mismatched_loop_depths() {
   cout << "After bounds inference..." << endl;
   prg.pretty_print();
 
-  if (!all_loop_nests_same_depth(prg)) {
-    cout << "Not all nests are the same depth!" << endl;
-    int min_depth = INT_MAX;
-    for (auto l : prg.all_ops()) {
-      int num_surrounding = surrounding_vars(l, prg).size();
-      if (num_surrounding < min_depth) {
-        min_depth = num_surrounding;
-      }
-    }
-    cout << "Min depth: " << min_depth << endl;
-
-    for (auto op : prg.all_ops()) {
-      auto surrounding = surrounding_vars(op, prg);
-      int num_surrounding = surrounding.size();
-      for (int v = min_depth; v < num_surrounding; v++) {
-        unroll(prg, surrounding.at(v));
-      }
-    }
-  }
-
-
+  unroll_mismatched_inner_loops(prg);
   cout << "After flattening..." << endl;
   prg.pretty_print();
 
