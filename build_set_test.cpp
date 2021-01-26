@@ -15616,6 +15616,20 @@ void llf_to_grayscale(const std::string& out, const std::string& in, prog& prg) 
   convert->add_store(out, x, y);
 }
 
+void llf_to_color_no_scales(const std::string& out, const std::string& original, const std::string& gray, prog& prg) {
+  string pr = out + "_to_color";
+  string y = prg.unique_name(pr);
+  string x = prg.unique_name(pr);
+  string b = prg.unique_name(pr);
+  auto cn = prg.add_nest(y, 0, 1, x, 0, 1, b, 0, 3);
+
+  auto convert = cn->add_op(prg.unique_name("cc"));
+  convert->add_function("llf_to_color_float_no_scales");
+  convert->add_load(original, b, x, y);
+  convert->add_load(gray, x, y);
+  convert->add_store(out, b, x, y);
+}
+
 void llf_to_color(const std::string& out, const std::string& original, const std::string& scales, const std::string& gray, prog& prg) {
   string pr = out + "_to_color";
   string y = prg.unique_name(pr);
@@ -19824,6 +19838,55 @@ void test_time_sharing_gaussian_pyramid() {
   move_to_benchmarks_folder(prg.name);
 }
 
+void test_multi_kernel_mismatched_loop_depths() {
+  prog prg("mismatched_depths");
+  prg.compute_unit_file = "local_laplacian_filters_compute.h";
+
+  prg.add_input("color_in_oc");
+  prg.add_output("color_out");
+
+  load_input("color_in_oc", "color_in_int", 3, prg);
+  pointwise("color_in", "llf_int_to_float", "color_in_int", 3, prg);
+
+  llf_to_grayscale("gray", "color_in", prg);
+
+
+  llf_to_color_no_scales("color_out_float", "color_in", "gray", prg);
+  pointwise("color_out", "llf_float_to_int", "color_out_float", 3, prg);
+
+  prg.pretty_print();
+  prg.sanity_check();
+
+  infer_bounds("color_out", {3, 23, 23}, prg);
+
+  cout << "After bounds inference..." << endl;
+  prg.pretty_print();
+
+  unroll_reduce_loops(prg);
+  merge_basic_block_ops(prg);
+  normalize_bounds(prg);
+  normalize_address_offsets(prg);
+
+  auto unopt_postprocessed = unoptimized_result(prg);
+
+  auto fusion_groups = one_stage_per_group(prg);
+  app_dag dag = partition_application(fusion_groups, prg);
+  string target = "gp_in_on_chip_1_buf4_to_gp_1112";
+  dag.prg.pretty_print();
+
+  CodegenOptions options;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  //options.hls_loop_codegen = HLS_LOOP_CODEGEN_ISL;
+  generate_app_code(options, dag);
+
+  generate_regression_testbench(dag.prg);
+  vector<string> multi_kernel_res = run_regression_tb(dag.prg);
+
+  compare("multi_kernel_" + prg.name + "_vs_unopt", multi_kernel_res, unopt_postprocessed);
+  move_to_benchmarks_folder(dag.prg.name);
+
+}
+
 void test_multi_kernel_llf() {
   prog prg = llf_float();
   //auto unopt_postprocessed = unoptimized_result(prg);
@@ -20912,6 +20975,7 @@ void stencil_chain_multi_kernel_test() {
 void dhuff_tests() {
   //test_multi_kernel_llf();
 
+  test_multi_kernel_mismatched_loop_depths();
   test_artificial_deadlock();
   test_multi_kernel_pyramid_collapsing();
   upsample2d_test();
