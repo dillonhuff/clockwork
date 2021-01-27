@@ -1484,6 +1484,20 @@ CoreIR::Module* affine_controller_use_lake_tile_counter(
   auto addr = its(isl_map_identity(isl_space_map_from_set(sp)), dom);
   auto clk_en_const = def->addInstance(ub_ins_name+"_clk_en_const", "corebit.const",
           {{"value", CoreIR::Const::make(context, true)}});
+
+  //define the dimension connect to root
+  std::string const_name = "const_0";
+  Values const_args = {{"width", Const::make(context, 16)}};
+
+  Values const_configargs = {
+    {"value", Const::make(context, BitVector(16, 0))}};
+  Wireable* const_inst = def->addInstance(
+    const_name,
+    "coreir.const",
+    const_args,
+    const_configargs);
+  def->connect(const_inst->sel("out"), def->sel("self")->sel("d")->sel(0));
+
   //Loop through all the domain dimension, skip the root
   for (int dim = 1; dim < num_dims(dom); dim ++) {
     json config_file;
@@ -1590,6 +1604,7 @@ CoreIR::Module* affine_controller_use_lake_tile_counter(
     if (has_stencil_valid) {
       def->connect(buf->sel("stencil_valid"), def->sel("self.valid"));
     }
+    generate_lake_tile_verilog(options, buf);
   }
   m->setDef(def);
 
