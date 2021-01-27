@@ -195,3 +195,22 @@ string isl_sanitize(const std::string& str) {
   return res;
 
 }
+
+bool is_permutation(const vector<int>& level_permutation) {
+  std::set<int> loops;
+  for (auto l : level_permutation) {
+    loops.insert(l);
+    if (l < 0) {
+      return false;
+    }
+    if (!(l < level_permutation.size())) {
+      return false;
+    }
+  }
+
+  if (level_permutation.size() != loops.size()) {
+    return false;
+  }
+  return true;
+}
+

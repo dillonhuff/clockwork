@@ -507,3 +507,5 @@ std::string pg(const pair<string, string>& b) {
   return pg(b.first, b.second);
 }
 
+bool is_permutation(const vector<int>& level_permutation);
+

@@ -1787,7 +1787,6 @@ vector<string> buffer_args(const map<string, UBuffer>& buffers, op* op, prog& pr
   return buf_srcs;
 }
 
-//compute_kernel generate_compute_op(
 void generate_compute_op(
     ostream& conv_out,
     prog& prg,
@@ -1796,10 +1795,6 @@ void generate_compute_op(
     map<string, isl_set*>& domain_map) {
 
   cout << "Generating compute for: " << op->name << endl;
-
-  //compute_kernel kernel;
-  //kernel.name = op->name;
-  //kernel.functional_unit = op->func;
 
   vector<string> buf_srcs;
   concat(buf_srcs, buffer_args(buffers, op, prg));
@@ -1810,7 +1805,6 @@ void generate_compute_op(
   vector<string> dim_args;
   for (auto a : space_var_args(s)) {
     dim_args.push_back(a);
-    //kernel.iteration_variables.push_back(a);
   }
   dim_args.push_back("0");
 
@@ -1851,7 +1845,6 @@ void generate_compute_op(
     conv_out << "\tauto " << value_name << " = ";
 
     string bundle_name = op->name + "_read";
-    //kernel.input_buffers.push_back({in_buffer, bundle_name});
 
     if (prg.is_boundary(in_buffer)) {
       conv_out << in_buffer << ".read();" << endl;
@@ -1895,7 +1888,6 @@ void generate_compute_op(
   std::set<string> out_buffers;
   for (auto con : op->buffers_written()) {
     out_buffers.insert(con);
-    //out_buffers.insert(con.first);
   }
   if (!(out_buffers.size() == 1)) {
     cout << "Error: " << out_buffers.size() << " out_buffers in " << op->name << endl;
@@ -1906,7 +1898,6 @@ void generate_compute_op(
   conv_out << "\t// Produce: " << out_buffer << endl;
 
   string bundle_name = op->name + "_write";
-  //kernel.output_buffer = {out_buffer, bundle_name};
 
   cout << "Checking if program is a boundary" << endl;
 
@@ -1941,18 +1932,31 @@ std::string perfect_loop_codegen(umap* schedmap) {
   conv_out << "// # sets: " << sets.size() << endl;
   assert(sets.size() == 1);
   isl_set* s = pick(get_sets(time_range));
-  isl_set* index_ranges = isl_set_project_out(cpy(s), isl_dim_set, num_dims(s) - 1, 1);
+  //isl_set* index_ranges = isl_set_project_out(cpy(s), isl_dim_set, num_dims(s) - 1, 1);
   vector<int> lower_bounds;
   vector<int> upper_bounds;
+  vector<string> constraint_list;
+  vector<string> dvs;
   for (int d = 0; d < num_dims(s); d++) {
     auto ds = project_all_but(s, d);
     auto lm = lexminval(ds);
     auto lmax = lexmaxval(ds);
     lower_bounds.push_back(to_int(lm));
     upper_bounds.push_back(to_int(lmax));
+
+    if (d < num_dims(s) - 1) {
+      string vn = "d" + str(d);
+      dvs.push_back(vn);
+      constraint_list.push_back(str(lower_bounds.back()) + " <= " + vn + " <= " + str(upper_bounds.back()));
+    }
   }
 
-  //for (int i = 0; i < lower_bounds.size(); i++) {
+
+  string range_set =
+    curlies(bracket_list(dvs) + " : " + sep_list(constraint_list, "", "", " and "));
+  isl_set* index_ranges =
+    rdset(ctx(schedmap), range_set);
+
   for (int i = 0; i < lower_bounds.size() - 1; i++) {
     conv_out << tab(i) << "for (int i" << str(i) << " = " << lower_bounds.at(i) << "; i" << str(i) << " <= " << upper_bounds.at(i) << "; i" << i << "++) {" << endl;
     if (i == ((int) lower_bounds.size()) - 2) {
@@ -2004,6 +2008,7 @@ std::string perfect_loop_codegen(umap* schedmap) {
     cout << "dom: " << str(dom) << endl;
     cout << "irn: " << str(index_ranges) << endl;
     dom = gist(dom, index_ranges);
+    cout << "ctx: " << str(dom) << endl;
     //assert(false);
     conv_out << tab(lower_bounds.size()) << "// " << str(dom) << endl;
     for (auto bs : get_basic_sets(dom)) {
@@ -2138,8 +2143,6 @@ void generate_buffer_code(
     ostream& conv_out,
     map<string, UBuffer>& buffers,
     prog& prg) {
-    //umap* schedmap,
-    //map<string, isl_set*>& domain_map) {
 
   for (auto& b : buffers) {
     if (!prg.is_boundary(b.first)) {
@@ -5751,6 +5754,7 @@ int loop_depth(op* op) {
   return d + max_child_depth;
 
 }
+
 bool all_loop_nests_same_depth(prog& prg) {
   auto ops = prg.all_ops();
 
@@ -6458,6 +6462,8 @@ void read_in_after(op* loop, isl_map* read_data, const std::string& rb_name, pro
   ld->add_store(rb_name, comma_list(store_addrs));
 }
 
+// Q: Maybe I should re-factor away the "loop" and
+// just get it from surrounding vars?
 op* copy_after(
     op* loop,
     op* location,
@@ -6477,6 +6483,9 @@ op* copy_after(
     assert(l >= 0);
     assert(l < loop_order.size());
   }
+
+  cout << "Read data: " << str(read_data) << endl;
+  cout << "Loops    : " << comma_list(loop_order) << endl;
   assert(loops.size() == loop_order.size());
 
   string buf = name(read_data);
@@ -8460,6 +8469,22 @@ bool all_kernel_outputs_have_fanout_one(app_dag& dag) {
   return true;
 }
 
+void set_channel_depths_to_constant(const int constant, app_dag& dag) {
+  std::set<std::string> done;
+  for (auto& buf : dag.prg.boundary_buffers()) {
+    done.insert(buf);
+  }
+
+  for (auto& gp : dag.fusion_group_progs) {
+    for (auto& buf : gp.second.boundary_buffers()) {
+      if (!elem(buf, done)) {
+        int depth = constant;
+        dag.channel_sizes[buf] = depth;
+      }
+    }
+  }
+}
+
 void generate_app_code(
     CodegenOptions& options,
     app_dag& dag) {
@@ -8471,15 +8496,14 @@ void generate_app_code(
     }
   }
 
-  //auto valid_deps = dag.prg.validity_deps();
-  //auto global_sched =
-    //its(clockwork_schedule_umap_reversed(dag.prg.whole_iteration_domain(), valid_deps, valid_deps),
-        ////dag.prg.validity_deps(),
-        ////dag.prg.validity_deps()),
-        //dag.prg.whole_iteration_domain());
-  //cout << "Sched: " << str(global_sched) << endl;
+  auto valid_deps = dag.prg.validity_deps();
+  auto global_sched =
+    its(clockwork_schedule_umap_reversed(dag.prg.whole_iteration_domain(), valid_deps, valid_deps),
+        dag.prg.whole_iteration_domain());
+  cout << "Sched: " << str(global_sched) << endl;
 
-  auto global_sched = dag.prg.optimized_codegen();
+  //auto global_sched = dag.prg.optimized_codegen();
+
   auto buffers = build_buffers(dag.prg, global_sched);
 
   cout << "Generating code for " << dag.prg.name << endl;
@@ -8531,6 +8555,7 @@ void generate_app_code(
         local_buffers[buf.first] = buf.second;
       }
     }
+
     generate_app_code_op_logic(options,
         conv_out,
         local_buffers,
@@ -8552,6 +8577,8 @@ void generate_app_code(
     done.insert(buf);
   }
 
+  set_channel_depths_to_constant(100, dag);
+
   for (auto& gp : dag.fusion_group_progs) {
     for (auto& buf : gp.second.boundary_buffers()) {
       if (!elem(buf, done)) {
@@ -8562,7 +8589,7 @@ void generate_app_code(
         string tp = rep_buf.bundle_type_string(bundle);
         conv_out << tab(1) << "HWStream< " << tp << " > " << buf << ";" << endl;
         open_synth_scope(conv_out);
-        int depth = 2048;
+        int depth = map_find(buf, dag.channel_sizes);
         conv_out << "#pragma HLS stream variable=" << buf << ".values depth=" << depth << endl;
         close_synth_scope(conv_out);
         done.insert(buf);
@@ -8651,25 +8678,51 @@ vector<int> write_permutation(const std::string& buf, prog& pp) {
   auto readers = find_writers(buf, pp);
   op* reader = pick(readers);
   auto addr_rep = pick(write_addrs(reader, buf, pp));
-  //cout << tab(1) << "Addr rep: " << str(addr_rep) << endl;
+  cout << tab(1) << "Addr rep: " << str(addr_rep) << endl;
   auto levels = get_variable_levels(pp);
   vector<int> level_permutation;
-  level_permutation.resize(isl_multi_aff_dim(addr_rep, isl_dim_set));
+  level_permutation.resize(isl_multi_aff_dim(addr_rep, isl_dim_set), -1);
+  vector<int> constant_levels;
   for (int i = 0; i < isl_multi_aff_dim(addr_rep, isl_dim_set); i++) {
     isl_aff* addr_comp = isl_multi_aff_get_aff(addr_rep, i);
-    //cout << tab(2) << str(addr_comp) << endl;
+
+    bool found_addr = false;
+    cout << tab(2) << str(addr_comp) << endl;
     for (int d = 0; d < num_in_dims(addr_comp); d++) {
       if (!is_zero(get_coeff(addr_comp, d))) {
         string var = surrounding_vars(reader, pp).at(d);
         int lvl = map_find(var, levels) - 1;
-        //cout << tab(3) << "var: " << var << endl;
-        //cout << tab(3) << "lvl: " << map_find(var, levels) << endl;
+        cout << tab(3) << "var: " << var << endl;
+        cout << tab(3) << "lvl: " << map_find(var, levels) << endl;
         assert(lvl >= 0);
         //cout << tab(3) << "address component " << i << " of " << b.first << " should be loaded at level " << lvl << endl;
         level_permutation[i] = lvl;
+        found_addr = true;
+        break;
+      } else {
+        cout << tab(3) << "Address component is zero" << endl;
       }
     }
+    if (!found_addr) {
+      constant_levels.push_back(i);
+    }
   }
+
+  if (constant_levels.size() > 0) {
+    cout << "Components " << comma_list(constant_levels) << " of " << buf << " are only accessed at constant locations" << endl;
+    int total_comps = isl_multi_aff_dim(addr_rep, isl_dim_set);
+    int constant_comps = constant_levels.size();
+    int next_pad_level = max_e(level_permutation) + 1;
+    for (auto i : constant_levels) {
+      level_permutation[i] = next_pad_level;
+      next_pad_level++;
+    }
+  }
+
+  cout << "Permutation for " << buf << ": " << comma_list(level_permutation) << endl;
+  assert(level_permutation.size() == isl_multi_aff_dim(addr_rep, isl_dim_set));
+  assert(is_permutation(level_permutation));
+
   return level_permutation;
 }
 
@@ -8677,27 +8730,17 @@ vector<int> read_permutation(const std::string& buf, prog& gp) {
   vector<int> level_permutation;
 
   auto readers = find_readers(buf, gp);
-  //cout << "=== Readers..." << endl;
-  //for (auto reader : readers) {
-  //cout << tab(1) << reader->name << endl;
-  //}
   op* reader = pick(readers);
   auto addr_rep = pick(read_addrs(reader, buf, gp));
-  //cout << tab(1) << "Addr rep: " << str(addr_rep) << endl;
   auto levels = get_variable_levels(gp);
-  //vector<int> level_permutation;
   level_permutation.resize(isl_multi_aff_dim(addr_rep, isl_dim_set));
   for (int i = 0; i < isl_multi_aff_dim(addr_rep, isl_dim_set); i++) {
     isl_aff* addr_comp = isl_multi_aff_get_aff(addr_rep, i);
-    //cout << tab(2) << str(addr_comp) << endl;
     for (int d = 0; d < num_in_dims(addr_comp); d++) {
       if (!is_zero(get_coeff(addr_comp, d))) {
         string var = surrounding_vars(reader, gp).at(d);
         int lvl = map_find(var, levels) - 1;
-        //cout << tab(3) << "var: " << var << endl;
-        //cout << tab(3) << "lvl: " << map_find(var, levels) << endl;
         assert(lvl >= 0);
-        //cout << tab(3) << "address component " << i << " of " << b.first << " should be loaded at level " << lvl << endl;
         level_permutation[i] = lvl;
       }
     }
@@ -8851,6 +8894,8 @@ app_dag partition_groups(const std::map<std::string, std::set<std::string> >& fr
 app_dag partition_application(const std::map<std::string, std::set<std::string> >& fusion_groups, prog& prg) {
 
   auto fresh_groups = insert_inter_group_buffers(fusion_groups, prg);
+  unroll_mismatched_inner_loops(prg);
+  merge_basic_block_ops(prg);
   return partition_groups(fresh_groups, prg);
 }
 
@@ -8923,4 +8968,29 @@ bool sw_schedule_respects_deps(umap* schedule, umap* deps) {
 }
 
 
+
+void unroll_mismatched_inner_loops(prog& prg) {
+  if (!all_loop_nests_same_depth(prg)) {
+    cout << "Not all nests are the same depth!" << endl;
+    int min_depth = INT_MAX;
+    for (auto l : prg.all_ops()) {
+      int num_surrounding = surrounding_vars(l, prg).size();
+      if (num_surrounding < min_depth) {
+        min_depth = num_surrounding;
+      }
+    }
+    cout << "Min depth: " << min_depth << endl;
+
+    for (auto op : prg.all_ops()) {
+      auto surrounding = surrounding_vars(op, prg);
+      int num_surrounding = surrounding.size();
+      for (int v = min_depth; v < num_surrounding; v++) {
+        unroll(prg, surrounding.at(v));
+      }
+    }
+  }
+
+
+
+}
 

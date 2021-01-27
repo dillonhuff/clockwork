@@ -117,6 +117,17 @@ hw_uint<32> llf_to_gray_float(const hw_uint<96>& pix) {
   return to_bits(res);
 }
 
+hw_uint<32> llf_to_color_float_no_scales(
+    const hw_uint<32>& original,
+    const hw_uint<32>& gray) {
+
+  float original_f = to_float(original);
+  float gray_f = to_float(gray);
+  float eps = 0.01f;
+  float res = ((original_f + eps)) / (gray_f + eps);
+  return to_bits(res);
+}
+
 hw_uint<32> llf_to_color_float(const hw_uint<32>& scales,
     const hw_uint<32>& original,
     const hw_uint<32>& gray) {

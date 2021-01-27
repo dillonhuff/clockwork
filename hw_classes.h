@@ -11,7 +11,7 @@
 // can make Vivado HLS take a *very* long
 // time even for tiny designs. Avoid it
 // unless absolutely necessary.
-//#define AP_INT_MAX_W 32768
+#define AP_INT_MAX_W 32768
 #include "ap_int.h"
 
 #include "hls_stream.h"
@@ -27,8 +27,18 @@ using namespace std;
 
 #define MOD_INC(x, N) ((x) == ((N) - 1) ? 0 : (x) + 1)
 
+static inline
+int int_floor_div(const int num, const int denom) {
+  if (num >= 0) {
+    return num / denom;
+  } else {
+    return -1*(-num / denom);
+  }
+}
+
 // TODO: Replace this with something more sound
-#define floord(x, d) ((int) floor((x) / (float) (d)))
+//#define floord(x, d) ((int) floor((x) / (float) (d)))
+#define floord(x, d) int_floor_div((x), (d))
 //#define floord(x, d) ((x) / (d))
 
 template<int Depth>
@@ -388,6 +398,10 @@ class HWStream {
 
 #else
 
+
+    std::string name;
+    int reads, writes;
+
     deque<T> values;
 
     int num_waiting() const {
@@ -400,13 +414,20 @@ class HWStream {
 
     void write(const T& v) {
       //cout << "Inserting: " << (hw_uint<64>) v << " into hwstream" << endl;
+      writes++;
       return values.push_front(v);
     }
 
     T read() {
+      if (values.size() == 0) {
+        std::cout << "Error: " << name << " is empty during read" << std::endl;
+        std::cout << "\tReads : " << reads << endl;
+        std::cout << "\tWrites: " << writes << endl;
+      }
       assert(values.size() > 0);
       T b = values.back();
       values.pop_back();
+      reads++;
       return b;
     }
 
