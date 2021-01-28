@@ -8497,11 +8497,12 @@ void set_channel_depths_to_with_kernel_depth(const int kernel_depth, app_dag& da
     vector<string> lp = dag.longest_reconvergent_path(t);
     cout << tab(2) << "Longest path..." << endl;
     for (auto p : lp) {
-      cout << tab(3) << lp << endl;
+      cout << tab(3) << p << endl;
     }
-  }
+    assert(lp.size() >= 1);
 
-  assert(false);
+    dag.channel_sizes[t] = std::max((int) 2, (int) (kernel_depth*(lp.size() - 1)));
+  }
 
 }
 
@@ -9036,6 +9037,8 @@ vector<string> app_dag::longest_reconvergent_path(const std::string& buf) {
   string src = producer_group(buf);
   string dst = consumer_group(buf);
 
+  cout << "Getting path from " << src << " to " << dst << endl;
+
   assert(src != dst);
 
   path start_path{src};
@@ -9047,15 +9050,20 @@ vector<string> app_dag::longest_reconvergent_path(const std::string& buf) {
     path p = active_paths.back();
     active_paths.pop_back();
 
-
     string node = p.back();
     visited.insert(node);
 
+    cout << "Node = " << node << endl;
+
     for (auto c : children(node)) {
-      if (!elem(c, visited)) {
-        path fresh = p;
-        fresh.push_back(c);
-        active_paths.push_back(fresh);
+      if (c == dst) {
+        finished_paths.push_back(p);
+      } else {
+        if (!elem(c, visited)) {
+          path fresh = p;
+          fresh.push_back(c);
+          active_paths.push_back(fresh);
+        }
       }
     }
   }
@@ -9067,5 +9075,14 @@ vector<string> app_dag::longest_reconvergent_path(const std::string& buf) {
 
 std::set<string> app_dag::children(const std::string& location) {
   std::set<string> ch;
+
+  assert(contains_key(location, fusion_group_progs));
+
+  for (auto buf : buffers_written(fusion_group_progs.at(location))) {
+    if (!elem(buf, prg.boundary_buffers())) {
+      ch.insert(consumer_group(buf));
+    }
+  }
+
   return ch;
 }
