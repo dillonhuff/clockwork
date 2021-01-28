@@ -1938,9 +1938,13 @@ struct app_dag {
 
   vector<string> sorted_fusion_groups();
 
+  std::set<string> children(const std::string& location);
+
   bool is_boundary(const std::string& buf) {
     return prg.is_boundary(buf);
   }
+
+  vector<string> longest_reconvergent_path(const std::string& buf);
 
   string consumer_group(const std::string& buf) {
     assert(fusion_groups.size() == fusion_group_progs.size());

@@ -8494,6 +8494,11 @@ void set_channel_depths_to_with_kernel_depth(const int kernel_depth, app_dag& da
     cout << tab(1) << t << endl;
     cout << tab(2) << "Producer: " << dag.producer_group(t) << endl;
     cout << tab(2) << "Consumer: " << dag.consumer_group(t) << endl;
+    vector<string> lp = dag.longest_reconvergent_path(t);
+    cout << tab(2) << "Longest path..." << endl;
+    for (auto p : lp) {
+      cout << tab(3) << lp << endl;
+    }
   }
 
   assert(false);
@@ -9025,3 +9030,42 @@ void unroll_mismatched_inner_loops(prog& prg) {
 
 }
 
+typedef vector<string> path;
+
+vector<string> app_dag::longest_reconvergent_path(const std::string& buf) {
+  string src = producer_group(buf);
+  string dst = consumer_group(buf);
+
+  assert(src != dst);
+
+  path start_path{src};
+  std::set<string> visited;
+  vector<path> active_paths{start_path};
+  vector<path> finished_paths;
+
+  while (active_paths.size() > 0) {
+    path p = active_paths.back();
+    active_paths.pop_back();
+
+
+    string node = p.back();
+    visited.insert(node);
+
+    for (auto c : children(node)) {
+      if (!elem(c, visited)) {
+        path fresh = p;
+        fresh.push_back(c);
+        active_paths.push_back(fresh);
+      }
+    }
+  }
+
+  assert(finished_paths.size() > 0);
+
+  return max_e(finished_paths, [](const path& p) { return p.size(); });
+}
+
+std::set<string> app_dag::children(const std::string& location) {
+  std::set<string> ch;
+  return ch;
+}
