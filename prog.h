@@ -6,6 +6,8 @@
 #include "qexpr.h"
 #include "app.h"
 
+typedef vector<string> path;
+
 enum ir_node_type {
   IR_NODE_TYPE_OPERATION,
   IR_NODE_TYPE_LOOP,
@@ -1935,6 +1937,15 @@ struct app_dag {
   map<string, prog> fusion_group_progs;
   map<string, int> channel_sizes;
 
+  vector<path> all_paths(const std::string& src, const std::string& dst);
+
+  std::set<string> all_nodes() {
+    std::set<string> nodes;
+    for (auto& g : fusion_groups) {
+      nodes.insert(g.first);
+    }
+    return nodes;
+  }
 
   vector<string> sorted_fusion_groups();
 

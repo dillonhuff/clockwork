@@ -8504,8 +8504,21 @@ void set_channel_depths_ilp(const int kernel_depth, app_dag& dag) {
   ilp_builder builder(dag.prg.ctx);
   vector<pair<string, isl_val*> > obj;
   for (auto channel : to_size) {
-      builder.add_gt(channel, 2);
-      obj.push_back({channel, isl_val_one(builder.ctx)});
+    // Ready valid channels must be at least two
+    // deep to max out throughput.
+    builder.add_gt(channel, 1);
+    obj.push_back({channel, isl_val_one(builder.ctx)});
+  }
+
+  for (auto src : dag.all_nodes()) {
+    for (auto dst : dag.all_nodes()) {
+      if (src != dst) {
+        vector<path> paths = dag.all_paths(src, dst);
+        for (auto p : paths) {
+          cout << tab(1) << p << endl;
+        }
+      }
+    }
   }
 
   builder.minimize(simplify(obj));
@@ -8513,6 +8526,7 @@ void set_channel_depths_ilp(const int kernel_depth, app_dag& dag) {
   for (auto v : builder.variable_positions) {
     cout << v.first << " = " << str(builder.value(v.first)) << endl;
   }
+
   assert(false);
 }
 
@@ -9077,7 +9091,6 @@ void unroll_mismatched_inner_loops(prog& prg) {
 
 }
 
-typedef vector<string> path;
 
 vector<string> app_dag::longest_reconvergent_path(const std::string& buf) {
   string src = producer_group(buf);
@@ -9131,4 +9144,8 @@ std::set<string> app_dag::children(const std::string& location) {
   }
 
   return ch;
+}
+
+vector<path> app_dag::all_paths(const std::string& src, const std::string& dst) {
+  return {};
 }
