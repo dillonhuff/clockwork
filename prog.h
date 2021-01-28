@@ -1937,6 +1937,8 @@ struct app_dag {
   map<string, prog> fusion_group_progs;
   map<string, int> channel_sizes;
 
+  string edge_between(const std::string& src, const std::string& dst);
+
   vector<path> all_paths(const std::string& src, const std::string& dst);
 
   std::set<string> all_nodes() {

@@ -8524,6 +8524,18 @@ void set_channel_depths_ilp(const int kernel_depth, app_dag& dag) {
               // static path length of p1
               int static_length_p1 = kernel_depth*(p1.size() - 2);
               cout << tab(1) << "Static length of: " << p1 << " = " << static_length_p1 << endl;
+
+              map<string, isl_val*> coeffs;
+              for (int i = 0; i < (int) p0.size() - 1; i++) {
+                // Note: This assumes at most one channel between
+                // any two stages.
+                string s = p0.at(i);
+                string d = p0.at(i + 1);
+
+                string connector = dag.edge_between(s, d);
+                coeffs[connector] = isl_val_one(builder.ctx);
+              }
+              builder.add_geq(coeffs, isl_val_int_from_si(builder.ctx, -static_length_p1));
             }
           }
         }
@@ -8535,9 +8547,9 @@ void set_channel_depths_ilp(const int kernel_depth, app_dag& dag) {
   cout << "Solution: " << endl;
   for (auto v : builder.variable_positions) {
     cout << v.first << " = " << str(builder.value(v.first)) << endl;
+    dag.channel_sizes[v.first] = to_int(builder.value(v.first));
   }
 
-  assert(false);
 }
 
 void set_channel_depths_to_with_kernel_depth(const int kernel_depth, app_dag& dag) {
@@ -9159,4 +9171,21 @@ vector<path> app_dag::all_paths(const std::string& src, const std::string& dst) 
   }
 
   return finished_paths;
+}
+
+string app_dag::edge_between(const std::string& src, const std::string& dst) {
+  assert(contains_key(src, fusion_group_progs));
+  assert(contains_key(dst, fusion_group_progs));
+
+  vector<string> edges;
+  auto read = buffers_read(fusion_group_progs.at(dst));
+  for (auto b : buffers_written(fusion_group_progs.at(src))) {
+    if (elem(b, read)) {
+      edges.push_back(b);
+    }
+  }
+
+  assert(edges.size() == 1);
+
+  return pick(edges);
 }
