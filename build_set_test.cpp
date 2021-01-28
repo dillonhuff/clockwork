@@ -19936,7 +19936,7 @@ void test_multi_kernel_llf() {
 
 void test_multi_kernel_pyramid_collapsing() {
 
-  prog prg("pyr_blndd256_ii1");
+  prog prg("pyr_blnddilp");
   prg.compute_unit_file = "local_laplacian_filters_compute.h";
   prg.add_input("in");
   prg.add_output("out");
@@ -21000,10 +21000,9 @@ void stencil_chain_multi_kernel_test() {
 void dhuff_tests() {
   //test_multi_kernel_llf();
 
-  test_multi_kernel_mismatched_loop_depths();
-
-  test_artificial_deadlock();
   test_multi_kernel_pyramid_collapsing();
+  test_multi_kernel_mismatched_loop_depths();
+  test_artificial_deadlock();
   upsample2d_test();
   up_stencil_down_test();
   test_multi_kernel_unsharp();
