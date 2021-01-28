@@ -1942,6 +1942,27 @@ struct app_dag {
     return prg.is_boundary(buf);
   }
 
+  string consumer_group(const std::string& buf) {
+    assert(fusion_groups.size() == fusion_group_progs.size());
+
+    for (auto& gp : fusion_group_progs) {
+      if (elem(buf, buffers_read(gp.second))) {
+        return gp.first;
+      }
+    }
+    cout << "Error: No consumer group for: " << buf << endl;
+    cout << "Program..." << endl;
+    prg.pretty_print();
+    cout << endl;
+
+    cout << "Fusion group progs..." << endl;
+    for (auto& gp : fusion_group_progs) {
+      gp.second.pretty_print();
+      cout << endl;
+    }
+    assert(false);
+  }
+
   string producer_group(const std::string& buf) {
     assert(fusion_groups.size() == fusion_group_progs.size());
 

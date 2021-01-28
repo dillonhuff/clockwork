@@ -8469,6 +8469,37 @@ bool all_kernel_outputs_have_fanout_one(app_dag& dag) {
   return true;
 }
 
+void set_channel_depths_to_with_kernel_depth(const int kernel_depth, app_dag& dag) {
+  // TODO: For each channel set the depth to be the length of the longest path
+  // between the source and destination
+
+  std::set<std::string> done;
+  std::set<std::string> to_size;
+  for (auto& buf : dag.prg.boundary_buffers()) {
+    done.insert(buf);
+  }
+
+  for (auto& gp : dag.fusion_group_progs) {
+    for (auto& buf : gp.second.boundary_buffers()) {
+      if (!elem(buf, done)) {
+        int depth = kernel_depth;
+        dag.channel_sizes[buf] = depth;
+        to_size.insert(buf);
+      }
+    }
+  }
+
+  cout << "Channels to size" << endl;
+  for (auto t : to_size) {
+    cout << tab(1) << t << endl;
+    cout << tab(2) << "Producer: " << dag.producer_group(t) << endl;
+    cout << tab(2) << "Consumer: " << dag.consumer_group(t) << endl;
+  }
+
+  assert(false);
+
+}
+
 void set_channel_depths_to_constant(const int constant, app_dag& dag) {
   std::set<std::string> done;
   for (auto& buf : dag.prg.boundary_buffers()) {
@@ -8577,7 +8608,7 @@ void generate_app_code(
     done.insert(buf);
   }
 
-  set_channel_depths_to_constant(100, dag);
+  set_channel_depths_to_with_kernel_depth(500, dag);
 
   for (auto& gp : dag.fusion_group_progs) {
     for (auto& buf : gp.second.boundary_buffers()) {
