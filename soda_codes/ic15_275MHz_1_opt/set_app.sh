@@ -1,2 +1,0 @@
-export app=ic15_275MHz_1_opt
-export HLS_CLOCK_FREQUENCY=275000000
