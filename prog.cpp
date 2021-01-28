@@ -8470,11 +8470,11 @@ bool all_kernel_outputs_have_fanout_one(app_dag& dag) {
 }
 
 void set_channel_depths_ilp(const int kernel_depth, app_dag& dag) {
-  //std::set<std::string> done;
+  std::set<std::string> done;
   std::set<std::string> to_size;
-  //for (auto& buf : dag.prg.boundary_buffers()) {
-    //done.insert(buf);
-  //}
+  for (auto& buf : dag.prg.boundary_buffers()) {
+    done.insert(buf);
+  }
 
   for (auto& gp : dag.fusion_group_progs) {
     for (auto& buf : gp.second.boundary_buffers()) {
@@ -8501,6 +8501,19 @@ void set_channel_depths_ilp(const int kernel_depth, app_dag& dag) {
     dag.channel_sizes[t] = std::max((int) 2, (int) (kernel_depth*(lp.size() - 1)));
   }
 
+  ilp_builder builder(dag.prg.ctx);
+  vector<pair<string, isl_val*> > obj;
+  for (auto channel : to_size) {
+      builder.add_gt(channel, 2);
+      obj.push_back({channel, isl_val_one(builder.ctx)});
+  }
+
+  builder.minimize(simplify(obj));
+  cout << "Solution: " << endl;
+  for (auto v : builder.variable_positions) {
+    cout << v.first << " = " << str(builder.value(v.first)) << endl;
+  }
+  assert(false);
 }
 
 void set_channel_depths_to_with_kernel_depth(const int kernel_depth, app_dag& dag) {

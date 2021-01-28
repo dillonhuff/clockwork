@@ -1349,3 +1349,5 @@ map<string, isl_aff*> clockwork_schedule_dimension(
     vector<isl_set*> domains,
     vector<isl_map*> deps,
     map<string, vector<string> >& high_bandwidth_deps);
+
+map<string, isl_val*> simplify(const vector<pair<string, isl_val*> >& terms);
