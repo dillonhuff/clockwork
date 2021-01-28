@@ -21001,6 +21001,7 @@ void dhuff_tests() {
   //test_multi_kernel_llf();
 
   test_multi_kernel_pyramid_collapsing();
+  assert(false);
   test_multi_kernel_mismatched_loop_depths();
   test_artificial_deadlock();
   upsample2d_test();
