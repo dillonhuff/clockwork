@@ -8513,6 +8513,7 @@ void set_channel_depths_ilp(const int kernel_depth, app_dag& dag) {
   for (auto src : dag.all_nodes()) {
     for (auto dst : dag.all_nodes()) {
       if (src != dst) {
+        cout << "--------" << endl;
         vector<path> paths = dag.all_paths(src, dst);
         for (auto p : paths) {
           cout << tab(1) << p << endl;
@@ -9096,36 +9097,37 @@ vector<string> app_dag::longest_reconvergent_path(const std::string& buf) {
   string src = producer_group(buf);
   string dst = consumer_group(buf);
 
-  cout << "Getting path from " << src << " to " << dst << endl;
+  vector<path> finished_paths = all_paths(src, dst);
+  //cout << "Getting path from " << src << " to " << dst << endl;
 
-  assert(src != dst);
+  //assert(src != dst);
 
-  path start_path{src};
-  std::set<string> visited;
-  vector<path> active_paths{start_path};
-  vector<path> finished_paths;
+  //path start_path{src};
+  //std::set<string> visited;
+  //vector<path> active_paths{start_path};
+  //vector<path> finished_paths;
 
-  while (active_paths.size() > 0) {
-    path p = active_paths.back();
-    active_paths.pop_back();
+  //while (active_paths.size() > 0) {
+    //path p = active_paths.back();
+    //active_paths.pop_back();
 
-    string node = p.back();
-    visited.insert(node);
+    //string node = p.back();
+    //visited.insert(node);
 
-    cout << "Node = " << node << endl;
+    //cout << "Node = " << node << endl;
 
-    for (auto c : children(node)) {
-      if (c == dst) {
-        finished_paths.push_back(p);
-      } else {
-        if (!elem(c, visited)) {
-          path fresh = p;
-          fresh.push_back(c);
-          active_paths.push_back(fresh);
-        }
-      }
-    }
-  }
+    //for (auto c : children(node)) {
+      //if (c == dst) {
+        //finished_paths.push_back(p);
+      //} else {
+        //if (!elem(c, visited)) {
+          //path fresh = p;
+          //fresh.push_back(c);
+          //active_paths.push_back(fresh);
+        //}
+      //}
+    //}
+  //}
 
   assert(finished_paths.size() > 0);
 
@@ -9147,5 +9149,35 @@ std::set<string> app_dag::children(const std::string& location) {
 }
 
 vector<path> app_dag::all_paths(const std::string& src, const std::string& dst) {
-  return {};
+  assert(src != dst);
+
+  path start_path{src};
+  std::set<string> visited;
+  vector<path> active_paths{start_path};
+  vector<path> finished_paths;
+
+  while (active_paths.size() > 0) {
+    path p = active_paths.back();
+    active_paths.pop_back();
+
+    string node = p.back();
+    visited.insert(node);
+
+
+    for (auto c : children(node)) {
+      if (c == dst) {
+        path pcpy = p;
+        pcpy.push_back(dst);
+        finished_paths.push_back(pcpy);
+      } else {
+        if (!elem(c, visited)) {
+          path fresh = p;
+          fresh.push_back(c);
+          active_paths.push_back(fresh);
+        }
+      }
+    }
+  }
+
+  return finished_paths;
 }
