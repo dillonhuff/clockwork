@@ -8513,10 +8513,19 @@ void set_channel_depths_ilp(const int kernel_depth, app_dag& dag) {
   for (auto src : dag.all_nodes()) {
     for (auto dst : dag.all_nodes()) {
       if (src != dst) {
-        cout << "--------" << endl;
         vector<path> paths = dag.all_paths(src, dst);
-        for (auto p : paths) {
-          cout << tab(1) << p << endl;
+        for (auto p0 : paths) {
+          for (auto p1 : paths) {
+            if (p0 != p1) {
+              assert(p0.size() >= 2);
+              assert(p1.size() >= 2);
+
+              // Dynamic path length of p0 must be at least as large as the
+              // static path length of p1
+              int static_length_p1 = kernel_depth*(p1.size() - 2);
+              cout << tab(1) << "Static length of: " << p1 << " = " << static_length_p1 << endl;
+            }
+          }
         }
       }
     }
@@ -9098,36 +9107,6 @@ vector<string> app_dag::longest_reconvergent_path(const std::string& buf) {
   string dst = consumer_group(buf);
 
   vector<path> finished_paths = all_paths(src, dst);
-  //cout << "Getting path from " << src << " to " << dst << endl;
-
-  //assert(src != dst);
-
-  //path start_path{src};
-  //std::set<string> visited;
-  //vector<path> active_paths{start_path};
-  //vector<path> finished_paths;
-
-  //while (active_paths.size() > 0) {
-    //path p = active_paths.back();
-    //active_paths.pop_back();
-
-    //string node = p.back();
-    //visited.insert(node);
-
-    //cout << "Node = " << node << endl;
-
-    //for (auto c : children(node)) {
-      //if (c == dst) {
-        //finished_paths.push_back(p);
-      //} else {
-        //if (!elem(c, visited)) {
-          //path fresh = p;
-          //fresh.push_back(c);
-          //active_paths.push_back(fresh);
-        //}
-      //}
-    //}
-  //}
 
   assert(finished_paths.size() > 0);
 
