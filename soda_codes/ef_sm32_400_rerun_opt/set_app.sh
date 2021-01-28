@@ -1,2 +1,0 @@
-export app=ef_sm32_400_rerun_opt
-export HLS_CLOCK_FREQUENCY=400000000
