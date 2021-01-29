@@ -8513,7 +8513,10 @@ void set_channel_depths_ilp(const int kernel_depth, app_dag& dag) {
   for (auto src : dag.all_nodes()) {
     for (auto dst : dag.all_nodes()) {
       if (src != dst) {
+        cout << "Getting all paths" << endl;
         vector<path> paths = dag.all_paths(src, dst);
+        cout << "Got all paths" << endl;
+        cout << tab(1) << "# of paths from " << src << " to " << dst << " = " << paths.size() << endl;
         for (auto p0 : paths) {
           for (auto p1 : paths) {
             if (p0 != p1) {
@@ -8525,6 +8528,7 @@ void set_channel_depths_ilp(const int kernel_depth, app_dag& dag) {
               int static_length_p1 = kernel_depth*(p1.size() - 2);
               cout << tab(1) << "Static length of: " << p1 << " = " << static_length_p1 << endl;
 
+
               map<string, isl_val*> coeffs;
               for (int i = 0; i < (int) p0.size() - 1; i++) {
                 // Note: This assumes at most one channel between
@@ -8532,10 +8536,14 @@ void set_channel_depths_ilp(const int kernel_depth, app_dag& dag) {
                 string s = p0.at(i);
                 string d = p0.at(i + 1);
 
+                cout << "Getting edge between" << endl;
                 string connector = dag.edge_between(s, d);
+                cout << "Got edge between" << endl;
                 coeffs[connector] = isl_val_one(builder.ctx);
               }
+              cout << "Adding constraint" << endl;
               builder.add_geq(coeffs, isl_val_int_from_si(builder.ctx, -static_length_p1));
+              cout << "Done adding constraint" << endl;
             }
           }
         }

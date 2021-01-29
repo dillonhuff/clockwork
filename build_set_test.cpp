@@ -19914,6 +19914,7 @@ void test_multi_kernel_mismatched_loop_depths() {
 
 void test_multi_kernel_llf() {
   prog prg = llf_float();
+  prg.name = "llf_dilp";
   //auto unopt_postprocessed = unoptimized_result(prg);
 
   auto fusion_groups = one_stage_per_group(prg);
@@ -19965,6 +19966,8 @@ void test_multi_kernel_pyramid_collapsing() {
   auto unopt_postprocessed = unoptimized_result(prg);
 
   auto fusion_groups = one_stage_per_group(prg);
+  //cout << "# of groups: " << fusion_groups.size() << endl;
+
   app_dag dag = partition_application(fusion_groups, prg);
   string target = "gp_in_on_chip_1_buf4_to_gp_1112";
   dag.prg.pretty_print();
@@ -21002,6 +21005,8 @@ void dhuff_tests() {
   assert(false);
 
   test_multi_kernel_pyramid_collapsing();
+
+
   test_multi_kernel_mismatched_loop_depths();
   test_artificial_deadlock();
   upsample2d_test();
