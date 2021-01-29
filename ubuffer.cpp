@@ -5781,6 +5781,7 @@ void UBuffer::generate_banks(CodegenOptions& options) {
   }
 
   //new mechod using the recipe
+  //This is the method that used currently
   map<string, isl_map*> UBuffer::produce_vectorized_schedule(vector<string> in_bd_vec, vector<string> out_bd_vec, vector<int> iis, int fetch_width) {
     /*
      * Previously we have two ops, input and output.In order to do the vectorization
@@ -5811,7 +5812,8 @@ void UBuffer::generate_banks(CodegenOptions& options) {
       auto out_sched_new = linear_schedule(to_map(out_sched), iis, 0, false);
 
       //The out vectorize schedule recipe
-      int vec_offset = out_bd_cnt * fetch_width/2 - (out_fetch_ii * fetch_width+1);
+      int vec_offset = out_bd_cnt * out_fetch_ii * fetch_width / 2
+          - (out_fetch_ii * fetch_width+1);
       auto out_sched_vec = linear_schedule(to_map(out_sched), iis, vec_offset, false);
       out_sched_vec = pad_one_more_dim_to_sched_map_innermost(out_sched_vec, 0);
       //cout << "\tin_sched vec: " << in_sched_vec << "\t\nout_sched vec: " << out_sched_vec << endl;
@@ -6199,6 +6201,8 @@ void UBuffer::generate_banks(CodegenOptions& options) {
       bool UBuffer::merge_small_dim(int fetch_width) {
         //pad the domain for both input port and output port
         std::set<int> merge_dim;
+
+        //merge the input dim
         for (auto bd: get_in_bundles()) {
           for (auto pt: port_bundles.at(bd)) {
             auto am = to_map(access_map.at(pt));
@@ -6226,12 +6230,15 @@ void UBuffer::generate_banks(CodegenOptions& options) {
           }
         }
 
+        //Merge the access(address) range
         if (merge_dim.size()) {
           for (auto& it: access_map) {
             auto map = it.second;
             auto rng = to_set(range(map));
             auto trans = flatten_set_trans_with_dim_set(rng, merge_dim);
+            //cout << "merge transform: " << str(trans) << endl;
             it.second = simplify(dot(map, trans));
+            //cout << "\torigin access map: " << str(map) << "\n\tafter trans: " << str(it.second) << endl;
           }
           return true;
         } else {
@@ -6704,16 +6711,18 @@ void UBuffer::generate_banks(CodegenOptions& options) {
               std::cout << "transform rewrite: " << str(op_trans) << endl;
 
 
-              isl_map* buf2op = to_map(inv(access_map.at(out_pt_name)));
+              auto buf2op = inv(access_map.at(out_pt_name));
 
               //Also need to pad the range for vectorization
-              int rem = get_pad_remainder(buf2op, dim_id, fetch_width);
-              umap* padded_buf2op;
-              if (rem == 0)
-                padded_buf2op = to_umap(buf2op);
-              else
-                padded_buf2op = to_umap(pad_to_domain_ubuf_map(buf2op, dim_id, fetch_width - rem));
-              auto rewrite_buf2op = dot(padded_buf2op, op_trans);
+              //int rem = get_pad_remainder(buf2op, dim_id, fetch_width);
+              //umap* padded_buf2op;
+              //if (rem == 0)
+              //padded_buf2op = to_umap(buf2op);
+              //else
+              //  padded_buf2op = to_umap(pad_to_domain_ubuf_map(buf2op, dim_id, fetch_width - rem));
+
+              //no need to pad since we handle it in the previous stage
+              auto rewrite_buf2op = dot(buf2op, op_trans);
               //auto rewrite_buf2op = dot(inv(access_map.at(out_pt_name)), op_trans);
               cout << "\t\toriginal buf2out: "<< str(inv(access_map.at(out_pt_name))) << endl
                 << "\t\tpadded and batched buf2out : "<< str(rewrite_buf2op) << endl;
@@ -6733,6 +6742,7 @@ void UBuffer::generate_banks(CodegenOptions& options) {
               //cout << "original loop: " << str(new_sched.at(::name(new_op_domain))) << endl;
 
               //pad schedule for cross boundary cases
+              //TODO: move this to the place when pad domain
               if (pad_schedule) {
                 auto padded_sched = new_sched.at(::name(new_op_domain));
                 padded_sched = pad_to_domain_ubuf_map(padded_sched, num_in_dims(padded_sched)-1, 1);

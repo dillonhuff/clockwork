@@ -1897,8 +1897,9 @@ Instance* generate_coreir_op_controller(CodegenOptions& options, ModuleDef* def,
 
   //For those op need loop index we need this controller
   bool need_index = op->index_variables_needed_by_compute.size() > 0;
-  //if (options.rtl_options.use_external_controllers || need_index ) {
-  if (options.rtl_options.use_external_controllers) {
+  //TODO: remove the first statement after kavya add init to lakewrapper
+  if (options.rtl_options.use_external_controllers || need_index ) {
+  //if (options.rtl_options.use_external_controllers) {
     auto aff_c = affine_controller(options, c, dom, aff);
     aff_c->print();
     controller = def->addInstance(controller_name(op->name), aff_c);
