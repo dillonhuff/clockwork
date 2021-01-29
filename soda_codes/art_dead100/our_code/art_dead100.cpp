@@ -388,17 +388,17 @@ inline void gray_FIFO_buf24_load_to_gray_FIFO_buf2427_write_bundle_write(hw_uint
 }
 
 // Operation logic
-inline void load_to_gray_to_gp_21215(gray_cache& gray, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */gray_to_gp_212, int d0, int d1, int d2) {
+inline void load_to_gray_to_gp_1811(gray_cache& gray, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */gray_to_gp_18, int d0, int d1, int d2) {
   // Dynamic address computation
 
 	// Consume: gray
-	auto gray_gray_ld13_c__gray_ld14_value = gray_load_to_gray_to_gp_21215_read_bundle_read(gray/* source_delay */, d0, d1, d2, 0);
+	auto gray_gray_ld9_c__gray_ld10_value = gray_load_to_gray_to_gp_1811_read_bundle_read(gray/* source_delay */, d0, d1, d2, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 
-	// Produce: gray_to_gp_212
-	gray_to_gp_212.write(gray_gray_ld13_c__gray_ld14_value);
+	// Produce: gray_to_gp_18
+	gray_to_gp_18.write(gray_gray_ld9_c__gray_ld10_value);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -418,17 +418,17 @@ inline void oc_load_in03(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */
 
 }
 
-inline void load_to_gray_to_gp_1811(gray_cache& gray, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */gray_to_gp_18, int d0, int d1, int d2) {
+inline void load_to_gray_to_gp_21215(gray_cache& gray, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */gray_to_gp_212, int d0, int d1, int d2) {
   // Dynamic address computation
 
 	// Consume: gray
-	auto gray_gray_ld9_c__gray_ld10_value = gray_load_to_gray_to_gp_1811_read_bundle_read(gray/* source_delay */, d0, d1, d2, 0);
+	auto gray_gray_ld13_c__gray_ld14_value = gray_load_to_gray_to_gp_21215_read_bundle_read(gray/* source_delay */, d0, d1, d2, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 
-	// Produce: gray_to_gp_18
-	gray_to_gp_18.write(gray_gray_ld9_c__gray_ld10_value);
+	// Produce: gray_to_gp_212
+	gray_to_gp_212.write(gray_gray_ld13_c__gray_ld14_value);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__

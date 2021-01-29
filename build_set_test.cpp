@@ -19975,9 +19975,9 @@ void test_multi_kernel_pyramid_collapsing() {
   dag.prg.pretty_print();
 
   CodegenOptions options;
-  all_unbanked(prg, options);
-  options.inner_bank_offset_mode =
-    INNER_BANK_OFFSET_MULTILINEAR;
+  //all_unbanked(prg, options);
+  //options.inner_bank_offset_mode =
+    //INNER_BANK_OFFSET_MULTILINEAR;
   options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
   //options.hls_loop_codegen = HLS_LOOP_CODEGEN_ISL;
   generate_app_code(options, dag);
