@@ -19914,7 +19914,7 @@ void test_multi_kernel_mismatched_loop_depths() {
 
 void test_multi_kernel_llf() {
   prog prg = llf_float();
-  prg.name = "llf_dilp";
+  prg.name = "llf_dcons_23";
   //auto unopt_postprocessed = unoptimized_result(prg);
 
   auto fusion_groups = one_stage_per_group(prg);
