@@ -19965,8 +19965,10 @@ void test_multi_kernel_pyramid_collapsing() {
 
   auto unopt_postprocessed = unoptimized_result(prg);
 
-  auto fusion_groups = one_stage_per_group(prg);
-  //cout << "# of groups: " << fusion_groups.size() << endl;
+  //auto fusion_groups = one_stage_per_group(prg);
+  auto fusion_groups = fuse_pointwise_stages(prg);
+  cout << "# of groups: " << fusion_groups.size() << endl;
+  //assert(false);
 
   app_dag dag = partition_application(fusion_groups, prg);
   string target = "gp_in_on_chip_1_buf4_to_gp_1112";

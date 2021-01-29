@@ -3085,7 +3085,37 @@ std::set<string> buffers_written(prog& prg) {
   return written;
 }
 
+std::set<string> buffers_read(op* p) {
+  if (p->is_loop()) {
+    std::set<string> read;
+    for (auto child : p->children) {
+      for (auto b : buffers_read(child)) {
+        read.insert(b);
+      }
+    }
+    return read;
+  }
+
+  assert(!p->is_loop());
+
+  std::set<string> bufs;
+  for (auto b : p->buffers_read()) {
+    bufs.insert(b);
+  }
+  return bufs;
+}
+
 std::set<string> buffers_written(op* p) {
+  if (p->is_loop()) {
+    std::set<string> written;
+    for (auto child : p->children) {
+      for (auto b : buffers_written(child)) {
+        written.insert(b);
+      }
+    }
+    return written;
+  }
+
   assert(!p->is_loop());
 
   std::set<string> bufs;
@@ -9075,6 +9105,81 @@ vector<string> app_dag::sorted_fusion_groups() {
 
   }
   return sorted;
+}
+
+bool is_pointwise_kernel(const std::string& name, prog& prg) {
+  return buffers_read(prg.find_loop(name)).size() == 1 &&
+    buffers_written(prg.find_loop(name)).size() == 1;
+}
+
+void merge_into(
+    const std::string& to_merge,
+    const std::string& dst,
+    map<std::string, std::set<string> >& groups) {
+
+  auto values = map_find(to_merge, groups);
+  for (auto v : values) {
+    groups.at(dst).insert(v);
+  }
+  groups.erase(to_merge);
+}
+
+std::set<string> parents(const std::string& to_merge, map<string, std::set<string> >& fusion_groups, prog& prg) {
+  std::set<string> parent_set;
+
+  auto read = buffers_read(prg.find_loop(pick(fusion_groups.at(to_merge))));
+  for (auto fg : fusion_groups) {
+    for (auto parent : fg.second) {
+      auto written = buffers_written(prg.find_loop(parent));
+      if (intersection(read, written).size() > 0) {
+        parent_set.insert(fg.first);
+      }
+    }
+  }
+
+  return parent_set;
+
+}
+string parent_group(const std::string& to_merge, map<string, std::set<string> >& fusion_groups, prog& prg) {
+  std::set<string> parent_set = parents(to_merge, fusion_groups, prg);
+
+  assert(parent_set.size() == 1);
+
+  return pick(parent_set);
+}
+
+map<std::string, std::set<string> > fuse_pointwise_stages(prog& prg) {
+  map<std::string, std::set<string> > fusion_groups = one_stage_per_group(prg);
+
+  bool found_mergeable = true;
+  while (found_mergeable) {
+    found_mergeable = false;
+
+    string to_merge = "";
+    for (auto g : fusion_groups) {
+      auto kernels = g.second;
+      if (parents(g.first, fusion_groups, prg).size() == 1 && kernels.size() == 1) {
+        if (is_pointwise_kernel(pick(kernels), prg)) {
+          cout << "Candidate pointwise fusion group: " << g.first << endl;
+          to_merge = g.first;
+          found_mergeable = true;
+          break;
+        }
+      }
+    }
+
+    if (found_mergeable) {
+      assert(to_merge != "");
+
+      string parent = parent_group(to_merge, fusion_groups, prg);
+      merge_into(to_merge, parent, fusion_groups);
+
+      assert(!contains_key(to_merge, fusion_groups));
+    }
+
+  }
+
+  return fusion_groups;
 }
 
 map<std::string, std::set<string> > one_stage_per_group(prog& prg) {

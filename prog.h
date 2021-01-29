@@ -1491,6 +1491,8 @@ void make_constant_dd(const std::string& target_op, const std::string& target_bu
 std::vector<string> topologically_sort_kernels(prog& prg);
 
 std::set<string> buffers_written(op* p);
+std::set<string> buffers_read(op* p);
+
 std::set<string> buffers_written(prog& prg);
 std::set<string> buffers_read(prog& prg);
 
@@ -2030,6 +2032,8 @@ std::map<std::string, std::set<std::string> >
 insert_inter_group_buffers(const std::map<std::string, std::set<std::string> >& fusion_groups, prog& prg);
 
 map<std::string, std::set<string> > one_stage_per_group(prog& prg);
+
+map<std::string, std::set<string> > fuse_pointwise_stages(prog& prg);
 
 vector<string> buffer_arg_names(op* op, prog& prg);
 
