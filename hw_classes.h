@@ -476,5 +476,11 @@ void burst_write(hw_uint<burst_width>* output,
   }
 }
 
+template<int num_wide_bursts, int wide_width, int narrow_width>
+void stream_narrower(HWStream<hw_uint<wide_width> >& input,
+    HWStream<hw_uint<narrow_width> >& output) {
+
+  assert(false);
+}
 
 
