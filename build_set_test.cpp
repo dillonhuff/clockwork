@@ -15967,7 +15967,7 @@ prog llf_float() {
 
   //assert(false);
 
-  infer_bounds("color_out", {3, 23, 23}, prg);
+  infer_bounds("color_out", {3, 2048, 2048}, prg);
 
   cout << "After bounds inference..." << endl;
   prg.pretty_print();
@@ -19914,7 +19914,7 @@ void test_multi_kernel_mismatched_loop_depths() {
 
 void test_multi_kernel_llf() {
   prog prg = llf_float();
-  prg.name = "llf_dcons_23";
+  prg.name = "llf_dcons_2048";
   //auto unopt_postprocessed = unoptimized_result(prg);
 
   auto fusion_groups = one_stage_per_group(prg);
@@ -19927,8 +19927,8 @@ void test_multi_kernel_llf() {
   //options.hls_loop_codegen = HLS_LOOP_CODEGEN_ISL;
   generate_app_code(options, dag);
 
-  generate_regression_testbench(dag.prg);
-  vector<string> multi_kernel_res = run_regression_tb(dag.prg);
+  //generate_regression_testbench(dag.prg);
+  //vector<string> multi_kernel_res = run_regression_tb(dag.prg);
 
   //compare("multi_kernel_" + prg.name + "_vs_unopt", multi_kernel_res, unopt_postprocessed);
   move_to_benchmarks_folder(dag.prg.name);
