@@ -22,29 +22,29 @@ int main(int argc, char **argv) {
   std::cout << "num_epochs = " << num_epochs << std::endl;
 
   size_t total_size_bytes = 0;
-  const int in_1_merged575_read_pipe0_DATA_SIZE = num_epochs*2223000;
-  const int in_1_merged575_read_pipe0_BYTES_PER_PIXEL = 16 / 8;
-  size_t in_1_merged575_read_pipe0_size_bytes = in_1_merged575_read_pipe0_BYTES_PER_PIXEL * in_1_merged575_read_pipe0_DATA_SIZE;
+  const int in_1_merged1793_read_pipe0_DATA_SIZE = num_epochs*2589600;
+  const int in_1_merged1793_read_pipe0_BYTES_PER_PIXEL = 16 / 8;
+  size_t in_1_merged1793_read_pipe0_size_bytes = in_1_merged1793_read_pipe0_BYTES_PER_PIXEL * in_1_merged1793_read_pipe0_DATA_SIZE;
 
-  total_size_bytes += in_1_merged575_read_pipe0_size_bytes;
-  const int jacdyn_1_1_merged623_write_pipe0_DATA_SIZE = num_epochs*2073600;
-  const int jacdyn_1_1_merged623_write_pipe0_BYTES_PER_PIXEL = 16 / 8;
-  size_t jacdyn_1_1_merged623_write_pipe0_size_bytes = jacdyn_1_1_merged623_write_pipe0_BYTES_PER_PIXEL * jacdyn_1_1_merged623_write_pipe0_DATA_SIZE;
+  total_size_bytes += in_1_merged1793_read_pipe0_size_bytes;
+  const int jacdyn_16_1_merged1841_write_pipe0_DATA_SIZE = num_epochs*2088960;
+  const int jacdyn_16_1_merged1841_write_pipe0_BYTES_PER_PIXEL = 16 / 8;
+  size_t jacdyn_16_1_merged1841_write_pipe0_size_bytes = jacdyn_16_1_merged1841_write_pipe0_BYTES_PER_PIXEL * jacdyn_16_1_merged1841_write_pipe0_DATA_SIZE;
 
-  total_size_bytes += jacdyn_1_1_merged623_write_pipe0_size_bytes;
+  total_size_bytes += jacdyn_16_1_merged1841_write_pipe0_size_bytes;
 
   cl_int err;
   cl::Context context;
   cl::Kernel krnl_vector_add;
   cl::CommandQueue q;
 
-  std::vector<uint8_t, aligned_allocator<uint8_t> > in_1_merged575_read_pipe0(in_1_merged575_read_pipe0_size_bytes);
-  std::vector<uint8_t, aligned_allocator<uint8_t> > jacdyn_1_1_merged623_write_pipe0(jacdyn_1_1_merged623_write_pipe0_size_bytes);
+  std::vector<uint8_t, aligned_allocator<uint8_t> > in_1_merged1793_read_pipe0(in_1_merged1793_read_pipe0_size_bytes);
+  std::vector<uint8_t, aligned_allocator<uint8_t> > jacdyn_16_1_merged1841_write_pipe0(jacdyn_16_1_merged1841_write_pipe0_size_bytes);
 
   // TODO: POPULATE BUFFERS FOR EACH PIPELINE
 #ifdef __POPULATE_HOST_INPUTS__
-  std::ofstream input_in_1_merged575_read("in_1_merged575_read.csv");
-  for (int i = 0; i < in_1_merged575_read_pipe0_DATA_SIZE; i++) {
+  std::ofstream input_in_1_merged1793_read("in_1_merged1793_read.csv");
+  for (int i = 0; i < in_1_merged1793_read_pipe0_DATA_SIZE; i++) {
 #ifdef __FLOAT_OUTPUT__
     float  val = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
 #else // __FLOAT_OUTPUT__
@@ -52,21 +52,21 @@ int main(int argc, char **argv) {
 #endif // __FLOAT_OUTPUT__
 
 #ifdef __FLOAT_OUTPUT__
-    input_in_1_merged575_read << val << std::endl;
+    input_in_1_merged1793_read << val << std::endl;
 #else // __FLOAT_OUTPUT__
-    input_in_1_merged575_read << val << std::endl;
+    input_in_1_merged1793_read << val << std::endl;
 #endif // __FLOAT_OUTPUT__
 
 #ifdef __FLOAT_OUTPUT__
-    ((uint16_t*) (in_1_merged575_read_pipe0.data()))[i] = bitcast<uint16_t, float>(val);
+    ((uint16_t*) (in_1_merged1793_read_pipe0.data()))[i] = bitcast<uint16_t, float>(val);
 #else // __FLOAT_OUTPUT__
-    ((uint16_t*) (in_1_merged575_read_pipe0.data()))[i] = val;
+    ((uint16_t*) (in_1_merged1793_read_pipe0.data()))[i] = val;
 #endif // __FLOAT_OUTPUT__
   }
 
-  input_in_1_merged575_read.close();
-  for (int i = 0; i < jacdyn_1_1_merged623_write_pipe0_DATA_SIZE; i++) {
-    ((uint16_t*) (jacdyn_1_1_merged623_write_pipe0.data()))[i] = 0;
+  input_in_1_merged1793_read.close();
+  for (int i = 0; i < jacdyn_16_1_merged1841_write_pipe0_DATA_SIZE; i++) {
+    ((uint16_t*) (jacdyn_16_1_merged1841_write_pipe0.data()))[i] = 0;
   }
 
 #endif // __POPULATE_HOST_INPUTS__
@@ -89,7 +89,7 @@ int main(int argc, char **argv) {
       << "] with xclbin file!\n";
     } else {
       std::cout << "Device[" << i << "]: program successful!\n";
-      OCL_CHECK(err, krnl_vector_add = cl::Kernel(program, "jacdyn_1_opt_accel", &err));
+      OCL_CHECK(err, krnl_vector_add = cl::Kernel(program, "jacdyn_16_opt_accel", &err));
       valid_device++;
       break;
     }
@@ -99,17 +99,17 @@ int main(int argc, char **argv) {
     exit(EXIT_FAILURE);
   }
 
-  OCL_CHECK(err, cl::Buffer in_1_merged575_read_pipe0_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_WRITE_ONLY, in_1_merged575_read_pipe0_size_bytes, in_1_merged575_read_pipe0.data(), &err));
-  OCL_CHECK(err, err = krnl_vector_add.setArg(0, in_1_merged575_read_pipe0_ocl_buf));
+  OCL_CHECK(err, cl::Buffer in_1_merged1793_read_pipe0_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_WRITE_ONLY, in_1_merged1793_read_pipe0_size_bytes, in_1_merged1793_read_pipe0.data(), &err));
+  OCL_CHECK(err, err = krnl_vector_add.setArg(0, in_1_merged1793_read_pipe0_ocl_buf));
 
-  OCL_CHECK(err, cl::Buffer jacdyn_1_1_merged623_write_pipe0_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_READ_ONLY, jacdyn_1_1_merged623_write_pipe0_size_bytes, jacdyn_1_1_merged623_write_pipe0.data(), &err));
-  OCL_CHECK(err, err = krnl_vector_add.setArg(1, jacdyn_1_1_merged623_write_pipe0_ocl_buf));
+  OCL_CHECK(err, cl::Buffer jacdyn_16_1_merged1841_write_pipe0_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_READ_ONLY, jacdyn_16_1_merged1841_write_pipe0_size_bytes, jacdyn_16_1_merged1841_write_pipe0.data(), &err));
+  OCL_CHECK(err, err = krnl_vector_add.setArg(1, jacdyn_16_1_merged1841_write_pipe0_ocl_buf));
 
 
   OCL_CHECK(err, err = krnl_vector_add.setArg(2, num_epochs));
 
   std::cout << "Migrating memory" << std::endl;
-  OCL_CHECK(err, err = q.enqueueMigrateMemObjects({in_1_merged575_read_pipe0_ocl_buf}, 0));
+  OCL_CHECK(err, err = q.enqueueMigrateMemObjects({in_1_merged1793_read_pipe0_ocl_buf}, 0));
 
   unsigned long start, end, nsduration;
   cl::Event event;
@@ -122,7 +122,7 @@ int main(int argc, char **argv) {
   start = OCL_CHECK(err,
   event.getProfilingInfo<CL_PROFILING_COMMAND_START>(&err));
   nsduration = end - start;
-  OCL_CHECK(err, err = q.enqueueMigrateMemObjects({jacdyn_1_1_merged623_write_pipe0_ocl_buf}, CL_MIGRATE_MEM_OBJECT_HOST));
+  OCL_CHECK(err, err = q.enqueueMigrateMemObjects({jacdyn_16_1_merged1841_write_pipe0_ocl_buf}, CL_MIGRATE_MEM_OBJECT_HOST));
 
   q.finish();
 
@@ -136,9 +136,9 @@ int main(int argc, char **argv) {
   std::cout << "GB / sec    = " << gbpersec << std::endl;
   printf("Execution time = %f (sec) \n", dsduration);
 {
-    std::ofstream regression_result("jacdyn_1_1_merged623_write_pipe0_accel_result.csv");
-    for (int i = 0; i < jacdyn_1_1_merged623_write_pipe0_DATA_SIZE; i++) {
-      regression_result << ((uint16_t*) (jacdyn_1_1_merged623_write_pipe0.data()))[i] << std::endl;
+    std::ofstream regression_result("jacdyn_16_1_merged1841_write_pipe0_accel_result.csv");
+    for (int i = 0; i < jacdyn_16_1_merged1841_write_pipe0_DATA_SIZE; i++) {
+      regression_result << ((uint16_t*) (jacdyn_16_1_merged1841_write_pipe0.data()))[i] << std::endl;
     }
 }
 

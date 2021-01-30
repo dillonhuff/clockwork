@@ -6492,10 +6492,7 @@ void read_in_after(op* loop, isl_map* read_data, const std::string& rb_name, pro
   ld->add_store(rb_name, comma_list(store_addrs));
 }
 
-// Q: Maybe I should re-factor away the "loop" and
-// just get it from surrounding vars?
 op* copy_after(
-    //op* loop,
     op* location,
     isl_set* read_data,
     const std::vector<int>& loop_order,
@@ -6563,7 +6560,6 @@ op* copy_after(
 }
 
 op* copy_before(
-    //op* loop,
     op* location,
     isl_set* read_data,
     const std::vector<int>& loop_order,
@@ -9015,7 +9011,6 @@ insert_inter_group_buffers(const std::map<std::string, std::set<std::string> >& 
         prg.find_loop(kernel)->replace_reads_from(b.first, replacement);
       }
 
-      //op* copy_loop = copy_before(prg.root, prg.find_loop(map_find(group_name, group_starts)), s, map_find(b.first, kernel_orders), replacement, prg);
       op* copy_loop = copy_before(prg.find_loop(map_find(group_name, group_starts)), s, map_find(b.first, kernel_orders), replacement, prg);
       fresh_groups[group_name].insert(copy_loop->name);
     }

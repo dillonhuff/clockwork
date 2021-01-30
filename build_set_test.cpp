@@ -21066,7 +21066,7 @@ void test_app_to_prog_conversion() {
 
 void test_jacobi15_dynamic() {
   string prefix = "jacdyn";
-  int throughput = 1;
+  int throughput = 16;
   string name = prefix + "_" + str(throughput);
   App lp = stencil_chain_stage_iccad(name, 15);
   int rows = 10;
@@ -21076,15 +21076,23 @@ void test_jacobi15_dynamic() {
   options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
 
   prog prg = lp.realize(options, name, {cols, rows}, "in", throughput);
-  auto extracted = unoptimized_result(prg);
-  //infer_bounds_and_unroll(pick(prg.outs), {1080, 1920}, 4, prg);
 
-  prg.pretty_print();
-  //assert(false);
+  //auto extracted = unoptimized_result(prg);
 
   auto fusion_groups = one_stage_per_group(prg);
 
-  app_dag dag = partition_application(fusion_groups, prg);
+  auto fresh_groups = insert_inter_group_buffers(fusion_groups, prg);
+  unroll_mismatched_inner_loops(prg);
+  merge_basic_block_ops(prg);
+  infer_bounds_and_unroll(pick(prg.outs), {1080, 1920}, throughput, prg);
+
+  app_dag dag = partition_groups(fresh_groups, prg);
+
+  //prg.pretty_print();
+  //assert(false);
+
+
+  //app_dag dag = partition_application(fusion_groups, prg);
 
   options = CodegenOptions();
   options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
@@ -21092,7 +21100,7 @@ void test_jacobi15_dynamic() {
 
   move_to_benchmarks_folder(prg.name);
 
-  //assert(false);
+  assert(false);
 }
 
 void dhuff_tests() {

@@ -3,4 +3,4 @@
 
 #include "hw_classes.h"
 
-void jacdyn_1_opt(HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */in_off_chip, HWStream<hw_uint<16> >& /* get_args num ports = 1 */jacdyn_1);
+void jacdyn_1_opt(HWStream<hw_uint<64> >& /* no bundle get_args num ports = 4 */in_off_chip, HWStream<hw_uint<64> >& /* get_args num ports = 4 */jacdyn_1);
