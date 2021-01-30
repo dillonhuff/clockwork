@@ -6148,15 +6148,6 @@ struct App {
     return buffers;
   }
 
-  prog lower_to_prog(const std::string& name) {
-    prog prg;
-    prg.name = name + "_naive";
-    prg.compute_unit_file = prg.name + "_compute_units.h";
-
-    generate_compute_unit_file(prg.compute_unit_file);
-    return prg;
-  }
-
   void populate_program(CodegenOptions& options,
       prog& prg,
       const string& name,
@@ -6560,7 +6551,7 @@ struct App {
     return whole_dom;
   }
 
-  void schedule_and_codegen(CodegenOptions& options, const std::string& name, const std::vector<string>& outputs) {
+  prog schedule_and_codegen(CodegenOptions& options, const std::string& name, const std::vector<string>& outputs) {
     time_t rawtime;
     struct tm * timeinfo;
     char buffer[80];
@@ -6575,12 +6566,6 @@ struct App {
 
     auto scheds = schedule_opt();
     umap* m = qschedule_to_map(ctx, scheds);
-    //umap* m = schedule();
-    //ofstream schedule_out(name + "_sched_" + time_str);
-    //for (auto k : get_maps(m)) {
-      //schedule_out << str(k) << endl;
-    //}
-    //schedule_out.close();
     assert(m != nullptr);
 
     map<string, Box> compute_domains;
@@ -6605,12 +6590,9 @@ struct App {
     prg.name = name + "_opt";
     prg.compute_unit_file = prg.name + "_compute_units.h";
 
-    //populate_program(options, prg, name, m, buffers);
     populate_program(options, prg, name, outputs, m, buffers);
 
-    release(prg);
-
-    return;
+    return prg;
   }
 
   void no_unrolling() {
@@ -6697,7 +6679,7 @@ struct App {
     realize_no_unroll(options, {{name, dims}});
   }
 
-  void realize_no_unroll(CodegenOptions& options,
+  prog realize_no_unroll(CodegenOptions& options,
       const std::vector<std::pair<std::string, std::vector<int> > >& bounds) {
     fill_data_domain(bounds);
     fill_compute_domain();
@@ -6706,41 +6688,41 @@ struct App {
       names.push_back(n.first);
     }
     string concat_name = sep_list(names, "", "", "_");
-    schedule_and_codegen(options, concat_name, names);
+    return schedule_and_codegen(options, concat_name, names);
   }
 
-  void realize(const std::string& name, const int d0, const int d1) {
+  prog realize(const std::string& name, const int d0, const int d1) {
     CodegenOptions options;
     options.internal = true;
     options.simplify_address_expressions = true;
     options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
-    realize(options, name, d0, d1);
+    return realize(options, name, d0, d1);
   }
 
-  void realize(CodegenOptions& options,
+  prog realize(CodegenOptions& options,
       const std::string& name,
       const int d0,
       const int d1) {
-    realize(options, name, {d0, d1}, 1);
+    return realize(options, name, {d0, d1}, 1);
   }
 
-  void realize(CodegenOptions& options, const std::string& name, const int d0, const int d1, const int unroll_factor) {
-    realize(options, name, {d0, d1}, unroll_factor);
+  prog realize(CodegenOptions& options, const std::string& name, const int d0, const int d1, const int unroll_factor) {
+    return realize(options, name, {d0, d1}, unroll_factor);
   }
 
-  void realize(CodegenOptions& options, const std::string& name, const vector<int>& dims, const int unroll_factor) {
-    realize(options, name, dims, name, unroll_factor);
+  prog realize(CodegenOptions& options, const std::string& name, const vector<int>& dims, const int unroll_factor) {
+    return realize(options, name, dims, name, unroll_factor);
   }
 
-  void realize(CodegenOptions& options,
+  prog realize(CodegenOptions& options,
       const std::string& out_name,
       const vector<int>& dims,
       const std::string& unroll_target,
       const int unroll_factor) {
-    realize(options, {{out_name, dims}}, unroll_target, unroll_factor);
+    return realize(options, {{out_name, dims}}, unroll_target, unroll_factor);
   }
 
-  void realize(CodegenOptions& options,
+  prog realize(CodegenOptions& options,
       const std::vector<std::pair<std::string, std::vector<int> > >& bounds,
       const std::string& unroll_target,
       const int unroll_factor) {
@@ -6754,10 +6736,7 @@ struct App {
     vector<int> dims = bounds.at(0).second;
 
     set_unroll_factors(bounds, unroll_target, unroll_factor);
-    realize_no_unroll(options, bounds);
-
-    //set_unroll_factors(out_name, unroll_target, unroll_factor);
-    //realize_no_unroll(options, out_name, dims);
+    prog prg = realize_no_unroll(options, bounds);
 
     auto end = std::chrono::system_clock::now();
     std::chrono::duration<double> elapsed = end - start;
@@ -6765,14 +6744,16 @@ struct App {
     ofstream schedule_info("./scratch/" + out_name + ".txt");
     schedule_info << "time to realize " << out_name << ": " << total_elapsed << endl;
     schedule_info.close();
+
+    return prg;
   }
 
-  void realize(const std::string& name, const int d0, const int d1, const int unroll_factor) {
+  prog realize(const std::string& name, const int d0, const int d1, const int unroll_factor) {
     CodegenOptions options;
     options.internal = true;
     options.simplify_address_expressions = true;
 
-    realize(options, name, {d0, d1}, unroll_factor);
+    return realize(options, name, {d0, d1}, unroll_factor);
   }
 
 };
@@ -21017,10 +20998,10 @@ void stencil_chain_multi_kernel_test() {
 void test_app_to_prog_conversion() {
   App jac = jacobi2d("jac");
   int size = 32;
-  jac.realize("jac", size, size);
+  prog prg = jac.realize("jac", size, size);
+
   auto original = run_regression_tb("jac_opt");
 
-  prog prg = jac.lower_to_prog("jac");
   auto extracted = unoptimized_result(prg);
 
   compare("jac_extracted" + prg.name + "_vs_unopt", original, extracted);
