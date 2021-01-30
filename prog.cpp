@@ -6495,12 +6495,14 @@ void read_in_after(op* loop, isl_map* read_data, const std::string& rb_name, pro
 // Q: Maybe I should re-factor away the "loop" and
 // just get it from surrounding vars?
 op* copy_after(
-    op* loop,
+    //op* loop,
     op* location,
     isl_set* read_data,
     const std::vector<int>& loop_order,
     const std::string& rb_name,
     prog& prg) {
+
+  op* loop = prg.parent(location);
 
   prg.pretty_print();
 
@@ -8989,7 +8991,8 @@ insert_inter_group_buffers(const std::map<std::string, std::set<std::string> >& 
 
       prg.buffer_port_widths[broadcast] = prg.buffer_port_width(name(s));
 
-      op* copy_loop = copy_after(prg.root, prg.find_loop(map_find(producer_group, group_ends)), s, map_find(b.first, kernel_orders), broadcast, prg);
+      //op* copy_loop = copy_after(prg.root, prg.find_loop(map_find(producer_group, group_ends)), s, map_find(b.first, kernel_orders), broadcast, prg);
+      op* copy_loop = copy_after(prg.find_loop(map_find(producer_group, group_ends)), s, map_find(b.first, kernel_orders), broadcast, prg);
       fresh_groups[producer_group].insert(copy_loop->name);
 
       group_buffer_channels[{group_name, b.first}] = broadcast;
