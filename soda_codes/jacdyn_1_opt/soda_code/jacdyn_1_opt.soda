@@ -2,7 +2,7 @@ kernel: jacdyn_1_opt
 unroll factor: 1
 burst width: 16
 
-input uint16: in_off_chip(1950, *)
+input uint16: in_off_chip(49, *)
 
 local uint16: in(0, 0) = in_off_chip(0, 0)
 

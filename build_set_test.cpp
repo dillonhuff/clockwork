@@ -21069,13 +21069,19 @@ void test_jacobi15_dynamic() {
   int throughput = 1;
   string name = prefix + "_" + str(throughput);
   App lp = stencil_chain_stage_iccad(name, 15);
-  int rows = 1080;
-  int cols = 1920;
+  int rows = 10;
+  int cols = 19;
   CodegenOptions options;
   options.internal = true;
   options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
 
   prog prg = lp.realize(options, name, {cols, rows}, "in", throughput);
+  auto extracted = unoptimized_result(prg);
+  //infer_bounds_and_unroll(pick(prg.outs), {1080, 1920}, 4, prg);
+
+  prg.pretty_print();
+  //assert(false);
+
   auto fusion_groups = one_stage_per_group(prg);
 
   app_dag dag = partition_application(fusion_groups, prg);

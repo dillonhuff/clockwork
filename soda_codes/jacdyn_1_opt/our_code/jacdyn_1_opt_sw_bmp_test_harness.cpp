@@ -10,8 +10,8 @@ int main(int argc, char **argv) {
   HWStream<hw_uint<16> > in_update_0_read_channel;
   HWStream<hw_uint<16> > jacdyn_1_update_0_write_channel;
   // In lanes = 1
-  for (int r = 0; r < 1095; r++) {
-    for (int cl = 0; cl < 1950 / 1; cl++) {
+  for (int r = 0; r < 25; r++) {
+    for (int cl = 0; cl < 49 / 1; cl++) {
       hw_uint<16> packed;
       {
       int c = 1*cl + 0;
@@ -28,9 +28,9 @@ int main(int argc, char **argv) {
     }
   }
   jacdyn_1_opt(in_update_0_read_channel, jacdyn_1_update_0_write_channel);
-  bitmap_image output(1920, 1080);
-  for (int r = 0; r < 1080; r++) {
-    for (int cl = 0; cl < 1920 / 1; cl++) {
+  bitmap_image output(19, 10);
+  for (int r = 0; r < 10; r++) {
+    for (int cl = 0; cl < 19 / 1; cl++) {
       auto packed_val = jacdyn_1_update_0_write_channel.read();
       hw_uint<16> packed_val_lane_0 = packed_val.extract<0, 15>();
       {

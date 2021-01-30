@@ -9005,6 +9005,7 @@ insert_inter_group_buffers(const std::map<std::string, std::set<std::string> >& 
       s = set_name(s, incoming_channel);
 
       string replacement = prg.un(b.first + "_FIFO_buf");
+      prg.buffer_port_widths[name(s)] = 16;
       for (auto kernel : map_find(group_name, fusion_groups)) {
         prg.find_loop(kernel)->replace_reads_from(b.first, replacement);
       }
@@ -9026,7 +9027,6 @@ insert_inter_group_buffers(const std::map<std::string, std::set<std::string> >& 
     cout << endl;
   }
   return fresh_groups;
-  //assert(false);
 }
 
 app_dag partition_groups(const std::map<std::string, std::set<std::string> >& fresh_groups, prog& prg) {
