@@ -5095,7 +5095,6 @@ struct App {
       rargs.push_back(a);
     }
     app_dag.at(func).add_reduce_update(accum, compute, rargs, reduce_ranges);
-
   }
 
   bool is_input(const std::string& name) const {
@@ -6202,10 +6201,29 @@ struct App {
 
           vector<string> fargs;
           for (auto p : u.get_srcs()) {
+            vector<string> vars;
+            for (auto var : surrounding) {
+              if (var != "root") {
+                vars.push_back(var);
+              }
+            }
+            assert(vars.size() == 2);
+
+
+
+
             cout << tab(1) << " op loads " << p.name << endl;
             for (auto off : p.offsets) {
-              op->add_load(p.name, "0, 0");
+              assert(off.size() == 2);
+              vector<string> terms;
+              int i = 0;
+              for (auto offt : off) {
+                terms.push_back(vars.at(i) + " + " + str(offt));
+                i++;
+              }
+              op->add_load(p.name, comma_list(terms));
             }
+
             if (!elem(p.name, fargs)) {
               fargs.push_back(p.name);
             }
@@ -21010,6 +21028,10 @@ void test_app_to_prog_conversion() {
   App jac = jacobi2d("jac");
   int size = 32;
   prog prg = jac.realize("jac", size, size);
+
+  prg.pretty_print();
+
+  assert(false);
 
   auto original = run_regression_tb("jac_opt");
 
