@@ -6219,7 +6219,14 @@ struct App {
               vector<string> terms;
               int i = 0;
               for (auto offt : off) {
-                terms.push_back(vars.at(i) + " + " + str(offt));
+                QAV stride = p.stride(i);
+                if (stride.denom != 1) {
+                  int num = stride.num;
+                  int denom = stride.denom;
+                  terms.push_back("floor((" + str(num) + "*" + vars.at(i) + ")/" + str(denom) + ")" + " + " + str(offt));
+                } else {
+                  terms.push_back(to_string(stride) + "*" + vars.at(i) + " + " + str(offt));
+                }
                 i++;
               }
               reverse(terms);
