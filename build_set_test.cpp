@@ -21030,8 +21030,7 @@ void test_app_to_prog_conversion() {
   prog prg = jac.realize("jac", size, size);
 
   prg.pretty_print();
-
-  assert(false);
+  prg.sanity_check();
 
   auto original = run_regression_tb("jac_opt");
 
