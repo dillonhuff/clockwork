@@ -1,9 +1,9 @@
 #include <fstream>
-#include "pyr_blnddilp.h"
+#include "pyr_blndd500_2048.h"
 
 int main() {
   srand(234);
-  ofstream fout("regression_result_pyr_blnddilp.txt");
+  ofstream fout("regression_result_pyr_blndd500_2048.txt");
   HWStream<hw_uint<32 > > in;
   HWStream<hw_uint<32 > > out;
 
@@ -20,7 +20,7 @@ int main() {
     in.write(value);
   }
 
-  pyr_blnddilp(in, out);
+  pyr_blndd500_2048(in, out);
   for (int i = 0; i < 4194304; i++) {
     auto actual = out.read();
     hw_uint<32> actual_lane_0 = actual.extract<0, 31>();

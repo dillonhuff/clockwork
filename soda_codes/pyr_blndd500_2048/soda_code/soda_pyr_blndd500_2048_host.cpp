@@ -6,8 +6,6 @@
 
 #include "clockwork_standard_compute_units.h"
 
-#define __POPULATE_HOST_INPUTS__
-
 int main(int argc, char **argv) {
   srand(234);
   if (argc != 2) {
@@ -22,27 +20,29 @@ int main(int argc, char **argv) {
   std::cout << "num_epochs = " << num_epochs << std::endl;
 
   size_t total_size_bytes = 0;
-  const int pw_math_in03_read_pipe0_DATA_SIZE = num_epochs*4223025;
-  const int pw_math_in03_read_pipe0_BYTES_PER_PIXEL = 32 / 8;
-  size_t pw_math_in03_read_pipe0_size_bytes = pw_math_in03_read_pipe0_BYTES_PER_PIXEL * pw_math_in03_read_pipe0_DATA_SIZE;
+  size_t total_size_bytes_read = 0;
+  size_t total_size_bytes_written = 0;
+  const int pw_math_in03_read_pipe0_DATA_SIZE = num_epochs*4194304;
+  const int pw_math_in03_read_BYTES_PER_PIXEL = 32 / 8;
+  size_t pw_math_in03_read_size_bytes = pw_math_in03_read_BYTES_PER_PIXEL * pw_math_in03_read_pipe0_DATA_SIZE;
 
-  total_size_bytes += pw_math_in03_read_pipe0_size_bytes;
+  total_size_bytes += pw_math_in03_read_size_bytes;
+  total_size_bytes_read += pw_math_in03_read_size_bytes;
   const int pw_math_lp_in_on_chip_0_buf48_reconstruct_lp70_buf737982_write_pipe0_DATA_SIZE = num_epochs*4194304;
-  const int pw_math_lp_in_on_chip_0_buf48_reconstruct_lp70_buf737982_write_pipe0_BYTES_PER_PIXEL = 32 / 8;
-  size_t pw_math_lp_in_on_chip_0_buf48_reconstruct_lp70_buf737982_write_pipe0_size_bytes = pw_math_lp_in_on_chip_0_buf48_reconstruct_lp70_buf737982_write_pipe0_BYTES_PER_PIXEL * pw_math_lp_in_on_chip_0_buf48_reconstruct_lp70_buf737982_write_pipe0_DATA_SIZE;
+  const int pw_math_lp_in_on_chip_0_buf48_reconstruct_lp70_buf737982_write_BYTES_PER_PIXEL = 32 / 8;
+  size_t pw_math_lp_in_on_chip_0_buf48_reconstruct_lp70_buf737982_write_size_bytes = pw_math_lp_in_on_chip_0_buf48_reconstruct_lp70_buf737982_write_BYTES_PER_PIXEL * pw_math_lp_in_on_chip_0_buf48_reconstruct_lp70_buf737982_write_pipe0_DATA_SIZE;
 
-  total_size_bytes += pw_math_lp_in_on_chip_0_buf48_reconstruct_lp70_buf737982_write_pipe0_size_bytes;
+  total_size_bytes += pw_math_lp_in_on_chip_0_buf48_reconstruct_lp70_buf737982_write_size_bytes;
+  total_size_bytes_written += pw_math_lp_in_on_chip_0_buf48_reconstruct_lp70_buf737982_write_size_bytes;
 
   cl_int err;
   cl::Context context;
   cl::Kernel krnl_vector_add;
   cl::CommandQueue q;
 
-  std::vector<uint8_t, aligned_allocator<uint8_t> > pw_math_in03_read_pipe0(pw_math_in03_read_pipe0_size_bytes);
-  std::vector<uint8_t, aligned_allocator<uint8_t> > pw_math_lp_in_on_chip_0_buf48_reconstruct_lp70_buf737982_write_pipe0(pw_math_lp_in_on_chip_0_buf48_reconstruct_lp70_buf737982_write_pipe0_size_bytes);
+  std::vector<uint8_t, aligned_allocator<uint8_t> > pw_math_in03_read_pipe0(pw_math_in03_read_size_bytes);
+  std::vector<uint8_t, aligned_allocator<uint8_t> > pw_math_lp_in_on_chip_0_buf48_reconstruct_lp70_buf737982_write_pipe0(pw_math_lp_in_on_chip_0_buf48_reconstruct_lp70_buf737982_write_size_bytes);
 
-  // TODO: POPULATE BUFFERS FOR EACH PIPELINE
-#ifdef __POPULATE_HOST_INPUTS__
   std::ofstream input_pw_math_in03_read("pw_math_in03_read.csv");
   for (int i = 0; i < pw_math_in03_read_pipe0_DATA_SIZE; i++) {
 #ifdef __FLOAT_OUTPUT__
@@ -66,10 +66,13 @@ int main(int argc, char **argv) {
 
   input_pw_math_in03_read.close();
   for (int i = 0; i < pw_math_lp_in_on_chip_0_buf48_reconstruct_lp70_buf737982_write_pipe0_DATA_SIZE; i++) {
+#ifdef __FLOAT_OUTPUT__
     ((uint32_t*) (pw_math_lp_in_on_chip_0_buf48_reconstruct_lp70_buf737982_write_pipe0.data()))[i] = 0;
+#else // __FLOAT_OUTPUT__
+    ((uint32_t*) (pw_math_lp_in_on_chip_0_buf48_reconstruct_lp70_buf737982_write_pipe0.data()))[i] = 0;
+#endif // __FLOAT_OUTPUT__
   }
 
-#endif // __POPULATE_HOST_INPUTS__
   auto devices = xcl::get_xil_devices();
   auto fileBuf = xcl::read_binary_file(binaryFile);
   cl::Program::Binaries bins{{fileBuf.data(), fileBuf.size()}};
@@ -89,7 +92,7 @@ int main(int argc, char **argv) {
       << "] with xclbin file!\n";
     } else {
       std::cout << "Device[" << i << "]: program successful!\n";
-      OCL_CHECK(err, krnl_vector_add = cl::Kernel(program, "pyr_blnddilp_accel", &err));
+      OCL_CHECK(err, krnl_vector_add = cl::Kernel(program, "pyr_blndd500_2048_kernel", &err));
       valid_device++;
       break;
     }
@@ -99,14 +102,14 @@ int main(int argc, char **argv) {
     exit(EXIT_FAILURE);
   }
 
-  OCL_CHECK(err, cl::Buffer pw_math_in03_read_pipe0_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_WRITE_ONLY, pw_math_in03_read_pipe0_size_bytes, pw_math_in03_read_pipe0.data(), &err));
-  OCL_CHECK(err, err = krnl_vector_add.setArg(0, pw_math_in03_read_pipe0_ocl_buf));
+  OCL_CHECK(err, cl::Buffer pw_math_lp_in_on_chip_0_buf48_reconstruct_lp70_buf737982_write_pipe0_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_READ_ONLY, pw_math_lp_in_on_chip_0_buf48_reconstruct_lp70_buf737982_write_size_bytes, pw_math_lp_in_on_chip_0_buf48_reconstruct_lp70_buf737982_write_pipe0.data(), &err));
+  OCL_CHECK(err, err = krnl_vector_add.setArg(0, pw_math_lp_in_on_chip_0_buf48_reconstruct_lp70_buf737982_write_pipe0_ocl_buf));
 
-  OCL_CHECK(err, cl::Buffer pw_math_lp_in_on_chip_0_buf48_reconstruct_lp70_buf737982_write_pipe0_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_READ_ONLY, pw_math_lp_in_on_chip_0_buf48_reconstruct_lp70_buf737982_write_pipe0_size_bytes, pw_math_lp_in_on_chip_0_buf48_reconstruct_lp70_buf737982_write_pipe0.data(), &err));
-  OCL_CHECK(err, err = krnl_vector_add.setArg(1, pw_math_lp_in_on_chip_0_buf48_reconstruct_lp70_buf737982_write_pipe0_ocl_buf));
+  OCL_CHECK(err, cl::Buffer pw_math_in03_read_pipe0_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_WRITE_ONLY, pw_math_in03_read_size_bytes, pw_math_in03_read_pipe0.data(), &err));
+  OCL_CHECK(err, err = krnl_vector_add.setArg(1, pw_math_in03_read_pipe0_ocl_buf));
 
-
-  OCL_CHECK(err, err = krnl_vector_add.setArg(2, num_epochs));
+  uint64_t transfer_size = num_epochs*(4194304 / 1);
+  OCL_CHECK(err, err = krnl_vector_add.setArg(2, transfer_size));
 
   std::cout << "Migrating memory" << std::endl;
   OCL_CHECK(err, err = q.enqueueMigrateMemObjects({pw_math_in03_read_pipe0_ocl_buf}, 0));
@@ -135,12 +138,14 @@ int main(int argc, char **argv) {
   std::cout << "bytes / sec = " << bpersec << std::endl;
   std::cout << "GB / sec    = " << gbpersec << std::endl;
   printf("Execution time = %f (sec) \n", dsduration);
-{
-    std::ofstream regression_result("pw_math_lp_in_on_chip_0_buf48_reconstruct_lp70_buf737982_write_pipe0_accel_result.csv");
-    for (int i = 0; i < pw_math_lp_in_on_chip_0_buf48_reconstruct_lp70_buf737982_write_pipe0_DATA_SIZE; i++) {
-      regression_result << ((uint32_t*) (pw_math_lp_in_on_chip_0_buf48_reconstruct_lp70_buf737982_write_pipe0.data()))[i] << std::endl;
-    }
-}
+  std::ofstream regression_result("pw_math_lp_in_on_chip_0_buf48_reconstruct_lp70_buf737982_write_accel_result.csv");
+  for (int i = 0; i < pw_math_lp_in_on_chip_0_buf48_reconstruct_lp70_buf737982_write_pipe0_DATA_SIZE; i++) {
+#ifdef __FLOAT_OUTPUT__
+    regression_result << bitcast<float, uint32_t>(((uint32_t*) (pw_math_lp_in_on_chip_0_buf48_reconstruct_lp70_buf737982_write_pipe0.data()))[i]) << std::endl;
+#else // __FLOAT_OUTPUT__
+    regression_result << ((uint32_t*) (pw_math_lp_in_on_chip_0_buf48_reconstruct_lp70_buf737982_write_pipe0.data()))[i] << std::endl;
+#endif // __FLOAT_OUTPUT__
+  }
 
   return 0;
 }

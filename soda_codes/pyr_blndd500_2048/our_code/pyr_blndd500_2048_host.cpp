@@ -89,7 +89,7 @@ int main(int argc, char **argv) {
       << "] with xclbin file!\n";
     } else {
       std::cout << "Device[" << i << "]: program successful!\n";
-      OCL_CHECK(err, krnl_vector_add = cl::Kernel(program, "pyr_blnddilp_accel", &err));
+      OCL_CHECK(err, krnl_vector_add = cl::Kernel(program, "pyr_blndd500_2048_accel", &err));
       valid_device++;
       break;
     }

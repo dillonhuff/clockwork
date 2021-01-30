@@ -1,5 +1,5 @@
 // AUTO GEN SODA TB
-#include "pyr_blnddilp_kernel.h"
+#include "pyr_blndd500_2048_kernel.h"
 #include <iostream>
 #include <fstream>
 
@@ -12,8 +12,8 @@ using namespace std;
 
 int main() {
   srand(234);
-  const int nrows = 2055;
-  const int ncols = 2055;
+  const int nrows = 2048;
+  const int ncols = 2048;
   uint64_t img_pixels = nrows*ncols;
   const uint64_t bits_per_pixel = PIXEL_WIDTH;
   uint64_t img_bits = bits_per_pixel*img_pixels;
@@ -27,8 +27,8 @@ int main() {
   ap_uint<BURST_WIDTH>* out = (ap_uint<BURST_WIDTH>*) malloc(sizeof(ap_uint<BURST_WIDTH>)*num_transfers);
   ap_uint<BURST_WIDTH>* in = (ap_uint<BURST_WIDTH>*) malloc(sizeof(ap_uint<BURST_WIDTH>)*num_transfers);
   fill_array_decimal<bits_per_pixel>("in_input_pixel.csv", in, nrows, ncols, transfer_cols);
-  pyr_blnddilp_kernel(out, in, num_transfers);
-  write_results_decimal<bits_per_pixel>("soda_pyr_blnddilp_regression_result.csv", out, nrows, ncols, transfer_cols);
+  pyr_blndd500_2048_kernel(out, in, num_transfers);
+  write_results_decimal<bits_per_pixel>("soda_pyr_blndd500_2048_regression_result.csv", out, nrows, ncols, transfer_cols);
   free(in);
   free(out);
 }
