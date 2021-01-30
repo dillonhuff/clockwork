@@ -8733,7 +8733,8 @@ void generate_app_code(
     done.insert(buf);
   }
 
-  set_channel_depths_to_with_kernel_depth(500, dag);
+  set_channel_depths_to_constant(32, dag);
+  //set_channel_depths_to_with_kernel_depth(500, dag);
   //set_channel_depths_ilp(500, dag);
 
   for (auto& gp : dag.fusion_group_progs) {

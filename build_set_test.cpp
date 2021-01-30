@@ -21064,7 +21064,34 @@ void test_app_to_prog_conversion() {
   //assert(false);
 }
 
+void test_jacobi15_dynamic() {
+  string prefix = "jacdyn";
+  int throughput = 1;
+  string name = prefix + "_" + str(throughput);
+  App lp = stencil_chain_stage_iccad(name, 15);
+  int rows = 1080;
+  int cols = 1920;
+  CodegenOptions options;
+  options.internal = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
+
+  prog prg = lp.realize(options, name, {cols, rows}, "in", throughput);
+  auto fusion_groups = one_stage_per_group(prg);
+
+  app_dag dag = partition_application(fusion_groups, prg);
+
+  options = CodegenOptions();
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  generate_app_code(options, dag);
+
+  move_to_benchmarks_folder(prg.name);
+
+  assert(false);
+}
+
 void dhuff_tests() {
+  test_jacobi15_dynamic();
+
   test_app_to_prog_conversion();
   test_multi_kernel_pyramid_collapsing();
 
