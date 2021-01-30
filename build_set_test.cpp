@@ -6248,7 +6248,8 @@ struct App {
     }
 
     generate_app_code(options, buffers, prg, its(m, action_domain), domain_map);
-    generate_regression_testbench(prg, buffers);
+    //generate_regression_testbench(prg, buffers);
+    generate_regression_testbench(prg); //, buffers);
     generate_soda_file(prg.name);
   }
 
@@ -21045,14 +21046,14 @@ void test_app_to_prog_conversion() {
 
   auto original = run_regression_tb("jac_opt");
   cout << "Original result: " << original << endl;
-  assert(false);
+  //assert(false);
 
   auto extracted = unoptimized_result(prg);
   cout << "Extracted result: " << extracted << endl;
-  assert(false);
+  //assert(false);
 
   compare("jac_extracted" + prg.name + "_vs_unopt", original, extracted);
-  assert(false);
+  //assert(false);
 }
 
 void dhuff_tests() {
