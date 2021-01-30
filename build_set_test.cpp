@@ -6194,7 +6194,9 @@ struct App {
           vector<string> fargs;
           for (auto p : u.get_srcs()) {
             cout << tab(1) << " op loads " << p.name << endl;
-            op->add_load(p.name, "0, 0");
+            for (auto off : p.offsets) {
+              op->add_load(p.name, "0, 0");
+            }
             if (!elem(p.name, fargs)) {
               fargs.push_back(p.name);
             }
@@ -21009,7 +21011,7 @@ void test_app_to_prog_conversion() {
 }
 
 void dhuff_tests() {
-  //test_app_to_prog_conversion();
+  test_app_to_prog_conversion();
 
   //test_multi_kernel_llf();
   //assert(false);
