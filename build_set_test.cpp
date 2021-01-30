@@ -21036,9 +21036,9 @@ void stencil_chain_multi_kernel_test() {
 }
 
 void test_app_to_prog_conversion() {
-  //App jac = jacobi2d("jac");
-  App jac = pointwise2d("jac");
-  int size = 3;
+  App jac = jacobi2d("jac");
+  //App jac = pointwise2d("jac");
+  int size = 10;
   prog prg = jac.realize("jac", size, size);
 
   prg.pretty_print();
