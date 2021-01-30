@@ -6188,8 +6188,17 @@ struct App {
           }
           auto op = nest->add_op(u.name());
           cout << "added op " << op->name << endl;
+          auto surrounding = surrounding_vars(op, prg);
+          vector<string> offsets;
+          for (auto var : surrounding) {
+            if (var != "root") {
+              offsets.push_back(var);
+            }
+          }
+          assert(offsets.size() == 2);
           // TODO: Replace with real description of apps
-          op->add_store(f, "0, 0");
+          op->add_store(f, sep_list(offsets, "", "", ", "));
+          //cout << "offsets: " << offsets << endl;
 
           vector<string> fargs;
           for (auto p : u.get_srcs()) {
