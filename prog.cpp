@@ -6563,13 +6563,14 @@ op* copy_after(
 }
 
 op* copy_before(
-    op* loop,
+    //op* loop,
     op* location,
     isl_set* read_data,
     const std::vector<int>& loop_order,
     const std::string& rb_name,
     prog& prg) {
 
+  op* loop = prg.parent(location);
   prg.pretty_print();
 
   assert(loop->is_loop());
@@ -8991,7 +8992,6 @@ insert_inter_group_buffers(const std::map<std::string, std::set<std::string> >& 
 
       prg.buffer_port_widths[broadcast] = prg.buffer_port_width(name(s));
 
-      //op* copy_loop = copy_after(prg.root, prg.find_loop(map_find(producer_group, group_ends)), s, map_find(b.first, kernel_orders), broadcast, prg);
       op* copy_loop = copy_after(prg.find_loop(map_find(producer_group, group_ends)), s, map_find(b.first, kernel_orders), broadcast, prg);
       fresh_groups[producer_group].insert(copy_loop->name);
 
@@ -9015,7 +9015,8 @@ insert_inter_group_buffers(const std::map<std::string, std::set<std::string> >& 
         prg.find_loop(kernel)->replace_reads_from(b.first, replacement);
       }
 
-      op* copy_loop = copy_before(prg.root, prg.find_loop(map_find(group_name, group_starts)), s, map_find(b.first, kernel_orders), replacement, prg);
+      //op* copy_loop = copy_before(prg.root, prg.find_loop(map_find(group_name, group_starts)), s, map_find(b.first, kernel_orders), replacement, prg);
+      op* copy_loop = copy_before(prg.find_loop(map_find(group_name, group_starts)), s, map_find(b.first, kernel_orders), replacement, prg);
       fresh_groups[group_name].insert(copy_loop->name);
     }
   }
