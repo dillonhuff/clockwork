@@ -6148,6 +6148,15 @@ struct App {
     return buffers;
   }
 
+  prog lower_to_prog(const std::string& name) {
+    prog prg;
+    prg.name = name + "_naive";
+    prg.compute_unit_file = prg.name + "_compute_units.h";
+
+    generate_compute_unit_file(prg.compute_unit_file);
+    return prg;
+  }
+
   void populate_program(CodegenOptions& options,
       prog& prg,
       const string& name,
@@ -21005,7 +21014,22 @@ void stencil_chain_multi_kernel_test() {
 
 }
 
+void test_app_to_prog_conversion() {
+  App jac = jacobi2d("jac");
+  int size = 32;
+  jac.realize("jac", size, size);
+  auto original = run_regression_tb("jac_opt");
+
+  prog prg = jac.lower_to_prog("jac");
+  auto extracted = unoptimized_result(prg);
+
+  compare("jac_extracted" + prg.name + "_vs_unopt", original, extracted);
+  assert(false);
+}
+
 void dhuff_tests() {
+  test_app_to_prog_conversion();
+
   //test_multi_kernel_llf();
   //assert(false);
 
