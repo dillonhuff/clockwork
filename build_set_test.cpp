@@ -6196,6 +6196,7 @@ struct App {
           }
           assert(offsets.size() == 2);
           // TODO: Replace with real description of apps
+          reverse(offsets);
           op->add_store(f, sep_list(offsets, "", "", ", "));
           //cout << "offsets: " << offsets << endl;
 
@@ -6221,6 +6222,7 @@ struct App {
                 terms.push_back(vars.at(i) + " + " + str(offt));
                 i++;
               }
+              reverse(terms);
               op->add_load(p.name, comma_list(terms));
             }
 
@@ -9954,6 +9956,14 @@ App blur_xy(const std::string output_name) {
   jac.func2d("input", "id", pt("input_arg"));
   jac.func2d("blurx", "blurx_comp", "input", {1, 1}, {{0, 0}, {0, 1}, {0, 2}});
   jac.func2d(output_name, "blury_comp", "blurx", {1, 1}, {{0, 0}, {1, 0}, {2, 0}});
+  return jac;
+}
+
+App pointwise2d(const std::string output_name) {
+  App jac;
+  jac.func2d("t1_arg");
+  jac.func2d("t1", "id", pt("t1_arg"));
+  jac.func2d(output_name, "id", pt("t1"));
   return jac;
 }
 
@@ -21025,16 +21035,21 @@ void stencil_chain_multi_kernel_test() {
 }
 
 void test_app_to_prog_conversion() {
-  App jac = jacobi2d("jac");
-  int size = 32;
+  //App jac = jacobi2d("jac");
+  App jac = pointwise2d("jac");
+  int size = 3;
   prog prg = jac.realize("jac", size, size);
 
   prg.pretty_print();
   prg.sanity_check();
 
   auto original = run_regression_tb("jac_opt");
+  cout << "Original result: " << original << endl;
+  assert(false);
 
   auto extracted = unoptimized_result(prg);
+  cout << "Extracted result: " << extracted << endl;
+  assert(false);
 
   compare("jac_extracted" + prg.name + "_vs_unopt", original, extracted);
   assert(false);
