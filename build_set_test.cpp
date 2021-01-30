@@ -21009,7 +21009,7 @@ void test_app_to_prog_conversion() {
 }
 
 void dhuff_tests() {
-  test_app_to_prog_conversion();
+  //test_app_to_prog_conversion();
 
   //test_multi_kernel_llf();
   //assert(false);
