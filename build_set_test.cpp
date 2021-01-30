@@ -21092,7 +21092,7 @@ void test_jacobi15_dynamic() {
 
   move_to_benchmarks_folder(prg.name);
 
-  assert(false);
+  //assert(false);
 }
 
 void dhuff_tests() {

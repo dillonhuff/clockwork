@@ -80,50 +80,50 @@ struct in_FIFO_buf64_load_to_in_FIFO_buf6467_137_merged_banks_4_cache {
 	// Capacity: 52
 	// # of read delays: 5
   // 0, 1, 25, 26, 51
-	hw_uint<32>  f0;
-	hw_uint<32>  f2;
-	fifo<hw_uint<32> , 23> f3;
-	hw_uint<32>  f4;
-	hw_uint<32>  f6;
-	fifo<hw_uint<32> , 24> f7;
-	hw_uint<32>  f8;
+	hw_uint<16> f0;
+	hw_uint<16> f2;
+	fifo<hw_uint<16>, 23> f3;
+	hw_uint<16> f4;
+	hw_uint<16> f6;
+	fifo<hw_uint<16>, 24> f7;
+	hw_uint<16> f8;
 
 
-	inline hw_uint<32>  peek_0() {
+	inline hw_uint<16> peek_0() {
 		return f0;
 	}
 
-	inline hw_uint<32>  peek_1() {
+	inline hw_uint<16> peek_1() {
 		return f2;
 	}
 
-	inline hw_uint<32>  peek_24() {
+	inline hw_uint<16> peek_24() {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 		return f3.back();
 	}
 
-	inline hw_uint<32>  peek_25() {
+	inline hw_uint<16> peek_25() {
 		return f4;
 	}
 
-	inline hw_uint<32>  peek_26() {
+	inline hw_uint<16> peek_26() {
 		return f6;
 	}
 
-	inline hw_uint<32>  peek_50() {
+	inline hw_uint<16> peek_50() {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 		return f7.back();
 	}
 
-	inline hw_uint<32>  peek_51() {
+	inline hw_uint<16> peek_51() {
 		return f8;
 	}
 
 
 
-	inline void push(const hw_uint<32>  value) {
+	inline void push(const hw_uint<16> value) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
     // cap: 1 reading from capacity: 24
@@ -166,11 +166,11 @@ struct in_FIFO_buf64_cache {
 
 
 
-inline void in_FIFO_buf64_load_to_in_FIFO_buf6467_137_write(hw_uint<32> & in_FIFO_buf64_load_to_in_FIFO_buf6467_137, in_FIFO_buf64_cache& in_FIFO_buf64, int root, int in_to_gp_20_ld66, int in_to_gp_20_ld65, int dynamic_address) {
+inline void in_FIFO_buf64_load_to_in_FIFO_buf6467_137_write(hw_uint<16>& in_FIFO_buf64_load_to_in_FIFO_buf6467_137, in_FIFO_buf64_cache& in_FIFO_buf64, int root, int in_to_gp_20_ld66, int in_to_gp_20_ld65, int dynamic_address) {
   in_FIFO_buf64.in_FIFO_buf64_load_to_in_FIFO_buf6467_137_merged_banks_4.push(in_FIFO_buf64_load_to_in_FIFO_buf6467_137);
 }
 
-inline hw_uint<32>  in_FIFO_buf64_stg0_update_0_71_select(in_FIFO_buf64_cache& in_FIFO_buf64, int root, int stg0_0, int stg0_1, int dynamic_address) {
+inline hw_uint<16> in_FIFO_buf64_stg0_update_0_71_select(in_FIFO_buf64_cache& in_FIFO_buf64, int root, int stg0_0, int stg0_1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // in_FIFO_buf64_stg0_update_0_71 read pattern: { stg0_update_0[root = 0, stg0_0, stg0_1] -> in_FIFO_buf64[stg0_1, -1 + stg0_0] : -14 <= stg0_0 <= 32 and 0 <= stg0_1 <= 23 }
@@ -181,7 +181,7 @@ inline hw_uint<32>  in_FIFO_buf64_stg0_update_0_71_select(in_FIFO_buf64_cache& i
   return 0;
 }
 
-inline hw_uint<32>  in_FIFO_buf64_stg0_update_0_72_select(in_FIFO_buf64_cache& in_FIFO_buf64, int root, int stg0_0, int stg0_1, int dynamic_address) {
+inline hw_uint<16> in_FIFO_buf64_stg0_update_0_72_select(in_FIFO_buf64_cache& in_FIFO_buf64, int root, int stg0_0, int stg0_1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // in_FIFO_buf64_stg0_update_0_72 read pattern: { stg0_update_0[root = 0, stg0_0, stg0_1] -> in_FIFO_buf64[stg0_1, stg0_0] : -14 <= stg0_0 <= 32 and 0 <= stg0_1 <= 23 }
@@ -192,7 +192,7 @@ inline hw_uint<32>  in_FIFO_buf64_stg0_update_0_72_select(in_FIFO_buf64_cache& i
   return 0;
 }
 
-inline hw_uint<32>  in_FIFO_buf64_stg0_update_0_73_select(in_FIFO_buf64_cache& in_FIFO_buf64, int root, int stg0_0, int stg0_1, int dynamic_address) {
+inline hw_uint<16> in_FIFO_buf64_stg0_update_0_73_select(in_FIFO_buf64_cache& in_FIFO_buf64, int root, int stg0_0, int stg0_1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // in_FIFO_buf64_stg0_update_0_73 read pattern: { stg0_update_0[root = 0, stg0_0, stg0_1] -> in_FIFO_buf64[1 + stg0_1, stg0_0] : -14 <= stg0_0 <= 32 and 0 <= stg0_1 <= 23 }
@@ -203,7 +203,7 @@ inline hw_uint<32>  in_FIFO_buf64_stg0_update_0_73_select(in_FIFO_buf64_cache& i
   return 0;
 }
 
-inline hw_uint<32>  in_FIFO_buf64_stg0_update_0_74_select(in_FIFO_buf64_cache& in_FIFO_buf64, int root, int stg0_0, int stg0_1, int dynamic_address) {
+inline hw_uint<16> in_FIFO_buf64_stg0_update_0_74_select(in_FIFO_buf64_cache& in_FIFO_buf64, int root, int stg0_0, int stg0_1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // in_FIFO_buf64_stg0_update_0_74 read pattern: { stg0_update_0[root = 0, stg0_0, stg0_1] -> in_FIFO_buf64[stg0_1, 1 + stg0_0] : -14 <= stg0_0 <= 32 and 0 <= stg0_1 <= 23 }
@@ -217,8 +217,8 @@ inline hw_uint<32>  in_FIFO_buf64_stg0_update_0_74_select(in_FIFO_buf64_cache& i
 // # of bundles = 2
 // load_to_in_FIFO_buf6467_write
 //	in_FIFO_buf64_load_to_in_FIFO_buf6467_137
-inline void in_FIFO_buf64_load_to_in_FIFO_buf6467_write_bundle_write(hw_uint<32>& load_to_in_FIFO_buf6467_write, in_FIFO_buf64_cache& in_FIFO_buf64, int root, int in_to_gp_20_ld66, int in_to_gp_20_ld65, int dynamic_address) {
-	hw_uint<32>  in_FIFO_buf64_load_to_in_FIFO_buf6467_137_res = load_to_in_FIFO_buf6467_write.extract<0, 31>();
+inline void in_FIFO_buf64_load_to_in_FIFO_buf6467_write_bundle_write(hw_uint<16>& load_to_in_FIFO_buf6467_write, in_FIFO_buf64_cache& in_FIFO_buf64, int root, int in_to_gp_20_ld66, int in_to_gp_20_ld65, int dynamic_address) {
+	hw_uint<16> in_FIFO_buf64_load_to_in_FIFO_buf6467_137_res = load_to_in_FIFO_buf6467_write.extract<0, 15>();
 	in_FIFO_buf64_load_to_in_FIFO_buf6467_137_write(in_FIFO_buf64_load_to_in_FIFO_buf6467_137_res, in_FIFO_buf64, root, in_to_gp_20_ld66, in_to_gp_20_ld65, dynamic_address);
 }
 
@@ -227,22 +227,22 @@ inline void in_FIFO_buf64_load_to_in_FIFO_buf6467_write_bundle_write(hw_uint<32>
 //	in_FIFO_buf64_stg0_update_0_72
 //	in_FIFO_buf64_stg0_update_0_73
 //	in_FIFO_buf64_stg0_update_0_74
-inline hw_uint<128> in_FIFO_buf64_stg0_update_0_read_bundle_read(in_FIFO_buf64_cache& in_FIFO_buf64, int root, int stg0_0, int stg0_1, int dynamic_address) {
+inline hw_uint<64> in_FIFO_buf64_stg0_update_0_read_bundle_read(in_FIFO_buf64_cache& in_FIFO_buf64, int root, int stg0_0, int stg0_1, int dynamic_address) {
   // # of ports in bundle: 4
     // in_FIFO_buf64_stg0_update_0_71
     // in_FIFO_buf64_stg0_update_0_72
     // in_FIFO_buf64_stg0_update_0_73
     // in_FIFO_buf64_stg0_update_0_74
 
-	hw_uint<128> result;
-	hw_uint<32>  in_FIFO_buf64_stg0_update_0_71_res = in_FIFO_buf64_stg0_update_0_71_select(in_FIFO_buf64, root, stg0_0, stg0_1, dynamic_address);
-	set_at<0, 128>(result, in_FIFO_buf64_stg0_update_0_71_res);
-	hw_uint<32>  in_FIFO_buf64_stg0_update_0_72_res = in_FIFO_buf64_stg0_update_0_72_select(in_FIFO_buf64, root, stg0_0, stg0_1, dynamic_address);
-	set_at<32, 128>(result, in_FIFO_buf64_stg0_update_0_72_res);
-	hw_uint<32>  in_FIFO_buf64_stg0_update_0_73_res = in_FIFO_buf64_stg0_update_0_73_select(in_FIFO_buf64, root, stg0_0, stg0_1, dynamic_address);
-	set_at<64, 128>(result, in_FIFO_buf64_stg0_update_0_73_res);
-	hw_uint<32>  in_FIFO_buf64_stg0_update_0_74_res = in_FIFO_buf64_stg0_update_0_74_select(in_FIFO_buf64, root, stg0_0, stg0_1, dynamic_address);
-	set_at<96, 128>(result, in_FIFO_buf64_stg0_update_0_74_res);
+	hw_uint<64> result;
+	hw_uint<16> in_FIFO_buf64_stg0_update_0_71_res = in_FIFO_buf64_stg0_update_0_71_select(in_FIFO_buf64, root, stg0_0, stg0_1, dynamic_address);
+	set_at<0, 64>(result, in_FIFO_buf64_stg0_update_0_71_res);
+	hw_uint<16> in_FIFO_buf64_stg0_update_0_72_res = in_FIFO_buf64_stg0_update_0_72_select(in_FIFO_buf64, root, stg0_0, stg0_1, dynamic_address);
+	set_at<16, 64>(result, in_FIFO_buf64_stg0_update_0_72_res);
+	hw_uint<16> in_FIFO_buf64_stg0_update_0_73_res = in_FIFO_buf64_stg0_update_0_73_select(in_FIFO_buf64, root, stg0_0, stg0_1, dynamic_address);
+	set_at<32, 64>(result, in_FIFO_buf64_stg0_update_0_73_res);
+	hw_uint<16> in_FIFO_buf64_stg0_update_0_74_res = in_FIFO_buf64_stg0_update_0_74_select(in_FIFO_buf64, root, stg0_0, stg0_1, dynamic_address);
+	set_at<48, 64>(result, in_FIFO_buf64_stg0_update_0_74_res);
 	return result;
 }
 
@@ -317,50 +317,50 @@ struct stg0_FIFO_buf68_load_to_stg0_FIFO_buf6871_133_merged_banks_4_cache {
 	// Capacity: 50
 	// # of read delays: 5
   // 0, 1, 24, 25, 49
-	hw_uint<32>  f0;
-	hw_uint<32>  f2;
-	fifo<hw_uint<32> , 22> f3;
-	hw_uint<32>  f4;
-	hw_uint<32>  f6;
-	fifo<hw_uint<32> , 23> f7;
-	hw_uint<32>  f8;
+	hw_uint<16> f0;
+	hw_uint<16> f2;
+	fifo<hw_uint<16>, 22> f3;
+	hw_uint<16> f4;
+	hw_uint<16> f6;
+	fifo<hw_uint<16>, 23> f7;
+	hw_uint<16> f8;
 
 
-	inline hw_uint<32>  peek_0() {
+	inline hw_uint<16> peek_0() {
 		return f0;
 	}
 
-	inline hw_uint<32>  peek_1() {
+	inline hw_uint<16> peek_1() {
 		return f2;
 	}
 
-	inline hw_uint<32>  peek_23() {
+	inline hw_uint<16> peek_23() {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 		return f3.back();
 	}
 
-	inline hw_uint<32>  peek_24() {
+	inline hw_uint<16> peek_24() {
 		return f4;
 	}
 
-	inline hw_uint<32>  peek_25() {
+	inline hw_uint<16> peek_25() {
 		return f6;
 	}
 
-	inline hw_uint<32>  peek_48() {
+	inline hw_uint<16> peek_48() {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 		return f7.back();
 	}
 
-	inline hw_uint<32>  peek_49() {
+	inline hw_uint<16> peek_49() {
 		return f8;
 	}
 
 
 
-	inline void push(const hw_uint<32>  value) {
+	inline void push(const hw_uint<16> value) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
     // cap: 1 reading from capacity: 23
@@ -403,11 +403,11 @@ struct stg0_FIFO_buf68_cache {
 
 
 
-inline void stg0_FIFO_buf68_load_to_stg0_FIFO_buf6871_133_write(hw_uint<32> & stg0_FIFO_buf68_load_to_stg0_FIFO_buf6871_133, stg0_FIFO_buf68_cache& stg0_FIFO_buf68, int root, int stg0_to_gp_84_ld70, int stg0_to_gp_84_ld69, int dynamic_address) {
+inline void stg0_FIFO_buf68_load_to_stg0_FIFO_buf6871_133_write(hw_uint<16>& stg0_FIFO_buf68_load_to_stg0_FIFO_buf6871_133, stg0_FIFO_buf68_cache& stg0_FIFO_buf68, int root, int stg0_to_gp_84_ld70, int stg0_to_gp_84_ld69, int dynamic_address) {
   stg0_FIFO_buf68.stg0_FIFO_buf68_load_to_stg0_FIFO_buf6871_133_merged_banks_4.push(stg0_FIFO_buf68_load_to_stg0_FIFO_buf6871_133);
 }
 
-inline hw_uint<32>  stg0_FIFO_buf68_stg1_update_0_41_select(stg0_FIFO_buf68_cache& stg0_FIFO_buf68, int root, int stg1_0, int stg1_1, int dynamic_address) {
+inline hw_uint<16> stg0_FIFO_buf68_stg1_update_0_41_select(stg0_FIFO_buf68_cache& stg0_FIFO_buf68, int root, int stg1_0, int stg1_1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // stg0_FIFO_buf68_stg1_update_0_41 read pattern: { stg1_update_0[root = 0, stg1_0, stg1_1] -> stg0_FIFO_buf68[stg1_1, -1 + stg1_0] : -13 <= stg1_0 <= 31 and 0 <= stg1_1 <= 22 }
@@ -418,7 +418,7 @@ inline hw_uint<32>  stg0_FIFO_buf68_stg1_update_0_41_select(stg0_FIFO_buf68_cach
   return 0;
 }
 
-inline hw_uint<32>  stg0_FIFO_buf68_stg1_update_0_42_select(stg0_FIFO_buf68_cache& stg0_FIFO_buf68, int root, int stg1_0, int stg1_1, int dynamic_address) {
+inline hw_uint<16> stg0_FIFO_buf68_stg1_update_0_42_select(stg0_FIFO_buf68_cache& stg0_FIFO_buf68, int root, int stg1_0, int stg1_1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // stg0_FIFO_buf68_stg1_update_0_42 read pattern: { stg1_update_0[root = 0, stg1_0, stg1_1] -> stg0_FIFO_buf68[stg1_1, stg1_0] : -13 <= stg1_0 <= 31 and 0 <= stg1_1 <= 22 }
@@ -429,7 +429,7 @@ inline hw_uint<32>  stg0_FIFO_buf68_stg1_update_0_42_select(stg0_FIFO_buf68_cach
   return 0;
 }
 
-inline hw_uint<32>  stg0_FIFO_buf68_stg1_update_0_43_select(stg0_FIFO_buf68_cache& stg0_FIFO_buf68, int root, int stg1_0, int stg1_1, int dynamic_address) {
+inline hw_uint<16> stg0_FIFO_buf68_stg1_update_0_43_select(stg0_FIFO_buf68_cache& stg0_FIFO_buf68, int root, int stg1_0, int stg1_1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // stg0_FIFO_buf68_stg1_update_0_43 read pattern: { stg1_update_0[root = 0, stg1_0, stg1_1] -> stg0_FIFO_buf68[1 + stg1_1, stg1_0] : -13 <= stg1_0 <= 31 and 0 <= stg1_1 <= 22 }
@@ -440,7 +440,7 @@ inline hw_uint<32>  stg0_FIFO_buf68_stg1_update_0_43_select(stg0_FIFO_buf68_cach
   return 0;
 }
 
-inline hw_uint<32>  stg0_FIFO_buf68_stg1_update_0_44_select(stg0_FIFO_buf68_cache& stg0_FIFO_buf68, int root, int stg1_0, int stg1_1, int dynamic_address) {
+inline hw_uint<16> stg0_FIFO_buf68_stg1_update_0_44_select(stg0_FIFO_buf68_cache& stg0_FIFO_buf68, int root, int stg1_0, int stg1_1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // stg0_FIFO_buf68_stg1_update_0_44 read pattern: { stg1_update_0[root = 0, stg1_0, stg1_1] -> stg0_FIFO_buf68[stg1_1, 1 + stg1_0] : -13 <= stg1_0 <= 31 and 0 <= stg1_1 <= 22 }
@@ -454,8 +454,8 @@ inline hw_uint<32>  stg0_FIFO_buf68_stg1_update_0_44_select(stg0_FIFO_buf68_cach
 // # of bundles = 2
 // load_to_stg0_FIFO_buf6871_write
 //	stg0_FIFO_buf68_load_to_stg0_FIFO_buf6871_133
-inline void stg0_FIFO_buf68_load_to_stg0_FIFO_buf6871_write_bundle_write(hw_uint<32>& load_to_stg0_FIFO_buf6871_write, stg0_FIFO_buf68_cache& stg0_FIFO_buf68, int root, int stg0_to_gp_84_ld70, int stg0_to_gp_84_ld69, int dynamic_address) {
-	hw_uint<32>  stg0_FIFO_buf68_load_to_stg0_FIFO_buf6871_133_res = load_to_stg0_FIFO_buf6871_write.extract<0, 31>();
+inline void stg0_FIFO_buf68_load_to_stg0_FIFO_buf6871_write_bundle_write(hw_uint<16>& load_to_stg0_FIFO_buf6871_write, stg0_FIFO_buf68_cache& stg0_FIFO_buf68, int root, int stg0_to_gp_84_ld70, int stg0_to_gp_84_ld69, int dynamic_address) {
+	hw_uint<16> stg0_FIFO_buf68_load_to_stg0_FIFO_buf6871_133_res = load_to_stg0_FIFO_buf6871_write.extract<0, 15>();
 	stg0_FIFO_buf68_load_to_stg0_FIFO_buf6871_133_write(stg0_FIFO_buf68_load_to_stg0_FIFO_buf6871_133_res, stg0_FIFO_buf68, root, stg0_to_gp_84_ld70, stg0_to_gp_84_ld69, dynamic_address);
 }
 
@@ -464,22 +464,22 @@ inline void stg0_FIFO_buf68_load_to_stg0_FIFO_buf6871_write_bundle_write(hw_uint
 //	stg0_FIFO_buf68_stg1_update_0_42
 //	stg0_FIFO_buf68_stg1_update_0_43
 //	stg0_FIFO_buf68_stg1_update_0_44
-inline hw_uint<128> stg0_FIFO_buf68_stg1_update_0_read_bundle_read(stg0_FIFO_buf68_cache& stg0_FIFO_buf68, int root, int stg1_0, int stg1_1, int dynamic_address) {
+inline hw_uint<64> stg0_FIFO_buf68_stg1_update_0_read_bundle_read(stg0_FIFO_buf68_cache& stg0_FIFO_buf68, int root, int stg1_0, int stg1_1, int dynamic_address) {
   // # of ports in bundle: 4
     // stg0_FIFO_buf68_stg1_update_0_41
     // stg0_FIFO_buf68_stg1_update_0_42
     // stg0_FIFO_buf68_stg1_update_0_43
     // stg0_FIFO_buf68_stg1_update_0_44
 
-	hw_uint<128> result;
-	hw_uint<32>  stg0_FIFO_buf68_stg1_update_0_41_res = stg0_FIFO_buf68_stg1_update_0_41_select(stg0_FIFO_buf68, root, stg1_0, stg1_1, dynamic_address);
-	set_at<0, 128>(result, stg0_FIFO_buf68_stg1_update_0_41_res);
-	hw_uint<32>  stg0_FIFO_buf68_stg1_update_0_42_res = stg0_FIFO_buf68_stg1_update_0_42_select(stg0_FIFO_buf68, root, stg1_0, stg1_1, dynamic_address);
-	set_at<32, 128>(result, stg0_FIFO_buf68_stg1_update_0_42_res);
-	hw_uint<32>  stg0_FIFO_buf68_stg1_update_0_43_res = stg0_FIFO_buf68_stg1_update_0_43_select(stg0_FIFO_buf68, root, stg1_0, stg1_1, dynamic_address);
-	set_at<64, 128>(result, stg0_FIFO_buf68_stg1_update_0_43_res);
-	hw_uint<32>  stg0_FIFO_buf68_stg1_update_0_44_res = stg0_FIFO_buf68_stg1_update_0_44_select(stg0_FIFO_buf68, root, stg1_0, stg1_1, dynamic_address);
-	set_at<96, 128>(result, stg0_FIFO_buf68_stg1_update_0_44_res);
+	hw_uint<64> result;
+	hw_uint<16> stg0_FIFO_buf68_stg1_update_0_41_res = stg0_FIFO_buf68_stg1_update_0_41_select(stg0_FIFO_buf68, root, stg1_0, stg1_1, dynamic_address);
+	set_at<0, 64>(result, stg0_FIFO_buf68_stg1_update_0_41_res);
+	hw_uint<16> stg0_FIFO_buf68_stg1_update_0_42_res = stg0_FIFO_buf68_stg1_update_0_42_select(stg0_FIFO_buf68, root, stg1_0, stg1_1, dynamic_address);
+	set_at<16, 64>(result, stg0_FIFO_buf68_stg1_update_0_42_res);
+	hw_uint<16> stg0_FIFO_buf68_stg1_update_0_43_res = stg0_FIFO_buf68_stg1_update_0_43_select(stg0_FIFO_buf68, root, stg1_0, stg1_1, dynamic_address);
+	set_at<32, 64>(result, stg0_FIFO_buf68_stg1_update_0_43_res);
+	hw_uint<16> stg0_FIFO_buf68_stg1_update_0_44_res = stg0_FIFO_buf68_stg1_update_0_44_select(stg0_FIFO_buf68, root, stg1_0, stg1_1, dynamic_address);
+	set_at<48, 64>(result, stg0_FIFO_buf68_stg1_update_0_44_res);
 	return result;
 }
 
@@ -620,50 +620,50 @@ struct stg10_FIFO_buf76_load_to_stg10_FIFO_buf7679_129_merged_banks_4_cache {
 	// Capacity: 30
 	// # of read delays: 5
   // 0, 1, 14, 15, 29
-	hw_uint<32>  f0;
-	hw_uint<32>  f2;
-	fifo<hw_uint<32> , 12> f3;
-	hw_uint<32>  f4;
-	hw_uint<32>  f6;
-	fifo<hw_uint<32> , 13> f7;
-	hw_uint<32>  f8;
+	hw_uint<16> f0;
+	hw_uint<16> f2;
+	fifo<hw_uint<16>, 12> f3;
+	hw_uint<16> f4;
+	hw_uint<16> f6;
+	fifo<hw_uint<16>, 13> f7;
+	hw_uint<16> f8;
 
 
-	inline hw_uint<32>  peek_0() {
+	inline hw_uint<16> peek_0() {
 		return f0;
 	}
 
-	inline hw_uint<32>  peek_1() {
+	inline hw_uint<16> peek_1() {
 		return f2;
 	}
 
-	inline hw_uint<32>  peek_13() {
+	inline hw_uint<16> peek_13() {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 		return f3.back();
 	}
 
-	inline hw_uint<32>  peek_14() {
+	inline hw_uint<16> peek_14() {
 		return f4;
 	}
 
-	inline hw_uint<32>  peek_15() {
+	inline hw_uint<16> peek_15() {
 		return f6;
 	}
 
-	inline hw_uint<32>  peek_28() {
+	inline hw_uint<16> peek_28() {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 		return f7.back();
 	}
 
-	inline hw_uint<32>  peek_29() {
+	inline hw_uint<16> peek_29() {
 		return f8;
 	}
 
 
 
-	inline void push(const hw_uint<32>  value) {
+	inline void push(const hw_uint<16> value) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
     // cap: 1 reading from capacity: 13
@@ -706,11 +706,11 @@ struct stg10_FIFO_buf76_cache {
 
 
 
-inline void stg10_FIFO_buf76_load_to_stg10_FIFO_buf7679_129_write(hw_uint<32> & stg10_FIFO_buf76_load_to_stg10_FIFO_buf7679_129, stg10_FIFO_buf76_cache& stg10_FIFO_buf76, int root, int stg10_to_gp_412_ld78, int stg10_to_gp_412_ld77, int dynamic_address) {
+inline void stg10_FIFO_buf76_load_to_stg10_FIFO_buf7679_129_write(hw_uint<16>& stg10_FIFO_buf76_load_to_stg10_FIFO_buf7679_129, stg10_FIFO_buf76_cache& stg10_FIFO_buf76, int root, int stg10_to_gp_412_ld78, int stg10_to_gp_412_ld77, int dynamic_address) {
   stg10_FIFO_buf76.stg10_FIFO_buf76_load_to_stg10_FIFO_buf7679_129_merged_banks_4.push(stg10_FIFO_buf76_load_to_stg10_FIFO_buf7679_129);
 }
 
-inline hw_uint<32>  stg10_FIFO_buf76_stg11_update_0_61_select(stg10_FIFO_buf76_cache& stg10_FIFO_buf76, int root, int stg11_0, int stg11_1, int dynamic_address) {
+inline hw_uint<16> stg10_FIFO_buf76_stg11_update_0_61_select(stg10_FIFO_buf76_cache& stg10_FIFO_buf76, int root, int stg11_0, int stg11_1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // stg10_FIFO_buf76_stg11_update_0_61 read pattern: { stg11_update_0[root = 0, stg11_0, stg11_1] -> stg10_FIFO_buf76[stg11_1, -1 + stg11_0] : -3 <= stg11_0 <= 21 and 0 <= stg11_1 <= 12 }
@@ -721,7 +721,7 @@ inline hw_uint<32>  stg10_FIFO_buf76_stg11_update_0_61_select(stg10_FIFO_buf76_c
   return 0;
 }
 
-inline hw_uint<32>  stg10_FIFO_buf76_stg11_update_0_62_select(stg10_FIFO_buf76_cache& stg10_FIFO_buf76, int root, int stg11_0, int stg11_1, int dynamic_address) {
+inline hw_uint<16> stg10_FIFO_buf76_stg11_update_0_62_select(stg10_FIFO_buf76_cache& stg10_FIFO_buf76, int root, int stg11_0, int stg11_1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // stg10_FIFO_buf76_stg11_update_0_62 read pattern: { stg11_update_0[root = 0, stg11_0, stg11_1] -> stg10_FIFO_buf76[stg11_1, stg11_0] : -3 <= stg11_0 <= 21 and 0 <= stg11_1 <= 12 }
@@ -732,7 +732,7 @@ inline hw_uint<32>  stg10_FIFO_buf76_stg11_update_0_62_select(stg10_FIFO_buf76_c
   return 0;
 }
 
-inline hw_uint<32>  stg10_FIFO_buf76_stg11_update_0_63_select(stg10_FIFO_buf76_cache& stg10_FIFO_buf76, int root, int stg11_0, int stg11_1, int dynamic_address) {
+inline hw_uint<16> stg10_FIFO_buf76_stg11_update_0_63_select(stg10_FIFO_buf76_cache& stg10_FIFO_buf76, int root, int stg11_0, int stg11_1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // stg10_FIFO_buf76_stg11_update_0_63 read pattern: { stg11_update_0[root = 0, stg11_0, stg11_1] -> stg10_FIFO_buf76[1 + stg11_1, stg11_0] : -3 <= stg11_0 <= 21 and 0 <= stg11_1 <= 12 }
@@ -743,7 +743,7 @@ inline hw_uint<32>  stg10_FIFO_buf76_stg11_update_0_63_select(stg10_FIFO_buf76_c
   return 0;
 }
 
-inline hw_uint<32>  stg10_FIFO_buf76_stg11_update_0_64_select(stg10_FIFO_buf76_cache& stg10_FIFO_buf76, int root, int stg11_0, int stg11_1, int dynamic_address) {
+inline hw_uint<16> stg10_FIFO_buf76_stg11_update_0_64_select(stg10_FIFO_buf76_cache& stg10_FIFO_buf76, int root, int stg11_0, int stg11_1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // stg10_FIFO_buf76_stg11_update_0_64 read pattern: { stg11_update_0[root = 0, stg11_0, stg11_1] -> stg10_FIFO_buf76[stg11_1, 1 + stg11_0] : -3 <= stg11_0 <= 21 and 0 <= stg11_1 <= 12 }
@@ -757,8 +757,8 @@ inline hw_uint<32>  stg10_FIFO_buf76_stg11_update_0_64_select(stg10_FIFO_buf76_c
 // # of bundles = 2
 // load_to_stg10_FIFO_buf7679_write
 //	stg10_FIFO_buf76_load_to_stg10_FIFO_buf7679_129
-inline void stg10_FIFO_buf76_load_to_stg10_FIFO_buf7679_write_bundle_write(hw_uint<32>& load_to_stg10_FIFO_buf7679_write, stg10_FIFO_buf76_cache& stg10_FIFO_buf76, int root, int stg10_to_gp_412_ld78, int stg10_to_gp_412_ld77, int dynamic_address) {
-	hw_uint<32>  stg10_FIFO_buf76_load_to_stg10_FIFO_buf7679_129_res = load_to_stg10_FIFO_buf7679_write.extract<0, 31>();
+inline void stg10_FIFO_buf76_load_to_stg10_FIFO_buf7679_write_bundle_write(hw_uint<16>& load_to_stg10_FIFO_buf7679_write, stg10_FIFO_buf76_cache& stg10_FIFO_buf76, int root, int stg10_to_gp_412_ld78, int stg10_to_gp_412_ld77, int dynamic_address) {
+	hw_uint<16> stg10_FIFO_buf76_load_to_stg10_FIFO_buf7679_129_res = load_to_stg10_FIFO_buf7679_write.extract<0, 15>();
 	stg10_FIFO_buf76_load_to_stg10_FIFO_buf7679_129_write(stg10_FIFO_buf76_load_to_stg10_FIFO_buf7679_129_res, stg10_FIFO_buf76, root, stg10_to_gp_412_ld78, stg10_to_gp_412_ld77, dynamic_address);
 }
 
@@ -767,22 +767,22 @@ inline void stg10_FIFO_buf76_load_to_stg10_FIFO_buf7679_write_bundle_write(hw_ui
 //	stg10_FIFO_buf76_stg11_update_0_62
 //	stg10_FIFO_buf76_stg11_update_0_63
 //	stg10_FIFO_buf76_stg11_update_0_64
-inline hw_uint<128> stg10_FIFO_buf76_stg11_update_0_read_bundle_read(stg10_FIFO_buf76_cache& stg10_FIFO_buf76, int root, int stg11_0, int stg11_1, int dynamic_address) {
+inline hw_uint<64> stg10_FIFO_buf76_stg11_update_0_read_bundle_read(stg10_FIFO_buf76_cache& stg10_FIFO_buf76, int root, int stg11_0, int stg11_1, int dynamic_address) {
   // # of ports in bundle: 4
     // stg10_FIFO_buf76_stg11_update_0_61
     // stg10_FIFO_buf76_stg11_update_0_62
     // stg10_FIFO_buf76_stg11_update_0_63
     // stg10_FIFO_buf76_stg11_update_0_64
 
-	hw_uint<128> result;
-	hw_uint<32>  stg10_FIFO_buf76_stg11_update_0_61_res = stg10_FIFO_buf76_stg11_update_0_61_select(stg10_FIFO_buf76, root, stg11_0, stg11_1, dynamic_address);
-	set_at<0, 128>(result, stg10_FIFO_buf76_stg11_update_0_61_res);
-	hw_uint<32>  stg10_FIFO_buf76_stg11_update_0_62_res = stg10_FIFO_buf76_stg11_update_0_62_select(stg10_FIFO_buf76, root, stg11_0, stg11_1, dynamic_address);
-	set_at<32, 128>(result, stg10_FIFO_buf76_stg11_update_0_62_res);
-	hw_uint<32>  stg10_FIFO_buf76_stg11_update_0_63_res = stg10_FIFO_buf76_stg11_update_0_63_select(stg10_FIFO_buf76, root, stg11_0, stg11_1, dynamic_address);
-	set_at<64, 128>(result, stg10_FIFO_buf76_stg11_update_0_63_res);
-	hw_uint<32>  stg10_FIFO_buf76_stg11_update_0_64_res = stg10_FIFO_buf76_stg11_update_0_64_select(stg10_FIFO_buf76, root, stg11_0, stg11_1, dynamic_address);
-	set_at<96, 128>(result, stg10_FIFO_buf76_stg11_update_0_64_res);
+	hw_uint<64> result;
+	hw_uint<16> stg10_FIFO_buf76_stg11_update_0_61_res = stg10_FIFO_buf76_stg11_update_0_61_select(stg10_FIFO_buf76, root, stg11_0, stg11_1, dynamic_address);
+	set_at<0, 64>(result, stg10_FIFO_buf76_stg11_update_0_61_res);
+	hw_uint<16> stg10_FIFO_buf76_stg11_update_0_62_res = stg10_FIFO_buf76_stg11_update_0_62_select(stg10_FIFO_buf76, root, stg11_0, stg11_1, dynamic_address);
+	set_at<16, 64>(result, stg10_FIFO_buf76_stg11_update_0_62_res);
+	hw_uint<16> stg10_FIFO_buf76_stg11_update_0_63_res = stg10_FIFO_buf76_stg11_update_0_63_select(stg10_FIFO_buf76, root, stg11_0, stg11_1, dynamic_address);
+	set_at<32, 64>(result, stg10_FIFO_buf76_stg11_update_0_63_res);
+	hw_uint<16> stg10_FIFO_buf76_stg11_update_0_64_res = stg10_FIFO_buf76_stg11_update_0_64_select(stg10_FIFO_buf76, root, stg11_0, stg11_1, dynamic_address);
+	set_at<48, 64>(result, stg10_FIFO_buf76_stg11_update_0_64_res);
 	return result;
 }
 
@@ -857,50 +857,50 @@ struct stg11_FIFO_buf80_load_to_stg11_FIFO_buf8083_125_merged_banks_4_cache {
 	// Capacity: 28
 	// # of read delays: 5
   // 0, 1, 13, 14, 27
-	hw_uint<32>  f0;
-	hw_uint<32>  f2;
-	fifo<hw_uint<32> , 11> f3;
-	hw_uint<32>  f4;
-	hw_uint<32>  f6;
-	fifo<hw_uint<32> , 12> f7;
-	hw_uint<32>  f8;
+	hw_uint<16> f0;
+	hw_uint<16> f2;
+	fifo<hw_uint<16>, 11> f3;
+	hw_uint<16> f4;
+	hw_uint<16> f6;
+	fifo<hw_uint<16>, 12> f7;
+	hw_uint<16> f8;
 
 
-	inline hw_uint<32>  peek_0() {
+	inline hw_uint<16> peek_0() {
 		return f0;
 	}
 
-	inline hw_uint<32>  peek_1() {
+	inline hw_uint<16> peek_1() {
 		return f2;
 	}
 
-	inline hw_uint<32>  peek_12() {
+	inline hw_uint<16> peek_12() {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 		return f3.back();
 	}
 
-	inline hw_uint<32>  peek_13() {
+	inline hw_uint<16> peek_13() {
 		return f4;
 	}
 
-	inline hw_uint<32>  peek_14() {
+	inline hw_uint<16> peek_14() {
 		return f6;
 	}
 
-	inline hw_uint<32>  peek_26() {
+	inline hw_uint<16> peek_26() {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 		return f7.back();
 	}
 
-	inline hw_uint<32>  peek_27() {
+	inline hw_uint<16> peek_27() {
 		return f8;
 	}
 
 
 
-	inline void push(const hw_uint<32>  value) {
+	inline void push(const hw_uint<16> value) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
     // cap: 1 reading from capacity: 12
@@ -943,11 +943,11 @@ struct stg11_FIFO_buf80_cache {
 
 
 
-inline void stg11_FIFO_buf80_load_to_stg11_FIFO_buf8083_125_write(hw_uint<32> & stg11_FIFO_buf80_load_to_stg11_FIFO_buf8083_125, stg11_FIFO_buf80_cache& stg11_FIFO_buf80, int root, int stg11_to_gp_516_ld82, int stg11_to_gp_516_ld81, int dynamic_address) {
+inline void stg11_FIFO_buf80_load_to_stg11_FIFO_buf8083_125_write(hw_uint<16>& stg11_FIFO_buf80_load_to_stg11_FIFO_buf8083_125, stg11_FIFO_buf80_cache& stg11_FIFO_buf80, int root, int stg11_to_gp_516_ld82, int stg11_to_gp_516_ld81, int dynamic_address) {
   stg11_FIFO_buf80.stg11_FIFO_buf80_load_to_stg11_FIFO_buf8083_125_merged_banks_4.push(stg11_FIFO_buf80_load_to_stg11_FIFO_buf8083_125);
 }
 
-inline hw_uint<32>  stg11_FIFO_buf80_stg12_update_0_56_select(stg11_FIFO_buf80_cache& stg11_FIFO_buf80, int root, int stg12_0, int stg12_1, int dynamic_address) {
+inline hw_uint<16> stg11_FIFO_buf80_stg12_update_0_56_select(stg11_FIFO_buf80_cache& stg11_FIFO_buf80, int root, int stg12_0, int stg12_1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // stg11_FIFO_buf80_stg12_update_0_56 read pattern: { stg12_update_0[root = 0, stg12_0, stg12_1] -> stg11_FIFO_buf80[stg12_1, -1 + stg12_0] : -2 <= stg12_0 <= 20 and 0 <= stg12_1 <= 11 }
@@ -958,7 +958,7 @@ inline hw_uint<32>  stg11_FIFO_buf80_stg12_update_0_56_select(stg11_FIFO_buf80_c
   return 0;
 }
 
-inline hw_uint<32>  stg11_FIFO_buf80_stg12_update_0_57_select(stg11_FIFO_buf80_cache& stg11_FIFO_buf80, int root, int stg12_0, int stg12_1, int dynamic_address) {
+inline hw_uint<16> stg11_FIFO_buf80_stg12_update_0_57_select(stg11_FIFO_buf80_cache& stg11_FIFO_buf80, int root, int stg12_0, int stg12_1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // stg11_FIFO_buf80_stg12_update_0_57 read pattern: { stg12_update_0[root = 0, stg12_0, stg12_1] -> stg11_FIFO_buf80[stg12_1, stg12_0] : -2 <= stg12_0 <= 20 and 0 <= stg12_1 <= 11 }
@@ -969,7 +969,7 @@ inline hw_uint<32>  stg11_FIFO_buf80_stg12_update_0_57_select(stg11_FIFO_buf80_c
   return 0;
 }
 
-inline hw_uint<32>  stg11_FIFO_buf80_stg12_update_0_58_select(stg11_FIFO_buf80_cache& stg11_FIFO_buf80, int root, int stg12_0, int stg12_1, int dynamic_address) {
+inline hw_uint<16> stg11_FIFO_buf80_stg12_update_0_58_select(stg11_FIFO_buf80_cache& stg11_FIFO_buf80, int root, int stg12_0, int stg12_1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // stg11_FIFO_buf80_stg12_update_0_58 read pattern: { stg12_update_0[root = 0, stg12_0, stg12_1] -> stg11_FIFO_buf80[1 + stg12_1, stg12_0] : -2 <= stg12_0 <= 20 and 0 <= stg12_1 <= 11 }
@@ -980,7 +980,7 @@ inline hw_uint<32>  stg11_FIFO_buf80_stg12_update_0_58_select(stg11_FIFO_buf80_c
   return 0;
 }
 
-inline hw_uint<32>  stg11_FIFO_buf80_stg12_update_0_59_select(stg11_FIFO_buf80_cache& stg11_FIFO_buf80, int root, int stg12_0, int stg12_1, int dynamic_address) {
+inline hw_uint<16> stg11_FIFO_buf80_stg12_update_0_59_select(stg11_FIFO_buf80_cache& stg11_FIFO_buf80, int root, int stg12_0, int stg12_1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // stg11_FIFO_buf80_stg12_update_0_59 read pattern: { stg12_update_0[root = 0, stg12_0, stg12_1] -> stg11_FIFO_buf80[stg12_1, 1 + stg12_0] : -2 <= stg12_0 <= 20 and 0 <= stg12_1 <= 11 }
@@ -994,8 +994,8 @@ inline hw_uint<32>  stg11_FIFO_buf80_stg12_update_0_59_select(stg11_FIFO_buf80_c
 // # of bundles = 2
 // load_to_stg11_FIFO_buf8083_write
 //	stg11_FIFO_buf80_load_to_stg11_FIFO_buf8083_125
-inline void stg11_FIFO_buf80_load_to_stg11_FIFO_buf8083_write_bundle_write(hw_uint<32>& load_to_stg11_FIFO_buf8083_write, stg11_FIFO_buf80_cache& stg11_FIFO_buf80, int root, int stg11_to_gp_516_ld82, int stg11_to_gp_516_ld81, int dynamic_address) {
-	hw_uint<32>  stg11_FIFO_buf80_load_to_stg11_FIFO_buf8083_125_res = load_to_stg11_FIFO_buf8083_write.extract<0, 31>();
+inline void stg11_FIFO_buf80_load_to_stg11_FIFO_buf8083_write_bundle_write(hw_uint<16>& load_to_stg11_FIFO_buf8083_write, stg11_FIFO_buf80_cache& stg11_FIFO_buf80, int root, int stg11_to_gp_516_ld82, int stg11_to_gp_516_ld81, int dynamic_address) {
+	hw_uint<16> stg11_FIFO_buf80_load_to_stg11_FIFO_buf8083_125_res = load_to_stg11_FIFO_buf8083_write.extract<0, 15>();
 	stg11_FIFO_buf80_load_to_stg11_FIFO_buf8083_125_write(stg11_FIFO_buf80_load_to_stg11_FIFO_buf8083_125_res, stg11_FIFO_buf80, root, stg11_to_gp_516_ld82, stg11_to_gp_516_ld81, dynamic_address);
 }
 
@@ -1004,22 +1004,22 @@ inline void stg11_FIFO_buf80_load_to_stg11_FIFO_buf8083_write_bundle_write(hw_ui
 //	stg11_FIFO_buf80_stg12_update_0_57
 //	stg11_FIFO_buf80_stg12_update_0_58
 //	stg11_FIFO_buf80_stg12_update_0_59
-inline hw_uint<128> stg11_FIFO_buf80_stg12_update_0_read_bundle_read(stg11_FIFO_buf80_cache& stg11_FIFO_buf80, int root, int stg12_0, int stg12_1, int dynamic_address) {
+inline hw_uint<64> stg11_FIFO_buf80_stg12_update_0_read_bundle_read(stg11_FIFO_buf80_cache& stg11_FIFO_buf80, int root, int stg12_0, int stg12_1, int dynamic_address) {
   // # of ports in bundle: 4
     // stg11_FIFO_buf80_stg12_update_0_56
     // stg11_FIFO_buf80_stg12_update_0_57
     // stg11_FIFO_buf80_stg12_update_0_58
     // stg11_FIFO_buf80_stg12_update_0_59
 
-	hw_uint<128> result;
-	hw_uint<32>  stg11_FIFO_buf80_stg12_update_0_56_res = stg11_FIFO_buf80_stg12_update_0_56_select(stg11_FIFO_buf80, root, stg12_0, stg12_1, dynamic_address);
-	set_at<0, 128>(result, stg11_FIFO_buf80_stg12_update_0_56_res);
-	hw_uint<32>  stg11_FIFO_buf80_stg12_update_0_57_res = stg11_FIFO_buf80_stg12_update_0_57_select(stg11_FIFO_buf80, root, stg12_0, stg12_1, dynamic_address);
-	set_at<32, 128>(result, stg11_FIFO_buf80_stg12_update_0_57_res);
-	hw_uint<32>  stg11_FIFO_buf80_stg12_update_0_58_res = stg11_FIFO_buf80_stg12_update_0_58_select(stg11_FIFO_buf80, root, stg12_0, stg12_1, dynamic_address);
-	set_at<64, 128>(result, stg11_FIFO_buf80_stg12_update_0_58_res);
-	hw_uint<32>  stg11_FIFO_buf80_stg12_update_0_59_res = stg11_FIFO_buf80_stg12_update_0_59_select(stg11_FIFO_buf80, root, stg12_0, stg12_1, dynamic_address);
-	set_at<96, 128>(result, stg11_FIFO_buf80_stg12_update_0_59_res);
+	hw_uint<64> result;
+	hw_uint<16> stg11_FIFO_buf80_stg12_update_0_56_res = stg11_FIFO_buf80_stg12_update_0_56_select(stg11_FIFO_buf80, root, stg12_0, stg12_1, dynamic_address);
+	set_at<0, 64>(result, stg11_FIFO_buf80_stg12_update_0_56_res);
+	hw_uint<16> stg11_FIFO_buf80_stg12_update_0_57_res = stg11_FIFO_buf80_stg12_update_0_57_select(stg11_FIFO_buf80, root, stg12_0, stg12_1, dynamic_address);
+	set_at<16, 64>(result, stg11_FIFO_buf80_stg12_update_0_57_res);
+	hw_uint<16> stg11_FIFO_buf80_stg12_update_0_58_res = stg11_FIFO_buf80_stg12_update_0_58_select(stg11_FIFO_buf80, root, stg12_0, stg12_1, dynamic_address);
+	set_at<32, 64>(result, stg11_FIFO_buf80_stg12_update_0_58_res);
+	hw_uint<16> stg11_FIFO_buf80_stg12_update_0_59_res = stg11_FIFO_buf80_stg12_update_0_59_select(stg11_FIFO_buf80, root, stg12_0, stg12_1, dynamic_address);
+	set_at<48, 64>(result, stg11_FIFO_buf80_stg12_update_0_59_res);
 	return result;
 }
 
@@ -1094,50 +1094,50 @@ struct stg12_FIFO_buf84_load_to_stg12_FIFO_buf8487_121_merged_banks_4_cache {
 	// Capacity: 26
 	// # of read delays: 5
   // 0, 1, 12, 13, 25
-	hw_uint<32>  f0;
-	hw_uint<32>  f2;
-	fifo<hw_uint<32> , 10> f3;
-	hw_uint<32>  f4;
-	hw_uint<32>  f6;
-	fifo<hw_uint<32> , 11> f7;
-	hw_uint<32>  f8;
+	hw_uint<16> f0;
+	hw_uint<16> f2;
+	fifo<hw_uint<16>, 10> f3;
+	hw_uint<16> f4;
+	hw_uint<16> f6;
+	fifo<hw_uint<16>, 11> f7;
+	hw_uint<16> f8;
 
 
-	inline hw_uint<32>  peek_0() {
+	inline hw_uint<16> peek_0() {
 		return f0;
 	}
 
-	inline hw_uint<32>  peek_1() {
+	inline hw_uint<16> peek_1() {
 		return f2;
 	}
 
-	inline hw_uint<32>  peek_11() {
+	inline hw_uint<16> peek_11() {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 		return f3.back();
 	}
 
-	inline hw_uint<32>  peek_12() {
+	inline hw_uint<16> peek_12() {
 		return f4;
 	}
 
-	inline hw_uint<32>  peek_13() {
+	inline hw_uint<16> peek_13() {
 		return f6;
 	}
 
-	inline hw_uint<32>  peek_24() {
+	inline hw_uint<16> peek_24() {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 		return f7.back();
 	}
 
-	inline hw_uint<32>  peek_25() {
+	inline hw_uint<16> peek_25() {
 		return f8;
 	}
 
 
 
-	inline void push(const hw_uint<32>  value) {
+	inline void push(const hw_uint<16> value) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
     // cap: 1 reading from capacity: 11
@@ -1180,11 +1180,11 @@ struct stg12_FIFO_buf84_cache {
 
 
 
-inline void stg12_FIFO_buf84_load_to_stg12_FIFO_buf8487_121_write(hw_uint<32> & stg12_FIFO_buf84_load_to_stg12_FIFO_buf8487_121, stg12_FIFO_buf84_cache& stg12_FIFO_buf84, int root, int stg12_to_gp_620_ld86, int stg12_to_gp_620_ld85, int dynamic_address) {
+inline void stg12_FIFO_buf84_load_to_stg12_FIFO_buf8487_121_write(hw_uint<16>& stg12_FIFO_buf84_load_to_stg12_FIFO_buf8487_121, stg12_FIFO_buf84_cache& stg12_FIFO_buf84, int root, int stg12_to_gp_620_ld86, int stg12_to_gp_620_ld85, int dynamic_address) {
   stg12_FIFO_buf84.stg12_FIFO_buf84_load_to_stg12_FIFO_buf8487_121_merged_banks_4.push(stg12_FIFO_buf84_load_to_stg12_FIFO_buf8487_121);
 }
 
-inline hw_uint<32>  stg12_FIFO_buf84_stg13_update_0_51_select(stg12_FIFO_buf84_cache& stg12_FIFO_buf84, int root, int stg13_0, int stg13_1, int dynamic_address) {
+inline hw_uint<16> stg12_FIFO_buf84_stg13_update_0_51_select(stg12_FIFO_buf84_cache& stg12_FIFO_buf84, int root, int stg13_0, int stg13_1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // stg12_FIFO_buf84_stg13_update_0_51 read pattern: { stg13_update_0[root = 0, stg13_0, stg13_1] -> stg12_FIFO_buf84[stg13_1, -1 + stg13_0] : -1 <= stg13_0 <= 19 and 0 <= stg13_1 <= 10 }
@@ -1195,7 +1195,7 @@ inline hw_uint<32>  stg12_FIFO_buf84_stg13_update_0_51_select(stg12_FIFO_buf84_c
   return 0;
 }
 
-inline hw_uint<32>  stg12_FIFO_buf84_stg13_update_0_52_select(stg12_FIFO_buf84_cache& stg12_FIFO_buf84, int root, int stg13_0, int stg13_1, int dynamic_address) {
+inline hw_uint<16> stg12_FIFO_buf84_stg13_update_0_52_select(stg12_FIFO_buf84_cache& stg12_FIFO_buf84, int root, int stg13_0, int stg13_1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // stg12_FIFO_buf84_stg13_update_0_52 read pattern: { stg13_update_0[root = 0, stg13_0, stg13_1] -> stg12_FIFO_buf84[stg13_1, stg13_0] : -1 <= stg13_0 <= 19 and 0 <= stg13_1 <= 10 }
@@ -1206,7 +1206,7 @@ inline hw_uint<32>  stg12_FIFO_buf84_stg13_update_0_52_select(stg12_FIFO_buf84_c
   return 0;
 }
 
-inline hw_uint<32>  stg12_FIFO_buf84_stg13_update_0_53_select(stg12_FIFO_buf84_cache& stg12_FIFO_buf84, int root, int stg13_0, int stg13_1, int dynamic_address) {
+inline hw_uint<16> stg12_FIFO_buf84_stg13_update_0_53_select(stg12_FIFO_buf84_cache& stg12_FIFO_buf84, int root, int stg13_0, int stg13_1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // stg12_FIFO_buf84_stg13_update_0_53 read pattern: { stg13_update_0[root = 0, stg13_0, stg13_1] -> stg12_FIFO_buf84[1 + stg13_1, stg13_0] : -1 <= stg13_0 <= 19 and 0 <= stg13_1 <= 10 }
@@ -1217,7 +1217,7 @@ inline hw_uint<32>  stg12_FIFO_buf84_stg13_update_0_53_select(stg12_FIFO_buf84_c
   return 0;
 }
 
-inline hw_uint<32>  stg12_FIFO_buf84_stg13_update_0_54_select(stg12_FIFO_buf84_cache& stg12_FIFO_buf84, int root, int stg13_0, int stg13_1, int dynamic_address) {
+inline hw_uint<16> stg12_FIFO_buf84_stg13_update_0_54_select(stg12_FIFO_buf84_cache& stg12_FIFO_buf84, int root, int stg13_0, int stg13_1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // stg12_FIFO_buf84_stg13_update_0_54 read pattern: { stg13_update_0[root = 0, stg13_0, stg13_1] -> stg12_FIFO_buf84[stg13_1, 1 + stg13_0] : -1 <= stg13_0 <= 19 and 0 <= stg13_1 <= 10 }
@@ -1231,8 +1231,8 @@ inline hw_uint<32>  stg12_FIFO_buf84_stg13_update_0_54_select(stg12_FIFO_buf84_c
 // # of bundles = 2
 // load_to_stg12_FIFO_buf8487_write
 //	stg12_FIFO_buf84_load_to_stg12_FIFO_buf8487_121
-inline void stg12_FIFO_buf84_load_to_stg12_FIFO_buf8487_write_bundle_write(hw_uint<32>& load_to_stg12_FIFO_buf8487_write, stg12_FIFO_buf84_cache& stg12_FIFO_buf84, int root, int stg12_to_gp_620_ld86, int stg12_to_gp_620_ld85, int dynamic_address) {
-	hw_uint<32>  stg12_FIFO_buf84_load_to_stg12_FIFO_buf8487_121_res = load_to_stg12_FIFO_buf8487_write.extract<0, 31>();
+inline void stg12_FIFO_buf84_load_to_stg12_FIFO_buf8487_write_bundle_write(hw_uint<16>& load_to_stg12_FIFO_buf8487_write, stg12_FIFO_buf84_cache& stg12_FIFO_buf84, int root, int stg12_to_gp_620_ld86, int stg12_to_gp_620_ld85, int dynamic_address) {
+	hw_uint<16> stg12_FIFO_buf84_load_to_stg12_FIFO_buf8487_121_res = load_to_stg12_FIFO_buf8487_write.extract<0, 15>();
 	stg12_FIFO_buf84_load_to_stg12_FIFO_buf8487_121_write(stg12_FIFO_buf84_load_to_stg12_FIFO_buf8487_121_res, stg12_FIFO_buf84, root, stg12_to_gp_620_ld86, stg12_to_gp_620_ld85, dynamic_address);
 }
 
@@ -1241,22 +1241,22 @@ inline void stg12_FIFO_buf84_load_to_stg12_FIFO_buf8487_write_bundle_write(hw_ui
 //	stg12_FIFO_buf84_stg13_update_0_52
 //	stg12_FIFO_buf84_stg13_update_0_53
 //	stg12_FIFO_buf84_stg13_update_0_54
-inline hw_uint<128> stg12_FIFO_buf84_stg13_update_0_read_bundle_read(stg12_FIFO_buf84_cache& stg12_FIFO_buf84, int root, int stg13_0, int stg13_1, int dynamic_address) {
+inline hw_uint<64> stg12_FIFO_buf84_stg13_update_0_read_bundle_read(stg12_FIFO_buf84_cache& stg12_FIFO_buf84, int root, int stg13_0, int stg13_1, int dynamic_address) {
   // # of ports in bundle: 4
     // stg12_FIFO_buf84_stg13_update_0_51
     // stg12_FIFO_buf84_stg13_update_0_52
     // stg12_FIFO_buf84_stg13_update_0_53
     // stg12_FIFO_buf84_stg13_update_0_54
 
-	hw_uint<128> result;
-	hw_uint<32>  stg12_FIFO_buf84_stg13_update_0_51_res = stg12_FIFO_buf84_stg13_update_0_51_select(stg12_FIFO_buf84, root, stg13_0, stg13_1, dynamic_address);
-	set_at<0, 128>(result, stg12_FIFO_buf84_stg13_update_0_51_res);
-	hw_uint<32>  stg12_FIFO_buf84_stg13_update_0_52_res = stg12_FIFO_buf84_stg13_update_0_52_select(stg12_FIFO_buf84, root, stg13_0, stg13_1, dynamic_address);
-	set_at<32, 128>(result, stg12_FIFO_buf84_stg13_update_0_52_res);
-	hw_uint<32>  stg12_FIFO_buf84_stg13_update_0_53_res = stg12_FIFO_buf84_stg13_update_0_53_select(stg12_FIFO_buf84, root, stg13_0, stg13_1, dynamic_address);
-	set_at<64, 128>(result, stg12_FIFO_buf84_stg13_update_0_53_res);
-	hw_uint<32>  stg12_FIFO_buf84_stg13_update_0_54_res = stg12_FIFO_buf84_stg13_update_0_54_select(stg12_FIFO_buf84, root, stg13_0, stg13_1, dynamic_address);
-	set_at<96, 128>(result, stg12_FIFO_buf84_stg13_update_0_54_res);
+	hw_uint<64> result;
+	hw_uint<16> stg12_FIFO_buf84_stg13_update_0_51_res = stg12_FIFO_buf84_stg13_update_0_51_select(stg12_FIFO_buf84, root, stg13_0, stg13_1, dynamic_address);
+	set_at<0, 64>(result, stg12_FIFO_buf84_stg13_update_0_51_res);
+	hw_uint<16> stg12_FIFO_buf84_stg13_update_0_52_res = stg12_FIFO_buf84_stg13_update_0_52_select(stg12_FIFO_buf84, root, stg13_0, stg13_1, dynamic_address);
+	set_at<16, 64>(result, stg12_FIFO_buf84_stg13_update_0_52_res);
+	hw_uint<16> stg12_FIFO_buf84_stg13_update_0_53_res = stg12_FIFO_buf84_stg13_update_0_53_select(stg12_FIFO_buf84, root, stg13_0, stg13_1, dynamic_address);
+	set_at<32, 64>(result, stg12_FIFO_buf84_stg13_update_0_53_res);
+	hw_uint<16> stg12_FIFO_buf84_stg13_update_0_54_res = stg12_FIFO_buf84_stg13_update_0_54_select(stg12_FIFO_buf84, root, stg13_0, stg13_1, dynamic_address);
+	set_at<48, 64>(result, stg12_FIFO_buf84_stg13_update_0_54_res);
 	return result;
 }
 
@@ -1331,50 +1331,50 @@ struct stg13_FIFO_buf88_load_to_stg13_FIFO_buf8891_117_merged_banks_4_cache {
 	// Capacity: 24
 	// # of read delays: 5
   // 0, 1, 11, 12, 23
-	hw_uint<32>  f0;
-	hw_uint<32>  f2;
-	fifo<hw_uint<32> , 9> f3;
-	hw_uint<32>  f4;
-	hw_uint<32>  f6;
-	fifo<hw_uint<32> , 10> f7;
-	hw_uint<32>  f8;
+	hw_uint<16> f0;
+	hw_uint<16> f2;
+	fifo<hw_uint<16>, 9> f3;
+	hw_uint<16> f4;
+	hw_uint<16> f6;
+	fifo<hw_uint<16>, 10> f7;
+	hw_uint<16> f8;
 
 
-	inline hw_uint<32>  peek_0() {
+	inline hw_uint<16> peek_0() {
 		return f0;
 	}
 
-	inline hw_uint<32>  peek_1() {
+	inline hw_uint<16> peek_1() {
 		return f2;
 	}
 
-	inline hw_uint<32>  peek_10() {
+	inline hw_uint<16> peek_10() {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 		return f3.back();
 	}
 
-	inline hw_uint<32>  peek_11() {
+	inline hw_uint<16> peek_11() {
 		return f4;
 	}
 
-	inline hw_uint<32>  peek_12() {
+	inline hw_uint<16> peek_12() {
 		return f6;
 	}
 
-	inline hw_uint<32>  peek_22() {
+	inline hw_uint<16> peek_22() {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 		return f7.back();
 	}
 
-	inline hw_uint<32>  peek_23() {
+	inline hw_uint<16> peek_23() {
 		return f8;
 	}
 
 
 
-	inline void push(const hw_uint<32>  value) {
+	inline void push(const hw_uint<16> value) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
     // cap: 1 reading from capacity: 10
@@ -1417,11 +1417,11 @@ struct stg13_FIFO_buf88_cache {
 
 
 
-inline void stg13_FIFO_buf88_load_to_stg13_FIFO_buf8891_117_write(hw_uint<32> & stg13_FIFO_buf88_load_to_stg13_FIFO_buf8891_117, stg13_FIFO_buf88_cache& stg13_FIFO_buf88, int root, int stg13_to_gp_724_ld90, int stg13_to_gp_724_ld89, int dynamic_address) {
+inline void stg13_FIFO_buf88_load_to_stg13_FIFO_buf8891_117_write(hw_uint<16>& stg13_FIFO_buf88_load_to_stg13_FIFO_buf8891_117, stg13_FIFO_buf88_cache& stg13_FIFO_buf88, int root, int stg13_to_gp_724_ld90, int stg13_to_gp_724_ld89, int dynamic_address) {
   stg13_FIFO_buf88.stg13_FIFO_buf88_load_to_stg13_FIFO_buf8891_117_merged_banks_4.push(stg13_FIFO_buf88_load_to_stg13_FIFO_buf8891_117);
 }
 
-inline hw_uint<32>  stg13_FIFO_buf88_stg14_update_0_46_select(stg13_FIFO_buf88_cache& stg13_FIFO_buf88, int root, int stg14_0, int stg14_1, int dynamic_address) {
+inline hw_uint<16> stg13_FIFO_buf88_stg14_update_0_46_select(stg13_FIFO_buf88_cache& stg13_FIFO_buf88, int root, int stg14_0, int stg14_1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // stg13_FIFO_buf88_stg14_update_0_46 read pattern: { stg14_update_0[root = 0, stg14_0, stg14_1] -> stg13_FIFO_buf88[stg14_1, -1 + stg14_0] : 0 <= stg14_0 <= 18 and 0 <= stg14_1 <= 9 }
@@ -1432,7 +1432,7 @@ inline hw_uint<32>  stg13_FIFO_buf88_stg14_update_0_46_select(stg13_FIFO_buf88_c
   return 0;
 }
 
-inline hw_uint<32>  stg13_FIFO_buf88_stg14_update_0_47_select(stg13_FIFO_buf88_cache& stg13_FIFO_buf88, int root, int stg14_0, int stg14_1, int dynamic_address) {
+inline hw_uint<16> stg13_FIFO_buf88_stg14_update_0_47_select(stg13_FIFO_buf88_cache& stg13_FIFO_buf88, int root, int stg14_0, int stg14_1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // stg13_FIFO_buf88_stg14_update_0_47 read pattern: { stg14_update_0[root = 0, stg14_0, stg14_1] -> stg13_FIFO_buf88[stg14_1, stg14_0] : 0 <= stg14_0 <= 18 and 0 <= stg14_1 <= 9 }
@@ -1443,7 +1443,7 @@ inline hw_uint<32>  stg13_FIFO_buf88_stg14_update_0_47_select(stg13_FIFO_buf88_c
   return 0;
 }
 
-inline hw_uint<32>  stg13_FIFO_buf88_stg14_update_0_48_select(stg13_FIFO_buf88_cache& stg13_FIFO_buf88, int root, int stg14_0, int stg14_1, int dynamic_address) {
+inline hw_uint<16> stg13_FIFO_buf88_stg14_update_0_48_select(stg13_FIFO_buf88_cache& stg13_FIFO_buf88, int root, int stg14_0, int stg14_1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // stg13_FIFO_buf88_stg14_update_0_48 read pattern: { stg14_update_0[root = 0, stg14_0, stg14_1] -> stg13_FIFO_buf88[1 + stg14_1, stg14_0] : 0 <= stg14_0 <= 18 and 0 <= stg14_1 <= 9 }
@@ -1454,7 +1454,7 @@ inline hw_uint<32>  stg13_FIFO_buf88_stg14_update_0_48_select(stg13_FIFO_buf88_c
   return 0;
 }
 
-inline hw_uint<32>  stg13_FIFO_buf88_stg14_update_0_49_select(stg13_FIFO_buf88_cache& stg13_FIFO_buf88, int root, int stg14_0, int stg14_1, int dynamic_address) {
+inline hw_uint<16> stg13_FIFO_buf88_stg14_update_0_49_select(stg13_FIFO_buf88_cache& stg13_FIFO_buf88, int root, int stg14_0, int stg14_1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // stg13_FIFO_buf88_stg14_update_0_49 read pattern: { stg14_update_0[root = 0, stg14_0, stg14_1] -> stg13_FIFO_buf88[stg14_1, 1 + stg14_0] : 0 <= stg14_0 <= 18 and 0 <= stg14_1 <= 9 }
@@ -1468,8 +1468,8 @@ inline hw_uint<32>  stg13_FIFO_buf88_stg14_update_0_49_select(stg13_FIFO_buf88_c
 // # of bundles = 2
 // load_to_stg13_FIFO_buf8891_write
 //	stg13_FIFO_buf88_load_to_stg13_FIFO_buf8891_117
-inline void stg13_FIFO_buf88_load_to_stg13_FIFO_buf8891_write_bundle_write(hw_uint<32>& load_to_stg13_FIFO_buf8891_write, stg13_FIFO_buf88_cache& stg13_FIFO_buf88, int root, int stg13_to_gp_724_ld90, int stg13_to_gp_724_ld89, int dynamic_address) {
-	hw_uint<32>  stg13_FIFO_buf88_load_to_stg13_FIFO_buf8891_117_res = load_to_stg13_FIFO_buf8891_write.extract<0, 31>();
+inline void stg13_FIFO_buf88_load_to_stg13_FIFO_buf8891_write_bundle_write(hw_uint<16>& load_to_stg13_FIFO_buf8891_write, stg13_FIFO_buf88_cache& stg13_FIFO_buf88, int root, int stg13_to_gp_724_ld90, int stg13_to_gp_724_ld89, int dynamic_address) {
+	hw_uint<16> stg13_FIFO_buf88_load_to_stg13_FIFO_buf8891_117_res = load_to_stg13_FIFO_buf8891_write.extract<0, 15>();
 	stg13_FIFO_buf88_load_to_stg13_FIFO_buf8891_117_write(stg13_FIFO_buf88_load_to_stg13_FIFO_buf8891_117_res, stg13_FIFO_buf88, root, stg13_to_gp_724_ld90, stg13_to_gp_724_ld89, dynamic_address);
 }
 
@@ -1478,22 +1478,22 @@ inline void stg13_FIFO_buf88_load_to_stg13_FIFO_buf8891_write_bundle_write(hw_ui
 //	stg13_FIFO_buf88_stg14_update_0_47
 //	stg13_FIFO_buf88_stg14_update_0_48
 //	stg13_FIFO_buf88_stg14_update_0_49
-inline hw_uint<128> stg13_FIFO_buf88_stg14_update_0_read_bundle_read(stg13_FIFO_buf88_cache& stg13_FIFO_buf88, int root, int stg14_0, int stg14_1, int dynamic_address) {
+inline hw_uint<64> stg13_FIFO_buf88_stg14_update_0_read_bundle_read(stg13_FIFO_buf88_cache& stg13_FIFO_buf88, int root, int stg14_0, int stg14_1, int dynamic_address) {
   // # of ports in bundle: 4
     // stg13_FIFO_buf88_stg14_update_0_46
     // stg13_FIFO_buf88_stg14_update_0_47
     // stg13_FIFO_buf88_stg14_update_0_48
     // stg13_FIFO_buf88_stg14_update_0_49
 
-	hw_uint<128> result;
-	hw_uint<32>  stg13_FIFO_buf88_stg14_update_0_46_res = stg13_FIFO_buf88_stg14_update_0_46_select(stg13_FIFO_buf88, root, stg14_0, stg14_1, dynamic_address);
-	set_at<0, 128>(result, stg13_FIFO_buf88_stg14_update_0_46_res);
-	hw_uint<32>  stg13_FIFO_buf88_stg14_update_0_47_res = stg13_FIFO_buf88_stg14_update_0_47_select(stg13_FIFO_buf88, root, stg14_0, stg14_1, dynamic_address);
-	set_at<32, 128>(result, stg13_FIFO_buf88_stg14_update_0_47_res);
-	hw_uint<32>  stg13_FIFO_buf88_stg14_update_0_48_res = stg13_FIFO_buf88_stg14_update_0_48_select(stg13_FIFO_buf88, root, stg14_0, stg14_1, dynamic_address);
-	set_at<64, 128>(result, stg13_FIFO_buf88_stg14_update_0_48_res);
-	hw_uint<32>  stg13_FIFO_buf88_stg14_update_0_49_res = stg13_FIFO_buf88_stg14_update_0_49_select(stg13_FIFO_buf88, root, stg14_0, stg14_1, dynamic_address);
-	set_at<96, 128>(result, stg13_FIFO_buf88_stg14_update_0_49_res);
+	hw_uint<64> result;
+	hw_uint<16> stg13_FIFO_buf88_stg14_update_0_46_res = stg13_FIFO_buf88_stg14_update_0_46_select(stg13_FIFO_buf88, root, stg14_0, stg14_1, dynamic_address);
+	set_at<0, 64>(result, stg13_FIFO_buf88_stg14_update_0_46_res);
+	hw_uint<16> stg13_FIFO_buf88_stg14_update_0_47_res = stg13_FIFO_buf88_stg14_update_0_47_select(stg13_FIFO_buf88, root, stg14_0, stg14_1, dynamic_address);
+	set_at<16, 64>(result, stg13_FIFO_buf88_stg14_update_0_47_res);
+	hw_uint<16> stg13_FIFO_buf88_stg14_update_0_48_res = stg13_FIFO_buf88_stg14_update_0_48_select(stg13_FIFO_buf88, root, stg14_0, stg14_1, dynamic_address);
+	set_at<32, 64>(result, stg13_FIFO_buf88_stg14_update_0_48_res);
+	hw_uint<16> stg13_FIFO_buf88_stg14_update_0_49_res = stg13_FIFO_buf88_stg14_update_0_49_select(stg13_FIFO_buf88, root, stg14_0, stg14_1, dynamic_address);
+	set_at<48, 64>(result, stg13_FIFO_buf88_stg14_update_0_49_res);
 	return result;
 }
 
@@ -1568,8 +1568,8 @@ struct stg14_FIFO_buf92_load_to_stg14_FIFO_buf9295_113_to_stg14_FIFO_buf92_jacdy
 	// Capacity: 1
 	// # of read delays: 2
   // 0, 0
-	fifo<hw_uint<32> , 1> f;
-	inline hw_uint<32>  peek(const int offset) {
+	fifo<hw_uint<16>, 1> f;
+	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
     return f.peek(0 - offset);
@@ -1577,7 +1577,7 @@ struct stg14_FIFO_buf92_load_to_stg14_FIFO_buf9295_113_to_stg14_FIFO_buf92_jacdy
 
 
 
-	inline void push(const hw_uint<32>  value) {
+	inline void push(const hw_uint<16> value) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
     return f.push(value);
@@ -1594,11 +1594,11 @@ struct stg14_FIFO_buf92_cache {
 
 
 
-inline void stg14_FIFO_buf92_load_to_stg14_FIFO_buf9295_113_write(hw_uint<32> & stg14_FIFO_buf92_load_to_stg14_FIFO_buf9295_113, stg14_FIFO_buf92_cache& stg14_FIFO_buf92, int root, int stg14_to_gp_128_ld94, int stg14_to_gp_128_ld93, int dynamic_address) {
+inline void stg14_FIFO_buf92_load_to_stg14_FIFO_buf9295_113_write(hw_uint<16>& stg14_FIFO_buf92_load_to_stg14_FIFO_buf9295_113, stg14_FIFO_buf92_cache& stg14_FIFO_buf92, int root, int stg14_to_gp_128_ld94, int stg14_to_gp_128_ld93, int dynamic_address) {
   stg14_FIFO_buf92.stg14_FIFO_buf92_load_to_stg14_FIFO_buf9295_113_to_stg14_FIFO_buf92_jacdyn_1_update_0_140.push(stg14_FIFO_buf92_load_to_stg14_FIFO_buf9295_113);
 }
 
-inline hw_uint<32>  stg14_FIFO_buf92_jacdyn_1_update_0_140_select(stg14_FIFO_buf92_cache& stg14_FIFO_buf92, int root, int jacdyn_1_0, int jacdyn_1_1, int dynamic_address) {
+inline hw_uint<16> stg14_FIFO_buf92_jacdyn_1_update_0_140_select(stg14_FIFO_buf92_cache& stg14_FIFO_buf92, int root, int jacdyn_1_0, int jacdyn_1_1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // stg14_FIFO_buf92_jacdyn_1_update_0_140 read pattern: { jacdyn_1_update_0[root = 0, jacdyn_1_0, jacdyn_1_1] -> stg14_FIFO_buf92[jacdyn_1_1, jacdyn_1_0] : 0 <= jacdyn_1_0 <= 18 and 0 <= jacdyn_1_1 <= 9 }
@@ -1612,20 +1612,20 @@ inline hw_uint<32>  stg14_FIFO_buf92_jacdyn_1_update_0_140_select(stg14_FIFO_buf
 // # of bundles = 2
 // jacdyn_1_update_0_read
 //	stg14_FIFO_buf92_jacdyn_1_update_0_140
-inline hw_uint<32> stg14_FIFO_buf92_jacdyn_1_update_0_read_bundle_read(stg14_FIFO_buf92_cache& stg14_FIFO_buf92, int root, int jacdyn_1_0, int jacdyn_1_1, int dynamic_address) {
+inline hw_uint<16> stg14_FIFO_buf92_jacdyn_1_update_0_read_bundle_read(stg14_FIFO_buf92_cache& stg14_FIFO_buf92, int root, int jacdyn_1_0, int jacdyn_1_1, int dynamic_address) {
   // # of ports in bundle: 1
     // stg14_FIFO_buf92_jacdyn_1_update_0_140
 
-	hw_uint<32> result;
-	hw_uint<32>  stg14_FIFO_buf92_jacdyn_1_update_0_140_res = stg14_FIFO_buf92_jacdyn_1_update_0_140_select(stg14_FIFO_buf92, root, jacdyn_1_0, jacdyn_1_1, dynamic_address);
-	set_at<0, 32>(result, stg14_FIFO_buf92_jacdyn_1_update_0_140_res);
+	hw_uint<16> result;
+	hw_uint<16> stg14_FIFO_buf92_jacdyn_1_update_0_140_res = stg14_FIFO_buf92_jacdyn_1_update_0_140_select(stg14_FIFO_buf92, root, jacdyn_1_0, jacdyn_1_1, dynamic_address);
+	set_at<0, 16>(result, stg14_FIFO_buf92_jacdyn_1_update_0_140_res);
 	return result;
 }
 
 // load_to_stg14_FIFO_buf9295_write
 //	stg14_FIFO_buf92_load_to_stg14_FIFO_buf9295_113
-inline void stg14_FIFO_buf92_load_to_stg14_FIFO_buf9295_write_bundle_write(hw_uint<32>& load_to_stg14_FIFO_buf9295_write, stg14_FIFO_buf92_cache& stg14_FIFO_buf92, int root, int stg14_to_gp_128_ld94, int stg14_to_gp_128_ld93, int dynamic_address) {
-	hw_uint<32>  stg14_FIFO_buf92_load_to_stg14_FIFO_buf9295_113_res = load_to_stg14_FIFO_buf9295_write.extract<0, 31>();
+inline void stg14_FIFO_buf92_load_to_stg14_FIFO_buf9295_write_bundle_write(hw_uint<16>& load_to_stg14_FIFO_buf9295_write, stg14_FIFO_buf92_cache& stg14_FIFO_buf92, int root, int stg14_to_gp_128_ld94, int stg14_to_gp_128_ld93, int dynamic_address) {
+	hw_uint<16> stg14_FIFO_buf92_load_to_stg14_FIFO_buf9295_113_res = load_to_stg14_FIFO_buf9295_write.extract<0, 15>();
 	stg14_FIFO_buf92_load_to_stg14_FIFO_buf9295_113_write(stg14_FIFO_buf92_load_to_stg14_FIFO_buf9295_113_res, stg14_FIFO_buf92, root, stg14_to_gp_128_ld94, stg14_to_gp_128_ld93, dynamic_address);
 }
 
@@ -1634,50 +1634,50 @@ struct stg1_FIFO_buf72_load_to_stg1_FIFO_buf7275_109_merged_banks_4_cache {
 	// Capacity: 48
 	// # of read delays: 5
   // 0, 1, 23, 24, 47
-	hw_uint<32>  f0;
-	hw_uint<32>  f2;
-	fifo<hw_uint<32> , 21> f3;
-	hw_uint<32>  f4;
-	hw_uint<32>  f6;
-	fifo<hw_uint<32> , 22> f7;
-	hw_uint<32>  f8;
+	hw_uint<16> f0;
+	hw_uint<16> f2;
+	fifo<hw_uint<16>, 21> f3;
+	hw_uint<16> f4;
+	hw_uint<16> f6;
+	fifo<hw_uint<16>, 22> f7;
+	hw_uint<16> f8;
 
 
-	inline hw_uint<32>  peek_0() {
+	inline hw_uint<16> peek_0() {
 		return f0;
 	}
 
-	inline hw_uint<32>  peek_1() {
+	inline hw_uint<16> peek_1() {
 		return f2;
 	}
 
-	inline hw_uint<32>  peek_22() {
+	inline hw_uint<16> peek_22() {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 		return f3.back();
 	}
 
-	inline hw_uint<32>  peek_23() {
+	inline hw_uint<16> peek_23() {
 		return f4;
 	}
 
-	inline hw_uint<32>  peek_24() {
+	inline hw_uint<16> peek_24() {
 		return f6;
 	}
 
-	inline hw_uint<32>  peek_46() {
+	inline hw_uint<16> peek_46() {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 		return f7.back();
 	}
 
-	inline hw_uint<32>  peek_47() {
+	inline hw_uint<16> peek_47() {
 		return f8;
 	}
 
 
 
-	inline void push(const hw_uint<32>  value) {
+	inline void push(const hw_uint<16> value) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
     // cap: 1 reading from capacity: 22
@@ -1720,11 +1720,11 @@ struct stg1_FIFO_buf72_cache {
 
 
 
-inline void stg1_FIFO_buf72_load_to_stg1_FIFO_buf7275_109_write(hw_uint<32> & stg1_FIFO_buf72_load_to_stg1_FIFO_buf7275_109, stg1_FIFO_buf72_cache& stg1_FIFO_buf72, int root, int stg1_to_gp_98_ld74, int stg1_to_gp_98_ld73, int dynamic_address) {
+inline void stg1_FIFO_buf72_load_to_stg1_FIFO_buf7275_109_write(hw_uint<16>& stg1_FIFO_buf72_load_to_stg1_FIFO_buf7275_109, stg1_FIFO_buf72_cache& stg1_FIFO_buf72, int root, int stg1_to_gp_98_ld74, int stg1_to_gp_98_ld73, int dynamic_address) {
   stg1_FIFO_buf72.stg1_FIFO_buf72_load_to_stg1_FIFO_buf7275_109_merged_banks_4.push(stg1_FIFO_buf72_load_to_stg1_FIFO_buf7275_109);
 }
 
-inline hw_uint<32>  stg1_FIFO_buf72_stg2_update_0_36_select(stg1_FIFO_buf72_cache& stg1_FIFO_buf72, int root, int stg2_0, int stg2_1, int dynamic_address) {
+inline hw_uint<16> stg1_FIFO_buf72_stg2_update_0_36_select(stg1_FIFO_buf72_cache& stg1_FIFO_buf72, int root, int stg2_0, int stg2_1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // stg1_FIFO_buf72_stg2_update_0_36 read pattern: { stg2_update_0[root = 0, stg2_0, stg2_1] -> stg1_FIFO_buf72[stg2_1, -1 + stg2_0] : -12 <= stg2_0 <= 30 and 0 <= stg2_1 <= 21 }
@@ -1735,7 +1735,7 @@ inline hw_uint<32>  stg1_FIFO_buf72_stg2_update_0_36_select(stg1_FIFO_buf72_cach
   return 0;
 }
 
-inline hw_uint<32>  stg1_FIFO_buf72_stg2_update_0_37_select(stg1_FIFO_buf72_cache& stg1_FIFO_buf72, int root, int stg2_0, int stg2_1, int dynamic_address) {
+inline hw_uint<16> stg1_FIFO_buf72_stg2_update_0_37_select(stg1_FIFO_buf72_cache& stg1_FIFO_buf72, int root, int stg2_0, int stg2_1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // stg1_FIFO_buf72_stg2_update_0_37 read pattern: { stg2_update_0[root = 0, stg2_0, stg2_1] -> stg1_FIFO_buf72[stg2_1, stg2_0] : -12 <= stg2_0 <= 30 and 0 <= stg2_1 <= 21 }
@@ -1746,7 +1746,7 @@ inline hw_uint<32>  stg1_FIFO_buf72_stg2_update_0_37_select(stg1_FIFO_buf72_cach
   return 0;
 }
 
-inline hw_uint<32>  stg1_FIFO_buf72_stg2_update_0_38_select(stg1_FIFO_buf72_cache& stg1_FIFO_buf72, int root, int stg2_0, int stg2_1, int dynamic_address) {
+inline hw_uint<16> stg1_FIFO_buf72_stg2_update_0_38_select(stg1_FIFO_buf72_cache& stg1_FIFO_buf72, int root, int stg2_0, int stg2_1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // stg1_FIFO_buf72_stg2_update_0_38 read pattern: { stg2_update_0[root = 0, stg2_0, stg2_1] -> stg1_FIFO_buf72[1 + stg2_1, stg2_0] : -12 <= stg2_0 <= 30 and 0 <= stg2_1 <= 21 }
@@ -1757,7 +1757,7 @@ inline hw_uint<32>  stg1_FIFO_buf72_stg2_update_0_38_select(stg1_FIFO_buf72_cach
   return 0;
 }
 
-inline hw_uint<32>  stg1_FIFO_buf72_stg2_update_0_39_select(stg1_FIFO_buf72_cache& stg1_FIFO_buf72, int root, int stg2_0, int stg2_1, int dynamic_address) {
+inline hw_uint<16> stg1_FIFO_buf72_stg2_update_0_39_select(stg1_FIFO_buf72_cache& stg1_FIFO_buf72, int root, int stg2_0, int stg2_1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // stg1_FIFO_buf72_stg2_update_0_39 read pattern: { stg2_update_0[root = 0, stg2_0, stg2_1] -> stg1_FIFO_buf72[stg2_1, 1 + stg2_0] : -12 <= stg2_0 <= 30 and 0 <= stg2_1 <= 21 }
@@ -1771,8 +1771,8 @@ inline hw_uint<32>  stg1_FIFO_buf72_stg2_update_0_39_select(stg1_FIFO_buf72_cach
 // # of bundles = 2
 // load_to_stg1_FIFO_buf7275_write
 //	stg1_FIFO_buf72_load_to_stg1_FIFO_buf7275_109
-inline void stg1_FIFO_buf72_load_to_stg1_FIFO_buf7275_write_bundle_write(hw_uint<32>& load_to_stg1_FIFO_buf7275_write, stg1_FIFO_buf72_cache& stg1_FIFO_buf72, int root, int stg1_to_gp_98_ld74, int stg1_to_gp_98_ld73, int dynamic_address) {
-	hw_uint<32>  stg1_FIFO_buf72_load_to_stg1_FIFO_buf7275_109_res = load_to_stg1_FIFO_buf7275_write.extract<0, 31>();
+inline void stg1_FIFO_buf72_load_to_stg1_FIFO_buf7275_write_bundle_write(hw_uint<16>& load_to_stg1_FIFO_buf7275_write, stg1_FIFO_buf72_cache& stg1_FIFO_buf72, int root, int stg1_to_gp_98_ld74, int stg1_to_gp_98_ld73, int dynamic_address) {
+	hw_uint<16> stg1_FIFO_buf72_load_to_stg1_FIFO_buf7275_109_res = load_to_stg1_FIFO_buf7275_write.extract<0, 15>();
 	stg1_FIFO_buf72_load_to_stg1_FIFO_buf7275_109_write(stg1_FIFO_buf72_load_to_stg1_FIFO_buf7275_109_res, stg1_FIFO_buf72, root, stg1_to_gp_98_ld74, stg1_to_gp_98_ld73, dynamic_address);
 }
 
@@ -1781,22 +1781,22 @@ inline void stg1_FIFO_buf72_load_to_stg1_FIFO_buf7275_write_bundle_write(hw_uint
 //	stg1_FIFO_buf72_stg2_update_0_37
 //	stg1_FIFO_buf72_stg2_update_0_38
 //	stg1_FIFO_buf72_stg2_update_0_39
-inline hw_uint<128> stg1_FIFO_buf72_stg2_update_0_read_bundle_read(stg1_FIFO_buf72_cache& stg1_FIFO_buf72, int root, int stg2_0, int stg2_1, int dynamic_address) {
+inline hw_uint<64> stg1_FIFO_buf72_stg2_update_0_read_bundle_read(stg1_FIFO_buf72_cache& stg1_FIFO_buf72, int root, int stg2_0, int stg2_1, int dynamic_address) {
   // # of ports in bundle: 4
     // stg1_FIFO_buf72_stg2_update_0_36
     // stg1_FIFO_buf72_stg2_update_0_37
     // stg1_FIFO_buf72_stg2_update_0_38
     // stg1_FIFO_buf72_stg2_update_0_39
 
-	hw_uint<128> result;
-	hw_uint<32>  stg1_FIFO_buf72_stg2_update_0_36_res = stg1_FIFO_buf72_stg2_update_0_36_select(stg1_FIFO_buf72, root, stg2_0, stg2_1, dynamic_address);
-	set_at<0, 128>(result, stg1_FIFO_buf72_stg2_update_0_36_res);
-	hw_uint<32>  stg1_FIFO_buf72_stg2_update_0_37_res = stg1_FIFO_buf72_stg2_update_0_37_select(stg1_FIFO_buf72, root, stg2_0, stg2_1, dynamic_address);
-	set_at<32, 128>(result, stg1_FIFO_buf72_stg2_update_0_37_res);
-	hw_uint<32>  stg1_FIFO_buf72_stg2_update_0_38_res = stg1_FIFO_buf72_stg2_update_0_38_select(stg1_FIFO_buf72, root, stg2_0, stg2_1, dynamic_address);
-	set_at<64, 128>(result, stg1_FIFO_buf72_stg2_update_0_38_res);
-	hw_uint<32>  stg1_FIFO_buf72_stg2_update_0_39_res = stg1_FIFO_buf72_stg2_update_0_39_select(stg1_FIFO_buf72, root, stg2_0, stg2_1, dynamic_address);
-	set_at<96, 128>(result, stg1_FIFO_buf72_stg2_update_0_39_res);
+	hw_uint<64> result;
+	hw_uint<16> stg1_FIFO_buf72_stg2_update_0_36_res = stg1_FIFO_buf72_stg2_update_0_36_select(stg1_FIFO_buf72, root, stg2_0, stg2_1, dynamic_address);
+	set_at<0, 64>(result, stg1_FIFO_buf72_stg2_update_0_36_res);
+	hw_uint<16> stg1_FIFO_buf72_stg2_update_0_37_res = stg1_FIFO_buf72_stg2_update_0_37_select(stg1_FIFO_buf72, root, stg2_0, stg2_1, dynamic_address);
+	set_at<16, 64>(result, stg1_FIFO_buf72_stg2_update_0_37_res);
+	hw_uint<16> stg1_FIFO_buf72_stg2_update_0_38_res = stg1_FIFO_buf72_stg2_update_0_38_select(stg1_FIFO_buf72, root, stg2_0, stg2_1, dynamic_address);
+	set_at<32, 64>(result, stg1_FIFO_buf72_stg2_update_0_38_res);
+	hw_uint<16> stg1_FIFO_buf72_stg2_update_0_39_res = stg1_FIFO_buf72_stg2_update_0_39_select(stg1_FIFO_buf72, root, stg2_0, stg2_1, dynamic_address);
+	set_at<48, 64>(result, stg1_FIFO_buf72_stg2_update_0_39_res);
 	return result;
 }
 
@@ -1871,50 +1871,50 @@ struct stg2_FIFO_buf96_load_to_stg2_FIFO_buf9699_105_merged_banks_4_cache {
 	// Capacity: 46
 	// # of read delays: 5
   // 0, 1, 22, 23, 45
-	hw_uint<32>  f0;
-	hw_uint<32>  f2;
-	fifo<hw_uint<32> , 20> f3;
-	hw_uint<32>  f4;
-	hw_uint<32>  f6;
-	fifo<hw_uint<32> , 21> f7;
-	hw_uint<32>  f8;
+	hw_uint<16> f0;
+	hw_uint<16> f2;
+	fifo<hw_uint<16>, 20> f3;
+	hw_uint<16> f4;
+	hw_uint<16> f6;
+	fifo<hw_uint<16>, 21> f7;
+	hw_uint<16> f8;
 
 
-	inline hw_uint<32>  peek_0() {
+	inline hw_uint<16> peek_0() {
 		return f0;
 	}
 
-	inline hw_uint<32>  peek_1() {
+	inline hw_uint<16> peek_1() {
 		return f2;
 	}
 
-	inline hw_uint<32>  peek_21() {
+	inline hw_uint<16> peek_21() {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 		return f3.back();
 	}
 
-	inline hw_uint<32>  peek_22() {
+	inline hw_uint<16> peek_22() {
 		return f4;
 	}
 
-	inline hw_uint<32>  peek_23() {
+	inline hw_uint<16> peek_23() {
 		return f6;
 	}
 
-	inline hw_uint<32>  peek_44() {
+	inline hw_uint<16> peek_44() {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 		return f7.back();
 	}
 
-	inline hw_uint<32>  peek_45() {
+	inline hw_uint<16> peek_45() {
 		return f8;
 	}
 
 
 
-	inline void push(const hw_uint<32>  value) {
+	inline void push(const hw_uint<16> value) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
     // cap: 1 reading from capacity: 21
@@ -1957,11 +1957,11 @@ struct stg2_FIFO_buf96_cache {
 
 
 
-inline void stg2_FIFO_buf96_load_to_stg2_FIFO_buf9699_105_write(hw_uint<32> & stg2_FIFO_buf96_load_to_stg2_FIFO_buf9699_105, stg2_FIFO_buf96_cache& stg2_FIFO_buf96, int root, int stg2_to_gp_1032_ld98, int stg2_to_gp_1032_ld97, int dynamic_address) {
+inline void stg2_FIFO_buf96_load_to_stg2_FIFO_buf9699_105_write(hw_uint<16>& stg2_FIFO_buf96_load_to_stg2_FIFO_buf9699_105, stg2_FIFO_buf96_cache& stg2_FIFO_buf96, int root, int stg2_to_gp_1032_ld98, int stg2_to_gp_1032_ld97, int dynamic_address) {
   stg2_FIFO_buf96.stg2_FIFO_buf96_load_to_stg2_FIFO_buf9699_105_merged_banks_4.push(stg2_FIFO_buf96_load_to_stg2_FIFO_buf9699_105);
 }
 
-inline hw_uint<32>  stg2_FIFO_buf96_stg3_update_0_31_select(stg2_FIFO_buf96_cache& stg2_FIFO_buf96, int root, int stg3_0, int stg3_1, int dynamic_address) {
+inline hw_uint<16> stg2_FIFO_buf96_stg3_update_0_31_select(stg2_FIFO_buf96_cache& stg2_FIFO_buf96, int root, int stg3_0, int stg3_1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // stg2_FIFO_buf96_stg3_update_0_31 read pattern: { stg3_update_0[root = 0, stg3_0, stg3_1] -> stg2_FIFO_buf96[stg3_1, -1 + stg3_0] : -11 <= stg3_0 <= 29 and 0 <= stg3_1 <= 20 }
@@ -1972,7 +1972,7 @@ inline hw_uint<32>  stg2_FIFO_buf96_stg3_update_0_31_select(stg2_FIFO_buf96_cach
   return 0;
 }
 
-inline hw_uint<32>  stg2_FIFO_buf96_stg3_update_0_32_select(stg2_FIFO_buf96_cache& stg2_FIFO_buf96, int root, int stg3_0, int stg3_1, int dynamic_address) {
+inline hw_uint<16> stg2_FIFO_buf96_stg3_update_0_32_select(stg2_FIFO_buf96_cache& stg2_FIFO_buf96, int root, int stg3_0, int stg3_1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // stg2_FIFO_buf96_stg3_update_0_32 read pattern: { stg3_update_0[root = 0, stg3_0, stg3_1] -> stg2_FIFO_buf96[stg3_1, stg3_0] : -11 <= stg3_0 <= 29 and 0 <= stg3_1 <= 20 }
@@ -1983,7 +1983,7 @@ inline hw_uint<32>  stg2_FIFO_buf96_stg3_update_0_32_select(stg2_FIFO_buf96_cach
   return 0;
 }
 
-inline hw_uint<32>  stg2_FIFO_buf96_stg3_update_0_33_select(stg2_FIFO_buf96_cache& stg2_FIFO_buf96, int root, int stg3_0, int stg3_1, int dynamic_address) {
+inline hw_uint<16> stg2_FIFO_buf96_stg3_update_0_33_select(stg2_FIFO_buf96_cache& stg2_FIFO_buf96, int root, int stg3_0, int stg3_1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // stg2_FIFO_buf96_stg3_update_0_33 read pattern: { stg3_update_0[root = 0, stg3_0, stg3_1] -> stg2_FIFO_buf96[1 + stg3_1, stg3_0] : -11 <= stg3_0 <= 29 and 0 <= stg3_1 <= 20 }
@@ -1994,7 +1994,7 @@ inline hw_uint<32>  stg2_FIFO_buf96_stg3_update_0_33_select(stg2_FIFO_buf96_cach
   return 0;
 }
 
-inline hw_uint<32>  stg2_FIFO_buf96_stg3_update_0_34_select(stg2_FIFO_buf96_cache& stg2_FIFO_buf96, int root, int stg3_0, int stg3_1, int dynamic_address) {
+inline hw_uint<16> stg2_FIFO_buf96_stg3_update_0_34_select(stg2_FIFO_buf96_cache& stg2_FIFO_buf96, int root, int stg3_0, int stg3_1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // stg2_FIFO_buf96_stg3_update_0_34 read pattern: { stg3_update_0[root = 0, stg3_0, stg3_1] -> stg2_FIFO_buf96[stg3_1, 1 + stg3_0] : -11 <= stg3_0 <= 29 and 0 <= stg3_1 <= 20 }
@@ -2008,8 +2008,8 @@ inline hw_uint<32>  stg2_FIFO_buf96_stg3_update_0_34_select(stg2_FIFO_buf96_cach
 // # of bundles = 2
 // load_to_stg2_FIFO_buf9699_write
 //	stg2_FIFO_buf96_load_to_stg2_FIFO_buf9699_105
-inline void stg2_FIFO_buf96_load_to_stg2_FIFO_buf9699_write_bundle_write(hw_uint<32>& load_to_stg2_FIFO_buf9699_write, stg2_FIFO_buf96_cache& stg2_FIFO_buf96, int root, int stg2_to_gp_1032_ld98, int stg2_to_gp_1032_ld97, int dynamic_address) {
-	hw_uint<32>  stg2_FIFO_buf96_load_to_stg2_FIFO_buf9699_105_res = load_to_stg2_FIFO_buf9699_write.extract<0, 31>();
+inline void stg2_FIFO_buf96_load_to_stg2_FIFO_buf9699_write_bundle_write(hw_uint<16>& load_to_stg2_FIFO_buf9699_write, stg2_FIFO_buf96_cache& stg2_FIFO_buf96, int root, int stg2_to_gp_1032_ld98, int stg2_to_gp_1032_ld97, int dynamic_address) {
+	hw_uint<16> stg2_FIFO_buf96_load_to_stg2_FIFO_buf9699_105_res = load_to_stg2_FIFO_buf9699_write.extract<0, 15>();
 	stg2_FIFO_buf96_load_to_stg2_FIFO_buf9699_105_write(stg2_FIFO_buf96_load_to_stg2_FIFO_buf9699_105_res, stg2_FIFO_buf96, root, stg2_to_gp_1032_ld98, stg2_to_gp_1032_ld97, dynamic_address);
 }
 
@@ -2018,22 +2018,22 @@ inline void stg2_FIFO_buf96_load_to_stg2_FIFO_buf9699_write_bundle_write(hw_uint
 //	stg2_FIFO_buf96_stg3_update_0_32
 //	stg2_FIFO_buf96_stg3_update_0_33
 //	stg2_FIFO_buf96_stg3_update_0_34
-inline hw_uint<128> stg2_FIFO_buf96_stg3_update_0_read_bundle_read(stg2_FIFO_buf96_cache& stg2_FIFO_buf96, int root, int stg3_0, int stg3_1, int dynamic_address) {
+inline hw_uint<64> stg2_FIFO_buf96_stg3_update_0_read_bundle_read(stg2_FIFO_buf96_cache& stg2_FIFO_buf96, int root, int stg3_0, int stg3_1, int dynamic_address) {
   // # of ports in bundle: 4
     // stg2_FIFO_buf96_stg3_update_0_31
     // stg2_FIFO_buf96_stg3_update_0_32
     // stg2_FIFO_buf96_stg3_update_0_33
     // stg2_FIFO_buf96_stg3_update_0_34
 
-	hw_uint<128> result;
-	hw_uint<32>  stg2_FIFO_buf96_stg3_update_0_31_res = stg2_FIFO_buf96_stg3_update_0_31_select(stg2_FIFO_buf96, root, stg3_0, stg3_1, dynamic_address);
-	set_at<0, 128>(result, stg2_FIFO_buf96_stg3_update_0_31_res);
-	hw_uint<32>  stg2_FIFO_buf96_stg3_update_0_32_res = stg2_FIFO_buf96_stg3_update_0_32_select(stg2_FIFO_buf96, root, stg3_0, stg3_1, dynamic_address);
-	set_at<32, 128>(result, stg2_FIFO_buf96_stg3_update_0_32_res);
-	hw_uint<32>  stg2_FIFO_buf96_stg3_update_0_33_res = stg2_FIFO_buf96_stg3_update_0_33_select(stg2_FIFO_buf96, root, stg3_0, stg3_1, dynamic_address);
-	set_at<64, 128>(result, stg2_FIFO_buf96_stg3_update_0_33_res);
-	hw_uint<32>  stg2_FIFO_buf96_stg3_update_0_34_res = stg2_FIFO_buf96_stg3_update_0_34_select(stg2_FIFO_buf96, root, stg3_0, stg3_1, dynamic_address);
-	set_at<96, 128>(result, stg2_FIFO_buf96_stg3_update_0_34_res);
+	hw_uint<64> result;
+	hw_uint<16> stg2_FIFO_buf96_stg3_update_0_31_res = stg2_FIFO_buf96_stg3_update_0_31_select(stg2_FIFO_buf96, root, stg3_0, stg3_1, dynamic_address);
+	set_at<0, 64>(result, stg2_FIFO_buf96_stg3_update_0_31_res);
+	hw_uint<16> stg2_FIFO_buf96_stg3_update_0_32_res = stg2_FIFO_buf96_stg3_update_0_32_select(stg2_FIFO_buf96, root, stg3_0, stg3_1, dynamic_address);
+	set_at<16, 64>(result, stg2_FIFO_buf96_stg3_update_0_32_res);
+	hw_uint<16> stg2_FIFO_buf96_stg3_update_0_33_res = stg2_FIFO_buf96_stg3_update_0_33_select(stg2_FIFO_buf96, root, stg3_0, stg3_1, dynamic_address);
+	set_at<32, 64>(result, stg2_FIFO_buf96_stg3_update_0_33_res);
+	hw_uint<16> stg2_FIFO_buf96_stg3_update_0_34_res = stg2_FIFO_buf96_stg3_update_0_34_select(stg2_FIFO_buf96, root, stg3_0, stg3_1, dynamic_address);
+	set_at<48, 64>(result, stg2_FIFO_buf96_stg3_update_0_34_res);
 	return result;
 }
 
@@ -2108,50 +2108,50 @@ struct stg3_FIFO_buf100_load_to_stg3_FIFO_buf100103_101_merged_banks_4_cache {
 	// Capacity: 44
 	// # of read delays: 5
   // 0, 1, 21, 22, 43
-	hw_uint<32>  f0;
-	hw_uint<32>  f2;
-	fifo<hw_uint<32> , 19> f3;
-	hw_uint<32>  f4;
-	hw_uint<32>  f6;
-	fifo<hw_uint<32> , 20> f7;
-	hw_uint<32>  f8;
+	hw_uint<16> f0;
+	hw_uint<16> f2;
+	fifo<hw_uint<16>, 19> f3;
+	hw_uint<16> f4;
+	hw_uint<16> f6;
+	fifo<hw_uint<16>, 20> f7;
+	hw_uint<16> f8;
 
 
-	inline hw_uint<32>  peek_0() {
+	inline hw_uint<16> peek_0() {
 		return f0;
 	}
 
-	inline hw_uint<32>  peek_1() {
+	inline hw_uint<16> peek_1() {
 		return f2;
 	}
 
-	inline hw_uint<32>  peek_20() {
+	inline hw_uint<16> peek_20() {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 		return f3.back();
 	}
 
-	inline hw_uint<32>  peek_21() {
+	inline hw_uint<16> peek_21() {
 		return f4;
 	}
 
-	inline hw_uint<32>  peek_22() {
+	inline hw_uint<16> peek_22() {
 		return f6;
 	}
 
-	inline hw_uint<32>  peek_42() {
+	inline hw_uint<16> peek_42() {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 		return f7.back();
 	}
 
-	inline hw_uint<32>  peek_43() {
+	inline hw_uint<16> peek_43() {
 		return f8;
 	}
 
 
 
-	inline void push(const hw_uint<32>  value) {
+	inline void push(const hw_uint<16> value) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
     // cap: 1 reading from capacity: 20
@@ -2194,11 +2194,11 @@ struct stg3_FIFO_buf100_cache {
 
 
 
-inline void stg3_FIFO_buf100_load_to_stg3_FIFO_buf100103_101_write(hw_uint<32> & stg3_FIFO_buf100_load_to_stg3_FIFO_buf100103_101, stg3_FIFO_buf100_cache& stg3_FIFO_buf100, int root, int stg3_to_gp_1136_ld102, int stg3_to_gp_1136_ld101, int dynamic_address) {
+inline void stg3_FIFO_buf100_load_to_stg3_FIFO_buf100103_101_write(hw_uint<16>& stg3_FIFO_buf100_load_to_stg3_FIFO_buf100103_101, stg3_FIFO_buf100_cache& stg3_FIFO_buf100, int root, int stg3_to_gp_1136_ld102, int stg3_to_gp_1136_ld101, int dynamic_address) {
   stg3_FIFO_buf100.stg3_FIFO_buf100_load_to_stg3_FIFO_buf100103_101_merged_banks_4.push(stg3_FIFO_buf100_load_to_stg3_FIFO_buf100103_101);
 }
 
-inline hw_uint<32>  stg3_FIFO_buf100_stg4_update_0_26_select(stg3_FIFO_buf100_cache& stg3_FIFO_buf100, int root, int stg4_0, int stg4_1, int dynamic_address) {
+inline hw_uint<16> stg3_FIFO_buf100_stg4_update_0_26_select(stg3_FIFO_buf100_cache& stg3_FIFO_buf100, int root, int stg4_0, int stg4_1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // stg3_FIFO_buf100_stg4_update_0_26 read pattern: { stg4_update_0[root = 0, stg4_0, stg4_1] -> stg3_FIFO_buf100[stg4_1, -1 + stg4_0] : -10 <= stg4_0 <= 28 and 0 <= stg4_1 <= 19 }
@@ -2209,7 +2209,7 @@ inline hw_uint<32>  stg3_FIFO_buf100_stg4_update_0_26_select(stg3_FIFO_buf100_ca
   return 0;
 }
 
-inline hw_uint<32>  stg3_FIFO_buf100_stg4_update_0_27_select(stg3_FIFO_buf100_cache& stg3_FIFO_buf100, int root, int stg4_0, int stg4_1, int dynamic_address) {
+inline hw_uint<16> stg3_FIFO_buf100_stg4_update_0_27_select(stg3_FIFO_buf100_cache& stg3_FIFO_buf100, int root, int stg4_0, int stg4_1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // stg3_FIFO_buf100_stg4_update_0_27 read pattern: { stg4_update_0[root = 0, stg4_0, stg4_1] -> stg3_FIFO_buf100[stg4_1, stg4_0] : -10 <= stg4_0 <= 28 and 0 <= stg4_1 <= 19 }
@@ -2220,7 +2220,7 @@ inline hw_uint<32>  stg3_FIFO_buf100_stg4_update_0_27_select(stg3_FIFO_buf100_ca
   return 0;
 }
 
-inline hw_uint<32>  stg3_FIFO_buf100_stg4_update_0_28_select(stg3_FIFO_buf100_cache& stg3_FIFO_buf100, int root, int stg4_0, int stg4_1, int dynamic_address) {
+inline hw_uint<16> stg3_FIFO_buf100_stg4_update_0_28_select(stg3_FIFO_buf100_cache& stg3_FIFO_buf100, int root, int stg4_0, int stg4_1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // stg3_FIFO_buf100_stg4_update_0_28 read pattern: { stg4_update_0[root = 0, stg4_0, stg4_1] -> stg3_FIFO_buf100[1 + stg4_1, stg4_0] : -10 <= stg4_0 <= 28 and 0 <= stg4_1 <= 19 }
@@ -2231,7 +2231,7 @@ inline hw_uint<32>  stg3_FIFO_buf100_stg4_update_0_28_select(stg3_FIFO_buf100_ca
   return 0;
 }
 
-inline hw_uint<32>  stg3_FIFO_buf100_stg4_update_0_29_select(stg3_FIFO_buf100_cache& stg3_FIFO_buf100, int root, int stg4_0, int stg4_1, int dynamic_address) {
+inline hw_uint<16> stg3_FIFO_buf100_stg4_update_0_29_select(stg3_FIFO_buf100_cache& stg3_FIFO_buf100, int root, int stg4_0, int stg4_1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // stg3_FIFO_buf100_stg4_update_0_29 read pattern: { stg4_update_0[root = 0, stg4_0, stg4_1] -> stg3_FIFO_buf100[stg4_1, 1 + stg4_0] : -10 <= stg4_0 <= 28 and 0 <= stg4_1 <= 19 }
@@ -2245,8 +2245,8 @@ inline hw_uint<32>  stg3_FIFO_buf100_stg4_update_0_29_select(stg3_FIFO_buf100_ca
 // # of bundles = 2
 // load_to_stg3_FIFO_buf100103_write
 //	stg3_FIFO_buf100_load_to_stg3_FIFO_buf100103_101
-inline void stg3_FIFO_buf100_load_to_stg3_FIFO_buf100103_write_bundle_write(hw_uint<32>& load_to_stg3_FIFO_buf100103_write, stg3_FIFO_buf100_cache& stg3_FIFO_buf100, int root, int stg3_to_gp_1136_ld102, int stg3_to_gp_1136_ld101, int dynamic_address) {
-	hw_uint<32>  stg3_FIFO_buf100_load_to_stg3_FIFO_buf100103_101_res = load_to_stg3_FIFO_buf100103_write.extract<0, 31>();
+inline void stg3_FIFO_buf100_load_to_stg3_FIFO_buf100103_write_bundle_write(hw_uint<16>& load_to_stg3_FIFO_buf100103_write, stg3_FIFO_buf100_cache& stg3_FIFO_buf100, int root, int stg3_to_gp_1136_ld102, int stg3_to_gp_1136_ld101, int dynamic_address) {
+	hw_uint<16> stg3_FIFO_buf100_load_to_stg3_FIFO_buf100103_101_res = load_to_stg3_FIFO_buf100103_write.extract<0, 15>();
 	stg3_FIFO_buf100_load_to_stg3_FIFO_buf100103_101_write(stg3_FIFO_buf100_load_to_stg3_FIFO_buf100103_101_res, stg3_FIFO_buf100, root, stg3_to_gp_1136_ld102, stg3_to_gp_1136_ld101, dynamic_address);
 }
 
@@ -2255,22 +2255,22 @@ inline void stg3_FIFO_buf100_load_to_stg3_FIFO_buf100103_write_bundle_write(hw_u
 //	stg3_FIFO_buf100_stg4_update_0_27
 //	stg3_FIFO_buf100_stg4_update_0_28
 //	stg3_FIFO_buf100_stg4_update_0_29
-inline hw_uint<128> stg3_FIFO_buf100_stg4_update_0_read_bundle_read(stg3_FIFO_buf100_cache& stg3_FIFO_buf100, int root, int stg4_0, int stg4_1, int dynamic_address) {
+inline hw_uint<64> stg3_FIFO_buf100_stg4_update_0_read_bundle_read(stg3_FIFO_buf100_cache& stg3_FIFO_buf100, int root, int stg4_0, int stg4_1, int dynamic_address) {
   // # of ports in bundle: 4
     // stg3_FIFO_buf100_stg4_update_0_26
     // stg3_FIFO_buf100_stg4_update_0_27
     // stg3_FIFO_buf100_stg4_update_0_28
     // stg3_FIFO_buf100_stg4_update_0_29
 
-	hw_uint<128> result;
-	hw_uint<32>  stg3_FIFO_buf100_stg4_update_0_26_res = stg3_FIFO_buf100_stg4_update_0_26_select(stg3_FIFO_buf100, root, stg4_0, stg4_1, dynamic_address);
-	set_at<0, 128>(result, stg3_FIFO_buf100_stg4_update_0_26_res);
-	hw_uint<32>  stg3_FIFO_buf100_stg4_update_0_27_res = stg3_FIFO_buf100_stg4_update_0_27_select(stg3_FIFO_buf100, root, stg4_0, stg4_1, dynamic_address);
-	set_at<32, 128>(result, stg3_FIFO_buf100_stg4_update_0_27_res);
-	hw_uint<32>  stg3_FIFO_buf100_stg4_update_0_28_res = stg3_FIFO_buf100_stg4_update_0_28_select(stg3_FIFO_buf100, root, stg4_0, stg4_1, dynamic_address);
-	set_at<64, 128>(result, stg3_FIFO_buf100_stg4_update_0_28_res);
-	hw_uint<32>  stg3_FIFO_buf100_stg4_update_0_29_res = stg3_FIFO_buf100_stg4_update_0_29_select(stg3_FIFO_buf100, root, stg4_0, stg4_1, dynamic_address);
-	set_at<96, 128>(result, stg3_FIFO_buf100_stg4_update_0_29_res);
+	hw_uint<64> result;
+	hw_uint<16> stg3_FIFO_buf100_stg4_update_0_26_res = stg3_FIFO_buf100_stg4_update_0_26_select(stg3_FIFO_buf100, root, stg4_0, stg4_1, dynamic_address);
+	set_at<0, 64>(result, stg3_FIFO_buf100_stg4_update_0_26_res);
+	hw_uint<16> stg3_FIFO_buf100_stg4_update_0_27_res = stg3_FIFO_buf100_stg4_update_0_27_select(stg3_FIFO_buf100, root, stg4_0, stg4_1, dynamic_address);
+	set_at<16, 64>(result, stg3_FIFO_buf100_stg4_update_0_27_res);
+	hw_uint<16> stg3_FIFO_buf100_stg4_update_0_28_res = stg3_FIFO_buf100_stg4_update_0_28_select(stg3_FIFO_buf100, root, stg4_0, stg4_1, dynamic_address);
+	set_at<32, 64>(result, stg3_FIFO_buf100_stg4_update_0_28_res);
+	hw_uint<16> stg3_FIFO_buf100_stg4_update_0_29_res = stg3_FIFO_buf100_stg4_update_0_29_select(stg3_FIFO_buf100, root, stg4_0, stg4_1, dynamic_address);
+	set_at<48, 64>(result, stg3_FIFO_buf100_stg4_update_0_29_res);
 	return result;
 }
 
@@ -2345,50 +2345,50 @@ struct stg4_FIFO_buf104_load_to_stg4_FIFO_buf104107_97_merged_banks_4_cache {
 	// Capacity: 42
 	// # of read delays: 5
   // 0, 1, 20, 21, 41
-	hw_uint<32>  f0;
-	hw_uint<32>  f2;
-	fifo<hw_uint<32> , 18> f3;
-	hw_uint<32>  f4;
-	hw_uint<32>  f6;
-	fifo<hw_uint<32> , 19> f7;
-	hw_uint<32>  f8;
+	hw_uint<16> f0;
+	hw_uint<16> f2;
+	fifo<hw_uint<16>, 18> f3;
+	hw_uint<16> f4;
+	hw_uint<16> f6;
+	fifo<hw_uint<16>, 19> f7;
+	hw_uint<16> f8;
 
 
-	inline hw_uint<32>  peek_0() {
+	inline hw_uint<16> peek_0() {
 		return f0;
 	}
 
-	inline hw_uint<32>  peek_1() {
+	inline hw_uint<16> peek_1() {
 		return f2;
 	}
 
-	inline hw_uint<32>  peek_19() {
+	inline hw_uint<16> peek_19() {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 		return f3.back();
 	}
 
-	inline hw_uint<32>  peek_20() {
+	inline hw_uint<16> peek_20() {
 		return f4;
 	}
 
-	inline hw_uint<32>  peek_21() {
+	inline hw_uint<16> peek_21() {
 		return f6;
 	}
 
-	inline hw_uint<32>  peek_40() {
+	inline hw_uint<16> peek_40() {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 		return f7.back();
 	}
 
-	inline hw_uint<32>  peek_41() {
+	inline hw_uint<16> peek_41() {
 		return f8;
 	}
 
 
 
-	inline void push(const hw_uint<32>  value) {
+	inline void push(const hw_uint<16> value) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
     // cap: 1 reading from capacity: 19
@@ -2431,11 +2431,11 @@ struct stg4_FIFO_buf104_cache {
 
 
 
-inline void stg4_FIFO_buf104_load_to_stg4_FIFO_buf104107_97_write(hw_uint<32> & stg4_FIFO_buf104_load_to_stg4_FIFO_buf104107_97, stg4_FIFO_buf104_cache& stg4_FIFO_buf104, int root, int stg4_to_gp_1240_ld106, int stg4_to_gp_1240_ld105, int dynamic_address) {
+inline void stg4_FIFO_buf104_load_to_stg4_FIFO_buf104107_97_write(hw_uint<16>& stg4_FIFO_buf104_load_to_stg4_FIFO_buf104107_97, stg4_FIFO_buf104_cache& stg4_FIFO_buf104, int root, int stg4_to_gp_1240_ld106, int stg4_to_gp_1240_ld105, int dynamic_address) {
   stg4_FIFO_buf104.stg4_FIFO_buf104_load_to_stg4_FIFO_buf104107_97_merged_banks_4.push(stg4_FIFO_buf104_load_to_stg4_FIFO_buf104107_97);
 }
 
-inline hw_uint<32>  stg4_FIFO_buf104_stg5_update_0_21_select(stg4_FIFO_buf104_cache& stg4_FIFO_buf104, int root, int stg5_0, int stg5_1, int dynamic_address) {
+inline hw_uint<16> stg4_FIFO_buf104_stg5_update_0_21_select(stg4_FIFO_buf104_cache& stg4_FIFO_buf104, int root, int stg5_0, int stg5_1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // stg4_FIFO_buf104_stg5_update_0_21 read pattern: { stg5_update_0[root = 0, stg5_0, stg5_1] -> stg4_FIFO_buf104[stg5_1, -1 + stg5_0] : -9 <= stg5_0 <= 27 and 0 <= stg5_1 <= 18 }
@@ -2446,7 +2446,7 @@ inline hw_uint<32>  stg4_FIFO_buf104_stg5_update_0_21_select(stg4_FIFO_buf104_ca
   return 0;
 }
 
-inline hw_uint<32>  stg4_FIFO_buf104_stg5_update_0_22_select(stg4_FIFO_buf104_cache& stg4_FIFO_buf104, int root, int stg5_0, int stg5_1, int dynamic_address) {
+inline hw_uint<16> stg4_FIFO_buf104_stg5_update_0_22_select(stg4_FIFO_buf104_cache& stg4_FIFO_buf104, int root, int stg5_0, int stg5_1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // stg4_FIFO_buf104_stg5_update_0_22 read pattern: { stg5_update_0[root = 0, stg5_0, stg5_1] -> stg4_FIFO_buf104[stg5_1, stg5_0] : -9 <= stg5_0 <= 27 and 0 <= stg5_1 <= 18 }
@@ -2457,7 +2457,7 @@ inline hw_uint<32>  stg4_FIFO_buf104_stg5_update_0_22_select(stg4_FIFO_buf104_ca
   return 0;
 }
 
-inline hw_uint<32>  stg4_FIFO_buf104_stg5_update_0_23_select(stg4_FIFO_buf104_cache& stg4_FIFO_buf104, int root, int stg5_0, int stg5_1, int dynamic_address) {
+inline hw_uint<16> stg4_FIFO_buf104_stg5_update_0_23_select(stg4_FIFO_buf104_cache& stg4_FIFO_buf104, int root, int stg5_0, int stg5_1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // stg4_FIFO_buf104_stg5_update_0_23 read pattern: { stg5_update_0[root = 0, stg5_0, stg5_1] -> stg4_FIFO_buf104[1 + stg5_1, stg5_0] : -9 <= stg5_0 <= 27 and 0 <= stg5_1 <= 18 }
@@ -2468,7 +2468,7 @@ inline hw_uint<32>  stg4_FIFO_buf104_stg5_update_0_23_select(stg4_FIFO_buf104_ca
   return 0;
 }
 
-inline hw_uint<32>  stg4_FIFO_buf104_stg5_update_0_24_select(stg4_FIFO_buf104_cache& stg4_FIFO_buf104, int root, int stg5_0, int stg5_1, int dynamic_address) {
+inline hw_uint<16> stg4_FIFO_buf104_stg5_update_0_24_select(stg4_FIFO_buf104_cache& stg4_FIFO_buf104, int root, int stg5_0, int stg5_1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // stg4_FIFO_buf104_stg5_update_0_24 read pattern: { stg5_update_0[root = 0, stg5_0, stg5_1] -> stg4_FIFO_buf104[stg5_1, 1 + stg5_0] : -9 <= stg5_0 <= 27 and 0 <= stg5_1 <= 18 }
@@ -2482,8 +2482,8 @@ inline hw_uint<32>  stg4_FIFO_buf104_stg5_update_0_24_select(stg4_FIFO_buf104_ca
 // # of bundles = 2
 // load_to_stg4_FIFO_buf104107_write
 //	stg4_FIFO_buf104_load_to_stg4_FIFO_buf104107_97
-inline void stg4_FIFO_buf104_load_to_stg4_FIFO_buf104107_write_bundle_write(hw_uint<32>& load_to_stg4_FIFO_buf104107_write, stg4_FIFO_buf104_cache& stg4_FIFO_buf104, int root, int stg4_to_gp_1240_ld106, int stg4_to_gp_1240_ld105, int dynamic_address) {
-	hw_uint<32>  stg4_FIFO_buf104_load_to_stg4_FIFO_buf104107_97_res = load_to_stg4_FIFO_buf104107_write.extract<0, 31>();
+inline void stg4_FIFO_buf104_load_to_stg4_FIFO_buf104107_write_bundle_write(hw_uint<16>& load_to_stg4_FIFO_buf104107_write, stg4_FIFO_buf104_cache& stg4_FIFO_buf104, int root, int stg4_to_gp_1240_ld106, int stg4_to_gp_1240_ld105, int dynamic_address) {
+	hw_uint<16> stg4_FIFO_buf104_load_to_stg4_FIFO_buf104107_97_res = load_to_stg4_FIFO_buf104107_write.extract<0, 15>();
 	stg4_FIFO_buf104_load_to_stg4_FIFO_buf104107_97_write(stg4_FIFO_buf104_load_to_stg4_FIFO_buf104107_97_res, stg4_FIFO_buf104, root, stg4_to_gp_1240_ld106, stg4_to_gp_1240_ld105, dynamic_address);
 }
 
@@ -2492,22 +2492,22 @@ inline void stg4_FIFO_buf104_load_to_stg4_FIFO_buf104107_write_bundle_write(hw_u
 //	stg4_FIFO_buf104_stg5_update_0_22
 //	stg4_FIFO_buf104_stg5_update_0_23
 //	stg4_FIFO_buf104_stg5_update_0_24
-inline hw_uint<128> stg4_FIFO_buf104_stg5_update_0_read_bundle_read(stg4_FIFO_buf104_cache& stg4_FIFO_buf104, int root, int stg5_0, int stg5_1, int dynamic_address) {
+inline hw_uint<64> stg4_FIFO_buf104_stg5_update_0_read_bundle_read(stg4_FIFO_buf104_cache& stg4_FIFO_buf104, int root, int stg5_0, int stg5_1, int dynamic_address) {
   // # of ports in bundle: 4
     // stg4_FIFO_buf104_stg5_update_0_21
     // stg4_FIFO_buf104_stg5_update_0_22
     // stg4_FIFO_buf104_stg5_update_0_23
     // stg4_FIFO_buf104_stg5_update_0_24
 
-	hw_uint<128> result;
-	hw_uint<32>  stg4_FIFO_buf104_stg5_update_0_21_res = stg4_FIFO_buf104_stg5_update_0_21_select(stg4_FIFO_buf104, root, stg5_0, stg5_1, dynamic_address);
-	set_at<0, 128>(result, stg4_FIFO_buf104_stg5_update_0_21_res);
-	hw_uint<32>  stg4_FIFO_buf104_stg5_update_0_22_res = stg4_FIFO_buf104_stg5_update_0_22_select(stg4_FIFO_buf104, root, stg5_0, stg5_1, dynamic_address);
-	set_at<32, 128>(result, stg4_FIFO_buf104_stg5_update_0_22_res);
-	hw_uint<32>  stg4_FIFO_buf104_stg5_update_0_23_res = stg4_FIFO_buf104_stg5_update_0_23_select(stg4_FIFO_buf104, root, stg5_0, stg5_1, dynamic_address);
-	set_at<64, 128>(result, stg4_FIFO_buf104_stg5_update_0_23_res);
-	hw_uint<32>  stg4_FIFO_buf104_stg5_update_0_24_res = stg4_FIFO_buf104_stg5_update_0_24_select(stg4_FIFO_buf104, root, stg5_0, stg5_1, dynamic_address);
-	set_at<96, 128>(result, stg4_FIFO_buf104_stg5_update_0_24_res);
+	hw_uint<64> result;
+	hw_uint<16> stg4_FIFO_buf104_stg5_update_0_21_res = stg4_FIFO_buf104_stg5_update_0_21_select(stg4_FIFO_buf104, root, stg5_0, stg5_1, dynamic_address);
+	set_at<0, 64>(result, stg4_FIFO_buf104_stg5_update_0_21_res);
+	hw_uint<16> stg4_FIFO_buf104_stg5_update_0_22_res = stg4_FIFO_buf104_stg5_update_0_22_select(stg4_FIFO_buf104, root, stg5_0, stg5_1, dynamic_address);
+	set_at<16, 64>(result, stg4_FIFO_buf104_stg5_update_0_22_res);
+	hw_uint<16> stg4_FIFO_buf104_stg5_update_0_23_res = stg4_FIFO_buf104_stg5_update_0_23_select(stg4_FIFO_buf104, root, stg5_0, stg5_1, dynamic_address);
+	set_at<32, 64>(result, stg4_FIFO_buf104_stg5_update_0_23_res);
+	hw_uint<16> stg4_FIFO_buf104_stg5_update_0_24_res = stg4_FIFO_buf104_stg5_update_0_24_select(stg4_FIFO_buf104, root, stg5_0, stg5_1, dynamic_address);
+	set_at<48, 64>(result, stg4_FIFO_buf104_stg5_update_0_24_res);
 	return result;
 }
 
@@ -2582,50 +2582,50 @@ struct stg5_FIFO_buf108_load_to_stg5_FIFO_buf108111_93_merged_banks_4_cache {
 	// Capacity: 40
 	// # of read delays: 5
   // 0, 1, 19, 20, 39
-	hw_uint<32>  f0;
-	hw_uint<32>  f2;
-	fifo<hw_uint<32> , 17> f3;
-	hw_uint<32>  f4;
-	hw_uint<32>  f6;
-	fifo<hw_uint<32> , 18> f7;
-	hw_uint<32>  f8;
+	hw_uint<16> f0;
+	hw_uint<16> f2;
+	fifo<hw_uint<16>, 17> f3;
+	hw_uint<16> f4;
+	hw_uint<16> f6;
+	fifo<hw_uint<16>, 18> f7;
+	hw_uint<16> f8;
 
 
-	inline hw_uint<32>  peek_0() {
+	inline hw_uint<16> peek_0() {
 		return f0;
 	}
 
-	inline hw_uint<32>  peek_1() {
+	inline hw_uint<16> peek_1() {
 		return f2;
 	}
 
-	inline hw_uint<32>  peek_18() {
+	inline hw_uint<16> peek_18() {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 		return f3.back();
 	}
 
-	inline hw_uint<32>  peek_19() {
+	inline hw_uint<16> peek_19() {
 		return f4;
 	}
 
-	inline hw_uint<32>  peek_20() {
+	inline hw_uint<16> peek_20() {
 		return f6;
 	}
 
-	inline hw_uint<32>  peek_38() {
+	inline hw_uint<16> peek_38() {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 		return f7.back();
 	}
 
-	inline hw_uint<32>  peek_39() {
+	inline hw_uint<16> peek_39() {
 		return f8;
 	}
 
 
 
-	inline void push(const hw_uint<32>  value) {
+	inline void push(const hw_uint<16> value) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
     // cap: 1 reading from capacity: 18
@@ -2668,11 +2668,11 @@ struct stg5_FIFO_buf108_cache {
 
 
 
-inline void stg5_FIFO_buf108_load_to_stg5_FIFO_buf108111_93_write(hw_uint<32> & stg5_FIFO_buf108_load_to_stg5_FIFO_buf108111_93, stg5_FIFO_buf108_cache& stg5_FIFO_buf108, int root, int stg5_to_gp_1344_ld110, int stg5_to_gp_1344_ld109, int dynamic_address) {
+inline void stg5_FIFO_buf108_load_to_stg5_FIFO_buf108111_93_write(hw_uint<16>& stg5_FIFO_buf108_load_to_stg5_FIFO_buf108111_93, stg5_FIFO_buf108_cache& stg5_FIFO_buf108, int root, int stg5_to_gp_1344_ld110, int stg5_to_gp_1344_ld109, int dynamic_address) {
   stg5_FIFO_buf108.stg5_FIFO_buf108_load_to_stg5_FIFO_buf108111_93_merged_banks_4.push(stg5_FIFO_buf108_load_to_stg5_FIFO_buf108111_93);
 }
 
-inline hw_uint<32>  stg5_FIFO_buf108_stg6_update_0_16_select(stg5_FIFO_buf108_cache& stg5_FIFO_buf108, int root, int stg6_0, int stg6_1, int dynamic_address) {
+inline hw_uint<16> stg5_FIFO_buf108_stg6_update_0_16_select(stg5_FIFO_buf108_cache& stg5_FIFO_buf108, int root, int stg6_0, int stg6_1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // stg5_FIFO_buf108_stg6_update_0_16 read pattern: { stg6_update_0[root = 0, stg6_0, stg6_1] -> stg5_FIFO_buf108[stg6_1, -1 + stg6_0] : -8 <= stg6_0 <= 26 and 0 <= stg6_1 <= 17 }
@@ -2683,7 +2683,7 @@ inline hw_uint<32>  stg5_FIFO_buf108_stg6_update_0_16_select(stg5_FIFO_buf108_ca
   return 0;
 }
 
-inline hw_uint<32>  stg5_FIFO_buf108_stg6_update_0_17_select(stg5_FIFO_buf108_cache& stg5_FIFO_buf108, int root, int stg6_0, int stg6_1, int dynamic_address) {
+inline hw_uint<16> stg5_FIFO_buf108_stg6_update_0_17_select(stg5_FIFO_buf108_cache& stg5_FIFO_buf108, int root, int stg6_0, int stg6_1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // stg5_FIFO_buf108_stg6_update_0_17 read pattern: { stg6_update_0[root = 0, stg6_0, stg6_1] -> stg5_FIFO_buf108[stg6_1, stg6_0] : -8 <= stg6_0 <= 26 and 0 <= stg6_1 <= 17 }
@@ -2694,7 +2694,7 @@ inline hw_uint<32>  stg5_FIFO_buf108_stg6_update_0_17_select(stg5_FIFO_buf108_ca
   return 0;
 }
 
-inline hw_uint<32>  stg5_FIFO_buf108_stg6_update_0_18_select(stg5_FIFO_buf108_cache& stg5_FIFO_buf108, int root, int stg6_0, int stg6_1, int dynamic_address) {
+inline hw_uint<16> stg5_FIFO_buf108_stg6_update_0_18_select(stg5_FIFO_buf108_cache& stg5_FIFO_buf108, int root, int stg6_0, int stg6_1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // stg5_FIFO_buf108_stg6_update_0_18 read pattern: { stg6_update_0[root = 0, stg6_0, stg6_1] -> stg5_FIFO_buf108[1 + stg6_1, stg6_0] : -8 <= stg6_0 <= 26 and 0 <= stg6_1 <= 17 }
@@ -2705,7 +2705,7 @@ inline hw_uint<32>  stg5_FIFO_buf108_stg6_update_0_18_select(stg5_FIFO_buf108_ca
   return 0;
 }
 
-inline hw_uint<32>  stg5_FIFO_buf108_stg6_update_0_19_select(stg5_FIFO_buf108_cache& stg5_FIFO_buf108, int root, int stg6_0, int stg6_1, int dynamic_address) {
+inline hw_uint<16> stg5_FIFO_buf108_stg6_update_0_19_select(stg5_FIFO_buf108_cache& stg5_FIFO_buf108, int root, int stg6_0, int stg6_1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // stg5_FIFO_buf108_stg6_update_0_19 read pattern: { stg6_update_0[root = 0, stg6_0, stg6_1] -> stg5_FIFO_buf108[stg6_1, 1 + stg6_0] : -8 <= stg6_0 <= 26 and 0 <= stg6_1 <= 17 }
@@ -2719,8 +2719,8 @@ inline hw_uint<32>  stg5_FIFO_buf108_stg6_update_0_19_select(stg5_FIFO_buf108_ca
 // # of bundles = 2
 // load_to_stg5_FIFO_buf108111_write
 //	stg5_FIFO_buf108_load_to_stg5_FIFO_buf108111_93
-inline void stg5_FIFO_buf108_load_to_stg5_FIFO_buf108111_write_bundle_write(hw_uint<32>& load_to_stg5_FIFO_buf108111_write, stg5_FIFO_buf108_cache& stg5_FIFO_buf108, int root, int stg5_to_gp_1344_ld110, int stg5_to_gp_1344_ld109, int dynamic_address) {
-	hw_uint<32>  stg5_FIFO_buf108_load_to_stg5_FIFO_buf108111_93_res = load_to_stg5_FIFO_buf108111_write.extract<0, 31>();
+inline void stg5_FIFO_buf108_load_to_stg5_FIFO_buf108111_write_bundle_write(hw_uint<16>& load_to_stg5_FIFO_buf108111_write, stg5_FIFO_buf108_cache& stg5_FIFO_buf108, int root, int stg5_to_gp_1344_ld110, int stg5_to_gp_1344_ld109, int dynamic_address) {
+	hw_uint<16> stg5_FIFO_buf108_load_to_stg5_FIFO_buf108111_93_res = load_to_stg5_FIFO_buf108111_write.extract<0, 15>();
 	stg5_FIFO_buf108_load_to_stg5_FIFO_buf108111_93_write(stg5_FIFO_buf108_load_to_stg5_FIFO_buf108111_93_res, stg5_FIFO_buf108, root, stg5_to_gp_1344_ld110, stg5_to_gp_1344_ld109, dynamic_address);
 }
 
@@ -2729,22 +2729,22 @@ inline void stg5_FIFO_buf108_load_to_stg5_FIFO_buf108111_write_bundle_write(hw_u
 //	stg5_FIFO_buf108_stg6_update_0_17
 //	stg5_FIFO_buf108_stg6_update_0_18
 //	stg5_FIFO_buf108_stg6_update_0_19
-inline hw_uint<128> stg5_FIFO_buf108_stg6_update_0_read_bundle_read(stg5_FIFO_buf108_cache& stg5_FIFO_buf108, int root, int stg6_0, int stg6_1, int dynamic_address) {
+inline hw_uint<64> stg5_FIFO_buf108_stg6_update_0_read_bundle_read(stg5_FIFO_buf108_cache& stg5_FIFO_buf108, int root, int stg6_0, int stg6_1, int dynamic_address) {
   // # of ports in bundle: 4
     // stg5_FIFO_buf108_stg6_update_0_16
     // stg5_FIFO_buf108_stg6_update_0_17
     // stg5_FIFO_buf108_stg6_update_0_18
     // stg5_FIFO_buf108_stg6_update_0_19
 
-	hw_uint<128> result;
-	hw_uint<32>  stg5_FIFO_buf108_stg6_update_0_16_res = stg5_FIFO_buf108_stg6_update_0_16_select(stg5_FIFO_buf108, root, stg6_0, stg6_1, dynamic_address);
-	set_at<0, 128>(result, stg5_FIFO_buf108_stg6_update_0_16_res);
-	hw_uint<32>  stg5_FIFO_buf108_stg6_update_0_17_res = stg5_FIFO_buf108_stg6_update_0_17_select(stg5_FIFO_buf108, root, stg6_0, stg6_1, dynamic_address);
-	set_at<32, 128>(result, stg5_FIFO_buf108_stg6_update_0_17_res);
-	hw_uint<32>  stg5_FIFO_buf108_stg6_update_0_18_res = stg5_FIFO_buf108_stg6_update_0_18_select(stg5_FIFO_buf108, root, stg6_0, stg6_1, dynamic_address);
-	set_at<64, 128>(result, stg5_FIFO_buf108_stg6_update_0_18_res);
-	hw_uint<32>  stg5_FIFO_buf108_stg6_update_0_19_res = stg5_FIFO_buf108_stg6_update_0_19_select(stg5_FIFO_buf108, root, stg6_0, stg6_1, dynamic_address);
-	set_at<96, 128>(result, stg5_FIFO_buf108_stg6_update_0_19_res);
+	hw_uint<64> result;
+	hw_uint<16> stg5_FIFO_buf108_stg6_update_0_16_res = stg5_FIFO_buf108_stg6_update_0_16_select(stg5_FIFO_buf108, root, stg6_0, stg6_1, dynamic_address);
+	set_at<0, 64>(result, stg5_FIFO_buf108_stg6_update_0_16_res);
+	hw_uint<16> stg5_FIFO_buf108_stg6_update_0_17_res = stg5_FIFO_buf108_stg6_update_0_17_select(stg5_FIFO_buf108, root, stg6_0, stg6_1, dynamic_address);
+	set_at<16, 64>(result, stg5_FIFO_buf108_stg6_update_0_17_res);
+	hw_uint<16> stg5_FIFO_buf108_stg6_update_0_18_res = stg5_FIFO_buf108_stg6_update_0_18_select(stg5_FIFO_buf108, root, stg6_0, stg6_1, dynamic_address);
+	set_at<32, 64>(result, stg5_FIFO_buf108_stg6_update_0_18_res);
+	hw_uint<16> stg5_FIFO_buf108_stg6_update_0_19_res = stg5_FIFO_buf108_stg6_update_0_19_select(stg5_FIFO_buf108, root, stg6_0, stg6_1, dynamic_address);
+	set_at<48, 64>(result, stg5_FIFO_buf108_stg6_update_0_19_res);
 	return result;
 }
 
@@ -2819,50 +2819,50 @@ struct stg6_FIFO_buf112_load_to_stg6_FIFO_buf112115_89_merged_banks_4_cache {
 	// Capacity: 38
 	// # of read delays: 5
   // 0, 1, 18, 19, 37
-	hw_uint<32>  f0;
-	hw_uint<32>  f2;
-	fifo<hw_uint<32> , 16> f3;
-	hw_uint<32>  f4;
-	hw_uint<32>  f6;
-	fifo<hw_uint<32> , 17> f7;
-	hw_uint<32>  f8;
+	hw_uint<16> f0;
+	hw_uint<16> f2;
+	fifo<hw_uint<16>, 16> f3;
+	hw_uint<16> f4;
+	hw_uint<16> f6;
+	fifo<hw_uint<16>, 17> f7;
+	hw_uint<16> f8;
 
 
-	inline hw_uint<32>  peek_0() {
+	inline hw_uint<16> peek_0() {
 		return f0;
 	}
 
-	inline hw_uint<32>  peek_1() {
+	inline hw_uint<16> peek_1() {
 		return f2;
 	}
 
-	inline hw_uint<32>  peek_17() {
+	inline hw_uint<16> peek_17() {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 		return f3.back();
 	}
 
-	inline hw_uint<32>  peek_18() {
+	inline hw_uint<16> peek_18() {
 		return f4;
 	}
 
-	inline hw_uint<32>  peek_19() {
+	inline hw_uint<16> peek_19() {
 		return f6;
 	}
 
-	inline hw_uint<32>  peek_36() {
+	inline hw_uint<16> peek_36() {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 		return f7.back();
 	}
 
-	inline hw_uint<32>  peek_37() {
+	inline hw_uint<16> peek_37() {
 		return f8;
 	}
 
 
 
-	inline void push(const hw_uint<32>  value) {
+	inline void push(const hw_uint<16> value) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
     // cap: 1 reading from capacity: 17
@@ -2905,11 +2905,11 @@ struct stg6_FIFO_buf112_cache {
 
 
 
-inline void stg6_FIFO_buf112_load_to_stg6_FIFO_buf112115_89_write(hw_uint<32> & stg6_FIFO_buf112_load_to_stg6_FIFO_buf112115_89, stg6_FIFO_buf112_cache& stg6_FIFO_buf112, int root, int stg6_to_gp_1448_ld114, int stg6_to_gp_1448_ld113, int dynamic_address) {
+inline void stg6_FIFO_buf112_load_to_stg6_FIFO_buf112115_89_write(hw_uint<16>& stg6_FIFO_buf112_load_to_stg6_FIFO_buf112115_89, stg6_FIFO_buf112_cache& stg6_FIFO_buf112, int root, int stg6_to_gp_1448_ld114, int stg6_to_gp_1448_ld113, int dynamic_address) {
   stg6_FIFO_buf112.stg6_FIFO_buf112_load_to_stg6_FIFO_buf112115_89_merged_banks_4.push(stg6_FIFO_buf112_load_to_stg6_FIFO_buf112115_89);
 }
 
-inline hw_uint<32>  stg6_FIFO_buf112_stg7_update_0_11_select(stg6_FIFO_buf112_cache& stg6_FIFO_buf112, int root, int stg7_0, int stg7_1, int dynamic_address) {
+inline hw_uint<16> stg6_FIFO_buf112_stg7_update_0_11_select(stg6_FIFO_buf112_cache& stg6_FIFO_buf112, int root, int stg7_0, int stg7_1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // stg6_FIFO_buf112_stg7_update_0_11 read pattern: { stg7_update_0[root = 0, stg7_0, stg7_1] -> stg6_FIFO_buf112[stg7_1, -1 + stg7_0] : -7 <= stg7_0 <= 25 and 0 <= stg7_1 <= 16 }
@@ -2920,7 +2920,7 @@ inline hw_uint<32>  stg6_FIFO_buf112_stg7_update_0_11_select(stg6_FIFO_buf112_ca
   return 0;
 }
 
-inline hw_uint<32>  stg6_FIFO_buf112_stg7_update_0_12_select(stg6_FIFO_buf112_cache& stg6_FIFO_buf112, int root, int stg7_0, int stg7_1, int dynamic_address) {
+inline hw_uint<16> stg6_FIFO_buf112_stg7_update_0_12_select(stg6_FIFO_buf112_cache& stg6_FIFO_buf112, int root, int stg7_0, int stg7_1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // stg6_FIFO_buf112_stg7_update_0_12 read pattern: { stg7_update_0[root = 0, stg7_0, stg7_1] -> stg6_FIFO_buf112[stg7_1, stg7_0] : -7 <= stg7_0 <= 25 and 0 <= stg7_1 <= 16 }
@@ -2931,7 +2931,7 @@ inline hw_uint<32>  stg6_FIFO_buf112_stg7_update_0_12_select(stg6_FIFO_buf112_ca
   return 0;
 }
 
-inline hw_uint<32>  stg6_FIFO_buf112_stg7_update_0_13_select(stg6_FIFO_buf112_cache& stg6_FIFO_buf112, int root, int stg7_0, int stg7_1, int dynamic_address) {
+inline hw_uint<16> stg6_FIFO_buf112_stg7_update_0_13_select(stg6_FIFO_buf112_cache& stg6_FIFO_buf112, int root, int stg7_0, int stg7_1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // stg6_FIFO_buf112_stg7_update_0_13 read pattern: { stg7_update_0[root = 0, stg7_0, stg7_1] -> stg6_FIFO_buf112[1 + stg7_1, stg7_0] : -7 <= stg7_0 <= 25 and 0 <= stg7_1 <= 16 }
@@ -2942,7 +2942,7 @@ inline hw_uint<32>  stg6_FIFO_buf112_stg7_update_0_13_select(stg6_FIFO_buf112_ca
   return 0;
 }
 
-inline hw_uint<32>  stg6_FIFO_buf112_stg7_update_0_14_select(stg6_FIFO_buf112_cache& stg6_FIFO_buf112, int root, int stg7_0, int stg7_1, int dynamic_address) {
+inline hw_uint<16> stg6_FIFO_buf112_stg7_update_0_14_select(stg6_FIFO_buf112_cache& stg6_FIFO_buf112, int root, int stg7_0, int stg7_1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // stg6_FIFO_buf112_stg7_update_0_14 read pattern: { stg7_update_0[root = 0, stg7_0, stg7_1] -> stg6_FIFO_buf112[stg7_1, 1 + stg7_0] : -7 <= stg7_0 <= 25 and 0 <= stg7_1 <= 16 }
@@ -2956,8 +2956,8 @@ inline hw_uint<32>  stg6_FIFO_buf112_stg7_update_0_14_select(stg6_FIFO_buf112_ca
 // # of bundles = 2
 // load_to_stg6_FIFO_buf112115_write
 //	stg6_FIFO_buf112_load_to_stg6_FIFO_buf112115_89
-inline void stg6_FIFO_buf112_load_to_stg6_FIFO_buf112115_write_bundle_write(hw_uint<32>& load_to_stg6_FIFO_buf112115_write, stg6_FIFO_buf112_cache& stg6_FIFO_buf112, int root, int stg6_to_gp_1448_ld114, int stg6_to_gp_1448_ld113, int dynamic_address) {
-	hw_uint<32>  stg6_FIFO_buf112_load_to_stg6_FIFO_buf112115_89_res = load_to_stg6_FIFO_buf112115_write.extract<0, 31>();
+inline void stg6_FIFO_buf112_load_to_stg6_FIFO_buf112115_write_bundle_write(hw_uint<16>& load_to_stg6_FIFO_buf112115_write, stg6_FIFO_buf112_cache& stg6_FIFO_buf112, int root, int stg6_to_gp_1448_ld114, int stg6_to_gp_1448_ld113, int dynamic_address) {
+	hw_uint<16> stg6_FIFO_buf112_load_to_stg6_FIFO_buf112115_89_res = load_to_stg6_FIFO_buf112115_write.extract<0, 15>();
 	stg6_FIFO_buf112_load_to_stg6_FIFO_buf112115_89_write(stg6_FIFO_buf112_load_to_stg6_FIFO_buf112115_89_res, stg6_FIFO_buf112, root, stg6_to_gp_1448_ld114, stg6_to_gp_1448_ld113, dynamic_address);
 }
 
@@ -2966,22 +2966,22 @@ inline void stg6_FIFO_buf112_load_to_stg6_FIFO_buf112115_write_bundle_write(hw_u
 //	stg6_FIFO_buf112_stg7_update_0_12
 //	stg6_FIFO_buf112_stg7_update_0_13
 //	stg6_FIFO_buf112_stg7_update_0_14
-inline hw_uint<128> stg6_FIFO_buf112_stg7_update_0_read_bundle_read(stg6_FIFO_buf112_cache& stg6_FIFO_buf112, int root, int stg7_0, int stg7_1, int dynamic_address) {
+inline hw_uint<64> stg6_FIFO_buf112_stg7_update_0_read_bundle_read(stg6_FIFO_buf112_cache& stg6_FIFO_buf112, int root, int stg7_0, int stg7_1, int dynamic_address) {
   // # of ports in bundle: 4
     // stg6_FIFO_buf112_stg7_update_0_11
     // stg6_FIFO_buf112_stg7_update_0_12
     // stg6_FIFO_buf112_stg7_update_0_13
     // stg6_FIFO_buf112_stg7_update_0_14
 
-	hw_uint<128> result;
-	hw_uint<32>  stg6_FIFO_buf112_stg7_update_0_11_res = stg6_FIFO_buf112_stg7_update_0_11_select(stg6_FIFO_buf112, root, stg7_0, stg7_1, dynamic_address);
-	set_at<0, 128>(result, stg6_FIFO_buf112_stg7_update_0_11_res);
-	hw_uint<32>  stg6_FIFO_buf112_stg7_update_0_12_res = stg6_FIFO_buf112_stg7_update_0_12_select(stg6_FIFO_buf112, root, stg7_0, stg7_1, dynamic_address);
-	set_at<32, 128>(result, stg6_FIFO_buf112_stg7_update_0_12_res);
-	hw_uint<32>  stg6_FIFO_buf112_stg7_update_0_13_res = stg6_FIFO_buf112_stg7_update_0_13_select(stg6_FIFO_buf112, root, stg7_0, stg7_1, dynamic_address);
-	set_at<64, 128>(result, stg6_FIFO_buf112_stg7_update_0_13_res);
-	hw_uint<32>  stg6_FIFO_buf112_stg7_update_0_14_res = stg6_FIFO_buf112_stg7_update_0_14_select(stg6_FIFO_buf112, root, stg7_0, stg7_1, dynamic_address);
-	set_at<96, 128>(result, stg6_FIFO_buf112_stg7_update_0_14_res);
+	hw_uint<64> result;
+	hw_uint<16> stg6_FIFO_buf112_stg7_update_0_11_res = stg6_FIFO_buf112_stg7_update_0_11_select(stg6_FIFO_buf112, root, stg7_0, stg7_1, dynamic_address);
+	set_at<0, 64>(result, stg6_FIFO_buf112_stg7_update_0_11_res);
+	hw_uint<16> stg6_FIFO_buf112_stg7_update_0_12_res = stg6_FIFO_buf112_stg7_update_0_12_select(stg6_FIFO_buf112, root, stg7_0, stg7_1, dynamic_address);
+	set_at<16, 64>(result, stg6_FIFO_buf112_stg7_update_0_12_res);
+	hw_uint<16> stg6_FIFO_buf112_stg7_update_0_13_res = stg6_FIFO_buf112_stg7_update_0_13_select(stg6_FIFO_buf112, root, stg7_0, stg7_1, dynamic_address);
+	set_at<32, 64>(result, stg6_FIFO_buf112_stg7_update_0_13_res);
+	hw_uint<16> stg6_FIFO_buf112_stg7_update_0_14_res = stg6_FIFO_buf112_stg7_update_0_14_select(stg6_FIFO_buf112, root, stg7_0, stg7_1, dynamic_address);
+	set_at<48, 64>(result, stg6_FIFO_buf112_stg7_update_0_14_res);
 	return result;
 }
 
@@ -3056,50 +3056,50 @@ struct stg7_FIFO_buf116_load_to_stg7_FIFO_buf116119_85_merged_banks_4_cache {
 	// Capacity: 36
 	// # of read delays: 5
   // 0, 1, 17, 18, 35
-	hw_uint<32>  f0;
-	hw_uint<32>  f2;
-	fifo<hw_uint<32> , 15> f3;
-	hw_uint<32>  f4;
-	hw_uint<32>  f6;
-	fifo<hw_uint<32> , 16> f7;
-	hw_uint<32>  f8;
+	hw_uint<16> f0;
+	hw_uint<16> f2;
+	fifo<hw_uint<16>, 15> f3;
+	hw_uint<16> f4;
+	hw_uint<16> f6;
+	fifo<hw_uint<16>, 16> f7;
+	hw_uint<16> f8;
 
 
-	inline hw_uint<32>  peek_0() {
+	inline hw_uint<16> peek_0() {
 		return f0;
 	}
 
-	inline hw_uint<32>  peek_1() {
+	inline hw_uint<16> peek_1() {
 		return f2;
 	}
 
-	inline hw_uint<32>  peek_16() {
+	inline hw_uint<16> peek_16() {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 		return f3.back();
 	}
 
-	inline hw_uint<32>  peek_17() {
+	inline hw_uint<16> peek_17() {
 		return f4;
 	}
 
-	inline hw_uint<32>  peek_18() {
+	inline hw_uint<16> peek_18() {
 		return f6;
 	}
 
-	inline hw_uint<32>  peek_34() {
+	inline hw_uint<16> peek_34() {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 		return f7.back();
 	}
 
-	inline hw_uint<32>  peek_35() {
+	inline hw_uint<16> peek_35() {
 		return f8;
 	}
 
 
 
-	inline void push(const hw_uint<32>  value) {
+	inline void push(const hw_uint<16> value) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
     // cap: 1 reading from capacity: 16
@@ -3142,11 +3142,11 @@ struct stg7_FIFO_buf116_cache {
 
 
 
-inline void stg7_FIFO_buf116_load_to_stg7_FIFO_buf116119_85_write(hw_uint<32> & stg7_FIFO_buf116_load_to_stg7_FIFO_buf116119_85, stg7_FIFO_buf116_cache& stg7_FIFO_buf116, int root, int stg7_to_gp_1552_ld118, int stg7_to_gp_1552_ld117, int dynamic_address) {
+inline void stg7_FIFO_buf116_load_to_stg7_FIFO_buf116119_85_write(hw_uint<16>& stg7_FIFO_buf116_load_to_stg7_FIFO_buf116119_85, stg7_FIFO_buf116_cache& stg7_FIFO_buf116, int root, int stg7_to_gp_1552_ld118, int stg7_to_gp_1552_ld117, int dynamic_address) {
   stg7_FIFO_buf116.stg7_FIFO_buf116_load_to_stg7_FIFO_buf116119_85_merged_banks_4.push(stg7_FIFO_buf116_load_to_stg7_FIFO_buf116119_85);
 }
 
-inline hw_uint<32>  stg7_FIFO_buf116_stg8_update_0_6_select(stg7_FIFO_buf116_cache& stg7_FIFO_buf116, int root, int stg8_0, int stg8_1, int dynamic_address) {
+inline hw_uint<16> stg7_FIFO_buf116_stg8_update_0_6_select(stg7_FIFO_buf116_cache& stg7_FIFO_buf116, int root, int stg8_0, int stg8_1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // stg7_FIFO_buf116_stg8_update_0_6 read pattern: { stg8_update_0[root = 0, stg8_0, stg8_1] -> stg7_FIFO_buf116[stg8_1, -1 + stg8_0] : -6 <= stg8_0 <= 24 and 0 <= stg8_1 <= 15 }
@@ -3157,7 +3157,7 @@ inline hw_uint<32>  stg7_FIFO_buf116_stg8_update_0_6_select(stg7_FIFO_buf116_cac
   return 0;
 }
 
-inline hw_uint<32>  stg7_FIFO_buf116_stg8_update_0_7_select(stg7_FIFO_buf116_cache& stg7_FIFO_buf116, int root, int stg8_0, int stg8_1, int dynamic_address) {
+inline hw_uint<16> stg7_FIFO_buf116_stg8_update_0_7_select(stg7_FIFO_buf116_cache& stg7_FIFO_buf116, int root, int stg8_0, int stg8_1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // stg7_FIFO_buf116_stg8_update_0_7 read pattern: { stg8_update_0[root = 0, stg8_0, stg8_1] -> stg7_FIFO_buf116[stg8_1, stg8_0] : -6 <= stg8_0 <= 24 and 0 <= stg8_1 <= 15 }
@@ -3168,7 +3168,7 @@ inline hw_uint<32>  stg7_FIFO_buf116_stg8_update_0_7_select(stg7_FIFO_buf116_cac
   return 0;
 }
 
-inline hw_uint<32>  stg7_FIFO_buf116_stg8_update_0_8_select(stg7_FIFO_buf116_cache& stg7_FIFO_buf116, int root, int stg8_0, int stg8_1, int dynamic_address) {
+inline hw_uint<16> stg7_FIFO_buf116_stg8_update_0_8_select(stg7_FIFO_buf116_cache& stg7_FIFO_buf116, int root, int stg8_0, int stg8_1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // stg7_FIFO_buf116_stg8_update_0_8 read pattern: { stg8_update_0[root = 0, stg8_0, stg8_1] -> stg7_FIFO_buf116[1 + stg8_1, stg8_0] : -6 <= stg8_0 <= 24 and 0 <= stg8_1 <= 15 }
@@ -3179,7 +3179,7 @@ inline hw_uint<32>  stg7_FIFO_buf116_stg8_update_0_8_select(stg7_FIFO_buf116_cac
   return 0;
 }
 
-inline hw_uint<32>  stg7_FIFO_buf116_stg8_update_0_9_select(stg7_FIFO_buf116_cache& stg7_FIFO_buf116, int root, int stg8_0, int stg8_1, int dynamic_address) {
+inline hw_uint<16> stg7_FIFO_buf116_stg8_update_0_9_select(stg7_FIFO_buf116_cache& stg7_FIFO_buf116, int root, int stg8_0, int stg8_1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // stg7_FIFO_buf116_stg8_update_0_9 read pattern: { stg8_update_0[root = 0, stg8_0, stg8_1] -> stg7_FIFO_buf116[stg8_1, 1 + stg8_0] : -6 <= stg8_0 <= 24 and 0 <= stg8_1 <= 15 }
@@ -3193,8 +3193,8 @@ inline hw_uint<32>  stg7_FIFO_buf116_stg8_update_0_9_select(stg7_FIFO_buf116_cac
 // # of bundles = 2
 // load_to_stg7_FIFO_buf116119_write
 //	stg7_FIFO_buf116_load_to_stg7_FIFO_buf116119_85
-inline void stg7_FIFO_buf116_load_to_stg7_FIFO_buf116119_write_bundle_write(hw_uint<32>& load_to_stg7_FIFO_buf116119_write, stg7_FIFO_buf116_cache& stg7_FIFO_buf116, int root, int stg7_to_gp_1552_ld118, int stg7_to_gp_1552_ld117, int dynamic_address) {
-	hw_uint<32>  stg7_FIFO_buf116_load_to_stg7_FIFO_buf116119_85_res = load_to_stg7_FIFO_buf116119_write.extract<0, 31>();
+inline void stg7_FIFO_buf116_load_to_stg7_FIFO_buf116119_write_bundle_write(hw_uint<16>& load_to_stg7_FIFO_buf116119_write, stg7_FIFO_buf116_cache& stg7_FIFO_buf116, int root, int stg7_to_gp_1552_ld118, int stg7_to_gp_1552_ld117, int dynamic_address) {
+	hw_uint<16> stg7_FIFO_buf116_load_to_stg7_FIFO_buf116119_85_res = load_to_stg7_FIFO_buf116119_write.extract<0, 15>();
 	stg7_FIFO_buf116_load_to_stg7_FIFO_buf116119_85_write(stg7_FIFO_buf116_load_to_stg7_FIFO_buf116119_85_res, stg7_FIFO_buf116, root, stg7_to_gp_1552_ld118, stg7_to_gp_1552_ld117, dynamic_address);
 }
 
@@ -3203,22 +3203,22 @@ inline void stg7_FIFO_buf116_load_to_stg7_FIFO_buf116119_write_bundle_write(hw_u
 //	stg7_FIFO_buf116_stg8_update_0_7
 //	stg7_FIFO_buf116_stg8_update_0_8
 //	stg7_FIFO_buf116_stg8_update_0_9
-inline hw_uint<128> stg7_FIFO_buf116_stg8_update_0_read_bundle_read(stg7_FIFO_buf116_cache& stg7_FIFO_buf116, int root, int stg8_0, int stg8_1, int dynamic_address) {
+inline hw_uint<64> stg7_FIFO_buf116_stg8_update_0_read_bundle_read(stg7_FIFO_buf116_cache& stg7_FIFO_buf116, int root, int stg8_0, int stg8_1, int dynamic_address) {
   // # of ports in bundle: 4
     // stg7_FIFO_buf116_stg8_update_0_6
     // stg7_FIFO_buf116_stg8_update_0_7
     // stg7_FIFO_buf116_stg8_update_0_8
     // stg7_FIFO_buf116_stg8_update_0_9
 
-	hw_uint<128> result;
-	hw_uint<32>  stg7_FIFO_buf116_stg8_update_0_6_res = stg7_FIFO_buf116_stg8_update_0_6_select(stg7_FIFO_buf116, root, stg8_0, stg8_1, dynamic_address);
-	set_at<0, 128>(result, stg7_FIFO_buf116_stg8_update_0_6_res);
-	hw_uint<32>  stg7_FIFO_buf116_stg8_update_0_7_res = stg7_FIFO_buf116_stg8_update_0_7_select(stg7_FIFO_buf116, root, stg8_0, stg8_1, dynamic_address);
-	set_at<32, 128>(result, stg7_FIFO_buf116_stg8_update_0_7_res);
-	hw_uint<32>  stg7_FIFO_buf116_stg8_update_0_8_res = stg7_FIFO_buf116_stg8_update_0_8_select(stg7_FIFO_buf116, root, stg8_0, stg8_1, dynamic_address);
-	set_at<64, 128>(result, stg7_FIFO_buf116_stg8_update_0_8_res);
-	hw_uint<32>  stg7_FIFO_buf116_stg8_update_0_9_res = stg7_FIFO_buf116_stg8_update_0_9_select(stg7_FIFO_buf116, root, stg8_0, stg8_1, dynamic_address);
-	set_at<96, 128>(result, stg7_FIFO_buf116_stg8_update_0_9_res);
+	hw_uint<64> result;
+	hw_uint<16> stg7_FIFO_buf116_stg8_update_0_6_res = stg7_FIFO_buf116_stg8_update_0_6_select(stg7_FIFO_buf116, root, stg8_0, stg8_1, dynamic_address);
+	set_at<0, 64>(result, stg7_FIFO_buf116_stg8_update_0_6_res);
+	hw_uint<16> stg7_FIFO_buf116_stg8_update_0_7_res = stg7_FIFO_buf116_stg8_update_0_7_select(stg7_FIFO_buf116, root, stg8_0, stg8_1, dynamic_address);
+	set_at<16, 64>(result, stg7_FIFO_buf116_stg8_update_0_7_res);
+	hw_uint<16> stg7_FIFO_buf116_stg8_update_0_8_res = stg7_FIFO_buf116_stg8_update_0_8_select(stg7_FIFO_buf116, root, stg8_0, stg8_1, dynamic_address);
+	set_at<32, 64>(result, stg7_FIFO_buf116_stg8_update_0_8_res);
+	hw_uint<16> stg7_FIFO_buf116_stg8_update_0_9_res = stg7_FIFO_buf116_stg8_update_0_9_select(stg7_FIFO_buf116, root, stg8_0, stg8_1, dynamic_address);
+	set_at<48, 64>(result, stg7_FIFO_buf116_stg8_update_0_9_res);
 	return result;
 }
 
@@ -3293,50 +3293,50 @@ struct stg8_FIFO_buf120_load_to_stg8_FIFO_buf120123_81_merged_banks_4_cache {
 	// Capacity: 34
 	// # of read delays: 5
   // 0, 1, 16, 17, 33
-	hw_uint<32>  f0;
-	hw_uint<32>  f2;
-	fifo<hw_uint<32> , 14> f3;
-	hw_uint<32>  f4;
-	hw_uint<32>  f6;
-	fifo<hw_uint<32> , 15> f7;
-	hw_uint<32>  f8;
+	hw_uint<16> f0;
+	hw_uint<16> f2;
+	fifo<hw_uint<16>, 14> f3;
+	hw_uint<16> f4;
+	hw_uint<16> f6;
+	fifo<hw_uint<16>, 15> f7;
+	hw_uint<16> f8;
 
 
-	inline hw_uint<32>  peek_0() {
+	inline hw_uint<16> peek_0() {
 		return f0;
 	}
 
-	inline hw_uint<32>  peek_1() {
+	inline hw_uint<16> peek_1() {
 		return f2;
 	}
 
-	inline hw_uint<32>  peek_15() {
+	inline hw_uint<16> peek_15() {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 		return f3.back();
 	}
 
-	inline hw_uint<32>  peek_16() {
+	inline hw_uint<16> peek_16() {
 		return f4;
 	}
 
-	inline hw_uint<32>  peek_17() {
+	inline hw_uint<16> peek_17() {
 		return f6;
 	}
 
-	inline hw_uint<32>  peek_32() {
+	inline hw_uint<16> peek_32() {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 		return f7.back();
 	}
 
-	inline hw_uint<32>  peek_33() {
+	inline hw_uint<16> peek_33() {
 		return f8;
 	}
 
 
 
-	inline void push(const hw_uint<32>  value) {
+	inline void push(const hw_uint<16> value) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
     // cap: 1 reading from capacity: 15
@@ -3379,11 +3379,11 @@ struct stg8_FIFO_buf120_cache {
 
 
 
-inline void stg8_FIFO_buf120_load_to_stg8_FIFO_buf120123_81_write(hw_uint<32> & stg8_FIFO_buf120_load_to_stg8_FIFO_buf120123_81, stg8_FIFO_buf120_cache& stg8_FIFO_buf120, int root, int stg8_to_gp_1656_ld122, int stg8_to_gp_1656_ld121, int dynamic_address) {
+inline void stg8_FIFO_buf120_load_to_stg8_FIFO_buf120123_81_write(hw_uint<16>& stg8_FIFO_buf120_load_to_stg8_FIFO_buf120123_81, stg8_FIFO_buf120_cache& stg8_FIFO_buf120, int root, int stg8_to_gp_1656_ld122, int stg8_to_gp_1656_ld121, int dynamic_address) {
   stg8_FIFO_buf120.stg8_FIFO_buf120_load_to_stg8_FIFO_buf120123_81_merged_banks_4.push(stg8_FIFO_buf120_load_to_stg8_FIFO_buf120123_81);
 }
 
-inline hw_uint<32>  stg8_FIFO_buf120_stg9_update_0_1_select(stg8_FIFO_buf120_cache& stg8_FIFO_buf120, int root, int stg9_0, int stg9_1, int dynamic_address) {
+inline hw_uint<16> stg8_FIFO_buf120_stg9_update_0_1_select(stg8_FIFO_buf120_cache& stg8_FIFO_buf120, int root, int stg9_0, int stg9_1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // stg8_FIFO_buf120_stg9_update_0_1 read pattern: { stg9_update_0[root = 0, stg9_0, stg9_1] -> stg8_FIFO_buf120[stg9_1, -1 + stg9_0] : -5 <= stg9_0 <= 23 and 0 <= stg9_1 <= 14 }
@@ -3394,7 +3394,7 @@ inline hw_uint<32>  stg8_FIFO_buf120_stg9_update_0_1_select(stg8_FIFO_buf120_cac
   return 0;
 }
 
-inline hw_uint<32>  stg8_FIFO_buf120_stg9_update_0_2_select(stg8_FIFO_buf120_cache& stg8_FIFO_buf120, int root, int stg9_0, int stg9_1, int dynamic_address) {
+inline hw_uint<16> stg8_FIFO_buf120_stg9_update_0_2_select(stg8_FIFO_buf120_cache& stg8_FIFO_buf120, int root, int stg9_0, int stg9_1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // stg8_FIFO_buf120_stg9_update_0_2 read pattern: { stg9_update_0[root = 0, stg9_0, stg9_1] -> stg8_FIFO_buf120[stg9_1, stg9_0] : -5 <= stg9_0 <= 23 and 0 <= stg9_1 <= 14 }
@@ -3405,7 +3405,7 @@ inline hw_uint<32>  stg8_FIFO_buf120_stg9_update_0_2_select(stg8_FIFO_buf120_cac
   return 0;
 }
 
-inline hw_uint<32>  stg8_FIFO_buf120_stg9_update_0_3_select(stg8_FIFO_buf120_cache& stg8_FIFO_buf120, int root, int stg9_0, int stg9_1, int dynamic_address) {
+inline hw_uint<16> stg8_FIFO_buf120_stg9_update_0_3_select(stg8_FIFO_buf120_cache& stg8_FIFO_buf120, int root, int stg9_0, int stg9_1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // stg8_FIFO_buf120_stg9_update_0_3 read pattern: { stg9_update_0[root = 0, stg9_0, stg9_1] -> stg8_FIFO_buf120[1 + stg9_1, stg9_0] : -5 <= stg9_0 <= 23 and 0 <= stg9_1 <= 14 }
@@ -3416,7 +3416,7 @@ inline hw_uint<32>  stg8_FIFO_buf120_stg9_update_0_3_select(stg8_FIFO_buf120_cac
   return 0;
 }
 
-inline hw_uint<32>  stg8_FIFO_buf120_stg9_update_0_4_select(stg8_FIFO_buf120_cache& stg8_FIFO_buf120, int root, int stg9_0, int stg9_1, int dynamic_address) {
+inline hw_uint<16> stg8_FIFO_buf120_stg9_update_0_4_select(stg8_FIFO_buf120_cache& stg8_FIFO_buf120, int root, int stg9_0, int stg9_1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // stg8_FIFO_buf120_stg9_update_0_4 read pattern: { stg9_update_0[root = 0, stg9_0, stg9_1] -> stg8_FIFO_buf120[stg9_1, 1 + stg9_0] : -5 <= stg9_0 <= 23 and 0 <= stg9_1 <= 14 }
@@ -3430,8 +3430,8 @@ inline hw_uint<32>  stg8_FIFO_buf120_stg9_update_0_4_select(stg8_FIFO_buf120_cac
 // # of bundles = 2
 // load_to_stg8_FIFO_buf120123_write
 //	stg8_FIFO_buf120_load_to_stg8_FIFO_buf120123_81
-inline void stg8_FIFO_buf120_load_to_stg8_FIFO_buf120123_write_bundle_write(hw_uint<32>& load_to_stg8_FIFO_buf120123_write, stg8_FIFO_buf120_cache& stg8_FIFO_buf120, int root, int stg8_to_gp_1656_ld122, int stg8_to_gp_1656_ld121, int dynamic_address) {
-	hw_uint<32>  stg8_FIFO_buf120_load_to_stg8_FIFO_buf120123_81_res = load_to_stg8_FIFO_buf120123_write.extract<0, 31>();
+inline void stg8_FIFO_buf120_load_to_stg8_FIFO_buf120123_write_bundle_write(hw_uint<16>& load_to_stg8_FIFO_buf120123_write, stg8_FIFO_buf120_cache& stg8_FIFO_buf120, int root, int stg8_to_gp_1656_ld122, int stg8_to_gp_1656_ld121, int dynamic_address) {
+	hw_uint<16> stg8_FIFO_buf120_load_to_stg8_FIFO_buf120123_81_res = load_to_stg8_FIFO_buf120123_write.extract<0, 15>();
 	stg8_FIFO_buf120_load_to_stg8_FIFO_buf120123_81_write(stg8_FIFO_buf120_load_to_stg8_FIFO_buf120123_81_res, stg8_FIFO_buf120, root, stg8_to_gp_1656_ld122, stg8_to_gp_1656_ld121, dynamic_address);
 }
 
@@ -3440,22 +3440,22 @@ inline void stg8_FIFO_buf120_load_to_stg8_FIFO_buf120123_write_bundle_write(hw_u
 //	stg8_FIFO_buf120_stg9_update_0_2
 //	stg8_FIFO_buf120_stg9_update_0_3
 //	stg8_FIFO_buf120_stg9_update_0_4
-inline hw_uint<128> stg8_FIFO_buf120_stg9_update_0_read_bundle_read(stg8_FIFO_buf120_cache& stg8_FIFO_buf120, int root, int stg9_0, int stg9_1, int dynamic_address) {
+inline hw_uint<64> stg8_FIFO_buf120_stg9_update_0_read_bundle_read(stg8_FIFO_buf120_cache& stg8_FIFO_buf120, int root, int stg9_0, int stg9_1, int dynamic_address) {
   // # of ports in bundle: 4
     // stg8_FIFO_buf120_stg9_update_0_1
     // stg8_FIFO_buf120_stg9_update_0_2
     // stg8_FIFO_buf120_stg9_update_0_3
     // stg8_FIFO_buf120_stg9_update_0_4
 
-	hw_uint<128> result;
-	hw_uint<32>  stg8_FIFO_buf120_stg9_update_0_1_res = stg8_FIFO_buf120_stg9_update_0_1_select(stg8_FIFO_buf120, root, stg9_0, stg9_1, dynamic_address);
-	set_at<0, 128>(result, stg8_FIFO_buf120_stg9_update_0_1_res);
-	hw_uint<32>  stg8_FIFO_buf120_stg9_update_0_2_res = stg8_FIFO_buf120_stg9_update_0_2_select(stg8_FIFO_buf120, root, stg9_0, stg9_1, dynamic_address);
-	set_at<32, 128>(result, stg8_FIFO_buf120_stg9_update_0_2_res);
-	hw_uint<32>  stg8_FIFO_buf120_stg9_update_0_3_res = stg8_FIFO_buf120_stg9_update_0_3_select(stg8_FIFO_buf120, root, stg9_0, stg9_1, dynamic_address);
-	set_at<64, 128>(result, stg8_FIFO_buf120_stg9_update_0_3_res);
-	hw_uint<32>  stg8_FIFO_buf120_stg9_update_0_4_res = stg8_FIFO_buf120_stg9_update_0_4_select(stg8_FIFO_buf120, root, stg9_0, stg9_1, dynamic_address);
-	set_at<96, 128>(result, stg8_FIFO_buf120_stg9_update_0_4_res);
+	hw_uint<64> result;
+	hw_uint<16> stg8_FIFO_buf120_stg9_update_0_1_res = stg8_FIFO_buf120_stg9_update_0_1_select(stg8_FIFO_buf120, root, stg9_0, stg9_1, dynamic_address);
+	set_at<0, 64>(result, stg8_FIFO_buf120_stg9_update_0_1_res);
+	hw_uint<16> stg8_FIFO_buf120_stg9_update_0_2_res = stg8_FIFO_buf120_stg9_update_0_2_select(stg8_FIFO_buf120, root, stg9_0, stg9_1, dynamic_address);
+	set_at<16, 64>(result, stg8_FIFO_buf120_stg9_update_0_2_res);
+	hw_uint<16> stg8_FIFO_buf120_stg9_update_0_3_res = stg8_FIFO_buf120_stg9_update_0_3_select(stg8_FIFO_buf120, root, stg9_0, stg9_1, dynamic_address);
+	set_at<32, 64>(result, stg8_FIFO_buf120_stg9_update_0_3_res);
+	hw_uint<16> stg8_FIFO_buf120_stg9_update_0_4_res = stg8_FIFO_buf120_stg9_update_0_4_select(stg8_FIFO_buf120, root, stg9_0, stg9_1, dynamic_address);
+	set_at<48, 64>(result, stg8_FIFO_buf120_stg9_update_0_4_res);
 	return result;
 }
 
@@ -3530,50 +3530,50 @@ struct stg9_FIFO_buf124_load_to_stg9_FIFO_buf124127_77_merged_banks_4_cache {
 	// Capacity: 32
 	// # of read delays: 5
   // 0, 1, 15, 16, 31
-	hw_uint<32>  f0;
-	hw_uint<32>  f2;
-	fifo<hw_uint<32> , 13> f3;
-	hw_uint<32>  f4;
-	hw_uint<32>  f6;
-	fifo<hw_uint<32> , 14> f7;
-	hw_uint<32>  f8;
+	hw_uint<16> f0;
+	hw_uint<16> f2;
+	fifo<hw_uint<16>, 13> f3;
+	hw_uint<16> f4;
+	hw_uint<16> f6;
+	fifo<hw_uint<16>, 14> f7;
+	hw_uint<16> f8;
 
 
-	inline hw_uint<32>  peek_0() {
+	inline hw_uint<16> peek_0() {
 		return f0;
 	}
 
-	inline hw_uint<32>  peek_1() {
+	inline hw_uint<16> peek_1() {
 		return f2;
 	}
 
-	inline hw_uint<32>  peek_14() {
+	inline hw_uint<16> peek_14() {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 		return f3.back();
 	}
 
-	inline hw_uint<32>  peek_15() {
+	inline hw_uint<16> peek_15() {
 		return f4;
 	}
 
-	inline hw_uint<32>  peek_16() {
+	inline hw_uint<16> peek_16() {
 		return f6;
 	}
 
-	inline hw_uint<32>  peek_30() {
+	inline hw_uint<16> peek_30() {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 		return f7.back();
 	}
 
-	inline hw_uint<32>  peek_31() {
+	inline hw_uint<16> peek_31() {
 		return f8;
 	}
 
 
 
-	inline void push(const hw_uint<32>  value) {
+	inline void push(const hw_uint<16> value) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
     // cap: 1 reading from capacity: 14
@@ -3616,11 +3616,11 @@ struct stg9_FIFO_buf124_cache {
 
 
 
-inline void stg9_FIFO_buf124_load_to_stg9_FIFO_buf124127_77_write(hw_uint<32> & stg9_FIFO_buf124_load_to_stg9_FIFO_buf124127_77, stg9_FIFO_buf124_cache& stg9_FIFO_buf124, int root, int stg9_to_gp_360_ld126, int stg9_to_gp_360_ld125, int dynamic_address) {
+inline void stg9_FIFO_buf124_load_to_stg9_FIFO_buf124127_77_write(hw_uint<16>& stg9_FIFO_buf124_load_to_stg9_FIFO_buf124127_77, stg9_FIFO_buf124_cache& stg9_FIFO_buf124, int root, int stg9_to_gp_360_ld126, int stg9_to_gp_360_ld125, int dynamic_address) {
   stg9_FIFO_buf124.stg9_FIFO_buf124_load_to_stg9_FIFO_buf124127_77_merged_banks_4.push(stg9_FIFO_buf124_load_to_stg9_FIFO_buf124127_77);
 }
 
-inline hw_uint<32>  stg9_FIFO_buf124_stg10_update_0_66_select(stg9_FIFO_buf124_cache& stg9_FIFO_buf124, int root, int stg10_0, int stg10_1, int dynamic_address) {
+inline hw_uint<16> stg9_FIFO_buf124_stg10_update_0_66_select(stg9_FIFO_buf124_cache& stg9_FIFO_buf124, int root, int stg10_0, int stg10_1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // stg9_FIFO_buf124_stg10_update_0_66 read pattern: { stg10_update_0[root = 0, stg10_0, stg10_1] -> stg9_FIFO_buf124[stg10_1, -1 + stg10_0] : -4 <= stg10_0 <= 22 and 0 <= stg10_1 <= 13 }
@@ -3631,7 +3631,7 @@ inline hw_uint<32>  stg9_FIFO_buf124_stg10_update_0_66_select(stg9_FIFO_buf124_c
   return 0;
 }
 
-inline hw_uint<32>  stg9_FIFO_buf124_stg10_update_0_67_select(stg9_FIFO_buf124_cache& stg9_FIFO_buf124, int root, int stg10_0, int stg10_1, int dynamic_address) {
+inline hw_uint<16> stg9_FIFO_buf124_stg10_update_0_67_select(stg9_FIFO_buf124_cache& stg9_FIFO_buf124, int root, int stg10_0, int stg10_1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // stg9_FIFO_buf124_stg10_update_0_67 read pattern: { stg10_update_0[root = 0, stg10_0, stg10_1] -> stg9_FIFO_buf124[stg10_1, stg10_0] : -4 <= stg10_0 <= 22 and 0 <= stg10_1 <= 13 }
@@ -3642,7 +3642,7 @@ inline hw_uint<32>  stg9_FIFO_buf124_stg10_update_0_67_select(stg9_FIFO_buf124_c
   return 0;
 }
 
-inline hw_uint<32>  stg9_FIFO_buf124_stg10_update_0_68_select(stg9_FIFO_buf124_cache& stg9_FIFO_buf124, int root, int stg10_0, int stg10_1, int dynamic_address) {
+inline hw_uint<16> stg9_FIFO_buf124_stg10_update_0_68_select(stg9_FIFO_buf124_cache& stg9_FIFO_buf124, int root, int stg10_0, int stg10_1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // stg9_FIFO_buf124_stg10_update_0_68 read pattern: { stg10_update_0[root = 0, stg10_0, stg10_1] -> stg9_FIFO_buf124[1 + stg10_1, stg10_0] : -4 <= stg10_0 <= 22 and 0 <= stg10_1 <= 13 }
@@ -3653,7 +3653,7 @@ inline hw_uint<32>  stg9_FIFO_buf124_stg10_update_0_68_select(stg9_FIFO_buf124_c
   return 0;
 }
 
-inline hw_uint<32>  stg9_FIFO_buf124_stg10_update_0_69_select(stg9_FIFO_buf124_cache& stg9_FIFO_buf124, int root, int stg10_0, int stg10_1, int dynamic_address) {
+inline hw_uint<16> stg9_FIFO_buf124_stg10_update_0_69_select(stg9_FIFO_buf124_cache& stg9_FIFO_buf124, int root, int stg10_0, int stg10_1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // stg9_FIFO_buf124_stg10_update_0_69 read pattern: { stg10_update_0[root = 0, stg10_0, stg10_1] -> stg9_FIFO_buf124[stg10_1, 1 + stg10_0] : -4 <= stg10_0 <= 22 and 0 <= stg10_1 <= 13 }
@@ -3667,8 +3667,8 @@ inline hw_uint<32>  stg9_FIFO_buf124_stg10_update_0_69_select(stg9_FIFO_buf124_c
 // # of bundles = 2
 // load_to_stg9_FIFO_buf124127_write
 //	stg9_FIFO_buf124_load_to_stg9_FIFO_buf124127_77
-inline void stg9_FIFO_buf124_load_to_stg9_FIFO_buf124127_write_bundle_write(hw_uint<32>& load_to_stg9_FIFO_buf124127_write, stg9_FIFO_buf124_cache& stg9_FIFO_buf124, int root, int stg9_to_gp_360_ld126, int stg9_to_gp_360_ld125, int dynamic_address) {
-	hw_uint<32>  stg9_FIFO_buf124_load_to_stg9_FIFO_buf124127_77_res = load_to_stg9_FIFO_buf124127_write.extract<0, 31>();
+inline void stg9_FIFO_buf124_load_to_stg9_FIFO_buf124127_write_bundle_write(hw_uint<16>& load_to_stg9_FIFO_buf124127_write, stg9_FIFO_buf124_cache& stg9_FIFO_buf124, int root, int stg9_to_gp_360_ld126, int stg9_to_gp_360_ld125, int dynamic_address) {
+	hw_uint<16> stg9_FIFO_buf124_load_to_stg9_FIFO_buf124127_77_res = load_to_stg9_FIFO_buf124127_write.extract<0, 15>();
 	stg9_FIFO_buf124_load_to_stg9_FIFO_buf124127_77_write(stg9_FIFO_buf124_load_to_stg9_FIFO_buf124127_77_res, stg9_FIFO_buf124, root, stg9_to_gp_360_ld126, stg9_to_gp_360_ld125, dynamic_address);
 }
 
@@ -3677,22 +3677,22 @@ inline void stg9_FIFO_buf124_load_to_stg9_FIFO_buf124127_write_bundle_write(hw_u
 //	stg9_FIFO_buf124_stg10_update_0_67
 //	stg9_FIFO_buf124_stg10_update_0_68
 //	stg9_FIFO_buf124_stg10_update_0_69
-inline hw_uint<128> stg9_FIFO_buf124_stg10_update_0_read_bundle_read(stg9_FIFO_buf124_cache& stg9_FIFO_buf124, int root, int stg10_0, int stg10_1, int dynamic_address) {
+inline hw_uint<64> stg9_FIFO_buf124_stg10_update_0_read_bundle_read(stg9_FIFO_buf124_cache& stg9_FIFO_buf124, int root, int stg10_0, int stg10_1, int dynamic_address) {
   // # of ports in bundle: 4
     // stg9_FIFO_buf124_stg10_update_0_66
     // stg9_FIFO_buf124_stg10_update_0_67
     // stg9_FIFO_buf124_stg10_update_0_68
     // stg9_FIFO_buf124_stg10_update_0_69
 
-	hw_uint<128> result;
-	hw_uint<32>  stg9_FIFO_buf124_stg10_update_0_66_res = stg9_FIFO_buf124_stg10_update_0_66_select(stg9_FIFO_buf124, root, stg10_0, stg10_1, dynamic_address);
-	set_at<0, 128>(result, stg9_FIFO_buf124_stg10_update_0_66_res);
-	hw_uint<32>  stg9_FIFO_buf124_stg10_update_0_67_res = stg9_FIFO_buf124_stg10_update_0_67_select(stg9_FIFO_buf124, root, stg10_0, stg10_1, dynamic_address);
-	set_at<32, 128>(result, stg9_FIFO_buf124_stg10_update_0_67_res);
-	hw_uint<32>  stg9_FIFO_buf124_stg10_update_0_68_res = stg9_FIFO_buf124_stg10_update_0_68_select(stg9_FIFO_buf124, root, stg10_0, stg10_1, dynamic_address);
-	set_at<64, 128>(result, stg9_FIFO_buf124_stg10_update_0_68_res);
-	hw_uint<32>  stg9_FIFO_buf124_stg10_update_0_69_res = stg9_FIFO_buf124_stg10_update_0_69_select(stg9_FIFO_buf124, root, stg10_0, stg10_1, dynamic_address);
-	set_at<96, 128>(result, stg9_FIFO_buf124_stg10_update_0_69_res);
+	hw_uint<64> result;
+	hw_uint<16> stg9_FIFO_buf124_stg10_update_0_66_res = stg9_FIFO_buf124_stg10_update_0_66_select(stg9_FIFO_buf124, root, stg10_0, stg10_1, dynamic_address);
+	set_at<0, 64>(result, stg9_FIFO_buf124_stg10_update_0_66_res);
+	hw_uint<16> stg9_FIFO_buf124_stg10_update_0_67_res = stg9_FIFO_buf124_stg10_update_0_67_select(stg9_FIFO_buf124, root, stg10_0, stg10_1, dynamic_address);
+	set_at<16, 64>(result, stg9_FIFO_buf124_stg10_update_0_67_res);
+	hw_uint<16> stg9_FIFO_buf124_stg10_update_0_68_res = stg9_FIFO_buf124_stg10_update_0_68_select(stg9_FIFO_buf124, root, stg10_0, stg10_1, dynamic_address);
+	set_at<32, 64>(result, stg9_FIFO_buf124_stg10_update_0_68_res);
+	hw_uint<16> stg9_FIFO_buf124_stg10_update_0_69_res = stg9_FIFO_buf124_stg10_update_0_69_select(stg9_FIFO_buf124, root, stg10_0, stg10_1, dynamic_address);
+	set_at<48, 64>(result, stg9_FIFO_buf124_stg10_update_0_69_res);
 	return result;
 }
 
