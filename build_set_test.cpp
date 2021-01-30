@@ -19987,7 +19987,7 @@ void test_multi_kernel_pyramid_collapsing() {
   string reconstructed = reconstruct_gaussian(lps, prg);
   cpy("out", reconstructed, 2, prg);
 
-  infer_bounds("out", {2048, 2048}, prg);
+  infer_bounds("out", {64, 64}, prg);
 
   prg.pretty_print();
   prg.sanity_check();
@@ -20000,7 +20000,7 @@ void test_multi_kernel_pyramid_collapsing() {
   prg.pretty_print();
   prg.sanity_check();
 
-  //auto unopt_postprocessed = unoptimized_result(prg);
+  auto unopt_postprocessed = unoptimized_result(prg);
 
   //auto fusion_groups = one_stage_per_group(prg);
   auto fusion_groups = fuse_pointwise_stages(prg);
@@ -20021,11 +20021,10 @@ void test_multi_kernel_pyramid_collapsing() {
 
   generate_regression_testbench(dag.prg);
 
-  //vector<string> multi_kernel_res = run_regression_tb(dag.prg);
+  vector<string> multi_kernel_res = run_regression_tb(dag.prg);
 
-  //compare("multi_kernel_" + prg.name + "_vs_unopt", multi_kernel_res, unopt_postprocessed);
+  compare("multi_kernel_" + prg.name + "_vs_unopt", multi_kernel_res, unopt_postprocessed);
   move_to_benchmarks_folder(dag.prg.name);
-  assert(false);
 }
 
 void test_artificial_deadlock() {
@@ -21066,8 +21065,8 @@ void test_app_to_prog_conversion() {
 }
 
 void dhuff_tests() {
-  test_multi_kernel_pyramid_collapsing();
   test_app_to_prog_conversion();
+  test_multi_kernel_pyramid_collapsing();
 
   //test_multi_kernel_llf();
   //assert(false);
