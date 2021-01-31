@@ -19974,7 +19974,7 @@ void test_multi_kernel_llf() {
 
 void test_multi_kernel_pyramid_collapsing() {
 
-  prog prg("pyr_blndd500_2048");
+  prog prg("pyr_blnd2d500_2048");
   prg.compute_unit_file = "local_laplacian_filters_compute.h";
   prg.add_input("in");
   prg.add_output("out");
@@ -20002,8 +20002,8 @@ void test_multi_kernel_pyramid_collapsing() {
 
   //auto unopt_postprocessed = unoptimized_result(prg);
 
-  //auto fusion_groups = one_stage_per_group(prg);
-  auto fusion_groups = fuse_pointwise_stages(prg);
+  auto fusion_groups = one_stage_per_group(prg);
+  //auto fusion_groups = fuse_pointwise_stages(prg);
   app_dag dag = partition_application(fusion_groups, prg);
 
   CodegenOptions options;

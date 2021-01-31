@@ -5024,6 +5024,26 @@ isl_map* producer_map(op* loop, const std::string& b, prog& prg) {
   return m;
 }
 
+umap* producer_umap(op* op, prog& prg) {
+  vector<umap*> maps;
+  umap* res = isl_union_map_read_from_str(prg.ctx, "{}");
+  maps.push_back(res);
+  for (auto m : write_addrs(op, prg)) {
+    maps.push_back(to_umap(to_map(m)));
+  }
+
+  auto vars = surrounding_vars(op, prg);
+  vector<string> constraints;
+  for (int d = 0; d < vars.size(); d++) {
+    auto lp = prg.find_loop(vars.at(d));
+    constraints.push_back(
+        str(lp->start) + " <= " + vars.at(d) + " < " + str(lp->end_exclusive));
+  }
+
+  isl_set* dom = rdset(prg.ctx, curlies(op->name + bracket_list(vars) + " : " + sep_list(constraints, "", "", " and ")));
+  return its(unn(maps), to_uset(dom));
+}
+
 umap* consumer_umap(op* op, prog& prg) {
   vector<umap*> maps;
   umap* res = isl_union_map_read_from_str(prg.ctx, "{}");
@@ -5076,6 +5096,20 @@ vector<isl_multi_aff*> write_addrs(op* op, const std::string& buf, prog& prg) {
       auto aff = rdmultiaff(prg.ctx, curlies(op->name + bracket_list(surrounding) + " -> " + sep_list(aff_terms, "[", "]", ", ")));
       affs.push_back(aff);
     }
+  }
+  return affs;
+}
+
+vector<isl_multi_aff*> write_addrs(op* op, prog& prg) {
+  assert(!op->is_loop() && !op->is_if());
+  auto surrounding = surrounding_vars(op, prg);
+
+  vector<isl_multi_aff*> affs;
+  for (auto cp : op->produces_pair()) {
+    assert(cp.second.size() == 1);
+    vector<string> aff_terms{cp.second.at(0).second};
+    auto aff = rdmultiaff(prg.ctx, curlies(op->name + bracket_list(surrounding) + " -> " + cp.first + sep_list(aff_terms, "[", "]", ", ")));
+    affs.push_back(aff);
   }
   return affs;
 }
@@ -8665,46 +8699,7 @@ void generate_app_code(
 
   auto buffers = build_buffers(dag.prg, global_sched);
 
-  for (auto c : dag.inter_group_channels()) {
-    cout << tab(1) << c << endl;
-    auto readers = find_readers(c, dag.prg);
-    auto writers = find_writers(c, dag.prg);
-
-    cout << tab(2) << "Readers..." << endl;
-    for (auto r : readers) {
-      //cout << tab(3) << r->name << endl;
-      cout << tab(3) << str(map_find(r->name, mps)) << endl;
-    }
-    //cout << endl;
-    //cout << tab(2) << "Writers..." << endl;
-    cout << tab(2) << "Writers..." << endl;
-    for (auto r : writers) {
-      //cout << tab(3) << r->name << endl;
-      cout << tab(3) << str(map_find(r->name, mps)) << endl;
-    }
-    cout << endl;
-
-    UBuffer buf = map_find(c, buffers);
-    {
-      //auto inpt_set = buf.get_in_ports();
-      //auto outpt_set = buf.get_out_ports();
-
-      //int maxdelay = 0;
-      //vector<int> read_delays{0};
-      //string inpt_name = pick(inpt_set);
-      //auto rddom = isl_union_set_empty(
-          //get_space(range(buf.access_map.at(inpt_name))));
-
-      //map<string, int> delay_map;
-      for (auto inpt : buf.get_in_ports()) {
-        int mdd = compute_max_dd(buf, inpt);
-        cout << tab(1) << "MDD = " << mdd << endl;
-        assert(mdd == 0);
-      }
-    }
-
-  }
-  assert(false);
+  //assert(false);
 
   //auto global_sched = dag.prg.optimized_codegen();
 
@@ -8781,10 +8776,54 @@ void generate_app_code(
     done.insert(buf);
   }
 
-  set_channel_depths_to_constant(32, dag);
-  //set_channel_depths_to_with_kernel_depth(500, dag);
+  //set_channel_depths_to_constant(32, dag);
+  set_channel_depths_to_with_kernel_depth(500, dag);
   //set_channel_depths_ilp(500, dag);
 
+  for (auto c : dag.inter_group_channels()) {
+    cout << tab(1) << c << endl;
+    UBuffer buf = map_find(c, buffers);
+    //cout << buf << endl << endl;
+    auto readers = find_readers(c, dag.prg);
+    auto writers = find_writers(c, dag.prg);
+
+    cout << tab(2) << "Readers..." << endl;
+    for (auto r : readers) {
+      cout << tab(3) << str(map_find(r->name, mps)) << endl;
+      auto read_map = consumer_umap(r, dag.prg);
+      cout << tab(3) << str(read_map) << endl;
+    }
+    cout << tab(2) << "Writers..." << endl;
+    for (auto r : writers) {
+      cout << tab(3) << str(map_find(r->name, mps)) << endl;
+      auto read_map = producer_umap(r, dag.prg);
+      cout << tab(3) << str(read_map) << endl;
+    }
+    cout << endl;
+
+    {
+      //auto inpt_set = buf.get_in_ports();
+      //auto outpt_set = buf.get_out_ports();
+
+      //int maxdelay = 0;
+      //vector<int> read_delays{0};
+      //string inpt_name = pick(inpt_set);
+      //auto rddom = isl_union_set_empty(
+          //get_space(range(buf.access_map.at(inpt_name))));
+
+      //map<string, int> delay_map;
+      int max_dd = 0;
+      for (auto inpt : buf.get_in_ports()) {
+        int mdd = compute_max_dd(buf, inpt);
+        cout << tab(1) << "MDD = " << mdd << endl;
+        if (mdd > max_dd) {
+          max_dd = mdd;
+        }
+      }
+      assert(max_dd == 0);
+    }
+
+  }
   for (auto& gp : dag.fusion_group_progs) {
     for (auto& buf : gp.second.boundary_buffers()) {
       if (!elem(buf, done)) {
