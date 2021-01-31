@@ -8663,6 +8663,8 @@ void generate_app_code(
     mps[domain_name(m)] = m;
   }
 
+  auto buffers = build_buffers(dag.prg, global_sched);
+
   for (auto c : dag.inter_group_channels()) {
     cout << tab(1) << c << endl;
     auto readers = find_readers(c, dag.prg);
@@ -8680,13 +8682,31 @@ void generate_app_code(
       cout << tab(3) << str(map_find(r->name, mps)) << endl;
     }
     cout << endl;
+
+    UBuffer buf = map_find(c, buffers);
+    {
+      //auto inpt_set = buf.get_in_ports();
+      //auto outpt_set = buf.get_out_ports();
+
+      //int maxdelay = 0;
+      //vector<int> read_delays{0};
+      //string inpt_name = pick(inpt_set);
+      //auto rddom = isl_union_set_empty(
+          //get_space(range(buf.access_map.at(inpt_name))));
+
+      //map<string, int> delay_map;
+      for (auto inpt : buf.get_in_ports()) {
+        int mdd = compute_max_dd(buf, inpt);
+        cout << tab(1) << "MDD = " << mdd << endl;
+      }
+    }
+
   }
-  //assert(false);
+  assert(false);
 
   //auto global_sched = dag.prg.optimized_codegen();
 
 
-  auto buffers = build_buffers(dag.prg, global_sched);
 
   cout << "Generating code for " << dag.prg.name << endl;
   map<string, UBuffer> reps;
