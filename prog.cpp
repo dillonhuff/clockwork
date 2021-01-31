@@ -8802,16 +8802,6 @@ void generate_app_code(
     cout << endl;
 
     {
-      //auto inpt_set = buf.get_in_ports();
-      //auto outpt_set = buf.get_out_ports();
-
-      //int maxdelay = 0;
-      //vector<int> read_delays{0};
-      //string inpt_name = pick(inpt_set);
-      //auto rddom = isl_union_set_empty(
-          //get_space(range(buf.access_map.at(inpt_name))));
-
-      //map<string, int> delay_map;
       int max_dd = 0;
       for (auto inpt : buf.get_in_ports()) {
         int mdd = compute_max_dd(buf, inpt);
@@ -8820,7 +8810,8 @@ void generate_app_code(
           max_dd = mdd;
         }
       }
-      assert(max_dd == 0);
+      dag.channel_sizes[c] += max_dd;
+      //assert(max_dd == 0);
     }
 
   }
