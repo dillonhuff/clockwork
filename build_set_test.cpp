@@ -21065,12 +21065,12 @@ void test_app_to_prog_conversion() {
 }
 
 void test_jacobi15_dynamic() {
-  string prefix = "jacdyn";
-  int throughput = 16;
+  string prefix = "jacdynl";
+  int throughput = 1;
   string name = prefix + "_" + str(throughput);
   App lp = stencil_chain_stage_iccad(name, 15);
-  int rows = 10;
-  int cols = 19;
+  int rows = 1080;
+  int cols = 1920;
   CodegenOptions options;
   options.internal = true;
   options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
@@ -21090,8 +21090,6 @@ void test_jacobi15_dynamic() {
 
   //prg.pretty_print();
   //assert(false);
-
-
   //app_dag dag = partition_application(fusion_groups, prg);
 
   options = CodegenOptions();
