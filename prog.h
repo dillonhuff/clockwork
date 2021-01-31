@@ -1941,6 +1941,8 @@ struct app_dag {
 
   string edge_between(const std::string& src, const std::string& dst);
 
+  std::set<string> inter_group_channels();
+
   vector<path> all_paths(const std::string& src, const std::string& dst);
 
   std::set<string> all_nodes() {

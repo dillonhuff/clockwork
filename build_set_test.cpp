@@ -21101,11 +21101,68 @@ void test_jacobi15_dynamic() {
   assert(false);
 }
 
+void test_multi_kernel_gp() {
+  prog prg("gp");
+  prg.compute_unit_file = "local_laplacian_filters_compute.h";
+  prg.add_input("in");
+  prg.add_output("out");
+
+  cpy("in_on_chip", "in", 2, prg);
+
+  const int num_pyramid_levels = 2;
+  vector<string> lps = gaussian_pyramid("in_on_chip", num_pyramid_levels, prg);
+
+  string reconstructed = reconstruct_gaussian(lps, prg);
+  cpy("out", reconstructed, 2, prg);
+
+  infer_bounds("out", {64, 64}, prg);
+
+  prg.pretty_print();
+  prg.sanity_check();
+
+  unroll_reduce_loops(prg);
+  merge_basic_block_ops(prg);
+  normalize_bounds(prg);
+  normalize_address_offsets(prg);
+
+  prg.pretty_print();
+  prg.sanity_check();
+
+  auto unopt_postprocessed = unoptimized_result(prg);
+
+  auto fusion_groups = one_stage_per_group(prg);
+  cout << "# of groups: " << fusion_groups.size() << endl;
+  //assert(false);
+
+  app_dag dag = partition_application(fusion_groups, prg);
+  //string target = "gp_in_on_chip_1_buf4_to_gp_1112";
+  dag.prg.pretty_print();
+  //assert(false);
+
+  CodegenOptions options;
+  //all_unbanked(prg, options);
+  //options.inner_bank_offset_mode =
+    //INNER_BANK_OFFSET_MULTILINEAR;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  //options.hls_loop_codegen = HLS_LOOP_CODEGEN_ISL;
+  generate_app_code(options, dag);
+
+  generate_regression_testbench(dag.prg);
+
+  vector<string> multi_kernel_res = run_regression_tb(dag.prg);
+
+  compare("multi_kernel_" + prg.name + "_vs_unopt", multi_kernel_res, unopt_postprocessed);
+  move_to_benchmarks_folder(dag.prg.name);
+
+}
+
 void dhuff_tests() {
+  test_multi_kernel_pyramid_collapsing();
+
+  test_multi_kernel_gp();
   test_jacobi15_dynamic();
 
   test_app_to_prog_conversion();
-  test_multi_kernel_pyramid_collapsing();
 
   //test_multi_kernel_llf();
   //assert(false);

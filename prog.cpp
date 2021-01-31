@@ -8657,7 +8657,13 @@ void generate_app_code(
         dag.prg.whole_iteration_domain());
   cout << "Sched: " << str(global_sched) << endl;
 
+  for (auto c : dag.inter_group_channels()) {
+    cout << tab(1) << c << endl;
+  }
+  assert(false);
+
   //auto global_sched = dag.prg.optimized_codegen();
+
 
   auto buffers = build_buffers(dag.prg, global_sched);
 
@@ -9303,4 +9309,21 @@ string app_dag::edge_between(const std::string& src, const std::string& dst) {
   assert(edges.size() == 1);
 
   return pick(edges);
+}
+
+std::set<string> app_dag::inter_group_channels() {
+  std::set<std::string> done;
+  std::set<std::string> to_size;
+  for (auto& buf : prg.boundary_buffers()) {
+    done.insert(buf);
+  }
+
+  for (auto& gp : fusion_group_progs) {
+    for (auto& buf : gp.second.boundary_buffers()) {
+      if (!elem(buf, done)) {
+        to_size.insert(buf);
+      }
+    }
+  }
+  return to_size;
 }
