@@ -8790,14 +8790,14 @@ void generate_app_code(
     cout << tab(2) << "Readers..." << endl;
     for (auto r : readers) {
       cout << tab(3) << str(map_find(r->name, mps)) << endl;
-      auto read_map = consumer_umap(r, dag.prg);
-      cout << tab(3) << str(read_map) << endl;
+      //auto read_map = consumer_umap(r, dag.prg);
+      //cout << tab(3) << str(read_map) << endl;
     }
     cout << tab(2) << "Writers..." << endl;
     for (auto r : writers) {
       cout << tab(3) << str(map_find(r->name, mps)) << endl;
-      auto read_map = producer_umap(r, dag.prg);
-      cout << tab(3) << str(read_map) << endl;
+      //auto read_map = producer_umap(r, dag.prg);
+      //cout << tab(3) << str(read_map) << endl;
     }
     cout << endl;
 
@@ -8815,6 +8815,8 @@ void generate_app_code(
     }
 
   }
+  assert(false);
+
   for (auto& gp : dag.fusion_group_progs) {
     for (auto& buf : gp.second.boundary_buffers()) {
       if (!elem(buf, done)) {
