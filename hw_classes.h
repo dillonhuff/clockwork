@@ -476,5 +476,25 @@ void burst_write(hw_uint<burst_width>* output,
   }
 }
 
+//template<int num_wide_bursts, int wide_width, int narrow_width>
+//void stream_narrower(HWStream<hw_uint<wide_width> >& input,
+    //HWStream<hw_uint<narrow_width> >& output) {
+
+  //// My case: width input: 128 (4 32 bit words)
+  //// width output: 96 (2 32 bit words)
+  //// so the solution should be:
+  //// break up into 12 32 bit words,
+  //// read in as 3 4 wide words then write out as
+  //// 4 3 wide 32 bit words.
+  //hw_uint<wide_width> wide_db;
+
+  //for (int i = 0; i < num_wide_bursts; i++) {
+    //hw_uint<wide_width> reg = input.read();
+    //for (int word_width = 0; word_width < words; )
+    ////int wide_db_wr_addr = i % 2;
+    ////wide_db.val(wide_db_wr_addr
+  //}
+  //assert(false);
+//}
 
 

@@ -3085,7 +3085,37 @@ std::set<string> buffers_written(prog& prg) {
   return written;
 }
 
+std::set<string> buffers_read(op* p) {
+  if (p->is_loop()) {
+    std::set<string> read;
+    for (auto child : p->children) {
+      for (auto b : buffers_read(child)) {
+        read.insert(b);
+      }
+    }
+    return read;
+  }
+
+  assert(!p->is_loop());
+
+  std::set<string> bufs;
+  for (auto b : p->buffers_read()) {
+    bufs.insert(b);
+  }
+  return bufs;
+}
+
 std::set<string> buffers_written(op* p) {
+  if (p->is_loop()) {
+    std::set<string> written;
+    for (auto child : p->children) {
+      for (auto b : buffers_written(child)) {
+        written.insert(b);
+      }
+    }
+    return written;
+  }
+
   assert(!p->is_loop());
 
   std::set<string> bufs;
@@ -6462,15 +6492,14 @@ void read_in_after(op* loop, isl_map* read_data, const std::string& rb_name, pro
   ld->add_store(rb_name, comma_list(store_addrs));
 }
 
-// Q: Maybe I should re-factor away the "loop" and
-// just get it from surrounding vars?
 op* copy_after(
-    op* loop,
     op* location,
     isl_set* read_data,
     const std::vector<int>& loop_order,
     const std::string& rb_name,
     prog& prg) {
+
+  op* loop = prg.parent(location);
 
   prg.pretty_print();
 
@@ -6531,13 +6560,13 @@ op* copy_after(
 }
 
 op* copy_before(
-    op* loop,
     op* location,
     isl_set* read_data,
     const std::vector<int>& loop_order,
     const std::string& rb_name,
     prog& prg) {
 
+  op* loop = prg.parent(location);
   prg.pretty_print();
 
   assert(loop->is_loop());
@@ -8513,7 +8542,10 @@ void set_channel_depths_ilp(const int kernel_depth, app_dag& dag) {
   for (auto src : dag.all_nodes()) {
     for (auto dst : dag.all_nodes()) {
       if (src != dst) {
+        cout << "Getting all paths" << endl;
         vector<path> paths = dag.all_paths(src, dst);
+        cout << "Got all paths" << endl;
+        cout << tab(1) << "# of paths from " << src << " to " << dst << " = " << paths.size() << endl;
         for (auto p0 : paths) {
           for (auto p1 : paths) {
             if (p0 != p1) {
@@ -8525,6 +8557,7 @@ void set_channel_depths_ilp(const int kernel_depth, app_dag& dag) {
               int static_length_p1 = kernel_depth*(p1.size() - 2);
               cout << tab(1) << "Static length of: " << p1 << " = " << static_length_p1 << endl;
 
+
               map<string, isl_val*> coeffs;
               for (int i = 0; i < (int) p0.size() - 1; i++) {
                 // Note: This assumes at most one channel between
@@ -8532,10 +8565,14 @@ void set_channel_depths_ilp(const int kernel_depth, app_dag& dag) {
                 string s = p0.at(i);
                 string d = p0.at(i + 1);
 
+                cout << "Getting edge between" << endl;
                 string connector = dag.edge_between(s, d);
+                cout << "Got edge between" << endl;
                 coeffs[connector] = isl_val_one(builder.ctx);
               }
+              cout << "Adding constraint" << endl;
               builder.add_geq(coeffs, isl_val_int_from_si(builder.ctx, -static_length_p1));
+              cout << "Done adding constraint" << endl;
             }
           }
         }
@@ -8695,8 +8732,9 @@ void generate_app_code(
     done.insert(buf);
   }
 
+  set_channel_depths_to_constant(32, dag);
   //set_channel_depths_to_with_kernel_depth(500, dag);
-  set_channel_depths_ilp(500, dag);
+  //set_channel_depths_ilp(500, dag);
 
   for (auto& gp : dag.fusion_group_progs) {
     for (auto& buf : gp.second.boundary_buffers()) {
@@ -8948,7 +8986,9 @@ insert_inter_group_buffers(const std::map<std::string, std::set<std::string> >& 
       string broadcast = prg.un(b.first + "_to_" + group_name);
       string producer_group = map_find(b.first, producer_groups);
 
-      op* copy_loop = copy_after(prg.root, prg.find_loop(map_find(producer_group, group_ends)), s, map_find(b.first, kernel_orders), broadcast, prg);
+      prg.buffer_port_widths[broadcast] = prg.buffer_port_width(name(s));
+
+      op* copy_loop = copy_after(prg.find_loop(map_find(producer_group, group_ends)), s, map_find(b.first, kernel_orders), broadcast, prg);
       fresh_groups[producer_group].insert(copy_loop->name);
 
       group_buffer_channels[{group_name, b.first}] = broadcast;
@@ -8966,11 +9006,12 @@ insert_inter_group_buffers(const std::map<std::string, std::set<std::string> >& 
       s = set_name(s, incoming_channel);
 
       string replacement = prg.un(b.first + "_FIFO_buf");
+      prg.buffer_port_widths[replacement] = prg.buffer_port_width(incoming_channel);
       for (auto kernel : map_find(group_name, fusion_groups)) {
         prg.find_loop(kernel)->replace_reads_from(b.first, replacement);
       }
 
-      op* copy_loop = copy_before(prg.root, prg.find_loop(map_find(group_name, group_starts)), s, map_find(b.first, kernel_orders), replacement, prg);
+      op* copy_loop = copy_before(prg.find_loop(map_find(group_name, group_starts)), s, map_find(b.first, kernel_orders), replacement, prg);
       fresh_groups[group_name].insert(copy_loop->name);
     }
   }
@@ -8987,7 +9028,6 @@ insert_inter_group_buffers(const std::map<std::string, std::set<std::string> >& 
     cout << endl;
   }
   return fresh_groups;
-  //assert(false);
 }
 
 app_dag partition_groups(const std::map<std::string, std::set<std::string> >& fresh_groups, prog& prg) {
@@ -9067,6 +9107,81 @@ vector<string> app_dag::sorted_fusion_groups() {
 
   }
   return sorted;
+}
+
+bool is_pointwise_kernel(const std::string& name, prog& prg) {
+  return buffers_read(prg.find_loop(name)).size() == 1 &&
+    buffers_written(prg.find_loop(name)).size() == 1;
+}
+
+void merge_into(
+    const std::string& to_merge,
+    const std::string& dst,
+    map<std::string, std::set<string> >& groups) {
+
+  auto values = map_find(to_merge, groups);
+  for (auto v : values) {
+    groups.at(dst).insert(v);
+  }
+  groups.erase(to_merge);
+}
+
+std::set<string> parents(const std::string& to_merge, map<string, std::set<string> >& fusion_groups, prog& prg) {
+  std::set<string> parent_set;
+
+  auto read = buffers_read(prg.find_loop(pick(fusion_groups.at(to_merge))));
+  for (auto fg : fusion_groups) {
+    for (auto parent : fg.second) {
+      auto written = buffers_written(prg.find_loop(parent));
+      if (intersection(read, written).size() > 0) {
+        parent_set.insert(fg.first);
+      }
+    }
+  }
+
+  return parent_set;
+
+}
+string parent_group(const std::string& to_merge, map<string, std::set<string> >& fusion_groups, prog& prg) {
+  std::set<string> parent_set = parents(to_merge, fusion_groups, prg);
+
+  assert(parent_set.size() == 1);
+
+  return pick(parent_set);
+}
+
+map<std::string, std::set<string> > fuse_pointwise_stages(prog& prg) {
+  map<std::string, std::set<string> > fusion_groups = one_stage_per_group(prg);
+
+  bool found_mergeable = true;
+  while (found_mergeable) {
+    found_mergeable = false;
+
+    string to_merge = "";
+    for (auto g : fusion_groups) {
+      auto kernels = g.second;
+      if (parents(g.first, fusion_groups, prg).size() == 1 && kernels.size() == 1) {
+        if (is_pointwise_kernel(pick(kernels), prg)) {
+          cout << "Candidate pointwise fusion group: " << g.first << endl;
+          to_merge = g.first;
+          found_mergeable = true;
+          break;
+        }
+      }
+    }
+
+    if (found_mergeable) {
+      assert(to_merge != "");
+
+      string parent = parent_group(to_merge, fusion_groups, prg);
+      merge_into(to_merge, parent, fusion_groups);
+
+      assert(!contains_key(to_merge, fusion_groups));
+    }
+
+  }
+
+  return fusion_groups;
 }
 
 map<std::string, std::set<string> > one_stage_per_group(prog& prg) {

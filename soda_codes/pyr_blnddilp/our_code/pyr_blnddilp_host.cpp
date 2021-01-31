@@ -22,12 +22,12 @@ int main(int argc, char **argv) {
   std::cout << "num_epochs = " << num_epochs << std::endl;
 
   size_t total_size_bytes = 0;
-  const int pw_math_in03_read_pipe0_DATA_SIZE = num_epochs*5041;
+  const int pw_math_in03_read_pipe0_DATA_SIZE = num_epochs*4223025;
   const int pw_math_in03_read_pipe0_BYTES_PER_PIXEL = 32 / 8;
   size_t pw_math_in03_read_pipe0_size_bytes = pw_math_in03_read_pipe0_BYTES_PER_PIXEL * pw_math_in03_read_pipe0_DATA_SIZE;
 
   total_size_bytes += pw_math_in03_read_pipe0_size_bytes;
-  const int pw_math_lp_in_on_chip_0_buf48_reconstruct_lp70_buf737982_write_pipe0_DATA_SIZE = num_epochs*4096;
+  const int pw_math_lp_in_on_chip_0_buf48_reconstruct_lp70_buf737982_write_pipe0_DATA_SIZE = num_epochs*4194304;
   const int pw_math_lp_in_on_chip_0_buf48_reconstruct_lp70_buf737982_write_pipe0_BYTES_PER_PIXEL = 32 / 8;
   size_t pw_math_lp_in_on_chip_0_buf48_reconstruct_lp70_buf737982_write_pipe0_size_bytes = pw_math_lp_in_on_chip_0_buf48_reconstruct_lp70_buf737982_write_pipe0_BYTES_PER_PIXEL * pw_math_lp_in_on_chip_0_buf48_reconstruct_lp70_buf737982_write_pipe0_DATA_SIZE;
 

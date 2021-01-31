@@ -5095,7 +5095,6 @@ struct App {
       rargs.push_back(a);
     }
     app_dag.at(func).add_reduce_update(accum, compute, rargs, reduce_ranges);
-
   }
 
   bool is_input(const std::string& name) const {
@@ -6188,13 +6187,52 @@ struct App {
           }
           auto op = nest->add_op(u.name());
           cout << "added op " << op->name << endl;
+          auto surrounding = surrounding_vars(op, prg);
+          vector<string> offsets;
+          for (auto var : surrounding) {
+            if (var != "root") {
+              offsets.push_back(var);
+            }
+          }
+          assert(offsets.size() == 2);
           // TODO: Replace with real description of apps
-          op->add_store(f, "0, 0");
+          reverse(offsets);
+          op->add_store(f, sep_list(offsets, "", "", ", "));
+          //cout << "offsets: " << offsets << endl;
 
           vector<string> fargs;
           for (auto p : u.get_srcs()) {
+            vector<string> vars;
+            for (auto var : surrounding) {
+              if (var != "root") {
+                vars.push_back(var);
+              }
+            }
+            assert(vars.size() == 2);
+
+
+
+
             cout << tab(1) << " op loads " << p.name << endl;
-            op->add_load(p.name, "0, 0");
+            for (auto off : p.offsets) {
+              assert(off.size() == 2);
+              vector<string> terms;
+              int i = 0;
+              for (auto offt : off) {
+                QAV stride = p.stride(i);
+                if (stride.denom != 1) {
+                  int num = stride.num;
+                  int denom = stride.denom;
+                  terms.push_back("floor((" + str(num) + "*" + vars.at(i) + ")/" + str(denom) + ")" + " + " + str(offt));
+                } else {
+                  terms.push_back(to_string(stride) + "*" + vars.at(i) + " + " + str(offt));
+                }
+                i++;
+              }
+              reverse(terms);
+              op->add_load(p.name, comma_list(terms));
+            }
+
             if (!elem(p.name, fargs)) {
               fargs.push_back(p.name);
             }
@@ -6217,7 +6255,8 @@ struct App {
     }
 
     generate_app_code(options, buffers, prg, its(m, action_domain), domain_map);
-    generate_regression_testbench(prg, buffers);
+    //generate_regression_testbench(prg, buffers);
+    generate_regression_testbench(prg); //, buffers);
     generate_soda_file(prg.name);
   }
 
@@ -6551,7 +6590,7 @@ struct App {
     return whole_dom;
   }
 
-  void schedule_and_codegen(CodegenOptions& options, const std::string& name, const std::vector<string>& outputs) {
+  prog schedule_and_codegen(CodegenOptions& options, const std::string& name, const std::vector<string>& outputs) {
     time_t rawtime;
     struct tm * timeinfo;
     char buffer[80];
@@ -6566,12 +6605,6 @@ struct App {
 
     auto scheds = schedule_opt();
     umap* m = qschedule_to_map(ctx, scheds);
-    //umap* m = schedule();
-    //ofstream schedule_out(name + "_sched_" + time_str);
-    //for (auto k : get_maps(m)) {
-      //schedule_out << str(k) << endl;
-    //}
-    //schedule_out.close();
     assert(m != nullptr);
 
     map<string, Box> compute_domains;
@@ -6596,12 +6629,9 @@ struct App {
     prg.name = name + "_opt";
     prg.compute_unit_file = prg.name + "_compute_units.h";
 
-    //populate_program(options, prg, name, m, buffers);
     populate_program(options, prg, name, outputs, m, buffers);
 
-    release(prg);
-
-    return;
+    return prg;
   }
 
   void no_unrolling() {
@@ -6688,7 +6718,7 @@ struct App {
     realize_no_unroll(options, {{name, dims}});
   }
 
-  void realize_no_unroll(CodegenOptions& options,
+  prog realize_no_unroll(CodegenOptions& options,
       const std::vector<std::pair<std::string, std::vector<int> > >& bounds) {
     fill_data_domain(bounds);
     fill_compute_domain();
@@ -6697,41 +6727,41 @@ struct App {
       names.push_back(n.first);
     }
     string concat_name = sep_list(names, "", "", "_");
-    schedule_and_codegen(options, concat_name, names);
+    return schedule_and_codegen(options, concat_name, names);
   }
 
-  void realize(const std::string& name, const int d0, const int d1) {
+  prog realize(const std::string& name, const int d0, const int d1) {
     CodegenOptions options;
     options.internal = true;
     options.simplify_address_expressions = true;
     options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
-    realize(options, name, d0, d1);
+    return realize(options, name, d0, d1);
   }
 
-  void realize(CodegenOptions& options,
+  prog realize(CodegenOptions& options,
       const std::string& name,
       const int d0,
       const int d1) {
-    realize(options, name, {d0, d1}, 1);
+    return realize(options, name, {d0, d1}, 1);
   }
 
-  void realize(CodegenOptions& options, const std::string& name, const int d0, const int d1, const int unroll_factor) {
-    realize(options, name, {d0, d1}, unroll_factor);
+  prog realize(CodegenOptions& options, const std::string& name, const int d0, const int d1, const int unroll_factor) {
+    return realize(options, name, {d0, d1}, unroll_factor);
   }
 
-  void realize(CodegenOptions& options, const std::string& name, const vector<int>& dims, const int unroll_factor) {
-    realize(options, name, dims, name, unroll_factor);
+  prog realize(CodegenOptions& options, const std::string& name, const vector<int>& dims, const int unroll_factor) {
+    return realize(options, name, dims, name, unroll_factor);
   }
 
-  void realize(CodegenOptions& options,
+  prog realize(CodegenOptions& options,
       const std::string& out_name,
       const vector<int>& dims,
       const std::string& unroll_target,
       const int unroll_factor) {
-    realize(options, {{out_name, dims}}, unroll_target, unroll_factor);
+    return realize(options, {{out_name, dims}}, unroll_target, unroll_factor);
   }
 
-  void realize(CodegenOptions& options,
+  prog realize(CodegenOptions& options,
       const std::vector<std::pair<std::string, std::vector<int> > >& bounds,
       const std::string& unroll_target,
       const int unroll_factor) {
@@ -6745,10 +6775,7 @@ struct App {
     vector<int> dims = bounds.at(0).second;
 
     set_unroll_factors(bounds, unroll_target, unroll_factor);
-    realize_no_unroll(options, bounds);
-
-    //set_unroll_factors(out_name, unroll_target, unroll_factor);
-    //realize_no_unroll(options, out_name, dims);
+    prog prg = realize_no_unroll(options, bounds);
 
     auto end = std::chrono::system_clock::now();
     std::chrono::duration<double> elapsed = end - start;
@@ -6756,14 +6783,16 @@ struct App {
     ofstream schedule_info("./scratch/" + out_name + ".txt");
     schedule_info << "time to realize " << out_name << ": " << total_elapsed << endl;
     schedule_info.close();
+
+    return prg;
   }
 
-  void realize(const std::string& name, const int d0, const int d1, const int unroll_factor) {
+  prog realize(const std::string& name, const int d0, const int d1, const int unroll_factor) {
     CodegenOptions options;
     options.internal = true;
     options.simplify_address_expressions = true;
 
-    realize(options, name, {d0, d1}, unroll_factor);
+    return realize(options, name, {d0, d1}, unroll_factor);
   }
 
 };
@@ -9935,6 +9964,14 @@ App blur_xy(const std::string output_name) {
   jac.func2d("input", "id", pt("input_arg"));
   jac.func2d("blurx", "blurx_comp", "input", {1, 1}, {{0, 0}, {0, 1}, {0, 2}});
   jac.func2d(output_name, "blury_comp", "blurx", {1, 1}, {{0, 0}, {1, 0}, {2, 0}});
+  return jac;
+}
+
+App pointwise2d(const std::string output_name) {
+  App jac;
+  jac.func2d("t1_arg");
+  jac.func2d("t1", "id", pt("t1_arg"));
+  jac.func2d(output_name, "id", pt("t1"));
   return jac;
 }
 
@@ -15967,7 +16004,7 @@ prog llf_float() {
 
   //assert(false);
 
-  infer_bounds("color_out", {3, 23, 23}, prg);
+  infer_bounds("color_out", {3, 2048, 2048}, prg);
 
   cout << "After bounds inference..." << endl;
   prg.pretty_print();
@@ -19914,6 +19951,7 @@ void test_multi_kernel_mismatched_loop_depths() {
 
 void test_multi_kernel_llf() {
   prog prg = llf_float();
+  prg.name = "llf_dcons_2048";
   //auto unopt_postprocessed = unoptimized_result(prg);
 
   auto fusion_groups = one_stage_per_group(prg);
@@ -19926,8 +19964,8 @@ void test_multi_kernel_llf() {
   //options.hls_loop_codegen = HLS_LOOP_CODEGEN_ISL;
   generate_app_code(options, dag);
 
-  generate_regression_testbench(dag.prg);
-  vector<string> multi_kernel_res = run_regression_tb(dag.prg);
+  //generate_regression_testbench(dag.prg);
+  //vector<string> multi_kernel_res = run_regression_tb(dag.prg);
 
   //compare("multi_kernel_" + prg.name + "_vs_unopt", multi_kernel_res, unopt_postprocessed);
   move_to_benchmarks_folder(dag.prg.name);
@@ -19936,7 +19974,7 @@ void test_multi_kernel_llf() {
 
 void test_multi_kernel_pyramid_collapsing() {
 
-  prog prg("pyr_blnddilp");
+  prog prg("pyr_blndd500_2048");
   prg.compute_unit_file = "local_laplacian_filters_compute.h";
   prg.add_input("in");
   prg.add_output("out");
@@ -19964,17 +20002,25 @@ void test_multi_kernel_pyramid_collapsing() {
 
   auto unopt_postprocessed = unoptimized_result(prg);
 
-  auto fusion_groups = one_stage_per_group(prg);
+  //auto fusion_groups = one_stage_per_group(prg);
+  auto fusion_groups = fuse_pointwise_stages(prg);
+  cout << "# of groups: " << fusion_groups.size() << endl;
+  //assert(false);
+
   app_dag dag = partition_application(fusion_groups, prg);
-  string target = "gp_in_on_chip_1_buf4_to_gp_1112";
+  //string target = "gp_in_on_chip_1_buf4_to_gp_1112";
   dag.prg.pretty_print();
 
   CodegenOptions options;
+  //all_unbanked(prg, options);
+  //options.inner_bank_offset_mode =
+    //INNER_BANK_OFFSET_MULTILINEAR;
   options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
   //options.hls_loop_codegen = HLS_LOOP_CODEGEN_ISL;
   generate_app_code(options, dag);
 
   generate_regression_testbench(dag.prg);
+
   vector<string> multi_kernel_res = run_regression_tb(dag.prg);
 
   compare("multi_kernel_" + prg.name + "_vs_unopt", multi_kernel_res, unopt_postprocessed);
@@ -20997,11 +21043,73 @@ void stencil_chain_multi_kernel_test() {
 
 }
 
-void dhuff_tests() {
-  //test_multi_kernel_llf();
+void test_app_to_prog_conversion() {
+  //App jac = jacobi2d("jac");
+  App jac = pointwise2d("jac");
+  int size = 10;
+  prog prg = jac.realize("jac", size, size);
 
-  test_multi_kernel_pyramid_collapsing();
+  prg.pretty_print();
+  prg.sanity_check();
+
+  auto original = run_regression_tb("jac_opt");
+  cout << "Original result: " << original << endl;
+  //assert(false);
+
+  auto extracted = unoptimized_result(prg);
+  cout << "Extracted result: " << extracted << endl;
+  //assert(false);
+
+  compare("jac_extracted" + prg.name + "_vs_unopt", original, extracted);
+  //assert(false);
+}
+
+void test_jacobi15_dynamic() {
+  string prefix = "jacdynl";
+  int throughput = 1;
+  string name = prefix + "_" + str(throughput);
+  App lp = stencil_chain_stage_iccad(name, 15);
+  int rows = 1080;
+  int cols = 1920;
+  CodegenOptions options;
+  options.internal = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
+
+  prog prg = lp.realize(options, name, {cols, rows}, "in", throughput);
+
+  //auto extracted = unoptimized_result(prg);
+
+  auto fusion_groups = one_stage_per_group(prg);
+
+  auto fresh_groups = insert_inter_group_buffers(fusion_groups, prg);
+  unroll_mismatched_inner_loops(prg);
+  merge_basic_block_ops(prg);
+  infer_bounds_and_unroll(pick(prg.outs), {1080, 1920}, throughput, prg);
+
+  app_dag dag = partition_groups(fresh_groups, prg);
+
+  //prg.pretty_print();
+  //assert(false);
+  //app_dag dag = partition_application(fusion_groups, prg);
+
+  options = CodegenOptions();
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  generate_app_code(options, dag);
+
+  move_to_benchmarks_folder(prg.name);
+
   assert(false);
+}
+
+void dhuff_tests() {
+  test_jacobi15_dynamic();
+
+  test_app_to_prog_conversion();
+  test_multi_kernel_pyramid_collapsing();
+
+  //test_multi_kernel_llf();
+  //assert(false);
+
   test_multi_kernel_mismatched_loop_depths();
   test_artificial_deadlock();
   upsample2d_test();
