@@ -8677,6 +8677,7 @@ void generate_app_code(
     }
     //cout << endl;
     //cout << tab(2) << "Writers..." << endl;
+    cout << tab(2) << "Writers..." << endl;
     for (auto r : writers) {
       //cout << tab(3) << r->name << endl;
       cout << tab(3) << str(map_find(r->name, mps)) << endl;
@@ -8698,6 +8699,7 @@ void generate_app_code(
       for (auto inpt : buf.get_in_ports()) {
         int mdd = compute_max_dd(buf, inpt);
         cout << tab(1) << "MDD = " << mdd << endl;
+        assert(mdd == 0);
       }
     }
 
