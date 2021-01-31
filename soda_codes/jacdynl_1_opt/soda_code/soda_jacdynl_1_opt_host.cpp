@@ -22,29 +22,29 @@ int main(int argc, char **argv) {
   size_t total_size_bytes = 0;
   size_t total_size_bytes_read = 0;
   size_t total_size_bytes_written = 0;
-  const int in_update_0_sm128_0225_read_pipe0_DATA_SIZE = num_epochs*2135250;
-  const int in_update_0_sm128_0225_read_BYTES_PER_PIXEL = 16 / 8;
-  size_t in_update_0_sm128_0225_read_size_bytes = in_update_0_sm128_0225_read_BYTES_PER_PIXEL * in_update_0_sm128_0225_read_pipe0_DATA_SIZE;
+  const int in_update_0_sm145_0211_read_pipe0_DATA_SIZE = num_epochs*2135250;
+  const int in_update_0_sm145_0211_read_BYTES_PER_PIXEL = 16 / 8;
+  size_t in_update_0_sm145_0211_read_size_bytes = in_update_0_sm145_0211_read_BYTES_PER_PIXEL * in_update_0_sm145_0211_read_pipe0_DATA_SIZE;
 
-  total_size_bytes += in_update_0_sm128_0225_read_size_bytes;
-  total_size_bytes_read += in_update_0_sm128_0225_read_size_bytes;
-  const int jacdynl_1_update_0_sm144_0185_write_pipe0_DATA_SIZE = num_epochs*2135250;
-  const int jacdynl_1_update_0_sm144_0185_write_BYTES_PER_PIXEL = 16 / 8;
-  size_t jacdynl_1_update_0_sm144_0185_write_size_bytes = jacdynl_1_update_0_sm144_0185_write_BYTES_PER_PIXEL * jacdynl_1_update_0_sm144_0185_write_pipe0_DATA_SIZE;
+  total_size_bytes += in_update_0_sm145_0211_read_size_bytes;
+  total_size_bytes_read += in_update_0_sm145_0211_read_size_bytes;
+  const int jacdynl_1_update_0_sm161_0243_write_pipe0_DATA_SIZE = num_epochs*2135250;
+  const int jacdynl_1_update_0_sm161_0243_write_BYTES_PER_PIXEL = 16 / 8;
+  size_t jacdynl_1_update_0_sm161_0243_write_size_bytes = jacdynl_1_update_0_sm161_0243_write_BYTES_PER_PIXEL * jacdynl_1_update_0_sm161_0243_write_pipe0_DATA_SIZE;
 
-  total_size_bytes += jacdynl_1_update_0_sm144_0185_write_size_bytes;
-  total_size_bytes_written += jacdynl_1_update_0_sm144_0185_write_size_bytes;
+  total_size_bytes += jacdynl_1_update_0_sm161_0243_write_size_bytes;
+  total_size_bytes_written += jacdynl_1_update_0_sm161_0243_write_size_bytes;
 
   cl_int err;
   cl::Context context;
   cl::Kernel krnl_vector_add;
   cl::CommandQueue q;
 
-  std::vector<uint8_t, aligned_allocator<uint8_t> > in_update_0_sm128_0225_read_pipe0(in_update_0_sm128_0225_read_size_bytes);
-  std::vector<uint8_t, aligned_allocator<uint8_t> > jacdynl_1_update_0_sm144_0185_write_pipe0(jacdynl_1_update_0_sm144_0185_write_size_bytes);
+  std::vector<uint8_t, aligned_allocator<uint8_t> > in_update_0_sm145_0211_read_pipe0(in_update_0_sm145_0211_read_size_bytes);
+  std::vector<uint8_t, aligned_allocator<uint8_t> > jacdynl_1_update_0_sm161_0243_write_pipe0(jacdynl_1_update_0_sm161_0243_write_size_bytes);
 
-  std::ofstream input_in_update_0_sm128_0225_read("in_update_0_sm128_0225_read.csv");
-  for (int i = 0; i < in_update_0_sm128_0225_read_pipe0_DATA_SIZE; i++) {
+  std::ofstream input_in_update_0_sm145_0211_read("in_update_0_sm145_0211_read.csv");
+  for (int i = 0; i < in_update_0_sm145_0211_read_pipe0_DATA_SIZE; i++) {
 #ifdef __FLOAT_OUTPUT__
     float  val = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
 #else // __FLOAT_OUTPUT__
@@ -52,24 +52,24 @@ int main(int argc, char **argv) {
 #endif // __FLOAT_OUTPUT__
 
 #ifdef __FLOAT_OUTPUT__
-    input_in_update_0_sm128_0225_read << val << std::endl;
+    input_in_update_0_sm145_0211_read << val << std::endl;
 #else // __FLOAT_OUTPUT__
-    input_in_update_0_sm128_0225_read << val << std::endl;
+    input_in_update_0_sm145_0211_read << val << std::endl;
 #endif // __FLOAT_OUTPUT__
 
 #ifdef __FLOAT_OUTPUT__
-    ((uint16_t*) (in_update_0_sm128_0225_read_pipe0.data()))[i] = bitcast<uint16_t, float>(val);
+    ((uint16_t*) (in_update_0_sm145_0211_read_pipe0.data()))[i] = bitcast<uint16_t, float>(val);
 #else // __FLOAT_OUTPUT__
-    ((uint16_t*) (in_update_0_sm128_0225_read_pipe0.data()))[i] = val;
+    ((uint16_t*) (in_update_0_sm145_0211_read_pipe0.data()))[i] = val;
 #endif // __FLOAT_OUTPUT__
   }
 
-  input_in_update_0_sm128_0225_read.close();
-  for (int i = 0; i < jacdynl_1_update_0_sm144_0185_write_pipe0_DATA_SIZE; i++) {
+  input_in_update_0_sm145_0211_read.close();
+  for (int i = 0; i < jacdynl_1_update_0_sm161_0243_write_pipe0_DATA_SIZE; i++) {
 #ifdef __FLOAT_OUTPUT__
-    ((uint16_t*) (jacdynl_1_update_0_sm144_0185_write_pipe0.data()))[i] = 0;
+    ((uint16_t*) (jacdynl_1_update_0_sm161_0243_write_pipe0.data()))[i] = 0;
 #else // __FLOAT_OUTPUT__
-    ((uint16_t*) (jacdynl_1_update_0_sm144_0185_write_pipe0.data()))[i] = 0;
+    ((uint16_t*) (jacdynl_1_update_0_sm161_0243_write_pipe0.data()))[i] = 0;
 #endif // __FLOAT_OUTPUT__
   }
 
@@ -102,17 +102,17 @@ int main(int argc, char **argv) {
     exit(EXIT_FAILURE);
   }
 
-  OCL_CHECK(err, cl::Buffer jacdynl_1_update_0_sm144_0185_write_pipe0_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_READ_ONLY, jacdynl_1_update_0_sm144_0185_write_size_bytes, jacdynl_1_update_0_sm144_0185_write_pipe0.data(), &err));
-  OCL_CHECK(err, err = krnl_vector_add.setArg(0, jacdynl_1_update_0_sm144_0185_write_pipe0_ocl_buf));
+  OCL_CHECK(err, cl::Buffer jacdynl_1_update_0_sm161_0243_write_pipe0_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_READ_ONLY, jacdynl_1_update_0_sm161_0243_write_size_bytes, jacdynl_1_update_0_sm161_0243_write_pipe0.data(), &err));
+  OCL_CHECK(err, err = krnl_vector_add.setArg(0, jacdynl_1_update_0_sm161_0243_write_pipe0_ocl_buf));
 
-  OCL_CHECK(err, cl::Buffer in_update_0_sm128_0225_read_pipe0_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_WRITE_ONLY, in_update_0_sm128_0225_read_size_bytes, in_update_0_sm128_0225_read_pipe0.data(), &err));
-  OCL_CHECK(err, err = krnl_vector_add.setArg(1, in_update_0_sm128_0225_read_pipe0_ocl_buf));
+  OCL_CHECK(err, cl::Buffer in_update_0_sm145_0211_read_pipe0_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_WRITE_ONLY, in_update_0_sm145_0211_read_size_bytes, in_update_0_sm145_0211_read_pipe0.data(), &err));
+  OCL_CHECK(err, err = krnl_vector_add.setArg(1, in_update_0_sm145_0211_read_pipe0_ocl_buf));
 
   uint64_t transfer_size = num_epochs*(2135250 / 1);
   OCL_CHECK(err, err = krnl_vector_add.setArg(2, transfer_size));
 
   std::cout << "Migrating memory" << std::endl;
-  OCL_CHECK(err, err = q.enqueueMigrateMemObjects({in_update_0_sm128_0225_read_pipe0_ocl_buf}, 0));
+  OCL_CHECK(err, err = q.enqueueMigrateMemObjects({in_update_0_sm145_0211_read_pipe0_ocl_buf}, 0));
 
   unsigned long start, end, nsduration;
   cl::Event event;
@@ -125,7 +125,7 @@ int main(int argc, char **argv) {
   start = OCL_CHECK(err,
   event.getProfilingInfo<CL_PROFILING_COMMAND_START>(&err));
   nsduration = end - start;
-  OCL_CHECK(err, err = q.enqueueMigrateMemObjects({jacdynl_1_update_0_sm144_0185_write_pipe0_ocl_buf}, CL_MIGRATE_MEM_OBJECT_HOST));
+  OCL_CHECK(err, err = q.enqueueMigrateMemObjects({jacdynl_1_update_0_sm161_0243_write_pipe0_ocl_buf}, CL_MIGRATE_MEM_OBJECT_HOST));
 
   q.finish();
 
@@ -138,12 +138,12 @@ int main(int argc, char **argv) {
   std::cout << "bytes / sec = " << bpersec << std::endl;
   std::cout << "GB / sec    = " << gbpersec << std::endl;
   printf("Execution time = %f (sec) \n", dsduration);
-  std::ofstream regression_result("jacdynl_1_update_0_sm144_0185_write_accel_result.csv");
-  for (int i = 0; i < jacdynl_1_update_0_sm144_0185_write_pipe0_DATA_SIZE; i++) {
+  std::ofstream regression_result("jacdynl_1_update_0_sm161_0243_write_accel_result.csv");
+  for (int i = 0; i < jacdynl_1_update_0_sm161_0243_write_pipe0_DATA_SIZE; i++) {
 #ifdef __FLOAT_OUTPUT__
-    regression_result << bitcast<float, uint16_t>(((uint16_t*) (jacdynl_1_update_0_sm144_0185_write_pipe0.data()))[i]) << std::endl;
+    regression_result << bitcast<float, uint16_t>(((uint16_t*) (jacdynl_1_update_0_sm161_0243_write_pipe0.data()))[i]) << std::endl;
 #else // __FLOAT_OUTPUT__
-    regression_result << ((uint16_t*) (jacdynl_1_update_0_sm144_0185_write_pipe0.data()))[i] << std::endl;
+    regression_result << ((uint16_t*) (jacdynl_1_update_0_sm161_0243_write_pipe0.data()))[i] << std::endl;
 #endif // __FLOAT_OUTPUT__
   }
 

@@ -8657,10 +8657,31 @@ void generate_app_code(
         dag.prg.whole_iteration_domain());
   cout << "Sched: " << str(global_sched) << endl;
 
+  auto sms = get_maps(global_sched);
+  map<string, isl_map*> mps;
+  for (auto m : sms) {
+    mps[domain_name(m)] = m;
+  }
+
   for (auto c : dag.inter_group_channels()) {
     cout << tab(1) << c << endl;
+    auto readers = find_readers(c, dag.prg);
+    auto writers = find_writers(c, dag.prg);
+
+    cout << tab(2) << "Readers..." << endl;
+    for (auto r : readers) {
+      //cout << tab(3) << r->name << endl;
+      cout << tab(3) << str(map_find(r->name, mps)) << endl;
+    }
+    //cout << endl;
+    //cout << tab(2) << "Writers..." << endl;
+    for (auto r : writers) {
+      //cout << tab(3) << r->name << endl;
+      cout << tab(3) << str(map_find(r->name, mps)) << endl;
+    }
+    cout << endl;
   }
-  assert(false);
+  //assert(false);
 
   //auto global_sched = dag.prg.optimized_codegen();
 
@@ -8971,9 +8992,16 @@ insert_inter_group_buffers(const std::map<std::string, std::set<std::string> >& 
 
   map<pair<string, string>, isl_set*> read_by_gp;
   for (auto b : kernel_broadcasts) {
-    auto consumers = prg.consumer_maps(b.first);
+    //auto consumers = prg.consumer_maps(b.first);
     for (auto group_name : b.second) {
       isl_set* s = read_by_group(b.first, map_find(group_name, fusion_groups), prg);
+      //cout << "Read by gp: " << str(s) << endl;
+      //for (auto m : consumers) {
+        //if (m.second != nullptr) {
+          //cout << tab(1) << "cm: " << str(m.second) << endl;
+          //s = unn(s, range(m.second));
+        //}
+      //}
       read_by_gp[{group_name, b.first}] = s;
     }
   }
@@ -9023,16 +9051,16 @@ insert_inter_group_buffers(const std::map<std::string, std::set<std::string> >& 
   }
 
 
-  cout << "After adding distributors..." << endl;
-  prg.pretty_print();
-  cout << "Groups..." << endl;
-  for (auto gp : fresh_groups) {
-    cout << tab(1) << gp.first << endl;
-    for (auto k : gp.second) {
-      cout << tab(2) << k << endl;
-    }
-    cout << endl;
-  }
+  //cout << "After adding distributors..." << endl;
+  //prg.pretty_print();
+  //cout << "Groups..." << endl;
+  //for (auto gp : fresh_groups) {
+    //cout << tab(1) << gp.first << endl;
+    //for (auto k : gp.second) {
+      //cout << tab(2) << k << endl;
+    //}
+    //cout << endl;
+  //}
   return fresh_groups;
 }
 
