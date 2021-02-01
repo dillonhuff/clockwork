@@ -8815,7 +8815,7 @@ void generate_app_code(
     }
 
   }
-  assert(false);
+  //assert(false);
 
   for (auto& gp : dag.fusion_group_progs) {
     for (auto& buf : gp.second.boundary_buffers()) {

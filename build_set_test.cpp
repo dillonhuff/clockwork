@@ -19987,7 +19987,7 @@ void test_multi_kernel_pyramid_collapsing() {
   string reconstructed = reconstruct_gaussian(lps, prg);
   cpy("out", reconstructed, 2, prg);
 
-  infer_bounds("out", {2048, 2048}, prg);
+  infer_bounds("out", {64, 64}, prg);
 
   prg.pretty_print();
   prg.sanity_check();
@@ -20000,7 +20000,7 @@ void test_multi_kernel_pyramid_collapsing() {
   prg.pretty_print();
   prg.sanity_check();
 
-  //auto unopt_postprocessed = unoptimized_result(prg);
+  auto unopt_postprocessed = unoptimized_result(prg);
 
   auto fusion_groups = one_stage_per_group(prg);
   //auto fusion_groups = fuse_pointwise_stages(prg);
@@ -20011,14 +20011,13 @@ void test_multi_kernel_pyramid_collapsing() {
   //options.inner_bank_offset_mode =
     //INNER_BANK_OFFSET_MULTILINEAR;
   options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
-  //options.hls_loop_codegen = HLS_LOOP_CODEGEN_ISL;
   generate_app_code(options, dag);
 
   generate_regression_testbench(dag.prg);
 
-  //vector<string> multi_kernel_res = run_regression_tb(dag.prg);
+  vector<string> multi_kernel_res = run_regression_tb(dag.prg);
 
-  //compare("multi_kernel_" + prg.name + "_vs_unopt", multi_kernel_res, unopt_postprocessed);
+  compare("multi_kernel_" + prg.name + "_vs_unopt", multi_kernel_res, unopt_postprocessed);
   move_to_benchmarks_folder(dag.prg.name);
 }
 
@@ -21153,7 +21152,7 @@ void test_multi_kernel_gp() {
 
 void dhuff_tests() {
   test_multi_kernel_pyramid_collapsing();
-  assert(false);
+  //assert(false);
 
   test_multi_kernel_gp();
   test_jacobi15_dynamic();
