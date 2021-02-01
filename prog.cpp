@@ -4850,7 +4850,7 @@ void merge_basic_block_ops(prog& prg) {
                 cc,
                 ag.back().str() + "_pack",
                 lanes,
-                32);
+                pick(ag).width);
             arg_names.push_back(ag.back().str() + "_pack");
           }
 
