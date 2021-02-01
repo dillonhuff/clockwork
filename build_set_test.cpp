@@ -21081,6 +21081,8 @@ void test_jacobi15_dynamic() {
   infer_bounds_and_unroll(pick(prg.outs), {1080, 1920}, throughput, prg);
 
   app_dag dag = partition_groups(fresh_groups, prg);
+  auto extracted = unoptimized_result(dag.prg);
+  assert(false);
 
   //prg.pretty_print();
   //assert(false);

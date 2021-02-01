@@ -4779,7 +4779,6 @@ compute_unit_internals compound_compute_unit(op* loop, prog& prg) {
 void merge_basic_block_ops(prog& prg) {
   std::set<op*> inner_loops = get_inner_loops(prg);
 
-  //string new_compute_file = prg.name + "_merged_compute_units.h";
   string new_compute_file = prg.compute_unit_file + "_merged_compute_units.h";
 
   ofstream out(new_compute_file);
@@ -4811,10 +4810,6 @@ void merge_basic_block_ops(prog& prg) {
         out << "hw_uint<" << write_width << "> " << compute_unit.name << "(" << comma_list(args) << ") {" << endl;
         out << tab(1) << "return " << pick(compute_unit.buffers_read()) << ";" << endl;
       } else {
-        //vector<string> args;
-        //for (auto r : compute_unit.buffers_read()) {
-          //args.push_back("hw_uint<32*" + str(compute_unit.num_lanes(r)) + ">& " + r);
-        //}
 
         vector<string> child_calls;
         string last_res = "";
@@ -4855,7 +4850,7 @@ void merge_basic_block_ops(prog& prg) {
           }
 
 
-          cc << "auto " << map_find(c, compute_unit.result_names) << " = " << c->func << "(" << comma_list(arg_names) << ");" << endl;
+          cc << tab(1) << "auto " << map_find(c, compute_unit.result_names) << " = " << c->func << "(" << comma_list(arg_names) << ");" << endl;
           child_calls.push_back(cc.str());
           last_res = map_find(c, compute_unit.result_names);
         }
