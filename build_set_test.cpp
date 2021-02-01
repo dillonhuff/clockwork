@@ -21153,7 +21153,7 @@ void test_multi_kernel_gp() {
 }
 
 void dhuff_tests() {
-  test_jacobi15_dynamic();
+  //test_jacobi15_dynamic();
 
   test_multi_kernel_pyramid_collapsing();
   test_multi_kernel_gp();
