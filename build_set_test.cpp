@@ -21069,7 +21069,7 @@ void test_jacobi15_dynamic() {
   options.internal = true;
   options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
 
-  prog prg = lp.realize(options, name, {cols, rows}, "in", throughput);
+  prog prg = lp.realize(options, name, {cols, rows}, "in", 1);
 
   //auto extracted = unoptimized_result(prg);
 
@@ -21153,7 +21153,7 @@ void test_multi_kernel_gp() {
 }
 
 void dhuff_tests() {
-  //test_jacobi15_dynamic();
+  test_jacobi15_dynamic();
 
   test_multi_kernel_pyramid_collapsing();
   test_multi_kernel_gp();

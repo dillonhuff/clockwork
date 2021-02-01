@@ -4874,7 +4874,7 @@ void merge_basic_block_ops(prog& prg) {
         }
 
         out << "\n\t" << endl;
-        out << sep_list(child_calls, "", "", "\n\t");
+        out << sep_list(child_calls, "", "", "\n");
         pack_bv(1, out, rname, prods, write_pixel_width);
         out << tab(1) << "return " << rname << ";" << endl;
         out << endl;
