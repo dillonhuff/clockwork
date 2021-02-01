@@ -2683,6 +2683,15 @@ int compile_compute(const std::string& name) {
   return res;
 }
 
+bool compile_regression_tb(prog& prg) {
+  return compile_regression_tb(prg.name);
+}
+
+bool compile_regression_tb(const std::string& name) {
+  int res = cmd("g++ -fstack-protector-all -std=c++11 regression_tb_" + name + ".cpp " + name + ".cpp");
+  return res;
+}
+
 std::vector<std::string> run_regression_tb(const std::string& name) {
   //int res = system(string("g++ -fstack-protector-all -std=c++11 regression_tb_" + name + ".cpp " + name + ".cpp").c_str());
   int res = cmd("g++ -fstack-protector-all -std=c++11 regression_tb_" + name + ".cpp " + name + ".cpp");
@@ -2723,6 +2732,16 @@ void regression_test(prog& prg) {
   CodegenOptions options;
   options.internal = true;
   regression_test(options, prg);
+}
+
+bool unoptimized_compiles(prog& prg) {
+  generate_unoptimized_code(prg);
+
+  cout << "Built unoptimized code" << endl;
+  auto old_name = prg.name;
+  prg.name = "unoptimized_" + old_name;
+  generate_regression_testbench(prg);
+  return compile_regression_tb(prg) == 0;
 }
 
 std::vector<string> unoptimized_result(prog& prg) {

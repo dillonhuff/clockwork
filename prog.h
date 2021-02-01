@@ -1465,6 +1465,7 @@ vector<string> incoming_buffers(const map<string, UBuffer>& buffers, op* op, pro
 vector<string> outgoing_buffers(const map<string, UBuffer>& buffers, op* op, prog& prg);
 
 
+bool unoptimized_compiles(prog& prg);
 std::vector<string> unoptimized_result(prog& prg);
 void generate_regression_testbench(prog& prg);
 void generate_regression_testbench(prog& prg, map<string, UBuffer>& buffers);
@@ -1526,6 +1527,8 @@ void generate_trace(prog& prg, umap* sched);
 
 void all_register_files(prog& prg, CodegenOptions& options);
 int compile_compute(const std::string& name);
+bool compile_regression_tb(const std::string& name);
+bool compile_regression_tb(prog& prg);
 
 vector<string> surrounding_vars(op* loop, prog& prg);
 vector<string> surrounding_vars(const std::string& op, prog& prg);

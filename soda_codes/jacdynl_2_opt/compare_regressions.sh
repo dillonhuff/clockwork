@@ -1,4 +1,4 @@
-app_name=jacdynl_2_opt
+app_name=unoptimized_jacdynl_2_opt
 cd soda_code
 ./run_tb.sh || { echo 'soda compilation failed'; exit 1; }
 cd ..

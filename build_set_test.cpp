@@ -21081,8 +21081,7 @@ void test_jacobi15_dynamic() {
   infer_bounds_and_unroll(pick(prg.outs), {1080, 1920}, throughput, prg);
 
   app_dag dag = partition_groups(fresh_groups, prg);
-  auto extracted = unoptimized_result(dag.prg);
-  assert(false);
+  assert(unoptimized_compiles(dag.prg));
 
   //prg.pretty_print();
   //assert(false);
@@ -21094,7 +21093,7 @@ void test_jacobi15_dynamic() {
 
   move_to_benchmarks_folder(prg.name);
 
-  assert(false);
+  //assert(false);
 }
 
 void test_multi_kernel_gp() {
