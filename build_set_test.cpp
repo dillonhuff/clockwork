@@ -21060,7 +21060,7 @@ void test_app_to_prog_conversion() {
 
 void test_jacobi15_dynamic() {
   string prefix = "jacdynl";
-  int throughput = 1;
+  int throughput = 2;
   string name = prefix + "_" + str(throughput);
   App lp = stencil_chain_stage_iccad(name, 15);
   int rows = 1080;
@@ -21092,7 +21092,7 @@ void test_jacobi15_dynamic() {
 
   move_to_benchmarks_folder(prg.name);
 
-  //assert(false);
+  assert(false);
 }
 
 void test_multi_kernel_gp() {
@@ -21151,12 +21151,10 @@ void test_multi_kernel_gp() {
 }
 
 void dhuff_tests() {
-  test_multi_kernel_pyramid_collapsing();
-  //assert(false);
-
-  test_multi_kernel_gp();
   test_jacobi15_dynamic();
 
+  test_multi_kernel_pyramid_collapsing();
+  test_multi_kernel_gp();
   test_app_to_prog_conversion();
 
   //test_multi_kernel_llf();
