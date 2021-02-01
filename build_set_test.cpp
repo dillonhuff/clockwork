@@ -10277,7 +10277,6 @@ void blur_xy_16_app_test(const std::string& prefix) {
     options.internal = true;
     options.simplify_address_expressions = true;
     options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
-    //options.num_input_epochs = 30;
     options.debug_options.expect_all_linebuffers = true;
     blur_xy_16(out_name).realize(options, out_name, cols, rows, unroll_factor);
 
@@ -19417,7 +19416,39 @@ void gpu_codegen_test() {
   assert(false);
 }
 
+void histogram1d_test() {
+  prog prg = histogram1d();
+  assert(unoptimized_compiles(prg));
+  assert(false);
+}
+
+void blur_static_dynamic_comparison() {
+  string prefix = "bxy";
+
+  int cols = 1920;
+  int rows = 1080;
+
+  int unroll_factor = 1;
+  string out_name = prefix + "_" + str(unroll_factor);
+
+  CodegenOptions options;
+  options.internal = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  options.debug_options.expect_all_linebuffers = true;
+  prog prg = blur_xy_16(out_name).realize(options, out_name, cols, rows, unroll_factor);
+
+  move_to_benchmarks_folder(out_name + "_opt");
+
+  assert(false);
+  
+}
+
 void application_tests() {
+
+  blur_static_dynamic_comparison();
+
+  histogram_test();
+  histogram1d_test();
   iccad_tests();
 
   gpu_codegen_test();
@@ -21070,18 +21101,21 @@ void test_jacobi15_dynamic() {
   options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
 
   prog prg = lp.realize(options, name, {cols, rows}, "in", 1);
+  generate_optimized_code(prg);
+  assert(false);
 
   //auto extracted = unoptimized_result(prg);
 
   auto fusion_groups = one_stage_per_group(prg);
+  app_dag dag = partition_application(fusion_groups, prg);
 
-  auto fresh_groups = insert_inter_group_buffers(fusion_groups, prg);
-  unroll_mismatched_inner_loops(prg);
-  merge_basic_block_ops(prg);
-  infer_bounds_and_unroll(pick(prg.outs), {1080, 1080}, throughput, prg);
+  //auto fresh_groups = insert_inter_group_buffers(fusion_groups, prg);
+  //unroll_mismatched_inner_loops(prg);
+  //merge_basic_block_ops(prg);
+  //infer_bounds_and_unroll(pick(prg.outs), {1080, 1080}, throughput, prg);
 
-  app_dag dag = partition_groups(fresh_groups, prg);
-  assert(unoptimized_compiles(dag.prg));
+  //app_dag dag = partition_groups(fresh_groups, prg);
+  //assert(unoptimized_compiles(dag.prg));
 
   //prg.pretty_print();
   //assert(false);
@@ -21093,7 +21127,7 @@ void test_jacobi15_dynamic() {
 
   move_to_benchmarks_folder(prg.name);
 
-  //assert(false);
+  assert(false);
 }
 
 void test_multi_kernel_gp() {
@@ -21139,7 +21173,6 @@ void test_multi_kernel_gp() {
   //options.inner_bank_offset_mode =
     //INNER_BANK_OFFSET_MULTILINEAR;
   options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
-  //options.hls_loop_codegen = HLS_LOOP_CODEGEN_ISL;
   generate_app_code(options, dag);
 
   generate_regression_testbench(dag.prg);

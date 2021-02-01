@@ -1,2 +1,2 @@
-export app=unoptimized_jacdynl2_1_opt
+export app=jacdynl2_1_opt
 export HLS_CLOCK_FREQUENCY=250000000
