@@ -4730,7 +4730,7 @@ compute_unit_internals compound_compute_unit(op* loop, prog& prg) {
       for (auto ar : op->write_addrs(b)) {
         auto as = simplify(ar);
         as = b + brackets(as);
-        addr_sources[as] = {false, map_find(op, cu.result_names)};
+        addr_sources[as] = {false, map_find(op, cu.result_names), 0, prg.buffer_port_width(b)};
 
         assert(ar.size() == 1);
         pair<string, address> wa{b, remove_whitespace(ar.at(0).second)};

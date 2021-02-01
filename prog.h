@@ -1594,6 +1594,7 @@ struct cu_val {
   bool is_arg;
   string name;
   int arg_buf_pos;
+  int width;
 
   std::string str() const {
     if (is_arg) {
