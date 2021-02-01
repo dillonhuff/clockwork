@@ -1928,6 +1928,7 @@ UBuffer write_latency_adjusted_buffer(
 
 vector<isl_multi_aff*> write_addrs(op* op, const std::string& buf, prog& prg);
 
+vector<isl_multi_aff*> write_addrs(op* op, prog& prg);
 vector<isl_multi_aff*> read_addrs(op* op, prog& prg);
 vector<isl_multi_aff*> read_addrs(op* op, const std::string& buf, prog& prg);
 
@@ -1940,6 +1941,8 @@ struct app_dag {
   map<string, int> channel_sizes;
 
   string edge_between(const std::string& src, const std::string& dst);
+
+  std::set<string> inter_group_channels();
 
   vector<path> all_paths(const std::string& src, const std::string& dst);
 

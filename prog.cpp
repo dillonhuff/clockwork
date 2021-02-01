@@ -5024,6 +5024,26 @@ isl_map* producer_map(op* loop, const std::string& b, prog& prg) {
   return m;
 }
 
+umap* producer_umap(op* op, prog& prg) {
+  vector<umap*> maps;
+  umap* res = isl_union_map_read_from_str(prg.ctx, "{}");
+  maps.push_back(res);
+  for (auto m : write_addrs(op, prg)) {
+    maps.push_back(to_umap(to_map(m)));
+  }
+
+  auto vars = surrounding_vars(op, prg);
+  vector<string> constraints;
+  for (int d = 0; d < vars.size(); d++) {
+    auto lp = prg.find_loop(vars.at(d));
+    constraints.push_back(
+        str(lp->start) + " <= " + vars.at(d) + " < " + str(lp->end_exclusive));
+  }
+
+  isl_set* dom = rdset(prg.ctx, curlies(op->name + bracket_list(vars) + " : " + sep_list(constraints, "", "", " and ")));
+  return its(unn(maps), to_uset(dom));
+}
+
 umap* consumer_umap(op* op, prog& prg) {
   vector<umap*> maps;
   umap* res = isl_union_map_read_from_str(prg.ctx, "{}");
@@ -5076,6 +5096,20 @@ vector<isl_multi_aff*> write_addrs(op* op, const std::string& buf, prog& prg) {
       auto aff = rdmultiaff(prg.ctx, curlies(op->name + bracket_list(surrounding) + " -> " + sep_list(aff_terms, "[", "]", ", ")));
       affs.push_back(aff);
     }
+  }
+  return affs;
+}
+
+vector<isl_multi_aff*> write_addrs(op* op, prog& prg) {
+  assert(!op->is_loop() && !op->is_if());
+  auto surrounding = surrounding_vars(op, prg);
+
+  vector<isl_multi_aff*> affs;
+  for (auto cp : op->produces_pair()) {
+    assert(cp.second.size() == 1);
+    vector<string> aff_terms{cp.second.at(0).second};
+    auto aff = rdmultiaff(prg.ctx, curlies(op->name + bracket_list(surrounding) + " -> " + cp.first + sep_list(aff_terms, "[", "]", ", ")));
+    affs.push_back(aff);
   }
   return affs;
 }
@@ -8657,9 +8691,19 @@ void generate_app_code(
         dag.prg.whole_iteration_domain());
   cout << "Sched: " << str(global_sched) << endl;
 
-  //auto global_sched = dag.prg.optimized_codegen();
+  auto sms = get_maps(global_sched);
+  map<string, isl_map*> mps;
+  for (auto m : sms) {
+    mps[domain_name(m)] = m;
+  }
 
   auto buffers = build_buffers(dag.prg, global_sched);
+
+  //assert(false);
+
+  //auto global_sched = dag.prg.optimized_codegen();
+
+
 
   cout << "Generating code for " << dag.prg.name << endl;
   map<string, UBuffer> reps;
@@ -8732,10 +8776,45 @@ void generate_app_code(
     done.insert(buf);
   }
 
-  set_channel_depths_to_constant(32, dag);
-  //set_channel_depths_to_with_kernel_depth(500, dag);
+  //set_channel_depths_to_constant(32, dag);
+  set_channel_depths_to_with_kernel_depth(500, dag);
   //set_channel_depths_ilp(500, dag);
 
+  for (auto c : dag.inter_group_channels()) {
+    cout << tab(1) << c << endl;
+    UBuffer buf = map_find(c, buffers);
+    //cout << buf << endl << endl;
+    auto readers = find_readers(c, dag.prg);
+    auto writers = find_writers(c, dag.prg);
+
+    cout << tab(2) << "Readers..." << endl;
+    for (auto r : readers) {
+      cout << tab(3) << str(map_find(r->name, mps)) << endl;
+      auto read_map = consumer_umap(r, dag.prg);
+      cout << tab(3) << str(read_map) << endl;
+    }
+    cout << tab(2) << "Writers..." << endl;
+    for (auto r : writers) {
+      cout << tab(3) << str(map_find(r->name, mps)) << endl;
+      auto read_map = producer_umap(r, dag.prg);
+      cout << tab(3) << str(read_map) << endl;
+    }
+    cout << endl;
+
+    {
+      int max_dd = 0;
+      for (auto inpt : buf.get_in_ports()) {
+        int mdd = compute_max_dd(buf, inpt);
+        cout << tab(1) << "MDD = " << mdd << endl;
+        if (mdd > max_dd) {
+          max_dd = mdd;
+        }
+      }
+      dag.channel_sizes[c] += max_dd;
+      //assert(max_dd == 0);
+    }
+
+  }
   for (auto& gp : dag.fusion_group_progs) {
     for (auto& buf : gp.second.boundary_buffers()) {
       if (!elem(buf, done)) {
@@ -8965,9 +9044,16 @@ insert_inter_group_buffers(const std::map<std::string, std::set<std::string> >& 
 
   map<pair<string, string>, isl_set*> read_by_gp;
   for (auto b : kernel_broadcasts) {
-    auto consumers = prg.consumer_maps(b.first);
+    //auto consumers = prg.consumer_maps(b.first);
     for (auto group_name : b.second) {
       isl_set* s = read_by_group(b.first, map_find(group_name, fusion_groups), prg);
+      //cout << "Read by gp: " << str(s) << endl;
+      //for (auto m : consumers) {
+        //if (m.second != nullptr) {
+          //cout << tab(1) << "cm: " << str(m.second) << endl;
+          //s = unn(s, range(m.second));
+        //}
+      //}
       read_by_gp[{group_name, b.first}] = s;
     }
   }
@@ -9017,16 +9103,16 @@ insert_inter_group_buffers(const std::map<std::string, std::set<std::string> >& 
   }
 
 
-  cout << "After adding distributors..." << endl;
-  prg.pretty_print();
-  cout << "Groups..." << endl;
-  for (auto gp : fresh_groups) {
-    cout << tab(1) << gp.first << endl;
-    for (auto k : gp.second) {
-      cout << tab(2) << k << endl;
-    }
-    cout << endl;
-  }
+  //cout << "After adding distributors..." << endl;
+  //prg.pretty_print();
+  //cout << "Groups..." << endl;
+  //for (auto gp : fresh_groups) {
+    //cout << tab(1) << gp.first << endl;
+    //for (auto k : gp.second) {
+      //cout << tab(2) << k << endl;
+    //}
+    //cout << endl;
+  //}
   return fresh_groups;
 }
 
@@ -9303,4 +9389,21 @@ string app_dag::edge_between(const std::string& src, const std::string& dst) {
   assert(edges.size() == 1);
 
   return pick(edges);
+}
+
+std::set<string> app_dag::inter_group_channels() {
+  std::set<std::string> done;
+  std::set<std::string> to_size;
+  for (auto& buf : prg.boundary_buffers()) {
+    done.insert(buf);
+  }
+
+  for (auto& gp : fusion_group_progs) {
+    for (auto& buf : gp.second.boundary_buffers()) {
+      if (!elem(buf, done)) {
+        to_size.insert(buf);
+      }
+    }
+  }
+  return to_size;
 }
