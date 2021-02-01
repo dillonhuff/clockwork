@@ -1652,27 +1652,27 @@ void us_mk1_ii1(HWStream<hw_uint<32> >& /* no bundle get_args num ports = 1 */in
 
   HWStream< hw_uint<32> > gray_to_gp_120;
 #ifdef __VIVADO_SYNTH__
-#pragma HLS stream variable=gray_to_gp_120.values depth=500
+#pragma HLS stream variable=gray_to_gp_120.values depth=32
 #endif //__VIVADO_SYNTH__
   HWStream< hw_uint<32> > gray_to_gp_224;
 #ifdef __VIVADO_SYNTH__
-#pragma HLS stream variable=gray_to_gp_224.values depth=500
+#pragma HLS stream variable=gray_to_gp_224.values depth=32
 #endif //__VIVADO_SYNTH__
   HWStream< hw_uint<32> > gray_diff_to_gp_436;
 #ifdef __VIVADO_SYNTH__
-#pragma HLS stream variable=gray_diff_to_gp_436.values depth=500
+#pragma HLS stream variable=gray_diff_to_gp_436.values depth=32
 #endif //__VIVADO_SYNTH__
   HWStream< hw_uint<32> > gray_blur_to_gp_328;
 #ifdef __VIVADO_SYNTH__
-#pragma HLS stream variable=gray_blur_to_gp_328.values depth=500
+#pragma HLS stream variable=gray_blur_to_gp_328.values depth=32
 #endif //__VIVADO_SYNTH__
   HWStream< hw_uint<32> > gray_blur_cache_to_gp_532;
 #ifdef __VIVADO_SYNTH__
-#pragma HLS stream variable=gray_blur_cache_to_gp_532.values depth=500
+#pragma HLS stream variable=gray_blur_cache_to_gp_532.values depth=32
 #endif //__VIVADO_SYNTH__
   HWStream< hw_uint<32> > blurred_to_gp_416;
 #ifdef __VIVADO_SYNTH__
-#pragma HLS stream variable=blurred_to_gp_416.values depth=500
+#pragma HLS stream variable=blurred_to_gp_416.values depth=32
 #endif //__VIVADO_SYNTH__
 
 

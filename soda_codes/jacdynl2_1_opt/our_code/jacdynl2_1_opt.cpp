@@ -2479,6 +2479,24 @@ inline void stg9_stg9_update_0_write_bundle_write(hw_uint<16>& stg9_update_0_wri
 
 
 // Operation logic
+inline void stg3_update_0(stg2_cache& stg2, stg3_cache& stg3, int d0, int d1) {
+  // Dynamic address computation
+
+	// Consume: stg2
+	auto stg2_1_m_stg3_1__p__0_c__1_m_stg3_0__p___m_1_value = stg2_stg3_update_0_read_bundle_read(stg2/* source_delay */, d0, d1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = stg3_generated_compute_unrolled_1(stg2_1_m_stg3_1__p__0_c__1_m_stg3_0__p___m_1_value);
+	// Produce: stg3
+	stg3_stg3_update_0_write_bundle_write(/* arg names */compute_result, stg3, d0, d1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
 inline void in_update_0(HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */in_off_chip, in_cache& in, int d0, int d1) {
   // Dynamic address computation
 
@@ -2541,24 +2559,6 @@ inline void stg2_update_0(stg1_cache& stg1, stg2_cache& stg2, int d0, int d1) {
 	auto compute_result = stg2_generated_compute_unrolled_1(stg1_1_m_stg2_1__p__0_c__1_m_stg2_0__p___m_1_value);
 	// Produce: stg2
 	stg2_stg2_update_0_write_bundle_write(/* arg names */compute_result, stg2, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void stg3_update_0(stg2_cache& stg2, stg3_cache& stg3, int d0, int d1) {
-  // Dynamic address computation
-
-	// Consume: stg2
-	auto stg2_1_m_stg3_1__p__0_c__1_m_stg3_0__p___m_1_value = stg2_stg3_update_0_read_bundle_read(stg2/* source_delay */, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = stg3_generated_compute_unrolled_1(stg2_1_m_stg3_1__p__0_c__1_m_stg3_0__p___m_1_value);
-	// Produce: stg3
-	stg3_stg3_update_0_write_bundle_write(/* arg names */compute_result, stg3, d0, d1, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
