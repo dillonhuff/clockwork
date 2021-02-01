@@ -2013,13 +2013,17 @@ void UBuffer::generate_coreir(CodegenOptions& options,
       } else {
         //Wiring the multi input case
         auto this_buf = rewrite_buffer.at(bk.name + "_ubuf");
-        for (auto inpt: inpts) {
+
+        //Iterate through bundle first, then ports in each bundle
+        for (auto in_bd: get_bank_in_bundles(bk.name)) {
+          for (auto inpt: port_bundles.at(in_bd)) {
             cout << "\t\tvisit port: " << inpt << endl;
             def->connect(buf->sel("data_in_" + to_string(inpt_cnt)), pt2wire.at(inpt));
             if (with_ctrl) {
               def->connect(buf->sel("wen_" + to_string(inpt_cnt)), def->sel("self."+get_bundle(inpt)+"_en"));
             }
             inpt_cnt ++;
+          }
         }
         for (auto outpt: outpts) {
           //need a second pass push all wire into a list
@@ -6108,9 +6112,11 @@ void UBuffer::generate_banks(CodegenOptions& options) {
         target_buf.port_bundles[bd_name].push_back(pt_name);
         target_buf.add_in_pt(pt_name, dom, to_map(rewrite_access_map), its(merge_sched, dom));
 
-        //LOOK at the name to judge if we need to remap the buffer
-        size_t found = target_buf.name.find("tb");
-        if(found != string::npos) {
+        //This must be TB write
+
+        ////LOOK at the name to judge if we need to remap the buffer
+        //size_t found = target_buf.name.find("tb");
+        //if(found != string::npos) {
           //auto acc_pt = target_buf.access_pattern.at(pt_name);
           cout << pt_name << ": " << str(target_buf.access_map[pt_name]) << endl;
           auto acc_pt = AccessPattern(to_map(target_buf.access_map[pt_name]), target_buf.ctx);
@@ -6118,7 +6124,7 @@ void UBuffer::generate_banks(CodegenOptions& options) {
           auto decouple_acc_map = acc_pt.get_access_map_and_decouple_reuse(ctx, dim_id, true);
           cout << "out pt decouple: " << str(decouple_acc_map) << endl;
           target_buf.access_map[pt_name] = to_umap(decouple_acc_map);
-        }
+        //}
 
         //if ((pick(access_cnt_per_port) > 1)) { //&& (!use_recipe)) {
 
@@ -6151,6 +6157,8 @@ void UBuffer::generate_banks(CodegenOptions& options) {
           cout << "Rewrited Access Map" << str(dot(inv(rewrite_buf2op), slice)) << endl;
           auto rewrite_access_map = dot(inv(rewrite_buf2op), slice);
           if (is_out) {
+            //This handle the output from SRAM
+
             string pt_name = origin_pt_name + "_out_" + std::to_string(new_pt_cnt);
             target_buf.port_bundles[bd_name].push_back(pt_name);
             //cout << "Schedule before its domain: " << str(sched) << endl;
@@ -6166,19 +6174,21 @@ void UBuffer::generate_banks(CodegenOptions& options) {
             }
           }
           else {
+            //This only handle the input to SRAM
+
             string pt_name = origin_pt_name + "_in_" + std::to_string(new_pt_cnt);
             target_buf.port_bundles[bd_name].push_back(pt_name);
             target_buf.add_in_pt(pt_name, dom, to_map(rewrite_access_map), simplify_expr(its(sched, dom)));
 
             //LOOK at the name to judge if we need to remap the buffer
-            size_t found = target_buf.name.find("tb");
-            if(found != string::npos) {
-              //auto acc_pt = target_buf.access_pattern.at(pt_name);
-              auto acc_pt = AccessPattern(to_map(target_buf.access_map[pt_name]), target_buf.ctx);
-              auto decouple_acc_map = acc_pt.get_access_map_and_decouple_reuse(ctx, dim_id);
-              cout << "out pt decouple: " << str(decouple_acc_map) << endl;
-              target_buf.access_map[pt_name] = to_umap(decouple_acc_map);
-            }
+            //size_t found = target_buf.name.find("tb");
+            //if(found != string::npos) {
+            //  //auto acc_pt = target_buf.access_pattern.at(pt_name);
+            //  auto acc_pt = AccessPattern(to_map(target_buf.access_map[pt_name]), target_buf.ctx);
+            //  auto decouple_acc_map = acc_pt.get_access_map_and_decouple_reuse(ctx, dim_id);
+            //  cout << "out pt decouple: " << str(decouple_acc_map) << endl;
+            //  target_buf.access_map[pt_name] = to_umap(decouple_acc_map);
+            //}
           }
           new_pt_cnt ++;
         }
