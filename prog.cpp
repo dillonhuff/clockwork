@@ -4798,7 +4798,8 @@ void merge_basic_block_ops(prog& prg) {
 
       vector<string> args;
       for (auto r : compute_unit.buffers_read()) {
-        args.push_back("hw_uint<32*" + str(compute_unit.num_lanes(r)) + ">& " + r);
+        //args.push_back("hw_uint<32*" + str(compute_unit.num_lanes(r)) + ">& " + r);
+        args.push_back("hw_uint<" + str(prg.buffer_port_width(r)) + "*" + str(compute_unit.num_lanes(r)) + ">& " + r);
       }
       int write_width = 0;
       for (auto w : compute_unit.waddrs) {
