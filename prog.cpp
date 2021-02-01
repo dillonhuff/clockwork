@@ -4719,7 +4719,7 @@ compute_unit_internals compound_compute_unit(op* loop, prog& prg) {
           cu.arg_names[op].push_back(val);
         } else {
           int index = cu.num_lanes(b);
-          cu.arg_names[op].push_back({true, b, index});
+          cu.arg_names[op].push_back({true, b, index, prg.buffer_port_width(b)});
           cu.raddrs.push_back({b, ar});
         }
       }
