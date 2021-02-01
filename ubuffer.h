@@ -2135,6 +2135,15 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
       return ret;
     }
 
+    std::set<string> get_bank_in_bundles(const std::string& bk_name) {
+      std::set<string> ret;
+      auto inpts = get_bank_inputs(bk_name);
+      for (auto inpt: inpts) {
+        ret.insert(get_bundle(inpt));
+      }
+      return ret;
+    }
+
     vector<string> get_in_bundles() const {
       vector<string> outpts;
       for (auto m : port_bundles) {
