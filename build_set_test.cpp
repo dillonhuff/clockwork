@@ -19423,7 +19423,7 @@ void histogram1d_test() {
 }
 
 void blur_static_dynamic_comparison() {
-  string prefix = "bxy";
+  string prefix = "bxy_d";
 
   int cols = 1920;
   int rows = 1080;
@@ -19436,6 +19436,18 @@ void blur_static_dynamic_comparison() {
   options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
   options.debug_options.expect_all_linebuffers = true;
   prog prg = blur_xy_16(out_name).realize(options, out_name, cols, rows, unroll_factor);
+
+  unroll_reduce_loops(prg);
+  merge_basic_block_ops(prg);
+  normalize_bounds(prg);
+  normalize_address_offsets(prg);
+
+  auto fusion_groups = one_stage_per_group(prg);
+  app_dag dag = partition_application(fusion_groups, prg);
+
+  options = CodegenOptions();
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  generate_app_code(options, dag);
 
   move_to_benchmarks_folder(out_name + "_opt");
 
