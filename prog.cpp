@@ -4797,14 +4797,18 @@ void merge_basic_block_ops(prog& prg) {
       }
 
       vector<string> args;
+      map<string, int> arg_pixel_widths;
       for (auto r : compute_unit.buffers_read()) {
-        //args.push_back("hw_uint<32*" + str(compute_unit.num_lanes(r)) + ">& " + r);
         args.push_back("hw_uint<" + str(prg.buffer_port_width(r)) + "*" + str(compute_unit.num_lanes(r)) + ">& " + r);
+        arg_pixel_widths[r] = prg.buffer_port_width(r);
       }
       int write_width = 0;
+      int write_pixel_width = -1;
       for (auto w : compute_unit.waddrs) {
         write_width += prg.buffer_port_width(w.first);
+        write_pixel_width = prg.buffer_port_width(w.first);
       }
+      assert(write_pixel_width > 0);
 
       if (all_ops_cpy) {
         assert(compute_unit.buffers_read().size() == 1);
@@ -4871,7 +4875,7 @@ void merge_basic_block_ops(prog& prg) {
 
         out << "\n\t" << endl;
         out << sep_list(child_calls, "", "", "\n\t");
-        pack_bv(1, out, rname, prods, 32);
+        pack_bv(1, out, rname, prods, write_pixel_width);
         out << tab(1) << "return " << rname << ";" << endl;
         out << endl;
 
