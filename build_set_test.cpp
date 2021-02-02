@@ -19470,8 +19470,8 @@ void blur16_static_dynamic_comparison() {
   options.internal = true;
   options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
   options.debug_options.expect_all_linebuffers = true;
-  prog prg = blur_xy_16(out_name).realize(options, out_name, cols, rows, unroll_factor);
-
+  prog prg = blur_xy_16(out_name).realize(options, out_name, cols, rows, 1);
+  prg.name = "bxy_d_16_opt";
   unroll_reduce_loops(prg);
   merge_basic_block_ops(prg);
   normalize_bounds(prg);
@@ -19483,6 +19483,8 @@ void blur16_static_dynamic_comparison() {
   merge_basic_block_ops(prg);
   infer_bounds_and_unroll(pick(prg.outs), {size, size}, throughput, prg);
 
+  assert(unoptimized_compiles(prg));
+
   app_dag dag = partition_groups(fresh_groups, prg);
   //app_dag dag = partition_application(fusion_groups, prg);
 
@@ -19490,10 +19492,9 @@ void blur16_static_dynamic_comparison() {
   options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
   generate_app_code(options, dag);
 
-  move_to_benchmarks_folder(out_name + "_opt");
+  move_to_benchmarks_folder(prg.name);
 
   assert(false);
-
 }
 
 void application_tests() {
