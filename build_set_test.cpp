@@ -17608,6 +17608,7 @@ void compile_for_garnet_single_port_mem(prog& prg,
 
   CodegenOptions options = garnet_codegen_single_port_with_addrgen_options(prg, dir);
   options.add_memory_hierarchy("mem");
+  options.add_memory_hierarchy("regfile");
   options.emit_smt_stream = gen_smt_stream;
   options.config_gen_only = config_gen_only;
   //if (multi_sram)
@@ -21152,6 +21153,11 @@ int main(int argc, char** argv) {
 
     if (cmd == "lake-tests") {
       lake_tests();
+      return 0;
+    }
+
+    if (cmd == "pond-tests") {
+      test_pond("aha_garnet_design_new");
       return 0;
     }
 
