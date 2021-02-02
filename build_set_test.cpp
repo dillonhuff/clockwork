@@ -6272,11 +6272,16 @@ struct App {
   }
 
   void generate_soda_file(const std::string& name) {
+    string rep = pick(app_dag).first;
+    generate_soda_file(name, last_update(rep).unroll_factor);
+  }
+
+  void generate_soda_file(const std::string& name, const int unroll_factor) {
     ofstream out(name + ".soda");
     out << "kernel: " << name << endl;
 
     string rep = pick(app_dag).first;
-    int unroll_factor = last_update(rep).unroll_factor;
+    //int unroll_factor = last_update(rep).unroll_factor;
     int width = app_dag.at(rep).pixel_width;
 
     out << "unroll factor: " << unroll_factor << endl;
@@ -21338,7 +21343,7 @@ void test_multi_kernel_gp() {
 }
 
 void dhuff_tests() {
-  test_jacobi15_dynamic();
+  //test_jacobi15_dynamic();
 
   test_multi_kernel_pyramid_collapsing();
   test_multi_kernel_gp();
