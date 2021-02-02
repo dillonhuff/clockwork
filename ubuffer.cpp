@@ -1239,10 +1239,80 @@ Json create_lake_config(unordered_map<string, MemConnSch> mem_conxs) {
 void add_lake_config(Json& jdata, ConfigMap data, int dimensionality, string domain_name) {
     auto tmp = MemConnSch(dimensionality, data);
     tmp.remove_redundant_dim();
+    cout << "Domain name: " << domain_name << endl;
+    cout << "jdata: " << jdata << endl;
     jdata[domain_name]["dimensionality"] = tmp.dimensionality;
     for (auto it: tmp.vals) {
+        cout << "\tit.first" << it.first << endl;
         jdata[domain_name][it.first] = it.second;
     }
+}
+
+//Simplify the single fetch width memory codegen
+Json UBuffer::generate_ubuf_args(CodegenOptions& options, UBuffer& ubuf) {
+
+    Json ret;
+
+    /*build a map from OP schedule name to input access map, to output access map
+    for each op name generate accessor config and also address generator
+    */
+
+    map<string, isl_map*>  op2sched;
+    map<string, vector<umap*>> op2write_map, op2read_map;
+    auto hardware_schedule = ubuf.global_schedule();
+
+    for (auto m : get_maps(hardware_schedule)) {
+        string op_name = domain_name(m);
+        op2sched[op_name] = m;
+        auto out_acc_umap = ubuf.producer_map();
+        for (auto out_acc_map: get_maps(out_acc_umap)) {
+            if (domain_name(out_acc_map) == op_name) {
+                map_insert(op2write_map, op_name, to_umap(out_acc_map));
+            }
+        }
+        auto in_acc_umap = ubuf.consumer_map();
+        for (auto in_acc_map: get_maps(in_acc_umap)) {
+            if (domain_name(in_acc_map) == op_name) {
+                map_insert(op2read_map, op_name, to_umap(in_acc_map));
+            }
+        }
+    }
+
+    //Go through all the ops and produce the read and write
+    std::set<string> ops = ubuf.get_ops();
+    auto mem = options.mem_hierarchy.at("regfile");
+    int word_width = mem.word_width.at("regfile");
+    int capacity = mem.capacity.at("regfile");
+    int port_width = mem.out_port_width.at("regfile");
+    for (auto op_name: ops) {
+        auto sched = op2sched.at(op_name);
+        auto dom = ::domain(sched);
+        auto aff = get_aff(sched);
+        auto config_info = generate_accessor_config_from_aff_expr(dom, aff);
+        cout << "\tSched: " << str(sched) << endl;
+        if(op2write_map.count(op_name)) {
+            for (auto acc_map: op2write_map.at(op_name)) {
+                auto reduce_map = linear_address_map_lake(to_set(range(acc_map)), mem.fetch_width);
+                auto linear_acc_map = dot(acc_map, reduce_map);
+                auto addressor = generate_addressor_config_from_aff_expr(get_aff(linear_acc_map), false, false, word_width, capacity, port_width);
+                config_info.merge(addressor);
+                cout << "\tWrite map: " << str(acc_map) << endl;
+            }
+            add_lake_config(ret, config_info, num_in_dims(aff), "in2regfile");
+        }
+        else if(op2read_map.count(op_name)) {
+            for (auto acc_map: op2read_map.at(op_name)) {
+                auto reduce_map = linear_address_map_lake(to_set(range(acc_map)), mem.fetch_width);
+                auto linear_acc_map = dot(acc_map, reduce_map);
+                auto addressor = generate_addressor_config_from_aff_expr(get_aff(linear_acc_map), true, false, word_width, capacity, port_width);
+                config_info.merge(addressor);
+                cout << "\tRead map: " << str(acc_map) << endl;
+            }
+            add_lake_config(ret, config_info, num_in_dims(aff), "regfile2out");
+        }
+    }
+    cout << ret << endl;
+    return ret;
 }
 
 Json UBuffer::generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> rewrite_buffer) {
@@ -1909,11 +1979,20 @@ void UBuffer::generate_coreir(CodegenOptions& options,
 
       string ub_ins_name = "ub_" + bk.name;
       map<string, UBuffer> vectorized_buf;
+      auto target_buf = rewrite_buffer.at(bk.name + "_ubuf");
       vectorized_buf.insert(
-              {bk.name + "_ubuf", rewrite_buffer.at(bk.name + "_ubuf")});
+              {bk.name + "_ubuf", target_buf});
+      auto capacity = total_capacity(target_buf);
 
+      cout << "Vectorization buffer capacity: "
+          << capacity << endl;
       //vectorization pass for lake tile
-      if (options.rtl_options.target_tile == TARGET_TILE_WIDE_FETCH_WITH_ADDRGEN) {
+      //if (options.rtl_options.target_tile == TARGET_TILE_WIDE_FETCH_WITH_ADDRGEN) {
+      if (capacity <= 32) {
+        cout << "Generate config for register file!" << endl;
+        config_file = generate_ubuf_args(options, target_buf);
+
+      } else {
         //buffer_vectorization(options.iis, bk.name + "_ubuf", 1, 4, rewrite_buffer);
         cout << "vectorization bk name: " << bk.name << endl;
         buffer_vectorization(options.iis, {bk.name + "_ubuf"},
