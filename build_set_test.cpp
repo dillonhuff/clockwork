@@ -19492,7 +19492,10 @@ void blur16_static_dynamic_comparison() {
   options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
   generate_app_code(options, dag);
 
+
   move_to_benchmarks_folder(prg.name);
+
+  cout << "prg name: " << prg.name << endl;
 
   assert(false);
 }

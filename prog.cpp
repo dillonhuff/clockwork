@@ -2741,6 +2741,7 @@ bool unoptimized_compiles(prog& prg) {
   auto old_name = prg.name;
   prg.name = "unoptimized_" + old_name;
   generate_regression_testbench(prg);
+  prg.name = old_name;
   return compile_regression_tb(prg) == 0;
 }
 

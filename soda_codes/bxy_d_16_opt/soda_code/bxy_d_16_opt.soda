@@ -1,8 +1,8 @@
 kernel: bxy_d_16_opt
-unroll factor: 16
-burst width: 256
+unroll factor: 1
+burst width: 16
 
-input uint16: input_arg(1104, *)
+input uint16: input_arg(1082, *)
 
 local uint16: input(0, 0) = input_arg(0, 0)
 

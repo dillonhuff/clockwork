@@ -5,4 +5,4 @@ cd ..
 cd our_code
 ./aws_run_tb_${app}.sh || { echo 'our compilation failed'; exit 1; }
 cd ..
-../../aligner ./our_code/bxy_d_16_1_merged255_write_accel_result.csv ./soda_code/soda_${app}_regression_result.csv
+../../aligner ./our_code/bxy_d_16_1_merged259_write_accel_result.csv ./soda_code/soda_${app}_regression_result.csv
