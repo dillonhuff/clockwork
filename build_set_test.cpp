@@ -19569,7 +19569,7 @@ void sbl_static_dynamic_comparison() {
 
   App sbl = sobel16(out_name);
   prog prg = sbl.realize(options, out_name, cols, rows, 1);
-  sbl.generate_soda_file(out_name);
+  sbl.generate_soda_file(out_name, throughput);
   prg.name = out_name + "_opt";
 
   unroll_reduce_loops(prg);
