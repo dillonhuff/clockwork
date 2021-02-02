@@ -17,7 +17,7 @@ int main(int argc, char **argv) {
 
   std::string binaryFile = argv[1];
 
-  int num_epochs = 1;
+  int num_epochs = 10;
 
   std::cout << "num_epochs = " << num_epochs << std::endl;
 
