@@ -19550,6 +19550,7 @@ void application_tests() {
 
   blur32_static_dynamic_comparison();
   blur16_static_dynamic_comparison();
+  blur_static_dynamic_comparison();
 
   histogram_test();
   histogram1d_test();
