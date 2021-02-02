@@ -19567,7 +19567,9 @@ void sbl_static_dynamic_comparison() {
   options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
   options.debug_options.expect_all_linebuffers = true;
 
-  prog prg = sobel16(out_name).realize(options, out_name, cols, rows, 1);
+  App sbl = sobel16(out_name);
+  prog prg = sbl.realize(options, out_name, cols, rows, 1);
+  sbl.generate_soda_file(out_name);
   prg.name = out_name + "_opt";
 
   unroll_reduce_loops(prg);
