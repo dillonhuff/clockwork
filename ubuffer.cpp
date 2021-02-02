@@ -915,7 +915,7 @@ ConfigMap generate_accessor_config_from_aff_expr(isl_set* write_domain, isl_aff*
 vector<MemConnSch> emit_lake_accessor_config(CodegenOptions& options, int in_project_dim, isl_map* sched_map) {
     vector<MemConnSch> ret;
     if ((in_project_dim != -1)
-            && options.mem_tile.multi_sram_accessor) {
+            && options.mem_hierarchy.at("mem").multi_sram_accessor) {
       cout << tab(1) << "Before schedule input projection" << str(get_aff(sched_map)) << endl;
       auto bank_set_vec = get_multi_bank_domain_set(sched_map, in_project_dim);
       for (auto bank_set: bank_set_vec) {
@@ -966,6 +966,7 @@ ConfigMap generate_addressor_config_from_aff_expr(isl_aff* addr,
 
 bool check_need_mux(CodegenOptions & options, UBuffer & buf,
         string op_name, string micro_buf_name, int bk_num, bool is_read) {
+    auto mem = options.mem_hierarchy.at("mem");
     bool need_mux = false;
     auto op2bd = buf.get_stmt2bd();
     assert(op2bd.at(op_name).size() == 1);
@@ -973,9 +974,9 @@ bool check_need_mux(CodegenOptions & options, UBuffer & buf,
     cout << tab(2) << "Bundle: " << bd_name << " has lane size = " << buf.lanes_in_bundle(bd_name) << endl;
     cout << tab(2) << "BK number: " << bk_num << ", num port: " << buf.num_out_ports() << endl;
     if (is_read) {
-        need_mux = (bk_num < (buf.num_in_ports() / options.mem_tile.in_port_width.at(micro_buf_name)));
+        need_mux = (bk_num < (buf.num_in_ports() / mem.in_port_width.at(micro_buf_name)));
     } else {
-        need_mux = (bk_num < (buf.num_out_ports() / options.mem_tile.out_port_width.at(micro_buf_name)));
+        need_mux = (bk_num < (buf.num_out_ports() / mem.out_port_width.at(micro_buf_name)));
     }
     return need_mux;
 }
@@ -1027,13 +1028,15 @@ pair<int, int> process_mux_info(CodegenOptions options, string op_name, bool is_
     auto bmap_vec = get_basic_maps(map);
     int port_width = bmap_vec.size();
 
+    auto mem = options.mem_hierarchy.at("mem");
+
     //get pt number, take the lake information
     int bk_num;
     if (is_read) {
         cout << micro_buf_name << endl;
-        bk_num = max(port_width / options.mem_tile.out_port_width.at(micro_buf_name), 1);
+        bk_num = max(port_width / mem.out_port_width.at(micro_buf_name), 1);
     } else {
-        bk_num = max(port_width / options.mem_tile.in_port_width.at(micro_buf_name), 1);
+        bk_num = max(port_width / mem.in_port_width.at(micro_buf_name), 1);
     }
     cout << tab(1) <<  "basic map vector size: " << port_width << endl;
     for (auto bmap: bmap_vec) {
@@ -1041,10 +1044,10 @@ pair<int, int> process_mux_info(CodegenOptions options, string op_name, bool is_
     }
     cout << tab(1) << "Bank number: " << bk_num << endl;
     cout << tab(1) << "mem tile component:" << micro_buf_name
-        <<", Bank constraint: : " << options.mem_tile.bank_num.at(micro_buf_name)<< endl;
+        <<", Bank constraint: : " << mem.bank_num.at(micro_buf_name)<< endl;
 
     //check if violate bank number
-    assert(bk_num <= options.mem_tile.bank_num.at(micro_buf_name));
+    assert(bk_num <= mem.bank_num.at(micro_buf_name));
 
     //Get the iteartion domain dimension that need to be project out
     auto project_dim = get_project_dim(buf, !is_read);
@@ -1098,7 +1101,8 @@ vector<ConfigMap> emit_lake_addrgen_config(CodegenOptions options, string op_nam
         get_memtile_bank_range(options, buf, coalesce(map), project_dim, is_read);
 
     //get the reduce map for this subbuffer structure
-    auto reduce_map = linear_address_map_lake(range_per_bank, options.mem_tile.fetch_width);
+    auto mem = options.mem_hierarchy.at("mem");
+    auto reduce_map = linear_address_map_lake(range_per_bank, mem.fetch_width);
     cout << "\tbank range:" << str(range_per_bank) << endl;
 
     //get mux information
@@ -1134,30 +1138,30 @@ vector<ConfigMap> emit_lake_addrgen_config(CodegenOptions options, string op_nam
             }
 
             //rewrite the address gen
-            reduce_map = linear_address_map_with_index(range_per_bank, addr_index, options.mem_tile.fetch_width);
+            reduce_map = linear_address_map_with_index(range_per_bank, addr_index, mem.fetch_width);
             cout << "Reduce map after mux insertion: " << str(reduce_map) << endl;
             cout << "Range per bank: " << str(range_per_bank) << endl;
             cout << "Range origin: " << str(range(map)) << endl;
 
-            auto mux_reduce_map = linear_address_map_with_index(range(map), mux_index, options.mem_tile.fetch_width);
+            auto mux_reduce_map = linear_address_map_with_index(range(map), mux_index, mem.fetch_width);
             auto mux_addr_expr = dot(to_map(bmap), mux_reduce_map);
             isl_aff* addr = get_aff(mux_addr_expr);
             cout << "mux addr aff: " << str(addr) << endl;
-            int ww = options.mem_tile.word_width.at(micro_buf_name);
-            int capacity = options.mem_tile.capacity.at(micro_buf_name);
+            int ww = mem.word_width.at(micro_buf_name);
+            int capacity = mem.capacity.at(micro_buf_name);
 
             //mux always has port width = 1
-            if (!options.mem_tile.multi_sram_accessor)
+            if (!mem.multi_sram_accessor)
               vals.merge(generate_addressor_config_from_aff_expr(addr, is_read, true, ww, capacity, 1));
         }
 
         //TODO: use word width to fix kavya's request
-        int ww = options.mem_tile.word_width.at(micro_buf_name);
-        int pw = is_read ? options.mem_tile.out_port_width.at(micro_buf_name) :
-            options.mem_tile.in_port_width.at(micro_buf_name);
-        int capacity = options.mem_tile.capacity.at(micro_buf_name);
-        //int ww = is_read ?options.mem_tile.out_port_width.at(micro_buf_name)
-        //    : options.mem_tile.in_port_width.at(micro_buf_name);
+        int ww = mem.word_width.at(micro_buf_name);
+        int pw = is_read ? mem.out_port_width.at(micro_buf_name) :
+            mem.in_port_width.at(micro_buf_name);
+        int capacity = mem.capacity.at(micro_buf_name);
+        //int ww = is_read ?mem.out_port_width.at(micro_buf_name)
+        //    : mem.in_port_width.at(micro_buf_name);
 
         isl_map* project_access_map;
         if (project_dim.has_value()) {
@@ -1179,7 +1183,7 @@ vector<ConfigMap> emit_lake_addrgen_config(CodegenOptions options, string op_nam
 
         //Project the input dimension out
         if ((in_project_dim != -1)
-                && options.mem_tile.multi_sram_accessor) {
+                && mem.multi_sram_accessor) {
           cout << tab(1) << "Before input projection" << str(get_aff(addr_expr_map)) << endl;
           cout << tab(1) << "map: " << str(to_map(bmap)) << "\n\tproject dim: " << in_project_dim << endl;
           auto bank_set_vec = get_multi_bank_domain_set(addr_expr_map, in_project_dim);
@@ -1316,6 +1320,7 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> r
     //    }
     //}
     unordered_map<string, MemConnSch> data;
+    auto mem = options.mem_hierarchy.at("mem");
 
     //this count is global to all the ubuffer sub controllers
     unordered_map<string, int> config_cnt = {{"in2agg", 0}, {"tb2out", 0}};
@@ -1334,7 +1339,7 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> r
                 MemConnSch tmp;
 
                 //This is for the new memtile config, need to slice the op into multiple accessor
-                if (options.mem_tile.multi_sram_accessor) {
+                if (mem.multi_sram_accessor) {
                     if (op2read_bank.count(op_name) &&
                             op2write_bank.count(op_name)) {
                         if (op2read_bank.at(op_name).second != -1) {
@@ -1446,7 +1451,7 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> r
                         auto read_config = read_addr_config.at(cnt);
                         auto write_config = write_addr_config.at(cnt);
                         string config_key = key;// + "_" + to_string(config_cnt.at(key) ++);
-                        if (options.mem_tile.multi_sram_accessor)
+                        if (mem.multi_sram_accessor)
                             config_key += "_" + to_string(config_cnt.at(key) ++);
                         auto cpy = accessor_config_vec.at(cnt);
                         cpy.vals.merge(read_config);
@@ -1525,14 +1530,15 @@ CoreIR::Module* affine_controller_use_lake_tile_counter(
     //generate tb accessor
     auto config_tb2out = generate_accessor_config_from_aff_expr(dom, aff);
 
+    auto mem = options.mem_hierarchy.at("mem");
 
     //generate tb address
     auto index_addr = project_all_out_but(cpy(addr), dim);
     cout << "Index address: " << str(index_addr) << endl;
     {
-      int word_width = options.mem_tile.word_width.at("tb");
-      int capacity = options.mem_tile.capacity.at("tb");
-      int port_width = options.mem_tile.out_port_width.at("tb");
+      int word_width = mem.word_width.at("tb");
+      int capacity = mem.capacity.at("tb");
+      int port_width = mem.out_port_width.at("tb");
       //is_read = true, is_mux = false
       auto addressor_tb2out = generate_addressor_config_from_aff_expr(get_aff(index_addr), true, false, word_width, capacity, port_width);
       config_tb2out.merge(addressor_tb2out);
@@ -1568,17 +1574,17 @@ CoreIR::Module* affine_controller_use_lake_tile_counter(
 
     //Getthe addressor
     {
-      int word_width = options.mem_tile.word_width.at("tb");
-      int capacity = options.mem_tile.capacity.at("tb");
-      int port_width = options.mem_tile.in_port_width.at("tb");
+      int word_width = mem.word_width.at("tb");
+      int capacity = mem.capacity.at("tb");
+      int port_width = mem.in_port_width.at("tb");
       auto addressor_sram2tb_write = generate_addressor_config_from_aff_expr(get_aff(vec_index_addr), false, false, word_width, capacity, port_width);
       config_sram2tb.merge(addressor_sram2tb_write);
     }
 
     {
-      int word_width = options.mem_tile.word_width.at("sram");
-      int capacity = options.mem_tile.capacity.at("sram");
-      int port_width = options.mem_tile.out_port_width.at("sram");
+      int word_width = mem.word_width.at("sram");
+      int capacity = mem.capacity.at("sram");
+      int port_width = mem.out_port_width.at("sram");
       auto addressor_sram2tb_read = generate_addressor_config_from_aff_expr(get_aff(vec_index_addr), true, false, word_width, capacity, port_width);
       config_sram2tb.merge(addressor_sram2tb_read);
     }
@@ -1911,7 +1917,7 @@ void UBuffer::generate_coreir(CodegenOptions& options,
         //buffer_vectorization(options.iis, bk.name + "_ubuf", 1, 4, rewrite_buffer);
         cout << "vectorization bk name: " << bk.name << endl;
         buffer_vectorization(options.iis, {bk.name + "_ubuf"},
-                options.mem_tile.fetch_width,
+                options.mem_hierarchy.at("mem").fetch_width,
                 vectorized_buf);
         config_file = generate_ubuf_args(options, vectorized_buf);
       }
@@ -3035,7 +3041,7 @@ void UBuffer::generate_smt_stream(CodegenOptions& options) {
       //vectorization pass for lake tile
       if (options.rtl_options.target_tile == TARGET_TILE_WIDE_FETCH_WITH_ADDRGEN) {
         buffer_vectorization(options.iis, {bk.name + "_ubuf"},
-                options.mem_tile.fetch_width,
+                options.mem_hierarchy.at("mem").fetch_width,
                 vec_buf);
                 //rewrite_buffer);
         //config_file = generate_ubuf_args(options, rewrite_buffer);
@@ -3124,7 +3130,7 @@ void UBuffer::collect_memory_cnt(CodegenOptions& options, mem_access_cnt& mem_ac
       //vectorization pass for lake tile
       if (options.rtl_options.target_tile == TARGET_TILE_WIDE_FETCH_WITH_ADDRGEN) {
         buffer_vectorization(options.iis, {bk.name + "_ubuf"},
-                options.mem_tile.fetch_width,
+                options.mem_hierarchy.at("mem").fetch_width,
                 vec_buf);
                 //rewrite_buffer);
         generate_access_cnt(options, ub_ins_name+"_ubuf", vec_buf, mem_access);
@@ -3207,7 +3213,7 @@ void generate_lake_stream(CodegenOptions & options,
 }
 
 pair<int, int> get_stream_vector_size(CodegenOptions &options, string buf_name) {
-    auto mem_tile_collateral = options.mem_tile;
+    auto mem_tile_collateral = options.mem_hierarchy.at("mem");
     if (contains(buf_name, "agg")) {
         int in_width = mem_tile_collateral.in_port_width.at("agg")
             * mem_tile_collateral.bank_num.at("agg");
@@ -3284,7 +3290,7 @@ string toBracketList(const vector<vector<int>> & data) {
 
 vector<StreamData> emit_top_address_stream(
         CodegenOptions& options, string subbuf, vector<UBuffer> & buffers) {
-  auto lake_info = options.mem_tile;
+  auto lake_info = options.mem_hierarchy.at("mem");
   int input_width = lake_info.in_port_width.at(subbuf);
   int output_width = lake_info.out_port_width.at(subbuf);
   int pt_num = lake_info.bank_num.at(subbuf);
