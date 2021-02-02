@@ -14152,9 +14152,50 @@ void Init_PE_energy_cost(power_analysis_params& power_params)  {
 }
 
 
-void compile_for_garnet_single_port_mem(prog & prg, string dir, bool gen_smt_stream, bool gen_config_only,bool multi_accessor, bool use_dse_compute);
+void compile_for_garnet_single_port_mem(prog & prg, string dir, bool gen_smt_stream, bool gen_config_only, bool use_dse_compute);
 void cpy_app_to_folder(const std::string& app_type, const std::string& prg_name);
 
+void test_pond(string dir) {
+  vector<prog> test_apps;
+  test_apps.push_back(resnet_simple());
+
+  for ( auto prg: test_apps) {
+    cout << "====== Running CGRA Single Port test for " << prg.name << endl;
+    prg.pretty_print();
+    prg.sanity_check();
+
+    break_up_multi_channel_inputs(prg);
+    break_up_multi_channel_outputs(prg);
+    dsa_writers(prg);
+    prg.pretty_print();
+    auto cpu = unoptimized_result(prg);
+
+    bool gen_config_only = true;
+    compile_for_garnet_single_port_mem(prg, dir, false, gen_config_only, false);
+    generate_regression_testbench(prg);
+
+    cout << "Output name: " << prg.name << endl;
+    //run_verilator_tb(prg.name);
+    //TODO: move to a function
+    //run verilator on all the generated verilog
+    if (!gen_config_only) {
+      string name = prg.name;
+      auto verilog_files = get_files("./" + dir + "/"+name+"/verilog/");
+      verilog_files.push_back(name + ".v");
+      verilog_files.push_back("LakeWrapper.v");
+      bool extra_flag_for_lake = true;
+      int res = run_verilator_on(name, name + "_verilog_tb.cpp", verilog_files, extra_flag_for_lake);
+      assert(res == 0);
+      cmd("rm LakeWrapper.v");
+
+      auto verilator_res = verilator_results(prg.name);
+      compare("cgra_" + prg.name + "_cpu_vs_verilog_comparison", verilator_res, cpu);
+      //string app_type = "dualwithaddr";
+      string app_type = "single_port_buffer";
+      cpy_app_to_folder(app_type, prg.name);
+    }
+  }
+}
 void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, string dir="aha_garnet_design") {
   vector<prog> test_apps;
   //TODO:has issue  with multiple input
@@ -14196,7 +14237,7 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
     auto cpu = unoptimized_result(prg);
 
     //compile_for_garnet_platonic_mem(prg);
-    compile_for_garnet_single_port_mem(prg, dir, false, gen_config_only, multi_accessor, false);
+    compile_for_garnet_single_port_mem(prg, dir, false, gen_config_only, false);
     generate_regression_testbench(prg);
 
     cout << "Output name: " << prg.name << endl;
@@ -14396,8 +14437,9 @@ void lake_identity_stream_SMT_test(int x, int y, string suffix) {
   //cmd("mkdir -p ./lake_stream/identity_stream/");
   //emit_lake_stream(buffers_opt, hsh, "./lake_stream/identity_stream/");
   CodegenOptions options;
+  options.add_memory_hierarchy("mem");
   UBuffer tmp;
-  options.mem_tile.multi_sram_accessor = true;
+  //options.mem_tile.multi_sram_accessor = true;
   options.dir = "./lake_controllers/identity_stream/";
   map<string, UBuffer> rewrite_buffers;
   auto sched_map = get_maps_in_map(hsh);
@@ -17456,6 +17498,7 @@ void generate_smt_stream_for_garnet_single_port_mem(prog& prg) {
   //auto buffers_opt = build_buffers(prg, clockwork_schedule(prg));
 
   CodegenOptions options = garnet_codegen_single_port_with_addrgen_options(prg, "aha_garnet_smt");
+  options.add_memory_hierarchy("mem");
   options.emit_smt_stream = true;
   schedule_info sched = garnet_schedule_info(options, prg);
   garnet_single_port_ram_schedule(sched, prg.root, prg);
@@ -17547,7 +17590,7 @@ void compile_for_garnet_single_port_mem(prog& prg,
         string dir,
         bool gen_smt_stream,
         bool config_gen_only,
-        bool multi_sram,
+        //bool multi_sram,
         bool use_dse_compute) {
 
   //make sure the loop bound and address is positive
@@ -17564,10 +17607,11 @@ void compile_for_garnet_single_port_mem(prog& prg,
   //auto buffers_opt = build_buffers(prg, clockwork_schedule(prg));
 
   CodegenOptions options = garnet_codegen_single_port_with_addrgen_options(prg, dir);
+  options.add_memory_hierarchy("mem");
   options.emit_smt_stream = gen_smt_stream;
   options.config_gen_only = config_gen_only;
-  if (multi_sram)
-      options.mem_tile.multi_sram_accessor = true;
+  //if (multi_sram)
+  //    options.mem_tile.multi_sram_accessor = true;
   schedule_info sched = garnet_schedule_info(options, prg, use_dse_compute);
   garnet_single_port_ram_schedule(sched, prg.root, prg);
   auto sched_map = op_times_map(sched, prg);
