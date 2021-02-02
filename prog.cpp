@@ -2683,6 +2683,15 @@ int compile_compute(const std::string& name) {
   return res;
 }
 
+bool compile_regression_tb(prog& prg) {
+  return compile_regression_tb(prg.name);
+}
+
+bool compile_regression_tb(const std::string& name) {
+  int res = cmd("g++ -fstack-protector-all -std=c++11 regression_tb_" + name + ".cpp " + name + ".cpp");
+  return res;
+}
+
 std::vector<std::string> run_regression_tb(const std::string& name) {
   //int res = system(string("g++ -fstack-protector-all -std=c++11 regression_tb_" + name + ".cpp " + name + ".cpp").c_str());
   int res = cmd("g++ -fstack-protector-all -std=c++11 regression_tb_" + name + ".cpp " + name + ".cpp");
@@ -2723,6 +2732,16 @@ void regression_test(prog& prg) {
   CodegenOptions options;
   options.internal = true;
   regression_test(options, prg);
+}
+
+bool unoptimized_compiles(prog& prg) {
+  generate_unoptimized_code(prg);
+
+  cout << "Built unoptimized code" << endl;
+  auto old_name = prg.name;
+  prg.name = "unoptimized_" + old_name;
+  generate_regression_testbench(prg);
+  return compile_regression_tb(prg) == 0;
 }
 
 std::vector<string> unoptimized_result(prog& prg) {
@@ -4719,7 +4738,7 @@ compute_unit_internals compound_compute_unit(op* loop, prog& prg) {
           cu.arg_names[op].push_back(val);
         } else {
           int index = cu.num_lanes(b);
-          cu.arg_names[op].push_back({true, b, index});
+          cu.arg_names[op].push_back({true, b, index, prg.buffer_port_width(b)});
           cu.raddrs.push_back({b, ar});
         }
       }
@@ -4730,7 +4749,7 @@ compute_unit_internals compound_compute_unit(op* loop, prog& prg) {
       for (auto ar : op->write_addrs(b)) {
         auto as = simplify(ar);
         as = b + brackets(as);
-        addr_sources[as] = {false, map_find(op, cu.result_names)};
+        addr_sources[as] = {false, map_find(op, cu.result_names), 0, prg.buffer_port_width(b)};
 
         assert(ar.size() == 1);
         pair<string, address> wa{b, remove_whitespace(ar.at(0).second)};
@@ -4779,7 +4798,6 @@ compute_unit_internals compound_compute_unit(op* loop, prog& prg) {
 void merge_basic_block_ops(prog& prg) {
   std::set<op*> inner_loops = get_inner_loops(prg);
 
-  //string new_compute_file = prg.name + "_merged_compute_units.h";
   string new_compute_file = prg.compute_unit_file + "_merged_compute_units.h";
 
   ofstream out(new_compute_file);
@@ -4798,23 +4816,24 @@ void merge_basic_block_ops(prog& prg) {
       }
 
       vector<string> args;
+      map<string, int> arg_pixel_widths;
       for (auto r : compute_unit.buffers_read()) {
-        args.push_back("hw_uint<32*" + str(compute_unit.num_lanes(r)) + ">& " + r);
+        args.push_back("hw_uint<" + str(prg.buffer_port_width(r)) + "*" + str(compute_unit.num_lanes(r)) + ">& " + r);
+        arg_pixel_widths[r] = prg.buffer_port_width(r);
       }
       int write_width = 0;
+      int write_pixel_width = -1;
       for (auto w : compute_unit.waddrs) {
         write_width += prg.buffer_port_width(w.first);
+        write_pixel_width = prg.buffer_port_width(w.first);
       }
+      assert(write_pixel_width > 0);
 
       if (all_ops_cpy) {
         assert(compute_unit.buffers_read().size() == 1);
         out << "hw_uint<" << write_width << "> " << compute_unit.name << "(" << comma_list(args) << ") {" << endl;
         out << tab(1) << "return " << pick(compute_unit.buffers_read()) << ";" << endl;
       } else {
-        //vector<string> args;
-        //for (auto r : compute_unit.buffers_read()) {
-          //args.push_back("hw_uint<32*" + str(compute_unit.num_lanes(r)) + ">& " + r);
-        //}
 
         vector<string> child_calls;
         string last_res = "";
@@ -4850,12 +4869,12 @@ void merge_basic_block_ops(prog& prg) {
                 cc,
                 ag.back().str() + "_pack",
                 lanes,
-                32);
+                pick(ag).width);
             arg_names.push_back(ag.back().str() + "_pack");
           }
 
 
-          cc << "auto " << map_find(c, compute_unit.result_names) << " = " << c->func << "(" << comma_list(arg_names) << ");" << endl;
+          cc << tab(1) << "auto " << map_find(c, compute_unit.result_names) << " = " << c->func << "(" << comma_list(arg_names) << ");" << endl;
           child_calls.push_back(cc.str());
           last_res = map_find(c, compute_unit.result_names);
         }
@@ -4874,8 +4893,8 @@ void merge_basic_block_ops(prog& prg) {
         }
 
         out << "\n\t" << endl;
-        out << sep_list(child_calls, "", "", "\n\t");
-        pack_bv(1, out, rname, prods, 32);
+        out << sep_list(child_calls, "", "", "\n");
+        pack_bv(1, out, rname, prods, write_pixel_width);
         out << tab(1) << "return " << rname << ";" << endl;
         out << endl;
 
@@ -8776,8 +8795,8 @@ void generate_app_code(
     done.insert(buf);
   }
 
-  //set_channel_depths_to_constant(32, dag);
-  set_channel_depths_to_with_kernel_depth(500, dag);
+  set_channel_depths_to_constant(32, dag);
+  //set_channel_depths_to_with_kernel_depth(500, dag);
   //set_channel_depths_ilp(500, dag);
 
   for (auto c : dag.inter_group_channels()) {
@@ -8790,14 +8809,14 @@ void generate_app_code(
     cout << tab(2) << "Readers..." << endl;
     for (auto r : readers) {
       cout << tab(3) << str(map_find(r->name, mps)) << endl;
-      auto read_map = consumer_umap(r, dag.prg);
-      cout << tab(3) << str(read_map) << endl;
+      //auto read_map = consumer_umap(r, dag.prg);
+      //cout << tab(3) << str(read_map) << endl;
     }
     cout << tab(2) << "Writers..." << endl;
     for (auto r : writers) {
       cout << tab(3) << str(map_find(r->name, mps)) << endl;
-      auto read_map = producer_umap(r, dag.prg);
-      cout << tab(3) << str(read_map) << endl;
+      //auto read_map = producer_umap(r, dag.prg);
+      //cout << tab(3) << str(read_map) << endl;
     }
     cout << endl;
 
@@ -8815,6 +8834,8 @@ void generate_app_code(
     }
 
   }
+  //assert(false);
+
   for (auto& gp : dag.fusion_group_progs) {
     for (auto& buf : gp.second.boundary_buffers()) {
       if (!elem(buf, done)) {
