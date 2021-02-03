@@ -19849,7 +19849,7 @@ void sbl_static_dynamic_comparison() {
 
 void application_tests() {
 
-  jac32_static_dynamic_comparison();
+  //jac32_static_dynamic_comparison();
   jac16_static_dynamic_comparison();
   jac_static_dynamic_comparison();
 
