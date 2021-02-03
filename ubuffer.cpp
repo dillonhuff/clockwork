@@ -1751,7 +1751,8 @@ CoreIR::Instance* UBuffer::generate_lake_tile_instance(
         CodegenOptions options,
         string ub_ins_name, string bank_name,
         size_t input_num, size_t output_num,
-        bool has_stencil_valid, bool has_flush) {
+        bool has_stencil_valid, bool has_flush,
+        string mode) {
 
   auto context = def->getContext();
   CoreIR::Instance* buf;
@@ -1777,7 +1778,8 @@ CoreIR::Instance* UBuffer::generate_lake_tile_instance(
     //modargs["config"] = CoreIR::Const::make(context, config_file);
     buf = def->addInstance(ub_ins_name, "cgralib.Mem_amber", genargs);
     buf->getMetaData()["config"] = config_file;
-    buf->getMetaData()["mode"] = string("lake");
+    //buf->getMetaData()["mode"] = string("lake");
+    buf->getMetaData()["mode"] = mode;
   } else {
     //TODO: remove cwlib in the future
     genargs["config"] = CoreIR::Const::make(context, config_file);
@@ -1988,9 +1990,11 @@ void UBuffer::generate_coreir(CodegenOptions& options,
           << capacity << endl;
       //vectorization pass for lake tile
       //if (options.rtl_options.target_tile == TARGET_TILE_WIDE_FETCH_WITH_ADDRGEN) {
+      string config_mode;
       if (capacity <= 32) {
         cout << "Generate config for register file!" << endl;
         config_file = generate_ubuf_args(options, target_buf);
+        config_mode = "pond";
 
       } else {
         //buffer_vectorization(options.iis, bk.name + "_ubuf", 1, 4, rewrite_buffer);
@@ -1999,6 +2003,7 @@ void UBuffer::generate_coreir(CodegenOptions& options,
                 options.mem_hierarchy.at("mem").fetch_width,
                 vectorized_buf);
         config_file = generate_ubuf_args(options, vectorized_buf);
+        config_mode = "lake";
       }
 
       //Generate SMT stream if needed
@@ -2011,7 +2016,7 @@ void UBuffer::generate_coreir(CodegenOptions& options,
       CoreIR::Instance* buf = generate_lake_tile_instance(def, options,
         ub_ins_name, bk.name,
         targe_buf.num_in_ports(), targe_buf.num_out_ports(),
-        has_stencil_valid & (!use_memtile_gen_stencil_valid), true);
+        has_stencil_valid & (!use_memtile_gen_stencil_valid), true, config_mode);
 
       //Wire stencil valid
       if (options.pass_through_valid) {
