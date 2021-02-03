@@ -2403,7 +2403,13 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
         CodegenOptions options,
         string ub_ins_name, string bk_name,
         size_t input_num, size_t output_num,
-        bool has_stencil_valid, bool has_flush, string mode = "lake");
+        bool has_stencil_valid, bool has_flush);
+
+    CoreIR::Instance* generate_pond_instance(
+        CoreIR::ModuleDef* def,
+        CodegenOptions options,
+        string ub_ins_name,
+        size_t input_num, size_t output_num);
 
     void emit_lake_config_collateral(CodegenOptions options, string dir);
 #endif
