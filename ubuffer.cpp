@@ -1991,7 +1991,8 @@ void UBuffer::generate_coreir(CodegenOptions& options,
       //vectorization pass for lake tile
       //if (options.rtl_options.target_tile == TARGET_TILE_WIDE_FETCH_WITH_ADDRGEN) {
       string config_mode;
-      if (capacity <= 32) {
+      bool multi_level_mem = options.mem_hierarchy.count("regfile");
+      if (capacity <= 32 && multi_level_mem) {
         cout << "Generate config for register file!" << endl;
         config_file = generate_ubuf_args(options, target_buf);
         config_mode = "pond";
