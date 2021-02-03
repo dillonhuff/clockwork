@@ -7525,8 +7525,8 @@ prog histogram1d() {
 //store is: histogram.stencil(bin.stencil(histogram_s1_r_x)) = (histogram.stencil(bin.stencil(histogram_s1_r_x)) + (uint16)1)
   auto hcompute_histogram_stencil_1 = histogram_s1_r_x->add_op("op_hcompute_histogram_stencil_1");
   hcompute_histogram_stencil_1->add_function("hcompute_histogram_stencil_1");
-  //hcompute_histogram_stencil_1->add_dynamic_load("histogram_stencil", "bin_stencil", "histogram_s1_r_x");
-  //hcompute_histogram_stencil_1->add_dynamic_store("histogram_stencil", "bin_stencil", "histogram_s1_r_x");
+  hcompute_histogram_stencil_1->add_dynamic_load("histogram_stencil", "bin_stencil", "histogram_s1_r_x");
+  hcompute_histogram_stencil_1->add_dynamic_store("histogram_stencil", "bin_stencil", "histogram_s1_r_x");
 
 //consuming histogram.stencil
 
