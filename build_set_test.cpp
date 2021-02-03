@@ -14152,7 +14152,7 @@ void Init_PE_energy_cost(power_analysis_params& power_params)  {
 }
 
 
-void compile_for_garnet_single_port_mem(prog & prg, string dir, bool gen_smt_stream, bool gen_config_only, bool use_dse_compute);
+void compile_for_garnet_single_port_mem(prog & prg, string dir, bool gen_smt_stream, bool gen_config_only, bool multi_level_mem, bool use_dse_compute);
 void cpy_app_to_folder(const std::string& app_type, const std::string& prg_name);
 
 void test_pond(string dir) {
@@ -14171,7 +14171,11 @@ void test_pond(string dir) {
     auto cpu = unoptimized_result(prg);
 
     bool gen_config_only = true;
-    compile_for_garnet_single_port_mem(prg, dir, false, gen_config_only, false);
+    compile_for_garnet_single_port_mem(prg, dir,
+            false, /*generate smt stream*/
+            gen_config_only,/*gen_config_only*/
+            true, /*multi level hierarchy*/
+            false/*use dse compute*/);
     generate_regression_testbench(prg);
 
     cout << "Output name: " << prg.name << endl;
@@ -14237,7 +14241,7 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
     auto cpu = unoptimized_result(prg);
 
     //compile_for_garnet_platonic_mem(prg);
-    compile_for_garnet_single_port_mem(prg, dir, false, gen_config_only, false);
+    compile_for_garnet_single_port_mem(prg, dir, false, gen_config_only, false, false);
     generate_regression_testbench(prg);
 
     cout << "Output name: " << prg.name << endl;
@@ -17590,7 +17594,7 @@ void compile_for_garnet_single_port_mem(prog& prg,
         string dir,
         bool gen_smt_stream,
         bool config_gen_only,
-        //bool multi_sram,
+        bool multi_level_mem,
         bool use_dse_compute) {
 
   //make sure the loop bound and address is positive
@@ -17608,7 +17612,8 @@ void compile_for_garnet_single_port_mem(prog& prg,
 
   CodegenOptions options = garnet_codegen_single_port_with_addrgen_options(prg, dir);
   options.add_memory_hierarchy("mem");
-  options.add_memory_hierarchy("regfile");
+  if (multi_level_mem)
+      options.add_memory_hierarchy("regfile");
   options.emit_smt_stream = gen_smt_stream;
   options.config_gen_only = config_gen_only;
   //if (multi_sram)
