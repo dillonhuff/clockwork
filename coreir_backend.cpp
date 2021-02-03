@@ -1749,9 +1749,18 @@ void emit_lake_config_collateral(CodegenOptions options, string tile_name, json 
 
 void run_lake_verilog_codegen(CodegenOptions& options, string v_name, string ub_ins_name) {
   //cmd("export LAKE_CONTROLLERS=$PWD");
-  cout << "Runing cmd$ python /nobackup/joeyliu/aha/lake/tests/wrapper_lake.py -c " + options.dir + "lake_collateral/" + ub_ins_name + " -s True -n " + v_name  <<  endl;
+  //cout << "Runing cmd$ python /nobackup/joeyliu/aha/lake/tests/wrapper_lake.py -c " + options.dir + "lake_collateral/" + ub_ins_name + " -s True -n " + v_name  <<  endl;
   ASSERT(getenv("LAKE_PATH"), "Define env var $LAKE_PATH which is the /PathTo/lake");
   int res_lake = cmd("python $LAKE_PATH/tests/wrapper_lake.py -c " + options.dir + "lake_collateral/" + ub_ins_name + " -s True -n " + v_name);
+  assert(res_lake == 0);
+  cmd("mkdir -p "+options.dir+"verilog");
+  cmd("mv LakeWrapper_"+v_name+".v " + options.dir + "verilog");
+}
+
+void run_pond_verilog_codegen(CodegenOptions& options, string v_name, string ub_ins_name) {
+  //cmd("export LAKE_CONTROLLERS=$PWD");
+  ASSERT(getenv("LAKE_PATH"), "Define env var $LAKE_PATH which is the /PathTo/lake");
+  int res_lake = cmd("python $LAKE_PATH/tests/wrapper_pond.py -c " + options.dir + "lake_collateral/" + ub_ins_name + " -n " + v_name);
   assert(res_lake == 0);
   cmd("mkdir -p "+options.dir+"verilog");
   cmd("mv LakeWrapper_"+v_name+".v " + options.dir + "verilog");
@@ -1766,11 +1775,19 @@ void generate_lake_tile_verilog(CodegenOptions& options, Instance* buf) {
 
   //dump the collateral file
   emit_lake_config_collateral(options, ub_ins_name, buf->getMetaData()["config"]);
+  string config_mode = buf->getMetaData()["mode"];
 
   if (options.config_gen_only)
     return;
   //run the lake generation cmd
-  run_lake_verilog_codegen(options, v_name, ub_ins_name);
+  if (config_mode == "lake")
+      run_lake_verilog_codegen(options, v_name, ub_ins_name);
+  else if (config_mode == "pond")
+      run_pond_verilog_codegen(options, v_name, ub_ins_name);
+  else {
+      cout << "Not implemented yet. " << endl;
+      assert(false);
+  }
 }
 
 Instance* generate_coreir_op_controller_verilog(CodegenOptions& options, ModuleDef* def, op* op, vector<isl_map*>& sched_maps, schedule_info& hwinfo) {

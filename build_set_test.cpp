@@ -14170,7 +14170,7 @@ void test_pond(string dir) {
     prg.pretty_print();
     auto cpu = unoptimized_result(prg);
 
-    bool gen_config_only = true;
+    bool gen_config_only = false;
     compile_for_garnet_single_port_mem(prg, dir,
             false, /*generate smt stream*/
             gen_config_only,/*gen_config_only*/
