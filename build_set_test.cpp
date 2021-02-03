@@ -11966,6 +11966,9 @@ void histogram_test() {
 
   int run_res = system("./a.out");
   assert(run_res == 0);
+
+  prg.pretty_print();
+  //assert(false);
 }
 
 template<typename T>
@@ -19423,8 +19426,12 @@ void gpu_codegen_test() {
 
 void histogram1d_test() {
   prog prg = histogram1d();
-  assert(unoptimized_compiles(prg));
+
+  prg.pretty_print();
   assert(false);
+
+  //assert(unoptimized_compiles(prg));
+  //assert(false);
 }
 
 void blur_static_dynamic_comparison() {
@@ -19946,7 +19953,7 @@ void sbl_static_dynamic_comparison() {
   assert(false);
 }
 
-void application_tests() {
+void initial_soda_comparison() {
   sbl16_static_dynamic_comparison_short_FIFOs();
   sbl32_static_dynamic_comparison_larger_bounds_to_prevent_vivado_unroll_error();
 
@@ -19961,7 +19968,9 @@ void application_tests() {
   blur32_static_dynamic_comparison();
   blur16_static_dynamic_comparison();
   blur_static_dynamic_comparison();
+}
 
+void application_tests() {
   histogram_test();
   histogram1d_test();
   iccad_tests();

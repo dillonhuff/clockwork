@@ -1005,23 +1005,6 @@ inline void gray_diff_FIFO_buf60_load_to_gray_diff_FIFO_buf6063_write_bundle_wri
 }
 
 // Operation logic
-inline void load_to_gray_to_gp_12023(gray_cache& gray, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */gray_to_gp_120, int d0, int d1, int d2) {
-  // Dynamic address computation
-
-	// Consume: gray
-	auto gray_gray_ld21_c__gray_ld22_value = gray_load_to_gray_to_gp_12023_read_bundle_read(gray/* source_delay */, d0, d1, d2, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	// Produce: gray_to_gp_120
-	gray_to_gp_120.write(gray_gray_ld21_c__gray_ld22_value);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
 inline void load_to_gray_to_gp_22427(gray_cache& gray, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */gray_to_gp_224, int d0, int d1, int d2) {
   // Dynamic address computation
 
@@ -1046,6 +1029,23 @@ inline void oc_load_in03(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */
 	auto in_oc_load_in02_p_0_c___oc_load_in01_p_0_value = in.read();
 	// Produce: gray
 	gray_oc_load_in03_write_bundle_write(/* arg names */in_oc_load_in02_p_0_c___oc_load_in01_p_0_value, gray, d0, d1, d2, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void load_to_gray_to_gp_12023(gray_cache& gray, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */gray_to_gp_120, int d0, int d1, int d2) {
+  // Dynamic address computation
+
+	// Consume: gray
+	auto gray_gray_ld21_c__gray_ld22_value = gray_load_to_gray_to_gp_12023_read_bundle_read(gray/* source_delay */, d0, d1, d2, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	// Produce: gray_to_gp_120
+	gray_to_gp_120.write(gray_gray_ld21_c__gray_ld22_value);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -1652,27 +1652,27 @@ void us_mk1_ii1(HWStream<hw_uint<32> >& /* no bundle get_args num ports = 1 */in
 
   HWStream< hw_uint<32> > gray_to_gp_120;
 #ifdef __VIVADO_SYNTH__
-#pragma HLS stream variable=gray_to_gp_120.values depth=32
+#pragma HLS stream variable=gray_to_gp_120.values depth=1
 #endif //__VIVADO_SYNTH__
   HWStream< hw_uint<32> > gray_to_gp_224;
 #ifdef __VIVADO_SYNTH__
-#pragma HLS stream variable=gray_to_gp_224.values depth=32
+#pragma HLS stream variable=gray_to_gp_224.values depth=1
 #endif //__VIVADO_SYNTH__
   HWStream< hw_uint<32> > gray_diff_to_gp_436;
 #ifdef __VIVADO_SYNTH__
-#pragma HLS stream variable=gray_diff_to_gp_436.values depth=32
+#pragma HLS stream variable=gray_diff_to_gp_436.values depth=1
 #endif //__VIVADO_SYNTH__
   HWStream< hw_uint<32> > gray_blur_to_gp_328;
 #ifdef __VIVADO_SYNTH__
-#pragma HLS stream variable=gray_blur_to_gp_328.values depth=32
+#pragma HLS stream variable=gray_blur_to_gp_328.values depth=1
 #endif //__VIVADO_SYNTH__
   HWStream< hw_uint<32> > gray_blur_cache_to_gp_532;
 #ifdef __VIVADO_SYNTH__
-#pragma HLS stream variable=gray_blur_cache_to_gp_532.values depth=32
+#pragma HLS stream variable=gray_blur_cache_to_gp_532.values depth=1
 #endif //__VIVADO_SYNTH__
   HWStream< hw_uint<32> > blurred_to_gp_416;
 #ifdef __VIVADO_SYNTH__
-#pragma HLS stream variable=blurred_to_gp_416.values depth=32
+#pragma HLS stream variable=blurred_to_gp_416.values depth=1
 #endif //__VIVADO_SYNTH__
 
 
