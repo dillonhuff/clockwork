@@ -1239,11 +1239,8 @@ Json create_lake_config(unordered_map<string, MemConnSch> mem_conxs) {
 void add_lake_config(Json& jdata, ConfigMap data, int dimensionality, string domain_name) {
     auto tmp = MemConnSch(dimensionality, data);
     tmp.remove_redundant_dim();
-    cout << "Domain name: " << domain_name << endl;
-    cout << "jdata: " << jdata << endl;
     jdata[domain_name]["dimensionality"] = tmp.dimensionality;
     for (auto it: tmp.vals) {
-        cout << "\tit.first" << it.first << endl;
         jdata[domain_name][it.first] = it.second;
     }
 }
@@ -1746,13 +1743,49 @@ CoreIR::Instance* affine_controller_use_lake_tile(
   return buf;
 }
 
+CoreIR::Instance* UBuffer::generate_pond_instance(
+        ModuleDef* def,
+        CodegenOptions options,
+        string ub_ins_name,
+        size_t input_num, size_t output_num) {
+
+  auto context = def->getContext();
+  CoreIR::Instance* buf;
+  CoreIR::Values genargs = {
+    {"width", CoreIR::Const::make(context, port_widths)},
+    {"num_inputs", CoreIR::Const::make(context, input_num)},
+    {"num_outputs", CoreIR::Const::make(context, output_num)},
+    {"ID", CoreIR::Const::make(context, context->getUnique())},
+  };
+  CoreIR::Values modargs = {
+    {"mode", CoreIR::Const::make(context, "pond")}
+  };
+  cout << "Add pond node with input_num = " << input_num
+      << ", output_num = " << output_num << endl;
+  buf = def->addInstance(ub_ins_name, "cgralib.pond", genargs);
+  buf->getMetaData()["config"] = config_file;
+  buf->getMetaData()["mode"] = "pond";
+
+  auto clk_en_const = def->addInstance(ub_ins_name+"_clk_en_const", "corebit.const",
+          {{"value", CoreIR::Const::make(context, true)}});
+
+  //garnet wire reset to flush of memory
+  def->connect(buf->sel("flush"), def->sel("self.reset"));
+  //def->connect(buf->sel("flush"), def->sel("self.flush"));
+  //def->connect(buf->sel("rst_n"), def->sel("self.rst_n"));
+  def->connect(buf->sel("clk"), def->sel("self.clk"));
+  def->connect(buf->sel("clk_en"), clk_en_const->sel("out"));
+  def->connect(buf->sel("rst_n"), clk_en_const->sel("out"));
+
+  return buf;
+}
+
 CoreIR::Instance* UBuffer::generate_lake_tile_instance(
         ModuleDef* def,
         CodegenOptions options,
         string ub_ins_name, string bank_name,
         size_t input_num, size_t output_num,
-        bool has_stencil_valid, bool has_flush,
-        string mode) {
+        bool has_stencil_valid, bool has_flush) {
 
   auto context = def->getContext();
   CoreIR::Instance* buf;
@@ -1778,8 +1811,7 @@ CoreIR::Instance* UBuffer::generate_lake_tile_instance(
     //modargs["config"] = CoreIR::Const::make(context, config_file);
     buf = def->addInstance(ub_ins_name, "cgralib.Mem_amber", genargs);
     buf->getMetaData()["config"] = config_file;
-    //buf->getMetaData()["mode"] = string("lake");
-    buf->getMetaData()["mode"] = mode;
+    buf->getMetaData()["mode"] = string("lake");
   } else {
     //TODO: remove cwlib in the future
     genargs["config"] = CoreIR::Const::make(context, config_file);
@@ -1819,7 +1851,29 @@ void UBuffer::generate_stencil_valid_config(CodegenOptions& options, string bank
   add_lake_config(config_file, stencil_valid, num_in_dims(sched), "stencil_valid");
 }
 
+string memDatainPort(string mode, int pt_cnt) {
+    if (mode == "lake")
+        return "data_in_" + to_string(pt_cnt);
+    else if (mode == "pond") {
+        assert(pt_cnt == 0);
+        return "data_in_pond";
+    } else {
+        cout << "Mode: " << mode << " is not implemented yet" << endl;
+        assert(false);
+    }
+}
 
+string memDataoutPort(string mode, int pt_cnt) {
+    if (mode == "lake")
+        return "data_out_" + to_string(pt_cnt);
+    else if (mode == "pond") {
+        assert(pt_cnt == 0);
+        return "data_out_pond";
+    } else {
+        cout << "Mode: " << mode << " is not implemented yet" << endl;
+        assert(false);
+    }
+}
 
 //generate/realize the rewrite structure inside ubuffer node
 void UBuffer::generate_coreir(CodegenOptions& options,
@@ -2014,13 +2068,21 @@ void UBuffer::generate_coreir(CodegenOptions& options,
 
       //create the tile instance
       auto targe_buf = rewrite_buffer.at(bk.name + "_ubuf");
-      CoreIR::Instance* buf = generate_lake_tile_instance(def, options,
-        ub_ins_name, bk.name,
-        targe_buf.num_in_ports(), targe_buf.num_out_ports(),
-        has_stencil_valid & (!use_memtile_gen_stencil_valid), true, config_mode);
+      CoreIR::Instance* buf;
+      if (config_mode == "lake") {
+        buf = generate_lake_tile_instance(def, options,
+          ub_ins_name, bk.name,
+          targe_buf.num_in_ports(), targe_buf.num_out_ports(),
+          has_stencil_valid & (!use_memtile_gen_stencil_valid), true);
+
+      } else if (config_mode == "pond") {
+        buf = generate_pond_instance(def, options, ub_ins_name,
+                targe_buf.num_in_ports(), target_buf.num_out_ports());
+        has_stencil_valid = false;
+      }
 
       //Wire stencil valid
-      if (options.pass_through_valid) {
+      if (options.pass_through_valid && (config_mode == "lake")) {
         if (has_stencil_valid & (!use_memtile_gen_stencil_valid)) {
           //a bank can belongs to multiple bundles
           for (auto bd_name : get_bank_out_bundles(bk.name)) {
@@ -2041,7 +2103,7 @@ void UBuffer::generate_coreir(CodegenOptions& options,
         //line buffer case
         string  inpt = pick(inpts);
         if (isIn.at(inpt)){
-          def->connect(buf->sel("data_in_" + to_string(inpt_cnt)), pt2wire.at(inpt));
+          def->connect(buf->sel(memDatainPort(config_mode, inpt_cnt)), pt2wire.at(inpt));
 
           //There is no control signal
           if (with_ctrl) {
@@ -2052,7 +2114,7 @@ void UBuffer::generate_coreir(CodegenOptions& options,
             }
           }
         } else {
-          def->connect(buf->sel("data_in_" + to_string(inpt_cnt)), wire2out.at(inpt));
+          def->connect(buf->sel(memDatainPort(config_mode, inpt_cnt)), wire2out.at(inpt));
           cout << "Input port: " << inpt << endl;
           if (with_ctrl) {
             def->connect(buf->sel("wen_" + to_string(inpt_cnt)), wire2out.at(inpt + "_valid"));
@@ -2083,10 +2145,11 @@ void UBuffer::generate_coreir(CodegenOptions& options,
           //need a second pass push all wire into a list
           //def->connect(buf->sel("dataout_"+to_string(outpt_cnt)), pt2wire.at(outpt));
           auto outpt = *(outpt_it);
-          CoreIR::Wireable* tmp = buf->sel("data_out_"+to_string(outpt_cnt));
+          //CoreIR::Wireable* tmp = buf->sel("data_out_"+to_string(outpt_cnt));
+          CoreIR::Wireable* tmp = buf->sel(memDataoutPort(config_mode, outpt_cnt));
           CoreIR::map_insert(outpt_bank_rd, outpt, tmp);
 
-          wire2out[outpt] = buf->sel("data_out_" + to_string(outpt_cnt));
+          wire2out[outpt] = tmp;
           //wire2out[outpt + "_valid"] = buf->sel("valid_" + to_string(outpt_cnt));
           //TODO: figure out valid wiring strategy
           //Wire the bank with the largest delay
@@ -2109,7 +2172,7 @@ void UBuffer::generate_coreir(CodegenOptions& options,
         for (auto in_bd: get_bank_in_bundles(bk.name)) {
           for (auto inpt: port_bundles.at(in_bd)) {
             cout << "\t\tvisit port: " << inpt << endl;
-            def->connect(buf->sel("data_in_" + to_string(inpt_cnt)), pt2wire.at(inpt));
+            def->connect(buf->sel(memDatainPort(config_mode, inpt_cnt)), pt2wire.at(inpt));
             if (with_ctrl) {
               def->connect(buf->sel("wen_" + to_string(inpt_cnt)), def->sel("self."+get_bundle(inpt)+"_en"));
             }
@@ -2119,7 +2182,7 @@ void UBuffer::generate_coreir(CodegenOptions& options,
         for (auto outpt: outpts) {
           //need a second pass push all wire into a list
           //def->connect(buf->sel("dataout_"+to_string(outpt_cnt)), pt2wire.at(outpt));
-          CoreIR::Wireable* tmp = buf->sel("data_out_"+to_string(outpt_cnt));
+          CoreIR::Wireable* tmp = buf->sel(memDataoutPort(config_mode, outpt_cnt));
           CoreIR::map_insert(outpt_bank_rd, outpt, tmp);
 
           //use the first port in the chain to be the output valid
@@ -2133,7 +2196,8 @@ void UBuffer::generate_coreir(CodegenOptions& options,
 
       //generate verilog collateral
       generate_lake_tile_verilog(options, buf);
-      all_mem_tiles.push_back(buf);
+      if (config_mode == "lake")
+          all_mem_tiles.push_back(buf);
 
     }
   }
