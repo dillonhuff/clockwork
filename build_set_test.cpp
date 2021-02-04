@@ -19659,7 +19659,7 @@ void jac16_static_dynamic_comparison() {
 }
 
 void cp_static_dynamic_comparison() {
-  string prefix = "cp_d";
+  string prefix = "cp";
 
   int size = 1080;
   int rows = size;
@@ -19676,7 +19676,10 @@ void cp_static_dynamic_comparison() {
 
   App jac = camera_pipeline(out_name);
   prog prg = jac.realize(options, out_name, cols, rows, 1);
-  prg.name = out_name + "_opt";
+
+  move_to_benchmarks_folder(out_name + "_opt");
+
+  prg.name = out_name + "_opt_d";
 
   jac.generate_soda_file(prg.name, throughput);
 
@@ -19705,7 +19708,6 @@ void cp_static_dynamic_comparison() {
   cout << "prg name: " << prg.name << endl;
 
   assert(false);
-
 }
 
 void jac_static_dynamic_comparison() {
