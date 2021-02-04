@@ -1958,7 +1958,12 @@ std::string perfect_loop_codegen(umap* schedmap) {
     rdset(ctx(schedmap), range_set);
 
   for (int i = 0; i < lower_bounds.size() - 1; i++) {
-    conv_out << tab(i) << "for (int i" << str(i) << " = " << lower_bounds.at(i) << "; i" << str(i) << " <= " << upper_bounds.at(i) << "; i" << i << "++) {" << endl;
+    int trip_count = upper_bounds.at(i) - lower_bounds.at(i) + 1;
+    if (trip_count == 1) {
+      conv_out << tab(i) << "int i" << str(i) << " = " << lower_bounds.at(i) << ";" << endl;
+    } else {
+      conv_out << tab(i) << "for (int i" << str(i) << " = " << lower_bounds.at(i) << "; i" << str(i) << " <= " << upper_bounds.at(i) << "; i" << i << "++) {" << endl;
+    }
     if (i == ((int) lower_bounds.size()) - 2) {
       conv_out << "#pragma HLS pipeline II=1" << endl;
     }
@@ -1992,7 +1997,6 @@ std::string perfect_loop_codegen(umap* schedmap) {
       return map_find(range_name(x), order);
       });
 
-  //for (auto time_to_val : get_maps(inv(schedmap))) {
   for (auto tv : maps) {
     cout << tab(1) << "tv: " << str(tv) << endl;
     cout << tab(2) << "start project out at: " << num_in_dims(tv) - 1 << endl;
@@ -2024,9 +2028,13 @@ std::string perfect_loop_codegen(umap* schedmap) {
 
   //assert(false);
 
-  //for (int i = 0; i < lower_bounds.size(); i++) {
   for (int i = 0; i < lower_bounds.size() - 1; i++) {
-    conv_out << tab(lower_bounds.size() - 1 - i) << "}" << endl;
+    int trip_count = upper_bounds.at(i) - lower_bounds.at(i) + 1;
+    if (trip_count == 1) {
+    } else {
+      conv_out << tab(lower_bounds.size() - 1 - i) << "}" << endl;
+    }
+    //conv_out << tab(lower_bounds.size() - 1 - i) << "}" << endl;
   }
 
   return conv_out.str();
