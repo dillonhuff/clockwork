@@ -22,29 +22,29 @@ int main(int argc, char **argv) {
   size_t total_size_bytes = 0;
   size_t total_size_bytes_read = 0;
   size_t total_size_bytes_written = 0;
-  const int cp_1_update_0_sm100_0151_write_pipe0_DATA_SIZE = num_epochs*1183744;
-  const int cp_1_update_0_sm100_0151_write_BYTES_PER_PIXEL = 16 / 8;
-  size_t cp_1_update_0_sm100_0151_write_size_bytes = cp_1_update_0_sm100_0151_write_BYTES_PER_PIXEL * cp_1_update_0_sm100_0151_write_pipe0_DATA_SIZE;
+  const int cp_1_update_0_sm98_0153_write_pipe0_DATA_SIZE = num_epochs*1183744;
+  const int cp_1_update_0_sm98_0153_write_BYTES_PER_PIXEL = 16 / 8;
+  size_t cp_1_update_0_sm98_0153_write_size_bytes = cp_1_update_0_sm98_0153_write_BYTES_PER_PIXEL * cp_1_update_0_sm98_0153_write_pipe0_DATA_SIZE;
 
-  total_size_bytes += cp_1_update_0_sm100_0151_write_size_bytes;
-  total_size_bytes_written += cp_1_update_0_sm100_0151_write_size_bytes;
-  const int raw_update_0_sm90_0137_read_pipe0_DATA_SIZE = num_epochs*1183744;
-  const int raw_update_0_sm90_0137_read_BYTES_PER_PIXEL = 16 / 8;
-  size_t raw_update_0_sm90_0137_read_size_bytes = raw_update_0_sm90_0137_read_BYTES_PER_PIXEL * raw_update_0_sm90_0137_read_pipe0_DATA_SIZE;
+  total_size_bytes += cp_1_update_0_sm98_0153_write_size_bytes;
+  total_size_bytes_written += cp_1_update_0_sm98_0153_write_size_bytes;
+  const int raw_update_0_sm88_0165_read_pipe0_DATA_SIZE = num_epochs*1183744;
+  const int raw_update_0_sm88_0165_read_BYTES_PER_PIXEL = 16 / 8;
+  size_t raw_update_0_sm88_0165_read_size_bytes = raw_update_0_sm88_0165_read_BYTES_PER_PIXEL * raw_update_0_sm88_0165_read_pipe0_DATA_SIZE;
 
-  total_size_bytes += raw_update_0_sm90_0137_read_size_bytes;
-  total_size_bytes_read += raw_update_0_sm90_0137_read_size_bytes;
+  total_size_bytes += raw_update_0_sm88_0165_read_size_bytes;
+  total_size_bytes_read += raw_update_0_sm88_0165_read_size_bytes;
 
   cl_int err;
   cl::Context context;
   cl::Kernel krnl_vector_add;
   cl::CommandQueue q;
 
-  std::vector<uint8_t, aligned_allocator<uint8_t> > cp_1_update_0_sm100_0151_write_pipe0(cp_1_update_0_sm100_0151_write_size_bytes);
-  std::vector<uint8_t, aligned_allocator<uint8_t> > raw_update_0_sm90_0137_read_pipe0(raw_update_0_sm90_0137_read_size_bytes);
+  std::vector<uint8_t, aligned_allocator<uint8_t> > cp_1_update_0_sm98_0153_write_pipe0(cp_1_update_0_sm98_0153_write_size_bytes);
+  std::vector<uint8_t, aligned_allocator<uint8_t> > raw_update_0_sm88_0165_read_pipe0(raw_update_0_sm88_0165_read_size_bytes);
 
-  std::ofstream input_raw_update_0_sm90_0137_read("raw_update_0_sm90_0137_read.csv");
-  for (int i = 0; i < raw_update_0_sm90_0137_read_pipe0_DATA_SIZE; i++) {
+  std::ofstream input_raw_update_0_sm88_0165_read("raw_update_0_sm88_0165_read.csv");
+  for (int i = 0; i < raw_update_0_sm88_0165_read_pipe0_DATA_SIZE; i++) {
 #ifdef __FLOAT_OUTPUT__
     float  val = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
 #else // __FLOAT_OUTPUT__
@@ -52,24 +52,24 @@ int main(int argc, char **argv) {
 #endif // __FLOAT_OUTPUT__
 
 #ifdef __FLOAT_OUTPUT__
-    input_raw_update_0_sm90_0137_read << val << std::endl;
+    input_raw_update_0_sm88_0165_read << val << std::endl;
 #else // __FLOAT_OUTPUT__
-    input_raw_update_0_sm90_0137_read << val << std::endl;
+    input_raw_update_0_sm88_0165_read << val << std::endl;
 #endif // __FLOAT_OUTPUT__
 
 #ifdef __FLOAT_OUTPUT__
-    ((uint16_t*) (raw_update_0_sm90_0137_read_pipe0.data()))[i] = bitcast<uint16_t, float>(val);
+    ((uint16_t*) (raw_update_0_sm88_0165_read_pipe0.data()))[i] = bitcast<uint16_t, float>(val);
 #else // __FLOAT_OUTPUT__
-    ((uint16_t*) (raw_update_0_sm90_0137_read_pipe0.data()))[i] = val;
+    ((uint16_t*) (raw_update_0_sm88_0165_read_pipe0.data()))[i] = val;
 #endif // __FLOAT_OUTPUT__
   }
 
-  input_raw_update_0_sm90_0137_read.close();
-  for (int i = 0; i < cp_1_update_0_sm100_0151_write_pipe0_DATA_SIZE; i++) {
+  input_raw_update_0_sm88_0165_read.close();
+  for (int i = 0; i < cp_1_update_0_sm98_0153_write_pipe0_DATA_SIZE; i++) {
 #ifdef __FLOAT_OUTPUT__
-    ((uint16_t*) (cp_1_update_0_sm100_0151_write_pipe0.data()))[i] = 0;
+    ((uint16_t*) (cp_1_update_0_sm98_0153_write_pipe0.data()))[i] = 0;
 #else // __FLOAT_OUTPUT__
-    ((uint16_t*) (cp_1_update_0_sm100_0151_write_pipe0.data()))[i] = 0;
+    ((uint16_t*) (cp_1_update_0_sm98_0153_write_pipe0.data()))[i] = 0;
 #endif // __FLOAT_OUTPUT__
   }
 
@@ -102,17 +102,17 @@ int main(int argc, char **argv) {
     exit(EXIT_FAILURE);
   }
 
-  OCL_CHECK(err, cl::Buffer cp_1_update_0_sm100_0151_write_pipe0_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_READ_ONLY, cp_1_update_0_sm100_0151_write_size_bytes, cp_1_update_0_sm100_0151_write_pipe0.data(), &err));
-  OCL_CHECK(err, err = krnl_vector_add.setArg(0, cp_1_update_0_sm100_0151_write_pipe0_ocl_buf));
+  OCL_CHECK(err, cl::Buffer cp_1_update_0_sm98_0153_write_pipe0_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_READ_ONLY, cp_1_update_0_sm98_0153_write_size_bytes, cp_1_update_0_sm98_0153_write_pipe0.data(), &err));
+  OCL_CHECK(err, err = krnl_vector_add.setArg(0, cp_1_update_0_sm98_0153_write_pipe0_ocl_buf));
 
-  OCL_CHECK(err, cl::Buffer raw_update_0_sm90_0137_read_pipe0_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_WRITE_ONLY, raw_update_0_sm90_0137_read_size_bytes, raw_update_0_sm90_0137_read_pipe0.data(), &err));
-  OCL_CHECK(err, err = krnl_vector_add.setArg(1, raw_update_0_sm90_0137_read_pipe0_ocl_buf));
+  OCL_CHECK(err, cl::Buffer raw_update_0_sm88_0165_read_pipe0_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_WRITE_ONLY, raw_update_0_sm88_0165_read_size_bytes, raw_update_0_sm88_0165_read_pipe0.data(), &err));
+  OCL_CHECK(err, err = krnl_vector_add.setArg(1, raw_update_0_sm88_0165_read_pipe0_ocl_buf));
 
   uint64_t transfer_size = num_epochs*(1183744 / 1);
   OCL_CHECK(err, err = krnl_vector_add.setArg(2, transfer_size));
 
   std::cout << "Migrating memory" << std::endl;
-  OCL_CHECK(err, err = q.enqueueMigrateMemObjects({raw_update_0_sm90_0137_read_pipe0_ocl_buf}, 0));
+  OCL_CHECK(err, err = q.enqueueMigrateMemObjects({raw_update_0_sm88_0165_read_pipe0_ocl_buf}, 0));
 
   unsigned long start, end, nsduration;
   cl::Event event;
@@ -125,7 +125,7 @@ int main(int argc, char **argv) {
   start = OCL_CHECK(err,
   event.getProfilingInfo<CL_PROFILING_COMMAND_START>(&err));
   nsduration = end - start;
-  OCL_CHECK(err, err = q.enqueueMigrateMemObjects({cp_1_update_0_sm100_0151_write_pipe0_ocl_buf}, CL_MIGRATE_MEM_OBJECT_HOST));
+  OCL_CHECK(err, err = q.enqueueMigrateMemObjects({cp_1_update_0_sm98_0153_write_pipe0_ocl_buf}, CL_MIGRATE_MEM_OBJECT_HOST));
 
   q.finish();
 
@@ -138,12 +138,12 @@ int main(int argc, char **argv) {
   std::cout << "bytes / sec = " << bpersec << std::endl;
   std::cout << "GB / sec    = " << gbpersec << std::endl;
   printf("Execution time = %f (sec) \n", dsduration);
-  std::ofstream regression_result("cp_1_update_0_sm100_0151_write_accel_result.csv");
-  for (int i = 0; i < cp_1_update_0_sm100_0151_write_pipe0_DATA_SIZE; i++) {
+  std::ofstream regression_result("cp_1_update_0_sm98_0153_write_accel_result.csv");
+  for (int i = 0; i < cp_1_update_0_sm98_0153_write_pipe0_DATA_SIZE; i++) {
 #ifdef __FLOAT_OUTPUT__
-    regression_result << bitcast<float, uint16_t>(((uint16_t*) (cp_1_update_0_sm100_0151_write_pipe0.data()))[i]) << std::endl;
+    regression_result << bitcast<float, uint16_t>(((uint16_t*) (cp_1_update_0_sm98_0153_write_pipe0.data()))[i]) << std::endl;
 #else // __FLOAT_OUTPUT__
-    regression_result << ((uint16_t*) (cp_1_update_0_sm100_0151_write_pipe0.data()))[i] << std::endl;
+    regression_result << ((uint16_t*) (cp_1_update_0_sm98_0153_write_pipe0.data()))[i] << std::endl;
 #endif // __FLOAT_OUTPUT__
   }
 
