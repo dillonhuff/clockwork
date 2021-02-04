@@ -11966,6 +11966,9 @@ void histogram_test() {
 
   int run_res = system("./a.out");
   assert(run_res == 0);
+
+  prg.pretty_print();
+  //assert(false);
 }
 
 template<typename T>
@@ -19423,8 +19426,12 @@ void gpu_codegen_test() {
 
 void histogram1d_test() {
   prog prg = histogram1d();
+
+  prg.pretty_print();
+  //assert(false);
+
   assert(unoptimized_compiles(prg));
-  assert(false);
+  //assert(false);
 }
 
 void blur_static_dynamic_comparison() {
@@ -19651,6 +19658,118 @@ void jac16_static_dynamic_comparison() {
 
 }
 
+void cp16_static_dynamic_comparison() {
+  string prefix = "cp";
+
+  int size = 1080;
+  int rows = size;
+  int cols = size;
+
+  int unroll_factor = 16;
+  int throughput = unroll_factor;
+  string out_name = prefix + "_" + str(unroll_factor);
+
+  CodegenOptions options;
+  options.internal = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  options.debug_options.expect_all_linebuffers = true;
+
+  App jac = camera_pipeline(out_name);
+  prog prg = jac.realize(options, out_name, cols, rows, 1);
+
+  move_to_benchmarks_folder(out_name + "_opt");
+
+  prg.name = out_name + "_opt_d";
+
+  jac.generate_soda_file(prg.name, throughput);
+
+  unroll_reduce_loops(prg);
+  merge_basic_block_ops(prg);
+  normalize_bounds(prg);
+  normalize_address_offsets(prg);
+
+  auto fusion_groups = one_stage_per_group(prg);
+  auto fresh_groups = insert_inter_group_buffers(fusion_groups, prg);
+  unroll_mismatched_inner_loops(prg);
+  merge_basic_block_ops(prg);
+  infer_bounds_and_unroll(pick(prg.outs), {size, size}, throughput, prg);
+
+  assert(unoptimized_compiles(prg));
+
+  app_dag dag = partition_groups(fresh_groups, prg);
+
+  options = CodegenOptions();
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  generate_app_code(options, dag);
+
+  move_to_benchmarks_folder(prg.name);
+
+  string synth_dir =
+    "./soda_codes/" + prg.name+ "/our_code/";
+
+  system(("cp " + out_name + "_opt" + "*.h " + synth_dir).c_str());
+
+  cout << "prg name: " << prg.name << endl;
+
+  assert(false);
+}
+
+void cp_static_dynamic_comparison() {
+  string prefix = "cp";
+
+  int size = 1080;
+  int rows = size;
+  int cols = size;
+
+  int unroll_factor = 1;
+  int throughput = unroll_factor;
+  string out_name = prefix + "_" + str(unroll_factor);
+
+  CodegenOptions options;
+  options.internal = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  options.debug_options.expect_all_linebuffers = true;
+
+  App jac = camera_pipeline(out_name);
+  prog prg = jac.realize(options, out_name, cols, rows, 1);
+
+  move_to_benchmarks_folder(out_name + "_opt");
+
+  prg.name = out_name + "_opt_d";
+
+  jac.generate_soda_file(prg.name, throughput);
+
+  unroll_reduce_loops(prg);
+  merge_basic_block_ops(prg);
+  normalize_bounds(prg);
+  normalize_address_offsets(prg);
+
+  auto fusion_groups = one_stage_per_group(prg);
+  auto fresh_groups = insert_inter_group_buffers(fusion_groups, prg);
+  unroll_mismatched_inner_loops(prg);
+  merge_basic_block_ops(prg);
+  infer_bounds_and_unroll(pick(prg.outs), {size, size}, throughput, prg);
+
+  assert(unoptimized_compiles(prg));
+
+  app_dag dag = partition_groups(fresh_groups, prg);
+
+  options = CodegenOptions();
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  generate_app_code(options, dag);
+
+  move_to_benchmarks_folder(prg.name);
+
+  string synth_dir =
+    "./soda_codes/" + prg.name+ "/our_code/";
+
+  system(("cp " + out_name + "_opt" + "*.h " + synth_dir).c_str());
+
+  cout << "prg name: " << prg.name << endl;
+
+  assert(false);
+}
+
 void jac_static_dynamic_comparison() {
   string prefix = "jac_d";
 
@@ -19701,6 +19820,56 @@ void jac_static_dynamic_comparison() {
 
 }
 
+void sbl32_static_dynamic_comparison_larger_bounds_to_prevent_vivado_unroll_error() {
+  string prefix = "sbl_dlb";
+
+  int size = 4096;
+  int rows = size;
+  int cols = size;
+
+  int unroll_factor = 32;
+  int throughput = 32;
+  string out_name = prefix + "_" + str(unroll_factor);
+
+  CodegenOptions options;
+  options.internal = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  options.debug_options.expect_all_linebuffers = true;
+
+  App sbl = sobel16(out_name);
+  prog prg = sbl.realize(options, out_name, cols, rows, 1);
+  prg.name = out_name + "_opt";
+
+  sbl.generate_soda_file(prg.name, throughput);
+
+  unroll_reduce_loops(prg);
+  merge_basic_block_ops(prg);
+  normalize_bounds(prg);
+  normalize_address_offsets(prg);
+
+  auto fusion_groups = one_stage_per_group(prg);
+  auto fresh_groups = insert_inter_group_buffers(fusion_groups, prg);
+  unroll_mismatched_inner_loops(prg);
+  merge_basic_block_ops(prg);
+  infer_bounds_and_unroll(pick(prg.outs), {size, size}, throughput, prg);
+
+  assert(unoptimized_compiles(prg));
+
+  app_dag dag = partition_groups(fresh_groups, prg);
+
+  options = CodegenOptions();
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  generate_app_code(options, dag);
+
+
+  move_to_benchmarks_folder(prg.name);
+
+  cout << "prg name: " << prg.name << endl;
+
+  assert(false);
+
+}
+
 void sbl32_static_dynamic_comparison() {
   string prefix = "sbl_d";
 
@@ -19710,6 +19879,55 @@ void sbl32_static_dynamic_comparison() {
 
   int unroll_factor = 32;
   int throughput = 32;
+  string out_name = prefix + "_" + str(unroll_factor);
+
+  CodegenOptions options;
+  options.internal = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  options.debug_options.expect_all_linebuffers = true;
+
+  App sbl = sobel16(out_name);
+  prog prg = sbl.realize(options, out_name, cols, rows, 1);
+  prg.name = out_name + "_opt";
+
+  sbl.generate_soda_file(prg.name, throughput);
+
+  unroll_reduce_loops(prg);
+  merge_basic_block_ops(prg);
+  normalize_bounds(prg);
+  normalize_address_offsets(prg);
+
+  auto fusion_groups = one_stage_per_group(prg);
+  auto fresh_groups = insert_inter_group_buffers(fusion_groups, prg);
+  unroll_mismatched_inner_loops(prg);
+  merge_basic_block_ops(prg);
+  infer_bounds_and_unroll(pick(prg.outs), {size, size}, throughput, prg);
+
+  assert(unoptimized_compiles(prg));
+
+  app_dag dag = partition_groups(fresh_groups, prg);
+
+  options = CodegenOptions();
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  generate_app_code(options, dag);
+
+
+  move_to_benchmarks_folder(prg.name);
+
+  cout << "prg name: " << prg.name << endl;
+
+  assert(false);
+}
+
+void sbl16_static_dynamic_comparison_short_FIFOs() {
+  string prefix = "sbl_dsd";
+
+  int size = 1080;
+  int rows = size;
+  int cols = size;
+
+  int unroll_factor = 16;
+  int throughput = 16;
   string out_name = prefix + "_" + str(unroll_factor);
 
   CodegenOptions options;
@@ -19847,9 +20065,16 @@ void sbl_static_dynamic_comparison() {
   assert(false);
 }
 
-void application_tests() {
+void initial_soda_comparison() {
 
-  //jac32_static_dynamic_comparison();
+  cp16_static_dynamic_comparison();
+  cp_static_dynamic_comparison();
+
+
+  sbl16_static_dynamic_comparison_short_FIFOs();
+  sbl32_static_dynamic_comparison_larger_bounds_to_prevent_vivado_unroll_error();
+
+  jac32_static_dynamic_comparison();
   jac16_static_dynamic_comparison();
   jac_static_dynamic_comparison();
 
@@ -19860,9 +20085,13 @@ void application_tests() {
   blur32_static_dynamic_comparison();
   blur16_static_dynamic_comparison();
   blur_static_dynamic_comparison();
+}
 
-  histogram_test();
+void application_tests() {
+  initial_soda_comparison();
+
   histogram1d_test();
+  histogram_test();
   iccad_tests();
 
   gpu_codegen_test();

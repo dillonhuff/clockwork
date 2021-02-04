@@ -2741,8 +2741,9 @@ bool unoptimized_compiles(prog& prg) {
   auto old_name = prg.name;
   prg.name = "unoptimized_" + old_name;
   generate_regression_testbench(prg);
+  bool res = compile_regression_tb(prg) == 0;
   prg.name = old_name;
-  return compile_regression_tb(prg) == 0;
+  return res;
 }
 
 std::vector<string> unoptimized_result(prog& prg) {
@@ -8797,6 +8798,7 @@ void generate_app_code(
   }
 
   set_channel_depths_to_constant(32, dag);
+  //set_channel_depths_to_constant(1, dag);
   //set_channel_depths_to_with_kernel_depth(500, dag);
   //set_channel_depths_ilp(500, dag);
 

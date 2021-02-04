@@ -136,11 +136,6 @@ struct ir_node {
 
       }
     }
-    //for (auto& b : produce_locs) {
-      //if (b.first == buf) {
-        //b.second = prefix + ", " + b.second;
-      //}
-    //}
   }
 
   void add_prefix_to_reads(const std::string& prefix,
@@ -580,40 +575,6 @@ struct ir_node {
 
   void add_dynamic_store(const std::string& buf,
       const std::string& addr_table,
-      const vector<std::string>& table_offset) {
-    //add_load(addr_table, table_offset);
-    //dynamic_load_addresses.push_back({buf, addr_table, table_offset});
-    //add_store(buf, "0");
-  }
-
-  void add_dynamic_load(const std::string& buf,
-      const std::string& addr_table,
-      const vector<std::string>& table_offset) {
-    //add_load(addr_table, table_offset);
-    //dynamic_store_addresses.push_back({buf, addr_table, table_offset});
-    //add_load(buf, "0");
-  }
-
-  void add_dynamic_store(const std::string& buf,
-      const std::string& addr_table,
-      const std::string& table_offset0,
-      const std::string& table_offset1) {
-    //add_load(addr_table, table_offset);
-    //dynamic_load_addresses.push_back({buf, addr_table, table_offset});
-    //add_store(buf, "0");
-  }
-
-  void add_dynamic_load(const std::string& buf,
-      const std::string& addr_table,
-      const std::string& table_offset0,
-      const std::string& table_offset1) {
-    //add_load(addr_table, table_offset);
-    //dynamic_store_addresses.push_back({buf, addr_table, table_offset});
-    //add_load(buf, "0");
-  }
-
-  void add_dynamic_store(const std::string& buf,
-      const std::string& addr_table,
       const std::string& table_offset) {
     add_load(addr_table, table_offset);
     dynamic_load_addresses.push_back({buf, addr_table, table_offset});
@@ -632,14 +593,6 @@ struct ir_node {
     assert(!is_loop());
     consume_locs_pair.push_back({b, loc});
     return consumed_value_name({b, loc});
-    //string val_name = b;
-    //for (auto val : loc) {
-      //val_name += "_";
-      //val_name += val.second;
-    //}
-    //val_name += "_value";
-    //val_name = c_sanitize(val_name);
-    //return val_name;
   }
 
   string add_load(const std::string& b, const std::string& d0, const std::string& d1, const std::string& d2, const std::string& d3, const std::string& d4) {
@@ -675,17 +628,6 @@ struct ir_node {
 
   std::vector<pair<buffer_name, piecewise_address> > produces_pair() const {
     return produce_locs;
-    //std::vector<pair<buffer_name, piecewise_address> > ps;
-    //for (auto p : produce_locs) {
-      //buffer_name b = p.first;
-      //address addr = p.second;
-      ////pair<buffer_name, address> pr{b, addr};
-      //pair<string, address> pr{"", addr};
-      //piecewise_address paddr{pr};
-      //pair<buffer_name, piecewise_address> psa{b, paddr};
-      //ps.push_back(psa);
-    //}
-    //return ps;
   }
 
   vector<string> produces() const {
