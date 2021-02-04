@@ -19428,9 +19428,9 @@ void histogram1d_test() {
   prog prg = histogram1d();
 
   prg.pretty_print();
-  assert(false);
+  //assert(false);
 
-  //assert(unoptimized_compiles(prg));
+  assert(unoptimized_compiles(prg));
   //assert(false);
 }
 
@@ -19625,6 +19625,56 @@ void jac16_static_dynamic_comparison() {
   options.debug_options.expect_all_linebuffers = true;
 
   App jac = stencil_chain_stage_iccad(out_name, 15);
+  prog prg = jac.realize(options, out_name, cols, rows, 1);
+  prg.name = out_name + "_opt";
+
+  jac.generate_soda_file(prg.name, throughput);
+
+  unroll_reduce_loops(prg);
+  merge_basic_block_ops(prg);
+  normalize_bounds(prg);
+  normalize_address_offsets(prg);
+
+  auto fusion_groups = one_stage_per_group(prg);
+  auto fresh_groups = insert_inter_group_buffers(fusion_groups, prg);
+  unroll_mismatched_inner_loops(prg);
+  merge_basic_block_ops(prg);
+  infer_bounds_and_unroll(pick(prg.outs), {size, size}, throughput, prg);
+
+  assert(unoptimized_compiles(prg));
+
+  app_dag dag = partition_groups(fresh_groups, prg);
+
+  options = CodegenOptions();
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  generate_app_code(options, dag);
+
+
+  move_to_benchmarks_folder(prg.name);
+
+  cout << "prg name: " << prg.name << endl;
+
+  assert(false);
+
+}
+
+void cp_static_dynamic_comparison() {
+  string prefix = "cp_d";
+
+  int size = 1080;
+  int rows = size;
+  int cols = size;
+
+  int unroll_factor = 1;
+  int throughput = unroll_factor;
+  string out_name = prefix + "_" + str(unroll_factor);
+
+  CodegenOptions options;
+  options.internal = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  options.debug_options.expect_all_linebuffers = true;
+
+  App jac = camera_pipeline(out_name);
   prog prg = jac.realize(options, out_name, cols, rows, 1);
   prg.name = out_name + "_opt";
 
@@ -19954,6 +20004,10 @@ void sbl_static_dynamic_comparison() {
 }
 
 void initial_soda_comparison() {
+
+  cp_static_dynamic_comparison();
+
+
   sbl16_static_dynamic_comparison_short_FIFOs();
   sbl32_static_dynamic_comparison_larger_bounds_to_prevent_vivado_unroll_error();
 
@@ -19971,8 +20025,10 @@ void initial_soda_comparison() {
 }
 
 void application_tests() {
-  histogram_test();
+  initial_soda_comparison();
+
   histogram1d_test();
+  histogram_test();
   iccad_tests();
 
   gpu_codegen_test();
