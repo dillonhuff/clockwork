@@ -19702,8 +19702,12 @@ void cp_static_dynamic_comparison() {
   options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
   generate_app_code(options, dag);
 
-
   move_to_benchmarks_folder(prg.name);
+
+  string synth_dir =
+    "./soda_codes/" + prg.name+ "/our_code/";
+
+  system(("cp " + out_name + "_opt" + "*.h " + synth_dir).c_str());
 
   cout << "prg name: " << prg.name << endl;
 
