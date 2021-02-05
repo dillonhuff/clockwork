@@ -346,12 +346,18 @@ std::string domain_name(isl_space* const s) {
 }
 
 std::string range_name(isl_space* const s) {
-  return std::string(isl_id_to_str(isl_space_get_tuple_id(s, isl_dim_out)));
+  if(isl_space_has_tuple_id(s, isl_dim_out))
+    return std::string(isl_id_to_str(isl_space_get_tuple_id(s, isl_dim_out)));
+  else
+    return "";
 }
 
 
 isl_map* set_range_name(isl_map* const m, string new_name) {
+  if(isl_map_has_tuple_id(m, isl_dim_out))
     return isl_map_set_tuple_name(m, isl_dim_out, new_name.c_str());
+  else
+    return m;
 }
 
 isl_multi_aff* set_in_name(isl_multi_aff* const m, string new_name) {
@@ -3818,6 +3824,53 @@ int get_domain_span_range(isl_map* const m, int dim) {
   return get_domain_range(domain(single_map), 0) * stride_in_dim(m, dim);
 
 }
+
+pair<int, int> get_domain_merge_dims(isl_map* m ){
+    int in_dims = num_in_dims(m);
+
+    //skip the root loop
+    for (int dim = 2; dim < in_dims; dim ++) {
+        int span_range = get_domain_span_range(m, dim);
+        int up_level_stride = stride_in_dim(m, dim-1);
+        if (span_range == up_level_stride)
+            return {in_dims - dim - 1, in_dims -  dim};
+    }
+
+    return {0, 0};
+}
+
+vector<pair<int, int>> get_all_domain_merge_dims(isl_map* m) {
+    int in_dims = num_in_dims(m);
+    vector<pair<int, int>> ret;
+    //skip the root loop
+    for (int dim = 2; dim < in_dims; dim ++) {
+        int span_range = get_domain_span_range(m, dim);
+        int up_level_stride = stride_in_dim(m, dim-1);
+        if (span_range == up_level_stride)
+            ret.push_back({in_dims - dim - 1, in_dims -  dim});
+    }
+    return ret;
+}
+
+
+isl_map* merge_domain_dim(isl_map* m) {
+    auto mm = cpy(m);
+    while(true) {
+        cout << " new map: " << str(mm) << endl;
+        auto merge_pair = get_domain_merge_dims(mm);
+        unordered_set<int> tmp({merge_pair.first, merge_pair.second});
+        if (merge_pair.first != merge_pair.second) {
+          auto reduce_map = linear_domain_map_with_index(domain(mm), tmp);
+          auto flatten_access_map = dot_domain(to_umap(mm), to_umap(reduce_map));
+          mm = to_map(flatten_access_map);
+        } else {
+            break;
+        }
+    }
+    return mm;
+}
+
+
 
 isl_map* get_domain_trans(isl_set* dom, int pos, int fetch_width) {
     string dom_name = name(dom);
