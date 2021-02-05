@@ -20123,18 +20123,18 @@ void cp16_static_dynamic_comparison_fresh_codegen() {
 }
 
 void initial_soda_comparison() {
+  jac32_static_dynamic_comparison();
+  jac16_static_dynamic_comparison();
+  jac_static_dynamic_comparison();
+
   cp16_static_dynamic_comparison_fresh_codegen();
 
   cp16_static_dynamic_comparison();
   cp_static_dynamic_comparison();
 
-
   sbl16_static_dynamic_comparison_short_FIFOs();
   sbl32_static_dynamic_comparison_larger_bounds_to_prevent_vivado_unroll_error();
 
-  jac32_static_dynamic_comparison();
-  jac16_static_dynamic_comparison();
-  jac_static_dynamic_comparison();
 
   sbl32_static_dynamic_comparison();
   sbl16_static_dynamic_comparison();
@@ -20148,9 +20148,11 @@ void initial_soda_comparison() {
 void application_tests() {
   initial_soda_comparison();
 
-  histogram1d_test();
   histogram_test();
+  histogram1d_test();
   iccad_tests();
+
+
 
   gpu_codegen_test();
 
