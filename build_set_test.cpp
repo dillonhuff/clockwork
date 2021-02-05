@@ -11164,7 +11164,58 @@ void blur_and_downsample_test() {
   regression_test(prg);
 }
 
+//only return one possible set that can be merged
+//from the outer most loop
+//Need to apply this function iteratively after flatten
+unordered_set<int> get_domain_merge_dims(isl_map* m ){
+    int in_dims = num_in_dims(m);
+
+    //skip the root loop
+    for (int dim = 2; dim < in_dims; dim ++) {
+        int span_range = get_domain_span_range(m, dim);
+        int up_level_stride = stride_in_dim(m, dim-1);
+        if (span_range == up_level_stride)
+            return {in_dims - dim - 1, in_dims -  dim};
+    }
+
+    return {};
+}
+
+isl_map* merge_domain_dim(isl_map* m) {
+    auto mm = cpy(m);
+    while(true) {
+        cout << " new map: " << str(mm) << endl;
+        auto merge_pair = get_domain_merge_dims(mm);
+        if (!empty(merge_pair)) {
+          auto reduce_map = linear_domain_map_with_index(domain(mm), merge_pair);
+          auto flatten_access_map = dot_domain(to_umap(mm), to_umap(reduce_map));
+          mm = to_map(flatten_access_map);
+        } else {
+            break;
+        }
+    }
+    return mm;
+}
+
 void playground() {
+
+    {
+        //Try to merge dimension
+        isl_ctx* ctx = isl_ctx_alloc();
+        auto access_map = isl_map_read_from_str(ctx, "{ conv[root = 0, y, x, ky, kx]->data[3*ky+kx]: 0<=x<=27 and 0<=y<=27 and 0<=kx<=2 and 0 <=ky<=2 }");
+        cout << "Final access map: " << str(merge_domain_dim(access_map)) << endl;
+        assert(false);
+        get_domain_merge_dims(access_map);
+        auto reduce_map = linear_domain_map_with_index(domain(access_map), {2,3});
+        //auto reduce_map_2D = linear_address_map_with_index(range(access_map), {0,2});
+        auto flatten_access_map = dot_domain(to_umap(access_map), to_umap(reduce_map));
+        //auto flatten_access_map_2D = dot(access_map, reduce_map_2D);
+        cout << "Origin: " << str(access_map) << endl;
+        cout << "Reduce map: " << str(reduce_map) << endl;
+        cout << "Rewrite: " << str(flatten_access_map) << endl;
+        //cout << "Rewrite 2D: " << str(flatten_access_map_2D) << endl;
+        assert(false);
+    }
     {
         isl_ctx* ctx = isl_ctx_alloc();
         auto acc_0 = isl_map_read_from_str(ctx,"{ sram2tb[i0, i1]-> data[130+64*i0+i1]: 0<=i0<=61 and 0<=i1<=61}");
