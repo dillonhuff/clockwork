@@ -373,6 +373,11 @@ isl_val* lexmaxval(isl_set* const m0);
 
 int get_domain_range(isl_set* const dom, int dim);
 int get_domain_span_range(isl_map* const m, int dim);
+pair<int, int> get_domain_merge_dims(isl_map* m );
+vector<pair<int, int>> get_all_domain_merge_dims(isl_map* m );
+isl_map* merge_domain_dim(isl_map* m);
+
+
 //vectorization transformation
 isl_map* get_domain_trans(isl_set* dom, int pos, int fetch_width);
 

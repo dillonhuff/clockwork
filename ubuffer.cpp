@@ -1245,6 +1245,35 @@ void add_lake_config(Json& jdata, ConfigMap data, int dimensionality, string dom
     }
 }
 
+
+pair<isl_map*, isl_map*> merge_dom_dim(isl_map* schedule, isl_map* acc_map) {
+    auto a_map = cpy(acc_map);
+    auto sched = cpy(schedule);
+    vector<pair<int, int>> all_pair_a =
+        get_all_domain_merge_dims(a_map);
+    vector<pair<int, int>> all_pair_s =
+        get_all_domain_merge_dims(sched);
+    int merge_cnt = 0;
+    while(!empty(all_pair_a) && !empty(all_pair_s)) {
+        auto pa = all_pair_a.front();
+        auto ps = all_pair_s.front();
+        if (pa.first == ps.first) {
+            unordered_set<int> tmp({pa.first - merge_cnt, pa.second - merge_cnt});
+            auto reduce_map = linear_domain_map_with_index(domain(a_map), tmp);
+            a_map = to_map(dot_domain(to_umap(a_map), to_umap(reduce_map)));
+            sched = to_map(dot_domain(to_umap(sched), to_umap(reduce_map)));
+            all_pair_a.erase(all_pair_a.begin());
+            all_pair_s.erase(all_pair_s.begin());
+            merge_cnt ++;
+        } else if(pa.first < ps.first) {
+            all_pair_a.erase(all_pair_a.begin());
+        } else {
+            all_pair_s.erase(all_pair_s.begin());
+        }
+    }
+    return make_pair(sched, a_map);
+}
+
 //Simplify the single fetch width memory codegen
 Json UBuffer::generate_ubuf_args(CodegenOptions& options, UBuffer& ubuf) {
 
@@ -1283,30 +1312,45 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, UBuffer& ubuf) {
     int port_width = mem.out_port_width.at("regfile");
     for (auto op_name: ops) {
         auto sched = op2sched.at(op_name);
-        auto dom = ::domain(sched);
-        auto aff = get_aff(sched);
-        auto config_info = generate_accessor_config_from_aff_expr(dom, aff);
-        cout << "\tSched: " << str(sched) << endl;
         if(op2write_map.count(op_name)) {
-            for (auto acc_map: op2write_map.at(op_name)) {
+            assert(op2write_map.size() == 1);
+            auto acc_map = pick(op2write_map.at(op_name));
                 auto reduce_map = linear_address_map_lake(to_set(range(acc_map)), mem.fetch_width);
                 auto linear_acc_map = dot(acc_map, reduce_map);
-                auto addressor = generate_addressor_config_from_aff_expr(get_aff(linear_acc_map), false, false, word_width, capacity, port_width);
+                //add a simplify optimization pass,
+                //reutrn:    pair(schedulem access_map)
+                auto m_pair = merge_dom_dim(sched, to_map(linear_acc_map));
+                sched = m_pair.first;
+                cout << "schedule: " << str(sched) << endl;
+                cout << "access map: " << str(m_pair.second) << endl;
+                auto aff = get_aff(sched);
+                auto dom = ::domain(sched);
+                auto config_info = generate_accessor_config_from_aff_expr(dom, aff);
+                auto addressor = generate_addressor_config_from_aff_expr(
+                        get_aff(m_pair.second), false, false, word_width, capacity, port_width);
                 config_info.merge(addressor);
                 cout << "\tWrite map: " << str(acc_map) << endl;
-            }
             add_lake_config(ret, config_info, num_in_dims(aff), "in2regfile");
         }
         else if(op2read_map.count(op_name)) {
-            for (auto acc_map: op2read_map.at(op_name)) {
+            assert(op2read_map.size() == 1);
+            auto acc_map = pick(op2read_map.at(op_name));
                 auto reduce_map = linear_address_map_lake(to_set(range(acc_map)), mem.fetch_width);
                 auto linear_acc_map = dot(acc_map, reduce_map);
-                auto addressor = generate_addressor_config_from_aff_expr(get_aff(linear_acc_map), true, false, word_width, capacity, port_width);
+                auto m_pair = merge_dom_dim(sched, to_map(linear_acc_map));
+                sched = m_pair.first;
+                cout << "schedule: " << str(sched) << endl;
+                cout << "access map: " << str(m_pair.second) << endl;
+                auto aff = get_aff(sched);
+                auto dom = ::domain(sched);
+                auto config_info = generate_accessor_config_from_aff_expr(dom, aff);
+                auto addressor = generate_addressor_config_from_aff_expr(
+                        get_aff(m_pair.second), true, false, word_width, capacity, port_width);
                 config_info.merge(addressor);
                 cout << "\tRead map: " << str(acc_map) << endl;
-            }
             add_lake_config(ret, config_info, num_in_dims(aff), "regfile2out");
         }
+        cout << "\tSched: " << str(sched) << endl;
     }
     cout << ret << endl;
     return ret;

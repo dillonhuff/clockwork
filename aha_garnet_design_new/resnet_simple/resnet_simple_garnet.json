@@ -384,7 +384,7 @@
           "ub_hw_kernel_global_wrapper_stencil_cyclic_0":{
             "genref":"cgralib.pond",
             "genargs":{"ID":["String","_U4"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
-            "metadata":{"config":{"in2regfile":{"cycle_starting_addr":[0],"cycle_stride":[1,3],"dimensionality":2,"extent":[3,3],"write_data_starting_addr":[0],"write_data_stride":[1,3]},"regfile2out":{"cycle_starting_addr":[10004],"cycle_stride":[1,32,896,2688],"dimensionality":4,"extent":[28,28,3,3],"read_data_starting_addr":[0],"read_data_stride":[0,0,1,3]}},"mode":"pond"}
+            "metadata":{"config":{"in2regfile":{"cycle_starting_addr":[0],"cycle_stride":[1],"dimensionality":1,"extent":[9],"write_data_starting_addr":[0],"write_data_stride":[1]},"regfile2out":{"cycle_starting_addr":[10004],"cycle_stride":[1,32,896],"dimensionality":3,"extent":[28,28,9],"read_data_starting_addr":[0],"read_data_stride":[0,0,1]}},"mode":"pond"}
           },
           "ub_hw_kernel_global_wrapper_stencil_cyclic_0_clk_en_const1_lutcnst":{
             "genref":"cgralib.PE",
@@ -531,7 +531,7 @@
           "hw_kernel_global_wrapper_stencil$ub_hw_kernel_global_wrapper_stencil_cyclic_0":{
             "genref":"cgralib.pond",
             "genargs":{"ID":["String","_U4"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
-            "metadata":{"config":{"in2regfile":{"cycle_starting_addr":[0],"cycle_stride":[1,3],"dimensionality":2,"extent":[3,3],"write_data_starting_addr":[0],"write_data_stride":[1,3]},"regfile2out":{"cycle_starting_addr":[10004],"cycle_stride":[1,32,896,2688],"dimensionality":4,"extent":[28,28,3,3],"read_data_starting_addr":[0],"read_data_stride":[0,0,1,3]}},"mode":"pond"}
+            "metadata":{"config":{"in2regfile":{"cycle_starting_addr":[0],"cycle_stride":[1],"dimensionality":1,"extent":[9],"write_data_starting_addr":[0],"write_data_stride":[1]},"regfile2out":{"cycle_starting_addr":[10004],"cycle_stride":[1,32,896],"dimensionality":3,"extent":[28,28,9],"read_data_starting_addr":[0],"read_data_stride":[0,0,1]}},"mode":"pond"}
           },
           "hw_kernel_global_wrapper_stencil$ub_hw_kernel_global_wrapper_stencil_cyclic_0_clk_en_const1_lutcnst":{
             "genref":"cgralib.PE",
