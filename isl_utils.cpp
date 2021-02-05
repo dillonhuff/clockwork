@@ -634,6 +634,46 @@ isl_map* linear_address_map_lake(isl_set* s, int fetch_width) {
   return isl_map_read_from_str(ctx(s), map_str.c_str());
 }
 
+isl_map* linear_address_map_with_index(isl_set* s, vector<int> index) {
+    return linear_address_map_with_index(s, index, 1);
+}
+
+isl_map* linear_domain_map_with_index(isl_set* s, unordered_set<int> index) {
+  string domain = name(s);
+  int dim = num_dims(s);
+  vector<string> var_names;
+  vector<string> out_var_names;
+  vector<string> exprs;
+  isl_val* stride = one(ctx(s));
+  int index_visited = 0;
+  for (int i = 0; i < dim; i++) {
+    string var = "d" + str(i);
+    var_names.push_back(var);
+    if (elem(i, index)) {
+      index_visited ++;
+      string var = "d" + str(i);
+      string stridestr = str(stride);
+      exprs.push_back(stridestr + "*" + var);
+      auto interval = project_all_but(s, dim-1-i);
+      isl_val* extend = add(sub(lexmaxval(interval), lexminval(interval)), one(ctx(s)));
+      stride = mul(stride, extend);
+      if (index_visited == index.size()) {
+          out_var_names.push_back(sep_list(exprs, "", "", "+"));
+      }
+    } else {
+        out_var_names.push_back("d" + str(i));
+    }
+  }
+  //Check if we visited all dimension need to be merged
+  assert(index_visited == index.size());
+  std::reverse(var_names.begin(), var_names.end());
+  std::reverse(out_var_names.begin(), out_var_names.end());
+
+  string map_str = "{" + domain + sep_list(var_names, "[", "]", ", ") + " -> "
+      + domain + sep_list(out_var_names, "[", "]", " ,") + " }";
+  return isl_map_read_from_str(ctx(s), map_str.c_str());
+}
+
 isl_map* linear_address_map_with_index(isl_set* s, vector<int> index, int fetch_width) {
   string domain = name(s);
   int dim = num_dims(s);
@@ -3312,6 +3352,32 @@ isl_map* project_all_but(isl_map* const dmap,
   return m;
 }
 
+isl_map* project_all_in_but(isl_map* const dmap,
+    const int d) {
+
+  auto m = cpy(dmap);
+  auto ct = ctx(dmap);
+
+  string dname = domain_name(m);
+  string rname = range_name(m);
+
+  if (d != 0) {
+    m = isl_map_project_out(m, isl_dim_in, 0, d);
+  }
+
+  int in_dim = num_in_dims(get_space(m));
+
+  m = isl_map_project_out(m, isl_dim_in, 1, in_dim - 1);
+
+  assert(num_in_dims(get_space(m)) == 1);
+
+  isl_map_set_tuple_id(m, isl_dim_in, id(ct, dname));
+  isl_map_set_tuple_id(m, isl_dim_out, id(ct, rname));
+
+  return m;
+}
+
+
 isl_map* project_all_out_but(isl_map* const dmap,
     const int d) {
 
@@ -3736,6 +3802,17 @@ int get_domain_range(isl_set* const dom, int dim) {
   auto min_dom_pt = lexminpt(dom);
   auto max_dom_pt = lexmaxpt(dom);
   return to_int(coord(max_dom_pt, dim)) - to_int(coord(min_dom_pt, dim)) + 1;
+}
+
+int get_domain_span_range(isl_map* const m, int dim) {
+  auto mm = cpy(m);
+  for (int d = 0; d < num_in_dims(m); d ++) {
+      if (d != dim)
+          mm = reset_domain_coeff(mm, d, 0);
+  }
+  auto single_map = project_all_in_but(mm, dim);
+  return get_domain_range(domain(single_map), 0) * stride_in_dim(m, dim);
+
 }
 
 isl_map* get_domain_trans(isl_set* dom, int pos, int fetch_width) {

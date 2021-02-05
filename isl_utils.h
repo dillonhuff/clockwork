@@ -27,11 +27,13 @@ typedef isl_union_set uset;
 #include <vector>
 #include <map>
 #include <string>
+#include <unordered_set>
 
 using std::vector;
 using std::pair;
 using std::map;
 using std::string;
+using std::unordered_set;
 
 std::string dim_name(isl_set* const a, const int d);
 std::string dim_name(isl_aff* const a, const int d);
@@ -189,6 +191,8 @@ std::string str(isl_multi_union_pw_aff* const pma);
 
 isl_map* linear_address_map(isl_set* s);
 isl_map* linear_address_map_lake(isl_set* s, int fetch_width);
+isl_map* linear_address_map_with_index(isl_set* s, vector<int> index);
+isl_map* linear_domain_map_with_index(isl_set* s, unordered_set<int> index);
 isl_map* linear_address_map_with_index(isl_set* s, vector<int> index, int fetch_width);
 
 vector<vector<int> > get_access_matrix_from_map(isl_map* acc_map);
@@ -368,6 +372,7 @@ isl_val* lexminval(isl_set* const m0);
 isl_val* lexmaxval(isl_set* const m0);
 
 int get_domain_range(isl_set* const dom, int dim);
+int get_domain_span_range(isl_map* const m, int dim);
 //vectorization transformation
 isl_map* get_domain_trans(isl_set* dom, int pos, int fetch_width);
 
@@ -599,6 +604,7 @@ isl_set* gist(isl_set* base, isl_set* context);
 
 isl_map* project_all_but(isl_map* const dmap, const int d);
 isl_map* project_all_out_but(isl_map* const dmap, const int d);
+isl_map* project_all_in_but(isl_map* const dmap, const int d);
 isl_set* project_all_but(isl_set* const dmap, const int d);
 isl_set* project_out(isl_set* const dmap, const int d);
 isl_map* project_out(isl_map* const dmap, const int d);
