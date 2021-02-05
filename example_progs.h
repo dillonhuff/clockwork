@@ -55,3 +55,4 @@ prog conv_3_3(int32_t, int32_t, string);
 prog cascade(int32_t, int32_t, string);
 prog harris(int32_t, int32_t, string);
 prog resnet_full_layer();
+prog histogram1d();

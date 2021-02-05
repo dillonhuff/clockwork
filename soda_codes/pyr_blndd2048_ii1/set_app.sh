@@ -1,2 +1,0 @@
-export app=pyr_blndd2048_ii1
-export HLS_CLOCK_FREQUENCY=250000000

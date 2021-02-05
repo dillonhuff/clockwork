@@ -1,0 +1,2 @@
+export app=llf_dcons_23
+export HLS_CLOCK_FREQUENCY=250000000

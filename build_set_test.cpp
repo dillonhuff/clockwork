@@ -5095,7 +5095,6 @@ struct App {
       rargs.push_back(a);
     }
     app_dag.at(func).add_reduce_update(accum, compute, rargs, reduce_ranges);
-
   }
 
   bool is_input(const std::string& name) const {
@@ -6188,13 +6187,52 @@ struct App {
           }
           auto op = nest->add_op(u.name());
           cout << "added op " << op->name << endl;
+          auto surrounding = surrounding_vars(op, prg);
+          vector<string> offsets;
+          for (auto var : surrounding) {
+            if (var != "root") {
+              offsets.push_back(var);
+            }
+          }
+          assert(offsets.size() == 2);
           // TODO: Replace with real description of apps
-          op->add_store(f, "0, 0");
+          reverse(offsets);
+          op->add_store(f, sep_list(offsets, "", "", ", "));
+          //cout << "offsets: " << offsets << endl;
 
           vector<string> fargs;
           for (auto p : u.get_srcs()) {
+            vector<string> vars;
+            for (auto var : surrounding) {
+              if (var != "root") {
+                vars.push_back(var);
+              }
+            }
+            assert(vars.size() == 2);
+
+
+
+
             cout << tab(1) << " op loads " << p.name << endl;
-            op->add_load(p.name, "0, 0");
+            for (auto off : p.offsets) {
+              assert(off.size() == 2);
+              vector<string> terms;
+              int i = 0;
+              for (auto offt : off) {
+                QAV stride = p.stride(i);
+                if (stride.denom != 1) {
+                  int num = stride.num;
+                  int denom = stride.denom;
+                  terms.push_back("floor((" + str(num) + "*" + vars.at(i) + ")/" + str(denom) + ")" + " + " + str(offt));
+                } else {
+                  terms.push_back(to_string(stride) + "*" + vars.at(i) + " + " + str(offt));
+                }
+                i++;
+              }
+              reverse(terms);
+              op->add_load(p.name, comma_list(terms));
+            }
+
             if (!elem(p.name, fargs)) {
               fargs.push_back(p.name);
             }
@@ -6217,7 +6255,8 @@ struct App {
     }
 
     generate_app_code(options, buffers, prg, its(m, action_domain), domain_map);
-    generate_regression_testbench(prg, buffers);
+    //generate_regression_testbench(prg, buffers);
+    generate_regression_testbench(prg); //, buffers);
     generate_soda_file(prg.name);
   }
 
@@ -6233,11 +6272,16 @@ struct App {
   }
 
   void generate_soda_file(const std::string& name) {
+    string rep = pick(app_dag).first;
+    generate_soda_file(name, last_update(rep).unroll_factor);
+  }
+
+  void generate_soda_file(const std::string& name, const int unroll_factor) {
     ofstream out(name + ".soda");
     out << "kernel: " << name << endl;
 
     string rep = pick(app_dag).first;
-    int unroll_factor = last_update(rep).unroll_factor;
+    //int unroll_factor = last_update(rep).unroll_factor;
     int width = app_dag.at(rep).pixel_width;
 
     out << "unroll factor: " << unroll_factor << endl;
@@ -6551,7 +6595,7 @@ struct App {
     return whole_dom;
   }
 
-  void schedule_and_codegen(CodegenOptions& options, const std::string& name, const std::vector<string>& outputs) {
+  prog schedule_and_codegen(CodegenOptions& options, const std::string& name, const std::vector<string>& outputs) {
     time_t rawtime;
     struct tm * timeinfo;
     char buffer[80];
@@ -6566,12 +6610,6 @@ struct App {
 
     auto scheds = schedule_opt();
     umap* m = qschedule_to_map(ctx, scheds);
-    //umap* m = schedule();
-    //ofstream schedule_out(name + "_sched_" + time_str);
-    //for (auto k : get_maps(m)) {
-      //schedule_out << str(k) << endl;
-    //}
-    //schedule_out.close();
     assert(m != nullptr);
 
     map<string, Box> compute_domains;
@@ -6596,12 +6634,9 @@ struct App {
     prg.name = name + "_opt";
     prg.compute_unit_file = prg.name + "_compute_units.h";
 
-    //populate_program(options, prg, name, m, buffers);
     populate_program(options, prg, name, outputs, m, buffers);
 
-    release(prg);
-
-    return;
+    return prg;
   }
 
   void no_unrolling() {
@@ -6688,7 +6723,7 @@ struct App {
     realize_no_unroll(options, {{name, dims}});
   }
 
-  void realize_no_unroll(CodegenOptions& options,
+  prog realize_no_unroll(CodegenOptions& options,
       const std::vector<std::pair<std::string, std::vector<int> > >& bounds) {
     fill_data_domain(bounds);
     fill_compute_domain();
@@ -6697,41 +6732,41 @@ struct App {
       names.push_back(n.first);
     }
     string concat_name = sep_list(names, "", "", "_");
-    schedule_and_codegen(options, concat_name, names);
+    return schedule_and_codegen(options, concat_name, names);
   }
 
-  void realize(const std::string& name, const int d0, const int d1) {
+  prog realize(const std::string& name, const int d0, const int d1) {
     CodegenOptions options;
     options.internal = true;
     options.simplify_address_expressions = true;
     options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
-    realize(options, name, d0, d1);
+    return realize(options, name, d0, d1);
   }
 
-  void realize(CodegenOptions& options,
+  prog realize(CodegenOptions& options,
       const std::string& name,
       const int d0,
       const int d1) {
-    realize(options, name, {d0, d1}, 1);
+    return realize(options, name, {d0, d1}, 1);
   }
 
-  void realize(CodegenOptions& options, const std::string& name, const int d0, const int d1, const int unroll_factor) {
-    realize(options, name, {d0, d1}, unroll_factor);
+  prog realize(CodegenOptions& options, const std::string& name, const int d0, const int d1, const int unroll_factor) {
+    return realize(options, name, {d0, d1}, unroll_factor);
   }
 
-  void realize(CodegenOptions& options, const std::string& name, const vector<int>& dims, const int unroll_factor) {
-    realize(options, name, dims, name, unroll_factor);
+  prog realize(CodegenOptions& options, const std::string& name, const vector<int>& dims, const int unroll_factor) {
+    return realize(options, name, dims, name, unroll_factor);
   }
 
-  void realize(CodegenOptions& options,
+  prog realize(CodegenOptions& options,
       const std::string& out_name,
       const vector<int>& dims,
       const std::string& unroll_target,
       const int unroll_factor) {
-    realize(options, {{out_name, dims}}, unroll_target, unroll_factor);
+    return realize(options, {{out_name, dims}}, unroll_target, unroll_factor);
   }
 
-  void realize(CodegenOptions& options,
+  prog realize(CodegenOptions& options,
       const std::vector<std::pair<std::string, std::vector<int> > >& bounds,
       const std::string& unroll_target,
       const int unroll_factor) {
@@ -6745,10 +6780,7 @@ struct App {
     vector<int> dims = bounds.at(0).second;
 
     set_unroll_factors(bounds, unroll_target, unroll_factor);
-    realize_no_unroll(options, bounds);
-
-    //set_unroll_factors(out_name, unroll_target, unroll_factor);
-    //realize_no_unroll(options, out_name, dims);
+    prog prg = realize_no_unroll(options, bounds);
 
     auto end = std::chrono::system_clock::now();
     std::chrono::duration<double> elapsed = end - start;
@@ -6756,14 +6788,16 @@ struct App {
     ofstream schedule_info("./scratch/" + out_name + ".txt");
     schedule_info << "time to realize " << out_name << ": " << total_elapsed << endl;
     schedule_info.close();
+
+    return prg;
   }
 
-  void realize(const std::string& name, const int d0, const int d1, const int unroll_factor) {
+  prog realize(const std::string& name, const int d0, const int d1, const int unroll_factor) {
     CodegenOptions options;
     options.internal = true;
     options.simplify_address_expressions = true;
 
-    realize(options, name, {d0, d1}, unroll_factor);
+    return realize(options, name, {d0, d1}, unroll_factor);
   }
 
 };
@@ -9938,6 +9972,14 @@ App blur_xy(const std::string output_name) {
   return jac;
 }
 
+App pointwise2d(const std::string output_name) {
+  App jac;
+  jac.func2d("t1_arg");
+  jac.func2d("t1", "id", pt("t1_arg"));
+  jac.func2d(output_name, "id", pt("t1"));
+  return jac;
+}
+
 App jacobi2d(const std::string output_name) {
   App jac;
   jac.func2d("t1_arg");
@@ -10240,7 +10282,6 @@ void blur_xy_16_app_test(const std::string& prefix) {
     options.internal = true;
     options.simplify_address_expressions = true;
     options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
-    //options.num_input_epochs = 30;
     options.debug_options.expect_all_linebuffers = true;
     blur_xy_16(out_name).realize(options, out_name, cols, rows, unroll_factor);
 
@@ -11943,6 +11984,9 @@ void histogram_test() {
 
   int run_res = system("./a.out");
   assert(run_res == 0);
+
+  prg.pretty_print();
+  //assert(false);
 }
 
 template<typename T>
@@ -16034,7 +16078,7 @@ prog llf_float() {
 
   //assert(false);
 
-  infer_bounds("color_out", {3, 23, 23}, prg);
+  infer_bounds("color_out", {3, 2048, 2048}, prg);
 
   cout << "After bounds inference..." << endl;
   prg.pretty_print();
@@ -19451,8 +19495,793 @@ void gpu_codegen_test() {
   assert(false);
 }
 
+void histogram1d_test() {
+  prog prg = histogram1d();
+
+  prg.pretty_print();
+  //assert(false);
+
+  assert(unoptimized_compiles(prg));
+  //assert(false);
+}
+
+void blur_static_dynamic_comparison() {
+  string prefix = "bxy_d";
+
+  int cols = 1920;
+  int rows = 1080;
+
+  int unroll_factor = 1;
+  string out_name = prefix + "_" + str(unroll_factor);
+
+  CodegenOptions options;
+  options.internal = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  options.debug_options.expect_all_linebuffers = true;
+  prog prg = blur_xy_16(out_name).realize(options, out_name, cols, rows, unroll_factor);
+
+  unroll_reduce_loops(prg);
+  merge_basic_block_ops(prg);
+  normalize_bounds(prg);
+  normalize_address_offsets(prg);
+
+  auto fusion_groups = one_stage_per_group(prg);
+  app_dag dag = partition_application(fusion_groups, prg);
+
+  options = CodegenOptions();
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  generate_app_code(options, dag);
+
+  move_to_benchmarks_folder(out_name + "_opt");
+
+  assert(false);
+  
+}
+
+void blur32_static_dynamic_comparison() {
+  string prefix = "bxy_d";
+
+  int size = 1080;
+  int rows = size;
+  int cols = size;
+
+  int unroll_factor = 32;
+  int throughput = 32;
+  string out_name = prefix + "_" + str(unroll_factor);
+
+  CodegenOptions options;
+  options.internal = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  options.debug_options.expect_all_linebuffers = true;
+
+  prog prg = blur_xy_16(out_name).realize(options, out_name, cols, rows, 1);
+  prg.name = out_name + "_opt";
+
+  unroll_reduce_loops(prg);
+  merge_basic_block_ops(prg);
+  normalize_bounds(prg);
+  normalize_address_offsets(prg);
+
+  auto fusion_groups = one_stage_per_group(prg);
+  auto fresh_groups = insert_inter_group_buffers(fusion_groups, prg);
+  unroll_mismatched_inner_loops(prg);
+  merge_basic_block_ops(prg);
+  infer_bounds_and_unroll(pick(prg.outs), {size, size}, throughput, prg);
+
+  assert(unoptimized_compiles(prg));
+
+  app_dag dag = partition_groups(fresh_groups, prg);
+
+  options = CodegenOptions();
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  generate_app_code(options, dag);
+
+
+  move_to_benchmarks_folder(prg.name);
+
+  cout << "prg name: " << prg.name << endl;
+
+  assert(false);
+}
+
+void blur16_static_dynamic_comparison() {
+  string prefix = "bxy_d";
+
+  int size = 1080;
+  int rows = size;
+  int cols = size;
+
+  int unroll_factor = 16;
+  int throughput = 16;
+  string out_name = prefix + "_" + str(unroll_factor);
+
+  CodegenOptions options;
+  options.internal = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  options.debug_options.expect_all_linebuffers = true;
+  prog prg = blur_xy_16(out_name).realize(options, out_name, cols, rows, 1);
+  prg.name = "bxy_d_16_opt";
+  unroll_reduce_loops(prg);
+  merge_basic_block_ops(prg);
+  normalize_bounds(prg);
+  normalize_address_offsets(prg);
+
+  auto fusion_groups = one_stage_per_group(prg);
+  auto fresh_groups = insert_inter_group_buffers(fusion_groups, prg);
+  unroll_mismatched_inner_loops(prg);
+  merge_basic_block_ops(prg);
+  infer_bounds_and_unroll(pick(prg.outs), {size, size}, throughput, prg);
+
+  assert(unoptimized_compiles(prg));
+
+  app_dag dag = partition_groups(fresh_groups, prg);
+  //app_dag dag = partition_application(fusion_groups, prg);
+
+  options = CodegenOptions();
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  generate_app_code(options, dag);
+
+
+  move_to_benchmarks_folder(prg.name);
+
+  cout << "prg name: " << prg.name << endl;
+
+  assert(false);
+}
+
+void jac32_static_dynamic_comparison() {
+  string prefix = "jac_d";
+
+  int size = 1080;
+  int rows = size;
+  int cols = size;
+
+  int unroll_factor = 32;
+  int throughput = unroll_factor;
+  string out_name = prefix + "_" + str(unroll_factor);
+
+  CodegenOptions options;
+  options.internal = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  options.debug_options.expect_all_linebuffers = true;
+
+  App jac = stencil_chain_stage_iccad(out_name, 15);
+  prog prg = jac.realize(options, out_name, cols, rows, 1);
+  prg.name = out_name + "_opt";
+
+  jac.generate_soda_file(prg.name, throughput);
+
+  unroll_reduce_loops(prg);
+  merge_basic_block_ops(prg);
+  normalize_bounds(prg);
+  normalize_address_offsets(prg);
+
+  auto fusion_groups = one_stage_per_group(prg);
+  auto fresh_groups = insert_inter_group_buffers(fusion_groups, prg);
+  unroll_mismatched_inner_loops(prg);
+  merge_basic_block_ops(prg);
+  infer_bounds_and_unroll(pick(prg.outs), {size, size}, throughput, prg);
+
+  assert(unoptimized_compiles(prg));
+
+  app_dag dag = partition_groups(fresh_groups, prg);
+
+  options = CodegenOptions();
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  generate_app_code(options, dag);
+
+
+  move_to_benchmarks_folder(prg.name);
+
+  cout << "prg name: " << prg.name << endl;
+
+  assert(false);
+
+}
+
+void jac16_static_dynamic_comparison() {
+  string prefix = "jac_d";
+
+  int size = 1080;
+  int rows = size;
+  int cols = size;
+
+  int unroll_factor = 16;
+  int throughput = unroll_factor;
+  string out_name = prefix + "_" + str(unroll_factor);
+
+  CodegenOptions options;
+  options.internal = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  options.debug_options.expect_all_linebuffers = true;
+
+  App jac = stencil_chain_stage_iccad(out_name, 15);
+  prog prg = jac.realize(options, out_name, cols, rows, 1);
+  prg.name = out_name + "_opt";
+
+  jac.generate_soda_file(prg.name, throughput);
+
+  unroll_reduce_loops(prg);
+  merge_basic_block_ops(prg);
+  normalize_bounds(prg);
+  normalize_address_offsets(prg);
+
+  auto fusion_groups = one_stage_per_group(prg);
+  auto fresh_groups = insert_inter_group_buffers(fusion_groups, prg);
+  unroll_mismatched_inner_loops(prg);
+  merge_basic_block_ops(prg);
+  infer_bounds_and_unroll(pick(prg.outs), {size, size}, throughput, prg);
+
+  assert(unoptimized_compiles(prg));
+
+  app_dag dag = partition_groups(fresh_groups, prg);
+
+  options = CodegenOptions();
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  generate_app_code(options, dag);
+
+
+  move_to_benchmarks_folder(prg.name);
+
+  cout << "prg name: " << prg.name << endl;
+
+  assert(false);
+
+}
+
+void cp32_static_dynamic_comparison() {
+  string prefix = "cp";
+
+  int size = 1080;
+  int rows = size;
+  int cols = size;
+
+  int unroll_factor = 32;
+  int throughput = unroll_factor;
+  string out_name = prefix + "_" + str(unroll_factor);
+
+  CodegenOptions options;
+  options.internal = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  options.debug_options.expect_all_linebuffers = true;
+
+  App jac = camera_pipeline(out_name);
+  prog prg = jac.realize(options, out_name, cols, rows, 1);
+
+  move_to_benchmarks_folder(out_name + "_opt");
+
+  prg.name = out_name + "_opt_d";
+
+  jac.generate_soda_file(prg.name, throughput);
+
+  unroll_reduce_loops(prg);
+  merge_basic_block_ops(prg);
+  normalize_bounds(prg);
+  normalize_address_offsets(prg);
+
+  auto fusion_groups = one_stage_per_group(prg);
+  auto fresh_groups = insert_inter_group_buffers(fusion_groups, prg);
+  unroll_mismatched_inner_loops(prg);
+  merge_basic_block_ops(prg);
+  infer_bounds_and_unroll(pick(prg.outs), {size, size}, throughput, prg);
+
+  assert(unoptimized_compiles(prg));
+
+  app_dag dag = partition_groups(fresh_groups, prg);
+
+  options = CodegenOptions();
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  generate_app_code(options, dag);
+
+  move_to_benchmarks_folder(prg.name);
+
+  string synth_dir =
+    "./soda_codes/" + prg.name+ "/our_code/";
+
+  system(("cp " + out_name + "_opt" + "*.h " + synth_dir).c_str());
+
+  cout << "prg name: " << prg.name << endl;
+
+  assert(false);
+}
+
+void cp16_static_dynamic_comparison() {
+  string prefix = "cp";
+
+  int size = 1080;
+  int rows = size;
+  int cols = size;
+
+  int unroll_factor = 16;
+  int throughput = unroll_factor;
+  string out_name = prefix + "_" + str(unroll_factor);
+
+  CodegenOptions options;
+  options.internal = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  options.debug_options.expect_all_linebuffers = true;
+
+  App jac = camera_pipeline(out_name);
+  prog prg = jac.realize(options, out_name, cols, rows, 1);
+
+  move_to_benchmarks_folder(out_name + "_opt");
+
+  prg.name = out_name + "_opt_d";
+
+  jac.generate_soda_file(prg.name, throughput);
+
+  unroll_reduce_loops(prg);
+  merge_basic_block_ops(prg);
+  normalize_bounds(prg);
+  normalize_address_offsets(prg);
+
+  auto fusion_groups = one_stage_per_group(prg);
+  auto fresh_groups = insert_inter_group_buffers(fusion_groups, prg);
+  unroll_mismatched_inner_loops(prg);
+  merge_basic_block_ops(prg);
+  infer_bounds_and_unroll(pick(prg.outs), {size, size}, throughput, prg);
+
+  assert(unoptimized_compiles(prg));
+
+  app_dag dag = partition_groups(fresh_groups, prg);
+
+  options = CodegenOptions();
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  generate_app_code(options, dag);
+
+  move_to_benchmarks_folder(prg.name);
+
+  string synth_dir =
+    "./soda_codes/" + prg.name+ "/our_code/";
+
+  system(("cp " + out_name + "_opt" + "*.h " + synth_dir).c_str());
+
+  cout << "prg name: " << prg.name << endl;
+
+  assert(false);
+}
+
+void cp_static_dynamic_comparison() {
+  string prefix = "cp";
+
+  int size = 1080;
+  int rows = size;
+  int cols = size;
+
+  int unroll_factor = 1;
+  int throughput = unroll_factor;
+  string out_name = prefix + "_" + str(unroll_factor);
+
+  CodegenOptions options;
+  options.internal = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  options.debug_options.expect_all_linebuffers = true;
+
+  App jac = camera_pipeline(out_name);
+  prog prg = jac.realize(options, out_name, cols, rows, 1);
+
+  move_to_benchmarks_folder(out_name + "_opt");
+
+  prg.name = out_name + "_opt_d";
+
+  jac.generate_soda_file(prg.name, throughput);
+
+  unroll_reduce_loops(prg);
+  merge_basic_block_ops(prg);
+  normalize_bounds(prg);
+  normalize_address_offsets(prg);
+
+  auto fusion_groups = one_stage_per_group(prg);
+  auto fresh_groups = insert_inter_group_buffers(fusion_groups, prg);
+  unroll_mismatched_inner_loops(prg);
+  merge_basic_block_ops(prg);
+  infer_bounds_and_unroll(pick(prg.outs), {size, size}, throughput, prg);
+
+  assert(unoptimized_compiles(prg));
+
+  app_dag dag = partition_groups(fresh_groups, prg);
+
+  options = CodegenOptions();
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  generate_app_code(options, dag);
+
+  move_to_benchmarks_folder(prg.name);
+
+  string synth_dir =
+    "./soda_codes/" + prg.name+ "/our_code/";
+
+  system(("cp " + out_name + "_opt" + "*.h " + synth_dir).c_str());
+
+  cout << "prg name: " << prg.name << endl;
+
+  assert(false);
+}
+
+void jac_static_dynamic_comparison() {
+  string prefix = "jac_d";
+
+  int size = 1080;
+  int rows = size;
+  int cols = size;
+
+  int unroll_factor = 1;
+  int throughput = unroll_factor;
+  string out_name = prefix + "_" + str(unroll_factor);
+
+  CodegenOptions options;
+  options.internal = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  options.debug_options.expect_all_linebuffers = true;
+
+  App jac = stencil_chain_stage_iccad(out_name, 15);
+  prog prg = jac.realize(options, out_name, cols, rows, 1);
+  prg.name = out_name + "_opt";
+
+  jac.generate_soda_file(prg.name, throughput);
+
+  unroll_reduce_loops(prg);
+  merge_basic_block_ops(prg);
+  normalize_bounds(prg);
+  normalize_address_offsets(prg);
+
+  auto fusion_groups = one_stage_per_group(prg);
+  auto fresh_groups = insert_inter_group_buffers(fusion_groups, prg);
+  unroll_mismatched_inner_loops(prg);
+  merge_basic_block_ops(prg);
+  infer_bounds_and_unroll(pick(prg.outs), {size, size}, throughput, prg);
+
+  assert(unoptimized_compiles(prg));
+
+  app_dag dag = partition_groups(fresh_groups, prg);
+
+  options = CodegenOptions();
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  generate_app_code(options, dag);
+
+
+  move_to_benchmarks_folder(prg.name);
+
+  cout << "prg name: " << prg.name << endl;
+
+  assert(false);
+
+}
+
+void sbl32_static_dynamic_comparison_larger_bounds_to_prevent_vivado_unroll_error() {
+  string prefix = "sbl_dlb";
+
+  int size = 4096;
+  int rows = size;
+  int cols = size;
+
+  int unroll_factor = 32;
+  int throughput = 32;
+  string out_name = prefix + "_" + str(unroll_factor);
+
+  CodegenOptions options;
+  options.internal = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  options.debug_options.expect_all_linebuffers = true;
+
+  App sbl = sobel16(out_name);
+  prog prg = sbl.realize(options, out_name, cols, rows, 1);
+  prg.name = out_name + "_opt";
+
+  sbl.generate_soda_file(prg.name, throughput);
+
+  unroll_reduce_loops(prg);
+  merge_basic_block_ops(prg);
+  normalize_bounds(prg);
+  normalize_address_offsets(prg);
+
+  auto fusion_groups = one_stage_per_group(prg);
+  auto fresh_groups = insert_inter_group_buffers(fusion_groups, prg);
+  unroll_mismatched_inner_loops(prg);
+  merge_basic_block_ops(prg);
+  infer_bounds_and_unroll(pick(prg.outs), {size, size}, throughput, prg);
+
+  assert(unoptimized_compiles(prg));
+
+  app_dag dag = partition_groups(fresh_groups, prg);
+
+  options = CodegenOptions();
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  generate_app_code(options, dag);
+
+
+  move_to_benchmarks_folder(prg.name);
+
+  cout << "prg name: " << prg.name << endl;
+
+  assert(false);
+
+}
+
+void sbl32_static_dynamic_comparison() {
+  string prefix = "sbl_d";
+
+  int size = 1080;
+  int rows = size;
+  int cols = size;
+
+  int unroll_factor = 32;
+  int throughput = 32;
+  string out_name = prefix + "_" + str(unroll_factor);
+
+  CodegenOptions options;
+  options.internal = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  options.debug_options.expect_all_linebuffers = true;
+
+  App sbl = sobel16(out_name);
+  prog prg = sbl.realize(options, out_name, cols, rows, 1);
+  prg.name = out_name + "_opt";
+
+  sbl.generate_soda_file(prg.name, throughput);
+
+  unroll_reduce_loops(prg);
+  merge_basic_block_ops(prg);
+  normalize_bounds(prg);
+  normalize_address_offsets(prg);
+
+  auto fusion_groups = one_stage_per_group(prg);
+  auto fresh_groups = insert_inter_group_buffers(fusion_groups, prg);
+  unroll_mismatched_inner_loops(prg);
+  merge_basic_block_ops(prg);
+  infer_bounds_and_unroll(pick(prg.outs), {size, size}, throughput, prg);
+
+  assert(unoptimized_compiles(prg));
+
+  app_dag dag = partition_groups(fresh_groups, prg);
+
+  options = CodegenOptions();
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  generate_app_code(options, dag);
+
+
+  move_to_benchmarks_folder(prg.name);
+
+  cout << "prg name: " << prg.name << endl;
+
+  assert(false);
+}
+
+void sbl16_static_dynamic_comparison_short_FIFOs() {
+  string prefix = "sbl_dsd";
+
+  int size = 1080;
+  int rows = size;
+  int cols = size;
+
+  int unroll_factor = 16;
+  int throughput = 16;
+  string out_name = prefix + "_" + str(unroll_factor);
+
+  CodegenOptions options;
+  options.internal = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  options.debug_options.expect_all_linebuffers = true;
+
+  App sbl = sobel16(out_name);
+  prog prg = sbl.realize(options, out_name, cols, rows, 1);
+  prg.name = out_name + "_opt";
+
+  sbl.generate_soda_file(prg.name, throughput);
+
+  unroll_reduce_loops(prg);
+  merge_basic_block_ops(prg);
+  normalize_bounds(prg);
+  normalize_address_offsets(prg);
+
+  auto fusion_groups = one_stage_per_group(prg);
+  auto fresh_groups = insert_inter_group_buffers(fusion_groups, prg);
+  unroll_mismatched_inner_loops(prg);
+  merge_basic_block_ops(prg);
+  infer_bounds_and_unroll(pick(prg.outs), {size, size}, throughput, prg);
+
+  assert(unoptimized_compiles(prg));
+
+  app_dag dag = partition_groups(fresh_groups, prg);
+
+  options = CodegenOptions();
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  generate_app_code(options, dag);
+
+
+  move_to_benchmarks_folder(prg.name);
+
+  cout << "prg name: " << prg.name << endl;
+
+  assert(false);
+}
+
+void sbl16_static_dynamic_comparison() {
+  string prefix = "sbl_d";
+
+  int size = 1080;
+  int rows = size;
+  int cols = size;
+
+  int unroll_factor = 16;
+  int throughput = 16;
+  string out_name = prefix + "_" + str(unroll_factor);
+
+  CodegenOptions options;
+  options.internal = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  options.debug_options.expect_all_linebuffers = true;
+
+  App sbl = sobel16(out_name);
+  prog prg = sbl.realize(options, out_name, cols, rows, 1);
+  prg.name = out_name + "_opt";
+
+  sbl.generate_soda_file(prg.name, throughput);
+
+  unroll_reduce_loops(prg);
+  merge_basic_block_ops(prg);
+  normalize_bounds(prg);
+  normalize_address_offsets(prg);
+
+  auto fusion_groups = one_stage_per_group(prg);
+  auto fresh_groups = insert_inter_group_buffers(fusion_groups, prg);
+  unroll_mismatched_inner_loops(prg);
+  merge_basic_block_ops(prg);
+  infer_bounds_and_unroll(pick(prg.outs), {size, size}, throughput, prg);
+
+  assert(unoptimized_compiles(prg));
+
+  app_dag dag = partition_groups(fresh_groups, prg);
+
+  options = CodegenOptions();
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  generate_app_code(options, dag);
+
+
+  move_to_benchmarks_folder(prg.name);
+
+  cout << "prg name: " << prg.name << endl;
+
+  assert(false);
+}
+
+void sbl_static_dynamic_comparison() {
+  string prefix = "sbl_d";
+
+  int size = 1080;
+  int rows = size;
+  int cols = size;
+
+  int unroll_factor = 1;
+  int throughput = 1;
+  string out_name = prefix + "_" + str(unroll_factor);
+
+  CodegenOptions options;
+  options.internal = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  options.debug_options.expect_all_linebuffers = true;
+
+  App sbl = sobel16(out_name);
+  prog prg = sbl.realize(options, out_name, cols, rows, 1);
+  sbl.generate_soda_file(out_name, throughput);
+  prg.name = out_name + "_opt";
+
+  unroll_reduce_loops(prg);
+  merge_basic_block_ops(prg);
+  normalize_bounds(prg);
+  normalize_address_offsets(prg);
+
+  auto fusion_groups = one_stage_per_group(prg);
+  auto fresh_groups = insert_inter_group_buffers(fusion_groups, prg);
+  unroll_mismatched_inner_loops(prg);
+  merge_basic_block_ops(prg);
+  infer_bounds_and_unroll(pick(prg.outs), {size, size}, throughput, prg);
+
+  assert(unoptimized_compiles(prg));
+
+  app_dag dag = partition_groups(fresh_groups, prg);
+
+  options = CodegenOptions();
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  generate_app_code(options, dag);
+
+
+  move_to_benchmarks_folder(prg.name);
+
+  cout << "prg name: " << prg.name << endl;
+
+  assert(false);
+}
+
+void cp16_static_dynamic_comparison_fresh_codegen() {
+  string prefix = "cpfc";
+
+  int size = 1080;
+  int rows = size;
+  int cols = size;
+
+  int unroll_factor = 16;
+  int throughput = unroll_factor;
+  string out_name = prefix + "_" + str(unroll_factor);
+
+  CodegenOptions options;
+  options.internal = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  options.debug_options.expect_all_linebuffers = true;
+
+  App jac = camera_pipeline(out_name);
+  prog prg = jac.realize(options, out_name, cols, rows, 1);
+
+  move_to_benchmarks_folder(out_name + "_opt");
+
+  prg.name = out_name + "_opt_d";
+
+  jac.generate_soda_file(prg.name, throughput);
+
+  unroll_reduce_loops(prg);
+  merge_basic_block_ops(prg);
+  normalize_bounds(prg);
+  normalize_address_offsets(prg);
+
+  auto fusion_groups = one_stage_per_group(prg);
+  auto fresh_groups = insert_inter_group_buffers(fusion_groups, prg);
+  unroll_mismatched_inner_loops(prg);
+  merge_basic_block_ops(prg);
+  infer_bounds_and_unroll(pick(prg.outs), {size, size}, throughput, prg);
+
+  assert(unoptimized_compiles(prg));
+
+  app_dag dag = partition_groups(fresh_groups, prg);
+
+  options = CodegenOptions();
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  generate_app_code(options, dag);
+
+  move_to_benchmarks_folder(prg.name);
+
+  string synth_dir =
+    "./soda_codes/" + prg.name+ "/our_code/";
+
+  system(("cp " + out_name + "_opt" + "*.h " + synth_dir).c_str());
+
+  cout << "prg name: " << prg.name << endl;
+
+  assert(false);
+
+}
+
+void initial_soda_comparison() {
+  cp32_static_dynamic_comparison();
+  cp16_static_dynamic_comparison();
+  cp_static_dynamic_comparison();
+
+  sbl32_static_dynamic_comparison();
+  sbl16_static_dynamic_comparison();
+  sbl_static_dynamic_comparison();
+
+  jac32_static_dynamic_comparison();
+  jac16_static_dynamic_comparison();
+  jac_static_dynamic_comparison();
+
+  cp16_static_dynamic_comparison_fresh_codegen();
+
+
+  sbl16_static_dynamic_comparison_short_FIFOs();
+  sbl32_static_dynamic_comparison_larger_bounds_to_prevent_vivado_unroll_error();
+
+
+  blur32_static_dynamic_comparison();
+  blur16_static_dynamic_comparison();
+  blur_static_dynamic_comparison();
+}
+
 void application_tests() {
+  initial_soda_comparison();
+
+  histogram_test();
+  histogram1d_test();
   iccad_tests();
+
+
 
   gpu_codegen_test();
 
@@ -19985,6 +20814,7 @@ void test_multi_kernel_mismatched_loop_depths() {
 
 void test_multi_kernel_llf() {
   prog prg = llf_float();
+  prg.name = "llf_dcons_2048";
   //auto unopt_postprocessed = unoptimized_result(prg);
 
   auto fusion_groups = one_stage_per_group(prg);
@@ -19997,8 +20827,8 @@ void test_multi_kernel_llf() {
   //options.hls_loop_codegen = HLS_LOOP_CODEGEN_ISL;
   generate_app_code(options, dag);
 
-  generate_regression_testbench(dag.prg);
-  vector<string> multi_kernel_res = run_regression_tb(dag.prg);
+  //generate_regression_testbench(dag.prg);
+  //vector<string> multi_kernel_res = run_regression_tb(dag.prg);
 
   //compare("multi_kernel_" + prg.name + "_vs_unopt", multi_kernel_res, unopt_postprocessed);
   move_to_benchmarks_folder(dag.prg.name);
@@ -20007,7 +20837,7 @@ void test_multi_kernel_llf() {
 
 void test_multi_kernel_pyramid_collapsing() {
 
-  prog prg("pyr_blndd256_ii1");
+  prog prg("pyr_blnd2d500_2048");
   prg.compute_unit_file = "local_laplacian_filters_compute.h";
   prg.add_input("in");
   prg.add_output("out");
@@ -20036,16 +20866,18 @@ void test_multi_kernel_pyramid_collapsing() {
   auto unopt_postprocessed = unoptimized_result(prg);
 
   auto fusion_groups = one_stage_per_group(prg);
+  //auto fusion_groups = fuse_pointwise_stages(prg);
   app_dag dag = partition_application(fusion_groups, prg);
-  string target = "gp_in_on_chip_1_buf4_to_gp_1112";
-  dag.prg.pretty_print();
 
   CodegenOptions options;
+  //all_unbanked(prg, options);
+  //options.inner_bank_offset_mode =
+    //INNER_BANK_OFFSET_MULTILINEAR;
   options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
-  //options.hls_loop_codegen = HLS_LOOP_CODEGEN_ISL;
   generate_app_code(options, dag);
 
   generate_regression_testbench(dag.prg);
+
   vector<string> multi_kernel_res = run_regression_tb(dag.prg);
 
   compare("multi_kernel_" + prg.name + "_vs_unopt", multi_kernel_res, unopt_postprocessed);
@@ -21068,13 +21900,134 @@ void stencil_chain_multi_kernel_test() {
 
 }
 
+void test_app_to_prog_conversion() {
+  //App jac = jacobi2d("jac");
+  App jac = pointwise2d("jac");
+  int size = 10;
+  prog prg = jac.realize("jac", size, size);
+
+  prg.pretty_print();
+  prg.sanity_check();
+
+  auto original = run_regression_tb("jac_opt");
+  cout << "Original result: " << original << endl;
+  //assert(false);
+
+  auto extracted = unoptimized_result(prg);
+  cout << "Extracted result: " << extracted << endl;
+  //assert(false);
+
+  compare("jac_extracted" + prg.name + "_vs_unopt", original, extracted);
+  //assert(false);
+}
+
+void test_jacobi15_dynamic() {
+  string prefix = "jacdynl2";
+  int throughput = 1;
+  string name = prefix + "_" + str(throughput);
+  App lp = stencil_chain_stage_iccad(name, 15);
+  int rows = 1080;
+  int cols = 1080;
+  CodegenOptions options;
+  options.internal = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
+
+  prog prg = lp.realize(options, name, {cols, rows}, "in", 1);
+  generate_optimized_code(prg);
+  assert(false);
+
+  //auto extracted = unoptimized_result(prg);
+
+  auto fusion_groups = one_stage_per_group(prg);
+  app_dag dag = partition_application(fusion_groups, prg);
+
+  //auto fresh_groups = insert_inter_group_buffers(fusion_groups, prg);
+  //unroll_mismatched_inner_loops(prg);
+  //merge_basic_block_ops(prg);
+  //infer_bounds_and_unroll(pick(prg.outs), {1080, 1080}, throughput, prg);
+
+  //app_dag dag = partition_groups(fresh_groups, prg);
+  //assert(unoptimized_compiles(dag.prg));
+
+  //prg.pretty_print();
+  //assert(false);
+  //app_dag dag = partition_application(fusion_groups, prg);
+
+  options = CodegenOptions();
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  generate_app_code(options, dag);
+
+  move_to_benchmarks_folder(prg.name);
+
+  assert(false);
+}
+
+void test_multi_kernel_gp() {
+  prog prg("gp");
+  prg.compute_unit_file = "local_laplacian_filters_compute.h";
+  prg.add_input("in");
+  prg.add_output("out");
+
+  cpy("in_on_chip", "in", 2, prg);
+
+  const int num_pyramid_levels = 2;
+  vector<string> lps = gaussian_pyramid("in_on_chip", num_pyramid_levels, prg);
+
+  string reconstructed = reconstruct_gaussian(lps, prg);
+  cpy("out", reconstructed, 2, prg);
+
+  infer_bounds("out", {64, 64}, prg);
+
+  prg.pretty_print();
+  prg.sanity_check();
+
+  unroll_reduce_loops(prg);
+  merge_basic_block_ops(prg);
+  normalize_bounds(prg);
+  normalize_address_offsets(prg);
+
+  prg.pretty_print();
+  prg.sanity_check();
+
+  auto unopt_postprocessed = unoptimized_result(prg);
+
+  auto fusion_groups = one_stage_per_group(prg);
+  cout << "# of groups: " << fusion_groups.size() << endl;
+  //assert(false);
+
+  app_dag dag = partition_application(fusion_groups, prg);
+  //string target = "gp_in_on_chip_1_buf4_to_gp_1112";
+  dag.prg.pretty_print();
+  //assert(false);
+
+  CodegenOptions options;
+  //all_unbanked(prg, options);
+  //options.inner_bank_offset_mode =
+    //INNER_BANK_OFFSET_MULTILINEAR;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  generate_app_code(options, dag);
+
+  generate_regression_testbench(dag.prg);
+
+  vector<string> multi_kernel_res = run_regression_tb(dag.prg);
+
+  compare("multi_kernel_" + prg.name + "_vs_unopt", multi_kernel_res, unopt_postprocessed);
+  move_to_benchmarks_folder(dag.prg.name);
+
+}
+
 void dhuff_tests() {
+  //test_jacobi15_dynamic();
+
+  test_multi_kernel_pyramid_collapsing();
+  test_multi_kernel_gp();
+  test_app_to_prog_conversion();
+
   //test_multi_kernel_llf();
+  //assert(false);
 
   test_multi_kernel_mismatched_loop_depths();
-
   test_artificial_deadlock();
-  test_multi_kernel_pyramid_collapsing();
   upsample2d_test();
   up_stencil_down_test();
   test_multi_kernel_unsharp();

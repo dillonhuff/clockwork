@@ -6,6 +6,8 @@
 #include "qexpr.h"
 #include "app.h"
 
+typedef vector<string> path;
+
 enum ir_node_type {
   IR_NODE_TYPE_OPERATION,
   IR_NODE_TYPE_LOOP,
@@ -134,11 +136,6 @@ struct ir_node {
 
       }
     }
-    //for (auto& b : produce_locs) {
-      //if (b.first == buf) {
-        //b.second = prefix + ", " + b.second;
-      //}
-    //}
   }
 
   void add_prefix_to_reads(const std::string& prefix,
@@ -578,40 +575,6 @@ struct ir_node {
 
   void add_dynamic_store(const std::string& buf,
       const std::string& addr_table,
-      const vector<std::string>& table_offset) {
-    //add_load(addr_table, table_offset);
-    //dynamic_load_addresses.push_back({buf, addr_table, table_offset});
-    //add_store(buf, "0");
-  }
-
-  void add_dynamic_load(const std::string& buf,
-      const std::string& addr_table,
-      const vector<std::string>& table_offset) {
-    //add_load(addr_table, table_offset);
-    //dynamic_store_addresses.push_back({buf, addr_table, table_offset});
-    //add_load(buf, "0");
-  }
-
-  void add_dynamic_store(const std::string& buf,
-      const std::string& addr_table,
-      const std::string& table_offset0,
-      const std::string& table_offset1) {
-    //add_load(addr_table, table_offset);
-    //dynamic_load_addresses.push_back({buf, addr_table, table_offset});
-    //add_store(buf, "0");
-  }
-
-  void add_dynamic_load(const std::string& buf,
-      const std::string& addr_table,
-      const std::string& table_offset0,
-      const std::string& table_offset1) {
-    //add_load(addr_table, table_offset);
-    //dynamic_store_addresses.push_back({buf, addr_table, table_offset});
-    //add_load(buf, "0");
-  }
-
-  void add_dynamic_store(const std::string& buf,
-      const std::string& addr_table,
       const std::string& table_offset) {
     add_load(addr_table, table_offset);
     dynamic_load_addresses.push_back({buf, addr_table, table_offset});
@@ -630,14 +593,6 @@ struct ir_node {
     assert(!is_loop());
     consume_locs_pair.push_back({b, loc});
     return consumed_value_name({b, loc});
-    //string val_name = b;
-    //for (auto val : loc) {
-      //val_name += "_";
-      //val_name += val.second;
-    //}
-    //val_name += "_value";
-    //val_name = c_sanitize(val_name);
-    //return val_name;
   }
 
   string add_load(const std::string& b, const std::string& d0, const std::string& d1, const std::string& d2, const std::string& d3, const std::string& d4) {
@@ -673,17 +628,6 @@ struct ir_node {
 
   std::vector<pair<buffer_name, piecewise_address> > produces_pair() const {
     return produce_locs;
-    //std::vector<pair<buffer_name, piecewise_address> > ps;
-    //for (auto p : produce_locs) {
-      //buffer_name b = p.first;
-      //address addr = p.second;
-      ////pair<buffer_name, address> pr{b, addr};
-      //pair<string, address> pr{"", addr};
-      //piecewise_address paddr{pr};
-      //pair<buffer_name, piecewise_address> psa{b, paddr};
-      //ps.push_back(psa);
-    //}
-    //return ps;
   }
 
   vector<string> produces() const {
@@ -1463,6 +1407,7 @@ vector<string> incoming_buffers(const map<string, UBuffer>& buffers, op* op, pro
 vector<string> outgoing_buffers(const map<string, UBuffer>& buffers, op* op, prog& prg);
 
 
+bool unoptimized_compiles(prog& prg);
 std::vector<string> unoptimized_result(prog& prg);
 void generate_regression_testbench(prog& prg);
 void generate_regression_testbench(prog& prg, map<string, UBuffer>& buffers);
@@ -1489,6 +1434,8 @@ void make_constant_dd(const std::string& target_op, const std::string& target_bu
 std::vector<string> topologically_sort_kernels(prog& prg);
 
 std::set<string> buffers_written(op* p);
+std::set<string> buffers_read(op* p);
+
 std::set<string> buffers_written(prog& prg);
 std::set<string> buffers_read(prog& prg);
 
@@ -1522,6 +1469,8 @@ void generate_trace(prog& prg, umap* sched);
 
 void all_register_files(prog& prg, CodegenOptions& options);
 int compile_compute(const std::string& name);
+bool compile_regression_tb(const std::string& name);
+bool compile_regression_tb(prog& prg);
 
 vector<string> surrounding_vars(op* loop, prog& prg);
 vector<string> surrounding_vars(const std::string& op, prog& prg);
@@ -1590,6 +1539,7 @@ struct cu_val {
   bool is_arg;
   string name;
   int arg_buf_pos;
+  int width;
 
   std::string str() const {
     if (is_arg) {
@@ -1924,6 +1874,7 @@ UBuffer write_latency_adjusted_buffer(
 
 vector<isl_multi_aff*> write_addrs(op* op, const std::string& buf, prog& prg);
 
+vector<isl_multi_aff*> write_addrs(op* op, prog& prg);
 vector<isl_multi_aff*> read_addrs(op* op, prog& prg);
 vector<isl_multi_aff*> read_addrs(op* op, const std::string& buf, prog& prg);
 
@@ -1935,11 +1886,49 @@ struct app_dag {
   map<string, prog> fusion_group_progs;
   map<string, int> channel_sizes;
 
+  string edge_between(const std::string& src, const std::string& dst);
+
+  std::set<string> inter_group_channels();
+
+  vector<path> all_paths(const std::string& src, const std::string& dst);
+
+  std::set<string> all_nodes() {
+    std::set<string> nodes;
+    for (auto& g : fusion_groups) {
+      nodes.insert(g.first);
+    }
+    return nodes;
+  }
 
   vector<string> sorted_fusion_groups();
 
+  std::set<string> children(const std::string& location);
+
   bool is_boundary(const std::string& buf) {
     return prg.is_boundary(buf);
+  }
+
+  vector<string> longest_reconvergent_path(const std::string& buf);
+
+  string consumer_group(const std::string& buf) {
+    assert(fusion_groups.size() == fusion_group_progs.size());
+
+    for (auto& gp : fusion_group_progs) {
+      if (elem(buf, buffers_read(gp.second))) {
+        return gp.first;
+      }
+    }
+    cout << "Error: No consumer group for: " << buf << endl;
+    cout << "Program..." << endl;
+    prg.pretty_print();
+    cout << endl;
+
+    cout << "Fusion group progs..." << endl;
+    for (auto& gp : fusion_group_progs) {
+      gp.second.pretty_print();
+      cout << endl;
+    }
+    assert(false);
   }
 
   string producer_group(const std::string& buf) {
@@ -1992,6 +1981,8 @@ std::map<std::string, std::set<std::string> >
 insert_inter_group_buffers(const std::map<std::string, std::set<std::string> >& fusion_groups, prog& prg);
 
 map<std::string, std::set<string> > one_stage_per_group(prog& prg);
+
+map<std::string, std::set<string> > fuse_pointwise_stages(prog& prg);
 
 vector<string> buffer_arg_names(op* op, prog& prg);
 
