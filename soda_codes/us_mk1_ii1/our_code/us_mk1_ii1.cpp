@@ -257,14 +257,14 @@ inline void gray_oc_load_in03_write_bundle_write(hw_uint<32>& oc_load_in03_write
 
 struct gray_FIFO_buf44_load_to_gray_FIFO_buf4447_26_to_gray_FIFO_buf44_pw_math_gray1215_5_cache {
 	// RAM Box: {[0, 63], [0, 63]}
-	// Capacity: 131
-	// # of read delays: 131
-  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130
-	fifo<hw_uint<32> , 131> f;
+	// Capacity: 3
+	// # of read delays: 3
+  // 0, 1, 2
+	fifo<hw_uint<32> , 3> f;
 	inline hw_uint<32>  peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    return f.peek(130 - offset);
+    return f.peek(2 - offset);
   }
 
 
@@ -294,9 +294,9 @@ inline hw_uint<32>  gray_FIFO_buf44_pw_math_gray1215_5_select(gray_FIFO_buf44_ca
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // gray_FIFO_buf44_pw_math_gray1215_5 read pattern: { pw_math_gray1215[root = 0, pw_math_gray1213, pw_math_gray1214] -> gray_FIFO_buf44[pw_math_gray1214, pw_math_gray1213] : 0 <= pw_math_gray1213 <= 63 and 0 <= pw_math_gray1214 <= 63 }
-  // Read schedule : { pw_math_gray1215[d0 = 0, d1, d2] -> [0, 2 + d1, 2 + d2, 4] : 0 <= d1 <= 63 and 0 <= d2 <= 63 }
+  // Read schedule : { pw_math_gray1215[d0 = 0, d1, d2] -> [0, d1, 2 + d2, 4] : 0 <= d1 <= 63 and 0 <= d2 <= 63 }
   // Write schedule: { load_to_gray_FIFO_buf4447[d0 = 0, d1, d2] -> [0, d1, d2, 3] : 0 <= d1 <= 63 and 0 <= d2 <= 63 }
-  auto value_gray_FIFO_buf44_load_to_gray_FIFO_buf4447_26 = gray_FIFO_buf44.gray_FIFO_buf44_load_to_gray_FIFO_buf4447_26_to_gray_FIFO_buf44_pw_math_gray1215_5.peek(/* one reader or all rams */ (-63 + pw_math_gray1214 == 0 && -62 + pw_math_gray1213 == 0) ? (64) : (-63 + pw_math_gray1214 == 0 && 61 - pw_math_gray1213 >= 0) ? (128) : (-62 + pw_math_gray1214 == 0 && 61 - pw_math_gray1213 >= 0) ? (129) : (61 - pw_math_gray1214 >= 0 && 61 - pw_math_gray1213 >= 0) ? (130) : (-63 + pw_math_gray1213 == 0 && 62 - pw_math_gray1214 >= 0) ? ((63 - pw_math_gray1214)) : (-62 + pw_math_gray1213 == 0 && 62 - pw_math_gray1214 >= 0) ? ((127 - pw_math_gray1214)) : 0);
+  auto value_gray_FIFO_buf44_load_to_gray_FIFO_buf4447_26 = gray_FIFO_buf44.gray_FIFO_buf44_load_to_gray_FIFO_buf4447_26_to_gray_FIFO_buf44_pw_math_gray1215_5.peek(/* one reader or all rams */ (-62 + pw_math_gray1214 == 0) ? (1) : (61 - pw_math_gray1214 >= 0) ? (2) : 0);
   return value_gray_FIFO_buf44_load_to_gray_FIFO_buf4447_26;
   return 0;
 }
@@ -911,8 +911,8 @@ inline hw_uint<32>  gray_diff_load_to_gray_diff_to_gp_43639_13_select(gray_diff_
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // gray_diff_load_to_gray_diff_to_gp_43639_13 read pattern: { load_to_gray_diff_to_gp_43639[root = 0, gray_diff_ld38, gray_diff_ld37] -> gray_diff[gray_diff_ld37, gray_diff_ld38] : 0 <= gray_diff_ld38 <= 63 and 0 <= gray_diff_ld37 <= 63 }
-  // Read schedule : { load_to_gray_diff_to_gp_43639[d0 = 0, d1, d2] -> [0, 2 + d1, 2 + d2, 6] : 0 <= d1 <= 63 and 0 <= d2 <= 63 }
-  // Write schedule: { pw_math_gray1215[d0 = 0, d1, d2] -> [0, 2 + d1, 2 + d2, 4] : 0 <= d1 <= 63 and 0 <= d2 <= 63 }
+  // Read schedule : { load_to_gray_diff_to_gp_43639[d0 = 0, d1, d2] -> [0, d1, 2 + d2, 6] : 0 <= d1 <= 63 and 0 <= d2 <= 63 }
+  // Write schedule: { pw_math_gray1215[d0 = 0, d1, d2] -> [0, d1, 2 + d2, 4] : 0 <= d1 <= 63 and 0 <= d2 <= 63 }
   auto value_gray_diff_pw_math_gray1215_4 = gray_diff.gray_diff_pw_math_gray1215_4_to_gray_diff_load_to_gray_diff_to_gp_43639_13.peek(/* one reader or all rams */ 0);
   return value_gray_diff_pw_math_gray1215_4;
   return 0;
@@ -1022,19 +1022,6 @@ inline void load_to_gray_to_gp_22427(gray_cache& gray, HWStream<hw_uint<32> >& /
 
 }
 
-inline void oc_load_in03(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */in, gray_cache& gray, int d0, int d1, int d2) {
-  // Dynamic address computation
-
-	// Consume: in
-	auto in_oc_load_in02_p_0_c___oc_load_in01_p_0_value = in.read();
-	// Produce: gray
-	gray_oc_load_in03_write_bundle_write(/* arg names */in_oc_load_in02_p_0_c___oc_load_in01_p_0_value, gray, d0, d1, d2, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
 inline void load_to_gray_to_gp_12023(gray_cache& gray, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */gray_to_gp_120, int d0, int d1, int d2) {
   // Dynamic address computation
 
@@ -1046,6 +1033,19 @@ inline void load_to_gray_to_gp_12023(gray_cache& gray, HWStream<hw_uint<32> >& /
 
 	// Produce: gray_to_gp_120
 	gray_to_gp_120.write(gray_gray_ld21_c__gray_ld22_value);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void oc_load_in03(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */in, gray_cache& gray, int d0, int d1, int d2) {
+  // Dynamic address computation
+
+	// Consume: in
+	auto in_oc_load_in02_p_0_c___oc_load_in01_p_0_value = in.read();
+	// Produce: gray
+	gray_oc_load_in03_write_bundle_write(/* arg names */in_oc_load_in02_p_0_c___oc_load_in01_p_0_value, gray, d0, d1, d2, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -1076,7 +1076,7 @@ void Extracted_gray_ld22_gray_ld26_oc_load_in01_(HWStream<hw_uint<32> >& /* no b
 
 	// time range: { [0, i1, i2, 2] : 0 <= i1 <= 65 and 0 <= i2 <= 65; [0, i1, i2, 1] : 0 <= i1 <= 63 and 0 <= i2 <= 63; [0, i1, i2, 0] : 0 <= i1 <= 65 and 0 <= i2 <= 65 }
 	// # sets: 1
-	for (int i0 = 0; i0 <= 0; i0++) {
+	int i0 = 0;
 	  for (int i1 = 0; i1 <= 65; i1++) {
 	    for (int i2 = 0; i2 <= 65; i2++) {
 	#pragma HLS pipeline II=1
@@ -1097,7 +1097,6 @@ void Extracted_gray_ld22_gray_ld26_oc_load_in01_(HWStream<hw_uint<32> >& /* no b
 	        if ((true)) {
 	          load_to_gray_to_gp_22427(gray /* buf name */, gray_to_gp_224, 0, ((1*i1)), ((1*i2)));
 	        }
-	      }
 	    }
 	  }
 	
@@ -1172,42 +1171,38 @@ void Extracted_gray_diff_ld38_gray_to_gp_120_ld46_pw_math_gray1213_(HWStream<hw_
 #pragma HLS inline recursive
 #endif // __VIVADO_SYNTH__
 
-// schedule: { load_to_gray_FIFO_buf4447[d0 = 0, d1, d2] -> [0, d1, d2, 3] : 0 <= d1 <= 63 and 0 <= d2 <= 63; load_to_gray_diff_to_gp_43639[d0 = 0, d1, d2] -> [0, 2 + d1, 2 + d2, 6] : 0 <= d1 <= 63 and 0 <= d2 <= 63; pw_math_gray1215[d0 = 0, d1, d2] -> [0, 2 + d1, 2 + d2, 4] : 0 <= d1 <= 63 and 0 <= d2 <= 63 }
+// schedule: { load_to_gray_FIFO_buf4447[d0 = 0, d1, d2] -> [0, d1, d2, 3] : 0 <= d1 <= 63 and 0 <= d2 <= 63; load_to_gray_diff_to_gp_43639[d0 = 0, d1, d2] -> [0, d1, 2 + d2, 6] : 0 <= d1 <= 63 and 0 <= d2 <= 63; pw_math_gray1215[d0 = 0, d1, d2] -> [0, d1, 2 + d2, 4] : 0 <= d1 <= 63 and 0 <= d2 <= 63 }
 //   { load_to_gray_FIFO_buf4447[d0 = 0, d1, d2] -> [0, d1, d2, 3] : 0 <= d1 <= 63 and 0 <= d2 <= 63 }
 // Condition for load_to_gray_FIFO_buf4447(((((-3 + 1*i3)) == 0) && (((1*i0)) == 0) && (((1*i1)) >= 0) && (((63 + -1*i1)) >= 0) && (((1*i2)) >= 0) && (((63 + -1*i2)) >= 0)))
-//   { load_to_gray_diff_to_gp_43639[d0 = 0, d1, d2] -> [0, 2 + d1, 2 + d2, 6] : 0 <= d1 <= 63 and 0 <= d2 <= 63 }
-// Condition for load_to_gray_diff_to_gp_43639(((((-6 + 1*i3)) == 0) && (((1*i0)) == 0) && (((-2 + 1*i1)) >= 0) && (((65 + -1*i1)) >= 0) && (((-2 + 1*i2)) >= 0) && (((65 + -1*i2)) >= 0)))
-//   { pw_math_gray1215[d0 = 0, d1, d2] -> [0, 2 + d1, 2 + d2, 4] : 0 <= d1 <= 63 and 0 <= d2 <= 63 }
-// Condition for pw_math_gray1215(((((-4 + 1*i3)) == 0) && (((1*i0)) == 0) && (((-2 + 1*i1)) >= 0) && (((65 + -1*i1)) >= 0) && (((-2 + 1*i2)) >= 0) && (((65 + -1*i2)) >= 0)))
+//   { load_to_gray_diff_to_gp_43639[d0 = 0, d1, d2] -> [0, d1, 2 + d2, 6] : 0 <= d1 <= 63 and 0 <= d2 <= 63 }
+// Condition for load_to_gray_diff_to_gp_43639(((((-6 + 1*i3)) == 0) && (((1*i0)) == 0) && (((1*i1)) >= 0) && (((63 + -1*i1)) >= 0) && (((-2 + 1*i2)) >= 0) && (((65 + -1*i2)) >= 0)))
+//   { pw_math_gray1215[d0 = 0, d1, d2] -> [0, d1, 2 + d2, 4] : 0 <= d1 <= 63 and 0 <= d2 <= 63 }
+// Condition for pw_math_gray1215(((((-4 + 1*i3)) == 0) && (((1*i0)) == 0) && (((1*i1)) >= 0) && (((63 + -1*i1)) >= 0) && (((-2 + 1*i2)) >= 0) && (((65 + -1*i2)) >= 0)))
 
-	// time range: { [0, i1, i2, 6] : 2 <= i1 <= 65 and 2 <= i2 <= 65; [0, i1, i2, 4] : 2 <= i1 <= 65 and 2 <= i2 <= 65; [0, i1, i2, 3] : 0 <= i1 <= 63 and 0 <= i2 <= 63 }
+	// time range: { [0, i1, i2, 6] : 0 <= i1 <= 63 and 2 <= i2 <= 65; [0, i1, i2, 4] : 0 <= i1 <= 63 and 2 <= i2 <= 65; [0, i1, i2, 3] : 0 <= i1 <= 63 and 0 <= i2 <= 63 }
 	// # sets: 1
-	for (int i0 = 0; i0 <= 0; i0++) {
-	  for (int i1 = 0; i1 <= 65; i1++) {
+	int i0 = 0;
+	  for (int i1 = 0; i1 <= 63; i1++) {
 	    for (int i2 = 0; i2 <= 65; i2++) {
 	#pragma HLS pipeline II=1
-	        // { [i0, i1, i2] : i1 <= 63 and i2 <= 63 }
-	        // { [i0, i1, i2] : i1 <= 63 and i2 <= 63 }
-	          // { [i0, i1, i2] : 63 - i1 >= 0 }
+	        // { [i0, i1, i2] : i2 <= 63 }
+	        // { [i0, i1, i2] : i2 <= 63 }
 	          // { [i0, i1, i2] : 63 - i2 >= 0 }
-	        if ((((((63 + -1*i1)) >= 0) && (((63 + -1*i2)) >= 0)))) {
+	        if ((((((63 + -1*i2)) >= 0)))) {
 	          load_to_gray_FIFO_buf4447(gray_to_gp_120 /* buf name */, gray_FIFO_buf44, 0, ((1*i1)), ((1*i2)));
 	        }
-	        // { [i0, i1, i2] : i1 >= 2 and i2 >= 2 }
-	        // { [i0, i1, i2] : i1 >= 2 and i2 >= 2 }
-	          // { [i0, i1, i2] : -2 + i1 >= 0 }
+	        // { [i0, i1, i2] : i2 >= 2 }
+	        // { [i0, i1, i2] : i2 >= 2 }
 	          // { [i0, i1, i2] : -2 + i2 >= 0 }
-	        if ((((((-2 + 1*i1)) >= 0) && (((-2 + 1*i2)) >= 0)))) {
-	          pw_math_gray1215(gray_FIFO_buf44 /* buf name */, gray_diff, 0, ((-2 + 1*i1)), ((-2 + 1*i2)));
+	        if ((((((-2 + 1*i2)) >= 0)))) {
+	          pw_math_gray1215(gray_FIFO_buf44 /* buf name */, gray_diff, 0, ((1*i1)), ((-2 + 1*i2)));
 	        }
-	        // { [i0, i1, i2] : i1 >= 2 and i2 >= 2 }
-	        // { [i0, i1, i2] : i1 >= 2 and i2 >= 2 }
-	          // { [i0, i1, i2] : -2 + i1 >= 0 }
+	        // { [i0, i1, i2] : i2 >= 2 }
+	        // { [i0, i1, i2] : i2 >= 2 }
 	          // { [i0, i1, i2] : -2 + i2 >= 0 }
-	        if ((((((-2 + 1*i1)) >= 0) && (((-2 + 1*i2)) >= 0)))) {
-	          load_to_gray_diff_to_gp_43639(gray_diff /* buf name */, gray_diff_to_gp_436, 0, ((-2 + 1*i1)), ((-2 + 1*i2)));
+	        if ((((((-2 + 1*i2)) >= 0)))) {
+	          load_to_gray_diff_to_gp_43639(gray_diff /* buf name */, gray_diff_to_gp_436, 0, ((1*i1)), ((-2 + 1*i2)));
 	        }
-	      }
 	    }
 	  }
 	
@@ -1292,7 +1287,7 @@ void Extracted_gray_blur_ld30_gray_to_gp_224_ld50_pw_math_gray45_(HWStream<hw_ui
 
 	// time range: { [0, i1, i2, i3] : 0 <= i1 <= 65 and 0 <= i2 <= 65 and 7 <= i3 <= 8; [0, i1, i2, 5] : 0 <= i1 <= 65 and 0 <= i2 <= 65 }
 	// # sets: 1
-	for (int i0 = 0; i0 <= 0; i0++) {
+	int i0 = 0;
 	  for (int i1 = 0; i1 <= 65; i1++) {
 	    for (int i2 = 0; i2 <= 65; i2++) {
 	#pragma HLS pipeline II=1
@@ -1311,7 +1306,6 @@ void Extracted_gray_blur_ld30_gray_to_gp_224_ld50_pw_math_gray45_(HWStream<hw_ui
 	        if ((true)) {
 	          load_to_gray_blur_to_gp_32831(gray_blur /* buf name */, gray_blur_to_gp_328, 0, ((1*i1)), ((1*i2)));
 	        }
-	      }
 	    }
 	  }
 	
@@ -1396,7 +1390,7 @@ void Extracted_gray_blur_cache_ld34_gray_blur_to_gp_328_ld54_pw_math_gray_blur89
 
 	// time range: { [0, i1, i2, i3] : 0 <= i1 <= 65 and 0 <= i2 <= 65 and 10 <= i3 <= 12 }
 	// # sets: 1
-	for (int i0 = 0; i0 <= 0; i0++) {
+	int i0 = 0;
 	  for (int i1 = 0; i1 <= 65; i1++) {
 	    for (int i2 = 0; i2 <= 65; i2++) {
 	#pragma HLS pipeline II=1
@@ -1415,7 +1409,6 @@ void Extracted_gray_blur_cache_ld34_gray_blur_to_gp_328_ld54_pw_math_gray_blur89
 	        if ((true)) {
 	          load_to_gray_blur_cache_to_gp_53235(gray_blur_cache /* buf name */, gray_blur_cache_to_gp_532, 0, ((1*i1)), ((1*i2)));
 	        }
-	      }
 	    }
 	  }
 	
@@ -1502,7 +1495,7 @@ void Extracted_blurred_to_gp_416_ld42_gray_diff_to_gp_436_ld62_y_(HWStream<hw_ui
 
 	// time range: { [0, i1, i2, i3] : 2 <= i1 <= 65 and 2 <= i2 <= 65 and 16 <= i3 <= 17; [0, i1, i2, 9] : 2 <= i1 <= 65 and 2 <= i2 <= 65 }
 	// # sets: 1
-	for (int i0 = 0; i0 <= 0; i0++) {
+	int i0 = 0;
 	  for (int i1 = 2; i1 <= 65; i1++) {
 	    for (int i2 = 2; i2 <= 65; i2++) {
 	#pragma HLS pipeline II=1
@@ -1521,7 +1514,6 @@ void Extracted_blurred_to_gp_416_ld42_gray_diff_to_gp_436_ld62_y_(HWStream<hw_ui
 	        if ((true)) {
 	          diff(gray_diff_FIFO_buf60 /* buf name */, blurred_FIFO_buf40 /* buf name */, out, 0, ((-2 + 1*i1)), ((-2 + 1*i2)));
 	        }
-	      }
 	    }
 	  }
 	
@@ -1606,7 +1598,7 @@ void Extracted_blurred_ld18_gray_blur_cache_to_gp_532_ld58_yb_(HWStream<hw_uint<
 
 	// time range: { [0, i1, i2, i3] : 2 <= i1 <= 65 and 2 <= i2 <= 65 and 14 <= i3 <= 15; [0, i1, i2, 13] : 0 <= i1 <= 65 and 0 <= i2 <= 65 }
 	// # sets: 1
-	for (int i0 = 0; i0 <= 0; i0++) {
+	int i0 = 0;
 	  for (int i1 = 0; i1 <= 65; i1++) {
 	    for (int i2 = 0; i2 <= 65; i2++) {
 	#pragma HLS pipeline II=1
@@ -1629,7 +1621,6 @@ void Extracted_blurred_ld18_gray_blur_cache_to_gp_532_ld58_yb_(HWStream<hw_uint<
 	        if ((((((-2 + 1*i1)) >= 0) && (((-2 + 1*i2)) >= 0)))) {
 	          load_to_blurred_to_gp_41619(blurred /* buf name */, blurred_to_gp_416, 0, ((-2 + 1*i1)), ((-2 + 1*i2)));
 	        }
-	      }
 	    }
 	  }
 	
@@ -1652,27 +1643,27 @@ void us_mk1_ii1(HWStream<hw_uint<32> >& /* no bundle get_args num ports = 1 */in
 
   HWStream< hw_uint<32> > gray_to_gp_120;
 #ifdef __VIVADO_SYNTH__
-#pragma HLS stream variable=gray_to_gp_120.values depth=1
+#pragma HLS stream variable=gray_to_gp_120.values depth=32
 #endif //__VIVADO_SYNTH__
   HWStream< hw_uint<32> > gray_to_gp_224;
 #ifdef __VIVADO_SYNTH__
-#pragma HLS stream variable=gray_to_gp_224.values depth=1
+#pragma HLS stream variable=gray_to_gp_224.values depth=32
 #endif //__VIVADO_SYNTH__
   HWStream< hw_uint<32> > gray_diff_to_gp_436;
 #ifdef __VIVADO_SYNTH__
-#pragma HLS stream variable=gray_diff_to_gp_436.values depth=1
+#pragma HLS stream variable=gray_diff_to_gp_436.values depth=160
 #endif //__VIVADO_SYNTH__
   HWStream< hw_uint<32> > gray_blur_to_gp_328;
 #ifdef __VIVADO_SYNTH__
-#pragma HLS stream variable=gray_blur_to_gp_328.values depth=1
+#pragma HLS stream variable=gray_blur_to_gp_328.values depth=32
 #endif //__VIVADO_SYNTH__
   HWStream< hw_uint<32> > gray_blur_cache_to_gp_532;
 #ifdef __VIVADO_SYNTH__
-#pragma HLS stream variable=gray_blur_cache_to_gp_532.values depth=1
+#pragma HLS stream variable=gray_blur_cache_to_gp_532.values depth=32
 #endif //__VIVADO_SYNTH__
   HWStream< hw_uint<32> > blurred_to_gp_416;
 #ifdef __VIVADO_SYNTH__
-#pragma HLS stream variable=blurred_to_gp_416.values depth=1
+#pragma HLS stream variable=blurred_to_gp_416.values depth=32
 #endif //__VIVADO_SYNTH__
 
 
