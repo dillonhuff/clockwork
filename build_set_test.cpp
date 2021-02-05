@@ -20123,6 +20123,10 @@ void cp16_static_dynamic_comparison_fresh_codegen() {
 }
 
 void initial_soda_comparison() {
+  sbl32_static_dynamic_comparison();
+  sbl16_static_dynamic_comparison();
+  sbl_static_dynamic_comparison();
+
   jac32_static_dynamic_comparison();
   jac16_static_dynamic_comparison();
   jac_static_dynamic_comparison();
@@ -20135,10 +20139,6 @@ void initial_soda_comparison() {
   sbl16_static_dynamic_comparison_short_FIFOs();
   sbl32_static_dynamic_comparison_larger_bounds_to_prevent_vivado_unroll_error();
 
-
-  sbl32_static_dynamic_comparison();
-  sbl16_static_dynamic_comparison();
-  sbl_static_dynamic_comparison();
 
   blur32_static_dynamic_comparison();
   blur16_static_dynamic_comparison();

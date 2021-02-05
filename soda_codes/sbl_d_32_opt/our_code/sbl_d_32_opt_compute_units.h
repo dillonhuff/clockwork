@@ -8,11 +8,11 @@ hw_uint<16> img_generated_compute(hw_uint<16*1> off_chip_img) {
 }
 
 hw_uint<16> mag_y_generated_compute(hw_uint<16*6> img) {
-  return uint16_t((((uint16_t(img.get<16, 1>()) - uint16_t(img.get<16, 0>())) + ((uint16_t(img.get<16, 3>()) - uint16_t(img.get<16, 2>())) * 3)) + (uint16_t(img.get<16, 5>()) - uint16_t(img.get<16, 4>()))));
+  return uint16_t(((uint16_t(img.get<16, 1>()) - uint16_t(img.get<16, 0>())) + (((uint16_t(img.get<16, 3>()) - uint16_t(img.get<16, 2>())) * 3) + (uint16_t(img.get<16, 5>()) - uint16_t(img.get<16, 4>())))));
 }
 
 hw_uint<16> mag_x_generated_compute(hw_uint<16*6> img) {
-  return uint16_t((((uint16_t(img.get<16, 3>()) - uint16_t(img.get<16, 0>())) + ((uint16_t(img.get<16, 4>()) - uint16_t(img.get<16, 1>())) * 3)) + (uint16_t(img.get<16, 5>()) - uint16_t(img.get<16, 2>()))));
+  return uint16_t(((uint16_t(img.get<16, 3>()) - uint16_t(img.get<16, 0>())) + (((uint16_t(img.get<16, 4>()) - uint16_t(img.get<16, 1>())) * 3) + (uint16_t(img.get<16, 5>()) - uint16_t(img.get<16, 2>())))));
 }
 
 hw_uint<16> sbl_d_32_generated_compute(hw_uint<16*1> mag_x, hw_uint<16*1> mag_y) {
