@@ -11081,39 +11081,6 @@ void blur_and_downsample_test() {
   regression_test(prg);
 }
 
-//only return one possible set that can be merged
-//from the outer most loop
-//Need to apply this function iteratively after flatten
-unordered_set<int> get_domain_merge_dims(isl_map* m ){
-    int in_dims = num_in_dims(m);
-
-    //skip the root loop
-    for (int dim = 2; dim < in_dims; dim ++) {
-        int span_range = get_domain_span_range(m, dim);
-        int up_level_stride = stride_in_dim(m, dim-1);
-        if (span_range == up_level_stride)
-            return {in_dims - dim - 1, in_dims -  dim};
-    }
-
-    return {};
-}
-
-isl_map* merge_domain_dim(isl_map* m) {
-    auto mm = cpy(m);
-    while(true) {
-        cout << " new map: " << str(mm) << endl;
-        auto merge_pair = get_domain_merge_dims(mm);
-        if (!empty(merge_pair)) {
-          auto reduce_map = linear_domain_map_with_index(domain(mm), merge_pair);
-          auto flatten_access_map = dot_domain(to_umap(mm), to_umap(reduce_map));
-          mm = to_map(flatten_access_map);
-        } else {
-            break;
-        }
-    }
-    return mm;
-}
-
 void playground() {
 
     {
