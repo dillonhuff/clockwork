@@ -20764,6 +20764,17 @@ void test_multi_kernel_llf() {
   assert(false);
 }
 
+bool groups_are_topologically_closed(map<string, std::set<string> >& fusion_groups, prog& prg) {
+
+  for (auto g : fusion_groups) {
+    cout << "Children of " << g.first << endl;
+    for (auto c : children(g.first, fusion_groups, prg)) {
+      cout << tab(1) << c << endl;
+    }
+  }
+  return false;
+}
+
 void test_chain_grouping() {
   prog prg("pyr_blnd2d500_2048");
   prg.compute_unit_file = "local_laplacian_filters_compute.h";
@@ -20795,7 +20806,7 @@ void test_chain_grouping() {
 
   auto fusion_groups = fuse_pointwise_stages(prg);
 
-  //assert(groups_are_topologically_closed(fusion_groups, prg));
+  assert(groups_are_topologically_closed(fusion_groups, prg));
 
   assert(false);
 }

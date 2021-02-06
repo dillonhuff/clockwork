@@ -1989,3 +1989,7 @@ vector<string> buffer_arg_names(op* op, prog& prg);
 void set_channel_depths_to_constant(const int constant, app_dag& dag);
 
 void unroll_mismatched_inner_loops(prog& prg);
+
+
+std::set<string> children(const std::string& to_merge, map<string, std::set<string> >& fusion_groups, prog& prg);
+std::set<string> parents(const std::string& to_merge, map<string, std::set<string> >& fusion_groups, prog& prg);

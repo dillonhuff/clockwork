@@ -9260,6 +9260,44 @@ std::set<string> parents(const std::string& to_merge, map<string, std::set<strin
   return parent_set;
 
 }
+
+std::set<string> buffers_written(const std::string& to_merge, map<string, std::set<string> >& fusion_groups, prog& prg) {
+  std::set<string> written;
+  for (auto k : map_find(to_merge, fusion_groups)) {
+    for (auto b : buffers_written(prg.find_loop(k))) {
+      written.insert(b);
+    }
+  }
+  return written;
+}
+
+std::set<string> buffers_read(const std::string& to_merge, map<string, std::set<string> >& fusion_groups, prog& prg) {
+  std::set<string> read;
+  for (auto k : map_find(to_merge, fusion_groups)) {
+    for (auto b : buffers_read(prg.find_loop(k))) {
+      read.insert(b);
+    }
+  }
+  return read;
+}
+
+std::set<string> children(const std::string& to_merge, map<string, std::set<string> >& fusion_groups, prog& prg) {
+  std::set<string> parent_set;
+
+  auto written = buffers_written(to_merge, fusion_groups, prg);
+  for (auto fg : fusion_groups) {
+    for (auto parent : fg.second) {
+      auto read = buffers_read(to_merge, fusion_groups, prg);
+      if (intersection(read, written).size() > 0) {
+        parent_set.insert(fg.first);
+      }
+    }
+  }
+
+  return parent_set;
+
+}
+
 string parent_group(const std::string& to_merge, map<string, std::set<string> >& fusion_groups, prog& prg) {
   std::set<string> parent_set = parents(to_merge, fusion_groups, prg);
 
