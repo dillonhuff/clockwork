@@ -20795,7 +20795,7 @@ void test_chain_grouping() {
 
   auto fusion_groups = fuse_pointwise_stages(prg);
 
-  assert(groups_are_topologically_closed(fusion_groups, prg));
+  //assert(groups_are_topologically_closed(fusion_groups, prg));
 
   assert(false);
 }
