@@ -20775,6 +20775,16 @@ bool groups_are_topologically_closed(map<string, std::set<string> >& fusion_grou
   return false;
 }
 
+bool is_partition(map<string, std::set<string> >& fusion_groups, prog& prg) {
+  int total_size = 0;
+  for (auto g : fusion_groups) {
+    total_size += g.second.size();
+  }
+
+  int num_kernels = get_kernels(prg).size();
+  return total_size == num_kernels;
+}
+
 void test_chain_grouping() {
   prog prg("pyr_blnd2d500_2048");
   prg.compute_unit_file = "local_laplacian_filters_compute.h";
@@ -20806,6 +20816,7 @@ void test_chain_grouping() {
 
   auto fusion_groups = fuse_pointwise_stages(prg);
 
+  assert(is_partition(fusion_groups, prg));
   assert(groups_are_topologically_closed(fusion_groups, prg));
 
   assert(false);
