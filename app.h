@@ -1069,6 +1069,11 @@ map<string, vector<int> >
 pad_insertion_indexes(uset* domain, umap* validity);
 
 umap*
+clockwork_schedule_umap_reversed(uset* domain,
+    umap* validity,
+    umap* proximity);
+
+umap*
 clockwork_schedule_umap(uset* domain,
     umap* validity,
     umap* proximity);
@@ -1344,3 +1349,5 @@ map<string, isl_aff*> clockwork_schedule_dimension(
     vector<isl_set*> domains,
     vector<isl_map*> deps,
     map<string, vector<string> >& high_bandwidth_deps);
+
+map<string, isl_val*> simplify(const vector<pair<string, isl_val*> >& terms);

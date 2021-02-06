@@ -4,6 +4,10 @@
 #include <vector>
 #include <cstdlib>
 
+#include "clockwork_standard_compute_units.h"
+
+#define __POPULATE_HOST_INPUTS__
+
 int main(int argc, char **argv) {
   srand(234);
   if (argc != 2) {
@@ -41,9 +45,23 @@ int main(int argc, char **argv) {
 #ifdef __POPULATE_HOST_INPUTS__
   std::ofstream input_pw_math_in_oc03_read("pw_math_in_oc03_read.csv");
   for (int i = 0; i < pw_math_in_oc03_read_pipe0_DATA_SIZE; i++) {
+#ifdef __FLOAT_OUTPUT__
+    float  val = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+#else // __FLOAT_OUTPUT__
     uint32_t val = (rand() % 256);
+#endif // __FLOAT_OUTPUT__
+
+#ifdef __FLOAT_OUTPUT__
     input_pw_math_in_oc03_read << val << std::endl;
+#else // __FLOAT_OUTPUT__
+    input_pw_math_in_oc03_read << val << std::endl;
+#endif // __FLOAT_OUTPUT__
+
+#ifdef __FLOAT_OUTPUT__
+    ((uint32_t*) (pw_math_in_oc03_read_pipe0.data()))[i] = bitcast<uint32_t, float>(val);
+#else // __FLOAT_OUTPUT__
     ((uint32_t*) (pw_math_in_oc03_read_pipe0.data()))[i] = val;
+#endif // __FLOAT_OUTPUT__
   }
 
   input_pw_math_in_oc03_read.close();
@@ -93,17 +111,17 @@ int main(int argc, char **argv) {
   std::cout << "Migrating memory" << std::endl;
   OCL_CHECK(err, err = q.enqueueMigrateMemObjects({pw_math_in_oc03_read_pipe0_ocl_buf}, 0));
 
-unsigned long start, end, nsduration;
-cl::Event event;
+  unsigned long start, end, nsduration;
+  cl::Event event;
 
   std::cout << "Starting kernel" << std::endl;
   OCL_CHECK(err, err = q.enqueueTask(krnl_vector_add, NULL, &event));
   OCL_CHECK(err, err = event.wait());
   end =
-OCL_CHECK(err, event.getProfilingInfo<CL_PROFILING_COMMAND_END>(&err));
-start = OCL_CHECK(err,
-event.getProfilingInfo<CL_PROFILING_COMMAND_START>(&err));
-nsduration = end - start;
+  OCL_CHECK(err, event.getProfilingInfo<CL_PROFILING_COMMAND_END>(&err));
+  start = OCL_CHECK(err,
+  event.getProfilingInfo<CL_PROFILING_COMMAND_START>(&err));
+  nsduration = end - start;
   OCL_CHECK(err, err = q.enqueueMigrateMemObjects({pw_math_in47_write_pipe0_ocl_buf}, CL_MIGRATE_MEM_OBJECT_HOST));
 
   q.finish();

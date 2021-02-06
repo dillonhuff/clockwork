@@ -1,5 +1,7 @@
 import matplotlib.pyplot as plt
 
+plt.style.use('seaborn-pastel')
+
 def set_size(w,h, ax=None):
     """ w, h: width, height in inches """
     if not ax: ax=plt.gca()
@@ -70,8 +72,8 @@ width = 0.5       # the width of the bars: can also be len(x) sequence
 
 fig, ax = plt.subplots()
 
-ax.bar(labels, hls_pnr_times, width,
-       label='HLS+PnR Time')
+ax.bar(labels, hls_pnr_times, width, edgecolor='black',
+       linewidth=2.0, label='HLS+PnR Time')
 # ax.bar(labels, cw_times, width, bottom=hls_pnr_times, label='CW')
 
 ax.set_ylabel('Total Compile Time (sec)')
@@ -83,5 +85,6 @@ ax.legend()
 
 # set_size(5, 5)
 
+fig.set_size_inches(16, 10)
 plt.show()
 fig.savefig('clockwork_compile_times.eps', format='eps')

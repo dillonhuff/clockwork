@@ -160,7 +160,8 @@ int main(const int argc, const char** argv) {
   }
   cout << endl;
 
-  if (true) {
+  //if (true) {
+  if (false) {
     cout << "Finding event index sub-alignments" << endl;
 
     find_event_index_alignment(reference_lines, target_lines);

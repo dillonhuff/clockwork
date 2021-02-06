@@ -27,8 +27,18 @@ using namespace std;
 
 #define MOD_INC(x, N) ((x) == ((N) - 1) ? 0 : (x) + 1)
 
+static inline
+int int_floor_div(const int num, const int denom) {
+  if (num >= 0) {
+    return num / denom;
+  } else {
+    return -1*(-num / denom);
+  }
+}
+
 // TODO: Replace this with something more sound
-#define floord(x, d) ((int) floor((x) / (float) (d)))
+//#define floord(x, d) ((int) floor((x) / (float) (d)))
+#define floord(x, d) int_floor_div((x), (d))
 //#define floord(x, d) ((x) / (d))
 
 template<int Depth>
@@ -388,6 +398,10 @@ class HWStream {
 
 #else
 
+
+    std::string name;
+    int reads, writes;
+
     deque<T> values;
 
     int num_waiting() const {
@@ -400,13 +414,20 @@ class HWStream {
 
     void write(const T& v) {
       //cout << "Inserting: " << (hw_uint<64>) v << " into hwstream" << endl;
+      writes++;
       return values.push_front(v);
     }
 
     T read() {
+      if (values.size() == 0) {
+        std::cout << "Error: " << name << " is empty during read" << std::endl;
+        std::cout << "\tReads : " << reads << endl;
+        std::cout << "\tWrites: " << writes << endl;
+      }
       assert(values.size() > 0);
       T b = values.back();
       values.pop_back();
+      reads++;
       return b;
     }
 
@@ -455,5 +476,25 @@ void burst_write(hw_uint<burst_width>* output,
   }
 }
 
+//template<int num_wide_bursts, int wide_width, int narrow_width>
+//void stream_narrower(HWStream<hw_uint<wide_width> >& input,
+    //HWStream<hw_uint<narrow_width> >& output) {
+
+  //// My case: width input: 128 (4 32 bit words)
+  //// width output: 96 (2 32 bit words)
+  //// so the solution should be:
+  //// break up into 12 32 bit words,
+  //// read in as 3 4 wide words then write out as
+  //// 4 3 wide 32 bit words.
+  //hw_uint<wide_width> wide_db;
+
+  //for (int i = 0; i < num_wide_bursts; i++) {
+    //hw_uint<wide_width> reg = input.read();
+    //for (int word_width = 0; word_width < words; )
+    ////int wide_db_wr_addr = i % 2;
+    ////wide_db.val(wide_db_wr_addr
+  //}
+  //assert(false);
+//}
 
 

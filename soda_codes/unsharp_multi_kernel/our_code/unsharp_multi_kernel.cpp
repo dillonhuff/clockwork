@@ -9,37 +9,46 @@ using namespace std;
 // compute file: clockwork_standard_compute_units.h_merged_compute_units.h
 #include "clockwork_standard_compute_units.h_merged_compute_units.h"
 
-struct blurred_all_inputs_to_all_outputs_cache {
+struct blurred_blur_35_to_blurred_load_to_blurred_to_gp_41619_29_cache {
 	// RAM Box: {[0, 63], [0, 63]}
-  hw_uint<32>  RAM[64][64];
-  inline hw_uint<32>  read(int d0, int d1) {
-    return RAM[d0][d1];
+	// Capacity: 1
+	// # of read delays: 2
+  // 0, 0
+	fifo<hw_uint<32> , 1> f;
+	inline hw_uint<32>  peek(const int offset) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.peek(0 - offset);
   }
 
 
 
-	inline void write(const hw_uint<32>  value, int d0, int d1) {
-    RAM[d0][d1] = value;
+	inline void push(const hw_uint<32>  value) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.push(value);
   }
 
 };
 
 struct blurred_cache {
   // # of banks: 1
-  blurred_all_inputs_to_all_outputs_cache blurred_all_inputs_to_all_outputs;
+  blurred_blur_35_to_blurred_load_to_blurred_to_gp_41619_29_cache blurred_blur_35_to_blurred_load_to_blurred_to_gp_41619_29;
 };
 
 
 
-inline void blurred_blur_35_write(hw_uint<32> & blurred_blur_35, blurred_cache& blurred, int root, int xb, int yb, int dynamic_address) {
-  blurred.blurred_all_inputs_to_all_outputs.write(blurred_blur_35, xb - 0, yb - 0);
+inline void blurred_blur_35_write(hw_uint<32> & blurred_blur_35, blurred_cache& blurred, int root, int yb, int xb, int dynamic_address) {
+  blurred.blurred_blur_35_to_blurred_load_to_blurred_to_gp_41619_29.push(blurred_blur_35);
 }
 
-inline hw_uint<32>  blurred_load_to_blurred_to_gp_41619_29_select(blurred_cache& blurred, int root, int blurred_ld17, int blurred_ld18, int dynamic_address) {
+inline hw_uint<32>  blurred_load_to_blurred_to_gp_41619_29_select(blurred_cache& blurred, int root, int blurred_ld18, int blurred_ld17, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // blurred_load_to_blurred_to_gp_41619_29 read pattern: { load_to_blurred_to_gp_41619[root = 0, blurred_ld17, blurred_ld18] -> blurred[blurred_ld17, blurred_ld18] : 0 <= blurred_ld17 <= 63 and 0 <= blurred_ld18 <= 63 }
-  auto value_blurred_blur_35 = blurred.blurred_all_inputs_to_all_outputs.read(blurred_ld17 - 0, blurred_ld18 - 0);
+  // blurred_load_to_blurred_to_gp_41619_29 read pattern: { load_to_blurred_to_gp_41619[root = 0, blurred_ld18, blurred_ld17] -> blurred[blurred_ld17, blurred_ld18] : 0 <= blurred_ld18 <= 63 and 0 <= blurred_ld17 <= 63 }
+  // Read schedule : { load_to_blurred_to_gp_41619[root = 0, blurred_ld18, blurred_ld17] -> [2 + blurred_ld18, 2 + blurred_ld17, 10] : 0 <= blurred_ld18 <= 63 and 0 <= blurred_ld17 <= 63 }
+  // Write schedule: { blur[root = 0, yb, xb] -> [2 + yb, 2 + xb, 9] : 0 <= yb <= 63 and 0 <= xb <= 63 }
+  auto value_blurred_blur_35 = blurred.blurred_blur_35_to_blurred_load_to_blurred_to_gp_41619_29.peek(/* one reader or all rams */ 0);
   return value_blurred_blur_35;
   return 0;
 }
@@ -47,54 +56,63 @@ inline hw_uint<32>  blurred_load_to_blurred_to_gp_41619_29_select(blurred_cache&
 // # of bundles = 2
 // blur_write
 //	blurred_blur_35
-inline void blurred_blur_write_bundle_write(hw_uint<32>& blur_write, blurred_cache& blurred, int root, int xb, int yb, int dynamic_address) {
+inline void blurred_blur_write_bundle_write(hw_uint<32>& blur_write, blurred_cache& blurred, int root, int yb, int xb, int dynamic_address) {
 	hw_uint<32>  blurred_blur_35_res = blur_write.extract<0, 31>();
-	blurred_blur_35_write(blurred_blur_35_res, blurred, root, xb, yb, dynamic_address);
+	blurred_blur_35_write(blurred_blur_35_res, blurred, root, yb, xb, dynamic_address);
 }
 
 // load_to_blurred_to_gp_41619_read
 //	blurred_load_to_blurred_to_gp_41619_29
-inline hw_uint<32> blurred_load_to_blurred_to_gp_41619_read_bundle_read(blurred_cache& blurred, int root, int blurred_ld17, int blurred_ld18, int dynamic_address) {
+inline hw_uint<32> blurred_load_to_blurred_to_gp_41619_read_bundle_read(blurred_cache& blurred, int root, int blurred_ld18, int blurred_ld17, int dynamic_address) {
   // # of ports in bundle: 1
     // blurred_load_to_blurred_to_gp_41619_29
 
 	hw_uint<32> result;
-	hw_uint<32>  blurred_load_to_blurred_to_gp_41619_29_res = blurred_load_to_blurred_to_gp_41619_29_select(blurred, root, blurred_ld17, blurred_ld18, dynamic_address);
+	hw_uint<32>  blurred_load_to_blurred_to_gp_41619_29_res = blurred_load_to_blurred_to_gp_41619_29_select(blurred, root, blurred_ld18, blurred_ld17, dynamic_address);
 	set_at<0, 32>(result, blurred_load_to_blurred_to_gp_41619_29_res);
 	return result;
 }
 
-struct blurred_FIFO_buf40_all_inputs_to_all_outputs_cache {
+struct blurred_FIFO_buf40_load_to_blurred_FIFO_buf4043_30_to_blurred_FIFO_buf40_diff_34_cache {
 	// RAM Box: {[0, 63], [0, 63]}
-  hw_uint<32>  RAM[64][64];
-  inline hw_uint<32>  read(int d0, int d1) {
-    return RAM[d0][d1];
+	// Capacity: 1
+	// # of read delays: 2
+  // 0, 0
+	fifo<hw_uint<32> , 1> f;
+	inline hw_uint<32>  peek(const int offset) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.peek(0 - offset);
   }
 
 
 
-	inline void write(const hw_uint<32>  value, int d0, int d1) {
-    RAM[d0][d1] = value;
+	inline void push(const hw_uint<32>  value) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.push(value);
   }
 
 };
 
 struct blurred_FIFO_buf40_cache {
   // # of banks: 1
-  blurred_FIFO_buf40_all_inputs_to_all_outputs_cache blurred_FIFO_buf40_all_inputs_to_all_outputs;
+  blurred_FIFO_buf40_load_to_blurred_FIFO_buf4043_30_to_blurred_FIFO_buf40_diff_34_cache blurred_FIFO_buf40_load_to_blurred_FIFO_buf4043_30_to_blurred_FIFO_buf40_diff_34;
 };
 
 
 
-inline void blurred_FIFO_buf40_load_to_blurred_FIFO_buf4043_30_write(hw_uint<32> & blurred_FIFO_buf40_load_to_blurred_FIFO_buf4043_30, blurred_FIFO_buf40_cache& blurred_FIFO_buf40, int root, int blurred_to_gp_416_ld41, int blurred_to_gp_416_ld42, int dynamic_address) {
-  blurred_FIFO_buf40.blurred_FIFO_buf40_all_inputs_to_all_outputs.write(blurred_FIFO_buf40_load_to_blurred_FIFO_buf4043_30, blurred_to_gp_416_ld41 - 0, blurred_to_gp_416_ld42 - 0);
+inline void blurred_FIFO_buf40_load_to_blurred_FIFO_buf4043_30_write(hw_uint<32> & blurred_FIFO_buf40_load_to_blurred_FIFO_buf4043_30, blurred_FIFO_buf40_cache& blurred_FIFO_buf40, int root, int blurred_to_gp_416_ld42, int blurred_to_gp_416_ld41, int dynamic_address) {
+  blurred_FIFO_buf40.blurred_FIFO_buf40_load_to_blurred_FIFO_buf4043_30_to_blurred_FIFO_buf40_diff_34.push(blurred_FIFO_buf40_load_to_blurred_FIFO_buf4043_30);
 }
 
-inline hw_uint<32>  blurred_FIFO_buf40_diff_34_select(blurred_FIFO_buf40_cache& blurred_FIFO_buf40, int root, int x, int y, int dynamic_address) {
+inline hw_uint<32>  blurred_FIFO_buf40_diff_34_select(blurred_FIFO_buf40_cache& blurred_FIFO_buf40, int root, int y, int x, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // blurred_FIFO_buf40_diff_34 read pattern: { diff[root = 0, x, y] -> blurred_FIFO_buf40[x, y] : 0 <= x <= 63 and 0 <= y <= 63 }
-  auto value_blurred_FIFO_buf40_load_to_blurred_FIFO_buf4043_30 = blurred_FIFO_buf40.blurred_FIFO_buf40_all_inputs_to_all_outputs.read(x - 0, y - 0);
+  // blurred_FIFO_buf40_diff_34 read pattern: { diff[root = 0, y, x] -> blurred_FIFO_buf40[x, y] : 0 <= y <= 63 and 0 <= x <= 63 }
+  // Read schedule : { diff[root = 0, y, x] -> [2 + y, 2 + x, 16] : 0 <= y <= 63 and 0 <= x <= 63 }
+  // Write schedule: { load_to_blurred_FIFO_buf4043[root = 0, blurred_to_gp_416_ld42, blurred_to_gp_416_ld41] -> [2 + blurred_to_gp_416_ld42, 2 + blurred_to_gp_416_ld41, 11] : 0 <= blurred_to_gp_416_ld42 <= 63 and 0 <= blurred_to_gp_416_ld41 <= 63 }
+  auto value_blurred_FIFO_buf40_load_to_blurred_FIFO_buf4043_30 = blurred_FIFO_buf40.blurred_FIFO_buf40_load_to_blurred_FIFO_buf4043_30_to_blurred_FIFO_buf40_diff_34.peek(/* one reader or all rams */ 0);
   return value_blurred_FIFO_buf40_load_to_blurred_FIFO_buf4043_30;
   return 0;
 }
@@ -102,54 +120,62 @@ inline hw_uint<32>  blurred_FIFO_buf40_diff_34_select(blurred_FIFO_buf40_cache& 
 // # of bundles = 2
 // diff_read
 //	blurred_FIFO_buf40_diff_34
-inline hw_uint<32> blurred_FIFO_buf40_diff_read_bundle_read(blurred_FIFO_buf40_cache& blurred_FIFO_buf40, int root, int x, int y, int dynamic_address) {
+inline hw_uint<32> blurred_FIFO_buf40_diff_read_bundle_read(blurred_FIFO_buf40_cache& blurred_FIFO_buf40, int root, int y, int x, int dynamic_address) {
   // # of ports in bundle: 1
     // blurred_FIFO_buf40_diff_34
 
 	hw_uint<32> result;
-	hw_uint<32>  blurred_FIFO_buf40_diff_34_res = blurred_FIFO_buf40_diff_34_select(blurred_FIFO_buf40, root, x, y, dynamic_address);
+	hw_uint<32>  blurred_FIFO_buf40_diff_34_res = blurred_FIFO_buf40_diff_34_select(blurred_FIFO_buf40, root, y, x, dynamic_address);
 	set_at<0, 32>(result, blurred_FIFO_buf40_diff_34_res);
 	return result;
 }
 
 // load_to_blurred_FIFO_buf4043_write
 //	blurred_FIFO_buf40_load_to_blurred_FIFO_buf4043_30
-inline void blurred_FIFO_buf40_load_to_blurred_FIFO_buf4043_write_bundle_write(hw_uint<32>& load_to_blurred_FIFO_buf4043_write, blurred_FIFO_buf40_cache& blurred_FIFO_buf40, int root, int blurred_to_gp_416_ld41, int blurred_to_gp_416_ld42, int dynamic_address) {
+inline void blurred_FIFO_buf40_load_to_blurred_FIFO_buf4043_write_bundle_write(hw_uint<32>& load_to_blurred_FIFO_buf4043_write, blurred_FIFO_buf40_cache& blurred_FIFO_buf40, int root, int blurred_to_gp_416_ld42, int blurred_to_gp_416_ld41, int dynamic_address) {
 	hw_uint<32>  blurred_FIFO_buf40_load_to_blurred_FIFO_buf4043_30_res = load_to_blurred_FIFO_buf4043_write.extract<0, 31>();
-	blurred_FIFO_buf40_load_to_blurred_FIFO_buf4043_30_write(blurred_FIFO_buf40_load_to_blurred_FIFO_buf4043_30_res, blurred_FIFO_buf40, root, blurred_to_gp_416_ld41, blurred_to_gp_416_ld42, dynamic_address);
+	blurred_FIFO_buf40_load_to_blurred_FIFO_buf4043_30_write(blurred_FIFO_buf40_load_to_blurred_FIFO_buf4043_30_res, blurred_FIFO_buf40, root, blurred_to_gp_416_ld42, blurred_to_gp_416_ld41, dynamic_address);
 }
 
-struct gray_all_inputs_to_all_outputs_cache {
+struct gray_oc_load_in03_6_merged_banks_2_cache {
 	// RAM Box: {[0, 65], [0, 65]}
-  hw_uint<32>  RAM[66][66];
-  inline hw_uint<32>  read(int d0, int d1) {
-    return RAM[d0][d1];
-  }
+	// Capacity: 1
+	// # of read delays: 1
+  // 0
+	hw_uint<32>  f1;
+
+
+	inline hw_uint<32>  peek_0() {
+		return f1;
+	}
 
 
 
-	inline void write(const hw_uint<32>  value, int d0, int d1) {
-    RAM[d0][d1] = value;
-  }
+	inline void push(const hw_uint<32>  value) {
+    // cap: 1
+    f1 = value;
+	}
 
 };
 
 struct gray_cache {
   // # of banks: 1
-  gray_all_inputs_to_all_outputs_cache gray_all_inputs_to_all_outputs;
+  gray_oc_load_in03_6_merged_banks_2_cache gray_oc_load_in03_6_merged_banks_2;
 };
 
 
 
 inline void gray_oc_load_in03_6_write(hw_uint<32> & gray_oc_load_in03_6, gray_cache& gray, int root, int oc_load_in01, int oc_load_in02, int dynamic_address) {
-  gray.gray_all_inputs_to_all_outputs.write(gray_oc_load_in03_6, oc_load_in02 - 0, oc_load_in01 - 0);
+  gray.gray_oc_load_in03_6_merged_banks_2.push(gray_oc_load_in03_6);
 }
 
 inline hw_uint<32>  gray_load_to_gray_to_gp_12023_11_select(gray_cache& gray, int root, int gray_ld22, int gray_ld21, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // gray_load_to_gray_to_gp_12023_11 read pattern: { load_to_gray_to_gp_12023[root = 0, gray_ld22, gray_ld21] -> gray[gray_ld21, gray_ld22] : 0 <= gray_ld22 <= 63 and 0 <= gray_ld21 <= 63 }
-  auto value_gray_oc_load_in03_6 = gray.gray_all_inputs_to_all_outputs.read(gray_ld21 - 0, gray_ld22 - 0);
+  // Read schedule : { load_to_gray_to_gp_12023[root = 0, gray_ld22, gray_ld21] -> [gray_ld22, gray_ld21, 12] : 0 <= gray_ld22 <= 63 and 0 <= gray_ld21 <= 63 }
+  // Write schedule: { oc_load_in03[root = 0, oc_load_in01, oc_load_in02] -> [oc_load_in01, oc_load_in02, 0] : 0 <= oc_load_in01 <= 65 and 0 <= oc_load_in02 <= 65 }
+  auto value_gray_oc_load_in03_6 = gray.gray_oc_load_in03_6_merged_banks_2.peek_0();
   return value_gray_oc_load_in03_6;
   return 0;
 }
@@ -158,7 +184,9 @@ inline hw_uint<32>  gray_load_to_gray_to_gp_22427_9_select(gray_cache& gray, int
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // gray_load_to_gray_to_gp_22427_9 read pattern: { load_to_gray_to_gp_22427[root = 0, gray_ld26, gray_ld25] -> gray[gray_ld25, gray_ld26] : 0 <= gray_ld26 <= 65 and 0 <= gray_ld25 <= 65 }
-  auto value_gray_oc_load_in03_6 = gray.gray_all_inputs_to_all_outputs.read(gray_ld25 - 0, gray_ld26 - 0);
+  // Read schedule : { load_to_gray_to_gp_22427[root = 0, gray_ld26, gray_ld25] -> [gray_ld26, gray_ld25, 1] : 0 <= gray_ld26 <= 65 and 0 <= gray_ld25 <= 65 }
+  // Write schedule: { oc_load_in03[root = 0, oc_load_in01, oc_load_in02] -> [oc_load_in01, oc_load_in02, 0] : 0 <= oc_load_in01 <= 65 and 0 <= oc_load_in02 <= 65 }
+  auto value_gray_oc_load_in03_6 = gray.gray_oc_load_in03_6_merged_banks_2.peek_0();
   return value_gray_oc_load_in03_6;
   return 0;
 }
@@ -195,37 +223,46 @@ inline void gray_oc_load_in03_write_bundle_write(hw_uint<32>& oc_load_in03_write
 	gray_oc_load_in03_6_write(gray_oc_load_in03_6_res, gray, root, oc_load_in01, oc_load_in02, dynamic_address);
 }
 
-struct gray_FIFO_buf44_all_inputs_to_all_outputs_cache {
+struct gray_FIFO_buf44_load_to_gray_FIFO_buf4447_26_to_gray_FIFO_buf44_pw_math_gray1215_5_cache {
 	// RAM Box: {[0, 63], [0, 63]}
-  hw_uint<32>  RAM[64][64];
-  inline hw_uint<32>  read(int d0, int d1) {
-    return RAM[d0][d1];
+	// Capacity: 1
+	// # of read delays: 2
+  // 0, 0
+	fifo<hw_uint<32> , 1> f;
+	inline hw_uint<32>  peek(const int offset) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.peek(0 - offset);
   }
 
 
 
-	inline void write(const hw_uint<32>  value, int d0, int d1) {
-    RAM[d0][d1] = value;
+	inline void push(const hw_uint<32>  value) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.push(value);
   }
 
 };
 
 struct gray_FIFO_buf44_cache {
   // # of banks: 1
-  gray_FIFO_buf44_all_inputs_to_all_outputs_cache gray_FIFO_buf44_all_inputs_to_all_outputs;
+  gray_FIFO_buf44_load_to_gray_FIFO_buf4447_26_to_gray_FIFO_buf44_pw_math_gray1215_5_cache gray_FIFO_buf44_load_to_gray_FIFO_buf4447_26_to_gray_FIFO_buf44_pw_math_gray1215_5;
 };
 
 
 
 inline void gray_FIFO_buf44_load_to_gray_FIFO_buf4447_26_write(hw_uint<32> & gray_FIFO_buf44_load_to_gray_FIFO_buf4447_26, gray_FIFO_buf44_cache& gray_FIFO_buf44, int root, int gray_to_gp_120_ld46, int gray_to_gp_120_ld45, int dynamic_address) {
-  gray_FIFO_buf44.gray_FIFO_buf44_all_inputs_to_all_outputs.write(gray_FIFO_buf44_load_to_gray_FIFO_buf4447_26, gray_to_gp_120_ld45 - 0, gray_to_gp_120_ld46 - 0);
+  gray_FIFO_buf44.gray_FIFO_buf44_load_to_gray_FIFO_buf4447_26_to_gray_FIFO_buf44_pw_math_gray1215_5.push(gray_FIFO_buf44_load_to_gray_FIFO_buf4447_26);
 }
 
 inline hw_uint<32>  gray_FIFO_buf44_pw_math_gray1215_5_select(gray_FIFO_buf44_cache& gray_FIFO_buf44, int root, int pw_math_gray1213, int pw_math_gray1214, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // gray_FIFO_buf44_pw_math_gray1215_5 read pattern: { pw_math_gray1215[root = 0, pw_math_gray1213, pw_math_gray1214] -> gray_FIFO_buf44[pw_math_gray1214, pw_math_gray1213] : 0 <= pw_math_gray1213 <= 63 and 0 <= pw_math_gray1214 <= 63 }
-  auto value_gray_FIFO_buf44_load_to_gray_FIFO_buf4447_26 = gray_FIFO_buf44.gray_FIFO_buf44_all_inputs_to_all_outputs.read(pw_math_gray1214 - 0, pw_math_gray1213 - 0);
+  // Read schedule : { pw_math_gray1215[root = 0, pw_math_gray1213, pw_math_gray1214] -> [pw_math_gray1213, pw_math_gray1214, 14] : 0 <= pw_math_gray1213 <= 63 and 0 <= pw_math_gray1214 <= 63 }
+  // Write schedule: { load_to_gray_FIFO_buf4447[root = 0, gray_to_gp_120_ld46, gray_to_gp_120_ld45] -> [gray_to_gp_120_ld46, gray_to_gp_120_ld45, 13] : 0 <= gray_to_gp_120_ld46 <= 63 and 0 <= gray_to_gp_120_ld45 <= 63 }
+  auto value_gray_FIFO_buf44_load_to_gray_FIFO_buf4447_26 = gray_FIFO_buf44.gray_FIFO_buf44_load_to_gray_FIFO_buf4447_26_to_gray_FIFO_buf44_pw_math_gray1215_5.peek(/* one reader or all rams */ 0);
   return value_gray_FIFO_buf44_load_to_gray_FIFO_buf4447_26;
   return 0;
 }
@@ -250,37 +287,46 @@ inline hw_uint<32> gray_FIFO_buf44_pw_math_gray1215_read_bundle_read(gray_FIFO_b
 	return result;
 }
 
-struct gray_FIFO_buf48_all_inputs_to_all_outputs_cache {
+struct gray_FIFO_buf48_load_to_gray_FIFO_buf4851_24_to_gray_FIFO_buf48_pw_math_gray47_3_cache {
 	// RAM Box: {[0, 65], [0, 65]}
-  hw_uint<32>  RAM[66][66];
-  inline hw_uint<32>  read(int d0, int d1) {
-    return RAM[d0][d1];
+	// Capacity: 1
+	// # of read delays: 2
+  // 0, 0
+	fifo<hw_uint<32> , 1> f;
+	inline hw_uint<32>  peek(const int offset) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.peek(0 - offset);
   }
 
 
 
-	inline void write(const hw_uint<32>  value, int d0, int d1) {
-    RAM[d0][d1] = value;
+	inline void push(const hw_uint<32>  value) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.push(value);
   }
 
 };
 
 struct gray_FIFO_buf48_cache {
   // # of banks: 1
-  gray_FIFO_buf48_all_inputs_to_all_outputs_cache gray_FIFO_buf48_all_inputs_to_all_outputs;
+  gray_FIFO_buf48_load_to_gray_FIFO_buf4851_24_to_gray_FIFO_buf48_pw_math_gray47_3_cache gray_FIFO_buf48_load_to_gray_FIFO_buf4851_24_to_gray_FIFO_buf48_pw_math_gray47_3;
 };
 
 
 
 inline void gray_FIFO_buf48_load_to_gray_FIFO_buf4851_24_write(hw_uint<32> & gray_FIFO_buf48_load_to_gray_FIFO_buf4851_24, gray_FIFO_buf48_cache& gray_FIFO_buf48, int root, int gray_to_gp_224_ld50, int gray_to_gp_224_ld49, int dynamic_address) {
-  gray_FIFO_buf48.gray_FIFO_buf48_all_inputs_to_all_outputs.write(gray_FIFO_buf48_load_to_gray_FIFO_buf4851_24, gray_to_gp_224_ld49 - 0, gray_to_gp_224_ld50 - 0);
+  gray_FIFO_buf48.gray_FIFO_buf48_load_to_gray_FIFO_buf4851_24_to_gray_FIFO_buf48_pw_math_gray47_3.push(gray_FIFO_buf48_load_to_gray_FIFO_buf4851_24);
 }
 
 inline hw_uint<32>  gray_FIFO_buf48_pw_math_gray47_3_select(gray_FIFO_buf48_cache& gray_FIFO_buf48, int root, int pw_math_gray45, int pw_math_gray46, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // gray_FIFO_buf48_pw_math_gray47_3 read pattern: { pw_math_gray47[root = 0, pw_math_gray45, pw_math_gray46] -> gray_FIFO_buf48[pw_math_gray46, pw_math_gray45] : 0 <= pw_math_gray45 <= 65 and 0 <= pw_math_gray46 <= 65 }
-  auto value_gray_FIFO_buf48_load_to_gray_FIFO_buf4851_24 = gray_FIFO_buf48.gray_FIFO_buf48_all_inputs_to_all_outputs.read(pw_math_gray46 - 0, pw_math_gray45 - 0);
+  // Read schedule : { pw_math_gray47[root = 0, pw_math_gray45, pw_math_gray46] -> [pw_math_gray45, pw_math_gray46, 3] : 0 <= pw_math_gray45 <= 65 and 0 <= pw_math_gray46 <= 65 }
+  // Write schedule: { load_to_gray_FIFO_buf4851[root = 0, gray_to_gp_224_ld50, gray_to_gp_224_ld49] -> [gray_to_gp_224_ld50, gray_to_gp_224_ld49, 2] : 0 <= gray_to_gp_224_ld50 <= 65 and 0 <= gray_to_gp_224_ld49 <= 65 }
+  auto value_gray_FIFO_buf48_load_to_gray_FIFO_buf4851_24 = gray_FIFO_buf48.gray_FIFO_buf48_load_to_gray_FIFO_buf4851_24_to_gray_FIFO_buf48_pw_math_gray47_3.peek(/* one reader or all rams */ 0);
   return value_gray_FIFO_buf48_load_to_gray_FIFO_buf4851_24;
   return 0;
 }
@@ -305,37 +351,46 @@ inline hw_uint<32> gray_FIFO_buf48_pw_math_gray47_read_bundle_read(gray_FIFO_buf
 	return result;
 }
 
-struct gray_blur_all_inputs_to_all_outputs_cache {
+struct gray_blur_pw_math_gray47_2_to_gray_blur_load_to_gray_blur_to_gp_32831_17_cache {
 	// RAM Box: {[0, 65], [0, 65]}
-  hw_uint<32>  RAM[66][66];
-  inline hw_uint<32>  read(int d0, int d1) {
-    return RAM[d0][d1];
+	// Capacity: 1
+	// # of read delays: 2
+  // 0, 0
+	fifo<hw_uint<32> , 1> f;
+	inline hw_uint<32>  peek(const int offset) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.peek(0 - offset);
   }
 
 
 
-	inline void write(const hw_uint<32>  value, int d0, int d1) {
-    RAM[d0][d1] = value;
+	inline void push(const hw_uint<32>  value) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.push(value);
   }
 
 };
 
 struct gray_blur_cache {
   // # of banks: 1
-  gray_blur_all_inputs_to_all_outputs_cache gray_blur_all_inputs_to_all_outputs;
+  gray_blur_pw_math_gray47_2_to_gray_blur_load_to_gray_blur_to_gp_32831_17_cache gray_blur_pw_math_gray47_2_to_gray_blur_load_to_gray_blur_to_gp_32831_17;
 };
 
 
 
 inline void gray_blur_pw_math_gray47_2_write(hw_uint<32> & gray_blur_pw_math_gray47_2, gray_blur_cache& gray_blur, int root, int pw_math_gray45, int pw_math_gray46, int dynamic_address) {
-  gray_blur.gray_blur_all_inputs_to_all_outputs.write(gray_blur_pw_math_gray47_2, pw_math_gray46 - 0, pw_math_gray45 - 0);
+  gray_blur.gray_blur_pw_math_gray47_2_to_gray_blur_load_to_gray_blur_to_gp_32831_17.push(gray_blur_pw_math_gray47_2);
 }
 
 inline hw_uint<32>  gray_blur_load_to_gray_blur_to_gp_32831_17_select(gray_blur_cache& gray_blur, int root, int gray_blur_ld30, int gray_blur_ld29, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // gray_blur_load_to_gray_blur_to_gp_32831_17 read pattern: { load_to_gray_blur_to_gp_32831[root = 0, gray_blur_ld30, gray_blur_ld29] -> gray_blur[gray_blur_ld29, gray_blur_ld30] : 0 <= gray_blur_ld30 <= 65 and 0 <= gray_blur_ld29 <= 65 }
-  auto value_gray_blur_pw_math_gray47_2 = gray_blur.gray_blur_all_inputs_to_all_outputs.read(gray_blur_ld29 - 0, gray_blur_ld30 - 0);
+  // Read schedule : { load_to_gray_blur_to_gp_32831[root = 0, gray_blur_ld30, gray_blur_ld29] -> [gray_blur_ld30, gray_blur_ld29, 4] : 0 <= gray_blur_ld30 <= 65 and 0 <= gray_blur_ld29 <= 65 }
+  // Write schedule: { pw_math_gray47[root = 0, pw_math_gray45, pw_math_gray46] -> [pw_math_gray45, pw_math_gray46, 3] : 0 <= pw_math_gray45 <= 65 and 0 <= pw_math_gray46 <= 65 }
+  auto value_gray_blur_pw_math_gray47_2 = gray_blur.gray_blur_pw_math_gray47_2_to_gray_blur_load_to_gray_blur_to_gp_32831_17.peek(/* one reader or all rams */ 0);
   return value_gray_blur_pw_math_gray47_2;
   return 0;
 }
@@ -360,37 +415,46 @@ inline void gray_blur_pw_math_gray47_write_bundle_write(hw_uint<32>& pw_math_gra
 	gray_blur_pw_math_gray47_2_write(gray_blur_pw_math_gray47_2_res, gray_blur, root, pw_math_gray45, pw_math_gray46, dynamic_address);
 }
 
-struct gray_blur_FIFO_buf52_all_inputs_to_all_outputs_cache {
+struct gray_blur_FIFO_buf52_load_to_gray_blur_FIFO_buf5255_22_to_gray_blur_FIFO_buf52_pw_math_gray_blur811_1_cache {
 	// RAM Box: {[0, 65], [0, 65]}
-  hw_uint<32>  RAM[66][66];
-  inline hw_uint<32>  read(int d0, int d1) {
-    return RAM[d0][d1];
+	// Capacity: 1
+	// # of read delays: 2
+  // 0, 0
+	fifo<hw_uint<32> , 1> f;
+	inline hw_uint<32>  peek(const int offset) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.peek(0 - offset);
   }
 
 
 
-	inline void write(const hw_uint<32>  value, int d0, int d1) {
-    RAM[d0][d1] = value;
+	inline void push(const hw_uint<32>  value) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.push(value);
   }
 
 };
 
 struct gray_blur_FIFO_buf52_cache {
   // # of banks: 1
-  gray_blur_FIFO_buf52_all_inputs_to_all_outputs_cache gray_blur_FIFO_buf52_all_inputs_to_all_outputs;
+  gray_blur_FIFO_buf52_load_to_gray_blur_FIFO_buf5255_22_to_gray_blur_FIFO_buf52_pw_math_gray_blur811_1_cache gray_blur_FIFO_buf52_load_to_gray_blur_FIFO_buf5255_22_to_gray_blur_FIFO_buf52_pw_math_gray_blur811_1;
 };
 
 
 
 inline void gray_blur_FIFO_buf52_load_to_gray_blur_FIFO_buf5255_22_write(hw_uint<32> & gray_blur_FIFO_buf52_load_to_gray_blur_FIFO_buf5255_22, gray_blur_FIFO_buf52_cache& gray_blur_FIFO_buf52, int root, int gray_blur_to_gp_328_ld54, int gray_blur_to_gp_328_ld53, int dynamic_address) {
-  gray_blur_FIFO_buf52.gray_blur_FIFO_buf52_all_inputs_to_all_outputs.write(gray_blur_FIFO_buf52_load_to_gray_blur_FIFO_buf5255_22, gray_blur_to_gp_328_ld53 - 0, gray_blur_to_gp_328_ld54 - 0);
+  gray_blur_FIFO_buf52.gray_blur_FIFO_buf52_load_to_gray_blur_FIFO_buf5255_22_to_gray_blur_FIFO_buf52_pw_math_gray_blur811_1.push(gray_blur_FIFO_buf52_load_to_gray_blur_FIFO_buf5255_22);
 }
 
 inline hw_uint<32>  gray_blur_FIFO_buf52_pw_math_gray_blur811_1_select(gray_blur_FIFO_buf52_cache& gray_blur_FIFO_buf52, int root, int pw_math_gray_blur89, int pw_math_gray_blur810, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // gray_blur_FIFO_buf52_pw_math_gray_blur811_1 read pattern: { pw_math_gray_blur811[root = 0, pw_math_gray_blur89, pw_math_gray_blur810] -> gray_blur_FIFO_buf52[pw_math_gray_blur810, pw_math_gray_blur89] : 0 <= pw_math_gray_blur89 <= 65 and 0 <= pw_math_gray_blur810 <= 65 }
-  auto value_gray_blur_FIFO_buf52_load_to_gray_blur_FIFO_buf5255_22 = gray_blur_FIFO_buf52.gray_blur_FIFO_buf52_all_inputs_to_all_outputs.read(pw_math_gray_blur810 - 0, pw_math_gray_blur89 - 0);
+  // Read schedule : { pw_math_gray_blur811[root = 0, pw_math_gray_blur89, pw_math_gray_blur810] -> [pw_math_gray_blur89, pw_math_gray_blur810, 6] : 0 <= pw_math_gray_blur89 <= 65 and 0 <= pw_math_gray_blur810 <= 65 }
+  // Write schedule: { load_to_gray_blur_FIFO_buf5255[root = 0, gray_blur_to_gp_328_ld54, gray_blur_to_gp_328_ld53] -> [gray_blur_to_gp_328_ld54, gray_blur_to_gp_328_ld53, 5] : 0 <= gray_blur_to_gp_328_ld54 <= 65 and 0 <= gray_blur_to_gp_328_ld53 <= 65 }
+  auto value_gray_blur_FIFO_buf52_load_to_gray_blur_FIFO_buf5255_22 = gray_blur_FIFO_buf52.gray_blur_FIFO_buf52_load_to_gray_blur_FIFO_buf5255_22_to_gray_blur_FIFO_buf52_pw_math_gray_blur811_1.peek(/* one reader or all rams */ 0);
   return value_gray_blur_FIFO_buf52_load_to_gray_blur_FIFO_buf5255_22;
   return 0;
 }
@@ -415,37 +479,46 @@ inline hw_uint<32> gray_blur_FIFO_buf52_pw_math_gray_blur811_read_bundle_read(gr
 	return result;
 }
 
-struct gray_blur_cache_all_inputs_to_all_outputs_cache {
+struct gray_blur_cache_pw_math_gray_blur811_0_to_gray_blur_cache_load_to_gray_blur_cache_to_gp_53235_19_cache {
 	// RAM Box: {[0, 65], [0, 65]}
-  hw_uint<32>  RAM[66][66];
-  inline hw_uint<32>  read(int d0, int d1) {
-    return RAM[d0][d1];
+	// Capacity: 1
+	// # of read delays: 2
+  // 0, 0
+	fifo<hw_uint<32> , 1> f;
+	inline hw_uint<32>  peek(const int offset) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.peek(0 - offset);
   }
 
 
 
-	inline void write(const hw_uint<32>  value, int d0, int d1) {
-    RAM[d0][d1] = value;
+	inline void push(const hw_uint<32>  value) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.push(value);
   }
 
 };
 
 struct gray_blur_cache_cache {
   // # of banks: 1
-  gray_blur_cache_all_inputs_to_all_outputs_cache gray_blur_cache_all_inputs_to_all_outputs;
+  gray_blur_cache_pw_math_gray_blur811_0_to_gray_blur_cache_load_to_gray_blur_cache_to_gp_53235_19_cache gray_blur_cache_pw_math_gray_blur811_0_to_gray_blur_cache_load_to_gray_blur_cache_to_gp_53235_19;
 };
 
 
 
 inline void gray_blur_cache_pw_math_gray_blur811_0_write(hw_uint<32> & gray_blur_cache_pw_math_gray_blur811_0, gray_blur_cache_cache& gray_blur_cache, int root, int pw_math_gray_blur89, int pw_math_gray_blur810, int dynamic_address) {
-  gray_blur_cache.gray_blur_cache_all_inputs_to_all_outputs.write(gray_blur_cache_pw_math_gray_blur811_0, pw_math_gray_blur810 - 0, pw_math_gray_blur89 - 0);
+  gray_blur_cache.gray_blur_cache_pw_math_gray_blur811_0_to_gray_blur_cache_load_to_gray_blur_cache_to_gp_53235_19.push(gray_blur_cache_pw_math_gray_blur811_0);
 }
 
 inline hw_uint<32>  gray_blur_cache_load_to_gray_blur_cache_to_gp_53235_19_select(gray_blur_cache_cache& gray_blur_cache, int root, int gray_blur_cache_ld34, int gray_blur_cache_ld33, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // gray_blur_cache_load_to_gray_blur_cache_to_gp_53235_19 read pattern: { load_to_gray_blur_cache_to_gp_53235[root = 0, gray_blur_cache_ld34, gray_blur_cache_ld33] -> gray_blur_cache[gray_blur_cache_ld33, gray_blur_cache_ld34] : 0 <= gray_blur_cache_ld34 <= 65 and 0 <= gray_blur_cache_ld33 <= 65 }
-  auto value_gray_blur_cache_pw_math_gray_blur811_0 = gray_blur_cache.gray_blur_cache_all_inputs_to_all_outputs.read(gray_blur_cache_ld33 - 0, gray_blur_cache_ld34 - 0);
+  // Read schedule : { load_to_gray_blur_cache_to_gp_53235[root = 0, gray_blur_cache_ld34, gray_blur_cache_ld33] -> [gray_blur_cache_ld34, gray_blur_cache_ld33, 7] : 0 <= gray_blur_cache_ld34 <= 65 and 0 <= gray_blur_cache_ld33 <= 65 }
+  // Write schedule: { pw_math_gray_blur811[root = 0, pw_math_gray_blur89, pw_math_gray_blur810] -> [pw_math_gray_blur89, pw_math_gray_blur810, 6] : 0 <= pw_math_gray_blur89 <= 65 and 0 <= pw_math_gray_blur810 <= 65 }
+  auto value_gray_blur_cache_pw_math_gray_blur811_0 = gray_blur_cache.gray_blur_cache_pw_math_gray_blur811_0_to_gray_blur_cache_load_to_gray_blur_cache_to_gp_53235_19.peek(/* one reader or all rams */ 0);
   return value_gray_blur_cache_pw_math_gray_blur811_0;
   return 0;
 }
@@ -470,109 +543,227 @@ inline void gray_blur_cache_pw_math_gray_blur811_write_bundle_write(hw_uint<32>&
 	gray_blur_cache_pw_math_gray_blur811_0_write(gray_blur_cache_pw_math_gray_blur811_0_res, gray_blur_cache, root, pw_math_gray_blur89, pw_math_gray_blur810, dynamic_address);
 }
 
-struct gray_blur_cache_FIFO_buf56_all_inputs_to_all_outputs_cache {
+struct gray_blur_cache_FIFO_buf56_load_to_gray_blur_cache_FIFO_buf5659_20_merged_banks_9_cache {
 	// RAM Box: {[0, 65], [0, 65]}
-  hw_uint<32>  RAM[66][66];
-  inline hw_uint<32>  read(int d0, int d1) {
-    return RAM[d0][d1];
-  }
+	// Capacity: 135
+	// # of read delays: 9
+  // 0, 1, 2, 66, 67, 68, 132, 133, 134
+	hw_uint<32>  f0;
+	hw_uint<32>  f2;
+	hw_uint<32>  f4;
+	fifo<hw_uint<32> , 63> f5;
+	hw_uint<32>  f6;
+	hw_uint<32>  f8;
+	hw_uint<32>  f10;
+	fifo<hw_uint<32> , 63> f11;
+	hw_uint<32>  f12;
+	hw_uint<32>  f14;
+	hw_uint<32>  f16;
+
+
+	inline hw_uint<32>  peek_0() {
+		return f0;
+	}
+
+	inline hw_uint<32>  peek_1() {
+		return f2;
+	}
+
+	inline hw_uint<32>  peek_2() {
+		return f4;
+	}
+
+	inline hw_uint<32>  peek_65() {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+		return f5.back();
+	}
+
+	inline hw_uint<32>  peek_66() {
+		return f6;
+	}
+
+	inline hw_uint<32>  peek_67() {
+		return f8;
+	}
+
+	inline hw_uint<32>  peek_68() {
+		return f10;
+	}
+
+	inline hw_uint<32>  peek_131() {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+		return f11.back();
+	}
+
+	inline hw_uint<32>  peek_132() {
+		return f12;
+	}
+
+	inline hw_uint<32>  peek_133() {
+		return f14;
+	}
+
+	inline hw_uint<32>  peek_134() {
+		return f16;
+	}
 
 
 
-	inline void write(const hw_uint<32>  value, int d0, int d1) {
-    RAM[d0][d1] = value;
-  }
+	inline void push(const hw_uint<32>  value) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    // cap: 1 reading from capacity: 1
+    f16 = f14;
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    // cap: 1 reading from capacity: 1
+    f14 = f12;
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    // cap: 1 reading from capacity: 63
+    f12 = f11.back();
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    // cap: 63 reading from capacity: 1
+    f11.push(f10);
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    // cap: 1 reading from capacity: 1
+    f10 = f8;
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    // cap: 1 reading from capacity: 1
+    f8 = f6;
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    // cap: 1 reading from capacity: 63
+    f6 = f5.back();
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    // cap: 63 reading from capacity: 1
+    f5.push(f4);
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    // cap: 1 reading from capacity: 1
+    f4 = f2;
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    // cap: 1 reading from capacity: 1
+    f2 = f0;
+    // cap: 1
+    f0 = value;
+	}
 
 };
 
 struct gray_blur_cache_FIFO_buf56_cache {
   // # of banks: 1
-  gray_blur_cache_FIFO_buf56_all_inputs_to_all_outputs_cache gray_blur_cache_FIFO_buf56_all_inputs_to_all_outputs;
+  gray_blur_cache_FIFO_buf56_load_to_gray_blur_cache_FIFO_buf5659_20_merged_banks_9_cache gray_blur_cache_FIFO_buf56_load_to_gray_blur_cache_FIFO_buf5659_20_merged_banks_9;
 };
 
 
 
 inline void gray_blur_cache_FIFO_buf56_load_to_gray_blur_cache_FIFO_buf5659_20_write(hw_uint<32> & gray_blur_cache_FIFO_buf56_load_to_gray_blur_cache_FIFO_buf5659_20, gray_blur_cache_FIFO_buf56_cache& gray_blur_cache_FIFO_buf56, int root, int gray_blur_cache_to_gp_532_ld58, int gray_blur_cache_to_gp_532_ld57, int dynamic_address) {
-  gray_blur_cache_FIFO_buf56.gray_blur_cache_FIFO_buf56_all_inputs_to_all_outputs.write(gray_blur_cache_FIFO_buf56_load_to_gray_blur_cache_FIFO_buf5659_20, gray_blur_cache_to_gp_532_ld57 - 0, gray_blur_cache_to_gp_532_ld58 - 0);
+  gray_blur_cache_FIFO_buf56.gray_blur_cache_FIFO_buf56_load_to_gray_blur_cache_FIFO_buf5659_20_merged_banks_9.push(gray_blur_cache_FIFO_buf56_load_to_gray_blur_cache_FIFO_buf5659_20);
 }
 
-inline hw_uint<32>  gray_blur_cache_FIFO_buf56_blur_36_select(gray_blur_cache_FIFO_buf56_cache& gray_blur_cache_FIFO_buf56, int root, int xb, int yb, int dynamic_address) {
+inline hw_uint<32>  gray_blur_cache_FIFO_buf56_blur_36_select(gray_blur_cache_FIFO_buf56_cache& gray_blur_cache_FIFO_buf56, int root, int yb, int xb, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // gray_blur_cache_FIFO_buf56_blur_36 read pattern: { blur[root = 0, xb, yb] -> gray_blur_cache_FIFO_buf56[xb, yb] : 0 <= xb <= 63 and 0 <= yb <= 63 }
-  auto value_gray_blur_cache_FIFO_buf56_load_to_gray_blur_cache_FIFO_buf5659_20 = gray_blur_cache_FIFO_buf56.gray_blur_cache_FIFO_buf56_all_inputs_to_all_outputs.read(xb - 0, yb - 0);
+  // gray_blur_cache_FIFO_buf56_blur_36 read pattern: { blur[root = 0, yb, xb] -> gray_blur_cache_FIFO_buf56[xb, yb] : 0 <= yb <= 63 and 0 <= xb <= 63 }
+  // Read schedule : { blur[root = 0, yb, xb] -> [2 + yb, 2 + xb, 9] : 0 <= yb <= 63 and 0 <= xb <= 63 }
+  // Write schedule: { load_to_gray_blur_cache_FIFO_buf5659[root = 0, gray_blur_cache_to_gp_532_ld58, gray_blur_cache_to_gp_532_ld57] -> [gray_blur_cache_to_gp_532_ld58, gray_blur_cache_to_gp_532_ld57, 8] : 0 <= gray_blur_cache_to_gp_532_ld58 <= 65 and 0 <= gray_blur_cache_to_gp_532_ld57 <= 65 }
+  auto value_gray_blur_cache_FIFO_buf56_load_to_gray_blur_cache_FIFO_buf5659_20 = gray_blur_cache_FIFO_buf56.gray_blur_cache_FIFO_buf56_load_to_gray_blur_cache_FIFO_buf5659_20_merged_banks_9.peek_134();
   return value_gray_blur_cache_FIFO_buf56_load_to_gray_blur_cache_FIFO_buf5659_20;
   return 0;
 }
 
-inline hw_uint<32>  gray_blur_cache_FIFO_buf56_blur_37_select(gray_blur_cache_FIFO_buf56_cache& gray_blur_cache_FIFO_buf56, int root, int xb, int yb, int dynamic_address) {
+inline hw_uint<32>  gray_blur_cache_FIFO_buf56_blur_37_select(gray_blur_cache_FIFO_buf56_cache& gray_blur_cache_FIFO_buf56, int root, int yb, int xb, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // gray_blur_cache_FIFO_buf56_blur_37 read pattern: { blur[root = 0, xb, yb] -> gray_blur_cache_FIFO_buf56[xb, 1 + yb] : 0 <= xb <= 63 and 0 <= yb <= 63 }
-  auto value_gray_blur_cache_FIFO_buf56_load_to_gray_blur_cache_FIFO_buf5659_20 = gray_blur_cache_FIFO_buf56.gray_blur_cache_FIFO_buf56_all_inputs_to_all_outputs.read(xb - 0, 1 + yb - 0);
+  // gray_blur_cache_FIFO_buf56_blur_37 read pattern: { blur[root = 0, yb, xb] -> gray_blur_cache_FIFO_buf56[xb, 1 + yb] : 0 <= yb <= 63 and 0 <= xb <= 63 }
+  // Read schedule : { blur[root = 0, yb, xb] -> [2 + yb, 2 + xb, 9] : 0 <= yb <= 63 and 0 <= xb <= 63 }
+  // Write schedule: { load_to_gray_blur_cache_FIFO_buf5659[root = 0, gray_blur_cache_to_gp_532_ld58, gray_blur_cache_to_gp_532_ld57] -> [gray_blur_cache_to_gp_532_ld58, gray_blur_cache_to_gp_532_ld57, 8] : 0 <= gray_blur_cache_to_gp_532_ld58 <= 65 and 0 <= gray_blur_cache_to_gp_532_ld57 <= 65 }
+  auto value_gray_blur_cache_FIFO_buf56_load_to_gray_blur_cache_FIFO_buf5659_20 = gray_blur_cache_FIFO_buf56.gray_blur_cache_FIFO_buf56_load_to_gray_blur_cache_FIFO_buf5659_20_merged_banks_9.peek_68();
   return value_gray_blur_cache_FIFO_buf56_load_to_gray_blur_cache_FIFO_buf5659_20;
   return 0;
 }
 
-inline hw_uint<32>  gray_blur_cache_FIFO_buf56_blur_38_select(gray_blur_cache_FIFO_buf56_cache& gray_blur_cache_FIFO_buf56, int root, int xb, int yb, int dynamic_address) {
+inline hw_uint<32>  gray_blur_cache_FIFO_buf56_blur_38_select(gray_blur_cache_FIFO_buf56_cache& gray_blur_cache_FIFO_buf56, int root, int yb, int xb, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // gray_blur_cache_FIFO_buf56_blur_38 read pattern: { blur[root = 0, xb, yb] -> gray_blur_cache_FIFO_buf56[xb, 2 + yb] : 0 <= xb <= 63 and 0 <= yb <= 63 }
-  auto value_gray_blur_cache_FIFO_buf56_load_to_gray_blur_cache_FIFO_buf5659_20 = gray_blur_cache_FIFO_buf56.gray_blur_cache_FIFO_buf56_all_inputs_to_all_outputs.read(xb - 0, 2 + yb - 0);
+  // gray_blur_cache_FIFO_buf56_blur_38 read pattern: { blur[root = 0, yb, xb] -> gray_blur_cache_FIFO_buf56[xb, 2 + yb] : 0 <= yb <= 63 and 0 <= xb <= 63 }
+  // Read schedule : { blur[root = 0, yb, xb] -> [2 + yb, 2 + xb, 9] : 0 <= yb <= 63 and 0 <= xb <= 63 }
+  // Write schedule: { load_to_gray_blur_cache_FIFO_buf5659[root = 0, gray_blur_cache_to_gp_532_ld58, gray_blur_cache_to_gp_532_ld57] -> [gray_blur_cache_to_gp_532_ld58, gray_blur_cache_to_gp_532_ld57, 8] : 0 <= gray_blur_cache_to_gp_532_ld58 <= 65 and 0 <= gray_blur_cache_to_gp_532_ld57 <= 65 }
+  auto value_gray_blur_cache_FIFO_buf56_load_to_gray_blur_cache_FIFO_buf5659_20 = gray_blur_cache_FIFO_buf56.gray_blur_cache_FIFO_buf56_load_to_gray_blur_cache_FIFO_buf5659_20_merged_banks_9.peek_2();
   return value_gray_blur_cache_FIFO_buf56_load_to_gray_blur_cache_FIFO_buf5659_20;
   return 0;
 }
 
-inline hw_uint<32>  gray_blur_cache_FIFO_buf56_blur_39_select(gray_blur_cache_FIFO_buf56_cache& gray_blur_cache_FIFO_buf56, int root, int xb, int yb, int dynamic_address) {
+inline hw_uint<32>  gray_blur_cache_FIFO_buf56_blur_39_select(gray_blur_cache_FIFO_buf56_cache& gray_blur_cache_FIFO_buf56, int root, int yb, int xb, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // gray_blur_cache_FIFO_buf56_blur_39 read pattern: { blur[root = 0, xb, yb] -> gray_blur_cache_FIFO_buf56[1 + xb, yb] : 0 <= xb <= 63 and 0 <= yb <= 63 }
-  auto value_gray_blur_cache_FIFO_buf56_load_to_gray_blur_cache_FIFO_buf5659_20 = gray_blur_cache_FIFO_buf56.gray_blur_cache_FIFO_buf56_all_inputs_to_all_outputs.read(1 + xb - 0, yb - 0);
+  // gray_blur_cache_FIFO_buf56_blur_39 read pattern: { blur[root = 0, yb, xb] -> gray_blur_cache_FIFO_buf56[1 + xb, yb] : 0 <= yb <= 63 and 0 <= xb <= 63 }
+  // Read schedule : { blur[root = 0, yb, xb] -> [2 + yb, 2 + xb, 9] : 0 <= yb <= 63 and 0 <= xb <= 63 }
+  // Write schedule: { load_to_gray_blur_cache_FIFO_buf5659[root = 0, gray_blur_cache_to_gp_532_ld58, gray_blur_cache_to_gp_532_ld57] -> [gray_blur_cache_to_gp_532_ld58, gray_blur_cache_to_gp_532_ld57, 8] : 0 <= gray_blur_cache_to_gp_532_ld58 <= 65 and 0 <= gray_blur_cache_to_gp_532_ld57 <= 65 }
+  auto value_gray_blur_cache_FIFO_buf56_load_to_gray_blur_cache_FIFO_buf5659_20 = gray_blur_cache_FIFO_buf56.gray_blur_cache_FIFO_buf56_load_to_gray_blur_cache_FIFO_buf5659_20_merged_banks_9.peek_133();
   return value_gray_blur_cache_FIFO_buf56_load_to_gray_blur_cache_FIFO_buf5659_20;
   return 0;
 }
 
-inline hw_uint<32>  gray_blur_cache_FIFO_buf56_blur_40_select(gray_blur_cache_FIFO_buf56_cache& gray_blur_cache_FIFO_buf56, int root, int xb, int yb, int dynamic_address) {
+inline hw_uint<32>  gray_blur_cache_FIFO_buf56_blur_40_select(gray_blur_cache_FIFO_buf56_cache& gray_blur_cache_FIFO_buf56, int root, int yb, int xb, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // gray_blur_cache_FIFO_buf56_blur_40 read pattern: { blur[root = 0, xb, yb] -> gray_blur_cache_FIFO_buf56[1 + xb, 1 + yb] : 0 <= xb <= 63 and 0 <= yb <= 63 }
-  auto value_gray_blur_cache_FIFO_buf56_load_to_gray_blur_cache_FIFO_buf5659_20 = gray_blur_cache_FIFO_buf56.gray_blur_cache_FIFO_buf56_all_inputs_to_all_outputs.read(1 + xb - 0, 1 + yb - 0);
+  // gray_blur_cache_FIFO_buf56_blur_40 read pattern: { blur[root = 0, yb, xb] -> gray_blur_cache_FIFO_buf56[1 + xb, 1 + yb] : 0 <= yb <= 63 and 0 <= xb <= 63 }
+  // Read schedule : { blur[root = 0, yb, xb] -> [2 + yb, 2 + xb, 9] : 0 <= yb <= 63 and 0 <= xb <= 63 }
+  // Write schedule: { load_to_gray_blur_cache_FIFO_buf5659[root = 0, gray_blur_cache_to_gp_532_ld58, gray_blur_cache_to_gp_532_ld57] -> [gray_blur_cache_to_gp_532_ld58, gray_blur_cache_to_gp_532_ld57, 8] : 0 <= gray_blur_cache_to_gp_532_ld58 <= 65 and 0 <= gray_blur_cache_to_gp_532_ld57 <= 65 }
+  auto value_gray_blur_cache_FIFO_buf56_load_to_gray_blur_cache_FIFO_buf5659_20 = gray_blur_cache_FIFO_buf56.gray_blur_cache_FIFO_buf56_load_to_gray_blur_cache_FIFO_buf5659_20_merged_banks_9.peek_67();
   return value_gray_blur_cache_FIFO_buf56_load_to_gray_blur_cache_FIFO_buf5659_20;
   return 0;
 }
 
-inline hw_uint<32>  gray_blur_cache_FIFO_buf56_blur_41_select(gray_blur_cache_FIFO_buf56_cache& gray_blur_cache_FIFO_buf56, int root, int xb, int yb, int dynamic_address) {
+inline hw_uint<32>  gray_blur_cache_FIFO_buf56_blur_41_select(gray_blur_cache_FIFO_buf56_cache& gray_blur_cache_FIFO_buf56, int root, int yb, int xb, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // gray_blur_cache_FIFO_buf56_blur_41 read pattern: { blur[root = 0, xb, yb] -> gray_blur_cache_FIFO_buf56[1 + xb, 2 + yb] : 0 <= xb <= 63 and 0 <= yb <= 63 }
-  auto value_gray_blur_cache_FIFO_buf56_load_to_gray_blur_cache_FIFO_buf5659_20 = gray_blur_cache_FIFO_buf56.gray_blur_cache_FIFO_buf56_all_inputs_to_all_outputs.read(1 + xb - 0, 2 + yb - 0);
+  // gray_blur_cache_FIFO_buf56_blur_41 read pattern: { blur[root = 0, yb, xb] -> gray_blur_cache_FIFO_buf56[1 + xb, 2 + yb] : 0 <= yb <= 63 and 0 <= xb <= 63 }
+  // Read schedule : { blur[root = 0, yb, xb] -> [2 + yb, 2 + xb, 9] : 0 <= yb <= 63 and 0 <= xb <= 63 }
+  // Write schedule: { load_to_gray_blur_cache_FIFO_buf5659[root = 0, gray_blur_cache_to_gp_532_ld58, gray_blur_cache_to_gp_532_ld57] -> [gray_blur_cache_to_gp_532_ld58, gray_blur_cache_to_gp_532_ld57, 8] : 0 <= gray_blur_cache_to_gp_532_ld58 <= 65 and 0 <= gray_blur_cache_to_gp_532_ld57 <= 65 }
+  auto value_gray_blur_cache_FIFO_buf56_load_to_gray_blur_cache_FIFO_buf5659_20 = gray_blur_cache_FIFO_buf56.gray_blur_cache_FIFO_buf56_load_to_gray_blur_cache_FIFO_buf5659_20_merged_banks_9.peek_1();
   return value_gray_blur_cache_FIFO_buf56_load_to_gray_blur_cache_FIFO_buf5659_20;
   return 0;
 }
 
-inline hw_uint<32>  gray_blur_cache_FIFO_buf56_blur_42_select(gray_blur_cache_FIFO_buf56_cache& gray_blur_cache_FIFO_buf56, int root, int xb, int yb, int dynamic_address) {
+inline hw_uint<32>  gray_blur_cache_FIFO_buf56_blur_42_select(gray_blur_cache_FIFO_buf56_cache& gray_blur_cache_FIFO_buf56, int root, int yb, int xb, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // gray_blur_cache_FIFO_buf56_blur_42 read pattern: { blur[root = 0, xb, yb] -> gray_blur_cache_FIFO_buf56[2 + xb, yb] : 0 <= xb <= 63 and 0 <= yb <= 63 }
-  auto value_gray_blur_cache_FIFO_buf56_load_to_gray_blur_cache_FIFO_buf5659_20 = gray_blur_cache_FIFO_buf56.gray_blur_cache_FIFO_buf56_all_inputs_to_all_outputs.read(2 + xb - 0, yb - 0);
+  // gray_blur_cache_FIFO_buf56_blur_42 read pattern: { blur[root = 0, yb, xb] -> gray_blur_cache_FIFO_buf56[2 + xb, yb] : 0 <= yb <= 63 and 0 <= xb <= 63 }
+  // Read schedule : { blur[root = 0, yb, xb] -> [2 + yb, 2 + xb, 9] : 0 <= yb <= 63 and 0 <= xb <= 63 }
+  // Write schedule: { load_to_gray_blur_cache_FIFO_buf5659[root = 0, gray_blur_cache_to_gp_532_ld58, gray_blur_cache_to_gp_532_ld57] -> [gray_blur_cache_to_gp_532_ld58, gray_blur_cache_to_gp_532_ld57, 8] : 0 <= gray_blur_cache_to_gp_532_ld58 <= 65 and 0 <= gray_blur_cache_to_gp_532_ld57 <= 65 }
+  auto value_gray_blur_cache_FIFO_buf56_load_to_gray_blur_cache_FIFO_buf5659_20 = gray_blur_cache_FIFO_buf56.gray_blur_cache_FIFO_buf56_load_to_gray_blur_cache_FIFO_buf5659_20_merged_banks_9.peek_132();
   return value_gray_blur_cache_FIFO_buf56_load_to_gray_blur_cache_FIFO_buf5659_20;
   return 0;
 }
 
-inline hw_uint<32>  gray_blur_cache_FIFO_buf56_blur_43_select(gray_blur_cache_FIFO_buf56_cache& gray_blur_cache_FIFO_buf56, int root, int xb, int yb, int dynamic_address) {
+inline hw_uint<32>  gray_blur_cache_FIFO_buf56_blur_43_select(gray_blur_cache_FIFO_buf56_cache& gray_blur_cache_FIFO_buf56, int root, int yb, int xb, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // gray_blur_cache_FIFO_buf56_blur_43 read pattern: { blur[root = 0, xb, yb] -> gray_blur_cache_FIFO_buf56[2 + xb, 1 + yb] : 0 <= xb <= 63 and 0 <= yb <= 63 }
-  auto value_gray_blur_cache_FIFO_buf56_load_to_gray_blur_cache_FIFO_buf5659_20 = gray_blur_cache_FIFO_buf56.gray_blur_cache_FIFO_buf56_all_inputs_to_all_outputs.read(2 + xb - 0, 1 + yb - 0);
+  // gray_blur_cache_FIFO_buf56_blur_43 read pattern: { blur[root = 0, yb, xb] -> gray_blur_cache_FIFO_buf56[2 + xb, 1 + yb] : 0 <= yb <= 63 and 0 <= xb <= 63 }
+  // Read schedule : { blur[root = 0, yb, xb] -> [2 + yb, 2 + xb, 9] : 0 <= yb <= 63 and 0 <= xb <= 63 }
+  // Write schedule: { load_to_gray_blur_cache_FIFO_buf5659[root = 0, gray_blur_cache_to_gp_532_ld58, gray_blur_cache_to_gp_532_ld57] -> [gray_blur_cache_to_gp_532_ld58, gray_blur_cache_to_gp_532_ld57, 8] : 0 <= gray_blur_cache_to_gp_532_ld58 <= 65 and 0 <= gray_blur_cache_to_gp_532_ld57 <= 65 }
+  auto value_gray_blur_cache_FIFO_buf56_load_to_gray_blur_cache_FIFO_buf5659_20 = gray_blur_cache_FIFO_buf56.gray_blur_cache_FIFO_buf56_load_to_gray_blur_cache_FIFO_buf5659_20_merged_banks_9.peek_66();
   return value_gray_blur_cache_FIFO_buf56_load_to_gray_blur_cache_FIFO_buf5659_20;
   return 0;
 }
 
-inline hw_uint<32>  gray_blur_cache_FIFO_buf56_blur_44_select(gray_blur_cache_FIFO_buf56_cache& gray_blur_cache_FIFO_buf56, int root, int xb, int yb, int dynamic_address) {
+inline hw_uint<32>  gray_blur_cache_FIFO_buf56_blur_44_select(gray_blur_cache_FIFO_buf56_cache& gray_blur_cache_FIFO_buf56, int root, int yb, int xb, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // gray_blur_cache_FIFO_buf56_blur_44 read pattern: { blur[root = 0, xb, yb] -> gray_blur_cache_FIFO_buf56[2 + xb, 2 + yb] : 0 <= xb <= 63 and 0 <= yb <= 63 }
-  auto value_gray_blur_cache_FIFO_buf56_load_to_gray_blur_cache_FIFO_buf5659_20 = gray_blur_cache_FIFO_buf56.gray_blur_cache_FIFO_buf56_all_inputs_to_all_outputs.read(2 + xb - 0, 2 + yb - 0);
+  // gray_blur_cache_FIFO_buf56_blur_44 read pattern: { blur[root = 0, yb, xb] -> gray_blur_cache_FIFO_buf56[2 + xb, 2 + yb] : 0 <= yb <= 63 and 0 <= xb <= 63 }
+  // Read schedule : { blur[root = 0, yb, xb] -> [2 + yb, 2 + xb, 9] : 0 <= yb <= 63 and 0 <= xb <= 63 }
+  // Write schedule: { load_to_gray_blur_cache_FIFO_buf5659[root = 0, gray_blur_cache_to_gp_532_ld58, gray_blur_cache_to_gp_532_ld57] -> [gray_blur_cache_to_gp_532_ld58, gray_blur_cache_to_gp_532_ld57, 8] : 0 <= gray_blur_cache_to_gp_532_ld58 <= 65 and 0 <= gray_blur_cache_to_gp_532_ld57 <= 65 }
+  auto value_gray_blur_cache_FIFO_buf56_load_to_gray_blur_cache_FIFO_buf5659_20 = gray_blur_cache_FIFO_buf56.gray_blur_cache_FIFO_buf56_load_to_gray_blur_cache_FIFO_buf5659_20_merged_banks_9.peek_0();
   return value_gray_blur_cache_FIFO_buf56_load_to_gray_blur_cache_FIFO_buf5659_20;
   return 0;
 }
@@ -588,7 +779,7 @@ inline hw_uint<32>  gray_blur_cache_FIFO_buf56_blur_44_select(gray_blur_cache_FI
 //	gray_blur_cache_FIFO_buf56_blur_42
 //	gray_blur_cache_FIFO_buf56_blur_43
 //	gray_blur_cache_FIFO_buf56_blur_44
-inline hw_uint<288> gray_blur_cache_FIFO_buf56_blur_read_bundle_read(gray_blur_cache_FIFO_buf56_cache& gray_blur_cache_FIFO_buf56, int root, int xb, int yb, int dynamic_address) {
+inline hw_uint<288> gray_blur_cache_FIFO_buf56_blur_read_bundle_read(gray_blur_cache_FIFO_buf56_cache& gray_blur_cache_FIFO_buf56, int root, int yb, int xb, int dynamic_address) {
   // # of ports in bundle: 9
     // gray_blur_cache_FIFO_buf56_blur_36
     // gray_blur_cache_FIFO_buf56_blur_37
@@ -601,23 +792,23 @@ inline hw_uint<288> gray_blur_cache_FIFO_buf56_blur_read_bundle_read(gray_blur_c
     // gray_blur_cache_FIFO_buf56_blur_44
 
 	hw_uint<288> result;
-	hw_uint<32>  gray_blur_cache_FIFO_buf56_blur_36_res = gray_blur_cache_FIFO_buf56_blur_36_select(gray_blur_cache_FIFO_buf56, root, xb, yb, dynamic_address);
+	hw_uint<32>  gray_blur_cache_FIFO_buf56_blur_36_res = gray_blur_cache_FIFO_buf56_blur_36_select(gray_blur_cache_FIFO_buf56, root, yb, xb, dynamic_address);
 	set_at<0, 288>(result, gray_blur_cache_FIFO_buf56_blur_36_res);
-	hw_uint<32>  gray_blur_cache_FIFO_buf56_blur_37_res = gray_blur_cache_FIFO_buf56_blur_37_select(gray_blur_cache_FIFO_buf56, root, xb, yb, dynamic_address);
+	hw_uint<32>  gray_blur_cache_FIFO_buf56_blur_37_res = gray_blur_cache_FIFO_buf56_blur_37_select(gray_blur_cache_FIFO_buf56, root, yb, xb, dynamic_address);
 	set_at<32, 288>(result, gray_blur_cache_FIFO_buf56_blur_37_res);
-	hw_uint<32>  gray_blur_cache_FIFO_buf56_blur_38_res = gray_blur_cache_FIFO_buf56_blur_38_select(gray_blur_cache_FIFO_buf56, root, xb, yb, dynamic_address);
+	hw_uint<32>  gray_blur_cache_FIFO_buf56_blur_38_res = gray_blur_cache_FIFO_buf56_blur_38_select(gray_blur_cache_FIFO_buf56, root, yb, xb, dynamic_address);
 	set_at<64, 288>(result, gray_blur_cache_FIFO_buf56_blur_38_res);
-	hw_uint<32>  gray_blur_cache_FIFO_buf56_blur_39_res = gray_blur_cache_FIFO_buf56_blur_39_select(gray_blur_cache_FIFO_buf56, root, xb, yb, dynamic_address);
+	hw_uint<32>  gray_blur_cache_FIFO_buf56_blur_39_res = gray_blur_cache_FIFO_buf56_blur_39_select(gray_blur_cache_FIFO_buf56, root, yb, xb, dynamic_address);
 	set_at<96, 288>(result, gray_blur_cache_FIFO_buf56_blur_39_res);
-	hw_uint<32>  gray_blur_cache_FIFO_buf56_blur_40_res = gray_blur_cache_FIFO_buf56_blur_40_select(gray_blur_cache_FIFO_buf56, root, xb, yb, dynamic_address);
+	hw_uint<32>  gray_blur_cache_FIFO_buf56_blur_40_res = gray_blur_cache_FIFO_buf56_blur_40_select(gray_blur_cache_FIFO_buf56, root, yb, xb, dynamic_address);
 	set_at<128, 288>(result, gray_blur_cache_FIFO_buf56_blur_40_res);
-	hw_uint<32>  gray_blur_cache_FIFO_buf56_blur_41_res = gray_blur_cache_FIFO_buf56_blur_41_select(gray_blur_cache_FIFO_buf56, root, xb, yb, dynamic_address);
+	hw_uint<32>  gray_blur_cache_FIFO_buf56_blur_41_res = gray_blur_cache_FIFO_buf56_blur_41_select(gray_blur_cache_FIFO_buf56, root, yb, xb, dynamic_address);
 	set_at<160, 288>(result, gray_blur_cache_FIFO_buf56_blur_41_res);
-	hw_uint<32>  gray_blur_cache_FIFO_buf56_blur_42_res = gray_blur_cache_FIFO_buf56_blur_42_select(gray_blur_cache_FIFO_buf56, root, xb, yb, dynamic_address);
+	hw_uint<32>  gray_blur_cache_FIFO_buf56_blur_42_res = gray_blur_cache_FIFO_buf56_blur_42_select(gray_blur_cache_FIFO_buf56, root, yb, xb, dynamic_address);
 	set_at<192, 288>(result, gray_blur_cache_FIFO_buf56_blur_42_res);
-	hw_uint<32>  gray_blur_cache_FIFO_buf56_blur_43_res = gray_blur_cache_FIFO_buf56_blur_43_select(gray_blur_cache_FIFO_buf56, root, xb, yb, dynamic_address);
+	hw_uint<32>  gray_blur_cache_FIFO_buf56_blur_43_res = gray_blur_cache_FIFO_buf56_blur_43_select(gray_blur_cache_FIFO_buf56, root, yb, xb, dynamic_address);
 	set_at<224, 288>(result, gray_blur_cache_FIFO_buf56_blur_43_res);
-	hw_uint<32>  gray_blur_cache_FIFO_buf56_blur_44_res = gray_blur_cache_FIFO_buf56_blur_44_select(gray_blur_cache_FIFO_buf56, root, xb, yb, dynamic_address);
+	hw_uint<32>  gray_blur_cache_FIFO_buf56_blur_44_res = gray_blur_cache_FIFO_buf56_blur_44_select(gray_blur_cache_FIFO_buf56, root, yb, xb, dynamic_address);
 	set_at<256, 288>(result, gray_blur_cache_FIFO_buf56_blur_44_res);
 	return result;
 }
@@ -629,37 +820,46 @@ inline void gray_blur_cache_FIFO_buf56_load_to_gray_blur_cache_FIFO_buf5659_writ
 	gray_blur_cache_FIFO_buf56_load_to_gray_blur_cache_FIFO_buf5659_20_write(gray_blur_cache_FIFO_buf56_load_to_gray_blur_cache_FIFO_buf5659_20_res, gray_blur_cache_FIFO_buf56, root, gray_blur_cache_to_gp_532_ld58, gray_blur_cache_to_gp_532_ld57, dynamic_address);
 }
 
-struct gray_diff_all_inputs_to_all_outputs_cache {
+struct gray_diff_pw_math_gray1215_4_to_gray_diff_load_to_gray_diff_to_gp_43639_13_cache {
 	// RAM Box: {[0, 63], [0, 63]}
-  hw_uint<32>  RAM[64][64];
-  inline hw_uint<32>  read(int d0, int d1) {
-    return RAM[d0][d1];
+	// Capacity: 1
+	// # of read delays: 2
+  // 0, 0
+	fifo<hw_uint<32> , 1> f;
+	inline hw_uint<32>  peek(const int offset) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.peek(0 - offset);
   }
 
 
 
-	inline void write(const hw_uint<32>  value, int d0, int d1) {
-    RAM[d0][d1] = value;
+	inline void push(const hw_uint<32>  value) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.push(value);
   }
 
 };
 
 struct gray_diff_cache {
   // # of banks: 1
-  gray_diff_all_inputs_to_all_outputs_cache gray_diff_all_inputs_to_all_outputs;
+  gray_diff_pw_math_gray1215_4_to_gray_diff_load_to_gray_diff_to_gp_43639_13_cache gray_diff_pw_math_gray1215_4_to_gray_diff_load_to_gray_diff_to_gp_43639_13;
 };
 
 
 
 inline void gray_diff_pw_math_gray1215_4_write(hw_uint<32> & gray_diff_pw_math_gray1215_4, gray_diff_cache& gray_diff, int root, int pw_math_gray1213, int pw_math_gray1214, int dynamic_address) {
-  gray_diff.gray_diff_all_inputs_to_all_outputs.write(gray_diff_pw_math_gray1215_4, pw_math_gray1214 - 0, pw_math_gray1213 - 0);
+  gray_diff.gray_diff_pw_math_gray1215_4_to_gray_diff_load_to_gray_diff_to_gp_43639_13.push(gray_diff_pw_math_gray1215_4);
 }
 
 inline hw_uint<32>  gray_diff_load_to_gray_diff_to_gp_43639_13_select(gray_diff_cache& gray_diff, int root, int gray_diff_ld38, int gray_diff_ld37, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // gray_diff_load_to_gray_diff_to_gp_43639_13 read pattern: { load_to_gray_diff_to_gp_43639[root = 0, gray_diff_ld38, gray_diff_ld37] -> gray_diff[gray_diff_ld37, gray_diff_ld38] : 0 <= gray_diff_ld38 <= 63 and 0 <= gray_diff_ld37 <= 63 }
-  auto value_gray_diff_pw_math_gray1215_4 = gray_diff.gray_diff_all_inputs_to_all_outputs.read(gray_diff_ld37 - 0, gray_diff_ld38 - 0);
+  // Read schedule : { load_to_gray_diff_to_gp_43639[root = 0, gray_diff_ld38, gray_diff_ld37] -> [gray_diff_ld38, gray_diff_ld37, 15] : 0 <= gray_diff_ld38 <= 63 and 0 <= gray_diff_ld37 <= 63 }
+  // Write schedule: { pw_math_gray1215[root = 0, pw_math_gray1213, pw_math_gray1214] -> [pw_math_gray1213, pw_math_gray1214, 14] : 0 <= pw_math_gray1213 <= 63 and 0 <= pw_math_gray1214 <= 63 }
+  auto value_gray_diff_pw_math_gray1215_4 = gray_diff.gray_diff_pw_math_gray1215_4_to_gray_diff_load_to_gray_diff_to_gp_43639_13.peek(/* one reader or all rams */ 0);
   return value_gray_diff_pw_math_gray1215_4;
   return 0;
 }
@@ -684,37 +884,46 @@ inline void gray_diff_pw_math_gray1215_write_bundle_write(hw_uint<32>& pw_math_g
 	gray_diff_pw_math_gray1215_4_write(gray_diff_pw_math_gray1215_4_res, gray_diff, root, pw_math_gray1213, pw_math_gray1214, dynamic_address);
 }
 
-struct gray_diff_FIFO_buf60_all_inputs_to_all_outputs_cache {
+struct gray_diff_FIFO_buf60_load_to_gray_diff_FIFO_buf6063_14_to_gray_diff_FIFO_buf60_diff_33_cache {
 	// RAM Box: {[0, 63], [0, 63]}
-  hw_uint<32>  RAM[64][64];
-  inline hw_uint<32>  read(int d0, int d1) {
-    return RAM[d0][d1];
+	// Capacity: 130
+	// # of read delays: 130
+  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129
+	fifo<hw_uint<32> , 130> f;
+	inline hw_uint<32>  peek(const int offset) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.peek(129 - offset);
   }
 
 
 
-	inline void write(const hw_uint<32>  value, int d0, int d1) {
-    RAM[d0][d1] = value;
+	inline void push(const hw_uint<32>  value) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.push(value);
   }
 
 };
 
 struct gray_diff_FIFO_buf60_cache {
   // # of banks: 1
-  gray_diff_FIFO_buf60_all_inputs_to_all_outputs_cache gray_diff_FIFO_buf60_all_inputs_to_all_outputs;
+  gray_diff_FIFO_buf60_load_to_gray_diff_FIFO_buf6063_14_to_gray_diff_FIFO_buf60_diff_33_cache gray_diff_FIFO_buf60_load_to_gray_diff_FIFO_buf6063_14_to_gray_diff_FIFO_buf60_diff_33;
 };
 
 
 
 inline void gray_diff_FIFO_buf60_load_to_gray_diff_FIFO_buf6063_14_write(hw_uint<32> & gray_diff_FIFO_buf60_load_to_gray_diff_FIFO_buf6063_14, gray_diff_FIFO_buf60_cache& gray_diff_FIFO_buf60, int root, int gray_diff_to_gp_436_ld62, int gray_diff_to_gp_436_ld61, int dynamic_address) {
-  gray_diff_FIFO_buf60.gray_diff_FIFO_buf60_all_inputs_to_all_outputs.write(gray_diff_FIFO_buf60_load_to_gray_diff_FIFO_buf6063_14, gray_diff_to_gp_436_ld61 - 0, gray_diff_to_gp_436_ld62 - 0);
+  gray_diff_FIFO_buf60.gray_diff_FIFO_buf60_load_to_gray_diff_FIFO_buf6063_14_to_gray_diff_FIFO_buf60_diff_33.push(gray_diff_FIFO_buf60_load_to_gray_diff_FIFO_buf6063_14);
 }
 
-inline hw_uint<32>  gray_diff_FIFO_buf60_diff_33_select(gray_diff_FIFO_buf60_cache& gray_diff_FIFO_buf60, int root, int x, int y, int dynamic_address) {
+inline hw_uint<32>  gray_diff_FIFO_buf60_diff_33_select(gray_diff_FIFO_buf60_cache& gray_diff_FIFO_buf60, int root, int y, int x, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // gray_diff_FIFO_buf60_diff_33 read pattern: { diff[root = 0, x, y] -> gray_diff_FIFO_buf60[x, y] : 0 <= x <= 63 and 0 <= y <= 63 }
-  auto value_gray_diff_FIFO_buf60_load_to_gray_diff_FIFO_buf6063_14 = gray_diff_FIFO_buf60.gray_diff_FIFO_buf60_all_inputs_to_all_outputs.read(x - 0, y - 0);
+  // gray_diff_FIFO_buf60_diff_33 read pattern: { diff[root = 0, y, x] -> gray_diff_FIFO_buf60[x, y] : 0 <= y <= 63 and 0 <= x <= 63 }
+  // Read schedule : { diff[root = 0, y, x] -> [2 + y, 2 + x, 16] : 0 <= y <= 63 and 0 <= x <= 63 }
+  // Write schedule: { load_to_gray_diff_FIFO_buf6063[root = 0, gray_diff_to_gp_436_ld62, gray_diff_to_gp_436_ld61] -> [gray_diff_to_gp_436_ld62, gray_diff_to_gp_436_ld61, 17] : 0 <= gray_diff_to_gp_436_ld62 <= 63 and 0 <= gray_diff_to_gp_436_ld61 <= 63 }
+  auto value_gray_diff_FIFO_buf60_load_to_gray_diff_FIFO_buf6063_14 = gray_diff_FIFO_buf60.gray_diff_FIFO_buf60_load_to_gray_diff_FIFO_buf6063_14_to_gray_diff_FIFO_buf60_diff_33.peek(/* one reader or all rams */ (-63 + x == 0 && -62 + y == 0) ? (64) : (-63 + x == 0 && 61 - y >= 0) ? (128) : (62 - x >= 0 && 61 - y >= 0) ? (129) : (-63 + y == 0 && 62 - x >= 0) ? ((63 - x)) : (-62 + y == 0 && 62 - x >= 0) ? ((127 - x)) : 0);
   return value_gray_diff_FIFO_buf60_load_to_gray_diff_FIFO_buf6063_14;
   return 0;
 }
@@ -722,12 +931,12 @@ inline hw_uint<32>  gray_diff_FIFO_buf60_diff_33_select(gray_diff_FIFO_buf60_cac
 // # of bundles = 2
 // diff_read
 //	gray_diff_FIFO_buf60_diff_33
-inline hw_uint<32> gray_diff_FIFO_buf60_diff_read_bundle_read(gray_diff_FIFO_buf60_cache& gray_diff_FIFO_buf60, int root, int x, int y, int dynamic_address) {
+inline hw_uint<32> gray_diff_FIFO_buf60_diff_read_bundle_read(gray_diff_FIFO_buf60_cache& gray_diff_FIFO_buf60, int root, int y, int x, int dynamic_address) {
   // # of ports in bundle: 1
     // gray_diff_FIFO_buf60_diff_33
 
 	hw_uint<32> result;
-	hw_uint<32>  gray_diff_FIFO_buf60_diff_33_res = gray_diff_FIFO_buf60_diff_33_select(gray_diff_FIFO_buf60, root, x, y, dynamic_address);
+	hw_uint<32>  gray_diff_FIFO_buf60_diff_33_res = gray_diff_FIFO_buf60_diff_33_select(gray_diff_FIFO_buf60, root, y, x, dynamic_address);
 	set_at<0, 32>(result, gray_diff_FIFO_buf60_diff_33_res);
 	return result;
 }
@@ -753,23 +962,6 @@ inline void oc_load_in03(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */
 
 }
 
-inline void load_to_gray_to_gp_12023(gray_cache& gray, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */gray_to_gp_120, int root, int gray_ld22, int gray_ld21) {
-  // Dynamic address computation
-
-	// Consume: gray
-	auto gray_gray_ld21_c__gray_ld22_value = gray_load_to_gray_to_gp_12023_read_bundle_read(gray/* source_delay */, root, gray_ld22, gray_ld21, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	// Produce: gray_to_gp_120
-	gray_to_gp_120.write(gray_gray_ld21_c__gray_ld22_value);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
 inline void load_to_gray_to_gp_22427(gray_cache& gray, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */gray_to_gp_224, int root, int gray_ld26, int gray_ld25) {
   // Dynamic address computation
 
@@ -781,6 +973,23 @@ inline void load_to_gray_to_gp_22427(gray_cache& gray, HWStream<hw_uint<32> >& /
 
 	// Produce: gray_to_gp_224
 	gray_to_gp_224.write(gray_gray_ld25_c__gray_ld26_value);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void load_to_gray_to_gp_12023(gray_cache& gray, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */gray_to_gp_120, int root, int gray_ld22, int gray_ld21) {
+  // Dynamic address computation
+
+	// Consume: gray
+	auto gray_gray_ld21_c__gray_ld22_value = gray_load_to_gray_to_gp_12023_read_bundle_read(gray/* source_delay */, root, gray_ld22, gray_ld21, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	// Produce: gray_to_gp_120
+	gray_to_gp_120.write(gray_gray_ld21_c__gray_ld22_value);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -801,36 +1010,30 @@ void Extracted_gray_ld22_gray_ld26_oc_load_in01_(HWStream<hw_uint<32> >& /* no b
 #pragma HLS inline recursive
 #endif // __VIVADO_SYNTH__
 
-// schedule: { oc_load_in03[root = 0, oc_load_in01, oc_load_in02] -> [oc_load_in01, 45 + oc_load_in02, 2, 0] : 0 <= oc_load_in01 <= 65 and 0 <= oc_load_in02 <= 65; load_to_gray_to_gp_12023[root = 0, gray_ld22, gray_ld21] -> [gray_ld22, 45 + gray_ld21, 2, 1] : 0 <= gray_ld22 <= 63 and 0 <= gray_ld21 <= 63; load_to_gray_to_gp_22427[root = 0, gray_ld26, gray_ld25] -> [gray_ld26, 47 + gray_ld25, 3, 0] : 0 <= gray_ld26 <= 65 and 0 <= gray_ld25 <= 65 }
-//   { oc_load_in03[root = 0, oc_load_in01, oc_load_in02] -> [oc_load_in01, 45 + oc_load_in02, 2, 0] : 0 <= oc_load_in01 <= 65 and 0 <= oc_load_in02 <= 65 }
-// Condition for oc_load_in03(((i3 == 0) && (-2 + i2 == 0) && (i0 >= 0) && (65 - i0 >= 0) && (-45 + i1 >= 0) && (110 - i1 >= 0)))
-//   { load_to_gray_to_gp_12023[root = 0, gray_ld22, gray_ld21] -> [gray_ld22, 45 + gray_ld21, 2, 1] : 0 <= gray_ld22 <= 63 and 0 <= gray_ld21 <= 63 }
-// Condition for load_to_gray_to_gp_12023(((-1 + i3 == 0) && (-2 + i2 == 0) && (i0 >= 0) && (63 - i0 >= 0) && (-45 + i1 >= 0) && (108 - i1 >= 0)))
-//   { load_to_gray_to_gp_22427[root = 0, gray_ld26, gray_ld25] -> [gray_ld26, 47 + gray_ld25, 3, 0] : 0 <= gray_ld26 <= 65 and 0 <= gray_ld25 <= 65 }
-// Condition for load_to_gray_to_gp_22427(((i3 == 0) && (-3 + i2 == 0) && (i0 >= 0) && (65 - i0 >= 0) && (-47 + i1 >= 0) && (112 - i1 >= 0)))
+// schedule: { oc_load_in03[root = 0, oc_load_in01, oc_load_in02] -> [oc_load_in01, oc_load_in02, 0] : 0 <= oc_load_in01 <= 65 and 0 <= oc_load_in02 <= 65; load_to_gray_to_gp_22427[root = 0, gray_ld26, gray_ld25] -> [gray_ld26, gray_ld25, 1] : 0 <= gray_ld26 <= 65 and 0 <= gray_ld25 <= 65; load_to_gray_to_gp_12023[root = 0, gray_ld22, gray_ld21] -> [gray_ld22, gray_ld21, 12] : 0 <= gray_ld22 <= 63 and 0 <= gray_ld21 <= 63 }
+//   { oc_load_in03[root = 0, oc_load_in01, oc_load_in02] -> [oc_load_in01, oc_load_in02, 0] : 0 <= oc_load_in01 <= 65 and 0 <= oc_load_in02 <= 65 }
+// Condition for oc_load_in03(((i2 == 0) && (i0 >= 0) && (65 - i0 >= 0) && (i1 >= 0) && (65 - i1 >= 0)))
+//   { load_to_gray_to_gp_22427[root = 0, gray_ld26, gray_ld25] -> [gray_ld26, gray_ld25, 1] : 0 <= gray_ld26 <= 65 and 0 <= gray_ld25 <= 65 }
+// Condition for load_to_gray_to_gp_22427(((-1 + i2 == 0) && (i0 >= 0) && (65 - i0 >= 0) && (i1 >= 0) && (65 - i1 >= 0)))
+//   { load_to_gray_to_gp_12023[root = 0, gray_ld22, gray_ld21] -> [gray_ld22, gray_ld21, 12] : 0 <= gray_ld22 <= 63 and 0 <= gray_ld21 <= 63 }
+// Condition for load_to_gray_to_gp_12023(((-12 + i2 == 0) && (i0 >= 0) && (63 - i0 >= 0) && (i1 >= 0) && (63 - i1 >= 0)))
 
   /*
 for (int c0 = 0; c0 <= 65; c0 += 1)
-  for (int c1 = 45; c1 <= 112; c1 += 1) {
-    if (c1 <= 110) {
-      oc_load_in03(0, c0, c1 - 45);
-      if (c0 <= 63 && c1 <= 108)
-        load_to_gray_to_gp_12023(0, c0, c1 - 45);
-    }
-    if (c1 >= 47)
-      load_to_gray_to_gp_22427(0, c0, c1 - 47);
+  for (int c1 = 0; c1 <= 65; c1 += 1) {
+    oc_load_in03(0, c0, c1);
+    load_to_gray_to_gp_22427(0, c0, c1);
+    if (c0 <= 63 && c1 <= 63)
+      load_to_gray_to_gp_12023(0, c0, c1);
   }
 
   */
 	for (int c0 = 0; c0 <= 65; c0 += 1)
-	  for (int c1 = 45; c1 <= 112; c1 += 1) {
-	    if (c1 <= 110) {
-	      oc_load_in03(in /* buf name */, gray, 0, c0, c1 - 45);
-	      if (c0 <= 63 && c1 <= 108)
-	        load_to_gray_to_gp_12023(gray /* buf name */, gray_to_gp_120, 0, c0, c1 - 45);
-	    }
-	    if (c1 >= 47)
-	      load_to_gray_to_gp_22427(gray /* buf name */, gray_to_gp_224, 0, c0, c1 - 47);
+	  for (int c1 = 0; c1 <= 65; c1 += 1) {
+	    oc_load_in03(in /* buf name */, gray, 0, c0, c1);
+	    load_to_gray_to_gp_22427(gray /* buf name */, gray_to_gp_224, 0, c0, c1);
+	    if (c0 <= 63 && c1 <= 63)
+	      load_to_gray_to_gp_12023(gray /* buf name */, gray_to_gp_120, 0, c0, c1);
 	  }
 	
 #ifndef __VIVADO_SYNTH__
@@ -904,28 +1107,28 @@ void Extracted_gray_diff_ld38_gray_to_gp_120_ld46_pw_math_gray1213_(HWStream<hw_
 #pragma HLS inline recursive
 #endif // __VIVADO_SYNTH__
 
-// schedule: { load_to_gray_FIFO_buf4447[root = 0, gray_to_gp_120_ld46, gray_to_gp_120_ld45] -> [gray_to_gp_120_ld46, 45 + gray_to_gp_120_ld45, 2, 2] : 0 <= gray_to_gp_120_ld46 <= 63 and 0 <= gray_to_gp_120_ld45 <= 63; load_to_gray_diff_to_gp_43639[root = 0, gray_diff_ld38, gray_diff_ld37] -> [gray_diff_ld38, 45 + gray_diff_ld37, 2, 4] : 0 <= gray_diff_ld38 <= 63 and 0 <= gray_diff_ld37 <= 63; pw_math_gray1215[root = 0, pw_math_gray1213, pw_math_gray1214] -> [pw_math_gray1213, 45 + pw_math_gray1214, 2, 3] : 0 <= pw_math_gray1213 <= 63 and 0 <= pw_math_gray1214 <= 63 }
-//   { load_to_gray_FIFO_buf4447[root = 0, gray_to_gp_120_ld46, gray_to_gp_120_ld45] -> [gray_to_gp_120_ld46, 45 + gray_to_gp_120_ld45, 2, 2] : 0 <= gray_to_gp_120_ld46 <= 63 and 0 <= gray_to_gp_120_ld45 <= 63 }
-// Condition for load_to_gray_FIFO_buf4447(((-2 + i3 == 0) && (-2 + i2 == 0) && (i0 >= 0) && (63 - i0 >= 0) && (-45 + i1 >= 0) && (108 - i1 >= 0)))
-//   { load_to_gray_diff_to_gp_43639[root = 0, gray_diff_ld38, gray_diff_ld37] -> [gray_diff_ld38, 45 + gray_diff_ld37, 2, 4] : 0 <= gray_diff_ld38 <= 63 and 0 <= gray_diff_ld37 <= 63 }
-// Condition for load_to_gray_diff_to_gp_43639(((-4 + i3 == 0) && (-2 + i2 == 0) && (i0 >= 0) && (63 - i0 >= 0) && (-45 + i1 >= 0) && (108 - i1 >= 0)))
-//   { pw_math_gray1215[root = 0, pw_math_gray1213, pw_math_gray1214] -> [pw_math_gray1213, 45 + pw_math_gray1214, 2, 3] : 0 <= pw_math_gray1213 <= 63 and 0 <= pw_math_gray1214 <= 63 }
-// Condition for pw_math_gray1215(((-3 + i3 == 0) && (-2 + i2 == 0) && (i0 >= 0) && (63 - i0 >= 0) && (-45 + i1 >= 0) && (108 - i1 >= 0)))
+// schedule: { load_to_gray_diff_to_gp_43639[root = 0, gray_diff_ld38, gray_diff_ld37] -> [gray_diff_ld38, gray_diff_ld37, 15] : 0 <= gray_diff_ld38 <= 63 and 0 <= gray_diff_ld37 <= 63; load_to_gray_FIFO_buf4447[root = 0, gray_to_gp_120_ld46, gray_to_gp_120_ld45] -> [gray_to_gp_120_ld46, gray_to_gp_120_ld45, 13] : 0 <= gray_to_gp_120_ld46 <= 63 and 0 <= gray_to_gp_120_ld45 <= 63; pw_math_gray1215[root = 0, pw_math_gray1213, pw_math_gray1214] -> [pw_math_gray1213, pw_math_gray1214, 14] : 0 <= pw_math_gray1213 <= 63 and 0 <= pw_math_gray1214 <= 63 }
+//   { load_to_gray_diff_to_gp_43639[root = 0, gray_diff_ld38, gray_diff_ld37] -> [gray_diff_ld38, gray_diff_ld37, 15] : 0 <= gray_diff_ld38 <= 63 and 0 <= gray_diff_ld37 <= 63 }
+// Condition for load_to_gray_diff_to_gp_43639(((-15 + i2 == 0) && (i0 >= 0) && (63 - i0 >= 0) && (i1 >= 0) && (63 - i1 >= 0)))
+//   { load_to_gray_FIFO_buf4447[root = 0, gray_to_gp_120_ld46, gray_to_gp_120_ld45] -> [gray_to_gp_120_ld46, gray_to_gp_120_ld45, 13] : 0 <= gray_to_gp_120_ld46 <= 63 and 0 <= gray_to_gp_120_ld45 <= 63 }
+// Condition for load_to_gray_FIFO_buf4447(((-13 + i2 == 0) && (i0 >= 0) && (63 - i0 >= 0) && (i1 >= 0) && (63 - i1 >= 0)))
+//   { pw_math_gray1215[root = 0, pw_math_gray1213, pw_math_gray1214] -> [pw_math_gray1213, pw_math_gray1214, 14] : 0 <= pw_math_gray1213 <= 63 and 0 <= pw_math_gray1214 <= 63 }
+// Condition for pw_math_gray1215(((-14 + i2 == 0) && (i0 >= 0) && (63 - i0 >= 0) && (i1 >= 0) && (63 - i1 >= 0)))
 
   /*
 for (int c0 = 0; c0 <= 63; c0 += 1)
-  for (int c1 = 45; c1 <= 108; c1 += 1) {
-    load_to_gray_FIFO_buf4447(0, c0, c1 - 45);
-    pw_math_gray1215(0, c0, c1 - 45);
-    load_to_gray_diff_to_gp_43639(0, c0, c1 - 45);
+  for (int c1 = 0; c1 <= 63; c1 += 1) {
+    load_to_gray_FIFO_buf4447(0, c0, c1);
+    pw_math_gray1215(0, c0, c1);
+    load_to_gray_diff_to_gp_43639(0, c0, c1);
   }
 
   */
 	for (int c0 = 0; c0 <= 63; c0 += 1)
-	  for (int c1 = 45; c1 <= 108; c1 += 1) {
-	    load_to_gray_FIFO_buf4447(gray_to_gp_120 /* buf name */, gray_FIFO_buf44, 0, c0, c1 - 45);
-	    pw_math_gray1215(gray_FIFO_buf44 /* buf name */, gray_diff, 0, c0, c1 - 45);
-	    load_to_gray_diff_to_gp_43639(gray_diff /* buf name */, gray_diff_to_gp_436, 0, c0, c1 - 45);
+	  for (int c1 = 0; c1 <= 63; c1 += 1) {
+	    load_to_gray_FIFO_buf4447(gray_to_gp_120 /* buf name */, gray_FIFO_buf44, 0, c0, c1);
+	    pw_math_gray1215(gray_FIFO_buf44 /* buf name */, gray_diff, 0, c0, c1);
+	    load_to_gray_diff_to_gp_43639(gray_diff /* buf name */, gray_diff_to_gp_436, 0, c0, c1);
 	  }
 	
 #ifndef __VIVADO_SYNTH__
@@ -999,34 +1202,28 @@ void Extracted_gray_blur_ld30_gray_to_gp_224_ld50_pw_math_gray45_(HWStream<hw_ui
 #pragma HLS inline recursive
 #endif // __VIVADO_SYNTH__
 
-// schedule: { pw_math_gray47[root = 0, pw_math_gray45, pw_math_gray46] -> [pw_math_gray45, 51 + pw_math_gray46, 8, 0] : 0 <= pw_math_gray45 <= 65 and 0 <= pw_math_gray46 <= 65; load_to_gray_FIFO_buf4851[root = 0, gray_to_gp_224_ld50, gray_to_gp_224_ld49] -> [gray_to_gp_224_ld50, 49 + gray_to_gp_224_ld49, 6, 0] : 0 <= gray_to_gp_224_ld50 <= 65 and 0 <= gray_to_gp_224_ld49 <= 65; load_to_gray_blur_to_gp_32831[root = 0, gray_blur_ld30, gray_blur_ld29] -> [gray_blur_ld30, 53 + gray_blur_ld29, 7, 0] : 0 <= gray_blur_ld30 <= 65 and 0 <= gray_blur_ld29 <= 65 }
-//   { pw_math_gray47[root = 0, pw_math_gray45, pw_math_gray46] -> [pw_math_gray45, 51 + pw_math_gray46, 8, 0] : 0 <= pw_math_gray45 <= 65 and 0 <= pw_math_gray46 <= 65 }
-// Condition for pw_math_gray47(((i3 == 0) && (-8 + i2 == 0) && (i0 >= 0) && (65 - i0 >= 0) && (-51 + i1 >= 0) && (116 - i1 >= 0)))
-//   { load_to_gray_FIFO_buf4851[root = 0, gray_to_gp_224_ld50, gray_to_gp_224_ld49] -> [gray_to_gp_224_ld50, 49 + gray_to_gp_224_ld49, 6, 0] : 0 <= gray_to_gp_224_ld50 <= 65 and 0 <= gray_to_gp_224_ld49 <= 65 }
-// Condition for load_to_gray_FIFO_buf4851(((i3 == 0) && (-6 + i2 == 0) && (i0 >= 0) && (65 - i0 >= 0) && (-49 + i1 >= 0) && (114 - i1 >= 0)))
-//   { load_to_gray_blur_to_gp_32831[root = 0, gray_blur_ld30, gray_blur_ld29] -> [gray_blur_ld30, 53 + gray_blur_ld29, 7, 0] : 0 <= gray_blur_ld30 <= 65 and 0 <= gray_blur_ld29 <= 65 }
-// Condition for load_to_gray_blur_to_gp_32831(((i3 == 0) && (-7 + i2 == 0) && (i0 >= 0) && (65 - i0 >= 0) && (-53 + i1 >= 0) && (118 - i1 >= 0)))
+// schedule: { load_to_gray_FIFO_buf4851[root = 0, gray_to_gp_224_ld50, gray_to_gp_224_ld49] -> [gray_to_gp_224_ld50, gray_to_gp_224_ld49, 2] : 0 <= gray_to_gp_224_ld50 <= 65 and 0 <= gray_to_gp_224_ld49 <= 65; pw_math_gray47[root = 0, pw_math_gray45, pw_math_gray46] -> [pw_math_gray45, pw_math_gray46, 3] : 0 <= pw_math_gray45 <= 65 and 0 <= pw_math_gray46 <= 65; load_to_gray_blur_to_gp_32831[root = 0, gray_blur_ld30, gray_blur_ld29] -> [gray_blur_ld30, gray_blur_ld29, 4] : 0 <= gray_blur_ld30 <= 65 and 0 <= gray_blur_ld29 <= 65 }
+//   { load_to_gray_FIFO_buf4851[root = 0, gray_to_gp_224_ld50, gray_to_gp_224_ld49] -> [gray_to_gp_224_ld50, gray_to_gp_224_ld49, 2] : 0 <= gray_to_gp_224_ld50 <= 65 and 0 <= gray_to_gp_224_ld49 <= 65 }
+// Condition for load_to_gray_FIFO_buf4851(((-2 + i2 == 0) && (i0 >= 0) && (65 - i0 >= 0) && (i1 >= 0) && (65 - i1 >= 0)))
+//   { pw_math_gray47[root = 0, pw_math_gray45, pw_math_gray46] -> [pw_math_gray45, pw_math_gray46, 3] : 0 <= pw_math_gray45 <= 65 and 0 <= pw_math_gray46 <= 65 }
+// Condition for pw_math_gray47(((-3 + i2 == 0) && (i0 >= 0) && (65 - i0 >= 0) && (i1 >= 0) && (65 - i1 >= 0)))
+//   { load_to_gray_blur_to_gp_32831[root = 0, gray_blur_ld30, gray_blur_ld29] -> [gray_blur_ld30, gray_blur_ld29, 4] : 0 <= gray_blur_ld30 <= 65 and 0 <= gray_blur_ld29 <= 65 }
+// Condition for load_to_gray_blur_to_gp_32831(((-4 + i2 == 0) && (i0 >= 0) && (65 - i0 >= 0) && (i1 >= 0) && (65 - i1 >= 0)))
 
   /*
 for (int c0 = 0; c0 <= 65; c0 += 1)
-  for (int c1 = 49; c1 <= 118; c1 += 1) {
-    if (c1 <= 114)
-      load_to_gray_FIFO_buf4851(0, c0, c1 - 49);
-    if (c1 >= 53)
-      load_to_gray_blur_to_gp_32831(0, c0, c1 - 53);
-    if (c1 >= 51 && c1 <= 116)
-      pw_math_gray47(0, c0, c1 - 51);
+  for (int c1 = 0; c1 <= 65; c1 += 1) {
+    load_to_gray_FIFO_buf4851(0, c0, c1);
+    pw_math_gray47(0, c0, c1);
+    load_to_gray_blur_to_gp_32831(0, c0, c1);
   }
 
   */
 	for (int c0 = 0; c0 <= 65; c0 += 1)
-	  for (int c1 = 49; c1 <= 118; c1 += 1) {
-	    if (c1 <= 114)
-	      load_to_gray_FIFO_buf4851(gray_to_gp_224 /* buf name */, gray_FIFO_buf48, 0, c0, c1 - 49);
-	    if (c1 >= 53)
-	      load_to_gray_blur_to_gp_32831(gray_blur /* buf name */, gray_blur_to_gp_328, 0, c0, c1 - 53);
-	    if (c1 >= 51 && c1 <= 116)
-	      pw_math_gray47(gray_FIFO_buf48 /* buf name */, gray_blur, 0, c0, c1 - 51);
+	  for (int c1 = 0; c1 <= 65; c1 += 1) {
+	    load_to_gray_FIFO_buf4851(gray_to_gp_224 /* buf name */, gray_FIFO_buf48, 0, c0, c1);
+	    pw_math_gray47(gray_FIFO_buf48 /* buf name */, gray_blur, 0, c0, c1);
+	    load_to_gray_blur_to_gp_32831(gray_blur /* buf name */, gray_blur_to_gp_328, 0, c0, c1);
 	  }
 	
 #ifndef __VIVADO_SYNTH__
@@ -1100,34 +1297,28 @@ void Extracted_gray_blur_cache_ld34_gray_blur_to_gp_328_ld54_pw_math_gray_blur89
 #pragma HLS inline recursive
 #endif // __VIVADO_SYNTH__
 
-// schedule: { pw_math_gray_blur811[root = 0, pw_math_gray_blur89, pw_math_gray_blur810] -> [pw_math_gray_blur89, 57 + pw_math_gray_blur810, 5, 0] : 0 <= pw_math_gray_blur89 <= 65 and 0 <= pw_math_gray_blur810 <= 65; load_to_gray_blur_FIFO_buf5255[root = 0, gray_blur_to_gp_328_ld54, gray_blur_to_gp_328_ld53] -> [gray_blur_to_gp_328_ld54, 55 + gray_blur_to_gp_328_ld53, 0, 0] : 0 <= gray_blur_to_gp_328_ld54 <= 65 and 0 <= gray_blur_to_gp_328_ld53 <= 65; load_to_gray_blur_cache_to_gp_53235[root = 0, gray_blur_cache_ld34, gray_blur_cache_ld33] -> [gray_blur_cache_ld34, 59 + gray_blur_cache_ld33, 4, 0] : 0 <= gray_blur_cache_ld34 <= 65 and 0 <= gray_blur_cache_ld33 <= 65 }
-//   { pw_math_gray_blur811[root = 0, pw_math_gray_blur89, pw_math_gray_blur810] -> [pw_math_gray_blur89, 57 + pw_math_gray_blur810, 5, 0] : 0 <= pw_math_gray_blur89 <= 65 and 0 <= pw_math_gray_blur810 <= 65 }
-// Condition for pw_math_gray_blur811(((i3 == 0) && (-5 + i2 == 0) && (i0 >= 0) && (65 - i0 >= 0) && (-57 + i1 >= 0) && (122 - i1 >= 0)))
-//   { load_to_gray_blur_FIFO_buf5255[root = 0, gray_blur_to_gp_328_ld54, gray_blur_to_gp_328_ld53] -> [gray_blur_to_gp_328_ld54, 55 + gray_blur_to_gp_328_ld53, 0, 0] : 0 <= gray_blur_to_gp_328_ld54 <= 65 and 0 <= gray_blur_to_gp_328_ld53 <= 65 }
-// Condition for load_to_gray_blur_FIFO_buf5255(((i3 == 0) && (i2 == 0) && (i0 >= 0) && (65 - i0 >= 0) && (-55 + i1 >= 0) && (120 - i1 >= 0)))
-//   { load_to_gray_blur_cache_to_gp_53235[root = 0, gray_blur_cache_ld34, gray_blur_cache_ld33] -> [gray_blur_cache_ld34, 59 + gray_blur_cache_ld33, 4, 0] : 0 <= gray_blur_cache_ld34 <= 65 and 0 <= gray_blur_cache_ld33 <= 65 }
-// Condition for load_to_gray_blur_cache_to_gp_53235(((i3 == 0) && (-4 + i2 == 0) && (i0 >= 0) && (65 - i0 >= 0) && (-59 + i1 >= 0) && (124 - i1 >= 0)))
+// schedule: { pw_math_gray_blur811[root = 0, pw_math_gray_blur89, pw_math_gray_blur810] -> [pw_math_gray_blur89, pw_math_gray_blur810, 6] : 0 <= pw_math_gray_blur89 <= 65 and 0 <= pw_math_gray_blur810 <= 65; load_to_gray_blur_FIFO_buf5255[root = 0, gray_blur_to_gp_328_ld54, gray_blur_to_gp_328_ld53] -> [gray_blur_to_gp_328_ld54, gray_blur_to_gp_328_ld53, 5] : 0 <= gray_blur_to_gp_328_ld54 <= 65 and 0 <= gray_blur_to_gp_328_ld53 <= 65; load_to_gray_blur_cache_to_gp_53235[root = 0, gray_blur_cache_ld34, gray_blur_cache_ld33] -> [gray_blur_cache_ld34, gray_blur_cache_ld33, 7] : 0 <= gray_blur_cache_ld34 <= 65 and 0 <= gray_blur_cache_ld33 <= 65 }
+//   { pw_math_gray_blur811[root = 0, pw_math_gray_blur89, pw_math_gray_blur810] -> [pw_math_gray_blur89, pw_math_gray_blur810, 6] : 0 <= pw_math_gray_blur89 <= 65 and 0 <= pw_math_gray_blur810 <= 65 }
+// Condition for pw_math_gray_blur811(((-6 + i2 == 0) && (i0 >= 0) && (65 - i0 >= 0) && (i1 >= 0) && (65 - i1 >= 0)))
+//   { load_to_gray_blur_FIFO_buf5255[root = 0, gray_blur_to_gp_328_ld54, gray_blur_to_gp_328_ld53] -> [gray_blur_to_gp_328_ld54, gray_blur_to_gp_328_ld53, 5] : 0 <= gray_blur_to_gp_328_ld54 <= 65 and 0 <= gray_blur_to_gp_328_ld53 <= 65 }
+// Condition for load_to_gray_blur_FIFO_buf5255(((-5 + i2 == 0) && (i0 >= 0) && (65 - i0 >= 0) && (i1 >= 0) && (65 - i1 >= 0)))
+//   { load_to_gray_blur_cache_to_gp_53235[root = 0, gray_blur_cache_ld34, gray_blur_cache_ld33] -> [gray_blur_cache_ld34, gray_blur_cache_ld33, 7] : 0 <= gray_blur_cache_ld34 <= 65 and 0 <= gray_blur_cache_ld33 <= 65 }
+// Condition for load_to_gray_blur_cache_to_gp_53235(((-7 + i2 == 0) && (i0 >= 0) && (65 - i0 >= 0) && (i1 >= 0) && (65 - i1 >= 0)))
 
   /*
 for (int c0 = 0; c0 <= 65; c0 += 1)
-  for (int c1 = 55; c1 <= 124; c1 += 1) {
-    if (c1 <= 120)
-      load_to_gray_blur_FIFO_buf5255(0, c0, c1 - 55);
-    if (c1 >= 59)
-      load_to_gray_blur_cache_to_gp_53235(0, c0, c1 - 59);
-    if (c1 >= 57 && c1 <= 122)
-      pw_math_gray_blur811(0, c0, c1 - 57);
+  for (int c1 = 0; c1 <= 65; c1 += 1) {
+    load_to_gray_blur_FIFO_buf5255(0, c0, c1);
+    pw_math_gray_blur811(0, c0, c1);
+    load_to_gray_blur_cache_to_gp_53235(0, c0, c1);
   }
 
   */
 	for (int c0 = 0; c0 <= 65; c0 += 1)
-	  for (int c1 = 55; c1 <= 124; c1 += 1) {
-	    if (c1 <= 120)
-	      load_to_gray_blur_FIFO_buf5255(gray_blur_to_gp_328 /* buf name */, gray_blur_FIFO_buf52, 0, c0, c1 - 55);
-	    if (c1 >= 59)
-	      load_to_gray_blur_cache_to_gp_53235(gray_blur_cache /* buf name */, gray_blur_cache_to_gp_532, 0, c0, c1 - 59);
-	    if (c1 >= 57 && c1 <= 122)
-	      pw_math_gray_blur811(gray_blur_FIFO_buf52 /* buf name */, gray_blur_cache, 0, c0, c1 - 57);
+	  for (int c1 = 0; c1 <= 65; c1 += 1) {
+	    load_to_gray_blur_FIFO_buf5255(gray_blur_to_gp_328 /* buf name */, gray_blur_FIFO_buf52, 0, c0, c1);
+	    pw_math_gray_blur811(gray_blur_FIFO_buf52 /* buf name */, gray_blur_cache, 0, c0, c1);
+	    load_to_gray_blur_cache_to_gp_53235(gray_blur_cache /* buf name */, gray_blur_cache_to_gp_532, 0, c0, c1);
 	  }
 	
 #ifndef __VIVADO_SYNTH__
@@ -1136,13 +1327,13 @@ for (int c0 = 0; c0 <= 65; c0 += 1)
 }
 
 // Operation logic
-inline void load_to_blurred_FIFO_buf4043(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */blurred_to_gp_416, blurred_FIFO_buf40_cache& blurred_FIFO_buf40, int root, int blurred_to_gp_416_ld41, int blurred_to_gp_416_ld42) {
+inline void load_to_blurred_FIFO_buf4043(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */blurred_to_gp_416, blurred_FIFO_buf40_cache& blurred_FIFO_buf40, int root, int blurred_to_gp_416_ld42, int blurred_to_gp_416_ld41) {
   // Dynamic address computation
 
 	// Consume: blurred_to_gp_416
 	auto blurred_to_gp_416_blurred_to_gp_416_ld41_c__blurred_to_gp_416_ld42_value = blurred_to_gp_416.read();
 	// Produce: blurred_FIFO_buf40
-	blurred_FIFO_buf40_load_to_blurred_FIFO_buf4043_write_bundle_write(/* arg names */blurred_to_gp_416_blurred_to_gp_416_ld41_c__blurred_to_gp_416_ld42_value, blurred_FIFO_buf40, root, blurred_to_gp_416_ld41, blurred_to_gp_416_ld42, 0);
+	blurred_FIFO_buf40_load_to_blurred_FIFO_buf4043_write_bundle_write(/* arg names */blurred_to_gp_416_blurred_to_gp_416_ld41_c__blurred_to_gp_416_ld42_value, blurred_FIFO_buf40, root, blurred_to_gp_416_ld42, blurred_to_gp_416_ld41, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -1162,17 +1353,17 @@ inline void load_to_gray_diff_FIFO_buf6063(HWStream<hw_uint<32> >& /* buffer_arg
 
 }
 
-inline void diff(gray_diff_FIFO_buf60_cache& gray_diff_FIFO_buf60, blurred_FIFO_buf40_cache& blurred_FIFO_buf40, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */out, int root, int x, int y) {
+inline void diff(gray_diff_FIFO_buf60_cache& gray_diff_FIFO_buf60, blurred_FIFO_buf40_cache& blurred_FIFO_buf40, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */out, int root, int y, int x) {
   // Dynamic address computation
 
 	// Consume: gray_diff_FIFO_buf60
-	auto gray_diff_FIFO_buf60_x_p_0_c___y_p_0_value = gray_diff_FIFO_buf60_diff_read_bundle_read(gray_diff_FIFO_buf60/* source_delay */, root, x, y, 0);
+	auto gray_diff_FIFO_buf60_x_p_0_c___y_p_0_value = gray_diff_FIFO_buf60_diff_read_bundle_read(gray_diff_FIFO_buf60/* source_delay */, root, y, x, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 
 	// Consume: blurred_FIFO_buf40
-	auto blurred_FIFO_buf40_x_p_0_c___y_p_0_value = blurred_FIFO_buf40_diff_read_bundle_read(blurred_FIFO_buf40/* source_delay */, root, x, y, 0);
+	auto blurred_FIFO_buf40_x_p_0_c___y_p_0_value = blurred_FIFO_buf40_diff_read_bundle_read(blurred_FIFO_buf40/* source_delay */, root, y, x, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -1187,10 +1378,10 @@ inline void diff(gray_diff_FIFO_buf60_cache& gray_diff_FIFO_buf60, blurred_FIFO_
 }
 
 // Driver function
-void Extracted_blurred_to_gp_416_ld41_gray_diff_to_gp_436_ld62_x_(HWStream<hw_uint<32> >& /* no bundle get_args num ports = 1 */blurred_to_gp_416, HWStream<hw_uint<32> >& /* no bundle get_args num ports = 1 */gray_diff_to_gp_436, HWStream<hw_uint<32> >& /* no bundle get_args num ports = 1 */out) {
+void Extracted_blurred_to_gp_416_ld42_gray_diff_to_gp_436_ld62_y_(HWStream<hw_uint<32> >& /* no bundle get_args num ports = 1 */blurred_to_gp_416, HWStream<hw_uint<32> >& /* no bundle get_args num ports = 1 */gray_diff_to_gp_436, HWStream<hw_uint<32> >& /* no bundle get_args num ports = 1 */out) {
 
 #ifndef __VIVADO_SYNTH__
-  ofstream debug_file("Extracted_blurred_to_gp_416_ld41_gray_diff_to_gp_436_ld62_x__debug.csv");
+  ofstream debug_file("Extracted_blurred_to_gp_416_ld42_gray_diff_to_gp_436_ld62_y__debug.csv");
   global_debug_handle = &debug_file;
 #endif //__VIVADO_SYNTH__
   blurred_FIFO_buf40_cache blurred_FIFO_buf40;
@@ -1203,36 +1394,48 @@ void Extracted_blurred_to_gp_416_ld41_gray_diff_to_gp_436_ld62_x_(HWStream<hw_ui
 #pragma HLS inline recursive
 #endif // __VIVADO_SYNTH__
 
-// schedule: { load_to_gray_diff_FIFO_buf6063[root = 0, gray_diff_to_gp_436_ld62, gray_diff_to_gp_436_ld61] -> [gray_diff_to_gp_436_ld62, 45 + gray_diff_to_gp_436_ld61, 2, 5] : 0 <= gray_diff_to_gp_436_ld62 <= 63 and 0 <= gray_diff_to_gp_436_ld61 <= 63; load_to_blurred_FIFO_buf4043[root = 0, blurred_to_gp_416_ld41, blurred_to_gp_416_ld42] -> [65 + blurred_to_gp_416_ld41, blurred_to_gp_416_ld42, 1, 3] : 0 <= blurred_to_gp_416_ld41 <= 63 and 0 <= blurred_to_gp_416_ld42 <= 63; diff[root = 0, x, y] -> [65 + x, y, 1, 4] : 0 <= x <= 63 and 0 <= y <= 63 }
-//   { load_to_gray_diff_FIFO_buf6063[root = 0, gray_diff_to_gp_436_ld62, gray_diff_to_gp_436_ld61] -> [gray_diff_to_gp_436_ld62, 45 + gray_diff_to_gp_436_ld61, 2, 5] : 0 <= gray_diff_to_gp_436_ld62 <= 63 and 0 <= gray_diff_to_gp_436_ld61 <= 63 }
-// Condition for load_to_gray_diff_FIFO_buf6063(((-5 + i3 == 0) && (-2 + i2 == 0) && (i0 >= 0) && (63 - i0 >= 0) && (-45 + i1 >= 0) && (108 - i1 >= 0)))
-//   { load_to_blurred_FIFO_buf4043[root = 0, blurred_to_gp_416_ld41, blurred_to_gp_416_ld42] -> [65 + blurred_to_gp_416_ld41, blurred_to_gp_416_ld42, 1, 3] : 0 <= blurred_to_gp_416_ld41 <= 63 and 0 <= blurred_to_gp_416_ld42 <= 63 }
-// Condition for load_to_blurred_FIFO_buf4043(((-3 + i3 == 0) && (-1 + i2 == 0) && (-65 + i0 >= 0) && (128 - i0 >= 0) && (i1 >= 0) && (63 - i1 >= 0)))
-//   { diff[root = 0, x, y] -> [65 + x, y, 1, 4] : 0 <= x <= 63 and 0 <= y <= 63 }
-// Condition for diff(((-4 + i3 == 0) && (-1 + i2 == 0) && (-65 + i0 >= 0) && (128 - i0 >= 0) && (i1 >= 0) && (63 - i1 >= 0)))
+// schedule: { load_to_blurred_FIFO_buf4043[root = 0, blurred_to_gp_416_ld42, blurred_to_gp_416_ld41] -> [2 + blurred_to_gp_416_ld42, 2 + blurred_to_gp_416_ld41, 11] : 0 <= blurred_to_gp_416_ld42 <= 63 and 0 <= blurred_to_gp_416_ld41 <= 63; diff[root = 0, y, x] -> [2 + y, 2 + x, 16] : 0 <= y <= 63 and 0 <= x <= 63; load_to_gray_diff_FIFO_buf6063[root = 0, gray_diff_to_gp_436_ld62, gray_diff_to_gp_436_ld61] -> [gray_diff_to_gp_436_ld62, gray_diff_to_gp_436_ld61, 17] : 0 <= gray_diff_to_gp_436_ld62 <= 63 and 0 <= gray_diff_to_gp_436_ld61 <= 63 }
+//   { load_to_blurred_FIFO_buf4043[root = 0, blurred_to_gp_416_ld42, blurred_to_gp_416_ld41] -> [2 + blurred_to_gp_416_ld42, 2 + blurred_to_gp_416_ld41, 11] : 0 <= blurred_to_gp_416_ld42 <= 63 and 0 <= blurred_to_gp_416_ld41 <= 63 }
+// Condition for load_to_blurred_FIFO_buf4043(((-11 + i2 == 0) && (-2 + i0 >= 0) && (65 - i0 >= 0) && (-2 + i1 >= 0) && (65 - i1 >= 0)))
+//   { diff[root = 0, y, x] -> [2 + y, 2 + x, 16] : 0 <= y <= 63 and 0 <= x <= 63 }
+// Condition for diff(((-16 + i2 == 0) && (-2 + i0 >= 0) && (65 - i0 >= 0) && (-2 + i1 >= 0) && (65 - i1 >= 0)))
+//   { load_to_gray_diff_FIFO_buf6063[root = 0, gray_diff_to_gp_436_ld62, gray_diff_to_gp_436_ld61] -> [gray_diff_to_gp_436_ld62, gray_diff_to_gp_436_ld61, 17] : 0 <= gray_diff_to_gp_436_ld62 <= 63 and 0 <= gray_diff_to_gp_436_ld61 <= 63 }
+// Condition for load_to_gray_diff_FIFO_buf6063(((-17 + i2 == 0) && (i0 >= 0) && (63 - i0 >= 0) && (i1 >= 0) && (63 - i1 >= 0)))
 
   /*
-{
-  for (int c0 = 0; c0 <= 63; c0 += 1)
-    for (int c1 = 45; c1 <= 108; c1 += 1)
-      load_to_gray_diff_FIFO_buf6063(0, c0, c1 - 45);
-  for (int c0 = 65; c0 <= 128; c0 += 1)
-    for (int c1 = 0; c1 <= 63; c1 += 1) {
-      load_to_blurred_FIFO_buf4043(0, c0 - 65, c1);
-      diff(0, c0 - 65, c1);
+for (int c0 = 0; c0 <= 65; c0 += 1) {
+  if (c0 >= 2) {
+    if (c0 <= 63)
+      for (int c1 = 0; c1 <= 1; c1 += 1)
+        load_to_gray_diff_FIFO_buf6063(0, c0, c1);
+    for (int c1 = 2; c1 <= 65; c1 += 1) {
+      load_to_blurred_FIFO_buf4043(0, c0 - 2, c1 - 2);
+      diff(0, c0 - 2, c1 - 2);
+      if (c0 <= 63 && c1 <= 63)
+        load_to_gray_diff_FIFO_buf6063(0, c0, c1);
     }
+  } else {
+    for (int c1 = 0; c1 <= 63; c1 += 1)
+      load_to_gray_diff_FIFO_buf6063(0, c0, c1);
+  }
 }
 
   */
-	{
-	  for (int c0 = 0; c0 <= 63; c0 += 1)
-	    for (int c1 = 45; c1 <= 108; c1 += 1)
-	      load_to_gray_diff_FIFO_buf6063(gray_diff_to_gp_436 /* buf name */, gray_diff_FIFO_buf60, 0, c0, c1 - 45);
-	  for (int c0 = 65; c0 <= 128; c0 += 1)
-	    for (int c1 = 0; c1 <= 63; c1 += 1) {
-	      load_to_blurred_FIFO_buf4043(blurred_to_gp_416 /* buf name */, blurred_FIFO_buf40, 0, c0 - 65, c1);
-	      diff(gray_diff_FIFO_buf60 /* buf name */, blurred_FIFO_buf40 /* buf name */, out, 0, c0 - 65, c1);
+	for (int c0 = 0; c0 <= 65; c0 += 1) {
+	  if (c0 >= 2) {
+	    if (c0 <= 63)
+	      for (int c1 = 0; c1 <= 1; c1 += 1)
+	        load_to_gray_diff_FIFO_buf6063(gray_diff_to_gp_436 /* buf name */, gray_diff_FIFO_buf60, 0, c0, c1);
+	    for (int c1 = 2; c1 <= 65; c1 += 1) {
+	      load_to_blurred_FIFO_buf4043(blurred_to_gp_416 /* buf name */, blurred_FIFO_buf40, 0, c0 - 2, c1 - 2);
+	      diff(gray_diff_FIFO_buf60 /* buf name */, blurred_FIFO_buf40 /* buf name */, out, 0, c0 - 2, c1 - 2);
+	      if (c0 <= 63 && c1 <= 63)
+	        load_to_gray_diff_FIFO_buf6063(gray_diff_to_gp_436 /* buf name */, gray_diff_FIFO_buf60, 0, c0, c1);
 	    }
+	  } else {
+	    for (int c1 = 0; c1 <= 63; c1 += 1)
+	      load_to_gray_diff_FIFO_buf6063(gray_diff_to_gp_436 /* buf name */, gray_diff_FIFO_buf60, 0, c0, c1);
+	  }
 	}
 	
 #ifndef __VIVADO_SYNTH__
@@ -1254,29 +1457,29 @@ inline void load_to_gray_blur_cache_FIFO_buf5659(HWStream<hw_uint<32> >& /* buff
 
 }
 
-inline void blur(gray_blur_cache_FIFO_buf56_cache& gray_blur_cache_FIFO_buf56, blurred_cache& blurred, int root, int xb, int yb) {
+inline void blur(gray_blur_cache_FIFO_buf56_cache& gray_blur_cache_FIFO_buf56, blurred_cache& blurred, int root, int yb, int xb) {
   // Dynamic address computation
 
 	// Consume: gray_blur_cache_FIFO_buf56
-	auto gray_blur_cache_FIFO_buf56_xb__p__0_p_0_c___yb__p__0_p_0_value = gray_blur_cache_FIFO_buf56_blur_read_bundle_read(gray_blur_cache_FIFO_buf56/* source_delay */, root, xb, yb, 0);
+	auto gray_blur_cache_FIFO_buf56_xb__p__0_p_0_c___yb__p__0_p_0_value = gray_blur_cache_FIFO_buf56_blur_read_bundle_read(gray_blur_cache_FIFO_buf56/* source_delay */, root, yb, xb, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 
 	auto compute_result = conv_3_3(gray_blur_cache_FIFO_buf56_xb__p__0_p_0_c___yb__p__0_p_0_value);
 	// Produce: blurred
-	blurred_blur_write_bundle_write(/* arg names */compute_result, blurred, root, xb, yb, 0);
+	blurred_blur_write_bundle_write(/* arg names */compute_result, blurred, root, yb, xb, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 
 }
 
-inline void load_to_blurred_to_gp_41619(blurred_cache& blurred, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */blurred_to_gp_416, int root, int blurred_ld17, int blurred_ld18) {
+inline void load_to_blurred_to_gp_41619(blurred_cache& blurred, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */blurred_to_gp_416, int root, int blurred_ld18, int blurred_ld17) {
   // Dynamic address computation
 
 	// Consume: blurred
-	auto blurred_blurred_ld17_c__blurred_ld18_value = blurred_load_to_blurred_to_gp_41619_read_bundle_read(blurred/* source_delay */, root, blurred_ld17, blurred_ld18, 0);
+	auto blurred_blurred_ld17_c__blurred_ld18_value = blurred_load_to_blurred_to_gp_41619_read_bundle_read(blurred/* source_delay */, root, blurred_ld18, blurred_ld17, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -1290,10 +1493,10 @@ inline void load_to_blurred_to_gp_41619(blurred_cache& blurred, HWStream<hw_uint
 }
 
 // Driver function
-void Extracted_blurred_ld17_gray_blur_cache_to_gp_532_ld58_xb_(HWStream<hw_uint<32> >& /* no bundle get_args num ports = 1 */gray_blur_cache_to_gp_532, HWStream<hw_uint<32> >& /* no bundle get_args num ports = 1 */blurred_to_gp_416) {
+void Extracted_blurred_ld18_gray_blur_cache_to_gp_532_ld58_yb_(HWStream<hw_uint<32> >& /* no bundle get_args num ports = 1 */gray_blur_cache_to_gp_532, HWStream<hw_uint<32> >& /* no bundle get_args num ports = 1 */blurred_to_gp_416) {
 
 #ifndef __VIVADO_SYNTH__
-  ofstream debug_file("Extracted_blurred_ld17_gray_blur_cache_to_gp_532_ld58_xb__debug.csv");
+  ofstream debug_file("Extracted_blurred_ld18_gray_blur_cache_to_gp_532_ld58_yb__debug.csv");
   global_debug_handle = &debug_file;
 #endif //__VIVADO_SYNTH__
   blurred_cache blurred;
@@ -1306,49 +1509,33 @@ void Extracted_blurred_ld17_gray_blur_cache_to_gp_532_ld58_xb_(HWStream<hw_uint<
 #pragma HLS inline recursive
 #endif // __VIVADO_SYNTH__
 
-// schedule: { load_to_gray_blur_cache_FIFO_buf5659[root = 0, gray_blur_cache_to_gp_532_ld58, gray_blur_cache_to_gp_532_ld57] -> [gray_blur_cache_to_gp_532_ld58, 61 + gray_blur_cache_to_gp_532_ld57, 1, 0] : 0 <= gray_blur_cache_to_gp_532_ld58 <= 65 and 0 <= gray_blur_cache_to_gp_532_ld57 <= 65; blur[root = 0, xb, yb] -> [65 + xb, yb, 1, 1] : 0 <= xb <= 63 and 0 <= yb <= 63; load_to_blurred_to_gp_41619[root = 0, blurred_ld17, blurred_ld18] -> [65 + blurred_ld17, blurred_ld18, 1, 2] : 0 <= blurred_ld17 <= 63 and 0 <= blurred_ld18 <= 63 }
-//   { load_to_gray_blur_cache_FIFO_buf5659[root = 0, gray_blur_cache_to_gp_532_ld58, gray_blur_cache_to_gp_532_ld57] -> [gray_blur_cache_to_gp_532_ld58, 61 + gray_blur_cache_to_gp_532_ld57, 1, 0] : 0 <= gray_blur_cache_to_gp_532_ld58 <= 65 and 0 <= gray_blur_cache_to_gp_532_ld57 <= 65 }
-// Condition for load_to_gray_blur_cache_FIFO_buf5659(((i3 == 0) && (-1 + i2 == 0) && (i0 >= 0) && (65 - i0 >= 0) && (-61 + i1 >= 0) && (126 - i1 >= 0)))
-//   { blur[root = 0, xb, yb] -> [65 + xb, yb, 1, 1] : 0 <= xb <= 63 and 0 <= yb <= 63 }
-// Condition for blur(((-1 + i3 == 0) && (-1 + i2 == 0) && (-65 + i0 >= 0) && (128 - i0 >= 0) && (i1 >= 0) && (63 - i1 >= 0)))
-//   { load_to_blurred_to_gp_41619[root = 0, blurred_ld17, blurred_ld18] -> [65 + blurred_ld17, blurred_ld18, 1, 2] : 0 <= blurred_ld17 <= 63 and 0 <= blurred_ld18 <= 63 }
-// Condition for load_to_blurred_to_gp_41619(((-2 + i3 == 0) && (-1 + i2 == 0) && (-65 + i0 >= 0) && (128 - i0 >= 0) && (i1 >= 0) && (63 - i1 >= 0)))
+// schedule: { load_to_gray_blur_cache_FIFO_buf5659[root = 0, gray_blur_cache_to_gp_532_ld58, gray_blur_cache_to_gp_532_ld57] -> [gray_blur_cache_to_gp_532_ld58, gray_blur_cache_to_gp_532_ld57, 8] : 0 <= gray_blur_cache_to_gp_532_ld58 <= 65 and 0 <= gray_blur_cache_to_gp_532_ld57 <= 65; load_to_blurred_to_gp_41619[root = 0, blurred_ld18, blurred_ld17] -> [2 + blurred_ld18, 2 + blurred_ld17, 10] : 0 <= blurred_ld18 <= 63 and 0 <= blurred_ld17 <= 63; blur[root = 0, yb, xb] -> [2 + yb, 2 + xb, 9] : 0 <= yb <= 63 and 0 <= xb <= 63 }
+//   { load_to_gray_blur_cache_FIFO_buf5659[root = 0, gray_blur_cache_to_gp_532_ld58, gray_blur_cache_to_gp_532_ld57] -> [gray_blur_cache_to_gp_532_ld58, gray_blur_cache_to_gp_532_ld57, 8] : 0 <= gray_blur_cache_to_gp_532_ld58 <= 65 and 0 <= gray_blur_cache_to_gp_532_ld57 <= 65 }
+// Condition for load_to_gray_blur_cache_FIFO_buf5659(((-8 + i2 == 0) && (i0 >= 0) && (65 - i0 >= 0) && (i1 >= 0) && (65 - i1 >= 0)))
+//   { load_to_blurred_to_gp_41619[root = 0, blurred_ld18, blurred_ld17] -> [2 + blurred_ld18, 2 + blurred_ld17, 10] : 0 <= blurred_ld18 <= 63 and 0 <= blurred_ld17 <= 63 }
+// Condition for load_to_blurred_to_gp_41619(((-10 + i2 == 0) && (-2 + i0 >= 0) && (65 - i0 >= 0) && (-2 + i1 >= 0) && (65 - i1 >= 0)))
+//   { blur[root = 0, yb, xb] -> [2 + yb, 2 + xb, 9] : 0 <= yb <= 63 and 0 <= xb <= 63 }
+// Condition for blur(((-9 + i2 == 0) && (-2 + i0 >= 0) && (65 - i0 >= 0) && (-2 + i1 >= 0) && (65 - i1 >= 0)))
 
   /*
-for (int c0 = 0; c0 <= 128; c0 += 1) {
-  if (c0 >= 65) {
-    for (int c1 = 0; c1 <= 63; c1 += 1) {
-      if (c0 == 65 && c1 >= 61)
-        load_to_gray_blur_cache_FIFO_buf5659(0, 65, c1 - 61);
-      blur(0, c0 - 65, c1);
-      load_to_blurred_to_gp_41619(0, c0 - 65, c1);
+for (int c0 = 0; c0 <= 65; c0 += 1)
+  for (int c1 = 0; c1 <= 65; c1 += 1) {
+    load_to_gray_blur_cache_FIFO_buf5659(0, c0, c1);
+    if (c0 >= 2 && c1 >= 2) {
+      blur(0, c0 - 2, c1 - 2);
+      load_to_blurred_to_gp_41619(0, c0 - 2, c1 - 2);
     }
-    if (c0 == 65)
-      for (int c1 = 64; c1 <= 126; c1 += 1)
-        load_to_gray_blur_cache_FIFO_buf5659(0, 65, c1 - 61);
-  } else {
-    for (int c1 = 61; c1 <= 126; c1 += 1)
-      load_to_gray_blur_cache_FIFO_buf5659(0, c0, c1 - 61);
   }
-}
 
   */
-	for (int c0 = 0; c0 <= 128; c0 += 1) {
-	  if (c0 >= 65) {
-	    for (int c1 = 0; c1 <= 63; c1 += 1) {
-	      if (c0 == 65 && c1 >= 61)
-	        load_to_gray_blur_cache_FIFO_buf5659(gray_blur_cache_to_gp_532 /* buf name */, gray_blur_cache_FIFO_buf56, 0, 65, c1 - 61);
-	      blur(gray_blur_cache_FIFO_buf56 /* buf name */, blurred, 0, c0 - 65, c1);
-	      load_to_blurred_to_gp_41619(blurred /* buf name */, blurred_to_gp_416, 0, c0 - 65, c1);
+	for (int c0 = 0; c0 <= 65; c0 += 1)
+	  for (int c1 = 0; c1 <= 65; c1 += 1) {
+	    load_to_gray_blur_cache_FIFO_buf5659(gray_blur_cache_to_gp_532 /* buf name */, gray_blur_cache_FIFO_buf56, 0, c0, c1);
+	    if (c0 >= 2 && c1 >= 2) {
+	      blur(gray_blur_cache_FIFO_buf56 /* buf name */, blurred, 0, c0 - 2, c1 - 2);
+	      load_to_blurred_to_gp_41619(blurred /* buf name */, blurred_to_gp_416, 0, c0 - 2, c1 - 2);
 	    }
-	    if (c0 == 65)
-	      for (int c1 = 64; c1 <= 126; c1 += 1)
-	        load_to_gray_blur_cache_FIFO_buf5659(gray_blur_cache_to_gp_532 /* buf name */, gray_blur_cache_FIFO_buf56, 0, 65, c1 - 61);
-	  } else {
-	    for (int c1 = 61; c1 <= 126; c1 += 1)
-	      load_to_gray_blur_cache_FIFO_buf5659(gray_blur_cache_to_gp_532 /* buf name */, gray_blur_cache_FIFO_buf56, 0, c0, c1 - 61);
 	  }
-	}
 	
 #ifndef __VIVADO_SYNTH__
   debug_file.close();
@@ -1397,8 +1584,8 @@ void unsharp_multi_kernel(HWStream<hw_uint<32> >& /* no bundle get_args num port
   Extracted_gray_diff_ld38_gray_to_gp_120_ld46_pw_math_gray1213_(gray_to_gp_120, gray_diff_to_gp_436);
   Extracted_gray_blur_ld30_gray_to_gp_224_ld50_pw_math_gray45_(gray_to_gp_224, gray_blur_to_gp_328);
   Extracted_gray_blur_cache_ld34_gray_blur_to_gp_328_ld54_pw_math_gray_blur89_(gray_blur_to_gp_328, gray_blur_cache_to_gp_532);
-  Extracted_blurred_ld17_gray_blur_cache_to_gp_532_ld58_xb_(gray_blur_cache_to_gp_532, blurred_to_gp_416);
-  Extracted_blurred_to_gp_416_ld41_gray_diff_to_gp_436_ld62_x_(blurred_to_gp_416, gray_diff_to_gp_436, out);
+  Extracted_blurred_ld18_gray_blur_cache_to_gp_532_ld58_yb_(gray_blur_cache_to_gp_532, blurred_to_gp_416);
+  Extracted_blurred_to_gp_416_ld42_gray_diff_to_gp_436_ld62_y_(blurred_to_gp_416, gray_diff_to_gp_436, out);
 
 #ifndef __VIVADO_SYNTH__
   debug_file.close();
@@ -1414,7 +1601,7 @@ void unsharp_multi_kernel_wrapper(HWStream<hw_uint<32> >& /* no bundle get_args 
 #ifdef __VIVADO_SYNTH__
   // { oc_load_in03[root = 0, oc_load_in01, oc_load_in02] -> in[oc_load_in02, oc_load_in01] : 0 <= oc_load_in01 <= 65 and 0 <= oc_load_in02 <= 65 }
 const int oc_load_in03_read_pipe0_num_transfers = 4356;
-  // { diff[root = 0, x, y] -> out[x, y] : 0 <= x <= 63 and 0 <= y <= 63 }
+  // { diff[root = 0, y, x] -> out[x, y] : 0 <= y <= 63 and 0 <= x <= 63 }
 const int diff_write_pipe0_num_transfers = 4096;
 
 

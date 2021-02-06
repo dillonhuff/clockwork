@@ -1,0 +1,42 @@
+kernel: jac_d_16_opt
+unroll factor: 16
+burst width: 256
+
+input uint16: in_off_chip(1110, *)
+
+local uint16: in(0, 0) = in_off_chip(0, 0)
+
+local uint16: stg0(0, 0) = (((((in(0, 1) + in(1, 0)) + in(0, 0)) + in(-1, 0)) + in(0, 1)) / 5)
+
+local uint16: stg1(0, 0) = (((((stg0(0, 1) + stg0(1, 0)) + stg0(0, 0)) + stg0(-1, 0)) + stg0(0, 1)) / 5)
+
+local uint16: stg2(0, 0) = (((((stg1(0, 1) + stg1(1, 0)) + stg1(0, 0)) + stg1(-1, 0)) + stg1(0, 1)) / 5)
+
+local uint16: stg3(0, 0) = (((((stg2(0, 1) + stg2(1, 0)) + stg2(0, 0)) + stg2(-1, 0)) + stg2(0, 1)) / 5)
+
+local uint16: stg4(0, 0) = (((((stg3(0, 1) + stg3(1, 0)) + stg3(0, 0)) + stg3(-1, 0)) + stg3(0, 1)) / 5)
+
+local uint16: stg5(0, 0) = (((((stg4(0, 1) + stg4(1, 0)) + stg4(0, 0)) + stg4(-1, 0)) + stg4(0, 1)) / 5)
+
+local uint16: stg6(0, 0) = (((((stg5(0, 1) + stg5(1, 0)) + stg5(0, 0)) + stg5(-1, 0)) + stg5(0, 1)) / 5)
+
+local uint16: stg7(0, 0) = (((((stg6(0, 1) + stg6(1, 0)) + stg6(0, 0)) + stg6(-1, 0)) + stg6(0, 1)) / 5)
+
+local uint16: stg8(0, 0) = (((((stg7(0, 1) + stg7(1, 0)) + stg7(0, 0)) + stg7(-1, 0)) + stg7(0, 1)) / 5)
+
+local uint16: stg9(0, 0) = (((((stg8(0, 1) + stg8(1, 0)) + stg8(0, 0)) + stg8(-1, 0)) + stg8(0, 1)) / 5)
+
+local uint16: stg10(0, 0) = (((((stg9(0, 1) + stg9(1, 0)) + stg9(0, 0)) + stg9(-1, 0)) + stg9(0, 1)) / 5)
+
+local uint16: stg11(0, 0) = (((((stg10(0, 1) + stg10(1, 0)) + stg10(0, 0)) + stg10(-1, 0)) + stg10(0, 1)) / 5)
+
+local uint16: stg12(0, 0) = (((((stg11(0, 1) + stg11(1, 0)) + stg11(0, 0)) + stg11(-1, 0)) + stg11(0, 1)) / 5)
+
+local uint16: stg13(0, 0) = (((((stg12(0, 1) + stg12(1, 0)) + stg12(0, 0)) + stg12(-1, 0)) + stg12(0, 1)) / 5)
+
+local uint16: stg14(0, 0) = (((((stg13(0, 1) + stg13(1, 0)) + stg13(0, 0)) + stg13(-1, 0)) + stg13(0, 1)) / 5)
+
+output uint16: jac_d_16(0, 0) = stg14(0, 0)
+
+
+iterate: 1

@@ -5095,7 +5095,6 @@ struct App {
       rargs.push_back(a);
     }
     app_dag.at(func).add_reduce_update(accum, compute, rargs, reduce_ranges);
-
   }
 
   bool is_input(const std::string& name) const {
@@ -6188,13 +6187,52 @@ struct App {
           }
           auto op = nest->add_op(u.name());
           cout << "added op " << op->name << endl;
+          auto surrounding = surrounding_vars(op, prg);
+          vector<string> offsets;
+          for (auto var : surrounding) {
+            if (var != "root") {
+              offsets.push_back(var);
+            }
+          }
+          assert(offsets.size() == 2);
           // TODO: Replace with real description of apps
-          op->add_store(f, "0, 0");
+          reverse(offsets);
+          op->add_store(f, sep_list(offsets, "", "", ", "));
+          //cout << "offsets: " << offsets << endl;
 
           vector<string> fargs;
           for (auto p : u.get_srcs()) {
+            vector<string> vars;
+            for (auto var : surrounding) {
+              if (var != "root") {
+                vars.push_back(var);
+              }
+            }
+            assert(vars.size() == 2);
+
+
+
+
             cout << tab(1) << " op loads " << p.name << endl;
-            op->add_load(p.name, "0, 0");
+            for (auto off : p.offsets) {
+              assert(off.size() == 2);
+              vector<string> terms;
+              int i = 0;
+              for (auto offt : off) {
+                QAV stride = p.stride(i);
+                if (stride.denom != 1) {
+                  int num = stride.num;
+                  int denom = stride.denom;
+                  terms.push_back("floor((" + str(num) + "*" + vars.at(i) + ")/" + str(denom) + ")" + " + " + str(offt));
+                } else {
+                  terms.push_back(to_string(stride) + "*" + vars.at(i) + " + " + str(offt));
+                }
+                i++;
+              }
+              reverse(terms);
+              op->add_load(p.name, comma_list(terms));
+            }
+
             if (!elem(p.name, fargs)) {
               fargs.push_back(p.name);
             }
@@ -6217,7 +6255,8 @@ struct App {
     }
 
     generate_app_code(options, buffers, prg, its(m, action_domain), domain_map);
-    generate_regression_testbench(prg, buffers);
+    //generate_regression_testbench(prg, buffers);
+    generate_regression_testbench(prg); //, buffers);
     generate_soda_file(prg.name);
   }
 
@@ -6233,11 +6272,16 @@ struct App {
   }
 
   void generate_soda_file(const std::string& name) {
+    string rep = pick(app_dag).first;
+    generate_soda_file(name, last_update(rep).unroll_factor);
+  }
+
+  void generate_soda_file(const std::string& name, const int unroll_factor) {
     ofstream out(name + ".soda");
     out << "kernel: " << name << endl;
 
     string rep = pick(app_dag).first;
-    int unroll_factor = last_update(rep).unroll_factor;
+    //int unroll_factor = last_update(rep).unroll_factor;
     int width = app_dag.at(rep).pixel_width;
 
     out << "unroll factor: " << unroll_factor << endl;
@@ -6551,7 +6595,7 @@ struct App {
     return whole_dom;
   }
 
-  void schedule_and_codegen(CodegenOptions& options, const std::string& name, const std::vector<string>& outputs) {
+  prog schedule_and_codegen(CodegenOptions& options, const std::string& name, const std::vector<string>& outputs) {
     time_t rawtime;
     struct tm * timeinfo;
     char buffer[80];
@@ -6566,12 +6610,6 @@ struct App {
 
     auto scheds = schedule_opt();
     umap* m = qschedule_to_map(ctx, scheds);
-    //umap* m = schedule();
-    //ofstream schedule_out(name + "_sched_" + time_str);
-    //for (auto k : get_maps(m)) {
-      //schedule_out << str(k) << endl;
-    //}
-    //schedule_out.close();
     assert(m != nullptr);
 
     map<string, Box> compute_domains;
@@ -6596,12 +6634,9 @@ struct App {
     prg.name = name + "_opt";
     prg.compute_unit_file = prg.name + "_compute_units.h";
 
-    //populate_program(options, prg, name, m, buffers);
     populate_program(options, prg, name, outputs, m, buffers);
 
-    release(prg);
-
-    return;
+    return prg;
   }
 
   void no_unrolling() {
@@ -6688,7 +6723,7 @@ struct App {
     realize_no_unroll(options, {{name, dims}});
   }
 
-  void realize_no_unroll(CodegenOptions& options,
+  prog realize_no_unroll(CodegenOptions& options,
       const std::vector<std::pair<std::string, std::vector<int> > >& bounds) {
     fill_data_domain(bounds);
     fill_compute_domain();
@@ -6697,41 +6732,41 @@ struct App {
       names.push_back(n.first);
     }
     string concat_name = sep_list(names, "", "", "_");
-    schedule_and_codegen(options, concat_name, names);
+    return schedule_and_codegen(options, concat_name, names);
   }
 
-  void realize(const std::string& name, const int d0, const int d1) {
+  prog realize(const std::string& name, const int d0, const int d1) {
     CodegenOptions options;
     options.internal = true;
     options.simplify_address_expressions = true;
-    options.use_custom_code_string = true;
-    realize(options, name, d0, d1);
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
+    return realize(options, name, d0, d1);
   }
 
-  void realize(CodegenOptions& options,
+  prog realize(CodegenOptions& options,
       const std::string& name,
       const int d0,
       const int d1) {
-    realize(options, name, {d0, d1}, 1);
+    return realize(options, name, {d0, d1}, 1);
   }
 
-  void realize(CodegenOptions& options, const std::string& name, const int d0, const int d1, const int unroll_factor) {
-    realize(options, name, {d0, d1}, unroll_factor);
+  prog realize(CodegenOptions& options, const std::string& name, const int d0, const int d1, const int unroll_factor) {
+    return realize(options, name, {d0, d1}, unroll_factor);
   }
 
-  void realize(CodegenOptions& options, const std::string& name, const vector<int>& dims, const int unroll_factor) {
-    realize(options, name, dims, name, unroll_factor);
+  prog realize(CodegenOptions& options, const std::string& name, const vector<int>& dims, const int unroll_factor) {
+    return realize(options, name, dims, name, unroll_factor);
   }
 
-  void realize(CodegenOptions& options,
+  prog realize(CodegenOptions& options,
       const std::string& out_name,
       const vector<int>& dims,
       const std::string& unroll_target,
       const int unroll_factor) {
-    realize(options, {{out_name, dims}}, unroll_target, unroll_factor);
+    return realize(options, {{out_name, dims}}, unroll_target, unroll_factor);
   }
 
-  void realize(CodegenOptions& options,
+  prog realize(CodegenOptions& options,
       const std::vector<std::pair<std::string, std::vector<int> > >& bounds,
       const std::string& unroll_target,
       const int unroll_factor) {
@@ -6745,10 +6780,7 @@ struct App {
     vector<int> dims = bounds.at(0).second;
 
     set_unroll_factors(bounds, unroll_target, unroll_factor);
-    realize_no_unroll(options, bounds);
-
-    //set_unroll_factors(out_name, unroll_target, unroll_factor);
-    //realize_no_unroll(options, out_name, dims);
+    prog prg = realize_no_unroll(options, bounds);
 
     auto end = std::chrono::system_clock::now();
     std::chrono::duration<double> elapsed = end - start;
@@ -6756,15 +6788,16 @@ struct App {
     ofstream schedule_info("./scratch/" + out_name + ".txt");
     schedule_info << "time to realize " << out_name << ": " << total_elapsed << endl;
     schedule_info.close();
+
+    return prg;
   }
 
-  void realize(const std::string& name, const int d0, const int d1, const int unroll_factor) {
+  prog realize(const std::string& name, const int d0, const int d1, const int unroll_factor) {
     CodegenOptions options;
     options.internal = true;
     options.simplify_address_expressions = true;
-    //options.use_custom_code_string = true;
 
-    realize(options, name, {d0, d1}, unroll_factor);
+    return realize(options, name, {d0, d1}, unroll_factor);
   }
 
 };
@@ -7275,7 +7308,7 @@ void tricky_shift_register_reconvergence_test() {
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
-  options.use_custom_code_string = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
   options.debug_options.expect_all_linebuffers = true;
   sobel.realize(options, "D", size, 1, 1);
 
@@ -7306,7 +7339,7 @@ void mismatched_stencil_test() {
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
-  options.use_custom_code_string = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
   options.debug_options.expect_all_linebuffers = true;
   sobel.realize(options, "mismatched_stencils", size, 1, 1);
 
@@ -7816,7 +7849,7 @@ void harris_unrolled_test() {
     CodegenOptions options;
     options.internal = true;
     options.simplify_address_expressions = true;
-    options.use_custom_code_string = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
     options.debug_options.expect_all_linebuffers = true;
     h.realize(options, out_name, cols, rows, unroll_factor);
   }
@@ -7946,7 +7979,7 @@ void generate_app_benchmark(
   mini_dimensions.resize(dimensions.size(), 256);
 
   CodegenOptions options;
-  options.use_custom_code_string = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
   app.realize(options, name, mini_dimensions, 1);
   int bmp_res = run_sw_bmp_test_harness(name + "_opt");
   //assert(false);
@@ -8027,7 +8060,7 @@ void camera_pipeline_all_adds_test(const std::string& prefix) {
     //CodegenOptions options;
     //options.internal = true;
     //options.simplify_address_expressions = true;
-    ////options.use_custom_code_string = true;
+    ////options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
     //options.use_custom_code_string = false;
     //options.debug_options.expect_all_linebuffers = true;
     ////options.num_input_epochs = 30;
@@ -8065,7 +8098,7 @@ void camera_pipeline_test(const std::string& prefix) {
     CodegenOptions options;
     options.internal = true;
     options.simplify_address_expressions = true;
-    options.use_custom_code_string = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
     options.debug_options.expect_all_linebuffers = true;
     options.num_input_epochs = 30;
     camera_pipeline(out_name).realize(options, out_name, cols, rows, unroll_factor);
@@ -8114,7 +8147,7 @@ void harris16_test(const std::string& prefix) {
     //CodegenOptions options;
     //options.internal = true;
     //options.simplify_address_expressions = true;
-    //options.use_custom_code_string = true;
+    //options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
     //options.debug_options.expect_all_linebuffers = true;
     //options.num_input_epochs = 30;
     //harris16(out_name).realize(options, out_name, cols, rows, unroll_factor);
@@ -8148,7 +8181,7 @@ void harris_test() {
     //CodegenOptions options;
     //options.internal = true;
     //options.simplify_address_expressions = true;
-    //options.use_custom_code_string = true;
+    //options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
     //options.debug_options.expect_all_linebuffers = true;
     //harris(out_name).realize(options, out_name, cols, rows, unroll_factor);
 
@@ -8220,8 +8253,7 @@ void denoise3d_reconvergence_test() {
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
-  //options.use_custom_code_string = false;
-  options.use_custom_code_string = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
   //options.all_rams = true;
   //options.debug_options.expect_all_linebuffers = true;
   hmini.realize(options, name, {mini_size, mini_size, mini_size}, 1);
@@ -8242,7 +8274,7 @@ void denoise3d_test() {
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
-  options.use_custom_code_string = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
   //options.debug_options.expect_all_linebuffers = true;
   hmini.realize(options, "dn3d_mini", {mini_size, mini_size, mini_size}, 1);
 
@@ -8267,7 +8299,7 @@ void denoise3d_test() {
     CodegenOptions options;
     options.internal = true;
     options.simplify_address_expressions = true;
-    options.use_custom_code_string = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
     options.debug_options.expect_all_linebuffers = true;
     denoise3d(out_name).realize(options, out_name, {cols, rows, channels}, unroll_factor);
 
@@ -8297,7 +8329,7 @@ void max_pooling_test_sizes(const std::string& prefix) {
     CodegenOptions options;
     options.internal = true;
     options.simplify_address_expressions = true;
-    options.use_custom_code_string = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
     max_pooling(name).realize(options, name, {H, W, D}, "in", factor);
   }
   {
@@ -8326,7 +8358,7 @@ void gauss_pyramid_test(const std::string& prefix) {
     CodegenOptions options;
     options.internal = true;
     options.simplify_address_expressions = true;
-    options.use_custom_code_string = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
 
     gauss_pyramid_fpga(name).realize(options, name, {cols, rows}, "in", factor);
     move_to_benchmarks_folder(name + "_opt");
@@ -8357,7 +8389,7 @@ void max_pooling_test(const std::string& prefix) {
     CodegenOptions options;
     options.internal = true;
     options.simplify_address_expressions = true;
-    options.use_custom_code_string = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
 
     max_pooling(name).realize(options, name, {H, W, D}, "in", factor);
     move_to_benchmarks_folder(name + "_opt");
@@ -8911,6 +8943,32 @@ App stencil_chain_iccad(const std::string& out_name) {
   return lp;
 }
 
+App stencil_chain_stage_iccad(const std::string& out_name, const int levels) {
+  App lp;
+  lp.set_default_pixel_width(16);
+  lp.func2d("in_off_chip");
+
+  // The temporary buffer we store the input image in
+  lp.func2d("in", v("in_off_chip"));
+
+  string last = "in";
+  for (int i = 0; i < levels; i++) {
+    string current = "stg" + str(i);
+    lp.func2d(current,
+      div(add({
+        v(last, 0, 1),
+        v(last, 1, 0),
+        v(last, 0, 0),
+        v(last, -1, 0),
+        v(last, 0, 1)}), 5));
+    last = current;
+  }
+  //auto dark_weight_pyramid = gauss_pyramid(pyramid_levels, "in", lp);
+
+  lp.func2d(out_name, v(last));
+
+  return lp;
+}
 App stencil_chain_20_stage_iccad(const std::string& out_name) {
   App lp;
   lp.set_default_pixel_width(16);
@@ -9004,7 +9062,7 @@ void increment_iccad_apps(const std::string& prefix) {
     int cols = 1920;
     CodegenOptions options;
     options.internal = true;
-    options.use_custom_code_string = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
     lp.realize(options, name, {cols, rows}, "in", throughput);
 
     move_to_benchmarks_folder(name + "_opt");
@@ -9022,7 +9080,7 @@ void identity_stream_iccad_apps(const std::string& prefix) {
     int cols = 1920;
     CodegenOptions options;
     options.internal = true;
-    options.use_custom_code_string = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
     lp.realize(options, name, {cols, rows}, "in", throughput);
 
     move_to_benchmarks_folder(name + "_opt");
@@ -9040,7 +9098,7 @@ void stencil_chain_no_dsp_long_iccad_apps(const std::string& prefix) {
     int cols = 1920;
     CodegenOptions options;
     options.internal = true;
-    options.use_custom_code_string = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
     lp.realize(options, name, {cols, rows}, "in", throughput);
 
     move_to_benchmarks_folder(name + "_opt");
@@ -9058,7 +9116,7 @@ void stencil_chain_no_dsp_iccad_apps(const std::string& prefix) {
     int cols = 1920;
     CodegenOptions options;
     options.internal = true;
-    options.use_custom_code_string = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
     lp.realize(options, name, {cols, rows}, "in", throughput);
 
     move_to_benchmarks_folder(name + "_opt");
@@ -9076,7 +9134,7 @@ void stencil_chain_fan_out_iccad_apps(const std::string& prefix) {
     int cols = 1920;
     CodegenOptions options;
     options.internal = true;
-    options.use_custom_code_string = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
     lp.realize(options, name, {cols, rows}, "in", throughput);
 
     move_to_benchmarks_folder(name + "_opt");
@@ -9093,7 +9151,7 @@ void stencil_chain_eight_stage_iccad_apps(const std::string& prefix) {
     int cols = 1920;
     CodegenOptions options;
     options.internal = true;
-    options.use_custom_code_string = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
     lp.realize(options, name, {cols, rows}, "in", throughput);
 
     move_to_benchmarks_folder(name + "_opt");
@@ -9111,7 +9169,7 @@ void stencil_chain_five_stage_iccad_apps(const std::string& prefix) {
     int cols = 1920;
     CodegenOptions options;
     options.internal = true;
-    options.use_custom_code_string = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
     lp.realize(options, name, {cols, rows}, "in", throughput);
 
     move_to_benchmarks_folder(name + "_opt");
@@ -9129,12 +9187,43 @@ void stencil_chain_one_stage_iccad_apps(const std::string& prefix) {
     int cols = 1920;
     CodegenOptions options;
     options.internal = true;
-    options.use_custom_code_string = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
     lp.realize(options, name, {cols, rows}, "in", throughput);
 
     move_to_benchmarks_folder(name + "_opt");
   }
   assert(false);
+}
+
+App heat_3d_real_iccad(const std::string& out_name, const int num_stages) {
+  App dn;
+  dn.set_default_num_type(NUM_TYPE_FLOAT);
+
+  dn.func3d("in");
+
+  dn.func3d("in_cc", v3("in", 0, 0, 0));
+
+  //int num_stages = 1;
+  string last = "in_cc";
+  for (int i = 0; i < num_stages; i++) {
+    string current = "h3_" + str(i);
+//.125f * (in(1, 0, 0) - 2.f * in(0, 0, 0) + in(-1,  0,  0)) +
+    //.125f * (in(0, 1, 0) - 2.f * in(0, 0, 0) + in( 0, -1,  0)) +
+    //.125f * (in(0, 0, 1) - 2.f * in(0, 0, 0) + in( 0,  0, -1)) +
+    //in(0, 0, 0)
+    dn.func3d(current,
+        add({
+          mul(fc("0.125"), v3(last, 1, 0, 0)), mul(fc("-0.125"), v3(last, 0, 0, 0)), mul(fc("0.125"), v3(last, -1, 0, 0)),
+          mul(fc("0.125"), v3(last, 0, 1, 0)), mul(fc("-0.125"), v3(last, 0, 0, 0)), mul(fc("0.125"), v3(last, 0, -1, 0)),
+          mul(fc("0.125"), v3(last, 0, 0, 1)), mul(fc("-0.125"), v3(last, 0, 0, 0)), mul(fc("0.125"), v3(last, 0, 0, -1)),
+          v3(last, 0, 0, 0)
+          }));
+    last = current;
+  }
+
+  dn.func3d(out_name, v3(last, 0, 0, 0));
+
+  return dn;
 }
 
 App heat_3d_iccad(const std::string& name) {
@@ -9151,10 +9240,10 @@ App heat_3d_iccad(const std::string& name) {
     string current = "h3_" + str(i);
     dn.func2d(current,
         add({
-          mul(fc("0.125f"), v(last, 1, 0)),
-          mul(fc("0.125f"), v(last, -1, 0)),
-          mul(fc("0.125f"), v(last, 0, 1)),
-          mul(fc("0.125f"), v(last, 0, -1)),
+          mul(fc("0.125"), v(last, 1, 0)),
+          mul(fc("0.125"), v(last, -1, 0)),
+          mul(fc("0.125"), v(last, 0, 1)),
+          mul(fc("0.125"), v(last, 0, -1)),
           mul(fc("0.25"), v(last, 0, 0))
           }));
     last = current;
@@ -9163,6 +9252,140 @@ App heat_3d_iccad(const std::string& name) {
   dn.func2d(name, v(last));
 
   return dn;
+}
+
+App float_big_stencil_iccad(const std::string& name, const int num_stages) {
+  App dn;
+  dn.set_default_num_type(NUM_TYPE_FLOAT);
+
+  dn.func2d("in");
+
+  dn.func2d("in_cc", v("in"));
+  dn.func2d(name, add({mul(fc("0.125"), v("in_cc", 0, 0)),
+        mul(fc("0.125"), v("in_cc", 0, -1)),
+        mul(fc("0.125"), v("in_cc", 0, -2))}));
+
+  return dn;
+}
+
+App float_stencil_iccad(const std::string& name) {
+  App dn;
+  dn.set_default_num_type(NUM_TYPE_FLOAT);
+
+  dn.func2d("in");
+
+  dn.func2d("in_cc", v("in"));
+  dn.func2d(name, add({mul(fc("0.125"), v("in_cc", 0, 0)),
+        mul(fc("0.125"), v("in_cc", 0, -1))}));
+
+  return dn;
+}
+
+App float_add_iccad(const std::string& name) {
+  App dn;
+  dn.set_default_num_type(NUM_TYPE_FLOAT);
+
+  dn.func2d("in");
+
+  dn.func2d("in_cc", v("in"));
+  dn.func2d(name, add({fc("0.125"), v("in_cc", 0, 0)}));
+
+  return dn;
+}
+
+void float_stencil_iccad_apps(const std::string& prefix) {
+  //vector<int> throughputs{1, 16, 32};
+  vector<int> throughputs{1};
+  //vector<int> throughputs{32};
+  //vector<int> throughputs{16};
+  //vector<int> throughputs{2, 4, 8, 12};
+  for (auto throughput : throughputs) {
+    string name = prefix + "_" + str(throughput);
+    App lp = float_stencil_iccad(name);
+    int rows = 32;
+    int cols = 32;
+    CodegenOptions options;
+    options.internal = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
+    options.rtl_options.hls_clock_target_Hz = 300000000;
+    lp.realize(options, name, {cols, rows}, "in", throughput);
+
+    move_to_benchmarks_folder(name + "_opt");
+  }
+  assert(false);
+
+}
+
+void float_add_iccad_apps(const std::string& prefix) {
+  //vector<int> throughputs{1, 16, 32};
+  vector<int> throughputs{1};
+  //vector<int> throughputs{32};
+  //vector<int> throughputs{16};
+  //vector<int> throughputs{2, 4, 8, 12};
+  for (auto throughput : throughputs) {
+    string name = prefix + "_" + str(throughput);
+    App lp = float_add_iccad(name);
+    int rows = 32;
+    int cols = 32;
+    CodegenOptions options;
+    options.internal = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
+    options.rtl_options.hls_clock_target_Hz = 300000000;
+    lp.realize(options, name, {cols, rows}, "in", throughput);
+
+    move_to_benchmarks_folder(name + "_opt");
+  }
+  assert(false);
+
+}
+
+void float_big_stencil_iccad_apps(const std::string& prefix, const int num_stages) {
+  //vector<int> throughputs{1, 16, 32};
+  vector<int> throughputs{1};
+  //vector<int> throughputs{32};
+  //vector<int> throughputs{16};
+  //vector<int> throughputs{2, 4, 8, 12};
+  //vector<int> throughputs{1, 8, 16};
+  for (auto throughput : throughputs) {
+    string name = prefix + "_" + str(throughput);
+    App lp = float_big_stencil_iccad(name, num_stages);
+    int rows = 32;
+    int cols = 32;
+    CodegenOptions options;
+    options.internal = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
+    options.rtl_options.hls_clock_target_Hz = 300000000;
+    lp.realize(options, name, {cols, rows}, "in", throughput);
+
+    move_to_benchmarks_folder(name + "_opt");
+  }
+  assert(false);
+
+}
+void heat_3d_real_iccad_apps(const std::string& prefix, const int num_stages) {
+  //vector<int> throughputs{1, 16, 32};
+  vector<int> throughputs{1};
+  //vector<int> throughputs{32};
+  //vector<int> throughputs{16};
+  //vector<int> throughputs{2, 4, 8, 12};
+  //vector<int> throughputs{1, 8, 16};
+  for (auto throughput : throughputs) {
+    string name = prefix + "_" + str(throughput);
+    App lp = heat_3d_real_iccad(name, num_stages);
+    int rows = 128;
+    int cols = 128;
+    int channels = 32;
+    CodegenOptions options;
+    options.internal = true;
+    options.num_input_epochs = 1;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
+    options.rtl_options.hls_clock_target_Hz = 300000000;
+    lp.realize(options, name, {cols, rows, channels}, "in", throughput);
+
+    move_to_benchmarks_folder(name + "_opt");
+  }
+  assert(false);
+
 }
 
 void heat_3d_iccad_apps(const std::string& prefix) {
@@ -9178,7 +9401,7 @@ void heat_3d_iccad_apps(const std::string& prefix) {
     int cols = 32;
     CodegenOptions options;
     options.internal = true;
-    options.use_custom_code_string = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
     options.rtl_options.hls_clock_target_Hz = 300000000;
     lp.realize(options, name, {cols, rows}, "in", throughput);
 
@@ -9188,6 +9411,45 @@ void heat_3d_iccad_apps(const std::string& prefix) {
 
 }
 
+void stencil_chain_12_stage_iccad_apps(const std::string& prefix) {
+  //vector<int> throughputs{1, 16, 32};
+  vector<int> throughputs{1};
+  for (auto throughput : throughputs) {
+    string name = prefix + "_" + str(throughput);
+    App lp = stencil_chain_stage_iccad(name, 12);
+    int rows = 10;
+    int cols = 19;
+    //int rows = 1080;
+    //int cols = 1920;
+    CodegenOptions options;
+    options.internal = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
+    options.rtl_options.hls_clock_target_Hz = 300000000;
+    lp.realize(options, name, {cols, rows}, "in", throughput);
+
+    move_to_benchmarks_folder(name + "_opt");
+  }
+  assert(false);
+}
+void stencil_chain_15_stage_iccad_apps(const std::string& prefix) {
+  vector<int> throughputs{1, 16, 32};
+  //vector<int> throughputs{1};
+  for (auto throughput : throughputs) {
+    string name = prefix + "_" + str(throughput);
+    App lp = stencil_chain_stage_iccad(name, 15);
+    int rows = 1080;
+    int cols = 1920;
+    CodegenOptions options;
+    options.internal = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
+    //options.rtl_options.hls_clock_target_Hz = 300000000;
+    options.rtl_options.hls_clock_target_Hz = 275000000;
+    lp.realize(options, name, {cols, rows}, "in", throughput);
+
+    move_to_benchmarks_folder(name + "_opt");
+  }
+  assert(false);
+}
 void stencil_chain_20_stage_iccad_apps(const std::string& prefix) {
   vector<int> throughputs{1, 16, 32};
   //vector<int> throughputs{1};
@@ -9198,7 +9460,7 @@ void stencil_chain_20_stage_iccad_apps(const std::string& prefix) {
     int cols = 1920;
     CodegenOptions options;
     options.internal = true;
-    options.use_custom_code_string = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
     options.rtl_options.hls_clock_target_Hz = 300000000;
     lp.realize(options, name, {cols, rows}, "in", throughput);
 
@@ -9217,7 +9479,7 @@ void stencil_chain_iccad_apps(const std::string& prefix) {
     int cols = 1920;
     CodegenOptions options;
     options.internal = true;
-    options.use_custom_code_string = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
     options.rtl_options.hls_clock_target_Hz = 500000000;
     lp.realize(options, name, {cols, rows}, "in", throughput);
 
@@ -9235,7 +9497,7 @@ void gauss_pyramid_iccad_apps(const std::string& prefix) {
     int cols = 1920 / pow(2, 4 - 1);
     CodegenOptions options;
     options.internal = true;
-    options.use_custom_code_string = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
     lp.realize(options, name, {cols, rows}, "in", throughput);
 
     move_to_benchmarks_folder(name + "_opt");
@@ -9244,7 +9506,9 @@ void gauss_pyramid_iccad_apps(const std::string& prefix) {
 }
 
 void exposure_fusion_iccad_apps(const std::string& prefix) {
-  vector<int> throughputs{1, 2, 4, 8, 16};
+  vector<int> throughputs{1};
+  //, 2, 4, 8, 16};
+  //vector<int> throughputs{1, 2, 4, 8, 16};
   //vector<int> throughputs{16};
   for (auto throughput : throughputs) {
     string name = prefix + "_" + str(throughput);
@@ -9254,7 +9518,7 @@ void exposure_fusion_iccad_apps(const std::string& prefix) {
     CodegenOptions options;
     options.internal = true;
     options.simplify_address_expressions = true;
-    options.use_custom_code_string = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
     lp.realize(options, name, cols, rows, throughput);
 
     move_to_benchmarks_folder(name + "_opt");
@@ -9490,7 +9754,7 @@ void single_gaussian_pyramid_app_test() {
     CodegenOptions options;
     options.internal = true;
     options.simplify_address_expressions = true;
-    options.use_custom_code_string = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
     options.debug_options.expect_all_linebuffers = true;
     gp.realize(options, name, 4, 4, 2);
   }
@@ -9517,7 +9781,7 @@ void ef_cartoon_test(const std::string& out_name) {
     CodegenOptions options;
     options.internal = true;
     options.simplify_address_expressions = true;
-    options.use_custom_code_string = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
     gp.realize(options, out_name, {cols, rows}, "in", 32);
     move_naive_to_benchmarks_folder(out_name + "_opt");
   }
@@ -9542,7 +9806,7 @@ void gaussian_pyramid_app_test(const std::string& prefix) {
     CodegenOptions options;
     options.internal = true;
     options.simplify_address_expressions = true;
-    options.use_custom_code_string = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
     options.debug_options.expect_all_linebuffers = true;
     gp.realize(options, name, {size, size}, "in", 2);
   }
@@ -9570,7 +9834,7 @@ void gaussian_pyramid_app_test(const std::string& prefix) {
     CodegenOptions options;
     options.internal = true;
     options.simplify_address_expressions = true;
-    options.use_custom_code_string = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
 
     gaussian_pyramid_app(name, 4).realize(options, name, {64, 64}, "in", factor);
     move_to_benchmarks_folder(name + "_opt");
@@ -9705,6 +9969,14 @@ App blur_xy(const std::string output_name) {
   jac.func2d("input", "id", pt("input_arg"));
   jac.func2d("blurx", "blurx_comp", "input", {1, 1}, {{0, 0}, {0, 1}, {0, 2}});
   jac.func2d(output_name, "blury_comp", "blurx", {1, 1}, {{0, 0}, {1, 0}, {2, 0}});
+  return jac;
+}
+
+App pointwise2d(const std::string output_name) {
+  App jac;
+  jac.func2d("t1_arg");
+  jac.func2d("t1", "id", pt("t1_arg"));
+  jac.func2d(output_name, "id", pt("t1"));
   return jac;
 }
 
@@ -9964,7 +10236,7 @@ void sobel_16_app_test(const std::string& prefix) {
     CodegenOptions options;
     options.internal = true;
     options.simplify_address_expressions = true;
-    options.use_custom_code_string = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
     options.num_input_epochs = 30;
     options.debug_options.expect_all_linebuffers = true;
     sobel16(out_name).realize(options, out_name, cols, rows, unroll_factor);
@@ -10009,8 +10281,7 @@ void blur_xy_16_app_test(const std::string& prefix) {
     CodegenOptions options;
     options.internal = true;
     options.simplify_address_expressions = true;
-    options.use_custom_code_string = true;
-    //options.num_input_epochs = 30;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
     options.debug_options.expect_all_linebuffers = true;
     blur_xy_16(out_name).realize(options, out_name, cols, rows, unroll_factor);
 
@@ -10061,7 +10332,7 @@ void jacobi2d_app_test() {
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
-  options.use_custom_code_string = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
   options.debug_options.expect_all_linebuffers = true;
   jac.realize(options, "t0", 32, 28, 1);
 
@@ -10084,7 +10355,7 @@ void jacobi2d_app_test() {
     CodegenOptions options;
     options.internal = true;
     options.simplify_address_expressions = true;
-    options.use_custom_code_string = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
     options.debug_options.expect_all_linebuffers = true;
     jacobi2d(out_name).realize(options, out_name, cols, rows, unroll_factor);
     std::vector<std::string> optimized =
@@ -10121,7 +10392,7 @@ void sum_diffs_test() {
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
-  options.use_custom_code_string = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
   options.debug_options.expect_all_linebuffers = true;
   dn.realize(options, out_name, size, size);
     std::vector<std::string> optimized =
@@ -10145,7 +10416,7 @@ void dummy_app_test() {
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
-  options.use_custom_code_string = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
   options.debug_options.expect_all_linebuffers = true;
   dn.realize(options, out_name, size, size);
   std::vector<std::string> optimized =
@@ -10186,7 +10457,7 @@ void two_input_denoise_pipeline_test() {
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
-  options.use_custom_code_string = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
   //options.debug_options.expect_all_linebuffers = true;
   dn.realize(options, out_name, size, size);
   std::vector<std::string> optimized =
@@ -10224,7 +10495,7 @@ void two_input_mag_test() {
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
-  options.use_custom_code_string = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
   options.debug_options.expect_all_linebuffers = true;
   dn.realize(options, out_name, size, size);
     std::vector<std::string> optimized =
@@ -10250,7 +10521,7 @@ void one_input_mag_test() {
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
-  options.use_custom_code_string = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
   options.debug_options.expect_all_linebuffers = true;
   dn.realize(options, out_name, size, size);
     std::vector<std::string> optimized =
@@ -10273,7 +10544,7 @@ void sum_float_test() {
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
-  options.use_custom_code_string = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
   options.debug_options.expect_all_linebuffers = true;
   dn.realize(options, out_name, size, size);
     std::vector<std::string> optimized =
@@ -10289,7 +10560,7 @@ void sum_denoise_test() {
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
-  options.use_custom_code_string = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
   options.debug_options.expect_all_linebuffers = true;
   dn.realize(options, "sum_denoise2d", size, size);
     std::vector<std::string> optimized =
@@ -10305,7 +10576,7 @@ void denoise2d_test() {
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
-  options.use_custom_code_string = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
   options.debug_options.expect_all_linebuffers = true;
   dn.realize(options, "denoise2d", size, size);
 
@@ -10368,7 +10639,7 @@ void conv3x3_app_unrolled_uneven_test() {
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
-  options.use_custom_code_string = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
   options.debug_options.expect_all_linebuffers = true;
   sobel.realize(options, "conv3x3_app_unrolled_uneven", 30, 30, 7);
 
@@ -10394,7 +10665,7 @@ void conv3x3_app_unrolled_test() {
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
-  options.use_custom_code_string = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
   options.debug_options.expect_all_linebuffers = true;
   sobel.realize(options, "conv3x3_app_unrolled", 30, 30, 2);
 
@@ -10422,7 +10693,7 @@ void conv3x3_app_test() {
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
-  options.use_custom_code_string = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
   options.debug_options.expect_all_linebuffers = true;
   sobel.realize(options, "conv3x3_app", 30, 30);
 
@@ -10852,6 +11123,39 @@ void blur_and_downsample_test() {
 }
 
 void playground() {
+    {
+        isl_ctx* ctx = isl_ctx_alloc();
+        auto acc_0 = isl_map_read_from_str(ctx,"{ sram2tb[i0, i1]-> data[130+64*i0+i1]: 0<=i0<=61 and 0<=i1<=61}");
+        for (int dom_dim = 0; dom_dim < num_in_dims(acc_0); dom_dim ++) {
+          auto trans = get_domain_trans(domain(acc_0), dom_dim, 4);
+          auto res = dot(trans, acc_0);
+          //project all the inner dim
+          for (int reset_dim = dom_dim+1; reset_dim < num_in_dims(acc_0); reset_dim ++) {
+              res = reset_domain_coeff(res, reset_dim, 0);
+              cout << "\treset: " << str(res) << endl;
+          }
+          if (dom_dim < num_in_dims(acc_0) - 1)
+              res = isl_map_project_out(cpy(res), isl_dim_in, dom_dim+1, num_in_dims(acc_0) - dom_dim - 1);
+          cout << "\tAfter trans: " << str(res) << endl;
+        }
+        //take the map with the lexmin point
+        //auto sub_maps = get_basic_maps(res);
+        //isl_map* target;
+        //isl_point* min_pt;
+        //for (auto m: sub_maps) {
+        //    auto pt = lexminpt(range(to_map(m)));
+        //    if (pt) {
+        //        min_pt = pt;
+        //        target = to_map(m);
+        //    } else if(lex_gt_pt(pt, min_pt)){
+        //        min_pt = pt;
+        //        target = to_map(m);
+        //    }
+        //}
+        //cout << "Final trans: " << str(target) << endl;
+        assert(false);
+
+    }
     /*{
         isl_ctx* ctx = isl_ctx_alloc();
         auto sched_0 = isl_map_read_from_str(ctx,  "{sram2tb[i0, i1]->[123 + 64*i0 + i1]: 0<=i0<=63 and 0<=i1<=63}");
@@ -11272,8 +11576,48 @@ void naive_implementations() {
 }
 
 void iccad_tests() {
+  // ef_cartoon
+  int throughput = 1;
+  //string name = "ef_" + str(throughput) + "_500";
+  string name = "ef_" + str(throughput); // + "_500";
+  App ef = ef_cartoon(name);
+  CodegenOptions options;
+  options.internal = true;
+  //options.num_input_epochs = 1;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
+  //options.rtl_options.hls_clock_target_Hz = 500000000;
+  int rows = 1920;
+  int cols = 1080;
+  ef.realize(options, name, {cols, rows}, "in", throughput);
 
+  move_to_benchmarks_folder(name + "_opt");
+  assert(false);
+
+  // exposure_fusion_app
+  exposure_fusion_iccad_apps("ef_fpga_rerun");
+
+  stencil_chain_15_stage_iccad_apps("ic15_275MHz");
+  assert(false);
+
+  // ef_cartoon
+  ef_cartoon_test("ef_cartoon");
+
+
+  // exposure_fusion_app
+  exposure_fusion();
+  assert(false);
+
+
+
+  heat_3d_real_iccad_apps("heat3dlafe_1", 1);
+  //heat_3d_real_iccad_apps("heat3dla_8", 8);
+  float_big_stencil_iccad_apps("flt_stencil", 1);
+
+  stencil_chain_12_stage_iccad_apps("ic12_small_300MHz");
+  stencil_chain_15_stage_iccad_apps("ic15_300MHz");
   heat_3d_iccad_apps("heat2d_1");
+  float_stencil_iccad_apps("float_stencil");
+  float_add_iccad_apps("float_add");
   //heat_3d_iccad_apps("h10_1_300MHz");
   //stencil_chain_iccad_apps("icsc_500MHz");
   //stencil_chain_20_stage_iccad_apps("ic20_500MHz");
@@ -11294,10 +11638,7 @@ void iccad_tests() {
   stencil_chain_no_dsp_iccad_apps("icsc_nd");
   identity_stream_iccad_apps("idstream");
 
-  //App ef = ef_cartoon("ef_sm");
-  //generate_app_benchmark("ef_sm", ef, {1920, 1080}, 1);
-  //assert(false);
-  exposure_fusion_iccad_apps("ef_fpga");
+
   gauss_pyramid_iccad_apps("gp_fpga");
   gauss_pyramid_test("gp_fpga");
   max_pooling_test("mpr16b_32");
@@ -11307,10 +11648,8 @@ void iccad_tests() {
   generate_app_benchmark("gp_sm", gp, {64, 64}, 1);
 
   gauss_pyramid_fpga_test("gp_fpga");
-  ef_cartoon_test("ef_cartoon");
 
   gauss_pyramid_fpga_test("gp_fpga");
-  exposure_fusion();
 
   int index = 20;
   string istr = str(index);
@@ -11627,6 +11966,9 @@ void histogram_test() {
 
   int run_res = system("./a.out");
   assert(run_res == 0);
+
+  prg.pretty_print();
+  //assert(false);
 }
 
 template<typename T>
@@ -11929,7 +12271,7 @@ int run_verilator_on(const std::string& top_module,
   //int verilator_build = cmd("verilator -Wall --cc " + sep_list(verilog_files, "", "", " ") + " --exe --build " + tb_file + " --top-module " + top_module + " -Wno-lint");
   int verilator_build = 0;
   if (extra_flag) {
-      verilator_build = cmd("verilator -Wall --cc " + sep_list(verilog_files, "", "", " ") + " --exe --build " + tb_file + " --top-module " + top_module + " -Wno-UNUSED -Wno-PINMISSING -Wno-DECLFILENAME -Wno-WIDTH -Wno-UNDRIVEN -Wno-CASEINCOMPLETE -Wno-MODDUP -Wno-UNOPTFLAT");
+      verilator_build = cmd("verilator -Wall --cc " + sep_list(verilog_files, "", "", " ") + " --exe --build " + tb_file + " --top-module " + top_module + " -Wno-UNUSED -Wno-PINMISSING -Wno-DECLFILENAME -Wno-WIDTH -Wno-UNDRIVEN -Wno-CASEINCOMPLETE -Wno-MODDUP -Wno-UNOPTFLAT -Wno-CMPCONST");
   } else {
       verilator_build = cmd("verilator -Wall --cc " + sep_list(verilog_files, "", "", " ") + " --exe --build " + tb_file + " --top-module " + top_module + " -Wno-UNUSED -Wno-WIDTH -Wno-PINMISSING -Wno-DECLFILENAME");
   }
@@ -12010,12 +12352,12 @@ void generate_cgra_tb(std::map<string, UBuffer> buffers_opt, prog prg, CodegenOp
   generate_verilog_tb(prg.name);
 }
 
-void generate_garnet_coreir(std::map<string, UBuffer> buffers_opt, prog prg, CodegenOptions& opt, schedule_info& hwinfo) {
+void generate_garnet_coreir(std::map<string, UBuffer> buffers_opt, prog prg, CodegenOptions& opt, schedule_info& hwinfo, bool use_dse_compute=false) {
   CoreIR::Context* context = CoreIR::newContext();
   CoreIRLoadLibrary_commonlib(context);
   CoreIRLoadLibrary_cwlib(context);
   //schedule_info hwinfo;
-  hwinfo.use_dse_compute = false;
+  hwinfo.use_dse_compute = use_dse_compute;
 
   //TODO: add lake memory tile configuration here
 
@@ -12031,6 +12373,15 @@ void generate_smt_stream(CodegenOptions& options, map<string, UBuffer>& buffers,
     if (!prg.is_boundary(buf.first)) {
       //generate stream with the rewrite buffer
       buf.second.generate_smt_stream(options);
+    }
+  }
+}
+
+void Mem_access_count(CodegenOptions& options, map<string, UBuffer>& buffers, mem_access_cnt& mem_access, prog& prg) {
+  for (auto & buf: buffers) {
+    if (!prg.is_boundary(buf.first)) {
+      //generate stream with the rewrite buffer
+      buf.second.collect_memory_cnt(options, mem_access);
     }
   }
 }
@@ -12736,7 +13087,7 @@ void mmul_outer_prod_test() {
   CodegenOptions options;
   options.internal = true;
   options.all_rams = true;
-  options.use_custom_code_string = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
   options.banking_strategies["C"] = {"register_file"};
   options.inner_bank_offset_mode = INNER_BANK_OFFSET_LINEAR;
   generate_optimized_code(options, prg);
@@ -13807,31 +14158,73 @@ void lake_conv33_recipe_test() {
 
 void dsa_writers(prog& prg);
 void dsa_readers(prog& prg);
+void break_up_multi_channel_outputs(prog& prg);
+void break_up_multi_channel_inputs(prog& prg);
+void load_pe_power_stats(power_analysis_params& power_params, const std::string& file);
 
-void compile_for_garnet_single_port_mem(prog & prg, string dir, bool gen_smt_stream, bool gen_config_only,bool multi_accessor );
+void Init_PE_energy_cost(power_analysis_params& power_params)  {
+    const double COST_PER_PE_MUL_PJ = 40.0 / 1000;
+    const double COST_PER_PE_ADD_PJ = 20.0 / 1000;
+
+    const double COST_PER_PE_SUB_PJ = 0.035;
+    const double COST_PER_PE_SHIFT_PJ = 0.01;
+    const double COST_PER_PE_LOGIC_BINOP_PJ = 0.01;
+    const double COST_PER_PE_EQ_PJ = 0.01;
+    const double COST_PER_PE_MUX_PJ = 0.5;
+    const double COST_PER_PE_CMP_PJ = 0.035;
+
+    power_params.alu_op_energy_costs["mult_0"] = COST_PER_PE_MUL_PJ;
+    power_params.alu_op_energy_costs["add"] = COST_PER_PE_ADD_PJ;
+    power_params.alu_op_energy_costs["rshft"] = COST_PER_PE_SHIFT_PJ;
+    power_params.alu_op_energy_costs["sub"] = COST_PER_PE_SUB_PJ;
+    power_params.alu_op_energy_costs["and"] = COST_PER_PE_LOGIC_BINOP_PJ;
+    power_params.alu_op_energy_costs["or"] = COST_PER_PE_LOGIC_BINOP_PJ;
+    power_params.alu_op_energy_costs["eq"] = COST_PER_PE_EQ_PJ;
+    power_params.alu_op_energy_costs["sel"] = COST_PER_PE_MUX_PJ;
+    power_params.alu_op_energy_costs["ult"] = COST_PER_PE_CMP_PJ;
+    power_params.alu_op_energy_costs["lt"] = COST_PER_PE_CMP_PJ;
+    power_params.alu_op_energy_costs["le"] = COST_PER_PE_CMP_PJ;
+    power_params.alu_op_energy_costs["ule"] = COST_PER_PE_CMP_PJ;
+    //Currently does not have
+    power_params.alu_op_energy_costs["max"] = COST_PER_PE_CMP_PJ + COST_PER_PE_MUX_PJ;
+    power_params.alu_op_energy_costs["umax"] = COST_PER_PE_CMP_PJ + COST_PER_PE_MUX_PJ;
+    power_params.alu_op_energy_costs["abs"] = COST_PER_PE_SUB_PJ;
+
+    //load_pe_power_stats(power_params, "./power_models/conv_3_3/PEs.txt");
+
+
+}
+
+
+void compile_for_garnet_single_port_mem(prog & prg, string dir, bool gen_smt_stream, bool gen_config_only,bool multi_accessor, bool use_dse_compute);
 void cpy_app_to_folder(const std::string& app_type, const std::string& prg_name);
 
 void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, string dir="aha_garnet_design") {
   vector<prog> test_apps;
+  //TODO:has issue  with multiple input
+  //test_apps.push_back(demosaic_complex());
+  test_apps.push_back(counter());
+  test_apps.push_back(demosaic_unrolled());
   test_apps.push_back(conv_3_3());
-  test_apps.push_back(resnet());
   test_apps.push_back(gaussian());
   test_apps.push_back(cascade());
   test_apps.push_back(harris());
-  test_apps.push_back(conv_1_2());
   test_apps.push_back(rom());
-  //test_apps.push_back(resnet());
+  test_apps.push_back(conv_1_2());
+  test_apps.push_back(camera_pipeline());
+  test_apps.push_back(up_sample());
+
+  test_apps.push_back(unsharp());
+  test_apps.push_back(resnet());
+  test_apps.push_back(mobilenet_unrolled());
+  ////test_apps.push_back(unsharp());
 
   //test_apps.push_back(conv_3_3_wide());
   //TODO: break in the middle of vectorization
   //test_apps.push_back(down_sample());
-  //test_apps.push_back(up_sample());
 
   //test_apps.push_back(camera_pipeline());
   //test_apps.push_back(unsharp());
-  //test_apps.push_back(mobilenet_unrolled());
-  //TODO:has issue  with multiple input
-  //test_apps.push_back(demosaic_complex());
 
   //test_apps.push_back(resnet());
   for ( auto prg: test_apps) {
@@ -13839,12 +14232,14 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
     prg.pretty_print();
     prg.sanity_check();
 
+    break_up_multi_channel_inputs(prg);
+    break_up_multi_channel_outputs(prg);
     dsa_writers(prg);
     prg.pretty_print();
     auto cpu = unoptimized_result(prg);
 
     //compile_for_garnet_platonic_mem(prg);
-    compile_for_garnet_single_port_mem(prg, dir, false, gen_config_only, multi_accessor);
+    compile_for_garnet_single_port_mem(prg, dir, false, gen_config_only, multi_accessor, false);
     generate_regression_testbench(prg);
 
     cout << "Output name: " << prg.name << endl;
@@ -13873,12 +14268,9 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
 void generate_smt_stream_for_garnet_single_port_mem(prog& prg);
 void test_single_port_mem_smt_stream() {
   vector<prog> test_apps;
-  //test_apps.push_back(conv_3_3());
-  //test_apps.push_back(cascade());
-  //test_apps.push_back(harris());
-  test_apps.push_back(resnet());
-  //test_apps.push_back(conv_1_2());
-  //test_apps.push_back(rom());
+  //test_apps.push_back(conv_3_3(28, 28, "_SMT_28_28"));
+  //test_apps.push_back(cascade(28, 28, "_SMT_28_28"));
+  test_apps.push_back(harris(14, 14, "_SMT_16_16"));
 
   for ( auto prg: test_apps) {
     cout << "====== Running CGRA Single Port test for " << prg.name << endl;
@@ -14011,7 +14403,7 @@ void lake_conv33_autovec_test() {
 
 }
 
-void lake_identity_stream_autovec_test() {
+void lake_identity_stream_SMT_test(int x, int y, string suffix) {
   prog lake_agg("lake_agg_test");
   lake_agg.add_input("in");
   lake_agg.add_output("out");
@@ -14019,20 +14411,20 @@ void lake_identity_stream_autovec_test() {
   int app_target_II = 1;
 
   //corresponding to the aggI/O, sramI/O, TBI/O latency
-  map<pair<string, string>, int> latency({{{"in2buf", "in2buf_vec"}, 1},
-          {{"in2buf_vec", "buf2out_vec"}, 2},
-          {{"buf2out_vec", "buf2out"}, 1}});
+  map<pair<string, string>, int> latency({{{"in2buf", "in2buf_agg2sram"}, 1},
+          {{"in2buf_agg2sram", "buf2out_sram2tb"}, 1},
+          {{"buf2out_sram2tb", "buf2out"}, 2}});
 
-  auto in2buf = lake_agg.add_nest("a1", 0, 8, "a0", 0, 8)->add_op("in2buf");
+  auto in2buf = lake_agg.add_nest("a1", 0, y, "a0", 0, x)->add_op("in2buf");
   in2buf->add_load("in", "a1, a0");
-  in2buf->add_store("buf", "a1, a0");
+  in2buf->add_store("buf_ubuf", "a1, a0");
 
-  auto buf2out= lake_agg.add_nest("b1", 0, 8, "b0", 0, 8)->add_op("buf2out");
-  buf2out->add_load("buf", "b1, b0");
+  auto buf2out= lake_agg.add_nest("b1", 0, y, "b0", 0, x)->add_op("buf2out");
+  buf2out->add_load("buf_ubuf", "b1, b0");
   buf2out->add_store("out", "b1, b0");
 
   auto buffers_opt = build_buffers(lake_agg);
-  buffer_vectorization("buf", 1, 4, buffers_opt);
+  buffer_vectorization("buf_ubuf", 1, 4, buffers_opt);
   auto new_opt_sched = optimized_schedule_from_buffers_flatten(buffers_opt, false);
   cout << "\t optimized schedule map: " << str(new_opt_sched) << endl;
   cout << codegen_c(new_opt_sched) << endl;
@@ -14046,7 +14438,32 @@ void lake_identity_stream_autovec_test() {
   //check_lake_config(op_vec, "./lake_controllers/identity_stream/", "./lake_gold/identity_stream/");
   //cmd("mkdir -p ./lake_stream/identity_stream/");
   //emit_lake_stream(buffers_opt, hsh, "./lake_stream/identity_stream/");
-
+  CodegenOptions options;
+  UBuffer tmp;
+  options.mem_tile.multi_sram_accessor = true;
+  options.dir = "./lake_controllers/identity_stream/";
+  map<string, UBuffer> rewrite_buffers;
+  auto sched_map = get_maps_in_map(hsh);
+  for ( auto it: buffers_opt ){
+      if (it.second.num_out_ports() != 0 && it.second.num_in_ports() != 0) {
+          auto & buf = it.second;
+          for (string pt : buf.get_all_ports()) {
+            auto dom = buf.domain.at(pt);
+            auto hw_sched = sched_map.at(::name(dom));
+            hw_sched = retrive_map_domain_with_dim(hw_sched, dom);
+            buf.schedule.at(pt) = to_umap(hw_sched);
+          }
+          rewrite_buffers.insert(it);
+      }
+  }
+  //Generate configuration for identity stream
+#ifdef COREIR
+  auto config = tmp.generate_ubuf_args(options, rewrite_buffers);
+  emit_lake_config_collateral(options, "buf_" + suffix, config);
+#endif
+  //Generate stream for identity stream
+  options.dir = "./aha_garnet_smt/identity_stream_"+suffix+"/";
+  generate_lake_stream(options, rewrite_buffers, hsh);
 
 }
 
@@ -14082,10 +14499,8 @@ void lake_dual_port_test() {
   //check_lake_config(op_vec, "./lake_controllers/identity_stream/", "./lake_gold/identity_stream/");
   //cmd("mkdir -p ./lake_stream/identity_stream/");
   //emit_lake_stream(buffers_opt, hsh, "./lake_stream/identity_stream/");
-
-
 }
-
+/*
 void lake_identity_stream_SMT_test(int x, int y, string suffix) {
   prog lake_agg("lake_agg_test");
   lake_agg.add_input("in");
@@ -14116,9 +14531,13 @@ void lake_identity_stream_SMT_test(int x, int y, string suffix) {
   cout << str(hsh) << endl;
   cout << codegen_c(hsh) << endl;
 
-  cmd("mkdir -p ./lake_stream/identity_stream_"+suffix+"/");
-  emit_lake_stream(buffers_opt, hsh, "./lake_stream/identity_stream_"+suffix+"/");
-}
+  cmd("mkdir -p ./aha_garnet_design/identity_stream_"+suffix+"/");
+  //emit_lake_stream(buffers_opt, hsh, "./lake_stream/identity_stream_"+suffix+"/");
+  CodegenOptions options;
+  options.mem_tile.multi_sram_accessor = true;
+  options.dir = "./aha_garnet_smt/identity_stream_"+suffix+"/";
+  generate_lake_stream(options, buffers_opt, hsh);
+}*/
 
 void lake_agg_sram_tb_config_test() {
   prog lake_agg("lake_agg_test");
@@ -14978,7 +15397,7 @@ void two_stage_psef() {
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
-  options.use_custom_code_string = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
   lp.realize(options, {{out0, {cols, rows}}, {out1, {cols, rows}}}, out0, unroll);
 
   compile_compute(out0 + "_" + out1 + "_opt.cpp");
@@ -15006,7 +15425,7 @@ void psef_multi_output_test() {
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
-  options.use_custom_code_string = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
   lp.realize(options, {{out0, {cols, rows}}, {out1, {cols, rows}}}, out0, unroll);
 
   compile_compute(out0 + "_" + out1 + "_opt.cpp");
@@ -15034,7 +15453,7 @@ void async_add_test() {
 
     CodegenOptions options;
     options.internal = true;
-    options.use_custom_code_string = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
     options.num_pipelines = 1;
     lp.realize(options, {{output_image, {cols, rows}}}, output_image, unroll);
 
@@ -15066,7 +15485,7 @@ void add_four_channels() {
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
-  options.use_custom_code_string = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
   lp.realize(options, {{out0, {cols, rows}}, {out1, {cols, rows}}}, out0, unroll);
 
   compile_compute(out0 + "_" + out1 + "_opt.cpp");
@@ -15095,7 +15514,7 @@ void weight_add_psef() {
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
-  options.use_custom_code_string = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
   lp.realize(options, {{out0, {cols, rows}}, {out1, {cols, rows}}}, out0, unroll);
 
   compile_compute(out0 + "_" + out1 + "_opt.cpp");
@@ -15239,6 +15658,20 @@ void llf_to_grayscale(const std::string& out, const std::string& in, prog& prg) 
   convert->add_load(in, "1", x, y);
   convert->add_load(in, "2", x, y);
   convert->add_store(out, x, y);
+}
+
+void llf_to_color_no_scales(const std::string& out, const std::string& original, const std::string& gray, prog& prg) {
+  string pr = out + "_to_color";
+  string y = prg.unique_name(pr);
+  string x = prg.unique_name(pr);
+  string b = prg.unique_name(pr);
+  auto cn = prg.add_nest(y, 0, 1, x, 0, 1, b, 0, 3);
+
+  auto convert = cn->add_op(prg.unique_name("cc"));
+  convert->add_function("llf_to_color_float_no_scales");
+  convert->add_load(original, b, x, y);
+  convert->add_load(gray, x, y);
+  convert->add_store(out, b, x, y);
 }
 
 void llf_to_color(const std::string& out, const std::string& original, const std::string& scales, const std::string& gray, prog& prg) {
@@ -15519,7 +15952,7 @@ void llf_pyramid_test() {
   //assert(false);
 }
 
-void llf_test() {
+prog llf_float() {
   int num_pyramid_levels = 4;
   int num_intensity_levels = 8;
 
@@ -15578,18 +16011,28 @@ void llf_test() {
 
   //assert(false);
 
-  infer_bounds("color_out", {3, 256, 256}, prg);
+  infer_bounds("color_out", {3, 2048, 2048}, prg);
 
   cout << "After bounds inference..." << endl;
   prg.pretty_print();
 
   unroll_reduce_loops(prg);
+  merge_basic_block_ops(prg);
+  normalize_bounds(prg);
+  normalize_address_offsets(prg);
+
+  return prg;
+}
+
+void llf_test() {
+
+  prog prg = llf_float();
 
   cout << "======================================" << endl;
   cout << "========= After unrolling reduce loops" << endl;
   prg.pretty_print();
 
-  //assert(false);
+  assert(false);
 
   //auto valid = prg.validity_deps();
   //cout << "Got valid" << endl;
@@ -15608,7 +16051,7 @@ void llf_test() {
   generate_unoptimized_code(prg);
   compile_compute("unoptimized_" + prg.name + ".cpp");
 
-  //assert(false);
+  assert(false);
 }
 
 void union_test() {
@@ -15634,12 +16077,11 @@ void union_test() {
 void dual_port_lake_test();
 
 void lake_smt_tests() {
+  //identity stream has a separate stream generation pass,
+  //because it will be optimized into a wire in ubuffer flow
+  //lake_identity_stream_SMT_test(28, 28, "28_28");
   test_single_port_mem_smt_stream();
-  //lake_identity_stream_SMT_test(20, 20, "20x20");
-  //lake_identity_stream_SMT_test(128, 128, "128x128");
-  //lake_identity_stream_SMT_test(64, 64, "64x64");
-  //lake_identity_stream_SMT_test(32, 32, "32x32");
-  ////lake_identity_stream_SMT_test(16, 16, "16x16");
+  assert(false);
   //assert (false);
 }
 
@@ -15652,7 +16094,6 @@ void lake_tests() {
   test_single_port_mem(false, true, "aha_garnet_design_new");
   //test_single_port_mem(false, false, "aha_garnet_design");
   assert(false);
-  lake_conv33_autovec_aha_test();
   //double_buffer_test();
   //lake_identity_stream_autovec_test();
   lake_gaussian_autovec_test();
@@ -16002,97 +16443,196 @@ void relax_delays_after_vectorization(schedule_info& sched, prog& prg) {
         d ++;
 
     sched.op_offset_within_parent[lp] = 10000 * d;
-    //int old_delay = map_find(lp, sched.op_offset_within_parent);
-    //int try_delay = 1;
-    //bool found_smaller_delay = false;
-    //while (try_delay < old_delay) {
-    //  sched.op_offset_within_parent[lp] = try_delay;
-    //  if (no_violated_cycle_accurate_dependencies(sched, prg)) {
-    //    found_smaller_delay = true;
-    //    break;
-    //  }
-    //  try_delay = max(try_delay * 2, try_delay + 1000);
-    //  //try_delay = min(try_delay * 2, try_delay + 1000);
-    //  //try_delay *= 2;
-    //}
-
-    //if (!found_smaller_delay) {
-    //  sched.op_offset_within_parent[lp] = old_delay;
-    //}
   }
 }
 
-void adjust_outer_delays(schedule_info& sched, prog& prg) {
+void relax_delays_rate_matched(schedule_info& sched, prog& prg) {
   cout << "Adjusting delays of " << prg.name << endl;
+  int d = 0;
+  int fetch_width = 4;
+  auto start_times = op_start_times(sched, prg);
+  auto domains = prg.domains();
   for (auto name : topologically_sort_kernels(prg)) {
     auto lp = prg.find_loop(name);
+    auto cons_op_vec = lp->all_ops();
+    if (cons_op_vec.size() > 1)
+        continue;
     cout << "Adjusting delay of " << lp->name << endl;
+    for(auto prod: get_producers(name, prg)){
+        auto prod_loop = prg.find_loop(prod);
+        auto prod_op_vec = prod_loop->all_ops();
+        //Assume we only have one op under loop nest
+        if (prod_op_vec.size() > 1)
+            continue;
+        auto prod_op_name = pick(prod_op_vec)->name;
+        auto cons_op_name = pick(cons_op_vec)->name;
+        auto prod_dom = domains.at(pick(prod_op_vec));
+        auto cons_dom = domains.at(pick(cons_op_vec));
+        auto prod_sched = to_map(start_times.at(pick(prod_op_vec)));
+        auto cons_sched = to_map(start_times.at(pick(cons_op_vec)));
 
-    int old_delay = map_find(lp, sched.op_offset_within_parent);
-    int try_delay = 1;
-    bool found_smaller_delay = false;
-    while (try_delay < old_delay) {
-      sched.op_offset_within_parent[lp] = try_delay;
-      if (no_violated_cycle_accurate_dependencies(sched, prg)) {
-        found_smaller_delay = true;
-        break;
-      }
-      try_delay = max(try_delay * 2, try_delay + 1000);
-      //try_delay = min(try_delay * 2, try_delay + 1000);
-      //try_delay *= 2;
-    }
+        cout << tab(2) << "Producers: " << prod_op_name << endl;
+        cout << tab(2) << "sched: " << str(prod_sched) << endl;
 
-    if (!found_smaller_delay) {
-      sched.op_offset_within_parent[lp] = old_delay;
+        cout << tab(2) << "Consumers: " << cons_op_name << endl;
+        cout << tab(2) << "sched: " << str(cons_sched) << endl;
+
+        auto equal_start_time =
+        equal(lexminpt(range(its(prod_sched, prod_dom))),
+                lexminpt(range(its(cons_sched, cons_dom))));
+        bool equal_rng = equal(range(prod_sched), range(cons_sched));
+        bool prod_need_index = pick(cons_op_vec)->index_variables_needed_by_compute.size();
+        cout << tab(4) << "Start cycle Is equal: " << equal_start_time << endl;
+        cout << tab(4) << "domain is same: " << equal_rng << endl;
+        if (equal_start_time && !equal_rng) {
+            int prod_ii = sched.II(pick(prod_op_vec)->parent);
+            cout << "\t\top " << prod_op_name << " has ii: " << prod_ii << endl;
+            //6 is a magic number which make upsample work
+            d += prod_ii * fetch_width + 6;
+        } else if (equal_start_time && prod_need_index){
+            d += 3;
+        }
     }
+    sched.op_offset_within_parent[lp] += d;
   }
 }
 
-void adjust_outer_pipeline_delays(schedule_info& sched, prog& prg) {
-  cout << "Adjusting delays of " << prg.name << endl;
-  for (auto lp : find_coarse_grained_pipeline_loop(prg.root)->children) {
+// void adjust_outer_delays(schedule_info& sched, prog& prg) {
+//   cout << "Adjusting delays of " << prg.name << endl;
+//   for (auto name : topologically_sort_kernels(prg)) {
+//     auto lp = prg.find_loop(name);
+//     cout << "Adjusting delay of " << lp->name << endl;
 
-    int old_delay = map_find(lp, sched.op_offset_within_parent);
-    int try_delay = 1;
-    bool found_smaller_delay = false;
-    while (try_delay < old_delay) {
-      sched.op_offset_within_parent[lp] = try_delay;
-      if (no_violated_cycle_accurate_dependencies(sched, prg)) {
-        found_smaller_delay = true;
-        break;
-      }
-      try_delay = max(try_delay * 2, try_delay + 1000);
-      //try_delay = min(try_delay * 2, try_delay + 1000);
-      //try_delay *= 2;
+//     int old_delay = map_find(lp, sched.op_offset_within_parent);
+//     int try_delay = 1;
+//     bool found_smaller_delay = false;
+//     while (try_delay < old_delay) {
+//       sched.op_offset_within_parent[lp] = try_delay;
+//       if (no_violated_cycle_accurate_dependencies(sched, prg)) {
+//         found_smaller_delay = true;
+//         break;
+//       }
+//       try_delay = max(try_delay * 2, try_delay + 1000);
+//       //try_delay = min(try_delay * 2, try_delay + 1000);
+//       //try_delay *= 2;
+//     }
+
+//     if (!found_smaller_delay) {
+//       sched.op_offset_within_parent[lp] = old_delay;
+//     }
+//   }
+// }
+
+// void adjust_outer_pipeline_delays(schedule_info& sched, prog& prg) {
+//   cout << "Adjusting delays of " << prg.name << endl;
+//   for (auto lp : find_coarse_grained_pipeline_loop(prg.root)->children) {
+
+//     int old_delay = map_find(lp, sched.op_offset_within_parent);
+//     int try_delay = 1;
+//     bool found_smaller_delay = false;
+//     while (try_delay < old_delay) {
+//       sched.op_offset_within_parent[lp] = try_delay;
+//       if (no_violated_cycle_accurate_dependencies(sched, prg)) {
+//         found_smaller_delay = true;
+//         break;
+//       }
+//       try_delay = max(try_delay * 2, try_delay + 1000);
+//       //try_delay = min(try_delay * 2, try_delay + 1000);
+//       //try_delay *= 2;
+//     }
+
+//     if (!found_smaller_delay) {
+//       sched.op_offset_within_parent[lp] = old_delay;
+//     }
+//   }
+// }
+
+void asap_input_iis(schedule_info& sched, prog& prg) {
+
+    //Looks for buffer all reading location is constant localtion
+    //lower the ii to be one
+    std::set<string> config_buffers;
+    for (auto b : all_buffers(prg)) {
+        if (prg.is_boundary(b)) {
+            continue;
+        }
+        bool all_write_from_offchip = true;
+        for (auto op_in : find_writers(b, prg)) {
+            bool all_read_offchip = true;
+            for (auto rdbuf : op_in->buffers_read()) {
+                if (!prg.is_boundary(rdbuf)) {
+                    all_read_offchip = false;
+                    break;
+                }
+            }
+            if (!all_read_offchip) {
+                all_write_from_offchip = false;
+                break;
+            }
+
+        }
+        if (all_write_from_offchip) {
+            config_buffers.insert(b);
+        }
+    }
+    //FIXME: fix this hack
+    std::set<string> filter_buffers;
+    for ( auto b : config_buffers ) {
+        cout << tab(2) << "Find buffers need to be rewritten: " << b << endl;
+        if (contains(b, "hw_filter")) {
+            filter_buffers.insert(b);
+        }
+    }
+    cout << "\nFilter buffers...\n" << endl;
+    for (auto b : filter_buffers) {
+        cout << tab(2) << "Left: " << b << endl;
+        for (auto op: find_writers(b, prg)) {
+            auto write_rep = op;
+            vector<string> loop_vars = surrounding_vars(write_rep, prg);
+            for (auto l_var: loop_vars) {
+                cout << tab(2) << "loop index var: " << l_var << endl;
+            }
+            assert(loop_vars.size() >= 1);
+            int ii = 1;
+            for (int it = loop_vars.size() - 1; it > 0; it --) {
+                string loop_name = loop_vars.at(it);
+                cout << "loop name: " << loop_name << endl;
+                cout << "original delay within parent: " <<
+                    sched.op_offset_within_parent[prg.find_loop(loop_name)] << endl;
+                sched.op_offset_within_parent[prg.find_loop(loop_name)] = 0;
+                sched.loop_iis[loop_name] = ii;
+                ii *= prg.find_loop(loop_name)->trip_count() + 1;
+            }
+        //    op->pretty_print();
+        //    cout << "\tOP delay: " << sched.op_offset_within_parent[op] << endl;
+
+        }
     }
 
-    if (!found_smaller_delay) {
-      sched.op_offset_within_parent[lp] = old_delay;
-    }
-  }
+
 }
 
-void adjust_inner_iis(schedule_info& sched, prog& prg) {
-  cout << "Adjusting iis of " << prg.name << endl;
-  for (auto lp : get_inner_loops(prg)) {
-    cout << "Adjusting ii of " << lp->name << endl;
-    int old_ii = map_find(lp->name, sched.loop_iis);
-    int try_ii = 1;
-    bool found_smaller_ii = false;
-    while (try_ii < old_ii) {
-      sched.loop_iis[lp->name] = try_ii;
-      if (no_violated_cycle_accurate_dependencies(sched, prg)) {
-        found_smaller_ii = true;
-        break;
-      }
-      try_ii *= 2;
-    }
+// void adjust_inner_iis(schedule_info& sched, prog& prg) {
+//   cout << "Adjusting iis of " << prg.name << endl;
+//   for (auto lp : get_inner_loops(prg)) {
+//     cout << "Adjusting ii of " << lp->name << endl;
+//     int old_ii = map_find(lp->name, sched.loop_iis);
+//     int try_ii = 1;
+//     bool found_smaller_ii = false;
+//     while (try_ii < old_ii) {
+//       sched.loop_iis[lp->name] = try_ii;
+//       if (no_violated_cycle_accurate_dependencies(sched, prg)) {
+//         found_smaller_ii = true;
+//         break;
+//       }
+//       try_ii *= 2;
+//     }
 
-    if (!found_smaller_ii) {
-      sched.loop_iis[lp->name] = old_ii;
-    }
-  }
-}
+//     if (!found_smaller_ii) {
+//       sched.loop_iis[lp->name] = old_ii;
+//     }
+//   }
+// }
 
 void break_up_multi_channel_outputs(prog& prg) {
   std::set<string> to_erase;
@@ -16295,40 +16835,14 @@ vector<int> garnet_fuse_ii_level(prog& prg) {
 }
 
 void sanity_check_hw_schedule(schedule_info& sched, prog& prg);
+void pad_to_single_depth(schedule_info& sched, op* root, prog& prg);
 void garnet_single_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
   if (is_rate_matchable(prg)) {
     prg.pretty_print();
-    bool single_depth = all_loop_nests_same_depth(prg);
-    int max_depth = max_loop_depth(prg);
 
-
-    if (!single_depth) {
-      map<string, vector<int> > pad_indexes;
-      for (auto k : get_kernels(prg)) {
-        auto lp = prg.find_loop(k);
-        for (auto rep : lp->descendant_ops()) {
-          int depth_m = loop_depth(prg.find_loop(k));
-          vector<int> inds;
-          inds.push_back(0);
-          for (int p = 0; p < max_depth - depth_m; p++) {
-            inds.push_back(-1);
-          }
-          for (int d = 1; d < depth_m + 1; d++) {
-            inds.push_back(d);
-          }
-
-          pad_indexes[rep->name] = inds;
-        }
-      }
-      cout << "Pad inds..." << endl;
-      for (auto p : pad_indexes) {
-        cout << tab(1) << p.first << ": " << comma_list(p.second) << endl;
-      }
-      insert_pad_loops(prg, pad_indexes);
-    }
-    prg.pretty_print();
-    single_depth = all_loop_nests_same_depth(prg);
-    assert(single_depth);
+    //TODO: need another function to choose between pad bottom level or top level
+    //pad_bottom_level_ops_with_loops(prg);
+    pad_to_single_depth(sched, root, prg);
 
     prg.pretty_print();
     cout << prg.name << " is a stencil pipeline" << endl;
@@ -16414,11 +16928,18 @@ void garnet_single_port_ram_schedule(schedule_info& sched, op* root, prog& prg) 
 
     //Hack for rom, Rom need to be conservative
     //because the affine controller output on cycle of flush is undeterministic
-    if (prg.name == "rom") {
+    if (prg.name == "rom" ) {
       adjust_schedule_forward(sched, prg, 1);
     } else {
       adjust_schedule_forward(sched, prg, 0);
     }
+    //Add delay for identity stream
+    relax_delays_rate_matched(sched, prg);
+
+    //Make input as fast as possible
+    asap_input_iis(sched, prg);
+    auto op_sched = op_start_times_map(sched, prg);
+    cout << "Final schedule after relax: " << str(op_sched)  << endl;
     return;
   }
 
@@ -16699,10 +17220,9 @@ void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
   sanity_check_iis(sched);
 }
 
-schedule_info garnet_schedule_info(CodegenOptions& options, prog& prg) {
+schedule_info garnet_schedule_info(CodegenOptions& options, prog& prg, bool use_dse_compute=false) {
   schedule_info sched;
-  sched.use_dse_compute = false;
-  //sched.use_dse_compute = true;
+  sched.use_dse_compute = use_dse_compute;
   for (auto op : prg.all_ops()) {
     if (op->func != "") {
       sched.resource_requirements[op] = op->func;
@@ -16760,7 +17280,7 @@ CodegenOptions garnet_codegen_single_port_with_addrgen_options(prog& prg, string
   CodegenOptions options;
   options.rtl_options.target_tile = TARGET_TILE_WIDE_FETCH_WITH_ADDRGEN;
   options.conditional_merge = true;
-  options.merge_threshold = 4;
+  options.merge_threshold = 10;
   options.iis = {1};
   options.rtl_options.max_inpt = 2;
   options.rtl_options.max_outpt = 2;
@@ -16881,15 +17401,15 @@ bool all_operations_assigned_to_resources(schedule_info& sched, prog& prg) {
   return true;
 }
 
-bool is_cst(isl_multi_aff* diff) {
-  for (auto aff : get_affs(diff)) {
-    if (!isl_aff_is_cst(aff)) {
-      return false;
-    }
-    release(aff);
-  }
-  return true;
-}
+// bool is_cst(isl_multi_aff* diff) {
+//   for (auto aff : get_affs(diff)) {
+//     if (!isl_aff_is_cst(aff)) {
+//       return false;
+//     }
+//     release(aff);
+//   }
+//   return true;
+// }
 
 void sanity_check_hw_schedule(schedule_info& sched, prog& prg) {
   assert(all_ops_scheduled(sched, prg));
@@ -16973,12 +17493,12 @@ void generate_smt_stream_for_garnet_single_port_mem(prog& prg) {
 
 
   //optimized schedule
-  cmd("mkdir -p aha_garnet_design/" + prg.name);
+  cmd("mkdir -p aha_garnet_smt/" + prg.name);
 
   //auto iis = garnet_fuse_ii_level(prg);
   //auto buffers_opt = build_buffers(prg, clockwork_schedule(prg));
 
-  CodegenOptions options = garnet_codegen_single_port_with_addrgen_options(prg, "aha_garnet_design");
+  CodegenOptions options = garnet_codegen_single_port_with_addrgen_options(prg, "aha_garnet_smt");
   options.emit_smt_stream = true;
   schedule_info sched = garnet_schedule_info(options, prg);
   garnet_single_port_ram_schedule(sched, prg.root, prg);
@@ -17039,11 +17559,39 @@ void generate_smt_stream_for_garnet_single_port_mem(prog& prg) {
   generate_smt_stream(options, buffers_opt, prg);
 }
 
+void emit_mem_access_count_to_csv(string dir, CodegenOptions& options, mem_access_cnt& acc_cnt) {
+
+    cmd("mkdir -p "+dir);
+    ofstream rd(dir +"/" + "memory_read.csv");
+    ofstream wr(dir +"/" + "memory_write.csv");
+    cout << "\tGenerate Memory Count Collateral for : " << tab(1) << dir << endl;
+    for (auto it: acc_cnt.read_cnt) {
+        string buf_name = it.first;
+        cout << tab(2) << "Emit Memory Access Count for Buffer: " << buf_name << endl;
+        rd << buf_name << ",";
+        for (auto sub_buf: it.second) {
+            cout << tab(4) << "Sub buf read: " << sub_buf.first << ": " << sub_buf.second << endl;
+            rd << sub_buf.first << ", " << sub_buf.second << ",";
+        }
+        rd << endl;
+
+        wr << buf_name << ",";
+        for (auto sub_buf: acc_cnt.write_cnt.at(buf_name)) {
+            cout << tab(4) << "Sub buf write: " << sub_buf.first << ": " << sub_buf.second << endl;
+            wr << sub_buf.first << ", " << sub_buf.second<< ",";
+        }
+        wr << endl;
+    }
+    rd.close();
+    wr.close();
+}
+
 void compile_for_garnet_single_port_mem(prog& prg,
         string dir,
         bool gen_smt_stream,
         bool config_gen_only,
-        bool multi_sram) {
+        bool multi_sram,
+        bool use_dse_compute) {
 
   //make sure the loop bound and address is positive
   normalize_bounds(prg);
@@ -17063,64 +17611,42 @@ void compile_for_garnet_single_port_mem(prog& prg,
   options.config_gen_only = config_gen_only;
   if (multi_sram)
       options.mem_tile.multi_sram_accessor = true;
-  schedule_info sched = garnet_schedule_info(options, prg);
+  schedule_info sched = garnet_schedule_info(options, prg, use_dse_compute);
   garnet_single_port_ram_schedule(sched, prg.root, prg);
   auto sched_map = op_times_map(sched, prg);
   auto hw_sched = its(sched_map,
           prg.whole_iteration_domain());
   cout << "result schedule: " << str(hw_sched) << endl;
   auto buffers_opt = build_buffers(prg, hw_sched);
-  //for (auto b: buffers_opt) {
-  //    cout << "create shift register for " << b.first << endl;
-
-  //  //compare out2in
-  //  auto shift_registered_outputs = determine_shift_reg_map(prg, b.second, sched);
-  //  //compare out2out
-  //  auto o2o = determine_output_shift_reg_map(prg, b.second, sched);
-  //  cout << o2o.size() << endl;
-  //  for (auto it: shift_registered_outputs) {
-  //    cout << it.first << " -> " << it.second.first << ", depth = " << it.second.second << endl;
-  //  }
-  //}
-  ////auto sched = global_schedule_from_buffers(buffers_opt);
-
-  for (auto& b : buffers_opt) {
-    cout << "\tGenerate bank for buffer: " << b.first << endl << b.second << endl;
+  for (auto & b: buffers_opt) {
+    cout << "create shift register for " << b.first << endl;
     if (b.second.num_in_ports() == 0 || b.second.num_out_ports() == 0)
         continue;
-    if (is_rate_matchable(prg)) {
-      b.second.generate_banks_and_merge(options);
-      b.second.port_group2bank(options);
-    } else {
-      //TODO: put this into a method
-      auto partition = embarassing_partition(b.second);
-      assert(partition.has_value());
-      cout << tab(1) << "Found partition: " << endl;
-      std::set<int> partition_dim = partition.get_value();
-      vector<int> cyclic_partition_factor;
-      vector<int> min_addr, max_addr;
-      min_addr = min_offsets_by_dimension(b.second);
-      max_addr = max_offsets_by_dimension(b.second);
-      for (int d = 0; d < b.second.logical_dimension(); d ++) {
-          if (elem(d, partition_dim)) {
-            cyclic_partition_factor.push_back(max_addr.at(d) - min_addr.at(d) + 1);
-          } else {
-            cyclic_partition_factor.push_back(1);
-            //cyclic_partition_factor.push_back(max_addr.at(d) - min_addr.at(d) + 1);
-          }
-      }
-      for (auto dim : partition_dim) {
-          cout << tab(2) << "Partition: " << dim << endl;
-      }
-      cout << "number of banks = " << card(cyclic_partition_factor) << endl;
-      options.banking_strategies[b.first] = {"cyclic", cyclic_partition_factor};
-      b.second.generate_banks_and_merge(options);
-      b.second.port_group2bank(options);
-    }
+
+    auto& buf = b.second;
+    auto impl = port_group2bank(options, prg, b.second, sched);
+
+    cout << "After shift register optimization: " << impl << endl;
+    if (impl.is_pure_shift_register(buf.get_out_ports()))
+      continue;
+
+    generate_banks_garnet(options, prg, buf, impl, sched);
   }
+  //FIXME: put into separate pass for power analysis
+  /*
+  mem_access_cnt mem_access;
+  Mem_access_count(options, buffers_opt, mem_access, prg);
+  emit_mem_access_count_to_csv(dir + "/MemCount/" + prg.name, options, mem_access);
+
+  power_analysis_params power_params;
+  power_analysis_info power_stats;
+  Init_PE_energy_cost(power_params);*/
 
 #ifdef COREIR
-  generate_garnet_coreir(buffers_opt, prg, options, sched);
+  //PE_energy_cost_instance_model(power_params, power_stats, prg);
+  //PE_energy_cost(power_params, power_stats, prg);
+
+  generate_garnet_coreir(buffers_opt, prg, options, sched, use_dse_compute);
   if (!options.config_gen_only) {
     generate_garnet_verilog_top(options, prg.name);
     generate_garnet_verilator_tb(prg, hw_sched, buffers_opt);
@@ -17334,11 +17860,12 @@ vector<prog> isca_programs() {
   //test_programs.push_back(harris_sch8_endcim());
   //test_programs.back().pretty_print();
 
-  test_programs.push_back(up_sample());
+  //FIXME: not work for M1 and M3
+  //test_programs.push_back(up_sample());
+  //test_programs.push_back(unsharp());
   test_programs.push_back(camera_pipeline());
   test_programs.push_back(gaussian());
   test_programs.push_back(mobilenet_unrolled());
-  test_programs.push_back(unsharp());
   test_programs.push_back(resnet());
   test_programs.push_back(cascade());
   test_programs.push_back(down_sample());
@@ -17659,7 +18186,7 @@ void generate_fpga_clockwork_code(prog& prg) {
     << prg.compute_unit_file << endl;
   CodegenOptions options;
   options.internal = true;
-  //options.use_custom_code_string = true;
+  //options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
   //map<string, Box> compute_domains;
   //for (auto s : get_sets(dom)) {
     //ops.push_back(name(s));
@@ -17721,18 +18248,17 @@ void cgra_flow_tests() {
   //vector<prog> M3_test_programs{gaussian()};
   test_codegen(M3_test_programs, compile_for_CGRA_M3_mem);
   //assert(false);
-  
 
   vector<prog> M1_test_programs = isca_programs();
   //vector<prog> M1_test_programs{gaussian()};
   test_codegen(M1_test_programs, compile_for_CGRA_M1_mem);
-  
+
   auto test_programs =
     all_cgra_programs();
   test_platonic_codegen(test_programs);
 
 
-  
+
 
   vector<prog> sram_test_programs{pointwise(), camera_pipeline(), resnet()};
   test_codegen(sram_test_programs, compile_for_generic_SRAM_mem);
@@ -18583,8 +19109,1110 @@ void misc_tests() {
 
 }
 
+void generate_cpu_reference_body(const int level, ostream& out, op* op, prog& prg) {
+  if (op->is_loop()) {
+    out << tab(level) << "for (int " << op->name << " = 0; " << op->name << " < " << op->trip_count() << "; " << op->name << "++) {" << endl;
+    for (auto child : op->children) {
+      generate_cpu_reference_body(level + 1, out, child, prg);
+    }
+    out << tab(level) << "}" << endl;
+  } else {
+
+    vector<string> compute_inputs;
+    for (auto loc : op->consume_locs_pair) {
+      isl_multi_aff* write_addr = pick(read_addrs(op, loc.first, prg));
+      vector<int> dims = map_find(loc.first, prg.buffer_bounds);
+      vector<int> strs = strides(dims);
+      //reverse(strs);
+      vector<string> components;
+      for (int i = 0; i < isl_multi_aff_dim(write_addr, isl_dim_set); i++) {
+        components.push_back(str(strs.at(i)) + "*" + codegen_c(isl_multi_aff_get_aff(write_addr, i)));
+      }
+      out << tab(level) << "float " << loc.first << "_v = " << loc.first << "[" << sep_list(components, "", "", " + ") << "];" << endl;
+      compute_inputs.push_back(loc.first + "_v");
+    }
+
+    assert(op->produce_locs.size() == 1);
+    auto loc = pick(op->produce_locs);
+    isl_multi_aff* write_addr = pick(write_addrs(op, loc.first, prg));
+    vector<int> dims = map_find(loc.first, prg.buffer_bounds);
+    vector<int> strs = strides(dims);
+    //reverse(strs);
+    vector<string> components;
+    for (int i = 0; i < isl_multi_aff_dim(write_addr, isl_dim_set); i++) {
+      components.push_back(str(strs.at(i)) + "*" + codegen_c(isl_multi_aff_get_aff(write_addr, i)));
+    }
+    out << tab(level) << loc.first << "[" << sep_list(components, "", "", " + ") << "] = " << op->func << sep_list(compute_inputs, "(", ")", ", ") << ";" << endl;
+  }
+
+}
+
+void generate_cuda_code(prog& prg, isl_map* gpu_sched) {
+  op* op = pick(prg.all_ops());
+  isl_set* dom = map_find(op, prg.domains());
+  cout << "domain: " << str(dom) << endl;
+
+  isl_map* gpu_sched_bounded = its(gpu_sched, dom);
+
+  cout << "bounded gpu schedule: " << str(gpu_sched_bounded) << endl;
+  isl_set* gpu_launches = range(gpu_sched_bounded);
+  cout << "gpu launches: " << str(gpu_launches) << endl;
+
+  vector<int> k_mins = mins(gpu_launches);
+  vector<int> k_maxs = maxs(gpu_launches);
+
+  cout << "kernel min: " << k_mins.at(0) << endl;
+  cout << "kernel max: " << k_maxs.at(0) << endl;
+
+  cout << "block x min: " << k_mins.at(1) << endl;
+  cout << "block x max: " << k_maxs.at(1) << endl;
+
+  cout << "thread x min: " << k_mins.at(4) << endl;
+  cout << "thread x max: " << k_maxs.at(4) << endl;
+
+  int block_xs = k_maxs.at(1) - k_mins.at(1) + 1;
+  int block_ys = k_maxs.at(2) - k_mins.at(2) + 1;
+  int block_zs = k_maxs.at(3) - k_mins.at(3) + 1;
+
+  int thread_xs = k_maxs.at(4) - k_mins.at(4) + 1;
+  int thread_ys = k_maxs.at(5) - k_mins.at(5) + 1;
+  int thread_zs = k_maxs.at(6) - k_mins.at(6) + 1;
+
+  vector<int> blocks{block_xs, block_ys, block_zs};
+  vector<int> threads{thread_xs, thread_ys, thread_zs};
+  ofstream out(prg.name + ".cu");
+  out << "#include <stdio.h>" << endl << endl;
+  out << "#include <assert.h>" << endl << endl;
+  out << "#include \"" << prg.compute_unit_file << "\"" << endl << endl;
+  out << endl;
+  out << "template<typename T>" << endl;
+  out << "__host__" << endl;
+  out << "__device__" << endl;
+  out << "inline" << endl;
+  out << "T id(const T& v) {" << endl;
+  out << "  return v;" << endl;
+  out << "}" << endl;
+
+  out << endl;
+
+  out << "// Operation logic" << endl;
+  for (auto op : prg.all_ops()) {
+    vector<string> arg_decls;
+    for (auto b : buffer_arg_names(op, prg)) {
+      arg_decls.push_back("float* " + b);
+    }
+    vector<string> surrounding = surrounding_vars(op, prg);
+    for (int i = 0; i < (int) surrounding.size(); i++) {
+      arg_decls.push_back("int " + surrounding.at(i)); //"int d" + str(i));
+    }
+    out << "__host__" << endl;
+    out << "__device__" << endl;
+    out << "inline" << endl;
+    out << "void " << op->name << sep_list(arg_decls, "(", ")", ", ") << " {" << endl;
+
+    vector<string> compute_inputs;
+    for (auto loc : op->consume_locs_pair) {
+      isl_multi_aff* write_addr = pick(read_addrs(op, loc.first, prg));
+      vector<int> dims = map_find(loc.first, prg.buffer_bounds);
+      vector<int> strs = strides(dims);
+      //reverse(strs);
+      vector<string> components;
+      for (int i = 0; i < isl_multi_aff_dim(write_addr, isl_dim_set); i++) {
+        components.push_back(str(strs.at(i)) + "*" + codegen_c(isl_multi_aff_get_aff(write_addr, i)));
+      }
+      out << tab(1) << "float " << loc.first << "_v = " << loc.first << "[" << sep_list(components, "", "", " + ") << "];" << endl;
+      compute_inputs.push_back(loc.first + "_v");
+    }
+
+    assert(op->produce_locs.size() == 1);
+    auto loc = pick(op->produce_locs);
+    isl_multi_aff* write_addr = pick(write_addrs(op, loc.first, prg));
+    //out << tab(1) << "// " << str(write_addr) << endl;
+    vector<int> dims = map_find(loc.first, prg.buffer_bounds);
+    vector<int> strs = strides(dims);
+    //reverse(strs);
+    vector<string> components;
+    for (int i = 0; i < isl_multi_aff_dim(write_addr, isl_dim_set); i++) {
+      components.push_back(str(strs.at(i)) + "*" + codegen_c(isl_multi_aff_get_aff(write_addr, i)));
+    }
+    out << tab(1) << loc.first << "[" << sep_list(components, "", "", " + ") << "] = " << op->func << sep_list(compute_inputs, "(", ")", ", ") << ";" << endl;
+    out << "}" << endl;
+  }
+  out << endl;
+
+  vector<string> arg_decls;
+  for (auto b : prg.boundary_buffers()) {
+    arg_decls.push_back("float* " + b);
+  }
+
+  out << "void " << prg.name << "_cpu_reference" << sep_list(arg_decls, "(", ")", ", ") << " {" << endl;
+  generate_cpu_reference_body(1, out, prg.root, prg);
+  out << "}" << endl;
+  out << endl;
+
+  out << "__global__" << endl;
+  out << "void " << prg.name << "_kernel" << sep_list(arg_decls, "(", ")", ", ") << " {" << endl;
+
+  vector<string> conds;
+  conds.push_back("threadIdx.x < " + str(thread_xs));
+  conds.push_back("threadIdx.y < " + str(thread_ys));
+  conds.push_back("threadIdx.z < " + str(thread_zs));
+  conds.push_back("blockIdx.x < " + str(block_xs));
+  conds.push_back("blockIdx.y < " + str(block_ys));
+  conds.push_back("blockIdx.z < " + str(block_zs));
+  out << tab(1) << "if (" << sep_list(conds, "", "", " && ") << ") {" << endl;
+  isl_multi_aff* aff = get_multi_aff(inv(gpu_sched_bounded));
+  // TODO: Handle loops inside the schedule
+  vector<string> surrounding = surrounding_vars(op, prg);
+  vector<string> args = buffer_arg_names(op, prg);
+  for (int i = 0; i < (int) surrounding.size(); i++) {
+    auto comp = isl_multi_aff_get_aff(aff, i);
+    out << tab(2) << "// " << str(comp) << endl;
+    comp = isl_aff_set_dim_id(comp, isl_dim_in, 1, id(prg.ctx, "blockIdx.x"));
+    comp = isl_aff_set_dim_id(comp, isl_dim_in, 2, id(prg.ctx, "blockIdx.y"));
+    comp = isl_aff_set_dim_id(comp, isl_dim_in, 3, id(prg.ctx, "blockIdx.z"));
+    comp = isl_aff_set_dim_id(comp, isl_dim_in, 4, id(prg.ctx, "threadIdx.x"));
+    comp = isl_aff_set_dim_id(comp, isl_dim_in, 5, id(prg.ctx, "threadIdx.y"));
+    comp = isl_aff_set_dim_id(comp, isl_dim_in, 6, id(prg.ctx, "threadIdx.z"));
+    out << tab(2) << "int d" << str(i) << " = " << codegen_c(comp) << ";" << endl;
+    args.push_back("d" + str(i));
+  }
+  string args_list = sep_list(args, "", "", ", ");
+  out << tab(2) << op->name << "(" << args_list << ");" << endl;
+  out << tab(2) << "// " << str(aff) << endl;
+  // Now: Execute all statement instances scheduled for this thread?
+
+  auto min_instances = get_multi_aff(lexmin(inv(gpu_sched_bounded)));
+  auto max_instances = get_multi_aff(lexmax(inv(gpu_sched_bounded)));
+  out << tab(2) << "// " << str(min_instances) << endl;
+  out << tab(2) << "// " << str(max_instances) << endl;
+  out << tab(1) << "}" << endl;
+  out << "}" << endl;
+
+  out << endl;
+
+  out << "void " << prg.name << "" << sep_list(arg_decls, "(", ")", ", ") << " {" << endl;
+  vector<string> kernel_args;
+  for (auto b : prg.boundary_buffers()) {
+    out << tab(1) << "float* " << b << "_cuda;" << endl;
+    string buf_size = str(prg.buffer_size(b));
+    out << tab(1) << "cudaMalloc(&" << b << "_cuda, sizeof(float)*" << buf_size << ");" << endl;
+    kernel_args.push_back(b + "_cuda");
+  }
+  for (auto b : prg.ins) {
+    string buf_size = str(prg.buffer_size(b));
+    out << tab(1) << "cudaMemcpy(" <<
+      b << "_cuda" <<
+      ", " <<
+      b <<
+      "," <<
+      "sizeof(float)*" << buf_size << ", cudaMemcpyHostToDevice);" << endl;
+  }
+
+  out << tab(1) << "dim3 blocks(" << comma_list(blocks) << ");" << endl;
+  out << tab(1) << "dim3 threads(" << comma_list(threads) << ");" << endl;
+  out << endl;
+
+  out << tab(1) << "cudaEvent_t start, stop;" << endl;
+  out << tab(1) << "cudaEventCreate(&start);" << endl;
+  out << tab(1) << "cudaEventCreate(&stop);" << endl;
+  out << tab(1) << "cudaEventRecord(start);" << endl;
+  out << tab(1) << prg.name << "_kernel<<<blocks, threads>>>" << sep_list(kernel_args, "(", ")", ", ") << ";" << endl;
+  out << tab(1) << "cudaEventRecord(stop);" << endl;
+  out << endl;
+  out << tab(1) << "cudaEventSynchronize(stop);" << endl;
+  out << tab(1) << "float milliseconds = 0;" << endl;
+  out << tab(1) << "cudaEventElapsedTime(&milliseconds, start, stop);" << endl;
+  out << tab(1) << "printf(\"GPU Exe time (ms): %f\\n\", milliseconds);" << endl;
+
+  out << endl;
+
+  for (auto b : prg.outs) {
+    string buf_size = str(prg.buffer_size(b));
+    out << tab(1) << "cudaMemcpy(" <<
+      b <<
+      ", " <<
+      b << "_cuda" <<
+      "," <<
+      "sizeof(float)*" << buf_size << ", cudaMemcpyDeviceToHost);" << endl;
+  }
+  for (auto b : prg.boundary_buffers()) {
+    out << tab(1) << "cudaFree(" << b << "_cuda);" << endl;
+  }
+  out << "}" << endl;
+
+  out << endl;
+
+  out << "int main() {" << endl;
+  {
+    vector<string> args;
+    vector<string> cpu_args;
+    for (auto b : prg.boundary_buffers()) {
+      {
+        out << tab(1) << "float* " << b << ";" << endl;
+        string buf_size = str(prg.buffer_size(b));
+        out << tab(1) << b << " = (float*) malloc(sizeof(float)*" << buf_size << ");" << endl;
+        args.push_back(b);
+        if (elem(b, prg.ins)) {
+          out << tab(1) << "for (int i = 0; i < " << buf_size << "; i++) {" << endl;
+          out << tab(2) << b << "[i] = i;" << endl;
+          out << tab(1) << "}" << endl;
+        }
+      }
+      {
+        out << tab(1) << "float* " << b << "_cpu_ref;" << endl;
+        string buf_size = str(prg.buffer_size(b));
+        out << tab(1) << b << "_cpu_ref = (float*) malloc(sizeof(float)*" << buf_size << ");" << endl;
+        cpu_args.push_back(b + "_cpu_ref");
+        if (elem(b, prg.ins)) {
+          out << tab(1) << "for (int i = 0; i < " << buf_size << "; i++) {" << endl;
+          out << tab(2) << b << "_cpu_ref[i] = i;" << endl;
+          out << tab(1) << "}" << endl;
+        }
+      }
+    }
+
+    out << endl;
+    out << tab(1) << prg.name << "_cpu_reference" << sep_list(cpu_args, "(", ");", ", ") << endl;
+    out << tab(1) << "printf(\"Done with CPU reference\\n\");" << endl;
+    out << tab(1) << prg.name << sep_list(args, "(", ");", ", ") << endl;
+    out << endl;
+    for (auto b : prg.boundary_buffers()) {
+      string buf_size = str(prg.buffer_size(b));
+      if (elem(b, prg.outs)) {
+        out << tab(1) << "for (int i = 0; i < " << buf_size << "; i++) {" << endl;
+        //out << tab(2) << "printf(\"" << b << "[%d] = %f\\n\", i, " << b << "[i]);" << endl;
+        //out << tab(2) << "printf(\"" << b << "_cpu_ref[%d] = %f\\n\", i, " << b << "_cpu_ref[i]);" << endl;
+        out << tab(2) << "assert(" << b << "[i] == " << b << "_cpu_ref[i]);" << endl;
+        out << tab(1) << "}" << endl;
+      }
+      out << tab(1) << "free(" << b << ");" << endl;
+      out << tab(1) << "free(" << b << "_cpu_ref);" << endl;
+    }
+  }
+
+  out << "}" << endl;
+  out.close();
+}
+
+void gpu_codegen_test() {
+  prog prg("hello_gpu");
+  prg.compute_unit_file = "clockwork_cuda_standard_compute_units.h";
+  prg.add_input("x_dram");
+  prg.add_output("y_dram");
+
+  cpy("y_dram", "x_dram", 2, prg);
+  infer_bounds("y_dram", {8, 64}, prg);
+
+  prg.pretty_print();
+  op* op = pick(prg.all_ops());
+  string name = op->name;
+  op->pretty_print();
+  string gpu_schedule = curlies(name + "[root, x, y] -> [0, x, 0, 0, y, 0, 0]");
+  cout << "GPU schedule:" << gpu_schedule << endl;
+  isl_map* gpu_sched = isl_map_read_from_str(prg.ctx, gpu_schedule.c_str());
+  cout << "gpu thread locs to instances: " << str(inv(gpu_sched)) << endl;
+  cout << tab(1) << "# statement instances per thread: " << str(card(inv(gpu_sched))) << endl;
+
+  generate_cuda_code(prg, gpu_sched);
+
+  int res = cmd("nvcc -o hg hello_gpu.cu");
+  assert(res == 0);
+  res = cmd("./hg");
+  assert(res == 0);
+
+  assert(false);
+}
+
+void histogram1d_test() {
+  prog prg = histogram1d();
+
+  prg.pretty_print();
+  //assert(false);
+
+  assert(unoptimized_compiles(prg));
+  //assert(false);
+}
+
+void blur_static_dynamic_comparison() {
+  string prefix = "bxy_d";
+
+  int cols = 1920;
+  int rows = 1080;
+
+  int unroll_factor = 1;
+  string out_name = prefix + "_" + str(unroll_factor);
+
+  CodegenOptions options;
+  options.internal = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  options.debug_options.expect_all_linebuffers = true;
+  prog prg = blur_xy_16(out_name).realize(options, out_name, cols, rows, unroll_factor);
+
+  unroll_reduce_loops(prg);
+  merge_basic_block_ops(prg);
+  normalize_bounds(prg);
+  normalize_address_offsets(prg);
+
+  auto fusion_groups = one_stage_per_group(prg);
+  app_dag dag = partition_application(fusion_groups, prg);
+
+  options = CodegenOptions();
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  generate_app_code(options, dag);
+
+  move_to_benchmarks_folder(out_name + "_opt");
+
+  assert(false);
+  
+}
+
+void blur32_static_dynamic_comparison() {
+  string prefix = "bxy_d";
+
+  int size = 1080;
+  int rows = size;
+  int cols = size;
+
+  int unroll_factor = 32;
+  int throughput = 32;
+  string out_name = prefix + "_" + str(unroll_factor);
+
+  CodegenOptions options;
+  options.internal = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  options.debug_options.expect_all_linebuffers = true;
+
+  prog prg = blur_xy_16(out_name).realize(options, out_name, cols, rows, 1);
+  prg.name = out_name + "_opt";
+
+  unroll_reduce_loops(prg);
+  merge_basic_block_ops(prg);
+  normalize_bounds(prg);
+  normalize_address_offsets(prg);
+
+  auto fusion_groups = one_stage_per_group(prg);
+  auto fresh_groups = insert_inter_group_buffers(fusion_groups, prg);
+  unroll_mismatched_inner_loops(prg);
+  merge_basic_block_ops(prg);
+  infer_bounds_and_unroll(pick(prg.outs), {size, size}, throughput, prg);
+
+  assert(unoptimized_compiles(prg));
+
+  app_dag dag = partition_groups(fresh_groups, prg);
+
+  options = CodegenOptions();
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  generate_app_code(options, dag);
+
+
+  move_to_benchmarks_folder(prg.name);
+
+  cout << "prg name: " << prg.name << endl;
+
+  assert(false);
+}
+
+void blur16_static_dynamic_comparison() {
+  string prefix = "bxy_d";
+
+  int size = 1080;
+  int rows = size;
+  int cols = size;
+
+  int unroll_factor = 16;
+  int throughput = 16;
+  string out_name = prefix + "_" + str(unroll_factor);
+
+  CodegenOptions options;
+  options.internal = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  options.debug_options.expect_all_linebuffers = true;
+  prog prg = blur_xy_16(out_name).realize(options, out_name, cols, rows, 1);
+  prg.name = "bxy_d_16_opt";
+  unroll_reduce_loops(prg);
+  merge_basic_block_ops(prg);
+  normalize_bounds(prg);
+  normalize_address_offsets(prg);
+
+  auto fusion_groups = one_stage_per_group(prg);
+  auto fresh_groups = insert_inter_group_buffers(fusion_groups, prg);
+  unroll_mismatched_inner_loops(prg);
+  merge_basic_block_ops(prg);
+  infer_bounds_and_unroll(pick(prg.outs), {size, size}, throughput, prg);
+
+  assert(unoptimized_compiles(prg));
+
+  app_dag dag = partition_groups(fresh_groups, prg);
+  //app_dag dag = partition_application(fusion_groups, prg);
+
+  options = CodegenOptions();
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  generate_app_code(options, dag);
+
+
+  move_to_benchmarks_folder(prg.name);
+
+  cout << "prg name: " << prg.name << endl;
+
+  assert(false);
+}
+
+void jac32_static_dynamic_comparison() {
+  string prefix = "jac_d";
+
+  int size = 1080;
+  int rows = size;
+  int cols = size;
+
+  int unroll_factor = 32;
+  int throughput = unroll_factor;
+  string out_name = prefix + "_" + str(unroll_factor);
+
+  CodegenOptions options;
+  options.internal = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  options.debug_options.expect_all_linebuffers = true;
+
+  App jac = stencil_chain_stage_iccad(out_name, 15);
+  prog prg = jac.realize(options, out_name, cols, rows, 1);
+  prg.name = out_name + "_opt";
+
+  jac.generate_soda_file(prg.name, throughput);
+
+  unroll_reduce_loops(prg);
+  merge_basic_block_ops(prg);
+  normalize_bounds(prg);
+  normalize_address_offsets(prg);
+
+  auto fusion_groups = one_stage_per_group(prg);
+  auto fresh_groups = insert_inter_group_buffers(fusion_groups, prg);
+  unroll_mismatched_inner_loops(prg);
+  merge_basic_block_ops(prg);
+  infer_bounds_and_unroll(pick(prg.outs), {size, size}, throughput, prg);
+
+  assert(unoptimized_compiles(prg));
+
+  app_dag dag = partition_groups(fresh_groups, prg);
+
+  options = CodegenOptions();
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  generate_app_code(options, dag);
+
+
+  move_to_benchmarks_folder(prg.name);
+
+  cout << "prg name: " << prg.name << endl;
+
+  assert(false);
+
+}
+
+void jac16_static_dynamic_comparison() {
+  string prefix = "jac_d";
+
+  int size = 1080;
+  int rows = size;
+  int cols = size;
+
+  int unroll_factor = 16;
+  int throughput = unroll_factor;
+  string out_name = prefix + "_" + str(unroll_factor);
+
+  CodegenOptions options;
+  options.internal = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  options.debug_options.expect_all_linebuffers = true;
+
+  App jac = stencil_chain_stage_iccad(out_name, 15);
+  prog prg = jac.realize(options, out_name, cols, rows, 1);
+  prg.name = out_name + "_opt";
+
+  jac.generate_soda_file(prg.name, throughput);
+
+  unroll_reduce_loops(prg);
+  merge_basic_block_ops(prg);
+  normalize_bounds(prg);
+  normalize_address_offsets(prg);
+
+  auto fusion_groups = one_stage_per_group(prg);
+  auto fresh_groups = insert_inter_group_buffers(fusion_groups, prg);
+  unroll_mismatched_inner_loops(prg);
+  merge_basic_block_ops(prg);
+  infer_bounds_and_unroll(pick(prg.outs), {size, size}, throughput, prg);
+
+  assert(unoptimized_compiles(prg));
+
+  app_dag dag = partition_groups(fresh_groups, prg);
+
+  options = CodegenOptions();
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  generate_app_code(options, dag);
+
+
+  move_to_benchmarks_folder(prg.name);
+
+  cout << "prg name: " << prg.name << endl;
+
+  assert(false);
+
+}
+
+void cp32_static_dynamic_comparison() {
+  string prefix = "cp";
+
+  int size = 1080;
+  int rows = size;
+  int cols = size;
+
+  int unroll_factor = 32;
+  int throughput = unroll_factor;
+  string out_name = prefix + "_" + str(unroll_factor);
+
+  CodegenOptions options;
+  options.internal = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  options.debug_options.expect_all_linebuffers = true;
+
+  App jac = camera_pipeline(out_name);
+  prog prg = jac.realize(options, out_name, cols, rows, 1);
+
+  move_to_benchmarks_folder(out_name + "_opt");
+
+  prg.name = out_name + "_opt_d";
+
+  jac.generate_soda_file(prg.name, throughput);
+
+  unroll_reduce_loops(prg);
+  merge_basic_block_ops(prg);
+  normalize_bounds(prg);
+  normalize_address_offsets(prg);
+
+  auto fusion_groups = one_stage_per_group(prg);
+  auto fresh_groups = insert_inter_group_buffers(fusion_groups, prg);
+  unroll_mismatched_inner_loops(prg);
+  merge_basic_block_ops(prg);
+  infer_bounds_and_unroll(pick(prg.outs), {size, size}, throughput, prg);
+
+  assert(unoptimized_compiles(prg));
+
+  app_dag dag = partition_groups(fresh_groups, prg);
+
+  options = CodegenOptions();
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  generate_app_code(options, dag);
+
+  move_to_benchmarks_folder(prg.name);
+
+  string synth_dir =
+    "./soda_codes/" + prg.name+ "/our_code/";
+
+  system(("cp " + out_name + "_opt" + "*.h " + synth_dir).c_str());
+
+  cout << "prg name: " << prg.name << endl;
+
+  assert(false);
+}
+
+void cp16_static_dynamic_comparison() {
+  string prefix = "cp";
+
+  int size = 1080;
+  int rows = size;
+  int cols = size;
+
+  int unroll_factor = 16;
+  int throughput = unroll_factor;
+  string out_name = prefix + "_" + str(unroll_factor);
+
+  CodegenOptions options;
+  options.internal = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  options.debug_options.expect_all_linebuffers = true;
+
+  App jac = camera_pipeline(out_name);
+  prog prg = jac.realize(options, out_name, cols, rows, 1);
+
+  move_to_benchmarks_folder(out_name + "_opt");
+
+  prg.name = out_name + "_opt_d";
+
+  jac.generate_soda_file(prg.name, throughput);
+
+  unroll_reduce_loops(prg);
+  merge_basic_block_ops(prg);
+  normalize_bounds(prg);
+  normalize_address_offsets(prg);
+
+  auto fusion_groups = one_stage_per_group(prg);
+  auto fresh_groups = insert_inter_group_buffers(fusion_groups, prg);
+  unroll_mismatched_inner_loops(prg);
+  merge_basic_block_ops(prg);
+  infer_bounds_and_unroll(pick(prg.outs), {size, size}, throughput, prg);
+
+  assert(unoptimized_compiles(prg));
+
+  app_dag dag = partition_groups(fresh_groups, prg);
+
+  options = CodegenOptions();
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  generate_app_code(options, dag);
+
+  move_to_benchmarks_folder(prg.name);
+
+  string synth_dir =
+    "./soda_codes/" + prg.name+ "/our_code/";
+
+  system(("cp " + out_name + "_opt" + "*.h " + synth_dir).c_str());
+
+  cout << "prg name: " << prg.name << endl;
+
+  assert(false);
+}
+
+void cp_static_dynamic_comparison() {
+  string prefix = "cp";
+
+  int size = 1080;
+  int rows = size;
+  int cols = size;
+
+  int unroll_factor = 1;
+  int throughput = unroll_factor;
+  string out_name = prefix + "_" + str(unroll_factor);
+
+  CodegenOptions options;
+  options.internal = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  options.debug_options.expect_all_linebuffers = true;
+
+  App jac = camera_pipeline(out_name);
+  prog prg = jac.realize(options, out_name, cols, rows, 1);
+
+  move_to_benchmarks_folder(out_name + "_opt");
+
+  prg.name = out_name + "_opt_d";
+
+  jac.generate_soda_file(prg.name, throughput);
+
+  unroll_reduce_loops(prg);
+  merge_basic_block_ops(prg);
+  normalize_bounds(prg);
+  normalize_address_offsets(prg);
+
+  auto fusion_groups = one_stage_per_group(prg);
+  auto fresh_groups = insert_inter_group_buffers(fusion_groups, prg);
+  unroll_mismatched_inner_loops(prg);
+  merge_basic_block_ops(prg);
+  infer_bounds_and_unroll(pick(prg.outs), {size, size}, throughput, prg);
+
+  assert(unoptimized_compiles(prg));
+
+  app_dag dag = partition_groups(fresh_groups, prg);
+
+  options = CodegenOptions();
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  generate_app_code(options, dag);
+
+  move_to_benchmarks_folder(prg.name);
+
+  string synth_dir =
+    "./soda_codes/" + prg.name+ "/our_code/";
+
+  system(("cp " + out_name + "_opt" + "*.h " + synth_dir).c_str());
+
+  cout << "prg name: " << prg.name << endl;
+
+  assert(false);
+}
+
+void jac_static_dynamic_comparison() {
+  string prefix = "jac_d";
+
+  int size = 1080;
+  int rows = size;
+  int cols = size;
+
+  int unroll_factor = 1;
+  int throughput = unroll_factor;
+  string out_name = prefix + "_" + str(unroll_factor);
+
+  CodegenOptions options;
+  options.internal = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  options.debug_options.expect_all_linebuffers = true;
+
+  App jac = stencil_chain_stage_iccad(out_name, 15);
+  prog prg = jac.realize(options, out_name, cols, rows, 1);
+  prg.name = out_name + "_opt";
+
+  jac.generate_soda_file(prg.name, throughput);
+
+  unroll_reduce_loops(prg);
+  merge_basic_block_ops(prg);
+  normalize_bounds(prg);
+  normalize_address_offsets(prg);
+
+  auto fusion_groups = one_stage_per_group(prg);
+  auto fresh_groups = insert_inter_group_buffers(fusion_groups, prg);
+  unroll_mismatched_inner_loops(prg);
+  merge_basic_block_ops(prg);
+  infer_bounds_and_unroll(pick(prg.outs), {size, size}, throughput, prg);
+
+  assert(unoptimized_compiles(prg));
+
+  app_dag dag = partition_groups(fresh_groups, prg);
+
+  options = CodegenOptions();
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  generate_app_code(options, dag);
+
+
+  move_to_benchmarks_folder(prg.name);
+
+  cout << "prg name: " << prg.name << endl;
+
+  assert(false);
+
+}
+
+void sbl32_static_dynamic_comparison_larger_bounds_to_prevent_vivado_unroll_error() {
+  string prefix = "sbl_dlb";
+
+  int size = 4096;
+  int rows = size;
+  int cols = size;
+
+  int unroll_factor = 32;
+  int throughput = 32;
+  string out_name = prefix + "_" + str(unroll_factor);
+
+  CodegenOptions options;
+  options.internal = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  options.debug_options.expect_all_linebuffers = true;
+
+  App sbl = sobel16(out_name);
+  prog prg = sbl.realize(options, out_name, cols, rows, 1);
+  prg.name = out_name + "_opt";
+
+  sbl.generate_soda_file(prg.name, throughput);
+
+  unroll_reduce_loops(prg);
+  merge_basic_block_ops(prg);
+  normalize_bounds(prg);
+  normalize_address_offsets(prg);
+
+  auto fusion_groups = one_stage_per_group(prg);
+  auto fresh_groups = insert_inter_group_buffers(fusion_groups, prg);
+  unroll_mismatched_inner_loops(prg);
+  merge_basic_block_ops(prg);
+  infer_bounds_and_unroll(pick(prg.outs), {size, size}, throughput, prg);
+
+  assert(unoptimized_compiles(prg));
+
+  app_dag dag = partition_groups(fresh_groups, prg);
+
+  options = CodegenOptions();
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  generate_app_code(options, dag);
+
+
+  move_to_benchmarks_folder(prg.name);
+
+  cout << "prg name: " << prg.name << endl;
+
+  assert(false);
+
+}
+
+void sbl32_static_dynamic_comparison() {
+  string prefix = "sbl_d";
+
+  int size = 1080;
+  int rows = size;
+  int cols = size;
+
+  int unroll_factor = 32;
+  int throughput = 32;
+  string out_name = prefix + "_" + str(unroll_factor);
+
+  CodegenOptions options;
+  options.internal = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  options.debug_options.expect_all_linebuffers = true;
+
+  App sbl = sobel16(out_name);
+  prog prg = sbl.realize(options, out_name, cols, rows, 1);
+  prg.name = out_name + "_opt";
+
+  sbl.generate_soda_file(prg.name, throughput);
+
+  unroll_reduce_loops(prg);
+  merge_basic_block_ops(prg);
+  normalize_bounds(prg);
+  normalize_address_offsets(prg);
+
+  auto fusion_groups = one_stage_per_group(prg);
+  auto fresh_groups = insert_inter_group_buffers(fusion_groups, prg);
+  unroll_mismatched_inner_loops(prg);
+  merge_basic_block_ops(prg);
+  infer_bounds_and_unroll(pick(prg.outs), {size, size}, throughput, prg);
+
+  assert(unoptimized_compiles(prg));
+
+  app_dag dag = partition_groups(fresh_groups, prg);
+
+  options = CodegenOptions();
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  generate_app_code(options, dag);
+
+
+  move_to_benchmarks_folder(prg.name);
+
+  cout << "prg name: " << prg.name << endl;
+
+  assert(false);
+}
+
+void sbl16_static_dynamic_comparison_short_FIFOs() {
+  string prefix = "sbl_dsd";
+
+  int size = 1080;
+  int rows = size;
+  int cols = size;
+
+  int unroll_factor = 16;
+  int throughput = 16;
+  string out_name = prefix + "_" + str(unroll_factor);
+
+  CodegenOptions options;
+  options.internal = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  options.debug_options.expect_all_linebuffers = true;
+
+  App sbl = sobel16(out_name);
+  prog prg = sbl.realize(options, out_name, cols, rows, 1);
+  prg.name = out_name + "_opt";
+
+  sbl.generate_soda_file(prg.name, throughput);
+
+  unroll_reduce_loops(prg);
+  merge_basic_block_ops(prg);
+  normalize_bounds(prg);
+  normalize_address_offsets(prg);
+
+  auto fusion_groups = one_stage_per_group(prg);
+  auto fresh_groups = insert_inter_group_buffers(fusion_groups, prg);
+  unroll_mismatched_inner_loops(prg);
+  merge_basic_block_ops(prg);
+  infer_bounds_and_unroll(pick(prg.outs), {size, size}, throughput, prg);
+
+  assert(unoptimized_compiles(prg));
+
+  app_dag dag = partition_groups(fresh_groups, prg);
+
+  options = CodegenOptions();
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  generate_app_code(options, dag);
+
+
+  move_to_benchmarks_folder(prg.name);
+
+  cout << "prg name: " << prg.name << endl;
+
+  assert(false);
+}
+
+void sbl16_static_dynamic_comparison() {
+  string prefix = "sbl_d";
+
+  int size = 1080;
+  int rows = size;
+  int cols = size;
+
+  int unroll_factor = 16;
+  int throughput = 16;
+  string out_name = prefix + "_" + str(unroll_factor);
+
+  CodegenOptions options;
+  options.internal = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  options.debug_options.expect_all_linebuffers = true;
+
+  App sbl = sobel16(out_name);
+  prog prg = sbl.realize(options, out_name, cols, rows, 1);
+  prg.name = out_name + "_opt";
+
+  sbl.generate_soda_file(prg.name, throughput);
+
+  unroll_reduce_loops(prg);
+  merge_basic_block_ops(prg);
+  normalize_bounds(prg);
+  normalize_address_offsets(prg);
+
+  auto fusion_groups = one_stage_per_group(prg);
+  auto fresh_groups = insert_inter_group_buffers(fusion_groups, prg);
+  unroll_mismatched_inner_loops(prg);
+  merge_basic_block_ops(prg);
+  infer_bounds_and_unroll(pick(prg.outs), {size, size}, throughput, prg);
+
+  assert(unoptimized_compiles(prg));
+
+  app_dag dag = partition_groups(fresh_groups, prg);
+
+  options = CodegenOptions();
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  generate_app_code(options, dag);
+
+
+  move_to_benchmarks_folder(prg.name);
+
+  cout << "prg name: " << prg.name << endl;
+
+  assert(false);
+}
+
+void sbl_static_dynamic_comparison() {
+  string prefix = "sbl_d";
+
+  int size = 1080;
+  int rows = size;
+  int cols = size;
+
+  int unroll_factor = 1;
+  int throughput = 1;
+  string out_name = prefix + "_" + str(unroll_factor);
+
+  CodegenOptions options;
+  options.internal = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  options.debug_options.expect_all_linebuffers = true;
+
+  App sbl = sobel16(out_name);
+  prog prg = sbl.realize(options, out_name, cols, rows, 1);
+  sbl.generate_soda_file(out_name, throughput);
+  prg.name = out_name + "_opt";
+
+  unroll_reduce_loops(prg);
+  merge_basic_block_ops(prg);
+  normalize_bounds(prg);
+  normalize_address_offsets(prg);
+
+  auto fusion_groups = one_stage_per_group(prg);
+  auto fresh_groups = insert_inter_group_buffers(fusion_groups, prg);
+  unroll_mismatched_inner_loops(prg);
+  merge_basic_block_ops(prg);
+  infer_bounds_and_unroll(pick(prg.outs), {size, size}, throughput, prg);
+
+  assert(unoptimized_compiles(prg));
+
+  app_dag dag = partition_groups(fresh_groups, prg);
+
+  options = CodegenOptions();
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  generate_app_code(options, dag);
+
+
+  move_to_benchmarks_folder(prg.name);
+
+  cout << "prg name: " << prg.name << endl;
+
+  assert(false);
+}
+
+void cp16_static_dynamic_comparison_fresh_codegen() {
+  string prefix = "cpfc";
+
+  int size = 1080;
+  int rows = size;
+  int cols = size;
+
+  int unroll_factor = 16;
+  int throughput = unroll_factor;
+  string out_name = prefix + "_" + str(unroll_factor);
+
+  CodegenOptions options;
+  options.internal = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  options.debug_options.expect_all_linebuffers = true;
+
+  App jac = camera_pipeline(out_name);
+  prog prg = jac.realize(options, out_name, cols, rows, 1);
+
+  move_to_benchmarks_folder(out_name + "_opt");
+
+  prg.name = out_name + "_opt_d";
+
+  jac.generate_soda_file(prg.name, throughput);
+
+  unroll_reduce_loops(prg);
+  merge_basic_block_ops(prg);
+  normalize_bounds(prg);
+  normalize_address_offsets(prg);
+
+  auto fusion_groups = one_stage_per_group(prg);
+  auto fresh_groups = insert_inter_group_buffers(fusion_groups, prg);
+  unroll_mismatched_inner_loops(prg);
+  merge_basic_block_ops(prg);
+  infer_bounds_and_unroll(pick(prg.outs), {size, size}, throughput, prg);
+
+  assert(unoptimized_compiles(prg));
+
+  app_dag dag = partition_groups(fresh_groups, prg);
+
+  options = CodegenOptions();
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  generate_app_code(options, dag);
+
+  move_to_benchmarks_folder(prg.name);
+
+  string synth_dir =
+    "./soda_codes/" + prg.name+ "/our_code/";
+
+  system(("cp " + out_name + "_opt" + "*.h " + synth_dir).c_str());
+
+  cout << "prg name: " << prg.name << endl;
+
+  assert(false);
+
+}
+
+void initial_soda_comparison() {
+  cp32_static_dynamic_comparison();
+  cp16_static_dynamic_comparison();
+  cp_static_dynamic_comparison();
+
+  sbl32_static_dynamic_comparison();
+  sbl16_static_dynamic_comparison();
+  sbl_static_dynamic_comparison();
+
+  jac32_static_dynamic_comparison();
+  jac16_static_dynamic_comparison();
+  jac_static_dynamic_comparison();
+
+  cp16_static_dynamic_comparison_fresh_codegen();
+
+
+  sbl16_static_dynamic_comparison_short_FIFOs();
+  sbl32_static_dynamic_comparison_larger_bounds_to_prevent_vivado_unroll_error();
+
+
+  blur32_static_dynamic_comparison();
+  blur16_static_dynamic_comparison();
+  blur_static_dynamic_comparison();
+}
+
 void application_tests() {
+  initial_soda_comparison();
+
+  histogram_test();
+  histogram1d_test();
   iccad_tests();
+
+
+
+  gpu_codegen_test();
 
   up_to_id_stream_tests();
   up_to_ram_addr_unit_test();
@@ -18712,7 +20340,7 @@ void asplos_ds_test() {
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
-  options.use_custom_code_string = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
   options.debug_options.expect_all_linebuffers = true;
 
   string hblur = as_ds("in", ds);
@@ -18736,7 +20364,7 @@ void asplos_gp_test() {
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
-  options.use_custom_code_string = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
   options.debug_options.expect_all_linebuffers = true;
   ds.realize(options, hblur, 30, 30, 1);
 }
@@ -18757,7 +20385,7 @@ void asplos_lp_test() {
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
-  options.use_custom_code_string = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
   ds.realize(options, image, 30, 30, 1);
 }
 
@@ -18795,7 +20423,7 @@ void asplos_ef_test() {
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
-  options.use_custom_code_string = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
   ds.realize(options, image, 30, 30, 1);
 
 }
@@ -19041,8 +20669,208 @@ void test_time_sharing_gaussian_pyramid() {
   move_to_benchmarks_folder(prg.name);
 }
 
+void test_multi_kernel_mismatched_loop_depths() {
+  prog prg("mismatched_depths");
+  prg.compute_unit_file = "local_laplacian_filters_compute.h";
+
+  prg.add_input("color_in_oc");
+  prg.add_output("color_out");
+
+  load_input("color_in_oc", "color_in_int", 3, prg);
+  pointwise("color_in", "llf_int_to_float", "color_in_int", 3, prg);
+
+  llf_to_grayscale("gray", "color_in", prg);
+
+  llf_to_color_no_scales("color_out_float", "color_in", "gray", prg);
+  pointwise("color_out", "llf_float_to_int", "color_out_float", 3, prg);
+
+  prg.pretty_print();
+  prg.sanity_check();
+
+  infer_bounds("color_out", {3, 23, 23}, prg);
+
+  cout << "After bounds inference..." << endl;
+  prg.pretty_print();
+
+  unroll_mismatched_inner_loops(prg);
+  cout << "After flattening..." << endl;
+  prg.pretty_print();
+
+  assert(all_loop_nests_same_depth(prg));
+
+  unroll_reduce_loops(prg);
+  merge_basic_block_ops(prg);
+  normalize_bounds(prg);
+  normalize_address_offsets(prg);
+
+  auto unopt_postprocessed = unoptimized_result(prg);
+
+  auto fusion_groups = one_stage_per_group(prg);
+
+  //auto fresh_groups = insert_inter_group_buffers(fusion_groups, prg);
+  //unroll_mismatched_inner_loops(prg);
+
+  //prg.pretty_print();
+  //assert(false);
+
+  prg.name = "mismatched_loops_plus_kernels";
+  //vector<string> multi_kernel_res = unoptimized_result(prg);
+
+  app_dag dag = partition_application(fusion_groups, prg);
+  string target = "gp_in_on_chip_1_buf4_to_gp_1112";
+  dag.prg.pretty_print();
+
+  CodegenOptions options;
+
+  //options.internal = true;
+  //options.all_rams = true;
+  //all_unbanked(prg, options);
+  //options.inner_bank_offset_mode =
+    //INNER_BANK_OFFSET_MULTILINEAR;
+
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  //options.hls_loop_codegen = HLS_LOOP_CODEGEN_ISL;
+  generate_app_code(options, dag);
+
+  generate_regression_testbench(dag.prg);
+  vector<string> multi_kernel_res = run_regression_tb(dag.prg);
+
+  compare("multi_kernel_" + prg.name + "_vs_unopt", multi_kernel_res, unopt_postprocessed);
+  //move_to_benchmarks_folder(dag.prg.name);
+
+  //assert(false);
+}
+
+void test_multi_kernel_llf() {
+  prog prg = llf_float();
+  prg.name = "llf_dcons_2048";
+  //auto unopt_postprocessed = unoptimized_result(prg);
+
+  auto fusion_groups = one_stage_per_group(prg);
+  app_dag dag = partition_application(fusion_groups, prg);
+  string target = "gp_in_on_chip_1_buf4_to_gp_1112";
+  dag.prg.pretty_print();
+
+  CodegenOptions options;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  //options.hls_loop_codegen = HLS_LOOP_CODEGEN_ISL;
+  generate_app_code(options, dag);
+
+  //generate_regression_testbench(dag.prg);
+  //vector<string> multi_kernel_res = run_regression_tb(dag.prg);
+
+  //compare("multi_kernel_" + prg.name + "_vs_unopt", multi_kernel_res, unopt_postprocessed);
+  move_to_benchmarks_folder(dag.prg.name);
+  assert(false);
+}
+
+void test_multi_kernel_pyramid_collapsing() {
+
+  prog prg("pyr_blnd2d500_2048");
+  prg.compute_unit_file = "local_laplacian_filters_compute.h";
+  prg.add_input("in");
+  prg.add_output("out");
+
+  cpy("in_on_chip", "in", 2, prg);
+
+  const int num_pyramid_levels = 4;
+  vector<string> lps = laplacian_pyramid("in_on_chip", num_pyramid_levels, prg);
+
+  string reconstructed = reconstruct_gaussian(lps, prg);
+  cpy("out", reconstructed, 2, prg);
+
+  infer_bounds("out", {64, 64}, prg);
+
+  prg.pretty_print();
+  prg.sanity_check();
+
+  unroll_reduce_loops(prg);
+  merge_basic_block_ops(prg);
+  normalize_bounds(prg);
+  normalize_address_offsets(prg);
+
+  prg.pretty_print();
+  prg.sanity_check();
+
+  auto unopt_postprocessed = unoptimized_result(prg);
+
+  auto fusion_groups = one_stage_per_group(prg);
+  //auto fusion_groups = fuse_pointwise_stages(prg);
+  app_dag dag = partition_application(fusion_groups, prg);
+
+  CodegenOptions options;
+  //all_unbanked(prg, options);
+  //options.inner_bank_offset_mode =
+    //INNER_BANK_OFFSET_MULTILINEAR;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  generate_app_code(options, dag);
+
+  generate_regression_testbench(dag.prg);
+
+  vector<string> multi_kernel_res = run_regression_tb(dag.prg);
+
+  compare("multi_kernel_" + prg.name + "_vs_unopt", multi_kernel_res, unopt_postprocessed);
+  move_to_benchmarks_folder(dag.prg.name);
+}
+
+void test_artificial_deadlock() {
+  prog prg("art_dead100");
+  prg.add_input("in");
+  prg.add_output("out");
+
+  load_input("in", "gray", 2, prg);
+
+  auto blurred = prg.add_nest("yb", 0, 1, "xb", 0, 1)->add_op("blur");
+  blurred->add_load("gray", "xb", "yb");
+  blurred->add_store("blurred", "xb", "yb");
+  blurred->add_function("conv_3_3_float_one");
+
+
+  auto diff = prg.add_nest("y", 0, 1, "x", 0, 1)->add_op("diff");
+  diff->add_load("gray", "x", "y");
+  diff->add_load("blurred", "x", "y");
+  diff->add_store("out", "x", "y");
+  diff->add_function("diff");
+
+
+  infer_bounds("out", {64, 64}, prg);
+
+  prg.pretty_print();
+  prg.sanity_check();
+
+  unroll_reduce_loops(prg);
+  merge_basic_block_ops(prg);
+  normalize_bounds(prg);
+  normalize_address_offsets(prg);
+
+  prg.pretty_print();
+  prg.sanity_check();
+
+  auto unopt_postprocessed = unoptimized_result(prg);
+
+  auto fusion_groups = one_stage_per_group(prg);
+  app_dag dag = partition_application(fusion_groups, prg);
+  for (auto& gp : dag.fusion_group_progs) {
+    cout << "============================" << endl;
+    gp.second.pretty_print();
+    cout << endl;
+  }
+
+  dag.prg.pretty_print();
+
+  CodegenOptions options;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  generate_app_code(options, dag);
+
+  generate_regression_testbench(dag.prg);
+  vector<string> multi_kernel_res = run_regression_tb(dag.prg);
+
+  compare("multi_kernel_" + prg.name + "_vs_unopt", multi_kernel_res, unopt_postprocessed);
+  move_to_benchmarks_folder(dag.prg.name);
+}
+
 void test_multi_kernel_unsharp() {
-  prog prg("unsharp_multi_kernel");
+  prog prg("us_mk1_ii1");
   prg.add_input("in");
   prg.add_output("out");
 
@@ -19050,7 +20878,7 @@ void test_multi_kernel_unsharp() {
   cpy("gray_blur", "gray", 2, prg);
   cpy("gray_blur_cache", "gray_blur", 2, prg);
 
-  auto blurred = prg.add_nest("xb", 0, 1, "yb", 0, 1)->add_op("blur");
+  auto blurred = prg.add_nest("yb", 0, 1, "xb", 0, 1)->add_op("blur");
   for (int i = 0; i < 3; i++) {
     for (int j = 0; j < 3; j++) {
       blurred->add_load("gray_blur_cache", "xb + " + str(i), "yb + " + str(j));
@@ -19061,7 +20889,7 @@ void test_multi_kernel_unsharp() {
 
 
   cpy("gray_diff", "gray", 2, prg);
-  auto diff = prg.add_nest("x", 0, 1, "y", 0, 1)->add_op("diff");
+  auto diff = prg.add_nest("y", 0, 1, "x", 0, 1)->add_op("diff");
   diff->add_load("gray_diff", "x", "y");
   diff->add_load("blurred", "x", "y");
   diff->add_store("out", "x", "y");
@@ -19081,72 +20909,9 @@ void test_multi_kernel_unsharp() {
   prg.pretty_print();
   prg.sanity_check();
 
-  //cout << "Channel sizes" << endl;
-  //auto sched = prg.optimized_codegen();
-  //cout << "Optimized schedule: " << str(sched) << endl;
-
-  //assert(false);
-
-  //for (auto b : all_buffers(prg)) {
-    //auto r = prg.consumer_map(b);
-    //auto w = prg.producer_map(b);
-    //if (!prg.is_boundary(b)) {
-      //cout << "========= " << b << endl;
-      //cout << tab(1) << str(r) << endl;
-      //cout << tab(1) << str(w) << endl;
-
-      //auto write_times = lexmin(dot(inv(w), sched));
-      //auto read_times = lexmin(dot(inv(r), sched));
-
-      //auto op_times = unn(write_times, read_times);
-
-      ////auto written_before = lex_gt(write_times, write_times);
-      //auto written_before = lex_gt(op_times, write_times);
-      //cout << "written before: " << str(written_before) << endl;
-      //auto times_to_written_before =
-        ////to_map(unn(dot(inv(write_times), written_before), inv(write_times)));
-        //to_map(unn(dot(inv(op_times), written_before), inv(write_times)));
-      //cout << "Values written before time: " << str(times_to_written_before) << endl;
-      ////cout << "Size = " << str(card(times_to_written_before)) << endl;
-      ////cout << "Bound = " << str(int_upper_bound(card(times_to_written_before))) << endl;
-
-      ////auto read_after = lex_lt(read_times, read_times);
-      //auto read_after = lex_lt(op_times, read_times);
-      //auto times_to_read_after =
-        //to_map(unn(dot(inv(op_times), read_after), inv(read_times)));
-      //cout << "Values read after time: " << str(times_to_read_after) << endl;
-      ////cout << "Size = " << str(card(times_to_read_after)) << endl;
-      ////cout << "Bound = " << str(int_upper_bound(card(times_to_read_after))) << endl;
-
-      //auto live = coalesce(simplify(its(times_to_read_after, times_to_written_before)));
-      //cout << "live: " << str(live) << endl;
-      //cout << "Size = " << str(card(live)) << endl;
-      //cout << "Bound = " << str(int_upper_bound(card(to_umap(live)))) << endl;
-
-      ////auto times_to_writes = dot(inv(sched), w);
-      ////auto times_to_reads = dot(inv(sched), r);
-
-      ////cout << "times to writes: " << str(times_to_writes) << endl;
-      ////cout << "times to reads : " << str(times_to_reads) << endl;
-
-      //// What am I trying to construct?
-      ////   An expression for max(#Writes(t) - #Reads(t))
-      //// Need: #(Data written at time t that has not yet been read)
-      //// Need: A map from times to the set of locations that have been written but not read
-      ////   A map from times to the set of locations that have been written
-      ////   A map from times to the set of locations that have not been read yet but will be
-    //}
-  //}
-  //assert(false);
-
   auto unopt_postprocessed = unoptimized_result(prg);
 
-  map<std::string, std::set<string> > fusion_groups;
-  int i = 0;
-  for (auto gp : get_kernels(prg)) {
-    fusion_groups["gp_" + str(i)] = {gp};
-    i++;
-  }
+  auto fusion_groups = one_stage_per_group(prg);
   app_dag dag = partition_application(fusion_groups, prg);
   for (auto& gp : dag.fusion_group_progs) {
     cout << "============================" << endl;
@@ -19154,18 +20919,13 @@ void test_multi_kernel_unsharp() {
     cout << endl;
   }
 
-  generate_regression_testbench(dag.prg);
+  dag.prg.pretty_print();
 
   CodegenOptions options;
-  options.internal = true;
-  options.all_rams = true;
-  all_unbanked(prg, options);
-  for (auto& gp : dag.fusion_group_progs) {
-    all_unbanked(gp.second, options);
-  }
-  options.inner_bank_offset_mode =
-    INNER_BANK_OFFSET_MULTILINEAR;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
   generate_app_code(options, dag);
+
+  generate_regression_testbench(dag.prg);
   vector<string> multi_kernel_res = run_regression_tb(dag.prg);
 
   compare("multi_kernel_" + prg.name + "_vs_unopt", multi_kernel_res, unopt_postprocessed);
@@ -19340,7 +21100,7 @@ prog stencil_chain(const std::string& name) {
       }
     }
     init->add_store(current_level, x, y);
-    
+
     last_level = current_level;
   }
 
@@ -19366,6 +21126,11 @@ prog stencil_chain(const std::string& name) {
 
 void dhuff_playground() {
   {
+    prog prg = demosaic_unrolled();
+    prg.pretty_print();
+    assert(false);
+  }
+  {
 #ifdef COREIR
     for (auto prg : harris_variants()) {
       prg.pretty_print();
@@ -19383,9 +21148,6 @@ void dhuff_playground() {
     assert(false);
 #endif
   }
-  //test_multi_kernel_unsharp();
-  //assert(false);
-
   //llf_test();
   //assert(false);
   {
@@ -19520,6 +21282,24 @@ void dhuff_playground() {
     prg.pretty_print();
     assert(false);
   }
+#ifdef COREIR
+  {
+    vector<prog> apps;
+    apps.push_back(camera_pipeline());
+    //apps.push_back(mobilenet_unrolled());
+    //apps.push_back(harris());
+    for (auto app: apps) {
+        auto pe_op_count = get_PE_optype_count_garnet(app);
+
+        ofstream out("aha_garnet_design_new/"+ app.name +"/pe_count_garnet.csv");
+        for (auto it: pe_op_count) {
+            out << it.first << "," << it.second << endl;
+        }
+    }
+    assert(false);
+
+  }
+#endif
   {
     prog prg = harris_sch6_2ppc();
     dsa_writers(prg);
@@ -19631,7 +21411,7 @@ void dhuff_playground() {
       //MEM_energy_cost(options, power_params, power_stats, prg);
     }
     assert(false);
-#endif 
+#endif
   }
   {
 #ifdef COREIR
@@ -19664,7 +21444,7 @@ void dhuff_playground() {
       compile_cycle_accurate_hw(options, sched, prg);
       normalize_bounds(prg);
       sequential_schedule(sched, prg.root, prg);
-      
+
       auto hw_sched = its(op_times_map(sched, prg), prg.whole_iteration_domain());
 
       auto buffers = build_buffers(prg, hw_sched);
@@ -19949,9 +21729,6 @@ void dhuff_playground() {
     //assert(false);
   //}
 
-  //test_multi_kernel_unsharp();
-  //assert(false);
-
   //test_multi_kernel_design();
   //test_time_sharing_gaussian_pyramid();
 
@@ -20052,9 +21829,138 @@ void stencil_chain_multi_kernel_test() {
 
 }
 
-void travis_tests() {
-  test_multi_kernel_design();
+void test_app_to_prog_conversion() {
+  //App jac = jacobi2d("jac");
+  App jac = pointwise2d("jac");
+  int size = 10;
+  prog prg = jac.realize("jac", size, size);
+
+  prg.pretty_print();
+  prg.sanity_check();
+
+  auto original = run_regression_tb("jac_opt");
+  cout << "Original result: " << original << endl;
+  //assert(false);
+
+  auto extracted = unoptimized_result(prg);
+  cout << "Extracted result: " << extracted << endl;
+  //assert(false);
+
+  compare("jac_extracted" + prg.name + "_vs_unopt", original, extracted);
+  //assert(false);
+}
+
+void test_jacobi15_dynamic() {
+  string prefix = "jacdynl2";
+  int throughput = 1;
+  string name = prefix + "_" + str(throughput);
+  App lp = stencil_chain_stage_iccad(name, 15);
+  int rows = 1080;
+  int cols = 1080;
+  CodegenOptions options;
+  options.internal = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
+
+  prog prg = lp.realize(options, name, {cols, rows}, "in", 1);
+  generate_optimized_code(prg);
+  assert(false);
+
+  //auto extracted = unoptimized_result(prg);
+
+  auto fusion_groups = one_stage_per_group(prg);
+  app_dag dag = partition_application(fusion_groups, prg);
+
+  //auto fresh_groups = insert_inter_group_buffers(fusion_groups, prg);
+  //unroll_mismatched_inner_loops(prg);
+  //merge_basic_block_ops(prg);
+  //infer_bounds_and_unroll(pick(prg.outs), {1080, 1080}, throughput, prg);
+
+  //app_dag dag = partition_groups(fresh_groups, prg);
+  //assert(unoptimized_compiles(dag.prg));
+
+  //prg.pretty_print();
+  //assert(false);
+  //app_dag dag = partition_application(fusion_groups, prg);
+
+  options = CodegenOptions();
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  generate_app_code(options, dag);
+
+  move_to_benchmarks_folder(prg.name);
+
+  assert(false);
+}
+
+void test_multi_kernel_gp() {
+  prog prg("gp");
+  prg.compute_unit_file = "local_laplacian_filters_compute.h";
+  prg.add_input("in");
+  prg.add_output("out");
+
+  cpy("in_on_chip", "in", 2, prg);
+
+  const int num_pyramid_levels = 2;
+  vector<string> lps = gaussian_pyramid("in_on_chip", num_pyramid_levels, prg);
+
+  string reconstructed = reconstruct_gaussian(lps, prg);
+  cpy("out", reconstructed, 2, prg);
+
+  infer_bounds("out", {64, 64}, prg);
+
+  prg.pretty_print();
+  prg.sanity_check();
+
+  unroll_reduce_loops(prg);
+  merge_basic_block_ops(prg);
+  normalize_bounds(prg);
+  normalize_address_offsets(prg);
+
+  prg.pretty_print();
+  prg.sanity_check();
+
+  auto unopt_postprocessed = unoptimized_result(prg);
+
+  auto fusion_groups = one_stage_per_group(prg);
+  cout << "# of groups: " << fusion_groups.size() << endl;
+  //assert(false);
+
+  app_dag dag = partition_application(fusion_groups, prg);
+  //string target = "gp_in_on_chip_1_buf4_to_gp_1112";
+  dag.prg.pretty_print();
+  //assert(false);
+
+  CodegenOptions options;
+  //all_unbanked(prg, options);
+  //options.inner_bank_offset_mode =
+    //INNER_BANK_OFFSET_MULTILINEAR;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  generate_app_code(options, dag);
+
+  generate_regression_testbench(dag.prg);
+
+  vector<string> multi_kernel_res = run_regression_tb(dag.prg);
+
+  compare("multi_kernel_" + prg.name + "_vs_unopt", multi_kernel_res, unopt_postprocessed);
+  move_to_benchmarks_folder(dag.prg.name);
+
+}
+
+void dhuff_tests() {
+  //test_jacobi15_dynamic();
+
+  test_multi_kernel_pyramid_collapsing();
+  test_multi_kernel_gp();
+  test_app_to_prog_conversion();
+
+  //test_multi_kernel_llf();
+  //assert(false);
+
+  test_multi_kernel_mismatched_loop_depths();
+  test_artificial_deadlock();
+  upsample2d_test();
+  up_stencil_down_test();
   test_multi_kernel_unsharp();
+  test_multi_kernel_design();
   stencil_chain_multi_kernel_test();
   infer_bounds_tests();
   test_if_construction();
@@ -20064,9 +21970,7 @@ void travis_tests() {
   reduce_1d_test();
   reduce_2d_test();
   compute_unit_with_index_variables_test();
-  upsample2d_test();
   downsample2d_test();
-  up_stencil_down_test();
   gaussian_pyramid_test();
 
   return;
@@ -20149,8 +22053,8 @@ int main(int argc, char** argv) {
       blur_example();
       return 0;
     }
-    if (cmd == "travis-tests") {
-      travis_tests();
+    if (cmd == "dhuff-tests") {
+      dhuff_tests();
       return 0;
     }
 

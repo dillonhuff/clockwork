@@ -1,0 +1,5 @@
+ub_gray_stencil_op_hcompute_gray_stencil_18_to_gray_stencil_op_hcompute_blur_unnormalized_stencil_1_26_ubuf,agg, 1024,sram, 1920,tb, 3780,
+ub_gray_stencil_op_hcompute_gray_stencil_18_to_gray_stencil_op_hcompute_blur_unnormalized_stencil_1_32_ubuf,agg, 1024,sram, 960,tb, 3720,
+ub_hw_input_global_wrapper_stencil_cyclic_0_0_0_ubuf,agg, 1024,sram, 960,tb, 3600,
+ub_hw_input_global_wrapper_stencil_cyclic_0_0_1_ubuf,agg, 1024,sram, 960,tb, 3600,
+ub_hw_input_global_wrapper_stencil_cyclic_0_0_2_ubuf,agg, 1024,sram, 960,tb, 3600,

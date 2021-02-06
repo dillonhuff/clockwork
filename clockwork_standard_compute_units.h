@@ -5,6 +5,12 @@
 
 typedef int16_t int16;
 
+template<typename To, typename From>
+static inline
+To bitcast(From a) {
+  return *((To*)((void*) (&a)));
+}
+
 template<typename T>
 T clamp_val(const T& a, const T& lo, const T& hi) {
   if (a < lo) {
@@ -258,34 +264,42 @@ T inc(T& src, T& a0) {
   //return src + a0;
 //}
 
+static
 hw_uint<16> interleave(hw_uint<16>& src, hw_uint<16>& a0, const int column_index) {
   return (column_index % 2) == 0 ? src : a0;
 }
 
+static
 hw_uint<16> fmadd_16(hw_uint<16>& src, hw_uint<16>& a0) {
   return src + a0;
 }
 
+static
 hw_uint<32> fma_32(hw_uint<32>& src, hw_uint<32>& a0, hw_uint<32>& a1) {
   return src + a0*a1;
 }
 
+static
 int fma(int& src, int& a0, int& a1) {
   return src + a0*a1;
 }
 
+static
 hw_uint<16> set_zero_16() {
   return hw_uint<16>(0);
 }
 
+static
 hw_uint<32> set_zero_32() {
   return hw_uint<32>(0);
 }
 
+static
 int set_zero() {
   return 0;
 }
 
+static
 hw_uint<16> zero() {
   return 16;
 }
@@ -446,6 +460,38 @@ hw_uint<16> conv_3_3(hw_uint<16*9>& in) {
   return (v0 + v1 + v2 +
     v3 + v4 + v5 +
     v6 + v7 + v8);
+}
+
+static inline
+hw_uint<32> conv_3_3_float_one(hw_uint<32>& in) {
+  hw_uint<32> v0 = in.extract<0, 31>();
+  float flt = to_float(v0);
+  double val = flt;
+
+  return ((int) (((234.0 + val*3.4) / 9.0) + (15.0 + val*2.1) / 17.2));
+}
+
+static inline
+hw_uint<32> conv_3_3_float(hw_uint<32*9>& in) {
+  hw_uint<32> v0 = in.extract<0, 31>();
+  hw_uint<32> v1 = in.extract<32, 63>();
+  hw_uint<32> v2 = in.extract<64, 95>();
+
+  hw_uint<32> v3 = in.extract<96, 127>();
+  hw_uint<32> v4 = in.extract<128, 159>();
+  hw_uint<32> v5 = in.extract<160, 191>();
+
+  hw_uint<32> v6 = in.extract<192, 223>();
+  hw_uint<32> v7 = in.extract<224, 255>();
+  hw_uint<32> v8 = in.extract<256, 287>();
+
+
+  //assert(false);
+
+  return ((int)
+      ((5.0f*to_float(v0) + 2.0f*to_float(v1) + 3.0f*to_float(v2) +
+        1.2f*to_float(v3) + 3.2f*to_float(v4) + 4.1f*to_float(v5) +
+        2.5f*to_float(v6) + 93.3f*to_float(v7) + 12.4f*to_float(v8)) / 9.0f));
 }
 
 static inline
@@ -703,11 +749,14 @@ hw_uint<32> blur_2x2_32(const hw_uint<32*4>& in) {
 }
 
 template<typename A, typename B>
+static
 inline A reinterpret(const B &b) {
     A a;
     std::memcpy(&a, &b, sizeof(a));
     return a;
 }
+
+static
 inline float float_from_bits(uint32_t bits) {
     return reinterpret<float, uint32_t>(bits);
 }

@@ -2,6 +2,7 @@
 #include "multi_kernel_design.h"
 
 int main() {
+  srand(234);
   ofstream fout("regression_result_multi_kernel_design.txt");
   HWStream<hw_uint<32 > > in;
   HWStream<hw_uint<32 > > out;

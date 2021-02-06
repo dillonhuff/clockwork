@@ -591,8 +591,8 @@ class AccessPattern {
       }
 
       int get_inner_most_related_dom_dim() {
-        int inner_most_address_related_dim_id = 0;
-        for (size_t i = rel_map.size() - 1; i >= 0; i -- ) {
+        int inner_most_address_related_dim_id = rel_map.size() - 1;
+        for (int i = rel_map.size() - 1; i >= 0; i -- ) {
           if (rel_map.at(i) != 0) {
             inner_most_address_related_dim_id = i;
             break;
@@ -668,7 +668,7 @@ class AccessPattern {
           vector<int> & stride_in_target = access_matrix[dim_id];
           int inner_most = get_inner_most_related_dom_dim();
           cout << "trans op dim: " << inner_most << endl;
-          vector<string> var_list(var_dim-1);
+          vector<string> var_list;//(var_dim-1);
           vector<string> origin_var_list(var_dim-1);
           //var_list.front() = "root";
           //origin_var_list.front() = "root";
@@ -683,13 +683,13 @@ class AccessPattern {
                   int factor = fetch_width / stride_in_target[it.second];
                   string trans = "floor("+ it.first + "/" + to_string(factor) + ")";
                   string rems = it.first + "%" + to_string(factor);
-                  var_list[id] = trans;
+                  var_list.push_back(trans);
                   var_list.push_back(rems);
                   origin_var_list[id] = it.first;
               }
               else {
                   //if (id <= inner_most)
-                  var_list[id] = it.first;
+                  var_list.push_back(it.first);
                   origin_var_list[id] = it.first;
               }
           }
@@ -732,7 +732,7 @@ class AccessPattern {
           auto origin_vars = sep_list(origin_var_list, "[", "]", "," );
           auto constraints = sep_list(trans_constraints, "", "", " and ");
           cout <<"OP name: " << op_name << endl;
-          isl_set* slice = (rdset(ctx, string("{ " + op_name +origin_vars + " : " + constraints + "}").c_str()));
+          isl_set* slice = (rdset(ctx, string("{ " + op_name + origin_vars + " : " + constraints + "}").c_str()));
           return slice;
       }
 
@@ -845,6 +845,8 @@ struct MemConnSch {
         dim ++;
     }
     dimensionality -= remove_dims.size();
+    if (dimensionality == 0)
+        dimensionality = 1;
     std::reverse(begin(remove_dims), end(remove_dims));
     for (auto rem_dim: remove_dims) {
         for (auto& it: vals) {
@@ -1014,20 +1016,20 @@ class UBuffer {
         return pt_vec.size() / hardware.out_port_width;
     }
 
-    //TODO: put it into qexpr.h
-    Box extract_access_range() {
-        auto addr_range = isl_union_map_read_from_str(ctx, "{}");
-        for (auto pt: get_in_ports()) {
-            addr_range = unn(access_map.at(pt), addr_range);
-        }
-        return Box(addr_range);
-    }
-
     vector<int> get_linearization_vector() {
-        vector<int> ret;
-        auto b = extract_access_range();
-        for (size_t i = 0; i < b.dimension(); i ++) {
-            ret.push_back(b.r_cardinality(i));
+        vector<int> ret({1});
+        vector<int> lengths;
+        int ld = logical_dimension();
+        for (int i = 0; i < ld; i ++) {
+            auto s = project_all_but(to_set(global_range()), ld - i - 1);
+            auto min = to_int(lexminval(s));
+            auto max= to_int(lexmaxval(s));
+            int length = max - min + 1;
+            lengths.push_back(length);
+        }
+        for (int i = 0; i < logical_dimension()-1; i ++) {
+            int stride = ret.back();
+            ret.push_back(stride * lengths.at(i));
         }
         return ret;
     }
@@ -1077,9 +1079,6 @@ class UBuffer {
         sort(point_vec.begin(), point_vec.end(), lex_lt_pt);
         for (auto point:  point_vec) {
             auto b = get_linearization_vector();
-            //FIXME: hack the tb address
-            if (is_suffix(name, "tb"))
-                b.back() /= point_vec.size();
             auto a = parse_pt(point);
             int addr = std::inner_product(a.rbegin(), a.rend(), b.begin(), 0);
             ret.push(addr);
@@ -1094,9 +1093,6 @@ class UBuffer {
         sort(point_vec.begin(), point_vec.end(), lex_lt_pt);
         for (auto point:  point_vec) {
             auto b = get_linearization_vector();
-            //FIXME: hack the tb address
-            if (is_suffix(name, "tb"))
-                b.back() /= num_out_ports();
             auto a = parse_pt(point);
             int addr = std::inner_product(a.begin(), a.end(), b.rbegin(), 0);
             ret.push(addr);
@@ -1242,6 +1238,26 @@ class UBuffer {
       return false;
     }
 
+    bool is_bank_output(const string& name) const{
+      for (auto bk: bank_list) {
+        if (elem(name, banks_to_outputs.at(bk.name))) {
+          return true;
+        }
+      }
+      return false;
+    }
+
+    vector<string> unbanking_outpts() const {
+      vector<string> cand;
+      for (auto outpt: get_out_ports()) {
+        if (!is_bank_output(outpt)) {
+          cand.push_back(outpt);
+        }
+      }
+      return cand;
+    }
+
+
     vector<stack_bank> receiver_banks(const std::string& inpt) {
       vector<stack_bank> bnks;
       for (auto b : bank_list) {
@@ -1263,10 +1279,36 @@ class UBuffer {
       return bnks;
     }
 
-    string get_lastest_outpt(string bk_name) {
+    vector<string> get_all_outpts(string bk_name) {
       auto outpts_set = get_bank_outputs(bk_name);
       vector<string> outpts(outpts_set.begin(), outpts_set.end());
+      vector<string> all_outpt_in_tree;
 
+      //Sort the output ports and get the latest output schedule
+      //sort(outpts.begin(), outpts.end(),
+      //        [this](const string& l, const string & r) {
+      //          auto l_start_time_stamp = lexminpt(range(schedule.at(l)));
+      //          auto r_start_time_stamp = lexminpt(range(schedule.at(r)));
+      //          return lex_lt_pt(l_start_time_stamp, r_start_time_stamp);
+      //        });
+      //last pt is the latests access
+      //auto outpt = outpts.back();
+      //Check if this is the shift register input
+      //DFS for the leaf port
+      for (auto outpt: outpts) {
+        if(!is_bank_input(outpt)) {
+            all_outpt_in_tree.push_back(outpt);
+        } else {
+          for (auto bk: receiver_banks(outpt)){
+            concat(all_outpt_in_tree, get_all_outpts(bk.name));
+          }
+        }
+      }
+      return all_outpt_in_tree;
+    }
+
+    isl_union_map* get_stencil_valid_sched(string bk_name) {
+      auto outpts = get_all_outpts(bk_name);
       //Sort the output ports and get the latest output schedule
       sort(outpts.begin(), outpts.end(),
               [this](const string& l, const string & r) {
@@ -1274,24 +1316,7 @@ class UBuffer {
                 auto r_start_time_stamp = lexminpt(range(schedule.at(r)));
                 return lex_lt_pt(l_start_time_stamp, r_start_time_stamp);
               });
-      //last pt is the latests access
-      auto outpt = outpts.back();
-      //Check if this is the shift register input
-      //DFS for the leaf port
-      if(!is_bank_input(outpt)) {
-          return outpt;
-      } else {
-        for (auto bk: receiver_banks(outpt)){
-          return get_lastest_outpt(bk.name);
-        }
-      }
-      assert(false);
-      return "";
-    }
-
-    isl_union_map* get_stencil_valid_sched(string bk_name) {
-      string outpt = get_lastest_outpt(bk_name);
-      return schedule.at(outpt);
+      return schedule.at(outpts.back());
 
       //only consider the shift register condition now
       //string outpt = pick(outpts);
@@ -1699,6 +1724,40 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
       return {id_candidate};
     }
 
+    //A ubuffer rewrite pass before vectorization remove the redundant dimension
+    bool simplify_address_space() {
+        auto consumer_rem_dim = get_consumer_bank_dim_id();
+        auto producer_rem_dim = get_producer_bank_dim_id();
+        if (consumer_rem_dim.has_value() && producer_rem_dim.has_value()) {
+            auto cons_rem = consumer_rem_dim.get_value();
+            auto prod_rem = producer_rem_dim.get_value();
+            vector<int> rem;
+            //std::set_intersection(cons_rem.begin(), cons_rem.end(),
+            //        prod_rem.begin(), prod_rem.end(),
+            //        rem.begin());
+            for (auto i : cons_rem) {
+                if (std::find(prod_rem.begin(), prod_rem.end(), i) != prod_rem.end()) {
+                    rem.push_back(i);
+                }
+            }
+            cout << tab(2) << "cons rem: " << cons_rem << endl;
+            cout << tab(2) << "prod rem: " << prod_rem << endl;
+            cout << tab(2) << "its: " << rem << endl;
+            for (auto rem_dim: rem) {
+                for (auto & it : access_map) {
+                    auto acc_map = to_map(it.second);
+                    if (num_out_dims(acc_map) == 1)
+                        continue;
+                    cout <<tab(2) << "Dim:" << rem_dim << " will be project out: " << str(acc_map) << endl;
+                    it.second = to_umap(project_out(acc_map, rem_dim));
+                }
+            }
+            return rem.size();
+        }
+        return false;
+    }
+
+
     int lanes_in_bundle(const std::string& bn) {
       assert(contains_key(bn, port_bundles));
       return map_find(bn, port_bundles).size();
@@ -1790,6 +1849,44 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
       return s;
     }
 
+
+    isl_union_set* global_write_domain() {
+      uset* s = isl_union_set_read_from_str(ctx, "{ }");
+      auto wr_ops = get_write_ops();
+      for (auto dm: domain) {
+        string dm_name = ::name(dm.second);
+        if (wr_ops.count(dm_name)) {
+          s = unn(s, to_uset(cpy(dm.second)));
+        }
+      }
+      return s;
+    }
+
+    isl_union_set* global_read_domain() {
+      uset* s = isl_union_set_read_from_str(ctx, "{ }");
+      auto rd_ops = get_read_ops();
+      for (auto dm: domain) {
+        string dm_name = ::name(dm.second);
+        if (rd_ops.count(dm_name)) {
+          s = unn(s, to_uset(cpy(dm.second)));
+        }
+      }
+      return s;
+    }
+
+    int global_write_count() {
+      int cnt = 0;
+      uset* wr_dom = global_write_domain();
+      return int_upper_bound(card(wr_dom));
+    }
+
+    int global_read_count() {
+      int cnt = 0;
+      uset* rd_dom = global_read_domain();
+      return  int_upper_bound(card(rd_dom));
+
+    }
+
     isl_union_set* global_retrive_domain() {
       uset* s = isl_union_set_read_from_str(ctx, "{ }");
       for (auto other : retrive_domain) {
@@ -1804,6 +1901,11 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
         s = unn(s, (range(other.second)));
       }
       return s;
+    }
+
+    string buf_range_name() {
+      auto am = pick(access_map);
+      return range_name(to_map(am.second));
     }
 
     void normalize_access_range() {
@@ -1843,7 +1945,7 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
     isl_union_map* producer_map() {
       umap* s = isl_union_map_read_from_str(ctx, "{ }");
       for (auto pt: get_in_ports()) {
-        s = unn(s, access_map.at(pt));
+        s = unn(s, coalesce(access_map.at(pt)));
       }
       return s;
     }
@@ -1851,7 +1953,7 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
     isl_union_map* consumer_map() {
       umap* s = isl_union_map_read_from_str(ctx, "{ }");
       for (auto pt: get_out_ports()) {
-        s = unn(s, access_map.at(pt));
+        s = unn(s, coalesce(access_map.at(pt)));
       }
       return s;
     }
@@ -2017,6 +2119,22 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
       return "";
     }
 
+    std::set<string> get_bank_out_bundles(const std::string& bk_name) {
+      std::set<string> ret;
+      auto outpts = get_bank_outputs(bk_name);
+      for (auto outpt: outpts) {
+        ret.insert(get_bundle(outpt));
+        //dfs for all related bundles
+        if(is_bank_input(outpt)) {
+          for (auto bk: receiver_banks(outpt)){
+            auto sub_bundles = get_bank_out_bundles(bk.name);
+            ret.insert(sub_bundles.begin(), sub_bundles.end());
+          }
+        }
+      }
+      return ret;
+    }
+
     vector<string> get_in_bundles() const {
       vector<string> outpts;
       for (auto m : port_bundles) {
@@ -2123,16 +2241,19 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
       auto stmt2bd = get_stmt2bd();
 
       //if it's not one of the buffer's op
+      cout << "find bd for op :" << op_name << endl;
       if (stmt2bd.count(op_name) == 0)
           return false;
 
       //if it is, we still need to check the bundle numbers
       auto bd_vec = stmt2bd.at(op_name);
+      for (auto it: bd_vec)
+          cout << "\tfind candidate: " << it << endl;
       int in_bd = 0, out_bd = 0;
       for (auto bd: bd_vec) {
         if (is_input_bundle(bd))
           in_bd ++;
-        else
+        if (is_output_bundle(bd))
           out_bd ++;
       }
       return in_bd && out_bd;
@@ -2234,6 +2355,10 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
     bank compute_bank_info(CodegenOptions& options, const std::string& inpt, const std::string& outpt);
     bank compute_bank_info(std::set<string> inpt, std::set<string> outpt);
     bank compute_bank_info(const std::string& inpt, const std::string& outpt, int depth);
+    bank compute_bank_info(
+          std::set<string> inpt_set,
+          std::set<string> outpt_set,
+          map<string, int> delay_map);
 
     void merge_bank(CodegenOptions& options, string inpt, vector<bank> mergeable);
 
@@ -2243,8 +2368,12 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
     //from bank to ubuffer
     map<string, UBuffer> generate_ubuffer(CodegenOptions& opt);
 
+    //for chaining and create subbank
+    vector<UBuffer> decouple_ubuffer_from_bank_map(isl_map* bank_map);
+
     //smt stream generation
     void generate_smt_stream(CodegenOptions& options);
+    void collect_memory_cnt(CodegenOptions& options, mem_access_cnt& mem_access);
 #ifdef COREIR
     CoreIR::Module* affine_controller(CoreIR::Context* context, isl_set* dom, isl_aff* aff);
 
@@ -2253,9 +2382,9 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
 
     //Wrappers for generate coreir
     //original memory generation for memory tile with enable and valid
-    void generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def);
+    void generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, schedule_info& info);
     //ubuffer coreir generation for tahoe memory tile
-    void generate_coreir_without_ctrl(CodegenOptions& options, CoreIR::ModuleDef* def);
+    void generate_coreir_without_ctrl(CodegenOptions& options, CoreIR::ModuleDef* def, schedule_info& info);
     Json generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> rewrite_buffer);
 
     void generate_stencil_valid_config(CodegenOptions& options, string bk_name);
@@ -2296,9 +2425,60 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
     maybe<int> dependence_distance_singleton(const string& inpt, const string& outpt, bool decouple=false);
     maybe<int> dependence_distance_max(const string& inpt, const string& outpt);
 
+    //Hack for single pixel input
+    std::map<string, UBuffer> vectorization_single_pixel(int fetch_width);
 
 };
 
+string toBracketList(const vector<vector<int>> & data);
+
+struct StreamData {
+    vector<vector<int> > in_data;
+    vector<vector<int> > out_data;
+    vector<bool> in_valid;
+    vector<bool> out_valid;
+    int in_port_width, out_port_width;
+    int port_num;
+
+    StreamData(int inpt_width, int outpt_width, int pt_num):
+        in_port_width(inpt_width),
+        out_port_width(outpt_width),
+        port_num(pt_num) {
+            in_data = vector<vector<int>>(port_num, vector<int>(in_port_width, 0));
+            out_data = vector<vector<int>>(port_num, vector<int>(out_port_width, 0));
+            in_valid = vector<bool>(port_num, false);
+            out_valid = vector<bool>(port_num, false);
+        }
+
+    void print_info() {
+      cout << "in_data: " << endl;
+      cout << toBracketList(in_data);
+      cout << endl;
+
+      cout << "out_data: " << endl;
+      cout << toBracketList(out_data);
+      cout << endl;
+
+      cout << "In valid: " << endl;
+      cout << sep_list(in_valid, "[", "]", " ");
+      cout << endl;
+
+      cout << "Out valid: " << endl;
+      cout << sep_list(out_valid, "[", "]", " ");
+      cout << endl;
+    }
+
+    void emit_csv(ofstream& out) {
+      out << toBracketList(in_data) << ", "
+          //<< sep_list(in_valid, "[", "]", " ") << ", "
+          << str(to_int(in_valid)) << ", "
+          << toBracketList(out_data) << ", "
+          //<< sep_list(out_valid, "[", "]", " ") << endl;
+          << str(to_int(out_valid)) << endl;
+
+
+    }
+};
 
 //Data structure to append top level stream and generate
 struct lakeStream {
@@ -2369,6 +2549,7 @@ void generate_lake_stream(CodegenOptions & options,
         map<string, UBuffer>& buffers_opt,
         umap* hardware_schedule);
 void emit_lake_address_stream2file(CodegenOptions& options, map<string, UBuffer> buffers_opt, string dir);
+void emit_lake_address_stream2file_new(CodegenOptions &options, map<string, UBuffer> buffers_opt, string dir);
 lakeStream emit_top_address_stream(string fname, vector<int> read_cycle, vector<int> write_cycle,
         vector<vector<int> > read_addr, vector<vector<int> > write_addr, int input_width, int output_width);
 
@@ -2465,6 +2646,7 @@ CoreIR::Module* generate_coreir(CodegenOptions& options, CoreIR::Context* contex
 void generate_synthesizable_functional_model(CodegenOptions& options, UBuffer& buf, CoreIR::ModuleDef* def, schedule_info& hwinfo);
 
 CoreIR::Instance* affine_controller_use_lake_tile(CoreIR::ModuleDef*, CoreIR::Context*, isl_set*, isl_aff*, string);
+CoreIR::Module* affine_controller_use_lake_tile_counter(CodegenOptions& options, CoreIR::Context*, isl_set*, isl_aff*, string);
 #endif
 
 void generate_hls_code(CodegenOptions& options, std::ostream& out, UBuffer& buf);
@@ -2493,6 +2675,7 @@ maybe<int> dependence_distance_singleton(UBuffer& buf, const string& inpt, const
 
 maybe<std::set<int> > embarassing_partition(UBuffer& buf);
 vector<vector<string> > overlapping_large_io_port_groups(UBuffer& buf, const int ports_per_direction);
+vector<int> get_cyclic_partition_factor_from_embarassing_partition(UBuffer & buf, std::set<int> & partition);
 
 int total_capacity(UBuffer& buf);
 vector<int> min_offsets_by_dimension(UBuffer& buf);
@@ -2521,6 +2704,16 @@ struct dgraph {
     }
   }
 
+  vector<string> get_out_edges(const std::string& src) {
+    vector<string> ret;
+    if (out_edges.count(src)) {
+        auto dsts = out_edges.at(src);
+        return vector<string>(dsts.begin(), dsts.end());
+    } else {
+        return ret;
+    }
+  }
+
   vector<pair<string, int> > in_edges(const std::string& dst) {
     vector<pair<string, int> > ed;
     for (auto w : out_edges) {
@@ -2530,9 +2723,49 @@ struct dgraph {
     }
     return ed;
   }
+
+  //process the zero delay node, make sure they come out from the same port
+  string find_origin(const std::string& dst) {
+    auto in_eds = in_edges(dst);
+    for (auto it: in_eds) {
+      if (it.second == 0)
+        return find_origin(it.first);
+    }
+    return dst;
+  }
+
+  vector<pair<string, string>> get_sub_branch(const std::string& out_pt) {
+    vector<pair<string, string> > ret;
+    for (auto dst: get_out_edges(out_pt)) {
+      ret.push_back({out_pt, dst});
+      concat(ret, get_sub_branch(dst));
+    }
+    return ret;
+  }
+
+  int max_delay_to_leaf(string outpt) {
+    //this is leaf
+    if (out_edges.count(outpt) == 0) {
+      return 0;
+    }
+
+    int max_child_delay = -1;
+    for (string dst: out_edges.at(outpt)) {
+      int w = weight(outpt, dst);
+      max_child_delay = max(w + max_delay_to_leaf(dst), max_child_delay);
+    }
+    assert(max_child_delay >= 0);
+    cout << "\tdelay of " << outpt << " = " << max_child_delay << endl;
+    return max_child_delay;
+  }
+
+
+  bool has_nodes() const {
+    return nodes.size();
+  }
 };
 
-std::ostream& operator<<(std::ostream& out, dgraph& dg);
+
 
 struct ubuffer_impl {
   map<int, int> partitioned_dimension_extents;
@@ -2545,6 +2778,54 @@ struct ubuffer_impl {
 
   map<string,pair<string,int>> shift_registered_outputs;
   vector<pair<string,pair<string,int>>> shift_registered_outputs_to_outputs;
+
+  void add_o2o_info(const string& inpt, const string& outpt, const int& delay) {
+      shift_registered_outputs_to_outputs.push_back(
+              {outpt, {inpt, delay}}
+              );
+  }
+
+  void add_i2o_info(const string& inpt, const string& outpt, const int& delay) {
+      shift_registered_outputs[outpt] = make_pair(inpt, delay);
+  }
+
+  std::set<string> get_sr_outpts() const {
+    std::set<string> outpts;
+    for (auto it: shift_registered_outputs_to_outputs) {
+      outpts.insert(it.first);
+    }
+
+    for (auto it: shift_registered_outputs) {
+      outpts.insert(it.first);
+    }
+
+    return outpts;
+  }
+
+  bool is_pure_shift_register(vector<string> outpts) {
+    auto sr_outpts = get_sr_outpts();
+    cout <<"SR outputs: " << sr_outpts << endl;
+    cout <<"BUF outputs: " << outpts << endl;
+    for (string pt: outpts) {
+        if (sr_outpts.find(pt) == sr_outpts.end()) {
+            return false;
+        }
+    }
+    return true;
+  }
+
+  int get_bank_num() const {
+    int bank_num = 1;
+    for (auto it: partitioned_dimension_extents) {
+      bank_num *= it.second;
+    }
+    return bank_num;
+  }
 };
 
+std::ostream& operator<<(std::ostream& out, dgraph& dg);
+std::ostream& operator<<(std::ostream& out, ubuffer_impl& impl);
+
 bool all_schedules_defined(UBuffer& buf);
+
+bool is_register(UBuffer& buf);

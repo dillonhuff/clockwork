@@ -11,6 +11,12 @@ std::string controller_name(const std::string& n) {
   return n + "_port_controller";
 }
 
+struct affine_controller_ctrl {
+  isl_aff* access_function;
+  isl_aff* sched;
+  isl_set* dom;
+};
+
 
 CoreIR::Wireable* mkConst(CoreIR::ModuleDef* def, const int width, const int val);
 CoreIR::Wireable* addList(CoreIR::ModuleDef* def, const std::vector<CoreIR::Wireable*>& vals);
@@ -25,7 +31,12 @@ CoreIR::Module* coreir_for_basic_set(CoreIR::Context* context, isl_basic_set* do
 
 CoreIR::Module* coreir_for_set(CoreIR::Context* context, isl_set* dom);
 
+CoreIR::Module* affine_controller(CodegenOptions& options, CoreIR::Context* context, isl_set* dom, isl_aff* aff);
 CoreIR::Module* affine_controller(CoreIR::Context* context, isl_set* dom, isl_aff* aff);
+
+affine_controller_ctrl pack_controller(affine_controller_ctrl& unpacked);
+
+void generate_banks_garnet(CodegenOptions& options, prog& prg, UBuffer& buf, ubuffer_impl& impl, schedule_info& hw_info);
 
 void generate_coreir_addrgen_in_tile(CodegenOptions& options,
     map<string, UBuffer>& buffers,
@@ -84,6 +95,9 @@ vector<pair<string, pair<string, int> >> determine_output_shift_reg_map(
     UBuffer& buf,
     schedule_info& hwinfo);
 
+
+dgraph build_shift_register_graph(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_info& hwinfo);
+
 //CoreIR::Namespace* CoreIRLoadLibrary_cgralib(CoreIR::Context* c);
 
 void add_raw_dual_port_sram_generator(CoreIR::Context* c);
@@ -92,6 +106,7 @@ CoreIR::Module* lake_rf(CoreIR::Context* c, const int width, const int depth);
 
 void ram_module(CoreIR::Context* c, const int width, const int depth);
 
+void emit_lake_config_collateral(CodegenOptions options, string tile_name, json config_file);
 
 void mini_sram_garnet_test();
 
@@ -170,9 +185,12 @@ isl_aff* inner_bank_offset_aff(const std::string& reader, UBuffer& buf, ubuffer_
 
 isl_aff* bank_offset_aff(const std::string& reader, UBuffer& buf, ubuffer_impl& impl);
 
-void garnet_map_module(CoreIR::Module* top);
+void garnet_map_module(CoreIR::Module* top, bool garnet_syntax_trans);
 
 double PE_energy_cost(power_analysis_params& power_params, power_analysis_info& power_stats, prog& prg);
+
+map<string, int> get_PE_optype_count(prog& prg);
+map<string, int> get_PE_optype_count_garnet(prog& prg);
 
 double PE_energy_cost_instance_model(power_analysis_params& power_params, power_analysis_info& power_stats, prog& prg);
 

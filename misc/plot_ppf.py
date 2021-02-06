@@ -50,10 +50,14 @@ def set_size(w,h, ax=None):
 
 labels = ['MP', 'GP', 'SEF']
 
-cw_ppf = [0.782, 0.78, 0.53]
-cpu_ppf = [0.01, 0.064, 0.002]
-gpu_ppf = [2.24, 1.61, 0.22]
-k80_ppf = [1.61, 0.298, 0.03]
+# cw_ppf = [0.782, 0.78, 0.53]
+cw_ppf = [0.782, 0.78, 0.52]
+# cpu_ppf = [0.01, 0.064, 0.002]
+cpu_ppf = [0.12, 0.064, 0.002]
+# gpu_ppf = [2.24, 1.61, 0.22]
+gpu_ppf = [1.24, 0.91, 0.22]
+# k80_ppf = [1.61, 0.298, 0.03]
+k80_ppf = [0.27, 0.23, 0.03]
 
 print('Improvement over V100 sef:', cw_ppf[2] / gpu_ppf[2])
 print('Improvement over k80 sef:', cw_ppf[2] / k80_ppf[2])
@@ -119,12 +123,15 @@ ax.set_ylabel('Energy Efficiency (Gigapixels / Joule)')
 # ax.set_title('Scores by group and gender')
 ax.set_xticks(x)
 ax.set_xticklabels(labels)
-ax.legend()
+# ax.legend(loc='center right')
+ax.legend(frameon=False, loc=(0.75, 0.45), edgecolor=None)
+# ax.legend(loc=(0.75, 0.45), edgecolor=None)
 
 # plt.yscale("log")
 
 for c in rects:
     autolabel(c)
 
+# fig.set_size_inches(14, 7.5)
 plt.show()
 fig.savefig('clockwork_ppf.eps', format='eps')

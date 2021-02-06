@@ -18,6 +18,18 @@ T pop(deque<T>& d) {
   return v;
 }
 
+static inline
+int to_int(const vector<bool> & bit_vec) {
+    int cnt = 0;
+    int res = 0;
+    for(bool bit: bit_vec) {
+      if (bit)
+        res += 1 <<  cnt;
+      cnt ++;
+    }
+    return res;
+}
+
 string isl_sanitize(const std::string& str);
 
 static inline
@@ -235,10 +247,10 @@ std::string sep_list(const std::vector<T>& vals, const std::string& ldelim, cons
   return sep_list(strs, ldelim, rdelim, sep);
 }
 
-static inline
-std::string comma_list(const std::vector<std::string>& strs) {
-  return sep_list(strs, "", "", ", ");
-}
+//static inline
+//std::string comma_list(const std::vector<std::string>& strs) {
+  //return sep_list(strs, "", "", ", ");
+//}
 
 static inline
 std::string bracket_list(const std::vector<std::string>& strs) {
@@ -375,6 +387,14 @@ std::ostream& operator<<(std::ostream& out, vector<T>& v) {
   return out;
 }
 
+template<typename T>
+static inline
+std::ostream& operator<<(std::ostream& out, std::set<T>& v) {
+  vector<T> vv(v.begin(), v.end());
+  out << sep_list(vv, "{", "}", ", ");
+  return out;
+}
+
 static inline
 string str(const int i) {
   return to_string(i);
@@ -486,4 +506,6 @@ static
 std::string pg(const pair<string, string>& b) {
   return pg(b.first, b.second);
 }
+
+bool is_permutation(const vector<int>& level_permutation);
 

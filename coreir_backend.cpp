@@ -55,12 +55,6 @@ void sort_lt_snd_2(std::vector<std::pair<T, Q> >& outputs) {
   sort_lt(outputs, [](const std::pair<T,Q> &x){return x.second;});
 }
 
-struct affine_controller_ctrl {
-  isl_aff* access_function;
-  isl_aff* sched;
-  isl_set* dom;
-};
-
 int min_address(affine_controller_ctrl& ctrl) {
   isl_map* acc =
     set_range_name(set_domain_name(to_map(ctrl.access_function), "dom"), "addr");
@@ -580,76 +574,11 @@ bool all_constant_accesses(UBuffer& buf) {
 }
 
 pair<ubuffer_impl,isl_map*> build_buffer_impl(prog& prg, UBuffer& buf, schedule_info& hwinfo) {
-  cout << "Building implementation of " << buf.name << endl;
   ubuffer_impl impl;
-
-  maybe<std::set<int> > embarassing_banking =
-    embarassing_partition(buf);
-  bool has_embarassing_partition = embarassing_banking.has_value();
-  assert(has_embarassing_partition);
-
-  if (embarassing_banking.get_value().size() == buf.logical_dimension()) {
-    cout << buf.name << " is really a register file" << endl;
-  }
-
-  //if (buf.get_out_ports().size() > 0 &&
-      //is_register_file(buf) &&
-      //&& all_constant_accesses(buf)) {
-    //cout << buf.name << " has all constant accesses" << endl;
-    ////assert(false);
-  //}
-
-  impl.partition_dims = embarassing_banking.get_value();
-  vector<int> extents;
-  extents = extents_by_dimension(buf);
-  for (auto d : impl.partition_dims) {
-    impl.partitioned_dimension_extents[d] = extents.at(d);
-  }
-
-  int num_banks = 1;
-  for (auto ent : impl.partitioned_dimension_extents) {
-    num_banks *= ent.second;
-  }
-
-  // Creating a map from bank numbers to values that read them
-  int bank_stride = 1;
-  vector<string> dvs;
-  vector<string> coeffs;
-  for (int d = 0; d < buf.logical_dimension(); d++) {
-    dvs.push_back("d" + str(d));
-    if (elem(d, impl.partition_dims)) {
-      coeffs.push_back(str(bank_stride) + "*" + dvs.at(d));
-      bank_stride *= map_find(d, impl.partitioned_dimension_extents);
-    }
-  }
-
-  coeffs.push_back("0");
-  string bank_func = curlies(buf.name + bracket_list(dvs) + " -> Bank[" + sep_list(coeffs, "", "", " + ") + "]");
-
-  cout << "Bank map: " << bank_func << endl;
-  //assert(false);
-  isl_map* m = isl_map_read_from_str(prg.ctx, bank_func.c_str());
-  for (auto pt : buf.get_all_ports()) {
-    for (int b = 0; b < num_banks; b++) {
-      isl_set* bnk = isl_set_read_from_str(prg.ctx, curlies("Bank[" + str(b) + "]").c_str());
-      assert(!empty(bnk));
-
-      isl_map* bnk_map = dot(to_map(buf.access_map.at(pt)), m);
-      isl_set* accesses_to_bank = its(range(bnk_map), bnk);
-      if (!empty(accesses_to_bank)) {
-        if (buf.is_out_pt(pt)) {
-          impl.bank_readers[b].insert(pt);
-          impl.outpt_to_bank[pt].insert(b);
-        } else {
-          impl.bank_writers[b].insert(pt);
-          impl.inpt_to_bank[pt].insert(b);
-        }
-      }
-    }
-  }
-
-  return {impl,m};
+  auto bank_map = build_buffer_impl(prg, buf, hwinfo, impl);
+  return {impl, bank_map};
 }
+
 
 int wire_width(CoreIR::Wireable* w) {
   auto tp = w->getType();
@@ -944,7 +873,7 @@ CoreIR::Module* generate_coreir(CodegenOptions& options, CoreIR::Context* contex
 //Assumes common has been loaded
 void load_mem_ext(Context* c) {
   //Specialized extensions
-  Generator* lbmem = c->getGenerator("memory.rowbuffer");
+  /*Generator* lbmem = c->getGenerator("memory.rowbuffer");
   lbmem->setGeneratorDefFromFun([](Context* c, Values args, ModuleDef* def) {
     uint width = args.at("width")->get<int>();
     uint depth = args.at("depth")->get<int>();
@@ -1028,20 +957,23 @@ void load_mem_ext(Context* c) {
     def->connect("self.raddr","cgramem.addr");
     def->connect("self.wdata","cgramem.wdata");
     def->connect("self.wen","cgramem.wen");
-  });
+  });*/
 
   Generator* rom = c->getGenerator("memory.rom2");
   rom->setGeneratorDefFromFun([](Context* c, Values args, ModuleDef* def) {
     uint width = args.at("width")->get<int>();
-    Values rbGenargs({{"width",Const::make(c,width)},{"total_depth",Const::make(c,1024)}});
-    def->addInstance("cgramem","cgralib.Mem",
-      rbGenargs,
-      {{"mode",Const::make(c,"sram")}, {"init", def->getModule()->getArg("init")}});
-    def->addInstance("c1","corebit.const",{{"value",Const::make(c,true)}});
-    def->addInstance("c0","corebit.const",{{"value",Const::make(c,false)}});
-    def->connect("self.rdata","cgramem.rdata");
-    def->connect("self.ren","cgramem.ren");
-    def->connect("self.raddr", "cgramem.addr");
+    Values rbGenargs({{"width",Const::make(c,width)}, {"is_rom", Const::make(c,true)}});
+    Json config;
+    config["mode"] = "sram";
+    def->addInstance("cgramem","cgralib.Mem", rbGenargs,
+      {{"mode", Const::make(c,"lake")},
+      {"init", def->getModule()->getArg("init")},
+      {"config", Const::make(c, config)}});
+    //def->addInstance("c1","corebit.const",{{"value",Const::make(c,true)}});
+    //def->addInstance("c0","corebit.const",{{"value",Const::make(c,false)}});
+    def->connect("self.rdata","cgramem.data_out_0");
+    def->connect("self.ren","cgramem.ren_in_0");
+    def->connect("self.raddr", "cgramem.addr_in_0");
   });
 }
 
@@ -1349,7 +1281,7 @@ void load_cgramapping(Context* c) {
 
 void LoadDefinition_cgralib(Context* c) {
 
-  //load_mem_ext(c);
+  load_mem_ext(c);
   load_commonlib_ext(c);
   load_opsubstitution(c);
   load_corebit2lut(c);
@@ -1708,9 +1640,12 @@ void connect_op_control_wires(CodegenOptions& options, ModuleDef* def, op* op, s
     cout << "Done Finding compute , op Latency : " << op_latency
         << ", read Latency: " << read_latency << endl;
 
-  if (options.rtl_options.use_external_controllers) {
+  if (options.rtl_options.use_external_controllers || op->index_variables_needed_by_compute.size()) {
     Wireable* op_start_wire = controller->sel("valid");
     Wireable* op_start_loop_vars = controller->sel("d");
+    if (!options.rtl_options.use_external_controllers) {
+        def->connect(controller->sel("rst_n"), def->sel("self.reset"));
+    }
 
     cout << "Delaying read" << endl;
     Wireable* read_start_wire =
@@ -1913,7 +1848,7 @@ Instance* generate_controller_coreir(CodegenOptions& options, ModuleDef* def, co
   //auto aff = isl_multi_aff_get_aff(aff, 0);
   Instance* controller;
   if (options.rtl_options.use_external_controllers) {
-    auto aff_c = affine_controller(c, dom, aff);
+    auto aff_c = affine_controller(options, c, dom, aff);
     aff_c->print();
     controller = def->addInstance(name, aff_c);
   } else {
@@ -1941,7 +1876,10 @@ Instance* generate_coreir_op_controller(CodegenOptions& options, ModuleDef* def,
   }
   assert(sched != nullptr);
 
+  cout << "Schedule to generate affine controller: " << str(sched) << endl;
+
   auto svec = isl_pw_multi_aff_from_map(sched);
+  cout << "pma: " << str(svec) << endl;
 
   vector<pair<isl_set*, isl_multi_aff*> > pieces =
     get_pieces(svec);
@@ -1956,9 +1894,19 @@ Instance* generate_coreir_op_controller(CodegenOptions& options, ModuleDef* def,
   // TODO: Assert multi size == 1
   auto aff = isl_multi_aff_get_aff(saff, 0);
   Instance* controller;
-  if (options.rtl_options.use_external_controllers) {
-    auto aff_c = affine_controller(c, dom, aff);
+
+  //For those op need loop index we need this controller
+  bool need_index = op->index_variables_needed_by_compute.size() > 0;
+  if (options.rtl_options.use_external_controllers || need_index ) {
+  //if (options.rtl_options.use_external_controllers) {
+    auto aff_c = affine_controller(options, c, dom, aff);
     aff_c->print();
+    controller = def->addInstance(controller_name(op->name), aff_c);
+  } else if (need_index) {
+    auto aff_c = affine_controller_use_lake_tile_counter(
+            options, c, dom, aff,
+            controller_name(op->name));
+    cout << aff_c->toString() <<endl;
     controller = def->addInstance(controller_name(op->name), aff_c);
   } else {
     controller = affine_controller_use_lake_tile(
@@ -2190,10 +2138,16 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
 
   //this is the flag to wire stencil valid signal
   bool need_pass_valid = false;
+  maybe<string> last_producer_buf_with_tile;
 
+  //TODO Clean the logic here
   for (auto op : ops_dft) {
     cout << "Visit op: " << op->name << endl;
     vector<string> surrounding = surrounding_vars(op, prg);
+    //Genertea op controller for the op need index varibale
+    if (op->index_variables_needed_by_compute.size() > 0) {
+      generate_coreir_op_controller(options, def, op, sched_maps, hwinfo);
+    }
     for (auto var : op->index_variables_needed_by_compute) {
       int level = map_find(var, levels);
       auto var_wire = exe_start_control_vars(def, op->name)->sel(level);
@@ -2212,17 +2166,18 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
       if (prg.is_output(buf_name)) {
         def->connect("self." + pg(buf_name, bundle_name), op->name + "." + pg(buf_name, bundle_name));
         if (options.pass_through_valid) {
-          if (app_contains_memory_tiles(buffers)) {
-            def->connect("self." + pg(buf_name, bundle_name) + "_valid", op->name + ".valid_pass_out");
-            need_pass_valid = true;
-          } else {
-            cout << "This app does not have memory tile!" << endl;
+            //def->connect("self." + pg(buf_name, bundle_name) + "_valid", op->name + ".valid_pass_out");
+            //need_pass_valid = true;
+          //} else {
+            //cout << "This app does not have memory tile!" << endl;
             //This is the situation does not have memory tile, we need to use affine generator
-            generate_coreir_op_controller(options, def, op, sched_maps, hwinfo);
+
+            //Always use the output controller, without index involve
+            if (op->index_variables_needed_by_compute.size() == 0)
+              generate_coreir_op_controller(options, def, op, sched_maps, hwinfo);
             auto output_en = "self." + pg(buf_name, bundle_name) + "_valid";
             def->connect(def->sel(output_en),
                 write_start_wire(def, op->name));
-          }
         }
       } else {
         def->connect(buf_name + "." + bundle_name, op->name + "." + pg(buf_name, bundle_name));
@@ -2244,6 +2199,12 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
       auto buf = map_find(buf_name, buffers);
 
       assert(buf.is_output_bundle(bundle.second));
+
+      if (last_producer_buf_with_tile.has_value()) {
+        if (buf_name != last_producer_buf_with_tile.get_value()) {
+          need_pass_valid = false;
+        }
+      }
 
       if (prg.is_input(buf_name)) {
 
@@ -2282,10 +2243,11 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
                     (!contains(buf_name, "clkwrk_dsa"))){
                def->connect(buf_name + "." + bundle_name +"_extra_ctrl", op->name + ".valid_pass_in" );
             }
-          }
-          //Stop at the ubuffer with memory tile inside
-          if (buffers.at(buf_name).contain_memory_tile) {
-            need_pass_valid = false;
+            //Stop at the ubuffer with memory tile inside
+            if (buffers.at(buf_name).contain_memory_tile && !last_producer_buf_with_tile.has_value()) {
+              cout << "Stop wiring stencil valid up from buf: " << buf_name << endl;
+              last_producer_buf_with_tile = buf_name;
+            }
           }
         }
         //def->connect(def->sel(buf_name + "." + bundle_name + "_ren"),
@@ -2303,7 +2265,7 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
   //connect_signal("reset", ub);
   //context->runPasses({"wireclocks-coreir"});
   //context->runPasses({"rungenerators", "wireclocks-coreir"});
-  context->runPasses({"rungenerators", "wireclocks-clk"});
+  context->runPasses({ "wireclocks-clk"});
 
   return ub;
   //assert(false);
@@ -2546,6 +2508,8 @@ void addIOs(Context* c, Module* top) {
     path[0] = "in";
     path.insert(path.begin(),"_self");
     mdef->connect({ioname,"in"},path);
+    //TODO: A hack to keep single valid should check with other apps
+    //break;
   }
   mdef->disconnect(mdef->getInterface());
   inlineInstance(pt);
@@ -2600,16 +2564,16 @@ bool ConstReplace(Instance* cnst) {
     return false;
   }
   ASSERT(conns.size()==1,"size: " + to_string(conns.size()));
-  for (auto conn : conns) {
-    if (auto conInst = dyn_cast<Instance>(conn->getTopParent())) {
-      cout << "  coninst= " << toString(conInst) << endl;
-      //cout << "  conn= " << toString(conn->getSelectPath()) << endl;
-      //if (conInst->getModuleRef()->getRefName() != "cgralib.Mem" || conn->getSelectPath().back()!="wen") {
-      if (conInst->getModuleRef()->getRefName() != "cgralib.Mem_jade") {
-        return false;
-      }
-    }
-  }
+  //for (auto conn : conns) {
+  //  if (auto conInst = dyn_cast<Instance>(conn->getTopParent())) {
+  //    cout << "  coninst= " << toString(conInst) << endl;
+  //    //cout << "  conn= " << toString(conn->getSelectPath()) << endl;
+  //    //if (conInst->getModuleRef()->getRefName() != "cgralib.Mem" || conn->getSelectPath().back()!="wen") {
+  //    if (conInst->getModuleRef()->getRefName() != "cgralib.Mem") {
+  //      return false;
+  //    }
+  //  }
+  //}
   cout << "REPLACING!" << endl;
   ModuleDef* def = cnst->getContainer();
   uint val = cnst->getModArgs().at("value")->get<bool>() ? 63 : 0;
@@ -2652,8 +2616,10 @@ bool MemtileReplace(Instance* cnst) {
   ModuleDef* def = cnst->getContainer();
   auto genargs = cnst->getModuleRef()->getGenArgs();
   auto config_file = cnst->getMetaData()["config"];
+  auto init = cnst->getMetaData()["init"];
   CoreIR::Values modargs = {
       {"config", CoreIR::Const::make(c, config_file)},
+      {"init", CoreIR::Const::make(c, init)},
       {"mode", CoreIR::Const::make(c, "lake")}
   };
   auto pt = addPassthrough(cnst, cnst->getInstname()+"_tmp");
@@ -2663,6 +2629,21 @@ bool MemtileReplace(Instance* cnst) {
   def->connect(pt->sel("in"), buf);
   inlineInstance(pt);
   inlineInstance(buf);
+
+  //remove rst_n
+  auto rst_n_conSet = buf->sel("rst_n")->getConnectedWireables();
+  vector<Wireable*> conns(rst_n_conSet.begin(), rst_n_conSet.end());
+  assert(conns.size() == 1);
+  auto conn = conns[0];
+  def->disconnect(buf->sel("rst_n"),conn);
+
+  //remove chain_en
+  auto chain_en_conSet = buf->sel("chain_chain_en")->getConnectedWireables();
+  vector<Wireable*> conns_ce(chain_en_conSet.begin(), chain_en_conSet.end());
+  for (auto conn: conns_ce) {
+    def->disconnect(buf->sel("chain_chain_en"),conn);
+  }
+
   return true;
 }
 
@@ -2670,7 +2651,7 @@ std::string MapperPasses::MemSubstitute::ID = "memsubstitute";
 void MapperPasses::MemSubstitute::setVisitorInfo() {
   Context* c = this->getContext();
   if (c->hasGenerator("cgralib.Mem_amber")) {
-    //addVisitorFunction(c->getGenerator("cgralib.Mem_amber"), MemtileReplace);
+    addVisitorFunction(c->getGenerator("cgralib.Mem_amber"), MemtileReplace);
   }
 
 }
@@ -2731,7 +2712,7 @@ void disconnect_input_enable(Context* c, Module* top) {
   }
 }
 
-void garnet_map_module(Module* top) {
+void garnet_map_module(Module* top, bool garnet_syntax_trans = false) {
   auto c = top->getContext();
 
   top->print();
@@ -2739,6 +2720,7 @@ void garnet_map_module(Module* top) {
   //load_cgramapping(c);
   LoadDefinition_cgralib(c);
 
+  c->runPasses({"rungenerators"});
   //A new pass to remove input enable signal affine controller
   disconnect_input_enable(c, top);
   c->runPasses({"deletedeadinstances"});
@@ -2749,12 +2731,14 @@ void garnet_map_module(Module* top) {
   c->runPasses({"cullgraph"});
   c->addPass(new CustomFlatten);
   c->runPasses({"customflatten"});
+  if (garnet_syntax_trans) {
+    c->addPass(new MapperPasses::MemSubstitute);
+    c->runPasses({"memsubstitute"});
+  }
   c->addPass(new MapperPasses::ConstDuplication);
   c->runPasses({"constduplication"});
   c->addPass(new MapperPasses::MemConst);
   c->runPasses({"memconst"});
-  c->addPass(new MapperPasses::MemSubstitute);
-  c->runPasses({"memsubstitute"});
 
   c->runPasses({"cullgraph"});
   c->getPassManager()->printLog();
@@ -2931,13 +2915,16 @@ void generate_coreir(CodegenOptions& options,
     context->die();
   }
 
-  //garnet_map_module(prg_mod);
-  context->runPasses({"rungenerators", "flatten", "removewires", "cullgraph"});
-
   auto ns_new = context->getNamespace("global");
-  if(!saveToFile(ns_new,  options.dir + prg.name+ "_garnet.json", prg_mod)) {
-    cout << "Could not save ubuffer coreir" << endl;
-    context->die();
+  //Garnet pass
+  if (options.rtl_options.use_prebuilt_memory) {
+    garnet_map_module(prg_mod, true);
+    context->runPasses({"rungenerators", "flatten", "removewires", "cullgraph"});
+
+    if(!saveToFile(ns_new,  options.dir + prg.name+ "_garnet.json", prg_mod)) {
+      cout << "Could not save ubuffer coreir" << endl;
+      context->die();
+    }
   }
 
   if (options.rtl_options.target_tile == TARGET_TILE_M1 ||
@@ -3350,7 +3337,24 @@ CoreIR::Module* affine_controller_def(CoreIR::Context* context, isl_set* dom, is
   return m;
 }
 
-CoreIR::Module* affine_controller_primitive(CoreIR::Context* context, isl_set* dom, isl_aff* aff) {
+CoreIR::Instance* build_counter(CoreIR::ModuleDef* def,
+        string name,
+        const int width,
+        const int min_val,
+        const int max_val,
+        const int inc_val) {
+    auto c = def->getContext();
+    CoreIR::Values args = {
+        {"width", CoreIR::Const::make(c, width)},
+        {"min", CoreIR::Const::make(c, min_val)},
+        {"max", CoreIR::Const::make(c, max_val)},
+        {"inc", CoreIR::Const::make(c, inc_val)},
+    };
+    auto ins = def->addInstance(name, "commonlib.counter", args);
+    return ins;
+}
+
+CoreIR::Module* affine_controller_primitive(CodegenOptions& options, CoreIR::Context* context, isl_set* dom, isl_aff* aff) {
   cout << tab(1) << "dom = " << str(dom) << endl;
 
   auto ns = context->getNamespace("global");
@@ -3362,6 +3366,9 @@ CoreIR::Module* affine_controller_primitive(CoreIR::Context* context, isl_set* d
       {"valid", c->Bit()}};
   int dims = num_in_dims(aff);
   ub_field.push_back({"d", context->Bit()->Arr(16)->Arr(dims)});
+  if (options.rtl_options.use_prebuilt_memory) {
+    ub_field.push_back({"rst_n", c->BitIn()});
+  }
 
   CoreIR::RecordType* utp = context->Record(ub_field);
   auto m = ns->newModuleDecl("affine_controller_" + context->getUnique(), utp);
@@ -3369,20 +3376,30 @@ CoreIR::Module* affine_controller_primitive(CoreIR::Context* context, isl_set* d
   auto aff_mod = coreir_for_aff(c, aff);
   auto aff_func = def->addInstance("affine_func", aff_mod);
 
-
-  auto cycle_time_reg = def->addInstance("cycle_time", "mantle.reg",
-      {{"width", CoreIR::Const::make(context, width)},
-      {"has_en", CoreIR::Const::make(context, false)}});
-
   auto one = def->addInstance(context->getUnique(),
       "coreir.const",
       {{"width", CoreIR::Const::make(c, width)}},
       {{"value", CoreIR::Const::make(c, BitVector(width, 1))}});
 
-  auto inc_time = def->addInstance("inc_time", "coreir.add", {{"width", CoreIR::Const::make(c, width)}});
-  def->connect(inc_time->sel("in0"), cycle_time_reg->sel("out"));
-  def->connect(inc_time->sel("in1"), one->sel("out"));
-  def->connect(inc_time->sel("out"), cycle_time_reg->sel("in"));
+  auto tinc = def->addInstance("true",
+    "corebit.const",
+    {{"value", CoreIR::Const::make(c, true)}});
+
+  CoreIR::Wireable* cycle_time_reg;
+  if (options.rtl_options.use_prebuilt_memory) {
+    cycle_time_reg = build_counter(def, "cycle_time", 16, 0, 65535, 1);
+    def->connect(cycle_time_reg->sel("reset"), def->sel("self.rst_n"));
+    def->connect(cycle_time_reg->sel("en"), tinc->sel("out"));
+  } else {
+    cycle_time_reg = def->addInstance("cycle_time", "mantle.reg",
+        {{"width", CoreIR::Const::make(context, width)},
+        {"has_en", CoreIR::Const::make(context, false)}});
+
+    auto inc_time = def->addInstance("inc_time", "coreir.add", {{"width", CoreIR::Const::make(c, width)}});
+    def->connect(inc_time->sel("in0"), cycle_time_reg->sel("out"));
+    def->connect(inc_time->sel("in1"), one->sel("out"));
+    def->connect(inc_time->sel("out"), cycle_time_reg->sel("in"));
+  }
 
   auto diff = def->addInstance("time_diff", "coreir.sub", {{"width", CoreIR::Const::make(c, width)}});
   def->connect(cycle_time_reg->sel("out"), diff->sel("in1"));
@@ -3424,9 +3441,6 @@ CoreIR::Module* affine_controller_primitive(CoreIR::Context* context, isl_set* d
     domain_at_max.push_back(atmax->sel("out"));
   }
 
-  auto tinc = def->addInstance("true",
-      "corebit.const",
-      {{"value", CoreIR::Const::make(c, true)}});
   for (int d = 0; d < num_dims(dom); d++) {
     string df = "d_" + str(d);
     auto inc = def->addInstance(df + "_inc", "coreir.add", {{"width", CoreIR::Const::make(c, width)}});
@@ -3515,12 +3529,18 @@ addrgen(ModuleDef* def, isl_set* rddom, isl_aff* acc_aff) {
 }
 
 CoreIR::Module* affine_controller(CoreIR::Context* context, isl_set* dom, isl_aff* aff) {
-  return affine_controller_primitive(context, dom, aff);
+  CodegenOptions options;
+  options.rtl_options.use_prebuilt_memory = false;
+  return affine_controller_primitive(options, context, dom, aff);
 }
 
-CoreIR::Instance* affine_controller(CoreIR::ModuleDef* def, isl_set* dom, isl_aff* aff) {
+CoreIR::Module* affine_controller(CodegenOptions& options, CoreIR::Context* context, isl_set* dom, isl_aff* aff) {
+  return affine_controller_primitive(options, context, dom, aff);
+}
+
+CoreIR::Instance* affine_controller(CodegenOptions options, CoreIR::ModuleDef* def, isl_set* dom, isl_aff* aff) {
   auto c = def->getContext();
-  auto ctrl = def->addInstance("ctrl_" + c->getUnique(), affine_controller(c, dom, aff));
+  auto ctrl = def->addInstance("ctrl_" + c->getUnique(), affine_controller(options, c, dom, aff));
   return ctrl;
 }
 
@@ -3845,7 +3865,7 @@ CoreIR::Module* delay_module(CodegenOptions& options,
       cout << "--- Write addr after construction: " << str(write_addr) << endl;
       isl_set* write_dom = isl_set_read_from_str(ctx, ("{ wr[a] : 0 <= a <= " + str(max_depth) + " }").c_str());
 
-      auto write_ctrl = affine_controller(def, write_dom, write_sched);
+      auto write_ctrl = affine_controller(options, def, write_dom, write_sched);
       cout << "write addr before call: " << str(write_addr) << endl;
       auto write_addrgen = addrgen(def, write_addr);
       def->connect(write_addrgen->sel("d"), write_ctrl->sel("d"));
@@ -3853,7 +3873,7 @@ CoreIR::Module* delay_module(CodegenOptions& options,
       isl_aff* read_sched = rdaff(ctx, ("{ rd[a] -> [(a)] }"));
       isl_aff* read_addr = rdaff(ctx, ("{ rd[a] -> [(a)] }"));
       isl_set* read_dom = isl_set_read_from_str(ctx, ("{ rd[a] : 0 <= a <= " + str(max_depth) + " }").c_str());
-      auto read_ctrl = affine_controller(def, read_dom, read_sched);
+      auto read_ctrl = affine_controller(options, def, read_dom, read_sched);
       auto read_addrgen = addrgen(def, read_addr);
       def->connect(read_addrgen->sel("d"), read_ctrl->sel("d"));
 
@@ -4398,7 +4418,7 @@ int generate_compute_unit_regression_tb(op* op, prog& prg) {
   return verilator_run;
 }
 
-dgraph build_shift_register_graph(CodegenOptions& options, CoreIR::ModuleDef* def, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
+dgraph build_shift_register_graph(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
   map<string,pair<string,int>> shift_registered_outputs = determine_shift_reg_map(prg, buf, hwinfo);
   vector<pair<string,pair<string,int>>> shift_registered_outputs_to_outputs = determine_output_shift_reg_map(prg, buf, hwinfo);
 
@@ -4440,7 +4460,7 @@ dgraph build_shift_register_graph(CodegenOptions& options, CoreIR::ModuleDef* de
 
 
 dgraph build_shift_registers_io(CodegenOptions& options, CoreIR::ModuleDef* def, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
-  dgraph dg = build_shift_register_graph(options, def, prg, buf, hwinfo);
+  dgraph dg = build_shift_register_graph(options, prg, buf, hwinfo);
 
   dgraph shift_registers;
 
@@ -4490,22 +4510,10 @@ dgraph build_shift_registers_io(CodegenOptions& options, CoreIR::ModuleDef* def,
   return shift_registers;
 }
 
-dgraph build_in_to_out_shift_register_graph(CodegenOptions& options, CoreIR::ModuleDef* def, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
-  map<string,pair<string,int>> shift_registered_outputs = determine_shift_reg_map(prg, buf, hwinfo);
-
-  dgraph dg;
-  for (auto pt : shift_registered_outputs) {
-    dg.add_edge(pt.second.first, pt.first, pt.second.second);
-  }
-
-  cout << "DG: ..." << endl;
-  cout << dg << endl;
-  return dg;
-}
 
 dgraph build_shift_registers(CodegenOptions& options, CoreIR::ModuleDef* def, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
   if (buf.name == "padded16_global_wrapper_stencil") {
-    dgraph shift_registers = build_in_to_out_shift_register_graph(options, def, prg, buf, hwinfo);
+    dgraph shift_registers = build_in_to_out_shift_register_graph(options, prg, buf, hwinfo);
 
     cout << "Shift registers..." << endl;
     cout << shift_registers << endl;
@@ -4516,7 +4524,7 @@ dgraph build_shift_registers(CodegenOptions& options, CoreIR::ModuleDef* def, pr
       for (auto v : shift_registers.out_edges.at(inpt)) {
         vals.push_back({v, shift_registers.weight(inpt, v)});
       }
-      sort_lt_snd_2(vals);
+      sort_lt(vals, [](const pair<string, int> & v) {return v.second;});
       for (auto v : vals) {
         cout << tab(1) << v.first << " -(" << v.second << ")-> " << v.second << endl;
       }
@@ -4546,7 +4554,7 @@ dgraph build_shift_registers(CodegenOptions& options, CoreIR::ModuleDef* def, pr
   }
 
 
-  dgraph dg = build_shift_register_graph(options, def, prg, buf, hwinfo);
+  dgraph dg = build_shift_register_graph(options, prg, buf, hwinfo);
 
   dgraph shift_registers;
 
@@ -4708,7 +4716,7 @@ std::set<string> generate_block_shift_register(CodegenOptions& options, CoreIR::
   auto c = def->getContext();
 
   assert(packed_sr);
-  string src = b_sreg.inpt;     
+  string src = b_sreg.inpt;
   Wireable * src_wire = def->sel("self." + buf.container_bundle(src) + "." + str(buf.bundle_offset(src)));
   Wireable * delayed_src = delay_by(def, "sr_ito_all_" + c->getUnique(), src_wire, b_sreg.init_delay);
   def->connect(def->sel(b_sreg.chain_starts.at(0) + "_net.in"), delayed_src);
@@ -5461,6 +5469,7 @@ double PE_energy_cost(power_analysis_params& power_params, power_analysis_info& 
   for (auto p : prg.all_ops()) {
     for (auto op : power_stats.PE_optype_counts[p->name]) {
       cout << tab(1) << op.first << " -> " << op.second << endl;
+      cout << tab(1) << "op_energy_cost : " << map_find(op.first, power_params.alu_op_energy_costs) << endl;
       energy_cost += map_find(p->name, power_stats.op_counts) *
         ((double) map_find(op.first, power_params.alu_op_energy_costs)) *
         ((double)op.second);
@@ -5470,6 +5479,91 @@ double PE_energy_cost(power_analysis_params& power_params, power_analysis_info& 
   cout << "Total PE energy cost for " << prg.name << ": " << energy_cost << endl;
 
   return energy_cost;
+}
+
+map<string, int> get_PE_optype_count_garnet(prog& prg) {
+
+  cout << "Computing PE energy cost for " << prg.name << endl;
+  map<string, int> PE_op_count;
+
+      CoreIR::Context* context = CoreIR::newContext();
+      CoreIRLoadLibrary_commonlib(context);
+      CoreIRLoadLibrary_cgralib(context);
+
+      string garnet_file = "./aha_garnet_design_new/" + prg.name + "/" + prg.name +  "_garnet.json";
+      if (!loadFromFile(context, garnet_file)) {
+        cout << "Could not load compute file for: " << prg.name << ", file name = " << garnet_file << endl;
+        assert(false);
+      }
+      auto ns = context->getNamespace("global");
+      CoreIR::Module* cu = ns->getModule(prg.name);
+      map<string, int> counts;
+      for (auto inst : cu->getDef()->getInstances()) {
+        cout << tab(1) << inst.second->getModuleRef()->getName() << endl;
+        counts[inst.second->getModuleRef()->getName()]++;
+        if (inst.second->getModuleRef()->getName() == "PE") {
+          auto modargs = inst.second->getModArgs();
+          if (modargs.find("alu_op") != end(modargs)) {
+            //power_stats.PE_optype_counts[op->name][inst.second->getModArgs().at("alu_op")->get<string>()]++;
+
+            PE_op_count[inst.second->getModArgs().at("alu_op")->get<string>()]++;
+          } else {
+            PE_op_count["lut"]++;
+          }
+        }
+      }
+      cu->print();
+      deleteContext(context);
+  //cout << "# of PEs in " << prg.name << " = " << PEs_used << endl;
+
+  return PE_op_count;
+}
+
+map<string, int> get_PE_optype_count(prog& prg) {
+
+  cout << "Computing PE energy cost for " << prg.name << endl;
+  map<string, int> PE_op_count;
+
+  for (auto op : prg.all_ops()) {
+    if (op->func != "") {
+      vector<string> surrounding = surrounding_vars(op, prg);
+      vector<int> bounds;
+      for (auto l : surrounding) {
+        bounds.push_back(prg.find_loop(l)->trip_count());
+      }
+
+      CoreIR::Context* context = CoreIR::newContext();
+      CoreIRLoadLibrary_commonlib(context);
+      CoreIRLoadLibrary_cgralib(context);
+
+      string compute_file = "./coreir_compute/" + prg.name + "_compute.json";
+      if (!loadFromFile(context, compute_file)) {
+        cout << "Could not load compute file for: " << prg.name << ", file name = " << compute_file << endl;
+        //assert(false);
+      }
+      auto ns = context->getNamespace("global");
+      CoreIR::Module* cu = ns->getModule(op->func);
+      garnet_map_module(cu);
+      map<string, int> counts;
+      for (auto inst : cu->getDef()->getInstances()) {
+        cout << tab(1) << inst.second->getModuleRef()->getName() << endl;
+        counts[inst.second->getModuleRef()->getName()]++;
+        if (inst.second->getModuleRef()->getName() == "PE") {
+          auto modargs = inst.second->getModArgs();
+          if (modargs.find("alu_op") != end(modargs)) {
+            //power_stats.PE_optype_counts[op->name][inst.second->getModArgs().at("alu_op")->get<string>()]++;
+
+            PE_op_count[inst.second->getModArgs().at("alu_op")->get<string>()]++;
+          }
+        }
+      }
+      cu->print();
+      deleteContext(context);
+    }
+  }
+  //cout << "# of PEs in " << prg.name << " = " << PEs_used << endl;
+
+  return PE_op_count;
 }
 
 double MEM_energy_cost(CodegenOptions& options, power_analysis_params& power_params, power_analysis_info& power_stats, prog& prg) {

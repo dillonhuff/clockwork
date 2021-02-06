@@ -1,2 +1,0 @@
-down_sample_hw_inbkb
-down_sample

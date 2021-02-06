@@ -1,2 +1,0 @@
-export app=h10_1_300MHz_4_opt
-export HLS_CLOCK_FREQUENCY=300000000

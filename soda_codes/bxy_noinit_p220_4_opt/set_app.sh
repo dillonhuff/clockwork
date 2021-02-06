@@ -1,1 +1,0 @@
-export app=bxy_noinit_p220_4_opt

@@ -25,6 +25,8 @@ struct blur_stencil_all_inputs_to_all_outputs_cache {
 };
 
 struct blur_stencil_cache {
+  // Reader addrs...
+    // { op_hcompute_hw_output_stencil[root = 0, hw_output_s0_y_yi, hw_output_s0_x_xi] -> blur_stencil[hw_output_s0_y_yi, hw_output_s0_x_xi] : 0 <= hw_output_s0_y_yi <= 61 and 0 <= hw_output_s0_x_xi <= 61 }
   // # of banks: 1
   blur_stencil_all_inputs_to_all_outputs_cache blur_stencil_all_inputs_to_all_outputs;
 };
@@ -32,14 +34,14 @@ struct blur_stencil_cache {
 
 
 inline void blur_stencil_op_hcompute_blur_stencil_16_write(hw_uint<16>& blur_stencil_op_hcompute_blur_stencil_16, blur_stencil_cache& blur_stencil, int root, int blur_s0_y, int blur_s0_x, int dynamic_address) {
-  blur_stencil.blur_stencil_all_inputs_to_all_outputs.write(blur_stencil_op_hcompute_blur_stencil_16, blur_s0_y - 0, blur_s0_x - 0);
+  blur_stencil.blur_stencil_all_inputs_to_all_outputs.write(blur_stencil_op_hcompute_blur_stencil_16, ((1*blur_s0_y)) - 0, ((1*blur_s0_x)) - 0);
 }
 
 inline hw_uint<16> blur_stencil_op_hcompute_hw_output_stencil_1_select(blur_stencil_cache& blur_stencil, int root, int hw_output_s0_y_yi, int hw_output_s0_x_xi, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // blur_stencil_op_hcompute_hw_output_stencil_1 read pattern: { op_hcompute_hw_output_stencil[root = 0, hw_output_s0_y_yi, hw_output_s0_x_xi] -> blur_stencil[hw_output_s0_y_yi, hw_output_s0_x_xi] : 0 <= hw_output_s0_y_yi <= 61 and 0 <= hw_output_s0_x_xi <= 61 }
-  auto value_blur_stencil_op_hcompute_blur_stencil_16 = blur_stencil.blur_stencil_all_inputs_to_all_outputs.read(hw_output_s0_y_yi - 0, hw_output_s0_x_xi - 0);
+  auto value_blur_stencil_op_hcompute_blur_stencil_16 = blur_stencil.blur_stencil_all_inputs_to_all_outputs.read(((1*hw_output_s0_y_yi)) - 0, ((1*hw_output_s0_x_xi)) - 0);
   return value_blur_stencil_op_hcompute_blur_stencil_16;
   return 0;
 }
@@ -80,6 +82,8 @@ struct blur_unnormalized_stencil_all_inputs_to_all_outputs_cache {
 };
 
 struct blur_unnormalized_stencil_cache {
+  // Reader addrs...
+    // { op_hcompute_blur_stencil[root = 0, blur_s0_y, blur_s0_x] -> blur_unnormalized_stencil[blur_s0_y, blur_s0_x] : 0 <= blur_s0_y <= 61 and 0 <= blur_s0_x <= 61 }
   // # of banks: 1
   blur_unnormalized_stencil_all_inputs_to_all_outputs_cache blur_unnormalized_stencil_all_inputs_to_all_outputs;
 };
@@ -87,14 +91,14 @@ struct blur_unnormalized_stencil_cache {
 
 
 inline void blur_unnormalized_stencil_op_hcompute_blur_unnormalized_stencil_1_4_write(hw_uint<16>& blur_unnormalized_stencil_op_hcompute_blur_unnormalized_stencil_1_4, blur_unnormalized_stencil_cache& blur_unnormalized_stencil, int root, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x, int dynamic_address) {
-  blur_unnormalized_stencil.blur_unnormalized_stencil_all_inputs_to_all_outputs.write(blur_unnormalized_stencil_op_hcompute_blur_unnormalized_stencil_1_4, blur_unnormalized_s1_y - 0, blur_unnormalized_s1_x - 0);
+  blur_unnormalized_stencil.blur_unnormalized_stencil_all_inputs_to_all_outputs.write(blur_unnormalized_stencil_op_hcompute_blur_unnormalized_stencil_1_4, ((1*blur_unnormalized_s1_y)) - 0, ((1*blur_unnormalized_s1_x)) - 0);
 }
 
 inline hw_uint<16> blur_unnormalized_stencil_op_hcompute_blur_stencil_17_select(blur_unnormalized_stencil_cache& blur_unnormalized_stencil, int root, int blur_s0_y, int blur_s0_x, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // blur_unnormalized_stencil_op_hcompute_blur_stencil_17 read pattern: { op_hcompute_blur_stencil[root = 0, blur_s0_y, blur_s0_x] -> blur_unnormalized_stencil[blur_s0_y, blur_s0_x] : 0 <= blur_s0_y <= 61 and 0 <= blur_s0_x <= 61 }
-  auto value_blur_unnormalized_stencil_op_hcompute_blur_unnormalized_stencil_1_4 = blur_unnormalized_stencil.blur_unnormalized_stencil_all_inputs_to_all_outputs.read(blur_s0_y - 0, blur_s0_x - 0);
+  auto value_blur_unnormalized_stencil_op_hcompute_blur_unnormalized_stencil_1_4 = blur_unnormalized_stencil.blur_unnormalized_stencil_all_inputs_to_all_outputs.read(((1*blur_s0_y)) - 0, ((1*blur_s0_x)) - 0);
   return value_blur_unnormalized_stencil_op_hcompute_blur_unnormalized_stencil_1_4;
   return 0;
 }
@@ -135,6 +139,8 @@ struct blur_unnormalized_stencil_clkwrk_dsa0_all_inputs_to_all_outputs_cache {
 };
 
 struct blur_unnormalized_stencil_clkwrk_dsa0_cache {
+  // Reader addrs...
+    // { op_hcompute_blur_unnormalized_stencil_1[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x] -> blur_unnormalized_stencil_clkwrk_dsa0[blur_unnormalized_s1_y, blur_unnormalized_s1_x] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x <= 61 }
   // # of banks: 1
   blur_unnormalized_stencil_clkwrk_dsa0_all_inputs_to_all_outputs_cache blur_unnormalized_stencil_clkwrk_dsa0_all_inputs_to_all_outputs;
 };
@@ -142,14 +148,14 @@ struct blur_unnormalized_stencil_clkwrk_dsa0_cache {
 
 
 inline void blur_unnormalized_stencil_clkwrk_dsa0_op_hcompute_blur_unnormalized_stencil_15_write(hw_uint<16>& blur_unnormalized_stencil_clkwrk_dsa0_op_hcompute_blur_unnormalized_stencil_15, blur_unnormalized_stencil_clkwrk_dsa0_cache& blur_unnormalized_stencil_clkwrk_dsa0, int root, int blur_unnormalized_s0_y, int blur_unnormalized_s0_x, int dynamic_address) {
-  blur_unnormalized_stencil_clkwrk_dsa0.blur_unnormalized_stencil_clkwrk_dsa0_all_inputs_to_all_outputs.write(blur_unnormalized_stencil_clkwrk_dsa0_op_hcompute_blur_unnormalized_stencil_15, blur_unnormalized_s0_y - 0, blur_unnormalized_s0_x - 0);
+  blur_unnormalized_stencil_clkwrk_dsa0.blur_unnormalized_stencil_clkwrk_dsa0_all_inputs_to_all_outputs.write(blur_unnormalized_stencil_clkwrk_dsa0_op_hcompute_blur_unnormalized_stencil_15, ((1*blur_unnormalized_s0_y)) - 0, ((1*blur_unnormalized_s0_x)) - 0);
 }
 
 inline hw_uint<16> blur_unnormalized_stencil_clkwrk_dsa0_op_hcompute_blur_unnormalized_stencil_1_5_select(blur_unnormalized_stencil_clkwrk_dsa0_cache& blur_unnormalized_stencil_clkwrk_dsa0, int root, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // blur_unnormalized_stencil_clkwrk_dsa0_op_hcompute_blur_unnormalized_stencil_1_5 read pattern: { op_hcompute_blur_unnormalized_stencil_1[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x] -> blur_unnormalized_stencil_clkwrk_dsa0[blur_unnormalized_s1_y, blur_unnormalized_s1_x] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x <= 61 }
-  auto value_blur_unnormalized_stencil_clkwrk_dsa0_op_hcompute_blur_unnormalized_stencil_15 = blur_unnormalized_stencil_clkwrk_dsa0.blur_unnormalized_stencil_clkwrk_dsa0_all_inputs_to_all_outputs.read(blur_unnormalized_s1_y - 0, blur_unnormalized_s1_x - 0);
+  auto value_blur_unnormalized_stencil_clkwrk_dsa0_op_hcompute_blur_unnormalized_stencil_15 = blur_unnormalized_stencil_clkwrk_dsa0.blur_unnormalized_stencil_clkwrk_dsa0_all_inputs_to_all_outputs.read(((1*blur_unnormalized_s1_y)) - 0, ((1*blur_unnormalized_s1_x)) - 0);
   return value_blur_unnormalized_stencil_clkwrk_dsa0_op_hcompute_blur_unnormalized_stencil_15;
   return 0;
 }
@@ -190,6 +196,16 @@ struct hw_input_global_wrapper_stencil_all_inputs_to_all_outputs_cache {
 };
 
 struct hw_input_global_wrapper_stencil_cache {
+  // Reader addrs...
+    // { op_hcompute_blur_unnormalized_stencil_1[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x] -> hw_input_global_wrapper_stencil[1 + blur_unnormalized_s1_y, 1 + blur_unnormalized_s1_x] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x <= 61 }
+    // { op_hcompute_blur_unnormalized_stencil_1[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x] -> hw_input_global_wrapper_stencil[1 + blur_unnormalized_s1_y, 2 + blur_unnormalized_s1_x] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x <= 61 }
+    // { op_hcompute_blur_unnormalized_stencil_1[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x] -> hw_input_global_wrapper_stencil[2 + blur_unnormalized_s1_y, blur_unnormalized_s1_x] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x <= 61 }
+    // { op_hcompute_blur_unnormalized_stencil_1[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x] -> hw_input_global_wrapper_stencil[2 + blur_unnormalized_s1_y, 2 + blur_unnormalized_s1_x] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x <= 61 }
+    // { op_hcompute_blur_unnormalized_stencil_1[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x] -> hw_input_global_wrapper_stencil[2 + blur_unnormalized_s1_y, 1 + blur_unnormalized_s1_x] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x <= 61 }
+    // { op_hcompute_blur_unnormalized_stencil_1[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x] -> hw_input_global_wrapper_stencil[blur_unnormalized_s1_y, blur_unnormalized_s1_x] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x <= 61 }
+    // { op_hcompute_blur_unnormalized_stencil_1[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x] -> hw_input_global_wrapper_stencil[blur_unnormalized_s1_y, 1 + blur_unnormalized_s1_x] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x <= 61 }
+    // { op_hcompute_blur_unnormalized_stencil_1[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x] -> hw_input_global_wrapper_stencil[blur_unnormalized_s1_y, 2 + blur_unnormalized_s1_x] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x <= 61 }
+    // { op_hcompute_blur_unnormalized_stencil_1[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x] -> hw_input_global_wrapper_stencil[1 + blur_unnormalized_s1_y, blur_unnormalized_s1_x] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x <= 61 }
   // # of banks: 1
   hw_input_global_wrapper_stencil_all_inputs_to_all_outputs_cache hw_input_global_wrapper_stencil_all_inputs_to_all_outputs;
 };
@@ -197,14 +213,14 @@ struct hw_input_global_wrapper_stencil_cache {
 
 
 inline void hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2_write(hw_uint<16>& hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2, hw_input_global_wrapper_stencil_cache& hw_input_global_wrapper_stencil, int root, int hw_input_global_wrapper_s0_y, int hw_input_global_wrapper_s0_x, int dynamic_address) {
-  hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_all_inputs_to_all_outputs.write(hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2, hw_input_global_wrapper_s0_y - 0, hw_input_global_wrapper_s0_x - 0);
+  hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_all_inputs_to_all_outputs.write(hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2, ((1*hw_input_global_wrapper_s0_y)) - 0, ((1*hw_input_global_wrapper_s0_x)) - 0);
 }
 
 inline hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_1_10_select(hw_input_global_wrapper_stencil_cache& hw_input_global_wrapper_stencil, int root, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_1_10 read pattern: { op_hcompute_blur_unnormalized_stencil_1[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x] -> hw_input_global_wrapper_stencil[1 + blur_unnormalized_s1_y, 1 + blur_unnormalized_s1_x] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x <= 61 }
-  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_all_inputs_to_all_outputs.read(1 + blur_unnormalized_s1_y - 0, 1 + blur_unnormalized_s1_x - 0);
+  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_all_inputs_to_all_outputs.read(((1 + 1*blur_unnormalized_s1_y)) - 0, ((1 + 1*blur_unnormalized_s1_x)) - 0);
   return value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2;
   return 0;
 }
@@ -213,7 +229,7 @@ inline hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_blur_unnormalized
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_1_11 read pattern: { op_hcompute_blur_unnormalized_stencil_1[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x] -> hw_input_global_wrapper_stencil[1 + blur_unnormalized_s1_y, 2 + blur_unnormalized_s1_x] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x <= 61 }
-  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_all_inputs_to_all_outputs.read(1 + blur_unnormalized_s1_y - 0, 2 + blur_unnormalized_s1_x - 0);
+  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_all_inputs_to_all_outputs.read(((1 + 1*blur_unnormalized_s1_y)) - 0, ((2 + 1*blur_unnormalized_s1_x)) - 0);
   return value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2;
   return 0;
 }
@@ -222,7 +238,7 @@ inline hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_blur_unnormalized
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_1_12 read pattern: { op_hcompute_blur_unnormalized_stencil_1[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x] -> hw_input_global_wrapper_stencil[2 + blur_unnormalized_s1_y, blur_unnormalized_s1_x] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x <= 61 }
-  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_all_inputs_to_all_outputs.read(2 + blur_unnormalized_s1_y - 0, blur_unnormalized_s1_x - 0);
+  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_all_inputs_to_all_outputs.read(((2 + 1*blur_unnormalized_s1_y)) - 0, ((1*blur_unnormalized_s1_x)) - 0);
   return value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2;
   return 0;
 }
@@ -231,7 +247,7 @@ inline hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_blur_unnormalized
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_1_13 read pattern: { op_hcompute_blur_unnormalized_stencil_1[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x] -> hw_input_global_wrapper_stencil[2 + blur_unnormalized_s1_y, 2 + blur_unnormalized_s1_x] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x <= 61 }
-  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_all_inputs_to_all_outputs.read(2 + blur_unnormalized_s1_y - 0, 2 + blur_unnormalized_s1_x - 0);
+  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_all_inputs_to_all_outputs.read(((2 + 1*blur_unnormalized_s1_y)) - 0, ((2 + 1*blur_unnormalized_s1_x)) - 0);
   return value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2;
   return 0;
 }
@@ -240,7 +256,7 @@ inline hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_blur_unnormalized
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_1_14 read pattern: { op_hcompute_blur_unnormalized_stencil_1[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x] -> hw_input_global_wrapper_stencil[2 + blur_unnormalized_s1_y, 1 + blur_unnormalized_s1_x] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x <= 61 }
-  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_all_inputs_to_all_outputs.read(2 + blur_unnormalized_s1_y - 0, 1 + blur_unnormalized_s1_x - 0);
+  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_all_inputs_to_all_outputs.read(((2 + 1*blur_unnormalized_s1_y)) - 0, ((1 + 1*blur_unnormalized_s1_x)) - 0);
   return value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2;
   return 0;
 }
@@ -249,7 +265,7 @@ inline hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_blur_unnormalized
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_1_6 read pattern: { op_hcompute_blur_unnormalized_stencil_1[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x] -> hw_input_global_wrapper_stencil[blur_unnormalized_s1_y, blur_unnormalized_s1_x] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x <= 61 }
-  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_all_inputs_to_all_outputs.read(blur_unnormalized_s1_y - 0, blur_unnormalized_s1_x - 0);
+  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_all_inputs_to_all_outputs.read(((1*blur_unnormalized_s1_y)) - 0, ((1*blur_unnormalized_s1_x)) - 0);
   return value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2;
   return 0;
 }
@@ -258,7 +274,7 @@ inline hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_blur_unnormalized
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_1_7 read pattern: { op_hcompute_blur_unnormalized_stencil_1[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x] -> hw_input_global_wrapper_stencil[blur_unnormalized_s1_y, 1 + blur_unnormalized_s1_x] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x <= 61 }
-  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_all_inputs_to_all_outputs.read(blur_unnormalized_s1_y - 0, 1 + blur_unnormalized_s1_x - 0);
+  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_all_inputs_to_all_outputs.read(((1*blur_unnormalized_s1_y)) - 0, ((1 + 1*blur_unnormalized_s1_x)) - 0);
   return value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2;
   return 0;
 }
@@ -267,7 +283,7 @@ inline hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_blur_unnormalized
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_1_8 read pattern: { op_hcompute_blur_unnormalized_stencil_1[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x] -> hw_input_global_wrapper_stencil[blur_unnormalized_s1_y, 2 + blur_unnormalized_s1_x] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x <= 61 }
-  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_all_inputs_to_all_outputs.read(blur_unnormalized_s1_y - 0, 2 + blur_unnormalized_s1_x - 0);
+  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_all_inputs_to_all_outputs.read(((1*blur_unnormalized_s1_y)) - 0, ((2 + 1*blur_unnormalized_s1_x)) - 0);
   return value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2;
   return 0;
 }
@@ -276,7 +292,7 @@ inline hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_blur_unnormalized
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_1_9 read pattern: { op_hcompute_blur_unnormalized_stencil_1[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x] -> hw_input_global_wrapper_stencil[1 + blur_unnormalized_s1_y, blur_unnormalized_s1_x] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x <= 61 }
-  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_all_inputs_to_all_outputs.read(1 + blur_unnormalized_s1_y - 0, blur_unnormalized_s1_x - 0);
+  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_all_inputs_to_all_outputs.read(((1 + 1*blur_unnormalized_s1_y)) - 0, ((1*blur_unnormalized_s1_x)) - 0);
   return value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2;
   return 0;
 }
@@ -337,32 +353,6 @@ inline void hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_
 
 
 // Operation logic
-inline void op_hcompute_hw_input_global_wrapper_stencil(HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */hw_input_stencil, hw_input_global_wrapper_stencil_cache& hw_input_global_wrapper_stencil, int root, int hw_input_global_wrapper_s0_y, int hw_input_global_wrapper_s0_x) {
-  // Dynamic address computation
-
-	// Consume: hw_input_stencil
-	auto hw_input_stencil_hw_input_global_wrapper_s0_y_c__hw_input_global_wrapper_s0_x_value = hw_input_stencil.read();
-	auto compute_result = hcompute_hw_input_global_wrapper_stencil(hw_input_stencil_hw_input_global_wrapper_s0_y_c__hw_input_global_wrapper_s0_x_value);
-	// Produce: hw_input_global_wrapper_stencil
-	hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_write_bundle_write(/* arg names */compute_result, hw_input_global_wrapper_stencil, root, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void op_hcompute_blur_unnormalized_stencil(blur_unnormalized_stencil_clkwrk_dsa0_cache& blur_unnormalized_stencil_clkwrk_dsa0, int root, int blur_unnormalized_s0_y, int blur_unnormalized_s0_x) {
-  // Dynamic address computation
-
-	auto compute_result = hcompute_blur_unnormalized_stencil();
-	// Produce: blur_unnormalized_stencil_clkwrk_dsa0
-	blur_unnormalized_stencil_clkwrk_dsa0_op_hcompute_blur_unnormalized_stencil_write_bundle_write(/* arg names */compute_result, blur_unnormalized_stencil_clkwrk_dsa0, root, blur_unnormalized_s0_y, blur_unnormalized_s0_x, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
 inline void op_hcompute_blur_unnormalized_stencil_1(blur_unnormalized_stencil_clkwrk_dsa0_cache& blur_unnormalized_stencil_clkwrk_dsa0, hw_input_global_wrapper_stencil_cache& hw_input_global_wrapper_stencil, blur_unnormalized_stencil_cache& blur_unnormalized_stencil, int root, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x) {
   // Dynamic address computation
 
@@ -387,18 +377,12 @@ inline void op_hcompute_blur_unnormalized_stencil_1(blur_unnormalized_stencil_cl
 
 }
 
-inline void op_hcompute_blur_stencil(blur_unnormalized_stencil_cache& blur_unnormalized_stencil, blur_stencil_cache& blur_stencil, int root, int blur_s0_y, int blur_s0_x) {
+inline void op_hcompute_blur_unnormalized_stencil(blur_unnormalized_stencil_clkwrk_dsa0_cache& blur_unnormalized_stencil_clkwrk_dsa0, int root, int blur_unnormalized_s0_y, int blur_unnormalized_s0_x) {
   // Dynamic address computation
 
-	// Consume: blur_unnormalized_stencil
-	auto blur_unnormalized_stencil_blur_s0_y_c__blur_s0_x_value = blur_unnormalized_stencil_op_hcompute_blur_stencil_read_bundle_read(blur_unnormalized_stencil/* source_delay */, root, blur_s0_y, blur_s0_x, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = hcompute_blur_stencil(blur_unnormalized_stencil_blur_s0_y_c__blur_s0_x_value);
-	// Produce: blur_stencil
-	blur_stencil_op_hcompute_blur_stencil_write_bundle_write(/* arg names */compute_result, blur_stencil, root, blur_s0_y, blur_s0_x, 0);
+	auto compute_result = hcompute_blur_unnormalized_stencil();
+	// Produce: blur_unnormalized_stencil_clkwrk_dsa0
+	blur_unnormalized_stencil_clkwrk_dsa0_op_hcompute_blur_unnormalized_stencil_write_bundle_write(/* arg names */compute_result, blur_unnormalized_stencil_clkwrk_dsa0, root, blur_unnormalized_s0_y, blur_unnormalized_s0_x, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -417,6 +401,38 @@ inline void op_hcompute_hw_output_stencil(blur_stencil_cache& blur_stencil, HWSt
 	auto compute_result = hcompute_hw_output_stencil(blur_stencil_hw_output_s0_y_yi_c__hw_output_s0_x_xi_value);
 	// Produce: hw_output_stencil
 	hw_output_stencil.write(compute_result);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void op_hcompute_hw_input_global_wrapper_stencil(HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */hw_input_stencil, hw_input_global_wrapper_stencil_cache& hw_input_global_wrapper_stencil, int root, int hw_input_global_wrapper_s0_y, int hw_input_global_wrapper_s0_x) {
+  // Dynamic address computation
+
+	// Consume: hw_input_stencil
+	auto hw_input_stencil_hw_input_global_wrapper_s0_y_c__hw_input_global_wrapper_s0_x_value = hw_input_stencil.read();
+	auto compute_result = hcompute_hw_input_global_wrapper_stencil(hw_input_stencil_hw_input_global_wrapper_s0_y_c__hw_input_global_wrapper_s0_x_value);
+	// Produce: hw_input_global_wrapper_stencil
+	hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_write_bundle_write(/* arg names */compute_result, hw_input_global_wrapper_stencil, root, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void op_hcompute_blur_stencil(blur_unnormalized_stencil_cache& blur_unnormalized_stencil, blur_stencil_cache& blur_stencil, int root, int blur_s0_y, int blur_s0_x) {
+  // Dynamic address computation
+
+	// Consume: blur_unnormalized_stencil
+	auto blur_unnormalized_stencil_blur_s0_y_c__blur_s0_x_value = blur_unnormalized_stencil_op_hcompute_blur_stencil_read_bundle_read(blur_unnormalized_stencil/* source_delay */, root, blur_s0_y, blur_s0_x, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = hcompute_blur_stencil(blur_unnormalized_stencil_blur_s0_y_c__blur_s0_x_value);
+	// Produce: blur_stencil
+	blur_stencil_op_hcompute_blur_stencil_write_bundle_write(/* arg names */compute_result, blur_stencil, root, blur_s0_y, blur_s0_x, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -446,38 +462,18 @@ void unoptimized_gaussian(HWStream<hw_uint<16> >& /* no bundle get_args num port
 #pragma HLS inline recursive
 #endif // __VIVADO_SYNTH__
 
-// schedule: { op_hcompute_blur_unnormalized_stencil[root = 0, blur_unnormalized_s0_y, blur_unnormalized_s0_x] -> [0, 0, 1, blur_unnormalized_s0_y, 0, blur_unnormalized_s0_x, 0] : 0 <= blur_unnormalized_s0_y <= 61 and 0 <= blur_unnormalized_s0_x <= 61; op_hcompute_blur_stencil[root = 0, blur_s0_y, blur_s0_x] -> [0, 0, 3, blur_s0_y, 0, blur_s0_x, 0] : 0 <= blur_s0_y <= 61 and 0 <= blur_s0_x <= 61; op_hcompute_hw_input_global_wrapper_stencil[root = 0, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x] -> [0, 0, 0, hw_input_global_wrapper_s0_y, 0, hw_input_global_wrapper_s0_x, 0] : 0 <= hw_input_global_wrapper_s0_y <= 63 and 0 <= hw_input_global_wrapper_s0_x <= 63; op_hcompute_blur_unnormalized_stencil_1[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x] -> [0, 0, 2, blur_unnormalized_s1_y, 0, blur_unnormalized_s1_x, 0] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x <= 61; op_hcompute_hw_output_stencil[root = 0, hw_output_s0_y_yi, hw_output_s0_x_xi] -> [0, 0, 4, hw_output_s0_y_yi, 0, hw_output_s0_x_xi, 0] : 0 <= hw_output_s0_y_yi <= 61 and 0 <= hw_output_s0_x_xi <= 61 }
+// schedule: { op_hcompute_blur_unnormalized_stencil[root = 0, blur_unnormalized_s0_y, blur_unnormalized_s0_x] -> [0, 0, 1, blur_unnormalized_s0_y, 0, blur_unnormalized_s0_x, 0] : 0 <= blur_unnormalized_s0_y <= 61 and 0 <= blur_unnormalized_s0_x <= 61; op_hcompute_blur_stencil[root = 0, blur_s0_y, blur_s0_x] -> [0, 0, 3, blur_s0_y, 0, blur_s0_x, 0] : 0 <= blur_s0_y <= 61 and 0 <= blur_s0_x <= 61; op_hcompute_blur_unnormalized_stencil_1[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x] -> [0, 0, 2, blur_unnormalized_s1_y, 0, blur_unnormalized_s1_x, 0] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x <= 61; op_hcompute_hw_input_global_wrapper_stencil[root = 0, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x] -> [0, 0, 0, hw_input_global_wrapper_s0_y, 0, hw_input_global_wrapper_s0_x, 0] : 0 <= hw_input_global_wrapper_s0_y <= 63 and 0 <= hw_input_global_wrapper_s0_x <= 63; op_hcompute_hw_output_stencil[root = 0, hw_output_s0_y_yi, hw_output_s0_x_xi] -> [0, 0, 4, hw_output_s0_y_yi, 0, hw_output_s0_x_xi, 0] : 0 <= hw_output_s0_y_yi <= 61 and 0 <= hw_output_s0_x_xi <= 61 }
 //   { op_hcompute_blur_unnormalized_stencil[root = 0, blur_unnormalized_s0_y, blur_unnormalized_s0_x] -> [0, 0, 1, blur_unnormalized_s0_y, 0, blur_unnormalized_s0_x, 0] : 0 <= blur_unnormalized_s0_y <= 61 and 0 <= blur_unnormalized_s0_x <= 61 }
-// Condition for op_hcompute_blur_unnormalized_stencil(((i6 == 0) && (i4 == 0) && (-1 + i2 == 0) && (i1 == 0) && (i0 == 0) && (i3 >= 0) && (61 - i3 >= 0) && (i5 >= 0) && (61 - i5 >= 0)))
+// Condition for op_hcompute_blur_unnormalized_stencil(((((1*i6)) == 0) && (((1*i4)) == 0) && (((-1 + 1*i2)) == 0) && (((1*i1)) == 0) && (((1*i0)) == 0) && (((1*i3)) >= 0) && (((61 + -1*i3)) >= 0) && (((1*i5)) >= 0) && (((61 + -1*i5)) >= 0)))
 //   { op_hcompute_blur_stencil[root = 0, blur_s0_y, blur_s0_x] -> [0, 0, 3, blur_s0_y, 0, blur_s0_x, 0] : 0 <= blur_s0_y <= 61 and 0 <= blur_s0_x <= 61 }
-// Condition for op_hcompute_blur_stencil(((i6 == 0) && (i4 == 0) && (-3 + i2 == 0) && (i1 == 0) && (i0 == 0) && (i3 >= 0) && (61 - i3 >= 0) && (i5 >= 0) && (61 - i5 >= 0)))
-//   { op_hcompute_hw_input_global_wrapper_stencil[root = 0, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x] -> [0, 0, 0, hw_input_global_wrapper_s0_y, 0, hw_input_global_wrapper_s0_x, 0] : 0 <= hw_input_global_wrapper_s0_y <= 63 and 0 <= hw_input_global_wrapper_s0_x <= 63 }
-// Condition for op_hcompute_hw_input_global_wrapper_stencil(((i6 == 0) && (i4 == 0) && (i2 == 0) && (i1 == 0) && (i0 == 0) && (i3 >= 0) && (63 - i3 >= 0) && (i5 >= 0) && (63 - i5 >= 0)))
+// Condition for op_hcompute_blur_stencil(((((1*i6)) == 0) && (((1*i4)) == 0) && (((-3 + 1*i2)) == 0) && (((1*i1)) == 0) && (((1*i0)) == 0) && (((1*i3)) >= 0) && (((61 + -1*i3)) >= 0) && (((1*i5)) >= 0) && (((61 + -1*i5)) >= 0)))
 //   { op_hcompute_blur_unnormalized_stencil_1[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x] -> [0, 0, 2, blur_unnormalized_s1_y, 0, blur_unnormalized_s1_x, 0] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x <= 61 }
-// Condition for op_hcompute_blur_unnormalized_stencil_1(((i6 == 0) && (i4 == 0) && (-2 + i2 == 0) && (i1 == 0) && (i0 == 0) && (i3 >= 0) && (61 - i3 >= 0) && (i5 >= 0) && (61 - i5 >= 0)))
+// Condition for op_hcompute_blur_unnormalized_stencil_1(((((1*i6)) == 0) && (((1*i4)) == 0) && (((-2 + 1*i2)) == 0) && (((1*i1)) == 0) && (((1*i0)) == 0) && (((1*i3)) >= 0) && (((61 + -1*i3)) >= 0) && (((1*i5)) >= 0) && (((61 + -1*i5)) >= 0)))
+//   { op_hcompute_hw_input_global_wrapper_stencil[root = 0, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x] -> [0, 0, 0, hw_input_global_wrapper_s0_y, 0, hw_input_global_wrapper_s0_x, 0] : 0 <= hw_input_global_wrapper_s0_y <= 63 and 0 <= hw_input_global_wrapper_s0_x <= 63 }
+// Condition for op_hcompute_hw_input_global_wrapper_stencil(((((1*i6)) == 0) && (((1*i4)) == 0) && (((1*i2)) == 0) && (((1*i1)) == 0) && (((1*i0)) == 0) && (((1*i3)) >= 0) && (((63 + -1*i3)) >= 0) && (((1*i5)) >= 0) && (((63 + -1*i5)) >= 0)))
 //   { op_hcompute_hw_output_stencil[root = 0, hw_output_s0_y_yi, hw_output_s0_x_xi] -> [0, 0, 4, hw_output_s0_y_yi, 0, hw_output_s0_x_xi, 0] : 0 <= hw_output_s0_y_yi <= 61 and 0 <= hw_output_s0_x_xi <= 61 }
-// Condition for op_hcompute_hw_output_stencil(((i6 == 0) && (i4 == 0) && (-4 + i2 == 0) && (i1 == 0) && (i0 == 0) && (i3 >= 0) && (61 - i3 >= 0) && (i5 >= 0) && (61 - i5 >= 0)))
+// Condition for op_hcompute_hw_output_stencil(((((1*i6)) == 0) && (((1*i4)) == 0) && (((-4 + 1*i2)) == 0) && (((1*i1)) == 0) && (((1*i0)) == 0) && (((1*i3)) >= 0) && (((61 + -1*i3)) >= 0) && (((1*i5)) >= 0) && (((61 + -1*i5)) >= 0)))
 
-  /*
-{
-  for (int c3 = 0; c3 <= 63; c3 += 1)
-    for (int c5 = 0; c5 <= 63; c5 += 1)
-      op_hcompute_hw_input_global_wrapper_stencil(0, c3, c5);
-  for (int c3 = 0; c3 <= 61; c3 += 1)
-    for (int c5 = 0; c5 <= 61; c5 += 1)
-      op_hcompute_blur_unnormalized_stencil(0, c3, c5);
-  for (int c3 = 0; c3 <= 61; c3 += 1)
-    for (int c5 = 0; c5 <= 61; c5 += 1)
-      op_hcompute_blur_unnormalized_stencil_1(0, c3, c5);
-  for (int c3 = 0; c3 <= 61; c3 += 1)
-    for (int c5 = 0; c5 <= 61; c5 += 1)
-      op_hcompute_blur_stencil(0, c3, c5);
-  for (int c3 = 0; c3 <= 61; c3 += 1)
-    for (int c5 = 0; c5 <= 61; c5 += 1)
-      op_hcompute_hw_output_stencil(0, c3, c5);
-}
-
-  */
 	{
 	  for (int c3 = 0; c3 <= 63; c3 += 1)
 	    for (int c5 = 0; c5 <= 63; c5 += 1)

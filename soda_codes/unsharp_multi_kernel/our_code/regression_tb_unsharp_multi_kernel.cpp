@@ -2,6 +2,7 @@
 #include "unsharp_multi_kernel.h"
 
 int main() {
+  srand(234);
   ofstream fout("regression_result_unsharp_multi_kernel.txt");
   HWStream<hw_uint<32 > > in;
   HWStream<hw_uint<32 > > out;

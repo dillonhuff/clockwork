@@ -21,6 +21,7 @@ vector<string> get_files(const std::string& path) {
     return file_list;
 }
 
+
 int run_sw_bmp_test_harness(const std::string& app_name) {
   int res = cmd("g++ -std=c++11 " + app_name + "_sw_bmp_test_harness.cpp " + app_name + ".cpp -I . -I ./aws_collateral");
   assert(res == 0);
@@ -130,6 +131,7 @@ void move_to_benchmarks_folder(const std::string& app_name) {
   system(("cp " + out_name + "*.cpp " + synth_dir).c_str());
   system(("cp regression_tb_" + out_name + ".cpp " + synth_dir).c_str());
   system(("cp " + out_name + "*.h " + synth_dir).c_str());
+  system(("cp clockwork_standard_compute_units.h_merged_compute_units.h " + synth_dir).c_str());
 
   make_exe("run_tb_" + out_name + ".sh");
   system(("mv run_tb_" + out_name + ".sh " + synth_dir).c_str());
@@ -193,3 +195,22 @@ string isl_sanitize(const std::string& str) {
   return res;
 
 }
+
+bool is_permutation(const vector<int>& level_permutation) {
+  std::set<int> loops;
+  for (auto l : level_permutation) {
+    loops.insert(l);
+    if (l < 0) {
+      return false;
+    }
+    if (!(l < level_permutation.size())) {
+      return false;
+    }
+  }
+
+  if (level_permutation.size() != loops.size()) {
+    return false;
+  }
+  return true;
+}
+

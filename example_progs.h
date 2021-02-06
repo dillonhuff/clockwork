@@ -1,6 +1,7 @@
 #pragma once
 #include "prog.h"
 
+prog counter();
 prog conv_multi(); //multiple-tile-cnn
 prog strided_conv();
 prog accumulation(); //reduce
@@ -19,12 +20,16 @@ prog unet_conv_3_3(); //reduce
 prog resnet(); //reduce
 //prog mini_conv_halide_fixed();
 prog camera_pipeline(); //stencil
+prog camera_pipeline_trunc(); //stencil
 prog up_sample();
+prog up_sample_exp();
 prog down_sample();
 prog conv_layer(); //reduce
 prog camera_pipeline_dse_1();
 prog rom();
 prog demosaic_complex();
+prog demosaic_2x2();
+prog demosaic_unrolled();
 prog bilateral();
 prog stereo();
 prog histogram();
@@ -43,4 +48,10 @@ prog harris_sch6_2ppc();
 prog harris_sch7_bigtile();
 prog harris_sch8_endcim();
 prog three_level_memory_two();
+
+//SMT test
+prog conv_3_3(int32_t, int32_t, string);
+prog cascade(int32_t, int32_t, string);
+prog harris(int32_t, int32_t, string);
 prog resnet_full_layer();
+prog histogram1d();
