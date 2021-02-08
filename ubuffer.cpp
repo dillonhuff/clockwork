@@ -1032,8 +1032,8 @@ pair<int, int> process_mux_info(CodegenOptions options, string op_name, bool is_
 
     //get pt number, take the lake information
     int bk_num;
+    cout << micro_buf_name << endl;
     if (is_read) {
-        cout << micro_buf_name << endl;
         bk_num = max(port_width / mem.out_port_width.at(micro_buf_name), 1);
     } else {
         bk_num = max(port_width / mem.in_port_width.at(micro_buf_name), 1);
@@ -6536,6 +6536,7 @@ void UBuffer::generate_banks(CodegenOptions& options) {
 
         auto am_aff = get_aff(am);
         cout << "\tinput pt access map: " << str(am_aff) << endl;
+        cout << "\tinput pt access map: " << str(am) << endl;
         auto agg_in_am = to_map(am_aff);
         agg_in_am = set_range_name(agg_in_am, range_name(am) + "_0_agg");
         vector<isl_map*> inpt_vec_am;
