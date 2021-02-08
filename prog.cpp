@@ -7704,7 +7704,6 @@ void adjust_outer_delays(schedule_info& sched, prog& prg) {
       sched.op_offset_within_parent[lp] = try_delay;
       if (no_violated_cycle_accurate_dependencies(sched, prg)) {
         latest_legal_delay = try_delay;
-        break;
       } else {
         earliest_possible_delay = try_delay;
       }
