@@ -354,10 +354,7 @@ std::string range_name(isl_space* const s) {
 
 
 isl_map* set_range_name(isl_map* const m, string new_name) {
-  if(isl_map_has_tuple_id(m, isl_dim_out))
     return isl_map_set_tuple_name(m, isl_dim_out, new_name.c_str());
-  else
-    return m;
 }
 
 isl_multi_aff* set_in_name(isl_multi_aff* const m, string new_name) {
