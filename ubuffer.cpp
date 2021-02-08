@@ -7313,6 +7313,7 @@ void UBuffer::generate_banks(CodegenOptions& options) {
           for (auto pt : g) {
             cout << tab(2) << pt << endl;
             cout << tab(3) << str(buf.access_map.at(pt)) << endl;
+            cout << tab(3) << str(buf.schedule.at(pt)) << endl;
           }
           if (parts.size() < g.size()) {
             return {};

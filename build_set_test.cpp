@@ -14323,9 +14323,12 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   //test_apps.push_back(up_sample());
 
   //test_apps.push_back(unsharp());
-  //test_apps.push_back(resnet());
+  //test_apps.push_back(resnet_coarse_pipeline_loop());
+  test_apps.push_back(resnet());
   test_apps.push_back(mobilenet_unrolled());
-  ////test_apps.push_back(unsharp());
+
+  //coarse grained pipeline
+  //test_apps.push_back(resnet_coarse_pipeline_loop());
 
   //test_apps.push_back(conv_3_3_wide());
   //TODO: break in the middle of vectorization
@@ -16637,15 +16640,33 @@ void relax_iis_for_vectorization(schedule_info& sched, prog& prg) {
 }
 
 void relax_delays_after_vectorization(schedule_info& sched, prog& prg) {
-  cout << "Adjusting delays of " << prg.name << endl;
+  cout << "Adjusting delays of " << prg.name << "After vectorization" << endl;
   int d = 0;
+  map<string, int> coarse_pipeline_II;
   for (auto name : topologically_sort_kernels(prg)) {
     auto lp = prg.find_loop(name);
     cout << "Adjusting delay of " << lp->name << endl;
-    if (get_producers(name, prg).size())
-        d ++;
+    cout << "II: " << sched.II(lp) << endl;
+    cout << "TP: " << (lp)->trip_count() << endl;
+    for (auto prod:  get_producers(name, prg))
+        cout << "\tprod: " << prod << endl;
+    coarse_pipeline_II[name] = sched.II(lp) * lp->trip_count();
+    sched.op_offset_within_parent[lp] = 0;
+  }
+  for (auto name : topologically_sort_kernels(prg)) {
+    auto lp = prg.find_loop(name);
+    cout << "Adjusting delay of " << lp->name << endl;
+    cout << "II: " << sched.II(lp) << endl;
+    int max_delay = 0;
+    for (string prod: get_producers(name, prg)){
+        op* prod_op = prg.find_loop(prod);
+        max_delay = max(coarse_pipeline_II.at(prod)
+                + sched.op_offset_within_parent.at(prod_op), max_delay);
+    }
 
-    sched.op_offset_within_parent[lp] = 10000 * d;
+    sched.op_offset_within_parent.at(lp) = max_delay;
+    cout << "final delay of " << lp->name <<
+        ": \n\t"<< max_delay << endl;
   }
 }
 
@@ -17083,6 +17104,8 @@ void garnet_single_port_ram_schedule(schedule_info& sched, op* root, prog& prg) 
   //}
   //assert(false);
 
+  /*
+   * old method for ISCA deadline*/
   asap_inner_loops_schedule(sched, root, prg);
   //sequential_schedule(sched, root, prg);
 
@@ -17098,6 +17121,57 @@ void garnet_single_port_ram_schedule(schedule_info& sched, op* root, prog& prg) 
 
   adjust_schedule_forward(sched, prg, 0);
   return;
+
+  //new method copy from coase grain pipeline, could not find correct delay
+  prg.pretty_print();
+  cout << prg.name << " is not a rate matchable pipeline... searching for outer loop parallelism" << endl;
+
+  //sequential_schedule(sched, root, prg);
+  asap_inner_loops_schedule(sched, root, prg);
+  cout << "Computed initial sequential schedule" << endl;
+  sanity_check_iis(sched);
+
+
+  adjust_inner_iis(sched, prg);
+  sanity_check_iis(sched);
+  tighten_iis(sched, prg);
+  //if (fetch width != 1)
+    relax_iis_for_vectorization(sched, prg);
+  sanity_check_iis(sched);
+
+  op* coarse_pipeline_loop = find_coarse_grained_pipeline_loop(prg.root);
+  if (coarse_pipeline_loop != nullptr &&
+      coarse_pipeline_loop->name != "root") {
+    cout << "Found coarse pipeline loop:" << coarse_pipeline_loop->name << " with childreen..." << endl;
+    int max_time = INT_MIN;
+    op* most_compute_intensive_stage = nullptr;
+    for (auto op : coarse_pipeline_loop->children) {
+      op->pretty_print();
+      cout << tab(1) << "Completion time: " << sched.total_latency(op) << endl;
+      cout << tab(1) << "Offset         : " << sched.offset_in_parent(op) << endl;
+      cout << endl;
+      if (sched.total_latency(op) > max_time) {
+        max_time = sched.total_latency(op);
+        most_compute_intensive_stage = op;
+      }
+    }
+    assert(most_compute_intensive_stage != nullptr);
+
+    cout << "Most compute intensive stage: " << most_compute_intensive_stage->name << endl;
+    cout << tab(1) << "Current II        : " << sched.II(coarse_pipeline_loop) << endl;
+    sched.loop_iis[coarse_pipeline_loop->name] =
+      max(sched.total_latency(most_compute_intensive_stage), 1);
+  }
+
+  cout << "Adjusting outer pipeline delays" << endl;
+  sanity_check_iis(sched);
+
+  relax_delays_after_vectorization(sched, prg);
+
+  adjust_outer_pipeline_delays(sched, prg);
+
+  cout << "Done Adjusting outer pipeline delays" << endl;
+  sanity_check_iis(sched);
 }
 
 void pad_to_single_depth(schedule_info& sched, op* root, prog& prg) {
