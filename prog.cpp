@@ -9026,6 +9026,11 @@ int get_start_pos(const std::set<string>& group, prog& prg) {
         break;
       }
     }
+
+    if (pos < 0) {
+      prg.pretty_print();
+      cout << "Error: No start pos for " << g << endl;
+    }
     assert(pos >= 0);
     if (pos < start_pos) {
       start_pos = pos;
@@ -9061,19 +9066,29 @@ vector<string> sort_group(const std::set<string>& group, prog& prg) {
 
 void make_groups_contiguous(const std::map<std::string, std::set<std::string> >& fusion_groups, prog& prg) {
   for (auto gp : fusion_groups) {
+    cout << "Getting start pos" << endl;
     int start_pos = get_start_pos(gp.second, prg);
-    vector<string> kernels = sort_group(gp.second, prg);
+    //cout << "Sorting kernels" << endl;
+    //vector<string> kernels = sort_group(gp.second, prg);
+    //cout << "Adding sorted kernels" << endl;
+
     vector<op*> new_children;
     for (int i = 0; i < start_pos; i++) {
       new_children.push_back(prg.root->children.at(i));
     }
 
-    for (int i = start_pos; i < start_pos + (int) kernels.size(); i++) {
-      new_children.push_back(prg.find_loop(kernels.at(i)));
+    vector<op*> to_add;
+    for (int i = start_pos; i < (int) prg.root->children.size(); i++) {
+      op* current = prg.root->children.at(i);
+      if (elem(current->name, gp.second)) {
+        new_children.push_back(current);
+      } else {
+        to_add.push_back(current);
+      }
     }
 
-    for (int i = start_pos + kernels.size(); i < (int) prg.root->children.size(); i++) {
-      new_children.push_back(prg.root->children.at(i));
+    for (auto op : to_add) {
+      new_children.push_back(op);
     }
 
     assert(new_children.size() == prg.root->children.size());
@@ -9084,7 +9099,9 @@ void make_groups_contiguous(const std::map<std::string, std::set<std::string> >&
 std::map<std::string, std::set<std::string> >
 insert_inter_group_buffers(const std::map<std::string, std::set<std::string> >& fusion_groups, prog& prg) {
 
-  //make_groups_contiguous(fusion_groups, prg);
+  cout << "Making contiguous" << endl;
+  make_groups_contiguous(fusion_groups, prg);
+  cout << "Done contiguous" << endl;
 
   assert(groups_are_contiguous(fusion_groups, prg));
 
