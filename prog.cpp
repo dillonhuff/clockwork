@@ -9084,7 +9084,7 @@ void make_groups_contiguous(const std::map<std::string, std::set<std::string> >&
 std::map<std::string, std::set<std::string> >
 insert_inter_group_buffers(const std::map<std::string, std::set<std::string> >& fusion_groups, prog& prg) {
 
-  make_groups_contiguous(fusion_groups, prg);
+  //make_groups_contiguous(fusion_groups, prg);
 
   assert(groups_are_contiguous(fusion_groups, prg));
 
