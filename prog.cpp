@@ -9016,8 +9016,75 @@ vector<int> read_permutation(const std::string& buf, prog& gp) {
   return level_permutation;
 }
 
+int get_start_pos(const std::set<string>& group, prog& prg) {
+  int start_pos = INT_MAX;
+  for (auto g : group) {
+    int pos = -1;
+    for (int i = 0; i < (int) prg.root->children.size(); i++) {
+      if (prg.root->children.at(i)->name == g) {
+        pos = i;
+        break;
+      }
+    }
+    assert(pos >= 0);
+    if (pos < start_pos) {
+      start_pos = pos;
+    }
+  }
+  return start_pos;
+}
+
+int position(const std::string& kernel, prog& prg) {
+  for (int i = 0; i < (int) prg.root->children.size(); i++) {
+    if (prg.root->children.at(i)->name == kernel) {
+      return i;
+    }
+  }
+  assert(false);
+  return -1;
+}
+
+vector<string> sort_group(const std::set<string>& group, prog& prg) {
+  vector<string> sorted;
+  vector<pair<string, int> > positions;
+  for (auto g : group) {
+    positions.push_back({g, position(g, prg)});
+  }
+
+  sort_lt(positions, [](const pair<string, int>& e) { return e.second; });
+
+  for (auto p : positions) {
+    sorted.push_back(p.first);
+  }
+  return sorted;
+}
+
+void make_groups_contiguous(const std::map<std::string, std::set<std::string> >& fusion_groups, prog& prg) {
+  for (auto gp : fusion_groups) {
+    int start_pos = get_start_pos(gp.second, prg);
+    vector<string> kernels = sort_group(gp.second, prg);
+    vector<op*> new_children;
+    for (int i = 0; i < start_pos; i++) {
+      new_children.push_back(prg.root->children.at(i));
+    }
+
+    for (int i = start_pos; i < start_pos + (int) kernels.size(); i++) {
+      new_children.push_back(prg.find_loop(kernels.at(i)));
+    }
+
+    for (int i = start_pos + kernels.size(); i < (int) prg.root->children.size(); i++) {
+      new_children.push_back(prg.root->children.at(i));
+    }
+
+    assert(new_children.size() == prg.root->children.size());
+    prg.root->children = new_children;
+  }
+}
+
 std::map<std::string, std::set<std::string> >
 insert_inter_group_buffers(const std::map<std::string, std::set<std::string> >& fusion_groups, prog& prg) {
+
+  make_groups_contiguous(fusion_groups, prg);
 
   assert(groups_are_contiguous(fusion_groups, prg));
 
