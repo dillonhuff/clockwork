@@ -20895,12 +20895,12 @@ void test_multi_kernel_pyramid_collapsing() {
 
   auto unopt_postprocessed = unoptimized_result(prg);
 
-  auto fusion_groups = one_stage_per_group(prg);
-  //auto fusion_groups = fuse_pointwise_stages(prg);
+  //auto fusion_groups = one_stage_per_group(prg);
+  auto fusion_groups = fuse_pointwise_stages(prg);
   app_dag dag = partition_application(fusion_groups, prg);
 
   CodegenOptions options;
-  //all_unbanked(prg, options);
+  //all_unbanked(prg, ostart_pos ptions);
   //options.inner_bank_offset_mode =
     //INNER_BANK_OFFSET_MULTILINEAR;
   options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;

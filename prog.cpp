@@ -9019,7 +9019,7 @@ vector<int> read_permutation(const std::string& buf, prog& gp) {
 std::map<std::string, std::set<std::string> >
 insert_inter_group_buffers(const std::map<std::string, std::set<std::string> >& fusion_groups, prog& prg) {
 
-  groups_are_contiguous(fusion_groups, prg);
+  assert(groups_are_contiguous(fusion_groups, prg));
 
   map<string, string> group_starts;
   map<string, string> group_ends;
