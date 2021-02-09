@@ -9018,6 +9018,9 @@ vector<int> read_permutation(const std::string& buf, prog& gp) {
 
 std::map<std::string, std::set<std::string> >
 insert_inter_group_buffers(const std::map<std::string, std::set<std::string> >& fusion_groups, prog& prg) {
+
+  groups_are_contiguous(fusion_groups, prg);
+
   map<string, string> group_starts;
   map<string, string> group_ends;
   for (auto gp : fusion_groups) {
@@ -9490,3 +9493,37 @@ std::set<string> app_dag::inter_group_channels() {
   }
   return to_size;
 }
+
+bool group_is_contiguous(const std::set<string>& fusion_groups, prog& prg) {
+  int start_pos = INT_MAX;
+  int end_pos = INT_MIN;
+  for (auto g : fusion_groups) {
+    int pos = -1;
+    for (int i = 0; i < (int) prg.root->children.size(); i++) {
+      if (prg.root->children.at(i)->name == g) {
+        pos = i;
+        break;
+      }
+    }
+    assert(pos >= 0);
+    if (pos < start_pos) {
+      start_pos = pos;
+    }
+    if (pos > end_pos) {
+      end_pos = pos;
+    }
+  }
+
+  assert(end_pos >= start_pos);
+  return (end_pos - start_pos + 1) == (int) fusion_groups.size();
+}
+
+bool groups_are_contiguous(const map<string, std::set<string> >& fusion_groups, prog& prg) {
+  for (auto gp : fusion_groups) {
+    if (!group_is_contiguous(gp.second, prg)) {
+      return false;
+    }
+  }
+  return true;
+}
+

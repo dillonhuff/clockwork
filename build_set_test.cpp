@@ -20862,6 +20862,7 @@ void test_chain_grouping() {
 
   assert(is_partition(fusion_groups, prg));
   assert(groups_are_topologically_closed(fusion_groups, prg));
+  assert(groups_are_contiguous(fusion_groups, prg));
 }
 
 void test_multi_kernel_pyramid_collapsing() {
