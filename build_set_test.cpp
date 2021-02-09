@@ -20764,15 +20764,59 @@ void test_multi_kernel_llf() {
   assert(false);
 }
 
+vector<path> all_paths_between(const std::string& src, const std::string& dst, prog& prg) {
+  assert(src != dst);
+
+  path start_path{src};
+  std::set<string> visited;
+  vector<path> active_paths{start_path};
+  vector<path> finished_paths;
+
+  while (active_paths.size() > 0) {
+    path p = active_paths.back();
+    active_paths.pop_back();
+
+    string node = p.back();
+    visited.insert(node);
+
+
+    for (auto c : children(node, prg)) {
+      if (c == dst) {
+        path pcpy = p;
+        pcpy.push_back(dst);
+        finished_paths.push_back(pcpy);
+      } else {
+        if (!elem(c, visited)) {
+          path fresh = p;
+          fresh.push_back(c);
+          active_paths.push_back(fresh);
+        }
+      }
+    }
+  }
+
+  return finished_paths;
+}
+
 bool groups_are_topologically_closed(map<string, std::set<string> >& fusion_groups, prog& prg) {
 
   for (auto g : fusion_groups) {
-    cout << "Children of " << g.first << endl;
-    for (auto c : children(g.first, fusion_groups, prg)) {
-      cout << tab(1) << c << endl;
+    for (auto src : g.second) {
+      for (auto dst : g.second) {
+        if (src != dst) {
+          vector<path> paths = all_paths_between(src, dst, prg);
+          for (auto p : paths) {
+            for (auto kernel : p) {
+              if (!elem(kernel, g.second)) {
+                return false;
+              }
+            }
+          }
+        }
+      }
     }
   }
-  return false;
+  return true;
 }
 
 bool is_partition(map<string, std::set<string> >& fusion_groups, prog& prg) {

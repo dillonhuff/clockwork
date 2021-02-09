@@ -9278,6 +9278,20 @@ std::set<string> buffers_read(const std::string& to_merge, map<string, std::set<
   return read;
 }
 
+std::set<string> children(const std::string& kernel, prog& prg) {
+  std::set<string> parent_set;
+
+  auto written = buffers_written(prg.find_loop(kernel));
+  for (auto k : get_kernels(prg)) {
+    auto read = buffers_read(prg.find_loop(k));
+    if (intersection(read, written).size() > 0) {
+      parent_set.insert(k);
+    }
+  }
+
+  return parent_set;
+}
+
 std::set<string> children(const std::string& to_merge, map<string, std::set<string> >& fusion_groups, prog& prg) {
   std::set<string> parent_set;
 
