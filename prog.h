@@ -1846,6 +1846,8 @@ void adjust_outer_delays(schedule_info& sched, prog& prg);
 void adjust_outer_pipeline_delays(schedule_info& sched, prog& prg);
 
 bool no_violated_cycle_accurate_dependencies(schedule_info& sched, prog& prg);
+bool sw_schedule_respects_deps(umap* schedule, umap* deps);
+bool no_violated_dependencies(umap* schedule, umap* deps);
 
 bool schedule_bounds_fit_controller_bitwidth(const int bitwidth, schedule_info& sched, prog& prg);
 
@@ -1999,3 +2001,5 @@ std::set<string> buffers_read(const std::string& to_merge, map<string, std::set<
 std::set<string> buffers_written(const std::string& to_merge, map<string, std::set<string> >& fusion_groups, prog& prg);
 
 std::set<string> children(const std::string& kernel, prog& prg);
+
+

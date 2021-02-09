@@ -8720,6 +8720,8 @@ void generate_app_code(
         dag.prg.whole_iteration_domain());
   cout << "Sched: " << str(global_sched) << endl;
 
+  assert(no_violated_dependencies(global_sched, valid_deps));
+
   auto sms = get_maps(global_sched);
   map<string, isl_map*> mps;
   for (auto m : sms) {
@@ -8728,7 +8730,6 @@ void generate_app_code(
 
   auto buffers = build_buffers(dag.prg, global_sched);
 
-  //assert(false);
 
   //auto global_sched = dag.prg.optimized_codegen();
 
@@ -8845,7 +8846,6 @@ void generate_app_code(
     }
 
   }
-  //assert(false);
 
   for (auto& gp : dag.fusion_group_progs) {
     for (auto& buf : gp.second.boundary_buffers()) {
@@ -9358,6 +9358,10 @@ map<std::string, std::set<string> > one_stage_per_group(prog& prg) {
   }
 
   return fusion_groups;
+}
+
+bool no_violated_dependencies(umap* schedule, umap* deps) {
+  return sw_schedule_respects_deps(schedule, deps);
 }
 
 bool sw_schedule_respects_deps(umap* schedule, umap* deps) {
