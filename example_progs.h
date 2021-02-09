@@ -38,6 +38,7 @@ prog mobilenet();
 prog mobilenet_small();
 prog three_level_memory();
 prog resnet_unrolled();
+prog resnet88();
 prog resnet_coarse_pipeline_loop();
 prog mobilenet_unrolled();
 prog harris_sch1_onebuf();
