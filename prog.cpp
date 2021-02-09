@@ -9286,11 +9286,9 @@ std::set<string> children(const std::string& to_merge, map<string, std::set<stri
 
   auto written = buffers_written(to_merge, fusion_groups, prg);
   for (auto fg : fusion_groups) {
-    for (auto parent : fg.second) {
-      auto read = buffers_read(to_merge, fusion_groups, prg);
-      if (intersection(read, written).size() > 0) {
-        parent_set.insert(fg.first);
-      }
+    auto read = buffers_read(fg.first, fusion_groups, prg);
+    if (intersection(read, written).size() > 0) {
+      parent_set.insert(fg.first);
     }
   }
 

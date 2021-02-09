@@ -20817,7 +20817,7 @@ void test_chain_grouping() {
   auto fusion_groups = fuse_pointwise_stages(prg);
 
   assert(is_partition(fusion_groups, prg));
-  //assert(groups_are_topologically_closed(fusion_groups, prg));
+  assert(groups_are_topologically_closed(fusion_groups, prg));
 }
 
 void test_multi_kernel_pyramid_collapsing() {
@@ -22001,7 +22001,81 @@ void test_multi_kernel_gp() {
 
 }
 
+void generate_gv_output(prog& prg) {
+  ofstream out(prg.name + ".gv");
+  out << "digraph " << prg.name << "{" << endl;
+  out << tab(1) << "layout=neato" << endl;
+
+  vector<string> kernels;
+  int i = 0;
+  for (auto k : get_kernels(prg)) {
+    kernels.push_back(k);
+  }
+
+  out << tab(1) << "node [shape=circle,fixedsize=false,width=0.9,style=filled,color=green]; " << sep_list(kernels, "", ";", ";") << endl;
+
+  vector<pair<string, string> > edges;
+  for (auto k : get_kernels(prg)) {
+    auto written = buffers_written(prg.find_loop(k));
+    for (auto l : get_kernels(prg)) {
+      auto read = buffers_read(prg.find_loop(l));
+      if (intersection(read, written).size() > 0) {
+        edges.push_back({k, l});
+      }
+    }
+  }
+
+  for (auto e : edges) {
+    out << tab(1) << e.first << "->" << e.second << ";" << endl;
+  }
+  
+  out << tab(1) << "overlap=false" << endl;
+  out << tab(1) << "fontsize=12" << endl;
+  out << "}" << endl;
+  out.close();
+
+}
+
+void gv_generation_pyramid() {
+  {
+    prog prg = llf_float();
+    prg.name = "llf";
+    generate_gv_output(prg);
+    assert(false);
+  }
+
+  prog prg("pbgraph");
+  prg.compute_unit_file = "local_laplacian_filters_compute.h";
+  prg.add_input("in");
+  prg.add_output("out");
+
+  cpy("in_on_chip", "in", 2, prg);
+
+  const int num_pyramid_levels = 4;
+  vector<string> lps = laplacian_pyramid("in_on_chip", num_pyramid_levels, prg);
+
+  string reconstructed = reconstruct_gaussian(lps, prg);
+  cpy("out", reconstructed, 2, prg);
+
+  infer_bounds("out", {64, 64}, prg);
+
+  prg.pretty_print();
+  prg.sanity_check();
+
+  unroll_reduce_loops(prg);
+  merge_basic_block_ops(prg);
+  normalize_bounds(prg);
+  normalize_address_offsets(prg);
+
+  prg.pretty_print();
+  prg.sanity_check();
+
+  generate_gv_output(prg);
+  assert(false);
+}
+
 void dhuff_tests() {
+  //gv_generation_pyramid();
   test_chain_grouping();
 
   //test_jacobi15_dynamic();
