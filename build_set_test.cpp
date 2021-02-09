@@ -20862,7 +20862,7 @@ void test_chain_grouping() {
 
   assert(is_partition(fusion_groups, prg));
   assert(groups_are_topologically_closed(fusion_groups, prg));
-  assert(groups_are_contiguous(fusion_groups, prg));
+  //assert(groups_are_contiguous(fusion_groups, prg));
 }
 
 void test_multi_kernel_pyramid_collapsing() {
@@ -20895,8 +20895,8 @@ void test_multi_kernel_pyramid_collapsing() {
 
   auto unopt_postprocessed = unoptimized_result(prg);
 
-  //auto fusion_groups = one_stage_per_group(prg);
-  auto fusion_groups = fuse_pointwise_stages(prg);
+  auto fusion_groups = one_stage_per_group(prg);
+  //auto fusion_groups = fuse_pointwise_stages(prg);
   app_dag dag = partition_application(fusion_groups, prg);
 
   CodegenOptions options;
