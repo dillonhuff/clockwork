@@ -1993,3 +1993,7 @@ void unroll_mismatched_inner_loops(prog& prg);
 
 std::set<string> children(const std::string& to_merge, map<string, std::set<string> >& fusion_groups, prog& prg);
 std::set<string> parents(const std::string& to_merge, map<string, std::set<string> >& fusion_groups, prog& prg);
+
+
+std::set<string> buffers_read(const std::string& to_merge, map<string, std::set<string> >& fusion_groups, prog& prg);
+std::set<string> buffers_written(const std::string& to_merge, map<string, std::set<string> >& fusion_groups, prog& prg);

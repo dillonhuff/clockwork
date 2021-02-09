@@ -9247,18 +9247,15 @@ void merge_into(
 std::set<string> parents(const std::string& to_merge, map<string, std::set<string> >& fusion_groups, prog& prg) {
   std::set<string> parent_set;
 
-  auto read = buffers_read(prg.find_loop(pick(fusion_groups.at(to_merge))));
+  auto read = buffers_read(to_merge, fusion_groups, prg);
   for (auto fg : fusion_groups) {
-    for (auto parent : fg.second) {
-      auto written = buffers_written(prg.find_loop(parent));
-      if (intersection(read, written).size() > 0) {
-        parent_set.insert(fg.first);
-      }
+    auto written = buffers_written(fg.first, fusion_groups, prg);
+    if (intersection(read, written).size() > 0) {
+      parent_set.insert(fg.first);
     }
   }
 
   return parent_set;
-
 }
 
 std::set<string> buffers_written(const std::string& to_merge, map<string, std::set<string> >& fusion_groups, prog& prg) {
