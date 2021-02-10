@@ -6671,14 +6671,18 @@ void UBuffer::generate_banks(CodegenOptions& options) {
                      string pt_b = pick(port_bundles.at(b));
                      auto sched_a = schedule.at(pt_a);
                      auto sched_b = schedule.at(pt_b);
-                     return empty(lex_gt(sched_a, sched_b));
+                     auto a_start = lexminpt(to_set(range(sched_a)));
+                     auto b_start = lexminpt(to_set(range(sched_b)));
+                     return (lex_lt_pt(a_start, b_start));
                    }
                  };
             for (auto it: in_bundle) {
+              cout << "\tVisit in bd: " << it<< endl;
               string pt = pick(port_bundles.at(it));
               bd2sched.insert(make_pair(it, schedule.at(pt)));
             }
             for (auto it: out_bundle) {
+              cout << "\tVisit out bd: " << it<< endl;
               string pt = pick(port_bundles.at(it));
               bd2sched.insert(make_pair(it, schedule.at(pt)));
             }
