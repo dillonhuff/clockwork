@@ -15681,7 +15681,7 @@ void llf_rescale_gray(const std::string& out, const std::string& scales, const s
   auto cn = prg.add_nest(y, 0, 1, x, 0, 1);
 
   auto convert = cn->add_op(prg.unique_name("cc"));
-  convert->add_function("llf_rescale_gray");
+  convert->add_function("llf_rescale_gray_float");
   convert->add_load(scales, x, y);
   convert->add_load(gray, x, y);
   convert->add_store(out, x, y);
@@ -15969,7 +15969,7 @@ prog llf_grayscale_float() {
   int num_pyramid_levels = 4;
   int num_intensity_levels = 8;
 
-  prog prg("local_laplacian_filters");
+  prog prg("llf_gs");
   prg.compute_unit_file = "local_laplacian_filters_compute.h";
 
   prg.add_input("gray_in_oc");
@@ -20343,6 +20343,17 @@ void large_pyramid_blend_pointwise_fusion() {
 void grayscale_llf_dynamic() {
   prog prg = llf_grayscale_float();
   prg.sanity_check();
+
+  auto fusion_groups = one_stage_per_group(prg);
+  app_dag dag = partition_application(fusion_groups, prg);
+
+  CodegenOptions options;
+  options = CodegenOptions();
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  generate_app_code(options, dag);
+
+  move_to_benchmarks_folder(prg.name);
+
   assert(false);
 }
 
