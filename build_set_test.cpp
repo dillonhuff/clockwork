@@ -19658,6 +19658,62 @@ void jac16_static_dynamic_comparison() {
 
 }
 
+void cp32_static_dynamic_comparison() {
+  string prefix = "cp";
+
+  int size = 1080;
+  int rows = size;
+  int cols = size;
+
+  int unroll_factor = 32;
+  int throughput = unroll_factor;
+  string out_name = prefix + "_" + str(unroll_factor);
+
+  CodegenOptions options;
+  options.internal = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  options.debug_options.expect_all_linebuffers = true;
+
+  App jac = camera_pipeline(out_name);
+  prog prg = jac.realize(options, out_name, cols, rows, 1);
+
+  move_to_benchmarks_folder(out_name + "_opt");
+
+  prg.name = out_name + "_opt_d";
+
+  jac.generate_soda_file(prg.name, throughput);
+
+  unroll_reduce_loops(prg);
+  merge_basic_block_ops(prg);
+  normalize_bounds(prg);
+  normalize_address_offsets(prg);
+
+  auto fusion_groups = one_stage_per_group(prg);
+  auto fresh_groups = insert_inter_group_buffers(fusion_groups, prg);
+  unroll_mismatched_inner_loops(prg);
+  merge_basic_block_ops(prg);
+  infer_bounds_and_unroll(pick(prg.outs), {size, size}, throughput, prg);
+
+  assert(unoptimized_compiles(prg));
+
+  app_dag dag = partition_groups(fresh_groups, prg);
+
+  options = CodegenOptions();
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  generate_app_code(options, dag);
+
+  move_to_benchmarks_folder(prg.name);
+
+  string synth_dir =
+    "./soda_codes/" + prg.name+ "/our_code/";
+
+  system(("cp " + out_name + "_opt" + "*.h " + synth_dir).c_str());
+
+  cout << "prg name: " << prg.name << endl;
+
+  assert(false);
+}
+
 void cp16_static_dynamic_comparison() {
   string prefix = "cp";
 
@@ -20123,34 +20179,109 @@ void cp16_static_dynamic_comparison_fresh_codegen() {
 }
 
 void initial_soda_comparison() {
-  cp16_static_dynamic_comparison_fresh_codegen();
-
+  cp32_static_dynamic_comparison();
   cp16_static_dynamic_comparison();
   cp_static_dynamic_comparison();
 
-
-  sbl16_static_dynamic_comparison_short_FIFOs();
-  sbl32_static_dynamic_comparison_larger_bounds_to_prevent_vivado_unroll_error();
+  sbl32_static_dynamic_comparison();
+  sbl16_static_dynamic_comparison();
+  sbl_static_dynamic_comparison();
 
   jac32_static_dynamic_comparison();
   jac16_static_dynamic_comparison();
   jac_static_dynamic_comparison();
 
-  sbl32_static_dynamic_comparison();
-  sbl16_static_dynamic_comparison();
-  sbl_static_dynamic_comparison();
+  cp16_static_dynamic_comparison_fresh_codegen();
+
+
+  sbl16_static_dynamic_comparison_short_FIFOs();
+  sbl32_static_dynamic_comparison_larger_bounds_to_prevent_vivado_unroll_error();
+
 
   blur32_static_dynamic_comparison();
   blur16_static_dynamic_comparison();
   blur_static_dynamic_comparison();
 }
 
+void llf_init() {
+  prog prg = llf_float();
+  prg.name = "llf_ospg";
+
+  auto fusion_groups = one_stage_per_group(prg);
+  app_dag dag = partition_application(fusion_groups, prg);
+
+  CodegenOptions options;
+  options = CodegenOptions();
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  generate_app_code(options, dag);
+
+  move_to_benchmarks_folder(prg.name);
+  assert(false);
+}
+
+void large_pyramid_blend_pointwise_fusion() {
+  prog prg("pyrblnd_pwf");
+  prg.compute_unit_file = "local_laplacian_filters_compute.h";
+  prg.add_input("in");
+  prg.add_output("out");
+
+  cpy("in_on_chip", "in", 2, prg);
+
+  const int num_pyramid_levels = 4;
+  vector<string> lps = laplacian_pyramid("in_on_chip", num_pyramid_levels, prg);
+
+  string reconstructed = reconstruct_gaussian(lps, prg);
+  cpy("out", reconstructed, 2, prg);
+
+  infer_bounds("out", {2048, 2048}, prg);
+
+  prg.pretty_print();
+  prg.sanity_check();
+
+  unroll_reduce_loops(prg);
+  merge_basic_block_ops(prg);
+  normalize_bounds(prg);
+  normalize_address_offsets(prg);
+
+  prg.pretty_print();
+  prg.sanity_check();
+
+  auto fusion_groups = fuse_pointwise_stages(prg);
+
+  cout << "# of kernels: " << get_kernels(prg).size() << endl;
+  cout << "# of groups : " << fusion_groups.size() << endl;
+  //assert(false);
+
+  app_dag dag = partition_application(fusion_groups, prg);
+
+  CodegenOptions options;
+  //all_unbanked(prg, ostart_pos ptions);
+  //options.inner_bank_offset_mode =
+    //INNER_BANK_OFFSET_MULTILINEAR;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  generate_app_code(options, dag);
+
+  generate_regression_testbench(dag.prg);
+
+
+  move_to_benchmarks_folder(dag.prg.name);
+  assert(false);
+}
+
+void multi_rate_dynamic_apps() {
+  large_pyramid_blend_pointwise_fusion();
+  llf_init();
+}
+
 void application_tests() {
+  multi_rate_dynamic_apps();
   initial_soda_comparison();
 
-  histogram1d_test();
   histogram_test();
+  histogram1d_test();
   iccad_tests();
+
+
 
   gpu_codegen_test();
 
@@ -20704,6 +20835,107 @@ void test_multi_kernel_llf() {
   assert(false);
 }
 
+vector<path> all_paths_between(const std::string& src, const std::string& dst, prog& prg) {
+  assert(src != dst);
+
+  path start_path{src};
+  std::set<string> visited;
+  vector<path> active_paths{start_path};
+  vector<path> finished_paths;
+
+  while (active_paths.size() > 0) {
+    path p = active_paths.back();
+    active_paths.pop_back();
+
+    string node = p.back();
+    visited.insert(node);
+
+
+    for (auto c : children(node, prg)) {
+      if (c == dst) {
+        path pcpy = p;
+        pcpy.push_back(dst);
+        finished_paths.push_back(pcpy);
+      } else {
+        if (!elem(c, visited)) {
+          path fresh = p;
+          fresh.push_back(c);
+          active_paths.push_back(fresh);
+        }
+      }
+    }
+  }
+
+  return finished_paths;
+}
+
+bool groups_are_topologically_closed(map<string, std::set<string> >& fusion_groups, prog& prg) {
+
+  for (auto g : fusion_groups) {
+    for (auto src : g.second) {
+      for (auto dst : g.second) {
+        if (src != dst) {
+          vector<path> paths = all_paths_between(src, dst, prg);
+          for (auto p : paths) {
+            for (auto kernel : p) {
+              if (!elem(kernel, g.second)) {
+                return false;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  return true;
+}
+
+bool is_partition(map<string, std::set<string> >& fusion_groups, prog& prg) {
+  int total_size = 0;
+  for (auto g : fusion_groups) {
+    total_size += g.second.size();
+  }
+
+  int num_kernels = get_kernels(prg).size();
+  return total_size == num_kernels;
+}
+
+void test_chain_grouping() {
+  prog prg("pyr_blnd2d500_2048");
+  prg.compute_unit_file = "local_laplacian_filters_compute.h";
+  prg.add_input("in");
+  prg.add_output("out");
+
+  cpy("in_on_chip", "in", 2, prg);
+
+  const int num_pyramid_levels = 4;
+  vector<string> lps = laplacian_pyramid("in_on_chip", num_pyramid_levels, prg);
+
+  string reconstructed = reconstruct_gaussian(lps, prg);
+  cpy("out", reconstructed, 2, prg);
+
+  infer_bounds("out", {64, 64}, prg);
+
+  prg.pretty_print();
+  prg.sanity_check();
+
+  unroll_reduce_loops(prg);
+  merge_basic_block_ops(prg);
+  normalize_bounds(prg);
+  normalize_address_offsets(prg);
+
+  prg.pretty_print();
+  prg.sanity_check();
+
+  auto unopt_postprocessed = unoptimized_result(prg);
+
+  auto fusion_groups = fuse_pointwise_stages(prg);
+
+  assert(is_partition(fusion_groups, prg));
+  assert(groups_are_topologically_closed(fusion_groups, prg));
+  //assert(groups_are_contiguous(fusion_groups, prg));
+}
+
 void test_multi_kernel_pyramid_collapsing() {
 
   prog prg("pyr_blnd2d500_2048");
@@ -20734,12 +20966,12 @@ void test_multi_kernel_pyramid_collapsing() {
 
   auto unopt_postprocessed = unoptimized_result(prg);
 
-  auto fusion_groups = one_stage_per_group(prg);
-  //auto fusion_groups = fuse_pointwise_stages(prg);
+  //auto fusion_groups = one_stage_per_group(prg);
+  auto fusion_groups = fuse_pointwise_stages(prg);
   app_dag dag = partition_application(fusion_groups, prg);
 
   CodegenOptions options;
-  //all_unbanked(prg, options);
+  //all_unbanked(prg, ostart_pos ptions);
   //options.inner_bank_offset_mode =
     //INNER_BANK_OFFSET_MULTILINEAR;
   options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
@@ -21065,6 +21297,12 @@ prog stencil_chain(const std::string& name) {
 }
 
 void dhuff_playground() {
+  {
+    prog prg = harris();
+    int num_buffers = all_buffers(prg).size();
+    cout << "# of buffers: " << num_buffers << endl;
+    assert(false);
+  }
   {
     prog prg = demosaic_unrolled();
     prg.pretty_print();
@@ -21885,7 +22123,83 @@ void test_multi_kernel_gp() {
 
 }
 
+void generate_gv_output(prog& prg) {
+  ofstream out(prg.name + ".gv");
+  out << "digraph " << prg.name << "{" << endl;
+  out << tab(1) << "layout=neato" << endl;
+
+  vector<string> kernels;
+  int i = 0;
+  for (auto k : get_kernels(prg)) {
+    kernels.push_back(k);
+  }
+
+  out << tab(1) << "node [shape=circle,fixedsize=false,width=0.9,style=filled,color=green]; " << sep_list(kernels, "", ";", ";") << endl;
+
+  vector<pair<string, string> > edges;
+  for (auto k : get_kernels(prg)) {
+    auto written = buffers_written(prg.find_loop(k));
+    for (auto l : get_kernels(prg)) {
+      auto read = buffers_read(prg.find_loop(l));
+      if (intersection(read, written).size() > 0) {
+        edges.push_back({k, l});
+      }
+    }
+  }
+
+  for (auto e : edges) {
+    out << tab(1) << e.first << "->" << e.second << ";" << endl;
+  }
+  
+  out << tab(1) << "overlap=false" << endl;
+  out << tab(1) << "fontsize=12" << endl;
+  out << "}" << endl;
+  out.close();
+
+}
+
+void gv_generation_pyramid() {
+  {
+    prog prg = llf_float();
+    prg.name = "llf";
+    generate_gv_output(prg);
+    assert(false);
+  }
+
+  prog prg("pbgraph");
+  prg.compute_unit_file = "local_laplacian_filters_compute.h";
+  prg.add_input("in");
+  prg.add_output("out");
+
+  cpy("in_on_chip", "in", 2, prg);
+
+  const int num_pyramid_levels = 4;
+  vector<string> lps = laplacian_pyramid("in_on_chip", num_pyramid_levels, prg);
+
+  string reconstructed = reconstruct_gaussian(lps, prg);
+  cpy("out", reconstructed, 2, prg);
+
+  infer_bounds("out", {64, 64}, prg);
+
+  prg.pretty_print();
+  prg.sanity_check();
+
+  unroll_reduce_loops(prg);
+  merge_basic_block_ops(prg);
+  normalize_bounds(prg);
+  normalize_address_offsets(prg);
+
+  prg.pretty_print();
+  prg.sanity_check();
+
+  generate_gv_output(prg);
+  assert(false);
+}
+
 void dhuff_tests() {
+  //gv_generation_pyramid();
+  test_chain_grouping();
+
   //test_jacobi15_dynamic();
 
   test_multi_kernel_pyramid_collapsing();

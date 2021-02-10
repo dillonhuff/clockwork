@@ -1,6 +1,18 @@
 #include "cpfc_16_opt_compute_units.h_merged_compute_units.h_merged_compute_units.h_merged_compute_units.h"
 
-hw_uint<256> raw_1_cu1177(hw_uint<16*16>& raw_oc) {
+hw_uint<256> demosaicb_ld29_cu1177(hw_uint<16*16>& demosaicb) {
+  return demosaicb;
+}
+
+hw_uint<256> demosaic_bxb_ld13_cu1179(hw_uint<16*16>& demosaic_bxb) {
+  return demosaic_bxb;
+}
+
+hw_uint<256> demosaic_diff_ld25_cu1181(hw_uint<16*16>& demosaic_diff) {
+  return demosaic_diff;
+}
+
+hw_uint<256> raw_1_cu1183(hw_uint<16*16>& raw_oc) {
   hw_uint<16> raw_oc_lane_0 = raw_oc.extract<0, 15>();
   hw_uint<16> raw_oc_lane_1 = raw_oc.extract<16, 31>();
   hw_uint<16> raw_oc_lane_2 = raw_oc.extract<32, 47>();
@@ -21,192 +33,89 @@ hw_uint<256> raw_1_cu1177(hw_uint<16*16>& raw_oc) {
 	
   hw_uint<16 > raw_oc_lane_0_pack;
   set_at<0, 16, 16>(raw_oc_lane_0_pack, raw_oc_lane_0);
-  auto res_raw_update_0_sm88_15439 = raw_generated_compute_unrolled_1(raw_oc_lane_0_pack);
+  auto res_raw_update_0_sm91_15247 = raw_generated_compute_unrolled_1(raw_oc_lane_0_pack);
 
   hw_uint<16 > raw_oc_lane_1_pack;
   set_at<0, 16, 16>(raw_oc_lane_1_pack, raw_oc_lane_1);
-  auto res_raw_update_0_sm88_14437 = raw_generated_compute_unrolled_1(raw_oc_lane_1_pack);
+  auto res_raw_update_0_sm91_14245 = raw_generated_compute_unrolled_1(raw_oc_lane_1_pack);
 
   hw_uint<16 > raw_oc_lane_2_pack;
   set_at<0, 16, 16>(raw_oc_lane_2_pack, raw_oc_lane_2);
-  auto res_raw_update_0_sm88_13435 = raw_generated_compute_unrolled_1(raw_oc_lane_2_pack);
+  auto res_raw_update_0_sm91_13243 = raw_generated_compute_unrolled_1(raw_oc_lane_2_pack);
 
   hw_uint<16 > raw_oc_lane_3_pack;
   set_at<0, 16, 16>(raw_oc_lane_3_pack, raw_oc_lane_3);
-  auto res_raw_update_0_sm88_12433 = raw_generated_compute_unrolled_1(raw_oc_lane_3_pack);
+  auto res_raw_update_0_sm91_12241 = raw_generated_compute_unrolled_1(raw_oc_lane_3_pack);
 
   hw_uint<16 > raw_oc_lane_4_pack;
   set_at<0, 16, 16>(raw_oc_lane_4_pack, raw_oc_lane_4);
-  auto res_raw_update_0_sm88_11431 = raw_generated_compute_unrolled_1(raw_oc_lane_4_pack);
+  auto res_raw_update_0_sm91_11239 = raw_generated_compute_unrolled_1(raw_oc_lane_4_pack);
 
   hw_uint<16 > raw_oc_lane_5_pack;
   set_at<0, 16, 16>(raw_oc_lane_5_pack, raw_oc_lane_5);
-  auto res_raw_update_0_sm88_10429 = raw_generated_compute_unrolled_1(raw_oc_lane_5_pack);
+  auto res_raw_update_0_sm91_10237 = raw_generated_compute_unrolled_1(raw_oc_lane_5_pack);
 
   hw_uint<16 > raw_oc_lane_6_pack;
   set_at<0, 16, 16>(raw_oc_lane_6_pack, raw_oc_lane_6);
-  auto res_raw_update_0_sm88_9427 = raw_generated_compute_unrolled_1(raw_oc_lane_6_pack);
+  auto res_raw_update_0_sm91_9235 = raw_generated_compute_unrolled_1(raw_oc_lane_6_pack);
 
   hw_uint<16 > raw_oc_lane_7_pack;
   set_at<0, 16, 16>(raw_oc_lane_7_pack, raw_oc_lane_7);
-  auto res_raw_update_0_sm88_8425 = raw_generated_compute_unrolled_1(raw_oc_lane_7_pack);
+  auto res_raw_update_0_sm91_8233 = raw_generated_compute_unrolled_1(raw_oc_lane_7_pack);
 
   hw_uint<16 > raw_oc_lane_8_pack;
   set_at<0, 16, 16>(raw_oc_lane_8_pack, raw_oc_lane_8);
-  auto res_raw_update_0_sm88_7423 = raw_generated_compute_unrolled_1(raw_oc_lane_8_pack);
+  auto res_raw_update_0_sm91_7231 = raw_generated_compute_unrolled_1(raw_oc_lane_8_pack);
 
   hw_uint<16 > raw_oc_lane_9_pack;
   set_at<0, 16, 16>(raw_oc_lane_9_pack, raw_oc_lane_9);
-  auto res_raw_update_0_sm88_6421 = raw_generated_compute_unrolled_1(raw_oc_lane_9_pack);
+  auto res_raw_update_0_sm91_6229 = raw_generated_compute_unrolled_1(raw_oc_lane_9_pack);
 
   hw_uint<16 > raw_oc_lane_10_pack;
   set_at<0, 16, 16>(raw_oc_lane_10_pack, raw_oc_lane_10);
-  auto res_raw_update_0_sm88_5419 = raw_generated_compute_unrolled_1(raw_oc_lane_10_pack);
+  auto res_raw_update_0_sm91_5227 = raw_generated_compute_unrolled_1(raw_oc_lane_10_pack);
 
   hw_uint<16 > raw_oc_lane_11_pack;
   set_at<0, 16, 16>(raw_oc_lane_11_pack, raw_oc_lane_11);
-  auto res_raw_update_0_sm88_4417 = raw_generated_compute_unrolled_1(raw_oc_lane_11_pack);
+  auto res_raw_update_0_sm91_4225 = raw_generated_compute_unrolled_1(raw_oc_lane_11_pack);
 
   hw_uint<16 > raw_oc_lane_12_pack;
   set_at<0, 16, 16>(raw_oc_lane_12_pack, raw_oc_lane_12);
-  auto res_raw_update_0_sm88_3415 = raw_generated_compute_unrolled_1(raw_oc_lane_12_pack);
+  auto res_raw_update_0_sm91_3223 = raw_generated_compute_unrolled_1(raw_oc_lane_12_pack);
 
   hw_uint<16 > raw_oc_lane_13_pack;
   set_at<0, 16, 16>(raw_oc_lane_13_pack, raw_oc_lane_13);
-  auto res_raw_update_0_sm88_2413 = raw_generated_compute_unrolled_1(raw_oc_lane_13_pack);
+  auto res_raw_update_0_sm91_2221 = raw_generated_compute_unrolled_1(raw_oc_lane_13_pack);
 
   hw_uint<16 > raw_oc_lane_14_pack;
   set_at<0, 16, 16>(raw_oc_lane_14_pack, raw_oc_lane_14);
-  auto res_raw_update_0_sm88_1411 = raw_generated_compute_unrolled_1(raw_oc_lane_14_pack);
+  auto res_raw_update_0_sm91_1219 = raw_generated_compute_unrolled_1(raw_oc_lane_14_pack);
 
   hw_uint<16 > raw_oc_lane_15_pack;
   set_at<0, 16, 16>(raw_oc_lane_15_pack, raw_oc_lane_15);
-  auto res_raw_update_0_sm88_0409 = raw_generated_compute_unrolled_1(raw_oc_lane_15_pack);
-  hw_uint<256 > return_value1178;
-  set_at<0, 256, 16>(return_value1178, res_raw_update_0_sm88_15439);
-  set_at<16, 256, 16>(return_value1178, res_raw_update_0_sm88_14437);
-  set_at<32, 256, 16>(return_value1178, res_raw_update_0_sm88_13435);
-  set_at<48, 256, 16>(return_value1178, res_raw_update_0_sm88_12433);
-  set_at<64, 256, 16>(return_value1178, res_raw_update_0_sm88_11431);
-  set_at<80, 256, 16>(return_value1178, res_raw_update_0_sm88_10429);
-  set_at<96, 256, 16>(return_value1178, res_raw_update_0_sm88_9427);
-  set_at<112, 256, 16>(return_value1178, res_raw_update_0_sm88_8425);
-  set_at<128, 256, 16>(return_value1178, res_raw_update_0_sm88_7423);
-  set_at<144, 256, 16>(return_value1178, res_raw_update_0_sm88_6421);
-  set_at<160, 256, 16>(return_value1178, res_raw_update_0_sm88_5419);
-  set_at<176, 256, 16>(return_value1178, res_raw_update_0_sm88_4417);
-  set_at<192, 256, 16>(return_value1178, res_raw_update_0_sm88_3415);
-  set_at<208, 256, 16>(return_value1178, res_raw_update_0_sm88_2413);
-  set_at<224, 256, 16>(return_value1178, res_raw_update_0_sm88_1411);
-  set_at<240, 256, 16>(return_value1178, res_raw_update_0_sm88_0409);
-  return return_value1178;
+  auto res_raw_update_0_sm91_0217 = raw_generated_compute_unrolled_1(raw_oc_lane_15_pack);
+  hw_uint<256 > return_value1184;
+  set_at<0, 256, 16>(return_value1184, res_raw_update_0_sm91_15247);
+  set_at<16, 256, 16>(return_value1184, res_raw_update_0_sm91_14245);
+  set_at<32, 256, 16>(return_value1184, res_raw_update_0_sm91_13243);
+  set_at<48, 256, 16>(return_value1184, res_raw_update_0_sm91_12241);
+  set_at<64, 256, 16>(return_value1184, res_raw_update_0_sm91_11239);
+  set_at<80, 256, 16>(return_value1184, res_raw_update_0_sm91_10237);
+  set_at<96, 256, 16>(return_value1184, res_raw_update_0_sm91_9235);
+  set_at<112, 256, 16>(return_value1184, res_raw_update_0_sm91_8233);
+  set_at<128, 256, 16>(return_value1184, res_raw_update_0_sm91_7231);
+  set_at<144, 256, 16>(return_value1184, res_raw_update_0_sm91_6229);
+  set_at<160, 256, 16>(return_value1184, res_raw_update_0_sm91_5227);
+  set_at<176, 256, 16>(return_value1184, res_raw_update_0_sm91_4225);
+  set_at<192, 256, 16>(return_value1184, res_raw_update_0_sm91_3223);
+  set_at<208, 256, 16>(return_value1184, res_raw_update_0_sm91_2221);
+  set_at<224, 256, 16>(return_value1184, res_raw_update_0_sm91_1219);
+  set_at<240, 256, 16>(return_value1184, res_raw_update_0_sm91_0217);
+  return return_value1184;
 
 }
 
-hw_uint<256> denoise_1_cu1180(hw_uint<16*16>& denoiseb_FIFO_buf80) {
-  hw_uint<16> denoiseb_FIFO_buf80_lane_0 = denoiseb_FIFO_buf80.extract<0, 15>();
-  hw_uint<16> denoiseb_FIFO_buf80_lane_1 = denoiseb_FIFO_buf80.extract<16, 31>();
-  hw_uint<16> denoiseb_FIFO_buf80_lane_2 = denoiseb_FIFO_buf80.extract<32, 47>();
-  hw_uint<16> denoiseb_FIFO_buf80_lane_3 = denoiseb_FIFO_buf80.extract<48, 63>();
-  hw_uint<16> denoiseb_FIFO_buf80_lane_4 = denoiseb_FIFO_buf80.extract<64, 79>();
-  hw_uint<16> denoiseb_FIFO_buf80_lane_5 = denoiseb_FIFO_buf80.extract<80, 95>();
-  hw_uint<16> denoiseb_FIFO_buf80_lane_6 = denoiseb_FIFO_buf80.extract<96, 111>();
-  hw_uint<16> denoiseb_FIFO_buf80_lane_7 = denoiseb_FIFO_buf80.extract<112, 127>();
-  hw_uint<16> denoiseb_FIFO_buf80_lane_8 = denoiseb_FIFO_buf80.extract<128, 143>();
-  hw_uint<16> denoiseb_FIFO_buf80_lane_9 = denoiseb_FIFO_buf80.extract<144, 159>();
-  hw_uint<16> denoiseb_FIFO_buf80_lane_10 = denoiseb_FIFO_buf80.extract<160, 175>();
-  hw_uint<16> denoiseb_FIFO_buf80_lane_11 = denoiseb_FIFO_buf80.extract<176, 191>();
-  hw_uint<16> denoiseb_FIFO_buf80_lane_12 = denoiseb_FIFO_buf80.extract<192, 207>();
-  hw_uint<16> denoiseb_FIFO_buf80_lane_13 = denoiseb_FIFO_buf80.extract<208, 223>();
-  hw_uint<16> denoiseb_FIFO_buf80_lane_14 = denoiseb_FIFO_buf80.extract<224, 239>();
-  hw_uint<16> denoiseb_FIFO_buf80_lane_15 = denoiseb_FIFO_buf80.extract<240, 255>();
-
-	
-  hw_uint<16 > denoiseb_FIFO_buf80_lane_0_pack;
-  set_at<0, 16, 16>(denoiseb_FIFO_buf80_lane_0_pack, denoiseb_FIFO_buf80_lane_0);
-  auto res_denoise_update_0_sm89_15471 = denoise_generated_compute_unrolled_1(denoiseb_FIFO_buf80_lane_0_pack);
-
-  hw_uint<16 > denoiseb_FIFO_buf80_lane_1_pack;
-  set_at<0, 16, 16>(denoiseb_FIFO_buf80_lane_1_pack, denoiseb_FIFO_buf80_lane_1);
-  auto res_denoise_update_0_sm89_14469 = denoise_generated_compute_unrolled_1(denoiseb_FIFO_buf80_lane_1_pack);
-
-  hw_uint<16 > denoiseb_FIFO_buf80_lane_2_pack;
-  set_at<0, 16, 16>(denoiseb_FIFO_buf80_lane_2_pack, denoiseb_FIFO_buf80_lane_2);
-  auto res_denoise_update_0_sm89_13467 = denoise_generated_compute_unrolled_1(denoiseb_FIFO_buf80_lane_2_pack);
-
-  hw_uint<16 > denoiseb_FIFO_buf80_lane_3_pack;
-  set_at<0, 16, 16>(denoiseb_FIFO_buf80_lane_3_pack, denoiseb_FIFO_buf80_lane_3);
-  auto res_denoise_update_0_sm89_12465 = denoise_generated_compute_unrolled_1(denoiseb_FIFO_buf80_lane_3_pack);
-
-  hw_uint<16 > denoiseb_FIFO_buf80_lane_4_pack;
-  set_at<0, 16, 16>(denoiseb_FIFO_buf80_lane_4_pack, denoiseb_FIFO_buf80_lane_4);
-  auto res_denoise_update_0_sm89_11463 = denoise_generated_compute_unrolled_1(denoiseb_FIFO_buf80_lane_4_pack);
-
-  hw_uint<16 > denoiseb_FIFO_buf80_lane_5_pack;
-  set_at<0, 16, 16>(denoiseb_FIFO_buf80_lane_5_pack, denoiseb_FIFO_buf80_lane_5);
-  auto res_denoise_update_0_sm89_10461 = denoise_generated_compute_unrolled_1(denoiseb_FIFO_buf80_lane_5_pack);
-
-  hw_uint<16 > denoiseb_FIFO_buf80_lane_6_pack;
-  set_at<0, 16, 16>(denoiseb_FIFO_buf80_lane_6_pack, denoiseb_FIFO_buf80_lane_6);
-  auto res_denoise_update_0_sm89_9459 = denoise_generated_compute_unrolled_1(denoiseb_FIFO_buf80_lane_6_pack);
-
-  hw_uint<16 > denoiseb_FIFO_buf80_lane_7_pack;
-  set_at<0, 16, 16>(denoiseb_FIFO_buf80_lane_7_pack, denoiseb_FIFO_buf80_lane_7);
-  auto res_denoise_update_0_sm89_8457 = denoise_generated_compute_unrolled_1(denoiseb_FIFO_buf80_lane_7_pack);
-
-  hw_uint<16 > denoiseb_FIFO_buf80_lane_8_pack;
-  set_at<0, 16, 16>(denoiseb_FIFO_buf80_lane_8_pack, denoiseb_FIFO_buf80_lane_8);
-  auto res_denoise_update_0_sm89_7455 = denoise_generated_compute_unrolled_1(denoiseb_FIFO_buf80_lane_8_pack);
-
-  hw_uint<16 > denoiseb_FIFO_buf80_lane_9_pack;
-  set_at<0, 16, 16>(denoiseb_FIFO_buf80_lane_9_pack, denoiseb_FIFO_buf80_lane_9);
-  auto res_denoise_update_0_sm89_6453 = denoise_generated_compute_unrolled_1(denoiseb_FIFO_buf80_lane_9_pack);
-
-  hw_uint<16 > denoiseb_FIFO_buf80_lane_10_pack;
-  set_at<0, 16, 16>(denoiseb_FIFO_buf80_lane_10_pack, denoiseb_FIFO_buf80_lane_10);
-  auto res_denoise_update_0_sm89_5451 = denoise_generated_compute_unrolled_1(denoiseb_FIFO_buf80_lane_10_pack);
-
-  hw_uint<16 > denoiseb_FIFO_buf80_lane_11_pack;
-  set_at<0, 16, 16>(denoiseb_FIFO_buf80_lane_11_pack, denoiseb_FIFO_buf80_lane_11);
-  auto res_denoise_update_0_sm89_4449 = denoise_generated_compute_unrolled_1(denoiseb_FIFO_buf80_lane_11_pack);
-
-  hw_uint<16 > denoiseb_FIFO_buf80_lane_12_pack;
-  set_at<0, 16, 16>(denoiseb_FIFO_buf80_lane_12_pack, denoiseb_FIFO_buf80_lane_12);
-  auto res_denoise_update_0_sm89_3447 = denoise_generated_compute_unrolled_1(denoiseb_FIFO_buf80_lane_12_pack);
-
-  hw_uint<16 > denoiseb_FIFO_buf80_lane_13_pack;
-  set_at<0, 16, 16>(denoiseb_FIFO_buf80_lane_13_pack, denoiseb_FIFO_buf80_lane_13);
-  auto res_denoise_update_0_sm89_2445 = denoise_generated_compute_unrolled_1(denoiseb_FIFO_buf80_lane_13_pack);
-
-  hw_uint<16 > denoiseb_FIFO_buf80_lane_14_pack;
-  set_at<0, 16, 16>(denoiseb_FIFO_buf80_lane_14_pack, denoiseb_FIFO_buf80_lane_14);
-  auto res_denoise_update_0_sm89_1443 = denoise_generated_compute_unrolled_1(denoiseb_FIFO_buf80_lane_14_pack);
-
-  hw_uint<16 > denoiseb_FIFO_buf80_lane_15_pack;
-  set_at<0, 16, 16>(denoiseb_FIFO_buf80_lane_15_pack, denoiseb_FIFO_buf80_lane_15);
-  auto res_denoise_update_0_sm89_0441 = denoise_generated_compute_unrolled_1(denoiseb_FIFO_buf80_lane_15_pack);
-  hw_uint<256 > return_value1181;
-  set_at<0, 256, 16>(return_value1181, res_denoise_update_0_sm89_15471);
-  set_at<16, 256, 16>(return_value1181, res_denoise_update_0_sm89_14469);
-  set_at<32, 256, 16>(return_value1181, res_denoise_update_0_sm89_13467);
-  set_at<48, 256, 16>(return_value1181, res_denoise_update_0_sm89_12465);
-  set_at<64, 256, 16>(return_value1181, res_denoise_update_0_sm89_11463);
-  set_at<80, 256, 16>(return_value1181, res_denoise_update_0_sm89_10461);
-  set_at<96, 256, 16>(return_value1181, res_denoise_update_0_sm89_9459);
-  set_at<112, 256, 16>(return_value1181, res_denoise_update_0_sm89_8457);
-  set_at<128, 256, 16>(return_value1181, res_denoise_update_0_sm89_7455);
-  set_at<144, 256, 16>(return_value1181, res_denoise_update_0_sm89_6453);
-  set_at<160, 256, 16>(return_value1181, res_denoise_update_0_sm89_5451);
-  set_at<176, 256, 16>(return_value1181, res_denoise_update_0_sm89_4449);
-  set_at<192, 256, 16>(return_value1181, res_denoise_update_0_sm89_3447);
-  set_at<208, 256, 16>(return_value1181, res_denoise_update_0_sm89_2445);
-  set_at<224, 256, 16>(return_value1181, res_denoise_update_0_sm89_1443);
-  set_at<240, 256, 16>(return_value1181, res_denoise_update_0_sm89_0441);
-  return return_value1181;
-
-}
-
-hw_uint<256> denoiseb_1_cu1183(hw_uint<16*400>& raw_FIFO_buf84) {
+hw_uint<256> denoiseb_1_cu1186(hw_uint<16*400>& raw_FIFO_buf84) {
   hw_uint<16> raw_FIFO_buf84_lane_0 = raw_FIFO_buf84.extract<0, 15>();
   hw_uint<16> raw_FIFO_buf84_lane_1 = raw_FIFO_buf84.extract<16, 31>();
   hw_uint<16> raw_FIFO_buf84_lane_2 = raw_FIFO_buf84.extract<32, 47>();
@@ -635,7 +544,7 @@ hw_uint<256> denoiseb_1_cu1183(hw_uint<16*400>& raw_FIFO_buf84) {
   set_at<352, 400, 16>(raw_FIFO_buf84_lane_24_pack, raw_FIFO_buf84_lane_22);
   set_at<368, 400, 16>(raw_FIFO_buf84_lane_24_pack, raw_FIFO_buf84_lane_23);
   set_at<384, 400, 16>(raw_FIFO_buf84_lane_24_pack, raw_FIFO_buf84_lane_24);
-  auto res_denoiseb_update_0_sm90_151175 = denoiseb_generated_compute_unrolled_1(raw_FIFO_buf84_lane_24_pack);
+  auto res_denoiseb_update_0_sm92_15279 = denoiseb_generated_compute_unrolled_1(raw_FIFO_buf84_lane_24_pack);
 
   hw_uint<400 > raw_FIFO_buf84_lane_49_pack;
   set_at<0, 400, 16>(raw_FIFO_buf84_lane_49_pack, raw_FIFO_buf84_lane_25);
@@ -663,7 +572,7 @@ hw_uint<256> denoiseb_1_cu1183(hw_uint<16*400>& raw_FIFO_buf84) {
   set_at<352, 400, 16>(raw_FIFO_buf84_lane_49_pack, raw_FIFO_buf84_lane_47);
   set_at<368, 400, 16>(raw_FIFO_buf84_lane_49_pack, raw_FIFO_buf84_lane_48);
   set_at<384, 400, 16>(raw_FIFO_buf84_lane_49_pack, raw_FIFO_buf84_lane_49);
-  auto res_denoiseb_update_0_sm90_141173 = denoiseb_generated_compute_unrolled_1(raw_FIFO_buf84_lane_49_pack);
+  auto res_denoiseb_update_0_sm92_14277 = denoiseb_generated_compute_unrolled_1(raw_FIFO_buf84_lane_49_pack);
 
   hw_uint<400 > raw_FIFO_buf84_lane_74_pack;
   set_at<0, 400, 16>(raw_FIFO_buf84_lane_74_pack, raw_FIFO_buf84_lane_50);
@@ -691,7 +600,7 @@ hw_uint<256> denoiseb_1_cu1183(hw_uint<16*400>& raw_FIFO_buf84) {
   set_at<352, 400, 16>(raw_FIFO_buf84_lane_74_pack, raw_FIFO_buf84_lane_72);
   set_at<368, 400, 16>(raw_FIFO_buf84_lane_74_pack, raw_FIFO_buf84_lane_73);
   set_at<384, 400, 16>(raw_FIFO_buf84_lane_74_pack, raw_FIFO_buf84_lane_74);
-  auto res_denoiseb_update_0_sm90_131171 = denoiseb_generated_compute_unrolled_1(raw_FIFO_buf84_lane_74_pack);
+  auto res_denoiseb_update_0_sm92_13275 = denoiseb_generated_compute_unrolled_1(raw_FIFO_buf84_lane_74_pack);
 
   hw_uint<400 > raw_FIFO_buf84_lane_99_pack;
   set_at<0, 400, 16>(raw_FIFO_buf84_lane_99_pack, raw_FIFO_buf84_lane_75);
@@ -719,7 +628,7 @@ hw_uint<256> denoiseb_1_cu1183(hw_uint<16*400>& raw_FIFO_buf84) {
   set_at<352, 400, 16>(raw_FIFO_buf84_lane_99_pack, raw_FIFO_buf84_lane_97);
   set_at<368, 400, 16>(raw_FIFO_buf84_lane_99_pack, raw_FIFO_buf84_lane_98);
   set_at<384, 400, 16>(raw_FIFO_buf84_lane_99_pack, raw_FIFO_buf84_lane_99);
-  auto res_denoiseb_update_0_sm90_121169 = denoiseb_generated_compute_unrolled_1(raw_FIFO_buf84_lane_99_pack);
+  auto res_denoiseb_update_0_sm92_12273 = denoiseb_generated_compute_unrolled_1(raw_FIFO_buf84_lane_99_pack);
 
   hw_uint<400 > raw_FIFO_buf84_lane_124_pack;
   set_at<0, 400, 16>(raw_FIFO_buf84_lane_124_pack, raw_FIFO_buf84_lane_100);
@@ -747,7 +656,7 @@ hw_uint<256> denoiseb_1_cu1183(hw_uint<16*400>& raw_FIFO_buf84) {
   set_at<352, 400, 16>(raw_FIFO_buf84_lane_124_pack, raw_FIFO_buf84_lane_122);
   set_at<368, 400, 16>(raw_FIFO_buf84_lane_124_pack, raw_FIFO_buf84_lane_123);
   set_at<384, 400, 16>(raw_FIFO_buf84_lane_124_pack, raw_FIFO_buf84_lane_124);
-  auto res_denoiseb_update_0_sm90_111167 = denoiseb_generated_compute_unrolled_1(raw_FIFO_buf84_lane_124_pack);
+  auto res_denoiseb_update_0_sm92_11271 = denoiseb_generated_compute_unrolled_1(raw_FIFO_buf84_lane_124_pack);
 
   hw_uint<400 > raw_FIFO_buf84_lane_149_pack;
   set_at<0, 400, 16>(raw_FIFO_buf84_lane_149_pack, raw_FIFO_buf84_lane_125);
@@ -775,7 +684,7 @@ hw_uint<256> denoiseb_1_cu1183(hw_uint<16*400>& raw_FIFO_buf84) {
   set_at<352, 400, 16>(raw_FIFO_buf84_lane_149_pack, raw_FIFO_buf84_lane_147);
   set_at<368, 400, 16>(raw_FIFO_buf84_lane_149_pack, raw_FIFO_buf84_lane_148);
   set_at<384, 400, 16>(raw_FIFO_buf84_lane_149_pack, raw_FIFO_buf84_lane_149);
-  auto res_denoiseb_update_0_sm90_101165 = denoiseb_generated_compute_unrolled_1(raw_FIFO_buf84_lane_149_pack);
+  auto res_denoiseb_update_0_sm92_10269 = denoiseb_generated_compute_unrolled_1(raw_FIFO_buf84_lane_149_pack);
 
   hw_uint<400 > raw_FIFO_buf84_lane_174_pack;
   set_at<0, 400, 16>(raw_FIFO_buf84_lane_174_pack, raw_FIFO_buf84_lane_150);
@@ -803,7 +712,7 @@ hw_uint<256> denoiseb_1_cu1183(hw_uint<16*400>& raw_FIFO_buf84) {
   set_at<352, 400, 16>(raw_FIFO_buf84_lane_174_pack, raw_FIFO_buf84_lane_172);
   set_at<368, 400, 16>(raw_FIFO_buf84_lane_174_pack, raw_FIFO_buf84_lane_173);
   set_at<384, 400, 16>(raw_FIFO_buf84_lane_174_pack, raw_FIFO_buf84_lane_174);
-  auto res_denoiseb_update_0_sm90_91163 = denoiseb_generated_compute_unrolled_1(raw_FIFO_buf84_lane_174_pack);
+  auto res_denoiseb_update_0_sm92_9267 = denoiseb_generated_compute_unrolled_1(raw_FIFO_buf84_lane_174_pack);
 
   hw_uint<400 > raw_FIFO_buf84_lane_199_pack;
   set_at<0, 400, 16>(raw_FIFO_buf84_lane_199_pack, raw_FIFO_buf84_lane_175);
@@ -831,7 +740,7 @@ hw_uint<256> denoiseb_1_cu1183(hw_uint<16*400>& raw_FIFO_buf84) {
   set_at<352, 400, 16>(raw_FIFO_buf84_lane_199_pack, raw_FIFO_buf84_lane_197);
   set_at<368, 400, 16>(raw_FIFO_buf84_lane_199_pack, raw_FIFO_buf84_lane_198);
   set_at<384, 400, 16>(raw_FIFO_buf84_lane_199_pack, raw_FIFO_buf84_lane_199);
-  auto res_denoiseb_update_0_sm90_81161 = denoiseb_generated_compute_unrolled_1(raw_FIFO_buf84_lane_199_pack);
+  auto res_denoiseb_update_0_sm92_8265 = denoiseb_generated_compute_unrolled_1(raw_FIFO_buf84_lane_199_pack);
 
   hw_uint<400 > raw_FIFO_buf84_lane_224_pack;
   set_at<0, 400, 16>(raw_FIFO_buf84_lane_224_pack, raw_FIFO_buf84_lane_200);
@@ -859,7 +768,7 @@ hw_uint<256> denoiseb_1_cu1183(hw_uint<16*400>& raw_FIFO_buf84) {
   set_at<352, 400, 16>(raw_FIFO_buf84_lane_224_pack, raw_FIFO_buf84_lane_222);
   set_at<368, 400, 16>(raw_FIFO_buf84_lane_224_pack, raw_FIFO_buf84_lane_223);
   set_at<384, 400, 16>(raw_FIFO_buf84_lane_224_pack, raw_FIFO_buf84_lane_224);
-  auto res_denoiseb_update_0_sm90_71159 = denoiseb_generated_compute_unrolled_1(raw_FIFO_buf84_lane_224_pack);
+  auto res_denoiseb_update_0_sm92_7263 = denoiseb_generated_compute_unrolled_1(raw_FIFO_buf84_lane_224_pack);
 
   hw_uint<400 > raw_FIFO_buf84_lane_249_pack;
   set_at<0, 400, 16>(raw_FIFO_buf84_lane_249_pack, raw_FIFO_buf84_lane_225);
@@ -887,7 +796,7 @@ hw_uint<256> denoiseb_1_cu1183(hw_uint<16*400>& raw_FIFO_buf84) {
   set_at<352, 400, 16>(raw_FIFO_buf84_lane_249_pack, raw_FIFO_buf84_lane_247);
   set_at<368, 400, 16>(raw_FIFO_buf84_lane_249_pack, raw_FIFO_buf84_lane_248);
   set_at<384, 400, 16>(raw_FIFO_buf84_lane_249_pack, raw_FIFO_buf84_lane_249);
-  auto res_denoiseb_update_0_sm90_61157 = denoiseb_generated_compute_unrolled_1(raw_FIFO_buf84_lane_249_pack);
+  auto res_denoiseb_update_0_sm92_6261 = denoiseb_generated_compute_unrolled_1(raw_FIFO_buf84_lane_249_pack);
 
   hw_uint<400 > raw_FIFO_buf84_lane_274_pack;
   set_at<0, 400, 16>(raw_FIFO_buf84_lane_274_pack, raw_FIFO_buf84_lane_250);
@@ -915,7 +824,7 @@ hw_uint<256> denoiseb_1_cu1183(hw_uint<16*400>& raw_FIFO_buf84) {
   set_at<352, 400, 16>(raw_FIFO_buf84_lane_274_pack, raw_FIFO_buf84_lane_272);
   set_at<368, 400, 16>(raw_FIFO_buf84_lane_274_pack, raw_FIFO_buf84_lane_273);
   set_at<384, 400, 16>(raw_FIFO_buf84_lane_274_pack, raw_FIFO_buf84_lane_274);
-  auto res_denoiseb_update_0_sm90_51155 = denoiseb_generated_compute_unrolled_1(raw_FIFO_buf84_lane_274_pack);
+  auto res_denoiseb_update_0_sm92_5259 = denoiseb_generated_compute_unrolled_1(raw_FIFO_buf84_lane_274_pack);
 
   hw_uint<400 > raw_FIFO_buf84_lane_299_pack;
   set_at<0, 400, 16>(raw_FIFO_buf84_lane_299_pack, raw_FIFO_buf84_lane_275);
@@ -943,7 +852,7 @@ hw_uint<256> denoiseb_1_cu1183(hw_uint<16*400>& raw_FIFO_buf84) {
   set_at<352, 400, 16>(raw_FIFO_buf84_lane_299_pack, raw_FIFO_buf84_lane_297);
   set_at<368, 400, 16>(raw_FIFO_buf84_lane_299_pack, raw_FIFO_buf84_lane_298);
   set_at<384, 400, 16>(raw_FIFO_buf84_lane_299_pack, raw_FIFO_buf84_lane_299);
-  auto res_denoiseb_update_0_sm90_41153 = denoiseb_generated_compute_unrolled_1(raw_FIFO_buf84_lane_299_pack);
+  auto res_denoiseb_update_0_sm92_4257 = denoiseb_generated_compute_unrolled_1(raw_FIFO_buf84_lane_299_pack);
 
   hw_uint<400 > raw_FIFO_buf84_lane_324_pack;
   set_at<0, 400, 16>(raw_FIFO_buf84_lane_324_pack, raw_FIFO_buf84_lane_300);
@@ -971,7 +880,7 @@ hw_uint<256> denoiseb_1_cu1183(hw_uint<16*400>& raw_FIFO_buf84) {
   set_at<352, 400, 16>(raw_FIFO_buf84_lane_324_pack, raw_FIFO_buf84_lane_322);
   set_at<368, 400, 16>(raw_FIFO_buf84_lane_324_pack, raw_FIFO_buf84_lane_323);
   set_at<384, 400, 16>(raw_FIFO_buf84_lane_324_pack, raw_FIFO_buf84_lane_324);
-  auto res_denoiseb_update_0_sm90_31151 = denoiseb_generated_compute_unrolled_1(raw_FIFO_buf84_lane_324_pack);
+  auto res_denoiseb_update_0_sm92_3255 = denoiseb_generated_compute_unrolled_1(raw_FIFO_buf84_lane_324_pack);
 
   hw_uint<400 > raw_FIFO_buf84_lane_349_pack;
   set_at<0, 400, 16>(raw_FIFO_buf84_lane_349_pack, raw_FIFO_buf84_lane_325);
@@ -999,7 +908,7 @@ hw_uint<256> denoiseb_1_cu1183(hw_uint<16*400>& raw_FIFO_buf84) {
   set_at<352, 400, 16>(raw_FIFO_buf84_lane_349_pack, raw_FIFO_buf84_lane_347);
   set_at<368, 400, 16>(raw_FIFO_buf84_lane_349_pack, raw_FIFO_buf84_lane_348);
   set_at<384, 400, 16>(raw_FIFO_buf84_lane_349_pack, raw_FIFO_buf84_lane_349);
-  auto res_denoiseb_update_0_sm90_21149 = denoiseb_generated_compute_unrolled_1(raw_FIFO_buf84_lane_349_pack);
+  auto res_denoiseb_update_0_sm92_2253 = denoiseb_generated_compute_unrolled_1(raw_FIFO_buf84_lane_349_pack);
 
   hw_uint<400 > raw_FIFO_buf84_lane_374_pack;
   set_at<0, 400, 16>(raw_FIFO_buf84_lane_374_pack, raw_FIFO_buf84_lane_350);
@@ -1027,7 +936,7 @@ hw_uint<256> denoiseb_1_cu1183(hw_uint<16*400>& raw_FIFO_buf84) {
   set_at<352, 400, 16>(raw_FIFO_buf84_lane_374_pack, raw_FIFO_buf84_lane_372);
   set_at<368, 400, 16>(raw_FIFO_buf84_lane_374_pack, raw_FIFO_buf84_lane_373);
   set_at<384, 400, 16>(raw_FIFO_buf84_lane_374_pack, raw_FIFO_buf84_lane_374);
-  auto res_denoiseb_update_0_sm90_11147 = denoiseb_generated_compute_unrolled_1(raw_FIFO_buf84_lane_374_pack);
+  auto res_denoiseb_update_0_sm92_1251 = denoiseb_generated_compute_unrolled_1(raw_FIFO_buf84_lane_374_pack);
 
   hw_uint<400 > raw_FIFO_buf84_lane_399_pack;
   set_at<0, 400, 16>(raw_FIFO_buf84_lane_399_pack, raw_FIFO_buf84_lane_375);
@@ -1055,29 +964,132 @@ hw_uint<256> denoiseb_1_cu1183(hw_uint<16*400>& raw_FIFO_buf84) {
   set_at<352, 400, 16>(raw_FIFO_buf84_lane_399_pack, raw_FIFO_buf84_lane_397);
   set_at<368, 400, 16>(raw_FIFO_buf84_lane_399_pack, raw_FIFO_buf84_lane_398);
   set_at<384, 400, 16>(raw_FIFO_buf84_lane_399_pack, raw_FIFO_buf84_lane_399);
-  auto res_denoiseb_update_0_sm90_01145 = denoiseb_generated_compute_unrolled_1(raw_FIFO_buf84_lane_399_pack);
-  hw_uint<256 > return_value1184;
-  set_at<0, 256, 16>(return_value1184, res_denoiseb_update_0_sm90_151175);
-  set_at<16, 256, 16>(return_value1184, res_denoiseb_update_0_sm90_141173);
-  set_at<32, 256, 16>(return_value1184, res_denoiseb_update_0_sm90_131171);
-  set_at<48, 256, 16>(return_value1184, res_denoiseb_update_0_sm90_121169);
-  set_at<64, 256, 16>(return_value1184, res_denoiseb_update_0_sm90_111167);
-  set_at<80, 256, 16>(return_value1184, res_denoiseb_update_0_sm90_101165);
-  set_at<96, 256, 16>(return_value1184, res_denoiseb_update_0_sm90_91163);
-  set_at<112, 256, 16>(return_value1184, res_denoiseb_update_0_sm90_81161);
-  set_at<128, 256, 16>(return_value1184, res_denoiseb_update_0_sm90_71159);
-  set_at<144, 256, 16>(return_value1184, res_denoiseb_update_0_sm90_61157);
-  set_at<160, 256, 16>(return_value1184, res_denoiseb_update_0_sm90_51155);
-  set_at<176, 256, 16>(return_value1184, res_denoiseb_update_0_sm90_41153);
-  set_at<192, 256, 16>(return_value1184, res_denoiseb_update_0_sm90_31151);
-  set_at<208, 256, 16>(return_value1184, res_denoiseb_update_0_sm90_21149);
-  set_at<224, 256, 16>(return_value1184, res_denoiseb_update_0_sm90_11147);
-  set_at<240, 256, 16>(return_value1184, res_denoiseb_update_0_sm90_01145);
-  return return_value1184;
+  auto res_denoiseb_update_0_sm92_0249 = denoiseb_generated_compute_unrolled_1(raw_FIFO_buf84_lane_399_pack);
+  hw_uint<256 > return_value1187;
+  set_at<0, 256, 16>(return_value1187, res_denoiseb_update_0_sm92_15279);
+  set_at<16, 256, 16>(return_value1187, res_denoiseb_update_0_sm92_14277);
+  set_at<32, 256, 16>(return_value1187, res_denoiseb_update_0_sm92_13275);
+  set_at<48, 256, 16>(return_value1187, res_denoiseb_update_0_sm92_12273);
+  set_at<64, 256, 16>(return_value1187, res_denoiseb_update_0_sm92_11271);
+  set_at<80, 256, 16>(return_value1187, res_denoiseb_update_0_sm92_10269);
+  set_at<96, 256, 16>(return_value1187, res_denoiseb_update_0_sm92_9267);
+  set_at<112, 256, 16>(return_value1187, res_denoiseb_update_0_sm92_8265);
+  set_at<128, 256, 16>(return_value1187, res_denoiseb_update_0_sm92_7263);
+  set_at<144, 256, 16>(return_value1187, res_denoiseb_update_0_sm92_6261);
+  set_at<160, 256, 16>(return_value1187, res_denoiseb_update_0_sm92_5259);
+  set_at<176, 256, 16>(return_value1187, res_denoiseb_update_0_sm92_4257);
+  set_at<192, 256, 16>(return_value1187, res_denoiseb_update_0_sm92_3255);
+  set_at<208, 256, 16>(return_value1187, res_denoiseb_update_0_sm92_2253);
+  set_at<224, 256, 16>(return_value1187, res_denoiseb_update_0_sm92_1251);
+  set_at<240, 256, 16>(return_value1187, res_denoiseb_update_0_sm92_0249);
+  return return_value1187;
 
 }
 
-hw_uint<256> demosaicb_1_cu1186(hw_uint<16*144>& denoise_FIFO_buf76) {
+hw_uint<256> denoise_1_cu1189(hw_uint<16*16>& denoiseb_FIFO_buf80) {
+  hw_uint<16> denoiseb_FIFO_buf80_lane_0 = denoiseb_FIFO_buf80.extract<0, 15>();
+  hw_uint<16> denoiseb_FIFO_buf80_lane_1 = denoiseb_FIFO_buf80.extract<16, 31>();
+  hw_uint<16> denoiseb_FIFO_buf80_lane_2 = denoiseb_FIFO_buf80.extract<32, 47>();
+  hw_uint<16> denoiseb_FIFO_buf80_lane_3 = denoiseb_FIFO_buf80.extract<48, 63>();
+  hw_uint<16> denoiseb_FIFO_buf80_lane_4 = denoiseb_FIFO_buf80.extract<64, 79>();
+  hw_uint<16> denoiseb_FIFO_buf80_lane_5 = denoiseb_FIFO_buf80.extract<80, 95>();
+  hw_uint<16> denoiseb_FIFO_buf80_lane_6 = denoiseb_FIFO_buf80.extract<96, 111>();
+  hw_uint<16> denoiseb_FIFO_buf80_lane_7 = denoiseb_FIFO_buf80.extract<112, 127>();
+  hw_uint<16> denoiseb_FIFO_buf80_lane_8 = denoiseb_FIFO_buf80.extract<128, 143>();
+  hw_uint<16> denoiseb_FIFO_buf80_lane_9 = denoiseb_FIFO_buf80.extract<144, 159>();
+  hw_uint<16> denoiseb_FIFO_buf80_lane_10 = denoiseb_FIFO_buf80.extract<160, 175>();
+  hw_uint<16> denoiseb_FIFO_buf80_lane_11 = denoiseb_FIFO_buf80.extract<176, 191>();
+  hw_uint<16> denoiseb_FIFO_buf80_lane_12 = denoiseb_FIFO_buf80.extract<192, 207>();
+  hw_uint<16> denoiseb_FIFO_buf80_lane_13 = denoiseb_FIFO_buf80.extract<208, 223>();
+  hw_uint<16> denoiseb_FIFO_buf80_lane_14 = denoiseb_FIFO_buf80.extract<224, 239>();
+  hw_uint<16> denoiseb_FIFO_buf80_lane_15 = denoiseb_FIFO_buf80.extract<240, 255>();
+
+	
+  hw_uint<16 > denoiseb_FIFO_buf80_lane_0_pack;
+  set_at<0, 16, 16>(denoiseb_FIFO_buf80_lane_0_pack, denoiseb_FIFO_buf80_lane_0);
+  auto res_denoise_update_0_sm93_15311 = denoise_generated_compute_unrolled_1(denoiseb_FIFO_buf80_lane_0_pack);
+
+  hw_uint<16 > denoiseb_FIFO_buf80_lane_1_pack;
+  set_at<0, 16, 16>(denoiseb_FIFO_buf80_lane_1_pack, denoiseb_FIFO_buf80_lane_1);
+  auto res_denoise_update_0_sm93_14309 = denoise_generated_compute_unrolled_1(denoiseb_FIFO_buf80_lane_1_pack);
+
+  hw_uint<16 > denoiseb_FIFO_buf80_lane_2_pack;
+  set_at<0, 16, 16>(denoiseb_FIFO_buf80_lane_2_pack, denoiseb_FIFO_buf80_lane_2);
+  auto res_denoise_update_0_sm93_13307 = denoise_generated_compute_unrolled_1(denoiseb_FIFO_buf80_lane_2_pack);
+
+  hw_uint<16 > denoiseb_FIFO_buf80_lane_3_pack;
+  set_at<0, 16, 16>(denoiseb_FIFO_buf80_lane_3_pack, denoiseb_FIFO_buf80_lane_3);
+  auto res_denoise_update_0_sm93_12305 = denoise_generated_compute_unrolled_1(denoiseb_FIFO_buf80_lane_3_pack);
+
+  hw_uint<16 > denoiseb_FIFO_buf80_lane_4_pack;
+  set_at<0, 16, 16>(denoiseb_FIFO_buf80_lane_4_pack, denoiseb_FIFO_buf80_lane_4);
+  auto res_denoise_update_0_sm93_11303 = denoise_generated_compute_unrolled_1(denoiseb_FIFO_buf80_lane_4_pack);
+
+  hw_uint<16 > denoiseb_FIFO_buf80_lane_5_pack;
+  set_at<0, 16, 16>(denoiseb_FIFO_buf80_lane_5_pack, denoiseb_FIFO_buf80_lane_5);
+  auto res_denoise_update_0_sm93_10301 = denoise_generated_compute_unrolled_1(denoiseb_FIFO_buf80_lane_5_pack);
+
+  hw_uint<16 > denoiseb_FIFO_buf80_lane_6_pack;
+  set_at<0, 16, 16>(denoiseb_FIFO_buf80_lane_6_pack, denoiseb_FIFO_buf80_lane_6);
+  auto res_denoise_update_0_sm93_9299 = denoise_generated_compute_unrolled_1(denoiseb_FIFO_buf80_lane_6_pack);
+
+  hw_uint<16 > denoiseb_FIFO_buf80_lane_7_pack;
+  set_at<0, 16, 16>(denoiseb_FIFO_buf80_lane_7_pack, denoiseb_FIFO_buf80_lane_7);
+  auto res_denoise_update_0_sm93_8297 = denoise_generated_compute_unrolled_1(denoiseb_FIFO_buf80_lane_7_pack);
+
+  hw_uint<16 > denoiseb_FIFO_buf80_lane_8_pack;
+  set_at<0, 16, 16>(denoiseb_FIFO_buf80_lane_8_pack, denoiseb_FIFO_buf80_lane_8);
+  auto res_denoise_update_0_sm93_7295 = denoise_generated_compute_unrolled_1(denoiseb_FIFO_buf80_lane_8_pack);
+
+  hw_uint<16 > denoiseb_FIFO_buf80_lane_9_pack;
+  set_at<0, 16, 16>(denoiseb_FIFO_buf80_lane_9_pack, denoiseb_FIFO_buf80_lane_9);
+  auto res_denoise_update_0_sm93_6293 = denoise_generated_compute_unrolled_1(denoiseb_FIFO_buf80_lane_9_pack);
+
+  hw_uint<16 > denoiseb_FIFO_buf80_lane_10_pack;
+  set_at<0, 16, 16>(denoiseb_FIFO_buf80_lane_10_pack, denoiseb_FIFO_buf80_lane_10);
+  auto res_denoise_update_0_sm93_5291 = denoise_generated_compute_unrolled_1(denoiseb_FIFO_buf80_lane_10_pack);
+
+  hw_uint<16 > denoiseb_FIFO_buf80_lane_11_pack;
+  set_at<0, 16, 16>(denoiseb_FIFO_buf80_lane_11_pack, denoiseb_FIFO_buf80_lane_11);
+  auto res_denoise_update_0_sm93_4289 = denoise_generated_compute_unrolled_1(denoiseb_FIFO_buf80_lane_11_pack);
+
+  hw_uint<16 > denoiseb_FIFO_buf80_lane_12_pack;
+  set_at<0, 16, 16>(denoiseb_FIFO_buf80_lane_12_pack, denoiseb_FIFO_buf80_lane_12);
+  auto res_denoise_update_0_sm93_3287 = denoise_generated_compute_unrolled_1(denoiseb_FIFO_buf80_lane_12_pack);
+
+  hw_uint<16 > denoiseb_FIFO_buf80_lane_13_pack;
+  set_at<0, 16, 16>(denoiseb_FIFO_buf80_lane_13_pack, denoiseb_FIFO_buf80_lane_13);
+  auto res_denoise_update_0_sm93_2285 = denoise_generated_compute_unrolled_1(denoiseb_FIFO_buf80_lane_13_pack);
+
+  hw_uint<16 > denoiseb_FIFO_buf80_lane_14_pack;
+  set_at<0, 16, 16>(denoiseb_FIFO_buf80_lane_14_pack, denoiseb_FIFO_buf80_lane_14);
+  auto res_denoise_update_0_sm93_1283 = denoise_generated_compute_unrolled_1(denoiseb_FIFO_buf80_lane_14_pack);
+
+  hw_uint<16 > denoiseb_FIFO_buf80_lane_15_pack;
+  set_at<0, 16, 16>(denoiseb_FIFO_buf80_lane_15_pack, denoiseb_FIFO_buf80_lane_15);
+  auto res_denoise_update_0_sm93_0281 = denoise_generated_compute_unrolled_1(denoiseb_FIFO_buf80_lane_15_pack);
+  hw_uint<256 > return_value1190;
+  set_at<0, 256, 16>(return_value1190, res_denoise_update_0_sm93_15311);
+  set_at<16, 256, 16>(return_value1190, res_denoise_update_0_sm93_14309);
+  set_at<32, 256, 16>(return_value1190, res_denoise_update_0_sm93_13307);
+  set_at<48, 256, 16>(return_value1190, res_denoise_update_0_sm93_12305);
+  set_at<64, 256, 16>(return_value1190, res_denoise_update_0_sm93_11303);
+  set_at<80, 256, 16>(return_value1190, res_denoise_update_0_sm93_10301);
+  set_at<96, 256, 16>(return_value1190, res_denoise_update_0_sm93_9299);
+  set_at<112, 256, 16>(return_value1190, res_denoise_update_0_sm93_8297);
+  set_at<128, 256, 16>(return_value1190, res_denoise_update_0_sm93_7295);
+  set_at<144, 256, 16>(return_value1190, res_denoise_update_0_sm93_6293);
+  set_at<160, 256, 16>(return_value1190, res_denoise_update_0_sm93_5291);
+  set_at<176, 256, 16>(return_value1190, res_denoise_update_0_sm93_4289);
+  set_at<192, 256, 16>(return_value1190, res_denoise_update_0_sm93_3287);
+  set_at<208, 256, 16>(return_value1190, res_denoise_update_0_sm93_2285);
+  set_at<224, 256, 16>(return_value1190, res_denoise_update_0_sm93_1283);
+  set_at<240, 256, 16>(return_value1190, res_denoise_update_0_sm93_0281);
+  return return_value1190;
+
+}
+
+hw_uint<256> demosaicb_1_cu1192(hw_uint<16*144>& denoise_FIFO_buf76) {
   hw_uint<16> denoise_FIFO_buf76_lane_0 = denoise_FIFO_buf76.extract<0, 15>();
   hw_uint<16> denoise_FIFO_buf76_lane_1 = denoise_FIFO_buf76.extract<16, 31>();
   hw_uint<16> denoise_FIFO_buf76_lane_2 = denoise_FIFO_buf76.extract<32, 47>();
@@ -1234,7 +1246,7 @@ hw_uint<256> demosaicb_1_cu1186(hw_uint<16*144>& denoise_FIFO_buf76) {
   set_at<96, 144, 16>(denoise_FIFO_buf76_lane_8_pack, denoise_FIFO_buf76_lane_6);
   set_at<112, 144, 16>(denoise_FIFO_buf76_lane_8_pack, denoise_FIFO_buf76_lane_7);
   set_at<128, 144, 16>(denoise_FIFO_buf76_lane_8_pack, denoise_FIFO_buf76_lane_8);
-  auto res_demosaicb_update_0_sm91_151079 = demosaicb_generated_compute_unrolled_1(denoise_FIFO_buf76_lane_8_pack);
+  auto res_demosaicb_update_0_sm94_15343 = demosaicb_generated_compute_unrolled_1(denoise_FIFO_buf76_lane_8_pack);
 
   hw_uint<144 > denoise_FIFO_buf76_lane_17_pack;
   set_at<0, 144, 16>(denoise_FIFO_buf76_lane_17_pack, denoise_FIFO_buf76_lane_9);
@@ -1246,7 +1258,7 @@ hw_uint<256> demosaicb_1_cu1186(hw_uint<16*144>& denoise_FIFO_buf76) {
   set_at<96, 144, 16>(denoise_FIFO_buf76_lane_17_pack, denoise_FIFO_buf76_lane_15);
   set_at<112, 144, 16>(denoise_FIFO_buf76_lane_17_pack, denoise_FIFO_buf76_lane_16);
   set_at<128, 144, 16>(denoise_FIFO_buf76_lane_17_pack, denoise_FIFO_buf76_lane_17);
-  auto res_demosaicb_update_0_sm91_141077 = demosaicb_generated_compute_unrolled_1(denoise_FIFO_buf76_lane_17_pack);
+  auto res_demosaicb_update_0_sm94_14341 = demosaicb_generated_compute_unrolled_1(denoise_FIFO_buf76_lane_17_pack);
 
   hw_uint<144 > denoise_FIFO_buf76_lane_26_pack;
   set_at<0, 144, 16>(denoise_FIFO_buf76_lane_26_pack, denoise_FIFO_buf76_lane_18);
@@ -1258,7 +1270,7 @@ hw_uint<256> demosaicb_1_cu1186(hw_uint<16*144>& denoise_FIFO_buf76) {
   set_at<96, 144, 16>(denoise_FIFO_buf76_lane_26_pack, denoise_FIFO_buf76_lane_24);
   set_at<112, 144, 16>(denoise_FIFO_buf76_lane_26_pack, denoise_FIFO_buf76_lane_25);
   set_at<128, 144, 16>(denoise_FIFO_buf76_lane_26_pack, denoise_FIFO_buf76_lane_26);
-  auto res_demosaicb_update_0_sm91_131075 = demosaicb_generated_compute_unrolled_1(denoise_FIFO_buf76_lane_26_pack);
+  auto res_demosaicb_update_0_sm94_13339 = demosaicb_generated_compute_unrolled_1(denoise_FIFO_buf76_lane_26_pack);
 
   hw_uint<144 > denoise_FIFO_buf76_lane_35_pack;
   set_at<0, 144, 16>(denoise_FIFO_buf76_lane_35_pack, denoise_FIFO_buf76_lane_27);
@@ -1270,7 +1282,7 @@ hw_uint<256> demosaicb_1_cu1186(hw_uint<16*144>& denoise_FIFO_buf76) {
   set_at<96, 144, 16>(denoise_FIFO_buf76_lane_35_pack, denoise_FIFO_buf76_lane_33);
   set_at<112, 144, 16>(denoise_FIFO_buf76_lane_35_pack, denoise_FIFO_buf76_lane_34);
   set_at<128, 144, 16>(denoise_FIFO_buf76_lane_35_pack, denoise_FIFO_buf76_lane_35);
-  auto res_demosaicb_update_0_sm91_121073 = demosaicb_generated_compute_unrolled_1(denoise_FIFO_buf76_lane_35_pack);
+  auto res_demosaicb_update_0_sm94_12337 = demosaicb_generated_compute_unrolled_1(denoise_FIFO_buf76_lane_35_pack);
 
   hw_uint<144 > denoise_FIFO_buf76_lane_44_pack;
   set_at<0, 144, 16>(denoise_FIFO_buf76_lane_44_pack, denoise_FIFO_buf76_lane_36);
@@ -1282,7 +1294,7 @@ hw_uint<256> demosaicb_1_cu1186(hw_uint<16*144>& denoise_FIFO_buf76) {
   set_at<96, 144, 16>(denoise_FIFO_buf76_lane_44_pack, denoise_FIFO_buf76_lane_42);
   set_at<112, 144, 16>(denoise_FIFO_buf76_lane_44_pack, denoise_FIFO_buf76_lane_43);
   set_at<128, 144, 16>(denoise_FIFO_buf76_lane_44_pack, denoise_FIFO_buf76_lane_44);
-  auto res_demosaicb_update_0_sm91_111071 = demosaicb_generated_compute_unrolled_1(denoise_FIFO_buf76_lane_44_pack);
+  auto res_demosaicb_update_0_sm94_11335 = demosaicb_generated_compute_unrolled_1(denoise_FIFO_buf76_lane_44_pack);
 
   hw_uint<144 > denoise_FIFO_buf76_lane_53_pack;
   set_at<0, 144, 16>(denoise_FIFO_buf76_lane_53_pack, denoise_FIFO_buf76_lane_45);
@@ -1294,7 +1306,7 @@ hw_uint<256> demosaicb_1_cu1186(hw_uint<16*144>& denoise_FIFO_buf76) {
   set_at<96, 144, 16>(denoise_FIFO_buf76_lane_53_pack, denoise_FIFO_buf76_lane_51);
   set_at<112, 144, 16>(denoise_FIFO_buf76_lane_53_pack, denoise_FIFO_buf76_lane_52);
   set_at<128, 144, 16>(denoise_FIFO_buf76_lane_53_pack, denoise_FIFO_buf76_lane_53);
-  auto res_demosaicb_update_0_sm91_101069 = demosaicb_generated_compute_unrolled_1(denoise_FIFO_buf76_lane_53_pack);
+  auto res_demosaicb_update_0_sm94_10333 = demosaicb_generated_compute_unrolled_1(denoise_FIFO_buf76_lane_53_pack);
 
   hw_uint<144 > denoise_FIFO_buf76_lane_62_pack;
   set_at<0, 144, 16>(denoise_FIFO_buf76_lane_62_pack, denoise_FIFO_buf76_lane_54);
@@ -1306,7 +1318,7 @@ hw_uint<256> demosaicb_1_cu1186(hw_uint<16*144>& denoise_FIFO_buf76) {
   set_at<96, 144, 16>(denoise_FIFO_buf76_lane_62_pack, denoise_FIFO_buf76_lane_60);
   set_at<112, 144, 16>(denoise_FIFO_buf76_lane_62_pack, denoise_FIFO_buf76_lane_61);
   set_at<128, 144, 16>(denoise_FIFO_buf76_lane_62_pack, denoise_FIFO_buf76_lane_62);
-  auto res_demosaicb_update_0_sm91_91067 = demosaicb_generated_compute_unrolled_1(denoise_FIFO_buf76_lane_62_pack);
+  auto res_demosaicb_update_0_sm94_9331 = demosaicb_generated_compute_unrolled_1(denoise_FIFO_buf76_lane_62_pack);
 
   hw_uint<144 > denoise_FIFO_buf76_lane_71_pack;
   set_at<0, 144, 16>(denoise_FIFO_buf76_lane_71_pack, denoise_FIFO_buf76_lane_63);
@@ -1318,7 +1330,7 @@ hw_uint<256> demosaicb_1_cu1186(hw_uint<16*144>& denoise_FIFO_buf76) {
   set_at<96, 144, 16>(denoise_FIFO_buf76_lane_71_pack, denoise_FIFO_buf76_lane_69);
   set_at<112, 144, 16>(denoise_FIFO_buf76_lane_71_pack, denoise_FIFO_buf76_lane_70);
   set_at<128, 144, 16>(denoise_FIFO_buf76_lane_71_pack, denoise_FIFO_buf76_lane_71);
-  auto res_demosaicb_update_0_sm91_81065 = demosaicb_generated_compute_unrolled_1(denoise_FIFO_buf76_lane_71_pack);
+  auto res_demosaicb_update_0_sm94_8329 = demosaicb_generated_compute_unrolled_1(denoise_FIFO_buf76_lane_71_pack);
 
   hw_uint<144 > denoise_FIFO_buf76_lane_80_pack;
   set_at<0, 144, 16>(denoise_FIFO_buf76_lane_80_pack, denoise_FIFO_buf76_lane_72);
@@ -1330,7 +1342,7 @@ hw_uint<256> demosaicb_1_cu1186(hw_uint<16*144>& denoise_FIFO_buf76) {
   set_at<96, 144, 16>(denoise_FIFO_buf76_lane_80_pack, denoise_FIFO_buf76_lane_78);
   set_at<112, 144, 16>(denoise_FIFO_buf76_lane_80_pack, denoise_FIFO_buf76_lane_79);
   set_at<128, 144, 16>(denoise_FIFO_buf76_lane_80_pack, denoise_FIFO_buf76_lane_80);
-  auto res_demosaicb_update_0_sm91_71063 = demosaicb_generated_compute_unrolled_1(denoise_FIFO_buf76_lane_80_pack);
+  auto res_demosaicb_update_0_sm94_7327 = demosaicb_generated_compute_unrolled_1(denoise_FIFO_buf76_lane_80_pack);
 
   hw_uint<144 > denoise_FIFO_buf76_lane_89_pack;
   set_at<0, 144, 16>(denoise_FIFO_buf76_lane_89_pack, denoise_FIFO_buf76_lane_81);
@@ -1342,7 +1354,7 @@ hw_uint<256> demosaicb_1_cu1186(hw_uint<16*144>& denoise_FIFO_buf76) {
   set_at<96, 144, 16>(denoise_FIFO_buf76_lane_89_pack, denoise_FIFO_buf76_lane_87);
   set_at<112, 144, 16>(denoise_FIFO_buf76_lane_89_pack, denoise_FIFO_buf76_lane_88);
   set_at<128, 144, 16>(denoise_FIFO_buf76_lane_89_pack, denoise_FIFO_buf76_lane_89);
-  auto res_demosaicb_update_0_sm91_61061 = demosaicb_generated_compute_unrolled_1(denoise_FIFO_buf76_lane_89_pack);
+  auto res_demosaicb_update_0_sm94_6325 = demosaicb_generated_compute_unrolled_1(denoise_FIFO_buf76_lane_89_pack);
 
   hw_uint<144 > denoise_FIFO_buf76_lane_98_pack;
   set_at<0, 144, 16>(denoise_FIFO_buf76_lane_98_pack, denoise_FIFO_buf76_lane_90);
@@ -1354,7 +1366,7 @@ hw_uint<256> demosaicb_1_cu1186(hw_uint<16*144>& denoise_FIFO_buf76) {
   set_at<96, 144, 16>(denoise_FIFO_buf76_lane_98_pack, denoise_FIFO_buf76_lane_96);
   set_at<112, 144, 16>(denoise_FIFO_buf76_lane_98_pack, denoise_FIFO_buf76_lane_97);
   set_at<128, 144, 16>(denoise_FIFO_buf76_lane_98_pack, denoise_FIFO_buf76_lane_98);
-  auto res_demosaicb_update_0_sm91_51059 = demosaicb_generated_compute_unrolled_1(denoise_FIFO_buf76_lane_98_pack);
+  auto res_demosaicb_update_0_sm94_5323 = demosaicb_generated_compute_unrolled_1(denoise_FIFO_buf76_lane_98_pack);
 
   hw_uint<144 > denoise_FIFO_buf76_lane_107_pack;
   set_at<0, 144, 16>(denoise_FIFO_buf76_lane_107_pack, denoise_FIFO_buf76_lane_99);
@@ -1366,7 +1378,7 @@ hw_uint<256> demosaicb_1_cu1186(hw_uint<16*144>& denoise_FIFO_buf76) {
   set_at<96, 144, 16>(denoise_FIFO_buf76_lane_107_pack, denoise_FIFO_buf76_lane_105);
   set_at<112, 144, 16>(denoise_FIFO_buf76_lane_107_pack, denoise_FIFO_buf76_lane_106);
   set_at<128, 144, 16>(denoise_FIFO_buf76_lane_107_pack, denoise_FIFO_buf76_lane_107);
-  auto res_demosaicb_update_0_sm91_41057 = demosaicb_generated_compute_unrolled_1(denoise_FIFO_buf76_lane_107_pack);
+  auto res_demosaicb_update_0_sm94_4321 = demosaicb_generated_compute_unrolled_1(denoise_FIFO_buf76_lane_107_pack);
 
   hw_uint<144 > denoise_FIFO_buf76_lane_116_pack;
   set_at<0, 144, 16>(denoise_FIFO_buf76_lane_116_pack, denoise_FIFO_buf76_lane_108);
@@ -1378,7 +1390,7 @@ hw_uint<256> demosaicb_1_cu1186(hw_uint<16*144>& denoise_FIFO_buf76) {
   set_at<96, 144, 16>(denoise_FIFO_buf76_lane_116_pack, denoise_FIFO_buf76_lane_114);
   set_at<112, 144, 16>(denoise_FIFO_buf76_lane_116_pack, denoise_FIFO_buf76_lane_115);
   set_at<128, 144, 16>(denoise_FIFO_buf76_lane_116_pack, denoise_FIFO_buf76_lane_116);
-  auto res_demosaicb_update_0_sm91_31055 = demosaicb_generated_compute_unrolled_1(denoise_FIFO_buf76_lane_116_pack);
+  auto res_demosaicb_update_0_sm94_3319 = demosaicb_generated_compute_unrolled_1(denoise_FIFO_buf76_lane_116_pack);
 
   hw_uint<144 > denoise_FIFO_buf76_lane_125_pack;
   set_at<0, 144, 16>(denoise_FIFO_buf76_lane_125_pack, denoise_FIFO_buf76_lane_117);
@@ -1390,7 +1402,7 @@ hw_uint<256> demosaicb_1_cu1186(hw_uint<16*144>& denoise_FIFO_buf76) {
   set_at<96, 144, 16>(denoise_FIFO_buf76_lane_125_pack, denoise_FIFO_buf76_lane_123);
   set_at<112, 144, 16>(denoise_FIFO_buf76_lane_125_pack, denoise_FIFO_buf76_lane_124);
   set_at<128, 144, 16>(denoise_FIFO_buf76_lane_125_pack, denoise_FIFO_buf76_lane_125);
-  auto res_demosaicb_update_0_sm91_21053 = demosaicb_generated_compute_unrolled_1(denoise_FIFO_buf76_lane_125_pack);
+  auto res_demosaicb_update_0_sm94_2317 = demosaicb_generated_compute_unrolled_1(denoise_FIFO_buf76_lane_125_pack);
 
   hw_uint<144 > denoise_FIFO_buf76_lane_134_pack;
   set_at<0, 144, 16>(denoise_FIFO_buf76_lane_134_pack, denoise_FIFO_buf76_lane_126);
@@ -1402,7 +1414,7 @@ hw_uint<256> demosaicb_1_cu1186(hw_uint<16*144>& denoise_FIFO_buf76) {
   set_at<96, 144, 16>(denoise_FIFO_buf76_lane_134_pack, denoise_FIFO_buf76_lane_132);
   set_at<112, 144, 16>(denoise_FIFO_buf76_lane_134_pack, denoise_FIFO_buf76_lane_133);
   set_at<128, 144, 16>(denoise_FIFO_buf76_lane_134_pack, denoise_FIFO_buf76_lane_134);
-  auto res_demosaicb_update_0_sm91_11051 = demosaicb_generated_compute_unrolled_1(denoise_FIFO_buf76_lane_134_pack);
+  auto res_demosaicb_update_0_sm94_1315 = demosaicb_generated_compute_unrolled_1(denoise_FIFO_buf76_lane_134_pack);
 
   hw_uint<144 > denoise_FIFO_buf76_lane_143_pack;
   set_at<0, 144, 16>(denoise_FIFO_buf76_lane_143_pack, denoise_FIFO_buf76_lane_135);
@@ -1414,29 +1426,29 @@ hw_uint<256> demosaicb_1_cu1186(hw_uint<16*144>& denoise_FIFO_buf76) {
   set_at<96, 144, 16>(denoise_FIFO_buf76_lane_143_pack, denoise_FIFO_buf76_lane_141);
   set_at<112, 144, 16>(denoise_FIFO_buf76_lane_143_pack, denoise_FIFO_buf76_lane_142);
   set_at<128, 144, 16>(denoise_FIFO_buf76_lane_143_pack, denoise_FIFO_buf76_lane_143);
-  auto res_demosaicb_update_0_sm91_01049 = demosaicb_generated_compute_unrolled_1(denoise_FIFO_buf76_lane_143_pack);
-  hw_uint<256 > return_value1187;
-  set_at<0, 256, 16>(return_value1187, res_demosaicb_update_0_sm91_151079);
-  set_at<16, 256, 16>(return_value1187, res_demosaicb_update_0_sm91_141077);
-  set_at<32, 256, 16>(return_value1187, res_demosaicb_update_0_sm91_131075);
-  set_at<48, 256, 16>(return_value1187, res_demosaicb_update_0_sm91_121073);
-  set_at<64, 256, 16>(return_value1187, res_demosaicb_update_0_sm91_111071);
-  set_at<80, 256, 16>(return_value1187, res_demosaicb_update_0_sm91_101069);
-  set_at<96, 256, 16>(return_value1187, res_demosaicb_update_0_sm91_91067);
-  set_at<112, 256, 16>(return_value1187, res_demosaicb_update_0_sm91_81065);
-  set_at<128, 256, 16>(return_value1187, res_demosaicb_update_0_sm91_71063);
-  set_at<144, 256, 16>(return_value1187, res_demosaicb_update_0_sm91_61061);
-  set_at<160, 256, 16>(return_value1187, res_demosaicb_update_0_sm91_51059);
-  set_at<176, 256, 16>(return_value1187, res_demosaicb_update_0_sm91_41057);
-  set_at<192, 256, 16>(return_value1187, res_demosaicb_update_0_sm91_31055);
-  set_at<208, 256, 16>(return_value1187, res_demosaicb_update_0_sm91_21053);
-  set_at<224, 256, 16>(return_value1187, res_demosaicb_update_0_sm91_11051);
-  set_at<240, 256, 16>(return_value1187, res_demosaicb_update_0_sm91_01049);
-  return return_value1187;
+  auto res_demosaicb_update_0_sm94_0313 = demosaicb_generated_compute_unrolled_1(denoise_FIFO_buf76_lane_143_pack);
+  hw_uint<256 > return_value1193;
+  set_at<0, 256, 16>(return_value1193, res_demosaicb_update_0_sm94_15343);
+  set_at<16, 256, 16>(return_value1193, res_demosaicb_update_0_sm94_14341);
+  set_at<32, 256, 16>(return_value1193, res_demosaicb_update_0_sm94_13339);
+  set_at<48, 256, 16>(return_value1193, res_demosaicb_update_0_sm94_12337);
+  set_at<64, 256, 16>(return_value1193, res_demosaicb_update_0_sm94_11335);
+  set_at<80, 256, 16>(return_value1193, res_demosaicb_update_0_sm94_10333);
+  set_at<96, 256, 16>(return_value1193, res_demosaicb_update_0_sm94_9331);
+  set_at<112, 256, 16>(return_value1193, res_demosaicb_update_0_sm94_8329);
+  set_at<128, 256, 16>(return_value1193, res_demosaicb_update_0_sm94_7327);
+  set_at<144, 256, 16>(return_value1193, res_demosaicb_update_0_sm94_6325);
+  set_at<160, 256, 16>(return_value1193, res_demosaicb_update_0_sm94_5323);
+  set_at<176, 256, 16>(return_value1193, res_demosaicb_update_0_sm94_4321);
+  set_at<192, 256, 16>(return_value1193, res_demosaicb_update_0_sm94_3319);
+  set_at<208, 256, 16>(return_value1193, res_demosaicb_update_0_sm94_2317);
+  set_at<224, 256, 16>(return_value1193, res_demosaicb_update_0_sm94_1315);
+  set_at<240, 256, 16>(return_value1193, res_demosaicb_update_0_sm94_0313);
+  return return_value1193;
 
 }
 
-hw_uint<256> demosaic_1_cu1189(hw_uint<16*16>& demosaicb_FIFO_buf72) {
+hw_uint<256> demosaic_1_cu1195(hw_uint<16*16>& demosaicb_FIFO_buf72) {
   hw_uint<16> demosaicb_FIFO_buf72_lane_0 = demosaicb_FIFO_buf72.extract<0, 15>();
   hw_uint<16> demosaicb_FIFO_buf72_lane_1 = demosaicb_FIFO_buf72.extract<16, 31>();
   hw_uint<16> demosaicb_FIFO_buf72_lane_2 = demosaicb_FIFO_buf72.extract<32, 47>();
@@ -1457,89 +1469,89 @@ hw_uint<256> demosaic_1_cu1189(hw_uint<16*16>& demosaicb_FIFO_buf72) {
 	
   hw_uint<16 > demosaicb_FIFO_buf72_lane_0_pack;
   set_at<0, 16, 16>(demosaicb_FIFO_buf72_lane_0_pack, demosaicb_FIFO_buf72_lane_0);
-  auto res_demosaic_update_0_sm92_151111 = demosaic_generated_compute_unrolled_1(demosaicb_FIFO_buf72_lane_0_pack);
+  auto res_demosaic_update_0_sm95_15375 = demosaic_generated_compute_unrolled_1(demosaicb_FIFO_buf72_lane_0_pack);
 
   hw_uint<16 > demosaicb_FIFO_buf72_lane_1_pack;
   set_at<0, 16, 16>(demosaicb_FIFO_buf72_lane_1_pack, demosaicb_FIFO_buf72_lane_1);
-  auto res_demosaic_update_0_sm92_141109 = demosaic_generated_compute_unrolled_1(demosaicb_FIFO_buf72_lane_1_pack);
+  auto res_demosaic_update_0_sm95_14373 = demosaic_generated_compute_unrolled_1(demosaicb_FIFO_buf72_lane_1_pack);
 
   hw_uint<16 > demosaicb_FIFO_buf72_lane_2_pack;
   set_at<0, 16, 16>(demosaicb_FIFO_buf72_lane_2_pack, demosaicb_FIFO_buf72_lane_2);
-  auto res_demosaic_update_0_sm92_131107 = demosaic_generated_compute_unrolled_1(demosaicb_FIFO_buf72_lane_2_pack);
+  auto res_demosaic_update_0_sm95_13371 = demosaic_generated_compute_unrolled_1(demosaicb_FIFO_buf72_lane_2_pack);
 
   hw_uint<16 > demosaicb_FIFO_buf72_lane_3_pack;
   set_at<0, 16, 16>(demosaicb_FIFO_buf72_lane_3_pack, demosaicb_FIFO_buf72_lane_3);
-  auto res_demosaic_update_0_sm92_121105 = demosaic_generated_compute_unrolled_1(demosaicb_FIFO_buf72_lane_3_pack);
+  auto res_demosaic_update_0_sm95_12369 = demosaic_generated_compute_unrolled_1(demosaicb_FIFO_buf72_lane_3_pack);
 
   hw_uint<16 > demosaicb_FIFO_buf72_lane_4_pack;
   set_at<0, 16, 16>(demosaicb_FIFO_buf72_lane_4_pack, demosaicb_FIFO_buf72_lane_4);
-  auto res_demosaic_update_0_sm92_111103 = demosaic_generated_compute_unrolled_1(demosaicb_FIFO_buf72_lane_4_pack);
+  auto res_demosaic_update_0_sm95_11367 = demosaic_generated_compute_unrolled_1(demosaicb_FIFO_buf72_lane_4_pack);
 
   hw_uint<16 > demosaicb_FIFO_buf72_lane_5_pack;
   set_at<0, 16, 16>(demosaicb_FIFO_buf72_lane_5_pack, demosaicb_FIFO_buf72_lane_5);
-  auto res_demosaic_update_0_sm92_101101 = demosaic_generated_compute_unrolled_1(demosaicb_FIFO_buf72_lane_5_pack);
+  auto res_demosaic_update_0_sm95_10365 = demosaic_generated_compute_unrolled_1(demosaicb_FIFO_buf72_lane_5_pack);
 
   hw_uint<16 > demosaicb_FIFO_buf72_lane_6_pack;
   set_at<0, 16, 16>(demosaicb_FIFO_buf72_lane_6_pack, demosaicb_FIFO_buf72_lane_6);
-  auto res_demosaic_update_0_sm92_91099 = demosaic_generated_compute_unrolled_1(demosaicb_FIFO_buf72_lane_6_pack);
+  auto res_demosaic_update_0_sm95_9363 = demosaic_generated_compute_unrolled_1(demosaicb_FIFO_buf72_lane_6_pack);
 
   hw_uint<16 > demosaicb_FIFO_buf72_lane_7_pack;
   set_at<0, 16, 16>(demosaicb_FIFO_buf72_lane_7_pack, demosaicb_FIFO_buf72_lane_7);
-  auto res_demosaic_update_0_sm92_81097 = demosaic_generated_compute_unrolled_1(demosaicb_FIFO_buf72_lane_7_pack);
+  auto res_demosaic_update_0_sm95_8361 = demosaic_generated_compute_unrolled_1(demosaicb_FIFO_buf72_lane_7_pack);
 
   hw_uint<16 > demosaicb_FIFO_buf72_lane_8_pack;
   set_at<0, 16, 16>(demosaicb_FIFO_buf72_lane_8_pack, demosaicb_FIFO_buf72_lane_8);
-  auto res_demosaic_update_0_sm92_71095 = demosaic_generated_compute_unrolled_1(demosaicb_FIFO_buf72_lane_8_pack);
+  auto res_demosaic_update_0_sm95_7359 = demosaic_generated_compute_unrolled_1(demosaicb_FIFO_buf72_lane_8_pack);
 
   hw_uint<16 > demosaicb_FIFO_buf72_lane_9_pack;
   set_at<0, 16, 16>(demosaicb_FIFO_buf72_lane_9_pack, demosaicb_FIFO_buf72_lane_9);
-  auto res_demosaic_update_0_sm92_61093 = demosaic_generated_compute_unrolled_1(demosaicb_FIFO_buf72_lane_9_pack);
+  auto res_demosaic_update_0_sm95_6357 = demosaic_generated_compute_unrolled_1(demosaicb_FIFO_buf72_lane_9_pack);
 
   hw_uint<16 > demosaicb_FIFO_buf72_lane_10_pack;
   set_at<0, 16, 16>(demosaicb_FIFO_buf72_lane_10_pack, demosaicb_FIFO_buf72_lane_10);
-  auto res_demosaic_update_0_sm92_51091 = demosaic_generated_compute_unrolled_1(demosaicb_FIFO_buf72_lane_10_pack);
+  auto res_demosaic_update_0_sm95_5355 = demosaic_generated_compute_unrolled_1(demosaicb_FIFO_buf72_lane_10_pack);
 
   hw_uint<16 > demosaicb_FIFO_buf72_lane_11_pack;
   set_at<0, 16, 16>(demosaicb_FIFO_buf72_lane_11_pack, demosaicb_FIFO_buf72_lane_11);
-  auto res_demosaic_update_0_sm92_41089 = demosaic_generated_compute_unrolled_1(demosaicb_FIFO_buf72_lane_11_pack);
+  auto res_demosaic_update_0_sm95_4353 = demosaic_generated_compute_unrolled_1(demosaicb_FIFO_buf72_lane_11_pack);
 
   hw_uint<16 > demosaicb_FIFO_buf72_lane_12_pack;
   set_at<0, 16, 16>(demosaicb_FIFO_buf72_lane_12_pack, demosaicb_FIFO_buf72_lane_12);
-  auto res_demosaic_update_0_sm92_31087 = demosaic_generated_compute_unrolled_1(demosaicb_FIFO_buf72_lane_12_pack);
+  auto res_demosaic_update_0_sm95_3351 = demosaic_generated_compute_unrolled_1(demosaicb_FIFO_buf72_lane_12_pack);
 
   hw_uint<16 > demosaicb_FIFO_buf72_lane_13_pack;
   set_at<0, 16, 16>(demosaicb_FIFO_buf72_lane_13_pack, demosaicb_FIFO_buf72_lane_13);
-  auto res_demosaic_update_0_sm92_21085 = demosaic_generated_compute_unrolled_1(demosaicb_FIFO_buf72_lane_13_pack);
+  auto res_demosaic_update_0_sm95_2349 = demosaic_generated_compute_unrolled_1(demosaicb_FIFO_buf72_lane_13_pack);
 
   hw_uint<16 > demosaicb_FIFO_buf72_lane_14_pack;
   set_at<0, 16, 16>(demosaicb_FIFO_buf72_lane_14_pack, demosaicb_FIFO_buf72_lane_14);
-  auto res_demosaic_update_0_sm92_11083 = demosaic_generated_compute_unrolled_1(demosaicb_FIFO_buf72_lane_14_pack);
+  auto res_demosaic_update_0_sm95_1347 = demosaic_generated_compute_unrolled_1(demosaicb_FIFO_buf72_lane_14_pack);
 
   hw_uint<16 > demosaicb_FIFO_buf72_lane_15_pack;
   set_at<0, 16, 16>(demosaicb_FIFO_buf72_lane_15_pack, demosaicb_FIFO_buf72_lane_15);
-  auto res_demosaic_update_0_sm92_01081 = demosaic_generated_compute_unrolled_1(demosaicb_FIFO_buf72_lane_15_pack);
-  hw_uint<256 > return_value1190;
-  set_at<0, 256, 16>(return_value1190, res_demosaic_update_0_sm92_151111);
-  set_at<16, 256, 16>(return_value1190, res_demosaic_update_0_sm92_141109);
-  set_at<32, 256, 16>(return_value1190, res_demosaic_update_0_sm92_131107);
-  set_at<48, 256, 16>(return_value1190, res_demosaic_update_0_sm92_121105);
-  set_at<64, 256, 16>(return_value1190, res_demosaic_update_0_sm92_111103);
-  set_at<80, 256, 16>(return_value1190, res_demosaic_update_0_sm92_101101);
-  set_at<96, 256, 16>(return_value1190, res_demosaic_update_0_sm92_91099);
-  set_at<112, 256, 16>(return_value1190, res_demosaic_update_0_sm92_81097);
-  set_at<128, 256, 16>(return_value1190, res_demosaic_update_0_sm92_71095);
-  set_at<144, 256, 16>(return_value1190, res_demosaic_update_0_sm92_61093);
-  set_at<160, 256, 16>(return_value1190, res_demosaic_update_0_sm92_51091);
-  set_at<176, 256, 16>(return_value1190, res_demosaic_update_0_sm92_41089);
-  set_at<192, 256, 16>(return_value1190, res_demosaic_update_0_sm92_31087);
-  set_at<208, 256, 16>(return_value1190, res_demosaic_update_0_sm92_21085);
-  set_at<224, 256, 16>(return_value1190, res_demosaic_update_0_sm92_11083);
-  set_at<240, 256, 16>(return_value1190, res_demosaic_update_0_sm92_01081);
-  return return_value1190;
+  auto res_demosaic_update_0_sm95_0345 = demosaic_generated_compute_unrolled_1(demosaicb_FIFO_buf72_lane_15_pack);
+  hw_uint<256 > return_value1196;
+  set_at<0, 256, 16>(return_value1196, res_demosaic_update_0_sm95_15375);
+  set_at<16, 256, 16>(return_value1196, res_demosaic_update_0_sm95_14373);
+  set_at<32, 256, 16>(return_value1196, res_demosaic_update_0_sm95_13371);
+  set_at<48, 256, 16>(return_value1196, res_demosaic_update_0_sm95_12369);
+  set_at<64, 256, 16>(return_value1196, res_demosaic_update_0_sm95_11367);
+  set_at<80, 256, 16>(return_value1196, res_demosaic_update_0_sm95_10365);
+  set_at<96, 256, 16>(return_value1196, res_demosaic_update_0_sm95_9363);
+  set_at<112, 256, 16>(return_value1196, res_demosaic_update_0_sm95_8361);
+  set_at<128, 256, 16>(return_value1196, res_demosaic_update_0_sm95_7359);
+  set_at<144, 256, 16>(return_value1196, res_demosaic_update_0_sm95_6357);
+  set_at<160, 256, 16>(return_value1196, res_demosaic_update_0_sm95_5355);
+  set_at<176, 256, 16>(return_value1196, res_demosaic_update_0_sm95_4353);
+  set_at<192, 256, 16>(return_value1196, res_demosaic_update_0_sm95_3351);
+  set_at<208, 256, 16>(return_value1196, res_demosaic_update_0_sm95_2349);
+  set_at<224, 256, 16>(return_value1196, res_demosaic_update_0_sm95_1347);
+  set_at<240, 256, 16>(return_value1196, res_demosaic_update_0_sm95_0345);
+  return return_value1196;
 
 }
 
-hw_uint<256> demosaic_bxb_1_cu1192(hw_uint<16*48>& demosaic_FIFO_buf44) {
+hw_uint<256> demosaic_bxb_1_cu1198(hw_uint<16*48>& demosaic_FIFO_buf44) {
   hw_uint<16> demosaic_FIFO_buf44_lane_0 = demosaic_FIFO_buf44.extract<0, 15>();
   hw_uint<16> demosaic_FIFO_buf44_lane_1 = demosaic_FIFO_buf44.extract<16, 31>();
   hw_uint<16> demosaic_FIFO_buf44_lane_2 = demosaic_FIFO_buf44.extract<32, 47>();
@@ -1594,119 +1606,119 @@ hw_uint<256> demosaic_bxb_1_cu1192(hw_uint<16*48>& demosaic_FIFO_buf44) {
   set_at<0, 48, 16>(demosaic_FIFO_buf44_lane_2_pack, demosaic_FIFO_buf44_lane_0);
   set_at<16, 48, 16>(demosaic_FIFO_buf44_lane_2_pack, demosaic_FIFO_buf44_lane_1);
   set_at<32, 48, 16>(demosaic_FIFO_buf44_lane_2_pack, demosaic_FIFO_buf44_lane_2);
-  auto res_demosaic_bxb_update_0_sm93_151143 = demosaic_bxb_generated_compute_unrolled_1(demosaic_FIFO_buf44_lane_2_pack);
+  auto res_demosaic_bxb_update_0_sm96_15407 = demosaic_bxb_generated_compute_unrolled_1(demosaic_FIFO_buf44_lane_2_pack);
 
   hw_uint<48 > demosaic_FIFO_buf44_lane_5_pack;
   set_at<0, 48, 16>(demosaic_FIFO_buf44_lane_5_pack, demosaic_FIFO_buf44_lane_3);
   set_at<16, 48, 16>(demosaic_FIFO_buf44_lane_5_pack, demosaic_FIFO_buf44_lane_4);
   set_at<32, 48, 16>(demosaic_FIFO_buf44_lane_5_pack, demosaic_FIFO_buf44_lane_5);
-  auto res_demosaic_bxb_update_0_sm93_141141 = demosaic_bxb_generated_compute_unrolled_1(demosaic_FIFO_buf44_lane_5_pack);
+  auto res_demosaic_bxb_update_0_sm96_14405 = demosaic_bxb_generated_compute_unrolled_1(demosaic_FIFO_buf44_lane_5_pack);
 
   hw_uint<48 > demosaic_FIFO_buf44_lane_8_pack;
   set_at<0, 48, 16>(demosaic_FIFO_buf44_lane_8_pack, demosaic_FIFO_buf44_lane_6);
   set_at<16, 48, 16>(demosaic_FIFO_buf44_lane_8_pack, demosaic_FIFO_buf44_lane_7);
   set_at<32, 48, 16>(demosaic_FIFO_buf44_lane_8_pack, demosaic_FIFO_buf44_lane_8);
-  auto res_demosaic_bxb_update_0_sm93_131139 = demosaic_bxb_generated_compute_unrolled_1(demosaic_FIFO_buf44_lane_8_pack);
+  auto res_demosaic_bxb_update_0_sm96_13403 = demosaic_bxb_generated_compute_unrolled_1(demosaic_FIFO_buf44_lane_8_pack);
 
   hw_uint<48 > demosaic_FIFO_buf44_lane_11_pack;
   set_at<0, 48, 16>(demosaic_FIFO_buf44_lane_11_pack, demosaic_FIFO_buf44_lane_9);
   set_at<16, 48, 16>(demosaic_FIFO_buf44_lane_11_pack, demosaic_FIFO_buf44_lane_10);
   set_at<32, 48, 16>(demosaic_FIFO_buf44_lane_11_pack, demosaic_FIFO_buf44_lane_11);
-  auto res_demosaic_bxb_update_0_sm93_121137 = demosaic_bxb_generated_compute_unrolled_1(demosaic_FIFO_buf44_lane_11_pack);
+  auto res_demosaic_bxb_update_0_sm96_12401 = demosaic_bxb_generated_compute_unrolled_1(demosaic_FIFO_buf44_lane_11_pack);
 
   hw_uint<48 > demosaic_FIFO_buf44_lane_14_pack;
   set_at<0, 48, 16>(demosaic_FIFO_buf44_lane_14_pack, demosaic_FIFO_buf44_lane_12);
   set_at<16, 48, 16>(demosaic_FIFO_buf44_lane_14_pack, demosaic_FIFO_buf44_lane_13);
   set_at<32, 48, 16>(demosaic_FIFO_buf44_lane_14_pack, demosaic_FIFO_buf44_lane_14);
-  auto res_demosaic_bxb_update_0_sm93_111135 = demosaic_bxb_generated_compute_unrolled_1(demosaic_FIFO_buf44_lane_14_pack);
+  auto res_demosaic_bxb_update_0_sm96_11399 = demosaic_bxb_generated_compute_unrolled_1(demosaic_FIFO_buf44_lane_14_pack);
 
   hw_uint<48 > demosaic_FIFO_buf44_lane_17_pack;
   set_at<0, 48, 16>(demosaic_FIFO_buf44_lane_17_pack, demosaic_FIFO_buf44_lane_15);
   set_at<16, 48, 16>(demosaic_FIFO_buf44_lane_17_pack, demosaic_FIFO_buf44_lane_16);
   set_at<32, 48, 16>(demosaic_FIFO_buf44_lane_17_pack, demosaic_FIFO_buf44_lane_17);
-  auto res_demosaic_bxb_update_0_sm93_101133 = demosaic_bxb_generated_compute_unrolled_1(demosaic_FIFO_buf44_lane_17_pack);
+  auto res_demosaic_bxb_update_0_sm96_10397 = demosaic_bxb_generated_compute_unrolled_1(demosaic_FIFO_buf44_lane_17_pack);
 
   hw_uint<48 > demosaic_FIFO_buf44_lane_20_pack;
   set_at<0, 48, 16>(demosaic_FIFO_buf44_lane_20_pack, demosaic_FIFO_buf44_lane_18);
   set_at<16, 48, 16>(demosaic_FIFO_buf44_lane_20_pack, demosaic_FIFO_buf44_lane_19);
   set_at<32, 48, 16>(demosaic_FIFO_buf44_lane_20_pack, demosaic_FIFO_buf44_lane_20);
-  auto res_demosaic_bxb_update_0_sm93_91131 = demosaic_bxb_generated_compute_unrolled_1(demosaic_FIFO_buf44_lane_20_pack);
+  auto res_demosaic_bxb_update_0_sm96_9395 = demosaic_bxb_generated_compute_unrolled_1(demosaic_FIFO_buf44_lane_20_pack);
 
   hw_uint<48 > demosaic_FIFO_buf44_lane_23_pack;
   set_at<0, 48, 16>(demosaic_FIFO_buf44_lane_23_pack, demosaic_FIFO_buf44_lane_21);
   set_at<16, 48, 16>(demosaic_FIFO_buf44_lane_23_pack, demosaic_FIFO_buf44_lane_22);
   set_at<32, 48, 16>(demosaic_FIFO_buf44_lane_23_pack, demosaic_FIFO_buf44_lane_23);
-  auto res_demosaic_bxb_update_0_sm93_81129 = demosaic_bxb_generated_compute_unrolled_1(demosaic_FIFO_buf44_lane_23_pack);
+  auto res_demosaic_bxb_update_0_sm96_8393 = demosaic_bxb_generated_compute_unrolled_1(demosaic_FIFO_buf44_lane_23_pack);
 
   hw_uint<48 > demosaic_FIFO_buf44_lane_26_pack;
   set_at<0, 48, 16>(demosaic_FIFO_buf44_lane_26_pack, demosaic_FIFO_buf44_lane_24);
   set_at<16, 48, 16>(demosaic_FIFO_buf44_lane_26_pack, demosaic_FIFO_buf44_lane_25);
   set_at<32, 48, 16>(demosaic_FIFO_buf44_lane_26_pack, demosaic_FIFO_buf44_lane_26);
-  auto res_demosaic_bxb_update_0_sm93_71127 = demosaic_bxb_generated_compute_unrolled_1(demosaic_FIFO_buf44_lane_26_pack);
+  auto res_demosaic_bxb_update_0_sm96_7391 = demosaic_bxb_generated_compute_unrolled_1(demosaic_FIFO_buf44_lane_26_pack);
 
   hw_uint<48 > demosaic_FIFO_buf44_lane_29_pack;
   set_at<0, 48, 16>(demosaic_FIFO_buf44_lane_29_pack, demosaic_FIFO_buf44_lane_27);
   set_at<16, 48, 16>(demosaic_FIFO_buf44_lane_29_pack, demosaic_FIFO_buf44_lane_28);
   set_at<32, 48, 16>(demosaic_FIFO_buf44_lane_29_pack, demosaic_FIFO_buf44_lane_29);
-  auto res_demosaic_bxb_update_0_sm93_61125 = demosaic_bxb_generated_compute_unrolled_1(demosaic_FIFO_buf44_lane_29_pack);
+  auto res_demosaic_bxb_update_0_sm96_6389 = demosaic_bxb_generated_compute_unrolled_1(demosaic_FIFO_buf44_lane_29_pack);
 
   hw_uint<48 > demosaic_FIFO_buf44_lane_32_pack;
   set_at<0, 48, 16>(demosaic_FIFO_buf44_lane_32_pack, demosaic_FIFO_buf44_lane_30);
   set_at<16, 48, 16>(demosaic_FIFO_buf44_lane_32_pack, demosaic_FIFO_buf44_lane_31);
   set_at<32, 48, 16>(demosaic_FIFO_buf44_lane_32_pack, demosaic_FIFO_buf44_lane_32);
-  auto res_demosaic_bxb_update_0_sm93_51123 = demosaic_bxb_generated_compute_unrolled_1(demosaic_FIFO_buf44_lane_32_pack);
+  auto res_demosaic_bxb_update_0_sm96_5387 = demosaic_bxb_generated_compute_unrolled_1(demosaic_FIFO_buf44_lane_32_pack);
 
   hw_uint<48 > demosaic_FIFO_buf44_lane_35_pack;
   set_at<0, 48, 16>(demosaic_FIFO_buf44_lane_35_pack, demosaic_FIFO_buf44_lane_33);
   set_at<16, 48, 16>(demosaic_FIFO_buf44_lane_35_pack, demosaic_FIFO_buf44_lane_34);
   set_at<32, 48, 16>(demosaic_FIFO_buf44_lane_35_pack, demosaic_FIFO_buf44_lane_35);
-  auto res_demosaic_bxb_update_0_sm93_41121 = demosaic_bxb_generated_compute_unrolled_1(demosaic_FIFO_buf44_lane_35_pack);
+  auto res_demosaic_bxb_update_0_sm96_4385 = demosaic_bxb_generated_compute_unrolled_1(demosaic_FIFO_buf44_lane_35_pack);
 
   hw_uint<48 > demosaic_FIFO_buf44_lane_38_pack;
   set_at<0, 48, 16>(demosaic_FIFO_buf44_lane_38_pack, demosaic_FIFO_buf44_lane_36);
   set_at<16, 48, 16>(demosaic_FIFO_buf44_lane_38_pack, demosaic_FIFO_buf44_lane_37);
   set_at<32, 48, 16>(demosaic_FIFO_buf44_lane_38_pack, demosaic_FIFO_buf44_lane_38);
-  auto res_demosaic_bxb_update_0_sm93_31119 = demosaic_bxb_generated_compute_unrolled_1(demosaic_FIFO_buf44_lane_38_pack);
+  auto res_demosaic_bxb_update_0_sm96_3383 = demosaic_bxb_generated_compute_unrolled_1(demosaic_FIFO_buf44_lane_38_pack);
 
   hw_uint<48 > demosaic_FIFO_buf44_lane_41_pack;
   set_at<0, 48, 16>(demosaic_FIFO_buf44_lane_41_pack, demosaic_FIFO_buf44_lane_39);
   set_at<16, 48, 16>(demosaic_FIFO_buf44_lane_41_pack, demosaic_FIFO_buf44_lane_40);
   set_at<32, 48, 16>(demosaic_FIFO_buf44_lane_41_pack, demosaic_FIFO_buf44_lane_41);
-  auto res_demosaic_bxb_update_0_sm93_21117 = demosaic_bxb_generated_compute_unrolled_1(demosaic_FIFO_buf44_lane_41_pack);
+  auto res_demosaic_bxb_update_0_sm96_2381 = demosaic_bxb_generated_compute_unrolled_1(demosaic_FIFO_buf44_lane_41_pack);
 
   hw_uint<48 > demosaic_FIFO_buf44_lane_44_pack;
   set_at<0, 48, 16>(demosaic_FIFO_buf44_lane_44_pack, demosaic_FIFO_buf44_lane_42);
   set_at<16, 48, 16>(demosaic_FIFO_buf44_lane_44_pack, demosaic_FIFO_buf44_lane_43);
   set_at<32, 48, 16>(demosaic_FIFO_buf44_lane_44_pack, demosaic_FIFO_buf44_lane_44);
-  auto res_demosaic_bxb_update_0_sm93_11115 = demosaic_bxb_generated_compute_unrolled_1(demosaic_FIFO_buf44_lane_44_pack);
+  auto res_demosaic_bxb_update_0_sm96_1379 = demosaic_bxb_generated_compute_unrolled_1(demosaic_FIFO_buf44_lane_44_pack);
 
   hw_uint<48 > demosaic_FIFO_buf44_lane_47_pack;
   set_at<0, 48, 16>(demosaic_FIFO_buf44_lane_47_pack, demosaic_FIFO_buf44_lane_45);
   set_at<16, 48, 16>(demosaic_FIFO_buf44_lane_47_pack, demosaic_FIFO_buf44_lane_46);
   set_at<32, 48, 16>(demosaic_FIFO_buf44_lane_47_pack, demosaic_FIFO_buf44_lane_47);
-  auto res_demosaic_bxb_update_0_sm93_01113 = demosaic_bxb_generated_compute_unrolled_1(demosaic_FIFO_buf44_lane_47_pack);
-  hw_uint<256 > return_value1193;
-  set_at<0, 256, 16>(return_value1193, res_demosaic_bxb_update_0_sm93_151143);
-  set_at<16, 256, 16>(return_value1193, res_demosaic_bxb_update_0_sm93_141141);
-  set_at<32, 256, 16>(return_value1193, res_demosaic_bxb_update_0_sm93_131139);
-  set_at<48, 256, 16>(return_value1193, res_demosaic_bxb_update_0_sm93_121137);
-  set_at<64, 256, 16>(return_value1193, res_demosaic_bxb_update_0_sm93_111135);
-  set_at<80, 256, 16>(return_value1193, res_demosaic_bxb_update_0_sm93_101133);
-  set_at<96, 256, 16>(return_value1193, res_demosaic_bxb_update_0_sm93_91131);
-  set_at<112, 256, 16>(return_value1193, res_demosaic_bxb_update_0_sm93_81129);
-  set_at<128, 256, 16>(return_value1193, res_demosaic_bxb_update_0_sm93_71127);
-  set_at<144, 256, 16>(return_value1193, res_demosaic_bxb_update_0_sm93_61125);
-  set_at<160, 256, 16>(return_value1193, res_demosaic_bxb_update_0_sm93_51123);
-  set_at<176, 256, 16>(return_value1193, res_demosaic_bxb_update_0_sm93_41121);
-  set_at<192, 256, 16>(return_value1193, res_demosaic_bxb_update_0_sm93_31119);
-  set_at<208, 256, 16>(return_value1193, res_demosaic_bxb_update_0_sm93_21117);
-  set_at<224, 256, 16>(return_value1193, res_demosaic_bxb_update_0_sm93_11115);
-  set_at<240, 256, 16>(return_value1193, res_demosaic_bxb_update_0_sm93_01113);
-  return return_value1193;
+  auto res_demosaic_bxb_update_0_sm96_0377 = demosaic_bxb_generated_compute_unrolled_1(demosaic_FIFO_buf44_lane_47_pack);
+  hw_uint<256 > return_value1199;
+  set_at<0, 256, 16>(return_value1199, res_demosaic_bxb_update_0_sm96_15407);
+  set_at<16, 256, 16>(return_value1199, res_demosaic_bxb_update_0_sm96_14405);
+  set_at<32, 256, 16>(return_value1199, res_demosaic_bxb_update_0_sm96_13403);
+  set_at<48, 256, 16>(return_value1199, res_demosaic_bxb_update_0_sm96_12401);
+  set_at<64, 256, 16>(return_value1199, res_demosaic_bxb_update_0_sm96_11399);
+  set_at<80, 256, 16>(return_value1199, res_demosaic_bxb_update_0_sm96_10397);
+  set_at<96, 256, 16>(return_value1199, res_demosaic_bxb_update_0_sm96_9395);
+  set_at<112, 256, 16>(return_value1199, res_demosaic_bxb_update_0_sm96_8393);
+  set_at<128, 256, 16>(return_value1199, res_demosaic_bxb_update_0_sm96_7391);
+  set_at<144, 256, 16>(return_value1199, res_demosaic_bxb_update_0_sm96_6389);
+  set_at<160, 256, 16>(return_value1199, res_demosaic_bxb_update_0_sm96_5387);
+  set_at<176, 256, 16>(return_value1199, res_demosaic_bxb_update_0_sm96_4385);
+  set_at<192, 256, 16>(return_value1199, res_demosaic_bxb_update_0_sm96_3383);
+  set_at<208, 256, 16>(return_value1199, res_demosaic_bxb_update_0_sm96_2381);
+  set_at<224, 256, 16>(return_value1199, res_demosaic_bxb_update_0_sm96_1379);
+  set_at<240, 256, 16>(return_value1199, res_demosaic_bxb_update_0_sm96_0377);
+  return return_value1199;
 
 }
 
-hw_uint<256> demosaic_bx_1_cu1195(hw_uint<16*16>& demosaic_bxb_FIFO_buf56) {
+hw_uint<256> demosaic_bx_1_cu1201(hw_uint<16*16>& demosaic_bxb_FIFO_buf56) {
   hw_uint<16> demosaic_bxb_FIFO_buf56_lane_0 = demosaic_bxb_FIFO_buf56.extract<0, 15>();
   hw_uint<16> demosaic_bxb_FIFO_buf56_lane_1 = demosaic_bxb_FIFO_buf56.extract<16, 31>();
   hw_uint<16> demosaic_bxb_FIFO_buf56_lane_2 = demosaic_bxb_FIFO_buf56.extract<32, 47>();
@@ -1727,89 +1739,89 @@ hw_uint<256> demosaic_bx_1_cu1195(hw_uint<16*16>& demosaic_bxb_FIFO_buf56) {
 	
   hw_uint<16 > demosaic_bxb_FIFO_buf56_lane_0_pack;
   set_at<0, 16, 16>(demosaic_bxb_FIFO_buf56_lane_0_pack, demosaic_bxb_FIFO_buf56_lane_0);
-  auto res_demosaic_bx_update_0_sm94_15151 = demosaic_bx_generated_compute_unrolled_1(demosaic_bxb_FIFO_buf56_lane_0_pack);
+  auto res_demosaic_bx_update_0_sm97_15439 = demosaic_bx_generated_compute_unrolled_1(demosaic_bxb_FIFO_buf56_lane_0_pack);
 
   hw_uint<16 > demosaic_bxb_FIFO_buf56_lane_1_pack;
   set_at<0, 16, 16>(demosaic_bxb_FIFO_buf56_lane_1_pack, demosaic_bxb_FIFO_buf56_lane_1);
-  auto res_demosaic_bx_update_0_sm94_14149 = demosaic_bx_generated_compute_unrolled_1(demosaic_bxb_FIFO_buf56_lane_1_pack);
+  auto res_demosaic_bx_update_0_sm97_14437 = demosaic_bx_generated_compute_unrolled_1(demosaic_bxb_FIFO_buf56_lane_1_pack);
 
   hw_uint<16 > demosaic_bxb_FIFO_buf56_lane_2_pack;
   set_at<0, 16, 16>(demosaic_bxb_FIFO_buf56_lane_2_pack, demosaic_bxb_FIFO_buf56_lane_2);
-  auto res_demosaic_bx_update_0_sm94_13147 = demosaic_bx_generated_compute_unrolled_1(demosaic_bxb_FIFO_buf56_lane_2_pack);
+  auto res_demosaic_bx_update_0_sm97_13435 = demosaic_bx_generated_compute_unrolled_1(demosaic_bxb_FIFO_buf56_lane_2_pack);
 
   hw_uint<16 > demosaic_bxb_FIFO_buf56_lane_3_pack;
   set_at<0, 16, 16>(demosaic_bxb_FIFO_buf56_lane_3_pack, demosaic_bxb_FIFO_buf56_lane_3);
-  auto res_demosaic_bx_update_0_sm94_12145 = demosaic_bx_generated_compute_unrolled_1(demosaic_bxb_FIFO_buf56_lane_3_pack);
+  auto res_demosaic_bx_update_0_sm97_12433 = demosaic_bx_generated_compute_unrolled_1(demosaic_bxb_FIFO_buf56_lane_3_pack);
 
   hw_uint<16 > demosaic_bxb_FIFO_buf56_lane_4_pack;
   set_at<0, 16, 16>(demosaic_bxb_FIFO_buf56_lane_4_pack, demosaic_bxb_FIFO_buf56_lane_4);
-  auto res_demosaic_bx_update_0_sm94_11143 = demosaic_bx_generated_compute_unrolled_1(demosaic_bxb_FIFO_buf56_lane_4_pack);
+  auto res_demosaic_bx_update_0_sm97_11431 = demosaic_bx_generated_compute_unrolled_1(demosaic_bxb_FIFO_buf56_lane_4_pack);
 
   hw_uint<16 > demosaic_bxb_FIFO_buf56_lane_5_pack;
   set_at<0, 16, 16>(demosaic_bxb_FIFO_buf56_lane_5_pack, demosaic_bxb_FIFO_buf56_lane_5);
-  auto res_demosaic_bx_update_0_sm94_10141 = demosaic_bx_generated_compute_unrolled_1(demosaic_bxb_FIFO_buf56_lane_5_pack);
+  auto res_demosaic_bx_update_0_sm97_10429 = demosaic_bx_generated_compute_unrolled_1(demosaic_bxb_FIFO_buf56_lane_5_pack);
 
   hw_uint<16 > demosaic_bxb_FIFO_buf56_lane_6_pack;
   set_at<0, 16, 16>(demosaic_bxb_FIFO_buf56_lane_6_pack, demosaic_bxb_FIFO_buf56_lane_6);
-  auto res_demosaic_bx_update_0_sm94_9139 = demosaic_bx_generated_compute_unrolled_1(demosaic_bxb_FIFO_buf56_lane_6_pack);
+  auto res_demosaic_bx_update_0_sm97_9427 = demosaic_bx_generated_compute_unrolled_1(demosaic_bxb_FIFO_buf56_lane_6_pack);
 
   hw_uint<16 > demosaic_bxb_FIFO_buf56_lane_7_pack;
   set_at<0, 16, 16>(demosaic_bxb_FIFO_buf56_lane_7_pack, demosaic_bxb_FIFO_buf56_lane_7);
-  auto res_demosaic_bx_update_0_sm94_8137 = demosaic_bx_generated_compute_unrolled_1(demosaic_bxb_FIFO_buf56_lane_7_pack);
+  auto res_demosaic_bx_update_0_sm97_8425 = demosaic_bx_generated_compute_unrolled_1(demosaic_bxb_FIFO_buf56_lane_7_pack);
 
   hw_uint<16 > demosaic_bxb_FIFO_buf56_lane_8_pack;
   set_at<0, 16, 16>(demosaic_bxb_FIFO_buf56_lane_8_pack, demosaic_bxb_FIFO_buf56_lane_8);
-  auto res_demosaic_bx_update_0_sm94_7135 = demosaic_bx_generated_compute_unrolled_1(demosaic_bxb_FIFO_buf56_lane_8_pack);
+  auto res_demosaic_bx_update_0_sm97_7423 = demosaic_bx_generated_compute_unrolled_1(demosaic_bxb_FIFO_buf56_lane_8_pack);
 
   hw_uint<16 > demosaic_bxb_FIFO_buf56_lane_9_pack;
   set_at<0, 16, 16>(demosaic_bxb_FIFO_buf56_lane_9_pack, demosaic_bxb_FIFO_buf56_lane_9);
-  auto res_demosaic_bx_update_0_sm94_6133 = demosaic_bx_generated_compute_unrolled_1(demosaic_bxb_FIFO_buf56_lane_9_pack);
+  auto res_demosaic_bx_update_0_sm97_6421 = demosaic_bx_generated_compute_unrolled_1(demosaic_bxb_FIFO_buf56_lane_9_pack);
 
   hw_uint<16 > demosaic_bxb_FIFO_buf56_lane_10_pack;
   set_at<0, 16, 16>(demosaic_bxb_FIFO_buf56_lane_10_pack, demosaic_bxb_FIFO_buf56_lane_10);
-  auto res_demosaic_bx_update_0_sm94_5131 = demosaic_bx_generated_compute_unrolled_1(demosaic_bxb_FIFO_buf56_lane_10_pack);
+  auto res_demosaic_bx_update_0_sm97_5419 = demosaic_bx_generated_compute_unrolled_1(demosaic_bxb_FIFO_buf56_lane_10_pack);
 
   hw_uint<16 > demosaic_bxb_FIFO_buf56_lane_11_pack;
   set_at<0, 16, 16>(demosaic_bxb_FIFO_buf56_lane_11_pack, demosaic_bxb_FIFO_buf56_lane_11);
-  auto res_demosaic_bx_update_0_sm94_4129 = demosaic_bx_generated_compute_unrolled_1(demosaic_bxb_FIFO_buf56_lane_11_pack);
+  auto res_demosaic_bx_update_0_sm97_4417 = demosaic_bx_generated_compute_unrolled_1(demosaic_bxb_FIFO_buf56_lane_11_pack);
 
   hw_uint<16 > demosaic_bxb_FIFO_buf56_lane_12_pack;
   set_at<0, 16, 16>(demosaic_bxb_FIFO_buf56_lane_12_pack, demosaic_bxb_FIFO_buf56_lane_12);
-  auto res_demosaic_bx_update_0_sm94_3127 = demosaic_bx_generated_compute_unrolled_1(demosaic_bxb_FIFO_buf56_lane_12_pack);
+  auto res_demosaic_bx_update_0_sm97_3415 = demosaic_bx_generated_compute_unrolled_1(demosaic_bxb_FIFO_buf56_lane_12_pack);
 
   hw_uint<16 > demosaic_bxb_FIFO_buf56_lane_13_pack;
   set_at<0, 16, 16>(demosaic_bxb_FIFO_buf56_lane_13_pack, demosaic_bxb_FIFO_buf56_lane_13);
-  auto res_demosaic_bx_update_0_sm94_2125 = demosaic_bx_generated_compute_unrolled_1(demosaic_bxb_FIFO_buf56_lane_13_pack);
+  auto res_demosaic_bx_update_0_sm97_2413 = demosaic_bx_generated_compute_unrolled_1(demosaic_bxb_FIFO_buf56_lane_13_pack);
 
   hw_uint<16 > demosaic_bxb_FIFO_buf56_lane_14_pack;
   set_at<0, 16, 16>(demosaic_bxb_FIFO_buf56_lane_14_pack, demosaic_bxb_FIFO_buf56_lane_14);
-  auto res_demosaic_bx_update_0_sm94_1123 = demosaic_bx_generated_compute_unrolled_1(demosaic_bxb_FIFO_buf56_lane_14_pack);
+  auto res_demosaic_bx_update_0_sm97_1411 = demosaic_bx_generated_compute_unrolled_1(demosaic_bxb_FIFO_buf56_lane_14_pack);
 
   hw_uint<16 > demosaic_bxb_FIFO_buf56_lane_15_pack;
   set_at<0, 16, 16>(demosaic_bxb_FIFO_buf56_lane_15_pack, demosaic_bxb_FIFO_buf56_lane_15);
-  auto res_demosaic_bx_update_0_sm94_0121 = demosaic_bx_generated_compute_unrolled_1(demosaic_bxb_FIFO_buf56_lane_15_pack);
-  hw_uint<256 > return_value1196;
-  set_at<0, 256, 16>(return_value1196, res_demosaic_bx_update_0_sm94_15151);
-  set_at<16, 256, 16>(return_value1196, res_demosaic_bx_update_0_sm94_14149);
-  set_at<32, 256, 16>(return_value1196, res_demosaic_bx_update_0_sm94_13147);
-  set_at<48, 256, 16>(return_value1196, res_demosaic_bx_update_0_sm94_12145);
-  set_at<64, 256, 16>(return_value1196, res_demosaic_bx_update_0_sm94_11143);
-  set_at<80, 256, 16>(return_value1196, res_demosaic_bx_update_0_sm94_10141);
-  set_at<96, 256, 16>(return_value1196, res_demosaic_bx_update_0_sm94_9139);
-  set_at<112, 256, 16>(return_value1196, res_demosaic_bx_update_0_sm94_8137);
-  set_at<128, 256, 16>(return_value1196, res_demosaic_bx_update_0_sm94_7135);
-  set_at<144, 256, 16>(return_value1196, res_demosaic_bx_update_0_sm94_6133);
-  set_at<160, 256, 16>(return_value1196, res_demosaic_bx_update_0_sm94_5131);
-  set_at<176, 256, 16>(return_value1196, res_demosaic_bx_update_0_sm94_4129);
-  set_at<192, 256, 16>(return_value1196, res_demosaic_bx_update_0_sm94_3127);
-  set_at<208, 256, 16>(return_value1196, res_demosaic_bx_update_0_sm94_2125);
-  set_at<224, 256, 16>(return_value1196, res_demosaic_bx_update_0_sm94_1123);
-  set_at<240, 256, 16>(return_value1196, res_demosaic_bx_update_0_sm94_0121);
-  return return_value1196;
+  auto res_demosaic_bx_update_0_sm97_0409 = demosaic_bx_generated_compute_unrolled_1(demosaic_bxb_FIFO_buf56_lane_15_pack);
+  hw_uint<256 > return_value1202;
+  set_at<0, 256, 16>(return_value1202, res_demosaic_bx_update_0_sm97_15439);
+  set_at<16, 256, 16>(return_value1202, res_demosaic_bx_update_0_sm97_14437);
+  set_at<32, 256, 16>(return_value1202, res_demosaic_bx_update_0_sm97_13435);
+  set_at<48, 256, 16>(return_value1202, res_demosaic_bx_update_0_sm97_12433);
+  set_at<64, 256, 16>(return_value1202, res_demosaic_bx_update_0_sm97_11431);
+  set_at<80, 256, 16>(return_value1202, res_demosaic_bx_update_0_sm97_10429);
+  set_at<96, 256, 16>(return_value1202, res_demosaic_bx_update_0_sm97_9427);
+  set_at<112, 256, 16>(return_value1202, res_demosaic_bx_update_0_sm97_8425);
+  set_at<128, 256, 16>(return_value1202, res_demosaic_bx_update_0_sm97_7423);
+  set_at<144, 256, 16>(return_value1202, res_demosaic_bx_update_0_sm97_6421);
+  set_at<160, 256, 16>(return_value1202, res_demosaic_bx_update_0_sm97_5419);
+  set_at<176, 256, 16>(return_value1202, res_demosaic_bx_update_0_sm97_4417);
+  set_at<192, 256, 16>(return_value1202, res_demosaic_bx_update_0_sm97_3415);
+  set_at<208, 256, 16>(return_value1202, res_demosaic_bx_update_0_sm97_2413);
+  set_at<224, 256, 16>(return_value1202, res_demosaic_bx_update_0_sm97_1411);
+  set_at<240, 256, 16>(return_value1202, res_demosaic_bx_update_0_sm97_0409);
+  return return_value1202;
 
 }
 
-hw_uint<256> demosaic_byb_1_cu1198(hw_uint<16*48>& demosaic_bx_FIFO_buf52) {
+hw_uint<256> demosaic_byb_1_cu1204(hw_uint<16*48>& demosaic_bx_FIFO_buf52) {
   hw_uint<16> demosaic_bx_FIFO_buf52_lane_0 = demosaic_bx_FIFO_buf52.extract<0, 15>();
   hw_uint<16> demosaic_bx_FIFO_buf52_lane_1 = demosaic_bx_FIFO_buf52.extract<16, 31>();
   hw_uint<16> demosaic_bx_FIFO_buf52_lane_2 = demosaic_bx_FIFO_buf52.extract<32, 47>();
@@ -1864,119 +1876,119 @@ hw_uint<256> demosaic_byb_1_cu1198(hw_uint<16*48>& demosaic_bx_FIFO_buf52) {
   set_at<0, 48, 16>(demosaic_bx_FIFO_buf52_lane_2_pack, demosaic_bx_FIFO_buf52_lane_0);
   set_at<16, 48, 16>(demosaic_bx_FIFO_buf52_lane_2_pack, demosaic_bx_FIFO_buf52_lane_1);
   set_at<32, 48, 16>(demosaic_bx_FIFO_buf52_lane_2_pack, demosaic_bx_FIFO_buf52_lane_2);
-  auto res_demosaic_byb_update_0_sm95_15183 = demosaic_byb_generated_compute_unrolled_1(demosaic_bx_FIFO_buf52_lane_2_pack);
+  auto res_demosaic_byb_update_0_sm98_15471 = demosaic_byb_generated_compute_unrolled_1(demosaic_bx_FIFO_buf52_lane_2_pack);
 
   hw_uint<48 > demosaic_bx_FIFO_buf52_lane_5_pack;
   set_at<0, 48, 16>(demosaic_bx_FIFO_buf52_lane_5_pack, demosaic_bx_FIFO_buf52_lane_3);
   set_at<16, 48, 16>(demosaic_bx_FIFO_buf52_lane_5_pack, demosaic_bx_FIFO_buf52_lane_4);
   set_at<32, 48, 16>(demosaic_bx_FIFO_buf52_lane_5_pack, demosaic_bx_FIFO_buf52_lane_5);
-  auto res_demosaic_byb_update_0_sm95_14181 = demosaic_byb_generated_compute_unrolled_1(demosaic_bx_FIFO_buf52_lane_5_pack);
+  auto res_demosaic_byb_update_0_sm98_14469 = demosaic_byb_generated_compute_unrolled_1(demosaic_bx_FIFO_buf52_lane_5_pack);
 
   hw_uint<48 > demosaic_bx_FIFO_buf52_lane_8_pack;
   set_at<0, 48, 16>(demosaic_bx_FIFO_buf52_lane_8_pack, demosaic_bx_FIFO_buf52_lane_6);
   set_at<16, 48, 16>(demosaic_bx_FIFO_buf52_lane_8_pack, demosaic_bx_FIFO_buf52_lane_7);
   set_at<32, 48, 16>(demosaic_bx_FIFO_buf52_lane_8_pack, demosaic_bx_FIFO_buf52_lane_8);
-  auto res_demosaic_byb_update_0_sm95_13179 = demosaic_byb_generated_compute_unrolled_1(demosaic_bx_FIFO_buf52_lane_8_pack);
+  auto res_demosaic_byb_update_0_sm98_13467 = demosaic_byb_generated_compute_unrolled_1(demosaic_bx_FIFO_buf52_lane_8_pack);
 
   hw_uint<48 > demosaic_bx_FIFO_buf52_lane_11_pack;
   set_at<0, 48, 16>(demosaic_bx_FIFO_buf52_lane_11_pack, demosaic_bx_FIFO_buf52_lane_9);
   set_at<16, 48, 16>(demosaic_bx_FIFO_buf52_lane_11_pack, demosaic_bx_FIFO_buf52_lane_10);
   set_at<32, 48, 16>(demosaic_bx_FIFO_buf52_lane_11_pack, demosaic_bx_FIFO_buf52_lane_11);
-  auto res_demosaic_byb_update_0_sm95_12177 = demosaic_byb_generated_compute_unrolled_1(demosaic_bx_FIFO_buf52_lane_11_pack);
+  auto res_demosaic_byb_update_0_sm98_12465 = demosaic_byb_generated_compute_unrolled_1(demosaic_bx_FIFO_buf52_lane_11_pack);
 
   hw_uint<48 > demosaic_bx_FIFO_buf52_lane_14_pack;
   set_at<0, 48, 16>(demosaic_bx_FIFO_buf52_lane_14_pack, demosaic_bx_FIFO_buf52_lane_12);
   set_at<16, 48, 16>(demosaic_bx_FIFO_buf52_lane_14_pack, demosaic_bx_FIFO_buf52_lane_13);
   set_at<32, 48, 16>(demosaic_bx_FIFO_buf52_lane_14_pack, demosaic_bx_FIFO_buf52_lane_14);
-  auto res_demosaic_byb_update_0_sm95_11175 = demosaic_byb_generated_compute_unrolled_1(demosaic_bx_FIFO_buf52_lane_14_pack);
+  auto res_demosaic_byb_update_0_sm98_11463 = demosaic_byb_generated_compute_unrolled_1(demosaic_bx_FIFO_buf52_lane_14_pack);
 
   hw_uint<48 > demosaic_bx_FIFO_buf52_lane_17_pack;
   set_at<0, 48, 16>(demosaic_bx_FIFO_buf52_lane_17_pack, demosaic_bx_FIFO_buf52_lane_15);
   set_at<16, 48, 16>(demosaic_bx_FIFO_buf52_lane_17_pack, demosaic_bx_FIFO_buf52_lane_16);
   set_at<32, 48, 16>(demosaic_bx_FIFO_buf52_lane_17_pack, demosaic_bx_FIFO_buf52_lane_17);
-  auto res_demosaic_byb_update_0_sm95_10173 = demosaic_byb_generated_compute_unrolled_1(demosaic_bx_FIFO_buf52_lane_17_pack);
+  auto res_demosaic_byb_update_0_sm98_10461 = demosaic_byb_generated_compute_unrolled_1(demosaic_bx_FIFO_buf52_lane_17_pack);
 
   hw_uint<48 > demosaic_bx_FIFO_buf52_lane_20_pack;
   set_at<0, 48, 16>(demosaic_bx_FIFO_buf52_lane_20_pack, demosaic_bx_FIFO_buf52_lane_18);
   set_at<16, 48, 16>(demosaic_bx_FIFO_buf52_lane_20_pack, demosaic_bx_FIFO_buf52_lane_19);
   set_at<32, 48, 16>(demosaic_bx_FIFO_buf52_lane_20_pack, demosaic_bx_FIFO_buf52_lane_20);
-  auto res_demosaic_byb_update_0_sm95_9171 = demosaic_byb_generated_compute_unrolled_1(demosaic_bx_FIFO_buf52_lane_20_pack);
+  auto res_demosaic_byb_update_0_sm98_9459 = demosaic_byb_generated_compute_unrolled_1(demosaic_bx_FIFO_buf52_lane_20_pack);
 
   hw_uint<48 > demosaic_bx_FIFO_buf52_lane_23_pack;
   set_at<0, 48, 16>(demosaic_bx_FIFO_buf52_lane_23_pack, demosaic_bx_FIFO_buf52_lane_21);
   set_at<16, 48, 16>(demosaic_bx_FIFO_buf52_lane_23_pack, demosaic_bx_FIFO_buf52_lane_22);
   set_at<32, 48, 16>(demosaic_bx_FIFO_buf52_lane_23_pack, demosaic_bx_FIFO_buf52_lane_23);
-  auto res_demosaic_byb_update_0_sm95_8169 = demosaic_byb_generated_compute_unrolled_1(demosaic_bx_FIFO_buf52_lane_23_pack);
+  auto res_demosaic_byb_update_0_sm98_8457 = demosaic_byb_generated_compute_unrolled_1(demosaic_bx_FIFO_buf52_lane_23_pack);
 
   hw_uint<48 > demosaic_bx_FIFO_buf52_lane_26_pack;
   set_at<0, 48, 16>(demosaic_bx_FIFO_buf52_lane_26_pack, demosaic_bx_FIFO_buf52_lane_24);
   set_at<16, 48, 16>(demosaic_bx_FIFO_buf52_lane_26_pack, demosaic_bx_FIFO_buf52_lane_25);
   set_at<32, 48, 16>(demosaic_bx_FIFO_buf52_lane_26_pack, demosaic_bx_FIFO_buf52_lane_26);
-  auto res_demosaic_byb_update_0_sm95_7167 = demosaic_byb_generated_compute_unrolled_1(demosaic_bx_FIFO_buf52_lane_26_pack);
+  auto res_demosaic_byb_update_0_sm98_7455 = demosaic_byb_generated_compute_unrolled_1(demosaic_bx_FIFO_buf52_lane_26_pack);
 
   hw_uint<48 > demosaic_bx_FIFO_buf52_lane_29_pack;
   set_at<0, 48, 16>(demosaic_bx_FIFO_buf52_lane_29_pack, demosaic_bx_FIFO_buf52_lane_27);
   set_at<16, 48, 16>(demosaic_bx_FIFO_buf52_lane_29_pack, demosaic_bx_FIFO_buf52_lane_28);
   set_at<32, 48, 16>(demosaic_bx_FIFO_buf52_lane_29_pack, demosaic_bx_FIFO_buf52_lane_29);
-  auto res_demosaic_byb_update_0_sm95_6165 = demosaic_byb_generated_compute_unrolled_1(demosaic_bx_FIFO_buf52_lane_29_pack);
+  auto res_demosaic_byb_update_0_sm98_6453 = demosaic_byb_generated_compute_unrolled_1(demosaic_bx_FIFO_buf52_lane_29_pack);
 
   hw_uint<48 > demosaic_bx_FIFO_buf52_lane_32_pack;
   set_at<0, 48, 16>(demosaic_bx_FIFO_buf52_lane_32_pack, demosaic_bx_FIFO_buf52_lane_30);
   set_at<16, 48, 16>(demosaic_bx_FIFO_buf52_lane_32_pack, demosaic_bx_FIFO_buf52_lane_31);
   set_at<32, 48, 16>(demosaic_bx_FIFO_buf52_lane_32_pack, demosaic_bx_FIFO_buf52_lane_32);
-  auto res_demosaic_byb_update_0_sm95_5163 = demosaic_byb_generated_compute_unrolled_1(demosaic_bx_FIFO_buf52_lane_32_pack);
+  auto res_demosaic_byb_update_0_sm98_5451 = demosaic_byb_generated_compute_unrolled_1(demosaic_bx_FIFO_buf52_lane_32_pack);
 
   hw_uint<48 > demosaic_bx_FIFO_buf52_lane_35_pack;
   set_at<0, 48, 16>(demosaic_bx_FIFO_buf52_lane_35_pack, demosaic_bx_FIFO_buf52_lane_33);
   set_at<16, 48, 16>(demosaic_bx_FIFO_buf52_lane_35_pack, demosaic_bx_FIFO_buf52_lane_34);
   set_at<32, 48, 16>(demosaic_bx_FIFO_buf52_lane_35_pack, demosaic_bx_FIFO_buf52_lane_35);
-  auto res_demosaic_byb_update_0_sm95_4161 = demosaic_byb_generated_compute_unrolled_1(demosaic_bx_FIFO_buf52_lane_35_pack);
+  auto res_demosaic_byb_update_0_sm98_4449 = demosaic_byb_generated_compute_unrolled_1(demosaic_bx_FIFO_buf52_lane_35_pack);
 
   hw_uint<48 > demosaic_bx_FIFO_buf52_lane_38_pack;
   set_at<0, 48, 16>(demosaic_bx_FIFO_buf52_lane_38_pack, demosaic_bx_FIFO_buf52_lane_36);
   set_at<16, 48, 16>(demosaic_bx_FIFO_buf52_lane_38_pack, demosaic_bx_FIFO_buf52_lane_37);
   set_at<32, 48, 16>(demosaic_bx_FIFO_buf52_lane_38_pack, demosaic_bx_FIFO_buf52_lane_38);
-  auto res_demosaic_byb_update_0_sm95_3159 = demosaic_byb_generated_compute_unrolled_1(demosaic_bx_FIFO_buf52_lane_38_pack);
+  auto res_demosaic_byb_update_0_sm98_3447 = demosaic_byb_generated_compute_unrolled_1(demosaic_bx_FIFO_buf52_lane_38_pack);
 
   hw_uint<48 > demosaic_bx_FIFO_buf52_lane_41_pack;
   set_at<0, 48, 16>(demosaic_bx_FIFO_buf52_lane_41_pack, demosaic_bx_FIFO_buf52_lane_39);
   set_at<16, 48, 16>(demosaic_bx_FIFO_buf52_lane_41_pack, demosaic_bx_FIFO_buf52_lane_40);
   set_at<32, 48, 16>(demosaic_bx_FIFO_buf52_lane_41_pack, demosaic_bx_FIFO_buf52_lane_41);
-  auto res_demosaic_byb_update_0_sm95_2157 = demosaic_byb_generated_compute_unrolled_1(demosaic_bx_FIFO_buf52_lane_41_pack);
+  auto res_demosaic_byb_update_0_sm98_2445 = demosaic_byb_generated_compute_unrolled_1(demosaic_bx_FIFO_buf52_lane_41_pack);
 
   hw_uint<48 > demosaic_bx_FIFO_buf52_lane_44_pack;
   set_at<0, 48, 16>(demosaic_bx_FIFO_buf52_lane_44_pack, demosaic_bx_FIFO_buf52_lane_42);
   set_at<16, 48, 16>(demosaic_bx_FIFO_buf52_lane_44_pack, demosaic_bx_FIFO_buf52_lane_43);
   set_at<32, 48, 16>(demosaic_bx_FIFO_buf52_lane_44_pack, demosaic_bx_FIFO_buf52_lane_44);
-  auto res_demosaic_byb_update_0_sm95_1155 = demosaic_byb_generated_compute_unrolled_1(demosaic_bx_FIFO_buf52_lane_44_pack);
+  auto res_demosaic_byb_update_0_sm98_1443 = demosaic_byb_generated_compute_unrolled_1(demosaic_bx_FIFO_buf52_lane_44_pack);
 
   hw_uint<48 > demosaic_bx_FIFO_buf52_lane_47_pack;
   set_at<0, 48, 16>(demosaic_bx_FIFO_buf52_lane_47_pack, demosaic_bx_FIFO_buf52_lane_45);
   set_at<16, 48, 16>(demosaic_bx_FIFO_buf52_lane_47_pack, demosaic_bx_FIFO_buf52_lane_46);
   set_at<32, 48, 16>(demosaic_bx_FIFO_buf52_lane_47_pack, demosaic_bx_FIFO_buf52_lane_47);
-  auto res_demosaic_byb_update_0_sm95_0153 = demosaic_byb_generated_compute_unrolled_1(demosaic_bx_FIFO_buf52_lane_47_pack);
-  hw_uint<256 > return_value1199;
-  set_at<0, 256, 16>(return_value1199, res_demosaic_byb_update_0_sm95_15183);
-  set_at<16, 256, 16>(return_value1199, res_demosaic_byb_update_0_sm95_14181);
-  set_at<32, 256, 16>(return_value1199, res_demosaic_byb_update_0_sm95_13179);
-  set_at<48, 256, 16>(return_value1199, res_demosaic_byb_update_0_sm95_12177);
-  set_at<64, 256, 16>(return_value1199, res_demosaic_byb_update_0_sm95_11175);
-  set_at<80, 256, 16>(return_value1199, res_demosaic_byb_update_0_sm95_10173);
-  set_at<96, 256, 16>(return_value1199, res_demosaic_byb_update_0_sm95_9171);
-  set_at<112, 256, 16>(return_value1199, res_demosaic_byb_update_0_sm95_8169);
-  set_at<128, 256, 16>(return_value1199, res_demosaic_byb_update_0_sm95_7167);
-  set_at<144, 256, 16>(return_value1199, res_demosaic_byb_update_0_sm95_6165);
-  set_at<160, 256, 16>(return_value1199, res_demosaic_byb_update_0_sm95_5163);
-  set_at<176, 256, 16>(return_value1199, res_demosaic_byb_update_0_sm95_4161);
-  set_at<192, 256, 16>(return_value1199, res_demosaic_byb_update_0_sm95_3159);
-  set_at<208, 256, 16>(return_value1199, res_demosaic_byb_update_0_sm95_2157);
-  set_at<224, 256, 16>(return_value1199, res_demosaic_byb_update_0_sm95_1155);
-  set_at<240, 256, 16>(return_value1199, res_demosaic_byb_update_0_sm95_0153);
-  return return_value1199;
+  auto res_demosaic_byb_update_0_sm98_0441 = demosaic_byb_generated_compute_unrolled_1(demosaic_bx_FIFO_buf52_lane_47_pack);
+  hw_uint<256 > return_value1205;
+  set_at<0, 256, 16>(return_value1205, res_demosaic_byb_update_0_sm98_15471);
+  set_at<16, 256, 16>(return_value1205, res_demosaic_byb_update_0_sm98_14469);
+  set_at<32, 256, 16>(return_value1205, res_demosaic_byb_update_0_sm98_13467);
+  set_at<48, 256, 16>(return_value1205, res_demosaic_byb_update_0_sm98_12465);
+  set_at<64, 256, 16>(return_value1205, res_demosaic_byb_update_0_sm98_11463);
+  set_at<80, 256, 16>(return_value1205, res_demosaic_byb_update_0_sm98_10461);
+  set_at<96, 256, 16>(return_value1205, res_demosaic_byb_update_0_sm98_9459);
+  set_at<112, 256, 16>(return_value1205, res_demosaic_byb_update_0_sm98_8457);
+  set_at<128, 256, 16>(return_value1205, res_demosaic_byb_update_0_sm98_7455);
+  set_at<144, 256, 16>(return_value1205, res_demosaic_byb_update_0_sm98_6453);
+  set_at<160, 256, 16>(return_value1205, res_demosaic_byb_update_0_sm98_5451);
+  set_at<176, 256, 16>(return_value1205, res_demosaic_byb_update_0_sm98_4449);
+  set_at<192, 256, 16>(return_value1205, res_demosaic_byb_update_0_sm98_3447);
+  set_at<208, 256, 16>(return_value1205, res_demosaic_byb_update_0_sm98_2445);
+  set_at<224, 256, 16>(return_value1205, res_demosaic_byb_update_0_sm98_1443);
+  set_at<240, 256, 16>(return_value1205, res_demosaic_byb_update_0_sm98_0441);
+  return return_value1205;
 
 }
 
-hw_uint<256> demosaic_by_1_cu1201(hw_uint<16*16>& demosaic_byb_FIFO_buf64) {
+hw_uint<256> demosaic_by_1_cu1207(hw_uint<16*16>& demosaic_byb_FIFO_buf64) {
   hw_uint<16> demosaic_byb_FIFO_buf64_lane_0 = demosaic_byb_FIFO_buf64.extract<0, 15>();
   hw_uint<16> demosaic_byb_FIFO_buf64_lane_1 = demosaic_byb_FIFO_buf64.extract<16, 31>();
   hw_uint<16> demosaic_byb_FIFO_buf64_lane_2 = demosaic_byb_FIFO_buf64.extract<32, 47>();
@@ -1997,89 +2009,89 @@ hw_uint<256> demosaic_by_1_cu1201(hw_uint<16*16>& demosaic_byb_FIFO_buf64) {
 	
   hw_uint<16 > demosaic_byb_FIFO_buf64_lane_0_pack;
   set_at<0, 16, 16>(demosaic_byb_FIFO_buf64_lane_0_pack, demosaic_byb_FIFO_buf64_lane_0);
-  auto res_demosaic_by_update_0_sm96_15215 = demosaic_by_generated_compute_unrolled_1(demosaic_byb_FIFO_buf64_lane_0_pack);
+  auto res_demosaic_by_update_0_sm99_15503 = demosaic_by_generated_compute_unrolled_1(demosaic_byb_FIFO_buf64_lane_0_pack);
 
   hw_uint<16 > demosaic_byb_FIFO_buf64_lane_1_pack;
   set_at<0, 16, 16>(demosaic_byb_FIFO_buf64_lane_1_pack, demosaic_byb_FIFO_buf64_lane_1);
-  auto res_demosaic_by_update_0_sm96_14213 = demosaic_by_generated_compute_unrolled_1(demosaic_byb_FIFO_buf64_lane_1_pack);
+  auto res_demosaic_by_update_0_sm99_14501 = demosaic_by_generated_compute_unrolled_1(demosaic_byb_FIFO_buf64_lane_1_pack);
 
   hw_uint<16 > demosaic_byb_FIFO_buf64_lane_2_pack;
   set_at<0, 16, 16>(demosaic_byb_FIFO_buf64_lane_2_pack, demosaic_byb_FIFO_buf64_lane_2);
-  auto res_demosaic_by_update_0_sm96_13211 = demosaic_by_generated_compute_unrolled_1(demosaic_byb_FIFO_buf64_lane_2_pack);
+  auto res_demosaic_by_update_0_sm99_13499 = demosaic_by_generated_compute_unrolled_1(demosaic_byb_FIFO_buf64_lane_2_pack);
 
   hw_uint<16 > demosaic_byb_FIFO_buf64_lane_3_pack;
   set_at<0, 16, 16>(demosaic_byb_FIFO_buf64_lane_3_pack, demosaic_byb_FIFO_buf64_lane_3);
-  auto res_demosaic_by_update_0_sm96_12209 = demosaic_by_generated_compute_unrolled_1(demosaic_byb_FIFO_buf64_lane_3_pack);
+  auto res_demosaic_by_update_0_sm99_12497 = demosaic_by_generated_compute_unrolled_1(demosaic_byb_FIFO_buf64_lane_3_pack);
 
   hw_uint<16 > demosaic_byb_FIFO_buf64_lane_4_pack;
   set_at<0, 16, 16>(demosaic_byb_FIFO_buf64_lane_4_pack, demosaic_byb_FIFO_buf64_lane_4);
-  auto res_demosaic_by_update_0_sm96_11207 = demosaic_by_generated_compute_unrolled_1(demosaic_byb_FIFO_buf64_lane_4_pack);
+  auto res_demosaic_by_update_0_sm99_11495 = demosaic_by_generated_compute_unrolled_1(demosaic_byb_FIFO_buf64_lane_4_pack);
 
   hw_uint<16 > demosaic_byb_FIFO_buf64_lane_5_pack;
   set_at<0, 16, 16>(demosaic_byb_FIFO_buf64_lane_5_pack, demosaic_byb_FIFO_buf64_lane_5);
-  auto res_demosaic_by_update_0_sm96_10205 = demosaic_by_generated_compute_unrolled_1(demosaic_byb_FIFO_buf64_lane_5_pack);
+  auto res_demosaic_by_update_0_sm99_10493 = demosaic_by_generated_compute_unrolled_1(demosaic_byb_FIFO_buf64_lane_5_pack);
 
   hw_uint<16 > demosaic_byb_FIFO_buf64_lane_6_pack;
   set_at<0, 16, 16>(demosaic_byb_FIFO_buf64_lane_6_pack, demosaic_byb_FIFO_buf64_lane_6);
-  auto res_demosaic_by_update_0_sm96_9203 = demosaic_by_generated_compute_unrolled_1(demosaic_byb_FIFO_buf64_lane_6_pack);
+  auto res_demosaic_by_update_0_sm99_9491 = demosaic_by_generated_compute_unrolled_1(demosaic_byb_FIFO_buf64_lane_6_pack);
 
   hw_uint<16 > demosaic_byb_FIFO_buf64_lane_7_pack;
   set_at<0, 16, 16>(demosaic_byb_FIFO_buf64_lane_7_pack, demosaic_byb_FIFO_buf64_lane_7);
-  auto res_demosaic_by_update_0_sm96_8201 = demosaic_by_generated_compute_unrolled_1(demosaic_byb_FIFO_buf64_lane_7_pack);
+  auto res_demosaic_by_update_0_sm99_8489 = demosaic_by_generated_compute_unrolled_1(demosaic_byb_FIFO_buf64_lane_7_pack);
 
   hw_uint<16 > demosaic_byb_FIFO_buf64_lane_8_pack;
   set_at<0, 16, 16>(demosaic_byb_FIFO_buf64_lane_8_pack, demosaic_byb_FIFO_buf64_lane_8);
-  auto res_demosaic_by_update_0_sm96_7199 = demosaic_by_generated_compute_unrolled_1(demosaic_byb_FIFO_buf64_lane_8_pack);
+  auto res_demosaic_by_update_0_sm99_7487 = demosaic_by_generated_compute_unrolled_1(demosaic_byb_FIFO_buf64_lane_8_pack);
 
   hw_uint<16 > demosaic_byb_FIFO_buf64_lane_9_pack;
   set_at<0, 16, 16>(demosaic_byb_FIFO_buf64_lane_9_pack, demosaic_byb_FIFO_buf64_lane_9);
-  auto res_demosaic_by_update_0_sm96_6197 = demosaic_by_generated_compute_unrolled_1(demosaic_byb_FIFO_buf64_lane_9_pack);
+  auto res_demosaic_by_update_0_sm99_6485 = demosaic_by_generated_compute_unrolled_1(demosaic_byb_FIFO_buf64_lane_9_pack);
 
   hw_uint<16 > demosaic_byb_FIFO_buf64_lane_10_pack;
   set_at<0, 16, 16>(demosaic_byb_FIFO_buf64_lane_10_pack, demosaic_byb_FIFO_buf64_lane_10);
-  auto res_demosaic_by_update_0_sm96_5195 = demosaic_by_generated_compute_unrolled_1(demosaic_byb_FIFO_buf64_lane_10_pack);
+  auto res_demosaic_by_update_0_sm99_5483 = demosaic_by_generated_compute_unrolled_1(demosaic_byb_FIFO_buf64_lane_10_pack);
 
   hw_uint<16 > demosaic_byb_FIFO_buf64_lane_11_pack;
   set_at<0, 16, 16>(demosaic_byb_FIFO_buf64_lane_11_pack, demosaic_byb_FIFO_buf64_lane_11);
-  auto res_demosaic_by_update_0_sm96_4193 = demosaic_by_generated_compute_unrolled_1(demosaic_byb_FIFO_buf64_lane_11_pack);
+  auto res_demosaic_by_update_0_sm99_4481 = demosaic_by_generated_compute_unrolled_1(demosaic_byb_FIFO_buf64_lane_11_pack);
 
   hw_uint<16 > demosaic_byb_FIFO_buf64_lane_12_pack;
   set_at<0, 16, 16>(demosaic_byb_FIFO_buf64_lane_12_pack, demosaic_byb_FIFO_buf64_lane_12);
-  auto res_demosaic_by_update_0_sm96_3191 = demosaic_by_generated_compute_unrolled_1(demosaic_byb_FIFO_buf64_lane_12_pack);
+  auto res_demosaic_by_update_0_sm99_3479 = demosaic_by_generated_compute_unrolled_1(demosaic_byb_FIFO_buf64_lane_12_pack);
 
   hw_uint<16 > demosaic_byb_FIFO_buf64_lane_13_pack;
   set_at<0, 16, 16>(demosaic_byb_FIFO_buf64_lane_13_pack, demosaic_byb_FIFO_buf64_lane_13);
-  auto res_demosaic_by_update_0_sm96_2189 = demosaic_by_generated_compute_unrolled_1(demosaic_byb_FIFO_buf64_lane_13_pack);
+  auto res_demosaic_by_update_0_sm99_2477 = demosaic_by_generated_compute_unrolled_1(demosaic_byb_FIFO_buf64_lane_13_pack);
 
   hw_uint<16 > demosaic_byb_FIFO_buf64_lane_14_pack;
   set_at<0, 16, 16>(demosaic_byb_FIFO_buf64_lane_14_pack, demosaic_byb_FIFO_buf64_lane_14);
-  auto res_demosaic_by_update_0_sm96_1187 = demosaic_by_generated_compute_unrolled_1(demosaic_byb_FIFO_buf64_lane_14_pack);
+  auto res_demosaic_by_update_0_sm99_1475 = demosaic_by_generated_compute_unrolled_1(demosaic_byb_FIFO_buf64_lane_14_pack);
 
   hw_uint<16 > demosaic_byb_FIFO_buf64_lane_15_pack;
   set_at<0, 16, 16>(demosaic_byb_FIFO_buf64_lane_15_pack, demosaic_byb_FIFO_buf64_lane_15);
-  auto res_demosaic_by_update_0_sm96_0185 = demosaic_by_generated_compute_unrolled_1(demosaic_byb_FIFO_buf64_lane_15_pack);
-  hw_uint<256 > return_value1202;
-  set_at<0, 256, 16>(return_value1202, res_demosaic_by_update_0_sm96_15215);
-  set_at<16, 256, 16>(return_value1202, res_demosaic_by_update_0_sm96_14213);
-  set_at<32, 256, 16>(return_value1202, res_demosaic_by_update_0_sm96_13211);
-  set_at<48, 256, 16>(return_value1202, res_demosaic_by_update_0_sm96_12209);
-  set_at<64, 256, 16>(return_value1202, res_demosaic_by_update_0_sm96_11207);
-  set_at<80, 256, 16>(return_value1202, res_demosaic_by_update_0_sm96_10205);
-  set_at<96, 256, 16>(return_value1202, res_demosaic_by_update_0_sm96_9203);
-  set_at<112, 256, 16>(return_value1202, res_demosaic_by_update_0_sm96_8201);
-  set_at<128, 256, 16>(return_value1202, res_demosaic_by_update_0_sm96_7199);
-  set_at<144, 256, 16>(return_value1202, res_demosaic_by_update_0_sm96_6197);
-  set_at<160, 256, 16>(return_value1202, res_demosaic_by_update_0_sm96_5195);
-  set_at<176, 256, 16>(return_value1202, res_demosaic_by_update_0_sm96_4193);
-  set_at<192, 256, 16>(return_value1202, res_demosaic_by_update_0_sm96_3191);
-  set_at<208, 256, 16>(return_value1202, res_demosaic_by_update_0_sm96_2189);
-  set_at<224, 256, 16>(return_value1202, res_demosaic_by_update_0_sm96_1187);
-  set_at<240, 256, 16>(return_value1202, res_demosaic_by_update_0_sm96_0185);
-  return return_value1202;
+  auto res_demosaic_by_update_0_sm99_0473 = demosaic_by_generated_compute_unrolled_1(demosaic_byb_FIFO_buf64_lane_15_pack);
+  hw_uint<256 > return_value1208;
+  set_at<0, 256, 16>(return_value1208, res_demosaic_by_update_0_sm99_15503);
+  set_at<16, 256, 16>(return_value1208, res_demosaic_by_update_0_sm99_14501);
+  set_at<32, 256, 16>(return_value1208, res_demosaic_by_update_0_sm99_13499);
+  set_at<48, 256, 16>(return_value1208, res_demosaic_by_update_0_sm99_12497);
+  set_at<64, 256, 16>(return_value1208, res_demosaic_by_update_0_sm99_11495);
+  set_at<80, 256, 16>(return_value1208, res_demosaic_by_update_0_sm99_10493);
+  set_at<96, 256, 16>(return_value1208, res_demosaic_by_update_0_sm99_9491);
+  set_at<112, 256, 16>(return_value1208, res_demosaic_by_update_0_sm99_8489);
+  set_at<128, 256, 16>(return_value1208, res_demosaic_by_update_0_sm99_7487);
+  set_at<144, 256, 16>(return_value1208, res_demosaic_by_update_0_sm99_6485);
+  set_at<160, 256, 16>(return_value1208, res_demosaic_by_update_0_sm99_5483);
+  set_at<176, 256, 16>(return_value1208, res_demosaic_by_update_0_sm99_4481);
+  set_at<192, 256, 16>(return_value1208, res_demosaic_by_update_0_sm99_3479);
+  set_at<208, 256, 16>(return_value1208, res_demosaic_by_update_0_sm99_2477);
+  set_at<224, 256, 16>(return_value1208, res_demosaic_by_update_0_sm99_1475);
+  set_at<240, 256, 16>(return_value1208, res_demosaic_by_update_0_sm99_0473);
+  return return_value1208;
 
 }
 
-hw_uint<256> demosaic_diff_1_cu1204(hw_uint<16*16>& demosaic_FIFO_buf48, hw_uint<16*16>& demosaic_by_FIFO_buf60) {
+hw_uint<256> demosaic_diff_1_cu1210(hw_uint<16*16>& demosaic_FIFO_buf48, hw_uint<16*16>& demosaic_by_FIFO_buf60) {
   hw_uint<16> demosaic_FIFO_buf48_lane_0 = demosaic_FIFO_buf48.extract<0, 15>();
   hw_uint<16> demosaic_FIFO_buf48_lane_1 = demosaic_FIFO_buf48.extract<16, 31>();
   hw_uint<16> demosaic_FIFO_buf48_lane_2 = demosaic_FIFO_buf48.extract<32, 47>();
@@ -2118,119 +2130,119 @@ hw_uint<256> demosaic_diff_1_cu1204(hw_uint<16*16>& demosaic_FIFO_buf48, hw_uint
   set_at<0, 16, 16>(demosaic_FIFO_buf48_lane_0_pack, demosaic_FIFO_buf48_lane_0);
   hw_uint<16 > demosaic_by_FIFO_buf60_lane_0_pack;
   set_at<0, 16, 16>(demosaic_by_FIFO_buf60_lane_0_pack, demosaic_by_FIFO_buf60_lane_0);
-  auto res_demosaic_diff_update_0_sm97_15247 = demosaic_diff_generated_compute_unrolled_1(demosaic_FIFO_buf48_lane_0_pack, demosaic_by_FIFO_buf60_lane_0_pack);
+  auto res_demosaic_diff_update_0_sm100_15535 = demosaic_diff_generated_compute_unrolled_1(demosaic_FIFO_buf48_lane_0_pack, demosaic_by_FIFO_buf60_lane_0_pack);
 
   hw_uint<16 > demosaic_FIFO_buf48_lane_1_pack;
   set_at<0, 16, 16>(demosaic_FIFO_buf48_lane_1_pack, demosaic_FIFO_buf48_lane_1);
   hw_uint<16 > demosaic_by_FIFO_buf60_lane_1_pack;
   set_at<0, 16, 16>(demosaic_by_FIFO_buf60_lane_1_pack, demosaic_by_FIFO_buf60_lane_1);
-  auto res_demosaic_diff_update_0_sm97_14245 = demosaic_diff_generated_compute_unrolled_1(demosaic_FIFO_buf48_lane_1_pack, demosaic_by_FIFO_buf60_lane_1_pack);
+  auto res_demosaic_diff_update_0_sm100_14533 = demosaic_diff_generated_compute_unrolled_1(demosaic_FIFO_buf48_lane_1_pack, demosaic_by_FIFO_buf60_lane_1_pack);
 
   hw_uint<16 > demosaic_FIFO_buf48_lane_2_pack;
   set_at<0, 16, 16>(demosaic_FIFO_buf48_lane_2_pack, demosaic_FIFO_buf48_lane_2);
   hw_uint<16 > demosaic_by_FIFO_buf60_lane_2_pack;
   set_at<0, 16, 16>(demosaic_by_FIFO_buf60_lane_2_pack, demosaic_by_FIFO_buf60_lane_2);
-  auto res_demosaic_diff_update_0_sm97_13243 = demosaic_diff_generated_compute_unrolled_1(demosaic_FIFO_buf48_lane_2_pack, demosaic_by_FIFO_buf60_lane_2_pack);
+  auto res_demosaic_diff_update_0_sm100_13531 = demosaic_diff_generated_compute_unrolled_1(demosaic_FIFO_buf48_lane_2_pack, demosaic_by_FIFO_buf60_lane_2_pack);
 
   hw_uint<16 > demosaic_FIFO_buf48_lane_3_pack;
   set_at<0, 16, 16>(demosaic_FIFO_buf48_lane_3_pack, demosaic_FIFO_buf48_lane_3);
   hw_uint<16 > demosaic_by_FIFO_buf60_lane_3_pack;
   set_at<0, 16, 16>(demosaic_by_FIFO_buf60_lane_3_pack, demosaic_by_FIFO_buf60_lane_3);
-  auto res_demosaic_diff_update_0_sm97_12241 = demosaic_diff_generated_compute_unrolled_1(demosaic_FIFO_buf48_lane_3_pack, demosaic_by_FIFO_buf60_lane_3_pack);
+  auto res_demosaic_diff_update_0_sm100_12529 = demosaic_diff_generated_compute_unrolled_1(demosaic_FIFO_buf48_lane_3_pack, demosaic_by_FIFO_buf60_lane_3_pack);
 
   hw_uint<16 > demosaic_FIFO_buf48_lane_4_pack;
   set_at<0, 16, 16>(demosaic_FIFO_buf48_lane_4_pack, demosaic_FIFO_buf48_lane_4);
   hw_uint<16 > demosaic_by_FIFO_buf60_lane_4_pack;
   set_at<0, 16, 16>(demosaic_by_FIFO_buf60_lane_4_pack, demosaic_by_FIFO_buf60_lane_4);
-  auto res_demosaic_diff_update_0_sm97_11239 = demosaic_diff_generated_compute_unrolled_1(demosaic_FIFO_buf48_lane_4_pack, demosaic_by_FIFO_buf60_lane_4_pack);
+  auto res_demosaic_diff_update_0_sm100_11527 = demosaic_diff_generated_compute_unrolled_1(demosaic_FIFO_buf48_lane_4_pack, demosaic_by_FIFO_buf60_lane_4_pack);
 
   hw_uint<16 > demosaic_FIFO_buf48_lane_5_pack;
   set_at<0, 16, 16>(demosaic_FIFO_buf48_lane_5_pack, demosaic_FIFO_buf48_lane_5);
   hw_uint<16 > demosaic_by_FIFO_buf60_lane_5_pack;
   set_at<0, 16, 16>(demosaic_by_FIFO_buf60_lane_5_pack, demosaic_by_FIFO_buf60_lane_5);
-  auto res_demosaic_diff_update_0_sm97_10237 = demosaic_diff_generated_compute_unrolled_1(demosaic_FIFO_buf48_lane_5_pack, demosaic_by_FIFO_buf60_lane_5_pack);
+  auto res_demosaic_diff_update_0_sm100_10525 = demosaic_diff_generated_compute_unrolled_1(demosaic_FIFO_buf48_lane_5_pack, demosaic_by_FIFO_buf60_lane_5_pack);
 
   hw_uint<16 > demosaic_FIFO_buf48_lane_6_pack;
   set_at<0, 16, 16>(demosaic_FIFO_buf48_lane_6_pack, demosaic_FIFO_buf48_lane_6);
   hw_uint<16 > demosaic_by_FIFO_buf60_lane_6_pack;
   set_at<0, 16, 16>(demosaic_by_FIFO_buf60_lane_6_pack, demosaic_by_FIFO_buf60_lane_6);
-  auto res_demosaic_diff_update_0_sm97_9235 = demosaic_diff_generated_compute_unrolled_1(demosaic_FIFO_buf48_lane_6_pack, demosaic_by_FIFO_buf60_lane_6_pack);
+  auto res_demosaic_diff_update_0_sm100_9523 = demosaic_diff_generated_compute_unrolled_1(demosaic_FIFO_buf48_lane_6_pack, demosaic_by_FIFO_buf60_lane_6_pack);
 
   hw_uint<16 > demosaic_FIFO_buf48_lane_7_pack;
   set_at<0, 16, 16>(demosaic_FIFO_buf48_lane_7_pack, demosaic_FIFO_buf48_lane_7);
   hw_uint<16 > demosaic_by_FIFO_buf60_lane_7_pack;
   set_at<0, 16, 16>(demosaic_by_FIFO_buf60_lane_7_pack, demosaic_by_FIFO_buf60_lane_7);
-  auto res_demosaic_diff_update_0_sm97_8233 = demosaic_diff_generated_compute_unrolled_1(demosaic_FIFO_buf48_lane_7_pack, demosaic_by_FIFO_buf60_lane_7_pack);
+  auto res_demosaic_diff_update_0_sm100_8521 = demosaic_diff_generated_compute_unrolled_1(demosaic_FIFO_buf48_lane_7_pack, demosaic_by_FIFO_buf60_lane_7_pack);
 
   hw_uint<16 > demosaic_FIFO_buf48_lane_8_pack;
   set_at<0, 16, 16>(demosaic_FIFO_buf48_lane_8_pack, demosaic_FIFO_buf48_lane_8);
   hw_uint<16 > demosaic_by_FIFO_buf60_lane_8_pack;
   set_at<0, 16, 16>(demosaic_by_FIFO_buf60_lane_8_pack, demosaic_by_FIFO_buf60_lane_8);
-  auto res_demosaic_diff_update_0_sm97_7231 = demosaic_diff_generated_compute_unrolled_1(demosaic_FIFO_buf48_lane_8_pack, demosaic_by_FIFO_buf60_lane_8_pack);
+  auto res_demosaic_diff_update_0_sm100_7519 = demosaic_diff_generated_compute_unrolled_1(demosaic_FIFO_buf48_lane_8_pack, demosaic_by_FIFO_buf60_lane_8_pack);
 
   hw_uint<16 > demosaic_FIFO_buf48_lane_9_pack;
   set_at<0, 16, 16>(demosaic_FIFO_buf48_lane_9_pack, demosaic_FIFO_buf48_lane_9);
   hw_uint<16 > demosaic_by_FIFO_buf60_lane_9_pack;
   set_at<0, 16, 16>(demosaic_by_FIFO_buf60_lane_9_pack, demosaic_by_FIFO_buf60_lane_9);
-  auto res_demosaic_diff_update_0_sm97_6229 = demosaic_diff_generated_compute_unrolled_1(demosaic_FIFO_buf48_lane_9_pack, demosaic_by_FIFO_buf60_lane_9_pack);
+  auto res_demosaic_diff_update_0_sm100_6517 = demosaic_diff_generated_compute_unrolled_1(demosaic_FIFO_buf48_lane_9_pack, demosaic_by_FIFO_buf60_lane_9_pack);
 
   hw_uint<16 > demosaic_FIFO_buf48_lane_10_pack;
   set_at<0, 16, 16>(demosaic_FIFO_buf48_lane_10_pack, demosaic_FIFO_buf48_lane_10);
   hw_uint<16 > demosaic_by_FIFO_buf60_lane_10_pack;
   set_at<0, 16, 16>(demosaic_by_FIFO_buf60_lane_10_pack, demosaic_by_FIFO_buf60_lane_10);
-  auto res_demosaic_diff_update_0_sm97_5227 = demosaic_diff_generated_compute_unrolled_1(demosaic_FIFO_buf48_lane_10_pack, demosaic_by_FIFO_buf60_lane_10_pack);
+  auto res_demosaic_diff_update_0_sm100_5515 = demosaic_diff_generated_compute_unrolled_1(demosaic_FIFO_buf48_lane_10_pack, demosaic_by_FIFO_buf60_lane_10_pack);
 
   hw_uint<16 > demosaic_FIFO_buf48_lane_11_pack;
   set_at<0, 16, 16>(demosaic_FIFO_buf48_lane_11_pack, demosaic_FIFO_buf48_lane_11);
   hw_uint<16 > demosaic_by_FIFO_buf60_lane_11_pack;
   set_at<0, 16, 16>(demosaic_by_FIFO_buf60_lane_11_pack, demosaic_by_FIFO_buf60_lane_11);
-  auto res_demosaic_diff_update_0_sm97_4225 = demosaic_diff_generated_compute_unrolled_1(demosaic_FIFO_buf48_lane_11_pack, demosaic_by_FIFO_buf60_lane_11_pack);
+  auto res_demosaic_diff_update_0_sm100_4513 = demosaic_diff_generated_compute_unrolled_1(demosaic_FIFO_buf48_lane_11_pack, demosaic_by_FIFO_buf60_lane_11_pack);
 
   hw_uint<16 > demosaic_FIFO_buf48_lane_12_pack;
   set_at<0, 16, 16>(demosaic_FIFO_buf48_lane_12_pack, demosaic_FIFO_buf48_lane_12);
   hw_uint<16 > demosaic_by_FIFO_buf60_lane_12_pack;
   set_at<0, 16, 16>(demosaic_by_FIFO_buf60_lane_12_pack, demosaic_by_FIFO_buf60_lane_12);
-  auto res_demosaic_diff_update_0_sm97_3223 = demosaic_diff_generated_compute_unrolled_1(demosaic_FIFO_buf48_lane_12_pack, demosaic_by_FIFO_buf60_lane_12_pack);
+  auto res_demosaic_diff_update_0_sm100_3511 = demosaic_diff_generated_compute_unrolled_1(demosaic_FIFO_buf48_lane_12_pack, demosaic_by_FIFO_buf60_lane_12_pack);
 
   hw_uint<16 > demosaic_FIFO_buf48_lane_13_pack;
   set_at<0, 16, 16>(demosaic_FIFO_buf48_lane_13_pack, demosaic_FIFO_buf48_lane_13);
   hw_uint<16 > demosaic_by_FIFO_buf60_lane_13_pack;
   set_at<0, 16, 16>(demosaic_by_FIFO_buf60_lane_13_pack, demosaic_by_FIFO_buf60_lane_13);
-  auto res_demosaic_diff_update_0_sm97_2221 = demosaic_diff_generated_compute_unrolled_1(demosaic_FIFO_buf48_lane_13_pack, demosaic_by_FIFO_buf60_lane_13_pack);
+  auto res_demosaic_diff_update_0_sm100_2509 = demosaic_diff_generated_compute_unrolled_1(demosaic_FIFO_buf48_lane_13_pack, demosaic_by_FIFO_buf60_lane_13_pack);
 
   hw_uint<16 > demosaic_FIFO_buf48_lane_14_pack;
   set_at<0, 16, 16>(demosaic_FIFO_buf48_lane_14_pack, demosaic_FIFO_buf48_lane_14);
   hw_uint<16 > demosaic_by_FIFO_buf60_lane_14_pack;
   set_at<0, 16, 16>(demosaic_by_FIFO_buf60_lane_14_pack, demosaic_by_FIFO_buf60_lane_14);
-  auto res_demosaic_diff_update_0_sm97_1219 = demosaic_diff_generated_compute_unrolled_1(demosaic_FIFO_buf48_lane_14_pack, demosaic_by_FIFO_buf60_lane_14_pack);
+  auto res_demosaic_diff_update_0_sm100_1507 = demosaic_diff_generated_compute_unrolled_1(demosaic_FIFO_buf48_lane_14_pack, demosaic_by_FIFO_buf60_lane_14_pack);
 
   hw_uint<16 > demosaic_FIFO_buf48_lane_15_pack;
   set_at<0, 16, 16>(demosaic_FIFO_buf48_lane_15_pack, demosaic_FIFO_buf48_lane_15);
   hw_uint<16 > demosaic_by_FIFO_buf60_lane_15_pack;
   set_at<0, 16, 16>(demosaic_by_FIFO_buf60_lane_15_pack, demosaic_by_FIFO_buf60_lane_15);
-  auto res_demosaic_diff_update_0_sm97_0217 = demosaic_diff_generated_compute_unrolled_1(demosaic_FIFO_buf48_lane_15_pack, demosaic_by_FIFO_buf60_lane_15_pack);
-  hw_uint<256 > return_value1205;
-  set_at<0, 256, 16>(return_value1205, res_demosaic_diff_update_0_sm97_15247);
-  set_at<16, 256, 16>(return_value1205, res_demosaic_diff_update_0_sm97_14245);
-  set_at<32, 256, 16>(return_value1205, res_demosaic_diff_update_0_sm97_13243);
-  set_at<48, 256, 16>(return_value1205, res_demosaic_diff_update_0_sm97_12241);
-  set_at<64, 256, 16>(return_value1205, res_demosaic_diff_update_0_sm97_11239);
-  set_at<80, 256, 16>(return_value1205, res_demosaic_diff_update_0_sm97_10237);
-  set_at<96, 256, 16>(return_value1205, res_demosaic_diff_update_0_sm97_9235);
-  set_at<112, 256, 16>(return_value1205, res_demosaic_diff_update_0_sm97_8233);
-  set_at<128, 256, 16>(return_value1205, res_demosaic_diff_update_0_sm97_7231);
-  set_at<144, 256, 16>(return_value1205, res_demosaic_diff_update_0_sm97_6229);
-  set_at<160, 256, 16>(return_value1205, res_demosaic_diff_update_0_sm97_5227);
-  set_at<176, 256, 16>(return_value1205, res_demosaic_diff_update_0_sm97_4225);
-  set_at<192, 256, 16>(return_value1205, res_demosaic_diff_update_0_sm97_3223);
-  set_at<208, 256, 16>(return_value1205, res_demosaic_diff_update_0_sm97_2221);
-  set_at<224, 256, 16>(return_value1205, res_demosaic_diff_update_0_sm97_1219);
-  set_at<240, 256, 16>(return_value1205, res_demosaic_diff_update_0_sm97_0217);
-  return return_value1205;
+  auto res_demosaic_diff_update_0_sm100_0505 = demosaic_diff_generated_compute_unrolled_1(demosaic_FIFO_buf48_lane_15_pack, demosaic_by_FIFO_buf60_lane_15_pack);
+  hw_uint<256 > return_value1211;
+  set_at<0, 256, 16>(return_value1211, res_demosaic_diff_update_0_sm100_15535);
+  set_at<16, 256, 16>(return_value1211, res_demosaic_diff_update_0_sm100_14533);
+  set_at<32, 256, 16>(return_value1211, res_demosaic_diff_update_0_sm100_13531);
+  set_at<48, 256, 16>(return_value1211, res_demosaic_diff_update_0_sm100_12529);
+  set_at<64, 256, 16>(return_value1211, res_demosaic_diff_update_0_sm100_11527);
+  set_at<80, 256, 16>(return_value1211, res_demosaic_diff_update_0_sm100_10525);
+  set_at<96, 256, 16>(return_value1211, res_demosaic_diff_update_0_sm100_9523);
+  set_at<112, 256, 16>(return_value1211, res_demosaic_diff_update_0_sm100_8521);
+  set_at<128, 256, 16>(return_value1211, res_demosaic_diff_update_0_sm100_7519);
+  set_at<144, 256, 16>(return_value1211, res_demosaic_diff_update_0_sm100_6517);
+  set_at<160, 256, 16>(return_value1211, res_demosaic_diff_update_0_sm100_5515);
+  set_at<176, 256, 16>(return_value1211, res_demosaic_diff_update_0_sm100_4513);
+  set_at<192, 256, 16>(return_value1211, res_demosaic_diff_update_0_sm100_3511);
+  set_at<208, 256, 16>(return_value1211, res_demosaic_diff_update_0_sm100_2509);
+  set_at<224, 256, 16>(return_value1211, res_demosaic_diff_update_0_sm100_1507);
+  set_at<240, 256, 16>(return_value1211, res_demosaic_diff_update_0_sm100_0505);
+  return return_value1211;
 
 }
 
-hw_uint<256> cpfc_16_1_cu1207(hw_uint<16*16>& demosaic_diff_FIFO_buf68) {
+hw_uint<256> cpfc_16_1_cu1213(hw_uint<16*16>& demosaic_diff_FIFO_buf68) {
   hw_uint<16> demosaic_diff_FIFO_buf68_lane_0 = demosaic_diff_FIFO_buf68.extract<0, 15>();
   hw_uint<16> demosaic_diff_FIFO_buf68_lane_1 = demosaic_diff_FIFO_buf68.extract<16, 31>();
   hw_uint<16> demosaic_diff_FIFO_buf68_lane_2 = demosaic_diff_FIFO_buf68.extract<32, 47>();
@@ -2251,142 +2263,130 @@ hw_uint<256> cpfc_16_1_cu1207(hw_uint<16*16>& demosaic_diff_FIFO_buf68) {
 	
   hw_uint<16 > demosaic_diff_FIFO_buf68_lane_0_pack;
   set_at<0, 16, 16>(demosaic_diff_FIFO_buf68_lane_0_pack, demosaic_diff_FIFO_buf68_lane_0);
-  auto res_cpfc_16_update_0_sm98_15279 = cpfc_16_generated_compute_unrolled_1(demosaic_diff_FIFO_buf68_lane_0_pack);
+  auto res_cpfc_16_update_0_sm101_15567 = cpfc_16_generated_compute_unrolled_1(demosaic_diff_FIFO_buf68_lane_0_pack);
 
   hw_uint<16 > demosaic_diff_FIFO_buf68_lane_1_pack;
   set_at<0, 16, 16>(demosaic_diff_FIFO_buf68_lane_1_pack, demosaic_diff_FIFO_buf68_lane_1);
-  auto res_cpfc_16_update_0_sm98_14277 = cpfc_16_generated_compute_unrolled_1(demosaic_diff_FIFO_buf68_lane_1_pack);
+  auto res_cpfc_16_update_0_sm101_14565 = cpfc_16_generated_compute_unrolled_1(demosaic_diff_FIFO_buf68_lane_1_pack);
 
   hw_uint<16 > demosaic_diff_FIFO_buf68_lane_2_pack;
   set_at<0, 16, 16>(demosaic_diff_FIFO_buf68_lane_2_pack, demosaic_diff_FIFO_buf68_lane_2);
-  auto res_cpfc_16_update_0_sm98_13275 = cpfc_16_generated_compute_unrolled_1(demosaic_diff_FIFO_buf68_lane_2_pack);
+  auto res_cpfc_16_update_0_sm101_13563 = cpfc_16_generated_compute_unrolled_1(demosaic_diff_FIFO_buf68_lane_2_pack);
 
   hw_uint<16 > demosaic_diff_FIFO_buf68_lane_3_pack;
   set_at<0, 16, 16>(demosaic_diff_FIFO_buf68_lane_3_pack, demosaic_diff_FIFO_buf68_lane_3);
-  auto res_cpfc_16_update_0_sm98_12273 = cpfc_16_generated_compute_unrolled_1(demosaic_diff_FIFO_buf68_lane_3_pack);
+  auto res_cpfc_16_update_0_sm101_12561 = cpfc_16_generated_compute_unrolled_1(demosaic_diff_FIFO_buf68_lane_3_pack);
 
   hw_uint<16 > demosaic_diff_FIFO_buf68_lane_4_pack;
   set_at<0, 16, 16>(demosaic_diff_FIFO_buf68_lane_4_pack, demosaic_diff_FIFO_buf68_lane_4);
-  auto res_cpfc_16_update_0_sm98_11271 = cpfc_16_generated_compute_unrolled_1(demosaic_diff_FIFO_buf68_lane_4_pack);
+  auto res_cpfc_16_update_0_sm101_11559 = cpfc_16_generated_compute_unrolled_1(demosaic_diff_FIFO_buf68_lane_4_pack);
 
   hw_uint<16 > demosaic_diff_FIFO_buf68_lane_5_pack;
   set_at<0, 16, 16>(demosaic_diff_FIFO_buf68_lane_5_pack, demosaic_diff_FIFO_buf68_lane_5);
-  auto res_cpfc_16_update_0_sm98_10269 = cpfc_16_generated_compute_unrolled_1(demosaic_diff_FIFO_buf68_lane_5_pack);
+  auto res_cpfc_16_update_0_sm101_10557 = cpfc_16_generated_compute_unrolled_1(demosaic_diff_FIFO_buf68_lane_5_pack);
 
   hw_uint<16 > demosaic_diff_FIFO_buf68_lane_6_pack;
   set_at<0, 16, 16>(demosaic_diff_FIFO_buf68_lane_6_pack, demosaic_diff_FIFO_buf68_lane_6);
-  auto res_cpfc_16_update_0_sm98_9267 = cpfc_16_generated_compute_unrolled_1(demosaic_diff_FIFO_buf68_lane_6_pack);
+  auto res_cpfc_16_update_0_sm101_9555 = cpfc_16_generated_compute_unrolled_1(demosaic_diff_FIFO_buf68_lane_6_pack);
 
   hw_uint<16 > demosaic_diff_FIFO_buf68_lane_7_pack;
   set_at<0, 16, 16>(demosaic_diff_FIFO_buf68_lane_7_pack, demosaic_diff_FIFO_buf68_lane_7);
-  auto res_cpfc_16_update_0_sm98_8265 = cpfc_16_generated_compute_unrolled_1(demosaic_diff_FIFO_buf68_lane_7_pack);
+  auto res_cpfc_16_update_0_sm101_8553 = cpfc_16_generated_compute_unrolled_1(demosaic_diff_FIFO_buf68_lane_7_pack);
 
   hw_uint<16 > demosaic_diff_FIFO_buf68_lane_8_pack;
   set_at<0, 16, 16>(demosaic_diff_FIFO_buf68_lane_8_pack, demosaic_diff_FIFO_buf68_lane_8);
-  auto res_cpfc_16_update_0_sm98_7263 = cpfc_16_generated_compute_unrolled_1(demosaic_diff_FIFO_buf68_lane_8_pack);
+  auto res_cpfc_16_update_0_sm101_7551 = cpfc_16_generated_compute_unrolled_1(demosaic_diff_FIFO_buf68_lane_8_pack);
 
   hw_uint<16 > demosaic_diff_FIFO_buf68_lane_9_pack;
   set_at<0, 16, 16>(demosaic_diff_FIFO_buf68_lane_9_pack, demosaic_diff_FIFO_buf68_lane_9);
-  auto res_cpfc_16_update_0_sm98_6261 = cpfc_16_generated_compute_unrolled_1(demosaic_diff_FIFO_buf68_lane_9_pack);
+  auto res_cpfc_16_update_0_sm101_6549 = cpfc_16_generated_compute_unrolled_1(demosaic_diff_FIFO_buf68_lane_9_pack);
 
   hw_uint<16 > demosaic_diff_FIFO_buf68_lane_10_pack;
   set_at<0, 16, 16>(demosaic_diff_FIFO_buf68_lane_10_pack, demosaic_diff_FIFO_buf68_lane_10);
-  auto res_cpfc_16_update_0_sm98_5259 = cpfc_16_generated_compute_unrolled_1(demosaic_diff_FIFO_buf68_lane_10_pack);
+  auto res_cpfc_16_update_0_sm101_5547 = cpfc_16_generated_compute_unrolled_1(demosaic_diff_FIFO_buf68_lane_10_pack);
 
   hw_uint<16 > demosaic_diff_FIFO_buf68_lane_11_pack;
   set_at<0, 16, 16>(demosaic_diff_FIFO_buf68_lane_11_pack, demosaic_diff_FIFO_buf68_lane_11);
-  auto res_cpfc_16_update_0_sm98_4257 = cpfc_16_generated_compute_unrolled_1(demosaic_diff_FIFO_buf68_lane_11_pack);
+  auto res_cpfc_16_update_0_sm101_4545 = cpfc_16_generated_compute_unrolled_1(demosaic_diff_FIFO_buf68_lane_11_pack);
 
   hw_uint<16 > demosaic_diff_FIFO_buf68_lane_12_pack;
   set_at<0, 16, 16>(demosaic_diff_FIFO_buf68_lane_12_pack, demosaic_diff_FIFO_buf68_lane_12);
-  auto res_cpfc_16_update_0_sm98_3255 = cpfc_16_generated_compute_unrolled_1(demosaic_diff_FIFO_buf68_lane_12_pack);
+  auto res_cpfc_16_update_0_sm101_3543 = cpfc_16_generated_compute_unrolled_1(demosaic_diff_FIFO_buf68_lane_12_pack);
 
   hw_uint<16 > demosaic_diff_FIFO_buf68_lane_13_pack;
   set_at<0, 16, 16>(demosaic_diff_FIFO_buf68_lane_13_pack, demosaic_diff_FIFO_buf68_lane_13);
-  auto res_cpfc_16_update_0_sm98_2253 = cpfc_16_generated_compute_unrolled_1(demosaic_diff_FIFO_buf68_lane_13_pack);
+  auto res_cpfc_16_update_0_sm101_2541 = cpfc_16_generated_compute_unrolled_1(demosaic_diff_FIFO_buf68_lane_13_pack);
 
   hw_uint<16 > demosaic_diff_FIFO_buf68_lane_14_pack;
   set_at<0, 16, 16>(demosaic_diff_FIFO_buf68_lane_14_pack, demosaic_diff_FIFO_buf68_lane_14);
-  auto res_cpfc_16_update_0_sm98_1251 = cpfc_16_generated_compute_unrolled_1(demosaic_diff_FIFO_buf68_lane_14_pack);
+  auto res_cpfc_16_update_0_sm101_1539 = cpfc_16_generated_compute_unrolled_1(demosaic_diff_FIFO_buf68_lane_14_pack);
 
   hw_uint<16 > demosaic_diff_FIFO_buf68_lane_15_pack;
   set_at<0, 16, 16>(demosaic_diff_FIFO_buf68_lane_15_pack, demosaic_diff_FIFO_buf68_lane_15);
-  auto res_cpfc_16_update_0_sm98_0249 = cpfc_16_generated_compute_unrolled_1(demosaic_diff_FIFO_buf68_lane_15_pack);
-  hw_uint<256 > return_value1208;
-  set_at<0, 256, 16>(return_value1208, res_cpfc_16_update_0_sm98_15279);
-  set_at<16, 256, 16>(return_value1208, res_cpfc_16_update_0_sm98_14277);
-  set_at<32, 256, 16>(return_value1208, res_cpfc_16_update_0_sm98_13275);
-  set_at<48, 256, 16>(return_value1208, res_cpfc_16_update_0_sm98_12273);
-  set_at<64, 256, 16>(return_value1208, res_cpfc_16_update_0_sm98_11271);
-  set_at<80, 256, 16>(return_value1208, res_cpfc_16_update_0_sm98_10269);
-  set_at<96, 256, 16>(return_value1208, res_cpfc_16_update_0_sm98_9267);
-  set_at<112, 256, 16>(return_value1208, res_cpfc_16_update_0_sm98_8265);
-  set_at<128, 256, 16>(return_value1208, res_cpfc_16_update_0_sm98_7263);
-  set_at<144, 256, 16>(return_value1208, res_cpfc_16_update_0_sm98_6261);
-  set_at<160, 256, 16>(return_value1208, res_cpfc_16_update_0_sm98_5259);
-  set_at<176, 256, 16>(return_value1208, res_cpfc_16_update_0_sm98_4257);
-  set_at<192, 256, 16>(return_value1208, res_cpfc_16_update_0_sm98_3255);
-  set_at<208, 256, 16>(return_value1208, res_cpfc_16_update_0_sm98_2253);
-  set_at<224, 256, 16>(return_value1208, res_cpfc_16_update_0_sm98_1251);
-  set_at<240, 256, 16>(return_value1208, res_cpfc_16_update_0_sm98_0249);
-  return return_value1208;
+  auto res_cpfc_16_update_0_sm101_0537 = cpfc_16_generated_compute_unrolled_1(demosaic_diff_FIFO_buf68_lane_15_pack);
+  hw_uint<256 > return_value1214;
+  set_at<0, 256, 16>(return_value1214, res_cpfc_16_update_0_sm101_15567);
+  set_at<16, 256, 16>(return_value1214, res_cpfc_16_update_0_sm101_14565);
+  set_at<32, 256, 16>(return_value1214, res_cpfc_16_update_0_sm101_13563);
+  set_at<48, 256, 16>(return_value1214, res_cpfc_16_update_0_sm101_12561);
+  set_at<64, 256, 16>(return_value1214, res_cpfc_16_update_0_sm101_11559);
+  set_at<80, 256, 16>(return_value1214, res_cpfc_16_update_0_sm101_10557);
+  set_at<96, 256, 16>(return_value1214, res_cpfc_16_update_0_sm101_9555);
+  set_at<112, 256, 16>(return_value1214, res_cpfc_16_update_0_sm101_8553);
+  set_at<128, 256, 16>(return_value1214, res_cpfc_16_update_0_sm101_7551);
+  set_at<144, 256, 16>(return_value1214, res_cpfc_16_update_0_sm101_6549);
+  set_at<160, 256, 16>(return_value1214, res_cpfc_16_update_0_sm101_5547);
+  set_at<176, 256, 16>(return_value1214, res_cpfc_16_update_0_sm101_4545);
+  set_at<192, 256, 16>(return_value1214, res_cpfc_16_update_0_sm101_3543);
+  set_at<208, 256, 16>(return_value1214, res_cpfc_16_update_0_sm101_2541);
+  set_at<224, 256, 16>(return_value1214, res_cpfc_16_update_0_sm101_1539);
+  set_at<240, 256, 16>(return_value1214, res_cpfc_16_update_0_sm101_0537);
+  return return_value1214;
 
 }
 
-hw_uint<256> denoise_to_gp_732_ld77_cu1210(hw_uint<16*16>& denoise_to_gp_732) {
-  return denoise_to_gp_732;
-}
-
-hw_uint<256> demosaic_by_ld17_cu1212(hw_uint<16*16>& demosaic_by) {
+hw_uint<256> demosaic_by_ld17_cu1216(hw_uint<16*16>& demosaic_by) {
   return demosaic_by;
 }
 
-hw_uint<256> demosaicb_ld29_cu1214(hw_uint<16*16>& demosaicb) {
-  return demosaicb;
-}
-
-hw_uint<256> demosaic_bxb_ld13_cu1216(hw_uint<16*16>& demosaic_bxb) {
-  return demosaic_bxb;
-}
-
-hw_uint<256> demosaic_byb_ld21_cu1218(hw_uint<16*16>& demosaic_byb) {
-  return demosaic_byb;
-}
-
-hw_uint<256> denoise_ld33_cu1220(hw_uint<16*16>& denoise) {
+hw_uint<256> denoise_ld33_cu1218(hw_uint<16*16>& denoise) {
   return denoise;
 }
 
-hw_uint<256> denoiseb_ld37_cu1222(hw_uint<16*16>& denoiseb) {
+hw_uint<256> denoiseb_ld37_cu1220(hw_uint<16*16>& denoiseb) {
   return denoiseb;
 }
 
-hw_uint<256> denoiseb_to_gp_836_ld81_cu1224(hw_uint<16*16>& denoiseb_to_gp_836) {
-  return denoiseb_to_gp_836;
-}
-
-hw_uint<256> demosaic_diff_ld25_cu1226(hw_uint<16*16>& demosaic_diff) {
-  return demosaic_diff;
-}
-
-hw_uint<256> raw_ld41_cu1228(hw_uint<16*16>& raw) {
-  return raw;
-}
-
-hw_uint<256> demosaic_to_gp_64_ld49_cu1230(hw_uint<16*16>& demosaic_to_gp_64) {
-  return demosaic_to_gp_64;
-}
-
-hw_uint<256> demosaic_bx_to_gp_58_ld53_cu1232(hw_uint<16*16>& demosaic_bx_to_gp_58) {
-  return demosaic_bx_to_gp_58;
-}
-
-hw_uint<256> demosaic_to_gp_30_ld45_cu1234(hw_uint<16*16>& demosaic_to_gp_30) {
+hw_uint<256> demosaic_to_gp_30_ld45_cu1222(hw_uint<16*16>& demosaic_to_gp_30) {
   return demosaic_to_gp_30;
 }
 
-hw_uint<256> demosaic_by_to_gp_616_ld61_cu1236(hw_uint<16*16>& demosaic_by_to_gp_616) {
-  return demosaic_by_to_gp_616;
+hw_uint<256> demosaic_ld1_cu1224(hw_uint<16*16>& demosaic) {
+  return demosaic;
+}
+
+hw_uint<256> demosaic_ld5_cu1226(hw_uint<16*16>& demosaic) {
+  return demosaic;
+}
+
+hw_uint<256> demosaic_bx_ld9_cu1228(hw_uint<16*16>& demosaic_bx) {
+  return demosaic_bx;
+}
+
+hw_uint<256> demosaic_byb_ld21_cu1230(hw_uint<16*16>& demosaic_byb) {
+  return demosaic_byb;
+}
+
+hw_uint<256> raw_ld41_cu1232(hw_uint<16*16>& raw) {
+  return raw;
+}
+
+hw_uint<256> demosaic_to_gp_64_ld49_cu1234(hw_uint<16*16>& demosaic_to_gp_64) {
+  return demosaic_to_gp_64;
+}
+
+hw_uint<256> demosaic_bx_to_gp_58_ld53_cu1236(hw_uint<16*16>& demosaic_bx_to_gp_58) {
+  return demosaic_bx_to_gp_58;
 }
 
 hw_uint<256> demosaic_byb_to_gp_420_ld65_cu1238(hw_uint<16*16>& demosaic_byb_to_gp_420) {
@@ -2401,20 +2401,20 @@ hw_uint<256> demosaicb_to_gp_128_ld73_cu1242(hw_uint<16*16>& demosaicb_to_gp_128
   return demosaicb_to_gp_128;
 }
 
-hw_uint<256> demosaic_bx_ld9_cu1244(hw_uint<16*16>& demosaic_bx) {
-  return demosaic_bx;
+hw_uint<256> denoiseb_to_gp_836_ld81_cu1244(hw_uint<16*16>& denoiseb_to_gp_836) {
+  return denoiseb_to_gp_836;
 }
 
-hw_uint<256> demosaic_ld1_cu1246(hw_uint<16*16>& demosaic) {
-  return demosaic;
-}
-
-hw_uint<256> demosaic_ld5_cu1248(hw_uint<16*16>& demosaic) {
-  return demosaic;
-}
-
-hw_uint<256> demosaic_bxb_to_gp_212_ld57_cu1250(hw_uint<16*16>& demosaic_bxb_to_gp_212) {
+hw_uint<256> demosaic_bxb_to_gp_212_ld57_cu1246(hw_uint<16*16>& demosaic_bxb_to_gp_212) {
   return demosaic_bxb_to_gp_212;
+}
+
+hw_uint<256> demosaic_by_to_gp_616_ld61_cu1248(hw_uint<16*16>& demosaic_by_to_gp_616) {
+  return demosaic_by_to_gp_616;
+}
+
+hw_uint<256> denoise_to_gp_732_ld77_cu1250(hw_uint<16*16>& denoise_to_gp_732) {
+  return denoise_to_gp_732;
 }
 
 hw_uint<256> raw_to_gp_940_ld85_cu1252(hw_uint<16*16>& raw_to_gp_940) {

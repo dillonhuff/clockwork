@@ -22,29 +22,29 @@ int main(int argc, char **argv) {
   std::cout << "num_epochs = " << num_epochs << std::endl;
 
   size_t total_size_bytes = 0;
-  const int img_1_merged828_read_pipe0_DATA_SIZE = num_epochs*1211840;
-  const int img_1_merged828_read_pipe0_BYTES_PER_PIXEL = 16 / 8;
-  size_t img_1_merged828_read_pipe0_size_bytes = img_1_merged828_read_pipe0_BYTES_PER_PIXEL * img_1_merged828_read_pipe0_DATA_SIZE;
+  const int img_1_merged816_read_pipe0_DATA_SIZE = num_epochs*1211840;
+  const int img_1_merged816_read_pipe0_BYTES_PER_PIXEL = 16 / 8;
+  size_t img_1_merged816_read_pipe0_size_bytes = img_1_merged816_read_pipe0_BYTES_PER_PIXEL * img_1_merged816_read_pipe0_DATA_SIZE;
 
-  total_size_bytes += img_1_merged828_read_pipe0_size_bytes;
-  const int sbl_d_32_1_merged837_write_pipe0_DATA_SIZE = num_epochs*1175040;
-  const int sbl_d_32_1_merged837_write_pipe0_BYTES_PER_PIXEL = 16 / 8;
-  size_t sbl_d_32_1_merged837_write_pipe0_size_bytes = sbl_d_32_1_merged837_write_pipe0_BYTES_PER_PIXEL * sbl_d_32_1_merged837_write_pipe0_DATA_SIZE;
+  total_size_bytes += img_1_merged816_read_pipe0_size_bytes;
+  const int sbl_d_32_1_merged825_write_pipe0_DATA_SIZE = num_epochs*1175040;
+  const int sbl_d_32_1_merged825_write_pipe0_BYTES_PER_PIXEL = 16 / 8;
+  size_t sbl_d_32_1_merged825_write_pipe0_size_bytes = sbl_d_32_1_merged825_write_pipe0_BYTES_PER_PIXEL * sbl_d_32_1_merged825_write_pipe0_DATA_SIZE;
 
-  total_size_bytes += sbl_d_32_1_merged837_write_pipe0_size_bytes;
+  total_size_bytes += sbl_d_32_1_merged825_write_pipe0_size_bytes;
 
   cl_int err;
   cl::Context context;
   cl::Kernel krnl_vector_add;
   cl::CommandQueue q;
 
-  std::vector<uint8_t, aligned_allocator<uint8_t> > img_1_merged828_read_pipe0(img_1_merged828_read_pipe0_size_bytes);
-  std::vector<uint8_t, aligned_allocator<uint8_t> > sbl_d_32_1_merged837_write_pipe0(sbl_d_32_1_merged837_write_pipe0_size_bytes);
+  std::vector<uint8_t, aligned_allocator<uint8_t> > img_1_merged816_read_pipe0(img_1_merged816_read_pipe0_size_bytes);
+  std::vector<uint8_t, aligned_allocator<uint8_t> > sbl_d_32_1_merged825_write_pipe0(sbl_d_32_1_merged825_write_pipe0_size_bytes);
 
   // TODO: POPULATE BUFFERS FOR EACH PIPELINE
 #ifdef __POPULATE_HOST_INPUTS__
-  std::ofstream input_img_1_merged828_read("img_1_merged828_read.csv");
-  for (int i = 0; i < img_1_merged828_read_pipe0_DATA_SIZE; i++) {
+  std::ofstream input_img_1_merged816_read("img_1_merged816_read.csv");
+  for (int i = 0; i < img_1_merged816_read_pipe0_DATA_SIZE; i++) {
 #ifdef __FLOAT_OUTPUT__
     float  val = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
 #else // __FLOAT_OUTPUT__
@@ -52,21 +52,21 @@ int main(int argc, char **argv) {
 #endif // __FLOAT_OUTPUT__
 
 #ifdef __FLOAT_OUTPUT__
-    input_img_1_merged828_read << val << std::endl;
+    input_img_1_merged816_read << val << std::endl;
 #else // __FLOAT_OUTPUT__
-    input_img_1_merged828_read << val << std::endl;
+    input_img_1_merged816_read << val << std::endl;
 #endif // __FLOAT_OUTPUT__
 
 #ifdef __FLOAT_OUTPUT__
-    ((uint16_t*) (img_1_merged828_read_pipe0.data()))[i] = bitcast<uint16_t, float>(val);
+    ((uint16_t*) (img_1_merged816_read_pipe0.data()))[i] = bitcast<uint16_t, float>(val);
 #else // __FLOAT_OUTPUT__
-    ((uint16_t*) (img_1_merged828_read_pipe0.data()))[i] = val;
+    ((uint16_t*) (img_1_merged816_read_pipe0.data()))[i] = val;
 #endif // __FLOAT_OUTPUT__
   }
 
-  input_img_1_merged828_read.close();
-  for (int i = 0; i < sbl_d_32_1_merged837_write_pipe0_DATA_SIZE; i++) {
-    ((uint16_t*) (sbl_d_32_1_merged837_write_pipe0.data()))[i] = 0;
+  input_img_1_merged816_read.close();
+  for (int i = 0; i < sbl_d_32_1_merged825_write_pipe0_DATA_SIZE; i++) {
+    ((uint16_t*) (sbl_d_32_1_merged825_write_pipe0.data()))[i] = 0;
   }
 
 #endif // __POPULATE_HOST_INPUTS__
@@ -99,17 +99,17 @@ int main(int argc, char **argv) {
     exit(EXIT_FAILURE);
   }
 
-  OCL_CHECK(err, cl::Buffer img_1_merged828_read_pipe0_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_WRITE_ONLY, img_1_merged828_read_pipe0_size_bytes, img_1_merged828_read_pipe0.data(), &err));
-  OCL_CHECK(err, err = krnl_vector_add.setArg(0, img_1_merged828_read_pipe0_ocl_buf));
+  OCL_CHECK(err, cl::Buffer img_1_merged816_read_pipe0_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_WRITE_ONLY, img_1_merged816_read_pipe0_size_bytes, img_1_merged816_read_pipe0.data(), &err));
+  OCL_CHECK(err, err = krnl_vector_add.setArg(0, img_1_merged816_read_pipe0_ocl_buf));
 
-  OCL_CHECK(err, cl::Buffer sbl_d_32_1_merged837_write_pipe0_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_READ_ONLY, sbl_d_32_1_merged837_write_pipe0_size_bytes, sbl_d_32_1_merged837_write_pipe0.data(), &err));
-  OCL_CHECK(err, err = krnl_vector_add.setArg(1, sbl_d_32_1_merged837_write_pipe0_ocl_buf));
+  OCL_CHECK(err, cl::Buffer sbl_d_32_1_merged825_write_pipe0_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_READ_ONLY, sbl_d_32_1_merged825_write_pipe0_size_bytes, sbl_d_32_1_merged825_write_pipe0.data(), &err));
+  OCL_CHECK(err, err = krnl_vector_add.setArg(1, sbl_d_32_1_merged825_write_pipe0_ocl_buf));
 
 
   OCL_CHECK(err, err = krnl_vector_add.setArg(2, num_epochs));
 
   std::cout << "Migrating memory" << std::endl;
-  OCL_CHECK(err, err = q.enqueueMigrateMemObjects({img_1_merged828_read_pipe0_ocl_buf}, 0));
+  OCL_CHECK(err, err = q.enqueueMigrateMemObjects({img_1_merged816_read_pipe0_ocl_buf}, 0));
 
   unsigned long start, end, nsduration;
   cl::Event event;
@@ -122,7 +122,7 @@ int main(int argc, char **argv) {
   start = OCL_CHECK(err,
   event.getProfilingInfo<CL_PROFILING_COMMAND_START>(&err));
   nsduration = end - start;
-  OCL_CHECK(err, err = q.enqueueMigrateMemObjects({sbl_d_32_1_merged837_write_pipe0_ocl_buf}, CL_MIGRATE_MEM_OBJECT_HOST));
+  OCL_CHECK(err, err = q.enqueueMigrateMemObjects({sbl_d_32_1_merged825_write_pipe0_ocl_buf}, CL_MIGRATE_MEM_OBJECT_HOST));
 
   q.finish();
 
@@ -136,9 +136,9 @@ int main(int argc, char **argv) {
   std::cout << "GB / sec    = " << gbpersec << std::endl;
   printf("Execution time = %f (sec) \n", dsduration);
 {
-    std::ofstream regression_result("sbl_d_32_1_merged837_write_pipe0_accel_result.csv");
-    for (int i = 0; i < sbl_d_32_1_merged837_write_pipe0_DATA_SIZE; i++) {
-      regression_result << ((uint16_t*) (sbl_d_32_1_merged837_write_pipe0.data()))[i] << std::endl;
+    std::ofstream regression_result("sbl_d_32_1_merged825_write_pipe0_accel_result.csv");
+    for (int i = 0; i < sbl_d_32_1_merged825_write_pipe0_DATA_SIZE; i++) {
+      regression_result << ((uint16_t*) (sbl_d_32_1_merged825_write_pipe0.data()))[i] << std::endl;
     }
 }
 

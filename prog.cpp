@@ -8720,6 +8720,8 @@ void generate_app_code(
         dag.prg.whole_iteration_domain());
   cout << "Sched: " << str(global_sched) << endl;
 
+  assert(no_violated_dependencies(global_sched, valid_deps));
+
   auto sms = get_maps(global_sched);
   map<string, isl_map*> mps;
   for (auto m : sms) {
@@ -8728,7 +8730,6 @@ void generate_app_code(
 
   auto buffers = build_buffers(dag.prg, global_sched);
 
-  //assert(false);
 
   //auto global_sched = dag.prg.optimized_codegen();
 
@@ -8805,7 +8806,8 @@ void generate_app_code(
     done.insert(buf);
   }
 
-  set_channel_depths_to_constant(32, dag);
+  set_channel_depths_to_constant(500, dag);
+  //set_channel_depths_to_constant(32, dag);
   //set_channel_depths_to_constant(1, dag);
   //set_channel_depths_to_with_kernel_depth(500, dag);
   //set_channel_depths_ilp(500, dag);
@@ -8845,7 +8847,6 @@ void generate_app_code(
     }
 
   }
-  //assert(false);
 
   for (auto& gp : dag.fusion_group_progs) {
     for (auto& buf : gp.second.boundary_buffers()) {
@@ -9016,8 +9017,95 @@ vector<int> read_permutation(const std::string& buf, prog& gp) {
   return level_permutation;
 }
 
+int get_start_pos(const std::set<string>& group, prog& prg) {
+  int start_pos = INT_MAX;
+  for (auto g : group) {
+    int pos = -1;
+    for (int i = 0; i < (int) prg.root->children.size(); i++) {
+      if (prg.root->children.at(i)->name == g) {
+        pos = i;
+        break;
+      }
+    }
+
+    if (pos < 0) {
+      prg.pretty_print();
+      cout << "Error: No start pos for " << g << endl;
+    }
+    assert(pos >= 0);
+    if (pos < start_pos) {
+      start_pos = pos;
+    }
+  }
+  return start_pos;
+}
+
+int position(const std::string& kernel, prog& prg) {
+  for (int i = 0; i < (int) prg.root->children.size(); i++) {
+    if (prg.root->children.at(i)->name == kernel) {
+      return i;
+    }
+  }
+  assert(false);
+  return -1;
+}
+
+vector<string> sort_group(const std::set<string>& group, prog& prg) {
+  vector<string> sorted;
+  vector<pair<string, int> > positions;
+  for (auto g : group) {
+    positions.push_back({g, position(g, prg)});
+  }
+
+  sort_lt(positions, [](const pair<string, int>& e) { return e.second; });
+
+  for (auto p : positions) {
+    sorted.push_back(p.first);
+  }
+  return sorted;
+}
+
+void make_groups_contiguous(const std::map<std::string, std::set<std::string> >& fusion_groups, prog& prg) {
+  for (auto gp : fusion_groups) {
+    cout << "Getting start pos" << endl;
+    int start_pos = get_start_pos(gp.second, prg);
+    //cout << "Sorting kernels" << endl;
+    //vector<string> kernels = sort_group(gp.second, prg);
+    //cout << "Adding sorted kernels" << endl;
+
+    vector<op*> new_children;
+    for (int i = 0; i < start_pos; i++) {
+      new_children.push_back(prg.root->children.at(i));
+    }
+
+    vector<op*> to_add;
+    for (int i = start_pos; i < (int) prg.root->children.size(); i++) {
+      op* current = prg.root->children.at(i);
+      if (elem(current->name, gp.second)) {
+        new_children.push_back(current);
+      } else {
+        to_add.push_back(current);
+      }
+    }
+
+    for (auto op : to_add) {
+      new_children.push_back(op);
+    }
+
+    assert(new_children.size() == prg.root->children.size());
+    prg.root->children = new_children;
+  }
+}
+
 std::map<std::string, std::set<std::string> >
 insert_inter_group_buffers(const std::map<std::string, std::set<std::string> >& fusion_groups, prog& prg) {
+
+  cout << "Making contiguous" << endl;
+  make_groups_contiguous(fusion_groups, prg);
+  cout << "Done contiguous" << endl;
+
+  assert(groups_are_contiguous(fusion_groups, prg));
+
   map<string, string> group_starts;
   map<string, string> group_ends;
   for (auto gp : fusion_groups) {
@@ -9247,19 +9335,66 @@ void merge_into(
 std::set<string> parents(const std::string& to_merge, map<string, std::set<string> >& fusion_groups, prog& prg) {
   std::set<string> parent_set;
 
-  auto read = buffers_read(prg.find_loop(pick(fusion_groups.at(to_merge))));
+  auto read = buffers_read(to_merge, fusion_groups, prg);
   for (auto fg : fusion_groups) {
-    for (auto parent : fg.second) {
-      auto written = buffers_written(prg.find_loop(parent));
-      if (intersection(read, written).size() > 0) {
-        parent_set.insert(fg.first);
-      }
+    auto written = buffers_written(fg.first, fusion_groups, prg);
+    if (intersection(read, written).size() > 0) {
+      parent_set.insert(fg.first);
+    }
+  }
+
+  return parent_set;
+}
+
+std::set<string> buffers_written(const std::string& to_merge, map<string, std::set<string> >& fusion_groups, prog& prg) {
+  std::set<string> written;
+  for (auto k : map_find(to_merge, fusion_groups)) {
+    for (auto b : buffers_written(prg.find_loop(k))) {
+      written.insert(b);
+    }
+  }
+  return written;
+}
+
+std::set<string> buffers_read(const std::string& to_merge, map<string, std::set<string> >& fusion_groups, prog& prg) {
+  std::set<string> read;
+  for (auto k : map_find(to_merge, fusion_groups)) {
+    for (auto b : buffers_read(prg.find_loop(k))) {
+      read.insert(b);
+    }
+  }
+  return read;
+}
+
+std::set<string> children(const std::string& kernel, prog& prg) {
+  std::set<string> parent_set;
+
+  auto written = buffers_written(prg.find_loop(kernel));
+  for (auto k : get_kernels(prg)) {
+    auto read = buffers_read(prg.find_loop(k));
+    if (intersection(read, written).size() > 0) {
+      parent_set.insert(k);
+    }
+  }
+
+  return parent_set;
+}
+
+std::set<string> children(const std::string& to_merge, map<string, std::set<string> >& fusion_groups, prog& prg) {
+  std::set<string> parent_set;
+
+  auto written = buffers_written(to_merge, fusion_groups, prg);
+  for (auto fg : fusion_groups) {
+    auto read = buffers_read(fg.first, fusion_groups, prg);
+    if (intersection(read, written).size() > 0) {
+      parent_set.insert(fg.first);
     }
   }
 
   return parent_set;
 
 }
+
 string parent_group(const std::string& to_merge, map<string, std::set<string> >& fusion_groups, prog& prg) {
   std::set<string> parent_set = parents(to_merge, fusion_groups, prg);
 
@@ -9311,6 +9446,10 @@ map<std::string, std::set<string> > one_stage_per_group(prog& prg) {
   }
 
   return fusion_groups;
+}
+
+bool no_violated_dependencies(umap* schedule, umap* deps) {
+  return sw_schedule_respects_deps(schedule, deps);
 }
 
 bool sw_schedule_respects_deps(umap* schedule, umap* deps) {
@@ -9439,3 +9578,37 @@ std::set<string> app_dag::inter_group_channels() {
   }
   return to_size;
 }
+
+bool group_is_contiguous(const std::set<string>& fusion_groups, prog& prg) {
+  int start_pos = INT_MAX;
+  int end_pos = INT_MIN;
+  for (auto g : fusion_groups) {
+    int pos = -1;
+    for (int i = 0; i < (int) prg.root->children.size(); i++) {
+      if (prg.root->children.at(i)->name == g) {
+        pos = i;
+        break;
+      }
+    }
+    assert(pos >= 0);
+    if (pos < start_pos) {
+      start_pos = pos;
+    }
+    if (pos > end_pos) {
+      end_pos = pos;
+    }
+  }
+
+  assert(end_pos >= start_pos);
+  return (end_pos - start_pos + 1) == (int) fusion_groups.size();
+}
+
+bool groups_are_contiguous(const map<string, std::set<string> >& fusion_groups, prog& prg) {
+  for (auto gp : fusion_groups) {
+    if (!group_is_contiguous(gp.second, prg)) {
+      return false;
+    }
+  }
+  return true;
+}
+

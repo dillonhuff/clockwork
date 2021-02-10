@@ -7,8 +7,8 @@
 
 int main(int argc, char **argv) {
   bitmap_image input("./images/taxi_slice_256.bmp");
-  HWStream<hw_uint<512> > in_1_merged3333_read_channel;
-  HWStream<hw_uint<512> > jac_d_32_1_merged3381_write_channel;
+  HWStream<hw_uint<512> > in_1_merged3317_read_channel;
+  HWStream<hw_uint<512> > jac_d_32_1_merged3365_write_channel;
   // In lanes = 32
   for (int r = 0; r < 1110; r++) {
     for (int cl = 0; cl < 1568 / 32; cl++) {
@@ -365,14 +365,14 @@ int main(int argc, char **argv) {
         set_at<496, 512, 16>(packed, 0);
       }
       }
-        in_1_merged3333_read_channel.write(packed);
+        in_1_merged3317_read_channel.write(packed);
     }
   }
-  jac_d_32_opt(in_1_merged3333_read_channel, jac_d_32_1_merged3381_write_channel);
+  jac_d_32_opt(in_1_merged3317_read_channel, jac_d_32_1_merged3365_write_channel);
   bitmap_image output(1088, 1080);
   for (int r = 0; r < 1080; r++) {
     for (int cl = 0; cl < 1088 / 32; cl++) {
-      auto packed_val = jac_d_32_1_merged3381_write_channel.read();
+      auto packed_val = jac_d_32_1_merged3365_write_channel.read();
       hw_uint<16> packed_val_lane_0 = packed_val.extract<0, 15>();
       hw_uint<16> packed_val_lane_1 = packed_val.extract<16, 31>();
       hw_uint<16> packed_val_lane_2 = packed_val.extract<32, 47>();

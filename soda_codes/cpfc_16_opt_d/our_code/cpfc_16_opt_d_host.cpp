@@ -22,29 +22,29 @@ int main(int argc, char **argv) {
   std::cout << "num_epochs = " << num_epochs << std::endl;
 
   size_t total_size_bytes = 0;
-  const int cpfc_16_1_merged1209_write_pipe0_DATA_SIZE = num_epochs*1175040;
-  const int cpfc_16_1_merged1209_write_pipe0_BYTES_PER_PIXEL = 16 / 8;
-  size_t cpfc_16_1_merged1209_write_pipe0_size_bytes = cpfc_16_1_merged1209_write_pipe0_BYTES_PER_PIXEL * cpfc_16_1_merged1209_write_pipe0_DATA_SIZE;
+  const int cpfc_16_1_merged1215_write_pipe0_DATA_SIZE = num_epochs*1175040;
+  const int cpfc_16_1_merged1215_write_pipe0_BYTES_PER_PIXEL = 16 / 8;
+  size_t cpfc_16_1_merged1215_write_pipe0_size_bytes = cpfc_16_1_merged1215_write_pipe0_BYTES_PER_PIXEL * cpfc_16_1_merged1215_write_pipe0_DATA_SIZE;
 
-  total_size_bytes += cpfc_16_1_merged1209_write_pipe0_size_bytes;
-  const int raw_1_merged1179_read_pipe0_DATA_SIZE = num_epochs*1235968;
-  const int raw_1_merged1179_read_pipe0_BYTES_PER_PIXEL = 16 / 8;
-  size_t raw_1_merged1179_read_pipe0_size_bytes = raw_1_merged1179_read_pipe0_BYTES_PER_PIXEL * raw_1_merged1179_read_pipe0_DATA_SIZE;
+  total_size_bytes += cpfc_16_1_merged1215_write_pipe0_size_bytes;
+  const int raw_1_merged1185_read_pipe0_DATA_SIZE = num_epochs*1235968;
+  const int raw_1_merged1185_read_pipe0_BYTES_PER_PIXEL = 16 / 8;
+  size_t raw_1_merged1185_read_pipe0_size_bytes = raw_1_merged1185_read_pipe0_BYTES_PER_PIXEL * raw_1_merged1185_read_pipe0_DATA_SIZE;
 
-  total_size_bytes += raw_1_merged1179_read_pipe0_size_bytes;
+  total_size_bytes += raw_1_merged1185_read_pipe0_size_bytes;
 
   cl_int err;
   cl::Context context;
   cl::Kernel krnl_vector_add;
   cl::CommandQueue q;
 
-  std::vector<uint8_t, aligned_allocator<uint8_t> > cpfc_16_1_merged1209_write_pipe0(cpfc_16_1_merged1209_write_pipe0_size_bytes);
-  std::vector<uint8_t, aligned_allocator<uint8_t> > raw_1_merged1179_read_pipe0(raw_1_merged1179_read_pipe0_size_bytes);
+  std::vector<uint8_t, aligned_allocator<uint8_t> > cpfc_16_1_merged1215_write_pipe0(cpfc_16_1_merged1215_write_pipe0_size_bytes);
+  std::vector<uint8_t, aligned_allocator<uint8_t> > raw_1_merged1185_read_pipe0(raw_1_merged1185_read_pipe0_size_bytes);
 
   // TODO: POPULATE BUFFERS FOR EACH PIPELINE
 #ifdef __POPULATE_HOST_INPUTS__
-  std::ofstream input_raw_1_merged1179_read("raw_1_merged1179_read.csv");
-  for (int i = 0; i < raw_1_merged1179_read_pipe0_DATA_SIZE; i++) {
+  std::ofstream input_raw_1_merged1185_read("raw_1_merged1185_read.csv");
+  for (int i = 0; i < raw_1_merged1185_read_pipe0_DATA_SIZE; i++) {
 #ifdef __FLOAT_OUTPUT__
     float  val = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
 #else // __FLOAT_OUTPUT__
@@ -52,21 +52,21 @@ int main(int argc, char **argv) {
 #endif // __FLOAT_OUTPUT__
 
 #ifdef __FLOAT_OUTPUT__
-    input_raw_1_merged1179_read << val << std::endl;
+    input_raw_1_merged1185_read << val << std::endl;
 #else // __FLOAT_OUTPUT__
-    input_raw_1_merged1179_read << val << std::endl;
+    input_raw_1_merged1185_read << val << std::endl;
 #endif // __FLOAT_OUTPUT__
 
 #ifdef __FLOAT_OUTPUT__
-    ((uint16_t*) (raw_1_merged1179_read_pipe0.data()))[i] = bitcast<uint16_t, float>(val);
+    ((uint16_t*) (raw_1_merged1185_read_pipe0.data()))[i] = bitcast<uint16_t, float>(val);
 #else // __FLOAT_OUTPUT__
-    ((uint16_t*) (raw_1_merged1179_read_pipe0.data()))[i] = val;
+    ((uint16_t*) (raw_1_merged1185_read_pipe0.data()))[i] = val;
 #endif // __FLOAT_OUTPUT__
   }
 
-  input_raw_1_merged1179_read.close();
-  for (int i = 0; i < cpfc_16_1_merged1209_write_pipe0_DATA_SIZE; i++) {
-    ((uint16_t*) (cpfc_16_1_merged1209_write_pipe0.data()))[i] = 0;
+  input_raw_1_merged1185_read.close();
+  for (int i = 0; i < cpfc_16_1_merged1215_write_pipe0_DATA_SIZE; i++) {
+    ((uint16_t*) (cpfc_16_1_merged1215_write_pipe0.data()))[i] = 0;
   }
 
 #endif // __POPULATE_HOST_INPUTS__
@@ -99,17 +99,17 @@ int main(int argc, char **argv) {
     exit(EXIT_FAILURE);
   }
 
-  OCL_CHECK(err, cl::Buffer raw_1_merged1179_read_pipe0_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_WRITE_ONLY, raw_1_merged1179_read_pipe0_size_bytes, raw_1_merged1179_read_pipe0.data(), &err));
-  OCL_CHECK(err, err = krnl_vector_add.setArg(0, raw_1_merged1179_read_pipe0_ocl_buf));
+  OCL_CHECK(err, cl::Buffer raw_1_merged1185_read_pipe0_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_WRITE_ONLY, raw_1_merged1185_read_pipe0_size_bytes, raw_1_merged1185_read_pipe0.data(), &err));
+  OCL_CHECK(err, err = krnl_vector_add.setArg(0, raw_1_merged1185_read_pipe0_ocl_buf));
 
-  OCL_CHECK(err, cl::Buffer cpfc_16_1_merged1209_write_pipe0_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_READ_ONLY, cpfc_16_1_merged1209_write_pipe0_size_bytes, cpfc_16_1_merged1209_write_pipe0.data(), &err));
-  OCL_CHECK(err, err = krnl_vector_add.setArg(1, cpfc_16_1_merged1209_write_pipe0_ocl_buf));
+  OCL_CHECK(err, cl::Buffer cpfc_16_1_merged1215_write_pipe0_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_READ_ONLY, cpfc_16_1_merged1215_write_pipe0_size_bytes, cpfc_16_1_merged1215_write_pipe0.data(), &err));
+  OCL_CHECK(err, err = krnl_vector_add.setArg(1, cpfc_16_1_merged1215_write_pipe0_ocl_buf));
 
 
   OCL_CHECK(err, err = krnl_vector_add.setArg(2, num_epochs));
 
   std::cout << "Migrating memory" << std::endl;
-  OCL_CHECK(err, err = q.enqueueMigrateMemObjects({raw_1_merged1179_read_pipe0_ocl_buf}, 0));
+  OCL_CHECK(err, err = q.enqueueMigrateMemObjects({raw_1_merged1185_read_pipe0_ocl_buf}, 0));
 
   unsigned long start, end, nsduration;
   cl::Event event;
@@ -122,7 +122,7 @@ int main(int argc, char **argv) {
   start = OCL_CHECK(err,
   event.getProfilingInfo<CL_PROFILING_COMMAND_START>(&err));
   nsduration = end - start;
-  OCL_CHECK(err, err = q.enqueueMigrateMemObjects({cpfc_16_1_merged1209_write_pipe0_ocl_buf}, CL_MIGRATE_MEM_OBJECT_HOST));
+  OCL_CHECK(err, err = q.enqueueMigrateMemObjects({cpfc_16_1_merged1215_write_pipe0_ocl_buf}, CL_MIGRATE_MEM_OBJECT_HOST));
 
   q.finish();
 
@@ -136,9 +136,9 @@ int main(int argc, char **argv) {
   std::cout << "GB / sec    = " << gbpersec << std::endl;
   printf("Execution time = %f (sec) \n", dsduration);
 {
-    std::ofstream regression_result("cpfc_16_1_merged1209_write_pipe0_accel_result.csv");
-    for (int i = 0; i < cpfc_16_1_merged1209_write_pipe0_DATA_SIZE; i++) {
-      regression_result << ((uint16_t*) (cpfc_16_1_merged1209_write_pipe0.data()))[i] << std::endl;
+    std::ofstream regression_result("cpfc_16_1_merged1215_write_pipe0_accel_result.csv");
+    for (int i = 0; i < cpfc_16_1_merged1215_write_pipe0_DATA_SIZE; i++) {
+      regression_result << ((uint16_t*) (cpfc_16_1_merged1215_write_pipe0.data()))[i] << std::endl;
     }
 }
 
