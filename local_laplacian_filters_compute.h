@@ -128,6 +128,15 @@ hw_uint<32> llf_to_color_float_no_scales(
   return to_bits(res);
 }
 
+hw_uint<32> llf_rescale_gray_float(
+    const hw_uint<32>& scales,
+    const hw_uint<32>& gray) {
+  float gray_f = to_float(gray);
+  float scales_f = to_float(scales);
+  float res = (scales_f * gray_f);
+  return to_bits(res);
+}
+
 hw_uint<32> llf_to_color_float(const hw_uint<32>& scales,
     const hw_uint<32>& original,
     const hw_uint<32>& gray) {
@@ -141,9 +150,6 @@ hw_uint<32> llf_to_color_float(const hw_uint<32>& scales,
   float eps = 0.01f;
   float res = (scales_f * (original_f + eps)) / (gray_f + eps);
   return to_bits(res);
-
-  //return to_bits(to_float(scales) * ((to_float(original) + eps) / (to_float(gray) + eps)));
-  //return original;
 }
 
 
