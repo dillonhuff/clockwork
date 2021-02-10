@@ -20203,7 +20203,78 @@ void initial_soda_comparison() {
   blur_static_dynamic_comparison();
 }
 
+void llf_init() {
+  prog prg = llf_float();
+  prg.name = "llf_ospg";
+
+  auto fusion_groups = one_stage_per_group(prg);
+  app_dag dag = partition_application(fusion_groups, prg);
+
+  CodegenOptions options;
+  options = CodegenOptions();
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  generate_app_code(options, dag);
+
+  move_to_benchmarks_folder(prg.name);
+  assert(false);
+}
+
+void large_pyramid_blend_pointwise_fusion() {
+  prog prg("pyrblnd_pwf");
+  prg.compute_unit_file = "local_laplacian_filters_compute.h";
+  prg.add_input("in");
+  prg.add_output("out");
+
+  cpy("in_on_chip", "in", 2, prg);
+
+  const int num_pyramid_levels = 4;
+  vector<string> lps = laplacian_pyramid("in_on_chip", num_pyramid_levels, prg);
+
+  string reconstructed = reconstruct_gaussian(lps, prg);
+  cpy("out", reconstructed, 2, prg);
+
+  infer_bounds("out", {2048, 2048}, prg);
+
+  prg.pretty_print();
+  prg.sanity_check();
+
+  unroll_reduce_loops(prg);
+  merge_basic_block_ops(prg);
+  normalize_bounds(prg);
+  normalize_address_offsets(prg);
+
+  prg.pretty_print();
+  prg.sanity_check();
+
+  auto fusion_groups = fuse_pointwise_stages(prg);
+
+  cout << "# of kernels: " << get_kernels(prg).size() << endl;
+  cout << "# of groups : " << fusion_groups.size() << endl;
+  //assert(false);
+
+  app_dag dag = partition_application(fusion_groups, prg);
+
+  CodegenOptions options;
+  //all_unbanked(prg, ostart_pos ptions);
+  //options.inner_bank_offset_mode =
+    //INNER_BANK_OFFSET_MULTILINEAR;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  generate_app_code(options, dag);
+
+  generate_regression_testbench(dag.prg);
+
+
+  move_to_benchmarks_folder(dag.prg.name);
+  assert(false);
+}
+
+void multi_rate_dynamic_apps() {
+  large_pyramid_blend_pointwise_fusion();
+  llf_init();
+}
+
 void application_tests() {
+  multi_rate_dynamic_apps();
   initial_soda_comparison();
 
   histogram_test();
@@ -21226,6 +21297,12 @@ prog stencil_chain(const std::string& name) {
 }
 
 void dhuff_playground() {
+  {
+    prog prg = harris();
+    int num_buffers = all_buffers(prg).size();
+    cout << "# of buffers: " << num_buffers << endl;
+    assert(false);
+  }
   {
     prog prg = demosaic_unrolled();
     prg.pretty_print();
