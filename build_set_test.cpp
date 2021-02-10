@@ -20340,6 +20340,25 @@ void large_pyramid_blend_pointwise_fusion() {
   assert(false);
 }
 
+void grayscale_llf_static() {
+  prog prg = llf_grayscale_float();
+  prg.name = prg.name + "_st";
+  prg.sanity_check();
+
+  auto fusion_groups = one_stage_per_group(prg);
+  app_dag dag = partition_application(fusion_groups, prg);
+
+  CodegenOptions options;
+  options = CodegenOptions();
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+
+  generate_optimized_code(options, prg);
+
+  move_to_benchmarks_folder(prg.name);
+
+  assert(false);
+}
+
 void grayscale_llf_dynamic() {
   prog prg = llf_grayscale_float();
   prg.sanity_check();
@@ -20358,6 +20377,7 @@ void grayscale_llf_dynamic() {
 }
 
 void multi_rate_dynamic_apps() {
+  grayscale_llf_static();
   grayscale_llf_dynamic();
   large_pyramid_blend_pointwise_fusion();
   llf_init();
@@ -20370,8 +20390,6 @@ void application_tests() {
   histogram_test();
   histogram1d_test();
   iccad_tests();
-
-
 
   gpu_codegen_test();
 
