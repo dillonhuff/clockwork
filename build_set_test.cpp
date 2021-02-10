@@ -20350,6 +20350,7 @@ void grayscale_llf_static() {
 
   CodegenOptions options;
   options = CodegenOptions();
+  options.scheduling_algorithm = SCHEDULE_ALGORITHM_CW;
   options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
 
   generate_optimized_code(options, prg);
