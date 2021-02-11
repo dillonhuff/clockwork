@@ -14269,7 +14269,6 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   //TODO:has issue  with multiple input
   //test_apps.push_back(demosaic_complex());
   //
- // test_apps.push_back(resnet_simple());
  // test_apps.push_back(counter());
  // test_apps.push_back(demosaic_unrolled());
  // test_apps.push_back(conv_3_3());
@@ -14288,6 +14287,7 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   //test_apps.push_back(resnet88());
   test_apps.push_back(resnet88_chain());
   //
+ // test_apps.push_back(resnet_simple());
   //test_apps.push_back(resnet_coarse_pipeline_loop());
 
   //coarse grained pipeline
