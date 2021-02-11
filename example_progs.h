@@ -37,6 +37,7 @@ prog histogram();
 prog mobilenet();
 prog mobilenet_small();
 prog three_level_memory();
+prog three_level_pond();
 prog resnet_unrolled();
 prog resnet88();
 prog resnet88_chain();
