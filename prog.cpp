@@ -2320,7 +2320,18 @@ void generate_app_code(CodegenOptions& options, map<string, UBuffer>& buffers, p
 }
 
 void generate_optimized_code(CodegenOptions& options, prog& prg) {
-  auto sched = its(isl_schedule_get_map(prg.optimized_schedule()), prg.whole_iteration_domain());
+  umap* sched = nullptr;
+
+  if (options.scheduling_algorithm == SCHEDULE_ALGORITHM_CW) {
+    auto valid_deps = prg.validity_deps();
+    sched =
+      its(clockwork_schedule_umap_reversed(prg.whole_iteration_domain(), valid_deps, valid_deps),
+          prg.whole_iteration_domain());
+  } else {
+    sched = its(isl_schedule_get_map(prg.optimized_schedule()), prg.whole_iteration_domain());
+  }
+
+  assert(sched != nullptr);
 
   cout << "Optimized schedule..." << endl;
   cout << tab(1) << ": " << str(sched) << endl << endl;

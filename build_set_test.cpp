@@ -15674,6 +15674,19 @@ void llf_to_color_no_scales(const std::string& out, const std::string& original,
   convert->add_store(out, b, x, y);
 }
 
+void llf_rescale_gray(const std::string& out, const std::string& scales, const std::string& gray, prog& prg) {
+  string pr = out + "_rescale_gray";
+  string y = prg.unique_name(pr);
+  string x = prg.unique_name(pr);
+  auto cn = prg.add_nest(y, 0, 1, x, 0, 1);
+
+  auto convert = cn->add_op(prg.unique_name("cc"));
+  convert->add_function("llf_rescale_gray_float");
+  convert->add_load(scales, x, y);
+  convert->add_load(gray, x, y);
+  convert->add_store(out, x, y);
+}
+
 void llf_to_color(const std::string& out, const std::string& original, const std::string& scales, const std::string& gray, prog& prg) {
   string pr = out + "_to_color";
   string y = prg.unique_name(pr);
@@ -15950,6 +15963,65 @@ void llf_pyramid_test() {
   compare("llf_pyramid_folded", orig_result, merged_result);
 
   //assert(false);
+}
+
+prog llf_grayscale_float() {
+  int num_pyramid_levels = 4;
+  int num_intensity_levels = 8;
+
+  prog prg("llf_gs");
+  prg.compute_unit_file = "local_laplacian_filters_compute.h";
+
+  prg.add_input("gray_in_oc");
+  prg.add_output("gray_out");
+
+  load_input("gray_in_oc", "gray", 2, prg);
+
+  // Make intensity pyramids
+  vector<vector<string> > intensity_level_pyramids;
+  for (int i = 0; i < num_intensity_levels; i++) {
+    string pw = prg.un("level_table");
+    pointwise(pw, "llf_level_entry_" + str(i), "gray", 2, prg);
+
+    intensity_level_pyramids.push_back(laplacian_pyramid(pw, num_pyramid_levels, prg));
+  }
+
+  // Make input Gaussian pyramid
+  vector<string> gray_levels = gaussian_pyramid("gray", num_pyramid_levels, prg);
+
+  // Compute levels for interpolated output
+  vector<string> output_levels;
+  for (int i = 0; i < num_pyramid_levels; i++) {
+    vector<string> intensities_at_level;
+    for (auto pyramid : intensity_level_pyramids) {
+      assert(pyramid.at(i) != "");
+      intensities_at_level.push_back(pyramid.at(i));
+    }
+    output_levels.push_back(llf_interpolate_intensity(gray_levels.at(i), intensities_at_level, prg));
+  }
+
+  string scales = reconstruct_gaussian(output_levels, prg);
+
+  llf_rescale_gray("gray_out_float", scales, "gray", prg);
+  pointwise("gray_out", "llf_float_to_int", "gray_out_float", 2, prg);
+
+  //llf_to_color("color_out_float", "color_in", scales, "gray", prg);
+  //pointwise("color_out", "llf_float_to_int", "color_out_float", 3, prg);
+
+  prg.pretty_print();
+  prg.sanity_check();
+
+  infer_bounds("gray_out", {2048, 2048}, prg);
+
+  cout << "After bounds inference..." << endl;
+  prg.pretty_print();
+
+  unroll_reduce_loops(prg);
+  merge_basic_block_ops(prg);
+  normalize_bounds(prg);
+  normalize_address_offsets(prg);
+
+  return prg;
 }
 
 prog llf_float() {
@@ -20268,7 +20340,46 @@ void large_pyramid_blend_pointwise_fusion() {
   assert(false);
 }
 
+void grayscale_llf_static() {
+  prog prg = llf_grayscale_float();
+  prg.name = prg.name + "_st";
+  prg.sanity_check();
+
+  auto fusion_groups = one_stage_per_group(prg);
+  app_dag dag = partition_application(fusion_groups, prg);
+
+  CodegenOptions options;
+  options = CodegenOptions();
+  options.scheduling_algorithm = SCHEDULE_ALGORITHM_CW;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+
+  generate_optimized_code(options, prg);
+
+  move_to_benchmarks_folder(prg.name);
+
+  assert(false);
+}
+
+void grayscale_llf_dynamic() {
+  prog prg = llf_grayscale_float();
+  prg.sanity_check();
+
+  auto fusion_groups = one_stage_per_group(prg);
+  app_dag dag = partition_application(fusion_groups, prg);
+
+  CodegenOptions options;
+  options = CodegenOptions();
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  generate_app_code(options, dag);
+
+  move_to_benchmarks_folder(prg.name);
+
+  assert(false);
+}
+
 void multi_rate_dynamic_apps() {
+  grayscale_llf_static();
+  grayscale_llf_dynamic();
   large_pyramid_blend_pointwise_fusion();
   llf_init();
 }
@@ -20280,8 +20391,6 @@ void application_tests() {
   histogram_test();
   histogram1d_test();
   iccad_tests();
-
-
 
   gpu_codegen_test();
 
