@@ -1,6 +1,6 @@
 #include "verilog_backend.h"
 
-#define SIM 0
+#define SIM 1
 
 string end_delay_with(ostream& out, const int width, const std::string& wire_in, prog& prg, const int delay) {
   vector<string> wires{wire_in};

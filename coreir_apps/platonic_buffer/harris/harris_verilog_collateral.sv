@@ -1,3 +1,50 @@
+  // min: { [285] }
+  // max: { [4120] }
+
+  // min: { [261] }
+  // max: { [4096] }
+
+  // min: { [285] }
+  // max: { [4120] }
+
+  // min: { [285] }
+  // max: { [4120] }
+
+  // min: { [297] }
+  // max: { [4132] }
+
+  // min: { [261] }
+  // max: { [4096] }
+
+  // min: { [444] }
+  // max: { [4149] }
+
+  // min: { [468] }
+  // max: { [4173] }
+
+  // min: { [149] }
+  // max: { [4114] }
+
+  // min: { [133] }
+  // max: { [4098] }
+
+  // min: { [1] }
+  // max: { [4096] }
+
+  // min: { [261] }
+  // max: { [4096] }
+
+  // min: { [149] }
+  // max: { [4114] }
+
+  // min: { [133] }
+  // max: { [4098] }
+
+  // min: { [149] }
+  // max: { [4114] }
+
+  // sched min: { [1] }
+  // sched max: { [4173] }
 
 module cim_output_stencil_embarassing_bank_selector(input logic [16*2 - 1 :0] d, output logic [15:0] out);
   assign out = 0;
@@ -171,10 +218,32 @@ cim_output_stencil_embarassing_bank_selector cim_output_stencil_cim_output_stenc
     delay_wire_10 <= op_hcompute_cim_output_stencil_write[0];
   end
   always @(posedge clk) begin
+    if(op_hcompute_cim_output_stencil_write_wen)begin
+      if(op_hcompute_cim_output_stencil_write_ctrl_vars!=op_hcompute_cim_output_stencil_write_ctrl_vars_fsm_out) begin
+        $display("Different");
+        $finish(-1);
+      end
+    end
+    if (op_hcompute_cim_output_stencil_write_wen!=op_hcompute_cim_output_stencil_write_wen_fsm_out) begin
+        $display(op_hcompute_cim_output_stencil_write_wen);
+        $display(op_hcompute_cim_output_stencil_write_wen_fsm_out);
+      $finish(-1);
+    end
+    if(op_hcompute_hw_output_stencil_read_ren)begin
+      if(op_hcompute_hw_output_stencil_read_ctrl_vars!=op_hcompute_hw_output_stencil_read_ctrl_vars_fsm_out) begin
+        $display("Different");
+        $finish(-1);
+      end
+    end
+    if (op_hcompute_hw_output_stencil_read_ren!=op_hcompute_hw_output_stencil_read_ren_fsm_out) begin
+        $display(op_hcompute_hw_output_stencil_read_ren);
+        $display(op_hcompute_hw_output_stencil_read_ren_fsm_out);
+      $finish(-1);
+    end
     if (delay_wire_9) begin
       case( delay_wire_8)
         0:bank_0[delay_wire_7] <= delay_wire_10;
-        default:bank_0[delay_wire_7] <= delay_wire_10;
+        default: $finish(-1);
       endcase
     end
   end
@@ -1698,10 +1767,32 @@ cim_stencil_bank_selector cim_stencil_cim_stencil_op_hcompute_cim_output_stencil
     delay_wire_635 <= op_hcompute_cim_stencil_write[0];
   end
   always @(posedge clk) begin
+    if(op_hcompute_cim_stencil_write_wen)begin
+      if(op_hcompute_cim_stencil_write_ctrl_vars!=op_hcompute_cim_stencil_write_ctrl_vars_fsm_out) begin
+        $display("Different");
+        $finish(-1);
+      end
+    end
+    if (op_hcompute_cim_stencil_write_wen!=op_hcompute_cim_stencil_write_wen_fsm_out) begin
+        $display(op_hcompute_cim_stencil_write_wen);
+        $display(op_hcompute_cim_stencil_write_wen_fsm_out);
+      $finish(-1);
+    end
+    if(op_hcompute_cim_output_stencil_read_ren)begin
+      if(op_hcompute_cim_output_stencil_read_ctrl_vars!=op_hcompute_cim_output_stencil_read_ctrl_vars_fsm_out) begin
+        $display("Different");
+        $finish(-1);
+      end
+    end
+    if (op_hcompute_cim_output_stencil_read_ren!=op_hcompute_cim_output_stencil_read_ren_fsm_out) begin
+        $display(op_hcompute_cim_output_stencil_read_ren);
+        $display(op_hcompute_cim_output_stencil_read_ren_fsm_out);
+      $finish(-1);
+    end
     if (delay_wire_634) begin
       case( delay_wire_633)
         0:bank_0[delay_wire_632] <= delay_wire_635;
-        default:bank_0[delay_wire_632] <= delay_wire_635;
+        default: $finish(-1);
       endcase
     end
   end
@@ -1972,10 +2063,43 @@ grad_x_stencil_bank_selector grad_x_stencil_grad_x_stencil_op_hcompute_lxy_stenc
     delay_wire_647 <= op_hcompute_grad_x_stencil_write[0];
   end
   always @(posedge clk) begin
+    if(op_hcompute_grad_x_stencil_write_wen)begin
+      if(op_hcompute_grad_x_stencil_write_ctrl_vars!=op_hcompute_grad_x_stencil_write_ctrl_vars_fsm_out) begin
+        $display("Different");
+        $finish(-1);
+      end
+    end
+    if (op_hcompute_grad_x_stencil_write_wen!=op_hcompute_grad_x_stencil_write_wen_fsm_out) begin
+        $display(op_hcompute_grad_x_stencil_write_wen);
+        $display(op_hcompute_grad_x_stencil_write_wen_fsm_out);
+      $finish(-1);
+    end
+    if(op_hcompute_lxx_stencil_read_ren)begin
+      if(op_hcompute_lxx_stencil_read_ctrl_vars!=op_hcompute_lxx_stencil_read_ctrl_vars_fsm_out) begin
+        $display("Different");
+        $finish(-1);
+      end
+    end
+    if (op_hcompute_lxx_stencil_read_ren!=op_hcompute_lxx_stencil_read_ren_fsm_out) begin
+        $display(op_hcompute_lxx_stencil_read_ren);
+        $display(op_hcompute_lxx_stencil_read_ren_fsm_out);
+      $finish(-1);
+    end
+    if(op_hcompute_lxy_stencil_read_ren)begin
+      if(op_hcompute_lxy_stencil_read_ctrl_vars!=op_hcompute_lxy_stencil_read_ctrl_vars_fsm_out) begin
+        $display("Different");
+        $finish(-1);
+      end
+    end
+    if (op_hcompute_lxy_stencil_read_ren!=op_hcompute_lxy_stencil_read_ren_fsm_out) begin
+        $display(op_hcompute_lxy_stencil_read_ren);
+        $display(op_hcompute_lxy_stencil_read_ren_fsm_out);
+      $finish(-1);
+    end
     if (delay_wire_646) begin
       case( delay_wire_645)
         0:bank_0[delay_wire_644] <= delay_wire_647;
-        default:bank_0[delay_wire_644] <= delay_wire_647;
+        default: $finish(-1);
       endcase
     end
   end
@@ -2246,10 +2370,43 @@ grad_y_stencil_bank_selector grad_y_stencil_grad_y_stencil_op_hcompute_lyy_stenc
     delay_wire_659 <= op_hcompute_grad_y_stencil_write[0];
   end
   always @(posedge clk) begin
+    if(op_hcompute_grad_y_stencil_write_wen)begin
+      if(op_hcompute_grad_y_stencil_write_ctrl_vars!=op_hcompute_grad_y_stencil_write_ctrl_vars_fsm_out) begin
+        $display("Different");
+        $finish(-1);
+      end
+    end
+    if (op_hcompute_grad_y_stencil_write_wen!=op_hcompute_grad_y_stencil_write_wen_fsm_out) begin
+        $display(op_hcompute_grad_y_stencil_write_wen);
+        $display(op_hcompute_grad_y_stencil_write_wen_fsm_out);
+      $finish(-1);
+    end
+    if(op_hcompute_lxy_stencil_read_ren)begin
+      if(op_hcompute_lxy_stencil_read_ctrl_vars!=op_hcompute_lxy_stencil_read_ctrl_vars_fsm_out) begin
+        $display("Different");
+        $finish(-1);
+      end
+    end
+    if (op_hcompute_lxy_stencil_read_ren!=op_hcompute_lxy_stencil_read_ren_fsm_out) begin
+        $display(op_hcompute_lxy_stencil_read_ren);
+        $display(op_hcompute_lxy_stencil_read_ren_fsm_out);
+      $finish(-1);
+    end
+    if(op_hcompute_lyy_stencil_read_ren)begin
+      if(op_hcompute_lyy_stencil_read_ctrl_vars!=op_hcompute_lyy_stencil_read_ctrl_vars_fsm_out) begin
+        $display("Different");
+        $finish(-1);
+      end
+    end
+    if (op_hcompute_lyy_stencil_read_ren!=op_hcompute_lyy_stencil_read_ren_fsm_out) begin
+        $display(op_hcompute_lyy_stencil_read_ren);
+        $display(op_hcompute_lyy_stencil_read_ren_fsm_out);
+      $finish(-1);
+    end
     if (delay_wire_658) begin
       case( delay_wire_657)
         0:bank_0[delay_wire_656] <= delay_wire_659;
-        default:bank_0[delay_wire_656] <= delay_wire_659;
+        default: $finish(-1);
       endcase
     end
   end
@@ -2431,10 +2588,32 @@ lgxx_stencil_embarassing_bank_selector lgxx_stencil_lgxx_stencil_op_hcompute_cim
     delay_wire_667 <= op_hcompute_lgxx_stencil_1_write[0];
   end
   always @(posedge clk) begin
+    if(op_hcompute_lgxx_stencil_1_write_wen)begin
+      if(op_hcompute_lgxx_stencil_1_write_ctrl_vars!=op_hcompute_lgxx_stencil_1_write_ctrl_vars_fsm_out) begin
+        $display("Different");
+        $finish(-1);
+      end
+    end
+    if (op_hcompute_lgxx_stencil_1_write_wen!=op_hcompute_lgxx_stencil_1_write_wen_fsm_out) begin
+        $display(op_hcompute_lgxx_stencil_1_write_wen);
+        $display(op_hcompute_lgxx_stencil_1_write_wen_fsm_out);
+      $finish(-1);
+    end
+    if(op_hcompute_cim_stencil_read_ren)begin
+      if(op_hcompute_cim_stencil_read_ctrl_vars!=op_hcompute_cim_stencil_read_ctrl_vars_fsm_out) begin
+        $display("Different");
+        $finish(-1);
+      end
+    end
+    if (op_hcompute_cim_stencil_read_ren!=op_hcompute_cim_stencil_read_ren_fsm_out) begin
+        $display(op_hcompute_cim_stencil_read_ren);
+        $display(op_hcompute_cim_stencil_read_ren_fsm_out);
+      $finish(-1);
+    end
     if (delay_wire_666) begin
       case( delay_wire_665)
         0:bank_0[delay_wire_664] <= delay_wire_667;
-        default:bank_0[delay_wire_664] <= delay_wire_667;
+        default: $finish(-1);
       endcase
     end
   end
@@ -2660,10 +2839,32 @@ lgxx_stencil_clkwrk_dsa0_embarassing_bank_selector lgxx_stencil_clkwrk_dsa0_lgxx
     delay_wire_697 <= op_hcompute_lgxx_stencil_write[0];
   end
   always @(posedge clk) begin
+    if(op_hcompute_lgxx_stencil_write_wen)begin
+      if(op_hcompute_lgxx_stencil_write_ctrl_vars!=op_hcompute_lgxx_stencil_write_ctrl_vars_fsm_out) begin
+        $display("Different");
+        $finish(-1);
+      end
+    end
+    if (op_hcompute_lgxx_stencil_write_wen!=op_hcompute_lgxx_stencil_write_wen_fsm_out) begin
+        $display(op_hcompute_lgxx_stencil_write_wen);
+        $display(op_hcompute_lgxx_stencil_write_wen_fsm_out);
+      $finish(-1);
+    end
+    if(op_hcompute_lgxx_stencil_1_read_ren)begin
+      if(op_hcompute_lgxx_stencil_1_read_ctrl_vars!=op_hcompute_lgxx_stencil_1_read_ctrl_vars_fsm_out) begin
+        $display("Different");
+        $finish(-1);
+      end
+    end
+    if (op_hcompute_lgxx_stencil_1_read_ren!=op_hcompute_lgxx_stencil_1_read_ren_fsm_out) begin
+        $display(op_hcompute_lgxx_stencil_1_read_ren);
+        $display(op_hcompute_lgxx_stencil_1_read_ren_fsm_out);
+      $finish(-1);
+    end
     if (delay_wire_696) begin
       case( delay_wire_695)
         0:bank_0[delay_wire_694] <= delay_wire_697;
-        default:bank_0[delay_wire_694] <= delay_wire_697;
+        default: $finish(-1);
       endcase
     end
   end
@@ -2845,10 +3046,32 @@ lgxy_stencil_embarassing_bank_selector lgxy_stencil_lgxy_stencil_op_hcompute_cim
     delay_wire_705 <= op_hcompute_lgxy_stencil_1_write[0];
   end
   always @(posedge clk) begin
+    if(op_hcompute_lgxy_stencil_1_write_wen)begin
+      if(op_hcompute_lgxy_stencil_1_write_ctrl_vars!=op_hcompute_lgxy_stencil_1_write_ctrl_vars_fsm_out) begin
+        $display("Different");
+        $finish(-1);
+      end
+    end
+    if (op_hcompute_lgxy_stencil_1_write_wen!=op_hcompute_lgxy_stencil_1_write_wen_fsm_out) begin
+        $display(op_hcompute_lgxy_stencil_1_write_wen);
+        $display(op_hcompute_lgxy_stencil_1_write_wen_fsm_out);
+      $finish(-1);
+    end
+    if(op_hcompute_cim_stencil_read_ren)begin
+      if(op_hcompute_cim_stencil_read_ctrl_vars!=op_hcompute_cim_stencil_read_ctrl_vars_fsm_out) begin
+        $display("Different");
+        $finish(-1);
+      end
+    end
+    if (op_hcompute_cim_stencil_read_ren!=op_hcompute_cim_stencil_read_ren_fsm_out) begin
+        $display(op_hcompute_cim_stencil_read_ren);
+        $display(op_hcompute_cim_stencil_read_ren_fsm_out);
+      $finish(-1);
+    end
     if (delay_wire_704) begin
       case( delay_wire_703)
         0:bank_0[delay_wire_702] <= delay_wire_705;
-        default:bank_0[delay_wire_702] <= delay_wire_705;
+        default: $finish(-1);
       endcase
     end
   end
@@ -3074,10 +3297,32 @@ lgxy_stencil_clkwrk_dsa1_embarassing_bank_selector lgxy_stencil_clkwrk_dsa1_lgxy
     delay_wire_735 <= op_hcompute_lgxy_stencil_write[0];
   end
   always @(posedge clk) begin
+    if(op_hcompute_lgxy_stencil_write_wen)begin
+      if(op_hcompute_lgxy_stencil_write_ctrl_vars!=op_hcompute_lgxy_stencil_write_ctrl_vars_fsm_out) begin
+        $display("Different");
+        $finish(-1);
+      end
+    end
+    if (op_hcompute_lgxy_stencil_write_wen!=op_hcompute_lgxy_stencil_write_wen_fsm_out) begin
+        $display(op_hcompute_lgxy_stencil_write_wen);
+        $display(op_hcompute_lgxy_stencil_write_wen_fsm_out);
+      $finish(-1);
+    end
+    if(op_hcompute_lgxy_stencil_1_read_ren)begin
+      if(op_hcompute_lgxy_stencil_1_read_ctrl_vars!=op_hcompute_lgxy_stencil_1_read_ctrl_vars_fsm_out) begin
+        $display("Different");
+        $finish(-1);
+      end
+    end
+    if (op_hcompute_lgxy_stencil_1_read_ren!=op_hcompute_lgxy_stencil_1_read_ren_fsm_out) begin
+        $display(op_hcompute_lgxy_stencil_1_read_ren);
+        $display(op_hcompute_lgxy_stencil_1_read_ren_fsm_out);
+      $finish(-1);
+    end
     if (delay_wire_734) begin
       case( delay_wire_733)
         0:bank_0[delay_wire_732] <= delay_wire_735;
-        default:bank_0[delay_wire_732] <= delay_wire_735;
+        default: $finish(-1);
       endcase
     end
   end
@@ -3259,10 +3504,32 @@ lgyy_stencil_embarassing_bank_selector lgyy_stencil_lgyy_stencil_op_hcompute_cim
     delay_wire_743 <= op_hcompute_lgyy_stencil_1_write[0];
   end
   always @(posedge clk) begin
+    if(op_hcompute_lgyy_stencil_1_write_wen)begin
+      if(op_hcompute_lgyy_stencil_1_write_ctrl_vars!=op_hcompute_lgyy_stencil_1_write_ctrl_vars_fsm_out) begin
+        $display("Different");
+        $finish(-1);
+      end
+    end
+    if (op_hcompute_lgyy_stencil_1_write_wen!=op_hcompute_lgyy_stencil_1_write_wen_fsm_out) begin
+        $display(op_hcompute_lgyy_stencil_1_write_wen);
+        $display(op_hcompute_lgyy_stencil_1_write_wen_fsm_out);
+      $finish(-1);
+    end
+    if(op_hcompute_cim_stencil_read_ren)begin
+      if(op_hcompute_cim_stencil_read_ctrl_vars!=op_hcompute_cim_stencil_read_ctrl_vars_fsm_out) begin
+        $display("Different");
+        $finish(-1);
+      end
+    end
+    if (op_hcompute_cim_stencil_read_ren!=op_hcompute_cim_stencil_read_ren_fsm_out) begin
+        $display(op_hcompute_cim_stencil_read_ren);
+        $display(op_hcompute_cim_stencil_read_ren_fsm_out);
+      $finish(-1);
+    end
     if (delay_wire_742) begin
       case( delay_wire_741)
         0:bank_0[delay_wire_740] <= delay_wire_743;
-        default:bank_0[delay_wire_740] <= delay_wire_743;
+        default: $finish(-1);
       endcase
     end
   end
@@ -3488,10 +3755,32 @@ lgyy_stencil_clkwrk_dsa2_embarassing_bank_selector lgyy_stencil_clkwrk_dsa2_lgyy
     delay_wire_773 <= op_hcompute_lgyy_stencil_write[0];
   end
   always @(posedge clk) begin
+    if(op_hcompute_lgyy_stencil_write_wen)begin
+      if(op_hcompute_lgyy_stencil_write_ctrl_vars!=op_hcompute_lgyy_stencil_write_ctrl_vars_fsm_out) begin
+        $display("Different");
+        $finish(-1);
+      end
+    end
+    if (op_hcompute_lgyy_stencil_write_wen!=op_hcompute_lgyy_stencil_write_wen_fsm_out) begin
+        $display(op_hcompute_lgyy_stencil_write_wen);
+        $display(op_hcompute_lgyy_stencil_write_wen_fsm_out);
+      $finish(-1);
+    end
+    if(op_hcompute_lgyy_stencil_1_read_ren)begin
+      if(op_hcompute_lgyy_stencil_1_read_ctrl_vars!=op_hcompute_lgyy_stencil_1_read_ctrl_vars_fsm_out) begin
+        $display("Different");
+        $finish(-1);
+      end
+    end
+    if (op_hcompute_lgyy_stencil_1_read_ren!=op_hcompute_lgyy_stencil_1_read_ren_fsm_out) begin
+        $display(op_hcompute_lgyy_stencil_1_read_ren);
+        $display(op_hcompute_lgyy_stencil_1_read_ren_fsm_out);
+      $finish(-1);
+    end
     if (delay_wire_772) begin
       case( delay_wire_771)
         0:bank_0[delay_wire_770] <= delay_wire_773;
-        default:bank_0[delay_wire_770] <= delay_wire_773;
+        default: $finish(-1);
       endcase
     end
   end
@@ -5015,10 +5304,32 @@ lxx_stencil_bank_selector lxx_stencil_lxx_stencil_op_hcompute_lgxx_stencil_1_43_
     delay_wire_1398 <= op_hcompute_lxx_stencil_write[0];
   end
   always @(posedge clk) begin
+    if(op_hcompute_lxx_stencil_write_wen)begin
+      if(op_hcompute_lxx_stencil_write_ctrl_vars!=op_hcompute_lxx_stencil_write_ctrl_vars_fsm_out) begin
+        $display("Different");
+        $finish(-1);
+      end
+    end
+    if (op_hcompute_lxx_stencil_write_wen!=op_hcompute_lxx_stencil_write_wen_fsm_out) begin
+        $display(op_hcompute_lxx_stencil_write_wen);
+        $display(op_hcompute_lxx_stencil_write_wen_fsm_out);
+      $finish(-1);
+    end
+    if(op_hcompute_lgxx_stencil_1_read_ren)begin
+      if(op_hcompute_lgxx_stencil_1_read_ctrl_vars!=op_hcompute_lgxx_stencil_1_read_ctrl_vars_fsm_out) begin
+        $display("Different");
+        $finish(-1);
+      end
+    end
+    if (op_hcompute_lgxx_stencil_1_read_ren!=op_hcompute_lgxx_stencil_1_read_ren_fsm_out) begin
+        $display(op_hcompute_lgxx_stencil_1_read_ren);
+        $display(op_hcompute_lgxx_stencil_1_read_ren_fsm_out);
+      $finish(-1);
+    end
     if (delay_wire_1397) begin
       case( delay_wire_1396)
         0:bank_0[delay_wire_1395] <= delay_wire_1398;
-        default:bank_0[delay_wire_1395] <= delay_wire_1398;
+        default: $finish(-1);
       endcase
     end
   end
@@ -6542,10 +6853,32 @@ lxy_stencil_bank_selector lxy_stencil_lxy_stencil_op_hcompute_lgxy_stencil_1_31_
     delay_wire_2023 <= op_hcompute_lxy_stencil_write[0];
   end
   always @(posedge clk) begin
+    if(op_hcompute_lxy_stencil_write_wen)begin
+      if(op_hcompute_lxy_stencil_write_ctrl_vars!=op_hcompute_lxy_stencil_write_ctrl_vars_fsm_out) begin
+        $display("Different");
+        $finish(-1);
+      end
+    end
+    if (op_hcompute_lxy_stencil_write_wen!=op_hcompute_lxy_stencil_write_wen_fsm_out) begin
+        $display(op_hcompute_lxy_stencil_write_wen);
+        $display(op_hcompute_lxy_stencil_write_wen_fsm_out);
+      $finish(-1);
+    end
+    if(op_hcompute_lgxy_stencil_1_read_ren)begin
+      if(op_hcompute_lgxy_stencil_1_read_ctrl_vars!=op_hcompute_lgxy_stencil_1_read_ctrl_vars_fsm_out) begin
+        $display("Different");
+        $finish(-1);
+      end
+    end
+    if (op_hcompute_lgxy_stencil_1_read_ren!=op_hcompute_lgxy_stencil_1_read_ren_fsm_out) begin
+        $display(op_hcompute_lgxy_stencil_1_read_ren);
+        $display(op_hcompute_lgxy_stencil_1_read_ren_fsm_out);
+      $finish(-1);
+    end
     if (delay_wire_2022) begin
       case( delay_wire_2021)
         0:bank_0[delay_wire_2020] <= delay_wire_2023;
-        default:bank_0[delay_wire_2020] <= delay_wire_2023;
+        default: $finish(-1);
       endcase
     end
   end
@@ -8069,10 +8402,32 @@ lyy_stencil_bank_selector lyy_stencil_lyy_stencil_op_hcompute_lgyy_stencil_1_19_
     delay_wire_2648 <= op_hcompute_lyy_stencil_write[0];
   end
   always @(posedge clk) begin
+    if(op_hcompute_lyy_stencil_write_wen)begin
+      if(op_hcompute_lyy_stencil_write_ctrl_vars!=op_hcompute_lyy_stencil_write_ctrl_vars_fsm_out) begin
+        $display("Different");
+        $finish(-1);
+      end
+    end
+    if (op_hcompute_lyy_stencil_write_wen!=op_hcompute_lyy_stencil_write_wen_fsm_out) begin
+        $display(op_hcompute_lyy_stencil_write_wen);
+        $display(op_hcompute_lyy_stencil_write_wen_fsm_out);
+      $finish(-1);
+    end
+    if(op_hcompute_lgyy_stencil_1_read_ren)begin
+      if(op_hcompute_lgyy_stencil_1_read_ctrl_vars!=op_hcompute_lgyy_stencil_1_read_ctrl_vars_fsm_out) begin
+        $display("Different");
+        $finish(-1);
+      end
+    end
+    if (op_hcompute_lgyy_stencil_1_read_ren!=op_hcompute_lgyy_stencil_1_read_ren_fsm_out) begin
+        $display(op_hcompute_lgyy_stencil_1_read_ren);
+        $display(op_hcompute_lgyy_stencil_1_read_ren_fsm_out);
+      $finish(-1);
+    end
     if (delay_wire_2647) begin
       case( delay_wire_2646)
         0:bank_0[delay_wire_2645] <= delay_wire_2648;
-        default:bank_0[delay_wire_2645] <= delay_wire_2648;
+        default: $finish(-1);
       endcase
     end
   end
@@ -10137,10 +10492,43 @@ padded16_global_wrapper_stencil_bank_selector padded16_global_wrapper_stencil_pa
     delay_wire_3480 <= op_hcompute_padded16_global_wrapper_stencil_write[0];
   end
   always @(posedge clk) begin
+    if(op_hcompute_padded16_global_wrapper_stencil_write_wen)begin
+      if(op_hcompute_padded16_global_wrapper_stencil_write_ctrl_vars!=op_hcompute_padded16_global_wrapper_stencil_write_ctrl_vars_fsm_out) begin
+        $display("Different");
+        $finish(-1);
+      end
+    end
+    if (op_hcompute_padded16_global_wrapper_stencil_write_wen!=op_hcompute_padded16_global_wrapper_stencil_write_wen_fsm_out) begin
+        $display(op_hcompute_padded16_global_wrapper_stencil_write_wen);
+        $display(op_hcompute_padded16_global_wrapper_stencil_write_wen_fsm_out);
+      $finish(-1);
+    end
+    if(op_hcompute_grad_x_stencil_read_ren)begin
+      if(op_hcompute_grad_x_stencil_read_ctrl_vars!=op_hcompute_grad_x_stencil_read_ctrl_vars_fsm_out) begin
+        $display("Different");
+        $finish(-1);
+      end
+    end
+    if (op_hcompute_grad_x_stencil_read_ren!=op_hcompute_grad_x_stencil_read_ren_fsm_out) begin
+        $display(op_hcompute_grad_x_stencil_read_ren);
+        $display(op_hcompute_grad_x_stencil_read_ren_fsm_out);
+      $finish(-1);
+    end
+    if(op_hcompute_grad_y_stencil_read_ren)begin
+      if(op_hcompute_grad_y_stencil_read_ctrl_vars!=op_hcompute_grad_y_stencil_read_ctrl_vars_fsm_out) begin
+        $display("Different");
+        $finish(-1);
+      end
+    end
+    if (op_hcompute_grad_y_stencil_read_ren!=op_hcompute_grad_y_stencil_read_ren_fsm_out) begin
+        $display(op_hcompute_grad_y_stencil_read_ren);
+        $display(op_hcompute_grad_y_stencil_read_ren_fsm_out);
+      $finish(-1);
+    end
     if (delay_wire_3479) begin
       case( delay_wire_3478)
         0:bank_0[delay_wire_3477] <= delay_wire_3480;
-        default:bank_0[delay_wire_3477] <= delay_wire_3480;
+        default: $finish(-1);
       endcase
     end
   end

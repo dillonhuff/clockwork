@@ -16569,56 +16569,6 @@ void relax_delays_rate_matched(schedule_info& sched, prog& prg) {
   }
 }
 
-// void adjust_outer_delays(schedule_info& sched, prog& prg) {
-//   cout << "Adjusting delays of " << prg.name << endl;
-//   for (auto name : topologically_sort_kernels(prg)) {
-//     auto lp = prg.find_loop(name);
-//     cout << "Adjusting delay of " << lp->name << endl;
-
-//     int old_delay = map_find(lp, sched.op_offset_within_parent);
-//     int try_delay = 1;
-//     bool found_smaller_delay = false;
-//     while (try_delay < old_delay) {
-//       sched.op_offset_within_parent[lp] = try_delay;
-//       if (no_violated_cycle_accurate_dependencies(sched, prg)) {
-//         found_smaller_delay = true;
-//         break;
-//       }
-//       try_delay = max(try_delay * 2, try_delay + 1000);
-//       //try_delay = min(try_delay * 2, try_delay + 1000);
-//       //try_delay *= 2;
-//     }
-
-//     if (!found_smaller_delay) {
-//       sched.op_offset_within_parent[lp] = old_delay;
-//     }
-//   }
-// }
-
-// void adjust_outer_pipeline_delays(schedule_info& sched, prog& prg) {
-//   cout << "Adjusting delays of " << prg.name << endl;
-//   for (auto lp : find_coarse_grained_pipeline_loop(prg.root)->children) {
-
-//     int old_delay = map_find(lp, sched.op_offset_within_parent);
-//     int try_delay = 1;
-//     bool found_smaller_delay = false;
-//     while (try_delay < old_delay) {
-//       sched.op_offset_within_parent[lp] = try_delay;
-//       if (no_violated_cycle_accurate_dependencies(sched, prg)) {
-//         found_smaller_delay = true;
-//         break;
-//       }
-//       try_delay = max(try_delay * 2, try_delay + 1000);
-//       //try_delay = min(try_delay * 2, try_delay + 1000);
-//       //try_delay *= 2;
-//     }
-
-//     if (!found_smaller_delay) {
-//       sched.op_offset_within_parent[lp] = old_delay;
-//     }
-//   }
-// }
-
 void asap_input_iis(schedule_info& sched, prog& prg) {
 
     //Looks for buffer all reading location is constant localtion
@@ -17726,7 +17676,8 @@ void compile_for_garnet_single_port_mem(prog& prg,
 #endif
 }
 
-umap* cycle_accurate_deps(schedule_info& sched, prog& prg) {
+//umap* cycle_accurate_deps(schedule_info& sched, prog& prg) {
+umap* cycle_accurate_deps(prog& prg) {
   auto valid = prg.validity_deps();
   umap* final_dep = rdmap(prg.ctx, "{}");
   for (auto m : get_maps(valid)) {
@@ -17815,7 +17766,7 @@ bool no_violated_cycle_accurate_dependencies(schedule_info& sched, prog& prg) {
     cout << tab(1) << str(m) << endl;
     release(m);
   }
-  auto deps = cycle_accurate_deps(sched, prg);
+  auto deps = cycle_accurate_deps(prg);
   cout << tab(1) << "Cycle deps: " << str(deps) << endl;
 
   deps = inv(deps);
@@ -18315,9 +18266,9 @@ void cgra_flow_tests() {
 
   vector<prog> M3_test_programs = isca_programs();
 
-  //vector<prog> bram_test_programs{pointwise(), gaussian(), harris(), resnet()};
+  vector<prog> bram_test_programs{pointwise(), gaussian(), harris(), resnet()};
   //vector<prog> bram_test_programs{resnet88()};
-  vector<prog> bram_test_programs{pointwise()};
+  //vector<prog> bram_test_programs{pointwise()};
   test_codegen(bram_test_programs, compile_for_FPGA_BRAM_mem);
   assert(false);
 
