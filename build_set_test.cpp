@@ -20200,7 +20200,8 @@ void multi_rate_dynamic_apps() {
 }
 
 void resnet88_test() {
-  prog prg = resnet88();
+  //prog prg = resnet88();
+  prog prg = resnet();
 
   prg.sanity_check();
 

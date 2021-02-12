@@ -1161,12 +1161,15 @@ void resnet(HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */hw_inp
   global_debug_handle = &debug_file;
 #endif //__VIVADO_SYNTH__
   conv_stencil_cache conv_stencil;
+#pragma HLS array_partition variable=conv_stencil.conv_stencil_all_inputs_to_all_outputs_cache complete dim=1
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   hw_input_global_wrapper_stencil_cache hw_input_global_wrapper_stencil;
+#pragma HLS array_partition variable=hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_stencil_all_inputs_to_all_outputs_cache complete dim=3
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   hw_kernel_global_wrapper_stencil_cache hw_kernel_global_wrapper_stencil;
+#pragma HLS array_partition variable=hw_kernel_global_wrapper_stencil.hw_kernel_global_wrapper_stencil_stencil_all_inputs_to_all_outputs_cache complete dim=0
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 #ifdef __VIVADO_SYNTH__
@@ -1197,14 +1200,17 @@ void resnet(HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */hw_inp
 	  for (int c7 = 0; c7 <= 29; c7 += 1)
 	    for (int c9 = 0; c9 <= 29; c9 += 1)
 	      for (int c11 = 0; c11 <= 7; c11 += 1)
+#pragma HLS pipeline II=1
 	        op_hcompute_hw_input_global_wrapper_stencil(hw_input_stencil /* buf name */, hw_input_global_wrapper_stencil, 0, 0, 0, c7, c9, c11);
 	  for (int c5 = 0; c5 <= 2; c5 += 1)
 	    for (int c7 = 0; c7 <= 2; c7 += 1)
 	      for (int c9 = 0; c9 <= 2; c9 += 1)
 	        for (int c11 = 0; c11 <= 7; c11 += 1)
+#pragma HLS pipeline II=1
 	          op_hcompute_hw_kernel_global_wrapper_stencil(hw_kernel_stencil /* buf name */, hw_kernel_global_wrapper_stencil, 0, 0, c5, c7, c9, c11);
 	  for (int c9 = 0; c9 <= 27; c9 += 1)
 	    for (int c11 = 0; c11 <= 27; c11 += 1) {
+#pragma HLS pipeline II=1
 	      op_hcompute_conv_stencil(conv_stencil, 0, 0, 0, 0, c9, c11);
 	      op_hcompute_conv_stencil_1(conv_stencil, 0, 0, 0, 0, c9, c11);
 	      op_hcompute_conv_stencil_2(conv_stencil, 0, 0, 0, 0, c9, c11);
@@ -1213,6 +1219,7 @@ void resnet(HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */hw_inp
 	    for (int c7 = 0; c7 <= 2; c7 += 1)
 	      for (int c9 = 0; c9 <= 27; c9 += 1)
 	        for (int c11 = 0; c11 <= 27; c11 += 1) {
+#pragma HLS pipeline II=1
 	          op_hcompute_conv_stencil_3(conv_stencil /* buf name */, hw_input_global_wrapper_stencil /* buf name */, hw_kernel_global_wrapper_stencil /* buf name */, 0, 0, c5, c7, c9, c11);
 	          op_hcompute_conv_stencil_4(conv_stencil /* buf name */, hw_input_global_wrapper_stencil /* buf name */, hw_kernel_global_wrapper_stencil /* buf name */, 0, 0, c5, c7, c9, c11);
 	          op_hcompute_conv_stencil_5(conv_stencil /* buf name */, hw_input_global_wrapper_stencil /* buf name */, hw_kernel_global_wrapper_stencil /* buf name */, 0, 0, c5, c7, c9, c11);
@@ -1220,6 +1227,7 @@ void resnet(HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */hw_inp
 	  for (int c7 = 0; c7 <= 2; c7 += 1)
 	    for (int c9 = 0; c9 <= 27; c9 += 1)
 	      for (int c11 = 0; c11 <= 27; c11 += 1)
+#pragma HLS pipeline II=1
 	        op_hcompute_hw_output_stencil(conv_stencil /* buf name */, hw_output_stencil, 0, 0, 0, c7, c9, c11);
 	}
 	
