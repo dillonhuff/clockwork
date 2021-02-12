@@ -419,6 +419,9 @@ isl_map* get_domain_ii_transform(isl_ctx* ctx, isl_set* const s, int ii);
 isl_map* get_shift_map(isl_map* s);
 isl_map* delay_schedule_inner_most(isl_map* s, int delay);
 isl_map* delay_schedule_domain_dim(isl_map* s, int dom_dim, int delay);
+
+isl_map* remove_irrelevant_in_dim(isl_map* m);
+
 vector<bool> relation_map(isl_map* m);
 int get_involve_dim(isl_map* m, int out_dim);
 vector<int> out_involve_dim(isl_map* m, int in_dim);
