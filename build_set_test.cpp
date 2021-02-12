@@ -17730,58 +17730,6 @@ bool schedule_bounds_fit_controller_bitwidth(const int bitwidth, schedule_info& 
   return true;
 }
 
-bool no_violated_cycle_accurate_dependencies(umap* deps, schedule_info& sched, prog& prg) {
-  prg.pretty_print();
-  sanity_check_iis(sched);
-  sanity_check_negative_starts(sched, prg);
-
-  auto start_times = op_start_times_map(sched, prg);
-  auto end_times = op_end_times_map(sched, prg);
-  auto all_times = unn(start_times, end_times);
-
-  cout << "Schedule..." << endl;
-  for (auto m : get_maps(start_times)) {
-    cout << tab(1) << str(m) << endl;
-    release(m);
-  }
-  cout << tab(1) << "Cycle deps: " << str(deps) << endl;
-
-  deps = inv(deps);
-  auto earlier = lex_lt(all_times, all_times);
-
-  cout << tab(1) << "Earlier deps: " << str(earlier) << endl;
-
-  auto violated = its(earlier, deps);
-
-  cout << tab(1) << "Violated deps: " << str(violated) << endl;
-  bool safe = empty(violated);
-
-  if (!safe) {
-    cout << "Schedule..." << endl;
-    for (auto s : get_maps(start_times)) {
-      cout << str(s) << endl << endl;
-    }
-    cout << endl;
-    cout << "Violated deps..." << endl;
-    for (auto m : get_maps(violated)) {
-      cout << str(m) << endl << endl;
-    }
-  }
-  release(violated);
-  release(earlier);
-  release(start_times);
-  release(end_times);
-  release(all_times);
-  //assert(false);
-  return safe;
-}
-
-bool no_violated_cycle_accurate_dependencies(schedule_info& sched, prog& prg) {
-  auto deps = cycle_accurate_deps(prg);
-  return no_violated_cycle_accurate_dependencies(deps, sched, prg);
-}
-
-
 void test_schedules(vector<prog>& test_programs) {
 
   for (auto& prg : test_programs) {
