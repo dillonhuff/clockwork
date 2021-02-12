@@ -1,6 +1,6 @@
 #include "verilog_backend.h"
 
-#define SIM 1
+#define SIM 0
 
 string end_delay_with(ostream& out, const int width, const std::string& wire_in, prog& prg, const int delay) {
   vector<string> wires{wire_in};
@@ -14,7 +14,7 @@ string end_delay_with(ostream& out, const int width, const std::string& wire_in,
   reverse(wires);
   out << tab(1) << "always @(posedge clk) begin" << endl;
   for (int d = 1; d < delay + 1; d++) {
-    out << tab(2) << wires.at(d) << " <= " << wires.at(d - 1) << ";";
+    out << tab(2) << wires.at(d) << " <= " << wires.at(d - 1) << ";" << endl;
   }
   out << tab(1) << "end" << endl;
   return wires.at(0);
