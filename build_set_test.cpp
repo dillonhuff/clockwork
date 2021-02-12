@@ -18315,8 +18315,8 @@ void cgra_flow_tests() {
 
   vector<prog> M3_test_programs = isca_programs();
 
-  //vector<prog> bram_test_programs{pointwise(), gaussian(), harris(), resnet()};
-  vector<prog> bram_test_programs{resnet88()};
+  vector<prog> bram_test_programs{pointwise(), gaussian(), harris(), resnet()};
+  //vector<prog> bram_test_programs{resnet88()};
   test_codegen(bram_test_programs, compile_for_FPGA_BRAM_mem);
   assert(false);
 

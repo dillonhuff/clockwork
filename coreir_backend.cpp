@@ -4208,7 +4208,7 @@ void pipeline_compute_units(prog& prg, schedule_info& hwinfo) {
         unscheduled.insert(i);
       }
       while (unscheduled.size() > 0) {
-        Instance* next_sched = nullptr;
+        std::set<Instance*> next_sched_lvl;
         for (Instance* i : unscheduled) {
           bool all_deps_scheduled = true;
           for (auto d : instance_connections_dst_to_src[i]) {
@@ -4219,14 +4219,37 @@ void pipeline_compute_units(prog& prg, schedule_info& hwinfo) {
           }
 
           if (all_deps_scheduled) {
-            next_sched = i;
-            break;
+            next_sched_lvl.insert(i);
           }
         }
-        assert(next_sched != nullptr);
-        unscheduled.erase(next_sched);
-        schedule.push_back({next_sched});
-        num_scheduled++;
+        assert(next_sched_lvl.size() > 0);
+        for (auto next_sched : next_sched_lvl) {
+          unscheduled.erase(next_sched);
+          schedule.push_back({next_sched});
+          num_scheduled++;
+        }
+
+
+        //Instance* next_sched = nullptr;
+        //for (Instance* i : unscheduled) {
+          //bool all_deps_scheduled = true;
+          //for (auto d : instance_connections_dst_to_src[i]) {
+            //if (dbhc::elem(d, unscheduled)) {
+              //all_deps_scheduled = false;
+              //break;
+            //}
+          //}
+
+          //if (all_deps_scheduled) {
+            //next_sched = i;
+            //break;
+          //}
+        //}
+        //assert(next_sched != nullptr);
+        //unscheduled.erase(next_sched);
+        //schedule.push_back({next_sched});
+        //num_scheduled++;
+
       }
       assert(num_scheduled == instances.size());
 
