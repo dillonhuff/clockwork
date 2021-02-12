@@ -2388,40 +2388,6 @@ void generate_unoptimized_code(CodegenOptions& options, prog& prg) {
   cout << codegen_c(prg.unoptimized_schedule());
 
   auto buffers = build_buffers(prg, prg.unoptimized_schedule());
-  //map<string, UBuffer> partitioned_buffers;
-  ////for (pair<string, UBuffer>& b : buffers) {
-  //for (const pair<string, UBuffer> b : buffers) {
-    //UBuffer buf = buffers.at(b.first);
-    //if (!prg.is_boundary(b.first)) {
-      //schedule_info hwinfo;
-
-      //maybe<std::set<int> > part = embarassing_partition(buf, hwinfo);
-
-      //if (part.has_value()) {
-        //buf.banking.partition = "cyclic";
-        //cout << "buf: " << buf.name << " has cyclic partition" << endl;
-        //for (int d = 0; d < buf.logical_dimension(); d++) {
-          //if (elem(d, part.get_value())) {
-            //buf.banking.cycle_factors.push_back(12);
-          //}
-        //}
-        //partitioned_buffers[b.first] = buf;
-        ////buffers[b.first] = buf;
-        //assert(map_find(b.first, partitioned_buffers).banking.partition == "cyclic");
-      //} else {
-        //partitioned_buffers[b.first] = b.second;
-      //}
-    //} else {
-      //partitioned_buffers[b.first] = b.second;
-    //}
-  //}
-  //for (auto b : partitioned_buffers) {
-    //if (!prg.is_boundary(b.first)) {
-      //cout << "Buffer: " << b.first << " partition: " << b.second.banking.partition << endl;
-      //assert(b.second.banking.partition == "cyclic");
-    //}
-  //}
-  //assert(false);
   generate_app_code(options, buffers, prg, sched);
 
   prg.name = old_name;

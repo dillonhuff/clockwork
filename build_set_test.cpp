@@ -18012,115 +18012,91 @@ std::string cw_box_codegen(CodegenOptions& options,
 }
 
 void generate_fpga_clockwork_code(prog& prg) {
-  auto valid = prg.validity_deps();
-  auto dom = prg.whole_iteration_domain();
-  map<string, vector<isl_aff*> > cwsched =
-    clockwork_schedule(dom, valid, cpy(valid));
 
-  cout << "Clockwork sched..." << endl;
-  std::vector<op*> dft_ops = get_dft_ops(prg);
-  cout << "DFT op order" << endl;
-  int pos = 0;
-  map<string, int> positions;
-  vector<string> ops;
-  for (auto op : dft_ops) {
-    cout << tab(1) << op->name << endl;
-    positions[op->name] = pos;
-    ops.push_back(op->name);
-    pos++;
-  }
+  if (is_rate_matchable(prg)) {
+    auto valid = prg.validity_deps();
+    auto dom = prg.whole_iteration_domain();
+    map<string, vector<isl_aff*> > cwsched =
+      clockwork_schedule(dom, valid, cpy(valid));
 
-  map<string, vector<QExpr> > scheds;
-  for (auto s : cwsched) {
-    string name = s.first;
-    vector<isl_aff*> vals = s.second;
-
-    scheds[name] = {};
-    int i = 0;
-    for (auto v : vals) {
-      QExpr rate = qexpr("d" + str(i));
-      auto rate_coeff =
-        qexpr(int_coeff(v, 0));
-      auto delay =
-        qexpr(int_const_coeff(v));
-
-      QExpr expr =
-        rate_coeff*rate + delay;
-      scheds[name].push_back(expr);
-      i++;
+    cout << "Clockwork sched..." << endl;
+    std::vector<op*> dft_ops = get_dft_ops(prg);
+    cout << "DFT op order" << endl;
+    int pos = 0;
+    map<string, int> positions;
+    vector<string> ops;
+    for (auto op : dft_ops) {
+      cout << tab(1) << op->name << endl;
+      positions[op->name] = pos;
+      ops.push_back(op->name);
+      pos++;
     }
-  }
 
-  // schedule is dN, ..., d1, d0
-  //for (auto& s : scheds) {
-    //reverse(s.second);
-  //}
+    map<string, vector<QExpr> > scheds;
+    for (auto s : cwsched) {
+      string name = s.first;
+      vector<isl_aff*> vals = s.second;
 
-  //// schedule is dN, ..., d1, d0
-  //for (auto& s : scheds) {
-    //reverse(s.second);
-    //QAV v = qconst(map_find(s.first, positions));
-    //QTerm t{{v}};
-    //QExpr e{{t}};
-    //s.second.push_back(e);
-  //}
+      scheds[name] = {};
+      int i = 0;
+      for (auto v : vals) {
+        QExpr rate = qexpr("d" + str(i));
+        auto rate_coeff =
+          qexpr(int_coeff(v, 0));
+        auto delay =
+          qexpr(int_const_coeff(v));
 
-  cout << "Final schedule..." << endl;
-  for (auto s : scheds) {
-    cout << tab(1) << s.first << endl;
-    for (auto v : s.second) {
-      cout << tab(2) << v << endl;
+        QExpr expr =
+          rate_coeff*rate + delay;
+        scheds[name].push_back(expr);
+        i++;
+      }
     }
-    cout << endl;
+
+    cout << "Final schedule..." << endl;
+    for (auto s : scheds) {
+      cout << tab(1) << s.first << endl;
+      for (auto v : s.second) {
+        cout << tab(2) << v << endl;
+      }
+      cout << endl;
+    }
+
+    auto sched = qschedule_to_map_final_sort(prg.ctx, scheds, positions);
+    sched = its(sched, dom);
+
+    cout << "Optimized schedule..." << endl;
+    for (auto s : get_maps(sched)) {
+      cout << tab(1) << str(s) << endl;
+    }
+
+    //assert(false);
+    //cout << tab(1) << ": " << str(sched) << endl << endl;
+    //cout << codegen_c(sched) << endl;
+
+    auto buffers = build_buffers(prg, sched);
+
+    assert(prg.compute_unit_file != "");
+    cout << "Compute unit file: "
+      << prg.compute_unit_file << endl;
+    CodegenOptions options;
+    options.internal = true;
+    generate_app_code(options, buffers, prg, sched);
+
+    release(sched);
+  } else {
+    auto sched = prg.unoptimized_schedule();
+
+    auto buffers = build_buffers(prg, prg.unoptimized_schedule());
+
+    CodegenOptions options;
+    options.internal = true;
+    options.all_rams = true;
+    all_unbanked(prg, options);
+    options.inner_bank_offset_mode =
+      INNER_BANK_OFFSET_MULTILINEAR;
+    generate_app_code(options, buffers, prg, sched);
   }
-
-  auto sched = qschedule_to_map_final_sort(prg.ctx, scheds, positions);
-  sched = its(sched, dom);
-
-  cout << "Optimized schedule..." << endl;
-  for (auto s : get_maps(sched)) {
-    cout << tab(1) << str(s) << endl;
-  }
-
-  //assert(false);
-  //cout << tab(1) << ": " << str(sched) << endl << endl;
-  //cout << codegen_c(sched) << endl;
-
-  auto buffers = build_buffers(prg, sched);
-
-  assert(prg.compute_unit_file != "");
-  cout << "Compute unit file: "
-    << prg.compute_unit_file << endl;
-  CodegenOptions options;
-  options.internal = true;
-  //options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
-  //map<string, Box> compute_domains;
-  //for (auto s : get_sets(dom)) {
-    //ops.push_back(name(s));
-    //Box bounds;
-    //for (int d = 0; d < num_dims(s); d++) {
-      //auto pr = project_all_but(s, d);
-      //int minv = to_int(lexminval(pr));
-      //int maxv = to_int(lexmaxval(pr));
-      //bounds.intervals.push_back({minv, maxv});
-    //}
-    //compute_domains[name(s)] = bounds;
-  //}
-
-  //cout << "Boxes..." << endl;
-  //for (auto b : compute_domains) {
-    //cout << tab(1) << b.first << " -> " << b.second << endl;
-  //}
-  ////assert(false);
-  //cout << "Generating box codegen" << endl;
-  //string cgn = cw_box_codegen(options, ops, scheds, compute_domains);
-  //cout << "Done" << endl;
-  //options.code_string = cgn;
-  //cout << "Code string..." << endl;
-  //cout << cgn << endl;
-  generate_app_code(options, buffers, prg, sched);
-
-  release(sched);
 }
 
 void fpga_asplos_tests() {
@@ -20232,7 +20208,9 @@ void resnet88_test() {
   break_up_multi_channel_outputs(prg);
   dsa_writers(prg);
   pad_to_single_depth(prg);
-  generate_unoptimized_code(prg);
+  generate_fpga_clockwork_code(prg);
+
+  move_to_benchmarks_folder(prg.name);
   assert(false);
 }
 
