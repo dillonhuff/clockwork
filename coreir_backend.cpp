@@ -2310,6 +2310,18 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
 
   ofstream verilog_collateral(prg.name + "_verilog_collateral.sv");
   verilog_collateral_file = &verilog_collateral;
+  vector<isl_set*> ss;
+  for (auto m : get_maps(schedmap)) {
+    verilog_collateral << tab(1) << "// min: " << str(lexmin(range(m))) << endl;
+    verilog_collateral << tab(1) << "// max: " << str(lexmax(range(m))) << endl;
+    verilog_collateral << endl;
+    ss.push_back(range(m));
+  }
+
+  isl_set* res = unn(ss);
+  verilog_collateral << tab(1) << "// sched min: " << str(lexmin(res)) << endl;
+  verilog_collateral << tab(1) << "// sched max: " << str(lexmax(res)) << endl;
+  
 
   assert(verilog_collateral_file != nullptr);
 
