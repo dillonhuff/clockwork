@@ -21407,6 +21407,11 @@ prog stencil_chain(const std::string& name) {
 
 void dhuff_playground() {
   {
+    prog prg = resnet88();
+    prg.pretty_print();
+    assert(false);
+  }
+  {
     prog prg = harris();
     int num_buffers = all_buffers(prg).size();
     cout << "# of buffers: " << num_buffers << endl;
