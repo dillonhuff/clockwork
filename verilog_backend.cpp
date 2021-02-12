@@ -908,12 +908,17 @@ void instantiate_banks(
 
       out << tab(2) << "if (" << bundle_wen_fsm << ") begin" << endl;
       out << tab(3) << "case( " << bank_selector << ")" << endl;
+      string last_ram = "";
       for (int b = 0; b < num_banks; b++) {
         string source_ram = "bank_" + str(b);
         out << tab(4) << b << ":" << source_ram << "[" << addr << "]" << " <= " << input_wire << ";" << endl;
+        last_ram = source_ram;
       }
 #if SIM
       out << tab(4) << "default: $finish(-1);" << endl;
+#else
+      assert(last_ram != "");
+      out << tab(4) << "default" << ":" << last_ram << "[" << addr << "]" << " <= " << input_wire << ";" << endl;
 #endif
       out << tab(3) << "endcase" << endl;
       out << tab(2) << "end" << endl;
@@ -938,17 +943,18 @@ void instantiate_banks(
         string bank_selector = map_find(outpt, port_bank_selectors);
         string inner_bank_offset = map_find(outpt, port_inner_bank_offsets);
         string out_wire = map_find(outpt, port_data);
+        string assign_str = load_latency == 0 ? " = " : " <= ";
 
         out << tab(2) << "if (" << bundle_ren_fsm << ") begin" << endl;
         out << tab(3) << "case( " << bank_selector << ")" << endl;
         for (int b = 0; b < num_banks; b++) {
           string source_ram = "bank_" + str(b);
-          string assign_str = load_latency == 0 ? " = " : " <= ";
-          out << tab(4) << b << ":" << out_wire << assign_str << source_ram << "[" << inner_bank_offset << "];" << endl;
         }
         counter++;
 #if SIM
         out << tab(4) << "default: $finish(-1);" << endl;
+#else
+        out << tab(4) << "default" << ":" << out_wire << assign_str << "0;" << endl;
 #endif
         out << tab(3) << "endcase" << endl;
         out << tab(2) << "end" << endl;
