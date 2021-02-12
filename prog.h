@@ -2007,3 +2007,9 @@ bool groups_are_contiguous(const map<string, std::set<string> >& fusion_groups, 
 
 bool no_violated_cycle_accurate_dependencies(umap* deps, schedule_info& sched, prog& prg);
 bool no_violated_cycle_accurate_dependencies(schedule_info& sched, prog& prg);
+
+umap* cycle_accurate_deps(prog& prg);
+
+void sanity_check_negative_starts(schedule_info& sched, prog& prg);
+
+int max_completion_time(schedule_info& sched, prog& prg);

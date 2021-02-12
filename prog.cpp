@@ -7695,6 +7695,7 @@ int op_latency(op* op, schedule_info& hwinfo) {
 }
 
 void adjust_outer_delays(schedule_info& sched, prog& prg) {
+  auto deps = cycle_accurate_deps(prg);
   cout << "Adjusting delays of " << prg.name << endl;
   for (auto lp : prg.root->children) {
     string name = lp->name;
@@ -7713,7 +7714,7 @@ void adjust_outer_delays(schedule_info& sched, prog& prg) {
       assert(latest_legal_delay >= earliest_possible_delay);
       int try_delay = (latest_legal_delay + earliest_possible_delay) / 2;
       sched.op_offset_within_parent[lp] = try_delay;
-      if (no_violated_cycle_accurate_dependencies(sched, prg)) {
+      if (no_violated_cycle_accurate_dependencies(deps, sched, prg)) {
         latest_legal_delay = try_delay;
         break;
       } else {
@@ -7748,6 +7749,7 @@ void adjust_outer_delays(schedule_info& sched, prog& prg) {
 }
 
 void adjust_outer_pipeline_delays(schedule_info& sched, prog& prg) {
+  auto deps = cycle_accurate_deps(prg);
   cout << "Adjusting delays of " << prg.name << endl;
   for (auto lp : find_coarse_grained_pipeline_loop(prg.root)->children) {
 
@@ -7756,7 +7758,7 @@ void adjust_outer_pipeline_delays(schedule_info& sched, prog& prg) {
     bool found_smaller_delay = false;
     while (try_delay < old_delay) {
       sched.op_offset_within_parent[lp] = try_delay;
-      if (no_violated_cycle_accurate_dependencies(sched, prg)) {
+      if (no_violated_cycle_accurate_dependencies(deps, sched, prg)) {
         found_smaller_delay = true;
         break;
       }
@@ -7772,6 +7774,7 @@ void adjust_outer_pipeline_delays(schedule_info& sched, prog& prg) {
 }
 
 void adjust_inner_iis(schedule_info& sched, prog& prg) {
+  auto deps = cycle_accurate_deps(prg);
   cout << "Adjusting iis of " << prg.name << endl;
   for (auto lp : get_inner_loops(prg)) {
     cout << "Adjusting ii of " << lp->name << endl;
@@ -7780,7 +7783,7 @@ void adjust_inner_iis(schedule_info& sched, prog& prg) {
     bool found_smaller_ii = false;
     while (try_ii < old_ii) {
       sched.loop_iis[lp->name] = try_ii;
-      if (no_violated_cycle_accurate_dependencies(sched, prg)) {
+      if (no_violated_cycle_accurate_dependencies(deps, sched, prg)) {
         found_smaller_ii = true;
         break;
       }
@@ -9621,5 +9624,102 @@ bool groups_are_contiguous(const map<string, std::set<string> >& fusion_groups, 
     }
   }
   return true;
+}
+
+bool no_violated_cycle_accurate_dependencies(umap* deps, schedule_info& sched, prog& prg) {
+  prg.pretty_print();
+  sanity_check_iis(sched);
+  sanity_check_negative_starts(sched, prg);
+
+  auto start_times = op_start_times_map(sched, prg);
+  auto end_times = op_end_times_map(sched, prg);
+  auto all_times = unn(start_times, end_times);
+
+  cout << "Schedule..." << endl;
+  for (auto m : get_maps(start_times)) {
+    cout << tab(1) << str(m) << endl;
+    release(m);
+  }
+  cout << tab(1) << "Cycle deps: " << str(deps) << endl;
+
+  deps = inv(deps);
+  auto earlier = lex_lt(all_times, all_times);
+
+  cout << tab(1) << "Earlier deps: " << str(earlier) << endl;
+
+  auto violated = its(earlier, deps);
+
+  cout << tab(1) << "Violated deps: " << str(violated) << endl;
+  bool safe = empty(violated);
+
+  if (!safe) {
+    cout << "Schedule..." << endl;
+    for (auto s : get_maps(start_times)) {
+      cout << str(s) << endl << endl;
+    }
+    cout << endl;
+    cout << "Violated deps..." << endl;
+    for (auto m : get_maps(violated)) {
+      cout << str(m) << endl << endl;
+    }
+  }
+  release(violated);
+  release(earlier);
+  release(start_times);
+  release(end_times);
+  release(all_times);
+  //assert(false);
+  return safe;
+}
+
+bool no_violated_cycle_accurate_dependencies(schedule_info& sched, prog& prg) {
+  auto deps = cycle_accurate_deps(prg);
+  return no_violated_cycle_accurate_dependencies(deps, sched, prg);
+}
+
+umap* cycle_accurate_deps(prog& prg) {
+  auto valid = prg.validity_deps();
+  umap* final_dep = rdmap(prg.ctx, "{}");
+  for (auto m : get_maps(valid)) {
+    string dom_name = "end_" + domain_name(m);
+    string rname = "start_" + range_name(m);
+    m = set_domain_name(set_range_name(m, rname), dom_name);
+    auto um = to_umap(m);
+    final_dep = unn(final_dep, um);
+    release(m);
+    release(um);
+  }
+
+  release(valid);
+  return final_dep;
+}
+
+void sanity_check_negative_starts(schedule_info& sched, prog& prg) {
+  auto start_times = its(op_start_times_map(sched, prg), op_start_times_domain(prg));
+  cout << "Start times..." << endl;
+  //cout << str(start_times) << endl;
+  for (auto m : get_maps(start_times)) {
+    cout << tab(1) << str(m) << endl;
+  }
+  //assert(false);
+  auto ranges = range(start_times);
+  auto range_set = to_set(ranges);
+  int min = to_int(lexminval(range_set));
+
+  cout << tab(1) << "min: " << str(lexmin(ranges)) << endl;
+  assert(min >= 0);
+}
+
+int max_completion_time(schedule_info& sched, prog& prg) {
+  auto start_times =
+    its(op_start_times_map(sched, prg), op_start_times_domain(prg));
+
+  int done_time = INT_MIN;
+
+  for (auto s : get_sets(range(start_times))) {
+    int max_dim = to_int(lexmaxval(s));
+    done_time = max(max_dim, done_time);
+  }
+  return done_time;
 }
 

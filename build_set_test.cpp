@@ -17654,53 +17654,6 @@ void compile_for_garnet_single_port_mem(prog& prg,
 #endif
 }
 
-//umap* cycle_accurate_deps(schedule_info& sched, prog& prg) {
-umap* cycle_accurate_deps(prog& prg) {
-  auto valid = prg.validity_deps();
-  umap* final_dep = rdmap(prg.ctx, "{}");
-  for (auto m : get_maps(valid)) {
-    string dom_name = "end_" + domain_name(m);
-    string rname = "start_" + range_name(m);
-    m = set_domain_name(set_range_name(m, rname), dom_name);
-    auto um = to_umap(m);
-    final_dep = unn(final_dep, um);
-    release(m);
-    release(um);
-  }
-
-  release(valid);
-  return final_dep;
-}
-
-void sanity_check_negative_starts(schedule_info& sched, prog& prg) {
-  auto start_times = its(op_start_times_map(sched, prg), op_start_times_domain(prg));
-  cout << "Start times..." << endl;
-  //cout << str(start_times) << endl;
-  for (auto m : get_maps(start_times)) {
-    cout << tab(1) << str(m) << endl;
-  }
-  //assert(false);
-  auto ranges = range(start_times);
-  auto range_set = to_set(ranges);
-  int min = to_int(lexminval(range_set));
-
-  cout << tab(1) << "min: " << str(lexmin(ranges)) << endl;
-  assert(min >= 0);
-}
-
-int max_completion_time(schedule_info& sched, prog& prg) {
-  auto start_times =
-    its(op_start_times_map(sched, prg), op_start_times_domain(prg));
-
-  int done_time = INT_MIN;
-
-  for (auto s : get_sets(range(start_times))) {
-    int max_dim = to_int(lexmaxval(s));
-    done_time = max(max_dim, done_time);
-  }
-  return done_time;
-}
-
 bool schedule_bounds_fit_controller_bitwidth(const int bitwidth, schedule_info& sched, prog& prg) {
   int max_val = pow(2, bitwidth);
 
