@@ -2482,6 +2482,35 @@ isl_map* peel_schedule_domain_dim(isl_map* m, int dom_dim, int delay) {
   return isl_map_from_basic_map(b_ret);
 }
 
+isl_map* remove_irrelevant_in_dim(isl_map* m) {
+    vector<bool> rel_map = relation_map(m);
+    vector<int> rem_dim;
+    isl_map* ret = cpy(m);
+    isl_set* dom = domain(m);
+    int dim = 0;
+    for (bool is_rel: rel_map) {
+        if (dim == 0) {
+            dim ++;
+            continue;
+        }
+        if (!is_rel && (get_dim_extent(dom, dim) == 1))
+            rem_dim.push_back(dim);
+        dim ++;
+    }
+    std::reverse(rem_dim.begin(), rem_dim.end());
+    cout << "remove dimension: " << rem_dim << endl;
+
+    for (int in_dim: rem_dim) {
+        ret = isl_map_project_out(ret, isl_dim_in, in_dim, 1);
+    }
+    auto ct = ctx(m);
+    string dname;
+    dname = domain_name(m);
+    isl_map_set_tuple_id(ret, isl_dim_in, id(ct, dname));
+
+    return ret;
+}
+
 vector<bool> relation_map(isl_map* m) {
   size_t dom_dim = num_in_dims(m);
   vector<bool> rel(dom_dim, false);
