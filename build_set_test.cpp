@@ -20389,6 +20389,10 @@ void resnet88_test() {
 
   prg.sanity_check();
 
+  break_up_multi_channel_inputs(prg);
+  break_up_multi_channel_outputs(prg);
+  dsa_writers(prg);
+  pad_to_single_depth(prg);
   generate_unoptimized_code(prg);
   assert(false);
 }
