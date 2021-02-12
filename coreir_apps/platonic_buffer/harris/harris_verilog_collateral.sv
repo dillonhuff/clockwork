@@ -45,6 +45,7 @@
 
   // sched min: { [1] }
   // sched max: { [4173] }
+// cim_output_stencil has embarassing partition: 1
 
 module cim_output_stencil_embarassing_bank_selector(input logic [16*2 - 1 :0] d, output logic [15:0] out);
   assign out = 0;
@@ -252,6 +253,7 @@ cim_output_stencil_embarassing_bank_selector cim_output_stencil_cim_output_stenc
 
 endmodule
 
+// cim_stencil has embarassing partition: 0
 
 module cim_stencil_bank_selector(input logic [16*2 - 1 :0] d, output logic [15:0] out);
   logic [15:0] bank_index_0;
@@ -1801,6 +1803,7 @@ cim_stencil_bank_selector cim_stencil_cim_stencil_op_hcompute_cim_output_stencil
 
 endmodule
 
+// grad_x_stencil has embarassing partition: 0
 
 module grad_x_stencil_bank_selector(input logic [16*2 - 1 :0] d, output logic [15:0] out);
   logic [15:0] bank_index_0;
@@ -2108,6 +2111,7 @@ grad_x_stencil_bank_selector grad_x_stencil_grad_x_stencil_op_hcompute_lxy_stenc
 
 endmodule
 
+// grad_y_stencil has embarassing partition: 0
 
 module grad_y_stencil_bank_selector(input logic [16*2 - 1 :0] d, output logic [15:0] out);
   logic [15:0] bank_index_0;
@@ -2415,6 +2419,7 @@ grad_y_stencil_bank_selector grad_y_stencil_grad_y_stencil_op_hcompute_lyy_stenc
 
 endmodule
 
+// lgxx_stencil has embarassing partition: 1
 
 module lgxx_stencil_embarassing_bank_selector(input logic [16*2 - 1 :0] d, output logic [15:0] out);
   assign out = 0;
@@ -2622,6 +2627,7 @@ lgxx_stencil_embarassing_bank_selector lgxx_stencil_lgxx_stencil_op_hcompute_cim
 
 endmodule
 
+// lgxx_stencil_clkwrk_dsa0 has embarassing partition: 1
 
 module lgxx_stencil_clkwrk_dsa0_embarassing_bank_selector(input logic [16*2 - 1 :0] d, output logic [15:0] out);
   assign out = 0;
@@ -2873,6 +2879,7 @@ lgxx_stencil_clkwrk_dsa0_embarassing_bank_selector lgxx_stencil_clkwrk_dsa0_lgxx
 
 endmodule
 
+// lgxy_stencil has embarassing partition: 1
 
 module lgxy_stencil_embarassing_bank_selector(input logic [16*2 - 1 :0] d, output logic [15:0] out);
   assign out = 0;
@@ -3080,6 +3087,7 @@ lgxy_stencil_embarassing_bank_selector lgxy_stencil_lgxy_stencil_op_hcompute_cim
 
 endmodule
 
+// lgxy_stencil_clkwrk_dsa1 has embarassing partition: 1
 
 module lgxy_stencil_clkwrk_dsa1_embarassing_bank_selector(input logic [16*2 - 1 :0] d, output logic [15:0] out);
   assign out = 0;
@@ -3331,6 +3339,7 @@ lgxy_stencil_clkwrk_dsa1_embarassing_bank_selector lgxy_stencil_clkwrk_dsa1_lgxy
 
 endmodule
 
+// lgyy_stencil has embarassing partition: 1
 
 module lgyy_stencil_embarassing_bank_selector(input logic [16*2 - 1 :0] d, output logic [15:0] out);
   assign out = 0;
@@ -3538,6 +3547,7 @@ lgyy_stencil_embarassing_bank_selector lgyy_stencil_lgyy_stencil_op_hcompute_cim
 
 endmodule
 
+// lgyy_stencil_clkwrk_dsa2 has embarassing partition: 1
 
 module lgyy_stencil_clkwrk_dsa2_embarassing_bank_selector(input logic [16*2 - 1 :0] d, output logic [15:0] out);
   assign out = 0;
@@ -3789,6 +3799,7 @@ lgyy_stencil_clkwrk_dsa2_embarassing_bank_selector lgyy_stencil_clkwrk_dsa2_lgyy
 
 endmodule
 
+// lxx_stencil has embarassing partition: 0
 
 module lxx_stencil_bank_selector(input logic [16*2 - 1 :0] d, output logic [15:0] out);
   logic [15:0] bank_index_0;
@@ -5338,6 +5349,7 @@ lxx_stencil_bank_selector lxx_stencil_lxx_stencil_op_hcompute_lgxx_stencil_1_43_
 
 endmodule
 
+// lxy_stencil has embarassing partition: 0
 
 module lxy_stencil_bank_selector(input logic [16*2 - 1 :0] d, output logic [15:0] out);
   logic [15:0] bank_index_0;
@@ -6887,6 +6899,7 @@ lxy_stencil_bank_selector lxy_stencil_lxy_stencil_op_hcompute_lgxy_stencil_1_31_
 
 endmodule
 
+// lyy_stencil has embarassing partition: 0
 
 module lyy_stencil_bank_selector(input logic [16*2 - 1 :0] d, output logic [15:0] out);
   logic [15:0] bank_index_0;
@@ -8436,6 +8449,7 @@ lyy_stencil_bank_selector lyy_stencil_lyy_stencil_op_hcompute_lgyy_stencil_1_19_
 
 endmodule
 
+// padded16_global_wrapper_stencil has embarassing partition: 0
 
 module padded16_global_wrapper_stencil_bank_selector(input logic [16*2 - 1 :0] d, output logic [15:0] out);
   logic [15:0] bank_index_0;
