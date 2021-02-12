@@ -16634,28 +16634,6 @@ void asap_input_iis(schedule_info& sched, prog& prg) {
 
 }
 
-// void adjust_inner_iis(schedule_info& sched, prog& prg) {
-//   cout << "Adjusting iis of " << prg.name << endl;
-//   for (auto lp : get_inner_loops(prg)) {
-//     cout << "Adjusting ii of " << lp->name << endl;
-//     int old_ii = map_find(lp->name, sched.loop_iis);
-//     int try_ii = 1;
-//     bool found_smaller_ii = false;
-//     while (try_ii < old_ii) {
-//       sched.loop_iis[lp->name] = try_ii;
-//       if (no_violated_cycle_accurate_dependencies(sched, prg)) {
-//         found_smaller_ii = true;
-//         break;
-//       }
-//       try_ii *= 2;
-//     }
-
-//     if (!found_smaller_ii) {
-//       sched.loop_iis[lp->name] = old_ii;
-//     }
-//   }
-// }
-
 void break_up_multi_channel_outputs(prog& prg) {
   std::set<string> to_erase;
   for (auto out : prg.outs) {
@@ -17752,7 +17730,7 @@ bool schedule_bounds_fit_controller_bitwidth(const int bitwidth, schedule_info& 
   return true;
 }
 
-bool no_violated_cycle_accurate_dependencies(schedule_info& sched, prog& prg) {
+bool no_violated_cycle_accurate_dependencies(umap* deps, schedule_info& sched, prog& prg) {
   prg.pretty_print();
   sanity_check_iis(sched);
   sanity_check_negative_starts(sched, prg);
@@ -17766,7 +17744,6 @@ bool no_violated_cycle_accurate_dependencies(schedule_info& sched, prog& prg) {
     cout << tab(1) << str(m) << endl;
     release(m);
   }
-  auto deps = cycle_accurate_deps(prg);
   cout << tab(1) << "Cycle deps: " << str(deps) << endl;
 
   deps = inv(deps);
@@ -17798,6 +17775,12 @@ bool no_violated_cycle_accurate_dependencies(schedule_info& sched, prog& prg) {
   //assert(false);
   return safe;
 }
+
+bool no_violated_cycle_accurate_dependencies(schedule_info& sched, prog& prg) {
+  auto deps = cycle_accurate_deps(prg);
+  return no_violated_cycle_accurate_dependencies(deps, sched, prg);
+}
+
 
 void test_schedules(vector<prog>& test_programs) {
 
