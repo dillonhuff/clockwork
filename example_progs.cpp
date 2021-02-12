@@ -8115,7 +8115,7 @@ prog three_level_pond() {
 //store is: hw_input.stencil(hw_input_s0_x, hw_input_s0_y) = input_cgra.stencil(hw_input_s0_x, hw_input_s0_y)
   auto hcompute_hw_input_stencil = hw_input_s0_x->add_op("op_hcompute_hw_input_stencil");
   hcompute_hw_input_stencil->add_function("hcompute_hw_input_stencil");
-  hcompute_hw_input_stencil->add_load("input_cgra_stencil", "hw_input_s0_y", "hw_input_s0_x");
+  hcompute_hw_input_stencil->add_load("input_cgra_stencil", "hw_input_s0_y + output_cgra_s0_y_y_cgra*8", "hw_input_s0_x + output_cgra_s0_x_x_cgra*8");
   prg.buffer_port_widths["hw_input_stencil"] = 16;
   hcompute_hw_input_stencil->add_store("hw_input_stencil", "hw_input_s0_y", "hw_input_s0_x");
 
