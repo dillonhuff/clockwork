@@ -20384,7 +20384,17 @@ void multi_rate_dynamic_apps() {
   llf_init();
 }
 
+void resnet88_test() {
+  prog prg = resnet88();
+
+  prg.sanity_check();
+
+  generate_unoptimized_code(prg);
+  assert(false);
+}
+
 void application_tests() {
+  resnet88_test();
   multi_rate_dynamic_apps();
   initial_soda_comparison();
 
