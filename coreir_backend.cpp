@@ -4229,7 +4229,6 @@ void pipeline_compute_units(prog& prg, schedule_info& hwinfo) {
           num_scheduled++;
         }
 
-
         //Instance* next_sched = nullptr;
         //for (Instance* i : unscheduled) {
           //bool all_deps_scheduled = true;
