@@ -18,6 +18,12 @@ struct dynamic_address {
 };
 
 template <typename T>
+std::ostream& operator<< (std::ostream& out, const std::pair<T, T>& v) {
+    out << "{" << v.first << ", " << v.second << "} ";
+    return out;
+}
+
+template <typename T>
 std::ostream& operator<< (std::ostream& out, const std::vector<T>& v) {
     if ( !v.empty()  ) {
         out << '[';

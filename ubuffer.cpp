@@ -1245,15 +1245,21 @@ void add_lake_config(Json& jdata, ConfigMap data, int dimensionality, string dom
     }
 }
 
-
+//This is an optimization pass
+//take both access map and schedule and merge the dimension
 pair<isl_map*, isl_map*> merge_dom_dim(isl_map* schedule, isl_map* acc_map) {
     auto a_map = cpy(acc_map);
     auto sched = cpy(schedule);
+    int merge_cnt = 0;
+
+    //Get all mergeable dim in order from inner to outer
     vector<pair<int, int>> all_pair_a =
         get_all_domain_merge_dims(a_map);
     vector<pair<int, int>> all_pair_s =
         get_all_domain_merge_dims(sched);
-    int merge_cnt = 0;
+
+    cout << "\taccess map merge pair: " << all_pair_a << endl;
+    cout << "\tschedule merge pair: " << all_pair_s << endl;
     while(!empty(all_pair_a) && !empty(all_pair_s)) {
         auto pa = all_pair_a.front();
         auto ps = all_pair_s.front();
@@ -1289,16 +1295,19 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, UBuffer& ubuf) {
 
     for (auto m : get_maps(hardware_schedule)) {
         string op_name = domain_name(m);
+        m = remove_irrelevant_in_dim(m);
         op2sched[op_name] = m;
         auto out_acc_umap = ubuf.producer_map();
         for (auto out_acc_map: get_maps(out_acc_umap)) {
             if (domain_name(out_acc_map) == op_name) {
+                out_acc_map = remove_irrelevant_in_dim(out_acc_map);
                 map_insert(op2write_map, op_name, to_umap(out_acc_map));
             }
         }
         auto in_acc_umap = ubuf.consumer_map();
         for (auto in_acc_map: get_maps(in_acc_umap)) {
             if (domain_name(in_acc_map) == op_name) {
+                in_acc_map = remove_irrelevant_in_dim(in_acc_map);
                 map_insert(op2read_map, op_name, to_umap(in_acc_map));
             }
         }
@@ -1317,12 +1326,17 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, UBuffer& ubuf) {
             auto acc_map = pick(op2write_map.at(op_name));
                 auto reduce_map = linear_address_map_lake(to_set(range(acc_map)), mem.fetch_width);
                 auto linear_acc_map = dot(acc_map, reduce_map);
+                cout << tab(1) << "Before Merge: " << endl;
+                cout << tab(2) << "acc map: " << str(acc_map) << endl;
+                cout << tab(2) << "sched: " << str(sched) << endl;
+                cout << tab(2) << "reduce_map: " << str(reduce_map) << endl;
                 //add a simplify optimization pass,
                 //reutrn:    pair(schedulem access_map)
                 auto m_pair = merge_dom_dim(sched, to_map(linear_acc_map));
                 sched = m_pair.first;
-                cout << "schedule: " << str(sched) << endl;
-                cout << "access map: " << str(m_pair.second) << endl;
+                cout << tab(1) << "After Merge: " << endl;
+                cout << tab(2) << "schedule: " << str(sched) << endl;
+                cout << tab(2) << "access map: " << str(m_pair.second) << endl;
                 auto aff = get_aff(sched);
                 auto dom = ::domain(sched);
                 auto config_info = generate_accessor_config_from_aff_expr(dom, aff);
@@ -1337,10 +1351,15 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, UBuffer& ubuf) {
             auto acc_map = pick(op2read_map.at(op_name));
                 auto reduce_map = linear_address_map_lake(to_set(range(acc_map)), mem.fetch_width);
                 auto linear_acc_map = dot(acc_map, reduce_map);
+                cout << tab(1) << "Before Merge: " << endl;
+                cout << tab(2) << "acc map: " << str(acc_map) << endl;
+                cout << tab(2) << "sched: " << str(sched) << endl;
+                cout << tab(2) << "reduce_map: " << str(reduce_map) << endl;
                 auto m_pair = merge_dom_dim(sched, to_map(linear_acc_map));
                 sched = m_pair.first;
-                cout << "schedule: " << str(sched) << endl;
-                cout << "access map: " << str(m_pair.second) << endl;
+                cout << tab(1) << "After Merge: " << endl;
+                cout << tab(2) << "schedule: " << str(sched) << endl;
+                cout << tab(2) << "access map: " << str(m_pair.second) << endl;
                 auto aff = get_aff(sched);
                 auto dom = ::domain(sched);
                 auto config_info = generate_accessor_config_from_aff_expr(dom, aff);
