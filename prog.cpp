@@ -4698,7 +4698,12 @@ map<string, int> compute_unroll_factors(const std::string& buf, const int unroll
   for (auto loop : inner_loops) {
     auto op = pick(loop->children);
     int qf = to_int(map_find("s_" + op->name, qfs));
-    factors[loop->name] = ceil(unroll_factor / qf);
+
+    int factor = std::max((int) 1, (int) ceil(unroll_factor / qf));
+
+    assert(factor > 0);
+
+    factors[loop->name] = factor;
   }
 
   return factors;
@@ -4713,11 +4718,16 @@ void unroll_producer_matching(const std::string& buf, const int unroll_factor, p
   cout << "Unroll factors..." << endl;
   for (auto f : unroll_factors) {
     cout << tab(1) << f.first << " -> " << f.second << endl;
+    assert(f.second > 0);
   }
   //assert(false);
   for (auto loop : inner_loops) {
     int factor = map_find(loop->name, unroll_factors);
     int tc = loop->trip_count();
+
+    if (tc % factor != 0) {
+      cout << "Error: Trip count " << tc << " is not evenly divisible by " << factor << endl;
+    }
     assert(tc % factor == 0);
     strip_mine(factor, loop, prg);
   }

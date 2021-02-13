@@ -20340,13 +20340,32 @@ void large_pyramid_blend_pointwise_fusion() {
   assert(false);
 }
 
+void grayscale_llf_static_2pix_per_cycle() {
+  const int size = 2048;
+  const int throughput = 2;
+  prog prg = llf_grayscale_float();
+  infer_bounds_and_unroll(pick(prg.outs), {size, size}, throughput, prg);
+
+  prg.name = prg.name + "_st";
+  prg.sanity_check();
+
+  CodegenOptions options;
+  options = CodegenOptions();
+  options.scheduling_algorithm = SCHEDULE_ALGORITHM_CW;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+
+  generate_optimized_code(options, prg);
+
+  move_to_benchmarks_folder(prg.name);
+
+  assert(false);
+}
+
+
 void grayscale_llf_static() {
   prog prg = llf_grayscale_float();
   prg.name = prg.name + "_st";
   prg.sanity_check();
-
-  auto fusion_groups = one_stage_per_group(prg);
-  app_dag dag = partition_application(fusion_groups, prg);
 
   CodegenOptions options;
   options = CodegenOptions();
@@ -20434,6 +20453,7 @@ void sef_static_and_dynamic() {
 }
 
 void multi_rate_dynamic_apps() {
+  //grayscale_llf_static_2pix_per_cycle();
 
   sef_static_and_dynamic();
 
