@@ -16569,56 +16569,6 @@ void relax_delays_rate_matched(schedule_info& sched, prog& prg) {
   }
 }
 
-// void adjust_outer_delays(schedule_info& sched, prog& prg) {
-//   cout << "Adjusting delays of " << prg.name << endl;
-//   for (auto name : topologically_sort_kernels(prg)) {
-//     auto lp = prg.find_loop(name);
-//     cout << "Adjusting delay of " << lp->name << endl;
-
-//     int old_delay = map_find(lp, sched.op_offset_within_parent);
-//     int try_delay = 1;
-//     bool found_smaller_delay = false;
-//     while (try_delay < old_delay) {
-//       sched.op_offset_within_parent[lp] = try_delay;
-//       if (no_violated_cycle_accurate_dependencies(sched, prg)) {
-//         found_smaller_delay = true;
-//         break;
-//       }
-//       try_delay = max(try_delay * 2, try_delay + 1000);
-//       //try_delay = min(try_delay * 2, try_delay + 1000);
-//       //try_delay *= 2;
-//     }
-
-//     if (!found_smaller_delay) {
-//       sched.op_offset_within_parent[lp] = old_delay;
-//     }
-//   }
-// }
-
-// void adjust_outer_pipeline_delays(schedule_info& sched, prog& prg) {
-//   cout << "Adjusting delays of " << prg.name << endl;
-//   for (auto lp : find_coarse_grained_pipeline_loop(prg.root)->children) {
-
-//     int old_delay = map_find(lp, sched.op_offset_within_parent);
-//     int try_delay = 1;
-//     bool found_smaller_delay = false;
-//     while (try_delay < old_delay) {
-//       sched.op_offset_within_parent[lp] = try_delay;
-//       if (no_violated_cycle_accurate_dependencies(sched, prg)) {
-//         found_smaller_delay = true;
-//         break;
-//       }
-//       try_delay = max(try_delay * 2, try_delay + 1000);
-//       //try_delay = min(try_delay * 2, try_delay + 1000);
-//       //try_delay *= 2;
-//     }
-
-//     if (!found_smaller_delay) {
-//       sched.op_offset_within_parent[lp] = old_delay;
-//     }
-//   }
-// }
-
 void asap_input_iis(schedule_info& sched, prog& prg) {
 
     //Looks for buffer all reading location is constant localtion
@@ -16683,28 +16633,6 @@ void asap_input_iis(schedule_info& sched, prog& prg) {
 
 
 }
-
-// void adjust_inner_iis(schedule_info& sched, prog& prg) {
-//   cout << "Adjusting iis of " << prg.name << endl;
-//   for (auto lp : get_inner_loops(prg)) {
-//     cout << "Adjusting ii of " << lp->name << endl;
-//     int old_ii = map_find(lp->name, sched.loop_iis);
-//     int try_ii = 1;
-//     bool found_smaller_ii = false;
-//     while (try_ii < old_ii) {
-//       sched.loop_iis[lp->name] = try_ii;
-//       if (no_violated_cycle_accurate_dependencies(sched, prg)) {
-//         found_smaller_ii = true;
-//         break;
-//       }
-//       try_ii *= 2;
-//     }
-
-//     if (!found_smaller_ii) {
-//       sched.loop_iis[lp->name] = old_ii;
-//     }
-//   }
-// }
 
 void break_up_multi_channel_outputs(prog& prg) {
   std::set<string> to_erase;
@@ -17726,52 +17654,6 @@ void compile_for_garnet_single_port_mem(prog& prg,
 #endif
 }
 
-umap* cycle_accurate_deps(schedule_info& sched, prog& prg) {
-  auto valid = prg.validity_deps();
-  umap* final_dep = rdmap(prg.ctx, "{}");
-  for (auto m : get_maps(valid)) {
-    string dom_name = "end_" + domain_name(m);
-    string rname = "start_" + range_name(m);
-    m = set_domain_name(set_range_name(m, rname), dom_name);
-    auto um = to_umap(m);
-    final_dep = unn(final_dep, um);
-    release(m);
-    release(um);
-  }
-
-  release(valid);
-  return final_dep;
-}
-
-void sanity_check_negative_starts(schedule_info& sched, prog& prg) {
-  auto start_times = its(op_start_times_map(sched, prg), op_start_times_domain(prg));
-  cout << "Start times..." << endl;
-  //cout << str(start_times) << endl;
-  for (auto m : get_maps(start_times)) {
-    cout << tab(1) << str(m) << endl;
-  }
-  //assert(false);
-  auto ranges = range(start_times);
-  auto range_set = to_set(ranges);
-  int min = to_int(lexminval(range_set));
-
-  cout << tab(1) << "min: " << str(lexmin(ranges)) << endl;
-  assert(min >= 0);
-}
-
-int max_completion_time(schedule_info& sched, prog& prg) {
-  auto start_times =
-    its(op_start_times_map(sched, prg), op_start_times_domain(prg));
-
-  int done_time = INT_MIN;
-
-  for (auto s : get_sets(range(start_times))) {
-    int max_dim = to_int(lexmaxval(s));
-    done_time = max(max_dim, done_time);
-  }
-  return done_time;
-}
-
 bool schedule_bounds_fit_controller_bitwidth(const int bitwidth, schedule_info& sched, prog& prg) {
   int max_val = pow(2, bitwidth);
 
@@ -17799,53 +17681,6 @@ bool schedule_bounds_fit_controller_bitwidth(const int bitwidth, schedule_info& 
     release(s);
   }
   return true;
-}
-
-bool no_violated_cycle_accurate_dependencies(schedule_info& sched, prog& prg) {
-  prg.pretty_print();
-  sanity_check_iis(sched);
-  sanity_check_negative_starts(sched, prg);
-
-  auto start_times = op_start_times_map(sched, prg);
-  auto end_times = op_end_times_map(sched, prg);
-  auto all_times = unn(start_times, end_times);
-
-  cout << "Schedule..." << endl;
-  for (auto m : get_maps(start_times)) {
-    cout << tab(1) << str(m) << endl;
-    release(m);
-  }
-  auto deps = cycle_accurate_deps(sched, prg);
-  cout << tab(1) << "Cycle deps: " << str(deps) << endl;
-
-  deps = inv(deps);
-  auto earlier = lex_lt(all_times, all_times);
-
-  cout << tab(1) << "Earlier deps: " << str(earlier) << endl;
-
-  auto violated = its(earlier, deps);
-
-  cout << tab(1) << "Violated deps: " << str(violated) << endl;
-  bool safe = empty(violated);
-
-  if (!safe) {
-    cout << "Schedule..." << endl;
-    for (auto s : get_maps(start_times)) {
-      cout << str(s) << endl << endl;
-    }
-    cout << endl;
-    cout << "Violated deps..." << endl;
-    for (auto m : get_maps(violated)) {
-      cout << str(m) << endl << endl;
-    }
-  }
-  release(violated);
-  release(earlier);
-  release(start_times);
-  release(end_times);
-  release(all_times);
-  //assert(false);
-  return safe;
 }
 
 void test_schedules(vector<prog>& test_programs) {
@@ -18177,115 +18012,91 @@ std::string cw_box_codegen(CodegenOptions& options,
 }
 
 void generate_fpga_clockwork_code(prog& prg) {
-  auto valid = prg.validity_deps();
-  auto dom = prg.whole_iteration_domain();
-  map<string, vector<isl_aff*> > cwsched =
-    clockwork_schedule(dom, valid, cpy(valid));
 
-  cout << "Clockwork sched..." << endl;
-  std::vector<op*> dft_ops = get_dft_ops(prg);
-  cout << "DFT op order" << endl;
-  int pos = 0;
-  map<string, int> positions;
-  vector<string> ops;
-  for (auto op : dft_ops) {
-    cout << tab(1) << op->name << endl;
-    positions[op->name] = pos;
-    ops.push_back(op->name);
-    pos++;
-  }
+  if (is_rate_matchable(prg)) {
+    auto valid = prg.validity_deps();
+    auto dom = prg.whole_iteration_domain();
+    map<string, vector<isl_aff*> > cwsched =
+      clockwork_schedule(dom, valid, cpy(valid));
 
-  map<string, vector<QExpr> > scheds;
-  for (auto s : cwsched) {
-    string name = s.first;
-    vector<isl_aff*> vals = s.second;
-
-    scheds[name] = {};
-    int i = 0;
-    for (auto v : vals) {
-      QExpr rate = qexpr("d" + str(i));
-      auto rate_coeff =
-        qexpr(int_coeff(v, 0));
-      auto delay =
-        qexpr(int_const_coeff(v));
-
-      QExpr expr =
-        rate_coeff*rate + delay;
-      scheds[name].push_back(expr);
-      i++;
+    cout << "Clockwork sched..." << endl;
+    std::vector<op*> dft_ops = get_dft_ops(prg);
+    cout << "DFT op order" << endl;
+    int pos = 0;
+    map<string, int> positions;
+    vector<string> ops;
+    for (auto op : dft_ops) {
+      cout << tab(1) << op->name << endl;
+      positions[op->name] = pos;
+      ops.push_back(op->name);
+      pos++;
     }
-  }
 
-  // schedule is dN, ..., d1, d0
-  //for (auto& s : scheds) {
-    //reverse(s.second);
-  //}
+    map<string, vector<QExpr> > scheds;
+    for (auto s : cwsched) {
+      string name = s.first;
+      vector<isl_aff*> vals = s.second;
 
-  //// schedule is dN, ..., d1, d0
-  //for (auto& s : scheds) {
-    //reverse(s.second);
-    //QAV v = qconst(map_find(s.first, positions));
-    //QTerm t{{v}};
-    //QExpr e{{t}};
-    //s.second.push_back(e);
-  //}
+      scheds[name] = {};
+      int i = 0;
+      for (auto v : vals) {
+        QExpr rate = qexpr("d" + str(i));
+        auto rate_coeff =
+          qexpr(int_coeff(v, 0));
+        auto delay =
+          qexpr(int_const_coeff(v));
 
-  cout << "Final schedule..." << endl;
-  for (auto s : scheds) {
-    cout << tab(1) << s.first << endl;
-    for (auto v : s.second) {
-      cout << tab(2) << v << endl;
+        QExpr expr =
+          rate_coeff*rate + delay;
+        scheds[name].push_back(expr);
+        i++;
+      }
     }
-    cout << endl;
+
+    cout << "Final schedule..." << endl;
+    for (auto s : scheds) {
+      cout << tab(1) << s.first << endl;
+      for (auto v : s.second) {
+        cout << tab(2) << v << endl;
+      }
+      cout << endl;
+    }
+
+    auto sched = qschedule_to_map_final_sort(prg.ctx, scheds, positions);
+    sched = its(sched, dom);
+
+    cout << "Optimized schedule..." << endl;
+    for (auto s : get_maps(sched)) {
+      cout << tab(1) << str(s) << endl;
+    }
+
+    //assert(false);
+    //cout << tab(1) << ": " << str(sched) << endl << endl;
+    //cout << codegen_c(sched) << endl;
+
+    auto buffers = build_buffers(prg, sched);
+
+    assert(prg.compute_unit_file != "");
+    cout << "Compute unit file: "
+      << prg.compute_unit_file << endl;
+    CodegenOptions options;
+    options.internal = true;
+    generate_app_code(options, buffers, prg, sched);
+
+    release(sched);
+  } else {
+    auto sched = prg.unoptimized_schedule();
+
+    auto buffers = build_buffers(prg, prg.unoptimized_schedule());
+
+    CodegenOptions options;
+    options.internal = true;
+    options.all_rams = true;
+    all_unbanked(prg, options);
+    options.inner_bank_offset_mode =
+      INNER_BANK_OFFSET_MULTILINEAR;
+    generate_app_code(options, buffers, prg, sched);
   }
-
-  auto sched = qschedule_to_map_final_sort(prg.ctx, scheds, positions);
-  sched = its(sched, dom);
-
-  cout << "Optimized schedule..." << endl;
-  for (auto s : get_maps(sched)) {
-    cout << tab(1) << str(s) << endl;
-  }
-
-  //assert(false);
-  //cout << tab(1) << ": " << str(sched) << endl << endl;
-  //cout << codegen_c(sched) << endl;
-
-  auto buffers = build_buffers(prg, sched);
-
-  assert(prg.compute_unit_file != "");
-  cout << "Compute unit file: "
-    << prg.compute_unit_file << endl;
-  CodegenOptions options;
-  options.internal = true;
-  //options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
-  //map<string, Box> compute_domains;
-  //for (auto s : get_sets(dom)) {
-    //ops.push_back(name(s));
-    //Box bounds;
-    //for (int d = 0; d < num_dims(s); d++) {
-      //auto pr = project_all_but(s, d);
-      //int minv = to_int(lexminval(pr));
-      //int maxv = to_int(lexmaxval(pr));
-      //bounds.intervals.push_back({minv, maxv});
-    //}
-    //compute_domains[name(s)] = bounds;
-  //}
-
-  //cout << "Boxes..." << endl;
-  //for (auto b : compute_domains) {
-    //cout << tab(1) << b.first << " -> " << b.second << endl;
-  //}
-  ////assert(false);
-  //cout << "Generating box codegen" << endl;
-  //string cgn = cw_box_codegen(options, ops, scheds, compute_domains);
-  //cout << "Done" << endl;
-  //options.code_string = cgn;
-  //cout << "Code string..." << endl;
-  //cout << cgn << endl;
-  generate_app_code(options, buffers, prg, sched);
-
-  release(sched);
 }
 
 void fpga_asplos_tests() {
@@ -18314,6 +18125,13 @@ void fpga_asplos_tests() {
 void cgra_flow_tests() {
 
   vector<prog> M3_test_programs = isca_programs();
+
+  //vector<prog> bram_test_programs{pointwise(), gaussian(), harris(), resnet()};
+  vector<prog> bram_test_programs{resnet88()};
+  //vector<prog> bram_test_programs{pointwise()};
+  test_codegen(bram_test_programs, compile_for_FPGA_BRAM_mem);
+  assert(false);
+
   //vector<prog> M3_test_programs = harris_variants();
   //vector<prog> M3_test_programs{up_sample(), resnet()};
   //vector<prog> M3_test_programs{resnet()};
@@ -18335,9 +18153,6 @@ void cgra_flow_tests() {
   vector<prog> sram_test_programs{pointwise(), camera_pipeline(), resnet()};
   test_codegen(sram_test_programs, compile_for_generic_SRAM_mem);
 
-  vector<prog> bram_test_programs{pointwise(), gaussian(), harris(), resnet()};
-  test_codegen(bram_test_programs, compile_for_FPGA_BRAM_mem);
-  //assert(false);
 }
 
 void dse_flow_tests() {
@@ -20464,7 +20279,24 @@ void multi_rate_dynamic_apps() {
   llf_init();
 }
 
+void resnet88_test() {
+  //prog prg = resnet88();
+  prog prg = resnet();
+
+  prg.sanity_check();
+
+  break_up_multi_channel_inputs(prg);
+  break_up_multi_channel_outputs(prg);
+  dsa_writers(prg);
+  pad_to_single_depth(prg);
+  generate_fpga_clockwork_code(prg);
+
+  move_to_benchmarks_folder(prg.name);
+  assert(false);
+}
+
 void application_tests() {
+  resnet88_test();
   multi_rate_dynamic_apps();
   initial_soda_comparison();
 

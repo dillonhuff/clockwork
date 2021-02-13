@@ -1,0 +1,625 @@
+
+****** Vivado(TM) HLS - High-Level Synthesis from C, C++ and SystemC v2019.2_AR73068 (64-bit)
+  **** SW Build 2700185 on Thu Oct 24 18:45:48 MDT 2019
+  **** IP Build 2699827 on Thu Oct 24 21:16:38 MDT 2019
+    ** Copyright 1986-2019 Xilinx, Inc. All Rights Reserved.
+
+source /opt/Xilinx/Vivado/2019.2/scripts/vivado_hls/hls.tcl -notrace
+INFO: [HLS 200-10] Running '/opt/Xilinx/Vivado/2019.2/bin/unwrapped/lnx64.o/vivado_hls'
+INFO: [HLS 200-10] For user 'centos' on host 'ip-172-31-64-113.ec2.internal' (Linux_x86_64 version 3.10.0-1062.4.1.el7.x86_64) on Fri Feb 12 18:22:51 UTC 2021
+INFO: [HLS 200-10] On os "CentOS Linux release 7.7.1908 (Core)"
+INFO: [HLS 200-10] In directory '/home/centos/clockwork/soda_codes/resnet/our_code'
+Sourcing Tcl script 'resnet_hls.tcl'
+INFO: [HLS 200-10] Creating and opening project '/home/centos/clockwork/soda_codes/resnet/our_code/resnet_proj'.
+INFO: [HLS 200-10] Adding design file 'resnet.cpp' to the project
+INFO: [HLS 200-10] Creating and opening solution '/home/centos/clockwork/soda_codes/resnet/our_code/resnet_proj/solution1'.
+INFO: [HLS 200-10] Cleaning up the solution database.
+INFO: [HLS 200-10] Setting target device to 'xcvu9p-flgb2104-2-i'
+INFO: [SYN 201-201] Setting up clock 'default' with a period of 5ns.
+INFO: [SCHED 204-61] Option 'relax_ii_for_timing' is enabled, will increase II to preserve clock frequency constraints.
+INFO: [HLS 200-10] Analyzing design file 'resnet.cpp' ... 
+WARNING: [HLS 214-111] Static scalars and arrays declared inside a dataflow region will be treated like local variables: resnet.cpp:1270:32
+WARNING: [HLS 214-111] Static scalars and arrays declared inside a dataflow region will be treated like local variables: resnet.cpp:1271:33
+WARNING: [HLS 214-111] Static scalars and arrays declared inside a dataflow region will be treated like local variables: resnet.cpp:1272:33
+WARNING: [HLS 214-113] Either use an argument of the function or declare the variable inside the dataflow loop body: resnet.cpp:1274:138
+WARNING: [HLS 214-113] Either use an argument of the function or declare the variable inside the dataflow loop body: resnet.cpp:1275:140
+WARNING: [HLS 214-113] Either use an argument of the function or declare the variable inside the dataflow loop body: resnet.cpp:1279:113
+WARNING: [HLS 200-471] Dataflow form checks found 6 issue(s) in file resnet.cpp
+INFO: [HLS 200-111] Finished Linking Time (s): cpu = 00:00:12 ; elapsed = 00:00:13 . Memory (MB): peak = 983.375 ; gain = 463.160 ; free physical = 61876 ; free virtual = 83221
+INFO: [HLS 200-111] Finished Checking Pragmas Time (s): cpu = 00:00:12 ; elapsed = 00:00:13 . Memory (MB): peak = 983.375 ; gain = 463.160 ; free physical = 61876 ; free virtual = 83221
+INFO: [HLS 200-10] Starting code transformations ...
+INFO: [XFORM 203-603] Inlining function 'op_hcompute_hw_input_global_wrapper_stencil' into 'resnet' (resnet.cpp:1204).
+INFO: [XFORM 203-603] Inlining function 'op_hcompute_hw_kernel_global_wrapper_stencil' into 'resnet' (resnet.cpp:1210).
+INFO: [XFORM 203-603] Inlining function 'op_hcompute_conv_stencil' into 'resnet' (resnet.cpp:1214).
+INFO: [XFORM 203-603] Inlining function 'op_hcompute_conv_stencil_1' into 'resnet' (resnet.cpp:1215).
+INFO: [XFORM 203-603] Inlining function 'op_hcompute_conv_stencil_2' into 'resnet' (resnet.cpp:1216).
+INFO: [XFORM 203-603] Inlining function 'op_hcompute_conv_stencil_3' into 'resnet' (resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'op_hcompute_conv_stencil_4' into 'resnet' (resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'op_hcompute_conv_stencil_5' into 'resnet' (resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'op_hcompute_hw_output_stencil' into 'resnet' (resnet.cpp:1231).
+INFO: [XFORM 203-603] Inlining function 'HWStream<hw_uint<16> >::read' into 'resnet' (resnet.cpp:988->resnet.cpp:1204).
+INFO: [XFORM 203-603] Inlining function 'hcompute_hw_input_global_wrapper_stencil' into 'resnet' (resnet.cpp:989->resnet.cpp:1204).
+INFO: [XFORM 203-603] Inlining function 'hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_write_bundle_write' into 'resnet' (resnet.cpp:991->resnet.cpp:1204).
+INFO: [XFORM 203-603] Inlining function 'HWStream<hw_uint<16> >::read' into 'resnet' (resnet.cpp:1002->resnet.cpp:1210).
+INFO: [XFORM 203-603] Inlining function 'hcompute_hw_kernel_global_wrapper_stencil' into 'resnet' (resnet.cpp:1003->resnet.cpp:1210).
+INFO: [XFORM 203-603] Inlining function 'hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_write_bundle_write' into 'resnet' (resnet.cpp:1005->resnet.cpp:1210).
+INFO: [XFORM 203-603] Inlining function 'hcompute_conv_stencil' into 'resnet' (resnet.cpp:1015->resnet.cpp:1214).
+INFO: [XFORM 203-603] Inlining function 'conv_stencil_op_hcompute_conv_stencil_write_bundle_write' into 'resnet' (resnet.cpp:1017->resnet.cpp:1214).
+INFO: [XFORM 203-603] Inlining function 'hcompute_conv_stencil_1' into 'resnet' (resnet.cpp:1027->resnet.cpp:1215).
+INFO: [XFORM 203-603] Inlining function 'conv_stencil_op_hcompute_conv_stencil_1_write_bundle_write' into 'resnet' (resnet.cpp:1029->resnet.cpp:1215).
+INFO: [XFORM 203-603] Inlining function 'hcompute_conv_stencil_2' into 'resnet' (resnet.cpp:1039->resnet.cpp:1216).
+INFO: [XFORM 203-603] Inlining function 'conv_stencil_op_hcompute_conv_stencil_2_write_bundle_write' into 'resnet' (resnet.cpp:1041->resnet.cpp:1216).
+INFO: [XFORM 203-603] Inlining function 'conv_stencil_op_hcompute_conv_stencil_3_read_bundle_read' into 'resnet' (resnet.cpp:1052->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_read_bundle_read' into 'resnet' (resnet.cpp:1058->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_read_bundle_read' into 'resnet' (resnet.cpp:1064->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'hcompute_conv_stencil_3' into 'resnet' (resnet.cpp:1069->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'conv_stencil_op_hcompute_conv_stencil_3_write_bundle_write' into 'resnet' (resnet.cpp:1071->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'conv_stencil_op_hcompute_conv_stencil_4_read_bundle_read' into 'resnet' (resnet.cpp:1082->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_read_bundle_read' into 'resnet' (resnet.cpp:1088->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_read_bundle_read' into 'resnet' (resnet.cpp:1094->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'hcompute_conv_stencil_4' into 'resnet' (resnet.cpp:1099->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'conv_stencil_op_hcompute_conv_stencil_4_write_bundle_write' into 'resnet' (resnet.cpp:1101->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'conv_stencil_op_hcompute_conv_stencil_5_read_bundle_read' into 'resnet' (resnet.cpp:1112->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_read_bundle_read' into 'resnet' (resnet.cpp:1118->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_read_bundle_read' into 'resnet' (resnet.cpp:1124->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'hcompute_conv_stencil_5' into 'resnet' (resnet.cpp:1129->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'conv_stencil_op_hcompute_conv_stencil_5_write_bundle_write' into 'resnet' (resnet.cpp:1131->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'conv_stencil_op_hcompute_hw_output_stencil_read_bundle_read' into 'resnet' (resnet.cpp:1142->resnet.cpp:1231).
+INFO: [XFORM 203-603] Inlining function 'hcompute_hw_output_stencil' into 'resnet' (resnet.cpp:1147->resnet.cpp:1231).
+INFO: [XFORM 203-603] Inlining function 'HWStream<hw_uint<16> >::write' into 'resnet' (resnet.cpp:1149->resnet.cpp:1231).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::extract<0, 15>' into 'resnet' (./resnet_compute.h:8->resnet.cpp:989->resnet.cpp:1204).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::operator int' into 'resnet' (./resnet_compute.h:8->resnet.cpp:989->resnet.cpp:1204).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::extract<0, 15>' into 'resnet' (resnet.cpp:581->resnet.cpp:991->resnet.cpp:1204).
+INFO: [XFORM 203-603] Inlining function 'hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_4_write' into 'resnet' (resnet.cpp:582->resnet.cpp:991->resnet.cpp:1204).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::extract<0, 15>' into 'resnet' (./resnet_compute.h:15->resnet.cpp:1003->resnet.cpp:1210).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::operator int' into 'resnet' (./resnet_compute.h:15->resnet.cpp:1003->resnet.cpp:1210).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::extract<0, 15>' into 'resnet' (resnet.cpp:976->resnet.cpp:1005->resnet.cpp:1210).
+INFO: [XFORM 203-603] Inlining function 'hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_write' into 'resnet' (resnet.cpp:977->resnet.cpp:1005->resnet.cpp:1210).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::extract<0, 15>' into 'resnet' (resnet.cpp:174->resnet.cpp:1017->resnet.cpp:1214).
+INFO: [XFORM 203-603] Inlining function 'conv_stencil_op_hcompute_conv_stencil_62_write' into 'resnet' (resnet.cpp:175->resnet.cpp:1017->resnet.cpp:1214).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::extract<0, 15>' into 'resnet' (resnet.cpp:103->resnet.cpp:1029->resnet.cpp:1215).
+INFO: [XFORM 203-603] Inlining function 'conv_stencil_op_hcompute_conv_stencil_1_61_write' into 'resnet' (resnet.cpp:104->resnet.cpp:1029->resnet.cpp:1215).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::extract<0, 15>' into 'resnet' (resnet.cpp:110->resnet.cpp:1041->resnet.cpp:1216).
+INFO: [XFORM 203-603] Inlining function 'conv_stencil_op_hcompute_conv_stencil_2_60_write' into 'resnet' (resnet.cpp:111->resnet.cpp:1041->resnet.cpp:1216).
+INFO: [XFORM 203-603] Inlining function 'conv_stencil_op_hcompute_conv_stencil_3_43_select' into 'resnet' (resnet.cpp:121->resnet.cpp:1052->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'set_at<0, 16, 16>' into 'resnet' (resnet.cpp:122->resnet.cpp:1052->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_44_select' into 'resnet' (resnet.cpp:479->resnet.cpp:1058->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'set_at<0, 128, 16>' into 'resnet' (resnet.cpp:480->resnet.cpp:1058->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_45_select' into 'resnet' (resnet.cpp:481->resnet.cpp:1058->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'set_at<16, 128, 16>' into 'resnet' (resnet.cpp:482->resnet.cpp:1058->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_46_select' into 'resnet' (resnet.cpp:483->resnet.cpp:1058->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'set_at<32, 128, 16>' into 'resnet' (resnet.cpp:484->resnet.cpp:1058->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_47_select' into 'resnet' (resnet.cpp:485->resnet.cpp:1058->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'set_at<48, 128, 16>' into 'resnet' (resnet.cpp:486->resnet.cpp:1058->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_48_select' into 'resnet' (resnet.cpp:487->resnet.cpp:1058->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'set_at<64, 128, 16>' into 'resnet' (resnet.cpp:488->resnet.cpp:1058->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_49_select' into 'resnet' (resnet.cpp:489->resnet.cpp:1058->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'set_at<80, 128, 16>' into 'resnet' (resnet.cpp:490->resnet.cpp:1058->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_50_select' into 'resnet' (resnet.cpp:491->resnet.cpp:1058->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'set_at<96, 128, 16>' into 'resnet' (resnet.cpp:492->resnet.cpp:1058->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_51_select' into 'resnet' (resnet.cpp:493->resnet.cpp:1058->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'set_at<112, 128, 16>' into 'resnet' (resnet.cpp:494->resnet.cpp:1058->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_52_select' into 'resnet' (resnet.cpp:874->resnet.cpp:1064->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'set_at<0, 128, 16>' into 'resnet' (resnet.cpp:875->resnet.cpp:1064->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_53_select' into 'resnet' (resnet.cpp:876->resnet.cpp:1064->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'set_at<16, 128, 16>' into 'resnet' (resnet.cpp:877->resnet.cpp:1064->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_54_select' into 'resnet' (resnet.cpp:878->resnet.cpp:1064->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'set_at<32, 128, 16>' into 'resnet' (resnet.cpp:879->resnet.cpp:1064->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_55_select' into 'resnet' (resnet.cpp:880->resnet.cpp:1064->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'set_at<48, 128, 16>' into 'resnet' (resnet.cpp:881->resnet.cpp:1064->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_56_select' into 'resnet' (resnet.cpp:882->resnet.cpp:1064->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'set_at<64, 128, 16>' into 'resnet' (resnet.cpp:883->resnet.cpp:1064->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_57_select' into 'resnet' (resnet.cpp:884->resnet.cpp:1064->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'set_at<80, 128, 16>' into 'resnet' (resnet.cpp:885->resnet.cpp:1064->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_58_select' into 'resnet' (resnet.cpp:886->resnet.cpp:1064->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'set_at<96, 128, 16>' into 'resnet' (resnet.cpp:887->resnet.cpp:1064->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_59_select' into 'resnet' (resnet.cpp:888->resnet.cpp:1064->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'set_at<112, 128, 16>' into 'resnet' (resnet.cpp:889->resnet.cpp:1064->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::extract<0, 15>' into 'resnet' (./resnet_compute.h:40->resnet.cpp:1069->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::operator int' into 'resnet' (./resnet_compute.h:40->resnet.cpp:1069->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<128>::extract<0, 15>' into 'resnet' (./resnet_compute.h:42->resnet.cpp:1069->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::operator int' into 'resnet' (./resnet_compute.h:42->resnet.cpp:1069->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<128>::extract<16, 31>' into 'resnet' (./resnet_compute.h:43->resnet.cpp:1069->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::operator int' into 'resnet' (./resnet_compute.h:43->resnet.cpp:1069->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<128>::extract<32, 47>' into 'resnet' (./resnet_compute.h:44->resnet.cpp:1069->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::operator int' into 'resnet' (./resnet_compute.h:44->resnet.cpp:1069->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<128>::extract<48, 63>' into 'resnet' (./resnet_compute.h:45->resnet.cpp:1069->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::operator int' into 'resnet' (./resnet_compute.h:45->resnet.cpp:1069->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<128>::extract<64, 79>' into 'resnet' (./resnet_compute.h:46->resnet.cpp:1069->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::operator int' into 'resnet' (./resnet_compute.h:46->resnet.cpp:1069->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<128>::extract<80, 95>' into 'resnet' (./resnet_compute.h:47->resnet.cpp:1069->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::operator int' into 'resnet' (./resnet_compute.h:47->resnet.cpp:1069->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<128>::extract<96, 111>' into 'resnet' (./resnet_compute.h:48->resnet.cpp:1069->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::operator int' into 'resnet' (./resnet_compute.h:48->resnet.cpp:1069->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<128>::extract<112, 127>' into 'resnet' (./resnet_compute.h:49->resnet.cpp:1069->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::operator int' into 'resnet' (./resnet_compute.h:49->resnet.cpp:1069->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<128>::extract<0, 15>' into 'resnet' (./resnet_compute.h:51->resnet.cpp:1069->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::operator int' into 'resnet' (./resnet_compute.h:51->resnet.cpp:1069->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<128>::extract<16, 31>' into 'resnet' (./resnet_compute.h:52->resnet.cpp:1069->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::operator int' into 'resnet' (./resnet_compute.h:52->resnet.cpp:1069->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<128>::extract<32, 47>' into 'resnet' (./resnet_compute.h:53->resnet.cpp:1069->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::operator int' into 'resnet' (./resnet_compute.h:53->resnet.cpp:1069->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<128>::extract<48, 63>' into 'resnet' (./resnet_compute.h:54->resnet.cpp:1069->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::operator int' into 'resnet' (./resnet_compute.h:54->resnet.cpp:1069->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<128>::extract<64, 79>' into 'resnet' (./resnet_compute.h:55->resnet.cpp:1069->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::operator int' into 'resnet' (./resnet_compute.h:55->resnet.cpp:1069->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<128>::extract<80, 95>' into 'resnet' (./resnet_compute.h:56->resnet.cpp:1069->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::operator int' into 'resnet' (./resnet_compute.h:56->resnet.cpp:1069->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<128>::extract<96, 111>' into 'resnet' (./resnet_compute.h:57->resnet.cpp:1069->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::operator int' into 'resnet' (./resnet_compute.h:57->resnet.cpp:1069->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<128>::extract<112, 127>' into 'resnet' (./resnet_compute.h:58->resnet.cpp:1069->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::operator int' into 'resnet' (./resnet_compute.h:58->resnet.cpp:1069->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::extract<0, 15>' into 'resnet' (resnet.cpp:129->resnet.cpp:1071->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'conv_stencil_op_hcompute_conv_stencil_3_42_write' into 'resnet' (resnet.cpp:130->resnet.cpp:1071->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'conv_stencil_op_hcompute_conv_stencil_4_25_select' into 'resnet' (resnet.cpp:140->resnet.cpp:1082->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'set_at<0, 16, 16>' into 'resnet' (resnet.cpp:141->resnet.cpp:1082->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_26_select' into 'resnet' (resnet.cpp:519->resnet.cpp:1088->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'set_at<0, 128, 16>' into 'resnet' (resnet.cpp:520->resnet.cpp:1088->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_27_select' into 'resnet' (resnet.cpp:521->resnet.cpp:1088->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'set_at<16, 128, 16>' into 'resnet' (resnet.cpp:522->resnet.cpp:1088->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_28_select' into 'resnet' (resnet.cpp:523->resnet.cpp:1088->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'set_at<32, 128, 16>' into 'resnet' (resnet.cpp:524->resnet.cpp:1088->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_29_select' into 'resnet' (resnet.cpp:525->resnet.cpp:1088->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'set_at<48, 128, 16>' into 'resnet' (resnet.cpp:526->resnet.cpp:1088->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_30_select' into 'resnet' (resnet.cpp:527->resnet.cpp:1088->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'set_at<64, 128, 16>' into 'resnet' (resnet.cpp:528->resnet.cpp:1088->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_31_select' into 'resnet' (resnet.cpp:529->resnet.cpp:1088->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'set_at<80, 128, 16>' into 'resnet' (resnet.cpp:530->resnet.cpp:1088->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_32_select' into 'resnet' (resnet.cpp:531->resnet.cpp:1088->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'set_at<96, 128, 16>' into 'resnet' (resnet.cpp:532->resnet.cpp:1088->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_33_select' into 'resnet' (resnet.cpp:533->resnet.cpp:1088->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'set_at<112, 128, 16>' into 'resnet' (resnet.cpp:534->resnet.cpp:1088->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_34_select' into 'resnet' (resnet.cpp:914->resnet.cpp:1094->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'set_at<0, 128, 16>' into 'resnet' (resnet.cpp:915->resnet.cpp:1094->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_35_select' into 'resnet' (resnet.cpp:916->resnet.cpp:1094->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'set_at<16, 128, 16>' into 'resnet' (resnet.cpp:917->resnet.cpp:1094->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_36_select' into 'resnet' (resnet.cpp:918->resnet.cpp:1094->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'set_at<32, 128, 16>' into 'resnet' (resnet.cpp:919->resnet.cpp:1094->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_37_select' into 'resnet' (resnet.cpp:920->resnet.cpp:1094->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'set_at<48, 128, 16>' into 'resnet' (resnet.cpp:921->resnet.cpp:1094->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_38_select' into 'resnet' (resnet.cpp:922->resnet.cpp:1094->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'set_at<64, 128, 16>' into 'resnet' (resnet.cpp:923->resnet.cpp:1094->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_39_select' into 'resnet' (resnet.cpp:924->resnet.cpp:1094->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'set_at<80, 128, 16>' into 'resnet' (resnet.cpp:925->resnet.cpp:1094->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_40_select' into 'resnet' (resnet.cpp:926->resnet.cpp:1094->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'set_at<96, 128, 16>' into 'resnet' (resnet.cpp:927->resnet.cpp:1094->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_41_select' into 'resnet' (resnet.cpp:928->resnet.cpp:1094->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'set_at<112, 128, 16>' into 'resnet' (resnet.cpp:929->resnet.cpp:1094->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::extract<0, 15>' into 'resnet' (./resnet_compute.h:81->resnet.cpp:1099->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::operator int' into 'resnet' (./resnet_compute.h:81->resnet.cpp:1099->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<128>::extract<0, 15>' into 'resnet' (./resnet_compute.h:83->resnet.cpp:1099->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::operator int' into 'resnet' (./resnet_compute.h:83->resnet.cpp:1099->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<128>::extract<16, 31>' into 'resnet' (./resnet_compute.h:84->resnet.cpp:1099->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::operator int' into 'resnet' (./resnet_compute.h:84->resnet.cpp:1099->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<128>::extract<32, 47>' into 'resnet' (./resnet_compute.h:85->resnet.cpp:1099->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::operator int' into 'resnet' (./resnet_compute.h:85->resnet.cpp:1099->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<128>::extract<48, 63>' into 'resnet' (./resnet_compute.h:86->resnet.cpp:1099->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::operator int' into 'resnet' (./resnet_compute.h:86->resnet.cpp:1099->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<128>::extract<64, 79>' into 'resnet' (./resnet_compute.h:87->resnet.cpp:1099->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::operator int' into 'resnet' (./resnet_compute.h:87->resnet.cpp:1099->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<128>::extract<80, 95>' into 'resnet' (./resnet_compute.h:88->resnet.cpp:1099->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::operator int' into 'resnet' (./resnet_compute.h:88->resnet.cpp:1099->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<128>::extract<96, 111>' into 'resnet' (./resnet_compute.h:89->resnet.cpp:1099->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::operator int' into 'resnet' (./resnet_compute.h:89->resnet.cpp:1099->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<128>::extract<112, 127>' into 'resnet' (./resnet_compute.h:90->resnet.cpp:1099->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::operator int' into 'resnet' (./resnet_compute.h:90->resnet.cpp:1099->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<128>::extract<0, 15>' into 'resnet' (./resnet_compute.h:92->resnet.cpp:1099->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::operator int' into 'resnet' (./resnet_compute.h:92->resnet.cpp:1099->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<128>::extract<16, 31>' into 'resnet' (./resnet_compute.h:93->resnet.cpp:1099->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::operator int' into 'resnet' (./resnet_compute.h:93->resnet.cpp:1099->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<128>::extract<32, 47>' into 'resnet' (./resnet_compute.h:94->resnet.cpp:1099->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::operator int' into 'resnet' (./resnet_compute.h:94->resnet.cpp:1099->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<128>::extract<48, 63>' into 'resnet' (./resnet_compute.h:95->resnet.cpp:1099->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::operator int' into 'resnet' (./resnet_compute.h:95->resnet.cpp:1099->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<128>::extract<64, 79>' into 'resnet' (./resnet_compute.h:96->resnet.cpp:1099->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::operator int' into 'resnet' (./resnet_compute.h:96->resnet.cpp:1099->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<128>::extract<80, 95>' into 'resnet' (./resnet_compute.h:97->resnet.cpp:1099->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::operator int' into 'resnet' (./resnet_compute.h:97->resnet.cpp:1099->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<128>::extract<96, 111>' into 'resnet' (./resnet_compute.h:98->resnet.cpp:1099->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::operator int' into 'resnet' (./resnet_compute.h:98->resnet.cpp:1099->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<128>::extract<112, 127>' into 'resnet' (./resnet_compute.h:99->resnet.cpp:1099->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::operator int' into 'resnet' (./resnet_compute.h:99->resnet.cpp:1099->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::extract<0, 15>' into 'resnet' (resnet.cpp:148->resnet.cpp:1101->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'conv_stencil_op_hcompute_conv_stencil_4_24_write' into 'resnet' (resnet.cpp:149->resnet.cpp:1101->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'conv_stencil_op_hcompute_conv_stencil_5_7_select' into 'resnet' (resnet.cpp:159->resnet.cpp:1112->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'set_at<0, 16, 16>' into 'resnet' (resnet.cpp:160->resnet.cpp:1112->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_8_select' into 'resnet' (resnet.cpp:559->resnet.cpp:1118->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'set_at<0, 128, 16>' into 'resnet' (resnet.cpp:560->resnet.cpp:1118->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_9_select' into 'resnet' (resnet.cpp:561->resnet.cpp:1118->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'set_at<16, 128, 16>' into 'resnet' (resnet.cpp:562->resnet.cpp:1118->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_10_select' into 'resnet' (resnet.cpp:563->resnet.cpp:1118->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'set_at<32, 128, 16>' into 'resnet' (resnet.cpp:564->resnet.cpp:1118->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_11_select' into 'resnet' (resnet.cpp:565->resnet.cpp:1118->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'set_at<48, 128, 16>' into 'resnet' (resnet.cpp:566->resnet.cpp:1118->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_12_select' into 'resnet' (resnet.cpp:567->resnet.cpp:1118->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'set_at<64, 128, 16>' into 'resnet' (resnet.cpp:568->resnet.cpp:1118->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_13_select' into 'resnet' (resnet.cpp:569->resnet.cpp:1118->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'set_at<80, 128, 16>' into 'resnet' (resnet.cpp:570->resnet.cpp:1118->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_14_select' into 'resnet' (resnet.cpp:571->resnet.cpp:1118->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'set_at<96, 128, 16>' into 'resnet' (resnet.cpp:572->resnet.cpp:1118->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_15_select' into 'resnet' (resnet.cpp:573->resnet.cpp:1118->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'set_at<112, 128, 16>' into 'resnet' (resnet.cpp:574->resnet.cpp:1118->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_16_select' into 'resnet' (resnet.cpp:954->resnet.cpp:1124->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'set_at<0, 128, 16>' into 'resnet' (resnet.cpp:955->resnet.cpp:1124->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_17_select' into 'resnet' (resnet.cpp:956->resnet.cpp:1124->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'set_at<16, 128, 16>' into 'resnet' (resnet.cpp:957->resnet.cpp:1124->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_18_select' into 'resnet' (resnet.cpp:958->resnet.cpp:1124->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'set_at<32, 128, 16>' into 'resnet' (resnet.cpp:959->resnet.cpp:1124->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_19_select' into 'resnet' (resnet.cpp:960->resnet.cpp:1124->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'set_at<48, 128, 16>' into 'resnet' (resnet.cpp:961->resnet.cpp:1124->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_20_select' into 'resnet' (resnet.cpp:962->resnet.cpp:1124->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'set_at<64, 128, 16>' into 'resnet' (resnet.cpp:963->resnet.cpp:1124->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_21_select' into 'resnet' (resnet.cpp:964->resnet.cpp:1124->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'set_at<80, 128, 16>' into 'resnet' (resnet.cpp:965->resnet.cpp:1124->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_22_select' into 'resnet' (resnet.cpp:966->resnet.cpp:1124->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'set_at<96, 128, 16>' into 'resnet' (resnet.cpp:967->resnet.cpp:1124->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_23_select' into 'resnet' (resnet.cpp:968->resnet.cpp:1124->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'set_at<112, 128, 16>' into 'resnet' (resnet.cpp:969->resnet.cpp:1124->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::extract<0, 15>' into 'resnet' (./resnet_compute.h:122->resnet.cpp:1129->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::operator int' into 'resnet' (./resnet_compute.h:122->resnet.cpp:1129->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<128>::extract<0, 15>' into 'resnet' (./resnet_compute.h:124->resnet.cpp:1129->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::operator int' into 'resnet' (./resnet_compute.h:124->resnet.cpp:1129->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<128>::extract<16, 31>' into 'resnet' (./resnet_compute.h:125->resnet.cpp:1129->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::operator int' into 'resnet' (./resnet_compute.h:125->resnet.cpp:1129->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<128>::extract<32, 47>' into 'resnet' (./resnet_compute.h:126->resnet.cpp:1129->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::operator int' into 'resnet' (./resnet_compute.h:126->resnet.cpp:1129->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<128>::extract<48, 63>' into 'resnet' (./resnet_compute.h:127->resnet.cpp:1129->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::operator int' into 'resnet' (./resnet_compute.h:127->resnet.cpp:1129->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<128>::extract<64, 79>' into 'resnet' (./resnet_compute.h:128->resnet.cpp:1129->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::operator int' into 'resnet' (./resnet_compute.h:128->resnet.cpp:1129->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<128>::extract<80, 95>' into 'resnet' (./resnet_compute.h:129->resnet.cpp:1129->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::operator int' into 'resnet' (./resnet_compute.h:129->resnet.cpp:1129->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<128>::extract<96, 111>' into 'resnet' (./resnet_compute.h:130->resnet.cpp:1129->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::operator int' into 'resnet' (./resnet_compute.h:130->resnet.cpp:1129->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<128>::extract<112, 127>' into 'resnet' (./resnet_compute.h:131->resnet.cpp:1129->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::operator int' into 'resnet' (./resnet_compute.h:131->resnet.cpp:1129->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<128>::extract<0, 15>' into 'resnet' (./resnet_compute.h:133->resnet.cpp:1129->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::operator int' into 'resnet' (./resnet_compute.h:133->resnet.cpp:1129->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<128>::extract<16, 31>' into 'resnet' (./resnet_compute.h:134->resnet.cpp:1129->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::operator int' into 'resnet' (./resnet_compute.h:134->resnet.cpp:1129->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<128>::extract<32, 47>' into 'resnet' (./resnet_compute.h:135->resnet.cpp:1129->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::operator int' into 'resnet' (./resnet_compute.h:135->resnet.cpp:1129->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<128>::extract<48, 63>' into 'resnet' (./resnet_compute.h:136->resnet.cpp:1129->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::operator int' into 'resnet' (./resnet_compute.h:136->resnet.cpp:1129->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<128>::extract<64, 79>' into 'resnet' (./resnet_compute.h:137->resnet.cpp:1129->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::operator int' into 'resnet' (./resnet_compute.h:137->resnet.cpp:1129->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<128>::extract<80, 95>' into 'resnet' (./resnet_compute.h:138->resnet.cpp:1129->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::operator int' into 'resnet' (./resnet_compute.h:138->resnet.cpp:1129->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<128>::extract<96, 111>' into 'resnet' (./resnet_compute.h:139->resnet.cpp:1129->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::operator int' into 'resnet' (./resnet_compute.h:139->resnet.cpp:1129->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<128>::extract<112, 127>' into 'resnet' (./resnet_compute.h:140->resnet.cpp:1129->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::operator int' into 'resnet' (./resnet_compute.h:140->resnet.cpp:1129->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::extract<0, 15>' into 'resnet' (resnet.cpp:167->resnet.cpp:1131->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'conv_stencil_op_hcompute_conv_stencil_5_6_write' into 'resnet' (resnet.cpp:168->resnet.cpp:1131->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'conv_stencil_op_hcompute_hw_output_stencil_1_select' into 'resnet' (resnet.cpp:185->resnet.cpp:1142->resnet.cpp:1231).
+INFO: [XFORM 203-603] Inlining function 'set_at<0, 16, 16>' into 'resnet' (resnet.cpp:186->resnet.cpp:1142->resnet.cpp:1231).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::extract<0, 15>' into 'resnet' (./resnet_compute.h:163->resnet.cpp:1147->resnet.cpp:1231).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::operator int' into 'resnet' (./resnet_compute.h:163->resnet.cpp:1147->resnet.cpp:1231).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::to_int' into 'resnet' (../../.././hw_classes.h:231->./resnet_compute.h:8->resnet.cpp:989->resnet.cpp:1204).
+INFO: [XFORM 203-603] Inlining function 'hw_input_global_wrapper_stencil_all_inputs_to_all_outputs_cache::write' into 'resnet' (resnet.cpp:238->resnet.cpp:582->resnet.cpp:991->resnet.cpp:1204).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::to_int' into 'resnet' (../../.././hw_classes.h:231->./resnet_compute.h:15->resnet.cpp:1003->resnet.cpp:1210).
+INFO: [XFORM 203-603] Inlining function 'hw_kernel_global_wrapper_stencil_all_inputs_to_all_outputs_cache::write' into 'resnet' (resnet.cpp:633->resnet.cpp:977->resnet.cpp:1005->resnet.cpp:1210).
+INFO: [XFORM 203-603] Inlining function 'conv_stencil_all_inputs_to_all_outputs_cache::write' into 'resnet' (resnet.cpp:60->resnet.cpp:175->resnet.cpp:1017->resnet.cpp:1214).
+INFO: [XFORM 203-603] Inlining function 'conv_stencil_all_inputs_to_all_outputs_cache::write' into 'resnet' (resnet.cpp:40->resnet.cpp:104->resnet.cpp:1029->resnet.cpp:1215).
+INFO: [XFORM 203-603] Inlining function 'conv_stencil_all_inputs_to_all_outputs_cache::write' into 'resnet' (resnet.cpp:44->resnet.cpp:111->resnet.cpp:1041->resnet.cpp:1216).
+INFO: [XFORM 203-603] Inlining function 'conv_stencil_all_inputs_to_all_outputs_cache::read' into 'resnet' (resnet.cpp:67->resnet.cpp:121->resnet.cpp:1052->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'hw_input_global_wrapper_stencil_all_inputs_to_all_outputs_cache::read' into 'resnet' (resnet.cpp:245->resnet.cpp:479->resnet.cpp:1058->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'hw_input_global_wrapper_stencil_all_inputs_to_all_outputs_cache::read' into 'resnet' (resnet.cpp:254->resnet.cpp:481->resnet.cpp:1058->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'hw_input_global_wrapper_stencil_all_inputs_to_all_outputs_cache::read' into 'resnet' (resnet.cpp:263->resnet.cpp:483->resnet.cpp:1058->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'hw_input_global_wrapper_stencil_all_inputs_to_all_outputs_cache::read' into 'resnet' (resnet.cpp:272->resnet.cpp:485->resnet.cpp:1058->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'hw_input_global_wrapper_stencil_all_inputs_to_all_outputs_cache::read' into 'resnet' (resnet.cpp:281->resnet.cpp:487->resnet.cpp:1058->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'hw_input_global_wrapper_stencil_all_inputs_to_all_outputs_cache::read' into 'resnet' (resnet.cpp:290->resnet.cpp:489->resnet.cpp:1058->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'hw_input_global_wrapper_stencil_all_inputs_to_all_outputs_cache::read' into 'resnet' (resnet.cpp:299->resnet.cpp:491->resnet.cpp:1058->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'hw_input_global_wrapper_stencil_all_inputs_to_all_outputs_cache::read' into 'resnet' (resnet.cpp:308->resnet.cpp:493->resnet.cpp:1058->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'hw_kernel_global_wrapper_stencil_all_inputs_to_all_outputs_cache::read' into 'resnet' (resnet.cpp:640->resnet.cpp:874->resnet.cpp:1064->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'hw_kernel_global_wrapper_stencil_all_inputs_to_all_outputs_cache::read' into 'resnet' (resnet.cpp:649->resnet.cpp:876->resnet.cpp:1064->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'hw_kernel_global_wrapper_stencil_all_inputs_to_all_outputs_cache::read' into 'resnet' (resnet.cpp:658->resnet.cpp:878->resnet.cpp:1064->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'hw_kernel_global_wrapper_stencil_all_inputs_to_all_outputs_cache::read' into 'resnet' (resnet.cpp:667->resnet.cpp:880->resnet.cpp:1064->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'hw_kernel_global_wrapper_stencil_all_inputs_to_all_outputs_cache::read' into 'resnet' (resnet.cpp:676->resnet.cpp:882->resnet.cpp:1064->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'hw_kernel_global_wrapper_stencil_all_inputs_to_all_outputs_cache::read' into 'resnet' (resnet.cpp:685->resnet.cpp:884->resnet.cpp:1064->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'hw_kernel_global_wrapper_stencil_all_inputs_to_all_outputs_cache::read' into 'resnet' (resnet.cpp:694->resnet.cpp:886->resnet.cpp:1064->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'hw_kernel_global_wrapper_stencil_all_inputs_to_all_outputs_cache::read' into 'resnet' (resnet.cpp:703->resnet.cpp:888->resnet.cpp:1064->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::to_int' into 'resnet' (../../.././hw_classes.h:231->./resnet_compute.h:40->resnet.cpp:1069->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::to_int' into 'resnet' (../../.././hw_classes.h:231->./resnet_compute.h:42->resnet.cpp:1069->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::to_int' into 'resnet' (../../.././hw_classes.h:231->./resnet_compute.h:43->resnet.cpp:1069->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::to_int' into 'resnet' (../../.././hw_classes.h:231->./resnet_compute.h:44->resnet.cpp:1069->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::to_int' into 'resnet' (../../.././hw_classes.h:231->./resnet_compute.h:45->resnet.cpp:1069->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::to_int' into 'resnet' (../../.././hw_classes.h:231->./resnet_compute.h:46->resnet.cpp:1069->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::to_int' into 'resnet' (../../.././hw_classes.h:231->./resnet_compute.h:47->resnet.cpp:1069->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::to_int' into 'resnet' (../../.././hw_classes.h:231->./resnet_compute.h:48->resnet.cpp:1069->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::to_int' into 'resnet' (../../.././hw_classes.h:231->./resnet_compute.h:49->resnet.cpp:1069->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::to_int' into 'resnet' (../../.././hw_classes.h:231->./resnet_compute.h:51->resnet.cpp:1069->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::to_int' into 'resnet' (../../.././hw_classes.h:231->./resnet_compute.h:52->resnet.cpp:1069->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::to_int' into 'resnet' (../../.././hw_classes.h:231->./resnet_compute.h:53->resnet.cpp:1069->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::to_int' into 'resnet' (../../.././hw_classes.h:231->./resnet_compute.h:54->resnet.cpp:1069->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::to_int' into 'resnet' (../../.././hw_classes.h:231->./resnet_compute.h:55->resnet.cpp:1069->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::to_int' into 'resnet' (../../.././hw_classes.h:231->./resnet_compute.h:56->resnet.cpp:1069->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::to_int' into 'resnet' (../../.././hw_classes.h:231->./resnet_compute.h:57->resnet.cpp:1069->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::to_int' into 'resnet' (../../.././hw_classes.h:231->./resnet_compute.h:58->resnet.cpp:1069->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'conv_stencil_all_inputs_to_all_outputs_cache::write' into 'resnet' (resnet.cpp:48->resnet.cpp:130->resnet.cpp:1071->resnet.cpp:1223).
+INFO: [XFORM 203-603] Inlining function 'conv_stencil_all_inputs_to_all_outputs_cache::read' into 'resnet' (resnet.cpp:76->resnet.cpp:140->resnet.cpp:1082->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'hw_input_global_wrapper_stencil_all_inputs_to_all_outputs_cache::read' into 'resnet' (resnet.cpp:317->resnet.cpp:519->resnet.cpp:1088->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'hw_input_global_wrapper_stencil_all_inputs_to_all_outputs_cache::read' into 'resnet' (resnet.cpp:326->resnet.cpp:521->resnet.cpp:1088->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'hw_input_global_wrapper_stencil_all_inputs_to_all_outputs_cache::read' into 'resnet' (resnet.cpp:335->resnet.cpp:523->resnet.cpp:1088->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'hw_input_global_wrapper_stencil_all_inputs_to_all_outputs_cache::read' into 'resnet' (resnet.cpp:344->resnet.cpp:525->resnet.cpp:1088->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'hw_input_global_wrapper_stencil_all_inputs_to_all_outputs_cache::read' into 'resnet' (resnet.cpp:353->resnet.cpp:527->resnet.cpp:1088->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'hw_input_global_wrapper_stencil_all_inputs_to_all_outputs_cache::read' into 'resnet' (resnet.cpp:362->resnet.cpp:529->resnet.cpp:1088->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'hw_input_global_wrapper_stencil_all_inputs_to_all_outputs_cache::read' into 'resnet' (resnet.cpp:371->resnet.cpp:531->resnet.cpp:1088->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'hw_input_global_wrapper_stencil_all_inputs_to_all_outputs_cache::read' into 'resnet' (resnet.cpp:380->resnet.cpp:533->resnet.cpp:1088->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'hw_kernel_global_wrapper_stencil_all_inputs_to_all_outputs_cache::read' into 'resnet' (resnet.cpp:712->resnet.cpp:914->resnet.cpp:1094->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'hw_kernel_global_wrapper_stencil_all_inputs_to_all_outputs_cache::read' into 'resnet' (resnet.cpp:721->resnet.cpp:916->resnet.cpp:1094->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'hw_kernel_global_wrapper_stencil_all_inputs_to_all_outputs_cache::read' into 'resnet' (resnet.cpp:730->resnet.cpp:918->resnet.cpp:1094->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'hw_kernel_global_wrapper_stencil_all_inputs_to_all_outputs_cache::read' into 'resnet' (resnet.cpp:739->resnet.cpp:920->resnet.cpp:1094->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'hw_kernel_global_wrapper_stencil_all_inputs_to_all_outputs_cache::read' into 'resnet' (resnet.cpp:748->resnet.cpp:922->resnet.cpp:1094->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'hw_kernel_global_wrapper_stencil_all_inputs_to_all_outputs_cache::read' into 'resnet' (resnet.cpp:757->resnet.cpp:924->resnet.cpp:1094->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'hw_kernel_global_wrapper_stencil_all_inputs_to_all_outputs_cache::read' into 'resnet' (resnet.cpp:766->resnet.cpp:926->resnet.cpp:1094->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'hw_kernel_global_wrapper_stencil_all_inputs_to_all_outputs_cache::read' into 'resnet' (resnet.cpp:775->resnet.cpp:928->resnet.cpp:1094->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::to_int' into 'resnet' (../../.././hw_classes.h:231->./resnet_compute.h:81->resnet.cpp:1099->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::to_int' into 'resnet' (../../.././hw_classes.h:231->./resnet_compute.h:83->resnet.cpp:1099->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::to_int' into 'resnet' (../../.././hw_classes.h:231->./resnet_compute.h:84->resnet.cpp:1099->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::to_int' into 'resnet' (../../.././hw_classes.h:231->./resnet_compute.h:85->resnet.cpp:1099->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::to_int' into 'resnet' (../../.././hw_classes.h:231->./resnet_compute.h:86->resnet.cpp:1099->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::to_int' into 'resnet' (../../.././hw_classes.h:231->./resnet_compute.h:87->resnet.cpp:1099->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::to_int' into 'resnet' (../../.././hw_classes.h:231->./resnet_compute.h:88->resnet.cpp:1099->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::to_int' into 'resnet' (../../.././hw_classes.h:231->./resnet_compute.h:89->resnet.cpp:1099->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::to_int' into 'resnet' (../../.././hw_classes.h:231->./resnet_compute.h:90->resnet.cpp:1099->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::to_int' into 'resnet' (../../.././hw_classes.h:231->./resnet_compute.h:92->resnet.cpp:1099->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::to_int' into 'resnet' (../../.././hw_classes.h:231->./resnet_compute.h:93->resnet.cpp:1099->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::to_int' into 'resnet' (../../.././hw_classes.h:231->./resnet_compute.h:94->resnet.cpp:1099->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::to_int' into 'resnet' (../../.././hw_classes.h:231->./resnet_compute.h:95->resnet.cpp:1099->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::to_int' into 'resnet' (../../.././hw_classes.h:231->./resnet_compute.h:96->resnet.cpp:1099->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::to_int' into 'resnet' (../../.././hw_classes.h:231->./resnet_compute.h:97->resnet.cpp:1099->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::to_int' into 'resnet' (../../.././hw_classes.h:231->./resnet_compute.h:98->resnet.cpp:1099->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::to_int' into 'resnet' (../../.././hw_classes.h:231->./resnet_compute.h:99->resnet.cpp:1099->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'conv_stencil_all_inputs_to_all_outputs_cache::write' into 'resnet' (resnet.cpp:52->resnet.cpp:149->resnet.cpp:1101->resnet.cpp:1224).
+INFO: [XFORM 203-603] Inlining function 'conv_stencil_all_inputs_to_all_outputs_cache::read' into 'resnet' (resnet.cpp:85->resnet.cpp:159->resnet.cpp:1112->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'hw_input_global_wrapper_stencil_all_inputs_to_all_outputs_cache::read' into 'resnet' (resnet.cpp:443->resnet.cpp:559->resnet.cpp:1118->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'hw_input_global_wrapper_stencil_all_inputs_to_all_outputs_cache::read' into 'resnet' (resnet.cpp:452->resnet.cpp:561->resnet.cpp:1118->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'hw_input_global_wrapper_stencil_all_inputs_to_all_outputs_cache::read' into 'resnet' (resnet.cpp:389->resnet.cpp:563->resnet.cpp:1118->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'hw_input_global_wrapper_stencil_all_inputs_to_all_outputs_cache::read' into 'resnet' (resnet.cpp:398->resnet.cpp:565->resnet.cpp:1118->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'hw_input_global_wrapper_stencil_all_inputs_to_all_outputs_cache::read' into 'resnet' (resnet.cpp:407->resnet.cpp:567->resnet.cpp:1118->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'hw_input_global_wrapper_stencil_all_inputs_to_all_outputs_cache::read' into 'resnet' (resnet.cpp:416->resnet.cpp:569->resnet.cpp:1118->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'hw_input_global_wrapper_stencil_all_inputs_to_all_outputs_cache::read' into 'resnet' (resnet.cpp:425->resnet.cpp:571->resnet.cpp:1118->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'hw_input_global_wrapper_stencil_all_inputs_to_all_outputs_cache::read' into 'resnet' (resnet.cpp:434->resnet.cpp:573->resnet.cpp:1118->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'hw_kernel_global_wrapper_stencil_all_inputs_to_all_outputs_cache::read' into 'resnet' (resnet.cpp:784->resnet.cpp:954->resnet.cpp:1124->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'hw_kernel_global_wrapper_stencil_all_inputs_to_all_outputs_cache::read' into 'resnet' (resnet.cpp:793->resnet.cpp:956->resnet.cpp:1124->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'hw_kernel_global_wrapper_stencil_all_inputs_to_all_outputs_cache::read' into 'resnet' (resnet.cpp:802->resnet.cpp:958->resnet.cpp:1124->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'hw_kernel_global_wrapper_stencil_all_inputs_to_all_outputs_cache::read' into 'resnet' (resnet.cpp:811->resnet.cpp:960->resnet.cpp:1124->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'hw_kernel_global_wrapper_stencil_all_inputs_to_all_outputs_cache::read' into 'resnet' (resnet.cpp:820->resnet.cpp:962->resnet.cpp:1124->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'hw_kernel_global_wrapper_stencil_all_inputs_to_all_outputs_cache::read' into 'resnet' (resnet.cpp:829->resnet.cpp:964->resnet.cpp:1124->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'hw_kernel_global_wrapper_stencil_all_inputs_to_all_outputs_cache::read' into 'resnet' (resnet.cpp:838->resnet.cpp:966->resnet.cpp:1124->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'hw_kernel_global_wrapper_stencil_all_inputs_to_all_outputs_cache::read' into 'resnet' (resnet.cpp:847->resnet.cpp:968->resnet.cpp:1124->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::to_int' into 'resnet' (../../.././hw_classes.h:231->./resnet_compute.h:122->resnet.cpp:1129->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::to_int' into 'resnet' (../../.././hw_classes.h:231->./resnet_compute.h:124->resnet.cpp:1129->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::to_int' into 'resnet' (../../.././hw_classes.h:231->./resnet_compute.h:125->resnet.cpp:1129->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::to_int' into 'resnet' (../../.././hw_classes.h:231->./resnet_compute.h:126->resnet.cpp:1129->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::to_int' into 'resnet' (../../.././hw_classes.h:231->./resnet_compute.h:127->resnet.cpp:1129->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::to_int' into 'resnet' (../../.././hw_classes.h:231->./resnet_compute.h:128->resnet.cpp:1129->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::to_int' into 'resnet' (../../.././hw_classes.h:231->./resnet_compute.h:129->resnet.cpp:1129->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::to_int' into 'resnet' (../../.././hw_classes.h:231->./resnet_compute.h:130->resnet.cpp:1129->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::to_int' into 'resnet' (../../.././hw_classes.h:231->./resnet_compute.h:131->resnet.cpp:1129->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::to_int' into 'resnet' (../../.././hw_classes.h:231->./resnet_compute.h:133->resnet.cpp:1129->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::to_int' into 'resnet' (../../.././hw_classes.h:231->./resnet_compute.h:134->resnet.cpp:1129->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::to_int' into 'resnet' (../../.././hw_classes.h:231->./resnet_compute.h:135->resnet.cpp:1129->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::to_int' into 'resnet' (../../.././hw_classes.h:231->./resnet_compute.h:136->resnet.cpp:1129->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::to_int' into 'resnet' (../../.././hw_classes.h:231->./resnet_compute.h:137->resnet.cpp:1129->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::to_int' into 'resnet' (../../.././hw_classes.h:231->./resnet_compute.h:138->resnet.cpp:1129->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::to_int' into 'resnet' (../../.././hw_classes.h:231->./resnet_compute.h:139->resnet.cpp:1129->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::to_int' into 'resnet' (../../.././hw_classes.h:231->./resnet_compute.h:140->resnet.cpp:1129->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'conv_stencil_all_inputs_to_all_outputs_cache::write' into 'resnet' (resnet.cpp:56->resnet.cpp:168->resnet.cpp:1131->resnet.cpp:1225).
+INFO: [XFORM 203-603] Inlining function 'conv_stencil_all_inputs_to_all_outputs_cache::read' into 'resnet' (resnet.cpp:94->resnet.cpp:185->resnet.cpp:1142->resnet.cpp:1231).
+INFO: [XFORM 203-603] Inlining function 'hw_uint<16>::to_int' into 'resnet' (../../.././hw_classes.h:231->./resnet_compute.h:163->resnet.cpp:1147->resnet.cpp:1231).
+INFO: [HLS 200-111] Finished Standard Transforms Time (s): cpu = 00:00:14 ; elapsed = 00:00:15 . Memory (MB): peak = 983.375 ; gain = 463.160 ; free physical = 61869 ; free virtual = 83216
+INFO: [HLS 200-10] Checking synthesizability ...
+WARNING: [SYNCHK 200-23] ../../.././hw_classes.h:222: variable-indexed range selection may cause suboptimal QoR.
+INFO: [SYNCHK 200-10] 0 error(s), 1 warning(s).
+INFO: [HLS 200-111] Finished Checking Synthesizability Time (s): cpu = 00:00:19 ; elapsed = 00:00:20 . Memory (MB): peak = 983.375 ; gain = 463.160 ; free physical = 61865 ; free virtual = 83212
+INFO: [XFORM 203-502] Unrolling all sub-loops inside loop 'Loop-1.1.1' (resnet.cpp:1202) in function 'resnet' for pipelining.
+INFO: [XFORM 203-502] Unrolling all sub-loops inside loop 'Loop-2.1.1.1' (resnet.cpp:1208) in function 'resnet' for pipelining.
+INFO: [XFORM 203-502] Unrolling all sub-loops inside loop 'Loop-3.1' (resnet.cpp:1212) in function 'resnet' for pipelining.
+INFO: [XFORM 203-502] Unrolling all sub-loops inside loop 'Loop-4.1.1.1' (resnet.cpp:1221) in function 'resnet' for pipelining.
+INFO: [XFORM 203-502] Unrolling all sub-loops inside loop 'Loop-5.1.1' (resnet.cpp:1229) in function 'resnet' for pipelining.
+INFO: [HLS 200-489] Unrolling loop 'Loop-1.1.1.1' (../../.././hw_classes.h:219) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-1.1.1.2' (../../.././hw_classes.h:219) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-2.1.1.1.1' (../../.././hw_classes.h:219) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-2.1.1.1.2' (../../.././hw_classes.h:219) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-3.1.1' (../../.././hw_classes.h:219) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-3.1.2' (../../.././hw_classes.h:219) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-3.1.3' (../../.././hw_classes.h:219) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.1' (../../.././hw_classes.h:353) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.2' (../../.././hw_classes.h:353) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.3' (../../.././hw_classes.h:353) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.4' (../../.././hw_classes.h:353) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.5' (../../.././hw_classes.h:353) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.6' (../../.././hw_classes.h:353) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.7' (../../.././hw_classes.h:353) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.8' (../../.././hw_classes.h:353) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.9' (../../.././hw_classes.h:353) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.10' (../../.././hw_classes.h:353) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.11' (../../.././hw_classes.h:353) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.12' (../../.././hw_classes.h:353) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.13' (../../.././hw_classes.h:353) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.14' (../../.././hw_classes.h:353) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.15' (../../.././hw_classes.h:353) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.16' (../../.././hw_classes.h:353) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.17' (../../.././hw_classes.h:353) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.18' (../../.././hw_classes.h:219) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.19' (../../.././hw_classes.h:219) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.20' (../../.././hw_classes.h:219) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.21' (../../.././hw_classes.h:219) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.22' (../../.././hw_classes.h:219) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.23' (../../.././hw_classes.h:219) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.24' (../../.././hw_classes.h:219) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.25' (../../.././hw_classes.h:219) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.26' (../../.././hw_classes.h:219) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.27' (../../.././hw_classes.h:219) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.28' (../../.././hw_classes.h:219) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.29' (../../.././hw_classes.h:219) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.30' (../../.././hw_classes.h:219) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.31' (../../.././hw_classes.h:219) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.32' (../../.././hw_classes.h:219) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.33' (../../.././hw_classes.h:219) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.34' (../../.././hw_classes.h:219) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.35' (../../.././hw_classes.h:219) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.36' (../../.././hw_classes.h:353) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.37' (../../.././hw_classes.h:353) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.38' (../../.././hw_classes.h:353) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.39' (../../.././hw_classes.h:353) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.40' (../../.././hw_classes.h:353) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.41' (../../.././hw_classes.h:353) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.42' (../../.././hw_classes.h:353) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.43' (../../.././hw_classes.h:353) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.44' (../../.././hw_classes.h:353) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.45' (../../.././hw_classes.h:353) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.46' (../../.././hw_classes.h:353) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.47' (../../.././hw_classes.h:353) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.48' (../../.././hw_classes.h:353) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.49' (../../.././hw_classes.h:353) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.50' (../../.././hw_classes.h:353) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.51' (../../.././hw_classes.h:353) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.52' (../../.././hw_classes.h:353) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.53' (../../.././hw_classes.h:219) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.54' (../../.././hw_classes.h:219) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.55' (../../.././hw_classes.h:219) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.56' (../../.././hw_classes.h:219) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.57' (../../.././hw_classes.h:219) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.58' (../../.././hw_classes.h:219) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.59' (../../.././hw_classes.h:219) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.60' (../../.././hw_classes.h:219) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.61' (../../.././hw_classes.h:219) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.62' (../../.././hw_classes.h:219) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.63' (../../.././hw_classes.h:219) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.64' (../../.././hw_classes.h:219) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.65' (../../.././hw_classes.h:219) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.66' (../../.././hw_classes.h:219) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.67' (../../.././hw_classes.h:219) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.68' (../../.././hw_classes.h:219) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.69' (../../.././hw_classes.h:219) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.70' (../../.././hw_classes.h:219) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.71' (../../.././hw_classes.h:353) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.72' (../../.././hw_classes.h:353) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.73' (../../.././hw_classes.h:353) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.74' (../../.././hw_classes.h:353) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.75' (../../.././hw_classes.h:353) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.76' (../../.././hw_classes.h:353) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.77' (../../.././hw_classes.h:353) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.78' (../../.././hw_classes.h:353) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.79' (../../.././hw_classes.h:353) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.80' (../../.././hw_classes.h:353) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.81' (../../.././hw_classes.h:353) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.82' (../../.././hw_classes.h:353) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.83' (../../.././hw_classes.h:353) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.84' (../../.././hw_classes.h:353) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.85' (../../.././hw_classes.h:353) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.86' (../../.././hw_classes.h:353) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.87' (../../.././hw_classes.h:353) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.88' (../../.././hw_classes.h:219) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.89' (../../.././hw_classes.h:219) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.90' (../../.././hw_classes.h:219) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.91' (../../.././hw_classes.h:219) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.92' (../../.././hw_classes.h:219) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.93' (../../.././hw_classes.h:219) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.94' (../../.././hw_classes.h:219) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.95' (../../.././hw_classes.h:219) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.96' (../../.././hw_classes.h:219) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.97' (../../.././hw_classes.h:219) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.98' (../../.././hw_classes.h:219) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.99' (../../.././hw_classes.h:219) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.100' (../../.././hw_classes.h:219) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.101' (../../.././hw_classes.h:219) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.102' (../../.././hw_classes.h:219) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.103' (../../.././hw_classes.h:219) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.104' (../../.././hw_classes.h:219) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-4.1.1.1.105' (../../.././hw_classes.h:219) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-5.1.1.1' (../../.././hw_classes.h:353) in function 'resnet' completely with a factor of 16.
+INFO: [HLS 200-489] Unrolling loop 'Loop-5.1.1.2' (../../.././hw_classes.h:219) in function 'resnet' completely with a factor of 16.
+INFO: [XFORM 203-101] Partitioning array 'conv_stencil.conv_stencil_all_inputs_to_all_outputs.RAM.val.V' (resnet.cpp:1163) in dimension 1 completely.
+INFO: [XFORM 203-101] Partitioning array 'hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_all_inputs_to_all_outputs.RAM.val.V' (resnet.cpp:1167) in dimension 3 completely.
+INFO: [XFORM 203-101] Partitioning array 'hw_kernel_global_wrapper_stencil.hw_kernel_global_wrapper_stencil_all_inputs_to_all_outputs.RAM.val.V' (resnet.cpp:1171) in dimension 1 completely.
+INFO: [XFORM 203-101] Partitioning array 'hw_kernel_global_wrapper_stencil.hw_kernel_global_wrapper_stencil_all_inputs_to_all_outputs.RAM.val.V' (resnet.cpp:1171) in dimension 2 completely.
+INFO: [XFORM 203-101] Partitioning array 'hw_kernel_global_wrapper_stencil.hw_kernel_global_wrapper_stencil_all_inputs_to_all_outputs.RAM.val.V' (resnet.cpp:1171) in dimension 3 completely.
+INFO: [XFORM 203-101] Partitioning array 'hw_kernel_global_wrapper_stencil.hw_kernel_global_wrapper_stencil_all_inputs_to_all_outputs.RAM.val.V' (resnet.cpp:1171) in dimension 4 completely.
+INFO: [XFORM 203-11] Balancing expressions in function 'resnet' (resnet.cpp:1157)...24 expression(s) balanced.
+INFO: [HLS 200-111] Finished Pre-synthesis Time (s): cpu = 00:00:28 ; elapsed = 00:00:29 . Memory (MB): peak = 1047.375 ; gain = 527.160 ; free physical = 61823 ; free virtual = 83172
+INFO: [XFORM 203-541] Flattening a loop nest 'Loop-1.1' (resnet.cpp:1201:21) in function 'resnet'.
+INFO: [XFORM 203-541] Flattening a loop nest 'Loop-1' (resnet.cpp:1200:19) in function 'resnet'.
+INFO: [XFORM 203-541] Flattening a loop nest 'Loop-2.1.1' (resnet.cpp:1207:23) in function 'resnet'.
+INFO: [XFORM 203-541] Flattening a loop nest 'Loop-2.1' (resnet.cpp:1206:21) in function 'resnet'.
+INFO: [XFORM 203-541] Flattening a loop nest 'Loop-2' (resnet.cpp:1205:19) in function 'resnet'.
+INFO: [XFORM 203-541] Flattening a loop nest 'Loop-3' (resnet.cpp:1211:19) in function 'resnet'.
+INFO: [XFORM 203-541] Flattening a loop nest 'Loop-4.1.1' (resnet.cpp:1220:23) in function 'resnet'.
+INFO: [XFORM 203-541] Flattening a loop nest 'Loop-4.1' (resnet.cpp:1219:21) in function 'resnet'.
+INFO: [XFORM 203-541] Flattening a loop nest 'Loop-4' (resnet.cpp:1218:19) in function 'resnet'.
+INFO: [XFORM 203-541] Flattening a loop nest 'Loop-5.1' (resnet.cpp:1228:21) in function 'resnet'.
+INFO: [XFORM 203-541] Flattening a loop nest 'Loop-5' (resnet.cpp:1227:19) in function 'resnet'.
+INFO: [HLS 200-472] Inferring partial write operation for 'conv_stencil.conv_st' (../../.././hw_classes.h:200:7)
+INFO: [HLS 200-472] Inferring partial write operation for 'conv_stencil.conv_st.1' (../../.././hw_classes.h:200:7)
+INFO: [HLS 200-472] Inferring partial write operation for 'conv_stencil.conv_st.2' (../../.././hw_classes.h:200:7)
+INFO: [HLS 200-472] Inferring partial write operation for 'conv_stencil.conv_st' (../../.././hw_classes.h:200:7)
+INFO: [HLS 200-472] Inferring partial write operation for 'conv_stencil.conv_st.1' (../../.././hw_classes.h:200:7)
+INFO: [HLS 200-472] Inferring partial write operation for 'conv_stencil.conv_st.2' (../../.././hw_classes.h:200:7)
+INFO: [HLS 200-472] Inferring partial write operation for 'hw_input_global_wrap' (../../.././hw_classes.h:200:7)
+INFO: [HLS 200-111] Finished Architecture Synthesis Time (s): cpu = 00:00:31 ; elapsed = 00:00:32 . Memory (MB): peak = 1047.375 ; gain = 527.160 ; free physical = 61823 ; free virtual = 83172
+INFO: [HLS 200-10] Starting hardware synthesis ...
+INFO: [HLS 200-10] Synthesizing 'resnet' ...
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-42] -- Implementing module 'resnet' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [SCHED 204-11] Starting scheduling ...
+INFO: [SCHED 204-61] Pipelining loop 'Loop 1'.
+INFO: [SCHED 204-61] Pipelining result : Target II = 1, Final II = 1, Depth = 2.
+INFO: [SCHED 204-61] Pipelining loop 'Loop 2'.
+INFO: [SCHED 204-61] Pipelining result : Target II = 1, Final II = 1, Depth = 2.
+INFO: [SCHED 204-61] Pipelining loop 'Loop 3'.
+INFO: [SCHED 204-61] Pipelining result : Target II = 1, Final II = 1, Depth = 1.
+INFO: [SCHED 204-61] Pipelining loop 'Loop 4'.
+INFO: [SCHED 204-61] Pipelining result : Target II = 1, Final II = 1, Depth = 4.
+INFO: [SCHED 204-61] Pipelining loop 'Loop 5'.
+INFO: [SCHED 204-61] Pipelining result : Target II = 1, Final II = 1, Depth = 2.
+INFO: [SCHED 204-11] Finished scheduling.
+INFO: [HLS 200-111]  Elapsed time: 32.93 seconds; current allocated memory: 127.697 MB.
+INFO: [BIND 205-100] Starting micro-architecture generation ...
+INFO: [BIND 205-101] Performing variable lifetime analysis.
+INFO: [BIND 205-101] Exploring resource sharing.
+INFO: [BIND 205-101] Binding ...
+INFO: [BIND 205-100] Finished micro-architecture generation.
+INFO: [HLS 200-111]  Elapsed time: 0.6 seconds; current allocated memory: 133.856 MB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-10] -- Generating RTL for module 'resnet' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [RTGEN 206-500] Setting interface mode on port 'resnet/hw_input_stencil_values_V_val_V' to 'ap_fifo'.
+INFO: [RTGEN 206-500] Setting interface mode on port 'resnet/hw_kernel_stencil_values_V_val_V' to 'ap_fifo'.
+INFO: [RTGEN 206-500] Setting interface mode on port 'resnet/hw_output_stencil_values_V_val_V' to 'ap_fifo'.
+INFO: [RTGEN 206-500] Setting interface mode on function 'resnet' to 'ap_ctrl_hs'.
+INFO: [SYN 201-210] Renamed object name 'resnet_conv_stencil_conv_st' to 'resnet_conv_stencbkb' due to the length limit 20
+INFO: [SYN 201-210] Renamed object name 'resnet_conv_stencil_conv_st_1' to 'resnet_conv_stenccud' due to the length limit 20
+INFO: [SYN 201-210] Renamed object name 'resnet_conv_stencil_conv_st_2' to 'resnet_conv_stencdEe' due to the length limit 20
+INFO: [SYN 201-210] Renamed object name 'resnet_hw_input_global_wrap' to 'resnet_hw_input_geOg' due to the length limit 20
+INFO: [SYN 201-210] Renamed object name 'resnet_hw_input_global_wrap_1' to 'resnet_hw_input_gfYi' due to the length limit 20
+INFO: [SYN 201-210] Renamed object name 'resnet_hw_input_global_wrap_2' to 'resnet_hw_input_gg8j' due to the length limit 20
+INFO: [SYN 201-210] Renamed object name 'resnet_hw_input_global_wrap_3' to 'resnet_hw_input_ghbi' due to the length limit 20
+INFO: [SYN 201-210] Renamed object name 'resnet_hw_input_global_wrap_4' to 'resnet_hw_input_gibs' due to the length limit 20
+INFO: [SYN 201-210] Renamed object name 'resnet_hw_input_global_wrap_5' to 'resnet_hw_input_gjbC' due to the length limit 20
+INFO: [SYN 201-210] Renamed object name 'resnet_hw_input_global_wrap_6' to 'resnet_hw_input_gkbM' due to the length limit 20
+INFO: [SYN 201-210] Renamed object name 'resnet_hw_input_global_wrap_7' to 'resnet_hw_input_glbW' due to the length limit 20
+INFO: [SYN 201-210] Renamed object name 'resnet_mux_94_16_1_1' to 'resnet_mux_94_16_mb6' due to the length limit 20
+INFO: [SYN 201-210] Renamed object name 'resnet_mux_32_16_1_1' to 'resnet_mux_32_16_ncg' due to the length limit 20
+INFO: [SYN 201-210] Renamed object name 'resnet_mul_mul_16s_16s_16_1_1' to 'resnet_mul_mul_16ocq' due to the length limit 20
+INFO: [SYN 201-210] Renamed object name 'resnet_mac_muladd_16s_16s_16ns_16_1_1' to 'resnet_mac_muladdpcA' due to the length limit 20
+INFO: [SYN 201-210] Renamed object name 'resnet_mac_muladd_16s_16s_16s_16_1_1' to 'resnet_mac_muladdqcK' due to the length limit 20
+INFO: [RTGEN 206-100] Generating core module 'resnet_mac_muladdpcA': 3 instance(s).
+INFO: [RTGEN 206-100] Generating core module 'resnet_mac_muladdqcK': 12 instance(s).
+INFO: [RTGEN 206-100] Generating core module 'resnet_mul_mul_16ocq': 9 instance(s).
+INFO: [RTGEN 206-100] Generating core module 'resnet_mux_32_16_ncg': 1 instance(s).
+INFO: [RTGEN 206-100] Generating core module 'resnet_mux_94_16_mb6': 24 instance(s).
+INFO: [RTGEN 206-100] Finished creating RTL model for 'resnet'.
+INFO: [HLS 200-111]  Elapsed time: 0.78 seconds; current allocated memory: 139.705 MB.
+INFO: [HLS 200-790] **** Loop Constraint Status: All loop constraints were satisfied.
+INFO: [HLS 200-789] **** Estimated Fmax: 229.04 MHz
+INFO: [RTMG 210-278] Implementing memory 'resnet_conv_stencbkb_ram (RAM)' using block RAMs.
+INFO: [RTMG 210-278] Implementing memory 'resnet_hw_input_geOg_ram (RAM)' using block RAMs.
+INFO: [HLS 200-111] Finished generating all RTL models Time (s): cpu = 00:00:34 ; elapsed = 00:00:36 . Memory (MB): peak = 1047.375 ; gain = 527.160 ; free physical = 61772 ; free virtual = 83141
+INFO: [VHDL 208-304] Generating VHDL RTL for resnet.
+INFO: [VLOG 209-307] Generating Verilog RTL for resnet.
+INFO: [HLS 200-112] Total elapsed time: 36.36 seconds; peak allocated memory: 139.705 MB.
+INFO: [Common 17-206] Exiting vivado_hls at Fri Feb 12 18:23:27 2021...
