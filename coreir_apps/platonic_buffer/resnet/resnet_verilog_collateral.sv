@@ -1,3 +1,33 @@
+  // min: { [2] }
+  // max: { [812] }
+
+  // min: { [8009] }
+  // max: { [19582] }
+
+  // min: { [8009] }
+  // max: { [19582] }
+
+  // min: { [1] }
+  // max: { [8099] }
+
+  // min: { [2] }
+  // max: { [243] }
+
+  // min: { [32033] }
+  // max: { [34467] }
+
+  // min: { [8009] }
+  // max: { [19582] }
+
+  // min: { [2] }
+  // max: { [812] }
+
+  // min: { [2] }
+  // max: { [812] }
+
+  // sched min: { [1] }
+  // sched max: { [34467] }
+// conv_stencil has embarassing partition: 1
 
 module conv_stencil_embarassing_bank_selector(input logic [16*3 - 1 :0] d, output logic [15:0] out);
   logic [15:0] bank_index_0;
@@ -973,23 +1003,137 @@ conv_stencil_embarassing_bank_selector conv_stencil_conv_stencil_op_hcompute_hw_
   assign addr6 = (((((1*op_hcompute_conv_stencil_3_read_ctrl_vars_fsm_out[3])) - 0))*1+((((1*op_hcompute_conv_stencil_3_read_ctrl_vars_fsm_out[4])) - 0))*28);
   logic [15:0] end_delay_wire_24;
   always @(posedge clk) begin
-    op_hcompute_conv_stencil_3_read[0] <= end_delay_wire_24;  end
+    op_hcompute_conv_stencil_3_read[0] <= end_delay_wire_24;
+  end
   logic [15:0] addr7;
   assign addr7 = (((((1*op_hcompute_conv_stencil_4_read_ctrl_vars_fsm_out[3])) - 0))*1+((((1*op_hcompute_conv_stencil_4_read_ctrl_vars_fsm_out[4])) - 0))*28);
   logic [15:0] end_delay_wire_25;
   always @(posedge clk) begin
-    op_hcompute_conv_stencil_4_read[0] <= end_delay_wire_25;  end
+    op_hcompute_conv_stencil_4_read[0] <= end_delay_wire_25;
+  end
   logic [15:0] addr8;
   assign addr8 = (((((1*op_hcompute_conv_stencil_5_read_ctrl_vars_fsm_out[3])) - 0))*1+((((1*op_hcompute_conv_stencil_5_read_ctrl_vars_fsm_out[4])) - 0))*28);
   logic [15:0] end_delay_wire_26;
   always @(posedge clk) begin
-    op_hcompute_conv_stencil_5_read[0] <= end_delay_wire_26;  end
+    op_hcompute_conv_stencil_5_read[0] <= end_delay_wire_26;
+  end
   logic [15:0] addr9;
   assign addr9 = (((((1*op_hcompute_hw_output_stencil_read_ctrl_vars_fsm_out[2])) - 0))*1+((((1*op_hcompute_hw_output_stencil_read_ctrl_vars_fsm_out[3])) - 0))*28);
   logic [15:0] end_delay_wire_27;
   always @(posedge clk) begin
-    op_hcompute_hw_output_stencil_read[0] <= end_delay_wire_27;  end
+    op_hcompute_hw_output_stencil_read[0] <= end_delay_wire_27;
+  end
   always @(posedge clk) begin
+    if(op_hcompute_conv_stencil_1_write_wen)begin
+      if(op_hcompute_conv_stencil_1_write_ctrl_vars!=op_hcompute_conv_stencil_1_write_ctrl_vars_fsm_out) begin
+        $display("Different");
+        $finish(-1);
+      end
+    end
+    if (op_hcompute_conv_stencil_1_write_wen!=op_hcompute_conv_stencil_1_write_wen_fsm_out) begin
+        $display(op_hcompute_conv_stencil_1_write_wen);
+        $display(op_hcompute_conv_stencil_1_write_wen_fsm_out);
+      $finish(-1);
+    end
+    if(op_hcompute_conv_stencil_2_write_wen)begin
+      if(op_hcompute_conv_stencil_2_write_ctrl_vars!=op_hcompute_conv_stencil_2_write_ctrl_vars_fsm_out) begin
+        $display("Different");
+        $finish(-1);
+      end
+    end
+    if (op_hcompute_conv_stencil_2_write_wen!=op_hcompute_conv_stencil_2_write_wen_fsm_out) begin
+        $display(op_hcompute_conv_stencil_2_write_wen);
+        $display(op_hcompute_conv_stencil_2_write_wen_fsm_out);
+      $finish(-1);
+    end
+    if(op_hcompute_conv_stencil_3_write_wen)begin
+      if(op_hcompute_conv_stencil_3_write_ctrl_vars!=op_hcompute_conv_stencil_3_write_ctrl_vars_fsm_out) begin
+        $display("Different");
+        $finish(-1);
+      end
+    end
+    if (op_hcompute_conv_stencil_3_write_wen!=op_hcompute_conv_stencil_3_write_wen_fsm_out) begin
+        $display(op_hcompute_conv_stencil_3_write_wen);
+        $display(op_hcompute_conv_stencil_3_write_wen_fsm_out);
+      $finish(-1);
+    end
+    if(op_hcompute_conv_stencil_4_write_wen)begin
+      if(op_hcompute_conv_stencil_4_write_ctrl_vars!=op_hcompute_conv_stencil_4_write_ctrl_vars_fsm_out) begin
+        $display("Different");
+        $finish(-1);
+      end
+    end
+    if (op_hcompute_conv_stencil_4_write_wen!=op_hcompute_conv_stencil_4_write_wen_fsm_out) begin
+        $display(op_hcompute_conv_stencil_4_write_wen);
+        $display(op_hcompute_conv_stencil_4_write_wen_fsm_out);
+      $finish(-1);
+    end
+    if(op_hcompute_conv_stencil_5_write_wen)begin
+      if(op_hcompute_conv_stencil_5_write_ctrl_vars!=op_hcompute_conv_stencil_5_write_ctrl_vars_fsm_out) begin
+        $display("Different");
+        $finish(-1);
+      end
+    end
+    if (op_hcompute_conv_stencil_5_write_wen!=op_hcompute_conv_stencil_5_write_wen_fsm_out) begin
+        $display(op_hcompute_conv_stencil_5_write_wen);
+        $display(op_hcompute_conv_stencil_5_write_wen_fsm_out);
+      $finish(-1);
+    end
+    if(op_hcompute_conv_stencil_write_wen)begin
+      if(op_hcompute_conv_stencil_write_ctrl_vars!=op_hcompute_conv_stencil_write_ctrl_vars_fsm_out) begin
+        $display("Different");
+        $finish(-1);
+      end
+    end
+    if (op_hcompute_conv_stencil_write_wen!=op_hcompute_conv_stencil_write_wen_fsm_out) begin
+        $display(op_hcompute_conv_stencil_write_wen);
+        $display(op_hcompute_conv_stencil_write_wen_fsm_out);
+      $finish(-1);
+    end
+    if(op_hcompute_conv_stencil_3_read_ren)begin
+      if(op_hcompute_conv_stencil_3_read_ctrl_vars!=op_hcompute_conv_stencil_3_read_ctrl_vars_fsm_out) begin
+        $display("Different");
+        $finish(-1);
+      end
+    end
+    if (op_hcompute_conv_stencil_3_read_ren!=op_hcompute_conv_stencil_3_read_ren_fsm_out) begin
+        $display(op_hcompute_conv_stencil_3_read_ren);
+        $display(op_hcompute_conv_stencil_3_read_ren_fsm_out);
+      $finish(-1);
+    end
+    if(op_hcompute_conv_stencil_4_read_ren)begin
+      if(op_hcompute_conv_stencil_4_read_ctrl_vars!=op_hcompute_conv_stencil_4_read_ctrl_vars_fsm_out) begin
+        $display("Different");
+        $finish(-1);
+      end
+    end
+    if (op_hcompute_conv_stencil_4_read_ren!=op_hcompute_conv_stencil_4_read_ren_fsm_out) begin
+        $display(op_hcompute_conv_stencil_4_read_ren);
+        $display(op_hcompute_conv_stencil_4_read_ren_fsm_out);
+      $finish(-1);
+    end
+    if(op_hcompute_conv_stencil_5_read_ren)begin
+      if(op_hcompute_conv_stencil_5_read_ctrl_vars!=op_hcompute_conv_stencil_5_read_ctrl_vars_fsm_out) begin
+        $display("Different");
+        $finish(-1);
+      end
+    end
+    if (op_hcompute_conv_stencil_5_read_ren!=op_hcompute_conv_stencil_5_read_ren_fsm_out) begin
+        $display(op_hcompute_conv_stencil_5_read_ren);
+        $display(op_hcompute_conv_stencil_5_read_ren_fsm_out);
+      $finish(-1);
+    end
+    if(op_hcompute_hw_output_stencil_read_ren)begin
+      if(op_hcompute_hw_output_stencil_read_ctrl_vars!=op_hcompute_hw_output_stencil_read_ctrl_vars_fsm_out) begin
+        $display("Different");
+        $finish(-1);
+      end
+    end
+    if (op_hcompute_hw_output_stencil_read_ren!=op_hcompute_hw_output_stencil_read_ren_fsm_out) begin
+        $display(op_hcompute_hw_output_stencil_read_ren);
+        $display(op_hcompute_hw_output_stencil_read_ren_fsm_out);
+      $finish(-1);
+    end
     if (delay_wire_2 &&delay_wire_1==0) begin
         bank_0[delay_wire_0] <= delay_wire_3;
     end
@@ -1086,6 +1230,7 @@ conv_stencil_embarassing_bank_selector conv_stencil_conv_stencil_op_hcompute_hw_
 
 endmodule
 
+// hw_input_global_wrapper_stencil has embarassing partition: 1
 
 module hw_input_global_wrapper_stencil_embarassing_bank_selector(input logic [16*3 - 1 :0] d, output logic [15:0] out);
   logic [15:0] bank_index_2;
@@ -1870,43 +2015,95 @@ hw_input_global_wrapper_stencil_embarassing_bank_selector hw_input_global_wrappe
   assign addr1 = (((((1*op_hcompute_conv_stencil_5_read_ctrl_vars_fsm_out[1] + 1*op_hcompute_conv_stencil_5_read_ctrl_vars_fsm_out[3])) - 0))*1+((((1*op_hcompute_conv_stencil_5_read_ctrl_vars_fsm_out[2] + 1*op_hcompute_conv_stencil_5_read_ctrl_vars_fsm_out[4])) - 0))*30);
   logic [15:0] end_delay_wire_32;
   always @(posedge clk) begin
-    op_hcompute_conv_stencil_5_read[2] <= end_delay_wire_32;  end
+    op_hcompute_conv_stencil_5_read[2] <= end_delay_wire_32;
+  end
   logic [15:0] addr2;
   assign addr2 = (((((1*op_hcompute_conv_stencil_5_read_ctrl_vars_fsm_out[1] + 1*op_hcompute_conv_stencil_5_read_ctrl_vars_fsm_out[3])) - 0))*1+((((1*op_hcompute_conv_stencil_5_read_ctrl_vars_fsm_out[2] + 1*op_hcompute_conv_stencil_5_read_ctrl_vars_fsm_out[4])) - 0))*30);
   logic [15:0] end_delay_wire_33;
   always @(posedge clk) begin
-    op_hcompute_conv_stencil_5_read[3] <= end_delay_wire_33;  end
+    op_hcompute_conv_stencil_5_read[3] <= end_delay_wire_33;
+  end
   logic [15:0] addr3;
   assign addr3 = (((((1*op_hcompute_conv_stencil_5_read_ctrl_vars_fsm_out[1] + 1*op_hcompute_conv_stencil_5_read_ctrl_vars_fsm_out[3])) - 0))*1+((((1*op_hcompute_conv_stencil_5_read_ctrl_vars_fsm_out[2] + 1*op_hcompute_conv_stencil_5_read_ctrl_vars_fsm_out[4])) - 0))*30);
   logic [15:0] end_delay_wire_34;
   always @(posedge clk) begin
-    op_hcompute_conv_stencil_5_read[4] <= end_delay_wire_34;  end
+    op_hcompute_conv_stencil_5_read[4] <= end_delay_wire_34;
+  end
   logic [15:0] addr4;
   assign addr4 = (((((1*op_hcompute_conv_stencil_5_read_ctrl_vars_fsm_out[1] + 1*op_hcompute_conv_stencil_5_read_ctrl_vars_fsm_out[3])) - 0))*1+((((1*op_hcompute_conv_stencil_5_read_ctrl_vars_fsm_out[2] + 1*op_hcompute_conv_stencil_5_read_ctrl_vars_fsm_out[4])) - 0))*30);
   logic [15:0] end_delay_wire_35;
   always @(posedge clk) begin
-    op_hcompute_conv_stencil_5_read[5] <= end_delay_wire_35;  end
+    op_hcompute_conv_stencil_5_read[5] <= end_delay_wire_35;
+  end
   logic [15:0] addr5;
   assign addr5 = (((((1*op_hcompute_conv_stencil_5_read_ctrl_vars_fsm_out[1] + 1*op_hcompute_conv_stencil_5_read_ctrl_vars_fsm_out[3])) - 0))*1+((((1*op_hcompute_conv_stencil_5_read_ctrl_vars_fsm_out[2] + 1*op_hcompute_conv_stencil_5_read_ctrl_vars_fsm_out[4])) - 0))*30);
   logic [15:0] end_delay_wire_36;
   always @(posedge clk) begin
-    op_hcompute_conv_stencil_5_read[6] <= end_delay_wire_36;  end
+    op_hcompute_conv_stencil_5_read[6] <= end_delay_wire_36;
+  end
   logic [15:0] addr6;
   assign addr6 = (((((1*op_hcompute_conv_stencil_5_read_ctrl_vars_fsm_out[1] + 1*op_hcompute_conv_stencil_5_read_ctrl_vars_fsm_out[3])) - 0))*1+((((1*op_hcompute_conv_stencil_5_read_ctrl_vars_fsm_out[2] + 1*op_hcompute_conv_stencil_5_read_ctrl_vars_fsm_out[4])) - 0))*30);
   logic [15:0] end_delay_wire_37;
   always @(posedge clk) begin
-    op_hcompute_conv_stencil_5_read[7] <= end_delay_wire_37;  end
+    op_hcompute_conv_stencil_5_read[7] <= end_delay_wire_37;
+  end
   logic [15:0] addr7;
   assign addr7 = (((((1*op_hcompute_conv_stencil_5_read_ctrl_vars_fsm_out[1] + 1*op_hcompute_conv_stencil_5_read_ctrl_vars_fsm_out[3])) - 0))*1+((((1*op_hcompute_conv_stencil_5_read_ctrl_vars_fsm_out[2] + 1*op_hcompute_conv_stencil_5_read_ctrl_vars_fsm_out[4])) - 0))*30);
   logic [15:0] end_delay_wire_38;
   always @(posedge clk) begin
-    op_hcompute_conv_stencil_5_read[0] <= end_delay_wire_38;  end
+    op_hcompute_conv_stencil_5_read[0] <= end_delay_wire_38;
+  end
   logic [15:0] addr8;
   assign addr8 = (((((1*op_hcompute_conv_stencil_5_read_ctrl_vars_fsm_out[1] + 1*op_hcompute_conv_stencil_5_read_ctrl_vars_fsm_out[3])) - 0))*1+((((1*op_hcompute_conv_stencil_5_read_ctrl_vars_fsm_out[2] + 1*op_hcompute_conv_stencil_5_read_ctrl_vars_fsm_out[4])) - 0))*30);
   logic [15:0] end_delay_wire_39;
   always @(posedge clk) begin
-    op_hcompute_conv_stencil_5_read[1] <= end_delay_wire_39;  end
+    op_hcompute_conv_stencil_5_read[1] <= end_delay_wire_39;
+  end
   always @(posedge clk) begin
+    if(op_hcompute_hw_input_global_wrapper_stencil_write_wen)begin
+      if(op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars!=op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars_fsm_out) begin
+        $display("Different");
+        $finish(-1);
+      end
+    end
+    if (op_hcompute_hw_input_global_wrapper_stencil_write_wen!=op_hcompute_hw_input_global_wrapper_stencil_write_wen_fsm_out) begin
+        $display(op_hcompute_hw_input_global_wrapper_stencil_write_wen);
+        $display(op_hcompute_hw_input_global_wrapper_stencil_write_wen_fsm_out);
+      $finish(-1);
+    end
+    if(op_hcompute_conv_stencil_3_read_ren)begin
+      if(op_hcompute_conv_stencil_3_read_ctrl_vars!=op_hcompute_conv_stencil_3_read_ctrl_vars_fsm_out) begin
+        $display("Different");
+        $finish(-1);
+      end
+    end
+    if (op_hcompute_conv_stencil_3_read_ren!=op_hcompute_conv_stencil_3_read_ren_fsm_out) begin
+        $display(op_hcompute_conv_stencil_3_read_ren);
+        $display(op_hcompute_conv_stencil_3_read_ren_fsm_out);
+      $finish(-1);
+    end
+    if(op_hcompute_conv_stencil_4_read_ren)begin
+      if(op_hcompute_conv_stencil_4_read_ctrl_vars!=op_hcompute_conv_stencil_4_read_ctrl_vars_fsm_out) begin
+        $display("Different");
+        $finish(-1);
+      end
+    end
+    if (op_hcompute_conv_stencil_4_read_ren!=op_hcompute_conv_stencil_4_read_ren_fsm_out) begin
+        $display(op_hcompute_conv_stencil_4_read_ren);
+        $display(op_hcompute_conv_stencil_4_read_ren_fsm_out);
+      $finish(-1);
+    end
+    if(op_hcompute_conv_stencil_5_read_ren)begin
+      if(op_hcompute_conv_stencil_5_read_ctrl_vars!=op_hcompute_conv_stencil_5_read_ctrl_vars_fsm_out) begin
+        $display("Different");
+        $finish(-1);
+      end
+    end
+    if (op_hcompute_conv_stencil_5_read_ren!=op_hcompute_conv_stencil_5_read_ren_fsm_out) begin
+        $display(op_hcompute_conv_stencil_5_read_ren);
+        $display(op_hcompute_conv_stencil_5_read_ren_fsm_out);
+      $finish(-1);
+    end
     if (delay_wire_30 &&delay_wire_29==0) begin
         bank_0[delay_wire_28] <= delay_wire_31;
     end
@@ -2129,6 +2326,7 @@ hw_input_global_wrapper_stencil_embarassing_bank_selector hw_input_global_wrappe
 
 endmodule
 
+// hw_kernel_global_wrapper_stencil has embarassing partition: 1
 
 module hw_kernel_global_wrapper_stencil_embarassing_bank_selector(input logic [16*4 - 1 :0] d, output logic [15:0] out);
   logic [15:0] bank_index_2;
@@ -2775,123 +2973,191 @@ hw_kernel_global_wrapper_stencil_embarassing_bank_selector hw_kernel_global_wrap
   assign addr1 = (((((1*op_hcompute_conv_stencil_3_read_ctrl_vars_fsm_out[1])) - 0))*1+((((1*op_hcompute_conv_stencil_3_read_ctrl_vars_fsm_out[2])) - 0))*3);
   logic [15:0] end_delay_wire_44;
   always @(posedge clk) begin
-    op_hcompute_conv_stencil_3_read[0] <= end_delay_wire_44;  end
+    op_hcompute_conv_stencil_3_read[0] <= end_delay_wire_44;
+  end
   logic [15:0] addr2;
   assign addr2 = (((((1*op_hcompute_conv_stencil_3_read_ctrl_vars_fsm_out[1])) - 0))*1+((((1*op_hcompute_conv_stencil_3_read_ctrl_vars_fsm_out[2])) - 0))*3);
   logic [15:0] end_delay_wire_45;
   always @(posedge clk) begin
-    op_hcompute_conv_stencil_3_read[1] <= end_delay_wire_45;  end
+    op_hcompute_conv_stencil_3_read[1] <= end_delay_wire_45;
+  end
   logic [15:0] addr3;
   assign addr3 = (((((1*op_hcompute_conv_stencil_3_read_ctrl_vars_fsm_out[1])) - 0))*1+((((1*op_hcompute_conv_stencil_3_read_ctrl_vars_fsm_out[2])) - 0))*3);
   logic [15:0] end_delay_wire_46;
   always @(posedge clk) begin
-    op_hcompute_conv_stencil_3_read[2] <= end_delay_wire_46;  end
+    op_hcompute_conv_stencil_3_read[2] <= end_delay_wire_46;
+  end
   logic [15:0] addr4;
   assign addr4 = (((((1*op_hcompute_conv_stencil_3_read_ctrl_vars_fsm_out[1])) - 0))*1+((((1*op_hcompute_conv_stencil_3_read_ctrl_vars_fsm_out[2])) - 0))*3);
   logic [15:0] end_delay_wire_47;
   always @(posedge clk) begin
-    op_hcompute_conv_stencil_3_read[3] <= end_delay_wire_47;  end
+    op_hcompute_conv_stencil_3_read[3] <= end_delay_wire_47;
+  end
   logic [15:0] addr5;
   assign addr5 = (((((1*op_hcompute_conv_stencil_3_read_ctrl_vars_fsm_out[1])) - 0))*1+((((1*op_hcompute_conv_stencil_3_read_ctrl_vars_fsm_out[2])) - 0))*3);
   logic [15:0] end_delay_wire_48;
   always @(posedge clk) begin
-    op_hcompute_conv_stencil_3_read[4] <= end_delay_wire_48;  end
+    op_hcompute_conv_stencil_3_read[4] <= end_delay_wire_48;
+  end
   logic [15:0] addr6;
   assign addr6 = (((((1*op_hcompute_conv_stencil_3_read_ctrl_vars_fsm_out[1])) - 0))*1+((((1*op_hcompute_conv_stencil_3_read_ctrl_vars_fsm_out[2])) - 0))*3);
   logic [15:0] end_delay_wire_49;
   always @(posedge clk) begin
-    op_hcompute_conv_stencil_3_read[5] <= end_delay_wire_49;  end
+    op_hcompute_conv_stencil_3_read[5] <= end_delay_wire_49;
+  end
   logic [15:0] addr7;
   assign addr7 = (((((1*op_hcompute_conv_stencil_3_read_ctrl_vars_fsm_out[1])) - 0))*1+((((1*op_hcompute_conv_stencil_3_read_ctrl_vars_fsm_out[2])) - 0))*3);
   logic [15:0] end_delay_wire_50;
   always @(posedge clk) begin
-    op_hcompute_conv_stencil_3_read[6] <= end_delay_wire_50;  end
+    op_hcompute_conv_stencil_3_read[6] <= end_delay_wire_50;
+  end
   logic [15:0] addr8;
   assign addr8 = (((((1*op_hcompute_conv_stencil_3_read_ctrl_vars_fsm_out[1])) - 0))*1+((((1*op_hcompute_conv_stencil_3_read_ctrl_vars_fsm_out[2])) - 0))*3);
   logic [15:0] end_delay_wire_51;
   always @(posedge clk) begin
-    op_hcompute_conv_stencil_3_read[7] <= end_delay_wire_51;  end
+    op_hcompute_conv_stencil_3_read[7] <= end_delay_wire_51;
+  end
   logic [15:0] addr9;
   assign addr9 = (((((1*op_hcompute_conv_stencil_4_read_ctrl_vars_fsm_out[1])) - 0))*1+((((1*op_hcompute_conv_stencil_4_read_ctrl_vars_fsm_out[2])) - 0))*3);
   logic [15:0] end_delay_wire_52;
   always @(posedge clk) begin
-    op_hcompute_conv_stencil_4_read[0] <= end_delay_wire_52;  end
+    op_hcompute_conv_stencil_4_read[0] <= end_delay_wire_52;
+  end
   logic [15:0] addr10;
   assign addr10 = (((((1*op_hcompute_conv_stencil_4_read_ctrl_vars_fsm_out[1])) - 0))*1+((((1*op_hcompute_conv_stencil_4_read_ctrl_vars_fsm_out[2])) - 0))*3);
   logic [15:0] end_delay_wire_53;
   always @(posedge clk) begin
-    op_hcompute_conv_stencil_4_read[1] <= end_delay_wire_53;  end
+    op_hcompute_conv_stencil_4_read[1] <= end_delay_wire_53;
+  end
   logic [15:0] addr11;
   assign addr11 = (((((1*op_hcompute_conv_stencil_4_read_ctrl_vars_fsm_out[1])) - 0))*1+((((1*op_hcompute_conv_stencil_4_read_ctrl_vars_fsm_out[2])) - 0))*3);
   logic [15:0] end_delay_wire_54;
   always @(posedge clk) begin
-    op_hcompute_conv_stencil_4_read[2] <= end_delay_wire_54;  end
+    op_hcompute_conv_stencil_4_read[2] <= end_delay_wire_54;
+  end
   logic [15:0] addr12;
   assign addr12 = (((((1*op_hcompute_conv_stencil_4_read_ctrl_vars_fsm_out[1])) - 0))*1+((((1*op_hcompute_conv_stencil_4_read_ctrl_vars_fsm_out[2])) - 0))*3);
   logic [15:0] end_delay_wire_55;
   always @(posedge clk) begin
-    op_hcompute_conv_stencil_4_read[3] <= end_delay_wire_55;  end
+    op_hcompute_conv_stencil_4_read[3] <= end_delay_wire_55;
+  end
   logic [15:0] addr13;
   assign addr13 = (((((1*op_hcompute_conv_stencil_4_read_ctrl_vars_fsm_out[1])) - 0))*1+((((1*op_hcompute_conv_stencil_4_read_ctrl_vars_fsm_out[2])) - 0))*3);
   logic [15:0] end_delay_wire_56;
   always @(posedge clk) begin
-    op_hcompute_conv_stencil_4_read[4] <= end_delay_wire_56;  end
+    op_hcompute_conv_stencil_4_read[4] <= end_delay_wire_56;
+  end
   logic [15:0] addr14;
   assign addr14 = (((((1*op_hcompute_conv_stencil_4_read_ctrl_vars_fsm_out[1])) - 0))*1+((((1*op_hcompute_conv_stencil_4_read_ctrl_vars_fsm_out[2])) - 0))*3);
   logic [15:0] end_delay_wire_57;
   always @(posedge clk) begin
-    op_hcompute_conv_stencil_4_read[5] <= end_delay_wire_57;  end
+    op_hcompute_conv_stencil_4_read[5] <= end_delay_wire_57;
+  end
   logic [15:0] addr15;
   assign addr15 = (((((1*op_hcompute_conv_stencil_4_read_ctrl_vars_fsm_out[1])) - 0))*1+((((1*op_hcompute_conv_stencil_4_read_ctrl_vars_fsm_out[2])) - 0))*3);
   logic [15:0] end_delay_wire_58;
   always @(posedge clk) begin
-    op_hcompute_conv_stencil_4_read[6] <= end_delay_wire_58;  end
+    op_hcompute_conv_stencil_4_read[6] <= end_delay_wire_58;
+  end
   logic [15:0] addr16;
   assign addr16 = (((((1*op_hcompute_conv_stencil_4_read_ctrl_vars_fsm_out[1])) - 0))*1+((((1*op_hcompute_conv_stencil_4_read_ctrl_vars_fsm_out[2])) - 0))*3);
   logic [15:0] end_delay_wire_59;
   always @(posedge clk) begin
-    op_hcompute_conv_stencil_4_read[7] <= end_delay_wire_59;  end
+    op_hcompute_conv_stencil_4_read[7] <= end_delay_wire_59;
+  end
   logic [15:0] addr17;
   assign addr17 = (((((1*op_hcompute_conv_stencil_5_read_ctrl_vars_fsm_out[1])) - 0))*1+((((1*op_hcompute_conv_stencil_5_read_ctrl_vars_fsm_out[2])) - 0))*3);
   logic [15:0] end_delay_wire_60;
   always @(posedge clk) begin
-    op_hcompute_conv_stencil_5_read[0] <= end_delay_wire_60;  end
+    op_hcompute_conv_stencil_5_read[0] <= end_delay_wire_60;
+  end
   logic [15:0] addr18;
   assign addr18 = (((((1*op_hcompute_conv_stencil_5_read_ctrl_vars_fsm_out[1])) - 0))*1+((((1*op_hcompute_conv_stencil_5_read_ctrl_vars_fsm_out[2])) - 0))*3);
   logic [15:0] end_delay_wire_61;
   always @(posedge clk) begin
-    op_hcompute_conv_stencil_5_read[1] <= end_delay_wire_61;  end
+    op_hcompute_conv_stencil_5_read[1] <= end_delay_wire_61;
+  end
   logic [15:0] addr19;
   assign addr19 = (((((1*op_hcompute_conv_stencil_5_read_ctrl_vars_fsm_out[1])) - 0))*1+((((1*op_hcompute_conv_stencil_5_read_ctrl_vars_fsm_out[2])) - 0))*3);
   logic [15:0] end_delay_wire_62;
   always @(posedge clk) begin
-    op_hcompute_conv_stencil_5_read[2] <= end_delay_wire_62;  end
+    op_hcompute_conv_stencil_5_read[2] <= end_delay_wire_62;
+  end
   logic [15:0] addr20;
   assign addr20 = (((((1*op_hcompute_conv_stencil_5_read_ctrl_vars_fsm_out[1])) - 0))*1+((((1*op_hcompute_conv_stencil_5_read_ctrl_vars_fsm_out[2])) - 0))*3);
   logic [15:0] end_delay_wire_63;
   always @(posedge clk) begin
-    op_hcompute_conv_stencil_5_read[3] <= end_delay_wire_63;  end
+    op_hcompute_conv_stencil_5_read[3] <= end_delay_wire_63;
+  end
   logic [15:0] addr21;
   assign addr21 = (((((1*op_hcompute_conv_stencil_5_read_ctrl_vars_fsm_out[1])) - 0))*1+((((1*op_hcompute_conv_stencil_5_read_ctrl_vars_fsm_out[2])) - 0))*3);
   logic [15:0] end_delay_wire_64;
   always @(posedge clk) begin
-    op_hcompute_conv_stencil_5_read[4] <= end_delay_wire_64;  end
+    op_hcompute_conv_stencil_5_read[4] <= end_delay_wire_64;
+  end
   logic [15:0] addr22;
   assign addr22 = (((((1*op_hcompute_conv_stencil_5_read_ctrl_vars_fsm_out[1])) - 0))*1+((((1*op_hcompute_conv_stencil_5_read_ctrl_vars_fsm_out[2])) - 0))*3);
   logic [15:0] end_delay_wire_65;
   always @(posedge clk) begin
-    op_hcompute_conv_stencil_5_read[5] <= end_delay_wire_65;  end
+    op_hcompute_conv_stencil_5_read[5] <= end_delay_wire_65;
+  end
   logic [15:0] addr23;
   assign addr23 = (((((1*op_hcompute_conv_stencil_5_read_ctrl_vars_fsm_out[1])) - 0))*1+((((1*op_hcompute_conv_stencil_5_read_ctrl_vars_fsm_out[2])) - 0))*3);
   logic [15:0] end_delay_wire_66;
   always @(posedge clk) begin
-    op_hcompute_conv_stencil_5_read[6] <= end_delay_wire_66;  end
+    op_hcompute_conv_stencil_5_read[6] <= end_delay_wire_66;
+  end
   logic [15:0] addr24;
   assign addr24 = (((((1*op_hcompute_conv_stencil_5_read_ctrl_vars_fsm_out[1])) - 0))*1+((((1*op_hcompute_conv_stencil_5_read_ctrl_vars_fsm_out[2])) - 0))*3);
   logic [15:0] end_delay_wire_67;
   always @(posedge clk) begin
-    op_hcompute_conv_stencil_5_read[7] <= end_delay_wire_67;  end
+    op_hcompute_conv_stencil_5_read[7] <= end_delay_wire_67;
+  end
   always @(posedge clk) begin
+    if(op_hcompute_hw_kernel_global_wrapper_stencil_write_wen)begin
+      if(op_hcompute_hw_kernel_global_wrapper_stencil_write_ctrl_vars!=op_hcompute_hw_kernel_global_wrapper_stencil_write_ctrl_vars_fsm_out) begin
+        $display("Different");
+        $finish(-1);
+      end
+    end
+    if (op_hcompute_hw_kernel_global_wrapper_stencil_write_wen!=op_hcompute_hw_kernel_global_wrapper_stencil_write_wen_fsm_out) begin
+        $display(op_hcompute_hw_kernel_global_wrapper_stencil_write_wen);
+        $display(op_hcompute_hw_kernel_global_wrapper_stencil_write_wen_fsm_out);
+      $finish(-1);
+    end
+    if(op_hcompute_conv_stencil_3_read_ren)begin
+      if(op_hcompute_conv_stencil_3_read_ctrl_vars!=op_hcompute_conv_stencil_3_read_ctrl_vars_fsm_out) begin
+        $display("Different");
+        $finish(-1);
+      end
+    end
+    if (op_hcompute_conv_stencil_3_read_ren!=op_hcompute_conv_stencil_3_read_ren_fsm_out) begin
+        $display(op_hcompute_conv_stencil_3_read_ren);
+        $display(op_hcompute_conv_stencil_3_read_ren_fsm_out);
+      $finish(-1);
+    end
+    if(op_hcompute_conv_stencil_4_read_ren)begin
+      if(op_hcompute_conv_stencil_4_read_ctrl_vars!=op_hcompute_conv_stencil_4_read_ctrl_vars_fsm_out) begin
+        $display("Different");
+        $finish(-1);
+      end
+    end
+    if (op_hcompute_conv_stencil_4_read_ren!=op_hcompute_conv_stencil_4_read_ren_fsm_out) begin
+        $display(op_hcompute_conv_stencil_4_read_ren);
+        $display(op_hcompute_conv_stencil_4_read_ren_fsm_out);
+      $finish(-1);
+    end
+    if(op_hcompute_conv_stencil_5_read_ren)begin
+      if(op_hcompute_conv_stencil_5_read_ctrl_vars!=op_hcompute_conv_stencil_5_read_ctrl_vars_fsm_out) begin
+        $display("Different");
+        $finish(-1);
+      end
+    end
+    if (op_hcompute_conv_stencil_5_read_ren!=op_hcompute_conv_stencil_5_read_ren_fsm_out) begin
+        $display(op_hcompute_conv_stencil_5_read_ren);
+        $display(op_hcompute_conv_stencil_5_read_ren_fsm_out);
+      $finish(-1);
+    end
     if (delay_wire_42 &&delay_wire_41==0) begin
         bank_0[delay_wire_40] <= delay_wire_43;
     end

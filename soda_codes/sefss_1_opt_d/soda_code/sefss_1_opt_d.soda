@@ -1,0 +1,110 @@
+kernel: sefss_1_opt_d
+unroll factor: 1
+burst width: 16
+
+input uint16: in_off_chip(1087, *)
+
+local uint16: in(0, 0) = <NULLPTR FOR SODA COMPUTE STRING>
+
+local uint16: dark(0, 0) = <NULLPTR FOR SODA COMPUTE STRING>
+
+local uint16: bright(0, 0) = <NULLPTR FOR SODA COMPUTE STRING>
+
+local uint16: dark_weights(0, 0) = <NULLPTR FOR SODA COMPUTE STRING>
+
+local uint16: bright_weights(0, 0) = <NULLPTR FOR SODA COMPUTE STRING>
+
+local uint16: dark_weights_normed(0, 0) = <NULLPTR FOR SODA COMPUTE STRING>
+
+local uint16: dark_gauss_blur_1(0, 0) = <NULLPTR FOR SODA COMPUTE STRING>
+
+local uint16: bright_weights_normed(0, 0) = <NULLPTR FOR SODA COMPUTE STRING>
+
+local uint16: bright_gauss_blur_1(0, 0) = <NULLPTR FOR SODA COMPUTE STRING>
+
+local uint16: dark_weights_normed_gauss_blur_1(0, 0) = <NULLPTR FOR SODA COMPUTE STRING>
+
+local uint16: dark_gauss_ds_1(0, 0) = <NULLPTR FOR SODA COMPUTE STRING>
+
+local uint16: dark_gauss_blur_2(0, 0) = <NULLPTR FOR SODA COMPUTE STRING>
+
+local uint16: bright_weights_normed_gauss_blur_1(0, 0) = <NULLPTR FOR SODA COMPUTE STRING>
+
+local uint16: bright_gauss_ds_1(0, 0) = <NULLPTR FOR SODA COMPUTE STRING>
+
+local uint16: bright_gauss_blur_2(0, 0) = <NULLPTR FOR SODA COMPUTE STRING>
+
+local uint16: dark_weights_normed_gauss_ds_1(0, 0) = <NULLPTR FOR SODA COMPUTE STRING>
+
+local uint16: dark_weights_normed_gauss_blur_2(0, 0) = <NULLPTR FOR SODA COMPUTE STRING>
+
+local uint16: dark_gauss_ds_2(0, 0) = <NULLPTR FOR SODA COMPUTE STRING>
+
+local uint16: dark_gauss_blur_3(0, 0) = <NULLPTR FOR SODA COMPUTE STRING>
+
+local uint16: bright_weights_normed_gauss_ds_1(0, 0) = <NULLPTR FOR SODA COMPUTE STRING>
+
+local uint16: bright_weights_normed_gauss_blur_2(0, 0) = <NULLPTR FOR SODA COMPUTE STRING>
+
+local uint16: bright_gauss_ds_2(0, 0) = <NULLPTR FOR SODA COMPUTE STRING>
+
+local uint16: bright_gauss_blur_3(0, 0) = <NULLPTR FOR SODA COMPUTE STRING>
+
+local uint16: dark_weights_normed_gauss_ds_2(0, 0) = <NULLPTR FOR SODA COMPUTE STRING>
+
+local uint16: dark_weights_normed_gauss_blur_3(0, 0) = <NULLPTR FOR SODA COMPUTE STRING>
+
+local uint16: dark_gauss_ds_3(0, 0) = <NULLPTR FOR SODA COMPUTE STRING>
+
+local uint16: bright_weights_normed_gauss_ds_2(0, 0) = <NULLPTR FOR SODA COMPUTE STRING>
+
+local uint16: bright_weights_normed_gauss_blur_3(0, 0) = <NULLPTR FOR SODA COMPUTE STRING>
+
+local uint16: bright_gauss_ds_3(0, 0) = <NULLPTR FOR SODA COMPUTE STRING>
+
+local uint16: dark_weights_normed_gauss_ds_3(0, 0) = <NULLPTR FOR SODA COMPUTE STRING>
+
+local uint16: dark_laplace_us_2(0, 0) = <NULLPTR FOR SODA COMPUTE STRING>
+
+local uint16: dark_laplace_us_1(0, 0) = <NULLPTR FOR SODA COMPUTE STRING>
+
+local uint16: dark_laplace_us_0(0, 0) = <NULLPTR FOR SODA COMPUTE STRING>
+
+local uint16: dark_laplace_diff_2(0, 0) = <NULLPTR FOR SODA COMPUTE STRING>
+
+local uint16: dark_laplace_diff_1(0, 0) = <NULLPTR FOR SODA COMPUTE STRING>
+
+local uint16: dark_laplace_diff_0(0, 0) = <NULLPTR FOR SODA COMPUTE STRING>
+
+local uint16: bright_weights_normed_gauss_ds_3(0, 0) = <NULLPTR FOR SODA COMPUTE STRING>
+
+local uint16: bright_laplace_us_2(0, 0) = <NULLPTR FOR SODA COMPUTE STRING>
+
+local uint16: bright_laplace_us_1(0, 0) = <NULLPTR FOR SODA COMPUTE STRING>
+
+local uint16: bright_laplace_us_0(0, 0) = <NULLPTR FOR SODA COMPUTE STRING>
+
+local uint16: bright_laplace_diff_2(0, 0) = <NULLPTR FOR SODA COMPUTE STRING>
+
+local uint16: bright_laplace_diff_1(0, 0) = <NULLPTR FOR SODA COMPUTE STRING>
+
+local uint16: bright_laplace_diff_0(0, 0) = <NULLPTR FOR SODA COMPUTE STRING>
+
+local uint16: fused_level_3(0, 0) = <NULLPTR FOR SODA COMPUTE STRING>
+
+local uint16: fused_level_2(0, 0) = <NULLPTR FOR SODA COMPUTE STRING>
+
+local uint16: fused_level_1(0, 0) = <NULLPTR FOR SODA COMPUTE STRING>
+
+local uint16: fused_level_0(0, 0) = <NULLPTR FOR SODA COMPUTE STRING>
+
+local uint16: final_merged_2(0, 0) = <NULLPTR FOR SODA COMPUTE STRING>
+
+local uint16: final_merged_1(0, 0) = <NULLPTR FOR SODA COMPUTE STRING>
+
+local uint16: final_merged_0(0, 0) = <NULLPTR FOR SODA COMPUTE STRING>
+
+output uint16: sefss_1(0, 0) = <NULLPTR FOR SODA COMPUTE STRING>
+
+
+iterate: 1
