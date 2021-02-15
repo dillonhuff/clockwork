@@ -7869,25 +7869,25 @@ void generate_deepak_power_flow_rtl_tb(
   //rgtb << "rst = 0;" << endl;
   //rgtb << "flush = 0;" << endl;
   //for (auto eb : edge_buffers(buffers, prg)) {
-    //string out_rep = eb.first;
-    //string out_bundle = eb.second;
+  //string out_rep = eb.first;
+  //string out_bundle = eb.second;
 
-    //UBuffer out_buf = map_find(out_rep, buffers);
+  //UBuffer out_buf = map_find(out_rep, buffers);
 
-    //int pixel_width = out_buf.port_widths;
-    //int pix_per_burst =
-      //out_buf.lanes_in_bundle(out_bundle);
+  //int pixel_width = out_buf.port_widths;
+  //int pix_per_burst =
+  //out_buf.lanes_in_bundle(out_bundle);
 
-    //if (prg.is_input(out_rep)) {
-      //string en_name =
-        //pg(out_rep, out_bundle) + "_en";
-      //string data_name =
-        //pg(out_rep, out_bundle);
+  //if (prg.is_input(out_rep)) {
+  //string en_name =
+  //pg(out_rep, out_bundle) + "_en";
+  //string data_name =
+  //pg(out_rep, out_bundle);
 
-      //rgtb << tab(3) << data_name << "[0] = 0;" << endl;
+  //rgtb << tab(3) << data_name << "[0] = 0;" << endl;
 
-    //} else {
-    //}
+  //} else {
+  //}
   //}
   //rgtb << tab(1) << "end" << endl;
   //rgtb << tab(1) << "always #5 clk = ~clk;" << endl;
@@ -7921,7 +7921,7 @@ void generate_deepak_power_flow_rtl_tb(
       string data_name =
         pg(out_rep, out_bundle);
       string data_in_name = data_name;
-        //inputs0[15:0] <= #`ASSIGNMENT_DELAY $urandom;
+      //inputs0[15:0] <= #`ASSIGNMENT_DELAY $urandom;
 
       rgtb << tab(3) << data_in_name << "[0] <= #`ASSIGNMENT_DELAY $urandom;" << endl;
       //rgtb << tab(2) << "if (" << en_name << ") begin" << endl;
@@ -7930,9 +7930,9 @@ void generate_deepak_power_flow_rtl_tb(
 
     } else {
       //string en_name =
-        //pg(out_rep, out_bundle) + "_valid";
+      //pg(out_rep, out_bundle) + "_valid";
       //string data_name =
-        //pg(out_rep, out_bundle);
+      //pg(out_rep, out_bundle);
       //rgtb << tab(2) << "if (" << en_name << ") begin" << endl;
       //rgtb << tab(3) << "$display(\"Got data %d from dut." << en_name << "\", " << data_name << "[0]" << ");" << endl;
       //rgtb << tab(2) << "end" << endl;
@@ -8123,80 +8123,80 @@ vector<int> analyze_memory_demands(prog& prg, UBuffer& buf, schedule_info& hwinf
     //assert(false);
     //auto eb = embarassing_partition(reduced, hwinfo);
     //if (!eb.has_value()) {
-      auto sched = reduced.global_schedule();
-      cout << "Banking schedule..." << endl;
-      for (auto s : get_maps(sched)) {
-        cout << tab(1) << str(s) << endl;
+    auto sched = reduced.global_schedule();
+    cout << "Banking schedule..." << endl;
+    for (auto s : get_maps(sched)) {
+      cout << tab(1) << str(s) << endl;
+    }
+    auto op_writes = reduced.producer_map();
+    auto op_reads = reduced.consumer_map();
+
+    auto written = range(op_writes);
+    auto read = range(op_reads);
+    auto all_data = unn(written, read);
+
+    auto read_id = isl_union_set_identity(cpy(read));
+
+    auto read_times = dot(inv(op_reads), sched);
+    //auto simul_reads = dot(read_times, inv(read_times));
+    // Set of simultaneous reads to different locations
+    auto simul_reads_umap =
+      diff(dot(read_times, inv(read_times)), read_id);
+    cout << "Simultaneous reads..." << str(simul_reads_umap) << endl;
+    if (empty(simul_reads_umap)) {
+      return unbanked;
+      //return;
+    }
+    auto simul_reads = to_map(simul_reads_umap);
+    auto diff = isl_map_deltas(cpy(simul_reads));
+    cout << tab(1) << "Deltas: " << str(diff) << endl;
+    //auto lmin = lexmin(diff);
+    auto lmax = lexmax(diff);
+    //cout << tab(1) << "LMin  : " << str(lmin) << endl;
+    cout << tab(1) << "LMax  : " << str(lmax) << endl;
+    vector<int> cycle_factors;
+    for (int d = 0; d < num_dims(diff); d++) {
+      auto pd = project_all_but(diff, d);
+      //auto lmin = lexmin(pd);
+      auto lmaxpt = lexmaxval(pd);
+      int bank_factor = to_int(lmaxpt) + 1;
+      cout << tab(2) << "Bank factor in " << d << ": " << bank_factor << endl;
+      cycle_factors.push_back(max(1, bank_factor));
+      //cout << tab(1) << "LMin " << d << " : " << str(lmin) << endl;
+      //cout << tab(1) << "LMax " << d << " : " << str(lmax) << endl;
+      //int lmax = to_int(sample(lmax));
+    }
+
+    vector<string> dvs;
+    vector<string> addrs;
+    int num_banks = 1;
+    for (int i = 0; i < num_dims(diff); i++) {
+      assert(cycle_factors.at(i) > 0);
+      dvs.push_back("a_" + str(i));
+      addrs.push_back("a_" + str(i) + " % " + str(cycle_factors.at(i)));
+      num_banks *= cycle_factors.at(i);
+    }
+
+    string bank_func =
+      curlies(reduced.name + bracket_list(dvs) + " -> " + bracket_list(addrs));
+    auto bnk = isl_map_read_from_str(reduced.ctx, bank_func.c_str());
+
+    cout << "=== After Analysis the bank func is: " << str(bnk) << endl;
+    assert(banking_scheme_is_legal(bnk, reduced));
+
+    // TODO: Remove this hack
+    if (cycle_factors.size() > 2) {
+      for (int d = 1; d < cycle_factors.size() - 1; d++) {
+        cycle_factors[d] = 1;
       }
-      auto op_writes = reduced.producer_map();
-      auto op_reads = reduced.consumer_map();
-
-      auto written = range(op_writes);
-      auto read = range(op_reads);
-      auto all_data = unn(written, read);
-
-      auto read_id = isl_union_set_identity(cpy(read));
-
-      auto read_times = dot(inv(op_reads), sched);
-      //auto simul_reads = dot(read_times, inv(read_times));
-      // Set of simultaneous reads to different locations
-      auto simul_reads_umap =
-        diff(dot(read_times, inv(read_times)), read_id);
-      cout << "Simultaneous reads..." << str(simul_reads_umap) << endl;
-      if (empty(simul_reads_umap)) {
-        return unbanked;
-        //return;
-      }
-      auto simul_reads = to_map(simul_reads_umap);
-      auto diff = isl_map_deltas(cpy(simul_reads));
-      cout << tab(1) << "Deltas: " << str(diff) << endl;
-      //auto lmin = lexmin(diff);
-      auto lmax = lexmax(diff);
-      //cout << tab(1) << "LMin  : " << str(lmin) << endl;
-      cout << tab(1) << "LMax  : " << str(lmax) << endl;
-      vector<int> cycle_factors;
-      for (int d = 0; d < num_dims(diff); d++) {
-        auto pd = project_all_but(diff, d);
-        //auto lmin = lexmin(pd);
-        auto lmaxpt = lexmaxval(pd);
-        int bank_factor = to_int(lmaxpt) + 1;
-        cout << tab(2) << "Bank factor in " << d << ": " << bank_factor << endl;
-        cycle_factors.push_back(max(1, bank_factor));
-        //cout << tab(1) << "LMin " << d << " : " << str(lmin) << endl;
-        //cout << tab(1) << "LMax " << d << " : " << str(lmax) << endl;
-        //int lmax = to_int(sample(lmax));
-      }
-
-      vector<string> dvs;
-      vector<string> addrs;
-      int num_banks = 1;
-      for (int i = 0; i < num_dims(diff); i++) {
-        assert(cycle_factors.at(i) > 0);
-        dvs.push_back("a_" + str(i));
-        addrs.push_back("a_" + str(i) + " % " + str(cycle_factors.at(i)));
-        num_banks *= cycle_factors.at(i);
-      }
-
-      string bank_func =
-        curlies(reduced.name + bracket_list(dvs) + " -> " + bracket_list(addrs));
-      auto bnk = isl_map_read_from_str(reduced.ctx, bank_func.c_str());
-
-      cout << "=== After Analysis the bank func is: " << str(bnk) << endl;
-      assert(banking_scheme_is_legal(bnk, reduced));
-
-      // TODO: Remove this hack
-      if (cycle_factors.size() > 2) {
-        for (int d = 1; d < cycle_factors.size() - 1; d++) {
-          cycle_factors[d] = 1;
-        }
-      }
-      for (auto f : cycle_factors) {
-        cout << tab(1) << f << endl;
-        assert(f > 0);
-      }
-      return cycle_factors;
-      //assert(false);
-      //}
+    }
+    for (auto f : cycle_factors) {
+      cout << tab(1) << f << endl;
+      assert(f > 0);
+    }
+    return cycle_factors;
+    //assert(false);
+    //}
   }
   return unbanked;
   //assert(false);
@@ -8222,25 +8222,25 @@ void pad_top_level_ops_with_loops(prog& prg) {
 }
 
 void move_node(op* node_to_be_moved, op* dst, prog& prg) {
-    op* src = prg.parent(node_to_be_moved);
-    remove(node_to_be_moved, src->children);
-    dst->children.push_back(node_to_be_moved);
-    node_to_be_moved->parent = dst;
+  op* src = prg.parent(node_to_be_moved);
+  remove(node_to_be_moved, src->children);
+  dst->children.push_back(node_to_be_moved);
+  node_to_be_moved->parent = dst;
 }
 
 void pad_bottom_level_ops_with_loops(prog& prg) {
-    int max_depth = max_loop_depth(prg);
-    for (auto c : prg.all_ops()) {
-        auto surrounding_loops = surrounding_vars(c, prg);
-        if (surrounding_loops.size() < max_depth) {
-            cout << "\tOp name: " << c->name << " need to be padded" << endl;
-            //loop on top of the op
-            op* container_loop = prg.parent(c);
-            op* pad_loop = container_loop->add_loop(prg.un("pad_wrapper"), 0, 1);
-            move_node(c, pad_loop, prg);
-        }
+  int max_depth = max_loop_depth(prg);
+  for (auto c : prg.all_ops()) {
+    auto surrounding_loops = surrounding_vars(c, prg);
+    if (surrounding_loops.size() < max_depth) {
+      cout << "\tOp name: " << c->name << " need to be padded" << endl;
+      //loop on top of the op
+      op* container_loop = prg.parent(c);
+      op* pad_loop = container_loop->add_loop(prg.un("pad_wrapper"), 0, 1);
+      move_node(c, pad_loop, prg);
     }
-    prg.pretty_print();
+  }
+  prg.pretty_print();
 }
 
 int max_loop_depth(prog& prg) {
@@ -8332,11 +8332,11 @@ void dsa_writers(prog& prg) {
       //op* w1 = ws.at(1);
 
       //if (w0->read_addrs().size() == 0) {
-        //initializers[b] = w0;
-        //updaters[b] = w1;
+      //initializers[b] = w0;
+      //updaters[b] = w1;
       //} else {
-        //initializers[b] = w1;
-        //updaters[b] = w0;
+      //initializers[b] = w1;
+      //updaters[b] = w0;
       //}
     }
 
@@ -8421,10 +8421,10 @@ int buffer_load_latency(CodegenOptions& options) {
     return 0;
 
   } else if (options.rtl_options.target_tile == TARGET_TILE_WIDE_FETCH_WITH_ADDRGEN ) {
-      return 0;
+    return 0;
   } else if(options.rtl_options.target_tile == TARGET_TILE_PLATONIC)
   {
-      return 0;
+    return 0;
   }
 
   if (options.rtl_options.target_tile == TARGET_TILE_DUAL_SRAM_WITH_ADDRGEN) {
@@ -8677,6 +8677,31 @@ void set_channel_depths_to_with_kernel_depth(const int kernel_depth, app_dag& da
 
 }
 
+void set_channel_depths_by_stage_depths(app_dag& dag) {
+  ifstream in("pipeline_depths.txt");
+  std::string line;
+  std::map<string, int> depths;
+  std::set<string> lines;
+  while (std::getline(in, line))
+  {
+    std::istringstream iss(line);
+    cout << "\t" << line << endl;
+    lines.insert(split_at(line, ",")[0]);
+    depths[split_at(line, ",")[0]] = stoi(split_at(line, ",")[1]);
+  }
+
+  for (auto gp : dag.fusion_group_progs) {
+    if (!elem(gp.second.name, lines)) {
+      cout << "Errror: No line for " << gp.second.name << endl;
+    } else {
+      cout << "success, found group: " << gp.second.name << endl;
+    }
+  }
+
+  in.close();
+  assert(false);
+}
+
 void set_channel_depths_to_constant(const int constant, app_dag& dag) {
   std::set<std::string> done;
   for (auto& buf : dag.prg.boundary_buffers()) {
@@ -8796,7 +8821,8 @@ void generate_app_code(
     done.insert(buf);
   }
 
-  set_channel_depths_to_constant(500, dag);
+  set_channel_depths_by_stage_depths(dag);
+  //set_channel_depths_to_constant(500, dag);
   //set_channel_depths_to_constant(32, dag);
   //set_channel_depths_to_constant(1, dag);
   //set_channel_depths_to_with_kernel_depth(500, dag);

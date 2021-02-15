@@ -20296,10 +20296,10 @@ void resnet88_test() {
 }
 
 void application_tests() {
-  resnet88_test();
   multi_rate_dynamic_apps();
   initial_soda_comparison();
 
+  resnet88_test();
   histogram_test();
   histogram1d_test();
   iccad_tests();
