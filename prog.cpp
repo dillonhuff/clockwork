@@ -8821,8 +8821,12 @@ void generate_app_code(
     done.insert(buf);
   }
 
+  if (options.slack_matching.tp == SLACK_MATCHING_TYPE_FIXED) {
+    set_channel_depths_to_constant(options.slack_matching.depth, dag);
+  } else {
+    assert(false);
+  }
   //set_channel_depths_by_stage_depths(dag);
-  set_channel_depths_to_constant(500, dag);
   //set_channel_depths_to_constant(32, dag);
   //set_channel_depths_to_constant(1, dag);
   //set_channel_depths_to_with_kernel_depth(500, dag);

@@ -15,7 +15,7 @@ enum slack_matching_type {
 
 struct slack_matching_policy {
   slack_matching_type tp;
-  int fixed_depth;
+  int depth;
 };
 
 enum test_data_input_stream_type {
