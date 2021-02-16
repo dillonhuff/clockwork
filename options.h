@@ -8,6 +8,16 @@
 
 using namespace std;
 
+enum slack_matching_type {
+  SLACK_MATCHING_TYPE_FIXED,
+  SLACK_MATCHING_TYPE_PIPELINE_DEPTH_AWARE,
+};
+
+struct slack_matching_policy {
+  slack_matching_type tp;
+  int fixed_depth;
+};
+
 enum test_data_input_stream_type {
   TEST_DATA_INPUT_STREAM_TYPE_CONSTANT,
   TEST_DATA_INPUT_STREAM_TYPE_RANDOM,
@@ -112,7 +122,6 @@ struct CodegenOptions {
   bool all_rams;
   bool add_dependence_pragmas;
   HLSLoopCodegen hls_loop_codegen;
-  //bool use_custom_code_string;
   string code_string;
   bool simplify_address_expressions;
   bool unroll_factors_as_pad;
@@ -133,7 +142,6 @@ struct CodegenOptions {
 
   bool use_epochs;
   int num_input_epochs;
-  bool push_garbage_outputs;
   bool use_soda_casting;
   InnerBankOffsetMode inner_bank_offset_mode;
   ScheduleAlgorithm scheduling_algorithm;
@@ -149,21 +157,22 @@ struct CodegenOptions {
   DebugOptions debug_options;
   LakeCollateral mem_tile;
 
+  slack_matching_policy slack_matching;
+
   CodegenOptions() : internal(true), all_rams(false), add_dependence_pragmas(true),
-  //use_custom_code_string(false),
   hls_loop_codegen(HLS_LOOP_CODEGEN_ISL), code_string(""), simplify_address_expressions(false),
   unroll_factors_as_pad(false), conditional_merge(false), merge_threshold(0),
   inline_vectorization(false), iis({}),
   pass_through_valid(false), emit_smt_stream(false), config_gen_only(false), dir(""),
   use_epochs(true),
   num_input_epochs(-1),
-  push_garbage_outputs(false),
   use_soda_casting(false),
   inner_bank_offset_mode(INNER_BANK_OFFSET_STACK),
   scheduling_algorithm(SCHEDULE_ALGORITHM_NAIVE),
   default_banking_strategy({"exhaustive"}),
   ignore_top_level_inter_deps(false),
-  num_pipelines(1)
+  num_pipelines(1),
+  slack_matching({SLACK_MATCHING_TYPE_FIXED, 500})
   {}
 
   banking_strategy get_banking_strategy(const std::string& buffer);
