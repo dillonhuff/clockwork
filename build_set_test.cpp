@@ -19321,6 +19321,12 @@ void histogram1d_test() {
   //assert(false);
 }
 
+// Currently:
+//  1. The blur example in the readme still works correctly
+//     and produces a sensible looking image
+//  2. The output of the app dag produces bad looking code
+//     where the image is slanted.
+//  3. The statically scheduled output works ok as well
 void updated_blur_static_dynamic_comparison() {
   string prefix = "ubxy_d";
 
@@ -19341,12 +19347,14 @@ void updated_blur_static_dynamic_comparison() {
   normalize_bounds(prg);
   normalize_address_offsets(prg);
 
-  auto fusion_groups = one_stage_per_group(prg);
-  app_dag dag = partition_application(fusion_groups, prg);
+  generate_optimized_code(options, prg);
 
-  options = CodegenOptions();
-  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
-  generate_app_code(options, dag);
+  //auto fusion_groups = one_stage_per_group(prg);
+  //app_dag dag = partition_application(fusion_groups, prg);
+
+  //options = CodegenOptions();
+  //options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  //generate_app_code(options, dag);
 
   //move_to_benchmarks_folder(out_name + "_opt");
 
