@@ -8821,8 +8821,8 @@ void generate_app_code(
     done.insert(buf);
   }
 
-  set_channel_depths_by_stage_depths(dag);
-  //set_channel_depths_to_constant(500, dag);
+  //set_channel_depths_by_stage_depths(dag);
+  set_channel_depths_to_constant(500, dag);
   //set_channel_depths_to_constant(32, dag);
   //set_channel_depths_to_constant(1, dag);
   //set_channel_depths_to_with_kernel_depth(500, dag);
