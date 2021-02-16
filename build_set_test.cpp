@@ -19330,8 +19330,8 @@ void histogram1d_test() {
 void updated_blur_static_dynamic_comparison() {
   string prefix = "ubxy_d";
 
-  int cols = 1920;
-  int rows = 1080;
+  int cols = 256;
+  int rows = 256;
 
   int unroll_factor = 1;
   string out_name = prefix + "_" + str(unroll_factor);
@@ -19342,12 +19342,19 @@ void updated_blur_static_dynamic_comparison() {
   options.debug_options.expect_all_linebuffers = true;
   prog prg = blur_xy_16(out_name).realize(options, out_name, cols, rows, unroll_factor);
 
-  unroll_reduce_loops(prg);
-  merge_basic_block_ops(prg);
-  normalize_bounds(prg);
-  normalize_address_offsets(prg);
+  std::vector<std::string> optimized =
+    run_regression_tb(out_name + "_opt");
 
-  generate_optimized_code(options, prg);
+  //unroll_reduce_loops(prg);
+  //merge_basic_block_ops(prg);
+  //normalize_bounds(prg);
+  //normalize_address_offsets(prg);
+
+  auto res = unoptimized_result(prg);
+
+  compare(prg.name + "_cpu_comparison", res, optimized);
+
+  //generate_optimized_code(options, prg);
 
   //auto fusion_groups = one_stage_per_group(prg);
   //app_dag dag = partition_application(fusion_groups, prg);
