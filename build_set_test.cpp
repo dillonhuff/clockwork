@@ -19321,6 +19321,39 @@ void histogram1d_test() {
   //assert(false);
 }
 
+void updated_blur_static_dynamic_comparison() {
+  string prefix = "ubxy_d";
+
+  int cols = 1920;
+  int rows = 1080;
+
+  int unroll_factor = 1;
+  string out_name = prefix + "_" + str(unroll_factor);
+
+  CodegenOptions options;
+  options.internal = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  options.debug_options.expect_all_linebuffers = true;
+  prog prg = blur_xy_16(out_name).realize(options, out_name, cols, rows, unroll_factor);
+
+  unroll_reduce_loops(prg);
+  merge_basic_block_ops(prg);
+  normalize_bounds(prg);
+  normalize_address_offsets(prg);
+
+  auto fusion_groups = one_stage_per_group(prg);
+  app_dag dag = partition_application(fusion_groups, prg);
+
+  options = CodegenOptions();
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  generate_app_code(options, dag);
+
+  //move_to_benchmarks_folder(out_name + "_opt");
+
+  assert(false);
+  
+}
+
 void blur_static_dynamic_comparison() {
   string prefix = "bxy_d";
 
@@ -20065,6 +20098,10 @@ void cp16_static_dynamic_comparison_fresh_codegen() {
 
 }
 
+void updated_soda_comparison() {
+  updated_blur_static_dynamic_comparison();
+}
+
 void initial_soda_comparison() {
   cp32_static_dynamic_comparison();
   cp16_static_dynamic_comparison();
@@ -20296,6 +20333,7 @@ void resnet88_test() {
 }
 
 void application_tests() {
+  updated_soda_comparison();
   multi_rate_dynamic_apps();
   initial_soda_comparison();
 
