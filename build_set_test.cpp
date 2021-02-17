@@ -19330,43 +19330,28 @@ void histogram1d_test() {
 void updated_blur_static_dynamic_comparison() {
   string prefix = "ubxy_d";
 
-  int cols = 256;
-  int rows = 256;
+  int cols = 64;
+  int rows = 64;
 
   int unroll_factor = 1;
   string out_name = prefix + "_" + str(unroll_factor);
 
-  CodegenOptions options;
-  options.internal = true;
-  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
-  options.debug_options.expect_all_linebuffers = true;
-  prog prg = blur_xy_16(out_name).realize(options, out_name, cols, rows, unroll_factor);
+  prog prg = blur_xy_16(out_name).realize(out_name, cols, rows);
+
+  //CodegenOptions options;
+  //options.internal = true;
+  //options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  //options.debug_options.expect_all_linebuffers = true;
+  //prog prg = blur_xy_16(out_name).realize(options, out_name, cols, rows, unroll_factor);
 
   std::vector<std::string> optimized =
     run_regression_tb(out_name + "_opt");
-
-  //unroll_reduce_loops(prg);
-  //merge_basic_block_ops(prg);
-  //normalize_bounds(prg);
-  //normalize_address_offsets(prg);
 
   auto res = unoptimized_result(prg);
 
   compare(prg.name + "_cpu_comparison", res, optimized);
 
-  //generate_optimized_code(options, prg);
-
-  //auto fusion_groups = one_stage_per_group(prg);
-  //app_dag dag = partition_application(fusion_groups, prg);
-
-  //options = CodegenOptions();
-  //options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
-  //generate_app_code(options, dag);
-
-  //move_to_benchmarks_folder(out_name + "_opt");
-
   assert(false);
-  
 }
 
 void blur_static_dynamic_comparison() {
@@ -22087,7 +22072,6 @@ void stencil_chain_multi_kernel_test() {
 }
 
 void test_app_to_prog_conversion() {
-  //App jac = jacobi2d("jac");
   App jac = pointwise2d("jac");
   int size = 10;
   prog prg = jac.realize("jac", size, size);
@@ -22097,14 +22081,11 @@ void test_app_to_prog_conversion() {
 
   auto original = run_regression_tb("jac_opt");
   cout << "Original result: " << original << endl;
-  //assert(false);
 
   auto extracted = unoptimized_result(prg);
   cout << "Extracted result: " << extracted << endl;
-  //assert(false);
 
   compare("jac_extracted" + prg.name + "_vs_unopt", original, extracted);
-  //assert(false);
 }
 
 void test_jacobi15_dynamic() {
@@ -22277,13 +22258,13 @@ void gv_generation_pyramid() {
 
 void dhuff_tests() {
   //gv_generation_pyramid();
+  test_app_to_prog_conversion();
   test_chain_grouping();
 
   //test_jacobi15_dynamic();
 
   test_multi_kernel_pyramid_collapsing();
   test_multi_kernel_gp();
-  test_app_to_prog_conversion();
 
   //test_multi_kernel_llf();
   //assert(false);
