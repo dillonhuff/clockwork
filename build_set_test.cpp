@@ -20234,7 +20234,66 @@ void cp16_static_dynamic_comparison_fresh_codegen() {
 
 }
 
+void updated_jac32_static_dynamic_comparison() {
+  string prefix = "jac2";
+
+  int size = 1080;
+  int rows = size;
+  int cols = size;
+
+  int unroll_factor = 32;
+  int throughput = unroll_factor;
+  string out_name = prefix + "_" + str(unroll_factor);
+
+  CodegenOptions options;
+  options.internal = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  options.debug_options.expect_all_linebuffers = true;
+
+  App jac = stencil_chain_stage_iccad(out_name, 15);
+  prog prg = jac.realize(options, out_name, cols, rows, 1);
+
+  move_to_benchmarks_folder(out_name + "_opt");
+
+  prg.name = out_name + "_opt_d";
+
+  jac.generate_soda_file(prg.name, throughput);
+
+  unroll_reduce_loops(prg);
+  merge_basic_block_ops(prg);
+  normalize_bounds(prg);
+  normalize_address_offsets(prg);
+
+  auto fusion_groups = one_stage_per_group(prg);
+  auto fresh_groups = insert_inter_group_buffers(fusion_groups, prg);
+  unroll_mismatched_inner_loops(prg);
+  merge_basic_block_ops(prg);
+  infer_bounds_and_unroll(pick(prg.outs), {size, size}, throughput, prg);
+
+  assert(unoptimized_compiles(prg));
+
+  app_dag dag = partition_groups(fresh_groups, prg);
+
+  options = CodegenOptions();
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  options.slack_matching = {SLACK_MATCHING_TYPE_FIXED, 2};
+  generate_app_code(options, dag);
+
+  move_to_benchmarks_folder(prg.name);
+
+  string synth_dir =
+    "./soda_codes/" + prg.name+ "/our_code/";
+
+  system(("cp " + out_name + "_opt" + "*.h " + synth_dir).c_str());
+
+  cout << "prg name: " << prg.name << endl;
+
+  assert(false);
+}
+
 void updated_soda_comparison() {
+  updated_jac32_static_dynamic_comparison();
+
   updated_blur1_static_dynamic_comparison();
   //updated_blur16_static_dynamic_comparison();
   //updated_blur32_static_dynamic_comparison();
@@ -20488,11 +20547,11 @@ void llf_grayscale_debugging() {
 }
 
 void application_tests() {
-  llf_grayscale_debugging();
 
   updated_soda_comparison();
   multi_rate_dynamic_apps();
   initial_soda_comparison();
+  llf_grayscale_debugging();
 
   resnet88_test();
   histogram_test();
