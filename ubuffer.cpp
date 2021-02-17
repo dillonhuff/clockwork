@@ -955,7 +955,7 @@ ConfigMap generate_addressor_config_from_aff_expr(isl_aff* addr,
     prefix += is_read ? "read_" : "write_";
     //cout << "\""+prefix+"\"," << "\"" << buf_name << "\"" << endl;
     cout << "\""+prefix+"data_starting_addr\"," <<
-        to_int(const_coeff(addr))/port_width  << ",0" << endl;
+        to_int(const_coeff(addr))/port_width<< ",0" << endl;
     vals[prefix + "data_starting_addr"] = {to_int(const_coeff(addr))/port_width};
     for (int d = 0; d < num_in_dims(addr); d++) {
       int ldim = num_in_dims(addr) - d - 1;
@@ -1288,7 +1288,11 @@ ConfigMap generate_addressor_config_from_access_map(umap* acc_map, LakeCollatera
      string micro_buf_name = get_micro_buf_name(buf_name);
      int word_width = mem.word_width.at(micro_buf_name);
      int capacity = mem.capacity.at(micro_buf_name);
-     int port_width = mem.out_port_width.at(micro_buf_name);
+     int port_width;
+     if (is_read)
+         port_width = mem.out_port_width.at(micro_buf_name);
+     else
+         port_width = mem.in_port_width.at(micro_buf_name);
      auto reduce_map = linear_address_map_lake(to_set(range(acc_map)), mem.fetch_width);
      auto linear_acc_map = dot(acc_map, reduce_map);
      cout << tab(1) << "Before Merge: " << endl;
@@ -1419,7 +1423,6 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, UBuffer& ubuf) {
     auto mem = options.mem_hierarchy.at("regfile");
     int word_width = mem.word_width.at("regfile");
     int capacity = mem.capacity.at("regfile");
-    int port_width = mem.out_port_width.at("regfile");
     for (auto op_name: ops) {
         auto sched = op2sched.at(op_name);
         if(op2write_map.count(op_name)) {
@@ -1441,6 +1444,7 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, UBuffer& ubuf) {
                 auto aff = get_aff(sched);
                 auto dom = ::domain(sched);
                 auto config_info = generate_accessor_config_from_aff_expr(dom, aff);
+                int port_width = mem.in_port_width.at("regfile");
                 auto addressor = generate_addressor_config_from_aff_expr(
                         get_aff(m_pair.second), false, false, word_width, capacity, port_width);
                 config_info.merge(addressor);
@@ -1464,6 +1468,7 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, UBuffer& ubuf) {
                 auto aff = get_aff(sched);
                 auto dom = ::domain(sched);
                 auto config_info = generate_accessor_config_from_aff_expr(dom, aff);
+                int port_width = mem.out_port_width.at("regfile");
                 auto addressor = generate_addressor_config_from_aff_expr(
                         get_aff(m_pair.second), true, false, word_width, capacity, port_width);
                 config_info.merge(addressor);
