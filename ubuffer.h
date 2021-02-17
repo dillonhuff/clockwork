@@ -2344,8 +2344,8 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
     pair<std::map<string, UBuffer>, vector<string> >
         vectorization(int dim_id, int fetch_width, vector<int> iis);
 
-    void add_vectorized_pt_to_ubuf(UBuffer& target_buf, vector<umap*> ap_vec, isl_map* merge_sched, string bd_name, int dim_id, int fetch_width, bool is_out);
-    void add_vectorized_pt_to_ubuf(UBuffer & target_buf, umap* rewrite_buf2op, isl_map* sched, string origin_pt_name, string bd_name, int dim_id, int fetch_width, bool is_out);
+    void add_vectorized_pt_to_ubuf(UBuffer& target_buf, vector<umap*> ap_vec, isl_map* merge_sched, string bd_name, int dim_id, int fetch_width, int cnt, bool is_out);
+    void add_vectorized_pt_to_ubuf(UBuffer & target_buf, umap* rewrite_buf2op, isl_map* sched, string origin_pt_name, string bd_name, int dim_id, int fetch_width, int cnt, bool is_out);
     int add_vectorized_pt_to_ubuf(UBuffer & target_buf, vector<pair<string, umap*>> rewrite_buf2op_map, map<string, isl_map*> sched_map, string bd_name, int dim_id, int fetch_width, bool is_out, bool use_recipe);
 
     //New refactor method
@@ -2404,7 +2404,8 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
     void generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, schedule_info& info);
     //ubuffer coreir generation for tahoe memory tile
     void generate_coreir_without_ctrl(CodegenOptions& options, CoreIR::ModuleDef* def, schedule_info& info);
-    Json generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> rewrite_buffer);
+    Json generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> &rewrite_buffer);
+    Json generate_ubuf_args_old(CodegenOptions& options, map<string, UBuffer> & rewrite_buffer);
     Json generate_ubuf_args(CodegenOptions& options, UBuffer& rewrite_buffer);
 
     void generate_stencil_valid_config(CodegenOptions& options, string bk_name);
@@ -2457,6 +2458,8 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
 };
 
 string toBracketList(const vector<vector<int>> & data);
+string get_micro_buf_name(string buf_name);
+string get_ctrl_name(string op_name);
 
 struct StreamData {
     vector<vector<int> > in_data;
