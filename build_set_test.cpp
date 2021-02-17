@@ -19409,7 +19409,7 @@ void blurx_app_to_prog_test() {
 
   compare("blurx test:" + prg.name + "_cpu_comparison", res, optimized);
 
-  assert(false);
+  //assert(false);
 }
 
 void updated_blur_static_dynamic_comparison() {
@@ -19427,7 +19427,7 @@ void updated_blur_static_dynamic_comparison() {
 
   compare(prg.name + "_cpu_comparison", res, optimized);
 
-  assert(false);
+  //assert(false);
 }
 
 void blur_static_dynamic_comparison() {

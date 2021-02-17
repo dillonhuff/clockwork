@@ -27,5 +27,7 @@ int main() {
     fout << actual_lane_0 << endl;
   }
 
+  assert(in.is_empty());
+  assert(out.is_empty());
   return 0;
 }
