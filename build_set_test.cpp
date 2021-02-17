@@ -6166,9 +6166,13 @@ struct App {
         app_dag.at(f).pixel_width;
 
       Box domain = data_domain(f);
+      vector<int> lens;
       for (int i = 0; i < domain.dimension(); i++) {
-        prg.buffer_bounds[f].push_back(domain.length(i));
+        lens.push_back(domain.length(i));
+        //prg.buffer_bounds[f].push_back(domain.length(i));
       }
+      reverse(lens);
+      prg.buffer_bounds[f] = lens;
 
       for (auto u : app_dag.at(f).updates) {
         if (u.get_srcs().size() == 0) {
@@ -6215,6 +6219,7 @@ struct App {
               assert(off.size() == 2);
               vector<string> terms;
               int i = 0;
+              //reverse(off);
               for (auto offt : off) {
                 QAV stride = p.stride(i);
                 if (stride.denom != 1) {

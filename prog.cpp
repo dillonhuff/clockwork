@@ -5267,12 +5267,14 @@ void sanity_check_all_reads_defined(prog& prg) {
   auto written_locs = range(written);
   auto read_but_never_written = diff(read_locs, written_locs);
 
-  cout << "Read but never written..." << endl;
+  cout << "Read but never written: " << str(read_but_never_written) << endl;
   for (auto m : get_sets(read_but_never_written)) {
     string mname = name(m);
     //cout << tab(1) << str(m) << endl;
     if (!prg.is_input(mname)) {
       cout << "Error: Buffer " << mname << " is read but not written at: " << str(m) << endl;
+      cout << tab(1) << "Read locs : " << str(read_locs) << endl;
+      cout << tab(1) << "Write locs: " << str(written_locs) << endl;
       print_box_bounds(mname, m);
       assert(false);
     }
