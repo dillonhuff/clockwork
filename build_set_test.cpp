@@ -14219,9 +14219,9 @@ void cpy_app_to_folder(const std::string& app_type, const std::string& prg_name)
 
 void test_pond(string dir) {
   vector<prog> test_apps;
-  //test_apps.push_back(resnet_simple());
-  //test_apps.push_back(resnet());
-  test_apps.push_back(three_level_pond());
+  test_apps.push_back(resnet_simple());
+  test_apps.push_back(resnet());
+  //test_apps.push_back(three_level_pond());
 
   for ( auto prg: test_apps) {
     cout << "====== Running CGRA Single Port test for " << prg.name << endl;

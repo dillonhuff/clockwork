@@ -7,6 +7,6 @@
 "extent_1",16,0
 "extent_2",64,0
 "write_data_starting_addr",0,0
-"write_data_stride_0",0,0
-"write_data_stride_1",1,0
+"write_data_stride_0",1,0
+"write_data_stride_1",4,0
 "write_data_stride_2",0,0
