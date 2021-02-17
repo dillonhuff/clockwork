@@ -19321,28 +19321,18 @@ void histogram1d_test() {
   //assert(false);
 }
 
-// Currently:
-//  1. The blur example in the readme still works correctly
-//     and produces a sensible looking image
-//  2. The output of the app dag produces bad looking code
-//     where the image is slanted.
-//  3. The statically scheduled output works ok as well
 void updated_blur_static_dynamic_comparison() {
   string prefix = "ubxy_d";
 
   int cols = 64;
   int rows = 64;
 
-  int unroll_factor = 1;
-  string out_name = prefix + "_" + str(unroll_factor);
+  string out_name = prefix;
 
   prog prg = blur_xy_16(out_name).realize(out_name, cols, rows);
 
-  //CodegenOptions options;
-  //options.internal = true;
-  //options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
-  //options.debug_options.expect_all_linebuffers = true;
-  //prog prg = blur_xy_16(out_name).realize(options, out_name, cols, rows, unroll_factor);
+  prg.pretty_print();
+  assert(false);
 
   std::vector<std::string> optimized =
     run_regression_tb(out_name + "_opt");
