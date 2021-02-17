@@ -15991,7 +15991,8 @@ prog llf_grayscale_float(const int r, const int c) {
   prg.add_input("gray_in_oc");
   prg.add_output("gray_out");
 
-  load_input("gray_in_oc", "gray", 2, prg);
+  load_input("gray_in_oc", "gray_int", 2, prg);
+  pointwise("gray", "llf_int_to_float", "gray_int", 2, prg);
 
   // Make intensity pyramids
   vector<vector<string> > intensity_level_pyramids;
