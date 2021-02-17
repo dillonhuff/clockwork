@@ -1283,6 +1283,104 @@ pair<isl_map*, isl_map*> merge_dom_dim(isl_map* schedule, isl_map* acc_map) {
     return make_pair(sched, a_map);
 }
 
+ConfigMap generate_addressor_config_from_access_map(umap* acc_map, LakeCollateral mem, bool is_read) {
+     string buf_name = range_name(to_map(acc_map));
+     string micro_buf_name = get_micro_buf_name(buf_name);
+     int word_width = mem.word_width.at(micro_buf_name);
+     int capacity = mem.capacity.at(micro_buf_name);
+     int port_width = mem.out_port_width.at(micro_buf_name);
+     auto reduce_map = linear_address_map_lake(to_set(range(acc_map)), mem.fetch_width);
+     auto linear_acc_map = dot(acc_map, reduce_map);
+     cout << tab(1) << "Before Merge: " << endl;
+     cout << tab(2) << "acc map: " << str(acc_map) << endl;
+     cout << tab(2) << "reduce_map: " << str(reduce_map) << endl;
+     cout << "\tlinearized Write map: " << str(linear_acc_map) << endl;
+     auto addressor = generate_addressor_config_from_aff_expr(
+         get_aff(linear_acc_map), is_read, false, word_width, capacity, port_width);
+     return addressor;
+}
+
+//A hack in refactor
+//FIXME: change the vectorization wide fetch expression
+isl_map* pick_left_most_access(isl_map* wide_fetch_access) {
+    if (single_valued(wide_fetch_access))
+        return wide_fetch_access;
+    auto bmap_vec = get_basic_maps(wide_fetch_access);
+    sort(bmap_vec.begin(), bmap_vec.end(), [](isl_basic_map* l, isl_basic_map* r) {
+              auto l_start = lexminpt(range(to_map(l)));
+              auto r_start = lexminpt(range(to_map(r)));
+              return lex_lt_pt(l_start, r_start);
+            });
+    return simplify(to_map(bmap_vec.front()));
+}
+
+//Wide fetch width codegen
+Json UBuffer::generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> & rewrite_buffer) {
+
+    Json ret;
+
+    /*build a map from OP schedule name to input access map, to output access map
+    for each op name generate accessor config and also address generator
+    */
+
+    map<string, isl_map*>  op2sched;
+    map<string, vector<umap*>> op2write_map, op2read_map;
+
+    for (auto it: rewrite_buffer) {
+        auto ubuf = it.second;
+        auto hardware_schedule = ubuf.global_schedule();
+        for (auto m : get_maps(hardware_schedule)) {
+            string op_name = domain_name(m);
+            cout << "sched: " << str(m) << endl;
+            m = remove_irrelevant_in_dim(m);
+            op2sched[op_name] = m;
+            auto out_acc_umap = ubuf.producer_map();
+            for (auto out_acc_map: get_maps(out_acc_umap)) {
+                out_acc_map = pick_left_most_access(out_acc_map);
+                cout << "write map: " << str(out_acc_map) << endl;
+                out_acc_map = remove_irrelevant_in_dim(out_acc_map);
+                map_insert(op2write_map, domain_name(out_acc_map), to_umap(out_acc_map));
+            }
+            auto in_acc_umap = ubuf.consumer_map();
+            for (auto in_acc_map: get_maps(in_acc_umap)) {
+                in_acc_map = pick_left_most_access(in_acc_map);
+                cout << "read map: " << str(in_acc_map) << endl;
+                in_acc_map = remove_irrelevant_in_dim(in_acc_map);
+                map_insert(op2read_map, domain_name(in_acc_map), to_umap(in_acc_map));
+            }
+        }
+    }
+
+    //Go through all the ops and produce the read and write
+    auto mem = options.mem_hierarchy.at("mem");
+    for (auto it: op2sched) {
+        string op_name = it.first;
+        auto sched = op2sched.at(op_name);
+        cout << "\tSched: " << str(sched) << endl;
+        string ctrl_name = get_ctrl_name(op_name);
+        auto aff = get_aff(sched);
+        auto dom = ::domain(sched);
+        auto config_info = generate_accessor_config_from_aff_expr(dom, aff);
+        if(op2write_map.count(op_name)) {
+            for (auto acc_map : op2write_map.at(op_name)) {
+                ConfigMap addressor =
+                    generate_addressor_config_from_access_map(acc_map, mem, false/*is write*/);
+                config_info.merge(addressor);
+            }
+        }
+        if(op2read_map.count(op_name)) {
+            for (auto acc_map : op2read_map.at(op_name)) {
+                ConfigMap addressor =
+                    generate_addressor_config_from_access_map(acc_map, mem, true/*is read*/);
+                config_info.merge(addressor);
+            }
+        }
+        add_lake_config(ret, config_info, num_in_dims(aff), ctrl_name);
+    }
+    cout << ret << endl;
+    return ret;
+}
+
 //Simplify the single fetch width memory codegen
 Json UBuffer::generate_ubuf_args(CodegenOptions& options, UBuffer& ubuf) {
 
@@ -1378,7 +1476,7 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, UBuffer& ubuf) {
     return ret;
 }
 
-Json UBuffer::generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> rewrite_buffer) {
+Json UBuffer::generate_ubuf_args_old(CodegenOptions& options, map<string, UBuffer> & rewrite_buffer) {
     cout << "Generating ubuf argument! " << endl << endl;
     for (auto it : rewrite_buffer) {
         cout << "\t\tBuf name: " << it.first << endl
@@ -2127,7 +2225,6 @@ void UBuffer::generate_coreir(CodegenOptions& options,
         for (auto buf: vectorized_buf) {
             cout << buf.first << endl << buf.second << endl;
         }
-        assert(false);
         config_file = generate_ubuf_args(options, vectorized_buf);
         config_mode = "lake";
       }
@@ -3291,6 +3388,16 @@ int UBuffer::get_vectorized_dim(int fetch_width) {
   assert(false);
 }
 
+string get_micro_buf_name(string buf_name) {
+    return split_at(buf_name, "_").back();
+}
+
+string get_ctrl_name(string buf_name) {
+    //Controller's name is the second from last
+    vector<string> substr =
+        split_at(buf_name, "_");
+    return *(substr.end() - 2) + "_" + *(substr.end() - 1);
+}
 
 void generate_access_cnt(CodegenOptions& options,
         string ub_ins_name,
@@ -3299,7 +3406,8 @@ void generate_access_cnt(CodegenOptions& options,
     map<string, int> ubuf_rd, ubuf_wr;
     for (auto it: rewrite_buffer) {
         string buf_name = it.first;
-        string micro_buf_name = split_at(buf_name, "_").back();
+        //string micro_buf_name = split_at(buf_name, "_").back();
+        string micro_buf_name = get_micro_buf_name(buf_name);
         auto buf_component = it.second;
         int rd_cnts = buf_component.global_read_count();
         int wr_cnts = buf_component.global_write_count();
@@ -6277,7 +6385,9 @@ void UBuffer::generate_banks(CodegenOptions& options) {
     return ap_vec_map;
   }
 
-  void UBuffer::add_vectorized_pt_to_ubuf(UBuffer& target_buf, vector<umap*> ap_vec, isl_map* merge_sched, string bd_name, int dim_id, int fetch_width, bool is_out) {
+  void UBuffer::add_vectorized_pt_to_ubuf(UBuffer& target_buf, vector<umap*> ap_vec, isl_map* merge_sched, string bd_name, int dim_id, int fetch_width, int cnt, bool is_out) {
+
+    merge_sched = add_domain_suffix(merge_sched, "_"+str(cnt));
     for (int new_pt_cnt= 0; new_pt_cnt < fetch_width; new_pt_cnt++) {
       auto rewrite_access_map = ap_vec.at(new_pt_cnt);
       int look_n_ahead = 1;
@@ -6292,8 +6402,10 @@ void UBuffer::generate_banks(CodegenOptions& options) {
       isl_map* a_map = to_map(rewrite_access_map);
       a_map = set_range_name(a_map, target_buf.name);
 
-      cout << "rewrite access map: " << str(rewrite_access_map) << endl;
-      isl_set* dom = ::domain(to_map(rewrite_access_map));
+      //Add suffix
+      a_map = add_domain_suffix(a_map, "_"+str(cnt));
+
+      isl_set* dom = ::domain(a_map);
       if (is_out) {
         string pt_name = bd_name + "_out_" + std::to_string(new_pt_cnt);
         target_buf.port_bundles[bd_name].push_back(pt_name);
@@ -6454,20 +6566,22 @@ void UBuffer::generate_banks(CodegenOptions& options) {
       return pick(access_cnt_per_port);
       }
 
-      void UBuffer::add_vectorized_pt_to_ubuf(UBuffer & target_buf, umap* rewrite_buf2op, isl_map* sched, string origin_pt_name, string bd_name, int dim_id, int fetch_width, bool is_out) {
+      void UBuffer::add_vectorized_pt_to_ubuf(UBuffer & target_buf, umap* rewrite_buf2op, isl_map* sched, string origin_pt_name, string bd_name, int dim_id, int fetch_width, int cnt, bool is_out) {
 
         AccessPattern acc_pattern = AccessPattern(
             to_map(access_map.at(origin_pt_name)), ctx);
         auto constraint_slices = acc_pattern.get_buf_slice(ctx, target_buf.name, dim_id, fetch_width);
         size_t new_pt_cnt = 0;
 
-        isl_set* dom = range(to_map(rewrite_buf2op));
-
+        //isl_set* dom = range(to_map(rewrite_buf2op));
+        sched = add_domain_suffix(sched, "_"+str(cnt));
         for (auto slice : constraint_slices) {
           cout << "Constraint: " << str(slice) << endl;
           cout << "origin: " << str(rewrite_buf2op) << endl;
           cout << "Rewrited Access Map" << str(dot(inv(rewrite_buf2op), slice)) << endl;
-          auto rewrite_access_map = dot(inv(rewrite_buf2op), slice);
+          auto rewrite_access_map = to_map(dot(inv(rewrite_buf2op), slice));
+          rewrite_access_map = add_domain_suffix(rewrite_access_map, "_"+str(cnt));
+          isl_set* dom = ::domain(rewrite_access_map);
           if (is_out) {
             //This handle the output from SRAM
 
@@ -6476,12 +6590,13 @@ void UBuffer::generate_banks(CodegenOptions& options) {
             //cout << "Schedule before its domain: " << str(sched) << endl;
             //cout << "its domain: " << str(dom) << endl;
             //cout << "Schedule add to the new agg: " << str(simplify_expr(its(sched, dom))) << endl;
-            target_buf.add_out_pt(pt_name, dom, to_map(rewrite_access_map), simplify_expr(its(sched, dom)));
+            target_buf.add_out_pt(pt_name, dom, rewrite_access_map, simplify_expr(its(sched, dom)));
 
             //remap the access map for self loop input
             if(is_self_loop_in(origin_pt_name)) {
               auto acc_pt = AccessPattern(to_map(target_buf.access_map[pt_name]), target_buf.ctx);
               auto decouple_acc_map = acc_pt.get_access_map_and_decouple_reuse(ctx, dim_id, true);
+              decouple_acc_map = add_domain_suffix(decouple_acc_map, "_"+str(cnt));
               target_buf.access_map[pt_name] = to_umap(decouple_acc_map);
             }
           }
@@ -6490,7 +6605,7 @@ void UBuffer::generate_banks(CodegenOptions& options) {
 
             string pt_name = origin_pt_name + "_in_" + std::to_string(new_pt_cnt);
             target_buf.port_bundles[bd_name].push_back(pt_name);
-            target_buf.add_in_pt(pt_name, dom, to_map(rewrite_access_map), simplify_expr(its(sched, dom)));
+            target_buf.add_in_pt(pt_name, dom, rewrite_access_map, simplify_expr(its(sched, dom)));
 
             //LOOK at the name to judge if we need to remap the buffer
             //size_t found = target_buf.name.find("tb");
@@ -6819,10 +6934,10 @@ void UBuffer::generate_banks(CodegenOptions& options) {
           }
 
 
-          int bd_cnt = 0;
+          int agg_cnt = 0;
           for (auto bd_name : in_bundle) {
             UBuffer agg_buf;
-            agg_buf.name = name + "_" + to_string(bd_cnt) + "_agg";
+            agg_buf.name = name + "_" + to_string(agg_cnt) + "_agg";
             agg_buf.ctx = ctx;
             agg_buf.port_widths = port_widths;
             agg_buf.hardware.out_port_width = fetch_width;
@@ -6861,10 +6976,10 @@ void UBuffer::generate_banks(CodegenOptions& options) {
               cout << "rewrite buffer to op map: " << str(access_map.at(in_pt_name)) << endl;
 
               //add in port to agg_buf
-              auto inpt_acc_map = remap_access_to_new_buffer(in_pt_name, "_" +to_string(bd_cnt) + "_agg");
+              auto inpt_acc_map = remap_access_to_new_buffer(in_pt_name, "_" +to_string(agg_cnt) + "_agg");
               if (is_self_loop(in_pt_name)){
                 inpt_acc_map = acc_pattern.get_access_map_and_decouple_reuse(ctx, dim_id, true);
-                inpt_acc_map = add_range_suffix(inpt_acc_map, "_" + to_string(bd_cnt) + "_agg");
+                inpt_acc_map = add_range_suffix(inpt_acc_map, "_" + to_string(agg_cnt) + "_agg");
               }
               //Strip mining the agg input
               {
@@ -6877,11 +6992,20 @@ void UBuffer::generate_banks(CodegenOptions& options) {
                   std::cout << "domain stripmining: " << str(sm_domain) << endl;
                   auto sm_access_map = dot(inv(op_stripmining), inpt_acc_map);
                   auto sm_sched = dot(inv(op_stripmining), new_sched.at(acc_pattern.op_name));
+                  sm_domain = add_suffix(sm_domain, "_in2agg_" + str(agg_cnt));
+                  sm_access_map = add_domain_suffix(sm_access_map, "_in2agg_" + str(agg_cnt));
+                  sm_sched = add_domain_suffix(sm_sched, "_in2agg_" + str(agg_cnt));
+
                   cout << "Access map add to agg_in: " << str(sm_access_map) << endl;
                   agg_buf.add_in_pt(in_pt_name+"_in", sm_domain, sm_access_map, its(sm_sched, sm_domain));
 
                 } else {
-                  agg_buf.add_in_pt(in_pt_name+"_in", domain.at(in_pt_name), inpt_acc_map, its(new_sched.at(acc_pattern.op_name), domain.at(in_pt_name)));
+                  auto dom = domain.at(in_pt_name);
+                  auto sched = its(new_sched.at(acc_pattern.op_name), dom);
+                  dom = add_suffix(dom, "_in2agg_" + str(agg_cnt));
+                  inpt_acc_map = add_domain_suffix(inpt_acc_map, "_in2agg_" + str(agg_cnt));
+                  sched = add_domain_suffix(sched, "_in2agg_" + str(agg_cnt));
+                  agg_buf.add_in_pt(in_pt_name+"_in", dom, inpt_acc_map, sched);
                 }
                 agg_buf.port_bundles[bd_name+"_agg_in"].push_back(in_pt_name + "_in");
               }
@@ -6900,11 +7024,11 @@ void UBuffer::generate_banks(CodegenOptions& options) {
               // }
 
               //add out port to agg_buf
-              add_vectorized_pt_to_ubuf(agg_buf, rewrite_buf2op, sched, in_pt_name, bd_name+"_agg_out", dim_id, fetch_width, true);
+              add_vectorized_pt_to_ubuf(agg_buf, rewrite_buf2op, sched, in_pt_name, bd_name+"_agg_out", dim_id, fetch_width, agg_cnt, true);
               //add in port to sram
-              add_vectorized_pt_to_ubuf(sram, rewrite_buf2op, sched, in_pt_name, bd_name, dim_id, fetch_width, false);
+              add_vectorized_pt_to_ubuf(sram, rewrite_buf2op, sched, in_pt_name, bd_name, dim_id, fetch_width, agg_cnt, false);
             }
-            bd_cnt ++;
+            agg_cnt ++;
             ret.insert({agg_buf.name, agg_buf});
             remove_deps.push_back(domain_name(agg_buf.access_map.at(pick(agg_buf.get_out_ports()))));
             cout << "AGG : " << agg_buf << endl;
@@ -7104,11 +7228,10 @@ void UBuffer::generate_banks(CodegenOptions& options) {
               tb.ctx = ctx;
               tb.port_widths = port_widths;
               tb.hardware.in_port_width = fetch_width;
-
               add_vectorized_pt_to_ubuf(sram, ap_vec_map.at(out_pt_name), op_sched_map.at(out_pt_name),
-                      bd_name + "_"+str(tb_cnt), dim_id, fetch_width, true/*is output*/);
+                      bd_name + "_"+str(tb_cnt), dim_id, fetch_width, tb_cnt, true/*is output*/);
               add_vectorized_pt_to_ubuf(tb, ap_vec_map.at(out_pt_name), op_sched_map.at(out_pt_name),
-                      bd_name+"_tb_in", dim_id, fetch_width, false/*is input*/);
+                      bd_name+"_tb_in", dim_id, fetch_width, tb_cnt, false/*is input*/);
 
               cout << "\tAdd TB output port: " << out_pt_name << endl;
               auto acc_pattern = AccessPattern(
@@ -7132,6 +7255,9 @@ void UBuffer::generate_banks(CodegenOptions& options) {
                 std::cout << "domain stripmining: " << str(sm_domain) << endl;
                 auto sm_access_map = dot(inv(op_stripmining), outpt_acc_map);
                 auto sm_sched = dot(inv(op_stripmining), new_sched.at(acc_pattern.op_name));
+                sm_domain = add_suffix(sm_domain, "_tb2out_" + str(tb_cnt));
+                sm_access_map = add_domain_suffix(sm_access_map, "_tb2out_" + str(tb_cnt));
+                sm_sched = add_domain_suffix(sm_sched, "_tb2out_" + str(tb_cnt));
                 cout << "Access map decouple reuse: " << str(outpt_acc_map) << endl;
                 tb.add_out_pt(out_pt_name+"_out", sm_domain, sm_access_map, its(sm_sched, sm_domain));
                 //tb.add_out_pt(out_pt_name+"_out", domain.at(out_pt_name), outpt_acc_map, its(new_sched.at(acc_pattern.op_name), domain.at(out_pt_name)));
@@ -7146,7 +7272,6 @@ void UBuffer::generate_banks(CodegenOptions& options) {
           cout << "SRAM: " << sram << endl;
           cout << "SRAM Schedule: " << str(sram.global_schedule()) << endl;
           ret.insert({sram.name, sram});
-          assert(false);
           return make_pair(ret, remove_deps);
         }
 
