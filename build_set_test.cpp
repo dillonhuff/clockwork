@@ -15981,7 +15981,7 @@ void llf_pyramid_test() {
   //assert(false);
 }
 
-prog llf_grayscale_float() {
+prog llf_grayscale_float(const int r, const int c) {
   int num_pyramid_levels = 4;
   int num_intensity_levels = 8;
 
@@ -16021,13 +16021,10 @@ prog llf_grayscale_float() {
   llf_rescale_gray("gray_out_float", scales, "gray", prg);
   pointwise("gray_out", "llf_float_to_int", "gray_out_float", 2, prg);
 
-  //llf_to_color("color_out_float", "color_in", scales, "gray", prg);
-  //pointwise("color_out", "llf_float_to_int", "color_out_float", 3, prg);
-
   prg.pretty_print();
   prg.sanity_check();
 
-  infer_bounds("gray_out", {2048, 2048}, prg);
+  infer_bounds("gray_out", {r, c}, prg);
 
   cout << "After bounds inference..." << endl;
   prg.pretty_print();
@@ -16039,6 +16036,11 @@ prog llf_grayscale_float() {
 
   return prg;
 }
+
+prog llf_grayscale_float() {
+  return llf_grayscale_float(2048, 2048);
+}
+
 
 prog llf_float() {
   int num_pyramid_levels = 4;
@@ -19475,9 +19477,6 @@ void updated_blur1_static_dynamic_comparison() {
   options.slack_matching = {SLACK_MATCHING_TYPE_FIXED, 2};
   generate_app_code(options, dag);
 
-  cout << "Prg name: " << dag.prg.name << endl;
-  assert(false);
-
   move_to_benchmarks_folder(prg.name);
 
   string synth_dir =
@@ -20470,7 +20469,25 @@ void resnet88_test() {
   assert(false);
 }
 
+void llf_grayscale_debugging() {
+  prog prg = llf_grayscale_float(32, 32);
+  prg.name = prg.name + "_st";
+  prg.sanity_check();
+
+  CodegenOptions options;
+  options = CodegenOptions();
+  options.scheduling_algorithm = SCHEDULE_ALGORITHM_CW;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+
+  generate_optimized_code(options, prg);
+
+  cout << "LLF prog: " << prg.name << endl;
+  assert(false);
+}
+
 void application_tests() {
+  llf_grayscale_debugging();
+
   updated_soda_comparison();
   multi_rate_dynamic_apps();
   initial_soda_comparison();
