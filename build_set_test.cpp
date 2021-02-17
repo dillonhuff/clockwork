@@ -6166,9 +6166,13 @@ struct App {
         app_dag.at(f).pixel_width;
 
       Box domain = data_domain(f);
+      vector<int> lens;
       for (int i = 0; i < domain.dimension(); i++) {
-        prg.buffer_bounds[f].push_back(domain.length(i));
+        lens.push_back(domain.length(i));
+        //prg.buffer_bounds[f].push_back(domain.length(i));
       }
+      //reverse(lens);
+      prg.buffer_bounds[f] = lens;
 
       for (auto u : app_dag.at(f).updates) {
         if (u.get_srcs().size() == 0) {
@@ -6181,7 +6185,10 @@ struct App {
             compute_box(u.name());
           op* nest = prg.root;
           int i = 0;
-          for (auto r : compute_b.intervals) {
+
+          auto intervals = compute_b.intervals;
+          reverse(intervals);
+          for (auto r : intervals) {
             nest = nest->add_nest(f + "_" + to_string(i), r.min, r.max + 1);
             i++;
           }
@@ -6210,14 +6217,12 @@ struct App {
             }
             assert(vars.size() == 2);
 
-
-
-
             cout << tab(1) << " op loads " << p.name << endl;
             for (auto off : p.offsets) {
               assert(off.size() == 2);
               vector<string> terms;
               int i = 0;
+              reverse(off);
               for (auto offt : off) {
                 QAV stride = p.stride(i);
                 if (stride.denom != 1) {
@@ -6255,8 +6260,7 @@ struct App {
     }
 
     generate_app_code(options, buffers, prg, its(m, action_domain), domain_map);
-    //generate_regression_testbench(prg, buffers);
-    generate_regression_testbench(prg); //, buffers);
+    generate_regression_testbench(prg);
     generate_soda_file(prg.name);
   }
 
@@ -9863,6 +9867,18 @@ App sobel_mag_y() {
       {{-1, -1}, {-1, 1}, {0, -1}, {0, 1}, {1, -1}, {1, 1}});
 
   return sobel;
+}
+
+App blur_x_16(const std::string output_name) {
+  App blur;
+  blur.set_default_pixel_width(16);
+  blur.func2d("input_arg");
+  blur.func2d("input", v("input_arg"));
+  //blur.func2d(output_name, div(add(v("input", 0, 0), v("input", 0, 1), v("input", 0, 2)), 3));
+  blur.func2d(output_name, div(add(v("input", 0, 0), v("input", 0, 1)), 3));
+  //blur.func2d(output_name, div(add(v("input", 0, 0), v("input", 0, 1), v("input", 1, 0)), 3));
+
+  return blur;
 }
 
 App blur_xy_16(const std::string output_name) {
@@ -19321,6 +19337,156 @@ void histogram1d_test() {
   //assert(false);
 }
 
+isl_set* bounds(const std::string& in, prog& prg) {
+  vector<int> bnds = map_find(in, prg.buffer_bounds);
+
+  vector<string> vars;
+  vector<string> clauses;
+  string name = in;
+  for (int i = 0; i < (int) bnds.size(); i++) {
+    auto v = "d" + str(i);
+    vars.push_back(v);
+    clauses.push_back("0 <= " + v + " < " + str(bnds.at(i)));
+  }
+
+  string srep =
+    curlies(name + bracket_list(vars) + " : " + sep_list(clauses, "", "", " and "));
+
+  return rdset(prg.ctx, srep);
+}
+
+void sanity_check_all_input_pixels_read(prog& prg) {
+  for (auto in : prg.ins) {
+    for (auto op : prg.all_ops()) {
+      if (elem(in, op->buffers_read())) {
+        cout << "Getting read map" << endl;
+        auto rd = prg.read_map(op, in);
+        cout << "Got read map" << endl;
+        if (rd != nullptr) {
+          rd = its(rd, prg.domain(op));
+          isl_set* read = (range(rd));
+          cout << op->name << " reads " << str(read) << endl;
+
+          isl_set* bnds = bounds(in, prg);
+
+          cout << in << " bounds: " << str(bnds) << endl;
+
+          assert(empty(diff(bnds, read)));
+          assert(empty(diff(read, bnds)));
+        }
+      }
+    }
+  }
+}
+
+void blurx_app_to_prog_test() {
+  string out_name = "blurx";
+
+  int cols = 32;
+  int rows = 32;
+
+  prog prg = blur_x_16(out_name).realize(out_name, cols, rows);
+
+
+  prg.pretty_print();
+  prg.sanity_check();
+  sanity_check_all_reads_defined(prg);
+  sanity_check_all_input_pixels_read(prg);
+
+  std::vector<std::string> optimized =
+    run_regression_tb(out_name + "_opt");
+
+  //auto res = unoptimized_result(prg);
+
+  prg.name = "prg_" + prg.name;
+  generate_optimized_code(prg);
+  generate_regression_testbench(prg);
+  auto res = run_regression_tb(prg);
+
+  //compare("blurx opt vs. unopt prog: " + prg.name, opt, res);
+  //assert(false);
+
+
+  compare("blurx test:" + prg.name + "_cpu_comparison", res, optimized);
+
+  //assert(false);
+}
+
+void updated_blur_static_dynamic_comparison() {
+  string out_name = "ubxy_d";
+
+  int cols = 64;
+  int rows = 64;
+
+  prog prg = blur_xy_16(out_name).realize(out_name, cols, rows);
+
+  std::vector<std::string> optimized =
+    run_regression_tb(out_name + "_opt");
+
+  auto res = unoptimized_result(prg);
+
+  compare(prg.name + "_cpu_comparison", res, optimized);
+
+  //assert(false);
+}
+
+void updated_blur1_static_dynamic_comparison() {
+  string prefix = "bxy2_d";
+
+  int size = 1080;
+  int rows = size;
+  int cols = size;
+
+  int unroll_factor = 1;
+  int throughput = unroll_factor;
+  string out_name = prefix + "_" + str(unroll_factor);
+
+  CodegenOptions options;
+  options.internal = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  options.debug_options.expect_all_linebuffers = true;
+
+  App jac = blur_xy_16(out_name);
+  prog prg = jac.realize(options, out_name, cols, rows, 1);
+
+  move_to_benchmarks_folder(out_name + "_opt");
+
+  prg.name = out_name + "_opt_d";
+
+  jac.generate_soda_file(prg.name, throughput);
+
+  unroll_reduce_loops(prg);
+  merge_basic_block_ops(prg);
+  normalize_bounds(prg);
+  normalize_address_offsets(prg);
+
+  auto fusion_groups = one_stage_per_group(prg);
+  auto fresh_groups = insert_inter_group_buffers(fusion_groups, prg);
+  unroll_mismatched_inner_loops(prg);
+  merge_basic_block_ops(prg);
+  infer_bounds_and_unroll(pick(prg.outs), {size, size}, throughput, prg);
+
+  assert(unoptimized_compiles(prg));
+
+  app_dag dag = partition_groups(fresh_groups, prg);
+
+  options = CodegenOptions();
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  options.slack_matching = {SLACK_MATCHING_TYPE_FIXED, 2};
+  generate_app_code(options, dag);
+
+  move_to_benchmarks_folder(prg.name);
+
+  string synth_dir =
+    "./soda_codes/" + prg.name+ "/our_code/";
+
+  system(("cp " + out_name + "_opt" + "*.h " + synth_dir).c_str());
+
+  cout << "prg name: " << prg.name << endl;
+
+  assert(false);
+}
+
 void blur_static_dynamic_comparison() {
   string prefix = "bxy_d";
 
@@ -20065,6 +20231,12 @@ void cp16_static_dynamic_comparison_fresh_codegen() {
 
 }
 
+void updated_soda_comparison() {
+  updated_blur1_static_dynamic_comparison();
+  //updated_blur16_static_dynamic_comparison();
+  //updated_blur32_static_dynamic_comparison();
+}
+
 void initial_soda_comparison() {
   cp32_static_dynamic_comparison();
   cp16_static_dynamic_comparison();
@@ -20296,10 +20468,11 @@ void resnet88_test() {
 }
 
 void application_tests() {
-  resnet88_test();
+  updated_soda_comparison();
   multi_rate_dynamic_apps();
   initial_soda_comparison();
 
+  resnet88_test();
   histogram_test();
   histogram1d_test();
   iccad_tests();
@@ -22034,24 +22207,21 @@ void stencil_chain_multi_kernel_test() {
 }
 
 void test_app_to_prog_conversion() {
-  //App jac = jacobi2d("jac");
   App jac = pointwise2d("jac");
   int size = 10;
   prog prg = jac.realize("jac", size, size);
 
   prg.pretty_print();
   prg.sanity_check();
+  sanity_check_all_input_pixels_read(prg);
 
   auto original = run_regression_tb("jac_opt");
   cout << "Original result: " << original << endl;
-  //assert(false);
 
   auto extracted = unoptimized_result(prg);
   cout << "Extracted result: " << extracted << endl;
-  //assert(false);
 
   compare("jac_extracted" + prg.name + "_vs_unopt", original, extracted);
-  //assert(false);
 }
 
 void test_jacobi15_dynamic() {
@@ -22223,14 +22393,18 @@ void gv_generation_pyramid() {
 }
 
 void dhuff_tests() {
+  test_app_to_prog_conversion();
+  blurx_app_to_prog_test();
+  updated_blur_static_dynamic_comparison();
+  
   //gv_generation_pyramid();
+  
   test_chain_grouping();
 
   //test_jacobi15_dynamic();
 
   test_multi_kernel_pyramid_collapsing();
   test_multi_kernel_gp();
-  test_app_to_prog_conversion();
 
   //test_multi_kernel_llf();
   //assert(false);
