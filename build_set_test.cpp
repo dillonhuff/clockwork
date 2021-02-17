@@ -14261,9 +14261,9 @@ void cpy_app_to_folder(const std::string& app_type, const std::string& prg_name)
 
 void test_pond(string dir) {
   vector<prog> test_apps;
-  test_apps.push_back(resnet_simple());
-  test_apps.push_back(resnet());
-  //test_apps.push_back(three_level_pond());
+  //test_apps.push_back(resnet_simple());
+  //test_apps.push_back(resnet());
+  test_apps.push_back(three_level_pond());
 
   for ( auto prg: test_apps) {
     cout << "====== Running CGRA Single Port test for " << prg.name << endl;
@@ -14311,25 +14311,25 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   //TODO:has issue  with multiple input
   //test_apps.push_back(demosaic_complex());
   //
- // test_apps.push_back(counter());
- // test_apps.push_back(demosaic_unrolled());
- // test_apps.push_back(conv_3_3());
- // test_apps.push_back(gaussian());
- // test_apps.push_back(cascade());
- // test_apps.push_back(harris());
- // test_apps.push_back(rom());
- // test_apps.push_back(conv_1_2());
- // test_apps.push_back(camera_pipeline());
- // test_apps.push_back(up_sample());
+  test_apps.push_back(conv_3_3());
+  //test_apps.push_back(counter());
+  //test_apps.push_back(demosaic_unrolled());
+  //test_apps.push_back(gaussian());
+  //test_apps.push_back(cascade());
+  //test_apps.push_back(harris());
+  //test_apps.push_back(rom());
+  //test_apps.push_back(conv_1_2());
+  //test_apps.push_back(camera_pipeline());
+  //test_apps.push_back(up_sample());
 
- // test_apps.push_back(unsharp());
- // test_apps.push_back(resnet());
- // test_apps.push_back(mobilenet_unrolled());
+  //test_apps.push_back(unsharp());
+  //test_apps.push_back(resnet());
+  //test_apps.push_back(mobilenet_unrolled());
 
-  //test_apps.push_back(resnet88());
-  test_apps.push_back(resnet88_chain());
+  ////test_apps.push_back(resnet88());
+  //test_apps.push_back(resnet88_chain());
+  //test_apps.push_back(resnet_simple());
   //
- // test_apps.push_back(resnet_simple());
   //test_apps.push_back(resnet_coarse_pipeline_loop());
 
   //coarse grained pipeline
@@ -17118,6 +17118,9 @@ void garnet_single_port_ram_schedule(schedule_info& sched, op* root, prog& prg) 
   tighten_iis(sched, prg);
   adjust_outer_delays(sched, prg);
 
+    auto op_sched = op_start_times_map(sched, prg);
+    cout << "schedule before vectorization relax: " << str(op_sched)  << endl;
+
   relax_iis_for_vectorization(sched, prg);
   relax_delays_after_vectorization(sched, prg);
   sanity_check_hw_schedule(sched, prg);
@@ -17984,6 +17987,7 @@ vector<prog> isca_programs() {
   //FIXME: not work for M1 and M3
   //test_programs.push_back(up_sample());
   //test_programs.push_back(unsharp());
+  test_programs.push_back(three_level_pond());
   test_programs.push_back(camera_pipeline());
   test_programs.push_back(gaussian());
   test_programs.push_back(mobilenet_unrolled());
@@ -24764,7 +24768,7 @@ int main(int argc, char** argv) {
     }
 
     if (cmd == "pond-tests") {
-      test_pond("aha_garnet_design_new");
+      test_pond("aha_garnet_design_pond");
       return 0;
     }
 

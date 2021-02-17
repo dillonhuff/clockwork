@@ -2344,8 +2344,12 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
     pair<std::map<string, UBuffer>, vector<string> >
         vectorization(int dim_id, int fetch_width, vector<int> iis);
 
+    void add_vectorized_pt_to_ubuf(UBuffer& target_buf, vector<umap*> ap_vec, isl_map* merge_sched, string bd_name, int dim_id, int fetch_width, bool is_out);
     void add_vectorized_pt_to_ubuf(UBuffer & target_buf, umap* rewrite_buf2op, isl_map* sched, string origin_pt_name, string bd_name, int dim_id, int fetch_width, bool is_out);
     int add_vectorized_pt_to_ubuf(UBuffer & target_buf, vector<pair<string, umap*>> rewrite_buf2op_map, map<string, isl_map*> sched_map, string bd_name, int dim_id, int fetch_width, bool is_out, bool use_recipe);
+
+    //New refactor method
+    map<string, vector<umap*>> get_access_pattern_map(vector<pair<string, umap*>> rewrite_buf2op_map, map<string, isl_map*> & sched_map, int dim_id, int fetch_width);
 
     map<string, isl_map*> produce_vectorized_schedule(string in_pt, string out_pt);
     map<string, isl_map*> produce_vectorized_schedule(string in_pt, string out_pt, int dim_id);
@@ -2694,6 +2698,8 @@ vector<string> generate_multilinear_address_components(const std::string& pt, ba
 maybe<int> dependence_distance_singleton(UBuffer& buf, const string& inpt, const string& outpt,
     umap* sched);
 
+//For chaining and intile banking
+map<string, UBuffer> decouple_multi_tile_ubuffer(CodegenOptions& options, map<string, UBuffer> & vec_buf);
 
 maybe<std::set<int> > embarassing_partition(UBuffer& buf);
 vector<vector<string> > overlapping_large_io_port_groups(UBuffer& buf, const int ports_per_direction);
