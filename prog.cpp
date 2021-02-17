@@ -2559,6 +2559,10 @@ void generate_regression_testbench(prog& prg, map<string, UBuffer>& buffers) {
     rgtb << tab(1) << "}" << endl << endl;
   }
 
+  for (auto b : prg.boundary_buffers()) {
+    rgtb << tab(1) << "assert(" << b << ".is_empty());" << endl;
+  }
+
   rgtb << tab(1) << "in_pix.close();" << endl;
   rgtb << tab(1) << "fout.close();" << endl;
   rgtb << tab(1) << "return 0;" << endl;
@@ -2658,6 +2662,11 @@ void generate_regression_testbench(prog& prg) {
     //rgtb << tab(2) << "fout << actual << endl;" << endl;
     rgtb << tab(1) << "}" << endl << endl;
   }
+
+  for (auto b : prg.boundary_buffers()) {
+    rgtb << tab(1) << "assert(" << b << ".is_empty());" << endl;
+  }
+
   rgtb << tab(1) << "return 0;" << endl;
   rgtb << "}" << endl;
   rgtb.close();

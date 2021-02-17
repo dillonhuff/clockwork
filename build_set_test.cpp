@@ -6196,7 +6196,7 @@ struct App {
           }
           assert(offsets.size() == 2);
           // TODO: Replace with real description of apps
-          //reverse(offsets);
+          reverse(offsets);
           op->add_store(f, sep_list(offsets, "", "", ", "));
           //cout << "offsets: " << offsets << endl;
 
@@ -6226,7 +6226,7 @@ struct App {
                 }
                 i++;
               }
-              //reverse(terms);
+              reverse(terms);
               op->add_load(p.name, comma_list(terms));
             }
 
@@ -19338,7 +19338,7 @@ isl_set* bounds(const std::string& in, prog& prg) {
   for (int i = 0; i < (int) bnds.size(); i++) {
     auto v = "d" + str(i);
     vars.push_back(v);
-    clauses.push_back("0 <= " + v + " <= " + str(bnds.at(i)));
+    clauses.push_back("0 <= " + v + " < " + str(bnds.at(i)));
   }
 
   string srep =
@@ -19347,14 +19347,7 @@ isl_set* bounds(const std::string& in, prog& prg) {
   return rdset(prg.ctx, srep);
 }
 
-void blurx_app_to_prog_test() {
-  string out_name = "blurx";
-
-  int cols = 32;
-  int rows = 32;
-
-  prog prg = blur_x_16(out_name).realize(out_name, cols, rows);
-
+void sanity_check_all_input_pixels_read(prog& prg) {
   for (auto in : prg.ins) {
     for (auto op : prg.all_ops()) {
       if (elem(in, op->buffers_read())) {
@@ -19373,16 +19366,24 @@ void blurx_app_to_prog_test() {
           assert(empty(diff(bnds, read)));
           assert(empty(diff(read, bnds)));
         }
-
       }
     }
-
   }
-  assert(false);
+}
+
+void blurx_app_to_prog_test() {
+  string out_name = "blurx";
+
+  int cols = 32;
+  int rows = 32;
+
+  prog prg = blur_x_16(out_name).realize(out_name, cols, rows);
+
 
   prg.pretty_print();
   prg.sanity_check();
   sanity_check_all_reads_defined(prg);
+  sanity_check_all_input_pixels_read(prg);
 
   std::vector<std::string> optimized =
     run_regression_tb(out_name + "_opt");
@@ -22136,6 +22137,7 @@ void test_app_to_prog_conversion() {
 
   prg.pretty_print();
   prg.sanity_check();
+  sanity_check_all_input_pixels_read(prg);
 
   auto original = run_regression_tb("jac_opt");
   cout << "Original result: " << original << endl;
@@ -22315,10 +22317,9 @@ void gv_generation_pyramid() {
 }
 
 void dhuff_tests() {
-  //blurx_app_to_prog_test();
-  //updated_blur_static_dynamic_comparison();
-
   test_app_to_prog_conversion();
+  blurx_app_to_prog_test();
+  updated_blur_static_dynamic_comparison();
   
   //gv_generation_pyramid();
   
