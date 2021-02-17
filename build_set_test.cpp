@@ -6210,9 +6210,6 @@ struct App {
             }
             assert(vars.size() == 2);
 
-
-
-
             cout << tab(1) << " op loads " << p.name << endl;
             for (auto off : p.offsets) {
               assert(off.size() == 2);
@@ -6255,8 +6252,7 @@ struct App {
     }
 
     generate_app_code(options, buffers, prg, its(m, action_domain), domain_map);
-    //generate_regression_testbench(prg, buffers);
-    generate_regression_testbench(prg); //, buffers);
+    generate_regression_testbench(prg);
     generate_soda_file(prg.name);
   }
 
@@ -9871,8 +9867,8 @@ App blur_x_16(const std::string output_name) {
   blur.func2d("input_arg");
   blur.func2d("input", v("input_arg"));
   //blur.func2d(output_name, div(add(v("input", 0, 0), v("input", 0, 1), v("input", 0, 2)), 3));
-  //blur.func2d(output_name, div(add(v("input", 0, 0), v("input", 0, 1)), 3));
-  blur.func2d(output_name, div(add(v("input", 0, 0), v("input", 0, 1), v("input", 1, 0)), 3));
+  blur.func2d(output_name, div(add(v("input", 0, 0), v("input", 0, 1)), 3));
+  //blur.func2d(output_name, div(add(v("input", 0, 0), v("input", 0, 1), v("input", 1, 0)), 3));
 
   return blur;
 }
@@ -19333,6 +19329,24 @@ void histogram1d_test() {
   //assert(false);
 }
 
+isl_set* bounds(const std::string& in, prog& prg) {
+  vector<int> bnds = map_find(in, prg.buffer_bounds);
+
+  vector<string> vars;
+  vector<string> clauses;
+  string name = in;
+  for (int i = 0; i < (int) bnds.size(); i++) {
+    auto v = "d" + str(i);
+    vars.push_back(v);
+    clauses.push_back("0 <= " + v + " <= " + str(bnds.at(i)));
+  }
+
+  string srep =
+    curlies(name + bracket_list(vars) + " : " + sep_list(clauses, "", "", " and "));
+
+  return rdset(prg.ctx, srep);
+}
+
 void blurx_app_to_prog_test() {
   string out_name = "blurx";
 
@@ -19340,6 +19354,32 @@ void blurx_app_to_prog_test() {
   int rows = 32;
 
   prog prg = blur_x_16(out_name).realize(out_name, cols, rows);
+
+  for (auto in : prg.ins) {
+    for (auto op : prg.all_ops()) {
+      if (elem(in, op->buffers_read())) {
+        cout << "Getting read map" << endl;
+        auto rd = prg.read_map(op, in);
+        cout << "Got read map" << endl;
+        if (rd != nullptr) {
+          rd = its(rd, prg.domain(op));
+          isl_set* read = (range(rd));
+          cout << op->name << " reads " << str(read) << endl;
+
+          isl_set* bnds = bounds(in, prg);
+
+          cout << in << " bounds: " << str(bnds) << endl;
+        }
+
+      }
+    }
+
+  }
+  assert(false);
+
+  prg.pretty_print();
+  prg.sanity_check();
+  sanity_check_all_reads_defined(prg);
 
   std::vector<std::string> optimized =
     run_regression_tb(out_name + "_opt");
