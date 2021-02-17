@@ -50,7 +50,7 @@ hw_uint<32> llf_level_entry(const hw_uint<32>& in, const int k) {
   //float res = gray + llf_remap(idx_i - 256 * k);
   //float res = gray + llf_remap(idx_i - 128 * k);
   //return to_bits(res);
-  return to_bits(res);
+  return to_bits(clamp_val(res, 0.0f, 1.0f));
 }
 
 hw_uint<32> llf_level_entry_0(const hw_uint<32>& in) {
@@ -138,9 +138,9 @@ hw_uint<32> llf_rescale_gray_float(
 
   cout << "Gray value      : " << gray_f << endl;
   cout << "Gray value (int): " << gray.to_int() << endl << endl;
-  return to_bits(gray_f);
+  //return to_bits(gray_f);
   //return to_bits(0.5f);
-  //return to_bits(res);
+  return to_bits(res);
 }
 
 hw_uint<32> llf_to_color_float(const hw_uint<32>& scales,
