@@ -9865,6 +9865,17 @@ App sobel_mag_y() {
   return sobel;
 }
 
+App blur_x_16(const std::string output_name) {
+  App blur;
+  blur.set_default_pixel_width(16);
+  blur.func2d("input_arg");
+  blur.func2d("input", v("input_arg"));
+  //blur.func2d(output_name, div(add(v("input", 0, 0), v("input", 0, 1), v("input", 0, 2)), 3));
+  blur.func2d(output_name, div(add(v("input", 0, 0), v("input", 0, 1)), 3));
+
+  return blur;
+}
+
 App blur_xy_16(const std::string output_name) {
   App blur;
   blur.set_default_pixel_width(16);
@@ -19321,18 +19332,31 @@ void histogram1d_test() {
   //assert(false);
 }
 
+void blurx_app_to_prog_test() {
+  string out_name = "blurx";
+
+  int cols = 32;
+  int rows = 32;
+
+  prog prg = blur_x_16(out_name).realize(out_name, cols, rows);
+
+  std::vector<std::string> optimized =
+    run_regression_tb(out_name + "_opt");
+
+  auto res = unoptimized_result(prg);
+
+  compare("blurx test:" + prg.name + "_cpu_comparison", res, optimized);
+
+  assert(false);
+}
+
 void updated_blur_static_dynamic_comparison() {
-  string prefix = "ubxy_d";
+  string out_name = "ubxy_d";
 
   int cols = 64;
   int rows = 64;
 
-  string out_name = prefix;
-
   prog prg = blur_xy_16(out_name).realize(out_name, cols, rows);
-
-  prg.pretty_print();
-  assert(false);
 
   std::vector<std::string> optimized =
     run_regression_tb(out_name + "_opt");
@@ -22247,8 +22271,10 @@ void gv_generation_pyramid() {
 }
 
 void dhuff_tests() {
-  //gv_generation_pyramid();
+  blurx_app_to_prog_test();
   test_app_to_prog_conversion();
+  updated_blur_static_dynamic_comparison();
+  //gv_generation_pyramid();
   test_chain_grouping();
 
   //test_jacobi15_dynamic();
