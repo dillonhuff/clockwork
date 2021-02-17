@@ -19475,6 +19475,9 @@ void updated_blur1_static_dynamic_comparison() {
   options.slack_matching = {SLACK_MATCHING_TYPE_FIXED, 2};
   generate_app_code(options, dag);
 
+  cout << "Prg name: " << dag.prg.name << endl;
+  assert(false);
+
   move_to_benchmarks_folder(prg.name);
 
   string synth_dir =
