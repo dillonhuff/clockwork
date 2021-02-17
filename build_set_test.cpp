@@ -9871,7 +9871,8 @@ App blur_x_16(const std::string output_name) {
   blur.func2d("input_arg");
   blur.func2d("input", v("input_arg"));
   //blur.func2d(output_name, div(add(v("input", 0, 0), v("input", 0, 1), v("input", 0, 2)), 3));
-  blur.func2d(output_name, div(add(v("input", 0, 0), v("input", 0, 1)), 3));
+  //blur.func2d(output_name, div(add(v("input", 0, 0), v("input", 0, 1)), 3));
+  blur.func2d(output_name, div(add(v("input", 0, 0), v("input", 0, 1), v("input", 1, 0)), 3));
 
   return blur;
 }
