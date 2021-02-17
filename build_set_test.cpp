@@ -14285,7 +14285,8 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
  // test_apps.push_back(mobilenet_unrolled());
 
   //test_apps.push_back(resnet88());
-  test_apps.push_back(resnet88_chain());
+  //test_apps.push_back(resnet88_chain());
+  test_apps.push_back(three_level_pond());
   //
  // test_apps.push_back(resnet_simple());
   //test_apps.push_back(resnet_coarse_pipeline_loop());
@@ -18013,6 +18014,7 @@ vector<prog> isca_programs() {
   //FIXME: not work for M1 and M3
   //test_programs.push_back(up_sample());
   //test_programs.push_back(unsharp());
+  test_programs.push_back(three_level_pond());
   test_programs.push_back(camera_pipeline());
   test_programs.push_back(gaussian());
   test_programs.push_back(mobilenet_unrolled());
