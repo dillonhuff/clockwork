@@ -20471,7 +20471,7 @@ void resnet88_test() {
 }
 
 void llf_grayscale_debugging() {
-  prog prg = llf_grayscale_float(32, 32);
+  prog prg = llf_grayscale_float(128, 128);
   prg.name = prg.name + "_st";
   prg.sanity_check();
 
@@ -20481,6 +20481,7 @@ void llf_grayscale_debugging() {
   options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
 
   generate_optimized_code(options, prg);
+  generate_regression_testbench(prg);
 
   cout << "LLF prog: " << prg.name << endl;
   assert(false);
