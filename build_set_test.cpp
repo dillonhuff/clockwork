@@ -6196,7 +6196,7 @@ struct App {
           }
           assert(offsets.size() == 2);
           // TODO: Replace with real description of apps
-          reverse(offsets);
+          //reverse(offsets);
           op->add_store(f, sep_list(offsets, "", "", ", "));
           //cout << "offsets: " << offsets << endl;
 
@@ -6226,7 +6226,7 @@ struct App {
                 }
                 i++;
               }
-              reverse(terms);
+              //reverse(terms);
               op->add_load(p.name, comma_list(terms));
             }
 
@@ -22315,10 +22315,13 @@ void gv_generation_pyramid() {
 }
 
 void dhuff_tests() {
-  blurx_app_to_prog_test();
+  //blurx_app_to_prog_test();
+  //updated_blur_static_dynamic_comparison();
+
   test_app_to_prog_conversion();
-  updated_blur_static_dynamic_comparison();
+  
   //gv_generation_pyramid();
+  
   test_chain_grouping();
 
   //test_jacobi15_dynamic();
