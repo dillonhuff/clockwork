@@ -8,5 +8,5 @@
 "read_data_stride_0",1,0
 "read_data_stride_1",16,0
 "write_data_starting_addr",0,0
-"write_data_stride_0",1,0
+"write_data_stride_0",4,0
 "write_data_stride_1",0,0
