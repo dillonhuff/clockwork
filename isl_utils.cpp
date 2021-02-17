@@ -1582,6 +1582,10 @@ isl_map* diff(isl_map* const m0, isl_map* const m1) {
   return isl_map_subtract(cpy(m0), cpy(m1));
 }
 
+isl_set* diff(isl_set* const m0, isl_set* const m1) {
+  return isl_set_subtract(cpy(m0), cpy(m1));
+}
+
 isl_union_set* diff(isl_union_set* const m0, isl_union_set* const m1) {
   return isl_union_set_subtract(cpy(m0), cpy(m1));
 }

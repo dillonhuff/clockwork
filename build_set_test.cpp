@@ -19369,6 +19369,9 @@ void blurx_app_to_prog_test() {
           isl_set* bnds = bounds(in, prg);
 
           cout << in << " bounds: " << str(bnds) << endl;
+
+          assert(empty(diff(bnds, read)));
+          assert(empty(diff(read, bnds)));
         }
 
       }
