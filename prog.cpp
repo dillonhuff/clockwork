@@ -2659,6 +2659,7 @@ void generate_regression_testbench(prog& prg) {
     for (auto r : results) {
       rgtb << tab(2) << "fout << " << r << " << endl;" << endl;
     }
+
     //rgtb << tab(2) << "fout << actual << endl;" << endl;
     rgtb << tab(1) << "}" << endl << endl;
   }

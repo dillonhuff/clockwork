@@ -6171,7 +6171,7 @@ struct App {
         lens.push_back(domain.length(i));
         //prg.buffer_bounds[f].push_back(domain.length(i));
       }
-      reverse(lens);
+      //reverse(lens);
       prg.buffer_bounds[f] = lens;
 
       for (auto u : app_dag.at(f).updates) {
@@ -6185,7 +6185,10 @@ struct App {
             compute_box(u.name());
           op* nest = prg.root;
           int i = 0;
-          for (auto r : compute_b.intervals) {
+
+          auto intervals = compute_b.intervals;
+          reverse(intervals);
+          for (auto r : intervals) {
             nest = nest->add_nest(f + "_" + to_string(i), r.min, r.max + 1);
             i++;
           }
@@ -6219,7 +6222,7 @@ struct App {
               assert(off.size() == 2);
               vector<string> terms;
               int i = 0;
-              //reverse(off);
+              reverse(off);
               for (auto offt : off) {
                 QAV stride = p.stride(i);
                 if (stride.denom != 1) {
@@ -19393,7 +19396,16 @@ void blurx_app_to_prog_test() {
   std::vector<std::string> optimized =
     run_regression_tb(out_name + "_opt");
 
-  auto res = unoptimized_result(prg);
+  //auto res = unoptimized_result(prg);
+
+  prg.name = "prg_" + prg.name;
+  generate_optimized_code(prg);
+  generate_regression_testbench(prg);
+  auto res = run_regression_tb(prg);
+
+  //compare("blurx opt vs. unopt prog: " + prg.name, opt, res);
+  //assert(false);
+
 
   compare("blurx test:" + prg.name + "_cpu_comparison", res, optimized);
 
