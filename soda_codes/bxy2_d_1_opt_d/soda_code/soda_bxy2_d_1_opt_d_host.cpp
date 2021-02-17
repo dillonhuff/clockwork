@@ -22,12 +22,12 @@ int main(int argc, char **argv) {
   size_t total_size_bytes = 0;
   size_t total_size_bytes_read = 0;
   size_t total_size_bytes_written = 0;
-  const int bxy2_d_1_update_0_sm18_025_write_pipe0_DATA_SIZE = num_epochs*1170724;
-  const int bxy2_d_1_update_0_sm18_025_write_BYTES_PER_PIXEL = 16 / 8;
-  size_t bxy2_d_1_update_0_sm18_025_write_size_bytes = bxy2_d_1_update_0_sm18_025_write_BYTES_PER_PIXEL * bxy2_d_1_update_0_sm18_025_write_pipe0_DATA_SIZE;
+  const int bxy2_d_1_update_0_sm18_023_write_pipe0_DATA_SIZE = num_epochs*1170724;
+  const int bxy2_d_1_update_0_sm18_023_write_BYTES_PER_PIXEL = 16 / 8;
+  size_t bxy2_d_1_update_0_sm18_023_write_size_bytes = bxy2_d_1_update_0_sm18_023_write_BYTES_PER_PIXEL * bxy2_d_1_update_0_sm18_023_write_pipe0_DATA_SIZE;
 
-  total_size_bytes += bxy2_d_1_update_0_sm18_025_write_size_bytes;
-  total_size_bytes_written += bxy2_d_1_update_0_sm18_025_write_size_bytes;
+  total_size_bytes += bxy2_d_1_update_0_sm18_023_write_size_bytes;
+  total_size_bytes_written += bxy2_d_1_update_0_sm18_023_write_size_bytes;
   const int input_update_0_sm16_029_read_pipe0_DATA_SIZE = num_epochs*1170724;
   const int input_update_0_sm16_029_read_BYTES_PER_PIXEL = 16 / 8;
   size_t input_update_0_sm16_029_read_size_bytes = input_update_0_sm16_029_read_BYTES_PER_PIXEL * input_update_0_sm16_029_read_pipe0_DATA_SIZE;
@@ -40,7 +40,7 @@ int main(int argc, char **argv) {
   cl::Kernel krnl_vector_add;
   cl::CommandQueue q;
 
-  std::vector<uint8_t, aligned_allocator<uint8_t> > bxy2_d_1_update_0_sm18_025_write_pipe0(bxy2_d_1_update_0_sm18_025_write_size_bytes);
+  std::vector<uint8_t, aligned_allocator<uint8_t> > bxy2_d_1_update_0_sm18_023_write_pipe0(bxy2_d_1_update_0_sm18_023_write_size_bytes);
   std::vector<uint8_t, aligned_allocator<uint8_t> > input_update_0_sm16_029_read_pipe0(input_update_0_sm16_029_read_size_bytes);
 
   std::ofstream input_input_update_0_sm16_029_read("input_update_0_sm16_029_read.csv");
@@ -65,11 +65,11 @@ int main(int argc, char **argv) {
   }
 
   input_input_update_0_sm16_029_read.close();
-  for (int i = 0; i < bxy2_d_1_update_0_sm18_025_write_pipe0_DATA_SIZE; i++) {
+  for (int i = 0; i < bxy2_d_1_update_0_sm18_023_write_pipe0_DATA_SIZE; i++) {
 #ifdef __FLOAT_OUTPUT__
-    ((uint16_t*) (bxy2_d_1_update_0_sm18_025_write_pipe0.data()))[i] = 0;
+    ((uint16_t*) (bxy2_d_1_update_0_sm18_023_write_pipe0.data()))[i] = 0;
 #else // __FLOAT_OUTPUT__
-    ((uint16_t*) (bxy2_d_1_update_0_sm18_025_write_pipe0.data()))[i] = 0;
+    ((uint16_t*) (bxy2_d_1_update_0_sm18_023_write_pipe0.data()))[i] = 0;
 #endif // __FLOAT_OUTPUT__
   }
 
@@ -102,8 +102,8 @@ int main(int argc, char **argv) {
     exit(EXIT_FAILURE);
   }
 
-  OCL_CHECK(err, cl::Buffer bxy2_d_1_update_0_sm18_025_write_pipe0_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_READ_ONLY, bxy2_d_1_update_0_sm18_025_write_size_bytes, bxy2_d_1_update_0_sm18_025_write_pipe0.data(), &err));
-  OCL_CHECK(err, err = krnl_vector_add.setArg(0, bxy2_d_1_update_0_sm18_025_write_pipe0_ocl_buf));
+  OCL_CHECK(err, cl::Buffer bxy2_d_1_update_0_sm18_023_write_pipe0_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_READ_ONLY, bxy2_d_1_update_0_sm18_023_write_size_bytes, bxy2_d_1_update_0_sm18_023_write_pipe0.data(), &err));
+  OCL_CHECK(err, err = krnl_vector_add.setArg(0, bxy2_d_1_update_0_sm18_023_write_pipe0_ocl_buf));
 
   OCL_CHECK(err, cl::Buffer input_update_0_sm16_029_read_pipe0_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_WRITE_ONLY, input_update_0_sm16_029_read_size_bytes, input_update_0_sm16_029_read_pipe0.data(), &err));
   OCL_CHECK(err, err = krnl_vector_add.setArg(1, input_update_0_sm16_029_read_pipe0_ocl_buf));
@@ -125,7 +125,7 @@ int main(int argc, char **argv) {
   start = OCL_CHECK(err,
   event.getProfilingInfo<CL_PROFILING_COMMAND_START>(&err));
   nsduration = end - start;
-  OCL_CHECK(err, err = q.enqueueMigrateMemObjects({bxy2_d_1_update_0_sm18_025_write_pipe0_ocl_buf}, CL_MIGRATE_MEM_OBJECT_HOST));
+  OCL_CHECK(err, err = q.enqueueMigrateMemObjects({bxy2_d_1_update_0_sm18_023_write_pipe0_ocl_buf}, CL_MIGRATE_MEM_OBJECT_HOST));
 
   q.finish();
 
@@ -138,12 +138,12 @@ int main(int argc, char **argv) {
   std::cout << "bytes / sec = " << bpersec << std::endl;
   std::cout << "GB / sec    = " << gbpersec << std::endl;
   printf("Execution time = %f (sec) \n", dsduration);
-  std::ofstream regression_result("bxy2_d_1_update_0_sm18_025_write_accel_result.csv");
-  for (int i = 0; i < bxy2_d_1_update_0_sm18_025_write_pipe0_DATA_SIZE; i++) {
+  std::ofstream regression_result("bxy2_d_1_update_0_sm18_023_write_accel_result.csv");
+  for (int i = 0; i < bxy2_d_1_update_0_sm18_023_write_pipe0_DATA_SIZE; i++) {
 #ifdef __FLOAT_OUTPUT__
-    regression_result << bitcast<float, uint16_t>(((uint16_t*) (bxy2_d_1_update_0_sm18_025_write_pipe0.data()))[i]) << std::endl;
+    regression_result << bitcast<float, uint16_t>(((uint16_t*) (bxy2_d_1_update_0_sm18_023_write_pipe0.data()))[i]) << std::endl;
 #else // __FLOAT_OUTPUT__
-    regression_result << ((uint16_t*) (bxy2_d_1_update_0_sm18_025_write_pipe0.data()))[i] << std::endl;
+    regression_result << ((uint16_t*) (bxy2_d_1_update_0_sm18_023_write_pipe0.data()))[i] << std::endl;
 #endif // __FLOAT_OUTPUT__
   }
 

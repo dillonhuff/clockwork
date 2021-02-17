@@ -19472,6 +19472,7 @@ void updated_blur1_static_dynamic_comparison() {
 
   options = CodegenOptions();
   options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  options.slack_matching = {SLACK_MATCHING_TYPE_FIXED, 2};
   generate_app_code(options, dag);
 
   move_to_benchmarks_folder(prg.name);
