@@ -6758,10 +6758,10 @@ void UBuffer::generate_banks(CodegenOptions& options) {
         auto aff = get_aff(sched);
         auto agg2sram_sched = to_map(add(aff, 1));
         agg2sram_sched = its(agg2sram_sched, in_dom);
-        agg2sram_sched = set_domain_name(agg2sram_sched, domain_name(sched) + "_agg2sram");
+        agg2sram_sched = set_domain_name(agg2sram_sched, domain_name(sched) + "_agg2sram_0");
         auto sram2tb_sched = to_map(add(aff, 4));
         sram2tb_sched = its(sram2tb_sched, in_dom);
-        sram2tb_sched = set_domain_name(sram2tb_sched, domain_name(sched) + "_sram2tb");
+        sram2tb_sched = set_domain_name(sram2tb_sched, domain_name(sched) + "_sram2tb_0");
         cout << "\tinput pt schedule: " << str(aff) << endl;
         cout << "\tagg2sram schedule: " << str(agg2sram_sched) << endl;
         cout << "\tsram2tb schedule: " << str(sram2tb_sched) << endl;
@@ -6771,14 +6771,15 @@ void UBuffer::generate_banks(CodegenOptions& options) {
         cout << "\tinput pt access map: " << str(am) << endl;
         auto agg_in_am = to_map(am_aff);
         agg_in_am = set_range_name(agg_in_am, range_name(am) + "_0_agg");
+        agg_in_am = add_domain_suffix(agg_in_am, "_in2agg_0");
         vector<isl_map*> inpt_vec_am;
         vector<isl_map*> inpt_sram_am;
         for (int i = 0; i < fetch_width; i ++) {
-          auto new_am = its(to_map(add(am_aff, i)), in_dom);
+          auto new_am = its(to_map(constant_aff(am_aff, i)), in_dom);
           auto new_am_agg = set_range_name(cpy(new_am), range_name(am) + "_0_agg");
           auto new_am_sram = set_range_name(cpy(new_am), range_name(am) + "_sram");
-          new_am_agg = set_domain_name(new_am_agg, domain_name(am) + "_agg2sram");
-          new_am_sram = set_domain_name(new_am_sram, domain_name(am) + "_agg2sram");
+          new_am_agg = set_domain_name(new_am_agg, domain_name(am) + "_agg2sram_0");
+          new_am_sram = set_domain_name(new_am_sram, domain_name(am) + "_agg2sram_0");
           cout << "\t\t rewrite agg am: " << str(new_am) << endl;
           inpt_vec_am.push_back(new_am_agg);
           inpt_sram_am.push_back(new_am_sram);
@@ -6787,15 +6788,21 @@ void UBuffer::generate_banks(CodegenOptions& options) {
         vector<isl_map*> outpt_vec_am;
         vector<isl_map*> outpt_sram_am;
         for (int i = 0; i < fetch_width; i ++) {
-          auto new_am = its(to_map(add(am_aff, i)), in_dom);
+          auto new_am = its(to_map(constant_aff(am_aff, i)), in_dom);
           auto new_am_sram= set_range_name(cpy(new_am), range_name(am) + "_sram");
           auto new_am_tb = set_range_name(cpy(new_am), range_name(am) + "_0_tb");
-          new_am_tb = set_domain_name(new_am_tb, domain_name(am) + "_sram2tb");
-          new_am_sram = set_domain_name(new_am_sram, domain_name(am) + "_sram2tb");
+          new_am_tb = set_domain_name(new_am_tb, domain_name(am) + "_sram2tb_0");
+          new_am_sram = set_domain_name(new_am_sram, domain_name(am) + "_sram2tb_0");
           cout << "\t\t rewrite agg am: " << str(new_am) << endl;
           outpt_vec_am.push_back(new_am_tb);
           outpt_sram_am.push_back(new_am_sram);
         }
+
+        in_dom = add_suffix(in_dom, "_in2agg_0");
+        sched = add_domain_suffix(sched, "_in2agg_0");
+
+        out_dom = add_suffix(out_dom, "_tb2out_0");
+        sched_out = add_domain_suffix(sched_out, "_tb2out_0");
 
         UBuffer agg;
         agg.name = name + "_0_agg";
@@ -6843,6 +6850,7 @@ void UBuffer::generate_banks(CodegenOptions& options) {
         cout << "\toutput pt access map: " << str(am_aff_out) << endl;
         auto tb_out_am = to_map(am_aff_out);
         tb_out_am = set_range_name(tb_out_am, range_name(am) + "_0_tb");
+        tb_out_am = add_domain_suffix(tb_out_am, "_tb2out_0");
 
         UBuffer tb;
         tb.name = name + "_0_tb";
