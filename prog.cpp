@@ -2324,6 +2324,9 @@ void generate_optimized_code(CodegenOptions& options, prog& prg) {
   umap* sched = nullptr;
 
   if (options.scheduling_algorithm == SCHEDULE_ALGORITHM_CW) {
+
+    assert(all_loop_nests_same_depth(prg));
+
     auto valid_deps = prg.validity_deps();
 
     auto dom = prg.whole_iteration_domain();
@@ -2331,36 +2334,44 @@ void generate_optimized_code(CodegenOptions& options, prog& prg) {
     int num_stmts_in_domain = get_sets(dom).size();
     int num_ops_in_prog = prg.all_ops().size();
 
-    cout << "Stmts in domain: " << num_stmts_in_domain << endl;
-    cout << "Ops in prog        : " << num_ops_in_prog << endl;
+    //cout << "Stmts in domain: " << num_stmts_in_domain << endl;
+    //cout << "Ops in prog        : " << num_ops_in_prog << endl;
 
     assert(num_stmts_in_domain == prg.all_ops().size());
 
     umap* pre_its_sched =
       clockwork_schedule_umap_reversed(cpy(dom), valid_deps, valid_deps);
-    cout << "Pre its sched: " << str(pre_its_sched) << endl;
-    cout << "dom: " << str(dom) << endl;
-    for (auto m : get_maps(pre_its_sched)) {
-      for (auto s : get_sets(dom)) {
-        if (name(s) == domain_name(m)) {
-          cout << "Matching domains: " << endl;
-          cout << tab(1) << str(s) << endl;
-          cout << tab(1) << str(m) << endl << endl;
+    //cout << "Pre its sched: " << str(pre_its_sched) << endl;
+    //cout << "dom: " << str(dom) << endl;
+    //for (auto m : get_maps(pre_its_sched)) {
+      //for (auto s : get_sets(dom)) {
+        //if (name(s) == domain_name(m)) {
+          //cout << "Matching domains: " << endl;
+          //cout << tab(1) << str(s) << endl;
+          //cout << tab(1) << str(m) << endl << endl;
 
-          assert(ctx(m) == ctx(s));
+          //assert(ctx(m) == ctx(s));
 
-          isl_space* s_dspace = get_space(s);
-          isl_space* m_dspace = get_space(domain(m));
+          //isl_space* s_dspace = get_space(s);
+          //isl_space* m_dspace = get_space(domain(m));
 
-          assert(isl_space_has_equal_params(s_dspace, m_dspace));
-          assert(isl_space_has_equal_tuples(s_dspace, m_dspace));
-          assert(isl_space_is_equal(s_dspace, m_dspace));
+          //isl_id* dspace_id = isl_space_get_tuple_id(s_dspace, isl_dim_set);
+          //cout << tab(1) << "dspace_id       = " << str(dspace_id) << endl;
+          //isl_id* other_dspace_id = isl_space_get_tuple_id(m_dspace, isl_dim_set);
+          //cout << tab(1) << "other_dspace_id = " << str(other_dspace_id) << endl;
 
-          isl_map* ints = its(m, s);
-          cout << tab(1) << "Intersection: " << str(ints) << endl;
-        }
-      }
-    }
+          //cout << tab(1) << "s_dspace: " << str(s_dspace) << endl;
+          //cout << tab(1) << "m_dspace: " << str(m_dspace) << endl;
+
+          //assert(isl_space_has_equal_params(s_dspace, m_dspace));
+          //assert(isl_space_has_equal_tuples(s_dspace, m_dspace));
+          //assert(isl_space_is_equal(s_dspace, m_dspace));
+
+          //isl_map* ints = its(m, s);
+          //cout << tab(1) << "Intersection: " << str(ints) << endl;
+        //}
+      //}
+    //}
     sched =
       its(pre_its_sched, dom);
     cout << "Post its sched: " << str(sched) << endl;
