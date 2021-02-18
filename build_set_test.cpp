@@ -20566,17 +20566,34 @@ void llf_grayscale_debugging() {
 }
 
 void two_input_blending_test() {
+
+  const int num_pyramid_levels = 4;
+
   prog prg("two_in_blnd");
+  prg.compute_unit_file = "local_laplacian_filters_compute.h";
+
   prg.add_input("in0_oc");
   prg.add_input("in1_oc");
   prg.add_output("out");
 
-  load_input("in0_oc", "in0", 2, prg);
-  load_input("in1_oc", "in1", 2, prg);
+  pointwise("in0", "llf_int_to_float", "in0_oc", 2, prg);
+  pointwise("in1", "llf_int_to_float", "in1_oc", 2, prg);
 
-  pointwise("merged", "add", "in0", "in1", 2, prg);
+  vector<string> lp0 = laplacian_pyramid("in0", num_pyramid_levels, prg);
+  vector<string> lp1 = laplacian_pyramid("in1", num_pyramid_levels, prg);
 
-  pointwise("out", "id", "merged", 2, prg);
+  vector<string> merged_pyramid;
+  for (int i = 0; i < (int) lp0.size(); i++) {
+    string l0 = lp0.at(i);
+    string l1 = lp1.at(i);
+    string res = "merged_" + str(i);
+    pointwise(res, "llf_float_average", l0, l1, 2, prg);
+    merged_pyramid.push_back(res);
+  }
+
+  string values = reconstruct_gaussian(merged_pyramid, prg);
+
+  pointwise("out", "llf_float_to_int", values, 2, prg);
 
   infer_bounds("out", {32, 32}, prg);
 

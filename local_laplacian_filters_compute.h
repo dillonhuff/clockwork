@@ -18,6 +18,13 @@ hw_uint<32> llf_float_to_int(const hw_uint<32>& pix) {
   return fi;
 }
 
+hw_uint<32> llf_float_average(const hw_uint<32>& pix0, const hw_uint<32>& pix1) {
+  float f0 = to_float(pix0);
+  float f1 = to_float(pix1);
+  float res = (f0 + f1) / 2.0f;
+  return to_bits(res);
+}
+
 float llf_remap(const float x) {
   float alpha = 2.0;
   //cout << "x = " << x << endl;
