@@ -6601,7 +6601,6 @@ void UBuffer::generate_banks(CodegenOptions& options) {
             if(is_self_loop_in(origin_pt_name)) {
               auto acc_pt = AccessPattern(to_map(target_buf.access_map[pt_name]), target_buf.ctx);
               auto decouple_acc_map = acc_pt.get_access_map_and_decouple_reuse(ctx, dim_id, true);
-              decouple_acc_map = add_domain_suffix(decouple_acc_map, "_"+str(cnt));
               target_buf.access_map[pt_name] = to_umap(decouple_acc_map);
             }
           }
