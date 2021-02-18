@@ -1686,8 +1686,6 @@ clockwork_schedule_umap_reversed(uset* domain,
 
   assert(num_stmts_in_domain == num_stmts_in_final_schedule);
 
-  assert(false);
-
   return s;
 }
 

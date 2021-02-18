@@ -2325,16 +2325,39 @@ void generate_optimized_code(CodegenOptions& options, prog& prg) {
 
   if (options.scheduling_algorithm == SCHEDULE_ALGORITHM_CW) {
     auto valid_deps = prg.validity_deps();
+
+    auto dom = prg.whole_iteration_domain();
+
+    int num_stmts_in_domain = get_sets(dom).size();
+    int num_ops_in_prog = prg.all_ops().size();
+
+    cout << "Stmts in domain: " << num_stmts_in_domain << endl;
+    cout << "Ops in prog        : " << num_ops_in_prog << endl;
+
+    assert(num_stmts_in_domain == prg.all_ops().size());
+
+    umap* pre_its_sched =
+      clockwork_schedule_umap_reversed(cpy(dom), valid_deps, valid_deps);
+    cout << "Pre its sched: " << str(pre_its_sched) << endl;
+    cout << "dom: " << str(dom) << endl;
     sched =
-      its(clockwork_schedule_umap_reversed(prg.whole_iteration_domain(), valid_deps, valid_deps),
-          prg.whole_iteration_domain());
+      its(pre_its_sched, dom);
+    cout << "Post its sched: " << str(sched) << endl;
   } else {
     sched = its(isl_schedule_get_map(prg.optimized_schedule()), prg.whole_iteration_domain());
   }
 
   assert(sched != nullptr);
+
   int num_stmts_in_schedule = get_maps(sched).size();
-  assert(num_stmts_in_schedule == prg.all_ops().size());
+  int num_ops = prg.all_ops().size();
+
+  cout << "Num stmts in schedule: " << num_stmts_in_schedule << endl;
+  cout << "Num ops in prog      : " << num_ops << endl;
+  for (auto s : get_maps(sched)) {
+    cout << tab(1) << str(s) << endl;
+  }
+  assert(num_stmts_in_schedule == num_ops);
 
   cout << "Optimized schedule..." << endl;
   cout << tab(1) << ": " << str(sched) << endl << endl;
