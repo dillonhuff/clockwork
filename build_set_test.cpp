@@ -15854,6 +15854,25 @@ string reconstruct_gaussian(const std::vector<string>& output_levels, prog& prg)
 }
 
 
+void pointwise(const std::string& out, const std::string& func, const std::string& in0, const std::string& in1, const int dim, prog& prg) {
+  string pr = prg.un("pw_math_" + in0 + "_" + in1);
+  op* lp = prg.root;
+  vector<string> vars;
+  for (int d = 0; d < dim; d++) {
+    string var = prg.un(pr);
+    lp = lp->add_loop(var, 0, 1);
+    vars.push_back(var);
+  }
+  reverse(vars);
+  auto ld = lp->add_op(prg.un(pr));
+  string vlist = comma_list(vars);
+  ld->add_load(in0, vlist);
+  ld->add_load(in1, vlist);
+  ld->add_function(func);
+  ld->add_store(out, vlist);
+
+}
+
 void pointwise(const std::string& out, const std::string& func, const std::string& in, const int dim, prog& prg) {
   string pr = prg.un("pw_math_" + in);
   op* lp = prg.root;
@@ -15981,7 +16000,7 @@ void llf_pyramid_test() {
   //assert(false);
 }
 
-prog llf_grayscale_float() {
+prog llf_grayscale_float(const int r, const int c) {
   int num_pyramid_levels = 4;
   int num_intensity_levels = 8;
 
@@ -15991,7 +16010,8 @@ prog llf_grayscale_float() {
   prg.add_input("gray_in_oc");
   prg.add_output("gray_out");
 
-  load_input("gray_in_oc", "gray", 2, prg);
+  load_input("gray_in_oc", "gray_int", 2, prg);
+  pointwise("gray", "llf_int_to_float", "gray_int", 2, prg);
 
   // Make intensity pyramids
   vector<vector<string> > intensity_level_pyramids;
@@ -16021,13 +16041,10 @@ prog llf_grayscale_float() {
   llf_rescale_gray("gray_out_float", scales, "gray", prg);
   pointwise("gray_out", "llf_float_to_int", "gray_out_float", 2, prg);
 
-  //llf_to_color("color_out_float", "color_in", scales, "gray", prg);
-  //pointwise("color_out", "llf_float_to_int", "color_out_float", 3, prg);
-
   prg.pretty_print();
   prg.sanity_check();
 
-  infer_bounds("gray_out", {2048, 2048}, prg);
+  infer_bounds("gray_out", {r, c}, prg);
 
   cout << "After bounds inference..." << endl;
   prg.pretty_print();
@@ -16039,6 +16056,11 @@ prog llf_grayscale_float() {
 
   return prg;
 }
+
+prog llf_grayscale_float() {
+  return llf_grayscale_float(2048, 2048);
+}
+
 
 prog llf_float() {
   int num_pyramid_levels = 4;
@@ -20231,7 +20253,66 @@ void cp16_static_dynamic_comparison_fresh_codegen() {
 
 }
 
+void updated_jac32_static_dynamic_comparison() {
+  string prefix = "jac2";
+
+  int size = 1080;
+  int rows = size;
+  int cols = size;
+
+  int unroll_factor = 32;
+  int throughput = unroll_factor;
+  string out_name = prefix + "_" + str(unroll_factor);
+
+  CodegenOptions options;
+  options.internal = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  options.debug_options.expect_all_linebuffers = true;
+
+  App jac = stencil_chain_stage_iccad(out_name, 15);
+  prog prg = jac.realize(options, out_name, cols, rows, 1);
+
+  move_to_benchmarks_folder(out_name + "_opt");
+
+  prg.name = out_name + "_opt_d";
+
+  jac.generate_soda_file(prg.name, throughput);
+
+  unroll_reduce_loops(prg);
+  merge_basic_block_ops(prg);
+  normalize_bounds(prg);
+  normalize_address_offsets(prg);
+
+  auto fusion_groups = one_stage_per_group(prg);
+  auto fresh_groups = insert_inter_group_buffers(fusion_groups, prg);
+  unroll_mismatched_inner_loops(prg);
+  merge_basic_block_ops(prg);
+  infer_bounds_and_unroll(pick(prg.outs), {size, size}, throughput, prg);
+
+  assert(unoptimized_compiles(prg));
+
+  app_dag dag = partition_groups(fresh_groups, prg);
+
+  options = CodegenOptions();
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  options.slack_matching = {SLACK_MATCHING_TYPE_FIXED, 2};
+  generate_app_code(options, dag);
+
+  move_to_benchmarks_folder(prg.name);
+
+  string synth_dir =
+    "./soda_codes/" + prg.name+ "/our_code/";
+
+  system(("cp " + out_name + "_opt" + "*.h " + synth_dir).c_str());
+
+  cout << "prg name: " << prg.name << endl;
+
+  assert(false);
+}
+
 void updated_soda_comparison() {
+  updated_jac32_static_dynamic_comparison();
+
   updated_blur1_static_dynamic_comparison();
   //updated_blur16_static_dynamic_comparison();
   //updated_blur32_static_dynamic_comparison();
@@ -20467,10 +20548,77 @@ void resnet88_test() {
   assert(false);
 }
 
+void llf_grayscale_debugging() {
+  prog prg = llf_grayscale_float(128, 128);
+  prg.name = prg.name + "_st";
+  prg.sanity_check();
+
+  CodegenOptions options;
+  options = CodegenOptions();
+  options.scheduling_algorithm = SCHEDULE_ALGORITHM_CW;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+
+  generate_optimized_code(options, prg);
+  generate_regression_testbench(prg);
+
+  cout << "LLF prog: " << prg.name << endl;
+  assert(false);
+}
+
+void two_input_blending_test() {
+
+  const int num_pyramid_levels = 4;
+
+  prog prg("two_in_blnd");
+  prg.compute_unit_file = "local_laplacian_filters_compute.h";
+
+  prg.add_input("in0_oc");
+  prg.add_input("in1_oc");
+  prg.add_output("out");
+
+  pointwise("in0", "llf_int_to_float", "in0_oc", 2, prg);
+  pointwise("in1", "llf_int_to_float", "in1_oc", 2, prg);
+
+  vector<string> lp0 = laplacian_pyramid("in0", num_pyramid_levels, prg);
+  vector<string> lp1 = laplacian_pyramid("in1", num_pyramid_levels, prg);
+
+  vector<string> merged_pyramid;
+  for (int i = 0; i < (int) lp0.size(); i++) {
+    string l0 = lp0.at(i);
+    string l1 = lp1.at(i);
+    string res = "merged_" + str(i);
+    pointwise(res, "llf_float_average", l0, l1, 2, prg);
+    merged_pyramid.push_back(res);
+  }
+
+  string values = reconstruct_gaussian(merged_pyramid, prg);
+
+  pointwise("out", "llf_float_to_int", values, 2, prg);
+
+  infer_bounds("out", {256, 256}, prg);
+
+  unroll_reduce_loops(prg);
+  merge_basic_block_ops(prg);
+  normalize_bounds(prg);
+  normalize_address_offsets(prg);
+
+  prg.pretty_print();
+
+  CodegenOptions options;
+  options.scheduling_algorithm = SCHEDULE_ALGORITHM_CW;
+  generate_optimized_code(options, prg);
+
+  assert(false);
+}
+
 void application_tests() {
+
+  two_input_blending_test();
+
   updated_soda_comparison();
   multi_rate_dynamic_apps();
   initial_soda_comparison();
+  llf_grayscale_debugging();
 
   resnet88_test();
   histogram_test();

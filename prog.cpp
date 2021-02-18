@@ -462,167 +462,168 @@ void generate_sw_bmp_test_harness(map<string, UBuffer>& buffers, prog& prg) {
 
   cout << "Generated channels" << endl;
 
-  auto in_rep = pick(inputs(buffers, prg));
-  auto& in_buf = buffers.at(in_rep.first);
-  string in_bundle_tp = in_buf.bundle_type_string(in_rep.second);
-  int pixel_width = in_buf.port_widths;
-  int lanes = in_buf.port_bundles.at(in_rep.second).size();
-  out << tab(1) << "// In lanes = " << lanes << endl;
+  for (auto in_rep : inputs(buffers, prg)) {
+    //auto in_rep = pick(inputs(buffers, prg));
+    auto& in_buf = buffers.at(in_rep.first);
+    string in_bundle_tp = in_buf.bundle_type_string(in_rep.second);
+    int pixel_width = in_buf.port_widths;
+    int lanes = in_buf.port_bundles.at(in_rep.second).size();
+    out << tab(1) << "// In lanes = " << lanes << endl;
 
-  cout << "Generating inputs" << endl;
+    cout << "Generating inputs" << endl;
 
-  int in_dim = prg.buffer_bounds[in_rep.first].size();
-  cout << "in dim = " << in_dim << endl;
-  bool in_rgb = in_dim == 3;
-  if (!(in_dim > 1 && in_dim <= 3)) {
-    out << tab(1) << "Unsupported input dimension: " << in_dim << endl;
-    return;
-  }
-
-  int in_rows;
-  int in_cols;
-  if (!in_rgb) {
-    in_cols = prg.buffer_bounds[in_rep.first].at(0);
-    in_rows = prg.buffer_bounds[in_rep.first].at(1);
-  } else {
-    in_cols = prg.buffer_bounds[in_rep.first].at(1);
-    in_rows = prg.buffer_bounds[in_rep.first].at(2);
-  }
-  cout << "in_cols = " << in_cols << endl;
-  cout << "lanes   = " << lanes << endl;
-  if (!(in_cols % lanes == 0)) {
-    out << tab(1) << "// Error: no support for uneven lanes in sw bmp test harness generation" << endl;
-    return;
-  }
-  //assert(in_cols % lanes == 0);
-
-  out << tab(1) << "for (int r = 0; r < " << in_rows << "; r++) {" << endl;
-  out << tab(2) << "for (int cl = 0; cl < " << in_cols << " / " << lanes << "; cl++) {" << endl;
-
-  out << tab(3) << in_bundle_tp << " packed;" << endl;
-  for (int l = 0; l < lanes; l++) {
-    out << tab(3) << "{" << endl;
-
-    if (!in_rgb) {
-      out << tab(3) << "int c = " << lanes << "*cl + " << l << ";" << endl;
-      out << tab(3) << "if (r < input.height() && c < input.width()) {" << endl;
-      out << tab(4) << "rgb_t pix;" << endl;
-      out << tab(4) << "input.get_pixel(c, r, pix);" << endl;
-      out << tab(4) << "auto val = (pix.red + pix.green + pix.blue) / 3;" << endl;
-      out << tab(4) << "set_at<" << l*pixel_width << ", " << lanes*pixel_width << ", " << pixel_width << ">(" <<
-        "packed, val);" << endl;
-      out << tab(3) << "} else {" << endl;
-      out << tab(4) << "set_at<" << l*pixel_width << ", " << lanes*pixel_width << ", " << pixel_width << ">(" <<
-        "packed, 0);" << endl;
-      out << tab(3) << "}" << endl;
-    } else {
-      out << tab(3) << "int c = " << lanes << "*cl + " << l << ";" << endl;
-      out << tab(3) << "if (r < input.height() && c < input.width()) {" << endl;
-      out << tab(4) << "rgb_t pix;" << endl;
-      out << tab(4) << "input.get_pixel(c, r, pix);" << endl;
-      out << tab(4) << in_rep.second << "_channel.write(pix.red);" << endl;
-      out << tab(4) << in_rep.second << "_channel.write(pix.green);" << endl;
-      out << tab(4) << in_rep.second << "_channel.write(pix.blue);" << endl;
-
-      out << tab(3) << "} else {" << endl;
-      out << tab(4) << in_rep.second << "_channel.write(0);" << endl;
-      out << tab(4) << in_rep.second << "_channel.write(0);" << endl;
-      out << tab(4) << in_rep.second << "_channel.write(0);" << endl;
-      out << tab(3) << "}" << endl;
+    int in_dim = prg.buffer_bounds[in_rep.first].size();
+    cout << "in dim = " << in_dim << endl;
+    bool in_rgb = in_dim == 3;
+    if (!(in_dim > 1 && in_dim <= 3)) {
+      out << tab(1) << "Unsupported input dimension: " << in_dim << endl;
+      return;
     }
 
-    out << tab(3) << "}" << endl;
-  }
-  if (!in_rgb) {
-    out << tab(4) << in_rep.second << "_channel.write(packed);" << endl;
-  }
-  out << tab(2) << "}" << endl;
-  out << tab(1) << "}" << endl;
+    int in_rows;
+    int in_cols;
+    if (!in_rgb) {
+      in_cols = prg.buffer_bounds[in_rep.first].at(0);
+      in_rows = prg.buffer_bounds[in_rep.first].at(1);
+    } else {
+      in_cols = prg.buffer_bounds[in_rep.first].at(1);
+      in_rows = prg.buffer_bounds[in_rep.first].at(2);
+    }
+    cout << "in_cols = " << in_cols << endl;
+    cout << "lanes   = " << lanes << endl;
+    if (!(in_cols % lanes == 0)) {
+      out << tab(1) << "// Error: no support for uneven lanes in sw bmp test harness generation" << endl;
+      return;
+    }
+    //assert(in_cols % lanes == 0);
 
-  //}
+    out << tab(1) << "for (int r = 0; r < " << in_rows << "; r++) {" << endl;
+    out << tab(2) << "for (int cl = 0; cl < " << in_cols << " / " << lanes << "; cl++) {" << endl;
+
+    out << tab(3) << in_bundle_tp << " packed;" << endl;
+    for (int l = 0; l < lanes; l++) {
+      out << tab(3) << "{" << endl;
+
+      if (!in_rgb) {
+        out << tab(3) << "int c = " << lanes << "*cl + " << l << ";" << endl;
+        out << tab(3) << "if (r < input.height() && c < input.width()) {" << endl;
+        out << tab(4) << "rgb_t pix;" << endl;
+        out << tab(4) << "input.get_pixel(c, r, pix);" << endl;
+        out << tab(4) << "auto val = (pix.red + pix.green + pix.blue) / 3;" << endl;
+        out << tab(4) << "set_at<" << l*pixel_width << ", " << lanes*pixel_width << ", " << pixel_width << ">(" <<
+          "packed, val);" << endl;
+        out << tab(3) << "} else {" << endl;
+        out << tab(4) << "set_at<" << l*pixel_width << ", " << lanes*pixel_width << ", " << pixel_width << ">(" <<
+          "packed, 0);" << endl;
+        out << tab(3) << "}" << endl;
+      } else {
+        out << tab(3) << "int c = " << lanes << "*cl + " << l << ";" << endl;
+        out << tab(3) << "if (r < input.height() && c < input.width()) {" << endl;
+        out << tab(4) << "rgb_t pix;" << endl;
+        out << tab(4) << "input.get_pixel(c, r, pix);" << endl;
+        out << tab(4) << in_rep.second << "_channel.write(pix.red);" << endl;
+        out << tab(4) << in_rep.second << "_channel.write(pix.green);" << endl;
+        out << tab(4) << in_rep.second << "_channel.write(pix.blue);" << endl;
+
+        out << tab(3) << "} else {" << endl;
+        out << tab(4) << in_rep.second << "_channel.write(0);" << endl;
+        out << tab(4) << in_rep.second << "_channel.write(0);" << endl;
+        out << tab(4) << in_rep.second << "_channel.write(0);" << endl;
+        out << tab(3) << "}" << endl;
+      }
+
+      out << tab(3) << "}" << endl;
+    }
+    if (!in_rgb) {
+      out << tab(4) << in_rep.second << "_channel.write(packed);" << endl;
+    }
+    out << tab(2) << "}" << endl;
+    out << tab(1) << "}" << endl;
+
+  }
 
   out << tab(1) << prg.name << sep_list(args, "(", ")", ", ") << ";" << endl;
 
   cout << "Generating outputs" << endl;
 
-{
-  auto out_rep = pick(outputs(buffers, prg));
-  auto& out_buf = buffers.at(out_rep.first);
-  string out_bundle_tp = out_buf.bundle_type_string(out_rep.second);
-  int pixel_width = out_buf.port_widths;
-  int lanes = out_buf.port_bundles.at(out_rep.second).size();
-  int out_dims = prg.buffer_bounds[out_rep.first].size();
-  bool out_rgb = prg.buffer_bounds[out_rep.first].size() == 3;
-  vector<string> sizes;
-  if (!(out_dims > 0 && out_dims <= 3)) {
-    out << tab(1) << "Unsupported output dimension: " << out_dims << endl;
-    return;
-  }
-  int out_cols;
-  int out_rows;
-  if (!out_rgb) {
-    out_cols = prg.buffer_bounds[out_rep.first].at(0);
-    out_rows = prg.buffer_bounds[out_rep.first].at(1);
-    for (auto sz : prg.buffer_bounds[out_rep.first]) {
-      sizes.push_back(str(sz));
+  {
+    auto out_rep = pick(outputs(buffers, prg));
+    auto& out_buf = buffers.at(out_rep.first);
+    string out_bundle_tp = out_buf.bundle_type_string(out_rep.second);
+    int pixel_width = out_buf.port_widths;
+    int lanes = out_buf.port_bundles.at(out_rep.second).size();
+    int out_dims = prg.buffer_bounds[out_rep.first].size();
+    bool out_rgb = prg.buffer_bounds[out_rep.first].size() == 3;
+    vector<string> sizes;
+    if (!(out_dims > 0 && out_dims <= 3)) {
+      out << tab(1) << "Unsupported output dimension: " << out_dims << endl;
+      return;
     }
-  } else {
-    out_cols = prg.buffer_bounds[out_rep.first].at(1);
-    out_rows = prg.buffer_bounds[out_rep.first].at(2);
-    int d = 0;
-    for (auto sz : prg.buffer_bounds[out_rep.first]) {
-      if (d > 0) {
+    int out_cols;
+    int out_rows;
+    if (!out_rgb) {
+      out_cols = prg.buffer_bounds[out_rep.first].at(0);
+      out_rows = prg.buffer_bounds[out_rep.first].at(1);
+      for (auto sz : prg.buffer_bounds[out_rep.first]) {
         sizes.push_back(str(sz));
       }
-      d++;
+    } else {
+      out_cols = prg.buffer_bounds[out_rep.first].at(1);
+      out_rows = prg.buffer_bounds[out_rep.first].at(2);
+      int d = 0;
+      for (auto sz : prg.buffer_bounds[out_rep.first]) {
+        if (d > 0) {
+          sizes.push_back(str(sz));
+        }
+        d++;
+      }
     }
-  }
 
-  out << tab(1) << "bitmap_image output(" << sep_list(sizes, "", "", ", ") << ");" << endl;
+    out << tab(1) << "bitmap_image output(" << sep_list(sizes, "", "", ", ") << ");" << endl;
 
-  out << tab(1) << "for (int r = 0; r < " << out_rows << "; r++) {" << endl;
-  out << tab(2) << "for (int cl = 0; cl < " << out_cols << " / " << lanes << "; cl++) {" << endl;
-  if (out_rgb) {
-    out << tab(3) << "int c = " << lanes << "*cl + " << "0" << ";" << endl;
-    out << tab(3) << "rgb_t pix;" << endl;
-
-    out << tab(3) << "auto red = " << out_rep.second << "_channel.read();" << endl;
-    out << tab(3) << "auto g = " << out_rep.second << "_channel.read();" << endl;
-    out << tab(3) << "auto b = " << out_rep.second << "_channel.read();" << endl;
-
-
-    out << tab(3) << "pix.red = " << "red" << ";" << endl;
-    out << tab(3) << "pix.green = " << "g" << ";" << endl;
-    out << tab(3) << "pix.blue = " << "b" << ";" << endl;
-    out << tab(3) << "output.set_pixel(c, r, pix);" << endl;
-
-  } else {
-    out << tab(3) << "auto packed_val = " << out_rep.second << "_channel.read();" << endl;
-    vector<string> unpacked_values =
-      split_bv(3, out, "packed_val", pixel_width, lanes);
-    for (int l = 0; l < lanes; l++) {
-      //out << tab(3) << "int c = " << lanes << "*cl + " << l << ";" << endl;
-      out << tab(3) << "{" << endl;
-      out << tab(3) << out_bundle_tp << " packed;" << endl;
-
-      out << tab(3) << "int c = " << lanes << "*cl + " << l << ";" << endl;
-
-      string val = unpacked_values.at(l);
+    out << tab(1) << "for (int r = 0; r < " << out_rows << "; r++) {" << endl;
+    out << tab(2) << "for (int cl = 0; cl < " << out_cols << " / " << lanes << "; cl++) {" << endl;
+    if (out_rgb) {
+      out << tab(3) << "int c = " << lanes << "*cl + " << "0" << ";" << endl;
       out << tab(3) << "rgb_t pix;" << endl;
-      out << tab(3) << "pix.red = " << val << ";" << endl;
-      out << tab(3) << "pix.green = " << val << ";" << endl;
-      out << tab(3) << "pix.blue = " << val << ";" << endl;
+
+      out << tab(3) << "auto red = " << out_rep.second << "_channel.read();" << endl;
+      out << tab(3) << "auto g = " << out_rep.second << "_channel.read();" << endl;
+      out << tab(3) << "auto b = " << out_rep.second << "_channel.read();" << endl;
+
+
+      out << tab(3) << "pix.red = " << "red" << ";" << endl;
+      out << tab(3) << "pix.green = " << "g" << ";" << endl;
+      out << tab(3) << "pix.blue = " << "b" << ";" << endl;
       out << tab(3) << "output.set_pixel(c, r, pix);" << endl;
-      out << tab(3) << "}" << endl;
+
+    } else {
+      out << tab(3) << "auto packed_val = " << out_rep.second << "_channel.read();" << endl;
+      vector<string> unpacked_values =
+        split_bv(3, out, "packed_val", pixel_width, lanes);
+      for (int l = 0; l < lanes; l++) {
+        //out << tab(3) << "int c = " << lanes << "*cl + " << l << ";" << endl;
+        out << tab(3) << "{" << endl;
+        out << tab(3) << out_bundle_tp << " packed;" << endl;
+
+        out << tab(3) << "int c = " << lanes << "*cl + " << l << ";" << endl;
+
+        string val = unpacked_values.at(l);
+        out << tab(3) << "rgb_t pix;" << endl;
+        out << tab(3) << "pix.red = " << val << ";" << endl;
+        out << tab(3) << "pix.green = " << val << ";" << endl;
+        out << tab(3) << "pix.blue = " << val << ";" << endl;
+        out << tab(3) << "output.set_pixel(c, r, pix);" << endl;
+        out << tab(3) << "}" << endl;
+      }
+
     }
 
+    out << tab(2) << "}" << endl;
+    out << tab(1) << "}" << endl;
+    out << tab(1) << "output.save_image(\"./images/" << prg.name << "_bmp_out.bmp\");" << endl;
+    out << "}" << endl;
   }
-
-  out << tab(2) << "}" << endl;
-  out << tab(1) << "}" << endl;
-  out << tab(1) << "output.save_image(\"./images/" << prg.name << "_bmp_out.bmp\");" << endl;
-  out << "}" << endl;
-}
 
 }
 
@@ -2323,15 +2324,72 @@ void generate_optimized_code(CodegenOptions& options, prog& prg) {
   umap* sched = nullptr;
 
   if (options.scheduling_algorithm == SCHEDULE_ALGORITHM_CW) {
+
+    assert(all_loop_nests_same_depth(prg));
+
     auto valid_deps = prg.validity_deps();
+
+    auto dom = prg.whole_iteration_domain();
+
+    int num_stmts_in_domain = get_sets(dom).size();
+    int num_ops_in_prog = prg.all_ops().size();
+
+    //cout << "Stmts in domain: " << num_stmts_in_domain << endl;
+    //cout << "Ops in prog        : " << num_ops_in_prog << endl;
+
+    assert(num_stmts_in_domain == prg.all_ops().size());
+
+    umap* pre_its_sched =
+      clockwork_schedule_umap_reversed(cpy(dom), valid_deps, valid_deps);
+    //cout << "Pre its sched: " << str(pre_its_sched) << endl;
+    //cout << "dom: " << str(dom) << endl;
+    //for (auto m : get_maps(pre_its_sched)) {
+      //for (auto s : get_sets(dom)) {
+        //if (name(s) == domain_name(m)) {
+          //cout << "Matching domains: " << endl;
+          //cout << tab(1) << str(s) << endl;
+          //cout << tab(1) << str(m) << endl << endl;
+
+          //assert(ctx(m) == ctx(s));
+
+          //isl_space* s_dspace = get_space(s);
+          //isl_space* m_dspace = get_space(domain(m));
+
+          //isl_id* dspace_id = isl_space_get_tuple_id(s_dspace, isl_dim_set);
+          //cout << tab(1) << "dspace_id       = " << str(dspace_id) << endl;
+          //isl_id* other_dspace_id = isl_space_get_tuple_id(m_dspace, isl_dim_set);
+          //cout << tab(1) << "other_dspace_id = " << str(other_dspace_id) << endl;
+
+          //cout << tab(1) << "s_dspace: " << str(s_dspace) << endl;
+          //cout << tab(1) << "m_dspace: " << str(m_dspace) << endl;
+
+          //assert(isl_space_has_equal_params(s_dspace, m_dspace));
+          //assert(isl_space_has_equal_tuples(s_dspace, m_dspace));
+          //assert(isl_space_is_equal(s_dspace, m_dspace));
+
+          //isl_map* ints = its(m, s);
+          //cout << tab(1) << "Intersection: " << str(ints) << endl;
+        //}
+      //}
+    //}
     sched =
-      its(clockwork_schedule_umap_reversed(prg.whole_iteration_domain(), valid_deps, valid_deps),
-          prg.whole_iteration_domain());
+      its(pre_its_sched, dom);
+    cout << "Post its sched: " << str(sched) << endl;
   } else {
     sched = its(isl_schedule_get_map(prg.optimized_schedule()), prg.whole_iteration_domain());
   }
 
   assert(sched != nullptr);
+
+  int num_stmts_in_schedule = get_maps(sched).size();
+  int num_ops = prg.all_ops().size();
+
+  cout << "Num stmts in schedule: " << num_stmts_in_schedule << endl;
+  cout << "Num ops in prog      : " << num_ops << endl;
+  for (auto s : get_maps(sched)) {
+    cout << tab(1) << str(s) << endl;
+  }
+  assert(num_stmts_in_schedule == num_ops);
 
   cout << "Optimized schedule..." << endl;
   cout << tab(1) << ": " << str(sched) << endl << endl;
@@ -7134,60 +7192,6 @@ umap* prog::validity_deps() {
   auto valid = unn(validity_dep_maps);
   assert(valid != nullptr);
   return valid;
-
-  //cout << "Got domain..." << endl;
-
-  //auto writes =
-    //its(producer_map(), domain);
-
-  //auto reads =
-    //its(consumer_map(), domain);
-
-  //cout << "Got producer / consumer maps" << endl;
-  //auto writers_to_readers = dot(writes, inv(reads));
-  //cout << "Writers to readers: " << endl;
-  //for (auto m : get_maps(writers_to_readers)) {
-    //cout << tab(1) << str(m) << endl;
-  //}
-  ////assert(false);
-  //auto validity =
-    //its(writers_to_readers, before);
-    ////its(dot(writes, inv(reads)), before);
-
-  //return validity;
-
-
-  // Old version
-  //umap* naive_sched = unoptimized_schedule();
-  //cout << "Naive sched for validity deps: " << str(naive_sched) << endl;
-
-  //cout << "Getting lex_lt for schedule..." << endl;
-  //auto before = lex_lt(naive_sched, naive_sched);
-
-  //cout << "Getting iteration domain..."<< endl;
-
-  //auto domain = whole_iteration_domain();
-
-  //cout << "Got domain..." << endl;
-
-  //auto writes =
-    //its(producer_map(), domain);
-
-  //auto reads =
-    //its(consumer_map(), domain);
-
-  //cout << "Got producer / consumer maps" << endl;
-  //auto writers_to_readers = dot(writes, inv(reads));
-  //cout << "Writers to readers: " << endl;
-  //for (auto m : get_maps(writers_to_readers)) {
-    //cout << tab(1) << str(m) << endl;
-  //}
-  ////assert(false);
-  //auto validity =
-    //its(writers_to_readers, before);
-    ////its(dot(writes, inv(reads)), before);
-
-  //return validity;
 }
 
 vector<pair<string, pair<string, int> >> determine_output_shift_reg_map(

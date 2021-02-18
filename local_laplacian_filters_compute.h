@@ -18,6 +18,13 @@ hw_uint<32> llf_float_to_int(const hw_uint<32>& pix) {
   return fi;
 }
 
+hw_uint<32> llf_float_average(const hw_uint<32>& pix0, const hw_uint<32>& pix1) {
+  float f0 = to_float(pix0);
+  float f1 = to_float(pix1);
+  float res = (f0 + f1) / 2.0f;
+  return to_bits(res);
+}
+
 float llf_remap(const float x) {
   float alpha = 2.0;
   //cout << "x = " << x << endl;
@@ -50,7 +57,7 @@ hw_uint<32> llf_level_entry(const hw_uint<32>& in, const int k) {
   //float res = gray + llf_remap(idx_i - 256 * k);
   //float res = gray + llf_remap(idx_i - 128 * k);
   //return to_bits(res);
-  return to_bits(res);
+  return to_bits(clamp_val(res, 0.0f, 1.0f));
 }
 
 hw_uint<32> llf_level_entry_0(const hw_uint<32>& in) {
@@ -134,6 +141,12 @@ hw_uint<32> llf_rescale_gray_float(
   float gray_f = to_float(gray);
   float scales_f = to_float(scales);
   float res = (scales_f * gray_f);
+
+
+  cout << "Gray value      : " << gray_f << endl;
+  cout << "Gray value (int): " << gray.to_int() << endl << endl;
+  //return to_bits(gray_f);
+  //return to_bits(0.5f);
   return to_bits(res);
 }
 
