@@ -2340,6 +2340,20 @@ void generate_optimized_code(CodegenOptions& options, prog& prg) {
       clockwork_schedule_umap_reversed(cpy(dom), valid_deps, valid_deps);
     cout << "Pre its sched: " << str(pre_its_sched) << endl;
     cout << "dom: " << str(dom) << endl;
+    for (auto m : get_maps(pre_its_sched)) {
+      for (auto s : get_sets(dom)) {
+        if (name(s) == domain_name(m)) {
+          cout << "Matching domains: " << endl;
+          cout << tab(1) << str(s) << endl;
+          cout << tab(1) << str(m) << endl << endl;
+
+          assert(ctx(m) == ctx(s));
+
+          isl_map* ints = its(m, s);
+          cout << tab(1) << "Intersection: " << str(ints) << endl;
+        }
+      }
+    }
     sched =
       its(pre_its_sched, dom);
     cout << "Post its sched: " << str(sched) << endl;
@@ -7160,60 +7174,6 @@ umap* prog::validity_deps() {
   auto valid = unn(validity_dep_maps);
   assert(valid != nullptr);
   return valid;
-
-  //cout << "Got domain..." << endl;
-
-  //auto writes =
-    //its(producer_map(), domain);
-
-  //auto reads =
-    //its(consumer_map(), domain);
-
-  //cout << "Got producer / consumer maps" << endl;
-  //auto writers_to_readers = dot(writes, inv(reads));
-  //cout << "Writers to readers: " << endl;
-  //for (auto m : get_maps(writers_to_readers)) {
-    //cout << tab(1) << str(m) << endl;
-  //}
-  ////assert(false);
-  //auto validity =
-    //its(writers_to_readers, before);
-    ////its(dot(writes, inv(reads)), before);
-
-  //return validity;
-
-
-  // Old version
-  //umap* naive_sched = unoptimized_schedule();
-  //cout << "Naive sched for validity deps: " << str(naive_sched) << endl;
-
-  //cout << "Getting lex_lt for schedule..." << endl;
-  //auto before = lex_lt(naive_sched, naive_sched);
-
-  //cout << "Getting iteration domain..."<< endl;
-
-  //auto domain = whole_iteration_domain();
-
-  //cout << "Got domain..." << endl;
-
-  //auto writes =
-    //its(producer_map(), domain);
-
-  //auto reads =
-    //its(consumer_map(), domain);
-
-  //cout << "Got producer / consumer maps" << endl;
-  //auto writers_to_readers = dot(writes, inv(reads));
-  //cout << "Writers to readers: " << endl;
-  //for (auto m : get_maps(writers_to_readers)) {
-    //cout << tab(1) << str(m) << endl;
-  //}
-  ////assert(false);
-  //auto validity =
-    //its(writers_to_readers, before);
-    ////its(dot(writes, inv(reads)), before);
-
-  //return validity;
 }
 
 vector<pair<string, pair<string, int> >> determine_output_shift_reg_map(
