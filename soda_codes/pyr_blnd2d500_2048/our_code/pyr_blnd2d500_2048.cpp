@@ -1041,14 +1041,14 @@ inline void gp_in_on_chip_2_buf12_FIFO_buf224_load_to_gp_in_on_chip_2_buf12_FIFO
 
 struct gp_in_on_chip_2_buf12_FIFO_buf228_load_to_gp_in_on_chip_2_buf12_FIFO_buf228231_65_to_gp_in_on_chip_2_buf12_FIFO_buf228_diff35_114_cache {
 	// RAM Box: {[1, 16], [1, 16]}
-	// Capacity: 17
-	// # of read delays: 17
-  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16
-	fifo<hw_uint<32> , 17> f;
+	// Capacity: 18
+	// # of read delays: 18
+  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17
+	fifo<hw_uint<32> , 18> f;
 	inline hw_uint<32>  peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    return f.peek(16 - offset);
+    return f.peek(17 - offset);
   }
 
 
@@ -1079,8 +1079,8 @@ inline hw_uint<32>  gp_in_on_chip_2_buf12_FIFO_buf228_diff35_114_select(gp_in_on
 #endif //__VIVADO_SYNTH__
   // gp_in_on_chip_2_buf12_FIFO_buf228_diff35_114 read pattern: { diff35[root = 0, lp_in_on_chip_233, lp_in_on_chip_234] -> gp_in_on_chip_2_buf12_FIFO_buf228[1 + lp_in_on_chip_234, 1 + lp_in_on_chip_233] : 0 <= lp_in_on_chip_233 <= 15 and 0 <= lp_in_on_chip_234 <= 15 }
   // Read schedule : { diff35[d0 = 0, d1, d2] -> [0, 14 + 4d1, 14 + 4d2, 29] : 0 <= d1 <= 15 and 0 <= d2 <= 15 }
-  // Write schedule: { load_to_gp_in_on_chip_2_buf12_FIFO_buf228231[d0 = 0, d1, d2] -> [0, 6 + 4d1, 10 + 4d2, 14] : 0 < d1 <= 16 and 0 < d2 <= 16 }
-  auto value_gp_in_on_chip_2_buf12_FIFO_buf228_load_to_gp_in_on_chip_2_buf12_FIFO_buf228231_65 = gp_in_on_chip_2_buf12_FIFO_buf228.gp_in_on_chip_2_buf12_FIFO_buf228_load_to_gp_in_on_chip_2_buf12_FIFO_buf228231_65_to_gp_in_on_chip_2_buf12_FIFO_buf228_diff35_114.peek(/* one reader or all rams */ (14 - lp_in_on_chip_234 >= 0 && 14 - lp_in_on_chip_233 >= 0) ? (16) : (-15 + lp_in_on_chip_234 == 0 && 14 - lp_in_on_chip_233 >= 0) ? (16) : (-15 + lp_in_on_chip_233 == 0 && 14 - lp_in_on_chip_234 >= 0) ? ((15 - lp_in_on_chip_234)) : 0);
+  // Write schedule: { load_to_gp_in_on_chip_2_buf12_FIFO_buf228231[d0 = 0, d1, d2] -> [0, 6 + 4d1, 6 + 4d2, 14] : 0 < d1 <= 16 and 0 < d2 <= 16 }
+  auto value_gp_in_on_chip_2_buf12_FIFO_buf228_load_to_gp_in_on_chip_2_buf12_FIFO_buf228231_65 = gp_in_on_chip_2_buf12_FIFO_buf228.gp_in_on_chip_2_buf12_FIFO_buf228_load_to_gp_in_on_chip_2_buf12_FIFO_buf228231_65_to_gp_in_on_chip_2_buf12_FIFO_buf228_diff35_114.peek(/* one reader or all rams */ (14 - lp_in_on_chip_234 >= 0 && 14 - lp_in_on_chip_233 >= 0) ? (17) : (-15 + lp_in_on_chip_234 == 0 && 14 - lp_in_on_chip_233 >= 0) ? (16) : (-15 + lp_in_on_chip_233 == 0 && 14 - lp_in_on_chip_234 >= 0) ? ((15 - lp_in_on_chip_234)) : 0);
   return value_gp_in_on_chip_2_buf12_FIFO_buf228_load_to_gp_in_on_chip_2_buf12_FIFO_buf228231_65;
   return 0;
 }
@@ -3755,52 +3755,56 @@ void Extracted_gp_in_on_chip_2_buf12_to_gp_7176_ld230_gp_in_on_chip_3_buf20_us28
 #pragma HLS inline recursive
 #endif // __VIVADO_SYNTH__
 
-// schedule: { load_to_gp_in_on_chip_3_buf20_us28_FIFO_buf236239[d0 = 0, d1, d2] -> [0, 14 + 4d1, 14 + 4d2, 27] : 0 <= d1 <= 15 and 0 <= d2 <= 15; diff35[d0 = 0, d1, d2] -> [0, 14 + 4d1, 14 + 4d2, 29] : 0 <= d1 <= 15 and 0 <= d2 <= 15; load_to_lp_in_on_chip_2_buf32_to_gp_8208211[d0 = 0, d1, d2] -> [0, 14 + 4d1, 14 + 4d2, 31] : 0 <= d1 <= 15 and 0 <= d2 <= 15; load_to_gp_in_on_chip_2_buf12_FIFO_buf228231[d0 = 0, d1, d2] -> [0, 6 + 4d1, 10 + 4d2, 14] : 0 < d1 <= 16 and 0 < d2 <= 16 }
+// schedule: { load_to_gp_in_on_chip_3_buf20_us28_FIFO_buf236239[d0 = 0, d1, d2] -> [0, 14 + 4d1, 14 + 4d2, 27] : 0 <= d1 <= 15 and 0 <= d2 <= 15; diff35[d0 = 0, d1, d2] -> [0, 14 + 4d1, 14 + 4d2, 29] : 0 <= d1 <= 15 and 0 <= d2 <= 15; load_to_lp_in_on_chip_2_buf32_to_gp_8208211[d0 = 0, d1, d2] -> [0, 14 + 4d1, 14 + 4d2, 31] : 0 <= d1 <= 15 and 0 <= d2 <= 15; load_to_gp_in_on_chip_2_buf12_FIFO_buf228231[d0 = 0, d1, d2] -> [0, 6 + 4d1, 6 + 4d2, 14] : 0 < d1 <= 16 and 0 < d2 <= 16 }
 //   { load_to_gp_in_on_chip_3_buf20_us28_FIFO_buf236239[d0 = 0, d1, d2] -> [0, 14 + 4d1, 14 + 4d2, 27] : 0 <= d1 <= 15 and 0 <= d2 <= 15 }
 // Condition for load_to_gp_in_on_chip_3_buf20_us28_FIFO_buf236239(((((-2 + -1*i1 + (4*(((2 + 1*i1)) >> 2)))) == 0) && (((-2 + -1*i2 + (4*(((2 + 1*i2)) >> 2)))) == 0) && (((-27 + 1*i3)) == 0) && (((1*i0)) == 0) && (((-14 + 1*i1)) >= 0) && (((74 + -1*i1)) >= 0) && (((-14 + 1*i2)) >= 0) && (((74 + -1*i2)) >= 0)))
 //   { diff35[d0 = 0, d1, d2] -> [0, 14 + 4d1, 14 + 4d2, 29] : 0 <= d1 <= 15 and 0 <= d2 <= 15 }
 // Condition for diff35(((((-2 + -1*i1 + (4*(((2 + 1*i1)) >> 2)))) == 0) && (((-2 + -1*i2 + (4*(((2 + 1*i2)) >> 2)))) == 0) && (((-29 + 1*i3)) == 0) && (((1*i0)) == 0) && (((-14 + 1*i1)) >= 0) && (((74 + -1*i1)) >= 0) && (((-14 + 1*i2)) >= 0) && (((74 + -1*i2)) >= 0)))
 //   { load_to_lp_in_on_chip_2_buf32_to_gp_8208211[d0 = 0, d1, d2] -> [0, 14 + 4d1, 14 + 4d2, 31] : 0 <= d1 <= 15 and 0 <= d2 <= 15 }
 // Condition for load_to_lp_in_on_chip_2_buf32_to_gp_8208211(((((-2 + -1*i1 + (4*(((2 + 1*i1)) >> 2)))) == 0) && (((-2 + -1*i2 + (4*(((2 + 1*i2)) >> 2)))) == 0) && (((-31 + 1*i3)) == 0) && (((1*i0)) == 0) && (((-14 + 1*i1)) >= 0) && (((74 + -1*i1)) >= 0) && (((-14 + 1*i2)) >= 0) && (((74 + -1*i2)) >= 0)))
-//   { load_to_gp_in_on_chip_2_buf12_FIFO_buf228231[d0 = 0, d1, d2] -> [0, 6 + 4d1, 10 + 4d2, 14] : 0 < d1 <= 16 and 0 < d2 <= 16 }
-// Condition for load_to_gp_in_on_chip_2_buf12_FIFO_buf228231(((((-2 + -1*i1 + (4*(((2 + 1*i1)) >> 2)))) == 0) && (((-2 + -1*i2 + (4*(((2 + 1*i2)) >> 2)))) == 0) && (((-14 + 1*i3)) == 0) && (((1*i0)) == 0) && (((-10 + 1*i1)) >= 0) && (((70 + -1*i1)) >= 0) && (((-14 + 1*i2)) >= 0) && (((74 + -1*i2)) >= 0)))
+//   { load_to_gp_in_on_chip_2_buf12_FIFO_buf228231[d0 = 0, d1, d2] -> [0, 6 + 4d1, 6 + 4d2, 14] : 0 < d1 <= 16 and 0 < d2 <= 16 }
+// Condition for load_to_gp_in_on_chip_2_buf12_FIFO_buf228231(((((-2 + -1*i1 + (4*(((2 + 1*i1)) >> 2)))) == 0) && (((-2 + -1*i2 + (4*(((2 + 1*i2)) >> 2)))) == 0) && (((-14 + 1*i3)) == 0) && (((1*i0)) == 0) && (((-10 + 1*i1)) >= 0) && (((70 + -1*i1)) >= 0) && (((-10 + 1*i2)) >= 0) && (((70 + -1*i2)) >= 0)))
 
-	// time range: { [0, i1, i2, 31] : (2 + i1) mod 4 = 0 and (2 + i2) mod 4 = 0 and 14 <= i1 <= 74 and 14 <= i2 <= 74; [0, i1, i2, 29] : (2 + i1) mod 4 = 0 and (2 + i2) mod 4 = 0 and 14 <= i1 <= 74 and 14 <= i2 <= 74; [0, i1, i2, 27] : (2 + i1) mod 4 = 0 and (2 + i2) mod 4 = 0 and 14 <= i1 <= 74 and 14 <= i2 <= 74; [0, i1, i2, 14] : (2 + i1) mod 4 = 0 and (2 + i2) mod 4 = 0 and 10 <= i1 <= 70 and 14 <= i2 <= 74 }
+	// time range: { [0, i1, i2, 31] : (2 + i1) mod 4 = 0 and (2 + i2) mod 4 = 0 and 14 <= i1 <= 74 and 14 <= i2 <= 74; [0, i1, i2, 29] : (2 + i1) mod 4 = 0 and (2 + i2) mod 4 = 0 and 14 <= i1 <= 74 and 14 <= i2 <= 74; [0, i1, i2, 27] : (2 + i1) mod 4 = 0 and (2 + i2) mod 4 = 0 and 14 <= i1 <= 74 and 14 <= i2 <= 74; [0, i1, i2, 14] : (2 + i1) mod 4 = 0 and (2 + i2) mod 4 = 0 and 10 <= i1 <= 70 and 10 <= i2 <= 70 }
 	// # sets: 1
 	int i0 = 0;
 	  for (int i1 = 10; i1 <= 74; i1++) {
-	    for (int i2 = 14; i2 <= 74; i2++) {
+	    for (int i2 = 10; i2 <= 74; i2++) {
 	#pragma HLS pipeline II=1
-	        // { [i0, i1, i2] : (2 + i1) mod 4 = 0 and (2 + i2) mod 4 = 0 and i1 <= 70 }
-	        // { [i0, i1, i2] : (2 + i1) mod 4 = 0 and (2 + i2) mod 4 = 0 and i1 <= 70 }
+	        // { [i0, i1, i2] : (2 + i1) mod 4 = 0 and (2 + i2) mod 4 = 0 and i1 <= 70 and i2 <= 70 }
+	        // { [i0, i1, i2] : (2 + i1) mod 4 = 0 and (2 + i2) mod 4 = 0 and i1 <= 70 and i2 <= 70 }
 	          // { [i0, i1, i2] : -2 - i2 + 4*floor((2 + i2)/4) = 0 }
 	          // { [i0, i1, i2] : -2 - i1 + 4*floor((2 + i1)/4) = 0 }
 	          // { [i0, i1, i2] : 70 - i1 >= 0 }
-	        if ((((((-2 + -1*i2 + (4*(((2 + 1*i2)) >> 2)))) == 0) && (((-2 + -1*i1 + (4*(((2 + 1*i1)) >> 2)))) == 0) && (((70 + -1*i1)) >= 0)))) {
-	          load_to_gp_in_on_chip_2_buf12_FIFO_buf228231(gp_in_on_chip_2_buf12_to_gp_7176 /* buf name */, gp_in_on_chip_2_buf12_FIFO_buf228, 0, ((-2 + (1*(((2 + 1*i1)) >> 2)))), ((-3 + (1*(((2 + 1*i2)) >> 2)))));
+	          // { [i0, i1, i2] : 70 - i2 >= 0 }
+	        if ((((((-2 + -1*i2 + (4*(((2 + 1*i2)) >> 2)))) == 0) && (((-2 + -1*i1 + (4*(((2 + 1*i1)) >> 2)))) == 0) && (((70 + -1*i1)) >= 0) && (((70 + -1*i2)) >= 0)))) {
+	          load_to_gp_in_on_chip_2_buf12_FIFO_buf228231(gp_in_on_chip_2_buf12_to_gp_7176 /* buf name */, gp_in_on_chip_2_buf12_FIFO_buf228, 0, ((-2 + (1*(((2 + 1*i1)) >> 2)))), ((-2 + (1*(((2 + 1*i2)) >> 2)))));
 	        }
-	        // { [i0, i1, i2] : (2 + i1) mod 4 = 0 and (2 + i2) mod 4 = 0 and i1 >= 14 }
-	        // { [i0, i1, i2] : (2 + i1) mod 4 = 0 and (2 + i2) mod 4 = 0 and i1 >= 14 }
+	        // { [i0, i1, i2] : (2 + i1) mod 4 = 0 and (2 + i2) mod 4 = 0 and i1 >= 14 and i2 >= 14 }
+	        // { [i0, i1, i2] : (2 + i1) mod 4 = 0 and (2 + i2) mod 4 = 0 and i1 >= 14 and i2 >= 14 }
 	          // { [i0, i1, i2] : -2 - i2 + 4*floor((2 + i2)/4) = 0 }
 	          // { [i0, i1, i2] : -2 - i1 + 4*floor((2 + i1)/4) = 0 }
 	          // { [i0, i1, i2] : -14 + i1 >= 0 }
-	        if ((((((-2 + -1*i2 + (4*(((2 + 1*i2)) >> 2)))) == 0) && (((-2 + -1*i1 + (4*(((2 + 1*i1)) >> 2)))) == 0) && (((-14 + 1*i1)) >= 0)))) {
+	          // { [i0, i1, i2] : -14 + i2 >= 0 }
+	        if ((((((-2 + -1*i2 + (4*(((2 + 1*i2)) >> 2)))) == 0) && (((-2 + -1*i1 + (4*(((2 + 1*i1)) >> 2)))) == 0) && (((-14 + 1*i1)) >= 0) && (((-14 + 1*i2)) >= 0)))) {
 	          load_to_gp_in_on_chip_3_buf20_us28_FIFO_buf236239(gp_in_on_chip_3_buf20_us28_to_gp_7184 /* buf name */, gp_in_on_chip_3_buf20_us28_FIFO_buf236, 0, ((-4 + (1*(((2 + 1*i1)) >> 2)))), ((-4 + (1*(((2 + 1*i2)) >> 2)))));
 	        }
-	        // { [i0, i1, i2] : (2 + i1) mod 4 = 0 and (2 + i2) mod 4 = 0 and i1 >= 14 }
-	        // { [i0, i1, i2] : (2 + i1) mod 4 = 0 and (2 + i2) mod 4 = 0 and i1 >= 14 }
+	        // { [i0, i1, i2] : (2 + i1) mod 4 = 0 and (2 + i2) mod 4 = 0 and i1 >= 14 and i2 >= 14 }
+	        // { [i0, i1, i2] : (2 + i1) mod 4 = 0 and (2 + i2) mod 4 = 0 and i1 >= 14 and i2 >= 14 }
 	          // { [i0, i1, i2] : -2 - i2 + 4*floor((2 + i2)/4) = 0 }
 	          // { [i0, i1, i2] : -2 - i1 + 4*floor((2 + i1)/4) = 0 }
 	          // { [i0, i1, i2] : -14 + i1 >= 0 }
-	        if ((((((-2 + -1*i2 + (4*(((2 + 1*i2)) >> 2)))) == 0) && (((-2 + -1*i1 + (4*(((2 + 1*i1)) >> 2)))) == 0) && (((-14 + 1*i1)) >= 0)))) {
+	          // { [i0, i1, i2] : -14 + i2 >= 0 }
+	        if ((((((-2 + -1*i2 + (4*(((2 + 1*i2)) >> 2)))) == 0) && (((-2 + -1*i1 + (4*(((2 + 1*i1)) >> 2)))) == 0) && (((-14 + 1*i1)) >= 0) && (((-14 + 1*i2)) >= 0)))) {
 	          diff35(gp_in_on_chip_2_buf12_FIFO_buf228 /* buf name */, gp_in_on_chip_3_buf20_us28_FIFO_buf236 /* buf name */, lp_in_on_chip_2_buf32, 0, ((-4 + (1*(((2 + 1*i1)) >> 2)))), ((-4 + (1*(((2 + 1*i2)) >> 2)))));
 	        }
-	        // { [i0, i1, i2] : (2 + i1) mod 4 = 0 and (2 + i2) mod 4 = 0 and i1 >= 14 }
-	        // { [i0, i1, i2] : (2 + i1) mod 4 = 0 and (2 + i2) mod 4 = 0 and i1 >= 14 }
+	        // { [i0, i1, i2] : (2 + i1) mod 4 = 0 and (2 + i2) mod 4 = 0 and i1 >= 14 and i2 >= 14 }
+	        // { [i0, i1, i2] : (2 + i1) mod 4 = 0 and (2 + i2) mod 4 = 0 and i1 >= 14 and i2 >= 14 }
 	          // { [i0, i1, i2] : -2 - i2 + 4*floor((2 + i2)/4) = 0 }
 	          // { [i0, i1, i2] : -2 - i1 + 4*floor((2 + i1)/4) = 0 }
 	          // { [i0, i1, i2] : -14 + i1 >= 0 }
-	        if ((((((-2 + -1*i2 + (4*(((2 + 1*i2)) >> 2)))) == 0) && (((-2 + -1*i1 + (4*(((2 + 1*i1)) >> 2)))) == 0) && (((-14 + 1*i1)) >= 0)))) {
+	          // { [i0, i1, i2] : -14 + i2 >= 0 }
+	        if ((((((-2 + -1*i2 + (4*(((2 + 1*i2)) >> 2)))) == 0) && (((-2 + -1*i1 + (4*(((2 + 1*i1)) >> 2)))) == 0) && (((-14 + 1*i1)) >= 0) && (((-14 + 1*i2)) >= 0)))) {
 	          load_to_lp_in_on_chip_2_buf32_to_gp_8208211(lp_in_on_chip_2_buf32 /* buf name */, lp_in_on_chip_2_buf32_to_gp_8208, 0, ((-4 + (1*(((2 + 1*i1)) >> 2)))), ((-4 + (1*(((2 + 1*i2)) >> 2)))));
 	        }
 	    }
@@ -4388,7 +4392,7 @@ void pyr_blnd2d500_2048(HWStream<hw_uint<32> >& /* no bundle get_args num ports 
 #endif //__VIVADO_SYNTH__
   HWStream< hw_uint<32> > gp_in_on_chip_2_buf12_to_gp_7176;
 #ifdef __VIVADO_SYNTH__
-#pragma HLS stream variable=gp_in_on_chip_2_buf12_to_gp_7176.values depth=501
+#pragma HLS stream variable=gp_in_on_chip_2_buf12_to_gp_7176.values depth=500
 #endif //__VIVADO_SYNTH__
   HWStream< hw_uint<32> > lp_in_on_chip_2_buf32_to_gp_8208;
 #ifdef __VIVADO_SYNTH__
