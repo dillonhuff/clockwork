@@ -20595,11 +20595,13 @@ void two_input_blending_test() {
 
   pointwise("out", "llf_float_to_int", values, 2, prg);
 
-  infer_bounds("out", {32, 32}, prg);
+  infer_bounds("out", {256, 256}, prg);
 
   prg.pretty_print();
 
-  generate_optimized_code(prg);
+  CodegenOptions options;
+  options.scheduling_algorithm = SCHEDULE_ALGORITHM_CW;
+  generate_optimized_code(options, prg);
 
   assert(false);
 }
