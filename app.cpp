@@ -1673,10 +1673,10 @@ clockwork_schedule_umap_reversed(uset* domain,
     string map_str = "{ " + f + sep_list(var_names, "[", "]", ", ") + " -> " + sep_list(sched_exprs, "[", "]", ", ") + " }";
 
     cout << "Map str: " << map_str << endl;
-    auto rm = rdmap(ctx(domain), map_str);
+    auto rm = isl_map_read_from_str(ctx(domain), map_str.c_str());
     cout << "map got str" << endl;
-    m = unn(m, rm);
-    isl_union_map_free(rm);
+    m = unn(m, to_umap(rm));
+    release(rm);
   }
 
   umap* s = m; //qschedule_to_map_final_sort(ctx(domain), scheds);
