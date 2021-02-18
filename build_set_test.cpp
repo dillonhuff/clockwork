@@ -15854,6 +15854,25 @@ string reconstruct_gaussian(const std::vector<string>& output_levels, prog& prg)
 }
 
 
+void pointwise(const std::string& out, const std::string& func, const std::string& in0, const std::string& in1, const int dim, prog& prg) {
+  string pr = prg.un("pw_math_" + in0 + "_" + in1);
+  op* lp = prg.root;
+  vector<string> vars;
+  for (int d = 0; d < dim; d++) {
+    string var = prg.un(pr);
+    lp = lp->add_loop(var, 0, 1);
+    vars.push_back(var);
+  }
+  reverse(vars);
+  auto ld = lp->add_op(prg.un(pr));
+  string vlist = comma_list(vars);
+  ld->add_load(in0, vlist);
+  ld->add_load(in1, vlist);
+  ld->add_function(func);
+  ld->add_store(out, vlist);
+
+}
+
 void pointwise(const std::string& out, const std::string& func, const std::string& in, const int dim, prog& prg) {
   string pr = prg.un("pw_math_" + in);
   op* lp = prg.root;
@@ -20546,7 +20565,31 @@ void llf_grayscale_debugging() {
   assert(false);
 }
 
+void two_input_blending_test() {
+  prog prg("two_in_blnd");
+  prg.add_input("in0_oc");
+  prg.add_input("in1_oc");
+  prg.add_output("out");
+
+  load_input("in0_oc", "in0", 2, prg);
+  load_input("in1_oc", "in1", 2, prg);
+
+  pointwise("merged", "add", "in0", "in1", 2, prg);
+
+  pointwise("out", "id", "merged", 2, prg);
+
+  infer_bounds("out", {32, 32}, prg);
+
+  prg.pretty_print();
+
+  generate_optimized_code(prg);
+
+  assert(false);
+}
+
 void application_tests() {
+
+  two_input_blending_test();
 
   updated_soda_comparison();
   multi_rate_dynamic_apps();
