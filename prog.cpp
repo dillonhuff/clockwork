@@ -9745,3 +9745,11 @@ int max_completion_time(schedule_info& sched, prog& prg) {
   return done_time;
 }
 
+void prepare_for_clockwork_scheduling(prog& prg) {
+  unroll_reduce_loops(prg);
+  merge_basic_block_ops(prg);
+  normalize_bounds(prg);
+  normalize_address_offsets(prg);
+  unroll_mismatched_inner_loops(prg);
+  merge_basic_block_ops(prg);
+}

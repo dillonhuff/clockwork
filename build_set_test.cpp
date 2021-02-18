@@ -20271,6 +20271,8 @@ void jac3_2_static_dynamic_comparison() {
 
   App jac = stencil_chain_stage_iccad(out_name, 15);
   prog prg = jac.realize(options, out_name, cols, rows, 1);
+  prepare_for_clockwork_scheduling(prg);
+
   jac.generate_soda_file(prg.name, throughput);
 
   move_to_benchmarks_folder(out_name + "_opt");
@@ -20278,12 +20280,6 @@ void jac3_2_static_dynamic_comparison() {
   assert(false);
 
   prg.name = out_name + "_opt_d";
-
-
-  unroll_reduce_loops(prg);
-  merge_basic_block_ops(prg);
-  normalize_bounds(prg);
-  normalize_address_offsets(prg);
 
   auto fusion_groups = one_stage_per_group(prg);
   auto fresh_groups = insert_inter_group_buffers(fusion_groups, prg);

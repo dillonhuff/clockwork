@@ -2013,3 +2013,5 @@ umap* cycle_accurate_deps(prog& prg);
 void sanity_check_negative_starts(schedule_info& sched, prog& prg);
 
 int max_completion_time(schedule_info& sched, prog& prg);
+
+void prepare_for_clockwork_scheduling(prog& prg);
