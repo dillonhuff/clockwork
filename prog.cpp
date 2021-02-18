@@ -462,167 +462,168 @@ void generate_sw_bmp_test_harness(map<string, UBuffer>& buffers, prog& prg) {
 
   cout << "Generated channels" << endl;
 
-  auto in_rep = pick(inputs(buffers, prg));
-  auto& in_buf = buffers.at(in_rep.first);
-  string in_bundle_tp = in_buf.bundle_type_string(in_rep.second);
-  int pixel_width = in_buf.port_widths;
-  int lanes = in_buf.port_bundles.at(in_rep.second).size();
-  out << tab(1) << "// In lanes = " << lanes << endl;
+  for (auto in_rep : inputs(buffers, prg)) {
+    //auto in_rep = pick(inputs(buffers, prg));
+    auto& in_buf = buffers.at(in_rep.first);
+    string in_bundle_tp = in_buf.bundle_type_string(in_rep.second);
+    int pixel_width = in_buf.port_widths;
+    int lanes = in_buf.port_bundles.at(in_rep.second).size();
+    out << tab(1) << "// In lanes = " << lanes << endl;
 
-  cout << "Generating inputs" << endl;
+    cout << "Generating inputs" << endl;
 
-  int in_dim = prg.buffer_bounds[in_rep.first].size();
-  cout << "in dim = " << in_dim << endl;
-  bool in_rgb = in_dim == 3;
-  if (!(in_dim > 1 && in_dim <= 3)) {
-    out << tab(1) << "Unsupported input dimension: " << in_dim << endl;
-    return;
-  }
-
-  int in_rows;
-  int in_cols;
-  if (!in_rgb) {
-    in_cols = prg.buffer_bounds[in_rep.first].at(0);
-    in_rows = prg.buffer_bounds[in_rep.first].at(1);
-  } else {
-    in_cols = prg.buffer_bounds[in_rep.first].at(1);
-    in_rows = prg.buffer_bounds[in_rep.first].at(2);
-  }
-  cout << "in_cols = " << in_cols << endl;
-  cout << "lanes   = " << lanes << endl;
-  if (!(in_cols % lanes == 0)) {
-    out << tab(1) << "// Error: no support for uneven lanes in sw bmp test harness generation" << endl;
-    return;
-  }
-  //assert(in_cols % lanes == 0);
-
-  out << tab(1) << "for (int r = 0; r < " << in_rows << "; r++) {" << endl;
-  out << tab(2) << "for (int cl = 0; cl < " << in_cols << " / " << lanes << "; cl++) {" << endl;
-
-  out << tab(3) << in_bundle_tp << " packed;" << endl;
-  for (int l = 0; l < lanes; l++) {
-    out << tab(3) << "{" << endl;
-
-    if (!in_rgb) {
-      out << tab(3) << "int c = " << lanes << "*cl + " << l << ";" << endl;
-      out << tab(3) << "if (r < input.height() && c < input.width()) {" << endl;
-      out << tab(4) << "rgb_t pix;" << endl;
-      out << tab(4) << "input.get_pixel(c, r, pix);" << endl;
-      out << tab(4) << "auto val = (pix.red + pix.green + pix.blue) / 3;" << endl;
-      out << tab(4) << "set_at<" << l*pixel_width << ", " << lanes*pixel_width << ", " << pixel_width << ">(" <<
-        "packed, val);" << endl;
-      out << tab(3) << "} else {" << endl;
-      out << tab(4) << "set_at<" << l*pixel_width << ", " << lanes*pixel_width << ", " << pixel_width << ">(" <<
-        "packed, 0);" << endl;
-      out << tab(3) << "}" << endl;
-    } else {
-      out << tab(3) << "int c = " << lanes << "*cl + " << l << ";" << endl;
-      out << tab(3) << "if (r < input.height() && c < input.width()) {" << endl;
-      out << tab(4) << "rgb_t pix;" << endl;
-      out << tab(4) << "input.get_pixel(c, r, pix);" << endl;
-      out << tab(4) << in_rep.second << "_channel.write(pix.red);" << endl;
-      out << tab(4) << in_rep.second << "_channel.write(pix.green);" << endl;
-      out << tab(4) << in_rep.second << "_channel.write(pix.blue);" << endl;
-
-      out << tab(3) << "} else {" << endl;
-      out << tab(4) << in_rep.second << "_channel.write(0);" << endl;
-      out << tab(4) << in_rep.second << "_channel.write(0);" << endl;
-      out << tab(4) << in_rep.second << "_channel.write(0);" << endl;
-      out << tab(3) << "}" << endl;
+    int in_dim = prg.buffer_bounds[in_rep.first].size();
+    cout << "in dim = " << in_dim << endl;
+    bool in_rgb = in_dim == 3;
+    if (!(in_dim > 1 && in_dim <= 3)) {
+      out << tab(1) << "Unsupported input dimension: " << in_dim << endl;
+      return;
     }
 
-    out << tab(3) << "}" << endl;
-  }
-  if (!in_rgb) {
-    out << tab(4) << in_rep.second << "_channel.write(packed);" << endl;
-  }
-  out << tab(2) << "}" << endl;
-  out << tab(1) << "}" << endl;
+    int in_rows;
+    int in_cols;
+    if (!in_rgb) {
+      in_cols = prg.buffer_bounds[in_rep.first].at(0);
+      in_rows = prg.buffer_bounds[in_rep.first].at(1);
+    } else {
+      in_cols = prg.buffer_bounds[in_rep.first].at(1);
+      in_rows = prg.buffer_bounds[in_rep.first].at(2);
+    }
+    cout << "in_cols = " << in_cols << endl;
+    cout << "lanes   = " << lanes << endl;
+    if (!(in_cols % lanes == 0)) {
+      out << tab(1) << "// Error: no support for uneven lanes in sw bmp test harness generation" << endl;
+      return;
+    }
+    //assert(in_cols % lanes == 0);
 
-  //}
+    out << tab(1) << "for (int r = 0; r < " << in_rows << "; r++) {" << endl;
+    out << tab(2) << "for (int cl = 0; cl < " << in_cols << " / " << lanes << "; cl++) {" << endl;
+
+    out << tab(3) << in_bundle_tp << " packed;" << endl;
+    for (int l = 0; l < lanes; l++) {
+      out << tab(3) << "{" << endl;
+
+      if (!in_rgb) {
+        out << tab(3) << "int c = " << lanes << "*cl + " << l << ";" << endl;
+        out << tab(3) << "if (r < input.height() && c < input.width()) {" << endl;
+        out << tab(4) << "rgb_t pix;" << endl;
+        out << tab(4) << "input.get_pixel(c, r, pix);" << endl;
+        out << tab(4) << "auto val = (pix.red + pix.green + pix.blue) / 3;" << endl;
+        out << tab(4) << "set_at<" << l*pixel_width << ", " << lanes*pixel_width << ", " << pixel_width << ">(" <<
+          "packed, val);" << endl;
+        out << tab(3) << "} else {" << endl;
+        out << tab(4) << "set_at<" << l*pixel_width << ", " << lanes*pixel_width << ", " << pixel_width << ">(" <<
+          "packed, 0);" << endl;
+        out << tab(3) << "}" << endl;
+      } else {
+        out << tab(3) << "int c = " << lanes << "*cl + " << l << ";" << endl;
+        out << tab(3) << "if (r < input.height() && c < input.width()) {" << endl;
+        out << tab(4) << "rgb_t pix;" << endl;
+        out << tab(4) << "input.get_pixel(c, r, pix);" << endl;
+        out << tab(4) << in_rep.second << "_channel.write(pix.red);" << endl;
+        out << tab(4) << in_rep.second << "_channel.write(pix.green);" << endl;
+        out << tab(4) << in_rep.second << "_channel.write(pix.blue);" << endl;
+
+        out << tab(3) << "} else {" << endl;
+        out << tab(4) << in_rep.second << "_channel.write(0);" << endl;
+        out << tab(4) << in_rep.second << "_channel.write(0);" << endl;
+        out << tab(4) << in_rep.second << "_channel.write(0);" << endl;
+        out << tab(3) << "}" << endl;
+      }
+
+      out << tab(3) << "}" << endl;
+    }
+    if (!in_rgb) {
+      out << tab(4) << in_rep.second << "_channel.write(packed);" << endl;
+    }
+    out << tab(2) << "}" << endl;
+    out << tab(1) << "}" << endl;
+
+  }
 
   out << tab(1) << prg.name << sep_list(args, "(", ")", ", ") << ";" << endl;
 
   cout << "Generating outputs" << endl;
 
-{
-  auto out_rep = pick(outputs(buffers, prg));
-  auto& out_buf = buffers.at(out_rep.first);
-  string out_bundle_tp = out_buf.bundle_type_string(out_rep.second);
-  int pixel_width = out_buf.port_widths;
-  int lanes = out_buf.port_bundles.at(out_rep.second).size();
-  int out_dims = prg.buffer_bounds[out_rep.first].size();
-  bool out_rgb = prg.buffer_bounds[out_rep.first].size() == 3;
-  vector<string> sizes;
-  if (!(out_dims > 0 && out_dims <= 3)) {
-    out << tab(1) << "Unsupported output dimension: " << out_dims << endl;
-    return;
-  }
-  int out_cols;
-  int out_rows;
-  if (!out_rgb) {
-    out_cols = prg.buffer_bounds[out_rep.first].at(0);
-    out_rows = prg.buffer_bounds[out_rep.first].at(1);
-    for (auto sz : prg.buffer_bounds[out_rep.first]) {
-      sizes.push_back(str(sz));
+  {
+    auto out_rep = pick(outputs(buffers, prg));
+    auto& out_buf = buffers.at(out_rep.first);
+    string out_bundle_tp = out_buf.bundle_type_string(out_rep.second);
+    int pixel_width = out_buf.port_widths;
+    int lanes = out_buf.port_bundles.at(out_rep.second).size();
+    int out_dims = prg.buffer_bounds[out_rep.first].size();
+    bool out_rgb = prg.buffer_bounds[out_rep.first].size() == 3;
+    vector<string> sizes;
+    if (!(out_dims > 0 && out_dims <= 3)) {
+      out << tab(1) << "Unsupported output dimension: " << out_dims << endl;
+      return;
     }
-  } else {
-    out_cols = prg.buffer_bounds[out_rep.first].at(1);
-    out_rows = prg.buffer_bounds[out_rep.first].at(2);
-    int d = 0;
-    for (auto sz : prg.buffer_bounds[out_rep.first]) {
-      if (d > 0) {
+    int out_cols;
+    int out_rows;
+    if (!out_rgb) {
+      out_cols = prg.buffer_bounds[out_rep.first].at(0);
+      out_rows = prg.buffer_bounds[out_rep.first].at(1);
+      for (auto sz : prg.buffer_bounds[out_rep.first]) {
         sizes.push_back(str(sz));
       }
-      d++;
+    } else {
+      out_cols = prg.buffer_bounds[out_rep.first].at(1);
+      out_rows = prg.buffer_bounds[out_rep.first].at(2);
+      int d = 0;
+      for (auto sz : prg.buffer_bounds[out_rep.first]) {
+        if (d > 0) {
+          sizes.push_back(str(sz));
+        }
+        d++;
+      }
     }
-  }
 
-  out << tab(1) << "bitmap_image output(" << sep_list(sizes, "", "", ", ") << ");" << endl;
+    out << tab(1) << "bitmap_image output(" << sep_list(sizes, "", "", ", ") << ");" << endl;
 
-  out << tab(1) << "for (int r = 0; r < " << out_rows << "; r++) {" << endl;
-  out << tab(2) << "for (int cl = 0; cl < " << out_cols << " / " << lanes << "; cl++) {" << endl;
-  if (out_rgb) {
-    out << tab(3) << "int c = " << lanes << "*cl + " << "0" << ";" << endl;
-    out << tab(3) << "rgb_t pix;" << endl;
-
-    out << tab(3) << "auto red = " << out_rep.second << "_channel.read();" << endl;
-    out << tab(3) << "auto g = " << out_rep.second << "_channel.read();" << endl;
-    out << tab(3) << "auto b = " << out_rep.second << "_channel.read();" << endl;
-
-
-    out << tab(3) << "pix.red = " << "red" << ";" << endl;
-    out << tab(3) << "pix.green = " << "g" << ";" << endl;
-    out << tab(3) << "pix.blue = " << "b" << ";" << endl;
-    out << tab(3) << "output.set_pixel(c, r, pix);" << endl;
-
-  } else {
-    out << tab(3) << "auto packed_val = " << out_rep.second << "_channel.read();" << endl;
-    vector<string> unpacked_values =
-      split_bv(3, out, "packed_val", pixel_width, lanes);
-    for (int l = 0; l < lanes; l++) {
-      //out << tab(3) << "int c = " << lanes << "*cl + " << l << ";" << endl;
-      out << tab(3) << "{" << endl;
-      out << tab(3) << out_bundle_tp << " packed;" << endl;
-
-      out << tab(3) << "int c = " << lanes << "*cl + " << l << ";" << endl;
-
-      string val = unpacked_values.at(l);
+    out << tab(1) << "for (int r = 0; r < " << out_rows << "; r++) {" << endl;
+    out << tab(2) << "for (int cl = 0; cl < " << out_cols << " / " << lanes << "; cl++) {" << endl;
+    if (out_rgb) {
+      out << tab(3) << "int c = " << lanes << "*cl + " << "0" << ";" << endl;
       out << tab(3) << "rgb_t pix;" << endl;
-      out << tab(3) << "pix.red = " << val << ";" << endl;
-      out << tab(3) << "pix.green = " << val << ";" << endl;
-      out << tab(3) << "pix.blue = " << val << ";" << endl;
+
+      out << tab(3) << "auto red = " << out_rep.second << "_channel.read();" << endl;
+      out << tab(3) << "auto g = " << out_rep.second << "_channel.read();" << endl;
+      out << tab(3) << "auto b = " << out_rep.second << "_channel.read();" << endl;
+
+
+      out << tab(3) << "pix.red = " << "red" << ";" << endl;
+      out << tab(3) << "pix.green = " << "g" << ";" << endl;
+      out << tab(3) << "pix.blue = " << "b" << ";" << endl;
       out << tab(3) << "output.set_pixel(c, r, pix);" << endl;
-      out << tab(3) << "}" << endl;
+
+    } else {
+      out << tab(3) << "auto packed_val = " << out_rep.second << "_channel.read();" << endl;
+      vector<string> unpacked_values =
+        split_bv(3, out, "packed_val", pixel_width, lanes);
+      for (int l = 0; l < lanes; l++) {
+        //out << tab(3) << "int c = " << lanes << "*cl + " << l << ";" << endl;
+        out << tab(3) << "{" << endl;
+        out << tab(3) << out_bundle_tp << " packed;" << endl;
+
+        out << tab(3) << "int c = " << lanes << "*cl + " << l << ";" << endl;
+
+        string val = unpacked_values.at(l);
+        out << tab(3) << "rgb_t pix;" << endl;
+        out << tab(3) << "pix.red = " << val << ";" << endl;
+        out << tab(3) << "pix.green = " << val << ";" << endl;
+        out << tab(3) << "pix.blue = " << val << ";" << endl;
+        out << tab(3) << "output.set_pixel(c, r, pix);" << endl;
+        out << tab(3) << "}" << endl;
+      }
+
     }
 
+    out << tab(2) << "}" << endl;
+    out << tab(1) << "}" << endl;
+    out << tab(1) << "output.save_image(\"./images/" << prg.name << "_bmp_out.bmp\");" << endl;
+    out << "}" << endl;
   }
-
-  out << tab(2) << "}" << endl;
-  out << tab(1) << "}" << endl;
-  out << tab(1) << "output.save_image(\"./images/" << prg.name << "_bmp_out.bmp\");" << endl;
-  out << "}" << endl;
-}
 
 }
 
