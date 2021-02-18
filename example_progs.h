@@ -37,6 +37,7 @@ prog mobilenet();
 prog mobilenet_small();
 prog three_level_memory();
 prog three_level_pond();
+prog three_level_pond_rolled();
 prog resnet_unrolled();
 prog resnet88();
 prog resnet_coarse_pipeline_loop();
