@@ -2349,6 +2349,13 @@ void generate_optimized_code(CodegenOptions& options, prog& prg) {
 
           assert(ctx(m) == ctx(s));
 
+          isl_space* s_dspace = get_space(s);
+          isl_space* m_dspace = get_space(domain(m));
+
+          assert(isl_space_has_equal_params(s_dspace, m_dspace));
+          assert(isl_space_has_equal_tuples(s_dspace, m_dspace));
+          assert(isl_space_is_equal(s_dspace, m_dspace));
+
           isl_map* ints = its(m, s);
           cout << tab(1) << "Intersection: " << str(ints) << endl;
         }
