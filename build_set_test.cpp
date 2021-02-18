@@ -20595,7 +20595,7 @@ void two_input_blending_test() {
 
   pointwise("out", "llf_float_to_int", values, 2, prg);
 
-  infer_bounds("out", {256, 256}, prg);
+  infer_bounds("out", {64, 64}, prg);
 
   prg.pretty_print();
 

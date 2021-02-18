@@ -2333,6 +2333,8 @@ void generate_optimized_code(CodegenOptions& options, prog& prg) {
   }
 
   assert(sched != nullptr);
+  int num_stmts_in_schedule = get_maps(sched).size();
+  assert(num_stmts_in_schedule == prg.all_ops().size());
 
   cout << "Optimized schedule..." << endl;
   cout << tab(1) << ": " << str(sched) << endl << endl;

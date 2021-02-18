@@ -79,20 +79,6 @@ inline void in_pw_math_in_oc03_write_bundle_write(hw_uint<32>& pw_math_in_oc03_w
 
 
 // Operation logic
-inline void pw_math_in_oc03(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */in_oc, in_cache& in, int root, int pw_math_in_oc01, int pw_math_in_oc02) {
-  // Dynamic address computation
-
-	// Consume: in_oc
-	auto in_oc_pw_math_in_oc02_c__pw_math_in_oc01_value = in_oc.read();
-	auto compute_result = id(in_oc_pw_math_in_oc02_c__pw_math_in_oc01_value);
-	// Produce: in
-	in_pw_math_in_oc03_write_bundle_write(/* arg names */compute_result, in, root, pw_math_in_oc01, pw_math_in_oc02, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
 inline void pw_math_in47(in_cache& in, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */out, int root, int pw_math_in45, int pw_math_in46) {
   // Dynamic address computation
 
@@ -105,6 +91,20 @@ inline void pw_math_in47(in_cache& in, HWStream<hw_uint<32> >& /* buffer_args nu
 	auto compute_result = id(in_pw_math_in46_c__pw_math_in45_value);
 	// Produce: out
 	out.write(compute_result);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void pw_math_in_oc03(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */in_oc, in_cache& in, int root, int pw_math_in_oc01, int pw_math_in_oc02) {
+  // Dynamic address computation
+
+	// Consume: in_oc
+	auto in_oc_pw_math_in_oc02_c__pw_math_in_oc01_value = in_oc.read();
+	auto compute_result = id(in_oc_pw_math_in_oc02_c__pw_math_in_oc01_value);
+	// Produce: in
+	in_pw_math_in_oc03_write_bundle_write(/* arg names */compute_result, in, root, pw_math_in_oc01, pw_math_in_oc02, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__

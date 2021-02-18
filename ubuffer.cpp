@@ -7383,6 +7383,7 @@ void UBuffer::generate_banks(CodegenOptions& options) {
         for (auto pt : buf.get_all_ports()) {
           if (!empty(buf.domain.at(pt))) {
             if (empty(buf.schedule.at(pt))) {
+              cout << "No schedule for " << pt << " on buffer " << buf.name << endl;
               return false;
             }
           }
