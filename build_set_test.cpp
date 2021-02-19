@@ -20690,8 +20690,7 @@ void llf_grayscale_debugging() {
   assert(false);
 }
 
-void two_input_blending_test() {
-
+prog two_in_blnd(const int r, const int c) {
   const int num_pyramid_levels = 4;
 
   prog prg("two_in_blnd");
@@ -20720,7 +20719,14 @@ void two_input_blending_test() {
 
   pointwise("out", "llf_float_to_int", values, 2, prg);
 
-  infer_bounds("out", {256, 256}, prg);
+  infer_bounds("out", {r, c}, prg);
+
+  return prg;
+}
+
+void two_input_blending_test() {
+
+  prog prg = two_in_blnd(64, 64);
 
   unroll_reduce_loops(prg);
   merge_basic_block_ops(prg);
