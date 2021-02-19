@@ -1926,12 +1926,9 @@ CoreIR::Instance* UBuffer::generate_pond_instance(
     {"num_outputs", CoreIR::Const::make(context, output_num)},
     {"ID", CoreIR::Const::make(context, context->getUnique())},
   };
-  CoreIR::Values modargs = {
-    {"mode", CoreIR::Const::make(context, "pond")}
-  };
   cout << "Add pond node with input_num = " << input_num
       << ", output_num = " << output_num << endl;
-  buf = def->addInstance(ub_ins_name, "cgralib.pond", genargs);
+  buf = def->addInstance(ub_ins_name, "cgralib.Pond_amber", genargs);
   buf->getMetaData()["config"] = config_file;
   buf->getMetaData()["mode"] = "pond";
 
