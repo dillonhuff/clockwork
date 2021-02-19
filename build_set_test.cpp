@@ -20253,6 +20253,47 @@ void cp16_static_dynamic_comparison_fresh_codegen() {
 
 }
 
+prog two_in_blnd(const int r, const int c);
+
+void two_in_blnd_static_dynamic_comparison() {
+  {
+    prog prg = two_in_blnd(2048, 2048);
+    prg.sanity_check();
+
+    auto fusion_groups = one_stage_per_group(prg);
+    app_dag dag = partition_application(fusion_groups, prg);
+
+    CodegenOptions options;
+    options = CodegenOptions();
+    options.scheduling_algorithm = SCHEDULE_ALGORITHM_CW;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+
+    generate_optimized_code(options, prg);
+
+    move_to_benchmarks_folder(prg.name);
+  }
+
+  {
+    prog prg = two_in_blnd(2048, 2048);
+    prg.name = prg.name + "_d";
+    prg.sanity_check();
+
+    auto fusion_groups = one_stage_per_group(prg);
+    app_dag dag = partition_application(fusion_groups, prg);
+
+    CodegenOptions options;
+    options = CodegenOptions();
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+    options.scheduling_algorithm = SCHEDULE_ALGORITHM_CW;
+    generate_app_code(options, dag);
+
+    move_to_benchmarks_folder(prg.name);
+
+  }
+
+  assert(false);
+}
+
 void jac3_32_static_dynamic_comparison() {
   string prefix = "jac3";
 
@@ -20721,6 +20762,9 @@ prog two_in_blnd(const int r, const int c) {
 
   infer_bounds("out", {r, c}, prg);
 
+
+  prepare_for_clockwork_scheduling(prg);
+
   return prg;
 }
 
@@ -20743,6 +20787,8 @@ void two_input_blending_test() {
 }
 
 void application_tests() {
+  two_in_blnd_static_dynamic_comparison();
+
   updated_soda_comparison();
 
   two_input_blending_test();
