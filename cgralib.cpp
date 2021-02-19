@@ -175,6 +175,54 @@ CoreIR::Namespace* CoreIRLoadLibrary_cgralib(Context* c) {
   Mem->addDefaultGenArgs({{"width",Const::make(c,16)},{"total_depth",Const::make(c,1024)}});
   Mem->setModParamsGen(MemModParamFun);
 
+  // cgralib.Pond_amber
+  Params cgralibpondamberparams = Params({
+        {"width", c->Int()}, // for m3 16
+        {"num_inputs", c->Int()}, // the number of ports you *actually use in a given config*
+        {"num_outputs", c->Int()}, // ''
+        {"ID", c->String()},            //for codegen, TODO: remove after coreIR fix
+    });
+
+  cgralib->newTypeGen(
+          "cgralib_pond_amber_type",
+          cgralibpondamberparams,
+          [](Context* c, Values genargs){
+            uint width = genargs.at("width")->get<int>();
+            uint num_input = genargs.at("num_inputs")->get<int>();
+            uint num_output = genargs.at("num_outputs")->get<int>();
+
+            RecordParams recordparams = {
+                {"rst_n", c->BitIn()},
+		        //{"chain_data_in", c->BitIn()->Arr(16)},
+		        //{"chain_data_out", c->Bit()->Arr(16)},
+                {"clk_en", c->BitIn()},
+                {"clk", c->Named("coreir.clkIn")}
+            };
+
+            recordparams.push_back({"data_in_pond", c->BitIn()->Arr(width)});
+            recordparams.push_back({"data_out_pond", c->Bit()->Arr(width)});
+            recordparams.push_back({"valid_out_pond", c->Bit()});
+            recordparams.push_back({"flush", c->BitIn()});
+
+        return c->Record(recordparams);
+    }
+
+  );
+
+  auto cgralib_pond_amber_gen = cgralib->newGeneratorDecl("Pond_amber", cgralib->getTypeGen("cgralib_pond_amber_type"), cgralibpondamberparams);
+  cgralib_pond_amber_gen->addDefaultGenArgs({{"num_inputs", Const::make(c, 1)}});
+  cgralib_pond_amber_gen->addDefaultGenArgs({{"ID", Const::make(c, "")}});
+  cgralib_pond_amber_gen->addDefaultGenArgs({{"num_outputs", Const::make(c, 1)}});
+
+
+  auto CGRALibPondAmberModParamFun = [](Context* c,Values genargs) -> std::pair<Params,Values> {
+    Params p; //params
+    Values d; //defaults
+
+    return {p,d};
+  };
+  cgralib_pond_amber_gen->setModParamsGen(CGRALibPondAmberModParamFun);
+
   // cgralib.Pond
   Params cgralibpondparams = Params({
         {"width", c->Int()}, // for m3 16
@@ -209,7 +257,7 @@ CoreIR::Namespace* CoreIRLoadLibrary_cgralib(Context* c) {
 
   );
 
-  auto cgralib_pond_gen = cgralib->newGeneratorDecl("pond", cgralib->getTypeGen("cgralib_pond_type"), cgralibpondparams);
+  auto cgralib_pond_gen = cgralib->newGeneratorDecl("Pond", cgralib->getTypeGen("cgralib_pond_type"), cgralibpondparams);
   cgralib_pond_gen->addDefaultGenArgs({{"num_inputs", Const::make(c, 1)}});
   cgralib_pond_gen->addDefaultGenArgs({{"ID", Const::make(c, "")}});
   cgralib_pond_gen->addDefaultGenArgs({{"num_outputs", Const::make(c, 1)}});
@@ -218,12 +266,12 @@ CoreIR::Namespace* CoreIRLoadLibrary_cgralib(Context* c) {
   auto CGRALibPondModParamFun = [](Context* c,Values genargs) -> std::pair<Params,Values> {
     Params p; //params
     Values d; //defaults
-    //p["mode"] = c->String();
+    p["mode"] = c->String();
 
-    //p["config"] = CoreIR::JsonType::make(c);
-
-    //p["depth"] = c->Int();
-    //d["depth"] = Const::make(c,1024);
+    p["config"] = CoreIR::JsonType::make(c);
+    Json jdata;
+    jdata = {};
+    d["config"] = Const::make(c,jdata);
 
     return {p,d};
   };

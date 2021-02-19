@@ -2688,6 +2688,60 @@ void MapperPasses::MemSubstitute::setVisitorInfo() {
 }
 
 namespace MapperPasses {
+class RegfileSubstitute: public CoreIR::InstanceVisitorPass {
+  public :
+    static std::string ID;
+    RegfileSubstitute() : InstanceVisitorPass(ID,"replace cgralib.Mem_amber to cgralib.Mem") {}
+    void setVisitorInfo() override;
+};
+
+}
+
+
+bool RegfileReplace(Instance* cnst) {
+  cout << tab(2) << "memory syntax transformation!" << endl;
+  cout << tab(2) << toString(cnst) << endl;
+  Context* c = cnst->getContext();
+  auto allSels = cnst->getSelects();
+  for (auto itr: allSels) {
+    cout << tab(2) << "Sel: " << itr.first << endl;
+  }
+  ModuleDef* def = cnst->getContainer();
+  auto genargs = cnst->getModuleRef()->getGenArgs();
+  auto config_file = cnst->getMetaData()["config"];
+  CoreIR::Values modargs = {
+      {"config", CoreIR::Const::make(c, config_file)},
+      {"mode", CoreIR::Const::make(c, "pond")}
+  };
+  auto pt = addPassthrough(cnst, cnst->getInstname()+"_tmp");
+  Instance* buf = def->addInstance(cnst->getInstname()+"_garnet",
+          "cgralib.Pond", genargs, modargs);
+  def->removeInstance(cnst);
+  def->connect(pt->sel("in"), buf);
+  inlineInstance(pt);
+  inlineInstance(buf);
+
+  //remove rst_n
+  //auto rst_n_conSet = buf->sel("rst_n")->getConnectedWireables();
+  //vector<Wireable*> conns(rst_n_conSet.begin(), rst_n_conSet.end());
+  //assert(conns.size() == 1);
+  //auto conn = conns[0];
+  //def->disconnect(buf->sel("rst_n"),conn);
+
+  return true;
+}
+
+std::string MapperPasses::RegfileSubstitute::ID = "regfilesubstitute";
+void MapperPasses::RegfileSubstitute::setVisitorInfo() {
+  Context* c = this->getContext();
+  if (c->hasGenerator("cgralib.Pond_amber")) {
+    addVisitorFunction(c->getGenerator("cgralib.Pond_amber"), RegfileReplace);
+  }
+
+}
+
+
+namespace MapperPasses {
 class ConstDuplication : public CoreIR::InstanceVisitorPass {
   public :
     static std::string ID;
@@ -2765,6 +2819,8 @@ void garnet_map_module(Module* top, bool garnet_syntax_trans = false) {
   if (garnet_syntax_trans) {
     c->addPass(new MapperPasses::MemSubstitute);
     c->runPasses({"memsubstitute"});
+    c->addPass(new MapperPasses::RegfileSubstitute);
+    c->runPasses({"regfilesubstitute"});
   }
   c->addPass(new MapperPasses::ConstDuplication);
   c->runPasses({"constduplication"});
