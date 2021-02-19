@@ -20271,6 +20271,8 @@ void two_in_blnd_static_dynamic_comparison() {
     generate_optimized_code(options, prg);
 
     move_to_benchmarks_folder(prg.name);
+
+    assert(false);
   }
 
   {
