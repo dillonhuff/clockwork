@@ -20673,6 +20673,7 @@ void sef_static_and_dynamic() {
 
   options = CodegenOptions();
   options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  options.slack_matching = {SLACK_MATCHING_TYPE_PIPELINE_DEPTH_AWARE, 1};
   generate_app_code(options, dag);
 
   move_to_benchmarks_folder(prg.name);
@@ -20689,14 +20690,14 @@ void sef_static_and_dynamic() {
 }
 
 void multi_rate_dynamic_apps() {
+  sef_static_and_dynamic();
+  large_pyramid_blend_pointwise_fusion();
   //grayscale_llf_static_2pix_per_cycle();
 
-  sef_static_and_dynamic();
 
   grayscale_llf_static();
   grayscale_llf_dynamic();
 
-  large_pyramid_blend_pointwise_fusion();
   llf_init();
 }
 
@@ -20789,13 +20790,13 @@ void two_input_blending_test() {
 }
 
 void application_tests() {
+  multi_rate_dynamic_apps();
   two_in_blnd_static_dynamic_comparison();
 
   updated_soda_comparison();
 
   two_input_blending_test();
 
-  multi_rate_dynamic_apps();
   initial_soda_comparison();
   llf_grayscale_debugging();
 

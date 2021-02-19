@@ -27,5 +27,7 @@ int main() {
     fout << actual_lane_0 << endl;
   }
 
+  assert(in_off_chip.is_empty());
+  assert(sefss_1.is_empty());
   return 0;
 }
