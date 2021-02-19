@@ -1,0 +1,715 @@
+{"top":"global.resnet_simple",
+"namespaces":{
+  "commonlib":{
+    "generators":{
+      "MAD":{
+        "typegen":"coreir.ternary",
+        "genparams":{"width":"Int"}
+      },
+      "abs":{
+        "typegen":"coreir.unary",
+        "genparams":{"width":"Int"}
+      },
+      "absd":{
+        "typegen":"coreir.binary",
+        "genparams":{"width":"Int"}
+      },
+      "accumulation_register":{
+        "typegen":"commonlib.accumulation_register_type",
+        "genparams":{"iterations":"Int", "width":"Int"}
+      },
+      "bitopn":{
+        "typegen":"commonlib.bitopN_type",
+        "genparams":{"N":"Int", "operator":"String"}
+      },
+      "const_array":{
+        "typegen":"coreir.constArrayTG",
+        "genparams":{"type":"CoreIRType", "value":"Int"},
+        "defaultgenargs":{"value":["Int",0]}
+      },
+      "counter":{
+        "typegen":"commonlib.counter_type",
+        "genparams":{"inc":"Int", "max":"Int", "min":"Int", "width":"Int"}
+      },
+      "deserializer":{
+        "typegen":"commonlib.deserializer_type",
+        "genparams":{"rate":"Int", "width":"Int"}
+      },
+      "div":{
+        "typegen":"coreir.binary",
+        "genparams":{"width":"Int"}
+      },
+      "lutN":{
+        "typegen":"commonlib.lutNType",
+        "genparams":{"N":"Int"},
+        "modules":[
+          [{"N":["Int",3]},{
+            "type":["Record",[
+              ["in",["Array",3,"BitIn"]],
+              ["out","Bit"]
+            ]],
+            "modparams":{"init":["BitVector",8]},
+            "instances":{
+              "lut":{
+                "genref":"cgralib.PE",
+                "genargs":{"numbitports":["Int",3], "numdataports":["Int",2], "op_kind":["String","bit"], "width":["Int",16]},
+                "modargs":{"bit0_mode":["String","BYPASS"], "bit0_value":["Bool",false], "bit1_mode":["String","BYPASS"], "bit1_value":["Bool",false], "bit2_mode":["String","BYPASS"], "bit2_value":["Bool",false], "flag_sel":["String","lut"], "lut_value":[["BitVector",8],"Arg","init"]}
+              }
+            },
+            "connections":[
+              ["self.in","lut.bit.in"],
+              ["self.out","lut.bit.out"]
+            ]
+          }]
+        ],
+        "metadata":{"verilog":{"definition":"  assign out = init[in];","interface":["input [N-1:0] in","output out"],"parameters":["init"]}}
+      },
+      "muxn":{
+        "typegen":"commonlib.muxN_type",
+        "genparams":{"N":"Int", "width":"Int"}
+      },
+      "opn":{
+        "typegen":"commonlib.opN_type",
+        "genparams":{"N":"Int", "operator":"String", "width":"Int"}
+      },
+      "reg_array":{
+        "typegen":"coreir.regArrayTG",
+        "genparams":{"has_clr":"Bool", "has_en":"Bool", "has_rst":"Bool", "init":"Int", "type":"CoreIRType"},
+        "defaultgenargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "init":["Int",0]}
+      },
+      "reshape":{
+        "typegen":"commonlib.reshape_type",
+        "genparams":{"input_type":"CoreIRType", "output_type":"CoreIRType"}
+      },
+      "sclamp":{
+        "typegen":"coreir.binary",
+        "genparams":{"width":"Int"}
+      },
+      "serializer":{
+        "typegen":"commonlib.serializer_type",
+        "genparams":{"rate":"Int", "width":"Int"}
+      },
+      "smax":{
+        "typegen":"coreir.binary",
+        "genparams":{"width":"Int"}
+      },
+      "smin":{
+        "typegen":"coreir.binary",
+        "genparams":{"width":"Int"}
+      },
+      "transpose":{
+        "typegen":"commonlib.transpose_type",
+        "genparams":{"input_type":"CoreIRType"}
+      },
+      "transpose_reshape":{
+        "typegen":"commonlib.reshape_type",
+        "genparams":{"input_type":"CoreIRType", "output_type":"CoreIRType"}
+      },
+      "uclamp":{
+        "typegen":"coreir.binary",
+        "genparams":{"width":"Int"}
+      },
+      "umax":{
+        "typegen":"coreir.binary",
+        "genparams":{"width":"Int"}
+      },
+      "umin":{
+        "typegen":"coreir.binary",
+        "genparams":{"width":"Int"}
+      }
+    },
+    "typegens":{
+      "accumulation_register_type":[{"iterations":"Int", "width":"Int"},"implicit"],
+      "bitopN_type":[{"N":"Int", "operator":"String"},"implicit"],
+      "counter_type":[{"inc":"Int", "max":"Int", "min":"Int", "width":"Int"},"implicit"],
+      "deserializer_type":[{"rate":"Int", "width":"Int"},"implicit"],
+      "lutNType":[{"N":"Int"},"sparse",[
+        [{"N":["Int",3]},["Record",[["in",["Array",3,"BitIn"]],["out","Bit"]]]]
+      ]],
+      "muxN_type":[{"N":"Int", "width":"Int"},"implicit"],
+      "opN_type":[{"N":"Int", "operator":"String", "width":"Int"},"implicit"],
+      "reshape_type":[{"input_type":"CoreIRType", "output_type":"CoreIRType"},"implicit"],
+      "serializer_type":[{"rate":"Int", "width":"Int"},"implicit"],
+      "transpose_type":[{"input_type":"CoreIRType"},"implicit"]
+    }
+  },
+  "global":{
+    "modules":{
+      "conv_stencil_ub":{
+        "type":["Record",[
+          ["clk",["Named","coreir.clkIn"]],
+          ["flush","BitIn"],
+          ["reset","BitIn"],
+          ["op_hcompute_conv_stencil_1_read",["Array",1,["Array",16,"Bit"]]],
+          ["op_hcompute_conv_stencil_1_read_extra_ctrl","Bit"],
+          ["op_hcompute_conv_stencil_1_write",["Array",1,["Array",16,"BitIn"]]],
+          ["op_hcompute_conv_stencil_1_write_extra_ctrl","BitIn"],
+          ["op_hcompute_conv_stencil_write",["Array",1,["Array",16,"BitIn"]]],
+          ["op_hcompute_conv_stencil_write_extra_ctrl","BitIn"],
+          ["op_hcompute_hw_output_stencil_read",["Array",1,["Array",16,"Bit"]]],
+          ["op_hcompute_hw_output_stencil_read_extra_ctrl","Bit"]
+        ]],
+        "instances":{
+          "chain_disen_const_U1":{
+            "modref":"corebit.const",
+            "modargs":{"value":["Bool",false]}
+          },
+          "ub_conv_stencil_cyclic_0_clk_en_const_lutcnst":{
+            "genref":"cgralib.PE",
+            "genargs":{"numbitports":["Int",3], "numdataports":["Int",2], "op_kind":["String","bit"], "width":["Int",16]},
+            "modargs":{"bit0_mode":["String","BYPASS"], "bit0_value":["Bool",false], "bit1_mode":["String","BYPASS"], "bit1_value":["Bool",false], "bit2_mode":["String","BYPASS"], "bit2_value":["Bool",false], "flag_sel":["String","lut"], "lut_value":[["BitVector",8],"8'h3f"]}
+          },
+          "ub_conv_stencil_cyclic_0_garnet":{
+            "genref":"cgralib.Mem",
+            "genargs":{"ID":["String","_U0"], "has_external_addrgen":["Bool",false], "has_flush":["Bool",true], "has_read_valid":["Bool",false], "has_reset":["Bool",false], "has_stencil_valid":["Bool",true], "has_valid":["Bool",false], "is_rom":["Bool",false], "num_inputs":["Int",2], "num_outputs":["Int",2], "use_prebuilt_mem":["Bool",true], "width":["Int",16]},
+            "modargs":{"config":["Json",{"agg2sram_0":{"cycle_starting_addr":[908],"cycle_stride":[4,32,896,2688],"dimensionality":4,"extent":[7,28,3,3],"read_data_starting_addr":[0],"read_data_stride":[1,3,0,0],"write_data_starting_addr":[0],"write_data_stride":[1,7,0,0]},"agg2sram_1":{"cycle_starting_addr":[4],"cycle_stride":[4,28],"dimensionality":2,"extent":[7,28],"read_data_starting_addr":[0],"read_data_stride":[1,3],"write_data_starting_addr":[0],"write_data_stride":[1,7]},"in2agg_0":{"cycle_starting_addr":[904],"cycle_stride":[1,4,32,896,2688],"dimensionality":5,"extent":[4,7,28,3,3],"write_data_starting_addr":[0],"write_data_stride":[1,4,12,0,0]},"in2agg_1":{"cycle_starting_addr":[0],"cycle_stride":[1,4,28],"dimensionality":3,"extent":[4,7,28],"write_data_starting_addr":[0],"write_data_stride":[1,4,12]},"sram2tb_0":{"cycle_starting_addr":[899],"cycle_stride":[4,32,896,2688],"dimensionality":4,"extent":[7,28,3,3],"read_data_starting_addr":[0],"read_data_stride":[1,7,0,0],"write_data_starting_addr":[0],"write_data_stride":[1,3,0,0]},"sram2tb_1":{"cycle_starting_addr":[8959],"cycle_stride":[4,28],"dimensionality":2,"extent":[7,28],"read_data_starting_addr":[0],"read_data_stride":[1,7],"write_data_starting_addr":[0],"write_data_stride":[1,3]},"stencil_valid":{"cycle_starting_addr":[8964],"cycle_stride":[1,28],"dimensionality":2,"extent":[28,28]},"tb2out_0":{"cycle_starting_addr":[904],"cycle_stride":[1,4,32,896,2688],"dimensionality":5,"extent":[4,7,28,3,3],"read_data_starting_addr":[0],"read_data_stride":[1,4,12,0,0]},"tb2out_1":{"cycle_starting_addr":[8964],"cycle_stride":[1,4,28],"dimensionality":3,"extent":[4,7,28],"read_data_starting_addr":[0],"read_data_stride":[1,4,12]}}], "init":["Json",null], "mode":["String","lake"]}
+          }
+        },
+        "connections":[
+          ["ub_conv_stencil_cyclic_0_garnet.clk","self.clk"],
+          ["ub_conv_stencil_cyclic_0_garnet.data_out_0","self.op_hcompute_conv_stencil_1_read.0"],
+          ["ub_conv_stencil_cyclic_0_garnet.stencil_valid","self.op_hcompute_conv_stencil_1_read_extra_ctrl"],
+          ["ub_conv_stencil_cyclic_0_garnet.data_in_0","self.op_hcompute_conv_stencil_1_write.0"],
+          ["ub_conv_stencil_cyclic_0_garnet.data_in_1","self.op_hcompute_conv_stencil_write.0"],
+          ["ub_conv_stencil_cyclic_0_garnet.data_out_1","self.op_hcompute_hw_output_stencil_read.0"],
+          ["ub_conv_stencil_cyclic_0_garnet.stencil_valid","self.op_hcompute_hw_output_stencil_read_extra_ctrl"],
+          ["ub_conv_stencil_cyclic_0_garnet.flush","self.reset"],
+          ["ub_conv_stencil_cyclic_0_garnet.clk_en","ub_conv_stencil_cyclic_0_clk_en_const_lutcnst.bit.out"]
+        ]
+      },
+      "cu_op_hcompute_conv_stencil":{
+        "type":["Record",[
+          ["clk",["Named","coreir.clkIn"]],
+          ["valid_pass_in","BitIn"],
+          ["valid_pass_out","Bit"],
+          ["conv_stencil_op_hcompute_conv_stencil_write",["Array",1,["Array",16,"Bit"]]]
+        ]],
+        "instances":{
+          "inner_compute$const_p0__662":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0000"]}
+          }
+        },
+        "connections":[
+          ["self.conv_stencil_op_hcompute_conv_stencil_write.0","inner_compute$const_p0__662.out"],
+          ["self.valid_pass_out","self.valid_pass_in"]
+        ]
+      },
+      "cu_op_hcompute_conv_stencil_1":{
+        "type":["Record",[
+          ["clk",["Named","coreir.clkIn"]],
+          ["valid_pass_in","BitIn"],
+          ["valid_pass_out","Bit"],
+          ["conv_stencil_op_hcompute_conv_stencil_1_read",["Array",1,["Array",16,"BitIn"]]],
+          ["hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_read",["Array",1,["Array",16,"BitIn"]]],
+          ["hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_1_read",["Array",1,["Array",16,"BitIn"]]],
+          ["conv_stencil_op_hcompute_conv_stencil_1_write",["Array",1,["Array",16,"Bit"]]]
+        ]],
+        "instances":{
+          "inner_compute$add_conv_stencil_1_666_667$binop":{
+            "genref":"cgralib.PE",
+            "genargs":{"numbitports":["Int",3], "numdataports":["Int",2], "op_kind":["String","alu"], "width":["Int",16]},
+            "modargs":{"alu_op":["String","add"], "data0_mode":["String","BYPASS"], "data0_value":[["BitVector",16],"16'h0000"], "data1_mode":["String","BYPASS"], "data1_value":[["BitVector",16],"16'h0000"], "signed":["Bool",false]}
+          },
+          "inner_compute$mul_hw_kernel_global_wrapper_stencil_1_hw_input_global_wrapper_stencil_1_666$binop":{
+            "genref":"cgralib.PE",
+            "genargs":{"numbitports":["Int",3], "numdataports":["Int",2], "op_kind":["String","alu"], "width":["Int",16]},
+            "modargs":{"alu_op":["String","mult_0"], "data0_mode":["String","BYPASS"], "data0_value":[["BitVector",16],"16'h0000"], "data1_mode":["String","BYPASS"], "data1_value":[["BitVector",16],"16'h0000"], "signed":["Bool",false]}
+          }
+        },
+        "connections":[
+          ["self.conv_stencil_op_hcompute_conv_stencil_1_read.0","inner_compute$add_conv_stencil_1_666_667$binop.data.in.0"],
+          ["inner_compute$mul_hw_kernel_global_wrapper_stencil_1_hw_input_global_wrapper_stencil_1_666$binop.data.out","inner_compute$add_conv_stencil_1_666_667$binop.data.in.1"],
+          ["self.conv_stencil_op_hcompute_conv_stencil_1_write.0","inner_compute$add_conv_stencil_1_666_667$binop.data.out"],
+          ["self.hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_1_read.0","inner_compute$mul_hw_kernel_global_wrapper_stencil_1_hw_input_global_wrapper_stencil_1_666$binop.data.in.0"],
+          ["self.hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_read.0","inner_compute$mul_hw_kernel_global_wrapper_stencil_1_hw_input_global_wrapper_stencil_1_666$binop.data.in.1"],
+          ["self.valid_pass_out","self.valid_pass_in"]
+        ]
+      },
+      "cu_op_hcompute_hw_input_global_wrapper_stencil":{
+        "type":["Record",[
+          ["clk",["Named","coreir.clkIn"]],
+          ["valid_pass_in","BitIn"],
+          ["valid_pass_out","Bit"],
+          ["hw_input_stencil_op_hcompute_hw_input_global_wrapper_stencil_read",["Array",1,["Array",16,"BitIn"]]],
+          ["hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_write",["Array",1,["Array",16,"Bit"]]]
+        ]],
+        "connections":[
+          ["self.hw_input_stencil_op_hcompute_hw_input_global_wrapper_stencil_read.0","self.hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_write.0"],
+          ["self.valid_pass_out","self.valid_pass_in"]
+        ]
+      },
+      "cu_op_hcompute_hw_kernel_global_wrapper_stencil":{
+        "type":["Record",[
+          ["clk",["Named","coreir.clkIn"]],
+          ["valid_pass_in","BitIn"],
+          ["valid_pass_out","Bit"],
+          ["hw_kernel_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_read",["Array",1,["Array",16,"BitIn"]]],
+          ["hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_write",["Array",1,["Array",16,"Bit"]]]
+        ]],
+        "connections":[
+          ["self.hw_kernel_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_read.0","self.hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_write.0"],
+          ["self.valid_pass_out","self.valid_pass_in"]
+        ]
+      },
+      "cu_op_hcompute_hw_output_stencil":{
+        "type":["Record",[
+          ["clk",["Named","coreir.clkIn"]],
+          ["valid_pass_in","BitIn"],
+          ["valid_pass_out","Bit"],
+          ["conv_stencil_op_hcompute_hw_output_stencil_read",["Array",1,["Array",16,"BitIn"]]],
+          ["hw_output_stencil_op_hcompute_hw_output_stencil_write",["Array",1,["Array",16,"Bit"]]]
+        ]],
+        "connections":[
+          ["self.hw_output_stencil_op_hcompute_hw_output_stencil_write.0","self.conv_stencil_op_hcompute_hw_output_stencil_read.0"],
+          ["self.valid_pass_out","self.valid_pass_in"]
+        ]
+      },
+      "hcompute_conv_stencil":{
+        "type":["Record",[
+          ["out_conv_stencil",["Array",16,"Bit"]]
+        ]],
+        "instances":{
+          "const_p0__662":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0000"]}
+          }
+        },
+        "connections":[
+          ["self.out_conv_stencil","const_p0__662.out"]
+        ]
+      },
+      "hcompute_conv_stencil_1":{
+        "type":["Record",[
+          ["out_conv_stencil",["Array",16,"Bit"]],
+          ["in0_conv_stencil",["Array",1,["Array",16,"BitIn"]]],
+          ["in1_hw_input_global_wrapper_stencil",["Array",1,["Array",16,"BitIn"]]],
+          ["in2_hw_kernel_global_wrapper_stencil",["Array",1,["Array",16,"BitIn"]]]
+        ]],
+        "instances":{
+          "add_conv_stencil_1_666_667$binop":{
+            "genref":"cgralib.PE",
+            "genargs":{"numbitports":["Int",3], "numdataports":["Int",2], "op_kind":["String","alu"], "width":["Int",16]},
+            "modargs":{"alu_op":["String","add"], "data0_mode":["String","BYPASS"], "data0_value":[["BitVector",16],"16'h0000"], "data1_mode":["String","BYPASS"], "data1_value":[["BitVector",16],"16'h0000"], "signed":["Bool",false]}
+          },
+          "mul_hw_kernel_global_wrapper_stencil_1_hw_input_global_wrapper_stencil_1_666$binop":{
+            "genref":"cgralib.PE",
+            "genargs":{"numbitports":["Int",3], "numdataports":["Int",2], "op_kind":["String","alu"], "width":["Int",16]},
+            "modargs":{"alu_op":["String","mult_0"], "data0_mode":["String","BYPASS"], "data0_value":[["BitVector",16],"16'h0000"], "data1_mode":["String","BYPASS"], "data1_value":[["BitVector",16],"16'h0000"], "signed":["Bool",false]}
+          }
+        },
+        "connections":[
+          ["self.in0_conv_stencil.0","add_conv_stencil_1_666_667$binop.data.in.0"],
+          ["mul_hw_kernel_global_wrapper_stencil_1_hw_input_global_wrapper_stencil_1_666$binop.data.out","add_conv_stencil_1_666_667$binop.data.in.1"],
+          ["self.out_conv_stencil","add_conv_stencil_1_666_667$binop.data.out"],
+          ["self.in2_hw_kernel_global_wrapper_stencil.0","mul_hw_kernel_global_wrapper_stencil_1_hw_input_global_wrapper_stencil_1_666$binop.data.in.0"],
+          ["self.in1_hw_input_global_wrapper_stencil.0","mul_hw_kernel_global_wrapper_stencil_1_hw_input_global_wrapper_stencil_1_666$binop.data.in.1"]
+        ]
+      },
+      "hcompute_hw_input_global_wrapper_stencil":{
+        "type":["Record",[
+          ["out_hw_input_global_wrapper_stencil",["Array",16,"Bit"]],
+          ["in0_hw_input_stencil",["Array",1,["Array",16,"BitIn"]]]
+        ]],
+        "connections":[
+          ["self.out_hw_input_global_wrapper_stencil","self.in0_hw_input_stencil.0"]
+        ]
+      },
+      "hcompute_hw_kernel_global_wrapper_stencil":{
+        "type":["Record",[
+          ["out_hw_kernel_global_wrapper_stencil",["Array",16,"Bit"]],
+          ["in0_hw_kernel_stencil",["Array",1,["Array",16,"BitIn"]]]
+        ]],
+        "connections":[
+          ["self.out_hw_kernel_global_wrapper_stencil","self.in0_hw_kernel_stencil.0"]
+        ]
+      },
+      "hcompute_hw_output_stencil":{
+        "type":["Record",[
+          ["out_hw_output_stencil",["Array",16,"Bit"]],
+          ["in0_conv_stencil",["Array",1,["Array",16,"BitIn"]]]
+        ]],
+        "connections":[
+          ["self.out_hw_output_stencil","self.in0_conv_stencil.0"]
+        ]
+      },
+      "hw_input_global_wrapper_stencil_ub":{
+        "type":["Record",[
+          ["clk",["Named","coreir.clkIn"]],
+          ["flush","BitIn"],
+          ["reset","BitIn"],
+          ["op_hcompute_conv_stencil_1_read",["Array",1,["Array",16,"Bit"]]],
+          ["op_hcompute_conv_stencil_1_read_extra_ctrl","Bit"],
+          ["op_hcompute_hw_input_global_wrapper_stencil_write",["Array",1,["Array",16,"BitIn"]]],
+          ["op_hcompute_hw_input_global_wrapper_stencil_write_extra_ctrl","BitIn"]
+        ]],
+        "instances":{
+          "chain_disen_const_U3":{
+            "modref":"corebit.const",
+            "modargs":{"value":["Bool",false]}
+          },
+          "ub_hw_input_global_wrapper_stencil_cyclic_0_clk_en_const_lutcnst":{
+            "genref":"cgralib.PE",
+            "genargs":{"numbitports":["Int",3], "numdataports":["Int",2], "op_kind":["String","bit"], "width":["Int",16]},
+            "modargs":{"bit0_mode":["String","BYPASS"], "bit0_value":["Bool",false], "bit1_mode":["String","BYPASS"], "bit1_value":["Bool",false], "bit2_mode":["String","BYPASS"], "bit2_value":["Bool",false], "flag_sel":["String","lut"], "lut_value":[["BitVector",8],"8'h3f"]}
+          },
+          "ub_hw_input_global_wrapper_stencil_cyclic_0_garnet":{
+            "genref":"cgralib.Mem",
+            "genargs":{"ID":["String","_U2"], "has_external_addrgen":["Bool",false], "has_flush":["Bool",true], "has_read_valid":["Bool",false], "has_reset":["Bool",false], "has_stencil_valid":["Bool",true], "has_valid":["Bool",false], "is_rom":["Bool",false], "num_inputs":["Int",1], "num_outputs":["Int",1], "use_prebuilt_mem":["Bool",true], "width":["Int",16]},
+            "modargs":{"config":["Json",{"agg2sram_0":{"cycle_starting_addr":[4],"cycle_stride":[4,30],"dimensionality":2,"extent":[8,30],"read_data_starting_addr":[0],"read_data_stride":[1,0],"write_data_starting_addr":[0],"write_data_stride":[1,8]},"in2agg_0":{"cycle_starting_addr":[0],"cycle_stride":[1,30],"dimensionality":2,"extent":[30,30],"write_data_starting_addr":[0],"write_data_stride":[1,0]},"sram2tb_0":{"cycle_starting_addr":[899],"cycle_stride":[4,32,896,2688],"dimensionality":4,"extent":[8,28,3,3],"read_data_starting_addr":[0],"read_data_stride":[1,8,0,8],"write_data_starting_addr":[0],"write_data_stride":[1,0,0,0]},"stencil_valid":{"cycle_starting_addr":[904],"cycle_stride":[1,32,896,2688],"dimensionality":4,"extent":[28,28,3,3]},"tb2out_0":{"cycle_starting_addr":[904],"cycle_stride":[1,4,32,896,2688],"dimensionality":5,"extent":[4,7,28,3,3],"read_data_starting_addr":[0],"read_data_stride":[1,4,0,1,0]}}], "init":["Json",null], "mode":["String","lake"]}
+          }
+        },
+        "connections":[
+          ["ub_hw_input_global_wrapper_stencil_cyclic_0_garnet.clk","self.clk"],
+          ["ub_hw_input_global_wrapper_stencil_cyclic_0_garnet.data_out_0","self.op_hcompute_conv_stencil_1_read.0"],
+          ["ub_hw_input_global_wrapper_stencil_cyclic_0_garnet.stencil_valid","self.op_hcompute_conv_stencil_1_read_extra_ctrl"],
+          ["ub_hw_input_global_wrapper_stencil_cyclic_0_garnet.data_in_0","self.op_hcompute_hw_input_global_wrapper_stencil_write.0"],
+          ["ub_hw_input_global_wrapper_stencil_cyclic_0_garnet.flush","self.reset"],
+          ["ub_hw_input_global_wrapper_stencil_cyclic_0_garnet.clk_en","ub_hw_input_global_wrapper_stencil_cyclic_0_clk_en_const_lutcnst.bit.out"]
+        ]
+      },
+      "hw_kernel_global_wrapper_stencil_ub":{
+        "type":["Record",[
+          ["clk",["Named","coreir.clkIn"]],
+          ["flush","BitIn"],
+          ["reset","BitIn"],
+          ["op_hcompute_conv_stencil_1_read",["Array",1,["Array",16,"Bit"]]],
+          ["op_hcompute_conv_stencil_1_read_extra_ctrl","Bit"],
+          ["op_hcompute_hw_kernel_global_wrapper_stencil_write",["Array",1,["Array",16,"BitIn"]]],
+          ["op_hcompute_hw_kernel_global_wrapper_stencil_write_extra_ctrl","BitIn"]
+        ]],
+        "instances":{
+          "ub_hw_kernel_global_wrapper_stencil_cyclic_0_clk_en_const1_lutcnst":{
+            "genref":"cgralib.PE",
+            "genargs":{"numbitports":["Int",3], "numdataports":["Int",2], "op_kind":["String","bit"], "width":["Int",16]},
+            "modargs":{"bit0_mode":["String","BYPASS"], "bit0_value":["Bool",false], "bit1_mode":["String","BYPASS"], "bit1_value":["Bool",false], "bit2_mode":["String","BYPASS"], "bit2_value":["Bool",false], "flag_sel":["String","lut"], "lut_value":[["BitVector",8],"8'h3f"]}
+          },
+          "ub_hw_kernel_global_wrapper_stencil_cyclic_0_clk_en_const_lutcnst":{
+            "genref":"cgralib.PE",
+            "genargs":{"numbitports":["Int",3], "numdataports":["Int",2], "op_kind":["String","bit"], "width":["Int",16]},
+            "modargs":{"bit0_mode":["String","BYPASS"], "bit0_value":["Bool",false], "bit1_mode":["String","BYPASS"], "bit1_value":["Bool",false], "bit2_mode":["String","BYPASS"], "bit2_value":["Bool",false], "flag_sel":["String","lut"], "lut_value":[["BitVector",8],"8'h3f"]}
+          },
+          "ub_hw_kernel_global_wrapper_stencil_cyclic_0_garnet":{
+            "genref":"cgralib.Pond",
+            "genargs":{"ID":["String","_U4"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
+            "modargs":{"config":["Json",{"in2regfile":{"cycle_starting_addr":[0],"cycle_stride":[1],"dimensionality":1,"extent":[9],"write_data_starting_addr":[0],"write_data_stride":[1]},"regfile2out":{"cycle_starting_addr":[904],"cycle_stride":[1,32,896],"dimensionality":3,"extent":[28,28,9],"read_data_starting_addr":[0],"read_data_stride":[0,0,1]}}], "mode":["String","pond"]}
+          }
+        },
+        "connections":[
+          ["ub_hw_kernel_global_wrapper_stencil_cyclic_0_garnet.clk","self.clk"],
+          ["ub_hw_kernel_global_wrapper_stencil_cyclic_0_garnet.data_out_pond","self.op_hcompute_conv_stencil_1_read.0"],
+          ["self.op_hcompute_hw_kernel_global_wrapper_stencil_write_extra_ctrl","self.op_hcompute_conv_stencil_1_read_extra_ctrl"],
+          ["ub_hw_kernel_global_wrapper_stencil_cyclic_0_garnet.data_in_pond","self.op_hcompute_hw_kernel_global_wrapper_stencil_write.0"],
+          ["ub_hw_kernel_global_wrapper_stencil_cyclic_0_garnet.flush","self.reset"],
+          ["ub_hw_kernel_global_wrapper_stencil_cyclic_0_garnet.clk_en","ub_hw_kernel_global_wrapper_stencil_cyclic_0_clk_en_const1_lutcnst.bit.out"],
+          ["ub_hw_kernel_global_wrapper_stencil_cyclic_0_garnet.rst_n","ub_hw_kernel_global_wrapper_stencil_cyclic_0_clk_en_const_lutcnst.bit.out"]
+        ]
+      },
+      "op_hcompute_hw_input_global_wrapper_stencil_exe_start_pt__U16":{
+        "type":["Record",[
+          ["in","BitIn"],
+          ["out","Bit"]
+        ]],
+        "connections":[
+          ["self.out","self.in"]
+        ]
+      },
+      "op_hcompute_hw_input_global_wrapper_stencil_read_start_pt__U15":{
+        "type":["Record",[
+          ["in","BitIn"],
+          ["out","Bit"]
+        ]],
+        "connections":[
+          ["self.out","self.in"]
+        ]
+      },
+      "op_hcompute_hw_input_global_wrapper_stencil_write_start_pt__U17":{
+        "type":["Record",[
+          ["in","BitIn"],
+          ["out","Bit"]
+        ]],
+        "connections":[
+          ["self.out","self.in"]
+        ]
+      },
+      "op_hcompute_hw_kernel_global_wrapper_stencil_exe_start_pt__U11":{
+        "type":["Record",[
+          ["in","BitIn"],
+          ["out","Bit"]
+        ]],
+        "connections":[
+          ["self.out","self.in"]
+        ]
+      },
+      "op_hcompute_hw_kernel_global_wrapper_stencil_read_start_pt__U10":{
+        "type":["Record",[
+          ["in","BitIn"],
+          ["out","Bit"]
+        ]],
+        "connections":[
+          ["self.out","self.in"]
+        ]
+      },
+      "op_hcompute_hw_kernel_global_wrapper_stencil_write_start_pt__U12":{
+        "type":["Record",[
+          ["in","BitIn"],
+          ["out","Bit"]
+        ]],
+        "connections":[
+          ["self.out","self.in"]
+        ]
+      },
+      "op_hcompute_hw_output_stencil_exe_start_pt__U7":{
+        "type":["Record",[
+          ["in","BitIn"],
+          ["out","Bit"]
+        ]],
+        "connections":[
+          ["self.out","self.in"]
+        ]
+      },
+      "op_hcompute_hw_output_stencil_read_start_pt__U6":{
+        "type":["Record",[
+          ["in","BitIn"],
+          ["out","Bit"]
+        ]],
+        "connections":[
+          ["self.out","self.in"]
+        ]
+      },
+      "op_hcompute_hw_output_stencil_write_start_pt__U8":{
+        "type":["Record",[
+          ["in","BitIn"],
+          ["out","Bit"]
+        ]],
+        "connections":[
+          ["self.out","self.in"]
+        ]
+      },
+      "resnet_simple":{
+        "type":["Record",[
+          ["clk",["Named","coreir.clkIn"]],
+          ["reset","BitIn"],
+          ["hw_input_stencil_op_hcompute_hw_input_global_wrapper_stencil_read_en","Bit"],
+          ["hw_input_stencil_op_hcompute_hw_input_global_wrapper_stencil_read",["Array",1,["Array",16,"BitIn"]]],
+          ["hw_kernel_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_read_en","Bit"],
+          ["hw_kernel_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_read",["Array",1,["Array",16,"BitIn"]]],
+          ["hw_output_stencil_op_hcompute_hw_output_stencil_write_valid","Bit"],
+          ["hw_output_stencil_op_hcompute_hw_output_stencil_write",["Array",1,["Array",16,"Bit"]]]
+        ]],
+        "instances":{
+          "conv_stencil$chain_disen_const_U1":{
+            "modref":"corebit.const",
+            "modargs":{"value":["Bool",false]}
+          },
+          "conv_stencil$ub_conv_stencil_cyclic_0_clk_en_const_lutcnst":{
+            "genref":"cgralib.PE",
+            "genargs":{"numbitports":["Int",3], "numdataports":["Int",2], "op_kind":["String","bit"], "width":["Int",16]},
+            "modargs":{"bit0_mode":["String","BYPASS"], "bit0_value":["Bool",false], "bit1_mode":["String","BYPASS"], "bit1_value":["Bool",false], "bit2_mode":["String","BYPASS"], "bit2_value":["Bool",false], "flag_sel":["String","lut"], "lut_value":[["BitVector",8],"8'h3f"]}
+          },
+          "conv_stencil$ub_conv_stencil_cyclic_0_garnet":{
+            "genref":"cgralib.Mem",
+            "genargs":{"ID":["String","_U0"], "has_external_addrgen":["Bool",false], "has_flush":["Bool",true], "has_read_valid":["Bool",false], "has_reset":["Bool",false], "has_stencil_valid":["Bool",true], "has_valid":["Bool",false], "is_rom":["Bool",false], "num_inputs":["Int",2], "num_outputs":["Int",2], "use_prebuilt_mem":["Bool",true], "width":["Int",16]},
+            "modargs":{"config":["Json",{"agg2sram_0":{"cycle_starting_addr":[908],"cycle_stride":[4,32,896,2688],"dimensionality":4,"extent":[7,28,3,3],"read_data_starting_addr":[0],"read_data_stride":[1,3,0,0],"write_data_starting_addr":[0],"write_data_stride":[1,7,0,0]},"agg2sram_1":{"cycle_starting_addr":[4],"cycle_stride":[4,28],"dimensionality":2,"extent":[7,28],"read_data_starting_addr":[0],"read_data_stride":[1,3],"write_data_starting_addr":[0],"write_data_stride":[1,7]},"in2agg_0":{"cycle_starting_addr":[904],"cycle_stride":[1,4,32,896,2688],"dimensionality":5,"extent":[4,7,28,3,3],"write_data_starting_addr":[0],"write_data_stride":[1,4,12,0,0]},"in2agg_1":{"cycle_starting_addr":[0],"cycle_stride":[1,4,28],"dimensionality":3,"extent":[4,7,28],"write_data_starting_addr":[0],"write_data_stride":[1,4,12]},"sram2tb_0":{"cycle_starting_addr":[899],"cycle_stride":[4,32,896,2688],"dimensionality":4,"extent":[7,28,3,3],"read_data_starting_addr":[0],"read_data_stride":[1,7,0,0],"write_data_starting_addr":[0],"write_data_stride":[1,3,0,0]},"sram2tb_1":{"cycle_starting_addr":[8959],"cycle_stride":[4,28],"dimensionality":2,"extent":[7,28],"read_data_starting_addr":[0],"read_data_stride":[1,7],"write_data_starting_addr":[0],"write_data_stride":[1,3]},"stencil_valid":{"cycle_starting_addr":[8964],"cycle_stride":[1,28],"dimensionality":2,"extent":[28,28]},"tb2out_0":{"cycle_starting_addr":[904],"cycle_stride":[1,4,32,896,2688],"dimensionality":5,"extent":[4,7,28,3,3],"read_data_starting_addr":[0],"read_data_stride":[1,4,12,0,0]},"tb2out_1":{"cycle_starting_addr":[8964],"cycle_stride":[1,4,28],"dimensionality":3,"extent":[4,7,28],"read_data_starting_addr":[0],"read_data_stride":[1,4,12]}}], "init":["Json",null], "mode":["String","lake"]}
+          },
+          "hw_input_global_wrapper_stencil$chain_disen_const_U3":{
+            "modref":"corebit.const",
+            "modargs":{"value":["Bool",false]}
+          },
+          "hw_input_global_wrapper_stencil$ub_hw_input_global_wrapper_stencil_cyclic_0_clk_en_const_lutcnst":{
+            "genref":"cgralib.PE",
+            "genargs":{"numbitports":["Int",3], "numdataports":["Int",2], "op_kind":["String","bit"], "width":["Int",16]},
+            "modargs":{"bit0_mode":["String","BYPASS"], "bit0_value":["Bool",false], "bit1_mode":["String","BYPASS"], "bit1_value":["Bool",false], "bit2_mode":["String","BYPASS"], "bit2_value":["Bool",false], "flag_sel":["String","lut"], "lut_value":[["BitVector",8],"8'h3f"]}
+          },
+          "hw_input_global_wrapper_stencil$ub_hw_input_global_wrapper_stencil_cyclic_0_garnet":{
+            "genref":"cgralib.Mem",
+            "genargs":{"ID":["String","_U2"], "has_external_addrgen":["Bool",false], "has_flush":["Bool",true], "has_read_valid":["Bool",false], "has_reset":["Bool",false], "has_stencil_valid":["Bool",true], "has_valid":["Bool",false], "is_rom":["Bool",false], "num_inputs":["Int",1], "num_outputs":["Int",1], "use_prebuilt_mem":["Bool",true], "width":["Int",16]},
+            "modargs":{"config":["Json",{"agg2sram_0":{"cycle_starting_addr":[4],"cycle_stride":[4,30],"dimensionality":2,"extent":[8,30],"read_data_starting_addr":[0],"read_data_stride":[1,0],"write_data_starting_addr":[0],"write_data_stride":[1,8]},"in2agg_0":{"cycle_starting_addr":[0],"cycle_stride":[1,30],"dimensionality":2,"extent":[30,30],"write_data_starting_addr":[0],"write_data_stride":[1,0]},"sram2tb_0":{"cycle_starting_addr":[899],"cycle_stride":[4,32,896,2688],"dimensionality":4,"extent":[8,28,3,3],"read_data_starting_addr":[0],"read_data_stride":[1,8,0,8],"write_data_starting_addr":[0],"write_data_stride":[1,0,0,0]},"stencil_valid":{"cycle_starting_addr":[904],"cycle_stride":[1,32,896,2688],"dimensionality":4,"extent":[28,28,3,3]},"tb2out_0":{"cycle_starting_addr":[904],"cycle_stride":[1,4,32,896,2688],"dimensionality":5,"extent":[4,7,28,3,3],"read_data_starting_addr":[0],"read_data_stride":[1,4,0,1,0]}}], "init":["Json",null], "mode":["String","lake"]}
+          },
+          "hw_kernel_global_wrapper_stencil$ub_hw_kernel_global_wrapper_stencil_cyclic_0_clk_en_const1_lutcnst":{
+            "genref":"cgralib.PE",
+            "genargs":{"numbitports":["Int",3], "numdataports":["Int",2], "op_kind":["String","bit"], "width":["Int",16]},
+            "modargs":{"bit0_mode":["String","BYPASS"], "bit0_value":["Bool",false], "bit1_mode":["String","BYPASS"], "bit1_value":["Bool",false], "bit2_mode":["String","BYPASS"], "bit2_value":["Bool",false], "flag_sel":["String","lut"], "lut_value":[["BitVector",8],"8'h3f"]}
+          },
+          "hw_kernel_global_wrapper_stencil$ub_hw_kernel_global_wrapper_stencil_cyclic_0_clk_en_const_lutcnst":{
+            "genref":"cgralib.PE",
+            "genargs":{"numbitports":["Int",3], "numdataports":["Int",2], "op_kind":["String","bit"], "width":["Int",16]},
+            "modargs":{"bit0_mode":["String","BYPASS"], "bit0_value":["Bool",false], "bit1_mode":["String","BYPASS"], "bit1_value":["Bool",false], "bit2_mode":["String","BYPASS"], "bit2_value":["Bool",false], "flag_sel":["String","lut"], "lut_value":[["BitVector",8],"8'h3f"]}
+          },
+          "hw_kernel_global_wrapper_stencil$ub_hw_kernel_global_wrapper_stencil_cyclic_0_garnet":{
+            "genref":"cgralib.Pond",
+            "genargs":{"ID":["String","_U4"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
+            "modargs":{"config":["Json",{"in2regfile":{"cycle_starting_addr":[0],"cycle_stride":[1],"dimensionality":1,"extent":[9],"write_data_starting_addr":[0],"write_data_stride":[1]},"regfile2out":{"cycle_starting_addr":[904],"cycle_stride":[1,32,896],"dimensionality":3,"extent":[28,28,9],"read_data_starting_addr":[0],"read_data_stride":[0,0,1]}}], "mode":["String","pond"]}
+          },
+          "io16_hw_output_stencil_op_hcompute_hw_output_stencil_write_0":{
+            "genref":"cgralib.IO",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"mode":["String","out"]}
+          },
+          "io16in_hw_input_stencil_op_hcompute_hw_input_global_wrapper_stencil_read_0":{
+            "genref":"cgralib.IO",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"mode":["String","in"]}
+          },
+          "io16in_hw_kernel_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_read_0":{
+            "genref":"cgralib.IO",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"mode":["String","in"]}
+          },
+          "io1_hw_output_stencil_op_hcompute_hw_output_stencil_write_valid":{
+            "modref":"cgralib.BitIO",
+            "modargs":{"mode":["String","out"]}
+          },
+          "io1in_reset":{
+            "modref":"cgralib.BitIO",
+            "modargs":{"mode":["String","in"]}
+          },
+          "op_hcompute_conv_stencil$inner_compute$const_p0__662":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0000"]}
+          },
+          "op_hcompute_conv_stencil_1$inner_compute$add_conv_stencil_1_666_667$binop":{
+            "genref":"cgralib.PE",
+            "genargs":{"numbitports":["Int",3], "numdataports":["Int",2], "op_kind":["String","alu"], "width":["Int",16]},
+            "modargs":{"alu_op":["String","add"], "data0_mode":["String","BYPASS"], "data0_value":[["BitVector",16],"16'h0000"], "data1_mode":["String","BYPASS"], "data1_value":[["BitVector",16],"16'h0000"], "signed":["Bool",false]}
+          },
+          "op_hcompute_conv_stencil_1$inner_compute$mul_hw_kernel_global_wrapper_stencil_1_hw_input_global_wrapper_stencil_1_666$binop":{
+            "genref":"cgralib.PE",
+            "genargs":{"numbitports":["Int",3], "numdataports":["Int",2], "op_kind":["String","alu"], "width":["Int",16]},
+            "modargs":{"alu_op":["String","mult_0"], "data0_mode":["String","BYPASS"], "data0_value":[["BitVector",16],"16'h0000"], "data1_mode":["String","BYPASS"], "data1_value":[["BitVector",16],"16'h0000"], "signed":["Bool",false]}
+          },
+          "op_hcompute_hw_output_stencil_port_controller_clk_en_const_lutcnst":{
+            "genref":"cgralib.PE",
+            "genargs":{"numbitports":["Int",3], "numdataports":["Int",2], "op_kind":["String","bit"], "width":["Int",16]},
+            "modargs":{"bit0_mode":["String","BYPASS"], "bit0_value":["Bool",false], "bit1_mode":["String","BYPASS"], "bit1_value":["Bool",false], "bit2_mode":["String","BYPASS"], "bit2_value":["Bool",false], "flag_sel":["String","lut"], "lut_value":[["BitVector",8],"8'h3f"]}
+          },
+          "op_hcompute_hw_output_stencil_port_controller_garnet":{
+            "genref":"cgralib.Mem",
+            "genargs":{"ID":["String","_U5"], "has_external_addrgen":["Bool",false], "has_flush":["Bool",true], "has_read_valid":["Bool",false], "has_reset":["Bool",false], "has_stencil_valid":["Bool",true], "has_valid":["Bool",false], "is_rom":["Bool",false], "num_inputs":["Int",0], "num_outputs":["Int",0], "use_prebuilt_mem":["Bool",true], "width":["Int",16]},
+            "modargs":{"config":["Json",{"stencil_valid":{"cycle_starting_addr":[8964],"cycle_stride":[1,28],"dimensionality":2,"extent":[28,28]}}], "init":["Json",null], "mode":["String","lake"]}
+          }
+        },
+        "connections":[
+          ["conv_stencil$ub_conv_stencil_cyclic_0_garnet.clk_en","conv_stencil$ub_conv_stencil_cyclic_0_clk_en_const_lutcnst.bit.out"],
+          ["op_hcompute_conv_stencil_1$inner_compute$add_conv_stencil_1_666_667$binop.data.out","conv_stencil$ub_conv_stencil_cyclic_0_garnet.data_in_0"],
+          ["op_hcompute_conv_stencil$inner_compute$const_p0__662.out","conv_stencil$ub_conv_stencil_cyclic_0_garnet.data_in_1"],
+          ["op_hcompute_conv_stencil_1$inner_compute$add_conv_stencil_1_666_667$binop.data.in.0","conv_stencil$ub_conv_stencil_cyclic_0_garnet.data_out_0"],
+          ["io16_hw_output_stencil_op_hcompute_hw_output_stencil_write_0.in","conv_stencil$ub_conv_stencil_cyclic_0_garnet.data_out_1"],
+          ["io1in_reset.out","conv_stencil$ub_conv_stencil_cyclic_0_garnet.flush"],
+          ["hw_input_global_wrapper_stencil$ub_hw_input_global_wrapper_stencil_cyclic_0_garnet.clk_en","hw_input_global_wrapper_stencil$ub_hw_input_global_wrapper_stencil_cyclic_0_clk_en_const_lutcnst.bit.out"],
+          ["io16in_hw_input_stencil_op_hcompute_hw_input_global_wrapper_stencil_read_0.out","hw_input_global_wrapper_stencil$ub_hw_input_global_wrapper_stencil_cyclic_0_garnet.data_in_0"],
+          ["op_hcompute_conv_stencil_1$inner_compute$mul_hw_kernel_global_wrapper_stencil_1_hw_input_global_wrapper_stencil_1_666$binop.data.in.1","hw_input_global_wrapper_stencil$ub_hw_input_global_wrapper_stencil_cyclic_0_garnet.data_out_0"],
+          ["io1in_reset.out","hw_input_global_wrapper_stencil$ub_hw_input_global_wrapper_stencil_cyclic_0_garnet.flush"],
+          ["hw_kernel_global_wrapper_stencil$ub_hw_kernel_global_wrapper_stencil_cyclic_0_garnet.clk_en","hw_kernel_global_wrapper_stencil$ub_hw_kernel_global_wrapper_stencil_cyclic_0_clk_en_const1_lutcnst.bit.out"],
+          ["hw_kernel_global_wrapper_stencil$ub_hw_kernel_global_wrapper_stencil_cyclic_0_garnet.rst_n","hw_kernel_global_wrapper_stencil$ub_hw_kernel_global_wrapper_stencil_cyclic_0_clk_en_const_lutcnst.bit.out"],
+          ["io16in_hw_kernel_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_read_0.out","hw_kernel_global_wrapper_stencil$ub_hw_kernel_global_wrapper_stencil_cyclic_0_garnet.data_in_pond"],
+          ["op_hcompute_conv_stencil_1$inner_compute$mul_hw_kernel_global_wrapper_stencil_1_hw_input_global_wrapper_stencil_1_666$binop.data.in.0","hw_kernel_global_wrapper_stencil$ub_hw_kernel_global_wrapper_stencil_cyclic_0_garnet.data_out_pond"],
+          ["io1in_reset.out","hw_kernel_global_wrapper_stencil$ub_hw_kernel_global_wrapper_stencil_cyclic_0_garnet.flush"],
+          ["op_hcompute_hw_output_stencil_port_controller_garnet.stencil_valid","io1_hw_output_stencil_op_hcompute_hw_output_stencil_write_valid.in"],
+          ["op_hcompute_hw_output_stencil_port_controller_garnet.flush","io1in_reset.out"],
+          ["op_hcompute_conv_stencil_1$inner_compute$mul_hw_kernel_global_wrapper_stencil_1_hw_input_global_wrapper_stencil_1_666$binop.data.out","op_hcompute_conv_stencil_1$inner_compute$add_conv_stencil_1_666_667$binop.data.in.1"],
+          ["op_hcompute_hw_output_stencil_port_controller_garnet.clk_en","op_hcompute_hw_output_stencil_port_controller_clk_en_const_lutcnst.bit.out"]
+        ]
+      }
+    },
+    "generators":{
+      "delay_tile":{
+        "typegen":"global.delay_tile_TG",
+        "genparams":{"delay":"Int"}
+      },
+      "raw_dual_port_sram_tile":{
+        "typegen":"global.raw_dual_port_sram_TG",
+        "genparams":{"depth":"Int"}
+      },
+      "raw_quad_port_memtile":{
+        "typegen":"global.raw_quad_port_memtile_TG",
+        "genparams":{"depth":"Int"}
+      },
+      "tahoe":{
+        "typegen":"global.tahoe_TG",
+        "genparams":{"depth":"Int"}
+      }
+    },
+    "typegens":{
+      "delay_tile_TG":[{"delay":"Int"},"implicit"],
+      "raw_dual_port_sram_TG":[{"depth":"Int"},"implicit"],
+      "raw_quad_port_memtile_TG":[{"depth":"Int"},"implicit"],
+      "tahoe_TG":[{"depth":"Int"},"implicit"]
+    }
+  },
+  "mantle":{
+    "generators":{
+      "add":{
+        "typegen":"mantle.addType",
+        "genparams":{"has_cin":"Bool", "has_cout":"Bool", "width":"Int"},
+        "defaultgenargs":{"has_cin":["Bool",false], "has_cout":["Bool",false]}
+      },
+      "counter":{
+        "typegen":"mantle.counter_type",
+        "genparams":{"has_en":"Bool", "has_max":"Bool", "has_srst":"Bool", "width":"Int"},
+        "defaultgenargs":{"has_en":["Bool",false], "has_max":["Bool",false], "has_srst":["Bool",false]}
+      },
+      "reg":{
+        "typegen":"mantle.regType",
+        "genparams":{"has_clr":"Bool", "has_en":"Bool", "has_rst":"Bool", "width":"Int"},
+        "modules":[
+          [{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},{
+            "type":["Record",[
+              ["in",["Array",16,"BitIn"]],
+              ["clk",["Named","coreir.clkIn"]],
+              ["out",["Array",16,"Bit"]]
+            ]],
+            "modparams":{"init":["BitVector",16]},
+            "defaultmodargs":{"init":[["BitVector",16],"16'h0000"]},
+            "instances":{
+              "reg0":{
+                "genref":"coreir.reg",
+                "genargs":{"width":["Int",16]},
+                "modargs":{"clk_posedge":["Bool",true], "init":[["BitVector",16],"Arg","init"]}
+              }
+            },
+            "connections":[
+              ["self.clk","reg0.clk"],
+              ["self.in","reg0.in"],
+              ["self.out","reg0.out"]
+            ]
+          }]
+        ],
+        "defaultgenargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false]}
+      },
+      "regCE":{
+        "typegen":"mantle.regCEType",
+        "genparams":{"width":"Int"},
+        "metadata":{"verilog":{"definition":"  reg [width-1:0] value;\n  always @(posedge clk) begin\n    if (ce) begin\n      value <= in;\n    end\n  end\n  assign out = value;","interface":["input [width-1:0] in","input ce","output [width-1:0] out","input clk"]}}
+      },
+      "regCE_arst":{
+        "typegen":"mantle.regCEArstType",
+        "genparams":{"width":"Int"},
+        "metadata":{"verilog":{"definition":"  reg [width-1:0] value;\n  always @(posedge clk, posedge arst) begin\n    if (arst) begin\n      value <= init;\n    end\n    else if (ce) begin\n      value <= in;\n    end\n  end\n  assign out = value;","interface":["input [width-1:0] in","input ce","output [width-1:0] out","input clk","input arst"],"parameters":["init"]}}
+      },
+      "sub":{
+        "typegen":"mantle.addType",
+        "genparams":{"has_cin":"Bool", "has_cout":"Bool", "width":"Int"},
+        "defaultgenargs":{"has_cin":["Bool",false], "has_cout":["Bool",false]}
+      },
+      "wire":{
+        "typegen":"mantle.wire",
+        "genparams":{"type":"CoreIRType"}
+      }
+    },
+    "typegens":{
+      "addType":[{"has_cin":"Bool", "has_cout":"Bool", "width":"Int"},"implicit"],
+      "counter_type":[{"has_en":"Bool", "has_max":"Bool", "has_srst":"Bool", "width":"Int"},"implicit"],
+      "regCEArstType":[{"width":"Int"},"implicit"],
+      "regCEType":[{"width":"Int"},"implicit"],
+      "regType":[{"has_clr":"Bool", "has_en":"Bool", "has_rst":"Bool", "width":"Int"},"sparse",[
+        [{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},["Record",[["in",["Array",16,"BitIn"]],["clk",["Named","coreir.clkIn"]],["out",["Array",16,"Bit"]]]]]
+      ]],
+      "wire":[{"type":"CoreIRType"},"implicit"]
+    }
+  }
+}
+}
