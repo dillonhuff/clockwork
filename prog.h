@@ -813,6 +813,8 @@ struct prog {
   // for the compute unit implementations
   string compute_unit_file;
 
+  prog deep_copy();
+
   map<string, vector<int> > buffer_bounds;
 
   void reset_context();

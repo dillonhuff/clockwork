@@ -9753,3 +9753,12 @@ void prepare_for_clockwork_scheduling(prog& prg) {
   unroll_mismatched_inner_loops(prg);
   merge_basic_block_ops(prg);
 }
+
+prog prog::deep_copy() {
+  prog cpy;
+
+  return cpy;
+}
+
+
+

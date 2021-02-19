@@ -20273,6 +20273,11 @@ void jac3_2_static_dynamic_comparison() {
   prog prg = jac.realize(options, out_name, cols, rows, 1);
   prepare_for_clockwork_scheduling(prg);
 
+  prog static_prg = prg.deep_copy();
+  static_prg.pretty_print();
+
+  assert(false);
+
   jac.generate_soda_file(prg.name, throughput);
 
   move_to_benchmarks_folder(out_name + "_opt");
