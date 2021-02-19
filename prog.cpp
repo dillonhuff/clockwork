@@ -8657,7 +8657,7 @@ void set_channel_depths_ilp(const int kernel_depth, app_dag& dag) {
 
 }
 
-void set_channel_depths_to_with_kernel_depth(const int kernel_depth, app_dag& dag) {
+void set_channel_depths_by_kernel_depth(const int kernel_depth, app_dag& dag) {
 
   std::set<std::string> done;
   std::set<std::string> to_size;
@@ -8839,7 +8839,7 @@ void generate_app_code(
   if (options.slack_matching.tp == SLACK_MATCHING_TYPE_FIXED) {
     set_channel_depths_to_constant(options.slack_matching.depth, dag);
   } else {
-    assert(false);
+    set_channel_depths_by_stage_depths(dag);
   }
   //set_channel_depths_by_stage_depths(dag);
   //set_channel_depths_to_constant(32, dag);
