@@ -27,13 +27,9 @@ hw_uint<32> llf_float_average(const hw_uint<32>& pix0, const hw_uint<32>& pix1) 
 
 float llf_remap(const float x) {
   float alpha = 2.0;
-  //cout << "x = " << x << endl;
   float fx = x / 256.0f;
-  //cout << "fx = " << fx << endl;
   float exp_pow = -fx * fx / 2.0f;
-  //cout << "exp pow = " << exp_pow << endl;
   float exp_val = exp(exp_pow);
-  //cout << "exp = " << exp_val << endl;
   float res = alpha * fx * exp_val;
   
   return res;
@@ -50,9 +46,7 @@ hw_uint<32> llf_level_entry(const hw_uint<32>& in, const int k) {
   float idx = gray * (float) (levels - 1) * 256.0f;
   int idx_i = clamp_val((int) idx, 0, (levels - 1) * 256);
   float remap_addr = idx_i - 256*k;
-  //cout << "remap addr = " << remap_addr << endl;
   float llf_coeff = llf_remap(remap_addr);
-  //cout << "llf coeff = " << llf_coeff << endl;
   float res = beta * (gray - level) + level + llf_coeff;
   //float res = gray + llf_remap(idx_i - 256 * k);
   //float res = gray + llf_remap(idx_i - 128 * k);
@@ -143,10 +137,6 @@ hw_uint<32> llf_rescale_gray_float(
   float res = (scales_f * gray_f);
 
 
-  cout << "Gray value      : " << gray_f << endl;
-  cout << "Gray value (int): " << gray.to_int() << endl << endl;
-  //return to_bits(gray_f);
-  //return to_bits(0.5f);
   return to_bits(res);
 }
 
@@ -156,10 +146,6 @@ hw_uint<32> llf_to_color_float(const hw_uint<32>& scales,
   float original_f = to_float(original);
   float gray_f = to_float(gray);
   float scales_f = to_float(scales);
-  //cout << "gray   = " << gray_f << endl;
-  //cout << "scales = " << scales_f << endl;
-  //assert(gray == scales);
-  //cout << endl;
   float eps = 0.01f;
   float res = (scales_f * (original_f + eps)) / (gray_f + eps);
   return to_bits(res);
@@ -198,9 +184,7 @@ hw_uint<32> llf_interpolate_float(
   float gray_f = to_float(gray);
   float level = gray_f * ((float) num_levels - 1);
   int level_i = clamp_val((int) level, 0, num_levels - 2);
-  //cout << "level_i = " << level_i << endl;
   float level_f = level - (float) level_i;
-  //cout << "level_f = " << level_f << endl << endl;
   if (level_i == 0) {
     return scale_by(level_f, intensity_0_f, intensity_1_f);
   }
