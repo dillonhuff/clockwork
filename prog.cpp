@@ -4508,7 +4508,6 @@ prog extract_group_to_separate_prog(const std::set<std::string>& group, prog& or
 	}
 	extracted.name = prg_name;
 
-	//for(auto kernel : topologically_sort_kernels(original)){
 	for(auto kernel : get_kernels_in_order(original)){
 		if(elem(kernel, group)){
 			op* kernel_copy = extracted.add_loop(kernel, original.start(kernel), original.end_exclusive(kernel));
@@ -9756,7 +9755,9 @@ void prepare_for_clockwork_scheduling(prog& prg) {
 
 prog prog::deep_copy() {
   prog cpy;
-
+  for (auto c : root->children) {
+    deep_copy_child(cpy.root, c, *this);
+  }
   return cpy;
 }
 
