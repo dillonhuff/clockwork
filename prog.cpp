@@ -3342,17 +3342,17 @@ void ir_node::copy_fields_from(op* other){
 }
 
 void deep_copy_child(op* dest, op* source, prog& original){
-	op* kernel_copy;
-	if(source -> is_loop()){
-		kernel_copy = dest -> add_loop(source->name, original.start(source->name), original.end_exclusive(source->name));
-		for(auto child : original.find_loop(source->name)->children){
-			deep_copy_child(kernel_copy, child, original);
-		}
-	}else{
-		kernel_copy = dest -> add_op(source -> name);
-		kernel_copy->copy_fields_from(source);
-	}
-
+  op* kernel_copy;
+  if (source -> is_loop()){
+    kernel_copy = dest -> add_loop(source->name, original.start(source->name), original.end_exclusive(source->name));
+    for(auto child : original.find_loop(source->name)->children){
+      deep_copy_child(kernel_copy, child, original);
+    }
+  } else{
+    assert(source->is_op());
+    kernel_copy = dest -> add_op(source -> name);
+    kernel_copy->copy_fields_from(source);
+  }
 }
 
 std::set<string> get_consumed_buffers(const std::string& kernel, prog& original){
@@ -4508,7 +4508,6 @@ prog extract_group_to_separate_prog(const std::set<std::string>& group, prog& or
 	}
 	extracted.name = prg_name;
 
-	//for(auto kernel : topologically_sort_kernels(original)){
 	for(auto kernel : get_kernels_in_order(original)){
 		if(elem(kernel, group)){
 			op* kernel_copy = extracted.add_loop(kernel, original.start(kernel), original.end_exclusive(kernel));
@@ -9744,4 +9743,35 @@ int max_completion_time(schedule_info& sched, prog& prg) {
   }
   return done_time;
 }
+
+void prepare_for_clockwork_scheduling(prog& prg) {
+  unroll_reduce_loops(prg);
+  merge_basic_block_ops(prg);
+  normalize_bounds(prg);
+  normalize_address_offsets(prg);
+  unroll_mismatched_inner_loops(prg);
+  merge_basic_block_ops(prg);
+}
+
+prog prog::deep_copy() {
+  prog cpy;
+  cpy.unique_num = unique_num;
+  cpy.name = name;
+  cpy.ctx = ctx;
+
+  cpy.ins = ins;
+  cpy.outs = outs;
+  cpy.buffer_port_widths = buffer_port_widths;
+  cpy.compute_unit_file = compute_unit_file;
+
+  cpy.buffer_bounds = buffer_bounds;
+
+  for (auto c : root->children) {
+    deep_copy_child(cpy.root, c, *this);
+  }
+
+  return cpy;
+}
+
+
 

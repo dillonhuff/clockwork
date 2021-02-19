@@ -813,6 +813,8 @@ struct prog {
   // for the compute unit implementations
   string compute_unit_file;
 
+  prog deep_copy();
+
   map<string, vector<int> > buffer_bounds;
 
   void reset_context();
@@ -2013,3 +2015,5 @@ umap* cycle_accurate_deps(prog& prg);
 void sanity_check_negative_starts(schedule_info& sched, prog& prg);
 
 int max_completion_time(schedule_info& sched, prog& prg);
+
+void prepare_for_clockwork_scheduling(prog& prg);
