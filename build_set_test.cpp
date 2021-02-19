@@ -20267,6 +20267,7 @@ void jac3_2_static_dynamic_comparison() {
   CodegenOptions options;
   options.internal = true;
   options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  options.scheduling_algorithm = SCHEDULE_ALGORITHM_CW;
   options.debug_options.expect_all_linebuffers = true;
 
   App jac = stencil_chain_stage_iccad(out_name, 15);
@@ -20274,11 +20275,12 @@ void jac3_2_static_dynamic_comparison() {
   prepare_for_clockwork_scheduling(prg);
 
   prog static_prg = prg.deep_copy();
+  infer_bounds_and_unroll(pick(static_prg.outs), {size, size}, throughput, static_prg);
+
   static_prg.pretty_print();
 
-  assert(false);
-
-  jac.generate_soda_file(prg.name, throughput);
+  generate_optimized_code(options, static_prg);
+  jac.generate_soda_file(static_prg.name, throughput);
 
   move_to_benchmarks_folder(out_name + "_opt");
 
