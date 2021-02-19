@@ -8707,7 +8707,12 @@ void set_channel_depths_by_stage_depths(app_dag& dag) {
 
   for (auto gp : dag.fusion_group_progs) {
     if (!elem(gp.second.name, lines)) {
-      cout << "Errror: No line for " << gp.second.name << endl;
+      cout << "Error: No line for " << gp.second.name << endl;
+      for (auto l : lines) {
+        if (is_prefix(l, gp.second.name) || is_prefix(gp.second.name, l)) {
+          cout << tab(1) << "Found prefix for " << gp.second.name << " at: " << l << endl;
+        }
+      }
     } else {
       cout << "success, found group: " << gp.second.name << endl;
     }
