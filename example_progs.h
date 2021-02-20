@@ -60,4 +60,4 @@ prog resnet_full_layer();
 prog histogram1d();
 
 prog jitnet();
-prog exposure_fusion();
+//prog exposure_fusion();
