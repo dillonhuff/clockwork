@@ -20255,6 +20255,57 @@ void cp16_static_dynamic_comparison_fresh_codegen() {
 
 prog two_in_blnd(const int r, const int c);
 
+void two_in_blnd_8pix_static_dynamic_comparison() {
+  const int throughput = 8;
+  const int size = 2048;
+
+  {
+    prog prg = two_in_blnd(2048, 2048);
+    prg.name = prg.name + "_" + str(throughput);
+    infer_bounds_and_unroll(pick(prg.outs), {size, size}, throughput, prg);
+    prg.sanity_check();
+
+    CodegenOptions options;
+    options = CodegenOptions();
+    options.scheduling_algorithm = SCHEDULE_ALGORITHM_CW;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+
+    generate_optimized_code(options, prg);
+
+    move_to_benchmarks_folder(prg.name);
+    cmd("cp local_laplacian_filter* ./soda_codes/" + prg.name + "/our_code/");
+  }
+
+  {
+    prog prg = two_in_blnd(2048, 2048);
+    prg.name = prg.name + "_d_" + str(throughput);
+    prg.sanity_check();
+
+    auto fusion_groups = one_stage_per_group(prg);
+
+    
+    auto fresh_groups = insert_inter_group_buffers(fusion_groups, prg);
+    unroll_mismatched_inner_loops(prg);
+    merge_basic_block_ops(prg);
+    infer_bounds_and_unroll(pick(prg.outs), {size, size}, throughput, prg);
+
+    assert(unoptimized_compiles(prg));
+
+    app_dag dag = partition_groups(fresh_groups, prg);
+
+    CodegenOptions options;
+    options = CodegenOptions();
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+    options.scheduling_algorithm = SCHEDULE_ALGORITHM_CW;
+    generate_app_code(options, dag);
+
+    move_to_benchmarks_folder(prg.name);
+    cmd("cp local_laplacian_filter* ./soda_codes/" + prg.name + "/our_code/");
+  }
+
+  assert(false);
+}
+
 void two_in_blnd_4pix_static_dynamic_comparison() {
   const int throughput = 4;
   const int size = 2048;
@@ -20894,6 +20945,7 @@ void two_input_blending_test() {
 }
 
 void application_tests() {
+  two_in_blnd_8pix_static_dynamic_comparison();
   two_in_blnd_4pix_static_dynamic_comparison();
   two_in_blnd_2pix_static_dynamic_comparison();
   two_in_blnd_static_dynamic_comparison();
