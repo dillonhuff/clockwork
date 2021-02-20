@@ -4158,6 +4158,10 @@ void extend_bounds_to_multiple_of(const int factor, const std::string& buf, prog
           cout << "ub     = " << ub << endl;
           assert(new_ub >= old_ub);
           prg.extend_bounds(val, lb, new_ub);
+
+          int new_trip_count = val_loop->trip_count();
+          cout << "new tc = " << new_trip_count << endl;
+          assert(new_trip_count % factor == 0);
         } else {
         }
       }
@@ -4217,6 +4221,7 @@ void extend_bounds_to_multiple_of(const int factor, const std::string& buf, prog
   }
 
   prg.pretty_print();
+  //assert(inner_loops_unrollable(buf, factor, prg));
   sanity_check_all_reads_defined(prg);
 }
 
