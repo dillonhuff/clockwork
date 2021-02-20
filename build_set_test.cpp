@@ -20261,6 +20261,7 @@ void two_in_blnd_2pix_static_dynamic_comparison() {
 
   {
     prog prg = two_in_blnd(2048, 2048);
+    prg.name = prg.name + "_" + str(throughput);
     infer_bounds_and_unroll(pick(prg.outs), {size, size}, throughput, prg);
     prg.sanity_check();
 
@@ -20277,7 +20278,7 @@ void two_in_blnd_2pix_static_dynamic_comparison() {
 
   {
     prog prg = two_in_blnd(2048, 2048);
-    prg.name = prg.name + "_d";
+    prg.name = prg.name + "_d_" + str(throughput);
     prg.sanity_check();
 
     auto fusion_groups = one_stage_per_group(prg);
