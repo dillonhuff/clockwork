@@ -4617,16 +4617,16 @@ void infer_bounds_and_unroll(const std::string& out, const std::vector<int>& bou
   prg.reset_context();
 
   extend_bounds_to_multiple_of(unroll_factor, out, prg);
-  assert(inner_loops_unrollable(out, unroll_factor, prg));
+  //assert(inner_loops_unrollable(out, unroll_factor, prg));
 
   unroll_reduce_loops(prg);
-  assert(inner_loops_unrollable(out, unroll_factor, prg));
+  //assert(inner_loops_unrollable(out, unroll_factor, prg));
 
   normalize_bounds(prg);
-  assert(inner_loops_unrollable(out, unroll_factor, prg));
+  //assert(inner_loops_unrollable(out, unroll_factor, prg));
 
   merge_basic_block_ops(prg);
-  assert(inner_loops_unrollable(out, unroll_factor, prg));
+  //assert(inner_loops_unrollable(out, unroll_factor, prg));
 
   unroll_producer_matching(out, unroll_factor, prg);
   merge_basic_block_ops(prg);
