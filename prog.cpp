@@ -4148,12 +4148,12 @@ void extend_bounds_to_multiple_of(const int factor, const std::string& buf, prog
           int new_length = nearest_larger_multiple_of(factor, length);
 
           cout << "new length      = " << new_length << endl;
-          length = nearest_larger_multiple_of(factor, length);
+          //length = nearest_larger_multiple_of(factor, length);
           int old_ub = val_loop->end_exclusive;
-          int new_ub = lb + length;
+          int new_ub = lb + new_length;
           cout << "lb     = " << lb << endl;
           cout << "old_ub = " << old_ub << endl;
-          cout << "len    = " << length << endl;
+          cout << "len    = " << new_length << endl;
           cout << "ub     = " << ub << endl;
           assert(new_ub >= old_ub);
           prg.extend_bounds(val, lb, new_ub);
@@ -4166,10 +4166,7 @@ void extend_bounds_to_multiple_of(const int factor, const std::string& buf, prog
       }
     }
 
-    // Optimize this call?
-    //auto cm = prg.consumer_maps();
     for (auto op : prg.find_loop(next_kernel)->descendant_ops()) {
-      //auto data_read = map_find(op, cm);
       auto data_read =
         consumer_umap(op, prg);
       assert(data_read != nullptr);
@@ -4197,13 +4194,6 @@ void extend_bounds_to_multiple_of(const int factor, const std::string& buf, prog
     }
 
     vector<int> int_bounds_for_s = extents(bound_set);
-    //vector<int> int_bounds_for_s;
-    //for (int d = 0; d < num_dims(bound_set); d++) {
-      //auto pr = project_all_but(bound_set, d);
-      //int lb = to_int(lexminval(pr));
-      //int ub = to_int(lexmaxval(pr)) + 1;
-      //int_bounds_for_s.push_back(ub - lb);
-    //}
     int_bounds_for_s = extend_bounds_to_multiple(factor, name(bound_set), prg);
     prg.buffer_bounds[name(bound_set)] = int_bounds_for_s;
     bounded.insert(name(bound_set));
@@ -4211,13 +4201,6 @@ void extend_bounds_to_multiple_of(const int factor, const std::string& buf, prog
 
   for (auto bound_set : bounds) {
     vector<int> int_bounds_for_s = extents(bound_set);
-    //vector<int> int_bounds_for_s;
-    //for (int d = 0; d < num_dims(bound_set); d++) {
-      //auto pr = project_all_but(bound_set, d);
-      //int lb = to_int(lexminval(pr));
-      //int ub = to_int(lexmaxval(pr)) + 1;
-      //int_bounds_for_s.push_back(ub - lb);
-    //}
     prg.buffer_bounds[name(bound_set)] = int_bounds_for_s;
   }
 
