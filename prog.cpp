@@ -4060,10 +4060,6 @@ void extend_bounds_to_multiple_of(const int factor, const std::string& buf, prog
 
   std::vector<string> kernels = get_kernels_in_order(prg);
   reverse(kernels);
-  //cout << "Reverse order kernels..." << endl;
-  //for (auto k : kernels) {
-    //cout << tab(1) << k << endl;
-  //}
 
   isl_set* bound_set = make_bound_set(buf, int_bounds, prg);
 
@@ -4078,17 +4074,6 @@ void extend_bounds_to_multiple_of(const int factor, const std::string& buf, prog
     if (all_inputs(bounds, prg)) {
       break;
     }
-    //bool all_inputs = true;
-    //for (auto b : bounds) {
-      //if (!prg.is_input(name(b))) {
-        //all_inputs = false;
-        //break;
-      //}
-    //}
-
-    //if (all_inputs) {
-      //break;
-    //}
 
     string next_kernel = "";
     bool found = false;
@@ -4111,6 +4096,7 @@ void extend_bounds_to_multiple_of(const int factor, const std::string& buf, prog
       }
     }
     assert(bound_set != nullptr);
+    assert(next_kernel != "");
 
     cout << "==== Inferring bounds for buffer: " << name(bound_set) << ", produced by: " << next_kernel << endl;
 
@@ -4119,8 +4105,6 @@ void extend_bounds_to_multiple_of(const int factor, const std::string& buf, prog
     if (prg.is_input(buf)) {
       continue;
     }
-
-    assert(next_kernel != "");
 
     cout << "Kernel: " << next_kernel << " produces " << buf << endl;
     op* dop = nullptr;
@@ -4212,26 +4196,28 @@ void extend_bounds_to_multiple_of(const int factor, const std::string& buf, prog
       cout << tab(1) << str(s) << endl;
     }
 
-    vector<int> int_bounds_for_s;
-    for (int d = 0; d < num_dims(bound_set); d++) {
-      auto pr = project_all_but(bound_set, d);
-      int lb = to_int(lexminval(pr));
-      int ub = to_int(lexmaxval(pr)) + 1;
-      int_bounds_for_s.push_back(ub - lb);
-    }
+    vector<int> int_bounds_for_s = extents(bound_set);
+    //vector<int> int_bounds_for_s;
+    //for (int d = 0; d < num_dims(bound_set); d++) {
+      //auto pr = project_all_but(bound_set, d);
+      //int lb = to_int(lexminval(pr));
+      //int ub = to_int(lexmaxval(pr)) + 1;
+      //int_bounds_for_s.push_back(ub - lb);
+    //}
     int_bounds_for_s = extend_bounds_to_multiple(factor, name(bound_set), prg);
     prg.buffer_bounds[name(bound_set)] = int_bounds_for_s;
     bounded.insert(name(bound_set));
   }
 
   for (auto bound_set : bounds) {
-    vector<int> int_bounds_for_s;
-    for (int d = 0; d < num_dims(bound_set); d++) {
-      auto pr = project_all_but(bound_set, d);
-      int lb = to_int(lexminval(pr));
-      int ub = to_int(lexmaxval(pr)) + 1;
-      int_bounds_for_s.push_back(ub - lb);
-    }
+    vector<int> int_bounds_for_s = extents(bound_set);
+    //vector<int> int_bounds_for_s;
+    //for (int d = 0; d < num_dims(bound_set); d++) {
+      //auto pr = project_all_but(bound_set, d);
+      //int lb = to_int(lexminval(pr));
+      //int ub = to_int(lexmaxval(pr)) + 1;
+      //int_bounds_for_s.push_back(ub - lb);
+    //}
     prg.buffer_bounds[name(bound_set)] = int_bounds_for_s;
   }
 
