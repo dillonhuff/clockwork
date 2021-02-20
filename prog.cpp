@@ -4042,16 +4042,28 @@ vector<int> extend_bounds_to_multiple(const int factor, const std::string& buf, 
   return new_bounds;
 }
 
+bool all_inputs(std::set<isl_set*>& bounds, prog& prg) {
+  bool all_inputs = true;
+  for (auto b : bounds) {
+    if (!prg.is_input(name(b))) {
+      all_inputs = false;
+      break;
+    }
+  }
+
+  return all_inputs;
+}
+
 void extend_bounds_to_multiple_of(const int factor, const std::string& buf, prog& prg) {
   vector<int> int_bounds = extend_bounds_to_multiple(factor, buf, prg);
   prg.buffer_bounds[buf] = int_bounds;
 
   std::vector<string> kernels = get_kernels_in_order(prg);
   reverse(kernels);
-  cout << "Reverse order kernels..." << endl;
-  for (auto k : kernels) {
-    cout << tab(1) << k << endl;
-  }
+  //cout << "Reverse order kernels..." << endl;
+  //for (auto k : kernels) {
+    //cout << tab(1) << k << endl;
+  //}
 
   isl_set* bound_set = make_bound_set(buf, int_bounds, prg);
 
@@ -4063,17 +4075,20 @@ void extend_bounds_to_multiple_of(const int factor, const std::string& buf, prog
   while (bounds.size() > 0) {
     isl_set* bound_set = nullptr;
 
-    bool all_inputs = true;
-    for (auto b : bounds) {
-      if (!prg.is_input(name(b))) {
-        all_inputs = false;
-        break;
-      }
-    }
-
-    if (all_inputs) {
+    if (all_inputs(bounds, prg)) {
       break;
     }
+    //bool all_inputs = true;
+    //for (auto b : bounds) {
+      //if (!prg.is_input(name(b))) {
+        //all_inputs = false;
+        //break;
+      //}
+    //}
+
+    //if (all_inputs) {
+      //break;
+    //}
 
     string next_kernel = "";
     bool found = false;

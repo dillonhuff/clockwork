@@ -22774,6 +22774,7 @@ void gv_generation_pyramid() {
 }
 
 void dhuff_tests() {
+  infer_bounds_tests();
   test_app_to_prog_conversion();
   blurx_app_to_prog_test();
   updated_blur_static_dynamic_comparison();
@@ -22797,7 +22798,6 @@ void dhuff_tests() {
   test_multi_kernel_unsharp();
   test_multi_kernel_design();
   stencil_chain_multi_kernel_test();
-  infer_bounds_tests();
   test_if_construction();
   test_time_sharing_gaussian_pyramid();
   jacobi_2d_2_test();
