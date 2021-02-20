@@ -22,19 +22,19 @@ int main(int argc, char **argv) {
   size_t total_size_bytes = 0;
   size_t total_size_bytes_read = 0;
   size_t total_size_bytes_written = 0;
-  const int pw_math_in0_oc02_merged428_read_pipe0_DATA_SIZE = num_epochs*4270290;
+  const int pw_math_in0_oc02_merged428_read_pipe0_DATA_SIZE = num_epochs*4237410;
   const int pw_math_in0_oc02_merged428_read_BYTES_PER_PIXEL = 32 / 8;
   size_t pw_math_in0_oc02_merged428_read_size_bytes = pw_math_in0_oc02_merged428_read_BYTES_PER_PIXEL * pw_math_in0_oc02_merged428_read_pipe0_DATA_SIZE;
 
   total_size_bytes += pw_math_in0_oc02_merged428_read_size_bytes;
   total_size_bytes_read += pw_math_in0_oc02_merged428_read_size_bytes;
-  const int pw_math_in1_oc46_merged431_read_pipe0_DATA_SIZE = num_epochs*4270290;
+  const int pw_math_in1_oc46_merged431_read_pipe0_DATA_SIZE = num_epochs*4237410;
   const int pw_math_in1_oc46_merged431_read_BYTES_PER_PIXEL = 32 / 8;
   size_t pw_math_in1_oc46_merged431_read_size_bytes = pw_math_in1_oc46_merged431_read_BYTES_PER_PIXEL * pw_math_in1_oc46_merged431_read_pipe0_DATA_SIZE;
 
   total_size_bytes += pw_math_in1_oc46_merged431_read_size_bytes;
   total_size_bytes_read += pw_math_in1_oc46_merged431_read_size_bytes;
-  const int pw_math_merged_0_reconstruct_lp138_buf141147149_merged452_write_pipe0_DATA_SIZE = num_epochs*4270290;
+  const int pw_math_merged_0_reconstruct_lp138_buf141147149_merged452_write_pipe0_DATA_SIZE = num_epochs*4237410;
   const int pw_math_merged_0_reconstruct_lp138_buf141147149_merged452_write_BYTES_PER_PIXEL = 32 / 8;
   size_t pw_math_merged_0_reconstruct_lp138_buf141147149_merged452_write_size_bytes = pw_math_merged_0_reconstruct_lp138_buf141147149_merged452_write_BYTES_PER_PIXEL * pw_math_merged_0_reconstruct_lp138_buf141147149_merged452_write_pipe0_DATA_SIZE;
 
@@ -140,7 +140,7 @@ int main(int argc, char **argv) {
   OCL_CHECK(err, cl::Buffer pw_math_in1_oc46_merged431_read_pipe0_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_WRITE_ONLY, pw_math_in1_oc46_merged431_read_size_bytes, pw_math_in1_oc46_merged431_read_pipe0.data(), &err));
   OCL_CHECK(err, err = krnl_vector_add.setArg(2, pw_math_in1_oc46_merged431_read_pipe0_ocl_buf));
 
-  uint64_t transfer_size = num_epochs*(4270290 / 2);
+  uint64_t transfer_size = num_epochs*(4237410 / 2);
   OCL_CHECK(err, err = krnl_vector_add.setArg(3, transfer_size));
 
   std::cout << "Migrating memory" << std::endl;

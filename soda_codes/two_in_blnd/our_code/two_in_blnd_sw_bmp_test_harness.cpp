@@ -12,7 +12,7 @@ int main(int argc, char **argv) {
   HWStream<hw_uint<64> > pw_math_merged_0_reconstruct_lp138_buf141147149_merged452_write_channel;
   // In lanes = 2
   for (int r = 0; r < 2055; r++) {
-    for (int cl = 0; cl < 2078 / 2; cl++) {
+    for (int cl = 0; cl < 2062 / 2; cl++) {
       hw_uint<64> packed;
       {
       int c = 2*cl + 0;
@@ -41,7 +41,7 @@ int main(int argc, char **argv) {
   }
   // In lanes = 2
   for (int r = 0; r < 2055; r++) {
-    for (int cl = 0; cl < 2074 / 2; cl++) {
+    for (int cl = 0; cl < 2062 / 2; cl++) {
       hw_uint<64> packed;
       {
       int c = 2*cl + 0;

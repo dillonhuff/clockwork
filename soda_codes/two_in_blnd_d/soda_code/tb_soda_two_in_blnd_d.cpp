@@ -4,7 +4,7 @@
 #include <fstream>
 
 #define PIXEL_WIDTH 32
-#define BURST_WIDTH 32
+#define BURST_WIDTH 64
 
 #include "runtime/test_utils.h"
 
@@ -13,7 +13,7 @@ using namespace std;
 int main() {
   srand(234);
   const int nrows = 2055;
-  const int ncols = 2055;
+  const int ncols = 2062;
   uint64_t img_pixels = nrows*ncols;
   const uint64_t bits_per_pixel = PIXEL_WIDTH;
   uint64_t img_bits = bits_per_pixel*img_pixels;

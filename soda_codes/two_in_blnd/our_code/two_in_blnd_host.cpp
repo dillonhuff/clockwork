@@ -22,12 +22,12 @@ int main(int argc, char **argv) {
   std::cout << "num_epochs = " << num_epochs << std::endl;
 
   size_t total_size_bytes = 0;
-  const int pw_math_in0_oc02_merged428_read_pipe0_DATA_SIZE = num_epochs*4270290;
+  const int pw_math_in0_oc02_merged428_read_pipe0_DATA_SIZE = num_epochs*4237410;
   const int pw_math_in0_oc02_merged428_read_pipe0_BYTES_PER_PIXEL = 32 / 8;
   size_t pw_math_in0_oc02_merged428_read_pipe0_size_bytes = pw_math_in0_oc02_merged428_read_pipe0_BYTES_PER_PIXEL * pw_math_in0_oc02_merged428_read_pipe0_DATA_SIZE;
 
   total_size_bytes += pw_math_in0_oc02_merged428_read_pipe0_size_bytes;
-  const int pw_math_in1_oc46_merged431_read_pipe0_DATA_SIZE = num_epochs*4262070;
+  const int pw_math_in1_oc46_merged431_read_pipe0_DATA_SIZE = num_epochs*4237410;
   const int pw_math_in1_oc46_merged431_read_pipe0_BYTES_PER_PIXEL = 32 / 8;
   size_t pw_math_in1_oc46_merged431_read_pipe0_size_bytes = pw_math_in1_oc46_merged431_read_pipe0_BYTES_PER_PIXEL * pw_math_in1_oc46_merged431_read_pipe0_DATA_SIZE;
 

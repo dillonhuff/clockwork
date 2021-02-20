@@ -4135,31 +4135,31 @@ void extend_bounds_to_multiple_of(const int factor, const std::string& buf, prog
         prg.extend_bounds(val, lb, ub);
 
         if (val == wvs.front()) {
-          int length = prg.trip_count(val);
+          int old_trip_count = prg.trip_count(val);
           auto val_loop = prg.find_loop(val);
 
-          cout << "ufactor         = " << factor << endl;
-          cout << "access lower    = " << lb << endl;
-          cout << "access upper    = " << ub << endl;
-          cout << "original start  = " << val_loop->start << endl;
-          cout << "original endex  = " << val_loop->end_exclusive << endl;
-          cout << "original length = " << length << endl;
+          cout << "factor                  = " << factor << endl;
+          //cout << "lb                      = " << lb << endl;
+          //cout << "ub                      = " << ub << endl;
+          cout << "original start          = " << val_loop->start << endl;
+          cout << "original end_exclusive  = " << val_loop->end_exclusive << endl;
+          cout << "original trip_count     = " << old_trip_count << endl;
 
-          int new_length = nearest_larger_multiple_of(factor, length);
+          int new_length = nearest_larger_multiple_of(factor, old_trip_count);
 
-          cout << "new length      = " << new_length << endl;
-          //length = nearest_larger_multiple_of(factor, length);
-          int old_ub = val_loop->end_exclusive;
-          int new_ub = lb + new_length;
-          cout << "lb     = " << lb << endl;
-          cout << "old_ub = " << old_ub << endl;
-          cout << "len    = " << new_length << endl;
-          cout << "ub     = " << ub << endl;
-          assert(new_ub >= old_ub);
-          prg.extend_bounds(val, lb, new_ub);
+          cout << "new length              = " << new_length << endl;
+
+          int new_ub = val_loop->start + new_length;
+
+          //cout << "new ub                  = " << ub << endl;
+          assert(new_ub >= ub);
+          prg.extend_bounds(val, val_loop->start, new_ub);
 
           int new_trip_count = val_loop->trip_count();
-          cout << "new tc = " << new_trip_count << endl;
+          cout << "new trip count          = " << new_trip_count << endl;
+
+          assert(new_trip_count == new_length);
+          assert(new_trip_count >= old_trip_count);
           assert(new_trip_count % factor == 0);
         } else {
         }
