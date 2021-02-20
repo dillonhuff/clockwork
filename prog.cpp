@@ -4046,7 +4046,6 @@ void extend_bounds_to_multiple_of(const int factor, const std::string& buf, prog
   vector<int> int_bounds = extend_bounds_to_multiple(factor, buf, prg);
   prg.buffer_bounds[buf] = int_bounds;
 
-  //std::vector<string> kernels = topologically_sort_kernels(prg);
   std::vector<string> kernels = get_kernels_in_order(prg);
   reverse(kernels);
   cout << "Reverse order kernels..." << endl;
@@ -4617,20 +4616,20 @@ void infer_bounds_and_unroll(const std::string& out, const std::vector<int>& bou
   infer_bounds(out, bounds, prg);
   prg.reset_context();
 
-  //cout << "After first bounds inference" << endl;
-  //prg.pretty_print();
-  //assert(false);
   extend_bounds_to_multiple_of(unroll_factor, out, prg);
+  assert(inner_loops_unrollable(out, unroll_factor, prg));
+
   unroll_reduce_loops(prg);
-  cout << "Sanity checking after unrolling reduce loops..." << endl;
-  //sanity_check_all_reads_defined(prg);
+  assert(inner_loops_unrollable(out, unroll_factor, prg));
+
   normalize_bounds(prg);
+  assert(inner_loops_unrollable(out, unroll_factor, prg));
+
   merge_basic_block_ops(prg);
+  assert(inner_loops_unrollable(out, unroll_factor, prg));
+
   unroll_producer_matching(out, unroll_factor, prg);
   merge_basic_block_ops(prg);
-  //cout << "Sanity checking after unrolling strip mined loops..." << endl;
-  //sanity_check_all_reads_defined(prg);
-  //sanity_check_all_reads_defined(prg);
 }
 
 void normalize_bounds(prog& prg) {
@@ -4742,6 +4741,24 @@ map<string, int> compute_unroll_factors(const std::string& buf, const int unroll
   return factors;
 }
 
+bool inner_loops_unrollable(const std::string& buf, const int unroll_factor, prog& prg) {
+  std::set<op*> inner_loops = get_inner_loops(prg);
+
+  for (auto loop : inner_loops) {
+    int factor = unroll_factor;
+    //int unroll_factor = map_find(loop->name, unroll_factors);
+    int tc = loop->trip_count();
+
+    if (tc % factor != 0) {
+      cout << "Error: Trip count " << tc << " is not evenly divisible by " << factor << endl;
+      cout << "Loop is..." << endl;
+      loop->pretty_print(1);
+      return false;
+    }
+  }
+  return true;
+}
+
 void unroll_producer_matching(const std::string& buf, const int unroll_factor, prog& prg) {
   std::set<op*> inner_loops = get_inner_loops(prg);
   std::map<string, int> unroll_factors =
@@ -4760,6 +4777,8 @@ void unroll_producer_matching(const std::string& buf, const int unroll_factor, p
 
     if (tc % factor != 0) {
       cout << "Error: Trip count " << tc << " is not evenly divisible by " << factor << endl;
+      cout << "Loop is..." << endl;
+      loop->pretty_print(1);
     }
     assert(tc % factor == 0);
     strip_mine(factor, loop, prg);

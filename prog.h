@@ -2017,3 +2017,5 @@ void sanity_check_negative_starts(schedule_info& sched, prog& prg);
 int max_completion_time(schedule_info& sched, prog& prg);
 
 void prepare_for_clockwork_scheduling(prog& prg);
+
+bool inner_loops_unrollable(const std::string& buf, const int unroll_factor, prog& prg);
