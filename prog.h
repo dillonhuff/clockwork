@@ -1907,6 +1907,7 @@ struct app_dag {
   vector<string> sorted_fusion_groups();
 
   std::set<string> children(const std::string& location);
+  std::set<string> ancestors(const std::string& location);
 
   bool is_boundary(const std::string& buf) {
     return prg.is_boundary(buf);

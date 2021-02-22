@@ -8730,6 +8730,51 @@ void set_channel_depths_by_stage_depths(app_dag& dag) {
   assert(false);
 }
 
+void set_channel_depths_by_assumed_stage_depth(const int depth, app_dag& dag) {
+  // Now: I want to create code that balances all paths that re-converge
+  // First: Enumerate all paths through the dag
+  // Second: Send this path balancing problem to an ILP solver
+
+  std::set<path> in_progress_paths;
+  vector<string> sorted_groups = dag.sorted_fusion_groups();
+  for (auto next_group : sorted_groups) {
+    // If the next group is an input group then add
+    // it as the start of a new path
+    if (dag.ancestors(next_group).size() == 0) {
+      assert(false);
+      in_progress_paths.insert({next_group});
+    }
+
+    // Build new paths by adding this node to
+    // each partial_path. If there are multiple
+    // partial paths to this node they must be
+    // balanced.
+    std::set<path> to_insert;
+    for (auto ancestor : dag.ancestors(next_group)) {
+      cout << "Checking on ancestor of " << ancestor << " of " << next_group << endl;
+      for (auto p : in_progress_paths) {
+        cout << tab(1) << "Path: " << p << endl;
+        if (p.back() == ancestor) {
+          path cpy = p;
+          cpy.push_back(next_group);
+          to_insert.insert(cpy);
+        }
+      }
+    }
+    for (auto p : to_insert) {
+      in_progress_paths.insert(p);
+    }
+
+    // Optional: Prune all partial paths that end
+    // with nodes whose children have all been
+    // processsed
+  }
+
+  cout << "# of paths: " << in_progress_paths.size() << endl;
+
+  assert(false);
+}
+
 void set_channel_depths_to_constant(const int constant, app_dag& dag) {
   std::set<std::string> done;
   for (auto& buf : dag.prg.boundary_buffers()) {
@@ -8852,7 +8897,7 @@ void generate_app_code(
   if (options.slack_matching.tp == SLACK_MATCHING_TYPE_FIXED) {
     set_channel_depths_to_constant(options.slack_matching.depth, dag);
   } else {
-    set_channel_depths_by_stage_depths(dag);
+    set_channel_depths_by_assumed_stage_depth(options.slack_matching.depth, dag);
   }
   //set_channel_depths_by_stage_depths(dag);
   //set_channel_depths_to_constant(32, dag);
@@ -9787,4 +9832,17 @@ prog prog::deep_copy() {
 }
 
 
+std::set<string> app_dag::ancestors(const std::string& location) {
+  std::set<string> ch;
 
+  assert(contains_key(location, fusion_group_progs));
+
+  for (auto buf : buffers_read(fusion_group_progs.at(location))) {
+    if (!elem(buf, prg.boundary_buffers())) {
+      ch.insert(producer_group(buf));
+    }
+  }
+
+  return ch;
+
+}
