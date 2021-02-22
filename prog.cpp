@@ -8730,12 +8730,37 @@ void set_channel_depths_by_stage_depths(app_dag& dag) {
   assert(false);
 }
 
-void set_channel_depths_by_assumed_stage_depth(const int depth, app_dag& dag) {
+void set_channel_depths_by_assumed_stage_depth(const int kernel_depth, app_dag& dag) {
+  std::set<std::string> done;
+  std::set<std::string> to_size;
+  for (auto& buf : dag.prg.boundary_buffers()) {
+    done.insert(buf);
+  }
+
+  for (auto& gp : dag.fusion_group_progs) {
+    for (auto& buf : gp.second.boundary_buffers()) {
+      if (!elem(buf, done)) {
+        int depth = kernel_depth;
+        dag.channel_sizes[buf] = depth;
+        to_size.insert(buf);
+      }
+    }
+  }
+
   // Now: I want to create code that balances all paths that re-converge
   // First: Enumerate all paths through the dag
   // Second: Send this path balancing problem to an ILP solver
 
   std::set<path> in_progress_paths;
+  ilp_builder builder(dag.prg.ctx);
+  vector<pair<string, isl_val*> > obj;
+  for (auto channel : to_size) {
+    // Ready valid channels must be at least two
+    // deep to max out throughput.
+    builder.add_gt(channel, 1);
+    obj.push_back({channel, isl_val_one(builder.ctx)});
+  }
+
   vector<string> sorted_groups = dag.sorted_fusion_groups();
   for (auto next_group : sorted_groups) {
     // If the next group is an input group then add
@@ -8760,6 +8785,38 @@ void set_channel_depths_by_assumed_stage_depth(const int depth, app_dag& dag) {
         }
       }
     }
+
+    for (auto p0 : to_insert) {
+      for (auto p1 : to_insert) {
+        if (p0 != p1) {
+          assert(p0.size() >= 2);
+          assert(p1.size() >= 2);
+
+          // Dynamic path length of p0 must be at least as large as the
+          // static path length of p1
+          int static_length_p1 = kernel_depth*(p1.size() - 2);
+          cout << tab(1) << "Static length of: " << p1 << " = " << static_length_p1 << endl;
+
+
+          map<string, isl_val*> coeffs;
+          for (int i = 0; i < (int) p0.size() - 1; i++) {
+            // Note: This assumes at most one channel between
+            // any two stages.
+            string s = p0.at(i);
+            string d = p0.at(i + 1);
+
+            cout << "Getting edge between" << endl;
+            string connector = dag.edge_between(s, d);
+            cout << "Got edge between" << endl;
+            coeffs[connector] = isl_val_one(builder.ctx);
+          }
+          cout << "Adding constraint" << endl;
+          builder.add_geq(coeffs, isl_val_int_from_si(builder.ctx, -static_length_p1));
+          cout << "Done adding constraint" << endl;
+        }
+      }
+    }
+
     for (auto p : to_insert) {
       in_progress_paths.insert(p);
     }
@@ -8770,6 +8827,12 @@ void set_channel_depths_by_assumed_stage_depth(const int depth, app_dag& dag) {
   }
 
   cout << "# of paths: " << in_progress_paths.size() << endl;
+  builder.minimize(simplify(obj));
+  cout << "Solution: " << endl;
+  for (auto v : builder.variable_positions) {
+    cout << v.first << " = " << str(builder.value(v.first)) << endl;
+    dag.channel_sizes[v.first] = to_int(builder.value(v.first));
+  }
 
   assert(false);
 }
