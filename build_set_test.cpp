@@ -20995,7 +20995,27 @@ void two_input_blending_test() {
   assert(false);
 }
 
+void path_sensitive_channel_sizing() {
+  prog prg = two_in_blnd(64, 64);
+  prg.name = prg.name + "_d";
+  prg.sanity_check();
+
+  auto fusion_groups = one_stage_per_group(prg);
+  app_dag dag = partition_application(fusion_groups, prg);
+
+  CodegenOptions options;
+  options = CodegenOptions();
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  options.scheduling_algorithm = SCHEDULE_ALGORITHM_CW;
+  options.slack_matching = {SLACK_MATCHING_TYPE_PIPELINE_DEPTH_AWARE, 5};
+  generate_app_code(options, dag);
+
+  assert(false);
+}
+
 void application_tests() {
+  path_sensitive_channel_sizing();
+
   two_in_blnd_16pix_static_dynamic_comparison();
   two_in_blnd_8pix_static_dynamic_comparison();
   two_in_blnd_4pix_static_dynamic_comparison();
