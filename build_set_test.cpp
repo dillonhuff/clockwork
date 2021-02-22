@@ -20996,7 +20996,7 @@ void two_input_blending_test() {
 }
 
 void path_sensitive_channel_sizing() {
-  prog prg = two_in_blnd(64, 64);
+  prog prg = llf_grayscale_float(64, 64);
   prg.name = prg.name + "_d";
   prg.sanity_check();
 
