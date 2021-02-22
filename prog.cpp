@@ -8741,7 +8741,6 @@ void set_channel_depths_by_assumed_stage_depth(const int depth, app_dag& dag) {
     // If the next group is an input group then add
     // it as the start of a new path
     if (dag.ancestors(next_group).size() == 0) {
-      assert(false);
       in_progress_paths.insert({next_group});
     }
 
@@ -9838,8 +9837,10 @@ std::set<string> app_dag::ancestors(const std::string& location) {
   std::set<string> ch;
   for (auto buf : buffers_read(fusion_group_progs.at(location))) {
     if (!elem(buf, prg.boundary_buffers())) {
-      assert(false);
-      ch.insert(producer_group(buf));
+      string pg = producer_group(buf);
+      if (pg != location) {
+        ch.insert(pg);
+      }
     }
   }
 
