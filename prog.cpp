@@ -9833,12 +9833,12 @@ prog prog::deep_copy() {
 
 
 std::set<string> app_dag::ancestors(const std::string& location) {
-  std::set<string> ch;
-
   assert(contains_key(location, fusion_group_progs));
 
+  std::set<string> ch;
   for (auto buf : buffers_read(fusion_group_progs.at(location))) {
     if (!elem(buf, prg.boundary_buffers())) {
+      assert(false);
       ch.insert(producer_group(buf));
     }
   }
