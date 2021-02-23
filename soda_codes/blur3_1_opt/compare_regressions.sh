@@ -1,4 +1,4 @@
-app_name=blur3_1_opt_d32
+app_name=blur3_1_opt
 cd soda_code
 ./run_tb.sh || { echo 'soda compilation failed'; exit 1; }
 cd ..

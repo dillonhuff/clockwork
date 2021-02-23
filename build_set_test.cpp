@@ -20525,7 +20525,7 @@ void blur3_1_static_dynamic_comparison() {
 
   {
     prog static_prg = prg.deep_copy();
-    prg.reset_context();
+    static_prg.reset_context();
 
     infer_bounds_and_unroll(pick(static_prg.outs), {size, size}, throughput, static_prg);
 
@@ -20535,29 +20535,36 @@ void blur3_1_static_dynamic_comparison() {
     app.generate_soda_file(static_prg.name, throughput);
 
     move_to_benchmarks_folder(out_name + "_opt");
+  }
 
-    prg.name = out_name + "_opt_d32";
+  {
+    prog static_prg = prg.deep_copy();
+    static_prg.name = out_name + "_opt_d32";
+    static_prg.reset_context();
 
-    auto fusion_groups = one_stage_per_group(prg);
-    auto fresh_groups = insert_inter_group_buffers(fusion_groups, prg);
-    unroll_mismatched_inner_loops(prg);
-    merge_basic_block_ops(prg);
-    infer_bounds_and_unroll(pick(prg.outs), {size, size}, throughput, prg);
+    infer_bounds_and_unroll(pick(static_prg.outs), {size, size}, throughput, static_prg);
 
-    assert(unoptimized_compiles(prg));
+    static_prg.pretty_print();
 
-    app_dag dag = partition_groups(fresh_groups, prg);
+    auto fusion_groups = one_stage_per_group(static_prg);
+    auto fresh_groups = insert_inter_group_buffers(fusion_groups, static_prg);
+    unroll_mismatched_inner_loops(static_prg);
+    merge_basic_block_ops(static_prg);
+    infer_bounds_and_unroll(pick(static_prg.outs), {size, size}, throughput, static_prg);
+
+    assert(unoptimized_compiles(static_prg));
+
+    app_dag dag = partition_groups(fresh_groups, static_prg);
 
     options = CodegenOptions();
     options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
     options.slack_matching = {SLACK_MATCHING_TYPE_FIXED, 32};
     generate_app_code(options, dag);
 
-    move_to_benchmarks_folder(prg.name);
+    move_to_benchmarks_folder(static_prg.name);
 
     string synth_dir =
-      "./soda_codes/" + prg.name+ "/our_code/";
-
+      "./soda_codes/" + static_prg.name+ "/our_code/";
     system(("cp " + out_name + "_opt" + "*.h " + synth_dir).c_str());
   }
 
@@ -20568,11 +20575,6 @@ void blur3_1_static_dynamic_comparison() {
     infer_bounds_and_unroll(pick(static_prg.outs), {size, size}, throughput, static_prg);
 
     static_prg.pretty_print();
-
-    generate_optimized_code(options, static_prg);
-    app.generate_soda_file(static_prg.name, throughput);
-
-    move_to_benchmarks_folder(out_name + "_opt");
 
     prg.name = out_name + "_opt_dis";
 
@@ -20623,6 +20625,42 @@ void blur3_32_static_dynamic_comparison() {
   App app = blur_xy_16(out_name);
   prog prg = app.realize(options, out_name, cols, rows, 1);
   prepare_for_clockwork_scheduling(prg);
+
+  {
+    prog static_prg = prg.deep_copy();
+    infer_bounds_and_unroll(pick(static_prg.outs), {size, size}, throughput, static_prg);
+
+    static_prg.pretty_print();
+
+    generate_optimized_code(options, static_prg);
+    app.generate_soda_file(static_prg.name, throughput);
+
+    move_to_benchmarks_folder(out_name + "_opt");
+
+    prg.name = out_name + "_opt";
+
+    auto fusion_groups = one_stage_per_group(prg);
+    auto fresh_groups = insert_inter_group_buffers(fusion_groups, prg);
+    unroll_mismatched_inner_loops(prg);
+    merge_basic_block_ops(prg);
+    infer_bounds_and_unroll(pick(prg.outs), {size, size}, throughput, prg);
+
+    assert(unoptimized_compiles(prg));
+
+    app_dag dag = partition_groups(fresh_groups, prg);
+
+    options = CodegenOptions();
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+    options.slack_matching = {SLACK_MATCHING_TYPE_FIXED, 32};
+    generate_app_code(options, dag);
+
+    move_to_benchmarks_folder(prg.name);
+
+    string synth_dir =
+      "./soda_codes/" + prg.name+ "/our_code/";
+
+    system(("cp " + out_name + "_opt" + "*.h " + synth_dir).c_str());
+  }
 
   {
     prog static_prg = prg.deep_copy();
