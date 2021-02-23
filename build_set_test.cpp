@@ -22391,6 +22391,13 @@ prog stencil_chain(const std::string& name) {
 
 void dhuff_playground() {
   {
+    prog prg = mod_example();
+    prg.pretty_print();
+
+    generate_unoptimized_code(prg);
+    assert(false);
+  }
+  {
     prog prg = resnet88();
     prg.pretty_print();
     assert(false);
