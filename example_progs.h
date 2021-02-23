@@ -62,3 +62,4 @@ prog histogram1d();
 prog jitnet();
 //prog exposure_fusion();
 prog 1x1conv();
+prog mod_example();
