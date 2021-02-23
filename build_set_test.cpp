@@ -21409,14 +21409,33 @@ void llf_250_channels() {
 }
 
 void two_in_blend_250_channels() {
+  prog prg = two_in_blnd(2048, 2048);
+  prg.name = prg.name + "_250";
+  prg.sanity_check();
+
+  auto fusion_groups = one_stage_per_group(prg);
+  app_dag dag = partition_application(fusion_groups, prg);
+
+  CodegenOptions options;
+  options = CodegenOptions();
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  options.scheduling_algorithm = SCHEDULE_ALGORITHM_CW;
+  options.slack_matching = {SLACK_MATCHING_TYPE_FIXED, 250};
+  generate_app_code(options, dag);
+
+  move_to_benchmarks_folder(prg.name);
+  cmd("cp local_laplacian_filter* ./soda_codes/" + prg.name + "/our_code/");
+
+  assert(false);
 
 }
 
 void application_tests() {
 
-  sef_250_channels();
-  llf_250_channels();
   two_in_blend_250_channels();
+  llf_250_channels();
+
+  sef_250_channels();
 
 
   blur3_1_static_dynamic_comparison();
