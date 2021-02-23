@@ -3036,14 +3036,30 @@ std::vector<std::string> get_kernels_in_order(prog& prg) {
   }
   return kernels;
 }
-std::set<std::string> get_kernels(prog& prg) {
+
+void insert_perfect_loop_kernel(prog& prg, op* root, std::set<std::string> & kernels) {
+  if (root->is_loop()) {
+    if (is_perfect(root, prg)) {
+      kernels.insert(root->name);
+    } else {
+      for (auto child: root->children)
+          insert_perfect_loop_kernel(prg, child, kernels);
+    }
+  }
+}
+
+std::set<std::string> get_kernels(op* root) {
   std::set<string> kernels;
-  for (auto child : prg.root->children) {
+  for (auto child : root->children) {
     if (child->is_loop()) {
       kernels.insert(child->name);
     }
   }
   return kernels;
+}
+
+std::set<std::string> get_kernels(prog& prg) {
+    return get_kernels(prg.root);
 }
 
 std::vector<piecewise_address> addrs_written(op* p, const std::string& buffer) {
@@ -3304,17 +3320,10 @@ void make_constant_dd(const std::string& target_op, const std::string& target_bu
   }
 }
 
-std::vector<string> topologically_sort_kernels(prog& prg){
+std::vector<string> topologically_sort(
+        std::set<string> not_yet_sorted,
+        map<string, std::set<string> > other_producers) {
 	std::vector<string> topologically_sorted_kernels;
-	std::set<string> not_yet_sorted = get_kernels(prg);
-
-  map<string, std::set<string> > other_producers;
-  for (auto next_kernel : not_yet_sorted) {
-    std::set<string> producers = get_producers(next_kernel, prg);
-    producers.erase(next_kernel);
-    other_producers[next_kernel] = producers;
-  }
-
 	while(not_yet_sorted.size() > 0){
 		for(auto next_kernel : not_yet_sorted){
 			bool all_producers_sorted = true;
@@ -3331,6 +3340,55 @@ std::vector<string> topologically_sort_kernels(prog& prg){
 			}
 		}
 	}
+    return topologically_sorted_kernels;
+}
+
+std::vector<string> topologically_sort_kernels(op* root, prog& prg){
+	std::set<string> not_yet_sorted = get_kernels(root);
+
+  map<string, std::set<string> > other_producers;
+  for (auto next_kernel : not_yet_sorted) {
+    std::set<string> producers = get_producers(next_kernel, root, prg);
+    producers.erase(next_kernel);
+    other_producers[next_kernel] = producers;
+  }
+
+  std::vector<string> topologically_sorted_kernels =
+      topologically_sort(not_yet_sorted, other_producers);
+
+  assert(topologically_sorted_kernels.size() == get_kernels(root).size());
+	return topologically_sorted_kernels;
+}
+
+std::vector<string> topologically_sort_kernels(prog& prg){
+	//std::vector<string> topologically_sorted_kernels;
+	std::set<string> not_yet_sorted = get_kernels(prg);
+
+  map<string, std::set<string> > other_producers;
+  for (auto next_kernel : not_yet_sorted) {
+    std::set<string> producers = get_producers(next_kernel, prg);
+    producers.erase(next_kernel);
+    other_producers[next_kernel] = producers;
+  }
+
+  std::vector<string> topologically_sorted_kernels =
+      topologically_sort(not_yet_sorted, other_producers);
+	//while(not_yet_sorted.size() > 0){
+	//	for(auto next_kernel : not_yet_sorted){
+	//		bool all_producers_sorted = true;
+	//		for (auto producer : other_producers.at(next_kernel)) {
+	//			if(!elem(producer, topologically_sorted_kernels)) {
+	//				all_producers_sorted = false;
+	//				break;
+	//			}
+	//		}
+	//		if(all_producers_sorted){
+	//			topologically_sorted_kernels.push_back(next_kernel);
+	//			not_yet_sorted.erase(next_kernel);
+	//			break;
+	//		}
+	//	}
+	//}
 
   assert(topologically_sorted_kernels.size() == get_kernels(prg).size());
 	return topologically_sorted_kernels;
@@ -3486,6 +3544,42 @@ void prog::sanity_check() {
       //assert(elem(v, ivs));
     //}
   //}
+}
+
+//Get producer in coarse grained loop nest sub ast
+std::set<string> get_producers(string next_kernel, op* root, prog& prg) {
+
+  //   cout << "next kernel: " << next_kernel<< endl;
+  std::set<string> producers;
+  op* loop = prg.find_loop(next_kernel);
+
+  std::set<string> buffers_read;
+  for (auto op : prg.find_loop(next_kernel)->descendant_ops()) {
+    for (auto buff : op->buffers_read()){
+      buffers_read.insert(buff);
+      //             cout << tab(1) << buff << endl;
+    }
+  }
+
+  //   cout << "getting other_kernels"<< endl;
+  for (auto other_kernel : get_kernels(root)) {
+    if (other_kernel != next_kernel) {
+      std::set<string> buffers_written;
+      for (auto op : prg.find_loop(other_kernel)->descendant_ops()) {
+        for (auto buff : op -> buffers_written()) {
+          buffers_written.insert(buff);
+        }
+      }
+
+
+      if (intersection(buffers_written, buffers_read).size() > 0) {
+        producers.insert(other_kernel);
+        //                           cout << "producer name: " << other_kernel << endl;
+      }
+    }
+
+  }
+  return producers;
 }
 
 
@@ -7351,6 +7445,32 @@ op* find_coarse_grained_pipeline_loop(op* lp) {
     return lp;
   }
   return find_coarse_grained_pipeline_loop(lp->children.back());
+}
+
+op* find_coarse_grained_pipeline_loop(op* lp, prog& prg) {
+  assert(lp->is_loop());
+  cout << "\t Visit loop " << lp->name << " for searching coarse pipeline loop" << endl;
+  if (lp->children.size() > 1) {
+    bool all_perfect = true;
+    vector<op*> non_perfect_loops;
+    for (auto child: lp->children) {
+      if (child->is_loop()) {
+        if(!is_perfect(child, prg)) {
+          all_perfect = false;
+          non_perfect_loops.push_back(child);
+        }
+      }
+    }
+    if (all_perfect)
+        return lp;
+    for (auto loop: non_perfect_loops) {
+        return find_coarse_grained_pipeline_loop(loop, prg);
+    }
+  }
+  if (lp->children.size() == 1 && !lp->children.back()->is_loop()) {
+    return lp;
+  }
+  return find_coarse_grained_pipeline_loop(lp->children.back(), prg);
   //if (lp->name != "root" && lp->children.size() == 1) {
     //return lp;
   //}
