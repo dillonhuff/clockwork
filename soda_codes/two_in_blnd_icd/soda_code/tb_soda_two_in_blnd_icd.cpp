@@ -1,5 +1,5 @@
 // AUTO GEN SODA TB
-#include "two_in_blnd_d_kernel.h"
+#include "two_in_blnd_icd_kernel.h"
 #include <iostream>
 #include <fstream>
 
@@ -12,8 +12,8 @@ using namespace std;
 
 int main() {
   srand(234);
-  const int nrows = 2055;
-  const int ncols = 2055;
+  const int nrows = 2051;
+  const int ncols = 2051;
   uint64_t img_pixels = nrows*ncols;
   const uint64_t bits_per_pixel = PIXEL_WIDTH;
   uint64_t img_bits = bits_per_pixel*img_pixels;
@@ -29,8 +29,8 @@ int main() {
   fill_array_decimal<bits_per_pixel>("in0_oc_input_pixel.csv", in0_oc, nrows, ncols, transfer_cols);
   ap_uint<BURST_WIDTH>* in1_oc = (ap_uint<BURST_WIDTH>*) malloc(sizeof(ap_uint<BURST_WIDTH>)*num_transfers);
   fill_array_decimal<bits_per_pixel>("in1_oc_input_pixel.csv", in1_oc, nrows, ncols, transfer_cols);
-  two_in_blnd_d_kernel(out, in0_oc, in1_oc, num_transfers);
-  write_results_decimal<bits_per_pixel>("soda_two_in_blnd_d_regression_result.csv", out, nrows, ncols, transfer_cols);
+  two_in_blnd_icd_kernel(out, in0_oc, in1_oc, num_transfers);
+  write_results_decimal<bits_per_pixel>("soda_two_in_blnd_icd_regression_result.csv", out, nrows, ncols, transfer_cols);
   free(in0_oc);
   free(in1_oc);
   free(out);

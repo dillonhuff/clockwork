@@ -8833,8 +8833,6 @@ void set_channel_depths_by_assumed_stage_depth(const int kernel_depth, app_dag& 
     cout << v.first << " = " << str(builder.value(v.first)) << endl;
     dag.channel_sizes[v.first] = to_int(builder.value(v.first));
   }
-
-  assert(false);
 }
 
 void set_channel_depths_to_constant(const int constant, app_dag& dag) {

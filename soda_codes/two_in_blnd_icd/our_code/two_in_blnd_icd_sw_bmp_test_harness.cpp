@@ -1,7 +1,7 @@
 #include <algorithm>
 #include <fstream>
 #include <vector>
-#include "two_in_blnd_d.h"
+#include "two_in_blnd_icd.h"
 #include "bitmap_image.hpp"
 #include <cstdlib>
 
@@ -11,8 +11,8 @@ int main(int argc, char **argv) {
   HWStream<hw_uint<32> > pw_math_in1_oc47_read_channel;
   HWStream<hw_uint<32> > pw_math_merged_0_reconstruct_lp138_buf141147150_write_channel;
   // In lanes = 1
-  for (int r = 0; r < 2055; r++) {
-    for (int cl = 0; cl < 2055 / 1; cl++) {
+  for (int r = 0; r < 2051; r++) {
+    for (int cl = 0; cl < 2051 / 1; cl++) {
       hw_uint<32> packed;
       {
       int c = 1*cl + 0;
@@ -46,7 +46,7 @@ int main(int argc, char **argv) {
         pw_math_in1_oc47_read_channel.write(packed);
     }
   }
-  two_in_blnd_d(pw_math_in0_oc03_read_channel, pw_math_in1_oc47_read_channel, pw_math_merged_0_reconstruct_lp138_buf141147150_write_channel);
+  two_in_blnd_icd(pw_math_in0_oc03_read_channel, pw_math_in1_oc47_read_channel, pw_math_merged_0_reconstruct_lp138_buf141147150_write_channel);
   bitmap_image output(2048, 2048);
   for (int r = 0; r < 2048; r++) {
     for (int cl = 0; cl < 2048 / 1; cl++) {
@@ -63,5 +63,5 @@ int main(int argc, char **argv) {
       }
     }
   }
-  output.save_image("./images/two_in_blnd_d_bmp_out.bmp");
+  output.save_image("./images/two_in_blnd_icd_bmp_out.bmp");
 }
