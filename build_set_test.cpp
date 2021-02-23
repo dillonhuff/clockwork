@@ -21660,10 +21660,10 @@ void sef_intelligent_channels2() {
 }
 
 void application_tests() {
-  cp_intelligent_channels2();
-  sef_intelligent_channels2();
-  llf_intelligent_channels2();
   two_in_blend_intelligent_channels2();
+  sef_intelligent_channels2();
+  cp_intelligent_channels2();
+  llf_intelligent_channels2();
 
   path_sensitive_channel_sizing();
 
