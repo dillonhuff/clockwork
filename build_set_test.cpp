@@ -21232,7 +21232,8 @@ void two_input_blending_test() {
 }
 
 void path_sensitive_channel_sizing() {
-  prog prg = llf_grayscale_float(64, 64);
+  //prog prg = llf_grayscale_float(64, 64);
+  prog prg = two_in_blnd(64, 64);
   prg.name = prg.name + "_d";
   prg.sanity_check();
 
@@ -21505,6 +21506,7 @@ void two_in_blend_250_channels() {
 }
 
 void application_tests() {
+  path_sensitive_channel_sizing();
 
   cp_intelligent_channels();
 
@@ -21518,7 +21520,6 @@ void application_tests() {
   sef_intelligent_channels();
   llf_intelligent_channels();
   two_in_blend_intelligent_channels();
-  path_sensitive_channel_sizing();
 
   two_in_blnd_16pix_static_dynamic_comparison();
   two_in_blnd_8pix_static_dynamic_comparison();
