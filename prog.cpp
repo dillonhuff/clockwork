@@ -8763,11 +8763,11 @@ void set_channel_depths_by_assumed_stage_depth(const int kernel_depth, app_dag& 
 
   vector<string> sorted_groups = dag.sorted_fusion_groups();
   for (auto next_group : sorted_groups) {
-    // If the next group is an input group then add
-    // it as the start of a new path
-    if (dag.ancestors(next_group).size() == 0) {
-      in_progress_paths.insert({next_group});
-    }
+    //// If the next group is an input group then add
+    //// it as the start of a new path
+    //if (dag.ancestors(next_group).size() == 0) {
+    in_progress_paths.insert({next_group});
+    //}
 
     // Build new paths by adding this node to
     // each partial_path. If there are multiple
