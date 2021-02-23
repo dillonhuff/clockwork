@@ -317,9 +317,8 @@ struct ir_node {
     val_name = c_sanitize(val_name);
     return val_name;
 
-    //string val_name = c_sanitize(val_loc.first + "_" + val_loc.second + "_value");
-    //return val_name;
   }
+
   string consumed_value_name(pair<string, string>& val_loc) {
     string val_name = c_sanitize(val_loc.first + "_" + val_loc.second + "_value");
     return val_name;

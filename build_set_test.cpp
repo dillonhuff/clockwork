@@ -22394,7 +22394,9 @@ void dhuff_playground() {
     prog prg = mod_example();
     prg.pretty_print();
 
-    generate_unoptimized_code(prg);
+    //generate_unoptimized_code(prg);
+
+    auto res = unoptimized_result(prg);
     assert(false);
   }
   {
