@@ -121,7 +121,7 @@ int main(int argc, char **argv) {
       << "] with xclbin file!\n";
     } else {
       std::cout << "Device[" << i << "]: program successful!\n";
-      OCL_CHECK(err, krnl_vector_add = cl::Kernel(program, "two_in_blnd_d_kernel", &err));
+      OCL_CHECK(err, krnl_vector_add = cl::Kernel(program, "two_in_blnd_icd_kernel", &err));
       valid_device++;
       break;
     }
