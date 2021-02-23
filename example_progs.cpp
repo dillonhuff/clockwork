@@ -8541,13 +8541,13 @@ prog three_level_pond_rolled() {
   hcompute_conv_stencil->add_function("hcompute_conv_stencil");
   prg.buffer_port_widths["conv_stencil"] = 16;
   hcompute_conv_stencil->add_store("conv_stencil", "conv_s0_y", "conv_s0_x");
-  auto conv_s1_y = output_cgra_s0_x_x_cgra->add_loop("conv_s1_y", 0, 8);
-  auto conv_s1_x = conv_s1_y->add_loop("conv_s1_x", 0, 8);
-  auto conv_s1_r_y = conv_s1_x->add_loop("conv_s1_r_y", 0, 3);
+  auto conv_s1_r_y = output_cgra_s0_x_x_cgra->add_loop("conv_s1_r_y", 0, 3);
   auto conv_s1_r_x = conv_s1_r_y->add_loop("conv_s1_r_x", 0, 3);
+  auto conv_s1_y = conv_s1_r_x->add_loop("conv_s1_y", 0, 8);
+  auto conv_s1_x = conv_s1_y->add_loop("conv_s1_x", 0, 8);
 
 //store is: conv.stencil(conv_s1_x, conv_s1_y) = (conv.stencil(conv_s1_x, conv_s1_y) + hw_input.stencil((conv_s1_r_x + conv_s1_x), (conv_s1_r_y + conv_s1_y)))
-  auto hcompute_conv_stencil_1 = conv_s1_r_x->add_op("op_hcompute_conv_stencil_1");
+  auto hcompute_conv_stencil_1 = conv_s1_x->add_op("op_hcompute_conv_stencil_1");
   hcompute_conv_stencil_1->add_function("hcompute_conv_stencil_1");
   hcompute_conv_stencil_1->add_load("conv_stencil", "conv_s1_y", "conv_s1_x");
   hcompute_conv_stencil_1->add_load("hw_input_stencil", "(conv_s1_r_y + conv_s1_y)", "(conv_s1_r_x + conv_s1_x)");
