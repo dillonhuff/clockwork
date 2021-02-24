@@ -20502,6 +20502,105 @@ void two_in_blnd_static_dynamic_comparison() {
   assert(false);
 }
 
+void blur4_static_dynamic_comparison(const int throughput) {
+  string prefix = "blur4";
+
+  //int size = 1080;
+  int rows = 1080;
+  int cols = 1920;
+
+  int unroll_factor = throughput;
+  //int throughput = unroll_factor;
+  string out_name = prefix + "_" + str(unroll_factor);
+
+  CodegenOptions options;
+  options.internal = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  options.scheduling_algorithm = SCHEDULE_ALGORITHM_CW;
+  options.debug_options.expect_all_linebuffers = true;
+
+  App app = blur_xy_16(out_name);
+  prog prg = app.realize(options, out_name, cols, rows, 1);
+  prepare_for_clockwork_scheduling(prg);
+
+  {
+    prog static_prg = prg.deep_copy();
+    static_prg.reset_context();
+
+    infer_bounds_and_unroll(pick(static_prg.outs), {cols, rows}, throughput, static_prg);
+
+    static_prg.pretty_print();
+
+    generate_optimized_code(options, static_prg);
+    app.generate_soda_file(static_prg.name, throughput);
+
+    move_to_benchmarks_folder(out_name + "_opt");
+  }
+
+  {
+    prog static_prg = prg.deep_copy();
+    static_prg.name = out_name + "_opt_d32";
+    static_prg.reset_context();
+
+    static_prg.pretty_print();
+
+    auto fusion_groups = one_stage_per_group(static_prg);
+    auto fresh_groups = insert_inter_group_buffers(fusion_groups, static_prg);
+    unroll_mismatched_inner_loops(static_prg);
+    merge_basic_block_ops(static_prg);
+    infer_bounds_and_unroll(pick(static_prg.outs), {cols, rows}, throughput, static_prg);
+
+    assert(unoptimized_compiles(static_prg));
+
+    app_dag dag = partition_groups(fresh_groups, static_prg);
+
+    options = CodegenOptions();
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+    options.slack_matching = {SLACK_MATCHING_TYPE_FIXED, 32};
+    generate_app_code(options, dag);
+
+    move_to_benchmarks_folder(static_prg.name);
+
+    string synth_dir =
+      "./soda_codes/" + static_prg.name+ "/our_code/";
+    system(("cp " + out_name + "_opt" + "*.h " + synth_dir).c_str());
+  }
+
+  {
+    prog static_prg = prg.deep_copy();
+    prg.reset_context();
+
+    static_prg.pretty_print();
+
+    prg.name = out_name + "_opt_dis";
+
+    auto fusion_groups = one_stage_per_group(prg);
+    auto fresh_groups = insert_inter_group_buffers(fusion_groups, prg);
+    unroll_mismatched_inner_loops(prg);
+    merge_basic_block_ops(prg);
+    infer_bounds_and_unroll(pick(prg.outs), {cols, rows}, throughput, prg);
+
+    assert(unoptimized_compiles(prg));
+
+    app_dag dag = partition_groups(fresh_groups, prg);
+
+    options = CodegenOptions();
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+    options.slack_matching = {SLACK_MATCHING_TYPE_PIPELINE_DEPTH_AWARE, 2};
+    generate_app_code(options, dag);
+
+    move_to_benchmarks_folder(prg.name);
+
+    string synth_dir =
+      "./soda_codes/" + prg.name+ "/our_code/";
+
+    system(("cp " + out_name + "_opt" + "*.h " + synth_dir).c_str());
+  }
+  cout << "prg name: " << prg.name << endl;
+
+  assert(false);
+}
+
 void blur3_16_static_dynamic_comparison() {
   string prefix = "blur3";
 
@@ -20509,7 +20608,7 @@ void blur3_16_static_dynamic_comparison() {
   int rows = size;
   int cols = size;
 
-  int unroll_factor = 2;
+  int unroll_factor = 16;
   int throughput = unroll_factor;
   string out_name = prefix + "_" + str(unroll_factor);
 
@@ -20542,8 +20641,6 @@ void blur3_16_static_dynamic_comparison() {
     static_prg.name = out_name + "_opt_d32";
     static_prg.reset_context();
 
-    infer_bounds_and_unroll(pick(static_prg.outs), {size, size}, throughput, static_prg);
-
     static_prg.pretty_print();
 
     auto fusion_groups = one_stage_per_group(static_prg);
@@ -20571,8 +20668,6 @@ void blur3_16_static_dynamic_comparison() {
   {
     prog static_prg = prg.deep_copy();
     prg.reset_context();
-
-    infer_bounds_and_unroll(pick(static_prg.outs), {size, size}, throughput, static_prg);
 
     static_prg.pretty_print();
 
@@ -21763,6 +21858,8 @@ void sef_intelligent_channels2() {
 }
 
 void application_tests() {
+  blur4_static_dynamic_comparison(1);
+
   blur3_16_static_dynamic_comparison();
   blur3_1_static_dynamic_comparison();
   blur3_32_static_dynamic_comparison();
