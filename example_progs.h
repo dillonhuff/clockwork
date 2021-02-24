@@ -63,5 +63,4 @@ prog jitnet();
 //prog exposure_fusion();
 prog 1x1conv();
 prog mod_example();
-prog 1x1conv();
 prog three_level_pond_copy();
