@@ -20509,7 +20509,7 @@ void blur3_16_static_dynamic_comparison() {
   int rows = size;
   int cols = size;
 
-  int unroll_factor = 16;
+  int unroll_factor = 2;
   int throughput = unroll_factor;
   string out_name = prefix + "_" + str(unroll_factor);
 
