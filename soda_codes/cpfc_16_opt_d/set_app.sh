@@ -1,2 +1,0 @@
-export app=cpfc_16_opt_d
-export HLS_CLOCK_FREQUENCY=250000000
