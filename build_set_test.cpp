@@ -22053,6 +22053,7 @@ void sef_intelligent_channels2() {
 }
 
 void application_tests() {
+  cp4_static_dynamic_comparison(16);
   cp4_static_dynamic_comparison(1);
 
   sbl4_static_dynamic_comparison(32);
