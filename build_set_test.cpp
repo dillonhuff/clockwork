@@ -21950,6 +21950,10 @@ void sef_250_channels() {
   assert(false);
 }
 
+void llf_2pix_250_channels() {
+  assert(false);
+}
+
 void llf_250_channels() {
   prog prg = llf_grayscale_float(2048, 2048);
   prg.name = prg.name + "_250";
@@ -22149,6 +22153,8 @@ void sef_intelligent_channels2() {
 }
 
 void application_tests() {
+  llf_2pix_250_channels();
+
   jac4_static_dynamic_comparison(32);
   jac4_static_dynamic_comparison(16);
   jac4_static_dynamic_comparison(1);
