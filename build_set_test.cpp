@@ -21858,6 +21858,7 @@ void sef_intelligent_channels2() {
 }
 
 void application_tests() {
+  blur4_static_dynamic_comparison(32);
   blur4_static_dynamic_comparison(16);
   blur4_static_dynamic_comparison(1);
 
