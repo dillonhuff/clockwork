@@ -22149,6 +22149,7 @@ void sef_intelligent_channels2() {
 }
 
 void application_tests() {
+  jac4_static_dynamic_comparison(32);
   jac4_static_dynamic_comparison(16);
   jac4_static_dynamic_comparison(1);
 
