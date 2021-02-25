@@ -10,8 +10,8 @@ int main(int argc, char **argv) {
   HWStream<hw_uint<32> > pw_math_in03_read_channel;
   HWStream<hw_uint<32> > pw_math_lp_in_on_chip_0_buf48_reconstruct_lp70_buf737982_write_channel;
   // In lanes = 1
-  for (int r = 0; r < 71; r++) {
-    for (int cl = 0; cl < 71 / 1; cl++) {
+  for (int r = 0; r < 64; r++) {
+    for (int cl = 0; cl < 64 / 1; cl++) {
       hw_uint<32> packed;
       {
       int c = 1*cl + 0;

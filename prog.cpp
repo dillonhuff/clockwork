@@ -9001,13 +9001,18 @@ void generate_app_code(
 
     {
       int max_dd = 0;
-      for (auto inpt : buf.get_in_ports()) {
-        int mdd = compute_max_dd(buf, inpt);
-        cout << tab(1) << "MDD = " << mdd << endl;
-        if (mdd > max_dd) {
-          max_dd = mdd;
-        }
-      }
+      assert(buf.get_in_bundles().size() == 1);
+      string rep = pick(buf.get_in_bundles());
+      max_dd =
+        compute_max_dd(buf, pick(map_find(rep, buf.port_bundles)));
+
+      //for (auto inpt : buf.get_in_ports()) {
+        //int mdd = compute_max_dd(buf, inpt);
+        //cout << tab(1) << "MDD = " << mdd << endl;
+        //if (mdd > max_dd) {
+          //max_dd = mdd;
+        //}
+      //}
       dag.channel_sizes[c] += max_dd;
       //assert(max_dd == 0);
     }
