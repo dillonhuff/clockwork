@@ -21951,6 +21951,34 @@ void sef_250_channels() {
 }
 
 void llf_2pix_250_channels() {
+  int throughput = 2;
+  int rows = 2048;
+  int cols = rows;
+
+  prog prg = llf_grayscale_float(cols, rows);
+  prg.name = prg.name + "2p";
+
+  auto fusion_groups = one_stage_per_group(prg);
+  auto fresh_groups = insert_inter_group_buffers(fusion_groups, prg);
+  unroll_mismatched_inner_loops(prg);
+  merge_basic_block_ops(prg);
+  infer_bounds_and_unroll(pick(prg.outs), {cols, rows}, throughput, prg);
+
+  assert(unoptimized_compiles(prg));
+
+  app_dag dag = partition_groups(fresh_groups, prg);
+
+  CodegenOptions options = CodegenOptions();
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  options.slack_matching = {SLACK_MATCHING_TYPE_FIXED, 250};
+  generate_app_code(options, dag);
+
+  move_to_benchmarks_folder(prg.name);
+
+  string synth_dir =
+    "./soda_codes/" + prg.name+ "/our_code/";
+  cmd("cp local_laplacian_filter* ./soda_codes/" + prg.name + "/our_code/");
+
   assert(false);
 }
 
