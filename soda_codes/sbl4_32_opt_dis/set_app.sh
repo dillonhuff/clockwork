@@ -1,0 +1,2 @@
+export app=sbl4_32_opt_dis
+export HLS_CLOCK_FREQUENCY=250000000

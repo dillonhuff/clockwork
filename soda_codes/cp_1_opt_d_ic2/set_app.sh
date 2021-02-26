@@ -1,0 +1,2 @@
+export app=cp_1_opt_d_ic2
+export HLS_CLOCK_FREQUENCY=250000000

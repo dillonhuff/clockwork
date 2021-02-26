@@ -317,9 +317,8 @@ struct ir_node {
     val_name = c_sanitize(val_name);
     return val_name;
 
-    //string val_name = c_sanitize(val_loc.first + "_" + val_loc.second + "_value");
-    //return val_name;
   }
+
   string consumed_value_name(pair<string, string>& val_loc) {
     string val_name = c_sanitize(val_loc.first + "_" + val_loc.second + "_value");
     return val_name;
@@ -812,6 +811,8 @@ struct prog {
   // The C++ source file which holds HLS code
   // for the compute unit implementations
   string compute_unit_file;
+
+  prog deep_copy();
 
   map<string, vector<int> > buffer_bounds;
 
@@ -1851,6 +1852,8 @@ void adjust_outer_delays(schedule_info& sched, prog& prg);
 void adjust_outer_pipeline_delays(schedule_info& sched, prog& prg);
 
 bool no_violated_cycle_accurate_dependencies(schedule_info& sched, prog& prg);
+bool sw_schedule_respects_deps(umap* schedule, umap* deps);
+bool no_violated_dependencies(umap* schedule, umap* deps);
 
 bool schedule_bounds_fit_controller_bitwidth(const int bitwidth, schedule_info& sched, prog& prg);
 
@@ -1908,6 +1911,7 @@ struct app_dag {
   vector<string> sorted_fusion_groups();
 
   std::set<string> children(const std::string& location);
+  std::set<string> ancestors(const std::string& location);
 
   bool is_boundary(const std::string& buf) {
     return prg.is_boundary(buf);
@@ -1994,3 +1998,29 @@ vector<string> buffer_arg_names(op* op, prog& prg);
 void set_channel_depths_to_constant(const int constant, app_dag& dag);
 
 void unroll_mismatched_inner_loops(prog& prg);
+
+
+std::set<string> children(const std::string& to_merge, map<string, std::set<string> >& fusion_groups, prog& prg);
+std::set<string> parents(const std::string& to_merge, map<string, std::set<string> >& fusion_groups, prog& prg);
+
+
+std::set<string> buffers_read(const std::string& to_merge, map<string, std::set<string> >& fusion_groups, prog& prg);
+std::set<string> buffers_written(const std::string& to_merge, map<string, std::set<string> >& fusion_groups, prog& prg);
+
+std::set<string> children(const std::string& kernel, prog& prg);
+
+
+bool groups_are_contiguous(const map<string, std::set<string> >& fusion_groups, prog& prg);
+
+bool no_violated_cycle_accurate_dependencies(umap* deps, schedule_info& sched, prog& prg);
+bool no_violated_cycle_accurate_dependencies(schedule_info& sched, prog& prg);
+
+umap* cycle_accurate_deps(prog& prg);
+
+void sanity_check_negative_starts(schedule_info& sched, prog& prg);
+
+int max_completion_time(schedule_info& sched, prog& prg);
+
+void prepare_for_clockwork_scheduling(prog& prg);
+
+bool inner_loops_unrollable(const std::string& buf, const int unroll_factor, prog& prg);

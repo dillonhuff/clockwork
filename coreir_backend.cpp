@@ -2329,6 +2329,18 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
 
   ofstream verilog_collateral(prg.name + "_verilog_collateral.sv");
   verilog_collateral_file = &verilog_collateral;
+  vector<isl_set*> ss;
+  for (auto m : get_maps(schedmap)) {
+    verilog_collateral << tab(1) << "// min: " << str(lexmin(range(m))) << endl;
+    verilog_collateral << tab(1) << "// max: " << str(lexmax(range(m))) << endl;
+    verilog_collateral << endl;
+    ss.push_back(range(m));
+  }
+
+  isl_set* res = unn(ss);
+  verilog_collateral << tab(1) << "// sched min: " << str(lexmin(res)) << endl;
+  verilog_collateral << tab(1) << "// sched max: " << str(lexmax(res)) << endl;
+  
 
   assert(verilog_collateral_file != nullptr);
 
@@ -4283,7 +4295,7 @@ void pipeline_compute_units(prog& prg, schedule_info& hwinfo) {
         unscheduled.insert(i);
       }
       while (unscheduled.size() > 0) {
-        Instance* next_sched = nullptr;
+        std::set<Instance*> next_sched_lvl;
         for (Instance* i : unscheduled) {
           bool all_deps_scheduled = true;
           for (auto d : instance_connections_dst_to_src[i]) {
@@ -4294,14 +4306,36 @@ void pipeline_compute_units(prog& prg, schedule_info& hwinfo) {
           }
 
           if (all_deps_scheduled) {
-            next_sched = i;
-            break;
+            next_sched_lvl.insert(i);
           }
         }
-        assert(next_sched != nullptr);
-        unscheduled.erase(next_sched);
-        schedule.push_back({next_sched});
-        num_scheduled++;
+        assert(next_sched_lvl.size() > 0);
+        for (auto next_sched : next_sched_lvl) {
+          unscheduled.erase(next_sched);
+          schedule.push_back({next_sched});
+          num_scheduled++;
+        }
+
+        //Instance* next_sched = nullptr;
+        //for (Instance* i : unscheduled) {
+          //bool all_deps_scheduled = true;
+          //for (auto d : instance_connections_dst_to_src[i]) {
+            //if (dbhc::elem(d, unscheduled)) {
+              //all_deps_scheduled = false;
+              //break;
+            //}
+          //}
+
+          //if (all_deps_scheduled) {
+            //next_sched = i;
+            //break;
+          //}
+        //}
+        //assert(next_sched != nullptr);
+        //unscheduled.erase(next_sched);
+        //schedule.push_back({next_sched});
+        //num_scheduled++;
+
       }
       assert(num_scheduled == instances.size());
 

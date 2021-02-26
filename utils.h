@@ -57,7 +57,9 @@ string c_sanitize(const std::string& str) {
       res += "_m_";
     } else if (c == '/') {
       res += "_div_";
-    } else {
+    } else if (c == '%') {
+      res += "_mod_";
+    }else {
       res += c;
     }
   }

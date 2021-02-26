@@ -1600,7 +1600,13 @@ umap*
 clockwork_schedule_umap_reversed(uset* domain,
     umap* validity,
     umap* proximity) {
+  int num_stmts_in_domain = get_sets(domain).size();
+
   auto sched = clockwork_schedule(domain, validity, proximity);
+
+  int num_stmts_in_sched_map = sched.size();
+
+  assert(num_stmts_in_domain == num_stmts_in_sched_map);
 
   map<string, vector<QExpr> > scheds;
   for (auto s : sched) {
@@ -1667,16 +1673,18 @@ clockwork_schedule_umap_reversed(uset* domain,
     string map_str = "{ " + f + sep_list(var_names, "[", "]", ", ") + " -> " + sep_list(sched_exprs, "[", "]", ", ") + " }";
 
     cout << "Map str: " << map_str << endl;
-    auto rm = rdmap(ctx(domain), map_str);
+    auto rm = isl_map_read_from_str(ctx(domain), map_str.c_str());
     cout << "map got str" << endl;
-    m = unn(m, rm);
-    isl_union_map_free(rm);
+    m = unn(m, to_umap(rm));
+    release(rm);
   }
 
   umap* s = m; //qschedule_to_map_final_sort(ctx(domain), scheds);
 
   cout << "M Final sched: " << str(s) << endl;
-  //assert(false);
+  int num_stmts_in_final_schedule = get_maps(s).size();
+
+  assert(num_stmts_in_domain == num_stmts_in_final_schedule);
 
   return s;
 }

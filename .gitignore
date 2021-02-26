@@ -64,3 +64,5 @@ warp_and_upsample*
 ef_*
 unoptimized_*
 aligner
+clockwork
+lib/

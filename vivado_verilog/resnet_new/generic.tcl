@@ -9,13 +9,13 @@
 # Log file: /home/ziheng/clockwork_synth/test_tcl/log/resnet.log
 # Journal file: /home/ziheng/clockwork_synth/test_tcl/log/resnet.jou
 #-----------------------------------------------------------
-create_project resnet /nobackup/zihengw/resnet_new/resnet_1 -part xc7k70tfbv676-1
-add_files -norecurse {/nobackup/zihengw/resnet_new/src/resnet_verilog_collateral.sv /nobackup/zihengw/resnet_new/src/resnet.v}
-add_files -fileset sim_1 -norecurse /nobackup/zihengw/resnet_new/tb/resnet_tb.sv
+create_project resnet ./resnet_1 -part xc7k70tfbv676-1
+add_files -norecurse {./src/resnet_verilog_collateral.sv ./src/resnet.v}
+add_files -fileset sim_1 -norecurse ./tb/resnet_tb.sv
 import_files -force -norecurse
 update_compile_order -fileset sources_1
 update_compile_order -fileset sources_1
-set_property file_type SystemVerilog [get_files  /nobackup/zihengw/resnet_new/resnet_1/resnet.srcs/sources_1/imports/src/resnet.v]
+set_property file_type SystemVerilog [get_files  ./resnet_1/resnet.srcs/sources_1/imports/src/resnet.v]
 set_property top resnet [get_filesets sources_1]
 set_property top resnet_tb [get_filesets sim_1]
 #launch_simulation

@@ -670,6 +670,7 @@ isl_val* eval(isl_aff* a, isl_point* p);
 
 
 isl_union_set* diff(isl_union_set* const m0, isl_union_set* const m1);
+isl_set* diff(isl_set* const m0, isl_set* const m1);
 
 
 isl_union_map* diff(isl_union_map* const m0, isl_union_map* const m1);

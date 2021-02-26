@@ -25,60 +25,60 @@ prog resnet_hc_multitile() {
   prg.compute_unit_file = "resnet_compute.h";
   prg.name = "resnet";
 
-// Stencil<uint16_t, 8, 30, 30> &input_copy_stencil = arg_0;
+  // Stencil<uint16_t, 8, 30, 30> &input_copy_stencil = arg_0;
   prg.add_input("input_copy_stencil");
   prg.buffer_port_widths["input_copy_stencil"] = 16;
-// Stencil<uint16_t, 8, 16, 3, 3> &kernel_copy_stencil = arg_1;
+  // Stencil<uint16_t, 8, 16, 3, 3> &kernel_copy_stencil = arg_1;
   prg.add_input("kernel_copy_stencil");
   prg.buffer_port_widths["kernel_copy_stencil"] = 16;
-// Stencil<void *> &hw_output_stencil = arg_2;
+  // Stencil<void *> &hw_output_stencil = arg_2;
   prg.add_output("hw_output_stencil");
   prg.buffer_port_widths["hw_output_stencil"] = 16;
 
 
-//consuming kernel_copy.stencil
+  //consuming kernel_copy.stencil
 
-//consuming input_copy.stencil
-////producing hw_input.stencil
+  //consuming input_copy.stencil
+  ////producing hw_input.stencil
   auto hw_input_s0_t = prg.add_loop("hw_input_s0_t", 0, 4);
   auto hw_input_s0_y = hw_input_s0_t->add_loop("hw_input_s0_y", 0, 32);
   auto hw_input_s0_x = hw_input_s0_y->add_loop("hw_input_s0_x", 0, 32);
   auto hw_input_s0_z = hw_input_s0_x->add_loop("hw_input_s0_z", 0, 8);
 
-//store is: hw_input.stencil(hw_input.s0.z, hw_input.s0.x, hw_input.s0.y) = input_copy.stencil(hw_input.s0.z, hw_input.s0.x, hw_input.s0.y)
+  //store is: hw_input.stencil(hw_input.s0.z, hw_input.s0.x, hw_input.s0.y) = input_copy.stencil(hw_input.s0.z, hw_input.s0.x, hw_input.s0.y)
   auto hcompute_hw_input_stencil = hw_input_s0_z->add_op("op_hcompute_hw_input_stencil");
   hcompute_hw_input_stencil->add_function("hcompute_hw_input_stencil");
   hcompute_hw_input_stencil->add_load("input_copy_stencil", "hw_input_s0_t", "hw_input_s0_y", "hw_input_s0_x", "hw_input_s0_z");
   prg.buffer_port_widths["hw_input_stencil"] = 16;
   hcompute_hw_input_stencil->add_store("hw_input_stencil", "hw_input_s0_t", "hw_input_s0_y", "hw_input_s0_x", "hw_input_s0_z");
-////producing hw_kernel.stencil
+  ////producing hw_kernel.stencil
   auto hw_kernel_s0_t = prg.add_loop("hw_kernel_s0_t", 0, 4);
   auto hw_kernel_s0_y = hw_kernel_s0_t->add_loop("hw_kernel_s0_y", 0, 3);
   auto hw_kernel_s0_x = hw_kernel_s0_y->add_loop("hw_kernel_s0_x", 0, 3);
   auto hw_kernel_s0_w = hw_kernel_s0_x->add_loop("hw_kernel_s0_w", 0, 16);
   auto hw_kernel_s0_z = hw_kernel_s0_w->add_loop("hw_kernel_s0_z", 0, 8);
 
-//store is: hw_kernel.stencil(hw_kernel.s0.z, hw_kernel.s0.w, hw_kernel.s0.x, hw_kernel.s0.y) = kernel_copy.stencil(hw_kernel.s0.z, hw_kernel.s0.w, hw_kernel.s0.x, hw_kernel.s0.y)
+  //store is: hw_kernel.stencil(hw_kernel.s0.z, hw_kernel.s0.w, hw_kernel.s0.x, hw_kernel.s0.y) = kernel_copy.stencil(hw_kernel.s0.z, hw_kernel.s0.w, hw_kernel.s0.x, hw_kernel.s0.y)
   auto hcompute_hw_kernel_stencil = hw_kernel_s0_z->add_op("op_hcompute_hw_kernel_stencil");
   hcompute_hw_kernel_stencil->add_function("hcompute_hw_kernel_stencil");
   hcompute_hw_kernel_stencil->add_load("kernel_copy_stencil", "hw_kernel_s0_t", "hw_kernel_s0_y", "hw_kernel_s0_x", "hw_kernel_s0_w", "hw_kernel_s0_z");
   prg.buffer_port_widths["hw_kernel_stencil"] = 16;
   hcompute_hw_kernel_stencil->add_store("hw_kernel_stencil", "hw_kernel_s0_t", "hw_kernel_s0_y", "hw_kernel_s0_x", "hw_kernel_s0_w", "hw_kernel_s0_z");
-////producing conv.stencil
+  ////producing conv.stencil
   auto conv_s0_t = prg.add_loop("conv_s0_t", 0, 4);
   auto conv_s0_w = conv_s0_t->add_loop("conv_s0_w", 0, 16);
   auto conv_s0_y = conv_s0_w->add_loop("conv_s0_y", 0, 28);
   auto conv_s0_x = conv_s0_y->add_loop("conv_s0_x", 0, 28);
 
-//store is: conv.stencil(conv.s0.x, conv.s0.y, conv.s0.w) = (uint16)0
+  //store is: conv.stencil(conv.s0.x, conv.s0.y, conv.s0.w) = (uint16)0
   auto hcompute_conv_stencil = conv_s0_x->add_op("op_hcompute_conv_stencil");
   hcompute_conv_stencil->add_function("hcompute_conv_stencil");
   prg.buffer_port_widths["conv_stencil"] = 16;
   hcompute_conv_stencil->add_store("conv_stencil", "conv_s0_t", "conv_s0_y", "conv_s0_x", "conv_s0_w");
 
-//consuming hw_kernel.stencil
+  //consuming hw_kernel.stencil
 
-//consuming hw_input.stencil
+  //consuming hw_input.stencil
   auto conv_s1_r_t = prg.add_loop("conv_s1_r_t", 0, 4);
   auto conv_s1_r_y = conv_s1_r_t->add_loop("conv_s1_r_y", 0, 3);
   auto conv_s1_r_x = conv_s1_r_y->add_loop("conv_s1_r_x", 0, 3);
@@ -87,34 +87,34 @@ prog resnet_hc_multitile() {
   auto conv_s1_x = conv_s1_y->add_loop("conv_s1_x", 0, 28);
   auto conv_s1_ic = conv_s1_x->add_loop("conv_s1_ic", 0, 4);
 
-//store is: conv.stencil(conv.s1.x, conv.s1.y, 0) = ((hw_kernel.stencil(0, 0, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(0, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(1, 0, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(1, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(2, 0, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(2, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(3, 0, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(3, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(4, 0, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(4, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(5, 0, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(5, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(6, 0, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(6, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + (conv.stencil(conv.s1.x, conv.s1.y, 0) + (hw_kernel.stencil(7, 0, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(7, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y)))))))))))
+  //store is: conv.stencil(conv.s1.x, conv.s1.y, 0) = ((hw_kernel.stencil(0, 0, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(0, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(1, 0, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(1, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(2, 0, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(2, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(3, 0, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(3, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(4, 0, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(4, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(5, 0, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(5, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(6, 0, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(6, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + (conv.stencil(conv.s1.x, conv.s1.y, 0) + (hw_kernel.stencil(7, 0, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(7, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y)))))))))))
   auto hcompute_conv_stencil_1 = conv_s1_ic->add_op("op_hcompute_conv_stencil_1");
   hcompute_conv_stencil_1->add_function("hcompute_conv_stencil_1");
   for (int oc_unroll = 0; oc_unroll < 4; oc_unroll ++) {
     hcompute_conv_stencil_1->add_load("conv_stencil", "conv_s1_r_t", "conv_s1_y", "conv_s1_x", "conv_s1_oc*4+" +  to_string(oc_unroll));
-      for (int ic_unroll = 0; ic_unroll < 2; ic_unroll ++) {
-        if (oc_unroll == 0)
-          hcompute_conv_stencil_1->add_load(
-                   "hw_input_stencil", "conv_s1_r_t",
-                  "(conv_s1_r_y + conv_s1_y)",
-                  "(conv_s1_r_x + conv_s1_x)",
-                  to_string(ic_unroll) + "+conv_s1_ic*2");
+    for (int ic_unroll = 0; ic_unroll < 2; ic_unroll ++) {
+      if (oc_unroll == 0)
         hcompute_conv_stencil_1->add_load(
-                "hw_kernel_stencil", "conv_s1_r_t",
-                "(conv_s1_r_y)", "(conv_s1_r_x)",
-                to_string(oc_unroll) + "+conv_s1_oc*4",
-                to_string(ic_unroll) + "+conv_s1_ic*2");
-      }
+            "hw_input_stencil", "conv_s1_r_t",
+            "(conv_s1_r_y + conv_s1_y)",
+            "(conv_s1_r_x + conv_s1_x)",
+            to_string(ic_unroll) + "+conv_s1_ic*2");
+      hcompute_conv_stencil_1->add_load(
+          "hw_kernel_stencil", "conv_s1_r_t",
+          "(conv_s1_r_y)", "(conv_s1_r_x)",
+          to_string(oc_unroll) + "+conv_s1_oc*4",
+          to_string(ic_unroll) + "+conv_s1_ic*2");
+    }
     hcompute_conv_stencil_1->add_store("conv_stencil", "conv_s1_r_t", "conv_s1_y", "conv_s1_x", to_string(oc_unroll) + "+conv_s1_oc*4");
   }
 
-//consuming conv.stencil
+  //consuming conv.stencil
   auto hw_output_s0_t = prg.add_loop("hw_output_s0_t", 0, 4);
   auto hw_output_s0_w = hw_output_s0_t->add_loop("hw_output_s0_w", 0, 16);
   auto hw_output_s0_y_yi = hw_output_s0_w->add_loop("hw_output_s0_y_yi", 0, 28);
   auto hw_output_s0_x_xi = hw_output_s0_y_yi->add_loop("hw_output_s0_x_xi", 0, 28);
 
-//store is: hw_output.stencil(hw_output.s0.x.xi, hw_output.s0.y.yi, hw_output.s0.w) = uint8(conv.stencil(hw_output.s0.x.xi, hw_output.s0.y.yi, hw_output.s0.w))
+  //store is: hw_output.stencil(hw_output.s0.x.xi, hw_output.s0.y.yi, hw_output.s0.w) = uint8(conv.stencil(hw_output.s0.x.xi, hw_output.s0.y.yi, hw_output.s0.w))
   auto hcompute_hw_output_stencil = hw_output_s0_x_xi->add_op("op_hcompute_hw_output_stencil");
   hcompute_hw_output_stencil->add_function("hcompute_hw_output_stencil");
   hcompute_hw_output_stencil->add_load("conv_stencil", "hw_output_s0_t", "hw_output_s0_y_yi", "hw_output_s0_x_xi", "hw_output_s0_w");
@@ -128,57 +128,57 @@ prog resnet_hc() {
   prg.compute_unit_file = "resnet_compute.h";
   prg.name = "resnet";
 
-// Stencil<uint16_t, 8, 30, 30> &input_copy_stencil = arg_0;
+  // Stencil<uint16_t, 8, 30, 30> &input_copy_stencil = arg_0;
   prg.add_input("input_copy_stencil");
   prg.buffer_port_widths["input_copy_stencil"] = 16;
-// Stencil<uint16_t, 8, 16, 3, 3> &kernel_copy_stencil = arg_1;
+  // Stencil<uint16_t, 8, 16, 3, 3> &kernel_copy_stencil = arg_1;
   prg.add_input("kernel_copy_stencil");
   prg.buffer_port_widths["kernel_copy_stencil"] = 16;
-// Stencil<void *> &hw_output_stencil = arg_2;
+  // Stencil<void *> &hw_output_stencil = arg_2;
   prg.add_output("hw_output_stencil");
   prg.buffer_port_widths["hw_output_stencil"] = 16;
 
 
-//consuming kernel_copy.stencil
+  //consuming kernel_copy.stencil
 
-//consuming input_copy.stencil
-////producing hw_input.stencil
+  //consuming input_copy.stencil
+  ////producing hw_input.stencil
   auto hw_input_s0_y = prg.add_loop("hw_input_s0_y", 0, 32);
   auto hw_input_s0_x = hw_input_s0_y->add_loop("hw_input_s0_x", 0, 32);
   auto hw_input_s0_z = hw_input_s0_x->add_loop("hw_input_s0_z", 0, 8);
 
-//store is: hw_input.stencil(hw_input.s0.z, hw_input.s0.x, hw_input.s0.y) = input_copy.stencil(hw_input.s0.z, hw_input.s0.x, hw_input.s0.y)
+  //store is: hw_input.stencil(hw_input.s0.z, hw_input.s0.x, hw_input.s0.y) = input_copy.stencil(hw_input.s0.z, hw_input.s0.x, hw_input.s0.y)
   auto hcompute_hw_input_stencil = hw_input_s0_z->add_op("op_hcompute_hw_input_stencil");
   hcompute_hw_input_stencil->add_function("hcompute_hw_input_stencil");
   hcompute_hw_input_stencil->add_load("input_copy_stencil", "hw_input_s0_y", "hw_input_s0_x", "hw_input_s0_z");
   prg.buffer_port_widths["hw_input_stencil"] = 16;
   hcompute_hw_input_stencil->add_store("hw_input_stencil", "hw_input_s0_y", "hw_input_s0_x", "hw_input_s0_z");
-////producing hw_kernel.stencil
+  ////producing hw_kernel.stencil
   auto hw_kernel_s0_y = prg.add_loop("hw_kernel_s0_y", 0, 3);
   auto hw_kernel_s0_x = hw_kernel_s0_y->add_loop("hw_kernel_s0_x", 0, 3);
   auto hw_kernel_s0_w = hw_kernel_s0_x->add_loop("hw_kernel_s0_w", 0, 16);
   auto hw_kernel_s0_z = hw_kernel_s0_w->add_loop("hw_kernel_s0_z", 0, 8);
 
-//store is: hw_kernel.stencil(hw_kernel.s0.z, hw_kernel.s0.w, hw_kernel.s0.x, hw_kernel.s0.y) = kernel_copy.stencil(hw_kernel.s0.z, hw_kernel.s0.w, hw_kernel.s0.x, hw_kernel.s0.y)
+  //store is: hw_kernel.stencil(hw_kernel.s0.z, hw_kernel.s0.w, hw_kernel.s0.x, hw_kernel.s0.y) = kernel_copy.stencil(hw_kernel.s0.z, hw_kernel.s0.w, hw_kernel.s0.x, hw_kernel.s0.y)
   auto hcompute_hw_kernel_stencil = hw_kernel_s0_z->add_op("op_hcompute_hw_kernel_stencil");
   hcompute_hw_kernel_stencil->add_function("hcompute_hw_kernel_stencil");
   hcompute_hw_kernel_stencil->add_load("kernel_copy_stencil", "hw_kernel_s0_y", "hw_kernel_s0_x", "hw_kernel_s0_w", "hw_kernel_s0_z");
   prg.buffer_port_widths["hw_kernel_stencil"] = 16;
   hcompute_hw_kernel_stencil->add_store("hw_kernel_stencil", "hw_kernel_s0_y", "hw_kernel_s0_x", "hw_kernel_s0_w", "hw_kernel_s0_z");
-////producing conv.stencil
+  ////producing conv.stencil
   auto conv_s0_w = prg.add_loop("conv_s0_w", 0, 16);
   auto conv_s0_y = conv_s0_w->add_loop("conv_s0_y", 0, 28);
   auto conv_s0_x = conv_s0_y->add_loop("conv_s0_x", 0, 28);
 
-//store is: conv.stencil(conv.s0.x, conv.s0.y, conv.s0.w) = (uint16)0
+  //store is: conv.stencil(conv.s0.x, conv.s0.y, conv.s0.w) = (uint16)0
   auto hcompute_conv_stencil = conv_s0_x->add_op("op_hcompute_conv_stencil");
   hcompute_conv_stencil->add_function("hcompute_conv_stencil");
   prg.buffer_port_widths["conv_stencil"] = 16;
   hcompute_conv_stencil->add_store("conv_stencil", "conv_s0_y", "conv_s0_x", "conv_s0_w");
 
-//consuming hw_kernel.stencil
+  //consuming hw_kernel.stencil
 
-//consuming hw_input.stencil
+  //consuming hw_input.stencil
   auto conv_s1_r_y = prg.add_loop("conv_s1_r_y", 0, 3);
   auto conv_s1_r_x = conv_s1_r_y->add_loop("conv_s1_r_x", 0, 3);
   auto conv_s1_oc = conv_s1_r_x->add_loop("conv_s1_oc", 0, 4);
@@ -186,31 +186,31 @@ prog resnet_hc() {
   auto conv_s1_x = conv_s1_y->add_loop("conv_s1_x", 0, 28);
   auto conv_s1_ic = conv_s1_x->add_loop("conv_s1_ic", 0, 4);
 
-//store is: conv.stencil(conv.s1.x, conv.s1.y, 0) = ((hw_kernel.stencil(0, 0, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(0, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(1, 0, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(1, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(2, 0, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(2, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(3, 0, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(3, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(4, 0, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(4, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(5, 0, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(5, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(6, 0, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(6, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + (conv.stencil(conv.s1.x, conv.s1.y, 0) + (hw_kernel.stencil(7, 0, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(7, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y)))))))))))
+  //store is: conv.stencil(conv.s1.x, conv.s1.y, 0) = ((hw_kernel.stencil(0, 0, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(0, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(1, 0, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(1, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(2, 0, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(2, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(3, 0, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(3, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(4, 0, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(4, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(5, 0, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(5, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(6, 0, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(6, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + (conv.stencil(conv.s1.x, conv.s1.y, 0) + (hw_kernel.stencil(7, 0, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(7, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y)))))))))))
   auto hcompute_conv_stencil_1 = conv_s1_ic->add_op("op_hcompute_conv_stencil_1");
   hcompute_conv_stencil_1->add_function("hcompute_conv_stencil_1");
   for (int oc_unroll = 0; oc_unroll < 4; oc_unroll ++) {
     hcompute_conv_stencil_1->add_load("conv_stencil", "conv_s1_y", "conv_s1_x", "conv_s1_oc*4+" +  to_string(oc_unroll));
-      for (int ic_unroll = 0; ic_unroll < 2; ic_unroll ++) {
-        if (oc_unroll == 0)
-          hcompute_conv_stencil_1->add_load("hw_input_stencil",
-                  "(conv_s1_r_y + conv_s1_y)",
-                  "(conv_s1_r_x + conv_s1_x)",
-                  to_string(ic_unroll) + "+conv_s1_ic*2");
-        hcompute_conv_stencil_1->add_load("hw_kernel_stencil",
-                "(conv_s1_r_y)", "(conv_s1_r_x)",
-                to_string(oc_unroll) + "+conv_s1_oc*4",
-                to_string(ic_unroll) + "+conv_s1_ic*2");
-      }
+    for (int ic_unroll = 0; ic_unroll < 2; ic_unroll ++) {
+      if (oc_unroll == 0)
+        hcompute_conv_stencil_1->add_load("hw_input_stencil",
+            "(conv_s1_r_y + conv_s1_y)",
+            "(conv_s1_r_x + conv_s1_x)",
+            to_string(ic_unroll) + "+conv_s1_ic*2");
+      hcompute_conv_stencil_1->add_load("hw_kernel_stencil",
+          "(conv_s1_r_y)", "(conv_s1_r_x)",
+          to_string(oc_unroll) + "+conv_s1_oc*4",
+          to_string(ic_unroll) + "+conv_s1_ic*2");
+    }
     hcompute_conv_stencil_1->add_store("conv_stencil", "conv_s1_y", "conv_s1_x", to_string(oc_unroll) + "+conv_s1_oc*4");
   }
 
-//consuming conv.stencil
+  //consuming conv.stencil
   auto hw_output_s0_w = prg.add_loop("hw_output_s0_w", 0, 16);
   auto hw_output_s0_y_yi = hw_output_s0_w->add_loop("hw_output_s0_y_yi", 0, 28);
   auto hw_output_s0_x_xi = hw_output_s0_y_yi->add_loop("hw_output_s0_x_xi", 0, 28);
 
-//store is: hw_output.stencil(hw_output.s0.x.xi, hw_output.s0.y.yi, hw_output.s0.w) = uint8(conv.stencil(hw_output.s0.x.xi, hw_output.s0.y.yi, hw_output.s0.w))
+  //store is: hw_output.stencil(hw_output.s0.x.xi, hw_output.s0.y.yi, hw_output.s0.w) = uint8(conv.stencil(hw_output.s0.x.xi, hw_output.s0.y.yi, hw_output.s0.w))
   auto hcompute_hw_output_stencil = hw_output_s0_x_xi->add_op("op_hcompute_hw_output_stencil");
   hcompute_hw_output_stencil->add_function("hcompute_hw_output_stencil");
   hcompute_hw_output_stencil->add_load("conv_stencil", "hw_output_s0_y_yi", "hw_output_s0_x_xi", "hw_output_s0_w");
@@ -220,430 +220,430 @@ prog resnet_hc() {
 }
 
 //prog resnet() {
-  //prog prg;
-  //prg.compute_unit_file = "resnet_compute.h";
-  //prg.name = "resnet";
+//prog prg;
+//prg.compute_unit_file = "resnet_compute.h";
+//prg.name = "resnet";
 
 //// Stencil<uint16_t, 8, 30, 30> &input_copy_stencil = arg_0;
-  //prg.add_input("input_copy_stencil");
-  //prg.buffer_port_widths["input_copy_stencil"] = 16;
+//prg.add_input("input_copy_stencil");
+//prg.buffer_port_widths["input_copy_stencil"] = 16;
 //// Stencil<uint16_t, 8, 16, 3, 3> &kernel_copy_stencil = arg_1;
-  //prg.add_input("kernel_copy_stencil");
-  //prg.buffer_port_widths["kernel_copy_stencil"] = 16;
+//prg.add_input("kernel_copy_stencil");
+//prg.buffer_port_widths["kernel_copy_stencil"] = 16;
 //// Stencil<void *> &hw_output_stencil = arg_2;
-  //prg.add_output("hw_output_stencil");
-  //prg.buffer_port_widths["hw_output_stencil"] = 16;
+//prg.add_output("hw_output_stencil");
+//prg.buffer_port_widths["hw_output_stencil"] = 16;
 
 
 ////consuming kernel_copy.stencil
 
 ////consuming input_copy.stencil
 //////producing hw_input.stencil
-  //auto hw_input_s0_y = prg.add_loop("hw_input_s0_y", 0, 30);
-  //auto hw_input_s0_x = hw_input_s0_y->add_loop("hw_input_s0_x", 0, 30);
-  //auto hw_input_s0_z = hw_input_s0_x->add_loop("hw_input_s0_z", 0, 8);
+//auto hw_input_s0_y = prg.add_loop("hw_input_s0_y", 0, 30);
+//auto hw_input_s0_x = hw_input_s0_y->add_loop("hw_input_s0_x", 0, 30);
+//auto hw_input_s0_z = hw_input_s0_x->add_loop("hw_input_s0_z", 0, 8);
 
 ////store is: hw_input.stencil(hw_input.s0.z, hw_input.s0.x, hw_input.s0.y) = input_copy.stencil(hw_input.s0.z, hw_input.s0.x, hw_input.s0.y)
-  //auto hcompute_hw_input_stencil = hw_input_s0_z->add_op("op_hcompute_hw_input_stencil");
-  //hcompute_hw_input_stencil->add_function("hcompute_hw_input_stencil");
-  //hcompute_hw_input_stencil->add_load("input_copy_stencil", "hw_input_s0_z", "hw_input_s0_x", "hw_input_s0_y");
-  //prg.buffer_port_widths["hw_input_stencil"] = 16;
-  //hcompute_hw_input_stencil->add_store("hw_input_stencil", "hw_input_s0_z", "hw_input_s0_x", "hw_input_s0_y");
+//auto hcompute_hw_input_stencil = hw_input_s0_z->add_op("op_hcompute_hw_input_stencil");
+//hcompute_hw_input_stencil->add_function("hcompute_hw_input_stencil");
+//hcompute_hw_input_stencil->add_load("input_copy_stencil", "hw_input_s0_z", "hw_input_s0_x", "hw_input_s0_y");
+//prg.buffer_port_widths["hw_input_stencil"] = 16;
+//hcompute_hw_input_stencil->add_store("hw_input_stencil", "hw_input_s0_z", "hw_input_s0_x", "hw_input_s0_y");
 //////producing hw_kernel.stencil
-  //auto hw_kernel_s0_y = prg.add_loop("hw_kernel_s0_y", 0, 3);
-  //auto hw_kernel_s0_x = hw_kernel_s0_y->add_loop("hw_kernel_s0_x", 0, 3);
-  //auto hw_kernel_s0_w = hw_kernel_s0_x->add_loop("hw_kernel_s0_w", 0, 16);
-  //auto hw_kernel_s0_z = hw_kernel_s0_w->add_loop("hw_kernel_s0_z", 0, 8);
+//auto hw_kernel_s0_y = prg.add_loop("hw_kernel_s0_y", 0, 3);
+//auto hw_kernel_s0_x = hw_kernel_s0_y->add_loop("hw_kernel_s0_x", 0, 3);
+//auto hw_kernel_s0_w = hw_kernel_s0_x->add_loop("hw_kernel_s0_w", 0, 16);
+//auto hw_kernel_s0_z = hw_kernel_s0_w->add_loop("hw_kernel_s0_z", 0, 8);
 
 ////store is: hw_kernel.stencil(hw_kernel.s0.z, hw_kernel.s0.w, hw_kernel.s0.x, hw_kernel.s0.y) = kernel_copy.stencil(hw_kernel.s0.z, hw_kernel.s0.w, hw_kernel.s0.x, hw_kernel.s0.y)
-  //auto hcompute_hw_kernel_stencil = hw_kernel_s0_z->add_op("op_hcompute_hw_kernel_stencil");
-  //hcompute_hw_kernel_stencil->add_function("hcompute_hw_kernel_stencil");
-  //hcompute_hw_kernel_stencil->add_load("kernel_copy_stencil", "hw_kernel_s0_z", "hw_kernel_s0_w", "hw_kernel_s0_x", "hw_kernel_s0_y");
-  //prg.buffer_port_widths["hw_kernel_stencil"] = 16;
-  //hcompute_hw_kernel_stencil->add_store("hw_kernel_stencil", "hw_kernel_s0_z", "hw_kernel_s0_w", "hw_kernel_s0_x", "hw_kernel_s0_y");
+//auto hcompute_hw_kernel_stencil = hw_kernel_s0_z->add_op("op_hcompute_hw_kernel_stencil");
+//hcompute_hw_kernel_stencil->add_function("hcompute_hw_kernel_stencil");
+//hcompute_hw_kernel_stencil->add_load("kernel_copy_stencil", "hw_kernel_s0_z", "hw_kernel_s0_w", "hw_kernel_s0_x", "hw_kernel_s0_y");
+//prg.buffer_port_widths["hw_kernel_stencil"] = 16;
+//hcompute_hw_kernel_stencil->add_store("hw_kernel_stencil", "hw_kernel_s0_z", "hw_kernel_s0_w", "hw_kernel_s0_x", "hw_kernel_s0_y");
 //////producing conv.stencil
-  //auto conv_s0_y = prg.add_loop("conv_s0_y", 0, 28);
-  //auto conv_s0_x = conv_s0_y->add_loop("conv_s0_x", 0, 28);
-  //auto conv_s0_w = conv_s0_x->add_loop("conv_s0_w", 0, 16);
+//auto conv_s0_y = prg.add_loop("conv_s0_y", 0, 28);
+//auto conv_s0_x = conv_s0_y->add_loop("conv_s0_x", 0, 28);
+//auto conv_s0_w = conv_s0_x->add_loop("conv_s0_w", 0, 16);
 
 ////store is: conv.stencil(conv.s0.x, conv.s0.y, conv.s0.w) = (uint16)0
-  //auto hcompute_conv_stencil = conv_s0_w->add_op("op_hcompute_conv_stencil");
-  //hcompute_conv_stencil->add_function("hcompute_conv_stencil");
-  //prg.buffer_port_widths["conv_stencil"] = 16;
-  //hcompute_conv_stencil->add_store("conv_stencil", "conv_s0_x", "conv_s0_y", "conv_s0_w");
+//auto hcompute_conv_stencil = conv_s0_w->add_op("op_hcompute_conv_stencil");
+//hcompute_conv_stencil->add_function("hcompute_conv_stencil");
+//prg.buffer_port_widths["conv_stencil"] = 16;
+//hcompute_conv_stencil->add_store("conv_stencil", "conv_s0_x", "conv_s0_y", "conv_s0_w");
 
 ////consuming hw_kernel.stencil
 
 ////consuming hw_input.stencil
-  //auto conv_s1_r_y = prg.add_loop("conv_s1_r_y", 0, 3);
-  //auto conv_s1_r_x = conv_s1_r_y->add_loop("conv_s1_r_x", 0, 3);
-  //auto conv_s1_y = conv_s1_r_x->add_loop("conv_s1_y", 0, 28);
-  //auto conv_s1_x = conv_s1_y->add_loop("conv_s1_x", 0, 28);
+//auto conv_s1_r_y = prg.add_loop("conv_s1_r_y", 0, 3);
+//auto conv_s1_r_x = conv_s1_r_y->add_loop("conv_s1_r_x", 0, 3);
+//auto conv_s1_y = conv_s1_r_x->add_loop("conv_s1_y", 0, 28);
+//auto conv_s1_x = conv_s1_y->add_loop("conv_s1_x", 0, 28);
 
 ////store is: conv.stencil(conv.s1.x, conv.s1.y, 0) = ((hw_kernel.stencil(0, 0, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(0, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(1, 0, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(1, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(2, 0, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(2, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(3, 0, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(3, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(4, 0, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(4, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(5, 0, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(5, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(6, 0, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(6, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + (conv.stencil(conv.s1.x, conv.s1.y, 0) + (hw_kernel.stencil(7, 0, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(7, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y)))))))))))
-  //auto hcompute_conv_stencil_1 = conv_s1_x->add_op("op_hcompute_conv_stencil_1");
-  //hcompute_conv_stencil_1->add_function("hcompute_conv_stencil_1");
-  //hcompute_conv_stencil_1->add_load("conv_stencil", "conv_s1_x", "conv_s1_y", "0");
-  //hcompute_conv_stencil_1->add_load("hw_input_stencil", "0", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_1->add_load("hw_input_stencil", "1", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_1->add_load("hw_input_stencil", "2", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_1->add_load("hw_input_stencil", "3", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_1->add_load("hw_input_stencil", "4", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_1->add_load("hw_input_stencil", "5", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_1->add_load("hw_input_stencil", "6", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_1->add_load("hw_input_stencil", "7", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_1->add_load("hw_kernel_stencil", "0", "0", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_1->add_load("hw_kernel_stencil", "1", "0", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_1->add_load("hw_kernel_stencil", "2", "0", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_1->add_load("hw_kernel_stencil", "3", "0", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_1->add_load("hw_kernel_stencil", "4", "0", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_1->add_load("hw_kernel_stencil", "5", "0", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_1->add_load("hw_kernel_stencil", "6", "0", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_1->add_load("hw_kernel_stencil", "7", "0", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_1->add_store("conv_stencil", "conv_s1_x", "conv_s1_y", "0");
+//auto hcompute_conv_stencil_1 = conv_s1_x->add_op("op_hcompute_conv_stencil_1");
+//hcompute_conv_stencil_1->add_function("hcompute_conv_stencil_1");
+//hcompute_conv_stencil_1->add_load("conv_stencil", "conv_s1_x", "conv_s1_y", "0");
+//hcompute_conv_stencil_1->add_load("hw_input_stencil", "0", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_1->add_load("hw_input_stencil", "1", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_1->add_load("hw_input_stencil", "2", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_1->add_load("hw_input_stencil", "3", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_1->add_load("hw_input_stencil", "4", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_1->add_load("hw_input_stencil", "5", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_1->add_load("hw_input_stencil", "6", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_1->add_load("hw_input_stencil", "7", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_1->add_load("hw_kernel_stencil", "0", "0", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_1->add_load("hw_kernel_stencil", "1", "0", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_1->add_load("hw_kernel_stencil", "2", "0", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_1->add_load("hw_kernel_stencil", "3", "0", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_1->add_load("hw_kernel_stencil", "4", "0", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_1->add_load("hw_kernel_stencil", "5", "0", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_1->add_load("hw_kernel_stencil", "6", "0", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_1->add_load("hw_kernel_stencil", "7", "0", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_1->add_store("conv_stencil", "conv_s1_x", "conv_s1_y", "0");
 
 ////store is: conv.stencil(conv.s1.x, conv.s1.y, 1) = ((hw_kernel.stencil(0, 1, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(0, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(1, 1, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(1, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(2, 1, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(2, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(3, 1, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(3, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(4, 1, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(4, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(5, 1, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(5, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(6, 1, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(6, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + (conv.stencil(conv.s1.x, conv.s1.y, 1) + (hw_kernel.stencil(7, 1, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(7, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y)))))))))))
-  //auto hcompute_conv_stencil_2 = conv_s1_x->add_op("op_hcompute_conv_stencil_2");
-  //hcompute_conv_stencil_2->add_function("hcompute_conv_stencil_2");
-  //hcompute_conv_stencil_2->add_load("conv_stencil", "conv_s1_x", "conv_s1_y", "1");
-  //hcompute_conv_stencil_2->add_load("hw_input_stencil", "1", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_2->add_load("hw_input_stencil", "2", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_2->add_load("hw_input_stencil", "3", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_2->add_load("hw_input_stencil", "4", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_2->add_load("hw_input_stencil", "5", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_2->add_load("hw_input_stencil", "6", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_2->add_load("hw_input_stencil", "7", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_2->add_load("hw_input_stencil", "0", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_2->add_load("hw_kernel_stencil", "1", "1", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_2->add_load("hw_kernel_stencil", "2", "1", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_2->add_load("hw_kernel_stencil", "3", "1", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_2->add_load("hw_kernel_stencil", "4", "1", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_2->add_load("hw_kernel_stencil", "5", "1", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_2->add_load("hw_kernel_stencil", "6", "1", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_2->add_load("hw_kernel_stencil", "7", "1", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_2->add_load("hw_kernel_stencil", "0", "1", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_2->add_store("conv_stencil", "conv_s1_x", "conv_s1_y", "1");
+//auto hcompute_conv_stencil_2 = conv_s1_x->add_op("op_hcompute_conv_stencil_2");
+//hcompute_conv_stencil_2->add_function("hcompute_conv_stencil_2");
+//hcompute_conv_stencil_2->add_load("conv_stencil", "conv_s1_x", "conv_s1_y", "1");
+//hcompute_conv_stencil_2->add_load("hw_input_stencil", "1", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_2->add_load("hw_input_stencil", "2", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_2->add_load("hw_input_stencil", "3", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_2->add_load("hw_input_stencil", "4", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_2->add_load("hw_input_stencil", "5", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_2->add_load("hw_input_stencil", "6", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_2->add_load("hw_input_stencil", "7", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_2->add_load("hw_input_stencil", "0", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_2->add_load("hw_kernel_stencil", "1", "1", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_2->add_load("hw_kernel_stencil", "2", "1", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_2->add_load("hw_kernel_stencil", "3", "1", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_2->add_load("hw_kernel_stencil", "4", "1", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_2->add_load("hw_kernel_stencil", "5", "1", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_2->add_load("hw_kernel_stencil", "6", "1", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_2->add_load("hw_kernel_stencil", "7", "1", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_2->add_load("hw_kernel_stencil", "0", "1", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_2->add_store("conv_stencil", "conv_s1_x", "conv_s1_y", "1");
 
 ////store is: conv.stencil(conv.s1.x, conv.s1.y, 2) = ((hw_kernel.stencil(0, 2, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(0, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(1, 2, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(1, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(2, 2, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(2, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(3, 2, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(3, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(4, 2, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(4, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(5, 2, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(5, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(6, 2, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(6, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + (conv.stencil(conv.s1.x, conv.s1.y, 2) + (hw_kernel.stencil(7, 2, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(7, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y)))))))))))
-  //auto hcompute_conv_stencil_3 = conv_s1_x->add_op("op_hcompute_conv_stencil_3");
-  //hcompute_conv_stencil_3->add_function("hcompute_conv_stencil_3");
-  //hcompute_conv_stencil_3->add_load("conv_stencil", "conv_s1_x", "conv_s1_y", "2");
-  //hcompute_conv_stencil_3->add_load("hw_input_stencil", "0", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_3->add_load("hw_input_stencil", "1", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_3->add_load("hw_input_stencil", "2", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_3->add_load("hw_input_stencil", "3", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_3->add_load("hw_input_stencil", "4", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_3->add_load("hw_input_stencil", "5", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_3->add_load("hw_input_stencil", "6", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_3->add_load("hw_input_stencil", "7", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_3->add_load("hw_kernel_stencil", "0", "2", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_3->add_load("hw_kernel_stencil", "1", "2", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_3->add_load("hw_kernel_stencil", "2", "2", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_3->add_load("hw_kernel_stencil", "3", "2", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_3->add_load("hw_kernel_stencil", "4", "2", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_3->add_load("hw_kernel_stencil", "5", "2", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_3->add_load("hw_kernel_stencil", "6", "2", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_3->add_load("hw_kernel_stencil", "7", "2", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_3->add_store("conv_stencil", "conv_s1_x", "conv_s1_y", "2");
+//auto hcompute_conv_stencil_3 = conv_s1_x->add_op("op_hcompute_conv_stencil_3");
+//hcompute_conv_stencil_3->add_function("hcompute_conv_stencil_3");
+//hcompute_conv_stencil_3->add_load("conv_stencil", "conv_s1_x", "conv_s1_y", "2");
+//hcompute_conv_stencil_3->add_load("hw_input_stencil", "0", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_3->add_load("hw_input_stencil", "1", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_3->add_load("hw_input_stencil", "2", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_3->add_load("hw_input_stencil", "3", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_3->add_load("hw_input_stencil", "4", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_3->add_load("hw_input_stencil", "5", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_3->add_load("hw_input_stencil", "6", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_3->add_load("hw_input_stencil", "7", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_3->add_load("hw_kernel_stencil", "0", "2", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_3->add_load("hw_kernel_stencil", "1", "2", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_3->add_load("hw_kernel_stencil", "2", "2", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_3->add_load("hw_kernel_stencil", "3", "2", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_3->add_load("hw_kernel_stencil", "4", "2", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_3->add_load("hw_kernel_stencil", "5", "2", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_3->add_load("hw_kernel_stencil", "6", "2", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_3->add_load("hw_kernel_stencil", "7", "2", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_3->add_store("conv_stencil", "conv_s1_x", "conv_s1_y", "2");
 
 ////store is: conv.stencil(conv.s1.x, conv.s1.y, 3) = ((hw_kernel.stencil(0, 3, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(0, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(1, 3, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(1, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(2, 3, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(2, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(3, 3, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(3, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(4, 3, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(4, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(5, 3, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(5, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(6, 3, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(6, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + (conv.stencil(conv.s1.x, conv.s1.y, 3) + (hw_kernel.stencil(7, 3, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(7, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y)))))))))))
-  //auto hcompute_conv_stencil_4 = conv_s1_x->add_op("op_hcompute_conv_stencil_4");
-  //hcompute_conv_stencil_4->add_function("hcompute_conv_stencil_4");
-  //hcompute_conv_stencil_4->add_load("conv_stencil", "conv_s1_x", "conv_s1_y", "3");
-  //hcompute_conv_stencil_4->add_load("hw_input_stencil", "0", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_4->add_load("hw_input_stencil", "1", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_4->add_load("hw_input_stencil", "2", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_4->add_load("hw_input_stencil", "3", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_4->add_load("hw_input_stencil", "4", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_4->add_load("hw_input_stencil", "5", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_4->add_load("hw_input_stencil", "6", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_4->add_load("hw_input_stencil", "7", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_4->add_load("hw_kernel_stencil", "0", "3", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_4->add_load("hw_kernel_stencil", "1", "3", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_4->add_load("hw_kernel_stencil", "2", "3", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_4->add_load("hw_kernel_stencil", "3", "3", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_4->add_load("hw_kernel_stencil", "4", "3", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_4->add_load("hw_kernel_stencil", "5", "3", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_4->add_load("hw_kernel_stencil", "6", "3", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_4->add_load("hw_kernel_stencil", "7", "3", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_4->add_store("conv_stencil", "conv_s1_x", "conv_s1_y", "3");
+//auto hcompute_conv_stencil_4 = conv_s1_x->add_op("op_hcompute_conv_stencil_4");
+//hcompute_conv_stencil_4->add_function("hcompute_conv_stencil_4");
+//hcompute_conv_stencil_4->add_load("conv_stencil", "conv_s1_x", "conv_s1_y", "3");
+//hcompute_conv_stencil_4->add_load("hw_input_stencil", "0", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_4->add_load("hw_input_stencil", "1", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_4->add_load("hw_input_stencil", "2", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_4->add_load("hw_input_stencil", "3", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_4->add_load("hw_input_stencil", "4", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_4->add_load("hw_input_stencil", "5", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_4->add_load("hw_input_stencil", "6", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_4->add_load("hw_input_stencil", "7", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_4->add_load("hw_kernel_stencil", "0", "3", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_4->add_load("hw_kernel_stencil", "1", "3", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_4->add_load("hw_kernel_stencil", "2", "3", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_4->add_load("hw_kernel_stencil", "3", "3", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_4->add_load("hw_kernel_stencil", "4", "3", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_4->add_load("hw_kernel_stencil", "5", "3", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_4->add_load("hw_kernel_stencil", "6", "3", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_4->add_load("hw_kernel_stencil", "7", "3", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_4->add_store("conv_stencil", "conv_s1_x", "conv_s1_y", "3");
 
 ////store is: conv.stencil(conv.s1.x, conv.s1.y, 4) = ((hw_kernel.stencil(0, 4, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(0, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(1, 4, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(1, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(2, 4, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(2, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(3, 4, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(3, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(4, 4, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(4, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(5, 4, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(5, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(6, 4, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(6, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + (conv.stencil(conv.s1.x, conv.s1.y, 4) + (hw_kernel.stencil(7, 4, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(7, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y)))))))))))
-  //auto hcompute_conv_stencil_5 = conv_s1_x->add_op("op_hcompute_conv_stencil_5");
-  //hcompute_conv_stencil_5->add_function("hcompute_conv_stencil_5");
-  //hcompute_conv_stencil_5->add_load("conv_stencil", "conv_s1_x", "conv_s1_y", "4");
-  //hcompute_conv_stencil_5->add_load("hw_input_stencil", "0", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_5->add_load("hw_input_stencil", "1", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_5->add_load("hw_input_stencil", "2", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_5->add_load("hw_input_stencil", "3", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_5->add_load("hw_input_stencil", "4", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_5->add_load("hw_input_stencil", "5", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_5->add_load("hw_input_stencil", "6", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_5->add_load("hw_input_stencil", "7", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_5->add_load("hw_kernel_stencil", "0", "4", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_5->add_load("hw_kernel_stencil", "1", "4", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_5->add_load("hw_kernel_stencil", "2", "4", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_5->add_load("hw_kernel_stencil", "3", "4", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_5->add_load("hw_kernel_stencil", "4", "4", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_5->add_load("hw_kernel_stencil", "5", "4", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_5->add_load("hw_kernel_stencil", "6", "4", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_5->add_load("hw_kernel_stencil", "7", "4", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_5->add_store("conv_stencil", "conv_s1_x", "conv_s1_y", "4");
+//auto hcompute_conv_stencil_5 = conv_s1_x->add_op("op_hcompute_conv_stencil_5");
+//hcompute_conv_stencil_5->add_function("hcompute_conv_stencil_5");
+//hcompute_conv_stencil_5->add_load("conv_stencil", "conv_s1_x", "conv_s1_y", "4");
+//hcompute_conv_stencil_5->add_load("hw_input_stencil", "0", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_5->add_load("hw_input_stencil", "1", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_5->add_load("hw_input_stencil", "2", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_5->add_load("hw_input_stencil", "3", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_5->add_load("hw_input_stencil", "4", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_5->add_load("hw_input_stencil", "5", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_5->add_load("hw_input_stencil", "6", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_5->add_load("hw_input_stencil", "7", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_5->add_load("hw_kernel_stencil", "0", "4", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_5->add_load("hw_kernel_stencil", "1", "4", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_5->add_load("hw_kernel_stencil", "2", "4", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_5->add_load("hw_kernel_stencil", "3", "4", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_5->add_load("hw_kernel_stencil", "4", "4", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_5->add_load("hw_kernel_stencil", "5", "4", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_5->add_load("hw_kernel_stencil", "6", "4", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_5->add_load("hw_kernel_stencil", "7", "4", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_5->add_store("conv_stencil", "conv_s1_x", "conv_s1_y", "4");
 
 ////store is: conv.stencil(conv.s1.x, conv.s1.y, 5) = ((hw_kernel.stencil(0, 5, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(0, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(1, 5, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(1, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(2, 5, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(2, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(3, 5, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(3, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(4, 5, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(4, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(5, 5, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(5, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(6, 5, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(6, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + (conv.stencil(conv.s1.x, conv.s1.y, 5) + (hw_kernel.stencil(7, 5, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(7, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y)))))))))))
-  //auto hcompute_conv_stencil_6 = conv_s1_x->add_op("op_hcompute_conv_stencil_6");
-  //hcompute_conv_stencil_6->add_function("hcompute_conv_stencil_6");
-  //hcompute_conv_stencil_6->add_load("conv_stencil", "conv_s1_x", "conv_s1_y", "5");
-  //hcompute_conv_stencil_6->add_load("hw_input_stencil", "0", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_6->add_load("hw_input_stencil", "1", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_6->add_load("hw_input_stencil", "2", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_6->add_load("hw_input_stencil", "3", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_6->add_load("hw_input_stencil", "4", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_6->add_load("hw_input_stencil", "5", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_6->add_load("hw_input_stencil", "6", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_6->add_load("hw_input_stencil", "7", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_6->add_load("hw_kernel_stencil", "0", "5", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_6->add_load("hw_kernel_stencil", "1", "5", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_6->add_load("hw_kernel_stencil", "2", "5", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_6->add_load("hw_kernel_stencil", "3", "5", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_6->add_load("hw_kernel_stencil", "4", "5", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_6->add_load("hw_kernel_stencil", "5", "5", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_6->add_load("hw_kernel_stencil", "6", "5", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_6->add_load("hw_kernel_stencil", "7", "5", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_6->add_store("conv_stencil", "conv_s1_x", "conv_s1_y", "5");
+//auto hcompute_conv_stencil_6 = conv_s1_x->add_op("op_hcompute_conv_stencil_6");
+//hcompute_conv_stencil_6->add_function("hcompute_conv_stencil_6");
+//hcompute_conv_stencil_6->add_load("conv_stencil", "conv_s1_x", "conv_s1_y", "5");
+//hcompute_conv_stencil_6->add_load("hw_input_stencil", "0", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_6->add_load("hw_input_stencil", "1", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_6->add_load("hw_input_stencil", "2", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_6->add_load("hw_input_stencil", "3", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_6->add_load("hw_input_stencil", "4", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_6->add_load("hw_input_stencil", "5", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_6->add_load("hw_input_stencil", "6", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_6->add_load("hw_input_stencil", "7", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_6->add_load("hw_kernel_stencil", "0", "5", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_6->add_load("hw_kernel_stencil", "1", "5", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_6->add_load("hw_kernel_stencil", "2", "5", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_6->add_load("hw_kernel_stencil", "3", "5", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_6->add_load("hw_kernel_stencil", "4", "5", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_6->add_load("hw_kernel_stencil", "5", "5", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_6->add_load("hw_kernel_stencil", "6", "5", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_6->add_load("hw_kernel_stencil", "7", "5", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_6->add_store("conv_stencil", "conv_s1_x", "conv_s1_y", "5");
 
 ////store is: conv.stencil(conv.s1.x, conv.s1.y, 6) = ((hw_kernel.stencil(0, 6, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(0, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(1, 6, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(1, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(2, 6, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(2, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(3, 6, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(3, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(4, 6, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(4, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(5, 6, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(5, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(6, 6, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(6, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + (conv.stencil(conv.s1.x, conv.s1.y, 6) + (hw_kernel.stencil(7, 6, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(7, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y)))))))))))
-  //auto hcompute_conv_stencil_7 = conv_s1_x->add_op("op_hcompute_conv_stencil_7");
-  //hcompute_conv_stencil_7->add_function("hcompute_conv_stencil_7");
-  //hcompute_conv_stencil_7->add_load("conv_stencil", "conv_s1_x", "conv_s1_y", "6");
-  //hcompute_conv_stencil_7->add_load("hw_input_stencil", "0", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_7->add_load("hw_input_stencil", "1", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_7->add_load("hw_input_stencil", "2", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_7->add_load("hw_input_stencil", "3", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_7->add_load("hw_input_stencil", "4", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_7->add_load("hw_input_stencil", "5", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_7->add_load("hw_input_stencil", "6", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_7->add_load("hw_input_stencil", "7", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_7->add_load("hw_kernel_stencil", "0", "6", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_7->add_load("hw_kernel_stencil", "1", "6", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_7->add_load("hw_kernel_stencil", "2", "6", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_7->add_load("hw_kernel_stencil", "3", "6", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_7->add_load("hw_kernel_stencil", "4", "6", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_7->add_load("hw_kernel_stencil", "5", "6", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_7->add_load("hw_kernel_stencil", "6", "6", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_7->add_load("hw_kernel_stencil", "7", "6", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_7->add_store("conv_stencil", "conv_s1_x", "conv_s1_y", "6");
+//auto hcompute_conv_stencil_7 = conv_s1_x->add_op("op_hcompute_conv_stencil_7");
+//hcompute_conv_stencil_7->add_function("hcompute_conv_stencil_7");
+//hcompute_conv_stencil_7->add_load("conv_stencil", "conv_s1_x", "conv_s1_y", "6");
+//hcompute_conv_stencil_7->add_load("hw_input_stencil", "0", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_7->add_load("hw_input_stencil", "1", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_7->add_load("hw_input_stencil", "2", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_7->add_load("hw_input_stencil", "3", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_7->add_load("hw_input_stencil", "4", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_7->add_load("hw_input_stencil", "5", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_7->add_load("hw_input_stencil", "6", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_7->add_load("hw_input_stencil", "7", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_7->add_load("hw_kernel_stencil", "0", "6", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_7->add_load("hw_kernel_stencil", "1", "6", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_7->add_load("hw_kernel_stencil", "2", "6", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_7->add_load("hw_kernel_stencil", "3", "6", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_7->add_load("hw_kernel_stencil", "4", "6", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_7->add_load("hw_kernel_stencil", "5", "6", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_7->add_load("hw_kernel_stencil", "6", "6", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_7->add_load("hw_kernel_stencil", "7", "6", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_7->add_store("conv_stencil", "conv_s1_x", "conv_s1_y", "6");
 
 ////store is: conv.stencil(conv.s1.x, conv.s1.y, 7) = ((hw_kernel.stencil(0, 7, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(0, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(1, 7, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(1, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(2, 7, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(2, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(3, 7, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(3, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(4, 7, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(4, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(5, 7, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(5, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(6, 7, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(6, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + (conv.stencil(conv.s1.x, conv.s1.y, 7) + (hw_kernel.stencil(7, 7, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(7, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y)))))))))))
-  //auto hcompute_conv_stencil_8 = conv_s1_x->add_op("op_hcompute_conv_stencil_8");
-  //hcompute_conv_stencil_8->add_function("hcompute_conv_stencil_8");
-  //hcompute_conv_stencil_8->add_load("conv_stencil", "conv_s1_x", "conv_s1_y", "7");
-  //hcompute_conv_stencil_8->add_load("hw_input_stencil", "0", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_8->add_load("hw_input_stencil", "1", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_8->add_load("hw_input_stencil", "2", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_8->add_load("hw_input_stencil", "3", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_8->add_load("hw_input_stencil", "4", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_8->add_load("hw_input_stencil", "5", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_8->add_load("hw_input_stencil", "6", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_8->add_load("hw_input_stencil", "7", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_8->add_load("hw_kernel_stencil", "0", "7", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_8->add_load("hw_kernel_stencil", "1", "7", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_8->add_load("hw_kernel_stencil", "2", "7", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_8->add_load("hw_kernel_stencil", "3", "7", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_8->add_load("hw_kernel_stencil", "4", "7", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_8->add_load("hw_kernel_stencil", "5", "7", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_8->add_load("hw_kernel_stencil", "6", "7", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_8->add_load("hw_kernel_stencil", "7", "7", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_8->add_store("conv_stencil", "conv_s1_x", "conv_s1_y", "7");
+//auto hcompute_conv_stencil_8 = conv_s1_x->add_op("op_hcompute_conv_stencil_8");
+//hcompute_conv_stencil_8->add_function("hcompute_conv_stencil_8");
+//hcompute_conv_stencil_8->add_load("conv_stencil", "conv_s1_x", "conv_s1_y", "7");
+//hcompute_conv_stencil_8->add_load("hw_input_stencil", "0", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_8->add_load("hw_input_stencil", "1", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_8->add_load("hw_input_stencil", "2", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_8->add_load("hw_input_stencil", "3", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_8->add_load("hw_input_stencil", "4", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_8->add_load("hw_input_stencil", "5", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_8->add_load("hw_input_stencil", "6", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_8->add_load("hw_input_stencil", "7", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_8->add_load("hw_kernel_stencil", "0", "7", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_8->add_load("hw_kernel_stencil", "1", "7", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_8->add_load("hw_kernel_stencil", "2", "7", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_8->add_load("hw_kernel_stencil", "3", "7", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_8->add_load("hw_kernel_stencil", "4", "7", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_8->add_load("hw_kernel_stencil", "5", "7", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_8->add_load("hw_kernel_stencil", "6", "7", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_8->add_load("hw_kernel_stencil", "7", "7", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_8->add_store("conv_stencil", "conv_s1_x", "conv_s1_y", "7");
 
 ////store is: conv.stencil(conv.s1.x, conv.s1.y, 8) = ((hw_kernel.stencil(0, 8, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(0, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(1, 8, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(1, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(2, 8, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(2, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(3, 8, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(3, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(4, 8, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(4, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(5, 8, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(5, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(6, 8, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(6, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + (conv.stencil(conv.s1.x, conv.s1.y, 8) + (hw_kernel.stencil(7, 8, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(7, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y)))))))))))
-  //auto hcompute_conv_stencil_9 = conv_s1_x->add_op("op_hcompute_conv_stencil_9");
-  //hcompute_conv_stencil_9->add_function("hcompute_conv_stencil_9");
-  //hcompute_conv_stencil_9->add_load("conv_stencil", "conv_s1_x", "conv_s1_y", "8");
-  //hcompute_conv_stencil_9->add_load("hw_input_stencil", "0", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_9->add_load("hw_input_stencil", "1", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_9->add_load("hw_input_stencil", "2", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_9->add_load("hw_input_stencil", "3", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_9->add_load("hw_input_stencil", "4", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_9->add_load("hw_input_stencil", "5", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_9->add_load("hw_input_stencil", "6", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_9->add_load("hw_input_stencil", "7", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_9->add_load("hw_kernel_stencil", "0", "8", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_9->add_load("hw_kernel_stencil", "1", "8", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_9->add_load("hw_kernel_stencil", "2", "8", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_9->add_load("hw_kernel_stencil", "3", "8", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_9->add_load("hw_kernel_stencil", "4", "8", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_9->add_load("hw_kernel_stencil", "5", "8", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_9->add_load("hw_kernel_stencil", "6", "8", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_9->add_load("hw_kernel_stencil", "7", "8", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_9->add_store("conv_stencil", "conv_s1_x", "conv_s1_y", "8");
+//auto hcompute_conv_stencil_9 = conv_s1_x->add_op("op_hcompute_conv_stencil_9");
+//hcompute_conv_stencil_9->add_function("hcompute_conv_stencil_9");
+//hcompute_conv_stencil_9->add_load("conv_stencil", "conv_s1_x", "conv_s1_y", "8");
+//hcompute_conv_stencil_9->add_load("hw_input_stencil", "0", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_9->add_load("hw_input_stencil", "1", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_9->add_load("hw_input_stencil", "2", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_9->add_load("hw_input_stencil", "3", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_9->add_load("hw_input_stencil", "4", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_9->add_load("hw_input_stencil", "5", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_9->add_load("hw_input_stencil", "6", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_9->add_load("hw_input_stencil", "7", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_9->add_load("hw_kernel_stencil", "0", "8", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_9->add_load("hw_kernel_stencil", "1", "8", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_9->add_load("hw_kernel_stencil", "2", "8", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_9->add_load("hw_kernel_stencil", "3", "8", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_9->add_load("hw_kernel_stencil", "4", "8", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_9->add_load("hw_kernel_stencil", "5", "8", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_9->add_load("hw_kernel_stencil", "6", "8", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_9->add_load("hw_kernel_stencil", "7", "8", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_9->add_store("conv_stencil", "conv_s1_x", "conv_s1_y", "8");
 
 ////store is: conv.stencil(conv.s1.x, conv.s1.y, 9) = ((hw_kernel.stencil(0, 9, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(0, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(1, 9, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(1, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(2, 9, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(2, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(3, 9, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(3, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(4, 9, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(4, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(5, 9, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(5, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(6, 9, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(6, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + (conv.stencil(conv.s1.x, conv.s1.y, 9) + (hw_kernel.stencil(7, 9, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(7, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y)))))))))))
-  //auto hcompute_conv_stencil_10 = conv_s1_x->add_op("op_hcompute_conv_stencil_10");
-  //hcompute_conv_stencil_10->add_function("hcompute_conv_stencil_10");
-  //hcompute_conv_stencil_10->add_load("conv_stencil", "conv_s1_x", "conv_s1_y", "9");
-  //hcompute_conv_stencil_10->add_load("hw_input_stencil", "0", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_10->add_load("hw_input_stencil", "1", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_10->add_load("hw_input_stencil", "2", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_10->add_load("hw_input_stencil", "3", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_10->add_load("hw_input_stencil", "4", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_10->add_load("hw_input_stencil", "5", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_10->add_load("hw_input_stencil", "6", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_10->add_load("hw_input_stencil", "7", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_10->add_load("hw_kernel_stencil", "0", "9", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_10->add_load("hw_kernel_stencil", "1", "9", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_10->add_load("hw_kernel_stencil", "2", "9", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_10->add_load("hw_kernel_stencil", "3", "9", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_10->add_load("hw_kernel_stencil", "4", "9", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_10->add_load("hw_kernel_stencil", "5", "9", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_10->add_load("hw_kernel_stencil", "6", "9", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_10->add_load("hw_kernel_stencil", "7", "9", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_10->add_store("conv_stencil", "conv_s1_x", "conv_s1_y", "9");
+//auto hcompute_conv_stencil_10 = conv_s1_x->add_op("op_hcompute_conv_stencil_10");
+//hcompute_conv_stencil_10->add_function("hcompute_conv_stencil_10");
+//hcompute_conv_stencil_10->add_load("conv_stencil", "conv_s1_x", "conv_s1_y", "9");
+//hcompute_conv_stencil_10->add_load("hw_input_stencil", "0", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_10->add_load("hw_input_stencil", "1", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_10->add_load("hw_input_stencil", "2", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_10->add_load("hw_input_stencil", "3", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_10->add_load("hw_input_stencil", "4", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_10->add_load("hw_input_stencil", "5", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_10->add_load("hw_input_stencil", "6", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_10->add_load("hw_input_stencil", "7", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_10->add_load("hw_kernel_stencil", "0", "9", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_10->add_load("hw_kernel_stencil", "1", "9", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_10->add_load("hw_kernel_stencil", "2", "9", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_10->add_load("hw_kernel_stencil", "3", "9", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_10->add_load("hw_kernel_stencil", "4", "9", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_10->add_load("hw_kernel_stencil", "5", "9", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_10->add_load("hw_kernel_stencil", "6", "9", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_10->add_load("hw_kernel_stencil", "7", "9", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_10->add_store("conv_stencil", "conv_s1_x", "conv_s1_y", "9");
 
 ////store is: conv.stencil(conv.s1.x, conv.s1.y, 10) = ((hw_kernel.stencil(0, 10, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(0, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(1, 10, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(1, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(2, 10, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(2, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(3, 10, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(3, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(4, 10, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(4, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(5, 10, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(5, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(6, 10, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(6, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + (conv.stencil(conv.s1.x, conv.s1.y, 10) + (hw_kernel.stencil(7, 10, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(7, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y)))))))))))
-  //auto hcompute_conv_stencil_11 = conv_s1_x->add_op("op_hcompute_conv_stencil_11");
-  //hcompute_conv_stencil_11->add_function("hcompute_conv_stencil_11");
-  //hcompute_conv_stencil_11->add_load("conv_stencil", "conv_s1_x", "conv_s1_y", "10");
-  //hcompute_conv_stencil_11->add_load("hw_input_stencil", "0", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_11->add_load("hw_input_stencil", "1", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_11->add_load("hw_input_stencil", "2", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_11->add_load("hw_input_stencil", "3", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_11->add_load("hw_input_stencil", "4", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_11->add_load("hw_input_stencil", "5", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_11->add_load("hw_input_stencil", "6", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_11->add_load("hw_input_stencil", "7", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_11->add_load("hw_kernel_stencil", "0", "10", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_11->add_load("hw_kernel_stencil", "1", "10", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_11->add_load("hw_kernel_stencil", "2", "10", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_11->add_load("hw_kernel_stencil", "3", "10", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_11->add_load("hw_kernel_stencil", "4", "10", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_11->add_load("hw_kernel_stencil", "5", "10", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_11->add_load("hw_kernel_stencil", "6", "10", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_11->add_load("hw_kernel_stencil", "7", "10", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_11->add_store("conv_stencil", "conv_s1_x", "conv_s1_y", "10");
+//auto hcompute_conv_stencil_11 = conv_s1_x->add_op("op_hcompute_conv_stencil_11");
+//hcompute_conv_stencil_11->add_function("hcompute_conv_stencil_11");
+//hcompute_conv_stencil_11->add_load("conv_stencil", "conv_s1_x", "conv_s1_y", "10");
+//hcompute_conv_stencil_11->add_load("hw_input_stencil", "0", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_11->add_load("hw_input_stencil", "1", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_11->add_load("hw_input_stencil", "2", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_11->add_load("hw_input_stencil", "3", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_11->add_load("hw_input_stencil", "4", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_11->add_load("hw_input_stencil", "5", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_11->add_load("hw_input_stencil", "6", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_11->add_load("hw_input_stencil", "7", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_11->add_load("hw_kernel_stencil", "0", "10", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_11->add_load("hw_kernel_stencil", "1", "10", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_11->add_load("hw_kernel_stencil", "2", "10", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_11->add_load("hw_kernel_stencil", "3", "10", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_11->add_load("hw_kernel_stencil", "4", "10", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_11->add_load("hw_kernel_stencil", "5", "10", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_11->add_load("hw_kernel_stencil", "6", "10", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_11->add_load("hw_kernel_stencil", "7", "10", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_11->add_store("conv_stencil", "conv_s1_x", "conv_s1_y", "10");
 
 ////store is: conv.stencil(conv.s1.x, conv.s1.y, 11) = ((hw_kernel.stencil(0, 11, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(0, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(1, 11, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(1, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(2, 11, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(2, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(3, 11, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(3, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(4, 11, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(4, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(5, 11, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(5, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(6, 11, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(6, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + (conv.stencil(conv.s1.x, conv.s1.y, 11) + (hw_kernel.stencil(7, 11, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(7, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y)))))))))))
-  //auto hcompute_conv_stencil_12 = conv_s1_x->add_op("op_hcompute_conv_stencil_12");
-  //hcompute_conv_stencil_12->add_function("hcompute_conv_stencil_12");
-  //hcompute_conv_stencil_12->add_load("conv_stencil", "conv_s1_x", "conv_s1_y", "11");
-  //hcompute_conv_stencil_12->add_load("hw_input_stencil", "0", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_12->add_load("hw_input_stencil", "1", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_12->add_load("hw_input_stencil", "2", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_12->add_load("hw_input_stencil", "3", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_12->add_load("hw_input_stencil", "4", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_12->add_load("hw_input_stencil", "5", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_12->add_load("hw_input_stencil", "6", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_12->add_load("hw_input_stencil", "7", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_12->add_load("hw_kernel_stencil", "0", "11", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_12->add_load("hw_kernel_stencil", "1", "11", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_12->add_load("hw_kernel_stencil", "2", "11", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_12->add_load("hw_kernel_stencil", "3", "11", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_12->add_load("hw_kernel_stencil", "4", "11", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_12->add_load("hw_kernel_stencil", "5", "11", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_12->add_load("hw_kernel_stencil", "6", "11", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_12->add_load("hw_kernel_stencil", "7", "11", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_12->add_store("conv_stencil", "conv_s1_x", "conv_s1_y", "11");
+//auto hcompute_conv_stencil_12 = conv_s1_x->add_op("op_hcompute_conv_stencil_12");
+//hcompute_conv_stencil_12->add_function("hcompute_conv_stencil_12");
+//hcompute_conv_stencil_12->add_load("conv_stencil", "conv_s1_x", "conv_s1_y", "11");
+//hcompute_conv_stencil_12->add_load("hw_input_stencil", "0", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_12->add_load("hw_input_stencil", "1", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_12->add_load("hw_input_stencil", "2", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_12->add_load("hw_input_stencil", "3", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_12->add_load("hw_input_stencil", "4", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_12->add_load("hw_input_stencil", "5", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_12->add_load("hw_input_stencil", "6", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_12->add_load("hw_input_stencil", "7", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_12->add_load("hw_kernel_stencil", "0", "11", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_12->add_load("hw_kernel_stencil", "1", "11", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_12->add_load("hw_kernel_stencil", "2", "11", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_12->add_load("hw_kernel_stencil", "3", "11", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_12->add_load("hw_kernel_stencil", "4", "11", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_12->add_load("hw_kernel_stencil", "5", "11", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_12->add_load("hw_kernel_stencil", "6", "11", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_12->add_load("hw_kernel_stencil", "7", "11", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_12->add_store("conv_stencil", "conv_s1_x", "conv_s1_y", "11");
 
 ////store is: conv.stencil(conv.s1.x, conv.s1.y, 12) = ((hw_kernel.stencil(0, 12, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(0, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(1, 12, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(1, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(2, 12, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(2, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(3, 12, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(3, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(4, 12, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(4, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(5, 12, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(5, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(6, 12, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(6, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + (conv.stencil(conv.s1.x, conv.s1.y, 12) + (hw_kernel.stencil(7, 12, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(7, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y)))))))))))
-  //auto hcompute_conv_stencil_13 = conv_s1_x->add_op("op_hcompute_conv_stencil_13");
-  //hcompute_conv_stencil_13->add_function("hcompute_conv_stencil_13");
-  //hcompute_conv_stencil_13->add_load("conv_stencil", "conv_s1_x", "conv_s1_y", "12");
-  //hcompute_conv_stencil_13->add_load("hw_input_stencil", "3", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_13->add_load("hw_input_stencil", "4", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_13->add_load("hw_input_stencil", "5", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_13->add_load("hw_input_stencil", "6", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_13->add_load("hw_input_stencil", "7", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_13->add_load("hw_input_stencil", "0", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_13->add_load("hw_input_stencil", "1", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_13->add_load("hw_input_stencil", "2", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_13->add_load("hw_kernel_stencil", "3", "12", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_13->add_load("hw_kernel_stencil", "4", "12", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_13->add_load("hw_kernel_stencil", "5", "12", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_13->add_load("hw_kernel_stencil", "6", "12", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_13->add_load("hw_kernel_stencil", "7", "12", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_13->add_load("hw_kernel_stencil", "0", "12", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_13->add_load("hw_kernel_stencil", "1", "12", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_13->add_load("hw_kernel_stencil", "2", "12", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_13->add_store("conv_stencil", "conv_s1_x", "conv_s1_y", "12");
+//auto hcompute_conv_stencil_13 = conv_s1_x->add_op("op_hcompute_conv_stencil_13");
+//hcompute_conv_stencil_13->add_function("hcompute_conv_stencil_13");
+//hcompute_conv_stencil_13->add_load("conv_stencil", "conv_s1_x", "conv_s1_y", "12");
+//hcompute_conv_stencil_13->add_load("hw_input_stencil", "3", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_13->add_load("hw_input_stencil", "4", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_13->add_load("hw_input_stencil", "5", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_13->add_load("hw_input_stencil", "6", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_13->add_load("hw_input_stencil", "7", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_13->add_load("hw_input_stencil", "0", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_13->add_load("hw_input_stencil", "1", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_13->add_load("hw_input_stencil", "2", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_13->add_load("hw_kernel_stencil", "3", "12", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_13->add_load("hw_kernel_stencil", "4", "12", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_13->add_load("hw_kernel_stencil", "5", "12", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_13->add_load("hw_kernel_stencil", "6", "12", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_13->add_load("hw_kernel_stencil", "7", "12", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_13->add_load("hw_kernel_stencil", "0", "12", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_13->add_load("hw_kernel_stencil", "1", "12", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_13->add_load("hw_kernel_stencil", "2", "12", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_13->add_store("conv_stencil", "conv_s1_x", "conv_s1_y", "12");
 
 ////store is: conv.stencil(conv.s1.x, conv.s1.y, 13) = ((hw_kernel.stencil(0, 13, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(0, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(1, 13, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(1, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(2, 13, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(2, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(3, 13, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(3, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(4, 13, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(4, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(5, 13, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(5, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(6, 13, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(6, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + (conv.stencil(conv.s1.x, conv.s1.y, 13) + (hw_kernel.stencil(7, 13, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(7, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y)))))))))))
-  //auto hcompute_conv_stencil_14 = conv_s1_x->add_op("op_hcompute_conv_stencil_14");
-  //hcompute_conv_stencil_14->add_function("hcompute_conv_stencil_14");
-  //hcompute_conv_stencil_14->add_load("conv_stencil", "conv_s1_x", "conv_s1_y", "13");
-  //hcompute_conv_stencil_14->add_load("hw_input_stencil", "0", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_14->add_load("hw_input_stencil", "1", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_14->add_load("hw_input_stencil", "2", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_14->add_load("hw_input_stencil", "3", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_14->add_load("hw_input_stencil", "4", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_14->add_load("hw_input_stencil", "5", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_14->add_load("hw_input_stencil", "6", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_14->add_load("hw_input_stencil", "7", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_14->add_load("hw_kernel_stencil", "0", "13", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_14->add_load("hw_kernel_stencil", "1", "13", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_14->add_load("hw_kernel_stencil", "2", "13", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_14->add_load("hw_kernel_stencil", "3", "13", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_14->add_load("hw_kernel_stencil", "4", "13", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_14->add_load("hw_kernel_stencil", "5", "13", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_14->add_load("hw_kernel_stencil", "6", "13", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_14->add_load("hw_kernel_stencil", "7", "13", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_14->add_store("conv_stencil", "conv_s1_x", "conv_s1_y", "13");
+//auto hcompute_conv_stencil_14 = conv_s1_x->add_op("op_hcompute_conv_stencil_14");
+//hcompute_conv_stencil_14->add_function("hcompute_conv_stencil_14");
+//hcompute_conv_stencil_14->add_load("conv_stencil", "conv_s1_x", "conv_s1_y", "13");
+//hcompute_conv_stencil_14->add_load("hw_input_stencil", "0", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_14->add_load("hw_input_stencil", "1", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_14->add_load("hw_input_stencil", "2", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_14->add_load("hw_input_stencil", "3", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_14->add_load("hw_input_stencil", "4", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_14->add_load("hw_input_stencil", "5", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_14->add_load("hw_input_stencil", "6", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_14->add_load("hw_input_stencil", "7", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_14->add_load("hw_kernel_stencil", "0", "13", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_14->add_load("hw_kernel_stencil", "1", "13", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_14->add_load("hw_kernel_stencil", "2", "13", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_14->add_load("hw_kernel_stencil", "3", "13", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_14->add_load("hw_kernel_stencil", "4", "13", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_14->add_load("hw_kernel_stencil", "5", "13", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_14->add_load("hw_kernel_stencil", "6", "13", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_14->add_load("hw_kernel_stencil", "7", "13", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_14->add_store("conv_stencil", "conv_s1_x", "conv_s1_y", "13");
 
 ////store is: conv.stencil(conv.s1.x, conv.s1.y, 14) = ((hw_kernel.stencil(0, 14, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(0, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(1, 14, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(1, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(2, 14, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(2, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(3, 14, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(3, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(4, 14, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(4, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(5, 14, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(5, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(6, 14, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(6, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + (conv.stencil(conv.s1.x, conv.s1.y, 14) + (hw_kernel.stencil(7, 14, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(7, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y)))))))))))
-  //auto hcompute_conv_stencil_15 = conv_s1_x->add_op("op_hcompute_conv_stencil_15");
-  //hcompute_conv_stencil_15->add_function("hcompute_conv_stencil_15");
-  //hcompute_conv_stencil_15->add_load("conv_stencil", "conv_s1_x", "conv_s1_y", "14");
-  //hcompute_conv_stencil_15->add_load("hw_input_stencil", "0", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_15->add_load("hw_input_stencil", "1", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_15->add_load("hw_input_stencil", "2", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_15->add_load("hw_input_stencil", "3", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_15->add_load("hw_input_stencil", "4", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_15->add_load("hw_input_stencil", "5", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_15->add_load("hw_input_stencil", "6", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_15->add_load("hw_input_stencil", "7", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_15->add_load("hw_kernel_stencil", "0", "14", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_15->add_load("hw_kernel_stencil", "1", "14", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_15->add_load("hw_kernel_stencil", "2", "14", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_15->add_load("hw_kernel_stencil", "3", "14", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_15->add_load("hw_kernel_stencil", "4", "14", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_15->add_load("hw_kernel_stencil", "5", "14", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_15->add_load("hw_kernel_stencil", "6", "14", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_15->add_load("hw_kernel_stencil", "7", "14", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_15->add_store("conv_stencil", "conv_s1_x", "conv_s1_y", "14");
+//auto hcompute_conv_stencil_15 = conv_s1_x->add_op("op_hcompute_conv_stencil_15");
+//hcompute_conv_stencil_15->add_function("hcompute_conv_stencil_15");
+//hcompute_conv_stencil_15->add_load("conv_stencil", "conv_s1_x", "conv_s1_y", "14");
+//hcompute_conv_stencil_15->add_load("hw_input_stencil", "0", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_15->add_load("hw_input_stencil", "1", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_15->add_load("hw_input_stencil", "2", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_15->add_load("hw_input_stencil", "3", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_15->add_load("hw_input_stencil", "4", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_15->add_load("hw_input_stencil", "5", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_15->add_load("hw_input_stencil", "6", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_15->add_load("hw_input_stencil", "7", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_15->add_load("hw_kernel_stencil", "0", "14", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_15->add_load("hw_kernel_stencil", "1", "14", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_15->add_load("hw_kernel_stencil", "2", "14", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_15->add_load("hw_kernel_stencil", "3", "14", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_15->add_load("hw_kernel_stencil", "4", "14", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_15->add_load("hw_kernel_stencil", "5", "14", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_15->add_load("hw_kernel_stencil", "6", "14", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_15->add_load("hw_kernel_stencil", "7", "14", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_15->add_store("conv_stencil", "conv_s1_x", "conv_s1_y", "14");
 
 ////store is: conv.stencil(conv.s1.x, conv.s1.y, 15) = ((hw_kernel.stencil(0, 15, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(0, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(1, 15, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(1, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(2, 15, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(2, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(3, 15, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(3, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(4, 15, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(4, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(5, 15, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(5, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(6, 15, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(6, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + (conv.stencil(conv.s1.x, conv.s1.y, 15) + (hw_kernel.stencil(7, 15, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(7, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y)))))))))))
-  //auto hcompute_conv_stencil_16 = conv_s1_x->add_op("op_hcompute_conv_stencil_16");
-  //hcompute_conv_stencil_16->add_function("hcompute_conv_stencil_16");
-  //hcompute_conv_stencil_16->add_load("conv_stencil", "conv_s1_x", "conv_s1_y", "15");
-  //hcompute_conv_stencil_16->add_load("hw_input_stencil", "0", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_16->add_load("hw_input_stencil", "1", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_16->add_load("hw_input_stencil", "2", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_16->add_load("hw_input_stencil", "3", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_16->add_load("hw_input_stencil", "4", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_16->add_load("hw_input_stencil", "5", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_16->add_load("hw_input_stencil", "6", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_16->add_load("hw_input_stencil", "7", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
-  //hcompute_conv_stencil_16->add_load("hw_kernel_stencil", "0", "15", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_16->add_load("hw_kernel_stencil", "1", "15", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_16->add_load("hw_kernel_stencil", "2", "15", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_16->add_load("hw_kernel_stencil", "3", "15", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_16->add_load("hw_kernel_stencil", "4", "15", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_16->add_load("hw_kernel_stencil", "5", "15", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_16->add_load("hw_kernel_stencil", "6", "15", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_16->add_load("hw_kernel_stencil", "7", "15", "conv_s1_r_x", "conv_s1_r_y");
-  //hcompute_conv_stencil_16->add_store("conv_stencil", "conv_s1_x", "conv_s1_y", "15");
+//auto hcompute_conv_stencil_16 = conv_s1_x->add_op("op_hcompute_conv_stencil_16");
+//hcompute_conv_stencil_16->add_function("hcompute_conv_stencil_16");
+//hcompute_conv_stencil_16->add_load("conv_stencil", "conv_s1_x", "conv_s1_y", "15");
+//hcompute_conv_stencil_16->add_load("hw_input_stencil", "0", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_16->add_load("hw_input_stencil", "1", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_16->add_load("hw_input_stencil", "2", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_16->add_load("hw_input_stencil", "3", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_16->add_load("hw_input_stencil", "4", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_16->add_load("hw_input_stencil", "5", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_16->add_load("hw_input_stencil", "6", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_16->add_load("hw_input_stencil", "7", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+//hcompute_conv_stencil_16->add_load("hw_kernel_stencil", "0", "15", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_16->add_load("hw_kernel_stencil", "1", "15", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_16->add_load("hw_kernel_stencil", "2", "15", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_16->add_load("hw_kernel_stencil", "3", "15", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_16->add_load("hw_kernel_stencil", "4", "15", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_16->add_load("hw_kernel_stencil", "5", "15", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_16->add_load("hw_kernel_stencil", "6", "15", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_16->add_load("hw_kernel_stencil", "7", "15", "conv_s1_r_x", "conv_s1_r_y");
+//hcompute_conv_stencil_16->add_store("conv_stencil", "conv_s1_x", "conv_s1_y", "15");
 
 ////consuming conv.stencil
-  //auto hw_output_s0_w = prg.add_loop("hw_output_s0_w", 0, 16);
-  //auto hw_output_s0_y_yi = hw_output_s0_w->add_loop("hw_output_s0_y_yi", 0, 28);
-  //auto hw_output_s0_x_xi = hw_output_s0_y_yi->add_loop("hw_output_s0_x_xi", 0, 28);
+//auto hw_output_s0_w = prg.add_loop("hw_output_s0_w", 0, 16);
+//auto hw_output_s0_y_yi = hw_output_s0_w->add_loop("hw_output_s0_y_yi", 0, 28);
+//auto hw_output_s0_x_xi = hw_output_s0_y_yi->add_loop("hw_output_s0_x_xi", 0, 28);
 
 ////store is: hw_output.stencil(hw_output.s0.x.xi, hw_output.s0.y.yi, hw_output.s0.w) = uint8(conv.stencil(hw_output.s0.x.xi, hw_output.s0.y.yi, hw_output.s0.w))
-  //auto hcompute_hw_output_stencil = hw_output_s0_x_xi->add_op("op_hcompute_hw_output_stencil");
-  //hcompute_hw_output_stencil->add_function("hcompute_hw_output_stencil");
-  //hcompute_hw_output_stencil->add_load("conv_stencil", "hw_output_s0_x_xi", "hw_output_s0_y_yi", "hw_output_s0_w");
-  //hcompute_hw_output_stencil->add_store("hw_output_stencil", "hw_output_s0_x_xi", "hw_output_s0_y_yi", "hw_output_s0_w");
+//auto hcompute_hw_output_stencil = hw_output_s0_x_xi->add_op("op_hcompute_hw_output_stencil");
+//hcompute_hw_output_stencil->add_function("hcompute_hw_output_stencil");
+//hcompute_hw_output_stencil->add_load("conv_stencil", "hw_output_s0_x_xi", "hw_output_s0_y_yi", "hw_output_s0_w");
+//hcompute_hw_output_stencil->add_store("hw_output_stencil", "hw_output_s0_x_xi", "hw_output_s0_y_yi", "hw_output_s0_w");
 
-  //return prg;
+//return prg;
 //}
 
 prog mini_conv_halide_fixed() {
@@ -6166,9 +6166,13 @@ struct App {
         app_dag.at(f).pixel_width;
 
       Box domain = data_domain(f);
+      vector<int> lens;
       for (int i = 0; i < domain.dimension(); i++) {
-        prg.buffer_bounds[f].push_back(domain.length(i));
+        lens.push_back(domain.length(i));
+        //prg.buffer_bounds[f].push_back(domain.length(i));
       }
+      //reverse(lens);
+      prg.buffer_bounds[f] = lens;
 
       for (auto u : app_dag.at(f).updates) {
         if (u.get_srcs().size() == 0) {
@@ -6181,7 +6185,10 @@ struct App {
             compute_box(u.name());
           op* nest = prg.root;
           int i = 0;
-          for (auto r : compute_b.intervals) {
+
+          auto intervals = compute_b.intervals;
+          reverse(intervals);
+          for (auto r : intervals) {
             nest = nest->add_nest(f + "_" + to_string(i), r.min, r.max + 1);
             i++;
           }
@@ -6210,14 +6217,12 @@ struct App {
             }
             assert(vars.size() == 2);
 
-
-
-
             cout << tab(1) << " op loads " << p.name << endl;
             for (auto off : p.offsets) {
               assert(off.size() == 2);
               vector<string> terms;
               int i = 0;
+              reverse(off);
               for (auto offt : off) {
                 QAV stride = p.stride(i);
                 if (stride.denom != 1) {
@@ -6255,8 +6260,7 @@ struct App {
     }
 
     generate_app_code(options, buffers, prg, its(m, action_domain), domain_map);
-    //generate_regression_testbench(prg, buffers);
-    generate_regression_testbench(prg); //, buffers);
+    generate_regression_testbench(prg);
     generate_soda_file(prg.name);
   }
 
@@ -9863,6 +9867,18 @@ App sobel_mag_y() {
       {{-1, -1}, {-1, 1}, {0, -1}, {0, 1}, {1, -1}, {1, 1}});
 
   return sobel;
+}
+
+App blur_x_16(const std::string output_name) {
+  App blur;
+  blur.set_default_pixel_width(16);
+  blur.func2d("input_arg");
+  blur.func2d("input", v("input_arg"));
+  //blur.func2d(output_name, div(add(v("input", 0, 0), v("input", 0, 1), v("input", 0, 2)), 3));
+  blur.func2d(output_name, div(add(v("input", 0, 0), v("input", 0, 1)), 3));
+  //blur.func2d(output_name, div(add(v("input", 0, 0), v("input", 0, 1), v("input", 1, 0)), 3));
+
+  return blur;
 }
 
 App blur_xy_16(const std::string output_name) {
@@ -15762,6 +15778,19 @@ void llf_to_color_no_scales(const std::string& out, const std::string& original,
   convert->add_store(out, b, x, y);
 }
 
+void llf_rescale_gray(const std::string& out, const std::string& scales, const std::string& gray, prog& prg) {
+  string pr = out + "_rescale_gray";
+  string y = prg.unique_name(pr);
+  string x = prg.unique_name(pr);
+  auto cn = prg.add_nest(y, 0, 1, x, 0, 1);
+
+  auto convert = cn->add_op(prg.unique_name("cc"));
+  convert->add_function("llf_rescale_gray_float");
+  convert->add_load(scales, x, y);
+  convert->add_load(gray, x, y);
+  convert->add_store(out, x, y);
+}
+
 void llf_to_color(const std::string& out, const std::string& original, const std::string& scales, const std::string& gray, prog& prg) {
   string pr = out + "_to_color";
   string y = prg.unique_name(pr);
@@ -15913,6 +15942,25 @@ string reconstruct_gaussian(const std::vector<string>& output_levels, prog& prg)
 }
 
 
+void pointwise(const std::string& out, const std::string& func, const std::string& in0, const std::string& in1, const int dim, prog& prg) {
+  string pr = prg.un("pw_math_" + in0 + "_" + in1);
+  op* lp = prg.root;
+  vector<string> vars;
+  for (int d = 0; d < dim; d++) {
+    string var = prg.un(pr);
+    lp = lp->add_loop(var, 0, 1);
+    vars.push_back(var);
+  }
+  reverse(vars);
+  auto ld = lp->add_op(prg.un(pr));
+  string vlist = comma_list(vars);
+  ld->add_load(in0, vlist);
+  ld->add_load(in1, vlist);
+  ld->add_function(func);
+  ld->add_store(out, vlist);
+
+}
+
 void pointwise(const std::string& out, const std::string& func, const std::string& in, const int dim, prog& prg) {
   string pr = prg.un("pw_math_" + in);
   op* lp = prg.root;
@@ -16039,6 +16087,68 @@ void llf_pyramid_test() {
 
   //assert(false);
 }
+
+prog llf_grayscale_float(const int r, const int c) {
+  int num_pyramid_levels = 4;
+  int num_intensity_levels = 8;
+
+  prog prg("llf_gs");
+  prg.compute_unit_file = "local_laplacian_filters_compute.h";
+
+  prg.add_input("gray_in_oc");
+  prg.add_output("gray_out");
+
+  load_input("gray_in_oc", "gray_int", 2, prg);
+  pointwise("gray", "llf_int_to_float", "gray_int", 2, prg);
+
+  // Make intensity pyramids
+  vector<vector<string> > intensity_level_pyramids;
+  for (int i = 0; i < num_intensity_levels; i++) {
+    string pw = prg.un("level_table");
+    pointwise(pw, "llf_level_entry_" + str(i), "gray", 2, prg);
+
+    intensity_level_pyramids.push_back(laplacian_pyramid(pw, num_pyramid_levels, prg));
+  }
+
+  // Make input Gaussian pyramid
+  vector<string> gray_levels = gaussian_pyramid("gray", num_pyramid_levels, prg);
+
+  // Compute levels for interpolated output
+  vector<string> output_levels;
+  for (int i = 0; i < num_pyramid_levels; i++) {
+    vector<string> intensities_at_level;
+    for (auto pyramid : intensity_level_pyramids) {
+      assert(pyramid.at(i) != "");
+      intensities_at_level.push_back(pyramid.at(i));
+    }
+    output_levels.push_back(llf_interpolate_intensity(gray_levels.at(i), intensities_at_level, prg));
+  }
+
+  string scales = reconstruct_gaussian(output_levels, prg);
+
+  llf_rescale_gray("gray_out_float", scales, "gray", prg);
+  pointwise("gray_out", "llf_float_to_int", "gray_out_float", 2, prg);
+
+  prg.pretty_print();
+  prg.sanity_check();
+
+  infer_bounds("gray_out", {r, c}, prg);
+
+  cout << "After bounds inference..." << endl;
+  prg.pretty_print();
+
+  unroll_reduce_loops(prg);
+  merge_basic_block_ops(prg);
+  normalize_bounds(prg);
+  normalize_address_offsets(prg);
+
+  return prg;
+}
+
+prog llf_grayscale_float() {
+  return llf_grayscale_float(2048, 2048);
+}
+
 
 prog llf_float() {
   int num_pyramid_levels = 4;
@@ -16662,56 +16772,6 @@ void relax_delays_rate_matched(schedule_info& sched, prog& prg) {
   }
 }
 
-// void adjust_outer_delays(schedule_info& sched, prog& prg) {
-//   cout << "Adjusting delays of " << prg.name << endl;
-//   for (auto name : topologically_sort_kernels(prg)) {
-//     auto lp = prg.find_loop(name);
-//     cout << "Adjusting delay of " << lp->name << endl;
-
-//     int old_delay = map_find(lp, sched.op_offset_within_parent);
-//     int try_delay = 1;
-//     bool found_smaller_delay = false;
-//     while (try_delay < old_delay) {
-//       sched.op_offset_within_parent[lp] = try_delay;
-//       if (no_violated_cycle_accurate_dependencies(sched, prg)) {
-//         found_smaller_delay = true;
-//         break;
-//       }
-//       try_delay = max(try_delay * 2, try_delay + 1000);
-//       //try_delay = min(try_delay * 2, try_delay + 1000);
-//       //try_delay *= 2;
-//     }
-
-//     if (!found_smaller_delay) {
-//       sched.op_offset_within_parent[lp] = old_delay;
-//     }
-//   }
-// }
-
-// void adjust_outer_pipeline_delays(schedule_info& sched, prog& prg) {
-//   cout << "Adjusting delays of " << prg.name << endl;
-//   for (auto lp : find_coarse_grained_pipeline_loop(prg.root)->children) {
-
-//     int old_delay = map_find(lp, sched.op_offset_within_parent);
-//     int try_delay = 1;
-//     bool found_smaller_delay = false;
-//     while (try_delay < old_delay) {
-//       sched.op_offset_within_parent[lp] = try_delay;
-//       if (no_violated_cycle_accurate_dependencies(sched, prg)) {
-//         found_smaller_delay = true;
-//         break;
-//       }
-//       try_delay = max(try_delay * 2, try_delay + 1000);
-//       //try_delay = min(try_delay * 2, try_delay + 1000);
-//       //try_delay *= 2;
-//     }
-
-//     if (!found_smaller_delay) {
-//       sched.op_offset_within_parent[lp] = old_delay;
-//     }
-//   }
-// }
-
 void asap_input_iis(schedule_info& sched, prog& prg) {
 
     //Looks for buffer all reading location is constant localtion
@@ -16776,28 +16836,6 @@ void asap_input_iis(schedule_info& sched, prog& prg) {
 
 
 }
-
-// void adjust_inner_iis(schedule_info& sched, prog& prg) {
-//   cout << "Adjusting iis of " << prg.name << endl;
-//   for (auto lp : get_inner_loops(prg)) {
-//     cout << "Adjusting ii of " << lp->name << endl;
-//     int old_ii = map_find(lp->name, sched.loop_iis);
-//     int try_ii = 1;
-//     bool found_smaller_ii = false;
-//     while (try_ii < old_ii) {
-//       sched.loop_iis[lp->name] = try_ii;
-//       if (no_violated_cycle_accurate_dependencies(sched, prg)) {
-//         found_smaller_ii = true;
-//         break;
-//       }
-//       try_ii *= 2;
-//     }
-
-//     if (!found_smaller_ii) {
-//       sched.loop_iis[lp->name] = old_ii;
-//     }
-//   }
-// }
 
 void break_up_multi_channel_outputs(prog& prg) {
   std::set<string> to_erase;
@@ -17872,52 +17910,6 @@ void compile_for_garnet_single_port_mem(prog& prg,
 #endif
 }
 
-umap* cycle_accurate_deps(schedule_info& sched, prog& prg) {
-  auto valid = prg.validity_deps();
-  umap* final_dep = rdmap(prg.ctx, "{}");
-  for (auto m : get_maps(valid)) {
-    string dom_name = "end_" + domain_name(m);
-    string rname = "start_" + range_name(m);
-    m = set_domain_name(set_range_name(m, rname), dom_name);
-    auto um = to_umap(m);
-    final_dep = unn(final_dep, um);
-    release(m);
-    release(um);
-  }
-
-  release(valid);
-  return final_dep;
-}
-
-void sanity_check_negative_starts(schedule_info& sched, prog& prg) {
-  auto start_times = its(op_start_times_map(sched, prg), op_start_times_domain(prg));
-  cout << "Start times..." << endl;
-  //cout << str(start_times) << endl;
-  for (auto m : get_maps(start_times)) {
-    cout << tab(1) << str(m) << endl;
-  }
-  //assert(false);
-  auto ranges = range(start_times);
-  auto range_set = to_set(ranges);
-  int min = to_int(lexminval(range_set));
-
-  cout << tab(1) << "min: " << str(lexmin(ranges)) << endl;
-  assert(min >= 0);
-}
-
-int max_completion_time(schedule_info& sched, prog& prg) {
-  auto start_times =
-    its(op_start_times_map(sched, prg), op_start_times_domain(prg));
-
-  int done_time = INT_MIN;
-
-  for (auto s : get_sets(range(start_times))) {
-    int max_dim = to_int(lexmaxval(s));
-    done_time = max(max_dim, done_time);
-  }
-  return done_time;
-}
-
 bool schedule_bounds_fit_controller_bitwidth(const int bitwidth, schedule_info& sched, prog& prg) {
   int max_val = pow(2, bitwidth);
 
@@ -17945,53 +17937,6 @@ bool schedule_bounds_fit_controller_bitwidth(const int bitwidth, schedule_info& 
     release(s);
   }
   return true;
-}
-
-bool no_violated_cycle_accurate_dependencies(schedule_info& sched, prog& prg) {
-  prg.pretty_print();
-  sanity_check_iis(sched);
-  sanity_check_negative_starts(sched, prg);
-
-  auto start_times = op_start_times_map(sched, prg);
-  auto end_times = op_end_times_map(sched, prg);
-  auto all_times = unn(start_times, end_times);
-
-  cout << "Schedule..." << endl;
-  for (auto m : get_maps(start_times)) {
-    cout << tab(1) << str(m) << endl;
-    release(m);
-  }
-  auto deps = cycle_accurate_deps(sched, prg);
-  cout << tab(1) << "Cycle deps: " << str(deps) << endl;
-
-  deps = inv(deps);
-  auto earlier = lex_lt(all_times, all_times);
-
-  cout << tab(1) << "Earlier deps: " << str(earlier) << endl;
-
-  auto violated = its(earlier, deps);
-
-  cout << tab(1) << "Violated deps: " << str(violated) << endl;
-  bool safe = empty(violated);
-
-  if (!safe) {
-    cout << "Schedule..." << endl;
-    for (auto s : get_maps(start_times)) {
-      cout << str(s) << endl << endl;
-    }
-    cout << endl;
-    cout << "Violated deps..." << endl;
-    for (auto m : get_maps(violated)) {
-      cout << str(m) << endl << endl;
-    }
-  }
-  release(violated);
-  release(earlier);
-  release(start_times);
-  release(end_times);
-  release(all_times);
-  //assert(false);
-  return safe;
 }
 
 void test_schedules(vector<prog>& test_programs) {
@@ -18324,115 +18269,91 @@ std::string cw_box_codegen(CodegenOptions& options,
 }
 
 void generate_fpga_clockwork_code(prog& prg) {
-  auto valid = prg.validity_deps();
-  auto dom = prg.whole_iteration_domain();
-  map<string, vector<isl_aff*> > cwsched =
-    clockwork_schedule(dom, valid, cpy(valid));
 
-  cout << "Clockwork sched..." << endl;
-  std::vector<op*> dft_ops = get_dft_ops(prg);
-  cout << "DFT op order" << endl;
-  int pos = 0;
-  map<string, int> positions;
-  vector<string> ops;
-  for (auto op : dft_ops) {
-    cout << tab(1) << op->name << endl;
-    positions[op->name] = pos;
-    ops.push_back(op->name);
-    pos++;
-  }
+  if (is_rate_matchable(prg)) {
+    auto valid = prg.validity_deps();
+    auto dom = prg.whole_iteration_domain();
+    map<string, vector<isl_aff*> > cwsched =
+      clockwork_schedule(dom, valid, cpy(valid));
 
-  map<string, vector<QExpr> > scheds;
-  for (auto s : cwsched) {
-    string name = s.first;
-    vector<isl_aff*> vals = s.second;
-
-    scheds[name] = {};
-    int i = 0;
-    for (auto v : vals) {
-      QExpr rate = qexpr("d" + str(i));
-      auto rate_coeff =
-        qexpr(int_coeff(v, 0));
-      auto delay =
-        qexpr(int_const_coeff(v));
-
-      QExpr expr =
-        rate_coeff*rate + delay;
-      scheds[name].push_back(expr);
-      i++;
+    cout << "Clockwork sched..." << endl;
+    std::vector<op*> dft_ops = get_dft_ops(prg);
+    cout << "DFT op order" << endl;
+    int pos = 0;
+    map<string, int> positions;
+    vector<string> ops;
+    for (auto op : dft_ops) {
+      cout << tab(1) << op->name << endl;
+      positions[op->name] = pos;
+      ops.push_back(op->name);
+      pos++;
     }
-  }
 
-  // schedule is dN, ..., d1, d0
-  //for (auto& s : scheds) {
-    //reverse(s.second);
-  //}
+    map<string, vector<QExpr> > scheds;
+    for (auto s : cwsched) {
+      string name = s.first;
+      vector<isl_aff*> vals = s.second;
 
-  //// schedule is dN, ..., d1, d0
-  //for (auto& s : scheds) {
-    //reverse(s.second);
-    //QAV v = qconst(map_find(s.first, positions));
-    //QTerm t{{v}};
-    //QExpr e{{t}};
-    //s.second.push_back(e);
-  //}
+      scheds[name] = {};
+      int i = 0;
+      for (auto v : vals) {
+        QExpr rate = qexpr("d" + str(i));
+        auto rate_coeff =
+          qexpr(int_coeff(v, 0));
+        auto delay =
+          qexpr(int_const_coeff(v));
 
-  cout << "Final schedule..." << endl;
-  for (auto s : scheds) {
-    cout << tab(1) << s.first << endl;
-    for (auto v : s.second) {
-      cout << tab(2) << v << endl;
+        QExpr expr =
+          rate_coeff*rate + delay;
+        scheds[name].push_back(expr);
+        i++;
+      }
     }
-    cout << endl;
+
+    cout << "Final schedule..." << endl;
+    for (auto s : scheds) {
+      cout << tab(1) << s.first << endl;
+      for (auto v : s.second) {
+        cout << tab(2) << v << endl;
+      }
+      cout << endl;
+    }
+
+    auto sched = qschedule_to_map_final_sort(prg.ctx, scheds, positions);
+    sched = its(sched, dom);
+
+    cout << "Optimized schedule..." << endl;
+    for (auto s : get_maps(sched)) {
+      cout << tab(1) << str(s) << endl;
+    }
+
+    //assert(false);
+    //cout << tab(1) << ": " << str(sched) << endl << endl;
+    //cout << codegen_c(sched) << endl;
+
+    auto buffers = build_buffers(prg, sched);
+
+    assert(prg.compute_unit_file != "");
+    cout << "Compute unit file: "
+      << prg.compute_unit_file << endl;
+    CodegenOptions options;
+    options.internal = true;
+    generate_app_code(options, buffers, prg, sched);
+
+    release(sched);
+  } else {
+    auto sched = prg.unoptimized_schedule();
+
+    auto buffers = build_buffers(prg, prg.unoptimized_schedule());
+
+    CodegenOptions options;
+    options.internal = true;
+    options.all_rams = true;
+    all_unbanked(prg, options);
+    options.inner_bank_offset_mode =
+      INNER_BANK_OFFSET_MULTILINEAR;
+    generate_app_code(options, buffers, prg, sched);
   }
-
-  auto sched = qschedule_to_map_final_sort(prg.ctx, scheds, positions);
-  sched = its(sched, dom);
-
-  cout << "Optimized schedule..." << endl;
-  for (auto s : get_maps(sched)) {
-    cout << tab(1) << str(s) << endl;
-  }
-
-  //assert(false);
-  //cout << tab(1) << ": " << str(sched) << endl << endl;
-  //cout << codegen_c(sched) << endl;
-
-  auto buffers = build_buffers(prg, sched);
-
-  assert(prg.compute_unit_file != "");
-  cout << "Compute unit file: "
-    << prg.compute_unit_file << endl;
-  CodegenOptions options;
-  options.internal = true;
-  //options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
-  //map<string, Box> compute_domains;
-  //for (auto s : get_sets(dom)) {
-    //ops.push_back(name(s));
-    //Box bounds;
-    //for (int d = 0; d < num_dims(s); d++) {
-      //auto pr = project_all_but(s, d);
-      //int minv = to_int(lexminval(pr));
-      //int maxv = to_int(lexmaxval(pr));
-      //bounds.intervals.push_back({minv, maxv});
-    //}
-    //compute_domains[name(s)] = bounds;
-  //}
-
-  //cout << "Boxes..." << endl;
-  //for (auto b : compute_domains) {
-    //cout << tab(1) << b.first << " -> " << b.second << endl;
-  //}
-  ////assert(false);
-  //cout << "Generating box codegen" << endl;
-  //string cgn = cw_box_codegen(options, ops, scheds, compute_domains);
-  //cout << "Done" << endl;
-  //options.code_string = cgn;
-  //cout << "Code string..." << endl;
-  //cout << cgn << endl;
-  generate_app_code(options, buffers, prg, sched);
-
-  release(sched);
 }
 
 void fpga_asplos_tests() {
@@ -18461,6 +18382,13 @@ void fpga_asplos_tests() {
 void cgra_flow_tests() {
 
   vector<prog> M3_test_programs = isca_programs();
+
+  //vector<prog> bram_test_programs{pointwise(), gaussian(), harris(), resnet()};
+  vector<prog> bram_test_programs{resnet88()};
+  //vector<prog> bram_test_programs{pointwise()};
+  test_codegen(bram_test_programs, compile_for_FPGA_BRAM_mem);
+  assert(false);
+
   //vector<prog> M3_test_programs = harris_variants();
   //vector<prog> M3_test_programs{up_sample(), resnet()};
   //vector<prog> M3_test_programs{resnet()};
@@ -18482,9 +18410,6 @@ void cgra_flow_tests() {
   vector<prog> sram_test_programs{pointwise(), camera_pipeline(), resnet()};
   test_codegen(sram_test_programs, compile_for_generic_SRAM_mem);
 
-  vector<prog> bram_test_programs{pointwise(), gaussian(), harris(), resnet()};
-  test_codegen(bram_test_programs, compile_for_FPGA_BRAM_mem);
-  //assert(false);
 }
 
 void dse_flow_tests() {
@@ -19653,6 +19578,156 @@ void histogram1d_test() {
   //assert(false);
 }
 
+isl_set* bounds(const std::string& in, prog& prg) {
+  vector<int> bnds = map_find(in, prg.buffer_bounds);
+
+  vector<string> vars;
+  vector<string> clauses;
+  string name = in;
+  for (int i = 0; i < (int) bnds.size(); i++) {
+    auto v = "d" + str(i);
+    vars.push_back(v);
+    clauses.push_back("0 <= " + v + " < " + str(bnds.at(i)));
+  }
+
+  string srep =
+    curlies(name + bracket_list(vars) + " : " + sep_list(clauses, "", "", " and "));
+
+  return rdset(prg.ctx, srep);
+}
+
+void sanity_check_all_input_pixels_read(prog& prg) {
+  for (auto in : prg.ins) {
+    for (auto op : prg.all_ops()) {
+      if (elem(in, op->buffers_read())) {
+        cout << "Getting read map" << endl;
+        auto rd = prg.read_map(op, in);
+        cout << "Got read map" << endl;
+        if (rd != nullptr) {
+          rd = its(rd, prg.domain(op));
+          isl_set* read = (range(rd));
+          cout << op->name << " reads " << str(read) << endl;
+
+          isl_set* bnds = bounds(in, prg);
+
+          cout << in << " bounds: " << str(bnds) << endl;
+
+          assert(empty(diff(bnds, read)));
+          assert(empty(diff(read, bnds)));
+        }
+      }
+    }
+  }
+}
+
+void blurx_app_to_prog_test() {
+  string out_name = "blurx";
+
+  int cols = 32;
+  int rows = 32;
+
+  prog prg = blur_x_16(out_name).realize(out_name, cols, rows);
+
+
+  prg.pretty_print();
+  prg.sanity_check();
+  sanity_check_all_reads_defined(prg);
+  sanity_check_all_input_pixels_read(prg);
+
+  std::vector<std::string> optimized =
+    run_regression_tb(out_name + "_opt");
+
+  //auto res = unoptimized_result(prg);
+
+  prg.name = "prg_" + prg.name;
+  generate_optimized_code(prg);
+  generate_regression_testbench(prg);
+  auto res = run_regression_tb(prg);
+
+  //compare("blurx opt vs. unopt prog: " + prg.name, opt, res);
+  //assert(false);
+
+
+  compare("blurx test:" + prg.name + "_cpu_comparison", res, optimized);
+
+  //assert(false);
+}
+
+void updated_blur_static_dynamic_comparison() {
+  string out_name = "ubxy_d";
+
+  int cols = 64;
+  int rows = 64;
+
+  prog prg = blur_xy_16(out_name).realize(out_name, cols, rows);
+
+  std::vector<std::string> optimized =
+    run_regression_tb(out_name + "_opt");
+
+  auto res = unoptimized_result(prg);
+
+  compare(prg.name + "_cpu_comparison", res, optimized);
+
+  //assert(false);
+}
+
+void updated_blur1_static_dynamic_comparison() {
+  string prefix = "bxy2_d";
+
+  int size = 1080;
+  int rows = size;
+  int cols = size;
+
+  int unroll_factor = 1;
+  int throughput = unroll_factor;
+  string out_name = prefix + "_" + str(unroll_factor);
+
+  CodegenOptions options;
+  options.internal = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  options.debug_options.expect_all_linebuffers = true;
+
+  App jac = blur_xy_16(out_name);
+  prog prg = jac.realize(options, out_name, cols, rows, 1);
+
+  move_to_benchmarks_folder(out_name + "_opt");
+
+  prg.name = out_name + "_opt_d";
+
+  jac.generate_soda_file(prg.name, throughput);
+
+  unroll_reduce_loops(prg);
+  merge_basic_block_ops(prg);
+  normalize_bounds(prg);
+  normalize_address_offsets(prg);
+
+  auto fusion_groups = one_stage_per_group(prg);
+  auto fresh_groups = insert_inter_group_buffers(fusion_groups, prg);
+  unroll_mismatched_inner_loops(prg);
+  merge_basic_block_ops(prg);
+  infer_bounds_and_unroll(pick(prg.outs), {size, size}, throughput, prg);
+
+  assert(unoptimized_compiles(prg));
+
+  app_dag dag = partition_groups(fresh_groups, prg);
+
+  options = CodegenOptions();
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  options.slack_matching = {SLACK_MATCHING_TYPE_FIXED, 2};
+  generate_app_code(options, dag);
+
+  move_to_benchmarks_folder(prg.name);
+
+  string synth_dir =
+    "./soda_codes/" + prg.name+ "/our_code/";
+
+  system(("cp " + out_name + "_opt" + "*.h " + synth_dir).c_str());
+
+  cout << "prg name: " << prg.name << endl;
+
+  assert(false);
+}
+
 void blur_static_dynamic_comparison() {
   string prefix = "bxy_d";
 
@@ -20397,6 +20472,1170 @@ void cp16_static_dynamic_comparison_fresh_codegen() {
 
 }
 
+prog two_in_blnd(const int r, const int c);
+
+void two_in_blnd_16pix_static_dynamic_comparison() {
+  const int throughput = 16;
+  const int size = 2048;
+
+  {
+    prog prg = two_in_blnd(2048, 2048);
+    prg.name = prg.name + "_" + str(throughput);
+    infer_bounds_and_unroll(pick(prg.outs), {size, size}, throughput, prg);
+    prg.sanity_check();
+
+    CodegenOptions options;
+    options = CodegenOptions();
+    options.scheduling_algorithm = SCHEDULE_ALGORITHM_CW;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+
+    generate_optimized_code(options, prg);
+
+    move_to_benchmarks_folder(prg.name);
+    cmd("cp local_laplacian_filter* ./soda_codes/" + prg.name + "/our_code/");
+  }
+
+  {
+    prog prg = two_in_blnd(2048, 2048);
+    prg.name = prg.name + "_d_" + str(throughput);
+    prg.sanity_check();
+
+    auto fusion_groups = one_stage_per_group(prg);
+
+
+    auto fresh_groups = insert_inter_group_buffers(fusion_groups, prg);
+    unroll_mismatched_inner_loops(prg);
+    merge_basic_block_ops(prg);
+    infer_bounds_and_unroll(pick(prg.outs), {size, size}, throughput, prg);
+
+    assert(unoptimized_compiles(prg));
+
+    app_dag dag = partition_groups(fresh_groups, prg);
+
+    CodegenOptions options;
+    options = CodegenOptions();
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+    options.scheduling_algorithm = SCHEDULE_ALGORITHM_CW;
+    generate_app_code(options, dag);
+
+    move_to_benchmarks_folder(prg.name);
+    cmd("cp local_laplacian_filter* ./soda_codes/" + prg.name + "/our_code/");
+  }
+
+  assert(false);
+}
+
+void two_in_blnd_8pix_static_dynamic_comparison() {
+  const int throughput = 8;
+  const int size = 2048;
+
+  {
+    prog prg = two_in_blnd(2048, 2048);
+    prg.name = prg.name + "_" + str(throughput);
+    infer_bounds_and_unroll(pick(prg.outs), {size, size}, throughput, prg);
+    prg.sanity_check();
+
+    CodegenOptions options;
+    options = CodegenOptions();
+    options.scheduling_algorithm = SCHEDULE_ALGORITHM_CW;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+
+    generate_optimized_code(options, prg);
+
+    move_to_benchmarks_folder(prg.name);
+    cmd("cp local_laplacian_filter* ./soda_codes/" + prg.name + "/our_code/");
+  }
+
+  {
+    prog prg = two_in_blnd(2048, 2048);
+    prg.name = prg.name + "_d_" + str(throughput);
+    prg.sanity_check();
+
+    auto fusion_groups = one_stage_per_group(prg);
+
+
+    auto fresh_groups = insert_inter_group_buffers(fusion_groups, prg);
+    unroll_mismatched_inner_loops(prg);
+    merge_basic_block_ops(prg);
+    infer_bounds_and_unroll(pick(prg.outs), {size, size}, throughput, prg);
+
+    assert(unoptimized_compiles(prg));
+
+    app_dag dag = partition_groups(fresh_groups, prg);
+
+    CodegenOptions options;
+    options = CodegenOptions();
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+    options.scheduling_algorithm = SCHEDULE_ALGORITHM_CW;
+    generate_app_code(options, dag);
+
+    move_to_benchmarks_folder(prg.name);
+    cmd("cp local_laplacian_filter* ./soda_codes/" + prg.name + "/our_code/");
+  }
+
+  assert(false);
+}
+
+void two_in_blnd_4pix_static_dynamic_comparison() {
+  const int throughput = 4;
+  const int size = 2048;
+
+  {
+    prog prg = two_in_blnd(2048, 2048);
+    prg.name = prg.name + "_" + str(throughput);
+    infer_bounds_and_unroll(pick(prg.outs), {size, size}, throughput, prg);
+    prg.sanity_check();
+
+    CodegenOptions options;
+    options = CodegenOptions();
+    options.scheduling_algorithm = SCHEDULE_ALGORITHM_CW;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+
+    generate_optimized_code(options, prg);
+
+    move_to_benchmarks_folder(prg.name);
+    cmd("cp local_laplacian_filter* ./soda_codes/" + prg.name + "/our_code/");
+  }
+
+  {
+    prog prg = two_in_blnd(2048, 2048);
+    prg.name = prg.name + "_d_" + str(throughput);
+    prg.sanity_check();
+
+    auto fusion_groups = one_stage_per_group(prg);
+
+
+    auto fresh_groups = insert_inter_group_buffers(fusion_groups, prg);
+    unroll_mismatched_inner_loops(prg);
+    merge_basic_block_ops(prg);
+    infer_bounds_and_unroll(pick(prg.outs), {size, size}, throughput, prg);
+
+    assert(unoptimized_compiles(prg));
+
+    app_dag dag = partition_groups(fresh_groups, prg);
+
+    CodegenOptions options;
+    options = CodegenOptions();
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+    options.scheduling_algorithm = SCHEDULE_ALGORITHM_CW;
+    generate_app_code(options, dag);
+
+    move_to_benchmarks_folder(prg.name);
+    cmd("cp local_laplacian_filter* ./soda_codes/" + prg.name + "/our_code/");
+  }
+
+  assert(false);
+}
+
+void two_in_blnd_2pix_static_dynamic_comparison() {
+  const int throughput = 2;
+  const int size = 2048;
+
+  {
+    prog prg = two_in_blnd(2048, 2048);
+    prg.name = prg.name + "_" + str(throughput);
+    infer_bounds_and_unroll(pick(prg.outs), {size, size}, throughput, prg);
+    prg.sanity_check();
+
+    CodegenOptions options;
+    options = CodegenOptions();
+    options.scheduling_algorithm = SCHEDULE_ALGORITHM_CW;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+
+    generate_optimized_code(options, prg);
+
+    move_to_benchmarks_folder(prg.name);
+    cmd("cp local_laplacian_filter* ./soda_codes/" + prg.name + "/our_code/");
+  }
+
+  {
+    prog prg = two_in_blnd(2048, 2048);
+    prg.name = prg.name + "_d_" + str(throughput);
+    prg.sanity_check();
+
+    auto fusion_groups = one_stage_per_group(prg);
+
+    //app_dag dag = partition_application(fusion_groups, prg);
+
+    auto fresh_groups = insert_inter_group_buffers(fusion_groups, prg);
+    unroll_mismatched_inner_loops(prg);
+    merge_basic_block_ops(prg);
+    infer_bounds_and_unroll(pick(prg.outs), {size, size}, throughput, prg);
+
+    assert(unoptimized_compiles(prg));
+
+    app_dag dag = partition_groups(fresh_groups, prg);
+
+    CodegenOptions options;
+    options = CodegenOptions();
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+    options.scheduling_algorithm = SCHEDULE_ALGORITHM_CW;
+    generate_app_code(options, dag);
+
+    move_to_benchmarks_folder(prg.name);
+    cmd("cp local_laplacian_filter* ./soda_codes/" + prg.name + "/our_code/");
+  }
+
+  assert(false);
+
+}
+
+void two_in_blnd_static_dynamic_comparison() {
+  {
+    prog prg = two_in_blnd(2048, 2048);
+    prg.sanity_check();
+
+    auto fusion_groups = one_stage_per_group(prg);
+    app_dag dag = partition_application(fusion_groups, prg);
+
+    CodegenOptions options;
+    options = CodegenOptions();
+    options.scheduling_algorithm = SCHEDULE_ALGORITHM_CW;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+
+    generate_optimized_code(options, prg);
+
+    move_to_benchmarks_folder(prg.name);
+
+    assert(false);
+  }
+
+  {
+    prog prg = two_in_blnd(2048, 2048);
+    prg.name = prg.name + "_d";
+    prg.sanity_check();
+
+    auto fusion_groups = one_stage_per_group(prg);
+    app_dag dag = partition_application(fusion_groups, prg);
+
+    CodegenOptions options;
+    options = CodegenOptions();
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+    options.scheduling_algorithm = SCHEDULE_ALGORITHM_CW;
+    generate_app_code(options, dag);
+
+    move_to_benchmarks_folder(prg.name);
+
+  }
+
+  assert(false);
+}
+
+void jac4_static_dynamic_comparison(const int throughput) {
+  string prefix = "jac4";
+
+  int rows = 1080;
+  int cols = 1920;
+
+  int unroll_factor = throughput;
+  string out_name = prefix + "_" + str(unroll_factor);
+
+  CodegenOptions options;
+  options.internal = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  options.scheduling_algorithm = SCHEDULE_ALGORITHM_CW;
+  options.debug_options.expect_all_linebuffers = true;
+
+  App app = stencil_chain_stage_iccad(out_name, 15);
+  prog prg = app.realize(options, out_name, cols, rows, 1);
+  prepare_for_clockwork_scheduling(prg);
+
+  {
+    prog static_prg = prg.deep_copy();
+    static_prg.reset_context();
+
+    infer_bounds_and_unroll(pick(static_prg.outs), {cols, rows}, throughput, static_prg);
+
+    static_prg.pretty_print();
+
+    generate_optimized_code(options, static_prg);
+    app.generate_soda_file(static_prg.name, throughput);
+
+    move_to_benchmarks_folder(out_name + "_opt");
+  }
+
+  {
+    prog static_prg = prg.deep_copy();
+    static_prg.name = out_name + "_opt_d32";
+    static_prg.reset_context();
+
+    static_prg.pretty_print();
+
+    auto fusion_groups = one_stage_per_group(static_prg);
+    auto fresh_groups = insert_inter_group_buffers(fusion_groups, static_prg);
+    unroll_mismatched_inner_loops(static_prg);
+    merge_basic_block_ops(static_prg);
+    infer_bounds_and_unroll(pick(static_prg.outs), {cols, rows}, throughput, static_prg);
+
+    assert(unoptimized_compiles(static_prg));
+
+    app_dag dag = partition_groups(fresh_groups, static_prg);
+
+    options = CodegenOptions();
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+    options.slack_matching = {SLACK_MATCHING_TYPE_FIXED, 32};
+    generate_app_code(options, dag);
+
+    move_to_benchmarks_folder(static_prg.name);
+
+    string synth_dir =
+      "./soda_codes/" + static_prg.name+ "/our_code/";
+    system(("cp " + out_name + "_opt" + "*.h " + synth_dir).c_str());
+  }
+
+  {
+    prog static_prg = prg.deep_copy();
+    prg.reset_context();
+
+    static_prg.pretty_print();
+
+    prg.name = out_name + "_opt_dis";
+
+    auto fusion_groups = one_stage_per_group(prg);
+    auto fresh_groups = insert_inter_group_buffers(fusion_groups, prg);
+    unroll_mismatched_inner_loops(prg);
+    merge_basic_block_ops(prg);
+    infer_bounds_and_unroll(pick(prg.outs), {cols, rows}, throughput, prg);
+
+    assert(unoptimized_compiles(prg));
+
+    app_dag dag = partition_groups(fresh_groups, prg);
+
+    options = CodegenOptions();
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+    options.slack_matching = {SLACK_MATCHING_TYPE_PIPELINE_DEPTH_AWARE, 2};
+    generate_app_code(options, dag);
+
+    move_to_benchmarks_folder(prg.name);
+
+    string synth_dir =
+      "./soda_codes/" + prg.name+ "/our_code/";
+
+    system(("cp " + out_name + "_opt" + "*.h " + synth_dir).c_str());
+  }
+  cout << "prg name: " << prg.name << endl;
+
+  assert(false);
+}
+void cp4_static_dynamic_comparison(const int throughput) {
+  string prefix = "cp4";
+
+  int rows = 1080;
+  int cols = 1920;
+
+  int unroll_factor = throughput;
+  string out_name = prefix + "_" + str(unroll_factor);
+
+  CodegenOptions options;
+  options.internal = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  options.scheduling_algorithm = SCHEDULE_ALGORITHM_CW;
+  options.debug_options.expect_all_linebuffers = true;
+
+  App app = camera_pipeline(out_name);
+  prog prg = app.realize(options, out_name, cols, rows, 1);
+  prepare_for_clockwork_scheduling(prg);
+
+  {
+    prog static_prg = prg.deep_copy();
+    static_prg.reset_context();
+
+    infer_bounds_and_unroll(pick(static_prg.outs), {cols, rows}, throughput, static_prg);
+
+    static_prg.pretty_print();
+
+    generate_optimized_code(options, static_prg);
+    app.generate_soda_file(static_prg.name, throughput);
+
+    move_to_benchmarks_folder(out_name + "_opt");
+  }
+
+  {
+    prog static_prg = prg.deep_copy();
+    static_prg.name = out_name + "_opt_d32";
+    static_prg.reset_context();
+
+    static_prg.pretty_print();
+
+    auto fusion_groups = one_stage_per_group(static_prg);
+    auto fresh_groups = insert_inter_group_buffers(fusion_groups, static_prg);
+    unroll_mismatched_inner_loops(static_prg);
+    merge_basic_block_ops(static_prg);
+    infer_bounds_and_unroll(pick(static_prg.outs), {cols, rows}, throughput, static_prg);
+
+    assert(unoptimized_compiles(static_prg));
+
+    app_dag dag = partition_groups(fresh_groups, static_prg);
+
+    options = CodegenOptions();
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+    options.slack_matching = {SLACK_MATCHING_TYPE_FIXED, 32};
+    generate_app_code(options, dag);
+
+    move_to_benchmarks_folder(static_prg.name);
+
+    string synth_dir =
+      "./soda_codes/" + static_prg.name+ "/our_code/";
+    system(("cp " + out_name + "_opt" + "*.h " + synth_dir).c_str());
+  }
+
+  {
+    prog static_prg = prg.deep_copy();
+    prg.reset_context();
+
+    static_prg.pretty_print();
+
+    prg.name = out_name + "_opt_dis";
+
+    auto fusion_groups = one_stage_per_group(prg);
+    auto fresh_groups = insert_inter_group_buffers(fusion_groups, prg);
+    unroll_mismatched_inner_loops(prg);
+    merge_basic_block_ops(prg);
+    infer_bounds_and_unroll(pick(prg.outs), {cols, rows}, throughput, prg);
+
+    assert(unoptimized_compiles(prg));
+
+    app_dag dag = partition_groups(fresh_groups, prg);
+
+    options = CodegenOptions();
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+    options.slack_matching = {SLACK_MATCHING_TYPE_PIPELINE_DEPTH_AWARE, 2};
+    generate_app_code(options, dag);
+
+    move_to_benchmarks_folder(prg.name);
+
+    string synth_dir =
+      "./soda_codes/" + prg.name+ "/our_code/";
+
+    system(("cp " + out_name + "_opt" + "*.h " + synth_dir).c_str());
+  }
+  cout << "prg name: " << prg.name << endl;
+
+  assert(false);
+}
+
+void sbl4_static_dynamic_comparison(const int throughput) {
+  string prefix = "sbl4";
+
+  //int size = 1080;
+  int rows = 1080;
+  int cols = 1920;
+
+  int unroll_factor = throughput;
+  //int throughput = unroll_factor;
+  string out_name = prefix + "_" + str(unroll_factor);
+
+  CodegenOptions options;
+  options.internal = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  options.scheduling_algorithm = SCHEDULE_ALGORITHM_CW;
+  options.debug_options.expect_all_linebuffers = true;
+
+  App app = sobel16(out_name);
+  prog prg = app.realize(options, out_name, cols, rows, 1);
+  prepare_for_clockwork_scheduling(prg);
+
+  {
+    prog static_prg = prg.deep_copy();
+    static_prg.reset_context();
+
+    infer_bounds_and_unroll(pick(static_prg.outs), {cols, rows}, throughput, static_prg);
+
+    static_prg.pretty_print();
+
+    generate_optimized_code(options, static_prg);
+    app.generate_soda_file(static_prg.name, throughput);
+
+    move_to_benchmarks_folder(out_name + "_opt");
+  }
+
+  {
+    prog static_prg = prg.deep_copy();
+    static_prg.name = out_name + "_opt_d32";
+    static_prg.reset_context();
+
+    static_prg.pretty_print();
+
+    auto fusion_groups = one_stage_per_group(static_prg);
+    auto fresh_groups = insert_inter_group_buffers(fusion_groups, static_prg);
+    unroll_mismatched_inner_loops(static_prg);
+    merge_basic_block_ops(static_prg);
+    infer_bounds_and_unroll(pick(static_prg.outs), {cols, rows}, throughput, static_prg);
+
+    assert(unoptimized_compiles(static_prg));
+
+    app_dag dag = partition_groups(fresh_groups, static_prg);
+
+    options = CodegenOptions();
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+    options.slack_matching = {SLACK_MATCHING_TYPE_FIXED, 32};
+    generate_app_code(options, dag);
+
+    move_to_benchmarks_folder(static_prg.name);
+
+    string synth_dir =
+      "./soda_codes/" + static_prg.name+ "/our_code/";
+    system(("cp " + out_name + "_opt" + "*.h " + synth_dir).c_str());
+  }
+
+  {
+    prog static_prg = prg.deep_copy();
+    prg.reset_context();
+
+    static_prg.pretty_print();
+
+    prg.name = out_name + "_opt_dis";
+
+    auto fusion_groups = one_stage_per_group(prg);
+    auto fresh_groups = insert_inter_group_buffers(fusion_groups, prg);
+    unroll_mismatched_inner_loops(prg);
+    merge_basic_block_ops(prg);
+    infer_bounds_and_unroll(pick(prg.outs), {cols, rows}, throughput, prg);
+
+    assert(unoptimized_compiles(prg));
+
+    app_dag dag = partition_groups(fresh_groups, prg);
+
+    options = CodegenOptions();
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+    options.slack_matching = {SLACK_MATCHING_TYPE_PIPELINE_DEPTH_AWARE, 2};
+    generate_app_code(options, dag);
+
+    move_to_benchmarks_folder(prg.name);
+
+    string synth_dir =
+      "./soda_codes/" + prg.name+ "/our_code/";
+
+    system(("cp " + out_name + "_opt" + "*.h " + synth_dir).c_str());
+  }
+  cout << "prg name: " << prg.name << endl;
+
+  assert(false);
+}
+void blur4_static_dynamic_comparison(const int throughput) {
+  string prefix = "blur4";
+
+  //int size = 1080;
+  int rows = 1080;
+  int cols = 1920;
+
+  int unroll_factor = throughput;
+  //int throughput = unroll_factor;
+  string out_name = prefix + "_" + str(unroll_factor);
+
+  CodegenOptions options;
+  options.internal = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  options.scheduling_algorithm = SCHEDULE_ALGORITHM_CW;
+  options.debug_options.expect_all_linebuffers = true;
+
+  App app = blur_xy_16(out_name);
+  prog prg = app.realize(options, out_name, cols, rows, 1);
+  prepare_for_clockwork_scheduling(prg);
+
+  {
+    prog static_prg = prg.deep_copy();
+    static_prg.reset_context();
+
+    infer_bounds_and_unroll(pick(static_prg.outs), {cols, rows}, throughput, static_prg);
+
+    static_prg.pretty_print();
+
+    generate_optimized_code(options, static_prg);
+    app.generate_soda_file(static_prg.name, throughput);
+
+    move_to_benchmarks_folder(out_name + "_opt");
+  }
+
+  {
+    prog static_prg = prg.deep_copy();
+    static_prg.name = out_name + "_opt_d32";
+    static_prg.reset_context();
+
+    static_prg.pretty_print();
+
+    auto fusion_groups = one_stage_per_group(static_prg);
+    auto fresh_groups = insert_inter_group_buffers(fusion_groups, static_prg);
+    unroll_mismatched_inner_loops(static_prg);
+    merge_basic_block_ops(static_prg);
+    infer_bounds_and_unroll(pick(static_prg.outs), {cols, rows}, throughput, static_prg);
+
+    assert(unoptimized_compiles(static_prg));
+
+    app_dag dag = partition_groups(fresh_groups, static_prg);
+
+    options = CodegenOptions();
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+    options.slack_matching = {SLACK_MATCHING_TYPE_FIXED, 32};
+    generate_app_code(options, dag);
+
+    move_to_benchmarks_folder(static_prg.name);
+
+    string synth_dir =
+      "./soda_codes/" + static_prg.name+ "/our_code/";
+    system(("cp " + out_name + "_opt" + "*.h " + synth_dir).c_str());
+  }
+
+  {
+    prog static_prg = prg.deep_copy();
+    prg.reset_context();
+
+    static_prg.pretty_print();
+
+    prg.name = out_name + "_opt_dis";
+
+    auto fusion_groups = one_stage_per_group(prg);
+    auto fresh_groups = insert_inter_group_buffers(fusion_groups, prg);
+    unroll_mismatched_inner_loops(prg);
+    merge_basic_block_ops(prg);
+    infer_bounds_and_unroll(pick(prg.outs), {cols, rows}, throughput, prg);
+
+    assert(unoptimized_compiles(prg));
+
+    app_dag dag = partition_groups(fresh_groups, prg);
+
+    options = CodegenOptions();
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+    options.slack_matching = {SLACK_MATCHING_TYPE_PIPELINE_DEPTH_AWARE, 2};
+    generate_app_code(options, dag);
+
+    move_to_benchmarks_folder(prg.name);
+
+    string synth_dir =
+      "./soda_codes/" + prg.name+ "/our_code/";
+
+    system(("cp " + out_name + "_opt" + "*.h " + synth_dir).c_str());
+  }
+  cout << "prg name: " << prg.name << endl;
+
+  assert(false);
+}
+
+void blur3_16_static_dynamic_comparison() {
+  string prefix = "blur3";
+
+  int size = 1080;
+  int rows = size;
+  int cols = size;
+
+  int unroll_factor = 16;
+  int throughput = unroll_factor;
+  string out_name = prefix + "_" + str(unroll_factor);
+
+  CodegenOptions options;
+  options.internal = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  options.scheduling_algorithm = SCHEDULE_ALGORITHM_CW;
+  options.debug_options.expect_all_linebuffers = true;
+
+  App app = blur_xy_16(out_name);
+  prog prg = app.realize(options, out_name, cols, rows, 1);
+  prepare_for_clockwork_scheduling(prg);
+
+  {
+    prog static_prg = prg.deep_copy();
+    static_prg.reset_context();
+
+    infer_bounds_and_unroll(pick(static_prg.outs), {size, size}, throughput, static_prg);
+
+    static_prg.pretty_print();
+
+    generate_optimized_code(options, static_prg);
+    app.generate_soda_file(static_prg.name, throughput);
+
+    move_to_benchmarks_folder(out_name + "_opt");
+  }
+
+  {
+    prog static_prg = prg.deep_copy();
+    static_prg.name = out_name + "_opt_d32";
+    static_prg.reset_context();
+
+    static_prg.pretty_print();
+
+    auto fusion_groups = one_stage_per_group(static_prg);
+    auto fresh_groups = insert_inter_group_buffers(fusion_groups, static_prg);
+    unroll_mismatched_inner_loops(static_prg);
+    merge_basic_block_ops(static_prg);
+    infer_bounds_and_unroll(pick(static_prg.outs), {size, size}, throughput, static_prg);
+
+    assert(unoptimized_compiles(static_prg));
+
+    app_dag dag = partition_groups(fresh_groups, static_prg);
+
+    options = CodegenOptions();
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+    options.slack_matching = {SLACK_MATCHING_TYPE_FIXED, 32};
+    generate_app_code(options, dag);
+
+    move_to_benchmarks_folder(static_prg.name);
+
+    string synth_dir =
+      "./soda_codes/" + static_prg.name+ "/our_code/";
+    system(("cp " + out_name + "_opt" + "*.h " + synth_dir).c_str());
+  }
+
+  {
+    prog static_prg = prg.deep_copy();
+    prg.reset_context();
+
+    static_prg.pretty_print();
+
+    prg.name = out_name + "_opt_dis";
+
+    auto fusion_groups = one_stage_per_group(prg);
+    auto fresh_groups = insert_inter_group_buffers(fusion_groups, prg);
+    unroll_mismatched_inner_loops(prg);
+    merge_basic_block_ops(prg);
+    infer_bounds_and_unroll(pick(prg.outs), {size, size}, throughput, prg);
+
+    assert(unoptimized_compiles(prg));
+
+    app_dag dag = partition_groups(fresh_groups, prg);
+
+    options = CodegenOptions();
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+    options.slack_matching = {SLACK_MATCHING_TYPE_PIPELINE_DEPTH_AWARE, 2};
+    generate_app_code(options, dag);
+
+    move_to_benchmarks_folder(prg.name);
+
+    string synth_dir =
+      "./soda_codes/" + prg.name+ "/our_code/";
+
+    system(("cp " + out_name + "_opt" + "*.h " + synth_dir).c_str());
+  }
+  cout << "prg name: " << prg.name << endl;
+
+  assert(false);
+}
+
+void blur3_1_static_dynamic_comparison() {
+  string prefix = "blur3";
+
+  int size = 1080;
+  int rows = size;
+  int cols = size;
+
+  int unroll_factor = 1;
+  int throughput = unroll_factor;
+  string out_name = prefix + "_" + str(unroll_factor);
+
+  CodegenOptions options;
+  options.internal = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  options.scheduling_algorithm = SCHEDULE_ALGORITHM_CW;
+  options.debug_options.expect_all_linebuffers = true;
+
+  App app = blur_xy_16(out_name);
+  prog prg = app.realize(options, out_name, cols, rows, 1);
+  prepare_for_clockwork_scheduling(prg);
+
+  {
+    prog static_prg = prg.deep_copy();
+    static_prg.reset_context();
+
+    infer_bounds_and_unroll(pick(static_prg.outs), {size, size}, throughput, static_prg);
+
+    static_prg.pretty_print();
+
+    generate_optimized_code(options, static_prg);
+    app.generate_soda_file(static_prg.name, throughput);
+
+    move_to_benchmarks_folder(out_name + "_opt");
+  }
+
+  {
+    prog static_prg = prg.deep_copy();
+    static_prg.name = out_name + "_opt_d32";
+    static_prg.reset_context();
+
+    infer_bounds_and_unroll(pick(static_prg.outs), {size, size}, throughput, static_prg);
+
+    static_prg.pretty_print();
+
+    auto fusion_groups = one_stage_per_group(static_prg);
+    auto fresh_groups = insert_inter_group_buffers(fusion_groups, static_prg);
+    unroll_mismatched_inner_loops(static_prg);
+    merge_basic_block_ops(static_prg);
+    infer_bounds_and_unroll(pick(static_prg.outs), {size, size}, throughput, static_prg);
+
+    assert(unoptimized_compiles(static_prg));
+
+    app_dag dag = partition_groups(fresh_groups, static_prg);
+
+    options = CodegenOptions();
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+    options.slack_matching = {SLACK_MATCHING_TYPE_FIXED, 32};
+    generate_app_code(options, dag);
+
+    move_to_benchmarks_folder(static_prg.name);
+
+    string synth_dir =
+      "./soda_codes/" + static_prg.name+ "/our_code/";
+    system(("cp " + out_name + "_opt" + "*.h " + synth_dir).c_str());
+  }
+
+  {
+    prog static_prg = prg.deep_copy();
+    prg.reset_context();
+
+    infer_bounds_and_unroll(pick(static_prg.outs), {size, size}, throughput, static_prg);
+
+    static_prg.pretty_print();
+
+    prg.name = out_name + "_opt_dis";
+
+    auto fusion_groups = one_stage_per_group(prg);
+    auto fresh_groups = insert_inter_group_buffers(fusion_groups, prg);
+    unroll_mismatched_inner_loops(prg);
+    merge_basic_block_ops(prg);
+    infer_bounds_and_unroll(pick(prg.outs), {size, size}, throughput, prg);
+
+    assert(unoptimized_compiles(prg));
+
+    app_dag dag = partition_groups(fresh_groups, prg);
+
+    options = CodegenOptions();
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+    options.slack_matching = {SLACK_MATCHING_TYPE_PIPELINE_DEPTH_AWARE, 2};
+    generate_app_code(options, dag);
+
+    move_to_benchmarks_folder(prg.name);
+
+    string synth_dir =
+      "./soda_codes/" + prg.name+ "/our_code/";
+
+    system(("cp " + out_name + "_opt" + "*.h " + synth_dir).c_str());
+  }
+  cout << "prg name: " << prg.name << endl;
+
+  assert(false);
+}
+
+void blur3_32_static_dynamic_comparison() {
+  string prefix = "blur3";
+
+  int size = 1080;
+  int rows = size;
+  int cols = size;
+
+  int unroll_factor = 32;
+  int throughput = unroll_factor;
+  string out_name = prefix + "_" + str(unroll_factor);
+
+  CodegenOptions options;
+  options.internal = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  options.scheduling_algorithm = SCHEDULE_ALGORITHM_CW;
+  options.debug_options.expect_all_linebuffers = true;
+
+  App app = blur_xy_16(out_name);
+  prog prg = app.realize(options, out_name, cols, rows, 1);
+  prepare_for_clockwork_scheduling(prg);
+
+  {
+    prog static_prg = prg.deep_copy();
+    infer_bounds_and_unroll(pick(static_prg.outs), {size, size}, throughput, static_prg);
+
+    static_prg.pretty_print();
+
+    generate_optimized_code(options, static_prg);
+    app.generate_soda_file(static_prg.name, throughput);
+
+    move_to_benchmarks_folder(out_name + "_opt");
+
+    prg.name = out_name + "_opt";
+
+    auto fusion_groups = one_stage_per_group(prg);
+    auto fresh_groups = insert_inter_group_buffers(fusion_groups, prg);
+    unroll_mismatched_inner_loops(prg);
+    merge_basic_block_ops(prg);
+    infer_bounds_and_unroll(pick(prg.outs), {size, size}, throughput, prg);
+
+    assert(unoptimized_compiles(prg));
+
+    app_dag dag = partition_groups(fresh_groups, prg);
+
+    options = CodegenOptions();
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+    options.slack_matching = {SLACK_MATCHING_TYPE_FIXED, 32};
+    generate_app_code(options, dag);
+
+    move_to_benchmarks_folder(prg.name);
+
+    string synth_dir =
+      "./soda_codes/" + prg.name+ "/our_code/";
+
+    system(("cp " + out_name + "_opt" + "*.h " + synth_dir).c_str());
+  }
+
+  {
+    prog static_prg = prg.deep_copy();
+    infer_bounds_and_unroll(pick(static_prg.outs), {size, size}, throughput, static_prg);
+
+    static_prg.pretty_print();
+
+    generate_optimized_code(options, static_prg);
+    app.generate_soda_file(static_prg.name, throughput);
+
+    move_to_benchmarks_folder(out_name + "_opt");
+
+    prg.name = out_name + "_opt_d32";
+
+    auto fusion_groups = one_stage_per_group(prg);
+    auto fresh_groups = insert_inter_group_buffers(fusion_groups, prg);
+    unroll_mismatched_inner_loops(prg);
+    merge_basic_block_ops(prg);
+    infer_bounds_and_unroll(pick(prg.outs), {size, size}, throughput, prg);
+
+    assert(unoptimized_compiles(prg));
+
+    app_dag dag = partition_groups(fresh_groups, prg);
+
+    options = CodegenOptions();
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+    options.slack_matching = {SLACK_MATCHING_TYPE_FIXED, 32};
+    generate_app_code(options, dag);
+
+    move_to_benchmarks_folder(prg.name);
+
+    string synth_dir =
+      "./soda_codes/" + prg.name+ "/our_code/";
+
+    system(("cp " + out_name + "_opt" + "*.h " + synth_dir).c_str());
+  }
+
+  {
+    prog static_prg = prg.deep_copy();
+    infer_bounds_and_unroll(pick(static_prg.outs), {size, size}, throughput, static_prg);
+
+    static_prg.pretty_print();
+
+    generate_optimized_code(options, static_prg);
+    app.generate_soda_file(static_prg.name, throughput);
+
+    move_to_benchmarks_folder(out_name + "_opt");
+
+    prg.name = out_name + "_opt_dis";
+
+    auto fusion_groups = one_stage_per_group(prg);
+    auto fresh_groups = insert_inter_group_buffers(fusion_groups, prg);
+    unroll_mismatched_inner_loops(prg);
+    merge_basic_block_ops(prg);
+    infer_bounds_and_unroll(pick(prg.outs), {size, size}, throughput, prg);
+
+    assert(unoptimized_compiles(prg));
+
+    app_dag dag = partition_groups(fresh_groups, prg);
+
+    options = CodegenOptions();
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+    options.slack_matching = {SLACK_MATCHING_TYPE_PIPELINE_DEPTH_AWARE, 2};
+    generate_app_code(options, dag);
+
+    move_to_benchmarks_folder(prg.name);
+
+    string synth_dir =
+      "./soda_codes/" + prg.name+ "/our_code/";
+
+    system(("cp " + out_name + "_opt" + "*.h " + synth_dir).c_str());
+  }
+  cout << "prg name: " << prg.name << endl;
+
+  assert(false);
+}
+
+void jac3_32_static_dynamic_comparison() {
+  string prefix = "jac3";
+
+  int size = 1080;
+  int rows = size;
+  int cols = size;
+
+  int unroll_factor = 32;
+  int throughput = unroll_factor;
+  string out_name = prefix + "_" + str(unroll_factor);
+
+  CodegenOptions options;
+  options.internal = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  options.scheduling_algorithm = SCHEDULE_ALGORITHM_CW;
+  options.debug_options.expect_all_linebuffers = true;
+
+  App jac = stencil_chain_stage_iccad(out_name, 15);
+  prog prg = jac.realize(options, out_name, cols, rows, 1);
+  prepare_for_clockwork_scheduling(prg);
+
+  prog static_prg = prg.deep_copy();
+  infer_bounds_and_unroll(pick(static_prg.outs), {size, size}, throughput, static_prg);
+
+  static_prg.pretty_print();
+
+  generate_optimized_code(options, static_prg);
+  jac.generate_soda_file(static_prg.name, throughput);
+
+  move_to_benchmarks_folder(out_name + "_opt");
+
+  prg.name = out_name + "_opt_d";
+
+  auto fusion_groups = one_stage_per_group(prg);
+  auto fresh_groups = insert_inter_group_buffers(fusion_groups, prg);
+  unroll_mismatched_inner_loops(prg);
+  merge_basic_block_ops(prg);
+  infer_bounds_and_unroll(pick(prg.outs), {size, size}, throughput, prg);
+
+  assert(unoptimized_compiles(prg));
+
+  app_dag dag = partition_groups(fresh_groups, prg);
+
+  options = CodegenOptions();
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  options.slack_matching = {SLACK_MATCHING_TYPE_FIXED, 2};
+  generate_app_code(options, dag);
+
+  move_to_benchmarks_folder(prg.name);
+
+  string synth_dir =
+    "./soda_codes/" + prg.name+ "/our_code/";
+
+  system(("cp " + out_name + "_opt" + "*.h " + synth_dir).c_str());
+
+  cout << "prg name: " << prg.name << endl;
+
+  assert(false);
+}
+
+void jac3_2_static_dynamic_comparison() {
+  string prefix = "jac3";
+
+  int size = 1080;
+  int rows = size;
+  int cols = size;
+
+  int unroll_factor = 2;
+  int throughput = unroll_factor;
+  string out_name = prefix + "_" + str(unroll_factor);
+
+  CodegenOptions options;
+  options.internal = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  options.scheduling_algorithm = SCHEDULE_ALGORITHM_CW;
+  options.debug_options.expect_all_linebuffers = true;
+
+  App jac = stencil_chain_stage_iccad(out_name, 15);
+  prog prg = jac.realize(options, out_name, cols, rows, 1);
+  prepare_for_clockwork_scheduling(prg);
+
+  prog static_prg = prg.deep_copy();
+  infer_bounds_and_unroll(pick(static_prg.outs), {size, size}, throughput, static_prg);
+
+  static_prg.pretty_print();
+
+  generate_optimized_code(options, static_prg);
+  jac.generate_soda_file(static_prg.name, throughput);
+
+  move_to_benchmarks_folder(out_name + "_opt");
+
+  assert(false);
+
+  prg.name = out_name + "_opt_d";
+
+  auto fusion_groups = one_stage_per_group(prg);
+  auto fresh_groups = insert_inter_group_buffers(fusion_groups, prg);
+  unroll_mismatched_inner_loops(prg);
+  merge_basic_block_ops(prg);
+  infer_bounds_and_unroll(pick(prg.outs), {size, size}, throughput, prg);
+
+  assert(unoptimized_compiles(prg));
+
+  app_dag dag = partition_groups(fresh_groups, prg);
+
+  options = CodegenOptions();
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  options.slack_matching = {SLACK_MATCHING_TYPE_FIXED, 2};
+  generate_app_code(options, dag);
+
+  move_to_benchmarks_folder(prg.name);
+
+  string synth_dir =
+    "./soda_codes/" + prg.name+ "/our_code/";
+
+  system(("cp " + out_name + "_opt" + "*.h " + synth_dir).c_str());
+
+  cout << "prg name: " << prg.name << endl;
+
+  assert(false);
+}
+
+void updated_jac32_static_dynamic_comparison() {
+  string prefix = "jac2";
+
+  int size = 1080;
+  int rows = size;
+  int cols = size;
+
+  int unroll_factor = 32;
+  int throughput = unroll_factor;
+  string out_name = prefix + "_" + str(unroll_factor);
+
+  CodegenOptions options;
+  options.internal = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  options.debug_options.expect_all_linebuffers = true;
+
+  App jac = stencil_chain_stage_iccad(out_name, 15);
+  prog prg = jac.realize(options, out_name, cols, rows, 1);
+
+  move_to_benchmarks_folder(out_name + "_opt");
+
+  prg.name = out_name + "_opt_d";
+
+  jac.generate_soda_file(prg.name, throughput);
+
+  unroll_reduce_loops(prg);
+  merge_basic_block_ops(prg);
+  normalize_bounds(prg);
+  normalize_address_offsets(prg);
+
+  auto fusion_groups = one_stage_per_group(prg);
+  auto fresh_groups = insert_inter_group_buffers(fusion_groups, prg);
+  unroll_mismatched_inner_loops(prg);
+  merge_basic_block_ops(prg);
+  infer_bounds_and_unroll(pick(prg.outs), {size, size}, throughput, prg);
+
+  assert(unoptimized_compiles(prg));
+
+  app_dag dag = partition_groups(fresh_groups, prg);
+
+  options = CodegenOptions();
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  options.slack_matching = {SLACK_MATCHING_TYPE_FIXED, 2};
+  generate_app_code(options, dag);
+
+  move_to_benchmarks_folder(prg.name);
+
+  string synth_dir =
+    "./soda_codes/" + prg.name+ "/our_code/";
+
+  system(("cp " + out_name + "_opt" + "*.h " + synth_dir).c_str());
+
+  cout << "prg name: " << prg.name << endl;
+
+  assert(false);
+}
+
+void updated_soda_comparison() {
+  jac3_32_static_dynamic_comparison();
+  jac3_2_static_dynamic_comparison();
+
+  updated_jac32_static_dynamic_comparison();
+
+  updated_blur1_static_dynamic_comparison();
+  //updated_blur16_static_dynamic_comparison();
+  //updated_blur32_static_dynamic_comparison();
+}
+
 void initial_soda_comparison() {
   cp32_static_dynamic_comparison();
   cp16_static_dynamic_comparison();
@@ -20422,14 +21661,836 @@ void initial_soda_comparison() {
   blur_static_dynamic_comparison();
 }
 
-void application_tests() {
-  initial_soda_comparison();
+void llf_init() {
+  prog prg = llf_float();
+  prg.name = "llf_ospg";
 
+  auto fusion_groups = one_stage_per_group(prg);
+  app_dag dag = partition_application(fusion_groups, prg);
+
+  CodegenOptions options;
+  options = CodegenOptions();
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  generate_app_code(options, dag);
+
+  move_to_benchmarks_folder(prg.name);
+  assert(false);
+}
+
+void large_pyramid_blend_pointwise_fusion() {
+  prog prg("pyrblnd_pwf");
+  prg.compute_unit_file = "local_laplacian_filters_compute.h";
+  prg.add_input("in");
+  prg.add_output("out");
+
+  cpy("in_on_chip", "in", 2, prg);
+
+  const int num_pyramid_levels = 4;
+  vector<string> lps = laplacian_pyramid("in_on_chip", num_pyramid_levels, prg);
+
+  string reconstructed = reconstruct_gaussian(lps, prg);
+  cpy("out", reconstructed, 2, prg);
+
+  infer_bounds("out", {2048, 2048}, prg);
+
+  prg.pretty_print();
+  prg.sanity_check();
+
+  unroll_reduce_loops(prg);
+  merge_basic_block_ops(prg);
+  normalize_bounds(prg);
+  normalize_address_offsets(prg);
+
+  prg.pretty_print();
+  prg.sanity_check();
+
+  auto fusion_groups = fuse_pointwise_stages(prg);
+
+  cout << "# of kernels: " << get_kernels(prg).size() << endl;
+  cout << "# of groups : " << fusion_groups.size() << endl;
+  //assert(false);
+
+  app_dag dag = partition_application(fusion_groups, prg);
+
+  CodegenOptions options;
+  //all_unbanked(prg, ostart_pos ptions);
+  //options.inner_bank_offset_mode =
+    //INNER_BANK_OFFSET_MULTILINEAR;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  generate_app_code(options, dag);
+
+  generate_regression_testbench(dag.prg);
+
+
+  move_to_benchmarks_folder(dag.prg.name);
+  assert(false);
+}
+
+void grayscale_llf_static_2pix_per_cycle() {
+  const int size = 2048;
+  const int throughput = 2;
+  prog prg = llf_grayscale_float();
+  infer_bounds_and_unroll(pick(prg.outs), {size, size}, throughput, prg);
+
+  prg.name = prg.name + "_st";
+  prg.sanity_check();
+
+  CodegenOptions options;
+  options = CodegenOptions();
+  options.scheduling_algorithm = SCHEDULE_ALGORITHM_CW;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+
+  generate_optimized_code(options, prg);
+
+  move_to_benchmarks_folder(prg.name);
+
+  assert(false);
+}
+
+
+void grayscale_llf_static() {
+  prog prg = llf_grayscale_float();
+  prg.name = prg.name + "_st";
+  prg.sanity_check();
+
+  CodegenOptions options;
+  options = CodegenOptions();
+  options.scheduling_algorithm = SCHEDULE_ALGORITHM_CW;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+
+  generate_optimized_code(options, prg);
+
+  move_to_benchmarks_folder(prg.name);
+
+  assert(false);
+}
+
+void grayscale_llf_dynamic() {
+  prog prg = llf_grayscale_float();
+  prg.sanity_check();
+
+  auto fusion_groups = one_stage_per_group(prg);
+  app_dag dag = partition_application(fusion_groups, prg);
+
+  CodegenOptions options;
+  options = CodegenOptions();
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  generate_app_code(options, dag);
+
+  move_to_benchmarks_folder(prg.name);
+
+  assert(false);
+}
+
+void sef_static_and_dynamic() {
+  string prefix = "sefss";
+
+  int size = 1080;
+  int rows = size;
+  int cols = size;
+
+  int unroll_factor = 1;
+  int throughput = unroll_factor;
+  string out_name = prefix + "_" + str(unroll_factor);
+
+  CodegenOptions options;
+  options.internal = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+
+  App jac = ef_cartoon(out_name);
+  prog prg = jac.realize(options, out_name, cols, rows, 1);
+
+  move_to_benchmarks_folder(out_name + "_opt");
+
+  prg.name = out_name + "_opt_d";
+
+  jac.generate_soda_file(prg.name, throughput);
+
+  unroll_reduce_loops(prg);
+  merge_basic_block_ops(prg);
+  normalize_bounds(prg);
+  normalize_address_offsets(prg);
+
+  auto fusion_groups = one_stage_per_group(prg);
+  auto fresh_groups = insert_inter_group_buffers(fusion_groups, prg);
+  unroll_mismatched_inner_loops(prg);
+  merge_basic_block_ops(prg);
+  infer_bounds_and_unroll(pick(prg.outs), {size, size}, throughput, prg);
+
+  assert(unoptimized_compiles(prg));
+
+  app_dag dag = partition_groups(fresh_groups, prg);
+
+  options = CodegenOptions();
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  options.slack_matching = {SLACK_MATCHING_TYPE_PIPELINE_DEPTH_AWARE, 1};
+  generate_app_code(options, dag);
+
+  move_to_benchmarks_folder(prg.name);
+
+  string synth_dir =
+    "./soda_codes/" + prg.name+ "/our_code/";
+
+  system(("cp " + out_name + "_opt" + "*.h " + synth_dir).c_str());
+
+  cout << "prg name: " << prg.name << endl;
+
+  assert(false);
+
+}
+
+void multi_rate_dynamic_apps() {
+  sef_static_and_dynamic();
+  large_pyramid_blend_pointwise_fusion();
+  //grayscale_llf_static_2pix_per_cycle();
+
+
+  grayscale_llf_static();
+  grayscale_llf_dynamic();
+
+  llf_init();
+}
+
+void resnet88_test() {
+  //prog prg = resnet88();
+  prog prg = resnet();
+
+  prg.sanity_check();
+
+  break_up_multi_channel_inputs(prg);
+  break_up_multi_channel_outputs(prg);
+  dsa_writers(prg);
+  pad_to_single_depth(prg);
+  generate_fpga_clockwork_code(prg);
+
+  move_to_benchmarks_folder(prg.name);
+  assert(false);
+}
+
+void llf_grayscale_debugging() {
+  prog prg = llf_grayscale_float(128, 128);
+  prg.name = prg.name + "_st";
+  prg.sanity_check();
+
+  CodegenOptions options;
+  options = CodegenOptions();
+  options.scheduling_algorithm = SCHEDULE_ALGORITHM_CW;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+
+  generate_optimized_code(options, prg);
+  generate_regression_testbench(prg);
+
+  cout << "LLF prog: " << prg.name << endl;
+  assert(false);
+}
+
+prog two_in_blnd(const int r, const int c) {
+  const int num_pyramid_levels = 4;
+
+  prog prg("two_in_blnd");
+  prg.compute_unit_file = "local_laplacian_filters_compute.h";
+
+  prg.add_input("in0_oc");
+  prg.add_input("in1_oc");
+  prg.add_output("out");
+
+  pointwise("in0", "llf_int_to_float", "in0_oc", 2, prg);
+  pointwise("in1", "llf_int_to_float", "in1_oc", 2, prg);
+
+  vector<string> lp0 = laplacian_pyramid("in0", num_pyramid_levels, prg);
+  vector<string> lp1 = laplacian_pyramid("in1", num_pyramid_levels, prg);
+
+  vector<string> merged_pyramid;
+  for (int i = 0; i < (int) lp0.size(); i++) {
+    string l0 = lp0.at(i);
+    string l1 = lp1.at(i);
+    string res = "merged_" + str(i);
+    pointwise(res, "llf_float_average", l0, l1, 2, prg);
+    merged_pyramid.push_back(res);
+  }
+
+  string values = reconstruct_gaussian(merged_pyramid, prg);
+
+  pointwise("out", "llf_float_to_int", values, 2, prg);
+
+  infer_bounds("out", {r, c}, prg);
+
+
+  prepare_for_clockwork_scheduling(prg);
+
+  return prg;
+}
+
+void two_input_blending_test() {
+
+  prog prg = two_in_blnd(64, 64);
+
+  unroll_reduce_loops(prg);
+  merge_basic_block_ops(prg);
+  normalize_bounds(prg);
+  normalize_address_offsets(prg);
+
+  prg.pretty_print();
+
+  CodegenOptions options;
+  options.scheduling_algorithm = SCHEDULE_ALGORITHM_CW;
+  generate_optimized_code(options, prg);
+
+  assert(false);
+}
+
+void path_sensitive_channel_sizing() {
+  //prog prg = two_in_blnd(64, 64);
+  prog prg = llf_grayscale_float(64, 64);
+  prg.name = prg.name + "_d";
+  prg.sanity_check();
+
+  auto fusion_groups = one_stage_per_group(prg);
+  app_dag dag = partition_application(fusion_groups, prg);
+
+  CodegenOptions options;
+  options = CodegenOptions();
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  options.scheduling_algorithm = SCHEDULE_ALGORITHM_CW;
+  options.slack_matching = {SLACK_MATCHING_TYPE_PIPELINE_DEPTH_AWARE, 5};
+  generate_app_code(options, dag);
+
+  assert(false);
+}
+
+void llf_intelligent_channels() {
+  prog prg = llf_grayscale_float(2048, 2048);
+  prg.name = prg.name + "_icd";
+  prg.sanity_check();
+
+  auto fusion_groups = one_stage_per_group(prg);
+  app_dag dag = partition_application(fusion_groups, prg);
+
+  CodegenOptions options;
+  options = CodegenOptions();
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  options.scheduling_algorithm = SCHEDULE_ALGORITHM_CW;
+  options.slack_matching = {SLACK_MATCHING_TYPE_PIPELINE_DEPTH_AWARE, 90};
+  generate_app_code(options, dag);
+
+  move_to_benchmarks_folder(prg.name);
+  cmd("cp local_laplacian_filter* ./soda_codes/" + prg.name + "/our_code/");
+
+  assert(false);
+}
+
+void two_in_blend_intelligent_channels() {
+  prog prg = two_in_blnd(2048, 2048);
+  prg.name = prg.name + "_icd";
+  prg.sanity_check();
+
+  auto fusion_groups = one_stage_per_group(prg);
+  app_dag dag = partition_application(fusion_groups, prg);
+
+  CodegenOptions options;
+  options = CodegenOptions();
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  options.scheduling_algorithm = SCHEDULE_ALGORITHM_CW;
+  options.slack_matching = {SLACK_MATCHING_TYPE_PIPELINE_DEPTH_AWARE, 90};
+  generate_app_code(options, dag);
+
+  move_to_benchmarks_folder(prg.name);
+  cmd("cp local_laplacian_filter* ./soda_codes/" + prg.name + "/our_code/");
+
+  assert(false);
+}
+
+void cp_intelligent_channels() {
+  string prefix = "cp";
+
+  int size = 1080;
+  int rows = size;
+  int cols = size;
+
+  int unroll_factor = 1;
+  int throughput = unroll_factor;
+  string out_name = prefix + "_" + str(unroll_factor);
+
+  CodegenOptions options;
+  options.internal = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+
+  App jac = camera_pipeline(out_name);
+  prog prg = jac.realize(options, out_name, cols, rows, 1);
+
+  move_to_benchmarks_folder(out_name + "_opt");
+
+  prg.name = out_name + "_opt_d_ic";
+
+  jac.generate_soda_file(prg.name, throughput);
+
+  unroll_reduce_loops(prg);
+  merge_basic_block_ops(prg);
+  normalize_bounds(prg);
+  normalize_address_offsets(prg);
+
+  auto fusion_groups = one_stage_per_group(prg);
+  auto fresh_groups = insert_inter_group_buffers(fusion_groups, prg);
+  unroll_mismatched_inner_loops(prg);
+  merge_basic_block_ops(prg);
+  infer_bounds_and_unroll(pick(prg.outs), {size, size}, throughput, prg);
+
+  assert(unoptimized_compiles(prg));
+
+  app_dag dag = partition_groups(fresh_groups, prg);
+
+  options = CodegenOptions();
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  options.slack_matching = {SLACK_MATCHING_TYPE_PIPELINE_DEPTH_AWARE, 10};
+  generate_app_code(options, dag);
+
+  move_to_benchmarks_folder(prg.name);
+
+  string synth_dir =
+    "./soda_codes/" + prg.name+ "/our_code/";
+
+  system(("cp " + out_name + "_opt" + "*.h " + synth_dir).c_str());
+
+  cout << "prg name: " << prg.name << endl;
+
+  assert(false);
+}
+
+void sef_intelligent_channels() {
+  string prefix = "sef";
+
+  int size = 1080;
+  int rows = size;
+  int cols = size;
+
+  int unroll_factor = 1;
+  int throughput = unroll_factor;
+  string out_name = prefix + "_" + str(unroll_factor);
+
+  CodegenOptions options;
+  options.internal = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+
+  App jac = ef_cartoon(out_name);
+  prog prg = jac.realize(options, out_name, cols, rows, 1);
+
+  move_to_benchmarks_folder(out_name + "_opt");
+
+  prg.name = out_name + "_opt_d_ic";
+
+  jac.generate_soda_file(prg.name, throughput);
+
+  unroll_reduce_loops(prg);
+  merge_basic_block_ops(prg);
+  normalize_bounds(prg);
+  normalize_address_offsets(prg);
+
+  auto fusion_groups = one_stage_per_group(prg);
+  auto fresh_groups = insert_inter_group_buffers(fusion_groups, prg);
+  unroll_mismatched_inner_loops(prg);
+  merge_basic_block_ops(prg);
+  infer_bounds_and_unroll(pick(prg.outs), {size, size}, throughput, prg);
+
+  assert(unoptimized_compiles(prg));
+
+  app_dag dag = partition_groups(fresh_groups, prg);
+
+  options = CodegenOptions();
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  options.slack_matching = {SLACK_MATCHING_TYPE_PIPELINE_DEPTH_AWARE, 10};
+  generate_app_code(options, dag);
+
+  move_to_benchmarks_folder(prg.name);
+
+  string synth_dir =
+    "./soda_codes/" + prg.name+ "/our_code/";
+
+  system(("cp " + out_name + "_opt" + "*.h " + synth_dir).c_str());
+
+  cout << "prg name: " << prg.name << endl;
+
+  assert(false);
+
+}
+
+void sef_250_channels() {
+  string prefix = "sef";
+
+  int size = 1080;
+  int rows = size;
+  int cols = size;
+
+  int unroll_factor = 1;
+  int throughput = unroll_factor;
+  string out_name = prefix + "_" + str(unroll_factor);
+
+  CodegenOptions options;
+  options.internal = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+
+  App jac = ef_cartoon(out_name);
+  prog prg = jac.realize(options, out_name, cols, rows, 1);
+
+  move_to_benchmarks_folder(out_name + "_opt");
+
+  prg.name = out_name + "_opt_250";
+
+  jac.generate_soda_file(prg.name, throughput);
+
+  unroll_reduce_loops(prg);
+  merge_basic_block_ops(prg);
+  normalize_bounds(prg);
+  normalize_address_offsets(prg);
+
+  auto fusion_groups = one_stage_per_group(prg);
+  auto fresh_groups = insert_inter_group_buffers(fusion_groups, prg);
+  unroll_mismatched_inner_loops(prg);
+  merge_basic_block_ops(prg);
+  infer_bounds_and_unroll(pick(prg.outs), {size, size}, throughput, prg);
+
+  assert(unoptimized_compiles(prg));
+
+  app_dag dag = partition_groups(fresh_groups, prg);
+
+  options = CodegenOptions();
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  options.slack_matching = {SLACK_MATCHING_TYPE_FIXED, 250};
+  generate_app_code(options, dag);
+
+  move_to_benchmarks_folder(prg.name);
+
+  string synth_dir =
+    "./soda_codes/" + prg.name+ "/our_code/";
+
+  system(("cp " + out_name + "_opt" + "*.h " + synth_dir).c_str());
+
+  cout << "prg name: " << prg.name << endl;
+
+  assert(false);
+}
+
+void llf_250_channels(const int throughput) {
+  int rows = 2048;
+  int cols = rows;
+
+  prog prg = llf_grayscale_float(cols, rows);
+  prg.name = prg.name + str(throughput) + "p";
+
+  auto fusion_groups = one_stage_per_group(prg);
+  auto fresh_groups = insert_inter_group_buffers(fusion_groups, prg);
+  unroll_mismatched_inner_loops(prg);
+  merge_basic_block_ops(prg);
+  infer_bounds_and_unroll(pick(prg.outs), {cols, rows}, throughput, prg);
+
+  assert(unoptimized_compiles(prg));
+
+  app_dag dag = partition_groups(fresh_groups, prg);
+
+  CodegenOptions options = CodegenOptions();
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  options.slack_matching = {SLACK_MATCHING_TYPE_FIXED, 250};
+  generate_app_code(options, dag);
+
+  move_to_benchmarks_folder(prg.name);
+
+  string synth_dir =
+    "./soda_codes/" + prg.name+ "/our_code/";
+  cmd("cp local_laplacian_filter* ./soda_codes/" + prg.name + "/our_code/");
+
+  assert(false);
+}
+
+void llf_2pix_250_channels() {
+  int throughput = 2;
+  int rows = 2048;
+  int cols = rows;
+
+  prog prg = llf_grayscale_float(cols, rows);
+  prg.name = prg.name + "2p";
+
+  auto fusion_groups = one_stage_per_group(prg);
+  auto fresh_groups = insert_inter_group_buffers(fusion_groups, prg);
+  unroll_mismatched_inner_loops(prg);
+  merge_basic_block_ops(prg);
+  infer_bounds_and_unroll(pick(prg.outs), {cols, rows}, throughput, prg);
+
+  assert(unoptimized_compiles(prg));
+
+  app_dag dag = partition_groups(fresh_groups, prg);
+
+  CodegenOptions options = CodegenOptions();
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  options.slack_matching = {SLACK_MATCHING_TYPE_FIXED, 250};
+  generate_app_code(options, dag);
+
+  move_to_benchmarks_folder(prg.name);
+
+  string synth_dir =
+    "./soda_codes/" + prg.name+ "/our_code/";
+  cmd("cp local_laplacian_filter* ./soda_codes/" + prg.name + "/our_code/");
+
+  assert(false);
+}
+
+void llf_250_channels() {
+  prog prg = llf_grayscale_float(2048, 2048);
+  prg.name = prg.name + "_250";
+  prg.sanity_check();
+
+  auto fusion_groups = one_stage_per_group(prg);
+  app_dag dag = partition_application(fusion_groups, prg);
+
+  CodegenOptions options;
+  options = CodegenOptions();
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  options.scheduling_algorithm = SCHEDULE_ALGORITHM_CW;
+  options.slack_matching = {SLACK_MATCHING_TYPE_FIXED, 250};
+  generate_app_code(options, dag);
+
+  move_to_benchmarks_folder(prg.name);
+  cmd("cp local_laplacian_filter* ./soda_codes/" + prg.name + "/our_code/");
+
+  assert(false);
+
+}
+
+void two_in_blend_250_channels() {
+  prog prg = two_in_blnd(2048, 2048);
+  prg.name = prg.name + "_250";
+  prg.sanity_check();
+
+  auto fusion_groups = one_stage_per_group(prg);
+  app_dag dag = partition_application(fusion_groups, prg);
+
+  CodegenOptions options;
+  options = CodegenOptions();
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  options.scheduling_algorithm = SCHEDULE_ALGORITHM_CW;
+  options.slack_matching = {SLACK_MATCHING_TYPE_FIXED, 250};
+  generate_app_code(options, dag);
+
+  move_to_benchmarks_folder(prg.name);
+  cmd("cp local_laplacian_filter* ./soda_codes/" + prg.name + "/our_code/");
+
+  assert(false);
+
+}
+
+void llf_intelligent_channels3() {
+  prog prg = llf_grayscale_float(2048, 2048);
+  prg.name = prg.name + "_icd3";
+  prg.sanity_check();
+
+  auto fusion_groups = one_stage_per_group(prg);
+  app_dag dag = partition_application(fusion_groups, prg);
+
+  CodegenOptions options;
+  options = CodegenOptions();
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  options.scheduling_algorithm = SCHEDULE_ALGORITHM_CW;
+  options.slack_matching = {SLACK_MATCHING_TYPE_PIPELINE_DEPTH_AWARE, 90};
+  generate_app_code(options, dag);
+
+  move_to_benchmarks_folder(prg.name);
+  cmd("cp local_laplacian_filter* ./soda_codes/" + prg.name + "/our_code/");
+
+  assert(false);
+}
+
+void two_in_blend_intelligent_channels2() {
+  prog prg = two_in_blnd(2048, 2048);
+  prg.name = prg.name + "_icd2";
+  prg.sanity_check();
+
+  auto fusion_groups = one_stage_per_group(prg);
+  app_dag dag = partition_application(fusion_groups, prg);
+
+  CodegenOptions options;
+  options = CodegenOptions();
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  options.scheduling_algorithm = SCHEDULE_ALGORITHM_CW;
+  options.slack_matching = {SLACK_MATCHING_TYPE_PIPELINE_DEPTH_AWARE, 90};
+  generate_app_code(options, dag);
+
+  move_to_benchmarks_folder(prg.name);
+  cmd("cp local_laplacian_filter* ./soda_codes/" + prg.name + "/our_code/");
+
+  assert(false);
+}
+
+void cp_intelligent_channels2() {
+  string prefix = "cp";
+
+  int size = 1080;
+  int rows = size;
+  int cols = size;
+
+  int unroll_factor = 1;
+  int throughput = unroll_factor;
+  string out_name = prefix + "_" + str(unroll_factor);
+
+  CodegenOptions options;
+  options.internal = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+
+  App jac = camera_pipeline(out_name);
+  prog prg = jac.realize(options, out_name, cols, rows, 1);
+
+  move_to_benchmarks_folder(out_name + "_opt");
+
+  prg.name = out_name + "_opt_d_ic2";
+
+  jac.generate_soda_file(prg.name, throughput);
+
+  unroll_reduce_loops(prg);
+  merge_basic_block_ops(prg);
+  normalize_bounds(prg);
+  normalize_address_offsets(prg);
+
+  auto fusion_groups = one_stage_per_group(prg);
+  auto fresh_groups = insert_inter_group_buffers(fusion_groups, prg);
+  unroll_mismatched_inner_loops(prg);
+  merge_basic_block_ops(prg);
+  infer_bounds_and_unroll(pick(prg.outs), {size, size}, throughput, prg);
+
+  assert(unoptimized_compiles(prg));
+
+  app_dag dag = partition_groups(fresh_groups, prg);
+
+  options = CodegenOptions();
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  options.slack_matching = {SLACK_MATCHING_TYPE_PIPELINE_DEPTH_AWARE, 10};
+  generate_app_code(options, dag);
+
+  move_to_benchmarks_folder(prg.name);
+
+  string synth_dir =
+    "./soda_codes/" + prg.name+ "/our_code/";
+
+  system(("cp " + out_name + "_opt" + "*.h " + synth_dir).c_str());
+
+  cout << "prg name: " << prg.name << endl;
+
+  assert(false);
+}
+
+void sef_intelligent_channels2() {
+  string prefix = "sef";
+
+  int size = 1080;
+  int rows = size;
+  int cols = size;
+
+  int unroll_factor = 1;
+  int throughput = unroll_factor;
+  string out_name = prefix + "_" + str(unroll_factor);
+
+  CodegenOptions options;
+  options.internal = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+
+  App jac = ef_cartoon(out_name);
+  prog prg = jac.realize(options, out_name, cols, rows, 1);
+
+  move_to_benchmarks_folder(out_name + "_opt");
+
+  prg.name = out_name + "_opt_d_ic2";
+
+  jac.generate_soda_file(prg.name, throughput);
+
+  unroll_reduce_loops(prg);
+  merge_basic_block_ops(prg);
+  normalize_bounds(prg);
+  normalize_address_offsets(prg);
+
+  auto fusion_groups = one_stage_per_group(prg);
+  auto fresh_groups = insert_inter_group_buffers(fusion_groups, prg);
+  unroll_mismatched_inner_loops(prg);
+  merge_basic_block_ops(prg);
+  infer_bounds_and_unroll(pick(prg.outs), {size, size}, throughput, prg);
+
+  assert(unoptimized_compiles(prg));
+
+  app_dag dag = partition_groups(fresh_groups, prg);
+
+  options = CodegenOptions();
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  options.slack_matching = {SLACK_MATCHING_TYPE_PIPELINE_DEPTH_AWARE, 10};
+  generate_app_code(options, dag);
+
+  move_to_benchmarks_folder(prg.name);
+
+  string synth_dir =
+    "./soda_codes/" + prg.name+ "/our_code/";
+
+  system(("cp " + out_name + "_opt" + "*.h " + synth_dir).c_str());
+
+  cout << "prg name: " << prg.name << endl;
+
+  assert(false);
+}
+
+void application_tests() {
+  llf_250_channels(8);
+  llf_250_channels(4);
+  llf_2pix_250_channels();
+
+  jac4_static_dynamic_comparison(32);
+  jac4_static_dynamic_comparison(16);
+  jac4_static_dynamic_comparison(1);
+
+  cp4_static_dynamic_comparison(32);
+  cp4_static_dynamic_comparison(16);
+  cp4_static_dynamic_comparison(1);
+
+  sbl4_static_dynamic_comparison(32);
+  sbl4_static_dynamic_comparison(16);
+  sbl4_static_dynamic_comparison(1);
+
+  blur4_static_dynamic_comparison(32);
+  blur4_static_dynamic_comparison(16);
+  blur4_static_dynamic_comparison(1);
+
+  blur3_16_static_dynamic_comparison();
+  blur3_1_static_dynamic_comparison();
+  blur3_32_static_dynamic_comparison();
+
+  path_sensitive_channel_sizing();
+  llf_intelligent_channels3();
+  two_in_blend_intelligent_channels2();
+  sef_intelligent_channels2();
+  cp_intelligent_channels2();
+
+
+  cp_intelligent_channels();
+
+  llf_250_channels();
+  two_in_blend_250_channels();
+  sef_250_channels();
+
+
+  sef_intelligent_channels();
+  llf_intelligent_channels();
+  two_in_blend_intelligent_channels();
+
+  two_in_blnd_16pix_static_dynamic_comparison();
+  two_in_blnd_8pix_static_dynamic_comparison();
+  two_in_blnd_4pix_static_dynamic_comparison();
+  two_in_blnd_2pix_static_dynamic_comparison();
+  two_in_blnd_static_dynamic_comparison();
+  multi_rate_dynamic_apps();
+
+  updated_soda_comparison();
+
+  two_input_blending_test();
+
+  initial_soda_comparison();
+  llf_grayscale_debugging();
+
+  resnet88_test();
   histogram_test();
   histogram1d_test();
   iccad_tests();
-
-
 
   gpu_codegen_test();
 
@@ -20983,6 +23044,107 @@ void test_multi_kernel_llf() {
   assert(false);
 }
 
+vector<path> all_paths_between(const std::string& src, const std::string& dst, prog& prg) {
+  assert(src != dst);
+
+  path start_path{src};
+  std::set<string> visited;
+  vector<path> active_paths{start_path};
+  vector<path> finished_paths;
+
+  while (active_paths.size() > 0) {
+    path p = active_paths.back();
+    active_paths.pop_back();
+
+    string node = p.back();
+    visited.insert(node);
+
+
+    for (auto c : children(node, prg)) {
+      if (c == dst) {
+        path pcpy = p;
+        pcpy.push_back(dst);
+        finished_paths.push_back(pcpy);
+      } else {
+        if (!elem(c, visited)) {
+          path fresh = p;
+          fresh.push_back(c);
+          active_paths.push_back(fresh);
+        }
+      }
+    }
+  }
+
+  return finished_paths;
+}
+
+bool groups_are_topologically_closed(map<string, std::set<string> >& fusion_groups, prog& prg) {
+
+  for (auto g : fusion_groups) {
+    for (auto src : g.second) {
+      for (auto dst : g.second) {
+        if (src != dst) {
+          vector<path> paths = all_paths_between(src, dst, prg);
+          for (auto p : paths) {
+            for (auto kernel : p) {
+              if (!elem(kernel, g.second)) {
+                return false;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  return true;
+}
+
+bool is_partition(map<string, std::set<string> >& fusion_groups, prog& prg) {
+  int total_size = 0;
+  for (auto g : fusion_groups) {
+    total_size += g.second.size();
+  }
+
+  int num_kernels = get_kernels(prg).size();
+  return total_size == num_kernels;
+}
+
+void test_chain_grouping() {
+  prog prg("pyr_blnd2d500_2048");
+  prg.compute_unit_file = "local_laplacian_filters_compute.h";
+  prg.add_input("in");
+  prg.add_output("out");
+
+  cpy("in_on_chip", "in", 2, prg);
+
+  const int num_pyramid_levels = 4;
+  vector<string> lps = laplacian_pyramid("in_on_chip", num_pyramid_levels, prg);
+
+  string reconstructed = reconstruct_gaussian(lps, prg);
+  cpy("out", reconstructed, 2, prg);
+
+  infer_bounds("out", {64, 64}, prg);
+
+  prg.pretty_print();
+  prg.sanity_check();
+
+  unroll_reduce_loops(prg);
+  merge_basic_block_ops(prg);
+  normalize_bounds(prg);
+  normalize_address_offsets(prg);
+
+  prg.pretty_print();
+  prg.sanity_check();
+
+  auto unopt_postprocessed = unoptimized_result(prg);
+
+  auto fusion_groups = fuse_pointwise_stages(prg);
+
+  assert(is_partition(fusion_groups, prg));
+  assert(groups_are_topologically_closed(fusion_groups, prg));
+  //assert(groups_are_contiguous(fusion_groups, prg));
+}
+
 void test_multi_kernel_pyramid_collapsing() {
 
   prog prg("pyr_blnd2d500_2048");
@@ -21013,12 +23175,12 @@ void test_multi_kernel_pyramid_collapsing() {
 
   auto unopt_postprocessed = unoptimized_result(prg);
 
-  auto fusion_groups = one_stage_per_group(prg);
-  //auto fusion_groups = fuse_pointwise_stages(prg);
+  //auto fusion_groups = one_stage_per_group(prg);
+  auto fusion_groups = fuse_pointwise_stages(prg);
   app_dag dag = partition_application(fusion_groups, prg);
 
   CodegenOptions options;
-  //all_unbanked(prg, options);
+  //all_unbanked(prg, ostart_pos ptions);
   //options.inner_bank_offset_mode =
     //INNER_BANK_OFFSET_MULTILINEAR;
   options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
@@ -21344,6 +23506,26 @@ prog stencil_chain(const std::string& name) {
 }
 
 void dhuff_playground() {
+  {
+    prog prg = mod_example();
+    prg.pretty_print();
+
+    //generate_unoptimized_code(prg);
+
+    auto res = unoptimized_result(prg);
+    assert(false);
+  }
+  {
+    prog prg = resnet88();
+    prg.pretty_print();
+    assert(false);
+  }
+  {
+    prog prg = harris();
+    int num_buffers = all_buffers(prg).size();
+    cout << "# of buffers: " << num_buffers << endl;
+    assert(false);
+  }
   {
     prog prg = demosaic_unrolled();
     prg.pretty_print();
@@ -22049,24 +24231,21 @@ void stencil_chain_multi_kernel_test() {
 }
 
 void test_app_to_prog_conversion() {
-  //App jac = jacobi2d("jac");
   App jac = pointwise2d("jac");
   int size = 10;
   prog prg = jac.realize("jac", size, size);
 
   prg.pretty_print();
   prg.sanity_check();
+  sanity_check_all_input_pixels_read(prg);
 
   auto original = run_regression_tb("jac_opt");
   cout << "Original result: " << original << endl;
-  //assert(false);
 
   auto extracted = unoptimized_result(prg);
   cout << "Extracted result: " << extracted << endl;
-  //assert(false);
 
   compare("jac_extracted" + prg.name + "_vs_unopt", original, extracted);
-  //assert(false);
 }
 
 void test_jacobi15_dynamic() {
@@ -22164,12 +24343,93 @@ void test_multi_kernel_gp() {
 
 }
 
+void generate_gv_output(prog& prg) {
+  ofstream out(prg.name + ".gv");
+  out << "digraph " << prg.name << "{" << endl;
+  out << tab(1) << "layout=neato" << endl;
+
+  vector<string> kernels;
+  int i = 0;
+  for (auto k : get_kernels(prg)) {
+    kernels.push_back(k);
+  }
+
+  out << tab(1) << "node [shape=circle,fixedsize=false,width=0.9,style=filled,color=green]; " << sep_list(kernels, "", ";", ";") << endl;
+
+  vector<pair<string, string> > edges;
+  for (auto k : get_kernels(prg)) {
+    auto written = buffers_written(prg.find_loop(k));
+    for (auto l : get_kernels(prg)) {
+      auto read = buffers_read(prg.find_loop(l));
+      if (intersection(read, written).size() > 0) {
+        edges.push_back({k, l});
+      }
+    }
+  }
+
+  for (auto e : edges) {
+    out << tab(1) << e.first << "->" << e.second << ";" << endl;
+  }
+
+  out << tab(1) << "overlap=false" << endl;
+  out << tab(1) << "fontsize=12" << endl;
+  out << "}" << endl;
+  out.close();
+
+}
+
+void gv_generation_pyramid() {
+  {
+    prog prg = llf_float();
+    prg.name = "llf";
+    generate_gv_output(prg);
+    assert(false);
+  }
+
+  prog prg("pbgraph");
+  prg.compute_unit_file = "local_laplacian_filters_compute.h";
+  prg.add_input("in");
+  prg.add_output("out");
+
+  cpy("in_on_chip", "in", 2, prg);
+
+  const int num_pyramid_levels = 4;
+  vector<string> lps = laplacian_pyramid("in_on_chip", num_pyramid_levels, prg);
+
+  string reconstructed = reconstruct_gaussian(lps, prg);
+  cpy("out", reconstructed, 2, prg);
+
+  infer_bounds("out", {64, 64}, prg);
+
+  prg.pretty_print();
+  prg.sanity_check();
+
+  unroll_reduce_loops(prg);
+  merge_basic_block_ops(prg);
+  normalize_bounds(prg);
+  normalize_address_offsets(prg);
+
+  prg.pretty_print();
+  prg.sanity_check();
+
+  generate_gv_output(prg);
+  assert(false);
+}
+
 void dhuff_tests() {
+  infer_bounds_tests();
+  test_app_to_prog_conversion();
+  blurx_app_to_prog_test();
+  updated_blur_static_dynamic_comparison();
+
+  //gv_generation_pyramid();
+
+  test_chain_grouping();
+
   //test_jacobi15_dynamic();
 
   test_multi_kernel_pyramid_collapsing();
   test_multi_kernel_gp();
-  test_app_to_prog_conversion();
 
   //test_multi_kernel_llf();
   //assert(false);
@@ -22181,7 +24441,6 @@ void dhuff_tests() {
   test_multi_kernel_unsharp();
   test_multi_kernel_design();
   stencil_chain_multi_kernel_test();
-  infer_bounds_tests();
   test_if_construction();
   test_time_sharing_gaussian_pyramid();
   jacobi_2d_2_test();
