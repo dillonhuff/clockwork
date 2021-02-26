@@ -22212,6 +22212,7 @@ void sef_intelligent_channels2() {
 }
 
 void application_tests() {
+  llf_250_channels(8);
   llf_250_channels(4);
   llf_2pix_250_channels();
 
