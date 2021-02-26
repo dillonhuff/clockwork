@@ -10,7 +10,7 @@ n = len(sys.argv)
 print("Total arguments passed:", n) 
 assert(n == 2)
 
-num_to_del = sys.argv[1]
+num_to_del = int(sys.argv[1])
 
 print("Deleting ", num_to_del, "FPGA images")
 

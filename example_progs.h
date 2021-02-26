@@ -61,6 +61,6 @@ prog histogram1d();
 
 prog jitnet();
 //prog exposure_fusion();
-prog 1x1conv();
+prog conv1x1();
 prog mod_example();
 prog three_level_pond_copy();

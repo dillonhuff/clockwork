@@ -1,2 +1,0 @@
-export app=jac2_32_opt_d
-export HLS_CLOCK_FREQUENCY=250000000

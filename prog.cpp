@@ -8747,10 +8747,7 @@ void set_channel_depths_by_assumed_stage_depth(const int kernel_depth, app_dag& 
     }
   }
 
-  // Now: I want to create code that balances all paths that re-converge
-  // First: Enumerate all paths through the dag
-  // Second: Send this path balancing problem to an ILP solver
-
+  std::set<string> processed_nodes;
   std::set<path> in_progress_paths;
   ilp_builder builder(dag.prg.ctx);
   vector<pair<string, isl_val*> > obj;
@@ -8762,17 +8759,12 @@ void set_channel_depths_by_assumed_stage_depth(const int kernel_depth, app_dag& 
   }
 
   vector<string> sorted_groups = dag.sorted_fusion_groups();
+  cout << "# of nodes to process: " << sorted_groups.size() << endl;
+  int processed = 0;
   for (auto next_group : sorted_groups) {
-    //// If the next group is an input group then add
-    //// it as the start of a new path
-    //if (dag.ancestors(next_group).size() == 0) {
-    in_progress_paths.insert({next_group});
-    //}
 
-    // Build new paths by adding this node to
-    // each partial_path. If there are multiple
-    // partial paths to this node they must be
-    // balanced.
+    in_progress_paths.insert({next_group});
+
     std::set<path> to_insert;
     for (auto ancestor : dag.ancestors(next_group)) {
       cout << "Checking on ancestor of " << ancestor << " of " << next_group << endl;
@@ -8821,9 +8813,30 @@ void set_channel_depths_by_assumed_stage_depth(const int kernel_depth, app_dag& 
       in_progress_paths.insert(p);
     }
 
-    // Optional: Prune all partial paths that end
-    // with nodes whose children have all been
-    // processsed
+    processed_nodes.insert(next_group);
+
+    std::vector<path> to_erase;
+    for (auto p : in_progress_paths) {
+      string head = p.back();
+      bool all_children_processed = true;
+      for (auto c : dag.children(head)) {
+        if (!elem(c, processed_nodes)) {
+          all_children_processed = false;
+          break;
+        }
+      }
+      if (all_children_processed) {
+        to_erase.push_back(p);
+      }
+    }
+
+    cout << "#Erasing " << to_erase.size() << " paths" << endl;
+    for (auto p : to_erase) {
+      cout << "Erasing: " << p << endl;
+      in_progress_paths.erase(p);
+    }
+    processed++;
+    cout << "# processed = " << processed << " (" << (processed / (double) sorted_groups.size()) << ")" << endl;
   }
 
   cout << "# of paths: " << in_progress_paths.size() << endl;
@@ -8988,13 +9001,18 @@ void generate_app_code(
 
     {
       int max_dd = 0;
-      for (auto inpt : buf.get_in_ports()) {
-        int mdd = compute_max_dd(buf, inpt);
-        cout << tab(1) << "MDD = " << mdd << endl;
-        if (mdd > max_dd) {
-          max_dd = mdd;
-        }
-      }
+      assert(buf.get_in_bundles().size() == 1);
+      string rep = pick(buf.get_in_bundles());
+      max_dd =
+        compute_max_dd(buf, pick(map_find(rep, buf.port_bundles)));
+
+      //for (auto inpt : buf.get_in_ports()) {
+        //int mdd = compute_max_dd(buf, inpt);
+        //cout << tab(1) << "MDD = " << mdd << endl;
+        //if (mdd > max_dd) {
+          //max_dd = mdd;
+        //}
+      //}
       dag.channel_sizes[c] += max_dd;
       //assert(max_dd == 0);
     }

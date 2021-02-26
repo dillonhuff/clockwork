@@ -4469,7 +4469,7 @@ prog resnet88() {
   prog prg;
   prg.compute_unit_file = "resnet88_compute.h";
   prg.name = "resnet88";
-  
+
 // Stencil<int16_t, 8, 30, 30> &hw_input_stencil = arg_0;
   prg.add_input("hw_input_stencil");
   prg.buffer_port_widths["hw_input_stencil"] = 16;
@@ -11481,7 +11481,7 @@ prog histogram1d() {
   //return prg;
 //}
 
-prog 1x1conv() {
+prog conv1x1() {
   prog prg;
   prg.compute_unit_file = "1x1conv_compute.h";
   prg.name = "1x1conv";
