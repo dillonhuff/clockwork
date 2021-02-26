@@ -16285,41 +16285,45 @@ void set_scheduled_loop_latency(schedule_info& hwinfo, op* op, prog& prg) {
   //hwinfo.instance_latencies[op] = latency;
 }
 
-void asap_inner_loops_schedule(schedule_info& hwinfo, op* op, prog& prg) {
+void relax_inner_delay_for_vec_read(schedule_info& sched, op* loop, prog& prg, int fetch_width);
+void relax_inner_delay_for_vec_write(schedule_info& sched, op* loop, prog& prg, int fetch_width);
+
+void asap_inner_loops_schedule(schedule_info& sched, op* op, prog& prg, int fetch_width) {
   //cout << "scheduling: " << op->name << endl;
 
   if (!op->is_loop()) {
-    int total_latency = op_latency(op, hwinfo);
-    //hwinfo.instance_latencies[op] = total_latency;
+    int total_latency = op_latency(op, sched);
     return;
   }
 
   for (auto other : op->children) {
-    asap_inner_loops_schedule(hwinfo, other, prg);
+    asap_inner_loops_schedule(sched, other, prg, fetch_width);
   }
 
   if (is_inner_loop(op)) {
     int latency = 0;
     for (auto other : op->children) {
       int old_latency = latency;
-      hwinfo.op_offset_within_parent[other] = 0;
-      latency = max(latency, hwinfo.total_latency(other));
+      sched.op_offset_within_parent[other] = 0;
+      latency = max(latency, sched.total_latency(other));
     }
-    hwinfo.loop_iis[op->name] = max(latency, 1);
+    sched.loop_iis[op->name] = max(latency, 1);
   } else {
     int latency = 0;
     for (auto other : op->children) {
       int old_latency = latency;
-      hwinfo.op_offset_within_parent[other] = latency;
-      latency += hwinfo.total_latency(other);
+      sched.op_offset_within_parent[other] = latency;
+      if (is_inner_loop(other)) {
+        //TODO: currently only need to pad read op
+        relax_inner_delay_for_vec_read(sched, other, prg, fetch_width);
+      }
+      latency = sched.total_latency(other) + sched.offset_in_parent(other);
       if (old_latency == latency) {
         latency += 1;
       }
     }
-    hwinfo.loop_iis[op->name] = max(latency, 1);
+    sched.loop_iis[op->name] = max(latency, 1);
   }
-
-
 }
 
 void sequential_schedule(schedule_info& hwinfo, op* op, prog& prg) {
@@ -16438,7 +16442,8 @@ void tighten_iis(schedule_info& sched, prog& prg) {
   }
 }
 
-void relax_inner_iis(schedule_info& sched, op* loop, umap* read_map) {
+
+void relax_inner_iis(schedule_info& sched, op* loop, umap* read_map, int fetch_width) {
 
     //always vectorize the inner most loop
     for (auto rd_map: get_maps(read_map)) {
@@ -16456,15 +16461,33 @@ void relax_inner_iis(schedule_info& sched, op* loop, umap* read_map) {
         cout << tab(4) << "packed dim extent: " << ext << endl;
         //TODO change 4 into codegen options,fetch_width
         if (ext > loop->trip_count()) {
+            auto child = pick(loop->children);
             cout << tab(4) << "Relax ii latency for op: " << loop->name << endl;
+            //cout << tab(4) << "Original offset within parent: " << sched.offset_in_parent(child) << endl;
             cout << tab(4) << "Original offset within parent: " << sched.offset_in_parent(loop) << endl;
             cout << tab(4) << "loop trip count: " << loop->trip_count() << endl;
-            sched.op_offset_within_parent.at(loop) =
-                (loop->trip_count()) % 4 + 4 * (loop->trip_count()%4 == 0);
+            sched.op_offset_within_parent.at(loop) = (loop->trip_count()) % fetch_width
+                + fetch_width * (loop->trip_count()%fetch_width== 0);
             cout << tab(4) << "New offset within parent: " << sched.offset_in_parent(loop) << endl;
         }
       }
     }
+}
+
+void relax_inner_delay_for_vec_read(schedule_info& sched, op* loop, prog& prg, int fetch_width) {
+  auto read_map = read_at(loop->name, prg);
+  if(read_map != nullptr) {
+    cout << tab(2) << "Relax for read op: \n\t"<< str(read_map) << endl;
+    relax_inner_iis(sched, loop, read_map, fetch_width);
+  }
+}
+
+void relax_inner_delay_for_vec_write(schedule_info& sched, op* loop, prog& prg, int fetch_width) {
+  auto write_map = written_at(loop->name, prg);
+  if(write_map != nullptr) {
+    cout << tab(2) << "Relax for write op: \n\t"<< str(write_map) << endl;
+    relax_inner_iis(sched, loop, write_map, fetch_width);
+  }
 }
 
 void relax_iis_for_vectorization(schedule_info& sched, prog& prg) {
@@ -16500,7 +16523,7 @@ void relax_iis_for_vectorization(schedule_info& sched, prog& prg) {
         auto read_map = read_at(loop->name, prg);
         if(read_map != nullptr) {
           cout << tab(2) << "Relax for read op: \n\t"<< str(read_map) << endl;
-          relax_inner_iis(sched, loop, read_map);
+          relax_inner_iis(sched, loop, read_map, 4);
         }
       }
     }
@@ -16522,8 +16545,7 @@ void relax_iis_for_vectorization(schedule_info& sched, prog& prg) {
   }
 }
 
-void relax_delays_for_coarse_pipeline(schedule_info& sched, prog& prg) {
-  cout << "Adjusting delays of " << prg.name << "After vectorization" << endl;
+void adjust_coarse_grained_loop_delays_sequentially(schedule_info& sched, prog& prg) {
   int d = 0;
   map<string, int> coarse_pipeline_II;
   op* coarse_pipeline_loop = find_coarse_grained_pipeline_loop(prg.root, prg);
@@ -16558,7 +16580,7 @@ void relax_delays_for_coarse_pipeline(schedule_info& sched, prog& prg) {
   }
 }
 
-void relax_delays_after_vectorization(schedule_info& sched, prog& prg) {
+void adjust_outer_delays_sequentially(schedule_info& sched, prog& prg) {
   cout << "Adjusting delays of " << prg.name << "After vectorization" << endl;
   int d = 0;
   map<string, int> coarse_pipeline_II;
@@ -17006,6 +17028,16 @@ void adjust_coarse_grained_loop_iis(schedule_info& sched, prog & prg) {
   }
 }
 
+void sanity_check_iis_for_vectorization(schedule_info& sched, prog& prg, int fetch_width) {
+    auto inner_loop = get_inner_loops(prg);
+    for (auto lp : prg.all_loops()) {
+        if (!elem(lp, inner_loop)) {
+            assert(sched.II(lp) % fetch_width == 0);
+        }
+    }
+}
+
+
 void garnet_single_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
   if (is_rate_matchable(prg)) {
     prg.pretty_print();
@@ -17124,59 +17156,28 @@ void garnet_single_port_ram_schedule(schedule_info& sched, op* root, prog& prg) 
 
   /*
    * old method for ISCA deadline*/
-  asap_inner_loops_schedule(sched, root, prg);
+  asap_inner_loops_schedule(sched, root, prg, 4);
   //sequential_schedule(sched, root, prg);
 
   adjust_inner_iis(sched, prg);
   tighten_iis(sched, prg);
-  adjust_outer_delays(sched, prg);
 
-    auto op_sched = op_start_times_map(sched, prg);
-    cout << "\tschedule before vectorization relax: " << str(op_sched)  << endl;
+  auto op_sched = op_start_times_map(sched, prg);
+  cout << "\tschedule before vectorization relax: " << str(op_sched)  << endl;
 
-  relax_iis_for_vectorization(sched, prg);
-  adjust_coarse_grained_loop_iis(sched, prg);
-  relax_delays_for_coarse_pipeline(sched, prg);
+  //adjust_coarse_grained_loop_iis(sched, prg);
+  //adjust_coarse_grained_loop_delays_sequentially(sched, prg);
 
-  relax_delays_after_vectorization(sched, prg);
+  //adjust_outer_delays(sched, prg);
+  adjust_outer_delays_sequentially(sched, prg);
 
-  op_sched = op_start_times_map(sched, prg);
-  cout << "\tschedule after vectorization relax: " << str(op_sched)  << endl;
+  //op_sched = op_start_times_map(sched, prg);
+  //cout << "\tschedule after vectorization relax: " << str(op_sched)  << endl;
   //assert(false);
-  ////adjust_outer_delays(sched, prg);
 
   adjust_schedule_forward(sched, prg, 0);
   sanity_check_hw_schedule(sched, prg);
   return;
-
-  //new method copy from coase grain pipeline, could not find correct delay
-  prg.pretty_print();
-  cout << prg.name << " is not a rate matchable pipeline... searching for outer loop parallelism" << endl;
-
-  //sequential_schedule(sched, root, prg);
-  asap_inner_loops_schedule(sched, root, prg);
-  cout << "Computed initial sequential schedule" << endl;
-  sanity_check_iis(sched);
-
-
-  adjust_inner_iis(sched, prg);
-  sanity_check_iis(sched);
-  tighten_iis(sched, prg);
-  //if (fetch width != 1)
-    relax_iis_for_vectorization(sched, prg);
-  sanity_check_iis(sched);
-
-  adjust_coarse_grained_loop_iis(sched, prg);
-
-  cout << "Adjusting outer pipeline delays" << endl;
-  sanity_check_iis(sched);
-
-  relax_delays_after_vectorization(sched, prg);
-
-  adjust_outer_pipeline_delays(sched, prg);
-
-  cout << "Done Adjusting outer pipeline delays" << endl;
-  sanity_check_iis(sched);
 }
 
 
@@ -17352,7 +17353,7 @@ void coarse_pipeline_schedule(schedule_info& sched, op* root, prog& prg) {
   cout << prg.name << " is not a rate matchable pipeline... searching for outer loop parallelism" << endl;
 
   //sequential_schedule(sched, root, prg);
-  asap_inner_loops_schedule(sched, root, prg);
+  asap_inner_loops_schedule(sched, root, prg, 1);
   cout << "Computed initial sequential schedule" << endl;
   sanity_check_iis(sched);
 
