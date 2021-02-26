@@ -11483,8 +11483,8 @@ prog histogram1d() {
 
 prog conv1x1() {
   prog prg;
-  prg.compute_unit_file = "1x1conv_compute.h";
-  prg.name = "1x1conv";
+  prg.compute_unit_file = "conv1x1_compute.h";
+  prg.name = "conv1x1";
 
 // Stencil<uint16_t, 8, 16, 16> &input_host_stencil = arg_0;
   prg.add_input("input_host_stencil");
