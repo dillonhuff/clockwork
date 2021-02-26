@@ -938,8 +938,8 @@
           }
         },
         "connections":[
-          ["inner_compute$umin_775_776_777$min_mux$mux.data.in.1","inner_compute$const_p255__776.out"],
-          ["inner_compute$umin_775_776_777$ucomp$compop.data.in.1","inner_compute$const_p255__7761.out"],
+          ["inner_compute$umin_775_776_777$ucomp$compop.data.in.1","inner_compute$const_p255__776.out"],
+          ["inner_compute$umin_775_776_777$min_mux$mux.data.in.1","inner_compute$const_p255__7761.out"],
           ["inner_compute$lshr_773_774_775$binop.data.in.1","inner_compute$const_p5__774.out"],
           ["inner_compute$mul_ratio_stencil_1_hw_input_global_wrapper_stencil_4_773$binop.data.out","inner_compute$lshr_773_774_775$binop.data.in.0"],
           ["inner_compute$umin_775_776_777$min_mux$mux.data.in.0","inner_compute$lshr_773_774_775$binop.data.out"],
@@ -998,8 +998,8 @@
           }
         },
         "connections":[
-          ["inner_compute$umin_792_793_794$ucomp$compop.data.in.1","inner_compute$const_p255__793.out"],
-          ["inner_compute$umin_792_793_794$min_mux$mux.data.in.1","inner_compute$const_p255__7931.out"],
+          ["inner_compute$umin_792_793_794$min_mux$mux.data.in.1","inner_compute$const_p255__793.out"],
+          ["inner_compute$umin_792_793_794$ucomp$compop.data.in.1","inner_compute$const_p255__7931.out"],
           ["inner_compute$lshr_790_791_792$binop.data.in.1","inner_compute$const_p5__791.out"],
           ["inner_compute$mul_ratio_stencil_2_hw_input_global_wrapper_stencil_5_790$binop.data.out","inner_compute$lshr_790_791_792$binop.data.in.0"],
           ["inner_compute$umin_792_793_794$min_mux$mux.data.in.0","inner_compute$lshr_790_791_792$binop.data.out"],
@@ -2072,8 +2072,8 @@
           }
         },
         "connections":[
-          ["umin_775_776_777$ucomp$compop.data.in.1","const_p255__776.out"],
-          ["umin_775_776_777$min_mux$mux.data.in.1","const_p255__7761.out"],
+          ["umin_775_776_777$min_mux$mux.data.in.1","const_p255__776.out"],
+          ["umin_775_776_777$ucomp$compop.data.in.1","const_p255__7761.out"],
           ["lshr_773_774_775$binop.data.in.1","const_p5__774.out"],
           ["mul_ratio_stencil_1_hw_input_global_wrapper_stencil_4_773$binop.data.out","lshr_773_774_775$binop.data.in.0"],
           ["umin_775_776_777$min_mux$mux.data.in.0","lshr_773_774_775$binop.data.out"],
@@ -3644,16 +3644,16 @@
           ["op_hcompute_gray_stencil$inner_compute$mul_hw_input_global_wrapper_stencil_2_405_406$binop.data.in.1","op_hcompute_gray_stencil$inner_compute$const_p29__405.out"],
           ["op_hcompute_gray_stencil$inner_compute$mul_hw_input_global_wrapper_stencil_3_407_408$binop.data.in.1","op_hcompute_gray_stencil$inner_compute$const_p77__407.out"],
           ["op_hcompute_gray_stencil$inner_compute$lshr_410_411_412$binop.data.in.1","op_hcompute_gray_stencil$inner_compute$const_p8__411.out"],
-          ["op_hcompute_hw_output_stencil$inner_compute$umin_775_776_777$min_mux$mux.data.in.1","op_hcompute_hw_output_stencil$inner_compute$const_p255__776.out"],
-          ["op_hcompute_hw_output_stencil$inner_compute$umin_775_776_777$ucomp$compop.data.in.1","op_hcompute_hw_output_stencil$inner_compute$const_p255__7761.out"],
+          ["op_hcompute_hw_output_stencil$inner_compute$umin_775_776_777$ucomp$compop.data.in.1","op_hcompute_hw_output_stencil$inner_compute$const_p255__776.out"],
+          ["op_hcompute_hw_output_stencil$inner_compute$umin_775_776_777$min_mux$mux.data.in.1","op_hcompute_hw_output_stencil$inner_compute$const_p255__7761.out"],
           ["op_hcompute_hw_output_stencil$inner_compute$lshr_773_774_775$binop.data.in.1","op_hcompute_hw_output_stencil$inner_compute$const_p5__774.out"],
           ["op_hcompute_hw_output_stencil$inner_compute$mul_ratio_stencil_1_hw_input_global_wrapper_stencil_4_773$binop.data.out","op_hcompute_hw_output_stencil$inner_compute$lshr_773_774_775$binop.data.in.0"],
           ["op_hcompute_hw_output_stencil$inner_compute$umin_775_776_777$min_mux$mux.data.in.0","op_hcompute_hw_output_stencil$inner_compute$lshr_773_774_775$binop.data.out"],
           ["op_hcompute_hw_output_stencil$inner_compute$umin_775_776_777$ucomp$compop.data.in.0","op_hcompute_hw_output_stencil$inner_compute$lshr_773_774_775$binop.data.out"],
           ["op_hcompute_ratio_stencil$inner_compute$umin_743_744_745$min_mux$mux.data.out","op_hcompute_hw_output_stencil$inner_compute$mul_ratio_stencil_1_hw_input_global_wrapper_stencil_4_773$binop.data.in.0"],
           ["op_hcompute_hw_output_stencil$inner_compute$umin_775_776_777$ucomp$compop.bit.out","op_hcompute_hw_output_stencil$inner_compute$umin_775_776_777$min_mux$mux.bit.in.0"],
-          ["op_hcompute_hw_output_stencil_1$inner_compute$umin_792_793_794$ucomp$compop.data.in.1","op_hcompute_hw_output_stencil_1$inner_compute$const_p255__793.out"],
-          ["op_hcompute_hw_output_stencil_1$inner_compute$umin_792_793_794$min_mux$mux.data.in.1","op_hcompute_hw_output_stencil_1$inner_compute$const_p255__7931.out"],
+          ["op_hcompute_hw_output_stencil_1$inner_compute$umin_792_793_794$min_mux$mux.data.in.1","op_hcompute_hw_output_stencil_1$inner_compute$const_p255__793.out"],
+          ["op_hcompute_hw_output_stencil_1$inner_compute$umin_792_793_794$ucomp$compop.data.in.1","op_hcompute_hw_output_stencil_1$inner_compute$const_p255__7931.out"],
           ["op_hcompute_hw_output_stencil_1$inner_compute$lshr_790_791_792$binop.data.in.1","op_hcompute_hw_output_stencil_1$inner_compute$const_p5__791.out"],
           ["op_hcompute_hw_output_stencil_1$inner_compute$mul_ratio_stencil_2_hw_input_global_wrapper_stencil_5_790$binop.data.out","op_hcompute_hw_output_stencil_1$inner_compute$lshr_790_791_792$binop.data.in.0"],
           ["op_hcompute_hw_output_stencil_1$inner_compute$umin_792_793_794$min_mux$mux.data.in.0","op_hcompute_hw_output_stencil_1$inner_compute$lshr_790_791_792$binop.data.out"],
