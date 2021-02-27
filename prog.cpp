@@ -2227,9 +2227,7 @@ void generate_app_code_op_logic(
 
   for (auto op : prg.all_ops()) {
     regex re("(\n\t\\s+)" + op->name + "\\((.*)\\);");
-    //string args_list = sep_list(buffer_arg_names(buffers, op, prg), "", "", ", ");
     string args_list = sep_list(buffer_arg_names(op, prg), "", "", ", ");
-    //code_string = regex_replace(code_string, re, "\n\t" + op->name + "(" + args_list + ", $1);");
     code_string = regex_replace(code_string, re, "$1" + op->name + "(" + args_list + ", $2);");
   }
 
@@ -2244,9 +2242,6 @@ void generate_app_code_op_logic(
   }
   conv_out << endl;
 
-  //conv_out << tab(1) << "/*" << endl;
-  //conv_out << original_isl_code_string << endl;
-  //conv_out << tab(1) << "*/" << endl;
   conv_out << code_string << endl;
 
   generate_driver_function_suffix(options, conv_out, buffers, prg);
@@ -8909,11 +8904,15 @@ void generate_app_code(
   ofstream conv_out(dag.prg.name + ".cpp");
   generate_app_prefix(options, conv_out, dag.prg);
 
+  int capacity = 0;
   for (auto& b : buffers) {
     if (!elem(b.first, boundary_bufs)) {
       generate_hls_code(options, conv_out, b.second);
+      capacity += buffer_capacity(b.second);
     }
   }
+  conv_out << "// Total re-use buffer capacity: " << capacity << " bits" << endl;
+  
 
   for (auto& gp : dag.fusion_group_progs) {
     vector<umap*> sched_maps;
@@ -8972,12 +8971,9 @@ void generate_app_code(
   } else {
     set_channel_depths_by_assumed_stage_depth(options.slack_matching.depth, dag);
   }
-  //set_channel_depths_by_stage_depths(dag);
-  //set_channel_depths_to_constant(32, dag);
-  //set_channel_depths_to_constant(1, dag);
-  //set_channel_depths_to_with_kernel_depth(500, dag);
-  //set_channel_depths_ilp(500, dag);
 
+  int bits_for_causality = 0;
+  int bits_for_slack_matching = 0;
   for (auto c : dag.inter_group_channels()) {
     cout << tab(1) << c << endl;
     UBuffer buf = map_find(c, buffers);
@@ -9006,18 +9002,27 @@ void generate_app_code(
       max_dd =
         compute_max_dd(buf, pick(map_find(rep, buf.port_bundles)));
 
-      //for (auto inpt : buf.get_in_ports()) {
-        //int mdd = compute_max_dd(buf, inpt);
-        //cout << tab(1) << "MDD = " << mdd << endl;
-        //if (mdd > max_dd) {
-          //max_dd = mdd;
-        //}
-      //}
+      int channel_width =
+        map_find(rep, buf.port_bundles).size();
+      int slack_bits = (buf.port_widths)*dag.channel_sizes[c]*channel_width;
+      bits_for_slack_matching += slack_bits;
+
+      conv_out << tab(1) << "// channel width: " << channel_width << endl;
+      conv_out << tab(1) << "// port width   : " << buf.port_widths << endl;
+      conv_out << tab(1) << "// dag size     : " << dag.channel_sizes[c] << endl;
+      conv_out << "// Bits to slack match " << c << " = " << slack_bits << endl;
+      conv_out << "// Bits to slack match " << c << " = " << slack_bits << endl;
+
+      bits_for_causality += (buf.port_widths) * max_dd * channel_width;
+
       dag.channel_sizes[c] += max_dd;
-      //assert(max_dd == 0);
     }
 
   }
+
+  conv_out << "// Bits in internal re-use buffers               : " << capacity << " bits" << endl;
+  conv_out << "// Bits in channels needed to guarantee causality: " << bits_for_causality << endl;
+  conv_out << "// Bits in channels needed to match slack        : " << bits_for_slack_matching << endl;
 
   for (auto& gp : dag.fusion_group_progs) {
     for (auto& buf : gp.second.boundary_buffers()) {
