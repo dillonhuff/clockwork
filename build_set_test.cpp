@@ -21721,8 +21721,8 @@ void two_input_blending_test() {
 }
 
 void path_sensitive_channel_sizing() {
-  prog prg = two_in_blnd(2048, 2048);
-  //prog prg = llf_grayscale_float(2048, 2048);
+  //prog prg = two_in_blnd(2048, 2048);
+  prog prg = llf_grayscale_float(2048, 2048);
   prg.name = prg.name + "_d";
   prg.sanity_check();
 
@@ -21733,7 +21733,8 @@ void path_sensitive_channel_sizing() {
   options = CodegenOptions();
   options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
   options.scheduling_algorithm = SCHEDULE_ALGORITHM_CW;
-  options.slack_matching = {SLACK_MATCHING_TYPE_PIPELINE_DEPTH_AWARE, 5};
+  //options.slack_matching = {SLACK_MATCHING_TYPE_PIPELINE_DEPTH_AWARE, 5};
+  options.slack_matching = {SLACK_MATCHING_TYPE_FIXED, 250};
   generate_app_code(options, dag);
 
   assert(false);
