@@ -8762,7 +8762,7 @@ void set_channel_depths_by_assumed_stage_depth(const int kernel_depth, app_dag& 
   cout << "# of nodes to process: " << sorted_groups.size() << endl;
   int processed = 0;
   for (auto next_group : sorted_groups) {
-    
+
     in_progress_paths.insert({next_group});
 
     std::set<path> to_insert;
