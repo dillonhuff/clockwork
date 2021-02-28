@@ -2888,8 +2888,8 @@ void generate_regression_testbench(prog& prg) {
     rgtb << tab(1) << "for (int i = 0; i < " << num_transfers << "; i++) {" << endl;
     vector<string> inds;
     for (int i = 0; i < unroll; i++) {
-      inds.push_back("rand() % 256");
-      //inds.push_back("(i) % 256");
+      //inds.push_back("rand() % 256");
+      inds.push_back("(i) % 256");
       //inds.push_back(str(unroll) + "*i + " + str(i));
     }
     pack_bv(2, rgtb, "value", inds, lane_width);
@@ -5708,8 +5708,8 @@ void generate_verilator_tb_in_streams(
     vector<string> inds;
     for (int i = 0; i < unroll; i++) {
       if (options.debug_options.test_inputs.tp == TEST_DATA_INPUT_STREAM_TYPE_RANDOM) {
-        inds.push_back("rand() % 256");
-        //inds.push_back("(i) % 256");
+        //inds.push_back("rand() % 256");
+        inds.push_back("(i) % 256");
       } else {
         assert(options.debug_options.test_inputs.tp == TEST_DATA_INPUT_STREAM_TYPE_INCREMENTING);
         inds.push_back(str(unroll) + "*i + " + str(i));
