@@ -14252,7 +14252,8 @@ void test_pond(string dir) {
   //test_apps.push_back(resnet_simple());
   //test_apps.push_back(resnet());
   //test_apps.push_back(three_level_pond());
-  test_apps.push_back(three_level_pond_rolled());
+  //test_apps.push_back(three_level_pond_rolled());
+  test_apps.push_back(three_level_pond_copy());
 
   for ( auto prg: test_apps) {
     cout << "====== Running CGRA Single Port test for " << prg.name << endl;
@@ -14300,22 +14301,22 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   //TODO:has issue  with multiple input
   //test_apps.push_back(demosaic_complex());
   //
-  test_apps.push_back(conv_3_3());
-  test_apps.push_back(counter());
-  test_apps.push_back(gaussian());
-  test_apps.push_back(cascade());
-  test_apps.push_back(harris());
-  test_apps.push_back(rom());
-  test_apps.push_back(conv_1_2());
-  test_apps.push_back(demosaic_unrolled());
-  test_apps.push_back(camera_pipeline());
-  test_apps.push_back(up_sample());
-  test_apps.push_back(unsharp());
+  //test_apps.push_back(conv_3_3());
+  //test_apps.push_back(counter());
+  //test_apps.push_back(gaussian());
+  //test_apps.push_back(cascade());
+  //test_apps.push_back(harris());
+  //test_apps.push_back(rom());
+  //test_apps.push_back(conv_1_2());
+  //test_apps.push_back(demosaic_unrolled());
+  //test_apps.push_back(camera_pipeline());
+  //test_apps.push_back(up_sample());
+  //test_apps.push_back(unsharp());
 
   //DNN apps
-  test_apps.push_back(resnet_simple());
+  //test_apps.push_back(resnet_simple());
   test_apps.push_back(resnet());
-  test_apps.push_back(mobilenet_unrolled());
+  //test_apps.push_back(mobilenet_unrolled());
 
   //Big applications
   //test_apps.push_back(resnet88());
@@ -16555,15 +16556,42 @@ void tighten_iis(schedule_info& sched, prog& prg) {
 
 void relax_inner_iis(schedule_info& sched, op* loop, umap* read_map, int fetch_width) {
 
+    //Handle the sliding window over vectorization dimension
     //always vectorize the inner most loop
     for (auto rd_map: get_maps(read_map)) {
       cout << tab(4) << "Read map: \n" << str(rd_map) << endl;
       auto b_map = to_map(pick(get_basic_maps(rd_map)));
       auto read_addr_involve_dim = out_involve_dim(b_map, num_in_dims(b_map) - 1);
       cout << tab(4) << "addr involve dim: " << read_addr_involve_dim << endl;
-      if (read_addr_involve_dim.size()) {
+
+      //Chances are that this dimension is fully unrolled
+      if (read_addr_involve_dim.size() > 0) {
         assert(read_addr_involve_dim.size() == 1);
         int packed_addr_dim = pick(read_addr_involve_dim);
+        auto in_involve_d = in_involve_dim(b_map, packed_addr_dim);
+        cout << "Involve in dim: " << in_involve_d << endl;
+        //Do not have sliding window
+        if (in_involve_d.size() == 1) {
+            continue;
+        }
+        for (int in_dim : in_involve_d) {
+            if (in_dim == num_in_dims(b_map) - 1)
+                continue;
+            auto proj_map = project_all_out_but(b_map, packed_addr_dim);
+            auto aff = get_aff(proj_map);
+            int stride = int_coeff(aff, in_dim);
+            cout << "Dim " << in_dim << " of AFF: " << str(aff) << "\n\t hasStride : " << stride << endl;
+            if (stride % fetch_width != 0) {
+              cout << tab(4) << "Relax ii latency for op: " << loop->name << endl;
+              //cout << tab(4) << "Original offset within parent: " << sched.offset_in_parent(child) << endl;
+              cout << tab(4) << "Original offset within parent: " << sched.offset_in_parent(loop) << endl;
+              cout << tab(4) << "loop trip count: " << loop->trip_count() << endl;
+              sched.op_offset_within_parent.at(loop) = (loop->trip_count()) % fetch_width
+                  + fetch_width * (loop->trip_count()%fetch_width== 0);
+              cout << tab(4) << "New offset within parent: " << sched.offset_in_parent(loop) << endl;
+            }
+        }
+        /*
         auto reads = range(b_map);
         int ext = to_int(lexmaxval(
                     project_all_but(reads, packed_addr_dim)
@@ -16571,7 +16599,6 @@ void relax_inner_iis(schedule_info& sched, op* loop, umap* read_map, int fetch_w
         cout << tab(4) << "packed dim extent: " << ext << endl;
         //TODO change 4 into codegen options,fetch_width
         if (ext > loop->trip_count()) {
-            auto child = pick(loop->children);
             cout << tab(4) << "Relax ii latency for op: " << loop->name << endl;
             //cout << tab(4) << "Original offset within parent: " << sched.offset_in_parent(child) << endl;
             cout << tab(4) << "Original offset within parent: " << sched.offset_in_parent(loop) << endl;
@@ -16579,8 +16606,8 @@ void relax_inner_iis(schedule_info& sched, op* loop, umap* read_map, int fetch_w
             sched.op_offset_within_parent.at(loop) = (loop->trip_count()) % fetch_width
                 + fetch_width * (loop->trip_count()%fetch_width== 0);
             cout << tab(4) << "New offset within parent: " << sched.offset_in_parent(loop) << endl;
+        }*/
         }
-      }
     }
 }
 
@@ -17200,8 +17227,6 @@ void garnet_single_port_ram_schedule(schedule_info& sched, op* root, prog& prg) 
   adjust_inner_iis(sched, prg);
   tighten_iis(sched, prg);
 
-  auto op_sched = op_start_times_map(sched, prg);
-  cout << "\tschedule before vectorization relax: " << str(op_sched)  << endl;
 
   //adjust_coarse_grained_loop_iis(sched, prg);
   //adjust_coarse_grained_loop_delays_sequentially(sched, prg);
@@ -17209,8 +17234,8 @@ void garnet_single_port_ram_schedule(schedule_info& sched, op* root, prog& prg) 
   //adjust_outer_delays(sched, prg);
   adjust_outer_delays_sequentially(sched, prg);
 
-  //op_sched = op_start_times_map(sched, prg);
-  //cout << "\tschedule after vectorization relax: " << str(op_sched)  << endl;
+  auto op_sched = op_start_times_map(sched, prg);
+  cout << "\tFinal schedule : " << str(op_sched)  << endl;
   //assert(false);
 
   adjust_schedule_forward(sched, prg, 0);

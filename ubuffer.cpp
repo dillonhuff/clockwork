@@ -7116,22 +7116,42 @@ void UBuffer::generate_banks(CodegenOptions& options) {
               //FIX the sliding window cross fetch_width boundary
               //TODO: move this into a function
               bool pad_schedule = false;
-              if (in_involve_dim(am, dim_id).size() > 1) {
+              auto involve_in_dim = in_involve_dim(am, dim_id);
+              if (involve_in_dim.size() > 1) {
+                bool slide_cross = false;
                 //Case one has sliding window
-                auto proj_map = isl_map_project_out(am, isl_dim_in, 0, num_in_dims(am)-1);
-                auto domain_pt = to_set(sample(::domain(proj_map)));
-                auto proj_map_sample = its(proj_map, domain_pt);
-                int whole_width = get_dim_extent(range(proj_map), dim_id);
-                int sw_width = get_dim_extent(range(proj_map_sample), dim_id);
-                cout << "Proj map: " << str(proj_map) << endl;
-                cout << "Proj map: " << str(proj_map_sample) << endl;
-                //If slide across boundary
-                if ((whole_width / fetch_width) !=
-                    (whole_width + sw_width - 1)/fetch_width ) {
+                for (int in_dim : involve_in_dim) {
+                    if (in_dim != num_in_dims(am) - 1) {
+                        auto proj_map = project_all_out_but(am, dim_id);
+                        auto aff = get_aff(proj_map);
+                        int stride = int_coeff(aff, in_dim);
+                        if (stride % 4) {
+                            slide_cross = true;
+                        }
+                    }
+                }
+                if (slide_cross) {
                   access_map.at(out_pt_name) =
                     to_umap(pad_to_domain_ubuf_map(am, num_in_dims(am) - 1, 1));
                   pad_schedule = true;
+
                 }
+
+                //auto proj_map = isl_map_project_out(am, isl_dim_in, 0, num_in_dims(am)-1);
+                //auto domain_pt = to_set(sample(::domain(proj_map)));
+                //auto proj_map_sample = its(proj_map, domain_pt);
+                //int whole_width = get_dim_extent(range(proj_map), dim_id);
+                //int sw_width = get_dim_extent(range(proj_map_sample), dim_id);
+                //cout << "whole_width : " << whole_width << "\n sw_width: " << sw_width << endl;
+                //cout << "Proj map: " << str(proj_map) << endl;
+                //cout << "Proj map: " << str(proj_map_sample) << endl;
+                //If slide across boundary
+                //if ((whole_width / fetch_width) !=
+                //    (whole_width + sw_width - 1)/fetch_width ) {
+                //  access_map.at(out_pt_name) =
+                //    to_umap(pad_to_domain_ubuf_map(am, num_in_dims(am) - 1, 1));
+                //  pad_schedule = true;
+                //}
               } else {
                 //Case two do not slide but just start from middle of the fetchwidth
                 int min_vec_dim = get_dim_min(range(am), dim_id);
