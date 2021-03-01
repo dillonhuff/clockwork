@@ -14264,13 +14264,13 @@ void Init_PE_energy_cost(power_analysis_params& power_params)  {
     power_params.alu_op_energy_costs["umax"] = COST_PER_PE_CMP_PJ + COST_PER_PE_MUX_PJ;
     power_params.alu_op_energy_costs["abs"] = COST_PER_PE_SUB_PJ;
 
-    //load_pe_power_stats(power_params, "./power_models/conv_3_3/PEs.txt");
+    load_pe_power_stats(power_params, "./power_models/conv_3_3/PEs.txt");
 
 
 }
 
 
-void compile_for_garnet_single_port_mem(prog & prg, string dir, bool gen_smt_stream, bool gen_config_only, bool multi_level_mem, bool use_dse_compute);
+void compile_for_garnet_single_port_mem(prog & prg, string dir, bool gen_smt_stream, bool gen_config_only, bool multi_level_mem, bool use_dse_compute, bool energy_model = false);
 void cpy_app_to_folder(const std::string& app_type, const std::string& prg_name);
 
 void test_pond(string dir) {
@@ -14322,6 +14322,53 @@ void test_pond(string dir) {
     }
   }
 }
+
+
+void test_energy_model(string dir) {
+  bool gen_config_only = true;
+  vector<prog> test_apps;
+  test_apps.push_back(conv_3_3());
+  //test_apps.push_back(harris());
+  //test_apps.push_back(resnet());
+
+  for ( auto prg: test_apps) {
+    cout << "====== Running Energy Model test for " << prg.name << endl;
+    prg.pretty_print();
+    prg.sanity_check();
+
+    break_up_multi_channel_inputs(prg);
+    break_up_multi_channel_outputs(prg);
+    dsa_writers(prg);
+    prg.pretty_print();
+    auto cpu = unoptimized_result(prg);
+
+    //compile_for_garnet_platonic_mem(prg);
+    compile_for_garnet_single_port_mem(prg, dir, false, gen_config_only, false, false, true);
+    generate_regression_testbench(prg);
+
+    cout << "Output name: " << prg.name << endl;
+    //run_verilator_tb(prg.name);
+    //TODO: move to a function
+    //run verilator on all the generated verilog
+    if (!gen_config_only) {
+      string name = prg.name;
+      auto verilog_files = get_files("./" + dir + "/"+name+"/verilog/");
+      verilog_files.push_back(name + ".v");
+      verilog_files.push_back("LakeWrapper.v");
+      bool extra_flag_for_lake = true;
+      int res = run_verilator_on(name, name + "_verilog_tb.cpp", verilog_files, extra_flag_for_lake);
+      assert(res == 0);
+      cmd("rm LakeWrapper.v");
+
+      auto verilator_res = verilator_results(prg.name);
+      compare("cgra_" + prg.name + "_cpu_vs_verilog_comparison", verilator_res, cpu);
+      //string app_type = "dualwithaddr";
+      string app_type = "single_port_buffer";
+      cpy_app_to_folder(app_type, prg.name);
+    }
+  }
+}
+
 void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, string dir="aha_garnet_design") {
   vector<prog> test_apps;
   //TODO:has issue  with multiple input
@@ -14370,28 +14417,7 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
 
     //compile_for_garnet_platonic_mem(prg);
     compile_for_garnet_single_port_mem(prg, dir, false, gen_config_only, false, false);
-    generate_regression_testbench(prg);
-
-    cout << "Output name: " << prg.name << endl;
-    //run_verilator_tb(prg.name);
-    //TODO: move to a function
-    //run verilator on all the generated verilog
-    if (!gen_config_only) {
-      string name = prg.name;
-      auto verilog_files = get_files("./" + dir + "/"+name+"/verilog/");
-      verilog_files.push_back(name + ".v");
-      verilog_files.push_back("LakeWrapper.v");
-      bool extra_flag_for_lake = true;
-      int res = run_verilator_on(name, name + "_verilog_tb.cpp", verilog_files, extra_flag_for_lake);
-      assert(res == 0);
-      cmd("rm LakeWrapper.v");
-
-      auto verilator_res = verilator_results(prg.name);
-      compare("cgra_" + prg.name + "_cpu_vs_verilog_comparison", verilator_res, cpu);
-      //string app_type = "dualwithaddr";
-      string app_type = "single_port_buffer";
-      cpy_app_to_folder(app_type, prg.name);
-    }
+    cout << "Finish test for: " << prg.name << endl;
   }
 }
 
@@ -17896,7 +17922,8 @@ void compile_for_garnet_single_port_mem(prog& prg,
         bool gen_smt_stream,
         bool config_gen_only,
         bool multi_level_mem,
-        bool use_dse_compute) {
+        bool use_dse_compute,
+        bool energy_model) {
 
   //make sure the loop bound and address is positive
   normalize_bounds(prg);
@@ -17941,19 +17968,22 @@ void compile_for_garnet_single_port_mem(prog& prg,
     generate_banks_garnet(options, prg, buf, impl, sched);
   }
   //FIXME: put into separate pass for power analysis
-  /*
-  mem_access_cnt mem_access;
-  Mem_access_count(options, buffers_opt, mem_access, prg);
-  emit_mem_access_count_to_csv(dir + "/MemCount/" + prg.name, options, mem_access);
+  if (energy_model) {
+    mem_access_cnt mem_access;
+    Mem_access_count(options, buffers_opt, mem_access, prg);
+    emit_mem_access_count_to_csv(dir + "/MemCount/" + prg.name, options, mem_access);
 
-  power_analysis_params power_params;
-  power_analysis_info power_stats;
-  Init_PE_energy_cost(power_params);*/
+    power_analysis_params power_params;
+    power_analysis_info power_stats;
+    Init_PE_energy_cost(power_params);
 
 #ifdef COREIR
-  //PE_energy_cost_instance_model(power_params, power_stats, prg);
-  //PE_energy_cost(power_params, power_stats, prg);
+    PE_energy_cost_instance_model(power_params, power_stats, prg);
+    PE_energy_cost(power_params, power_stats, prg);
 #endif
+
+  }
+
 
 #ifdef COREIR
   generate_garnet_coreir(buffers_opt, prg, options, sched, use_dse_compute);
@@ -24862,6 +24892,11 @@ int main(int argc, char** argv) {
 
     if (cmd == "pond-tests") {
       test_pond("aha_garnet_design_pond");
+      return 0;
+    }
+
+    if (cmd == "energy-tests") {
+      test_energy_model("aha_energy_model");
       return 0;
     }
 
