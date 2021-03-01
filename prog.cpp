@@ -1927,8 +1927,9 @@ void generate_compute_op(
 std::string resource_sharing_loop_codegen(umap* schedmap) {
   vector<isl_map*> maps = get_maps(schedmap);
   vector<pair<string, pair<int, int> > > bounds;
+  int d = 1;
   for (auto m : maps) {
-    isl_set* rng = project_all_but(range(m), 0);
+    isl_set* rng = project_all_but(range(m), d);
     bounds.push_back({domain_name(m), {to_int(lexminval(rng)), to_int(lexmaxval(rng))}});
   }
 
