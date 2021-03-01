@@ -14275,8 +14275,8 @@ void cpy_app_to_folder(const std::string& app_type, const std::string& prg_name)
 
 void test_pond(string dir) {
   vector<prog> test_apps;
-  //test_apps.push_back(resnet_simple());
-  //test_apps.push_back(resnet());
+  test_apps.push_back(resnet_simple());
+  test_apps.push_back(resnet());
   //test_apps.push_back(three_level_pond());
   //test_apps.push_back(three_level_pond_rolled());
   test_apps.push_back(three_level_pond_copy());
@@ -14327,20 +14327,20 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   //TODO:has issue  with multiple input
   //test_apps.push_back(demosaic_complex());
   //
-  //test_apps.push_back(conv_3_3());
-  //test_apps.push_back(counter());
-  //test_apps.push_back(gaussian());
-  //test_apps.push_back(cascade());
-  //test_apps.push_back(harris());
-  //test_apps.push_back(rom());
-  //test_apps.push_back(conv_1_2());
-  //test_apps.push_back(demosaic_unrolled());
-  //test_apps.push_back(camera_pipeline());
-  //test_apps.push_back(up_sample());
-  //test_apps.push_back(unsharp());
+  test_apps.push_back(conv_3_3());
+  test_apps.push_back(counter());
+  test_apps.push_back(gaussian());
+  test_apps.push_back(cascade());
+  test_apps.push_back(harris());
+  test_apps.push_back(rom());
+  test_apps.push_back(conv_1_2());
+  test_apps.push_back(demosaic_unrolled());
+  test_apps.push_back(camera_pipeline());
+  test_apps.push_back(up_sample());
+  test_apps.push_back(unsharp());
 
   //DNN apps
-  //test_apps.push_back(resnet_simple());
+  test_apps.push_back(resnet_simple());
   test_apps.push_back(resnet());
   //test_apps.push_back(mobilenet_unrolled());
 
@@ -16317,6 +16317,7 @@ void lake_tests() {
   //assert(false);
   //playground();
   test_single_port_mem(false, true, "aha_garnet_design_new");
+  test_pond("aha_garnet_design_pond");
   //test_single_port_mem(false, false, "aha_garnet_design");
   assert(false);
   //double_buffer_test();
@@ -17952,7 +17953,9 @@ void compile_for_garnet_single_port_mem(prog& prg,
 #ifdef COREIR
   //PE_energy_cost_instance_model(power_params, power_stats, prg);
   //PE_energy_cost(power_params, power_stats, prg);
+#endif
 
+#ifdef COREIR
   generate_garnet_coreir(buffers_opt, prg, options, sched, use_dse_compute);
   if (!options.config_gen_only) {
     generate_garnet_verilog_top(options, prg.name);
