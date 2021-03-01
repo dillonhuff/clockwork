@@ -21720,10 +21720,11 @@ void two_input_blending_test() {
   assert(false);
 }
 
-void path_sensitive_channel_sizing() {
-  //prog prg = two_in_blnd(2048, 2048);
-  prog prg = llf_grayscale_float(2048, 2048);
-  prg.name = prg.name + "_d";
+// Generating high performance designs?
+void resource_sharing_test() {
+  prog prg = two_in_blnd(64, 64);
+  //prog prg = llf_grayscale_float(2048, 2048);
+  prg.name = prg.name + "_s";
   prg.sanity_check();
 
   auto fusion_groups = one_stage_per_group(prg);
@@ -21733,9 +21734,8 @@ void path_sensitive_channel_sizing() {
   options = CodegenOptions();
   options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
   options.scheduling_algorithm = SCHEDULE_ALGORITHM_CW;
-  //options.slack_matching = {SLACK_MATCHING_TYPE_PIPELINE_DEPTH_AWARE, 5};
   options.slack_matching = {SLACK_MATCHING_TYPE_FIXED, 250};
-  generate_app_code(options, dag);
+  generate_resource_sharing_code(options, dag);
 
   assert(false);
 }
@@ -21757,6 +21757,25 @@ void llf_intelligent_channels() {
 
   move_to_benchmarks_folder(prg.name);
   cmd("cp local_laplacian_filter* ./soda_codes/" + prg.name + "/our_code/");
+
+  assert(false);
+}
+void path_sensitive_channel_sizing() {
+  //prog prg = two_in_blnd(2048, 2048);
+  prog prg = llf_grayscale_float(2048, 2048);
+  prg.name = prg.name + "_d";
+  prg.sanity_check();
+
+  auto fusion_groups = one_stage_per_group(prg);
+  app_dag dag = partition_application(fusion_groups, prg);
+
+  CodegenOptions options;
+  options = CodegenOptions();
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  options.scheduling_algorithm = SCHEDULE_ALGORITHM_CW;
+  //options.slack_matching = {SLACK_MATCHING_TYPE_PIPELINE_DEPTH_AWARE, 5};
+  options.slack_matching = {SLACK_MATCHING_TYPE_FIXED, 250};
+  generate_app_code(options, dag);
 
   assert(false);
 }
@@ -22213,6 +22232,9 @@ void sef_intelligent_channels2() {
 }
 
 void application_tests() {
+  resource_sharing_test();
+
+
   path_sensitive_channel_sizing();
   llf_250_channels(8);
   llf_250_channels(4);

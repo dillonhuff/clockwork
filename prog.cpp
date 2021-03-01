@@ -1924,6 +1924,32 @@ void generate_compute_op(
 
 }
 
+std::string resource_sharing_loop_codegen(umap* schedmap) {
+  vector<isl_map*> maps = get_maps(schedmap);
+  vector<pair<string, pair<int, int> > > bounds;
+  for (auto m : maps) {
+    isl_set* rng = project_all_but(range(m), 0);
+    bounds.push_back({domain_name(m), {to_int(lexminval(rng)), to_int(lexmaxval(rng))}});
+  }
+
+  cout << "Bounds..." << endl;
+  for (auto b : bounds) {
+    cout << b.first << " -> " << b.second.first << ", " << b.second.second << endl;
+  }
+  assert(false);
+
+  cout << "Schedule maps..." << endl;
+
+  //auto time_range = coalesce(range(schedmap));
+  //conv_out << "// time range: " << str(time_range) << endl;
+  //auto sets = get_sets(time_range);
+
+  //conv_out << "// # sets: " << sets.size() << endl;
+  //assert(sets.size() == 1);
+  //isl_set* s = pick(get_sets(time_range));
+  return "";
+}
+
 std::string perfect_loop_codegen(umap* schedmap) {
   ostringstream conv_out;
   auto time_range = coalesce(range(schedmap));
@@ -8857,6 +8883,33 @@ void set_channel_depths_to_constant(const int constant, app_dag& dag) {
       }
     }
   }
+}
+
+void generate_resource_sharing_code(
+    CodegenOptions& options,
+    app_dag& dag) {
+
+  auto valid_deps = dag.prg.validity_deps();
+  auto global_sched =
+    its(clockwork_schedule_umap_reversed(dag.prg.whole_iteration_domain(), valid_deps, valid_deps),
+        dag.prg.whole_iteration_domain());
+  cout << "Sched: " << str(global_sched) << endl;
+
+  string code_string = resource_sharing_loop_codegen(global_sched);
+
+  cout << "Code: " << endl;
+  cout << code_string << endl;
+
+  // What are the major changes that are needed?
+  //  - We have to have one C++ function that takes in
+  //    inputs from every channel and does compute ops on them 
+  //  - Compute units in other operations have to be done
+  //    by writing data to a channel and then reading it back
+  //    from another channel
+  // Q: How much of this can be done by modifying the existing
+  //    DAG codegen that I have?
+
+  assert(false);
 }
 
 void generate_app_code(
