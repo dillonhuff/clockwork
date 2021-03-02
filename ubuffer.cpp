@@ -729,6 +729,8 @@ map<string, UBuffer> UBuffer::generate_ubuffer(CodegenOptions& options) {
     buf.name = bname;
     buf.ctx = ctx;
     buf.port_widths = port_widths;
+    buf.coarse_grained_pipeline_loop_level = coarse_grained_pipeline_loop_level;
+    cout << "CGPL level :" << coarse_grained_pipeline_loop_level;
     auto inpts = get_bank_inputs(b.name);
     auto outpts = get_bank_unique_outputs(b.name);
 
@@ -2202,8 +2204,21 @@ void UBuffer::generate_coreir(CodegenOptions& options,
       string ub_ins_name = "ub_" + bk.name;
       map<string, UBuffer> vectorized_buf;
       auto target_buf = rewrite_buffer.at(bk.name + "_ubuf");
+
+      //Check if has coarse grained pipeline
+      bool decouple_ctrl =
+          target_buf.check_decouple_coarse_grained_pipeline_ctrl();
+      isl_map* cgpl_schedule;
+      UBuffer new_target_buf;
+      if (decouple_ctrl) {
+        cgpl_schedule =
+            target_buf.get_coarse_grained_pipeline_schedule(new_target_buf);
+      } else {
+        new_target_buf = target_buf;
+      }
+
       vectorized_buf.insert(
-              {bk.name + "_ubuf", target_buf});
+              {bk.name + "_ubuf", new_target_buf});
       auto capacity = total_capacity(target_buf);
 
       cout << "Vectorization buffer capacity: "
@@ -2233,7 +2248,8 @@ void UBuffer::generate_coreir(CodegenOptions& options,
 
       //Generate SMT stream if needed
       if (options.emit_smt_stream) {
-        generate_lake_stream(options, vectorized_buf, global_schedule_from_buffers(vectorized_buf));
+        generate_lake_stream(options, vectorized_buf,
+                global_schedule_from_buffers(vectorized_buf));
       }
 
       //create the tile instance
@@ -2249,6 +2265,23 @@ void UBuffer::generate_coreir(CodegenOptions& options,
         buf = generate_pond_instance(def, options, ub_ins_name,
                 targe_buf.num_in_ports(), target_buf.num_out_ports());
         has_stencil_valid = false;
+      }
+
+      //A rewrite pass to change the wiring
+      if (decouple_ctrl) {
+        //Disconnect the original connection from flush port
+        auto conns = buf->sel("flush")->getConnectedWireables();
+        for (auto conn: conns) {
+          def->disconnect(buf->sel("flush"), conn);
+        }
+        //connect with the new ctrl stencil valid port
+        CoreIR:Instance* cgpl_ctrl =
+                   affine_controller_use_lake_tile(def, context,
+                           ::domain(cgpl_schedule),
+                           get_aff(cgpl_schedule),
+                           ub_ins_name + "_cgpl_ctrl");
+        generate_lake_tile_verilog(options, cgpl_ctrl);
+        def->connect(cgpl_ctrl->sel("stencil_valid"), buf->sel("flush"));
       }
 
       //Wire stencil valid

@@ -847,6 +847,10 @@ vector<string> get_map_in_dim_id(isl_map* m) {
     return var_list;
 }
 
+string get_in_dim_name(isl_map* m, int i) {
+    return str(isl_map_get_dim_id(m, isl_dim_in, i));
+}
+
 isl_map* gen_hw_sched_from_sched_vec(isl_ctx* ctx, std::vector<string> sched_vec, vector<string> var_list, string op_name) {
     string vars = sep_list(var_list, "[", "]", ",");
     string sched = sep_list(sched_vec, "[", "]", ",");
@@ -2417,6 +2421,27 @@ isl_map* delay_schedule_inner_most(isl_map* m, int delay) {
   return isl_map_from_basic_map(b_ret);
 }
 
+isl_map* set_schedule_delay(isl_map* m, int delay) {
+  auto c_vec = constraints(m);
+  for (auto & c: c_vec) {
+    size_t dom_dim = isl_constraint_dim(c, isl_dim_out);
+    bool involve = isl_constraint_involves_dims(c, isl_dim_out, dom_dim - 1, 1);
+    if (involve && isl_constraint_is_equality(c)) {
+      c = isl_constraint_set_constant_si(c, -delay);
+    }
+  }
+  auto b_ret = isl_basic_map_universe(get_space(m));
+  for (auto c: c_vec) {
+      b_ret = isl_basic_map_add_constraint(b_ret, c);
+  }
+  string dname = domain_name(m);
+  auto ct = ctx(m);
+  b_ret =
+      isl_basic_map_set_tuple_id(b_ret, isl_dim_in, id(ct, dname));
+
+  return isl_map_from_basic_map(b_ret);
+}
+
 isl_map* delay_schedule_domain_dim(isl_map* m, int dom_dim, int delay) {
   auto c_vec = constraints(m);
   for (auto & c: c_vec) {
@@ -2513,6 +2538,23 @@ isl_map* remove_irrelevant_in_dim(isl_map* m) {
     isl_map_set_tuple_id(ret, isl_dim_in, id(ct, dname));
 
     return ret;
+}
+
+isl_map* set_in_dim_to_val(isl_map* m, int in_dim, int val) {
+    isl_map* ret = isl_map_upper_bound_si(m, isl_dim_in, in_dim, val);
+    ret = isl_map_lower_bound_si(ret, isl_dim_in, in_dim, val);
+    return ret;
+}
+
+isl_map* remove_in_dims(isl_map* m, vector<int> remove_dims) {
+    std::sort(remove_dims.begin(), remove_dims.end(), std::greater<int>());
+    auto tmp = cpy(m);
+    for (int dim: remove_dims) {
+      tmp = set_in_dim_to_val(tmp, dim, 0);
+      tmp = isl_map_project_out(tmp, isl_dim_in, dim, 1);
+    }
+    isl_map_set_tuple_id(tmp, isl_dim_in, id(ctx(m), domain_name(m)));
+    return tmp;
 }
 
 vector<bool> relation_map(isl_map* m) {
