@@ -21722,7 +21722,22 @@ void two_input_blending_test() {
 
 // Generating high performance designs?
 void resource_sharing_test() {
-  prog prg = two_in_blnd(64, 64);
+  //prog prg = two_in_blnd(64, 64);
+  prog prg("cpy");
+  prg.add_input("in");
+  prg.add_output("out");
+
+  pointwise("A", "id", "in", 2, prg);
+  pointwise("Ac", "inc", "A", 2, prg);
+  pointwise("B", "id", "Ac", 2, prg);
+  pointwise("out", "Bc", "B", 2, prg);
+
+  prg.pretty_print();
+  prg.sanity_check();
+
+
+  assert(false);
+
   //prog prg = llf_grayscale_float(2048, 2048);
   prg.name = prg.name + "_s";
   prg.sanity_check();
