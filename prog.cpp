@@ -1169,6 +1169,35 @@ isl_set* prog::domain(op* op) {
   return map_find(op, domains());
 }
 
+void tag_coarse_grained_loop_to_ubuf(map<string, UBuffer> & buffers, prog& prg) {
+  auto all_op = prg.all_ops();
+
+  //sort all ops by its name instead of ptr addres
+  //to avoid uncertainty in buffer name
+  vector<op*> all_op_vec(all_op.begin(), all_op.end());
+  std::sort(all_op_vec.begin(), all_op_vec.end(), [](op* l, op* r){return l->name > r->name;});
+  op* cgpl_lp = find_coarse_grained_pipeline_loop(prg.root, prg);
+  cout << "Coarse grained loop: " << cgpl_lp->name << endl;
+  if (cgpl_lp == nullptr || cgpl_lp->name == "root") {
+    return;
+  }
+  auto op_under_cgpl = cgpl_lp->descendant_op_names();
+  //for (auto op_name: op_under_cgpl) {
+  //  cout << "OP: " << op_name << " is under coarse granularity loop" << endl;
+  //}
+  for (auto & it: buffers) {
+    auto & buf = it.second;
+    auto buf_ops = buf.get_ops();
+    bool buffer_under_cgpl = std::includes(
+            op_under_cgpl.begin(), op_under_cgpl.end(),
+            buf_ops.begin(), buf_ops.end());
+    if (buffer_under_cgpl) {
+      cout << "Buffer: " << buf.name << " should be tagged coarse grained pipeline loop" << endl;
+      buf.coarse_grained_pipeline_loop_level = max_loop_depth(prg) - loop_depth(cgpl_lp);
+    }
+  }
+}
+
 map<string, UBuffer> build_buffers(prog& prg, umap* opt_sched) {
   int usuffix = 0;
 

@@ -217,6 +217,7 @@ isl_map* gen_map_from_sched_vec(isl_ctx* ctx, vector<string> sched_vec, string o
 isl_map* gen_hw_sched_from_sched_vec(isl_ctx* ctx, vector<string> sched_vec, string op_name);
 isl_map* gen_hw_sched_from_sched_vec(isl_ctx* ctx, vector<string> sched_vec, vector<string> var_list, string op_name);
 vector<string> get_map_in_dim_id(isl_map* m);
+string get_in_dim_name(isl_map* m, int i);
 
 unsigned get_dim(isl_set* const s);
 
@@ -418,9 +419,12 @@ isl_map* retrive_map_domain_with_dim(isl_map*, isl_set*);
 isl_map* get_domain_ii_transform(isl_ctx* ctx, isl_set* const s, int ii);
 isl_map* get_shift_map(isl_map* s);
 isl_map* delay_schedule_inner_most(isl_map* s, int delay);
+isl_map* set_schedule_delay(isl_map* m, int delay);
 isl_map* delay_schedule_domain_dim(isl_map* s, int dom_dim, int delay);
 
 isl_map* remove_irrelevant_in_dim(isl_map* m);
+isl_map* set_in_dim_to_val(isl_map* m, int in_dim, int val);
+isl_map* remove_in_dims(isl_map* m, vector<int> remove_dims);
 
 vector<bool> relation_map(isl_map* m);
 int get_involve_dim(isl_map* m, int out_dim);
