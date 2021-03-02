@@ -1398,6 +1398,8 @@ map<string, UBuffer> build_buffers(prog& prg, umap* opt_sched);
 
 map<string, UBuffer> build_buffers(prog& prg);
 
+void tag_coarse_grained_loop_to_ubuf(map<string, UBuffer>& buffers, prog& prg);
+
 void generate_app_code(CodegenOptions& options, map<string, UBuffer>& buffers, prog& prg, umap* schedmap);
 
 prog duplicate_interface(prog& p);
