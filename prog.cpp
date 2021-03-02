@@ -1192,7 +1192,7 @@ void tag_coarse_grained_loop_to_ubuf(map<string, UBuffer> & buffers, prog& prg) 
             op_under_cgpl.begin(), op_under_cgpl.end(),
             buf_ops.begin(), buf_ops.end());
     if (buffer_under_cgpl) {
-      cout << "Buffer: " << buf.name << " should be tagged coarse grained pipeline loop" << endl;
+      cout << "\tBuffer: " << buf.name << " should be tagged coarse grained pipeline loop" << endl;
       buf.coarse_grained_pipeline_loop_level = max_loop_depth(prg) - loop_depth(cgpl_lp);
     }
   }
