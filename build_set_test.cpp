@@ -21730,19 +21730,43 @@ void resource_sharing_test() {
   pointwise("A", "id", "in", 2, prg);
   pointwise("Ac", "inc", "A", 2, prg);
   pointwise("B", "id", "Ac", 2, prg);
-  pointwise("out", "Bc", "B", 2, prg);
+  pointwise("Bc", "inc", "A", 2, prg);
+  pointwise("out", "id", "Bc", 2, prg);
 
   prg.pretty_print();
   prg.sanity_check();
 
 
-  assert(false);
-
-  //prog prg = llf_grayscale_float(2048, 2048);
   prg.name = prg.name + "_s";
   prg.sanity_check();
 
-  auto fusion_groups = one_stage_per_group(prg);
+  map<string, std::set<string> > fusion_groups =
+  {{"lda", {"pw_math_in01"}}};
+
+//for (int pw_math_in01 = 0; pw_math_in01 < 1; pw_math_in01++) {
+    //for (int pw_math_in02 = 0; pw_math_in02 < 1; pw_math_in02++) {
+      //pw_math_in03: A[pw_math_in02, pw_math_in01] = id(in[pw_math_in02, pw_math_in01])
+    //}
+  //}
+  //for (int pw_math_A45 = 0; pw_math_A45 < 1; pw_math_A45++) {
+    //for (int pw_math_A46 = 0; pw_math_A46 < 1; pw_math_A46++) {
+      //pw_math_A47: Ac[pw_math_A46, pw_math_A45] = inc(A[pw_math_A46, pw_math_A45])
+    //}
+  //}
+  //for (int pw_math_Ac89 = 0; pw_math_Ac89 < 1; pw_math_Ac89++) {
+    //for (int pw_math_Ac810 = 0; pw_math_Ac810 < 1; pw_math_Ac810++) {
+      //pw_math_Ac811: B[pw_math_Ac810, pw_math_Ac89] = id(Ac[pw_math_Ac810, pw_math_Ac89])
+    //}
+  //}
+  //for (int pw_math_A1213 = 0; pw_math_A1213 < 1; pw_math_A1213++) {
+    //for (int pw_math_A1214 = 0; pw_math_A1214 < 1; pw_math_A1214++) {
+      //pw_math_A1215: Bc[pw_math_A1214, pw_math_A1213] = inc(A[pw_math_A1214, pw_math_A1213])
+    //}
+  //}
+  //for (int pw_math_Bc1617 = 0; pw_math_Bc1617 < 1; pw_math_Bc1617++) {
+    //for (int pw_math_Bc1618 = 0; pw_math_Bc1618 < 1; pw_math_Bc1618++) {
+
+  assert(false);
   app_dag dag = partition_application(fusion_groups, prg);
 
   CodegenOptions options;
