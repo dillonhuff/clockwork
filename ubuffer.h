@@ -1361,56 +1361,6 @@ class UBuffer {
       return true;
     }
 
-    isl_map* get_coarse_grained_pipeline_schedule(UBuffer& new_ub) {
-      new_ub.name = name;
-      new_ub.ctx = ctx;
-      new_ub.port_widths = port_widths;
-
-      //First pass get the minimum schedule delay
-      int min_offset = INT_MAX;
-      isl_map* cgpl_sched;
-      for (auto it: schedule) {
-        auto sched = to_map(it.second);
-        auto pt_name = it.first;
-        int in_dim = coarse_grained_pipeline_loop_level;
-
-        std::vector<int> inner_levels(num_in_dims(sched) - in_dim - 1);
-        std::iota (std::begin(inner_levels), std::end(inner_levels), in_dim + 1);
-        cgpl_sched = remove_in_dims(sched, inner_levels);
-        min_offset = min( min_offset, int_const_coeff(get_aff(cgpl_sched)));
-      }
-      cout << "\tcgpls chedule: " << str(cgpl_sched) << endl;
-      cgpl_sched = set_schedule_delay(cgpl_sched, min_offset-1);
-      cout << "pt min offset : " << min_offset << endl;
-      cout << "\tcgpls chedule: " << str(cgpl_sched) << endl;
-
-      //Second pass create the new ubuffer
-      for (auto it: schedule) {
-        auto sched = to_map(it.second);
-        auto pt_name = it.first;
-        auto acc_map = to_map(access_map.at(pt_name));
-        int in_dim = coarse_grained_pipeline_loop_level;
-        std::vector<int> cgpl_levels(in_dim);
-        std::iota (std::begin(cgpl_levels), std::end(cgpl_levels), 1); // Fill start with 1, cannot remove root
-        auto new_pt_sched = remove_in_dims(sched, cgpl_levels);
-        new_pt_sched = linear_schedule(new_pt_sched, {1}, -min_offset, false);
-        auto new_acc_map = remove_in_dims(acc_map, cgpl_levels);
-
-        cout << "\tnew pt schedule: " << str(new_pt_sched) << endl;
-        cout << "\tnew acc_pattern: " << str(new_acc_map) << endl;
-
-        string bd_name = get_bundle(pt_name);
-        new_ub.port_bundles[bd_name].push_back(pt_name);
-        if (isIn.at(pt_name))
-            new_ub.add_in_pt(pt_name, ::domain(new_pt_sched), new_acc_map, new_pt_sched);
-        else
-            new_ub.add_out_pt(pt_name, ::domain(new_pt_sched), new_acc_map, new_pt_sched);
-      }
-      cout << "pt min offset : " << min_offset << endl;
-
-      return cgpl_sched;
-    }
-
     isl_union_map* get_outpt_sched() const {
       auto ret = isl_union_map_read_from_str(ctx, "{}");
       for (auto pt: get_out_ports()) {
@@ -2460,6 +2410,8 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
 
     //from bank to ubuffer
     map<string, UBuffer> generate_ubuffer(CodegenOptions& opt);
+    //optimization pass to add an coarse grained controller, save iteration counter
+    isl_map* get_coarse_grained_pipeline_schedule(UBuffer& new_ub);
 
     //for chaining and create subbank
     vector<UBuffer> decouple_ubuffer_from_bank_map(isl_map* bank_map);
