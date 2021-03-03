@@ -9406,7 +9406,6 @@ insert_inter_group_buffers(const std::map<std::string, std::set<std::string> >& 
   }
 
   // Map from buffers to the kernels they read
-  map<string, vector<string> > kernel_broadcasts;
 
   map<string, std::set<string> > produced_bufs;
   map<string, std::set<string> > consumed_bufs;
@@ -9422,6 +9421,7 @@ insert_inter_group_buffers(const std::map<std::string, std::set<std::string> >& 
 
   cout << "=== Creating broadcast data structures..." << endl;
   map<string, vector<int> > kernel_orders;
+  map<string, vector<string> > kernel_broadcasts;
   for (auto gp : fusion_groups) {
     cout << "GP..." << endl;
     auto produced = map_find(gp.first, produced_bufs);
@@ -9457,10 +9457,9 @@ insert_inter_group_buffers(const std::map<std::string, std::set<std::string> >& 
   map<string, std::set<string> > fresh_groups = fusion_groups;
   map<pair<string, string>, string> group_buffer_channels;
   for (auto b : kernel_broadcasts) {
-    //auto consumers = prg.consumer_maps(b.first);
     for (auto group_name : b.second) {
+      isl_set* s = map_find({group_name, b.first}, read_by_gp);
       {
-        isl_set* s = map_find({group_name, b.first}, read_by_gp);
 
         string broadcast = prg.un(b.first + "_to_" + group_name);
         string producer_group = map_find(b.first, producer_groups);
@@ -9472,19 +9471,10 @@ insert_inter_group_buffers(const std::map<std::string, std::set<std::string> >& 
 
         group_buffer_channels[{group_name, b.first}] = broadcast;
       }
-    //}
-  //}
-
-  //cout << "After adding copy buffers..." << endl;
-  //prg.pretty_print();
-
-  //for (auto b : kernel_broadcasts) {
-    ////auto consumers = prg.consumer_maps(b.first);
-    //for (auto group_name : b.second) {
       {
-        isl_set* s = map_find({group_name, b.first}, read_by_gp);
+        //isl_set* s = map_find({group_name, b.first}, read_by_gp);
         string incoming_channel = group_buffer_channels[{group_name, b.first}];
-        s = set_name(s, incoming_channel);
+        isl_set* incoming = set_name(cpy(s), incoming_channel);
 
         string replacement = prg.un(b.first + "_FIFO_buf");
         prg.buffer_port_widths[replacement] = prg.buffer_port_width(incoming_channel);
@@ -9492,7 +9482,7 @@ insert_inter_group_buffers(const std::map<std::string, std::set<std::string> >& 
           prg.find_loop(kernel)->replace_reads_from(b.first, replacement);
         }
 
-        op* copy_loop = copy_before(prg.find_loop(map_find(group_name, group_starts)), s, map_find(b.first, kernel_orders), replacement, prg);
+        op* copy_loop = copy_before(prg.find_loop(map_find(group_name, group_starts)), incoming, map_find(b.first, kernel_orders), replacement, prg);
         fresh_groups[group_name].insert(copy_loop->name);
       }
     }
