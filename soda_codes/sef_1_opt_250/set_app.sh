@@ -1,0 +1,2 @@
+export app=sef_1_opt_250
+export HLS_CLOCK_FREQUENCY=250000000

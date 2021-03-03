@@ -19539,7 +19539,7 @@ void blur_static_dynamic_comparison() {
   move_to_benchmarks_folder(out_name + "_opt");
 
   assert(false);
-  
+
 }
 
 void blur32_static_dynamic_comparison() {
@@ -20283,7 +20283,7 @@ void two_in_blnd_16pix_static_dynamic_comparison() {
 
     auto fusion_groups = one_stage_per_group(prg);
 
-    
+
     auto fresh_groups = insert_inter_group_buffers(fusion_groups, prg);
     unroll_mismatched_inner_loops(prg);
     merge_basic_block_ops(prg);
@@ -20334,7 +20334,7 @@ void two_in_blnd_8pix_static_dynamic_comparison() {
 
     auto fusion_groups = one_stage_per_group(prg);
 
-    
+
     auto fresh_groups = insert_inter_group_buffers(fusion_groups, prg);
     unroll_mismatched_inner_loops(prg);
     merge_basic_block_ops(prg);
@@ -20385,7 +20385,7 @@ void two_in_blnd_4pix_static_dynamic_comparison() {
 
     auto fusion_groups = one_stage_per_group(prg);
 
-    
+
     auto fresh_groups = insert_inter_group_buffers(fusion_groups, prg);
     unroll_mismatched_inner_loops(prg);
     merge_basic_block_ops(prg);
@@ -20437,7 +20437,7 @@ void two_in_blnd_2pix_static_dynamic_comparison() {
     auto fusion_groups = one_stage_per_group(prg);
 
     //app_dag dag = partition_application(fusion_groups, prg);
-    
+
     auto fresh_groups = insert_inter_group_buffers(fusion_groups, prg);
     unroll_mismatched_inner_loops(prg);
     merge_basic_block_ops(prg);
@@ -24198,7 +24198,7 @@ void generate_gv_output(prog& prg) {
   for (auto e : edges) {
     out << tab(1) << e.first << "->" << e.second << ";" << endl;
   }
-  
+
   out << tab(1) << "overlap=false" << endl;
   out << tab(1) << "fontsize=12" << endl;
   out << "}" << endl;
@@ -24254,9 +24254,9 @@ void dhuff_tests() {
   test_app_to_prog_conversion();
   blurx_app_to_prog_test();
   updated_blur_static_dynamic_comparison();
-  
+
   //gv_generation_pyramid();
-  
+
   test_chain_grouping();
 
   //test_jacobi15_dynamic();
