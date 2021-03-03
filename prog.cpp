@@ -1924,6 +1924,11 @@ void generate_compute_op(
 
 }
 
+isl_set* mk_set(isl_ctx* c, const vector<string>& vars, const vector<string>& constraints) {
+  string s = curlies(bracket_list(vars) + " : " + sep_list(constraints, "", "", " and "));
+  return isl_set_read_from_str(c, s.c_str());
+}
+
 std::string resource_sharing_loop_codegen(umap* schedmap) {
   auto time_range = coalesce(range(schedmap));
   auto sets = get_sets(time_range);
@@ -1965,7 +1970,16 @@ std::string resource_sharing_loop_codegen(umap* schedmap) {
   vector<isl_set*> interval_sets;
   for (auto i : intervals) {
     cout << tab(1) << i.first << ", " << i.second << endl;
-    isl_set* is = isl_set_universe(get_space(s));
+    vector<string> constraints;
+    vector<string> vars;
+    for (int di = 0; di < num_dims(s); di++) {
+      string v = "d" + str(di);
+      vars.push_back(v);
+      if (di == d) {
+        constraints.push_back(str(i.first) + " <= " + v + " < " + str(i.second));
+      } 
+    }
+    isl_set* is = mk_set(ctx(s), vars, constraints);
     interval_sets.push_back(is);
   }
   cout << endl;
