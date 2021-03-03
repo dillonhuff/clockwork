@@ -21723,59 +21723,73 @@ void two_input_blending_test() {
 // Generating high performance designs?
 void resource_sharing_test() {
   //prog prg = two_in_blnd(64, 64);
-  prog prg("cpy");
+  prog prg("cpy_resource");
   prg.add_input("in");
   prg.add_output("out");
 
   pointwise("A", "id", "in", 2, prg);
-  pointwise("Ac", "inc", "A", 2, prg);
+  pointwise("Ac", "plus_one", "A", 2, prg);
   pointwise("B", "id", "Ac", 2, prg);
-  pointwise("Bc", "inc", "A", 2, prg);
+  pointwise("Bc", "plus_one", "B", 2, prg);
   pointwise("out", "id", "Bc", 2, prg);
+
+  infer_bounds("out", {8, 8}, prg);
 
   prg.pretty_print();
   prg.sanity_check();
-
 
   prg.name = prg.name + "_s";
   prg.sanity_check();
 
   map<string, std::set<string> > fusion_groups =
-  {{"lda", {"pw_math_in01"}}};
+  {{"lda", {"pw_math_in01"}}, {"comp", {"pw_math_A45", "pw_math_B1213", "pw_math_Bc1617"}}, {"ldb", {"pw_math_Ac89"}}};
 
-//for (int pw_math_in01 = 0; pw_math_in01 < 1; pw_math_in01++) {
-    //for (int pw_math_in02 = 0; pw_math_in02 < 1; pw_math_in02++) {
+//for (int pw_math_in01 = 0; pw_math_in01 < 8; pw_math_in01++) {
+    //for (int pw_math_in02 = 0; pw_math_in02 < 8; pw_math_in02++) {
       //pw_math_in03: A[pw_math_in02, pw_math_in01] = id(in[pw_math_in02, pw_math_in01])
     //}
   //}
-  //for (int pw_math_A45 = 0; pw_math_A45 < 1; pw_math_A45++) {
-    //for (int pw_math_A46 = 0; pw_math_A46 < 1; pw_math_A46++) {
-      //pw_math_A47: Ac[pw_math_A46, pw_math_A45] = inc(A[pw_math_A46, pw_math_A45])
+  //for (int pw_math_A45 = 0; pw_math_A45 < 8; pw_math_A45++) {
+    //for (int pw_math_A46 = 0; pw_math_A46 < 8; pw_math_A46++) {
+      //pw_math_A47: Ac[pw_math_A46, pw_math_A45] = plus_one(A[pw_math_A46, pw_math_A45])
     //}
   //}
-  //for (int pw_math_Ac89 = 0; pw_math_Ac89 < 1; pw_math_Ac89++) {
-    //for (int pw_math_Ac810 = 0; pw_math_Ac810 < 1; pw_math_Ac810++) {
+  //for (int pw_math_Ac89 = 0; pw_math_Ac89 < 8; pw_math_Ac89++) {
+    //for (int pw_math_Ac810 = 0; pw_math_Ac810 < 8; pw_math_Ac810++) {
       //pw_math_Ac811: B[pw_math_Ac810, pw_math_Ac89] = id(Ac[pw_math_Ac810, pw_math_Ac89])
     //}
   //}
-  //for (int pw_math_A1213 = 0; pw_math_A1213 < 1; pw_math_A1213++) {
-    //for (int pw_math_A1214 = 0; pw_math_A1214 < 1; pw_math_A1214++) {
-      //pw_math_A1215: Bc[pw_math_A1214, pw_math_A1213] = inc(A[pw_math_A1214, pw_math_A1213])
+  //for (int pw_math_B1213 = 0; pw_math_B1213 < 8; pw_math_B1213++) {
+    //for (int pw_math_B1214 = 0; pw_math_B1214 < 8; pw_math_B1214++) {
+      //pw_math_B1215: Bc[pw_math_B1214, pw_math_B1213] = plus_one(B[pw_math_B1214, pw_math_B1213])
     //}
   //}
-  //for (int pw_math_Bc1617 = 0; pw_math_Bc1617 < 1; pw_math_Bc1617++) {
-    //for (int pw_math_Bc1618 = 0; pw_math_Bc1618 < 1; pw_math_Bc1618++) {
+  //for (int pw_math_Bc1617 = 0; pw_math_Bc1617 < 8; pw_math_Bc1617++) {
+    //for (int pw_math_Bc1618 = 0; pw_math_Bc1618 < 8; pw_math_Bc1618++) {
+      //pw_math_Bc1619: out[pw_math_Bc1618, pw_math_Bc1617] = id(Bc[pw_math_Bc1618, pw_math_Bc1617])
+    //}
+  //}
 
-  assert(false);
+
+
+
+  auto unopt_postprocessed = unoptimized_result(prg);
+
   app_dag dag = partition_application(fusion_groups, prg);
+
+  //assert(false);
 
   CodegenOptions options;
   options = CodegenOptions();
   options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
   options.scheduling_algorithm = SCHEDULE_ALGORITHM_CW;
   options.slack_matching = {SLACK_MATCHING_TYPE_FIXED, 250};
-  generate_resource_sharing_code(options, dag);
+  generate_app_code(options, dag);
 
+  generate_regression_testbench(dag.prg);
+  vector<string> multi_kernel_res = run_regression_tb(dag.prg);
+
+  compare("resource_shared" + prg.name + "_vs_unopt", multi_kernel_res, unopt_postprocessed);
   assert(false);
 }
 
