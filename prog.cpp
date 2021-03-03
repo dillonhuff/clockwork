@@ -9337,7 +9337,7 @@ void make_groups_contiguous(const std::map<std::string, std::set<std::string> >&
   while (unprocessed_kernels.size() > 0) {
     string next_kernel = "";
     for (auto k : unprocessed_kernels) {
-      if (container(k, fusion_groups) == k) {
+      if (container(k, fusion_groups) == active_group) {
 
         bool all_ancestors_processed = true;
         for (auto a : parents(k, prg)) {
