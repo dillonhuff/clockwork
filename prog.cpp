@@ -9411,25 +9411,6 @@ insert_inter_group_buffers(const std::map<std::string, std::set<std::string> >& 
   make_groups_contiguous(fusion_groups, prg);
   cout << "Done contiguous" << endl;
 
-  map<string, string> group_starts;
-  map<string, string> group_ends;
-  for (auto gp : fusion_groups) {
-    for (auto kernel : get_kernels_in_order(prg)) {
-      if (elem(kernel, gp.second)) {
-        group_starts[gp.first] = kernel;
-        break;
-      }
-    }
-    vector<string> rev_kernels = get_kernels_in_order(prg);
-    reverse(rev_kernels);
-    for (auto kernel : rev_kernels) {
-      if (elem(kernel, gp.second)) {
-        group_ends[gp.first] = kernel;
-        break;
-      }
-    }
-  }
-
   // Map from buffers to the kernels they read
   map<string, std::set<string> > produced_bufs;
   map<string, std::set<string> > consumed_bufs;
@@ -9490,7 +9471,6 @@ insert_inter_group_buffers(const std::map<std::string, std::set<std::string> >& 
 
       prg.buffer_port_widths[broadcast] = prg.buffer_port_width(name(s));
 
-      //op* copy_insert_point = prg.find_loop(map_find(producer_group, group_ends));
       op* copy_insert_point = last_writer_in_group(b.first, map_find(producer_group, fusion_groups), prg);
       op* copy_loop = copy_after(copy_insert_point, s, kernel_order, broadcast, prg);
       fresh_groups[producer_group].insert(copy_loop->name);
@@ -9502,7 +9482,6 @@ insert_inter_group_buffers(const std::map<std::string, std::set<std::string> >& 
       }
 
       isl_set* incoming = set_name(cpy(s), incoming_channel);
-      //op* copy_r_insert_point = prg.find_loop(map_find(group_name, group_starts));
       op* copy_r_insert_point = first_reader_in_group(replacement, map_find(group_name, fusion_groups), prg);
       op* copy_loop_r = copy_before(copy_r_insert_point, incoming, kernel_order, replacement, prg);
       fresh_groups[group_name].insert(copy_loop_r->name);
