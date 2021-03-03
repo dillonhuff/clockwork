@@ -9377,34 +9377,6 @@ void make_groups_contiguous(const std::map<std::string, std::set<std::string> >&
 
   assert(sorted_kernels.size() == prg.root->children.size());
   prg.root->children = sorted_kernels;
-
-
-  //for (auto gp : fusion_groups) {
-    //cout << "Getting start pos" << endl;
-    //int start_pos = get_start_pos(gp.second, prg);
-
-    //vector<op*> new_children;
-    //for (int i = 0; i < start_pos; i++) {
-      //new_children.push_back(prg.root->children.at(i));
-    //}
-
-    //vector<op*> to_add;
-    //for (int i = start_pos; i < (int) prg.root->children.size(); i++) {
-      //op* current = prg.root->children.at(i);
-      //if (elem(current->name, gp.second)) {
-        //new_children.push_back(current);
-      //} else {
-        //to_add.push_back(current);
-      //}
-    //}
-
-    //for (auto op : to_add) {
-      //new_children.push_back(op);
-    //}
-
-    //assert(new_children.size() == prg.root->children.size());
-    //prg.root->children = new_children;
-  //}
 }
 
 std::map<std::string, std::set<std::string> >
@@ -9413,10 +9385,6 @@ insert_inter_group_buffers(const std::map<std::string, std::set<std::string> >& 
   cout << "Making contiguous" << endl;
   make_groups_contiguous(fusion_groups, prg);
   cout << "Done contiguous" << endl;
-
-  //if (dag.sorted_groups().has_value()) {
-    //assert(groups_are_contiguous(fusion_groups, prg));
-  //}
 
   map<string, string> group_starts;
   map<string, string> group_ends;
@@ -9439,7 +9407,6 @@ insert_inter_group_buffers(const std::map<std::string, std::set<std::string> >& 
 
   // Map from buffers to the kernels they read
   map<string, vector<string> > kernel_broadcasts;
-  map<string, vector<int> > kernel_orders;
 
   map<string, std::set<string> > produced_bufs;
   map<string, std::set<string> > consumed_bufs;
@@ -9454,6 +9421,7 @@ insert_inter_group_buffers(const std::map<std::string, std::set<std::string> >& 
   }
 
   cout << "=== Creating broadcast data structures..." << endl;
+  map<string, vector<int> > kernel_orders;
   for (auto gp : fusion_groups) {
     cout << "GP..." << endl;
     auto produced = map_find(gp.first, produced_bufs);
@@ -9476,16 +9444,8 @@ insert_inter_group_buffers(const std::map<std::string, std::set<std::string> >& 
 
   map<pair<string, string>, isl_set*> read_by_gp;
   for (auto b : kernel_broadcasts) {
-    //auto consumers = prg.consumer_maps(b.first);
     for (auto group_name : b.second) {
       isl_set* s = read_by_group(b.first, map_find(group_name, fusion_groups), prg);
-      //cout << "Read by gp: " << str(s) << endl;
-      //for (auto m : consumers) {
-        //if (m.second != nullptr) {
-          //cout << tab(1) << "cm: " << str(m.second) << endl;
-          //s = unn(s, range(m.second));
-        //}
-      //}
       read_by_gp[{group_name, b.first}] = s;
     }
   }
@@ -9497,54 +9457,47 @@ insert_inter_group_buffers(const std::map<std::string, std::set<std::string> >& 
   map<string, std::set<string> > fresh_groups = fusion_groups;
   map<pair<string, string>, string> group_buffer_channels;
   for (auto b : kernel_broadcasts) {
-    auto consumers = prg.consumer_maps(b.first);
+    //auto consumers = prg.consumer_maps(b.first);
     for (auto group_name : b.second) {
-      isl_set* s = map_find({group_name, b.first}, read_by_gp);
+      {
+        isl_set* s = map_find({group_name, b.first}, read_by_gp);
 
-      string broadcast = prg.un(b.first + "_to_" + group_name);
-      string producer_group = map_find(b.first, producer_groups);
+        string broadcast = prg.un(b.first + "_to_" + group_name);
+        string producer_group = map_find(b.first, producer_groups);
 
-      prg.buffer_port_widths[broadcast] = prg.buffer_port_width(name(s));
+        prg.buffer_port_widths[broadcast] = prg.buffer_port_width(name(s));
 
-      op* copy_loop = copy_after(prg.find_loop(map_find(producer_group, group_ends)), s, map_find(b.first, kernel_orders), broadcast, prg);
-      fresh_groups[producer_group].insert(copy_loop->name);
+        op* copy_loop = copy_after(prg.find_loop(map_find(producer_group, group_ends)), s, map_find(b.first, kernel_orders), broadcast, prg);
+        fresh_groups[producer_group].insert(copy_loop->name);
 
-      group_buffer_channels[{group_name, b.first}] = broadcast;
-    }
-  }
-
-  cout << "After adding copy buffers..." << endl;
-  prg.pretty_print();
-
-  for (auto b : kernel_broadcasts) {
-    auto consumers = prg.consumer_maps(b.first);
-    for (auto group_name : b.second) {
-      isl_set* s = map_find({group_name, b.first}, read_by_gp);
-      string incoming_channel = group_buffer_channels[{group_name, b.first}];
-      s = set_name(s, incoming_channel);
-
-      string replacement = prg.un(b.first + "_FIFO_buf");
-      prg.buffer_port_widths[replacement] = prg.buffer_port_width(incoming_channel);
-      for (auto kernel : map_find(group_name, fusion_groups)) {
-        prg.find_loop(kernel)->replace_reads_from(b.first, replacement);
+        group_buffer_channels[{group_name, b.first}] = broadcast;
       }
+    //}
+  //}
 
-      op* copy_loop = copy_before(prg.find_loop(map_find(group_name, group_starts)), s, map_find(b.first, kernel_orders), replacement, prg);
-      fresh_groups[group_name].insert(copy_loop->name);
+  //cout << "After adding copy buffers..." << endl;
+  //prg.pretty_print();
+
+  //for (auto b : kernel_broadcasts) {
+    ////auto consumers = prg.consumer_maps(b.first);
+    //for (auto group_name : b.second) {
+      {
+        isl_set* s = map_find({group_name, b.first}, read_by_gp);
+        string incoming_channel = group_buffer_channels[{group_name, b.first}];
+        s = set_name(s, incoming_channel);
+
+        string replacement = prg.un(b.first + "_FIFO_buf");
+        prg.buffer_port_widths[replacement] = prg.buffer_port_width(incoming_channel);
+        for (auto kernel : map_find(group_name, fusion_groups)) {
+          prg.find_loop(kernel)->replace_reads_from(b.first, replacement);
+        }
+
+        op* copy_loop = copy_before(prg.find_loop(map_find(group_name, group_starts)), s, map_find(b.first, kernel_orders), replacement, prg);
+        fresh_groups[group_name].insert(copy_loop->name);
+      }
     }
   }
 
-
-  //cout << "After adding distributors..." << endl;
-  //prg.pretty_print();
-  //cout << "Groups..." << endl;
-  //for (auto gp : fresh_groups) {
-    //cout << tab(1) << gp.first << endl;
-    //for (auto k : gp.second) {
-      //cout << tab(2) << k << endl;
-    //}
-    //cout << endl;
-  //}
   return fresh_groups;
 }
 
