@@ -2024,3 +2024,6 @@ bool inner_loops_unrollable(const std::string& buf, const int unroll_factor, pro
 void generate_resource_sharing_code(
     CodegenOptions& options,
     app_dag& dag);
+
+
+std::string resource_sharing_loop_codegen(umap* schedmap);

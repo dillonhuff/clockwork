@@ -21722,48 +21722,57 @@ void two_input_blending_test() {
 
 // Generating high performance designs?
 void resource_sharing_test() {
-  //prog prg = two_in_blnd(64, 64);
-  prog prg("cpy_resource");
-  prg.add_input("in");
-  prg.add_output("out");
+  prog prg = two_in_blnd(64, 64);
 
-  pointwise("A", "id", "in", 2, prg);
-  pointwise("Ac", "plus_one", "A", 2, prg);
-  pointwise("B", "id", "Ac", 2, prg);
-  pointwise("Bc", "plus_one", "B", 2, prg);
-  pointwise("out", "id", "Bc", 2, prg);
+  auto valid_deps = prg.validity_deps();
+  auto global_sched =
+    its(clockwork_schedule_umap_reversed(prg.whole_iteration_domain(), valid_deps, valid_deps),
+        prg.whole_iteration_domain());
+  cout << "Sched: " << str(global_sched) << endl;
+  resource_sharing_loop_codegen(global_sched);
+  assert(false);
 
-  infer_bounds("out", {8, 8}, prg);
+  //prog prg("cpy_resource");
+  //prg.add_input("in");
+  //prg.add_output("out");
 
-  prg.pretty_print();
-  prg.sanity_check();
+  //pointwise("A", "id", "in", 2, prg);
+  //pointwise("Ac", "plus_one", "A", 2, prg);
+  //pointwise("B", "id", "Ac", 2, prg);
+  //pointwise("Bc", "plus_one", "B", 2, prg);
+  //pointwise("out", "id", "Bc", 2, prg);
 
-  prg.name = prg.name + "_s";
-  prg.sanity_check();
+  //infer_bounds("out", {8, 8}, prg);
 
-  map<string, std::set<string> > fusion_groups =
-  {{"lda", {"pw_math_in01"}}, {"comp", {"pw_math_A45", "pw_math_B1213", "pw_math_Bc1617"}}, {"ldb", {"pw_math_Ac89"}}};
+  //prg.pretty_print();
+  //prg.sanity_check();
 
-  auto unopt_postprocessed = unoptimized_result(prg);
+  //prg.name = prg.name + "_s";
+  //prg.sanity_check();
 
-  app_dag dag = partition_application(fusion_groups, prg);
+  //map<string, std::set<string> > fusion_groups =
+  //{{"lda", {"pw_math_in01"}}, {"comp", {"pw_math_A45", "pw_math_B1213", "pw_math_Bc1617"}}, {"ldb", {"pw_math_Ac89"}}};
 
+  //auto unopt_postprocessed = unoptimized_result(prg);
+
+  //app_dag dag = partition_application(fusion_groups, prg);
+
+  ////assert(false);
+
+  //CodegenOptions options;
+  //options = CodegenOptions();
+  //options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  //options.scheduling_algorithm = SCHEDULE_ALGORITHM_CW;
+  //options.slack_matching = {SLACK_MATCHING_TYPE_FIXED, 250};
+  //generate_app_code(options, dag);
+  //move_to_benchmarks_folder(dag.prg.name);
   //assert(false);
 
-  CodegenOptions options;
-  options = CodegenOptions();
-  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
-  options.scheduling_algorithm = SCHEDULE_ALGORITHM_CW;
-  options.slack_matching = {SLACK_MATCHING_TYPE_FIXED, 250};
-  generate_app_code(options, dag);
-  move_to_benchmarks_folder(dag.prg.name);
-  assert(false);
+  //generate_regression_testbench(dag.prg);
+  //vector<string> multi_kernel_res = run_regression_tb(dag.prg);
 
-  generate_regression_testbench(dag.prg);
-  vector<string> multi_kernel_res = run_regression_tb(dag.prg);
-
-  compare("resource_shared" + prg.name + "_vs_unopt", multi_kernel_res, unopt_postprocessed);
-  assert(false);
+  //compare("resource_shared" + prg.name + "_vs_unopt", multi_kernel_res, unopt_postprocessed);
+  //assert(false);
 }
 
 void llf_intelligent_channels() {
@@ -22259,7 +22268,6 @@ void sef_intelligent_channels2() {
 
 void application_tests() {
   resource_sharing_test();
-
 
   path_sensitive_channel_sizing();
   llf_250_channels(8);
@@ -23336,6 +23344,10 @@ prog stencil_chain(const std::string& name) {
 }
 
 void dhuff_playground() {
+  {
+    resnet().pretty_print();
+    assert(false);
+  }
   {
     prog prg = mod_example();
     prg.pretty_print();

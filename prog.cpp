@@ -1925,40 +1925,59 @@ void generate_compute_op(
 }
 
 std::string resource_sharing_loop_codegen(umap* schedmap) {
+  auto time_range = coalesce(range(schedmap));
+  auto sets = get_sets(time_range);
+
+  assert(sets.size() == 1);
+  isl_set* s = pick(get_sets(time_range));
+  assert(s != nullptr);
+
+  vector<isl_map*> maps = get_maps(schedmap);
+  vector<pair<string, pair<int, int> > > bounds;
+  vector<int> split_points;
+  int d = 1;
+  for (auto m : maps) {
+    isl_set* rng = project_all_but(range(m), d);
+    bounds.push_back({domain_name(m), {to_int(lexminval(rng)), to_int(lexmaxval(rng))}});
+    split_points.push_back(bounds.back().second.first);
+    split_points.push_back(bounds.back().second.second);
+  }
+
+  cout << "Bounds..." << endl;
+  for (auto b : bounds) {
+    cout << b.first << " -> " << b.second.first << ", " << b.second.second << endl;
+  }
+
+  vector<int> breakpts = sort_unique(split_points);
+  cout << "Points to split..." << endl;
+  for (auto b : breakpts) {
+    cout << tab(1) << b << endl;
+  }
+
+  assert(breakpts.size() > 0);
+
+  vector<pair<int, int> > intervals;
+  for (int i = 0; i < (int) breakpts.size() - 1; i++) {
+    intervals.push_back({breakpts[i], breakpts[i + 1]});
+  }
+
+  cout << "Intervals..." << endl;
+  vector<isl_set*> interval_sets;
+  for (auto i : intervals) {
+    cout << tab(1) << i.first << ", " << i.second << endl;
+    isl_set* is = isl_set_universe(get_space(s));
+    interval_sets.push_back(is);
+  }
+  cout << endl;
+  cout << "Restrictions..." << endl;
+  for (auto i : interval_sets) {
+    cout << tab(1) << str(i) << endl;
+  }
+  assert(false);
+
+  cout << "Schedule maps..." << endl;
+
   return "";
-  //vector<isl_map*> maps = get_maps(schedmap);
-  //vector<pair<string, pair<int, int> > > bounds;
-  //vector<int> split_points;
-  //int d = 1;
-  //for (auto m : maps) {
-    //isl_set* rng = project_all_but(range(m), d);
-    //bounds.push_back({domain_name(m), {to_int(lexminval(rng)), to_int(lexmaxval(rng))}});
-    //split_points.push_back(bounds.back().second.first);
-    //split_points.push_back(bounds.back().second.second);
-  //}
-
-  //cout << "Bounds..." << endl;
-  //for (auto b : bounds) {
-    //cout << b.first << " -> " << b.second.first << ", " << b.second.second << endl;
-  //}
-
-  //vector<int> breakpts = sort_unique(split_points);
-  //cout << "Points to split..." << endl;
-  //for (auto b : breakpts) {
-    //cout << tab(1) << b << endl;
-  //}
-  //assert(false);
-
-  //cout << "Schedule maps..." << endl;
-
-  ////auto time_range = coalesce(range(schedmap));
-  ////conv_out << "// time range: " << str(time_range) << endl;
-  ////auto sets = get_sets(time_range);
-
-  ////conv_out << "// # sets: " << sets.size() << endl;
-  ////assert(sets.size() == 1);
-  ////isl_set* s = pick(get_sets(time_range));
-  //return "";
 }
 
 std::string perfect_loop_codegen(umap* schedmap) {
