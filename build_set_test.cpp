@@ -21756,6 +21756,8 @@ void resource_sharing_test() {
   options.scheduling_algorithm = SCHEDULE_ALGORITHM_CW;
   options.slack_matching = {SLACK_MATCHING_TYPE_FIXED, 250};
   generate_app_code(options, dag);
+  move_to_benchmarks_folder(dag.prg.name);
+  assert(false);
 
   generate_regression_testbench(dag.prg);
   vector<string> multi_kernel_res = run_regression_tb(dag.prg);
