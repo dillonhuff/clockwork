@@ -1903,7 +1903,7 @@ struct app_dag {
     return nodes;
   }
 
-  vector<string> sorted_fusion_groups();
+  maybe<vector<string> > sorted_fusion_groups();
 
   std::set<string> children(const std::string& location);
   std::set<string> ancestors(const std::string& location);

@@ -21744,35 +21744,6 @@ void resource_sharing_test() {
   map<string, std::set<string> > fusion_groups =
   {{"lda", {"pw_math_in01"}}, {"comp", {"pw_math_A45", "pw_math_B1213", "pw_math_Bc1617"}}, {"ldb", {"pw_math_Ac89"}}};
 
-//for (int pw_math_in01 = 0; pw_math_in01 < 8; pw_math_in01++) {
-    //for (int pw_math_in02 = 0; pw_math_in02 < 8; pw_math_in02++) {
-      //pw_math_in03: A[pw_math_in02, pw_math_in01] = id(in[pw_math_in02, pw_math_in01])
-    //}
-  //}
-  //for (int pw_math_A45 = 0; pw_math_A45 < 8; pw_math_A45++) {
-    //for (int pw_math_A46 = 0; pw_math_A46 < 8; pw_math_A46++) {
-      //pw_math_A47: Ac[pw_math_A46, pw_math_A45] = plus_one(A[pw_math_A46, pw_math_A45])
-    //}
-  //}
-  //for (int pw_math_Ac89 = 0; pw_math_Ac89 < 8; pw_math_Ac89++) {
-    //for (int pw_math_Ac810 = 0; pw_math_Ac810 < 8; pw_math_Ac810++) {
-      //pw_math_Ac811: B[pw_math_Ac810, pw_math_Ac89] = id(Ac[pw_math_Ac810, pw_math_Ac89])
-    //}
-  //}
-  //for (int pw_math_B1213 = 0; pw_math_B1213 < 8; pw_math_B1213++) {
-    //for (int pw_math_B1214 = 0; pw_math_B1214 < 8; pw_math_B1214++) {
-      //pw_math_B1215: Bc[pw_math_B1214, pw_math_B1213] = plus_one(B[pw_math_B1214, pw_math_B1213])
-    //}
-  //}
-  //for (int pw_math_Bc1617 = 0; pw_math_Bc1617 < 8; pw_math_Bc1617++) {
-    //for (int pw_math_Bc1618 = 0; pw_math_Bc1618 < 8; pw_math_Bc1618++) {
-      //pw_math_Bc1619: out[pw_math_Bc1618, pw_math_Bc1617] = id(Bc[pw_math_Bc1618, pw_math_Bc1617])
-    //}
-  //}
-
-
-
-
   auto unopt_postprocessed = unoptimized_result(prg);
 
   app_dag dag = partition_application(fusion_groups, prg);

@@ -8790,7 +8790,7 @@ void set_channel_depths_by_assumed_stage_depth(const int kernel_depth, app_dag& 
     obj.push_back({channel, isl_val_one(builder.ctx)});
   }
 
-  vector<string> sorted_groups = dag.sorted_fusion_groups();
+  vector<string> sorted_groups = dag.sorted_fusion_groups().get_value();
   cout << "# of nodes to process: " << sorted_groups.size() << endl;
   int processed = 0;
   for (auto next_group : sorted_groups) {
@@ -9108,7 +9108,16 @@ void generate_app_code(
 
   conv_out << endl << endl;
 
-  for (auto& gpn : dag.sorted_fusion_groups()) {
+  auto sorted_gps = dag.sorted_fusion_groups();
+  vector<string> gps;
+  for (auto g : dag.fusion_groups) {
+    gps.push_back(g.first);
+  }
+  if (sorted_gps.has_value()) {
+    gps = sorted_gps.get_value();
+  }
+  //for (auto& gpn : dag.sorted_fusion_groups()) {
+  for (auto& gpn : gps) {
     auto& gp = dag.fusion_group_progs.at(gpn);
     vector<string> args;
     for (auto in : gp.ins) {
@@ -9509,7 +9518,7 @@ void prog::reset_context() {
   ctx = isl_ctx_alloc();
 }
 
-vector<string> app_dag::sorted_fusion_groups() {
+maybe<vector<string> > app_dag::sorted_fusion_groups() {
   assert(fusion_groups.size() == fusion_group_progs.size());
 
   vector<string> sorted;
@@ -9548,9 +9557,9 @@ vector<string> app_dag::sorted_fusion_groups() {
         pg.second.pretty_print();
         cout << endl;
       }
+      return {};
     }
-    assert(found_sorted);
-
+    //assert(found_sorted);
   }
   return sorted;
 }
