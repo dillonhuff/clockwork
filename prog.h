@@ -2003,6 +2003,7 @@ std::set<string> buffers_read(const std::string& to_merge, map<string, std::set<
 std::set<string> buffers_written(const std::string& to_merge, map<string, std::set<string> >& fusion_groups, prog& prg);
 
 std::set<string> children(const std::string& kernel, prog& prg);
+std::set<string> parents(const std::string& kernel, prog& prg);
 
 
 bool groups_are_contiguous(const map<string, std::set<string> >& fusion_groups, prog& prg);

@@ -9314,36 +9314,97 @@ vector<string> sort_group(const std::set<string>& group, prog& prg) {
   return sorted;
 }
 
-void make_groups_contiguous(const std::map<std::string, std::set<std::string> >& fusion_groups, prog& prg) {
-  for (auto gp : fusion_groups) {
-    cout << "Getting start pos" << endl;
-    int start_pos = get_start_pos(gp.second, prg);
-    //cout << "Sorting kernels" << endl;
-    //vector<string> kernels = sort_group(gp.second, prg);
-    //cout << "Adding sorted kernels" << endl;
-
-    vector<op*> new_children;
-    for (int i = 0; i < start_pos; i++) {
-      new_children.push_back(prg.root->children.at(i));
+string container(const std::string& val, const std::map<std::string, std::set<std::string> >& fusion_groups) {
+  for (auto g : fusion_groups) {
+    if (elem(val, g.second)) {
+      return g.first;
     }
+  }
+  assert(false);
+}
 
-    vector<op*> to_add;
-    for (int i = start_pos; i < (int) prg.root->children.size(); i++) {
-      op* current = prg.root->children.at(i);
-      if (elem(current->name, gp.second)) {
-        new_children.push_back(current);
-      } else {
-        to_add.push_back(current);
+void make_groups_contiguous(const std::map<std::string, std::set<std::string> >& fusion_groups, prog& prg) {
+
+  if (prg.root->children.size() == 0) {
+    return;
+  }
+
+  string active_group =
+    container(prg.root->children[0]->name, fusion_groups);
+  auto unprocessed_kernels = get_kernels(prg);
+
+  vector<op*> sorted_kernels;
+  while (unprocessed_kernels.size() > 0) {
+    string next_kernel = "";
+    for (auto k : unprocessed_kernels) {
+      if (container(k, fusion_groups) == k) {
+
+        bool all_ancestors_processed = true;
+        for (auto a : parents(k, prg)) {
+          if (elem(a, unprocessed_kernels)) {
+            all_ancestors_processed = false;
+            break;
+          }
+        }
+        if (all_ancestors_processed) {
+          next_kernel = k;
+          break;
+        }
       }
     }
 
-    for (auto op : to_add) {
-      new_children.push_back(op);
+    if (next_kernel == "") {
+      for (auto k : unprocessed_kernels) {
+        bool all_ancestors_processed = true;
+        for (auto a : parents(k, prg)) {
+          if (elem(a, unprocessed_kernels)) {
+            all_ancestors_processed = false;
+            break;
+          }
+        }
+        if (all_ancestors_processed) {
+          next_kernel = k;
+          break;
+        }
+      }
     }
+    assert(next_kernel != "");
 
-    assert(new_children.size() == prg.root->children.size());
-    prg.root->children = new_children;
+    sorted_kernels.push_back(prg.find_loop(next_kernel));
+    active_group = container(next_kernel, fusion_groups);
+    unprocessed_kernels.erase(next_kernel);
   }
+
+  assert(sorted_kernels.size() == prg.root->children.size());
+  prg.root->children = sorted_kernels;
+
+
+  //for (auto gp : fusion_groups) {
+    //cout << "Getting start pos" << endl;
+    //int start_pos = get_start_pos(gp.second, prg);
+
+    //vector<op*> new_children;
+    //for (int i = 0; i < start_pos; i++) {
+      //new_children.push_back(prg.root->children.at(i));
+    //}
+
+    //vector<op*> to_add;
+    //for (int i = start_pos; i < (int) prg.root->children.size(); i++) {
+      //op* current = prg.root->children.at(i);
+      //if (elem(current->name, gp.second)) {
+        //new_children.push_back(current);
+      //} else {
+        //to_add.push_back(current);
+      //}
+    //}
+
+    //for (auto op : to_add) {
+      //new_children.push_back(op);
+    //}
+
+    //assert(new_children.size() == prg.root->children.size());
+    //prg.root->children = new_children;
+  //}
 }
 
 std::map<std::string, std::set<std::string> >
@@ -9613,6 +9674,20 @@ std::set<string> buffers_read(const std::string& to_merge, map<string, std::set<
     }
   }
   return read;
+}
+
+std::set<string> parents(const std::string& kernel, prog& prg) {
+  std::set<string> parent_set;
+
+  auto read = buffers_read(prg.find_loop(kernel));
+  for (auto k : get_kernels(prg)) {
+    auto written = buffers_written(prg.find_loop(k));
+    if (intersection(read, written).size() > 0) {
+      parent_set.insert(k);
+    }
+  }
+
+  return parent_set;
 }
 
 std::set<string> children(const std::string& kernel, prog& prg) {

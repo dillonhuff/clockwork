@@ -24245,6 +24245,11 @@ void gv_generation_pyramid() {
 }
 
 void dhuff_tests() {
+  test_multi_kernel_unsharp();
+  test_multi_kernel_design();
+  test_multi_kernel_pyramid_collapsing();
+  test_multi_kernel_gp();
+
   infer_bounds_tests();
   test_app_to_prog_conversion();
   blurx_app_to_prog_test();
@@ -24255,19 +24260,12 @@ void dhuff_tests() {
   test_chain_grouping();
 
   //test_jacobi15_dynamic();
-
-  test_multi_kernel_pyramid_collapsing();
-  test_multi_kernel_gp();
-
   //test_multi_kernel_llf();
-  //assert(false);
 
   test_multi_kernel_mismatched_loop_depths();
   test_artificial_deadlock();
   upsample2d_test();
   up_stencil_down_test();
-  test_multi_kernel_unsharp();
-  test_multi_kernel_design();
   stencil_chain_multi_kernel_test();
   test_if_construction();
   test_time_sharing_gaussian_pyramid();
