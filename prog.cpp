@@ -9379,6 +9379,31 @@ void make_groups_contiguous(const std::map<std::string, std::set<std::string> >&
   prg.root->children = sorted_kernels;
 }
 
+op* last_writer_in_group(const std::string& buf, const std::set<string>& kernels, prog& prg) {
+  vector<op*> rc = prg.root->children;
+  reverse(rc);
+  for (auto c : rc) {
+    if (elem(c->name, kernels)) {
+      if (elem(buf, buffers_written(c))) {
+        return c;
+      }
+    }
+  }
+  cout << "No writer for " << buf << endl;
+  assert(false);
+}
+
+op* first_reader_in_group(const std::string& buf, const std::set<string>& kernels, prog& prg) {
+  for (auto c : prg.root->children) {
+    if (elem(c->name, kernels)) {
+      if (elem(buf, buffers_read(c))) {
+        return c;
+      }
+    }
+  }
+  assert(false);
+}
+
 std::map<std::string, std::set<std::string> >
 insert_inter_group_buffers(const std::map<std::string, std::set<std::string> >& fusion_groups, prog& prg) {
 
@@ -9463,11 +9488,10 @@ insert_inter_group_buffers(const std::map<std::string, std::set<std::string> >& 
       string incoming_channel = broadcast; 
       string producer_group = map_find(b.first, producer_groups);
 
-
       prg.buffer_port_widths[broadcast] = prg.buffer_port_width(name(s));
 
-      op* copy_insert_point = prg.find_loop(map_find(producer_group, group_ends));
-      //op* copy_loop = copy_after(prg.find_loop(map_find(producer_group, group_ends)), s, kernel_order, broadcast, prg);
+      //op* copy_insert_point = prg.find_loop(map_find(producer_group, group_ends));
+      op* copy_insert_point = last_writer_in_group(b.first, map_find(producer_group, fusion_groups), prg);
       op* copy_loop = copy_after(copy_insert_point, s, kernel_order, broadcast, prg);
       fresh_groups[producer_group].insert(copy_loop->name);
 
@@ -9478,8 +9502,8 @@ insert_inter_group_buffers(const std::map<std::string, std::set<std::string> >& 
       }
 
       isl_set* incoming = set_name(cpy(s), incoming_channel);
-      op* copy_r_insert_point = prg.find_loop(map_find(group_name, group_starts));
-      //op* copy_loop_r = copy_before(prg.find_loop(map_find(group_name, group_starts)), incoming, kernel_order, replacement, prg);
+      //op* copy_r_insert_point = prg.find_loop(map_find(group_name, group_starts));
+      op* copy_r_insert_point = first_reader_in_group(replacement, map_find(group_name, fusion_groups), prg);
       op* copy_loop_r = copy_before(copy_r_insert_point, incoming, kernel_order, replacement, prg);
       fresh_groups[group_name].insert(copy_loop_r->name);
     }
