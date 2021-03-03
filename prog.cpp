@@ -9414,7 +9414,9 @@ insert_inter_group_buffers(const std::map<std::string, std::set<std::string> >& 
   make_groups_contiguous(fusion_groups, prg);
   cout << "Done contiguous" << endl;
 
-  assert(groups_are_contiguous(fusion_groups, prg));
+  //if (dag.sorted_groups().has_value()) {
+    //assert(groups_are_contiguous(fusion_groups, prg));
+  //}
 
   map<string, string> group_starts;
   map<string, string> group_ends;
