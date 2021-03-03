@@ -9,7 +9,6 @@ using namespace std;
 // compute file: local_laplacian_filters_compute.h_merged_compute_units.h_merged_compute_units.h
 #include "local_laplacian_filters_compute.h_merged_compute_units.h_merged_compute_units.h"
 
-<<<<<<< HEAD
 struct gp_in_on_chip_1_buf4_gp_in_on_chip_16_merged157_97_to_gp_in_on_chip_1_buf4_load_to_gp_in_on_chip_1_buf4_to_gp_5164167_74_cache {
 	// RAM Box: {[3, 34], [3, 34]}
 	// Capacity: 37
@@ -32,8 +31,6 @@ struct gp_in_on_chip_1_buf4_gp_in_on_chip_16_merged157_97_to_gp_in_on_chip_1_buf
 
 };
 
-=======
->>>>>>> 89b3f51bdb8eb51a288ec002dbba28ce9175d84f
 struct gp_in_on_chip_1_buf4_gp_in_on_chip_16_merged157_97_to_gp_in_on_chip_1_buf4_us47_7_cache {
 	// RAM Box: {[3, 34], [3, 34]}
 	// Capacity: 32
@@ -56,11 +53,7 @@ struct gp_in_on_chip_1_buf4_gp_in_on_chip_16_merged157_97_to_gp_in_on_chip_1_buf
 
 };
 
-<<<<<<< HEAD
 struct gp_in_on_chip_1_buf4_gp_in_on_chip_16_merged157_97_merged_banks_9_cache {
-=======
-struct gp_in_on_chip_1_buf4_gp_in_on_chip_16_merged157_97_merged_banks_10_cache {
->>>>>>> 89b3f51bdb8eb51a288ec002dbba28ce9175d84f
 	// RAM Box: {[0, 34], [0, 34]}
 	// Capacity: 73
 	// # of read delays: 9
@@ -177,7 +170,6 @@ struct gp_in_on_chip_1_buf4_gp_in_on_chip_16_merged157_97_merged_banks_10_cache 
 
 struct gp_in_on_chip_1_buf4_cache {
   // Reader addrs...
-<<<<<<< HEAD
     // { gp_in_on_chip_214_merged160[root = 0, gp_in_on_chip_213, gp_in_on_chip_214] -> gp_in_on_chip_1_buf4[2gp_in_on_chip_214, 2 + 2gp_in_on_chip_213] : 0 <= gp_in_on_chip_213 <= 16 and 0 <= gp_in_on_chip_214 <= 16 }
     // { gp_in_on_chip_214_merged160[root = 0, gp_in_on_chip_213, gp_in_on_chip_214] -> gp_in_on_chip_1_buf4[1 + 2gp_in_on_chip_214, 2 + 2gp_in_on_chip_213] : 0 <= gp_in_on_chip_213 <= 16 and 0 <= gp_in_on_chip_214 <= 16 }
     // { gp_in_on_chip_214_merged160[root = 0, gp_in_on_chip_213, gp_in_on_chip_214] -> gp_in_on_chip_1_buf4[2 + 2gp_in_on_chip_214, 2 + 2gp_in_on_chip_213] : 0 <= gp_in_on_chip_213 <= 16 and 0 <= gp_in_on_chip_214 <= 16 }
@@ -193,28 +185,11 @@ struct gp_in_on_chip_1_buf4_cache {
   gp_in_on_chip_1_buf4_gp_in_on_chip_16_merged157_97_to_gp_in_on_chip_1_buf4_load_to_gp_in_on_chip_1_buf4_to_gp_5164167_74_cache gp_in_on_chip_1_buf4_gp_in_on_chip_16_merged157_97_to_gp_in_on_chip_1_buf4_load_to_gp_in_on_chip_1_buf4_to_gp_5164167_74;
   gp_in_on_chip_1_buf4_gp_in_on_chip_16_merged157_97_to_gp_in_on_chip_1_buf4_us47_7_cache gp_in_on_chip_1_buf4_gp_in_on_chip_16_merged157_97_to_gp_in_on_chip_1_buf4_us47_7;
   gp_in_on_chip_1_buf4_gp_in_on_chip_16_merged157_97_merged_banks_9_cache gp_in_on_chip_1_buf4_gp_in_on_chip_16_merged157_97_merged_banks_9;
-=======
-    // { gp_in_on_chip_214_merged163[root = 0, gp_in_on_chip_213, gp_in_on_chip_214] -> gp_in_on_chip_1_buf4[2gp_in_on_chip_214, 2 + 2gp_in_on_chip_213] : 0 <= gp_in_on_chip_213 <= 16 and 0 <= gp_in_on_chip_214 <= 16 }
-    // { gp_in_on_chip_214_merged163[root = 0, gp_in_on_chip_213, gp_in_on_chip_214] -> gp_in_on_chip_1_buf4[1 + 2gp_in_on_chip_214, 2 + 2gp_in_on_chip_213] : 0 <= gp_in_on_chip_213 <= 16 and 0 <= gp_in_on_chip_214 <= 16 }
-    // { gp_in_on_chip_214_merged163[root = 0, gp_in_on_chip_213, gp_in_on_chip_214] -> gp_in_on_chip_1_buf4[2 + 2gp_in_on_chip_214, 2 + 2gp_in_on_chip_213] : 0 <= gp_in_on_chip_213 <= 16 and 0 <= gp_in_on_chip_214 <= 16 }
-    // { gp_in_on_chip_214_merged163[root = 0, gp_in_on_chip_213, gp_in_on_chip_214] -> gp_in_on_chip_1_buf4[2gp_in_on_chip_214, 1 + 2gp_in_on_chip_213] : 0 <= gp_in_on_chip_213 <= 16 and 0 <= gp_in_on_chip_214 <= 16 }
-    // { gp_in_on_chip_214_merged163[root = 0, gp_in_on_chip_213, gp_in_on_chip_214] -> gp_in_on_chip_1_buf4[1 + 2gp_in_on_chip_214, 1 + 2gp_in_on_chip_213] : 0 <= gp_in_on_chip_213 <= 16 and 0 <= gp_in_on_chip_214 <= 16 }
-    // { gp_in_on_chip_214_merged163[root = 0, gp_in_on_chip_213, gp_in_on_chip_214] -> gp_in_on_chip_1_buf4[2 + 2gp_in_on_chip_214, 1 + 2gp_in_on_chip_213] : 0 <= gp_in_on_chip_213 <= 16 and 0 <= gp_in_on_chip_214 <= 16 }
-    // { gp_in_on_chip_214_merged163[root = 0, gp_in_on_chip_213, gp_in_on_chip_214] -> gp_in_on_chip_1_buf4[2gp_in_on_chip_214, 2gp_in_on_chip_213] : 0 <= gp_in_on_chip_213 <= 16 and 0 <= gp_in_on_chip_214 <= 16 }
-    // { gp_in_on_chip_214_merged163[root = 0, gp_in_on_chip_213, gp_in_on_chip_214] -> gp_in_on_chip_1_buf4[1 + 2gp_in_on_chip_214, 2gp_in_on_chip_213] : 0 <= gp_in_on_chip_213 <= 16 and 0 <= gp_in_on_chip_214 <= 16 }
-    // { gp_in_on_chip_214_merged163[root = 0, gp_in_on_chip_213, gp_in_on_chip_214] -> gp_in_on_chip_1_buf4[2 + 2gp_in_on_chip_214, 2gp_in_on_chip_213] : 0 <= gp_in_on_chip_213 <= 16 and 0 <= gp_in_on_chip_214 <= 16 }
-    // { load_to_gp_in_on_chip_1_buf4_to_gp_5164167[root = 0, gp_in_on_chip_1_buf4_ld166, gp_in_on_chip_1_buf4_ld165] -> gp_in_on_chip_1_buf4[gp_in_on_chip_1_buf4_ld165, gp_in_on_chip_1_buf4_ld166] : 3 <= gp_in_on_chip_1_buf4_ld166 <= 34 and 3 <= gp_in_on_chip_1_buf4_ld165 <= 34 }
-    // { us47[root = 0, us_gp_in_on_chip_1_buf445, us_gp_in_on_chip_1_buf446] -> gp_in_on_chip_1_buf4[o0, o1] : 0 <= us_gp_in_on_chip_1_buf445 <= 63 and 0 <= us_gp_in_on_chip_1_buf446 <= 63 and 5 + us_gp_in_on_chip_1_buf446 <= 2o0 <= 6 + us_gp_in_on_chip_1_buf446 and 5 + us_gp_in_on_chip_1_buf445 <= 2o1 <= 6 + us_gp_in_on_chip_1_buf445 }
-  // # of banks: 2
-  gp_in_on_chip_1_buf4_gp_in_on_chip_16_merged157_97_to_gp_in_on_chip_1_buf4_us47_7_cache gp_in_on_chip_1_buf4_gp_in_on_chip_16_merged157_97_to_gp_in_on_chip_1_buf4_us47_7;
-  gp_in_on_chip_1_buf4_gp_in_on_chip_16_merged157_97_merged_banks_10_cache gp_in_on_chip_1_buf4_gp_in_on_chip_16_merged157_97_merged_banks_10;
->>>>>>> 89b3f51bdb8eb51a288ec002dbba28ce9175d84f
 };
 
 
 
 inline void gp_in_on_chip_1_buf4_gp_in_on_chip_16_merged157_97_write(hw_uint<32> & gp_in_on_chip_1_buf4_gp_in_on_chip_16_merged157_97, gp_in_on_chip_1_buf4_cache& gp_in_on_chip_1_buf4, int root, int gp_in_on_chip_15, int gp_in_on_chip_16, int dynamic_address) {
-<<<<<<< HEAD
   gp_in_on_chip_1_buf4.gp_in_on_chip_1_buf4_gp_in_on_chip_16_merged157_97_to_gp_in_on_chip_1_buf4_load_to_gp_in_on_chip_1_buf4_to_gp_5164167_74.push(gp_in_on_chip_1_buf4_gp_in_on_chip_16_merged157_97);
   gp_in_on_chip_1_buf4.gp_in_on_chip_1_buf4_gp_in_on_chip_16_merged157_97_to_gp_in_on_chip_1_buf4_us47_7.push(gp_in_on_chip_1_buf4_gp_in_on_chip_16_merged157_97);
   gp_in_on_chip_1_buf4.gp_in_on_chip_1_buf4_gp_in_on_chip_16_merged157_97_merged_banks_9.push(gp_in_on_chip_1_buf4_gp_in_on_chip_16_merged157_97);
@@ -227,24 +202,10 @@ inline hw_uint<32>  gp_in_on_chip_1_buf4_gp_in_on_chip_214_merged160_88_select(g
   // Read schedule : { gp_in_on_chip_214_merged160[d0 = 0, d1, d2] -> [0, 6 + 4d1, 6 + 4d2, 3] : 0 <= d1 <= 16 and 0 <= d2 <= 16 }
   // Write schedule: { gp_in_on_chip_16_merged157[d0 = 0, d1, d2] -> [0, 2 + 2d1, 2 + 2d2, 2] : 0 <= d1 <= 34 and 0 <= d2 <= 34 }
   auto value_gp_in_on_chip_1_buf4_gp_in_on_chip_16_merged157_97 = gp_in_on_chip_1_buf4.gp_in_on_chip_1_buf4_gp_in_on_chip_16_merged157_97_merged_banks_9.peek_2();
-=======
-  gp_in_on_chip_1_buf4.gp_in_on_chip_1_buf4_gp_in_on_chip_16_merged157_97_to_gp_in_on_chip_1_buf4_us47_7.push(gp_in_on_chip_1_buf4_gp_in_on_chip_16_merged157_97);
-  gp_in_on_chip_1_buf4.gp_in_on_chip_1_buf4_gp_in_on_chip_16_merged157_97_merged_banks_10.push(gp_in_on_chip_1_buf4_gp_in_on_chip_16_merged157_97);
-}
-
-inline hw_uint<32>  gp_in_on_chip_1_buf4_gp_in_on_chip_214_merged163_88_select(gp_in_on_chip_1_buf4_cache& gp_in_on_chip_1_buf4, int root, int gp_in_on_chip_213, int gp_in_on_chip_214, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-  // gp_in_on_chip_1_buf4_gp_in_on_chip_214_merged163_88 read pattern: { gp_in_on_chip_214_merged163[root = 0, gp_in_on_chip_213, gp_in_on_chip_214] -> gp_in_on_chip_1_buf4[2gp_in_on_chip_214, 2 + 2gp_in_on_chip_213] : 0 <= gp_in_on_chip_213 <= 16 and 0 <= gp_in_on_chip_214 <= 16 }
-  // Read schedule : { gp_in_on_chip_214_merged163[d0 = 0, d1, d2] -> [0, 6 + 4d1, 6 + 4d2, 6] : 0 <= d1 <= 16 and 0 <= d2 <= 16 }
-  // Write schedule: { gp_in_on_chip_16_merged157[d0 = 0, d1, d2] -> [0, 2 + 2d1, 2 + 2d2, 3] : 0 <= d1 <= 34 and 0 <= d2 <= 34 }
-  auto value_gp_in_on_chip_1_buf4_gp_in_on_chip_16_merged157_97 = gp_in_on_chip_1_buf4.gp_in_on_chip_1_buf4_gp_in_on_chip_16_merged157_97_merged_banks_10.peek_2();
->>>>>>> 89b3f51bdb8eb51a288ec002dbba28ce9175d84f
   return value_gp_in_on_chip_1_buf4_gp_in_on_chip_16_merged157_97;
   return 0;
 }
 
-<<<<<<< HEAD
 inline hw_uint<32>  gp_in_on_chip_1_buf4_gp_in_on_chip_214_merged160_89_select(gp_in_on_chip_1_buf4_cache& gp_in_on_chip_1_buf4, int root, int gp_in_on_chip_213, int gp_in_on_chip_214, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -252,20 +213,10 @@ inline hw_uint<32>  gp_in_on_chip_1_buf4_gp_in_on_chip_214_merged160_89_select(g
   // Read schedule : { gp_in_on_chip_214_merged160[d0 = 0, d1, d2] -> [0, 6 + 4d1, 6 + 4d2, 3] : 0 <= d1 <= 16 and 0 <= d2 <= 16 }
   // Write schedule: { gp_in_on_chip_16_merged157[d0 = 0, d1, d2] -> [0, 2 + 2d1, 2 + 2d2, 2] : 0 <= d1 <= 34 and 0 <= d2 <= 34 }
   auto value_gp_in_on_chip_1_buf4_gp_in_on_chip_16_merged157_97 = gp_in_on_chip_1_buf4.gp_in_on_chip_1_buf4_gp_in_on_chip_16_merged157_97_merged_banks_9.peek_1();
-=======
-inline hw_uint<32>  gp_in_on_chip_1_buf4_gp_in_on_chip_214_merged163_89_select(gp_in_on_chip_1_buf4_cache& gp_in_on_chip_1_buf4, int root, int gp_in_on_chip_213, int gp_in_on_chip_214, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-  // gp_in_on_chip_1_buf4_gp_in_on_chip_214_merged163_89 read pattern: { gp_in_on_chip_214_merged163[root = 0, gp_in_on_chip_213, gp_in_on_chip_214] -> gp_in_on_chip_1_buf4[1 + 2gp_in_on_chip_214, 2 + 2gp_in_on_chip_213] : 0 <= gp_in_on_chip_213 <= 16 and 0 <= gp_in_on_chip_214 <= 16 }
-  // Read schedule : { gp_in_on_chip_214_merged163[d0 = 0, d1, d2] -> [0, 6 + 4d1, 6 + 4d2, 6] : 0 <= d1 <= 16 and 0 <= d2 <= 16 }
-  // Write schedule: { gp_in_on_chip_16_merged157[d0 = 0, d1, d2] -> [0, 2 + 2d1, 2 + 2d2, 3] : 0 <= d1 <= 34 and 0 <= d2 <= 34 }
-  auto value_gp_in_on_chip_1_buf4_gp_in_on_chip_16_merged157_97 = gp_in_on_chip_1_buf4.gp_in_on_chip_1_buf4_gp_in_on_chip_16_merged157_97_merged_banks_10.peek_1();
->>>>>>> 89b3f51bdb8eb51a288ec002dbba28ce9175d84f
   return value_gp_in_on_chip_1_buf4_gp_in_on_chip_16_merged157_97;
   return 0;
 }
 
-<<<<<<< HEAD
 inline hw_uint<32>  gp_in_on_chip_1_buf4_gp_in_on_chip_214_merged160_90_select(gp_in_on_chip_1_buf4_cache& gp_in_on_chip_1_buf4, int root, int gp_in_on_chip_213, int gp_in_on_chip_214, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -273,20 +224,10 @@ inline hw_uint<32>  gp_in_on_chip_1_buf4_gp_in_on_chip_214_merged160_90_select(g
   // Read schedule : { gp_in_on_chip_214_merged160[d0 = 0, d1, d2] -> [0, 6 + 4d1, 6 + 4d2, 3] : 0 <= d1 <= 16 and 0 <= d2 <= 16 }
   // Write schedule: { gp_in_on_chip_16_merged157[d0 = 0, d1, d2] -> [0, 2 + 2d1, 2 + 2d2, 2] : 0 <= d1 <= 34 and 0 <= d2 <= 34 }
   auto value_gp_in_on_chip_1_buf4_gp_in_on_chip_16_merged157_97 = gp_in_on_chip_1_buf4.gp_in_on_chip_1_buf4_gp_in_on_chip_16_merged157_97_merged_banks_9.peek_0();
-=======
-inline hw_uint<32>  gp_in_on_chip_1_buf4_gp_in_on_chip_214_merged163_90_select(gp_in_on_chip_1_buf4_cache& gp_in_on_chip_1_buf4, int root, int gp_in_on_chip_213, int gp_in_on_chip_214, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-  // gp_in_on_chip_1_buf4_gp_in_on_chip_214_merged163_90 read pattern: { gp_in_on_chip_214_merged163[root = 0, gp_in_on_chip_213, gp_in_on_chip_214] -> gp_in_on_chip_1_buf4[2 + 2gp_in_on_chip_214, 2 + 2gp_in_on_chip_213] : 0 <= gp_in_on_chip_213 <= 16 and 0 <= gp_in_on_chip_214 <= 16 }
-  // Read schedule : { gp_in_on_chip_214_merged163[d0 = 0, d1, d2] -> [0, 6 + 4d1, 6 + 4d2, 6] : 0 <= d1 <= 16 and 0 <= d2 <= 16 }
-  // Write schedule: { gp_in_on_chip_16_merged157[d0 = 0, d1, d2] -> [0, 2 + 2d1, 2 + 2d2, 3] : 0 <= d1 <= 34 and 0 <= d2 <= 34 }
-  auto value_gp_in_on_chip_1_buf4_gp_in_on_chip_16_merged157_97 = gp_in_on_chip_1_buf4.gp_in_on_chip_1_buf4_gp_in_on_chip_16_merged157_97_merged_banks_10.peek_0();
->>>>>>> 89b3f51bdb8eb51a288ec002dbba28ce9175d84f
   return value_gp_in_on_chip_1_buf4_gp_in_on_chip_16_merged157_97;
   return 0;
 }
 
-<<<<<<< HEAD
 inline hw_uint<32>  gp_in_on_chip_1_buf4_gp_in_on_chip_214_merged160_91_select(gp_in_on_chip_1_buf4_cache& gp_in_on_chip_1_buf4, int root, int gp_in_on_chip_213, int gp_in_on_chip_214, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -294,20 +235,10 @@ inline hw_uint<32>  gp_in_on_chip_1_buf4_gp_in_on_chip_214_merged160_91_select(g
   // Read schedule : { gp_in_on_chip_214_merged160[d0 = 0, d1, d2] -> [0, 6 + 4d1, 6 + 4d2, 3] : 0 <= d1 <= 16 and 0 <= d2 <= 16 }
   // Write schedule: { gp_in_on_chip_16_merged157[d0 = 0, d1, d2] -> [0, 2 + 2d1, 2 + 2d2, 2] : 0 <= d1 <= 34 and 0 <= d2 <= 34 }
   auto value_gp_in_on_chip_1_buf4_gp_in_on_chip_16_merged157_97 = gp_in_on_chip_1_buf4.gp_in_on_chip_1_buf4_gp_in_on_chip_16_merged157_97_merged_banks_9.peek_37();
-=======
-inline hw_uint<32>  gp_in_on_chip_1_buf4_gp_in_on_chip_214_merged163_91_select(gp_in_on_chip_1_buf4_cache& gp_in_on_chip_1_buf4, int root, int gp_in_on_chip_213, int gp_in_on_chip_214, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-  // gp_in_on_chip_1_buf4_gp_in_on_chip_214_merged163_91 read pattern: { gp_in_on_chip_214_merged163[root = 0, gp_in_on_chip_213, gp_in_on_chip_214] -> gp_in_on_chip_1_buf4[2gp_in_on_chip_214, 1 + 2gp_in_on_chip_213] : 0 <= gp_in_on_chip_213 <= 16 and 0 <= gp_in_on_chip_214 <= 16 }
-  // Read schedule : { gp_in_on_chip_214_merged163[d0 = 0, d1, d2] -> [0, 6 + 4d1, 6 + 4d2, 6] : 0 <= d1 <= 16 and 0 <= d2 <= 16 }
-  // Write schedule: { gp_in_on_chip_16_merged157[d0 = 0, d1, d2] -> [0, 2 + 2d1, 2 + 2d2, 3] : 0 <= d1 <= 34 and 0 <= d2 <= 34 }
-  auto value_gp_in_on_chip_1_buf4_gp_in_on_chip_16_merged157_97 = gp_in_on_chip_1_buf4.gp_in_on_chip_1_buf4_gp_in_on_chip_16_merged157_97_merged_banks_10.peek_37();
->>>>>>> 89b3f51bdb8eb51a288ec002dbba28ce9175d84f
   return value_gp_in_on_chip_1_buf4_gp_in_on_chip_16_merged157_97;
   return 0;
 }
 
-<<<<<<< HEAD
 inline hw_uint<32>  gp_in_on_chip_1_buf4_gp_in_on_chip_214_merged160_92_select(gp_in_on_chip_1_buf4_cache& gp_in_on_chip_1_buf4, int root, int gp_in_on_chip_213, int gp_in_on_chip_214, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -315,20 +246,10 @@ inline hw_uint<32>  gp_in_on_chip_1_buf4_gp_in_on_chip_214_merged160_92_select(g
   // Read schedule : { gp_in_on_chip_214_merged160[d0 = 0, d1, d2] -> [0, 6 + 4d1, 6 + 4d2, 3] : 0 <= d1 <= 16 and 0 <= d2 <= 16 }
   // Write schedule: { gp_in_on_chip_16_merged157[d0 = 0, d1, d2] -> [0, 2 + 2d1, 2 + 2d2, 2] : 0 <= d1 <= 34 and 0 <= d2 <= 34 }
   auto value_gp_in_on_chip_1_buf4_gp_in_on_chip_16_merged157_97 = gp_in_on_chip_1_buf4.gp_in_on_chip_1_buf4_gp_in_on_chip_16_merged157_97_merged_banks_9.peek_36();
-=======
-inline hw_uint<32>  gp_in_on_chip_1_buf4_gp_in_on_chip_214_merged163_92_select(gp_in_on_chip_1_buf4_cache& gp_in_on_chip_1_buf4, int root, int gp_in_on_chip_213, int gp_in_on_chip_214, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-  // gp_in_on_chip_1_buf4_gp_in_on_chip_214_merged163_92 read pattern: { gp_in_on_chip_214_merged163[root = 0, gp_in_on_chip_213, gp_in_on_chip_214] -> gp_in_on_chip_1_buf4[1 + 2gp_in_on_chip_214, 1 + 2gp_in_on_chip_213] : 0 <= gp_in_on_chip_213 <= 16 and 0 <= gp_in_on_chip_214 <= 16 }
-  // Read schedule : { gp_in_on_chip_214_merged163[d0 = 0, d1, d2] -> [0, 6 + 4d1, 6 + 4d2, 6] : 0 <= d1 <= 16 and 0 <= d2 <= 16 }
-  // Write schedule: { gp_in_on_chip_16_merged157[d0 = 0, d1, d2] -> [0, 2 + 2d1, 2 + 2d2, 3] : 0 <= d1 <= 34 and 0 <= d2 <= 34 }
-  auto value_gp_in_on_chip_1_buf4_gp_in_on_chip_16_merged157_97 = gp_in_on_chip_1_buf4.gp_in_on_chip_1_buf4_gp_in_on_chip_16_merged157_97_merged_banks_10.peek_36();
->>>>>>> 89b3f51bdb8eb51a288ec002dbba28ce9175d84f
   return value_gp_in_on_chip_1_buf4_gp_in_on_chip_16_merged157_97;
   return 0;
 }
 
-<<<<<<< HEAD
 inline hw_uint<32>  gp_in_on_chip_1_buf4_gp_in_on_chip_214_merged160_93_select(gp_in_on_chip_1_buf4_cache& gp_in_on_chip_1_buf4, int root, int gp_in_on_chip_213, int gp_in_on_chip_214, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -336,20 +257,10 @@ inline hw_uint<32>  gp_in_on_chip_1_buf4_gp_in_on_chip_214_merged160_93_select(g
   // Read schedule : { gp_in_on_chip_214_merged160[d0 = 0, d1, d2] -> [0, 6 + 4d1, 6 + 4d2, 3] : 0 <= d1 <= 16 and 0 <= d2 <= 16 }
   // Write schedule: { gp_in_on_chip_16_merged157[d0 = 0, d1, d2] -> [0, 2 + 2d1, 2 + 2d2, 2] : 0 <= d1 <= 34 and 0 <= d2 <= 34 }
   auto value_gp_in_on_chip_1_buf4_gp_in_on_chip_16_merged157_97 = gp_in_on_chip_1_buf4.gp_in_on_chip_1_buf4_gp_in_on_chip_16_merged157_97_merged_banks_9.peek_35();
-=======
-inline hw_uint<32>  gp_in_on_chip_1_buf4_gp_in_on_chip_214_merged163_93_select(gp_in_on_chip_1_buf4_cache& gp_in_on_chip_1_buf4, int root, int gp_in_on_chip_213, int gp_in_on_chip_214, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-  // gp_in_on_chip_1_buf4_gp_in_on_chip_214_merged163_93 read pattern: { gp_in_on_chip_214_merged163[root = 0, gp_in_on_chip_213, gp_in_on_chip_214] -> gp_in_on_chip_1_buf4[2 + 2gp_in_on_chip_214, 1 + 2gp_in_on_chip_213] : 0 <= gp_in_on_chip_213 <= 16 and 0 <= gp_in_on_chip_214 <= 16 }
-  // Read schedule : { gp_in_on_chip_214_merged163[d0 = 0, d1, d2] -> [0, 6 + 4d1, 6 + 4d2, 6] : 0 <= d1 <= 16 and 0 <= d2 <= 16 }
-  // Write schedule: { gp_in_on_chip_16_merged157[d0 = 0, d1, d2] -> [0, 2 + 2d1, 2 + 2d2, 3] : 0 <= d1 <= 34 and 0 <= d2 <= 34 }
-  auto value_gp_in_on_chip_1_buf4_gp_in_on_chip_16_merged157_97 = gp_in_on_chip_1_buf4.gp_in_on_chip_1_buf4_gp_in_on_chip_16_merged157_97_merged_banks_10.peek_35();
->>>>>>> 89b3f51bdb8eb51a288ec002dbba28ce9175d84f
   return value_gp_in_on_chip_1_buf4_gp_in_on_chip_16_merged157_97;
   return 0;
 }
 
-<<<<<<< HEAD
 inline hw_uint<32>  gp_in_on_chip_1_buf4_gp_in_on_chip_214_merged160_94_select(gp_in_on_chip_1_buf4_cache& gp_in_on_chip_1_buf4, int root, int gp_in_on_chip_213, int gp_in_on_chip_214, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -357,20 +268,10 @@ inline hw_uint<32>  gp_in_on_chip_1_buf4_gp_in_on_chip_214_merged160_94_select(g
   // Read schedule : { gp_in_on_chip_214_merged160[d0 = 0, d1, d2] -> [0, 6 + 4d1, 6 + 4d2, 3] : 0 <= d1 <= 16 and 0 <= d2 <= 16 }
   // Write schedule: { gp_in_on_chip_16_merged157[d0 = 0, d1, d2] -> [0, 2 + 2d1, 2 + 2d2, 2] : 0 <= d1 <= 34 and 0 <= d2 <= 34 }
   auto value_gp_in_on_chip_1_buf4_gp_in_on_chip_16_merged157_97 = gp_in_on_chip_1_buf4.gp_in_on_chip_1_buf4_gp_in_on_chip_16_merged157_97_merged_banks_9.peek_72();
-=======
-inline hw_uint<32>  gp_in_on_chip_1_buf4_gp_in_on_chip_214_merged163_94_select(gp_in_on_chip_1_buf4_cache& gp_in_on_chip_1_buf4, int root, int gp_in_on_chip_213, int gp_in_on_chip_214, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-  // gp_in_on_chip_1_buf4_gp_in_on_chip_214_merged163_94 read pattern: { gp_in_on_chip_214_merged163[root = 0, gp_in_on_chip_213, gp_in_on_chip_214] -> gp_in_on_chip_1_buf4[2gp_in_on_chip_214, 2gp_in_on_chip_213] : 0 <= gp_in_on_chip_213 <= 16 and 0 <= gp_in_on_chip_214 <= 16 }
-  // Read schedule : { gp_in_on_chip_214_merged163[d0 = 0, d1, d2] -> [0, 6 + 4d1, 6 + 4d2, 6] : 0 <= d1 <= 16 and 0 <= d2 <= 16 }
-  // Write schedule: { gp_in_on_chip_16_merged157[d0 = 0, d1, d2] -> [0, 2 + 2d1, 2 + 2d2, 3] : 0 <= d1 <= 34 and 0 <= d2 <= 34 }
-  auto value_gp_in_on_chip_1_buf4_gp_in_on_chip_16_merged157_97 = gp_in_on_chip_1_buf4.gp_in_on_chip_1_buf4_gp_in_on_chip_16_merged157_97_merged_banks_10.peek_72();
->>>>>>> 89b3f51bdb8eb51a288ec002dbba28ce9175d84f
   return value_gp_in_on_chip_1_buf4_gp_in_on_chip_16_merged157_97;
   return 0;
 }
 
-<<<<<<< HEAD
 inline hw_uint<32>  gp_in_on_chip_1_buf4_gp_in_on_chip_214_merged160_95_select(gp_in_on_chip_1_buf4_cache& gp_in_on_chip_1_buf4, int root, int gp_in_on_chip_213, int gp_in_on_chip_214, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -378,20 +279,10 @@ inline hw_uint<32>  gp_in_on_chip_1_buf4_gp_in_on_chip_214_merged160_95_select(g
   // Read schedule : { gp_in_on_chip_214_merged160[d0 = 0, d1, d2] -> [0, 6 + 4d1, 6 + 4d2, 3] : 0 <= d1 <= 16 and 0 <= d2 <= 16 }
   // Write schedule: { gp_in_on_chip_16_merged157[d0 = 0, d1, d2] -> [0, 2 + 2d1, 2 + 2d2, 2] : 0 <= d1 <= 34 and 0 <= d2 <= 34 }
   auto value_gp_in_on_chip_1_buf4_gp_in_on_chip_16_merged157_97 = gp_in_on_chip_1_buf4.gp_in_on_chip_1_buf4_gp_in_on_chip_16_merged157_97_merged_banks_9.peek_71();
-=======
-inline hw_uint<32>  gp_in_on_chip_1_buf4_gp_in_on_chip_214_merged163_95_select(gp_in_on_chip_1_buf4_cache& gp_in_on_chip_1_buf4, int root, int gp_in_on_chip_213, int gp_in_on_chip_214, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-  // gp_in_on_chip_1_buf4_gp_in_on_chip_214_merged163_95 read pattern: { gp_in_on_chip_214_merged163[root = 0, gp_in_on_chip_213, gp_in_on_chip_214] -> gp_in_on_chip_1_buf4[1 + 2gp_in_on_chip_214, 2gp_in_on_chip_213] : 0 <= gp_in_on_chip_213 <= 16 and 0 <= gp_in_on_chip_214 <= 16 }
-  // Read schedule : { gp_in_on_chip_214_merged163[d0 = 0, d1, d2] -> [0, 6 + 4d1, 6 + 4d2, 6] : 0 <= d1 <= 16 and 0 <= d2 <= 16 }
-  // Write schedule: { gp_in_on_chip_16_merged157[d0 = 0, d1, d2] -> [0, 2 + 2d1, 2 + 2d2, 3] : 0 <= d1 <= 34 and 0 <= d2 <= 34 }
-  auto value_gp_in_on_chip_1_buf4_gp_in_on_chip_16_merged157_97 = gp_in_on_chip_1_buf4.gp_in_on_chip_1_buf4_gp_in_on_chip_16_merged157_97_merged_banks_10.peek_71();
->>>>>>> 89b3f51bdb8eb51a288ec002dbba28ce9175d84f
   return value_gp_in_on_chip_1_buf4_gp_in_on_chip_16_merged157_97;
   return 0;
 }
 
-<<<<<<< HEAD
 inline hw_uint<32>  gp_in_on_chip_1_buf4_gp_in_on_chip_214_merged160_96_select(gp_in_on_chip_1_buf4_cache& gp_in_on_chip_1_buf4, int root, int gp_in_on_chip_213, int gp_in_on_chip_214, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -399,15 +290,6 @@ inline hw_uint<32>  gp_in_on_chip_1_buf4_gp_in_on_chip_214_merged160_96_select(g
   // Read schedule : { gp_in_on_chip_214_merged160[d0 = 0, d1, d2] -> [0, 6 + 4d1, 6 + 4d2, 3] : 0 <= d1 <= 16 and 0 <= d2 <= 16 }
   // Write schedule: { gp_in_on_chip_16_merged157[d0 = 0, d1, d2] -> [0, 2 + 2d1, 2 + 2d2, 2] : 0 <= d1 <= 34 and 0 <= d2 <= 34 }
   auto value_gp_in_on_chip_1_buf4_gp_in_on_chip_16_merged157_97 = gp_in_on_chip_1_buf4.gp_in_on_chip_1_buf4_gp_in_on_chip_16_merged157_97_merged_banks_9.peek_70();
-=======
-inline hw_uint<32>  gp_in_on_chip_1_buf4_gp_in_on_chip_214_merged163_96_select(gp_in_on_chip_1_buf4_cache& gp_in_on_chip_1_buf4, int root, int gp_in_on_chip_213, int gp_in_on_chip_214, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-  // gp_in_on_chip_1_buf4_gp_in_on_chip_214_merged163_96 read pattern: { gp_in_on_chip_214_merged163[root = 0, gp_in_on_chip_213, gp_in_on_chip_214] -> gp_in_on_chip_1_buf4[2 + 2gp_in_on_chip_214, 2gp_in_on_chip_213] : 0 <= gp_in_on_chip_213 <= 16 and 0 <= gp_in_on_chip_214 <= 16 }
-  // Read schedule : { gp_in_on_chip_214_merged163[d0 = 0, d1, d2] -> [0, 6 + 4d1, 6 + 4d2, 6] : 0 <= d1 <= 16 and 0 <= d2 <= 16 }
-  // Write schedule: { gp_in_on_chip_16_merged157[d0 = 0, d1, d2] -> [0, 2 + 2d1, 2 + 2d2, 3] : 0 <= d1 <= 34 and 0 <= d2 <= 34 }
-  auto value_gp_in_on_chip_1_buf4_gp_in_on_chip_16_merged157_97 = gp_in_on_chip_1_buf4.gp_in_on_chip_1_buf4_gp_in_on_chip_16_merged157_97_merged_banks_10.peek_70();
->>>>>>> 89b3f51bdb8eb51a288ec002dbba28ce9175d84f
   return value_gp_in_on_chip_1_buf4_gp_in_on_chip_16_merged157_97;
   return 0;
 }
@@ -416,15 +298,9 @@ inline hw_uint<32>  gp_in_on_chip_1_buf4_load_to_gp_in_on_chip_1_buf4_to_gp_5164
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // gp_in_on_chip_1_buf4_load_to_gp_in_on_chip_1_buf4_to_gp_5164167_74 read pattern: { load_to_gp_in_on_chip_1_buf4_to_gp_5164167[root = 0, gp_in_on_chip_1_buf4_ld166, gp_in_on_chip_1_buf4_ld165] -> gp_in_on_chip_1_buf4[gp_in_on_chip_1_buf4_ld165, gp_in_on_chip_1_buf4_ld166] : 3 <= gp_in_on_chip_1_buf4_ld166 <= 34 and 3 <= gp_in_on_chip_1_buf4_ld165 <= 34 }
-<<<<<<< HEAD
   // Read schedule : { load_to_gp_in_on_chip_1_buf4_to_gp_5164167[d0 = 0, d1, d2] -> [0, 4 + 2d1, 4 + 2d2, 5] : 3 <= d1 <= 34 and 3 <= d2 <= 34 }
   // Write schedule: { gp_in_on_chip_16_merged157[d0 = 0, d1, d2] -> [0, 2 + 2d1, 2 + 2d2, 2] : 0 <= d1 <= 34 and 0 <= d2 <= 34 }
   auto value_gp_in_on_chip_1_buf4_gp_in_on_chip_16_merged157_97 = gp_in_on_chip_1_buf4.gp_in_on_chip_1_buf4_gp_in_on_chip_16_merged157_97_to_gp_in_on_chip_1_buf4_load_to_gp_in_on_chip_1_buf4_to_gp_5164167_74.peek(/* one reader or all rams */ (33 - gp_in_on_chip_1_buf4_ld165 >= 0 && 33 - gp_in_on_chip_1_buf4_ld166 >= 0) ? (36) : (-34 + gp_in_on_chip_1_buf4_ld165 == 0 && 33 - gp_in_on_chip_1_buf4_ld166 >= 0) ? (35) : (-34 + gp_in_on_chip_1_buf4_ld166 == 0 && 33 - gp_in_on_chip_1_buf4_ld165 >= 0) ? ((34 - gp_in_on_chip_1_buf4_ld165)) : 0);
-=======
-  // Read schedule : { load_to_gp_in_on_chip_1_buf4_to_gp_5164167[d0 = 0, d1, d2] -> [0, 2 + 2d1, 2 + 2d2, 4] : 3 <= d1 <= 34 and 3 <= d2 <= 34 }
-  // Write schedule: { gp_in_on_chip_16_merged157[d0 = 0, d1, d2] -> [0, 2 + 2d1, 2 + 2d2, 3] : 0 <= d1 <= 34 and 0 <= d2 <= 34 }
-  auto value_gp_in_on_chip_1_buf4_gp_in_on_chip_16_merged157_97 = gp_in_on_chip_1_buf4.gp_in_on_chip_1_buf4_gp_in_on_chip_16_merged157_97_merged_banks_10.peek_0();
->>>>>>> 89b3f51bdb8eb51a288ec002dbba28ce9175d84f
   return value_gp_in_on_chip_1_buf4_gp_in_on_chip_16_merged157_97;
   return 0;
 }
@@ -433,13 +309,8 @@ inline hw_uint<32>  gp_in_on_chip_1_buf4_us47_7_select(gp_in_on_chip_1_buf4_cach
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // gp_in_on_chip_1_buf4_us47_7 read pattern: { us47[root = 0, us_gp_in_on_chip_1_buf445, us_gp_in_on_chip_1_buf446] -> gp_in_on_chip_1_buf4[o0, o1] : 0 <= us_gp_in_on_chip_1_buf445 <= 63 and 0 <= us_gp_in_on_chip_1_buf446 <= 63 and 5 + us_gp_in_on_chip_1_buf446 <= 2o0 <= 6 + us_gp_in_on_chip_1_buf446 and 5 + us_gp_in_on_chip_1_buf445 <= 2o1 <= 6 + us_gp_in_on_chip_1_buf445 }
-<<<<<<< HEAD
   // Read schedule : { us47[d0 = 0, d1, d2] -> [0, 8 + d1, 8 + d2, 10] : 0 <= d1 <= 63 and 0 <= d2 <= 63 }
   // Write schedule: { gp_in_on_chip_16_merged157[d0 = 0, d1, d2] -> [0, 2 + 2d1, 2 + 2d2, 2] : 0 <= d1 <= 34 and 0 <= d2 <= 34 }
-=======
-  // Read schedule : { us47[d0 = 0, d1, d2] -> [0, 8 + d1, 8 + d2, 8] : 0 <= d1 <= 63 and 0 <= d2 <= 63 }
-  // Write schedule: { gp_in_on_chip_16_merged157[d0 = 0, d1, d2] -> [0, 2 + 2d1, 2 + 2d2, 3] : 0 <= d1 <= 34 and 0 <= d2 <= 34 }
->>>>>>> 89b3f51bdb8eb51a288ec002dbba28ce9175d84f
   auto value_gp_in_on_chip_1_buf4_gp_in_on_chip_16_merged157_97 = gp_in_on_chip_1_buf4.gp_in_on_chip_1_buf4_gp_in_on_chip_16_merged157_97_to_gp_in_on_chip_1_buf4_us47_7.peek(/* one reader or all rams */ ((-1 - us_gp_in_on_chip_1_buf445) % 2 == 0 && 61 - us_gp_in_on_chip_1_buf446 >= 0) ? ((31 - floord(2*us_gp_in_on_chip_1_buf446, 4))) : 0);
   return value_gp_in_on_chip_1_buf4_gp_in_on_chip_16_merged157_97;
   return 0;
@@ -453,7 +324,6 @@ inline void gp_in_on_chip_1_buf4_gp_in_on_chip_16_merged157_write_bundle_write(h
 	gp_in_on_chip_1_buf4_gp_in_on_chip_16_merged157_97_write(gp_in_on_chip_1_buf4_gp_in_on_chip_16_merged157_97_res, gp_in_on_chip_1_buf4, root, gp_in_on_chip_15, gp_in_on_chip_16, dynamic_address);
 }
 
-<<<<<<< HEAD
 // gp_in_on_chip_214_merged160_read
 //	gp_in_on_chip_1_buf4_gp_in_on_chip_214_merged160_88
 //	gp_in_on_chip_1_buf4_gp_in_on_chip_214_merged160_89
@@ -495,49 +365,6 @@ inline hw_uint<288> gp_in_on_chip_1_buf4_gp_in_on_chip_214_merged160_read_bundle
 	set_at<224, 288>(result, gp_in_on_chip_1_buf4_gp_in_on_chip_214_merged160_95_res);
 	hw_uint<32>  gp_in_on_chip_1_buf4_gp_in_on_chip_214_merged160_96_res = gp_in_on_chip_1_buf4_gp_in_on_chip_214_merged160_96_select(gp_in_on_chip_1_buf4, root, gp_in_on_chip_213, gp_in_on_chip_214, dynamic_address);
 	set_at<256, 288>(result, gp_in_on_chip_1_buf4_gp_in_on_chip_214_merged160_96_res);
-=======
-// gp_in_on_chip_214_merged163_read
-//	gp_in_on_chip_1_buf4_gp_in_on_chip_214_merged163_88
-//	gp_in_on_chip_1_buf4_gp_in_on_chip_214_merged163_89
-//	gp_in_on_chip_1_buf4_gp_in_on_chip_214_merged163_90
-//	gp_in_on_chip_1_buf4_gp_in_on_chip_214_merged163_91
-//	gp_in_on_chip_1_buf4_gp_in_on_chip_214_merged163_92
-//	gp_in_on_chip_1_buf4_gp_in_on_chip_214_merged163_93
-//	gp_in_on_chip_1_buf4_gp_in_on_chip_214_merged163_94
-//	gp_in_on_chip_1_buf4_gp_in_on_chip_214_merged163_95
-//	gp_in_on_chip_1_buf4_gp_in_on_chip_214_merged163_96
-inline hw_uint<288> gp_in_on_chip_1_buf4_gp_in_on_chip_214_merged163_read_bundle_read(gp_in_on_chip_1_buf4_cache& gp_in_on_chip_1_buf4, int root, int gp_in_on_chip_213, int gp_in_on_chip_214, int dynamic_address) {
-  // # of ports in bundle: 9
-    // gp_in_on_chip_1_buf4_gp_in_on_chip_214_merged163_88
-    // gp_in_on_chip_1_buf4_gp_in_on_chip_214_merged163_89
-    // gp_in_on_chip_1_buf4_gp_in_on_chip_214_merged163_90
-    // gp_in_on_chip_1_buf4_gp_in_on_chip_214_merged163_91
-    // gp_in_on_chip_1_buf4_gp_in_on_chip_214_merged163_92
-    // gp_in_on_chip_1_buf4_gp_in_on_chip_214_merged163_93
-    // gp_in_on_chip_1_buf4_gp_in_on_chip_214_merged163_94
-    // gp_in_on_chip_1_buf4_gp_in_on_chip_214_merged163_95
-    // gp_in_on_chip_1_buf4_gp_in_on_chip_214_merged163_96
-
-	hw_uint<288> result;
-	hw_uint<32>  gp_in_on_chip_1_buf4_gp_in_on_chip_214_merged163_88_res = gp_in_on_chip_1_buf4_gp_in_on_chip_214_merged163_88_select(gp_in_on_chip_1_buf4, root, gp_in_on_chip_213, gp_in_on_chip_214, dynamic_address);
-	set_at<0, 288>(result, gp_in_on_chip_1_buf4_gp_in_on_chip_214_merged163_88_res);
-	hw_uint<32>  gp_in_on_chip_1_buf4_gp_in_on_chip_214_merged163_89_res = gp_in_on_chip_1_buf4_gp_in_on_chip_214_merged163_89_select(gp_in_on_chip_1_buf4, root, gp_in_on_chip_213, gp_in_on_chip_214, dynamic_address);
-	set_at<32, 288>(result, gp_in_on_chip_1_buf4_gp_in_on_chip_214_merged163_89_res);
-	hw_uint<32>  gp_in_on_chip_1_buf4_gp_in_on_chip_214_merged163_90_res = gp_in_on_chip_1_buf4_gp_in_on_chip_214_merged163_90_select(gp_in_on_chip_1_buf4, root, gp_in_on_chip_213, gp_in_on_chip_214, dynamic_address);
-	set_at<64, 288>(result, gp_in_on_chip_1_buf4_gp_in_on_chip_214_merged163_90_res);
-	hw_uint<32>  gp_in_on_chip_1_buf4_gp_in_on_chip_214_merged163_91_res = gp_in_on_chip_1_buf4_gp_in_on_chip_214_merged163_91_select(gp_in_on_chip_1_buf4, root, gp_in_on_chip_213, gp_in_on_chip_214, dynamic_address);
-	set_at<96, 288>(result, gp_in_on_chip_1_buf4_gp_in_on_chip_214_merged163_91_res);
-	hw_uint<32>  gp_in_on_chip_1_buf4_gp_in_on_chip_214_merged163_92_res = gp_in_on_chip_1_buf4_gp_in_on_chip_214_merged163_92_select(gp_in_on_chip_1_buf4, root, gp_in_on_chip_213, gp_in_on_chip_214, dynamic_address);
-	set_at<128, 288>(result, gp_in_on_chip_1_buf4_gp_in_on_chip_214_merged163_92_res);
-	hw_uint<32>  gp_in_on_chip_1_buf4_gp_in_on_chip_214_merged163_93_res = gp_in_on_chip_1_buf4_gp_in_on_chip_214_merged163_93_select(gp_in_on_chip_1_buf4, root, gp_in_on_chip_213, gp_in_on_chip_214, dynamic_address);
-	set_at<160, 288>(result, gp_in_on_chip_1_buf4_gp_in_on_chip_214_merged163_93_res);
-	hw_uint<32>  gp_in_on_chip_1_buf4_gp_in_on_chip_214_merged163_94_res = gp_in_on_chip_1_buf4_gp_in_on_chip_214_merged163_94_select(gp_in_on_chip_1_buf4, root, gp_in_on_chip_213, gp_in_on_chip_214, dynamic_address);
-	set_at<192, 288>(result, gp_in_on_chip_1_buf4_gp_in_on_chip_214_merged163_94_res);
-	hw_uint<32>  gp_in_on_chip_1_buf4_gp_in_on_chip_214_merged163_95_res = gp_in_on_chip_1_buf4_gp_in_on_chip_214_merged163_95_select(gp_in_on_chip_1_buf4, root, gp_in_on_chip_213, gp_in_on_chip_214, dynamic_address);
-	set_at<224, 288>(result, gp_in_on_chip_1_buf4_gp_in_on_chip_214_merged163_95_res);
-	hw_uint<32>  gp_in_on_chip_1_buf4_gp_in_on_chip_214_merged163_96_res = gp_in_on_chip_1_buf4_gp_in_on_chip_214_merged163_96_select(gp_in_on_chip_1_buf4, root, gp_in_on_chip_213, gp_in_on_chip_214, dynamic_address);
-	set_at<256, 288>(result, gp_in_on_chip_1_buf4_gp_in_on_chip_214_merged163_96_res);
->>>>>>> 89b3f51bdb8eb51a288ec002dbba28ce9175d84f
 	return result;
 }
 
@@ -603,19 +430,11 @@ inline void gp_in_on_chip_1_buf4_FIFO_buf168_load_to_gp_in_on_chip_1_buf4_FIFO_b
 inline hw_uint<32>  gp_in_on_chip_1_buf4_FIFO_buf168_diff43_111_select(gp_in_on_chip_1_buf4_FIFO_buf168_cache& gp_in_on_chip_1_buf4_FIFO_buf168, int root, int lp_in_on_chip_141, int lp_in_on_chip_142, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-<<<<<<< HEAD
   // gp_in_on_chip_1_buf4_FIFO_buf168_diff43_111 read pattern: { diff43[root = 0, lp_in_on_chip_141, lp_in_on_chip_142] -> gp_in_on_chip_1_buf4_FIFO_buf168[3 + lp_in_on_chip_142, 3 + lp_in_on_chip_141] : 0 <= lp_in_on_chip_141 <= 31 and 0 <= lp_in_on_chip_142 <= 31 }
   // Read schedule : { diff43[d0 = 0, d1, d2] -> [0, 10 + 2d1, 10 + 2d2, 24] : 0 <= d1 <= 31 and 0 <= d2 <= 31 }
   // Write schedule: { load_to_gp_in_on_chip_1_buf4_FIFO_buf168171[d0 = 0, d1, d2] -> [0, 4 + 2d1, 4 + 2d2, 7] : 3 <= d1 <= 34 and 3 <= d2 <= 34 }
   auto value_gp_in_on_chip_1_buf4_FIFO_buf168_load_to_gp_in_on_chip_1_buf4_FIFO_buf168171_75 = gp_in_on_chip_1_buf4_FIFO_buf168.gp_in_on_chip_1_buf4_FIFO_buf168_load_to_gp_in_on_chip_1_buf4_FIFO_buf168171_75_to_gp_in_on_chip_1_buf4_FIFO_buf168_diff43_111.peek(/* one reader or all rams */ 0);
   return value_gp_in_on_chip_1_buf4_FIFO_buf168_load_to_gp_in_on_chip_1_buf4_FIFO_buf168171_75;
-=======
-  // gp_in_on_chip_1_buf4_FIFO_buf216_diff43_111 read pattern: { diff43[root = 0, lp_in_on_chip_141, lp_in_on_chip_142] -> gp_in_on_chip_1_buf4_FIFO_buf216[3 + lp_in_on_chip_142, 3 + lp_in_on_chip_141] : 0 <= lp_in_on_chip_141 <= 31 and 0 <= lp_in_on_chip_142 <= 31 }
-  // Read schedule : { diff43[d0 = 0, d1, d2] -> [0, 10 + 2d1, 10 + 2d2, 21] : 0 <= d1 <= 31 and 0 <= d2 <= 31 }
-  // Write schedule: { load_to_gp_in_on_chip_1_buf4_FIFO_buf216219[d0 = 0, d1, d2] -> [0, 4 + 2d1, 4 + 2d2, 5] : 3 <= d1 <= 34 and 3 <= d2 <= 34 }
-  auto value_gp_in_on_chip_1_buf4_FIFO_buf216_load_to_gp_in_on_chip_1_buf4_FIFO_buf216219_75 = gp_in_on_chip_1_buf4_FIFO_buf216.gp_in_on_chip_1_buf4_FIFO_buf216_load_to_gp_in_on_chip_1_buf4_FIFO_buf216219_75_to_gp_in_on_chip_1_buf4_FIFO_buf216_diff43_111.peek(/* one reader or all rams */ 0);
-  return value_gp_in_on_chip_1_buf4_FIFO_buf216_load_to_gp_in_on_chip_1_buf4_FIFO_buf216219_75;
->>>>>>> 89b3f51bdb8eb51a288ec002dbba28ce9175d84f
   return 0;
 }
 
@@ -677,17 +496,10 @@ inline void gp_in_on_chip_1_buf4_us44_us47_6_write(hw_uint<32> & gp_in_on_chip_1
 inline hw_uint<32>  gp_in_on_chip_1_buf4_us44_load_to_gp_in_on_chip_1_buf4_us44_to_gp_3172175_70_select(gp_in_on_chip_1_buf4_us44_cache& gp_in_on_chip_1_buf4_us44, int root, int gp_in_on_chip_1_buf4_us44_ld174, int gp_in_on_chip_1_buf4_us44_ld173, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-<<<<<<< HEAD
   // gp_in_on_chip_1_buf4_us44_load_to_gp_in_on_chip_1_buf4_us44_to_gp_3172175_70 read pattern: { load_to_gp_in_on_chip_1_buf4_us44_to_gp_3172175[root = 0, gp_in_on_chip_1_buf4_us44_ld174, gp_in_on_chip_1_buf4_us44_ld173] -> gp_in_on_chip_1_buf4_us44[gp_in_on_chip_1_buf4_us44_ld173, gp_in_on_chip_1_buf4_us44_ld174] : 0 <= gp_in_on_chip_1_buf4_us44_ld174 <= 63 and 0 <= gp_in_on_chip_1_buf4_us44_ld173 <= 63 }
   // Read schedule : { load_to_gp_in_on_chip_1_buf4_us44_to_gp_3172175[d0 = 0, d1, d2] -> [0, 8 + d1, 8 + d2, 11] : 0 <= d1 <= 63 and 0 <= d2 <= 63 }
   // Write schedule: { us47[d0 = 0, d1, d2] -> [0, 8 + d1, 8 + d2, 10] : 0 <= d1 <= 63 and 0 <= d2 <= 63 }
   auto value_gp_in_on_chip_1_buf4_us44_us47_6 = gp_in_on_chip_1_buf4_us44.gp_in_on_chip_1_buf4_us44_us47_6_to_gp_in_on_chip_1_buf4_us44_load_to_gp_in_on_chip_1_buf4_us44_to_gp_3172175_70.peek(/* one reader or all rams */ 0);
-=======
-  // gp_in_on_chip_1_buf4_us44_load_to_gp_in_on_chip_1_buf4_us44_to_gp_3168171_70 read pattern: { load_to_gp_in_on_chip_1_buf4_us44_to_gp_3168171[root = 0, gp_in_on_chip_1_buf4_us44_ld170, gp_in_on_chip_1_buf4_us44_ld169] -> gp_in_on_chip_1_buf4_us44[gp_in_on_chip_1_buf4_us44_ld169, gp_in_on_chip_1_buf4_us44_ld170] : 0 <= gp_in_on_chip_1_buf4_us44_ld170 <= 63 and 0 <= gp_in_on_chip_1_buf4_us44_ld169 <= 63 }
-  // Read schedule : { load_to_gp_in_on_chip_1_buf4_us44_to_gp_3168171[d0 = 0, d1, d2] -> [0, 8 + d1, 8 + d2, 11] : 0 <= d1 <= 63 and 0 <= d2 <= 63 }
-  // Write schedule: { us47[d0 = 0, d1, d2] -> [0, 8 + d1, 8 + d2, 8] : 0 <= d1 <= 63 and 0 <= d2 <= 63 }
-  auto value_gp_in_on_chip_1_buf4_us44_us47_6 = gp_in_on_chip_1_buf4_us44.gp_in_on_chip_1_buf4_us44_us47_6_to_gp_in_on_chip_1_buf4_us44_load_to_gp_in_on_chip_1_buf4_us44_to_gp_3168171_70.peek(/* one reader or all rams */ 0);
->>>>>>> 89b3f51bdb8eb51a288ec002dbba28ce9175d84f
   return value_gp_in_on_chip_1_buf4_us44_us47_6;
   return 0;
 }
@@ -750,19 +562,11 @@ inline void gp_in_on_chip_1_buf4_us44_FIFO_buf176_load_to_gp_in_on_chip_1_buf4_u
 inline hw_uint<32>  gp_in_on_chip_1_buf4_us44_FIFO_buf176_diff51_109_select(gp_in_on_chip_1_buf4_us44_FIFO_buf176_cache& gp_in_on_chip_1_buf4_us44_FIFO_buf176, int root, int lp_in_on_chip_049, int lp_in_on_chip_050, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-<<<<<<< HEAD
   // gp_in_on_chip_1_buf4_us44_FIFO_buf176_diff51_109 read pattern: { diff51[root = 0, lp_in_on_chip_049, lp_in_on_chip_050] -> gp_in_on_chip_1_buf4_us44_FIFO_buf176[lp_in_on_chip_050, lp_in_on_chip_049] : 0 <= lp_in_on_chip_049 <= 63 and 0 <= lp_in_on_chip_050 <= 63 }
   // Read schedule : { diff51[d0 = 0, d1, d2] -> [0, 8 + d1, 8 + d2, 19] : 0 <= d1 <= 63 and 0 <= d2 <= 63 }
   // Write schedule: { load_to_gp_in_on_chip_1_buf4_us44_FIFO_buf176179[d0 = 0, d1, d2] -> [0, 8 + d1, 8 + d2, 15] : 0 <= d1 <= 63 and 0 <= d2 <= 63 }
   auto value_gp_in_on_chip_1_buf4_us44_FIFO_buf176_load_to_gp_in_on_chip_1_buf4_us44_FIFO_buf176179_71 = gp_in_on_chip_1_buf4_us44_FIFO_buf176.gp_in_on_chip_1_buf4_us44_FIFO_buf176_load_to_gp_in_on_chip_1_buf4_us44_FIFO_buf176179_71_to_gp_in_on_chip_1_buf4_us44_FIFO_buf176_diff51_109.peek(/* one reader or all rams */ 0);
   return value_gp_in_on_chip_1_buf4_us44_FIFO_buf176_load_to_gp_in_on_chip_1_buf4_us44_FIFO_buf176179_71;
-=======
-  // gp_in_on_chip_1_buf4_us44_FIFO_buf220_diff51_109 read pattern: { diff51[root = 0, lp_in_on_chip_049, lp_in_on_chip_050] -> gp_in_on_chip_1_buf4_us44_FIFO_buf220[lp_in_on_chip_050, lp_in_on_chip_049] : 0 <= lp_in_on_chip_049 <= 63 and 0 <= lp_in_on_chip_050 <= 63 }
-  // Read schedule : { diff51[d0 = 0, d1, d2] -> [0, 8 + d1, 8 + d2, 15] : 0 <= d1 <= 63 and 0 <= d2 <= 63 }
-  // Write schedule: { load_to_gp_in_on_chip_1_buf4_us44_FIFO_buf220223[d0 = 0, d1, d2] -> [0, 8 + d1, 8 + d2, 13] : 0 <= d1 <= 63 and 0 <= d2 <= 63 }
-  auto value_gp_in_on_chip_1_buf4_us44_FIFO_buf220_load_to_gp_in_on_chip_1_buf4_us44_FIFO_buf220223_71 = gp_in_on_chip_1_buf4_us44_FIFO_buf220.gp_in_on_chip_1_buf4_us44_FIFO_buf220_load_to_gp_in_on_chip_1_buf4_us44_FIFO_buf220223_71_to_gp_in_on_chip_1_buf4_us44_FIFO_buf220_diff51_109.peek(/* one reader or all rams */ 0);
-  return value_gp_in_on_chip_1_buf4_us44_FIFO_buf220_load_to_gp_in_on_chip_1_buf4_us44_FIFO_buf220223_71;
->>>>>>> 89b3f51bdb8eb51a288ec002dbba28ce9175d84f
   return 0;
 }
 
@@ -786,11 +590,7 @@ inline void gp_in_on_chip_1_buf4_us44_FIFO_buf176_load_to_gp_in_on_chip_1_buf4_u
 	gp_in_on_chip_1_buf4_us44_FIFO_buf176_load_to_gp_in_on_chip_1_buf4_us44_FIFO_buf176179_71_write(gp_in_on_chip_1_buf4_us44_FIFO_buf176_load_to_gp_in_on_chip_1_buf4_us44_FIFO_buf176179_71_res, gp_in_on_chip_1_buf4_us44_FIFO_buf176, root, gp_in_on_chip_1_buf4_us44_to_gp_3172_ld178, gp_in_on_chip_1_buf4_us44_to_gp_3172_ld177, dynamic_address);
 }
 
-<<<<<<< HEAD
 struct gp_in_on_chip_2_buf12_gp_in_on_chip_214_merged160_87_to_gp_in_on_chip_2_buf12_load_to_gp_in_on_chip_2_buf12_to_gp_2180183_64_cache {
-=======
-struct gp_in_on_chip_2_buf12_gp_in_on_chip_214_merged163_87_to_gp_in_on_chip_2_buf12_load_to_gp_in_on_chip_2_buf12_to_gp_2172175_64_cache {
->>>>>>> 89b3f51bdb8eb51a288ec002dbba28ce9175d84f
 	// RAM Box: {[0, 16], [0, 16]}
 	// Capacity: 1
 	// # of read delays: 2
@@ -812,20 +612,16 @@ struct gp_in_on_chip_2_buf12_gp_in_on_chip_214_merged163_87_to_gp_in_on_chip_2_b
 
 };
 
-<<<<<<< HEAD
 struct gp_in_on_chip_2_buf12_gp_in_on_chip_214_merged160_87_to_gp_in_on_chip_2_buf12_load_to_gp_in_on_chip_2_buf12_to_gp_7188191_62_cache {
-=======
-struct gp_in_on_chip_2_buf12_gp_in_on_chip_214_merged163_87_to_gp_in_on_chip_2_buf12_load_to_gp_in_on_chip_2_buf12_to_gp_7176179_62_cache {
->>>>>>> 89b3f51bdb8eb51a288ec002dbba28ce9175d84f
 	// RAM Box: {[1, 16], [1, 16]}
-	// Capacity: 19
-	// # of read delays: 19
-  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18
-	fifo<hw_uint<32> , 19> f;
+	// Capacity: 1
+	// # of read delays: 2
+  // 0, 0
+	fifo<hw_uint<32> , 1> f;
 	inline hw_uint<32>  peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    return f.peek(18 - offset);
+    return f.peek(0 - offset);
   }
 
 
@@ -838,11 +634,7 @@ struct gp_in_on_chip_2_buf12_gp_in_on_chip_214_merged163_87_to_gp_in_on_chip_2_b
 
 };
 
-<<<<<<< HEAD
 struct gp_in_on_chip_2_buf12_gp_in_on_chip_214_merged160_87_to_gp_in_on_chip_2_buf12_us39_9_cache {
-=======
-struct gp_in_on_chip_2_buf12_gp_in_on_chip_214_merged163_87_to_gp_in_on_chip_2_buf12_us39_9_cache {
->>>>>>> 89b3f51bdb8eb51a288ec002dbba28ce9175d84f
 	// RAM Box: {[1, 16], [1, 16]}
 	// Capacity: 16
 	// # of read delays: 17
@@ -870,67 +662,38 @@ struct gp_in_on_chip_2_buf12_cache {
     // { load_to_gp_in_on_chip_2_buf12_to_gp_7188191[root = 0, gp_in_on_chip_2_buf12_ld190, gp_in_on_chip_2_buf12_ld189] -> gp_in_on_chip_2_buf12[gp_in_on_chip_2_buf12_ld189, gp_in_on_chip_2_buf12_ld190] : 0 < gp_in_on_chip_2_buf12_ld190 <= 16 and 0 < gp_in_on_chip_2_buf12_ld189 <= 16 }
     // { us39[root = 0, us_gp_in_on_chip_2_buf1237, us_gp_in_on_chip_2_buf1238] -> gp_in_on_chip_2_buf12[o0, o1] : 0 <= us_gp_in_on_chip_2_buf1237 <= 31 and 0 <= us_gp_in_on_chip_2_buf1238 <= 31 and us_gp_in_on_chip_2_buf1238 < 2o0 <= 2 + us_gp_in_on_chip_2_buf1238 and us_gp_in_on_chip_2_buf1237 < 2o1 <= 2 + us_gp_in_on_chip_2_buf1237 }
   // # of banks: 3
-<<<<<<< HEAD
   gp_in_on_chip_2_buf12_gp_in_on_chip_214_merged160_87_to_gp_in_on_chip_2_buf12_load_to_gp_in_on_chip_2_buf12_to_gp_2180183_64_cache gp_in_on_chip_2_buf12_gp_in_on_chip_214_merged160_87_to_gp_in_on_chip_2_buf12_load_to_gp_in_on_chip_2_buf12_to_gp_2180183_64;
   gp_in_on_chip_2_buf12_gp_in_on_chip_214_merged160_87_to_gp_in_on_chip_2_buf12_load_to_gp_in_on_chip_2_buf12_to_gp_7188191_62_cache gp_in_on_chip_2_buf12_gp_in_on_chip_214_merged160_87_to_gp_in_on_chip_2_buf12_load_to_gp_in_on_chip_2_buf12_to_gp_7188191_62;
   gp_in_on_chip_2_buf12_gp_in_on_chip_214_merged160_87_to_gp_in_on_chip_2_buf12_us39_9_cache gp_in_on_chip_2_buf12_gp_in_on_chip_214_merged160_87_to_gp_in_on_chip_2_buf12_us39_9;
-=======
-  gp_in_on_chip_2_buf12_gp_in_on_chip_214_merged163_87_to_gp_in_on_chip_2_buf12_load_to_gp_in_on_chip_2_buf12_to_gp_2172175_64_cache gp_in_on_chip_2_buf12_gp_in_on_chip_214_merged163_87_to_gp_in_on_chip_2_buf12_load_to_gp_in_on_chip_2_buf12_to_gp_2172175_64;
-  gp_in_on_chip_2_buf12_gp_in_on_chip_214_merged163_87_to_gp_in_on_chip_2_buf12_load_to_gp_in_on_chip_2_buf12_to_gp_7176179_62_cache gp_in_on_chip_2_buf12_gp_in_on_chip_214_merged163_87_to_gp_in_on_chip_2_buf12_load_to_gp_in_on_chip_2_buf12_to_gp_7176179_62;
-  gp_in_on_chip_2_buf12_gp_in_on_chip_214_merged163_87_to_gp_in_on_chip_2_buf12_us39_9_cache gp_in_on_chip_2_buf12_gp_in_on_chip_214_merged163_87_to_gp_in_on_chip_2_buf12_us39_9;
->>>>>>> 89b3f51bdb8eb51a288ec002dbba28ce9175d84f
 };
 
 
 
-<<<<<<< HEAD
 inline void gp_in_on_chip_2_buf12_gp_in_on_chip_214_merged160_87_write(hw_uint<32> & gp_in_on_chip_2_buf12_gp_in_on_chip_214_merged160_87, gp_in_on_chip_2_buf12_cache& gp_in_on_chip_2_buf12, int root, int gp_in_on_chip_213, int gp_in_on_chip_214, int dynamic_address) {
   gp_in_on_chip_2_buf12.gp_in_on_chip_2_buf12_gp_in_on_chip_214_merged160_87_to_gp_in_on_chip_2_buf12_load_to_gp_in_on_chip_2_buf12_to_gp_2180183_64.push(gp_in_on_chip_2_buf12_gp_in_on_chip_214_merged160_87);
   gp_in_on_chip_2_buf12.gp_in_on_chip_2_buf12_gp_in_on_chip_214_merged160_87_to_gp_in_on_chip_2_buf12_load_to_gp_in_on_chip_2_buf12_to_gp_7188191_62.push(gp_in_on_chip_2_buf12_gp_in_on_chip_214_merged160_87);
   gp_in_on_chip_2_buf12.gp_in_on_chip_2_buf12_gp_in_on_chip_214_merged160_87_to_gp_in_on_chip_2_buf12_us39_9.push(gp_in_on_chip_2_buf12_gp_in_on_chip_214_merged160_87);
-=======
-inline void gp_in_on_chip_2_buf12_gp_in_on_chip_214_merged163_87_write(hw_uint<32> & gp_in_on_chip_2_buf12_gp_in_on_chip_214_merged163_87, gp_in_on_chip_2_buf12_cache& gp_in_on_chip_2_buf12, int root, int gp_in_on_chip_213, int gp_in_on_chip_214, int dynamic_address) {
-  gp_in_on_chip_2_buf12.gp_in_on_chip_2_buf12_gp_in_on_chip_214_merged163_87_to_gp_in_on_chip_2_buf12_load_to_gp_in_on_chip_2_buf12_to_gp_2172175_64.push(gp_in_on_chip_2_buf12_gp_in_on_chip_214_merged163_87);
-  gp_in_on_chip_2_buf12.gp_in_on_chip_2_buf12_gp_in_on_chip_214_merged163_87_to_gp_in_on_chip_2_buf12_load_to_gp_in_on_chip_2_buf12_to_gp_7176179_62.push(gp_in_on_chip_2_buf12_gp_in_on_chip_214_merged163_87);
-  gp_in_on_chip_2_buf12.gp_in_on_chip_2_buf12_gp_in_on_chip_214_merged163_87_to_gp_in_on_chip_2_buf12_us39_9.push(gp_in_on_chip_2_buf12_gp_in_on_chip_214_merged163_87);
->>>>>>> 89b3f51bdb8eb51a288ec002dbba28ce9175d84f
 }
 
 inline hw_uint<32>  gp_in_on_chip_2_buf12_load_to_gp_in_on_chip_2_buf12_to_gp_2180183_64_select(gp_in_on_chip_2_buf12_cache& gp_in_on_chip_2_buf12, int root, int gp_in_on_chip_2_buf12_ld182, int gp_in_on_chip_2_buf12_ld181, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-<<<<<<< HEAD
   // gp_in_on_chip_2_buf12_load_to_gp_in_on_chip_2_buf12_to_gp_2180183_64 read pattern: { load_to_gp_in_on_chip_2_buf12_to_gp_2180183[root = 0, gp_in_on_chip_2_buf12_ld182, gp_in_on_chip_2_buf12_ld181] -> gp_in_on_chip_2_buf12[gp_in_on_chip_2_buf12_ld181, gp_in_on_chip_2_buf12_ld182] : 0 <= gp_in_on_chip_2_buf12_ld182 <= 16 and 0 <= gp_in_on_chip_2_buf12_ld181 <= 16 }
   // Read schedule : { load_to_gp_in_on_chip_2_buf12_to_gp_2180183[d0 = 0, d1, d2] -> [0, 6 + 4d1, 6 + 4d2, 12] : 0 <= d1 <= 16 and 0 <= d2 <= 16 }
   // Write schedule: { gp_in_on_chip_214_merged160[d0 = 0, d1, d2] -> [0, 6 + 4d1, 6 + 4d2, 3] : 0 <= d1 <= 16 and 0 <= d2 <= 16 }
   auto value_gp_in_on_chip_2_buf12_gp_in_on_chip_214_merged160_87 = gp_in_on_chip_2_buf12.gp_in_on_chip_2_buf12_gp_in_on_chip_214_merged160_87_to_gp_in_on_chip_2_buf12_load_to_gp_in_on_chip_2_buf12_to_gp_2180183_64.peek(/* one reader or all rams */ 0);
   return value_gp_in_on_chip_2_buf12_gp_in_on_chip_214_merged160_87;
-=======
-  // gp_in_on_chip_2_buf12_load_to_gp_in_on_chip_2_buf12_to_gp_2172175_64 read pattern: { load_to_gp_in_on_chip_2_buf12_to_gp_2172175[root = 0, gp_in_on_chip_2_buf12_ld174, gp_in_on_chip_2_buf12_ld173] -> gp_in_on_chip_2_buf12[gp_in_on_chip_2_buf12_ld173, gp_in_on_chip_2_buf12_ld174] : 0 <= gp_in_on_chip_2_buf12_ld174 <= 16 and 0 <= gp_in_on_chip_2_buf12_ld173 <= 16 }
-  // Read schedule : { load_to_gp_in_on_chip_2_buf12_to_gp_2172175[d0 = 0, d1, d2] -> [0, 6 + 4d1, 6 + 4d2, 9] : 0 <= d1 <= 16 and 0 <= d2 <= 16 }
-  // Write schedule: { gp_in_on_chip_214_merged163[d0 = 0, d1, d2] -> [0, 6 + 4d1, 6 + 4d2, 6] : 0 <= d1 <= 16 and 0 <= d2 <= 16 }
-  auto value_gp_in_on_chip_2_buf12_gp_in_on_chip_214_merged163_87 = gp_in_on_chip_2_buf12.gp_in_on_chip_2_buf12_gp_in_on_chip_214_merged163_87_to_gp_in_on_chip_2_buf12_load_to_gp_in_on_chip_2_buf12_to_gp_2172175_64.peek(/* one reader or all rams */ 0);
-  return value_gp_in_on_chip_2_buf12_gp_in_on_chip_214_merged163_87;
->>>>>>> 89b3f51bdb8eb51a288ec002dbba28ce9175d84f
   return 0;
 }
 
 inline hw_uint<32>  gp_in_on_chip_2_buf12_load_to_gp_in_on_chip_2_buf12_to_gp_7188191_62_select(gp_in_on_chip_2_buf12_cache& gp_in_on_chip_2_buf12, int root, int gp_in_on_chip_2_buf12_ld190, int gp_in_on_chip_2_buf12_ld189, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-<<<<<<< HEAD
   // gp_in_on_chip_2_buf12_load_to_gp_in_on_chip_2_buf12_to_gp_7188191_62 read pattern: { load_to_gp_in_on_chip_2_buf12_to_gp_7188191[root = 0, gp_in_on_chip_2_buf12_ld190, gp_in_on_chip_2_buf12_ld189] -> gp_in_on_chip_2_buf12[gp_in_on_chip_2_buf12_ld189, gp_in_on_chip_2_buf12_ld190] : 0 < gp_in_on_chip_2_buf12_ld190 <= 16 and 0 < gp_in_on_chip_2_buf12_ld189 <= 16 }
   // Read schedule : { load_to_gp_in_on_chip_2_buf12_to_gp_7188191[d0 = 0, d1, d2] -> [0, 6 + 4d1, 6 + 4d2, 4] : 0 < d1 <= 16 and 0 < d2 <= 16 }
   // Write schedule: { gp_in_on_chip_214_merged160[d0 = 0, d1, d2] -> [0, 6 + 4d1, 6 + 4d2, 3] : 0 <= d1 <= 16 and 0 <= d2 <= 16 }
   auto value_gp_in_on_chip_2_buf12_gp_in_on_chip_214_merged160_87 = gp_in_on_chip_2_buf12.gp_in_on_chip_2_buf12_gp_in_on_chip_214_merged160_87_to_gp_in_on_chip_2_buf12_load_to_gp_in_on_chip_2_buf12_to_gp_7188191_62.peek(/* one reader or all rams */ 0);
   return value_gp_in_on_chip_2_buf12_gp_in_on_chip_214_merged160_87;
-=======
-  // gp_in_on_chip_2_buf12_load_to_gp_in_on_chip_2_buf12_to_gp_7176179_62 read pattern: { load_to_gp_in_on_chip_2_buf12_to_gp_7176179[root = 0, gp_in_on_chip_2_buf12_ld178, gp_in_on_chip_2_buf12_ld177] -> gp_in_on_chip_2_buf12[gp_in_on_chip_2_buf12_ld177, gp_in_on_chip_2_buf12_ld178] : 0 < gp_in_on_chip_2_buf12_ld178 <= 16 and 0 < gp_in_on_chip_2_buf12_ld177 <= 16 }
-  // Read schedule : { load_to_gp_in_on_chip_2_buf12_to_gp_7176179[d0 = 0, d1, d2] -> [0, 10 + 4d1, 10 + 4d2, 12] : 0 < d1 <= 16 and 0 < d2 <= 16 }
-  // Write schedule: { gp_in_on_chip_214_merged163[d0 = 0, d1, d2] -> [0, 6 + 4d1, 6 + 4d2, 6] : 0 <= d1 <= 16 and 0 <= d2 <= 16 }
-  auto value_gp_in_on_chip_2_buf12_gp_in_on_chip_214_merged163_87 = gp_in_on_chip_2_buf12.gp_in_on_chip_2_buf12_gp_in_on_chip_214_merged163_87_to_gp_in_on_chip_2_buf12_load_to_gp_in_on_chip_2_buf12_to_gp_7176179_62.peek(/* one reader or all rams */ (15 - gp_in_on_chip_2_buf12_ld177 >= 0 && 15 - gp_in_on_chip_2_buf12_ld178 >= 0) ? (18) : (-16 + gp_in_on_chip_2_buf12_ld177 == 0 && 15 - gp_in_on_chip_2_buf12_ld178 >= 0) ? (17) : (-16 + gp_in_on_chip_2_buf12_ld178 == 0 && 15 - gp_in_on_chip_2_buf12_ld177 >= 0) ? ((16 - gp_in_on_chip_2_buf12_ld177)) : 0);
-  return value_gp_in_on_chip_2_buf12_gp_in_on_chip_214_merged163_87;
->>>>>>> 89b3f51bdb8eb51a288ec002dbba28ce9175d84f
   return 0;
 }
 
@@ -938,34 +701,19 @@ inline hw_uint<32>  gp_in_on_chip_2_buf12_us39_9_select(gp_in_on_chip_2_buf12_ca
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // gp_in_on_chip_2_buf12_us39_9 read pattern: { us39[root = 0, us_gp_in_on_chip_2_buf1237, us_gp_in_on_chip_2_buf1238] -> gp_in_on_chip_2_buf12[o0, o1] : 0 <= us_gp_in_on_chip_2_buf1237 <= 31 and 0 <= us_gp_in_on_chip_2_buf1238 <= 31 and us_gp_in_on_chip_2_buf1238 < 2o0 <= 2 + us_gp_in_on_chip_2_buf1238 and us_gp_in_on_chip_2_buf1237 < 2o1 <= 2 + us_gp_in_on_chip_2_buf1237 }
-<<<<<<< HEAD
   // Read schedule : { us39[d0 = 0, d1, d2] -> [0, 10 + 2d1, 10 + 2d2, 9] : 0 <= d1 <= 31 and 0 <= d2 <= 31 }
   // Write schedule: { gp_in_on_chip_214_merged160[d0 = 0, d1, d2] -> [0, 6 + 4d1, 6 + 4d2, 3] : 0 <= d1 <= 16 and 0 <= d2 <= 16 }
   auto value_gp_in_on_chip_2_buf12_gp_in_on_chip_214_merged160_87 = gp_in_on_chip_2_buf12.gp_in_on_chip_2_buf12_gp_in_on_chip_214_merged160_87_to_gp_in_on_chip_2_buf12_us39_9.peek(/* one reader or all rams */ ((-1 - us_gp_in_on_chip_2_buf1237) % 2 == 0 && 29 - us_gp_in_on_chip_2_buf1238 >= 0) ? ((15 - floord(2*us_gp_in_on_chip_2_buf1238, 4))) : 0);
   return value_gp_in_on_chip_2_buf12_gp_in_on_chip_214_merged160_87;
-=======
-  // Read schedule : { us39[d0 = 0, d1, d2] -> [0, 10 + 2d1, 10 + 2d2, 7] : 0 <= d1 <= 31 and 0 <= d2 <= 31 }
-  // Write schedule: { gp_in_on_chip_214_merged163[d0 = 0, d1, d2] -> [0, 6 + 4d1, 6 + 4d2, 6] : 0 <= d1 <= 16 and 0 <= d2 <= 16 }
-  auto value_gp_in_on_chip_2_buf12_gp_in_on_chip_214_merged163_87 = gp_in_on_chip_2_buf12.gp_in_on_chip_2_buf12_gp_in_on_chip_214_merged163_87_to_gp_in_on_chip_2_buf12_us39_9.peek(/* one reader or all rams */ ((-1 - us_gp_in_on_chip_2_buf1237) % 2 == 0 && 29 - us_gp_in_on_chip_2_buf1238 >= 0) ? ((15 - floord(2*us_gp_in_on_chip_2_buf1238, 4))) : 0);
-  return value_gp_in_on_chip_2_buf12_gp_in_on_chip_214_merged163_87;
->>>>>>> 89b3f51bdb8eb51a288ec002dbba28ce9175d84f
   return 0;
 }
 
 // # of bundles = 4
-<<<<<<< HEAD
 // gp_in_on_chip_214_merged160_write
 //	gp_in_on_chip_2_buf12_gp_in_on_chip_214_merged160_87
 inline void gp_in_on_chip_2_buf12_gp_in_on_chip_214_merged160_write_bundle_write(hw_uint<32>& gp_in_on_chip_214_merged160_write, gp_in_on_chip_2_buf12_cache& gp_in_on_chip_2_buf12, int root, int gp_in_on_chip_213, int gp_in_on_chip_214, int dynamic_address) {
 	hw_uint<32>  gp_in_on_chip_2_buf12_gp_in_on_chip_214_merged160_87_res = gp_in_on_chip_214_merged160_write.extract<0, 31>();
 	gp_in_on_chip_2_buf12_gp_in_on_chip_214_merged160_87_write(gp_in_on_chip_2_buf12_gp_in_on_chip_214_merged160_87_res, gp_in_on_chip_2_buf12, root, gp_in_on_chip_213, gp_in_on_chip_214, dynamic_address);
-=======
-// gp_in_on_chip_214_merged163_write
-//	gp_in_on_chip_2_buf12_gp_in_on_chip_214_merged163_87
-inline void gp_in_on_chip_2_buf12_gp_in_on_chip_214_merged163_write_bundle_write(hw_uint<32>& gp_in_on_chip_214_merged163_write, gp_in_on_chip_2_buf12_cache& gp_in_on_chip_2_buf12, int root, int gp_in_on_chip_213, int gp_in_on_chip_214, int dynamic_address) {
-	hw_uint<32>  gp_in_on_chip_2_buf12_gp_in_on_chip_214_merged163_87_res = gp_in_on_chip_214_merged163_write.extract<0, 31>();
-	gp_in_on_chip_2_buf12_gp_in_on_chip_214_merged163_87_write(gp_in_on_chip_2_buf12_gp_in_on_chip_214_merged163_87_res, gp_in_on_chip_2_buf12, root, gp_in_on_chip_213, gp_in_on_chip_214, dynamic_address);
->>>>>>> 89b3f51bdb8eb51a288ec002dbba28ce9175d84f
 }
 
 // load_to_gp_in_on_chip_2_buf12_to_gp_2180183_read
@@ -1293,14 +1041,14 @@ inline void gp_in_on_chip_2_buf12_FIFO_buf184_load_to_gp_in_on_chip_2_buf12_FIFO
 
 struct gp_in_on_chip_2_buf12_FIFO_buf192_load_to_gp_in_on_chip_2_buf12_FIFO_buf192195_65_to_gp_in_on_chip_2_buf12_FIFO_buf192_diff35_114_cache {
 	// RAM Box: {[1, 16], [1, 16]}
-	// Capacity: 1
-	// # of read delays: 2
-  // 0, 0
-	fifo<hw_uint<32> , 1> f;
+	// Capacity: 17
+	// # of read delays: 17
+  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16
+	fifo<hw_uint<32> , 17> f;
 	inline hw_uint<32>  peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    return f.peek(0 - offset);
+    return f.peek(16 - offset);
   }
 
 
@@ -1329,19 +1077,11 @@ inline void gp_in_on_chip_2_buf12_FIFO_buf192_load_to_gp_in_on_chip_2_buf12_FIFO
 inline hw_uint<32>  gp_in_on_chip_2_buf12_FIFO_buf192_diff35_114_select(gp_in_on_chip_2_buf12_FIFO_buf192_cache& gp_in_on_chip_2_buf12_FIFO_buf192, int root, int lp_in_on_chip_233, int lp_in_on_chip_234, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-<<<<<<< HEAD
   // gp_in_on_chip_2_buf12_FIFO_buf192_diff35_114 read pattern: { diff35[root = 0, lp_in_on_chip_233, lp_in_on_chip_234] -> gp_in_on_chip_2_buf12_FIFO_buf192[1 + lp_in_on_chip_234, 1 + lp_in_on_chip_233] : 0 <= lp_in_on_chip_233 <= 15 and 0 <= lp_in_on_chip_234 <= 15 }
   // Read schedule : { diff35[d0 = 0, d1, d2] -> [0, 14 + 4d1, 14 + 4d2, 30] : 0 <= d1 <= 15 and 0 <= d2 <= 15 }
-  // Write schedule: { load_to_gp_in_on_chip_2_buf12_FIFO_buf192195[d0 = 0, d1, d2] -> [0, 6 + 4d1, 6 + 4d2, 8] : 0 < d1 <= 16 and 0 < d2 <= 16 }
-  auto value_gp_in_on_chip_2_buf12_FIFO_buf192_load_to_gp_in_on_chip_2_buf12_FIFO_buf192195_65 = gp_in_on_chip_2_buf12_FIFO_buf192.gp_in_on_chip_2_buf12_FIFO_buf192_load_to_gp_in_on_chip_2_buf12_FIFO_buf192195_65_to_gp_in_on_chip_2_buf12_FIFO_buf192_diff35_114.peek(/* one reader or all rams */ (14 - lp_in_on_chip_234 >= 0 && 14 - lp_in_on_chip_233 >= 0) ? (17) : (-15 + lp_in_on_chip_234 == 0 && 14 - lp_in_on_chip_233 >= 0) ? (16) : (-15 + lp_in_on_chip_233 == 0 && 14 - lp_in_on_chip_234 >= 0) ? ((15 - lp_in_on_chip_234)) : 0);
+  // Write schedule: { load_to_gp_in_on_chip_2_buf12_FIFO_buf192195[d0 = 0, d1, d2] -> [0, 6 + 4d1, 10 + 4d2, 8] : 0 < d1 <= 16 and 0 < d2 <= 16 }
+  auto value_gp_in_on_chip_2_buf12_FIFO_buf192_load_to_gp_in_on_chip_2_buf12_FIFO_buf192195_65 = gp_in_on_chip_2_buf12_FIFO_buf192.gp_in_on_chip_2_buf12_FIFO_buf192_load_to_gp_in_on_chip_2_buf12_FIFO_buf192195_65_to_gp_in_on_chip_2_buf12_FIFO_buf192_diff35_114.peek(/* one reader or all rams */ (14 - lp_in_on_chip_234 >= 0 && 14 - lp_in_on_chip_233 >= 0) ? (16) : (-15 + lp_in_on_chip_234 == 0 && 14 - lp_in_on_chip_233 >= 0) ? (16) : (-15 + lp_in_on_chip_233 == 0 && 14 - lp_in_on_chip_234 >= 0) ? ((15 - lp_in_on_chip_234)) : 0);
   return value_gp_in_on_chip_2_buf12_FIFO_buf192_load_to_gp_in_on_chip_2_buf12_FIFO_buf192195_65;
-=======
-  // gp_in_on_chip_2_buf12_FIFO_buf228_diff35_114 read pattern: { diff35[root = 0, lp_in_on_chip_233, lp_in_on_chip_234] -> gp_in_on_chip_2_buf12_FIFO_buf228[1 + lp_in_on_chip_234, 1 + lp_in_on_chip_233] : 0 <= lp_in_on_chip_233 <= 15 and 0 <= lp_in_on_chip_234 <= 15 }
-  // Read schedule : { diff35[d0 = 0, d1, d2] -> [0, 14 + 4d1, 14 + 4d2, 30] : 0 <= d1 <= 15 and 0 <= d2 <= 15 }
-  // Write schedule: { load_to_gp_in_on_chip_2_buf12_FIFO_buf228231[d0 = 0, d1, d2] -> [0, 10 + 4d1, 10 + 4d2, 20] : 0 < d1 <= 16 and 0 < d2 <= 16 }
-  auto value_gp_in_on_chip_2_buf12_FIFO_buf228_load_to_gp_in_on_chip_2_buf12_FIFO_buf228231_65 = gp_in_on_chip_2_buf12_FIFO_buf228.gp_in_on_chip_2_buf12_FIFO_buf228_load_to_gp_in_on_chip_2_buf12_FIFO_buf228231_65_to_gp_in_on_chip_2_buf12_FIFO_buf228_diff35_114.peek(/* one reader or all rams */ 0);
-  return value_gp_in_on_chip_2_buf12_FIFO_buf228_load_to_gp_in_on_chip_2_buf12_FIFO_buf228231_65;
->>>>>>> 89b3f51bdb8eb51a288ec002dbba28ce9175d84f
   return 0;
 }
 
@@ -1403,17 +1143,10 @@ inline void gp_in_on_chip_2_buf12_us36_us39_8_write(hw_uint<32> & gp_in_on_chip_
 inline hw_uint<32>  gp_in_on_chip_2_buf12_us36_load_to_gp_in_on_chip_2_buf12_us36_to_gp_5196199_58_select(gp_in_on_chip_2_buf12_us36_cache& gp_in_on_chip_2_buf12_us36, int root, int gp_in_on_chip_2_buf12_us36_ld198, int gp_in_on_chip_2_buf12_us36_ld197, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-<<<<<<< HEAD
   // gp_in_on_chip_2_buf12_us36_load_to_gp_in_on_chip_2_buf12_us36_to_gp_5196199_58 read pattern: { load_to_gp_in_on_chip_2_buf12_us36_to_gp_5196199[root = 0, gp_in_on_chip_2_buf12_us36_ld198, gp_in_on_chip_2_buf12_us36_ld197] -> gp_in_on_chip_2_buf12_us36[gp_in_on_chip_2_buf12_us36_ld197, gp_in_on_chip_2_buf12_us36_ld198] : 0 <= gp_in_on_chip_2_buf12_us36_ld198 <= 31 and 0 <= gp_in_on_chip_2_buf12_us36_ld197 <= 31 }
   // Read schedule : { load_to_gp_in_on_chip_2_buf12_us36_to_gp_5196199[d0 = 0, d1, d2] -> [0, 10 + 2d1, 10 + 2d2, 13] : 0 <= d1 <= 31 and 0 <= d2 <= 31 }
   // Write schedule: { us39[d0 = 0, d1, d2] -> [0, 10 + 2d1, 10 + 2d2, 9] : 0 <= d1 <= 31 and 0 <= d2 <= 31 }
   auto value_gp_in_on_chip_2_buf12_us36_us39_8 = gp_in_on_chip_2_buf12_us36.gp_in_on_chip_2_buf12_us36_us39_8_to_gp_in_on_chip_2_buf12_us36_load_to_gp_in_on_chip_2_buf12_us36_to_gp_5196199_58.peek(/* one reader or all rams */ 0);
-=======
-  // gp_in_on_chip_2_buf12_us36_load_to_gp_in_on_chip_2_buf12_us36_to_gp_5180183_58 read pattern: { load_to_gp_in_on_chip_2_buf12_us36_to_gp_5180183[root = 0, gp_in_on_chip_2_buf12_us36_ld182, gp_in_on_chip_2_buf12_us36_ld181] -> gp_in_on_chip_2_buf12_us36[gp_in_on_chip_2_buf12_us36_ld181, gp_in_on_chip_2_buf12_us36_ld182] : 0 <= gp_in_on_chip_2_buf12_us36_ld182 <= 31 and 0 <= gp_in_on_chip_2_buf12_us36_ld181 <= 31 }
-  // Read schedule : { load_to_gp_in_on_chip_2_buf12_us36_to_gp_5180183[d0 = 0, d1, d2] -> [0, 10 + 2d1, 10 + 2d2, 10] : 0 <= d1 <= 31 and 0 <= d2 <= 31 }
-  // Write schedule: { us39[d0 = 0, d1, d2] -> [0, 10 + 2d1, 10 + 2d2, 7] : 0 <= d1 <= 31 and 0 <= d2 <= 31 }
-  auto value_gp_in_on_chip_2_buf12_us36_us39_8 = gp_in_on_chip_2_buf12_us36.gp_in_on_chip_2_buf12_us36_us39_8_to_gp_in_on_chip_2_buf12_us36_load_to_gp_in_on_chip_2_buf12_us36_to_gp_5180183_58.peek(/* one reader or all rams */ 0);
->>>>>>> 89b3f51bdb8eb51a288ec002dbba28ce9175d84f
   return value_gp_in_on_chip_2_buf12_us36_us39_8;
   return 0;
 }
@@ -1476,19 +1209,11 @@ inline void gp_in_on_chip_2_buf12_us36_FIFO_buf200_load_to_gp_in_on_chip_2_buf12
 inline hw_uint<32>  gp_in_on_chip_2_buf12_us36_FIFO_buf200_diff43_112_select(gp_in_on_chip_2_buf12_us36_FIFO_buf200_cache& gp_in_on_chip_2_buf12_us36_FIFO_buf200, int root, int lp_in_on_chip_141, int lp_in_on_chip_142, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-<<<<<<< HEAD
   // gp_in_on_chip_2_buf12_us36_FIFO_buf200_diff43_112 read pattern: { diff43[root = 0, lp_in_on_chip_141, lp_in_on_chip_142] -> gp_in_on_chip_2_buf12_us36_FIFO_buf200[lp_in_on_chip_142, lp_in_on_chip_141] : 0 <= lp_in_on_chip_141 <= 31 and 0 <= lp_in_on_chip_142 <= 31 }
   // Read schedule : { diff43[d0 = 0, d1, d2] -> [0, 10 + 2d1, 10 + 2d2, 24] : 0 <= d1 <= 31 and 0 <= d2 <= 31 }
   // Write schedule: { load_to_gp_in_on_chip_2_buf12_us36_FIFO_buf200203[d0 = 0, d1, d2] -> [0, 10 + 2d1, 10 + 2d2, 17] : 0 <= d1 <= 31 and 0 <= d2 <= 31 }
   auto value_gp_in_on_chip_2_buf12_us36_FIFO_buf200_load_to_gp_in_on_chip_2_buf12_us36_FIFO_buf200203_59 = gp_in_on_chip_2_buf12_us36_FIFO_buf200.gp_in_on_chip_2_buf12_us36_FIFO_buf200_load_to_gp_in_on_chip_2_buf12_us36_FIFO_buf200203_59_to_gp_in_on_chip_2_buf12_us36_FIFO_buf200_diff43_112.peek(/* one reader or all rams */ 0);
   return value_gp_in_on_chip_2_buf12_us36_FIFO_buf200_load_to_gp_in_on_chip_2_buf12_us36_FIFO_buf200203_59;
-=======
-  // gp_in_on_chip_2_buf12_us36_FIFO_buf232_diff43_112 read pattern: { diff43[root = 0, lp_in_on_chip_141, lp_in_on_chip_142] -> gp_in_on_chip_2_buf12_us36_FIFO_buf232[lp_in_on_chip_142, lp_in_on_chip_141] : 0 <= lp_in_on_chip_141 <= 31 and 0 <= lp_in_on_chip_142 <= 31 }
-  // Read schedule : { diff43[d0 = 0, d1, d2] -> [0, 10 + 2d1, 10 + 2d2, 21] : 0 <= d1 <= 31 and 0 <= d2 <= 31 }
-  // Write schedule: { load_to_gp_in_on_chip_2_buf12_us36_FIFO_buf232235[d0 = 0, d1, d2] -> [0, 10 + 2d1, 10 + 2d2, 18] : 0 <= d1 <= 31 and 0 <= d2 <= 31 }
-  auto value_gp_in_on_chip_2_buf12_us36_FIFO_buf232_load_to_gp_in_on_chip_2_buf12_us36_FIFO_buf232235_59 = gp_in_on_chip_2_buf12_us36_FIFO_buf232.gp_in_on_chip_2_buf12_us36_FIFO_buf232_load_to_gp_in_on_chip_2_buf12_us36_FIFO_buf232235_59_to_gp_in_on_chip_2_buf12_us36_FIFO_buf232_diff43_112.peek(/* one reader or all rams */ 0);
-  return value_gp_in_on_chip_2_buf12_us36_FIFO_buf232_load_to_gp_in_on_chip_2_buf12_us36_FIFO_buf232235_59;
->>>>>>> 89b3f51bdb8eb51a288ec002dbba28ce9175d84f
   return 0;
 }
 
@@ -1576,17 +1301,10 @@ inline hw_uint<32>  gp_in_on_chip_3_buf20_us31_11_select(gp_in_on_chip_3_buf20_c
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // gp_in_on_chip_3_buf20_us31_11 read pattern: { us31[root = 0, us_gp_in_on_chip_3_buf2029, us_gp_in_on_chip_3_buf2030] -> gp_in_on_chip_3_buf20[o0, o1] : 0 <= us_gp_in_on_chip_3_buf2029 <= 15 and 0 <= us_gp_in_on_chip_3_buf2030 <= 15 and -1 + us_gp_in_on_chip_3_buf2030 <= 2o0 <= us_gp_in_on_chip_3_buf2030 and -1 + us_gp_in_on_chip_3_buf2029 <= 2o1 <= us_gp_in_on_chip_3_buf2029 }
-<<<<<<< HEAD
   // Read schedule : { us31[d0 = 0, d1, d2] -> [0, 14 + 4d1, 14 + 4d2, 18] : 0 <= d1 <= 15 and 0 <= d2 <= 15 }
   // Write schedule: { gp_in_on_chip_322_merged163[d0 = 0, d1, d2] -> [0, 14 + 8d1, 14 + 8d2, 16] : 0 <= d1 <= 7 and 0 <= d2 <= 7 }
   auto value_gp_in_on_chip_3_buf20_gp_in_on_chip_322_merged163_77 = gp_in_on_chip_3_buf20.gp_in_on_chip_3_buf20_gp_in_on_chip_322_merged163_77_to_gp_in_on_chip_3_buf20_us31_11.peek(/* one reader or all rams */ ((-1 - us_gp_in_on_chip_3_buf2029) % 2 == 0 && 13 - us_gp_in_on_chip_3_buf2030 >= 0) ? ((7 - floord(2*us_gp_in_on_chip_3_buf2030, 4))) : 0);
   return value_gp_in_on_chip_3_buf20_gp_in_on_chip_322_merged163_77;
-=======
-  // Read schedule : { us31[d0 = 0, d1, d2] -> [0, 14 + 4d1, 14 + 4d2, 23] : 0 <= d1 <= 15 and 0 <= d2 <= 15 }
-  // Write schedule: { gp_in_on_chip_322_merged160[d0 = 0, d1, d2] -> [0, 14 + 8d1, 14 + 8d2, 16] : 0 <= d1 <= 7 and 0 <= d2 <= 7 }
-  auto value_gp_in_on_chip_3_buf20_gp_in_on_chip_322_merged160_77 = gp_in_on_chip_3_buf20.gp_in_on_chip_3_buf20_gp_in_on_chip_322_merged160_77_to_gp_in_on_chip_3_buf20_us31_11.peek(/* one reader or all rams */ ((-1 - us_gp_in_on_chip_3_buf2029) % 2 == 0 && 13 - us_gp_in_on_chip_3_buf2030 >= 0) ? ((7 - floord(2*us_gp_in_on_chip_3_buf2030, 4))) : 0);
-  return value_gp_in_on_chip_3_buf20_gp_in_on_chip_322_merged160_77;
->>>>>>> 89b3f51bdb8eb51a288ec002dbba28ce9175d84f
   return 0;
 }
 
@@ -1671,17 +1389,10 @@ inline void gp_in_on_chip_3_buf20_us28_us31_10_write(hw_uint<32> & gp_in_on_chip
 inline hw_uint<32>  gp_in_on_chip_3_buf20_us28_load_to_gp_in_on_chip_3_buf20_us28_to_gp_7204207_54_select(gp_in_on_chip_3_buf20_us28_cache& gp_in_on_chip_3_buf20_us28, int root, int gp_in_on_chip_3_buf20_us28_ld206, int gp_in_on_chip_3_buf20_us28_ld205, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-<<<<<<< HEAD
   // gp_in_on_chip_3_buf20_us28_load_to_gp_in_on_chip_3_buf20_us28_to_gp_7204207_54 read pattern: { load_to_gp_in_on_chip_3_buf20_us28_to_gp_7204207[root = 0, gp_in_on_chip_3_buf20_us28_ld206, gp_in_on_chip_3_buf20_us28_ld205] -> gp_in_on_chip_3_buf20_us28[gp_in_on_chip_3_buf20_us28_ld205, gp_in_on_chip_3_buf20_us28_ld206] : 0 <= gp_in_on_chip_3_buf20_us28_ld206 <= 15 and 0 <= gp_in_on_chip_3_buf20_us28_ld205 <= 15 }
   // Read schedule : { load_to_gp_in_on_chip_3_buf20_us28_to_gp_7204207[d0 = 0, d1, d2] -> [0, 14 + 4d1, 14 + 4d2, 23] : 0 <= d1 <= 15 and 0 <= d2 <= 15 }
   // Write schedule: { us31[d0 = 0, d1, d2] -> [0, 14 + 4d1, 14 + 4d2, 18] : 0 <= d1 <= 15 and 0 <= d2 <= 15 }
   auto value_gp_in_on_chip_3_buf20_us28_us31_10 = gp_in_on_chip_3_buf20_us28.gp_in_on_chip_3_buf20_us28_us31_10_to_gp_in_on_chip_3_buf20_us28_load_to_gp_in_on_chip_3_buf20_us28_to_gp_7204207_54.peek(/* one reader or all rams */ 0);
-=======
-  // gp_in_on_chip_3_buf20_us28_load_to_gp_in_on_chip_3_buf20_us28_to_gp_7184187_54 read pattern: { load_to_gp_in_on_chip_3_buf20_us28_to_gp_7184187[root = 0, gp_in_on_chip_3_buf20_us28_ld186, gp_in_on_chip_3_buf20_us28_ld185] -> gp_in_on_chip_3_buf20_us28[gp_in_on_chip_3_buf20_us28_ld185, gp_in_on_chip_3_buf20_us28_ld186] : 0 <= gp_in_on_chip_3_buf20_us28_ld186 <= 15 and 0 <= gp_in_on_chip_3_buf20_us28_ld185 <= 15 }
-  // Read schedule : { load_to_gp_in_on_chip_3_buf20_us28_to_gp_7184187[d0 = 0, d1, d2] -> [0, 14 + 4d1, 14 + 4d2, 27] : 0 <= d1 <= 15 and 0 <= d2 <= 15 }
-  // Write schedule: { us31[d0 = 0, d1, d2] -> [0, 14 + 4d1, 14 + 4d2, 23] : 0 <= d1 <= 15 and 0 <= d2 <= 15 }
-  auto value_gp_in_on_chip_3_buf20_us28_us31_10 = gp_in_on_chip_3_buf20_us28.gp_in_on_chip_3_buf20_us28_us31_10_to_gp_in_on_chip_3_buf20_us28_load_to_gp_in_on_chip_3_buf20_us28_to_gp_7184187_54.peek(/* one reader or all rams */ 0);
->>>>>>> 89b3f51bdb8eb51a288ec002dbba28ce9175d84f
   return value_gp_in_on_chip_3_buf20_us28_us31_10;
   return 0;
 }
@@ -1744,19 +1455,11 @@ inline void gp_in_on_chip_3_buf20_us28_FIFO_buf208_load_to_gp_in_on_chip_3_buf20
 inline hw_uint<32>  gp_in_on_chip_3_buf20_us28_FIFO_buf208_diff35_115_select(gp_in_on_chip_3_buf20_us28_FIFO_buf208_cache& gp_in_on_chip_3_buf20_us28_FIFO_buf208, int root, int lp_in_on_chip_233, int lp_in_on_chip_234, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-<<<<<<< HEAD
   // gp_in_on_chip_3_buf20_us28_FIFO_buf208_diff35_115 read pattern: { diff35[root = 0, lp_in_on_chip_233, lp_in_on_chip_234] -> gp_in_on_chip_3_buf20_us28_FIFO_buf208[lp_in_on_chip_234, lp_in_on_chip_233] : 0 <= lp_in_on_chip_233 <= 15 and 0 <= lp_in_on_chip_234 <= 15 }
   // Read schedule : { diff35[d0 = 0, d1, d2] -> [0, 14 + 4d1, 14 + 4d2, 30] : 0 <= d1 <= 15 and 0 <= d2 <= 15 }
   // Write schedule: { load_to_gp_in_on_chip_3_buf20_us28_FIFO_buf208211[d0 = 0, d1, d2] -> [0, 14 + 4d1, 14 + 4d2, 28] : 0 <= d1 <= 15 and 0 <= d2 <= 15 }
   auto value_gp_in_on_chip_3_buf20_us28_FIFO_buf208_load_to_gp_in_on_chip_3_buf20_us28_FIFO_buf208211_55 = gp_in_on_chip_3_buf20_us28_FIFO_buf208.gp_in_on_chip_3_buf20_us28_FIFO_buf208_load_to_gp_in_on_chip_3_buf20_us28_FIFO_buf208211_55_to_gp_in_on_chip_3_buf20_us28_FIFO_buf208_diff35_115.peek(/* one reader or all rams */ 0);
   return value_gp_in_on_chip_3_buf20_us28_FIFO_buf208_load_to_gp_in_on_chip_3_buf20_us28_FIFO_buf208211_55;
-=======
-  // gp_in_on_chip_3_buf20_us28_FIFO_buf236_diff35_115 read pattern: { diff35[root = 0, lp_in_on_chip_233, lp_in_on_chip_234] -> gp_in_on_chip_3_buf20_us28_FIFO_buf236[lp_in_on_chip_234, lp_in_on_chip_233] : 0 <= lp_in_on_chip_233 <= 15 and 0 <= lp_in_on_chip_234 <= 15 }
-  // Read schedule : { diff35[d0 = 0, d1, d2] -> [0, 14 + 4d1, 14 + 4d2, 30] : 0 <= d1 <= 15 and 0 <= d2 <= 15 }
-  // Write schedule: { load_to_gp_in_on_chip_3_buf20_us28_FIFO_buf236239[d0 = 0, d1, d2] -> [0, 14 + 4d1, 14 + 4d2, 28] : 0 <= d1 <= 15 and 0 <= d2 <= 15 }
-  auto value_gp_in_on_chip_3_buf20_us28_FIFO_buf236_load_to_gp_in_on_chip_3_buf20_us28_FIFO_buf236239_55 = gp_in_on_chip_3_buf20_us28_FIFO_buf236.gp_in_on_chip_3_buf20_us28_FIFO_buf236_load_to_gp_in_on_chip_3_buf20_us28_FIFO_buf236239_55_to_gp_in_on_chip_3_buf20_us28_FIFO_buf236_diff35_115.peek(/* one reader or all rams */ 0);
-  return value_gp_in_on_chip_3_buf20_us28_FIFO_buf236_load_to_gp_in_on_chip_3_buf20_us28_FIFO_buf236239_55;
->>>>>>> 89b3f51bdb8eb51a288ec002dbba28ce9175d84f
   return 0;
 }
 
@@ -1818,17 +1521,10 @@ inline void gp_in_on_chip_3_buf20_us56_us59_4_write(hw_uint<32> & gp_in_on_chip_
 inline hw_uint<32>  gp_in_on_chip_3_buf20_us56_load_to_gp_in_on_chip_3_buf20_us56_to_gp_8212215_50_select(gp_in_on_chip_3_buf20_us56_cache& gp_in_on_chip_3_buf20_us56, int root, int gp_in_on_chip_3_buf20_us56_ld214, int gp_in_on_chip_3_buf20_us56_ld213, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-<<<<<<< HEAD
   // gp_in_on_chip_3_buf20_us56_load_to_gp_in_on_chip_3_buf20_us56_to_gp_8212215_50 read pattern: { load_to_gp_in_on_chip_3_buf20_us56_to_gp_8212215[root = 0, gp_in_on_chip_3_buf20_us56_ld214, gp_in_on_chip_3_buf20_us56_ld213] -> gp_in_on_chip_3_buf20_us56[gp_in_on_chip_3_buf20_us56_ld213, gp_in_on_chip_3_buf20_us56_ld214] : 0 <= gp_in_on_chip_3_buf20_us56_ld214 <= 15 and 0 <= gp_in_on_chip_3_buf20_us56_ld213 <= 15 }
   // Read schedule : { load_to_gp_in_on_chip_3_buf20_us56_to_gp_8212215[d0 = 0, d1, d2] -> [0, 14 + 4d1, 14 + 4d2, 21] : 0 <= d1 <= 15 and 0 <= d2 <= 15 }
   // Write schedule: { us59[d0 = 0, d1, d2] -> [0, 14 + 4d1, 14 + 4d2, 20] : 0 <= d1 <= 15 and 0 <= d2 <= 15 }
   auto value_gp_in_on_chip_3_buf20_us56_us59_4 = gp_in_on_chip_3_buf20_us56.gp_in_on_chip_3_buf20_us56_us59_4_to_gp_in_on_chip_3_buf20_us56_load_to_gp_in_on_chip_3_buf20_us56_to_gp_8212215_50.peek(/* one reader or all rams */ 0);
-=======
-  // gp_in_on_chip_3_buf20_us56_load_to_gp_in_on_chip_3_buf20_us56_to_gp_8188191_50 read pattern: { load_to_gp_in_on_chip_3_buf20_us56_to_gp_8188191[root = 0, gp_in_on_chip_3_buf20_us56_ld190, gp_in_on_chip_3_buf20_us56_ld189] -> gp_in_on_chip_3_buf20_us56[gp_in_on_chip_3_buf20_us56_ld189, gp_in_on_chip_3_buf20_us56_ld190] : 0 <= gp_in_on_chip_3_buf20_us56_ld190 <= 15 and 0 <= gp_in_on_chip_3_buf20_us56_ld189 <= 15 }
-  // Read schedule : { load_to_gp_in_on_chip_3_buf20_us56_to_gp_8188191[d0 = 0, d1, d2] -> [0, 14 + 4d1, 14 + 4d2, 22] : 0 <= d1 <= 15 and 0 <= d2 <= 15 }
-  // Write schedule: { us59[d0 = 0, d1, d2] -> [0, 14 + 4d1, 14 + 4d2, 17] : 0 <= d1 <= 15 and 0 <= d2 <= 15 }
-  auto value_gp_in_on_chip_3_buf20_us56_us59_4 = gp_in_on_chip_3_buf20_us56.gp_in_on_chip_3_buf20_us56_us59_4_to_gp_in_on_chip_3_buf20_us56_load_to_gp_in_on_chip_3_buf20_us56_to_gp_8188191_50.peek(/* one reader or all rams */ 0);
->>>>>>> 89b3f51bdb8eb51a288ec002dbba28ce9175d84f
   return value_gp_in_on_chip_3_buf20_us56_us59_4;
   return 0;
 }
@@ -1893,15 +1589,9 @@ inline hw_uint<32>  gp_in_on_chip_3_buf20_us56_FIFO_buf216_rc60_20_select(gp_in_
 #endif //__VIVADO_SYNTH__
   // gp_in_on_chip_3_buf20_us56_FIFO_buf216_rc60_20 read pattern: { rc60[root = 0, lp_in_on_chip_2_buf32_reconstruct_lp5253, lp_in_on_chip_2_buf32_reconstruct_lp5254] -> gp_in_on_chip_3_buf20_us56_FIFO_buf216[lp_in_on_chip_2_buf32_reconstruct_lp5254, lp_in_on_chip_2_buf32_reconstruct_lp5253] : 0 <= lp_in_on_chip_2_buf32_reconstruct_lp5253 <= 15 and 0 <= lp_in_on_chip_2_buf32_reconstruct_lp5254 <= 15 }
   // Read schedule : { rc60[d0 = 0, d1, d2] -> [0, 14 + 4d1, 14 + 4d2, 33] : 0 <= d1 <= 15 and 0 <= d2 <= 15 }
-<<<<<<< HEAD
   // Write schedule: { load_to_gp_in_on_chip_3_buf20_us56_FIFO_buf216219[d0 = 0, d1, d2] -> [0, 14 + 4d1, 14 + 4d2, 22] : 0 <= d1 <= 15 and 0 <= d2 <= 15 }
   auto value_gp_in_on_chip_3_buf20_us56_FIFO_buf216_load_to_gp_in_on_chip_3_buf20_us56_FIFO_buf216219_51 = gp_in_on_chip_3_buf20_us56_FIFO_buf216.gp_in_on_chip_3_buf20_us56_FIFO_buf216_load_to_gp_in_on_chip_3_buf20_us56_FIFO_buf216219_51_to_gp_in_on_chip_3_buf20_us56_FIFO_buf216_rc60_20.peek(/* one reader or all rams */ 0);
   return value_gp_in_on_chip_3_buf20_us56_FIFO_buf216_load_to_gp_in_on_chip_3_buf20_us56_FIFO_buf216219_51;
-=======
-  // Write schedule: { load_to_gp_in_on_chip_3_buf20_us56_FIFO_buf240243[d0 = 0, d1, d2] -> [0, 14 + 4d1, 14 + 4d2, 25] : 0 <= d1 <= 15 and 0 <= d2 <= 15 }
-  auto value_gp_in_on_chip_3_buf20_us56_FIFO_buf240_load_to_gp_in_on_chip_3_buf20_us56_FIFO_buf240243_51 = gp_in_on_chip_3_buf20_us56_FIFO_buf240.gp_in_on_chip_3_buf20_us56_FIFO_buf240_load_to_gp_in_on_chip_3_buf20_us56_FIFO_buf240243_51_to_gp_in_on_chip_3_buf20_us56_FIFO_buf240_rc60_20.peek(/* one reader or all rams */ 0);
-  return value_gp_in_on_chip_3_buf20_us56_FIFO_buf240_load_to_gp_in_on_chip_3_buf20_us56_FIFO_buf240243_51;
->>>>>>> 89b3f51bdb8eb51a288ec002dbba28ce9175d84f
   return 0;
 }
 
@@ -2073,11 +1763,7 @@ struct in_on_chip_cache {
     // { gp_in_on_chip_16_merged157[root = 0, gp_in_on_chip_15, gp_in_on_chip_16] -> in_on_chip[2 + 2gp_in_on_chip_16, 2gp_in_on_chip_15] : 0 <= gp_in_on_chip_15 <= 34 and 0 <= gp_in_on_chip_16 <= 34 }
     // { gp_in_on_chip_16_merged157[root = 0, gp_in_on_chip_15, gp_in_on_chip_16] -> in_on_chip[2gp_in_on_chip_16, 2 + 2gp_in_on_chip_15] : 0 <= gp_in_on_chip_15 <= 34 and 0 <= gp_in_on_chip_16 <= 34 }
     // { gp_in_on_chip_16_merged157[root = 0, gp_in_on_chip_15, gp_in_on_chip_16] -> in_on_chip[1 + 2gp_in_on_chip_16, 2 + 2gp_in_on_chip_15] : 0 <= gp_in_on_chip_15 <= 34 and 0 <= gp_in_on_chip_16 <= 34 }
-<<<<<<< HEAD
     // { load_to_in_on_chip_to_gp_3220223[root = 0, in_on_chip_ld222, in_on_chip_ld221] -> in_on_chip[in_on_chip_ld221, in_on_chip_ld222] : 7 <= in_on_chip_ld222 <= 70 and 7 <= in_on_chip_ld221 <= 70 }
-=======
-    // { load_to_in_on_chip_to_gp_3192195[root = 0, in_on_chip_ld194, in_on_chip_ld193] -> in_on_chip[in_on_chip_ld193, in_on_chip_ld194] : 7 <= in_on_chip_ld194 <= 70 and 7 <= in_on_chip_ld193 <= 70 }
->>>>>>> 89b3f51bdb8eb51a288ec002dbba28ce9175d84f
   // # of banks: 2
   in_on_chip_pw_math_in03_23_to_in_on_chip_load_to_in_on_chip_to_gp_3220223_46_cache in_on_chip_pw_math_in03_23_to_in_on_chip_load_to_in_on_chip_to_gp_3220223_46;
   in_on_chip_pw_math_in03_23_merged_banks_9_cache in_on_chip_pw_math_in03_23_merged_banks_9;
@@ -2094,11 +1780,7 @@ inline hw_uint<32>  in_on_chip_gp_in_on_chip_16_merged157_100_select(in_on_chip_
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // in_on_chip_gp_in_on_chip_16_merged157_100 read pattern: { gp_in_on_chip_16_merged157[root = 0, gp_in_on_chip_15, gp_in_on_chip_16] -> in_on_chip[2 + 2gp_in_on_chip_16, 2 + 2gp_in_on_chip_15] : 0 <= gp_in_on_chip_15 <= 34 and 0 <= gp_in_on_chip_16 <= 34 }
-<<<<<<< HEAD
   // Read schedule : { gp_in_on_chip_16_merged157[d0 = 0, d1, d2] -> [0, 2 + 2d1, 2 + 2d2, 2] : 0 <= d1 <= 34 and 0 <= d2 <= 34 }
-=======
-  // Read schedule : { gp_in_on_chip_16_merged157[d0 = 0, d1, d2] -> [0, 2 + 2d1, 2 + 2d2, 3] : 0 <= d1 <= 34 and 0 <= d2 <= 34 }
->>>>>>> 89b3f51bdb8eb51a288ec002dbba28ce9175d84f
   // Write schedule: { pw_math_in03[d0 = 0, d1, d2] -> [0, d1, d2, 0] : 0 <= d1 <= 70 and 0 <= d2 <= 70 }
   auto value_in_on_chip_pw_math_in03_23 = in_on_chip.in_on_chip_pw_math_in03_23_merged_banks_9.peek_0();
   return value_in_on_chip_pw_math_in03_23;
@@ -2109,11 +1791,7 @@ inline hw_uint<32>  in_on_chip_gp_in_on_chip_16_merged157_101_select(in_on_chip_
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // in_on_chip_gp_in_on_chip_16_merged157_101 read pattern: { gp_in_on_chip_16_merged157[root = 0, gp_in_on_chip_15, gp_in_on_chip_16] -> in_on_chip[2gp_in_on_chip_16, 1 + 2gp_in_on_chip_15] : 0 <= gp_in_on_chip_15 <= 34 and 0 <= gp_in_on_chip_16 <= 34 }
-<<<<<<< HEAD
   // Read schedule : { gp_in_on_chip_16_merged157[d0 = 0, d1, d2] -> [0, 2 + 2d1, 2 + 2d2, 2] : 0 <= d1 <= 34 and 0 <= d2 <= 34 }
-=======
-  // Read schedule : { gp_in_on_chip_16_merged157[d0 = 0, d1, d2] -> [0, 2 + 2d1, 2 + 2d2, 3] : 0 <= d1 <= 34 and 0 <= d2 <= 34 }
->>>>>>> 89b3f51bdb8eb51a288ec002dbba28ce9175d84f
   // Write schedule: { pw_math_in03[d0 = 0, d1, d2] -> [0, d1, d2, 0] : 0 <= d1 <= 70 and 0 <= d2 <= 70 }
   auto value_in_on_chip_pw_math_in03_23 = in_on_chip.in_on_chip_pw_math_in03_23_merged_banks_9.peek_73();
   return value_in_on_chip_pw_math_in03_23;
@@ -2124,11 +1802,7 @@ inline hw_uint<32>  in_on_chip_gp_in_on_chip_16_merged157_102_select(in_on_chip_
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // in_on_chip_gp_in_on_chip_16_merged157_102 read pattern: { gp_in_on_chip_16_merged157[root = 0, gp_in_on_chip_15, gp_in_on_chip_16] -> in_on_chip[1 + 2gp_in_on_chip_16, 1 + 2gp_in_on_chip_15] : 0 <= gp_in_on_chip_15 <= 34 and 0 <= gp_in_on_chip_16 <= 34 }
-<<<<<<< HEAD
   // Read schedule : { gp_in_on_chip_16_merged157[d0 = 0, d1, d2] -> [0, 2 + 2d1, 2 + 2d2, 2] : 0 <= d1 <= 34 and 0 <= d2 <= 34 }
-=======
-  // Read schedule : { gp_in_on_chip_16_merged157[d0 = 0, d1, d2] -> [0, 2 + 2d1, 2 + 2d2, 3] : 0 <= d1 <= 34 and 0 <= d2 <= 34 }
->>>>>>> 89b3f51bdb8eb51a288ec002dbba28ce9175d84f
   // Write schedule: { pw_math_in03[d0 = 0, d1, d2] -> [0, d1, d2, 0] : 0 <= d1 <= 70 and 0 <= d2 <= 70 }
   auto value_in_on_chip_pw_math_in03_23 = in_on_chip.in_on_chip_pw_math_in03_23_merged_banks_9.peek_72();
   return value_in_on_chip_pw_math_in03_23;
@@ -2139,11 +1813,7 @@ inline hw_uint<32>  in_on_chip_gp_in_on_chip_16_merged157_103_select(in_on_chip_
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // in_on_chip_gp_in_on_chip_16_merged157_103 read pattern: { gp_in_on_chip_16_merged157[root = 0, gp_in_on_chip_15, gp_in_on_chip_16] -> in_on_chip[2 + 2gp_in_on_chip_16, 1 + 2gp_in_on_chip_15] : 0 <= gp_in_on_chip_15 <= 34 and 0 <= gp_in_on_chip_16 <= 34 }
-<<<<<<< HEAD
   // Read schedule : { gp_in_on_chip_16_merged157[d0 = 0, d1, d2] -> [0, 2 + 2d1, 2 + 2d2, 2] : 0 <= d1 <= 34 and 0 <= d2 <= 34 }
-=======
-  // Read schedule : { gp_in_on_chip_16_merged157[d0 = 0, d1, d2] -> [0, 2 + 2d1, 2 + 2d2, 3] : 0 <= d1 <= 34 and 0 <= d2 <= 34 }
->>>>>>> 89b3f51bdb8eb51a288ec002dbba28ce9175d84f
   // Write schedule: { pw_math_in03[d0 = 0, d1, d2] -> [0, d1, d2, 0] : 0 <= d1 <= 70 and 0 <= d2 <= 70 }
   auto value_in_on_chip_pw_math_in03_23 = in_on_chip.in_on_chip_pw_math_in03_23_merged_banks_9.peek_71();
   return value_in_on_chip_pw_math_in03_23;
@@ -2154,11 +1824,7 @@ inline hw_uint<32>  in_on_chip_gp_in_on_chip_16_merged157_104_select(in_on_chip_
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // in_on_chip_gp_in_on_chip_16_merged157_104 read pattern: { gp_in_on_chip_16_merged157[root = 0, gp_in_on_chip_15, gp_in_on_chip_16] -> in_on_chip[2gp_in_on_chip_16, 2gp_in_on_chip_15] : 0 <= gp_in_on_chip_15 <= 34 and 0 <= gp_in_on_chip_16 <= 34 }
-<<<<<<< HEAD
   // Read schedule : { gp_in_on_chip_16_merged157[d0 = 0, d1, d2] -> [0, 2 + 2d1, 2 + 2d2, 2] : 0 <= d1 <= 34 and 0 <= d2 <= 34 }
-=======
-  // Read schedule : { gp_in_on_chip_16_merged157[d0 = 0, d1, d2] -> [0, 2 + 2d1, 2 + 2d2, 3] : 0 <= d1 <= 34 and 0 <= d2 <= 34 }
->>>>>>> 89b3f51bdb8eb51a288ec002dbba28ce9175d84f
   // Write schedule: { pw_math_in03[d0 = 0, d1, d2] -> [0, d1, d2, 0] : 0 <= d1 <= 70 and 0 <= d2 <= 70 }
   auto value_in_on_chip_pw_math_in03_23 = in_on_chip.in_on_chip_pw_math_in03_23_merged_banks_9.peek_144();
   return value_in_on_chip_pw_math_in03_23;
@@ -2169,11 +1835,7 @@ inline hw_uint<32>  in_on_chip_gp_in_on_chip_16_merged157_105_select(in_on_chip_
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // in_on_chip_gp_in_on_chip_16_merged157_105 read pattern: { gp_in_on_chip_16_merged157[root = 0, gp_in_on_chip_15, gp_in_on_chip_16] -> in_on_chip[1 + 2gp_in_on_chip_16, 2gp_in_on_chip_15] : 0 <= gp_in_on_chip_15 <= 34 and 0 <= gp_in_on_chip_16 <= 34 }
-<<<<<<< HEAD
   // Read schedule : { gp_in_on_chip_16_merged157[d0 = 0, d1, d2] -> [0, 2 + 2d1, 2 + 2d2, 2] : 0 <= d1 <= 34 and 0 <= d2 <= 34 }
-=======
-  // Read schedule : { gp_in_on_chip_16_merged157[d0 = 0, d1, d2] -> [0, 2 + 2d1, 2 + 2d2, 3] : 0 <= d1 <= 34 and 0 <= d2 <= 34 }
->>>>>>> 89b3f51bdb8eb51a288ec002dbba28ce9175d84f
   // Write schedule: { pw_math_in03[d0 = 0, d1, d2] -> [0, d1, d2, 0] : 0 <= d1 <= 70 and 0 <= d2 <= 70 }
   auto value_in_on_chip_pw_math_in03_23 = in_on_chip.in_on_chip_pw_math_in03_23_merged_banks_9.peek_143();
   return value_in_on_chip_pw_math_in03_23;
@@ -2184,11 +1846,7 @@ inline hw_uint<32>  in_on_chip_gp_in_on_chip_16_merged157_106_select(in_on_chip_
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // in_on_chip_gp_in_on_chip_16_merged157_106 read pattern: { gp_in_on_chip_16_merged157[root = 0, gp_in_on_chip_15, gp_in_on_chip_16] -> in_on_chip[2 + 2gp_in_on_chip_16, 2gp_in_on_chip_15] : 0 <= gp_in_on_chip_15 <= 34 and 0 <= gp_in_on_chip_16 <= 34 }
-<<<<<<< HEAD
   // Read schedule : { gp_in_on_chip_16_merged157[d0 = 0, d1, d2] -> [0, 2 + 2d1, 2 + 2d2, 2] : 0 <= d1 <= 34 and 0 <= d2 <= 34 }
-=======
-  // Read schedule : { gp_in_on_chip_16_merged157[d0 = 0, d1, d2] -> [0, 2 + 2d1, 2 + 2d2, 3] : 0 <= d1 <= 34 and 0 <= d2 <= 34 }
->>>>>>> 89b3f51bdb8eb51a288ec002dbba28ce9175d84f
   // Write schedule: { pw_math_in03[d0 = 0, d1, d2] -> [0, d1, d2, 0] : 0 <= d1 <= 70 and 0 <= d2 <= 70 }
   auto value_in_on_chip_pw_math_in03_23 = in_on_chip.in_on_chip_pw_math_in03_23_merged_banks_9.peek_142();
   return value_in_on_chip_pw_math_in03_23;
@@ -2199,11 +1857,7 @@ inline hw_uint<32>  in_on_chip_gp_in_on_chip_16_merged157_98_select(in_on_chip_c
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // in_on_chip_gp_in_on_chip_16_merged157_98 read pattern: { gp_in_on_chip_16_merged157[root = 0, gp_in_on_chip_15, gp_in_on_chip_16] -> in_on_chip[2gp_in_on_chip_16, 2 + 2gp_in_on_chip_15] : 0 <= gp_in_on_chip_15 <= 34 and 0 <= gp_in_on_chip_16 <= 34 }
-<<<<<<< HEAD
   // Read schedule : { gp_in_on_chip_16_merged157[d0 = 0, d1, d2] -> [0, 2 + 2d1, 2 + 2d2, 2] : 0 <= d1 <= 34 and 0 <= d2 <= 34 }
-=======
-  // Read schedule : { gp_in_on_chip_16_merged157[d0 = 0, d1, d2] -> [0, 2 + 2d1, 2 + 2d2, 3] : 0 <= d1 <= 34 and 0 <= d2 <= 34 }
->>>>>>> 89b3f51bdb8eb51a288ec002dbba28ce9175d84f
   // Write schedule: { pw_math_in03[d0 = 0, d1, d2] -> [0, d1, d2, 0] : 0 <= d1 <= 70 and 0 <= d2 <= 70 }
   auto value_in_on_chip_pw_math_in03_23 = in_on_chip.in_on_chip_pw_math_in03_23_merged_banks_9.peek_2();
   return value_in_on_chip_pw_math_in03_23;
@@ -2214,11 +1868,7 @@ inline hw_uint<32>  in_on_chip_gp_in_on_chip_16_merged157_99_select(in_on_chip_c
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // in_on_chip_gp_in_on_chip_16_merged157_99 read pattern: { gp_in_on_chip_16_merged157[root = 0, gp_in_on_chip_15, gp_in_on_chip_16] -> in_on_chip[1 + 2gp_in_on_chip_16, 2 + 2gp_in_on_chip_15] : 0 <= gp_in_on_chip_15 <= 34 and 0 <= gp_in_on_chip_16 <= 34 }
-<<<<<<< HEAD
   // Read schedule : { gp_in_on_chip_16_merged157[d0 = 0, d1, d2] -> [0, 2 + 2d1, 2 + 2d2, 2] : 0 <= d1 <= 34 and 0 <= d2 <= 34 }
-=======
-  // Read schedule : { gp_in_on_chip_16_merged157[d0 = 0, d1, d2] -> [0, 2 + 2d1, 2 + 2d2, 3] : 0 <= d1 <= 34 and 0 <= d2 <= 34 }
->>>>>>> 89b3f51bdb8eb51a288ec002dbba28ce9175d84f
   // Write schedule: { pw_math_in03[d0 = 0, d1, d2] -> [0, d1, d2, 0] : 0 <= d1 <= 70 and 0 <= d2 <= 70 }
   auto value_in_on_chip_pw_math_in03_23 = in_on_chip.in_on_chip_pw_math_in03_23_merged_banks_9.peek_1();
   return value_in_on_chip_pw_math_in03_23;
@@ -2228,13 +1878,8 @@ inline hw_uint<32>  in_on_chip_gp_in_on_chip_16_merged157_99_select(in_on_chip_c
 inline hw_uint<32>  in_on_chip_load_to_in_on_chip_to_gp_3220223_46_select(in_on_chip_cache& in_on_chip, int root, int in_on_chip_ld222, int in_on_chip_ld221, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-<<<<<<< HEAD
   // in_on_chip_load_to_in_on_chip_to_gp_3220223_46 read pattern: { load_to_in_on_chip_to_gp_3220223[root = 0, in_on_chip_ld222, in_on_chip_ld221] -> in_on_chip[in_on_chip_ld221, in_on_chip_ld222] : 7 <= in_on_chip_ld222 <= 70 and 7 <= in_on_chip_ld221 <= 70 }
   // Read schedule : { load_to_in_on_chip_to_gp_3220223[d0 = 0, d1, d2] -> [0, 1 + d1, 1 + d2, 1] : 7 <= d1 <= 70 and 7 <= d2 <= 70 }
-=======
-  // in_on_chip_load_to_in_on_chip_to_gp_3192195_46 read pattern: { load_to_in_on_chip_to_gp_3192195[root = 0, in_on_chip_ld194, in_on_chip_ld193] -> in_on_chip[in_on_chip_ld193, in_on_chip_ld194] : 7 <= in_on_chip_ld194 <= 70 and 7 <= in_on_chip_ld193 <= 70 }
-  // Read schedule : { load_to_in_on_chip_to_gp_3192195[d0 = 0, d1, d2] -> [0, 1 + d1, 1 + d2, 1] : 7 <= d1 <= 70 and 7 <= d2 <= 70 }
->>>>>>> 89b3f51bdb8eb51a288ec002dbba28ce9175d84f
   // Write schedule: { pw_math_in03[d0 = 0, d1, d2] -> [0, d1, d2, 0] : 0 <= d1 <= 70 and 0 <= d2 <= 70 }
   auto value_in_on_chip_pw_math_in03_23 = in_on_chip.in_on_chip_pw_math_in03_23_to_in_on_chip_load_to_in_on_chip_to_gp_3220223_46.peek(/* one reader or all rams */ (69 - in_on_chip_ld221 >= 0 && 69 - in_on_chip_ld222 >= 0) ? (72) : (-70 + in_on_chip_ld221 == 0 && 69 - in_on_chip_ld222 >= 0) ? (71) : (-70 + in_on_chip_ld222 == 0 && 69 - in_on_chip_ld221 >= 0) ? ((70 - in_on_chip_ld221)) : 0);
   return value_in_on_chip_pw_math_in03_23;
@@ -2343,19 +1988,11 @@ inline void in_on_chip_FIFO_buf224_load_to_in_on_chip_FIFO_buf224227_47_write(hw
 inline hw_uint<32>  in_on_chip_FIFO_buf224_diff51_108_select(in_on_chip_FIFO_buf224_cache& in_on_chip_FIFO_buf224, int root, int lp_in_on_chip_049, int lp_in_on_chip_050, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-<<<<<<< HEAD
   // in_on_chip_FIFO_buf224_diff51_108 read pattern: { diff51[root = 0, lp_in_on_chip_049, lp_in_on_chip_050] -> in_on_chip_FIFO_buf224[7 + lp_in_on_chip_050, 7 + lp_in_on_chip_049] : 0 <= lp_in_on_chip_049 <= 63 and 0 <= lp_in_on_chip_050 <= 63 }
   // Read schedule : { diff51[d0 = 0, d1, d2] -> [0, 8 + d1, 8 + d2, 19] : 0 <= d1 <= 63 and 0 <= d2 <= 63 }
   // Write schedule: { load_to_in_on_chip_FIFO_buf224227[d0 = 0, d1, d2] -> [0, 1 + d1, 1 + d2, 6] : 7 <= d1 <= 70 and 7 <= d2 <= 70 }
   auto value_in_on_chip_FIFO_buf224_load_to_in_on_chip_FIFO_buf224227_47 = in_on_chip_FIFO_buf224.in_on_chip_FIFO_buf224_load_to_in_on_chip_FIFO_buf224227_47_to_in_on_chip_FIFO_buf224_diff51_108.peek(/* one reader or all rams */ 0);
   return value_in_on_chip_FIFO_buf224_load_to_in_on_chip_FIFO_buf224227_47;
-=======
-  // in_on_chip_FIFO_buf244_diff51_108 read pattern: { diff51[root = 0, lp_in_on_chip_049, lp_in_on_chip_050] -> in_on_chip_FIFO_buf244[7 + lp_in_on_chip_050, 7 + lp_in_on_chip_049] : 0 <= lp_in_on_chip_049 <= 63 and 0 <= lp_in_on_chip_050 <= 63 }
-  // Read schedule : { diff51[d0 = 0, d1, d2] -> [0, 8 + d1, 8 + d2, 15] : 0 <= d1 <= 63 and 0 <= d2 <= 63 }
-  // Write schedule: { load_to_in_on_chip_FIFO_buf244247[d0 = 0, d1, d2] -> [0, 1 + d1, 1 + d2, 2] : 7 <= d1 <= 70 and 7 <= d2 <= 70 }
-  auto value_in_on_chip_FIFO_buf244_load_to_in_on_chip_FIFO_buf244247_47 = in_on_chip_FIFO_buf244.in_on_chip_FIFO_buf244_load_to_in_on_chip_FIFO_buf244247_47_to_in_on_chip_FIFO_buf244_diff51_108.peek(/* one reader or all rams */ 0);
-  return value_in_on_chip_FIFO_buf244_load_to_in_on_chip_FIFO_buf244247_47;
->>>>>>> 89b3f51bdb8eb51a288ec002dbba28ce9175d84f
   return 0;
 }
 
@@ -2417,17 +2054,10 @@ inline void lp_in_on_chip_0_buf48_diff51_107_write(hw_uint<32> & lp_in_on_chip_0
 inline hw_uint<32>  lp_in_on_chip_0_buf48_load_to_lp_in_on_chip_0_buf48_to_gp_4228231_42_select(lp_in_on_chip_0_buf48_cache& lp_in_on_chip_0_buf48, int root, int lp_in_on_chip_0_buf48_ld230, int lp_in_on_chip_0_buf48_ld229, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-<<<<<<< HEAD
   // lp_in_on_chip_0_buf48_load_to_lp_in_on_chip_0_buf48_to_gp_4228231_42 read pattern: { load_to_lp_in_on_chip_0_buf48_to_gp_4228231[root = 0, lp_in_on_chip_0_buf48_ld230, lp_in_on_chip_0_buf48_ld229] -> lp_in_on_chip_0_buf48[lp_in_on_chip_0_buf48_ld229, lp_in_on_chip_0_buf48_ld230] : 0 <= lp_in_on_chip_0_buf48_ld230 <= 63 and 0 <= lp_in_on_chip_0_buf48_ld229 <= 63 }
   // Read schedule : { load_to_lp_in_on_chip_0_buf48_to_gp_4228231[d0 = 0, d1, d2] -> [0, 8 + d1, 8 + d2, 26] : 0 <= d1 <= 63 and 0 <= d2 <= 63 }
   // Write schedule: { diff51[d0 = 0, d1, d2] -> [0, 8 + d1, 8 + d2, 19] : 0 <= d1 <= 63 and 0 <= d2 <= 63 }
   auto value_lp_in_on_chip_0_buf48_diff51_107 = lp_in_on_chip_0_buf48.lp_in_on_chip_0_buf48_diff51_107_to_lp_in_on_chip_0_buf48_load_to_lp_in_on_chip_0_buf48_to_gp_4228231_42.peek(/* one reader or all rams */ 0);
-=======
-  // lp_in_on_chip_0_buf48_load_to_lp_in_on_chip_0_buf48_to_gp_4196199_42 read pattern: { load_to_lp_in_on_chip_0_buf48_to_gp_4196199[root = 0, lp_in_on_chip_0_buf48_ld198, lp_in_on_chip_0_buf48_ld197] -> lp_in_on_chip_0_buf48[lp_in_on_chip_0_buf48_ld197, lp_in_on_chip_0_buf48_ld198] : 0 <= lp_in_on_chip_0_buf48_ld198 <= 63 and 0 <= lp_in_on_chip_0_buf48_ld197 <= 63 }
-  // Read schedule : { load_to_lp_in_on_chip_0_buf48_to_gp_4196199[d0 = 0, d1, d2] -> [0, 14 + d1, 14 + d2, 19] : 0 <= d1 <= 63 and 0 <= d2 <= 63 }
-  // Write schedule: { diff51[d0 = 0, d1, d2] -> [0, 8 + d1, 8 + d2, 15] : 0 <= d1 <= 63 and 0 <= d2 <= 63 }
-  auto value_lp_in_on_chip_0_buf48_diff51_107 = lp_in_on_chip_0_buf48.lp_in_on_chip_0_buf48_diff51_107_to_lp_in_on_chip_0_buf48_load_to_lp_in_on_chip_0_buf48_to_gp_4196199_42.peek(/* one reader or all rams */ (-63 + lp_in_on_chip_0_buf48_ld197 == 0 && -58 + lp_in_on_chip_0_buf48_ld198 == 0) ? (320) : (-63 + lp_in_on_chip_0_buf48_ld197 == 0 && 57 - lp_in_on_chip_0_buf48_ld198 >= 0) ? (384) : (-58 + lp_in_on_chip_0_buf48_ld197 == 0 && 57 - lp_in_on_chip_0_buf48_ld198 >= 0) ? (389) : (57 - lp_in_on_chip_0_buf48_ld197 >= 0 && 57 - lp_in_on_chip_0_buf48_ld198 >= 0) ? (390) : (-63 + lp_in_on_chip_0_buf48_ld197 == 0 && -59 + lp_in_on_chip_0_buf48_ld198 >= 0 && 62 - lp_in_on_chip_0_buf48_ld198 >= 0) ? ((4032 - 64 * lp_in_on_chip_0_buf48_ld198)) : (-63 + lp_in_on_chip_0_buf48_ld198 == 0 && 62 - lp_in_on_chip_0_buf48_ld197 >= 0) ? ((63 - lp_in_on_chip_0_buf48_ld197)) : (-58 + lp_in_on_chip_0_buf48_ld198 == 0 && 62 - lp_in_on_chip_0_buf48_ld197 >= 0) ? ((383 - lp_in_on_chip_0_buf48_ld197)) : (62 - lp_in_on_chip_0_buf48_ld197 >= 0 && 57 - lp_in_on_chip_0_buf48_ld198 >= 0 && -59 + lp_in_on_chip_0_buf48_ld197 >= 0) ? ((447 - lp_in_on_chip_0_buf48_ld197)) : (-59 + lp_in_on_chip_0_buf48_ld198 >= 0 && 62 - lp_in_on_chip_0_buf48_ld198 >= 0 && 62 - lp_in_on_chip_0_buf48_ld197 >= 0) ? (((4095 - 64 * lp_in_on_chip_0_buf48_ld198) - lp_in_on_chip_0_buf48_ld197)) : 0);
->>>>>>> 89b3f51bdb8eb51a288ec002dbba28ce9175d84f
   return value_lp_in_on_chip_0_buf48_diff51_107;
   return 0;
 }
@@ -2492,15 +2122,9 @@ inline hw_uint<32>  lp_in_on_chip_0_buf48_FIFO_buf232_rc78_13_select(lp_in_on_ch
 #endif //__VIVADO_SYNTH__
   // lp_in_on_chip_0_buf48_FIFO_buf232_rc78_13 read pattern: { rc78[root = 0, lp_in_on_chip_0_buf48_reconstruct_lp7071, lp_in_on_chip_0_buf48_reconstruct_lp7072] -> lp_in_on_chip_0_buf48_FIFO_buf232[lp_in_on_chip_0_buf48_reconstruct_lp7072, lp_in_on_chip_0_buf48_reconstruct_lp7071] : 0 <= lp_in_on_chip_0_buf48_reconstruct_lp7071 <= 63 and 0 <= lp_in_on_chip_0_buf48_reconstruct_lp7072 <= 63 }
   // Read schedule : { rc78[d0 = 0, d1, d2] -> [0, 14 + d1, 14 + d2, 41] : 0 <= d1 <= 63 and 0 <= d2 <= 63 }
-<<<<<<< HEAD
   // Write schedule: { load_to_lp_in_on_chip_0_buf48_FIFO_buf232235[d0 = 0, d1, d2] -> [0, 14 + d1, 14 + d2, 29] : 0 <= d1 <= 63 and 0 <= d2 <= 63 }
   auto value_lp_in_on_chip_0_buf48_FIFO_buf232_load_to_lp_in_on_chip_0_buf48_FIFO_buf232235_43 = lp_in_on_chip_0_buf48_FIFO_buf232.lp_in_on_chip_0_buf48_FIFO_buf232_load_to_lp_in_on_chip_0_buf48_FIFO_buf232235_43_to_lp_in_on_chip_0_buf48_FIFO_buf232_rc78_13.peek(/* one reader or all rams */ 0);
   return value_lp_in_on_chip_0_buf48_FIFO_buf232_load_to_lp_in_on_chip_0_buf48_FIFO_buf232235_43;
-=======
-  // Write schedule: { load_to_lp_in_on_chip_0_buf48_FIFO_buf248251[d0 = 0, d1, d2] -> [0, 14 + d1, 14 + d2, 24] : 0 <= d1 <= 63 and 0 <= d2 <= 63 }
-  auto value_lp_in_on_chip_0_buf48_FIFO_buf248_load_to_lp_in_on_chip_0_buf48_FIFO_buf248251_43 = lp_in_on_chip_0_buf48_FIFO_buf248.lp_in_on_chip_0_buf48_FIFO_buf248_load_to_lp_in_on_chip_0_buf48_FIFO_buf248251_43_to_lp_in_on_chip_0_buf48_FIFO_buf248_rc78_13.peek(/* one reader or all rams */ 0);
-  return value_lp_in_on_chip_0_buf48_FIFO_buf248_load_to_lp_in_on_chip_0_buf48_FIFO_buf248251_43;
->>>>>>> 89b3f51bdb8eb51a288ec002dbba28ce9175d84f
   return 0;
 }
 
@@ -2628,17 +2252,10 @@ inline void lp_in_on_chip_1_buf40_diff43_110_write(hw_uint<32> & lp_in_on_chip_1
 inline hw_uint<32>  lp_in_on_chip_1_buf40_load_to_lp_in_on_chip_1_buf40_to_gp_6236239_34_select(lp_in_on_chip_1_buf40_cache& lp_in_on_chip_1_buf40, int root, int lp_in_on_chip_1_buf40_ld238, int lp_in_on_chip_1_buf40_ld237, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-<<<<<<< HEAD
   // lp_in_on_chip_1_buf40_load_to_lp_in_on_chip_1_buf40_to_gp_6236239_34 read pattern: { load_to_lp_in_on_chip_1_buf40_to_gp_6236239[root = 0, lp_in_on_chip_1_buf40_ld238, lp_in_on_chip_1_buf40_ld237] -> lp_in_on_chip_1_buf40[lp_in_on_chip_1_buf40_ld237, lp_in_on_chip_1_buf40_ld238] : 0 <= lp_in_on_chip_1_buf40_ld238 <= 31 and 0 <= lp_in_on_chip_1_buf40_ld237 <= 31 }
   // Read schedule : { load_to_lp_in_on_chip_1_buf40_to_gp_6236239[d0 = 0, d1, d2] -> [0, 14 + 2d1, 10 + 2d2, 25] : 0 <= d1 <= 31 and 0 <= d2 <= 31 }
   // Write schedule: { diff43[d0 = 0, d1, d2] -> [0, 10 + 2d1, 10 + 2d2, 24] : 0 <= d1 <= 31 and 0 <= d2 <= 31 }
   auto value_lp_in_on_chip_1_buf40_diff43_110 = lp_in_on_chip_1_buf40.lp_in_on_chip_1_buf40_diff43_110_to_lp_in_on_chip_1_buf40_load_to_lp_in_on_chip_1_buf40_to_gp_6236239_34.peek(/* one reader or all rams */ (-31 + lp_in_on_chip_1_buf40_ld237 == 0 && -30 + lp_in_on_chip_1_buf40_ld238 == 0) ? (32) : (30 - lp_in_on_chip_1_buf40_ld237 >= 0 && 29 - lp_in_on_chip_1_buf40_ld238 >= 0) ? (64) : (-31 + lp_in_on_chip_1_buf40_ld238 == 0 && 30 - lp_in_on_chip_1_buf40_ld237 >= 0) ? ((31 - lp_in_on_chip_1_buf40_ld237)) : (-31 + lp_in_on_chip_1_buf40_ld237 == 0 && 29 - lp_in_on_chip_1_buf40_ld238 >= 0) ? (64) : (-30 + lp_in_on_chip_1_buf40_ld238 == 0 && 30 - lp_in_on_chip_1_buf40_ld237 >= 0) ? ((63 - lp_in_on_chip_1_buf40_ld237)) : 0);
-=======
-  // lp_in_on_chip_1_buf40_load_to_lp_in_on_chip_1_buf40_to_gp_6200203_34 read pattern: { load_to_lp_in_on_chip_1_buf40_to_gp_6200203[root = 0, lp_in_on_chip_1_buf40_ld202, lp_in_on_chip_1_buf40_ld201] -> lp_in_on_chip_1_buf40[lp_in_on_chip_1_buf40_ld201, lp_in_on_chip_1_buf40_ld202] : 0 <= lp_in_on_chip_1_buf40_ld202 <= 31 and 0 <= lp_in_on_chip_1_buf40_ld201 <= 31 }
-  // Read schedule : { load_to_lp_in_on_chip_1_buf40_to_gp_6200203[d0 = 0, d1, d2] -> [0, 10 + 2d1, 10 + 2d2, 26] : 0 <= d1 <= 31 and 0 <= d2 <= 31 }
-  // Write schedule: { diff43[d0 = 0, d1, d2] -> [0, 10 + 2d1, 10 + 2d2, 21] : 0 <= d1 <= 31 and 0 <= d2 <= 31 }
-  auto value_lp_in_on_chip_1_buf40_diff43_110 = lp_in_on_chip_1_buf40.lp_in_on_chip_1_buf40_diff43_110_to_lp_in_on_chip_1_buf40_load_to_lp_in_on_chip_1_buf40_to_gp_6200203_34.peek(/* one reader or all rams */ 0);
->>>>>>> 89b3f51bdb8eb51a288ec002dbba28ce9175d84f
   return value_lp_in_on_chip_1_buf40_diff43_110;
   return 0;
 }
@@ -2703,15 +2320,9 @@ inline hw_uint<32>  lp_in_on_chip_1_buf40_FIFO_buf240_rc69_16_select(lp_in_on_ch
 #endif //__VIVADO_SYNTH__
   // lp_in_on_chip_1_buf40_FIFO_buf240_rc69_16 read pattern: { rc69[root = 0, lp_in_on_chip_1_buf40_reconstruct_lp6162, lp_in_on_chip_1_buf40_reconstruct_lp6163] -> lp_in_on_chip_1_buf40_FIFO_buf240[lp_in_on_chip_1_buf40_reconstruct_lp6163, lp_in_on_chip_1_buf40_reconstruct_lp6162] : 0 <= lp_in_on_chip_1_buf40_reconstruct_lp6162 <= 31 and 0 <= lp_in_on_chip_1_buf40_reconstruct_lp6163 <= 31 }
   // Read schedule : { rc69[d0 = 0, d1, d2] -> [0, 14 + 2d1, 14 + 2d2, 37] : 0 <= d1 <= 31 and 0 <= d2 <= 31 }
-<<<<<<< HEAD
   // Write schedule: { load_to_lp_in_on_chip_1_buf40_FIFO_buf240243[d0 = 0, d1, d2] -> [0, 14 + 2d1, 10 + 2d2, 27] : 0 <= d1 <= 31 and 0 <= d2 <= 31 }
   auto value_lp_in_on_chip_1_buf40_FIFO_buf240_load_to_lp_in_on_chip_1_buf40_FIFO_buf240243_39 = lp_in_on_chip_1_buf40_FIFO_buf240.lp_in_on_chip_1_buf40_FIFO_buf240_load_to_lp_in_on_chip_1_buf40_FIFO_buf240243_39_to_lp_in_on_chip_1_buf40_FIFO_buf240_rc69_16.peek(/* one reader or all rams */ (-30 + lp_in_on_chip_1_buf40_reconstruct_lp6163 == 0) ? (1) : (29 - lp_in_on_chip_1_buf40_reconstruct_lp6163 >= 0) ? (2) : 0);
   return value_lp_in_on_chip_1_buf40_FIFO_buf240_load_to_lp_in_on_chip_1_buf40_FIFO_buf240243_39;
-=======
-  // Write schedule: { load_to_lp_in_on_chip_1_buf40_FIFO_buf252255[d0 = 0, d1, d2] -> [0, 10 + 2d1, 10 + 2d2, 29] : 0 <= d1 <= 31 and 0 <= d2 <= 31 }
-  auto value_lp_in_on_chip_1_buf40_FIFO_buf252_load_to_lp_in_on_chip_1_buf40_FIFO_buf252255_39 = lp_in_on_chip_1_buf40_FIFO_buf252.lp_in_on_chip_1_buf40_FIFO_buf252_load_to_lp_in_on_chip_1_buf40_FIFO_buf252255_39_to_lp_in_on_chip_1_buf40_FIFO_buf252_rc69_16.peek(/* one reader or all rams */ (-31 + lp_in_on_chip_1_buf40_reconstruct_lp6163 == 0 && -30 + lp_in_on_chip_1_buf40_reconstruct_lp6162 == 0) ? (32) : (-31 + lp_in_on_chip_1_buf40_reconstruct_lp6163 == 0 && 29 - lp_in_on_chip_1_buf40_reconstruct_lp6162 >= 0) ? (64) : (-30 + lp_in_on_chip_1_buf40_reconstruct_lp6163 == 0 && 29 - lp_in_on_chip_1_buf40_reconstruct_lp6162 >= 0) ? (65) : (29 - lp_in_on_chip_1_buf40_reconstruct_lp6163 >= 0 && 29 - lp_in_on_chip_1_buf40_reconstruct_lp6162 >= 0) ? (66) : (-31 + lp_in_on_chip_1_buf40_reconstruct_lp6162 == 0 && 30 - lp_in_on_chip_1_buf40_reconstruct_lp6163 >= 0) ? ((31 - lp_in_on_chip_1_buf40_reconstruct_lp6163)) : (-30 + lp_in_on_chip_1_buf40_reconstruct_lp6162 == 0 && 30 - lp_in_on_chip_1_buf40_reconstruct_lp6163 >= 0) ? ((63 - lp_in_on_chip_1_buf40_reconstruct_lp6163)) : 0);
-  return value_lp_in_on_chip_1_buf40_FIFO_buf252_load_to_lp_in_on_chip_1_buf40_FIFO_buf252255_39;
->>>>>>> 89b3f51bdb8eb51a288ec002dbba28ce9175d84f
   return 0;
 }
 
@@ -2971,17 +2582,10 @@ inline void lp_in_on_chip_2_buf32_diff35_113_write(hw_uint<32> & lp_in_on_chip_2
 inline hw_uint<32>  lp_in_on_chip_2_buf32_load_to_lp_in_on_chip_2_buf32_to_gp_8252255_26_select(lp_in_on_chip_2_buf32_cache& lp_in_on_chip_2_buf32, int root, int lp_in_on_chip_2_buf32_ld254, int lp_in_on_chip_2_buf32_ld253, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-<<<<<<< HEAD
   // lp_in_on_chip_2_buf32_load_to_lp_in_on_chip_2_buf32_to_gp_8252255_26 read pattern: { load_to_lp_in_on_chip_2_buf32_to_gp_8252255[root = 0, lp_in_on_chip_2_buf32_ld254, lp_in_on_chip_2_buf32_ld253] -> lp_in_on_chip_2_buf32[lp_in_on_chip_2_buf32_ld253, lp_in_on_chip_2_buf32_ld254] : 0 <= lp_in_on_chip_2_buf32_ld254 <= 15 and 0 <= lp_in_on_chip_2_buf32_ld253 <= 15 }
   // Read schedule : { load_to_lp_in_on_chip_2_buf32_to_gp_8252255[d0 = 0, d1, d2] -> [0, 14 + 4d1, 14 + 4d2, 31] : 0 <= d1 <= 15 and 0 <= d2 <= 15 }
   // Write schedule: { diff35[d0 = 0, d1, d2] -> [0, 14 + 4d1, 14 + 4d2, 30] : 0 <= d1 <= 15 and 0 <= d2 <= 15 }
   auto value_lp_in_on_chip_2_buf32_diff35_113 = lp_in_on_chip_2_buf32.lp_in_on_chip_2_buf32_diff35_113_to_lp_in_on_chip_2_buf32_load_to_lp_in_on_chip_2_buf32_to_gp_8252255_26.peek(/* one reader or all rams */ 0);
-=======
-  // lp_in_on_chip_2_buf32_load_to_lp_in_on_chip_2_buf32_to_gp_8208211_26 read pattern: { load_to_lp_in_on_chip_2_buf32_to_gp_8208211[root = 0, lp_in_on_chip_2_buf32_ld210, lp_in_on_chip_2_buf32_ld209] -> lp_in_on_chip_2_buf32[lp_in_on_chip_2_buf32_ld209, lp_in_on_chip_2_buf32_ld210] : 0 <= lp_in_on_chip_2_buf32_ld210 <= 15 and 0 <= lp_in_on_chip_2_buf32_ld209 <= 15 }
-  // Read schedule : { load_to_lp_in_on_chip_2_buf32_to_gp_8208211[d0 = 0, d1, d2] -> [0, 14 + 4d1, 14 + 4d2, 31] : 0 <= d1 <= 15 and 0 <= d2 <= 15 }
-  // Write schedule: { diff35[d0 = 0, d1, d2] -> [0, 14 + 4d1, 14 + 4d2, 30] : 0 <= d1 <= 15 and 0 <= d2 <= 15 }
-  auto value_lp_in_on_chip_2_buf32_diff35_113 = lp_in_on_chip_2_buf32.lp_in_on_chip_2_buf32_diff35_113_to_lp_in_on_chip_2_buf32_load_to_lp_in_on_chip_2_buf32_to_gp_8208211_26.peek(/* one reader or all rams */ 0);
->>>>>>> 89b3f51bdb8eb51a288ec002dbba28ce9175d84f
   return value_lp_in_on_chip_2_buf32_diff35_113;
   return 0;
 }
@@ -3270,9 +2874,8 @@ inline hw_uint<32> lp_in_on_chip_2_buf32_reconstruct_lp52_buf55_us65_FIFO_buf264
 	return result;
 }
 
-// Total re-use buffer capacity: 17568 bits
+// Total re-use buffer capacity: 17536 bits
 // Operation logic
-<<<<<<< HEAD
 inline void load_to_gp_in_on_chip_2_buf12_FIFO_buf184187(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */gp_in_on_chip_2_buf12_to_gp_2180, gp_in_on_chip_2_buf12_FIFO_buf184_cache& gp_in_on_chip_2_buf12_FIFO_buf184, int d0, int d1, int d2) {
   // Dynamic address computation
 
@@ -3287,9 +2890,6 @@ inline void load_to_gp_in_on_chip_2_buf12_FIFO_buf184187(HWStream<hw_uint<32> >&
 }
 
 inline void gp_in_on_chip_322_merged163(gp_in_on_chip_2_buf12_FIFO_buf184_cache& gp_in_on_chip_2_buf12_FIFO_buf184, gp_in_on_chip_3_buf20_cache& gp_in_on_chip_3_buf20, int d0, int d1, int d2) {
-=======
-inline void gp_in_on_chip_322_merged160(gp_in_on_chip_2_buf12_FIFO_buf224_cache& gp_in_on_chip_2_buf12_FIFO_buf224, gp_in_on_chip_3_buf20_cache& gp_in_on_chip_3_buf20, int d0, int d1, int d2) {
->>>>>>> 89b3f51bdb8eb51a288ec002dbba28ce9175d84f
   // Dynamic address computation
 
 	// Consume: gp_in_on_chip_2_buf12_FIFO_buf184
@@ -3324,103 +2924,51 @@ inline void us31(gp_in_on_chip_3_buf20_cache& gp_in_on_chip_3_buf20, gp_in_on_ch
 
 }
 
-<<<<<<< HEAD
 inline void load_to_gp_in_on_chip_3_buf20_us28_to_gp_7204207(gp_in_on_chip_3_buf20_us28_cache& gp_in_on_chip_3_buf20_us28, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */gp_in_on_chip_3_buf20_us28_to_gp_7204, int d0, int d1, int d2) {
   // Dynamic address computation
 
 	// Consume: gp_in_on_chip_3_buf20_us28
 	auto gp_in_on_chip_3_buf20_us28_gp_in_on_chip_3_buf20_us28_ld205_c__gp_in_on_chip_3_buf20_us28_ld206_value = gp_in_on_chip_3_buf20_us28_load_to_gp_in_on_chip_3_buf20_us28_to_gp_7204207_read_bundle_read(gp_in_on_chip_3_buf20_us28/* source_delay */, d0, d1, d2, 0);
-=======
-inline void load_to_gp_in_on_chip_3_buf20_us56_to_gp_8188191(gp_in_on_chip_3_buf20_us56_cache& gp_in_on_chip_3_buf20_us56, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */gp_in_on_chip_3_buf20_us56_to_gp_8188, int d0, int d1, int d2) {
-  // Dynamic address computation
-
-	// Consume: gp_in_on_chip_3_buf20_us56
-	auto gp_in_on_chip_3_buf20_us56_gp_in_on_chip_3_buf20_us56_ld189_c__gp_in_on_chip_3_buf20_us56_ld190_value = gp_in_on_chip_3_buf20_us56_load_to_gp_in_on_chip_3_buf20_us56_to_gp_8188191_read_bundle_read(gp_in_on_chip_3_buf20_us56/* source_delay */, d0, d1, d2, 0);
->>>>>>> 89b3f51bdb8eb51a288ec002dbba28ce9175d84f
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 
-<<<<<<< HEAD
 	// Produce: gp_in_on_chip_3_buf20_us28_to_gp_7204
 	gp_in_on_chip_3_buf20_us28_to_gp_7204.write(gp_in_on_chip_3_buf20_us28_gp_in_on_chip_3_buf20_us28_ld205_c__gp_in_on_chip_3_buf20_us28_ld206_value);
-=======
-	// Produce: gp_in_on_chip_3_buf20_us56_to_gp_8188
-	gp_in_on_chip_3_buf20_us56_to_gp_8188.write(gp_in_on_chip_3_buf20_us56_gp_in_on_chip_3_buf20_us56_ld189_c__gp_in_on_chip_3_buf20_us56_ld190_value);
->>>>>>> 89b3f51bdb8eb51a288ec002dbba28ce9175d84f
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 
 }
 
-<<<<<<< HEAD
 inline void us59(gp_in_on_chip_3_buf20_cache& gp_in_on_chip_3_buf20, gp_in_on_chip_3_buf20_us56_cache& gp_in_on_chip_3_buf20_us56, int d0, int d1, int d2) {
   // Dynamic address computation
 
 	// Consume: gp_in_on_chip_3_buf20
 	auto gp_in_on_chip_3_buf20_floor_lp_us_gp_in_on_chip_3_buf2058__div__2_rp__p_0_c___floor_lp_us_gp_in_on_chip_3_buf2057__div__2_rp__p_0_value = gp_in_on_chip_3_buf20_us59_read_bundle_read(gp_in_on_chip_3_buf20/* source_delay */, d0, d1, d2, 0);
-=======
-inline void load_to_gp_in_on_chip_3_buf20_us28_to_gp_7184187(gp_in_on_chip_3_buf20_us28_cache& gp_in_on_chip_3_buf20_us28, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */gp_in_on_chip_3_buf20_us28_to_gp_7184, int d0, int d1, int d2) {
-  // Dynamic address computation
-
-	// Consume: gp_in_on_chip_3_buf20_us28
-	auto gp_in_on_chip_3_buf20_us28_gp_in_on_chip_3_buf20_us28_ld185_c__gp_in_on_chip_3_buf20_us28_ld186_value = gp_in_on_chip_3_buf20_us28_load_to_gp_in_on_chip_3_buf20_us28_to_gp_7184187_read_bundle_read(gp_in_on_chip_3_buf20_us28/* source_delay */, d0, d1, d2, 0);
->>>>>>> 89b3f51bdb8eb51a288ec002dbba28ce9175d84f
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 
-<<<<<<< HEAD
 	// Produce: gp_in_on_chip_3_buf20_us56
 	gp_in_on_chip_3_buf20_us56_us59_write_bundle_write(/* arg names */gp_in_on_chip_3_buf20_floor_lp_us_gp_in_on_chip_3_buf2058__div__2_rp__p_0_c___floor_lp_us_gp_in_on_chip_3_buf2057__div__2_rp__p_0_value, gp_in_on_chip_3_buf20_us56, d0, d1, d2, 0);
-=======
-	// Produce: gp_in_on_chip_3_buf20_us28_to_gp_7184
-	gp_in_on_chip_3_buf20_us28_to_gp_7184.write(gp_in_on_chip_3_buf20_us28_gp_in_on_chip_3_buf20_us28_ld185_c__gp_in_on_chip_3_buf20_us28_ld186_value);
->>>>>>> 89b3f51bdb8eb51a288ec002dbba28ce9175d84f
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 
 }
 
-<<<<<<< HEAD
 inline void load_to_gp_in_on_chip_3_buf20_us56_to_gp_8212215(gp_in_on_chip_3_buf20_us56_cache& gp_in_on_chip_3_buf20_us56, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */gp_in_on_chip_3_buf20_us56_to_gp_8212, int d0, int d1, int d2) {
   // Dynamic address computation
 
 	// Consume: gp_in_on_chip_3_buf20_us56
 	auto gp_in_on_chip_3_buf20_us56_gp_in_on_chip_3_buf20_us56_ld213_c__gp_in_on_chip_3_buf20_us56_ld214_value = gp_in_on_chip_3_buf20_us56_load_to_gp_in_on_chip_3_buf20_us56_to_gp_8212215_read_bundle_read(gp_in_on_chip_3_buf20_us56/* source_delay */, d0, d1, d2, 0);
-=======
-inline void load_to_gp_in_on_chip_2_buf12_FIFO_buf224227(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */gp_in_on_chip_2_buf12_to_gp_2172, gp_in_on_chip_2_buf12_FIFO_buf224_cache& gp_in_on_chip_2_buf12_FIFO_buf224, int d0, int d1, int d2) {
-  // Dynamic address computation
-
-	// Consume: gp_in_on_chip_2_buf12_to_gp_2172
-	auto gp_in_on_chip_2_buf12_to_gp_2172_gp_in_on_chip_2_buf12_to_gp_2172_ld225_c__gp_in_on_chip_2_buf12_to_gp_2172_ld226_value = gp_in_on_chip_2_buf12_to_gp_2172.read();
-	// Produce: gp_in_on_chip_2_buf12_FIFO_buf224
-	gp_in_on_chip_2_buf12_FIFO_buf224_load_to_gp_in_on_chip_2_buf12_FIFO_buf224227_write_bundle_write(/* arg names */gp_in_on_chip_2_buf12_to_gp_2172_gp_in_on_chip_2_buf12_to_gp_2172_ld225_c__gp_in_on_chip_2_buf12_to_gp_2172_ld226_value, gp_in_on_chip_2_buf12_FIFO_buf224, d0, d1, d2, 0);
->>>>>>> 89b3f51bdb8eb51a288ec002dbba28ce9175d84f
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 
-<<<<<<< HEAD
 	// Produce: gp_in_on_chip_3_buf20_us56_to_gp_8212
 	gp_in_on_chip_3_buf20_us56_to_gp_8212.write(gp_in_on_chip_3_buf20_us56_gp_in_on_chip_3_buf20_us56_ld213_c__gp_in_on_chip_3_buf20_us56_ld214_value);
-=======
-}
-
-inline void us59(gp_in_on_chip_3_buf20_cache& gp_in_on_chip_3_buf20, gp_in_on_chip_3_buf20_us56_cache& gp_in_on_chip_3_buf20_us56, int d0, int d1, int d2) {
-  // Dynamic address computation
-
-	// Consume: gp_in_on_chip_3_buf20
-	auto gp_in_on_chip_3_buf20_floor_lp_us_gp_in_on_chip_3_buf2058__div__2_rp__p_0_c___floor_lp_us_gp_in_on_chip_3_buf2057__div__2_rp__p_0_value = gp_in_on_chip_3_buf20_us59_read_bundle_read(gp_in_on_chip_3_buf20/* source_delay */, d0, d1, d2, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	// Produce: gp_in_on_chip_3_buf20_us56
-	gp_in_on_chip_3_buf20_us56_us59_write_bundle_write(/* arg names */gp_in_on_chip_3_buf20_floor_lp_us_gp_in_on_chip_3_buf2058__div__2_rp__p_0_c___floor_lp_us_gp_in_on_chip_3_buf2057__div__2_rp__p_0_value, gp_in_on_chip_3_buf20_us56, d0, d1, d2, 0);
->>>>>>> 89b3f51bdb8eb51a288ec002dbba28ce9175d84f
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -3450,7 +2998,6 @@ void Extracted_gp_in_on_chip_2_buf12_to_gp_2180_ld186_gp_in_on_chip_321_gp_in_on
 #pragma HLS inline recursive
 #endif // __VIVADO_SYNTH__
 
-<<<<<<< HEAD
 // schedule: { us59[d0 = 0, d1, d2] -> [0, 14 + 4d1, 14 + 4d2, 20] : 0 <= d1 <= 15 and 0 <= d2 <= 15; us31[d0 = 0, d1, d2] -> [0, 14 + 4d1, 14 + 4d2, 18] : 0 <= d1 <= 15 and 0 <= d2 <= 15; load_to_gp_in_on_chip_3_buf20_us28_to_gp_7204207[d0 = 0, d1, d2] -> [0, 14 + 4d1, 14 + 4d2, 23] : 0 <= d1 <= 15 and 0 <= d2 <= 15; gp_in_on_chip_322_merged163[d0 = 0, d1, d2] -> [0, 14 + 8d1, 14 + 8d2, 16] : 0 <= d1 <= 7 and 0 <= d2 <= 7; load_to_gp_in_on_chip_3_buf20_us56_to_gp_8212215[d0 = 0, d1, d2] -> [0, 14 + 4d1, 14 + 4d2, 21] : 0 <= d1 <= 15 and 0 <= d2 <= 15; load_to_gp_in_on_chip_2_buf12_FIFO_buf184187[d0 = 0, d1, d2] -> [0, 6 + 4d1, 6 + 4d2, 14] : 0 <= d1 <= 16 and 0 <= d2 <= 16 }
 //   { us59[d0 = 0, d1, d2] -> [0, 14 + 4d1, 14 + 4d2, 20] : 0 <= d1 <= 15 and 0 <= d2 <= 15 }
 // Condition for us59(((((-2 + -1*i1 + (4*(((2 + 1*i1)) >> 2)))) == 0) && (((-2 + -1*i2 + (4*(((2 + 1*i2)) >> 2)))) == 0) && (((-20 + 1*i3)) == 0) && (((1*i0)) == 0) && (((-14 + 1*i1)) >= 0) && (((74 + -1*i1)) >= 0) && (((-14 + 1*i2)) >= 0) && (((74 + -1*i2)) >= 0)))
@@ -3466,23 +3013,6 @@ void Extracted_gp_in_on_chip_2_buf12_to_gp_2180_ld186_gp_in_on_chip_321_gp_in_on
 // Condition for load_to_gp_in_on_chip_2_buf12_FIFO_buf184187(((((-2 + -1*i1 + (4*(((2 + 1*i1)) >> 2)))) == 0) && (((-2 + -1*i2 + (4*(((2 + 1*i2)) >> 2)))) == 0) && (((-14 + 1*i3)) == 0) && (((1*i0)) == 0) && (((-6 + 1*i1)) >= 0) && (((70 + -1*i1)) >= 0) && (((-6 + 1*i2)) >= 0) && (((70 + -1*i2)) >= 0)))
 
 	// time range: { [0, i1, i2, i3] : (2 + i1) mod 4 = 0 and (2 + i2) mod 4 = 0 and 14 <= i1 <= 74 and 14 <= i2 <= 74 and 20 <= i3 <= 21; [0, i1, i2, 23] : (2 + i1) mod 4 = 0 and (2 + i2) mod 4 = 0 and 14 <= i1 <= 74 and 14 <= i2 <= 74; [0, i1, i2, 18] : (2 + i1) mod 4 = 0 and (2 + i2) mod 4 = 0 and 14 <= i1 <= 74 and 14 <= i2 <= 74; [0, i1, i2, 16] : (2 + i1) mod 8 = 0 and (2 + i2) mod 8 = 0 and 14 <= i1 <= 70 and 14 <= i2 <= 70; [0, i1, i2, 14] : (2 + i1) mod 4 = 0 and (2 + i2) mod 4 = 0 and 6 <= i1 <= 70 and 6 <= i2 <= 70 }
-=======
-// schedule: { load_to_gp_in_on_chip_3_buf20_us28_to_gp_7184187[d0 = 0, d1, d2] -> [0, 14 + 4d1, 14 + 4d2, 27] : 0 <= d1 <= 15 and 0 <= d2 <= 15; us59[d0 = 0, d1, d2] -> [0, 14 + 4d1, 14 + 4d2, 17] : 0 <= d1 <= 15 and 0 <= d2 <= 15; us31[d0 = 0, d1, d2] -> [0, 14 + 4d1, 14 + 4d2, 23] : 0 <= d1 <= 15 and 0 <= d2 <= 15; load_to_gp_in_on_chip_3_buf20_us56_to_gp_8188191[d0 = 0, d1, d2] -> [0, 14 + 4d1, 14 + 4d2, 22] : 0 <= d1 <= 15 and 0 <= d2 <= 15; load_to_gp_in_on_chip_2_buf12_FIFO_buf224227[d0 = 0, d1, d2] -> [0, 6 + 4d1, 6 + 4d2, 14] : 0 <= d1 <= 16 and 0 <= d2 <= 16; gp_in_on_chip_322_merged160[d0 = 0, d1, d2] -> [0, 14 + 8d1, 14 + 8d2, 16] : 0 <= d1 <= 7 and 0 <= d2 <= 7 }
-//   { load_to_gp_in_on_chip_3_buf20_us28_to_gp_7184187[d0 = 0, d1, d2] -> [0, 14 + 4d1, 14 + 4d2, 27] : 0 <= d1 <= 15 and 0 <= d2 <= 15 }
-// Condition for load_to_gp_in_on_chip_3_buf20_us28_to_gp_7184187(((((-2 + -1*i1 + (4*(((2 + 1*i1)) >> 2)))) == 0) && (((-2 + -1*i2 + (4*(((2 + 1*i2)) >> 2)))) == 0) && (((-27 + 1*i3)) == 0) && (((1*i0)) == 0) && (((-14 + 1*i1)) >= 0) && (((74 + -1*i1)) >= 0) && (((-14 + 1*i2)) >= 0) && (((74 + -1*i2)) >= 0)))
-//   { us59[d0 = 0, d1, d2] -> [0, 14 + 4d1, 14 + 4d2, 17] : 0 <= d1 <= 15 and 0 <= d2 <= 15 }
-// Condition for us59(((((-2 + -1*i1 + (4*(((2 + 1*i1)) >> 2)))) == 0) && (((-2 + -1*i2 + (4*(((2 + 1*i2)) >> 2)))) == 0) && (((-17 + 1*i3)) == 0) && (((1*i0)) == 0) && (((-14 + 1*i1)) >= 0) && (((74 + -1*i1)) >= 0) && (((-14 + 1*i2)) >= 0) && (((74 + -1*i2)) >= 0)))
-//   { us31[d0 = 0, d1, d2] -> [0, 14 + 4d1, 14 + 4d2, 23] : 0 <= d1 <= 15 and 0 <= d2 <= 15 }
-// Condition for us31(((((-2 + -1*i1 + (4*(((2 + 1*i1)) >> 2)))) == 0) && (((-2 + -1*i2 + (4*(((2 + 1*i2)) >> 2)))) == 0) && (((-23 + 1*i3)) == 0) && (((1*i0)) == 0) && (((-14 + 1*i1)) >= 0) && (((74 + -1*i1)) >= 0) && (((-14 + 1*i2)) >= 0) && (((74 + -1*i2)) >= 0)))
-//   { load_to_gp_in_on_chip_3_buf20_us56_to_gp_8188191[d0 = 0, d1, d2] -> [0, 14 + 4d1, 14 + 4d2, 22] : 0 <= d1 <= 15 and 0 <= d2 <= 15 }
-// Condition for load_to_gp_in_on_chip_3_buf20_us56_to_gp_8188191(((((-2 + -1*i1 + (4*(((2 + 1*i1)) >> 2)))) == 0) && (((-2 + -1*i2 + (4*(((2 + 1*i2)) >> 2)))) == 0) && (((-22 + 1*i3)) == 0) && (((1*i0)) == 0) && (((-14 + 1*i1)) >= 0) && (((74 + -1*i1)) >= 0) && (((-14 + 1*i2)) >= 0) && (((74 + -1*i2)) >= 0)))
-//   { load_to_gp_in_on_chip_2_buf12_FIFO_buf224227[d0 = 0, d1, d2] -> [0, 6 + 4d1, 6 + 4d2, 14] : 0 <= d1 <= 16 and 0 <= d2 <= 16 }
-// Condition for load_to_gp_in_on_chip_2_buf12_FIFO_buf224227(((((-2 + -1*i1 + (4*(((2 + 1*i1)) >> 2)))) == 0) && (((-2 + -1*i2 + (4*(((2 + 1*i2)) >> 2)))) == 0) && (((-14 + 1*i3)) == 0) && (((1*i0)) == 0) && (((-6 + 1*i1)) >= 0) && (((70 + -1*i1)) >= 0) && (((-6 + 1*i2)) >= 0) && (((70 + -1*i2)) >= 0)))
-//   { gp_in_on_chip_322_merged160[d0 = 0, d1, d2] -> [0, 14 + 8d1, 14 + 8d2, 16] : 0 <= d1 <= 7 and 0 <= d2 <= 7 }
-// Condition for gp_in_on_chip_322_merged160(((((-2 + -1*i1 + (8*(((2 + 1*i1)) >> 3)))) == 0) && (((-2 + -1*i2 + (8*(((2 + 1*i2)) >> 3)))) == 0) && (((-16 + 1*i3)) == 0) && (((1*i0)) == 0) && (((-14 + 1*i1)) >= 0) && (((70 + -1*i1)) >= 0) && (((-14 + 1*i2)) >= 0) && (((70 + -1*i2)) >= 0)))
-
-	// time range: { [0, i1, i2, i3] : (2 + i1) mod 4 = 0 and (2 + i2) mod 4 = 0 and 14 <= i1 <= 74 and 14 <= i2 <= 74 and 22 <= i3 <= 23; [0, i1, i2, 27] : (2 + i1) mod 4 = 0 and (2 + i2) mod 4 = 0 and 14 <= i1 <= 74 and 14 <= i2 <= 74; [0, i1, i2, 17] : (2 + i1) mod 4 = 0 and (2 + i2) mod 4 = 0 and 14 <= i1 <= 74 and 14 <= i2 <= 74; [0, i1, i2, 16] : (2 + i1) mod 8 = 0 and (2 + i2) mod 8 = 0 and 14 <= i1 <= 70 and 14 <= i2 <= 70; [0, i1, i2, 14] : (2 + i1) mod 4 = 0 and (2 + i2) mod 4 = 0 and 6 <= i1 <= 70 and 6 <= i2 <= 70 }
->>>>>>> 89b3f51bdb8eb51a288ec002dbba28ce9175d84f
 	// # sets: 1
 	int i0 = 0;
 	  for (int i1 = 6; i1 <= 74; i1++) {
@@ -3551,7 +3081,6 @@ void Extracted_gp_in_on_chip_2_buf12_to_gp_2180_ld186_gp_in_on_chip_321_gp_in_on
 }
 
 // Operation logic
-<<<<<<< HEAD
 inline void load_to_gp_in_on_chip_1_buf4_us44_FIFO_buf176179(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */gp_in_on_chip_1_buf4_us44_to_gp_3172, gp_in_on_chip_1_buf4_us44_FIFO_buf176_cache& gp_in_on_chip_1_buf4_us44_FIFO_buf176, int d0, int d1, int d2) {
   // Dynamic address computation
 
@@ -3559,22 +3088,12 @@ inline void load_to_gp_in_on_chip_1_buf4_us44_FIFO_buf176179(HWStream<hw_uint<32
 	auto gp_in_on_chip_1_buf4_us44_to_gp_3172_gp_in_on_chip_1_buf4_us44_to_gp_3172_ld177_c__gp_in_on_chip_1_buf4_us44_to_gp_3172_ld178_value = gp_in_on_chip_1_buf4_us44_to_gp_3172.read();
 	// Produce: gp_in_on_chip_1_buf4_us44_FIFO_buf176
 	gp_in_on_chip_1_buf4_us44_FIFO_buf176_load_to_gp_in_on_chip_1_buf4_us44_FIFO_buf176179_write_bundle_write(/* arg names */gp_in_on_chip_1_buf4_us44_to_gp_3172_gp_in_on_chip_1_buf4_us44_to_gp_3172_ld177_c__gp_in_on_chip_1_buf4_us44_to_gp_3172_ld178_value, gp_in_on_chip_1_buf4_us44_FIFO_buf176, d0, d1, d2, 0);
-=======
-inline void load_to_gp_in_on_chip_1_buf4_us44_FIFO_buf220223(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */gp_in_on_chip_1_buf4_us44_to_gp_3168, gp_in_on_chip_1_buf4_us44_FIFO_buf220_cache& gp_in_on_chip_1_buf4_us44_FIFO_buf220, int d0, int d1, int d2) {
-  // Dynamic address computation
-
-	// Consume: gp_in_on_chip_1_buf4_us44_to_gp_3168
-	auto gp_in_on_chip_1_buf4_us44_to_gp_3168_gp_in_on_chip_1_buf4_us44_to_gp_3168_ld221_c__gp_in_on_chip_1_buf4_us44_to_gp_3168_ld222_value = gp_in_on_chip_1_buf4_us44_to_gp_3168.read();
-	// Produce: gp_in_on_chip_1_buf4_us44_FIFO_buf220
-	gp_in_on_chip_1_buf4_us44_FIFO_buf220_load_to_gp_in_on_chip_1_buf4_us44_FIFO_buf220223_write_bundle_write(/* arg names */gp_in_on_chip_1_buf4_us44_to_gp_3168_gp_in_on_chip_1_buf4_us44_to_gp_3168_ld221_c__gp_in_on_chip_1_buf4_us44_to_gp_3168_ld222_value, gp_in_on_chip_1_buf4_us44_FIFO_buf220, d0, d1, d2, 0);
->>>>>>> 89b3f51bdb8eb51a288ec002dbba28ce9175d84f
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 
 }
 
-<<<<<<< HEAD
 inline void load_to_in_on_chip_FIFO_buf224227(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */in_on_chip_to_gp_3220, in_on_chip_FIFO_buf224_cache& in_on_chip_FIFO_buf224, int d0, int d1, int d2) {
   // Dynamic address computation
 
@@ -3582,15 +3101,6 @@ inline void load_to_in_on_chip_FIFO_buf224227(HWStream<hw_uint<32> >& /* buffer_
 	auto in_on_chip_to_gp_3220_in_on_chip_to_gp_3220_ld225_c__in_on_chip_to_gp_3220_ld226_value = in_on_chip_to_gp_3220.read();
 	// Produce: in_on_chip_FIFO_buf224
 	in_on_chip_FIFO_buf224_load_to_in_on_chip_FIFO_buf224227_write_bundle_write(/* arg names */in_on_chip_to_gp_3220_in_on_chip_to_gp_3220_ld225_c__in_on_chip_to_gp_3220_ld226_value, in_on_chip_FIFO_buf224, d0, d1, d2, 0);
-=======
-inline void load_to_in_on_chip_FIFO_buf244247(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */in_on_chip_to_gp_3192, in_on_chip_FIFO_buf244_cache& in_on_chip_FIFO_buf244, int d0, int d1, int d2) {
-  // Dynamic address computation
-
-	// Consume: in_on_chip_to_gp_3192
-	auto in_on_chip_to_gp_3192_in_on_chip_to_gp_3192_ld245_c__in_on_chip_to_gp_3192_ld246_value = in_on_chip_to_gp_3192.read();
-	// Produce: in_on_chip_FIFO_buf244
-	in_on_chip_FIFO_buf244_load_to_in_on_chip_FIFO_buf244247_write_bundle_write(/* arg names */in_on_chip_to_gp_3192_in_on_chip_to_gp_3192_ld245_c__in_on_chip_to_gp_3192_ld246_value, in_on_chip_FIFO_buf244, d0, d1, d2, 0);
->>>>>>> 89b3f51bdb8eb51a288ec002dbba28ce9175d84f
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -3658,7 +3168,6 @@ void Extracted_gp_in_on_chip_1_buf4_us44_to_gp_3172_ld178_in_on_chip_to_gp_3220_
 #pragma HLS inline recursive
 #endif // __VIVADO_SYNTH__
 
-<<<<<<< HEAD
 // schedule: { diff51[d0 = 0, d1, d2] -> [0, 8 + d1, 8 + d2, 19] : 0 <= d1 <= 63 and 0 <= d2 <= 63; load_to_lp_in_on_chip_0_buf48_to_gp_4228231[d0 = 0, d1, d2] -> [0, 8 + d1, 8 + d2, 26] : 0 <= d1 <= 63 and 0 <= d2 <= 63; load_to_gp_in_on_chip_1_buf4_us44_FIFO_buf176179[d0 = 0, d1, d2] -> [0, 8 + d1, 8 + d2, 15] : 0 <= d1 <= 63 and 0 <= d2 <= 63; load_to_in_on_chip_FIFO_buf224227[d0 = 0, d1, d2] -> [0, 1 + d1, 1 + d2, 6] : 7 <= d1 <= 70 and 7 <= d2 <= 70 }
 //   { diff51[d0 = 0, d1, d2] -> [0, 8 + d1, 8 + d2, 19] : 0 <= d1 <= 63 and 0 <= d2 <= 63 }
 // Condition for diff51(((((-19 + 1*i3)) == 0) && (((1*i0)) == 0) && (((-8 + 1*i1)) >= 0) && (((71 + -1*i1)) >= 0) && (((-8 + 1*i2)) >= 0) && (((71 + -1*i2)) >= 0)))
@@ -3670,25 +3179,11 @@ void Extracted_gp_in_on_chip_1_buf4_us44_to_gp_3172_ld178_in_on_chip_to_gp_3220_
 // Condition for load_to_in_on_chip_FIFO_buf224227(((((-6 + 1*i3)) == 0) && (((1*i0)) == 0) && (((-8 + 1*i1)) >= 0) && (((71 + -1*i1)) >= 0) && (((-8 + 1*i2)) >= 0) && (((71 + -1*i2)) >= 0)))
 
 	// time range: { [0, i1, i2, 26] : 8 <= i1 <= 71 and 8 <= i2 <= 71; [0, i1, i2, 19] : 8 <= i1 <= 71 and 8 <= i2 <= 71; [0, i1, i2, 15] : 8 <= i1 <= 71 and 8 <= i2 <= 71; [0, i1, i2, 6] : 8 <= i1 <= 71 and 8 <= i2 <= 71 }
-=======
-// schedule: { diff51[d0 = 0, d1, d2] -> [0, 8 + d1, 8 + d2, 15] : 0 <= d1 <= 63 and 0 <= d2 <= 63; load_to_in_on_chip_FIFO_buf244247[d0 = 0, d1, d2] -> [0, 1 + d1, 1 + d2, 2] : 7 <= d1 <= 70 and 7 <= d2 <= 70; load_to_lp_in_on_chip_0_buf48_to_gp_4196199[d0 = 0, d1, d2] -> [0, 14 + d1, 14 + d2, 19] : 0 <= d1 <= 63 and 0 <= d2 <= 63; load_to_gp_in_on_chip_1_buf4_us44_FIFO_buf220223[d0 = 0, d1, d2] -> [0, 8 + d1, 8 + d2, 13] : 0 <= d1 <= 63 and 0 <= d2 <= 63 }
-//   { diff51[d0 = 0, d1, d2] -> [0, 8 + d1, 8 + d2, 15] : 0 <= d1 <= 63 and 0 <= d2 <= 63 }
-// Condition for diff51(((((-15 + 1*i3)) == 0) && (((1*i0)) == 0) && (((-8 + 1*i1)) >= 0) && (((71 + -1*i1)) >= 0) && (((-8 + 1*i2)) >= 0) && (((71 + -1*i2)) >= 0)))
-//   { load_to_in_on_chip_FIFO_buf244247[d0 = 0, d1, d2] -> [0, 1 + d1, 1 + d2, 2] : 7 <= d1 <= 70 and 7 <= d2 <= 70 }
-// Condition for load_to_in_on_chip_FIFO_buf244247(((((-2 + 1*i3)) == 0) && (((1*i0)) == 0) && (((-8 + 1*i1)) >= 0) && (((71 + -1*i1)) >= 0) && (((-8 + 1*i2)) >= 0) && (((71 + -1*i2)) >= 0)))
-//   { load_to_lp_in_on_chip_0_buf48_to_gp_4196199[d0 = 0, d1, d2] -> [0, 14 + d1, 14 + d2, 19] : 0 <= d1 <= 63 and 0 <= d2 <= 63 }
-// Condition for load_to_lp_in_on_chip_0_buf48_to_gp_4196199(((((-19 + 1*i3)) == 0) && (((1*i0)) == 0) && (((-14 + 1*i1)) >= 0) && (((77 + -1*i1)) >= 0) && (((-14 + 1*i2)) >= 0) && (((77 + -1*i2)) >= 0)))
-//   { load_to_gp_in_on_chip_1_buf4_us44_FIFO_buf220223[d0 = 0, d1, d2] -> [0, 8 + d1, 8 + d2, 13] : 0 <= d1 <= 63 and 0 <= d2 <= 63 }
-// Condition for load_to_gp_in_on_chip_1_buf4_us44_FIFO_buf220223(((((-13 + 1*i3)) == 0) && (((1*i0)) == 0) && (((-8 + 1*i1)) >= 0) && (((71 + -1*i1)) >= 0) && (((-8 + 1*i2)) >= 0) && (((71 + -1*i2)) >= 0)))
-
-	// time range: { [0, i1, i2, 19] : 14 <= i1 <= 77 and 14 <= i2 <= 77; [0, i1, i2, 15] : 8 <= i1 <= 71 and 8 <= i2 <= 71; [0, i1, i2, 13] : 8 <= i1 <= 71 and 8 <= i2 <= 71; [0, i1, i2, 2] : 8 <= i1 <= 71 and 8 <= i2 <= 71 }
->>>>>>> 89b3f51bdb8eb51a288ec002dbba28ce9175d84f
 	// # sets: 1
 	int i0 = 0;
 	  for (int i1 = 8; i1 <= 71; i1++) {
 	    for (int i2 = 8; i2 <= 71; i2++) {
 	#pragma HLS pipeline II=1
-<<<<<<< HEAD
 	        // { [i0, i1, i2] }
 	        // { [i0, i1, i2] :  }
 	        if ((true)) {
@@ -3698,21 +3193,6 @@ void Extracted_gp_in_on_chip_1_buf4_us44_to_gp_3172_ld178_in_on_chip_to_gp_3220_
 	        // { [i0, i1, i2] :  }
 	        if ((true)) {
 	          load_to_gp_in_on_chip_1_buf4_us44_FIFO_buf176179(gp_in_on_chip_1_buf4_us44_to_gp_3172 /* buf name */, gp_in_on_chip_1_buf4_us44_FIFO_buf176, 0, ((-8 + 1*i1)), ((-8 + 1*i2)));
-=======
-	        // { [i0, i1, i2] : i1 <= 71 and i2 <= 71 }
-	        // { [i0, i1, i2] : i1 <= 71 and i2 <= 71 }
-	          // { [i0, i1, i2] : 71 - i1 >= 0 }
-	          // { [i0, i1, i2] : 71 - i2 >= 0 }
-	        if ((((((71 + -1*i1)) >= 0) && (((71 + -1*i2)) >= 0)))) {
-	          load_to_in_on_chip_FIFO_buf244247(in_on_chip_to_gp_3192 /* buf name */, in_on_chip_FIFO_buf244, 0, ((-1 + 1*i1)), ((-1 + 1*i2)));
-	        }
-	        // { [i0, i1, i2] : i1 <= 71 and i2 <= 71 }
-	        // { [i0, i1, i2] : i1 <= 71 and i2 <= 71 }
-	          // { [i0, i1, i2] : 71 - i1 >= 0 }
-	          // { [i0, i1, i2] : 71 - i2 >= 0 }
-	        if ((((((71 + -1*i1)) >= 0) && (((71 + -1*i2)) >= 0)))) {
-	          load_to_gp_in_on_chip_1_buf4_us44_FIFO_buf220223(gp_in_on_chip_1_buf4_us44_to_gp_3168 /* buf name */, gp_in_on_chip_1_buf4_us44_FIFO_buf220, 0, ((-8 + 1*i1)), ((-8 + 1*i2)));
->>>>>>> 89b3f51bdb8eb51a288ec002dbba28ce9175d84f
 	        }
 	        // { [i0, i1, i2] }
 	        // { [i0, i1, i2] :  }
@@ -3733,7 +3213,6 @@ void Extracted_gp_in_on_chip_1_buf4_us44_to_gp_3172_ld178_in_on_chip_to_gp_3220_
 }
 
 // Operation logic
-<<<<<<< HEAD
 inline void load_to_lp_in_on_chip_0_buf48_FIFO_buf232235(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */lp_in_on_chip_0_buf48_to_gp_4228, lp_in_on_chip_0_buf48_FIFO_buf232_cache& lp_in_on_chip_0_buf48_FIFO_buf232, int d0, int d1, int d2) {
   // Dynamic address computation
 
@@ -3741,22 +3220,12 @@ inline void load_to_lp_in_on_chip_0_buf48_FIFO_buf232235(HWStream<hw_uint<32> >&
 	auto lp_in_on_chip_0_buf48_to_gp_4228_lp_in_on_chip_0_buf48_to_gp_4228_ld233_c__lp_in_on_chip_0_buf48_to_gp_4228_ld234_value = lp_in_on_chip_0_buf48_to_gp_4228.read();
 	// Produce: lp_in_on_chip_0_buf48_FIFO_buf232
 	lp_in_on_chip_0_buf48_FIFO_buf232_load_to_lp_in_on_chip_0_buf48_FIFO_buf232235_write_bundle_write(/* arg names */lp_in_on_chip_0_buf48_to_gp_4228_lp_in_on_chip_0_buf48_to_gp_4228_ld233_c__lp_in_on_chip_0_buf48_to_gp_4228_ld234_value, lp_in_on_chip_0_buf48_FIFO_buf232, d0, d1, d2, 0);
-=======
-inline void load_to_lp_in_on_chip_0_buf48_FIFO_buf248251(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */lp_in_on_chip_0_buf48_to_gp_4196, lp_in_on_chip_0_buf48_FIFO_buf248_cache& lp_in_on_chip_0_buf48_FIFO_buf248, int d0, int d1, int d2) {
-  // Dynamic address computation
-
-	// Consume: lp_in_on_chip_0_buf48_to_gp_4196
-	auto lp_in_on_chip_0_buf48_to_gp_4196_lp_in_on_chip_0_buf48_to_gp_4196_ld249_c__lp_in_on_chip_0_buf48_to_gp_4196_ld250_value = lp_in_on_chip_0_buf48_to_gp_4196.read();
-	// Produce: lp_in_on_chip_0_buf48_FIFO_buf248
-	lp_in_on_chip_0_buf48_FIFO_buf248_load_to_lp_in_on_chip_0_buf48_FIFO_buf248251_write_bundle_write(/* arg names */lp_in_on_chip_0_buf48_to_gp_4196_lp_in_on_chip_0_buf48_to_gp_4196_ld249_c__lp_in_on_chip_0_buf48_to_gp_4196_ld250_value, lp_in_on_chip_0_buf48_FIFO_buf248, d0, d1, d2, 0);
->>>>>>> 89b3f51bdb8eb51a288ec002dbba28ce9175d84f
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 
 }
 
-<<<<<<< HEAD
 inline void load_to_lp_in_on_chip_1_buf40_reconstruct_lp61_buf64_us74_FIFO_buf248251(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */lp_in_on_chip_1_buf40_reconstruct_lp61_buf64_us74_to_gp_4244, lp_in_on_chip_1_buf40_reconstruct_lp61_buf64_us74_FIFO_buf248_cache& lp_in_on_chip_1_buf40_reconstruct_lp61_buf64_us74_FIFO_buf248, int d0, int d1, int d2) {
   // Dynamic address computation
 
@@ -3764,15 +3233,6 @@ inline void load_to_lp_in_on_chip_1_buf40_reconstruct_lp61_buf64_us74_FIFO_buf24
 	auto lp_in_on_chip_1_buf40_reconstruct_lp61_buf64_us74_to_gp_4244_lp_in_on_chip_1_buf40_reconstruct_lp61_buf64_us74_to_gp_4244_ld249_c__lp_in_on_chip_1_buf40_reconstruct_lp61_buf64_us74_to_gp_4244_ld250_value = lp_in_on_chip_1_buf40_reconstruct_lp61_buf64_us74_to_gp_4244.read();
 	// Produce: lp_in_on_chip_1_buf40_reconstruct_lp61_buf64_us74_FIFO_buf248
 	lp_in_on_chip_1_buf40_reconstruct_lp61_buf64_us74_FIFO_buf248_load_to_lp_in_on_chip_1_buf40_reconstruct_lp61_buf64_us74_FIFO_buf248251_write_bundle_write(/* arg names */lp_in_on_chip_1_buf40_reconstruct_lp61_buf64_us74_to_gp_4244_lp_in_on_chip_1_buf40_reconstruct_lp61_buf64_us74_to_gp_4244_ld249_c__lp_in_on_chip_1_buf40_reconstruct_lp61_buf64_us74_to_gp_4244_ld250_value, lp_in_on_chip_1_buf40_reconstruct_lp61_buf64_us74_FIFO_buf248, d0, d1, d2, 0);
-=======
-inline void load_to_lp_in_on_chip_1_buf40_reconstruct_lp61_buf64_us74_FIFO_buf256259(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */lp_in_on_chip_1_buf40_reconstruct_lp61_buf64_us74_to_gp_4204, lp_in_on_chip_1_buf40_reconstruct_lp61_buf64_us74_FIFO_buf256_cache& lp_in_on_chip_1_buf40_reconstruct_lp61_buf64_us74_FIFO_buf256, int d0, int d1, int d2) {
-  // Dynamic address computation
-
-	// Consume: lp_in_on_chip_1_buf40_reconstruct_lp61_buf64_us74_to_gp_4204
-	auto lp_in_on_chip_1_buf40_reconstruct_lp61_buf64_us74_to_gp_4204_lp_in_on_chip_1_buf40_reconstruct_lp61_buf64_us74_to_gp_4204_ld257_c__lp_in_on_chip_1_buf40_reconstruct_lp61_buf64_us74_to_gp_4204_ld258_value = lp_in_on_chip_1_buf40_reconstruct_lp61_buf64_us74_to_gp_4204.read();
-	// Produce: lp_in_on_chip_1_buf40_reconstruct_lp61_buf64_us74_FIFO_buf256
-	lp_in_on_chip_1_buf40_reconstruct_lp61_buf64_us74_FIFO_buf256_load_to_lp_in_on_chip_1_buf40_reconstruct_lp61_buf64_us74_FIFO_buf256259_write_bundle_write(/* arg names */lp_in_on_chip_1_buf40_reconstruct_lp61_buf64_us74_to_gp_4204_lp_in_on_chip_1_buf40_reconstruct_lp61_buf64_us74_to_gp_4204_ld257_c__lp_in_on_chip_1_buf40_reconstruct_lp61_buf64_us74_to_gp_4204_ld258_value, lp_in_on_chip_1_buf40_reconstruct_lp61_buf64_us74_FIFO_buf256, d0, d1, d2, 0);
->>>>>>> 89b3f51bdb8eb51a288ec002dbba28ce9175d84f
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -3841,27 +3301,17 @@ void Extracted_lp_in_on_chip_0_buf48_reconstruct_lp7071_lp_in_on_chip_0_buf48_to
 #pragma HLS inline recursive
 #endif // __VIVADO_SYNTH__
 
-<<<<<<< HEAD
 // schedule: { load_to_lp_in_on_chip_0_buf48_FIFO_buf232235[d0 = 0, d1, d2] -> [0, 14 + d1, 14 + d2, 29] : 0 <= d1 <= 63 and 0 <= d2 <= 63; load_to_lp_in_on_chip_1_buf40_reconstruct_lp61_buf64_us74_FIFO_buf248251[d0 = 0, d1, d2] -> [0, 14 + d1, 14 + d2, 40] : 0 <= d1 <= 63 and 0 <= d2 <= 63; rc78[d0 = 0, d1, d2] -> [0, 14 + d1, 14 + d2, 41] : 0 <= d1 <= 63 and 0 <= d2 <= 63; pw_math_lp_in_on_chip_0_buf48_reconstruct_lp70_buf737982[d0 = 0, d1, d2] -> [0, 14 + d1, 14 + d2, 42] : 0 <= d1 <= 63 and 0 <= d2 <= 63 }
 //   { load_to_lp_in_on_chip_0_buf48_FIFO_buf232235[d0 = 0, d1, d2] -> [0, 14 + d1, 14 + d2, 29] : 0 <= d1 <= 63 and 0 <= d2 <= 63 }
 // Condition for load_to_lp_in_on_chip_0_buf48_FIFO_buf232235(((((-29 + 1*i3)) == 0) && (((1*i0)) == 0) && (((-14 + 1*i1)) >= 0) && (((77 + -1*i1)) >= 0) && (((-14 + 1*i2)) >= 0) && (((77 + -1*i2)) >= 0)))
 //   { load_to_lp_in_on_chip_1_buf40_reconstruct_lp61_buf64_us74_FIFO_buf248251[d0 = 0, d1, d2] -> [0, 14 + d1, 14 + d2, 40] : 0 <= d1 <= 63 and 0 <= d2 <= 63 }
 // Condition for load_to_lp_in_on_chip_1_buf40_reconstruct_lp61_buf64_us74_FIFO_buf248251(((((-40 + 1*i3)) == 0) && (((1*i0)) == 0) && (((-14 + 1*i1)) >= 0) && (((77 + -1*i1)) >= 0) && (((-14 + 1*i2)) >= 0) && (((77 + -1*i2)) >= 0)))
-=======
-// schedule: { load_to_lp_in_on_chip_0_buf48_FIFO_buf248251[d0 = 0, d1, d2] -> [0, 14 + d1, 14 + d2, 24] : 0 <= d1 <= 63 and 0 <= d2 <= 63; rc78[d0 = 0, d1, d2] -> [0, 14 + d1, 14 + d2, 41] : 0 <= d1 <= 63 and 0 <= d2 <= 63; pw_math_lp_in_on_chip_0_buf48_reconstruct_lp70_buf737982[d0 = 0, d1, d2] -> [0, 14 + d1, 14 + d2, 42] : 0 <= d1 <= 63 and 0 <= d2 <= 63; load_to_lp_in_on_chip_1_buf40_reconstruct_lp61_buf64_us74_FIFO_buf256259[d0 = 0, d1, d2] -> [0, 14 + d1, 14 + d2, 40] : 0 <= d1 <= 63 and 0 <= d2 <= 63 }
-//   { load_to_lp_in_on_chip_0_buf48_FIFO_buf248251[d0 = 0, d1, d2] -> [0, 14 + d1, 14 + d2, 24] : 0 <= d1 <= 63 and 0 <= d2 <= 63 }
-// Condition for load_to_lp_in_on_chip_0_buf48_FIFO_buf248251(((((-24 + 1*i3)) == 0) && (((1*i0)) == 0) && (((-14 + 1*i1)) >= 0) && (((77 + -1*i1)) >= 0) && (((-14 + 1*i2)) >= 0) && (((77 + -1*i2)) >= 0)))
->>>>>>> 89b3f51bdb8eb51a288ec002dbba28ce9175d84f
 //   { rc78[d0 = 0, d1, d2] -> [0, 14 + d1, 14 + d2, 41] : 0 <= d1 <= 63 and 0 <= d2 <= 63 }
 // Condition for rc78(((((-41 + 1*i3)) == 0) && (((1*i0)) == 0) && (((-14 + 1*i1)) >= 0) && (((77 + -1*i1)) >= 0) && (((-14 + 1*i2)) >= 0) && (((77 + -1*i2)) >= 0)))
 //   { pw_math_lp_in_on_chip_0_buf48_reconstruct_lp70_buf737982[d0 = 0, d1, d2] -> [0, 14 + d1, 14 + d2, 42] : 0 <= d1 <= 63 and 0 <= d2 <= 63 }
 // Condition for pw_math_lp_in_on_chip_0_buf48_reconstruct_lp70_buf737982(((((-42 + 1*i3)) == 0) && (((1*i0)) == 0) && (((-14 + 1*i1)) >= 0) && (((77 + -1*i1)) >= 0) && (((-14 + 1*i2)) >= 0) && (((77 + -1*i2)) >= 0)))
 
-<<<<<<< HEAD
 	// time range: { [0, i1, i2, i3] : 14 <= i1 <= 77 and 14 <= i2 <= 77 and 40 <= i3 <= 42; [0, i1, i2, 29] : 14 <= i1 <= 77 and 14 <= i2 <= 77 }
-=======
-	// time range: { [0, i1, i2, i3] : 14 <= i1 <= 77 and 14 <= i2 <= 77 and 40 <= i3 <= 42; [0, i1, i2, 24] : 14 <= i1 <= 77 and 14 <= i2 <= 77 }
->>>>>>> 89b3f51bdb8eb51a288ec002dbba28ce9175d84f
 	// # sets: 1
 	int i0 = 0;
 	  for (int i1 = 14; i1 <= 77; i1++) {
@@ -3983,7 +3433,6 @@ void Extracted_gp_in_on_chip_1_buf4_to_gp_5164_ld170_gp_in_on_chip_2_buf12_us36_
 #pragma HLS inline recursive
 #endif // __VIVADO_SYNTH__
 
-<<<<<<< HEAD
 // schedule: { load_to_lp_in_on_chip_1_buf40_to_gp_6236239[d0 = 0, d1, d2] -> [0, 14 + 2d1, 10 + 2d2, 25] : 0 <= d1 <= 31 and 0 <= d2 <= 31; load_to_gp_in_on_chip_1_buf4_FIFO_buf168171[d0 = 0, d1, d2] -> [0, 4 + 2d1, 4 + 2d2, 7] : 3 <= d1 <= 34 and 3 <= d2 <= 34; load_to_gp_in_on_chip_2_buf12_us36_FIFO_buf200203[d0 = 0, d1, d2] -> [0, 10 + 2d1, 10 + 2d2, 17] : 0 <= d1 <= 31 and 0 <= d2 <= 31; diff43[d0 = 0, d1, d2] -> [0, 10 + 2d1, 10 + 2d2, 24] : 0 <= d1 <= 31 and 0 <= d2 <= 31 }
 //   { load_to_lp_in_on_chip_1_buf40_to_gp_6236239[d0 = 0, d1, d2] -> [0, 14 + 2d1, 10 + 2d2, 25] : 0 <= d1 <= 31 and 0 <= d2 <= 31 }
 // Condition for load_to_lp_in_on_chip_1_buf40_to_gp_6236239(((((-1*i1 + (2*(((1*i1)) >> 1)))) == 0) && (((-1*i2 + (2*(((1*i2)) >> 1)))) == 0) && (((-25 + 1*i3)) == 0) && (((1*i0)) == 0) && (((-14 + 1*i1)) >= 0) && (((76 + -1*i1)) >= 0) && (((-10 + 1*i2)) >= 0) && (((72 + -1*i2)) >= 0)))
@@ -3995,19 +3444,6 @@ void Extracted_gp_in_on_chip_1_buf4_to_gp_5164_ld170_gp_in_on_chip_2_buf12_us36_
 // Condition for diff43(((((-1*i1 + (2*(((1*i1)) >> 1)))) == 0) && (((-1*i2 + (2*(((1*i2)) >> 1)))) == 0) && (((-24 + 1*i3)) == 0) && (((1*i0)) == 0) && (((-10 + 1*i1)) >= 0) && (((72 + -1*i1)) >= 0) && (((-10 + 1*i2)) >= 0) && (((72 + -1*i2)) >= 0)))
 
 	// time range: { [0, i1, i2, 25] : (i1) mod 2 = 0 and (i2) mod 2 = 0 and 14 <= i1 <= 76 and 10 <= i2 <= 72; [0, i1, i2, 24] : (i1) mod 2 = 0 and (i2) mod 2 = 0 and 10 <= i1 <= 72 and 10 <= i2 <= 72; [0, i1, i2, 17] : (i1) mod 2 = 0 and (i2) mod 2 = 0 and 10 <= i1 <= 72 and 10 <= i2 <= 72; [0, i1, i2, 7] : (i1) mod 2 = 0 and (i2) mod 2 = 0 and 10 <= i1 <= 72 and 10 <= i2 <= 72 }
-=======
-// schedule: { load_to_gp_in_on_chip_2_buf12_us36_FIFO_buf232235[d0 = 0, d1, d2] -> [0, 10 + 2d1, 10 + 2d2, 18] : 0 <= d1 <= 31 and 0 <= d2 <= 31; load_to_gp_in_on_chip_1_buf4_FIFO_buf216219[d0 = 0, d1, d2] -> [0, 4 + 2d1, 4 + 2d2, 5] : 3 <= d1 <= 34 and 3 <= d2 <= 34; load_to_lp_in_on_chip_1_buf40_to_gp_6200203[d0 = 0, d1, d2] -> [0, 10 + 2d1, 10 + 2d2, 26] : 0 <= d1 <= 31 and 0 <= d2 <= 31; diff43[d0 = 0, d1, d2] -> [0, 10 + 2d1, 10 + 2d2, 21] : 0 <= d1 <= 31 and 0 <= d2 <= 31 }
-//   { load_to_gp_in_on_chip_2_buf12_us36_FIFO_buf232235[d0 = 0, d1, d2] -> [0, 10 + 2d1, 10 + 2d2, 18] : 0 <= d1 <= 31 and 0 <= d2 <= 31 }
-// Condition for load_to_gp_in_on_chip_2_buf12_us36_FIFO_buf232235(((((-1*i1 + (2*(((1*i1)) >> 1)))) == 0) && (((-1*i2 + (2*(((1*i2)) >> 1)))) == 0) && (((-18 + 1*i3)) == 0) && (((1*i0)) == 0) && (((-10 + 1*i1)) >= 0) && (((72 + -1*i1)) >= 0) && (((-10 + 1*i2)) >= 0) && (((72 + -1*i2)) >= 0)))
-//   { load_to_gp_in_on_chip_1_buf4_FIFO_buf216219[d0 = 0, d1, d2] -> [0, 4 + 2d1, 4 + 2d2, 5] : 3 <= d1 <= 34 and 3 <= d2 <= 34 }
-// Condition for load_to_gp_in_on_chip_1_buf4_FIFO_buf216219(((((-1*i1 + (2*(((1*i1)) >> 1)))) == 0) && (((-1*i2 + (2*(((1*i2)) >> 1)))) == 0) && (((-5 + 1*i3)) == 0) && (((1*i0)) == 0) && (((-10 + 1*i1)) >= 0) && (((72 + -1*i1)) >= 0) && (((-10 + 1*i2)) >= 0) && (((72 + -1*i2)) >= 0)))
-//   { load_to_lp_in_on_chip_1_buf40_to_gp_6200203[d0 = 0, d1, d2] -> [0, 10 + 2d1, 10 + 2d2, 26] : 0 <= d1 <= 31 and 0 <= d2 <= 31 }
-// Condition for load_to_lp_in_on_chip_1_buf40_to_gp_6200203(((((-1*i1 + (2*(((1*i1)) >> 1)))) == 0) && (((-1*i2 + (2*(((1*i2)) >> 1)))) == 0) && (((-26 + 1*i3)) == 0) && (((1*i0)) == 0) && (((-10 + 1*i1)) >= 0) && (((72 + -1*i1)) >= 0) && (((-10 + 1*i2)) >= 0) && (((72 + -1*i2)) >= 0)))
-//   { diff43[d0 = 0, d1, d2] -> [0, 10 + 2d1, 10 + 2d2, 21] : 0 <= d1 <= 31 and 0 <= d2 <= 31 }
-// Condition for diff43(((((-1*i1 + (2*(((1*i1)) >> 1)))) == 0) && (((-1*i2 + (2*(((1*i2)) >> 1)))) == 0) && (((-21 + 1*i3)) == 0) && (((1*i0)) == 0) && (((-10 + 1*i1)) >= 0) && (((72 + -1*i1)) >= 0) && (((-10 + 1*i2)) >= 0) && (((72 + -1*i2)) >= 0)))
-
-	// time range: { [0, i1, i2, 26] : (i1) mod 2 = 0 and (i2) mod 2 = 0 and 10 <= i1 <= 72 and 10 <= i2 <= 72; [0, i1, i2, 21] : (i1) mod 2 = 0 and (i2) mod 2 = 0 and 10 <= i1 <= 72 and 10 <= i2 <= 72; [0, i1, i2, 18] : (i1) mod 2 = 0 and (i2) mod 2 = 0 and 10 <= i1 <= 72 and 10 <= i2 <= 72; [0, i1, i2, 5] : (i1) mod 2 = 0 and (i2) mod 2 = 0 and 10 <= i1 <= 72 and 10 <= i2 <= 72 }
->>>>>>> 89b3f51bdb8eb51a288ec002dbba28ce9175d84f
 	// # sets: 1
 	int i0 = 0;
 	  for (int i1 = 10; i1 <= 76; i1++) {
@@ -4054,24 +3490,7 @@ void Extracted_gp_in_on_chip_1_buf4_to_gp_5164_ld170_gp_in_on_chip_2_buf12_us36_
 }
 
 // Operation logic
-<<<<<<< HEAD
 inline void load_to_lp_in_on_chip_1_buf40_FIFO_buf240243(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */lp_in_on_chip_1_buf40_to_gp_6236, lp_in_on_chip_1_buf40_FIFO_buf240_cache& lp_in_on_chip_1_buf40_FIFO_buf240, int d0, int d1, int d2) {
-=======
-inline void load_to_lp_in_on_chip_1_buf40_FIFO_buf252255(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */lp_in_on_chip_1_buf40_to_gp_6200, lp_in_on_chip_1_buf40_FIFO_buf252_cache& lp_in_on_chip_1_buf40_FIFO_buf252, int d0, int d1, int d2) {
-  // Dynamic address computation
-
-	// Consume: lp_in_on_chip_1_buf40_to_gp_6200
-	auto lp_in_on_chip_1_buf40_to_gp_6200_lp_in_on_chip_1_buf40_to_gp_6200_ld253_c__lp_in_on_chip_1_buf40_to_gp_6200_ld254_value = lp_in_on_chip_1_buf40_to_gp_6200.read();
-	// Produce: lp_in_on_chip_1_buf40_FIFO_buf252
-	lp_in_on_chip_1_buf40_FIFO_buf252_load_to_lp_in_on_chip_1_buf40_FIFO_buf252255_write_bundle_write(/* arg names */lp_in_on_chip_1_buf40_to_gp_6200_lp_in_on_chip_1_buf40_to_gp_6200_ld253_c__lp_in_on_chip_1_buf40_to_gp_6200_ld254_value, lp_in_on_chip_1_buf40_FIFO_buf252, d0, d1, d2, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void load_to_lp_in_on_chip_2_buf32_reconstruct_lp52_buf55_us65_FIFO_buf264267(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */lp_in_on_chip_2_buf32_reconstruct_lp52_buf55_us65_to_gp_6212, lp_in_on_chip_2_buf32_reconstruct_lp52_buf55_us65_FIFO_buf264_cache& lp_in_on_chip_2_buf32_reconstruct_lp52_buf55_us65_FIFO_buf264, int d0, int d1, int d2) {
->>>>>>> 89b3f51bdb8eb51a288ec002dbba28ce9175d84f
   // Dynamic address computation
 
 	// Consume: lp_in_on_chip_1_buf40_to_gp_6236
@@ -4178,32 +3597,19 @@ void Extracted_lp_in_on_chip_1_buf40_reconstruct_lp6162_lp_in_on_chip_1_buf40_re
 #pragma HLS inline recursive
 #endif // __VIVADO_SYNTH__
 
-<<<<<<< HEAD
 // schedule: { rc69[d0 = 0, d1, d2] -> [0, 14 + 2d1, 14 + 2d2, 37] : 0 <= d1 <= 31 and 0 <= d2 <= 31; us77[d0 = 0, d1, d2] -> [0, 14 + d1, 14 + d2, 38] : 0 <= d1 <= 63 and 0 <= d2 <= 63; load_to_lp_in_on_chip_1_buf40_FIFO_buf240243[d0 = 0, d1, d2] -> [0, 14 + 2d1, 10 + 2d2, 27] : 0 <= d1 <= 31 and 0 <= d2 <= 31; load_to_lp_in_on_chip_1_buf40_reconstruct_lp61_buf64_us74_to_gp_4244247[d0 = 0, d1, d2] -> [0, 14 + d1, 14 + d2, 39] : 0 <= d1 <= 63 and 0 <= d2 <= 63; load_to_lp_in_on_chip_2_buf32_reconstruct_lp52_buf55_us65_FIFO_buf264267[d0 = 0, d1, d2] -> [0, 14 + 2d1, 14 + 2d2, 36] : 0 <= d1 <= 31 and 0 <= d2 <= 31 }
-=======
-// schedule: { rc69[d0 = 0, d1, d2] -> [0, 14 + 2d1, 14 + 2d2, 37] : 0 <= d1 <= 31 and 0 <= d2 <= 31; us77[d0 = 0, d1, d2] -> [0, 14 + d1, 14 + d2, 38] : 0 <= d1 <= 63 and 0 <= d2 <= 63; load_to_lp_in_on_chip_1_buf40_FIFO_buf252255[d0 = 0, d1, d2] -> [0, 10 + 2d1, 10 + 2d2, 29] : 0 <= d1 <= 31 and 0 <= d2 <= 31; load_to_lp_in_on_chip_2_buf32_reconstruct_lp52_buf55_us65_FIFO_buf264267[d0 = 0, d1, d2] -> [0, 14 + 2d1, 14 + 2d2, 36] : 0 <= d1 <= 31 and 0 <= d2 <= 31; load_to_lp_in_on_chip_1_buf40_reconstruct_lp61_buf64_us74_to_gp_4204207[d0 = 0, d1, d2] -> [0, 14 + d1, 14 + d2, 39] : 0 <= d1 <= 63 and 0 <= d2 <= 63 }
->>>>>>> 89b3f51bdb8eb51a288ec002dbba28ce9175d84f
 //   { rc69[d0 = 0, d1, d2] -> [0, 14 + 2d1, 14 + 2d2, 37] : 0 <= d1 <= 31 and 0 <= d2 <= 31 }
 // Condition for rc69(((((-1*i1 + (2*(((1*i1)) >> 1)))) == 0) && (((-1*i2 + (2*(((1*i2)) >> 1)))) == 0) && (((-37 + 1*i3)) == 0) && (((1*i0)) == 0) && (((-14 + 1*i1)) >= 0) && (((76 + -1*i1)) >= 0) && (((-14 + 1*i2)) >= 0) && (((76 + -1*i2)) >= 0)))
 //   { us77[d0 = 0, d1, d2] -> [0, 14 + d1, 14 + d2, 38] : 0 <= d1 <= 63 and 0 <= d2 <= 63 }
 // Condition for us77(((((-38 + 1*i3)) == 0) && (((1*i0)) == 0) && (((-14 + 1*i1)) >= 0) && (((77 + -1*i1)) >= 0) && (((-14 + 1*i2)) >= 0) && (((77 + -1*i2)) >= 0)))
-<<<<<<< HEAD
 //   { load_to_lp_in_on_chip_1_buf40_FIFO_buf240243[d0 = 0, d1, d2] -> [0, 14 + 2d1, 10 + 2d2, 27] : 0 <= d1 <= 31 and 0 <= d2 <= 31 }
 // Condition for load_to_lp_in_on_chip_1_buf40_FIFO_buf240243(((((-1*i1 + (2*(((1*i1)) >> 1)))) == 0) && (((-1*i2 + (2*(((1*i2)) >> 1)))) == 0) && (((-27 + 1*i3)) == 0) && (((1*i0)) == 0) && (((-14 + 1*i1)) >= 0) && (((76 + -1*i1)) >= 0) && (((-10 + 1*i2)) >= 0) && (((72 + -1*i2)) >= 0)))
 //   { load_to_lp_in_on_chip_1_buf40_reconstruct_lp61_buf64_us74_to_gp_4244247[d0 = 0, d1, d2] -> [0, 14 + d1, 14 + d2, 39] : 0 <= d1 <= 63 and 0 <= d2 <= 63 }
 // Condition for load_to_lp_in_on_chip_1_buf40_reconstruct_lp61_buf64_us74_to_gp_4244247(((((-39 + 1*i3)) == 0) && (((1*i0)) == 0) && (((-14 + 1*i1)) >= 0) && (((77 + -1*i1)) >= 0) && (((-14 + 1*i2)) >= 0) && (((77 + -1*i2)) >= 0)))
-=======
-//   { load_to_lp_in_on_chip_1_buf40_FIFO_buf252255[d0 = 0, d1, d2] -> [0, 10 + 2d1, 10 + 2d2, 29] : 0 <= d1 <= 31 and 0 <= d2 <= 31 }
-// Condition for load_to_lp_in_on_chip_1_buf40_FIFO_buf252255(((((-1*i1 + (2*(((1*i1)) >> 1)))) == 0) && (((-1*i2 + (2*(((1*i2)) >> 1)))) == 0) && (((-29 + 1*i3)) == 0) && (((1*i0)) == 0) && (((-10 + 1*i1)) >= 0) && (((72 + -1*i1)) >= 0) && (((-10 + 1*i2)) >= 0) && (((72 + -1*i2)) >= 0)))
->>>>>>> 89b3f51bdb8eb51a288ec002dbba28ce9175d84f
 //   { load_to_lp_in_on_chip_2_buf32_reconstruct_lp52_buf55_us65_FIFO_buf264267[d0 = 0, d1, d2] -> [0, 14 + 2d1, 14 + 2d2, 36] : 0 <= d1 <= 31 and 0 <= d2 <= 31 }
 // Condition for load_to_lp_in_on_chip_2_buf32_reconstruct_lp52_buf55_us65_FIFO_buf264267(((((-1*i1 + (2*(((1*i1)) >> 1)))) == 0) && (((-1*i2 + (2*(((1*i2)) >> 1)))) == 0) && (((-36 + 1*i3)) == 0) && (((1*i0)) == 0) && (((-14 + 1*i1)) >= 0) && (((76 + -1*i1)) >= 0) && (((-14 + 1*i2)) >= 0) && (((76 + -1*i2)) >= 0)))
 
-<<<<<<< HEAD
 	// time range: { [0, i1, i2, i3] : 14 <= i1 <= 77 and 14 <= i2 <= 77 and 36 <= i3 <= 39 and (i3 >= 38 or ((i1) mod 2 = 0 and (i2) mod 2 = 0 and i1 <= 76 and i2 <= 76 and i3 <= 37)); [0, i1, i2, 27] : (i1) mod 2 = 0 and (i2) mod 2 = 0 and 14 <= i1 <= 76 and 10 <= i2 <= 72 }
-=======
-	// time range: { [0, i1, i2, i3] : 14 <= i1 <= 77 and 14 <= i2 <= 77 and 36 <= i3 <= 39 and (i3 >= 38 or ((i1) mod 2 = 0 and (i2) mod 2 = 0 and i1 <= 76 and i2 <= 76 and i3 <= 37)); [0, i1, i2, 29] : (i1) mod 2 = 0 and (i2) mod 2 = 0 and 10 <= i1 <= 72 and 10 <= i2 <= 72 }
->>>>>>> 89b3f51bdb8eb51a288ec002dbba28ce9175d84f
 	// # sets: 1
 	int i0 = 0;
 	  for (int i1 = 14; i1 <= 77; i1++) {
@@ -4254,7 +3660,6 @@ void Extracted_lp_in_on_chip_1_buf40_reconstruct_lp6162_lp_in_on_chip_1_buf40_re
 }
 
 // Operation logic
-<<<<<<< HEAD
 inline void load_to_gp_in_on_chip_2_buf12_FIFO_buf192195(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */gp_in_on_chip_2_buf12_to_gp_7188, gp_in_on_chip_2_buf12_FIFO_buf192_cache& gp_in_on_chip_2_buf12_FIFO_buf192, int d0, int d1, int d2) {
   // Dynamic address computation
 
@@ -4262,22 +3667,12 @@ inline void load_to_gp_in_on_chip_2_buf12_FIFO_buf192195(HWStream<hw_uint<32> >&
 	auto gp_in_on_chip_2_buf12_to_gp_7188_gp_in_on_chip_2_buf12_to_gp_7188_ld193_c__gp_in_on_chip_2_buf12_to_gp_7188_ld194_value = gp_in_on_chip_2_buf12_to_gp_7188.read();
 	// Produce: gp_in_on_chip_2_buf12_FIFO_buf192
 	gp_in_on_chip_2_buf12_FIFO_buf192_load_to_gp_in_on_chip_2_buf12_FIFO_buf192195_write_bundle_write(/* arg names */gp_in_on_chip_2_buf12_to_gp_7188_gp_in_on_chip_2_buf12_to_gp_7188_ld193_c__gp_in_on_chip_2_buf12_to_gp_7188_ld194_value, gp_in_on_chip_2_buf12_FIFO_buf192, d0, d1, d2, 0);
-=======
-inline void load_to_gp_in_on_chip_2_buf12_FIFO_buf228231(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */gp_in_on_chip_2_buf12_to_gp_7176, gp_in_on_chip_2_buf12_FIFO_buf228_cache& gp_in_on_chip_2_buf12_FIFO_buf228, int d0, int d1, int d2) {
-  // Dynamic address computation
-
-	// Consume: gp_in_on_chip_2_buf12_to_gp_7176
-	auto gp_in_on_chip_2_buf12_to_gp_7176_gp_in_on_chip_2_buf12_to_gp_7176_ld229_c__gp_in_on_chip_2_buf12_to_gp_7176_ld230_value = gp_in_on_chip_2_buf12_to_gp_7176.read();
-	// Produce: gp_in_on_chip_2_buf12_FIFO_buf228
-	gp_in_on_chip_2_buf12_FIFO_buf228_load_to_gp_in_on_chip_2_buf12_FIFO_buf228231_write_bundle_write(/* arg names */gp_in_on_chip_2_buf12_to_gp_7176_gp_in_on_chip_2_buf12_to_gp_7176_ld229_c__gp_in_on_chip_2_buf12_to_gp_7176_ld230_value, gp_in_on_chip_2_buf12_FIFO_buf228, d0, d1, d2, 0);
->>>>>>> 89b3f51bdb8eb51a288ec002dbba28ce9175d84f
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 
 }
 
-<<<<<<< HEAD
 inline void load_to_gp_in_on_chip_3_buf20_us28_FIFO_buf208211(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */gp_in_on_chip_3_buf20_us28_to_gp_7204, gp_in_on_chip_3_buf20_us28_FIFO_buf208_cache& gp_in_on_chip_3_buf20_us28_FIFO_buf208, int d0, int d1, int d2) {
   // Dynamic address computation
 
@@ -4285,54 +3680,28 @@ inline void load_to_gp_in_on_chip_3_buf20_us28_FIFO_buf208211(HWStream<hw_uint<3
 	auto gp_in_on_chip_3_buf20_us28_to_gp_7204_gp_in_on_chip_3_buf20_us28_to_gp_7204_ld209_c__gp_in_on_chip_3_buf20_us28_to_gp_7204_ld210_value = gp_in_on_chip_3_buf20_us28_to_gp_7204.read();
 	// Produce: gp_in_on_chip_3_buf20_us28_FIFO_buf208
 	gp_in_on_chip_3_buf20_us28_FIFO_buf208_load_to_gp_in_on_chip_3_buf20_us28_FIFO_buf208211_write_bundle_write(/* arg names */gp_in_on_chip_3_buf20_us28_to_gp_7204_gp_in_on_chip_3_buf20_us28_to_gp_7204_ld209_c__gp_in_on_chip_3_buf20_us28_to_gp_7204_ld210_value, gp_in_on_chip_3_buf20_us28_FIFO_buf208, d0, d1, d2, 0);
-=======
-inline void load_to_gp_in_on_chip_3_buf20_us28_FIFO_buf236239(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */gp_in_on_chip_3_buf20_us28_to_gp_7184, gp_in_on_chip_3_buf20_us28_FIFO_buf236_cache& gp_in_on_chip_3_buf20_us28_FIFO_buf236, int d0, int d1, int d2) {
-  // Dynamic address computation
-
-	// Consume: gp_in_on_chip_3_buf20_us28_to_gp_7184
-	auto gp_in_on_chip_3_buf20_us28_to_gp_7184_gp_in_on_chip_3_buf20_us28_to_gp_7184_ld237_c__gp_in_on_chip_3_buf20_us28_to_gp_7184_ld238_value = gp_in_on_chip_3_buf20_us28_to_gp_7184.read();
-	// Produce: gp_in_on_chip_3_buf20_us28_FIFO_buf236
-	gp_in_on_chip_3_buf20_us28_FIFO_buf236_load_to_gp_in_on_chip_3_buf20_us28_FIFO_buf236239_write_bundle_write(/* arg names */gp_in_on_chip_3_buf20_us28_to_gp_7184_gp_in_on_chip_3_buf20_us28_to_gp_7184_ld237_c__gp_in_on_chip_3_buf20_us28_to_gp_7184_ld238_value, gp_in_on_chip_3_buf20_us28_FIFO_buf236, d0, d1, d2, 0);
->>>>>>> 89b3f51bdb8eb51a288ec002dbba28ce9175d84f
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 
 }
 
-<<<<<<< HEAD
 inline void diff35(gp_in_on_chip_2_buf12_FIFO_buf192_cache& gp_in_on_chip_2_buf12_FIFO_buf192, gp_in_on_chip_3_buf20_us28_FIFO_buf208_cache& gp_in_on_chip_3_buf20_us28_FIFO_buf208, lp_in_on_chip_2_buf32_cache& lp_in_on_chip_2_buf32, int d0, int d1, int d2) {
   // Dynamic address computation
 
 	// Consume: gp_in_on_chip_2_buf12_FIFO_buf192
 	auto gp_in_on_chip_2_buf12_FIFO_buf192_lp_in_on_chip_234_p_1_c___lp_in_on_chip_233_p_1_value = gp_in_on_chip_2_buf12_FIFO_buf192_diff35_read_bundle_read(gp_in_on_chip_2_buf12_FIFO_buf192/* source_delay */, d0, d1, d2, 0);
-=======
-inline void diff35(gp_in_on_chip_2_buf12_FIFO_buf228_cache& gp_in_on_chip_2_buf12_FIFO_buf228, gp_in_on_chip_3_buf20_us28_FIFO_buf236_cache& gp_in_on_chip_3_buf20_us28_FIFO_buf236, lp_in_on_chip_2_buf32_cache& lp_in_on_chip_2_buf32, int d0, int d1, int d2) {
-  // Dynamic address computation
-
-	// Consume: gp_in_on_chip_2_buf12_FIFO_buf228
-	auto gp_in_on_chip_2_buf12_FIFO_buf228_lp_in_on_chip_234_p_1_c___lp_in_on_chip_233_p_1_value = gp_in_on_chip_2_buf12_FIFO_buf228_diff35_read_bundle_read(gp_in_on_chip_2_buf12_FIFO_buf228/* source_delay */, d0, d1, d2, 0);
->>>>>>> 89b3f51bdb8eb51a288ec002dbba28ce9175d84f
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 
-<<<<<<< HEAD
 	// Consume: gp_in_on_chip_3_buf20_us28_FIFO_buf208
 	auto gp_in_on_chip_3_buf20_us28_FIFO_buf208_lp_in_on_chip_234_p_0_c___lp_in_on_chip_233_p_0_value = gp_in_on_chip_3_buf20_us28_FIFO_buf208_diff35_read_bundle_read(gp_in_on_chip_3_buf20_us28_FIFO_buf208/* source_delay */, d0, d1, d2, 0);
-=======
-	// Consume: gp_in_on_chip_3_buf20_us28_FIFO_buf236
-	auto gp_in_on_chip_3_buf20_us28_FIFO_buf236_lp_in_on_chip_234_p_0_c___lp_in_on_chip_233_p_0_value = gp_in_on_chip_3_buf20_us28_FIFO_buf236_diff35_read_bundle_read(gp_in_on_chip_3_buf20_us28_FIFO_buf236/* source_delay */, d0, d1, d2, 0);
->>>>>>> 89b3f51bdb8eb51a288ec002dbba28ce9175d84f
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 
-<<<<<<< HEAD
 	auto compute_result = llf_diff_float_32(gp_in_on_chip_2_buf12_FIFO_buf192_lp_in_on_chip_234_p_1_c___lp_in_on_chip_233_p_1_value, gp_in_on_chip_3_buf20_us28_FIFO_buf208_lp_in_on_chip_234_p_0_c___lp_in_on_chip_233_p_0_value);
-=======
-	auto compute_result = llf_diff_float_32(gp_in_on_chip_2_buf12_FIFO_buf228_lp_in_on_chip_234_p_1_c___lp_in_on_chip_233_p_1_value, gp_in_on_chip_3_buf20_us28_FIFO_buf236_lp_in_on_chip_234_p_0_c___lp_in_on_chip_233_p_0_value);
->>>>>>> 89b3f51bdb8eb51a288ec002dbba28ce9175d84f
 	// Produce: lp_in_on_chip_2_buf32
 	lp_in_on_chip_2_buf32_diff35_write_bundle_write(/* arg names */compute_result, lp_in_on_chip_2_buf32, d0, d1, d2, 0);
 
@@ -4378,91 +3747,53 @@ void Extracted_gp_in_on_chip_2_buf12_to_gp_7188_ld194_gp_in_on_chip_3_buf20_us28
 #pragma HLS inline recursive
 #endif // __VIVADO_SYNTH__
 
-<<<<<<< HEAD
-// schedule: { load_to_lp_in_on_chip_2_buf32_to_gp_8252255[d0 = 0, d1, d2] -> [0, 14 + 4d1, 14 + 4d2, 31] : 0 <= d1 <= 15 and 0 <= d2 <= 15; diff35[d0 = 0, d1, d2] -> [0, 14 + 4d1, 14 + 4d2, 30] : 0 <= d1 <= 15 and 0 <= d2 <= 15; load_to_gp_in_on_chip_3_buf20_us28_FIFO_buf208211[d0 = 0, d1, d2] -> [0, 14 + 4d1, 14 + 4d2, 28] : 0 <= d1 <= 15 and 0 <= d2 <= 15; load_to_gp_in_on_chip_2_buf12_FIFO_buf192195[d0 = 0, d1, d2] -> [0, 6 + 4d1, 6 + 4d2, 8] : 0 < d1 <= 16 and 0 < d2 <= 16 }
+// schedule: { load_to_lp_in_on_chip_2_buf32_to_gp_8252255[d0 = 0, d1, d2] -> [0, 14 + 4d1, 14 + 4d2, 31] : 0 <= d1 <= 15 and 0 <= d2 <= 15; diff35[d0 = 0, d1, d2] -> [0, 14 + 4d1, 14 + 4d2, 30] : 0 <= d1 <= 15 and 0 <= d2 <= 15; load_to_gp_in_on_chip_3_buf20_us28_FIFO_buf208211[d0 = 0, d1, d2] -> [0, 14 + 4d1, 14 + 4d2, 28] : 0 <= d1 <= 15 and 0 <= d2 <= 15; load_to_gp_in_on_chip_2_buf12_FIFO_buf192195[d0 = 0, d1, d2] -> [0, 6 + 4d1, 10 + 4d2, 8] : 0 < d1 <= 16 and 0 < d2 <= 16 }
 //   { load_to_lp_in_on_chip_2_buf32_to_gp_8252255[d0 = 0, d1, d2] -> [0, 14 + 4d1, 14 + 4d2, 31] : 0 <= d1 <= 15 and 0 <= d2 <= 15 }
 // Condition for load_to_lp_in_on_chip_2_buf32_to_gp_8252255(((((-2 + -1*i1 + (4*(((2 + 1*i1)) >> 2)))) == 0) && (((-2 + -1*i2 + (4*(((2 + 1*i2)) >> 2)))) == 0) && (((-31 + 1*i3)) == 0) && (((1*i0)) == 0) && (((-14 + 1*i1)) >= 0) && (((74 + -1*i1)) >= 0) && (((-14 + 1*i2)) >= 0) && (((74 + -1*i2)) >= 0)))
 //   { diff35[d0 = 0, d1, d2] -> [0, 14 + 4d1, 14 + 4d2, 30] : 0 <= d1 <= 15 and 0 <= d2 <= 15 }
 // Condition for diff35(((((-2 + -1*i1 + (4*(((2 + 1*i1)) >> 2)))) == 0) && (((-2 + -1*i2 + (4*(((2 + 1*i2)) >> 2)))) == 0) && (((-30 + 1*i3)) == 0) && (((1*i0)) == 0) && (((-14 + 1*i1)) >= 0) && (((74 + -1*i1)) >= 0) && (((-14 + 1*i2)) >= 0) && (((74 + -1*i2)) >= 0)))
 //   { load_to_gp_in_on_chip_3_buf20_us28_FIFO_buf208211[d0 = 0, d1, d2] -> [0, 14 + 4d1, 14 + 4d2, 28] : 0 <= d1 <= 15 and 0 <= d2 <= 15 }
 // Condition for load_to_gp_in_on_chip_3_buf20_us28_FIFO_buf208211(((((-2 + -1*i1 + (4*(((2 + 1*i1)) >> 2)))) == 0) && (((-2 + -1*i2 + (4*(((2 + 1*i2)) >> 2)))) == 0) && (((-28 + 1*i3)) == 0) && (((1*i0)) == 0) && (((-14 + 1*i1)) >= 0) && (((74 + -1*i1)) >= 0) && (((-14 + 1*i2)) >= 0) && (((74 + -1*i2)) >= 0)))
-//   { load_to_gp_in_on_chip_2_buf12_FIFO_buf192195[d0 = 0, d1, d2] -> [0, 6 + 4d1, 6 + 4d2, 8] : 0 < d1 <= 16 and 0 < d2 <= 16 }
-// Condition for load_to_gp_in_on_chip_2_buf12_FIFO_buf192195(((((-2 + -1*i1 + (4*(((2 + 1*i1)) >> 2)))) == 0) && (((-2 + -1*i2 + (4*(((2 + 1*i2)) >> 2)))) == 0) && (((-8 + 1*i3)) == 0) && (((1*i0)) == 0) && (((-10 + 1*i1)) >= 0) && (((70 + -1*i1)) >= 0) && (((-10 + 1*i2)) >= 0) && (((70 + -1*i2)) >= 0)))
+//   { load_to_gp_in_on_chip_2_buf12_FIFO_buf192195[d0 = 0, d1, d2] -> [0, 6 + 4d1, 10 + 4d2, 8] : 0 < d1 <= 16 and 0 < d2 <= 16 }
+// Condition for load_to_gp_in_on_chip_2_buf12_FIFO_buf192195(((((-2 + -1*i1 + (4*(((2 + 1*i1)) >> 2)))) == 0) && (((-2 + -1*i2 + (4*(((2 + 1*i2)) >> 2)))) == 0) && (((-8 + 1*i3)) == 0) && (((1*i0)) == 0) && (((-10 + 1*i1)) >= 0) && (((70 + -1*i1)) >= 0) && (((-14 + 1*i2)) >= 0) && (((74 + -1*i2)) >= 0)))
 
-	// time range: { [0, i1, i2, i3] : (2 + i1) mod 4 = 0 and (2 + i2) mod 4 = 0 and 14 <= i1 <= 74 and 14 <= i2 <= 74 and 30 <= i3 <= 31; [0, i1, i2, 28] : (2 + i1) mod 4 = 0 and (2 + i2) mod 4 = 0 and 14 <= i1 <= 74 and 14 <= i2 <= 74; [0, i1, i2, 8] : (2 + i1) mod 4 = 0 and (2 + i2) mod 4 = 0 and 10 <= i1 <= 70 and 10 <= i2 <= 70 }
-=======
-// schedule: { load_to_gp_in_on_chip_3_buf20_us28_FIFO_buf236239[d0 = 0, d1, d2] -> [0, 14 + 4d1, 14 + 4d2, 28] : 0 <= d1 <= 15 and 0 <= d2 <= 15; diff35[d0 = 0, d1, d2] -> [0, 14 + 4d1, 14 + 4d2, 30] : 0 <= d1 <= 15 and 0 <= d2 <= 15; load_to_lp_in_on_chip_2_buf32_to_gp_8208211[d0 = 0, d1, d2] -> [0, 14 + 4d1, 14 + 4d2, 31] : 0 <= d1 <= 15 and 0 <= d2 <= 15; load_to_gp_in_on_chip_2_buf12_FIFO_buf228231[d0 = 0, d1, d2] -> [0, 10 + 4d1, 10 + 4d2, 20] : 0 < d1 <= 16 and 0 < d2 <= 16 }
-//   { load_to_gp_in_on_chip_3_buf20_us28_FIFO_buf236239[d0 = 0, d1, d2] -> [0, 14 + 4d1, 14 + 4d2, 28] : 0 <= d1 <= 15 and 0 <= d2 <= 15 }
-// Condition for load_to_gp_in_on_chip_3_buf20_us28_FIFO_buf236239(((((-2 + -1*i1 + (4*(((2 + 1*i1)) >> 2)))) == 0) && (((-2 + -1*i2 + (4*(((2 + 1*i2)) >> 2)))) == 0) && (((-28 + 1*i3)) == 0) && (((1*i0)) == 0) && (((-14 + 1*i1)) >= 0) && (((74 + -1*i1)) >= 0) && (((-14 + 1*i2)) >= 0) && (((74 + -1*i2)) >= 0)))
-//   { diff35[d0 = 0, d1, d2] -> [0, 14 + 4d1, 14 + 4d2, 30] : 0 <= d1 <= 15 and 0 <= d2 <= 15 }
-// Condition for diff35(((((-2 + -1*i1 + (4*(((2 + 1*i1)) >> 2)))) == 0) && (((-2 + -1*i2 + (4*(((2 + 1*i2)) >> 2)))) == 0) && (((-30 + 1*i3)) == 0) && (((1*i0)) == 0) && (((-14 + 1*i1)) >= 0) && (((74 + -1*i1)) >= 0) && (((-14 + 1*i2)) >= 0) && (((74 + -1*i2)) >= 0)))
-//   { load_to_lp_in_on_chip_2_buf32_to_gp_8208211[d0 = 0, d1, d2] -> [0, 14 + 4d1, 14 + 4d2, 31] : 0 <= d1 <= 15 and 0 <= d2 <= 15 }
-// Condition for load_to_lp_in_on_chip_2_buf32_to_gp_8208211(((((-2 + -1*i1 + (4*(((2 + 1*i1)) >> 2)))) == 0) && (((-2 + -1*i2 + (4*(((2 + 1*i2)) >> 2)))) == 0) && (((-31 + 1*i3)) == 0) && (((1*i0)) == 0) && (((-14 + 1*i1)) >= 0) && (((74 + -1*i1)) >= 0) && (((-14 + 1*i2)) >= 0) && (((74 + -1*i2)) >= 0)))
-//   { load_to_gp_in_on_chip_2_buf12_FIFO_buf228231[d0 = 0, d1, d2] -> [0, 10 + 4d1, 10 + 4d2, 20] : 0 < d1 <= 16 and 0 < d2 <= 16 }
-// Condition for load_to_gp_in_on_chip_2_buf12_FIFO_buf228231(((((-2 + -1*i1 + (4*(((2 + 1*i1)) >> 2)))) == 0) && (((-2 + -1*i2 + (4*(((2 + 1*i2)) >> 2)))) == 0) && (((-20 + 1*i3)) == 0) && (((1*i0)) == 0) && (((-14 + 1*i1)) >= 0) && (((74 + -1*i1)) >= 0) && (((-14 + 1*i2)) >= 0) && (((74 + -1*i2)) >= 0)))
-
-	// time range: { [0, i1, i2, i3] : (2 + i1) mod 4 = 0 and (2 + i2) mod 4 = 0 and 14 <= i1 <= 74 and 14 <= i2 <= 74 and 30 <= i3 <= 31; [0, i1, i2, 28] : (2 + i1) mod 4 = 0 and (2 + i2) mod 4 = 0 and 14 <= i1 <= 74 and 14 <= i2 <= 74; [0, i1, i2, 20] : (2 + i1) mod 4 = 0 and (2 + i2) mod 4 = 0 and 14 <= i1 <= 74 and 14 <= i2 <= 74 }
->>>>>>> 89b3f51bdb8eb51a288ec002dbba28ce9175d84f
+	// time range: { [0, i1, i2, i3] : (2 + i1) mod 4 = 0 and (2 + i2) mod 4 = 0 and 14 <= i1 <= 74 and 14 <= i2 <= 74 and 30 <= i3 <= 31; [0, i1, i2, 28] : (2 + i1) mod 4 = 0 and (2 + i2) mod 4 = 0 and 14 <= i1 <= 74 and 14 <= i2 <= 74; [0, i1, i2, 8] : (2 + i1) mod 4 = 0 and (2 + i2) mod 4 = 0 and 10 <= i1 <= 70 and 14 <= i2 <= 74 }
 	// # sets: 1
 	int i0 = 0;
-	  for (int i1 = 14; i1 <= 74; i1++) {
+	  for (int i1 = 10; i1 <= 74; i1++) {
 	    for (int i2 = 14; i2 <= 74; i2++) {
 	#pragma HLS pipeline II=1
-	        // { [i0, i1, i2] : (2 + i1) mod 4 = 0 and (2 + i2) mod 4 = 0 }
-	        // { [i0, i1, i2] : (2 + i1) mod 4 = 0 and (2 + i2) mod 4 = 0 }
+	        // { [i0, i1, i2] : (2 + i1) mod 4 = 0 and (2 + i2) mod 4 = 0 and i1 <= 70 }
+	        // { [i0, i1, i2] : (2 + i1) mod 4 = 0 and (2 + i2) mod 4 = 0 and i1 <= 70 }
 	          // { [i0, i1, i2] : -2 - i2 + 4*floor((2 + i2)/4) = 0 }
 	          // { [i0, i1, i2] : -2 - i1 + 4*floor((2 + i1)/4) = 0 }
-<<<<<<< HEAD
 	          // { [i0, i1, i2] : 70 - i1 >= 0 }
-	          // { [i0, i1, i2] : 70 - i2 >= 0 }
-	        if ((((((-2 + -1*i2 + (4*(((2 + 1*i2)) >> 2)))) == 0) && (((-2 + -1*i1 + (4*(((2 + 1*i1)) >> 2)))) == 0) && (((70 + -1*i1)) >= 0) && (((70 + -1*i2)) >= 0)))) {
-	          load_to_gp_in_on_chip_2_buf12_FIFO_buf192195(gp_in_on_chip_2_buf12_to_gp_7188 /* buf name */, gp_in_on_chip_2_buf12_FIFO_buf192, 0, ((-2 + (1*(((2 + 1*i1)) >> 2)))), ((-2 + (1*(((2 + 1*i2)) >> 2)))));
-=======
-	        if ((((((-2 + -1*i2 + (4*(((2 + 1*i2)) >> 2)))) == 0) && (((-2 + -1*i1 + (4*(((2 + 1*i1)) >> 2)))) == 0)))) {
-	          load_to_gp_in_on_chip_2_buf12_FIFO_buf228231(gp_in_on_chip_2_buf12_to_gp_7176 /* buf name */, gp_in_on_chip_2_buf12_FIFO_buf228, 0, ((-3 + (1*(((2 + 1*i1)) >> 2)))), ((-3 + (1*(((2 + 1*i2)) >> 2)))));
->>>>>>> 89b3f51bdb8eb51a288ec002dbba28ce9175d84f
+	        if ((((((-2 + -1*i2 + (4*(((2 + 1*i2)) >> 2)))) == 0) && (((-2 + -1*i1 + (4*(((2 + 1*i1)) >> 2)))) == 0) && (((70 + -1*i1)) >= 0)))) {
+	          load_to_gp_in_on_chip_2_buf12_FIFO_buf192195(gp_in_on_chip_2_buf12_to_gp_7188 /* buf name */, gp_in_on_chip_2_buf12_FIFO_buf192, 0, ((-2 + (1*(((2 + 1*i1)) >> 2)))), ((-3 + (1*(((2 + 1*i2)) >> 2)))));
 	        }
-	        // { [i0, i1, i2] : (2 + i1) mod 4 = 0 and (2 + i2) mod 4 = 0 }
-	        // { [i0, i1, i2] : (2 + i1) mod 4 = 0 and (2 + i2) mod 4 = 0 }
+	        // { [i0, i1, i2] : (2 + i1) mod 4 = 0 and (2 + i2) mod 4 = 0 and i1 >= 14 }
+	        // { [i0, i1, i2] : (2 + i1) mod 4 = 0 and (2 + i2) mod 4 = 0 and i1 >= 14 }
 	          // { [i0, i1, i2] : -2 - i2 + 4*floor((2 + i2)/4) = 0 }
 	          // { [i0, i1, i2] : -2 - i1 + 4*floor((2 + i1)/4) = 0 }
-<<<<<<< HEAD
 	          // { [i0, i1, i2] : -14 + i1 >= 0 }
-	          // { [i0, i1, i2] : -14 + i2 >= 0 }
-	        if ((((((-2 + -1*i2 + (4*(((2 + 1*i2)) >> 2)))) == 0) && (((-2 + -1*i1 + (4*(((2 + 1*i1)) >> 2)))) == 0) && (((-14 + 1*i1)) >= 0) && (((-14 + 1*i2)) >= 0)))) {
+	        if ((((((-2 + -1*i2 + (4*(((2 + 1*i2)) >> 2)))) == 0) && (((-2 + -1*i1 + (4*(((2 + 1*i1)) >> 2)))) == 0) && (((-14 + 1*i1)) >= 0)))) {
 	          load_to_gp_in_on_chip_3_buf20_us28_FIFO_buf208211(gp_in_on_chip_3_buf20_us28_to_gp_7204 /* buf name */, gp_in_on_chip_3_buf20_us28_FIFO_buf208, 0, ((-4 + (1*(((2 + 1*i1)) >> 2)))), ((-4 + (1*(((2 + 1*i2)) >> 2)))));
-=======
-	        if ((((((-2 + -1*i2 + (4*(((2 + 1*i2)) >> 2)))) == 0) && (((-2 + -1*i1 + (4*(((2 + 1*i1)) >> 2)))) == 0)))) {
-	          load_to_gp_in_on_chip_3_buf20_us28_FIFO_buf236239(gp_in_on_chip_3_buf20_us28_to_gp_7184 /* buf name */, gp_in_on_chip_3_buf20_us28_FIFO_buf236, 0, ((-4 + (1*(((2 + 1*i1)) >> 2)))), ((-4 + (1*(((2 + 1*i2)) >> 2)))));
->>>>>>> 89b3f51bdb8eb51a288ec002dbba28ce9175d84f
 	        }
-	        // { [i0, i1, i2] : (2 + i1) mod 4 = 0 and (2 + i2) mod 4 = 0 }
-	        // { [i0, i1, i2] : (2 + i1) mod 4 = 0 and (2 + i2) mod 4 = 0 }
+	        // { [i0, i1, i2] : (2 + i1) mod 4 = 0 and (2 + i2) mod 4 = 0 and i1 >= 14 }
+	        // { [i0, i1, i2] : (2 + i1) mod 4 = 0 and (2 + i2) mod 4 = 0 and i1 >= 14 }
 	          // { [i0, i1, i2] : -2 - i2 + 4*floor((2 + i2)/4) = 0 }
 	          // { [i0, i1, i2] : -2 - i1 + 4*floor((2 + i1)/4) = 0 }
-<<<<<<< HEAD
 	          // { [i0, i1, i2] : -14 + i1 >= 0 }
-	          // { [i0, i1, i2] : -14 + i2 >= 0 }
-	        if ((((((-2 + -1*i2 + (4*(((2 + 1*i2)) >> 2)))) == 0) && (((-2 + -1*i1 + (4*(((2 + 1*i1)) >> 2)))) == 0) && (((-14 + 1*i1)) >= 0) && (((-14 + 1*i2)) >= 0)))) {
+	        if ((((((-2 + -1*i2 + (4*(((2 + 1*i2)) >> 2)))) == 0) && (((-2 + -1*i1 + (4*(((2 + 1*i1)) >> 2)))) == 0) && (((-14 + 1*i1)) >= 0)))) {
 	          diff35(gp_in_on_chip_2_buf12_FIFO_buf192 /* buf name */, gp_in_on_chip_3_buf20_us28_FIFO_buf208 /* buf name */, lp_in_on_chip_2_buf32, 0, ((-4 + (1*(((2 + 1*i1)) >> 2)))), ((-4 + (1*(((2 + 1*i2)) >> 2)))));
-=======
-	        if ((((((-2 + -1*i2 + (4*(((2 + 1*i2)) >> 2)))) == 0) && (((-2 + -1*i1 + (4*(((2 + 1*i1)) >> 2)))) == 0)))) {
-	          diff35(gp_in_on_chip_2_buf12_FIFO_buf228 /* buf name */, gp_in_on_chip_3_buf20_us28_FIFO_buf236 /* buf name */, lp_in_on_chip_2_buf32, 0, ((-4 + (1*(((2 + 1*i1)) >> 2)))), ((-4 + (1*(((2 + 1*i2)) >> 2)))));
->>>>>>> 89b3f51bdb8eb51a288ec002dbba28ce9175d84f
 	        }
-	        // { [i0, i1, i2] : (2 + i1) mod 4 = 0 and (2 + i2) mod 4 = 0 }
-	        // { [i0, i1, i2] : (2 + i1) mod 4 = 0 and (2 + i2) mod 4 = 0 }
+	        // { [i0, i1, i2] : (2 + i1) mod 4 = 0 and (2 + i2) mod 4 = 0 and i1 >= 14 }
+	        // { [i0, i1, i2] : (2 + i1) mod 4 = 0 and (2 + i2) mod 4 = 0 and i1 >= 14 }
 	          // { [i0, i1, i2] : -2 - i2 + 4*floor((2 + i2)/4) = 0 }
 	          // { [i0, i1, i2] : -2 - i1 + 4*floor((2 + i1)/4) = 0 }
-<<<<<<< HEAD
 	          // { [i0, i1, i2] : -14 + i1 >= 0 }
-	          // { [i0, i1, i2] : -14 + i2 >= 0 }
-	        if ((((((-2 + -1*i2 + (4*(((2 + 1*i2)) >> 2)))) == 0) && (((-2 + -1*i1 + (4*(((2 + 1*i1)) >> 2)))) == 0) && (((-14 + 1*i1)) >= 0) && (((-14 + 1*i2)) >= 0)))) {
+	        if ((((((-2 + -1*i2 + (4*(((2 + 1*i2)) >> 2)))) == 0) && (((-2 + -1*i1 + (4*(((2 + 1*i1)) >> 2)))) == 0) && (((-14 + 1*i1)) >= 0)))) {
 	          load_to_lp_in_on_chip_2_buf32_to_gp_8252255(lp_in_on_chip_2_buf32 /* buf name */, lp_in_on_chip_2_buf32_to_gp_8252, 0, ((-4 + (1*(((2 + 1*i1)) >> 2)))), ((-4 + (1*(((2 + 1*i2)) >> 2)))));
-=======
-	        if ((((((-2 + -1*i2 + (4*(((2 + 1*i2)) >> 2)))) == 0) && (((-2 + -1*i1 + (4*(((2 + 1*i1)) >> 2)))) == 0)))) {
-	          load_to_lp_in_on_chip_2_buf32_to_gp_8208211(lp_in_on_chip_2_buf32 /* buf name */, lp_in_on_chip_2_buf32_to_gp_8208, 0, ((-4 + (1*(((2 + 1*i1)) >> 2)))), ((-4 + (1*(((2 + 1*i2)) >> 2)))));
->>>>>>> 89b3f51bdb8eb51a288ec002dbba28ce9175d84f
 	        }
 	    }
 	  }
@@ -4473,7 +3804,6 @@ void Extracted_gp_in_on_chip_2_buf12_to_gp_7188_ld194_gp_in_on_chip_3_buf20_us28
 }
 
 // Operation logic
-<<<<<<< HEAD
 inline void load_to_gp_in_on_chip_3_buf20_us56_FIFO_buf216219(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */gp_in_on_chip_3_buf20_us56_to_gp_8212, gp_in_on_chip_3_buf20_us56_FIFO_buf216_cache& gp_in_on_chip_3_buf20_us56_FIFO_buf216, int d0, int d1, int d2) {
   // Dynamic address computation
 
@@ -4481,22 +3811,12 @@ inline void load_to_gp_in_on_chip_3_buf20_us56_FIFO_buf216219(HWStream<hw_uint<3
 	auto gp_in_on_chip_3_buf20_us56_to_gp_8212_gp_in_on_chip_3_buf20_us56_to_gp_8212_ld217_c__gp_in_on_chip_3_buf20_us56_to_gp_8212_ld218_value = gp_in_on_chip_3_buf20_us56_to_gp_8212.read();
 	// Produce: gp_in_on_chip_3_buf20_us56_FIFO_buf216
 	gp_in_on_chip_3_buf20_us56_FIFO_buf216_load_to_gp_in_on_chip_3_buf20_us56_FIFO_buf216219_write_bundle_write(/* arg names */gp_in_on_chip_3_buf20_us56_to_gp_8212_gp_in_on_chip_3_buf20_us56_to_gp_8212_ld217_c__gp_in_on_chip_3_buf20_us56_to_gp_8212_ld218_value, gp_in_on_chip_3_buf20_us56_FIFO_buf216, d0, d1, d2, 0);
-=======
-inline void load_to_gp_in_on_chip_3_buf20_us56_FIFO_buf240243(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */gp_in_on_chip_3_buf20_us56_to_gp_8188, gp_in_on_chip_3_buf20_us56_FIFO_buf240_cache& gp_in_on_chip_3_buf20_us56_FIFO_buf240, int d0, int d1, int d2) {
-  // Dynamic address computation
-
-	// Consume: gp_in_on_chip_3_buf20_us56_to_gp_8188
-	auto gp_in_on_chip_3_buf20_us56_to_gp_8188_gp_in_on_chip_3_buf20_us56_to_gp_8188_ld241_c__gp_in_on_chip_3_buf20_us56_to_gp_8188_ld242_value = gp_in_on_chip_3_buf20_us56_to_gp_8188.read();
-	// Produce: gp_in_on_chip_3_buf20_us56_FIFO_buf240
-	gp_in_on_chip_3_buf20_us56_FIFO_buf240_load_to_gp_in_on_chip_3_buf20_us56_FIFO_buf240243_write_bundle_write(/* arg names */gp_in_on_chip_3_buf20_us56_to_gp_8188_gp_in_on_chip_3_buf20_us56_to_gp_8188_ld241_c__gp_in_on_chip_3_buf20_us56_to_gp_8188_ld242_value, gp_in_on_chip_3_buf20_us56_FIFO_buf240, d0, d1, d2, 0);
->>>>>>> 89b3f51bdb8eb51a288ec002dbba28ce9175d84f
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 
 }
 
-<<<<<<< HEAD
 inline void load_to_lp_in_on_chip_2_buf32_FIFO_buf256259(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */lp_in_on_chip_2_buf32_to_gp_8252, lp_in_on_chip_2_buf32_FIFO_buf256_cache& lp_in_on_chip_2_buf32_FIFO_buf256, int d0, int d1, int d2) {
   // Dynamic address computation
 
@@ -4504,15 +3824,6 @@ inline void load_to_lp_in_on_chip_2_buf32_FIFO_buf256259(HWStream<hw_uint<32> >&
 	auto lp_in_on_chip_2_buf32_to_gp_8252_lp_in_on_chip_2_buf32_to_gp_8252_ld257_c__lp_in_on_chip_2_buf32_to_gp_8252_ld258_value = lp_in_on_chip_2_buf32_to_gp_8252.read();
 	// Produce: lp_in_on_chip_2_buf32_FIFO_buf256
 	lp_in_on_chip_2_buf32_FIFO_buf256_load_to_lp_in_on_chip_2_buf32_FIFO_buf256259_write_bundle_write(/* arg names */lp_in_on_chip_2_buf32_to_gp_8252_lp_in_on_chip_2_buf32_to_gp_8252_ld257_c__lp_in_on_chip_2_buf32_to_gp_8252_ld258_value, lp_in_on_chip_2_buf32_FIFO_buf256, d0, d1, d2, 0);
-=======
-inline void load_to_lp_in_on_chip_2_buf32_FIFO_buf260263(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */lp_in_on_chip_2_buf32_to_gp_8208, lp_in_on_chip_2_buf32_FIFO_buf260_cache& lp_in_on_chip_2_buf32_FIFO_buf260, int d0, int d1, int d2) {
-  // Dynamic address computation
-
-	// Consume: lp_in_on_chip_2_buf32_to_gp_8208
-	auto lp_in_on_chip_2_buf32_to_gp_8208_lp_in_on_chip_2_buf32_to_gp_8208_ld261_c__lp_in_on_chip_2_buf32_to_gp_8208_ld262_value = lp_in_on_chip_2_buf32_to_gp_8208.read();
-	// Produce: lp_in_on_chip_2_buf32_FIFO_buf260
-	lp_in_on_chip_2_buf32_FIFO_buf260_load_to_lp_in_on_chip_2_buf32_FIFO_buf260263_write_bundle_write(/* arg names */lp_in_on_chip_2_buf32_to_gp_8208_lp_in_on_chip_2_buf32_to_gp_8208_ld261_c__lp_in_on_chip_2_buf32_to_gp_8208_ld262_value, lp_in_on_chip_2_buf32_FIFO_buf260, d0, d1, d2, 0);
->>>>>>> 89b3f51bdb8eb51a288ec002dbba28ce9175d84f
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -4600,15 +3911,9 @@ void Extracted_gp_in_on_chip_3_buf20_us56_to_gp_8212_ld218_lp_in_on_chip_2_buf32
 #pragma HLS inline recursive
 #endif // __VIVADO_SYNTH__
 
-<<<<<<< HEAD
 // schedule: { load_to_lp_in_on_chip_2_buf32_FIFO_buf256259[d0 = 0, d1, d2] -> [0, 14 + 4d1, 14 + 4d2, 32] : 0 <= d1 <= 15 and 0 <= d2 <= 15; rc60[d0 = 0, d1, d2] -> [0, 14 + 4d1, 14 + 4d2, 33] : 0 <= d1 <= 15 and 0 <= d2 <= 15; load_to_gp_in_on_chip_3_buf20_us56_FIFO_buf216219[d0 = 0, d1, d2] -> [0, 14 + 4d1, 14 + 4d2, 22] : 0 <= d1 <= 15 and 0 <= d2 <= 15; load_to_lp_in_on_chip_2_buf32_reconstruct_lp52_buf55_us65_to_gp_6260263[d0 = 0, d1, d2] -> [0, 14 + 2d1, 14 + 2d2, 35] : 0 <= d1 <= 31 and 0 <= d2 <= 31; us68[d0 = 0, d1, d2] -> [0, 14 + 2d1, 14 + 2d2, 34] : 0 <= d1 <= 31 and 0 <= d2 <= 31 }
 //   { load_to_lp_in_on_chip_2_buf32_FIFO_buf256259[d0 = 0, d1, d2] -> [0, 14 + 4d1, 14 + 4d2, 32] : 0 <= d1 <= 15 and 0 <= d2 <= 15 }
 // Condition for load_to_lp_in_on_chip_2_buf32_FIFO_buf256259(((((-2 + -1*i1 + (4*(((2 + 1*i1)) >> 2)))) == 0) && (((-2 + -1*i2 + (4*(((2 + 1*i2)) >> 2)))) == 0) && (((-32 + 1*i3)) == 0) && (((1*i0)) == 0) && (((-14 + 1*i1)) >= 0) && (((74 + -1*i1)) >= 0) && (((-14 + 1*i2)) >= 0) && (((74 + -1*i2)) >= 0)))
-=======
-// schedule: { load_to_lp_in_on_chip_2_buf32_reconstruct_lp52_buf55_us65_to_gp_6212215[d0 = 0, d1, d2] -> [0, 14 + 2d1, 14 + 2d2, 35] : 0 <= d1 <= 31 and 0 <= d2 <= 31; rc60[d0 = 0, d1, d2] -> [0, 14 + 4d1, 14 + 4d2, 33] : 0 <= d1 <= 15 and 0 <= d2 <= 15; us68[d0 = 0, d1, d2] -> [0, 14 + 2d1, 14 + 2d2, 34] : 0 <= d1 <= 31 and 0 <= d2 <= 31; load_to_gp_in_on_chip_3_buf20_us56_FIFO_buf240243[d0 = 0, d1, d2] -> [0, 14 + 4d1, 14 + 4d2, 25] : 0 <= d1 <= 15 and 0 <= d2 <= 15; load_to_lp_in_on_chip_2_buf32_FIFO_buf260263[d0 = 0, d1, d2] -> [0, 14 + 4d1, 14 + 4d2, 32] : 0 <= d1 <= 15 and 0 <= d2 <= 15 }
-//   { load_to_lp_in_on_chip_2_buf32_reconstruct_lp52_buf55_us65_to_gp_6212215[d0 = 0, d1, d2] -> [0, 14 + 2d1, 14 + 2d2, 35] : 0 <= d1 <= 31 and 0 <= d2 <= 31 }
-// Condition for load_to_lp_in_on_chip_2_buf32_reconstruct_lp52_buf55_us65_to_gp_6212215(((((-1*i1 + (2*(((1*i1)) >> 1)))) == 0) && (((-1*i2 + (2*(((1*i2)) >> 1)))) == 0) && (((-35 + 1*i3)) == 0) && (((1*i0)) == 0) && (((-14 + 1*i1)) >= 0) && (((76 + -1*i1)) >= 0) && (((-14 + 1*i2)) >= 0) && (((76 + -1*i2)) >= 0)))
->>>>>>> 89b3f51bdb8eb51a288ec002dbba28ce9175d84f
 //   { rc60[d0 = 0, d1, d2] -> [0, 14 + 4d1, 14 + 4d2, 33] : 0 <= d1 <= 15 and 0 <= d2 <= 15 }
 // Condition for rc60(((((-2 + -1*i1 + (4*(((2 + 1*i1)) >> 2)))) == 0) && (((-2 + -1*i2 + (4*(((2 + 1*i2)) >> 2)))) == 0) && (((-33 + 1*i3)) == 0) && (((1*i0)) == 0) && (((-14 + 1*i1)) >= 0) && (((74 + -1*i1)) >= 0) && (((-14 + 1*i2)) >= 0) && (((74 + -1*i2)) >= 0)))
 //   { load_to_gp_in_on_chip_3_buf20_us56_FIFO_buf216219[d0 = 0, d1, d2] -> [0, 14 + 4d1, 14 + 4d2, 22] : 0 <= d1 <= 15 and 0 <= d2 <= 15 }
@@ -4617,17 +3922,8 @@ void Extracted_gp_in_on_chip_3_buf20_us56_to_gp_8212_ld218_lp_in_on_chip_2_buf32
 // Condition for load_to_lp_in_on_chip_2_buf32_reconstruct_lp52_buf55_us65_to_gp_6260263(((((-1*i1 + (2*(((1*i1)) >> 1)))) == 0) && (((-1*i2 + (2*(((1*i2)) >> 1)))) == 0) && (((-35 + 1*i3)) == 0) && (((1*i0)) == 0) && (((-14 + 1*i1)) >= 0) && (((76 + -1*i1)) >= 0) && (((-14 + 1*i2)) >= 0) && (((76 + -1*i2)) >= 0)))
 //   { us68[d0 = 0, d1, d2] -> [0, 14 + 2d1, 14 + 2d2, 34] : 0 <= d1 <= 31 and 0 <= d2 <= 31 }
 // Condition for us68(((((-1*i1 + (2*(((1*i1)) >> 1)))) == 0) && (((-1*i2 + (2*(((1*i2)) >> 1)))) == 0) && (((-34 + 1*i3)) == 0) && (((1*i0)) == 0) && (((-14 + 1*i1)) >= 0) && (((76 + -1*i1)) >= 0) && (((-14 + 1*i2)) >= 0) && (((76 + -1*i2)) >= 0)))
-<<<<<<< HEAD
 
 	// time range: { [0, i1, i2, i3] : 14 <= i1 <= 76 and 14 <= i2 <= 76 and 32 <= i3 <= 35 and (((2 + i1) mod 4 = 0 and (2 + i2) mod 4 = 0 and i1 <= 74 and i2 <= 74 and i3 <= 33) or ((i1) mod 2 = 0 and (i2) mod 2 = 0 and i3 >= 34)); [0, i1, i2, 22] : (2 + i1) mod 4 = 0 and (2 + i2) mod 4 = 0 and 14 <= i1 <= 74 and 14 <= i2 <= 74 }
-=======
-//   { load_to_gp_in_on_chip_3_buf20_us56_FIFO_buf240243[d0 = 0, d1, d2] -> [0, 14 + 4d1, 14 + 4d2, 25] : 0 <= d1 <= 15 and 0 <= d2 <= 15 }
-// Condition for load_to_gp_in_on_chip_3_buf20_us56_FIFO_buf240243(((((-2 + -1*i1 + (4*(((2 + 1*i1)) >> 2)))) == 0) && (((-2 + -1*i2 + (4*(((2 + 1*i2)) >> 2)))) == 0) && (((-25 + 1*i3)) == 0) && (((1*i0)) == 0) && (((-14 + 1*i1)) >= 0) && (((74 + -1*i1)) >= 0) && (((-14 + 1*i2)) >= 0) && (((74 + -1*i2)) >= 0)))
-//   { load_to_lp_in_on_chip_2_buf32_FIFO_buf260263[d0 = 0, d1, d2] -> [0, 14 + 4d1, 14 + 4d2, 32] : 0 <= d1 <= 15 and 0 <= d2 <= 15 }
-// Condition for load_to_lp_in_on_chip_2_buf32_FIFO_buf260263(((((-2 + -1*i1 + (4*(((2 + 1*i1)) >> 2)))) == 0) && (((-2 + -1*i2 + (4*(((2 + 1*i2)) >> 2)))) == 0) && (((-32 + 1*i3)) == 0) && (((1*i0)) == 0) && (((-14 + 1*i1)) >= 0) && (((74 + -1*i1)) >= 0) && (((-14 + 1*i2)) >= 0) && (((74 + -1*i2)) >= 0)))
-
-	// time range: { [0, i1, i2, i3] : 14 <= i1 <= 76 and 14 <= i2 <= 76 and 32 <= i3 <= 35 and (((2 + i1) mod 4 = 0 and (2 + i2) mod 4 = 0 and i1 <= 74 and i2 <= 74 and i3 <= 33) or ((i1) mod 2 = 0 and (i2) mod 2 = 0 and i3 >= 34)); [0, i1, i2, 25] : (2 + i1) mod 4 = 0 and (2 + i2) mod 4 = 0 and 14 <= i1 <= 74 and 14 <= i2 <= 74 }
->>>>>>> 89b3f51bdb8eb51a288ec002dbba28ce9175d84f
 	// # sets: 1
 	int i0 = 0;
 	  for (int i1 = 14; i1 <= 76; i1++) {
@@ -4691,63 +3987,35 @@ inline void pw_math_in03(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */
 
 }
 
-<<<<<<< HEAD
 inline void load_to_in_on_chip_to_gp_3220223(in_on_chip_cache& in_on_chip, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */in_on_chip_to_gp_3220, int d0, int d1, int d2) {
   // Dynamic address computation
 
 	// Consume: in_on_chip
 	auto in_on_chip_in_on_chip_ld221_c__in_on_chip_ld222_value = in_on_chip_load_to_in_on_chip_to_gp_3220223_read_bundle_read(in_on_chip/* source_delay */, d0, d1, d2, 0);
-=======
-inline void gp_in_on_chip_16_merged157(in_on_chip_cache& in_on_chip, gp_in_on_chip_1_buf4_cache& gp_in_on_chip_1_buf4, int d0, int d1, int d2) {
-  // Dynamic address computation
-
-	// Consume: in_on_chip
-	auto in_on_chip_2_m__lp_gp_in_on_chip_16__p___m_3_rp___p___m_1_p_7_c_______2_m__lp_gp_in_on_chip_15__p___m_3_rp___p__1_p_7_value = in_on_chip_gp_in_on_chip_16_merged157_read_bundle_read(in_on_chip/* source_delay */, d0, d1, d2, 0);
->>>>>>> 89b3f51bdb8eb51a288ec002dbba28ce9175d84f
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 
-<<<<<<< HEAD
 	// Produce: in_on_chip_to_gp_3220
 	in_on_chip_to_gp_3220.write(in_on_chip_in_on_chip_ld221_c__in_on_chip_ld222_value);
-=======
-	auto compute_result = gp_in_on_chip_16_cu155(in_on_chip_2_m__lp_gp_in_on_chip_16__p___m_3_rp___p___m_1_p_7_c_______2_m__lp_gp_in_on_chip_15__p___m_3_rp___p__1_p_7_value);
-	// Produce: gp_in_on_chip_1_buf4
-	gp_in_on_chip_1_buf4_gp_in_on_chip_16_merged157_write_bundle_write(/* arg names */compute_result, gp_in_on_chip_1_buf4, d0, d1, d2, 0);
->>>>>>> 89b3f51bdb8eb51a288ec002dbba28ce9175d84f
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 
 }
 
-<<<<<<< HEAD
 inline void gp_in_on_chip_16_merged157(in_on_chip_cache& in_on_chip, gp_in_on_chip_1_buf4_cache& gp_in_on_chip_1_buf4, int d0, int d1, int d2) {
   // Dynamic address computation
 
 	// Consume: in_on_chip
 	auto in_on_chip_2_m__lp_gp_in_on_chip_16__p___m_3_rp___p___m_1_p_7_c_______2_m__lp_gp_in_on_chip_15__p___m_3_rp___p__1_p_7_value = in_on_chip_gp_in_on_chip_16_merged157_read_bundle_read(in_on_chip/* source_delay */, d0, d1, d2, 0);
-=======
-inline void gp_in_on_chip_214_merged163(gp_in_on_chip_1_buf4_cache& gp_in_on_chip_1_buf4, gp_in_on_chip_2_buf12_cache& gp_in_on_chip_2_buf12, int d0, int d1, int d2) {
-  // Dynamic address computation
-
-	// Consume: gp_in_on_chip_1_buf4
-	auto gp_in_on_chip_1_buf4_2_m__lp_gp_in_on_chip_214__p___m_1_rp___p___m_1_p_3_c_______2_m__lp_gp_in_on_chip_213__p___m_1_rp___p__1_p_3_value = gp_in_on_chip_1_buf4_gp_in_on_chip_214_merged163_read_bundle_read(gp_in_on_chip_1_buf4/* source_delay */, d0, d1, d2, 0);
->>>>>>> 89b3f51bdb8eb51a288ec002dbba28ce9175d84f
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 
-<<<<<<< HEAD
 	auto compute_result = gp_in_on_chip_16_cu155(in_on_chip_2_m__lp_gp_in_on_chip_16__p___m_3_rp___p___m_1_p_7_c_______2_m__lp_gp_in_on_chip_15__p___m_3_rp___p__1_p_7_value);
 	// Produce: gp_in_on_chip_1_buf4
 	gp_in_on_chip_1_buf4_gp_in_on_chip_16_merged157_write_bundle_write(/* arg names */compute_result, gp_in_on_chip_1_buf4, d0, d1, d2, 0);
-=======
-	auto compute_result = gp_in_on_chip_214_cu161(gp_in_on_chip_1_buf4_2_m__lp_gp_in_on_chip_214__p___m_1_rp___p___m_1_p_3_c_______2_m__lp_gp_in_on_chip_213__p___m_1_rp___p__1_p_3_value);
-	// Produce: gp_in_on_chip_2_buf12
-	gp_in_on_chip_2_buf12_gp_in_on_chip_214_merged163_write_bundle_write(/* arg names */compute_result, gp_in_on_chip_2_buf12, d0, d1, d2, 0);
->>>>>>> 89b3f51bdb8eb51a288ec002dbba28ce9175d84f
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -4771,7 +4039,6 @@ inline void load_to_gp_in_on_chip_1_buf4_to_gp_5164167(gp_in_on_chip_1_buf4_cach
 
 }
 
-<<<<<<< HEAD
 inline void gp_in_on_chip_214_merged160(gp_in_on_chip_1_buf4_cache& gp_in_on_chip_1_buf4, gp_in_on_chip_2_buf12_cache& gp_in_on_chip_2_buf12, int d0, int d1, int d2) {
   // Dynamic address computation
 
@@ -4791,9 +4058,6 @@ inline void gp_in_on_chip_214_merged160(gp_in_on_chip_1_buf4_cache& gp_in_on_chi
 }
 
 inline void load_to_gp_in_on_chip_2_buf12_to_gp_7188191(gp_in_on_chip_2_buf12_cache& gp_in_on_chip_2_buf12, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */gp_in_on_chip_2_buf12_to_gp_7188, int d0, int d1, int d2) {
-=======
-inline void us47(gp_in_on_chip_1_buf4_cache& gp_in_on_chip_1_buf4, gp_in_on_chip_1_buf4_us44_cache& gp_in_on_chip_1_buf4_us44, int d0, int d1, int d2) {
->>>>>>> 89b3f51bdb8eb51a288ec002dbba28ce9175d84f
   // Dynamic address computation
 
 	// Consume: gp_in_on_chip_2_buf12
@@ -4861,30 +4125,17 @@ inline void load_to_gp_in_on_chip_1_buf4_us44_to_gp_3172175(gp_in_on_chip_1_buf4
 
 }
 
-<<<<<<< HEAD
 inline void us39(gp_in_on_chip_2_buf12_cache& gp_in_on_chip_2_buf12, gp_in_on_chip_2_buf12_us36_cache& gp_in_on_chip_2_buf12_us36, int d0, int d1, int d2) {
   // Dynamic address computation
 
 	// Consume: gp_in_on_chip_2_buf12
 	auto gp_in_on_chip_2_buf12_floor_lp_us_gp_in_on_chip_2_buf1238__div__2_rp__p_1_c___floor_lp_us_gp_in_on_chip_2_buf1237__div__2_rp__p_1_value = gp_in_on_chip_2_buf12_us39_read_bundle_read(gp_in_on_chip_2_buf12/* source_delay */, d0, d1, d2, 0);
-=======
-inline void load_to_gp_in_on_chip_2_buf12_to_gp_2172175(gp_in_on_chip_2_buf12_cache& gp_in_on_chip_2_buf12, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */gp_in_on_chip_2_buf12_to_gp_2172, int d0, int d1, int d2) {
-  // Dynamic address computation
-
-	// Consume: gp_in_on_chip_2_buf12
-	auto gp_in_on_chip_2_buf12_gp_in_on_chip_2_buf12_ld173_c__gp_in_on_chip_2_buf12_ld174_value = gp_in_on_chip_2_buf12_load_to_gp_in_on_chip_2_buf12_to_gp_2172175_read_bundle_read(gp_in_on_chip_2_buf12/* source_delay */, d0, d1, d2, 0);
->>>>>>> 89b3f51bdb8eb51a288ec002dbba28ce9175d84f
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 
-<<<<<<< HEAD
 	// Produce: gp_in_on_chip_2_buf12_us36
 	gp_in_on_chip_2_buf12_us36_us39_write_bundle_write(/* arg names */gp_in_on_chip_2_buf12_floor_lp_us_gp_in_on_chip_2_buf1238__div__2_rp__p_1_c___floor_lp_us_gp_in_on_chip_2_buf1237__div__2_rp__p_1_value, gp_in_on_chip_2_buf12_us36, d0, d1, d2, 0);
-=======
-	// Produce: gp_in_on_chip_2_buf12_to_gp_2172
-	gp_in_on_chip_2_buf12_to_gp_2172.write(gp_in_on_chip_2_buf12_gp_in_on_chip_2_buf12_ld173_c__gp_in_on_chip_2_buf12_ld174_value);
->>>>>>> 89b3f51bdb8eb51a288ec002dbba28ce9175d84f
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -4902,23 +4153,6 @@ inline void load_to_gp_in_on_chip_2_buf12_us36_to_gp_5196199(gp_in_on_chip_2_buf
 
 	// Produce: gp_in_on_chip_2_buf12_us36_to_gp_5196
 	gp_in_on_chip_2_buf12_us36_to_gp_5196.write(gp_in_on_chip_2_buf12_us36_gp_in_on_chip_2_buf12_us36_ld197_c__gp_in_on_chip_2_buf12_us36_ld198_value);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void load_to_gp_in_on_chip_1_buf4_to_gp_5164167(gp_in_on_chip_1_buf4_cache& gp_in_on_chip_1_buf4, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */gp_in_on_chip_1_buf4_to_gp_5164, int d0, int d1, int d2) {
-  // Dynamic address computation
-
-	// Consume: gp_in_on_chip_1_buf4
-	auto gp_in_on_chip_1_buf4_gp_in_on_chip_1_buf4_ld165_c__gp_in_on_chip_1_buf4_ld166_value = gp_in_on_chip_1_buf4_load_to_gp_in_on_chip_1_buf4_to_gp_5164167_read_bundle_read(gp_in_on_chip_1_buf4/* source_delay */, d0, d1, d2, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	// Produce: gp_in_on_chip_1_buf4_to_gp_5164
-	gp_in_on_chip_1_buf4_to_gp_5164.write(gp_in_on_chip_1_buf4_gp_in_on_chip_1_buf4_ld165_c__gp_in_on_chip_1_buf4_ld166_value);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -4951,7 +4185,6 @@ void Extracted_gp_in_on_chip_15_gp_in_on_chip_1_buf4_ld166_gp_in_on_chip_1_buf4_
 #pragma HLS inline recursive
 #endif // __VIVADO_SYNTH__
 
-<<<<<<< HEAD
 // schedule: { load_to_gp_in_on_chip_1_buf4_to_gp_5164167[d0 = 0, d1, d2] -> [0, 4 + 2d1, 4 + 2d2, 5] : 3 <= d1 <= 34 and 3 <= d2 <= 34; load_to_gp_in_on_chip_1_buf4_us44_to_gp_3172175[d0 = 0, d1, d2] -> [0, 8 + d1, 8 + d2, 11] : 0 <= d1 <= 63 and 0 <= d2 <= 63; us47[d0 = 0, d1, d2] -> [0, 8 + d1, 8 + d2, 10] : 0 <= d1 <= 63 and 0 <= d2 <= 63; load_to_gp_in_on_chip_2_buf12_to_gp_2180183[d0 = 0, d1, d2] -> [0, 6 + 4d1, 6 + 4d2, 12] : 0 <= d1 <= 16 and 0 <= d2 <= 16; load_to_in_on_chip_to_gp_3220223[d0 = 0, d1, d2] -> [0, 1 + d1, 1 + d2, 1] : 7 <= d1 <= 70 and 7 <= d2 <= 70; load_to_gp_in_on_chip_2_buf12_us36_to_gp_5196199[d0 = 0, d1, d2] -> [0, 10 + 2d1, 10 + 2d2, 13] : 0 <= d1 <= 31 and 0 <= d2 <= 31; pw_math_in03[d0 = 0, d1, d2] -> [0, d1, d2, 0] : 0 <= d1 <= 70 and 0 <= d2 <= 70; gp_in_on_chip_16_merged157[d0 = 0, d1, d2] -> [0, 2 + 2d1, 2 + 2d2, 2] : 0 <= d1 <= 34 and 0 <= d2 <= 34; load_to_gp_in_on_chip_2_buf12_to_gp_7188191[d0 = 0, d1, d2] -> [0, 6 + 4d1, 6 + 4d2, 4] : 0 < d1 <= 16 and 0 < d2 <= 16; gp_in_on_chip_214_merged160[d0 = 0, d1, d2] -> [0, 6 + 4d1, 6 + 4d2, 3] : 0 <= d1 <= 16 and 0 <= d2 <= 16; us39[d0 = 0, d1, d2] -> [0, 10 + 2d1, 10 + 2d2, 9] : 0 <= d1 <= 31 and 0 <= d2 <= 31 }
 //   { load_to_gp_in_on_chip_1_buf4_to_gp_5164167[d0 = 0, d1, d2] -> [0, 4 + 2d1, 4 + 2d2, 5] : 3 <= d1 <= 34 and 3 <= d2 <= 34 }
 // Condition for load_to_gp_in_on_chip_1_buf4_to_gp_5164167(((((-1*i1 + (2*(((1*i1)) >> 1)))) == 0) && (((-1*i2 + (2*(((1*i2)) >> 1)))) == 0) && (((-5 + 1*i3)) == 0) && (((1*i0)) == 0) && (((-10 + 1*i1)) >= 0) && (((72 + -1*i1)) >= 0) && (((-10 + 1*i2)) >= 0) && (((72 + -1*i2)) >= 0)))
@@ -4977,37 +4210,10 @@ void Extracted_gp_in_on_chip_15_gp_in_on_chip_1_buf4_ld166_gp_in_on_chip_1_buf4_
 // Condition for us39(((((-1*i1 + (2*(((1*i1)) >> 1)))) == 0) && (((-1*i2 + (2*(((1*i2)) >> 1)))) == 0) && (((-9 + 1*i3)) == 0) && (((1*i0)) == 0) && (((-10 + 1*i1)) >= 0) && (((72 + -1*i1)) >= 0) && (((-10 + 1*i2)) >= 0) && (((72 + -1*i2)) >= 0)))
 
 	// time range: { [0, i1, i2, i3] : i1 <= 71 and i2 <= 71 and 3 <= i3 <= 11 and ((i1 >= 8 and i2 >= 8 and i3 >= 10) or ((2 + i1) mod 4 = 0 and (2 + i2) mod 4 = 0 and i1 <= 70 and i2 <= 70 and i3 <= 4 and 4i3 <= 6 + i2 and 4i3 <= 6 + i1)); [0, i1, i2, 0] : 0 <= i1 <= 70 and 0 <= i2 <= 70; [0, i1, i2, 13] : (i1) mod 2 = 0 and (i2) mod 2 = 0 and 10 <= i1 <= 72 and 10 <= i2 <= 72; [0, i1, i2, 12] : (2 + i1) mod 4 = 0 and (2 + i2) mod 4 = 0 and 6 <= i1 <= 70 and 6 <= i2 <= 70; [0, i1, i2, 9] : (i1) mod 2 = 0 and (i2) mod 2 = 0 and 10 <= i1 <= 72 and 10 <= i2 <= 72; [0, i1, i2, 5] : (i1) mod 2 = 0 and (i2) mod 2 = 0 and 10 <= i1 <= 72 and 10 <= i2 <= 72; [0, i1, i2, 2] : (i1) mod 2 = 0 and (i2) mod 2 = 0 and 2 <= i1 <= 70 and 2 <= i2 <= 70; [0, i1, i2, 1] : 8 <= i1 <= 71 and 8 <= i2 <= 71 }
-=======
-// schedule: { load_to_gp_in_on_chip_1_buf4_to_gp_5164167[d0 = 0, d1, d2] -> [0, 2 + 2d1, 2 + 2d2, 4] : 3 <= d1 <= 34 and 3 <= d2 <= 34; load_to_gp_in_on_chip_2_buf12_to_gp_2172175[d0 = 0, d1, d2] -> [0, 6 + 4d1, 6 + 4d2, 9] : 0 <= d1 <= 16 and 0 <= d2 <= 16; us39[d0 = 0, d1, d2] -> [0, 10 + 2d1, 10 + 2d2, 7] : 0 <= d1 <= 31 and 0 <= d2 <= 31; us47[d0 = 0, d1, d2] -> [0, 8 + d1, 8 + d2, 8] : 0 <= d1 <= 63 and 0 <= d2 <= 63; load_to_gp_in_on_chip_2_buf12_to_gp_7176179[d0 = 0, d1, d2] -> [0, 10 + 4d1, 10 + 4d2, 12] : 0 < d1 <= 16 and 0 < d2 <= 16; pw_math_in03[d0 = 0, d1, d2] -> [0, d1, d2, 0] : 0 <= d1 <= 70 and 0 <= d2 <= 70; load_to_in_on_chip_to_gp_3192195[d0 = 0, d1, d2] -> [0, 1 + d1, 1 + d2, 1] : 7 <= d1 <= 70 and 7 <= d2 <= 70; gp_in_on_chip_16_merged157[d0 = 0, d1, d2] -> [0, 2 + 2d1, 2 + 2d2, 3] : 0 <= d1 <= 34 and 0 <= d2 <= 34; load_to_gp_in_on_chip_1_buf4_us44_to_gp_3168171[d0 = 0, d1, d2] -> [0, 8 + d1, 8 + d2, 11] : 0 <= d1 <= 63 and 0 <= d2 <= 63; gp_in_on_chip_214_merged163[d0 = 0, d1, d2] -> [0, 6 + 4d1, 6 + 4d2, 6] : 0 <= d1 <= 16 and 0 <= d2 <= 16; load_to_gp_in_on_chip_2_buf12_us36_to_gp_5180183[d0 = 0, d1, d2] -> [0, 10 + 2d1, 10 + 2d2, 10] : 0 <= d1 <= 31 and 0 <= d2 <= 31 }
-//   { load_to_gp_in_on_chip_1_buf4_to_gp_5164167[d0 = 0, d1, d2] -> [0, 2 + 2d1, 2 + 2d2, 4] : 3 <= d1 <= 34 and 3 <= d2 <= 34 }
-// Condition for load_to_gp_in_on_chip_1_buf4_to_gp_5164167(((((-1*i1 + (2*(((1*i1)) >> 1)))) == 0) && (((-1*i2 + (2*(((1*i2)) >> 1)))) == 0) && (((-4 + 1*i3)) == 0) && (((1*i0)) == 0) && (((-8 + 1*i1)) >= 0) && (((70 + -1*i1)) >= 0) && (((-8 + 1*i2)) >= 0) && (((70 + -1*i2)) >= 0)))
-//   { load_to_gp_in_on_chip_2_buf12_to_gp_2172175[d0 = 0, d1, d2] -> [0, 6 + 4d1, 6 + 4d2, 9] : 0 <= d1 <= 16 and 0 <= d2 <= 16 }
-// Condition for load_to_gp_in_on_chip_2_buf12_to_gp_2172175(((((-2 + -1*i1 + (4*(((2 + 1*i1)) >> 2)))) == 0) && (((-2 + -1*i2 + (4*(((2 + 1*i2)) >> 2)))) == 0) && (((-9 + 1*i3)) == 0) && (((1*i0)) == 0) && (((-6 + 1*i1)) >= 0) && (((70 + -1*i1)) >= 0) && (((-6 + 1*i2)) >= 0) && (((70 + -1*i2)) >= 0)))
-//   { us39[d0 = 0, d1, d2] -> [0, 10 + 2d1, 10 + 2d2, 7] : 0 <= d1 <= 31 and 0 <= d2 <= 31 }
-// Condition for us39(((((-1*i1 + (2*(((1*i1)) >> 1)))) == 0) && (((-1*i2 + (2*(((1*i2)) >> 1)))) == 0) && (((-7 + 1*i3)) == 0) && (((1*i0)) == 0) && (((-10 + 1*i1)) >= 0) && (((72 + -1*i1)) >= 0) && (((-10 + 1*i2)) >= 0) && (((72 + -1*i2)) >= 0)))
-//   { us47[d0 = 0, d1, d2] -> [0, 8 + d1, 8 + d2, 8] : 0 <= d1 <= 63 and 0 <= d2 <= 63 }
-// Condition for us47(((((-8 + 1*i3)) == 0) && (((1*i0)) == 0) && (((-8 + 1*i1)) >= 0) && (((71 + -1*i1)) >= 0) && (((-8 + 1*i2)) >= 0) && (((71 + -1*i2)) >= 0)))
-//   { load_to_gp_in_on_chip_2_buf12_to_gp_7176179[d0 = 0, d1, d2] -> [0, 10 + 4d1, 10 + 4d2, 12] : 0 < d1 <= 16 and 0 < d2 <= 16 }
-// Condition for load_to_gp_in_on_chip_2_buf12_to_gp_7176179(((((-2 + -1*i1 + (4*(((2 + 1*i1)) >> 2)))) == 0) && (((-2 + -1*i2 + (4*(((2 + 1*i2)) >> 2)))) == 0) && (((-12 + 1*i3)) == 0) && (((1*i0)) == 0) && (((-14 + 1*i1)) >= 0) && (((74 + -1*i1)) >= 0) && (((-14 + 1*i2)) >= 0) && (((74 + -1*i2)) >= 0)))
-//   { pw_math_in03[d0 = 0, d1, d2] -> [0, d1, d2, 0] : 0 <= d1 <= 70 and 0 <= d2 <= 70 }
-// Condition for pw_math_in03(((((1*i3)) == 0) && (((1*i0)) == 0) && (((1*i1)) >= 0) && (((70 + -1*i1)) >= 0) && (((1*i2)) >= 0) && (((70 + -1*i2)) >= 0)))
-//   { load_to_in_on_chip_to_gp_3192195[d0 = 0, d1, d2] -> [0, 1 + d1, 1 + d2, 1] : 7 <= d1 <= 70 and 7 <= d2 <= 70 }
-// Condition for load_to_in_on_chip_to_gp_3192195(((((-1 + 1*i3)) == 0) && (((1*i0)) == 0) && (((-8 + 1*i1)) >= 0) && (((71 + -1*i1)) >= 0) && (((-8 + 1*i2)) >= 0) && (((71 + -1*i2)) >= 0)))
-//   { gp_in_on_chip_16_merged157[d0 = 0, d1, d2] -> [0, 2 + 2d1, 2 + 2d2, 3] : 0 <= d1 <= 34 and 0 <= d2 <= 34 }
-// Condition for gp_in_on_chip_16_merged157(((((-1*i1 + (2*(((1*i1)) >> 1)))) == 0) && (((-1*i2 + (2*(((1*i2)) >> 1)))) == 0) && (((-3 + 1*i3)) == 0) && (((1*i0)) == 0) && (((-2 + 1*i1)) >= 0) && (((70 + -1*i1)) >= 0) && (((-2 + 1*i2)) >= 0) && (((70 + -1*i2)) >= 0)))
-//   { load_to_gp_in_on_chip_1_buf4_us44_to_gp_3168171[d0 = 0, d1, d2] -> [0, 8 + d1, 8 + d2, 11] : 0 <= d1 <= 63 and 0 <= d2 <= 63 }
-// Condition for load_to_gp_in_on_chip_1_buf4_us44_to_gp_3168171(((((-11 + 1*i3)) == 0) && (((1*i0)) == 0) && (((-8 + 1*i1)) >= 0) && (((71 + -1*i1)) >= 0) && (((-8 + 1*i2)) >= 0) && (((71 + -1*i2)) >= 0)))
-//   { gp_in_on_chip_214_merged163[d0 = 0, d1, d2] -> [0, 6 + 4d1, 6 + 4d2, 6] : 0 <= d1 <= 16 and 0 <= d2 <= 16 }
-// Condition for gp_in_on_chip_214_merged163(((((-2 + -1*i1 + (4*(((2 + 1*i1)) >> 2)))) == 0) && (((-2 + -1*i2 + (4*(((2 + 1*i2)) >> 2)))) == 0) && (((-6 + 1*i3)) == 0) && (((1*i0)) == 0) && (((-6 + 1*i1)) >= 0) && (((70 + -1*i1)) >= 0) && (((-6 + 1*i2)) >= 0) && (((70 + -1*i2)) >= 0)))
-//   { load_to_gp_in_on_chip_2_buf12_us36_to_gp_5180183[d0 = 0, d1, d2] -> [0, 10 + 2d1, 10 + 2d2, 10] : 0 <= d1 <= 31 and 0 <= d2 <= 31 }
-// Condition for load_to_gp_in_on_chip_2_buf12_us36_to_gp_5180183(((((-1*i1 + (2*(((1*i1)) >> 1)))) == 0) && (((-1*i2 + (2*(((1*i2)) >> 1)))) == 0) && (((-10 + 1*i3)) == 0) && (((1*i0)) == 0) && (((-10 + 1*i1)) >= 0) && (((72 + -1*i1)) >= 0) && (((-10 + 1*i2)) >= 0) && (((72 + -1*i2)) >= 0)))
-
-	// time range: { [0, i1, i2, i3] : i1 <= 71 and i2 <= 71 and i3 >= 8 and 2i3 >= 24 - i2 and 2i3 >= 24 - i1 and 4*floor((2 + i1)/4) >= -25 + i1 + 3i3 and 4*floor((2 + i2)/4) >= -25 + i2 + 3i3; [0, i1, i2, 12] : (2 + i1) mod 4 = 0 and (2 + i2) mod 4 = 0 and 14 <= i1 <= 74 and 14 <= i2 <= 74; [0, i1, i2, 11] : 8 <= i1 <= 71 and 8 <= i2 <= 71; [0, i1, i2, 10] : (i1) mod 2 = 0 and (i2) mod 2 = 0 and 10 <= i1 <= 72 and 10 <= i2 <= 72; [0, i1, i2, 7] : (i1) mod 2 = 0 and (i2) mod 2 = 0 and 10 <= i1 <= 72 and 10 <= i2 <= 72; [0, i1, i2, 6] : (2 + i1) mod 4 = 0 and (2 + i2) mod 4 = 0 and 6 <= i1 <= 70 and 6 <= i2 <= 70; [0, i1, i2, 4] : (i1) mod 2 = 0 and (i2) mod 2 = 0 and 8 <= i1 <= 70 and 8 <= i2 <= 70; [0, i1, i2, 3] : (i1) mod 2 = 0 and (i2) mod 2 = 0 and 2 <= i1 <= 70 and 2 <= i2 <= 70; [0, i1, i2, 1] : 8 <= i1 <= 71 and 8 <= i2 <= 71; [0, i1, i2, 0] : 0 <= i1 <= 70 and 0 <= i2 <= 70 }
->>>>>>> 89b3f51bdb8eb51a288ec002dbba28ce9175d84f
 	// # sets: 1
 	int i0 = 0;
-	  for (int i1 = 0; i1 <= 74; i1++) {
-	    for (int i2 = 0; i2 <= 74; i2++) {
+	  for (int i1 = 0; i1 <= 72; i1++) {
+	    for (int i2 = 0; i2 <= 72; i2++) {
 	#pragma HLS pipeline II=1
 	        // { [i0, i1, i2] : i1 <= 70 and i2 <= 70 }
 	        // { [i0, i1, i2] : i1 <= 70 and i2 <= 70 }
@@ -5023,11 +4229,7 @@ void Extracted_gp_in_on_chip_15_gp_in_on_chip_1_buf4_ld166_gp_in_on_chip_1_buf4_
 	          // { [i0, i1, i2] : -8 + i2 >= 0 }
 	          // { [i0, i1, i2] : 71 - i2 >= 0 }
 	        if ((((((-8 + 1*i1)) >= 0) && (((71 + -1*i1)) >= 0) && (((-8 + 1*i2)) >= 0) && (((71 + -1*i2)) >= 0)))) {
-<<<<<<< HEAD
 	          load_to_in_on_chip_to_gp_3220223(in_on_chip /* buf name */, in_on_chip_to_gp_3220, 0, ((-1 + 1*i1)), ((-1 + 1*i2)));
-=======
-	          load_to_in_on_chip_to_gp_3192195(in_on_chip /* buf name */, in_on_chip_to_gp_3192, 0, ((-1 + 1*i1)), ((-1 + 1*i2)));
->>>>>>> 89b3f51bdb8eb51a288ec002dbba28ce9175d84f
 	        }
 	        // { [i0, i1, i2] : (i1) mod 2 = 0 and (i2) mod 2 = 0 and 2 <= i1 <= 70 and 2 <= i2 <= 70 }
 	        // { [i0, i1, i2] : (i1) mod 2 = 0 and (i2) mod 2 = 0 and 2 <= i1 <= 70 and 2 <= i2 <= 70 }
@@ -5039,7 +4241,6 @@ void Extracted_gp_in_on_chip_15_gp_in_on_chip_1_buf4_ld166_gp_in_on_chip_1_buf4_
 	          // { [i0, i1, i2] : 70 - i2 >= 0 }
 	        if ((((((-1*i2 + (2*(((1*i2)) >> 1)))) == 0) && (((-1*i1 + (2*(((1*i1)) >> 1)))) == 0) && (((-2 + 1*i1)) >= 0) && (((70 + -1*i1)) >= 0) && (((-2 + 1*i2)) >= 0) && (((70 + -1*i2)) >= 0)))) {
 	          gp_in_on_chip_16_merged157(in_on_chip /* buf name */, gp_in_on_chip_1_buf4, 0, ((-1 + (1*(((1*i1)) >> 1)))), ((-1 + (1*(((1*i2)) >> 1)))));
-<<<<<<< HEAD
 	        }
 	        // { [i0, i1, i2] : (2 + i1) mod 4 = 0 and (2 + i2) mod 4 = 0 and i1 >= 6 and i2 >= 6 }
 	        // { [i0, i1, i2] : (2 + i1) mod 4 = 0 and (2 + i2) mod 4 = 0 and i1 >= 6 and i2 >= 6 }
@@ -5067,8 +4268,6 @@ void Extracted_gp_in_on_chip_15_gp_in_on_chip_1_buf4_ld166_gp_in_on_chip_1_buf4_
 	          // { [i0, i1, i2] : -10 + i2 >= 0 }
 	        if ((((((-1*i2 + (2*(((1*i2)) >> 1)))) == 0) && (((-1*i1 + (2*(((1*i1)) >> 1)))) == 0) && (((-10 + 1*i1)) >= 0) && (((-10 + 1*i2)) >= 0)))) {
 	          load_to_gp_in_on_chip_1_buf4_to_gp_5164167(gp_in_on_chip_1_buf4 /* buf name */, gp_in_on_chip_1_buf4_to_gp_5164, 0, ((-2 + (1*(((1*i1)) >> 1)))), ((-2 + (1*(((1*i2)) >> 1)))));
-=======
->>>>>>> 89b3f51bdb8eb51a288ec002dbba28ce9175d84f
 	        }
 	        // { [i0, i1, i2] : (i1) mod 2 = 0 and (i2) mod 2 = 0 and i1 >= 10 and i2 >= 10 }
 	        // { [i0, i1, i2] : (i1) mod 2 = 0 and (i2) mod 2 = 0 and i1 >= 10 and i2 >= 10 }
@@ -5079,7 +4278,6 @@ void Extracted_gp_in_on_chip_15_gp_in_on_chip_1_buf4_ld166_gp_in_on_chip_1_buf4_
 	        if ((((((-1*i2 + (2*(((1*i2)) >> 1)))) == 0) && (((-1*i1 + (2*(((1*i1)) >> 1)))) == 0) && (((-10 + 1*i1)) >= 0) && (((-10 + 1*i2)) >= 0)))) {
 	          us39(gp_in_on_chip_2_buf12 /* buf name */, gp_in_on_chip_2_buf12_us36, 0, ((-5 + (1*(((1*i1)) >> 1)))), ((-5 + (1*(((1*i2)) >> 1)))));
 	        }
-<<<<<<< HEAD
 	        // { [i0, i1, i2] : 8 <= i1 <= 71 and 8 <= i2 <= 71 }
 	        // { [i0, i1, i2] : 8 <= i1 <= 71 and 8 <= i2 <= 71 }
 	          // { [i0, i1, i2] : -8 + i1 >= 0 }
@@ -5088,29 +4286,6 @@ void Extracted_gp_in_on_chip_15_gp_in_on_chip_1_buf4_ld166_gp_in_on_chip_1_buf4_
 	          // { [i0, i1, i2] : 71 - i2 >= 0 }
 	        if ((((((-8 + 1*i1)) >= 0) && (((71 + -1*i1)) >= 0) && (((-8 + 1*i2)) >= 0) && (((71 + -1*i2)) >= 0)))) {
 	          us47(gp_in_on_chip_1_buf4 /* buf name */, gp_in_on_chip_1_buf4_us44, 0, ((-8 + 1*i1)), ((-8 + 1*i2)));
-=======
-	        // { [i0, i1, i2] : (2 + i1) mod 4 = 0 and (2 + i2) mod 4 = 0 and 6 <= i1 <= 70 and 6 <= i2 <= 70 }
-	        // { [i0, i1, i2] : (2 + i1) mod 4 = 0 and (2 + i2) mod 4 = 0 and 6 <= i1 <= 70 and 6 <= i2 <= 70 }
-	          // { [i0, i1, i2] : -2 - i2 + 4*floor((2 + i2)/4) = 0 }
-	          // { [i0, i1, i2] : -2 - i1 + 4*floor((2 + i1)/4) = 0 }
-	          // { [i0, i1, i2] : -6 + i1 >= 0 }
-	          // { [i0, i1, i2] : 70 - i1 >= 0 }
-	          // { [i0, i1, i2] : -6 + i2 >= 0 }
-	          // { [i0, i1, i2] : 70 - i2 >= 0 }
-	        if ((((((-2 + -1*i2 + (4*(((2 + 1*i2)) >> 2)))) == 0) && (((-2 + -1*i1 + (4*(((2 + 1*i1)) >> 2)))) == 0) && (((-6 + 1*i1)) >= 0) && (((70 + -1*i1)) >= 0) && (((-6 + 1*i2)) >= 0) && (((70 + -1*i2)) >= 0)))) {
-	          gp_in_on_chip_214_merged163(gp_in_on_chip_1_buf4 /* buf name */, gp_in_on_chip_2_buf12, 0, ((-2 + (1*(((2 + 1*i1)) >> 2)))), ((-2 + (1*(((2 + 1*i2)) >> 2)))));
-	        }
-	        // { [i0, i1, i2] : (i1) mod 2 = 0 and (i2) mod 2 = 0 and 10 <= i1 <= 72 and 10 <= i2 <= 72 }
-	        // { [i0, i1, i2] : (i1) mod 2 = 0 and (i2) mod 2 = 0 and 10 <= i1 <= 72 and 10 <= i2 <= 72 }
-	          // { [i0, i1, i2] : -i2 + 2*floor((i2)/2) = 0 }
-	          // { [i0, i1, i2] : -i1 + 2*floor((i1)/2) = 0 }
-	          // { [i0, i1, i2] : -10 + i1 >= 0 }
-	          // { [i0, i1, i2] : 72 - i1 >= 0 }
-	          // { [i0, i1, i2] : -10 + i2 >= 0 }
-	          // { [i0, i1, i2] : 72 - i2 >= 0 }
-	        if ((((((-1*i2 + (2*(((1*i2)) >> 1)))) == 0) && (((-1*i1 + (2*(((1*i1)) >> 1)))) == 0) && (((-10 + 1*i1)) >= 0) && (((72 + -1*i1)) >= 0) && (((-10 + 1*i2)) >= 0) && (((72 + -1*i2)) >= 0)))) {
-	          us39(gp_in_on_chip_2_buf12 /* buf name */, gp_in_on_chip_2_buf12_us36, 0, ((-5 + (1*(((1*i1)) >> 1)))), ((-5 + (1*(((1*i2)) >> 1)))));
->>>>>>> 89b3f51bdb8eb51a288ec002dbba28ce9175d84f
 	        }
 	        // { [i0, i1, i2] : 8 <= i1 <= 71 and 8 <= i2 <= 71 }
 	        // { [i0, i1, i2] : 8 <= i1 <= 71 and 8 <= i2 <= 71 }
@@ -5119,20 +4294,14 @@ void Extracted_gp_in_on_chip_15_gp_in_on_chip_1_buf4_ld166_gp_in_on_chip_1_buf4_
 	          // { [i0, i1, i2] : -8 + i2 >= 0 }
 	          // { [i0, i1, i2] : 71 - i2 >= 0 }
 	        if ((((((-8 + 1*i1)) >= 0) && (((71 + -1*i1)) >= 0) && (((-8 + 1*i2)) >= 0) && (((71 + -1*i2)) >= 0)))) {
-<<<<<<< HEAD
 	          load_to_gp_in_on_chip_1_buf4_us44_to_gp_3172175(gp_in_on_chip_1_buf4_us44 /* buf name */, gp_in_on_chip_1_buf4_us44_to_gp_3172, 0, ((-8 + 1*i1)), ((-8 + 1*i2)));
-=======
-	          us47(gp_in_on_chip_1_buf4 /* buf name */, gp_in_on_chip_1_buf4_us44, 0, ((-8 + 1*i1)), ((-8 + 1*i2)));
->>>>>>> 89b3f51bdb8eb51a288ec002dbba28ce9175d84f
 	        }
-	        // { [i0, i1, i2] : (2 + i1) mod 4 = 0 and (2 + i2) mod 4 = 0 and 6 <= i1 <= 70 and 6 <= i2 <= 70 }
-	        // { [i0, i1, i2] : (2 + i1) mod 4 = 0 and (2 + i2) mod 4 = 0 and 6 <= i1 <= 70 and 6 <= i2 <= 70 }
+	        // { [i0, i1, i2] : (2 + i1) mod 4 = 0 and (2 + i2) mod 4 = 0 and i1 >= 6 and i2 >= 6 }
+	        // { [i0, i1, i2] : (2 + i1) mod 4 = 0 and (2 + i2) mod 4 = 0 and i1 >= 6 and i2 >= 6 }
 	          // { [i0, i1, i2] : -2 - i2 + 4*floor((2 + i2)/4) = 0 }
 	          // { [i0, i1, i2] : -2 - i1 + 4*floor((2 + i1)/4) = 0 }
 	          // { [i0, i1, i2] : -6 + i1 >= 0 }
-	          // { [i0, i1, i2] : 70 - i1 >= 0 }
 	          // { [i0, i1, i2] : -6 + i2 >= 0 }
-<<<<<<< HEAD
 	        if ((((((-2 + -1*i2 + (4*(((2 + 1*i2)) >> 2)))) == 0) && (((-2 + -1*i1 + (4*(((2 + 1*i1)) >> 2)))) == 0) && (((-6 + 1*i1)) >= 0) && (((-6 + 1*i2)) >= 0)))) {
 	          load_to_gp_in_on_chip_2_buf12_to_gp_2180183(gp_in_on_chip_2_buf12 /* buf name */, gp_in_on_chip_2_buf12_to_gp_2180, 0, ((-2 + (1*(((2 + 1*i1)) >> 2)))), ((-2 + (1*(((2 + 1*i2)) >> 2)))));
 	        }
@@ -5144,40 +4313,6 @@ void Extracted_gp_in_on_chip_15_gp_in_on_chip_1_buf4_ld166_gp_in_on_chip_1_buf4_
 	          // { [i0, i1, i2] : -10 + i2 >= 0 }
 	        if ((((((-1*i2 + (2*(((1*i2)) >> 1)))) == 0) && (((-1*i1 + (2*(((1*i1)) >> 1)))) == 0) && (((-10 + 1*i1)) >= 0) && (((-10 + 1*i2)) >= 0)))) {
 	          load_to_gp_in_on_chip_2_buf12_us36_to_gp_5196199(gp_in_on_chip_2_buf12_us36 /* buf name */, gp_in_on_chip_2_buf12_us36_to_gp_5196, 0, ((-5 + (1*(((1*i1)) >> 1)))), ((-5 + (1*(((1*i2)) >> 1)))));
-=======
-	          // { [i0, i1, i2] : 70 - i2 >= 0 }
-	        if ((((((-2 + -1*i2 + (4*(((2 + 1*i2)) >> 2)))) == 0) && (((-2 + -1*i1 + (4*(((2 + 1*i1)) >> 2)))) == 0) && (((-6 + 1*i1)) >= 0) && (((70 + -1*i1)) >= 0) && (((-6 + 1*i2)) >= 0) && (((70 + -1*i2)) >= 0)))) {
-	          load_to_gp_in_on_chip_2_buf12_to_gp_2172175(gp_in_on_chip_2_buf12 /* buf name */, gp_in_on_chip_2_buf12_to_gp_2172, 0, ((-2 + (1*(((2 + 1*i1)) >> 2)))), ((-2 + (1*(((2 + 1*i2)) >> 2)))));
-	        }
-	        // { [i0, i1, i2] : (i1) mod 2 = 0 and (i2) mod 2 = 0 and 10 <= i1 <= 72 and 10 <= i2 <= 72 }
-	        // { [i0, i1, i2] : (i1) mod 2 = 0 and (i2) mod 2 = 0 and 10 <= i1 <= 72 and 10 <= i2 <= 72 }
-	          // { [i0, i1, i2] : -i2 + 2*floor((i2)/2) = 0 }
-	          // { [i0, i1, i2] : -i1 + 2*floor((i1)/2) = 0 }
-	          // { [i0, i1, i2] : -10 + i1 >= 0 }
-	          // { [i0, i1, i2] : 72 - i1 >= 0 }
-	          // { [i0, i1, i2] : -10 + i2 >= 0 }
-	          // { [i0, i1, i2] : 72 - i2 >= 0 }
-	        if ((((((-1*i2 + (2*(((1*i2)) >> 1)))) == 0) && (((-1*i1 + (2*(((1*i1)) >> 1)))) == 0) && (((-10 + 1*i1)) >= 0) && (((72 + -1*i1)) >= 0) && (((-10 + 1*i2)) >= 0) && (((72 + -1*i2)) >= 0)))) {
-	          load_to_gp_in_on_chip_2_buf12_us36_to_gp_5180183(gp_in_on_chip_2_buf12_us36 /* buf name */, gp_in_on_chip_2_buf12_us36_to_gp_5180, 0, ((-5 + (1*(((1*i1)) >> 1)))), ((-5 + (1*(((1*i2)) >> 1)))));
-	        }
-	        // { [i0, i1, i2] : 8 <= i1 <= 71 and 8 <= i2 <= 71 }
-	        // { [i0, i1, i2] : 8 <= i1 <= 71 and 8 <= i2 <= 71 }
-	          // { [i0, i1, i2] : -8 + i1 >= 0 }
-	          // { [i0, i1, i2] : 71 - i1 >= 0 }
-	          // { [i0, i1, i2] : -8 + i2 >= 0 }
-	          // { [i0, i1, i2] : 71 - i2 >= 0 }
-	        if ((((((-8 + 1*i1)) >= 0) && (((71 + -1*i1)) >= 0) && (((-8 + 1*i2)) >= 0) && (((71 + -1*i2)) >= 0)))) {
-	          load_to_gp_in_on_chip_1_buf4_us44_to_gp_3168171(gp_in_on_chip_1_buf4_us44 /* buf name */, gp_in_on_chip_1_buf4_us44_to_gp_3168, 0, ((-8 + 1*i1)), ((-8 + 1*i2)));
-	        }
-	        // { [i0, i1, i2] : (2 + i1) mod 4 = 0 and (2 + i2) mod 4 = 0 and i1 >= 14 and i2 >= 14 }
-	        // { [i0, i1, i2] : (2 + i1) mod 4 = 0 and (2 + i2) mod 4 = 0 and i1 >= 14 and i2 >= 14 }
-	          // { [i0, i1, i2] : -2 - i2 + 4*floor((2 + i2)/4) = 0 }
-	          // { [i0, i1, i2] : -2 - i1 + 4*floor((2 + i1)/4) = 0 }
-	          // { [i0, i1, i2] : -14 + i1 >= 0 }
-	          // { [i0, i1, i2] : -14 + i2 >= 0 }
-	        if ((((((-2 + -1*i2 + (4*(((2 + 1*i2)) >> 2)))) == 0) && (((-2 + -1*i1 + (4*(((2 + 1*i1)) >> 2)))) == 0) && (((-14 + 1*i1)) >= 0) && (((-14 + 1*i2)) >= 0)))) {
-	          load_to_gp_in_on_chip_2_buf12_to_gp_7176179(gp_in_on_chip_2_buf12 /* buf name */, gp_in_on_chip_2_buf12_to_gp_7176, 0, ((-3 + (1*(((2 + 1*i1)) >> 2)))), ((-3 + (1*(((2 + 1*i2)) >> 2)))));
->>>>>>> 89b3f51bdb8eb51a288ec002dbba28ce9175d84f
 	        }
 	    }
 	  }
@@ -5264,8 +4399,8 @@ void pyr_blnd2d500_2048(HWStream<hw_uint<32> >& /* no bundle get_args num ports 
   // dag size     : 500
 // Bits to slack match lp_in_on_chip_2_buf32_to_gp_8252 = 16000
 // Bits to slack match lp_in_on_chip_2_buf32_to_gp_8252 = 16000
-// Bits in internal re-use buffers               : 17568 bits
-// Bits in channels needed to guarantee causality: 12480
+// Bits in internal re-use buffers               : 17536 bits
+// Bits in channels needed to guarantee causality: 12512
 // Bits in channels needed to match slack        : 208000
   HWStream< hw_uint<32> > gp_in_on_chip_2_buf12_to_gp_2180;
 #ifdef __VIVADO_SYNTH__
@@ -5313,7 +4448,7 @@ void pyr_blnd2d500_2048(HWStream<hw_uint<32> >& /* no bundle get_args num ports 
 #endif //__VIVADO_SYNTH__
   HWStream< hw_uint<32> > gp_in_on_chip_2_buf12_to_gp_7188;
 #ifdef __VIVADO_SYNTH__
-#pragma HLS stream variable=gp_in_on_chip_2_buf12_to_gp_7188.values depth=500
+#pragma HLS stream variable=gp_in_on_chip_2_buf12_to_gp_7188.values depth=501
 #endif //__VIVADO_SYNTH__
   HWStream< hw_uint<32> > lp_in_on_chip_2_buf32_to_gp_8252;
 #ifdef __VIVADO_SYNTH__
