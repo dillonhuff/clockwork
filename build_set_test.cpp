@@ -24245,9 +24245,9 @@ void gv_generation_pyramid() {
 }
 
 void dhuff_tests() {
+  test_multi_kernel_pyramid_collapsing();
   test_multi_kernel_unsharp();
   test_multi_kernel_design();
-  test_multi_kernel_pyramid_collapsing();
   test_multi_kernel_gp();
 
   infer_bounds_tests();
