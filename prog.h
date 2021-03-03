@@ -1903,7 +1903,7 @@ struct app_dag {
     return nodes;
   }
 
-  vector<string> sorted_fusion_groups();
+  maybe<vector<string> > sorted_fusion_groups();
 
   std::set<string> children(const std::string& location);
   std::set<string> ancestors(const std::string& location);
@@ -2003,6 +2003,7 @@ std::set<string> buffers_read(const std::string& to_merge, map<string, std::set<
 std::set<string> buffers_written(const std::string& to_merge, map<string, std::set<string> >& fusion_groups, prog& prg);
 
 std::set<string> children(const std::string& kernel, prog& prg);
+std::set<string> parents(const std::string& kernel, prog& prg);
 
 
 bool groups_are_contiguous(const map<string, std::set<string> >& fusion_groups, prog& prg);
@@ -2019,3 +2020,7 @@ int max_completion_time(schedule_info& sched, prog& prg);
 void prepare_for_clockwork_scheduling(prog& prg);
 
 bool inner_loops_unrollable(const std::string& buf, const int unroll_factor, prog& prg);
+
+void generate_resource_sharing_code(
+    CodegenOptions& options,
+    app_dag& dag);

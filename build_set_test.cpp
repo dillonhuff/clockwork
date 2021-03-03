@@ -19539,7 +19539,7 @@ void blur_static_dynamic_comparison() {
   move_to_benchmarks_folder(out_name + "_opt");
 
   assert(false);
-  
+
 }
 
 void blur32_static_dynamic_comparison() {
@@ -20283,7 +20283,7 @@ void two_in_blnd_16pix_static_dynamic_comparison() {
 
     auto fusion_groups = one_stage_per_group(prg);
 
-    
+
     auto fresh_groups = insert_inter_group_buffers(fusion_groups, prg);
     unroll_mismatched_inner_loops(prg);
     merge_basic_block_ops(prg);
@@ -20334,7 +20334,7 @@ void two_in_blnd_8pix_static_dynamic_comparison() {
 
     auto fusion_groups = one_stage_per_group(prg);
 
-    
+
     auto fresh_groups = insert_inter_group_buffers(fusion_groups, prg);
     unroll_mismatched_inner_loops(prg);
     merge_basic_block_ops(prg);
@@ -20385,7 +20385,7 @@ void two_in_blnd_4pix_static_dynamic_comparison() {
 
     auto fusion_groups = one_stage_per_group(prg);
 
-    
+
     auto fresh_groups = insert_inter_group_buffers(fusion_groups, prg);
     unroll_mismatched_inner_loops(prg);
     merge_basic_block_ops(prg);
@@ -20437,7 +20437,7 @@ void two_in_blnd_2pix_static_dynamic_comparison() {
     auto fusion_groups = one_stage_per_group(prg);
 
     //app_dag dag = partition_application(fusion_groups, prg);
-    
+
     auto fresh_groups = insert_inter_group_buffers(fusion_groups, prg);
     unroll_mismatched_inner_loops(prg);
     merge_basic_block_ops(prg);
@@ -21720,22 +21720,49 @@ void two_input_blending_test() {
   assert(false);
 }
 
-void path_sensitive_channel_sizing() {
+// Generating high performance designs?
+void resource_sharing_test() {
   //prog prg = two_in_blnd(64, 64);
-  prog prg = llf_grayscale_float(64, 64);
-  prg.name = prg.name + "_d";
+  prog prg("cpy_resource");
+  prg.add_input("in");
+  prg.add_output("out");
+
+  pointwise("A", "id", "in", 2, prg);
+  pointwise("Ac", "plus_one", "A", 2, prg);
+  pointwise("B", "id", "Ac", 2, prg);
+  pointwise("Bc", "plus_one", "B", 2, prg);
+  pointwise("out", "id", "Bc", 2, prg);
+
+  infer_bounds("out", {8, 8}, prg);
+
+  prg.pretty_print();
   prg.sanity_check();
 
-  auto fusion_groups = one_stage_per_group(prg);
+  prg.name = prg.name + "_s";
+  prg.sanity_check();
+
+  map<string, std::set<string> > fusion_groups =
+  {{"lda", {"pw_math_in01"}}, {"comp", {"pw_math_A45", "pw_math_B1213", "pw_math_Bc1617"}}, {"ldb", {"pw_math_Ac89"}}};
+
+  auto unopt_postprocessed = unoptimized_result(prg);
+
   app_dag dag = partition_application(fusion_groups, prg);
+
+  //assert(false);
 
   CodegenOptions options;
   options = CodegenOptions();
   options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
   options.scheduling_algorithm = SCHEDULE_ALGORITHM_CW;
-  options.slack_matching = {SLACK_MATCHING_TYPE_PIPELINE_DEPTH_AWARE, 5};
+  options.slack_matching = {SLACK_MATCHING_TYPE_FIXED, 250};
   generate_app_code(options, dag);
+  move_to_benchmarks_folder(dag.prg.name);
+  assert(false);
 
+  generate_regression_testbench(dag.prg);
+  vector<string> multi_kernel_res = run_regression_tb(dag.prg);
+
+  compare("resource_shared" + prg.name + "_vs_unopt", multi_kernel_res, unopt_postprocessed);
   assert(false);
 }
 
@@ -21756,6 +21783,25 @@ void llf_intelligent_channels() {
 
   move_to_benchmarks_folder(prg.name);
   cmd("cp local_laplacian_filter* ./soda_codes/" + prg.name + "/our_code/");
+
+  assert(false);
+}
+void path_sensitive_channel_sizing() {
+  //prog prg = two_in_blnd(2048, 2048);
+  prog prg = llf_grayscale_float(2048, 2048);
+  prg.name = prg.name + "_d";
+  prg.sanity_check();
+
+  auto fusion_groups = one_stage_per_group(prg);
+  app_dag dag = partition_application(fusion_groups, prg);
+
+  CodegenOptions options;
+  options = CodegenOptions();
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  options.scheduling_algorithm = SCHEDULE_ALGORITHM_CW;
+  //options.slack_matching = {SLACK_MATCHING_TYPE_PIPELINE_DEPTH_AWARE, 5};
+  options.slack_matching = {SLACK_MATCHING_TYPE_FIXED, 250};
+  generate_app_code(options, dag);
 
   assert(false);
 }
@@ -22212,6 +22258,10 @@ void sef_intelligent_channels2() {
 }
 
 void application_tests() {
+  resource_sharing_test();
+
+
+  path_sensitive_channel_sizing();
   llf_250_channels(8);
   llf_250_channels(4);
   llf_2pix_250_channels();
@@ -22236,7 +22286,6 @@ void application_tests() {
   blur3_1_static_dynamic_comparison();
   blur3_32_static_dynamic_comparison();
 
-  path_sensitive_channel_sizing();
   llf_intelligent_channels3();
   two_in_blend_intelligent_channels2();
   sef_intelligent_channels2();
@@ -24151,7 +24200,7 @@ void generate_gv_output(prog& prg) {
   for (auto e : edges) {
     out << tab(1) << e.first << "->" << e.second << ";" << endl;
   }
-  
+
   out << tab(1) << "overlap=false" << endl;
   out << tab(1) << "fontsize=12" << endl;
   out << "}" << endl;
@@ -24198,29 +24247,27 @@ void gv_generation_pyramid() {
 }
 
 void dhuff_tests() {
+  test_multi_kernel_pyramid_collapsing();
+  test_multi_kernel_unsharp();
+  test_multi_kernel_design();
+  test_multi_kernel_gp();
+
   infer_bounds_tests();
   test_app_to_prog_conversion();
   blurx_app_to_prog_test();
   updated_blur_static_dynamic_comparison();
-  
+
   //gv_generation_pyramid();
-  
+
   test_chain_grouping();
 
   //test_jacobi15_dynamic();
-
-  test_multi_kernel_pyramid_collapsing();
-  test_multi_kernel_gp();
-
   //test_multi_kernel_llf();
-  //assert(false);
 
   test_multi_kernel_mismatched_loop_depths();
   test_artificial_deadlock();
   upsample2d_test();
   up_stencil_down_test();
-  test_multi_kernel_unsharp();
-  test_multi_kernel_design();
   stencil_chain_multi_kernel_test();
   test_if_construction();
   test_time_sharing_gaussian_pyramid();

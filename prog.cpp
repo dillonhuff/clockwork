@@ -1924,6 +1924,43 @@ void generate_compute_op(
 
 }
 
+std::string resource_sharing_loop_codegen(umap* schedmap) {
+  return "";
+  //vector<isl_map*> maps = get_maps(schedmap);
+  //vector<pair<string, pair<int, int> > > bounds;
+  //vector<int> split_points;
+  //int d = 1;
+  //for (auto m : maps) {
+    //isl_set* rng = project_all_but(range(m), d);
+    //bounds.push_back({domain_name(m), {to_int(lexminval(rng)), to_int(lexmaxval(rng))}});
+    //split_points.push_back(bounds.back().second.first);
+    //split_points.push_back(bounds.back().second.second);
+  //}
+
+  //cout << "Bounds..." << endl;
+  //for (auto b : bounds) {
+    //cout << b.first << " -> " << b.second.first << ", " << b.second.second << endl;
+  //}
+
+  //vector<int> breakpts = sort_unique(split_points);
+  //cout << "Points to split..." << endl;
+  //for (auto b : breakpts) {
+    //cout << tab(1) << b << endl;
+  //}
+  //assert(false);
+
+  //cout << "Schedule maps..." << endl;
+
+  ////auto time_range = coalesce(range(schedmap));
+  ////conv_out << "// time range: " << str(time_range) << endl;
+  ////auto sets = get_sets(time_range);
+
+  ////conv_out << "// # sets: " << sets.size() << endl;
+  ////assert(sets.size() == 1);
+  ////isl_set* s = pick(get_sets(time_range));
+  //return "";
+}
+
 std::string perfect_loop_codegen(umap* schedmap) {
   ostringstream conv_out;
   auto time_range = coalesce(range(schedmap));
@@ -2227,9 +2264,7 @@ void generate_app_code_op_logic(
 
   for (auto op : prg.all_ops()) {
     regex re("(\n\t\\s+)" + op->name + "\\((.*)\\);");
-    //string args_list = sep_list(buffer_arg_names(buffers, op, prg), "", "", ", ");
     string args_list = sep_list(buffer_arg_names(op, prg), "", "", ", ");
-    //code_string = regex_replace(code_string, re, "\n\t" + op->name + "(" + args_list + ", $1);");
     code_string = regex_replace(code_string, re, "$1" + op->name + "(" + args_list + ", $2);");
   }
 
@@ -2244,9 +2279,6 @@ void generate_app_code_op_logic(
   }
   conv_out << endl;
 
-  //conv_out << tab(1) << "/*" << endl;
-  //conv_out << original_isl_code_string << endl;
-  //conv_out << tab(1) << "*/" << endl;
   conv_out << code_string << endl;
 
   generate_driver_function_suffix(options, conv_out, buffers, prg);
@@ -8758,11 +8790,11 @@ void set_channel_depths_by_assumed_stage_depth(const int kernel_depth, app_dag& 
     obj.push_back({channel, isl_val_one(builder.ctx)});
   }
 
-  vector<string> sorted_groups = dag.sorted_fusion_groups();
+  vector<string> sorted_groups = dag.sorted_fusion_groups().get_value();
   cout << "# of nodes to process: " << sorted_groups.size() << endl;
   int processed = 0;
   for (auto next_group : sorted_groups) {
-    
+
     in_progress_paths.insert({next_group});
 
     std::set<path> to_insert;
@@ -8864,6 +8896,33 @@ void set_channel_depths_to_constant(const int constant, app_dag& dag) {
   }
 }
 
+void generate_resource_sharing_code(
+    CodegenOptions& options,
+    app_dag& dag) {
+
+  auto valid_deps = dag.prg.validity_deps();
+  auto global_sched =
+    its(clockwork_schedule_umap_reversed(dag.prg.whole_iteration_domain(), valid_deps, valid_deps),
+        dag.prg.whole_iteration_domain());
+  cout << "Sched: " << str(global_sched) << endl;
+
+  string code_string = resource_sharing_loop_codegen(global_sched);
+
+  cout << "Code: " << endl;
+  cout << code_string << endl;
+
+  // What are the major changes that are needed?
+  //  - We have to have one C++ function that takes in
+  //    inputs from every channel and does compute ops on them 
+  //  - Compute units in other operations have to be done
+  //    by writing data to a channel and then reading it back
+  //    from another channel
+  // Q: How much of this can be done by modifying the existing
+  //    DAG codegen that I have?
+
+  assert(false);
+}
+
 void generate_app_code(
     CodegenOptions& options,
     app_dag& dag) {
@@ -8909,11 +8968,15 @@ void generate_app_code(
   ofstream conv_out(dag.prg.name + ".cpp");
   generate_app_prefix(options, conv_out, dag.prg);
 
+  int capacity = 0;
   for (auto& b : buffers) {
     if (!elem(b.first, boundary_bufs)) {
       generate_hls_code(options, conv_out, b.second);
+      capacity += buffer_capacity(b.second);
     }
   }
+  conv_out << "// Total re-use buffer capacity: " << capacity << " bits" << endl;
+  
 
   for (auto& gp : dag.fusion_group_progs) {
     vector<umap*> sched_maps;
@@ -8972,12 +9035,9 @@ void generate_app_code(
   } else {
     set_channel_depths_by_assumed_stage_depth(options.slack_matching.depth, dag);
   }
-  //set_channel_depths_by_stage_depths(dag);
-  //set_channel_depths_to_constant(32, dag);
-  //set_channel_depths_to_constant(1, dag);
-  //set_channel_depths_to_with_kernel_depth(500, dag);
-  //set_channel_depths_ilp(500, dag);
 
+  int bits_for_causality = 0;
+  int bits_for_slack_matching = 0;
   for (auto c : dag.inter_group_channels()) {
     cout << tab(1) << c << endl;
     UBuffer buf = map_find(c, buffers);
@@ -9006,18 +9066,27 @@ void generate_app_code(
       max_dd =
         compute_max_dd(buf, pick(map_find(rep, buf.port_bundles)));
 
-      //for (auto inpt : buf.get_in_ports()) {
-        //int mdd = compute_max_dd(buf, inpt);
-        //cout << tab(1) << "MDD = " << mdd << endl;
-        //if (mdd > max_dd) {
-          //max_dd = mdd;
-        //}
-      //}
+      int channel_width =
+        map_find(rep, buf.port_bundles).size();
+      int slack_bits = (buf.port_widths)*dag.channel_sizes[c]*channel_width;
+      bits_for_slack_matching += slack_bits;
+
+      conv_out << tab(1) << "// channel width: " << channel_width << endl;
+      conv_out << tab(1) << "// port width   : " << buf.port_widths << endl;
+      conv_out << tab(1) << "// dag size     : " << dag.channel_sizes[c] << endl;
+      conv_out << "// Bits to slack match " << c << " = " << slack_bits << endl;
+      conv_out << "// Bits to slack match " << c << " = " << slack_bits << endl;
+
+      bits_for_causality += (buf.port_widths) * max_dd * channel_width;
+
       dag.channel_sizes[c] += max_dd;
-      //assert(max_dd == 0);
     }
 
   }
+
+  conv_out << "// Bits in internal re-use buffers               : " << capacity << " bits" << endl;
+  conv_out << "// Bits in channels needed to guarantee causality: " << bits_for_causality << endl;
+  conv_out << "// Bits in channels needed to match slack        : " << bits_for_slack_matching << endl;
 
   for (auto& gp : dag.fusion_group_progs) {
     for (auto& buf : gp.second.boundary_buffers()) {
@@ -9039,7 +9108,16 @@ void generate_app_code(
 
   conv_out << endl << endl;
 
-  for (auto& gpn : dag.sorted_fusion_groups()) {
+  auto sorted_gps = dag.sorted_fusion_groups();
+  vector<string> gps;
+  for (auto g : dag.fusion_groups) {
+    gps.push_back(g.first);
+  }
+  if (sorted_gps.has_value()) {
+    gps = sorted_gps.get_value();
+  }
+  //for (auto& gpn : dag.sorted_fusion_groups()) {
+  for (auto& gpn : gps) {
     auto& gp = dag.fusion_group_progs.at(gpn);
     vector<string> args;
     for (auto in : gp.ins) {
@@ -9236,36 +9314,94 @@ vector<string> sort_group(const std::set<string>& group, prog& prg) {
   return sorted;
 }
 
-void make_groups_contiguous(const std::map<std::string, std::set<std::string> >& fusion_groups, prog& prg) {
-  for (auto gp : fusion_groups) {
-    cout << "Getting start pos" << endl;
-    int start_pos = get_start_pos(gp.second, prg);
-    //cout << "Sorting kernels" << endl;
-    //vector<string> kernels = sort_group(gp.second, prg);
-    //cout << "Adding sorted kernels" << endl;
-
-    vector<op*> new_children;
-    for (int i = 0; i < start_pos; i++) {
-      new_children.push_back(prg.root->children.at(i));
+string container(const std::string& val, const std::map<std::string, std::set<std::string> >& fusion_groups) {
+  for (auto g : fusion_groups) {
+    if (elem(val, g.second)) {
+      return g.first;
     }
+  }
+  assert(false);
+}
 
-    vector<op*> to_add;
-    for (int i = start_pos; i < (int) prg.root->children.size(); i++) {
-      op* current = prg.root->children.at(i);
-      if (elem(current->name, gp.second)) {
-        new_children.push_back(current);
-      } else {
-        to_add.push_back(current);
+void make_groups_contiguous(const std::map<std::string, std::set<std::string> >& fusion_groups, prog& prg) {
+
+  if (prg.root->children.size() == 0) {
+    return;
+  }
+
+  string active_group =
+    container(prg.root->children[0]->name, fusion_groups);
+  auto unprocessed_kernels = get_kernels(prg);
+
+  vector<op*> sorted_kernels;
+  while (unprocessed_kernels.size() > 0) {
+    string next_kernel = "";
+    for (auto k : unprocessed_kernels) {
+      if (container(k, fusion_groups) == active_group) {
+
+        bool all_ancestors_processed = true;
+        for (auto a : parents(k, prg)) {
+          if (elem(a, unprocessed_kernels)) {
+            all_ancestors_processed = false;
+            break;
+          }
+        }
+        if (all_ancestors_processed) {
+          next_kernel = k;
+          break;
+        }
       }
     }
 
-    for (auto op : to_add) {
-      new_children.push_back(op);
+    if (next_kernel == "") {
+      for (auto k : unprocessed_kernels) {
+        bool all_ancestors_processed = true;
+        for (auto a : parents(k, prg)) {
+          if (elem(a, unprocessed_kernels)) {
+            all_ancestors_processed = false;
+            break;
+          }
+        }
+        if (all_ancestors_processed) {
+          next_kernel = k;
+          break;
+        }
+      }
     }
+    assert(next_kernel != "");
 
-    assert(new_children.size() == prg.root->children.size());
-    prg.root->children = new_children;
+    sorted_kernels.push_back(prg.find_loop(next_kernel));
+    active_group = container(next_kernel, fusion_groups);
+    unprocessed_kernels.erase(next_kernel);
   }
+
+  assert(sorted_kernels.size() == prg.root->children.size());
+  prg.root->children = sorted_kernels;
+}
+
+op* last_writer_in_group(const std::string& buf, const std::set<string>& kernels, prog& prg) {
+  vector<op*> rc = prg.root->children;
+  reverse(rc);
+  for (auto c : rc) {
+    if (elem(c->name, kernels)) {
+      if (elem(buf, buffers_written(c))) {
+        return c;
+      }
+    }
+  }
+  cout << "No writer for " << buf << endl;
+  assert(false);
+}
+
+op* first_reader_in_group(const std::string& buf, const std::set<string>& kernels, prog& prg) {
+  for (auto c : prg.root->children) {
+    if (elem(c->name, kernels)) {
+      if (elem(buf, buffers_read(c))) {
+        return c;
+      }
+    }
+  }
+  assert(false);
 }
 
 std::map<std::string, std::set<std::string> >
@@ -9275,31 +9411,7 @@ insert_inter_group_buffers(const std::map<std::string, std::set<std::string> >& 
   make_groups_contiguous(fusion_groups, prg);
   cout << "Done contiguous" << endl;
 
-  assert(groups_are_contiguous(fusion_groups, prg));
-
-  map<string, string> group_starts;
-  map<string, string> group_ends;
-  for (auto gp : fusion_groups) {
-    for (auto kernel : get_kernels_in_order(prg)) {
-      if (elem(kernel, gp.second)) {
-        group_starts[gp.first] = kernel;
-        break;
-      }
-    }
-    vector<string> rev_kernels = get_kernels_in_order(prg);
-    reverse(rev_kernels);
-    for (auto kernel : rev_kernels) {
-      if (elem(kernel, gp.second)) {
-        group_ends[gp.first] = kernel;
-        break;
-      }
-    }
-  }
-
   // Map from buffers to the kernels they read
-  map<string, vector<string> > kernel_broadcasts;
-  map<string, vector<int> > kernel_orders;
-
   map<string, std::set<string> > produced_bufs;
   map<string, std::set<string> > consumed_bufs;
   map<string, string> producer_groups;
@@ -9313,6 +9425,8 @@ insert_inter_group_buffers(const std::map<std::string, std::set<std::string> >& 
   }
 
   cout << "=== Creating broadcast data structures..." << endl;
+  map<string, vector<int> > kernel_orders;
+  map<string, vector<string> > kernel_broadcasts;
   for (auto gp : fusion_groups) {
     cout << "GP..." << endl;
     auto produced = map_find(gp.first, produced_bufs);
@@ -9335,16 +9449,8 @@ insert_inter_group_buffers(const std::map<std::string, std::set<std::string> >& 
 
   map<pair<string, string>, isl_set*> read_by_gp;
   for (auto b : kernel_broadcasts) {
-    //auto consumers = prg.consumer_maps(b.first);
     for (auto group_name : b.second) {
       isl_set* s = read_by_group(b.first, map_find(group_name, fusion_groups), prg);
-      //cout << "Read by gp: " << str(s) << endl;
-      //for (auto m : consumers) {
-        //if (m.second != nullptr) {
-          //cout << tab(1) << "cm: " << str(m.second) << endl;
-          //s = unn(s, range(m.second));
-        //}
-      //}
       read_by_gp[{group_name, b.first}] = s;
     }
   }
@@ -9354,33 +9460,20 @@ insert_inter_group_buffers(const std::map<std::string, std::set<std::string> >& 
   prg.pretty_print();
 
   map<string, std::set<string> > fresh_groups = fusion_groups;
-  map<pair<string, string>, string> group_buffer_channels;
   for (auto b : kernel_broadcasts) {
-    auto consumers = prg.consumer_maps(b.first);
+    vector<int> kernel_order = map_find(b.first, kernel_orders);
     for (auto group_name : b.second) {
       isl_set* s = map_find({group_name, b.first}, read_by_gp);
 
       string broadcast = prg.un(b.first + "_to_" + group_name);
+      string incoming_channel = broadcast; 
       string producer_group = map_find(b.first, producer_groups);
 
       prg.buffer_port_widths[broadcast] = prg.buffer_port_width(name(s));
 
-      op* copy_loop = copy_after(prg.find_loop(map_find(producer_group, group_ends)), s, map_find(b.first, kernel_orders), broadcast, prg);
+      op* copy_insert_point = last_writer_in_group(b.first, map_find(producer_group, fusion_groups), prg);
+      op* copy_loop = copy_after(copy_insert_point, s, kernel_order, broadcast, prg);
       fresh_groups[producer_group].insert(copy_loop->name);
-
-      group_buffer_channels[{group_name, b.first}] = broadcast;
-    }
-  }
-
-  cout << "After adding copy buffers..." << endl;
-  prg.pretty_print();
-
-  for (auto b : kernel_broadcasts) {
-    auto consumers = prg.consumer_maps(b.first);
-    for (auto group_name : b.second) {
-      isl_set* s = map_find({group_name, b.first}, read_by_gp);
-      string incoming_channel = group_buffer_channels[{group_name, b.first}];
-      s = set_name(s, incoming_channel);
 
       string replacement = prg.un(b.first + "_FIFO_buf");
       prg.buffer_port_widths[replacement] = prg.buffer_port_width(incoming_channel);
@@ -9388,22 +9481,13 @@ insert_inter_group_buffers(const std::map<std::string, std::set<std::string> >& 
         prg.find_loop(kernel)->replace_reads_from(b.first, replacement);
       }
 
-      op* copy_loop = copy_before(prg.find_loop(map_find(group_name, group_starts)), s, map_find(b.first, kernel_orders), replacement, prg);
-      fresh_groups[group_name].insert(copy_loop->name);
+      isl_set* incoming = set_name(cpy(s), incoming_channel);
+      op* copy_r_insert_point = first_reader_in_group(replacement, map_find(group_name, fusion_groups), prg);
+      op* copy_loop_r = copy_before(copy_r_insert_point, incoming, kernel_order, replacement, prg);
+      fresh_groups[group_name].insert(copy_loop_r->name);
     }
   }
 
-
-  //cout << "After adding distributors..." << endl;
-  //prg.pretty_print();
-  //cout << "Groups..." << endl;
-  //for (auto gp : fresh_groups) {
-    //cout << tab(1) << gp.first << endl;
-    //for (auto k : gp.second) {
-      //cout << tab(2) << k << endl;
-    //}
-    //cout << endl;
-  //}
   return fresh_groups;
 }
 
@@ -9440,7 +9524,7 @@ void prog::reset_context() {
   ctx = isl_ctx_alloc();
 }
 
-vector<string> app_dag::sorted_fusion_groups() {
+maybe<vector<string> > app_dag::sorted_fusion_groups() {
   assert(fusion_groups.size() == fusion_group_progs.size());
 
   vector<string> sorted;
@@ -9479,9 +9563,9 @@ vector<string> app_dag::sorted_fusion_groups() {
         pg.second.pretty_print();
         cout << endl;
       }
+      return {};
     }
-    assert(found_sorted);
-
+    //assert(found_sorted);
   }
   return sorted;
 }
@@ -9535,6 +9619,20 @@ std::set<string> buffers_read(const std::string& to_merge, map<string, std::set<
     }
   }
   return read;
+}
+
+std::set<string> parents(const std::string& kernel, prog& prg) {
+  std::set<string> parent_set;
+
+  auto read = buffers_read(prg.find_loop(kernel));
+  for (auto k : get_kernels(prg)) {
+    auto written = buffers_written(prg.find_loop(k));
+    if (intersection(read, written).size() > 0) {
+      parent_set.insert(k);
+    }
+  }
+
+  return parent_set;
 }
 
 std::set<string> children(const std::string& kernel, prog& prg) {
