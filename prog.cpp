@@ -9458,30 +9458,30 @@ insert_inter_group_buffers(const std::map<std::string, std::set<std::string> >& 
     vector<int> kernel_order = map_find(b.first, kernel_orders);
     for (auto group_name : b.second) {
       isl_set* s = map_find({group_name, b.first}, read_by_gp);
+
       string broadcast = prg.un(b.first + "_to_" + group_name);
       string incoming_channel = broadcast; 
+      string producer_group = map_find(b.first, producer_groups);
 
-      {
-        string producer_group = map_find(b.first, producer_groups);
 
-        prg.buffer_port_widths[broadcast] = prg.buffer_port_width(name(s));
+      prg.buffer_port_widths[broadcast] = prg.buffer_port_width(name(s));
 
-        op* copy_loop = copy_after(prg.find_loop(map_find(producer_group, group_ends)), s, kernel_order, broadcast, prg);
-        fresh_groups[producer_group].insert(copy_loop->name);
+      op* copy_insert_point = prg.find_loop(map_find(producer_group, group_ends));
+      //op* copy_loop = copy_after(prg.find_loop(map_find(producer_group, group_ends)), s, kernel_order, broadcast, prg);
+      op* copy_loop = copy_after(copy_insert_point, s, kernel_order, broadcast, prg);
+      fresh_groups[producer_group].insert(copy_loop->name);
 
-      //}
-      //{
-        isl_set* incoming = set_name(cpy(s), incoming_channel);
-
-        string replacement = prg.un(b.first + "_FIFO_buf");
-        prg.buffer_port_widths[replacement] = prg.buffer_port_width(incoming_channel);
-        for (auto kernel : map_find(group_name, fusion_groups)) {
-          prg.find_loop(kernel)->replace_reads_from(b.first, replacement);
-        }
-
-        op* copy_loop_r = copy_before(prg.find_loop(map_find(group_name, group_starts)), incoming, kernel_order, replacement, prg);
-        fresh_groups[group_name].insert(copy_loop_r->name);
+      string replacement = prg.un(b.first + "_FIFO_buf");
+      prg.buffer_port_widths[replacement] = prg.buffer_port_width(incoming_channel);
+      for (auto kernel : map_find(group_name, fusion_groups)) {
+        prg.find_loop(kernel)->replace_reads_from(b.first, replacement);
       }
+
+      isl_set* incoming = set_name(cpy(s), incoming_channel);
+      op* copy_r_insert_point = prg.find_loop(map_find(group_name, group_starts));
+      //op* copy_loop_r = copy_before(prg.find_loop(map_find(group_name, group_starts)), incoming, kernel_order, replacement, prg);
+      op* copy_loop_r = copy_before(copy_r_insert_point, incoming, kernel_order, replacement, prg);
+      fresh_groups[group_name].insert(copy_loop_r->name);
     }
   }
 
