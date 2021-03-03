@@ -1968,6 +1968,7 @@ std::string resource_sharing_loop_codegen(umap* schedmap) {
 
   cout << "Intervals..." << endl;
   vector<isl_set*> interval_sets;
+  int idx = 0;
   for (auto i : intervals) {
     cout << tab(1) << i.first << ", " << i.second << endl;
     vector<string> constraints;
@@ -1976,16 +1977,25 @@ std::string resource_sharing_loop_codegen(umap* schedmap) {
       string v = "d" + str(di);
       vars.push_back(v);
       if (di == d) {
-        constraints.push_back(str(i.first) + " <= " + v + " < " + str(i.second));
+        constraints.push_back(str(i.first) + " <= " + v + ((idx == (int) intervals.size() - 1) ? " <= " : " < ") + str(i.second));
       } 
     }
     isl_set* is = mk_set(ctx(s), vars, constraints);
     interval_sets.push_back(is);
+    idx++;
   }
   cout << endl;
   cout << "Restrictions..." << endl;
-  for (auto i : interval_sets) {
-    cout << tab(1) << str(i) << endl;
+  idx = 0;
+  for (auto is : interval_sets) {
+    auto i = intervals.at(idx);
+    string var = "d" + str(d);
+    cout << "for (" << var << " = " << i.first << "; " << var << " " << ((idx == (int) intervals.size() - 1) ? " <= " : " < ") << " " << i.second << "; " << var << "++)" << endl;
+    umap* r = its_range(schedmap, to_uset(is));
+    cout << perfect_loop_codegen(r) << endl << endl;
+    //cout << tab(1) << str(i) << endl;
+    //cout << tab(1) << "Restricted schedule: " << str(its_range(schedmap, to_uset(i))) << endl
+    idx++;
   }
   assert(false);
 
