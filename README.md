@@ -167,7 +167,7 @@ For AHA CGRA users, we provide interconnect-agonstic testing of memory tile conf
 Put your application clockwork memory function inside `xxx_memory.cpp` in to `example_prog.cpp` and add to the header `example_prog.h`
 Copy `xxx_compute.h` into the root directory `./` of this repo.
 Copy `xxx_compute.json` into the `./coreir_compute/` directory of this repo.
-Lastly, add your application into the top of `test_apps` vector in `test_single_port_mem` method.
+Lastly, add your application into the top of `test_apps` vector in `test_single_port_mem` method in `build_set_test.cpp`.
 ```
 void test_single_port_mem() {
     vector<prog> test_apps;
