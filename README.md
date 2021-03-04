@@ -163,16 +163,22 @@ that can be ignored.
 ## Testing CGRA Memory Functionality with [Lake](https://github.com/StanfordAHA/lake) Verilog Generation.
 
 For AHA CGRA users, we provide interconnect-agonstic testing of memory tile configurations. 
-* Add new application to the test
+### Add new application to the test
 Put your application clockwork memory function inside `xxx_memory.cpp` in to `example_prog.cpp` and add to the header `example_prog.h`
 Copy `xxx_compute.h` into the root directory `./` of this repo.
 Copy `xxx_compute.json` into the `./coreir_compute/` directory of this repo.
-Lastly, add your application into the top of `test_apps` vector in `test_single_port_mem method`.
+Lastly, add your application into the top of `test_apps` vector in `test_single_port_mem` method.
 ```
-vector<prog> test_apps;
-//Add your new application here
-test_apps.push_back(conv_3_3());
+void test_single_port_mem() {
+    vector<prog> test_apps;
+    
+    //Add your new application here
+    
+    test_apps.push_back(conv_3_3());
+    ...
+}
 ```
+### Command to run the test
 The tests depend on CoreIR and Lake. Before running the lake tests, be sure to install CoreIR and Lake. 
 Add the following path to `./user_settings/private_settings.sh`
 ```
@@ -180,7 +186,7 @@ export COREIR_PATH=/path/to/coreir
 export LAKE_PATH=/path/to/lake
 export LAKE_CONTROLLERS=$PWD
 ```
-* Command to run the verilog functionality test.
+Command to run the verilog functionality test.
 ```
 ./rebuild_and_run.sh lake-tests
 ```
