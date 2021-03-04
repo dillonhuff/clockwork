@@ -21722,7 +21722,34 @@ void two_input_blending_test() {
 
 // Generating high performance designs?
 void resource_sharing_test() {
-  prog prg = two_in_blnd(64, 64);
+  prog prg("oned_r");
+  prg.add_input("in");
+  prg.add_output("out");
+
+  pointwise("ina", "id", "in", 1, prg);
+  
+  auto lo = prg.add_loop("y", 0, 1)->add_op("so");
+  lo->add_load("ina", "y");
+  lo->add_load("ina", "y+1");
+  lo->add_load("ina", "y+2");
+  lo->add_store("so", "y");
+  lo->add_function("float_stencil_1x3");
+
+  auto ds = prg.add_loop("d", 0, 1)->add_op("ds");
+  ds->add_load("so", "2*d");
+  ds->add_store("sd", "d");
+
+  lo = prg.add_loop("y1", 0, 1)->add_op("s1");
+  lo->add_load("sd", "y1");
+  lo->add_load("sd", "y1+1");
+  lo->add_load("sd", "y1+2");
+  lo->add_store("out", "y1");
+  lo->add_function("float_stencil_1x3");
+
+  prg.pretty_print();
+  assert(false);
+
+  //prog prg = two_in_blnd(64, 64);
 
   auto valid_deps = prg.validity_deps();
   auto global_sched =
@@ -22267,16 +22294,25 @@ void sef_intelligent_channels2() {
 }
 
 void scheduling_benchmarks() {
-  prog prg = two_in_blnd(2048, 2048);
+  //prog prg = two_in_blnd(2048, 2048);
+  prog prg = llf_grayscale_float(2048, 2048);
+  //prog prg = pointwise();
+  //prog prg = harris();
+
+  auto fusion_groups = one_stage_per_group(prg);
+  app_dag dag = partition_application(fusion_groups, prg);
+  prg = dag.prg;
+  cout << "# of statements to schedule: " << prg.all_ops().size() << endl;
+
   auto um = clockwork_schedule_prog(prg);
   auto umi = prg.optimized_schedule();
   assert(false);
 }
 
 void application_tests() {
-  scheduling_benchmarks();
-
   resource_sharing_test();
+
+  scheduling_benchmarks();
 
   path_sensitive_channel_sizing();
   llf_250_channels(8);

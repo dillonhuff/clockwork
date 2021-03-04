@@ -4426,7 +4426,16 @@ isl_schedule* prog::optimized_schedule() {
   cout << "Computing schedule for: " << str(domain) << endl << tab(1) << " subject to " << str(validity) << endl;
   cout << "Getting schedule..." << endl;
 
+  double total_elapsed = 0.;
+  auto start = std::chrono::system_clock::now();
+
   isl_schedule* sched = isl_union_set_compute_schedule(domain, validity, proximity);
+
+  auto end = std::chrono::system_clock::now();
+  std::chrono::duration<double> elapsed = end - start;
+  total_elapsed += elapsed.count();
+
+  cout << "### Schedule elapsed: " << total_elapsed << endl;
 
   cout << endl;
   cout << "Result: " << str(sched) << endl;
@@ -8910,9 +8919,19 @@ void set_channel_depths_to_constant(const int constant, app_dag& dag) {
 
 umap* clockwork_schedule_prog(prog& prg) {
   auto valid_deps = prg.validity_deps();
+  double total_elapsed = 0.;
+  auto start = std::chrono::system_clock::now();
+
+  auto ss =
+    clockwork_schedule_umap_reversed(prg.whole_iteration_domain(), valid_deps, valid_deps);
+
+  auto end = std::chrono::system_clock::now();
+  std::chrono::duration<double> elapsed = end - start;
+  total_elapsed += elapsed.count();
+
+  cout << "### Clockwork Schedule elapsed: " << total_elapsed << endl;
   auto global_sched =
-    its(clockwork_schedule_umap_reversed(prg.whole_iteration_domain(), valid_deps, valid_deps),
-        prg.whole_iteration_domain());
+    its(ss, prg.whole_iteration_domain());
 
   return global_sched;
 }
