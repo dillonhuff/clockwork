@@ -22266,7 +22266,16 @@ void sef_intelligent_channels2() {
   assert(false);
 }
 
+void scheduling_benchmarks() {
+  prog prg = two_in_blnd(2048, 2048);
+  auto um = clockwork_schedule_prog(prg);
+  auto umi = prg.optimized_schedule();
+  assert(false);
+}
+
 void application_tests() {
+  scheduling_benchmarks();
+
   resource_sharing_test();
 
   path_sensitive_channel_sizing();

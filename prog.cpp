@@ -2052,24 +2052,24 @@ std::string perfect_loop_codegen(umap* schedmap) {
 
   map<string, int> order;
   for (auto time_to_val : get_maps(inv(schedmap))) {
-    cout << "Time to val: " << str(time_to_val) << endl;
+    //cout << "Time to val: " << str(time_to_val) << endl;
     auto val_to_time = inv(time_to_val);
-    cout << "Val to time: " << str(val_to_time) << endl;
+    //cout << "Val to time: " << str(val_to_time) << endl;
     auto last_dim =
       isl_map_project_out(cpy(val_to_time), isl_dim_out, 0, lower_bounds.size() - 1);
-    cout << "Val to last: " << str(last_dim) << endl;
+    //cout << "Val to last: " << str(last_dim) << endl;
     isl_aff* lda = get_aff(last_dim);
     int const_val = -1;
     if (is_cst(lda)) {
-      cout << tab(1) << "Constant!" << endl;
+      //cout << tab(1) << "Constant!" << endl;
       const_val = to_int(const_coeff(lda));
     } else {
       cout << "Error: Final schedule dimension: " << str(lda) << " is not constant" << endl;
       assert(false);
     }
     assert(const_val >= 0);
-    cout << tab(1) << "C = " << const_val << endl;
-    cout << endl;
+    //cout << tab(1) << "C = " << const_val << endl;
+    //cout << endl;
     order[range_name(time_to_val)] = const_val;
   }
 
@@ -2079,10 +2079,10 @@ std::string perfect_loop_codegen(umap* schedmap) {
       });
 
   for (auto tv : maps) {
-    cout << tab(1) << "tv: " << str(tv) << endl;
-    cout << tab(2) << "start project out at: " << num_in_dims(tv) - 1 << endl;
+    //cout << tab(1) << "tv: " << str(tv) << endl;
+    //cout << tab(2) << "start project out at: " << num_in_dims(tv) - 1 << endl;
     auto time_to_val = isl_map_project_out(cpy(tv), isl_dim_in, num_in_dims(tv) - 1, 1);
-    cout << "time to val: " << str(time_to_val) << endl;
+    //cout << "time to val: " << str(time_to_val) << endl;
     auto pw = isl_pw_multi_aff_from_map(time_to_val);
     vector<pair<isl_set*, isl_multi_aff*> > pieces =
       get_pieces(pw);
@@ -2090,10 +2090,10 @@ std::string perfect_loop_codegen(umap* schedmap) {
 
     auto saff = pieces.at(0).second;
     auto dom = pieces.at(0).first;
-    cout << "dom: " << str(dom) << endl;
-    cout << "irn: " << str(index_ranges) << endl;
+    //cout << "dom: " << str(dom) << endl;
+    //cout << "irn: " << str(index_ranges) << endl;
     dom = gist(dom, index_ranges);
-    cout << "ctx: " << str(dom) << endl;
+    //cout << "ctx: " << str(dom) << endl;
     //assert(false);
     conv_out << tab(lower_bounds.size()) << "// " << str(dom) << endl;
     for (auto bs : get_basic_sets(dom)) {
@@ -2416,37 +2416,6 @@ void generate_optimized_code(CodegenOptions& options, prog& prg) {
 
     umap* pre_its_sched =
       clockwork_schedule_umap_reversed(cpy(dom), valid_deps, valid_deps);
-    //cout << "Pre its sched: " << str(pre_its_sched) << endl;
-    //cout << "dom: " << str(dom) << endl;
-    //for (auto m : get_maps(pre_its_sched)) {
-      //for (auto s : get_sets(dom)) {
-        //if (name(s) == domain_name(m)) {
-          //cout << "Matching domains: " << endl;
-          //cout << tab(1) << str(s) << endl;
-          //cout << tab(1) << str(m) << endl << endl;
-
-          //assert(ctx(m) == ctx(s));
-
-          //isl_space* s_dspace = get_space(s);
-          //isl_space* m_dspace = get_space(domain(m));
-
-          //isl_id* dspace_id = isl_space_get_tuple_id(s_dspace, isl_dim_set);
-          //cout << tab(1) << "dspace_id       = " << str(dspace_id) << endl;
-          //isl_id* other_dspace_id = isl_space_get_tuple_id(m_dspace, isl_dim_set);
-          //cout << tab(1) << "other_dspace_id = " << str(other_dspace_id) << endl;
-
-          //cout << tab(1) << "s_dspace: " << str(s_dspace) << endl;
-          //cout << tab(1) << "m_dspace: " << str(m_dspace) << endl;
-
-          //assert(isl_space_has_equal_params(s_dspace, m_dspace));
-          //assert(isl_space_has_equal_tuples(s_dspace, m_dspace));
-          //assert(isl_space_is_equal(s_dspace, m_dspace));
-
-          //isl_map* ints = its(m, s);
-          //cout << tab(1) << "Intersection: " << str(ints) << endl;
-        //}
-      //}
-    //}
     sched =
       its(pre_its_sched, dom);
     cout << "Post its sched: " << str(sched) << endl;
@@ -8937,6 +8906,15 @@ void set_channel_depths_to_constant(const int constant, app_dag& dag) {
       }
     }
   }
+}
+
+umap* clockwork_schedule_prog(prog& prg) {
+  auto valid_deps = prg.validity_deps();
+  auto global_sched =
+    its(clockwork_schedule_umap_reversed(prg.whole_iteration_domain(), valid_deps, valid_deps),
+        prg.whole_iteration_domain());
+
+  return global_sched;
 }
 
 void generate_resource_sharing_code(

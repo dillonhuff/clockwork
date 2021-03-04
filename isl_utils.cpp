@@ -1041,7 +1041,7 @@ std::string codegen_c(isl_multi_aff* const bset) {
 std::string codegen_c_v(isl_aff* const aff) {
   vector<string> ctrl_vars;
   for (int i = 0; i < num_in_dims(aff); i++) {
-    cout << "cv i = " << i << endl;
+    //cout << "cv i = " << i << endl;
     const char* n = isl_aff_get_dim_name(aff, isl_dim_in, i);
     if (n != nullptr) {
       ctrl_vars.push_back(string(n));

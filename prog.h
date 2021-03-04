@@ -2028,3 +2028,6 @@ void generate_resource_sharing_code(
 
 std::string resource_sharing_loop_codegen(umap* schedmap);
 std::string perfect_loop_codegen(umap* schedmap);
+
+umap* clockwork_schedule_prog(prog& prg);
+
