@@ -20848,7 +20848,12 @@ void blur5_static_dynamic_comparison(const int throughput) {
     static_prg.pretty_print();
 
     generate_optimized_code(options, static_prg);
-    vector<int> input_bounds_vs = map_find(pick(static_prg.ins), prg.buffer_bounds);
+
+    static_prg.pretty_print();
+    string buf = pick(static_prg.ins);
+    cout << "Buf = " << buf << endl;
+    vector<int> input_bounds_vs = map_find(buf, static_prg.buffer_bounds);
+    cout << tab(1) << "bounds: " << comma_list(input_bounds_vs) << endl;
     vector<string> input_bounds;
     for (auto b : input_bounds_vs) {
       input_bounds.push_back(str(b));
