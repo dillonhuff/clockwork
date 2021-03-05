@@ -2050,12 +2050,15 @@ std::string non_blocking_loop_codegen(umap* schedmap) {
   isl_set* index_ranges =
     rdset(ctx(schedmap), range_set);
 
+  conv_out << tab(1) << "int current_stmt = 0;";
   for (int i = 0; i < lower_bounds.size() - 1; i++) {
     int trip_count = upper_bounds.at(i) - lower_bounds.at(i) + 1;
     if (trip_count == 1) {
       conv_out << tab(i) << "int i" << str(i) << " = " << lower_bounds.at(i) << ";" << endl;
     } else {
-      conv_out << tab(i) << "for (int i" << str(i) << " = " << lower_bounds.at(i) << "; i" << str(i) << " <= " << upper_bounds.at(i) << "; i" << i << "++) {" << endl;
+      string var = "i" + str(i);
+      conv_out << tab(i) << "int i" << str(i) << " = " << lower_bounds.at(i) << ";" << endl;
+      conv_out << tab(i) << "while (" << var << " <= " << upper_bounds.at(i) << ") {" << endl;
     }
     if (i == ((int) lower_bounds.size()) - 2) {
       conv_out << "#pragma HLS pipeline II=1" << endl;
@@ -2090,11 +2093,17 @@ std::string non_blocking_loop_codegen(umap* schedmap) {
       return map_find(range_name(x), order);
       });
 
+  int num_stmts = maps.size();
+  assert(num_stmts > 0);
+
+  int last_stmt = num_stmts - 1;
+  assert(last_stmt >= 0);
+
+  conv_out << tab(lower_bounds.size() - 2) << "if (current_stmt == " << last_stmt + 1 << ") { current_stmt = 0; }" << endl << endl;
+
+  int current_stmt = 0;
   for (auto tv : maps) {
-    //cout << tab(1) << "tv: " << str(tv) << endl;
-    //cout << tab(2) << "start project out at: " << num_in_dims(tv) - 1 << endl;
     auto time_to_val = isl_map_project_out(cpy(tv), isl_dim_in, num_in_dims(tv) - 1, 1);
-    //cout << "time to val: " << str(time_to_val) << endl;
     auto pw = isl_pw_multi_aff_from_map(time_to_val);
     vector<pair<isl_set*, isl_multi_aff*> > pieces =
       get_pieces(pw);
@@ -2102,32 +2111,26 @@ std::string non_blocking_loop_codegen(umap* schedmap) {
 
     auto saff = pieces.at(0).second;
     auto dom = pieces.at(0).first;
-    //cout << "dom: " << str(dom) << endl;
-    //cout << "irn: " << str(index_ranges) << endl;
     dom = gist(dom, index_ranges);
-    //cout << "ctx: " << str(dom) << endl;
-    //assert(false);
-    conv_out << tab(lower_bounds.size()) << "// " << str(dom) << endl;
-    for (auto bs : get_basic_sets(dom)) {
-      conv_out << tab(lower_bounds.size()) << "// " << str(bs) << endl;
-      for (auto c : constraints(bs)) {
-        conv_out << tab(lower_bounds.size() + 1) << "// " << str(c) << endl;
-      }
-    }
-    conv_out << tab(lower_bounds.size()) << "if (" << codegen_c(dom) << ") {" << endl;
+
+    conv_out << tab(lower_bounds.size()) << "if (" << "current_stmt == " << current_stmt << " && " << codegen_c(dom) << ") {" << endl;
     conv_out << tab(lower_bounds.size() + 1) << codegen_c(saff) << ";" << endl;
+    conv_out << tab(lower_bounds.size() + 1) << "current_stmt++;" << endl;
+    conv_out << tab(lower_bounds.size()) << "} else if (" << "current_stmt == " << current_stmt << " && !" << codegen_c(dom) << ") {" << endl;
+    conv_out << tab(lower_bounds.size() + 1) << "current_stmt++;" << endl;
     conv_out << tab(lower_bounds.size()) << "}" << endl;
+
+    current_stmt++;
   }
 
-  //assert(false);
-
-  for (int i = 0; i < lower_bounds.size() - 1; i++) {
+  for (int i = ((int) lower_bounds.size()) - 2; i >= 0; i--) {
     int trip_count = upper_bounds.at(i) - lower_bounds.at(i) + 1;
     if (trip_count == 1) {
     } else {
-      conv_out << tab(lower_bounds.size() - 1 - i) << "}" << endl;
+      conv_out << tab(i+1) << "i" << i << " = current_stmt == " << last_stmt + 1 << " ? i" << i << " + 1 : i" << i << ";" << endl;
+      conv_out << tab(i) << "}" << endl;
     }
-    //conv_out << tab(lower_bounds.size() - 1 - i) << "}" << endl;
+
   }
 
   return conv_out.str();
