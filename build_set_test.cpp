@@ -21722,7 +21722,7 @@ void two_input_blending_test() {
 
 // Generating high performance designs?
 void resource_sharing_test() {
-  prog prg("oned_r");
+  prog prg("oned_r_oc");
   prg.add_input("in");
   prg.add_output("out");
 
