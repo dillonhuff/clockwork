@@ -2016,6 +2016,123 @@ std::string resource_sharing_loop_codegen(umap* schedmap) {
   return resource_sharing_loop_codegen(schedmap, 0);
 }
 
+std::string non_blocking_loop_codegen(umap* schedmap) {
+  ostringstream conv_out;
+  auto time_range = coalesce(range(schedmap));
+  conv_out << "// time range: " << str(time_range) << endl;
+  auto sets = get_sets(time_range);
+
+  conv_out << "// # sets: " << sets.size() << endl;
+  assert(sets.size() == 1);
+  isl_set* s = pick(get_sets(time_range));
+  //isl_set* index_ranges = isl_set_project_out(cpy(s), isl_dim_set, num_dims(s) - 1, 1);
+  vector<int> lower_bounds;
+  vector<int> upper_bounds;
+  vector<string> constraint_list;
+  vector<string> dvs;
+  for (int d = 0; d < num_dims(s); d++) {
+    auto ds = project_all_but(s, d);
+    auto lm = lexminval(ds);
+    auto lmax = lexmaxval(ds);
+    lower_bounds.push_back(to_int(lm));
+    upper_bounds.push_back(to_int(lmax));
+
+    if (d < num_dims(s) - 1) {
+      string vn = "d" + str(d);
+      dvs.push_back(vn);
+      constraint_list.push_back(str(lower_bounds.back()) + " <= " + vn + " <= " + str(upper_bounds.back()));
+    }
+  }
+
+
+  string range_set =
+    curlies(bracket_list(dvs) + " : " + sep_list(constraint_list, "", "", " and "));
+  isl_set* index_ranges =
+    rdset(ctx(schedmap), range_set);
+
+  for (int i = 0; i < lower_bounds.size() - 1; i++) {
+    int trip_count = upper_bounds.at(i) - lower_bounds.at(i) + 1;
+    if (trip_count == 1) {
+      conv_out << tab(i) << "int i" << str(i) << " = " << lower_bounds.at(i) << ";" << endl;
+    } else {
+      conv_out << tab(i) << "for (int i" << str(i) << " = " << lower_bounds.at(i) << "; i" << str(i) << " <= " << upper_bounds.at(i) << "; i" << i << "++) {" << endl;
+    }
+    if (i == ((int) lower_bounds.size()) - 2) {
+      conv_out << "#pragma HLS pipeline II=1" << endl;
+    }
+  }
+
+  map<string, int> order;
+  for (auto time_to_val : get_maps(inv(schedmap))) {
+    //cout << "Time to val: " << str(time_to_val) << endl;
+    auto val_to_time = inv(time_to_val);
+    //cout << "Val to time: " << str(val_to_time) << endl;
+    auto last_dim =
+      isl_map_project_out(cpy(val_to_time), isl_dim_out, 0, lower_bounds.size() - 1);
+    //cout << "Val to last: " << str(last_dim) << endl;
+    isl_aff* lda = get_aff(last_dim);
+    int const_val = -1;
+    if (is_cst(lda)) {
+      //cout << tab(1) << "Constant!" << endl;
+      const_val = to_int(const_coeff(lda));
+    } else {
+      cout << "Error: Final schedule dimension: " << str(lda) << " is not constant" << endl;
+      assert(false);
+    }
+    assert(const_val >= 0);
+    //cout << tab(1) << "C = " << const_val << endl;
+    //cout << endl;
+    order[range_name(time_to_val)] = const_val;
+  }
+
+  vector<isl_map*> maps = get_maps(inv(schedmap));
+  sort_lt(maps, [order](isl_map* x) {
+      return map_find(range_name(x), order);
+      });
+
+  for (auto tv : maps) {
+    //cout << tab(1) << "tv: " << str(tv) << endl;
+    //cout << tab(2) << "start project out at: " << num_in_dims(tv) - 1 << endl;
+    auto time_to_val = isl_map_project_out(cpy(tv), isl_dim_in, num_in_dims(tv) - 1, 1);
+    //cout << "time to val: " << str(time_to_val) << endl;
+    auto pw = isl_pw_multi_aff_from_map(time_to_val);
+    vector<pair<isl_set*, isl_multi_aff*> > pieces =
+      get_pieces(pw);
+    assert(pieces.size() == 1);
+
+    auto saff = pieces.at(0).second;
+    auto dom = pieces.at(0).first;
+    //cout << "dom: " << str(dom) << endl;
+    //cout << "irn: " << str(index_ranges) << endl;
+    dom = gist(dom, index_ranges);
+    //cout << "ctx: " << str(dom) << endl;
+    //assert(false);
+    conv_out << tab(lower_bounds.size()) << "// " << str(dom) << endl;
+    for (auto bs : get_basic_sets(dom)) {
+      conv_out << tab(lower_bounds.size()) << "// " << str(bs) << endl;
+      for (auto c : constraints(bs)) {
+        conv_out << tab(lower_bounds.size() + 1) << "// " << str(c) << endl;
+      }
+    }
+    conv_out << tab(lower_bounds.size()) << "if (" << codegen_c(dom) << ") {" << endl;
+    conv_out << tab(lower_bounds.size() + 1) << codegen_c(saff) << ";" << endl;
+    conv_out << tab(lower_bounds.size()) << "}" << endl;
+  }
+
+  //assert(false);
+
+  for (int i = 0; i < lower_bounds.size() - 1; i++) {
+    int trip_count = upper_bounds.at(i) - lower_bounds.at(i) + 1;
+    if (trip_count == 1) {
+    } else {
+      conv_out << tab(lower_bounds.size() - 1 - i) << "}" << endl;
+    }
+    //conv_out << tab(lower_bounds.size() - 1 - i) << "}" << endl;
+  }
+
+  return conv_out.str();
+}
+
 std::string perfect_loop_codegen(umap* schedmap) {
   ostringstream conv_out;
   auto time_range = coalesce(range(schedmap));
@@ -2310,6 +2427,8 @@ void generate_app_code_op_logic(
     code_string = perfect_loop_codegen(schedmap);
   } else if (options.hls_loop_codegen == HLS_LOOP_CODEGEN_CYLINDRICAL) {
     code_string = resource_sharing_loop_codegen(schedmap);
+  } else if (options.hls_loop_codegen == HLS_LOOP_CODEGEN_NON_BLOCKING) {
+    code_string = non_blocking_loop_codegen(schedmap);
   } else {
     assert(options.hls_loop_codegen == HLS_LOOP_CODEGEN_ISL);
     code_string = codegen_c(schedmap);

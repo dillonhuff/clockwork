@@ -20855,8 +20855,14 @@ void blur5_static_dynamic_comparison(const int throughput) {
     vector<int> input_bounds_vs = map_find(buf, static_prg.buffer_bounds);
     cout << tab(1) << "bounds: " << comma_list(input_bounds_vs) << endl;
     vector<string> input_bounds;
+    int i = 0;
     for (auto b : input_bounds_vs) {
-      input_bounds.push_back(str(b));
+      if (i < ((int) input_bounds_vs.size()) - 1) {
+        input_bounds.push_back(str(b));
+      } else {
+        input_bounds.push_back("*");
+      }
+      i++;
     }
     app.generate_soda_file(static_prg.name, throughput, input_bounds);
     //assert(false);
@@ -21889,7 +21895,7 @@ void resource_sharing_test() {
 
   CodegenOptions options;
   options.scheduling_algorithm = SCHEDULE_ALGORITHM_CW;
-  options.hls_loop_codegen = HLS_LOOP_CODEGEN_CYLINDRICAL;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_NON_BLOCKING;
   generate_optimized_code(options, prg);
   generate_regression_testbench(prg);
 

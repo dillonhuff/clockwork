@@ -1,7 +1,7 @@
 #include "blur5_16_opt_compute_units.h_merged_compute_units.h_merged_compute_units.h_merged_compute_units.h_merged_compute_units.h"
 
-hw_uint<256> input_to_gp_18_ld13_cu247(hw_uint<16*16>& input_to_gp_18) {
-  return input_to_gp_18;
+hw_uint<256> blurx_ld1_cu247(hw_uint<16*16>& blurx) {
+  return blurx;
 }
 
 hw_uint<256> blurx_to_gp_00_ld5_cu249(hw_uint<16*16>& blurx_to_gp_00) {
@@ -12,8 +12,8 @@ hw_uint<256> input_ld9_cu251(hw_uint<16*16>& input) {
   return input;
 }
 
-hw_uint<256> blurx_ld1_cu253(hw_uint<16*16>& blurx) {
-  return blurx;
+hw_uint<256> input_to_gp_18_ld13_cu253(hw_uint<16*16>& input_to_gp_18) {
+  return input_to_gp_18;
 }
 
 hw_uint<256> input_1_cu255(hw_uint<16*16>& input_arg) {

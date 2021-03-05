@@ -2,7 +2,7 @@ kernel: blur5_16_opt
 unroll factor: 16
 burst width: 256
 
-input uint16: input_arg(1936, 1082)
+input uint16: input_arg(1936, *)
 
 local uint16: input(0, 0) = input_arg(0, 0)
 
