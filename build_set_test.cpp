@@ -20827,7 +20827,6 @@ void blur5_static_dynamic_comparison(const int throughput) {
   int cols = 1920;
 
   int unroll_factor = throughput;
-  //int throughput = unroll_factor;
   string out_name = prefix + "_" + str(unroll_factor);
 
   CodegenOptions options;
@@ -22458,7 +22457,7 @@ void scheduling_benchmarks() {
 }
 
 void application_tests() {
-  blur5_static_dynamic_comparison(7);
+  blur5_static_dynamic_comparison(16);
   resource_sharing_test();
 
   scheduling_benchmarks();
