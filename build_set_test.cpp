@@ -20859,7 +20859,7 @@ void blur5_static_dynamic_comparison(const int throughput) {
       input_bounds.push_back(str(b));
     }
     app.generate_soda_file(static_prg.name, throughput, input_bounds);
-    assert(false);
+    //assert(false);
 
     move_to_benchmarks_folder(out_name + "_opt");
   }
