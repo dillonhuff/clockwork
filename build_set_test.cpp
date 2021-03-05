@@ -21751,7 +21751,10 @@ void resource_sharing_test() {
 
   auto ures = unoptimized_result(prg);
 
-  generate_optimized_code(prg);
+  CodegenOptions options;
+  options.scheduling_algorithm = SCHEDULE_ALGORITHM_CW;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  generate_optimized_code(options, prg);
   generate_regression_testbench(prg);
 
   auto ores = run_regression_tb(prg);

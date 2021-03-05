@@ -98,8 +98,8 @@ inline hw_uint<32>  ina_soc_1_select(ina_cache& ina, int root, int y, int dynami
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // ina_soc_1 read pattern: { soc[root = 0, y] -> ina[y] : 0 <= y <= 258 }
-  // Read schedule : { soc[root = 0, y] -> [2 + y, 1] : 0 <= y <= 258 }
-  // Write schedule: { pw_math_in02[root = 0, pw_math_in01] -> [pw_math_in01, 0] : 0 <= pw_math_in01 <= 260 }
+  // Read schedule : { soc[d0 = 0, d1] -> [0, 2 + d1, 1] : 0 <= d1 <= 258 }
+  // Write schedule: { pw_math_in02[d0 = 0, d1] -> [0, d1, 0] : 0 <= d1 <= 260 }
   auto value_ina_pw_math_in02_8 = ina.ina_pw_math_in02_8_to_ina_soc_1.peek(/* one reader or all rams */ 2);
   return value_ina_pw_math_in02_8;
   return 0;
@@ -109,8 +109,8 @@ inline hw_uint<32>  ina_soc_2_select(ina_cache& ina, int root, int y, int dynami
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // ina_soc_2 read pattern: { soc[root = 0, y] -> ina[1 + y] : 0 <= y <= 258 }
-  // Read schedule : { soc[root = 0, y] -> [2 + y, 1] : 0 <= y <= 258 }
-  // Write schedule: { pw_math_in02[root = 0, pw_math_in01] -> [pw_math_in01, 0] : 0 <= pw_math_in01 <= 260 }
+  // Read schedule : { soc[d0 = 0, d1] -> [0, 2 + d1, 1] : 0 <= d1 <= 258 }
+  // Write schedule: { pw_math_in02[d0 = 0, d1] -> [0, d1, 0] : 0 <= d1 <= 260 }
   auto value_ina_pw_math_in02_8 = ina.ina_pw_math_in02_8_to_ina_soc_2.peek(/* one reader or all rams */ 1);
   return value_ina_pw_math_in02_8;
   return 0;
@@ -120,8 +120,8 @@ inline hw_uint<32>  ina_soc_3_select(ina_cache& ina, int root, int y, int dynami
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // ina_soc_3 read pattern: { soc[root = 0, y] -> ina[2 + y] : 0 <= y <= 258 }
-  // Read schedule : { soc[root = 0, y] -> [2 + y, 1] : 0 <= y <= 258 }
-  // Write schedule: { pw_math_in02[root = 0, pw_math_in01] -> [pw_math_in01, 0] : 0 <= pw_math_in01 <= 260 }
+  // Read schedule : { soc[d0 = 0, d1] -> [0, 2 + d1, 1] : 0 <= d1 <= 258 }
+  // Write schedule: { pw_math_in02[d0 = 0, d1] -> [0, d1, 0] : 0 <= d1 <= 260 }
   auto value_ina_pw_math_in02_8 = ina.ina_pw_math_in02_8_to_ina_soc_3.peek(/* one reader or all rams */ 0);
   return value_ina_pw_math_in02_8;
   return 0;
@@ -244,8 +244,8 @@ inline hw_uint<32>  sd_s1_5_select(sd_cache& sd, int root, int y1, int dynamic_a
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // sd_s1_5 read pattern: { s1[root = 0, y1] -> sd[y1] : 0 <= y1 <= 127 }
-  // Read schedule : { s1[root = 0, y1] -> [6 + 2y1, 3] : 0 <= y1 <= 127 }
-  // Write schedule: { ds[root = 0, d] -> [2 + 2d, 2] : 0 <= d <= 129 }
+  // Read schedule : { s1[d0 = 0, d1] -> [0, 6 + 2d1, 3] : 0 <= d1 <= 127 }
+  // Write schedule: { ds[d0 = 0, d1] -> [0, 2 + 2d1, 2] : 0 <= d1 <= 129 }
   auto value_sd_ds_10 = sd.sd_ds_10_to_sd_s1_5.peek(/* one reader or all rams */ 2);
   return value_sd_ds_10;
   return 0;
@@ -255,8 +255,8 @@ inline hw_uint<32>  sd_s1_6_select(sd_cache& sd, int root, int y1, int dynamic_a
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // sd_s1_6 read pattern: { s1[root = 0, y1] -> sd[1 + y1] : 0 <= y1 <= 127 }
-  // Read schedule : { s1[root = 0, y1] -> [6 + 2y1, 3] : 0 <= y1 <= 127 }
-  // Write schedule: { ds[root = 0, d] -> [2 + 2d, 2] : 0 <= d <= 129 }
+  // Read schedule : { s1[d0 = 0, d1] -> [0, 6 + 2d1, 3] : 0 <= d1 <= 127 }
+  // Write schedule: { ds[d0 = 0, d1] -> [0, 2 + 2d1, 2] : 0 <= d1 <= 129 }
   auto value_sd_ds_10 = sd.sd_ds_10_to_sd_s1_6.peek(/* one reader or all rams */ 1);
   return value_sd_ds_10;
   return 0;
@@ -266,8 +266,8 @@ inline hw_uint<32>  sd_s1_7_select(sd_cache& sd, int root, int y1, int dynamic_a
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // sd_s1_7 read pattern: { s1[root = 0, y1] -> sd[2 + y1] : 0 <= y1 <= 127 }
-  // Read schedule : { s1[root = 0, y1] -> [6 + 2y1, 3] : 0 <= y1 <= 127 }
-  // Write schedule: { ds[root = 0, d] -> [2 + 2d, 2] : 0 <= d <= 129 }
+  // Read schedule : { s1[d0 = 0, d1] -> [0, 6 + 2d1, 3] : 0 <= d1 <= 127 }
+  // Write schedule: { ds[d0 = 0, d1] -> [0, 2 + 2d1, 2] : 0 <= d1 <= 129 }
   auto value_sd_ds_10 = sd.sd_ds_10_to_sd_s1_7.peek(/* one reader or all rams */ 0);
   return value_sd_ds_10;
   return 0;
@@ -340,8 +340,8 @@ inline hw_uint<32>  so_ds_11_select(so_cache& so, int root, int d, int dynamic_a
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // so_ds_11 read pattern: { ds[root = 0, d] -> so[2d] : 0 <= d <= 129 }
-  // Read schedule : { ds[root = 0, d] -> [2 + 2d, 2] : 0 <= d <= 129 }
-  // Write schedule: { soc[root = 0, y] -> [2 + y, 1] : 0 <= y <= 258 }
+  // Read schedule : { ds[d0 = 0, d1] -> [0, 2 + 2d1, 2] : 0 <= d1 <= 129 }
+  // Write schedule: { soc[d0 = 0, d1] -> [0, 2 + d1, 1] : 0 <= d1 <= 258 }
   auto value_so_soc_0 = so.so_soc_0_to_so_ds_11.peek(/* one reader or all rams */ 0);
   return value_so_soc_0;
   return 0;
@@ -458,27 +458,47 @@ void oned_r_oc(HWStream<hw_uint<32> >& /* no bundle get_args num ports = 1 */in,
 #pragma HLS inline recursive
 #endif // __VIVADO_SYNTH__
 
-// schedule: { soc[root = 0, y] -> [2 + y, 1] : 0 <= y <= 258; ds[root = 0, d] -> [2 + 2d, 2] : 0 <= d <= 129; pw_math_in02[root = 0, pw_math_in01] -> [pw_math_in01, 0] : 0 <= pw_math_in01 <= 260; s1[root = 0, y1] -> [6 + 2y1, 3] : 0 <= y1 <= 127 }
-//   { soc[root = 0, y] -> [2 + y, 1] : 0 <= y <= 258 }
-// Condition for soc(((((-1 + 1*i1)) == 0) && (((-2 + 1*i0)) >= 0) && (((260 + -1*i0)) >= 0)))
-//   { ds[root = 0, d] -> [2 + 2d, 2] : 0 <= d <= 129 }
-// Condition for ds(((((-1*i0 + (2*(((1*i0)) >> 1)))) == 0) && (((-2 + 1*i1)) == 0) && (((-2 + 1*i0)) >= 0) && (((260 + -1*i0)) >= 0)))
-//   { pw_math_in02[root = 0, pw_math_in01] -> [pw_math_in01, 0] : 0 <= pw_math_in01 <= 260 }
-// Condition for pw_math_in02(((((1*i1)) == 0) && (((1*i0)) >= 0) && (((260 + -1*i0)) >= 0)))
-//   { s1[root = 0, y1] -> [6 + 2y1, 3] : 0 <= y1 <= 127 }
-// Condition for s1(((((-1*i0 + (2*(((1*i0)) >> 1)))) == 0) && (((-3 + 1*i1)) == 0) && (((-6 + 1*i0)) >= 0) && (((260 + -1*i0)) >= 0)))
+// schedule: { s1[d0 = 0, d1] -> [0, 6 + 2d1, 3] : 0 <= d1 <= 127; pw_math_in02[d0 = 0, d1] -> [0, d1, 0] : 0 <= d1 <= 260; ds[d0 = 0, d1] -> [0, 2 + 2d1, 2] : 0 <= d1 <= 129; soc[d0 = 0, d1] -> [0, 2 + d1, 1] : 0 <= d1 <= 258 }
+//   { s1[d0 = 0, d1] -> [0, 6 + 2d1, 3] : 0 <= d1 <= 127 }
+// Condition for s1(((((-1*i1 + (2*(((1*i1)) >> 1)))) == 0) && (((-3 + 1*i2)) == 0) && (((1*i0)) == 0) && (((-6 + 1*i1)) >= 0) && (((260 + -1*i1)) >= 0)))
+//   { pw_math_in02[d0 = 0, d1] -> [0, d1, 0] : 0 <= d1 <= 260 }
+// Condition for pw_math_in02(((((1*i2)) == 0) && (((1*i0)) == 0) && (((1*i1)) >= 0) && (((260 + -1*i1)) >= 0)))
+//   { ds[d0 = 0, d1] -> [0, 2 + 2d1, 2] : 0 <= d1 <= 129 }
+// Condition for ds(((((-1*i1 + (2*(((1*i1)) >> 1)))) == 0) && (((-2 + 1*i2)) == 0) && (((1*i0)) == 0) && (((-2 + 1*i1)) >= 0) && (((260 + -1*i1)) >= 0)))
+//   { soc[d0 = 0, d1] -> [0, 2 + d1, 1] : 0 <= d1 <= 258 }
+// Condition for soc(((((-1 + 1*i2)) == 0) && (((1*i0)) == 0) && (((-2 + 1*i1)) >= 0) && (((260 + -1*i1)) >= 0)))
 
-	for (int c0 = 0; c0 <= 260; c0 += 1) {
-	  pw_math_in02(in /* buf name */, ina, 0, c0);
-	  if (c0 >= 2) {
-	    soc(ina /* buf name */, so, 0, c0 - 2);
-	    if (c0 % 2 == 0) {
-	      ds(so /* buf name */, sd, 0, (c0 / 2) - 1);
-	      if (c0 >= 6)
-	        s1(sd /* buf name */, out, 0, (c0 / 2) - 3);
-	    }
+	// time range: { [0, i1, i2] : i1 <= 260 and i2 > 0 and floor((i1)/2) > 0 and 2*floor((i1)/2) >= -2 + i1 + i2; [0, i1, 0] : 0 <= i1 <= 260; [0, i1, 3] : (i1) mod 2 = 0 and 6 <= i1 <= 260 }
+	// # sets: 1
+	int i0 = 0;
+	  for (int i1 = 0; i1 <= 260; i1++) {
+	#pragma HLS pipeline II=1
+	      // { [i0, i1] }
+	      // { [i0, i1] :  }
+	      if ((true)) {
+	        pw_math_in02(in /* buf name */, ina, 0, ((1*i1)));
+	      }
+	      // { [i0, i1] : i1 >= 2 }
+	      // { [i0, i1] : i1 >= 2 }
+	        // { [i0, i1] : -2 + i1 >= 0 }
+	      if ((((((-2 + 1*i1)) >= 0)))) {
+	        soc(ina /* buf name */, so, 0, ((-2 + 1*i1)));
+	      }
+	      // { [i0, i1] : (i1) mod 2 = 0 and i1 >= 2 }
+	      // { [i0, i1] : (i1) mod 2 = 0 and i1 >= 2 }
+	        // { [i0, i1] : -i1 + 2*floor((i1)/2) = 0 }
+	        // { [i0, i1] : -2 + i1 >= 0 }
+	      if ((((((-1*i1 + (2*(((1*i1)) >> 1)))) == 0) && (((-2 + 1*i1)) >= 0)))) {
+	        ds(so /* buf name */, sd, 0, ((-1 + (1*(((1*i1)) >> 1)))));
+	      }
+	      // { [i0, i1] : (i1) mod 2 = 0 and i1 >= 6 }
+	      // { [i0, i1] : (i1) mod 2 = 0 and i1 >= 6 }
+	        // { [i0, i1] : -i1 + 2*floor((i1)/2) = 0 }
+	        // { [i0, i1] : -6 + i1 >= 0 }
+	      if ((((((-1*i1 + (2*(((1*i1)) >> 1)))) == 0) && (((-6 + 1*i1)) >= 0)))) {
+	        s1(sd /* buf name */, out, 0, ((-3 + (1*(((1*i1)) >> 1)))));
+	      }
 	  }
-	}
 	
 #ifndef __VIVADO_SYNTH__
   debug_file.close();
