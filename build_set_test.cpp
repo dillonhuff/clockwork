@@ -6276,11 +6276,57 @@ struct App {
   }
 
   void generate_soda_file(const std::string& name) {
+    string max_buffer = max_buf();
     string rep = pick(app_dag).first;
-    generate_soda_file(name, last_update(rep).unroll_factor);
+    Box domain = data_domain(max_buffer);
+    //assert(domain.dimension() == 2);
+    vector<string> dims;
+    for (int i = 0; i < domain.dimension(); i++) {
+      if (i < domain.dimension() - 1) {
+        dims.push_back(str(domain.length(i)));
+      } else {
+        dims.push_back("*");
+      }
+    }
+    generate_soda_file(name, last_update(rep).unroll_factor, dims);
   }
 
   void generate_soda_file(const std::string& name, const int unroll_factor) {
+    string max_buffer = max_buf();
+    string rep = pick(app_dag).first;
+    Box domain = data_domain(max_buffer);
+    vector<string> dims;
+    for (int i = 0; i < domain.dimension(); i++) {
+      if (i < domain.dimension() - 1) {
+        dims.push_back(str(domain.length(i)));
+      } else {
+        dims.push_back("*");
+      }
+    }
+    generate_soda_file(name, unroll_factor, dims);
+  }
+
+  std::string max_buf() {
+    std::set<string> external_buffers;
+    for (auto f : sort_functions()) {
+      if (producers(f).size() == 0) {
+        external_buffers.insert(f);
+      }
+    }
+
+    string max_buffer;
+    int max_size = -1;
+    for (auto b : external_buffers) {
+      if (original_buffer_size(b) > max_size) {
+        max_buffer = b;
+        max_size = original_buffer_size(b);
+      }
+    }
+
+    return max_buffer;
+  }
+
+  void generate_soda_file(const std::string& name, const int unroll_factor, std::vector<std::string>& dims) {
     ofstream out(name + ".soda");
     out << "kernel: " << name << endl;
 
@@ -6299,29 +6345,30 @@ struct App {
     }
 
     assert(external_buffers.size() > 0);
-    string max_buffer;
-    int max_size = -1;
-    for (auto b : external_buffers) {
-      if (original_buffer_size(b) > max_size) {
-        max_buffer = b;
-        max_size = original_buffer_size(b);
-      }
-    }
-    for (auto b : external_buffers) {
-      if (b != max_buffer) {
-        out << "input " << num_type_cstring() << ": " << b << endl;
-      }
-    }
-    Box domain = data_domain(max_buffer);
+    string max_buffer = max_buf();
+    //string max_buffer;
+    //int max_size = -1;
+    //for (auto b : external_buffers) {
+      //if (original_buffer_size(b) > max_size) {
+        //max_buffer = b;
+        //max_size = original_buffer_size(b);
+      //}
+    //}
+    //for (auto b : external_buffers) {
+      //if (b != max_buffer) {
+        //out << "input " << num_type_cstring() << ": " << b << endl;
+      //}
+    //}
+    //Box domain = data_domain(max_buffer);
     //assert(domain.dimension() == 2);
-    vector<string> dims;
-    for (int i = 0; i < domain.dimension(); i++) {
-      if (i < domain.dimension() - 1) {
-        dims.push_back(str(domain.length(i)));
-      } else {
-        dims.push_back("*");
-      }
-    }
+    //vector<string> dims;
+    //for (int i = 0; i < domain.dimension(); i++) {
+      //if (i < domain.dimension() - 1) {
+        //dims.push_back(str(domain.length(i)));
+      //} else {
+        //dims.push_back("*");
+      //}
+    //}
     out << "input " << num_type_cstring() << ": " << max_buffer << sep_list(dims, "(", ")", ", ") << endl << endl;
 
     vector<string> zeros;
@@ -6338,30 +6385,9 @@ struct App {
             out << "output " << num_type_cstring() << ": " << f << zrs << " = ";
               out << soda_compute_string(width, u.def) << endl << endl;
           } else {
-            //bool all_producers_external = true;
-            //for (auto p : producers(f)) {
-              //if (!elem(p.name, external_buffers)) {
-                //all_producers_external = false;
-                //break;
-              //}
-            //}
 
-            //if (all_producers_external) {
-              //Box domain = data_domain(f);
-              ////assert(domain.dimension() == 2);
-              //vector<string> dims;
-              //for (int i = 0; i < domain.dimension(); i++) {
-                //if (i < domain.dimension() - 1) {
-                  //dims.push_back(str(domain.length(i)));
-                //} else {
-                  //dims.push_back("*");
-                //}
-              //}
-              //out << "input " << num_type_cstring() << ": " << f << sep_list(dims, "(", ")", ", ") << endl << endl;
-            //} else {
-              out << "local " << num_type_cstring() << ": " << f << zrs << " = ";
-              out << soda_compute_string(width, u.def) << endl << endl;
-            //}
+            out << "local " << num_type_cstring() << ": " << f << zrs << " = ";
+            out << soda_compute_string(width, u.def) << endl << endl;
           }
         }
       }
