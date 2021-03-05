@@ -2104,6 +2104,10 @@ std::string non_blocking_loop_codegen(umap* schedmap, prog& prg) {
   int current_stmt = 0;
   for (auto tv : maps) {
     auto time_to_val = isl_map_project_out(cpy(tv), isl_dim_in, num_in_dims(tv) - 1, 1);
+
+    cout << "Getting statement name from: " << str(time_to_val) << endl;
+    string stmt = range_name(time_to_val);
+
     auto pw = isl_pw_multi_aff_from_map(time_to_val);
     vector<pair<isl_set*, isl_multi_aff*> > pieces =
       get_pieces(pw);
@@ -2113,9 +2117,22 @@ std::string non_blocking_loop_codegen(umap* schedmap, prog& prg) {
     auto dom = pieces.at(0).first;
     dom = gist(dom, index_ranges);
 
+
+    cout << "Stmt: " << stmt << endl;
+
+    op* s = prg.find_op(stmt);
+    vector<string> check_str{"true"};
+    for (auto b : s->buffers_read()) {
+      if (elem(b, prg.ins)) {
+        check_str.push_back("!" + parens(b + ".is_empty()"));
+      }
+    }
+    string not_blocked = sep_list(check_str, "(", ")", " && ");
+
+
     conv_out << tab(lower_bounds.size()) << "if (" << "current_stmt == " << current_stmt << " && !" << codegen_c(dom) << ") {" << endl;
     conv_out << tab(lower_bounds.size() + 1) << "current_stmt++;" << endl;
-    conv_out << tab(lower_bounds.size()) << "} else if (" << "current_stmt == " << current_stmt << " && " << codegen_c(dom) << ") {" << endl;
+    conv_out << tab(lower_bounds.size()) << "} else if (" << "current_stmt == " << current_stmt << " && " << not_blocked << " && " << codegen_c(dom) << ") {" << endl;
     conv_out << tab(lower_bounds.size() + 1) << codegen_c(saff) << ";" << endl;
     conv_out << tab(lower_bounds.size() + 1) << "current_stmt++;" << endl;
     conv_out << tab(lower_bounds.size()) << "}" << endl;

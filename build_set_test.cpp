@@ -21861,6 +21861,32 @@ void two_input_blending_test() {
   assert(false);
 }
 
+void pyr_blnd_non_blocking_test() {
+  prog prg = two_in_blnd(2048, 2048);
+  prg.name = prg.name + "_nb";
+  //auto ures = unoptimized_result(prg);
+
+  CodegenOptions options;
+  options.scheduling_algorithm = SCHEDULE_ALGORITHM_CW;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_NON_BLOCKING;
+  options.slack_matching = {SLACK_MATCHING_TYPE_FIXED, 2};
+
+  auto fusion_groups = one_stage_per_group(prg);
+  app_dag dag = partition_application(fusion_groups, prg);
+  generate_app_code(options, dag);
+
+  //generate_regression_testbench(prg);
+
+  //auto ores = run_regression_tb(prg);
+
+
+  //compare(prg.name + "opt comparison", ures, ores);
+  //assert(false);
+  move_to_benchmarks_folder(prg.name);
+
+  assert(false);
+}
+
 // Generating high performance designs?
 void resource_sharing_test() {
   //prog prg("oned_r_oc");
@@ -22468,6 +22494,7 @@ void scheduling_benchmarks() {
 }
 
 void application_tests() {
+  pyr_blnd_non_blocking_test();
   resource_sharing_test();
 
   blur5_static_dynamic_comparison(16);
