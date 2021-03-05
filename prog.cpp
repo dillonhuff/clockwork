@@ -2016,7 +2016,7 @@ std::string resource_sharing_loop_codegen(umap* schedmap) {
   return resource_sharing_loop_codegen(schedmap, 0);
 }
 
-std::string non_blocking_loop_codegen(umap* schedmap) {
+std::string non_blocking_loop_codegen(umap* schedmap, prog& prg) {
   ostringstream conv_out;
   auto time_range = coalesce(range(schedmap));
   conv_out << "// time range: " << str(time_range) << endl;
@@ -2113,10 +2113,10 @@ std::string non_blocking_loop_codegen(umap* schedmap) {
     auto dom = pieces.at(0).first;
     dom = gist(dom, index_ranges);
 
-    conv_out << tab(lower_bounds.size()) << "if (" << "current_stmt == " << current_stmt << " && " << codegen_c(dom) << ") {" << endl;
-    conv_out << tab(lower_bounds.size() + 1) << codegen_c(saff) << ";" << endl;
+    conv_out << tab(lower_bounds.size()) << "if (" << "current_stmt == " << current_stmt << " && !" << codegen_c(dom) << ") {" << endl;
     conv_out << tab(lower_bounds.size() + 1) << "current_stmt++;" << endl;
-    conv_out << tab(lower_bounds.size()) << "} else if (" << "current_stmt == " << current_stmt << " && !" << codegen_c(dom) << ") {" << endl;
+    conv_out << tab(lower_bounds.size()) << "} else if (" << "current_stmt == " << current_stmt << " && " << codegen_c(dom) << ") {" << endl;
+    conv_out << tab(lower_bounds.size() + 1) << codegen_c(saff) << ";" << endl;
     conv_out << tab(lower_bounds.size() + 1) << "current_stmt++;" << endl;
     conv_out << tab(lower_bounds.size()) << "}" << endl;
 
@@ -2431,7 +2431,7 @@ void generate_app_code_op_logic(
   } else if (options.hls_loop_codegen == HLS_LOOP_CODEGEN_CYLINDRICAL) {
     code_string = resource_sharing_loop_codegen(schedmap);
   } else if (options.hls_loop_codegen == HLS_LOOP_CODEGEN_NON_BLOCKING) {
-    code_string = non_blocking_loop_codegen(schedmap);
+    code_string = non_blocking_loop_codegen(schedmap, prg);
   } else {
     assert(options.hls_loop_codegen == HLS_LOOP_CODEGEN_ISL);
     code_string = codegen_c(schedmap);
