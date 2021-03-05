@@ -22468,8 +22468,9 @@ void scheduling_benchmarks() {
 }
 
 void application_tests() {
-  blur5_static_dynamic_comparison(16);
   resource_sharing_test();
+
+  blur5_static_dynamic_comparison(16);
 
   scheduling_benchmarks();
 
