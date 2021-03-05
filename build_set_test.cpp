@@ -21728,7 +21728,7 @@ void resource_sharing_test() {
 
   pointwise("ina", "id", "in", 1, prg);
   
-  auto lo = prg.add_loop("y", 0, 1)->add_op("so");
+  auto lo = prg.add_loop("y", 0, 1)->add_op("soc");
   lo->add_load("ina", "y");
   lo->add_load("ina", "y+1");
   lo->add_load("ina", "y+2");
@@ -21746,7 +21746,20 @@ void resource_sharing_test() {
   lo->add_store("out", "y1");
   lo->add_function("float_stencil_1x3");
 
+  infer_bounds("out", {128}, prg);
   prg.pretty_print();
+
+  auto ures = unoptimized_result(prg);
+
+  generate_optimized_code(prg);
+  generate_regression_testbench(prg);
+
+  auto ores = run_regression_tb(prg);
+
+
+  compare(prg.name + "opt comparison", ures, ores);
+  move_to_benchmarks_folder(prg.name);
+
   assert(false);
 
   //prog prg = two_in_blnd(64, 64);
