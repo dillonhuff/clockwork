@@ -1929,7 +1929,7 @@ isl_set* mk_set(isl_ctx* c, const vector<string>& vars, const vector<string>& co
   return isl_set_read_from_str(c, s.c_str());
 }
 
-std::string resource_sharing_loop_codegen(umap* schedmap) {
+std::string resource_sharing_loop_codegen(umap* schedmap, const int d) {
   auto time_range = coalesce(range(schedmap));
   auto sets = get_sets(time_range);
 
@@ -1937,10 +1937,13 @@ std::string resource_sharing_loop_codegen(umap* schedmap) {
   isl_set* s = pick(get_sets(time_range));
   assert(s != nullptr);
 
+  if (d == num_dims(s) - 1) {
+    return perfect_loop_codegen(schedmap);
+  }
+
   vector<isl_map*> maps = get_maps(schedmap);
   vector<pair<string, pair<int, int> > > bounds;
   vector<int> split_points;
-  int d = 1;
   for (auto m : maps) {
     isl_set* rng = project_all_but(range(m), d);
     bounds.push_back({domain_name(m), {to_int(lexminval(rng)), to_int(lexmaxval(rng))}});
@@ -1966,6 +1969,10 @@ std::string resource_sharing_loop_codegen(umap* schedmap) {
     intervals.push_back({breakpts[i], breakpts[i + 1]});
   }
 
+  if (intervals.size() == 0) {
+    return resource_sharing_loop_codegen(schedmap, d + 1);
+  }
+
   cout << "Intervals..." << endl;
   vector<isl_set*> interval_sets;
   int idx = 0;
@@ -1987,21 +1994,26 @@ std::string resource_sharing_loop_codegen(umap* schedmap) {
   cout << endl;
   cout << "Restrictions..." << endl;
   idx = 0;
+  ostringstream out;
   for (auto is : interval_sets) {
+    out << tab(1) << "{" << endl;
     auto i = intervals.at(idx);
     string var = "d" + str(d);
     cout << "for (" << var << " = " << i.first << "; " << var << " " << ((idx == (int) intervals.size() - 1) ? " <= " : " < ") << " " << i.second << "; " << var << "++)" << endl;
     umap* r = its_range(schedmap, to_uset(is));
-    cout << perfect_loop_codegen(r) << endl << endl;
-    //cout << tab(1) << str(i) << endl;
-    //cout << tab(1) << "Restricted schedule: " << str(its_range(schedmap, to_uset(i))) << endl
+    //out << perfect_loop_codegen(r) << endl << endl;
+    out << resource_sharing_loop_codegen(r, d + 1) << endl << endl;
+    out << tab(1) << "}" << endl;
     idx++;
   }
-  assert(false);
 
   cout << "Schedule maps..." << endl;
 
-  return "";
+  return out.str();
+}
+
+std::string resource_sharing_loop_codegen(umap* schedmap) {
+  return resource_sharing_loop_codegen(schedmap, 0);
 }
 
 std::string perfect_loop_codegen(umap* schedmap) {
@@ -2296,6 +2308,8 @@ void generate_app_code_op_logic(
     // Do nothing, leave code string
   } else if (options.hls_loop_codegen == HLS_LOOP_CODEGEN_PERFECT) {
     code_string = perfect_loop_codegen(schedmap);
+  } else if (options.hls_loop_codegen == HLS_LOOP_CODEGEN_CYLINDRICAL) {
+    code_string = resource_sharing_loop_codegen(schedmap);
   } else {
     assert(options.hls_loop_codegen == HLS_LOOP_CODEGEN_ISL);
     code_string = codegen_c(schedmap);

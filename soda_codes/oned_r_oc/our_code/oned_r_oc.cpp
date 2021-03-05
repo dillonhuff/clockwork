@@ -468,36 +468,78 @@ void oned_r_oc(HWStream<hw_uint<32> >& /* no bundle get_args num ports = 1 */in,
 //   { soc[d0 = 0, d1] -> [0, 2 + d1, 1] : 0 <= d1 <= 258 }
 // Condition for soc(((((-1 + 1*i2)) == 0) && (((1*i0)) == 0) && (((-2 + 1*i1)) >= 0) && (((260 + -1*i1)) >= 0)))
 
-	// time range: { [0, i1, i2] : i1 <= 260 and i2 > 0 and floor((i1)/2) > 0 and 2*floor((i1)/2) >= -2 + i1 + i2; [0, i1, 0] : 0 <= i1 <= 260; [0, i1, 3] : (i1) mod 2 = 0 and 6 <= i1 <= 260 }
+	  {
+	// time range: { [0, i1, 0] : 0 <= i1 <= 1 }
 	// # sets: 1
 	int i0 = 0;
-	  for (int i1 = 0; i1 <= 260; i1++) {
+	  for (int i1 = 0; i1 <= 1; i1++) {
 	#pragma HLS pipeline II=1
 	      // { [i0, i1] }
 	      // { [i0, i1] :  }
 	      if ((true)) {
 	        pw_math_in02(in /* buf name */, ina, 0, ((1*i1)));
 	      }
-	      // { [i0, i1] : i1 >= 2 }
-	      // { [i0, i1] : i1 >= 2 }
-	        // { [i0, i1] : -2 + i1 >= 0 }
-	      if ((((((-2 + 1*i1)) >= 0)))) {
+	  }
+	
+	
+	  }
+	  {
+	// time range: { [0, i1, i2] : 2 <= i1 <= 5 and i2 >= 0 and 2*floor((i1)/2) >= -2 + i1 + i2 }
+	// # sets: 1
+	int i0 = 0;
+	  for (int i1 = 2; i1 <= 5; i1++) {
+	#pragma HLS pipeline II=1
+	      // { [i0, i1] }
+	      // { [i0, i1] :  }
+	      if ((true)) {
+	        pw_math_in02(in /* buf name */, ina, 0, ((1*i1)));
+	      }
+	      // { [i0, i1] }
+	      // { [i0, i1] :  }
+	      if ((true)) {
 	        soc(ina /* buf name */, so, 0, ((-2 + 1*i1)));
 	      }
-	      // { [i0, i1] : (i1) mod 2 = 0 and i1 >= 2 }
-	      // { [i0, i1] : (i1) mod 2 = 0 and i1 >= 2 }
+	      // { [i0, i1] : (i1) mod 2 = 0 }
+	      // { [i0, i1] : (i1) mod 2 = 0 }
 	        // { [i0, i1] : -i1 + 2*floor((i1)/2) = 0 }
-	        // { [i0, i1] : -2 + i1 >= 0 }
-	      if ((((((-1*i1 + (2*(((1*i1)) >> 1)))) == 0) && (((-2 + 1*i1)) >= 0)))) {
+	      if ((((((-1*i1 + (2*(((1*i1)) >> 1)))) == 0)))) {
 	        ds(so /* buf name */, sd, 0, ((-1 + (1*(((1*i1)) >> 1)))));
 	      }
-	      // { [i0, i1] : (i1) mod 2 = 0 and i1 >= 6 }
-	      // { [i0, i1] : (i1) mod 2 = 0 and i1 >= 6 }
+	  }
+	
+	
+	  }
+	  {
+	// time range: { [0, i1, i2] : 6 <= i1 <= 260 and i2 >= 0 and 2*floor((i1)/2) >= -2 + i1 + i2; [0, i1, 3] : (i1) mod 2 = 0 and 6 <= i1 <= 260 }
+	// # sets: 1
+	int i0 = 0;
+	  for (int i1 = 6; i1 <= 260; i1++) {
+	#pragma HLS pipeline II=1
+	      // { [i0, i1] }
+	      // { [i0, i1] :  }
+	      if ((true)) {
+	        pw_math_in02(in /* buf name */, ina, 0, ((1*i1)));
+	      }
+	      // { [i0, i1] }
+	      // { [i0, i1] :  }
+	      if ((true)) {
+	        soc(ina /* buf name */, so, 0, ((-2 + 1*i1)));
+	      }
+	      // { [i0, i1] : (i1) mod 2 = 0 }
+	      // { [i0, i1] : (i1) mod 2 = 0 }
 	        // { [i0, i1] : -i1 + 2*floor((i1)/2) = 0 }
-	        // { [i0, i1] : -6 + i1 >= 0 }
-	      if ((((((-1*i1 + (2*(((1*i1)) >> 1)))) == 0) && (((-6 + 1*i1)) >= 0)))) {
+	      if ((((((-1*i1 + (2*(((1*i1)) >> 1)))) == 0)))) {
+	        ds(so /* buf name */, sd, 0, ((-1 + (1*(((1*i1)) >> 1)))));
+	      }
+	      // { [i0, i1] : (i1) mod 2 = 0 }
+	      // { [i0, i1] : (i1) mod 2 = 0 }
+	        // { [i0, i1] : -i1 + 2*floor((i1)/2) = 0 }
+	      if ((((((-1*i1 + (2*(((1*i1)) >> 1)))) == 0)))) {
 	        s1(sd /* buf name */, out, 0, ((-3 + (1*(((1*i1)) >> 1)))));
 	      }
+	  }
+	
+	
 	  }
 	
 #ifndef __VIVADO_SYNTH__
