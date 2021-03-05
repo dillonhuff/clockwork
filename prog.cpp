@@ -1999,7 +1999,7 @@ std::string resource_sharing_loop_codegen(umap* schedmap, const int d) {
     out << tab(1) << "{" << endl;
     auto i = intervals.at(idx);
     string var = "d" + str(d);
-    cout << "for (" << var << " = " << i.first << "; " << var << " " << ((idx == (int) intervals.size() - 1) ? " <= " : " < ") << " " << i.second << "; " << var << "++)" << endl;
+    //cout << "for (" << var << " = " << i.first << "; " << var << " " << ((idx == (int) intervals.size() - 1) ? " <= " : " < ") << " " << i.second << "; " << var << "++)" << endl;
     umap* r = its_range(schedmap, to_uset(is));
     //out << perfect_loop_codegen(r) << endl << endl;
     out << resource_sharing_loop_codegen(r, d + 1) << endl << endl;
