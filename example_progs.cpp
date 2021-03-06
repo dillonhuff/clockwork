@@ -8,7 +8,7 @@ prog fft8() {
 // Stencil<float, 8, 2> &hw_input_stencil = arg_0;
   prg.add_input("hw_input_stencil");
   prg.buffer_port_widths["hw_input_stencil"] = 32;
-// Stencil<float, 8, 2, 8> &hw_twi_stencil = arg_1;
+// Stencil<float, 8, 2, 3> &hw_twi_stencil = arg_1;
   prg.add_input("hw_twi_stencil");
   prg.buffer_port_widths["hw_twi_stencil"] = 32;
 // Stencil<float, 8, 2> &hw_output_stencil = arg_2;
@@ -226,6 +226,7 @@ prog fft8() {
 
   return prg;
 }
+
 
 
 
