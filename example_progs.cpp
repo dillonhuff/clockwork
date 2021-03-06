@@ -470,6 +470,7 @@ prog resnet_simple() {
   return prg;
 }
 
+
 prog counter() {
   prog prg;
   prg.compute_unit_file = "counter_compute.h";
