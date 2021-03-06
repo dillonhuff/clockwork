@@ -1,0 +1,12 @@
+# Depending on the order of the contraints (PolyLib may change them around)
+# the following problem yields neighborhood simplices that are either triangles
+# or quadrilaterals.  The order below results in only triangles
+5 6
+   1    1    0    0    0    0 
+   1   -6    2  -13   -5    0 
+   1    1   -2    5    2    0 
+   1    0    1    0    0    0 
+   1    0    0    0    0    1 
+
+E 2
+P 2

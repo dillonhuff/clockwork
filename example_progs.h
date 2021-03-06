@@ -1,6 +1,8 @@
 #pragma once
 #include "prog.h"
 
+prog fft8();
+
 prog counter();
 prog conv_multi(); //multiple-tile-cnn
 prog strided_conv();

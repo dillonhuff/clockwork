@@ -1,0 +1,17 @@
+var s_blur_example_update_0, integer;
+var s_blurx_update_0, integer;
+var s_input_arg_update_0, integer;
+var s_input_update_0, integer;
+s.t. c0 : 1*s_blurx_update_0 + 0*s_input_update_0 + 0*s_input_arg_update_0 + 0*s_blur_example_update_0 + -1>= 0;
+s.t. c1 : -1*s_blurx_update_0 + 0*s_input_update_0 + 0*s_input_arg_update_0 + 1*s_blur_example_update_0 + 0>= 0;
+s.t. c2 : 1*s_blurx_update_0 + 0*s_input_update_0 + 0*s_input_arg_update_0 + -1*s_blur_example_update_0 + 0>= 0;
+s.t. c3 : -1*s_blurx_update_0 + 0*s_input_update_0 + 1*s_input_arg_update_0 + 0*s_blur_example_update_0 + 0>= 0;
+s.t. c4 : 1*s_blurx_update_0 + 0*s_input_update_0 + -1*s_input_arg_update_0 + 0*s_blur_example_update_0 + 0>= 0;
+s.t. c5 : -1*s_blurx_update_0 + 1*s_input_update_0 + 0*s_input_arg_update_0 + 0*s_blur_example_update_0 + 0>= 0;
+s.t. c6 : 1*s_blurx_update_0 + -1*s_input_update_0 + 0*s_input_arg_update_0 + 0*s_blur_example_update_0 + 0>= 0;
+minimize obj: 1*s_blur_example_update_0 + 1*s_blurx_update_0 + 1*s_input_arg_update_0 + 1*s_input_update_0;
+solve;printf "s_blur_example_update_0 = %d\n", s_blur_example_update_0;
+printf "s_blurx_update_0 = %d\n", s_blurx_update_0;
+printf "s_input_arg_update_0 = %d\n", s_input_arg_update_0;
+printf "s_input_update_0 = %d\n", s_input_update_0;
+end;

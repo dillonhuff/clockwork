@@ -1,0 +1,100 @@
+barvinok is a library for counting the number of integer points
+in parametric and non-parametric polytopes as well as projections
+of such sets.
+For parametric polytopes the count is represented by either
+an explicit function or a generating function.
+The first comes in the shape of a piece-wise step-polynomial.
+This is a generalization of both Ehrhart quasi-polynomials
+and vector partition functions.
+The second is a generalization of an Ehrhart series.
+
+This library shares some functionality with LattE
+(http://www.math.ucdavis.edu/~latte/)
+and uses PolyLib (included), NTL (http://shoup.net/ntl/).
+If you have cloned the git repository, you need to run
+	./get_submodules.sh
+	sh autogen.sh
+to get the submodules and create the configure scripts.
+
+Additionally, the following packages can optionally be used
+- Omega+ (http://chunchen.info/omega/)
+- GLPK (http://www.gnu.org/software/glpk/)
+
+NTL needs to have been compiled with GMP support.
+That is, you have to specify
+    NTL_GMP_LIP=on
+NTL also needs to have been compiled in ISO mode.
+For versions older than 5.4, this means you need an additional
+    NTL_STD_CXX=on
+
+Suppose you want to install everything in /opt,
+Then you configure/compile NTL using
+
+cd src
+./configure NTL_GMP_LIP=on PREFIX=/opt GMP_PREFIX=/path/to/gmp
+make
+make install
+
+Configure this library using
+
+./configure --prefix=/opt --with-gmp-prefix=/path/to/gmp --with-ntl-prefix=/opt
+
+If you want shared libraries, then configure with the
+--enable-shared-barvinok option.
+Note that this requires NTL to have been built as a shared library as well
+(using "SHARED=on" on its configure line).
+Also note that if you have previously installed a shared library of an older
+version of barvinok, and you do not install one for this version, then the
+linker may pick up the old shared library rather than the new static library.
+
+By default, barvinok will use the included copy of isl.
+If you want it to use a pre-installed version of isl instead, then
+configure with the --with-isl=system option.  Use the --with-isl-prefix
+option to specify the installation prefix of isl, if needed.
+
+If you want to compile and use the included pet library, then
+you need the following packages:
+- libyaml (http://pyyaml.org/wiki/LibYAML)
+- LLVM/clang (http://clang.llvm.org/get_started.html)
+Additionally, you need to configure with the --with-pet=bundled option.
+See pet/README for more information.
+
+Then
+
+make
+make check
+make install
+
+If you want to put any one of these packages in the default location
+(typically /usr/local), then the prefix argument can be omitted.
+For more information on other arguments,
+
+./configure --help
+
+The input format of barvinok_enumerate is the same as that
+of testehrhart from the PolyLib distribution.
+See the PolyLib manual, barvinok_enumerate.c or the
+examples in tests/ehrhart/ .
+
+Note that the fractional representation is subject to change.
+
+The library supports three specialization algorithms.
+The first performs a direct specialization using a random vector.
+The second performs a "depth-first" incremental specialization.
+The third performs a "breadth-first" incremental specialization.
+
+The first is usually the fastest, but can fail if the random
+vector happens to be chosen incorrectly.
+The incremental algorithms should never fail, but can be slower,
+in some cases by quite a bit.  The breadth-first version should
+be faster than the depth-first version, especially on polytopes
+of moderate dimension with a lot of "structure", but can require
+more memory.
+
+For bug reports, feature requests and questions,
+contact http://groups.google.com/group/isl-development
+
+Whenever you report a bug, please mention the exact version of barvinok
+that you are using (output of "./iscc --version").  If you are unable
+to compile barvinok, then report the git version (output of "git describe")
+or the version included in the name of the tarball.

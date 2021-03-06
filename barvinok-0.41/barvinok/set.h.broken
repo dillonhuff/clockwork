@@ -1,0 +1,3 @@
+#define negate STL_NEGATE
+#include <set>
+#undef negate

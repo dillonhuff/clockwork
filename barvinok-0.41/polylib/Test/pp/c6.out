@@ -1,0 +1,1196 @@
+---------------------------------------
+Domain :
+         P - S - T  >= 0
+         T  >= 0
+         S - T  >= 0
+         R - T  >= 0
+         Q - S - T  >= 0
+          1 >= 0
+
+Vertices :
+[ S+T,  S+T,  T,  T,  T,  0 ]
+[ S+T,  S+T,  T,  T,  T,  -Q+T ]
+[ 0,  S+T,  T,  T,  T,  0 ]
+[ 0,  S+T,  T,  T,  T,  -Q+T ]
+[ 0,  0,  T,  T,  T,  0 ]
+[ 0,  0,  T,  T,  T,  -Q+T ]
+[ 0,  0,  -S,  T,  T,  0 ]
+[ 0,  0,  -S,  T,  T,  -Q+T ]
+[ 0,  0,  -S,  -S,  T,  0 ]
+[ 0,  0,  -S,  -S,  T,  -Q+T ]
+[ 0,  0,  -S,  -S,  -S,  0 ]
+[ 0,  0,  -S,  -S,  -S,  -Q-S ]
+---------------------------------------
+Domain :
+         P -2S  >= 0
+         - Q + T  >= 0
+         Q -2S  >= 0
+         S  >= 0
+         R - S  >= 0
+          1 >= 0
+
+Vertices :
+[ 2S,  2S,  S,  S,  Q,  0 ]
+[ 2S,  2S,  S,  S,  S,  0 ]
+[ 2S,  2S,  S,  S,  S,  -Q+S ]
+[ 0,  2S,  S,  S,  Q,  0 ]
+[ 0,  2S,  S,  S,  S,  0 ]
+[ 0,  2S,  S,  S,  S,  -Q+S ]
+[ 0,  0,  S,  S,  Q,  0 ]
+[ 0,  0,  S,  S,  S,  0 ]
+[ 0,  0,  S,  S,  S,  -Q+S ]
+[ 0,  0,  -S,  S,  Q,  0 ]
+[ 0,  0,  -S,  S,  S,  0 ]
+[ 0,  0,  -S,  S,  S,  -Q+S ]
+[ 0,  0,  -S,  -S,  Q,  0 ]
+[ 0,  0,  -S,  -S,  -S,  0 ]
+[ 0,  0,  -S,  -S,  -S,  -Q-S ]
+---------------------------------------
+Domain :
+         - S + T  >= 0
+         P -2S  >= 0
+         R - S  >= 0
+         S  >= 0
+         Q - T  >= 0
+         Q -2S  >= 0
+          1 >= 0
+
+Vertices :
+[ 2S,  2S,  S,  S,  T,  0 ]
+[ 2S,  2S,  S,  S,  T,  -Q+T ]
+[ 2S,  2S,  S,  S,  S,  0 ]
+[ 2S,  2S,  S,  S,  S,  -Q+S ]
+[ 0,  2S,  S,  S,  T,  0 ]
+[ 0,  2S,  S,  S,  T,  -Q+T ]
+[ 0,  2S,  S,  S,  S,  0 ]
+[ 0,  2S,  S,  S,  S,  -Q+S ]
+[ 0,  0,  S,  S,  T,  0 ]
+[ 0,  0,  S,  S,  T,  -Q+T ]
+[ 0,  0,  S,  S,  S,  0 ]
+[ 0,  0,  S,  S,  S,  -Q+S ]
+[ 0,  0,  -S,  S,  T,  0 ]
+[ 0,  0,  -S,  S,  T,  -Q+T ]
+[ 0,  0,  -S,  S,  S,  0 ]
+[ 0,  0,  -S,  S,  S,  -Q+S ]
+[ 0,  0,  -S,  -S,  T,  0 ]
+[ 0,  0,  -S,  -S,  T,  -Q+T ]
+[ 0,  0,  -S,  -S,  -S,  0 ]
+[ 0,  0,  -S,  -S,  -S,  -Q-S ]
+---------------------------------------
+Domain :
+         P - R - S  >= 0
+         R  >= 0
+         - R + T  >= 0
+         S - T  >= 0
+         Q - R - S  >= 0
+          1 >= 0
+
+Vertices :
+[ R+S,  R+S,  R,  T,  T,  0 ]
+[ R+S,  R+S,  R,  T,  T,  -Q+T ]
+[ R+S,  R+S,  R,  R,  T,  0 ]
+[ R+S,  R+S,  R,  R,  T,  -Q+T ]
+[ R+S,  R+S,  R,  R,  R,  0 ]
+[ R+S,  R+S,  R,  R,  R,  -Q+R ]
+[ 0,  R+S,  R,  T,  T,  0 ]
+[ 0,  R+S,  R,  T,  T,  -Q+T ]
+[ 0,  R+S,  R,  R,  T,  0 ]
+[ 0,  R+S,  R,  R,  T,  -Q+T ]
+[ 0,  R+S,  R,  R,  R,  0 ]
+[ 0,  R+S,  R,  R,  R,  -Q+R ]
+[ 0,  0,  R,  T,  T,  0 ]
+[ 0,  0,  R,  T,  T,  -Q+T ]
+[ 0,  0,  R,  R,  T,  0 ]
+[ 0,  0,  R,  R,  T,  -Q+T ]
+[ 0,  0,  R,  R,  R,  0 ]
+[ 0,  0,  R,  R,  R,  -Q+R ]
+[ 0,  0,  -S,  T,  T,  0 ]
+[ 0,  0,  -S,  T,  T,  -Q+T ]
+[ 0,  0,  -S,  -S,  T,  0 ]
+[ 0,  0,  -S,  -S,  T,  -Q+T ]
+[ 0,  0,  -S,  -S,  -S,  0 ]
+[ 0,  0,  -S,  -S,  -S,  -Q-S ]
+---------------------------------------
+Domain :
+         P - R - S  >= 0
+         - R + S  >= 0
+         - Q + T  >= 0
+         Q - R - S  >= 0
+         R  >= 0
+          1 >= 0
+
+Vertices :
+[ R+S,  R+S,  R,  S,  Q,  0 ]
+[ R+S,  R+S,  R,  S,  S,  0 ]
+[ R+S,  R+S,  R,  S,  S,  -Q+S ]
+[ R+S,  R+S,  R,  R,  Q,  0 ]
+[ R+S,  R+S,  R,  R,  R,  0 ]
+[ R+S,  R+S,  R,  R,  R,  -Q+R ]
+[ 0,  R+S,  R,  S,  Q,  0 ]
+[ 0,  R+S,  R,  S,  S,  0 ]
+[ 0,  R+S,  R,  S,  S,  -Q+S ]
+[ 0,  R+S,  R,  R,  Q,  0 ]
+[ 0,  R+S,  R,  R,  R,  0 ]
+[ 0,  R+S,  R,  R,  R,  -Q+R ]
+[ 0,  0,  R,  S,  Q,  0 ]
+[ 0,  0,  R,  S,  S,  0 ]
+[ 0,  0,  R,  S,  S,  -Q+S ]
+[ 0,  0,  R,  R,  Q,  0 ]
+[ 0,  0,  R,  R,  R,  0 ]
+[ 0,  0,  R,  R,  R,  -Q+R ]
+[ 0,  0,  -S,  S,  Q,  0 ]
+[ 0,  0,  -S,  S,  S,  0 ]
+[ 0,  0,  -S,  S,  S,  -Q+S ]
+[ 0,  0,  -S,  -S,  Q,  0 ]
+[ 0,  0,  -S,  -S,  -S,  0 ]
+[ 0,  0,  -S,  -S,  -S,  -Q-S ]
+---------------------------------------
+Domain :
+         - S + T  >= 0
+         - R + S  >= 0
+         P - R - S  >= 0
+         R  >= 0
+         Q - T  >= 0
+         Q - R - S  >= 0
+          1 >= 0
+
+Vertices :
+[ R+S,  R+S,  R,  S,  T,  0 ]
+[ R+S,  R+S,  R,  S,  T,  -Q+T ]
+[ R+S,  R+S,  R,  S,  S,  0 ]
+[ R+S,  R+S,  R,  S,  S,  -Q+S ]
+[ R+S,  R+S,  R,  R,  T,  0 ]
+[ R+S,  R+S,  R,  R,  T,  -Q+T ]
+[ R+S,  R+S,  R,  R,  R,  0 ]
+[ R+S,  R+S,  R,  R,  R,  -Q+R ]
+[ 0,  R+S,  R,  S,  T,  0 ]
+[ 0,  R+S,  R,  S,  T,  -Q+T ]
+[ 0,  R+S,  R,  S,  S,  0 ]
+[ 0,  R+S,  R,  S,  S,  -Q+S ]
+[ 0,  R+S,  R,  R,  T,  0 ]
+[ 0,  R+S,  R,  R,  T,  -Q+T ]
+[ 0,  R+S,  R,  R,  R,  0 ]
+[ 0,  R+S,  R,  R,  R,  -Q+R ]
+[ 0,  0,  R,  S,  T,  0 ]
+[ 0,  0,  R,  S,  T,  -Q+T ]
+[ 0,  0,  R,  S,  S,  0 ]
+[ 0,  0,  R,  S,  S,  -Q+S ]
+[ 0,  0,  R,  R,  T,  0 ]
+[ 0,  0,  R,  R,  T,  -Q+T ]
+[ 0,  0,  R,  R,  R,  0 ]
+[ 0,  0,  R,  R,  R,  -Q+R ]
+[ 0,  0,  -S,  S,  T,  0 ]
+[ 0,  0,  -S,  S,  T,  -Q+T ]
+[ 0,  0,  -S,  S,  S,  0 ]
+[ 0,  0,  -S,  S,  S,  -Q+S ]
+[ 0,  0,  -S,  -S,  T,  0 ]
+[ 0,  0,  -S,  -S,  T,  -Q+T ]
+[ 0,  0,  -S,  -S,  -S,  0 ]
+[ 0,  0,  -S,  -S,  -S,  -Q-S ]
+---------------------------------------
+Domain :
+         P - Q  >= 0
+         - Q + T  >= 0
+         Q  >= 0
+         - Q + S  >= 0
+         - Q + R  >= 0
+          1 >= 0
+
+Vertices :
+[ Q,  Q,  Q,  Q,  Q,  0 ]
+[ Q,  Q,  Q-S,  Q,  Q,  0 ]
+[ Q,  Q,  Q-S,  Q-S,  Q,  0 ]
+[ Q,  Q,  Q-S,  Q-S,  Q-S,  0 ]
+[ Q,  Q,  Q-S,  Q-S,  Q-S,  -S ]
+[ 0,  Q,  Q,  Q,  Q,  0 ]
+[ 0,  Q,  Q-S,  Q,  Q,  0 ]
+[ 0,  Q,  Q-S,  Q-S,  Q,  0 ]
+[ 0,  Q,  Q-S,  Q-S,  Q-S,  0 ]
+[ 0,  Q,  Q-S,  Q-S,  Q-S,  -S ]
+[ 0,  0,  Q,  Q,  Q,  0 ]
+[ 0,  0,  -S,  Q,  Q,  0 ]
+[ 0,  0,  -S,  -S,  Q,  0 ]
+[ 0,  0,  -S,  -S,  -S,  0 ]
+[ 0,  0,  -S,  -S,  -S,  -Q-S ]
+---------------------------------------
+Domain :
+         - Q + S + T  >= 0
+         P - Q  >= 0
+         R - T  >= 0
+         T  >= 0
+         Q - T  >= 0
+         S - T  >= 0
+          1 >= 0
+
+Vertices :
+[ Q,  Q,  T,  T,  T,  0 ]
+[ Q,  Q,  T,  T,  T,  -Q+T ]
+[ Q,  Q,  Q-S,  T,  T,  0 ]
+[ Q,  Q,  Q-S,  T,  T,  -Q+T ]
+[ Q,  Q,  Q-S,  Q-S,  T,  0 ]
+[ Q,  Q,  Q-S,  Q-S,  T,  -Q+T ]
+[ Q,  Q,  Q-S,  Q-S,  Q-S,  0 ]
+[ Q,  Q,  Q-S,  Q-S,  Q-S,  -S ]
+[ 0,  Q,  T,  T,  T,  0 ]
+[ 0,  Q,  T,  T,  T,  -Q+T ]
+[ 0,  Q,  Q-S,  T,  T,  0 ]
+[ 0,  Q,  Q-S,  T,  T,  -Q+T ]
+[ 0,  Q,  Q-S,  Q-S,  T,  0 ]
+[ 0,  Q,  Q-S,  Q-S,  T,  -Q+T ]
+[ 0,  Q,  Q-S,  Q-S,  Q-S,  0 ]
+[ 0,  Q,  Q-S,  Q-S,  Q-S,  -S ]
+[ 0,  0,  T,  T,  T,  0 ]
+[ 0,  0,  T,  T,  T,  -Q+T ]
+[ 0,  0,  -S,  T,  T,  0 ]
+[ 0,  0,  -S,  T,  T,  -Q+T ]
+[ 0,  0,  -S,  -S,  T,  0 ]
+[ 0,  0,  -S,  -S,  T,  -Q+T ]
+[ 0,  0,  -S,  -S,  -S,  0 ]
+[ 0,  0,  -S,  -S,  -S,  -Q-S ]
+---------------------------------------
+Domain :
+         P - Q  >= 0
+         - Q + T  >= 0
+         - Q + 2S  >= 0
+         Q - S  >= 0
+         R - S  >= 0
+          1 >= 0
+
+Vertices :
+[ Q,  Q,  S,  S,  Q,  0 ]
+[ Q,  Q,  S,  S,  S,  0 ]
+[ Q,  Q,  S,  S,  S,  -Q+S ]
+[ Q,  Q,  Q-S,  S,  Q,  0 ]
+[ Q,  Q,  Q-S,  S,  S,  0 ]
+[ Q,  Q,  Q-S,  S,  S,  -Q+S ]
+[ Q,  Q,  Q-S,  Q-S,  Q,  0 ]
+[ Q,  Q,  Q-S,  Q-S,  Q-S,  0 ]
+[ Q,  Q,  Q-S,  Q-S,  Q-S,  -S ]
+[ 0,  Q,  S,  S,  Q,  0 ]
+[ 0,  Q,  S,  S,  S,  0 ]
+[ 0,  Q,  S,  S,  S,  -Q+S ]
+[ 0,  Q,  Q-S,  S,  Q,  0 ]
+[ 0,  Q,  Q-S,  S,  S,  0 ]
+[ 0,  Q,  Q-S,  S,  S,  -Q+S ]
+[ 0,  Q,  Q-S,  Q-S,  Q,  0 ]
+[ 0,  Q,  Q-S,  Q-S,  Q-S,  0 ]
+[ 0,  Q,  Q-S,  Q-S,  Q-S,  -S ]
+[ 0,  0,  S,  S,  Q,  0 ]
+[ 0,  0,  S,  S,  S,  0 ]
+[ 0,  0,  S,  S,  S,  -Q+S ]
+[ 0,  0,  -S,  S,  Q,  0 ]
+[ 0,  0,  -S,  S,  S,  0 ]
+[ 0,  0,  -S,  S,  S,  -Q+S ]
+[ 0,  0,  -S,  -S,  Q,  0 ]
+[ 0,  0,  -S,  -S,  -S,  0 ]
+[ 0,  0,  -S,  -S,  -S,  -Q-S ]
+---------------------------------------
+Domain :
+         P - Q  >= 0
+         Q - T  >= 0
+         - Q + 2S  >= 0
+         - S + T  >= 0
+         R - S  >= 0
+          1 >= 0
+
+Vertices :
+[ Q,  Q,  S,  S,  T,  0 ]
+[ Q,  Q,  S,  S,  T,  -Q+T ]
+[ Q,  Q,  S,  S,  S,  0 ]
+[ Q,  Q,  S,  S,  S,  -Q+S ]
+[ Q,  Q,  Q-S,  S,  T,  0 ]
+[ Q,  Q,  Q-S,  S,  T,  -Q+T ]
+[ Q,  Q,  Q-S,  S,  S,  0 ]
+[ Q,  Q,  Q-S,  S,  S,  -Q+S ]
+[ Q,  Q,  Q-S,  Q-S,  T,  0 ]
+[ Q,  Q,  Q-S,  Q-S,  T,  -Q+T ]
+[ Q,  Q,  Q-S,  Q-S,  Q-S,  0 ]
+[ Q,  Q,  Q-S,  Q-S,  Q-S,  -S ]
+[ 0,  Q,  S,  S,  T,  0 ]
+[ 0,  Q,  S,  S,  T,  -Q+T ]
+[ 0,  Q,  S,  S,  S,  0 ]
+[ 0,  Q,  S,  S,  S,  -Q+S ]
+[ 0,  Q,  Q-S,  S,  T,  0 ]
+[ 0,  Q,  Q-S,  S,  T,  -Q+T ]
+[ 0,  Q,  Q-S,  S,  S,  0 ]
+[ 0,  Q,  Q-S,  S,  S,  -Q+S ]
+[ 0,  Q,  Q-S,  Q-S,  T,  0 ]
+[ 0,  Q,  Q-S,  Q-S,  T,  -Q+T ]
+[ 0,  Q,  Q-S,  Q-S,  Q-S,  0 ]
+[ 0,  Q,  Q-S,  Q-S,  Q-S,  -S ]
+[ 0,  0,  S,  S,  T,  0 ]
+[ 0,  0,  S,  S,  T,  -Q+T ]
+[ 0,  0,  S,  S,  S,  0 ]
+[ 0,  0,  S,  S,  S,  -Q+S ]
+[ 0,  0,  -S,  S,  T,  0 ]
+[ 0,  0,  -S,  S,  T,  -Q+T ]
+[ 0,  0,  -S,  S,  S,  0 ]
+[ 0,  0,  -S,  S,  S,  -Q+S ]
+[ 0,  0,  -S,  -S,  T,  0 ]
+[ 0,  0,  -S,  -S,  T,  -Q+T ]
+[ 0,  0,  -S,  -S,  -S,  0 ]
+[ 0,  0,  -S,  -S,  -S,  -Q-S ]
+---------------------------------------
+Domain :
+         P - Q  >= 0
+         Q - R  >= 0
+         - Q + T  >= 0
+         R  >= 0
+         - Q + S  >= 0
+          1 >= 0
+
+Vertices :
+[ Q,  Q,  R,  Q,  Q,  0 ]
+[ Q,  Q,  R,  R,  Q,  0 ]
+[ Q,  Q,  R,  R,  R,  0 ]
+[ Q,  Q,  R,  R,  R,  -Q+R ]
+[ Q,  Q,  Q-S,  Q,  Q,  0 ]
+[ Q,  Q,  Q-S,  Q-S,  Q,  0 ]
+[ Q,  Q,  Q-S,  Q-S,  Q-S,  0 ]
+[ Q,  Q,  Q-S,  Q-S,  Q-S,  -S ]
+[ 0,  Q,  R,  Q,  Q,  0 ]
+[ 0,  Q,  R,  R,  Q,  0 ]
+[ 0,  Q,  R,  R,  R,  0 ]
+[ 0,  Q,  R,  R,  R,  -Q+R ]
+[ 0,  Q,  Q-S,  Q,  Q,  0 ]
+[ 0,  Q,  Q-S,  Q-S,  Q,  0 ]
+[ 0,  Q,  Q-S,  Q-S,  Q-S,  0 ]
+[ 0,  Q,  Q-S,  Q-S,  Q-S,  -S ]
+[ 0,  0,  R,  Q,  Q,  0 ]
+[ 0,  0,  R,  R,  Q,  0 ]
+[ 0,  0,  R,  R,  R,  0 ]
+[ 0,  0,  R,  R,  R,  -Q+R ]
+[ 0,  0,  -S,  Q,  Q,  0 ]
+[ 0,  0,  -S,  -S,  Q,  0 ]
+[ 0,  0,  -S,  -S,  -S,  0 ]
+[ 0,  0,  -S,  -S,  -S,  -Q-S ]
+---------------------------------------
+Domain :
+         S - T  >= 0
+         - R + T  >= 0
+         P - Q  >= 0
+         Q - T  >= 0
+         R  >= 0
+         - Q + R + S  >= 0
+          1 >= 0
+
+Vertices :
+[ Q,  Q,  R,  T,  T,  0 ]
+[ Q,  Q,  R,  T,  T,  -Q+T ]
+[ Q,  Q,  R,  R,  T,  0 ]
+[ Q,  Q,  R,  R,  T,  -Q+T ]
+[ Q,  Q,  R,  R,  R,  0 ]
+[ Q,  Q,  R,  R,  R,  -Q+R ]
+[ Q,  Q,  Q-S,  T,  T,  0 ]
+[ Q,  Q,  Q-S,  T,  T,  -Q+T ]
+[ Q,  Q,  Q-S,  Q-S,  T,  0 ]
+[ Q,  Q,  Q-S,  Q-S,  T,  -Q+T ]
+[ Q,  Q,  Q-S,  Q-S,  Q-S,  0 ]
+[ Q,  Q,  Q-S,  Q-S,  Q-S,  -S ]
+[ 0,  Q,  R,  T,  T,  0 ]
+[ 0,  Q,  R,  T,  T,  -Q+T ]
+[ 0,  Q,  R,  R,  T,  0 ]
+[ 0,  Q,  R,  R,  T,  -Q+T ]
+[ 0,  Q,  R,  R,  R,  0 ]
+[ 0,  Q,  R,  R,  R,  -Q+R ]
+[ 0,  Q,  Q-S,  T,  T,  0 ]
+[ 0,  Q,  Q-S,  T,  T,  -Q+T ]
+[ 0,  Q,  Q-S,  Q-S,  T,  0 ]
+[ 0,  Q,  Q-S,  Q-S,  T,  -Q+T ]
+[ 0,  Q,  Q-S,  Q-S,  Q-S,  0 ]
+[ 0,  Q,  Q-S,  Q-S,  Q-S,  -S ]
+[ 0,  0,  R,  T,  T,  0 ]
+[ 0,  0,  R,  T,  T,  -Q+T ]
+[ 0,  0,  R,  R,  T,  0 ]
+[ 0,  0,  R,  R,  T,  -Q+T ]
+[ 0,  0,  R,  R,  R,  0 ]
+[ 0,  0,  R,  R,  R,  -Q+R ]
+[ 0,  0,  -S,  T,  T,  0 ]
+[ 0,  0,  -S,  T,  T,  -Q+T ]
+[ 0,  0,  -S,  -S,  T,  0 ]
+[ 0,  0,  -S,  -S,  T,  -Q+T ]
+[ 0,  0,  -S,  -S,  -S,  0 ]
+[ 0,  0,  -S,  -S,  -S,  -Q-S ]
+---------------------------------------
+Domain :
+         P - Q  >= 0
+         - R + S  >= 0
+         - Q + T  >= 0
+         - Q + R + S  >= 0
+         Q - S  >= 0
+          1 >= 0
+
+Vertices :
+[ Q,  Q,  R,  S,  Q,  0 ]
+[ Q,  Q,  R,  S,  S,  0 ]
+[ Q,  Q,  R,  S,  S,  -Q+S ]
+[ Q,  Q,  R,  R,  Q,  0 ]
+[ Q,  Q,  R,  R,  R,  0 ]
+[ Q,  Q,  R,  R,  R,  -Q+R ]
+[ Q,  Q,  Q-S,  S,  Q,  0 ]
+[ Q,  Q,  Q-S,  S,  S,  0 ]
+[ Q,  Q,  Q-S,  S,  S,  -Q+S ]
+[ Q,  Q,  Q-S,  Q-S,  Q,  0 ]
+[ Q,  Q,  Q-S,  Q-S,  Q-S,  0 ]
+[ Q,  Q,  Q-S,  Q-S,  Q-S,  -S ]
+[ 0,  Q,  R,  S,  Q,  0 ]
+[ 0,  Q,  R,  S,  S,  0 ]
+[ 0,  Q,  R,  S,  S,  -Q+S ]
+[ 0,  Q,  R,  R,  Q,  0 ]
+[ 0,  Q,  R,  R,  R,  0 ]
+[ 0,  Q,  R,  R,  R,  -Q+R ]
+[ 0,  Q,  Q-S,  S,  Q,  0 ]
+[ 0,  Q,  Q-S,  S,  S,  0 ]
+[ 0,  Q,  Q-S,  S,  S,  -Q+S ]
+[ 0,  Q,  Q-S,  Q-S,  Q,  0 ]
+[ 0,  Q,  Q-S,  Q-S,  Q-S,  0 ]
+[ 0,  Q,  Q-S,  Q-S,  Q-S,  -S ]
+[ 0,  0,  R,  S,  Q,  0 ]
+[ 0,  0,  R,  S,  S,  0 ]
+[ 0,  0,  R,  S,  S,  -Q+S ]
+[ 0,  0,  R,  R,  Q,  0 ]
+[ 0,  0,  R,  R,  R,  0 ]
+[ 0,  0,  R,  R,  R,  -Q+R ]
+[ 0,  0,  -S,  S,  Q,  0 ]
+[ 0,  0,  -S,  S,  S,  0 ]
+[ 0,  0,  -S,  S,  S,  -Q+S ]
+[ 0,  0,  -S,  -S,  Q,  0 ]
+[ 0,  0,  -S,  -S,  -S,  0 ]
+[ 0,  0,  -S,  -S,  -S,  -Q-S ]
+---------------------------------------
+Domain :
+         P - Q  >= 0
+         Q - T  >= 0
+         - R + S  >= 0
+         - Q + R + S  >= 0
+         - S + T  >= 0
+          1 >= 0
+
+Vertices :
+[ Q,  Q,  R,  S,  T,  0 ]
+[ Q,  Q,  R,  S,  T,  -Q+T ]
+[ Q,  Q,  R,  S,  S,  0 ]
+[ Q,  Q,  R,  S,  S,  -Q+S ]
+[ Q,  Q,  R,  R,  T,  0 ]
+[ Q,  Q,  R,  R,  T,  -Q+T ]
+[ Q,  Q,  R,  R,  R,  0 ]
+[ Q,  Q,  R,  R,  R,  -Q+R ]
+[ Q,  Q,  Q-S,  S,  T,  0 ]
+[ Q,  Q,  Q-S,  S,  T,  -Q+T ]
+[ Q,  Q,  Q-S,  S,  S,  0 ]
+[ Q,  Q,  Q-S,  S,  S,  -Q+S ]
+[ Q,  Q,  Q-S,  Q-S,  T,  0 ]
+[ Q,  Q,  Q-S,  Q-S,  T,  -Q+T ]
+[ Q,  Q,  Q-S,  Q-S,  Q-S,  0 ]
+[ Q,  Q,  Q-S,  Q-S,  Q-S,  -S ]
+[ 0,  Q,  R,  S,  T,  0 ]
+[ 0,  Q,  R,  S,  T,  -Q+T ]
+[ 0,  Q,  R,  S,  S,  0 ]
+[ 0,  Q,  R,  S,  S,  -Q+S ]
+[ 0,  Q,  R,  R,  T,  0 ]
+[ 0,  Q,  R,  R,  T,  -Q+T ]
+[ 0,  Q,  R,  R,  R,  0 ]
+[ 0,  Q,  R,  R,  R,  -Q+R ]
+[ 0,  Q,  Q-S,  S,  T,  0 ]
+[ 0,  Q,  Q-S,  S,  T,  -Q+T ]
+[ 0,  Q,  Q-S,  S,  S,  0 ]
+[ 0,  Q,  Q-S,  S,  S,  -Q+S ]
+[ 0,  Q,  Q-S,  Q-S,  T,  0 ]
+[ 0,  Q,  Q-S,  Q-S,  T,  -Q+T ]
+[ 0,  Q,  Q-S,  Q-S,  Q-S,  0 ]
+[ 0,  Q,  Q-S,  Q-S,  Q-S,  -S ]
+[ 0,  0,  R,  S,  T,  0 ]
+[ 0,  0,  R,  S,  T,  -Q+T ]
+[ 0,  0,  R,  S,  S,  0 ]
+[ 0,  0,  R,  S,  S,  -Q+S ]
+[ 0,  0,  R,  R,  T,  0 ]
+[ 0,  0,  R,  R,  T,  -Q+T ]
+[ 0,  0,  R,  R,  R,  0 ]
+[ 0,  0,  R,  R,  R,  -Q+R ]
+[ 0,  0,  -S,  S,  T,  0 ]
+[ 0,  0,  -S,  S,  T,  -Q+T ]
+[ 0,  0,  -S,  S,  S,  0 ]
+[ 0,  0,  -S,  S,  S,  -Q+S ]
+[ 0,  0,  -S,  -S,  T,  0 ]
+[ 0,  0,  -S,  -S,  T,  -Q+T ]
+[ 0,  0,  -S,  -S,  -S,  0 ]
+[ 0,  0,  -S,  -S,  -S,  -Q-S ]
+---------------------------------------
+Domain :
+         - P + S + T  >= 0
+         Q - S - T  >= 0
+         R - T  >= 0
+         T  >= 0
+         P  >= 0
+         S - T  >= 0
+          1 >= 0
+
+Vertices :
+[ P,  S+T,  T,  T,  T,  0 ]
+[ P,  S+T,  T,  T,  T,  -Q+T ]
+[ P,  P,  T,  T,  T,  0 ]
+[ P,  P,  T,  T,  T,  -Q+T ]
+[ P,  P,  P-S,  T,  T,  0 ]
+[ P,  P,  P-S,  T,  T,  -Q+T ]
+[ P,  P,  P-S,  P-S,  T,  0 ]
+[ P,  P,  P-S,  P-S,  T,  -Q+T ]
+[ P,  P,  P-S,  P-S,  P-S,  0 ]
+[ P,  P,  P-S,  P-S,  P-S,  P-Q-S ]
+[ 0,  S+T,  T,  T,  T,  0 ]
+[ 0,  S+T,  T,  T,  T,  -Q+T ]
+[ 0,  0,  T,  T,  T,  0 ]
+[ 0,  0,  T,  T,  T,  -Q+T ]
+[ 0,  0,  -S,  T,  T,  0 ]
+[ 0,  0,  -S,  T,  T,  -Q+T ]
+[ 0,  0,  -S,  -S,  T,  0 ]
+[ 0,  0,  -S,  -S,  T,  -Q+T ]
+[ 0,  0,  -S,  -S,  -S,  0 ]
+[ 0,  0,  -S,  -S,  -S,  -Q-S ]
+---------------------------------------
+Domain :
+         R - S  >= 0
+         - Q + T  >= 0
+         - P + 2S  >= 0
+         Q -2S  >= 0
+         P  >= 0
+          1 >= 0
+
+Vertices :
+[ P,  2S,  S,  S,  Q,  0 ]
+[ P,  2S,  S,  S,  S,  0 ]
+[ P,  2S,  S,  S,  S,  -Q+S ]
+[ P,  P,  S,  S,  Q,  0 ]
+[ P,  P,  S,  S,  S,  0 ]
+[ P,  P,  S,  S,  S,  -Q+S ]
+[ P,  P,  P-S,  S,  Q,  0 ]
+[ P,  P,  P-S,  S,  S,  0 ]
+[ P,  P,  P-S,  S,  S,  -Q+S ]
+[ P,  P,  P-S,  P-S,  Q,  0 ]
+[ P,  P,  P-S,  P-S,  P-S,  0 ]
+[ P,  P,  P-S,  P-S,  P-S,  P-Q-S ]
+[ 0,  2S,  S,  S,  Q,  0 ]
+[ 0,  2S,  S,  S,  S,  0 ]
+[ 0,  2S,  S,  S,  S,  -Q+S ]
+[ 0,  0,  S,  S,  Q,  0 ]
+[ 0,  0,  S,  S,  S,  0 ]
+[ 0,  0,  S,  S,  S,  -Q+S ]
+[ 0,  0,  -S,  S,  Q,  0 ]
+[ 0,  0,  -S,  S,  S,  0 ]
+[ 0,  0,  -S,  S,  S,  -Q+S ]
+[ 0,  0,  -S,  -S,  Q,  0 ]
+[ 0,  0,  -S,  -S,  -S,  0 ]
+[ 0,  0,  -S,  -S,  -S,  -Q-S ]
+---------------------------------------
+Domain :
+         - S + T  >= 0
+         R - S  >= 0
+         - P + 2S  >= 0
+         Q -2S  >= 0
+         Q - T  >= 0
+         P  >= 0
+          1 >= 0
+
+Vertices :
+[ P,  2S,  S,  S,  T,  0 ]
+[ P,  2S,  S,  S,  T,  -Q+T ]
+[ P,  2S,  S,  S,  S,  0 ]
+[ P,  2S,  S,  S,  S,  -Q+S ]
+[ P,  P,  S,  S,  T,  0 ]
+[ P,  P,  S,  S,  T,  -Q+T ]
+[ P,  P,  S,  S,  S,  0 ]
+[ P,  P,  S,  S,  S,  -Q+S ]
+[ P,  P,  P-S,  S,  T,  0 ]
+[ P,  P,  P-S,  S,  T,  -Q+T ]
+[ P,  P,  P-S,  S,  S,  0 ]
+[ P,  P,  P-S,  S,  S,  -Q+S ]
+[ P,  P,  P-S,  P-S,  T,  0 ]
+[ P,  P,  P-S,  P-S,  T,  -Q+T ]
+[ P,  P,  P-S,  P-S,  P-S,  0 ]
+[ P,  P,  P-S,  P-S,  P-S,  P-Q-S ]
+[ 0,  2S,  S,  S,  T,  0 ]
+[ 0,  2S,  S,  S,  T,  -Q+T ]
+[ 0,  2S,  S,  S,  S,  0 ]
+[ 0,  2S,  S,  S,  S,  -Q+S ]
+[ 0,  0,  S,  S,  T,  0 ]
+[ 0,  0,  S,  S,  T,  -Q+T ]
+[ 0,  0,  S,  S,  S,  0 ]
+[ 0,  0,  S,  S,  S,  -Q+S ]
+[ 0,  0,  -S,  S,  T,  0 ]
+[ 0,  0,  -S,  S,  T,  -Q+T ]
+[ 0,  0,  -S,  S,  S,  0 ]
+[ 0,  0,  -S,  S,  S,  -Q+S ]
+[ 0,  0,  -S,  -S,  T,  0 ]
+[ 0,  0,  -S,  -S,  T,  -Q+T ]
+[ 0,  0,  -S,  -S,  -S,  0 ]
+[ 0,  0,  -S,  -S,  -S,  -Q-S ]
+---------------------------------------
+Domain :
+         - P + R + S  >= 0
+         Q - R - S  >= 0
+         - R + T  >= 0
+         S - T  >= 0
+         P  >= 0
+         R  >= 0
+          1 >= 0
+
+Vertices :
+[ P,  R+S,  R,  T,  T,  0 ]
+[ P,  R+S,  R,  T,  T,  -Q+T ]
+[ P,  R+S,  R,  R,  T,  0 ]
+[ P,  R+S,  R,  R,  T,  -Q+T ]
+[ P,  R+S,  R,  R,  R,  0 ]
+[ P,  R+S,  R,  R,  R,  -Q+R ]
+[ P,  P,  R,  T,  T,  0 ]
+[ P,  P,  R,  T,  T,  -Q+T ]
+[ P,  P,  R,  R,  T,  0 ]
+[ P,  P,  R,  R,  T,  -Q+T ]
+[ P,  P,  R,  R,  R,  0 ]
+[ P,  P,  R,  R,  R,  -Q+R ]
+[ P,  P,  P-S,  T,  T,  0 ]
+[ P,  P,  P-S,  T,  T,  -Q+T ]
+[ P,  P,  P-S,  P-S,  T,  0 ]
+[ P,  P,  P-S,  P-S,  T,  -Q+T ]
+[ P,  P,  P-S,  P-S,  P-S,  0 ]
+[ P,  P,  P-S,  P-S,  P-S,  P-Q-S ]
+[ 0,  R+S,  R,  T,  T,  0 ]
+[ 0,  R+S,  R,  T,  T,  -Q+T ]
+[ 0,  R+S,  R,  R,  T,  0 ]
+[ 0,  R+S,  R,  R,  T,  -Q+T ]
+[ 0,  R+S,  R,  R,  R,  0 ]
+[ 0,  R+S,  R,  R,  R,  -Q+R ]
+[ 0,  0,  R,  T,  T,  0 ]
+[ 0,  0,  R,  T,  T,  -Q+T ]
+[ 0,  0,  R,  R,  T,  0 ]
+[ 0,  0,  R,  R,  T,  -Q+T ]
+[ 0,  0,  R,  R,  R,  0 ]
+[ 0,  0,  R,  R,  R,  -Q+R ]
+[ 0,  0,  -S,  T,  T,  0 ]
+[ 0,  0,  -S,  T,  T,  -Q+T ]
+[ 0,  0,  -S,  -S,  T,  0 ]
+[ 0,  0,  -S,  -S,  T,  -Q+T ]
+[ 0,  0,  -S,  -S,  -S,  0 ]
+[ 0,  0,  -S,  -S,  -S,  -Q-S ]
+---------------------------------------
+Domain :
+         R  >= 0
+         - Q + T  >= 0
+         Q - R - S  >= 0
+         - P + R + S  >= 0
+         - R + S  >= 0
+         P  >= 0
+          1 >= 0
+
+Vertices :
+[ P,  R+S,  R,  S,  Q,  0 ]
+[ P,  R+S,  R,  S,  S,  0 ]
+[ P,  R+S,  R,  S,  S,  -Q+S ]
+[ P,  R+S,  R,  R,  Q,  0 ]
+[ P,  R+S,  R,  R,  R,  0 ]
+[ P,  R+S,  R,  R,  R,  -Q+R ]
+[ P,  P,  R,  S,  Q,  0 ]
+[ P,  P,  R,  S,  S,  0 ]
+[ P,  P,  R,  S,  S,  -Q+S ]
+[ P,  P,  R,  R,  Q,  0 ]
+[ P,  P,  R,  R,  R,  0 ]
+[ P,  P,  R,  R,  R,  -Q+R ]
+[ P,  P,  P-S,  S,  Q,  0 ]
+[ P,  P,  P-S,  S,  S,  0 ]
+[ P,  P,  P-S,  S,  S,  -Q+S ]
+[ P,  P,  P-S,  P-S,  Q,  0 ]
+[ P,  P,  P-S,  P-S,  P-S,  0 ]
+[ P,  P,  P-S,  P-S,  P-S,  P-Q-S ]
+[ 0,  R+S,  R,  S,  Q,  0 ]
+[ 0,  R+S,  R,  S,  S,  0 ]
+[ 0,  R+S,  R,  S,  S,  -Q+S ]
+[ 0,  R+S,  R,  R,  Q,  0 ]
+[ 0,  R+S,  R,  R,  R,  0 ]
+[ 0,  R+S,  R,  R,  R,  -Q+R ]
+[ 0,  0,  R,  S,  Q,  0 ]
+[ 0,  0,  R,  S,  S,  0 ]
+[ 0,  0,  R,  S,  S,  -Q+S ]
+[ 0,  0,  R,  R,  Q,  0 ]
+[ 0,  0,  R,  R,  R,  0 ]
+[ 0,  0,  R,  R,  R,  -Q+R ]
+[ 0,  0,  -S,  S,  Q,  0 ]
+[ 0,  0,  -S,  S,  S,  0 ]
+[ 0,  0,  -S,  S,  S,  -Q+S ]
+[ 0,  0,  -S,  -S,  Q,  0 ]
+[ 0,  0,  -S,  -S,  -S,  0 ]
+[ 0,  0,  -S,  -S,  -S,  -Q-S ]
+---------------------------------------
+Domain :
+         P  >= 0
+         Q - R - S  >= 0
+         - R + S  >= 0
+         - P + R + S  >= 0
+         - S + T  >= 0
+         R  >= 0
+         Q - T  >= 0
+          1 >= 0
+
+Vertices :
+[ P,  R+S,  R,  S,  T,  0 ]
+[ P,  R+S,  R,  S,  T,  -Q+T ]
+[ P,  R+S,  R,  S,  S,  0 ]
+[ P,  R+S,  R,  S,  S,  -Q+S ]
+[ P,  R+S,  R,  R,  T,  0 ]
+[ P,  R+S,  R,  R,  T,  -Q+T ]
+[ P,  R+S,  R,  R,  R,  0 ]
+[ P,  R+S,  R,  R,  R,  -Q+R ]
+[ P,  P,  R,  S,  T,  0 ]
+[ P,  P,  R,  S,  T,  -Q+T ]
+[ P,  P,  R,  S,  S,  0 ]
+[ P,  P,  R,  S,  S,  -Q+S ]
+[ P,  P,  R,  R,  T,  0 ]
+[ P,  P,  R,  R,  T,  -Q+T ]
+[ P,  P,  R,  R,  R,  0 ]
+[ P,  P,  R,  R,  R,  -Q+R ]
+[ P,  P,  P-S,  S,  T,  0 ]
+[ P,  P,  P-S,  S,  T,  -Q+T ]
+[ P,  P,  P-S,  S,  S,  0 ]
+[ P,  P,  P-S,  S,  S,  -Q+S ]
+[ P,  P,  P-S,  P-S,  T,  0 ]
+[ P,  P,  P-S,  P-S,  T,  -Q+T ]
+[ P,  P,  P-S,  P-S,  P-S,  0 ]
+[ P,  P,  P-S,  P-S,  P-S,  P-Q-S ]
+[ 0,  R+S,  R,  S,  T,  0 ]
+[ 0,  R+S,  R,  S,  T,  -Q+T ]
+[ 0,  R+S,  R,  S,  S,  0 ]
+[ 0,  R+S,  R,  S,  S,  -Q+S ]
+[ 0,  R+S,  R,  R,  T,  0 ]
+[ 0,  R+S,  R,  R,  T,  -Q+T ]
+[ 0,  R+S,  R,  R,  R,  0 ]
+[ 0,  R+S,  R,  R,  R,  -Q+R ]
+[ 0,  0,  R,  S,  T,  0 ]
+[ 0,  0,  R,  S,  T,  -Q+T ]
+[ 0,  0,  R,  S,  S,  0 ]
+[ 0,  0,  R,  S,  S,  -Q+S ]
+[ 0,  0,  R,  R,  T,  0 ]
+[ 0,  0,  R,  R,  T,  -Q+T ]
+[ 0,  0,  R,  R,  R,  0 ]
+[ 0,  0,  R,  R,  R,  -Q+R ]
+[ 0,  0,  -S,  S,  T,  0 ]
+[ 0,  0,  -S,  S,  T,  -Q+T ]
+[ 0,  0,  -S,  S,  S,  0 ]
+[ 0,  0,  -S,  S,  S,  -Q+S ]
+[ 0,  0,  -S,  -S,  T,  0 ]
+[ 0,  0,  -S,  -S,  T,  -Q+T ]
+[ 0,  0,  -S,  -S,  -S,  0 ]
+[ 0,  0,  -S,  -S,  -S,  -Q-S ]
+---------------------------------------
+Domain :
+         - Q + R  >= 0
+         - Q + T  >= 0
+         P  >= 0
+         - P + Q  >= 0
+         - Q + S  >= 0
+          1 >= 0
+
+Vertices :
+[ P,  Q,  Q,  Q,  Q,  0 ]
+[ P,  Q,  Q-S,  Q,  Q,  0 ]
+[ P,  Q,  Q-S,  Q-S,  Q,  0 ]
+[ P,  Q,  Q-S,  Q-S,  Q-S,  0 ]
+[ P,  Q,  Q-S,  Q-S,  Q-S,  -S ]
+[ P,  P,  Q,  Q,  Q,  0 ]
+[ P,  P,  P-S,  Q,  Q,  0 ]
+[ P,  P,  P-S,  P-S,  Q,  0 ]
+[ P,  P,  P-S,  P-S,  P-S,  0 ]
+[ P,  P,  P-S,  P-S,  P-S,  P-Q-S ]
+[ 0,  Q,  Q,  Q,  Q,  0 ]
+[ 0,  Q,  Q-S,  Q,  Q,  0 ]
+[ 0,  Q,  Q-S,  Q-S,  Q,  0 ]
+[ 0,  Q,  Q-S,  Q-S,  Q-S,  0 ]
+[ 0,  Q,  Q-S,  Q-S,  Q-S,  -S ]
+[ 0,  0,  Q,  Q,  Q,  0 ]
+[ 0,  0,  -S,  Q,  Q,  0 ]
+[ 0,  0,  -S,  -S,  Q,  0 ]
+[ 0,  0,  -S,  -S,  -S,  0 ]
+[ 0,  0,  -S,  -S,  -S,  -Q-S ]
+---------------------------------------
+Domain :
+         T  >= 0
+         R - T  >= 0
+         - Q + S + T  >= 0
+         - P + Q  >= 0
+         S - T  >= 0
+         P  >= 0
+         Q - T  >= 0
+          1 >= 0
+
+Vertices :
+[ P,  Q,  T,  T,  T,  0 ]
+[ P,  Q,  T,  T,  T,  -Q+T ]
+[ P,  Q,  Q-S,  T,  T,  0 ]
+[ P,  Q,  Q-S,  T,  T,  -Q+T ]
+[ P,  Q,  Q-S,  Q-S,  T,  0 ]
+[ P,  Q,  Q-S,  Q-S,  T,  -Q+T ]
+[ P,  Q,  Q-S,  Q-S,  Q-S,  0 ]
+[ P,  Q,  Q-S,  Q-S,  Q-S,  -S ]
+[ P,  P,  T,  T,  T,  0 ]
+[ P,  P,  T,  T,  T,  -Q+T ]
+[ P,  P,  P-S,  T,  T,  0 ]
+[ P,  P,  P-S,  T,  T,  -Q+T ]
+[ P,  P,  P-S,  P-S,  T,  0 ]
+[ P,  P,  P-S,  P-S,  T,  -Q+T ]
+[ P,  P,  P-S,  P-S,  P-S,  0 ]
+[ P,  P,  P-S,  P-S,  P-S,  P-Q-S ]
+[ 0,  Q,  T,  T,  T,  0 ]
+[ 0,  Q,  T,  T,  T,  -Q+T ]
+[ 0,  Q,  Q-S,  T,  T,  0 ]
+[ 0,  Q,  Q-S,  T,  T,  -Q+T ]
+[ 0,  Q,  Q-S,  Q-S,  T,  0 ]
+[ 0,  Q,  Q-S,  Q-S,  T,  -Q+T ]
+[ 0,  Q,  Q-S,  Q-S,  Q-S,  0 ]
+[ 0,  Q,  Q-S,  Q-S,  Q-S,  -S ]
+[ 0,  0,  T,  T,  T,  0 ]
+[ 0,  0,  T,  T,  T,  -Q+T ]
+[ 0,  0,  -S,  T,  T,  0 ]
+[ 0,  0,  -S,  T,  T,  -Q+T ]
+[ 0,  0,  -S,  -S,  T,  0 ]
+[ 0,  0,  -S,  -S,  T,  -Q+T ]
+[ 0,  0,  -S,  -S,  -S,  0 ]
+[ 0,  0,  -S,  -S,  -S,  -Q-S ]
+---------------------------------------
+Domain :
+         - P + Q  >= 0
+         - Q + T  >= 0
+         R - S  >= 0
+         - Q + 2S  >= 0
+         P  >= 0
+         Q - S  >= 0
+          1 >= 0
+
+Vertices :
+[ P,  Q,  S,  S,  Q,  0 ]
+[ P,  Q,  S,  S,  S,  0 ]
+[ P,  Q,  S,  S,  S,  -Q+S ]
+[ P,  Q,  Q-S,  S,  Q,  0 ]
+[ P,  Q,  Q-S,  S,  S,  0 ]
+[ P,  Q,  Q-S,  S,  S,  -Q+S ]
+[ P,  Q,  Q-S,  Q-S,  Q,  0 ]
+[ P,  Q,  Q-S,  Q-S,  Q-S,  0 ]
+[ P,  Q,  Q-S,  Q-S,  Q-S,  -S ]
+[ P,  P,  S,  S,  Q,  0 ]
+[ P,  P,  S,  S,  S,  0 ]
+[ P,  P,  S,  S,  S,  -Q+S ]
+[ P,  P,  P-S,  S,  Q,  0 ]
+[ P,  P,  P-S,  S,  S,  0 ]
+[ P,  P,  P-S,  S,  S,  -Q+S ]
+[ P,  P,  P-S,  P-S,  Q,  0 ]
+[ P,  P,  P-S,  P-S,  P-S,  0 ]
+[ P,  P,  P-S,  P-S,  P-S,  P-Q-S ]
+[ 0,  Q,  S,  S,  Q,  0 ]
+[ 0,  Q,  S,  S,  S,  0 ]
+[ 0,  Q,  S,  S,  S,  -Q+S ]
+[ 0,  Q,  Q-S,  S,  Q,  0 ]
+[ 0,  Q,  Q-S,  S,  S,  0 ]
+[ 0,  Q,  Q-S,  S,  S,  -Q+S ]
+[ 0,  Q,  Q-S,  Q-S,  Q,  0 ]
+[ 0,  Q,  Q-S,  Q-S,  Q-S,  0 ]
+[ 0,  Q,  Q-S,  Q-S,  Q-S,  -S ]
+[ 0,  0,  S,  S,  Q,  0 ]
+[ 0,  0,  S,  S,  S,  0 ]
+[ 0,  0,  S,  S,  S,  -Q+S ]
+[ 0,  0,  -S,  S,  Q,  0 ]
+[ 0,  0,  -S,  S,  S,  0 ]
+[ 0,  0,  -S,  S,  S,  -Q+S ]
+[ 0,  0,  -S,  -S,  Q,  0 ]
+[ 0,  0,  -S,  -S,  -S,  0 ]
+[ 0,  0,  -S,  -S,  -S,  -Q-S ]
+---------------------------------------
+Domain :
+         - P + Q  >= 0
+         R - S  >= 0
+         - Q + 2S  >= 0
+         - S + T  >= 0
+         P  >= 0
+         Q - T  >= 0
+          1 >= 0
+
+Vertices :
+[ P,  Q,  S,  S,  T,  0 ]
+[ P,  Q,  S,  S,  T,  -Q+T ]
+[ P,  Q,  S,  S,  S,  0 ]
+[ P,  Q,  S,  S,  S,  -Q+S ]
+[ P,  Q,  Q-S,  S,  T,  0 ]
+[ P,  Q,  Q-S,  S,  T,  -Q+T ]
+[ P,  Q,  Q-S,  S,  S,  0 ]
+[ P,  Q,  Q-S,  S,  S,  -Q+S ]
+[ P,  Q,  Q-S,  Q-S,  T,  0 ]
+[ P,  Q,  Q-S,  Q-S,  T,  -Q+T ]
+[ P,  Q,  Q-S,  Q-S,  Q-S,  0 ]
+[ P,  Q,  Q-S,  Q-S,  Q-S,  -S ]
+[ P,  P,  S,  S,  T,  0 ]
+[ P,  P,  S,  S,  T,  -Q+T ]
+[ P,  P,  S,  S,  S,  0 ]
+[ P,  P,  S,  S,  S,  -Q+S ]
+[ P,  P,  P-S,  S,  T,  0 ]
+[ P,  P,  P-S,  S,  T,  -Q+T ]
+[ P,  P,  P-S,  S,  S,  0 ]
+[ P,  P,  P-S,  S,  S,  -Q+S ]
+[ P,  P,  P-S,  P-S,  T,  0 ]
+[ P,  P,  P-S,  P-S,  T,  -Q+T ]
+[ P,  P,  P-S,  P-S,  P-S,  0 ]
+[ P,  P,  P-S,  P-S,  P-S,  P-Q-S ]
+[ 0,  Q,  S,  S,  T,  0 ]
+[ 0,  Q,  S,  S,  T,  -Q+T ]
+[ 0,  Q,  S,  S,  S,  0 ]
+[ 0,  Q,  S,  S,  S,  -Q+S ]
+[ 0,  Q,  Q-S,  S,  T,  0 ]
+[ 0,  Q,  Q-S,  S,  T,  -Q+T ]
+[ 0,  Q,  Q-S,  S,  S,  0 ]
+[ 0,  Q,  Q-S,  S,  S,  -Q+S ]
+[ 0,  Q,  Q-S,  Q-S,  T,  0 ]
+[ 0,  Q,  Q-S,  Q-S,  T,  -Q+T ]
+[ 0,  Q,  Q-S,  Q-S,  Q-S,  0 ]
+[ 0,  Q,  Q-S,  Q-S,  Q-S,  -S ]
+[ 0,  0,  S,  S,  T,  0 ]
+[ 0,  0,  S,  S,  T,  -Q+T ]
+[ 0,  0,  S,  S,  S,  0 ]
+[ 0,  0,  S,  S,  S,  -Q+S ]
+[ 0,  0,  -S,  S,  T,  0 ]
+[ 0,  0,  -S,  S,  T,  -Q+T ]
+[ 0,  0,  -S,  S,  S,  0 ]
+[ 0,  0,  -S,  S,  S,  -Q+S ]
+[ 0,  0,  -S,  -S,  T,  0 ]
+[ 0,  0,  -S,  -S,  T,  -Q+T ]
+[ 0,  0,  -S,  -S,  -S,  0 ]
+[ 0,  0,  -S,  -S,  -S,  -Q-S ]
+---------------------------------------
+Domain :
+         P  >= 0
+         - Q + T  >= 0
+         - Q + S  >= 0
+         Q - R  >= 0
+         - P + Q  >= 0
+         R  >= 0
+          1 >= 0
+
+Vertices :
+[ P,  Q,  R,  Q,  Q,  0 ]
+[ P,  Q,  R,  R,  Q,  0 ]
+[ P,  Q,  R,  R,  R,  0 ]
+[ P,  Q,  R,  R,  R,  -Q+R ]
+[ P,  Q,  Q-S,  Q,  Q,  0 ]
+[ P,  Q,  Q-S,  Q-S,  Q,  0 ]
+[ P,  Q,  Q-S,  Q-S,  Q-S,  0 ]
+[ P,  Q,  Q-S,  Q-S,  Q-S,  -S ]
+[ P,  P,  R,  Q,  Q,  0 ]
+[ P,  P,  R,  R,  Q,  0 ]
+[ P,  P,  R,  R,  R,  0 ]
+[ P,  P,  R,  R,  R,  -Q+R ]
+[ P,  P,  P-S,  Q,  Q,  0 ]
+[ P,  P,  P-S,  P-S,  Q,  0 ]
+[ P,  P,  P-S,  P-S,  P-S,  0 ]
+[ P,  P,  P-S,  P-S,  P-S,  P-Q-S ]
+[ 0,  Q,  R,  Q,  Q,  0 ]
+[ 0,  Q,  R,  R,  Q,  0 ]
+[ 0,  Q,  R,  R,  R,  0 ]
+[ 0,  Q,  R,  R,  R,  -Q+R ]
+[ 0,  Q,  Q-S,  Q,  Q,  0 ]
+[ 0,  Q,  Q-S,  Q-S,  Q,  0 ]
+[ 0,  Q,  Q-S,  Q-S,  Q-S,  0 ]
+[ 0,  Q,  Q-S,  Q-S,  Q-S,  -S ]
+[ 0,  0,  R,  Q,  Q,  0 ]
+[ 0,  0,  R,  R,  Q,  0 ]
+[ 0,  0,  R,  R,  R,  0 ]
+[ 0,  0,  R,  R,  R,  -Q+R ]
+[ 0,  0,  -S,  Q,  Q,  0 ]
+[ 0,  0,  -S,  -S,  Q,  0 ]
+[ 0,  0,  -S,  -S,  -S,  0 ]
+[ 0,  0,  -S,  -S,  -S,  -Q-S ]
+---------------------------------------
+Domain :
+         R  >= 0
+         - Q + R + S  >= 0
+         S - T  >= 0
+         - P + Q  >= 0
+         - R + T  >= 0
+         P  >= 0
+         Q - T  >= 0
+          1 >= 0
+
+Vertices :
+[ P,  Q,  R,  T,  T,  0 ]
+[ P,  Q,  R,  T,  T,  -Q+T ]
+[ P,  Q,  R,  R,  T,  0 ]
+[ P,  Q,  R,  R,  T,  -Q+T ]
+[ P,  Q,  R,  R,  R,  0 ]
+[ P,  Q,  R,  R,  R,  -Q+R ]
+[ P,  Q,  Q-S,  T,  T,  0 ]
+[ P,  Q,  Q-S,  T,  T,  -Q+T ]
+[ P,  Q,  Q-S,  Q-S,  T,  0 ]
+[ P,  Q,  Q-S,  Q-S,  T,  -Q+T ]
+[ P,  Q,  Q-S,  Q-S,  Q-S,  0 ]
+[ P,  Q,  Q-S,  Q-S,  Q-S,  -S ]
+[ P,  P,  R,  T,  T,  0 ]
+[ P,  P,  R,  T,  T,  -Q+T ]
+[ P,  P,  R,  R,  T,  0 ]
+[ P,  P,  R,  R,  T,  -Q+T ]
+[ P,  P,  R,  R,  R,  0 ]
+[ P,  P,  R,  R,  R,  -Q+R ]
+[ P,  P,  P-S,  T,  T,  0 ]
+[ P,  P,  P-S,  T,  T,  -Q+T ]
+[ P,  P,  P-S,  P-S,  T,  0 ]
+[ P,  P,  P-S,  P-S,  T,  -Q+T ]
+[ P,  P,  P-S,  P-S,  P-S,  0 ]
+[ P,  P,  P-S,  P-S,  P-S,  P-Q-S ]
+[ 0,  Q,  R,  T,  T,  0 ]
+[ 0,  Q,  R,  T,  T,  -Q+T ]
+[ 0,  Q,  R,  R,  T,  0 ]
+[ 0,  Q,  R,  R,  T,  -Q+T ]
+[ 0,  Q,  R,  R,  R,  0 ]
+[ 0,  Q,  R,  R,  R,  -Q+R ]
+[ 0,  Q,  Q-S,  T,  T,  0 ]
+[ 0,  Q,  Q-S,  T,  T,  -Q+T ]
+[ 0,  Q,  Q-S,  Q-S,  T,  0 ]
+[ 0,  Q,  Q-S,  Q-S,  T,  -Q+T ]
+[ 0,  Q,  Q-S,  Q-S,  Q-S,  0 ]
+[ 0,  Q,  Q-S,  Q-S,  Q-S,  -S ]
+[ 0,  0,  R,  T,  T,  0 ]
+[ 0,  0,  R,  T,  T,  -Q+T ]
+[ 0,  0,  R,  R,  T,  0 ]
+[ 0,  0,  R,  R,  T,  -Q+T ]
+[ 0,  0,  R,  R,  R,  0 ]
+[ 0,  0,  R,  R,  R,  -Q+R ]
+[ 0,  0,  -S,  T,  T,  0 ]
+[ 0,  0,  -S,  T,  T,  -Q+T ]
+[ 0,  0,  -S,  -S,  T,  0 ]
+[ 0,  0,  -S,  -S,  T,  -Q+T ]
+[ 0,  0,  -S,  -S,  -S,  0 ]
+[ 0,  0,  -S,  -S,  -S,  -Q-S ]
+---------------------------------------
+Domain :
+         P  >= 0
+         - Q + T  >= 0
+         Q - S  >= 0
+         - Q + R + S  >= 0
+         - R + S  >= 0
+         - P + Q  >= 0
+          1 >= 0
+
+Vertices :
+[ P,  Q,  R,  S,  Q,  0 ]
+[ P,  Q,  R,  S,  S,  0 ]
+[ P,  Q,  R,  S,  S,  -Q+S ]
+[ P,  Q,  R,  R,  Q,  0 ]
+[ P,  Q,  R,  R,  R,  0 ]
+[ P,  Q,  R,  R,  R,  -Q+R ]
+[ P,  Q,  Q-S,  S,  Q,  0 ]
+[ P,  Q,  Q-S,  S,  S,  0 ]
+[ P,  Q,  Q-S,  S,  S,  -Q+S ]
+[ P,  Q,  Q-S,  Q-S,  Q,  0 ]
+[ P,  Q,  Q-S,  Q-S,  Q-S,  0 ]
+[ P,  Q,  Q-S,  Q-S,  Q-S,  -S ]
+[ P,  P,  R,  S,  Q,  0 ]
+[ P,  P,  R,  S,  S,  0 ]
+[ P,  P,  R,  S,  S,  -Q+S ]
+[ P,  P,  R,  R,  Q,  0 ]
+[ P,  P,  R,  R,  R,  0 ]
+[ P,  P,  R,  R,  R,  -Q+R ]
+[ P,  P,  P-S,  S,  Q,  0 ]
+[ P,  P,  P-S,  S,  S,  0 ]
+[ P,  P,  P-S,  S,  S,  -Q+S ]
+[ P,  P,  P-S,  P-S,  Q,  0 ]
+[ P,  P,  P-S,  P-S,  P-S,  0 ]
+[ P,  P,  P-S,  P-S,  P-S,  P-Q-S ]
+[ 0,  Q,  R,  S,  Q,  0 ]
+[ 0,  Q,  R,  S,  S,  0 ]
+[ 0,  Q,  R,  S,  S,  -Q+S ]
+[ 0,  Q,  R,  R,  Q,  0 ]
+[ 0,  Q,  R,  R,  R,  0 ]
+[ 0,  Q,  R,  R,  R,  -Q+R ]
+[ 0,  Q,  Q-S,  S,  Q,  0 ]
+[ 0,  Q,  Q-S,  S,  S,  0 ]
+[ 0,  Q,  Q-S,  S,  S,  -Q+S ]
+[ 0,  Q,  Q-S,  Q-S,  Q,  0 ]
+[ 0,  Q,  Q-S,  Q-S,  Q-S,  0 ]
+[ 0,  Q,  Q-S,  Q-S,  Q-S,  -S ]
+[ 0,  0,  R,  S,  Q,  0 ]
+[ 0,  0,  R,  S,  S,  0 ]
+[ 0,  0,  R,  S,  S,  -Q+S ]
+[ 0,  0,  R,  R,  Q,  0 ]
+[ 0,  0,  R,  R,  R,  0 ]
+[ 0,  0,  R,  R,  R,  -Q+R ]
+[ 0,  0,  -S,  S,  Q,  0 ]
+[ 0,  0,  -S,  S,  S,  0 ]
+[ 0,  0,  -S,  S,  S,  -Q+S ]
+[ 0,  0,  -S,  -S,  Q,  0 ]
+[ 0,  0,  -S,  -S,  -S,  0 ]
+[ 0,  0,  -S,  -S,  -S,  -Q-S ]
+---------------------------------------
+Domain :
+         - P + Q  >= 0
+         - S + T  >= 0
+         - Q + R + S  >= 0
+         - R + S  >= 0
+         Q - T  >= 0
+         P  >= 0
+          1 >= 0
+
+Vertices :
+[ P,  Q,  R,  S,  T,  0 ]
+[ P,  Q,  R,  S,  T,  -Q+T ]
+[ P,  Q,  R,  S,  S,  0 ]
+[ P,  Q,  R,  S,  S,  -Q+S ]
+[ P,  Q,  R,  R,  T,  0 ]
+[ P,  Q,  R,  R,  T,  -Q+T ]
+[ P,  Q,  R,  R,  R,  0 ]
+[ P,  Q,  R,  R,  R,  -Q+R ]
+[ P,  Q,  Q-S,  S,  T,  0 ]
+[ P,  Q,  Q-S,  S,  T,  -Q+T ]
+[ P,  Q,  Q-S,  S,  S,  0 ]
+[ P,  Q,  Q-S,  S,  S,  -Q+S ]
+[ P,  Q,  Q-S,  Q-S,  T,  0 ]
+[ P,  Q,  Q-S,  Q-S,  T,  -Q+T ]
+[ P,  Q,  Q-S,  Q-S,  Q-S,  0 ]
+[ P,  Q,  Q-S,  Q-S,  Q-S,  -S ]
+[ P,  P,  R,  S,  T,  0 ]
+[ P,  P,  R,  S,  T,  -Q+T ]
+[ P,  P,  R,  S,  S,  0 ]
+[ P,  P,  R,  S,  S,  -Q+S ]
+[ P,  P,  R,  R,  T,  0 ]
+[ P,  P,  R,  R,  T,  -Q+T ]
+[ P,  P,  R,  R,  R,  0 ]
+[ P,  P,  R,  R,  R,  -Q+R ]
+[ P,  P,  P-S,  S,  T,  0 ]
+[ P,  P,  P-S,  S,  T,  -Q+T ]
+[ P,  P,  P-S,  S,  S,  0 ]
+[ P,  P,  P-S,  S,  S,  -Q+S ]
+[ P,  P,  P-S,  P-S,  T,  0 ]
+[ P,  P,  P-S,  P-S,  T,  -Q+T ]
+[ P,  P,  P-S,  P-S,  P-S,  0 ]
+[ P,  P,  P-S,  P-S,  P-S,  P-Q-S ]
+[ 0,  Q,  R,  S,  T,  0 ]
+[ 0,  Q,  R,  S,  T,  -Q+T ]
+[ 0,  Q,  R,  S,  S,  0 ]
+[ 0,  Q,  R,  S,  S,  -Q+S ]
+[ 0,  Q,  R,  R,  T,  0 ]
+[ 0,  Q,  R,  R,  T,  -Q+T ]
+[ 0,  Q,  R,  R,  R,  0 ]
+[ 0,  Q,  R,  R,  R,  -Q+R ]
+[ 0,  Q,  Q-S,  S,  T,  0 ]
+[ 0,  Q,  Q-S,  S,  T,  -Q+T ]
+[ 0,  Q,  Q-S,  S,  S,  0 ]
+[ 0,  Q,  Q-S,  S,  S,  -Q+S ]
+[ 0,  Q,  Q-S,  Q-S,  T,  0 ]
+[ 0,  Q,  Q-S,  Q-S,  T,  -Q+T ]
+[ 0,  Q,  Q-S,  Q-S,  Q-S,  0 ]
+[ 0,  Q,  Q-S,  Q-S,  Q-S,  -S ]
+[ 0,  0,  R,  S,  T,  0 ]
+[ 0,  0,  R,  S,  T,  -Q+T ]
+[ 0,  0,  R,  S,  S,  0 ]
+[ 0,  0,  R,  S,  S,  -Q+S ]
+[ 0,  0,  R,  R,  T,  0 ]
+[ 0,  0,  R,  R,  T,  -Q+T ]
+[ 0,  0,  R,  R,  R,  0 ]
+[ 0,  0,  R,  R,  R,  -Q+R ]
+[ 0,  0,  -S,  S,  T,  0 ]
+[ 0,  0,  -S,  S,  T,  -Q+T ]
+[ 0,  0,  -S,  S,  S,  0 ]
+[ 0,  0,  -S,  S,  S,  -Q+S ]
+[ 0,  0,  -S,  -S,  T,  0 ]
+[ 0,  0,  -S,  -S,  T,  -Q+T ]
+[ 0,  0,  -S,  -S,  -S,  0 ]
+[ 0,  0,  -S,  -S,  -S,  -Q-S ]
