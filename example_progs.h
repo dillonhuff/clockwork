@@ -1,7 +1,10 @@
 #pragma once
 #include "prog.h"
 
-prog fft8();
+prog fft8_unroll0();
+prog fft8_unroll2();
+prog fft8_unroll4();
+prog fft8_unroll8();
 
 prog counter();
 prog conv_multi(); //multiple-tile-cnn

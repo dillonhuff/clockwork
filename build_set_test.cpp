@@ -14235,7 +14235,12 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   
   
   
-  test_apps.push_back(fft8());
+  
+  
+  // test_apps.push_back(fft8_unroll0());
+  // test_apps.push_back(fft8_unroll2());
+  // test_apps.push_back(fft8_unroll4());
+  test_apps.push_back(fft8_unroll8());
   
   
   
