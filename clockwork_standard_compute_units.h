@@ -115,6 +115,21 @@ diff_r2d(const hw_uint<32*2>& in) {
 }
 
 static inline
+hw_uint<32> float_stencil_1x3(const hw_uint<32*3>& in) {
+  hw_uint<32> v0 = in.extract<0, 31>();
+  hw_uint<32> v1 = in.extract<32, 63>();
+  hw_uint<32> v2 = in.extract<64, 95>();
+
+
+  float f0 = to_float(v0);
+  float f1 = to_float(v1);
+  float f2 = to_float(v2);
+
+  float res = (2.7f*f0 + 1.83f*f1 + 2.45f*f2) / 3.0f;
+  return to_bits(res);
+}
+
+static inline
 hw_uint<32> heat3d_compute(const hw_uint<32*9>& in) {
   hw_uint<32> v0 = in.extract<0, 31>();
   hw_uint<32> v1 = in.extract<32, 63>();

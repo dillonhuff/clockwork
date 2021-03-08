@@ -1924,41 +1924,233 @@ void generate_compute_op(
 
 }
 
+isl_set* mk_set(isl_ctx* c, const vector<string>& vars, const vector<string>& constraints) {
+  string s = curlies(bracket_list(vars) + " : " + sep_list(constraints, "", "", " and "));
+  return isl_set_read_from_str(c, s.c_str());
+}
+
+std::string resource_sharing_loop_codegen(umap* schedmap, const int d) {
+  auto time_range = coalesce(range(schedmap));
+  auto sets = get_sets(time_range);
+
+  assert(sets.size() == 1);
+  isl_set* s = pick(get_sets(time_range));
+  assert(s != nullptr);
+
+  if (d == num_dims(s) - 1) {
+    return perfect_loop_codegen(schedmap);
+  }
+
+  vector<isl_map*> maps = get_maps(schedmap);
+  vector<pair<string, pair<int, int> > > bounds;
+  vector<int> split_points;
+  for (auto m : maps) {
+    isl_set* rng = project_all_but(range(m), d);
+    bounds.push_back({domain_name(m), {to_int(lexminval(rng)), to_int(lexmaxval(rng))}});
+    split_points.push_back(bounds.back().second.first);
+    split_points.push_back(bounds.back().second.second);
+  }
+
+  cout << "Bounds..." << endl;
+  for (auto b : bounds) {
+    cout << b.first << " -> " << b.second.first << ", " << b.second.second << endl;
+  }
+
+  vector<int> breakpts = sort_unique(split_points);
+  cout << "Points to split..." << endl;
+  for (auto b : breakpts) {
+    cout << tab(1) << b << endl;
+  }
+
+  assert(breakpts.size() > 0);
+
+  vector<pair<int, int> > intervals;
+  for (int i = 0; i < (int) breakpts.size() - 1; i++) {
+    intervals.push_back({breakpts[i], breakpts[i + 1]});
+  }
+
+  if (intervals.size() == 0) {
+    return resource_sharing_loop_codegen(schedmap, d + 1);
+  }
+
+  cout << "Intervals..." << endl;
+  vector<isl_set*> interval_sets;
+  int idx = 0;
+  for (auto i : intervals) {
+    cout << tab(1) << i.first << ", " << i.second << endl;
+    vector<string> constraints;
+    vector<string> vars;
+    for (int di = 0; di < num_dims(s); di++) {
+      string v = "d" + str(di);
+      vars.push_back(v);
+      if (di == d) {
+        constraints.push_back(str(i.first) + " <= " + v + ((idx == (int) intervals.size() - 1) ? " <= " : " < ") + str(i.second));
+      } 
+    }
+    isl_set* is = mk_set(ctx(s), vars, constraints);
+    interval_sets.push_back(is);
+    idx++;
+  }
+  cout << endl;
+  cout << "Restrictions..." << endl;
+  idx = 0;
+  ostringstream out;
+  for (auto is : interval_sets) {
+    out << tab(1) << "{" << endl;
+    auto i = intervals.at(idx);
+    string var = "d" + str(d);
+    //cout << "for (" << var << " = " << i.first << "; " << var << " " << ((idx == (int) intervals.size() - 1) ? " <= " : " < ") << " " << i.second << "; " << var << "++)" << endl;
+    umap* r = its_range(schedmap, to_uset(is));
+    //out << perfect_loop_codegen(r) << endl << endl;
+    out << resource_sharing_loop_codegen(r, d + 1) << endl << endl;
+    out << tab(1) << "}" << endl;
+    idx++;
+  }
+
+  cout << "Schedule maps..." << endl;
+
+  return out.str();
+}
+
 std::string resource_sharing_loop_codegen(umap* schedmap) {
-  return "";
-  //vector<isl_map*> maps = get_maps(schedmap);
-  //vector<pair<string, pair<int, int> > > bounds;
-  //vector<int> split_points;
-  //int d = 1;
-  //for (auto m : maps) {
-    //isl_set* rng = project_all_but(range(m), d);
-    //bounds.push_back({domain_name(m), {to_int(lexminval(rng)), to_int(lexmaxval(rng))}});
-    //split_points.push_back(bounds.back().second.first);
-    //split_points.push_back(bounds.back().second.second);
-  //}
+  return resource_sharing_loop_codegen(schedmap, 0);
+}
 
-  //cout << "Bounds..." << endl;
-  //for (auto b : bounds) {
-    //cout << b.first << " -> " << b.second.first << ", " << b.second.second << endl;
-  //}
+std::string non_blocking_loop_codegen(umap* schedmap, prog& prg) {
+  ostringstream conv_out;
+  auto time_range = coalesce(range(schedmap));
+  conv_out << "// time range: " << str(time_range) << endl;
+  auto sets = get_sets(time_range);
 
-  //vector<int> breakpts = sort_unique(split_points);
-  //cout << "Points to split..." << endl;
-  //for (auto b : breakpts) {
-    //cout << tab(1) << b << endl;
-  //}
-  //assert(false);
+  conv_out << "// # sets: " << sets.size() << endl;
+  assert(sets.size() == 1);
+  isl_set* s = pick(get_sets(time_range));
+  //isl_set* index_ranges = isl_set_project_out(cpy(s), isl_dim_set, num_dims(s) - 1, 1);
+  vector<int> lower_bounds;
+  vector<int> upper_bounds;
+  vector<string> constraint_list;
+  vector<string> dvs;
+  for (int d = 0; d < num_dims(s); d++) {
+    auto ds = project_all_but(s, d);
+    auto lm = lexminval(ds);
+    auto lmax = lexmaxval(ds);
+    lower_bounds.push_back(to_int(lm));
+    upper_bounds.push_back(to_int(lmax));
 
-  //cout << "Schedule maps..." << endl;
+    if (d < num_dims(s) - 1) {
+      string vn = "d" + str(d);
+      dvs.push_back(vn);
+      constraint_list.push_back(str(lower_bounds.back()) + " <= " + vn + " <= " + str(upper_bounds.back()));
+    }
+  }
 
-  ////auto time_range = coalesce(range(schedmap));
-  ////conv_out << "// time range: " << str(time_range) << endl;
-  ////auto sets = get_sets(time_range);
 
-  ////conv_out << "// # sets: " << sets.size() << endl;
-  ////assert(sets.size() == 1);
-  ////isl_set* s = pick(get_sets(time_range));
-  //return "";
+  string range_set =
+    curlies(bracket_list(dvs) + " : " + sep_list(constraint_list, "", "", " and "));
+  isl_set* index_ranges =
+    rdset(ctx(schedmap), range_set);
+
+  conv_out << tab(1) << "int current_stmt = 0;";
+  for (int i = 0; i < lower_bounds.size() - 1; i++) {
+    int trip_count = upper_bounds.at(i) - lower_bounds.at(i) + 1;
+    if (trip_count == 1) {
+      conv_out << tab(i) << "int i" << str(i) << " = " << lower_bounds.at(i) << ";" << endl;
+    } else {
+      string var = "i" + str(i);
+      conv_out << tab(i) << "int i" << str(i) << " = " << lower_bounds.at(i) << ";" << endl;
+      conv_out << tab(i) << "while (" << var << " <= " << upper_bounds.at(i) << ") {" << endl;
+    }
+    if (i == ((int) lower_bounds.size()) - 2) {
+      conv_out << "#pragma HLS pipeline II=1" << endl;
+    }
+  }
+
+  map<string, int> order;
+  for (auto time_to_val : get_maps(inv(schedmap))) {
+    //cout << "Time to val: " << str(time_to_val) << endl;
+    auto val_to_time = inv(time_to_val);
+    //cout << "Val to time: " << str(val_to_time) << endl;
+    auto last_dim =
+      isl_map_project_out(cpy(val_to_time), isl_dim_out, 0, lower_bounds.size() - 1);
+    //cout << "Val to last: " << str(last_dim) << endl;
+    isl_aff* lda = get_aff(last_dim);
+    int const_val = -1;
+    if (is_cst(lda)) {
+      //cout << tab(1) << "Constant!" << endl;
+      const_val = to_int(const_coeff(lda));
+    } else {
+      cout << "Error: Final schedule dimension: " << str(lda) << " is not constant" << endl;
+      assert(false);
+    }
+    assert(const_val >= 0);
+    //cout << tab(1) << "C = " << const_val << endl;
+    //cout << endl;
+    order[range_name(time_to_val)] = const_val;
+  }
+
+  vector<isl_map*> maps = get_maps(inv(schedmap));
+  sort_lt(maps, [order](isl_map* x) {
+      return map_find(range_name(x), order);
+      });
+
+  int num_stmts = maps.size();
+  assert(num_stmts > 0);
+
+  int last_stmt = num_stmts - 1;
+  assert(last_stmt >= 0);
+
+  conv_out << tab(lower_bounds.size() - 2) << "if (current_stmt == " << last_stmt + 1 << ") { current_stmt = 0; }" << endl << endl;
+
+  int current_stmt = 0;
+  for (auto tv : maps) {
+    auto time_to_val = isl_map_project_out(cpy(tv), isl_dim_in, num_in_dims(tv) - 1, 1);
+
+    cout << "Getting statement name from: " << str(time_to_val) << endl;
+    string stmt = range_name(time_to_val);
+
+    auto pw = isl_pw_multi_aff_from_map(time_to_val);
+    vector<pair<isl_set*, isl_multi_aff*> > pieces =
+      get_pieces(pw);
+    assert(pieces.size() == 1);
+
+    auto saff = pieces.at(0).second;
+    auto dom = pieces.at(0).first;
+    dom = gist(dom, index_ranges);
+
+
+    cout << "Stmt: " << stmt << endl;
+
+    op* s = prg.find_op(stmt);
+    vector<string> check_str{"true"};
+    for (auto b : s->buffers_read()) {
+      if (elem(b, prg.ins)) {
+        check_str.push_back("!" + parens(b + ".is_empty()"));
+      }
+    }
+    string not_blocked = sep_list(check_str, "(", ")", " && ");
+
+
+    conv_out << tab(lower_bounds.size()) << "if (" << "current_stmt == " << current_stmt << " && !" << codegen_c(dom) << ") {" << endl;
+    conv_out << tab(lower_bounds.size() + 1) << "current_stmt++;" << endl;
+    conv_out << tab(lower_bounds.size()) << "} else if (" << "current_stmt == " << current_stmt << " && " << not_blocked << " && " << codegen_c(dom) << ") {" << endl;
+    conv_out << tab(lower_bounds.size() + 1) << codegen_c(saff) << ";" << endl;
+    conv_out << tab(lower_bounds.size() + 1) << "current_stmt++;" << endl;
+    conv_out << tab(lower_bounds.size()) << "}" << endl;
+
+    current_stmt++;
+  }
+
+  for (int i = ((int) lower_bounds.size()) - 2; i >= 0; i--) {
+    int trip_count = upper_bounds.at(i) - lower_bounds.at(i) + 1;
+    if (trip_count == 1) {
+    } else {
+      conv_out << tab(i+1) << "i" << i << " = current_stmt == " << last_stmt + 1 << " ? i" << i << " + 1 : i" << i << ";" << endl;
+      conv_out << tab(i) << "}" << endl;
+    }
+
+  }
+
+  return conv_out.str();
 }
 
 std::string perfect_loop_codegen(umap* schedmap) {
@@ -2009,24 +2201,24 @@ std::string perfect_loop_codegen(umap* schedmap) {
 
   map<string, int> order;
   for (auto time_to_val : get_maps(inv(schedmap))) {
-    cout << "Time to val: " << str(time_to_val) << endl;
+    //cout << "Time to val: " << str(time_to_val) << endl;
     auto val_to_time = inv(time_to_val);
-    cout << "Val to time: " << str(val_to_time) << endl;
+    //cout << "Val to time: " << str(val_to_time) << endl;
     auto last_dim =
       isl_map_project_out(cpy(val_to_time), isl_dim_out, 0, lower_bounds.size() - 1);
-    cout << "Val to last: " << str(last_dim) << endl;
+    //cout << "Val to last: " << str(last_dim) << endl;
     isl_aff* lda = get_aff(last_dim);
     int const_val = -1;
     if (is_cst(lda)) {
-      cout << tab(1) << "Constant!" << endl;
+      //cout << tab(1) << "Constant!" << endl;
       const_val = to_int(const_coeff(lda));
     } else {
       cout << "Error: Final schedule dimension: " << str(lda) << " is not constant" << endl;
       assert(false);
     }
     assert(const_val >= 0);
-    cout << tab(1) << "C = " << const_val << endl;
-    cout << endl;
+    //cout << tab(1) << "C = " << const_val << endl;
+    //cout << endl;
     order[range_name(time_to_val)] = const_val;
   }
 
@@ -2036,10 +2228,10 @@ std::string perfect_loop_codegen(umap* schedmap) {
       });
 
   for (auto tv : maps) {
-    cout << tab(1) << "tv: " << str(tv) << endl;
-    cout << tab(2) << "start project out at: " << num_in_dims(tv) - 1 << endl;
+    //cout << tab(1) << "tv: " << str(tv) << endl;
+    //cout << tab(2) << "start project out at: " << num_in_dims(tv) - 1 << endl;
     auto time_to_val = isl_map_project_out(cpy(tv), isl_dim_in, num_in_dims(tv) - 1, 1);
-    cout << "time to val: " << str(time_to_val) << endl;
+    //cout << "time to val: " << str(time_to_val) << endl;
     auto pw = isl_pw_multi_aff_from_map(time_to_val);
     vector<pair<isl_set*, isl_multi_aff*> > pieces =
       get_pieces(pw);
@@ -2047,10 +2239,10 @@ std::string perfect_loop_codegen(umap* schedmap) {
 
     auto saff = pieces.at(0).second;
     auto dom = pieces.at(0).first;
-    cout << "dom: " << str(dom) << endl;
-    cout << "irn: " << str(index_ranges) << endl;
+    //cout << "dom: " << str(dom) << endl;
+    //cout << "irn: " << str(index_ranges) << endl;
     dom = gist(dom, index_ranges);
-    cout << "ctx: " << str(dom) << endl;
+    //cout << "ctx: " << str(dom) << endl;
     //assert(false);
     conv_out << tab(lower_bounds.size()) << "// " << str(dom) << endl;
     for (auto bs : get_basic_sets(dom)) {
@@ -2253,6 +2445,10 @@ void generate_app_code_op_logic(
     // Do nothing, leave code string
   } else if (options.hls_loop_codegen == HLS_LOOP_CODEGEN_PERFECT) {
     code_string = perfect_loop_codegen(schedmap);
+  } else if (options.hls_loop_codegen == HLS_LOOP_CODEGEN_CYLINDRICAL) {
+    code_string = resource_sharing_loop_codegen(schedmap);
+  } else if (options.hls_loop_codegen == HLS_LOOP_CODEGEN_NON_BLOCKING) {
+    code_string = non_blocking_loop_codegen(schedmap, prg);
   } else {
     assert(options.hls_loop_codegen == HLS_LOOP_CODEGEN_ISL);
     code_string = codegen_c(schedmap);
@@ -2373,37 +2569,6 @@ void generate_optimized_code(CodegenOptions& options, prog& prg) {
 
     umap* pre_its_sched =
       clockwork_schedule_umap_reversed(cpy(dom), valid_deps, valid_deps);
-    //cout << "Pre its sched: " << str(pre_its_sched) << endl;
-    //cout << "dom: " << str(dom) << endl;
-    //for (auto m : get_maps(pre_its_sched)) {
-      //for (auto s : get_sets(dom)) {
-        //if (name(s) == domain_name(m)) {
-          //cout << "Matching domains: " << endl;
-          //cout << tab(1) << str(s) << endl;
-          //cout << tab(1) << str(m) << endl << endl;
-
-          //assert(ctx(m) == ctx(s));
-
-          //isl_space* s_dspace = get_space(s);
-          //isl_space* m_dspace = get_space(domain(m));
-
-          //isl_id* dspace_id = isl_space_get_tuple_id(s_dspace, isl_dim_set);
-          //cout << tab(1) << "dspace_id       = " << str(dspace_id) << endl;
-          //isl_id* other_dspace_id = isl_space_get_tuple_id(m_dspace, isl_dim_set);
-          //cout << tab(1) << "other_dspace_id = " << str(other_dspace_id) << endl;
-
-          //cout << tab(1) << "s_dspace: " << str(s_dspace) << endl;
-          //cout << tab(1) << "m_dspace: " << str(m_dspace) << endl;
-
-          //assert(isl_space_has_equal_params(s_dspace, m_dspace));
-          //assert(isl_space_has_equal_tuples(s_dspace, m_dspace));
-          //assert(isl_space_is_equal(s_dspace, m_dspace));
-
-          //isl_map* ints = its(m, s);
-          //cout << tab(1) << "Intersection: " << str(ints) << endl;
-        //}
-      //}
-    //}
     sched =
       its(pre_its_sched, dom);
     cout << "Post its sched: " << str(sched) << endl;
@@ -4414,7 +4579,16 @@ isl_schedule* prog::optimized_schedule() {
   cout << "Computing schedule for: " << str(domain) << endl << tab(1) << " subject to " << str(validity) << endl;
   cout << "Getting schedule..." << endl;
 
+  double total_elapsed = 0.;
+  auto start = std::chrono::system_clock::now();
+
   isl_schedule* sched = isl_union_set_compute_schedule(domain, validity, proximity);
+
+  auto end = std::chrono::system_clock::now();
+  std::chrono::duration<double> elapsed = end - start;
+  total_elapsed += elapsed.count();
+
+  cout << "### Schedule elapsed: " << total_elapsed << endl;
 
   cout << endl;
   cout << "Result: " << str(sched) << endl;
@@ -8894,6 +9068,25 @@ void set_channel_depths_to_constant(const int constant, app_dag& dag) {
       }
     }
   }
+}
+
+umap* clockwork_schedule_prog(prog& prg) {
+  auto valid_deps = prg.validity_deps();
+  double total_elapsed = 0.;
+  auto start = std::chrono::system_clock::now();
+
+  auto ss =
+    clockwork_schedule_umap_reversed(prg.whole_iteration_domain(), valid_deps, valid_deps);
+
+  auto end = std::chrono::system_clock::now();
+  std::chrono::duration<double> elapsed = end - start;
+  total_elapsed += elapsed.count();
+
+  cout << "### Clockwork Schedule elapsed: " << total_elapsed << endl;
+  auto global_sched =
+    its(ss, prg.whole_iteration_domain());
+
+  return global_sched;
 }
 
 void generate_resource_sharing_code(
