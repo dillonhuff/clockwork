@@ -259,7 +259,7 @@
           "ub_hw_kernel_global_wrapper_stencil_cyclic_0":{
             "genref":"cgralib.Pond_amber",
             "genargs":{"ID":["String","_U4"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
-            "metadata":{"config":{"in2regfile":{"cycle_starting_addr":[0],"cycle_stride":[1],"dimensionality":1,"extent":[9],"write_data_starting_addr":[0],"write_data_stride":[1]},"regfile2out":{"cycle_starting_addr":[904],"cycle_stride":[1,32,896],"dimensionality":3,"extent":[28,28,9],"read_data_starting_addr":[0],"read_data_stride":[0,0,1]}},"mode":"pond"}
+            "metadata":{"config":{"in2regfile_0":{"cycle_starting_addr":[0],"cycle_stride":[1],"dimensionality":1,"extent":[9],"write_data_starting_addr":[0],"write_data_stride":[1]},"regfile2out_0":{"cycle_starting_addr":[904],"cycle_stride":[1,32,896],"dimensionality":3,"extent":[28,28,9],"read_data_starting_addr":[0],"read_data_stride":[0,0,1]}},"mode":"pond"}
           },
           "ub_hw_kernel_global_wrapper_stencil_cyclic_0_clk_en_const":{
             "modref":"corebit.const",
@@ -268,9 +268,9 @@
         },
         "connections":[
           ["ub_hw_kernel_global_wrapper_stencil_cyclic_0.clk","self.clk"],
-          ["ub_hw_kernel_global_wrapper_stencil_cyclic_0.data_out_pond","self.op_hcompute_conv_stencil_1_read.0"],
+          ["ub_hw_kernel_global_wrapper_stencil_cyclic_0.data_out_pond_0","self.op_hcompute_conv_stencil_1_read.0"],
           ["self.op_hcompute_hw_kernel_global_wrapper_stencil_write_extra_ctrl","self.op_hcompute_conv_stencil_1_read_extra_ctrl"],
-          ["ub_hw_kernel_global_wrapper_stencil_cyclic_0.data_in_pond","self.op_hcompute_hw_kernel_global_wrapper_stencil_write.0"],
+          ["ub_hw_kernel_global_wrapper_stencil_cyclic_0.data_in_pond_0","self.op_hcompute_hw_kernel_global_wrapper_stencil_write.0"],
           ["ub_hw_kernel_global_wrapper_stencil_cyclic_0.flush","self.reset"],
           ["ub_hw_kernel_global_wrapper_stencil_cyclic_0_clk_en_const.out","ub_hw_kernel_global_wrapper_stencil_cyclic_0.clk_en"],
           ["ub_hw_kernel_global_wrapper_stencil_cyclic_0_clk_en_const.out","ub_hw_kernel_global_wrapper_stencil_cyclic_0.rst_n"]

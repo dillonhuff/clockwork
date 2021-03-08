@@ -1476,10 +1476,11 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, UBuffer& ubuf) {
     auto mem = options.mem_hierarchy.at("regfile");
     int word_width = mem.word_width.at("regfile");
     int capacity = mem.capacity.at("regfile");
+    int in_cnt = 0, out_cnt = 0;
     for (auto op_name: ops) {
         auto sched = op2sched.at(op_name);
         if(op2write_map.count(op_name)) {
-            assert(op2write_map.size() == 1);
+            assert(op2write_map.size() <= 2);
             auto acc_map = pick(op2write_map.at(op_name));
                 auto reduce_map = linear_address_map_lake(to_set(range(acc_map)), mem.fetch_width);
                 auto linear_acc_map = dot(acc_map, reduce_map);
@@ -1493,19 +1494,21 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, UBuffer& ubuf) {
                 sched = m_pair.first;
                 cout << tab(1) << "After Merge: " << endl;
                 cout << tab(2) << "schedule: " << str(sched) << endl;
-                cout << tab(2) << "access map: " << str(m_pair.second) << endl;
+                //cout << tab(2) << "access map: " << str(m_pair.second) << endl;
                 auto aff = get_aff(sched);
                 auto dom = ::domain(sched);
                 auto config_info = generate_accessor_config_from_aff_expr(dom, aff);
                 int port_width = mem.in_port_width.at("regfile");
                 auto addressor = generate_addressor_config_from_aff_expr(
                         get_aff(m_pair.second), false, false, word_width, capacity, port_width);
+                        //get_aff(to_map(linear_acc_map)), false, false, word_width, capacity, port_width);
                 config_info.merge(addressor);
                 cout << "\tWrite map: " << str(acc_map) << endl;
-            add_lake_config(ret, config_info, num_in_dims(aff), "in2regfile");
+            add_lake_config(ret, config_info, num_in_dims(aff), "in2regfile_" + str(in_cnt));
+            in_cnt ++;
         }
-        else if(op2read_map.count(op_name)) {
-            assert(op2read_map.size() == 1);
+        if(op2read_map.count(op_name)) {
+            assert(op2read_map.size() <= 2);
             auto acc_map = pick(op2read_map.at(op_name));
                 auto reduce_map = linear_address_map_lake(to_set(range(acc_map)), mem.fetch_width);
                 auto linear_acc_map = dot(acc_map, reduce_map);
@@ -1517,16 +1520,18 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, UBuffer& ubuf) {
                 sched = m_pair.first;
                 cout << tab(1) << "After Merge: " << endl;
                 cout << tab(2) << "schedule: " << str(sched) << endl;
-                cout << tab(2) << "access map: " << str(m_pair.second) << endl;
+                //cout << tab(2) << "access map: " << str(m_pair.second) << endl;
                 auto aff = get_aff(sched);
                 auto dom = ::domain(sched);
                 auto config_info = generate_accessor_config_from_aff_expr(dom, aff);
                 int port_width = mem.out_port_width.at("regfile");
                 auto addressor = generate_addressor_config_from_aff_expr(
                         get_aff(m_pair.second), true, false, word_width, capacity, port_width);
+                        //get_aff(linear_acc_map), true, false, word_width, capacity, port_width);
                 config_info.merge(addressor);
                 cout << "\tRead map: " << str(acc_map) << endl;
-            add_lake_config(ret, config_info, num_in_dims(aff), "regfile2out");
+            add_lake_config(ret, config_info, num_in_dims(aff), "regfile2out_" + str(out_cnt));
+            out_cnt ++;
         }
         cout << "\tSched: " << str(sched) << endl;
     }
@@ -2074,8 +2079,7 @@ string memDatainPort(string mode, int pt_cnt) {
     if (mode == "lake")
         return "data_in_" + to_string(pt_cnt);
     else if (mode == "pond") {
-        assert(pt_cnt == 0);
-        return "data_in_pond";
+        return "data_in_pond_" + to_string(pt_cnt);
     } else {
         cout << "Mode: " << mode << " is not implemented yet" << endl;
         assert(false);
@@ -2086,8 +2090,7 @@ string memDataoutPort(string mode, int pt_cnt) {
     if (mode == "lake")
         return "data_out_" + to_string(pt_cnt);
     else if (mode == "pond") {
-        assert(pt_cnt == 0);
-        return "data_out_pond";
+        return "data_out_pond_" + to_string(pt_cnt);
     } else {
         cout << "Mode: " << mode << " is not implemented yet" << endl;
         assert(false);
@@ -2278,9 +2281,9 @@ void UBuffer::generate_coreir(CodegenOptions& options,
       //if (options.rtl_options.target_tile == TARGET_TILE_WIDE_FETCH_WITH_ADDRGEN) {
       string config_mode;
       bool multi_level_mem = options.mem_hierarchy.count("regfile");
-      if (capacity <= 32 && multi_level_mem) {
+      if (capacity <= 32 && multi_level_mem && (target_buf.num_in_ports() < 2) ) {
         cout << "Generate config for register file!" << endl;
-        config_file = generate_ubuf_args(options, target_buf);
+        config_file = generate_ubuf_args(options, new_target_buf);
         config_mode = "pond";
 
       } else {
