@@ -199,8 +199,12 @@ CoreIR::Namespace* CoreIRLoadLibrary_cgralib(Context* c) {
                 {"clk", c->Named("coreir.clkIn")}
             };
 
-            recordparams.push_back({"data_in_pond", c->BitIn()->Arr(width)});
-            recordparams.push_back({"data_out_pond", c->Bit()->Arr(width)});
+            for (size_t i = 0; i < num_input; i ++) {
+                recordparams.push_back({"data_in_pond_" + to_string(i) , c->BitIn()->Arr(width)});
+            }
+            for (size_t i = 0; i < num_output; i ++) {
+                recordparams.push_back({"data_out_pond_" + to_string(i), c->Bit()->Arr(width)});
+            }
             recordparams.push_back({"valid_out_pond", c->Bit()});
             recordparams.push_back({"flush", c->BitIn()});
 
@@ -247,8 +251,12 @@ CoreIR::Namespace* CoreIRLoadLibrary_cgralib(Context* c) {
                 {"clk", c->Named("coreir.clkIn")}
             };
 
-            recordparams.push_back({"data_in_pond", c->BitIn()->Arr(width)});
-            recordparams.push_back({"data_out_pond", c->Bit()->Arr(width)});
+            for (size_t i = 0; i < num_input; i ++) {
+                recordparams.push_back({"data_in_pond_" + to_string(i), c->BitIn()->Arr(width)});
+            }
+            for (size_t i = 0; i < num_output; i ++) {
+                recordparams.push_back({"data_out_pond_" + to_string(i), c->Bit()->Arr(width)});
+            }
             recordparams.push_back({"valid_out_pond", c->Bit()});
             recordparams.push_back({"flush", c->BitIn()});
 

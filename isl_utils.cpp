@@ -2526,16 +2526,19 @@ isl_map* remove_irrelevant_in_dim(isl_map* m) {
             rem_dim.push_back(dim);
         dim ++;
     }
-    std::reverse(rem_dim.begin(), rem_dim.end());
-    cout << "remove dimension: " << rem_dim << endl;
+    if (rem_dim.size()) {
+        std::reverse(rem_dim.begin(), rem_dim.end());
+        cout << "remove dimension: " << rem_dim << endl;
 
-    for (int in_dim: rem_dim) {
-        ret = isl_map_project_out(ret, isl_dim_in, in_dim, 1);
+        for (int in_dim: rem_dim) {
+            ret = isl_map_project_out(ret, isl_dim_in, in_dim, 1);
+        }
+        auto ct = ctx(m);
+        string dname;
+        dname = domain_name(m);
+        isl_map_set_tuple_id(ret, isl_dim_in, id(ct, dname));
+
     }
-    auto ct = ctx(m);
-    string dname;
-    dname = domain_name(m);
-    isl_map_set_tuple_id(ret, isl_dim_in, id(ct, dname));
 
     return ret;
 }
