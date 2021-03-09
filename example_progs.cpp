@@ -42,482 +42,224 @@ prog fft8_unroll8() {
 //consuming hw_input_global_wrapper.stencil
   auto hw_output_s0_y_yi = prg.add_loop("hw_output_s0_y_yi", 0, 2);
   auto hw_output_s0_x_xi = hw_output_s0_y_yi->add_loop("hw_output_s0_x_xi", 0, 8);
-////producing f4
-
-//store is: f4.0.stencil((hw_output_s0_x_xi + -7)) = 0.000000f
-  auto hcompute_f4_0_stencil = hw_output_s0_x_xi->add_op("op_hcompute_f4_0_stencil");
-  hcompute_f4_0_stencil->add_function("hcompute_f4_0_stencil");
-  prg.buffer_port_widths["f4_0_stencil"] = 32;
-  hcompute_f4_0_stencil->add_store("f4_0_stencil", "(hw_output_s0_x_xi + -7)");
-
-//store is: f4.1.stencil((hw_output_s0_x_xi + -7)) = 0.000000f
-  auto hcompute_f4_1_stencil = hw_output_s0_x_xi->add_op("op_hcompute_f4_1_stencil");
-  hcompute_f4_1_stencil->add_function("hcompute_f4_1_stencil");
-  prg.buffer_port_widths["f4_1_stencil"] = 32;
-  hcompute_f4_1_stencil->add_store("f4_1_stencil", "(hw_output_s0_x_xi + -7)");
-
-//store is: f4.0.stencil((hw_output_s0_x_xi + -6)) = 0.000000f
-  auto hcompute_f4_0_stencil_1 = hw_output_s0_x_xi->add_op("op_hcompute_f4_0_stencil_1");
-  hcompute_f4_0_stencil_1->add_function("hcompute_f4_0_stencil_1");
-  hcompute_f4_0_stencil_1->add_store("f4_0_stencil", "(hw_output_s0_x_xi + -6)");
-
-//store is: f4.1.stencil((hw_output_s0_x_xi + -6)) = 0.000000f
-  auto hcompute_f4_1_stencil_1 = hw_output_s0_x_xi->add_op("op_hcompute_f4_1_stencil_1");
-  hcompute_f4_1_stencil_1->add_function("hcompute_f4_1_stencil_1");
-  hcompute_f4_1_stencil_1->add_store("f4_1_stencil", "(hw_output_s0_x_xi + -6)");
-
-//store is: f4.0.stencil((hw_output_s0_x_xi + -5)) = 0.000000f
-  auto hcompute_f4_0_stencil_2 = hw_output_s0_x_xi->add_op("op_hcompute_f4_0_stencil_2");
-  hcompute_f4_0_stencil_2->add_function("hcompute_f4_0_stencil_2");
-  hcompute_f4_0_stencil_2->add_store("f4_0_stencil", "(hw_output_s0_x_xi + -5)");
-
-//store is: f4.1.stencil((hw_output_s0_x_xi + -5)) = 0.000000f
-  auto hcompute_f4_1_stencil_2 = hw_output_s0_x_xi->add_op("op_hcompute_f4_1_stencil_2");
-  hcompute_f4_1_stencil_2->add_function("hcompute_f4_1_stencil_2");
-  hcompute_f4_1_stencil_2->add_store("f4_1_stencil", "(hw_output_s0_x_xi + -5)");
-
-//store is: f4.0.stencil((hw_output_s0_x_xi + -4)) = 0.000000f
-  auto hcompute_f4_0_stencil_3 = hw_output_s0_x_xi->add_op("op_hcompute_f4_0_stencil_3");
-  hcompute_f4_0_stencil_3->add_function("hcompute_f4_0_stencil_3");
-  hcompute_f4_0_stencil_3->add_store("f4_0_stencil", "(hw_output_s0_x_xi + -4)");
-
-//store is: f4.1.stencil((hw_output_s0_x_xi + -4)) = 0.000000f
-  auto hcompute_f4_1_stencil_3 = hw_output_s0_x_xi->add_op("op_hcompute_f4_1_stencil_3");
-  hcompute_f4_1_stencil_3->add_function("hcompute_f4_1_stencil_3");
-  hcompute_f4_1_stencil_3->add_store("f4_1_stencil", "(hw_output_s0_x_xi + -4)");
-
-//store is: f4.0.stencil((hw_output_s0_x_xi + -3)) = 0.000000f
-  auto hcompute_f4_0_stencil_4 = hw_output_s0_x_xi->add_op("op_hcompute_f4_0_stencil_4");
-  hcompute_f4_0_stencil_4->add_function("hcompute_f4_0_stencil_4");
-  hcompute_f4_0_stencil_4->add_store("f4_0_stencil", "(hw_output_s0_x_xi + -3)");
-
-//store is: f4.1.stencil((hw_output_s0_x_xi + -3)) = 0.000000f
-  auto hcompute_f4_1_stencil_4 = hw_output_s0_x_xi->add_op("op_hcompute_f4_1_stencil_4");
-  hcompute_f4_1_stencil_4->add_function("hcompute_f4_1_stencil_4");
-  hcompute_f4_1_stencil_4->add_store("f4_1_stencil", "(hw_output_s0_x_xi + -3)");
-
-//store is: f4.0.stencil((hw_output_s0_x_xi + -2)) = 0.000000f
-  auto hcompute_f4_0_stencil_5 = hw_output_s0_x_xi->add_op("op_hcompute_f4_0_stencil_5");
-  hcompute_f4_0_stencil_5->add_function("hcompute_f4_0_stencil_5");
-  hcompute_f4_0_stencil_5->add_store("f4_0_stencil", "(hw_output_s0_x_xi + -2)");
-
-//store is: f4.1.stencil((hw_output_s0_x_xi + -2)) = 0.000000f
-  auto hcompute_f4_1_stencil_5 = hw_output_s0_x_xi->add_op("op_hcompute_f4_1_stencil_5");
-  hcompute_f4_1_stencil_5->add_function("hcompute_f4_1_stencil_5");
-  hcompute_f4_1_stencil_5->add_store("f4_1_stencil", "(hw_output_s0_x_xi + -2)");
-
-//store is: f4.0.stencil((hw_output_s0_x_xi + -1)) = 0.000000f
-  auto hcompute_f4_0_stencil_6 = hw_output_s0_x_xi->add_op("op_hcompute_f4_0_stencil_6");
-  hcompute_f4_0_stencil_6->add_function("hcompute_f4_0_stencil_6");
-  hcompute_f4_0_stencil_6->add_store("f4_0_stencil", "(hw_output_s0_x_xi + -1)");
-
-//store is: f4.1.stencil((hw_output_s0_x_xi + -1)) = 0.000000f
-  auto hcompute_f4_1_stencil_6 = hw_output_s0_x_xi->add_op("op_hcompute_f4_1_stencil_6");
-  hcompute_f4_1_stencil_6->add_function("hcompute_f4_1_stencil_6");
-  hcompute_f4_1_stencil_6->add_store("f4_1_stencil", "(hw_output_s0_x_xi + -1)");
-
-//store is: f4.0.stencil(hw_output_s0_x_xi) = 0.000000f
-  auto hcompute_f4_0_stencil_7 = hw_output_s0_x_xi->add_op("op_hcompute_f4_0_stencil_7");
-  hcompute_f4_0_stencil_7->add_function("hcompute_f4_0_stencil_7");
-  hcompute_f4_0_stencil_7->add_store("f4_0_stencil", "hw_output_s0_x_xi");
-
-//store is: f4.1.stencil(hw_output_s0_x_xi) = 0.000000f
-  auto hcompute_f4_1_stencil_7 = hw_output_s0_x_xi->add_op("op_hcompute_f4_1_stencil_7");
-  hcompute_f4_1_stencil_7->add_function("hcompute_f4_1_stencil_7");
-  hcompute_f4_1_stencil_7->add_store("f4_1_stencil", "hw_output_s0_x_xi");
-  auto f4_s1_t_x = hw_output_s0_x_xi->add_loop("f4_s1_t_x", 0, 8);
-////producing f3
-
-//store is: f3.0.stencil(0) = 0.000000f
-  auto hcompute_f3_0_stencil = f4_s1_t_x->add_op("op_hcompute_f3_0_stencil");
-  hcompute_f3_0_stencil->add_function("hcompute_f3_0_stencil");
-  prg.buffer_port_widths["f3_0_stencil"] = 32;
-  hcompute_f3_0_stencil->add_store("f3_0_stencil", "0");
-
-//store is: f3.1.stencil(0) = 0.000000f
-  auto hcompute_f3_1_stencil = f4_s1_t_x->add_op("op_hcompute_f3_1_stencil");
-  hcompute_f3_1_stencil->add_function("hcompute_f3_1_stencil");
-  prg.buffer_port_widths["f3_1_stencil"] = 32;
-  hcompute_f3_1_stencil->add_store("f3_1_stencil", "0");
-
-//store is: f3.0.stencil(1) = 0.000000f
-  auto hcompute_f3_0_stencil_1 = f4_s1_t_x->add_op("op_hcompute_f3_0_stencil_1");
-  hcompute_f3_0_stencil_1->add_function("hcompute_f3_0_stencil_1");
-  hcompute_f3_0_stencil_1->add_store("f3_0_stencil", "1");
-
-//store is: f3.1.stencil(1) = 0.000000f
-  auto hcompute_f3_1_stencil_1 = f4_s1_t_x->add_op("op_hcompute_f3_1_stencil_1");
-  hcompute_f3_1_stencil_1->add_function("hcompute_f3_1_stencil_1");
-  hcompute_f3_1_stencil_1->add_store("f3_1_stencil", "1");
-
-//store is: f3.0.stencil(2) = 0.000000f
-  auto hcompute_f3_0_stencil_2 = f4_s1_t_x->add_op("op_hcompute_f3_0_stencil_2");
-  hcompute_f3_0_stencil_2->add_function("hcompute_f3_0_stencil_2");
-  hcompute_f3_0_stencil_2->add_store("f3_0_stencil", "2");
-
-//store is: f3.1.stencil(2) = 0.000000f
-  auto hcompute_f3_1_stencil_2 = f4_s1_t_x->add_op("op_hcompute_f3_1_stencil_2");
-  hcompute_f3_1_stencil_2->add_function("hcompute_f3_1_stencil_2");
-  hcompute_f3_1_stencil_2->add_store("f3_1_stencil", "2");
-
-//store is: f3.0.stencil(3) = 0.000000f
-  auto hcompute_f3_0_stencil_3 = f4_s1_t_x->add_op("op_hcompute_f3_0_stencil_3");
-  hcompute_f3_0_stencil_3->add_function("hcompute_f3_0_stencil_3");
-  hcompute_f3_0_stencil_3->add_store("f3_0_stencil", "3");
-
-//store is: f3.1.stencil(3) = 0.000000f
-  auto hcompute_f3_1_stencil_3 = f4_s1_t_x->add_op("op_hcompute_f3_1_stencil_3");
-  hcompute_f3_1_stencil_3->add_function("hcompute_f3_1_stencil_3");
-  hcompute_f3_1_stencil_3->add_store("f3_1_stencil", "3");
-
-//store is: f3.0.stencil(4) = 0.000000f
-  auto hcompute_f3_0_stencil_4 = f4_s1_t_x->add_op("op_hcompute_f3_0_stencil_4");
-  hcompute_f3_0_stencil_4->add_function("hcompute_f3_0_stencil_4");
-  hcompute_f3_0_stencil_4->add_store("f3_0_stencil", "4");
-
-//store is: f3.1.stencil(4) = 0.000000f
-  auto hcompute_f3_1_stencil_4 = f4_s1_t_x->add_op("op_hcompute_f3_1_stencil_4");
-  hcompute_f3_1_stencil_4->add_function("hcompute_f3_1_stencil_4");
-  hcompute_f3_1_stencil_4->add_store("f3_1_stencil", "4");
-
-//store is: f3.0.stencil(5) = 0.000000f
-  auto hcompute_f3_0_stencil_5 = f4_s1_t_x->add_op("op_hcompute_f3_0_stencil_5");
-  hcompute_f3_0_stencil_5->add_function("hcompute_f3_0_stencil_5");
-  hcompute_f3_0_stencil_5->add_store("f3_0_stencil", "5");
-
-//store is: f3.1.stencil(5) = 0.000000f
-  auto hcompute_f3_1_stencil_5 = f4_s1_t_x->add_op("op_hcompute_f3_1_stencil_5");
-  hcompute_f3_1_stencil_5->add_function("hcompute_f3_1_stencil_5");
-  hcompute_f3_1_stencil_5->add_store("f3_1_stencil", "5");
-
-//store is: f3.0.stencil(6) = 0.000000f
-  auto hcompute_f3_0_stencil_6 = f4_s1_t_x->add_op("op_hcompute_f3_0_stencil_6");
-  hcompute_f3_0_stencil_6->add_function("hcompute_f3_0_stencil_6");
-  hcompute_f3_0_stencil_6->add_store("f3_0_stencil", "6");
-
-//store is: f3.1.stencil(6) = 0.000000f
-  auto hcompute_f3_1_stencil_6 = f4_s1_t_x->add_op("op_hcompute_f3_1_stencil_6");
-  hcompute_f3_1_stencil_6->add_function("hcompute_f3_1_stencil_6");
-  hcompute_f3_1_stencil_6->add_store("f3_1_stencil", "6");
-
-//store is: f3.0.stencil(7) = 0.000000f
-  auto hcompute_f3_0_stencil_7 = f4_s1_t_x->add_op("op_hcompute_f3_0_stencil_7");
-  hcompute_f3_0_stencil_7->add_function("hcompute_f3_0_stencil_7");
-  hcompute_f3_0_stencil_7->add_store("f3_0_stencil", "7");
-
-//store is: f3.1.stencil(7) = 0.000000f
-  auto hcompute_f3_1_stencil_7 = f4_s1_t_x->add_op("op_hcompute_f3_1_stencil_7");
-  hcompute_f3_1_stencil_7->add_function("hcompute_f3_1_stencil_7");
-  hcompute_f3_1_stencil_7->add_store("f3_1_stencil", "7");
-  auto f3_s1_t_x = f4_s1_t_x->add_loop("f3_s1_t_x", 0, 8);
-////producing f2
-
-//store is: f2.0.stencil(0) = 0.000000f
-  auto hcompute_f2_0_stencil = f3_s1_t_x->add_op("op_hcompute_f2_0_stencil");
-  hcompute_f2_0_stencil->add_function("hcompute_f2_0_stencil");
-  prg.buffer_port_widths["f2_0_stencil"] = 32;
-  hcompute_f2_0_stencil->add_store("f2_0_stencil", "0");
-
-//store is: f2.1.stencil(0) = 0.000000f
-  auto hcompute_f2_1_stencil = f3_s1_t_x->add_op("op_hcompute_f2_1_stencil");
-  hcompute_f2_1_stencil->add_function("hcompute_f2_1_stencil");
-  prg.buffer_port_widths["f2_1_stencil"] = 32;
-  hcompute_f2_1_stencil->add_store("f2_1_stencil", "0");
-
-//store is: f2.0.stencil(1) = 0.000000f
-  auto hcompute_f2_0_stencil_1 = f3_s1_t_x->add_op("op_hcompute_f2_0_stencil_1");
-  hcompute_f2_0_stencil_1->add_function("hcompute_f2_0_stencil_1");
-  hcompute_f2_0_stencil_1->add_store("f2_0_stencil", "1");
-
-//store is: f2.1.stencil(1) = 0.000000f
-  auto hcompute_f2_1_stencil_1 = f3_s1_t_x->add_op("op_hcompute_f2_1_stencil_1");
-  hcompute_f2_1_stencil_1->add_function("hcompute_f2_1_stencil_1");
-  hcompute_f2_1_stencil_1->add_store("f2_1_stencil", "1");
-
-//store is: f2.0.stencil(2) = 0.000000f
-  auto hcompute_f2_0_stencil_2 = f3_s1_t_x->add_op("op_hcompute_f2_0_stencil_2");
-  hcompute_f2_0_stencil_2->add_function("hcompute_f2_0_stencil_2");
-  hcompute_f2_0_stencil_2->add_store("f2_0_stencil", "2");
-
-//store is: f2.1.stencil(2) = 0.000000f
-  auto hcompute_f2_1_stencil_2 = f3_s1_t_x->add_op("op_hcompute_f2_1_stencil_2");
-  hcompute_f2_1_stencil_2->add_function("hcompute_f2_1_stencil_2");
-  hcompute_f2_1_stencil_2->add_store("f2_1_stencil", "2");
-
-//store is: f2.0.stencil(3) = 0.000000f
-  auto hcompute_f2_0_stencil_3 = f3_s1_t_x->add_op("op_hcompute_f2_0_stencil_3");
-  hcompute_f2_0_stencil_3->add_function("hcompute_f2_0_stencil_3");
-  hcompute_f2_0_stencil_3->add_store("f2_0_stencil", "3");
-
-//store is: f2.1.stencil(3) = 0.000000f
-  auto hcompute_f2_1_stencil_3 = f3_s1_t_x->add_op("op_hcompute_f2_1_stencil_3");
-  hcompute_f2_1_stencil_3->add_function("hcompute_f2_1_stencil_3");
-  hcompute_f2_1_stencil_3->add_store("f2_1_stencil", "3");
-
-//store is: f2.0.stencil(4) = 0.000000f
-  auto hcompute_f2_0_stencil_4 = f3_s1_t_x->add_op("op_hcompute_f2_0_stencil_4");
-  hcompute_f2_0_stencil_4->add_function("hcompute_f2_0_stencil_4");
-  hcompute_f2_0_stencil_4->add_store("f2_0_stencil", "4");
-
-//store is: f2.1.stencil(4) = 0.000000f
-  auto hcompute_f2_1_stencil_4 = f3_s1_t_x->add_op("op_hcompute_f2_1_stencil_4");
-  hcompute_f2_1_stencil_4->add_function("hcompute_f2_1_stencil_4");
-  hcompute_f2_1_stencil_4->add_store("f2_1_stencil", "4");
-
-//store is: f2.0.stencil(5) = 0.000000f
-  auto hcompute_f2_0_stencil_5 = f3_s1_t_x->add_op("op_hcompute_f2_0_stencil_5");
-  hcompute_f2_0_stencil_5->add_function("hcompute_f2_0_stencil_5");
-  hcompute_f2_0_stencil_5->add_store("f2_0_stencil", "5");
-
-//store is: f2.1.stencil(5) = 0.000000f
-  auto hcompute_f2_1_stencil_5 = f3_s1_t_x->add_op("op_hcompute_f2_1_stencil_5");
-  hcompute_f2_1_stencil_5->add_function("hcompute_f2_1_stencil_5");
-  hcompute_f2_1_stencil_5->add_store("f2_1_stencil", "5");
-
-//store is: f2.0.stencil(6) = 0.000000f
-  auto hcompute_f2_0_stencil_6 = f3_s1_t_x->add_op("op_hcompute_f2_0_stencil_6");
-  hcompute_f2_0_stencil_6->add_function("hcompute_f2_0_stencil_6");
-  hcompute_f2_0_stencil_6->add_store("f2_0_stencil", "6");
-
-//store is: f2.1.stencil(6) = 0.000000f
-  auto hcompute_f2_1_stencil_6 = f3_s1_t_x->add_op("op_hcompute_f2_1_stencil_6");
-  hcompute_f2_1_stencil_6->add_function("hcompute_f2_1_stencil_6");
-  hcompute_f2_1_stencil_6->add_store("f2_1_stencil", "6");
-
-//store is: f2.0.stencil(7) = 0.000000f
-  auto hcompute_f2_0_stencil_7 = f3_s1_t_x->add_op("op_hcompute_f2_0_stencil_7");
-  hcompute_f2_0_stencil_7->add_function("hcompute_f2_0_stencil_7");
-  hcompute_f2_0_stencil_7->add_store("f2_0_stencil", "7");
-
-//store is: f2.1.stencil(7) = 0.000000f
-  auto hcompute_f2_1_stencil_7 = f3_s1_t_x->add_op("op_hcompute_f2_1_stencil_7");
-  hcompute_f2_1_stencil_7->add_function("hcompute_f2_1_stencil_7");
-  hcompute_f2_1_stencil_7->add_store("f2_1_stencil", "7");
-  auto f2_s1_t_x = f3_s1_t_x->add_loop("f2_s1_t_x", 0, 8);
 ////producing f1
+  auto f1_s0_y = hw_output_s0_x_xi->add_loop("f1_s0_y", 0, 4);
 
-//store is: f1.0.stencil(0) = hw_input_global_wrapper.stencil(0, 0)
-  auto hcompute_f1_0_stencil = f2_s1_t_x->add_op("op_hcompute_f1_0_stencil");
+//store is: f1.0.stencil(0, f1_s0_y) = 0.000000f
+  auto hcompute_f1_0_stencil = f1_s0_y->add_op("op_hcompute_f1_0_stencil");
   hcompute_f1_0_stencil->add_function("hcompute_f1_0_stencil");
-  hcompute_f1_0_stencil->add_load("hw_input_global_wrapper_stencil", "0", "0");
   prg.buffer_port_widths["f1_0_stencil"] = 32;
-  hcompute_f1_0_stencil->add_store("f1_0_stencil", "0");
+  hcompute_f1_0_stencil->add_store("f1_0_stencil", "f1_s0_y", "0");
 
-//store is: f1.1.stencil(0) = hw_input_global_wrapper.stencil(0, 1)
-  auto hcompute_f1_1_stencil = f2_s1_t_x->add_op("op_hcompute_f1_1_stencil");
+//store is: f1.1.stencil(0, f1_s0_y) = 0.000000f
+  auto hcompute_f1_1_stencil = f1_s0_y->add_op("op_hcompute_f1_1_stencil");
   hcompute_f1_1_stencil->add_function("hcompute_f1_1_stencil");
-  hcompute_f1_1_stencil->add_load("hw_input_global_wrapper_stencil", "1", "0");
   prg.buffer_port_widths["f1_1_stencil"] = 32;
-  hcompute_f1_1_stencil->add_store("f1_1_stencil", "0");
+  hcompute_f1_1_stencil->add_store("f1_1_stencil", "f1_s0_y", "0");
 
-//store is: f1.0.stencil(1) = hw_input_global_wrapper.stencil(1, 0)
-  auto hcompute_f1_0_stencil_1 = f2_s1_t_x->add_op("op_hcompute_f1_0_stencil_1");
+//store is: f1.0.stencil(1, f1_s0_y) = 0.000000f
+  auto hcompute_f1_0_stencil_1 = f1_s0_y->add_op("op_hcompute_f1_0_stencil_1");
   hcompute_f1_0_stencil_1->add_function("hcompute_f1_0_stencil_1");
-  hcompute_f1_0_stencil_1->add_load("hw_input_global_wrapper_stencil", "0", "1");
-  hcompute_f1_0_stencil_1->add_store("f1_0_stencil", "1");
+  hcompute_f1_0_stencil_1->add_store("f1_0_stencil", "f1_s0_y", "1");
 
-//store is: f1.1.stencil(1) = hw_input_global_wrapper.stencil(1, 1)
-  auto hcompute_f1_1_stencil_1 = f2_s1_t_x->add_op("op_hcompute_f1_1_stencil_1");
+//store is: f1.1.stencil(1, f1_s0_y) = 0.000000f
+  auto hcompute_f1_1_stencil_1 = f1_s0_y->add_op("op_hcompute_f1_1_stencil_1");
   hcompute_f1_1_stencil_1->add_function("hcompute_f1_1_stencil_1");
-  hcompute_f1_1_stencil_1->add_load("hw_input_global_wrapper_stencil", "1", "1");
-  hcompute_f1_1_stencil_1->add_store("f1_1_stencil", "1");
+  hcompute_f1_1_stencil_1->add_store("f1_1_stencil", "f1_s0_y", "1");
 
-//store is: f1.0.stencil(2) = hw_input_global_wrapper.stencil(2, 0)
-  auto hcompute_f1_0_stencil_2 = f2_s1_t_x->add_op("op_hcompute_f1_0_stencil_2");
+//store is: f1.0.stencil(2, f1_s0_y) = 0.000000f
+  auto hcompute_f1_0_stencil_2 = f1_s0_y->add_op("op_hcompute_f1_0_stencil_2");
   hcompute_f1_0_stencil_2->add_function("hcompute_f1_0_stencil_2");
-  hcompute_f1_0_stencil_2->add_load("hw_input_global_wrapper_stencil", "0", "2");
-  hcompute_f1_0_stencil_2->add_store("f1_0_stencil", "2");
+  hcompute_f1_0_stencil_2->add_store("f1_0_stencil", "f1_s0_y", "2");
 
-//store is: f1.1.stencil(2) = hw_input_global_wrapper.stencil(2, 1)
-  auto hcompute_f1_1_stencil_2 = f2_s1_t_x->add_op("op_hcompute_f1_1_stencil_2");
+//store is: f1.1.stencil(2, f1_s0_y) = 0.000000f
+  auto hcompute_f1_1_stencil_2 = f1_s0_y->add_op("op_hcompute_f1_1_stencil_2");
   hcompute_f1_1_stencil_2->add_function("hcompute_f1_1_stencil_2");
-  hcompute_f1_1_stencil_2->add_load("hw_input_global_wrapper_stencil", "1", "2");
-  hcompute_f1_1_stencil_2->add_store("f1_1_stencil", "2");
+  hcompute_f1_1_stencil_2->add_store("f1_1_stencil", "f1_s0_y", "2");
 
-//store is: f1.0.stencil(3) = hw_input_global_wrapper.stencil(3, 0)
-  auto hcompute_f1_0_stencil_3 = f2_s1_t_x->add_op("op_hcompute_f1_0_stencil_3");
+//store is: f1.0.stencil(3, f1_s0_y) = 0.000000f
+  auto hcompute_f1_0_stencil_3 = f1_s0_y->add_op("op_hcompute_f1_0_stencil_3");
   hcompute_f1_0_stencil_3->add_function("hcompute_f1_0_stencil_3");
-  hcompute_f1_0_stencil_3->add_load("hw_input_global_wrapper_stencil", "0", "3");
-  hcompute_f1_0_stencil_3->add_store("f1_0_stencil", "3");
+  hcompute_f1_0_stencil_3->add_store("f1_0_stencil", "f1_s0_y", "3");
 
-//store is: f1.1.stencil(3) = hw_input_global_wrapper.stencil(3, 1)
-  auto hcompute_f1_1_stencil_3 = f2_s1_t_x->add_op("op_hcompute_f1_1_stencil_3");
+//store is: f1.1.stencil(3, f1_s0_y) = 0.000000f
+  auto hcompute_f1_1_stencil_3 = f1_s0_y->add_op("op_hcompute_f1_1_stencil_3");
   hcompute_f1_1_stencil_3->add_function("hcompute_f1_1_stencil_3");
-  hcompute_f1_1_stencil_3->add_load("hw_input_global_wrapper_stencil", "1", "3");
-  hcompute_f1_1_stencil_3->add_store("f1_1_stencil", "3");
+  hcompute_f1_1_stencil_3->add_store("f1_1_stencil", "f1_s0_y", "3");
 
-//store is: f1.0.stencil(4) = hw_input_global_wrapper.stencil(4, 0)
-  auto hcompute_f1_0_stencil_4 = f2_s1_t_x->add_op("op_hcompute_f1_0_stencil_4");
+//store is: f1.0.stencil(4, f1_s0_y) = 0.000000f
+  auto hcompute_f1_0_stencil_4 = f1_s0_y->add_op("op_hcompute_f1_0_stencil_4");
   hcompute_f1_0_stencil_4->add_function("hcompute_f1_0_stencil_4");
-  hcompute_f1_0_stencil_4->add_load("hw_input_global_wrapper_stencil", "0", "4");
-  hcompute_f1_0_stencil_4->add_store("f1_0_stencil", "4");
+  hcompute_f1_0_stencil_4->add_store("f1_0_stencil", "f1_s0_y", "4");
 
-//store is: f1.1.stencil(4) = hw_input_global_wrapper.stencil(4, 1)
-  auto hcompute_f1_1_stencil_4 = f2_s1_t_x->add_op("op_hcompute_f1_1_stencil_4");
+//store is: f1.1.stencil(4, f1_s0_y) = 0.000000f
+  auto hcompute_f1_1_stencil_4 = f1_s0_y->add_op("op_hcompute_f1_1_stencil_4");
   hcompute_f1_1_stencil_4->add_function("hcompute_f1_1_stencil_4");
-  hcompute_f1_1_stencil_4->add_load("hw_input_global_wrapper_stencil", "1", "4");
-  hcompute_f1_1_stencil_4->add_store("f1_1_stencil", "4");
+  hcompute_f1_1_stencil_4->add_store("f1_1_stencil", "f1_s0_y", "4");
 
-//store is: f1.0.stencil(5) = hw_input_global_wrapper.stencil(5, 0)
-  auto hcompute_f1_0_stencil_5 = f2_s1_t_x->add_op("op_hcompute_f1_0_stencil_5");
+//store is: f1.0.stencil(5, f1_s0_y) = 0.000000f
+  auto hcompute_f1_0_stencil_5 = f1_s0_y->add_op("op_hcompute_f1_0_stencil_5");
   hcompute_f1_0_stencil_5->add_function("hcompute_f1_0_stencil_5");
-  hcompute_f1_0_stencil_5->add_load("hw_input_global_wrapper_stencil", "0", "5");
-  hcompute_f1_0_stencil_5->add_store("f1_0_stencil", "5");
+  hcompute_f1_0_stencil_5->add_store("f1_0_stencil", "f1_s0_y", "5");
 
-//store is: f1.1.stencil(5) = hw_input_global_wrapper.stencil(5, 1)
-  auto hcompute_f1_1_stencil_5 = f2_s1_t_x->add_op("op_hcompute_f1_1_stencil_5");
+//store is: f1.1.stencil(5, f1_s0_y) = 0.000000f
+  auto hcompute_f1_1_stencil_5 = f1_s0_y->add_op("op_hcompute_f1_1_stencil_5");
   hcompute_f1_1_stencil_5->add_function("hcompute_f1_1_stencil_5");
-  hcompute_f1_1_stencil_5->add_load("hw_input_global_wrapper_stencil", "1", "5");
-  hcompute_f1_1_stencil_5->add_store("f1_1_stencil", "5");
+  hcompute_f1_1_stencil_5->add_store("f1_1_stencil", "f1_s0_y", "5");
 
-//store is: f1.0.stencil(6) = hw_input_global_wrapper.stencil(6, 0)
-  auto hcompute_f1_0_stencil_6 = f2_s1_t_x->add_op("op_hcompute_f1_0_stencil_6");
+//store is: f1.0.stencil(6, f1_s0_y) = 0.000000f
+  auto hcompute_f1_0_stencil_6 = f1_s0_y->add_op("op_hcompute_f1_0_stencil_6");
   hcompute_f1_0_stencil_6->add_function("hcompute_f1_0_stencil_6");
-  hcompute_f1_0_stencil_6->add_load("hw_input_global_wrapper_stencil", "0", "6");
-  hcompute_f1_0_stencil_6->add_store("f1_0_stencil", "6");
+  hcompute_f1_0_stencil_6->add_store("f1_0_stencil", "f1_s0_y", "6");
 
-//store is: f1.1.stencil(6) = hw_input_global_wrapper.stencil(6, 1)
-  auto hcompute_f1_1_stencil_6 = f2_s1_t_x->add_op("op_hcompute_f1_1_stencil_6");
+//store is: f1.1.stencil(6, f1_s0_y) = 0.000000f
+  auto hcompute_f1_1_stencil_6 = f1_s0_y->add_op("op_hcompute_f1_1_stencil_6");
   hcompute_f1_1_stencil_6->add_function("hcompute_f1_1_stencil_6");
-  hcompute_f1_1_stencil_6->add_load("hw_input_global_wrapper_stencil", "1", "6");
-  hcompute_f1_1_stencil_6->add_store("f1_1_stencil", "6");
+  hcompute_f1_1_stencil_6->add_store("f1_1_stencil", "f1_s0_y", "6");
 
-//store is: f1.0.stencil(7) = hw_input_global_wrapper.stencil(7, 0)
-  auto hcompute_f1_0_stencil_7 = f2_s1_t_x->add_op("op_hcompute_f1_0_stencil_7");
+//store is: f1.0.stencil(7, f1_s0_y) = 0.000000f
+  auto hcompute_f1_0_stencil_7 = f1_s0_y->add_op("op_hcompute_f1_0_stencil_7");
   hcompute_f1_0_stencil_7->add_function("hcompute_f1_0_stencil_7");
-  hcompute_f1_0_stencil_7->add_load("hw_input_global_wrapper_stencil", "0", "7");
-  hcompute_f1_0_stencil_7->add_store("f1_0_stencil", "7");
+  hcompute_f1_0_stencil_7->add_store("f1_0_stencil", "f1_s0_y", "7");
 
-//store is: f1.1.stencil(7) = hw_input_global_wrapper.stencil(7, 1)
-  auto hcompute_f1_1_stencil_7 = f2_s1_t_x->add_op("op_hcompute_f1_1_stencil_7");
+//store is: f1.1.stencil(7, f1_s0_y) = 0.000000f
+  auto hcompute_f1_1_stencil_7 = f1_s0_y->add_op("op_hcompute_f1_1_stencil_7");
   hcompute_f1_1_stencil_7->add_function("hcompute_f1_1_stencil_7");
-  hcompute_f1_1_stencil_7->add_load("hw_input_global_wrapper_stencil", "1", "7");
-  hcompute_f1_1_stencil_7->add_store("f1_1_stencil", "7");
-  auto f1_s1_t_x = f2_s1_t_x->add_loop("f1_s1_t_x", 0, 8);
+  hcompute_f1_1_stencil_7->add_store("f1_1_stencil", "f1_s0_y", "7");
+  auto f1_s1_x = hw_output_s0_x_xi->add_loop("f1_s1_x", 0, 8);
 
-//store is: f1.0.stencil(f1_s1_t_x) = ((f1.0.stencil(f1_s1_t_x)*hw_twi_global_wrapper.stencil(f1_s1_t_x, 0, 0)) - (f1.1.stencil(f1_s1_t_x)*hw_twi_global_wrapper.stencil(f1_s1_t_x, 1, 0)))
-  auto hcompute_f1_0_stencil_8 = f1_s1_t_x->add_op("op_hcompute_f1_0_stencil_8");
+//store is: f1.0.stencil(f1_s1_x, 0) = hw_input_global_wrapper.stencil(f1_s1_x, 0)
+  auto hcompute_f1_0_stencil_8 = f1_s1_x->add_op("op_hcompute_f1_0_stencil_8");
   hcompute_f1_0_stencil_8->add_function("hcompute_f1_0_stencil_8");
-  hcompute_f1_0_stencil_8->add_load("f1_0_stencil", "f1_s1_t_x");
-  hcompute_f1_0_stencil_8->add_load("f1_1_stencil", "f1_s1_t_x");
-  hcompute_f1_0_stencil_8->add_load("hw_twi_global_wrapper_stencil", "0", "0", "f1_s1_t_x");
-  hcompute_f1_0_stencil_8->add_load("hw_twi_global_wrapper_stencil", "0", "1", "f1_s1_t_x");
-  hcompute_f1_0_stencil_8->add_store("f1_0_stencil", "f1_s1_t_x");
+  hcompute_f1_0_stencil_8->add_load("hw_input_global_wrapper_stencil", "0", "f1_s1_x");
+  hcompute_f1_0_stencil_8->add_store("f1_0_stencil", "0", "f1_s1_x");
 
-//store is: f1.1.stencil(f1_s1_t_x) = ((f1.0.stencil(f1_s1_t_x)*hw_twi_global_wrapper.stencil(f1_s1_t_x, 1, 0)) + (f1.1.stencil(f1_s1_t_x)*hw_twi_global_wrapper.stencil(f1_s1_t_x, 0, 0)))
-  auto hcompute_f1_1_stencil_8 = f1_s1_t_x->add_op("op_hcompute_f1_1_stencil_8");
+//store is: f1.1.stencil(f1_s1_x, 0) = hw_input_global_wrapper.stencil(f1_s1_x, 1)
+  auto hcompute_f1_1_stencil_8 = f1_s1_x->add_op("op_hcompute_f1_1_stencil_8");
   hcompute_f1_1_stencil_8->add_function("hcompute_f1_1_stencil_8");
-  hcompute_f1_1_stencil_8->add_load("f1_0_stencil", "f1_s1_t_x");
-  hcompute_f1_1_stencil_8->add_load("f1_1_stencil", "f1_s1_t_x");
-  hcompute_f1_1_stencil_8->add_load("hw_twi_global_wrapper_stencil", "0", "1", "f1_s1_t_x");
-  hcompute_f1_1_stencil_8->add_load("hw_twi_global_wrapper_stencil", "0", "0", "f1_s1_t_x");
-  hcompute_f1_1_stencil_8->add_store("f1_1_stencil", "f1_s1_t_x");
+  hcompute_f1_1_stencil_8->add_load("hw_input_global_wrapper_stencil", "1", "f1_s1_x");
+  hcompute_f1_1_stencil_8->add_store("f1_1_stencil", "0", "f1_s1_x");
+  auto f1_s2_t_x = hw_output_s0_x_xi->add_loop("f1_s2_t_x", 0, 8);
+
+//store is: f1.0.stencil(f1_s2_t_x, 0) = ((f1.0.stencil(f1_s2_t_x, 0)*hw_twi_global_wrapper.stencil(f1_s2_t_x, 0, 0)) - (f1.1.stencil(f1_s2_t_x, 0)*hw_twi_global_wrapper.stencil(f1_s2_t_x, 1, 0)))
+  auto hcompute_f1_0_stencil_9 = f1_s2_t_x->add_op("op_hcompute_f1_0_stencil_9");
+  hcompute_f1_0_stencil_9->add_function("hcompute_f1_0_stencil_9");
+  hcompute_f1_0_stencil_9->add_load("f1_0_stencil", "0", "f1_s2_t_x");
+  hcompute_f1_0_stencil_9->add_load("f1_1_stencil", "0", "f1_s2_t_x");
+  hcompute_f1_0_stencil_9->add_load("hw_twi_global_wrapper_stencil", "0", "0", "f1_s2_t_x");
+  hcompute_f1_0_stencil_9->add_load("hw_twi_global_wrapper_stencil", "0", "1", "f1_s2_t_x");
+  hcompute_f1_0_stencil_9->add_store("f1_0_stencil", "0", "f1_s2_t_x");
+
+//store is: f1.1.stencil(f1_s2_t_x, 0) = ((f1.0.stencil(f1_s2_t_x, 0)*hw_twi_global_wrapper.stencil(f1_s2_t_x, 1, 0)) + (f1.1.stencil(f1_s2_t_x, 0)*hw_twi_global_wrapper.stencil(f1_s2_t_x, 0, 0)))
+  auto hcompute_f1_1_stencil_9 = f1_s2_t_x->add_op("op_hcompute_f1_1_stencil_9");
+  hcompute_f1_1_stencil_9->add_function("hcompute_f1_1_stencil_9");
+  hcompute_f1_1_stencil_9->add_load("f1_0_stencil", "0", "f1_s2_t_x");
+  hcompute_f1_1_stencil_9->add_load("f1_1_stencil", "0", "f1_s2_t_x");
+  hcompute_f1_1_stencil_9->add_load("hw_twi_global_wrapper_stencil", "0", "1", "f1_s2_t_x");
+  hcompute_f1_1_stencil_9->add_load("hw_twi_global_wrapper_stencil", "0", "0", "f1_s2_t_x");
+  hcompute_f1_1_stencil_9->add_store("f1_1_stencil", "0", "f1_s2_t_x");
+  auto f1_s3_t_x = hw_output_s0_x_xi->add_loop("f1_s3_t_x", 0, 8);
+
+//store is: f1.0.stencil(f1_s3_t_x, 1) = (f1.0.stencil((((f1_s3_t_x/2)*2) + ((f1_s3_t_x + 1) % 2)), 0) + (f1.0.stencil(f1_s3_t_x, 0)*float32((1 - ((f1_s3_t_x/(((f1_s3_t_x/2)*2) + 1))*2)))))
+  auto hcompute_f1_0_stencil_10 = f1_s3_t_x->add_op("op_hcompute_f1_0_stencil_10");
+  hcompute_f1_0_stencil_10->add_function("hcompute_f1_0_stencil_10");
+  hcompute_f1_0_stencil_10->add_load("f1_0_stencil", "0", "((floor((f1_s3_t_x/2))*2) + ((f1_s3_t_x + 1) % 2))");
+  hcompute_f1_0_stencil_10->add_load("f1_0_stencil", "0", "f1_s3_t_x");
+  hcompute_f1_0_stencil_10->add_store("f1_0_stencil", "1", "f1_s3_t_x");
+  hcompute_f1_0_stencil_10->compute_unit_needs_index_variable("f1_s3_t_x");
+
+//store is: f1.1.stencil(f1_s3_t_x, 1) = (f1.1.stencil((((f1_s3_t_x/2)*2) + ((f1_s3_t_x + 1) % 2)), 0) + (f1.1.stencil(f1_s3_t_x, 0)*float32((1 - ((f1_s3_t_x/(((f1_s3_t_x/2)*2) + 1))*2)))))
+  auto hcompute_f1_1_stencil_10 = f1_s3_t_x->add_op("op_hcompute_f1_1_stencil_10");
+  hcompute_f1_1_stencil_10->add_function("hcompute_f1_1_stencil_10");
+  hcompute_f1_1_stencil_10->add_load("f1_1_stencil", "0", "((floor((f1_s3_t_x/2))*2) + ((f1_s3_t_x + 1) % 2))");
+  hcompute_f1_1_stencil_10->add_load("f1_1_stencil", "0", "f1_s3_t_x");
+  hcompute_f1_1_stencil_10->add_store("f1_1_stencil", "1", "f1_s3_t_x");
+  hcompute_f1_1_stencil_10->compute_unit_needs_index_variable("f1_s3_t_x");
+  auto f1_s4_t_x = hw_output_s0_x_xi->add_loop("f1_s4_t_x", 0, 8);
+
+//store is: f1.0.stencil(f1_s4_t_x, 1) = ((f1.0.stencil(f1_s4_t_x, 1)*hw_twi_global_wrapper.stencil(f1_s4_t_x, 0, 1)) - (f1.1.stencil(f1_s4_t_x, 1)*hw_twi_global_wrapper.stencil(f1_s4_t_x, 1, 1)))
+  auto hcompute_f1_0_stencil_11 = f1_s4_t_x->add_op("op_hcompute_f1_0_stencil_11");
+  hcompute_f1_0_stencil_11->add_function("hcompute_f1_0_stencil_11");
+  hcompute_f1_0_stencil_11->add_load("f1_0_stencil", "1", "f1_s4_t_x");
+  hcompute_f1_0_stencil_11->add_load("f1_1_stencil", "1", "f1_s4_t_x");
+  hcompute_f1_0_stencil_11->add_load("hw_twi_global_wrapper_stencil", "1", "0", "f1_s4_t_x");
+  hcompute_f1_0_stencil_11->add_load("hw_twi_global_wrapper_stencil", "1", "1", "f1_s4_t_x");
+  hcompute_f1_0_stencil_11->add_store("f1_0_stencil", "1", "f1_s4_t_x");
+
+//store is: f1.1.stencil(f1_s4_t_x, 1) = ((f1.0.stencil(f1_s4_t_x, 1)*hw_twi_global_wrapper.stencil(f1_s4_t_x, 1, 1)) + (f1.1.stencil(f1_s4_t_x, 1)*hw_twi_global_wrapper.stencil(f1_s4_t_x, 0, 1)))
+  auto hcompute_f1_1_stencil_11 = f1_s4_t_x->add_op("op_hcompute_f1_1_stencil_11");
+  hcompute_f1_1_stencil_11->add_function("hcompute_f1_1_stencil_11");
+  hcompute_f1_1_stencil_11->add_load("f1_0_stencil", "1", "f1_s4_t_x");
+  hcompute_f1_1_stencil_11->add_load("f1_1_stencil", "1", "f1_s4_t_x");
+  hcompute_f1_1_stencil_11->add_load("hw_twi_global_wrapper_stencil", "1", "1", "f1_s4_t_x");
+  hcompute_f1_1_stencil_11->add_load("hw_twi_global_wrapper_stencil", "1", "0", "f1_s4_t_x");
+  hcompute_f1_1_stencil_11->add_store("f1_1_stencil", "1", "f1_s4_t_x");
+  auto f1_s5_t_x = hw_output_s0_x_xi->add_loop("f1_s5_t_x", 0, 8);
+
+//store is: f1.0.stencil(f1_s5_t_x, 2) = (f1.0.stencil((((f1_s5_t_x/4)*4) + ((f1_s5_t_x + 2) % 4)), 1) + (f1.0.stencil(f1_s5_t_x, 1)*float32((1 - ((f1_s5_t_x/(((f1_s5_t_x/4)*4) + 2))*2)))))
+  auto hcompute_f1_0_stencil_12 = f1_s5_t_x->add_op("op_hcompute_f1_0_stencil_12");
+  hcompute_f1_0_stencil_12->add_function("hcompute_f1_0_stencil_12");
+  hcompute_f1_0_stencil_12->add_load("f1_0_stencil", "1", "((floor((f1_s5_t_x/4))*4) + ((f1_s5_t_x + 2) % 4))");
+  hcompute_f1_0_stencil_12->add_load("f1_0_stencil", "1", "f1_s5_t_x");
+  hcompute_f1_0_stencil_12->add_store("f1_0_stencil", "2", "f1_s5_t_x");
+  hcompute_f1_0_stencil_12->compute_unit_needs_index_variable("f1_s5_t_x");
+
+//store is: f1.1.stencil(f1_s5_t_x, 2) = (f1.1.stencil((((f1_s5_t_x/4)*4) + ((f1_s5_t_x + 2) % 4)), 1) + (f1.1.stencil(f1_s5_t_x, 1)*float32((1 - ((f1_s5_t_x/(((f1_s5_t_x/4)*4) + 2))*2)))))
+  auto hcompute_f1_1_stencil_12 = f1_s5_t_x->add_op("op_hcompute_f1_1_stencil_12");
+  hcompute_f1_1_stencil_12->add_function("hcompute_f1_1_stencil_12");
+  hcompute_f1_1_stencil_12->add_load("f1_1_stencil", "1", "((floor((f1_s5_t_x/4))*4) + ((f1_s5_t_x + 2) % 4))");
+  hcompute_f1_1_stencil_12->add_load("f1_1_stencil", "1", "f1_s5_t_x");
+  hcompute_f1_1_stencil_12->add_store("f1_1_stencil", "2", "f1_s5_t_x");
+  hcompute_f1_1_stencil_12->compute_unit_needs_index_variable("f1_s5_t_x");
+  auto f1_s6_t_x = hw_output_s0_x_xi->add_loop("f1_s6_t_x", 0, 8);
+
+//store is: f1.0.stencil(f1_s6_t_x, 2) = ((f1.0.stencil(f1_s6_t_x, 2)*hw_twi_global_wrapper.stencil(f1_s6_t_x, 0, 2)) - (f1.1.stencil(f1_s6_t_x, 2)*hw_twi_global_wrapper.stencil(f1_s6_t_x, 1, 2)))
+  auto hcompute_f1_0_stencil_13 = f1_s6_t_x->add_op("op_hcompute_f1_0_stencil_13");
+  hcompute_f1_0_stencil_13->add_function("hcompute_f1_0_stencil_13");
+  hcompute_f1_0_stencil_13->add_load("f1_0_stencil", "2", "f1_s6_t_x");
+  hcompute_f1_0_stencil_13->add_load("f1_1_stencil", "2", "f1_s6_t_x");
+  hcompute_f1_0_stencil_13->add_load("hw_twi_global_wrapper_stencil", "2", "1", "f1_s6_t_x");
+  hcompute_f1_0_stencil_13->add_load("hw_twi_global_wrapper_stencil", "2", "0", "f1_s6_t_x");
+  hcompute_f1_0_stencil_13->add_store("f1_0_stencil", "2", "f1_s6_t_x");
+
+//store is: f1.1.stencil(f1_s6_t_x, 2) = ((f1.0.stencil(f1_s6_t_x, 2)*hw_twi_global_wrapper.stencil(f1_s6_t_x, 1, 2)) + (f1.1.stencil(f1_s6_t_x, 2)*hw_twi_global_wrapper.stencil(f1_s6_t_x, 0, 2)))
+  auto hcompute_f1_1_stencil_13 = f1_s6_t_x->add_op("op_hcompute_f1_1_stencil_13");
+  hcompute_f1_1_stencil_13->add_function("hcompute_f1_1_stencil_13");
+  hcompute_f1_1_stencil_13->add_load("f1_0_stencil", "2", "f1_s6_t_x");
+  hcompute_f1_1_stencil_13->add_load("f1_1_stencil", "2", "f1_s6_t_x");
+  hcompute_f1_1_stencil_13->add_load("hw_twi_global_wrapper_stencil", "2", "1", "f1_s6_t_x");
+  hcompute_f1_1_stencil_13->add_load("hw_twi_global_wrapper_stencil", "2", "0", "f1_s6_t_x");
+  hcompute_f1_1_stencil_13->add_store("f1_1_stencil", "2", "f1_s6_t_x");
+  auto f1_s7_t_x = hw_output_s0_x_xi->add_loop("f1_s7_t_x", 0, 8);
+
+//store is: f1.0.stencil(f1_s7_t_x, 3) = (f1.0.stencil(((f1_s7_t_x + 4) % 8), 2) + (f1.0.stencil(f1_s7_t_x, 2)*float32((1 - ((f1_s7_t_x/4)*2)))))
+  auto hcompute_f1_0_stencil_14 = f1_s7_t_x->add_op("op_hcompute_f1_0_stencil_14");
+  hcompute_f1_0_stencil_14->add_function("hcompute_f1_0_stencil_14");
+  hcompute_f1_0_stencil_14->add_load("f1_0_stencil", "2", "((f1_s7_t_x + 4) % 8)");
+  hcompute_f1_0_stencil_14->add_load("f1_0_stencil", "2", "f1_s7_t_x");
+  hcompute_f1_0_stencil_14->add_store("f1_0_stencil", "3", "f1_s7_t_x");
+  hcompute_f1_0_stencil_14->compute_unit_needs_index_variable("f1_s7_t_x");
+
+//store is: f1.1.stencil(f1_s7_t_x, 3) = (f1.1.stencil(((f1_s7_t_x + 4) % 8), 2) + (f1.1.stencil(f1_s7_t_x, 2)*float32((1 - ((f1_s7_t_x/4)*2)))))
+  auto hcompute_f1_1_stencil_14 = f1_s7_t_x->add_op("op_hcompute_f1_1_stencil_14");
+  hcompute_f1_1_stencil_14->add_function("hcompute_f1_1_stencil_14");
+  hcompute_f1_1_stencil_14->add_load("f1_1_stencil", "2", "((f1_s7_t_x + 4) % 8)");
+  hcompute_f1_1_stencil_14->add_load("f1_1_stencil", "2", "f1_s7_t_x");
+  hcompute_f1_1_stencil_14->add_store("f1_1_stencil", "3", "f1_s7_t_x");
+  hcompute_f1_1_stencil_14->compute_unit_needs_index_variable("f1_s7_t_x");
 
 //consuming f1
 
-//store is: f2.0.stencil(f2_s1_t_x) = (f1.0.stencil((((f2_s1_t_x/2)*2) + ((f2_s1_t_x + 1) % 2))) + (f1.0.stencil(f2_s1_t_x)*float32((1 - ((f2_s1_t_x/(((f2_s1_t_x/2)*2) + 1))*2)))))
-  auto hcompute_f2_0_stencil_8 = f2_s1_t_x->add_op("op_hcompute_f2_0_stencil_8");
-  hcompute_f2_0_stencil_8->add_function("hcompute_f2_0_stencil_8");
-  hcompute_f2_0_stencil_8->add_load("f1_0_stencil", "((floor((f2_s1_t_x/2))*2) + ((f2_s1_t_x + 1) % 2))");
-  hcompute_f2_0_stencil_8->add_load("f1_0_stencil", "f2_s1_t_x");
-  hcompute_f2_0_stencil_8->add_store("f2_0_stencil", "f2_s1_t_x");
-  hcompute_f2_0_stencil_8->compute_unit_needs_index_variable("f2_s1_t_x");
-
-//store is: f2.1.stencil(f2_s1_t_x) = (f1.1.stencil((((f2_s1_t_x/2)*2) + ((f2_s1_t_x + 1) % 2))) + (f1.1.stencil(f2_s1_t_x)*float32((1 - ((f2_s1_t_x/(((f2_s1_t_x/2)*2) + 1))*2)))))
-  auto hcompute_f2_1_stencil_8 = f2_s1_t_x->add_op("op_hcompute_f2_1_stencil_8");
-  hcompute_f2_1_stencil_8->add_function("hcompute_f2_1_stencil_8");
-  hcompute_f2_1_stencil_8->add_load("f1_1_stencil", "((floor((f2_s1_t_x/2))*2) + ((f2_s1_t_x + 1) % 2))");
-  hcompute_f2_1_stencil_8->add_load("f1_1_stencil", "f2_s1_t_x");
-  hcompute_f2_1_stencil_8->add_store("f2_1_stencil", "f2_s1_t_x");
-  hcompute_f2_1_stencil_8->compute_unit_needs_index_variable("f2_s1_t_x");
-  auto f2_s2_t_x = f3_s1_t_x->add_loop("f2_s2_t_x", 0, 8);
-
-//store is: f2.0.stencil(f2_s2_t_x) = ((f2.0.stencil(f2_s2_t_x)*hw_twi_global_wrapper.stencil(f2_s2_t_x, 0, 1)) - (f2.1.stencil(f2_s2_t_x)*hw_twi_global_wrapper.stencil(f2_s2_t_x, 1, 1)))
-  auto hcompute_f2_0_stencil_9 = f2_s2_t_x->add_op("op_hcompute_f2_0_stencil_9");
-  hcompute_f2_0_stencil_9->add_function("hcompute_f2_0_stencil_9");
-  hcompute_f2_0_stencil_9->add_load("f2_0_stencil", "f2_s2_t_x");
-  hcompute_f2_0_stencil_9->add_load("f2_1_stencil", "f2_s2_t_x");
-  hcompute_f2_0_stencil_9->add_load("hw_twi_global_wrapper_stencil", "1", "0", "f2_s2_t_x");
-  hcompute_f2_0_stencil_9->add_load("hw_twi_global_wrapper_stencil", "1", "1", "f2_s2_t_x");
-  hcompute_f2_0_stencil_9->add_store("f2_0_stencil", "f2_s2_t_x");
-
-//store is: f2.1.stencil(f2_s2_t_x) = ((f2.0.stencil(f2_s2_t_x)*hw_twi_global_wrapper.stencil(f2_s2_t_x, 1, 1)) + (f2.1.stencil(f2_s2_t_x)*hw_twi_global_wrapper.stencil(f2_s2_t_x, 0, 1)))
-  auto hcompute_f2_1_stencil_9 = f2_s2_t_x->add_op("op_hcompute_f2_1_stencil_9");
-  hcompute_f2_1_stencil_9->add_function("hcompute_f2_1_stencil_9");
-  hcompute_f2_1_stencil_9->add_load("f2_0_stencil", "f2_s2_t_x");
-  hcompute_f2_1_stencil_9->add_load("f2_1_stencil", "f2_s2_t_x");
-  hcompute_f2_1_stencil_9->add_load("hw_twi_global_wrapper_stencil", "1", "1", "f2_s2_t_x");
-  hcompute_f2_1_stencil_9->add_load("hw_twi_global_wrapper_stencil", "1", "0", "f2_s2_t_x");
-  hcompute_f2_1_stencil_9->add_store("f2_1_stencil", "f2_s2_t_x");
-
-//consuming f2
-
-//store is: f3.0.stencil(f3_s1_t_x) = (f2.0.stencil((((f3_s1_t_x/4)*4) + ((f3_s1_t_x + 2) % 4))) + (f2.0.stencil(f3_s1_t_x)*float32((1 - ((f3_s1_t_x/(((f3_s1_t_x/4)*4) + 2))*2)))))
-  auto hcompute_f3_0_stencil_8 = f3_s1_t_x->add_op("op_hcompute_f3_0_stencil_8");
-  hcompute_f3_0_stencil_8->add_function("hcompute_f3_0_stencil_8");
-  hcompute_f3_0_stencil_8->add_load("f2_0_stencil", "((floor((f3_s1_t_x/4))*4) + ((f3_s1_t_x + 2) % 4))");
-  hcompute_f3_0_stencil_8->add_load("f2_0_stencil", "f3_s1_t_x");
-  hcompute_f3_0_stencil_8->add_store("f3_0_stencil", "f3_s1_t_x");
-  hcompute_f3_0_stencil_8->compute_unit_needs_index_variable("f3_s1_t_x");
-
-//store is: f3.1.stencil(f3_s1_t_x) = (f2.1.stencil((((f3_s1_t_x/4)*4) + ((f3_s1_t_x + 2) % 4))) + (f2.1.stencil(f3_s1_t_x)*float32((1 - ((f3_s1_t_x/(((f3_s1_t_x/4)*4) + 2))*2)))))
-  auto hcompute_f3_1_stencil_8 = f3_s1_t_x->add_op("op_hcompute_f3_1_stencil_8");
-  hcompute_f3_1_stencil_8->add_function("hcompute_f3_1_stencil_8");
-  hcompute_f3_1_stencil_8->add_load("f2_1_stencil", "((floor((f3_s1_t_x/4))*4) + ((f3_s1_t_x + 2) % 4))");
-  hcompute_f3_1_stencil_8->add_load("f2_1_stencil", "f3_s1_t_x");
-  hcompute_f3_1_stencil_8->add_store("f3_1_stencil", "f3_s1_t_x");
-  hcompute_f3_1_stencil_8->compute_unit_needs_index_variable("f3_s1_t_x");
-  auto f3_s2_t_x = f4_s1_t_x->add_loop("f3_s2_t_x", 0, 8);
-
-//store is: f3.0.stencil(f3_s2_t_x) = ((f3.0.stencil(f3_s2_t_x)*hw_twi_global_wrapper.stencil(f3_s2_t_x, 0, 2)) - (f3.1.stencil(f3_s2_t_x)*hw_twi_global_wrapper.stencil(f3_s2_t_x, 1, 2)))
-  auto hcompute_f3_0_stencil_9 = f3_s2_t_x->add_op("op_hcompute_f3_0_stencil_9");
-  hcompute_f3_0_stencil_9->add_function("hcompute_f3_0_stencil_9");
-  hcompute_f3_0_stencil_9->add_load("f3_0_stencil", "f3_s2_t_x");
-  hcompute_f3_0_stencil_9->add_load("f3_1_stencil", "f3_s2_t_x");
-  hcompute_f3_0_stencil_9->add_load("hw_twi_global_wrapper_stencil", "2", "1", "f3_s2_t_x");
-  hcompute_f3_0_stencil_9->add_load("hw_twi_global_wrapper_stencil", "2", "0", "f3_s2_t_x");
-  hcompute_f3_0_stencil_9->add_store("f3_0_stencil", "f3_s2_t_x");
-
-//store is: f3.1.stencil(f3_s2_t_x) = ((f3.0.stencil(f3_s2_t_x)*hw_twi_global_wrapper.stencil(f3_s2_t_x, 1, 2)) + (f3.1.stencil(f3_s2_t_x)*hw_twi_global_wrapper.stencil(f3_s2_t_x, 0, 2)))
-  auto hcompute_f3_1_stencil_9 = f3_s2_t_x->add_op("op_hcompute_f3_1_stencil_9");
-  hcompute_f3_1_stencil_9->add_function("hcompute_f3_1_stencil_9");
-  hcompute_f3_1_stencil_9->add_load("f3_0_stencil", "f3_s2_t_x");
-  hcompute_f3_1_stencil_9->add_load("f3_1_stencil", "f3_s2_t_x");
-  hcompute_f3_1_stencil_9->add_load("hw_twi_global_wrapper_stencil", "2", "1", "f3_s2_t_x");
-  hcompute_f3_1_stencil_9->add_load("hw_twi_global_wrapper_stencil", "2", "0", "f3_s2_t_x");
-  hcompute_f3_1_stencil_9->add_store("f3_1_stencil", "f3_s2_t_x");
-
-//consuming f3
-
-//store is: f4.0.stencil(f4_s1_t_x) = (f3.0.stencil(((f4_s1_t_x + 4) % 8)) + (f3.0.stencil(f4_s1_t_x)*float32((1 - ((f4_s1_t_x/4)*2)))))
-  auto hcompute_f4_0_stencil_8 = f4_s1_t_x->add_op("op_hcompute_f4_0_stencil_8");
-  hcompute_f4_0_stencil_8->add_function("hcompute_f4_0_stencil_8");
-  hcompute_f4_0_stencil_8->add_load("f3_0_stencil", "((f4_s1_t_x + 4) % 8)");
-  hcompute_f4_0_stencil_8->add_load("f3_0_stencil", "f4_s1_t_x");
-  hcompute_f4_0_stencil_8->add_store("f4_0_stencil", "f4_s1_t_x");
-  hcompute_f4_0_stencil_8->compute_unit_needs_index_variable("f4_s1_t_x");
-
-//store is: f4.1.stencil(f4_s1_t_x) = (f3.1.stencil(((f4_s1_t_x + 4) % 8)) + (f3.1.stencil(f4_s1_t_x)*float32((1 - ((f4_s1_t_x/4)*2)))))
-  auto hcompute_f4_1_stencil_8 = f4_s1_t_x->add_op("op_hcompute_f4_1_stencil_8");
-  hcompute_f4_1_stencil_8->add_function("hcompute_f4_1_stencil_8");
-  hcompute_f4_1_stencil_8->add_load("f3_1_stencil", "((f4_s1_t_x + 4) % 8)");
-  hcompute_f4_1_stencil_8->add_load("f3_1_stencil", "f4_s1_t_x");
-  hcompute_f4_1_stencil_8->add_store("f4_1_stencil", "f4_s1_t_x");
-  hcompute_f4_1_stencil_8->compute_unit_needs_index_variable("f4_s1_t_x");
-
-//consuming f4
-
-//store is: hw_output.stencil(hw_output_s0_x_xi, hw_output_s0_y_yi) = select((hw_output_s0_y_yi == 0), f4.0.stencil(hw_output_s0_x_xi), f4.1.stencil(hw_output_s0_x_xi))
+//store is: hw_output.stencil(hw_output_s0_x_xi, hw_output_s0_y_yi) = select((hw_output_s0_y_yi == 0), f1.0.stencil(hw_output_s0_x_xi, 3), f1.1.stencil(hw_output_s0_x_xi, 3))
   auto hcompute_hw_output_stencil = hw_output_s0_x_xi->add_op("op_hcompute_hw_output_stencil");
   hcompute_hw_output_stencil->add_function("hcompute_hw_output_stencil");
-  hcompute_hw_output_stencil->add_load("f4_0_stencil", "hw_output_s0_x_xi");
-  hcompute_hw_output_stencil->add_load("f4_1_stencil", "hw_output_s0_x_xi");
+  hcompute_hw_output_stencil->add_load("f1_0_stencil", "3", "hw_output_s0_x_xi");
+  hcompute_hw_output_stencil->add_load("f1_1_stencil", "3", "hw_output_s0_x_xi");
   hcompute_hw_output_stencil->add_store("hw_output_stencil", "hw_output_s0_y_yi", "hw_output_s0_x_xi");
   hcompute_hw_output_stencil->compute_unit_needs_index_variable("hw_output_s0_y_yi");
 
   return prg;
 }
-
 
 
 prog fft8_unroll4() {
@@ -562,311 +304,180 @@ prog fft8_unroll4() {
 //consuming hw_input_global_wrapper.stencil
   auto hw_output_s0_y_yi = prg.add_loop("hw_output_s0_y_yi", 0, 2);
   auto hw_output_s0_x_xi = hw_output_s0_y_yi->add_loop("hw_output_s0_x_xi", 0, 8);
-////producing f4
-
-//store is: f4.0.stencil((hw_output_s0_x_xi + -3)) = 0.000000f
-  auto hcompute_f4_0_stencil = hw_output_s0_x_xi->add_op("op_hcompute_f4_0_stencil");
-  hcompute_f4_0_stencil->add_function("hcompute_f4_0_stencil");
-  prg.buffer_port_widths["f4_0_stencil"] = 32;
-  hcompute_f4_0_stencil->add_store("f4_0_stencil", "(hw_output_s0_x_xi + -3)");
-
-//store is: f4.1.stencil((hw_output_s0_x_xi + -3)) = 0.000000f
-  auto hcompute_f4_1_stencil = hw_output_s0_x_xi->add_op("op_hcompute_f4_1_stencil");
-  hcompute_f4_1_stencil->add_function("hcompute_f4_1_stencil");
-  prg.buffer_port_widths["f4_1_stencil"] = 32;
-  hcompute_f4_1_stencil->add_store("f4_1_stencil", "(hw_output_s0_x_xi + -3)");
-
-//store is: f4.0.stencil((hw_output_s0_x_xi + -2)) = 0.000000f
-  auto hcompute_f4_0_stencil_1 = hw_output_s0_x_xi->add_op("op_hcompute_f4_0_stencil_1");
-  hcompute_f4_0_stencil_1->add_function("hcompute_f4_0_stencil_1");
-  hcompute_f4_0_stencil_1->add_store("f4_0_stencil", "(hw_output_s0_x_xi + -2)");
-
-//store is: f4.1.stencil((hw_output_s0_x_xi + -2)) = 0.000000f
-  auto hcompute_f4_1_stencil_1 = hw_output_s0_x_xi->add_op("op_hcompute_f4_1_stencil_1");
-  hcompute_f4_1_stencil_1->add_function("hcompute_f4_1_stencil_1");
-  hcompute_f4_1_stencil_1->add_store("f4_1_stencil", "(hw_output_s0_x_xi + -2)");
-
-//store is: f4.0.stencil((hw_output_s0_x_xi + -1)) = 0.000000f
-  auto hcompute_f4_0_stencil_2 = hw_output_s0_x_xi->add_op("op_hcompute_f4_0_stencil_2");
-  hcompute_f4_0_stencil_2->add_function("hcompute_f4_0_stencil_2");
-  hcompute_f4_0_stencil_2->add_store("f4_0_stencil", "(hw_output_s0_x_xi + -1)");
-
-//store is: f4.1.stencil((hw_output_s0_x_xi + -1)) = 0.000000f
-  auto hcompute_f4_1_stencil_2 = hw_output_s0_x_xi->add_op("op_hcompute_f4_1_stencil_2");
-  hcompute_f4_1_stencil_2->add_function("hcompute_f4_1_stencil_2");
-  hcompute_f4_1_stencil_2->add_store("f4_1_stencil", "(hw_output_s0_x_xi + -1)");
-
-//store is: f4.0.stencil(hw_output_s0_x_xi) = 0.000000f
-  auto hcompute_f4_0_stencil_3 = hw_output_s0_x_xi->add_op("op_hcompute_f4_0_stencil_3");
-  hcompute_f4_0_stencil_3->add_function("hcompute_f4_0_stencil_3");
-  hcompute_f4_0_stencil_3->add_store("f4_0_stencil", "hw_output_s0_x_xi");
-
-//store is: f4.1.stencil(hw_output_s0_x_xi) = 0.000000f
-  auto hcompute_f4_1_stencil_3 = hw_output_s0_x_xi->add_op("op_hcompute_f4_1_stencil_3");
-  hcompute_f4_1_stencil_3->add_function("hcompute_f4_1_stencil_3");
-  hcompute_f4_1_stencil_3->add_store("f4_1_stencil", "hw_output_s0_x_xi");
-  auto f4_s1_t_x = hw_output_s0_x_xi->add_loop("f4_s1_t_x", 0, 8);
-////producing f3
-  auto f3_s0_x_x = f4_s1_t_x->add_loop("f3_s0_x_x", 0, 2);
-
-//store is: f3.0.stencil((f3_s0_x_x*4)) = 0.000000f
-  auto hcompute_f3_0_stencil = f3_s0_x_x->add_op("op_hcompute_f3_0_stencil");
-  hcompute_f3_0_stencil->add_function("hcompute_f3_0_stencil");
-  prg.buffer_port_widths["f3_0_stencil"] = 32;
-  hcompute_f3_0_stencil->add_store("f3_0_stencil", "(f3_s0_x_x*4)");
-
-//store is: f3.1.stencil((f3_s0_x_x*4)) = 0.000000f
-  auto hcompute_f3_1_stencil = f3_s0_x_x->add_op("op_hcompute_f3_1_stencil");
-  hcompute_f3_1_stencil->add_function("hcompute_f3_1_stencil");
-  prg.buffer_port_widths["f3_1_stencil"] = 32;
-  hcompute_f3_1_stencil->add_store("f3_1_stencil", "(f3_s0_x_x*4)");
-
-//store is: f3.0.stencil(((f3_s0_x_x*4) + 1)) = 0.000000f
-  auto hcompute_f3_0_stencil_1 = f3_s0_x_x->add_op("op_hcompute_f3_0_stencil_1");
-  hcompute_f3_0_stencil_1->add_function("hcompute_f3_0_stencil_1");
-  hcompute_f3_0_stencil_1->add_store("f3_0_stencil", "((f3_s0_x_x*4) + 1)");
-
-//store is: f3.1.stencil(((f3_s0_x_x*4) + 1)) = 0.000000f
-  auto hcompute_f3_1_stencil_1 = f3_s0_x_x->add_op("op_hcompute_f3_1_stencil_1");
-  hcompute_f3_1_stencil_1->add_function("hcompute_f3_1_stencil_1");
-  hcompute_f3_1_stencil_1->add_store("f3_1_stencil", "((f3_s0_x_x*4) + 1)");
-
-//store is: f3.0.stencil(((f3_s0_x_x*4) + 2)) = 0.000000f
-  auto hcompute_f3_0_stencil_2 = f3_s0_x_x->add_op("op_hcompute_f3_0_stencil_2");
-  hcompute_f3_0_stencil_2->add_function("hcompute_f3_0_stencil_2");
-  hcompute_f3_0_stencil_2->add_store("f3_0_stencil", "((f3_s0_x_x*4) + 2)");
-
-//store is: f3.1.stencil(((f3_s0_x_x*4) + 2)) = 0.000000f
-  auto hcompute_f3_1_stencil_2 = f3_s0_x_x->add_op("op_hcompute_f3_1_stencil_2");
-  hcompute_f3_1_stencil_2->add_function("hcompute_f3_1_stencil_2");
-  hcompute_f3_1_stencil_2->add_store("f3_1_stencil", "((f3_s0_x_x*4) + 2)");
-
-//store is: f3.0.stencil(((f3_s0_x_x*4) + 3)) = 0.000000f
-  auto hcompute_f3_0_stencil_3 = f3_s0_x_x->add_op("op_hcompute_f3_0_stencil_3");
-  hcompute_f3_0_stencil_3->add_function("hcompute_f3_0_stencil_3");
-  hcompute_f3_0_stencil_3->add_store("f3_0_stencil", "((f3_s0_x_x*4) + 3)");
-
-//store is: f3.1.stencil(((f3_s0_x_x*4) + 3)) = 0.000000f
-  auto hcompute_f3_1_stencil_3 = f3_s0_x_x->add_op("op_hcompute_f3_1_stencil_3");
-  hcompute_f3_1_stencil_3->add_function("hcompute_f3_1_stencil_3");
-  hcompute_f3_1_stencil_3->add_store("f3_1_stencil", "((f3_s0_x_x*4) + 3)");
-  auto f3_s1_t_x = f4_s1_t_x->add_loop("f3_s1_t_x", 0, 8);
-////producing f2
-  auto f2_s0_x_x = f3_s1_t_x->add_loop("f2_s0_x_x", 0, 2);
-
-//store is: f2.0.stencil((f2_s0_x_x*4)) = 0.000000f
-  auto hcompute_f2_0_stencil = f2_s0_x_x->add_op("op_hcompute_f2_0_stencil");
-  hcompute_f2_0_stencil->add_function("hcompute_f2_0_stencil");
-  prg.buffer_port_widths["f2_0_stencil"] = 32;
-  hcompute_f2_0_stencil->add_store("f2_0_stencil", "(f2_s0_x_x*4)");
-
-//store is: f2.1.stencil((f2_s0_x_x*4)) = 0.000000f
-  auto hcompute_f2_1_stencil = f2_s0_x_x->add_op("op_hcompute_f2_1_stencil");
-  hcompute_f2_1_stencil->add_function("hcompute_f2_1_stencil");
-  prg.buffer_port_widths["f2_1_stencil"] = 32;
-  hcompute_f2_1_stencil->add_store("f2_1_stencil", "(f2_s0_x_x*4)");
-
-//store is: f2.0.stencil(((f2_s0_x_x*4) + 1)) = 0.000000f
-  auto hcompute_f2_0_stencil_1 = f2_s0_x_x->add_op("op_hcompute_f2_0_stencil_1");
-  hcompute_f2_0_stencil_1->add_function("hcompute_f2_0_stencil_1");
-  hcompute_f2_0_stencil_1->add_store("f2_0_stencil", "((f2_s0_x_x*4) + 1)");
-
-//store is: f2.1.stencil(((f2_s0_x_x*4) + 1)) = 0.000000f
-  auto hcompute_f2_1_stencil_1 = f2_s0_x_x->add_op("op_hcompute_f2_1_stencil_1");
-  hcompute_f2_1_stencil_1->add_function("hcompute_f2_1_stencil_1");
-  hcompute_f2_1_stencil_1->add_store("f2_1_stencil", "((f2_s0_x_x*4) + 1)");
-
-//store is: f2.0.stencil(((f2_s0_x_x*4) + 2)) = 0.000000f
-  auto hcompute_f2_0_stencil_2 = f2_s0_x_x->add_op("op_hcompute_f2_0_stencil_2");
-  hcompute_f2_0_stencil_2->add_function("hcompute_f2_0_stencil_2");
-  hcompute_f2_0_stencil_2->add_store("f2_0_stencil", "((f2_s0_x_x*4) + 2)");
-
-//store is: f2.1.stencil(((f2_s0_x_x*4) + 2)) = 0.000000f
-  auto hcompute_f2_1_stencil_2 = f2_s0_x_x->add_op("op_hcompute_f2_1_stencil_2");
-  hcompute_f2_1_stencil_2->add_function("hcompute_f2_1_stencil_2");
-  hcompute_f2_1_stencil_2->add_store("f2_1_stencil", "((f2_s0_x_x*4) + 2)");
-
-//store is: f2.0.stencil(((f2_s0_x_x*4) + 3)) = 0.000000f
-  auto hcompute_f2_0_stencil_3 = f2_s0_x_x->add_op("op_hcompute_f2_0_stencil_3");
-  hcompute_f2_0_stencil_3->add_function("hcompute_f2_0_stencil_3");
-  hcompute_f2_0_stencil_3->add_store("f2_0_stencil", "((f2_s0_x_x*4) + 3)");
-
-//store is: f2.1.stencil(((f2_s0_x_x*4) + 3)) = 0.000000f
-  auto hcompute_f2_1_stencil_3 = f2_s0_x_x->add_op("op_hcompute_f2_1_stencil_3");
-  hcompute_f2_1_stencil_3->add_function("hcompute_f2_1_stencil_3");
-  hcompute_f2_1_stencil_3->add_store("f2_1_stencil", "((f2_s0_x_x*4) + 3)");
-  auto f2_s1_t_x = f3_s1_t_x->add_loop("f2_s1_t_x", 0, 8);
 ////producing f1
-  auto f1_s0_x_x = f2_s1_t_x->add_loop("f1_s0_x_x", 0, 2);
+  auto f1_s0_y = hw_output_s0_x_xi->add_loop("f1_s0_y", 0, 4);
+  auto f1_s0_x_x = f1_s0_y->add_loop("f1_s0_x_x", 0, 2);
 
-//store is: f1.0.stencil((f1_s0_x_x*4)) = hw_input_global_wrapper.stencil((f1_s0_x_x*4), 0)
+//store is: f1.0.stencil((f1_s0_x_x*4), f1_s0_y) = 0.000000f
   auto hcompute_f1_0_stencil = f1_s0_x_x->add_op("op_hcompute_f1_0_stencil");
   hcompute_f1_0_stencil->add_function("hcompute_f1_0_stencil");
-  hcompute_f1_0_stencil->add_load("hw_input_global_wrapper_stencil", "0", "(f1_s0_x_x*4)");
   prg.buffer_port_widths["f1_0_stencil"] = 32;
-  hcompute_f1_0_stencil->add_store("f1_0_stencil", "(f1_s0_x_x*4)");
+  hcompute_f1_0_stencil->add_store("f1_0_stencil", "f1_s0_y", "(f1_s0_x_x*4)");
 
-//store is: f1.1.stencil((f1_s0_x_x*4)) = hw_input_global_wrapper.stencil((f1_s0_x_x*4), 1)
+//store is: f1.1.stencil((f1_s0_x_x*4), f1_s0_y) = 0.000000f
   auto hcompute_f1_1_stencil = f1_s0_x_x->add_op("op_hcompute_f1_1_stencil");
   hcompute_f1_1_stencil->add_function("hcompute_f1_1_stencil");
-  hcompute_f1_1_stencil->add_load("hw_input_global_wrapper_stencil", "1", "(f1_s0_x_x*4)");
   prg.buffer_port_widths["f1_1_stencil"] = 32;
-  hcompute_f1_1_stencil->add_store("f1_1_stencil", "(f1_s0_x_x*4)");
+  hcompute_f1_1_stencil->add_store("f1_1_stencil", "f1_s0_y", "(f1_s0_x_x*4)");
 
-//store is: f1.0.stencil(((f1_s0_x_x*4) + 1)) = hw_input_global_wrapper.stencil(((f1_s0_x_x*4) + 1), 0)
+//store is: f1.0.stencil(((f1_s0_x_x*4) + 1), f1_s0_y) = 0.000000f
   auto hcompute_f1_0_stencil_1 = f1_s0_x_x->add_op("op_hcompute_f1_0_stencil_1");
   hcompute_f1_0_stencil_1->add_function("hcompute_f1_0_stencil_1");
-  hcompute_f1_0_stencil_1->add_load("hw_input_global_wrapper_stencil", "0", "((f1_s0_x_x*4) + 1)");
-  hcompute_f1_0_stencil_1->add_store("f1_0_stencil", "((f1_s0_x_x*4) + 1)");
+  hcompute_f1_0_stencil_1->add_store("f1_0_stencil", "f1_s0_y", "((f1_s0_x_x*4) + 1)");
 
-//store is: f1.1.stencil(((f1_s0_x_x*4) + 1)) = hw_input_global_wrapper.stencil(((f1_s0_x_x*4) + 1), 1)
+//store is: f1.1.stencil(((f1_s0_x_x*4) + 1), f1_s0_y) = 0.000000f
   auto hcompute_f1_1_stencil_1 = f1_s0_x_x->add_op("op_hcompute_f1_1_stencil_1");
   hcompute_f1_1_stencil_1->add_function("hcompute_f1_1_stencil_1");
-  hcompute_f1_1_stencil_1->add_load("hw_input_global_wrapper_stencil", "1", "((f1_s0_x_x*4) + 1)");
-  hcompute_f1_1_stencil_1->add_store("f1_1_stencil", "((f1_s0_x_x*4) + 1)");
+  hcompute_f1_1_stencil_1->add_store("f1_1_stencil", "f1_s0_y", "((f1_s0_x_x*4) + 1)");
 
-//store is: f1.0.stencil(((f1_s0_x_x*4) + 2)) = hw_input_global_wrapper.stencil(((f1_s0_x_x*4) + 2), 0)
+//store is: f1.0.stencil(((f1_s0_x_x*4) + 2), f1_s0_y) = 0.000000f
   auto hcompute_f1_0_stencil_2 = f1_s0_x_x->add_op("op_hcompute_f1_0_stencil_2");
   hcompute_f1_0_stencil_2->add_function("hcompute_f1_0_stencil_2");
-  hcompute_f1_0_stencil_2->add_load("hw_input_global_wrapper_stencil", "0", "((f1_s0_x_x*4) + 2)");
-  hcompute_f1_0_stencil_2->add_store("f1_0_stencil", "((f1_s0_x_x*4) + 2)");
+  hcompute_f1_0_stencil_2->add_store("f1_0_stencil", "f1_s0_y", "((f1_s0_x_x*4) + 2)");
 
-//store is: f1.1.stencil(((f1_s0_x_x*4) + 2)) = hw_input_global_wrapper.stencil(((f1_s0_x_x*4) + 2), 1)
+//store is: f1.1.stencil(((f1_s0_x_x*4) + 2), f1_s0_y) = 0.000000f
   auto hcompute_f1_1_stencil_2 = f1_s0_x_x->add_op("op_hcompute_f1_1_stencil_2");
   hcompute_f1_1_stencil_2->add_function("hcompute_f1_1_stencil_2");
-  hcompute_f1_1_stencil_2->add_load("hw_input_global_wrapper_stencil", "1", "((f1_s0_x_x*4) + 2)");
-  hcompute_f1_1_stencil_2->add_store("f1_1_stencil", "((f1_s0_x_x*4) + 2)");
+  hcompute_f1_1_stencil_2->add_store("f1_1_stencil", "f1_s0_y", "((f1_s0_x_x*4) + 2)");
 
-//store is: f1.0.stencil(((f1_s0_x_x*4) + 3)) = hw_input_global_wrapper.stencil(((f1_s0_x_x*4) + 3), 0)
+//store is: f1.0.stencil(((f1_s0_x_x*4) + 3), f1_s0_y) = 0.000000f
   auto hcompute_f1_0_stencil_3 = f1_s0_x_x->add_op("op_hcompute_f1_0_stencil_3");
   hcompute_f1_0_stencil_3->add_function("hcompute_f1_0_stencil_3");
-  hcompute_f1_0_stencil_3->add_load("hw_input_global_wrapper_stencil", "0", "((f1_s0_x_x*4) + 3)");
-  hcompute_f1_0_stencil_3->add_store("f1_0_stencil", "((f1_s0_x_x*4) + 3)");
+  hcompute_f1_0_stencil_3->add_store("f1_0_stencil", "f1_s0_y", "((f1_s0_x_x*4) + 3)");
 
-//store is: f1.1.stencil(((f1_s0_x_x*4) + 3)) = hw_input_global_wrapper.stencil(((f1_s0_x_x*4) + 3), 1)
+//store is: f1.1.stencil(((f1_s0_x_x*4) + 3), f1_s0_y) = 0.000000f
   auto hcompute_f1_1_stencil_3 = f1_s0_x_x->add_op("op_hcompute_f1_1_stencil_3");
   hcompute_f1_1_stencil_3->add_function("hcompute_f1_1_stencil_3");
-  hcompute_f1_1_stencil_3->add_load("hw_input_global_wrapper_stencil", "1", "((f1_s0_x_x*4) + 3)");
-  hcompute_f1_1_stencil_3->add_store("f1_1_stencil", "((f1_s0_x_x*4) + 3)");
-  auto f1_s1_t_x = f2_s1_t_x->add_loop("f1_s1_t_x", 0, 8);
+  hcompute_f1_1_stencil_3->add_store("f1_1_stencil", "f1_s0_y", "((f1_s0_x_x*4) + 3)");
+  auto f1_s1_x = hw_output_s0_x_xi->add_loop("f1_s1_x", 0, 8);
 
-//store is: f1.0.stencil(f1_s1_t_x) = ((f1.0.stencil(f1_s1_t_x)*hw_twi_global_wrapper.stencil(f1_s1_t_x, 0, 0)) - (f1.1.stencil(f1_s1_t_x)*hw_twi_global_wrapper.stencil(f1_s1_t_x, 1, 0)))
-  auto hcompute_f1_0_stencil_4 = f1_s1_t_x->add_op("op_hcompute_f1_0_stencil_4");
+//store is: f1.0.stencil(f1_s1_x, 0) = hw_input_global_wrapper.stencil(f1_s1_x, 0)
+  auto hcompute_f1_0_stencil_4 = f1_s1_x->add_op("op_hcompute_f1_0_stencil_4");
   hcompute_f1_0_stencil_4->add_function("hcompute_f1_0_stencil_4");
-  hcompute_f1_0_stencil_4->add_load("f1_0_stencil", "f1_s1_t_x");
-  hcompute_f1_0_stencil_4->add_load("f1_1_stencil", "f1_s1_t_x");
-  hcompute_f1_0_stencil_4->add_load("hw_twi_global_wrapper_stencil", "0", "0", "f1_s1_t_x");
-  hcompute_f1_0_stencil_4->add_load("hw_twi_global_wrapper_stencil", "0", "1", "f1_s1_t_x");
-  hcompute_f1_0_stencil_4->add_store("f1_0_stencil", "f1_s1_t_x");
+  hcompute_f1_0_stencil_4->add_load("hw_input_global_wrapper_stencil", "0", "f1_s1_x");
+  hcompute_f1_0_stencil_4->add_store("f1_0_stencil", "0", "f1_s1_x");
 
-//store is: f1.1.stencil(f1_s1_t_x) = ((f1.0.stencil(f1_s1_t_x)*hw_twi_global_wrapper.stencil(f1_s1_t_x, 1, 0)) + (f1.1.stencil(f1_s1_t_x)*hw_twi_global_wrapper.stencil(f1_s1_t_x, 0, 0)))
-  auto hcompute_f1_1_stencil_4 = f1_s1_t_x->add_op("op_hcompute_f1_1_stencil_4");
+//store is: f1.1.stencil(f1_s1_x, 0) = hw_input_global_wrapper.stencil(f1_s1_x, 1)
+  auto hcompute_f1_1_stencil_4 = f1_s1_x->add_op("op_hcompute_f1_1_stencil_4");
   hcompute_f1_1_stencil_4->add_function("hcompute_f1_1_stencil_4");
-  hcompute_f1_1_stencil_4->add_load("f1_0_stencil", "f1_s1_t_x");
-  hcompute_f1_1_stencil_4->add_load("f1_1_stencil", "f1_s1_t_x");
-  hcompute_f1_1_stencil_4->add_load("hw_twi_global_wrapper_stencil", "0", "1", "f1_s1_t_x");
-  hcompute_f1_1_stencil_4->add_load("hw_twi_global_wrapper_stencil", "0", "0", "f1_s1_t_x");
-  hcompute_f1_1_stencil_4->add_store("f1_1_stencil", "f1_s1_t_x");
+  hcompute_f1_1_stencil_4->add_load("hw_input_global_wrapper_stencil", "1", "f1_s1_x");
+  hcompute_f1_1_stencil_4->add_store("f1_1_stencil", "0", "f1_s1_x");
+  auto f1_s2_t_x = hw_output_s0_x_xi->add_loop("f1_s2_t_x", 0, 8);
+
+//store is: f1.0.stencil(f1_s2_t_x, 0) = ((f1.0.stencil(f1_s2_t_x, 0)*hw_twi_global_wrapper.stencil(f1_s2_t_x, 0, 0)) - (f1.1.stencil(f1_s2_t_x, 0)*hw_twi_global_wrapper.stencil(f1_s2_t_x, 1, 0)))
+  auto hcompute_f1_0_stencil_5 = f1_s2_t_x->add_op("op_hcompute_f1_0_stencil_5");
+  hcompute_f1_0_stencil_5->add_function("hcompute_f1_0_stencil_5");
+  hcompute_f1_0_stencil_5->add_load("f1_0_stencil", "0", "f1_s2_t_x");
+  hcompute_f1_0_stencil_5->add_load("f1_1_stencil", "0", "f1_s2_t_x");
+  hcompute_f1_0_stencil_5->add_load("hw_twi_global_wrapper_stencil", "0", "0", "f1_s2_t_x");
+  hcompute_f1_0_stencil_5->add_load("hw_twi_global_wrapper_stencil", "0", "1", "f1_s2_t_x");
+  hcompute_f1_0_stencil_5->add_store("f1_0_stencil", "0", "f1_s2_t_x");
+
+//store is: f1.1.stencil(f1_s2_t_x, 0) = ((f1.0.stencil(f1_s2_t_x, 0)*hw_twi_global_wrapper.stencil(f1_s2_t_x, 1, 0)) + (f1.1.stencil(f1_s2_t_x, 0)*hw_twi_global_wrapper.stencil(f1_s2_t_x, 0, 0)))
+  auto hcompute_f1_1_stencil_5 = f1_s2_t_x->add_op("op_hcompute_f1_1_stencil_5");
+  hcompute_f1_1_stencil_5->add_function("hcompute_f1_1_stencil_5");
+  hcompute_f1_1_stencil_5->add_load("f1_0_stencil", "0", "f1_s2_t_x");
+  hcompute_f1_1_stencil_5->add_load("f1_1_stencil", "0", "f1_s2_t_x");
+  hcompute_f1_1_stencil_5->add_load("hw_twi_global_wrapper_stencil", "0", "1", "f1_s2_t_x");
+  hcompute_f1_1_stencil_5->add_load("hw_twi_global_wrapper_stencil", "0", "0", "f1_s2_t_x");
+  hcompute_f1_1_stencil_5->add_store("f1_1_stencil", "0", "f1_s2_t_x");
+  auto f1_s3_t_x = hw_output_s0_x_xi->add_loop("f1_s3_t_x", 0, 8);
+
+//store is: f1.0.stencil(f1_s3_t_x, 1) = (f1.0.stencil((((f1_s3_t_x/2)*2) + ((f1_s3_t_x + 1) % 2)), 0) + (f1.0.stencil(f1_s3_t_x, 0)*float32((1 - ((f1_s3_t_x/(((f1_s3_t_x/2)*2) + 1))*2)))))
+  auto hcompute_f1_0_stencil_6 = f1_s3_t_x->add_op("op_hcompute_f1_0_stencil_6");
+  hcompute_f1_0_stencil_6->add_function("hcompute_f1_0_stencil_6");
+  hcompute_f1_0_stencil_6->add_load("f1_0_stencil", "0", "((floor((f1_s3_t_x/2))*2) + ((f1_s3_t_x + 1) % 2))");
+  hcompute_f1_0_stencil_6->add_load("f1_0_stencil", "0", "f1_s3_t_x");
+  hcompute_f1_0_stencil_6->add_store("f1_0_stencil", "1", "f1_s3_t_x");
+  hcompute_f1_0_stencil_6->compute_unit_needs_index_variable("f1_s3_t_x");
+
+//store is: f1.1.stencil(f1_s3_t_x, 1) = (f1.1.stencil((((f1_s3_t_x/2)*2) + ((f1_s3_t_x + 1) % 2)), 0) + (f1.1.stencil(f1_s3_t_x, 0)*float32((1 - ((f1_s3_t_x/(((f1_s3_t_x/2)*2) + 1))*2)))))
+  auto hcompute_f1_1_stencil_6 = f1_s3_t_x->add_op("op_hcompute_f1_1_stencil_6");
+  hcompute_f1_1_stencil_6->add_function("hcompute_f1_1_stencil_6");
+  hcompute_f1_1_stencil_6->add_load("f1_1_stencil", "0", "((floor((f1_s3_t_x/2))*2) + ((f1_s3_t_x + 1) % 2))");
+  hcompute_f1_1_stencil_6->add_load("f1_1_stencil", "0", "f1_s3_t_x");
+  hcompute_f1_1_stencil_6->add_store("f1_1_stencil", "1", "f1_s3_t_x");
+  hcompute_f1_1_stencil_6->compute_unit_needs_index_variable("f1_s3_t_x");
+  auto f1_s4_t_x = hw_output_s0_x_xi->add_loop("f1_s4_t_x", 0, 8);
+
+//store is: f1.0.stencil(f1_s4_t_x, 1) = ((f1.0.stencil(f1_s4_t_x, 1)*hw_twi_global_wrapper.stencil(f1_s4_t_x, 0, 1)) - (f1.1.stencil(f1_s4_t_x, 1)*hw_twi_global_wrapper.stencil(f1_s4_t_x, 1, 1)))
+  auto hcompute_f1_0_stencil_7 = f1_s4_t_x->add_op("op_hcompute_f1_0_stencil_7");
+  hcompute_f1_0_stencil_7->add_function("hcompute_f1_0_stencil_7");
+  hcompute_f1_0_stencil_7->add_load("f1_0_stencil", "1", "f1_s4_t_x");
+  hcompute_f1_0_stencil_7->add_load("f1_1_stencil", "1", "f1_s4_t_x");
+  hcompute_f1_0_stencil_7->add_load("hw_twi_global_wrapper_stencil", "1", "0", "f1_s4_t_x");
+  hcompute_f1_0_stencil_7->add_load("hw_twi_global_wrapper_stencil", "1", "1", "f1_s4_t_x");
+  hcompute_f1_0_stencil_7->add_store("f1_0_stencil", "1", "f1_s4_t_x");
+
+//store is: f1.1.stencil(f1_s4_t_x, 1) = ((f1.0.stencil(f1_s4_t_x, 1)*hw_twi_global_wrapper.stencil(f1_s4_t_x, 1, 1)) + (f1.1.stencil(f1_s4_t_x, 1)*hw_twi_global_wrapper.stencil(f1_s4_t_x, 0, 1)))
+  auto hcompute_f1_1_stencil_7 = f1_s4_t_x->add_op("op_hcompute_f1_1_stencil_7");
+  hcompute_f1_1_stencil_7->add_function("hcompute_f1_1_stencil_7");
+  hcompute_f1_1_stencil_7->add_load("f1_0_stencil", "1", "f1_s4_t_x");
+  hcompute_f1_1_stencil_7->add_load("f1_1_stencil", "1", "f1_s4_t_x");
+  hcompute_f1_1_stencil_7->add_load("hw_twi_global_wrapper_stencil", "1", "1", "f1_s4_t_x");
+  hcompute_f1_1_stencil_7->add_load("hw_twi_global_wrapper_stencil", "1", "0", "f1_s4_t_x");
+  hcompute_f1_1_stencil_7->add_store("f1_1_stencil", "1", "f1_s4_t_x");
+  auto f1_s5_t_x = hw_output_s0_x_xi->add_loop("f1_s5_t_x", 0, 8);
+
+//store is: f1.0.stencil(f1_s5_t_x, 2) = (f1.0.stencil((((f1_s5_t_x/4)*4) + ((f1_s5_t_x + 2) % 4)), 1) + (f1.0.stencil(f1_s5_t_x, 1)*float32((1 - ((f1_s5_t_x/(((f1_s5_t_x/4)*4) + 2))*2)))))
+  auto hcompute_f1_0_stencil_8 = f1_s5_t_x->add_op("op_hcompute_f1_0_stencil_8");
+  hcompute_f1_0_stencil_8->add_function("hcompute_f1_0_stencil_8");
+  hcompute_f1_0_stencil_8->add_load("f1_0_stencil", "1", "((floor((f1_s5_t_x/4))*4) + ((f1_s5_t_x + 2) % 4))");
+  hcompute_f1_0_stencil_8->add_load("f1_0_stencil", "1", "f1_s5_t_x");
+  hcompute_f1_0_stencil_8->add_store("f1_0_stencil", "2", "f1_s5_t_x");
+  hcompute_f1_0_stencil_8->compute_unit_needs_index_variable("f1_s5_t_x");
+
+//store is: f1.1.stencil(f1_s5_t_x, 2) = (f1.1.stencil((((f1_s5_t_x/4)*4) + ((f1_s5_t_x + 2) % 4)), 1) + (f1.1.stencil(f1_s5_t_x, 1)*float32((1 - ((f1_s5_t_x/(((f1_s5_t_x/4)*4) + 2))*2)))))
+  auto hcompute_f1_1_stencil_8 = f1_s5_t_x->add_op("op_hcompute_f1_1_stencil_8");
+  hcompute_f1_1_stencil_8->add_function("hcompute_f1_1_stencil_8");
+  hcompute_f1_1_stencil_8->add_load("f1_1_stencil", "1", "((floor((f1_s5_t_x/4))*4) + ((f1_s5_t_x + 2) % 4))");
+  hcompute_f1_1_stencil_8->add_load("f1_1_stencil", "1", "f1_s5_t_x");
+  hcompute_f1_1_stencil_8->add_store("f1_1_stencil", "2", "f1_s5_t_x");
+  hcompute_f1_1_stencil_8->compute_unit_needs_index_variable("f1_s5_t_x");
+  auto f1_s6_t_x = hw_output_s0_x_xi->add_loop("f1_s6_t_x", 0, 8);
+
+//store is: f1.0.stencil(f1_s6_t_x, 2) = ((f1.0.stencil(f1_s6_t_x, 2)*hw_twi_global_wrapper.stencil(f1_s6_t_x, 0, 2)) - (f1.1.stencil(f1_s6_t_x, 2)*hw_twi_global_wrapper.stencil(f1_s6_t_x, 1, 2)))
+  auto hcompute_f1_0_stencil_9 = f1_s6_t_x->add_op("op_hcompute_f1_0_stencil_9");
+  hcompute_f1_0_stencil_9->add_function("hcompute_f1_0_stencil_9");
+  hcompute_f1_0_stencil_9->add_load("f1_0_stencil", "2", "f1_s6_t_x");
+  hcompute_f1_0_stencil_9->add_load("f1_1_stencil", "2", "f1_s6_t_x");
+  hcompute_f1_0_stencil_9->add_load("hw_twi_global_wrapper_stencil", "2", "1", "f1_s6_t_x");
+  hcompute_f1_0_stencil_9->add_load("hw_twi_global_wrapper_stencil", "2", "0", "f1_s6_t_x");
+  hcompute_f1_0_stencil_9->add_store("f1_0_stencil", "2", "f1_s6_t_x");
+
+//store is: f1.1.stencil(f1_s6_t_x, 2) = ((f1.0.stencil(f1_s6_t_x, 2)*hw_twi_global_wrapper.stencil(f1_s6_t_x, 1, 2)) + (f1.1.stencil(f1_s6_t_x, 2)*hw_twi_global_wrapper.stencil(f1_s6_t_x, 0, 2)))
+  auto hcompute_f1_1_stencil_9 = f1_s6_t_x->add_op("op_hcompute_f1_1_stencil_9");
+  hcompute_f1_1_stencil_9->add_function("hcompute_f1_1_stencil_9");
+  hcompute_f1_1_stencil_9->add_load("f1_0_stencil", "2", "f1_s6_t_x");
+  hcompute_f1_1_stencil_9->add_load("f1_1_stencil", "2", "f1_s6_t_x");
+  hcompute_f1_1_stencil_9->add_load("hw_twi_global_wrapper_stencil", "2", "1", "f1_s6_t_x");
+  hcompute_f1_1_stencil_9->add_load("hw_twi_global_wrapper_stencil", "2", "0", "f1_s6_t_x");
+  hcompute_f1_1_stencil_9->add_store("f1_1_stencil", "2", "f1_s6_t_x");
+  auto f1_s7_t_x = hw_output_s0_x_xi->add_loop("f1_s7_t_x", 0, 8);
+
+//store is: f1.0.stencil(f1_s7_t_x, 3) = (f1.0.stencil(((f1_s7_t_x + 4) % 8), 2) + (f1.0.stencil(f1_s7_t_x, 2)*float32((1 - ((f1_s7_t_x/4)*2)))))
+  auto hcompute_f1_0_stencil_10 = f1_s7_t_x->add_op("op_hcompute_f1_0_stencil_10");
+  hcompute_f1_0_stencil_10->add_function("hcompute_f1_0_stencil_10");
+  hcompute_f1_0_stencil_10->add_load("f1_0_stencil", "2", "((f1_s7_t_x + 4) % 8)");
+  hcompute_f1_0_stencil_10->add_load("f1_0_stencil", "2", "f1_s7_t_x");
+  hcompute_f1_0_stencil_10->add_store("f1_0_stencil", "3", "f1_s7_t_x");
+  hcompute_f1_0_stencil_10->compute_unit_needs_index_variable("f1_s7_t_x");
+
+//store is: f1.1.stencil(f1_s7_t_x, 3) = (f1.1.stencil(((f1_s7_t_x + 4) % 8), 2) + (f1.1.stencil(f1_s7_t_x, 2)*float32((1 - ((f1_s7_t_x/4)*2)))))
+  auto hcompute_f1_1_stencil_10 = f1_s7_t_x->add_op("op_hcompute_f1_1_stencil_10");
+  hcompute_f1_1_stencil_10->add_function("hcompute_f1_1_stencil_10");
+  hcompute_f1_1_stencil_10->add_load("f1_1_stencil", "2", "((f1_s7_t_x + 4) % 8)");
+  hcompute_f1_1_stencil_10->add_load("f1_1_stencil", "2", "f1_s7_t_x");
+  hcompute_f1_1_stencil_10->add_store("f1_1_stencil", "3", "f1_s7_t_x");
+  hcompute_f1_1_stencil_10->compute_unit_needs_index_variable("f1_s7_t_x");
 
 //consuming f1
 
-//store is: f2.0.stencil(f2_s1_t_x) = (f1.0.stencil((((f2_s1_t_x/2)*2) + ((f2_s1_t_x + 1) % 2))) + (f1.0.stencil(f2_s1_t_x)*float32((1 - ((f2_s1_t_x/(((f2_s1_t_x/2)*2) + 1))*2)))))
-  auto hcompute_f2_0_stencil_4 = f2_s1_t_x->add_op("op_hcompute_f2_0_stencil_4");
-  hcompute_f2_0_stencil_4->add_function("hcompute_f2_0_stencil_4");
-  hcompute_f2_0_stencil_4->add_load("f1_0_stencil", "((floor((f2_s1_t_x/2))*2) + ((f2_s1_t_x + 1) % 2))");
-  hcompute_f2_0_stencil_4->add_load("f1_0_stencil", "f2_s1_t_x");
-  hcompute_f2_0_stencil_4->add_store("f2_0_stencil", "f2_s1_t_x");
-  hcompute_f2_0_stencil_4->compute_unit_needs_index_variable("f2_s1_t_x");
-
-//store is: f2.1.stencil(f2_s1_t_x) = (f1.1.stencil((((f2_s1_t_x/2)*2) + ((f2_s1_t_x + 1) % 2))) + (f1.1.stencil(f2_s1_t_x)*float32((1 - ((f2_s1_t_x/(((f2_s1_t_x/2)*2) + 1))*2)))))
-  auto hcompute_f2_1_stencil_4 = f2_s1_t_x->add_op("op_hcompute_f2_1_stencil_4");
-  hcompute_f2_1_stencil_4->add_function("hcompute_f2_1_stencil_4");
-  hcompute_f2_1_stencil_4->add_load("f1_1_stencil", "((floor((f2_s1_t_x/2))*2) + ((f2_s1_t_x + 1) % 2))");
-  hcompute_f2_1_stencil_4->add_load("f1_1_stencil", "f2_s1_t_x");
-  hcompute_f2_1_stencil_4->add_store("f2_1_stencil", "f2_s1_t_x");
-  hcompute_f2_1_stencil_4->compute_unit_needs_index_variable("f2_s1_t_x");
-  auto f2_s2_t_x = f3_s1_t_x->add_loop("f2_s2_t_x", 0, 8);
-
-//store is: f2.0.stencil(f2_s2_t_x) = ((f2.0.stencil(f2_s2_t_x)*hw_twi_global_wrapper.stencil(f2_s2_t_x, 0, 1)) - (f2.1.stencil(f2_s2_t_x)*hw_twi_global_wrapper.stencil(f2_s2_t_x, 1, 1)))
-  auto hcompute_f2_0_stencil_5 = f2_s2_t_x->add_op("op_hcompute_f2_0_stencil_5");
-  hcompute_f2_0_stencil_5->add_function("hcompute_f2_0_stencil_5");
-  hcompute_f2_0_stencil_5->add_load("f2_0_stencil", "f2_s2_t_x");
-  hcompute_f2_0_stencil_5->add_load("f2_1_stencil", "f2_s2_t_x");
-  hcompute_f2_0_stencil_5->add_load("hw_twi_global_wrapper_stencil", "1", "0", "f2_s2_t_x");
-  hcompute_f2_0_stencil_5->add_load("hw_twi_global_wrapper_stencil", "1", "1", "f2_s2_t_x");
-  hcompute_f2_0_stencil_5->add_store("f2_0_stencil", "f2_s2_t_x");
-
-//store is: f2.1.stencil(f2_s2_t_x) = ((f2.0.stencil(f2_s2_t_x)*hw_twi_global_wrapper.stencil(f2_s2_t_x, 1, 1)) + (f2.1.stencil(f2_s2_t_x)*hw_twi_global_wrapper.stencil(f2_s2_t_x, 0, 1)))
-  auto hcompute_f2_1_stencil_5 = f2_s2_t_x->add_op("op_hcompute_f2_1_stencil_5");
-  hcompute_f2_1_stencil_5->add_function("hcompute_f2_1_stencil_5");
-  hcompute_f2_1_stencil_5->add_load("f2_0_stencil", "f2_s2_t_x");
-  hcompute_f2_1_stencil_5->add_load("f2_1_stencil", "f2_s2_t_x");
-  hcompute_f2_1_stencil_5->add_load("hw_twi_global_wrapper_stencil", "1", "1", "f2_s2_t_x");
-  hcompute_f2_1_stencil_5->add_load("hw_twi_global_wrapper_stencil", "1", "0", "f2_s2_t_x");
-  hcompute_f2_1_stencil_5->add_store("f2_1_stencil", "f2_s2_t_x");
-
-//consuming f2
-
-//store is: f3.0.stencil(f3_s1_t_x) = (f2.0.stencil((((f3_s1_t_x/4)*4) + ((f3_s1_t_x + 2) % 4))) + (f2.0.stencil(f3_s1_t_x)*float32((1 - ((f3_s1_t_x/(((f3_s1_t_x/4)*4) + 2))*2)))))
-  auto hcompute_f3_0_stencil_4 = f3_s1_t_x->add_op("op_hcompute_f3_0_stencil_4");
-  hcompute_f3_0_stencil_4->add_function("hcompute_f3_0_stencil_4");
-  hcompute_f3_0_stencil_4->add_load("f2_0_stencil", "((floor((f3_s1_t_x/4))*4) + ((f3_s1_t_x + 2) % 4))");
-  hcompute_f3_0_stencil_4->add_load("f2_0_stencil", "f3_s1_t_x");
-  hcompute_f3_0_stencil_4->add_store("f3_0_stencil", "f3_s1_t_x");
-  hcompute_f3_0_stencil_4->compute_unit_needs_index_variable("f3_s1_t_x");
-
-//store is: f3.1.stencil(f3_s1_t_x) = (f2.1.stencil((((f3_s1_t_x/4)*4) + ((f3_s1_t_x + 2) % 4))) + (f2.1.stencil(f3_s1_t_x)*float32((1 - ((f3_s1_t_x/(((f3_s1_t_x/4)*4) + 2))*2)))))
-  auto hcompute_f3_1_stencil_4 = f3_s1_t_x->add_op("op_hcompute_f3_1_stencil_4");
-  hcompute_f3_1_stencil_4->add_function("hcompute_f3_1_stencil_4");
-  hcompute_f3_1_stencil_4->add_load("f2_1_stencil", "((floor((f3_s1_t_x/4))*4) + ((f3_s1_t_x + 2) % 4))");
-  hcompute_f3_1_stencil_4->add_load("f2_1_stencil", "f3_s1_t_x");
-  hcompute_f3_1_stencil_4->add_store("f3_1_stencil", "f3_s1_t_x");
-  hcompute_f3_1_stencil_4->compute_unit_needs_index_variable("f3_s1_t_x");
-  auto f3_s2_t_x = f4_s1_t_x->add_loop("f3_s2_t_x", 0, 8);
-
-//store is: f3.0.stencil(f3_s2_t_x) = ((f3.0.stencil(f3_s2_t_x)*hw_twi_global_wrapper.stencil(f3_s2_t_x, 0, 2)) - (f3.1.stencil(f3_s2_t_x)*hw_twi_global_wrapper.stencil(f3_s2_t_x, 1, 2)))
-  auto hcompute_f3_0_stencil_5 = f3_s2_t_x->add_op("op_hcompute_f3_0_stencil_5");
-  hcompute_f3_0_stencil_5->add_function("hcompute_f3_0_stencil_5");
-  hcompute_f3_0_stencil_5->add_load("f3_0_stencil", "f3_s2_t_x");
-  hcompute_f3_0_stencil_5->add_load("f3_1_stencil", "f3_s2_t_x");
-  hcompute_f3_0_stencil_5->add_load("hw_twi_global_wrapper_stencil", "2", "1", "f3_s2_t_x");
-  hcompute_f3_0_stencil_5->add_load("hw_twi_global_wrapper_stencil", "2", "0", "f3_s2_t_x");
-  hcompute_f3_0_stencil_5->add_store("f3_0_stencil", "f3_s2_t_x");
-
-//store is: f3.1.stencil(f3_s2_t_x) = ((f3.0.stencil(f3_s2_t_x)*hw_twi_global_wrapper.stencil(f3_s2_t_x, 1, 2)) + (f3.1.stencil(f3_s2_t_x)*hw_twi_global_wrapper.stencil(f3_s2_t_x, 0, 2)))
-  auto hcompute_f3_1_stencil_5 = f3_s2_t_x->add_op("op_hcompute_f3_1_stencil_5");
-  hcompute_f3_1_stencil_5->add_function("hcompute_f3_1_stencil_5");
-  hcompute_f3_1_stencil_5->add_load("f3_0_stencil", "f3_s2_t_x");
-  hcompute_f3_1_stencil_5->add_load("f3_1_stencil", "f3_s2_t_x");
-  hcompute_f3_1_stencil_5->add_load("hw_twi_global_wrapper_stencil", "2", "1", "f3_s2_t_x");
-  hcompute_f3_1_stencil_5->add_load("hw_twi_global_wrapper_stencil", "2", "0", "f3_s2_t_x");
-  hcompute_f3_1_stencil_5->add_store("f3_1_stencil", "f3_s2_t_x");
-
-//consuming f3
-
-//store is: f4.0.stencil(f4_s1_t_x) = (f3.0.stencil(((f4_s1_t_x + 4) % 8)) + (f3.0.stencil(f4_s1_t_x)*float32((1 - ((f4_s1_t_x/4)*2)))))
-  auto hcompute_f4_0_stencil_4 = f4_s1_t_x->add_op("op_hcompute_f4_0_stencil_4");
-  hcompute_f4_0_stencil_4->add_function("hcompute_f4_0_stencil_4");
-  hcompute_f4_0_stencil_4->add_load("f3_0_stencil", "((f4_s1_t_x + 4) % 8)");
-  hcompute_f4_0_stencil_4->add_load("f3_0_stencil", "f4_s1_t_x");
-  hcompute_f4_0_stencil_4->add_store("f4_0_stencil", "f4_s1_t_x");
-  hcompute_f4_0_stencil_4->compute_unit_needs_index_variable("f4_s1_t_x");
-
-//store is: f4.1.stencil(f4_s1_t_x) = (f3.1.stencil(((f4_s1_t_x + 4) % 8)) + (f3.1.stencil(f4_s1_t_x)*float32((1 - ((f4_s1_t_x/4)*2)))))
-  auto hcompute_f4_1_stencil_4 = f4_s1_t_x->add_op("op_hcompute_f4_1_stencil_4");
-  hcompute_f4_1_stencil_4->add_function("hcompute_f4_1_stencil_4");
-  hcompute_f4_1_stencil_4->add_load("f3_1_stencil", "((f4_s1_t_x + 4) % 8)");
-  hcompute_f4_1_stencil_4->add_load("f3_1_stencil", "f4_s1_t_x");
-  hcompute_f4_1_stencil_4->add_store("f4_1_stencil", "f4_s1_t_x");
-  hcompute_f4_1_stencil_4->compute_unit_needs_index_variable("f4_s1_t_x");
-
-//consuming f4
-
-//store is: hw_output.stencil(hw_output_s0_x_xi, hw_output_s0_y_yi) = select((hw_output_s0_y_yi == 0), f4.0.stencil(hw_output_s0_x_xi), f4.1.stencil(hw_output_s0_x_xi))
+//store is: hw_output.stencil(hw_output_s0_x_xi, hw_output_s0_y_yi) = select((hw_output_s0_y_yi == 0), f1.0.stencil(hw_output_s0_x_xi, 3), f1.1.stencil(hw_output_s0_x_xi, 3))
   auto hcompute_hw_output_stencil = hw_output_s0_x_xi->add_op("op_hcompute_hw_output_stencil");
   hcompute_hw_output_stencil->add_function("hcompute_hw_output_stencil");
-  hcompute_hw_output_stencil->add_load("f4_0_stencil", "hw_output_s0_x_xi");
-  hcompute_hw_output_stencil->add_load("f4_1_stencil", "hw_output_s0_x_xi");
+  hcompute_hw_output_stencil->add_load("f1_0_stencil", "3", "hw_output_s0_x_xi");
+  hcompute_hw_output_stencil->add_load("f1_1_stencil", "3", "hw_output_s0_x_xi");
   hcompute_hw_output_stencil->add_store("hw_output_stencil", "hw_output_s0_y_yi", "hw_output_s0_x_xi");
   hcompute_hw_output_stencil->compute_unit_needs_index_variable("hw_output_s0_y_yi");
 
@@ -916,232 +527,166 @@ prog fft8_unroll2() {
 //consuming hw_input_global_wrapper.stencil
   auto hw_output_s0_y_yi = prg.add_loop("hw_output_s0_y_yi", 0, 2);
   auto hw_output_s0_x_xi = hw_output_s0_y_yi->add_loop("hw_output_s0_x_xi", 0, 8);
-////producing f4
-
-//store is: f4.0.stencil((hw_output_s0_x_xi + -1)) = 0.000000f
-  auto hcompute_f4_0_stencil = hw_output_s0_x_xi->add_op("op_hcompute_f4_0_stencil");
-  hcompute_f4_0_stencil->add_function("hcompute_f4_0_stencil");
-  prg.buffer_port_widths["f4_0_stencil"] = 32;
-  hcompute_f4_0_stencil->add_store("f4_0_stencil", "(hw_output_s0_x_xi + -1)");
-
-//store is: f4.1.stencil((hw_output_s0_x_xi + -1)) = 0.000000f
-  auto hcompute_f4_1_stencil = hw_output_s0_x_xi->add_op("op_hcompute_f4_1_stencil");
-  hcompute_f4_1_stencil->add_function("hcompute_f4_1_stencil");
-  prg.buffer_port_widths["f4_1_stencil"] = 32;
-  hcompute_f4_1_stencil->add_store("f4_1_stencil", "(hw_output_s0_x_xi + -1)");
-
-//store is: f4.0.stencil(hw_output_s0_x_xi) = 0.000000f
-  auto hcompute_f4_0_stencil_1 = hw_output_s0_x_xi->add_op("op_hcompute_f4_0_stencil_1");
-  hcompute_f4_0_stencil_1->add_function("hcompute_f4_0_stencil_1");
-  hcompute_f4_0_stencil_1->add_store("f4_0_stencil", "hw_output_s0_x_xi");
-
-//store is: f4.1.stencil(hw_output_s0_x_xi) = 0.000000f
-  auto hcompute_f4_1_stencil_1 = hw_output_s0_x_xi->add_op("op_hcompute_f4_1_stencil_1");
-  hcompute_f4_1_stencil_1->add_function("hcompute_f4_1_stencil_1");
-  hcompute_f4_1_stencil_1->add_store("f4_1_stencil", "hw_output_s0_x_xi");
-  auto f4_s1_t_x = hw_output_s0_x_xi->add_loop("f4_s1_t_x", 0, 8);
-////producing f3
-  auto f3_s0_x_x = f4_s1_t_x->add_loop("f3_s0_x_x", 0, 4);
-
-//store is: f3.0.stencil((f3_s0_x_x*2)) = 0.000000f
-  auto hcompute_f3_0_stencil = f3_s0_x_x->add_op("op_hcompute_f3_0_stencil");
-  hcompute_f3_0_stencil->add_function("hcompute_f3_0_stencil");
-  prg.buffer_port_widths["f3_0_stencil"] = 32;
-  hcompute_f3_0_stencil->add_store("f3_0_stencil", "(f3_s0_x_x*2)");
-
-//store is: f3.1.stencil((f3_s0_x_x*2)) = 0.000000f
-  auto hcompute_f3_1_stencil = f3_s0_x_x->add_op("op_hcompute_f3_1_stencil");
-  hcompute_f3_1_stencil->add_function("hcompute_f3_1_stencil");
-  prg.buffer_port_widths["f3_1_stencil"] = 32;
-  hcompute_f3_1_stencil->add_store("f3_1_stencil", "(f3_s0_x_x*2)");
-
-//store is: f3.0.stencil(((f3_s0_x_x*2) + 1)) = 0.000000f
-  auto hcompute_f3_0_stencil_1 = f3_s0_x_x->add_op("op_hcompute_f3_0_stencil_1");
-  hcompute_f3_0_stencil_1->add_function("hcompute_f3_0_stencil_1");
-  hcompute_f3_0_stencil_1->add_store("f3_0_stencil", "((f3_s0_x_x*2) + 1)");
-
-//store is: f3.1.stencil(((f3_s0_x_x*2) + 1)) = 0.000000f
-  auto hcompute_f3_1_stencil_1 = f3_s0_x_x->add_op("op_hcompute_f3_1_stencil_1");
-  hcompute_f3_1_stencil_1->add_function("hcompute_f3_1_stencil_1");
-  hcompute_f3_1_stencil_1->add_store("f3_1_stencil", "((f3_s0_x_x*2) + 1)");
-  auto f3_s1_t_x = f4_s1_t_x->add_loop("f3_s1_t_x", 0, 8);
-////producing f2
-  auto f2_s0_x_x = f3_s1_t_x->add_loop("f2_s0_x_x", 0, 4);
-
-//store is: f2.0.stencil((f2_s0_x_x*2)) = 0.000000f
-  auto hcompute_f2_0_stencil = f2_s0_x_x->add_op("op_hcompute_f2_0_stencil");
-  hcompute_f2_0_stencil->add_function("hcompute_f2_0_stencil");
-  prg.buffer_port_widths["f2_0_stencil"] = 32;
-  hcompute_f2_0_stencil->add_store("f2_0_stencil", "(f2_s0_x_x*2)");
-
-//store is: f2.1.stencil((f2_s0_x_x*2)) = 0.000000f
-  auto hcompute_f2_1_stencil = f2_s0_x_x->add_op("op_hcompute_f2_1_stencil");
-  hcompute_f2_1_stencil->add_function("hcompute_f2_1_stencil");
-  prg.buffer_port_widths["f2_1_stencil"] = 32;
-  hcompute_f2_1_stencil->add_store("f2_1_stencil", "(f2_s0_x_x*2)");
-
-//store is: f2.0.stencil(((f2_s0_x_x*2) + 1)) = 0.000000f
-  auto hcompute_f2_0_stencil_1 = f2_s0_x_x->add_op("op_hcompute_f2_0_stencil_1");
-  hcompute_f2_0_stencil_1->add_function("hcompute_f2_0_stencil_1");
-  hcompute_f2_0_stencil_1->add_store("f2_0_stencil", "((f2_s0_x_x*2) + 1)");
-
-//store is: f2.1.stencil(((f2_s0_x_x*2) + 1)) = 0.000000f
-  auto hcompute_f2_1_stencil_1 = f2_s0_x_x->add_op("op_hcompute_f2_1_stencil_1");
-  hcompute_f2_1_stencil_1->add_function("hcompute_f2_1_stencil_1");
-  hcompute_f2_1_stencil_1->add_store("f2_1_stencil", "((f2_s0_x_x*2) + 1)");
-  auto f2_s1_t_x = f3_s1_t_x->add_loop("f2_s1_t_x", 0, 8);
 ////producing f1
-  auto f1_s0_x_x = f2_s1_t_x->add_loop("f1_s0_x_x", 0, 4);
+  auto f1_s0_y = hw_output_s0_x_xi->add_loop("f1_s0_y", 0, 4);
+  auto f1_s0_x_x = f1_s0_y->add_loop("f1_s0_x_x", 0, 4);
 
-//store is: f1.0.stencil((f1_s0_x_x*2)) = hw_input_global_wrapper.stencil((f1_s0_x_x*2), 0)
+//store is: f1.0.stencil((f1_s0_x_x*2), f1_s0_y) = 0.000000f
   auto hcompute_f1_0_stencil = f1_s0_x_x->add_op("op_hcompute_f1_0_stencil");
   hcompute_f1_0_stencil->add_function("hcompute_f1_0_stencil");
-  hcompute_f1_0_stencil->add_load("hw_input_global_wrapper_stencil", "0", "(f1_s0_x_x*2)");
   prg.buffer_port_widths["f1_0_stencil"] = 32;
-  hcompute_f1_0_stencil->add_store("f1_0_stencil", "(f1_s0_x_x*2)");
+  hcompute_f1_0_stencil->add_store("f1_0_stencil", "f1_s0_y", "(f1_s0_x_x*2)");
 
-//store is: f1.1.stencil((f1_s0_x_x*2)) = hw_input_global_wrapper.stencil((f1_s0_x_x*2), 1)
+//store is: f1.1.stencil((f1_s0_x_x*2), f1_s0_y) = 0.000000f
   auto hcompute_f1_1_stencil = f1_s0_x_x->add_op("op_hcompute_f1_1_stencil");
   hcompute_f1_1_stencil->add_function("hcompute_f1_1_stencil");
-  hcompute_f1_1_stencil->add_load("hw_input_global_wrapper_stencil", "1", "(f1_s0_x_x*2)");
   prg.buffer_port_widths["f1_1_stencil"] = 32;
-  hcompute_f1_1_stencil->add_store("f1_1_stencil", "(f1_s0_x_x*2)");
+  hcompute_f1_1_stencil->add_store("f1_1_stencil", "f1_s0_y", "(f1_s0_x_x*2)");
 
-//store is: f1.0.stencil(((f1_s0_x_x*2) + 1)) = hw_input_global_wrapper.stencil(((f1_s0_x_x*2) + 1), 0)
+//store is: f1.0.stencil(((f1_s0_x_x*2) + 1), f1_s0_y) = 0.000000f
   auto hcompute_f1_0_stencil_1 = f1_s0_x_x->add_op("op_hcompute_f1_0_stencil_1");
   hcompute_f1_0_stencil_1->add_function("hcompute_f1_0_stencil_1");
-  hcompute_f1_0_stencil_1->add_load("hw_input_global_wrapper_stencil", "0", "((f1_s0_x_x*2) + 1)");
-  hcompute_f1_0_stencil_1->add_store("f1_0_stencil", "((f1_s0_x_x*2) + 1)");
+  hcompute_f1_0_stencil_1->add_store("f1_0_stencil", "f1_s0_y", "((f1_s0_x_x*2) + 1)");
 
-//store is: f1.1.stencil(((f1_s0_x_x*2) + 1)) = hw_input_global_wrapper.stencil(((f1_s0_x_x*2) + 1), 1)
+//store is: f1.1.stencil(((f1_s0_x_x*2) + 1), f1_s0_y) = 0.000000f
   auto hcompute_f1_1_stencil_1 = f1_s0_x_x->add_op("op_hcompute_f1_1_stencil_1");
   hcompute_f1_1_stencil_1->add_function("hcompute_f1_1_stencil_1");
-  hcompute_f1_1_stencil_1->add_load("hw_input_global_wrapper_stencil", "1", "((f1_s0_x_x*2) + 1)");
-  hcompute_f1_1_stencil_1->add_store("f1_1_stencil", "((f1_s0_x_x*2) + 1)");
-  auto f1_s1_t_x = f2_s1_t_x->add_loop("f1_s1_t_x", 0, 8);
+  hcompute_f1_1_stencil_1->add_store("f1_1_stencil", "f1_s0_y", "((f1_s0_x_x*2) + 1)");
+  auto f1_s1_x = hw_output_s0_x_xi->add_loop("f1_s1_x", 0, 8);
 
-//store is: f1.0.stencil(f1_s1_t_x) = ((f1.0.stencil(f1_s1_t_x)*hw_twi_global_wrapper.stencil(f1_s1_t_x, 0, 0)) - (f1.1.stencil(f1_s1_t_x)*hw_twi_global_wrapper.stencil(f1_s1_t_x, 1, 0)))
-  auto hcompute_f1_0_stencil_2 = f1_s1_t_x->add_op("op_hcompute_f1_0_stencil_2");
+//store is: f1.0.stencil(f1_s1_x, 0) = hw_input_global_wrapper.stencil(f1_s1_x, 0)
+  auto hcompute_f1_0_stencil_2 = f1_s1_x->add_op("op_hcompute_f1_0_stencil_2");
   hcompute_f1_0_stencil_2->add_function("hcompute_f1_0_stencil_2");
-  hcompute_f1_0_stencil_2->add_load("f1_0_stencil", "f1_s1_t_x");
-  hcompute_f1_0_stencil_2->add_load("f1_1_stencil", "f1_s1_t_x");
-  hcompute_f1_0_stencil_2->add_load("hw_twi_global_wrapper_stencil", "0", "0", "f1_s1_t_x");
-  hcompute_f1_0_stencil_2->add_load("hw_twi_global_wrapper_stencil", "0", "1", "f1_s1_t_x");
-  hcompute_f1_0_stencil_2->add_store("f1_0_stencil", "f1_s1_t_x");
+  hcompute_f1_0_stencil_2->add_load("hw_input_global_wrapper_stencil", "0", "f1_s1_x");
+  hcompute_f1_0_stencil_2->add_store("f1_0_stencil", "0", "f1_s1_x");
 
-//store is: f1.1.stencil(f1_s1_t_x) = ((f1.0.stencil(f1_s1_t_x)*hw_twi_global_wrapper.stencil(f1_s1_t_x, 1, 0)) + (f1.1.stencil(f1_s1_t_x)*hw_twi_global_wrapper.stencil(f1_s1_t_x, 0, 0)))
-  auto hcompute_f1_1_stencil_2 = f1_s1_t_x->add_op("op_hcompute_f1_1_stencil_2");
+//store is: f1.1.stencil(f1_s1_x, 0) = hw_input_global_wrapper.stencil(f1_s1_x, 1)
+  auto hcompute_f1_1_stencil_2 = f1_s1_x->add_op("op_hcompute_f1_1_stencil_2");
   hcompute_f1_1_stencil_2->add_function("hcompute_f1_1_stencil_2");
-  hcompute_f1_1_stencil_2->add_load("f1_0_stencil", "f1_s1_t_x");
-  hcompute_f1_1_stencil_2->add_load("f1_1_stencil", "f1_s1_t_x");
-  hcompute_f1_1_stencil_2->add_load("hw_twi_global_wrapper_stencil", "0", "1", "f1_s1_t_x");
-  hcompute_f1_1_stencil_2->add_load("hw_twi_global_wrapper_stencil", "0", "0", "f1_s1_t_x");
-  hcompute_f1_1_stencil_2->add_store("f1_1_stencil", "f1_s1_t_x");
+  hcompute_f1_1_stencil_2->add_load("hw_input_global_wrapper_stencil", "1", "f1_s1_x");
+  hcompute_f1_1_stencil_2->add_store("f1_1_stencil", "0", "f1_s1_x");
+  auto f1_s2_t_x = hw_output_s0_x_xi->add_loop("f1_s2_t_x", 0, 8);
+
+//store is: f1.0.stencil(f1_s2_t_x, 0) = ((f1.0.stencil(f1_s2_t_x, 0)*hw_twi_global_wrapper.stencil(f1_s2_t_x, 0, 0)) - (f1.1.stencil(f1_s2_t_x, 0)*hw_twi_global_wrapper.stencil(f1_s2_t_x, 1, 0)))
+  auto hcompute_f1_0_stencil_3 = f1_s2_t_x->add_op("op_hcompute_f1_0_stencil_3");
+  hcompute_f1_0_stencil_3->add_function("hcompute_f1_0_stencil_3");
+  hcompute_f1_0_stencil_3->add_load("f1_0_stencil", "0", "f1_s2_t_x");
+  hcompute_f1_0_stencil_3->add_load("f1_1_stencil", "0", "f1_s2_t_x");
+  hcompute_f1_0_stencil_3->add_load("hw_twi_global_wrapper_stencil", "0", "0", "f1_s2_t_x");
+  hcompute_f1_0_stencil_3->add_load("hw_twi_global_wrapper_stencil", "0", "1", "f1_s2_t_x");
+  hcompute_f1_0_stencil_3->add_store("f1_0_stencil", "0", "f1_s2_t_x");
+
+//store is: f1.1.stencil(f1_s2_t_x, 0) = ((f1.0.stencil(f1_s2_t_x, 0)*hw_twi_global_wrapper.stencil(f1_s2_t_x, 1, 0)) + (f1.1.stencil(f1_s2_t_x, 0)*hw_twi_global_wrapper.stencil(f1_s2_t_x, 0, 0)))
+  auto hcompute_f1_1_stencil_3 = f1_s2_t_x->add_op("op_hcompute_f1_1_stencil_3");
+  hcompute_f1_1_stencil_3->add_function("hcompute_f1_1_stencil_3");
+  hcompute_f1_1_stencil_3->add_load("f1_0_stencil", "0", "f1_s2_t_x");
+  hcompute_f1_1_stencil_3->add_load("f1_1_stencil", "0", "f1_s2_t_x");
+  hcompute_f1_1_stencil_3->add_load("hw_twi_global_wrapper_stencil", "0", "1", "f1_s2_t_x");
+  hcompute_f1_1_stencil_3->add_load("hw_twi_global_wrapper_stencil", "0", "0", "f1_s2_t_x");
+  hcompute_f1_1_stencil_3->add_store("f1_1_stencil", "0", "f1_s2_t_x");
+  auto f1_s3_t_x = hw_output_s0_x_xi->add_loop("f1_s3_t_x", 0, 8);
+
+//store is: f1.0.stencil(f1_s3_t_x, 1) = (f1.0.stencil((((f1_s3_t_x/2)*2) + ((f1_s3_t_x + 1) % 2)), 0) + (f1.0.stencil(f1_s3_t_x, 0)*float32((1 - ((f1_s3_t_x/(((f1_s3_t_x/2)*2) + 1))*2)))))
+  auto hcompute_f1_0_stencil_4 = f1_s3_t_x->add_op("op_hcompute_f1_0_stencil_4");
+  hcompute_f1_0_stencil_4->add_function("hcompute_f1_0_stencil_4");
+  hcompute_f1_0_stencil_4->add_load("f1_0_stencil", "0", "((floor((f1_s3_t_x/2))*2) + ((f1_s3_t_x + 1) % 2))");
+  hcompute_f1_0_stencil_4->add_load("f1_0_stencil", "0", "f1_s3_t_x");
+  hcompute_f1_0_stencil_4->add_store("f1_0_stencil", "1", "f1_s3_t_x");
+  hcompute_f1_0_stencil_4->compute_unit_needs_index_variable("f1_s3_t_x");
+
+//store is: f1.1.stencil(f1_s3_t_x, 1) = (f1.1.stencil((((f1_s3_t_x/2)*2) + ((f1_s3_t_x + 1) % 2)), 0) + (f1.1.stencil(f1_s3_t_x, 0)*float32((1 - ((f1_s3_t_x/(((f1_s3_t_x/2)*2) + 1))*2)))))
+  auto hcompute_f1_1_stencil_4 = f1_s3_t_x->add_op("op_hcompute_f1_1_stencil_4");
+  hcompute_f1_1_stencil_4->add_function("hcompute_f1_1_stencil_4");
+  hcompute_f1_1_stencil_4->add_load("f1_1_stencil", "0", "((floor((f1_s3_t_x/2))*2) + ((f1_s3_t_x + 1) % 2))");
+  hcompute_f1_1_stencil_4->add_load("f1_1_stencil", "0", "f1_s3_t_x");
+  hcompute_f1_1_stencil_4->add_store("f1_1_stencil", "1", "f1_s3_t_x");
+  hcompute_f1_1_stencil_4->compute_unit_needs_index_variable("f1_s3_t_x");
+  auto f1_s4_t_x = hw_output_s0_x_xi->add_loop("f1_s4_t_x", 0, 8);
+
+//store is: f1.0.stencil(f1_s4_t_x, 1) = ((f1.0.stencil(f1_s4_t_x, 1)*hw_twi_global_wrapper.stencil(f1_s4_t_x, 0, 1)) - (f1.1.stencil(f1_s4_t_x, 1)*hw_twi_global_wrapper.stencil(f1_s4_t_x, 1, 1)))
+  auto hcompute_f1_0_stencil_5 = f1_s4_t_x->add_op("op_hcompute_f1_0_stencil_5");
+  hcompute_f1_0_stencil_5->add_function("hcompute_f1_0_stencil_5");
+  hcompute_f1_0_stencil_5->add_load("f1_0_stencil", "1", "f1_s4_t_x");
+  hcompute_f1_0_stencil_5->add_load("f1_1_stencil", "1", "f1_s4_t_x");
+  hcompute_f1_0_stencil_5->add_load("hw_twi_global_wrapper_stencil", "1", "0", "f1_s4_t_x");
+  hcompute_f1_0_stencil_5->add_load("hw_twi_global_wrapper_stencil", "1", "1", "f1_s4_t_x");
+  hcompute_f1_0_stencil_5->add_store("f1_0_stencil", "1", "f1_s4_t_x");
+
+//store is: f1.1.stencil(f1_s4_t_x, 1) = ((f1.0.stencil(f1_s4_t_x, 1)*hw_twi_global_wrapper.stencil(f1_s4_t_x, 1, 1)) + (f1.1.stencil(f1_s4_t_x, 1)*hw_twi_global_wrapper.stencil(f1_s4_t_x, 0, 1)))
+  auto hcompute_f1_1_stencil_5 = f1_s4_t_x->add_op("op_hcompute_f1_1_stencil_5");
+  hcompute_f1_1_stencil_5->add_function("hcompute_f1_1_stencil_5");
+  hcompute_f1_1_stencil_5->add_load("f1_0_stencil", "1", "f1_s4_t_x");
+  hcompute_f1_1_stencil_5->add_load("f1_1_stencil", "1", "f1_s4_t_x");
+  hcompute_f1_1_stencil_5->add_load("hw_twi_global_wrapper_stencil", "1", "1", "f1_s4_t_x");
+  hcompute_f1_1_stencil_5->add_load("hw_twi_global_wrapper_stencil", "1", "0", "f1_s4_t_x");
+  hcompute_f1_1_stencil_5->add_store("f1_1_stencil", "1", "f1_s4_t_x");
+  auto f1_s5_t_x = hw_output_s0_x_xi->add_loop("f1_s5_t_x", 0, 8);
+
+//store is: f1.0.stencil(f1_s5_t_x, 2) = (f1.0.stencil((((f1_s5_t_x/4)*4) + ((f1_s5_t_x + 2) % 4)), 1) + (f1.0.stencil(f1_s5_t_x, 1)*float32((1 - ((f1_s5_t_x/(((f1_s5_t_x/4)*4) + 2))*2)))))
+  auto hcompute_f1_0_stencil_6 = f1_s5_t_x->add_op("op_hcompute_f1_0_stencil_6");
+  hcompute_f1_0_stencil_6->add_function("hcompute_f1_0_stencil_6");
+  hcompute_f1_0_stencil_6->add_load("f1_0_stencil", "1", "((floor((f1_s5_t_x/4))*4) + ((f1_s5_t_x + 2) % 4))");
+  hcompute_f1_0_stencil_6->add_load("f1_0_stencil", "1", "f1_s5_t_x");
+  hcompute_f1_0_stencil_6->add_store("f1_0_stencil", "2", "f1_s5_t_x");
+  hcompute_f1_0_stencil_6->compute_unit_needs_index_variable("f1_s5_t_x");
+
+//store is: f1.1.stencil(f1_s5_t_x, 2) = (f1.1.stencil((((f1_s5_t_x/4)*4) + ((f1_s5_t_x + 2) % 4)), 1) + (f1.1.stencil(f1_s5_t_x, 1)*float32((1 - ((f1_s5_t_x/(((f1_s5_t_x/4)*4) + 2))*2)))))
+  auto hcompute_f1_1_stencil_6 = f1_s5_t_x->add_op("op_hcompute_f1_1_stencil_6");
+  hcompute_f1_1_stencil_6->add_function("hcompute_f1_1_stencil_6");
+  hcompute_f1_1_stencil_6->add_load("f1_1_stencil", "1", "((floor((f1_s5_t_x/4))*4) + ((f1_s5_t_x + 2) % 4))");
+  hcompute_f1_1_stencil_6->add_load("f1_1_stencil", "1", "f1_s5_t_x");
+  hcompute_f1_1_stencil_6->add_store("f1_1_stencil", "2", "f1_s5_t_x");
+  hcompute_f1_1_stencil_6->compute_unit_needs_index_variable("f1_s5_t_x");
+  auto f1_s6_t_x = hw_output_s0_x_xi->add_loop("f1_s6_t_x", 0, 8);
+
+//store is: f1.0.stencil(f1_s6_t_x, 2) = ((f1.0.stencil(f1_s6_t_x, 2)*hw_twi_global_wrapper.stencil(f1_s6_t_x, 0, 2)) - (f1.1.stencil(f1_s6_t_x, 2)*hw_twi_global_wrapper.stencil(f1_s6_t_x, 1, 2)))
+  auto hcompute_f1_0_stencil_7 = f1_s6_t_x->add_op("op_hcompute_f1_0_stencil_7");
+  hcompute_f1_0_stencil_7->add_function("hcompute_f1_0_stencil_7");
+  hcompute_f1_0_stencil_7->add_load("f1_0_stencil", "2", "f1_s6_t_x");
+  hcompute_f1_0_stencil_7->add_load("f1_1_stencil", "2", "f1_s6_t_x");
+  hcompute_f1_0_stencil_7->add_load("hw_twi_global_wrapper_stencil", "2", "1", "f1_s6_t_x");
+  hcompute_f1_0_stencil_7->add_load("hw_twi_global_wrapper_stencil", "2", "0", "f1_s6_t_x");
+  hcompute_f1_0_stencil_7->add_store("f1_0_stencil", "2", "f1_s6_t_x");
+
+//store is: f1.1.stencil(f1_s6_t_x, 2) = ((f1.0.stencil(f1_s6_t_x, 2)*hw_twi_global_wrapper.stencil(f1_s6_t_x, 1, 2)) + (f1.1.stencil(f1_s6_t_x, 2)*hw_twi_global_wrapper.stencil(f1_s6_t_x, 0, 2)))
+  auto hcompute_f1_1_stencil_7 = f1_s6_t_x->add_op("op_hcompute_f1_1_stencil_7");
+  hcompute_f1_1_stencil_7->add_function("hcompute_f1_1_stencil_7");
+  hcompute_f1_1_stencil_7->add_load("f1_0_stencil", "2", "f1_s6_t_x");
+  hcompute_f1_1_stencil_7->add_load("f1_1_stencil", "2", "f1_s6_t_x");
+  hcompute_f1_1_stencil_7->add_load("hw_twi_global_wrapper_stencil", "2", "1", "f1_s6_t_x");
+  hcompute_f1_1_stencil_7->add_load("hw_twi_global_wrapper_stencil", "2", "0", "f1_s6_t_x");
+  hcompute_f1_1_stencil_7->add_store("f1_1_stencil", "2", "f1_s6_t_x");
+  auto f1_s7_t_x = hw_output_s0_x_xi->add_loop("f1_s7_t_x", 0, 8);
+
+//store is: f1.0.stencil(f1_s7_t_x, 3) = (f1.0.stencil(((f1_s7_t_x + 4) % 8), 2) + (f1.0.stencil(f1_s7_t_x, 2)*float32((1 - ((f1_s7_t_x/4)*2)))))
+  auto hcompute_f1_0_stencil_8 = f1_s7_t_x->add_op("op_hcompute_f1_0_stencil_8");
+  hcompute_f1_0_stencil_8->add_function("hcompute_f1_0_stencil_8");
+  hcompute_f1_0_stencil_8->add_load("f1_0_stencil", "2", "((f1_s7_t_x + 4) % 8)");
+  hcompute_f1_0_stencil_8->add_load("f1_0_stencil", "2", "f1_s7_t_x");
+  hcompute_f1_0_stencil_8->add_store("f1_0_stencil", "3", "f1_s7_t_x");
+  hcompute_f1_0_stencil_8->compute_unit_needs_index_variable("f1_s7_t_x");
+
+//store is: f1.1.stencil(f1_s7_t_x, 3) = (f1.1.stencil(((f1_s7_t_x + 4) % 8), 2) + (f1.1.stencil(f1_s7_t_x, 2)*float32((1 - ((f1_s7_t_x/4)*2)))))
+  auto hcompute_f1_1_stencil_8 = f1_s7_t_x->add_op("op_hcompute_f1_1_stencil_8");
+  hcompute_f1_1_stencil_8->add_function("hcompute_f1_1_stencil_8");
+  hcompute_f1_1_stencil_8->add_load("f1_1_stencil", "2", "((f1_s7_t_x + 4) % 8)");
+  hcompute_f1_1_stencil_8->add_load("f1_1_stencil", "2", "f1_s7_t_x");
+  hcompute_f1_1_stencil_8->add_store("f1_1_stencil", "3", "f1_s7_t_x");
+  hcompute_f1_1_stencil_8->compute_unit_needs_index_variable("f1_s7_t_x");
 
 //consuming f1
 
-//store is: f2.0.stencil(f2_s1_t_x) = (f1.0.stencil((((f2_s1_t_x/2)*2) + ((f2_s1_t_x + 1) % 2))) + (f1.0.stencil(f2_s1_t_x)*float32((1 - ((f2_s1_t_x/(((f2_s1_t_x/2)*2) + 1))*2)))))
-  auto hcompute_f2_0_stencil_2 = f2_s1_t_x->add_op("op_hcompute_f2_0_stencil_2");
-  hcompute_f2_0_stencil_2->add_function("hcompute_f2_0_stencil_2");
-  hcompute_f2_0_stencil_2->add_load("f1_0_stencil", "((floor((f2_s1_t_x/2))*2) + ((f2_s1_t_x + 1) % 2))");
-  hcompute_f2_0_stencil_2->add_load("f1_0_stencil", "f2_s1_t_x");
-  hcompute_f2_0_stencil_2->add_store("f2_0_stencil", "f2_s1_t_x");
-  hcompute_f2_0_stencil_2->compute_unit_needs_index_variable("f2_s1_t_x");
-
-//store is: f2.1.stencil(f2_s1_t_x) = (f1.1.stencil((((f2_s1_t_x/2)*2) + ((f2_s1_t_x + 1) % 2))) + (f1.1.stencil(f2_s1_t_x)*float32((1 - ((f2_s1_t_x/(((f2_s1_t_x/2)*2) + 1))*2)))))
-  auto hcompute_f2_1_stencil_2 = f2_s1_t_x->add_op("op_hcompute_f2_1_stencil_2");
-  hcompute_f2_1_stencil_2->add_function("hcompute_f2_1_stencil_2");
-  hcompute_f2_1_stencil_2->add_load("f1_1_stencil", "((floor((f2_s1_t_x/2))*2) + ((f2_s1_t_x + 1) % 2))");
-  hcompute_f2_1_stencil_2->add_load("f1_1_stencil", "f2_s1_t_x");
-  hcompute_f2_1_stencil_2->add_store("f2_1_stencil", "f2_s1_t_x");
-  hcompute_f2_1_stencil_2->compute_unit_needs_index_variable("f2_s1_t_x");
-  auto f2_s2_t_x = f3_s1_t_x->add_loop("f2_s2_t_x", 0, 8);
-
-//store is: f2.0.stencil(f2_s2_t_x) = ((f2.0.stencil(f2_s2_t_x)*hw_twi_global_wrapper.stencil(f2_s2_t_x, 0, 1)) - (f2.1.stencil(f2_s2_t_x)*hw_twi_global_wrapper.stencil(f2_s2_t_x, 1, 1)))
-  auto hcompute_f2_0_stencil_3 = f2_s2_t_x->add_op("op_hcompute_f2_0_stencil_3");
-  hcompute_f2_0_stencil_3->add_function("hcompute_f2_0_stencil_3");
-  hcompute_f2_0_stencil_3->add_load("f2_0_stencil", "f2_s2_t_x");
-  hcompute_f2_0_stencil_3->add_load("f2_1_stencil", "f2_s2_t_x");
-  hcompute_f2_0_stencil_3->add_load("hw_twi_global_wrapper_stencil", "1", "0", "f2_s2_t_x");
-  hcompute_f2_0_stencil_3->add_load("hw_twi_global_wrapper_stencil", "1", "1", "f2_s2_t_x");
-  hcompute_f2_0_stencil_3->add_store("f2_0_stencil", "f2_s2_t_x");
-
-//store is: f2.1.stencil(f2_s2_t_x) = ((f2.0.stencil(f2_s2_t_x)*hw_twi_global_wrapper.stencil(f2_s2_t_x, 1, 1)) + (f2.1.stencil(f2_s2_t_x)*hw_twi_global_wrapper.stencil(f2_s2_t_x, 0, 1)))
-  auto hcompute_f2_1_stencil_3 = f2_s2_t_x->add_op("op_hcompute_f2_1_stencil_3");
-  hcompute_f2_1_stencil_3->add_function("hcompute_f2_1_stencil_3");
-  hcompute_f2_1_stencil_3->add_load("f2_0_stencil", "f2_s2_t_x");
-  hcompute_f2_1_stencil_3->add_load("f2_1_stencil", "f2_s2_t_x");
-  hcompute_f2_1_stencil_3->add_load("hw_twi_global_wrapper_stencil", "1", "1", "f2_s2_t_x");
-  hcompute_f2_1_stencil_3->add_load("hw_twi_global_wrapper_stencil", "1", "0", "f2_s2_t_x");
-  hcompute_f2_1_stencil_3->add_store("f2_1_stencil", "f2_s2_t_x");
-
-//consuming f2
-
-//store is: f3.0.stencil(f3_s1_t_x) = (f2.0.stencil((((f3_s1_t_x/4)*4) + ((f3_s1_t_x + 2) % 4))) + (f2.0.stencil(f3_s1_t_x)*float32((1 - ((f3_s1_t_x/(((f3_s1_t_x/4)*4) + 2))*2)))))
-  auto hcompute_f3_0_stencil_2 = f3_s1_t_x->add_op("op_hcompute_f3_0_stencil_2");
-  hcompute_f3_0_stencil_2->add_function("hcompute_f3_0_stencil_2");
-  hcompute_f3_0_stencil_2->add_load("f2_0_stencil", "((floor((f3_s1_t_x/4))*4) + ((f3_s1_t_x + 2) % 4))");
-  hcompute_f3_0_stencil_2->add_load("f2_0_stencil", "f3_s1_t_x");
-  hcompute_f3_0_stencil_2->add_store("f3_0_stencil", "f3_s1_t_x");
-  hcompute_f3_0_stencil_2->compute_unit_needs_index_variable("f3_s1_t_x");
-
-//store is: f3.1.stencil(f3_s1_t_x) = (f2.1.stencil((((f3_s1_t_x/4)*4) + ((f3_s1_t_x + 2) % 4))) + (f2.1.stencil(f3_s1_t_x)*float32((1 - ((f3_s1_t_x/(((f3_s1_t_x/4)*4) + 2))*2)))))
-  auto hcompute_f3_1_stencil_2 = f3_s1_t_x->add_op("op_hcompute_f3_1_stencil_2");
-  hcompute_f3_1_stencil_2->add_function("hcompute_f3_1_stencil_2");
-  hcompute_f3_1_stencil_2->add_load("f2_1_stencil", "((floor((f3_s1_t_x/4))*4) + ((f3_s1_t_x + 2) % 4))");
-  hcompute_f3_1_stencil_2->add_load("f2_1_stencil", "f3_s1_t_x");
-  hcompute_f3_1_stencil_2->add_store("f3_1_stencil", "f3_s1_t_x");
-  hcompute_f3_1_stencil_2->compute_unit_needs_index_variable("f3_s1_t_x");
-  auto f3_s2_t_x = f4_s1_t_x->add_loop("f3_s2_t_x", 0, 8);
-
-//store is: f3.0.stencil(f3_s2_t_x) = ((f3.0.stencil(f3_s2_t_x)*hw_twi_global_wrapper.stencil(f3_s2_t_x, 0, 2)) - (f3.1.stencil(f3_s2_t_x)*hw_twi_global_wrapper.stencil(f3_s2_t_x, 1, 2)))
-  auto hcompute_f3_0_stencil_3 = f3_s2_t_x->add_op("op_hcompute_f3_0_stencil_3");
-  hcompute_f3_0_stencil_3->add_function("hcompute_f3_0_stencil_3");
-  hcompute_f3_0_stencil_3->add_load("f3_0_stencil", "f3_s2_t_x");
-  hcompute_f3_0_stencil_3->add_load("f3_1_stencil", "f3_s2_t_x");
-  hcompute_f3_0_stencil_3->add_load("hw_twi_global_wrapper_stencil", "2", "1", "f3_s2_t_x");
-  hcompute_f3_0_stencil_3->add_load("hw_twi_global_wrapper_stencil", "2", "0", "f3_s2_t_x");
-  hcompute_f3_0_stencil_3->add_store("f3_0_stencil", "f3_s2_t_x");
-
-//store is: f3.1.stencil(f3_s2_t_x) = ((f3.0.stencil(f3_s2_t_x)*hw_twi_global_wrapper.stencil(f3_s2_t_x, 1, 2)) + (f3.1.stencil(f3_s2_t_x)*hw_twi_global_wrapper.stencil(f3_s2_t_x, 0, 2)))
-  auto hcompute_f3_1_stencil_3 = f3_s2_t_x->add_op("op_hcompute_f3_1_stencil_3");
-  hcompute_f3_1_stencil_3->add_function("hcompute_f3_1_stencil_3");
-  hcompute_f3_1_stencil_3->add_load("f3_0_stencil", "f3_s2_t_x");
-  hcompute_f3_1_stencil_3->add_load("f3_1_stencil", "f3_s2_t_x");
-  hcompute_f3_1_stencil_3->add_load("hw_twi_global_wrapper_stencil", "2", "1", "f3_s2_t_x");
-  hcompute_f3_1_stencil_3->add_load("hw_twi_global_wrapper_stencil", "2", "0", "f3_s2_t_x");
-  hcompute_f3_1_stencil_3->add_store("f3_1_stencil", "f3_s2_t_x");
-
-//consuming f3
-
-//store is: f4.0.stencil(f4_s1_t_x) = (f3.0.stencil(((f4_s1_t_x + 4) % 8)) + (f3.0.stencil(f4_s1_t_x)*float32((1 - ((f4_s1_t_x/4)*2)))))
-  auto hcompute_f4_0_stencil_2 = f4_s1_t_x->add_op("op_hcompute_f4_0_stencil_2");
-  hcompute_f4_0_stencil_2->add_function("hcompute_f4_0_stencil_2");
-  hcompute_f4_0_stencil_2->add_load("f3_0_stencil", "((f4_s1_t_x + 4) % 8)");
-  hcompute_f4_0_stencil_2->add_load("f3_0_stencil", "f4_s1_t_x");
-  hcompute_f4_0_stencil_2->add_store("f4_0_stencil", "f4_s1_t_x");
-  hcompute_f4_0_stencil_2->compute_unit_needs_index_variable("f4_s1_t_x");
-
-//store is: f4.1.stencil(f4_s1_t_x) = (f3.1.stencil(((f4_s1_t_x + 4) % 8)) + (f3.1.stencil(f4_s1_t_x)*float32((1 - ((f4_s1_t_x/4)*2)))))
-  auto hcompute_f4_1_stencil_2 = f4_s1_t_x->add_op("op_hcompute_f4_1_stencil_2");
-  hcompute_f4_1_stencil_2->add_function("hcompute_f4_1_stencil_2");
-  hcompute_f4_1_stencil_2->add_load("f3_1_stencil", "((f4_s1_t_x + 4) % 8)");
-  hcompute_f4_1_stencil_2->add_load("f3_1_stencil", "f4_s1_t_x");
-  hcompute_f4_1_stencil_2->add_store("f4_1_stencil", "f4_s1_t_x");
-  hcompute_f4_1_stencil_2->compute_unit_needs_index_variable("f4_s1_t_x");
-
-//consuming f4
-
-//store is: hw_output.stencil(hw_output_s0_x_xi, hw_output_s0_y_yi) = select((hw_output_s0_y_yi == 0), f4.0.stencil(hw_output_s0_x_xi), f4.1.stencil(hw_output_s0_x_xi))
+//store is: hw_output.stencil(hw_output_s0_x_xi, hw_output_s0_y_yi) = select((hw_output_s0_y_yi == 0), f1.0.stencil(hw_output_s0_x_xi, 3), f1.1.stencil(hw_output_s0_x_xi, 3))
   auto hcompute_hw_output_stencil = hw_output_s0_x_xi->add_op("op_hcompute_hw_output_stencil");
   hcompute_hw_output_stencil->add_function("hcompute_hw_output_stencil");
-  hcompute_hw_output_stencil->add_load("f4_0_stencil", "hw_output_s0_x_xi");
-  hcompute_hw_output_stencil->add_load("f4_1_stencil", "hw_output_s0_x_xi");
+  hcompute_hw_output_stencil->add_load("f1_0_stencil", "3", "hw_output_s0_x_xi");
+  hcompute_hw_output_stencil->add_load("f1_1_stencil", "3", "hw_output_s0_x_xi");
   hcompute_hw_output_stencil->add_store("hw_output_stencil", "hw_output_s0_y_yi", "hw_output_s0_x_xi");
   hcompute_hw_output_stencil->compute_unit_needs_index_variable("hw_output_s0_y_yi");
 
   return prg;
 }
+
 
 
 
@@ -1187,190 +732,156 @@ prog fft8_unroll0() {
 //consuming hw_input_global_wrapper.stencil
   auto hw_output_s0_y_yi = prg.add_loop("hw_output_s0_y_yi", 0, 2);
   auto hw_output_s0_x_xi = hw_output_s0_y_yi->add_loop("hw_output_s0_x_xi", 0, 8);
-////producing f4
-
-//store is: f4.0.stencil(hw_output_s0_x_xi) = 0.000000f
-  auto hcompute_f4_0_stencil = hw_output_s0_x_xi->add_op("op_hcompute_f4_0_stencil");
-  hcompute_f4_0_stencil->add_function("hcompute_f4_0_stencil");
-  prg.buffer_port_widths["f4_0_stencil"] = 32;
-  hcompute_f4_0_stencil->add_store("f4_0_stencil", "hw_output_s0_x_xi");
-
-//store is: f4.1.stencil(hw_output_s0_x_xi) = 0.000000f
-  auto hcompute_f4_1_stencil = hw_output_s0_x_xi->add_op("op_hcompute_f4_1_stencil");
-  hcompute_f4_1_stencil->add_function("hcompute_f4_1_stencil");
-  prg.buffer_port_widths["f4_1_stencil"] = 32;
-  hcompute_f4_1_stencil->add_store("f4_1_stencil", "hw_output_s0_x_xi");
-  auto f4_s1_t_x = hw_output_s0_x_xi->add_loop("f4_s1_t_x", 0, 8);
-////producing f3
-  auto f3_s0_x = f4_s1_t_x->add_loop("f3_s0_x", 0, 8);
-
-//store is: f3.0.stencil(f3_s0_x) = 0.000000f
-  auto hcompute_f3_0_stencil = f3_s0_x->add_op("op_hcompute_f3_0_stencil");
-  hcompute_f3_0_stencil->add_function("hcompute_f3_0_stencil");
-  prg.buffer_port_widths["f3_0_stencil"] = 32;
-  hcompute_f3_0_stencil->add_store("f3_0_stencil", "f3_s0_x");
-
-//store is: f3.1.stencil(f3_s0_x) = 0.000000f
-  auto hcompute_f3_1_stencil = f3_s0_x->add_op("op_hcompute_f3_1_stencil");
-  hcompute_f3_1_stencil->add_function("hcompute_f3_1_stencil");
-  prg.buffer_port_widths["f3_1_stencil"] = 32;
-  hcompute_f3_1_stencil->add_store("f3_1_stencil", "f3_s0_x");
-  auto f3_s1_t_x = f4_s1_t_x->add_loop("f3_s1_t_x", 0, 8);
-////producing f2
-  auto f2_s0_x = f3_s1_t_x->add_loop("f2_s0_x", 0, 8);
-
-//store is: f2.0.stencil(f2_s0_x) = 0.000000f
-  auto hcompute_f2_0_stencil = f2_s0_x->add_op("op_hcompute_f2_0_stencil");
-  hcompute_f2_0_stencil->add_function("hcompute_f2_0_stencil");
-  prg.buffer_port_widths["f2_0_stencil"] = 32;
-  hcompute_f2_0_stencil->add_store("f2_0_stencil", "f2_s0_x");
-
-//store is: f2.1.stencil(f2_s0_x) = 0.000000f
-  auto hcompute_f2_1_stencil = f2_s0_x->add_op("op_hcompute_f2_1_stencil");
-  hcompute_f2_1_stencil->add_function("hcompute_f2_1_stencil");
-  prg.buffer_port_widths["f2_1_stencil"] = 32;
-  hcompute_f2_1_stencil->add_store("f2_1_stencil", "f2_s0_x");
-  auto f2_s1_t_x = f3_s1_t_x->add_loop("f2_s1_t_x", 0, 8);
 ////producing f1
-  auto f1_s0_x = f2_s1_t_x->add_loop("f1_s0_x", 0, 8);
+  auto f1_s0_y = hw_output_s0_x_xi->add_loop("f1_s0_y", 0, 4);
+  auto f1_s0_x = f1_s0_y->add_loop("f1_s0_x", 0, 8);
 
-//store is: f1.0.stencil(f1_s0_x) = hw_input_global_wrapper.stencil(f1_s0_x, 0)
+//store is: f1.0.stencil(f1_s0_x, f1_s0_y) = 0.000000f
   auto hcompute_f1_0_stencil = f1_s0_x->add_op("op_hcompute_f1_0_stencil");
   hcompute_f1_0_stencil->add_function("hcompute_f1_0_stencil");
-  hcompute_f1_0_stencil->add_load("hw_input_global_wrapper_stencil", "0", "f1_s0_x");
   prg.buffer_port_widths["f1_0_stencil"] = 32;
-  hcompute_f1_0_stencil->add_store("f1_0_stencil", "f1_s0_x");
+  hcompute_f1_0_stencil->add_store("f1_0_stencil", "f1_s0_y", "f1_s0_x");
 
-//store is: f1.1.stencil(f1_s0_x) = hw_input_global_wrapper.stencil(f1_s0_x, 1)
+//store is: f1.1.stencil(f1_s0_x, f1_s0_y) = 0.000000f
   auto hcompute_f1_1_stencil = f1_s0_x->add_op("op_hcompute_f1_1_stencil");
   hcompute_f1_1_stencil->add_function("hcompute_f1_1_stencil");
-  hcompute_f1_1_stencil->add_load("hw_input_global_wrapper_stencil", "1", "f1_s0_x");
   prg.buffer_port_widths["f1_1_stencil"] = 32;
-  hcompute_f1_1_stencil->add_store("f1_1_stencil", "f1_s0_x");
-  auto f1_s1_t_x = f2_s1_t_x->add_loop("f1_s1_t_x", 0, 8);
+  hcompute_f1_1_stencil->add_store("f1_1_stencil", "f1_s0_y", "f1_s0_x");
+  auto f1_s1_x = hw_output_s0_x_xi->add_loop("f1_s1_x", 0, 8);
 
-//store is: f1.0.stencil(f1_s1_t_x) = ((f1.0.stencil(f1_s1_t_x)*hw_twi_global_wrapper.stencil(f1_s1_t_x, 0, 0)) - (f1.1.stencil(f1_s1_t_x)*hw_twi_global_wrapper.stencil(f1_s1_t_x, 1, 0)))
-  auto hcompute_f1_0_stencil_1 = f1_s1_t_x->add_op("op_hcompute_f1_0_stencil_1");
+//store is: f1.0.stencil(f1_s1_x, 0) = hw_input_global_wrapper.stencil(f1_s1_x, 0)
+  auto hcompute_f1_0_stencil_1 = f1_s1_x->add_op("op_hcompute_f1_0_stencil_1");
   hcompute_f1_0_stencil_1->add_function("hcompute_f1_0_stencil_1");
-  hcompute_f1_0_stencil_1->add_load("f1_0_stencil", "f1_s1_t_x");
-  hcompute_f1_0_stencil_1->add_load("f1_1_stencil", "f1_s1_t_x");
-  hcompute_f1_0_stencil_1->add_load("hw_twi_global_wrapper_stencil", "0", "0", "f1_s1_t_x");
-  hcompute_f1_0_stencil_1->add_load("hw_twi_global_wrapper_stencil", "0", "1", "f1_s1_t_x");
-  hcompute_f1_0_stencil_1->add_store("f1_0_stencil", "f1_s1_t_x");
+  hcompute_f1_0_stencil_1->add_load("hw_input_global_wrapper_stencil", "0", "f1_s1_x");
+  hcompute_f1_0_stencil_1->add_store("f1_0_stencil", "0", "f1_s1_x");
 
-//store is: f1.1.stencil(f1_s1_t_x) = ((f1.0.stencil(f1_s1_t_x)*hw_twi_global_wrapper.stencil(f1_s1_t_x, 1, 0)) + (f1.1.stencil(f1_s1_t_x)*hw_twi_global_wrapper.stencil(f1_s1_t_x, 0, 0)))
-  auto hcompute_f1_1_stencil_1 = f1_s1_t_x->add_op("op_hcompute_f1_1_stencil_1");
+//store is: f1.1.stencil(f1_s1_x, 0) = hw_input_global_wrapper.stencil(f1_s1_x, 1)
+  auto hcompute_f1_1_stencil_1 = f1_s1_x->add_op("op_hcompute_f1_1_stencil_1");
   hcompute_f1_1_stencil_1->add_function("hcompute_f1_1_stencil_1");
-  hcompute_f1_1_stencil_1->add_load("f1_0_stencil", "f1_s1_t_x");
-  hcompute_f1_1_stencil_1->add_load("f1_1_stencil", "f1_s1_t_x");
-  hcompute_f1_1_stencil_1->add_load("hw_twi_global_wrapper_stencil", "0", "1", "f1_s1_t_x");
-  hcompute_f1_1_stencil_1->add_load("hw_twi_global_wrapper_stencil", "0", "0", "f1_s1_t_x");
-  hcompute_f1_1_stencil_1->add_store("f1_1_stencil", "f1_s1_t_x");
+  hcompute_f1_1_stencil_1->add_load("hw_input_global_wrapper_stencil", "1", "f1_s1_x");
+  hcompute_f1_1_stencil_1->add_store("f1_1_stencil", "0", "f1_s1_x");
+  auto f1_s2_t_x = hw_output_s0_x_xi->add_loop("f1_s2_t_x", 0, 8);
+
+//store is: f1.0.stencil(f1_s2_t_x, 0) = ((f1.0.stencil(f1_s2_t_x, 0)*hw_twi_global_wrapper.stencil(f1_s2_t_x, 0, 0)) - (f1.1.stencil(f1_s2_t_x, 0)*hw_twi_global_wrapper.stencil(f1_s2_t_x, 1, 0)))
+  auto hcompute_f1_0_stencil_2 = f1_s2_t_x->add_op("op_hcompute_f1_0_stencil_2");
+  hcompute_f1_0_stencil_2->add_function("hcompute_f1_0_stencil_2");
+  hcompute_f1_0_stencil_2->add_load("f1_0_stencil", "0", "f1_s2_t_x");
+  hcompute_f1_0_stencil_2->add_load("f1_1_stencil", "0", "f1_s2_t_x");
+  hcompute_f1_0_stencil_2->add_load("hw_twi_global_wrapper_stencil", "0", "0", "f1_s2_t_x");
+  hcompute_f1_0_stencil_2->add_load("hw_twi_global_wrapper_stencil", "0", "1", "f1_s2_t_x");
+  hcompute_f1_0_stencil_2->add_store("f1_0_stencil", "0", "f1_s2_t_x");
+
+//store is: f1.1.stencil(f1_s2_t_x, 0) = ((f1.0.stencil(f1_s2_t_x, 0)*hw_twi_global_wrapper.stencil(f1_s2_t_x, 1, 0)) + (f1.1.stencil(f1_s2_t_x, 0)*hw_twi_global_wrapper.stencil(f1_s2_t_x, 0, 0)))
+  auto hcompute_f1_1_stencil_2 = f1_s2_t_x->add_op("op_hcompute_f1_1_stencil_2");
+  hcompute_f1_1_stencil_2->add_function("hcompute_f1_1_stencil_2");
+  hcompute_f1_1_stencil_2->add_load("f1_0_stencil", "0", "f1_s2_t_x");
+  hcompute_f1_1_stencil_2->add_load("f1_1_stencil", "0", "f1_s2_t_x");
+  hcompute_f1_1_stencil_2->add_load("hw_twi_global_wrapper_stencil", "0", "1", "f1_s2_t_x");
+  hcompute_f1_1_stencil_2->add_load("hw_twi_global_wrapper_stencil", "0", "0", "f1_s2_t_x");
+  hcompute_f1_1_stencil_2->add_store("f1_1_stencil", "0", "f1_s2_t_x");
+  auto f1_s3_t_x = hw_output_s0_x_xi->add_loop("f1_s3_t_x", 0, 8);
+
+//store is: f1.0.stencil(f1_s3_t_x, 1) = (f1.0.stencil((((f1_s3_t_x/2)*2) + ((f1_s3_t_x + 1) % 2)), 0) + (f1.0.stencil(f1_s3_t_x, 0)*float32((1 - ((f1_s3_t_x/(((f1_s3_t_x/2)*2) + 1))*2)))))
+  auto hcompute_f1_0_stencil_3 = f1_s3_t_x->add_op("op_hcompute_f1_0_stencil_3");
+  hcompute_f1_0_stencil_3->add_function("hcompute_f1_0_stencil_3");
+  hcompute_f1_0_stencil_3->add_load("f1_0_stencil", "0", "((floor((f1_s3_t_x/2))*2) + ((f1_s3_t_x + 1) % 2))");
+  hcompute_f1_0_stencil_3->add_load("f1_0_stencil", "0", "f1_s3_t_x");
+  hcompute_f1_0_stencil_3->add_store("f1_0_stencil", "1", "f1_s3_t_x");
+  hcompute_f1_0_stencil_3->compute_unit_needs_index_variable("f1_s3_t_x");
+
+//store is: f1.1.stencil(f1_s3_t_x, 1) = (f1.1.stencil((((f1_s3_t_x/2)*2) + ((f1_s3_t_x + 1) % 2)), 0) + (f1.1.stencil(f1_s3_t_x, 0)*float32((1 - ((f1_s3_t_x/(((f1_s3_t_x/2)*2) + 1))*2)))))
+  auto hcompute_f1_1_stencil_3 = f1_s3_t_x->add_op("op_hcompute_f1_1_stencil_3");
+  hcompute_f1_1_stencil_3->add_function("hcompute_f1_1_stencil_3");
+  hcompute_f1_1_stencil_3->add_load("f1_1_stencil", "0", "((floor((f1_s3_t_x/2))*2) + ((f1_s3_t_x + 1) % 2))");
+  hcompute_f1_1_stencil_3->add_load("f1_1_stencil", "0", "f1_s3_t_x");
+  hcompute_f1_1_stencil_3->add_store("f1_1_stencil", "1", "f1_s3_t_x");
+  hcompute_f1_1_stencil_3->compute_unit_needs_index_variable("f1_s3_t_x");
+  auto f1_s4_t_x = hw_output_s0_x_xi->add_loop("f1_s4_t_x", 0, 8);
+
+//store is: f1.0.stencil(f1_s4_t_x, 1) = ((f1.0.stencil(f1_s4_t_x, 1)*hw_twi_global_wrapper.stencil(f1_s4_t_x, 0, 1)) - (f1.1.stencil(f1_s4_t_x, 1)*hw_twi_global_wrapper.stencil(f1_s4_t_x, 1, 1)))
+  auto hcompute_f1_0_stencil_4 = f1_s4_t_x->add_op("op_hcompute_f1_0_stencil_4");
+  hcompute_f1_0_stencil_4->add_function("hcompute_f1_0_stencil_4");
+  hcompute_f1_0_stencil_4->add_load("f1_0_stencil", "1", "f1_s4_t_x");
+  hcompute_f1_0_stencil_4->add_load("f1_1_stencil", "1", "f1_s4_t_x");
+  hcompute_f1_0_stencil_4->add_load("hw_twi_global_wrapper_stencil", "1", "0", "f1_s4_t_x");
+  hcompute_f1_0_stencil_4->add_load("hw_twi_global_wrapper_stencil", "1", "1", "f1_s4_t_x");
+  hcompute_f1_0_stencil_4->add_store("f1_0_stencil", "1", "f1_s4_t_x");
+
+//store is: f1.1.stencil(f1_s4_t_x, 1) = ((f1.0.stencil(f1_s4_t_x, 1)*hw_twi_global_wrapper.stencil(f1_s4_t_x, 1, 1)) + (f1.1.stencil(f1_s4_t_x, 1)*hw_twi_global_wrapper.stencil(f1_s4_t_x, 0, 1)))
+  auto hcompute_f1_1_stencil_4 = f1_s4_t_x->add_op("op_hcompute_f1_1_stencil_4");
+  hcompute_f1_1_stencil_4->add_function("hcompute_f1_1_stencil_4");
+  hcompute_f1_1_stencil_4->add_load("f1_0_stencil", "1", "f1_s4_t_x");
+  hcompute_f1_1_stencil_4->add_load("f1_1_stencil", "1", "f1_s4_t_x");
+  hcompute_f1_1_stencil_4->add_load("hw_twi_global_wrapper_stencil", "1", "1", "f1_s4_t_x");
+  hcompute_f1_1_stencil_4->add_load("hw_twi_global_wrapper_stencil", "1", "0", "f1_s4_t_x");
+  hcompute_f1_1_stencil_4->add_store("f1_1_stencil", "1", "f1_s4_t_x");
+  auto f1_s5_t_x = hw_output_s0_x_xi->add_loop("f1_s5_t_x", 0, 8);
+
+//store is: f1.0.stencil(f1_s5_t_x, 2) = (f1.0.stencil((((f1_s5_t_x/4)*4) + ((f1_s5_t_x + 2) % 4)), 1) + (f1.0.stencil(f1_s5_t_x, 1)*float32((1 - ((f1_s5_t_x/(((f1_s5_t_x/4)*4) + 2))*2)))))
+  auto hcompute_f1_0_stencil_5 = f1_s5_t_x->add_op("op_hcompute_f1_0_stencil_5");
+  hcompute_f1_0_stencil_5->add_function("hcompute_f1_0_stencil_5");
+  hcompute_f1_0_stencil_5->add_load("f1_0_stencil", "1", "((floor((f1_s5_t_x/4))*4) + ((f1_s5_t_x + 2) % 4))");
+  hcompute_f1_0_stencil_5->add_load("f1_0_stencil", "1", "f1_s5_t_x");
+  hcompute_f1_0_stencil_5->add_store("f1_0_stencil", "2", "f1_s5_t_x");
+  hcompute_f1_0_stencil_5->compute_unit_needs_index_variable("f1_s5_t_x");
+
+//store is: f1.1.stencil(f1_s5_t_x, 2) = (f1.1.stencil((((f1_s5_t_x/4)*4) + ((f1_s5_t_x + 2) % 4)), 1) + (f1.1.stencil(f1_s5_t_x, 1)*float32((1 - ((f1_s5_t_x/(((f1_s5_t_x/4)*4) + 2))*2)))))
+  auto hcompute_f1_1_stencil_5 = f1_s5_t_x->add_op("op_hcompute_f1_1_stencil_5");
+  hcompute_f1_1_stencil_5->add_function("hcompute_f1_1_stencil_5");
+  hcompute_f1_1_stencil_5->add_load("f1_1_stencil", "1", "((floor((f1_s5_t_x/4))*4) + ((f1_s5_t_x + 2) % 4))");
+  hcompute_f1_1_stencil_5->add_load("f1_1_stencil", "1", "f1_s5_t_x");
+  hcompute_f1_1_stencil_5->add_store("f1_1_stencil", "2", "f1_s5_t_x");
+  hcompute_f1_1_stencil_5->compute_unit_needs_index_variable("f1_s5_t_x");
+  auto f1_s6_t_x = hw_output_s0_x_xi->add_loop("f1_s6_t_x", 0, 8);
+
+//store is: f1.0.stencil(f1_s6_t_x, 2) = ((f1.0.stencil(f1_s6_t_x, 2)*hw_twi_global_wrapper.stencil(f1_s6_t_x, 0, 2)) - (f1.1.stencil(f1_s6_t_x, 2)*hw_twi_global_wrapper.stencil(f1_s6_t_x, 1, 2)))
+  auto hcompute_f1_0_stencil_6 = f1_s6_t_x->add_op("op_hcompute_f1_0_stencil_6");
+  hcompute_f1_0_stencil_6->add_function("hcompute_f1_0_stencil_6");
+  hcompute_f1_0_stencil_6->add_load("f1_0_stencil", "2", "f1_s6_t_x");
+  hcompute_f1_0_stencil_6->add_load("f1_1_stencil", "2", "f1_s6_t_x");
+  hcompute_f1_0_stencil_6->add_load("hw_twi_global_wrapper_stencil", "2", "1", "f1_s6_t_x");
+  hcompute_f1_0_stencil_6->add_load("hw_twi_global_wrapper_stencil", "2", "0", "f1_s6_t_x");
+  hcompute_f1_0_stencil_6->add_store("f1_0_stencil", "2", "f1_s6_t_x");
+
+//store is: f1.1.stencil(f1_s6_t_x, 2) = ((f1.0.stencil(f1_s6_t_x, 2)*hw_twi_global_wrapper.stencil(f1_s6_t_x, 1, 2)) + (f1.1.stencil(f1_s6_t_x, 2)*hw_twi_global_wrapper.stencil(f1_s6_t_x, 0, 2)))
+  auto hcompute_f1_1_stencil_6 = f1_s6_t_x->add_op("op_hcompute_f1_1_stencil_6");
+  hcompute_f1_1_stencil_6->add_function("hcompute_f1_1_stencil_6");
+  hcompute_f1_1_stencil_6->add_load("f1_0_stencil", "2", "f1_s6_t_x");
+  hcompute_f1_1_stencil_6->add_load("f1_1_stencil", "2", "f1_s6_t_x");
+  hcompute_f1_1_stencil_6->add_load("hw_twi_global_wrapper_stencil", "2", "1", "f1_s6_t_x");
+  hcompute_f1_1_stencil_6->add_load("hw_twi_global_wrapper_stencil", "2", "0", "f1_s6_t_x");
+  hcompute_f1_1_stencil_6->add_store("f1_1_stencil", "2", "f1_s6_t_x");
+  auto f1_s7_t_x = hw_output_s0_x_xi->add_loop("f1_s7_t_x", 0, 8);
+
+//store is: f1.0.stencil(f1_s7_t_x, 3) = (f1.0.stencil(((f1_s7_t_x + 4) % 8), 2) + (f1.0.stencil(f1_s7_t_x, 2)*float32((1 - ((f1_s7_t_x/4)*2)))))
+  auto hcompute_f1_0_stencil_7 = f1_s7_t_x->add_op("op_hcompute_f1_0_stencil_7");
+  hcompute_f1_0_stencil_7->add_function("hcompute_f1_0_stencil_7");
+  hcompute_f1_0_stencil_7->add_load("f1_0_stencil", "2", "((f1_s7_t_x + 4) % 8)");
+  hcompute_f1_0_stencil_7->add_load("f1_0_stencil", "2", "f1_s7_t_x");
+  hcompute_f1_0_stencil_7->add_store("f1_0_stencil", "3", "f1_s7_t_x");
+  hcompute_f1_0_stencil_7->compute_unit_needs_index_variable("f1_s7_t_x");
+
+//store is: f1.1.stencil(f1_s7_t_x, 3) = (f1.1.stencil(((f1_s7_t_x + 4) % 8), 2) + (f1.1.stencil(f1_s7_t_x, 2)*float32((1 - ((f1_s7_t_x/4)*2)))))
+  auto hcompute_f1_1_stencil_7 = f1_s7_t_x->add_op("op_hcompute_f1_1_stencil_7");
+  hcompute_f1_1_stencil_7->add_function("hcompute_f1_1_stencil_7");
+  hcompute_f1_1_stencil_7->add_load("f1_1_stencil", "2", "((f1_s7_t_x + 4) % 8)");
+  hcompute_f1_1_stencil_7->add_load("f1_1_stencil", "2", "f1_s7_t_x");
+  hcompute_f1_1_stencil_7->add_store("f1_1_stencil", "3", "f1_s7_t_x");
+  hcompute_f1_1_stencil_7->compute_unit_needs_index_variable("f1_s7_t_x");
 
 //consuming f1
 
-//store is: f2.0.stencil(f2_s1_t_x) = (f1.0.stencil((((f2_s1_t_x/2)*2) + ((f2_s1_t_x + 1) % 2))) + (f1.0.stencil(f2_s1_t_x)*float32((1 - ((f2_s1_t_x/(((f2_s1_t_x/2)*2) + 1))*2)))))
-  auto hcompute_f2_0_stencil_1 = f2_s1_t_x->add_op("op_hcompute_f2_0_stencil_1");
-  hcompute_f2_0_stencil_1->add_function("hcompute_f2_0_stencil_1");
-  hcompute_f2_0_stencil_1->add_load("f1_0_stencil", "((floor((f2_s1_t_x/2))*2) + ((f2_s1_t_x + 1) % 2))");
-  hcompute_f2_0_stencil_1->add_load("f1_0_stencil", "f2_s1_t_x");
-  hcompute_f2_0_stencil_1->add_store("f2_0_stencil", "f2_s1_t_x");
-  hcompute_f2_0_stencil_1->compute_unit_needs_index_variable("f2_s1_t_x");
-
-//store is: f2.1.stencil(f2_s1_t_x) = (f1.1.stencil((((f2_s1_t_x/2)*2) + ((f2_s1_t_x + 1) % 2))) + (f1.1.stencil(f2_s1_t_x)*float32((1 - ((f2_s1_t_x/(((f2_s1_t_x/2)*2) + 1))*2)))))
-  auto hcompute_f2_1_stencil_1 = f2_s1_t_x->add_op("op_hcompute_f2_1_stencil_1");
-  hcompute_f2_1_stencil_1->add_function("hcompute_f2_1_stencil_1");
-  hcompute_f2_1_stencil_1->add_load("f1_1_stencil", "((floor((f2_s1_t_x/2))*2) + ((f2_s1_t_x + 1) % 2))");
-  hcompute_f2_1_stencil_1->add_load("f1_1_stencil", "f2_s1_t_x");
-  hcompute_f2_1_stencil_1->add_store("f2_1_stencil", "f2_s1_t_x");
-  hcompute_f2_1_stencil_1->compute_unit_needs_index_variable("f2_s1_t_x");
-  auto f2_s2_t_x = f3_s1_t_x->add_loop("f2_s2_t_x", 0, 8);
-
-//store is: f2.0.stencil(f2_s2_t_x) = ((f2.0.stencil(f2_s2_t_x)*hw_twi_global_wrapper.stencil(f2_s2_t_x, 0, 1)) - (f2.1.stencil(f2_s2_t_x)*hw_twi_global_wrapper.stencil(f2_s2_t_x, 1, 1)))
-  auto hcompute_f2_0_stencil_2 = f2_s2_t_x->add_op("op_hcompute_f2_0_stencil_2");
-  hcompute_f2_0_stencil_2->add_function("hcompute_f2_0_stencil_2");
-  hcompute_f2_0_stencil_2->add_load("f2_0_stencil", "f2_s2_t_x");
-  hcompute_f2_0_stencil_2->add_load("f2_1_stencil", "f2_s2_t_x");
-  hcompute_f2_0_stencil_2->add_load("hw_twi_global_wrapper_stencil", "1", "0", "f2_s2_t_x");
-  hcompute_f2_0_stencil_2->add_load("hw_twi_global_wrapper_stencil", "1", "1", "f2_s2_t_x");
-  hcompute_f2_0_stencil_2->add_store("f2_0_stencil", "f2_s2_t_x");
-
-//store is: f2.1.stencil(f2_s2_t_x) = ((f2.0.stencil(f2_s2_t_x)*hw_twi_global_wrapper.stencil(f2_s2_t_x, 1, 1)) + (f2.1.stencil(f2_s2_t_x)*hw_twi_global_wrapper.stencil(f2_s2_t_x, 0, 1)))
-  auto hcompute_f2_1_stencil_2 = f2_s2_t_x->add_op("op_hcompute_f2_1_stencil_2");
-  hcompute_f2_1_stencil_2->add_function("hcompute_f2_1_stencil_2");
-  hcompute_f2_1_stencil_2->add_load("f2_0_stencil", "f2_s2_t_x");
-  hcompute_f2_1_stencil_2->add_load("f2_1_stencil", "f2_s2_t_x");
-  hcompute_f2_1_stencil_2->add_load("hw_twi_global_wrapper_stencil", "1", "1", "f2_s2_t_x");
-  hcompute_f2_1_stencil_2->add_load("hw_twi_global_wrapper_stencil", "1", "0", "f2_s2_t_x");
-  hcompute_f2_1_stencil_2->add_store("f2_1_stencil", "f2_s2_t_x");
-
-//consuming f2
-
-//store is: f3.0.stencil(f3_s1_t_x) = (f2.0.stencil((((f3_s1_t_x/4)*4) + ((f3_s1_t_x + 2) % 4))) + (f2.0.stencil(f3_s1_t_x)*float32((1 - ((f3_s1_t_x/(((f3_s1_t_x/4)*4) + 2))*2)))))
-  auto hcompute_f3_0_stencil_1 = f3_s1_t_x->add_op("op_hcompute_f3_0_stencil_1");
-  hcompute_f3_0_stencil_1->add_function("hcompute_f3_0_stencil_1");
-  hcompute_f3_0_stencil_1->add_load("f2_0_stencil", "((floor((f3_s1_t_x/4))*4) + ((f3_s1_t_x + 2) % 4))");
-  hcompute_f3_0_stencil_1->add_load("f2_0_stencil", "f3_s1_t_x");
-  hcompute_f3_0_stencil_1->add_store("f3_0_stencil", "f3_s1_t_x");
-  hcompute_f3_0_stencil_1->compute_unit_needs_index_variable("f3_s1_t_x");
-
-//store is: f3.1.stencil(f3_s1_t_x) = (f2.1.stencil((((f3_s1_t_x/4)*4) + ((f3_s1_t_x + 2) % 4))) + (f2.1.stencil(f3_s1_t_x)*float32((1 - ((f3_s1_t_x/(((f3_s1_t_x/4)*4) + 2))*2)))))
-  auto hcompute_f3_1_stencil_1 = f3_s1_t_x->add_op("op_hcompute_f3_1_stencil_1");
-  hcompute_f3_1_stencil_1->add_function("hcompute_f3_1_stencil_1");
-  hcompute_f3_1_stencil_1->add_load("f2_1_stencil", "((floor((f3_s1_t_x/4))*4) + ((f3_s1_t_x + 2) % 4))");
-  hcompute_f3_1_stencil_1->add_load("f2_1_stencil", "f3_s1_t_x");
-  hcompute_f3_1_stencil_1->add_store("f3_1_stencil", "f3_s1_t_x");
-  hcompute_f3_1_stencil_1->compute_unit_needs_index_variable("f3_s1_t_x");
-  auto f3_s2_t_x = f4_s1_t_x->add_loop("f3_s2_t_x", 0, 8);
-
-//store is: f3.0.stencil(f3_s2_t_x) = ((f3.0.stencil(f3_s2_t_x)*hw_twi_global_wrapper.stencil(f3_s2_t_x, 0, 2)) - (f3.1.stencil(f3_s2_t_x)*hw_twi_global_wrapper.stencil(f3_s2_t_x, 1, 2)))
-  auto hcompute_f3_0_stencil_2 = f3_s2_t_x->add_op("op_hcompute_f3_0_stencil_2");
-  hcompute_f3_0_stencil_2->add_function("hcompute_f3_0_stencil_2");
-  hcompute_f3_0_stencil_2->add_load("f3_0_stencil", "f3_s2_t_x");
-  hcompute_f3_0_stencil_2->add_load("f3_1_stencil", "f3_s2_t_x");
-  hcompute_f3_0_stencil_2->add_load("hw_twi_global_wrapper_stencil", "2", "1", "f3_s2_t_x");
-  hcompute_f3_0_stencil_2->add_load("hw_twi_global_wrapper_stencil", "2", "0", "f3_s2_t_x");
-  hcompute_f3_0_stencil_2->add_store("f3_0_stencil", "f3_s2_t_x");
-
-//store is: f3.1.stencil(f3_s2_t_x) = ((f3.0.stencil(f3_s2_t_x)*hw_twi_global_wrapper.stencil(f3_s2_t_x, 1, 2)) + (f3.1.stencil(f3_s2_t_x)*hw_twi_global_wrapper.stencil(f3_s2_t_x, 0, 2)))
-  auto hcompute_f3_1_stencil_2 = f3_s2_t_x->add_op("op_hcompute_f3_1_stencil_2");
-  hcompute_f3_1_stencil_2->add_function("hcompute_f3_1_stencil_2");
-  hcompute_f3_1_stencil_2->add_load("f3_0_stencil", "f3_s2_t_x");
-  hcompute_f3_1_stencil_2->add_load("f3_1_stencil", "f3_s2_t_x");
-  hcompute_f3_1_stencil_2->add_load("hw_twi_global_wrapper_stencil", "2", "1", "f3_s2_t_x");
-  hcompute_f3_1_stencil_2->add_load("hw_twi_global_wrapper_stencil", "2", "0", "f3_s2_t_x");
-  hcompute_f3_1_stencil_2->add_store("f3_1_stencil", "f3_s2_t_x");
-
-//consuming f3
-
-//store is: f4.0.stencil(f4_s1_t_x) = (f3.0.stencil(((f4_s1_t_x + 4) % 8)) + (f3.0.stencil(f4_s1_t_x)*float32((1 - ((f4_s1_t_x/4)*2)))))
-  auto hcompute_f4_0_stencil_1 = f4_s1_t_x->add_op("op_hcompute_f4_0_stencil_1");
-  hcompute_f4_0_stencil_1->add_function("hcompute_f4_0_stencil_1");
-  hcompute_f4_0_stencil_1->add_load("f3_0_stencil", "((f4_s1_t_x + 4) % 8)");
-  hcompute_f4_0_stencil_1->add_load("f3_0_stencil", "f4_s1_t_x");
-  hcompute_f4_0_stencil_1->add_store("f4_0_stencil", "f4_s1_t_x");
-  hcompute_f4_0_stencil_1->compute_unit_needs_index_variable("f4_s1_t_x");
-
-//store is: f4.1.stencil(f4_s1_t_x) = (f3.1.stencil(((f4_s1_t_x + 4) % 8)) + (f3.1.stencil(f4_s1_t_x)*float32((1 - ((f4_s1_t_x/4)*2)))))
-  auto hcompute_f4_1_stencil_1 = f4_s1_t_x->add_op("op_hcompute_f4_1_stencil_1");
-  hcompute_f4_1_stencil_1->add_function("hcompute_f4_1_stencil_1");
-  hcompute_f4_1_stencil_1->add_load("f3_1_stencil", "((f4_s1_t_x + 4) % 8)");
-  hcompute_f4_1_stencil_1->add_load("f3_1_stencil", "f4_s1_t_x");
-  hcompute_f4_1_stencil_1->add_store("f4_1_stencil", "f4_s1_t_x");
-  hcompute_f4_1_stencil_1->compute_unit_needs_index_variable("f4_s1_t_x");
-
-//consuming f4
-
-//store is: hw_output.stencil(hw_output_s0_x_xi, hw_output_s0_y_yi) = select((hw_output_s0_y_yi == 0), f4.0.stencil(hw_output_s0_x_xi), f4.1.stencil(hw_output_s0_x_xi))
+//store is: hw_output.stencil(hw_output_s0_x_xi, hw_output_s0_y_yi) = select((hw_output_s0_y_yi == 0), f1.0.stencil(hw_output_s0_x_xi, 3), f1.1.stencil(hw_output_s0_x_xi, 3))
   auto hcompute_hw_output_stencil = hw_output_s0_x_xi->add_op("op_hcompute_hw_output_stencil");
   hcompute_hw_output_stencil->add_function("hcompute_hw_output_stencil");
-  hcompute_hw_output_stencil->add_load("f4_0_stencil", "hw_output_s0_x_xi");
-  hcompute_hw_output_stencil->add_load("f4_1_stencil", "hw_output_s0_x_xi");
+  hcompute_hw_output_stencil->add_load("f1_0_stencil", "3", "hw_output_s0_x_xi");
+  hcompute_hw_output_stencil->add_load("f1_1_stencil", "3", "hw_output_s0_x_xi");
   hcompute_hw_output_stencil->add_store("hw_output_stencil", "hw_output_s0_y_yi", "hw_output_s0_x_xi");
   hcompute_hw_output_stencil->compute_unit_needs_index_variable("hw_output_s0_y_yi");
 
   return prg;
 }
+
 
 
 
