@@ -22421,6 +22421,59 @@ void cp_intelligent_channels2() {
   assert(false);
 }
 
+void sef_channels(const int unroll_factor, const int channel_depth) {
+  string prefix = "sef";
+
+  int size = 1080;
+  int rows = size;
+  int cols = size;
+
+  //int unroll_factor = 1;
+  int throughput = unroll_factor;
+  string out_name = prefix + "_" + str(unroll_factor);
+
+  CodegenOptions options;
+  options.internal = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+
+  App jac = ef_cartoon(out_name);
+  prog prg = jac.realize(options, out_name, cols, rows, 1);
+
+  move_to_benchmarks_folder(out_name + "_opt");
+
+  prg.name = out_name + "_opt_d_d" + str(unroll_factor);
+
+  unroll_reduce_loops(prg);
+  merge_basic_block_ops(prg);
+  normalize_bounds(prg);
+  normalize_address_offsets(prg);
+
+  auto fusion_groups = one_stage_per_group(prg);
+  auto fresh_groups = insert_inter_group_buffers(fusion_groups, prg);
+  unroll_mismatched_inner_loops(prg);
+  merge_basic_block_ops(prg);
+  infer_bounds_and_unroll(pick(prg.outs), {size, size}, throughput, prg);
+
+  assert(unoptimized_compiles(prg));
+
+  app_dag dag = partition_groups(fresh_groups, prg);
+
+  options = CodegenOptions();
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  options.slack_matching = {SLACK_MATCHING_TYPE_FIXED, channel_depth};
+  generate_app_code(options, dag);
+
+  move_to_benchmarks_folder(prg.name);
+
+  string synth_dir =
+    "./soda_codes/" + prg.name+ "/our_code/";
+
+  system(("cp " + out_name + "_opt" + "*.h " + synth_dir).c_str());
+
+  cout << "prg name: " << prg.name << endl;
+
+  assert(false);
+}
 void sef_intelligent_channels2() {
   string prefix = "sef";
 
@@ -22494,6 +22547,8 @@ void scheduling_benchmarks() {
 }
 
 void application_tests() {
+  sef_channels(2, 500);
+
   pyr_blnd_non_blocking_test();
   resource_sharing_test();
 
