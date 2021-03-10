@@ -28,7 +28,7 @@ $(info CoreIR Path is [${COREIR_PATH}])
 COREIR_INCLUDE = $(COREIR_PATH)/include
 COREIR_LIB = $(COREIR_PATH)/lib
 
-CXX_FLAGS += -I $(COREIR_INCLUDE) -D COREIR
+CXX_FLAGS += -I $(COREIR_INCLUDE) -D COREIR -D CGRAFLOW
 LINK_FLAGS += -L $(COREIR_LIB) -Wl,-rpath $(COREIR_LIB) -lcoreir -lcoreirsim -lcoreir-commonlib
 endif
 
