@@ -12090,31 +12090,31 @@ prog three_level_pond_copy() {
 
 //consuming input_cgra.stencil
 ////producing output_cgra.stencil
-  auto output_cgra_s0_y_y_cgra = prg.add_loop("output_cgra_s0_y_y_cgra", 0, 8);
-  auto output_cgra_s0_x_x_cgra = output_cgra_s0_y_y_cgra->add_loop("output_cgra_s0_x_x_cgra", 0, 4);
+  auto output_cgra_s0_y_y_cgra = prg.add_loop("output_cgra_s0_y_y_cgra", 0, 32);
+  auto output_cgra_s0_x_x_cgra = output_cgra_s0_y_y_cgra->add_loop("output_cgra_s0_x_x_cgra", 0, 2);
 ////producing hw_input.stencil
-  auto hw_input_s0_y = output_cgra_s0_x_x_cgra->add_loop("hw_input_s0_y", 0, 4);
-  auto hw_input_s0_x = hw_input_s0_y->add_loop("hw_input_s0_x", 0, 8);
+  auto hw_input_s0_y = output_cgra_s0_x_x_cgra->add_loop("hw_input_s0_y", 0, 1);
+  auto hw_input_s0_x = hw_input_s0_y->add_loop("hw_input_s0_x", 0, 16);
 
 //store is: hw_input.stencil(hw_input_s0_x, hw_input_s0_y) = input_cgra.stencil(((output_cgra_s0_x_x_cgra*8) + hw_input_s0_x), ((output_cgra_s0_y_y_cgra*8) + hw_input_s0_y))
   auto hcompute_hw_input_stencil = hw_input_s0_x->add_op("op_hcompute_hw_input_stencil");
   hcompute_hw_input_stencil->add_function("hcompute_hw_input_stencil");
-  hcompute_hw_input_stencil->add_load("input_cgra_stencil", "((output_cgra_s0_y_y_cgra*4) + hw_input_s0_y)", "((output_cgra_s0_x_x_cgra*8) + hw_input_s0_x)");
+  hcompute_hw_input_stencil->add_load("input_cgra_stencil", "((output_cgra_s0_y_y_cgra*1) + hw_input_s0_y)", "((output_cgra_s0_x_x_cgra*16) + hw_input_s0_x)");
   prg.buffer_port_widths["hw_input_stencil"] = 16;
   hcompute_hw_input_stencil->add_store("hw_input_stencil", "hw_input_s0_y", "hw_input_s0_x");
 
 //consuming hw_input.stencil
 ////producing conv.stencil
-  auto conv_s0_y = output_cgra_s0_x_x_cgra->add_loop("conv_s0_y", 0, 4);
-  auto conv_s0_x = conv_s0_y->add_loop("conv_s0_x", 0, 8);
+  auto conv_s0_y = output_cgra_s0_x_x_cgra->add_loop("conv_s0_y", 0, 1);
+  auto conv_s0_x = conv_s0_y->add_loop("conv_s0_x", 0, 16);
 
 //store is: conv.stencil(conv_s0_x, conv_s0_y) = (uint16)0
   auto hcompute_conv_stencil = conv_s0_x->add_op("op_hcompute_conv_stencil");
   hcompute_conv_stencil->add_function("hcompute_conv_stencil");
   prg.buffer_port_widths["conv_stencil"] = 16;
   hcompute_conv_stencil->add_store("conv_stencil", "conv_s0_y", "conv_s0_x");
-  auto conv_s1_y = output_cgra_s0_x_x_cgra->add_loop("conv_s1_y", 0, 4);
-  auto conv_s1_x = conv_s1_y->add_loop("conv_s1_x", 0, 8);
+  auto conv_s1_y = output_cgra_s0_x_x_cgra->add_loop("conv_s1_y", 0, 1);
+  auto conv_s1_x = conv_s1_y->add_loop("conv_s1_x", 0, 16);
 
 //store is: conv.stencil(conv_s1_x, conv_s1_y) = (conv.stencil(conv_s1_x, conv_s1_y) + hw_input.stencil(conv_s1_x, conv_s1_y))
   auto hcompute_conv_stencil_1 = conv_s1_x->add_op("op_hcompute_conv_stencil_1");
@@ -12124,15 +12124,15 @@ prog three_level_pond_copy() {
   hcompute_conv_stencil_1->add_store("conv_stencil", "conv_s1_y", "conv_s1_x");
 
 //consuming conv.stencil
-  auto output_cgra_s0_y_y_pond = output_cgra_s0_x_x_cgra->add_loop("output_cgra_s0_y_y_pond", 0, 4);
-  auto output_cgra_s0_x_x_pond = output_cgra_s0_y_y_pond->add_loop("output_cgra_s0_x_x_pond", 0, 8);
+  auto output_cgra_s0_y_y_pond = output_cgra_s0_x_x_cgra->add_loop("output_cgra_s0_y_y_pond", 0, 1);
+  auto output_cgra_s0_x_x_pond = output_cgra_s0_y_y_pond->add_loop("output_cgra_s0_x_x_pond", 0, 16);
 
 //store is: output_cgra.stencil(((output_cgra_s0_x_x_cgra*8) + output_cgra_s0_x_x_pond), ((output_cgra_s0_y_y_cgra*8) + output_cgra_s0_y_y_pond)) = conv.stencil(output_cgra_s0_x_x_pond, output_cgra_s0_y_y_pond)
   auto hcompute_output_cgra_stencil = output_cgra_s0_x_x_pond->add_op("op_hcompute_output_cgra_stencil");
   hcompute_output_cgra_stencil->add_function("hcompute_output_cgra_stencil");
   hcompute_output_cgra_stencil->add_load("conv_stencil", "output_cgra_s0_y_y_pond", "output_cgra_s0_x_x_pond");
   prg.buffer_port_widths["output_cgra_stencil"] = 16;
-  hcompute_output_cgra_stencil->add_store("output_cgra_stencil", "((output_cgra_s0_y_y_cgra*8) + output_cgra_s0_y_y_pond)", "((output_cgra_s0_x_x_cgra*8) + output_cgra_s0_x_x_pond)");
+  hcompute_output_cgra_stencil->add_store("output_cgra_stencil", "((output_cgra_s0_y_y_cgra*1) + output_cgra_s0_y_y_pond)", "((output_cgra_s0_x_x_cgra*16) + output_cgra_s0_x_x_pond)");
 
 //consuming output_cgra.stencil
   auto hw_output_s0_y_yi = prg.add_loop("hw_output_s0_y_yi", 0, 32);

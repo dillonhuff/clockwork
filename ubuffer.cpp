@@ -1472,7 +1472,7 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, UBuffer& ubuf) {
     }
 
     //Go through all the ops and produce the read and write
-    std::set<string> ops = ubuf.get_ops();
+    vector<string> ops = ubuf.get_ops_sorted_by_bundle();
     auto mem = options.mem_hierarchy.at("regfile");
     int word_width = mem.word_width.at("regfile");
     int capacity = mem.capacity.at("regfile");
@@ -2281,7 +2281,7 @@ void UBuffer::generate_coreir(CodegenOptions& options,
       //if (options.rtl_options.target_tile == TARGET_TILE_WIDE_FETCH_WITH_ADDRGEN) {
       string config_mode;
       bool multi_level_mem = options.mem_hierarchy.count("regfile");
-      if (capacity <= 32 && multi_level_mem && (target_buf.num_in_ports() < 2) ) {
+      if (capacity <= 32 && multi_level_mem && (target_buf.num_in_ports() > 1) ) {
         cout << "Generate config for register file!" << endl;
         config_file = generate_ubuf_args(options, new_target_buf);
         config_mode = "pond";
