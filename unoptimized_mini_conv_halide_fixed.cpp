@@ -184,30 +184,6 @@ inline void hw_input_copy_stencil_hcompute_hw_input_copy_stencil_write_bundle_wr
 
 
 // Operation logic
-inline void hcompute_conv_stencil_1(conv_stencil_init_cache& conv_stencil_init, hw_input_copy_stencil_cache& hw_input_copy_stencil, conv_stencil_cache& conv_stencil, int root, int hw_output_s0_x_xo) {
-  // Dynamic address computation
-
-	// Consume: conv_stencil_init
-	auto conv_stencil_init_hw_output_s0_x_xo_value = conv_stencil_init_hcompute_conv_stencil_1_read_bundle_read(conv_stencil_init/* source_delay */, root, hw_output_s0_x_xo, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	// Consume: hw_input_copy_stencil
-	auto hw_input_copy_stencil_hw_output_s0_x_xo_value = hw_input_copy_stencil_hcompute_conv_stencil_1_read_bundle_read(hw_input_copy_stencil/* source_delay */, root, hw_output_s0_x_xo, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = hcompute_conv_stencil_1(conv_stencil_init_hw_output_s0_x_xo_value, hw_input_copy_stencil_hw_output_s0_x_xo_value);
-	// Produce: conv_stencil
-	conv_stencil_hcompute_conv_stencil_1_write_bundle_write(/* arg names */compute_result, conv_stencil, root, hw_output_s0_x_xo, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
 inline void hcompute_hw_output_stencil(conv_stencil_cache& conv_stencil, HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */hw_output_stencil, int root, int hw_output_s0_x_xo) {
   // Dynamic address computation
 
@@ -246,6 +222,30 @@ inline void hcompute_conv_stencil(conv_stencil_init_cache& conv_stencil_init, in
 	auto compute_result = hcompute_conv_stencil();
 	// Produce: conv_stencil_init
 	conv_stencil_init_hcompute_conv_stencil_write_bundle_write(/* arg names */compute_result, conv_stencil_init, root, hw_output_s0_x_xo, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void hcompute_conv_stencil_1(conv_stencil_init_cache& conv_stencil_init, hw_input_copy_stencil_cache& hw_input_copy_stencil, conv_stencil_cache& conv_stencil, int root, int hw_output_s0_x_xo) {
+  // Dynamic address computation
+
+	// Consume: conv_stencil_init
+	auto conv_stencil_init_hw_output_s0_x_xo_value = conv_stencil_init_hcompute_conv_stencil_1_read_bundle_read(conv_stencil_init/* source_delay */, root, hw_output_s0_x_xo, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	// Consume: hw_input_copy_stencil
+	auto hw_input_copy_stencil_hw_output_s0_x_xo_value = hw_input_copy_stencil_hcompute_conv_stencil_1_read_bundle_read(hw_input_copy_stencil/* source_delay */, root, hw_output_s0_x_xo, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = hcompute_conv_stencil_1(conv_stencil_init_hw_output_s0_x_xo_value, hw_input_copy_stencil_hw_output_s0_x_xo_value);
+	// Produce: conv_stencil
+	conv_stencil_hcompute_conv_stencil_1_write_bundle_write(/* arg names */compute_result, conv_stencil, root, hw_output_s0_x_xo, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
