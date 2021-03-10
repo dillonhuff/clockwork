@@ -140,7 +140,8 @@ for i in range(len(bvalues)):
 
 categories = policies
 
-fig, ax = plt.subplots(1, 1, sharey=True, tight_layout=True)
+fig, ax = plt.subplots(1, 1, sharey=True, tight_layout=True, figsize=(12, 6))
+
 width = 1.0
 margin = 0.2
 inter_bar_margin = 0.05
@@ -162,34 +163,20 @@ for i in range(len(categories) - 1):
     max_pos += inter_bar_margin
 
 
+minor_labels = ['SODA', 'CWS', 'CWD32', 'CWDsmall']
+
 pos = max_pos
 rects = []
 for i in range(len(categories)):
-    rects.append(ax.bar(x - pos, categories[i], bar_width, **next(styles))) #, label=arch_labels[i]))
+    rects.append(ax.bar(x - pos, categories[i], bar_width, **next(styles), label=minor_labels[i])) #arch_labels[i]))
     pos -= bar_width
     pos -= inter_bar_margin
 
+major_labels = ['Blur 1', 'Blur 16', 'Blur 32', 'SBL 1', 'SBL 16', 'SBL 32', 'CP 1', 'CP 16', 'CP 32', 'Jac 1', 'Jac 16', 'Jac 32']
+ax.set_xticks(x)
+ax.set_xticklabels(major_labels)
 
-# # x = np.arange(len(labels))  # the label locations
-# x = np.arange(len(policies[0]))  # the label locations
-# # print('bvalues:', bvalues)
-# # We can set the number of bins with the `bins` kwarg
-# prop_iter = iter(plt.rcParams['axes.prop_cycle'])
-
-
-# width = 0.35
-# width = 0.35
-
-# # axs.bar(x, bvalues, linewidth=2.0, edgecolor='black')
-# offset = 1.5*width
-# for p in policies:
-    # axs.bar(x - offset, p, width, linewidth=2.0, edgecolor='black')
-    # offset += width
-
-# # axs[1].hist(y, bins=n_bins)
-# # axs.set_xticks(x)
-# # axs.set_xticklabels(labels)
-# # plt.xticks(rotation = 90)
+ax.legend()
 
 plt.show()
 fig.savefig('clockwork_fifo_utilizations.eps', format='eps')
