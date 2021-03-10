@@ -106,19 +106,32 @@ def extract_lut(values):
 res = table_op(f, extract_lut)
 print(res)
 
-labels = ['G1', 'G2', 'G3', 'G4', 'G5']
+major_labels = ['app'] * len(lutasmem)
+print('major labels:', major_labels)
+print('lutasmem    :', lutasmem)
+
+x = np.arange(len(major_labels))  # the label locations
+# ['Blur 1', 'Blur 16', 'Blur 32', 'SBL 1', 'SBL 16', 'SBL 32', 'CP 1', 'CP 16', 'CP 32', 'Jac 1', 'Jac 16', 'Jac 32']
+
+# labels = ['G1', 'G2', 'G3', 'G4', 'G5']
 men_means = [20, 35, 30, 35, 27]
 women_means = [25, 32, 34, 20, 25]
 width = 0.35       # the width of the bars: can also be len(x) sequence
 
 fig, ax = plt.subplots()
 
-ax.bar(labels, men_means, width, label='Men')
-ax.bar(labels, women_means, width, bottom=men_means,
-       label='Women')
+# ax.bar(labels, men_means, width, label='Men')
+# ax.bar(labels, women_means, width, bottom=men_means,
+       # label='Women')
 
-ax.set_ylabel('Scores')
-ax.set_title('Scores by group and gender')
+ax.bar(x, lutasmem) #, width, label='LUTAsMem')
+# ax.bar(labels, women_means, width, bottom=men_means,
+       # label='Women')
+ax.set_xticks(x)
+ax.set_xticklabels(major_labels)
+
+# ax.set_ylabel('Scores')
+# ax.set_title('Scores by group and gender')
 ax.legend()
 
 plt.show()
