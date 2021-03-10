@@ -14249,8 +14249,8 @@ void cpy_app_to_folder(const std::string& app_type, const std::string& prg_name)
 
 void test_pond(string dir) {
   vector<prog> test_apps;
-  //test_apps.push_back(resnet_simple());
-  //test_apps.push_back(resnet());
+  test_apps.push_back(resnet_simple());
+  test_apps.push_back(resnet());
   //test_apps.push_back(three_level_pond());
   //test_apps.push_back(three_level_pond_rolled());
   test_apps.push_back(three_level_pond_copy());
@@ -14363,7 +14363,7 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   //DNN apps
   test_apps.push_back(resnet_simple());
   test_apps.push_back(resnet());
-  //test_apps.push_back(mobilenet_unrolled());
+  test_apps.push_back(mobilenet_unrolled());
 
   //Big applications
   //test_apps.push_back(resnet88());

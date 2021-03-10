@@ -17,7 +17,9 @@ module cgralib_Mem_amber__ID_U0__has_external_addrgenFalse__has_flushTrue__has_r
   input logic flush,
   input logic [1:0] ren_in,
   input logic rst_n,
+  input logic [3:0] strg_ub_agg_only_agg_write_addr_gen_1_starting_addr,
   input logic strg_ub_agg_only_agg_write_sched_gen_1_enable,
+  input logic [15:0] strg_ub_agg_only_agg_write_sched_gen_1_sched_addr_gen_starting_addr,
   input logic strg_ub_agg_sram_shared_agg_read_sched_gen_1_enable,
   input logic [1:0] wen_in,
   output logic [31:0] config_data_out_0,
@@ -117,137 +119,135 @@ wire [15:0] strg_ub_tb_only_tb_read_sched_gen_1_sched_addr_gen_strides_1 = 1;
 wire [15:0] strg_ub_tb_only_loops_buf2out_read_1_ranges_2 = 60;
 wire [3:0] strg_ub_tb_only_tb_read_addr_gen_1_strides_2 = 1;
 wire [15:0] strg_ub_tb_only_tb_read_sched_gen_1_sched_addr_gen_strides_2 = 1;
-wire [15:0] strg_ub_agg_only_loops_in2buf_1_ranges_0 = 0;
-wire [15:0] strg_ub_agg_only_loops_in2buf_1_ranges_1 = 0;
-wire [15:0] strg_ub_agg_only_loops_in2buf_1_ranges_2 = 0;
-wire [15:0] strg_ub_agg_only_loops_in2buf_1_ranges_3 = 0;
-wire [15:0] strg_ub_agg_only_loops_in2buf_1_ranges_4 = 0;
-wire [15:0] strg_ub_agg_only_loops_in2buf_1_ranges_5 = 0;
-wire [15:0] loops_stencil_valid_ranges_2 = 0;
-wire [15:0] loops_stencil_valid_ranges_3 = 0;
-wire [15:0] loops_stencil_valid_ranges_4 = 0;
-wire [15:0] loops_stencil_valid_ranges_5 = 0;
-wire [15:0] strg_ub_tb_only_loops_buf2out_read_0_ranges_3 = 0;
-wire [15:0] strg_ub_tb_only_loops_buf2out_read_0_ranges_4 = 0;
-wire [15:0] strg_ub_tb_only_loops_buf2out_read_0_ranges_5 = 0;
+wire [15:0] strg_ub_agg_sram_shared_agg_read_sched_gen_1_sched_addr_gen_starting_addr = 0;
 wire [15:0] strg_ub_sram_tb_shared_output_sched_gen_0_sched_addr_gen_strides_2 = 0;
 wire [15:0] strg_ub_sram_tb_shared_output_sched_gen_0_sched_addr_gen_strides_3 = 0;
 wire [15:0] strg_ub_sram_tb_shared_output_sched_gen_0_sched_addr_gen_strides_4 = 0;
 wire [15:0] strg_ub_sram_tb_shared_output_sched_gen_0_sched_addr_gen_strides_5 = 0;
-wire [15:0] strg_ub_tb_only_tb_read_sched_gen_1_sched_addr_gen_strides_3 = 0;
-wire [15:0] strg_ub_tb_only_tb_read_sched_gen_1_sched_addr_gen_strides_4 = 0;
-wire [15:0] strg_ub_tb_only_tb_read_sched_gen_1_sched_addr_gen_strides_5 = 0;
-wire [15:0] strg_ub_sram_only_input_addr_gen_1_starting_addr = 0;
-wire [15:0] strg_ub_sram_tb_shared_loops_buf2out_autovec_read_0_ranges_2 = 0;
-wire [15:0] strg_ub_sram_tb_shared_loops_buf2out_autovec_read_0_ranges_3 = 0;
-wire [15:0] strg_ub_sram_tb_shared_loops_buf2out_autovec_read_0_ranges_4 = 0;
-wire [15:0] strg_ub_sram_tb_shared_loops_buf2out_autovec_read_0_ranges_5 = 0;
-wire [15:0] strg_ub_sram_only_input_addr_gen_0_strides_2 = 0;
-wire [15:0] strg_ub_sram_only_input_addr_gen_0_strides_3 = 0;
-wire [15:0] strg_ub_sram_only_input_addr_gen_0_strides_4 = 0;
-wire [15:0] strg_ub_sram_only_input_addr_gen_0_strides_5 = 0;
-wire [15:0] strg_ub_agg_sram_shared_loops_in2buf_autovec_write_1_ranges_0 = 0;
-wire [15:0] strg_ub_agg_sram_shared_loops_in2buf_autovec_write_1_ranges_1 = 0;
-wire [15:0] strg_ub_agg_sram_shared_loops_in2buf_autovec_write_1_ranges_2 = 0;
-wire [15:0] strg_ub_agg_sram_shared_loops_in2buf_autovec_write_1_ranges_3 = 0;
-wire [15:0] strg_ub_agg_sram_shared_loops_in2buf_autovec_write_1_ranges_4 = 0;
-wire [15:0] strg_ub_agg_sram_shared_loops_in2buf_autovec_write_1_ranges_5 = 0;
-wire [15:0] strg_ub_agg_only_agg_read_addr_gen_0_strides_2 = 0;
-wire [15:0] strg_ub_agg_only_agg_read_addr_gen_0_strides_3 = 0;
-wire [15:0] strg_ub_agg_only_agg_read_addr_gen_0_strides_4 = 0;
-wire [15:0] strg_ub_agg_only_agg_read_addr_gen_0_strides_5 = 0;
+wire [15:0] strg_ub_tb_only_loops_buf2out_read_0_ranges_3 = 0;
+wire [15:0] strg_ub_tb_only_loops_buf2out_read_0_ranges_4 = 0;
+wire [15:0] strg_ub_tb_only_loops_buf2out_read_0_ranges_5 = 0;
+wire [15:0] strg_ub_sram_tb_shared_loops_buf2out_autovec_read_1_ranges_2 = 0;
+wire [15:0] strg_ub_sram_tb_shared_loops_buf2out_autovec_read_1_ranges_3 = 0;
+wire [15:0] strg_ub_sram_tb_shared_loops_buf2out_autovec_read_1_ranges_4 = 0;
+wire [15:0] strg_ub_sram_tb_shared_loops_buf2out_autovec_read_1_ranges_5 = 0;
+wire [15:0] strg_ub_agg_sram_shared_loops_in2buf_autovec_write_1_dimensionality = 0;
 wire [15:0] strg_ub_agg_only_loops_in2buf_0_ranges_3 = 0;
 wire [15:0] strg_ub_agg_only_loops_in2buf_0_ranges_4 = 0;
 wire [15:0] strg_ub_agg_only_loops_in2buf_0_ranges_5 = 0;
-wire [15:0] strg_ub_agg_only_agg_read_addr_gen_1_starting_addr = 0;
-wire [15:0] strg_ub_agg_only_agg_write_sched_gen_1_sched_addr_gen_starting_addr = 0;
-wire [15:0] strg_ub_tb_only_tb_write_addr_gen_0_strides_2 = 0;
-wire [15:0] strg_ub_tb_only_tb_write_addr_gen_0_strides_3 = 0;
-wire [15:0] strg_ub_tb_only_tb_write_addr_gen_0_strides_4 = 0;
-wire [15:0] strg_ub_tb_only_tb_write_addr_gen_0_strides_5 = 0;
-wire [15:0] strg_ub_agg_only_agg_write_addr_gen_1_starting_addr = 0;
-wire [15:0] strg_ub_agg_only_agg_write_sched_gen_0_sched_addr_gen_strides_3 = 0;
-wire [15:0] strg_ub_agg_only_agg_write_sched_gen_0_sched_addr_gen_strides_4 = 0;
-wire [15:0] strg_ub_agg_only_agg_write_sched_gen_0_sched_addr_gen_strides_5 = 0;
-wire [15:0] strg_ub_agg_sram_shared_agg_read_sched_gen_1_sched_addr_gen_starting_addr = 0;
-wire [15:0] strg_ub_tb_only_tb_read_addr_gen_0_strides_3 = 0;
-wire [15:0] strg_ub_tb_only_tb_read_addr_gen_0_strides_4 = 0;
-wire [15:0] strg_ub_tb_only_tb_read_addr_gen_0_strides_5 = 0;
 wire [15:0] strg_ub_agg_only_agg_write_sched_gen_1_sched_addr_gen_strides_0 = 0;
 wire [15:0] strg_ub_agg_only_agg_write_sched_gen_1_sched_addr_gen_strides_1 = 0;
 wire [15:0] strg_ub_agg_only_agg_write_sched_gen_1_sched_addr_gen_strides_2 = 0;
 wire [15:0] strg_ub_agg_only_agg_write_sched_gen_1_sched_addr_gen_strides_3 = 0;
 wire [15:0] strg_ub_agg_only_agg_write_sched_gen_1_sched_addr_gen_strides_4 = 0;
 wire [15:0] strg_ub_agg_only_agg_write_sched_gen_1_sched_addr_gen_strides_5 = 0;
-wire [15:0] strg_ub_tb_only_loops_buf2out_read_1_ranges_3 = 0;
-wire [15:0] strg_ub_tb_only_loops_buf2out_read_1_ranges_4 = 0;
-wire [15:0] strg_ub_tb_only_loops_buf2out_read_1_ranges_5 = 0;
-wire [15:0] strg_ub_agg_sram_shared_loops_in2buf_autovec_write_1_dimensionality = 0;
-wire [15:0] strg_ub_tb_only_tb_read_addr_gen_1_strides_3 = 0;
-wire [15:0] strg_ub_tb_only_tb_read_addr_gen_1_strides_4 = 0;
-wire [15:0] strg_ub_tb_only_tb_read_addr_gen_1_strides_5 = 0;
-wire [15:0] strg_ub_agg_only_agg_read_addr_gen_1_strides_0 = 0;
-wire [15:0] strg_ub_agg_only_agg_read_addr_gen_1_strides_1 = 0;
-wire [15:0] strg_ub_agg_only_agg_read_addr_gen_1_strides_2 = 0;
-wire [15:0] strg_ub_agg_only_agg_read_addr_gen_1_strides_3 = 0;
-wire [15:0] strg_ub_agg_only_agg_read_addr_gen_1_strides_4 = 0;
-wire [15:0] strg_ub_agg_only_agg_read_addr_gen_1_strides_5 = 0;
-wire [15:0] strg_ub_agg_sram_shared_loops_in2buf_autovec_write_0_ranges_2 = 0;
-wire [15:0] strg_ub_agg_sram_shared_loops_in2buf_autovec_write_0_ranges_3 = 0;
-wire [15:0] strg_ub_agg_sram_shared_loops_in2buf_autovec_write_0_ranges_4 = 0;
-wire [15:0] strg_ub_agg_sram_shared_loops_in2buf_autovec_write_0_ranges_5 = 0;
-wire [15:0] strg_ub_sram_tb_shared_output_sched_gen_1_sched_addr_gen_strides_2 = 0;
-wire [15:0] strg_ub_sram_tb_shared_output_sched_gen_1_sched_addr_gen_strides_3 = 0;
-wire [15:0] strg_ub_sram_tb_shared_output_sched_gen_1_sched_addr_gen_strides_4 = 0;
-wire [15:0] strg_ub_sram_tb_shared_output_sched_gen_1_sched_addr_gen_strides_5 = 0;
-wire [15:0] strg_ub_agg_only_agg_write_addr_gen_1_strides_0 = 0;
-wire [15:0] strg_ub_agg_only_agg_write_addr_gen_1_strides_1 = 0;
-wire [15:0] strg_ub_agg_only_agg_write_addr_gen_1_strides_2 = 0;
-wire [15:0] strg_ub_agg_only_agg_write_addr_gen_1_strides_3 = 0;
-wire [15:0] strg_ub_agg_only_agg_write_addr_gen_1_strides_4 = 0;
-wire [15:0] strg_ub_agg_only_agg_write_addr_gen_1_strides_5 = 0;
-wire [15:0] strg_ub_sram_tb_shared_loops_buf2out_autovec_read_1_ranges_2 = 0;
-wire [15:0] strg_ub_sram_tb_shared_loops_buf2out_autovec_read_1_ranges_3 = 0;
-wire [15:0] strg_ub_sram_tb_shared_loops_buf2out_autovec_read_1_ranges_4 = 0;
-wire [15:0] strg_ub_sram_tb_shared_loops_buf2out_autovec_read_1_ranges_5 = 0;
-wire [15:0] strg_ub_tb_only_tb_read_sched_gen_0_sched_addr_gen_strides_3 = 0;
-wire [15:0] strg_ub_tb_only_tb_read_sched_gen_0_sched_addr_gen_strides_4 = 0;
-wire [15:0] strg_ub_tb_only_tb_read_sched_gen_0_sched_addr_gen_strides_5 = 0;
-wire [15:0] strg_ub_sram_only_input_addr_gen_1_strides_0 = 0;
-wire [15:0] strg_ub_sram_only_input_addr_gen_1_strides_1 = 0;
-wire [15:0] strg_ub_sram_only_input_addr_gen_1_strides_2 = 0;
-wire [15:0] strg_ub_sram_only_input_addr_gen_1_strides_3 = 0;
-wire [15:0] strg_ub_sram_only_input_addr_gen_1_strides_4 = 0;
-wire [15:0] strg_ub_sram_only_input_addr_gen_1_strides_5 = 0;
-wire [15:0] strg_ub_agg_sram_shared_agg_read_sched_gen_0_sched_addr_gen_strides_2 = 0;
-wire [15:0] strg_ub_agg_sram_shared_agg_read_sched_gen_0_sched_addr_gen_strides_3 = 0;
-wire [15:0] strg_ub_agg_sram_shared_agg_read_sched_gen_0_sched_addr_gen_strides_4 = 0;
-wire [15:0] strg_ub_agg_sram_shared_agg_read_sched_gen_0_sched_addr_gen_strides_5 = 0;
-wire [15:0] strg_ub_sram_only_output_addr_gen_0_strides_2 = 0;
-wire [15:0] strg_ub_sram_only_output_addr_gen_0_strides_3 = 0;
-wire [15:0] strg_ub_sram_only_output_addr_gen_0_strides_4 = 0;
-wire [15:0] strg_ub_sram_only_output_addr_gen_0_strides_5 = 0;
-wire [15:0] stencil_valid_sched_gen_sched_addr_gen_strides_2 = 0;
-wire [15:0] stencil_valid_sched_gen_sched_addr_gen_strides_3 = 0;
-wire [15:0] stencil_valid_sched_gen_sched_addr_gen_strides_4 = 0;
-wire [15:0] stencil_valid_sched_gen_sched_addr_gen_strides_5 = 0;
-wire [15:0] strg_ub_sram_only_output_addr_gen_1_strides_2 = 0;
-wire [15:0] strg_ub_sram_only_output_addr_gen_1_strides_3 = 0;
-wire [15:0] strg_ub_sram_only_output_addr_gen_1_strides_4 = 0;
-wire [15:0] strg_ub_sram_only_output_addr_gen_1_strides_5 = 0;
+wire [15:0] strg_ub_sram_only_input_addr_gen_0_strides_2 = 0;
+wire [15:0] strg_ub_sram_only_input_addr_gen_0_strides_3 = 0;
+wire [15:0] strg_ub_sram_only_input_addr_gen_0_strides_4 = 0;
+wire [15:0] strg_ub_sram_only_input_addr_gen_0_strides_5 = 0;
+wire [15:0] strg_ub_agg_only_agg_read_addr_gen_0_strides_2 = 0;
+wire [15:0] strg_ub_agg_only_agg_read_addr_gen_0_strides_3 = 0;
+wire [15:0] strg_ub_agg_only_agg_read_addr_gen_0_strides_4 = 0;
+wire [15:0] strg_ub_agg_only_agg_read_addr_gen_0_strides_5 = 0;
+wire [15:0] loops_stencil_valid_ranges_2 = 0;
+wire [15:0] loops_stencil_valid_ranges_3 = 0;
+wire [15:0] loops_stencil_valid_ranges_4 = 0;
+wire [15:0] loops_stencil_valid_ranges_5 = 0;
 wire [15:0] strg_ub_tb_only_tb_write_addr_gen_1_strides_2 = 0;
 wire [15:0] strg_ub_tb_only_tb_write_addr_gen_1_strides_3 = 0;
 wire [15:0] strg_ub_tb_only_tb_write_addr_gen_1_strides_4 = 0;
 wire [15:0] strg_ub_tb_only_tb_write_addr_gen_1_strides_5 = 0;
-wire [15:0] strg_ub_agg_only_agg_write_addr_gen_0_strides_3 = 0;
-wire [15:0] strg_ub_agg_only_agg_write_addr_gen_0_strides_4 = 0;
-wire [15:0] strg_ub_agg_only_agg_write_addr_gen_0_strides_5 = 0;
+wire [15:0] strg_ub_tb_only_tb_read_addr_gen_1_strides_3 = 0;
+wire [15:0] strg_ub_tb_only_tb_read_addr_gen_1_strides_4 = 0;
+wire [15:0] strg_ub_tb_only_tb_read_addr_gen_1_strides_5 = 0;
+wire [15:0] strg_ub_agg_sram_shared_agg_read_sched_gen_0_sched_addr_gen_strides_2 = 0;
+wire [15:0] strg_ub_agg_sram_shared_agg_read_sched_gen_0_sched_addr_gen_strides_3 = 0;
+wire [15:0] strg_ub_agg_sram_shared_agg_read_sched_gen_0_sched_addr_gen_strides_4 = 0;
+wire [15:0] strg_ub_agg_sram_shared_agg_read_sched_gen_0_sched_addr_gen_strides_5 = 0;
+wire [15:0] stencil_valid_sched_gen_sched_addr_gen_strides_2 = 0;
+wire [15:0] stencil_valid_sched_gen_sched_addr_gen_strides_3 = 0;
+wire [15:0] stencil_valid_sched_gen_sched_addr_gen_strides_4 = 0;
+wire [15:0] stencil_valid_sched_gen_sched_addr_gen_strides_5 = 0;
+wire [15:0] strg_ub_sram_only_output_addr_gen_0_strides_2 = 0;
+wire [15:0] strg_ub_sram_only_output_addr_gen_0_strides_3 = 0;
+wire [15:0] strg_ub_sram_only_output_addr_gen_0_strides_4 = 0;
+wire [15:0] strg_ub_sram_only_output_addr_gen_0_strides_5 = 0;
+wire [15:0] strg_ub_sram_tb_shared_output_sched_gen_1_sched_addr_gen_strides_2 = 0;
+wire [15:0] strg_ub_sram_tb_shared_output_sched_gen_1_sched_addr_gen_strides_3 = 0;
+wire [15:0] strg_ub_sram_tb_shared_output_sched_gen_1_sched_addr_gen_strides_4 = 0;
+wire [15:0] strg_ub_sram_tb_shared_output_sched_gen_1_sched_addr_gen_strides_5 = 0;
+wire [15:0] strg_ub_tb_only_tb_read_addr_gen_0_strides_3 = 0;
+wire [15:0] strg_ub_tb_only_tb_read_addr_gen_0_strides_4 = 0;
+wire [15:0] strg_ub_tb_only_tb_read_addr_gen_0_strides_5 = 0;
+wire [15:0] strg_ub_tb_only_loops_buf2out_read_1_ranges_3 = 0;
+wire [15:0] strg_ub_tb_only_loops_buf2out_read_1_ranges_4 = 0;
+wire [15:0] strg_ub_tb_only_loops_buf2out_read_1_ranges_5 = 0;
+wire [15:0] strg_ub_tb_only_tb_read_sched_gen_0_sched_addr_gen_strides_3 = 0;
+wire [15:0] strg_ub_tb_only_tb_read_sched_gen_0_sched_addr_gen_strides_4 = 0;
+wire [15:0] strg_ub_tb_only_tb_read_sched_gen_0_sched_addr_gen_strides_5 = 0;
+wire [15:0] strg_ub_sram_only_input_addr_gen_1_starting_addr = 0;
+wire [15:0] strg_ub_agg_only_agg_write_sched_gen_0_sched_addr_gen_strides_3 = 0;
+wire [15:0] strg_ub_agg_only_agg_write_sched_gen_0_sched_addr_gen_strides_4 = 0;
+wire [15:0] strg_ub_agg_only_agg_write_sched_gen_0_sched_addr_gen_strides_5 = 0;
+wire [15:0] strg_ub_agg_sram_shared_loops_in2buf_autovec_write_0_ranges_2 = 0;
+wire [15:0] strg_ub_agg_sram_shared_loops_in2buf_autovec_write_0_ranges_3 = 0;
+wire [15:0] strg_ub_agg_sram_shared_loops_in2buf_autovec_write_0_ranges_4 = 0;
+wire [15:0] strg_ub_agg_sram_shared_loops_in2buf_autovec_write_0_ranges_5 = 0;
+wire [15:0] strg_ub_agg_only_loops_in2buf_1_ranges_0 = 0;
+wire [15:0] strg_ub_agg_only_loops_in2buf_1_ranges_1 = 0;
+wire [15:0] strg_ub_agg_only_loops_in2buf_1_ranges_2 = 0;
+wire [15:0] strg_ub_agg_only_loops_in2buf_1_ranges_3 = 0;
+wire [15:0] strg_ub_agg_only_loops_in2buf_1_ranges_4 = 0;
+wire [15:0] strg_ub_agg_only_loops_in2buf_1_ranges_5 = 0;
+wire [15:0] strg_ub_agg_sram_shared_loops_in2buf_autovec_write_1_ranges_0 = 0;
+wire [15:0] strg_ub_agg_sram_shared_loops_in2buf_autovec_write_1_ranges_1 = 0;
+wire [15:0] strg_ub_agg_sram_shared_loops_in2buf_autovec_write_1_ranges_2 = 0;
+wire [15:0] strg_ub_agg_sram_shared_loops_in2buf_autovec_write_1_ranges_3 = 0;
+wire [15:0] strg_ub_agg_sram_shared_loops_in2buf_autovec_write_1_ranges_4 = 0;
+wire [15:0] strg_ub_agg_sram_shared_loops_in2buf_autovec_write_1_ranges_5 = 0;
+wire [15:0] strg_ub_sram_tb_shared_loops_buf2out_autovec_read_0_ranges_2 = 0;
+wire [15:0] strg_ub_sram_tb_shared_loops_buf2out_autovec_read_0_ranges_3 = 0;
+wire [15:0] strg_ub_sram_tb_shared_loops_buf2out_autovec_read_0_ranges_4 = 0;
+wire [15:0] strg_ub_sram_tb_shared_loops_buf2out_autovec_read_0_ranges_5 = 0;
+wire [15:0] strg_ub_sram_only_output_addr_gen_1_strides_2 = 0;
+wire [15:0] strg_ub_sram_only_output_addr_gen_1_strides_3 = 0;
+wire [15:0] strg_ub_sram_only_output_addr_gen_1_strides_4 = 0;
+wire [15:0] strg_ub_sram_only_output_addr_gen_1_strides_5 = 0;
 wire [15:0] strg_ub_agg_sram_shared_agg_read_sched_gen_1_sched_addr_gen_strides_0 = 0;
 wire [15:0] strg_ub_agg_sram_shared_agg_read_sched_gen_1_sched_addr_gen_strides_1 = 0;
 wire [15:0] strg_ub_agg_sram_shared_agg_read_sched_gen_1_sched_addr_gen_strides_2 = 0;
 wire [15:0] strg_ub_agg_sram_shared_agg_read_sched_gen_1_sched_addr_gen_strides_3 = 0;
 wire [15:0] strg_ub_agg_sram_shared_agg_read_sched_gen_1_sched_addr_gen_strides_4 = 0;
 wire [15:0] strg_ub_agg_sram_shared_agg_read_sched_gen_1_sched_addr_gen_strides_5 = 0;
+wire [15:0] strg_ub_sram_only_input_addr_gen_1_strides_0 = 0;
+wire [15:0] strg_ub_sram_only_input_addr_gen_1_strides_1 = 0;
+wire [15:0] strg_ub_sram_only_input_addr_gen_1_strides_2 = 0;
+wire [15:0] strg_ub_sram_only_input_addr_gen_1_strides_3 = 0;
+wire [15:0] strg_ub_sram_only_input_addr_gen_1_strides_4 = 0;
+wire [15:0] strg_ub_sram_only_input_addr_gen_1_strides_5 = 0;
+wire [15:0] strg_ub_agg_only_agg_write_addr_gen_1_strides_0 = 0;
+wire [15:0] strg_ub_agg_only_agg_write_addr_gen_1_strides_1 = 0;
+wire [15:0] strg_ub_agg_only_agg_write_addr_gen_1_strides_2 = 0;
+wire [15:0] strg_ub_agg_only_agg_write_addr_gen_1_strides_3 = 0;
+wire [15:0] strg_ub_agg_only_agg_write_addr_gen_1_strides_4 = 0;
+wire [15:0] strg_ub_agg_only_agg_write_addr_gen_1_strides_5 = 0;
+wire [15:0] strg_ub_agg_only_agg_read_addr_gen_1_starting_addr = 0;
+wire [15:0] strg_ub_agg_only_agg_write_addr_gen_0_strides_3 = 0;
+wire [15:0] strg_ub_agg_only_agg_write_addr_gen_0_strides_4 = 0;
+wire [15:0] strg_ub_agg_only_agg_write_addr_gen_0_strides_5 = 0;
+wire [15:0] strg_ub_tb_only_tb_write_addr_gen_0_strides_2 = 0;
+wire [15:0] strg_ub_tb_only_tb_write_addr_gen_0_strides_3 = 0;
+wire [15:0] strg_ub_tb_only_tb_write_addr_gen_0_strides_4 = 0;
+wire [15:0] strg_ub_tb_only_tb_write_addr_gen_0_strides_5 = 0;
+wire [15:0] strg_ub_tb_only_tb_read_sched_gen_1_sched_addr_gen_strides_3 = 0;
+wire [15:0] strg_ub_tb_only_tb_read_sched_gen_1_sched_addr_gen_strides_4 = 0;
+wire [15:0] strg_ub_tb_only_tb_read_sched_gen_1_sched_addr_gen_strides_5 = 0;
+wire [15:0] strg_ub_agg_only_agg_read_addr_gen_1_strides_0 = 0;
+wire [15:0] strg_ub_agg_only_agg_read_addr_gen_1_strides_1 = 0;
+wire [15:0] strg_ub_agg_only_agg_read_addr_gen_1_strides_2 = 0;
+wire [15:0] strg_ub_agg_only_agg_read_addr_gen_1_strides_3 = 0;
+wire [15:0] strg_ub_agg_only_agg_read_addr_gen_1_strides_4 = 0;
+wire [15:0] strg_ub_agg_only_agg_read_addr_gen_1_strides_5 = 0;
 wire [15:0] strg_ub_agg_only_loops_in2buf_1_dimensionality = 0;
 LakeTop_W LakeTop_W (
 . addr_in_0( addr_in_0),
@@ -268,7 +268,9 @@ LakeTop_W LakeTop_W (
 . flush( flush),
 . ren_in( ren_in),
 . rst_n( rst_n),
+. strg_ub_agg_only_agg_write_addr_gen_1_starting_addr( strg_ub_agg_only_agg_write_addr_gen_1_starting_addr),
 . strg_ub_agg_only_agg_write_sched_gen_1_enable( strg_ub_agg_only_agg_write_sched_gen_1_enable),
+. strg_ub_agg_only_agg_write_sched_gen_1_sched_addr_gen_starting_addr( strg_ub_agg_only_agg_write_sched_gen_1_sched_addr_gen_starting_addr),
 . strg_ub_agg_sram_shared_agg_read_sched_gen_1_enable( strg_ub_agg_sram_shared_agg_read_sched_gen_1_enable),
 . wen_in( wen_in),
 . config_data_out_0( config_data_out_0),
@@ -367,137 +369,135 @@ LakeTop_W LakeTop_W (
 .strg_ub_tb_only_loops_buf2out_read_1_ranges_2(strg_ub_tb_only_loops_buf2out_read_1_ranges_2),
 .strg_ub_tb_only_tb_read_addr_gen_1_strides_2(strg_ub_tb_only_tb_read_addr_gen_1_strides_2),
 .strg_ub_tb_only_tb_read_sched_gen_1_sched_addr_gen_strides_2(strg_ub_tb_only_tb_read_sched_gen_1_sched_addr_gen_strides_2),
-.strg_ub_agg_only_loops_in2buf_1_ranges_0(strg_ub_agg_only_loops_in2buf_1_ranges_0),
-.strg_ub_agg_only_loops_in2buf_1_ranges_1(strg_ub_agg_only_loops_in2buf_1_ranges_1),
-.strg_ub_agg_only_loops_in2buf_1_ranges_2(strg_ub_agg_only_loops_in2buf_1_ranges_2),
-.strg_ub_agg_only_loops_in2buf_1_ranges_3(strg_ub_agg_only_loops_in2buf_1_ranges_3),
-.strg_ub_agg_only_loops_in2buf_1_ranges_4(strg_ub_agg_only_loops_in2buf_1_ranges_4),
-.strg_ub_agg_only_loops_in2buf_1_ranges_5(strg_ub_agg_only_loops_in2buf_1_ranges_5),
-.loops_stencil_valid_ranges_2(loops_stencil_valid_ranges_2),
-.loops_stencil_valid_ranges_3(loops_stencil_valid_ranges_3),
-.loops_stencil_valid_ranges_4(loops_stencil_valid_ranges_4),
-.loops_stencil_valid_ranges_5(loops_stencil_valid_ranges_5),
-.strg_ub_tb_only_loops_buf2out_read_0_ranges_3(strg_ub_tb_only_loops_buf2out_read_0_ranges_3),
-.strg_ub_tb_only_loops_buf2out_read_0_ranges_4(strg_ub_tb_only_loops_buf2out_read_0_ranges_4),
-.strg_ub_tb_only_loops_buf2out_read_0_ranges_5(strg_ub_tb_only_loops_buf2out_read_0_ranges_5),
+.strg_ub_agg_sram_shared_agg_read_sched_gen_1_sched_addr_gen_starting_addr(strg_ub_agg_sram_shared_agg_read_sched_gen_1_sched_addr_gen_starting_addr),
 .strg_ub_sram_tb_shared_output_sched_gen_0_sched_addr_gen_strides_2(strg_ub_sram_tb_shared_output_sched_gen_0_sched_addr_gen_strides_2),
 .strg_ub_sram_tb_shared_output_sched_gen_0_sched_addr_gen_strides_3(strg_ub_sram_tb_shared_output_sched_gen_0_sched_addr_gen_strides_3),
 .strg_ub_sram_tb_shared_output_sched_gen_0_sched_addr_gen_strides_4(strg_ub_sram_tb_shared_output_sched_gen_0_sched_addr_gen_strides_4),
 .strg_ub_sram_tb_shared_output_sched_gen_0_sched_addr_gen_strides_5(strg_ub_sram_tb_shared_output_sched_gen_0_sched_addr_gen_strides_5),
-.strg_ub_tb_only_tb_read_sched_gen_1_sched_addr_gen_strides_3(strg_ub_tb_only_tb_read_sched_gen_1_sched_addr_gen_strides_3),
-.strg_ub_tb_only_tb_read_sched_gen_1_sched_addr_gen_strides_4(strg_ub_tb_only_tb_read_sched_gen_1_sched_addr_gen_strides_4),
-.strg_ub_tb_only_tb_read_sched_gen_1_sched_addr_gen_strides_5(strg_ub_tb_only_tb_read_sched_gen_1_sched_addr_gen_strides_5),
-.strg_ub_sram_only_input_addr_gen_1_starting_addr(strg_ub_sram_only_input_addr_gen_1_starting_addr),
-.strg_ub_sram_tb_shared_loops_buf2out_autovec_read_0_ranges_2(strg_ub_sram_tb_shared_loops_buf2out_autovec_read_0_ranges_2),
-.strg_ub_sram_tb_shared_loops_buf2out_autovec_read_0_ranges_3(strg_ub_sram_tb_shared_loops_buf2out_autovec_read_0_ranges_3),
-.strg_ub_sram_tb_shared_loops_buf2out_autovec_read_0_ranges_4(strg_ub_sram_tb_shared_loops_buf2out_autovec_read_0_ranges_4),
-.strg_ub_sram_tb_shared_loops_buf2out_autovec_read_0_ranges_5(strg_ub_sram_tb_shared_loops_buf2out_autovec_read_0_ranges_5),
-.strg_ub_sram_only_input_addr_gen_0_strides_2(strg_ub_sram_only_input_addr_gen_0_strides_2),
-.strg_ub_sram_only_input_addr_gen_0_strides_3(strg_ub_sram_only_input_addr_gen_0_strides_3),
-.strg_ub_sram_only_input_addr_gen_0_strides_4(strg_ub_sram_only_input_addr_gen_0_strides_4),
-.strg_ub_sram_only_input_addr_gen_0_strides_5(strg_ub_sram_only_input_addr_gen_0_strides_5),
-.strg_ub_agg_sram_shared_loops_in2buf_autovec_write_1_ranges_0(strg_ub_agg_sram_shared_loops_in2buf_autovec_write_1_ranges_0),
-.strg_ub_agg_sram_shared_loops_in2buf_autovec_write_1_ranges_1(strg_ub_agg_sram_shared_loops_in2buf_autovec_write_1_ranges_1),
-.strg_ub_agg_sram_shared_loops_in2buf_autovec_write_1_ranges_2(strg_ub_agg_sram_shared_loops_in2buf_autovec_write_1_ranges_2),
-.strg_ub_agg_sram_shared_loops_in2buf_autovec_write_1_ranges_3(strg_ub_agg_sram_shared_loops_in2buf_autovec_write_1_ranges_3),
-.strg_ub_agg_sram_shared_loops_in2buf_autovec_write_1_ranges_4(strg_ub_agg_sram_shared_loops_in2buf_autovec_write_1_ranges_4),
-.strg_ub_agg_sram_shared_loops_in2buf_autovec_write_1_ranges_5(strg_ub_agg_sram_shared_loops_in2buf_autovec_write_1_ranges_5),
-.strg_ub_agg_only_agg_read_addr_gen_0_strides_2(strg_ub_agg_only_agg_read_addr_gen_0_strides_2),
-.strg_ub_agg_only_agg_read_addr_gen_0_strides_3(strg_ub_agg_only_agg_read_addr_gen_0_strides_3),
-.strg_ub_agg_only_agg_read_addr_gen_0_strides_4(strg_ub_agg_only_agg_read_addr_gen_0_strides_4),
-.strg_ub_agg_only_agg_read_addr_gen_0_strides_5(strg_ub_agg_only_agg_read_addr_gen_0_strides_5),
+.strg_ub_tb_only_loops_buf2out_read_0_ranges_3(strg_ub_tb_only_loops_buf2out_read_0_ranges_3),
+.strg_ub_tb_only_loops_buf2out_read_0_ranges_4(strg_ub_tb_only_loops_buf2out_read_0_ranges_4),
+.strg_ub_tb_only_loops_buf2out_read_0_ranges_5(strg_ub_tb_only_loops_buf2out_read_0_ranges_5),
+.strg_ub_sram_tb_shared_loops_buf2out_autovec_read_1_ranges_2(strg_ub_sram_tb_shared_loops_buf2out_autovec_read_1_ranges_2),
+.strg_ub_sram_tb_shared_loops_buf2out_autovec_read_1_ranges_3(strg_ub_sram_tb_shared_loops_buf2out_autovec_read_1_ranges_3),
+.strg_ub_sram_tb_shared_loops_buf2out_autovec_read_1_ranges_4(strg_ub_sram_tb_shared_loops_buf2out_autovec_read_1_ranges_4),
+.strg_ub_sram_tb_shared_loops_buf2out_autovec_read_1_ranges_5(strg_ub_sram_tb_shared_loops_buf2out_autovec_read_1_ranges_5),
+.strg_ub_agg_sram_shared_loops_in2buf_autovec_write_1_dimensionality(strg_ub_agg_sram_shared_loops_in2buf_autovec_write_1_dimensionality),
 .strg_ub_agg_only_loops_in2buf_0_ranges_3(strg_ub_agg_only_loops_in2buf_0_ranges_3),
 .strg_ub_agg_only_loops_in2buf_0_ranges_4(strg_ub_agg_only_loops_in2buf_0_ranges_4),
 .strg_ub_agg_only_loops_in2buf_0_ranges_5(strg_ub_agg_only_loops_in2buf_0_ranges_5),
-.strg_ub_agg_only_agg_read_addr_gen_1_starting_addr(strg_ub_agg_only_agg_read_addr_gen_1_starting_addr),
-.strg_ub_agg_only_agg_write_sched_gen_1_sched_addr_gen_starting_addr(strg_ub_agg_only_agg_write_sched_gen_1_sched_addr_gen_starting_addr),
-.strg_ub_tb_only_tb_write_addr_gen_0_strides_2(strg_ub_tb_only_tb_write_addr_gen_0_strides_2),
-.strg_ub_tb_only_tb_write_addr_gen_0_strides_3(strg_ub_tb_only_tb_write_addr_gen_0_strides_3),
-.strg_ub_tb_only_tb_write_addr_gen_0_strides_4(strg_ub_tb_only_tb_write_addr_gen_0_strides_4),
-.strg_ub_tb_only_tb_write_addr_gen_0_strides_5(strg_ub_tb_only_tb_write_addr_gen_0_strides_5),
-.strg_ub_agg_only_agg_write_addr_gen_1_starting_addr(strg_ub_agg_only_agg_write_addr_gen_1_starting_addr),
-.strg_ub_agg_only_agg_write_sched_gen_0_sched_addr_gen_strides_3(strg_ub_agg_only_agg_write_sched_gen_0_sched_addr_gen_strides_3),
-.strg_ub_agg_only_agg_write_sched_gen_0_sched_addr_gen_strides_4(strg_ub_agg_only_agg_write_sched_gen_0_sched_addr_gen_strides_4),
-.strg_ub_agg_only_agg_write_sched_gen_0_sched_addr_gen_strides_5(strg_ub_agg_only_agg_write_sched_gen_0_sched_addr_gen_strides_5),
-.strg_ub_agg_sram_shared_agg_read_sched_gen_1_sched_addr_gen_starting_addr(strg_ub_agg_sram_shared_agg_read_sched_gen_1_sched_addr_gen_starting_addr),
-.strg_ub_tb_only_tb_read_addr_gen_0_strides_3(strg_ub_tb_only_tb_read_addr_gen_0_strides_3),
-.strg_ub_tb_only_tb_read_addr_gen_0_strides_4(strg_ub_tb_only_tb_read_addr_gen_0_strides_4),
-.strg_ub_tb_only_tb_read_addr_gen_0_strides_5(strg_ub_tb_only_tb_read_addr_gen_0_strides_5),
 .strg_ub_agg_only_agg_write_sched_gen_1_sched_addr_gen_strides_0(strg_ub_agg_only_agg_write_sched_gen_1_sched_addr_gen_strides_0),
 .strg_ub_agg_only_agg_write_sched_gen_1_sched_addr_gen_strides_1(strg_ub_agg_only_agg_write_sched_gen_1_sched_addr_gen_strides_1),
 .strg_ub_agg_only_agg_write_sched_gen_1_sched_addr_gen_strides_2(strg_ub_agg_only_agg_write_sched_gen_1_sched_addr_gen_strides_2),
 .strg_ub_agg_only_agg_write_sched_gen_1_sched_addr_gen_strides_3(strg_ub_agg_only_agg_write_sched_gen_1_sched_addr_gen_strides_3),
 .strg_ub_agg_only_agg_write_sched_gen_1_sched_addr_gen_strides_4(strg_ub_agg_only_agg_write_sched_gen_1_sched_addr_gen_strides_4),
 .strg_ub_agg_only_agg_write_sched_gen_1_sched_addr_gen_strides_5(strg_ub_agg_only_agg_write_sched_gen_1_sched_addr_gen_strides_5),
-.strg_ub_tb_only_loops_buf2out_read_1_ranges_3(strg_ub_tb_only_loops_buf2out_read_1_ranges_3),
-.strg_ub_tb_only_loops_buf2out_read_1_ranges_4(strg_ub_tb_only_loops_buf2out_read_1_ranges_4),
-.strg_ub_tb_only_loops_buf2out_read_1_ranges_5(strg_ub_tb_only_loops_buf2out_read_1_ranges_5),
-.strg_ub_agg_sram_shared_loops_in2buf_autovec_write_1_dimensionality(strg_ub_agg_sram_shared_loops_in2buf_autovec_write_1_dimensionality),
-.strg_ub_tb_only_tb_read_addr_gen_1_strides_3(strg_ub_tb_only_tb_read_addr_gen_1_strides_3),
-.strg_ub_tb_only_tb_read_addr_gen_1_strides_4(strg_ub_tb_only_tb_read_addr_gen_1_strides_4),
-.strg_ub_tb_only_tb_read_addr_gen_1_strides_5(strg_ub_tb_only_tb_read_addr_gen_1_strides_5),
-.strg_ub_agg_only_agg_read_addr_gen_1_strides_0(strg_ub_agg_only_agg_read_addr_gen_1_strides_0),
-.strg_ub_agg_only_agg_read_addr_gen_1_strides_1(strg_ub_agg_only_agg_read_addr_gen_1_strides_1),
-.strg_ub_agg_only_agg_read_addr_gen_1_strides_2(strg_ub_agg_only_agg_read_addr_gen_1_strides_2),
-.strg_ub_agg_only_agg_read_addr_gen_1_strides_3(strg_ub_agg_only_agg_read_addr_gen_1_strides_3),
-.strg_ub_agg_only_agg_read_addr_gen_1_strides_4(strg_ub_agg_only_agg_read_addr_gen_1_strides_4),
-.strg_ub_agg_only_agg_read_addr_gen_1_strides_5(strg_ub_agg_only_agg_read_addr_gen_1_strides_5),
-.strg_ub_agg_sram_shared_loops_in2buf_autovec_write_0_ranges_2(strg_ub_agg_sram_shared_loops_in2buf_autovec_write_0_ranges_2),
-.strg_ub_agg_sram_shared_loops_in2buf_autovec_write_0_ranges_3(strg_ub_agg_sram_shared_loops_in2buf_autovec_write_0_ranges_3),
-.strg_ub_agg_sram_shared_loops_in2buf_autovec_write_0_ranges_4(strg_ub_agg_sram_shared_loops_in2buf_autovec_write_0_ranges_4),
-.strg_ub_agg_sram_shared_loops_in2buf_autovec_write_0_ranges_5(strg_ub_agg_sram_shared_loops_in2buf_autovec_write_0_ranges_5),
-.strg_ub_sram_tb_shared_output_sched_gen_1_sched_addr_gen_strides_2(strg_ub_sram_tb_shared_output_sched_gen_1_sched_addr_gen_strides_2),
-.strg_ub_sram_tb_shared_output_sched_gen_1_sched_addr_gen_strides_3(strg_ub_sram_tb_shared_output_sched_gen_1_sched_addr_gen_strides_3),
-.strg_ub_sram_tb_shared_output_sched_gen_1_sched_addr_gen_strides_4(strg_ub_sram_tb_shared_output_sched_gen_1_sched_addr_gen_strides_4),
-.strg_ub_sram_tb_shared_output_sched_gen_1_sched_addr_gen_strides_5(strg_ub_sram_tb_shared_output_sched_gen_1_sched_addr_gen_strides_5),
-.strg_ub_agg_only_agg_write_addr_gen_1_strides_0(strg_ub_agg_only_agg_write_addr_gen_1_strides_0),
-.strg_ub_agg_only_agg_write_addr_gen_1_strides_1(strg_ub_agg_only_agg_write_addr_gen_1_strides_1),
-.strg_ub_agg_only_agg_write_addr_gen_1_strides_2(strg_ub_agg_only_agg_write_addr_gen_1_strides_2),
-.strg_ub_agg_only_agg_write_addr_gen_1_strides_3(strg_ub_agg_only_agg_write_addr_gen_1_strides_3),
-.strg_ub_agg_only_agg_write_addr_gen_1_strides_4(strg_ub_agg_only_agg_write_addr_gen_1_strides_4),
-.strg_ub_agg_only_agg_write_addr_gen_1_strides_5(strg_ub_agg_only_agg_write_addr_gen_1_strides_5),
-.strg_ub_sram_tb_shared_loops_buf2out_autovec_read_1_ranges_2(strg_ub_sram_tb_shared_loops_buf2out_autovec_read_1_ranges_2),
-.strg_ub_sram_tb_shared_loops_buf2out_autovec_read_1_ranges_3(strg_ub_sram_tb_shared_loops_buf2out_autovec_read_1_ranges_3),
-.strg_ub_sram_tb_shared_loops_buf2out_autovec_read_1_ranges_4(strg_ub_sram_tb_shared_loops_buf2out_autovec_read_1_ranges_4),
-.strg_ub_sram_tb_shared_loops_buf2out_autovec_read_1_ranges_5(strg_ub_sram_tb_shared_loops_buf2out_autovec_read_1_ranges_5),
-.strg_ub_tb_only_tb_read_sched_gen_0_sched_addr_gen_strides_3(strg_ub_tb_only_tb_read_sched_gen_0_sched_addr_gen_strides_3),
-.strg_ub_tb_only_tb_read_sched_gen_0_sched_addr_gen_strides_4(strg_ub_tb_only_tb_read_sched_gen_0_sched_addr_gen_strides_4),
-.strg_ub_tb_only_tb_read_sched_gen_0_sched_addr_gen_strides_5(strg_ub_tb_only_tb_read_sched_gen_0_sched_addr_gen_strides_5),
-.strg_ub_sram_only_input_addr_gen_1_strides_0(strg_ub_sram_only_input_addr_gen_1_strides_0),
-.strg_ub_sram_only_input_addr_gen_1_strides_1(strg_ub_sram_only_input_addr_gen_1_strides_1),
-.strg_ub_sram_only_input_addr_gen_1_strides_2(strg_ub_sram_only_input_addr_gen_1_strides_2),
-.strg_ub_sram_only_input_addr_gen_1_strides_3(strg_ub_sram_only_input_addr_gen_1_strides_3),
-.strg_ub_sram_only_input_addr_gen_1_strides_4(strg_ub_sram_only_input_addr_gen_1_strides_4),
-.strg_ub_sram_only_input_addr_gen_1_strides_5(strg_ub_sram_only_input_addr_gen_1_strides_5),
-.strg_ub_agg_sram_shared_agg_read_sched_gen_0_sched_addr_gen_strides_2(strg_ub_agg_sram_shared_agg_read_sched_gen_0_sched_addr_gen_strides_2),
-.strg_ub_agg_sram_shared_agg_read_sched_gen_0_sched_addr_gen_strides_3(strg_ub_agg_sram_shared_agg_read_sched_gen_0_sched_addr_gen_strides_3),
-.strg_ub_agg_sram_shared_agg_read_sched_gen_0_sched_addr_gen_strides_4(strg_ub_agg_sram_shared_agg_read_sched_gen_0_sched_addr_gen_strides_4),
-.strg_ub_agg_sram_shared_agg_read_sched_gen_0_sched_addr_gen_strides_5(strg_ub_agg_sram_shared_agg_read_sched_gen_0_sched_addr_gen_strides_5),
-.strg_ub_sram_only_output_addr_gen_0_strides_2(strg_ub_sram_only_output_addr_gen_0_strides_2),
-.strg_ub_sram_only_output_addr_gen_0_strides_3(strg_ub_sram_only_output_addr_gen_0_strides_3),
-.strg_ub_sram_only_output_addr_gen_0_strides_4(strg_ub_sram_only_output_addr_gen_0_strides_4),
-.strg_ub_sram_only_output_addr_gen_0_strides_5(strg_ub_sram_only_output_addr_gen_0_strides_5),
-.stencil_valid_sched_gen_sched_addr_gen_strides_2(stencil_valid_sched_gen_sched_addr_gen_strides_2),
-.stencil_valid_sched_gen_sched_addr_gen_strides_3(stencil_valid_sched_gen_sched_addr_gen_strides_3),
-.stencil_valid_sched_gen_sched_addr_gen_strides_4(stencil_valid_sched_gen_sched_addr_gen_strides_4),
-.stencil_valid_sched_gen_sched_addr_gen_strides_5(stencil_valid_sched_gen_sched_addr_gen_strides_5),
-.strg_ub_sram_only_output_addr_gen_1_strides_2(strg_ub_sram_only_output_addr_gen_1_strides_2),
-.strg_ub_sram_only_output_addr_gen_1_strides_3(strg_ub_sram_only_output_addr_gen_1_strides_3),
-.strg_ub_sram_only_output_addr_gen_1_strides_4(strg_ub_sram_only_output_addr_gen_1_strides_4),
-.strg_ub_sram_only_output_addr_gen_1_strides_5(strg_ub_sram_only_output_addr_gen_1_strides_5),
+.strg_ub_sram_only_input_addr_gen_0_strides_2(strg_ub_sram_only_input_addr_gen_0_strides_2),
+.strg_ub_sram_only_input_addr_gen_0_strides_3(strg_ub_sram_only_input_addr_gen_0_strides_3),
+.strg_ub_sram_only_input_addr_gen_0_strides_4(strg_ub_sram_only_input_addr_gen_0_strides_4),
+.strg_ub_sram_only_input_addr_gen_0_strides_5(strg_ub_sram_only_input_addr_gen_0_strides_5),
+.strg_ub_agg_only_agg_read_addr_gen_0_strides_2(strg_ub_agg_only_agg_read_addr_gen_0_strides_2),
+.strg_ub_agg_only_agg_read_addr_gen_0_strides_3(strg_ub_agg_only_agg_read_addr_gen_0_strides_3),
+.strg_ub_agg_only_agg_read_addr_gen_0_strides_4(strg_ub_agg_only_agg_read_addr_gen_0_strides_4),
+.strg_ub_agg_only_agg_read_addr_gen_0_strides_5(strg_ub_agg_only_agg_read_addr_gen_0_strides_5),
+.loops_stencil_valid_ranges_2(loops_stencil_valid_ranges_2),
+.loops_stencil_valid_ranges_3(loops_stencil_valid_ranges_3),
+.loops_stencil_valid_ranges_4(loops_stencil_valid_ranges_4),
+.loops_stencil_valid_ranges_5(loops_stencil_valid_ranges_5),
 .strg_ub_tb_only_tb_write_addr_gen_1_strides_2(strg_ub_tb_only_tb_write_addr_gen_1_strides_2),
 .strg_ub_tb_only_tb_write_addr_gen_1_strides_3(strg_ub_tb_only_tb_write_addr_gen_1_strides_3),
 .strg_ub_tb_only_tb_write_addr_gen_1_strides_4(strg_ub_tb_only_tb_write_addr_gen_1_strides_4),
 .strg_ub_tb_only_tb_write_addr_gen_1_strides_5(strg_ub_tb_only_tb_write_addr_gen_1_strides_5),
-.strg_ub_agg_only_agg_write_addr_gen_0_strides_3(strg_ub_agg_only_agg_write_addr_gen_0_strides_3),
-.strg_ub_agg_only_agg_write_addr_gen_0_strides_4(strg_ub_agg_only_agg_write_addr_gen_0_strides_4),
-.strg_ub_agg_only_agg_write_addr_gen_0_strides_5(strg_ub_agg_only_agg_write_addr_gen_0_strides_5),
+.strg_ub_tb_only_tb_read_addr_gen_1_strides_3(strg_ub_tb_only_tb_read_addr_gen_1_strides_3),
+.strg_ub_tb_only_tb_read_addr_gen_1_strides_4(strg_ub_tb_only_tb_read_addr_gen_1_strides_4),
+.strg_ub_tb_only_tb_read_addr_gen_1_strides_5(strg_ub_tb_only_tb_read_addr_gen_1_strides_5),
+.strg_ub_agg_sram_shared_agg_read_sched_gen_0_sched_addr_gen_strides_2(strg_ub_agg_sram_shared_agg_read_sched_gen_0_sched_addr_gen_strides_2),
+.strg_ub_agg_sram_shared_agg_read_sched_gen_0_sched_addr_gen_strides_3(strg_ub_agg_sram_shared_agg_read_sched_gen_0_sched_addr_gen_strides_3),
+.strg_ub_agg_sram_shared_agg_read_sched_gen_0_sched_addr_gen_strides_4(strg_ub_agg_sram_shared_agg_read_sched_gen_0_sched_addr_gen_strides_4),
+.strg_ub_agg_sram_shared_agg_read_sched_gen_0_sched_addr_gen_strides_5(strg_ub_agg_sram_shared_agg_read_sched_gen_0_sched_addr_gen_strides_5),
+.stencil_valid_sched_gen_sched_addr_gen_strides_2(stencil_valid_sched_gen_sched_addr_gen_strides_2),
+.stencil_valid_sched_gen_sched_addr_gen_strides_3(stencil_valid_sched_gen_sched_addr_gen_strides_3),
+.stencil_valid_sched_gen_sched_addr_gen_strides_4(stencil_valid_sched_gen_sched_addr_gen_strides_4),
+.stencil_valid_sched_gen_sched_addr_gen_strides_5(stencil_valid_sched_gen_sched_addr_gen_strides_5),
+.strg_ub_sram_only_output_addr_gen_0_strides_2(strg_ub_sram_only_output_addr_gen_0_strides_2),
+.strg_ub_sram_only_output_addr_gen_0_strides_3(strg_ub_sram_only_output_addr_gen_0_strides_3),
+.strg_ub_sram_only_output_addr_gen_0_strides_4(strg_ub_sram_only_output_addr_gen_0_strides_4),
+.strg_ub_sram_only_output_addr_gen_0_strides_5(strg_ub_sram_only_output_addr_gen_0_strides_5),
+.strg_ub_sram_tb_shared_output_sched_gen_1_sched_addr_gen_strides_2(strg_ub_sram_tb_shared_output_sched_gen_1_sched_addr_gen_strides_2),
+.strg_ub_sram_tb_shared_output_sched_gen_1_sched_addr_gen_strides_3(strg_ub_sram_tb_shared_output_sched_gen_1_sched_addr_gen_strides_3),
+.strg_ub_sram_tb_shared_output_sched_gen_1_sched_addr_gen_strides_4(strg_ub_sram_tb_shared_output_sched_gen_1_sched_addr_gen_strides_4),
+.strg_ub_sram_tb_shared_output_sched_gen_1_sched_addr_gen_strides_5(strg_ub_sram_tb_shared_output_sched_gen_1_sched_addr_gen_strides_5),
+.strg_ub_tb_only_tb_read_addr_gen_0_strides_3(strg_ub_tb_only_tb_read_addr_gen_0_strides_3),
+.strg_ub_tb_only_tb_read_addr_gen_0_strides_4(strg_ub_tb_only_tb_read_addr_gen_0_strides_4),
+.strg_ub_tb_only_tb_read_addr_gen_0_strides_5(strg_ub_tb_only_tb_read_addr_gen_0_strides_5),
+.strg_ub_tb_only_loops_buf2out_read_1_ranges_3(strg_ub_tb_only_loops_buf2out_read_1_ranges_3),
+.strg_ub_tb_only_loops_buf2out_read_1_ranges_4(strg_ub_tb_only_loops_buf2out_read_1_ranges_4),
+.strg_ub_tb_only_loops_buf2out_read_1_ranges_5(strg_ub_tb_only_loops_buf2out_read_1_ranges_5),
+.strg_ub_tb_only_tb_read_sched_gen_0_sched_addr_gen_strides_3(strg_ub_tb_only_tb_read_sched_gen_0_sched_addr_gen_strides_3),
+.strg_ub_tb_only_tb_read_sched_gen_0_sched_addr_gen_strides_4(strg_ub_tb_only_tb_read_sched_gen_0_sched_addr_gen_strides_4),
+.strg_ub_tb_only_tb_read_sched_gen_0_sched_addr_gen_strides_5(strg_ub_tb_only_tb_read_sched_gen_0_sched_addr_gen_strides_5),
+.strg_ub_sram_only_input_addr_gen_1_starting_addr(strg_ub_sram_only_input_addr_gen_1_starting_addr),
+.strg_ub_agg_only_agg_write_sched_gen_0_sched_addr_gen_strides_3(strg_ub_agg_only_agg_write_sched_gen_0_sched_addr_gen_strides_3),
+.strg_ub_agg_only_agg_write_sched_gen_0_sched_addr_gen_strides_4(strg_ub_agg_only_agg_write_sched_gen_0_sched_addr_gen_strides_4),
+.strg_ub_agg_only_agg_write_sched_gen_0_sched_addr_gen_strides_5(strg_ub_agg_only_agg_write_sched_gen_0_sched_addr_gen_strides_5),
+.strg_ub_agg_sram_shared_loops_in2buf_autovec_write_0_ranges_2(strg_ub_agg_sram_shared_loops_in2buf_autovec_write_0_ranges_2),
+.strg_ub_agg_sram_shared_loops_in2buf_autovec_write_0_ranges_3(strg_ub_agg_sram_shared_loops_in2buf_autovec_write_0_ranges_3),
+.strg_ub_agg_sram_shared_loops_in2buf_autovec_write_0_ranges_4(strg_ub_agg_sram_shared_loops_in2buf_autovec_write_0_ranges_4),
+.strg_ub_agg_sram_shared_loops_in2buf_autovec_write_0_ranges_5(strg_ub_agg_sram_shared_loops_in2buf_autovec_write_0_ranges_5),
+.strg_ub_agg_only_loops_in2buf_1_ranges_0(strg_ub_agg_only_loops_in2buf_1_ranges_0),
+.strg_ub_agg_only_loops_in2buf_1_ranges_1(strg_ub_agg_only_loops_in2buf_1_ranges_1),
+.strg_ub_agg_only_loops_in2buf_1_ranges_2(strg_ub_agg_only_loops_in2buf_1_ranges_2),
+.strg_ub_agg_only_loops_in2buf_1_ranges_3(strg_ub_agg_only_loops_in2buf_1_ranges_3),
+.strg_ub_agg_only_loops_in2buf_1_ranges_4(strg_ub_agg_only_loops_in2buf_1_ranges_4),
+.strg_ub_agg_only_loops_in2buf_1_ranges_5(strg_ub_agg_only_loops_in2buf_1_ranges_5),
+.strg_ub_agg_sram_shared_loops_in2buf_autovec_write_1_ranges_0(strg_ub_agg_sram_shared_loops_in2buf_autovec_write_1_ranges_0),
+.strg_ub_agg_sram_shared_loops_in2buf_autovec_write_1_ranges_1(strg_ub_agg_sram_shared_loops_in2buf_autovec_write_1_ranges_1),
+.strg_ub_agg_sram_shared_loops_in2buf_autovec_write_1_ranges_2(strg_ub_agg_sram_shared_loops_in2buf_autovec_write_1_ranges_2),
+.strg_ub_agg_sram_shared_loops_in2buf_autovec_write_1_ranges_3(strg_ub_agg_sram_shared_loops_in2buf_autovec_write_1_ranges_3),
+.strg_ub_agg_sram_shared_loops_in2buf_autovec_write_1_ranges_4(strg_ub_agg_sram_shared_loops_in2buf_autovec_write_1_ranges_4),
+.strg_ub_agg_sram_shared_loops_in2buf_autovec_write_1_ranges_5(strg_ub_agg_sram_shared_loops_in2buf_autovec_write_1_ranges_5),
+.strg_ub_sram_tb_shared_loops_buf2out_autovec_read_0_ranges_2(strg_ub_sram_tb_shared_loops_buf2out_autovec_read_0_ranges_2),
+.strg_ub_sram_tb_shared_loops_buf2out_autovec_read_0_ranges_3(strg_ub_sram_tb_shared_loops_buf2out_autovec_read_0_ranges_3),
+.strg_ub_sram_tb_shared_loops_buf2out_autovec_read_0_ranges_4(strg_ub_sram_tb_shared_loops_buf2out_autovec_read_0_ranges_4),
+.strg_ub_sram_tb_shared_loops_buf2out_autovec_read_0_ranges_5(strg_ub_sram_tb_shared_loops_buf2out_autovec_read_0_ranges_5),
+.strg_ub_sram_only_output_addr_gen_1_strides_2(strg_ub_sram_only_output_addr_gen_1_strides_2),
+.strg_ub_sram_only_output_addr_gen_1_strides_3(strg_ub_sram_only_output_addr_gen_1_strides_3),
+.strg_ub_sram_only_output_addr_gen_1_strides_4(strg_ub_sram_only_output_addr_gen_1_strides_4),
+.strg_ub_sram_only_output_addr_gen_1_strides_5(strg_ub_sram_only_output_addr_gen_1_strides_5),
 .strg_ub_agg_sram_shared_agg_read_sched_gen_1_sched_addr_gen_strides_0(strg_ub_agg_sram_shared_agg_read_sched_gen_1_sched_addr_gen_strides_0),
 .strg_ub_agg_sram_shared_agg_read_sched_gen_1_sched_addr_gen_strides_1(strg_ub_agg_sram_shared_agg_read_sched_gen_1_sched_addr_gen_strides_1),
 .strg_ub_agg_sram_shared_agg_read_sched_gen_1_sched_addr_gen_strides_2(strg_ub_agg_sram_shared_agg_read_sched_gen_1_sched_addr_gen_strides_2),
 .strg_ub_agg_sram_shared_agg_read_sched_gen_1_sched_addr_gen_strides_3(strg_ub_agg_sram_shared_agg_read_sched_gen_1_sched_addr_gen_strides_3),
 .strg_ub_agg_sram_shared_agg_read_sched_gen_1_sched_addr_gen_strides_4(strg_ub_agg_sram_shared_agg_read_sched_gen_1_sched_addr_gen_strides_4),
 .strg_ub_agg_sram_shared_agg_read_sched_gen_1_sched_addr_gen_strides_5(strg_ub_agg_sram_shared_agg_read_sched_gen_1_sched_addr_gen_strides_5),
+.strg_ub_sram_only_input_addr_gen_1_strides_0(strg_ub_sram_only_input_addr_gen_1_strides_0),
+.strg_ub_sram_only_input_addr_gen_1_strides_1(strg_ub_sram_only_input_addr_gen_1_strides_1),
+.strg_ub_sram_only_input_addr_gen_1_strides_2(strg_ub_sram_only_input_addr_gen_1_strides_2),
+.strg_ub_sram_only_input_addr_gen_1_strides_3(strg_ub_sram_only_input_addr_gen_1_strides_3),
+.strg_ub_sram_only_input_addr_gen_1_strides_4(strg_ub_sram_only_input_addr_gen_1_strides_4),
+.strg_ub_sram_only_input_addr_gen_1_strides_5(strg_ub_sram_only_input_addr_gen_1_strides_5),
+.strg_ub_agg_only_agg_write_addr_gen_1_strides_0(strg_ub_agg_only_agg_write_addr_gen_1_strides_0),
+.strg_ub_agg_only_agg_write_addr_gen_1_strides_1(strg_ub_agg_only_agg_write_addr_gen_1_strides_1),
+.strg_ub_agg_only_agg_write_addr_gen_1_strides_2(strg_ub_agg_only_agg_write_addr_gen_1_strides_2),
+.strg_ub_agg_only_agg_write_addr_gen_1_strides_3(strg_ub_agg_only_agg_write_addr_gen_1_strides_3),
+.strg_ub_agg_only_agg_write_addr_gen_1_strides_4(strg_ub_agg_only_agg_write_addr_gen_1_strides_4),
+.strg_ub_agg_only_agg_write_addr_gen_1_strides_5(strg_ub_agg_only_agg_write_addr_gen_1_strides_5),
+.strg_ub_agg_only_agg_read_addr_gen_1_starting_addr(strg_ub_agg_only_agg_read_addr_gen_1_starting_addr),
+.strg_ub_agg_only_agg_write_addr_gen_0_strides_3(strg_ub_agg_only_agg_write_addr_gen_0_strides_3),
+.strg_ub_agg_only_agg_write_addr_gen_0_strides_4(strg_ub_agg_only_agg_write_addr_gen_0_strides_4),
+.strg_ub_agg_only_agg_write_addr_gen_0_strides_5(strg_ub_agg_only_agg_write_addr_gen_0_strides_5),
+.strg_ub_tb_only_tb_write_addr_gen_0_strides_2(strg_ub_tb_only_tb_write_addr_gen_0_strides_2),
+.strg_ub_tb_only_tb_write_addr_gen_0_strides_3(strg_ub_tb_only_tb_write_addr_gen_0_strides_3),
+.strg_ub_tb_only_tb_write_addr_gen_0_strides_4(strg_ub_tb_only_tb_write_addr_gen_0_strides_4),
+.strg_ub_tb_only_tb_write_addr_gen_0_strides_5(strg_ub_tb_only_tb_write_addr_gen_0_strides_5),
+.strg_ub_tb_only_tb_read_sched_gen_1_sched_addr_gen_strides_3(strg_ub_tb_only_tb_read_sched_gen_1_sched_addr_gen_strides_3),
+.strg_ub_tb_only_tb_read_sched_gen_1_sched_addr_gen_strides_4(strg_ub_tb_only_tb_read_sched_gen_1_sched_addr_gen_strides_4),
+.strg_ub_tb_only_tb_read_sched_gen_1_sched_addr_gen_strides_5(strg_ub_tb_only_tb_read_sched_gen_1_sched_addr_gen_strides_5),
+.strg_ub_agg_only_agg_read_addr_gen_1_strides_0(strg_ub_agg_only_agg_read_addr_gen_1_strides_0),
+.strg_ub_agg_only_agg_read_addr_gen_1_strides_1(strg_ub_agg_only_agg_read_addr_gen_1_strides_1),
+.strg_ub_agg_only_agg_read_addr_gen_1_strides_2(strg_ub_agg_only_agg_read_addr_gen_1_strides_2),
+.strg_ub_agg_only_agg_read_addr_gen_1_strides_3(strg_ub_agg_only_agg_read_addr_gen_1_strides_3),
+.strg_ub_agg_only_agg_read_addr_gen_1_strides_4(strg_ub_agg_only_agg_read_addr_gen_1_strides_4),
+.strg_ub_agg_only_agg_read_addr_gen_1_strides_5(strg_ub_agg_only_agg_read_addr_gen_1_strides_5),
 .strg_ub_agg_only_loops_in2buf_1_dimensionality(strg_ub_agg_only_loops_in2buf_1_dimensionality)
 );
 endmodule

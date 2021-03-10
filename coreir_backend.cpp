@@ -2111,7 +2111,11 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
   Module* ub = coreir_moduledef(options, buffers, prg, schedmap, context, hwinfo);
 
   bool found_compute = true;
+#ifndef CGRAFLOW
   string compute_file = "./coreir_compute/" + prg.name + "_compute.json";
+#else
+  string compute_file = "./" + prg.name + "_compute.json";
+#endif
   if (hwinfo.use_dse_compute) {
     compute_file = "./dse_compute/" + prg.name + "_mapped.json";
     //compute_file = "./dse_apps/" + prg.name + ".json";
@@ -2119,7 +2123,7 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
   ifstream cfile(compute_file);
   if (!cfile.good()) {
     cout << "No compute unit file: " << compute_file << endl;
-    //assert(false);
+    assert(false);
   }
   if (!loadFromFile(context, compute_file)) {
     found_compute = false;

@@ -2031,6 +2031,19 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
         return ret;
     }
 
+    //Use for Garnet Codegen
+    vector<string> get_ops_sorted_by_bundle() const {
+        vector<string> ret;
+        for (auto b : port_bundles) {
+            for (auto bp : b.second) {
+                string op = domain_name(schedule.at(bp));
+                if (!elem(op, ret))
+                   ret.push_back(op);
+            }
+        }
+        return ret;
+    }
+
     bool is_in_pt(const std::string& name) const {
       assert(contains_key(name, isIn));
       return isIn.at(name);
