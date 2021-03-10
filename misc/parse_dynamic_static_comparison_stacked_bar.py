@@ -58,11 +58,13 @@ lutasmem = []
 ff = []
 bram = []
 
+labels = []
 def extract_lut(values):
     rm = "(.*)\[(.*)\\\%\]"
     fvalues = []
 
     i = 0;
+    labels.append(values[0].strip() + ' ' + values[1].strip() + ' ' + values[2].strip())
     for v in values:
         if i < 3:
             fvalues.append(v)
@@ -106,7 +108,7 @@ def extract_lut(values):
 res = table_op(f, extract_lut)
 print(res)
 
-major_labels = ['app'] * len(lutasmem)
+major_labels = labels # ['app'] * len(lutasmem)
 print('major labels:', major_labels)
 print('lutasmem    :', lutasmem)
 
