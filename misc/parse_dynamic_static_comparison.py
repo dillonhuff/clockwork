@@ -146,7 +146,7 @@ width = 0.35
 # axs.bar(x, bvalues, linewidth=2.0, edgecolor='black')
 offset = 1
 for p in policies:
-    axs.bar(x - width / offset, p, width, linewidth=2.0, edgecolor='black')
+    axs.bar(x - offset*(width / len(policies)), p, width, linewidth=2.0, edgecolor='black')
     offset += 1
 
 # axs[1].hist(y, bins=n_bins)
