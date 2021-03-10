@@ -46,31 +46,25 @@ def entry_to_int(values):
         return values
     return values
 
-def extract_percentage(values):
+def extract_lut(values):
     rm = "(.*)\[(.*)\\\%\]"
     fvalues = []
 
     i = 0;
-    max_util = -100000
     for v in values:
         if i < 3:
             fvalues.append(v)
-        else:
+        elif i == 3:
             m = re.match(rm, v)
-            if m:
-                print(v, 'matches, now false')
-                print('Group0:', m[0])
-                print('Group1:', m[1])
-                print('Group2:', m[2])
-                if float(m[2]) > max_util:
-                    max_util = float(m[2])
-            # else:
-                # fvalues.append(v)
+            print(v, 'matches, now false')
+            print('Group0:', m[0])
+            print('Group1:', m[1])
+            print('Group2:', m[2])
+            fvalues.append(m[1])
         i += 1
 
-    fvalues.append(str(max_util))
     return fvalues
 
-res = table_op(f, extract_pe)
+res = table_op(f, extract_lut)
 print(res)
 
