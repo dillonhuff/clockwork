@@ -4,6 +4,7 @@ from matplotlib import cm
 import numpy as np
 from matplotlib import colors
 from matplotlib.ticker import PercentFormatter
+from cycler import cycler
 
 
 f = open('./tables/dynamic_static_comparison.tex').readlines()
@@ -126,33 +127,69 @@ assert(len(colorlist) == len(bvalues))
 assert(len(bvalues) % 4 == 0)
 
 policies = []
+arch_labels = []
 for i in range(4):
     policies.append([])
+    arch_labels.append([])
 
 for i in range(len(bvalues)):
     elem = bvalues[i]
     policies[i % 4].append(elem)
+    arch_labels[i % 4].append(labels[i])
 
 
-fig, axs = plt.subplots(1, 1, sharey=True, tight_layout=True)
-# x = np.arange(len(labels))  # the label locations
-x = np.arange(len(policies[0]))  # the label locations
-# print('bvalues:', bvalues)
-# We can set the number of bins with the `bins` kwarg
-prop_iter = iter(plt.rcParams['axes.prop_cycle'])
+categories = policies
 
-width = 0.35
+fig, ax = plt.subplots(1, 1, sharey=True, tight_layout=True)
+width = 1.0
+margin = 0.2
+inter_bar_margin = 0.05
+bar_width = (width - margin - inter_bar_margin*(len(categories) - 1))/4.0
 
-# axs.bar(x, bvalues, linewidth=2.0, edgecolor='black')
-offset = 1
-for p in policies:
-    axs.bar(x - offset*(width / len(policies)), p, width, linewidth=2.0, edgecolor='black')
-    offset += 1
 
-# axs[1].hist(y, bins=n_bins)
-# axs.set_xticks(x)
-# axs.set_xticklabels(labels)
-# plt.xticks(rotation = 90)
+use_offset = len(categories) % 2 == 1
+x = np.arange(len(categories[0]))  # the label locations
+
+ax.grid(axis='y')
+bar_cycle = (cycler('edgecolor', 'k')*cycler('zorder', [10]))
+styles = bar_cycle()
+offset = bar_width / 2.0 if use_offset else 0.0
+
+# compute max position
+max_pos = -bar_width - offset - inter_bar_margin*3.0
+for i in range(len(categories) - 1):
+    max_pos += bar_width
+    max_pos += inter_bar_margin
+
+
+pos = max_pos
+rects = []
+for i in range(len(categories)):
+    rects.append(ax.bar(x - pos, categories[i], bar_width, **next(styles))) #, label=arch_labels[i]))
+    pos -= bar_width
+    pos -= inter_bar_margin
+
+
+# # x = np.arange(len(labels))  # the label locations
+# x = np.arange(len(policies[0]))  # the label locations
+# # print('bvalues:', bvalues)
+# # We can set the number of bins with the `bins` kwarg
+# prop_iter = iter(plt.rcParams['axes.prop_cycle'])
+
+
+# width = 0.35
+# width = 0.35
+
+# # axs.bar(x, bvalues, linewidth=2.0, edgecolor='black')
+# offset = 1.5*width
+# for p in policies:
+    # axs.bar(x - offset, p, width, linewidth=2.0, edgecolor='black')
+    # offset += width
+
+# # axs[1].hist(y, bins=n_bins)
+# # axs.set_xticks(x)
+# # axs.set_xticklabels(labels)
+# # plt.xticks(rotation = 90)
 
 plt.show()
 fig.savefig('clockwork_fifo_utilizations.eps', format='eps')
