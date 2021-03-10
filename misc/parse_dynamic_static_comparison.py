@@ -1,4 +1,10 @@
 import re
+import matplotlib.pyplot as plt
+from matplotlib import cm
+import numpy as np
+from matplotlib import colors
+from matplotlib.ticker import PercentFormatter
+
 
 f = open('./tables/dynamic_static_comparison.tex').readlines()
 
@@ -46,12 +52,17 @@ def entry_to_int(values):
         return values
     return values
 
+labels = []
+bvalues = []
 def extract_percentage(values):
+    print('Extracting percentage...')
     rm = "(.*)\[(.*)\\\%\]"
     fvalues = []
 
     i = 0;
     max_util = -100000
+
+    labels.append(values[0].strip() + ' ' + values[1].strip() + ' ' + values[2].strip())
     for v in values:
         if i < 3:
             fvalues.append(v)
@@ -68,9 +79,80 @@ def extract_percentage(values):
                 # fvalues.append(v)
         i += 1
 
+    print('Appending to values:')
+    bvalues.append(max_util)
     fvalues.append(str(max_util))
     return fvalues
 
-res = table_op(f, extract_pe)
+res = table_op(f, extract_percentage)
 print(res)
 
+plt.style.use('seaborn-pastel')
+
+labels.pop(0)
+bvalues.pop(0)
+colors = ['cyan', 'blue', 'green', 'yellow']
+
+def get_cmap(n, name='hsv'):
+    '''Returns a function that maps each index in 0, 1, ..., n-1 to a distinct 
+    RGB color; the keyword argument name must be a standard mpl colormap name.'''
+    return plt.cm.get_cmap(name, n)
+
+# colors = []
+# for i in range(4):
+    # colors.append(get_cmap(4)(i))
+# i = -1
+# def getCycledColor():
+    # global i, colors
+    # if i < len(colors) -1:
+        # i = i + 1
+        # return colors[i]
+    # else:
+        # i = -1
+
+# prop = plt.rcParams['axes.prop_cycle']
+# colors = []
+# i = 0
+# for c in prop:
+    # colors.append(c)
+    # if i >= 4:
+        # break;
+
+colorlist = []
+for v in range(len(bvalues)):
+    colorlist.append(colors[v % len(colors)])
+
+assert(len(colorlist) == len(bvalues))
+assert(len(bvalues) % 4 == 0)
+
+policies = []
+for i in range(4):
+    policies.append([])
+
+for i in range(len(bvalues)):
+    elem = bvalues[i]
+    policies[i % 4].append(elem)
+
+
+fig, axs = plt.subplots(1, 1, sharey=True, tight_layout=True)
+# x = np.arange(len(labels))  # the label locations
+x = np.arange(len(policies[0]))  # the label locations
+# print('bvalues:', bvalues)
+# We can set the number of bins with the `bins` kwarg
+prop_iter = iter(plt.rcParams['axes.prop_cycle'])
+
+width = 0.35
+
+# axs.bar(x, bvalues, linewidth=2.0, edgecolor='black')
+offset = 1
+for p in policies:
+    axs.bar(x - width / offset, p, width, linewidth=2.0, edgecolor='black')
+    offset += 1
+
+# axs[1].hist(y, bins=n_bins)
+# axs.set_xticks(x)
+# axs.set_xticklabels(labels)
+# plt.xticks(rotation = 90)
+
+plt.show()
+fig.savefig('clockwork_fifo_utilizations.eps', format='eps')
