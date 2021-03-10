@@ -21862,14 +21862,15 @@ void two_input_blending_test() {
 }
 
 void pyr_blnd_non_blocking_test() {
-  prog prg = two_in_blnd(2048, 2048);
-  prg.name = prg.name + "_nb";
+  //prog prg = two_in_blnd(2048, 2048);
+  prog prg = llf_grayscale_float(2048, 2048);
+  prg.name = prg.name + "_count_fifos";
   //auto ures = unoptimized_result(prg);
 
   CodegenOptions options;
   options.scheduling_algorithm = SCHEDULE_ALGORITHM_CW;
-  options.hls_loop_codegen = HLS_LOOP_CODEGEN_NON_BLOCKING;
-  options.slack_matching = {SLACK_MATCHING_TYPE_FIXED, 2};
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  options.slack_matching = {SLACK_MATCHING_TYPE_FIXED, 0};
 
   auto fusion_groups = one_stage_per_group(prg);
   app_dag dag = partition_application(fusion_groups, prg);
@@ -22547,9 +22548,10 @@ void scheduling_benchmarks() {
 }
 
 void application_tests() {
+  pyr_blnd_non_blocking_test();
+
   sef_channels(2, 500);
 
-  pyr_blnd_non_blocking_test();
   resource_sharing_test();
 
   blur5_static_dynamic_comparison(16);

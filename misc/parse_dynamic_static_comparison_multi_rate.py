@@ -1,6 +1,6 @@
 import re
 
-f = open('./tables/dynamic_static_comparison.tex').readlines()
+f = open('./tables/multi_rate_pb_llf.tex').readlines()
 
 def intersperse(lst, item):
     result = [item] * (len(lst) * 2 - 1)
@@ -50,27 +50,19 @@ def extract_percentage(values):
     rm = "(.*)\[(.*)\\\%\]"
     fvalues = []
 
-    i = 0;
-    max_util = -100000
     for v in values:
-        if i < 3:
-            fvalues.append(v)
+        m = re.match(rm, v)
+        if m:
+            print(v, 'matches, now false')
+            print('Group0:', m[0])
+            print('Group1:', m[1])
+            print('Group2:', m[2])
+            fvalues.append(m[1])
         else:
-            m = re.match(rm, v)
-            if m:
-                print(v, 'matches, now false')
-                print('Group0:', m[0])
-                print('Group1:', m[1])
-                print('Group2:', m[2])
-                if float(m[2]) > max_util:
-                    max_util = float(m[2])
-            # else:
-                # fvalues.append(v)
-        i += 1
+            fvalues.append(v)
 
-    fvalues.append(str(max_util))
     return fvalues
 
-res = table_op(f, extract_pe)
+res = table_op(f, extract_percentage)
 print(res)
 
