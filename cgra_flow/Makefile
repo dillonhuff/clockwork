@@ -37,7 +37,9 @@ TEST_HEADER_FILES = $(patsubst %.cpp,%.h,$(TEST_FILES))
 
 LIB_CPP_FILES = ../build_set_test.cpp ../prog_splitting_test.cpp ../qexpr.cpp ../expr.cpp ../app.cpp ../isl_utils.cpp ../prog.cpp ../codegen.cpp ../ubuffer.cpp ../coreir_backend.cpp ../cgralib.cpp ../cwlib.cpp ../options.cpp ../lake_target.cpp ../utils.cpp ../example_progs.cpp ../simple_example_progs.cpp ../rdai_collateral.cpp ../verilog_backend.cpp  
 LIB_HEADER_FILES = $(patsubst %.cpp,%.h,$(LIB_CPP_FILES)) 
-LIB_HEADER_FILES += cgra_flow.h
+
+CXX_FLAGS += -I ..
+LIB_HEADER_FILES += ../cgra_flow.h
 
 TEST_OBJ_FILES := $(patsubst %.cpp,%.o,$(TEST_FILES))
 OBJ_FILES := $(patsubst %.cpp,%.o,$(LIB_CPP_FILES)) 
