@@ -18446,7 +18446,6 @@ void cgra_flow_tests() {
   vector<prog> bram_test_programs{resnet88()};
   //vector<prog> bram_test_programs{pointwise()};
   test_codegen(bram_test_programs, compile_for_FPGA_BRAM_mem);
-  assert(false);
 
   //vector<prog> M3_test_programs = harris_variants();
   //vector<prog> M3_test_programs{up_sample(), resnet()};
