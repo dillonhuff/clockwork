@@ -21890,34 +21890,34 @@ void pyr_blnd_non_blocking_test() {
 
 // Generating high performance designs?
 void resource_sharing_test() {
-  //prog prg("oned_r_oc");
-  //prg.add_input("in");
-  //prg.add_output("out");
+  prog prg("oned_r_oc2");
+  prg.add_input("in");
+  prg.add_output("out");
 
-  //pointwise("ina", "id", "in", 1, prg);
+  pointwise("ina", "id", "in", 1, prg);
   
-  //auto lo = prg.add_loop("y", 0, 1)->add_op("soc");
-  //lo->add_load("ina", "y");
-  //lo->add_load("ina", "y+1");
-  //lo->add_load("ina", "y+2");
-  //lo->add_store("so", "y");
-  //lo->add_function("float_stencil_1x3");
+  auto lo = prg.add_loop("y", 0, 1)->add_op("soc");
+  lo->add_load("ina", "y");
+  lo->add_load("ina", "y+1");
+  lo->add_load("ina", "y+2");
+  lo->add_store("so", "y");
+  lo->add_function("float_stencil_1x3");
 
-  //auto ds = prg.add_loop("d", 0, 1)->add_op("ds");
-  //ds->add_load("so", "2*d");
-  //ds->add_store("sd", "d");
+  auto ds = prg.add_loop("d", 0, 1)->add_op("ds");
+  ds->add_load("so", "2*d");
+  ds->add_store("sd", "d");
 
-  //lo = prg.add_loop("y1", 0, 1)->add_op("s1");
-  //lo->add_load("sd", "y1");
-  //lo->add_load("sd", "y1+1");
-  //lo->add_load("sd", "y1+2");
-  //lo->add_store("out", "y1");
-  //lo->add_function("float_stencil_1x3");
+  lo = prg.add_loop("y1", 0, 1)->add_op("s1");
+  lo->add_load("sd", "y1");
+  lo->add_load("sd", "y1+1");
+  lo->add_load("sd", "y1+2");
+  lo->add_store("out", "y1");
+  lo->add_function("float_stencil_1x3");
 
-  //infer_bounds("out", {128}, prg);
-  //prg.pretty_print();
+  infer_bounds("out", {128}, prg);
+  prg.pretty_print();
 
-  prog prg = two_in_blnd(64, 64);
+  //prog prg = two_in_blnd(64, 64);
   auto ures = unoptimized_result(prg);
 
   CodegenOptions options;
@@ -22548,11 +22548,11 @@ void scheduling_benchmarks() {
 }
 
 void application_tests() {
+  resource_sharing_test();
   pyr_blnd_non_blocking_test();
 
   sef_channels(2, 500);
 
-  resource_sharing_test();
 
   blur5_static_dynamic_comparison(16);
 
