@@ -2776,7 +2776,7 @@ bool compile_regression_tb(const std::string& name) {
 
 std::vector<std::string> run_regression_tb(const std::string& name) {
   //int res = system(string("g++ -fstack-protector-all -std=c++11 regression_tb_" + name + ".cpp " + name + ".cpp").c_str());
-  int res = cmd("g++ -fstack-protector-all -std=c++11 regression_tb_" + name + ".cpp " + name + ".cpp");
+  int res = cmd("g++ -fstack-protector-all -std=c++11 -I /nobackup/setter/h2h/hwbuffer/clockwork regression_tb_" + name + ".cpp " + name + ".cpp");
   assert(res == 0);
 
   res = system("./a.out");

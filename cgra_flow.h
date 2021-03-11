@@ -12,7 +12,7 @@
 // #include "../prog.h"
 #include "ubuffer.h"
 #include <chrono>
-#include<iostream>
+#include <iostream>
 using std::cout;
 using std::endl;
 
@@ -51,7 +51,7 @@ void compile_app_for_garnet_single_port_mem(prog& prg, string dir) {
 
     //TODO: make this argument explicit to user
     bool multi_level_memory = false;
-    bool gen_config_only = false;
+    bool gen_config_only = true;
     bool gen_smt = false;
     bool use_dse_compute = false;
 
