@@ -1,0 +1,48 @@
+{
+"namespaces":{
+  "global":{
+    "modules":{
+      "hcompute_hw_input_global_wrapper_stencil":{
+        "type":["Record",[
+          ["out_hw_input_global_wrapper_stencil",["Array",16,"Bit"]],
+          ["in0_hw_input_stencil",["Array",1,["Array",16,"BitIn"]]]
+        ]],
+        "connections":[
+          ["self.out_hw_input_global_wrapper_stencil","self.in0_hw_input_stencil.0"]
+        ]
+      },
+      "hcompute_hw_output_stencil":{
+        "type":["Record",[
+          ["out_hw_output_stencil",["Array",16,"Bit"]],
+          ["in0_hw_input_global_wrapper_stencil",["Array",1,["Array",16,"BitIn"]]],
+          ["hw_output_s0_x_xi",["Array",16,"BitIn"]],
+          ["hw_output_s0_y_yi",["Array",16,"BitIn"]]
+        ]],
+        "instances":{
+          "add_262_263_264":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
+          },
+          "add_264_263_265":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
+          },
+          "add_hw_output_s0_x_xi_hw_output_s0_y_yi_262":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
+          }
+        },
+        "connections":[
+          ["add_hw_output_s0_x_xi_hw_output_s0_y_yi_262.out","add_262_263_264.in0"],
+          ["self.in0_hw_input_global_wrapper_stencil.0","add_262_263_264.in1"],
+          ["add_264_263_265.in0","add_262_263_264.out"],
+          ["self.in0_hw_input_global_wrapper_stencil.0","add_264_263_265.in1"],
+          ["self.out_hw_output_stencil","add_264_263_265.out"],
+          ["self.hw_output_s0_x_xi","add_hw_output_s0_x_xi_hw_output_s0_y_yi_262.in0"],
+          ["self.hw_output_s0_y_yi","add_hw_output_s0_x_xi_hw_output_s0_y_yi_262.in1"]
+        ]
+      }
+    }
+  }
+}
+}
