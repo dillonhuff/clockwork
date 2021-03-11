@@ -21862,14 +21862,15 @@ void two_input_blending_test() {
 }
 
 void pyr_blnd_non_blocking_test() {
-  prog prg = two_in_blnd(2048, 2048);
-  prg.name = prg.name + "_nb";
+  //prog prg = two_in_blnd(2048, 2048);
+  prog prg = llf_grayscale_float(2048, 2048);
+  prg.name = prg.name + "_count_fifos";
   //auto ures = unoptimized_result(prg);
 
   CodegenOptions options;
   options.scheduling_algorithm = SCHEDULE_ALGORITHM_CW;
-  options.hls_loop_codegen = HLS_LOOP_CODEGEN_NON_BLOCKING;
-  options.slack_matching = {SLACK_MATCHING_TYPE_FIXED, 2};
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  options.slack_matching = {SLACK_MATCHING_TYPE_FIXED, 0};
 
   auto fusion_groups = one_stage_per_group(prg);
   app_dag dag = partition_application(fusion_groups, prg);
@@ -21889,7 +21890,7 @@ void pyr_blnd_non_blocking_test() {
 
 // Generating high performance designs?
 void resource_sharing_test() {
-  //prog prg("oned_r_oc");
+  //prog prg("oned_r_oc2");
   //prg.add_input("in");
   //prg.add_output("out");
 
@@ -21916,74 +21917,74 @@ void resource_sharing_test() {
   //infer_bounds("out", {128}, prg);
   //prg.pretty_print();
 
-  prog prg = two_in_blnd(64, 64);
-  auto ures = unoptimized_result(prg);
-
-  CodegenOptions options;
-  options.scheduling_algorithm = SCHEDULE_ALGORITHM_CW;
-  options.hls_loop_codegen = HLS_LOOP_CODEGEN_NON_BLOCKING;
-  generate_optimized_code(options, prg);
-  generate_regression_testbench(prg);
-
-  auto ores = run_regression_tb(prg);
-
-
-  compare(prg.name + "opt comparison", ures, ores);
-  move_to_benchmarks_folder(prg.name);
-
-  assert(false);
-
-  //prog prg = two_in_blnd(64, 64);
-
-  auto valid_deps = prg.validity_deps();
-  auto global_sched =
-    its(clockwork_schedule_umap_reversed(prg.whole_iteration_domain(), valid_deps, valid_deps),
-        prg.whole_iteration_domain());
-  cout << "Sched: " << str(global_sched) << endl;
-  resource_sharing_loop_codegen(global_sched);
-  assert(false);
-
-  //prog prg("cpy_resource");
-  //prg.add_input("in");
-  //prg.add_output("out");
-
-  //pointwise("A", "id", "in", 2, prg);
-  //pointwise("Ac", "plus_one", "A", 2, prg);
-  //pointwise("B", "id", "Ac", 2, prg);
-  //pointwise("Bc", "plus_one", "B", 2, prg);
-  //pointwise("out", "id", "Bc", 2, prg);
-
-  //infer_bounds("out", {8, 8}, prg);
-
-  //prg.pretty_print();
-  //prg.sanity_check();
-
-  //prg.name = prg.name + "_s";
-  //prg.sanity_check();
-
-  //map<string, std::set<string> > fusion_groups =
-  //{{"lda", {"pw_math_in01"}}, {"comp", {"pw_math_A45", "pw_math_B1213", "pw_math_Bc1617"}}, {"ldb", {"pw_math_Ac89"}}};
-
-  //auto unopt_postprocessed = unoptimized_result(prg);
-
-  //app_dag dag = partition_application(fusion_groups, prg);
-
-  ////assert(false);
+  ////prog prg = two_in_blnd(64, 64);
+  //auto ures = unoptimized_result(prg);
 
   //CodegenOptions options;
-  //options = CodegenOptions();
-  //options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
   //options.scheduling_algorithm = SCHEDULE_ALGORITHM_CW;
-  //options.slack_matching = {SLACK_MATCHING_TYPE_FIXED, 250};
-  //generate_app_code(options, dag);
-  //move_to_benchmarks_folder(dag.prg.name);
+  //options.hls_loop_codegen = HLS_LOOP_CODEGEN_NON_BLOCKING;
+  //generate_optimized_code(options, prg);
+  //generate_regression_testbench(prg);
+
+  //auto ores = run_regression_tb(prg);
+
+
+  //compare(prg.name + "opt comparison", ures, ores);
+  //move_to_benchmarks_folder(prg.name);
+
   //assert(false);
 
-  //generate_regression_testbench(dag.prg);
-  //vector<string> multi_kernel_res = run_regression_tb(dag.prg);
+  ////prog prg = two_in_blnd(64, 64);
 
-  //compare("resource_shared" + prg.name + "_vs_unopt", multi_kernel_res, unopt_postprocessed);
+  //auto valid_deps = prg.validity_deps();
+  //auto global_sched =
+    //its(clockwork_schedule_umap_reversed(prg.whole_iteration_domain(), valid_deps, valid_deps),
+        //prg.whole_iteration_domain());
+  //cout << "Sched: " << str(global_sched) << endl;
+  //resource_sharing_loop_codegen(global_sched);
   //assert(false);
+
+  prog prg("cpy_resource2");
+  prg.add_input("in");
+  prg.add_output("out");
+
+  pointwise("A", "id", "in", 2, prg);
+  pointwise("Ac", "plus_one", "A", 2, prg);
+  pointwise("B", "id", "Ac", 2, prg);
+  pointwise("Bc", "plus_one", "B", 2, prg);
+  pointwise("out", "id", "Bc", 2, prg);
+
+  infer_bounds("out", {8, 8}, prg);
+
+  prg.pretty_print();
+  prg.sanity_check();
+
+  prg.name = prg.name + "_s";
+  prg.sanity_check();
+
+  map<string, std::set<string> > fusion_groups =
+  {{"lda", {"pw_math_in01"}}, {"comp", {"pw_math_A45", "pw_math_B1213", "pw_math_Bc1617"}}, {"ldb", {"pw_math_Ac89"}}};
+
+  auto unopt_postprocessed = unoptimized_result(prg);
+
+  app_dag dag = partition_application(fusion_groups, prg);
+
+  //assert(false);
+
+  CodegenOptions options;
+  options = CodegenOptions();
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_NON_BLOCKING;
+  options.scheduling_algorithm = SCHEDULE_ALGORITHM_CW;
+  options.slack_matching = {SLACK_MATCHING_TYPE_FIXED, 250};
+  generate_app_code(options, dag);
+  move_to_benchmarks_folder(dag.prg.name);
+  assert(false);
+
+  generate_regression_testbench(dag.prg);
+  vector<string> multi_kernel_res = run_regression_tb(dag.prg);
+
+  compare("resource_shared" + prg.name + "_vs_unopt", multi_kernel_res, unopt_postprocessed);
+  assert(false);
 }
 
 void llf_intelligent_channels() {
@@ -22547,10 +22548,11 @@ void scheduling_benchmarks() {
 }
 
 void application_tests() {
+  resource_sharing_test();
+  pyr_blnd_non_blocking_test();
+
   sef_channels(2, 500);
 
-  pyr_blnd_non_blocking_test();
-  resource_sharing_test();
 
   blur5_static_dynamic_comparison(16);
 
