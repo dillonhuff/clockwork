@@ -64,7 +64,8 @@ def extract_lut(values):
     fvalues = []
 
     i = 0;
-    labels.append(values[0].strip() + ' ' + values[1].strip() + ' ' + values[2].strip())
+    # labels.append(values[0].strip() + ' ' + values[1].strip() + ' ' + values[2].strip())
+    labels.append(values[2].strip())
     for v in values:
         if i < 3:
             fvalues.append(v)
@@ -94,7 +95,7 @@ def extract_lut(values):
             print('Group2:', m[2])
             ff.append(float(m[2]))
         # BRAM 
-        elif i == 5:
+        elif i == 6:
             m = re.match(rm, v)
             print(v, 'matches, now false')
             print('Group0:', m[0])
@@ -108,90 +109,54 @@ def extract_lut(values):
 res = table_op(f, extract_lut)
 print(res)
 
-major_labels = labels # ['app'] * len(lutasmem)
+major_labels = labels[1:] # ['app'] * len(lutasmem)
 print('major labels:', major_labels)
 print('lutasmem    :', lutasmem)
 
-x = np.arange(len(major_labels))  # the label locations
-# ['Blur 1', 'Blur 16', 'Blur 32', 'SBL 1', 'SBL 16', 'SBL 32', 'CP 1', 'CP 16', 'CP 32', 'Jac 1', 'Jac 16', 'Jac 32']
+# x = np.arange(len(major_labels))  # the label locations
 
-# labels = ['G1', 'G2', 'G3', 'G4', 'G5']
+ind = 0
+xs = []
+for i in range(len(major_labels)):
+    ind += 1
+    if i > 0 and i % 4 == 0:
+        ind += 1
+    xs.append(ind)
+
+x = np.array(xs)
+print('X = ', x)
+
 men_means = [20, 35, 30, 35, 27]
 women_means = [25, 32, 34, 20, 25]
-width = 0.35       # the width of the bars: can also be len(x) sequence
+width = 0.75      # the width of the bars: can also be len(x) sequence
 
-fig, ax = plt.subplots()
+fig, ax = plt.subplots(figsize=(12, 6))
+ax.set_axisbelow(True)
+ax.grid(axis='y')
 
-# ax.bar(labels, men_means, width, label='Men')
-# ax.bar(labels, women_means, width, bottom=men_means,
-       # label='Women')
+assert(len(bram) == len(ff))
+assert(len(lutasmem) == len(ff))
 
-ax.bar(x, lutasmem) #, width, label='LUTAsMem')
-# ax.bar(labels, women_means, width, bottom=men_means,
-       # label='Women')
+bram_offset = np.array(ff) + np.array(lutasmem)
+print('bram offset:', bram_offset)
+
+# font = {'family' : 'normal',
+        # 'size'   : 10}
+# plt.rc('font', **font)
+
+ax.bar(x, lutasmem, width, edgecolor='black', label='LUTAsMem')
+ax.bar(x, ff, width, bottom=lutasmem, edgecolor='black', label='FF')
+ax.bar(x, bram, width, bottom=bram_offset, edgecolor='black', label='BRAM')
+
 ax.set_xticks(x)
 ax.set_xticklabels(major_labels)
 
-# ax.set_ylabel('Scores')
-# ax.set_title('Scores by group and gender')
 ax.legend()
+plt.xticks(rotation=90)
+plt.gcf().subplots_adjust(bottom=0.15)
 
 plt.show()
-
-# policies = []
-# arch_labels = []
-# for i in range(4):
-    # policies.append([])
-    # arch_labels.append([])
-
-# for i in range(len(bvalues)):
-    # elem = bvalues[i]
-    # policies[i % 4].append(elem)
-    # # arch_labels[i % 4].append(labels[i])
-
-
-# categories = policies
-
-# fig, ax = plt.subplots(1, 1, sharey=True, tight_layout=True, figsize=(12, 6))
-
-# width = 1.0
-# margin = 0.2
-# inter_bar_margin = 0.05
-# bar_width = (width - margin - inter_bar_margin*(len(categories) - 1))/4.0
-
-
-# use_offset = len(categories) % 2 == 1
-# x = np.arange(len(categories[0]))  # the label locations
-
-# ax.grid(axis='y')
-# bar_cycle = (cycler('edgecolor', 'k')*cycler('zorder', [10]))
-# styles = bar_cycle()
-# offset = bar_width / 2.0 if use_offset else 0.0
-
-# # compute max position
-# max_pos = -bar_width - offset - inter_bar_margin*3.0
-# for i in range(len(categories) - 1):
-    # max_pos += bar_width
-    # max_pos += inter_bar_margin
-
-
-# minor_labels = ['SODA', 'CWS', 'CWD32', 'CWDsmall']
-
-# pos = max_pos
-# rects = []
-# for i in range(len(categories)):
-    # rects.append(ax.bar(x - pos, categories[i], bar_width, **next(styles), label=minor_labels[i])) #arch_labels[i]))
-    # pos -= bar_width
-    # pos -= inter_bar_margin
-
-# major_labels = ['Blur 1', 'Blur 16', 'Blur 32', 'SBL 1', 'SBL 16', 'SBL 32', 'CP 1', 'CP 16', 'CP 32', 'Jac 1', 'Jac 16', 'Jac 32']
-# ax.set_xticks(x)
-# ax.set_xticklabels(major_labels)
-
-# ax.legend()
-
-# plt.show()
-# fig.savefig('clockwork_fifo_lut_utilizations.eps', format='eps')
+fig.savefig('clockwork_fifo_mem_utilizations.eps', format='eps')
 
 
 
