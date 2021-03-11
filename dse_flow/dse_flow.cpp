@@ -21,13 +21,14 @@ int main(int argc, char** argv) {
     cout << "Running DSE flow" << endl;
 
     if (argc != 3) {
-        cout << "Usage: ./dse_flow app_name dse/lassen" << endl;
+        cout << "Usage: ./dse_flow app_name mapped_compute.json" << endl;
         return 1;
     }
 
     string app_name = argv[1];
-    bool use_dse_compute = !strcmp(argv[2], "dse");
-    string dir = use_dse_compute ? "dse_flow/output/dse" : "dse_flow/output/lassen";
+    string dse_compute_filename = argv[2];
+    bool use_dse_compute = true;
+    string dir = "dse_flow/output";
 
 
     std::map<string,prog (*)()> func_map;
@@ -45,7 +46,7 @@ int main(int argc, char** argv) {
     auto prg_ptr = func_map[app_name];
     auto prg = prg_ptr();
 
-    bool gen_config_only = true; 
+    bool gen_config_only = false; 
     bool multi_accessor = false;
     
 
@@ -59,7 +60,7 @@ int main(int argc, char** argv) {
 
     auto cpu = unoptimized_result(prg);
 
-    compile_for_garnet_single_port_mem(prg, dir, false, gen_config_only, multi_accessor, use_dse_compute, true);
+    compile_for_garnet_single_port_mem(prg, dir, false, gen_config_only, multi_accessor, use_dse_compute, true, dse_compute_filename);
     generate_regression_testbench(prg);
 
     cout << "Output name: " << dir << "/" << prg.name << endl;

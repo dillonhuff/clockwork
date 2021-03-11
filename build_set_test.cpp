@@ -12194,6 +12194,8 @@ int run_verilator_on(const std::string& top_module,
   //int verilator_build = cmd("verilator -Wall --cc " + sep_list(verilog_files, "", "", " ") + " --exe --build " + tb_file + " --top-module " + top_module + " -Wno-lint");
   int verilator_build = 0;
   if (extra_flag) {
+    cout << "verilator -Wall --cc " + sep_list(verilog_files, "", "", " ") + " --exe --build " + tb_file + " --top-module " + top_module + " -Wno-UNUSED -Wno-PINMISSING -Wno-DECLFILENAME -Wno-WIDTH -Wno-UNDRIVEN -Wno-CASEINCOMPLETE -Wno-MODDUP -Wno-UNOPTFLAT -Wno-CMPCONST" << endl;
+    assert(false);
       verilator_build = cmd("verilator -Wall --cc " + sep_list(verilog_files, "", "", " ") + " --exe --build " + tb_file + " --top-module " + top_module + " -Wno-UNUSED -Wno-PINMISSING -Wno-DECLFILENAME -Wno-WIDTH -Wno-UNDRIVEN -Wno-CASEINCOMPLETE -Wno-MODDUP -Wno-UNOPTFLAT -Wno-CMPCONST");
   } else {
       verilator_build = cmd("verilator -Wall --cc " + sep_list(verilog_files, "", "", " ") + " --exe --build " + tb_file + " --top-module " + top_module + " -Wno-UNUSED -Wno-WIDTH -Wno-PINMISSING -Wno-DECLFILENAME");
@@ -12242,7 +12244,7 @@ void run_verilator_tb(const std::string& name) {
 void generate_verilog_tb(const std::string& name) {
 
     cmd("echo $LD_LIBRARY_PATH");
-  int to_verilog_res = cmd("${COREIR_PATH}/bin/coreir --inline --load_libs commonlib,cwlib --input " + name + ".json --output " + name + ".v -p \"rungenerators; wireclocks-clk; deletedeadinstances; add-dummy-inputs\"");
+  int to_verilog_res = cmd("${COREIR_PATH}/bin/coreir --inline --load_libs commonlib,cwlib --input " + name + ".json --output " + name + ".v -p \"rungenerators; wireclocks-clk; wireclocks-arst; deletedeadinstances; add-dummy-inputs\"");
   assert(to_verilog_res == 0);
 }
 
@@ -12250,7 +12252,7 @@ void generate_verilog_tb(const std::string& name) {
 void generate_garnet_verilog_top(CodegenOptions& options, const std::string& name) {
 
     cmd("echo $LD_LIBRARY_PATH");
-  int to_verilog_res = cmd("${COREIR_PATH}/bin/coreir --inline --load_libs commonlib,cwlib,cgralib --input " + options.dir  + "/"+name +".json --output " + name + ".v -p \"rungenerators; wireclocks-clk; deletedeadinstances; add-dummy-inputs\"");
+  int to_verilog_res = cmd("${COREIR_PATH}/bin/coreir --inline --load_libs commonlib,cwlib,cgralib --input " + options.dir  + "/"+name +".json --output " + name + ".v -p \"rungenerators; wireclocks-clk; wireclocks-arst; deletedeadinstances; add-dummy-inputs\"");
   assert(to_verilog_res == 0);
 
   //run verilator on all the generated verilog
@@ -12275,7 +12277,7 @@ void generate_cgra_tb(std::map<string, UBuffer> buffers_opt, prog prg, CodegenOp
   generate_verilog_tb(prg.name);
 }
 
-void generate_garnet_coreir(std::map<string, UBuffer> buffers_opt, prog prg, CodegenOptions& opt, schedule_info& hwinfo, bool use_dse_compute, bool for_metamapper) {
+void generate_garnet_coreir(std::map<string, UBuffer> buffers_opt, prog prg, CodegenOptions& opt, schedule_info& hwinfo, bool use_dse_compute, bool for_metamapper, string dse_compute_filename) {
   CoreIR::Context* context = CoreIR::newContext();
   CoreIRLoadLibrary_commonlib(context);
   CoreIRLoadLibrary_cwlib(context);
@@ -12284,9 +12286,9 @@ void generate_garnet_coreir(std::map<string, UBuffer> buffers_opt, prog prg, Cod
 
   //TODO: add lake memory tile configuration here
 
-  auto sched = global_schedule_from_buffers(buffers_opt);
+  umap* sched = global_schedule_from_buffers(buffers_opt);
   if (for_metamapper) {
-    generate_coreir_for_metamapper(opt, buffers_opt, prg, sched, hwinfo);
+    generate_coreir_without_ctrl(opt, buffers_opt, prg, sched, hwinfo, dse_compute_filename);
   } else {
     generate_coreir(opt, buffers_opt, prg, sched, hwinfo);
   }
@@ -13644,7 +13646,7 @@ void lake_resnet_test() {
     if ((b.second.get_in_ports().size() && b.second.get_out_ports().size()) == 0)
         continue;
     b.second.generate_banks_and_merge(options);
-    b.second.print_bank_info();
+    b.second.print_bank_info(); 
 
     //Assign an configuration file,
     //json config_reg_map = parse_config_file("conv33_configuration.txt");
@@ -14122,7 +14124,7 @@ void Init_PE_energy_cost(power_analysis_params& power_params)  {
 }
 
 
-void compile_for_garnet_single_port_mem(prog & prg, string dir, bool gen_smt_stream, bool gen_config_only,bool multi_accessor, bool use_dse_compute, bool for_metamapper);
+void compile_for_garnet_single_port_mem(prog & prg, string dir, bool gen_smt_stream, bool gen_config_only,bool multi_accessor, bool use_dse_compute, bool for_metamapper, string dse_compute_filename);
 void cpy_app_to_folder(const std::string& app_type, const std::string& prg_name);
 
 void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, string dir="aha_garnet_design") {
@@ -14164,7 +14166,7 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
     auto cpu = unoptimized_result(prg);
 
     //compile_for_garnet_platonic_mem(prg);
-    compile_for_garnet_single_port_mem(prg, dir, false, gen_config_only, multi_accessor, false, false);
+    compile_for_garnet_single_port_mem(prg, dir, false, gen_config_only, multi_accessor, false, false, "");
     generate_regression_testbench(prg);
 
     cout << "Output name: " << prg.name << endl;
@@ -17488,7 +17490,8 @@ void compile_for_garnet_single_port_mem(prog& prg,
         bool config_gen_only,
         bool multi_sram,
         bool use_dse_compute,
-        bool for_metamapper) {
+        bool for_metamapper,
+        string dse_compute_filename) {
 
   //make sure the loop bound and address is positive
   normalize_bounds(prg);
@@ -17543,7 +17546,7 @@ void compile_for_garnet_single_port_mem(prog& prg,
   //PE_energy_cost_instance_model(power_params, power_stats, prg);
   //PE_energy_cost(power_params, power_stats, prg);
 
-  generate_garnet_coreir(buffers_opt, prg, options, sched, use_dse_compute, for_metamapper);
+  generate_garnet_coreir(buffers_opt, prg, options, sched, use_dse_compute, for_metamapper, dse_compute_filename);
   if (!options.config_gen_only) {
     generate_garnet_verilog_top(options, prg.name);
     generate_garnet_verilator_tb(prg, hw_sched, buffers_opt);

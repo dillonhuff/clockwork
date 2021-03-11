@@ -2080,15 +2080,15 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
     prog& prg,
     umap* schedmap,
     CoreIR::Context* context,
-    schedule_info& hwinfo) {
+    schedule_info& hwinfo,
+    string dse_compute_filename) {
 
   Module* ub = coreir_moduledef(options, buffers, prg, schedmap, context, hwinfo);
 
   bool found_compute = true;
   string compute_file = "./coreir_compute/" + prg.name + "_compute.json";
   if (hwinfo.use_dse_compute) {
-    compute_file = "./dse_compute/" + prg.name + "_mapped.json";
-    //compute_file = "./dse_apps/" + prg.name + ".json";
+    compute_file = dse_compute_filename;
   }
   ifstream cfile(compute_file);
   if (!cfile.good()) {
@@ -2911,7 +2911,7 @@ void generate_coreir(CodegenOptions& options,
 
   CoreIR::Module* prg_mod;
   if (options.rtl_options.use_prebuilt_memory) {
-    prg_mod = generate_coreir_without_ctrl(options, buffers, prg, schedmap, context, hwinfo);
+    prg_mod = generate_coreir_without_ctrl(options, buffers, prg, schedmap, context, hwinfo, "");
   } else {
     prg_mod = generate_coreir(options, buffers, prg, schedmap, context, hwinfo);
   }
@@ -2947,11 +2947,12 @@ void generate_coreir(CodegenOptions& options,
   deleteContext(context);
 }
 
-void generate_coreir_for_metamapper(CodegenOptions& options,
+void generate_coreir_without_ctrl(CodegenOptions& options,
     map<string, UBuffer>& buffers,
     prog& prg,
     umap* schedmap,
-    schedule_info& hwinfo) {
+    schedule_info& hwinfo, 
+    string dse_compute_filename) {
 
 
   CoreIR::Context* context = CoreIR::newContext();
@@ -2968,8 +2969,13 @@ void generate_coreir_for_metamapper(CodegenOptions& options,
 
   CoreIR::Module* prg_mod;
  
-  prg_mod = generate_coreir_without_ctrl(options, buffers, prg, schedmap, context, hwinfo);
+  prg_mod = generate_coreir_without_ctrl(options, buffers, prg, schedmap, context, hwinfo, dse_compute_filename);
 
+  auto ns = context->getNamespace("global");
+  if(!saveToFile(ns, options.dir + prg.name + ".json", prg_mod)) {
+    cout << "Could not save ubuffer coreir" << endl;
+    context->die();
+  }
 
   map_memory(prg_mod);
 
