@@ -2972,8 +2972,12 @@ bool compile_regression_tb(const std::string& name) {
 }
 
 std::vector<std::string> run_regression_tb(const std::string& name) {
-  //int res = system(string("g++ -fstack-protector-all -std=c++11 regression_tb_" + name + ".cpp " + name + ".cpp").c_str());
-  int res = cmd("g++ -fstack-protector-all -std=c++11 -I /nobackup/setter/h2h/hwbuffer/clockwork regression_tb_" + name + ".cpp " + name + ".cpp");
+#ifndef CGRAFLOW
+  int res = system(string("g++ -fstack-protector-all -std=c++11 regression_tb_" + name + ".cpp " + name + ".cpp").c_str());
+#else
+  cmd("echo $CLKWRK_PATH");
+  int res = cmd("g++ -fstack-protector-all -std=c++11 -I $CLKWRK_PATH regression_tb_" + name + ".cpp " + name + ".cpp");
+#endif
   assert(res == 0);
 
   res = system("./a.out");
