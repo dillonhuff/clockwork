@@ -1738,7 +1738,7 @@ void emit_lake_config2csv(json data, ofstream& out) {
 void emit_lake_config_collateral(CodegenOptions options, string tile_name, json config_file) {
     cout << "\tGenerate collateral for buffer: " << tile_name << endl;
     string file_dir = options.dir + "lake_collateral/" + tile_name;
-    cmd("rm -r " + file_dir);
+    cmd("rm -rf " + file_dir);
     cmd("mkdir -p " + file_dir);
     for (auto it = config_file.begin(); it != config_file.end(); ++it) {
         cout << "\t\tconfig key: " << it.key() << ", " << it.value() << endl;
