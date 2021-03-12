@@ -1752,6 +1752,7 @@ void run_lake_verilog_codegen(CodegenOptions& options, string v_name, string ub_
   //cmd("export LAKE_CONTROLLERS=$PWD");
   //cout << "Runing cmd$ python /nobackup/joeyliu/aha/lake/tests/wrapper_lake.py -c " + options.dir + "lake_collateral/" + ub_ins_name + " -s True -n " + v_name  <<  endl;
   ASSERT(getenv("LAKE_PATH"), "Define env var $LAKE_PATH which is the /PathTo/lake");
+  cmd("echo $LAKE_PATH");
   int res_lake = cmd("python $LAKE_PATH/tests/wrapper_lake.py -c " + options.dir + "lake_collateral/" + ub_ins_name + " -s True -n " + v_name);
   assert(res_lake == 0);
   cmd("mkdir -p "+options.dir+"verilog");
