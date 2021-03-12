@@ -43,6 +43,9 @@ vector<string> cgra_flow_result(prog& prg, string dir) {
 void sanity_check(prog& prg, vector<string>& cpu, vector<string> & verilator_res) {
     compare("cgra_" + prg.name + "_cpu_vs_verilog_comparison", verilator_res, cpu);
     string app_type = "single_port_buffer";
+    cout << "*********************************************************" << endl;
+    cout << "*** Interconnect Agnostic Test on < " << prg.name << " > PASS ***"<< endl;
+    cout << "*********************************************************" << endl;
     cpy_app_to_folder(app_type, prg.name);
 }
 
@@ -51,7 +54,7 @@ void compile_app_for_garnet_single_port_mem(prog& prg, string dir) {
 
     //TODO: make this argument explicit to user
     bool multi_level_memory = false;
-    bool gen_config_only = true;
+    bool gen_config_only = false;
     bool gen_smt = false;
     bool use_dse_compute = false;
 
