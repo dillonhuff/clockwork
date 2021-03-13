@@ -257,6 +257,10 @@ prog fft8_unroll8() {
   hcompute_hw_output_stencil->add_load("f1_1_stencil", "3", "hw_output_s0_x_xi");
   hcompute_hw_output_stencil->add_store("hw_output_stencil", "hw_output_s0_y_yi", "hw_output_s0_x_xi");
   hcompute_hw_output_stencil->compute_unit_needs_index_variable("hw_output_s0_y_yi");
+  
+  cout << "**************************************************************************" << endl;
+  prg.pretty_print();
+  cout << "**************************************************************************" << endl;
 
   return prg;
 }
@@ -480,6 +484,10 @@ prog fft8_unroll4() {
   hcompute_hw_output_stencil->add_load("f1_1_stencil", "3", "hw_output_s0_x_xi");
   hcompute_hw_output_stencil->add_store("hw_output_stencil", "hw_output_s0_y_yi", "hw_output_s0_x_xi");
   hcompute_hw_output_stencil->compute_unit_needs_index_variable("hw_output_s0_y_yi");
+  
+  cout << "**************************************************************************" << endl;
+  prg.pretty_print();
+  cout << "**************************************************************************" << endl;
 
   return prg;
 }
@@ -683,6 +691,10 @@ prog fft8_unroll2() {
   hcompute_hw_output_stencil->add_load("f1_1_stencil", "3", "hw_output_s0_x_xi");
   hcompute_hw_output_stencil->add_store("hw_output_stencil", "hw_output_s0_y_yi", "hw_output_s0_x_xi");
   hcompute_hw_output_stencil->compute_unit_needs_index_variable("hw_output_s0_y_yi");
+  
+  cout << "**************************************************************************" << endl;
+  prg.pretty_print();
+  cout << "**************************************************************************" << endl;
 
   return prg;
 }
@@ -879,6 +891,11 @@ prog fft8_unroll0() {
   hcompute_hw_output_stencil->add_store("hw_output_stencil", "hw_output_s0_y_yi", "hw_output_s0_x_xi");
   hcompute_hw_output_stencil->compute_unit_needs_index_variable("hw_output_s0_y_yi");
 
+
+  cout << "**************************************************************************" << endl;
+  prg.pretty_print();
+  cout << "**************************************************************************" << endl;
+  
   return prg;
 }
 

@@ -14243,8 +14243,6 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   test_apps.push_back(fft8_unroll8());
   
   
-  
-  
   // test_apps.push_back(mobilenet_unrolled());
   ////test_apps.push_back(unsharp());
 
@@ -14257,7 +14255,25 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
 
   //test_apps.push_back(resnet());
   for ( auto prg: test_apps) {
-    cout << "************************************************" << endl;
+    
+	
+    prg.sanity_check();
+
+    break_up_multi_channel_inputs(prg);
+    break_up_multi_channel_outputs(prg);
+    dsa_writers(prg);
+    auto cpu = unoptimized_result(prg);
+
+    //compile_for_garnet_platonic_mem(prg);
+    compile_for_garnet_single_port_mem(prg, dir, false, gen_config_only, multi_accessor, false);
+    generate_regression_testbench(prg);
+
+    cout << "Output name: " << prg.name << endl;
+    //run_verilator_tb(prg.name);
+    //TODO: move to a function
+    //run verilator on all the generated verilog
+	
+	cout << "************************************************" << endl;
     cout << "************************************************" << endl;
     cout << "************************************************" << endl;
     cout << "************************************************" << endl;
@@ -14275,22 +14291,7 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
     cout << "************************************************" << endl;
     cout << "************************************************" << endl;
 	
-    prg.sanity_check();
-
-    break_up_multi_channel_inputs(prg);
-    break_up_multi_channel_outputs(prg);
-    dsa_writers(prg);
-    prg.pretty_print();
-    auto cpu = unoptimized_result(prg);
-
-    //compile_for_garnet_platonic_mem(prg);
-    compile_for_garnet_single_port_mem(prg, dir, false, gen_config_only, multi_accessor, false);
-    generate_regression_testbench(prg);
-
-    cout << "Output name: " << prg.name << endl;
-    //run_verilator_tb(prg.name);
-    //TODO: move to a function
-    //run verilator on all the generated verilog
+	
     if (!gen_config_only) {
       string name = prg.name;
       auto verilog_files = get_files("./" + dir + "/"+name+"/verilog/");
