@@ -14379,6 +14379,7 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   //TODO:has issue  with multiple input
   //test_apps.push_back(demosaic_complex());
   //
+  test_apps.push_back(fft8_unroll8_ratematch());
   test_apps.push_back(fft8_unroll8());
   test_apps.push_back(gaussian());
   test_apps.push_back(conv_3_3());
@@ -14411,24 +14412,6 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   //test_apps.push_back(down_sample());
 
   for ( auto prg: test_apps) {
-    cout << "************************************************" << endl;
-    cout << "************************************************" << endl;
-    cout << "************************************************" << endl;
-    cout << "************************************************" << endl;
-    cout << "************************************************" << endl;
-    cout << "************************************************" << endl;
-    cout << "************************************************" << endl;
-    cout << "************************************************" << endl;
-	prg.pretty_print();
-	cout << "************************************************" << endl;
-    cout << "************************************************" << endl;
-    cout << "************************************************" << endl;
-    cout << "************************************************" << endl;
-    cout << "************************************************" << endl;
-    cout << "************************************************" << endl;
-    cout << "************************************************" << endl;
-    cout << "************************************************" << endl;
-
     prg.sanity_check();
 
     break_up_multi_channel_inputs(prg);
