@@ -1,4 +1,4 @@
-app_name=unoptimized_three_level_pond_copy
+app_name=unoptimized_fft8_unroll8
 cd soda_code
 ./run_tb.sh || { echo 'soda compilation failed'; exit 1; }
 cd ..
