@@ -22,13 +22,13 @@ int main(int argc, char **argv) {
   size_t total_size_bytes = 0;
   size_t total_size_bytes_read = 0;
   size_t total_size_bytes_written = 0;
-  const int pw_math_in03_read_pipe0_DATA_SIZE = num_epochs*4489;
+  const int pw_math_in03_read_pipe0_DATA_SIZE = num_epochs*5041;
   const int pw_math_in03_read_BYTES_PER_PIXEL = 32 / 8;
   size_t pw_math_in03_read_size_bytes = pw_math_in03_read_BYTES_PER_PIXEL * pw_math_in03_read_pipe0_DATA_SIZE;
 
   total_size_bytes += pw_math_in03_read_size_bytes;
   total_size_bytes_read += pw_math_in03_read_size_bytes;
-  const int pw_math_lp_in_on_chip_0_buf48_reconstruct_lp70_buf737982_write_pipe0_DATA_SIZE = num_epochs*4489;
+  const int pw_math_lp_in_on_chip_0_buf48_reconstruct_lp70_buf737982_write_pipe0_DATA_SIZE = num_epochs*5041;
   const int pw_math_lp_in_on_chip_0_buf48_reconstruct_lp70_buf737982_write_BYTES_PER_PIXEL = 32 / 8;
   size_t pw_math_lp_in_on_chip_0_buf48_reconstruct_lp70_buf737982_write_size_bytes = pw_math_lp_in_on_chip_0_buf48_reconstruct_lp70_buf737982_write_BYTES_PER_PIXEL * pw_math_lp_in_on_chip_0_buf48_reconstruct_lp70_buf737982_write_pipe0_DATA_SIZE;
 
@@ -108,7 +108,7 @@ int main(int argc, char **argv) {
   OCL_CHECK(err, cl::Buffer pw_math_in03_read_pipe0_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_WRITE_ONLY, pw_math_in03_read_size_bytes, pw_math_in03_read_pipe0.data(), &err));
   OCL_CHECK(err, err = krnl_vector_add.setArg(1, pw_math_in03_read_pipe0_ocl_buf));
 
-  uint64_t transfer_size = num_epochs*(4489 / 1);
+  uint64_t transfer_size = num_epochs*(5041 / 1);
   OCL_CHECK(err, err = krnl_vector_add.setArg(2, transfer_size));
 
   std::cout << "Migrating memory" << std::endl;

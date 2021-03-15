@@ -14394,9 +14394,9 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   //DNN apps
   test_apps.push_back(resnet_simple());
   test_apps.push_back(resnet());
-  test_apps.push_back(mobilenet_unrolled());
 
   //Big applications
+  test_apps.push_back(mobilenet_unrolled());
   //test_apps.push_back(resnet88());
   //test_apps.push_back(resnet88_chain());
 
@@ -22195,7 +22195,7 @@ void resource_sharing_test() {
   //prg.add_output("out");
 
   //pointwise("ina", "id", "in", 1, prg);
-  
+
   //auto lo = prg.add_loop("y", 0, 1)->add_op("soc");
   //lo->add_load("ina", "y");
   //lo->add_load("ina", "y+1");
