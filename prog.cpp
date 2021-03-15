@@ -1953,6 +1953,235 @@ void generate_compute_op(
 
 }
 
+isl_set* mk_set(isl_ctx* c, const vector<string>& vars, const vector<string>& constraints) {
+  string s = curlies(bracket_list(vars) + " : " + sep_list(constraints, "", "", " and "));
+  return isl_set_read_from_str(c, s.c_str());
+}
+
+std::string resource_sharing_loop_codegen(umap* schedmap, const int d) {
+  auto time_range = coalesce(range(schedmap));
+  auto sets = get_sets(time_range);
+
+  assert(sets.size() == 1);
+  isl_set* s = pick(get_sets(time_range));
+  assert(s != nullptr);
+
+  if (d == num_dims(s) - 1) {
+    return perfect_loop_codegen(schedmap);
+  }
+
+  vector<isl_map*> maps = get_maps(schedmap);
+  vector<pair<string, pair<int, int> > > bounds;
+  vector<int> split_points;
+  for (auto m : maps) {
+    isl_set* rng = project_all_but(range(m), d);
+    bounds.push_back({domain_name(m), {to_int(lexminval(rng)), to_int(lexmaxval(rng))}});
+    split_points.push_back(bounds.back().second.first);
+    split_points.push_back(bounds.back().second.second);
+  }
+
+  cout << "Bounds..." << endl;
+  for (auto b : bounds) {
+    cout << b.first << " -> " << b.second.first << ", " << b.second.second << endl;
+  }
+
+  vector<int> breakpts = sort_unique(split_points);
+  cout << "Points to split..." << endl;
+  for (auto b : breakpts) {
+    cout << tab(1) << b << endl;
+  }
+
+  assert(breakpts.size() > 0);
+
+  vector<pair<int, int> > intervals;
+  for (int i = 0; i < (int) breakpts.size() - 1; i++) {
+    intervals.push_back({breakpts[i], breakpts[i + 1]});
+  }
+
+  if (intervals.size() == 0) {
+    return resource_sharing_loop_codegen(schedmap, d + 1);
+  }
+
+  cout << "Intervals..." << endl;
+  vector<isl_set*> interval_sets;
+  int idx = 0;
+  for (auto i : intervals) {
+    cout << tab(1) << i.first << ", " << i.second << endl;
+    vector<string> constraints;
+    vector<string> vars;
+    for (int di = 0; di < num_dims(s); di++) {
+      string v = "d" + str(di);
+      vars.push_back(v);
+      if (di == d) {
+        constraints.push_back(str(i.first) + " <= " + v + ((idx == (int) intervals.size() - 1) ? " <= " : " < ") + str(i.second));
+      } 
+    }
+    isl_set* is = mk_set(ctx(s), vars, constraints);
+    interval_sets.push_back(is);
+    idx++;
+  }
+  cout << endl;
+  cout << "Restrictions..." << endl;
+  idx = 0;
+  ostringstream out;
+  for (auto is : interval_sets) {
+    out << tab(1) << "{" << endl;
+    auto i = intervals.at(idx);
+    string var = "d" + str(d);
+    //cout << "for (" << var << " = " << i.first << "; " << var << " " << ((idx == (int) intervals.size() - 1) ? " <= " : " < ") << " " << i.second << "; " << var << "++)" << endl;
+    umap* r = its_range(schedmap, to_uset(is));
+    //out << perfect_loop_codegen(r) << endl << endl;
+    out << resource_sharing_loop_codegen(r, d + 1) << endl << endl;
+    out << tab(1) << "}" << endl;
+    idx++;
+  }
+
+  cout << "Schedule maps..." << endl;
+
+  return out.str();
+}
+
+std::string resource_sharing_loop_codegen(umap* schedmap) {
+  return resource_sharing_loop_codegen(schedmap, 0);
+}
+
+std::string non_blocking_loop_codegen(umap* schedmap, prog& prg) {
+  ostringstream conv_out;
+  auto time_range = coalesce(range(schedmap));
+  conv_out << "// time range: " << str(time_range) << endl;
+  auto sets = get_sets(time_range);
+
+  conv_out << "// # sets: " << sets.size() << endl;
+  assert(sets.size() == 1);
+  isl_set* s = pick(get_sets(time_range));
+  //isl_set* index_ranges = isl_set_project_out(cpy(s), isl_dim_set, num_dims(s) - 1, 1);
+  vector<int> lower_bounds;
+  vector<int> upper_bounds;
+  vector<string> constraint_list;
+  vector<string> dvs;
+  for (int d = 0; d < num_dims(s); d++) {
+    auto ds = project_all_but(s, d);
+    auto lm = lexminval(ds);
+    auto lmax = lexmaxval(ds);
+    lower_bounds.push_back(to_int(lm));
+    upper_bounds.push_back(to_int(lmax));
+
+    if (d < num_dims(s) - 1) {
+      string vn = "d" + str(d);
+      dvs.push_back(vn);
+      constraint_list.push_back(str(lower_bounds.back()) + " <= " + vn + " <= " + str(upper_bounds.back()));
+    }
+  }
+
+
+  string range_set =
+    curlies(bracket_list(dvs) + " : " + sep_list(constraint_list, "", "", " and "));
+  isl_set* index_ranges =
+    rdset(ctx(schedmap), range_set);
+
+  conv_out << tab(1) << "int current_stmt = 0;";
+  for (int i = 0; i < lower_bounds.size() - 1; i++) {
+    int trip_count = upper_bounds.at(i) - lower_bounds.at(i) + 1;
+    if (trip_count == 1) {
+      conv_out << tab(i) << "int i" << str(i) << " = " << lower_bounds.at(i) << ";" << endl;
+    } else {
+      string var = "i" + str(i);
+      conv_out << tab(i) << "int i" << str(i) << " = " << lower_bounds.at(i) << ";" << endl;
+      conv_out << tab(i) << "while (" << var << " <= " << upper_bounds.at(i) << ") {" << endl;
+    }
+    if (i == ((int) lower_bounds.size()) - 2) {
+      conv_out << "#pragma HLS pipeline II=1" << endl;
+    }
+  }
+
+  map<string, int> order;
+  for (auto time_to_val : get_maps(inv(schedmap))) {
+    //cout << "Time to val: " << str(time_to_val) << endl;
+    auto val_to_time = inv(time_to_val);
+    //cout << "Val to time: " << str(val_to_time) << endl;
+    auto last_dim =
+      isl_map_project_out(cpy(val_to_time), isl_dim_out, 0, lower_bounds.size() - 1);
+    //cout << "Val to last: " << str(last_dim) << endl;
+    isl_aff* lda = get_aff(last_dim);
+    int const_val = -1;
+    if (is_cst(lda)) {
+      //cout << tab(1) << "Constant!" << endl;
+      const_val = to_int(const_coeff(lda));
+    } else {
+      cout << "Error: Final schedule dimension: " << str(lda) << " is not constant" << endl;
+      assert(false);
+    }
+    assert(const_val >= 0);
+    //cout << tab(1) << "C = " << const_val << endl;
+    //cout << endl;
+    order[range_name(time_to_val)] = const_val;
+  }
+
+  vector<isl_map*> maps = get_maps(inv(schedmap));
+  sort_lt(maps, [order](isl_map* x) {
+      return map_find(range_name(x), order);
+      });
+
+  int num_stmts = maps.size();
+  assert(num_stmts > 0);
+
+  int last_stmt = num_stmts - 1;
+  assert(last_stmt >= 0);
+
+  conv_out << tab(lower_bounds.size() - 2) << "if (current_stmt == " << last_stmt + 1 << ") { current_stmt = 0; }" << endl << endl;
+
+  int current_stmt = 0;
+  for (auto tv : maps) {
+    auto time_to_val = isl_map_project_out(cpy(tv), isl_dim_in, num_in_dims(tv) - 1, 1);
+
+    cout << "Getting statement name from: " << str(time_to_val) << endl;
+    string stmt = range_name(time_to_val);
+
+    auto pw = isl_pw_multi_aff_from_map(time_to_val);
+    vector<pair<isl_set*, isl_multi_aff*> > pieces =
+      get_pieces(pw);
+    assert(pieces.size() == 1);
+
+    auto saff = pieces.at(0).second;
+    auto dom = pieces.at(0).first;
+    dom = gist(dom, index_ranges);
+
+
+    cout << "Stmt: " << stmt << endl;
+
+    op* s = prg.find_op(stmt);
+    vector<string> check_str{"true"};
+    for (auto b : s->buffers_read()) {
+      if (elem(b, prg.ins)) {
+        check_str.push_back("!" + parens(b + ".is_empty()"));
+      }
+    }
+    string not_blocked = sep_list(check_str, "(", ")", " && ");
+
+
+    conv_out << tab(lower_bounds.size()) << "if (" << "current_stmt == " << current_stmt << " && !" << codegen_c(dom) << ") {" << endl;
+    conv_out << tab(lower_bounds.size() + 1) << "current_stmt++;" << endl;
+    conv_out << tab(lower_bounds.size()) << "} else if (" << "current_stmt == " << current_stmt << " && " << not_blocked << " && " << codegen_c(dom) << ") {" << endl;
+    conv_out << tab(lower_bounds.size() + 1) << codegen_c(saff) << ";" << endl;
+    conv_out << tab(lower_bounds.size() + 1) << "current_stmt++;" << endl;
+    conv_out << tab(lower_bounds.size()) << "}" << endl;
+
+    current_stmt++;
+  }
+
+  for (int i = ((int) lower_bounds.size()) - 2; i >= 0; i--) {
+    int trip_count = upper_bounds.at(i) - lower_bounds.at(i) + 1;
+    if (trip_count == 1) {
+    } else {
+      conv_out << tab(i+1) << "i" << i << " = current_stmt == " << last_stmt + 1 << " ? i" << i << " + 1 : i" << i << ";" << endl;
+      conv_out << tab(i) << "}" << endl;
+    }
+
+  }
+
+  return conv_out.str();
+}
+
 std::string perfect_loop_codegen(umap* schedmap) {
   ostringstream conv_out;
   auto time_range = coalesce(range(schedmap));
@@ -2001,24 +2230,24 @@ std::string perfect_loop_codegen(umap* schedmap) {
 
   map<string, int> order;
   for (auto time_to_val : get_maps(inv(schedmap))) {
-    cout << "Time to val: " << str(time_to_val) << endl;
+    //cout << "Time to val: " << str(time_to_val) << endl;
     auto val_to_time = inv(time_to_val);
-    cout << "Val to time: " << str(val_to_time) << endl;
+    //cout << "Val to time: " << str(val_to_time) << endl;
     auto last_dim =
       isl_map_project_out(cpy(val_to_time), isl_dim_out, 0, lower_bounds.size() - 1);
-    cout << "Val to last: " << str(last_dim) << endl;
+    //cout << "Val to last: " << str(last_dim) << endl;
     isl_aff* lda = get_aff(last_dim);
     int const_val = -1;
     if (is_cst(lda)) {
-      cout << tab(1) << "Constant!" << endl;
+      //cout << tab(1) << "Constant!" << endl;
       const_val = to_int(const_coeff(lda));
     } else {
       cout << "Error: Final schedule dimension: " << str(lda) << " is not constant" << endl;
       assert(false);
     }
     assert(const_val >= 0);
-    cout << tab(1) << "C = " << const_val << endl;
-    cout << endl;
+    //cout << tab(1) << "C = " << const_val << endl;
+    //cout << endl;
     order[range_name(time_to_val)] = const_val;
   }
 
@@ -2028,10 +2257,10 @@ std::string perfect_loop_codegen(umap* schedmap) {
       });
 
   for (auto tv : maps) {
-    cout << tab(1) << "tv: " << str(tv) << endl;
-    cout << tab(2) << "start project out at: " << num_in_dims(tv) - 1 << endl;
+    //cout << tab(1) << "tv: " << str(tv) << endl;
+    //cout << tab(2) << "start project out at: " << num_in_dims(tv) - 1 << endl;
     auto time_to_val = isl_map_project_out(cpy(tv), isl_dim_in, num_in_dims(tv) - 1, 1);
-    cout << "time to val: " << str(time_to_val) << endl;
+    //cout << "time to val: " << str(time_to_val) << endl;
     auto pw = isl_pw_multi_aff_from_map(time_to_val);
     vector<pair<isl_set*, isl_multi_aff*> > pieces =
       get_pieces(pw);
@@ -2039,10 +2268,10 @@ std::string perfect_loop_codegen(umap* schedmap) {
 
     auto saff = pieces.at(0).second;
     auto dom = pieces.at(0).first;
-    cout << "dom: " << str(dom) << endl;
-    cout << "irn: " << str(index_ranges) << endl;
+    //cout << "dom: " << str(dom) << endl;
+    //cout << "irn: " << str(index_ranges) << endl;
     dom = gist(dom, index_ranges);
-    cout << "ctx: " << str(dom) << endl;
+    //cout << "ctx: " << str(dom) << endl;
     //assert(false);
     conv_out << tab(lower_bounds.size()) << "// " << str(dom) << endl;
     for (auto bs : get_basic_sets(dom)) {
@@ -2245,6 +2474,10 @@ void generate_app_code_op_logic(
     // Do nothing, leave code string
   } else if (options.hls_loop_codegen == HLS_LOOP_CODEGEN_PERFECT) {
     code_string = perfect_loop_codegen(schedmap);
+  } else if (options.hls_loop_codegen == HLS_LOOP_CODEGEN_CYLINDRICAL) {
+    code_string = resource_sharing_loop_codegen(schedmap);
+  } else if (options.hls_loop_codegen == HLS_LOOP_CODEGEN_NON_BLOCKING) {
+    code_string = non_blocking_loop_codegen(schedmap, prg);
   } else {
     assert(options.hls_loop_codegen == HLS_LOOP_CODEGEN_ISL);
     code_string = codegen_c(schedmap);
@@ -2256,9 +2489,7 @@ void generate_app_code_op_logic(
 
   for (auto op : prg.all_ops()) {
     regex re("(\n\t\\s+)" + op->name + "\\((.*)\\);");
-    //string args_list = sep_list(buffer_arg_names(buffers, op, prg), "", "", ", ");
     string args_list = sep_list(buffer_arg_names(op, prg), "", "", ", ");
-    //code_string = regex_replace(code_string, re, "\n\t" + op->name + "(" + args_list + ", $1);");
     code_string = regex_replace(code_string, re, "$1" + op->name + "(" + args_list + ", $2);");
   }
 
@@ -2273,9 +2504,6 @@ void generate_app_code_op_logic(
   }
   conv_out << endl;
 
-  //conv_out << tab(1) << "/*" << endl;
-  //conv_out << original_isl_code_string << endl;
-  //conv_out << tab(1) << "*/" << endl;
   conv_out << code_string << endl;
 
   generate_driver_function_suffix(options, conv_out, buffers, prg);
@@ -2370,37 +2598,6 @@ void generate_optimized_code(CodegenOptions& options, prog& prg) {
 
     umap* pre_its_sched =
       clockwork_schedule_umap_reversed(cpy(dom), valid_deps, valid_deps);
-    //cout << "Pre its sched: " << str(pre_its_sched) << endl;
-    //cout << "dom: " << str(dom) << endl;
-    //for (auto m : get_maps(pre_its_sched)) {
-      //for (auto s : get_sets(dom)) {
-        //if (name(s) == domain_name(m)) {
-          //cout << "Matching domains: " << endl;
-          //cout << tab(1) << str(s) << endl;
-          //cout << tab(1) << str(m) << endl << endl;
-
-          //assert(ctx(m) == ctx(s));
-
-          //isl_space* s_dspace = get_space(s);
-          //isl_space* m_dspace = get_space(domain(m));
-
-          //isl_id* dspace_id = isl_space_get_tuple_id(s_dspace, isl_dim_set);
-          //cout << tab(1) << "dspace_id       = " << str(dspace_id) << endl;
-          //isl_id* other_dspace_id = isl_space_get_tuple_id(m_dspace, isl_dim_set);
-          //cout << tab(1) << "other_dspace_id = " << str(other_dspace_id) << endl;
-
-          //cout << tab(1) << "s_dspace: " << str(s_dspace) << endl;
-          //cout << tab(1) << "m_dspace: " << str(m_dspace) << endl;
-
-          //assert(isl_space_has_equal_params(s_dspace, m_dspace));
-          //assert(isl_space_has_equal_tuples(s_dspace, m_dspace));
-          //assert(isl_space_is_equal(s_dspace, m_dspace));
-
-          //isl_map* ints = its(m, s);
-          //cout << tab(1) << "Intersection: " << str(ints) << endl;
-        //}
-      //}
-    //}
     sched =
       its(pre_its_sched, dom);
     cout << "Post its sched: " << str(sched) << endl;
@@ -4509,7 +4706,16 @@ isl_schedule* prog::optimized_schedule() {
   cout << "Computing schedule for: " << str(domain) << endl << tab(1) << " subject to " << str(validity) << endl;
   cout << "Getting schedule..." << endl;
 
+  double total_elapsed = 0.;
+  auto start = std::chrono::system_clock::now();
+
   isl_schedule* sched = isl_union_set_compute_schedule(domain, validity, proximity);
+
+  auto end = std::chrono::system_clock::now();
+  std::chrono::duration<double> elapsed = end - start;
+  total_elapsed += elapsed.count();
+
+  cout << "### Schedule elapsed: " << total_elapsed << endl;
 
   cout << endl;
   cout << "Result: " << str(sched) << endl;
@@ -8910,7 +9116,7 @@ void set_channel_depths_by_assumed_stage_depth(const int kernel_depth, app_dag& 
     obj.push_back({channel, isl_val_one(builder.ctx)});
   }
 
-  vector<string> sorted_groups = dag.sorted_fusion_groups();
+  vector<string> sorted_groups = dag.sorted_fusion_groups().get_value();
   cout << "# of nodes to process: " << sorted_groups.size() << endl;
   int processed = 0;
   for (auto next_group : sorted_groups) {
@@ -9016,6 +9222,52 @@ void set_channel_depths_to_constant(const int constant, app_dag& dag) {
   }
 }
 
+umap* clockwork_schedule_prog(prog& prg) {
+  auto valid_deps = prg.validity_deps();
+  double total_elapsed = 0.;
+  auto start = std::chrono::system_clock::now();
+
+  auto ss =
+    clockwork_schedule_umap_reversed(prg.whole_iteration_domain(), valid_deps, valid_deps);
+
+  auto end = std::chrono::system_clock::now();
+  std::chrono::duration<double> elapsed = end - start;
+  total_elapsed += elapsed.count();
+
+  cout << "### Clockwork Schedule elapsed: " << total_elapsed << endl;
+  auto global_sched =
+    its(ss, prg.whole_iteration_domain());
+
+  return global_sched;
+}
+
+void generate_resource_sharing_code(
+    CodegenOptions& options,
+    app_dag& dag) {
+
+  auto valid_deps = dag.prg.validity_deps();
+  auto global_sched =
+    its(clockwork_schedule_umap_reversed(dag.prg.whole_iteration_domain(), valid_deps, valid_deps),
+        dag.prg.whole_iteration_domain());
+  cout << "Sched: " << str(global_sched) << endl;
+
+  string code_string = resource_sharing_loop_codegen(global_sched);
+
+  cout << "Code: " << endl;
+  cout << code_string << endl;
+
+  // What are the major changes that are needed?
+  //  - We have to have one C++ function that takes in
+  //    inputs from every channel and does compute ops on them 
+  //  - Compute units in other operations have to be done
+  //    by writing data to a channel and then reading it back
+  //    from another channel
+  // Q: How much of this can be done by modifying the existing
+  //    DAG codegen that I have?
+
+  assert(false);
+}
+
 void generate_app_code(
     CodegenOptions& options,
     app_dag& dag) {
@@ -9061,11 +9313,15 @@ void generate_app_code(
   ofstream conv_out(dag.prg.name + ".cpp");
   generate_app_prefix(options, conv_out, dag.prg);
 
+  int capacity = 0;
   for (auto& b : buffers) {
     if (!elem(b.first, boundary_bufs)) {
       generate_hls_code(options, conv_out, b.second);
+      capacity += buffer_capacity(b.second);
     }
   }
+  conv_out << "// Total re-use buffer capacity: " << capacity << " bits" << endl;
+  
 
   for (auto& gp : dag.fusion_group_progs) {
     vector<umap*> sched_maps;
@@ -9124,12 +9380,9 @@ void generate_app_code(
   } else {
     set_channel_depths_by_assumed_stage_depth(options.slack_matching.depth, dag);
   }
-  //set_channel_depths_by_stage_depths(dag);
-  //set_channel_depths_to_constant(32, dag);
-  //set_channel_depths_to_constant(1, dag);
-  //set_channel_depths_to_with_kernel_depth(500, dag);
-  //set_channel_depths_ilp(500, dag);
 
+  int bits_for_causality = 0;
+  int bits_for_slack_matching = 0;
   for (auto c : dag.inter_group_channels()) {
     cout << tab(1) << c << endl;
     UBuffer buf = map_find(c, buffers);
@@ -9158,18 +9411,27 @@ void generate_app_code(
       max_dd =
         compute_max_dd(buf, pick(map_find(rep, buf.port_bundles)));
 
-      //for (auto inpt : buf.get_in_ports()) {
-        //int mdd = compute_max_dd(buf, inpt);
-        //cout << tab(1) << "MDD = " << mdd << endl;
-        //if (mdd > max_dd) {
-          //max_dd = mdd;
-        //}
-      //}
+      int channel_width =
+        map_find(rep, buf.port_bundles).size();
+      int slack_bits = (buf.port_widths)*dag.channel_sizes[c]*channel_width;
+      bits_for_slack_matching += slack_bits;
+
+      conv_out << tab(1) << "// channel width: " << channel_width << endl;
+      conv_out << tab(1) << "// port width   : " << buf.port_widths << endl;
+      conv_out << tab(1) << "// dag size     : " << dag.channel_sizes[c] << endl;
+      conv_out << "// Bits to slack match " << c << " = " << slack_bits << endl;
+      conv_out << "// Bits to slack match " << c << " = " << slack_bits << endl;
+
+      bits_for_causality += (buf.port_widths) * max_dd * channel_width;
+
       dag.channel_sizes[c] += max_dd;
-      //assert(max_dd == 0);
     }
 
   }
+
+  conv_out << "// Bits in internal re-use buffers               : " << capacity << " bits" << endl;
+  conv_out << "// Bits in channels needed to guarantee causality: " << bits_for_causality << endl;
+  conv_out << "// Bits in channels needed to match slack        : " << bits_for_slack_matching << endl;
 
   for (auto& gp : dag.fusion_group_progs) {
     for (auto& buf : gp.second.boundary_buffers()) {
@@ -9191,7 +9453,16 @@ void generate_app_code(
 
   conv_out << endl << endl;
 
-  for (auto& gpn : dag.sorted_fusion_groups()) {
+  auto sorted_gps = dag.sorted_fusion_groups();
+  vector<string> gps;
+  for (auto g : dag.fusion_groups) {
+    gps.push_back(g.first);
+  }
+  if (sorted_gps.has_value()) {
+    gps = sorted_gps.get_value();
+  }
+  //for (auto& gpn : dag.sorted_fusion_groups()) {
+  for (auto& gpn : gps) {
     auto& gp = dag.fusion_group_progs.at(gpn);
     vector<string> args;
     for (auto in : gp.ins) {
@@ -9388,36 +9659,94 @@ vector<string> sort_group(const std::set<string>& group, prog& prg) {
   return sorted;
 }
 
-void make_groups_contiguous(const std::map<std::string, std::set<std::string> >& fusion_groups, prog& prg) {
-  for (auto gp : fusion_groups) {
-    cout << "Getting start pos" << endl;
-    int start_pos = get_start_pos(gp.second, prg);
-    //cout << "Sorting kernels" << endl;
-    //vector<string> kernels = sort_group(gp.second, prg);
-    //cout << "Adding sorted kernels" << endl;
-
-    vector<op*> new_children;
-    for (int i = 0; i < start_pos; i++) {
-      new_children.push_back(prg.root->children.at(i));
+string container(const std::string& val, const std::map<std::string, std::set<std::string> >& fusion_groups) {
+  for (auto g : fusion_groups) {
+    if (elem(val, g.second)) {
+      return g.first;
     }
+  }
+  assert(false);
+}
 
-    vector<op*> to_add;
-    for (int i = start_pos; i < (int) prg.root->children.size(); i++) {
-      op* current = prg.root->children.at(i);
-      if (elem(current->name, gp.second)) {
-        new_children.push_back(current);
-      } else {
-        to_add.push_back(current);
+void make_groups_contiguous(const std::map<std::string, std::set<std::string> >& fusion_groups, prog& prg) {
+
+  if (prg.root->children.size() == 0) {
+    return;
+  }
+
+  string active_group =
+    container(prg.root->children[0]->name, fusion_groups);
+  auto unprocessed_kernels = get_kernels(prg);
+
+  vector<op*> sorted_kernels;
+  while (unprocessed_kernels.size() > 0) {
+    string next_kernel = "";
+    for (auto k : unprocessed_kernels) {
+      if (container(k, fusion_groups) == active_group) {
+
+        bool all_ancestors_processed = true;
+        for (auto a : parents(k, prg)) {
+          if (elem(a, unprocessed_kernels)) {
+            all_ancestors_processed = false;
+            break;
+          }
+        }
+        if (all_ancestors_processed) {
+          next_kernel = k;
+          break;
+        }
       }
     }
 
-    for (auto op : to_add) {
-      new_children.push_back(op);
+    if (next_kernel == "") {
+      for (auto k : unprocessed_kernels) {
+        bool all_ancestors_processed = true;
+        for (auto a : parents(k, prg)) {
+          if (elem(a, unprocessed_kernels)) {
+            all_ancestors_processed = false;
+            break;
+          }
+        }
+        if (all_ancestors_processed) {
+          next_kernel = k;
+          break;
+        }
+      }
     }
+    assert(next_kernel != "");
 
-    assert(new_children.size() == prg.root->children.size());
-    prg.root->children = new_children;
+    sorted_kernels.push_back(prg.find_loop(next_kernel));
+    active_group = container(next_kernel, fusion_groups);
+    unprocessed_kernels.erase(next_kernel);
   }
+
+  assert(sorted_kernels.size() == prg.root->children.size());
+  prg.root->children = sorted_kernels;
+}
+
+op* last_writer_in_group(const std::string& buf, const std::set<string>& kernels, prog& prg) {
+  vector<op*> rc = prg.root->children;
+  reverse(rc);
+  for (auto c : rc) {
+    if (elem(c->name, kernels)) {
+      if (elem(buf, buffers_written(c))) {
+        return c;
+      }
+    }
+  }
+  cout << "No writer for " << buf << endl;
+  assert(false);
+}
+
+op* first_reader_in_group(const std::string& buf, const std::set<string>& kernels, prog& prg) {
+  for (auto c : prg.root->children) {
+    if (elem(c->name, kernels)) {
+      if (elem(buf, buffers_read(c))) {
+        return c;
+      }
+    }
+  }
+  assert(false);
 }
 
 std::map<std::string, std::set<std::string> >
@@ -9427,31 +9756,7 @@ insert_inter_group_buffers(const std::map<std::string, std::set<std::string> >& 
   make_groups_contiguous(fusion_groups, prg);
   cout << "Done contiguous" << endl;
 
-  assert(groups_are_contiguous(fusion_groups, prg));
-
-  map<string, string> group_starts;
-  map<string, string> group_ends;
-  for (auto gp : fusion_groups) {
-    for (auto kernel : get_kernels_in_order(prg)) {
-      if (elem(kernel, gp.second)) {
-        group_starts[gp.first] = kernel;
-        break;
-      }
-    }
-    vector<string> rev_kernels = get_kernels_in_order(prg);
-    reverse(rev_kernels);
-    for (auto kernel : rev_kernels) {
-      if (elem(kernel, gp.second)) {
-        group_ends[gp.first] = kernel;
-        break;
-      }
-    }
-  }
-
   // Map from buffers to the kernels they read
-  map<string, vector<string> > kernel_broadcasts;
-  map<string, vector<int> > kernel_orders;
-
   map<string, std::set<string> > produced_bufs;
   map<string, std::set<string> > consumed_bufs;
   map<string, string> producer_groups;
@@ -9465,6 +9770,8 @@ insert_inter_group_buffers(const std::map<std::string, std::set<std::string> >& 
   }
 
   cout << "=== Creating broadcast data structures..." << endl;
+  map<string, vector<int> > kernel_orders;
+  map<string, vector<string> > kernel_broadcasts;
   for (auto gp : fusion_groups) {
     cout << "GP..." << endl;
     auto produced = map_find(gp.first, produced_bufs);
@@ -9487,16 +9794,8 @@ insert_inter_group_buffers(const std::map<std::string, std::set<std::string> >& 
 
   map<pair<string, string>, isl_set*> read_by_gp;
   for (auto b : kernel_broadcasts) {
-    //auto consumers = prg.consumer_maps(b.first);
     for (auto group_name : b.second) {
       isl_set* s = read_by_group(b.first, map_find(group_name, fusion_groups), prg);
-      //cout << "Read by gp: " << str(s) << endl;
-      //for (auto m : consumers) {
-        //if (m.second != nullptr) {
-          //cout << tab(1) << "cm: " << str(m.second) << endl;
-          //s = unn(s, range(m.second));
-        //}
-      //}
       read_by_gp[{group_name, b.first}] = s;
     }
   }
@@ -9506,33 +9805,20 @@ insert_inter_group_buffers(const std::map<std::string, std::set<std::string> >& 
   prg.pretty_print();
 
   map<string, std::set<string> > fresh_groups = fusion_groups;
-  map<pair<string, string>, string> group_buffer_channels;
   for (auto b : kernel_broadcasts) {
-    auto consumers = prg.consumer_maps(b.first);
+    vector<int> kernel_order = map_find(b.first, kernel_orders);
     for (auto group_name : b.second) {
       isl_set* s = map_find({group_name, b.first}, read_by_gp);
 
       string broadcast = prg.un(b.first + "_to_" + group_name);
+      string incoming_channel = broadcast; 
       string producer_group = map_find(b.first, producer_groups);
 
       prg.buffer_port_widths[broadcast] = prg.buffer_port_width(name(s));
 
-      op* copy_loop = copy_after(prg.find_loop(map_find(producer_group, group_ends)), s, map_find(b.first, kernel_orders), broadcast, prg);
+      op* copy_insert_point = last_writer_in_group(b.first, map_find(producer_group, fusion_groups), prg);
+      op* copy_loop = copy_after(copy_insert_point, s, kernel_order, broadcast, prg);
       fresh_groups[producer_group].insert(copy_loop->name);
-
-      group_buffer_channels[{group_name, b.first}] = broadcast;
-    }
-  }
-
-  cout << "After adding copy buffers..." << endl;
-  prg.pretty_print();
-
-  for (auto b : kernel_broadcasts) {
-    auto consumers = prg.consumer_maps(b.first);
-    for (auto group_name : b.second) {
-      isl_set* s = map_find({group_name, b.first}, read_by_gp);
-      string incoming_channel = group_buffer_channels[{group_name, b.first}];
-      s = set_name(s, incoming_channel);
 
       string replacement = prg.un(b.first + "_FIFO_buf");
       prg.buffer_port_widths[replacement] = prg.buffer_port_width(incoming_channel);
@@ -9540,22 +9826,13 @@ insert_inter_group_buffers(const std::map<std::string, std::set<std::string> >& 
         prg.find_loop(kernel)->replace_reads_from(b.first, replacement);
       }
 
-      op* copy_loop = copy_before(prg.find_loop(map_find(group_name, group_starts)), s, map_find(b.first, kernel_orders), replacement, prg);
-      fresh_groups[group_name].insert(copy_loop->name);
+      isl_set* incoming = set_name(cpy(s), incoming_channel);
+      op* copy_r_insert_point = first_reader_in_group(replacement, map_find(group_name, fusion_groups), prg);
+      op* copy_loop_r = copy_before(copy_r_insert_point, incoming, kernel_order, replacement, prg);
+      fresh_groups[group_name].insert(copy_loop_r->name);
     }
   }
 
-
-  //cout << "After adding distributors..." << endl;
-  //prg.pretty_print();
-  //cout << "Groups..." << endl;
-  //for (auto gp : fresh_groups) {
-    //cout << tab(1) << gp.first << endl;
-    //for (auto k : gp.second) {
-      //cout << tab(2) << k << endl;
-    //}
-    //cout << endl;
-  //}
   return fresh_groups;
 }
 
@@ -9592,7 +9869,7 @@ void prog::reset_context() {
   ctx = isl_ctx_alloc();
 }
 
-vector<string> app_dag::sorted_fusion_groups() {
+maybe<vector<string> > app_dag::sorted_fusion_groups() {
   assert(fusion_groups.size() == fusion_group_progs.size());
 
   vector<string> sorted;
@@ -9631,9 +9908,9 @@ vector<string> app_dag::sorted_fusion_groups() {
         pg.second.pretty_print();
         cout << endl;
       }
+      return {};
     }
-    assert(found_sorted);
-
+    //assert(found_sorted);
   }
   return sorted;
 }
@@ -9687,6 +9964,20 @@ std::set<string> buffers_read(const std::string& to_merge, map<string, std::set<
     }
   }
   return read;
+}
+
+std::set<string> parents(const std::string& kernel, prog& prg) {
+  std::set<string> parent_set;
+
+  auto read = buffers_read(prg.find_loop(kernel));
+  for (auto k : get_kernels(prg)) {
+    auto written = buffers_written(prg.find_loop(k));
+    if (intersection(read, written).size() > 0) {
+      parent_set.insert(k);
+    }
+  }
+
+  return parent_set;
 }
 
 std::set<string> children(const std::string& kernel, prog& prg) {
