@@ -22548,6 +22548,8 @@ void scheduling_benchmarks() {
 }
 
 void application_tests() {
+  blur5_static_dynamic_comparison(2);
+
   resource_sharing_test();
   pyr_blnd_non_blocking_test();
 
