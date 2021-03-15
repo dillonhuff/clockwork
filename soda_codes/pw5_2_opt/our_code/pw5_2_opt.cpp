@@ -125,6 +125,20 @@ inline void t1_t1_1_merged12_write_bundle_write(hw_uint<64>& t1_1_merged12_write
 
 
 // Operation logic
+inline void t1_1_merged12(HWStream<hw_uint<64> >& /* buffer_args num ports = 2 */t1_arg, t1_cache& t1, int root, int t1_0, int t1_1) {
+  // Dynamic address computation
+
+	// Consume: t1_arg
+	auto t1_arg_1_m__lp_2_m_t1_1__p__1_rp___p__0_p_0_c_____1_m_t1_0__p__0_p_0_value = t1_arg.read();
+	auto compute_result = t1_1_cu10(t1_arg_1_m__lp_2_m_t1_1__p__1_rp___p__0_p_0_c_____1_m_t1_0__p__0_p_0_value);
+	// Produce: t1
+	t1_t1_1_merged12_write_bundle_write(/* arg names */compute_result, t1, root, t1_0, t1_1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
 inline void pw5_2_1_merged15(t1_cache& t1, HWStream<hw_uint<64> >& /* buffer_args num ports = 2 */pw5_2, int root, int pw5_2_0, int pw5_2_1) {
   // Dynamic address computation
 
@@ -137,20 +151,6 @@ inline void pw5_2_1_merged15(t1_cache& t1, HWStream<hw_uint<64> >& /* buffer_arg
 	auto compute_result = pw5_2_1_cu13(t1_1_m__lp_2_m_pw5_2_1__p__1_rp___p__0_p_0_c_____1_m_pw5_2_0__p__0_p_0_value);
 	// Produce: pw5_2
 	pw5_2.write(compute_result);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void t1_1_merged12(HWStream<hw_uint<64> >& /* buffer_args num ports = 2 */t1_arg, t1_cache& t1, int root, int t1_0, int t1_1) {
-  // Dynamic address computation
-
-	// Consume: t1_arg
-	auto t1_arg_1_m__lp_2_m_t1_1__p__1_rp___p__0_p_0_c_____1_m_t1_0__p__0_p_0_value = t1_arg.read();
-	auto compute_result = t1_1_cu10(t1_arg_1_m__lp_2_m_t1_1__p__1_rp___p__0_p_0_c_____1_m_t1_0__p__0_p_0_value);
-	// Produce: t1
-	t1_t1_1_merged12_write_bundle_write(/* arg names */compute_result, t1, root, t1_0, t1_1, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__

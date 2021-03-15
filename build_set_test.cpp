@@ -9900,9 +9900,7 @@ App blur_x_16(const std::string output_name) {
   blur.set_default_pixel_width(16);
   blur.func2d("input_arg");
   blur.func2d("input", v("input_arg"));
-  //blur.func2d(output_name, div(add(v("input", 0, 0), v("input", 0, 1), v("input", 0, 2)), 3));
-  blur.func2d(output_name, div(add(v("input", 0, 0), v("input", 0, 1)), 3));
-  //blur.func2d(output_name, div(add(v("input", 0, 0), v("input", 0, 1), v("input", 1, 0)), 3));
+  blur.func2d(output_name, div(add(v("input", 0, 0), v("input", 0, 1), v("input", 0, 2)), 3));
 
   return blur;
 }
@@ -21120,6 +21118,119 @@ void sbl4_static_dynamic_comparison(const int throughput) {
   assert(false);
 }
 
+void one_stage_blurx5_static_dynamic_comparison(const int throughput) {
+  string prefix = "blurx5";
+
+  int rows = 1080;
+  int cols = 1920;
+
+  int unroll_factor = throughput;
+  string out_name = prefix + "_" + str(unroll_factor);
+
+  CodegenOptions options;
+  options.internal = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  options.scheduling_algorithm = SCHEDULE_ALGORITHM_CW;
+  options.debug_options.expect_all_linebuffers = true;
+
+  App app = blur_x_16(out_name);
+  prog prg = app.realize(options, out_name, cols, rows, 1);
+  prepare_for_clockwork_scheduling(prg);
+
+  {
+    prog static_prg = prg.deep_copy();
+    static_prg.reset_context();
+
+    infer_bounds_and_unroll(pick(static_prg.outs), {cols, rows}, throughput, static_prg);
+
+    static_prg.pretty_print();
+
+    generate_optimized_code(options, static_prg);
+
+    static_prg.pretty_print();
+    string buf = pick(static_prg.ins);
+    cout << "Buf = " << buf << endl;
+    vector<int> input_bounds_vs = map_find(buf, static_prg.buffer_bounds);
+    cout << tab(1) << "bounds: " << comma_list(input_bounds_vs) << endl;
+    vector<string> input_bounds;
+    int i = 0;
+    for (auto b : input_bounds_vs) {
+      if (i < ((int) input_bounds_vs.size()) - 1) {
+        input_bounds.push_back(str(b));
+      } else {
+        input_bounds.push_back("*");
+      }
+      i++;
+    }
+    app.generate_soda_file(static_prg.name, throughput, input_bounds);
+    //assert(false);
+
+    move_to_benchmarks_folder(out_name + "_opt");
+  }
+
+  {
+    prog static_prg = prg.deep_copy();
+    static_prg.name = out_name + "_opt_d32";
+    static_prg.reset_context();
+
+    static_prg.pretty_print();
+
+    auto fusion_groups = one_stage_per_group(static_prg);
+    auto fresh_groups = insert_inter_group_buffers(fusion_groups, static_prg);
+    unroll_mismatched_inner_loops(static_prg);
+    merge_basic_block_ops(static_prg);
+    infer_bounds_and_unroll(pick(static_prg.outs), {cols, rows}, throughput, static_prg);
+
+    assert(unoptimized_compiles(static_prg));
+
+    app_dag dag = partition_groups(fresh_groups, static_prg);
+
+    options = CodegenOptions();
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+    options.slack_matching = {SLACK_MATCHING_TYPE_FIXED, 32};
+    generate_app_code(options, dag);
+
+    move_to_benchmarks_folder(static_prg.name);
+
+    string synth_dir =
+      "./soda_codes/" + static_prg.name+ "/our_code/";
+    system(("cp " + out_name + "_opt" + "*.h " + synth_dir).c_str());
+  }
+
+  {
+    prog static_prg = prg.deep_copy();
+    prg.reset_context();
+
+    static_prg.pretty_print();
+
+    prg.name = out_name + "_opt_dis";
+
+    auto fusion_groups = one_stage_per_group(prg);
+    auto fresh_groups = insert_inter_group_buffers(fusion_groups, prg);
+    unroll_mismatched_inner_loops(prg);
+    merge_basic_block_ops(prg);
+    infer_bounds_and_unroll(pick(prg.outs), {cols, rows}, throughput, prg);
+
+    assert(unoptimized_compiles(prg));
+
+    app_dag dag = partition_groups(fresh_groups, prg);
+
+    options = CodegenOptions();
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+    options.slack_matching = {SLACK_MATCHING_TYPE_PIPELINE_DEPTH_AWARE, 2};
+    generate_app_code(options, dag);
+
+    move_to_benchmarks_folder(prg.name);
+
+    string synth_dir =
+      "./soda_codes/" + prg.name+ "/our_code/";
+
+    system(("cp " + out_name + "_opt" + "*.h " + synth_dir).c_str());
+  }
+  cout << "prg name: " << prg.name << endl;
+
+  assert(false);
+}
 void pw5_static_dynamic_comparison(const int throughput) {
   string prefix = "pw5";
 
@@ -22961,6 +23072,7 @@ void scheduling_benchmarks() {
 }
 
 void application_tests() {
+  one_stage_blurx5_static_dynamic_comparison(2);
   pw5_static_dynamic_comparison(2);
   blur5_static_dynamic_comparison(2);
 
