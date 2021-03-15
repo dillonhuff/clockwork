@@ -14219,34 +14219,34 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   vector<prog> test_apps;
   //TODO:has issue  with multiple input
   //test_apps.push_back(demosaic_complex());
-  // test_apps.push_back(counter());
-  // test_apps.push_back(demosaic_unrolled());
-  // test_apps.push_back(conv_3_3());
-  // test_apps.push_back(gaussian());
-  // test_apps.push_back(cascade());
-  // test_apps.push_back(harris());
-  // test_apps.push_back(rom());
-  // test_apps.push_back(conv_1_2());
-  // test_apps.push_back(camera_pipeline());
-  // test_apps.push_back(up_sample());
-
-  // test_apps.push_back(unsharp());
-  // test_apps.push_back(resnet());
-
-
-
-
-
-  // test_apps.push_back(fft8_unroll0());
-  // test_apps.push_back(fft8_unroll2());
-  // test_apps.push_back(fft8_unroll4());
+  //
+  test_apps.push_back(fft8_unroll8_ratematch());
   test_apps.push_back(fft8_unroll8());
+  test_apps.push_back(gaussian());
+  test_apps.push_back(conv_3_3());
+  test_apps.push_back(counter());
+  test_apps.push_back(cascade());
+  test_apps.push_back(harris());
+  test_apps.push_back(rom());
+  test_apps.push_back(conv_1_2());
+  test_apps.push_back(demosaic_unrolled());
+  test_apps.push_back(camera_pipeline());
+  test_apps.push_back(up_sample());
+  test_apps.push_back(unsharp());
 
+  //DNN apps
+  test_apps.push_back(resnet_simple());
+  test_apps.push_back(resnet());
 
+  //Big applications
+  test_apps.push_back(mobilenet_unrolled());
+  //test_apps.push_back(resnet88());
+  //test_apps.push_back(resnet88_chain());
 
+  //test_apps.push_back(resnet_coarse_pipeline_loop());
 
-  // test_apps.push_back(mobilenet_unrolled());
-  ////test_apps.push_back(unsharp());
+  //coarse grained pipeline
+  //test_apps.push_back(resnet_coarse_pipeline_loop());
 
   //test_apps.push_back(conv_3_3_wide());
   //TODO: break in the middle of vectorization
@@ -14257,24 +14257,6 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
 
   //test_apps.push_back(resnet());
   for ( auto prg: test_apps) {
-    cout << "************************************************" << endl;
-    cout << "************************************************" << endl;
-    cout << "************************************************" << endl;
-    cout << "************************************************" << endl;
-    cout << "************************************************" << endl;
-    cout << "************************************************" << endl;
-    cout << "************************************************" << endl;
-    cout << "************************************************" << endl;
-	prg.pretty_print();
-	cout << "************************************************" << endl;
-    cout << "************************************************" << endl;
-    cout << "************************************************" << endl;
-    cout << "************************************************" << endl;
-    cout << "************************************************" << endl;
-    cout << "************************************************" << endl;
-    cout << "************************************************" << endl;
-    cout << "************************************************" << endl;
-
     prg.sanity_check();
 
     break_up_multi_channel_inputs(prg);
