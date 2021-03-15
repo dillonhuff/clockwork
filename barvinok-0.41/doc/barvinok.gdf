@@ -1,0 +1,67 @@
+@entry{DAG, DAG, Directed Acyclic Graph}
+@entry{HNF, HNF, Hermite Normal Form}
+@entry{IG, IG, Interference Graph}
+@entry{ILPa, ILP, Instruction-Level Parallelism}
+@entry{ILPr, ILP, Integer Linear Programming}
+@entry{SG, SG, Spanning Graph}
+@entry{LCG, LCG, Loop Communication Graph}
+@entry{LDG, LDG, Loop Dependence Graph}
+@entry{ADG, ADG, Apparent Dependence Graph}
+@entry{EDG, EDG, Expanded Dependence Graph}
+@entry{RDG, RDG, Reduced Dependence Graph}
+@entry{SCC, SCC, strongly connected component}
+@entry{gcd, gcd, greatest common divisor}
+@entry{lcm, lcm, least common multiple}
+@entry{CARE, CARE, Conditional Affine Recurrence Equations}
+@entry{SARE, SARE, System of Affine Recurrence Equations}
+@entry{SURE, SURE, System of Uniform Recurrence Equations}
+@entry{PLS, PLS, piecewise-linear schedule}
+@entry{VDLS, VDLS, variable dependent linear schedule}
+@entry{APP, APP, Algebraic Path Problem}
+@entry{PRDG, PRDG, polyhedral reduced dependence graph}
+@entry{RecMII, RecMII, Recurrence Minimum Initiation Interval}
+@entry{ResMII, ResMII, Resource Minimum Initiation Interval}
+@entry{SDF, SDF, Synchronous Dataflow}
+@entry{CBP, CBP, consumed-before-produced}
+@entry{HLL, HLL, High Level Language}
+@entry{CSP, CSP, Communicating Sequential Processes}
+@entry{AST, AST, Abstract Syntax Tree}
+@entry{LLL, LLL, Lenstra, Lenstra and Lovasz' basis reduction algorithm}
+@entry{DSA, DSA, Dynamic Single Assignment}
+@entry{CME, CME, Cache Miss Equations}
+@entry{PME, PME, Probabilistic Miss Equations}
+@entry{WCET, WCET, Worst-Case Execution Time}
+@entry{TLB, TLB, Translation Lookaside Buffer}
+@entry{NDD, NDD, Number Decision Diagram}
+@entry{DFA, DFA, Deterministic Finite Automaton}
+@entry{LSB, LSB, Least Significant Bit}
+@entry{MSB, MSB, Most Significant Bit}
+@entry{FSA, FSA, Finite State Automaton}
+@entry{WS1S, WS1S, Weak Second-order Theory of One Successor}
+@entry{lub, lub, least upper bound}
+@entry{CAD, CAD, Cylindrical Algebraic Decomposition}
+@entry{PER, {\tt PER}, Polyhedral Extraction Routine}
+@entry{W2P, {\tt W2P}, WHIRL to Polyhedra}
+@entry{ORC, {\tt ORC}, Open Research Compiler}
+@entry{pers, {\tt pers}, PER in SUIF}
+@entry{DTSE, DTSE, Data Transfer and Storage Exploration}
+@entry{SUIF, SUIF, Stanford University Intermediate Format}
+@entry{s2c, s2c, SUIF to C}
+@entry{cloog, {\tt CLooG}, Chunky Loop Generator}
+@entry{wloog, {\tt WLooG}, WHIRL Loop Generator}
+@entry{sloog, {\tt sloog}, SUIF Loop Generator}
+@entry{USVD, USVD, Updating Singular Value Decomposition}
+@entry{SCBD, SCBD, Storage Cycle Budget Distribution}
+@entry{MHLA, MHLA, Memory Hierarchy Layer Assignment}
+@entry{BG, BG, Basic Group}
+@entry{SBO, SBO, Storage Bandwidth Optimization)}
+@entry{MC, MC, Memory Compaction}
+@entry{CD, CD, Cavity Detection}
+@entry{BRD, BRD, Backward Reuse Distance}
+@entry{RACE, RACE, Reduction of Arithmetic Cost of Expressions}
+@entry{PIP, PIP, Parametric Integer Programming}
+@entry{ADS, ADS, Accessed Data Set}
+@entry{OOM, OOM, Out Of Memory}
+@entry{SNF, SNF, Smith Normal Form}
+@entry{LBL, LBL, Linearly Bounded Lattice}
+@entry{DNF, DNF, Disjunctive Normal Form}

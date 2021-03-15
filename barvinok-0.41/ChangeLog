@@ -1,0 +1,369 @@
+version: 0.41
+date: Tue Mar  6 21:23:21 CET 2018
+changes:
+    - drop support for applying "codegen" to a set from iscc
+---
+version: 0.40
+date: Thu Feb 23 10:03:21 CET 2017
+changes:
+    - minor bug fixes
+---
+version: 0.39
+date: Fri Jan 15 09:20:30 CET 2016
+changes:
+    - support more recent versions of NTL
+    - support more operations in iscc
+---
+version: 0.38
+date: Tue Jun 16 12:36:25 CEST 2015
+changes:
+    - support more recent versions of GLPK
+    - support schedule trees in iscc
+    - minor bug fixes
+---
+version: 0.37
+date: Mon Apr 14 11:22:44 CEST 2014
+changes:
+    - support NTL 6.0.0
+    - integrate isl-polylib submodule
+    - minor bug fixes
+---
+version: 0.36
+date: Mon Dec  3 09:34:27 CET 2012
+changes:
+    - support fixed power operation in iscc
+    - use isl for codegen operation in iscc
+    - drop cloog submodule
+---
+version: 0.35
+date: Sun Dec 18 10:49:36 CET 2011
+changes:
+    - add pet submodule
+    - drop omega submodule
+    - preliminary Python bindings
+---
+version: 0.34
+date: Thu Jul 14 12:31:21 CEST 2011
+changes:
+    - add cloog submodule
+    - change license to GPLv2+ (from GPLv2)
+---
+version: 0.33
+date: Fri Mar 18 17:35:10 CET 2011
+changes:
+    - add isl_set_apply_pw_qpolynomial
+    - drop piplib submodule
+    - barvinok_bound and barvinok_summate now accept input in isl notation
+    - use isl for more operations
+    - improved iscc
+---
+version: 0.32.1
+date: Mon Sep 13 11:38:47 CEST 2010
+changes:
+    - fix parameter alignment in iscc
+---
+version: 0.32
+date: Fri Sep 10 14:58:48 CEST 2010
+changes:
+    - support named and nested spaces
+    - support union sets and maps
+    - add isl_map_apply_pw_qpolynomial
+    - use union sets and maps in iscc
+    - support codegen operation in iscc if CLooG is available
+---
+version: 0.31
+date: Tue Jun 29 13:18:52 CEST 2010
+changes:
+    - use isl for argument parsing
+    - minor compilation fixes
+    - drop bernstein library in favor of isl implementation
+    - drop Omega calculator
+    - the Omega submodule is no longer compiled by default
+    - improved isl based calculator
+    - drop barvinok_enumerate_pip_with_options
+---
+version: 0.30
+date: Wed Mar 10 18:10:33 CET 2010
+changes:
+    - add isl interface and new isl based calculator
+    - barvinok_enumerate now returns NaN on infinite problems
+    - minor compilation and bug fixes
+    - support newer versions of TOPCOM
+---
+version: 0.29
+date: Wed Jul 22 15:14:01 CEST 2009
+changes:
+    - new version of Laurent expansion based exact summation
+    - minor compilation and bug fixes
+    - add semigroup_holes application
+    - add vector_partition_chambers application
+---
+version: 0.28
+date: Thu Oct 16 21:56:01 CEST 2008
+changes:
+    - add omega as submodule
+    - minor compilation and bug fixes
+---
+version: 0.27
+date: Sun May  4 23:42:49 CEST 2008
+changes:
+    - add Parker's library for DFA based counting
+    - support nested sums based exact summation
+    - support Laurent expansion based exact summation
+    - handle equalities and factors in summation
+    - support range propagation for computing bounds
+    - support computation of exact bound through iteration
+    - fix conversion from GiNaC's numeric to Values
+---
+version: 0.26
+date: Wed Jan 16 23:45:17 CET 2008
+changes:
+    - support computation of generating functions in barvinok_enumerate_e
+    - support polymake 2.3
+    - support GiNaC 1.3.8 and newer
+    - support summation using Bernoulli formula
+    - add and use zsolve from 4ti2 for computing Hilbert bases of cones
+    - support use of piplib for solving LPs
+    - add polyhedron_integer_hull and polytope_minimize
+    - add polytope_lattice_width for computing the lattice widths of polytopes
+---
+version: 0.25
+date: Tue Sep 11 22:02:22 CEST 2007
+changes:
+    - add PolyLib and piplib as submodules
+    - remove compatibility with old versions of PolyLib and piplib
+    - support use of piplib for basis reduction
+    - support summation using local Euler-Maclaurin formula for 2D polytopes
+    - support TOPCOM based chamber decompositions
+    - simplify primal decomposition
+---
+version: 0.24
+date: Sat Jun 30 23:37:31 CEST 2007
+changes:
+    - support exponential (Todd) substitution for non-parametric problems
+    - support primal and stopped decomposition on parametric problems
+    - support nested sums polynomial approximation of quasi-polynomials
+    - add barvinok_summate for summating a polynomial over a polytope
+    - speed improvements in barvinok_count and polyhedron_sample
+---
+version: 0.23
+date: Sat Apr 28 20:10:35 CEST 2007
+changes:
+    - use arpg for argument parsing in most commands
+    - |-
+      support polynomial approximations of quasi-polynomials, including
+      volume computation, Meister's method and replacing fractional parts
+      by constants
+    - add barvinok_maximize for computing upper (and lower) bounds
+    - support non-parametric primal and stopped Barvinok decomposition
+    - periodic number representation now run-time configurable
+    - drop support for ancient PolyLib versions
+    - simplified partitioning of chamber complex
+    - add evalue_eval, an exact version of copmute_evalue
+    - improved handling of large generating functions
+    - integrate barvinok_series functionality into barvinok_enumerate
+    - support use of cdd for solving LPs in basis reduction
+    - initial support for computing bounds over quasi-polynomials
+    - recursive Bernstein expansion
+    - corrections and improvements of lexmin
+    - optionally print quasi-polynomial as list of polynomials
+    - add some documentation
+---
+version: 0.22
+date: Tue Oct 31 23:15:15 CET 2006
+changes:
+    - include bernstein library with interface to barvinok and occ
+    - some occ clean-ups
+    - barvinok_count now only returns -1 for unbounded polyhedra with integer points
+    - preliminary implementation of projection via neighborhood complexes
+    - implement generalized basis reduction
+    - add polyhedron_sample
+    - add polytope_scan
+    - add lexmin
+    - some internal reorganization
+    - some gen_fun clean-ups and optimizations
+    - plug some memory leaks
+    - fix some corner cases
+    - shared libraries are no longer built by default
+    - introduce barvinok_options to pass to functions instead of just MaxRays
+    - use same LLL reduction parameter that LattE uses
+    - add some documentation
+---
+version: 0.21
+date: Thu Jun 22 20:49:11 CEST 2006
+changes:
+    - add some documentation
+    - add barvinok_ehrhart
+    - add h_star_vector polymake client
+    - fix some corner cases
+    - more experimental support for enumerating unions of polytopes
+    - rename cdd2polylib.pl to latte2polylib.pl
+---
+version: 0.20
+date: Wed Feb 22 12:01:23 CET 2006
+changes:
+    - fix PIP-based reduction by removing some code and assuming a recent PIP
+    - some memory leaks plugged
+    - optionally use Omega as a preprocessor in barvinok_enumerate_e
+    - integrate verif_ehrhart_e into barvinok_enumerate_e
+    - barvinok_series handles more problem with equalities
+    - add gen_fun::Hadamard_product
+    - experimental support for enumerating unions of polytopes
+---
+version: 0.19
+date: Fri Jan 20 22:14:44 CET 2006
+changes:
+    - include Omega Calculator interface occ
+    - print_enode creates parameter names if none are provided
+    - only use PIP to project out some variables
+    - some header file fixes
+    - C89 fixes again
+---
+version: 0.18
+date: Thu Sep 15 11:27:19 CEST 2005
+changes:
+    - factor polyhedra into independent parts before enumeration
+    - make "random vector" specialization more robust
+    - speed up verif_ehrhart by only checking inside the context
+    - remove {Param,}Polyhedron_Reduce
+    - rename triangularize_cone to triangulate_cone
+    - generalize computation of lexmin/max using PIP
+    - compute the number of lexsmaller elements using PolyLib's LexSmaller
+---
+version: 0.17
+date: Mon Aug  1 12:23:50 CEST 2005
+changes:
+    - fix some configuration problems
+    - include minimal polymake client
+---
+version: 0.16
+date: Thu Jun 30 12:10:29 CEST 2005
+changes:
+    - implement "breadth-first" incremental specialization
+    - implement non-incremental version for series computation
+    - make non-incremental specialization the default again
+    - check for bad PolyLib version at runtime
+    - compiles on Windows (mingw32)
+    - add version option
+    - allow crosscompilation
+    - compute the coefficients of an Ehrhart series
+    - fix conversion of PIP output to polyhedra
+    - allow direct verification of Ehrhart series
+---
+version: 0.15
+date: Sun Dec 12 23:00:40 CET 2004
+changes:
+    - export Polyhedron_Project
+    - allow verification of step-functions computed from Ehrhart series
+    - optionally compute step-functions incrementally
+    - disable possibly incorrect optimization
+    - minor optimizations in Ehrhart series computations
+---
+version: 0.14
+date: Wed Nov 17 19:22:23 CET 2004
+changes:
+    - use code for computing series to count non-parametric polytopes
+    - add conversion from series to explicit function
+    - fix removal of redundant equalities
+---
+version: 0.13
+date: Sat Oct 16 12:13:30 CEST 2004
+changes:
+    - use slightly larger random numbers
+    - change basis to remove existential variable
+    - fix bug in reduction
+    - handle empty PIP solution
+    - add utility to remove equalities
+---
+version: 0.12
+date: Sun Oct  3 20:47:11 CEST 2004
+changes:
+    - reduce memory requirements
+    - add cdd2polylib.pl
+    - add patch for NTL 5.3.2
+    - experimental support for Ehrhart series
+    - compile fix on systems that lack <getopt.h>
+---
+version: 0.11
+date: Sat Sep 18 14:49:40 CEST 2004
+changes:
+    - fix minor bugs
+    - find and use PIP if available
+    - don't overallocate matrices on newer PolyLibs
+    - verification program for enumeration of integer projections
+    - summation of enumerations
+    - avoid gccisms
+    - support older versions of GMP
+---
+version: 0.10
+date: Tue Jul  6 22:09:11 CEST 2004
+changes:
+    - install header files
+    - modulo representation changed to fractionals
+    - perform some simplifications on the modulo representation
+    - barvinok_enumerate returns a malloc'ed evalue
+    - a few bugs in barvinok_enumerate_e removed
+    - optionally print an indication of the size of an enumeration
+    - emask added
+    - bug in triangularization fixed
+    - bug in polyhedron reduction fixed
+    - verif_ehrhart.c should compile on C89 systems again
+---
+version: 0.09
+changes:
+    - bug in polyhedron reduction fixed
+---
+version: 0.08
+date: Sun Feb 22 21:15:00 CET 2004
+changes:
+    - remove remaining part of Kristof's Ehrhart manipulation code
+    - optimize modulo expression based on validity domain
+    - support partition evalues
+    - factor out 1D polytopes
+    - validity domains can now be unions of polytopes
+    - optionally convert modulo representation to lookup-table
+    - rename indicator to relation
+    - add DomainIncludes
+---
+version: 0.07
+changes:
+    - support "indicator" evalues
+    - support equalities for modulo representation
+---
+version: 0.06
+changes:
+    - remove part of Kristof's Ehrhart manipulation code
+    - partial support for modulo representation
+    - support cvs version of PolyLib
+---
+version: 0.05
+date: Thu Nov 27 13:35:59 CET 2003
+changes:
+    - |-
+      include code from Kristof Beyls for manipulating Ehrhart
+      polynomials
+    - |-
+      implement barvinok_enumerate for constructing Ehrhart
+      polynomials using barvinok's algorithm
+---
+version: 0.04
+date: Thu Nov  6 01:36:25 CET 2003
+changes:
+    - |-
+      allow specification of max #constraints 
+      for those without automatically growing chernikova tables
+    - fix a few small bugs
+    - some minor optimizations
+---
+version: 0.03
+date: Mon Nov  3 16:35:57 CET 2003
+changes:
+    - fix a number of bugs
+    - add tests
+---
+version: 0.02
+date: Mon Oct 20 14:15:45 CEST 2003
+changes:
+    - change name from count to barvinok_count
+    - return -1 if polyhedron is unbounded
+    - trivially optimize counting in presence of some independent constraints

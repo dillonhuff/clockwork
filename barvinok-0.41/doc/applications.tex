@@ -1,0 +1,475 @@
+\section{\texorpdfstring{Applications included
+in the \protect\ai[\tt]{barvinok} distribution}
+{Applications included in the barvinok distribution}}
+\label{a:usage}
+
+\index{barvinok@{\tt  barvinok}!availability}
+{\sloppy 
+This section describes some application programs
+provided by the \barvinok/ library,
+available from \url{http://barvinok.gforge.inria.fr/}.
+For compilation instructions we refer to the \verb+README+ file
+included in the distribution.
+}
+
+Common option to all programs:\\
+\begin{tabular}{lll}
+\ai[\tt]{--version} & \ai[\tt]{-V} & print version
+\\
+\ai[\tt]{--help} & \ai[\tt]{-?} & list available options
+\end{tabular}
+
+\subsection{\texorpdfstring{\protect\ai[\tt]{barvinok\_count}}{barvinok\_count}}
+
+The program \ai[\tt]{barvinok\_count} enumerates a
+non-parametric polytope.  It takes one polytope
+in \PolyLib/ notation as input and prints the number
+of integer points in the polytope.
+The \PolyLib/ notation corresponds to the internal
+representation of \ai[\tt]{Polyhedron}s as explained
+in Section~\ref{a:existing}.
+\index{input format!constraints}
+The first line of the input contains the number of rows
+and the number of columns in the \ai[\tt]{Constraint} matrix.
+The rest of the input is composed of the elements of the matrix.
+Recall that the number of columns is two more than the number
+of variables, where the extra first columns is one or zero
+depending on whether the constraint is an inequality ($\ge 0$)
+or an equality ($= 0$).  The next columns contain
+the coefficients of the variables and the final column contains
+the constant in the constraint.
+E.g., the set 
+$S = \lb\, s \mid s \geq 0 \wedge  2 s \leq 13 \, \rb$
+from \citeN[Example~38 on page~134]{Verdoolaege2005PhD}
+corresponds to the following input and
+output.
+\begin{verbatim}
+> cat S
+2 3
+
+1 1 0
+1 -2 13
+> ./barvinok_count  < S
+POLYHEDRON Dimension:1
+           Constraints:2  Equations:0  Rays:2  Lines:0
+Constraints 2 3
+Inequality: [   1   0 ]
+Inequality: [  -2  13 ]
+Rays 2 3
+Vertex: [   0 ]/1
+Vertex: [  13 ]/2
+   7 
+\end{verbatim}
+\index{PolyLib@{\tt  PolyLib}!version 5.22.0 or newer}
+Note that if you use \PolyLib/ version 5.22.0 or newer then the output
+may look slightly different as the computation of the \ai[\tt]{Rays}
+may have been postponed to a later stage.
+The program \ai[\tt]{latte2polylib.pl} can be used to
+convert a polytope from \ai[\tt]{LattE} \shortcite{latte1.1}
+notation to \PolyLib/ notation.
+
+\index{input format!vertices}
+As an alternative to the constraints based input, the input polytope
+may also be specified by its \ai[\tt]{Ray} matrix.
+The first line of the input contains the single word \ai[\tt]{vertices}.
+The second line contains the number of rows
+and the number of columns in the \ai[\tt]{Ray} matrix.
+The rest of the input is composed of the elements of the matrix.
+Recall that the number of columns is two more than the number
+of variables, where the extra first columns is one or zero
+depending on whether the ray is a line or not.
+The next columns contain
+the numerators of the coordinates and the final column contains
+the denominator of the vertex or $0$ for a ray.
+E.g., the above set can also be described as
+\begin{verbatim}
+vertices
+
+2 3
+
+1 0 1
+1 13 2
+\end{verbatim}
+
+\subsection{\texorpdfstring{\protect\ai[\tt]{barvinok\_enumerate}}
+{barvinok\_enumerate}}
+
+The program \ai[\tt]{barvinok\_enumerate} enumerates a
+parametric polytope as a \psp/ or \rgf/.  It takes two polytopes in \PolyLib/
+notation as input, optionally followed by a list of parameter
+names.
+The two polytopes refer to arguments \verb+P+ and \verb+C+
+of the corresponding function. (See Section~\ref{a:counting:functions}.)
+The following example was taken by \shortciteN{Loechner1999}
+from \shortciteN[Chapter II.2]{Loechner97phd}.
+\begin{verbatim}
+> cat loechner 
+# Dimension of the matrix: 
+7 7 
+# Constraints: 
+# i j k P Q cte 
+1 1 0 0 0 0 0 # 0 <= i 
+1 -1 0 0 1 0 0 # i <= P 
+1 0 1 0 0 0 0 # 0 <= j 
+1 1 -1 0 0 0 0 # j <= i
+1 0 0 1 0 0 0 # 0 <= k 
+1 1 -1 -1 0 0 0 # k <= i-j 
+0 1 1 1 0 -1 0 # Q = i + j + k
+
+# 2 parameters, no constraints. 
+0 4
+> ./barvinok_enumerate < loechner 
+POLYHEDRON Dimension:5
+           Constraints:6  Equations:1  Rays:5  Lines:0
+Constraints 6 7
+Equality:   [   1   1   1   0  -1   0 ]
+Inequality: [   0   1   1   1  -1   0 ]
+Inequality: [   0   1   0   0   0   0 ]
+Inequality: [   0   0   1   0   0   0 ]
+Inequality: [   0  -2  -2   0   1   0 ]
+Inequality: [   0   0   0   0   0   1 ]
+Rays 5 7
+Ray:    [   1   0   1   1   2 ]
+Ray:    [   1   1   0   1   2 ]
+Vertex: [   0   0   0   0   0 ]/1
+Ray:    [   0   0   0   1   0 ]
+Ray:    [   1   0   0   1   1 ]
+POLYHEDRON Dimension:2
+           Constraints:1  Equations:0  Rays:3  Lines:2
+Constraints 1 4
+Inequality: [   0   0   1 ]
+Rays 3 4
+Line:   [   1   0 ]
+Line:   [   0   1 ]
+Vertex: [   0   0 ]/1
+         - P + Q  >= 0
+         2P - Q  >= 0
+          1 >= 0
+
+( -1/2 * P^2 + ( 1 * Q + 1/2 )
+ * P + ( -3/8 * Q^2 + ( -1/2 * {( 1/2 * Q + 0 )
+} + 1/4 )
+ * Q + ( -5/4 * {( 1/2 * Q + 0 )
+} + 1 )
+ )
+ )
+         Q  >= 0
+         P - Q  -1 >= 0
+          1 >= 0
+
+( 1/8 * Q^2 + ( -1/2 * {( 1/2 * Q + 0 )
+} + 3/4 )
+ * Q + ( -5/4 * {( 1/2 * Q + 0 )
+} + 1 )
+ )
+\end{verbatim}
+The output corresponds to 
+$$
+\begin{cases}
+\makebox[0pt][l]{$-\frac 1 2 P^2 + P Q + \frac 1 2 P - \frac 3 8 Q^2
++ \left( \frac 1 4 - \frac 1 2 \left\{ \frac 1 2 Q \right\} \right)
+	       	Q + 1 
+- \frac 5 4 \left\{ \frac 1 2 Q \right\}$} \\
+&
+\hbox{if $P \le Q \le 2 P$}
+\\
+\frac 1 8 Q^2 + 
+\left( \frac 3 4 - \frac 1 2 \left\{ \frac 1 2 Q \right\} \right)
+- \frac 5 4 \left\{ \frac 1 2 Q \right\}
+\qquad
+\qquad
+\qquad
+\qquad
+\qquad
+&
+\hbox{if $0 \le Q \le P-1$}
+.
+\end{cases}
+$$
+The following is an example of Petr Lison\u{e}k\index{Lison\u{e}k, P.}.
+\begin{verbatim}
+> cat petr
+4 6
+1 -1 -1 -1 1 0
+1 1 -1 0 0 0
+1 0 1 -1 0 0
+1 0 0 1 0 -1
+
+0 3
+n
+> ./barvinok_enumerate --series < petr
+POLYHEDRON Dimension:4
+           Constraints:5  Equations:0  Rays:5  Lines:0
+Constraints 5 6
+Inequality: [  -1  -1  -1   1   0 ]
+Inequality: [   1  -1   0   0   0 ]
+Inequality: [   0   1  -1   0   0 ]
+Inequality: [   0   0   1   0  -1 ]
+Inequality: [   0   0   0   0   1 ]
+Rays 5 6
+Ray:    [   1   1   1   3 ]
+Ray:    [   1   1   0   2 ]
+Ray:    [   1   0   0   1 ]
+Ray:    [   0   0   0   1 ]
+Vertex: [   1   1   1   3 ]/1
+POLYHEDRON Dimension:1
+           Constraints:1  Equations:0  Rays:2  Lines:1
+Constraints 1 3
+Inequality: [   0   1 ]
+Rays 2 3
+Line:   [   1 ]
+Vertex: [   0 ]/1
+(n^3)/((1-n) * (1-n) * (1-n^2) * (1-n^3))
+\end{verbatim}
+
+Options:\\
+\begin{tabular}{llp{0.7\textwidth}}
+\ai[\tt]{--floor} & \ai[\tt]{-f} & 
+convert \ai[\tt]{fractional}s to \ai[\tt]{flooring}s
+\\
+\ai[\tt]{--convert} & \ai[\tt]{-c} & 
+convert \ai[\tt]{fractional}s to \ai[\tt]{periodic}s
+\\
+\ai[\tt]{--series} & \ai[\tt]{-s} & 
+compute \rgf/ instead of \psp/
+\\
+\ai[\tt]{--explicit} & \ai[\tt]{-e} & 
+convert computed \rgf/ to a \psp/
+\end{tabular}
+
+\subsection{\texorpdfstring{\protect\ai[\tt]{barvinok\_enumerate\_e}}
+{barvinok\_enumerate\_e}}
+
+The program \ai[\tt]{barvinok\_enumerate\_e} enumerates a
+parametric projected set.  It takes a single polytope in \PolyLib/
+notation as input, followed by two lines indicating the number
+or existential variables and the number of parameters and
+optionally followed by a list of parameter names.
+The syntax for the line indicating the number of existential
+variables is the letter \verb+E+ followed by a space and the actual number.
+For indicating the number of parameters, the letter \verb+P+ is used.
+The following example corresponds to 
+\citeN[Example~36 on page~129]{Verdoolaege2005PhD}.
+\begin{verbatim}
+> cat projected 
+5 6
+#   k   i   j   p   cst
+1   0   1   0   0   -1
+1   0   -1  0   0   8
+1   0   0   1   0   -1
+1   0   0   -1  1   0
+0   -1  6   9   0   -7
+
+E 2
+P 1
+> ./barvinok_enumerate_e <projected 
+POLYHEDRON Dimension:4
+           Constraints:5  Equations:1  Rays:4  Lines:0
+Constraints 5 6
+Equality:   [   1  -6  -9   0   7 ]
+Inequality: [   0   1   0   0  -1 ]
+Inequality: [   0  -1   0   0   8 ]
+Inequality: [   0   0   1   0  -1 ]
+Inequality: [   0   0  -1   1   0 ]
+Rays 4 6
+Vertex: [  50   8   1   1 ]/1
+Ray:    [   0   0   0   1 ]
+Ray:    [   9   0   1   1 ]
+Vertex: [   8   1   1   1 ]/1
+exist: 2, nparam: 1
+         P  -3 >= 0
+          1 >= 0
+
+( 3 * P + 10 )
+         P  -1 >= 0
+         - P + 2 >= 0
+
+( 8 * P + 0 )
+\end{verbatim}
+
+Options:\\
+\begin{tabular}{llp{0.7\textwidth}}
+\ai[\tt]{--floor} & \ai[\tt]{-f} & 
+convert \ai[\tt]{fractional}s to \ai[\tt]{flooring}s
+\\
+\ai[\tt]{--convert} & \ai[\tt]{-c} & 
+convert \ai[\tt]{fractional}s to \ai[\tt]{periodic}s
+\\
+\ai[\tt]{--omega} & \ai[\tt]{-o} & 
+use \Omegalib/ as a preprocessor
+\\
+\ai[\tt]{--pip} & \ai[\tt]{-p} & 
+\begin{minipage}[t]{0.7\textwidth}
+\raggedright
+call \ai[\tt]{barvinok\_enumerate\_pip} instead of \ai[\tt]{barvinok\_enumerate\_e}
+\end{minipage}
+\\
+\ai[\tt]{--isl} & \ai[\tt]{-i} & 
+\raggedright
+call \ai[\tt]{barvinok\_enumerate\_isl} instead of \ai[\tt]{barvinok\_enumerate\_e}
+\end{tabular}
+
+\subsection{\texorpdfstring{\protect\ai[\tt]{barvinok\_union}}
+{barvinok\_union}}
+
+The program \ai[\tt]{barvinok\_union} enumerates a \ai{union} of
+parametric polytopes.  It takes as input the number of parametric
+polytopes in the union, the polytopes in combined data and
+parameter space in \PolyLib/ notation, the context in parameter space
+in \PolyLib/ notation and optionally a list of parameter names.
+
+Options:\\
+\begin{tabular}{llp{0.7\textwidth}}
+\ai[\tt]{--series} & \ai[\tt]{-s} & 
+compute \rgf/ instead of \psp/
+\end{tabular}
+
+\subsection{\texorpdfstring{\protect\ai[\tt]{barvinok\_ehrhart}}
+{barvinok\_ehrhart}}
+
+\sindex{Ehrhart}{quasi-polynomial}
+The program \ai[\tt]{barvinok\_ehrhart} computes the
+\ai{Ehrhart quasi-polynomial} of a polytope $P$, i.e., a quasi-polynomial
+in $n$ that evaluates to the number of integer points in the dilation
+of $P$ by a factor $n$.
+The input is the same as that of \ai[\tt]{barvinok\_count}, except that
+it may be followed by the variable name.
+The functionality is the same as running \ai[\tt]{barvinok\_enumerate}
+on the cone over $P$ placed at $n=1$.
+
+Options:\\
+\begin{tabular}{llp{0.7\textwidth}}
+\ai[\tt]{--floor} & \ai[\tt]{-f} & 
+convert \ai[\tt]{fractional}s to \ai[\tt]{flooring}s
+\\
+\ai[\tt]{--convert} & \ai[\tt]{-c} & 
+convert \ai[\tt]{fractional}s to \ai[\tt]{periodic}s
+\\
+\ai[\tt]{--series} & \ai[\tt]{-s} & 
+compute \ai{Ehrhart series} instead of \ai{Ehrhart quasi-polynomial}
+\end{tabular}
+
+\subsection{\texorpdfstring{\protect\ai[\tt]{polyhedron\_sample}}
+{polyhedron\_sample}}
+
+The program \ai[\tt]{polyhedron\_sample} takes a polytope
+in \PolyLib/ notation and prints an integer point in the polytope
+if there is one.  The point is computed using
+\ai[\tt]{Polyhedron\_Sample}.
+
+\subsection{\texorpdfstring{\protect\ai[\tt]{polytope\_scan}}
+{polytope\_scan}}
+
+The program \ai[\tt]{polytope\_scan} takes a polytope in
+\PolyLib/ notation and prints a list of all integer points in the polytope.
+Unless the \ai[\tt]{--direct} options is given, the order is based
+on the \ai{reduced basis} computed with
+\ai[\tt]{Polyhedron\_Reduced\_Basis}.
+
+Options:\\
+\begin{tabular}{llp{0.7\textwidth}}
+\ai[\tt]{--direct} & \ai[\tt]{-d} & 
+list the points in the lexicographical order
+\end{tabular}
+
+\subsection{\texorpdfstring{\protect\ai[\tt]{lexmin}}{lexmin}}
+
+The program \ai[\tt]{lexmin} implements an algorithm for performing
+\indac{PIP} based on \rgf/s and provides an alternative for the
+technique of \shortciteN{Feautrier88parametric}, which is based
+on \ai{cutting plane}s \shortcite{Gomory1963}.
+The input is the same as that of the \ai[\tt]{example} program
+from \piplib/ \cite{Feautrier:PIP}, except that the value
+for the ``\ai{big parameter}'' needs to be $-1$, since there is
+no need for big parameters, and it does not read any options
+from the input file.
+
+\subsection{\texorpdfstring{\protect\ai[\tt]{barvinok\_summate}}
+{barvinok\_summate}}
+
+Given a \psp/ in \isl/ format,
+the program \ai[\tt]{barvinok\_summate} computes the \ai{sum} of
+the piecewise quasi-polynomial evaluated in all (integer) values of
+the variables.  The result is an expression in the parameters.
+Note that \ai[\tt]{barvinok\_enumerate} and \ai[\tt]{barvinok\_enumerate\_e}
+can produce \psp/s when given the \ai[\tt]{-I} option, but they will
+have only parameters and no variables.
+
+For example
+\begin{verbatim}
+> cat square_p3.pwqp
+[n] -> { [x, y] -> x * y :
+         n >= -9 + 3x and x >= 2 and y >= 4 and y <= 5 }
+> ./barvinok_summate < square_p3.pwqp
+[n] -> { (45 + 63/2 * [(n)/3] + 9/2 * [(n)/3]^2) : n >= -3 }
+\end{verbatim}
+
+Options:\\
+\begin{tabular}{llp{0.7\textwidth}}
+\ai[\tt]{--summation} & & 
+specifies which summation method to use;
+\ai[\tt]{box} refers to the method of
+\shortciteN[Section~4.5.4]{Verdoolaege2005PhD},
+\ai[\tt]{bernoulli} refers to the method of
+\autoref{s:nested:exact},
+\ai[\tt]{euler} refers to the method of
+\autoref{s:euler},
+and \ai[\tt]{laurent} refers to the method of
+\autoref{s:laurent}.
+\end{tabular}
+
+\subsection{\texorpdfstring{\protect\ai[\tt]{barvinok\_bound}}
+{barvinok\_bound}}
+
+Given a \psp/ in \isl/ format,
+the program \ai[\tt]{barvinok\_bound} computes an \ai{upper bound}
+(or \ai{lower bound}) for
+the values attained by the piecewise quasi-polynomial
+over all (integer) values of the variables.
+The result is an expression in the parameters.
+Note that \ai[\tt]{barvinok\_enumerate} and \ai[\tt]{barvinok\_enumerate\_e}
+can produce \psp/s when given the \ai[\tt]{-I} option, but they will
+have only parameters and no variables.
+
+\begin{verbatim}
+> cat devos.pwqp
+[U] -> { [V] -> ((1/3 * U + 2/3 * V) - [(U + 2V)/3]) :
+         2V >= -3 - U and 2V <= -U and U >= 0 and U <= 10 }
+> ./barvinok_bound < devos.pwqp
+[U] -> { max(2/3) : U <= 10 and U >= 0 }
+\end{verbatim}
+
+Options:\\
+\begin{tabular}{llp{0.7\textwidth}}
+\ai[\tt]{--lower} & &
+compute lower bound instead of upper bound
+\end{tabular}
+
+\subsection{\texorpdfstring{\protect\ai[\tt]{polytope\_minimize}}
+{polytope\_minimize}}
+
+The program \ai[\tt]{polytope\_minimize} has been superseded
+by \isl/'s \ai[\tt]{isl\_polyhedron\_minimize}.
+
+\subsection{\texorpdfstring{\protect\ai[\tt]{polyhedron\_integer\_hull}}
+{polyhedron\_integer\_hull}}
+
+The program \ai[\tt]{polyhedron\_integer\_hull} takes a polyhedron
+in \PolyLib/ notation and
+prints its \ai{integer hull}.
+The integer hull is computed as explained in \autoref{s:integer:hull}.
+
+\subsection{\texorpdfstring{\protect\ai[\tt]{polytope\_lattice\_width}}
+{polytope\_lattice\_width}}
+
+The program \ai[\tt]{polytope\_lattice\_width} computes
+the \ai{lattice width} of a parametric polytope.
+The input is the same as that of \ai[\tt]{barvinok\_enumerate}.
+The lattice width is computed as explained
+in \autoref{s:width}.
+
+Options:\\
+\begin{tabular}{llp{0.7\textwidth}}
+\ai[\tt]{--direction} & \ai[\tt]{-d} & 
+print the lattice width directions
+\end{tabular}

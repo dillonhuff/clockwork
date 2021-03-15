@@ -1,0 +1,1 @@
+[i, j] -> { [o1, o2] -> (([(i + j)/32]^2) - [(1 + i + j)/32]^2) : o2 <= 2 and 32o2 <= j and 32o2 >= -i - j + 32o1 and 32o2 >= 1 + i and 32o2 <= 31 - i - j + 32o1 and 32o2 <= -31 + i + j and 32o2 >= -30 + j and j <= 99 and j >= 31 - 2i and i >= 0 and i <= 99 and j >= 0 and o1 <= 9 and o1 >= 0 }
