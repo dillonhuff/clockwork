@@ -2321,7 +2321,7 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
   isl_set* res = unn(ss);
   verilog_collateral << tab(1) << "// sched min: " << str(lexmin(res)) << endl;
   verilog_collateral << tab(1) << "// sched max: " << str(lexmax(res)) << endl;
-  
+
 
   assert(verilog_collateral_file != nullptr);
 

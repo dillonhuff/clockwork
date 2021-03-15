@@ -7,13 +7,13 @@ prog fft8_unroll8() {
 
 // Stencil<float, 8, 2> &hw_input_stencil = arg_0;
   prg.add_input("hw_input_stencil");
-  prg.buffer_port_widths["hw_input_stencil"] = 32;
+  prg.buffer_port_widths["hw_input_stencil"] = 16;
 // Stencil<float, 8, 2, 3> &hw_twi_stencil = arg_1;
   prg.add_input("hw_twi_stencil");
-  prg.buffer_port_widths["hw_twi_stencil"] = 32;
+  prg.buffer_port_widths["hw_twi_stencil"] = 16;
 // Stencil<float, 8, 2> &hw_output_stencil = arg_2;
   prg.add_output("hw_output_stencil");
-  prg.buffer_port_widths["hw_output_stencil"] = 32;
+  prg.buffer_port_widths["hw_output_stencil"] = 16;
 
 ////producing hw_twi_global_wrapper.stencil
   auto hw_twi_global_wrapper_s0_z = prg.add_loop("hw_twi_global_wrapper_s0_z", 0, 3);
@@ -24,7 +24,7 @@ prog fft8_unroll8() {
   auto hcompute_hw_twi_global_wrapper_stencil = hw_twi_global_wrapper_s0_x->add_op("op_hcompute_hw_twi_global_wrapper_stencil");
   hcompute_hw_twi_global_wrapper_stencil->add_function("hcompute_hw_twi_global_wrapper_stencil");
   hcompute_hw_twi_global_wrapper_stencil->add_load("hw_twi_stencil", "hw_twi_global_wrapper_s0_z", "hw_twi_global_wrapper_s0_y", "hw_twi_global_wrapper_s0_x");
-  prg.buffer_port_widths["hw_twi_global_wrapper_stencil"] = 32;
+  prg.buffer_port_widths["hw_twi_global_wrapper_stencil"] = 16;
   hcompute_hw_twi_global_wrapper_stencil->add_store("hw_twi_global_wrapper_stencil", "hw_twi_global_wrapper_s0_z", "hw_twi_global_wrapper_s0_y", "hw_twi_global_wrapper_s0_x");
 
 //consuming hw_twi_global_wrapper.stencil
@@ -36,7 +36,7 @@ prog fft8_unroll8() {
   auto hcompute_hw_input_global_wrapper_stencil = hw_input_global_wrapper_s0_x->add_op("op_hcompute_hw_input_global_wrapper_stencil");
   hcompute_hw_input_global_wrapper_stencil->add_function("hcompute_hw_input_global_wrapper_stencil");
   hcompute_hw_input_global_wrapper_stencil->add_load("hw_input_stencil", "hw_input_global_wrapper_s0_y", "hw_input_global_wrapper_s0_x");
-  prg.buffer_port_widths["hw_input_global_wrapper_stencil"] = 32;
+  prg.buffer_port_widths["hw_input_global_wrapper_stencil"] = 16;
   hcompute_hw_input_global_wrapper_stencil->add_store("hw_input_global_wrapper_stencil", "hw_input_global_wrapper_s0_y", "hw_input_global_wrapper_s0_x");
 
 //consuming hw_input_global_wrapper.stencil
@@ -48,13 +48,13 @@ prog fft8_unroll8() {
 //store is: f1.0.stencil(0, f1_s0_y) = 0.000000f
   auto hcompute_f1_0_stencil = f1_s0_y->add_op("op_hcompute_f1_0_stencil");
   hcompute_f1_0_stencil->add_function("hcompute_f1_0_stencil");
-  prg.buffer_port_widths["f1_0_stencil"] = 32;
+  prg.buffer_port_widths["f1_0_stencil"] = 16;
   hcompute_f1_0_stencil->add_store("f1_0_stencil", "f1_s0_y", "0");
 
 //store is: f1.1.stencil(0, f1_s0_y) = 0.000000f
   auto hcompute_f1_1_stencil = f1_s0_y->add_op("op_hcompute_f1_1_stencil");
   hcompute_f1_1_stencil->add_function("hcompute_f1_1_stencil");
-  prg.buffer_port_widths["f1_1_stencil"] = 32;
+  prg.buffer_port_widths["f1_1_stencil"] = 16;
   hcompute_f1_1_stencil->add_store("f1_1_stencil", "f1_s0_y", "0");
 
 //store is: f1.0.stencil(1, f1_s0_y) = 0.000000f

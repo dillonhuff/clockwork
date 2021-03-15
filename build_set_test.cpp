@@ -14232,19 +14232,19 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
 
   // test_apps.push_back(unsharp());
   // test_apps.push_back(resnet());
-  
-  
-  
-  
-  
+
+
+
+
+
   // test_apps.push_back(fft8_unroll0());
   // test_apps.push_back(fft8_unroll2());
   // test_apps.push_back(fft8_unroll4());
   test_apps.push_back(fft8_unroll8());
-  
-  
-  
-  
+
+
+
+
   // test_apps.push_back(mobilenet_unrolled());
   ////test_apps.push_back(unsharp());
 
@@ -14274,18 +14274,18 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
     cout << "************************************************" << endl;
     cout << "************************************************" << endl;
     cout << "************************************************" << endl;
-	
+
     prg.sanity_check();
 
     break_up_multi_channel_inputs(prg);
     break_up_multi_channel_outputs(prg);
     dsa_writers(prg);
     prg.pretty_print();
-    auto cpu = unoptimized_result(prg);
+    //auto cpu = unoptimized_result(prg);
 
     //compile_for_garnet_platonic_mem(prg);
     compile_for_garnet_single_port_mem(prg, dir, false, gen_config_only, multi_accessor, false);
-    generate_regression_testbench(prg);
+    //generate_regression_testbench(prg);
 
     cout << "Output name: " << prg.name << endl;
     //run_verilator_tb(prg.name);
@@ -14302,7 +14302,7 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
       cmd("rm LakeWrapper.v");
 
       auto verilator_res = verilator_results(prg.name);
-      compare("cgra_" + prg.name + "_cpu_vs_verilog_comparison", verilator_res, cpu);
+      //compare("cgra_" + prg.name + "_cpu_vs_verilog_comparison", verilator_res, cpu);
       //string app_type = "dualwithaddr";
       string app_type = "single_port_buffer";
       cpy_app_to_folder(app_type, prg.name);
@@ -21756,7 +21756,7 @@ void resource_sharing_test() {
   prg.add_output("out");
 
   pointwise("ina", "id", "in", 1, prg);
-  
+
   auto lo = prg.add_loop("y", 0, 1)->add_op("soc");
   lo->add_load("ina", "y");
   lo->add_load("ina", "y+1");
