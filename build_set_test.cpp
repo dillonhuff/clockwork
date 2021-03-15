@@ -23198,6 +23198,7 @@ void scheduling_benchmarks() {
 }
 
 void application_tests() {
+  one_stage_blurx6_static_dynamic_comparison(1);
   one_stage_blurx6_static_dynamic_comparison(2);
   one_stage_blurx5_static_dynamic_comparison(2);
   pw5_static_dynamic_comparison(2);
