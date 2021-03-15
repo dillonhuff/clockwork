@@ -1,2 +1,0 @@
-export app=gaussian_pyramid
-export HLS_CLOCK_FREQUENCY=250000000
