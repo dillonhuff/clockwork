@@ -1738,6 +1738,7 @@ void emit_lake_config2csv(json data, ofstream& out) {
 void emit_lake_config_collateral(CodegenOptions options, string tile_name, json config_file) {
     cout << "\tGenerate collateral for buffer: " << tile_name << endl;
     string file_dir = options.dir + "lake_collateral/" + tile_name;
+    cmd("rm -rf " + file_dir);
     cmd("mkdir -p " + file_dir);
     for (auto it = config_file.begin(); it != config_file.end(); ++it) {
         cout << "\t\tconfig key: " << it.key() << ", " << it.value() << endl;
@@ -1749,9 +1750,19 @@ void emit_lake_config_collateral(CodegenOptions options, string tile_name, json 
 
 void run_lake_verilog_codegen(CodegenOptions& options, string v_name, string ub_ins_name) {
   //cmd("export LAKE_CONTROLLERS=$PWD");
-  cout << "Runing cmd$ python /nobackup/joeyliu/aha/lake/tests/wrapper_lake.py -c " + options.dir + "lake_collateral/" + ub_ins_name + " -s True -n " + v_name  <<  endl;
+  //cout << "Runing cmd$ python /nobackup/joeyliu/aha/lake/tests/wrapper_lake.py -c " + options.dir + "lake_collateral/" + ub_ins_name + " -s True -n " + v_name  <<  endl;
   ASSERT(getenv("LAKE_PATH"), "Define env var $LAKE_PATH which is the /PathTo/lake");
+  cmd("echo $LAKE_PATH");
   int res_lake = cmd("python $LAKE_PATH/tests/wrapper_lake.py -c " + options.dir + "lake_collateral/" + ub_ins_name + " -s True -n " + v_name);
+  assert(res_lake == 0);
+  cmd("mkdir -p "+options.dir+"verilog");
+  cmd("mv LakeWrapper_"+v_name+".v " + options.dir + "verilog");
+}
+
+void run_pond_verilog_codegen(CodegenOptions& options, string v_name, string ub_ins_name) {
+  //cmd("export LAKE_CONTROLLERS=$PWD");
+  ASSERT(getenv("LAKE_PATH"), "Define env var $LAKE_PATH which is the /PathTo/lake");
+  int res_lake = cmd("python $LAKE_PATH/tests/wrapper_pond.py -c " + options.dir + "lake_collateral/" + ub_ins_name + " -n " + v_name + " -d 512");
   assert(res_lake == 0);
   cmd("mkdir -p "+options.dir+"verilog");
   cmd("mv LakeWrapper_"+v_name+".v " + options.dir + "verilog");
@@ -1766,11 +1777,19 @@ void generate_lake_tile_verilog(CodegenOptions& options, Instance* buf) {
 
   //dump the collateral file
   emit_lake_config_collateral(options, ub_ins_name, buf->getMetaData()["config"]);
+  string config_mode = buf->getMetaData()["mode"];
 
   if (options.config_gen_only)
     return;
   //run the lake generation cmd
-  run_lake_verilog_codegen(options, v_name, ub_ins_name);
+  if (config_mode == "lake")
+      run_lake_verilog_codegen(options, v_name, ub_ins_name);
+  else if (config_mode == "pond")
+      run_pond_verilog_codegen(options, v_name, ub_ins_name);
+  else {
+      cout << "Not implemented yet. " << endl;
+      assert(false);
+  }
 }
 
 Instance* generate_coreir_op_controller_verilog(CodegenOptions& options, ModuleDef* def, op* op, vector<isl_map*>& sched_maps, schedule_info& hwinfo) {
@@ -1897,6 +1916,7 @@ Instance* generate_coreir_op_controller(CodegenOptions& options, ModuleDef* def,
 
   //For those op need loop index we need this controller
   bool need_index = op->index_variables_needed_by_compute.size() > 0;
+  //TODO: remove the first statement after kavya add init to lakewrapper
   if (options.rtl_options.use_external_controllers || need_index ) {
   //if (options.rtl_options.use_external_controllers) {
     auto aff_c = affine_controller(options, c, dom, aff);
@@ -2092,7 +2112,11 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
   Module* ub = coreir_moduledef(options, buffers, prg, schedmap, context, hwinfo);
 
   bool found_compute = true;
+#ifndef CGRAFLOW
   string compute_file = "./coreir_compute/" + prg.name + "_compute.json";
+#else
+  string compute_file = "./" + prg.name + "_compute.json";
+#endif
   if (hwinfo.use_dse_compute) {
     compute_file = "./dse_compute/" + prg.name + "_mapped.json";
     //compute_file = "./dse_apps/" + prg.name + ".json";
@@ -2100,7 +2124,7 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
   ifstream cfile(compute_file);
   if (!cfile.good()) {
     cout << "No compute unit file: " << compute_file << endl;
-    //assert(false);
+    assert(false);
   }
   if (!loadFromFile(context, compute_file)) {
     found_compute = false;
@@ -2321,7 +2345,7 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
   isl_set* res = unn(ss);
   verilog_collateral << tab(1) << "// sched min: " << str(lexmin(res)) << endl;
   verilog_collateral << tab(1) << "// sched max: " << str(lexmax(res)) << endl;
-  
+
 
   assert(verilog_collateral_file != nullptr);
 
@@ -2669,6 +2693,60 @@ void MapperPasses::MemSubstitute::setVisitorInfo() {
 }
 
 namespace MapperPasses {
+class RegfileSubstitute: public CoreIR::InstanceVisitorPass {
+  public :
+    static std::string ID;
+    RegfileSubstitute() : InstanceVisitorPass(ID,"replace cgralib.Mem_amber to cgralib.Mem") {}
+    void setVisitorInfo() override;
+};
+
+}
+
+
+bool RegfileReplace(Instance* cnst) {
+  cout << tab(2) << "memory syntax transformation!" << endl;
+  cout << tab(2) << toString(cnst) << endl;
+  Context* c = cnst->getContext();
+  auto allSels = cnst->getSelects();
+  for (auto itr: allSels) {
+    cout << tab(2) << "Sel: " << itr.first << endl;
+  }
+  ModuleDef* def = cnst->getContainer();
+  auto genargs = cnst->getModuleRef()->getGenArgs();
+  auto config_file = cnst->getMetaData()["config"];
+  CoreIR::Values modargs = {
+      {"config", CoreIR::Const::make(c, config_file)},
+      {"mode", CoreIR::Const::make(c, "pond")}
+  };
+  auto pt = addPassthrough(cnst, cnst->getInstname()+"_tmp");
+  Instance* buf = def->addInstance(cnst->getInstname()+"_garnet",
+          "cgralib.Pond", genargs, modargs);
+  def->removeInstance(cnst);
+  def->connect(pt->sel("in"), buf);
+  inlineInstance(pt);
+  inlineInstance(buf);
+
+  //remove rst_n
+  //auto rst_n_conSet = buf->sel("rst_n")->getConnectedWireables();
+  //vector<Wireable*> conns(rst_n_conSet.begin(), rst_n_conSet.end());
+  //assert(conns.size() == 1);
+  //auto conn = conns[0];
+  //def->disconnect(buf->sel("rst_n"),conn);
+
+  return true;
+}
+
+std::string MapperPasses::RegfileSubstitute::ID = "regfilesubstitute";
+void MapperPasses::RegfileSubstitute::setVisitorInfo() {
+  Context* c = this->getContext();
+  if (c->hasGenerator("cgralib.Pond_amber")) {
+    addVisitorFunction(c->getGenerator("cgralib.Pond_amber"), RegfileReplace);
+  }
+
+}
+
+
+namespace MapperPasses {
 class ConstDuplication : public CoreIR::InstanceVisitorPass {
   public :
     static std::string ID;
@@ -2746,6 +2824,8 @@ void garnet_map_module(Module* top, bool garnet_syntax_trans = false) {
   if (garnet_syntax_trans) {
     c->addPass(new MapperPasses::MemSubstitute);
     c->runPasses({"memsubstitute"});
+    c->addPass(new MapperPasses::RegfileSubstitute);
+    c->runPasses({"regfilesubstitute"});
   }
   c->addPass(new MapperPasses::ConstDuplication);
   c->runPasses({"constduplication"});
@@ -5449,7 +5529,7 @@ double PE_energy_cost_instance_model(power_analysis_params& power_params, power_
 
   cout << "Total PE energy cost for " << prg.name << ": " << energy_cost * 1e12 << " (pJ)" << endl;
 
-  assert(false);
+  //assert(false);
   return energy_cost * 1e12;
 }
 

@@ -1398,6 +1398,8 @@ map<string, UBuffer> build_buffers(prog& prg, umap* opt_sched);
 
 map<string, UBuffer> build_buffers(prog& prg);
 
+void tag_coarse_grained_loop_to_ubuf(map<string, UBuffer>& buffers, prog& prg);
+
 void generate_app_code(CodegenOptions& options, map<string, UBuffer>& buffers, prog& prg, umap* schedmap);
 
 prog duplicate_interface(prog& p);
@@ -1425,6 +1427,7 @@ void regression_test(prog& prg);
 void regression_test(CodegenOptions& options, prog& prg);
 
 std::set<std::string> get_kernels(prog& prg);
+std::set<std::string> get_kernels(op* root);
 
 std::vector<piecewise_address> addrs_referenced(op* p, const std::string& buffer);
 
@@ -1433,6 +1436,7 @@ vector<string> upsample_vars(const std::string& target_buf, op* reader, prog& pr
 void make_constant_dd(const std::string& target_op, const std::string& target_buf, prog& prg);
 
 std::vector<string> topologically_sort_kernels(prog& prg);
+std::vector<string> topologically_sort_kernels(op* root, prog& prg);
 
 std::set<string> buffers_written(op* p);
 std::set<string> buffers_read(op* p);
@@ -1445,6 +1449,8 @@ bool writes(const std::string& target_buf, op* p);
 op* find_writer(const std::string& target_buf, prog& prg);
 
 std::set<string> get_producers(string next_kernel, prog& prg);
+//in sub ast under root
+std::set<string> get_producers(string next_kernel, op* root, prog& prg);
 
 void deep_copy_child(op* dest, op* source, prog& original);
 
@@ -1805,6 +1811,7 @@ void push_below(loop* outer, loop* inner, prog& prg);
 void add_reuse_buffer_no_delta(const std::string& level, const std::string& buffer, prog& prg);
 
 op* find_coarse_grained_pipeline_loop(op* lp);
+op* find_coarse_grained_pipeline_loop(op* lp, prog& prg);
 
 vector<pair<string, pair<string, int> >> determine_output_shift_reg_map(
     prog& prg,
