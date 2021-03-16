@@ -1,2 +1,2 @@
-export app=gaussian_pyramid
+export app=unoptimized_three_level_pond_copy
 export HLS_CLOCK_FREQUENCY=250000000

@@ -14379,19 +14379,19 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   //TODO:has issue  with multiple input
   //test_apps.push_back(demosaic_complex());
   //
-  test_apps.push_back(fft8_unroll8_ratematch());
-  test_apps.push_back(fft8_unroll8());
-  test_apps.push_back(gaussian());
-  test_apps.push_back(conv_3_3());
-  test_apps.push_back(counter());
-  test_apps.push_back(cascade());
-  test_apps.push_back(harris());
-  test_apps.push_back(rom());
-  test_apps.push_back(conv_1_2());
-  test_apps.push_back(demosaic_unrolled());
-  test_apps.push_back(camera_pipeline());
-  test_apps.push_back(up_sample());
-  test_apps.push_back(unsharp());
+  //test_apps.push_back(fft8_unroll8_pease());
+  //test_apps.push_back(fft8_unroll8());
+  //test_apps.push_back(gaussian());
+  //test_apps.push_back(conv_3_3());
+  //test_apps.push_back(counter());
+  //test_apps.push_back(cascade());
+  //test_apps.push_back(harris());
+  //test_apps.push_back(rom());
+  //test_apps.push_back(conv_1_2());
+  //test_apps.push_back(demosaic_unrolled());
+  //test_apps.push_back(camera_pipeline());
+  //test_apps.push_back(up_sample());
+  //test_apps.push_back(unsharp());
 
   //DNN apps
   test_apps.push_back(resnet_simple());
@@ -17180,7 +17180,7 @@ void sanity_check_iis_for_vectorization(schedule_info& sched, prog& prg, int fet
 
 
 void garnet_single_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
-  if (is_rate_matchable(prg)) {
+  if (is_rate_matchable(prg) && !contains(prg.name, "pease")) {
     prg.pretty_print();
 
     //TODO: need another function to choose between pad bottom level or top level
@@ -17312,7 +17312,6 @@ void garnet_single_port_ram_schedule(schedule_info& sched, op* root, prog& prg) 
 
   auto op_sched = op_start_times_map(sched, prg);
   cout << "\tFinal schedule : " << str(op_sched)  << endl;
-  //assert(false);
 
   adjust_schedule_forward(sched, prg, 0);
   sanity_check_hw_schedule(sched, prg);
