@@ -23430,6 +23430,8 @@ void scheduling_benchmarks() {
 }
 
 void application_tests() {
+  one_stage_blurx7_static_dynamic_comparison(16);
+
   one_stage_blurx7_static_dynamic_comparison(2);
   one_stage_blurx6_test(2);
   one_stage_blurx6_static_dynamic_comparison(1);
