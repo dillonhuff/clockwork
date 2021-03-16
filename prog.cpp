@@ -4270,14 +4270,16 @@ void unroll(prog& prg, const std::string& var) {
   vector<op*> children = p->children;
   op* container = prg.parent(p);
 
+  op* last_position = p;
   for (auto v : indexes(p)) {
     for (auto child : children) {
       if (!child->is_loop()) {
         string name = prg.unique_name(isl_sanitize(child->name + "_" + var + "_" + str(v)));
-        auto val = container->add_op_after(p, prg.unique_name(child->name + "_" + var + "_" + str(v)));
+        auto val = container->add_op_after(last_position, prg.unique_name(child->name + "_" + var + "_" + str(v)));
         val->copy_fields_from(child);
         val->replace_variable(var, v);
         val->name = name;
+        last_position = val;
       } else {
         cout << "Error: Unrolling loop that contains a loop" << endl;
         assert(false);
@@ -5134,8 +5136,11 @@ compute_unit_internals compound_compute_unit(op* loop, prog& prg) {
   for (auto op : cu.operations) {
     cu.arg_names[op] = {};
 
-    for (auto b : op->buffers_read()) {
-      for (auto ar : op->read_addrs(b)) {
+    //for (auto b : op->buffers_read()) {
+      //for (auto ar : op->read_addrs(b)) {
+      for (auto cp : op->consume_locs_pair) {
+        string b = cp.first;
+        auto ar = cp.second;
         simplified_addr as = simplify(ar);
         as = b + brackets(as);
         if (contains_key(as, addr_sources)) {
@@ -5147,7 +5152,8 @@ compute_unit_internals compound_compute_unit(op* loop, prog& prg) {
           cu.raddrs.push_back({b, ar});
         }
       }
-    }
+      //}
+    //}
 
     for (auto b : op->buffers_written()) {
       // Update addr_sources
