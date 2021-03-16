@@ -575,7 +575,17 @@ bool all_constant_accesses(UBuffer& buf) {
 
 pair<ubuffer_impl,isl_map*> build_buffer_impl(prog& prg, UBuffer& buf, schedule_info& hwinfo) {
   ubuffer_impl impl;
-  auto bank_map = build_buffer_impl(prg, buf, hwinfo, impl);
+  maybe<std::set<int> > embarassing_banking =
+    embarassing_partition(buf);
+  bool has_embarassing_partition = embarassing_banking.has_value();
+  assert(has_embarassing_partition);
+
+  if (embarassing_banking.get_value().size() == buf.logical_dimension()) {
+    cout << buf.name << " is really a register file" << endl;
+  }
+
+  impl.partition_dims = embarassing_banking.get_value();
+  auto bank_map = build_buffer_impl_embarrassing_banking(prg, buf, hwinfo, impl);
   return {impl, bank_map};
 }
 

@@ -2014,7 +2014,7 @@ std::string resource_sharing_loop_codegen(umap* schedmap, const int d) {
       vars.push_back(v);
       if (di == d) {
         constraints.push_back(str(i.first) + " <= " + v + ((idx == (int) intervals.size() - 1) ? " <= " : " < ") + str(i.second));
-      } 
+      }
     }
     isl_set* is = mk_set(ctx(s), vars, constraints);
     interval_sets.push_back(is);
@@ -7802,19 +7802,9 @@ ubuffer_impl port_group2bank(CodegenOptions& options, prog& prg, UBuffer& buf, s
     //Add a visit pass on the sr graph for all input, take the data use the threshold
 }
 
-isl_map* build_buffer_impl(prog& prg, UBuffer& buf, schedule_info& hwinfo, ubuffer_impl& impl) {
-  cout << "Building implementation of " << buf.name << endl;
+isl_map* build_buffer_impl_embarrassing_banking(prog& prg, UBuffer& buf, schedule_info& hwinfo, ubuffer_impl& impl) {
+  cout << "Building implementation of " << buf.name << " Using Embarassing Banking. " << endl;
 
-  maybe<std::set<int> > embarassing_banking =
-    embarassing_partition(buf);
-  bool has_embarassing_partition = embarassing_banking.has_value();
-  assert(has_embarassing_partition);
-
-  if (embarassing_banking.get_value().size() == buf.logical_dimension()) {
-    cout << buf.name << " is really a register file" << endl;
-  }
-
-  impl.partition_dims = embarassing_banking.get_value();
   vector<int> extents;
   extents = extents_by_dimension(buf);
   for (auto d : impl.partition_dims) {
@@ -7871,24 +7861,37 @@ void generate_banks_garnet(CodegenOptions& options, prog& prg, UBuffer& buf, ubu
 
     //TODO: implement more banking strategies
     buf.banking.partition = "cyclic";
-    auto bank_func = build_buffer_impl(prg, buf, hw_info, impl);
+    maybe<std::set<int> > embarassing_banking =
+      embarassing_partition(buf);
+    bool has_embarassing_partition = embarassing_banking.has_value();
+    if (has_embarassing_partition) {
+      if (embarassing_banking.get_value().size() == buf.logical_dimension()) {
+        cout << buf.name << " is really a register file" << endl;
+      }
 
-    cout << "bank func: " << str(bank_func) << endl;
-    cout << "After banking: " << impl << endl;
+      impl.partition_dims = embarassing_banking.get_value();
+      auto bank_func = build_buffer_impl_embarrassing_banking(prg, buf, hw_info, impl);
 
-    //take the ubuffer implementation add bank to ubuffer
-    for (int bank_id = 0; bank_id < impl.get_bank_num(); bank_id ++) {
-      isl_set* bnk = isl_set_read_from_str(prg.ctx, curlies("Bank["+str(bank_id) + "]").c_str());
-      auto rddom = to_uset(domain(its_range(bank_func, bnk)));
-      cout << "rddom before its: " << str(rddom) << endl;
-      rddom = coalesce(its(rddom, buf.global_range()));
-      cout << "rddom after its: " << str(rddom) << endl;
-      auto point = pick(get_points(bnk));
-      cout << "ADD BANK!\n Bank id: " << str(point) << endl;
-      std::set<string> input_sets = impl.bank_writers.at(bank_id);
-      std::set<string> output_sets = impl.bank_readers.at(bank_id);
-      auto bnk_info = buf.compute_bank_info(rddom, point, input_sets, output_sets);
-      buf.add_bank_between(input_sets, output_sets, bnk_info);
+      cout << "bank func: " << str(bank_func) << endl;
+      cout << "After banking: " << impl << endl;
+
+      //take the ubuffer implementation add bank to ubuffer
+      for (int bank_id = 0; bank_id < impl.get_bank_num(); bank_id ++) {
+        isl_set* bnk = isl_set_read_from_str(prg.ctx, curlies("Bank["+str(bank_id) + "]").c_str());
+        auto rddom = to_uset(domain(its_range(bank_func, bnk)));
+        cout << "rddom before its: " << str(rddom) << endl;
+        rddom = coalesce(its(rddom, buf.global_range()));
+        cout << "rddom after its: " << str(rddom) << endl;
+        auto point = pick(get_points(bnk));
+        cout << "ADD BANK!\n Bank id: " << str(point) << endl;
+        std::set<string> input_sets = impl.bank_writers.at(bank_id);
+        std::set<string> output_sets = impl.bank_readers.at(bank_id);
+        auto bnk_info = buf.compute_bank_info(rddom, point, input_sets, output_sets);
+        buf.add_bank_between(input_sets, output_sets, bnk_info);
+      }
+    } else {
+        cout << "CANNOT support by current banking strategies!" << endl;
+        assert(false);
     }
 }
 
@@ -9258,7 +9261,7 @@ void generate_resource_sharing_code(
 
   // What are the major changes that are needed?
   //  - We have to have one C++ function that takes in
-  //    inputs from every channel and does compute ops on them 
+  //    inputs from every channel and does compute ops on them
   //  - Compute units in other operations have to be done
   //    by writing data to a channel and then reading it back
   //    from another channel
@@ -9321,7 +9324,7 @@ void generate_app_code(
     }
   }
   conv_out << "// Total re-use buffer capacity: " << capacity << " bits" << endl;
-  
+
 
   for (auto& gp : dag.fusion_group_progs) {
     vector<umap*> sched_maps;
@@ -9811,7 +9814,7 @@ insert_inter_group_buffers(const std::map<std::string, std::set<std::string> >& 
       isl_set* s = map_find({group_name, b.first}, read_by_gp);
 
       string broadcast = prg.un(b.first + "_to_" + group_name);
-      string incoming_channel = broadcast; 
+      string incoming_channel = broadcast;
       string producer_group = map_find(b.first, producer_groups);
 
       prg.buffer_port_widths[broadcast] = prg.buffer_port_width(name(s));
