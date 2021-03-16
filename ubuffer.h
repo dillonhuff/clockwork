@@ -18,6 +18,12 @@ struct dynamic_address {
 };
 
 template <typename T>
+std::ostream& operator<< (std::ostream& out, const std::pair<T, T>& v) {
+    out << "{" << v.first << ", " << v.second << "} ";
+    return out;
+}
+
+template <typename T>
 std::ostream& operator<< (std::ostream& out, const std::vector<T>& v) {
     if ( !v.empty()  ) {
         out << '[';
@@ -870,6 +876,8 @@ class UBuffer {
     std::map<string, bool> isIn;
     std::map<string, isl_set*> domain;
 
+    int coarse_grained_pipeline_loop_level;
+
     //This is used to retrive the flattened iteration domain
     std::map<string, isl_set*> retrive_domain;
 
@@ -1331,6 +1339,28 @@ class UBuffer {
       //}
     }
 
+    bool check_decouple_coarse_grained_pipeline_ctrl() {
+      if (coarse_grained_pipeline_loop_level == 0)
+          return false;
+      for (auto it: schedule) {
+        auto pt_name = it.first;
+        auto sched = to_map(it.second);
+        auto acc_map = to_map(access_map.at(pt_name));
+        auto rel_map = relation_map(acc_map) ;
+        int in_dim = coarse_grained_pipeline_loop_level;
+        cout << get_in_dim_name(sched, in_dim) << endl;
+
+        //sanity check
+        for (int i = 0; i <= in_dim; i ++) {
+          if (rel_map.at(i) == true) {
+            cout << "Cannot separate this loop" << endl;
+            assert(false);
+          }
+        }
+      }
+      return true;
+    }
+
     isl_union_map* get_outpt_sched() const {
       auto ret = isl_union_map_read_from_str(ctx, "{}");
       for (auto pt: get_out_ports()) {
@@ -1628,7 +1658,7 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
     }
 
 
-    UBuffer() : port_widths(32) {}
+    UBuffer() : port_widths(32), coarse_grained_pipeline_loop_level(0) {}
 
     //method to create a subgroup
     UBuffer(UBuffer buf, std::set<string> inpt_set, std::set<string> outpt_set, int idx) {
@@ -2001,6 +2031,19 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
         return ret;
     }
 
+    //Use for Garnet Codegen
+    vector<string> get_ops_sorted_by_bundle() const {
+        vector<string> ret;
+        for (auto b : port_bundles) {
+            for (auto bp : b.second) {
+                string op = domain_name(schedule.at(bp));
+                if (!elem(op, ret))
+                   ret.push_back(op);
+            }
+        }
+        return ret;
+    }
+
     bool is_in_pt(const std::string& name) const {
       assert(contains_key(name, isIn));
       return isIn.at(name);
@@ -2131,6 +2174,15 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
             ret.insert(sub_bundles.begin(), sub_bundles.end());
           }
         }
+      }
+      return ret;
+    }
+
+    std::set<string> get_bank_in_bundles(const std::string& bk_name) {
+      std::set<string> ret;
+      auto inpts = get_bank_inputs(bk_name);
+      for (auto inpt: inpts) {
+        ret.insert(get_bundle(inpt));
       }
       return ret;
     }
@@ -2329,8 +2381,12 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
     pair<std::map<string, UBuffer>, vector<string> >
         vectorization(int dim_id, int fetch_width, vector<int> iis);
 
-    void add_vectorized_pt_to_ubuf(UBuffer & target_buf, umap* rewrite_buf2op, isl_map* sched, string origin_pt_name, string bd_name, int dim_id, int fetch_width, bool is_out);
+    void add_vectorized_pt_to_ubuf(UBuffer& target_buf, vector<umap*> ap_vec, isl_map* merge_sched, string bd_name, int dim_id, int fetch_width, int cnt, bool is_out);
+    void add_vectorized_pt_to_ubuf(UBuffer & target_buf, umap* rewrite_buf2op, isl_map* sched, string origin_pt_name, string bd_name, int dim_id, int fetch_width, int cnt, bool is_out);
     int add_vectorized_pt_to_ubuf(UBuffer & target_buf, vector<pair<string, umap*>> rewrite_buf2op_map, map<string, isl_map*> sched_map, string bd_name, int dim_id, int fetch_width, bool is_out, bool use_recipe);
+
+    //New refactor method
+    map<string, vector<umap*>> get_access_pattern_map(vector<pair<string, umap*>> rewrite_buf2op_map, map<string, isl_map*> & sched_map, int dim_id, int fetch_width);
 
     map<string, isl_map*> produce_vectorized_schedule(string in_pt, string out_pt);
     map<string, isl_map*> produce_vectorized_schedule(string in_pt, string out_pt, int dim_id);
@@ -2367,6 +2423,8 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
 
     //from bank to ubuffer
     map<string, UBuffer> generate_ubuffer(CodegenOptions& opt);
+    //optimization pass to add an coarse grained controller, save iteration counter
+    isl_map* get_coarse_grained_pipeline_schedule(UBuffer& new_ub);
 
     //for chaining and create subbank
     vector<UBuffer> decouple_ubuffer_from_bank_map(isl_map* bank_map);
@@ -2385,7 +2443,9 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
     void generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, schedule_info& info);
     //ubuffer coreir generation for tahoe memory tile
     void generate_coreir_without_ctrl(CodegenOptions& options, CoreIR::ModuleDef* def, schedule_info& info);
-    Json generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> rewrite_buffer);
+    Json generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> &rewrite_buffer);
+    Json generate_ubuf_args_old(CodegenOptions& options, map<string, UBuffer> & rewrite_buffer);
+    Json generate_ubuf_args(CodegenOptions& options, UBuffer& rewrite_buffer);
 
     void generate_stencil_valid_config(CodegenOptions& options, string bk_name);
     CoreIR::Instance* generate_lake_tile_instance(
@@ -2394,6 +2454,12 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
         string ub_ins_name, string bk_name,
         size_t input_num, size_t output_num,
         bool has_stencil_valid, bool has_flush);
+
+    CoreIR::Instance* generate_pond_instance(
+        CoreIR::ModuleDef* def,
+        CodegenOptions options,
+        string ub_ins_name,
+        size_t input_num, size_t output_num);
 
     void emit_lake_config_collateral(CodegenOptions options, string dir);
 #endif
@@ -2431,6 +2497,8 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
 };
 
 string toBracketList(const vector<vector<int>> & data);
+string get_micro_buf_name(string buf_name);
+string get_ctrl_name(string op_name);
 
 struct StreamData {
     vector<vector<int> > in_data;
@@ -2672,6 +2740,8 @@ vector<string> generate_multilinear_address_components(const std::string& pt, ba
 maybe<int> dependence_distance_singleton(UBuffer& buf, const string& inpt, const string& outpt,
     umap* sched);
 
+//For chaining and intile banking
+map<string, UBuffer> decouple_multi_tile_ubuffer(CodegenOptions& options, map<string, UBuffer> & vec_buf);
 
 maybe<std::set<int> > embarassing_partition(UBuffer& buf);
 vector<vector<string> > overlapping_large_io_port_groups(UBuffer& buf, const int ports_per_direction);

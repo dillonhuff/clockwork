@@ -1009,36 +1009,18 @@ inline void op_hcompute_hw_kernel_global_wrapper_stencil(HWStream<hw_uint<16> >&
 
 }
 
-inline void op_hcompute_conv_stencil(conv_stencil_cache& conv_stencil, int root, int conv_s0_y, int conv_s0_x) {
+inline void op_hcompute_hw_output_stencil(conv_stencil_cache& conv_stencil, HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */hw_output_stencil, int root, int hw_output_s0_w, int hw_output_s0_y_yi, int hw_output_s0_x_xi) {
   // Dynamic address computation
 
-	auto compute_result = hcompute_conv_stencil();
-	// Produce: conv_stencil
-	conv_stencil_op_hcompute_conv_stencil_write_bundle_write(/* arg names */compute_result, conv_stencil, root, conv_s0_y, conv_s0_x, 0);
+	// Consume: conv_stencil
+	auto conv_stencil_hw_output_s0_w_c__hw_output_s0_y_yi_c__hw_output_s0_x_xi_value = conv_stencil_op_hcompute_hw_output_stencil_read_bundle_read(conv_stencil/* source_delay */, root, hw_output_s0_w, hw_output_s0_y_yi, hw_output_s0_x_xi, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 
-}
-
-inline void op_hcompute_conv_stencil_1(conv_stencil_cache& conv_stencil, int root, int conv_s0_y, int conv_s0_x) {
-  // Dynamic address computation
-
-	auto compute_result = hcompute_conv_stencil_1();
-	// Produce: conv_stencil
-	conv_stencil_op_hcompute_conv_stencil_1_write_bundle_write(/* arg names */compute_result, conv_stencil, root, conv_s0_y, conv_s0_x, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void op_hcompute_conv_stencil_2(conv_stencil_cache& conv_stencil, int root, int conv_s0_y, int conv_s0_x) {
-  // Dynamic address computation
-
-	auto compute_result = hcompute_conv_stencil_2();
-	// Produce: conv_stencil
-	conv_stencil_op_hcompute_conv_stencil_2_write_bundle_write(/* arg names */compute_result, conv_stencil, root, conv_s0_y, conv_s0_x, 0);
+	auto compute_result = hcompute_hw_output_stencil(conv_stencil_hw_output_s0_w_c__hw_output_s0_y_yi_c__hw_output_s0_x_xi_value);
+	// Produce: hw_output_stencil
+	hw_output_stencil.write(compute_result);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -1135,18 +1117,36 @@ inline void op_hcompute_conv_stencil_5(conv_stencil_cache& conv_stencil, hw_inpu
 
 }
 
-inline void op_hcompute_hw_output_stencil(conv_stencil_cache& conv_stencil, HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */hw_output_stencil, int root, int hw_output_s0_w, int hw_output_s0_y_yi, int hw_output_s0_x_xi) {
+inline void op_hcompute_conv_stencil_1(conv_stencil_cache& conv_stencil, int root, int conv_s0_y, int conv_s0_x) {
   // Dynamic address computation
 
-	// Consume: conv_stencil
-	auto conv_stencil_hw_output_s0_w_c__hw_output_s0_y_yi_c__hw_output_s0_x_xi_value = conv_stencil_op_hcompute_hw_output_stencil_read_bundle_read(conv_stencil/* source_delay */, root, hw_output_s0_w, hw_output_s0_y_yi, hw_output_s0_x_xi, 0);
+	auto compute_result = hcompute_conv_stencil_1();
+	// Produce: conv_stencil
+	conv_stencil_op_hcompute_conv_stencil_1_write_bundle_write(/* arg names */compute_result, conv_stencil, root, conv_s0_y, conv_s0_x, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 
-	auto compute_result = hcompute_hw_output_stencil(conv_stencil_hw_output_s0_w_c__hw_output_s0_y_yi_c__hw_output_s0_x_xi_value);
-	// Produce: hw_output_stencil
-	hw_output_stencil.write(compute_result);
+}
+
+inline void op_hcompute_conv_stencil(conv_stencil_cache& conv_stencil, int root, int conv_s0_y, int conv_s0_x) {
+  // Dynamic address computation
+
+	auto compute_result = hcompute_conv_stencil();
+	// Produce: conv_stencil
+	conv_stencil_op_hcompute_conv_stencil_write_bundle_write(/* arg names */compute_result, conv_stencil, root, conv_s0_y, conv_s0_x, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void op_hcompute_conv_stencil_2(conv_stencil_cache& conv_stencil, int root, int conv_s0_y, int conv_s0_x) {
+  // Dynamic address computation
+
+	auto compute_result = hcompute_conv_stencil_2();
+	// Produce: conv_stencil
+	conv_stencil_op_hcompute_conv_stencil_2_write_bundle_write(/* arg names */compute_result, conv_stencil, root, conv_s0_y, conv_s0_x, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -1173,17 +1173,17 @@ void unoptimized_resnet(HWStream<hw_uint<16> >& /* no bundle get_args num ports 
 #pragma HLS inline recursive
 #endif // __VIVADO_SYNTH__
 
-// schedule: { op_hcompute_conv_stencil_2[root = 0, conv_s0_y, conv_s0_x] -> [0, 0, 2, conv_s0_y, 0, conv_s0_x, 2, 0, 0, 0, 0] : 0 <= conv_s0_y <= 27 and 0 <= conv_s0_x <= 27; op_hcompute_hw_input_global_wrapper_stencil[root = 0, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x, hw_input_global_wrapper_s0_z] -> [0, 0, 0, hw_input_global_wrapper_s0_y, 0, hw_input_global_wrapper_s0_x, 0, hw_input_global_wrapper_s0_z, 0, 0, 0] : 0 <= hw_input_global_wrapper_s0_y <= 29 and 0 <= hw_input_global_wrapper_s0_x <= 29 and 0 <= hw_input_global_wrapper_s0_z <= 7; op_hcompute_hw_kernel_global_wrapper_stencil[root = 0, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [0, 0, 1, hw_kernel_global_wrapper_s0_y, 0, hw_kernel_global_wrapper_s0_x, 0, hw_kernel_global_wrapper_s0_w, 0, hw_kernel_global_wrapper_s0_z, 0] : 0 <= hw_kernel_global_wrapper_s0_y <= 2 and 0 <= hw_kernel_global_wrapper_s0_x <= 2 and 0 <= hw_kernel_global_wrapper_s0_w <= 2 and 0 <= hw_kernel_global_wrapper_s0_z <= 7; op_hcompute_conv_stencil_3[root = 0, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> [0, 0, 3, conv_s1_r_y, 0, conv_s1_r_x, 0, conv_s1_y, 0, conv_s1_x, 0] : 0 <= conv_s1_r_y <= 2 and 0 <= conv_s1_r_x <= 2 and 0 <= conv_s1_y <= 27 and 0 <= conv_s1_x <= 27; op_hcompute_hw_output_stencil[root = 0, hw_output_s0_w, hw_output_s0_y_yi, hw_output_s0_x_xi] -> [0, 0, 4, hw_output_s0_w, 0, hw_output_s0_y_yi, 0, hw_output_s0_x_xi, 0, 0, 0] : 0 <= hw_output_s0_w <= 2 and 0 <= hw_output_s0_y_yi <= 27 and 0 <= hw_output_s0_x_xi <= 27; op_hcompute_conv_stencil_4[root = 0, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> [0, 0, 3, conv_s1_r_y, 0, conv_s1_r_x, 0, conv_s1_y, 0, conv_s1_x, 1] : 0 <= conv_s1_r_y <= 2 and 0 <= conv_s1_r_x <= 2 and 0 <= conv_s1_y <= 27 and 0 <= conv_s1_x <= 27; op_hcompute_conv_stencil[root = 0, conv_s0_y, conv_s0_x] -> [0, 0, 2, conv_s0_y, 0, conv_s0_x, 0, 0, 0, 0, 0] : 0 <= conv_s0_y <= 27 and 0 <= conv_s0_x <= 27; op_hcompute_conv_stencil_1[root = 0, conv_s0_y, conv_s0_x] -> [0, 0, 2, conv_s0_y, 0, conv_s0_x, 1, 0, 0, 0, 0] : 0 <= conv_s0_y <= 27 and 0 <= conv_s0_x <= 27; op_hcompute_conv_stencil_5[root = 0, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> [0, 0, 3, conv_s1_r_y, 0, conv_s1_r_x, 0, conv_s1_y, 0, conv_s1_x, 2] : 0 <= conv_s1_r_y <= 2 and 0 <= conv_s1_r_x <= 2 and 0 <= conv_s1_y <= 27 and 0 <= conv_s1_x <= 27 }
+// schedule: { op_hcompute_conv_stencil_2[root = 0, conv_s0_y, conv_s0_x] -> [0, 0, 2, conv_s0_y, 0, conv_s0_x, 2, 0, 0, 0, 0] : 0 <= conv_s0_y <= 27 and 0 <= conv_s0_x <= 27; op_hcompute_hw_input_global_wrapper_stencil[root = 0, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x, hw_input_global_wrapper_s0_z] -> [0, 0, 0, hw_input_global_wrapper_s0_y, 0, hw_input_global_wrapper_s0_x, 0, hw_input_global_wrapper_s0_z, 0, 0, 0] : 0 <= hw_input_global_wrapper_s0_y <= 29 and 0 <= hw_input_global_wrapper_s0_x <= 29 and 0 <= hw_input_global_wrapper_s0_z <= 7; op_hcompute_hw_kernel_global_wrapper_stencil[root = 0, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [0, 0, 1, hw_kernel_global_wrapper_s0_y, 0, hw_kernel_global_wrapper_s0_x, 0, hw_kernel_global_wrapper_s0_w, 0, hw_kernel_global_wrapper_s0_z, 0] : 0 <= hw_kernel_global_wrapper_s0_y <= 2 and 0 <= hw_kernel_global_wrapper_s0_x <= 2 and 0 <= hw_kernel_global_wrapper_s0_w <= 2 and 0 <= hw_kernel_global_wrapper_s0_z <= 7; op_hcompute_hw_output_stencil[root = 0, hw_output_s0_w, hw_output_s0_y_yi, hw_output_s0_x_xi] -> [0, 0, 4, hw_output_s0_w, 0, hw_output_s0_y_yi, 0, hw_output_s0_x_xi, 0, 0, 0] : 0 <= hw_output_s0_w <= 2 and 0 <= hw_output_s0_y_yi <= 27 and 0 <= hw_output_s0_x_xi <= 27; op_hcompute_conv_stencil_3[root = 0, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> [0, 0, 3, conv_s1_r_y, 0, conv_s1_r_x, 0, conv_s1_y, 0, conv_s1_x, 0] : 0 <= conv_s1_r_y <= 2 and 0 <= conv_s1_r_x <= 2 and 0 <= conv_s1_y <= 27 and 0 <= conv_s1_x <= 27; op_hcompute_conv_stencil_4[root = 0, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> [0, 0, 3, conv_s1_r_y, 0, conv_s1_r_x, 0, conv_s1_y, 0, conv_s1_x, 1] : 0 <= conv_s1_r_y <= 2 and 0 <= conv_s1_r_x <= 2 and 0 <= conv_s1_y <= 27 and 0 <= conv_s1_x <= 27; op_hcompute_conv_stencil[root = 0, conv_s0_y, conv_s0_x] -> [0, 0, 2, conv_s0_y, 0, conv_s0_x, 0, 0, 0, 0, 0] : 0 <= conv_s0_y <= 27 and 0 <= conv_s0_x <= 27; op_hcompute_conv_stencil_1[root = 0, conv_s0_y, conv_s0_x] -> [0, 0, 2, conv_s0_y, 0, conv_s0_x, 1, 0, 0, 0, 0] : 0 <= conv_s0_y <= 27 and 0 <= conv_s0_x <= 27; op_hcompute_conv_stencil_5[root = 0, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> [0, 0, 3, conv_s1_r_y, 0, conv_s1_r_x, 0, conv_s1_y, 0, conv_s1_x, 2] : 0 <= conv_s1_r_y <= 2 and 0 <= conv_s1_r_x <= 2 and 0 <= conv_s1_y <= 27 and 0 <= conv_s1_x <= 27 }
 //   { op_hcompute_conv_stencil_2[root = 0, conv_s0_y, conv_s0_x] -> [0, 0, 2, conv_s0_y, 0, conv_s0_x, 2, 0, 0, 0, 0] : 0 <= conv_s0_y <= 27 and 0 <= conv_s0_x <= 27 }
 // Condition for op_hcompute_conv_stencil_2(((((1*i10)) == 0) && (((1*i9)) == 0) && (((1*i8)) == 0) && (((1*i7)) == 0) && (((-2 + 1*i6)) == 0) && (((1*i4)) == 0) && (((-2 + 1*i2)) == 0) && (((1*i1)) == 0) && (((1*i0)) == 0) && (((1*i3)) >= 0) && (((27 + -1*i3)) >= 0) && (((1*i5)) >= 0) && (((27 + -1*i5)) >= 0)))
 //   { op_hcompute_hw_input_global_wrapper_stencil[root = 0, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x, hw_input_global_wrapper_s0_z] -> [0, 0, 0, hw_input_global_wrapper_s0_y, 0, hw_input_global_wrapper_s0_x, 0, hw_input_global_wrapper_s0_z, 0, 0, 0] : 0 <= hw_input_global_wrapper_s0_y <= 29 and 0 <= hw_input_global_wrapper_s0_x <= 29 and 0 <= hw_input_global_wrapper_s0_z <= 7 }
 // Condition for op_hcompute_hw_input_global_wrapper_stencil(((((1*i10)) == 0) && (((1*i9)) == 0) && (((1*i8)) == 0) && (((1*i6)) == 0) && (((1*i4)) == 0) && (((1*i2)) == 0) && (((1*i1)) == 0) && (((1*i0)) == 0) && (((1*i3)) >= 0) && (((29 + -1*i3)) >= 0) && (((1*i5)) >= 0) && (((29 + -1*i5)) >= 0) && (((1*i7)) >= 0) && (((7 + -1*i7)) >= 0)))
 //   { op_hcompute_hw_kernel_global_wrapper_stencil[root = 0, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [0, 0, 1, hw_kernel_global_wrapper_s0_y, 0, hw_kernel_global_wrapper_s0_x, 0, hw_kernel_global_wrapper_s0_w, 0, hw_kernel_global_wrapper_s0_z, 0] : 0 <= hw_kernel_global_wrapper_s0_y <= 2 and 0 <= hw_kernel_global_wrapper_s0_x <= 2 and 0 <= hw_kernel_global_wrapper_s0_w <= 2 and 0 <= hw_kernel_global_wrapper_s0_z <= 7 }
 // Condition for op_hcompute_hw_kernel_global_wrapper_stencil(((((1*i10)) == 0) && (((1*i8)) == 0) && (((1*i6)) == 0) && (((1*i4)) == 0) && (((-1 + 1*i2)) == 0) && (((1*i1)) == 0) && (((1*i0)) == 0) && (((1*i3)) >= 0) && (((2 + -1*i3)) >= 0) && (((1*i5)) >= 0) && (((2 + -1*i5)) >= 0) && (((1*i7)) >= 0) && (((2 + -1*i7)) >= 0) && (((1*i9)) >= 0) && (((7 + -1*i9)) >= 0)))
-//   { op_hcompute_conv_stencil_3[root = 0, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> [0, 0, 3, conv_s1_r_y, 0, conv_s1_r_x, 0, conv_s1_y, 0, conv_s1_x, 0] : 0 <= conv_s1_r_y <= 2 and 0 <= conv_s1_r_x <= 2 and 0 <= conv_s1_y <= 27 and 0 <= conv_s1_x <= 27 }
-// Condition for op_hcompute_conv_stencil_3(((((1*i10)) == 0) && (((1*i8)) == 0) && (((1*i6)) == 0) && (((1*i4)) == 0) && (((-3 + 1*i2)) == 0) && (((1*i1)) == 0) && (((1*i0)) == 0) && (((1*i3)) >= 0) && (((2 + -1*i3)) >= 0) && (((1*i5)) >= 0) && (((2 + -1*i5)) >= 0) && (((1*i7)) >= 0) && (((27 + -1*i7)) >= 0) && (((1*i9)) >= 0) && (((27 + -1*i9)) >= 0)))
 //   { op_hcompute_hw_output_stencil[root = 0, hw_output_s0_w, hw_output_s0_y_yi, hw_output_s0_x_xi] -> [0, 0, 4, hw_output_s0_w, 0, hw_output_s0_y_yi, 0, hw_output_s0_x_xi, 0, 0, 0] : 0 <= hw_output_s0_w <= 2 and 0 <= hw_output_s0_y_yi <= 27 and 0 <= hw_output_s0_x_xi <= 27 }
 // Condition for op_hcompute_hw_output_stencil(((((1*i10)) == 0) && (((1*i9)) == 0) && (((1*i8)) == 0) && (((1*i6)) == 0) && (((1*i4)) == 0) && (((-4 + 1*i2)) == 0) && (((1*i1)) == 0) && (((1*i0)) == 0) && (((1*i3)) >= 0) && (((2 + -1*i3)) >= 0) && (((1*i5)) >= 0) && (((27 + -1*i5)) >= 0) && (((1*i7)) >= 0) && (((27 + -1*i7)) >= 0)))
+//   { op_hcompute_conv_stencil_3[root = 0, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> [0, 0, 3, conv_s1_r_y, 0, conv_s1_r_x, 0, conv_s1_y, 0, conv_s1_x, 0] : 0 <= conv_s1_r_y <= 2 and 0 <= conv_s1_r_x <= 2 and 0 <= conv_s1_y <= 27 and 0 <= conv_s1_x <= 27 }
+// Condition for op_hcompute_conv_stencil_3(((((1*i10)) == 0) && (((1*i8)) == 0) && (((1*i6)) == 0) && (((1*i4)) == 0) && (((-3 + 1*i2)) == 0) && (((1*i1)) == 0) && (((1*i0)) == 0) && (((1*i3)) >= 0) && (((2 + -1*i3)) >= 0) && (((1*i5)) >= 0) && (((2 + -1*i5)) >= 0) && (((1*i7)) >= 0) && (((27 + -1*i7)) >= 0) && (((1*i9)) >= 0) && (((27 + -1*i9)) >= 0)))
 //   { op_hcompute_conv_stencil_4[root = 0, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> [0, 0, 3, conv_s1_r_y, 0, conv_s1_r_x, 0, conv_s1_y, 0, conv_s1_x, 1] : 0 <= conv_s1_r_y <= 2 and 0 <= conv_s1_r_x <= 2 and 0 <= conv_s1_y <= 27 and 0 <= conv_s1_x <= 27 }
 // Condition for op_hcompute_conv_stencil_4(((((-1 + 1*i10)) == 0) && (((1*i8)) == 0) && (((1*i6)) == 0) && (((1*i4)) == 0) && (((-3 + 1*i2)) == 0) && (((1*i1)) == 0) && (((1*i0)) == 0) && (((1*i3)) >= 0) && (((2 + -1*i3)) >= 0) && (((1*i5)) >= 0) && (((2 + -1*i5)) >= 0) && (((1*i7)) >= 0) && (((27 + -1*i7)) >= 0) && (((1*i9)) >= 0) && (((27 + -1*i9)) >= 0)))
 //   { op_hcompute_conv_stencil[root = 0, conv_s0_y, conv_s0_x] -> [0, 0, 2, conv_s0_y, 0, conv_s0_x, 0, 0, 0, 0, 0] : 0 <= conv_s0_y <= 27 and 0 <= conv_s0_x <= 27 }

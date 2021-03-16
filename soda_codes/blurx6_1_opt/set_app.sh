@@ -1,0 +1,2 @@
+export app=blurx6_1_opt
+export HLS_CLOCK_FREQUENCY=250000000

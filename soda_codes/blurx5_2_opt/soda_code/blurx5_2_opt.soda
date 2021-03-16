@@ -1,0 +1,12 @@
+kernel: blurx5_2_opt
+unroll factor: 2
+burst width: 32
+
+input uint16: input_arg(1920, *)
+
+local uint16: input(0, 0) = input_arg(0, 0)
+
+output uint16: blurx5_2(0, 0) = ((input(0, 0) + (input(0, 1) + input(0, 2))) / 3)
+
+
+iterate: 1

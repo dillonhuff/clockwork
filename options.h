@@ -1,5 +1,7 @@
 #pragma once
 
+#include <iostream>
+#include <cassert>
 #include <string>
 #include <vector>
 #include <map>
@@ -101,14 +103,27 @@ struct LakeCollateral {
     int fetch_width;
     bool multi_sram_accessor;
 
-    LakeCollateral():
+    //TODO: use the collateral kavya generated
+    LakeCollateral(string level = "mem"):
         fetch_width(4),
-        multi_sram_accessor(false),
+        multi_sram_accessor(true),
         word_width({{"agg", 1}, {"sram", 4}, {"tb", 1}}),
         in_port_width({{"agg", 1}, {"sram", 4}, {"tb", 4}}),
         out_port_width({{"agg", 4}, {"sram", 4}, {"tb", 1}}),
         bank_num({{"agg", 2}, {"sram", 1}, {"tb", 2}}),
-        capacity({{"agg", 16}, {"sram", 512}, {"tb", 16}}) {}
+        capacity({{"agg", 16}, {"sram", 512}, {"tb", 16}}) {
+            if (level == "regfile") {
+                fetch_width = 1;
+                word_width = {{"regfile", 1}};
+                in_port_width= {{"regfile", 1}};
+                out_port_width = {{"regfile", 1}};
+                bank_num = {{"regfile", 1}};
+                capacity = {{"regfile", 32}};
+            } else if (level != "mem") {
+                cout << "\t\tERROR: Memory component not identified" << endl;
+                assert(false);
+            }
+        }
 };
 
 enum HLSLoopCodegen {
@@ -157,7 +172,7 @@ struct CodegenOptions {
   RTLOptions rtl_options;
 
   DebugOptions debug_options;
-  LakeCollateral mem_tile;
+  map<string, LakeCollateral> mem_hierarchy;
 
   slack_matching_policy slack_matching;
 
@@ -176,6 +191,8 @@ struct CodegenOptions {
   num_pipelines(1),
   slack_matching({SLACK_MATCHING_TYPE_FIXED, 500})
   {}
+
+  void add_memory_hierarchy(const std::string& level);
 
   banking_strategy get_banking_strategy(const std::string& buffer);
 
