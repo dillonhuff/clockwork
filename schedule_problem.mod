@@ -1,13 +1,5 @@
-var s_A_oc_update_0, integer;
-var s_A_update_0, integer;
-var s_B_update_0, integer;
-s.t. c0 : 1*s_B_update_0 + 0*s_A_update_0 + 0*s_A_oc_update_0 + -2>= 0;
-s.t. c1 : -1*s_B_update_0 + 0*s_A_update_0 + 2*s_A_oc_update_0 + 0>= 0;
-s.t. c2 : 1*s_B_update_0 + 0*s_A_update_0 + -2*s_A_oc_update_0 + 0>= 0;
-s.t. c3 : -1*s_B_update_0 + 2*s_A_update_0 + 0*s_A_oc_update_0 + 0>= 0;
-s.t. c4 : 1*s_B_update_0 + -2*s_A_update_0 + 0*s_A_oc_update_0 + 0>= 0;
-minimize obj: 1*s_A_oc_update_0 + 1*s_A_update_0 + 1*s_B_update_0;
-solve;printf "s_A_oc_update_0 = %d\n", s_A_oc_update_0;
-printf "s_A_update_0 = %d\n", s_A_update_0;
-printf "s_B_update_0 = %d\n", s_B_update_0;
+var input_to_gp_00, integer;
+s.t. c0 : 1*input_to_gp_00 + -2>= 0;
+minimize obj: 1*input_to_gp_00;
+solve;printf "input_to_gp_00 = %d\n", input_to_gp_00;
 end;
