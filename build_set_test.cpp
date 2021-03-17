@@ -21030,6 +21030,63 @@ void cp4_static_dynamic_comparison(const int throughput) {
   assert(false);
 }
 
+void sbl8_static_dynamic_comparison() {
+  string prefix = "sbl8";
+
+  int rows = 16;
+  int cols = 16;
+
+  //int unroll_factor = throughput;
+  string out_name = prefix; //+ "_sd_comp"; // + str(unroll_factor);
+
+  CodegenOptions options;
+  options.internal = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  options.scheduling_algorithm = SCHEDULE_ALGORITHM_CW;
+  options.debug_options.expect_all_linebuffers = true;
+
+  App app = sobel16(out_name);
+  prog prg = app.realize(options, out_name, cols, rows, 1);
+  prepare_for_clockwork_scheduling(prg);
+
+  vector<string> res1pix;
+  vector<string> res2pix;
+  {
+    prog static_prg = prg.deep_copy();
+    static_prg.reset_context();
+
+    infer_bounds_and_unroll(pick(static_prg.outs), {cols, rows}, 1, static_prg);
+
+    static_prg.pretty_print();
+
+    generate_optimized_code(options, static_prg);
+    generate_regression_testbench(static_prg);
+
+    res1pix = run_regression_tb(static_prg);
+  }
+
+  {
+    int unroll_factor = 4;
+    prog static_prg = prg.deep_copy();
+    static_prg.name = static_prg.name + "_" + str(unroll_factor);
+    static_prg.reset_context();
+
+    infer_bounds_and_unroll(pick(static_prg.outs), {cols, rows}, unroll_factor, static_prg);
+
+    static_prg.pretty_print();
+
+    generate_optimized_code(options, static_prg);
+    generate_regression_testbench(static_prg);
+
+    res2pix = run_regression_tb(static_prg);
+  }
+
+  compare(prg.name + "_throughput_comp", res1pix, res2pix);
+
+  assert(false);
+}
+
+
 void sbl7_static_dynamic_comparison(const int throughput) {
   string prefix = "sbl7";
 
@@ -23527,6 +23584,8 @@ void scheduling_benchmarks() {
 }
 
 void application_tests() {
+  sbl8_static_dynamic_comparison();
+
   sbl7_static_dynamic_comparison(32);
   sbl7_static_dynamic_comparison(16);
   sbl7_static_dynamic_comparison(1);
