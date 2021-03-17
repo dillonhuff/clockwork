@@ -21030,7 +21030,7 @@ void cp4_static_dynamic_comparison(const int throughput) {
   assert(false);
 }
 
-void sbl8_static_dynamic_comparison() {
+void test_sbl8_static_dynamic_comparison() {
   string prefix = "sbl8";
 
   int rows = 16;
@@ -21066,7 +21066,7 @@ void sbl8_static_dynamic_comparison() {
   }
 
   {
-    int unroll_factor = 4;
+    int unroll_factor = 2;
     prog static_prg = prg.deep_copy();
     static_prg.name = static_prg.name + "_" + str(unroll_factor);
     static_prg.reset_context();
@@ -21083,7 +21083,6 @@ void sbl8_static_dynamic_comparison() {
 
   compare(prg.name + "_throughput_comp", res1pix, res2pix);
 
-  assert(false);
 }
 
 
@@ -23584,7 +23583,7 @@ void scheduling_benchmarks() {
 }
 
 void application_tests() {
-  sbl8_static_dynamic_comparison();
+  test_sbl8_static_dynamic_comparison();
 
   sbl7_static_dynamic_comparison(32);
   sbl7_static_dynamic_comparison(16);
@@ -25602,6 +25601,7 @@ void gv_generation_pyramid() {
 }
 
 void dhuff_tests() {
+  test_sbl8_static_dynamic_comparison();
   test_multi_kernel_pyramid_collapsing();
   test_multi_kernel_unsharp();
   test_multi_kernel_design();
