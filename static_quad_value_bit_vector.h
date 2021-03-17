@@ -68,6 +68,7 @@ namespace bsim {
     }
 
     assert(false);
+    return "";
   }
 
   class quad_value {
@@ -134,6 +135,7 @@ namespace bsim {
         return "z";
       }
       assert(false);
+      return "";
     }
 
     void print(std::ostream& out) const {

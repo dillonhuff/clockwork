@@ -6276,11 +6276,57 @@ struct App {
   }
 
   void generate_soda_file(const std::string& name) {
+    string max_buffer = max_buf();
     string rep = pick(app_dag).first;
-    generate_soda_file(name, last_update(rep).unroll_factor);
+    Box domain = data_domain(max_buffer);
+    //assert(domain.dimension() == 2);
+    vector<string> dims;
+    for (int i = 0; i < domain.dimension(); i++) {
+      if (i < domain.dimension() - 1) {
+        dims.push_back(str(domain.length(i)));
+      } else {
+        dims.push_back("*");
+      }
+    }
+    generate_soda_file(name, last_update(rep).unroll_factor, dims);
   }
 
   void generate_soda_file(const std::string& name, const int unroll_factor) {
+    string max_buffer = max_buf();
+    string rep = pick(app_dag).first;
+    Box domain = data_domain(max_buffer);
+    vector<string> dims;
+    for (int i = 0; i < domain.dimension(); i++) {
+      if (i < domain.dimension() - 1) {
+        dims.push_back(str(domain.length(i)));
+      } else {
+        dims.push_back("*");
+      }
+    }
+    generate_soda_file(name, unroll_factor, dims);
+  }
+
+  std::string max_buf() {
+    std::set<string> external_buffers;
+    for (auto f : sort_functions()) {
+      if (producers(f).size() == 0) {
+        external_buffers.insert(f);
+      }
+    }
+
+    string max_buffer;
+    int max_size = -1;
+    for (auto b : external_buffers) {
+      if (original_buffer_size(b) > max_size) {
+        max_buffer = b;
+        max_size = original_buffer_size(b);
+      }
+    }
+
+    return max_buffer;
+  }
+
+  void generate_soda_file(const std::string& name, const int unroll_factor, std::vector<std::string>& dims) {
     ofstream out(name + ".soda");
     out << "kernel: " << name << endl;
 
@@ -6299,29 +6345,30 @@ struct App {
     }
 
     assert(external_buffers.size() > 0);
-    string max_buffer;
-    int max_size = -1;
-    for (auto b : external_buffers) {
-      if (original_buffer_size(b) > max_size) {
-        max_buffer = b;
-        max_size = original_buffer_size(b);
-      }
-    }
-    for (auto b : external_buffers) {
-      if (b != max_buffer) {
-        out << "input " << num_type_cstring() << ": " << b << endl;
-      }
-    }
-    Box domain = data_domain(max_buffer);
+    string max_buffer = max_buf();
+    //string max_buffer;
+    //int max_size = -1;
+    //for (auto b : external_buffers) {
+      //if (original_buffer_size(b) > max_size) {
+        //max_buffer = b;
+        //max_size = original_buffer_size(b);
+      //}
+    //}
+    //for (auto b : external_buffers) {
+      //if (b != max_buffer) {
+        //out << "input " << num_type_cstring() << ": " << b << endl;
+      //}
+    //}
+    //Box domain = data_domain(max_buffer);
     //assert(domain.dimension() == 2);
-    vector<string> dims;
-    for (int i = 0; i < domain.dimension(); i++) {
-      if (i < domain.dimension() - 1) {
-        dims.push_back(str(domain.length(i)));
-      } else {
-        dims.push_back("*");
-      }
-    }
+    //vector<string> dims;
+    //for (int i = 0; i < domain.dimension(); i++) {
+      //if (i < domain.dimension() - 1) {
+        //dims.push_back(str(domain.length(i)));
+      //} else {
+        //dims.push_back("*");
+      //}
+    //}
     out << "input " << num_type_cstring() << ": " << max_buffer << sep_list(dims, "(", ")", ", ") << endl << endl;
 
     vector<string> zeros;
@@ -6338,30 +6385,9 @@ struct App {
             out << "output " << num_type_cstring() << ": " << f << zrs << " = ";
               out << soda_compute_string(width, u.def) << endl << endl;
           } else {
-            //bool all_producers_external = true;
-            //for (auto p : producers(f)) {
-              //if (!elem(p.name, external_buffers)) {
-                //all_producers_external = false;
-                //break;
-              //}
-            //}
 
-            //if (all_producers_external) {
-              //Box domain = data_domain(f);
-              ////assert(domain.dimension() == 2);
-              //vector<string> dims;
-              //for (int i = 0; i < domain.dimension(); i++) {
-                //if (i < domain.dimension() - 1) {
-                  //dims.push_back(str(domain.length(i)));
-                //} else {
-                  //dims.push_back("*");
-                //}
-              //}
-              //out << "input " << num_type_cstring() << ": " << f << sep_list(dims, "(", ")", ", ") << endl << endl;
-            //} else {
-              out << "local " << num_type_cstring() << ": " << f << zrs << " = ";
-              out << soda_compute_string(width, u.def) << endl << endl;
-            //}
+            out << "local " << num_type_cstring() << ": " << f << zrs << " = ";
+            out << soda_compute_string(width, u.def) << endl << endl;
           }
         }
       }
@@ -14368,9 +14394,9 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   //DNN apps
   test_apps.push_back(resnet_simple());
   test_apps.push_back(resnet());
-  test_apps.push_back(mobilenet_unrolled());
 
   //Big applications
+  test_apps.push_back(mobilenet_unrolled());
   //test_apps.push_back(resnet88());
   //test_apps.push_back(resnet88_chain());
 
@@ -21093,6 +21119,121 @@ void sbl4_static_dynamic_comparison(const int throughput) {
 
   assert(false);
 }
+
+void blur5_static_dynamic_comparison(const int throughput) {
+  string prefix = "blur5";
+
+  int rows = 1080;
+  int cols = 1920;
+
+  int unroll_factor = throughput;
+  string out_name = prefix + "_" + str(unroll_factor);
+
+  CodegenOptions options;
+  options.internal = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  options.scheduling_algorithm = SCHEDULE_ALGORITHM_CW;
+  options.debug_options.expect_all_linebuffers = true;
+
+  App app = blur_xy_16(out_name);
+  prog prg = app.realize(options, out_name, cols, rows, 1);
+  prepare_for_clockwork_scheduling(prg);
+
+  {
+    prog static_prg = prg.deep_copy();
+    static_prg.reset_context();
+
+    infer_bounds_and_unroll(pick(static_prg.outs), {cols, rows}, throughput, static_prg);
+
+    static_prg.pretty_print();
+
+    generate_optimized_code(options, static_prg);
+
+    static_prg.pretty_print();
+    string buf = pick(static_prg.ins);
+    cout << "Buf = " << buf << endl;
+    vector<int> input_bounds_vs = map_find(buf, static_prg.buffer_bounds);
+    cout << tab(1) << "bounds: " << comma_list(input_bounds_vs) << endl;
+    vector<string> input_bounds;
+    int i = 0;
+    for (auto b : input_bounds_vs) {
+      if (i < ((int) input_bounds_vs.size()) - 1) {
+        input_bounds.push_back(str(b));
+      } else {
+        input_bounds.push_back("*");
+      }
+      i++;
+    }
+    app.generate_soda_file(static_prg.name, throughput, input_bounds);
+    //assert(false);
+
+    move_to_benchmarks_folder(out_name + "_opt");
+  }
+
+  {
+    prog static_prg = prg.deep_copy();
+    static_prg.name = out_name + "_opt_d32";
+    static_prg.reset_context();
+
+    static_prg.pretty_print();
+
+    auto fusion_groups = one_stage_per_group(static_prg);
+    auto fresh_groups = insert_inter_group_buffers(fusion_groups, static_prg);
+    unroll_mismatched_inner_loops(static_prg);
+    merge_basic_block_ops(static_prg);
+    infer_bounds_and_unroll(pick(static_prg.outs), {cols, rows}, throughput, static_prg);
+
+    assert(unoptimized_compiles(static_prg));
+
+    app_dag dag = partition_groups(fresh_groups, static_prg);
+
+    options = CodegenOptions();
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+    options.slack_matching = {SLACK_MATCHING_TYPE_FIXED, 32};
+    generate_app_code(options, dag);
+
+    move_to_benchmarks_folder(static_prg.name);
+
+    string synth_dir =
+      "./soda_codes/" + static_prg.name+ "/our_code/";
+    system(("cp " + out_name + "_opt" + "*.h " + synth_dir).c_str());
+  }
+
+  {
+    prog static_prg = prg.deep_copy();
+    prg.reset_context();
+
+    static_prg.pretty_print();
+
+    prg.name = out_name + "_opt_dis";
+
+    auto fusion_groups = one_stage_per_group(prg);
+    auto fresh_groups = insert_inter_group_buffers(fusion_groups, prg);
+    unroll_mismatched_inner_loops(prg);
+    merge_basic_block_ops(prg);
+    infer_bounds_and_unroll(pick(prg.outs), {cols, rows}, throughput, prg);
+
+    assert(unoptimized_compiles(prg));
+
+    app_dag dag = partition_groups(fresh_groups, prg);
+
+    options = CodegenOptions();
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+    options.slack_matching = {SLACK_MATCHING_TYPE_PIPELINE_DEPTH_AWARE, 2};
+    generate_app_code(options, dag);
+
+    move_to_benchmarks_folder(prg.name);
+
+    string synth_dir =
+      "./soda_codes/" + prg.name+ "/our_code/";
+
+    system(("cp " + out_name + "_opt" + "*.h " + synth_dir).c_str());
+  }
+  cout << "prg name: " << prg.name << endl;
+
+  assert(false);
+}
+
 void blur4_static_dynamic_comparison(const int throughput) {
   string prefix = "blur4";
 
@@ -22020,22 +22161,129 @@ void two_input_blending_test() {
   assert(false);
 }
 
-void path_sensitive_channel_sizing() {
-  //prog prg = two_in_blnd(64, 64);
-  prog prg = llf_grayscale_float(64, 64);
-  prg.name = prg.name + "_d";
-  prg.sanity_check();
+void pyr_blnd_non_blocking_test() {
+  //prog prg = two_in_blnd(2048, 2048);
+  prog prg = llf_grayscale_float(2048, 2048);
+  prg.name = prg.name + "_count_fifos";
+  //auto ures = unoptimized_result(prg);
+
+  CodegenOptions options;
+  options.scheduling_algorithm = SCHEDULE_ALGORITHM_CW;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  options.slack_matching = {SLACK_MATCHING_TYPE_FIXED, 0};
 
   auto fusion_groups = one_stage_per_group(prg);
   app_dag dag = partition_application(fusion_groups, prg);
+  generate_app_code(options, dag);
+
+  //generate_regression_testbench(prg);
+
+  //auto ores = run_regression_tb(prg);
+
+
+  //compare(prg.name + "opt comparison", ures, ores);
+  //assert(false);
+  move_to_benchmarks_folder(prg.name);
+
+  assert(false);
+}
+
+// Generating high performance designs?
+void resource_sharing_test() {
+  //prog prg("oned_r_oc2");
+  //prg.add_input("in");
+  //prg.add_output("out");
+
+  //pointwise("ina", "id", "in", 1, prg);
+
+  //auto lo = prg.add_loop("y", 0, 1)->add_op("soc");
+  //lo->add_load("ina", "y");
+  //lo->add_load("ina", "y+1");
+  //lo->add_load("ina", "y+2");
+  //lo->add_store("so", "y");
+  //lo->add_function("float_stencil_1x3");
+
+  //auto ds = prg.add_loop("d", 0, 1)->add_op("ds");
+  //ds->add_load("so", "2*d");
+  //ds->add_store("sd", "d");
+
+  //lo = prg.add_loop("y1", 0, 1)->add_op("s1");
+  //lo->add_load("sd", "y1");
+  //lo->add_load("sd", "y1+1");
+  //lo->add_load("sd", "y1+2");
+  //lo->add_store("out", "y1");
+  //lo->add_function("float_stencil_1x3");
+
+  //infer_bounds("out", {128}, prg);
+  //prg.pretty_print();
+
+  ////prog prg = two_in_blnd(64, 64);
+  //auto ures = unoptimized_result(prg);
+
+  //CodegenOptions options;
+  //options.scheduling_algorithm = SCHEDULE_ALGORITHM_CW;
+  //options.hls_loop_codegen = HLS_LOOP_CODEGEN_NON_BLOCKING;
+  //generate_optimized_code(options, prg);
+  //generate_regression_testbench(prg);
+
+  //auto ores = run_regression_tb(prg);
+
+
+  //compare(prg.name + "opt comparison", ures, ores);
+  //move_to_benchmarks_folder(prg.name);
+
+  //assert(false);
+
+  ////prog prg = two_in_blnd(64, 64);
+
+  //auto valid_deps = prg.validity_deps();
+  //auto global_sched =
+    //its(clockwork_schedule_umap_reversed(prg.whole_iteration_domain(), valid_deps, valid_deps),
+        //prg.whole_iteration_domain());
+  //cout << "Sched: " << str(global_sched) << endl;
+  //resource_sharing_loop_codegen(global_sched);
+  //assert(false);
+
+  prog prg("cpy_resource2");
+  prg.add_input("in");
+  prg.add_output("out");
+
+  pointwise("A", "id", "in", 2, prg);
+  pointwise("Ac", "plus_one", "A", 2, prg);
+  pointwise("B", "id", "Ac", 2, prg);
+  pointwise("Bc", "plus_one", "B", 2, prg);
+  pointwise("out", "id", "Bc", 2, prg);
+
+  infer_bounds("out", {8, 8}, prg);
+
+  prg.pretty_print();
+  prg.sanity_check();
+
+  prg.name = prg.name + "_s";
+  prg.sanity_check();
+
+  map<string, std::set<string> > fusion_groups =
+  {{"lda", {"pw_math_in01"}}, {"comp", {"pw_math_A45", "pw_math_B1213", "pw_math_Bc1617"}}, {"ldb", {"pw_math_Ac89"}}};
+
+  auto unopt_postprocessed = unoptimized_result(prg);
+
+  app_dag dag = partition_application(fusion_groups, prg);
+
+  //assert(false);
 
   CodegenOptions options;
   options = CodegenOptions();
-  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_NON_BLOCKING;
   options.scheduling_algorithm = SCHEDULE_ALGORITHM_CW;
-  options.slack_matching = {SLACK_MATCHING_TYPE_PIPELINE_DEPTH_AWARE, 5};
+  options.slack_matching = {SLACK_MATCHING_TYPE_FIXED, 250};
   generate_app_code(options, dag);
+  move_to_benchmarks_folder(dag.prg.name);
+  assert(false);
 
+  generate_regression_testbench(dag.prg);
+  vector<string> multi_kernel_res = run_regression_tb(dag.prg);
+
+  compare("resource_shared" + prg.name + "_vs_unopt", multi_kernel_res, unopt_postprocessed);
   assert(false);
 }
 
@@ -22056,6 +22304,25 @@ void llf_intelligent_channels() {
 
   move_to_benchmarks_folder(prg.name);
   cmd("cp local_laplacian_filter* ./soda_codes/" + prg.name + "/our_code/");
+
+  assert(false);
+}
+void path_sensitive_channel_sizing() {
+  //prog prg = two_in_blnd(2048, 2048);
+  prog prg = llf_grayscale_float(2048, 2048);
+  prg.name = prg.name + "_d";
+  prg.sanity_check();
+
+  auto fusion_groups = one_stage_per_group(prg);
+  app_dag dag = partition_application(fusion_groups, prg);
+
+  CodegenOptions options;
+  options = CodegenOptions();
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  options.scheduling_algorithm = SCHEDULE_ALGORITHM_CW;
+  //options.slack_matching = {SLACK_MATCHING_TYPE_PIPELINE_DEPTH_AWARE, 5};
+  options.slack_matching = {SLACK_MATCHING_TYPE_FIXED, 250};
+  generate_app_code(options, dag);
 
   assert(false);
 }
@@ -22455,6 +22722,59 @@ void cp_intelligent_channels2() {
   assert(false);
 }
 
+void sef_channels(const int unroll_factor, const int channel_depth) {
+  string prefix = "sef";
+
+  int size = 1080;
+  int rows = size;
+  int cols = size;
+
+  //int unroll_factor = 1;
+  int throughput = unroll_factor;
+  string out_name = prefix + "_" + str(unroll_factor);
+
+  CodegenOptions options;
+  options.internal = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+
+  App jac = ef_cartoon(out_name);
+  prog prg = jac.realize(options, out_name, cols, rows, 1);
+
+  move_to_benchmarks_folder(out_name + "_opt");
+
+  prg.name = out_name + "_opt_d_d" + str(unroll_factor);
+
+  unroll_reduce_loops(prg);
+  merge_basic_block_ops(prg);
+  normalize_bounds(prg);
+  normalize_address_offsets(prg);
+
+  auto fusion_groups = one_stage_per_group(prg);
+  auto fresh_groups = insert_inter_group_buffers(fusion_groups, prg);
+  unroll_mismatched_inner_loops(prg);
+  merge_basic_block_ops(prg);
+  infer_bounds_and_unroll(pick(prg.outs), {size, size}, throughput, prg);
+
+  assert(unoptimized_compiles(prg));
+
+  app_dag dag = partition_groups(fresh_groups, prg);
+
+  options = CodegenOptions();
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_PERFECT;
+  options.slack_matching = {SLACK_MATCHING_TYPE_FIXED, channel_depth};
+  generate_app_code(options, dag);
+
+  move_to_benchmarks_folder(prg.name);
+
+  string synth_dir =
+    "./soda_codes/" + prg.name+ "/our_code/";
+
+  system(("cp " + out_name + "_opt" + "*.h " + synth_dir).c_str());
+
+  cout << "prg name: " << prg.name << endl;
+
+  assert(false);
+}
 void sef_intelligent_channels2() {
   string prefix = "sef";
 
@@ -22511,7 +22831,34 @@ void sef_intelligent_channels2() {
   assert(false);
 }
 
+void scheduling_benchmarks() {
+  //prog prg = two_in_blnd(2048, 2048);
+  prog prg = llf_grayscale_float(2048, 2048);
+  //prog prg = pointwise();
+  //prog prg = harris();
+
+  auto fusion_groups = one_stage_per_group(prg);
+  app_dag dag = partition_application(fusion_groups, prg);
+  prg = dag.prg;
+  cout << "# of statements to schedule: " << prg.all_ops().size() << endl;
+
+  auto um = clockwork_schedule_prog(prg);
+  auto umi = prg.optimized_schedule();
+  assert(false);
+}
+
 void application_tests() {
+  resource_sharing_test();
+  pyr_blnd_non_blocking_test();
+
+  sef_channels(2, 500);
+
+
+  blur5_static_dynamic_comparison(16);
+
+  scheduling_benchmarks();
+
+  path_sensitive_channel_sizing();
   llf_250_channels(8);
   llf_250_channels(4);
   llf_2pix_250_channels();
@@ -22536,7 +22883,6 @@ void application_tests() {
   blur3_1_static_dynamic_comparison();
   blur3_32_static_dynamic_comparison();
 
-  path_sensitive_channel_sizing();
   llf_intelligent_channels3();
   two_in_blend_intelligent_channels2();
   sef_intelligent_channels2();
@@ -23588,6 +23934,10 @@ prog stencil_chain(const std::string& name) {
 
 void dhuff_playground() {
   {
+    resnet().pretty_print();
+    assert(false);
+  }
+  {
     prog prg = mod_example();
     prg.pretty_print();
 
@@ -24498,6 +24848,11 @@ void gv_generation_pyramid() {
 }
 
 void dhuff_tests() {
+  test_multi_kernel_pyramid_collapsing();
+  test_multi_kernel_unsharp();
+  test_multi_kernel_design();
+  test_multi_kernel_gp();
+
   infer_bounds_tests();
   test_app_to_prog_conversion();
   blurx_app_to_prog_test();
@@ -24508,19 +24863,12 @@ void dhuff_tests() {
   test_chain_grouping();
 
   //test_jacobi15_dynamic();
-
-  test_multi_kernel_pyramid_collapsing();
-  test_multi_kernel_gp();
-
   //test_multi_kernel_llf();
-  //assert(false);
 
   test_multi_kernel_mismatched_loop_depths();
   test_artificial_deadlock();
   upsample2d_test();
   up_stencil_down_test();
-  test_multi_kernel_unsharp();
-  test_multi_kernel_design();
   stencil_chain_multi_kernel_test();
   test_if_construction();
   test_time_sharing_gaussian_pyramid();

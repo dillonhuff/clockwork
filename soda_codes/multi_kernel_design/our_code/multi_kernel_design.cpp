@@ -123,6 +123,7 @@ inline hw_uint<32> gray_FIFO_buf12_pw_math_gray47_read_bundle_read(gray_FIFO_buf
 	return result;
 }
 
+// Total re-use buffer capacity: 1024 bits
 // Operation logic
 inline void oc_load_in03(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */in, gray_cache& gray, int d0, int d1, int d2) {
   // Dynamic address computation
@@ -260,6 +261,14 @@ void multi_kernel_design(HWStream<hw_uint<32> >& /* no bundle get_args num ports
 #pragma HLS dataflow
 #endif //__VIVADO_SYNTH__
 
+  // channel width: 1
+  // port width   : 32
+  // dag size     : 500
+// Bits to slack match gray_to_gp_18 = 16000
+// Bits to slack match gray_to_gp_18 = 16000
+// Bits in internal re-use buffers               : 1024 bits
+// Bits in channels needed to guarantee causality: 0
+// Bits in channels needed to match slack        : 16000
   HWStream< hw_uint<32> > gray_to_gp_18;
 #ifdef __VIVADO_SYNTH__
 #pragma HLS stream variable=gray_to_gp_18.values depth=500
