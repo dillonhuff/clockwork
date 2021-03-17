@@ -42,6 +42,8 @@ int main(int argc, char** argv) {
     func_map["cascade"] = cascade;
     func_map["stereo"] = stereo;
     func_map["resnet"] = resnet;
+    func_map["conv_3_3"] = conv_3_3;
+    func_map["conv_1_2"] = conv_1_2;
 
     auto prg_ptr = func_map[app_name];
     auto prg = prg_ptr();
@@ -63,8 +65,6 @@ int main(int argc, char** argv) {
     compile_for_garnet_single_port_mem(prg, dir, false, gen_config_only, multi_accessor, use_dse_compute, true, dse_compute_filename);
     generate_regression_testbench(prg);
 
-    cout << "Output name: " << dir << "/" << prg.name << endl;
-
     //run verilator on all the generated verilog
     if (!gen_config_only) {
         string name = prg.name;
@@ -74,14 +74,16 @@ int main(int argc, char** argv) {
         bool extra_flag_for_lake = true;
         int res = run_verilator_on(name, name + "_verilog_tb.cpp", verilog_files, extra_flag_for_lake);
         assert(res == 0);
-        cmd("rm LakeWrapper.v");
+        // cmd("rm LakeWrapper.v");
 
         auto verilator_res = verilator_results(prg.name);
         compare("cgra_" + prg.name + "_cpu_vs_verilog_comparison", verilator_res, cpu);
-        //string app_type = "dualwithaddr";
-        string app_type = "single_port_buffer";
-        cpy_app_to_folder(app_type, prg.name);
+        // //string app_type = "dualwithaddr";
+        // string app_type = "single_port_buffer";
+        // cpy_app_to_folder(app_type, prg.name);
     }
     
+    cout << "Passed!" << endl;
+    cout << "Output name: " << dir << "/" << prg.name << endl;
     return 0;
 }

@@ -12194,8 +12194,6 @@ int run_verilator_on(const std::string& top_module,
   //int verilator_build = cmd("verilator -Wall --cc " + sep_list(verilog_files, "", "", " ") + " --exe --build " + tb_file + " --top-module " + top_module + " -Wno-lint");
   int verilator_build = 0;
   if (extra_flag) {
-    cout << "verilator -Wall --cc " + sep_list(verilog_files, "", "", " ") + " --exe --build " + tb_file + " --top-module " + top_module + " -Wno-UNUSED -Wno-PINMISSING -Wno-DECLFILENAME -Wno-WIDTH -Wno-UNDRIVEN -Wno-CASEINCOMPLETE -Wno-MODDUP -Wno-UNOPTFLAT -Wno-CMPCONST" << endl;
-    assert(false);
       verilator_build = cmd("verilator -Wall --cc " + sep_list(verilog_files, "", "", " ") + " --exe --build " + tb_file + " --top-module " + top_module + " -Wno-UNUSED -Wno-PINMISSING -Wno-DECLFILENAME -Wno-WIDTH -Wno-UNDRIVEN -Wno-CASEINCOMPLETE -Wno-MODDUP -Wno-UNOPTFLAT -Wno-CMPCONST");
   } else {
       verilator_build = cmd("verilator -Wall --cc " + sep_list(verilog_files, "", "", " ") + " --exe --build " + tb_file + " --top-module " + top_module + " -Wno-UNUSED -Wno-WIDTH -Wno-PINMISSING -Wno-DECLFILENAME");
@@ -12206,6 +12204,7 @@ int run_verilator_on(const std::string& top_module,
   //assert(verilator_d == 0);
 
   int verilator_run = cmd("./obj_dir/V" + top_module);
+  cout << "verilator -Wall --cc " + sep_list(verilog_files, "", "", " ") + " --exe --build " + tb_file + " --top-module " + top_module + " -Wno-UNUSED -Wno-PINMISSING -Wno-DECLFILENAME -Wno-WIDTH -Wno-UNDRIVEN -Wno-CASEINCOMPLETE -Wno-MODDUP -Wno-UNOPTFLAT -Wno-CMPCONST" << endl;
   return verilator_run;
 }
 
@@ -12252,7 +12251,7 @@ void generate_verilog_tb(const std::string& name) {
 void generate_garnet_verilog_top(CodegenOptions& options, const std::string& name) {
 
     cmd("echo $LD_LIBRARY_PATH");
-  int to_verilog_res = cmd("${COREIR_PATH}/bin/coreir --inline --load_libs commonlib,cwlib,cgralib --input " + options.dir  + "/"+name +".json --output " + name + ".v -p \"rungenerators; wireclocks-clk; wireclocks-arst; deletedeadinstances; add-dummy-inputs\"");
+  int to_verilog_res = cmd("${COREIR_PATH}/bin/coreir --inline --load_libs commonlib,cwlib,cgralib,float --input " + options.dir  + "/"+name +".json --output " + name + ".v -p \"rungenerators; wireclocks-clk; wireclocks-arst; deletedeadinstances; add-dummy-inputs\"");
   assert(to_verilog_res == 0);
 
   //run verilator on all the generated verilog

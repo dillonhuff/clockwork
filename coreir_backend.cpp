@@ -2977,7 +2977,7 @@ void generate_coreir_without_ctrl(CodegenOptions& options,
     context->die();
   }
 
-  map_memory(prg_mod);
+  // map_memory(prg_mod);
 
   for (auto op : prg.all_ops()) {
     cout << "Inlining " << op->name << endl;
