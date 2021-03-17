@@ -14379,7 +14379,7 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   //TODO:has issue  with multiple input
   //test_apps.push_back(demosaic_complex());
   //
-  //test_apps.push_back(fft8_unroll8_pease());
+  test_apps.push_back(fft8_unroll8_pease());
   //test_apps.push_back(fft8_unroll8());
   //test_apps.push_back(gaussian());
   //test_apps.push_back(conv_3_3());
@@ -17283,6 +17283,12 @@ void garnet_single_port_ram_schedule(schedule_info& sched, op* root, prog& prg) 
     asap_input_iis(sched, prg);
     auto op_sched = op_start_times_map(sched, prg);
     cout << "Final schedule after relax: " << str(op_sched)  << endl;
+    return;
+  } else if (contains(prg.name, "pease")) {
+    sequential_schedule(sched, root, prg);
+    auto op_sched = op_start_times_map(sched, prg);
+    cout << "\tFinal schedule : " << str(op_sched)  << endl;
+    sanity_check_hw_schedule(sched, prg);
     return;
   }
 

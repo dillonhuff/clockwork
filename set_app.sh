@@ -1,2 +1,2 @@
-export app=unoptimized_three_level_pond_copy
+export app=unoptimized_resnet
 export HLS_CLOCK_FREQUENCY=250000000

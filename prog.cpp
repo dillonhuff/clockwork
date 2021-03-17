@@ -7860,11 +7860,11 @@ isl_map* build_buffer_impl_embarrassing_banking(prog& prg, UBuffer& buf, schedul
 void generate_banks_garnet(CodegenOptions& options, prog& prg, UBuffer& buf, ubuffer_impl& impl, schedule_info& hw_info) {
 
     //TODO: implement more banking strategies
-    buf.banking.partition = "cyclic";
     maybe<std::set<int> > embarassing_banking =
       embarassing_partition(buf);
     bool has_embarassing_partition = embarassing_banking.has_value();
     if (has_embarassing_partition) {
+      buf.banking.partition = "cyclic";
       if (embarassing_banking.get_value().size() == buf.logical_dimension()) {
         cout << buf.name << " is really a register file" << endl;
       }
@@ -7890,8 +7890,10 @@ void generate_banks_garnet(CodegenOptions& options, prog& prg, UBuffer& buf, ubu
         buf.add_bank_between(input_sets, output_sets, bnk_info);
       }
     } else {
-        cout << "CANNOT support by current banking strategies!" << endl;
-        assert(false);
+        cout << "Use exhaustive banking! " << endl;
+        buf.generate_banks_and_merge(options);
+        //cout << "CANNOT support by current banking strategies!" << endl;
+        //assert(false);
     }
 }
 
