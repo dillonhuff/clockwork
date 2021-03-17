@@ -16340,7 +16340,7 @@ void lake_tests() {
   //assert(false);
   //playground();
   test_single_port_mem(false, true, "aha_garnet_design_new");
-  //test_pond("aha_garnet_design_pond");
+  test_pond("aha_garnet_design_pond");
   //test_single_port_mem(false, false, "aha_garnet_design");
   assert(false);
   //double_buffer_test();
