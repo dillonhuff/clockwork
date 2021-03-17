@@ -4782,7 +4782,7 @@ bank UBuffer::compute_bank_info(
       if (delay_info.has_value()) {
         delay_map.at(s_out) = delay_info.get_value();
       } else {
-        assert(false);
+        //assert(false);
       }
     }
     delay_map.at(pt_delay.begin()->first) = 0;
