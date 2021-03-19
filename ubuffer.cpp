@@ -1012,9 +1012,12 @@ ConfigMap generate_addressor_config_from_aff_expr(isl_aff* addr,
     vals[prefix + "data_starting_addr"] = {to_int(const_coeff(addr))/port_width};
     for (int d = 0; d < num_in_dims(addr); d++) {
       int ldim = num_in_dims(addr) - d - 1;
+      int stride_raw = to_int(get_coeff(addr, d));
+      if (stride_raw < 0)
+          stride_raw += capacity;
       cout << "\""+prefix+"data_stride_" << ldim << "\"," <<
-          to_int(get_coeff(addr, d))% capacity /port_width << ",0" << endl;
-      map_insert(vals, prefix+"data_stride", to_int(get_coeff(addr, d))% capacity/port_width) ;
+          stride_raw % capacity /port_width << ",0" << endl;
+      map_insert(vals, prefix+"data_stride", stride_raw % capacity/port_width) ;
     }
     std::reverse(vals.at(prefix+"data_stride").begin(), vals.at(prefix+"data_stride").end());
     return vals;
