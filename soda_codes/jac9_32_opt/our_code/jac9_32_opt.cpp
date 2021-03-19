@@ -60500,6 +60500,60 @@ inline void stg9_stg9_1_merged1137_write_bundle_write(hw_uint<512>& stg9_1_merge
 
 
 // Operation logic
+inline void stg5_1_merged1125(stg4_cache& stg4, stg5_cache& stg5, int root, int stg5_0, int stg5_1) {
+  // Dynamic address computation
+
+	// Consume: stg4
+	auto stg4_1_m__lp__lp_32_m_stg5_1__p__0_rp___p___m_9_rp___p___m_1_p_10_c______1_m_stg5_0__p__0_p_0_value = stg4_stg5_1_merged1125_read_bundle_read(stg4/* source_delay */, root, stg5_0, stg5_1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = stg5_1_cu1123(stg4_1_m__lp__lp_32_m_stg5_1__p__0_rp___p___m_9_rp___p___m_1_p_10_c______1_m_stg5_0__p__0_p_0_value);
+	// Produce: stg5
+	stg5_stg5_1_merged1125_write_bundle_write(/* arg names */compute_result, stg5, root, stg5_0, stg5_1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void stg6_1_merged1128(stg5_cache& stg5, stg6_cache& stg6, int root, int stg6_0, int stg6_1) {
+  // Dynamic address computation
+
+	// Consume: stg5
+	auto stg5_1_m__lp__lp_32_m_stg6_1__p__0_rp___p___m_8_rp___p___m_1_p_9_c______1_m_stg6_0__p__0_p_0_value = stg5_stg6_1_merged1128_read_bundle_read(stg5/* source_delay */, root, stg6_0, stg6_1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = stg6_1_cu1126(stg5_1_m__lp__lp_32_m_stg6_1__p__0_rp___p___m_8_rp___p___m_1_p_9_c______1_m_stg6_0__p__0_p_0_value);
+	// Produce: stg6
+	stg6_stg6_1_merged1128_write_bundle_write(/* arg names */compute_result, stg6, root, stg6_0, stg6_1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void stg7_1_merged1131(stg6_cache& stg6, stg7_cache& stg7, int root, int stg7_0, int stg7_1) {
+  // Dynamic address computation
+
+	// Consume: stg6
+	auto stg6_1_m__lp__lp_32_m_stg7_1__p__0_rp___p___m_7_rp___p___m_1_p_8_c______1_m_stg7_0__p__0_p_0_value = stg6_stg7_1_merged1131_read_bundle_read(stg6/* source_delay */, root, stg7_0, stg7_1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = stg7_1_cu1129(stg6_1_m__lp__lp_32_m_stg7_1__p__0_rp___p___m_7_rp___p___m_1_p_8_c______1_m_stg7_0__p__0_p_0_value);
+	// Produce: stg7
+	stg7_stg7_1_merged1131_write_bundle_write(/* arg names */compute_result, stg7, root, stg7_0, stg7_1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
 inline void in_1_merged1107(HWStream<hw_uint<512> >& /* buffer_args num ports = 32 */in_off_chip, in_cache& in, int root, int in_0, int in_1) {
   // Dynamic address computation
 
@@ -60604,54 +60658,18 @@ inline void stg4_1_merged1122(stg3_cache& stg3, stg4_cache& stg4, int root, int 
 
 }
 
-inline void stg5_1_merged1125(stg4_cache& stg4, stg5_cache& stg5, int root, int stg5_0, int stg5_1) {
+inline void jac9_32_1_merged1155(stg14_cache& stg14, HWStream<hw_uint<512> >& /* buffer_args num ports = 32 */jac9_32, int root, int jac9_32_0, int jac9_32_1) {
   // Dynamic address computation
 
-	// Consume: stg4
-	auto stg4_1_m__lp__lp_32_m_stg5_1__p__0_rp___p___m_9_rp___p___m_1_p_10_c______1_m_stg5_0__p__0_p_0_value = stg4_stg5_1_merged1125_read_bundle_read(stg4/* source_delay */, root, stg5_0, stg5_1, 0);
+	// Consume: stg14
+	auto stg14_1_m__lp_32_m_jac9_32_1__p__0_rp___p__0_p_0_c_____1_m_jac9_32_0__p__0_p_0_value = stg14_jac9_32_1_merged1155_read_bundle_read(stg14/* source_delay */, root, jac9_32_0, jac9_32_1, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 
-	auto compute_result = stg5_1_cu1123(stg4_1_m__lp__lp_32_m_stg5_1__p__0_rp___p___m_9_rp___p___m_1_p_10_c______1_m_stg5_0__p__0_p_0_value);
-	// Produce: stg5
-	stg5_stg5_1_merged1125_write_bundle_write(/* arg names */compute_result, stg5, root, stg5_0, stg5_1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void stg6_1_merged1128(stg5_cache& stg5, stg6_cache& stg6, int root, int stg6_0, int stg6_1) {
-  // Dynamic address computation
-
-	// Consume: stg5
-	auto stg5_1_m__lp__lp_32_m_stg6_1__p__0_rp___p___m_8_rp___p___m_1_p_9_c______1_m_stg6_0__p__0_p_0_value = stg5_stg6_1_merged1128_read_bundle_read(stg5/* source_delay */, root, stg6_0, stg6_1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = stg6_1_cu1126(stg5_1_m__lp__lp_32_m_stg6_1__p__0_rp___p___m_8_rp___p___m_1_p_9_c______1_m_stg6_0__p__0_p_0_value);
-	// Produce: stg6
-	stg6_stg6_1_merged1128_write_bundle_write(/* arg names */compute_result, stg6, root, stg6_0, stg6_1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void stg7_1_merged1131(stg6_cache& stg6, stg7_cache& stg7, int root, int stg7_0, int stg7_1) {
-  // Dynamic address computation
-
-	// Consume: stg6
-	auto stg6_1_m__lp__lp_32_m_stg7_1__p__0_rp___p___m_7_rp___p___m_1_p_8_c______1_m_stg7_0__p__0_p_0_value = stg6_stg7_1_merged1131_read_bundle_read(stg6/* source_delay */, root, stg7_0, stg7_1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = stg7_1_cu1129(stg6_1_m__lp__lp_32_m_stg7_1__p__0_rp___p___m_7_rp___p___m_1_p_8_c______1_m_stg7_0__p__0_p_0_value);
-	// Produce: stg7
-	stg7_stg7_1_merged1131_write_bundle_write(/* arg names */compute_result, stg7, root, stg7_0, stg7_1, 0);
+	auto compute_result = jac9_32_1_cu1153(stg14_1_m__lp_32_m_jac9_32_1__p__0_rp___p__0_p_0_c_____1_m_jac9_32_0__p__0_p_0_value);
+	// Produce: jac9_32
+	jac9_32.write(compute_result);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -60688,24 +60706,6 @@ inline void stg9_1_merged1137(stg8_cache& stg8, stg9_cache& stg9, int root, int 
 	auto compute_result = stg9_1_cu1135(stg8_1_m__lp__lp_32_m_stg9_1__p__0_rp___p___m_5_rp___p___m_1_p_6_c______1_m_stg9_0__p__0_p_0_value);
 	// Produce: stg9
 	stg9_stg9_1_merged1137_write_bundle_write(/* arg names */compute_result, stg9, root, stg9_0, stg9_1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void jac9_32_1_merged1155(stg14_cache& stg14, HWStream<hw_uint<512> >& /* buffer_args num ports = 32 */jac9_32, int root, int jac9_32_0, int jac9_32_1) {
-  // Dynamic address computation
-
-	// Consume: stg14
-	auto stg14_1_m__lp_32_m_jac9_32_1__p__0_rp___p__0_p_0_c_____1_m_jac9_32_0__p__0_p_0_value = stg14_jac9_32_1_merged1155_read_bundle_read(stg14/* source_delay */, root, jac9_32_0, jac9_32_1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = jac9_32_1_cu1153(stg14_1_m__lp_32_m_jac9_32_1__p__0_rp___p__0_p_0_c_____1_m_jac9_32_0__p__0_p_0_value);
-	// Produce: jac9_32
-	jac9_32.write(compute_result);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__

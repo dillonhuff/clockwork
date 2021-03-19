@@ -21510,7 +21510,7 @@ void blur9_static_dynamic_comparison(const int throughput) {
   }
   cout << "prg name: " << prg.name << endl;
 
-  assert(false);
+  //assert(false);
 }
 
 
@@ -24042,6 +24042,9 @@ void scheduling_benchmarks() {
 }
 
 void application_tests() {
+  blur9_static_dynamic_comparison(1);
+  blur9_static_dynamic_comparison(32);
+
   jac9_static_dynamic_comparison(32);
   jac9_static_dynamic_comparison(1);
   cp9_static_dynamic_comparison(1);
