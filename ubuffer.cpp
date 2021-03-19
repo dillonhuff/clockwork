@@ -4942,24 +4942,17 @@ bank UBuffer::compute_bank_info(
 }
 
 map<string, std::set<string> >
-get_unique_output_ports(UBuffer& buf) {
+UBuffer::get_unique_ports(std::set<string> &outpts) {
   map<string, std::set<string> > outmap;
-  for (auto pt : buf.get_out_ports()) {
+  for (auto pt : outpts) {
 
     bool is_duplicate = false;
-    auto m = map_find(pt, buf.access_map);
-    auto sched = map_find(pt, buf.schedule);
-    auto dom = map_find(pt, buf.domain);
 
     for (auto existing_pair : outmap) {
       string existing = existing_pair.first;
-      auto e_m = map_find(existing, buf.access_map);
-      auto e_sched = map_find(existing, buf.schedule);
-      auto e_dom = map_find(existing, buf.domain);
 
-      if (isl_union_map_is_equal(e_m, m) &&
-          isl_set_is_equal(e_dom, dom) &&
-          isl_union_map_is_equal(e_sched, sched)) {
+      if (can_be_broadcast(existing, pt)){
+        cout << pt << "-> broadcast ->" << existing << endl;
         is_duplicate = true;
         outmap[existing].insert(pt);
         break;
@@ -5203,8 +5196,10 @@ void UBuffer::generate_banks(CodegenOptions& options) {
 
     } else {
 
+      auto outpts = get_out_ports();
+      std::set<string> out_pt_set(outpts.begin(), outpts.end());
       map<string, std::set<string> > unique_outs =
-        get_unique_output_ports(*this);
+        get_unique_ports(out_pt_set);
 
       cout << "===== Unique ports" << endl;
       for (auto ptg : unique_outs) {
@@ -5301,6 +5296,59 @@ void UBuffer::generate_banks(CodegenOptions& options) {
 
       }
     }
+  }
+
+  vector<pair<std::set<string>, std::set<string> > >
+      UBuffer::port_grouping(CodegenOptions& options,
+          std::set<string> inpts,
+          std::set<string> outpts) {
+    vector<pair<std::set<string>, std::set<string> > > ret;
+    //naive case we need to create a bank between each input port and output port
+    if (!overlap_schedule(inpts) && !overlap_schedule(outpts)) {
+        if((inpts.size() <= options.rtl_options.max_inpt) &&
+            (outpts.size() <= options.rtl_options.max_outpt)) {
+            ret.push_back(
+                    make_pair(inpts, outpts)
+                    );
+        } else {
+            cout << "Need to implement a partition algorithm" << endl;
+            assert(false);
+        }
+    } else {
+        map<string, std::set<string> > outpt_partitions =
+            get_unique_ports(outpts);
+        for (string inpt: inpts) {
+            for (auto it : outpt_partitions) {
+                ret.push_back(make_pair(std::set<string>({inpt}), it.second));
+            }
+        }
+    }
+    return ret;
+  }
+
+  void UBuffer::merge_bank_broadcast(string inpt) {
+    vector<bank> mergeable;
+    bank to_replace;
+    string pt_to_be_merge = "";
+    for (auto bk: receiver_banks(inpt)) {
+      assert(get_bank_inputs(bk.name).size() == 1);
+      assert(get_bank_outputs(bk.name).size() == 1);
+      string current = pick(get_bank_outputs(bk.name));
+      if (pt_to_be_merge== "") {
+        to_replace = bk;
+        pt_to_be_merge = current;
+      } else {
+        if (can_be_broadcast(pt_to_be_merge, current))
+        mergeable.push_back(bk);
+      }
+    }
+    if(mergeable.size() == 0)
+        return;
+    for (auto merge: mergeable) {
+      replace_bank(merge, to_replace);
+      cout << "Merge bank: " << merge.name << " into " << to_replace.name << endl;
+    }
+    assert(false);
   }
 
   isl_map* UBuffer::merge_output_pt(vector<string> merge_pt) {
