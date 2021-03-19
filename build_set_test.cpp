@@ -14282,11 +14282,12 @@ void test_pond(string dir, bool run_verilator=true) {
   vector<prog> test_apps;
   test_apps.push_back(resnet_simple());
   test_apps.push_back(resnet());
-  //test_apps.push_back(three_level_pond());
-  //test_apps.push_back(three_level_pond_rolled());
   test_apps.push_back(three_level_pond_copy());
   test_apps.push_back(fft8_unroll8_split());
 
+  //TODO: tobe tested with new pond
+  //test_apps.push_back(three_level_pond());
+  //test_apps.push_back(three_level_pond_rolled());
   for ( auto prg: test_apps) {
     cout << "====== Running CGRA Single Port test for " << prg.name << endl;
     prg.pretty_print();
@@ -14381,17 +14382,17 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   //test_apps.push_back(demosaic_complex());
   //
   //test_apps.push_back(fft8_unroll8());
-  //test_apps.push_back(gaussian());
-  //test_apps.push_back(conv_3_3());
-  //test_apps.push_back(counter());
-  //test_apps.push_back(cascade());
-  //test_apps.push_back(harris());
-  //test_apps.push_back(rom());
-  //test_apps.push_back(conv_1_2());
-  //test_apps.push_back(demosaic_unrolled());
-  //test_apps.push_back(camera_pipeline());
-  //test_apps.push_back(up_sample());
-  //test_apps.push_back(unsharp());
+  test_apps.push_back(gaussian());
+  test_apps.push_back(conv_3_3());
+  test_apps.push_back(counter());
+  test_apps.push_back(cascade());
+  test_apps.push_back(harris());
+  test_apps.push_back(rom());
+  test_apps.push_back(conv_1_2());
+  test_apps.push_back(demosaic_unrolled());
+  test_apps.push_back(camera_pipeline());
+  test_apps.push_back(up_sample());
+  test_apps.push_back(unsharp());
 
   //DNN apps
   test_apps.push_back(resnet_simple());

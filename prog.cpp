@@ -7998,24 +7998,45 @@ void generate_banks_garnet(CodegenOptions& options, prog& prg, UBuffer& buf, ubu
         cout << "ADD BANK!\n Bank id: " << str(point) << endl;
         std::set<string> input_sets = impl.bank_writers.at(bank_id);
         std::set<string> output_sets = impl.bank_readers.at(bank_id);
-        //naive banking
-        if (buf.overlap_schedule(input_sets) || buf.overlap_schedule(output_sets)) {
-            cout << "inputs for bank: " << input_sets << endl;
-            cout << "outputs for bank: " << output_sets << endl;
-            assert(input_sets.size() == 1);
-          for (string inpt : input_sets) {
-            for (string outpt: output_sets) {
-              //auto bnk_info = buf.compute_bank_info(rddom, point, {inpt}, {outpt});
-              maybe<int> delay_info = buf.dependence_distance_max(inpt, outpt);
-              assert(delay_info.has_value());
-              auto bnk_info = buf.compute_bank_info(inpt, outpt, delay_info.get_value());
-              buf.add_bank_between(inpt, outpt, bnk_info);
-            }
-          }
-        } else {
+        auto bank_IOs = buf.port_grouping(options, input_sets, output_sets);
+        for (auto bank_IO_pair: bank_IOs) {
+            cout << "input group: " << bank_IO_pair.first << endl;
+            cout << "output group: " << bank_IO_pair.second << endl;
+          //TODO potential bug for multi bank with broad casting case
+          //TODO bank is not a good intermediate representation and contains too much internal data
+          //     use buffer impl then
+          if ((bank_IO_pair.first.size() == 1) && (bank_IO_pair.second.size() == 1)){
+            string inpt = pick(bank_IO_pair.first);
+            string outpt = pick(bank_IO_pair.second);
+            maybe<int> delay_info = buf.dependence_distance_max(inpt, outpt);
+            assert(delay_info.has_value());
+            auto bnk_info = buf.compute_bank_info(inpt, outpt, delay_info.get_value());
+            buf.add_bank_between(inpt, outpt, bnk_info);
+          } else {
+            auto input_sets = bank_IO_pair.first;
+            auto output_sets = bank_IO_pair.second;
             auto bnk_info = buf.compute_bank_info(rddom, point, input_sets, output_sets);
             buf.add_bank_between(input_sets, output_sets, bnk_info);
+          }
         }
+        //if (buf.overlap_schedule(input_sets) || buf.overlap_schedule(output_sets)) {
+        //    cout << "inputs for bank: " << input_sets << endl;
+        //    cout << "outputs for bank: " << output_sets << endl;
+        //    assert(input_sets.size() == 1);
+        //  for (string inpt : input_sets) {
+        //    for (string outpt: output_sets) {
+        //      //auto bnk_info = buf.compute_bank_info(rddom, point, {inpt}, {outpt});
+        //      maybe<int> delay_info = buf.dependence_distance_max(inpt, outpt);
+        //      assert(delay_info.has_value());
+        //      auto bnk_info = buf.compute_bank_info(inpt, outpt, delay_info.get_value());
+        //      buf.add_bank_between(inpt, outpt, bnk_info);
+        //    }
+        //    buf.merge_bank_broadcast(inpt);
+        //  }
+        //} else {
+        //    auto bnk_info = buf.compute_bank_info(rddom, point, input_sets, output_sets);
+        //    buf.add_bank_between(input_sets, output_sets, bnk_info);
+        //}
       }
     } else {
         cout << "Use exhaustive banking! " << endl;
