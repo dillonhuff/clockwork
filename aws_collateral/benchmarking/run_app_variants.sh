@@ -16,3 +16,25 @@ cd ..
 # return to original directory
 cd ../..
 
+cd ./soda_codes/${target}_d32/
+source set_app.sh
+
+cd our_code
+../../../aws_collateral/run_our_image.sh
+# return to app top-level
+cd ..
+
+# return to original directory
+cd ../..
+
+
+cd ./soda_codes/${target}_dis/
+source set_app.sh
+
+cd our_code
+../../../aws_collateral/run_our_image.sh
+# return to app top-level
+cd ..
+
+# return to original directory
+cd ../..
