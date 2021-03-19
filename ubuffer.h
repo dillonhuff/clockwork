@@ -1432,11 +1432,11 @@ class UBuffer {
     }
 
     bool can_be_broadcast(const std::string& pt0, const std::string& pt1) const {
-      auto acc_0 = range(access_map.at(pt0));
-      auto acc_1 = range(access_map.at(pt1));
+      auto acc_0 = to_map(access_map.at(pt0));
+      auto acc_1 = to_map(access_map.at(pt1));
       auto sched_0 = range(schedule.at(pt0));
       auto sched_1 = range(schedule.at(pt1));
-      bool acc_equal = equal(acc_0, acc_1);
+      bool acc_equal = equal_regardless_of_domain(acc_0, acc_1);
       bool sched_equal = equal(sched_0, sched_1);
       return acc_equal && sched_equal;
     }
@@ -1459,6 +1459,7 @@ class UBuffer {
       //return ret;
     }
 
+    map<string, std::set<string> > get_unique_ports(std::set<string> &ports);
 
 std::set<string> get_bank_unique_outputs(const std::string& name) const {
     auto outpts_all = get_bank_outputs(name);
@@ -2419,6 +2420,7 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
           map<string, int> delay_map);
 
     void merge_bank(CodegenOptions& options, string inpt, vector<bank> mergeable);
+    void merge_bank_broadcast(string inpt);
 
     void generate_banks(CodegenOptions& options);
     void generate_banks_and_merge(CodegenOptions& options);
@@ -2476,6 +2478,8 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
     string generate_linearize_ram_addr(const std::string& pt, bank& bank);
 
     vector<UBuffer> port_grouping(int port_width);
+    vector<pair<std::set<string>, std::set<string> > >
+      port_grouping(CodegenOptions &options, std::set<string> inpts, std::set<string> outpts);
 
     //helper function for port group2bank
     uset* create_subbank_branch(
@@ -2734,8 +2738,6 @@ bool inner_bank_offset_is_legal(isl_map* slot_func,
     umap* sched);
 
 
-map<string, std::set<string> >
-get_unique_output_ports(UBuffer& buf);
 
 vector<string> generate_multilinear_address_components(const std::string& pt, bank& bnk, UBuffer& buf);
 

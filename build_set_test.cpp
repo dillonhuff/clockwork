@@ -14282,10 +14282,11 @@ void test_pond(string dir) {
   vector<prog> test_apps;
   test_apps.push_back(resnet_simple());
   test_apps.push_back(resnet());
-  //test_apps.push_back(three_level_pond());
-  //test_apps.push_back(three_level_pond_rolled());
   test_apps.push_back(three_level_pond_copy());
 
+  //TODO: tobe tested with new pond
+  //test_apps.push_back(three_level_pond());
+  //test_apps.push_back(three_level_pond_rolled());
   for ( auto prg: test_apps) {
     cout << "====== Running CGRA Single Port test for " << prg.name << endl;
     prg.pretty_print();
@@ -14379,7 +14380,7 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   //TODO:has issue  with multiple input
   //test_apps.push_back(demosaic_complex());
   //
-  test_apps.push_back(fft8_unroll8());
+  //test_apps.push_back(fft8_unroll8());
   test_apps.push_back(gaussian());
   test_apps.push_back(conv_3_3());
   test_apps.push_back(counter());

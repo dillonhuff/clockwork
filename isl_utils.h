@@ -120,6 +120,7 @@ bool equal(isl_map* const l, isl_map* const r);
 bool equal(isl_aff* const l, isl_aff* const r);
 bool equal(uset* const l, uset* const r);
 bool equal(umap* const l, umap* const r);
+bool equal_regardless_of_domain(isl_map* const l, isl_map* const r);
 
 bool empty(umap* const s);
 bool empty(isl_map* const s);
