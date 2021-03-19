@@ -6423,6 +6423,118 @@ umap* op_end_times_map(schedule_info& sched, prog& prg) {
   return to_umap(hs);
 }
 
+
+isl_map* prog::map_from_expr(op* op, pair<string, piecewise_address>& top_pair) {
+  auto ivars = iter_vars();
+  auto doms = domains();
+  auto vars = map_find(op, ivars);
+  auto dom = map_find(op, doms);
+  string ivar_str = sep_list(vars, "[", "]", ", ");
+  string cond = "{ ";
+  for (auto sec_pair : top_pair.second) {
+    cond = cond + string(op->name + ivar_str + " -> " + top_pair.first + "[" + sec_pair.second + "] : " + sec_pair.first + "; ");
+  }
+  cond = cond.substr(0, cond.length() - 2);
+  cond = cond + string(" }");
+  isl_map* vmap = its(isl_map_read_from_str(ctx, cond.c_str()), dom);
+  return vmap;
+}
+
+void remove_div(prog& prg) {
+  prg.pretty_print();
+  /*
+  for (auto b : all_buffers(prg)) {
+    cout << "Buffer: " << b << endl;
+    map<op*, isl_map*> prods = prg.producer_maps(b);
+    cout << tab(1) << "Producers..." << endl;
+    for (auto opm : prods) {
+      cout << "\tProducer map: " << str(opm.second) << endl;
+      auto aff = get_aff(opm.second);
+      for (int d = 0; d < num_div_dims(aff); d++) {
+        auto div_dim = isl_aff_get_div(aff, d);
+        cout << tab(2) << "===div: " << str(div_dim) << endl;
+        int denom = to_int(isl_aff_get_denominator_val(div_dim));
+        cout << tab(2) << "denom: " << denom << endl;
+      }
+    }
+
+    map<op*, isl_map*> cons = prg.consumer_maps(b);
+
+    cout << "Got consumers" << endl;
+    for (auto opm : cons) {
+      cout << "\t op: " << opm.first->name << endl;
+      if (opm.second != nullptr) {
+        cout << "\t Consumer map: " << str(opm.second) << endl;
+        //for (auto buffer_addr: opm.first->consume_locs_pair) {
+        //  isl_map* rdmap = prg.map_from_expr(opm.first, buffer_addr);
+        //  cout << "\t\t sub map: " << str(rdmap) << endl;
+        //}
+        for (auto bmap: get_basic_maps(opm.second)) {
+          cout << "\t\t bmap: " << str(bmap) << endl;
+          for (auto aff: get_aff_vec(to_map(bmap))) {
+            cout << "\t\t\t" << str(aff) << endl;
+          }
+        }
+      }
+    }
+  }*/
+  for (auto op: prg.all_ops()) {
+    cout << "\tVisit op: " << op->name << endl;
+    for (auto read_buf_addr_pair : op->consume_locs_pair) {
+      isl_map* rdmap = prg.map_from_expr(op, read_buf_addr_pair);
+      cout << "\t\tread sub map: " << str(simplify(rdmap)) << endl;
+      for (auto aff: get_aff_vec(rdmap)) {
+        cout << "\t\t\t" << str(aff) << endl;
+        map<int, int> split_dims;
+        for (int d = 0; d < num_div_dims(aff); d++) {
+          auto div_dim = isl_aff_get_div(aff, d);
+          cout << tab(8) << "===div: " << str(div_dim) << endl;
+          int denom = to_int(isl_aff_get_denominator_val(div_dim));
+          cout << tab(8) << "denom: " << denom << endl;
+
+          for (int di = 0; di < num_in_dims(rdmap); di++) {
+            if (!is_zero(get_coeff(aff, di))) {
+              split_dims[di] = denom;
+            }
+          }
+          break;
+        }
+        if (split_dims.size()) {
+          for (auto it: split_dims)
+            cout << "\tDim: " << it.first << " denom: " << it.second << endl;
+          vector<string> dvars;
+          vector<string> origin_vars;
+          for (int d = 0; d < num_in_dims(rdmap); d ++) {
+            if (contains_key(d, split_dims)) {
+              int denom = split_dims.at(d);
+              dvars.push_back("floor(d" + str(d) + "/" + str(denom) + ")");
+              dvars.push_back("d"+str(d) + "%" + str(denom));
+            } else {
+              dvars.push_back("d" + str(d));
+            }
+            origin_vars.push_back("d" + str(d));
+          }
+          string trans_str =
+            curlies(
+                ::domain_name(rdmap) +  bracket_list(origin_vars)
+                + "->" +
+                ::domain_name(rdmap) + bracket_list(dvars)
+                );
+          cout << "\tTrans str" << trans_str << endl;
+          auto trans_map = isl_map_read_from_str(ctx(rdmap), trans_str.c_str());
+          auto stripmining_rdmap= dot(inv(trans_map), rdmap);
+          cout << "\t After strip mining: " << str(simplify_expr(stripmining_rdmap)) << endl;
+        }
+      }
+    }
+    for (auto write_buf_addr_pair : op->produce_locs) {
+      isl_map* wtmap = prg.map_from_expr(op, write_buf_addr_pair);
+      cout << "\t\twrite map: " << str(wtmap) << endl;
+    }
+  }
+  assert(false);
+}
+
 void normalize_address_offsets(prog& prg) {
   prg.pretty_print();
   for (auto b : all_buffers(prg)) {
@@ -7886,8 +7998,24 @@ void generate_banks_garnet(CodegenOptions& options, prog& prg, UBuffer& buf, ubu
         cout << "ADD BANK!\n Bank id: " << str(point) << endl;
         std::set<string> input_sets = impl.bank_writers.at(bank_id);
         std::set<string> output_sets = impl.bank_readers.at(bank_id);
-        auto bnk_info = buf.compute_bank_info(rddom, point, input_sets, output_sets);
-        buf.add_bank_between(input_sets, output_sets, bnk_info);
+        //naive banking
+        if (buf.overlap_schedule(input_sets) || buf.overlap_schedule(output_sets)) {
+            cout << "inputs for bank: " << input_sets << endl;
+            cout << "outputs for bank: " << output_sets << endl;
+            assert(input_sets.size() == 1);
+          for (string inpt : input_sets) {
+            for (string outpt: output_sets) {
+              //auto bnk_info = buf.compute_bank_info(rddom, point, {inpt}, {outpt});
+              maybe<int> delay_info = buf.dependence_distance_max(inpt, outpt);
+              assert(delay_info.has_value());
+              auto bnk_info = buf.compute_bank_info(inpt, outpt, delay_info.get_value());
+              buf.add_bank_between(inpt, outpt, bnk_info);
+            }
+          }
+        } else {
+            auto bnk_info = buf.compute_bank_info(rddom, point, input_sets, output_sets);
+            buf.add_bank_between(input_sets, output_sets, bnk_info);
+        }
       }
     } else {
         cout << "Use exhaustive banking! " << endl;

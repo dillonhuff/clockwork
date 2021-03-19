@@ -283,7 +283,7 @@ class AccessPattern {
           return isl_set_read_from_str(ctx, string("{ " + op_name + vars + " : " + ds + "}").c_str());
       }
 
-      string get_expr(size_t item, size_t cnt, vector<string> var_list) {
+      string get_expr(int item, size_t cnt, vector<string> var_list) {
           if (item == 1) {
               return var_list[cnt];
           }
@@ -467,6 +467,7 @@ class AccessPattern {
               out_range[i] = range_val;
               auto vec_stride = isl_set_get_stride(isl_map_range(cpy(access_map)), i);
               vec_stride_in_addr.push_back(isl_val_get_num_si(vec_stride));
+              cout << "Stride : " << isl_val_get_num_si(vec_stride) << "\tOrigin: " << str(vec_stride) << endl;
               //int range_max = get_dim_max(isl_map_domain(inv(access_map)),i);
               int range_max = get_dim_max(range(access_map),i);
               if (range_val == 1) {
@@ -2376,6 +2377,7 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
     bool merge_small_dim(int fetch_width);
     void merge_out_bundle();
 
+    bool overlap_schedule(std::set<string> & ptset);
 
     //change the input and output and return the agg and tb ubuffer stucture
     pair<std::map<string, UBuffer>, vector<string> >

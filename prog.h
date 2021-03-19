@@ -1220,6 +1220,8 @@ struct prog {
 
   void shift_address_range(const std::string& buf, const std::vector<int>& min_locs);
 
+  isl_map* map_from_expr(op* op, pair<string, piecewise_address> & top_pair);
+
   map<op*, isl_map*> producer_maps() {
     map<op*, isl_map*> m;
     auto ivars = iter_vars();
@@ -1767,6 +1769,7 @@ umap* op_end_times_map(schedule_info& sched, prog& prg);
 
 map<string, isl_set*> op_start_times_domains(prog& prg);
 void normalize_address_offsets(prog& prg);
+void remove_div(prog& prg);
 
 vector<op*> ops_at_level(const int level, prog& prg);
 bool is_op_scheduled(op* op, schedule_info& sched, prog& prg);

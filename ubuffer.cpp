@@ -2281,7 +2281,7 @@ void UBuffer::generate_coreir(CodegenOptions& options,
       //if (options.rtl_options.target_tile == TARGET_TILE_WIDE_FETCH_WITH_ADDRGEN) {
       string config_mode;
       bool multi_level_mem = options.mem_hierarchy.count("regfile");
-      if (capacity <= 32 && multi_level_mem && (target_buf.num_in_ports() > 1) ) {
+      if (capacity <= 32 && multi_level_mem ) {
         cout << "Generate config for register file!" << endl;
         config_file = generate_ubuf_args(options, new_target_buf);
         config_mode = "pond";
@@ -2957,6 +2957,20 @@ void UBuffer::generate_coreir(CodegenOptions& options,
       }
     }
   }
+
+bool UBuffer::overlap_schedule(std::set<string> & ptset) {
+    for (string lpt: ptset) {
+        for (string rpt: ptset) {
+            if (lpt < rpt) {
+                auto overlap =
+                    dot(schedule.at(lpt), inv(schedule.at(rpt)));
+                if (!empty(overlap))
+                    return true;
+            }
+        }
+    }
+    return false;
+}
 
 bool build_delay_map(UBuffer& buf, map<string, vector<pair<string, int> > >& delay_maps, umap* sched, schedule_info& hwinfo) {
   bool built_dm = true;

@@ -14278,13 +14278,14 @@ void Init_PE_energy_cost(power_analysis_params& power_params)  {
 void compile_for_garnet_single_port_mem(prog & prg, string dir, bool gen_smt_stream, bool gen_config_only, bool multi_level_mem, bool use_dse_compute, bool energy_model = false);
 void cpy_app_to_folder(const std::string& app_type, const std::string& prg_name);
 
-void test_pond(string dir) {
+void test_pond(string dir, bool run_verilator=true) {
   vector<prog> test_apps;
   test_apps.push_back(resnet_simple());
   test_apps.push_back(resnet());
   //test_apps.push_back(three_level_pond());
   //test_apps.push_back(three_level_pond_rolled());
   test_apps.push_back(three_level_pond_copy());
+  test_apps.push_back(fft8_unroll8_split());
 
   for ( auto prg: test_apps) {
     cout << "====== Running CGRA Single Port test for " << prg.name << endl;
@@ -14295,21 +14296,21 @@ void test_pond(string dir) {
     break_up_multi_channel_outputs(prg);
     dsa_writers(prg);
     prg.pretty_print();
-    auto cpu = unoptimized_result(prg);
+    bool gen_config_only = !run_verilator;
 
-    bool gen_config_only = false;
     compile_for_garnet_single_port_mem(prg, dir,
             false, /*generate smt stream*/
             gen_config_only,/*gen_config_only*/
             true, /*multi level hierarchy*/
             false/*use dse compute*/);
-    generate_regression_testbench(prg);
+    //generate_regression_testbench(prg);
 
     cout << "Output name: " << prg.name << endl;
     //run_verilator_tb(prg.name);
     //TODO: move to a function
     //run verilator on all the generated verilog
     if (!gen_config_only) {
+      auto cpu = unoptimized_result(prg);
       string name = prg.name;
       auto verilog_files = get_files("./" + dir + "/"+name+"/verilog/");
       verilog_files.push_back(name + ".v");
@@ -14379,7 +14380,6 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   //TODO:has issue  with multiple input
   //test_apps.push_back(demosaic_complex());
   //
-  test_apps.push_back(fft8_unroll8_pease());
   //test_apps.push_back(fft8_unroll8());
   //test_apps.push_back(gaussian());
   //test_apps.push_back(conv_3_3());
@@ -14418,7 +14418,7 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
     break_up_multi_channel_outputs(prg);
     dsa_writers(prg);
     prg.pretty_print();
-    //auto cpu = unoptimized_result(prg);
+    auto cpu = unoptimized_result(prg);
 
     //compile_for_garnet_platonic_mem(prg);
     compile_for_garnet_single_port_mem(prg, dir, false, gen_config_only, false, false);
@@ -14433,7 +14433,7 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
       bool extra_flag_for_lake = true;
       int res = run_verilator_on(name, name + "_verilog_tb.cpp", verilog_files, extra_flag_for_lake);
       assert(res == 0);
-      //cmd("rm LakeWrapper.v");
+      cmd("rm LakeWrapper.v");
 
       auto verilator_res = verilator_results(prg.name);
       //compare("cgra_" + prg.name + "_cpu_vs_verilog_comparison", verilator_res, cpu);
@@ -17180,7 +17180,7 @@ void sanity_check_iis_for_vectorization(schedule_info& sched, prog& prg, int fet
 
 
 void garnet_single_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
-  if (is_rate_matchable(prg) && !contains(prg.name, "pease")) {
+  if (is_rate_matchable(prg) && !contains(prg.name, "split")) {
     prg.pretty_print();
 
     //TODO: need another function to choose between pad bottom level or top level
@@ -17284,7 +17284,7 @@ void garnet_single_port_ram_schedule(schedule_info& sched, op* root, prog& prg) 
     auto op_sched = op_start_times_map(sched, prg);
     cout << "Final schedule after relax: " << str(op_sched)  << endl;
     return;
-  } else if (contains(prg.name, "pease")) {
+  } else if (contains(prg.name, "split")) {
     sequential_schedule(sched, root, prg);
     auto op_sched = op_start_times_map(sched, prg);
     cout << "\tFinal schedule : " << str(op_sched)  << endl;
@@ -17956,6 +17956,7 @@ void compile_for_garnet_single_port_mem(prog& prg,
   //make sure the loop bound and address is positive
   normalize_bounds(prg);
   normalize_address_offsets(prg);
+  //remove_div(prg);
   prg.sanity_check();
   prg.pretty_print();
 
@@ -24976,7 +24977,14 @@ int main(int argc, char** argv) {
     }
 
     if (cmd == "pond-tests") {
-      test_pond("aha_garnet_design_pond");
+      bool run_verilator = true;
+      test_pond("aha_garnet_design_pond", run_verilator);
+      return 0;
+    }
+
+    if (cmd == "pond-exp") {
+      bool run_verilator = false;
+      test_pond("aha_garnet_design_pond", run_verilator);
       return 0;
     }
 

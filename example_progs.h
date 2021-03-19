@@ -7,6 +7,7 @@ prog fft8_unroll4();
 prog fft8_unroll8();
 prog fft8_unroll8_ratematch();
 prog fft8_unroll8_pease();
+prog fft8_unroll8_split();
 
 prog counter();
 prog conv_multi(); //multiple-tile-cnn
