@@ -34,6 +34,16 @@ std::ostream& operator<< (std::ostream& out, const std::vector<T>& v) {
 }
 
 template <typename T>
+std::ostream& operator<< (std::ostream& out, const std::set<T>& v) {
+    if ( !v.empty()  ) {
+        out << '{';
+        std::copy (v.begin(), v.end(), std::ostream_iterator<T>(out, ", "));
+        out << "\b\b}";
+    }
+    return out;
+}
+
+template <typename T>
 std::ostream& operator<< (std::ostream& out, const std::map<string, T>& m) {
     if ( !m.empty()  ) {
       for (const auto &p : m)
@@ -2808,6 +2818,7 @@ struct dgraph {
     return dst;
   }
 
+  //get subtree
   vector<pair<string, string>> get_sub_branch(const std::string& out_pt) {
     vector<pair<string, string> > ret;
     for (auto dst: get_out_edges(out_pt)) {
@@ -2840,10 +2851,7 @@ struct dgraph {
 };
 
 
-
-struct ubuffer_impl {
-  map<int, int> partitioned_dimension_extents;
-  std::set<int> partition_dims;
+struct UBufferImpl {
 
   map<int, std::set<string> > bank_readers;
   map<int, std::set<string> > bank_writers;
@@ -2876,7 +2884,7 @@ struct ubuffer_impl {
     return outpts;
   }
 
-  bool is_pure_shift_register(vector<string> outpts) {
+  bool is_pure_shift_register(vector<string> outpts) const {
     auto sr_outpts = get_sr_outpts();
     cout <<"SR outputs: " << sr_outpts << endl;
     cout <<"BUF outputs: " << outpts << endl;
@@ -2889,16 +2897,69 @@ struct ubuffer_impl {
   }
 
   int get_bank_num() const {
+    int cnt = 0;
+    for (auto it: bank_readers) {
+      cnt ++;
+    }
+    return cnt;
+  }
+
+  void print_info(std::ostream& out) const {
+    out << "Bank writers: " << endl;
+    for (auto it: bank_writers) {
+      out << "\t bank NO." << it.first << endl;
+      out << "\t\twriters: " << it.second << endl;
+    }
+    out << "Bank readers: " << endl;
+    for (auto it: bank_readers) {
+      out << "\t bank NO." << it.first << endl;
+      out << "\t\treaders: " << it.second << endl;
+    }
+    out << "Shift Register Output: " << endl;
+    out << "\tmemtiles IO:: " << endl;
+    for (auto it: shift_registered_outputs) {
+      out << "\t\t " << it.second.first << "->" << it.first << ", delay = " << it.second.second << endl;
+    }
+
+    out << "\tregister IO:: " << endl;
+    for (auto it: shift_registered_outputs_to_outputs) {
+      out << "\t\t " << it.second.first << "->" << it.first << ", delay = " << it.second.second << endl;
+    }
+  }
+
+};
+
+
+struct EmbarrassingBankingImpl: public UBufferImpl {
+  map<int, int> partitioned_dimension_extents;
+  std::set<int> partition_dims;
+
+  EmbarrassingBankingImpl() {}
+  EmbarrassingBankingImpl(UBufferImpl const & impl) : UBufferImpl(impl) {}
+
+  int get_bank_num() const {
     int bank_num = 1;
     for (auto it: partitioned_dimension_extents) {
       bank_num *= it.second;
     }
     return bank_num;
   }
+
+  void print_info(std::ostream& out) const {
+
+    UBufferImpl::print_info(out);
+    out << "==========Embarrassing Banking ============" << endl;
+    out << "Partition dim : " << partition_dims << endl;
+    out << "Partition dim extent: " << endl;
+    for (auto it: partitioned_dimension_extents) {
+      out << "\t" << it.first << ": " << it.second << endl;
+    }
+  }
+
 };
 
 std::ostream& operator<<(std::ostream& out, dgraph& dg);
-std::ostream& operator<<(std::ostream& out, ubuffer_impl& impl);
+std::ostream& operator<<(std::ostream& out, UBufferImpl& impl);
 
 bool all_schedules_defined(UBuffer& buf);
 
