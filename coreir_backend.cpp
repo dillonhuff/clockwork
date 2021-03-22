@@ -402,7 +402,7 @@ affine_controller_ctrl pack_controller(affine_controller_ctrl& unpacked) {
 
 }
 
-M3_config instantiate_M3_verilog(CodegenOptions& options, const std::string& long_name, const int b, ubuffer_impl& impl, UBuffer& buf, prog& prg,
+M3_config instantiate_M3_verilog(CodegenOptions& options, const std::string& long_name, const int b, EmbarrassingBankingImpl& impl, UBuffer& buf, prog& prg,
     map<pair<string, int>, int> ubuffer_port_and_bank_to_bank_port,
     schedule_info& hwinfo) {
 
@@ -554,7 +554,7 @@ Wireable* eqConst(ModuleDef* def, Wireable* val, const int b) {
   return eq->sel("out");
 }
 
-bool is_register_file(UBuffer& buf, ubuffer_impl& impl) {
+bool is_register_file(UBuffer& buf, const EmbarrassingBankingImpl& impl) {
   if (impl.partition_dims.size() < buf.logical_dimension()) {
     return false;
   }
@@ -573,8 +573,8 @@ bool all_constant_accesses(UBuffer& buf) {
   return true;
 }
 
-pair<ubuffer_impl,isl_map*> build_buffer_impl(prog& prg, UBuffer& buf, schedule_info& hwinfo) {
-  ubuffer_impl impl;
+pair<EmbarrassingBankingImpl, isl_map*> build_buffer_impl(prog& prg, UBuffer& buf, schedule_info& hwinfo) {
+  EmbarrassingBankingImpl impl;
   maybe<std::set<int> > embarassing_banking =
     embarassing_partition(buf);
   bool has_embarassing_partition = embarassing_banking.has_value();
@@ -637,11 +637,8 @@ Wireable* mkOneHot(ModuleDef* def, vector<Wireable*>& conds, vector<Wireable*>& 
 }
 
 map<pair<string, int>, int>
-build_ubuffer_to_bank_binding(ubuffer_impl& impl) {
-    int num_banks = 1;
-    for (auto ent : impl.partitioned_dimension_extents) {
-      num_banks *= ent.second;
-    }
+build_ubuffer_to_bank_binding(const UBufferImpl& impl) {
+  int num_banks = impl.get_bank_num();
   map<pair<string, int>, int> ubuffer_port_and_bank_to_bank_port;
   map<int, int> bank_to_next_available_out_port;
   map<int, int> bank_to_next_available_in_port;
@@ -741,7 +738,7 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
 
   if (buf.num_out_ports() > 0) {
     auto implm = build_buffer_impl(prg, buf, hwinfo);
-    ubuffer_impl impl = implm.first;
+    auto impl = implm.first;
 
     map<pair<string, int>, int> ubuffer_port_and_bank_to_bank_port =
       build_ubuffer_to_bank_binding(impl);
@@ -4928,7 +4925,7 @@ void instantiate_one_to_one_sreg(CodegenOptions& options, ModuleDef* def, UBuffe
           def->connect(read_fsm->sel("d")->sel(1),sreg->sel("read_addr_0"));
           def->connect(one,sreg->sel("wen_0"));
           def->connect(one,sreg->sel("ren_0"));
-          ubuffer_impl impl;
+          UBufferImpl impl;
           impl.bank_readers[0] = {"test"};
           impl.bank_writers[0] = {"test_writer"};
           instantiate_M1_verilog(sreg->getModuleRef()->getLongName(), 0, impl, buf);
@@ -5014,7 +5011,7 @@ std::set<string> generate_M1_shift_registers(CodegenOptions& options, CoreIR::Mo
   return done_outpt;
 }
 
-void M1_sanity_check_port_counts(ubuffer_impl& impl) {
+void M1_sanity_check_port_counts(const UBufferImpl& impl) {
 
   map<int, std::set<string> > bank_readers = impl.bank_readers;
   map<int, std::set<string> > bank_writers = impl.bank_writers;
@@ -5065,7 +5062,7 @@ void M1_sanity_check_port_counts(ubuffer_impl& impl) {
     }
 }
 
-void instantiate_M1_verilog(const std::string& long_name, const int b, ubuffer_impl& impl, UBuffer& buf) {
+void instantiate_M1_verilog(const std::string& long_name, const int b, const UBufferImpl& impl, UBuffer& buf) {
     assert(verilog_collateral_file != nullptr);
 
     vector<string> port_decls = {};
@@ -5073,13 +5070,13 @@ void instantiate_M1_verilog(const std::string& long_name, const int b, ubuffer_i
     port_decls.push_back("input rst_n");
     port_decls.push_back("input clk_en");
     port_decls.push_back("input chain_chain_en");
-    for(int i = 0; i < impl.bank_writers[b].size(); i++)
+    for(int i = 0; i < impl.bank_writers.at(b).size(); i++)
     {
       port_decls.push_back("input [15:0] data_in_" + str(i));
       port_decls.push_back("input [15:0] write_addr_" + str(i));
       port_decls.push_back("input wen_" + str(i));
     }
-    for(int i = 0; i < impl.bank_readers[b].size(); i++)
+    for(int i = 0; i < impl.bank_readers.at(b).size(); i++)
     {
       port_decls.push_back("output logic [15:0] data_out_" + str(i));
       port_decls.push_back("input [15:0] read_addr_" + str(i));
@@ -5091,25 +5088,25 @@ void instantiate_M1_verilog(const std::string& long_name, const int b, ubuffer_i
     *verilog_collateral_file << "module " << long_name <<" ("<< sep_list(port_decls,"","",",") <<"); "<< endl;
     *verilog_collateral_file << tab(1) << "logic [15:0] SRAM [1023:0];" << endl;
     *verilog_collateral_file << tab(1) << "logic chain_ren;" << endl << endl;
-    for (int i = 0; i < impl.bank_readers[b].size(); i++) {
+    for (int i = 0; i < impl.bank_readers.at(b).size(); i++) {
       *verilog_collateral_file << tab(1) << "logic [15:0] data_out_" << i << "_tmp;" << endl;
     }
 
     *verilog_collateral_file << tab(1) << "always @(posedge clk) begin" << endl;
-    *verilog_collateral_file << tab(2) << "chain_ren <= " << "ren_" << impl.bank_readers[b].size() - 1 << ";" << endl;
-    for (int i = 0; i < impl.bank_readers[b].size(); i++) {
+    *verilog_collateral_file << tab(2) << "chain_ren <= " << "ren_" << impl.bank_readers.at(b).size() - 1 << ";" << endl;
+    for (int i = 0; i < impl.bank_readers.at(b).size(); i++) {
       *verilog_collateral_file << tab(2) << "data_out_" << str(i) << "_tmp <= SRAM[read_addr_" << i << "];" << endl;
     }
-    for (int i = 0; i < impl.bank_writers[b].size(); i++) {
+    for (int i = 0; i < impl.bank_writers.at(b).size(); i++) {
       *verilog_collateral_file << tab(2) << "if (wen_" << i << ") begin" << endl;
       *verilog_collateral_file << tab(3) << "SRAM[write_addr_" << i << "] <= " << "data_in_" << str(i) << ";" << endl;
       *verilog_collateral_file << tab(2) << "end" << endl;
     }
     *verilog_collateral_file << tab(1) << "end" << endl;
     //*verilog_collateral_file << tab(1) << "assign chain_data_out = chain_ren ? " << "data_out_" << bank_readers[b].size() - 1 << "_tmp : chain_data_in;" << endl;
-    *verilog_collateral_file << tab(1) << "assign chain_data_out = chain_ren ? " << "data_out_" << impl.bank_readers[b].size() - 1 << "_tmp : 512;" << endl;
-    for (int i = 0; i < impl.bank_readers[b].size(); i++) {
-      if (i == impl.bank_readers[b].size() - 1) {
+    *verilog_collateral_file << tab(1) << "assign chain_data_out = chain_ren ? " << "data_out_" << impl.bank_readers.at(b).size() - 1 << "_tmp : 512;" << endl;
+    for (int i = 0; i < impl.bank_readers.at(b).size(); i++) {
+      if (i == impl.bank_readers.at(b).size() - 1) {
         *verilog_collateral_file << tab(1) << "assign data_out_" << i << " = chain_data_out;" << endl;
       } else {
         *verilog_collateral_file << tab(1) << "assign data_out_" << i << " = data_out_" << i << "_tmp;" << endl;
@@ -5134,7 +5131,7 @@ void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
 
   if (buf.num_out_ports() > 0) {
     auto implm = build_buffer_impl(prg, buf, hwinfo);
-    ubuffer_impl impl = implm.first;
+    auto impl = implm.first;
 
     int num_banks = 1;
     for (auto ent : impl.partitioned_dimension_extents) {
@@ -5340,7 +5337,7 @@ void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
 
 }
 
-isl_aff* bank_offset_aff(const std::string& reader, UBuffer& buf, ubuffer_impl& impl) {
+isl_aff* bank_offset_aff(const std::string& reader, UBuffer& buf, const EmbarrassingBankingImpl& impl) {
   int bank_stride = 1;
   vector<string> dvs;
   vector<string> coeffs;
@@ -5362,7 +5359,7 @@ isl_aff* bank_offset_aff(const std::string& reader, UBuffer& buf, ubuffer_impl& 
   return addr_expr_aff;
 }
 
-CoreIR::Instance* build_bank_selector(const std::string& reader, UBuffer& buf, ubuffer_impl& impl, CoreIR::ModuleDef* def) {
+CoreIR::Instance* build_bank_selector(const std::string& reader, UBuffer& buf, const EmbarrassingBankingImpl& impl, CoreIR::ModuleDef* def) {
   int bank_stride = 1;
   vector<string> dvs;
   vector<string> coeffs;
@@ -5388,7 +5385,7 @@ CoreIR::Instance* build_bank_selector(const std::string& reader, UBuffer& buf, u
   return agen;
 }
 
-isl_aff* inner_bank_offset_aff(const std::string& reader, UBuffer& buf, ubuffer_impl& impl) {
+isl_aff* inner_bank_offset_aff(const std::string& reader, UBuffer& buf, const EmbarrassingBankingImpl& impl) {
   vector<int> extents = extents_by_dimension(buf);
   int bank_stride = 1;
   vector<string> dvs;
@@ -5411,7 +5408,7 @@ isl_aff* inner_bank_offset_aff(const std::string& reader, UBuffer& buf, ubuffer_
   return addr_expr_aff;
 }
 
-CoreIR::Instance* build_inner_bank_offset(const std::string& reader, UBuffer& buf, ubuffer_impl& impl, CoreIR::ModuleDef* def) {
+CoreIR::Instance* build_inner_bank_offset(const std::string& reader, UBuffer& buf, const EmbarrassingBankingImpl& impl, CoreIR::ModuleDef* def) {
   vector<int> extents = extents_by_dimension(buf);
   int bank_stride = 1;
   vector<string> dvs;

@@ -1828,11 +1828,11 @@ map<string, pair<string, int> > determine_shift_reg_map(
 
 dgraph build_in_to_out_shift_register_graph(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_info& hwinfo);
 dgraph build_shift_registers(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_info& hwinfo);
-ubuffer_impl port_group2bank(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_info& hwinfo);
+UBufferImpl port_group2bank(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_info& hwinfo);
 
-isl_map* build_buffer_impl_embarrassing_banking(prog& prg, UBuffer& buf, schedule_info& hwinfo, ubuffer_impl& impl);
+isl_map* build_buffer_impl_embarrassing_banking(prog& prg, UBuffer& buf, schedule_info& hwinfo, EmbarrassingBankingImpl& impl);
 
-void generate_banks_garnet(CodegenOptions& options, prog& prg, UBuffer& buf, ubuffer_impl& impl, schedule_info& hw_info);
+void generate_banks_garnet(CodegenOptions& options, prog& prg, UBuffer& buf, UBufferImpl& impl, schedule_info& hw_info);
 
 
 void sanity_check_iis(schedule_info& sched);
