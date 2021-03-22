@@ -1339,8 +1339,6 @@ map<string, UBuffer> build_buffers(prog& prg, umap* opt_sched) {
       }
       auto op_sched_its = its(opt_sched, to_uset(domains.at(op)));
       cout << "ITS      : " << str(op_sched_its) << endl;
-      cout << "sched ctx: " << ctx(opt_sched) << endl;
-      cout << "dom   ctx: " << ctx(domains.at(op)) << endl;
 
       assert(ctx(opt_sched) == ctx(domains.at(op)));
 
@@ -7772,7 +7770,7 @@ dgraph build_in_to_out_shift_register_graph(CodegenOptions& options, prog& prg, 
 }
 
 //helper function to create all the shift registered port
-void create_subbranch(const std::string& out_pt, dgraph& sr_graph, UBuffer& buf, ubuffer_impl &impl) {
+void create_subbranch(const std::string& out_pt, dgraph& sr_graph, UBuffer& buf, UBufferImpl &impl) {
     auto src2dst = sr_graph.get_sub_branch(out_pt);
     cout << "\tsubbranch size: " << src2dst.size() << endl;
     for (auto io_pair: src2dst) {
@@ -7833,8 +7831,8 @@ dgraph build_shift_registers(CodegenOptions& options, prog& prg, UBuffer& buf, s
 }
 
 
-ubuffer_impl port_group2bank(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
-    ubuffer_impl impl;
+UBufferImpl port_group2bank(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
+    UBufferImpl impl;
 
     int in_port_width = options.rtl_options.max_inpt;
     int out_port_width = options.rtl_options.max_outpt;
@@ -7884,7 +7882,7 @@ ubuffer_impl port_group2bank(CodegenOptions& options, prog& prg, UBuffer& buf, s
                 buf.add_bank_between(src, pt_name, sr_bank);
                 create_subbranch(pt_name, sr_graph, buf, impl);
 
-                //TODO: use ubuffer_impl to substite bank in ubuffer
+                //TODO: use UBufferImpl to substite bank in ubuffer
                 impl.add_i2o_info(src, pt_name, delay);
             } else {
                 out_pts.insert(pt_name);
@@ -7897,7 +7895,7 @@ ubuffer_impl port_group2bank(CodegenOptions& options, prog& prg, UBuffer& buf, s
                         buf.add_bank_between(src, out_pt, super_bank);
                         create_subbranch(out_pt, sr_graph, buf, impl);
 
-                        //TODO: use ubuffer_impl to substite bank in ubuffer
+                        //TODO: use UBufferImpl to substite bank in ubuffer
                         impl.add_i2o_info(src, out_pt, delay);
                     }
                     read_delay.clear();
@@ -7908,13 +7906,15 @@ ubuffer_impl port_group2bank(CodegenOptions& options, prog& prg, UBuffer& buf, s
 
     }
     buf.print_bank_info();
+    cout << sr_graph;
+    cout << impl;
 
     return impl;
 
     //Add a visit pass on the sr graph for all input, take the data use the threshold
 }
 
-isl_map* build_buffer_impl_embarrassing_banking(prog& prg, UBuffer& buf, schedule_info& hwinfo, ubuffer_impl& impl) {
+isl_map* build_buffer_impl_embarrassing_banking(prog& prg, UBuffer& buf, schedule_info& hwinfo, EmbarrassingBankingImpl& impl) {
   cout << "Building implementation of " << buf.name << " Using Embarassing Banking. " << endl;
 
   vector<int> extents;
@@ -7969,7 +7969,7 @@ isl_map* build_buffer_impl_embarrassing_banking(prog& prg, UBuffer& buf, schedul
 }
 
 
-void generate_banks_garnet(CodegenOptions& options, prog& prg, UBuffer& buf, ubuffer_impl& impl, schedule_info& hw_info) {
+void generate_banks_garnet(CodegenOptions& options, prog& prg, UBuffer& buf, UBufferImpl& impl, schedule_info& hw_info) {
 
     //TODO: implement more banking strategies
     maybe<std::set<int> > embarassing_banking =
@@ -7981,14 +7981,16 @@ void generate_banks_garnet(CodegenOptions& options, prog& prg, UBuffer& buf, ubu
         cout << buf.name << " is really a register file" << endl;
       }
 
-      impl.partition_dims = embarassing_banking.get_value();
-      auto bank_func = build_buffer_impl_embarrassing_banking(prg, buf, hw_info, impl);
+      EmbarrassingBankingImpl bank_impl(impl);
+
+      bank_impl.partition_dims = embarassing_banking.get_value();
+      auto bank_func = build_buffer_impl_embarrassing_banking(prg, buf, hw_info, bank_impl);
 
       cout << "bank func: " << str(bank_func) << endl;
-      cout << "After banking: " << impl << endl;
+      cout << "After banking: " << bank_impl << endl;
 
       //take the ubuffer implementation add bank to ubuffer
-      for (int bank_id = 0; bank_id < impl.get_bank_num(); bank_id ++) {
+      for (int bank_id = 0; bank_id < bank_impl.get_bank_num(); bank_id ++) {
         isl_set* bnk = isl_set_read_from_str(prg.ctx, curlies("Bank["+str(bank_id) + "]").c_str());
         auto rddom = to_uset(domain(its_range(bank_func, bnk)));
         cout << "rddom before its: " << str(rddom) << endl;
@@ -7996,8 +7998,8 @@ void generate_banks_garnet(CodegenOptions& options, prog& prg, UBuffer& buf, ubu
         cout << "rddom after its: " << str(rddom) << endl;
         auto point = pick(get_points(bnk));
         cout << "ADD BANK!\n Bank id: " << str(point) << endl;
-        std::set<string> input_sets = impl.bank_writers.at(bank_id);
-        std::set<string> output_sets = impl.bank_readers.at(bank_id);
+        std::set<string> input_sets = bank_impl.bank_writers.at(bank_id);
+        std::set<string> output_sets = bank_impl.bank_readers.at(bank_id);
         auto bank_IOs = buf.port_grouping(options, input_sets, output_sets);
         for (auto bank_IO_pair: bank_IOs) {
             cout << "input group: " << bank_IO_pair.first << endl;
