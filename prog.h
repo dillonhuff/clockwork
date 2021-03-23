@@ -1830,10 +1830,12 @@ dgraph build_in_to_out_shift_register_graph(CodegenOptions& options, prog& prg, 
 dgraph build_shift_registers(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_info& hwinfo);
 UBufferImpl port_group2bank(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_info& hwinfo);
 
-isl_map* build_buffer_impl_embarrassing_banking(prog& prg, UBuffer& buf, schedule_info& hwinfo, EmbarrassingBankingImpl& impl);
+isl_map* build_buffer_impl_embarrassing_banking(UBuffer& buf, schedule_info& hwinfo, EmbarrassingBankingImpl& impl);
 
-void generate_banks_garnet(CodegenOptions& options, prog& prg, UBuffer& buf, UBufferImpl& impl, schedule_info& hw_info);
+void generate_banks_garnet(CodegenOptions& options, UBuffer& buf, UBufferImpl& impl, schedule_info& hw_info);
 
+UBufferImpl generate_optimized_memory_implementation(
+        CodegenOptions& options, UBuffer & buf, prog & prg, schedule_info& hwinfo);
 
 void sanity_check_iis(schedule_info& sched);
 

@@ -585,7 +585,7 @@ pair<EmbarrassingBankingImpl, isl_map*> build_buffer_impl(prog& prg, UBuffer& bu
   }
 
   impl.partition_dims = embarassing_banking.get_value();
-  auto bank_map = build_buffer_impl_embarrassing_banking(prg, buf, hwinfo, impl);
+  auto bank_map = build_buffer_impl_embarrassing_banking(buf, hwinfo, impl);
   return {impl, bank_map};
 }
 
@@ -2150,7 +2150,11 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
 
   for (auto& buf : buffers) {
     if (!prg.is_boundary(buf.first)) {
-      auto ub_mod = generate_coreir_without_ctrl(options, context, buf.second, hwinfo);
+      //all the memory optimization pass goes here
+      auto impl = generate_optimized_memory_implementation(options, buf.second, prg, hwinfo);
+
+      //Generate the memory module
+      auto ub_mod = generate_coreir_without_ctrl(options, context, buf.second, impl, hwinfo);
       def->addInstance(buf.second.name, ub_mod);
       //TODO: add reset connection for garnet mapping
       //cout << "connected reset for " << buf.first << buf.second.name <<  endl;
