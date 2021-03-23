@@ -903,11 +903,12 @@ maybe<vector<int>> get_project_dim(UBuffer & buf, bool is_read) {
 
 
 void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, schedule_info & info) {
-  generate_coreir(options, def, info, true);
+  UBufferImpl impl;
+  generate_coreir(options, impl, def, info, true);
 }
 
-void UBuffer::generate_coreir_without_ctrl(CodegenOptions& options, CoreIR::ModuleDef* def, schedule_info & info) {
-  generate_coreir(options, def, info, false);
+void UBuffer::generate_coreir_without_ctrl(CodegenOptions& options, UBufferImpl& impl, CoreIR::ModuleDef* def, schedule_info & info) {
+  generate_coreir(options, impl, def, info, false);
 }
 
 vector<isl_set*> get_multi_bank_domain_set(isl_map* origin_map, int project_out_domain) {
@@ -2102,6 +2103,7 @@ string memDataoutPort(string mode, int pt_cnt) {
 
 //generate/realize the rewrite structure inside ubuffer node
 void UBuffer::generate_coreir(CodegenOptions& options,
+        UBufferImpl& impl,
         CoreIR::ModuleDef* def,
         schedule_info& info,
         bool with_ctrl) {
@@ -3271,7 +3273,7 @@ bool build_delay_map(UBuffer& buf, map<string, vector<pair<string, int> > >& del
     return ub;
   }
 
-  CoreIR::Module* generate_coreir_without_ctrl(CodegenOptions& options, CoreIR::Context* context, UBuffer& buf, schedule_info& hwinfo) {
+  CoreIR::Module* generate_coreir_without_ctrl(CodegenOptions& options, CoreIR::Context* context, UBuffer& buf, UBufferImpl & impl, schedule_info& hwinfo) {
     auto ns = context->getNamespace("global");
 
     vector<pair<string, CoreIR::Type*> >
@@ -3314,7 +3316,7 @@ bool build_delay_map(UBuffer& buf, map<string, vector<pair<string, int> > >& del
     if (false) {
       generate_synthesizable_functional_model(options, buf, def, hwinfo);
     } else {
-      buf.generate_coreir_without_ctrl(options, def, hwinfo);
+      buf.generate_coreir_without_ctrl(options, impl, def, hwinfo);
     }
 
     ub->setDef(def);

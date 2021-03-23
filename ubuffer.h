@@ -877,6 +877,8 @@ struct MemConnSch {
   }
 };
 
+struct UBufferImpl;
+
 class UBuffer {
 
   public:
@@ -2450,13 +2452,13 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
     CoreIR::Module* affine_controller(CoreIR::Context* context, isl_set* dom, isl_aff* aff);
 
     //kernel function for generate coreir
-    void generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, schedule_info& info, bool with_ctrl=true);
+    void generate_coreir(CodegenOptions& options, UBufferImpl& impl, CoreIR::ModuleDef* def, schedule_info& info, bool with_ctrl=true);
 
     //Wrappers for generate coreir
     //original memory generation for memory tile with enable and valid
     void generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, schedule_info& info);
     //ubuffer coreir generation for tahoe memory tile
-    void generate_coreir_without_ctrl(CodegenOptions& options, CoreIR::ModuleDef* def, schedule_info& info);
+    void generate_coreir_without_ctrl(CodegenOptions& options, UBufferImpl& impl, CoreIR::ModuleDef* def, schedule_info& info);
     Json generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> &rewrite_buffer);
     Json generate_ubuf_args_old(CodegenOptions& options, map<string, UBuffer> & rewrite_buffer);
     Json generate_ubuf_args(CodegenOptions& options, UBuffer& rewrite_buffer);
@@ -2720,7 +2722,7 @@ vector<string> dimension_var_decls(const std::string& pt, UBuffer& buf);
 vector<string> dimension_var_args(const std::string& pt, UBuffer& buf);
 
 #ifdef COREIR
-CoreIR::Module* generate_coreir_without_ctrl(CodegenOptions& options, CoreIR::Context* context, UBuffer& buf, schedule_info& hwinfo);
+CoreIR::Module* generate_coreir_without_ctrl(CodegenOptions& options, CoreIR::Context* context, UBuffer& buf, UBufferImpl& impl, schedule_info& hwinfo);
 
 CoreIR::Module* generate_coreir(CodegenOptions& options, CoreIR::Context* context, UBuffer& buf, schedule_info& hwinfo);
 

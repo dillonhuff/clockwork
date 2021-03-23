@@ -7830,6 +7830,22 @@ dgraph build_shift_registers(CodegenOptions& options, prog& prg, UBuffer& buf, s
   return dg;
 }
 
+UBufferImpl generate_optimized_memory_implementation(
+        CodegenOptions& options, UBuffer & buf, prog & prg, schedule_info& hwinfo) {
+    //TODO: possible bug to comment out
+    //if (prg.is_boundary(buf.name))
+    //    return impl;
+
+    cout << "create shift register for " << buf << endl;
+    auto impl = port_group2bank(options, prg, buf, hwinfo);
+
+    cout << "After shift register optimization: " << impl << endl;
+    if (!impl.is_pure_shift_register(buf.get_out_ports()))
+        generate_banks_garnet(options, buf, impl, hwinfo);
+    return impl;
+}
+
+
 
 UBufferImpl port_group2bank(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
     UBufferImpl impl;
@@ -7896,7 +7912,7 @@ UBufferImpl port_group2bank(CodegenOptions& options, prog& prg, UBuffer& buf, sc
                         create_subbranch(out_pt, sr_graph, buf, impl);
 
                         //TODO: use UBufferImpl to substite bank in ubuffer
-                        impl.add_i2o_info(src, out_pt, delay);
+                        impl.add_i2o_info(src, out_pt, read_delay.at(out_pt));
                     }
                     read_delay.clear();
                     out_pts.clear();
@@ -7914,7 +7930,7 @@ UBufferImpl port_group2bank(CodegenOptions& options, prog& prg, UBuffer& buf, sc
     //Add a visit pass on the sr graph for all input, take the data use the threshold
 }
 
-isl_map* build_buffer_impl_embarrassing_banking(prog& prg, UBuffer& buf, schedule_info& hwinfo, EmbarrassingBankingImpl& impl) {
+isl_map* build_buffer_impl_embarrassing_banking(UBuffer& buf, schedule_info& hwinfo, EmbarrassingBankingImpl& impl) {
   cout << "Building implementation of " << buf.name << " Using Embarassing Banking. " << endl;
 
   vector<int> extents;
@@ -7945,10 +7961,10 @@ isl_map* build_buffer_impl_embarrassing_banking(prog& prg, UBuffer& buf, schedul
 
   cout << "Bank map: " << bank_func << endl;
   //assert(false);
-  isl_map* m = isl_map_read_from_str(prg.ctx, bank_func.c_str());
+  isl_map* m = isl_map_read_from_str(buf.ctx, bank_func.c_str());
   for (auto pt : buf.get_all_ports()) {
     for (int b = 0; b < num_banks; b++) {
-      isl_set* bnk = isl_set_read_from_str(prg.ctx, curlies("Bank[" + str(b) + "]").c_str());
+      isl_set* bnk = isl_set_read_from_str(buf.ctx, curlies("Bank[" + str(b) + "]").c_str());
       assert(!empty(bnk));
 
       isl_map* bnk_map = dot(to_map(buf.access_map.at(pt)), m);
@@ -7969,7 +7985,7 @@ isl_map* build_buffer_impl_embarrassing_banking(prog& prg, UBuffer& buf, schedul
 }
 
 
-void generate_banks_garnet(CodegenOptions& options, prog& prg, UBuffer& buf, UBufferImpl& impl, schedule_info& hw_info) {
+void generate_banks_garnet(CodegenOptions& options, UBuffer& buf, UBufferImpl& impl, schedule_info& hw_info) {
 
     //TODO: implement more banking strategies
     maybe<std::set<int> > embarassing_banking =
@@ -7984,14 +8000,14 @@ void generate_banks_garnet(CodegenOptions& options, prog& prg, UBuffer& buf, UBu
       EmbarrassingBankingImpl bank_impl(impl);
 
       bank_impl.partition_dims = embarassing_banking.get_value();
-      auto bank_func = build_buffer_impl_embarrassing_banking(prg, buf, hw_info, bank_impl);
+      auto bank_func = build_buffer_impl_embarrassing_banking(buf, hw_info, bank_impl);
 
       cout << "bank func: " << str(bank_func) << endl;
       cout << "After banking: " << bank_impl << endl;
 
       //take the ubuffer implementation add bank to ubuffer
       for (int bank_id = 0; bank_id < bank_impl.get_bank_num(); bank_id ++) {
-        isl_set* bnk = isl_set_read_from_str(prg.ctx, curlies("Bank["+str(bank_id) + "]").c_str());
+        isl_set* bnk = isl_set_read_from_str(buf.ctx, curlies("Bank["+str(bank_id) + "]").c_str());
         auto rddom = to_uset(domain(its_range(bank_func, bnk)));
         cout << "rddom before its: " << str(rddom) << endl;
         rddom = coalesce(its(rddom, buf.global_range()));
