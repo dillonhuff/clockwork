@@ -2652,6 +2652,12 @@ class MemSubstitute: public CoreIR::InstanceVisitorPass {
 
 }
 
+vector<CoreIR::Wireable*> getConnectWires(CoreIR::Wireable* wire) {
+  auto conSet = wire->getConnectedWireables();
+  vector<Wireable*> conns(conSet.begin(), conSet.end());
+  return conns;
+}
+
 bool MemtileReplace(Instance* cnst) {
   cout << tab(2) << "memory syntax transformation!" << endl;
   cout << tab(2) << toString(cnst) << endl;

@@ -11,6 +11,8 @@ std::string controller_name(const std::string& n) {
   return n + "_port_controller";
 }
 
+vector<CoreIR::Wireable*> getConnectWires(CoreIR::Wireable* wire);
+
 struct affine_controller_ctrl {
   isl_aff* access_function;
   isl_aff* sched;
