@@ -2101,11 +2101,41 @@ string memDataoutPort(string mode, int pt_cnt) {
     }
 }
 
+//helper function to generate shift register
+void UBuffer::generate_sreg_and_wire(CodegenOptions& options, UBufferImpl& impl, CoreIR::ModuleDef* def, map<string, CoreIR::Wireable*> & pt2wire){
+  auto context = def->getContext();
+
+  for (auto it: impl.get_shift_registered_ports(options)) {
+    //add pt for it.first(an output port)
+    string dst = it.first;
+    string src = it.second.first;
+    int delay = it.second.second;
+    auto wire = pt2wire.at(src);
+    CoreIR::Wireable* last_out;
+    if (isIn.at(src))
+      last_out = wire;
+    else {
+      auto conns = getConnectWires(wire);
+      assert(conns.size() == 1);
+      last_out = pick(conns);
+    }
+    CoreIR::Wireable* final_out = pt2wire.at(dst);
+    for (size_t i = 0; i < delay; i ++) {
+      auto reg = def->addInstance("d_reg_"+context->getUnique(), "mantle.reg",
+          {{"width", CoreIR::Const::make(context, port_widths)},
+          {"has_en", CoreIR::Const::make(context, false)}});
+      def->connect(reg->sel("in"), last_out);
+      last_out = reg->sel("out");
+    }
+    def->connect(last_out, final_out);
+  }
+}
+
 //generate/realize the rewrite structure inside ubuffer node
 void UBuffer::generate_coreir(CodegenOptions& options,
         UBufferImpl& impl,
         CoreIR::ModuleDef* def,
-        schedule_info& info,
+        schedule_info& info, //TODO:remove this
         bool with_ctrl) {
   auto context = def->getContext();
   //for (auto it : get_banks()) {
@@ -2188,71 +2218,71 @@ void UBuffer::generate_coreir(CodegenOptions& options,
     auto buf_inpts = get_in_ports();
     cout << "Bank:" << bk.name << " has max_delay: " << bk.maxdelay << endl;
     if (bk.maxdelay == 0) {
-      //this is a wire
-      assert(inpts.size() == 1);
+    //  //this is a wire
+    //  assert(inpts.size() == 1);
 
-      //broadcast the input port to a series of output port
-      if (isIn.at(pick(inpts))) {
-        for (auto outpt: outpts) {
-          def->connect(pt2wire.at(pick(inpts)), pt2wire.at(outpt));
-          wire2out[outpt] = pt2wire.at(pick(inpts));
-        }
-      } else {
-        for (auto outpt: outpts) {
-          if (wire2out.count(pick(inpts))) {
-            //if (pt2psth.count(outpt)) {
-            //  auto psth = pt2psth.at(outpt);
-            //  def->connect(psth->sel("out"), wire2out.at(pick(inpts)));
-            //} else {
-              def->connect(wire2out.at(pick(inpts)), pt2wire.at(outpt));
-              wire2out[outpt] = wire2out.at(pick(inpts));
-            //}
-          } else {
-            //auto psth = CoreIR::addPassthrough(pt2wire.at(outpt), outpt + "_psth");
-            //def->connect(psth->sel("in"), pt2wire.at(outpt));
-            //pt2psth[outpt] = psth;
-          }
-        }
-      }
+    //  //broadcast the input port to a series of output port
+    //  if (isIn.at(pick(inpts))) {
+    //    for (auto outpt: outpts) {
+    //      def->connect(pt2wire.at(pick(inpts)), pt2wire.at(outpt));
+    //      wire2out[outpt] = pt2wire.at(pick(inpts));
+    //    }
+    //  } else {
+    //    for (auto outpt: outpts) {
+    //      if (wire2out.count(pick(inpts))) {
+    //        //if (pt2psth.count(outpt)) {
+    //        //  auto psth = pt2psth.at(outpt);
+    //        //  def->connect(psth->sel("out"), wire2out.at(pick(inpts)));
+    //        //} else {
+    //          def->connect(wire2out.at(pick(inpts)), pt2wire.at(outpt));
+    //          wire2out[outpt] = wire2out.at(pick(inpts));
+    //        //}
+    //      } else {
+    //        //auto psth = CoreIR::addPassthrough(pt2wire.at(outpt), outpt + "_psth");
+    //        //def->connect(psth->sel("in"), pt2wire.at(outpt));
+    //        //pt2psth[outpt] = psth;
+    //      }
+    //    }
+    //  }
     } else if (bk.maxdelay <= options.merge_threshold) {
-      //Must be a chain of register
-      assert(inpts.size() == 1);
-      assert(outpts.size() == 1);
+    //  //Must be a chain of register
+    //  assert(inpts.size() == 1);
+    //  assert(outpts.size() == 1);
 
-      //TODO: Need to move this to shift register optimization
-      //auto op_latency = info.compute_latency(pick(get_write_ops()));
-      int reg_delay_length = bk.maxdelay;
-      //if(is_in_pt(pick(inpts)) && (op_latency != 0)) {
-      //  reg_delay_length -= op_latency;
-      //  cout << "\t reduce delay for OP : " << pick(get_read_ops()) << endl;
-      //}
-      //if (reg_delay_length == 0) {
-      //    def->connect(pt2wire.at(pick(inpts)), pt2wire.at(pick(outpts)));
-      //}
+    //  //TODO: Need to move this to shift register optimization
+    //  //auto op_latency = info.compute_latency(pick(get_write_ops()));
+    //  int reg_delay_length = bk.maxdelay;
+    //  //if(is_in_pt(pick(inpts)) && (op_latency != 0)) {
+    //  //  reg_delay_length -= op_latency;
+    //  //  cout << "\t reduce delay for OP : " << pick(get_read_ops()) << endl;
+    //  //}
+    //  //if (reg_delay_length == 0) {
+    //  //    def->connect(pt2wire.at(pick(inpts)), pt2wire.at(pick(outpts)));
+    //  //}
 
-      CoreIR::Wireable* last_out;
-      for (size_t i = 0; i < reg_delay_length; i ++) {
-        auto reg = def->addInstance("d_reg_"+context->getUnique(), "mantle.reg",
-            {{"width", CoreIR::Const::make(context, port_widths)},
-            {"has_en", CoreIR::Const::make(context, false)}});
-        //do not wire input for the first pass
-        //Wire the shift register chain
-        if (i == 0) {
-          if (isIn.at(pick(inpts))) {
-            def->connect(reg->sel("in"), pt2wire.at(pick(inpts)));
-          } else {
-            reg_in[pick(inpts)] = reg->sel("in");
-          }
-        } else {
-          def->connect(reg->sel("in"), last_out);
-        }
-        if (i == reg_delay_length - 1) {
-          def->connect(reg->sel("out"), pt2wire.at(pick(outpts)));
-          wire2out[pick(outpts)] = reg->sel("out");
-        } else {
-          last_out = reg->sel("out");
-        }
-      }
+    //  CoreIR::Wireable* last_out;
+    //  for (size_t i = 0; i < reg_delay_length; i ++) {
+    //    auto reg = def->addInstance("d_reg_"+context->getUnique(), "mantle.reg",
+    //        {{"width", CoreIR::Const::make(context, port_widths)},
+    //        {"has_en", CoreIR::Const::make(context, false)}});
+    //    //do not wire input for the first pass
+    //    //Wire the shift register chain
+    //    if (i == 0) {
+    //      if (isIn.at(pick(inpts))) {
+    //        def->connect(reg->sel("in"), pt2wire.at(pick(inpts)));
+    //      } else {
+    //        reg_in[pick(inpts)] = reg->sel("in");
+    //      }
+    //    } else {
+    //      def->connect(reg->sel("in"), last_out);
+    //    }
+    //    if (i == reg_delay_length - 1) {
+    //      def->connect(reg->sel("out"), pt2wire.at(pick(outpts)));
+    //      wire2out[pick(outpts)] = reg->sel("out");
+    //    } else {
+    //      last_out = reg->sel("out");
+    //    }
+    //  }
     } else {
       //generate a memory for this ubuffer
       contain_memory_tile = true;
@@ -2312,17 +2342,17 @@ void UBuffer::generate_coreir(CodegenOptions& options,
       }
 
       //create the tile instance
-      auto targe_buf = rewrite_buffer.at(bk.name + "_ubuf");
+      //target_buf = rewrite_buffer.at(bk.name + "_ubuf");
       CoreIR::Instance* buf;
       if (config_mode == "lake") {
         buf = generate_lake_tile_instance(def, options,
           ub_ins_name, bk.name,
-          targe_buf.num_in_ports(), targe_buf.num_out_ports(),
+          target_buf.num_in_ports(), target_buf.num_out_ports(),
           has_stencil_valid & (!use_memtile_gen_stencil_valid), true);
 
       } else if (config_mode == "pond") {
         buf = generate_pond_instance(def, options, ub_ins_name,
-                targe_buf.num_in_ports(), target_buf.num_out_ports());
+                target_buf.num_in_ports(), target_buf.num_out_ports());
         has_stencil_valid = false;
       }
 
@@ -2376,6 +2406,8 @@ void UBuffer::generate_coreir(CodegenOptions& options,
             }
           }
         } else {
+          //TODO: maybe not enter here
+          //assert(False)
           def->connect(buf->sel(memDatainPort(config_mode, inpt_cnt)), wire2out.at(inpt));
           cout << "Input port: " << inpt << endl;
           if (with_ctrl) {
@@ -2530,6 +2562,7 @@ void UBuffer::generate_coreir(CodegenOptions& options,
   }
 
   //Add the chaining pass
+  //single port multiple wire need chaining
   std::set<Wireable*> chain_enable_tile, chain_disable_tile;
   for (auto itr: outpt_bank_rd) {
     string outpt = itr.first;
@@ -2592,14 +2625,16 @@ void UBuffer::generate_coreir(CodegenOptions& options,
     }
   }
 
+  generate_sreg_and_wire(options, impl, def, pt2wire);
+
 
   //second pass wire all the register input port
-  for (auto it: reg_in) {
-    string outpt = it.first;
-    auto in = it.second;
-    auto out = wire2out.at(outpt);
-    def->connect(in, out);
-  }
+  //for (auto it: reg_in) {
+  //  string outpt = it.first;
+  //  auto in = it.second;
+  //  auto out = wire2out.at(outpt);
+  //  def->connect(in, out);
+  //}
 
 }
 

@@ -2454,6 +2454,8 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
     //kernel function for generate coreir
     void generate_coreir(CodegenOptions& options, UBufferImpl& impl, CoreIR::ModuleDef* def, schedule_info& info, bool with_ctrl=true);
 
+    //helper function for sreg generation
+    void generate_sreg_and_wire(CodegenOptions& options, UBufferImpl& impl, CoreIR::ModuleDef* def, map<string, CoreIR::Wireable*> & pt2wire);
     //Wrappers for generate coreir
     //original memory generation for memory tile with enable and valid
     void generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, schedule_info& info);
@@ -2862,6 +2864,19 @@ struct UBufferImpl {
 
   map<string,pair<string,int>> shift_registered_outputs;
   vector<pair<string,pair<string,int>>> shift_registered_outputs_to_outputs;
+
+  vector<pair<string, pair<string, int>>>
+      get_shift_registered_ports(CodegenOptions& options) {
+
+        vector<pair<string, pair<string, int>>> ret;
+        for (auto it: shift_registered_outputs) {
+            if (it.second.second <= options.merge_threshold) {
+                ret.push_back(it);
+            }
+        }
+        concat(ret, shift_registered_outputs_to_outputs);
+        return ret;
+  }
 
   void add_o2o_info(const string& inpt, const string& outpt, const int& delay) {
       shift_registered_outputs_to_outputs.push_back(
