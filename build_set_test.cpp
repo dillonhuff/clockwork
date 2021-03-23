@@ -24042,6 +24042,9 @@ void scheduling_benchmarks() {
 }
 
 void application_tests() {
+  cp9_static_dynamic_comparison(32);
+  cp9_static_dynamic_comparison(16);
+
   sbl9_static_dynamic_comparison(32);
   sbl9_static_dynamic_comparison(1);
 
