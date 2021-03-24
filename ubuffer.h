@@ -2439,6 +2439,8 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
 
     //from bank to ubuffer
     map<string, UBuffer> generate_ubuffer(CodegenOptions& opt);
+    UBuffer generate_ubuffer(UBufferImpl& impl, int bank);
+
     //optimization pass to add an coarse grained controller, save iteration counter
     isl_map* get_coarse_grained_pipeline_schedule(UBuffer& new_ub);
 
@@ -2493,7 +2495,8 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
 
     vector<UBuffer> port_grouping(int port_width);
     vector<pair<std::set<string>, std::set<string> > >
-      port_grouping(CodegenOptions &options, std::set<string> inpts, std::set<string> outpts);
+      port_grouping(CodegenOptions &options, UBufferImpl& impl, uset* rddom, std::set<string> inpts, std::set<string> outpts);
+    void parse_exhaustive_banking_into_impl(UBufferImpl & impl);
 
     //helper function for port group2bank
     uset* create_subbank_branch(
@@ -2857,20 +2860,76 @@ struct dgraph {
 
 struct UBufferImpl {
 
+  map<int, isl_set*> bank_rddom;
   map<int, std::set<string> > bank_readers;
   map<int, std::set<string> > bank_writers;
+  map<int, vector<std::set<string>> > bank_outpt2readers;
+  map<int, vector<std::set<string>> > bank_inpt2writers;
   map<string, std::set<int>> outpt_to_bank;
   map<string, std::set<int>> inpt_to_bank;
 
+  //Shift register data
+  map<string, int> shift_depth;
   map<string,pair<string,int>> shift_registered_outputs;
   vector<pair<string,pair<string,int>>> shift_registered_outputs_to_outputs;
 
+  int get_new_bank_id() {
+    return bank_rddom.size();
+  }
+
+  void sequentially_assign_inpt(std::set<string> inpts, int b) {
+    vector<std::set<string>> partition;
+    for (string inpt: inpts) {
+        partition.push_back({inpt});
+    }
+    bank_inpt2writers[b] = partition;
+  }
+
+  void sequentially_assign_outpt(std::set<string> outpts, int b) {
+    vector<std::set<string>> partition;
+    for (string outpt: outpts) {
+        partition.push_back({outpt});
+    }
+    bank_outpt2readers[b] = partition;
+  }
+
+  vector<string> get_unique_inpts(int bank) {
+    vector<string> ret;
+    for (auto broadcast_set: bank_inpt2writers.at(bank)) {
+      ret.push_back(pick(broadcast_set));
+    }
+    return ret;
+  }
+
+  vector<string> get_unique_outpts(int bank) {
+    vector<string> ret;
+    for (auto broadcast_set: bank_outpt2readers.at(bank)) {
+      ret.push_back(pick(broadcast_set));
+    }
+    return ret;
+  }
+
+  int add_new_bank_between(const std::set<string> & inpts, const std::set<string>& outpts, isl_set* rddom) {
+    int b = get_new_bank_id();
+    for (auto outpt: outpts) {
+      bank_readers[b].insert(outpt);
+      outpt_to_bank[outpt].insert(b);
+    }
+    for (auto inpt: inpts) {
+      bank_writers[b].insert(inpt);
+      inpt_to_bank[inpt].insert(b);
+    }
+    bank_rddom[b] = rddom;
+    return b;
+  }
+
   vector<pair<string, pair<string, int>>>
-      get_shift_registered_ports(CodegenOptions& options) {
+      get_shift_registered_ports() {
 
         vector<pair<string, pair<string, int>>> ret;
         for (auto it: shift_registered_outputs) {
-            if (it.second.second <= options.merge_threshold) {
+            //Not implemented use a bank of memory
+            if (outpt_to_bank.count(it.first) == 0) {
                 ret.push_back(it);
             }
         }
