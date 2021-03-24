@@ -14437,7 +14437,7 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
       cmd("rm LakeWrapper.v");
 
       auto verilator_res = verilator_results(prg.name);
-      //compare("cgra_" + prg.name + "_cpu_vs_verilog_comparison", verilator_res, cpu);
+      compare("cgra_" + prg.name + "_cpu_vs_verilog_comparison", verilator_res, cpu);
       //string app_type = "dualwithaddr";
       string app_type = "single_port_buffer";
       cpy_app_to_folder(app_type, prg.name);

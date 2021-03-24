@@ -482,8 +482,7 @@
           ["self.clk","d_reg__U1.clk"],
           ["d_reg__U2.in","d_reg__U1.out"],
           ["self.clk","d_reg__U2.clk"],
-          ["self.op_hcompute_hw_output_stencil_read.0","d_reg__U2.out"],
-          ["self.op_hcompute_hw_output_stencil_read_extra_ctrl","self.op_hcompute_hw_input_global_wrapper_stencil_write_extra_ctrl"]
+          ["self.op_hcompute_hw_output_stencil_read.0","d_reg__U2.out"]
         ]
       },
       "op_hcompute_hw_input_global_wrapper_stencil_exe_start_pt__U28":{

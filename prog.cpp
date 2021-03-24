@@ -7885,10 +7885,14 @@ UBufferImpl port_group2bank(CodegenOptions& options, prog& prg, UBuffer& buf, sc
             //Rewrite the ubuffer prepare for vectorization
             int depth = sr_graph.max_delay_to_leaf(pt_name);
             if (depth > 0) {
-                auto outpt_info = buf.get_shift_pt_access_with_sched(pt_name, depth);
-                auto new_access_map = outpt_info.first;
-                auto new_sched = outpt_info.second;
-                buf.replace_pt(pt_name, new_access_map, new_sched);
+                //Only save this meta data in shift register impl
+                impl.shift_depth[pt_name] = depth;
+
+                //TODO: move the access pattern rewrite into ubuffer generation
+                //auto outpt_info = buf.get_shift_pt_access_with_sched(pt_name, depth);
+                //auto new_access_map = outpt_info.first;
+                //auto new_sched = outpt_info.second;
+                //buf.replace_pt(pt_name, new_access_map, new_sched);
             }
 
             if (pt_delay_pair.second <= options.merge_threshold) {
@@ -7907,6 +7911,9 @@ UBufferImpl port_group2bank(CodegenOptions& options, prog& prg, UBuffer& buf, sc
                 if ((out_pts.size() == out_port_width) || (out_delays.size() == 0)) {
                     //add the bank that require memory tile
                     auto super_bank = buf.compute_bank_info({src}, out_pts, read_delay);
+                    int bank = impl.add_new_bank_between({src}, out_pts, to_set(buf.global_range()));
+                    impl.sequentially_assign_inpt({src}, bank);
+                    impl.sequentially_assign_outpt(out_pts, bank);
                     for (auto out_pt: out_pts) {
                         buf.add_bank_between(src, out_pt, super_bank);
                         create_subbranch(out_pt, sr_graph, buf, impl);
@@ -8016,7 +8023,7 @@ void generate_banks_garnet(CodegenOptions& options, UBuffer& buf, UBufferImpl& i
         cout << "ADD BANK!\n Bank id: " << str(point) << endl;
         std::set<string> input_sets = bank_impl.bank_writers.at(bank_id);
         std::set<string> output_sets = bank_impl.bank_readers.at(bank_id);
-        auto bank_IOs = buf.port_grouping(options, input_sets, output_sets);
+        auto bank_IOs = buf.port_grouping(options, impl, rddom, input_sets, output_sets);
         for (auto bank_IO_pair: bank_IOs) {
             cout << "input group: " << bank_IO_pair.first << endl;
             cout << "output group: " << bank_IO_pair.second << endl;
@@ -8030,11 +8037,15 @@ void generate_banks_garnet(CodegenOptions& options, UBuffer& buf, UBufferImpl& i
             assert(delay_info.has_value());
             auto bnk_info = buf.compute_bank_info(inpt, outpt, delay_info.get_value());
             buf.add_bank_between(inpt, outpt, bnk_info);
+
+            //impl.add_new_bank_between({inpt}, {outpt}, to_set(rddom));
           } else {
             auto input_sets = bank_IO_pair.first;
             auto output_sets = bank_IO_pair.second;
             auto bnk_info = buf.compute_bank_info(rddom, point, input_sets, output_sets);
             buf.add_bank_between(input_sets, output_sets, bnk_info);
+
+            //impl.add_new_bank_between(input_sets, output_sets, to_set(rddom));
           }
         }
         //if (buf.overlap_schedule(input_sets) || buf.overlap_schedule(output_sets)) {
@@ -8059,8 +8070,9 @@ void generate_banks_garnet(CodegenOptions& options, UBuffer& buf, UBufferImpl& i
     } else {
         cout << "Use exhaustive banking! " << endl;
         buf.generate_banks_and_merge(options);
+        buf.parse_exhaustive_banking_into_impl(impl);
+        cout << "After exhaustive banking:\n " << impl << endl;
         //cout << "CANNOT support by current banking strategies!" << endl;
-        //assert(false);
     }
 }
 
