@@ -343,8 +343,7 @@
           ["op_hcompute_hw_output_stencil_read_extra_ctrl","Bit"]
         ]],
         "connections":[
-          ["self.op_hcompute_hw_output_stencil_read.0","self.op_hcompute_hw_input_global_wrapper_stencil_write.0"],
-          ["self.op_hcompute_hw_output_stencil_read_extra_ctrl","self.op_hcompute_hw_input_global_wrapper_stencil_write_extra_ctrl"]
+          ["self.op_hcompute_hw_output_stencil_read.0","self.op_hcompute_hw_input_global_wrapper_stencil_write.0"]
         ]
       },
       "op_hcompute_hw_input_global_wrapper_stencil_exe_start_pt__U7":{
