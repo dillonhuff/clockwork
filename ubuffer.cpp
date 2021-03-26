@@ -2300,6 +2300,66 @@ void UBuffer::generate_sreg_and_wire(CodegenOptions& options, UBufferImpl& impl,
   }
 }
 
+CoreIR::Instance* UBuffer::map_ubuffer_to_cgra(CodegenOptions& options, CoreIR::ModuleDef* def, UBuffer& target_buf, string ub_ins_name) {
+
+  map<string, UBuffer> vectorized_buf;
+  vectorized_buf.insert(
+          {target_buf.name+ "_ubuf", target_buf});
+  auto capacity = total_capacity(target_buf);
+
+  cout << "Vectorization buffer capacity: " << capacity << endl;
+  string config_mode;
+  bool multi_level_mem = options.mem_hierarchy.count("regfile");
+  if (capacity <= 32 && multi_level_mem ) {
+    cout << "Generate config for register file!" << endl;
+    //TODO generate the config file on the fly
+    config_file = generate_ubuf_args(options, target_buf);
+    config_mode = "pond";
+  } else {
+    //buffer_vectorization(options.iis, bk.name + "_ubuf", 1, 4, rewrite_buffer);
+    cout << "vectorization buf name: " << target_buf.name << endl;
+    buffer_vectorization(options.iis, {target_buf.name+ "_ubuf"},
+            options.mem_hierarchy.at("mem").fetch_width, vectorized_buf);
+    vectorized_buf = decouple_multi_tile_ubuffer(options, vectorized_buf);
+    for (auto buf: vectorized_buf) {
+        cout << "After vectorization codegen: " << buf.first << endl << buf.second << endl;
+    }
+    //TODO generate the config file on the fly
+    config_file = generate_ubuf_args(options, vectorized_buf);
+    config_mode = "lake";
+  }
+  CoreIR::Instance* buf;
+  if (config_mode == "lake") {
+    buf = generate_lake_tile_instance(def, options,
+      ub_ins_name, target_buf.name,
+      target_buf.num_in_ports(), target_buf.num_out_ports(),
+      false/*TODO: exclude stencil valid signal*/, true);
+
+  } else if (config_mode == "pond") {
+    buf = generate_pond_instance(def, options, ub_ins_name,
+            target_buf.num_in_ports(), target_buf.num_out_ports());
+  }
+  return buf;
+}
+
+bool cgpl_ctrl_optimization(CodegenOptions& options, CoreIR::ModuleDef* def, CoreIR::Instance* &cgpl_ctrl, UBuffer& target_buf,  string ub_ins_name) {
+  auto context = def->getContext();
+  bool decouple_ctrl =
+      target_buf.check_decouple_coarse_grained_pipeline_ctrl();
+  if (decouple_ctrl) {
+    UBuffer new_target_buf;
+    auto cgpl_schedule =
+        target_buf.get_coarse_grained_pipeline_schedule(new_target_buf);
+    //connect with the new ctrl stencil valid port
+     cgpl_ctrl = affine_controller_use_lake_tile(
+            def, context, ::domain(cgpl_schedule),
+            get_aff(cgpl_schedule), ub_ins_name + "_cgpl_ctrl");
+    generate_lake_tile_verilog(options, cgpl_ctrl);
+    target_buf = new_target_buf;
+  }
+  return decouple_ctrl;
+}
+
 //generate/realize the rewrite structure inside ubuffer node
 void UBuffer::generate_coreir(CodegenOptions& options,
         UBufferImpl& impl,
@@ -2456,94 +2516,99 @@ void UBuffer::generate_coreir(CodegenOptions& options,
     {
       UBuffer target_buf = generate_ubuffer(impl, bank_id);
       //generate a memory for this ubuffer
-      contain_memory_tile = true;
+      //contain_memory_tile = true;
 
       //if we has memory tile we will generate stencil valid
-      has_stencil_valid = true;
+      //has_stencil_valid = true;
 
       //string ub_ins_name = "ub_" + target_buf.name;
       string ub_ins_name = get_ub_inst_name(bank_id);
-      map<string, UBuffer> vectorized_buf;
       //auto target_buf = rewrite_buffer.at(target_buf.name + "_ubuf");
 
       //Check if has coarse grained pipeline
-      bool decouple_ctrl =
-          target_buf.check_decouple_coarse_grained_pipeline_ctrl();
-      isl_map* cgpl_schedule;
-      UBuffer new_target_buf;
-      if (decouple_ctrl) {
-        cgpl_schedule =
-            target_buf.get_coarse_grained_pipeline_schedule(new_target_buf);
-      } else {
-        new_target_buf = target_buf;
-      }
+      CoreIR::Instance* cgpl_ctrl;
+      cout << "cgpl_ctrl: " << cgpl_ctrl << endl;
+      bool decouple_ctrl = cgpl_ctrl_optimization(options, def, cgpl_ctrl, target_buf, ub_ins_name);
+      cout << "cgpl_ctrl: " << cgpl_ctrl << endl;
+      //bool decouple_ctrl =
+      //    target_buf.check_decouple_coarse_grained_pipeline_ctrl();
+      //isl_map* cgpl_schedule;
+      //UBuffer new_target_buf;
+      //if (decouple_ctrl) {
+      //  cgpl_schedule =
+      //      target_buf.get_coarse_grained_pipeline_schedule(new_target_buf);
+      //  //connect with the new ctrl stencil valid port
+      //   cgpl_ctrl = affine_controller_use_lake_tile(
+      //          def, context, ::domain(cgpl_schedule),
+      //          get_aff(cgpl_schedule), ub_ins_name + "_cgpl_ctrl");
+      //  generate_lake_tile_verilog(options, cgpl_ctrl);
+      //} else {
+      //  new_target_buf = target_buf;
+      //}
+      CoreIR::Instance* buf = map_ubuffer_to_cgra(options, def, target_buf, ub_ins_name);
 
-      vectorized_buf.insert(
-              {target_buf.name+ "_ubuf", new_target_buf});
-      auto capacity = total_capacity(target_buf);
+      //map<string, UBuffer> vectorized_buf;
+      //vectorized_buf.insert(
+      //        {target_buf.name+ "_ubuf", new_target_buf});
+      //auto capacity = total_capacity(target_buf);
 
-      cout << "Vectorization buffer capacity: "
-          << capacity << endl;
-      //vectorization pass for lake tile
-      //if (options.rtl_options.target_tile == TARGET_TILE_WIDE_FETCH_WITH_ADDRGEN) {
-      string config_mode;
-      bool multi_level_mem = options.mem_hierarchy.count("regfile");
-      if (capacity <= 32 && multi_level_mem ) {
-        cout << "Generate config for register file!" << endl;
-        config_file = generate_ubuf_args(options, new_target_buf);
-        config_mode = "pond";
+      //cout << "Vectorization buffer capacity: "
+      //    << capacity << endl;
+      ////vectorization pass for lake tile
+      ////if (options.rtl_options.target_tile == TARGET_TILE_WIDE_FETCH_WITH_ADDRGEN) {
+      //string config_mode;
+      //bool multi_level_mem = options.mem_hierarchy.count("regfile");
+      //if (capacity <= 32 && multi_level_mem ) {
+      //  cout << "Generate config for register file!" << endl;
+      //  config_file = generate_ubuf_args(options, new_target_buf);
+      //  config_mode = "pond";
 
-      } else {
-        //buffer_vectorization(options.iis, bk.name + "_ubuf", 1, 4, rewrite_buffer);
-        cout << "vectorization buf name: " << target_buf.name << endl;
-        buffer_vectorization(options.iis, {target_buf.name+ "_ubuf"},
-                options.mem_hierarchy.at("mem").fetch_width,
-                vectorized_buf);
-        vectorized_buf = decouple_multi_tile_ubuffer(options, vectorized_buf);
-        for (auto buf: vectorized_buf) {
-            cout << buf.first << endl << buf.second << endl;
-        }
-        config_file = generate_ubuf_args(options, vectorized_buf);
-        config_mode = "lake";
-      }
+      //} else {
+      //  //buffer_vectorization(options.iis, bk.name + "_ubuf", 1, 4, rewrite_buffer);
+      //  cout << "vectorization buf name: " << target_buf.name << endl;
+      //  buffer_vectorization(options.iis, {target_buf.name+ "_ubuf"},
+      //          options.mem_hierarchy.at("mem").fetch_width, vectorized_buf);
+      //  vectorized_buf = decouple_multi_tile_ubuffer(options, vectorized_buf);
+      //  for (auto buf: vectorized_buf) {
+      //      cout << "After vectorization codegen: " << buf.first << endl << buf.second << endl;
+      //  }
+      //  config_file = generate_ubuf_args(options, vectorized_buf);
+      //  config_mode = "lake";
+      //}
+      ////create the tile ins
+      ////target_buf = rewrite_buffer.at(bk.name + "_ubuf");
+      //CoreIR::Instance* buf;
+      //if (config_mode == "lake") {
+      //  buf = generate_lake_tile_instance(def, options,
+      //    ub_ins_name, target_buf.name,
+      //    target_buf.num_in_ports(), target_buf.num_out_ports(),
+      //    has_stencil_valid & (!use_memtile_gen_stencil_valid), true);
 
-      //Generate SMT stream if needed
-      if (options.emit_smt_stream) {
-        generate_lake_stream(options, vectorized_buf,
-                global_schedule_from_buffers(vectorized_buf));
-      }
+      //} else if (config_mode == "pond") {
+      //  buf = generate_pond_instance(def, options, ub_ins_name,
+      //          target_buf.num_in_ports(), target_buf.num_out_ports());
+      //  has_stencil_valid = false;
+      //}
 
-      //create the tile instance
-      //target_buf = rewrite_buffer.at(bk.name + "_ubuf");
-      CoreIR::Instance* buf;
-      if (config_mode == "lake") {
-        buf = generate_lake_tile_instance(def, options,
-          ub_ins_name, target_buf.name,
-          target_buf.num_in_ports(), target_buf.num_out_ports(),
-          has_stencil_valid & (!use_memtile_gen_stencil_valid), true);
-
-      } else if (config_mode == "pond") {
-        buf = generate_pond_instance(def, options, ub_ins_name,
-                target_buf.num_in_ports(), target_buf.num_out_ports());
-        has_stencil_valid = false;
-      }
-
-      //A rewrite pass to change the wiring
+      //A rewrite pass to change the wiring if optimize for cgpl
       if (decouple_ctrl) {
         //Disconnect the original connection from flush port
         auto conns = buf->sel("flush")->getConnectedWireables();
         for (auto conn: conns) {
           def->disconnect(buf->sel("flush"), conn);
         }
-        //connect with the new ctrl stencil valid port
-        CoreIR:Instance* cgpl_ctrl =
-                   affine_controller_use_lake_tile(def, context,
-                           ::domain(cgpl_schedule),
-                           get_aff(cgpl_schedule),
-                           ub_ins_name + "_cgpl_ctrl");
-        generate_lake_tile_verilog(options, cgpl_ctrl);
+        cout << cgpl_ctrl << endl;
+        cout << cgpl_ctrl->sel("stencil_valid")->toString() << endl;
+        cout << cgpl_ctrl->toString() << endl;
         def->connect(cgpl_ctrl->sel("stencil_valid"), buf->sel("flush"));
       }
+
+      //TODO: move smt into a separate flow
+      //Generate SMT stream if needed
+      //if (options.emit_smt_stream) {
+      //  generate_lake_stream(options, vectorized_buf,
+      //          global_schedule_from_buffers(vectorized_buf));
+      //}
 
       //FIXME: maybe has trouble to comment this out
       //Wire stencil valid
