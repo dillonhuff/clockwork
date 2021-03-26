@@ -23382,6 +23382,50 @@ void pyr_blnd_non_blocking_test() {
   assert(false);
 }
 
+void float_sharing_test() {
+  prog prg("float_cpy_resource");
+  prg.add_input("in");
+  prg.add_output("out");
+
+  pointwise("A", "id", "in", 2, prg);
+  pointwise("Ac", "float_square", "A", 2, prg);
+  pointwise("B", "id", "Ac", 2, prg);
+  pointwise("Bc", "float_square", "B", 2, prg);
+  pointwise("out", "id", "Bc", 2, prg);
+
+  infer_bounds("out", {8, 8}, prg);
+
+  prg.pretty_print();
+  prg.sanity_check();
+
+  prg.name = prg.name + "_s";
+  prg.sanity_check();
+
+  map<string, std::set<string> > fusion_groups =
+  {{"lda", {"pw_math_in01"}}, {"comp", {"pw_math_A45", "pw_math_B1213", "pw_math_Bc1617"}}, {"ldb", {"pw_math_Ac89"}}};
+
+  auto unopt_postprocessed = unoptimized_result(prg);
+
+  app_dag dag = partition_application(fusion_groups, prg);
+
+  //assert(false);
+
+  CodegenOptions options;
+  options = CodegenOptions();
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_NON_BLOCKING;
+  options.scheduling_algorithm = SCHEDULE_ALGORITHM_CW;
+  options.slack_matching = {SLACK_MATCHING_TYPE_FIXED, 250};
+  generate_app_code(options, dag);
+  move_to_benchmarks_folder(dag.prg.name);
+  assert(false);
+
+  generate_regression_testbench(dag.prg);
+  vector<string> multi_kernel_res = run_regression_tb(dag.prg);
+
+  compare("resource_shared" + prg.name + "_vs_unopt", multi_kernel_res, unopt_postprocessed);
+  assert(false);
+}
+
 // Generating high performance designs?
 void resource_sharing_test() {
   //prog prg("oned_r_oc2");
@@ -24042,6 +24086,8 @@ void scheduling_benchmarks() {
 }
 
 void application_tests() {
+  float_sharing_test();
+
   cp9_static_dynamic_comparison(32);
   cp9_static_dynamic_comparison(16);
 
