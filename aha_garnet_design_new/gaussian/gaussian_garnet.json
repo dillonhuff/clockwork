@@ -446,7 +446,7 @@
           ["hw_output_stencil_op_hcompute_hw_output_stencil_write",["Array",1,["Array",16,"Bit"]]]
         ]],
         "instances":{
-          "hw_input_global_wrapper_stencil$chain_disen_const_U1":{
+          "hw_input_global_wrapper_stencil$chain_en_const_U1":{
             "modref":"corebit.const",
             "modargs":{"value":["Bool",false]}
           },
@@ -973,7 +973,7 @@
           ["op_hcompute_hw_input_global_wrapper_stencil_write_extra_ctrl","BitIn"]
         ]],
         "instances":{
-          "chain_disen_const_U1":{
+          "chain_en_const_U1":{
             "modref":"corebit.const",
             "modargs":{"value":["Bool",false]}
           },
