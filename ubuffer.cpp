@@ -2142,6 +2142,7 @@ CoreIR::Instance* UBuffer::generate_lake_tile_instance(
   return buf;
 }
 
+
 void UBuffer::generate_stencil_valid_config(CodegenOptions& options, string bank_name) {
   auto outpt_sched = get_stencil_valid_sched(bank_name);
   cout << "original outpt schedule: " << str(outpt_sched) << endl;
@@ -2174,6 +2175,99 @@ string memDataoutPort(string mode, int pt_cnt) {
         cout << "Mode: " << mode << " is not implemented yet" << endl;
         assert(false);
     }
+}
+
+//Helper function to find the last port in chaining path
+CoreIR::Wireable* findChainDataIn(CoreIR::Wireable* mem_data_out, int port_id) {
+    auto last_bank =  mem_data_out->getTopParent();
+    auto chain_in = last_bank->sel("chain_data_in_" + str(port_id));
+    auto conns = getConnectWires(chain_in);
+    if (conns.size() == 0) {
+        return chain_in;
+    } else {
+        assert(conns.size() == 1);
+        return findChainDataIn(pick(conns), port_id);
+    }
+
+}
+
+void UBuffer::wire_ubuf_IO(CodegenOptions& options,CoreIR::ModuleDef* def, map<string, CoreIR::Wireable*> & pt2wire,
+        CoreIR::Instance* buf, UBufferImpl & impl, int bank_id, bool with_ctrl) {
+  auto context = def->getContext();
+
+  int inpt_cnt = 0, outpt_cnt = 0;
+  string config_mode = buf->getMetaData()["mode"];
+  //TODO: remove this
+  for (auto inpt_broadcast_set: impl.bank_inpt2writers.at(bank_id)) {
+    //Cannot wire multiple wire into one memory port
+    assert(inpt_broadcast_set.size() == 1);
+    for (auto inpt: inpt_broadcast_set) {
+      if (isIn.at(inpt)){
+        def->connect(buf->sel(memDatainPort(config_mode, inpt_cnt)), pt2wire.at(inpt));
+
+        //There is no control signal
+        if (with_ctrl) {
+          def->connect(buf->sel("wen_" + to_string(inpt_cnt)), def->sel("self."+get_bundle(inpt)+"_en"));
+        }
+      } else {
+        cout << "Did not implement serial line buffer optimization!" << endl;
+        assert(false);
+      }
+    }
+    inpt_cnt ++;
+  }
+  bool chain_en = false;
+  for (auto outpt_broadcast_set: impl.bank_outpt2readers.at(bank_id)) {
+    for (auto outpt: outpt_broadcast_set) {
+      //need a second pass push all wire into a list
+      //def->connect(buf->sel("dataout_"+to_string(outpt_cnt)), pt2wire.at(outpt));
+      //auto outpt = *(outpt_it);
+      //CoreIR::Wireable* tmp = buf->sel("data_out_"+to_string(outpt_cnt));
+      CoreIR::Wireable* tmp = buf->sel(memDataoutPort(config_mode, outpt_cnt));
+      //CoreIR::map_insert(outpt_bank_rd, outpt, tmp);
+      if (impl.outpt_to_bank.at(outpt).size() == 1) {
+        //no chaining
+        def->connect(buf->sel(memDataoutPort(config_mode, outpt_cnt)), pt2wire.at(outpt));
+      } else {
+        chain_en = true;
+        auto conns = getConnectWires(pt2wire.at(outpt));
+        if(conns.size() == 0) {
+          //First chaining wiring, wire to the output
+          def->connect(buf->sel(memDataoutPort(config_mode, outpt_cnt)), pt2wire.at(outpt));
+        } else {
+          assert(conns.size() == 1);
+          CoreIR::Wireable* last_dangling_chain_data_in =
+              findChainDataIn(pick(conns), outpt_cnt);
+          def->connect(buf->sel(memDataoutPort(config_mode, outpt_cnt)), last_dangling_chain_data_in);
+        }
+      }
+
+    }
+    outpt_cnt++;
+  }
+
+  if (config_mode == "lake") {
+    if (!chain_en) {
+      auto chain_en_const = def->addInstance("chain_en_const"+context->getUnique(), "corebit.const",
+          {{"value", CoreIR::Const::make(context, false)}});
+      def->connect(buf->sel("chain_chain_en"), chain_en_const->sel("out"));
+
+    } else {
+      //Need chaining
+      auto chain_en_const = def->addInstance("chain_en_const"+context->getUnique(), "corebit.const",
+          {{"value", CoreIR::Const::make(context, true)}});
+      def->connect(buf->sel("chain_chain_en"), chain_en_const->sel("out"));
+
+      //Add the chainenable config
+      buf->getMetaData()["config"]["chain_en"] = 1;
+
+    }
+  } else {
+    if (chain_en) {
+      cout << "Pond does not support chaining!" << endl;
+      assert(false);
+    }
+  }
 }
 
 //helper function to generate shift register
@@ -2291,8 +2385,6 @@ void UBuffer::generate_coreir(CodegenOptions& options,
     //assert(false);
   for (auto it: impl.bank_rddom) {
     auto bank_id = it.first;
-    std::set<string> inpts = impl.bank_writers.at(bank_id);
-    std::set<string> outpts = impl.bank_readers.at(bank_id);
     //auto buf_inpts = get_in_ports();
     //cout << "Bank:" << bk.name << " has max_delay: " << bk.maxdelay << endl;
     //if (bk.maxdelay == 0) {
@@ -2369,7 +2461,8 @@ void UBuffer::generate_coreir(CodegenOptions& options,
       //if we has memory tile we will generate stencil valid
       has_stencil_valid = true;
 
-      string ub_ins_name = "ub_" + target_buf.name;
+      //string ub_ins_name = "ub_" + target_buf.name;
+      string ub_ins_name = get_ub_inst_name(bank_id);
       map<string, UBuffer> vectorized_buf;
       //auto target_buf = rewrite_buffer.at(target_buf.name + "_ubuf");
 
@@ -2470,121 +2563,125 @@ void UBuffer::generate_coreir(CodegenOptions& options,
       //  }
       //}
 
-      int inpt_cnt = 0, outpt_cnt = 0;
-      if (inpts.size() == 1) {
-        //line buffer case
-        string  inpt = pick(inpts);
-        if (isIn.at(inpt)){
-          def->connect(buf->sel(memDatainPort(config_mode, inpt_cnt)), pt2wire.at(inpt));
-
-          //There is no control signal
-          if (with_ctrl) {
-            def->connect(buf->sel("wen_" + to_string(inpt_cnt)), def->sel("self."+get_bundle(inpt)+"_en"));
-            //also connect ren
-            for (size_t out_i = 0; out_i < outpts.size(); out_i ++ ) {
-              def->connect(buf->sel("ren_" + to_string(out_i)), def->sel("self."+get_bundle(inpt)+"_en"));
-            }
-          }
-        } else {
-          //TODO: maybe not enter here
-          //assert(False)
-          def->connect(buf->sel(memDatainPort(config_mode, inpt_cnt)), wire2out.at(inpt));
-          cout << "Input port: " << inpt << endl;
-          if (with_ctrl) {
-            def->connect(buf->sel("wen_" + to_string(inpt_cnt)), wire2out.at(inpt + "_valid"));
-            //also connect ren
-            for (size_t out_i = 0; out_i < outpts.size(); out_i ++ ) {
-              def->connect(buf->sel("ren_" + to_string(out_i)), wire2out.at(inpt + "_valid"));
-            }
-          }
-        }
-        //for (auto it: bk.delay_map) {
-        //    cout << "Bank delay map: "  <<it.first << ", " << it.second << endl;
-        //}
-
-        vector<string> pt_vec(outpts.begin(), outpts.end());
-        sort(pt_vec.begin(), pt_vec.end(), [this](const string l, const string r) {
-                //Sort by bundle name first
-              //auto l_bd = get_bundle(l);
-              //auto r_bd = get_bundle(r);
-              //if (l_bd != r_bd) {
-              //  return l_bd < r_bd;
-              //}
-              //If in same bundle sort by start_addr
-              //auto l_start = lexminpt(range(access_map.at(l)));
-              //auto r_start = lexminpt(range(access_map.at(r)));
-              //return lex_lt_pt(l_start, r_start);
-              return l < r;
-              });
-        //for (auto outpt_it = pt_vec.begin(); outpt_it < pt_vec.end(); outpt_it ++) {
-        for (auto outpt_broadcast_set: impl.bank_outpt2readers.at(bank_id)) {
-          for (auto outpt: outpt_broadcast_set) {
-            //need a second pass push all wire into a list
-            //def->connect(buf->sel("dataout_"+to_string(outpt_cnt)), pt2wire.at(outpt));
-            //auto outpt = *(outpt_it);
-            //CoreIR::Wireable* tmp = buf->sel("data_out_"+to_string(outpt_cnt));
-            CoreIR::Wireable* tmp = buf->sel(memDataoutPort(config_mode, outpt_cnt));
-            CoreIR::map_insert(outpt_bank_rd, outpt, tmp);
-
-            wire2out[outpt] = tmp;
-            //wire2out[outpt + "_valid"] = buf->sel("valid_" + to_string(outpt_cnt));
-            //TODO: figure out valid wiring strategy
-            //Wire the bank with the largest delay
-            //valid_out[outpt] = buf->sel("valid_" + to_string(outpt_cnt));
-            if (with_ctrl) {
-              CoreIR::map_insert(outpt_bank_valid, outpt,
-                    (CoreIR::Wireable*)buf->sel("valid_" + to_string(outpt_cnt)));
-            }
-
-          }
-          //Broadcast do not need to increment port
-          //auto next_pt = std::min(outpt_it + 1, pt_vec.end() - 1);
-          //if (bk.delay_map.at(outpt) != bk.delay_map.at(*next_pt)){
-          outpt_cnt++;
-          //}
-        }
-      } else {
-        //Iterate through bundle first, then ports in each bundle
-        //TODO: possible bug
-        vector<string> pt_vec(inpts.begin(), inpts.end());
-        sort(pt_vec.begin(), pt_vec.end(), [this](const string l, const string r) {
-                //Sort by bundle name first
-              auto l_bd = get_bundle(l);
-              auto r_bd = get_bundle(r);
-              if (l_bd != r_bd) {
-                return l_bd < r_bd;
-              }
-              return l < r;
-              });
-        //for (auto in_bd: get_bank_in_bundles(bk.name)) {
-          //for (auto inpt: port_bundles.at(in_bd)) {
-          for(string inpt: pt_vec) {
-            cout << "\t\tvisit port: " << inpt << endl;
-            def->connect(buf->sel(memDatainPort(config_mode, inpt_cnt)), pt2wire.at(inpt));
-            if (with_ctrl) {
-              def->connect(buf->sel("wen_" + to_string(inpt_cnt)), def->sel("self."+get_bundle(inpt)+"_en"));
-            }
-            inpt_cnt ++;
-          }
-        for (auto outpt: outpts) {
-          //need a second pass push all wire into a list
-          //def->connect(buf->sel("dataout_"+to_string(outpt_cnt)), pt2wire.at(outpt));
-          CoreIR::Wireable* tmp = buf->sel(memDataoutPort(config_mode, outpt_cnt));
-          CoreIR::map_insert(outpt_bank_rd, outpt, tmp);
-
-          //use the first port in the chain to be the output valid
-          if (with_ctrl) {
-            CoreIR::map_insert(outpt_bank_valid, outpt,
-                  (CoreIR::Wireable*)buf->sel("valid_" + to_string(outpt_cnt)));
-          }
-          outpt_cnt++;
-        }
-      }
-
       //generate verilog collateral
       generate_lake_tile_verilog(options, buf);
-      if (config_mode == "lake")
-          all_mem_tiles.push_back(buf);
+
+      //Wiring the port after generate verilog
+      wire_ubuf_IO(options, def, pt2wire, buf, impl, bank_id, with_ctrl);
+
+      //int inpt_cnt = 0, outpt_cnt = 0;
+      //if (inpts.size() == 1) {
+      //  //line buffer case
+      //  string  inpt = pick(inpts);
+      //  if (isIn.at(inpt)){
+      //    def->connect(buf->sel(memDatainPort(config_mode, inpt_cnt)), pt2wire.at(inpt));
+
+      //    //There is no control signal
+      //    if (with_ctrl) {
+      //      def->connect(buf->sel("wen_" + to_string(inpt_cnt)), def->sel("self."+get_bundle(inpt)+"_en"));
+      //      //also connect ren
+      //      for (size_t out_i = 0; out_i < outpts.size(); out_i ++ ) {
+      //        def->connect(buf->sel("ren_" + to_string(out_i)), def->sel("self."+get_bundle(inpt)+"_en"));
+      //      }
+      //    }
+      //  } else {
+      //    //TODO: maybe not enter here
+      //    assert(false);
+      //    def->connect(buf->sel(memDatainPort(config_mode, inpt_cnt)), wire2out.at(inpt));
+      //    cout << "Input port: " << inpt << endl;
+      //    if (with_ctrl) {
+      //      def->connect(buf->sel("wen_" + to_string(inpt_cnt)), wire2out.at(inpt + "_valid"));
+      //      //also connect ren
+      //      for (size_t out_i = 0; out_i < outpts.size(); out_i ++ ) {
+      //        def->connect(buf->sel("ren_" + to_string(out_i)), wire2out.at(inpt + "_valid"));
+      //      }
+      //    }
+      //  }
+      //  //for (auto it: bk.delay_map) {
+      //  //    cout << "Bank delay map: "  <<it.first << ", " << it.second << endl;
+      //  //}
+
+      //  //vector<string> pt_vec(outpts.begin(), outpts.end());
+      //  //sort(pt_vec.begin(), pt_vec.end(), [this](const string l, const string r) {
+      //  //        //Sort by bundle name first
+      //  //      //auto l_bd = get_bundle(l);
+      //  //      //auto r_bd = get_bundle(r);
+      //  //      //if (l_bd != r_bd) {
+      //  //      //  return l_bd < r_bd;
+      //  //      //}
+      //  //      //If in same bundle sort by start_addr
+      //  //      //auto l_start = lexminpt(range(access_map.at(l)));
+      //  //      //auto r_start = lexminpt(range(access_map.at(r)));
+      //  //      //return lex_lt_pt(l_start, r_start);
+      //  //      return l < r;
+      //  //      });
+      //  //for (auto outpt_it = pt_vec.begin(); outpt_it < pt_vec.end(); outpt_it ++) {
+      //  for (auto outpt_broadcast_set: impl.bank_outpt2readers.at(bank_id)) {
+      //    for (auto outpt: outpt_broadcast_set) {
+      //      //need a second pass push all wire into a list
+      //      //def->connect(buf->sel("dataout_"+to_string(outpt_cnt)), pt2wire.at(outpt));
+      //      //auto outpt = *(outpt_it);
+      //      //CoreIR::Wireable* tmp = buf->sel("data_out_"+to_string(outpt_cnt));
+      //      CoreIR::Wireable* tmp = buf->sel(memDataoutPort(config_mode, outpt_cnt));
+      //      CoreIR::map_insert(outpt_bank_rd, outpt, tmp);
+
+      //      wire2out[outpt] = tmp;
+      //      //wire2out[outpt + "_valid"] = buf->sel("valid_" + to_string(outpt_cnt));
+      //      //TODO: figure out valid wiring strategy
+      //      //Wire the bank with the largest delay
+      //      //valid_out[outpt] = buf->sel("valid_" + to_string(outpt_cnt));
+      //      if (with_ctrl) {
+      //        CoreIR::map_insert(outpt_bank_valid, outpt,
+      //              (CoreIR::Wireable*)buf->sel("valid_" + to_string(outpt_cnt)));
+      //      }
+
+      //    }
+      //    //Broadcast do not need to increment port
+      //    //auto next_pt = std::min(outpt_it + 1, pt_vec.end() - 1);
+      //    //if (bk.delay_map.at(outpt) != bk.delay_map.at(*next_pt)){
+      //    outpt_cnt++;
+      //    //}
+      //  }
+      //} else {
+      //  //Iterate through bundle first, then ports in each bundle
+      //  //TODO: possible bug
+      //  vector<string> pt_vec(inpts.begin(), inpts.end());
+      //  sort(pt_vec.begin(), pt_vec.end(), [this](const string l, const string r) {
+      //          //Sort by bundle name first
+      //        auto l_bd = get_bundle(l);
+      //        auto r_bd = get_bundle(r);
+      //        if (l_bd != r_bd) {
+      //          return l_bd < r_bd;
+      //        }
+      //        return l < r;
+      //        });
+      //  //for (auto in_bd: get_bank_in_bundles(bk.name)) {
+      //    //for (auto inpt: port_bundles.at(in_bd)) {
+      //    for(string inpt: pt_vec) {
+      //      cout << "\t\tvisit port: " << inpt << endl;
+      //      def->connect(buf->sel(memDatainPort(config_mode, inpt_cnt)), pt2wire.at(inpt));
+      //      if (with_ctrl) {
+      //        def->connect(buf->sel("wen_" + to_string(inpt_cnt)), def->sel("self."+get_bundle(inpt)+"_en"));
+      //      }
+      //      inpt_cnt ++;
+      //    }
+      //  for (auto outpt: outpts) {
+      //    //need a second pass push all wire into a list
+      //    //def->connect(buf->sel("dataout_"+to_string(outpt_cnt)), pt2wire.at(outpt));
+      //    CoreIR::Wireable* tmp = buf->sel(memDataoutPort(config_mode, outpt_cnt));
+      //    CoreIR::map_insert(outpt_bank_rd, outpt, tmp);
+
+      //    //use the first port in the chain to be the output valid
+      //    if (with_ctrl) {
+      //      CoreIR::map_insert(outpt_bank_valid, outpt,
+      //            (CoreIR::Wireable*)buf->sel("valid_" + to_string(outpt_cnt)));
+      //    }
+      //    outpt_cnt++;
+      //  }
+      //}
+
+      //if (config_mode == "lake")
+      //    all_mem_tiles.push_back(buf);
 
     }
   }
@@ -2657,67 +2754,67 @@ void UBuffer::generate_coreir(CodegenOptions& options,
 
   //Add the chaining pass
   //single port multiple wire need chaining
-  std::set<Wireable*> chain_enable_tile, chain_disable_tile;
-  for (auto itr: outpt_bank_rd) {
-    string outpt = itr.first;
-    auto connect_vec = itr.second;
+  //std::set<Wireable*> chain_enable_tile, chain_disable_tile;
+  //for (auto itr: outpt_bank_rd) {
+  //  string outpt = itr.first;
+  //  auto connect_vec = itr.second;
 
-    if (connect_vec.size() == 1) {
-      def->connect(pick(connect_vec), pt2wire.at(outpt));
-      cout << "Node: " << pick(connect_vec)->toString()
-          << "Parent node: " << pick(connect_vec)->getTopParent()->toString() << endl;;
-      //chain_disable_tile.insert(pick(connect_vec)->getTopParent());
-    }
-    else {
-      //wiring the chaining pass
-      for (size_t it = 0; it < connect_vec.size(); it ++) {
-        auto wire = connect_vec.at(it);
-        if (it == 0) {
-          //wire the first output to the ubuf outpt
-          def->connect(wire, pt2wire.at(outpt));
+  //  if (connect_vec.size() == 1) {
+  //    def->connect(pick(connect_vec), pt2wire.at(outpt));
+  //    cout << "Node: " << pick(connect_vec)->toString()
+  //        << "Parent node: " << pick(connect_vec)->getTopParent()->toString() << endl;;
+  //    //chain_disable_tile.insert(pick(connect_vec)->getTopParent());
+  //  }
+  //  else {
+  //    //wiring the chaining pass
+  //    for (size_t it = 0; it < connect_vec.size(); it ++) {
+  //      auto wire = connect_vec.at(it);
+  //      if (it == 0) {
+  //        //wire the first output to the ubuf outpt
+  //        def->connect(wire, pt2wire.at(outpt));
 
-          //push it to chain enable
-          chain_enable_tile.insert(wire->getTopParent());
-        }
-        else {
-          auto last_bank = connect_vec[it-1]->getTopParent();
-          string portID = split_at(wire->toString(), "_").back();
-          def->connect(wire, last_bank->sel("chain_data_in_" + portID));
+  //        //push it to chain enable
+  //        chain_enable_tile.insert(wire->getTopParent());
+  //      }
+  //      else {
+  //        auto last_bank = connect_vec[it-1]->getTopParent();
+  //        string portID = split_at(wire->toString(), "_").back();
+  //        def->connect(wire, last_bank->sel("chain_data_in_" + portID));
 
-          //push it to chain enable tile
-          chain_enable_tile.insert(wire->getTopParent());
-        }
-      }
-    }
-  }
+  //        //push it to chain enable tile
+  //        chain_enable_tile.insert(wire->getTopParent());
+  //      }
+  //    }
+  //  }
+  //}
   //After find chaining tile, push the non-chained tile into another set
-  for (auto memtile: all_mem_tiles) {
-      if (chain_enable_tile.count(memtile) == 0) {
-          chain_disable_tile.insert(memtile);
-      }
-  }
+  //for (auto memtile: all_mem_tiles) {
+  //  if (chain_enable_tile.count(memtile) == 0) {
+  //      chain_disable_tile.insert(memtile);
+  //  }
+  //}
 
-  cout << "chain_en size: " << chain_enable_tile.size() <<endl
-      << "chain_disable size: " << chain_disable_tile.size() << endl;
+  //cout << "chain_en size: " << chain_enable_tile.size() <<endl
+  //    << "chain_disable size: " << chain_disable_tile.size() << endl;
 
-  //wire the chain enable disable signal
-  if (chain_enable_tile.size()) {
-    auto chain_en_const = def->addInstance("chain_en_const"+context->getUnique(), "corebit.const",
-            {{"value", CoreIR::Const::make(context, true)}});
-    for (auto t: chain_enable_tile) {
-      def->connect(t->sel("chain_chain_en"), chain_en_const->sel("out"));
-      //Add the chainenable config
-      t->getMetaData()["config"]["chain_en"] = 1;
-    }
-  }
+  ////wire the chain enable disable signal
+  //if (chain_enable_tile.size()) {
+  //  auto chain_en_const = def->addInstance("chain_en_const"+context->getUnique(), "corebit.const",
+  //          {{"value", CoreIR::Const::make(context, true)}});
+  //  for (auto t: chain_enable_tile) {
+  //    def->connect(t->sel("chain_chain_en"), chain_en_const->sel("out"));
+  //    //Add the chainenable config
+  //    t->getMetaData()["config"]["chain_en"] = 1;
+  //  }
+  //}
 
-  if (chain_disable_tile.size()) {
-    auto chain_en_const = def->addInstance("chain_disen_const"+context->getUnique(), "corebit.const",
-            {{"value", CoreIR::Const::make(context, false)}});
-    for (auto t: chain_disable_tile) {
-      def->connect(t->sel("chain_chain_en"), chain_en_const->sel("out"));
-    }
-  }
+  //if (chain_disable_tile.size()) {
+  //  auto chain_en_const = def->addInstance("chain_disen_const"+context->getUnique(), "corebit.const",
+  //          {{"value", CoreIR::Const::make(context, false)}});
+  //  for (auto t: chain_disable_tile) {
+  //    def->connect(t->sel("chain_chain_en"), chain_en_const->sel("out"));
+  //  }
+  //}
 
   generate_sreg_and_wire(options, impl, def, pt2wire);
 
@@ -5459,8 +5556,8 @@ void UBuffer::generate_banks(CodegenOptions& options) {
         if((inpts.size() <= options.rtl_options.max_inpt) &&
             (outpts.size() <= options.rtl_options.max_outpt)) {
             int bank = impl.add_new_bank_between(inpts, outpts, to_set(rddom));
-            impl.sequentially_assign_inpt(inpts, bank);
-            impl.sequentially_assign_outpt(outpts, bank);
+            impl.sequentially_assign_inpt(sort_pt_by_bundle(inpts), bank);
+            impl.sequentially_assign_outpt(sort_pt_by_bundle(outpts), bank);
 
             ret.push_back(
                     make_pair(inpts, outpts)
@@ -5470,8 +5567,17 @@ void UBuffer::generate_banks(CodegenOptions& options) {
             assert(false);
         }
     } else {
-        map<string, std::set<string> > outpt_partitions =
-            get_unique_ports(outpts);
+
+        //use this customized cmp to sort the pt by bundle name
+        auto cmp = [this](const string & l, const string & r) {
+            return this->cmp_by_bd(l, r);
+        };
+        map<string, std::set<string>, decltype(cmp)> outpt_partitions(cmp);
+        auto tmp = get_unique_ports(outpts);
+        for (auto it: tmp) {
+            outpt_partitions.insert(it);
+        }
+
         for (string inpt: inpts) {
             for (auto it : outpt_partitions) {
                 ret.push_back(make_pair(std::set<string>({inpt}), it.second));

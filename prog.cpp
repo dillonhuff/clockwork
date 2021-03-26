@@ -7913,7 +7913,7 @@ UBufferImpl port_group2bank(CodegenOptions& options, prog& prg, UBuffer& buf, sc
                     auto super_bank = buf.compute_bank_info({src}, out_pts, read_delay);
                     int bank = impl.add_new_bank_between({src}, out_pts, to_set(buf.global_range()));
                     impl.sequentially_assign_inpt({src}, bank);
-                    impl.sequentially_assign_outpt(out_pts, bank);
+                    impl.sequentially_assign_outpt(buf.sort_pt_by_bundle(out_pts), bank);
                     for (auto out_pt: out_pts) {
                         buf.add_bank_between(src, out_pt, super_bank);
                         create_subbranch(out_pt, sr_graph, buf, impl);
