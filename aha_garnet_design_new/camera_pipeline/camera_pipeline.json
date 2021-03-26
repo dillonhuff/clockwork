@@ -1585,7 +1585,7 @@
           ["op_hcompute_denoised_1_stencil_write_extra_ctrl","BitIn"]
         ]],
         "instances":{
-          "chain_disen_const_U7":{
+          "chain_en_const_U7":{
             "modref":"corebit.const",
             "modargs":{"value":["Bool",false]}
           },
@@ -1630,7 +1630,7 @@
           }
         },
         "connections":[
-          ["ub_denoised_1_stencil_BANK_0.chain_chain_en","chain_disen_const_U7.out"],
+          ["ub_denoised_1_stencil_BANK_0.chain_chain_en","chain_en_const_U7.out"],
           ["self.clk","d_reg__U10.clk"],
           ["ub_denoised_1_stencil_BANK_0.data_out_0","d_reg__U10.in"],
           ["d_reg__U11.in","d_reg__U10.out"],
@@ -3728,7 +3728,7 @@
           ["op_hcompute_hw_input_global_wrapper_stencil_write_extra_ctrl","BitIn"]
         ]],
         "instances":{
-          "chain_disen_const_U15":{
+          "chain_en_const_U15":{
             "modref":"corebit.const",
             "modargs":{"value":["Bool",false]}
           },
@@ -3773,7 +3773,7 @@
           }
         },
         "connections":[
-          ["ub_hw_input_global_wrapper_stencil_BANK_0.chain_chain_en","chain_disen_const_U15.out"],
+          ["ub_hw_input_global_wrapper_stencil_BANK_0.chain_chain_en","chain_en_const_U15.out"],
           ["self.clk","d_reg__U16.clk"],
           ["self.op_hcompute_hw_input_global_wrapper_stencil_write.0","d_reg__U16.in"],
           ["d_reg__U17.in","d_reg__U16.out"],

@@ -212,7 +212,7 @@
           ["op_hcompute_nearest_neighbor_stencil_read_extra_ctrl","Bit"]
         ]],
         "instances":{
-          "chain_disen_const_U1":{
+          "chain_en_const_U1":{
             "modref":"corebit.const",
             "modargs":{"value":["Bool",false]}
           },
@@ -313,7 +313,7 @@
           ["input_copy_stencil_op_hcompute_hw_input_stencil_read",["Array",1,["Array",16,"BitIn"]]]
         ]],
         "instances":{
-          "hw_input_stencil$chain_disen_const_U1":{
+          "hw_input_stencil$chain_en_const_U1":{
             "modref":"corebit.const",
             "modargs":{"value":["Bool",false]}
           },

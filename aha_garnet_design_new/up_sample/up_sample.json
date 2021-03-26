@@ -97,7 +97,7 @@
           ["op_hcompute_nearest_neighbor_stencil_read_extra_ctrl","Bit"]
         ]],
         "instances":{
-          "chain_disen_const_U1":{
+          "chain_en_const_U1":{
             "modref":"corebit.const",
             "modargs":{"value":["Bool",false]}
           },
@@ -112,7 +112,7 @@
           }
         },
         "connections":[
-          ["ub_hw_input_stencil_BANK_0.chain_chain_en","chain_disen_const_U1.out"],
+          ["ub_hw_input_stencil_BANK_0.chain_chain_en","chain_en_const_U1.out"],
           ["ub_hw_input_stencil_BANK_0.clk","self.clk"],
           ["ub_hw_input_stencil_BANK_0.data_in_0","self.op_hcompute_hw_input_stencil_write.0"],
           ["ub_hw_input_stencil_BANK_0.data_out_0","self.op_hcompute_nearest_neighbor_stencil_read.0"],

@@ -161,7 +161,7 @@
           ["op_hcompute_conv2_stencil_1_read_extra_ctrl","Bit"]
         ]],
         "instances":{
-          "chain_disen_const_U1":{
+          "chain_en_const_U1":{
             "modref":"corebit.const",
             "modargs":{"value":["Bool",false]}
           },
@@ -206,7 +206,7 @@
           }
         },
         "connections":[
-          ["ub_conv1_stencil_BANK_0.chain_chain_en","chain_disen_const_U1.out"],
+          ["ub_conv1_stencil_BANK_0.chain_chain_en","chain_en_const_U1.out"],
           ["self.clk","d_reg__U2.clk"],
           ["self.op_hcompute_conv1_stencil_1_write.0","d_reg__U2.in"],
           ["d_reg__U3.in","d_reg__U2.out"],
@@ -694,7 +694,7 @@
           ["op_hcompute_hw_input_global_wrapper_stencil_write_extra_ctrl","BitIn"]
         ]],
         "instances":{
-          "chain_disen_const_U9":{
+          "chain_en_const_U9":{
             "modref":"corebit.const",
             "modargs":{"value":["Bool",false]}
           },
@@ -739,7 +739,7 @@
           }
         },
         "connections":[
-          ["ub_hw_input_global_wrapper_stencil_BANK_0.chain_chain_en","chain_disen_const_U9.out"],
+          ["ub_hw_input_global_wrapper_stencil_BANK_0.chain_chain_en","chain_en_const_U9.out"],
           ["self.clk","d_reg__U10.clk"],
           ["self.op_hcompute_hw_input_global_wrapper_stencil_write.0","d_reg__U10.in"],
           ["d_reg__U11.in","d_reg__U10.out"],

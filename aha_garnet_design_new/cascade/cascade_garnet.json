@@ -145,7 +145,7 @@
           ["hw_output_stencil_op_hcompute_hw_output_stencil_write",["Array",1,["Array",16,"Bit"]]]
         ]],
         "instances":{
-          "conv1_stencil$chain_disen_const_U1":{
+          "conv1_stencil$chain_en_const_U1":{
             "modref":"corebit.const",
             "modargs":{"value":["Bool",false]}
           },
@@ -189,7 +189,7 @@
             "genargs":{"ID":["String","_U0"], "has_external_addrgen":["Bool",false], "has_flush":["Bool",true], "has_read_valid":["Bool",false], "has_reset":["Bool",false], "has_stencil_valid":["Bool",true], "has_valid":["Bool",false], "is_rom":["Bool",false], "num_inputs":["Int",1], "num_outputs":["Int",2], "use_prebuilt_mem":["Bool",true], "width":["Int",16]},
             "modargs":{"config":["Json",{"agg2sram_0":{"cycle_starting_addr":[134],"cycle_stride":[4,64],"dimensionality":2,"extent":[16,62],"read_data_starting_addr":[0],"read_data_stride":[1,0],"write_data_starting_addr":[0],"write_data_stride":[1,16]},"in2agg_0":{"cycle_starting_addr":[130],"cycle_stride":[1,4,64],"dimensionality":3,"extent":[4,16,62],"write_data_starting_addr":[0],"write_data_stride":[1,4,0]},"sram2tb_0":{"cycle_starting_addr":[255],"cycle_stride":[4,64],"dimensionality":2,"extent":[16,60],"read_data_starting_addr":[16],"read_data_stride":[1,16],"write_data_starting_addr":[0],"write_data_stride":[1,0]},"sram2tb_1":{"cycle_starting_addr":[253],"cycle_stride":[4,64],"dimensionality":2,"extent":[16,60],"read_data_starting_addr":[0],"read_data_stride":[1,16],"write_data_starting_addr":[0],"write_data_stride":[1,0]},"tb2out_0":{"cycle_starting_addr":[258],"cycle_stride":[1,4,64],"dimensionality":3,"extent":[4,16,60],"read_data_starting_addr":[0],"read_data_stride":[1,4,0]},"tb2out_1":{"cycle_starting_addr":[258],"cycle_stride":[1,4,64],"dimensionality":3,"extent":[4,16,60],"read_data_starting_addr":[0],"read_data_stride":[1,4,0]}}], "init":["Json",null], "mode":["String","lake"]}
           },
-          "hw_input_global_wrapper_stencil$chain_disen_const_U9":{
+          "hw_input_global_wrapper_stencil$chain_en_const_U9":{
             "modref":"corebit.const",
             "modargs":{"value":["Bool",false]}
           },
@@ -568,7 +568,7 @@
           ["op_hcompute_conv2_stencil_1_read_extra_ctrl","Bit"]
         ]],
         "instances":{
-          "chain_disen_const_U1":{
+          "chain_en_const_U1":{
             "modref":"corebit.const",
             "modargs":{"value":["Bool",false]}
           },
@@ -1340,7 +1340,7 @@
           ["op_hcompute_hw_input_global_wrapper_stencil_write_extra_ctrl","BitIn"]
         ]],
         "instances":{
-          "chain_disen_const_U9":{
+          "chain_en_const_U9":{
             "modref":"corebit.const",
             "modargs":{"value":["Bool",false]}
           },

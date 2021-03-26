@@ -1250,6 +1250,28 @@ class UBuffer {
       return ::num_dims(dom);
     }
 
+    bool cmp_by_bd(const string l, const string r) {
+      auto l_bd = get_bundle(l);
+      auto r_bd = get_bundle(r);
+      if (l_bd != r_bd) {
+        return l_bd < r_bd;
+      }
+      return l < r;
+    }
+
+    vector<string> sort_pt_by_bundle(const std::set<string> & pts) {
+      vector<string> pt_vec(pts.begin(), pts.end());
+      sort(pt_vec.begin(), pt_vec.end(), [this](const string l, const string r) {
+          //Sort by bundle name first
+          return this->cmp_by_bd(l, r);
+      });
+      return pt_vec;
+    }
+
+    string get_ub_inst_name(const int bank_id) const {
+      return "ub_" + name + "_BANK_" + str(bank_id);
+    }
+
     bool is_bank_input(const string& name) const{
       for (auto bk: bank_list) {
         if (elem(name, banks_to_inputs.at(bk.name))) {
@@ -2458,6 +2480,10 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
 
     //helper function for sreg generation
     void generate_sreg_and_wire(CodegenOptions& options, UBufferImpl& impl, CoreIR::ModuleDef* def, map<string, CoreIR::Wireable*> & pt2wire);
+    //helper function for wire IO connection
+    void wire_ubuf_IO(CodegenOptions& options,CoreIR::ModuleDef* def, map<string, CoreIR::Wireable*> & pt2wire,
+        CoreIR::Instance* buf, UBufferImpl & impl, int bank_id, bool with_ctrl);
+
     //Wrappers for generate coreir
     //original memory generation for memory tile with enable and valid
     void generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, schedule_info& info);
@@ -2877,7 +2903,7 @@ struct UBufferImpl {
     return bank_rddom.size();
   }
 
-  void sequentially_assign_inpt(std::set<string> inpts, int b) {
+  void sequentially_assign_inpt(vector<string> inpts, int b) {
     vector<std::set<string>> partition;
     for (string inpt: inpts) {
         partition.push_back({inpt});
@@ -2885,7 +2911,7 @@ struct UBufferImpl {
     bank_inpt2writers[b] = partition;
   }
 
-  void sequentially_assign_outpt(std::set<string> outpts, int b) {
+  void sequentially_assign_outpt(vector<string> outpts, int b) {
     vector<std::set<string>> partition;
     for (string outpt: outpts) {
         partition.push_back({outpt});
