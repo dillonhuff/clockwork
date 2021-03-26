@@ -2481,8 +2481,9 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
     //helper function for sreg generation
     void generate_sreg_and_wire(CodegenOptions& options, UBufferImpl& impl, CoreIR::ModuleDef* def, map<string, CoreIR::Wireable*> & pt2wire);
     //helper function for wire IO connection
-    void wire_ubuf_IO(CodegenOptions& options,CoreIR::ModuleDef* def, map<string, CoreIR::Wireable*> & pt2wire,
-        CoreIR::Instance* buf, UBufferImpl & impl, int bank_id, bool with_ctrl);
+    void wire_ubuf_IO(CodegenOptions& options, CoreIR::ModuleDef* def, map<string, CoreIR::Wireable*> & pt2wire, CoreIR::Instance* buf, UBufferImpl & impl, int bank_id, bool with_ctrl);
+    //Helper function for generate cgra mem instance
+    CoreIR::Instance* map_ubuffer_to_cgra(CodegenOptions& options, CoreIR::ModuleDef* def, UBuffer& target_buf, string ub_ins_name);
 
     //Wrappers for generate coreir
     //original memory generation for memory tile with enable and valid
