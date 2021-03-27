@@ -1220,6 +1220,8 @@ struct prog {
 
   void shift_address_range(const std::string& buf, const std::vector<int>& min_locs);
 
+  isl_map* map_from_expr(op* op, pair<string, piecewise_address> & top_pair);
+
   map<op*, isl_map*> producer_maps() {
     map<op*, isl_map*> m;
     auto ivars = iter_vars();
@@ -1767,6 +1769,7 @@ umap* op_end_times_map(schedule_info& sched, prog& prg);
 
 map<string, isl_set*> op_start_times_domains(prog& prg);
 void normalize_address_offsets(prog& prg);
+void remove_div(prog& prg);
 
 vector<op*> ops_at_level(const int level, prog& prg);
 bool is_op_scheduled(op* op, schedule_info& sched, prog& prg);
@@ -1825,12 +1828,14 @@ map<string, pair<string, int> > determine_shift_reg_map(
 
 dgraph build_in_to_out_shift_register_graph(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_info& hwinfo);
 dgraph build_shift_registers(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_info& hwinfo);
-ubuffer_impl port_group2bank(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_info& hwinfo);
+UBufferImpl port_group2bank(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_info& hwinfo);
 
-isl_map* build_buffer_impl(prog& prg, UBuffer& buf, schedule_info& hwinfo, ubuffer_impl& impl);
+isl_map* build_buffer_impl_embarrassing_banking(UBuffer& buf, schedule_info& hwinfo, EmbarrassingBankingImpl& impl);
 
-void generate_banks_garnet(CodegenOptions& options, prog& prg, UBuffer& buf, ubuffer_impl& impl, schedule_info& hw_info);
+void generate_banks_garnet(CodegenOptions& options, UBuffer& buf, UBufferImpl& impl, schedule_info& hw_info);
 
+UBufferImpl generate_optimized_memory_implementation(
+        CodegenOptions& options, UBuffer & buf, prog & prg, schedule_info& hwinfo);
 
 void sanity_check_iis(schedule_info& sched);
 

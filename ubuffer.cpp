@@ -750,6 +750,81 @@ isl_map* UBuffer::get_coarse_grained_pipeline_schedule(UBuffer& new_ub) {
   return cgpl_sched;
 }
 
+UBuffer UBuffer::generate_ubuffer(UBufferImpl& impl, int bank) {
+  //for(auto it: impl.bank_rddom) {
+    //int bank = it.first;
+    string bname = name + "_BANK_" + str(bank);
+    auto rddom = impl.bank_rddom.at(bank);
+
+    //create ubuffer for codegen
+    UBuffer buf;
+    buf.name = bname;
+    buf.ctx = ctx;
+    buf.port_widths = port_widths;
+    buf.coarse_grained_pipeline_loop_level = coarse_grained_pipeline_loop_level;
+    cout << "CGPL level :" << coarse_grained_pipeline_loop_level;
+
+    auto inpts = impl.get_unique_inpts(bank);
+    auto outpts = impl.get_unique_outpts(bank);
+
+    //TODO: may need a sort
+    //add a sort of output make sure we have positive stride when coalesce
+    //vector<string> outpt_vec(outpts.begin(), outpts.end());
+    /*sort(pt_vec.begin(), pt_vec.end(), [this](const string l, const string r) {
+              auto l_start = lexminpt(range(access_map.at(l)));
+              auto r_start = lexminpt(range(access_map.at(r)));
+              return lex_lt_pt(l_start, r_start);
+              });
+    */
+    int usuffix = 0;
+    for (string inpt: inpts) {
+      auto acc_map = to_map(access_map.at(inpt));
+
+      //get the bank specific access map
+      acc_map = coalesce(its_range(acc_map, rddom));
+
+      acc_map = set_range_name(acc_map, bname);
+      auto dom = ::domain(acc_map);
+      string pt_name = bname + "_" + ::name(dom) + "_" + to_string(usuffix);
+      //buf.port_bundles[get_bundle(inpt)].push_back(pt_name);
+
+      //Put into separate bundle if we have different domain name
+      buf.port_bundles[::name(dom) + "_write"].push_back(inpt);
+      buf.add_in_pt(inpt, dom, acc_map, its(schedule.at(inpt), dom));
+      usuffix ++;
+    }
+
+    for (string outpt: outpts) {
+      auto acc_map = to_map(access_map.at(outpt));
+      //get the bank specific access map
+      acc_map = coalesce(its_range(acc_map, rddom));
+      auto sched = schedule.at(outpt);
+
+      //Shift register need preprocess the schedule and access pattern
+      if (impl.shift_depth.count(outpt) > 0) {
+          auto outpt_info =
+              get_shift_pt_access_with_sched(outpt, impl.shift_depth.at(outpt));
+          acc_map = outpt_info.first;
+          sched = to_umap(outpt_info.second);
+      }
+
+      acc_map = set_range_name(acc_map, bname);
+      auto dom = ::domain(acc_map);
+      string pt_name = bname + "_" + ::name(dom) + "_" + to_string(usuffix);
+
+      //buf.port_bundles[get_bundle(outpt)].push_back(pt_name);
+
+      //Put into separate bundle if we have different domain name
+      buf.port_bundles[::name(dom) + "_read"].push_back(outpt);
+
+      buf.add_out_pt(outpt, dom, acc_map, its(sched, dom));
+      usuffix ++;
+    }
+  buf.simplify_address_space();
+  //}
+  return buf;
+}
+
 //Post processing get the ubuffer for each bank
 /*
  * This will generate the ubuffer for vectorization,
@@ -903,11 +978,12 @@ maybe<vector<int>> get_project_dim(UBuffer & buf, bool is_read) {
 
 
 void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, schedule_info & info) {
-  generate_coreir(options, def, info, true);
+  UBufferImpl impl;
+  generate_coreir(options, impl, def, info, true);
 }
 
-void UBuffer::generate_coreir_without_ctrl(CodegenOptions& options, CoreIR::ModuleDef* def, schedule_info & info) {
-  generate_coreir(options, def, info, false);
+void UBuffer::generate_coreir_without_ctrl(CodegenOptions& options, UBufferImpl& impl, CoreIR::ModuleDef* def, schedule_info & info) {
+  generate_coreir(options, impl, def, info, false);
 }
 
 vector<isl_set*> get_multi_bank_domain_set(isl_map* origin_map, int project_out_domain) {
@@ -1012,9 +1088,12 @@ ConfigMap generate_addressor_config_from_aff_expr(isl_aff* addr,
     vals[prefix + "data_starting_addr"] = {to_int(const_coeff(addr))/port_width};
     for (int d = 0; d < num_in_dims(addr); d++) {
       int ldim = num_in_dims(addr) - d - 1;
+      int stride_raw = to_int(get_coeff(addr, d));
+      if (stride_raw < 0)
+          stride_raw += capacity;
       cout << "\""+prefix+"data_stride_" << ldim << "\"," <<
-          to_int(get_coeff(addr, d))% capacity /port_width << ",0" << endl;
-      map_insert(vals, prefix+"data_stride", to_int(get_coeff(addr, d))% capacity/port_width) ;
+          stride_raw % capacity /port_width << ",0" << endl;
+      map_insert(vals, prefix+"data_stride", stride_raw % capacity/port_width) ;
     }
     std::reverse(vals.at(prefix+"data_stride").begin(), vals.at(prefix+"data_stride").end());
     return vals;
@@ -2063,6 +2142,7 @@ CoreIR::Instance* UBuffer::generate_lake_tile_instance(
   return buf;
 }
 
+
 void UBuffer::generate_stencil_valid_config(CodegenOptions& options, string bank_name) {
   auto outpt_sched = get_stencil_valid_sched(bank_name);
   cout << "original outpt schedule: " << str(outpt_sched) << endl;
@@ -2097,40 +2177,212 @@ string memDataoutPort(string mode, int pt_cnt) {
     }
 }
 
+//Helper function to find the last port in chaining path
+CoreIR::Wireable* findChainDataIn(CoreIR::Wireable* mem_data_out, int port_id) {
+    auto last_bank =  mem_data_out->getTopParent();
+    auto chain_in = last_bank->sel("chain_data_in_" + str(port_id));
+    auto conns = getConnectWires(chain_in);
+    if (conns.size() == 0) {
+        return chain_in;
+    } else {
+        assert(conns.size() == 1);
+        return findChainDataIn(pick(conns), port_id);
+    }
+
+}
+
+void UBuffer::wire_ubuf_IO(CodegenOptions& options,CoreIR::ModuleDef* def, map<string, CoreIR::Wireable*> & pt2wire,
+        CoreIR::Instance* buf, UBufferImpl & impl, int bank_id, bool with_ctrl) {
+  auto context = def->getContext();
+
+  int inpt_cnt = 0, outpt_cnt = 0;
+  string config_mode = buf->getMetaData()["mode"];
+  //TODO: remove this
+  for (auto inpt_broadcast_set: impl.bank_inpt2writers.at(bank_id)) {
+    //Cannot wire multiple wire into one memory port
+    assert(inpt_broadcast_set.size() == 1);
+    for (auto inpt: inpt_broadcast_set) {
+      if (isIn.at(inpt)){
+        def->connect(buf->sel(memDatainPort(config_mode, inpt_cnt)), pt2wire.at(inpt));
+
+        //There is no control signal
+        if (with_ctrl) {
+          def->connect(buf->sel("wen_" + to_string(inpt_cnt)), def->sel("self."+get_bundle(inpt)+"_en"));
+        }
+      } else {
+        cout << "Did not implement serial line buffer optimization!" << endl;
+        assert(false);
+      }
+    }
+    inpt_cnt ++;
+  }
+  bool chain_en = false;
+  for (auto outpt_broadcast_set: impl.bank_outpt2readers.at(bank_id)) {
+    for (auto outpt: outpt_broadcast_set) {
+      //need a second pass push all wire into a list
+      //def->connect(buf->sel("dataout_"+to_string(outpt_cnt)), pt2wire.at(outpt));
+      //auto outpt = *(outpt_it);
+      //CoreIR::Wireable* tmp = buf->sel("data_out_"+to_string(outpt_cnt));
+      CoreIR::Wireable* tmp = buf->sel(memDataoutPort(config_mode, outpt_cnt));
+      //CoreIR::map_insert(outpt_bank_rd, outpt, tmp);
+      if (impl.outpt_to_bank.at(outpt).size() == 1) {
+        //no chaining
+        def->connect(buf->sel(memDataoutPort(config_mode, outpt_cnt)), pt2wire.at(outpt));
+      } else {
+        chain_en = true;
+        auto conns = getConnectWires(pt2wire.at(outpt));
+        if(conns.size() == 0) {
+          //First chaining wiring, wire to the output
+          def->connect(buf->sel(memDataoutPort(config_mode, outpt_cnt)), pt2wire.at(outpt));
+        } else {
+          assert(conns.size() == 1);
+          CoreIR::Wireable* last_dangling_chain_data_in =
+              findChainDataIn(pick(conns), outpt_cnt);
+          def->connect(buf->sel(memDataoutPort(config_mode, outpt_cnt)), last_dangling_chain_data_in);
+        }
+      }
+
+    }
+    outpt_cnt++;
+  }
+
+  if (config_mode == "lake") {
+    if (!chain_en) {
+      auto chain_en_const = def->addInstance("chain_en_const"+context->getUnique(), "corebit.const",
+          {{"value", CoreIR::Const::make(context, false)}});
+      def->connect(buf->sel("chain_chain_en"), chain_en_const->sel("out"));
+
+    } else {
+      //Need chaining
+      auto chain_en_const = def->addInstance("chain_en_const"+context->getUnique(), "corebit.const",
+          {{"value", CoreIR::Const::make(context, true)}});
+      def->connect(buf->sel("chain_chain_en"), chain_en_const->sel("out"));
+
+      //Add the chainenable config
+      buf->getMetaData()["config"]["chain_en"] = 1;
+
+    }
+  } else {
+    if (chain_en) {
+      cout << "Pond does not support chaining!" << endl;
+      assert(false);
+    }
+  }
+}
+
+//helper function to generate shift register
+void UBuffer::generate_sreg_and_wire(CodegenOptions& options, UBufferImpl& impl, CoreIR::ModuleDef* def, map<string, CoreIR::Wireable*> & pt2wire){
+  auto context = def->getContext();
+
+  for (auto it: impl.get_shift_registered_ports()) {
+    //add pt for it.first(an output port)
+    string dst = it.first;
+    string src = it.second.first;
+    int delay = it.second.second;
+    auto wire = pt2wire.at(src);
+    CoreIR::Wireable* last_out;
+    if (isIn.at(src))
+      last_out = wire;
+    else {
+      auto conns = getConnectWires(wire);
+      assert(conns.size() == 1);
+      last_out = pick(conns);
+    }
+    CoreIR::Wireable* final_out = pt2wire.at(dst);
+    for (size_t i = 0; i < delay; i ++) {
+      auto reg = def->addInstance("d_reg_"+context->getUnique(), "mantle.reg",
+          {{"width", CoreIR::Const::make(context, port_widths)},
+          {"has_en", CoreIR::Const::make(context, false)}});
+      def->connect(reg->sel("in"), last_out);
+      last_out = reg->sel("out");
+    }
+    def->connect(last_out, final_out);
+  }
+}
+
+CoreIR::Instance* UBuffer::map_ubuffer_to_cgra(CodegenOptions& options, CoreIR::ModuleDef* def, UBuffer& target_buf) {
+
+  map<string, UBuffer> vectorized_buf;
+  string ub_ins_name = "ub_" + target_buf.name;
+  vectorized_buf.insert(
+          {target_buf.name+ "_ubuf", target_buf});
+  auto capacity = total_capacity(target_buf);
+
+  cout << "Vectorization buffer capacity: " << capacity << endl;
+  string config_mode;
+  bool multi_level_mem = options.mem_hierarchy.count("regfile");
+  if (capacity <= 32 && multi_level_mem ) {
+    cout << "Generate config for register file!" << endl;
+    //TODO generate the config file on the fly
+    config_file = generate_ubuf_args(options, target_buf);
+    config_mode = "pond";
+  } else {
+    //buffer_vectorization(options.iis, bk.name + "_ubuf", 1, 4, rewrite_buffer);
+    cout << "vectorization buf name: " << target_buf.name << endl;
+    buffer_vectorization(options.iis, {target_buf.name+ "_ubuf"},
+            options.mem_hierarchy.at("mem").fetch_width, vectorized_buf);
+    vectorized_buf = decouple_multi_tile_ubuffer(options, vectorized_buf);
+    for (auto buf: vectorized_buf) {
+        cout << "After vectorization codegen: " << buf.first << endl << buf.second << endl;
+    }
+    //TODO generate the config file on the fly
+    config_file = generate_ubuf_args(options, vectorized_buf);
+    config_mode = "lake";
+  }
+  CoreIR::Instance* buf;
+  if (config_mode == "lake") {
+    buf = generate_lake_tile_instance(def, options,
+      ub_ins_name, target_buf.name,
+      target_buf.num_in_ports(), target_buf.num_out_ports(),
+      false/*TODO: exclude stencil valid signal*/, true);
+
+  } else if (config_mode == "pond") {
+    buf = generate_pond_instance(def, options, ub_ins_name,
+            target_buf.num_in_ports(), target_buf.num_out_ports());
+  }
+  return buf;
+}
+
+bool cgpl_ctrl_optimization(CodegenOptions& options, CoreIR::ModuleDef* def, CoreIR::Instance* &cgpl_ctrl, UBuffer& target_buf) {
+  string ub_ins_name = "ub_" + target_buf.name;
+  auto context = def->getContext();
+  bool decouple_ctrl =
+      target_buf.check_decouple_coarse_grained_pipeline_ctrl();
+  if (decouple_ctrl) {
+    UBuffer new_target_buf;
+    auto cgpl_schedule =
+        target_buf.get_coarse_grained_pipeline_schedule(new_target_buf);
+    //connect with the new ctrl stencil valid port
+     cgpl_ctrl = affine_controller_use_lake_tile(
+            def, context, ::domain(cgpl_schedule),
+            get_aff(cgpl_schedule), ub_ins_name + "_cgpl_ctrl");
+    generate_lake_tile_verilog(options, cgpl_ctrl);
+    target_buf = new_target_buf;
+  }
+  return decouple_ctrl;
+}
+
+void cgpl_post_processing(CoreIR::ModuleDef* def, CoreIR::Instance*buf, CoreIR::Instance* cgpl_ctrl, bool decouple_ctrl) {
+  if (decouple_ctrl) {
+    //Disconnect the original connection from flush port
+    auto conns = buf->sel("flush")->getConnectedWireables();
+    for (auto conn: conns) {
+      def->disconnect(buf->sel("flush"), conn);
+    }
+    def->connect(cgpl_ctrl->sel("stencil_valid"), buf->sel("flush"));
+  }
+}
+
 //generate/realize the rewrite structure inside ubuffer node
 void UBuffer::generate_coreir(CodegenOptions& options,
+        UBufferImpl& impl,
         CoreIR::ModuleDef* def,
-        schedule_info& info,
+        schedule_info& info, //TODO:remove this
         bool with_ctrl) {
   auto context = def->getContext();
-  //for (auto it : get_banks()) {
-    //auto connection = it.first;
-    //auto bk = it.second;
-    ////cout << "[inpt: " << connection.first << "] -> [bk: " << bk.name << ", delay = " << bk.maxdelay <<  "] -> [outpt:" << connection.second <<  "]\n";
-  //}
-
-  //map save the register
-  map<string, CoreIR::Instance*> pt2psth;
-  map<string, CoreIR::Wireable*> wire2out;
   map<string, CoreIR::Wireable*> pt2wire;
 
-  vector<CoreIR::Wireable*> all_mem_tiles;
-
-  //A map save the relation between ubuffer port to hardware memory wireable
-  map<string, std::vector<CoreIR::Wireable*>> outpt_bank_rd, outpt_bank_valid;
-
-  map<string, CoreIR::Wireable*> reg_in;
-  //define the map save valid output using customized comparator
-  auto valid_out = std::map<string, CoreIR::Wireable*,
-       std::function<bool(const string&, const string&)>>{
-        [this](const string& l, const string& r) {
-            auto l_start = lexminpt(range(access_map.at(l)));
-            auto r_start = lexminpt(range(access_map.at(r)));
-            return lex_lt_pt(l_start, r_start);
-            }
-  };
-
-  //TODO: possible bug, the sequence may not be correct
+  //Sequence of port is based on name of bundle
   for (auto b : get_in_bundles()) {
     int pix_width = port_widths;
     int pt_cnt = 0;
@@ -2152,449 +2404,32 @@ void UBuffer::generate_coreir(CodegenOptions& options,
     }
   }
 
-  //sort the bank by delay first
-  auto bank_list = get_banks_and_sort();
-  //sort(bank_list.begin(), bank_list.end(), [](const bank l, const bank r) {
-  //          return l.maxdelay > r.maxdelay;
-  //        } );
+  //Go through the banks and generate connection and config
+  for (auto it: impl.bank_rddom) {
+    auto bank_id = it.first;
+    UBuffer target_buf = generate_ubuffer(impl, bank_id);
 
-  //generate all the ubuffer for internal vectorization
-  auto rewrite_buffer = generate_ubuffer(options);
+    //An optimization for coarse grained pipeline, save the iterator level
+    CoreIR::Instance* cgpl_ctrl;
+    bool decouple_ctrl = cgpl_ctrl_optimization(options, def, cgpl_ctrl, target_buf);
 
-  //Some control signal for stencil valid signal
-  bool has_stencil_valid = false;
-  bool use_memtile_gen_stencil_valid = false;
+    //Generate the ubuffer module for CGRA
+    //Lake/Pond coreir generation
+    CoreIR::Instance* buf = map_ubuffer_to_cgra(options, def, target_buf);
 
-  //Judge if stencil valid is needed from the very beginning
-  if (options.pass_through_valid) {
-    //generate stencil valid
-    cout << "ubuffer global schedule: " << str(global_schedule()) << endl;
-    cout << "ubuffer output schedule: " << str(get_outpt_sched()) << endl;
-    if (!equal(global_outpt_sched(), get_outpt_sched())) {
-      cout << "Set stencil valid to be true!" << endl;
-      has_stencil_valid = true;
-      use_memtile_gen_stencil_valid = false;
-    }
-  }
-  for (auto bk : bank_list) {
-    //assert(false);
-    std::set<string> inpts = get_bank_inputs(bk.name);
-    std::set<string> outpts = get_bank_outputs(bk.name);
-    auto buf_inpts = get_in_ports();
-    cout << "Bank:" << bk.name << " has max_delay: " << bk.maxdelay << endl;
-    if (bk.maxdelay == 0) {
-      //this is a wire
-      assert(inpts.size() == 1);
-
-      //broadcast the input port to a series of output port
-      if (isIn.at(pick(inpts))) {
-        for (auto outpt: outpts) {
-          def->connect(pt2wire.at(pick(inpts)), pt2wire.at(outpt));
-          wire2out[outpt] = pt2wire.at(pick(inpts));
-        }
-      } else {
-        for (auto outpt: outpts) {
-          if (wire2out.count(pick(inpts))) {
-            //if (pt2psth.count(outpt)) {
-            //  auto psth = pt2psth.at(outpt);
-            //  def->connect(psth->sel("out"), wire2out.at(pick(inpts)));
-            //} else {
-              def->connect(wire2out.at(pick(inpts)), pt2wire.at(outpt));
-              wire2out[outpt] = wire2out.at(pick(inpts));
-            //}
-          } else {
-            //auto psth = CoreIR::addPassthrough(pt2wire.at(outpt), outpt + "_psth");
-            //def->connect(psth->sel("in"), pt2wire.at(outpt));
-            //pt2psth[outpt] = psth;
-          }
-        }
-      }
-    } else if (bk.maxdelay <= options.merge_threshold) {
-      //Must be a chain of register
-      assert(inpts.size() == 1);
-      assert(outpts.size() == 1);
-
-      //TODO: Need to move this to shift register optimization
-      //auto op_latency = info.compute_latency(pick(get_write_ops()));
-      int reg_delay_length = bk.maxdelay;
-      //if(is_in_pt(pick(inpts)) && (op_latency != 0)) {
-      //  reg_delay_length -= op_latency;
-      //  cout << "\t reduce delay for OP : " << pick(get_read_ops()) << endl;
-      //}
-      //if (reg_delay_length == 0) {
-      //    def->connect(pt2wire.at(pick(inpts)), pt2wire.at(pick(outpts)));
-      //}
-
-      CoreIR::Wireable* last_out;
-      for (size_t i = 0; i < reg_delay_length; i ++) {
-        auto reg = def->addInstance("d_reg_"+context->getUnique(), "mantle.reg",
-            {{"width", CoreIR::Const::make(context, port_widths)},
-            {"has_en", CoreIR::Const::make(context, false)}});
-        //do not wire input for the first pass
-        //Wire the shift register chain
-        if (i == 0) {
-          if (isIn.at(pick(inpts))) {
-            def->connect(reg->sel("in"), pt2wire.at(pick(inpts)));
-          } else {
-            reg_in[pick(inpts)] = reg->sel("in");
-          }
-        } else {
-          def->connect(reg->sel("in"), last_out);
-        }
-        if (i == reg_delay_length - 1) {
-          def->connect(reg->sel("out"), pt2wire.at(pick(outpts)));
-          wire2out[pick(outpts)] = reg->sel("out");
-        } else {
-          last_out = reg->sel("out");
-        }
-      }
-    } else {
-      //generate a memory for this ubuffer
-      contain_memory_tile = true;
-
-      //if we has memory tile we will generate stencil valid
-      has_stencil_valid = true;
-
-      string ub_ins_name = "ub_" + bk.name;
-      map<string, UBuffer> vectorized_buf;
-      auto target_buf = rewrite_buffer.at(bk.name + "_ubuf");
-
-      //Check if has coarse grained pipeline
-      bool decouple_ctrl =
-          target_buf.check_decouple_coarse_grained_pipeline_ctrl();
-      isl_map* cgpl_schedule;
-      UBuffer new_target_buf;
-      if (decouple_ctrl) {
-        cgpl_schedule =
-            target_buf.get_coarse_grained_pipeline_schedule(new_target_buf);
-      } else {
-        new_target_buf = target_buf;
-      }
-
-      vectorized_buf.insert(
-              {bk.name + "_ubuf", new_target_buf});
-      auto capacity = total_capacity(target_buf);
-
-      cout << "Vectorization buffer capacity: "
-          << capacity << endl;
-      //vectorization pass for lake tile
-      //if (options.rtl_options.target_tile == TARGET_TILE_WIDE_FETCH_WITH_ADDRGEN) {
-      string config_mode;
-      bool multi_level_mem = options.mem_hierarchy.count("regfile");
-      if (capacity <= 32 && multi_level_mem && (target_buf.num_in_ports() > 1) ) {
-        cout << "Generate config for register file!" << endl;
-        config_file = generate_ubuf_args(options, new_target_buf);
-        config_mode = "pond";
-
-      } else {
-        //buffer_vectorization(options.iis, bk.name + "_ubuf", 1, 4, rewrite_buffer);
-        cout << "vectorization bk name: " << bk.name << endl;
-        buffer_vectorization(options.iis, {bk.name + "_ubuf"},
-                options.mem_hierarchy.at("mem").fetch_width,
-                vectorized_buf);
-        vectorized_buf = decouple_multi_tile_ubuffer(options, vectorized_buf);
-        for (auto buf: vectorized_buf) {
-            cout << buf.first << endl << buf.second << endl;
-        }
-        config_file = generate_ubuf_args(options, vectorized_buf);
-        config_mode = "lake";
-      }
-
-      //Generate SMT stream if needed
-      if (options.emit_smt_stream) {
-        generate_lake_stream(options, vectorized_buf,
-                global_schedule_from_buffers(vectorized_buf));
-      }
-
-      //create the tile instance
-      auto targe_buf = rewrite_buffer.at(bk.name + "_ubuf");
-      CoreIR::Instance* buf;
-      if (config_mode == "lake") {
-        buf = generate_lake_tile_instance(def, options,
-          ub_ins_name, bk.name,
-          targe_buf.num_in_ports(), targe_buf.num_out_ports(),
-          has_stencil_valid & (!use_memtile_gen_stencil_valid), true);
-
-      } else if (config_mode == "pond") {
-        buf = generate_pond_instance(def, options, ub_ins_name,
-                targe_buf.num_in_ports(), target_buf.num_out_ports());
-        has_stencil_valid = false;
-      }
-
-      //A rewrite pass to change the wiring
-      if (decouple_ctrl) {
-        //Disconnect the original connection from flush port
-        auto conns = buf->sel("flush")->getConnectedWireables();
-        for (auto conn: conns) {
-          def->disconnect(buf->sel("flush"), conn);
-        }
-        //connect with the new ctrl stencil valid port
-        CoreIR:Instance* cgpl_ctrl =
-                   affine_controller_use_lake_tile(def, context,
-                           ::domain(cgpl_schedule),
-                           get_aff(cgpl_schedule),
-                           ub_ins_name + "_cgpl_ctrl");
-        generate_lake_tile_verilog(options, cgpl_ctrl);
-        def->connect(cgpl_ctrl->sel("stencil_valid"), buf->sel("flush"));
-      }
-
-      //Wire stencil valid
-      if (options.pass_through_valid && (config_mode == "lake")) {
-        if (has_stencil_valid & (!use_memtile_gen_stencil_valid)) {
-          //a bank can belongs to multiple bundles
-          for (auto bd_name : get_bank_out_bundles(bk.name)) {
-            auto ctrl_wire = def->sel("self." + bd_name + "_extra_ctrl");
-
-            //Chances are there are multiple bank output port connect to the control wire,
-            //Just pick the first one
-            if (ctrl_wire->getSelects().size() == 0) {
-              def->connect(buf->sel("stencil_valid"), ctrl_wire);
-              use_memtile_gen_stencil_valid = true;
-            }
-          }
-        }
-      }
-
-      int inpt_cnt = 0, outpt_cnt = 0;
-      if (inpts.size() == 1) {
-        //line buffer case
-        string  inpt = pick(inpts);
-        if (isIn.at(inpt)){
-          def->connect(buf->sel(memDatainPort(config_mode, inpt_cnt)), pt2wire.at(inpt));
-
-          //There is no control signal
-          if (with_ctrl) {
-            def->connect(buf->sel("wen_" + to_string(inpt_cnt)), def->sel("self."+get_bundle(inpt)+"_en"));
-            //also connect ren
-            for (size_t out_i = 0; out_i < outpts.size(); out_i ++ ) {
-              def->connect(buf->sel("ren_" + to_string(out_i)), def->sel("self."+get_bundle(inpt)+"_en"));
-            }
-          }
-        } else {
-          def->connect(buf->sel(memDatainPort(config_mode, inpt_cnt)), wire2out.at(inpt));
-          cout << "Input port: " << inpt << endl;
-          if (with_ctrl) {
-            def->connect(buf->sel("wen_" + to_string(inpt_cnt)), wire2out.at(inpt + "_valid"));
-            //also connect ren
-            for (size_t out_i = 0; out_i < outpts.size(); out_i ++ ) {
-              def->connect(buf->sel("ren_" + to_string(out_i)), wire2out.at(inpt + "_valid"));
-            }
-          }
-        }
-        for (auto it: bk.delay_map) {
-            cout << "Bank delay map: "  <<it.first << ", " << it.second << endl;
-        }
-
-        vector<string> pt_vec(outpts.begin(), outpts.end());
-        sort(pt_vec.begin(), pt_vec.end(), [this](const string l, const string r) {
-                //Sort by bundle name first
-              auto l_bd = get_bundle(l);
-              auto r_bd = get_bundle(r);
-              if (l_bd != r_bd) {
-                return l_bd < r_bd;
-              }
-              //If in same bundle sort by start_addr
-              auto l_start = lexminpt(range(access_map.at(l)));
-              auto r_start = lexminpt(range(access_map.at(r)));
-              return lex_lt_pt(l_start, r_start);
-              });
-        for (auto outpt_it = pt_vec.begin(); outpt_it < pt_vec.end(); outpt_it ++) {
-          //need a second pass push all wire into a list
-          //def->connect(buf->sel("dataout_"+to_string(outpt_cnt)), pt2wire.at(outpt));
-          auto outpt = *(outpt_it);
-          //CoreIR::Wireable* tmp = buf->sel("data_out_"+to_string(outpt_cnt));
-          CoreIR::Wireable* tmp = buf->sel(memDataoutPort(config_mode, outpt_cnt));
-          CoreIR::map_insert(outpt_bank_rd, outpt, tmp);
-
-          wire2out[outpt] = tmp;
-          //wire2out[outpt + "_valid"] = buf->sel("valid_" + to_string(outpt_cnt));
-          //TODO: figure out valid wiring strategy
-          //Wire the bank with the largest delay
-          //valid_out[outpt] = buf->sel("valid_" + to_string(outpt_cnt));
-          if (with_ctrl) {
-            CoreIR::map_insert(outpt_bank_valid, outpt,
-                  (CoreIR::Wireable*)buf->sel("valid_" + to_string(outpt_cnt)));
-          }
-          //Broadcast do not need to increment port
-          auto next_pt = std::min(outpt_it + 1, pt_vec.end() - 1);
-          if (bk.delay_map.at(outpt) != bk.delay_map.at(*next_pt)){
-            outpt_cnt++;
-          }
-        }
-      } else {
-        //Wiring the multi input case
-        auto this_buf = rewrite_buffer.at(bk.name + "_ubuf");
-
-        //Iterate through bundle first, then ports in each bundle
-        for (auto in_bd: get_bank_in_bundles(bk.name)) {
-          for (auto inpt: port_bundles.at(in_bd)) {
-            cout << "\t\tvisit port: " << inpt << endl;
-            def->connect(buf->sel(memDatainPort(config_mode, inpt_cnt)), pt2wire.at(inpt));
-            if (with_ctrl) {
-              def->connect(buf->sel("wen_" + to_string(inpt_cnt)), def->sel("self."+get_bundle(inpt)+"_en"));
-            }
-            inpt_cnt ++;
-          }
-        }
-        for (auto outpt: outpts) {
-          //need a second pass push all wire into a list
-          //def->connect(buf->sel("dataout_"+to_string(outpt_cnt)), pt2wire.at(outpt));
-          CoreIR::Wireable* tmp = buf->sel(memDataoutPort(config_mode, outpt_cnt));
-          CoreIR::map_insert(outpt_bank_rd, outpt, tmp);
-
-          //use the first port in the chain to be the output valid
-          if (with_ctrl) {
-            CoreIR::map_insert(outpt_bank_valid, outpt,
-                  (CoreIR::Wireable*)buf->sel("valid_" + to_string(outpt_cnt)));
-          }
-          outpt_cnt++;
-        }
-      }
-
-      //generate verilog collateral
-      generate_lake_tile_verilog(options, buf);
-      if (config_mode == "lake")
-          all_mem_tiles.push_back(buf);
-
-    }
-  }
-
-  //This is the situation that stencil valid is needed but do not have memtile in ubufub_ins_namefer
-  if (has_stencil_valid & (!use_memtile_gen_stencil_valid)) {
-    cout << "Bank size: " << bank_list.size() << endl;
-    CoreIR::Instance* buf = generate_lake_tile_instance(def, options,
-            this->name + "_stencil_valid_gen", pick(bank_list).name, 0, 0, true, true);
-    auto out_bds = get_out_bundles();
-
-    //Only consider one output bundle now
-    assert(out_bds.size() == 1);
-
-    def->connect(buf->sel("stencil_valid"), def->sel("self." + pick(out_bds) + "_extra_ctrl"));
-    use_memtile_gen_stencil_valid = true;
+    //Wire the stencil valid to flush of ubuffer module
+    //if we can optmize for coarse grained pipeline scheduler
+    cgpl_post_processing(def, buf, cgpl_ctrl, decouple_ctrl);
 
     //generate verilog collateral
     generate_lake_tile_verilog(options, buf);
+
+    //Wiring the port after generate verilog
+    wire_ubuf_IO(options, def, pt2wire, buf, impl, bank_id, with_ctrl);
   }
 
-  //wire the control var if not using stencil_Valid
-  map<string, vector<CoreIR::Wireable*>> outctrl_to_inval;
-  if (options.pass_through_valid) {
-    if (!has_stencil_valid){
-      for (auto bk : bank_list) {
-        //assert(false);
-        std::set<string> inpts = get_bank_inputs(bk.name);
-        std::set<string> outpts = get_bank_outputs(bk.name);
-        for (auto outpt: outpts) {
-            cout << tab(1) << "Wire through the input bundle: " << get_bundle(pick(inpts))
-                << " and output bundle: " << get_bundle(outpt) << endl;
-            CoreIR::map_insert(outctrl_to_inval, get_bundle(outpt),
-                    (CoreIR::Wireable*)def->sel("self."+get_bundle(pick(inpts))+"_extra_ctrl"));
-            //def->connect(def->sel("self." + get_bundle(pick(inpts)) + "_extra_ctrl"),
-            //  def->sel("self." + get_bundle(outpt) + "_extra_ctrl"));
-        }
-      }
-      for (auto it: outctrl_to_inval) {
-        auto out = andList(def, it.second);
-        def->connect(def->sel("self."+it.first+"_extra_ctrl"), out);
-      }
-    }
-  }
-
-  for (auto itr: pt2psth) {
-      CoreIR::inlineInstance(itr.second);
-  }
-
-  //wiring the valid if we are using valid
-  if (with_ctrl) {
-    map<string, bool> bundle_valid;
-    for (auto out_bd: get_out_bundles()) {
-      bundle_valid[out_bd] = false;
-    }
-    for (auto itr: outpt_bank_rd) {
-      string outpt = itr.first;
-
-      //wire the valid signal
-      auto bd = container_bundle(outpt);
-      if (bundle_valid.at(bd) == false) {
-        def->connect(pick(outpt_bank_valid.at(outpt)),
-                def->sel("self." + bd + "_valid"));
-        bundle_valid.at(bd) = true;
-      }
-      cout << "connect valid: " << outpt <<  endl;
-    }
-  }
-
-  //Add the chaining pass
-  std::set<Wireable*> chain_enable_tile, chain_disable_tile;
-  for (auto itr: outpt_bank_rd) {
-    string outpt = itr.first;
-    auto connect_vec = itr.second;
-
-    if (connect_vec.size() == 1) {
-      def->connect(pick(connect_vec), pt2wire.at(outpt));
-      cout << "Node: " << pick(connect_vec)->toString()
-          << "Parent node: " << pick(connect_vec)->getTopParent()->toString() << endl;;
-      //chain_disable_tile.insert(pick(connect_vec)->getTopParent());
-    }
-    else {
-      //wiring the chaining pass
-      for (size_t it = 0; it < connect_vec.size(); it ++) {
-        auto wire = connect_vec.at(it);
-        if (it == 0) {
-          //wire the first output to the ubuf outpt
-          def->connect(wire, pt2wire.at(outpt));
-
-          //push it to chain enable
-          chain_enable_tile.insert(wire->getTopParent());
-        }
-        else {
-          auto last_bank = connect_vec[it-1]->getTopParent();
-          string portID = split_at(wire->toString(), "_").back();
-          def->connect(wire, last_bank->sel("chain_data_in_" + portID));
-
-          //push it to chain enable tile
-          chain_enable_tile.insert(wire->getTopParent());
-        }
-      }
-    }
-  }
-  //After find chaining tile, push the non-chained tile into another set
-  for (auto memtile: all_mem_tiles) {
-      if (chain_enable_tile.count(memtile) == 0) {
-          chain_disable_tile.insert(memtile);
-      }
-  }
-
-  cout << "chain_en size: " << chain_enable_tile.size() <<endl
-      << "chain_disable size: " << chain_disable_tile.size() << endl;
-
-  //wire the chain enable disable signal
-  if (chain_enable_tile.size()) {
-    auto chain_en_const = def->addInstance("chain_en_const"+context->getUnique(), "corebit.const",
-            {{"value", CoreIR::Const::make(context, true)}});
-    for (auto t: chain_enable_tile) {
-      def->connect(t->sel("chain_chain_en"), chain_en_const->sel("out"));
-      //Add the chainenable config
-      t->getMetaData()["config"]["chain_en"] = 1;
-    }
-  }
-
-  if (chain_disable_tile.size()) {
-    auto chain_en_const = def->addInstance("chain_disen_const"+context->getUnique(), "corebit.const",
-            {{"value", CoreIR::Const::make(context, false)}});
-    for (auto t: chain_disable_tile) {
-      def->connect(t->sel("chain_chain_en"), chain_en_const->sel("out"));
-    }
-  }
-
-
-  //second pass wire all the register input port
-  for (auto it: reg_in) {
-    string outpt = it.first;
-    auto in = it.second;
-    auto out = wire2out.at(outpt);
-    def->connect(in, out);
-  }
+  //Generate the shift register connection
+  generate_sreg_and_wire(options, impl, def, pt2wire);
 
 }
 
@@ -2958,6 +2793,20 @@ void UBuffer::generate_coreir(CodegenOptions& options,
     }
   }
 
+bool UBuffer::overlap_schedule(std::set<string> & ptset) {
+    for (string lpt: ptset) {
+        for (string rpt: ptset) {
+            if (lpt < rpt) {
+                auto overlap =
+                    dot(schedule.at(lpt), inv(schedule.at(rpt)));
+                if (!empty(overlap))
+                    return true;
+            }
+        }
+    }
+    return false;
+}
+
 bool build_delay_map(UBuffer& buf, map<string, vector<pair<string, int> > >& delay_maps, umap* sched, schedule_info& hwinfo) {
   bool built_dm = true;
   for (auto outpt : buf.get_out_ports()) {
@@ -3254,7 +3103,7 @@ bool build_delay_map(UBuffer& buf, map<string, vector<pair<string, int> > >& del
     return ub;
   }
 
-  CoreIR::Module* generate_coreir_without_ctrl(CodegenOptions& options, CoreIR::Context* context, UBuffer& buf, schedule_info& hwinfo) {
+  CoreIR::Module* generate_coreir_without_ctrl(CodegenOptions& options, CoreIR::Context* context, UBuffer& buf, UBufferImpl & impl, schedule_info& hwinfo) {
     auto ns = context->getNamespace("global");
 
     vector<pair<string, CoreIR::Type*> >
@@ -3297,7 +3146,7 @@ bool build_delay_map(UBuffer& buf, map<string, vector<pair<string, int> > >& del
     if (false) {
       generate_synthesizable_functional_model(options, buf, def, hwinfo);
     } else {
-      buf.generate_coreir_without_ctrl(options, def, hwinfo);
+      buf.generate_coreir_without_ctrl(options, impl, def, hwinfo);
     }
 
     ub->setDef(def);
@@ -4782,7 +4631,7 @@ bank UBuffer::compute_bank_info(
       if (delay_info.has_value()) {
         delay_map.at(s_out) = delay_info.get_value();
       } else {
-        assert(false);
+        //assert(false);
       }
     }
     delay_map.at(pt_delay.begin()->first) = 0;
@@ -4928,24 +4777,17 @@ bank UBuffer::compute_bank_info(
 }
 
 map<string, std::set<string> >
-get_unique_output_ports(UBuffer& buf) {
+UBuffer::get_unique_ports(std::set<string> &outpts) {
   map<string, std::set<string> > outmap;
-  for (auto pt : buf.get_out_ports()) {
+  for (auto pt : outpts) {
 
     bool is_duplicate = false;
-    auto m = map_find(pt, buf.access_map);
-    auto sched = map_find(pt, buf.schedule);
-    auto dom = map_find(pt, buf.domain);
 
     for (auto existing_pair : outmap) {
       string existing = existing_pair.first;
-      auto e_m = map_find(existing, buf.access_map);
-      auto e_sched = map_find(existing, buf.schedule);
-      auto e_dom = map_find(existing, buf.domain);
 
-      if (isl_union_map_is_equal(e_m, m) &&
-          isl_set_is_equal(e_dom, dom) &&
-          isl_union_map_is_equal(e_sched, sched)) {
+      if (can_be_broadcast(existing, pt)){
+        cout << pt << "-> broadcast ->" << existing << endl;
         is_duplicate = true;
         outmap[existing].insert(pt);
         break;
@@ -5189,8 +5031,10 @@ void UBuffer::generate_banks(CodegenOptions& options) {
 
     } else {
 
+      auto outpts = get_out_ports();
+      std::set<string> out_pt_set(outpts.begin(), outpts.end());
       map<string, std::set<string> > unique_outs =
-        get_unique_output_ports(*this);
+        get_unique_ports(out_pt_set);
 
       cout << "===== Unique ports" << endl;
       for (auto ptg : unique_outs) {
@@ -5287,6 +5131,92 @@ void UBuffer::generate_banks(CodegenOptions& options) {
 
       }
     }
+  }
+
+  void UBuffer::parse_exhaustive_banking_into_impl(UBufferImpl & impl) {
+    for(auto bank: get_banks()) {
+      auto inpts = banks_to_inputs.at(bank.name);
+      auto outpts = banks_to_outputs.at(bank.name);
+      assert(banks_to_inputs.at(bank.name).size() == 1);
+      assert(banks_to_outputs.at(bank.name).size() == 1);
+      int impl_bank = impl.add_new_bank_between(inpts, outpts, to_set(bank.rddom));
+      cout << "Add bank: " << bank.name << "between: "
+          << inpts << " and " << outpts <<"\n with rddom:"
+          << str(bank.rddom) << endl;
+      map_insert(impl.bank_inpt2writers, impl_bank, inpts);
+      map_insert(impl.bank_outpt2readers, impl_bank, outpts);
+    }
+  }
+
+  vector<pair<std::set<string>, std::set<string> > >
+      UBuffer::port_grouping(CodegenOptions& options,
+          UBufferImpl & impl,
+          uset* rddom,
+          std::set<string> inpts,
+          std::set<string> outpts) {
+    vector<pair<std::set<string>, std::set<string> > > ret;
+    //naive case we need to create a bank between each input port and output port
+    if (!overlap_schedule(inpts) && !overlap_schedule(outpts)) {
+        if((inpts.size() <= options.rtl_options.max_inpt) &&
+            (outpts.size() <= options.rtl_options.max_outpt)) {
+            int bank = impl.add_new_bank_between(inpts, outpts, to_set(rddom));
+            impl.sequentially_assign_inpt(sort_pt_by_bundle(inpts), bank);
+            impl.sequentially_assign_outpt(sort_pt_by_bundle(outpts), bank);
+
+            ret.push_back(
+                    make_pair(inpts, outpts)
+                    );
+        } else {
+            cout << "Need to implement a partition algorithm" << endl;
+            assert(false);
+        }
+    } else {
+
+        //use this customized cmp to sort the pt by bundle name
+        auto cmp = [this](const string & l, const string & r) {
+            return this->cmp_by_bd(l, r);
+        };
+        map<string, std::set<string>, decltype(cmp)> outpt_partitions(cmp);
+        auto tmp = get_unique_ports(outpts);
+        for (auto it: tmp) {
+            outpt_partitions.insert(it);
+        }
+
+        for (string inpt: inpts) {
+            for (auto it : outpt_partitions) {
+                ret.push_back(make_pair(std::set<string>({inpt}), it.second));
+                int bank = impl.add_new_bank_between({inpt}, it.second, to_set(rddom));
+                map_insert(impl.bank_inpt2writers, bank, {inpt});
+                map_insert(impl.bank_outpt2readers, bank, it.second);
+            }
+        }
+    }
+    return ret;
+  }
+
+  void UBuffer::merge_bank_broadcast(string inpt) {
+    vector<bank> mergeable;
+    bank to_replace;
+    string pt_to_be_merge = "";
+    for (auto bk: receiver_banks(inpt)) {
+      assert(get_bank_inputs(bk.name).size() == 1);
+      assert(get_bank_outputs(bk.name).size() == 1);
+      string current = pick(get_bank_outputs(bk.name));
+      if (pt_to_be_merge== "") {
+        to_replace = bk;
+        pt_to_be_merge = current;
+      } else {
+        if (can_be_broadcast(pt_to_be_merge, current))
+        mergeable.push_back(bk);
+      }
+    }
+    if(mergeable.size() == 0)
+        return;
+    for (auto merge: mergeable) {
+      replace_bank(merge, to_replace);
+      cout << "Merge bank: " << merge.name << " into " << to_replace.name << endl;
+    }
+    assert(false);
   }
 
   isl_map* UBuffer::merge_output_pt(vector<string> merge_pt) {
@@ -7309,6 +7239,9 @@ void UBuffer::generate_banks(CodegenOptions& options) {
                 padded_sched = pad_to_domain_ubuf_map(padded_sched, num_in_dims(padded_sched)-1, 1);
                 op_sched = its(padded_sched, slice_dim);
               } else {
+                  for (auto it: new_sched) {
+                    cout << "new sched: " << it.first <<  ": " << str(it.second) <<endl;
+                  }
                 op_sched = its(new_sched.at(::name(new_op_domain)), slice_dim);
               }
               //cout << "op schedule before trans: " << str(op_sched) << endl;
@@ -7950,32 +7883,8 @@ void UBuffer::generate_banks(CodegenOptions& options) {
         return out;
       }
 
-      std::ostream& operator<<(std::ostream& out, ubuffer_impl& impl) {
-        out << "Partition dim : " << impl.partition_dims << endl;
-        out << "Partition dim extent: " << endl;
-        for (auto it: impl.partitioned_dimension_extents) {
-          out << "\t" << it.first << ": " << it.second << endl;
-        }
-        out << "Bank writers: " << endl;
-        for (auto it: impl.bank_writers) {
-          out << "\t bank NO." << it.first << endl;
-          out << "\t\twriters: " << it.second << endl;
-        }
-        out << "Bank readers: " << endl;
-        for (auto it: impl.bank_readers) {
-          out << "\t bank NO." << it.first << endl;
-          out << "\t\treaders: " << it.second << endl;
-        }
-        out << "Shift Register Output: " << endl;
-        out << "\tmemtiles IO:: " << endl;
-        for (auto it: impl.shift_registered_outputs) {
-          out << "\t\t " << it.second.first << "->" << it.first << ", delay = " << it.second.second << endl;
-        }
-
-        out << "\tregister IO:: " << endl;
-        for (auto it: impl.shift_registered_outputs_to_outputs) {
-          out << "\t\t " << it.second.first << "->" << it.first << ", delay = " << it.second.second << endl;
-        }
+      std::ostream& operator<<(std::ostream& out, UBufferImpl& impl) {
+        impl.print_info(out);
         return out;
       }
 

@@ -1,6 +1,14 @@
 #pragma once
 #include "prog.h"
 
+prog fft8_unroll0();
+prog fft8_unroll2();
+prog fft8_unroll4();
+prog fft8_unroll8();
+prog fft8_unroll8_ratematch();
+prog fft8_unroll8_pease();
+prog fft8_unroll8_split();
+
 prog counter();
 prog conv_multi(); //multiple-tile-cnn
 prog strided_conv();
@@ -53,6 +61,7 @@ prog harris_sch6_2ppc();
 prog harris_sch7_bigtile();
 prog harris_sch8_endcim();
 prog three_level_memory_two();
+prog fft8_unroll8();
 
 //SMT test
 prog conv_3_3(int32_t, int32_t, string);

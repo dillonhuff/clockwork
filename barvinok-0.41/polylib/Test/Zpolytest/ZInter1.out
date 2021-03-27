@@ -1,0 +1,15 @@
+
+ZPOLYHEDRON: Dimension 2 
+
+LATTICE: 
+3 3
+    0    0    0
+    0    0    0
+    0    0    1
+POLYHEDRON Dimension:2
+           Constraints:3  Equations:3  Rays:0  Lines:0
+Constraints 3 4
+Equality:   [    1    0    0 ]
+Equality:   [    0    1    0 ]
+Equality:   [    0    0    1 ]
+Rays 0 4

@@ -1,0 +1,2 @@
+r := sum { a[i] -> ([(i)/3]) : (exists (e0 = [(i)/3]: 3e0 = i and i >= 2 and i <= 23))};
+assert(r == { 28 });

@@ -34,6 +34,16 @@ std::ostream& operator<< (std::ostream& out, const std::vector<T>& v) {
 }
 
 template <typename T>
+std::ostream& operator<< (std::ostream& out, const std::set<T>& v) {
+    if ( !v.empty()  ) {
+        out << '{';
+        std::copy (v.begin(), v.end(), std::ostream_iterator<T>(out, ", "));
+        out << "\b\b}";
+    }
+    return out;
+}
+
+template <typename T>
 std::ostream& operator<< (std::ostream& out, const std::map<string, T>& m) {
     if ( !m.empty()  ) {
       for (const auto &p : m)
@@ -283,7 +293,7 @@ class AccessPattern {
           return isl_set_read_from_str(ctx, string("{ " + op_name + vars + " : " + ds + "}").c_str());
       }
 
-      string get_expr(size_t item, size_t cnt, vector<string> var_list) {
+      string get_expr(int item, size_t cnt, vector<string> var_list) {
           if (item == 1) {
               return var_list[cnt];
           }
@@ -467,6 +477,7 @@ class AccessPattern {
               out_range[i] = range_val;
               auto vec_stride = isl_set_get_stride(isl_map_range(cpy(access_map)), i);
               vec_stride_in_addr.push_back(isl_val_get_num_si(vec_stride));
+              cout << "Stride : " << isl_val_get_num_si(vec_stride) << "\tOrigin: " << str(vec_stride) << endl;
               //int range_max = get_dim_max(isl_map_domain(inv(access_map)),i);
               int range_max = get_dim_max(range(access_map),i);
               if (range_val == 1) {
@@ -866,6 +877,8 @@ struct MemConnSch {
   }
 };
 
+struct UBufferImpl;
+
 class UBuffer {
 
   public:
@@ -1237,6 +1250,28 @@ class UBuffer {
       return ::num_dims(dom);
     }
 
+    bool cmp_by_bd(const string l, const string r) {
+      auto l_bd = get_bundle(l);
+      auto r_bd = get_bundle(r);
+      if (l_bd != r_bd) {
+        return l_bd < r_bd;
+      }
+      return l < r;
+    }
+
+    vector<string> sort_pt_by_bundle(const std::set<string> & pts) {
+      vector<string> pt_vec(pts.begin(), pts.end());
+      sort(pt_vec.begin(), pt_vec.end(), [this](const string l, const string r) {
+          //Sort by bundle name first
+          return this->cmp_by_bd(l, r);
+      });
+      return pt_vec;
+    }
+
+    string get_ub_inst_name(const int bank_id) const {
+      return "ub_" + name + "_BANK_" + str(bank_id);
+    }
+
     bool is_bank_input(const string& name) const{
       for (auto bk: bank_list) {
         if (elem(name, banks_to_inputs.at(bk.name))) {
@@ -1431,11 +1466,11 @@ class UBuffer {
     }
 
     bool can_be_broadcast(const std::string& pt0, const std::string& pt1) const {
-      auto acc_0 = range(access_map.at(pt0));
-      auto acc_1 = range(access_map.at(pt1));
+      auto acc_0 = to_map(access_map.at(pt0));
+      auto acc_1 = to_map(access_map.at(pt1));
       auto sched_0 = range(schedule.at(pt0));
       auto sched_1 = range(schedule.at(pt1));
-      bool acc_equal = equal(acc_0, acc_1);
+      bool acc_equal = equal_regardless_of_domain(acc_0, acc_1);
       bool sched_equal = equal(sched_0, sched_1);
       return acc_equal && sched_equal;
     }
@@ -1458,6 +1493,7 @@ class UBuffer {
       //return ret;
     }
 
+    map<string, std::set<string> > get_unique_ports(std::set<string> &ports);
 
 std::set<string> get_bank_unique_outputs(const std::string& name) const {
     auto outpts_all = get_bank_outputs(name);
@@ -2376,6 +2412,7 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
     bool merge_small_dim(int fetch_width);
     void merge_out_bundle();
 
+    bool overlap_schedule(std::set<string> & ptset);
 
     //change the input and output and return the agg and tb ubuffer stucture
     pair<std::map<string, UBuffer>, vector<string> >
@@ -2417,12 +2454,15 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
           map<string, int> delay_map);
 
     void merge_bank(CodegenOptions& options, string inpt, vector<bank> mergeable);
+    void merge_bank_broadcast(string inpt);
 
     void generate_banks(CodegenOptions& options);
     void generate_banks_and_merge(CodegenOptions& options);
 
     //from bank to ubuffer
     map<string, UBuffer> generate_ubuffer(CodegenOptions& opt);
+    UBuffer generate_ubuffer(UBufferImpl& impl, int bank);
+
     //optimization pass to add an coarse grained controller, save iteration counter
     isl_map* get_coarse_grained_pipeline_schedule(UBuffer& new_ub);
 
@@ -2436,13 +2476,20 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
     CoreIR::Module* affine_controller(CoreIR::Context* context, isl_set* dom, isl_aff* aff);
 
     //kernel function for generate coreir
-    void generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, schedule_info& info, bool with_ctrl=true);
+    void generate_coreir(CodegenOptions& options, UBufferImpl& impl, CoreIR::ModuleDef* def, schedule_info& info, bool with_ctrl=true);
+
+    //helper function for sreg generation
+    void generate_sreg_and_wire(CodegenOptions& options, UBufferImpl& impl, CoreIR::ModuleDef* def, map<string, CoreIR::Wireable*> & pt2wire);
+    //helper function for wire IO connection
+    void wire_ubuf_IO(CodegenOptions& options, CoreIR::ModuleDef* def, map<string, CoreIR::Wireable*> & pt2wire, CoreIR::Instance* buf, UBufferImpl & impl, int bank_id, bool with_ctrl);
+    //Helper function for generate cgra mem instance
+    CoreIR::Instance* map_ubuffer_to_cgra(CodegenOptions& options, CoreIR::ModuleDef* def, UBuffer& target_buf);
 
     //Wrappers for generate coreir
     //original memory generation for memory tile with enable and valid
     void generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, schedule_info& info);
     //ubuffer coreir generation for tahoe memory tile
-    void generate_coreir_without_ctrl(CodegenOptions& options, CoreIR::ModuleDef* def, schedule_info& info);
+    void generate_coreir_without_ctrl(CodegenOptions& options, UBufferImpl& impl, CoreIR::ModuleDef* def, schedule_info& info);
     Json generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> &rewrite_buffer);
     Json generate_ubuf_args_old(CodegenOptions& options, map<string, UBuffer> & rewrite_buffer);
     Json generate_ubuf_args(CodegenOptions& options, UBuffer& rewrite_buffer);
@@ -2474,6 +2521,9 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
     string generate_linearize_ram_addr(const std::string& pt, bank& bank);
 
     vector<UBuffer> port_grouping(int port_width);
+    vector<pair<std::set<string>, std::set<string> > >
+      port_grouping(CodegenOptions &options, UBufferImpl& impl, uset* rddom, std::set<string> inpts, std::set<string> outpts);
+    void parse_exhaustive_banking_into_impl(UBufferImpl & impl);
 
     //helper function for port group2bank
     uset* create_subbank_branch(
@@ -2704,7 +2754,7 @@ vector<string> dimension_var_decls(const std::string& pt, UBuffer& buf);
 vector<string> dimension_var_args(const std::string& pt, UBuffer& buf);
 
 #ifdef COREIR
-CoreIR::Module* generate_coreir_without_ctrl(CodegenOptions& options, CoreIR::Context* context, UBuffer& buf, schedule_info& hwinfo);
+CoreIR::Module* generate_coreir_without_ctrl(CodegenOptions& options, CoreIR::Context* context, UBuffer& buf, UBufferImpl& impl, schedule_info& hwinfo);
 
 CoreIR::Module* generate_coreir(CodegenOptions& options, CoreIR::Context* context, UBuffer& buf, schedule_info& hwinfo);
 
@@ -2732,8 +2782,6 @@ bool inner_bank_offset_is_legal(isl_map* slot_func,
     umap* sched);
 
 
-map<string, std::set<string> >
-get_unique_output_ports(UBuffer& buf);
 
 vector<string> generate_multilinear_address_components(const std::string& pt, bank& bnk, UBuffer& buf);
 
@@ -2804,6 +2852,7 @@ struct dgraph {
     return dst;
   }
 
+  //get subtree
   vector<pair<string, string>> get_sub_branch(const std::string& out_pt) {
     vector<pair<string, string> > ret;
     for (auto dst: get_out_edges(out_pt)) {
@@ -2836,18 +2885,84 @@ struct dgraph {
 };
 
 
+struct UBufferImpl {
 
-struct ubuffer_impl {
-  map<int, int> partitioned_dimension_extents;
-  std::set<int> partition_dims;
-
+  map<int, isl_set*> bank_rddom;
   map<int, std::set<string> > bank_readers;
   map<int, std::set<string> > bank_writers;
+  map<int, vector<std::set<string>> > bank_outpt2readers;
+  map<int, vector<std::set<string>> > bank_inpt2writers;
   map<string, std::set<int>> outpt_to_bank;
   map<string, std::set<int>> inpt_to_bank;
 
+  //Shift register data
+  map<string, int> shift_depth;
   map<string,pair<string,int>> shift_registered_outputs;
   vector<pair<string,pair<string,int>>> shift_registered_outputs_to_outputs;
+
+  int get_new_bank_id() {
+    return bank_rddom.size();
+  }
+
+  void sequentially_assign_inpt(vector<string> inpts, int b) {
+    vector<std::set<string>> partition;
+    for (string inpt: inpts) {
+        partition.push_back({inpt});
+    }
+    bank_inpt2writers[b] = partition;
+  }
+
+  void sequentially_assign_outpt(vector<string> outpts, int b) {
+    vector<std::set<string>> partition;
+    for (string outpt: outpts) {
+        partition.push_back({outpt});
+    }
+    bank_outpt2readers[b] = partition;
+  }
+
+  vector<string> get_unique_inpts(int bank) {
+    vector<string> ret;
+    for (auto broadcast_set: bank_inpt2writers.at(bank)) {
+      ret.push_back(pick(broadcast_set));
+    }
+    return ret;
+  }
+
+  vector<string> get_unique_outpts(int bank) {
+    vector<string> ret;
+    for (auto broadcast_set: bank_outpt2readers.at(bank)) {
+      ret.push_back(pick(broadcast_set));
+    }
+    return ret;
+  }
+
+  int add_new_bank_between(const std::set<string> & inpts, const std::set<string>& outpts, isl_set* rddom) {
+    int b = get_new_bank_id();
+    for (auto outpt: outpts) {
+      bank_readers[b].insert(outpt);
+      outpt_to_bank[outpt].insert(b);
+    }
+    for (auto inpt: inpts) {
+      bank_writers[b].insert(inpt);
+      inpt_to_bank[inpt].insert(b);
+    }
+    bank_rddom[b] = rddom;
+    return b;
+  }
+
+  vector<pair<string, pair<string, int>>>
+      get_shift_registered_ports() {
+
+        vector<pair<string, pair<string, int>>> ret;
+        for (auto it: shift_registered_outputs) {
+            //Not implemented use a bank of memory
+            if (outpt_to_bank.count(it.first) == 0) {
+                ret.push_back(it);
+            }
+        }
+        concat(ret, shift_registered_outputs_to_outputs);
+        return ret;
+  }
 
   void add_o2o_info(const string& inpt, const string& outpt, const int& delay) {
       shift_registered_outputs_to_outputs.push_back(
@@ -2872,7 +2987,7 @@ struct ubuffer_impl {
     return outpts;
   }
 
-  bool is_pure_shift_register(vector<string> outpts) {
+  bool is_pure_shift_register(vector<string> outpts) const {
     auto sr_outpts = get_sr_outpts();
     cout <<"SR outputs: " << sr_outpts << endl;
     cout <<"BUF outputs: " << outpts << endl;
@@ -2885,16 +3000,69 @@ struct ubuffer_impl {
   }
 
   int get_bank_num() const {
+    int cnt = 0;
+    for (auto it: bank_readers) {
+      cnt ++;
+    }
+    return cnt;
+  }
+
+  void print_info(std::ostream& out) const {
+    out << "Bank writers: " << endl;
+    for (auto it: bank_writers) {
+      out << "\t bank NO." << it.first << endl;
+      out << "\t\twriters: " << it.second << endl;
+    }
+    out << "Bank readers: " << endl;
+    for (auto it: bank_readers) {
+      out << "\t bank NO." << it.first << endl;
+      out << "\t\treaders: " << it.second << endl;
+    }
+    out << "Shift Register Output: " << endl;
+    out << "\tmemtiles IO:: " << endl;
+    for (auto it: shift_registered_outputs) {
+      out << "\t\t " << it.second.first << "->" << it.first << ", delay = " << it.second.second << endl;
+    }
+
+    out << "\tregister IO:: " << endl;
+    for (auto it: shift_registered_outputs_to_outputs) {
+      out << "\t\t " << it.second.first << "->" << it.first << ", delay = " << it.second.second << endl;
+    }
+  }
+
+};
+
+
+struct EmbarrassingBankingImpl: public UBufferImpl {
+  map<int, int> partitioned_dimension_extents;
+  std::set<int> partition_dims;
+
+  EmbarrassingBankingImpl() {}
+  EmbarrassingBankingImpl(UBufferImpl const & impl) : UBufferImpl(impl) {}
+
+  int get_bank_num() const {
     int bank_num = 1;
     for (auto it: partitioned_dimension_extents) {
       bank_num *= it.second;
     }
     return bank_num;
   }
+
+  void print_info(std::ostream& out) const {
+
+    UBufferImpl::print_info(out);
+    out << "==========Embarrassing Banking ============" << endl;
+    out << "Partition dim : " << partition_dims << endl;
+    out << "Partition dim extent: " << endl;
+    for (auto it: partitioned_dimension_extents) {
+      out << "\t" << it.first << ": " << it.second << endl;
+    }
+  }
+
 };
 
 std::ostream& operator<<(std::ostream& out, dgraph& dg);
-std::ostream& operator<<(std::ostream& out, ubuffer_impl& impl);
+std::ostream& operator<<(std::ostream& out, UBufferImpl& impl);
 
 bool all_schedules_defined(UBuffer& buf);
 

@@ -11,6 +11,8 @@ std::string controller_name(const std::string& n) {
   return n + "_port_controller";
 }
 
+vector<CoreIR::Wireable*> getConnectWires(CoreIR::Wireable* wire);
+
 struct affine_controller_ctrl {
   isl_aff* access_function;
   isl_aff* sched;
@@ -36,7 +38,7 @@ CoreIR::Module* affine_controller(CoreIR::Context* context, isl_set* dom, isl_af
 
 affine_controller_ctrl pack_controller(affine_controller_ctrl& unpacked);
 
-void generate_banks_garnet(CodegenOptions& options, prog& prg, UBuffer& buf, ubuffer_impl& impl, schedule_info& hw_info);
+void generate_banks_garnet(CodegenOptions& options, prog& prg, UBuffer& buf, UBufferImpl& impl, schedule_info& hw_info);
 
 void generate_coreir_addrgen_in_tile(CodegenOptions& options,
     map<string, UBuffer>& buffers,
@@ -169,21 +171,21 @@ CoreIR::Wireable* control_vars(CoreIR::ModuleDef* def, const std::string& reader
 
 CoreIR::Wireable* control_en(CoreIR::ModuleDef* def, const std::string& reader, UBuffer& buf);
 
-CoreIR::Instance* build_bank_selector(const std::string& reader, UBuffer& buf, ubuffer_impl& impl, CoreIR::ModuleDef* def);
+CoreIR::Instance* build_bank_selector(const std::string& reader, UBuffer& buf, const EmbarrassingBankingImpl& impl, CoreIR::ModuleDef* def);
 
-CoreIR::Instance* build_inner_bank_offset(const std::string& reader, UBuffer& buf, ubuffer_impl& impl, CoreIR::ModuleDef* def);
+CoreIR::Instance* build_inner_bank_offset(const std::string& reader, UBuffer& buf, const EmbarrassingBankingImpl& impl, CoreIR::ModuleDef* def);
 
 std::set<string> generate_M1_shift_registers(CodegenOptions& options, CoreIR::ModuleDef* def, prog& prg, UBuffer& buf, schedule_info& hwinfo);
 
-void instantiate_M1_verilog(const std::string& long_name, const int b, ubuffer_impl& impl, UBuffer& buf);
+void instantiate_M1_verilog(const std::string& long_name, const int b, const UBufferImpl& impl, UBuffer& buf);
 
-void M1_sanity_check_port_counts(ubuffer_impl& impl);
+void M1_sanity_check_port_counts(const UBufferImpl& impl);
 
 CoreIR::Module* affine_controller_def(CoreIR::Context* context, isl_set* dom, isl_aff* aff);
 
-isl_aff* inner_bank_offset_aff(const std::string& reader, UBuffer& buf, ubuffer_impl& impl);
+isl_aff* inner_bank_offset_aff(const std::string& reader, UBuffer& buf, const EmbarrassingBankingImpl& impl);
 
-isl_aff* bank_offset_aff(const std::string& reader, UBuffer& buf, ubuffer_impl& impl);
+isl_aff* bank_offset_aff(const std::string& reader, UBuffer& buf, const EmbarrassingBankingImpl& impl);
 
 void garnet_map_module(CoreIR::Module* top, bool garnet_syntax_trans);
 

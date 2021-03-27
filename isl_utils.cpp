@@ -204,6 +204,14 @@ bool equal(umap* const l, umap* const r) {
   return isl_union_map_is_equal(l, r);
 }
 
+bool equal_regardless_of_domain(isl_map* const l, isl_map* const r) {
+  auto ll = cpy(l);
+  auto rr = cpy(r);
+  ll = isl_map_reset_tuple_id(ll, isl_dim_in);
+  rr = isl_map_reset_tuple_id(rr, isl_dim_in);
+  return isl_map_is_equal(ll, rr);
+}
+
 bool empty(isl_basic_set* const s) {
   return isl_basic_set_is_empty(s);
 }

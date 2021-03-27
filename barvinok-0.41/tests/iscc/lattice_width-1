@@ -1,0 +1,5 @@
+P := [n] -> { [x,y] : x, y >= 0 and x <= 10 and 2x+y <= n };
+R := lattice_width(P);
+W := [n] -> { 10 : n >= 21; 1/2 * n : 0 <= n <= 20 };
+Z := [n] -> { };
+assert((R - W) == Z);
