@@ -399,8 +399,8 @@
           ["ub_hw_kernel_global_wrapper_stencil_BANK_0_garnet.data_out_pond_0","self.op_hcompute_conv_stencil_1_read.0"],
           ["ub_hw_kernel_global_wrapper_stencil_BANK_0_garnet.data_in_pond_0","self.op_hcompute_hw_kernel_global_wrapper_stencil_write.0"],
           ["ub_hw_kernel_global_wrapper_stencil_BANK_0_garnet.flush","self.reset"],
-          ["ub_hw_kernel_global_wrapper_stencil_BANK_0_garnet.clk_en","ub_hw_kernel_global_wrapper_stencil_BANK_0_clk_en_const1_lutcnst.bit.out"],
-          ["ub_hw_kernel_global_wrapper_stencil_BANK_0_garnet.rst_n","ub_hw_kernel_global_wrapper_stencil_BANK_0_clk_en_const_lutcnst.bit.out"]
+          ["ub_hw_kernel_global_wrapper_stencil_BANK_0_garnet.rst_n","ub_hw_kernel_global_wrapper_stencil_BANK_0_clk_en_const1_lutcnst.bit.out"],
+          ["ub_hw_kernel_global_wrapper_stencil_BANK_0_garnet.clk_en","ub_hw_kernel_global_wrapper_stencil_BANK_0_clk_en_const_lutcnst.bit.out"]
         ]
       },
       "op_hcompute_hw_input_global_wrapper_stencil_exe_start_pt__U16":{
@@ -599,8 +599,8 @@
           ["io16in_hw_input_stencil_op_hcompute_hw_input_global_wrapper_stencil_read_0.out","hw_input_global_wrapper_stencil$ub_hw_input_global_wrapper_stencil_BANK_0_garnet.data_in_0"],
           ["op_hcompute_conv_stencil_1$inner_compute$mul_hw_kernel_global_wrapper_stencil_1_hw_input_global_wrapper_stencil_1_666$binop.data.in.1","hw_input_global_wrapper_stencil$ub_hw_input_global_wrapper_stencil_BANK_0_garnet.data_out_0"],
           ["io1in_reset.out","hw_input_global_wrapper_stencil$ub_hw_input_global_wrapper_stencil_BANK_0_garnet.flush"],
-          ["hw_kernel_global_wrapper_stencil$ub_hw_kernel_global_wrapper_stencil_BANK_0_garnet.rst_n","hw_kernel_global_wrapper_stencil$ub_hw_kernel_global_wrapper_stencil_BANK_0_clk_en_const1_lutcnst.bit.out"],
-          ["hw_kernel_global_wrapper_stencil$ub_hw_kernel_global_wrapper_stencil_BANK_0_garnet.clk_en","hw_kernel_global_wrapper_stencil$ub_hw_kernel_global_wrapper_stencil_BANK_0_clk_en_const_lutcnst.bit.out"],
+          ["hw_kernel_global_wrapper_stencil$ub_hw_kernel_global_wrapper_stencil_BANK_0_garnet.clk_en","hw_kernel_global_wrapper_stencil$ub_hw_kernel_global_wrapper_stencil_BANK_0_clk_en_const1_lutcnst.bit.out"],
+          ["hw_kernel_global_wrapper_stencil$ub_hw_kernel_global_wrapper_stencil_BANK_0_garnet.rst_n","hw_kernel_global_wrapper_stencil$ub_hw_kernel_global_wrapper_stencil_BANK_0_clk_en_const_lutcnst.bit.out"],
           ["io16in_hw_kernel_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_read_0.out","hw_kernel_global_wrapper_stencil$ub_hw_kernel_global_wrapper_stencil_BANK_0_garnet.data_in_pond_0"],
           ["op_hcompute_conv_stencil_1$inner_compute$mul_hw_kernel_global_wrapper_stencil_1_hw_input_global_wrapper_stencil_1_666$binop.data.in.0","hw_kernel_global_wrapper_stencil$ub_hw_kernel_global_wrapper_stencil_BANK_0_garnet.data_out_pond_0"],
           ["io1in_reset.out","hw_kernel_global_wrapper_stencil$ub_hw_kernel_global_wrapper_stencil_BANK_0_garnet.flush"],
