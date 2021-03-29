@@ -7780,8 +7780,8 @@ void create_subbranch(const std::string& out_pt, dgraph& sr_graph, UBuffer& buf,
         if (delay == 0) {
             inpt = sr_graph.find_origin(inpt);
         }
-        auto bk = buf.compute_bank_info(inpt, outpt, delay);
-        buf.add_bank_between(inpt, outpt, bk);
+        //auto bk = buf.compute_bank_info(inpt, outpt, delay);
+        //buf.add_bank_between(inpt, outpt, bk);
         impl.add_o2o_info(inpt, outpt, delay);
     }
 }
@@ -7874,8 +7874,8 @@ UBufferImpl port_group2bank(CodegenOptions& options, prog& prg, UBuffer& buf, sc
         }
 
         //The data structure that carry the port and delay informations
-        std::set<string> out_pts;
-        map<string, int> read_delay;
+        //std::set<string> out_pts;
+        //map<string, int> read_delay;
         while(out_delays.size()) {
             auto pt_delay_pair = out_delays.back();
             out_delays.pop_back();
@@ -7898,38 +7898,48 @@ UBufferImpl port_group2bank(CodegenOptions& options, prog& prg, UBuffer& buf, sc
             if (pt_delay_pair.second <= options.merge_threshold) {
                 //add new sr only chain
                 //Rewrite the access map and schedule
-                auto sr_bank = buf.compute_bank_info(src, pt_name, delay);
-                buf.add_bank_between(src, pt_name, sr_bank);
+                //auto sr_bank = buf.compute_bank_info(src, pt_name, delay);
+                //buf.add_bank_between(src, pt_name, sr_bank);
                 create_subbranch(pt_name, sr_graph, buf, impl);
 
                 //TODO: use UBufferImpl to substite bank in ubuffer
                 impl.add_i2o_info(src, pt_name, delay);
+                //No need to add a memory tile
             } else {
-                out_pts.insert(pt_name);
-                read_delay.insert(pt_delay_pair);
-                //saturize the output ports or the last remaining port
-                if ((out_pts.size() == out_port_width) || (out_delays.size() == 0)) {
-                    //add the bank that require memory tile
-                    auto super_bank = buf.compute_bank_info({src}, out_pts, read_delay);
-                    int bank = impl.add_new_bank_between({src}, out_pts, to_set(buf.global_range()));
-                    impl.sequentially_assign_inpt({src}, bank);
-                    impl.sequentially_assign_outpt(buf.sort_pt_by_bundle(out_pts), bank);
-                    for (auto out_pt: out_pts) {
-                        buf.add_bank_between(src, out_pt, super_bank);
-                        create_subbranch(out_pt, sr_graph, buf, impl);
+                //out_pts.insert(pt_name);
+                //read_delay.insert(pt_delay_pair);
+                ////saturize the output ports or the last remaining port
+                //if ((out_pts.size() == out_port_width) || (out_delays.size() == 0)) {
+                //    //add the bank that require memory tile
+                //    auto super_bank = buf.compute_bank_info({src}, out_pts, read_delay);
+                //    int bank = impl.add_new_bank_between({src}, out_pts, to_set(buf.global_range()));
+                //    impl.sequentially_assign_inpt({src}, bank);
+                //    impl.sequentially_assign_outpt(buf.sort_pt_by_bundle(out_pts), bank);
+                //    for (auto out_pt: out_pts) {
+                //        buf.add_bank_between(src, out_pt, super_bank);
+                //        create_subbranch(out_pt, sr_graph, buf, impl);
 
-                        //TODO: use UBufferImpl to substite bank in ubuffer
-                        impl.add_i2o_info(src, out_pt, read_delay.at(out_pt));
-                    }
-                    read_delay.clear();
-                    out_pts.clear();
-                }
+                //        //TODO: use UBufferImpl to substite bank in ubuffer
+                //        impl.add_i2o_info(src, out_pt, read_delay.at(out_pt));
+                //    }
+                //    read_delay.clear();
+                //    out_pts.clear();
+                //}
+                impl.add_i2o_info(src, pt_name, pt_delay_pair.second);
+                //Need to add a bank of memory tile
+                //TODO: possible bug rddom set to the whole buffer
+                int bank = impl.add_new_bank_between({src}, {pt_name}, to_set(buf.global_range()));
+                map_insert(impl.bank_inpt2writers, bank, {src});
+                map_insert(impl.bank_outpt2readers, bank, {pt_name});
+                create_subbranch(pt_name, sr_graph, buf, impl);
             }
         }
 
     }
     buf.print_bank_info();
     cout << sr_graph;
+    cout << impl;
+    impl.bank_merging(options);
     cout << impl;
 
     return impl;
