@@ -3037,6 +3037,79 @@ struct UBufferImpl {
       shift_registered_outputs[outpt] = make_pair(inpt, delay);
   }
 
+  void merge_banks(vector<int> banks_tobe_merged) {
+    std::set<string> merge_inpts, merge_outpts;
+    for (int bank_id: banks_tobe_merged) {
+        assert(bank_writers.at(bank_id).size() == 1);
+        assert(bank_readers.at(bank_id).size() == 1);
+        merge_inpts.merge(bank_writers.at(bank_id));
+        merge_outpts.merge(bank_readers.at(bank_id));
+    }
+    //TODO: may need an extra check if we can merge more port
+    //assert(merge_inpts.size() <= options.rtl_options.max_inpt);
+    //assert(merge_outpts.size() <= options.rtl_options.max_outpt);
+    int new_bk = add_new_bank_between(merge_inpts, merge_outpts,
+            bank_rddom.at(banks_tobe_merged.front()));
+    for (string inpt: merge_inpts) {
+        map_insert(bank_inpt2writers, new_bk, {inpt});
+    }
+    for (string outpt: merge_outpts) {
+        map_insert(bank_outpt2readers, new_bk, {outpt});
+    }
+    for (auto bk: banks_tobe_merged) {
+        remove_bank(bk);
+    }
+
+  }
+
+  void conditional_merging(CodegenOptions & options, const vector<int> & banks_tobe_merged) {
+    auto it = banks_tobe_merged.begin();
+    vector<int> merging_banks;
+    while(true) {
+      //full condition
+      if(get_banks_inpts_num(merging_banks) > options.rtl_options.max_inpt ||
+        get_banks_outpts_num(merging_banks) > options.rtl_options.max_outpt) {
+        auto last_bank = merging_banks.back();
+        merging_banks.pop_back();
+        merge_banks(merging_banks);
+        merging_banks.clear();
+        merging_banks.push_back(last_bank);
+      } else if (it == banks_tobe_merged.end()) {
+        merge_banks(merging_banks);
+        break;
+      } else {
+        merging_banks.push_back(*it);
+        it ++;
+      }
+    }
+  }
+
+  std::set<string> get_banks_inpts(const vector<int> & banks) {
+    std::set<string> ret;
+    for(int bank: banks) {
+      auto inpts = bank_writers.at(bank);
+      ret.insert(inpts.begin(), inpts.end());
+    }
+    return ret;
+  }
+
+  int get_banks_inpts_num(const vector<int> & banks) {
+    return get_banks_inpts(banks).size();
+  }
+
+  std::set<string> get_banks_outpts(const vector<int> & banks) {
+    std::set<string> ret;
+    for(int bank: banks) {
+      auto outpts = bank_readers.at(bank);
+      ret.insert(outpts.begin(), outpts.end());
+    }
+    return ret;
+  }
+
+  int get_banks_outpts_num(const vector<int> & banks) {
+    return get_banks_outpts(banks).size();
+  }
+
   void bank_merging(CodegenOptions & options) {
     auto comp = [this](const int& a, const int& b) {
         return !equal(this->bank_rddom.at(a), this->bank_rddom.at(b));
@@ -3058,26 +3131,9 @@ struct UBufferImpl {
             cout << "\tPerform bank merging!" << endl;
             std::set<string> merge_inpts, merge_outpts;
             vector<int> banks_tobe_merged = it.second;
-            for (int bank_id: banks_tobe_merged) {
-                assert(bank_writers.at(bank_id).size() == 1);
-                assert(bank_readers.at(bank_id).size() == 1);
-                merge_inpts.merge(bank_writers.at(bank_id));
-                merge_outpts.merge(bank_readers.at(bank_id));
-            }
-            //TODO: may need an extra check if we can merge more port
-            assert(merge_inpts.size() <= options.rtl_options.max_inpt);
-            assert(merge_outpts.size() <= options.rtl_options.max_outpt);
-            int new_bk = add_new_bank_between(merge_inpts, merge_outpts, bank_rddom.at(it.first));
-            for (string inpt: merge_inpts) {
-                map_insert(bank_inpt2writers, new_bk, {inpt});
-            }
-            for (string outpt: merge_outpts) {
-                map_insert(bank_outpt2readers, new_bk, {outpt});
-            }
+            //Sort from the very begining
             sort(banks_tobe_merged.begin(), banks_tobe_merged.end(), std::greater<int>());
-            for (auto bk: banks_tobe_merged) {
-                remove_bank(bk);
-            }
+            conditional_merging(options, banks_tobe_merged);
         }
     }
   }
