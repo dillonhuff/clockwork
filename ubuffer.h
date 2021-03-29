@@ -2904,6 +2904,69 @@ struct UBufferImpl {
     return bank_rddom.size();
   }
 
+  void remove_bank(int bank_id) {
+    bank_rddom.erase(bank_id);
+    for(auto it = bank_rddom.begin(); it != bank_rddom.end(); it ++){
+        if (it->first > bank_id) {
+            auto node = bank_rddom.extract(it->first);
+            node.key() = it->first - 1;
+            bank_rddom.insert(std::move(node));
+        }
+    }
+    bank_readers.erase(bank_id);
+    for(auto it = bank_readers.begin(); it != bank_readers.end(); it ++){
+        if (it->first > bank_id) {
+            auto node = bank_readers.extract(it->first);
+            node.key() = it->first - 1;
+            bank_readers.insert(std::move(node));
+        }
+    }
+    bank_writers.erase(bank_id);
+    for(auto it = bank_writers.begin(); it != bank_writers.end(); it ++){
+        if (it->first > bank_id) {
+            auto node = bank_writers.extract(it->first);
+            node.key() = it->first - 1;
+            bank_writers.insert(std::move(node));
+        }
+    }
+    bank_outpt2readers.erase(bank_id);
+    for(auto it = bank_outpt2readers.begin(); it != bank_outpt2readers.end(); it ++){
+        if (it->first > bank_id) {
+            auto node = bank_outpt2readers.extract(it->first);
+            node.key() = it->first - 1;
+            bank_outpt2readers.insert(std::move(node));
+        }
+    }
+    bank_inpt2writers.erase(bank_id);
+    for(auto it = bank_inpt2writers.begin(); it != bank_inpt2writers.end(); it ++){
+        if (it->first > bank_id) {
+            auto node = bank_inpt2writers.extract(it->first);
+            node.key() = it->first - 1;
+            bank_inpt2writers.insert(std::move(node));
+        }
+    }
+    for (auto& it: outpt_to_bank) {
+        it.second.erase(bank_id);
+        for (auto bk: it.second) {
+            if (bk > bank_id) {
+                auto val = it.second.extract(bk);
+                val.value() = bk - 1;
+                it.second.insert(std::move(val));
+            }
+        }
+    }
+    for (auto& it: inpt_to_bank) {
+        it.second.erase(bank_id);
+        for (auto bk: it.second) {
+            if (bk > bank_id) {
+                auto val = it.second.extract(bk);
+                val.value() = bk - 1;
+                it.second.insert(std::move(val));
+            }
+        }
+    }
+  }
+
   void sequentially_assign_inpt(vector<string> inpts, int b) {
     vector<std::set<string>> partition;
     for (string inpt: inpts) {
@@ -2972,6 +3035,51 @@ struct UBufferImpl {
 
   void add_i2o_info(const string& inpt, const string& outpt, const int& delay) {
       shift_registered_outputs[outpt] = make_pair(inpt, delay);
+  }
+
+  void bank_merging(CodegenOptions & options) {
+    auto comp = [this](const int& a, const int& b) {
+        return !equal(this->bank_rddom.at(a), this->bank_rddom.at(b));
+    };
+    //std::set<string> merge_inpts, merge_outpts;
+    //vector<vector<int>> merge_banks;
+    map<int, vector<int>, decltype(comp)> merge_map(comp);
+    for (auto it: bank_rddom) {
+        int bank_id = it.first;
+        if (merge_map.count(bank_id)) {
+            merge_map[bank_id].push_back(it.first);
+        } else {
+            merge_map[bank_id] = {bank_id};
+        }
+    }
+    for (auto it: merge_map) {
+        if (it.second.size() > 1) {
+            cout << "\tGroup: " << it.first << ": " << it.second << endl;
+            cout << "\tPerform bank merging!" << endl;
+            std::set<string> merge_inpts, merge_outpts;
+            vector<int> banks_tobe_merged = it.second;
+            for (int bank_id: banks_tobe_merged) {
+                assert(bank_writers.at(bank_id).size() == 1);
+                assert(bank_readers.at(bank_id).size() == 1);
+                merge_inpts.merge(bank_writers.at(bank_id));
+                merge_outpts.merge(bank_readers.at(bank_id));
+            }
+            //TODO: may need an extra check if we can merge more port
+            assert(merge_inpts.size() <= options.rtl_options.max_inpt);
+            assert(merge_outpts.size() <= options.rtl_options.max_outpt);
+            int new_bk = add_new_bank_between(merge_inpts, merge_outpts, bank_rddom.at(it.first));
+            for (string inpt: merge_inpts) {
+                map_insert(bank_inpt2writers, new_bk, {inpt});
+            }
+            for (string outpt: merge_outpts) {
+                map_insert(bank_outpt2readers, new_bk, {outpt});
+            }
+            sort(banks_tobe_merged.begin(), banks_tobe_merged.end(), std::greater<int>());
+            for (auto bk: banks_tobe_merged) {
+                remove_bank(bk);
+            }
+        }
+    }
   }
 
   std::set<string> get_sr_outpts() const {
