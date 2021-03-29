@@ -7928,7 +7928,9 @@ UBufferImpl port_group2bank(CodegenOptions& options, prog& prg, UBuffer& buf, sc
                 impl.add_i2o_info(src, pt_name, pt_delay_pair.second);
                 //Need to add a bank of memory tile
                 //TODO: possible bug rddom set to the whole buffer
-                int bank = impl.add_new_bank_between({src}, {pt_name}, to_set(buf.global_range()));
+                int bank = impl.add_new_bank_between({src}, {pt_name},
+                        //to_set(buf.global_range()));
+                        to_set(unn(range(buf.access_map.at(src)), range(buf.access_map.at(pt_name)))));
                 map_insert(impl.bank_inpt2writers, bank, {src});
                 map_insert(impl.bank_outpt2readers, bank, {pt_name});
                 create_subbranch(pt_name, sr_graph, buf, impl);
