@@ -2744,11 +2744,11 @@ bool RegfileReplace(Instance* cnst) {
   inlineInstance(buf);
 
   //remove rst_n
-  //auto rst_n_conSet = buf->sel("rst_n")->getConnectedWireables();
-  //vector<Wireable*> conns(rst_n_conSet.begin(), rst_n_conSet.end());
-  //assert(conns.size() == 1);
-  //auto conn = conns[0];
-  //def->disconnect(buf->sel("rst_n"),conn);
+  auto rst_n_conSet = buf->sel("rst_n")->getConnectedWireables();
+  vector<Wireable*> conns(rst_n_conSet.begin(), rst_n_conSet.end());
+  assert(conns.size() == 1);
+  auto conn = conns[0];
+  def->disconnect(buf->sel("rst_n"),conn);
 
   return true;
 }
