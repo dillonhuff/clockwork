@@ -14283,6 +14283,8 @@ void test_pond(string dir) {
   test_apps.push_back(resnet_simple());
   test_apps.push_back(resnet());
   test_apps.push_back(three_level_pond_copy());
+  test_apps.push_back(three_level_pond_rolled());
+  test_apps.push_back(fft8_unroll8_split());
 
   //TODO: tobe tested with new pond
   //test_apps.push_back(three_level_pond());
