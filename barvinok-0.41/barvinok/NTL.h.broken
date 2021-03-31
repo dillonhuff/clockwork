@@ -1,3 +1,0 @@
-#include <barvinok/set.h>
-#include <NTL/ZZ.h>
-#include <NTL/vector.h>
