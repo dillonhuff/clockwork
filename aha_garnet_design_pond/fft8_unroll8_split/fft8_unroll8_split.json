@@ -1889,65 +1889,6 @@
           ["f3_0_stencil_op_hcompute_f3_0_stencil_write",["Array",1,["Array",16,"Bit"]]]
         ]],
         "instances":{
-          "add_all__U14":{
-            "genref":"coreir.add",
-            "genargs":{"width":["Int",16]}
-          },
-          "add_all__U15":{
-            "genref":"coreir.add",
-            "genargs":{"width":["Int",16]}
-          },
-          "add_all__U16":{
-            "genref":"coreir.add",
-            "genargs":{"width":["Int",16]}
-          },
-          "add_all__U17":{
-            "genref":"coreir.add",
-            "genargs":{"width":["Int",16]}
-          },
-          "add_all__U18":{
-            "genref":"coreir.add",
-            "genargs":{"width":["Int",16]}
-          },
-          "add_all__U19":{
-            "genref":"coreir.add",
-            "genargs":{"width":["Int",16]}
-          },
-          "add_all__U20":{
-            "genref":"coreir.add",
-            "genargs":{"width":["Int",16]}
-          }
-        },
-        "connections":[
-          ["self.hw_input_global_wrapper_stencil_op_hcompute_f3_0_stencil_read.0","add_all__U14.in0"],
-          ["self.hw_input_global_wrapper_stencil_op_hcompute_f3_0_stencil_read.1","add_all__U14.in1"],
-          ["add_all__U15.in0","add_all__U14.out"],
-          ["self.hw_input_global_wrapper_stencil_op_hcompute_f3_0_stencil_read.2","add_all__U15.in1"],
-          ["add_all__U16.in0","add_all__U15.out"],
-          ["self.hw_input_global_wrapper_stencil_op_hcompute_f3_0_stencil_read.3","add_all__U16.in1"],
-          ["add_all__U17.in0","add_all__U16.out"],
-          ["self.hw_twi_global_wrapper_stencil_op_hcompute_f3_0_stencil_read.0","add_all__U17.in1"],
-          ["add_all__U18.in0","add_all__U17.out"],
-          ["self.hw_twi_global_wrapper_stencil_op_hcompute_f3_0_stencil_read.1","add_all__U18.in1"],
-          ["add_all__U19.in0","add_all__U18.out"],
-          ["self.hw_twi_global_wrapper_stencil_op_hcompute_f3_0_stencil_read.2","add_all__U19.in1"],
-          ["add_all__U20.in0","add_all__U19.out"],
-          ["self.hw_twi_global_wrapper_stencil_op_hcompute_f3_0_stencil_read.3","add_all__U20.in1"],
-          ["self.f3_0_stencil_op_hcompute_f3_0_stencil_write.0","add_all__U20.out"],
-          ["self.valid_pass_out","self.valid_pass_in"]
-        ]
-      },
-      "cu_op_hcompute_f3_1_stencil":{
-        "type":["Record",[
-          ["clk",["Named","coreir.clkIn"]],
-          ["valid_pass_in","BitIn"],
-          ["valid_pass_out","Bit"],
-          ["f3_s0_x_xo_3",["Array",16,"BitIn"]],
-          ["hw_input_global_wrapper_stencil_op_hcompute_f3_1_stencil_read",["Array",4,["Array",16,"BitIn"]]],
-          ["hw_twi_global_wrapper_stencil_op_hcompute_f3_1_stencil_read",["Array",4,["Array",16,"BitIn"]]],
-          ["f3_1_stencil_op_hcompute_f3_1_stencil_write",["Array",1,["Array",16,"Bit"]]]
-        ]],
-        "instances":{
           "add_all__U21":{
             "genref":"coreir.add",
             "genargs":{"width":["Int",16]}
@@ -1978,21 +1919,80 @@
           }
         },
         "connections":[
-          ["self.hw_input_global_wrapper_stencil_op_hcompute_f3_1_stencil_read.0","add_all__U21.in0"],
-          ["self.hw_input_global_wrapper_stencil_op_hcompute_f3_1_stencil_read.1","add_all__U21.in1"],
+          ["self.hw_input_global_wrapper_stencil_op_hcompute_f3_0_stencil_read.0","add_all__U21.in0"],
+          ["self.hw_input_global_wrapper_stencil_op_hcompute_f3_0_stencil_read.1","add_all__U21.in1"],
           ["add_all__U22.in0","add_all__U21.out"],
-          ["self.hw_input_global_wrapper_stencil_op_hcompute_f3_1_stencil_read.2","add_all__U22.in1"],
+          ["self.hw_input_global_wrapper_stencil_op_hcompute_f3_0_stencil_read.2","add_all__U22.in1"],
           ["add_all__U23.in0","add_all__U22.out"],
-          ["self.hw_input_global_wrapper_stencil_op_hcompute_f3_1_stencil_read.3","add_all__U23.in1"],
+          ["self.hw_input_global_wrapper_stencil_op_hcompute_f3_0_stencil_read.3","add_all__U23.in1"],
           ["add_all__U24.in0","add_all__U23.out"],
-          ["self.hw_twi_global_wrapper_stencil_op_hcompute_f3_1_stencil_read.0","add_all__U24.in1"],
+          ["self.hw_twi_global_wrapper_stencil_op_hcompute_f3_0_stencil_read.0","add_all__U24.in1"],
           ["add_all__U25.in0","add_all__U24.out"],
-          ["self.hw_twi_global_wrapper_stencil_op_hcompute_f3_1_stencil_read.1","add_all__U25.in1"],
+          ["self.hw_twi_global_wrapper_stencil_op_hcompute_f3_0_stencil_read.1","add_all__U25.in1"],
           ["add_all__U26.in0","add_all__U25.out"],
-          ["self.hw_twi_global_wrapper_stencil_op_hcompute_f3_1_stencil_read.2","add_all__U26.in1"],
+          ["self.hw_twi_global_wrapper_stencil_op_hcompute_f3_0_stencil_read.2","add_all__U26.in1"],
           ["add_all__U27.in0","add_all__U26.out"],
-          ["self.hw_twi_global_wrapper_stencil_op_hcompute_f3_1_stencil_read.3","add_all__U27.in1"],
-          ["self.f3_1_stencil_op_hcompute_f3_1_stencil_write.0","add_all__U27.out"],
+          ["self.hw_twi_global_wrapper_stencil_op_hcompute_f3_0_stencil_read.3","add_all__U27.in1"],
+          ["self.f3_0_stencil_op_hcompute_f3_0_stencil_write.0","add_all__U27.out"],
+          ["self.valid_pass_out","self.valid_pass_in"]
+        ]
+      },
+      "cu_op_hcompute_f3_1_stencil":{
+        "type":["Record",[
+          ["clk",["Named","coreir.clkIn"]],
+          ["valid_pass_in","BitIn"],
+          ["valid_pass_out","Bit"],
+          ["f3_s0_x_xo_3",["Array",16,"BitIn"]],
+          ["hw_input_global_wrapper_stencil_op_hcompute_f3_1_stencil_read",["Array",4,["Array",16,"BitIn"]]],
+          ["hw_twi_global_wrapper_stencil_op_hcompute_f3_1_stencil_read",["Array",4,["Array",16,"BitIn"]]],
+          ["f3_1_stencil_op_hcompute_f3_1_stencil_write",["Array",1,["Array",16,"Bit"]]]
+        ]],
+        "instances":{
+          "add_all__U14":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
+          },
+          "add_all__U15":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
+          },
+          "add_all__U16":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
+          },
+          "add_all__U17":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
+          },
+          "add_all__U18":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
+          },
+          "add_all__U19":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
+          },
+          "add_all__U20":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
+          }
+        },
+        "connections":[
+          ["self.hw_input_global_wrapper_stencil_op_hcompute_f3_1_stencil_read.0","add_all__U14.in0"],
+          ["self.hw_input_global_wrapper_stencil_op_hcompute_f3_1_stencil_read.1","add_all__U14.in1"],
+          ["add_all__U15.in0","add_all__U14.out"],
+          ["self.hw_input_global_wrapper_stencil_op_hcompute_f3_1_stencil_read.2","add_all__U15.in1"],
+          ["add_all__U16.in0","add_all__U15.out"],
+          ["self.hw_input_global_wrapper_stencil_op_hcompute_f3_1_stencil_read.3","add_all__U16.in1"],
+          ["add_all__U17.in0","add_all__U16.out"],
+          ["self.hw_twi_global_wrapper_stencil_op_hcompute_f3_1_stencil_read.0","add_all__U17.in1"],
+          ["add_all__U18.in0","add_all__U17.out"],
+          ["self.hw_twi_global_wrapper_stencil_op_hcompute_f3_1_stencil_read.1","add_all__U18.in1"],
+          ["add_all__U19.in0","add_all__U18.out"],
+          ["self.hw_twi_global_wrapper_stencil_op_hcompute_f3_1_stencil_read.2","add_all__U19.in1"],
+          ["add_all__U20.in0","add_all__U19.out"],
+          ["self.hw_twi_global_wrapper_stencil_op_hcompute_f3_1_stencil_read.3","add_all__U20.in1"],
+          ["self.f3_1_stencil_op_hcompute_f3_1_stencil_write.0","add_all__U20.out"],
           ["self.valid_pass_out","self.valid_pass_in"]
         ]
       },
@@ -2006,66 +2006,6 @@
           ["f3_1_stencil_op_hcompute_f4_0_stencil_read",["Array",2,["Array",16,"BitIn"]]],
           ["hw_twi_global_wrapper_stencil_op_hcompute_f4_0_stencil_read",["Array",4,["Array",16,"BitIn"]]],
           ["f4_0_stencil_op_hcompute_f4_0_stencil_write",["Array",1,["Array",16,"Bit"]]]
-        ]],
-        "instances":{
-          "add_all__U28":{
-            "genref":"coreir.add",
-            "genargs":{"width":["Int",16]}
-          },
-          "add_all__U29":{
-            "genref":"coreir.add",
-            "genargs":{"width":["Int",16]}
-          },
-          "add_all__U30":{
-            "genref":"coreir.add",
-            "genargs":{"width":["Int",16]}
-          },
-          "add_all__U31":{
-            "genref":"coreir.add",
-            "genargs":{"width":["Int",16]}
-          },
-          "add_all__U32":{
-            "genref":"coreir.add",
-            "genargs":{"width":["Int",16]}
-          },
-          "add_all__U33":{
-            "genref":"coreir.add",
-            "genargs":{"width":["Int",16]}
-          },
-          "add_all__U34":{
-            "genref":"coreir.add",
-            "genargs":{"width":["Int",16]}
-          }
-        },
-        "connections":[
-          ["self.f3_0_stencil_op_hcompute_f4_0_stencil_read.0","add_all__U28.in0"],
-          ["self.f3_0_stencil_op_hcompute_f4_0_stencil_read.1","add_all__U28.in1"],
-          ["add_all__U29.in0","add_all__U28.out"],
-          ["self.f3_1_stencil_op_hcompute_f4_0_stencil_read.0","add_all__U29.in1"],
-          ["add_all__U30.in0","add_all__U29.out"],
-          ["self.f3_1_stencil_op_hcompute_f4_0_stencil_read.1","add_all__U30.in1"],
-          ["add_all__U31.in0","add_all__U30.out"],
-          ["self.hw_twi_global_wrapper_stencil_op_hcompute_f4_0_stencil_read.0","add_all__U31.in1"],
-          ["add_all__U32.in0","add_all__U31.out"],
-          ["self.hw_twi_global_wrapper_stencil_op_hcompute_f4_0_stencil_read.1","add_all__U32.in1"],
-          ["add_all__U33.in0","add_all__U32.out"],
-          ["self.hw_twi_global_wrapper_stencil_op_hcompute_f4_0_stencil_read.2","add_all__U33.in1"],
-          ["add_all__U34.in0","add_all__U33.out"],
-          ["self.hw_twi_global_wrapper_stencil_op_hcompute_f4_0_stencil_read.3","add_all__U34.in1"],
-          ["self.f4_0_stencil_op_hcompute_f4_0_stencil_write.0","add_all__U34.out"],
-          ["self.valid_pass_out","self.valid_pass_in"]
-        ]
-      },
-      "cu_op_hcompute_f4_1_stencil":{
-        "type":["Record",[
-          ["clk",["Named","coreir.clkIn"]],
-          ["valid_pass_in","BitIn"],
-          ["valid_pass_out","Bit"],
-          ["f4_s0_x_xo_3",["Array",16,"BitIn"]],
-          ["f3_0_stencil_op_hcompute_f4_1_stencil_read",["Array",2,["Array",16,"BitIn"]]],
-          ["f3_1_stencil_op_hcompute_f4_1_stencil_read",["Array",2,["Array",16,"BitIn"]]],
-          ["hw_twi_global_wrapper_stencil_op_hcompute_f4_1_stencil_read",["Array",4,["Array",16,"BitIn"]]],
-          ["f4_1_stencil_op_hcompute_f4_1_stencil_write",["Array",1,["Array",16,"Bit"]]]
         ]],
         "instances":{
           "add_all__U10":{
@@ -2099,33 +2039,33 @@
         },
         "connections":[
           ["add_all__U9.out","add_all__U10.in0"],
-          ["self.hw_twi_global_wrapper_stencil_op_hcompute_f4_1_stencil_read.0","add_all__U10.in1"],
+          ["self.hw_twi_global_wrapper_stencil_op_hcompute_f4_0_stencil_read.0","add_all__U10.in1"],
           ["add_all__U11.in0","add_all__U10.out"],
-          ["self.hw_twi_global_wrapper_stencil_op_hcompute_f4_1_stencil_read.1","add_all__U11.in1"],
+          ["self.hw_twi_global_wrapper_stencil_op_hcompute_f4_0_stencil_read.1","add_all__U11.in1"],
           ["add_all__U12.in0","add_all__U11.out"],
-          ["self.hw_twi_global_wrapper_stencil_op_hcompute_f4_1_stencil_read.2","add_all__U12.in1"],
+          ["self.hw_twi_global_wrapper_stencil_op_hcompute_f4_0_stencil_read.2","add_all__U12.in1"],
           ["add_all__U13.in0","add_all__U12.out"],
-          ["self.hw_twi_global_wrapper_stencil_op_hcompute_f4_1_stencil_read.3","add_all__U13.in1"],
-          ["self.f4_1_stencil_op_hcompute_f4_1_stencil_write.0","add_all__U13.out"],
-          ["self.f3_0_stencil_op_hcompute_f4_1_stencil_read.0","add_all__U7.in0"],
-          ["self.f3_0_stencil_op_hcompute_f4_1_stencil_read.1","add_all__U7.in1"],
+          ["self.hw_twi_global_wrapper_stencil_op_hcompute_f4_0_stencil_read.3","add_all__U13.in1"],
+          ["self.f4_0_stencil_op_hcompute_f4_0_stencil_write.0","add_all__U13.out"],
+          ["self.f3_0_stencil_op_hcompute_f4_0_stencil_read.0","add_all__U7.in0"],
+          ["self.f3_0_stencil_op_hcompute_f4_0_stencil_read.1","add_all__U7.in1"],
           ["add_all__U8.in0","add_all__U7.out"],
-          ["self.f3_1_stencil_op_hcompute_f4_1_stencil_read.0","add_all__U8.in1"],
+          ["self.f3_1_stencil_op_hcompute_f4_0_stencil_read.0","add_all__U8.in1"],
           ["add_all__U9.in0","add_all__U8.out"],
-          ["self.f3_1_stencil_op_hcompute_f4_1_stencil_read.1","add_all__U9.in1"],
+          ["self.f3_1_stencil_op_hcompute_f4_0_stencil_read.1","add_all__U9.in1"],
           ["self.valid_pass_out","self.valid_pass_in"]
         ]
       },
-      "cu_op_hcompute_f5_0_stencil":{
+      "cu_op_hcompute_f4_1_stencil":{
         "type":["Record",[
           ["clk",["Named","coreir.clkIn"]],
           ["valid_pass_in","BitIn"],
           ["valid_pass_out","Bit"],
-          ["f5_s0_x_xo_3",["Array",16,"BitIn"]],
-          ["f4_0_stencil_op_hcompute_f5_0_stencil_read",["Array",2,["Array",16,"BitIn"]]],
-          ["f4_1_stencil_op_hcompute_f5_0_stencil_read",["Array",2,["Array",16,"BitIn"]]],
-          ["hw_twi_global_wrapper_stencil_op_hcompute_f5_0_stencil_read",["Array",4,["Array",16,"BitIn"]]],
-          ["f5_0_stencil_op_hcompute_f5_0_stencil_write",["Array",1,["Array",16,"Bit"]]]
+          ["f4_s0_x_xo_3",["Array",16,"BitIn"]],
+          ["f3_0_stencil_op_hcompute_f4_1_stencil_read",["Array",2,["Array",16,"BitIn"]]],
+          ["f3_1_stencil_op_hcompute_f4_1_stencil_read",["Array",2,["Array",16,"BitIn"]]],
+          ["hw_twi_global_wrapper_stencil_op_hcompute_f4_1_stencil_read",["Array",4,["Array",16,"BitIn"]]],
+          ["f4_1_stencil_op_hcompute_f4_1_stencil_write",["Array",1,["Array",16,"Bit"]]]
         ]],
         "instances":{
           "add_all__U0":{
@@ -2158,21 +2098,81 @@
           }
         },
         "connections":[
-          ["self.f4_0_stencil_op_hcompute_f5_0_stencil_read.0","add_all__U0.in0"],
-          ["self.f4_0_stencil_op_hcompute_f5_0_stencil_read.1","add_all__U0.in1"],
+          ["self.f3_0_stencil_op_hcompute_f4_1_stencil_read.0","add_all__U0.in0"],
+          ["self.f3_0_stencil_op_hcompute_f4_1_stencil_read.1","add_all__U0.in1"],
           ["add_all__U1.in0","add_all__U0.out"],
-          ["self.f4_1_stencil_op_hcompute_f5_0_stencil_read.0","add_all__U1.in1"],
+          ["self.f3_1_stencil_op_hcompute_f4_1_stencil_read.0","add_all__U1.in1"],
           ["add_all__U2.in0","add_all__U1.out"],
-          ["self.f4_1_stencil_op_hcompute_f5_0_stencil_read.1","add_all__U2.in1"],
+          ["self.f3_1_stencil_op_hcompute_f4_1_stencil_read.1","add_all__U2.in1"],
           ["add_all__U3.in0","add_all__U2.out"],
-          ["self.hw_twi_global_wrapper_stencil_op_hcompute_f5_0_stencil_read.0","add_all__U3.in1"],
+          ["self.hw_twi_global_wrapper_stencil_op_hcompute_f4_1_stencil_read.0","add_all__U3.in1"],
           ["add_all__U4.in0","add_all__U3.out"],
-          ["self.hw_twi_global_wrapper_stencil_op_hcompute_f5_0_stencil_read.1","add_all__U4.in1"],
+          ["self.hw_twi_global_wrapper_stencil_op_hcompute_f4_1_stencil_read.1","add_all__U4.in1"],
           ["add_all__U5.in0","add_all__U4.out"],
-          ["self.hw_twi_global_wrapper_stencil_op_hcompute_f5_0_stencil_read.2","add_all__U5.in1"],
+          ["self.hw_twi_global_wrapper_stencil_op_hcompute_f4_1_stencil_read.2","add_all__U5.in1"],
           ["add_all__U6.in0","add_all__U5.out"],
-          ["self.hw_twi_global_wrapper_stencil_op_hcompute_f5_0_stencil_read.3","add_all__U6.in1"],
-          ["self.f5_0_stencil_op_hcompute_f5_0_stencil_write.0","add_all__U6.out"],
+          ["self.hw_twi_global_wrapper_stencil_op_hcompute_f4_1_stencil_read.3","add_all__U6.in1"],
+          ["self.f4_1_stencil_op_hcompute_f4_1_stencil_write.0","add_all__U6.out"],
+          ["self.valid_pass_out","self.valid_pass_in"]
+        ]
+      },
+      "cu_op_hcompute_f5_0_stencil":{
+        "type":["Record",[
+          ["clk",["Named","coreir.clkIn"]],
+          ["valid_pass_in","BitIn"],
+          ["valid_pass_out","Bit"],
+          ["f5_s0_x_xo_3",["Array",16,"BitIn"]],
+          ["f4_0_stencil_op_hcompute_f5_0_stencil_read",["Array",2,["Array",16,"BitIn"]]],
+          ["f4_1_stencil_op_hcompute_f5_0_stencil_read",["Array",2,["Array",16,"BitIn"]]],
+          ["hw_twi_global_wrapper_stencil_op_hcompute_f5_0_stencil_read",["Array",4,["Array",16,"BitIn"]]],
+          ["f5_0_stencil_op_hcompute_f5_0_stencil_write",["Array",1,["Array",16,"Bit"]]]
+        ]],
+        "instances":{
+          "add_all__U29":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
+          },
+          "add_all__U30":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
+          },
+          "add_all__U31":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
+          },
+          "add_all__U32":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
+          },
+          "add_all__U33":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
+          },
+          "add_all__U34":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
+          },
+          "add_all__U35":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
+          }
+        },
+        "connections":[
+          ["self.f4_0_stencil_op_hcompute_f5_0_stencil_read.0","add_all__U29.in0"],
+          ["self.f4_0_stencil_op_hcompute_f5_0_stencil_read.1","add_all__U29.in1"],
+          ["add_all__U30.in0","add_all__U29.out"],
+          ["self.f4_1_stencil_op_hcompute_f5_0_stencil_read.0","add_all__U30.in1"],
+          ["add_all__U31.in0","add_all__U30.out"],
+          ["self.f4_1_stencil_op_hcompute_f5_0_stencil_read.1","add_all__U31.in1"],
+          ["add_all__U32.in0","add_all__U31.out"],
+          ["self.hw_twi_global_wrapper_stencil_op_hcompute_f5_0_stencil_read.0","add_all__U32.in1"],
+          ["add_all__U33.in0","add_all__U32.out"],
+          ["self.hw_twi_global_wrapper_stencil_op_hcompute_f5_0_stencil_read.1","add_all__U33.in1"],
+          ["add_all__U34.in0","add_all__U33.out"],
+          ["self.hw_twi_global_wrapper_stencil_op_hcompute_f5_0_stencil_read.2","add_all__U34.in1"],
+          ["add_all__U35.in0","add_all__U34.out"],
+          ["self.hw_twi_global_wrapper_stencil_op_hcompute_f5_0_stencil_read.3","add_all__U35.in1"],
+          ["self.f5_0_stencil_op_hcompute_f5_0_stencil_write.0","add_all__U35.out"],
           ["self.valid_pass_out","self.valid_pass_in"]
         ]
       },
@@ -2188,10 +2188,6 @@
           ["f5_1_stencil_op_hcompute_f5_1_stencil_write",["Array",1,["Array",16,"Bit"]]]
         ]],
         "instances":{
-          "add_all__U35":{
-            "genref":"coreir.add",
-            "genargs":{"width":["Int",16]}
-          },
           "add_all__U36":{
             "genref":"coreir.add",
             "genargs":{"width":["Int",16]}
@@ -2215,24 +2211,28 @@
           "add_all__U41":{
             "genref":"coreir.add",
             "genargs":{"width":["Int",16]}
+          },
+          "add_all__U42":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
           }
         },
         "connections":[
-          ["self.f4_0_stencil_op_hcompute_f5_1_stencil_read.0","add_all__U35.in0"],
-          ["self.f4_0_stencil_op_hcompute_f5_1_stencil_read.1","add_all__U35.in1"],
-          ["add_all__U36.in0","add_all__U35.out"],
-          ["self.f4_1_stencil_op_hcompute_f5_1_stencil_read.0","add_all__U36.in1"],
+          ["self.f4_0_stencil_op_hcompute_f5_1_stencil_read.0","add_all__U36.in0"],
+          ["self.f4_0_stencil_op_hcompute_f5_1_stencil_read.1","add_all__U36.in1"],
           ["add_all__U37.in0","add_all__U36.out"],
-          ["self.f4_1_stencil_op_hcompute_f5_1_stencil_read.1","add_all__U37.in1"],
+          ["self.f4_1_stencil_op_hcompute_f5_1_stencil_read.0","add_all__U37.in1"],
           ["add_all__U38.in0","add_all__U37.out"],
-          ["self.hw_twi_global_wrapper_stencil_op_hcompute_f5_1_stencil_read.0","add_all__U38.in1"],
+          ["self.f4_1_stencil_op_hcompute_f5_1_stencil_read.1","add_all__U38.in1"],
           ["add_all__U39.in0","add_all__U38.out"],
-          ["self.hw_twi_global_wrapper_stencil_op_hcompute_f5_1_stencil_read.1","add_all__U39.in1"],
+          ["self.hw_twi_global_wrapper_stencil_op_hcompute_f5_1_stencil_read.0","add_all__U39.in1"],
           ["add_all__U40.in0","add_all__U39.out"],
-          ["self.hw_twi_global_wrapper_stencil_op_hcompute_f5_1_stencil_read.2","add_all__U40.in1"],
+          ["self.hw_twi_global_wrapper_stencil_op_hcompute_f5_1_stencil_read.1","add_all__U40.in1"],
           ["add_all__U41.in0","add_all__U40.out"],
-          ["self.hw_twi_global_wrapper_stencil_op_hcompute_f5_1_stencil_read.3","add_all__U41.in1"],
-          ["self.f5_1_stencil_op_hcompute_f5_1_stencil_write.0","add_all__U41.out"],
+          ["self.hw_twi_global_wrapper_stencil_op_hcompute_f5_1_stencil_read.2","add_all__U41.in1"],
+          ["add_all__U42.in0","add_all__U41.out"],
+          ["self.hw_twi_global_wrapper_stencil_op_hcompute_f5_1_stencil_read.3","add_all__U42.in1"],
+          ["self.f5_1_stencil_op_hcompute_f5_1_stencil_write.0","add_all__U42.out"],
           ["self.valid_pass_out","self.valid_pass_in"]
         ]
       },
@@ -2260,15 +2260,15 @@
           ["hw_output_stencil_op_hcompute_hw_output_stencil_write",["Array",1,["Array",16,"Bit"]]]
         ]],
         "instances":{
-          "add_all__U42":{
+          "add_all__U28":{
             "genref":"coreir.add",
             "genargs":{"width":["Int",16]}
           }
         },
         "connections":[
-          ["self.f5_0_stencil_op_hcompute_hw_output_stencil_read.0","add_all__U42.in0"],
-          ["self.f5_1_stencil_op_hcompute_hw_output_stencil_read.0","add_all__U42.in1"],
-          ["self.hw_output_stencil_op_hcompute_hw_output_stencil_write.0","add_all__U42.out"],
+          ["self.f5_0_stencil_op_hcompute_hw_output_stencil_read.0","add_all__U28.in0"],
+          ["self.f5_1_stencil_op_hcompute_hw_output_stencil_read.0","add_all__U28.in1"],
+          ["self.hw_output_stencil_op_hcompute_hw_output_stencil_write.0","add_all__U28.out"],
           ["self.valid_pass_out","self.valid_pass_in"]
         ]
       },
@@ -2301,7 +2301,7 @@
           "ub_f3_0_stencil_BANK_0":{
             "genref":"cgralib.Pond_amber",
             "genargs":{"ID":["String","_U43"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
-            "metadata":{"config":{"in2regfile_0":{"cycle_starting_addr":[64],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"write_data_starting_addr":[0],"write_data_stride":[1,4]},"regfile2out_0":{"cycle_starting_addr":[78],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[0],"read_data_stride":[2,1]}},"mode":"pond"}
+            "metadata":{"config":{"in2regfile_0":{"cycle_starting_addr":[64],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"write_data_starting_addr":[0],"write_data_stride":[1,4]},"regfile2out_0":{"cycle_starting_addr":[79],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[1],"read_data_stride":[2,31]}},"mode":"pond"}
           },
           "ub_f3_0_stencil_BANK_0_clk_en_const":{
             "modref":"corebit.const",
@@ -2310,7 +2310,7 @@
           "ub_f3_0_stencil_BANK_1":{
             "genref":"cgralib.Pond_amber",
             "genargs":{"ID":["String","_U44"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
-            "metadata":{"config":{"in2regfile_0":{"cycle_starting_addr":[64],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"write_data_starting_addr":[0],"write_data_stride":[1,4]},"regfile2out_0":{"cycle_starting_addr":[78],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[1],"read_data_stride":[2,31]}},"mode":"pond"}
+            "metadata":{"config":{"in2regfile_0":{"cycle_starting_addr":[64],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"write_data_starting_addr":[0],"write_data_stride":[1,4]},"regfile2out_0":{"cycle_starting_addr":[79],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[0],"read_data_stride":[2,1]}},"mode":"pond"}
           },
           "ub_f3_0_stencil_BANK_1_clk_en_const":{
             "modref":"corebit.const",
@@ -2319,7 +2319,7 @@
           "ub_f3_0_stencil_BANK_2":{
             "genref":"cgralib.Pond_amber",
             "genargs":{"ID":["String","_U45"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
-            "metadata":{"config":{"in2regfile_0":{"cycle_starting_addr":[64],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"write_data_starting_addr":[0],"write_data_stride":[1,4]},"regfile2out_0":{"cycle_starting_addr":[79],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[0],"read_data_stride":[2,1]}},"mode":"pond"}
+            "metadata":{"config":{"in2regfile_0":{"cycle_starting_addr":[64],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"write_data_starting_addr":[0],"write_data_stride":[1,4]},"regfile2out_0":{"cycle_starting_addr":[78],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[1],"read_data_stride":[2,31]}},"mode":"pond"}
           },
           "ub_f3_0_stencil_BANK_2_clk_en_const":{
             "modref":"corebit.const",
@@ -2328,7 +2328,7 @@
           "ub_f3_0_stencil_BANK_3":{
             "genref":"cgralib.Pond_amber",
             "genargs":{"ID":["String","_U46"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
-            "metadata":{"config":{"in2regfile_0":{"cycle_starting_addr":[64],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"write_data_starting_addr":[0],"write_data_stride":[1,4]},"regfile2out_0":{"cycle_starting_addr":[79],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[1],"read_data_stride":[2,31]}},"mode":"pond"}
+            "metadata":{"config":{"in2regfile_0":{"cycle_starting_addr":[64],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"write_data_starting_addr":[0],"write_data_stride":[1,4]},"regfile2out_0":{"cycle_starting_addr":[78],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[0],"read_data_stride":[2,1]}},"mode":"pond"}
           },
           "ub_f3_0_stencil_BANK_3_clk_en_const":{
             "modref":"corebit.const",
@@ -2344,10 +2344,10 @@
           ["ub_f3_0_stencil_BANK_1.data_in_pond_0","self.op_hcompute_f3_0_stencil_write.0"],
           ["ub_f3_0_stencil_BANK_2.data_in_pond_0","self.op_hcompute_f3_0_stencil_write.0"],
           ["ub_f3_0_stencil_BANK_3.data_in_pond_0","self.op_hcompute_f3_0_stencil_write.0"],
-          ["ub_f3_0_stencil_BANK_0.data_out_pond_0","self.op_hcompute_f4_0_stencil_read.0"],
-          ["ub_f3_0_stencil_BANK_1.data_out_pond_0","self.op_hcompute_f4_0_stencil_read.1"],
-          ["ub_f3_0_stencil_BANK_2.data_out_pond_0","self.op_hcompute_f4_1_stencil_read.0"],
-          ["ub_f3_0_stencil_BANK_3.data_out_pond_0","self.op_hcompute_f4_1_stencil_read.1"],
+          ["ub_f3_0_stencil_BANK_3.data_out_pond_0","self.op_hcompute_f4_0_stencil_read.0"],
+          ["ub_f3_0_stencil_BANK_2.data_out_pond_0","self.op_hcompute_f4_0_stencil_read.1"],
+          ["ub_f3_0_stencil_BANK_1.data_out_pond_0","self.op_hcompute_f4_1_stencil_read.0"],
+          ["ub_f3_0_stencil_BANK_0.data_out_pond_0","self.op_hcompute_f4_1_stencil_read.1"],
           ["ub_f3_0_stencil_BANK_0.flush","self.reset"],
           ["ub_f3_0_stencil_BANK_1.flush","self.reset"],
           ["ub_f3_0_stencil_BANK_2.flush","self.reset"],
@@ -2378,7 +2378,7 @@
           "ub_f3_1_stencil_BANK_0":{
             "genref":"cgralib.Pond_amber",
             "genargs":{"ID":["String","_U47"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
-            "metadata":{"config":{"in2regfile_0":{"cycle_starting_addr":[65],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"write_data_starting_addr":[0],"write_data_stride":[1,4]},"regfile2out_0":{"cycle_starting_addr":[78],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[0],"read_data_stride":[2,1]}},"mode":"pond"}
+            "metadata":{"config":{"in2regfile_0":{"cycle_starting_addr":[65],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"write_data_starting_addr":[0],"write_data_stride":[1,4]},"regfile2out_0":{"cycle_starting_addr":[79],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[1],"read_data_stride":[2,31]}},"mode":"pond"}
           },
           "ub_f3_1_stencil_BANK_0_clk_en_const":{
             "modref":"corebit.const",
@@ -2387,7 +2387,7 @@
           "ub_f3_1_stencil_BANK_1":{
             "genref":"cgralib.Pond_amber",
             "genargs":{"ID":["String","_U48"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
-            "metadata":{"config":{"in2regfile_0":{"cycle_starting_addr":[65],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"write_data_starting_addr":[0],"write_data_stride":[1,4]},"regfile2out_0":{"cycle_starting_addr":[78],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[1],"read_data_stride":[2,31]}},"mode":"pond"}
+            "metadata":{"config":{"in2regfile_0":{"cycle_starting_addr":[65],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"write_data_starting_addr":[0],"write_data_stride":[1,4]},"regfile2out_0":{"cycle_starting_addr":[79],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[0],"read_data_stride":[2,1]}},"mode":"pond"}
           },
           "ub_f3_1_stencil_BANK_1_clk_en_const":{
             "modref":"corebit.const",
@@ -2396,7 +2396,7 @@
           "ub_f3_1_stencil_BANK_2":{
             "genref":"cgralib.Pond_amber",
             "genargs":{"ID":["String","_U49"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
-            "metadata":{"config":{"in2regfile_0":{"cycle_starting_addr":[65],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"write_data_starting_addr":[0],"write_data_stride":[1,4]},"regfile2out_0":{"cycle_starting_addr":[79],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[0],"read_data_stride":[2,1]}},"mode":"pond"}
+            "metadata":{"config":{"in2regfile_0":{"cycle_starting_addr":[65],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"write_data_starting_addr":[0],"write_data_stride":[1,4]},"regfile2out_0":{"cycle_starting_addr":[78],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[1],"read_data_stride":[2,31]}},"mode":"pond"}
           },
           "ub_f3_1_stencil_BANK_2_clk_en_const":{
             "modref":"corebit.const",
@@ -2405,7 +2405,7 @@
           "ub_f3_1_stencil_BANK_3":{
             "genref":"cgralib.Pond_amber",
             "genargs":{"ID":["String","_U50"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
-            "metadata":{"config":{"in2regfile_0":{"cycle_starting_addr":[65],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"write_data_starting_addr":[0],"write_data_stride":[1,4]},"regfile2out_0":{"cycle_starting_addr":[79],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[1],"read_data_stride":[2,31]}},"mode":"pond"}
+            "metadata":{"config":{"in2regfile_0":{"cycle_starting_addr":[65],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"write_data_starting_addr":[0],"write_data_stride":[1,4]},"regfile2out_0":{"cycle_starting_addr":[78],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[0],"read_data_stride":[2,1]}},"mode":"pond"}
           },
           "ub_f3_1_stencil_BANK_3_clk_en_const":{
             "modref":"corebit.const",
@@ -2421,10 +2421,10 @@
           ["ub_f3_1_stencil_BANK_1.data_in_pond_0","self.op_hcompute_f3_1_stencil_write.0"],
           ["ub_f3_1_stencil_BANK_2.data_in_pond_0","self.op_hcompute_f3_1_stencil_write.0"],
           ["ub_f3_1_stencil_BANK_3.data_in_pond_0","self.op_hcompute_f3_1_stencil_write.0"],
-          ["ub_f3_1_stencil_BANK_0.data_out_pond_0","self.op_hcompute_f4_0_stencil_read.0"],
-          ["ub_f3_1_stencil_BANK_1.data_out_pond_0","self.op_hcompute_f4_0_stencil_read.1"],
-          ["ub_f3_1_stencil_BANK_2.data_out_pond_0","self.op_hcompute_f4_1_stencil_read.0"],
-          ["ub_f3_1_stencil_BANK_3.data_out_pond_0","self.op_hcompute_f4_1_stencil_read.1"],
+          ["ub_f3_1_stencil_BANK_3.data_out_pond_0","self.op_hcompute_f4_0_stencil_read.0"],
+          ["ub_f3_1_stencil_BANK_2.data_out_pond_0","self.op_hcompute_f4_0_stencil_read.1"],
+          ["ub_f3_1_stencil_BANK_1.data_out_pond_0","self.op_hcompute_f4_1_stencil_read.0"],
+          ["ub_f3_1_stencil_BANK_0.data_out_pond_0","self.op_hcompute_f4_1_stencil_read.1"],
           ["ub_f3_1_stencil_BANK_0.flush","self.reset"],
           ["ub_f3_1_stencil_BANK_1.flush","self.reset"],
           ["ub_f3_1_stencil_BANK_2.flush","self.reset"],
@@ -2455,7 +2455,7 @@
           "ub_f4_0_stencil_BANK_0":{
             "genref":"cgralib.Pond_amber",
             "genargs":{"ID":["String","_U51"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
-            "metadata":{"config":{"in2regfile_0":{"cycle_starting_addr":[78],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"write_data_starting_addr":[0],"write_data_stride":[1,4]},"regfile2out_0":{"cycle_starting_addr":[92],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[0],"read_data_stride":[2,1]}},"mode":"pond"}
+            "metadata":{"config":{"in2regfile_0":{"cycle_starting_addr":[78],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"write_data_starting_addr":[0],"write_data_stride":[1,4]},"regfile2out_0":{"cycle_starting_addr":[93],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[1],"read_data_stride":[2,31]}},"mode":"pond"}
           },
           "ub_f4_0_stencil_BANK_0_clk_en_const":{
             "modref":"corebit.const",
@@ -2464,7 +2464,7 @@
           "ub_f4_0_stencil_BANK_1":{
             "genref":"cgralib.Pond_amber",
             "genargs":{"ID":["String","_U52"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
-            "metadata":{"config":{"in2regfile_0":{"cycle_starting_addr":[78],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"write_data_starting_addr":[0],"write_data_stride":[1,4]},"regfile2out_0":{"cycle_starting_addr":[92],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[1],"read_data_stride":[2,31]}},"mode":"pond"}
+            "metadata":{"config":{"in2regfile_0":{"cycle_starting_addr":[78],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"write_data_starting_addr":[0],"write_data_stride":[1,4]},"regfile2out_0":{"cycle_starting_addr":[93],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[0],"read_data_stride":[2,1]}},"mode":"pond"}
           },
           "ub_f4_0_stencil_BANK_1_clk_en_const":{
             "modref":"corebit.const",
@@ -2473,7 +2473,7 @@
           "ub_f4_0_stencil_BANK_2":{
             "genref":"cgralib.Pond_amber",
             "genargs":{"ID":["String","_U53"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
-            "metadata":{"config":{"in2regfile_0":{"cycle_starting_addr":[78],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"write_data_starting_addr":[0],"write_data_stride":[1,4]},"regfile2out_0":{"cycle_starting_addr":[93],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[0],"read_data_stride":[2,1]}},"mode":"pond"}
+            "metadata":{"config":{"in2regfile_0":{"cycle_starting_addr":[78],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"write_data_starting_addr":[0],"write_data_stride":[1,4]},"regfile2out_0":{"cycle_starting_addr":[92],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[1],"read_data_stride":[2,31]}},"mode":"pond"}
           },
           "ub_f4_0_stencil_BANK_2_clk_en_const":{
             "modref":"corebit.const",
@@ -2482,7 +2482,7 @@
           "ub_f4_0_stencil_BANK_3":{
             "genref":"cgralib.Pond_amber",
             "genargs":{"ID":["String","_U54"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
-            "metadata":{"config":{"in2regfile_0":{"cycle_starting_addr":[78],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"write_data_starting_addr":[0],"write_data_stride":[1,4]},"regfile2out_0":{"cycle_starting_addr":[93],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[1],"read_data_stride":[2,31]}},"mode":"pond"}
+            "metadata":{"config":{"in2regfile_0":{"cycle_starting_addr":[78],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"write_data_starting_addr":[0],"write_data_stride":[1,4]},"regfile2out_0":{"cycle_starting_addr":[92],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[0],"read_data_stride":[2,1]}},"mode":"pond"}
           },
           "ub_f4_0_stencil_BANK_3_clk_en_const":{
             "modref":"corebit.const",
@@ -2498,10 +2498,10 @@
           ["ub_f4_0_stencil_BANK_1.data_in_pond_0","self.op_hcompute_f4_0_stencil_write.0"],
           ["ub_f4_0_stencil_BANK_2.data_in_pond_0","self.op_hcompute_f4_0_stencil_write.0"],
           ["ub_f4_0_stencil_BANK_3.data_in_pond_0","self.op_hcompute_f4_0_stencil_write.0"],
-          ["ub_f4_0_stencil_BANK_0.data_out_pond_0","self.op_hcompute_f5_0_stencil_read.0"],
-          ["ub_f4_0_stencil_BANK_1.data_out_pond_0","self.op_hcompute_f5_0_stencil_read.1"],
-          ["ub_f4_0_stencil_BANK_2.data_out_pond_0","self.op_hcompute_f5_1_stencil_read.0"],
-          ["ub_f4_0_stencil_BANK_3.data_out_pond_0","self.op_hcompute_f5_1_stencil_read.1"],
+          ["ub_f4_0_stencil_BANK_3.data_out_pond_0","self.op_hcompute_f5_0_stencil_read.0"],
+          ["ub_f4_0_stencil_BANK_2.data_out_pond_0","self.op_hcompute_f5_0_stencil_read.1"],
+          ["ub_f4_0_stencil_BANK_1.data_out_pond_0","self.op_hcompute_f5_1_stencil_read.0"],
+          ["ub_f4_0_stencil_BANK_0.data_out_pond_0","self.op_hcompute_f5_1_stencil_read.1"],
           ["ub_f4_0_stencil_BANK_0.flush","self.reset"],
           ["ub_f4_0_stencil_BANK_1.flush","self.reset"],
           ["ub_f4_0_stencil_BANK_2.flush","self.reset"],
@@ -2532,7 +2532,7 @@
           "ub_f4_1_stencil_BANK_0":{
             "genref":"cgralib.Pond_amber",
             "genargs":{"ID":["String","_U55"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
-            "metadata":{"config":{"in2regfile_0":{"cycle_starting_addr":[79],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"write_data_starting_addr":[0],"write_data_stride":[1,4]},"regfile2out_0":{"cycle_starting_addr":[92],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[0],"read_data_stride":[2,1]}},"mode":"pond"}
+            "metadata":{"config":{"in2regfile_0":{"cycle_starting_addr":[79],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"write_data_starting_addr":[0],"write_data_stride":[1,4]},"regfile2out_0":{"cycle_starting_addr":[93],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[1],"read_data_stride":[2,31]}},"mode":"pond"}
           },
           "ub_f4_1_stencil_BANK_0_clk_en_const":{
             "modref":"corebit.const",
@@ -2541,7 +2541,7 @@
           "ub_f4_1_stencil_BANK_1":{
             "genref":"cgralib.Pond_amber",
             "genargs":{"ID":["String","_U56"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
-            "metadata":{"config":{"in2regfile_0":{"cycle_starting_addr":[79],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"write_data_starting_addr":[0],"write_data_stride":[1,4]},"regfile2out_0":{"cycle_starting_addr":[92],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[1],"read_data_stride":[2,31]}},"mode":"pond"}
+            "metadata":{"config":{"in2regfile_0":{"cycle_starting_addr":[79],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"write_data_starting_addr":[0],"write_data_stride":[1,4]},"regfile2out_0":{"cycle_starting_addr":[93],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[0],"read_data_stride":[2,1]}},"mode":"pond"}
           },
           "ub_f4_1_stencil_BANK_1_clk_en_const":{
             "modref":"corebit.const",
@@ -2550,7 +2550,7 @@
           "ub_f4_1_stencil_BANK_2":{
             "genref":"cgralib.Pond_amber",
             "genargs":{"ID":["String","_U57"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
-            "metadata":{"config":{"in2regfile_0":{"cycle_starting_addr":[79],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"write_data_starting_addr":[0],"write_data_stride":[1,4]},"regfile2out_0":{"cycle_starting_addr":[93],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[0],"read_data_stride":[2,1]}},"mode":"pond"}
+            "metadata":{"config":{"in2regfile_0":{"cycle_starting_addr":[79],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"write_data_starting_addr":[0],"write_data_stride":[1,4]},"regfile2out_0":{"cycle_starting_addr":[92],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[1],"read_data_stride":[2,31]}},"mode":"pond"}
           },
           "ub_f4_1_stencil_BANK_2_clk_en_const":{
             "modref":"corebit.const",
@@ -2559,7 +2559,7 @@
           "ub_f4_1_stencil_BANK_3":{
             "genref":"cgralib.Pond_amber",
             "genargs":{"ID":["String","_U58"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
-            "metadata":{"config":{"in2regfile_0":{"cycle_starting_addr":[79],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"write_data_starting_addr":[0],"write_data_stride":[1,4]},"regfile2out_0":{"cycle_starting_addr":[93],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[1],"read_data_stride":[2,31]}},"mode":"pond"}
+            "metadata":{"config":{"in2regfile_0":{"cycle_starting_addr":[79],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"write_data_starting_addr":[0],"write_data_stride":[1,4]},"regfile2out_0":{"cycle_starting_addr":[92],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[0],"read_data_stride":[2,1]}},"mode":"pond"}
           },
           "ub_f4_1_stencil_BANK_3_clk_en_const":{
             "modref":"corebit.const",
@@ -2575,10 +2575,10 @@
           ["ub_f4_1_stencil_BANK_1.data_in_pond_0","self.op_hcompute_f4_1_stencil_write.0"],
           ["ub_f4_1_stencil_BANK_2.data_in_pond_0","self.op_hcompute_f4_1_stencil_write.0"],
           ["ub_f4_1_stencil_BANK_3.data_in_pond_0","self.op_hcompute_f4_1_stencil_write.0"],
-          ["ub_f4_1_stencil_BANK_0.data_out_pond_0","self.op_hcompute_f5_0_stencil_read.0"],
-          ["ub_f4_1_stencil_BANK_1.data_out_pond_0","self.op_hcompute_f5_0_stencil_read.1"],
-          ["ub_f4_1_stencil_BANK_2.data_out_pond_0","self.op_hcompute_f5_1_stencil_read.0"],
-          ["ub_f4_1_stencil_BANK_3.data_out_pond_0","self.op_hcompute_f5_1_stencil_read.1"],
+          ["ub_f4_1_stencil_BANK_3.data_out_pond_0","self.op_hcompute_f5_0_stencil_read.0"],
+          ["ub_f4_1_stencil_BANK_2.data_out_pond_0","self.op_hcompute_f5_0_stencil_read.1"],
+          ["ub_f4_1_stencil_BANK_1.data_out_pond_0","self.op_hcompute_f5_1_stencil_read.0"],
+          ["ub_f4_1_stencil_BANK_0.data_out_pond_0","self.op_hcompute_f5_1_stencil_read.1"],
           ["ub_f4_1_stencil_BANK_0.flush","self.reset"],
           ["ub_f4_1_stencil_BANK_1.flush","self.reset"],
           ["ub_f4_1_stencil_BANK_2.flush","self.reset"],
@@ -3139,7 +3139,7 @@
           "ub_hw_input_global_wrapper_stencil_BANK_0":{
             "genref":"cgralib.Pond_amber",
             "genargs":{"ID":["String","_U61"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
-            "metadata":{"config":{"in2regfile_0":{"cycle_starting_addr":[48],"cycle_stride":[1],"dimensionality":1,"extent":[8],"write_data_starting_addr":[0],"write_data_stride":[1]},"regfile2out_0":{"cycle_starting_addr":[64],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[0],"read_data_stride":[2,1]}},"mode":"pond"}
+            "metadata":{"config":{"in2regfile_0":{"cycle_starting_addr":[56],"cycle_stride":[1],"dimensionality":1,"extent":[8],"write_data_starting_addr":[0],"write_data_stride":[1]},"regfile2out_0":{"cycle_starting_addr":[64],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[0],"read_data_stride":[2,1]}},"mode":"pond"}
           },
           "ub_hw_input_global_wrapper_stencil_BANK_0_clk_en_const":{
             "modref":"corebit.const",
@@ -3148,7 +3148,7 @@
           "ub_hw_input_global_wrapper_stencil_BANK_1":{
             "genref":"cgralib.Pond_amber",
             "genargs":{"ID":["String","_U62"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
-            "metadata":{"config":{"in2regfile_0":{"cycle_starting_addr":[48],"cycle_stride":[1],"dimensionality":1,"extent":[8],"write_data_starting_addr":[0],"write_data_stride":[1]},"regfile2out_0":{"cycle_starting_addr":[64],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[1],"read_data_stride":[2,31]}},"mode":"pond"}
+            "metadata":{"config":{"in2regfile_0":{"cycle_starting_addr":[56],"cycle_stride":[1],"dimensionality":1,"extent":[8],"write_data_starting_addr":[0],"write_data_stride":[1]},"regfile2out_0":{"cycle_starting_addr":[64],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[1],"read_data_stride":[2,31]}},"mode":"pond"}
           },
           "ub_hw_input_global_wrapper_stencil_BANK_1_clk_en_const":{
             "modref":"corebit.const",
@@ -3157,7 +3157,7 @@
           "ub_hw_input_global_wrapper_stencil_BANK_2":{
             "genref":"cgralib.Pond_amber",
             "genargs":{"ID":["String","_U63"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
-            "metadata":{"config":{"in2regfile_0":{"cycle_starting_addr":[48],"cycle_stride":[1],"dimensionality":1,"extent":[8],"write_data_starting_addr":[0],"write_data_stride":[1]},"regfile2out_0":{"cycle_starting_addr":[65],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[0],"read_data_stride":[2,1]}},"mode":"pond"}
+            "metadata":{"config":{"in2regfile_0":{"cycle_starting_addr":[56],"cycle_stride":[1],"dimensionality":1,"extent":[8],"write_data_starting_addr":[0],"write_data_stride":[1]},"regfile2out_0":{"cycle_starting_addr":[65],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[0],"read_data_stride":[2,1]}},"mode":"pond"}
           },
           "ub_hw_input_global_wrapper_stencil_BANK_2_clk_en_const":{
             "modref":"corebit.const",
@@ -3166,7 +3166,7 @@
           "ub_hw_input_global_wrapper_stencil_BANK_3":{
             "genref":"cgralib.Pond_amber",
             "genargs":{"ID":["String","_U64"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
-            "metadata":{"config":{"in2regfile_0":{"cycle_starting_addr":[48],"cycle_stride":[1],"dimensionality":1,"extent":[8],"write_data_starting_addr":[0],"write_data_stride":[1]},"regfile2out_0":{"cycle_starting_addr":[65],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[1],"read_data_stride":[2,31]}},"mode":"pond"}
+            "metadata":{"config":{"in2regfile_0":{"cycle_starting_addr":[56],"cycle_stride":[1],"dimensionality":1,"extent":[8],"write_data_starting_addr":[0],"write_data_stride":[1]},"regfile2out_0":{"cycle_starting_addr":[65],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[1],"read_data_stride":[2,31]}},"mode":"pond"}
           },
           "ub_hw_input_global_wrapper_stencil_BANK_3_clk_en_const":{
             "modref":"corebit.const",
@@ -3175,7 +3175,7 @@
           "ub_hw_input_global_wrapper_stencil_BANK_4":{
             "genref":"cgralib.Pond_amber",
             "genargs":{"ID":["String","_U65"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
-            "metadata":{"config":{"in2regfile_0":{"cycle_starting_addr":[56],"cycle_stride":[1],"dimensionality":1,"extent":[8],"write_data_starting_addr":[0],"write_data_stride":[1]},"regfile2out_0":{"cycle_starting_addr":[64],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[0],"read_data_stride":[2,1]}},"mode":"pond"}
+            "metadata":{"config":{"in2regfile_0":{"cycle_starting_addr":[48],"cycle_stride":[1],"dimensionality":1,"extent":[8],"write_data_starting_addr":[0],"write_data_stride":[1]},"regfile2out_0":{"cycle_starting_addr":[65],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[1],"read_data_stride":[2,31]}},"mode":"pond"}
           },
           "ub_hw_input_global_wrapper_stencil_BANK_4_clk_en_const":{
             "modref":"corebit.const",
@@ -3184,7 +3184,7 @@
           "ub_hw_input_global_wrapper_stencil_BANK_5":{
             "genref":"cgralib.Pond_amber",
             "genargs":{"ID":["String","_U66"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
-            "metadata":{"config":{"in2regfile_0":{"cycle_starting_addr":[56],"cycle_stride":[1],"dimensionality":1,"extent":[8],"write_data_starting_addr":[0],"write_data_stride":[1]},"regfile2out_0":{"cycle_starting_addr":[64],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[1],"read_data_stride":[2,31]}},"mode":"pond"}
+            "metadata":{"config":{"in2regfile_0":{"cycle_starting_addr":[48],"cycle_stride":[1],"dimensionality":1,"extent":[8],"write_data_starting_addr":[0],"write_data_stride":[1]},"regfile2out_0":{"cycle_starting_addr":[65],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[0],"read_data_stride":[2,1]}},"mode":"pond"}
           },
           "ub_hw_input_global_wrapper_stencil_BANK_5_clk_en_const":{
             "modref":"corebit.const",
@@ -3193,7 +3193,7 @@
           "ub_hw_input_global_wrapper_stencil_BANK_6":{
             "genref":"cgralib.Pond_amber",
             "genargs":{"ID":["String","_U67"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
-            "metadata":{"config":{"in2regfile_0":{"cycle_starting_addr":[56],"cycle_stride":[1],"dimensionality":1,"extent":[8],"write_data_starting_addr":[0],"write_data_stride":[1]},"regfile2out_0":{"cycle_starting_addr":[65],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[0],"read_data_stride":[2,1]}},"mode":"pond"}
+            "metadata":{"config":{"in2regfile_0":{"cycle_starting_addr":[48],"cycle_stride":[1],"dimensionality":1,"extent":[8],"write_data_starting_addr":[0],"write_data_stride":[1]},"regfile2out_0":{"cycle_starting_addr":[64],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[1],"read_data_stride":[2,31]}},"mode":"pond"}
           },
           "ub_hw_input_global_wrapper_stencil_BANK_6_clk_en_const":{
             "modref":"corebit.const",
@@ -3202,7 +3202,7 @@
           "ub_hw_input_global_wrapper_stencil_BANK_7":{
             "genref":"cgralib.Pond_amber",
             "genargs":{"ID":["String","_U68"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
-            "metadata":{"config":{"in2regfile_0":{"cycle_starting_addr":[56],"cycle_stride":[1],"dimensionality":1,"extent":[8],"write_data_starting_addr":[0],"write_data_stride":[1]},"regfile2out_0":{"cycle_starting_addr":[65],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[1],"read_data_stride":[2,31]}},"mode":"pond"}
+            "metadata":{"config":{"in2regfile_0":{"cycle_starting_addr":[48],"cycle_stride":[1],"dimensionality":1,"extent":[8],"write_data_starting_addr":[0],"write_data_stride":[1]},"regfile2out_0":{"cycle_starting_addr":[64],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[0],"read_data_stride":[2,1]}},"mode":"pond"}
           },
           "ub_hw_input_global_wrapper_stencil_BANK_7_clk_en_const":{
             "modref":"corebit.const",
@@ -3218,14 +3218,14 @@
           ["ub_hw_input_global_wrapper_stencil_BANK_5.clk","self.clk"],
           ["ub_hw_input_global_wrapper_stencil_BANK_6.clk","self.clk"],
           ["ub_hw_input_global_wrapper_stencil_BANK_7.clk","self.clk"],
-          ["ub_hw_input_global_wrapper_stencil_BANK_0.data_out_pond_0","self.op_hcompute_f3_0_stencil_read.0"],
-          ["ub_hw_input_global_wrapper_stencil_BANK_4.data_out_pond_0","self.op_hcompute_f3_0_stencil_read.1"],
-          ["ub_hw_input_global_wrapper_stencil_BANK_1.data_out_pond_0","self.op_hcompute_f3_0_stencil_read.2"],
-          ["ub_hw_input_global_wrapper_stencil_BANK_5.data_out_pond_0","self.op_hcompute_f3_0_stencil_read.3"],
-          ["ub_hw_input_global_wrapper_stencil_BANK_2.data_out_pond_0","self.op_hcompute_f3_1_stencil_read.0"],
-          ["ub_hw_input_global_wrapper_stencil_BANK_6.data_out_pond_0","self.op_hcompute_f3_1_stencil_read.1"],
-          ["ub_hw_input_global_wrapper_stencil_BANK_3.data_out_pond_0","self.op_hcompute_f3_1_stencil_read.2"],
-          ["ub_hw_input_global_wrapper_stencil_BANK_7.data_out_pond_0","self.op_hcompute_f3_1_stencil_read.3"],
+          ["ub_hw_input_global_wrapper_stencil_BANK_7.data_out_pond_0","self.op_hcompute_f3_0_stencil_read.0"],
+          ["ub_hw_input_global_wrapper_stencil_BANK_0.data_out_pond_0","self.op_hcompute_f3_0_stencil_read.1"],
+          ["ub_hw_input_global_wrapper_stencil_BANK_6.data_out_pond_0","self.op_hcompute_f3_0_stencil_read.2"],
+          ["ub_hw_input_global_wrapper_stencil_BANK_1.data_out_pond_0","self.op_hcompute_f3_0_stencil_read.3"],
+          ["ub_hw_input_global_wrapper_stencil_BANK_5.data_out_pond_0","self.op_hcompute_f3_1_stencil_read.0"],
+          ["ub_hw_input_global_wrapper_stencil_BANK_2.data_out_pond_0","self.op_hcompute_f3_1_stencil_read.1"],
+          ["ub_hw_input_global_wrapper_stencil_BANK_4.data_out_pond_0","self.op_hcompute_f3_1_stencil_read.2"],
+          ["ub_hw_input_global_wrapper_stencil_BANK_3.data_out_pond_0","self.op_hcompute_f3_1_stencil_read.3"],
           ["ub_hw_input_global_wrapper_stencil_BANK_0.data_in_pond_0","self.op_hcompute_hw_input_global_wrapper_stencil_write.0"],
           ["ub_hw_input_global_wrapper_stencil_BANK_1.data_in_pond_0","self.op_hcompute_hw_input_global_wrapper_stencil_write.0"],
           ["ub_hw_input_global_wrapper_stencil_BANK_2.data_in_pond_0","self.op_hcompute_hw_input_global_wrapper_stencil_write.0"],
@@ -3284,7 +3284,7 @@
           "ub_hw_twi_global_wrapper_stencil_BANK_0":{
             "genref":"cgralib.Pond_amber",
             "genargs":{"ID":["String","_U69"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
-            "metadata":{"config":{"in2regfile_0":{"cycle_starting_addr":[0],"cycle_stride":[1],"dimensionality":1,"extent":[8],"write_data_starting_addr":[0],"write_data_stride":[1]},"regfile2out_0":{"cycle_starting_addr":[64],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[0],"read_data_stride":[2,1]}},"mode":"pond"}
+            "metadata":{"config":{"in2regfile_0":{"cycle_starting_addr":[16],"cycle_stride":[1],"dimensionality":1,"extent":[8],"write_data_starting_addr":[0],"write_data_stride":[1]},"regfile2out_0":{"cycle_starting_addr":[78],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[1],"read_data_stride":[2,31]}},"mode":"pond"}
           },
           "ub_hw_twi_global_wrapper_stencil_BANK_0_clk_en_const":{
             "modref":"corebit.const",
@@ -3293,12 +3293,12 @@
           "ub_hw_twi_global_wrapper_stencil_BANK_1":{
             "genref":"cgralib.Pond_amber",
             "genargs":{"ID":["String","_U70"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
-            "metadata":{"config":{"in2regfile_0":{"cycle_starting_addr":[0],"cycle_stride":[1],"dimensionality":1,"extent":[8],"write_data_starting_addr":[0],"write_data_stride":[1]},"regfile2out_0":{"cycle_starting_addr":[64],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[1],"read_data_stride":[2,31]}},"mode":"pond"}
+            "metadata":{"config":{"in2regfile_0":{"cycle_starting_addr":[16],"cycle_stride":[1],"dimensionality":1,"extent":[8],"write_data_starting_addr":[0],"write_data_stride":[1]},"regfile2out_0":{"cycle_starting_addr":[78],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[0],"read_data_stride":[2,1]}},"mode":"pond"}
           },
           "ub_hw_twi_global_wrapper_stencil_BANK_10":{
             "genref":"cgralib.Pond_amber",
             "genargs":{"ID":["String","_U79"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
-            "metadata":{"config":{"in2regfile_0":{"cycle_starting_addr":[32],"cycle_stride":[1],"dimensionality":1,"extent":[8],"write_data_starting_addr":[0],"write_data_stride":[1]},"regfile2out_0":{"cycle_starting_addr":[93],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[0],"read_data_stride":[2,1]}},"mode":"pond"}
+            "metadata":{"config":{"in2regfile_0":{"cycle_starting_addr":[8],"cycle_stride":[1],"dimensionality":1,"extent":[8],"write_data_starting_addr":[0],"write_data_stride":[1]},"regfile2out_0":{"cycle_starting_addr":[65],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[0],"read_data_stride":[2,1]}},"mode":"pond"}
           },
           "ub_hw_twi_global_wrapper_stencil_BANK_10_clk_en_const":{
             "modref":"corebit.const",
@@ -3307,7 +3307,7 @@
           "ub_hw_twi_global_wrapper_stencil_BANK_11":{
             "genref":"cgralib.Pond_amber",
             "genargs":{"ID":["String","_U80"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
-            "metadata":{"config":{"in2regfile_0":{"cycle_starting_addr":[32],"cycle_stride":[1],"dimensionality":1,"extent":[8],"write_data_starting_addr":[0],"write_data_stride":[1]},"regfile2out_0":{"cycle_starting_addr":[93],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[1],"read_data_stride":[2,31]}},"mode":"pond"}
+            "metadata":{"config":{"in2regfile_0":{"cycle_starting_addr":[8],"cycle_stride":[1],"dimensionality":1,"extent":[8],"write_data_starting_addr":[0],"write_data_stride":[1]},"regfile2out_0":{"cycle_starting_addr":[65],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[1],"read_data_stride":[2,31]}},"mode":"pond"}
           },
           "ub_hw_twi_global_wrapper_stencil_BANK_11_clk_en_const":{
             "modref":"corebit.const",
@@ -3316,7 +3316,7 @@
           "ub_hw_twi_global_wrapper_stencil_BANK_12":{
             "genref":"cgralib.Pond_amber",
             "genargs":{"ID":["String","_U81"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
-            "metadata":{"config":{"in2regfile_0":{"cycle_starting_addr":[8],"cycle_stride":[1],"dimensionality":1,"extent":[8],"write_data_starting_addr":[0],"write_data_stride":[1]},"regfile2out_0":{"cycle_starting_addr":[64],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[0],"read_data_stride":[2,1]}},"mode":"pond"}
+            "metadata":{"config":{"in2regfile_0":{"cycle_starting_addr":[24],"cycle_stride":[1],"dimensionality":1,"extent":[8],"write_data_starting_addr":[0],"write_data_stride":[1]},"regfile2out_0":{"cycle_starting_addr":[78],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[0],"read_data_stride":[2,1]}},"mode":"pond"}
           },
           "ub_hw_twi_global_wrapper_stencil_BANK_12_clk_en_const":{
             "modref":"corebit.const",
@@ -3325,7 +3325,7 @@
           "ub_hw_twi_global_wrapper_stencil_BANK_13":{
             "genref":"cgralib.Pond_amber",
             "genargs":{"ID":["String","_U82"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
-            "metadata":{"config":{"in2regfile_0":{"cycle_starting_addr":[8],"cycle_stride":[1],"dimensionality":1,"extent":[8],"write_data_starting_addr":[0],"write_data_stride":[1]},"regfile2out_0":{"cycle_starting_addr":[64],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[1],"read_data_stride":[2,31]}},"mode":"pond"}
+            "metadata":{"config":{"in2regfile_0":{"cycle_starting_addr":[24],"cycle_stride":[1],"dimensionality":1,"extent":[8],"write_data_starting_addr":[0],"write_data_stride":[1]},"regfile2out_0":{"cycle_starting_addr":[78],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[1],"read_data_stride":[2,31]}},"mode":"pond"}
           },
           "ub_hw_twi_global_wrapper_stencil_BANK_13_clk_en_const":{
             "modref":"corebit.const",
@@ -3334,7 +3334,7 @@
           "ub_hw_twi_global_wrapper_stencil_BANK_14":{
             "genref":"cgralib.Pond_amber",
             "genargs":{"ID":["String","_U83"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
-            "metadata":{"config":{"in2regfile_0":{"cycle_starting_addr":[8],"cycle_stride":[1],"dimensionality":1,"extent":[8],"write_data_starting_addr":[0],"write_data_stride":[1]},"regfile2out_0":{"cycle_starting_addr":[65],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[0],"read_data_stride":[2,1]}},"mode":"pond"}
+            "metadata":{"config":{"in2regfile_0":{"cycle_starting_addr":[24],"cycle_stride":[1],"dimensionality":1,"extent":[8],"write_data_starting_addr":[0],"write_data_stride":[1]},"regfile2out_0":{"cycle_starting_addr":[79],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[0],"read_data_stride":[2,1]}},"mode":"pond"}
           },
           "ub_hw_twi_global_wrapper_stencil_BANK_14_clk_en_const":{
             "modref":"corebit.const",
@@ -3343,7 +3343,7 @@
           "ub_hw_twi_global_wrapper_stencil_BANK_15":{
             "genref":"cgralib.Pond_amber",
             "genargs":{"ID":["String","_U84"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
-            "metadata":{"config":{"in2regfile_0":{"cycle_starting_addr":[8],"cycle_stride":[1],"dimensionality":1,"extent":[8],"write_data_starting_addr":[0],"write_data_stride":[1]},"regfile2out_0":{"cycle_starting_addr":[65],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[1],"read_data_stride":[2,31]}},"mode":"pond"}
+            "metadata":{"config":{"in2regfile_0":{"cycle_starting_addr":[24],"cycle_stride":[1],"dimensionality":1,"extent":[8],"write_data_starting_addr":[0],"write_data_stride":[1]},"regfile2out_0":{"cycle_starting_addr":[79],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[1],"read_data_stride":[2,31]}},"mode":"pond"}
           },
           "ub_hw_twi_global_wrapper_stencil_BANK_15_clk_en_const":{
             "modref":"corebit.const",
@@ -3352,7 +3352,7 @@
           "ub_hw_twi_global_wrapper_stencil_BANK_16":{
             "genref":"cgralib.Pond_amber",
             "genargs":{"ID":["String","_U85"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
-            "metadata":{"config":{"in2regfile_0":{"cycle_starting_addr":[24],"cycle_stride":[1],"dimensionality":1,"extent":[8],"write_data_starting_addr":[0],"write_data_stride":[1]},"regfile2out_0":{"cycle_starting_addr":[78],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[0],"read_data_stride":[2,1]}},"mode":"pond"}
+            "metadata":{"config":{"in2regfile_0":{"cycle_starting_addr":[40],"cycle_stride":[1],"dimensionality":1,"extent":[8],"write_data_starting_addr":[0],"write_data_stride":[1]},"regfile2out_0":{"cycle_starting_addr":[92],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[0],"read_data_stride":[2,1]}},"mode":"pond"}
           },
           "ub_hw_twi_global_wrapper_stencil_BANK_16_clk_en_const":{
             "modref":"corebit.const",
@@ -3361,7 +3361,7 @@
           "ub_hw_twi_global_wrapper_stencil_BANK_17":{
             "genref":"cgralib.Pond_amber",
             "genargs":{"ID":["String","_U86"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
-            "metadata":{"config":{"in2regfile_0":{"cycle_starting_addr":[24],"cycle_stride":[1],"dimensionality":1,"extent":[8],"write_data_starting_addr":[0],"write_data_stride":[1]},"regfile2out_0":{"cycle_starting_addr":[78],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[1],"read_data_stride":[2,31]}},"mode":"pond"}
+            "metadata":{"config":{"in2regfile_0":{"cycle_starting_addr":[40],"cycle_stride":[1],"dimensionality":1,"extent":[8],"write_data_starting_addr":[0],"write_data_stride":[1]},"regfile2out_0":{"cycle_starting_addr":[92],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[1],"read_data_stride":[2,31]}},"mode":"pond"}
           },
           "ub_hw_twi_global_wrapper_stencil_BANK_17_clk_en_const":{
             "modref":"corebit.const",
@@ -3370,7 +3370,7 @@
           "ub_hw_twi_global_wrapper_stencil_BANK_18":{
             "genref":"cgralib.Pond_amber",
             "genargs":{"ID":["String","_U87"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
-            "metadata":{"config":{"in2regfile_0":{"cycle_starting_addr":[24],"cycle_stride":[1],"dimensionality":1,"extent":[8],"write_data_starting_addr":[0],"write_data_stride":[1]},"regfile2out_0":{"cycle_starting_addr":[79],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[0],"read_data_stride":[2,1]}},"mode":"pond"}
+            "metadata":{"config":{"in2regfile_0":{"cycle_starting_addr":[40],"cycle_stride":[1],"dimensionality":1,"extent":[8],"write_data_starting_addr":[0],"write_data_stride":[1]},"regfile2out_0":{"cycle_starting_addr":[93],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[0],"read_data_stride":[2,1]}},"mode":"pond"}
           },
           "ub_hw_twi_global_wrapper_stencil_BANK_18_clk_en_const":{
             "modref":"corebit.const",
@@ -3379,7 +3379,7 @@
           "ub_hw_twi_global_wrapper_stencil_BANK_19":{
             "genref":"cgralib.Pond_amber",
             "genargs":{"ID":["String","_U88"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
-            "metadata":{"config":{"in2regfile_0":{"cycle_starting_addr":[24],"cycle_stride":[1],"dimensionality":1,"extent":[8],"write_data_starting_addr":[0],"write_data_stride":[1]},"regfile2out_0":{"cycle_starting_addr":[79],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[1],"read_data_stride":[2,31]}},"mode":"pond"}
+            "metadata":{"config":{"in2regfile_0":{"cycle_starting_addr":[40],"cycle_stride":[1],"dimensionality":1,"extent":[8],"write_data_starting_addr":[0],"write_data_stride":[1]},"regfile2out_0":{"cycle_starting_addr":[93],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[1],"read_data_stride":[2,31]}},"mode":"pond"}
           },
           "ub_hw_twi_global_wrapper_stencil_BANK_19_clk_en_const":{
             "modref":"corebit.const",
@@ -3392,12 +3392,12 @@
           "ub_hw_twi_global_wrapper_stencil_BANK_2":{
             "genref":"cgralib.Pond_amber",
             "genargs":{"ID":["String","_U71"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
-            "metadata":{"config":{"in2regfile_0":{"cycle_starting_addr":[0],"cycle_stride":[1],"dimensionality":1,"extent":[8],"write_data_starting_addr":[0],"write_data_stride":[1]},"regfile2out_0":{"cycle_starting_addr":[65],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[0],"read_data_stride":[2,1]}},"mode":"pond"}
+            "metadata":{"config":{"in2regfile_0":{"cycle_starting_addr":[16],"cycle_stride":[1],"dimensionality":1,"extent":[8],"write_data_starting_addr":[0],"write_data_stride":[1]},"regfile2out_0":{"cycle_starting_addr":[79],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[0],"read_data_stride":[2,1]}},"mode":"pond"}
           },
           "ub_hw_twi_global_wrapper_stencil_BANK_20":{
             "genref":"cgralib.Pond_amber",
             "genargs":{"ID":["String","_U89"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
-            "metadata":{"config":{"in2regfile_0":{"cycle_starting_addr":[40],"cycle_stride":[1],"dimensionality":1,"extent":[8],"write_data_starting_addr":[0],"write_data_stride":[1]},"regfile2out_0":{"cycle_starting_addr":[92],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[0],"read_data_stride":[2,1]}},"mode":"pond"}
+            "metadata":{"config":{"in2regfile_0":{"cycle_starting_addr":[0],"cycle_stride":[1],"dimensionality":1,"extent":[8],"write_data_starting_addr":[0],"write_data_stride":[1]},"regfile2out_0":{"cycle_starting_addr":[65],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[1],"read_data_stride":[2,31]}},"mode":"pond"}
           },
           "ub_hw_twi_global_wrapper_stencil_BANK_20_clk_en_const":{
             "modref":"corebit.const",
@@ -3406,7 +3406,7 @@
           "ub_hw_twi_global_wrapper_stencil_BANK_21":{
             "genref":"cgralib.Pond_amber",
             "genargs":{"ID":["String","_U90"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
-            "metadata":{"config":{"in2regfile_0":{"cycle_starting_addr":[40],"cycle_stride":[1],"dimensionality":1,"extent":[8],"write_data_starting_addr":[0],"write_data_stride":[1]},"regfile2out_0":{"cycle_starting_addr":[92],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[1],"read_data_stride":[2,31]}},"mode":"pond"}
+            "metadata":{"config":{"in2regfile_0":{"cycle_starting_addr":[0],"cycle_stride":[1],"dimensionality":1,"extent":[8],"write_data_starting_addr":[0],"write_data_stride":[1]},"regfile2out_0":{"cycle_starting_addr":[65],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[0],"read_data_stride":[2,1]}},"mode":"pond"}
           },
           "ub_hw_twi_global_wrapper_stencil_BANK_21_clk_en_const":{
             "modref":"corebit.const",
@@ -3415,7 +3415,7 @@
           "ub_hw_twi_global_wrapper_stencil_BANK_22":{
             "genref":"cgralib.Pond_amber",
             "genargs":{"ID":["String","_U91"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
-            "metadata":{"config":{"in2regfile_0":{"cycle_starting_addr":[40],"cycle_stride":[1],"dimensionality":1,"extent":[8],"write_data_starting_addr":[0],"write_data_stride":[1]},"regfile2out_0":{"cycle_starting_addr":[93],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[0],"read_data_stride":[2,1]}},"mode":"pond"}
+            "metadata":{"config":{"in2regfile_0":{"cycle_starting_addr":[0],"cycle_stride":[1],"dimensionality":1,"extent":[8],"write_data_starting_addr":[0],"write_data_stride":[1]},"regfile2out_0":{"cycle_starting_addr":[64],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[1],"read_data_stride":[2,31]}},"mode":"pond"}
           },
           "ub_hw_twi_global_wrapper_stencil_BANK_22_clk_en_const":{
             "modref":"corebit.const",
@@ -3424,7 +3424,7 @@
           "ub_hw_twi_global_wrapper_stencil_BANK_23":{
             "genref":"cgralib.Pond_amber",
             "genargs":{"ID":["String","_U92"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
-            "metadata":{"config":{"in2regfile_0":{"cycle_starting_addr":[40],"cycle_stride":[1],"dimensionality":1,"extent":[8],"write_data_starting_addr":[0],"write_data_stride":[1]},"regfile2out_0":{"cycle_starting_addr":[93],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[1],"read_data_stride":[2,31]}},"mode":"pond"}
+            "metadata":{"config":{"in2regfile_0":{"cycle_starting_addr":[0],"cycle_stride":[1],"dimensionality":1,"extent":[8],"write_data_starting_addr":[0],"write_data_stride":[1]},"regfile2out_0":{"cycle_starting_addr":[64],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[0],"read_data_stride":[2,1]}},"mode":"pond"}
           },
           "ub_hw_twi_global_wrapper_stencil_BANK_23_clk_en_const":{
             "modref":"corebit.const",
@@ -3437,7 +3437,7 @@
           "ub_hw_twi_global_wrapper_stencil_BANK_3":{
             "genref":"cgralib.Pond_amber",
             "genargs":{"ID":["String","_U72"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
-            "metadata":{"config":{"in2regfile_0":{"cycle_starting_addr":[0],"cycle_stride":[1],"dimensionality":1,"extent":[8],"write_data_starting_addr":[0],"write_data_stride":[1]},"regfile2out_0":{"cycle_starting_addr":[65],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[1],"read_data_stride":[2,31]}},"mode":"pond"}
+            "metadata":{"config":{"in2regfile_0":{"cycle_starting_addr":[16],"cycle_stride":[1],"dimensionality":1,"extent":[8],"write_data_starting_addr":[0],"write_data_stride":[1]},"regfile2out_0":{"cycle_starting_addr":[79],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[1],"read_data_stride":[2,31]}},"mode":"pond"}
           },
           "ub_hw_twi_global_wrapper_stencil_BANK_3_clk_en_const":{
             "modref":"corebit.const",
@@ -3446,7 +3446,7 @@
           "ub_hw_twi_global_wrapper_stencil_BANK_4":{
             "genref":"cgralib.Pond_amber",
             "genargs":{"ID":["String","_U73"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
-            "metadata":{"config":{"in2regfile_0":{"cycle_starting_addr":[16],"cycle_stride":[1],"dimensionality":1,"extent":[8],"write_data_starting_addr":[0],"write_data_stride":[1]},"regfile2out_0":{"cycle_starting_addr":[78],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[1],"read_data_stride":[2,31]}},"mode":"pond"}
+            "metadata":{"config":{"in2regfile_0":{"cycle_starting_addr":[32],"cycle_stride":[1],"dimensionality":1,"extent":[8],"write_data_starting_addr":[0],"write_data_stride":[1]},"regfile2out_0":{"cycle_starting_addr":[92],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[0],"read_data_stride":[2,1]}},"mode":"pond"}
           },
           "ub_hw_twi_global_wrapper_stencil_BANK_4_clk_en_const":{
             "modref":"corebit.const",
@@ -3455,7 +3455,7 @@
           "ub_hw_twi_global_wrapper_stencil_BANK_5":{
             "genref":"cgralib.Pond_amber",
             "genargs":{"ID":["String","_U74"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
-            "metadata":{"config":{"in2regfile_0":{"cycle_starting_addr":[16],"cycle_stride":[1],"dimensionality":1,"extent":[8],"write_data_starting_addr":[0],"write_data_stride":[1]},"regfile2out_0":{"cycle_starting_addr":[78],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[0],"read_data_stride":[2,1]}},"mode":"pond"}
+            "metadata":{"config":{"in2regfile_0":{"cycle_starting_addr":[32],"cycle_stride":[1],"dimensionality":1,"extent":[8],"write_data_starting_addr":[0],"write_data_stride":[1]},"regfile2out_0":{"cycle_starting_addr":[92],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[1],"read_data_stride":[2,31]}},"mode":"pond"}
           },
           "ub_hw_twi_global_wrapper_stencil_BANK_5_clk_en_const":{
             "modref":"corebit.const",
@@ -3464,7 +3464,7 @@
           "ub_hw_twi_global_wrapper_stencil_BANK_6":{
             "genref":"cgralib.Pond_amber",
             "genargs":{"ID":["String","_U75"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
-            "metadata":{"config":{"in2regfile_0":{"cycle_starting_addr":[16],"cycle_stride":[1],"dimensionality":1,"extent":[8],"write_data_starting_addr":[0],"write_data_stride":[1]},"regfile2out_0":{"cycle_starting_addr":[79],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[0],"read_data_stride":[2,1]}},"mode":"pond"}
+            "metadata":{"config":{"in2regfile_0":{"cycle_starting_addr":[32],"cycle_stride":[1],"dimensionality":1,"extent":[8],"write_data_starting_addr":[0],"write_data_stride":[1]},"regfile2out_0":{"cycle_starting_addr":[93],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[0],"read_data_stride":[2,1]}},"mode":"pond"}
           },
           "ub_hw_twi_global_wrapper_stencil_BANK_6_clk_en_const":{
             "modref":"corebit.const",
@@ -3473,7 +3473,7 @@
           "ub_hw_twi_global_wrapper_stencil_BANK_7":{
             "genref":"cgralib.Pond_amber",
             "genargs":{"ID":["String","_U76"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
-            "metadata":{"config":{"in2regfile_0":{"cycle_starting_addr":[16],"cycle_stride":[1],"dimensionality":1,"extent":[8],"write_data_starting_addr":[0],"write_data_stride":[1]},"regfile2out_0":{"cycle_starting_addr":[79],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[1],"read_data_stride":[2,31]}},"mode":"pond"}
+            "metadata":{"config":{"in2regfile_0":{"cycle_starting_addr":[32],"cycle_stride":[1],"dimensionality":1,"extent":[8],"write_data_starting_addr":[0],"write_data_stride":[1]},"regfile2out_0":{"cycle_starting_addr":[93],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[1],"read_data_stride":[2,31]}},"mode":"pond"}
           },
           "ub_hw_twi_global_wrapper_stencil_BANK_7_clk_en_const":{
             "modref":"corebit.const",
@@ -3482,7 +3482,7 @@
           "ub_hw_twi_global_wrapper_stencil_BANK_8":{
             "genref":"cgralib.Pond_amber",
             "genargs":{"ID":["String","_U77"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
-            "metadata":{"config":{"in2regfile_0":{"cycle_starting_addr":[32],"cycle_stride":[1],"dimensionality":1,"extent":[8],"write_data_starting_addr":[0],"write_data_stride":[1]},"regfile2out_0":{"cycle_starting_addr":[92],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[0],"read_data_stride":[2,1]}},"mode":"pond"}
+            "metadata":{"config":{"in2regfile_0":{"cycle_starting_addr":[8],"cycle_stride":[1],"dimensionality":1,"extent":[8],"write_data_starting_addr":[0],"write_data_stride":[1]},"regfile2out_0":{"cycle_starting_addr":[64],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[0],"read_data_stride":[2,1]}},"mode":"pond"}
           },
           "ub_hw_twi_global_wrapper_stencil_BANK_8_clk_en_const":{
             "modref":"corebit.const",
@@ -3491,7 +3491,7 @@
           "ub_hw_twi_global_wrapper_stencil_BANK_9":{
             "genref":"cgralib.Pond_amber",
             "genargs":{"ID":["String","_U78"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
-            "metadata":{"config":{"in2regfile_0":{"cycle_starting_addr":[32],"cycle_stride":[1],"dimensionality":1,"extent":[8],"write_data_starting_addr":[0],"write_data_stride":[1]},"regfile2out_0":{"cycle_starting_addr":[92],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[1],"read_data_stride":[2,31]}},"mode":"pond"}
+            "metadata":{"config":{"in2regfile_0":{"cycle_starting_addr":[8],"cycle_stride":[1],"dimensionality":1,"extent":[8],"write_data_starting_addr":[0],"write_data_stride":[1]},"regfile2out_0":{"cycle_starting_addr":[64],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[1],"read_data_stride":[2,31]}},"mode":"pond"}
           },
           "ub_hw_twi_global_wrapper_stencil_BANK_9_clk_en_const":{
             "modref":"corebit.const",
@@ -3523,30 +3523,30 @@
           ["ub_hw_twi_global_wrapper_stencil_BANK_7.clk","self.clk"],
           ["ub_hw_twi_global_wrapper_stencil_BANK_8.clk","self.clk"],
           ["ub_hw_twi_global_wrapper_stencil_BANK_9.clk","self.clk"],
-          ["ub_hw_twi_global_wrapper_stencil_BANK_0.data_out_pond_0","self.op_hcompute_f3_0_stencil_read.0"],
-          ["ub_hw_twi_global_wrapper_stencil_BANK_12.data_out_pond_0","self.op_hcompute_f3_0_stencil_read.1"],
-          ["ub_hw_twi_global_wrapper_stencil_BANK_1.data_out_pond_0","self.op_hcompute_f3_0_stencil_read.2"],
-          ["ub_hw_twi_global_wrapper_stencil_BANK_13.data_out_pond_0","self.op_hcompute_f3_0_stencil_read.3"],
-          ["ub_hw_twi_global_wrapper_stencil_BANK_14.data_out_pond_0","self.op_hcompute_f3_1_stencil_read.0"],
-          ["ub_hw_twi_global_wrapper_stencil_BANK_2.data_out_pond_0","self.op_hcompute_f3_1_stencil_read.1"],
-          ["ub_hw_twi_global_wrapper_stencil_BANK_15.data_out_pond_0","self.op_hcompute_f3_1_stencil_read.2"],
-          ["ub_hw_twi_global_wrapper_stencil_BANK_3.data_out_pond_0","self.op_hcompute_f3_1_stencil_read.3"],
-          ["ub_hw_twi_global_wrapper_stencil_BANK_16.data_out_pond_0","self.op_hcompute_f4_0_stencil_read.0"],
-          ["ub_hw_twi_global_wrapper_stencil_BANK_4.data_out_pond_0","self.op_hcompute_f4_0_stencil_read.1"],
-          ["ub_hw_twi_global_wrapper_stencil_BANK_17.data_out_pond_0","self.op_hcompute_f4_0_stencil_read.2"],
-          ["ub_hw_twi_global_wrapper_stencil_BANK_5.data_out_pond_0","self.op_hcompute_f4_0_stencil_read.3"],
-          ["ub_hw_twi_global_wrapper_stencil_BANK_18.data_out_pond_0","self.op_hcompute_f4_1_stencil_read.0"],
-          ["ub_hw_twi_global_wrapper_stencil_BANK_6.data_out_pond_0","self.op_hcompute_f4_1_stencil_read.1"],
-          ["ub_hw_twi_global_wrapper_stencil_BANK_19.data_out_pond_0","self.op_hcompute_f4_1_stencil_read.2"],
-          ["ub_hw_twi_global_wrapper_stencil_BANK_7.data_out_pond_0","self.op_hcompute_f4_1_stencil_read.3"],
-          ["ub_hw_twi_global_wrapper_stencil_BANK_8.data_out_pond_0","self.op_hcompute_f5_0_stencil_read.0"],
-          ["ub_hw_twi_global_wrapper_stencil_BANK_20.data_out_pond_0","self.op_hcompute_f5_0_stencil_read.1"],
-          ["ub_hw_twi_global_wrapper_stencil_BANK_9.data_out_pond_0","self.op_hcompute_f5_0_stencil_read.2"],
-          ["ub_hw_twi_global_wrapper_stencil_BANK_21.data_out_pond_0","self.op_hcompute_f5_0_stencil_read.3"],
-          ["ub_hw_twi_global_wrapper_stencil_BANK_22.data_out_pond_0","self.op_hcompute_f5_1_stencil_read.0"],
-          ["ub_hw_twi_global_wrapper_stencil_BANK_10.data_out_pond_0","self.op_hcompute_f5_1_stencil_read.1"],
-          ["ub_hw_twi_global_wrapper_stencil_BANK_23.data_out_pond_0","self.op_hcompute_f5_1_stencil_read.2"],
-          ["ub_hw_twi_global_wrapper_stencil_BANK_11.data_out_pond_0","self.op_hcompute_f5_1_stencil_read.3"],
+          ["ub_hw_twi_global_wrapper_stencil_BANK_23.data_out_pond_0","self.op_hcompute_f3_0_stencil_read.0"],
+          ["ub_hw_twi_global_wrapper_stencil_BANK_8.data_out_pond_0","self.op_hcompute_f3_0_stencil_read.1"],
+          ["ub_hw_twi_global_wrapper_stencil_BANK_22.data_out_pond_0","self.op_hcompute_f3_0_stencil_read.2"],
+          ["ub_hw_twi_global_wrapper_stencil_BANK_9.data_out_pond_0","self.op_hcompute_f3_0_stencil_read.3"],
+          ["ub_hw_twi_global_wrapper_stencil_BANK_10.data_out_pond_0","self.op_hcompute_f3_1_stencil_read.0"],
+          ["ub_hw_twi_global_wrapper_stencil_BANK_21.data_out_pond_0","self.op_hcompute_f3_1_stencil_read.1"],
+          ["ub_hw_twi_global_wrapper_stencil_BANK_11.data_out_pond_0","self.op_hcompute_f3_1_stencil_read.2"],
+          ["ub_hw_twi_global_wrapper_stencil_BANK_20.data_out_pond_0","self.op_hcompute_f3_1_stencil_read.3"],
+          ["ub_hw_twi_global_wrapper_stencil_BANK_12.data_out_pond_0","self.op_hcompute_f4_0_stencil_read.0"],
+          ["ub_hw_twi_global_wrapper_stencil_BANK_0.data_out_pond_0","self.op_hcompute_f4_0_stencil_read.1"],
+          ["ub_hw_twi_global_wrapper_stencil_BANK_13.data_out_pond_0","self.op_hcompute_f4_0_stencil_read.2"],
+          ["ub_hw_twi_global_wrapper_stencil_BANK_1.data_out_pond_0","self.op_hcompute_f4_0_stencil_read.3"],
+          ["ub_hw_twi_global_wrapper_stencil_BANK_14.data_out_pond_0","self.op_hcompute_f4_1_stencil_read.0"],
+          ["ub_hw_twi_global_wrapper_stencil_BANK_2.data_out_pond_0","self.op_hcompute_f4_1_stencil_read.1"],
+          ["ub_hw_twi_global_wrapper_stencil_BANK_15.data_out_pond_0","self.op_hcompute_f4_1_stencil_read.2"],
+          ["ub_hw_twi_global_wrapper_stencil_BANK_3.data_out_pond_0","self.op_hcompute_f4_1_stencil_read.3"],
+          ["ub_hw_twi_global_wrapper_stencil_BANK_4.data_out_pond_0","self.op_hcompute_f5_0_stencil_read.0"],
+          ["ub_hw_twi_global_wrapper_stencil_BANK_16.data_out_pond_0","self.op_hcompute_f5_0_stencil_read.1"],
+          ["ub_hw_twi_global_wrapper_stencil_BANK_5.data_out_pond_0","self.op_hcompute_f5_0_stencil_read.2"],
+          ["ub_hw_twi_global_wrapper_stencil_BANK_17.data_out_pond_0","self.op_hcompute_f5_0_stencil_read.3"],
+          ["ub_hw_twi_global_wrapper_stencil_BANK_18.data_out_pond_0","self.op_hcompute_f5_1_stencil_read.0"],
+          ["ub_hw_twi_global_wrapper_stencil_BANK_6.data_out_pond_0","self.op_hcompute_f5_1_stencil_read.1"],
+          ["ub_hw_twi_global_wrapper_stencil_BANK_19.data_out_pond_0","self.op_hcompute_f5_1_stencil_read.2"],
+          ["ub_hw_twi_global_wrapper_stencil_BANK_7.data_out_pond_0","self.op_hcompute_f5_1_stencil_read.3"],
           ["ub_hw_twi_global_wrapper_stencil_BANK_0.data_in_pond_0","self.op_hcompute_hw_twi_global_wrapper_stencil_write.0"],
           ["ub_hw_twi_global_wrapper_stencil_BANK_1.data_in_pond_0","self.op_hcompute_hw_twi_global_wrapper_stencil_write.0"],
           ["ub_hw_twi_global_wrapper_stencil_BANK_10.data_in_pond_0","self.op_hcompute_hw_twi_global_wrapper_stencil_write.0"],

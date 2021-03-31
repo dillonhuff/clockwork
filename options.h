@@ -1,5 +1,5 @@
 #pragma once
-
+#include "utils.h"
 #include <iostream>
 #include <cassert>
 #include <string>
@@ -101,11 +101,13 @@ struct LakeCollateral {
     std::unordered_map<string, int> in_port_width;
     std::unordered_map<string, int> out_port_width;
     int fetch_width;
+    int max_chaining;
     bool multi_sram_accessor;
 
     //TODO: use the collateral kavya generated
     LakeCollateral(string level = "mem"):
         fetch_width(4),
+        max_chaining(4),
         multi_sram_accessor(true),
         word_width({{"agg", 1}, {"sram", 4}, {"tb", 1}}),
         in_port_width({{"agg", 1}, {"sram", 4}, {"tb", 4}}),
@@ -114,6 +116,7 @@ struct LakeCollateral {
         capacity({{"agg", 16}, {"sram", 512}, {"tb", 16}}) {
             if (level == "regfile") {
                 fetch_width = 1;
+                max_chaining = 1;
                 word_width = {{"regfile", 1}};
                 in_port_width= {{"regfile", 1}};
                 out_port_width = {{"regfile", 1}};
@@ -124,6 +127,30 @@ struct LakeCollateral {
                 assert(false);
             }
         }
+
+    int get_max_capacity() const {
+        int c = 0;
+        for (auto it: capacity) {
+            c = std::max(c, it.second);
+        }
+        return c * max_chaining;
+    }
+
+    int get_inpt_num() {
+        if (bank_num.size() == 1)
+            return pick(bank_num).second;
+        else {
+            return bank_num.at("agg");
+        }
+    }
+
+    int get_outpt_num() {
+        if (bank_num.size() == 1)
+            return pick(bank_num).second;
+        else {
+            return bank_num.at("tb");
+        }
+    }
 };
 
 enum HLSLoopCodegen {

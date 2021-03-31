@@ -14321,6 +14321,7 @@ void test_pond(string dir, bool run_verilator=true) {
       int res = run_verilator_on(name, name + "_verilog_tb.cpp", verilog_files, extra_flag_for_lake);
       assert(res == 0);
       cmd("rm LakeWrapper.v");
+      cmd("rm -rf ./" + dir + "/" + name + "/verilog/");
 
       auto verilator_res = verilator_results(prg.name);
       compare("cgra_" + prg.name + "_cpu_vs_verilog_comparison", verilator_res, cpu);
