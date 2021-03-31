@@ -7842,6 +7842,12 @@ UBufferImpl generate_optimized_memory_implementation(
     cout << "After shift register optimization: " << impl << endl;
     if (!impl.is_pure_shift_register(buf.get_out_ports()))
         generate_banks_garnet(options, buf, impl, hwinfo);
+
+
+
+    cout << "After banking optimization: " << impl << endl;
+    impl.bank_merging(options);
+    cout << "After bank merging: " << impl << endl;
     return impl;
 }
 
@@ -7940,8 +7946,6 @@ UBufferImpl port_group2bank(CodegenOptions& options, prog& prg, UBuffer& buf, sc
     }
     buf.print_bank_info();
     cout << sr_graph;
-    cout << impl;
-    impl.bank_merging(options);
     cout << impl;
 
     return impl;
