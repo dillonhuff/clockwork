@@ -46,15 +46,18 @@ void sanity_check(prog& prg, vector<string>& cpu, vector<string> & verilator_res
     cout << "*********************************************************" << endl;
     cout << "*** Interconnect Agnostic Test on < " << prg.name << " > PASS ***"<< endl;
     cout << "*********************************************************" << endl;
-    cpy_app_to_folder(app_type, prg.name);
+
+    //cpy_app_to_folder(app_type, prg.name);
+    cmd("mkdir -p ./coreir_apps/" + app_type + "/" + prg.name);
+    cmd("mv " + prg.name + ".v ./coreir_apps/" + app_type + "/" + prg.name + "/");
+    cmd("mv " + prg.name + "_verilog_tb.cpp ./coreir_apps/" + app_type + "/" + prg.name + "/");
 }
 
-void compile_app_for_garnet_single_port_mem(prog& prg, string dir) {
+void compile_app_for_garnet_single_port_mem(prog& prg, string dir, bool gen_config_only=true) {
     cout << "Running CGRA flow on " << prg.name << endl;
 
     //TODO: make this argument explicit to user
     bool multi_level_memory = false;
-    bool gen_config_only = false;
     bool gen_smt = false;
     bool use_dse_compute = false;
 
