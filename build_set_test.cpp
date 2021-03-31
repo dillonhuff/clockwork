@@ -24107,6 +24107,7 @@ void printout_tests() {
 }
 
 void application_tests() {
+
   printout_tests();
 
   float_sharing_test();
@@ -25231,9 +25232,19 @@ prog stencil_chain(const std::string& name) {
 
 void dhuff_playground() {
   {
+    prog prg = lucas_kanade();
+
+    prg.sanity_check();
+
+    cout << "# results: " << unoptimized_result(prg) << endl;
+    assert(false);
+  }
+
+  {
     resnet().pretty_print();
     assert(false);
   }
+
   {
     prog prg = mod_example();
     prg.pretty_print();

@@ -4156,6 +4156,9 @@ void generate_select(CodegenOptions& options, std::ostream& out, const string& o
   out << tab(1) << "// " << outpt << " read pattern: " << str(buf.access_map.at(outpt)) << endl;
 
   if (buf.banking.partition == "register_file" || buf.banking.partition == "none") {
+    if (!(buf.bank_list.size() == 1)) {
+      cout << buf << endl;
+    }
     assert(buf.bank_list.size() == 1);
     // Port is irrelevant here
     // TODO: Extract inner bank offset
