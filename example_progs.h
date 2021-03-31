@@ -66,3 +66,5 @@ prog jitnet();
 prog conv1x1();
 prog mod_example();
 prog three_level_pond_copy();
+
+prog lucas_kanade();

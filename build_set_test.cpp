@@ -24085,7 +24085,30 @@ void scheduling_benchmarks() {
   assert(false);
 }
 
+void printout_tests() {
+  isl_ctx* ctx = isl_ctx_alloc();
+
+  umap* s = isl_union_map_read_from_str(ctx, "{ P[j] -> [0, j] : 0 <= j <= 5; C[i] -> [1, i] : 0 <= i <= 2 }");
+  cout << codegen_c(s) << endl;
+
+  {
+    umap* s = isl_union_map_read_from_str(ctx, "{ P[j] -> [0, j] : 0 <= j <= 5; C[i] -> [1, 2*i + 1] : 0 <= i <= 2 }");
+    cout << codegen_c(s) << endl;
+  }
+
+  {
+    umap* s = isl_union_map_read_from_str(ctx, "{ P[j] -> [j, 0] : 0 <= j <= 5; C[i] -> [2*i + 1, 1] : 0 <= i <= 2 }");
+    cout << codegen_c(s) << endl;
+  }
+
+  isl_ctx_free(ctx);
+
+  assert(false);
+}
+
 void application_tests() {
+  printout_tests();
+
   float_sharing_test();
 
   cp9_static_dynamic_comparison(32);
