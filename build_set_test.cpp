@@ -14280,10 +14280,10 @@ void cpy_app_to_folder(const std::string& app_type, const std::string& prg_name)
 
 void test_pond(string dir) {
   vector<prog> test_apps;
-  test_apps.push_back(resnet_simple());
-  test_apps.push_back(resnet());
-  test_apps.push_back(three_level_pond_copy());
-  test_apps.push_back(three_level_pond_rolled());
+  //test_apps.push_back(three_level_pond_rolled());
+  //test_apps.push_back(resnet_simple());
+  //test_apps.push_back(resnet());
+  //test_apps.push_back(three_level_pond_copy());
   test_apps.push_back(fft8_unroll8_split());
 
   //TODO: tobe tested with new pond
@@ -14298,7 +14298,6 @@ void test_pond(string dir) {
     break_up_multi_channel_outputs(prg);
     dsa_writers(prg);
     prg.pretty_print();
-    auto cpu = unoptimized_result(prg);
 
     bool gen_config_only = false;
     compile_for_garnet_single_port_mem(prg, dir,
@@ -14306,7 +14305,7 @@ void test_pond(string dir) {
             gen_config_only,/*gen_config_only*/
             true, /*multi level hierarchy*/
             false/*use dse compute*/);
-    generate_regression_testbench(prg);
+    //generate_regression_testbench(prg);
 
     cout << "Output name: " << prg.name << endl;
     //run_verilator_tb(prg.name);
@@ -14318,6 +14317,7 @@ void test_pond(string dir) {
       verilog_files.push_back(name + ".v");
       verilog_files.push_back("LakeWrapper.v");
       bool extra_flag_for_lake = true;
+      auto cpu = unoptimized_result(prg);
       int res = run_verilator_on(name, name + "_verilog_tb.cpp", verilog_files, extra_flag_for_lake);
       assert(res == 0);
       cmd("rm LakeWrapper.v");
@@ -14423,7 +14423,6 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
     break_up_multi_channel_outputs(prg);
     dsa_writers(prg);
     prg.pretty_print();
-    auto cpu = unoptimized_result(prg);
 
     //compile_for_garnet_platonic_mem(prg);
     compile_for_garnet_single_port_mem(prg, dir, false, gen_config_only, false, false);
@@ -14436,9 +14435,10 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
       verilog_files.push_back(name + ".v");
       verilog_files.push_back("LakeWrapper.v");
       bool extra_flag_for_lake = true;
+      auto cpu = unoptimized_result(prg);
       int res = run_verilator_on(name, name + "_verilog_tb.cpp", verilog_files, extra_flag_for_lake);
       assert(res == 0);
-      //cmd("rm LakeWrapper.v");
+      cmd("rm LakeWrapper.v");
 
       auto verilator_res = verilator_results(prg.name);
       compare("cgra_" + prg.name + "_cpu_vs_verilog_comparison", verilator_res, cpu);
@@ -17185,7 +17185,11 @@ void sanity_check_iis_for_vectorization(schedule_info& sched, prog& prg, int fet
 
 
 void garnet_single_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
-  if (is_rate_matchable(prg)) {
+  if (contains(prg.name, "fft")) {
+    //An hack on the fft schedule
+    sequential_schedule(sched, root, prg);
+    return;
+  } else if (is_rate_matchable(prg)) {
     prg.pretty_print();
 
     //TODO: need another function to choose between pad bottom level or top level

@@ -1714,21 +1714,23 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, UBuffer& ubuf) {
         if(op2write_map.count(op_name)) {
             assert(op2write_map.size() <= 2);
             auto acc_map = pick(op2write_map.at(op_name));
-                auto reduce_map = linear_address_map_lake(to_set(range(acc_map)), mem.fetch_width);
+                //auto reduce_map = linear_address_map_lake(to_set(range(acc_map)), mem.fetch_width);
+                auto reduce_map = linear_address_map_lake(to_set(ubuf.global_range()), mem.fetch_width);
                 auto linear_acc_map = dot(acc_map, reduce_map);
                 cout << tab(1) << "Before Merge: " << endl;
                 cout << tab(2) << "acc map: " << str(acc_map) << endl;
                 cout << tab(2) << "sched: " << str(sched) << endl;
                 cout << tab(2) << "reduce_map: " << str(reduce_map) << endl;
+                cout << tab(2) << "1d acc map: " << str(linear_acc_map) << endl;
                 //add a simplify optimization pass,
                 //reutrn:    pair(schedulem access_map)
                 auto m_pair = merge_dom_dim(sched, to_map(linear_acc_map));
-                sched = m_pair.first;
+                auto new_sched = m_pair.first;
                 cout << tab(1) << "After Merge: " << endl;
-                cout << tab(2) << "schedule: " << str(sched) << endl;
+                cout << tab(2) << "schedule: " << str(new_sched) << endl;
                 //cout << tab(2) << "access map: " << str(m_pair.second) << endl;
-                auto aff = get_aff(sched);
-                auto dom = ::domain(sched);
+                auto aff = get_aff(new_sched);
+                auto dom = ::domain(new_sched);
                 auto config_info = generate_accessor_config_from_aff_expr(dom, aff);
                 int port_width = mem.in_port_width.at("regfile");
                 auto addressor = generate_addressor_config_from_aff_expr(
@@ -1742,19 +1744,20 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, UBuffer& ubuf) {
         if(op2read_map.count(op_name)) {
             assert(op2read_map.size() <= 2);
             auto acc_map = pick(op2read_map.at(op_name));
-                auto reduce_map = linear_address_map_lake(to_set(range(acc_map)), mem.fetch_width);
+                //auto reduce_map = linear_address_map_lake(to_set(range(acc_map)), mem.fetch_width);
+                auto reduce_map = linear_address_map_lake(to_set(ubuf.global_range()), mem.fetch_width);
                 auto linear_acc_map = dot(acc_map, reduce_map);
                 cout << tab(1) << "Before Merge: " << endl;
                 cout << tab(2) << "acc map: " << str(acc_map) << endl;
                 cout << tab(2) << "sched: " << str(sched) << endl;
                 cout << tab(2) << "reduce_map: " << str(reduce_map) << endl;
                 auto m_pair = merge_dom_dim(sched, to_map(linear_acc_map));
-                sched = m_pair.first;
+                auto new_sched = m_pair.first;
                 cout << tab(1) << "After Merge: " << endl;
-                cout << tab(2) << "schedule: " << str(sched) << endl;
+                cout << tab(2) << "schedule: " << str(new_sched) << endl;
                 //cout << tab(2) << "access map: " << str(m_pair.second) << endl;
-                auto aff = get_aff(sched);
-                auto dom = ::domain(sched);
+                auto aff = get_aff(new_sched);
+                auto dom = ::domain(new_sched);
                 auto config_info = generate_accessor_config_from_aff_expr(dom, aff);
                 int port_width = mem.out_port_width.at("regfile");
                 auto addressor = generate_addressor_config_from_aff_expr(
@@ -1765,7 +1768,6 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, UBuffer& ubuf) {
             add_lake_config(ret, config_info, num_in_dims(aff), "regfile2out_" + str(out_cnt));
             out_cnt ++;
         }
-        cout << "\tSched: " << str(sched) << endl;
     }
     cout << ret << endl;
     return ret;

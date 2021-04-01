@@ -6638,7 +6638,7 @@ prog resnet88_chain() {
 
   return prg;
 }
-
+/*
 prog resnet88_chain() {
   prog prg;
   prg.compute_unit_file = "resnet88_chain_compute.h";
@@ -6959,7 +6959,7 @@ prog resnet88_chain() {
   hcompute_hw_output_stencil->add_store("hw_output_stencil", "hw_output_s0_w", "hw_output_s0_y_yi", "hw_output_s0_x_xi");
 
   return prg;
-}
+}*/
 
 prog resnet_coarse_pipeline_loop() {
   prog prg = resnet();
@@ -9993,7 +9993,7 @@ prog three_level_pond_rolled() {
 
 ////producing input_cgra.stencil
   auto input_cgra_s0_y = prg.add_loop("input_cgra_s0_y", 0, 32);
-  auto input_cgra_s0_x = input_cgra_s0_y->add_loop("input_cgra_s0_x", 0, 32);
+  auto input_cgra_s0_x = input_cgra_s0_y->add_loop("input_cgra_s0_x", 0, 36);
 
 //store is: input_cgra.stencil(input_cgra_s0_x, input_cgra_s0_y) = input_host.stencil(input_cgra_s0_x, input_cgra_s0_y)
   auto hcompute_input_cgra_stencil = input_cgra_s0_x->add_op("op_hcompute_input_cgra_stencil");
@@ -10008,7 +10008,7 @@ prog three_level_pond_rolled() {
   auto output_cgra_s0_x_x_cgra = output_cgra_s0_y_y_cgra->add_loop("output_cgra_s0_x_x_cgra", 0, 4);
 ////producing hw_input.stencil
   auto hw_input_s0_y = output_cgra_s0_x_x_cgra->add_loop("hw_input_s0_y", 0, 2);
-  auto hw_input_s0_x = hw_input_s0_y->add_loop("hw_input_s0_x", 0, 8);
+  auto hw_input_s0_x = hw_input_s0_y->add_loop("hw_input_s0_x", 0, 12);
 
 //store is: hw_input.stencil(hw_input_s0_x, hw_input_s0_y) = input_cgra.stencil(((output_cgra_s0_x_x_cgra*8) + hw_input_s0_x), ((output_cgra_s0_y_y_cgra*8) + hw_input_s0_y))
   auto hcompute_hw_input_stencil = hw_input_s0_x->add_op("op_hcompute_hw_input_stencil");
@@ -10036,7 +10036,7 @@ prog three_level_pond_rolled() {
   auto hcompute_conv_stencil_1 = conv_s1_x->add_op("op_hcompute_conv_stencil_1");
   hcompute_conv_stencil_1->add_function("hcompute_conv_stencil_1");
   hcompute_conv_stencil_1->add_load("conv_stencil", "conv_s1_y", "conv_s1_x");
-  hcompute_conv_stencil_1->add_load("hw_input_stencil", "(conv_s1_y)", "(conv_s1_x)");
+  hcompute_conv_stencil_1->add_load("hw_input_stencil", "(conv_s1_y)", "(conv_s1_x + conv_s1_r_x)");
   hcompute_conv_stencil_1->add_store("conv_stencil", "conv_s1_y", "conv_s1_x");
 
 //consuming conv.stencil
