@@ -1660,9 +1660,8 @@ void UBuffer::generate_coreir(CodegenOptions& options,
 
       CoreIR::Wireable* last_out;
       for (size_t i = 0; i < reg_delay_length; i ++) {
-        auto reg = def->addInstance("d_reg_"+context->getUnique(), "mantle.reg",
-            {{"width", CoreIR::Const::make(context, port_widths)},
-            {"has_en", CoreIR::Const::make(context, false)}});
+        auto reg = def->addInstance("d_reg_"+context->getUnique(), "coreir.reg",
+            {{"width", CoreIR::Const::make(context, port_widths)}});
         //do not wire input for the first pass
         //Wire the shift register chain
         if (i == 0) {

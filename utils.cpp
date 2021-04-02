@@ -82,14 +82,14 @@ void compare(const std::string& name,
   }
   assert(unoptimized_res.size() == optimized_res.size());
   for (size_t i = 0; i < unoptimized_res.size(); i++) {
+      // cout << "\tunoptimized = " << unoptimized_res.at(i) << endl;
+      // cout << "\toptimized   = " << optimized_res.at(i) << endl;
+    if (!(unoptimized_res.at(i) == optimized_res.at(i))) {
+      cout << "Error in " << name << ": After optimization, at output " << i << " unoptimized_res != optimized_res" << endl;
       cout << "\tunoptimized = " << unoptimized_res.at(i) << endl;
       cout << "\toptimized   = " << optimized_res.at(i) << endl;
-    // if (!(unoptimized_res.at(i) == optimized_res.at(i))) {
-    //   cout << "Error in " << name << ": After optimization, at output " << i << " unoptimized_res != optimized_res" << endl;
-    //   cout << "\tunoptimized = " << unoptimized_res.at(i) << endl;
-    //   cout << "\toptimized   = " << optimized_res.at(i) << endl;
-    //   assert(unoptimized_res.at(i) == optimized_res.at(i));
-    // }
+      assert(unoptimized_res.at(i) == optimized_res.at(i));
+    }
   }
 }
 

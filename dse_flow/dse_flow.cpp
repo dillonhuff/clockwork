@@ -44,12 +44,14 @@ int main(int argc, char** argv) {
     func_map["resnet"] = resnet;
     func_map["conv_3_3"] = conv_3_3;
     func_map["conv_1_2"] = conv_1_2;
+    func_map["resnet_layer_gen"] = resnet_layer_gen;
 
+   
     auto prg_ptr = func_map[app_name];
     auto prg = prg_ptr();
 
     bool gen_config_only = false; 
-    bool multi_accessor = false;
+    bool multi_accessor = true;
     
 
     cout << "====== Running CGRA Single Port test for " << prg.name << endl;
@@ -74,7 +76,7 @@ int main(int argc, char** argv) {
         bool extra_flag_for_lake = true;
         int res = run_verilator_on(name, name + "_verilog_tb.cpp", verilog_files, extra_flag_for_lake);
         assert(res == 0);
-        // cmd("rm LakeWrapper.v");
+        cmd("rm LakeWrapper.v");
 
         auto verilator_res = verilator_results(prg.name);
         compare("cgra_" + prg.name + "_cpu_vs_verilog_comparison", verilator_res, cpu);

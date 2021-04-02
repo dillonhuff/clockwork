@@ -14129,18 +14129,18 @@ void cpy_app_to_folder(const std::string& app_type, const std::string& prg_name)
 void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, string dir="aha_garnet_design") {
   vector<prog> test_apps;
   test_apps.push_back(conv_3_3());
-  test_apps.push_back(gaussian());
-  test_apps.push_back(cascade());
-  test_apps.push_back(harris());
-  test_apps.push_back(rom());
-  test_apps.push_back(conv_1_2());
-  test_apps.push_back(demosaic_unrolled());
-  test_apps.push_back(camera_pipeline());
-  test_apps.push_back(up_sample());
+  // test_apps.push_back(gaussian());
+  // test_apps.push_back(cascade());
+  // test_apps.push_back(harris());
+  // test_apps.push_back(rom());
+  // test_apps.push_back(conv_1_2());
+  // test_apps.push_back(demosaic_unrolled());
+  // test_apps.push_back(camera_pipeline());
+  // test_apps.push_back(up_sample());
 
-  test_apps.push_back(unsharp());
-  test_apps.push_back(resnet());
-  test_apps.push_back(mobilenet_unrolled());
+  // test_apps.push_back(unsharp());
+  // test_apps.push_back(resnet());
+  // test_apps.push_back(mobilenet_unrolled());
   ////test_apps.push_back(unsharp());
 
   //test_apps.push_back(conv_3_3_wide());
@@ -17120,52 +17120,86 @@ void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
 schedule_info garnet_schedule_info(CodegenOptions& options, prog& prg, bool use_dse_compute=false) {
   schedule_info sched;
   sched.use_dse_compute = use_dse_compute;
-  for (auto op : prg.all_ops()) {
-    if (op->func != "") {
-      sched.resource_requirements[op] = op->func;
-    }
 
-    // Extremely hacky rom latency introduction
-    if (op->func == "hcompute_curved_stencil") {
-      sched.compute_unit_latencies[op->func] = 1;
-      //sched.op_compute_unit_latencies[op->name] = 1;
-    } else if (op->func == "hcompute_curved_stencil_1") {
-      sched.compute_unit_latencies[op->func] = 1;
-      //sched.op_compute_unit_latencies[op->name] = 1;
-    } else if (op->func == "hcompute_curved_stencil_2") {
-      sched.compute_unit_latencies[op->func] = 1;
-      //sched.op_compute_unit_latencies[op->name] = 1;
-    } else if (prg.name == "rom" && op->func == "hcompute_hw_output_stencil") {
-      //assert(false);
-      sched.compute_unit_latencies[op->func] = 1;
-      //sched.op_compute_unit_latencies[op->name] = 1;
-    } else if (op->func != "") {
-      sched.compute_unit_latencies[op->func] = 0;
-      //sched.op_compute_unit_latencies[op->name] = 0;
-    } else {
-      //sched.op_compute_unit_latencies[op->name] = 0;
-    }
+  if (use_dse_compute) {
+    json kernel_latencies;
+    std::ifstream kernel_latencies_file("dse_kernel_latencies/" + prg.name + "_compute_kernel_latencies.json", std::ifstream::binary);
+    kernel_latencies_file >> kernel_latencies;
 
-    for (auto b : op->buffers_referenced()) {
-      if (!prg.is_boundary(b)) {
-        sched.buffer_load_latencies[b] = buffer_load_latency(options);
-        sched.buffer_store_latencies[b] = buffer_store_latency(options);
+    for (auto op : prg.all_ops()) {
+      if (op->func != "") {
+        sched.resource_requirements[op] = op->func;
+      }
+
+      if (kernel_latencies[op->func] == NULL) {
+        cout << "NO KERNEL LATENCY " <<  op->func << " : NULL" << endl;
+        sched.compute_unit_latencies[op->func] = 0;
       } else {
-        sched.buffer_load_latencies[b] = 0;
-        sched.buffer_store_latencies[b] = 0;
+        cout << "KERNEL LATENCY " <<  op->func << " : " << kernel_latencies[op->func] << endl;
+        sched.compute_unit_latencies[op->func] = kernel_latencies[op->func];
+      }
+// sched.compute_unit_latencies[op->func] = 0;
+
+      for (auto b : op->buffers_referenced()) {
+        if (!prg.is_boundary(b)) {
+          sched.buffer_load_latencies[b] = buffer_load_latency(options);
+          sched.buffer_store_latencies[b] = buffer_store_latency(options);
+        } else {
+          sched.buffer_load_latencies[b] = 0;
+          sched.buffer_store_latencies[b] = 0;
+        }
+      }
+    }
+
+  } else {
+
+    for (auto op : prg.all_ops()) {
+      if (op->func != "") {
+        sched.resource_requirements[op] = op->func;
+      }
+
+      // Extremely hacky rom latency introduction
+      if (op->func == "hcompute_curved_stencil") {
+        sched.compute_unit_latencies[op->func] = 1;
+        //sched.op_compute_unit_latencies[op->name] = 1;
+      } else if (op->func == "hcompute_curved_stencil_1") {
+        sched.compute_unit_latencies[op->func] = 1;
+        //sched.op_compute_unit_latencies[op->name] = 1;
+      } else if (op->func == "hcompute_curved_stencil_2") {
+        sched.compute_unit_latencies[op->func] = 1;
+        //sched.op_compute_unit_latencies[op->name] = 1;
+      } else if (prg.name == "rom" && op->func == "hcompute_hw_output_stencil") {
+        //assert(false);
+        sched.compute_unit_latencies[op->func] = 1;
+        //sched.op_compute_unit_latencies[op->name] = 1;
+      } else if (op->func != "") {
+        sched.compute_unit_latencies[op->func] = 0;
+        //sched.op_compute_unit_latencies[op->name] = 0;
+      } else {
+        //sched.op_compute_unit_latencies[op->name] = 0;
+      }
+
+      for (auto b : op->buffers_referenced()) {
+        if (!prg.is_boundary(b)) {
+          sched.buffer_load_latencies[b] = buffer_load_latency(options);
+          sched.buffer_store_latencies[b] = buffer_store_latency(options);
+        } else {
+          sched.buffer_load_latencies[b] = 0;
+          sched.buffer_store_latencies[b] = 0;
+        }
       }
     }
   }
 
-  for (auto op : prg.all_ops()) {
-    if (op->func != "") {
-      if (options.rtl_options.use_pipelined_compute_units) {
-        sched.op_compute_unit_names[op->name] = op->func + "_pipelined";
-      } else {
-        sched.op_compute_unit_names[op->name] = op->func;
+    for (auto op : prg.all_ops()) {
+      if (op->func != "") {
+        if (options.rtl_options.use_pipelined_compute_units) {
+          sched.op_compute_unit_names[op->name] = op->func + "_pipelined";
+        } else {
+          sched.op_compute_unit_names[op->name] = op->func;
+        }
       }
     }
-  }
 
 #ifdef COREIR
   pipeline_compute_units(prg, sched);

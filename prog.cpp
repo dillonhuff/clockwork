@@ -5343,7 +5343,7 @@ void generate_garnet_verilator_tb(prog& prg,
   //rgtb << tab(1) << "for (int t = 0; t < 30000; t++) {" << endl;
   //rgtb << tab(1) << "for (int t = 0; t < 300; t++) {" << endl;
 
-  rgtb << tab(2) << "cout << \"t = \" << t << endl;" << endl;
+  // rgtb << tab(2) << "cout << \"t = \" << t << endl;" << endl;
   for (auto out : inputs(buffers, prg)) {
     string ctrl_name =
       out.first + "_" + out.second + "_en";
@@ -5351,8 +5351,10 @@ void generate_garnet_verilator_tb(prog& prg,
       "dut." + out.first + "_" + out.second;
     //rgtb << tab(2) << "if (!" << out.first << ".is_empty()) {" << endl;
     rgtb << tab(2) << "if (dut." << ctrl_name << ") {" << endl;
-    rgtb << tab(3) << "cout << \"send me data!\" << endl;" << endl;
-    rgtb << tab(3) << "*(" << data_name << ") = (int) " << out.first << ".read();" << endl;
+    // rgtb << tab(3) << "cout << \"send me data!\" << endl;" << endl;
+    rgtb << tab(3) << "int tmp = (int) " << out.first << ".read();" << endl;
+    rgtb << tab(3) << "cout << \"Reading:\" << tmp << endl;" << endl;
+    rgtb << tab(3) << "*(" << data_name << ") = (int) " << "tmp;" << endl;
     rgtb << tab(2) << "}" << endl;
   }
 
@@ -5366,8 +5368,8 @@ void generate_garnet_verilator_tb(prog& prg,
       "dut." + out.first + "_" + out.second;
     rgtb << tab(1) << ctrl_name << "_count += dut." << ctrl_name << ";" << endl;
     rgtb << tab(1) << "if (dut." << ctrl_name << ") {" << endl;
-    rgtb << tab(2) << "cout << (int) *(" << data_name << ") << endl;" << endl;
-    rgtb << tab(2) << "cout << t << \"Get output val:\" << (int) *(" << data_name << ") << endl << endl;" << endl;
+    // rgtb << tab(2) << "cout << (int) *(" << data_name << ") << endl;" << endl;
+    rgtb << tab(2) << "cout << \"Output:\" << (int) *(" << data_name << ") << endl << endl;" << endl;
     rgtb << tab(2) << "hw_uint<16> val((int) *(" << data_name << "));" << endl;
     //rgtb << tab(2) << "fout << val << endl;" << endl;
     rgtb << tab(2) << out.first << ".write(val);" << endl;
