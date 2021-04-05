@@ -621,6 +621,10 @@ std::string str(isl_multi_union_pw_aff* const mupa) {
   return r;
 }
 
+isl_map* linear_address_map_lake(isl_set* s) {
+    return linear_address_map_lake(s, 1);
+}
+
 isl_map* linear_address_map_lake(isl_set* s, int fetch_width) {
   string domain = name(s);
   int dim = num_dims(s);
@@ -4462,6 +4466,18 @@ vector<int> extents(isl_set* s) {
     exts.push_back(to_int(lexmaxval(pr)) - to_int(lexminval(pr)) + 1);
   }
   return exts;
+}
+
+isl_set* project_out_zero_dim(isl_set* s) {
+  auto s_c = cpy(s);
+  vector<int> exts = extents(s_c);
+  isl_set* ret = s_c;
+  for (auto itr = exts.begin(); itr != exts.end(); itr ++) {
+    if (*itr == 1){
+      ret = project_out(ret, itr - exts.begin());
+    }
+  }
+  return ret;
 }
 
 bool is_cst(isl_multi_aff* ma) {
