@@ -2038,3 +2038,4 @@ std::string perfect_loop_codegen(umap* schedmap);
 
 umap* clockwork_schedule_prog(prog& prg);
 
+std::vector<std::string> get_kernels_in_order(prog& prg);

@@ -16839,7 +16839,7 @@ void relax_delays_rate_matched(schedule_info& sched, prog& prg) {
   int fetch_width = 4;
   auto start_times = op_start_times(sched, prg);
   auto domains = prg.domains();
-  for (auto name : topologically_sort_kernels(prg)) {
+  for (auto name : get_kernels_in_order(prg)) {
     auto lp = prg.find_loop(name);
     auto cons_op_vec = lp->all_ops();
     if (cons_op_vec.size() > 1)
