@@ -11167,6 +11167,24 @@ void blur_and_downsample_test() {
 void playground() {
     {
         isl_ctx* ctx = isl_ctx_alloc();
+        auto in_0 = isl_map_read_from_str(ctx,"{ input[i0, i1]-> data[i0, i1]: 0<=i0<=61 and 0<=i1<=61}");
+        auto in_sched = isl_map_read_from_str(ctx,"{ input[i0, i1]-> [62*i0 + i1]: 0<=i0<=61 and 0<=i1<=61}");
+
+        auto out_0 = isl_map_read_from_str(ctx,"{ output[i0, i1]-> data[i0, i1]: 0<=i0<=59 and 0<=i1<=61}");
+        auto out_1 = isl_map_read_from_str(ctx,"{ output[i0, i1]-> data[i0+1, i1]: 0<=i0<=59 and 0<=i1<=61}");
+        auto out_2 = isl_map_read_from_str(ctx,"{ output[i0, i1]-> data[i0+2, i1]: 0<=i0<=59 and 0<=i1<=61}");
+        auto out_sched = isl_map_read_from_str(ctx,"{ output[i0, i1]-> [124+62*i0 + i1]: 0<=i0<=59 and 0<=i1<=61}");
+        auto in_sched_shift = linear_schedule(in_sched, {1}, 62, false);
+        auto data2cycle = dot(inv(in_0), in_sched_shift);
+        auto new_outpt_acc = dot(out_sched, inv(data2cycle));
+        cout << str(in_sched_shift) << endl;
+        cout << str(data2cycle) << endl;
+        cout << str(simplify_expr(new_outpt_acc)) << endl;
+        assert(false);
+
+    }
+    {
+        isl_ctx* ctx = isl_ctx_alloc();
         auto acc_0 = isl_map_read_from_str(ctx,"{ sram2tb[i0, i2, i1]-> data[i0, i1+i2]: 0<=i0<=61 and 0<=i1<=61 and 0<=i2<=7}");
 
         auto trans = isl_map_read_from_str(ctx,"{ sram2tb[i0, i1]-> sram2tb[i0, i2, 4*i1+1]}");
@@ -14382,8 +14400,9 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   vector<prog> test_apps;
   //TODO:has issue  with multiple input
   //test_apps.push_back(demosaic_complex());
-  //
   //test_apps.push_back(fft8_unroll8());
+  //
+  test_apps.push_back(down_sample());
   test_apps.push_back(gaussian());
   test_apps.push_back(conv_3_3());
   test_apps.push_back(counter());
@@ -14392,6 +14411,7 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   test_apps.push_back(rom());
   test_apps.push_back(conv_1_2());
   test_apps.push_back(demosaic_unrolled());
+  //test_apps.push_back(camera_pipeline_trunc());
   test_apps.push_back(camera_pipeline());
   test_apps.push_back(up_sample());
   test_apps.push_back(unsharp());
@@ -14421,7 +14441,6 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
     break_up_multi_channel_outputs(prg);
     dsa_writers(prg);
     prg.pretty_print();
-    auto cpu = unoptimized_result(prg);
 
     //compile_for_garnet_platonic_mem(prg);
     compile_for_garnet_single_port_mem(prg, dir, false, gen_config_only, false, false);
@@ -14434,6 +14453,7 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
       verilog_files.push_back(name + ".v");
       verilog_files.push_back("LakeWrapper.v");
       bool extra_flag_for_lake = true;
+      auto cpu = unoptimized_result(prg);
       int res = run_verilator_on(name, name + "_verilog_tb.cpp", verilog_files, extra_flag_for_lake);
       assert(res == 0);
       cmd("rm LakeWrapper.v");
@@ -17183,7 +17203,11 @@ void sanity_check_iis_for_vectorization(schedule_info& sched, prog& prg, int fet
 
 
 void garnet_single_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
-  if (is_rate_matchable(prg) && !contains(prg.name, "split")) {
+  if (contains(prg.name, "fft")) {
+    //An hack on the fft schedule
+    sequential_schedule(sched, root, prg);
+    return;
+  } else if (is_rate_matchable(prg)) {
     prg.pretty_print();
 
     //TODO: need another function to choose between pad bottom level or top level

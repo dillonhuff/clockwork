@@ -777,6 +777,7 @@ UBuffer UBuffer::generate_ubuffer(UBufferImpl& impl, int bank) {
               });
     */
     int usuffix = 0;
+    bool sr = false;
     for (string inpt: inpts) {
       auto acc_map = to_map(access_map.at(inpt));
 
@@ -790,7 +791,21 @@ UBuffer UBuffer::generate_ubuffer(UBufferImpl& impl, int bank) {
 
       //Put into separate bundle if we have different domain name
       buf.port_bundles[::name(dom) + "_write"].push_back(inpt);
-      buf.add_in_pt(inpt, dom, acc_map, its(schedule.at(inpt), dom));
+      if (impl.is_shift_register_input(inpt)) {
+        //rewrite for shift register
+        //TODO pass codegenoptions
+        //auto reduce_map = linear_address_map_lake(rddom, 4);
+        //cout << "Reduce map: " << str(reduce_map) << endl;
+        //reduce_map = set_range_name(reduce_map, bname);
+        //reduce_map = set_domain_name(reduce_map, bname);
+        //auto linear_acc_map = dot(acc_map, reduce_map);
+        //cout << "linear map: " << str(linear_acc_map) << endl;
+        //buf.add_in_pt(inpt, dom, linear_acc_map, its(schedule.at(inpt), dom));
+        buf.add_in_pt(inpt, dom, acc_map, its(schedule.at(inpt), dom));
+        sr = true;
+      } else {
+        buf.add_in_pt(inpt, dom, acc_map, its(schedule.at(inpt), dom));
+      }
       usuffix ++;
     }
 
@@ -800,28 +815,60 @@ UBuffer UBuffer::generate_ubuffer(UBufferImpl& impl, int bank) {
       acc_map = coalesce(its_range(acc_map, rddom));
       auto sched = schedule.at(outpt);
 
+      acc_map = set_range_name(acc_map, bname);
+      auto dom = ::domain(acc_map);
       //Shift register need preprocess the schedule and access pattern
-      if (impl.shift_depth.count(outpt) > 0) {
+      /*if (impl.shift_depth.count(outpt) > 0) {
           auto outpt_info =
               get_shift_pt_access_with_sched(outpt, impl.shift_depth.at(outpt));
           acc_map = outpt_info.first;
           sched = to_umap(outpt_info.second);
-      }
-
-      acc_map = set_range_name(acc_map, bname);
-      auto dom = ::domain(acc_map);
+      }*/
       string pt_name = bname + "_" + ::name(dom) + "_" + to_string(usuffix);
 
-      //buf.port_bundles[get_bundle(outpt)].push_back(pt_name);
+      if (impl.is_shift_register_output(outpt)) {
+        int delay = impl.shift_registered_outputs.at(outpt).second;;
+        string inpt = impl.shift_registered_outputs.at(outpt).first;
 
-      //Put into separate bundle if we have different domain name
-      buf.port_bundles[::name(dom) + "_read"].push_back(outpt);
+        auto acc_map = to_map(access_map.at(inpt));
+        //get the bank specific access map
+        acc_map = coalesce(its_range(acc_map, rddom));
+        auto sched = to_map(schedule.at(inpt));
 
-      buf.add_out_pt(outpt, dom, acc_map, its(sched, dom));
+        acc_map = set_range_name(acc_map, bname);
+        acc_map = add_domain_suffix(acc_map, domain_name(acc_map) + "_delay_"+str(delay));
+        sched = add_domain_suffix(sched, domain_name(sched) + "_delay_"+str(delay));
+
+        auto dom = ::domain(acc_map);
+        sched = linear_schedule(sched, {1}, delay, false);
+       // auto reduce_map = linear_address_map_lake(rddom, 4);
+       // cout << "Reduce map: " << str(reduce_map) << endl;
+       // reduce_map = set_range_name(reduce_map, bname);
+       // reduce_map = set_domain_name(reduce_map, bname);
+       // auto linear_acc_map = dot(acc_map, reduce_map);
+       // cout << "linear map: " << str(linear_acc_map) << endl;
+
+        //change bundle naming strategy to keep same sequence
+        buf.port_bundles[outpt + "_read"].push_back(outpt);
+        //buf.add_out_pt(outpt, dom, linear_acc_map, its(to_umap(sched), dom));
+        buf.add_out_pt(outpt, dom, acc_map, its(to_umap(sched), dom));
+      } else {
+
+        //buf.port_bundles[get_bundle(outpt)].push_back(pt_name);
+
+        //Put into separate bundle if we have different domain name
+        buf.port_bundles[::name(dom) + "_read"].push_back(outpt);
+
+        buf.add_out_pt(outpt, dom, acc_map, its(sched, dom));
+      }
       usuffix ++;
     }
   buf.simplify_address_space();
-  //}
+  if (sr) {
+    buf.linear_address_space(project_out_zero_dim(rddom), 4);
+  }
+  cout << buf << endl;
+
   return buf;
 }
 
@@ -1714,21 +1761,23 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, UBuffer& ubuf) {
         if(op2write_map.count(op_name)) {
             assert(op2write_map.size() <= 2);
             auto acc_map = pick(op2write_map.at(op_name));
-                auto reduce_map = linear_address_map_lake(to_set(range(acc_map)), mem.fetch_width);
+                //auto reduce_map = linear_address_map_lake(to_set(range(acc_map)), mem.fetch_width);
+                auto reduce_map = linear_address_map_lake(to_set(ubuf.global_range()), mem.fetch_width);
                 auto linear_acc_map = dot(acc_map, reduce_map);
                 cout << tab(1) << "Before Merge: " << endl;
                 cout << tab(2) << "acc map: " << str(acc_map) << endl;
                 cout << tab(2) << "sched: " << str(sched) << endl;
                 cout << tab(2) << "reduce_map: " << str(reduce_map) << endl;
+                cout << tab(2) << "1d acc map: " << str(linear_acc_map) << endl;
                 //add a simplify optimization pass,
                 //reutrn:    pair(schedulem access_map)
                 auto m_pair = merge_dom_dim(sched, to_map(linear_acc_map));
-                sched = m_pair.first;
+                auto new_sched = m_pair.first;
                 cout << tab(1) << "After Merge: " << endl;
-                cout << tab(2) << "schedule: " << str(sched) << endl;
+                cout << tab(2) << "schedule: " << str(new_sched) << endl;
                 //cout << tab(2) << "access map: " << str(m_pair.second) << endl;
-                auto aff = get_aff(sched);
-                auto dom = ::domain(sched);
+                auto aff = get_aff(new_sched);
+                auto dom = ::domain(new_sched);
                 auto config_info = generate_accessor_config_from_aff_expr(dom, aff);
                 int port_width = mem.in_port_width.at("regfile");
                 auto addressor = generate_addressor_config_from_aff_expr(
@@ -1742,19 +1791,20 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, UBuffer& ubuf) {
         if(op2read_map.count(op_name)) {
             assert(op2read_map.size() <= 2);
             auto acc_map = pick(op2read_map.at(op_name));
-                auto reduce_map = linear_address_map_lake(to_set(range(acc_map)), mem.fetch_width);
+                //auto reduce_map = linear_address_map_lake(to_set(range(acc_map)), mem.fetch_width);
+                auto reduce_map = linear_address_map_lake(to_set(ubuf.global_range()), mem.fetch_width);
                 auto linear_acc_map = dot(acc_map, reduce_map);
                 cout << tab(1) << "Before Merge: " << endl;
                 cout << tab(2) << "acc map: " << str(acc_map) << endl;
                 cout << tab(2) << "sched: " << str(sched) << endl;
                 cout << tab(2) << "reduce_map: " << str(reduce_map) << endl;
                 auto m_pair = merge_dom_dim(sched, to_map(linear_acc_map));
-                sched = m_pair.first;
+                auto new_sched = m_pair.first;
                 cout << tab(1) << "After Merge: " << endl;
-                cout << tab(2) << "schedule: " << str(sched) << endl;
+                cout << tab(2) << "schedule: " << str(new_sched) << endl;
                 //cout << tab(2) << "access map: " << str(m_pair.second) << endl;
-                auto aff = get_aff(sched);
-                auto dom = ::domain(sched);
+                auto aff = get_aff(new_sched);
+                auto dom = ::domain(new_sched);
                 auto config_info = generate_accessor_config_from_aff_expr(dom, aff);
                 int port_width = mem.out_port_width.at("regfile");
                 auto addressor = generate_addressor_config_from_aff_expr(
@@ -1765,7 +1815,6 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, UBuffer& ubuf) {
             add_lake_config(ret, config_info, num_in_dims(aff), "regfile2out_" + str(out_cnt));
             out_cnt ++;
         }
-        cout << "\tSched: " << str(sched) << endl;
     }
     cout << ret << endl;
     return ret;
@@ -6322,9 +6371,14 @@ void UBuffer::generate_banks(CodegenOptions& options) {
       auto out_sched_new = linear_schedule(to_map(out_sched), iis, 0, false);
 
       //The out vectorize schedule recipe
-      int vec_offset = out_bd_cnt * out_fetch_ii * fetch_width / 2
+      //TODO: double check this recipe and refactor it into a function
+      int const_sched = int_const_coeff(get_aff(out_sched));
+      cout << "Sched const" << const_sched << endl;
+      int rem = (const_sched % fetch_width) / 2;
+      int vec_offset = abs(out_bd_cnt - rem) * out_fetch_ii * fetch_width / 2
           - (out_fetch_ii * fetch_width+1);
       auto out_sched_vec = linear_schedule(to_map(out_sched), iis, vec_offset, false);
+
       out_sched_vec = pad_one_more_dim_to_sched_map_innermost(out_sched_vec, 0);
       //cout << "\tin_sched vec: " << in_sched_vec << "\t\nout_sched vec: " << out_sched_vec << endl;
       new_sched.insert(make_pair(out_op, out_sched_new));
@@ -6547,7 +6601,6 @@ void UBuffer::generate_banks(CodegenOptions& options) {
       cout << "PT: " << origin_pt_name << "\n\torginal sched: " << str(sched) << endl;
 
       int in_fetch_ii = get_vector_fetch_loop_ii(to_umap(sched));
-      cout << "in_fetch_ii: " << in_fetch_ii << endl;
       assert(in_fetch_ii % access_cnt_per_port.at(pt_cnt) == 0);
       int offset = in_fetch_ii / access_cnt_per_port.at(pt_cnt) * pt_cnt;
       auto new_sched = linear_schedule(sched, {1, 1}, offset, false);

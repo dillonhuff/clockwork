@@ -1823,6 +1823,20 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
         return false;
     }
 
+    void linear_address_space(isl_set* rddom, int fetch_width) {
+      auto reduce_map = linear_address_map_lake(rddom, fetch_width);
+      string dname = buf_range_name();
+      reduce_map = set_domain_name(reduce_map, dname);
+      reduce_map = set_range_name(reduce_map, dname);
+      cout << "reduce map: " << str(reduce_map) << endl;
+      for (auto& it: access_map) {
+        auto acc_map = to_map(it.second);
+        auto linear_acc_map = dot(acc_map, reduce_map);
+        cout << "linear map: " << str(linear_acc_map) << endl;
+        it.second = to_umap(linear_acc_map);
+      }
+    }
+
 
     int lanes_in_bundle(const std::string& bn) {
       assert(contains_key(bn, port_bundles));
@@ -3063,6 +3077,19 @@ struct UBufferImpl {
         }
     }
     return true;
+  }
+
+  bool is_shift_register_input(string input) const {
+    for (auto it: shift_registered_outputs) {
+      if (it.second.first == input)
+        return true;
+    }
+    return false;
+  }
+
+  bool is_shift_register_output(string output) const {
+    std::set<string> outpts = get_sr_outpts();
+    return outpts.count(output);
   }
 
   int get_bank_num() const {
