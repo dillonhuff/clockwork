@@ -972,9 +972,9 @@ void load_mem_ext(Context* c) {
     Values rbGenargs({{"width",Const::make(c,width)}, {"is_rom", Const::make(c,true)}});
     Json config;
     config["mode"] = "sram";
+    config["init"] = (def->getModule()->getArg("init")->get<Json>())[0];
     def->addInstance("cgramem","cgralib.Mem", rbGenargs,
       {{"mode", Const::make(c,"lake")},
-      {"init", def->getModule()->getArg("init")},
       {"config", Const::make(c, config)}});
     //def->addInstance("c1","corebit.const",{{"value",Const::make(c,true)}});
     //def->addInstance("c0","corebit.const",{{"value",Const::make(c,false)}});
