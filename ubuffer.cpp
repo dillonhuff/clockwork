@@ -6547,6 +6547,7 @@ void UBuffer::generate_banks(CodegenOptions& options) {
       cout << "PT: " << origin_pt_name << "\n\torginal sched: " << str(sched) << endl;
 
       int in_fetch_ii = get_vector_fetch_loop_ii(to_umap(sched));
+      cout << "in_fetch_ii: " << in_fetch_ii << endl;
       assert(in_fetch_ii % access_cnt_per_port.at(pt_cnt) == 0);
       int offset = in_fetch_ii / access_cnt_per_port.at(pt_cnt) * pt_cnt;
       auto new_sched = linear_schedule(sched, {1, 1}, offset, false);
@@ -7271,7 +7272,7 @@ void UBuffer::generate_banks(CodegenOptions& options) {
                 auto trans_map = isl_map_read_from_str(ctx, trans_str.c_str());
                 auto stripmining_am = dot(inv(trans_map), am);
                 cout << "\t After strip mining: " << str(stripmining_am) << endl;
-                access_map.at(out_pt_name) = to_umap(stripmining_am);
+                access_map.at(out_pt_name) = to_umap(simplify(stripmining_am));
                 auto sched = schedule.at(out_pt_name);
                 schedule.at(out_pt_name) = dot(inv(trans_map), sched);
                 domain.at(out_pt_name) = ::domain(stripmining_am);
@@ -7279,6 +7280,9 @@ void UBuffer::generate_banks(CodegenOptions& options) {
                 string o_dom_name = domain_name(am);
                 new_sched.at(dom_name) = dot(inv(trans_map), new_sched.at(dom_name));
                 new_sched.at(o_dom_name) = dot(inv(trans_map), new_sched.at(o_dom_name));
+
+                //update the access name
+                am = to_map(access_map.at(out_pt_name));
               }
 
 

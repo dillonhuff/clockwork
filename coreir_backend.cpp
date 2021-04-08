@@ -972,9 +972,9 @@ void load_mem_ext(Context* c) {
     Values rbGenargs({{"width",Const::make(c,width)}, {"is_rom", Const::make(c,true)}});
     Json config;
     config["mode"] = "sram";
-    config["init"] = (def->getModule()->getArg("init")->get<Json>())[0];
     def->addInstance("cgramem","cgralib.Mem", rbGenargs,
       {{"mode", Const::make(c,"lake")},
+      {"init", def->getModule()->getArg("init")},
       {"config", Const::make(c, config)}});
     //def->addInstance("c1","corebit.const",{{"value",Const::make(c,true)}});
     //def->addInstance("c0","corebit.const",{{"value",Const::make(c,false)}});
@@ -2643,10 +2643,10 @@ void MapperPasses::MemConst::setVisitorInfo() {
 }
 
 namespace MapperPasses {
-class MemSubstitute: public CoreIR::InstanceVisitorPass {
+class MemInitCopy: public CoreIR::InstanceVisitorPass {
   public :
     static std::string ID;
-    MemSubstitute() : InstanceVisitorPass(ID,"replace cgralib.Mem_amber to cgralib.Mem") {}
+    MemInitCopy() : InstanceVisitorPass(ID, "move init into config") {}
     void setVisitorInfo() override;
 };
 
@@ -2656,6 +2656,76 @@ vector<CoreIR::Wireable*> getConnectWires(CoreIR::Wireable* wire) {
   auto conSet = wire->getConnectedWireables();
   vector<Wireable*> conns(conSet.begin(), conSet.end());
   return conns;
+}
+
+void reconnectInWire(ModuleDef* def, CoreIR::Wireable* rem_w, CoreIR::Wireable* new_w) {
+  vector<Wireable*> conns = getConnectWires(rem_w);
+  assert(conns.size() == 1);
+  def->disconnect(pick(conns), rem_w);
+  def->connect(pick(conns), new_w);
+}
+
+void reconnectOutWire(ModuleDef* def, CoreIR::Wireable* rem_w, CoreIR::Wireable* new_w) {
+  vector<Wireable*> conns = getConnectWires(rem_w);
+  for (auto conn: conns) {
+    def->disconnect((conn), rem_w);
+    def->connect((conn), new_w);
+  }
+}
+
+bool InitMove(Instance* cnst) {
+  cout << tab(2) << "memory syntax transformation init copy!" << endl;
+  cout << tab(2) << toString(cnst) << endl;
+  Context* c = cnst->getContext();
+
+  //Move the init into config
+  auto init_data = cnst->getModArgs().at("init")->get<Json>();
+  Json config_json;
+  config_json["init"] = init_data;
+  config_json["mode"] = "sram";
+  ModuleDef* def = cnst->getContainer();
+  CoreIR::Values modargs = {
+      {"config", CoreIR::Const::make(c, config_json)},
+      {"mode", CoreIR::Const::make(c, "lake")}
+  };
+  CoreIR::Values genargs = {
+    {"width", CoreIR::Const::make(c, 16)},
+    {"is_rom", CoreIR::Const::make(c, true)},
+    {"num_inputs", CoreIR::Const::make(c, 1)},
+    {"num_outputs", CoreIR::Const::make(c, 1)},
+  };
+
+  //auto pt = addPassthrough(cnst, cnst->getInstname()+"_tmp");
+  Instance* buf = def->addInstance(cnst->getInstname()+"_rom",
+          "cgralib.Mem", genargs, modargs);
+  reconnectInWire(def, cnst->sel("raddr"), buf->sel("addr_in_0"));
+  reconnectInWire(def, cnst->sel("ren"), buf->sel("ren_in_0"));
+  reconnectOutWire(def, cnst->sel("rdata"), buf->sel("data_out_0"));
+  def->removeInstance(cnst);
+  //def->connect(pt->sel("in"), buf);
+  //inlineInstance(pt);
+  //inlineInstance(buf);
+
+  return true;
+}
+
+std::string MapperPasses::MemInitCopy::ID = "meminitcopy";
+void MapperPasses::MemInitCopy::setVisitorInfo() {
+  Context* c = this->getContext();
+  if (c->hasGenerator("memory.rom2")) {
+    addVisitorFunction(c->getGenerator("memory.rom2"), InitMove);
+  }
+}
+
+
+namespace MapperPasses {
+class MemSubstitute: public CoreIR::InstanceVisitorPass {
+  public :
+    static std::string ID;
+    MemSubstitute() : InstanceVisitorPass(ID,"replace cgralib.Mem_amber to cgralib.Mem") {}
+    void setVisitorInfo() override;
+};
+
 }
 
 bool MemtileReplace(Instance* cnst) {
@@ -2839,6 +2909,8 @@ void garnet_map_module(Module* top, bool garnet_syntax_trans = false) {
   c->addPass(new CustomFlatten);
   c->runPasses({"customflatten"});
   if (garnet_syntax_trans) {
+    c->addPass(new MapperPasses::MemInitCopy);
+    c->runPasses({"meminitcopy"});
     c->addPass(new MapperPasses::MemSubstitute);
     c->runPasses({"memsubstitute"});
     c->addPass(new MapperPasses::RegfileSubstitute);
