@@ -14402,6 +14402,7 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   //test_apps.push_back(demosaic_complex());
   //test_apps.push_back(fft8_unroll8());
   //
+  //test_apps.push_back(camera_pipeline_new());
   test_apps.push_back(down_sample());
   test_apps.push_back(gaussian());
   test_apps.push_back(conv_3_3());
