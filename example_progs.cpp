@@ -956,6 +956,7 @@ prog gaussian() {
 }
 
 
+
 prog cascade() {
   prog prg;
   prg.compute_unit_file = "cascade_compute.h";
@@ -1072,31 +1073,39 @@ prog harris() {
   hcompute_padded16_global_wrapper_stencil->add_store("padded16_global_wrapper_stencil", "padded16_global_wrapper_s0_y", "padded16_global_wrapper_s0_x");
 
 //consuming padded16_global_wrapper.stencil
-////producing grad_x.stencil
-  auto grad_x_s0_y = prg.add_loop("grad_x_s0_y", -2, 60);
-  auto grad_x_s0_x = grad_x_s0_y->add_loop("grad_x_s0_x", -2, 60);
+////producing grad_x_unclamp.stencil
+  auto grad_x_unclamp_s0_y = prg.add_loop("grad_x_unclamp_s0_y", -2, 60);
+  auto grad_x_unclamp_s0_x = grad_x_unclamp_s0_y->add_loop("grad_x_unclamp_s0_x", -2, 60);
 
-//store is: grad_x.stencil(grad_x_s0_x, grad_x_s0_y) = max(min(((((padded16_global_wrapper.stencil((grad_x_s0_x + 1), (grad_x_s0_y + -1)) + (padded16_global_wrapper.stencil((grad_x_s0_x + 1), (grad_x_s0_y + 1)) + (padded16_global_wrapper.stencil((grad_x_s0_x + 1), grad_x_s0_y)*(int16)2))) - padded16_global_wrapper.stencil((grad_x_s0_x + -1), (grad_x_s0_y + -1))) - (padded16_global_wrapper.stencil((grad_x_s0_x + -1), grad_x_s0_y)*(int16)2)) - padded16_global_wrapper.stencil((grad_x_s0_x + -1), (grad_x_s0_y + 1))), (int16)255), (int16)-255)
-  auto hcompute_grad_x_stencil = grad_x_s0_x->add_op("op_hcompute_grad_x_stencil");
-  hcompute_grad_x_stencil->add_function("hcompute_grad_x_stencil");
-  hcompute_grad_x_stencil->add_load("padded16_global_wrapper_stencil", "(grad_x_s0_y + -1)", "(grad_x_s0_x + 1)");
-  hcompute_grad_x_stencil->add_load("padded16_global_wrapper_stencil", "(grad_x_s0_y + 1)", "(grad_x_s0_x + 1)");
-  hcompute_grad_x_stencil->add_load("padded16_global_wrapper_stencil", "grad_x_s0_y", "(grad_x_s0_x + 1)");
-  hcompute_grad_x_stencil->add_load("padded16_global_wrapper_stencil", "(grad_x_s0_y + -1)", "(grad_x_s0_x + -1)");
-  hcompute_grad_x_stencil->add_load("padded16_global_wrapper_stencil", "grad_x_s0_y", "(grad_x_s0_x + -1)");
-  hcompute_grad_x_stencil->add_load("padded16_global_wrapper_stencil", "(grad_x_s0_y + 1)", "(grad_x_s0_x + -1)");
-  prg.buffer_port_widths["grad_x_stencil"] = 16;
-  hcompute_grad_x_stencil->add_store("grad_x_stencil", "grad_x_s0_y", "grad_x_s0_x");
+//store is: grad_x_unclamp.stencil(grad_x_unclamp_s0_x, grad_x_unclamp_s0_y) = (int16)0
+  auto hcompute_grad_x_unclamp_stencil = grad_x_unclamp_s0_x->add_op("op_hcompute_grad_x_unclamp_stencil");
+  hcompute_grad_x_unclamp_stencil->add_function("hcompute_grad_x_unclamp_stencil");
+  prg.buffer_port_widths["grad_x_unclamp_stencil"] = 16;
+  hcompute_grad_x_unclamp_stencil->add_store("grad_x_unclamp_stencil", "grad_x_unclamp_s0_y", "grad_x_unclamp_s0_x");
+  auto grad_x_unclamp_s1_y = prg.add_loop("grad_x_unclamp_s1_y", -2, 60);
+  auto grad_x_unclamp_s1_x = grad_x_unclamp_s1_y->add_loop("grad_x_unclamp_s1_x", -2, 60);
 
-//consuming grad_x.stencil
+//store is: grad_x_unclamp.stencil(grad_x_unclamp_s1_x, grad_x_unclamp_s1_y) = ((((grad_x_unclamp.stencil(grad_x_unclamp_s1_x, grad_x_unclamp_s1_y) + (padded16_global_wrapper.stencil((grad_x_unclamp_s1_x + 1), (grad_x_unclamp_s1_y + -1)) + (padded16_global_wrapper.stencil((grad_x_unclamp_s1_x + 1), (grad_x_unclamp_s1_y + 1)) + (padded16_global_wrapper.stencil((grad_x_unclamp_s1_x + 1), grad_x_unclamp_s1_y)*(int16)2)))) - padded16_global_wrapper.stencil((grad_x_unclamp_s1_x + -1), (grad_x_unclamp_s1_y + -1))) - (padded16_global_wrapper.stencil((grad_x_unclamp_s1_x + -1), grad_x_unclamp_s1_y)*(int16)2)) - padded16_global_wrapper.stencil((grad_x_unclamp_s1_x + -1), (grad_x_unclamp_s1_y + 1)))
+  auto hcompute_grad_x_unclamp_stencil_1 = grad_x_unclamp_s1_x->add_op("op_hcompute_grad_x_unclamp_stencil_1");
+  hcompute_grad_x_unclamp_stencil_1->add_function("hcompute_grad_x_unclamp_stencil_1");
+  hcompute_grad_x_unclamp_stencil_1->add_load("grad_x_unclamp_stencil", "grad_x_unclamp_s1_y", "grad_x_unclamp_s1_x");
+  hcompute_grad_x_unclamp_stencil_1->add_load("padded16_global_wrapper_stencil", "(grad_x_unclamp_s1_y + -1)", "(grad_x_unclamp_s1_x + 1)");
+  hcompute_grad_x_unclamp_stencil_1->add_load("padded16_global_wrapper_stencil", "(grad_x_unclamp_s1_y + 1)", "(grad_x_unclamp_s1_x + 1)");
+  hcompute_grad_x_unclamp_stencil_1->add_load("padded16_global_wrapper_stencil", "grad_x_unclamp_s1_y", "(grad_x_unclamp_s1_x + 1)");
+  hcompute_grad_x_unclamp_stencil_1->add_load("padded16_global_wrapper_stencil", "(grad_x_unclamp_s1_y + -1)", "(grad_x_unclamp_s1_x + -1)");
+  hcompute_grad_x_unclamp_stencil_1->add_load("padded16_global_wrapper_stencil", "grad_x_unclamp_s1_y", "(grad_x_unclamp_s1_x + -1)");
+  hcompute_grad_x_unclamp_stencil_1->add_load("padded16_global_wrapper_stencil", "(grad_x_unclamp_s1_y + 1)", "(grad_x_unclamp_s1_x + -1)");
+  hcompute_grad_x_unclamp_stencil_1->add_store("grad_x_unclamp_stencil", "grad_x_unclamp_s1_y", "grad_x_unclamp_s1_x");
+
+//consuming grad_x_unclamp.stencil
 ////producing lxx.stencil
   auto lxx_s0_y = prg.add_loop("lxx_s0_y", -2, 60);
   auto lxx_s0_x = lxx_s0_y->add_loop("lxx_s0_x", -2, 60);
 
-//store is: lxx.stencil(lxx_s0_x, lxx_s0_y) = ((grad_x.stencil(lxx_s0_x, lxx_s0_y)*grad_x.stencil(lxx_s0_x, lxx_s0_y))/(int16)128)
+//store is: lxx.stencil(lxx_s0_x, lxx_s0_y) = ((max(min(grad_x_unclamp.stencil(lxx_s0_x, lxx_s0_y), (int16)180), (int16)-180)*max(min(grad_x_unclamp.stencil(lxx_s0_x, lxx_s0_y), (int16)180), (int16)-180))/(int16)64)
   auto hcompute_lxx_stencil = lxx_s0_x->add_op("op_hcompute_lxx_stencil");
   hcompute_lxx_stencil->add_function("hcompute_lxx_stencil");
-  hcompute_lxx_stencil->add_load("grad_x_stencil", "lxx_s0_y", "lxx_s0_x");
+  hcompute_lxx_stencil->add_load("grad_x_unclamp_stencil", "lxx_s0_y", "lxx_s0_x");
   prg.buffer_port_widths["lxx_stencil"] = 16;
   hcompute_lxx_stencil->add_store("lxx_stencil", "lxx_s0_y", "lxx_s0_x");
 
@@ -1129,32 +1138,40 @@ prog harris() {
   hcompute_lgxx_stencil_1->add_store("lgxx_stencil", "lgxx_s1_y", "lgxx_s1_x");
 
 //consuming lgxx.stencil
-////producing grad_y.stencil
-  auto grad_y_s0_y = prg.add_loop("grad_y_s0_y", -2, 60);
-  auto grad_y_s0_x = grad_y_s0_y->add_loop("grad_y_s0_x", -2, 60);
+////producing grad_y_unclamp.stencil
+  auto grad_y_unclamp_s0_y = prg.add_loop("grad_y_unclamp_s0_y", -2, 60);
+  auto grad_y_unclamp_s0_x = grad_y_unclamp_s0_y->add_loop("grad_y_unclamp_s0_x", -2, 60);
 
-//store is: grad_y.stencil(grad_y_s0_x, grad_y_s0_y) = max(min(((((padded16_global_wrapper.stencil((grad_y_s0_x + -1), (grad_y_s0_y + 1)) + (padded16_global_wrapper.stencil((grad_y_s0_x + 1), (grad_y_s0_y + 1)) + (padded16_global_wrapper.stencil(grad_y_s0_x, (grad_y_s0_y + 1))*(int16)2))) - padded16_global_wrapper.stencil((grad_y_s0_x + -1), (grad_y_s0_y + -1))) - (padded16_global_wrapper.stencil(grad_y_s0_x, (grad_y_s0_y + -1))*(int16)2)) - padded16_global_wrapper.stencil((grad_y_s0_x + 1), (grad_y_s0_y + -1))), (int16)255), (int16)-255)
-  auto hcompute_grad_y_stencil = grad_y_s0_x->add_op("op_hcompute_grad_y_stencil");
-  hcompute_grad_y_stencil->add_function("hcompute_grad_y_stencil");
-  hcompute_grad_y_stencil->add_load("padded16_global_wrapper_stencil", "(grad_y_s0_y + -1)", "(grad_y_s0_x + -1)");
-  hcompute_grad_y_stencil->add_load("padded16_global_wrapper_stencil", "(grad_y_s0_y + -1)", "grad_y_s0_x");
-  hcompute_grad_y_stencil->add_load("padded16_global_wrapper_stencil", "(grad_y_s0_y + -1)", "(grad_y_s0_x + 1)");
-  hcompute_grad_y_stencil->add_load("padded16_global_wrapper_stencil", "(grad_y_s0_y + 1)", "(grad_y_s0_x + -1)");
-  hcompute_grad_y_stencil->add_load("padded16_global_wrapper_stencil", "(grad_y_s0_y + 1)", "(grad_y_s0_x + 1)");
-  hcompute_grad_y_stencil->add_load("padded16_global_wrapper_stencil", "(grad_y_s0_y + 1)", "grad_y_s0_x");
-  prg.buffer_port_widths["grad_y_stencil"] = 16;
-  hcompute_grad_y_stencil->add_store("grad_y_stencil", "grad_y_s0_y", "grad_y_s0_x");
+//store is: grad_y_unclamp.stencil(grad_y_unclamp_s0_x, grad_y_unclamp_s0_y) = (int16)0
+  auto hcompute_grad_y_unclamp_stencil = grad_y_unclamp_s0_x->add_op("op_hcompute_grad_y_unclamp_stencil");
+  hcompute_grad_y_unclamp_stencil->add_function("hcompute_grad_y_unclamp_stencil");
+  prg.buffer_port_widths["grad_y_unclamp_stencil"] = 16;
+  hcompute_grad_y_unclamp_stencil->add_store("grad_y_unclamp_stencil", "grad_y_unclamp_s0_y", "grad_y_unclamp_s0_x");
+  auto grad_y_unclamp_s1_y = prg.add_loop("grad_y_unclamp_s1_y", -2, 60);
+  auto grad_y_unclamp_s1_x = grad_y_unclamp_s1_y->add_loop("grad_y_unclamp_s1_x", -2, 60);
 
-//consuming grad_y.stencil
+//store is: grad_y_unclamp.stencil(grad_y_unclamp_s1_x, grad_y_unclamp_s1_y) = ((((grad_y_unclamp.stencil(grad_y_unclamp_s1_x, grad_y_unclamp_s1_y) + (padded16_global_wrapper.stencil((grad_y_unclamp_s1_x + -1), (grad_y_unclamp_s1_y + 1)) + (padded16_global_wrapper.stencil((grad_y_unclamp_s1_x + 1), (grad_y_unclamp_s1_y + 1)) + (padded16_global_wrapper.stencil(grad_y_unclamp_s1_x, (grad_y_unclamp_s1_y + 1))*(int16)2)))) - padded16_global_wrapper.stencil((grad_y_unclamp_s1_x + -1), (grad_y_unclamp_s1_y + -1))) - (padded16_global_wrapper.stencil(grad_y_unclamp_s1_x, (grad_y_unclamp_s1_y + -1))*(int16)2)) - padded16_global_wrapper.stencil((grad_y_unclamp_s1_x + 1), (grad_y_unclamp_s1_y + -1)))
+  auto hcompute_grad_y_unclamp_stencil_1 = grad_y_unclamp_s1_x->add_op("op_hcompute_grad_y_unclamp_stencil_1");
+  hcompute_grad_y_unclamp_stencil_1->add_function("hcompute_grad_y_unclamp_stencil_1");
+  hcompute_grad_y_unclamp_stencil_1->add_load("grad_y_unclamp_stencil", "grad_y_unclamp_s1_y", "grad_y_unclamp_s1_x");
+  hcompute_grad_y_unclamp_stencil_1->add_load("padded16_global_wrapper_stencil", "(grad_y_unclamp_s1_y + -1)", "(grad_y_unclamp_s1_x + -1)");
+  hcompute_grad_y_unclamp_stencil_1->add_load("padded16_global_wrapper_stencil", "(grad_y_unclamp_s1_y + -1)", "grad_y_unclamp_s1_x");
+  hcompute_grad_y_unclamp_stencil_1->add_load("padded16_global_wrapper_stencil", "(grad_y_unclamp_s1_y + -1)", "(grad_y_unclamp_s1_x + 1)");
+  hcompute_grad_y_unclamp_stencil_1->add_load("padded16_global_wrapper_stencil", "(grad_y_unclamp_s1_y + 1)", "(grad_y_unclamp_s1_x + -1)");
+  hcompute_grad_y_unclamp_stencil_1->add_load("padded16_global_wrapper_stencil", "(grad_y_unclamp_s1_y + 1)", "(grad_y_unclamp_s1_x + 1)");
+  hcompute_grad_y_unclamp_stencil_1->add_load("padded16_global_wrapper_stencil", "(grad_y_unclamp_s1_y + 1)", "grad_y_unclamp_s1_x");
+  hcompute_grad_y_unclamp_stencil_1->add_store("grad_y_unclamp_stencil", "grad_y_unclamp_s1_y", "grad_y_unclamp_s1_x");
+
+//consuming grad_y_unclamp.stencil
 ////producing lxy.stencil
   auto lxy_s0_y = prg.add_loop("lxy_s0_y", -2, 60);
   auto lxy_s0_x = lxy_s0_y->add_loop("lxy_s0_x", -2, 60);
 
-//store is: lxy.stencil(lxy_s0_x, lxy_s0_y) = ((grad_x.stencil(lxy_s0_x, lxy_s0_y)*grad_y.stencil(lxy_s0_x, lxy_s0_y))/(int16)128)
+//store is: lxy.stencil(lxy_s0_x, lxy_s0_y) = ((max(min(grad_x_unclamp.stencil(lxy_s0_x, lxy_s0_y), (int16)180), (int16)-180)*max(min(grad_y_unclamp.stencil(lxy_s0_x, lxy_s0_y), (int16)180), (int16)-180))/(int16)64)
   auto hcompute_lxy_stencil = lxy_s0_x->add_op("op_hcompute_lxy_stencil");
   hcompute_lxy_stencil->add_function("hcompute_lxy_stencil");
-  hcompute_lxy_stencil->add_load("grad_x_stencil", "lxy_s0_y", "lxy_s0_x");
-  hcompute_lxy_stencil->add_load("grad_y_stencil", "lxy_s0_y", "lxy_s0_x");
+  hcompute_lxy_stencil->add_load("grad_x_unclamp_stencil", "lxy_s0_y", "lxy_s0_x");
+  hcompute_lxy_stencil->add_load("grad_y_unclamp_stencil", "lxy_s0_y", "lxy_s0_x");
   prg.buffer_port_widths["lxy_stencil"] = 16;
   hcompute_lxy_stencil->add_store("lxy_stencil", "lxy_s0_y", "lxy_s0_x");
 
@@ -1191,10 +1208,10 @@ prog harris() {
   auto lyy_s0_y = prg.add_loop("lyy_s0_y", -2, 60);
   auto lyy_s0_x = lyy_s0_y->add_loop("lyy_s0_x", -2, 60);
 
-//store is: lyy.stencil(lyy_s0_x, lyy_s0_y) = ((grad_y.stencil(lyy_s0_x, lyy_s0_y)*grad_y.stencil(lyy_s0_x, lyy_s0_y))/(int16)128)
+//store is: lyy.stencil(lyy_s0_x, lyy_s0_y) = ((max(min(grad_y_unclamp.stencil(lyy_s0_x, lyy_s0_y), (int16)180), (int16)-180)*max(min(grad_y_unclamp.stencil(lyy_s0_x, lyy_s0_y), (int16)180), (int16)-180))/(int16)64)
   auto hcompute_lyy_stencil = lyy_s0_x->add_op("op_hcompute_lyy_stencil");
   hcompute_lyy_stencil->add_function("hcompute_lyy_stencil");
-  hcompute_lyy_stencil->add_load("grad_y_stencil", "lyy_s0_y", "lyy_s0_x");
+  hcompute_lyy_stencil->add_load("grad_y_unclamp_stencil", "lyy_s0_y", "lyy_s0_x");
   prg.buffer_port_widths["lyy_stencil"] = 16;
   hcompute_lyy_stencil->add_store("lyy_stencil", "lyy_s0_y", "lyy_s0_x");
 
@@ -1273,53 +1290,7 @@ prog harris() {
   return prg;
 }
 
-prog pointwise() {
-  prog prg;
-  prg.compute_unit_file = "pointwise_compute.h";
-  prg.name = "pointwise";
 
-// Stencil<uint16_t, 64, 64> &hw_input_stencil = arg_0;
-  prg.add_input("hw_input_stencil");
-  prg.buffer_port_widths["hw_input_stencil"] = 16;
-// Stencil<uint16_t, 64, 64> &hw_output_stencil = arg_1;
-  prg.add_output("hw_output_stencil");
-  prg.buffer_port_widths["hw_output_stencil"] = 16;
-
-////producing hw_input_global_wrapper.stencil
-  auto hw_input_global_wrapper_s0_y = prg.add_loop("hw_input_global_wrapper_s0_y", 0, 64);
-  auto hw_input_global_wrapper_s0_x = hw_input_global_wrapper_s0_y->add_loop("hw_input_global_wrapper_s0_x", 0, 64);
-
-//store is: hw_input_global_wrapper.stencil(hw_input_global_wrapper_s0_x, hw_input_global_wrapper_s0_y) = hw_input.stencil(hw_input_global_wrapper_s0_x, hw_input_global_wrapper_s0_y)
-  auto hcompute_hw_input_global_wrapper_stencil = hw_input_global_wrapper_s0_x->add_op("op_hcompute_hw_input_global_wrapper_stencil");
-  hcompute_hw_input_global_wrapper_stencil->add_function("hcompute_hw_input_global_wrapper_stencil");
-  hcompute_hw_input_global_wrapper_stencil->add_load("hw_input_stencil", "hw_input_global_wrapper_s0_y", "hw_input_global_wrapper_s0_x");
-  prg.buffer_port_widths["hw_input_global_wrapper_stencil"] = 16;
-  hcompute_hw_input_global_wrapper_stencil->add_store("hw_input_global_wrapper_stencil", "hw_input_global_wrapper_s0_y", "hw_input_global_wrapper_s0_x");
-
-//consuming hw_input_global_wrapper.stencil
-////producing mult.stencil
-  auto mult_s0_y = prg.add_loop("mult_s0_y", 0, 64);
-  auto mult_s0_x = mult_s0_y->add_loop("mult_s0_x", 0, 64);
-
-//store is: mult.stencil(mult_s0_x, mult_s0_y) = (hw_input_global_wrapper.stencil(mult_s0_x, mult_s0_y)*(uint16)2)
-  auto hcompute_mult_stencil = mult_s0_x->add_op("op_hcompute_mult_stencil");
-  hcompute_mult_stencil->add_function("hcompute_mult_stencil");
-  hcompute_mult_stencil->add_load("hw_input_global_wrapper_stencil", "mult_s0_y", "mult_s0_x");
-  prg.buffer_port_widths["mult_stencil"] = 16;
-  hcompute_mult_stencil->add_store("mult_stencil", "mult_s0_y", "mult_s0_x");
-
-//consuming mult.stencil
-  auto hw_output_s0_y_yi = prg.add_loop("hw_output_s0_y_yi", 0, 64);
-  auto hw_output_s0_x_xi = hw_output_s0_y_yi->add_loop("hw_output_s0_x_xi", 0, 64);
-
-//store is: hw_output.stencil(hw_output_s0_x_xi, hw_output_s0_y_yi) = mult.stencil(hw_output_s0_x_xi, hw_output_s0_y_yi)
-  auto hcompute_hw_output_stencil = hw_output_s0_x_xi->add_op("op_hcompute_hw_output_stencil");
-  hcompute_hw_output_stencil->add_function("hcompute_hw_output_stencil");
-  hcompute_hw_output_stencil->add_load("mult_stencil", "hw_output_s0_y_yi", "hw_output_s0_x_xi");
-  hcompute_hw_output_stencil->add_store("hw_output_stencil", "hw_output_s0_y_yi", "hw_output_s0_x_xi");
-
-  return prg;
-}
 
 prog brighten_blur() {
   prog prg;
@@ -2712,13 +2683,13 @@ prog camera_pipeline() {
 // Stencil<uint16_t, 64, 64> &hw_input_stencil = arg_0;
   prg.add_input("hw_input_stencil");
   prg.buffer_port_widths["hw_input_stencil"] = 16;
-// Stencil<uint16_t, 58, 58, 3> &hw_output_stencil = arg_1;
+// Stencil<uint16_t, 56, 56, 3> &hw_output_stencil = arg_1;
   prg.add_output("hw_output_stencil");
   prg.buffer_port_widths["hw_output_stencil"] = 16;
 
 ////producing hw_input_global_wrapper.stencil
-  auto hw_input_global_wrapper_s0_y = prg.add_loop("hw_input_global_wrapper_s0_y", -3, 61);
-  auto hw_input_global_wrapper_s0_x = hw_input_global_wrapper_s0_y->add_loop("hw_input_global_wrapper_s0_x", -3, 61);
+  auto hw_input_global_wrapper_s0_y = prg.add_loop("hw_input_global_wrapper_s0_y", -4, 60);
+  auto hw_input_global_wrapper_s0_x = hw_input_global_wrapper_s0_y->add_loop("hw_input_global_wrapper_s0_x", -4, 60);
 
 //store is: hw_input_global_wrapper.stencil(hw_input_global_wrapper_s0_x, hw_input_global_wrapper_s0_y) = hw_input.stencil(hw_input_global_wrapper_s0_x, hw_input_global_wrapper_s0_y)
   auto hcompute_hw_input_global_wrapper_stencil = hw_input_global_wrapper_s0_x->add_op("op_hcompute_hw_input_global_wrapper_stencil");
@@ -2729,10 +2700,10 @@ prog camera_pipeline() {
 
 //consuming hw_input_global_wrapper.stencil
 ////producing denoised$1.stencil
-  auto denoised_1_s0_y = prg.add_loop("denoised_1_s0_y", -1, 59);
-  auto denoised_1_s0_x = denoised_1_s0_y->add_loop("denoised_1_s0_x", -1, 59);
+  auto denoised_1_s0_y = prg.add_loop("denoised_1_s0_y", -2, 58);
+  auto denoised_1_s0_x = denoised_1_s0_y->add_loop("denoised_1_s0_x", -2, 58);
 
-//store is: denoised$1.stencil(denoised_1_s0_x, denoised_1_s0_y) = max(min(hw_input_global_wrapper.stencil(denoised_1_s0_x, denoised_1_s0_y), max(hw_input_global_wrapper.stencil(denoised_1_s0_x, (denoised_1_s0_y + 2)), max(hw_input_global_wrapper.stencil(denoised_1_s0_x, (denoised_1_s0_y + -2)), max(hw_input_global_wrapper.stencil((denoised_1_s0_x + -2), denoised_1_s0_y), hw_input_global_wrapper.stencil((denoised_1_s0_x + 2), denoised_1_s0_y))))), min(hw_input_global_wrapper.stencil(denoised_1_s0_x, (denoised_1_s0_y + 2)), min(hw_input_global_wrapper.stencil(denoised_1_s0_x, (denoised_1_s0_y + -2)), min(hw_input_global_wrapper.stencil((denoised_1_s0_x + -2), denoised_1_s0_y), hw_input_global_wrapper.stencil((denoised_1_s0_x + 2), denoised_1_s0_y)))))
+//store is: denoised$1.stencil(denoised_1_s0_x, denoised_1_s0_y) = min(hw_input_global_wrapper.stencil(denoised_1_s0_x, denoised_1_s0_y), max(hw_input_global_wrapper.stencil(denoised_1_s0_x, (denoised_1_s0_y + 2)), max(hw_input_global_wrapper.stencil(denoised_1_s0_x, (denoised_1_s0_y + -2)), max(hw_input_global_wrapper.stencil((denoised_1_s0_x + -2), denoised_1_s0_y), hw_input_global_wrapper.stencil((denoised_1_s0_x + 2), denoised_1_s0_y)))))
   auto hcompute_denoised_1_stencil = denoised_1_s0_x->add_op("op_hcompute_denoised_1_stencil");
   hcompute_denoised_1_stencil->add_function("hcompute_denoised_1_stencil");
   hcompute_denoised_1_stencil->add_load("hw_input_global_wrapper_stencil", "denoised_1_s0_y", "denoised_1_s0_x");
@@ -2744,63 +2715,128 @@ prog camera_pipeline() {
   hcompute_denoised_1_stencil->add_store("denoised_1_stencil", "denoised_1_s0_y", "denoised_1_s0_x");
 
 //consuming denoised$1.stencil
-////producing demosaicked$1.stencil
-  auto demosaicked_1_s0_y = prg.add_loop("demosaicked_1_s0_y", 0, 58);
-  auto demosaicked_1_s0_x = demosaicked_1_s0_y->add_loop("demosaicked_1_s0_x", 0, 58);
+////producing b_b.stencil
+  auto b_b_s0_y = prg.add_loop("b_b_s0_y", -1, 28);
+  auto b_b_s0_x = b_b_s0_y->add_loop("b_b_s0_x", 0, 29);
 
-//store is: demosaicked$1.stencil(demosaicked_1_s0_x, demosaicked_1_s0_y, 0) = select(((demosaicked_1_s0_y % 2) == 0), select(((demosaicked_1_s0_x % 2) == 0), ((denoised$1.stencil(demosaicked_1_s0_x, demosaicked_1_s0_y) + (((denoised$1.stencil(demosaicked_1_s0_x, demosaicked_1_s0_y) + denoised$1.stencil((demosaicked_1_s0_x + 1), demosaicked_1_s0_y)) + (uint16)1)/(uint16)2)) - (((select((absd(denoised$1.stencil((demosaicked_1_s0_x + 1), demosaicked_1_s0_y), denoised$1.stencil(demosaicked_1_s0_x, demosaicked_1_s0_y)) < absd(denoised$1.stencil((demosaicked_1_s0_x + 1), demosaicked_1_s0_y), denoised$1.stencil((demosaicked_1_s0_x + 1), (demosaicked_1_s0_y + 1)))), (((denoised$1.stencil(demosaicked_1_s0_x, demosaicked_1_s0_y) + denoised$1.stencil((demosaicked_1_s0_x + 1), demosaicked_1_s0_y)) + (uint16)1)/(uint16)2), (((denoised$1.stencil((demosaicked_1_s0_x + 1), demosaicked_1_s0_y) + denoised$1.stencil((demosaicked_1_s0_x + 1), (demosaicked_1_s0_y + 1))) + (uint16)1)/(uint16)2)) + select((absd(denoised$1.stencil(demosaicked_1_s0_x, demosaicked_1_s0_y), denoised$1.stencil((demosaicked_1_s0_x + -1), demosaicked_1_s0_y)) < absd(denoised$1.stencil(demosaicked_1_s0_x, demosaicked_1_s0_y), denoised$1.stencil(demosaicked_1_s0_x, (demosaicked_1_s0_y + 1)))), (((denoised$1.stencil((demosaicked_1_s0_x + -1), demosaicked_1_s0_y) + denoised$1.stencil(demosaicked_1_s0_x, demosaicked_1_s0_y)) + (uint16)1)/(uint16)2), (((denoised$1.stencil(demosaicked_1_s0_x, (demosaicked_1_s0_y + 1)) + denoised$1.stencil(demosaicked_1_s0_x, demosaicked_1_s0_y)) + (uint16)1)/(uint16)2))) + (uint16)1)/(uint16)2)), denoised$1.stencil(demosaicked_1_s0_x, demosaicked_1_s0_y)), select(((demosaicked_1_s0_x % 2) == 0), select((absd(denoised$1.stencil((demosaicked_1_s0_x + 1), (demosaicked_1_s0_y + -1)), denoised$1.stencil(demosaicked_1_s0_x, demosaicked_1_s0_y)) < absd(denoised$1.stencil(demosaicked_1_s0_x, (demosaicked_1_s0_y + -1)), denoised$1.stencil((demosaicked_1_s0_x + 1), demosaicked_1_s0_y))), (((((denoised$1.stencil(demosaicked_1_s0_x, demosaicked_1_s0_y) + denoised$1.stencil((demosaicked_1_s0_x + 1), (demosaicked_1_s0_y + -1))) + (uint16)1)/(uint16)2) + select((absd(denoised$1.stencil(demosaicked_1_s0_x, demosaicked_1_s0_y), denoised$1.stencil((demosaicked_1_s0_x + 1), demosaicked_1_s0_y)) < absd(denoised$1.stencil(demosaicked_1_s0_x, demosaicked_1_s0_y), denoised$1.stencil(demosaicked_1_s0_x, (demosaicked_1_s0_y + -1)))), (((denoised$1.stencil(demosaicked_1_s0_x, demosaicked_1_s0_y) + denoised$1.stencil((demosaicked_1_s0_x + 1), demosaicked_1_s0_y)) + (uint16)1)/(uint16)2), (((denoised$1.stencil(demosaicked_1_s0_x, demosaicked_1_s0_y) + denoised$1.stencil(demosaicked_1_s0_x, (demosaicked_1_s0_y + -1))) + (uint16)1)/(uint16)2))) - (((select((absd(denoised$1.stencil((demosaicked_1_s0_x + 1), (demosaicked_1_s0_y + -1)), denoised$1.stencil(demosaicked_1_s0_x, (demosaicked_1_s0_y + -1))) < absd(denoised$1.stencil((demosaicked_1_s0_x + 1), (demosaicked_1_s0_y + -1)), denoised$1.stencil((demosaicked_1_s0_x + 1), demosaicked_1_s0_y))), (((denoised$1.stencil(demosaicked_1_s0_x, (demosaicked_1_s0_y + -1)) + denoised$1.stencil((demosaicked_1_s0_x + 1), (demosaicked_1_s0_y + -1))) + (uint16)1)/(uint16)2), (((denoised$1.stencil((demosaicked_1_s0_x + 1), (demosaicked_1_s0_y + -1)) + denoised$1.stencil((demosaicked_1_s0_x + 1), demosaicked_1_s0_y)) + (uint16)1)/(uint16)2)) + select((absd(denoised$1.stencil(demosaicked_1_s0_x, demosaicked_1_s0_y), denoised$1.stencil((demosaicked_1_s0_x + -1), demosaicked_1_s0_y)) < absd(denoised$1.stencil(demosaicked_1_s0_x, demosaicked_1_s0_y), denoised$1.stencil(demosaicked_1_s0_x, (demosaicked_1_s0_y + 1)))), (((denoised$1.stencil((demosaicked_1_s0_x + -1), demosaicked_1_s0_y) + denoised$1.stencil(demosaicked_1_s0_x, demosaicked_1_s0_y)) + (uint16)1)/(uint16)2), (((denoised$1.stencil(demosaicked_1_s0_x, (demosaicked_1_s0_y + 1)) + denoised$1.stencil(demosaicked_1_s0_x, demosaicked_1_s0_y)) + (uint16)1)/(uint16)2))) + (uint16)1)/(uint16)2)), (((((denoised$1.stencil((demosaicked_1_s0_x + 1), demosaicked_1_s0_y) + denoised$1.stencil(demosaicked_1_s0_x, (demosaicked_1_s0_y + -1))) + (uint16)1)/(uint16)2) + select((absd(denoised$1.stencil(demosaicked_1_s0_x, demosaicked_1_s0_y), denoised$1.stencil((demosaicked_1_s0_x + 1), demosaicked_1_s0_y)) < absd(denoised$1.stencil(demosaicked_1_s0_x, demosaicked_1_s0_y), denoised$1.stencil(demosaicked_1_s0_x, (demosaicked_1_s0_y + -1)))), (((denoised$1.stencil(demosaicked_1_s0_x, demosaicked_1_s0_y) + denoised$1.stencil((demosaicked_1_s0_x + 1), demosaicked_1_s0_y)) + (uint16)1)/(uint16)2), (((denoised$1.stencil(demosaicked_1_s0_x, demosaicked_1_s0_y) + denoised$1.stencil(demosaicked_1_s0_x, (demosaicked_1_s0_y + -1))) + (uint16)1)/(uint16)2))) - (((select((absd(denoised$1.stencil((demosaicked_1_s0_x + 1), demosaicked_1_s0_y), denoised$1.stencil(demosaicked_1_s0_x, demosaicked_1_s0_y)) < absd(denoised$1.stencil((demosaicked_1_s0_x + 1), demosaicked_1_s0_y), denoised$1.stencil((demosaicked_1_s0_x + 1), (demosaicked_1_s0_y + 1)))), (((denoised$1.stencil(demosaicked_1_s0_x, demosaicked_1_s0_y) + denoised$1.stencil((demosaicked_1_s0_x + 1), demosaicked_1_s0_y)) + (uint16)1)/(uint16)2), (((denoised$1.stencil((demosaicked_1_s0_x + 1), demosaicked_1_s0_y) + denoised$1.stencil((demosaicked_1_s0_x + 1), (demosaicked_1_s0_y + 1))) + (uint16)1)/(uint16)2)) + select((absd(denoised$1.stencil(demosaicked_1_s0_x, (demosaicked_1_s0_y + -1)), denoised$1.stencil((demosaicked_1_s0_x + -1), (demosaicked_1_s0_y + -1))) < absd(denoised$1.stencil(demosaicked_1_s0_x, (demosaicked_1_s0_y + -1)), denoised$1.stencil(demosaicked_1_s0_x, demosaicked_1_s0_y))), (((denoised$1.stencil((demosaicked_1_s0_x + -1), (demosaicked_1_s0_y + -1)) + denoised$1.stencil(demosaicked_1_s0_x, (demosaicked_1_s0_y + -1))) + (uint16)1)/(uint16)2), (((denoised$1.stencil(demosaicked_1_s0_x, demosaicked_1_s0_y) + denoised$1.stencil(demosaicked_1_s0_x, (demosaicked_1_s0_y + -1))) + (uint16)1)/(uint16)2))) + (uint16)1)/(uint16)2))), ((denoised$1.stencil(demosaicked_1_s0_x, demosaicked_1_s0_y) + (((denoised$1.stencil(demosaicked_1_s0_x, demosaicked_1_s0_y) + denoised$1.stencil(demosaicked_1_s0_x, (demosaicked_1_s0_y + -1))) + (uint16)1)/(uint16)2)) - (((select((absd(denoised$1.stencil(demosaicked_1_s0_x, demosaicked_1_s0_y), denoised$1.stencil((demosaicked_1_s0_x + -1), demosaicked_1_s0_y)) < absd(denoised$1.stencil(demosaicked_1_s0_x, demosaicked_1_s0_y), denoised$1.stencil(demosaicked_1_s0_x, (demosaicked_1_s0_y + 1)))), (((denoised$1.stencil((demosaicked_1_s0_x + -1), demosaicked_1_s0_y) + denoised$1.stencil(demosaicked_1_s0_x, demosaicked_1_s0_y)) + (uint16)1)/(uint16)2), (((denoised$1.stencil(demosaicked_1_s0_x, (demosaicked_1_s0_y + 1)) + denoised$1.stencil(demosaicked_1_s0_x, demosaicked_1_s0_y)) + (uint16)1)/(uint16)2)) + select((absd(denoised$1.stencil(demosaicked_1_s0_x, (demosaicked_1_s0_y + -1)), denoised$1.stencil((demosaicked_1_s0_x + -1), (demosaicked_1_s0_y + -1))) < absd(denoised$1.stencil(demosaicked_1_s0_x, (demosaicked_1_s0_y + -1)), denoised$1.stencil(demosaicked_1_s0_x, demosaicked_1_s0_y))), (((denoised$1.stencil((demosaicked_1_s0_x + -1), (demosaicked_1_s0_y + -1)) + denoised$1.stencil(demosaicked_1_s0_x, (demosaicked_1_s0_y + -1))) + (uint16)1)/(uint16)2), (((denoised$1.stencil(demosaicked_1_s0_x, demosaicked_1_s0_y) + denoised$1.stencil(demosaicked_1_s0_x, (demosaicked_1_s0_y + -1))) + (uint16)1)/(uint16)2))) + (uint16)1)/(uint16)2))))
+//store is: b_b.stencil(b_b_s0_x, b_b_s0_y) = denoised$1.stencil((b_b_s0_x*2), ((b_b_s0_y*2) + 1))
+  auto hcompute_b_b_stencil = b_b_s0_x->add_op("op_hcompute_b_b_stencil");
+  hcompute_b_b_stencil->add_function("hcompute_b_b_stencil");
+  hcompute_b_b_stencil->add_load("denoised_1_stencil", "((b_b_s0_y*2) + 1)", "(b_b_s0_x*2)");
+  prg.buffer_port_widths["b_b_stencil"] = 16;
+  hcompute_b_b_stencil->add_store("b_b_stencil", "b_b_s0_y", "b_b_s0_x");
+
+//consuming b_b.stencil
+////producing g_gb.stencil
+  auto g_gb_s0_y = prg.add_loop("g_gb_s0_y", -1, 29);
+  auto g_gb_s0_x = g_gb_s0_y->add_loop("g_gb_s0_x", -1, 29);
+
+//store is: g_gb.stencil(g_gb_s0_x, g_gb_s0_y) = denoised$1.stencil(((g_gb_s0_x*2) + 1), ((g_gb_s0_y*2) + 1))
+  auto hcompute_g_gb_stencil = g_gb_s0_x->add_op("op_hcompute_g_gb_stencil");
+  hcompute_g_gb_stencil->add_function("hcompute_g_gb_stencil");
+  hcompute_g_gb_stencil->add_load("denoised_1_stencil", "((g_gb_s0_y*2) + 1)", "((g_gb_s0_x*2) + 1)");
+  prg.buffer_port_widths["g_gb_stencil"] = 16;
+  hcompute_g_gb_stencil->add_store("g_gb_stencil", "g_gb_s0_y", "g_gb_s0_x");
+
+//consuming g_gb.stencil
+////producing g_gr.stencil
+  auto g_gr_s0_y = prg.add_loop("g_gr_s0_y", -1, 29);
+  auto g_gr_s0_x = g_gr_s0_y->add_loop("g_gr_s0_x", -1, 29);
+
+//store is: g_gr.stencil(g_gr_s0_x, g_gr_s0_y) = denoised$1.stencil((g_gr_s0_x*2), (g_gr_s0_y*2))
+  auto hcompute_g_gr_stencil = g_gr_s0_x->add_op("op_hcompute_g_gr_stencil");
+  hcompute_g_gr_stencil->add_function("hcompute_g_gr_stencil");
+  hcompute_g_gr_stencil->add_load("denoised_1_stencil", "(g_gr_s0_y*2)", "(g_gr_s0_x*2)");
+  prg.buffer_port_widths["g_gr_stencil"] = 16;
+  hcompute_g_gr_stencil->add_store("g_gr_stencil", "g_gr_s0_y", "g_gr_s0_x");
+
+//consuming g_gr.stencil
+////producing r_r.stencil
+  auto r_r_s0_y = prg.add_loop("r_r_s0_y", 0, 29);
+  auto r_r_s0_x = r_r_s0_y->add_loop("r_r_s0_x", -1, 28);
+
+//store is: r_r.stencil(r_r_s0_x, r_r_s0_y) = denoised$1.stencil(((r_r_s0_x*2) + 1), (r_r_s0_y*2))
+  auto hcompute_r_r_stencil = r_r_s0_x->add_op("op_hcompute_r_r_stencil");
+  hcompute_r_r_stencil->add_function("hcompute_r_r_stencil");
+  hcompute_r_r_stencil->add_load("denoised_1_stencil", "(r_r_s0_y*2)", "((r_r_s0_x*2) + 1)");
+  prg.buffer_port_widths["r_r_stencil"] = 16;
+  hcompute_r_r_stencil->add_store("r_r_stencil", "r_r_s0_y", "r_r_s0_x");
+
+//consuming r_r.stencil
+////producing demosaicked$1.stencil
+  auto demosaicked_1_s0_y = prg.add_loop("demosaicked_1_s0_y", 0, 56);
+  auto demosaicked_1_s0_x = demosaicked_1_s0_y->add_loop("demosaicked_1_s0_x", 0, 56);
+
+//store is: demosaicked$1.stencil(demosaicked_1_s0_x, demosaicked_1_s0_y, 0) = select(((demosaicked_1_s0_y % 2) == 0), select(((demosaicked_1_s0_x % 2) == 0), ((g_gr.stencil((demosaicked_1_s0_x/2), (demosaicked_1_s0_y/2)) + (((r_r.stencil(((demosaicked_1_s0_x/2) + -1), (demosaicked_1_s0_y/2)) + r_r.stencil((demosaicked_1_s0_x/2), (demosaicked_1_s0_y/2))) + (uint16)1)/(uint16)2)) - (((select((absd(g_gr.stencil(((demosaicked_1_s0_x/2) + 1), (demosaicked_1_s0_y/2)), g_gr.stencil((demosaicked_1_s0_x/2), (demosaicked_1_s0_y/2))) < absd(g_gb.stencil((demosaicked_1_s0_x/2), ((demosaicked_1_s0_y/2) + -1)), g_gb.stencil((demosaicked_1_s0_x/2), (demosaicked_1_s0_y/2)))), (((g_gr.stencil((demosaicked_1_s0_x/2), (demosaicked_1_s0_y/2)) + g_gr.stencil(((demosaicked_1_s0_x/2) + 1), (demosaicked_1_s0_y/2))) + (uint16)1)/(uint16)2), (((g_gb.stencil((demosaicked_1_s0_x/2), (demosaicked_1_s0_y/2)) + g_gb.stencil((demosaicked_1_s0_x/2), ((demosaicked_1_s0_y/2) + -1))) + (uint16)1)/(uint16)2)) + select((absd(g_gr.stencil((demosaicked_1_s0_x/2), (demosaicked_1_s0_y/2)), g_gr.stencil(((demosaicked_1_s0_x/2) + -1), (demosaicked_1_s0_y/2))) < absd(g_gb.stencil(((demosaicked_1_s0_x/2) + -1), ((demosaicked_1_s0_y/2) + -1)), g_gb.stencil(((demosaicked_1_s0_x/2) + -1), (demosaicked_1_s0_y/2)))), (((g_gr.stencil(((demosaicked_1_s0_x/2) + -1), (demosaicked_1_s0_y/2)) + g_gr.stencil((demosaicked_1_s0_x/2), (demosaicked_1_s0_y/2))) + (uint16)1)/(uint16)2), (((g_gb.stencil(((demosaicked_1_s0_x/2) + -1), (demosaicked_1_s0_y/2)) + g_gb.stencil(((demosaicked_1_s0_x/2) + -1), ((demosaicked_1_s0_y/2) + -1))) + (uint16)1)/(uint16)2))) + (uint16)1)/(uint16)2)), r_r.stencil((demosaicked_1_s0_x/2), (demosaicked_1_s0_y/2))), select(((demosaicked_1_s0_x % 2) == 0), select((absd(r_r.stencil((demosaicked_1_s0_x/2), (demosaicked_1_s0_y/2)), r_r.stencil(((demosaicked_1_s0_x/2) + -1), ((demosaicked_1_s0_y/2) + 1))) < absd(r_r.stencil(((demosaicked_1_s0_x/2) + -1), (demosaicked_1_s0_y/2)), r_r.stencil((demosaicked_1_s0_x/2), ((demosaicked_1_s0_y/2) + 1)))), (((((r_r.stencil(((demosaicked_1_s0_x/2) + -1), ((demosaicked_1_s0_y/2) + 1)) + r_r.stencil((demosaicked_1_s0_x/2), (demosaicked_1_s0_y/2))) + (uint16)1)/(uint16)2) + select((absd(g_gb.stencil(((demosaicked_1_s0_x/2) + -1), (demosaicked_1_s0_y/2)), g_gb.stencil((demosaicked_1_s0_x/2), (demosaicked_1_s0_y/2))) < absd(g_gr.stencil((demosaicked_1_s0_x/2), ((demosaicked_1_s0_y/2) + 1)), g_gr.stencil((demosaicked_1_s0_x/2), (demosaicked_1_s0_y/2)))), (((g_gb.stencil(((demosaicked_1_s0_x/2) + -1), (demosaicked_1_s0_y/2)) + g_gb.stencil((demosaicked_1_s0_x/2), (demosaicked_1_s0_y/2))) + (uint16)1)/(uint16)2), (((g_gr.stencil((demosaicked_1_s0_x/2), ((demosaicked_1_s0_y/2) + 1)) + g_gr.stencil((demosaicked_1_s0_x/2), (demosaicked_1_s0_y/2))) + (uint16)1)/(uint16)2))) - (((select((absd(g_gr.stencil((demosaicked_1_s0_x/2), ((demosaicked_1_s0_y/2) + 1)), g_gr.stencil(((demosaicked_1_s0_x/2) + -1), ((demosaicked_1_s0_y/2) + 1))) < absd(g_gb.stencil(((demosaicked_1_s0_x/2) + -1), (demosaicked_1_s0_y/2)), g_gb.stencil(((demosaicked_1_s0_x/2) + -1), ((demosaicked_1_s0_y/2) + 1)))), (((g_gr.stencil(((demosaicked_1_s0_x/2) + -1), ((demosaicked_1_s0_y/2) + 1)) + g_gr.stencil((demosaicked_1_s0_x/2), ((demosaicked_1_s0_y/2) + 1))) + (uint16)1)/(uint16)2), (((g_gb.stencil(((demosaicked_1_s0_x/2) + -1), ((demosaicked_1_s0_y/2) + 1)) + g_gb.stencil(((demosaicked_1_s0_x/2) + -1), (demosaicked_1_s0_y/2))) + (uint16)1)/(uint16)2)) + select((absd(g_gr.stencil(((demosaicked_1_s0_x/2) + 1), (demosaicked_1_s0_y/2)), g_gr.stencil((demosaicked_1_s0_x/2), (demosaicked_1_s0_y/2))) < absd(g_gb.stencil((demosaicked_1_s0_x/2), ((demosaicked_1_s0_y/2) + -1)), g_gb.stencil((demosaicked_1_s0_x/2), (demosaicked_1_s0_y/2)))), (((g_gr.stencil((demosaicked_1_s0_x/2), (demosaicked_1_s0_y/2)) + g_gr.stencil(((demosaicked_1_s0_x/2) + 1), (demosaicked_1_s0_y/2))) + (uint16)1)/(uint16)2), (((g_gb.stencil((demosaicked_1_s0_x/2), (demosaicked_1_s0_y/2)) + g_gb.stencil((demosaicked_1_s0_x/2), ((demosaicked_1_s0_y/2) + -1))) + (uint16)1)/(uint16)2))) + (uint16)1)/(uint16)2)), (((((r_r.stencil((demosaicked_1_s0_x/2), ((demosaicked_1_s0_y/2) + 1)) + r_r.stencil(((demosaicked_1_s0_x/2) + -1), (demosaicked_1_s0_y/2))) + (uint16)1)/(uint16)2) + select((absd(g_gb.stencil(((demosaicked_1_s0_x/2) + -1), (demosaicked_1_s0_y/2)), g_gb.stencil((demosaicked_1_s0_x/2), (demosaicked_1_s0_y/2))) < absd(g_gr.stencil((demosaicked_1_s0_x/2), ((demosaicked_1_s0_y/2) + 1)), g_gr.stencil((demosaicked_1_s0_x/2), (demosaicked_1_s0_y/2)))), (((g_gb.stencil(((demosaicked_1_s0_x/2) + -1), (demosaicked_1_s0_y/2)) + g_gb.stencil((demosaicked_1_s0_x/2), (demosaicked_1_s0_y/2))) + (uint16)1)/(uint16)2), (((g_gr.stencil((demosaicked_1_s0_x/2), ((demosaicked_1_s0_y/2) + 1)) + g_gr.stencil((demosaicked_1_s0_x/2), (demosaicked_1_s0_y/2))) + (uint16)1)/(uint16)2))) - (((select((absd(g_gr.stencil((demosaicked_1_s0_x/2), (demosaicked_1_s0_y/2)), g_gr.stencil(((demosaicked_1_s0_x/2) + -1), (demosaicked_1_s0_y/2))) < absd(g_gb.stencil(((demosaicked_1_s0_x/2) + -1), ((demosaicked_1_s0_y/2) + -1)), g_gb.stencil(((demosaicked_1_s0_x/2) + -1), (demosaicked_1_s0_y/2)))), (((g_gr.stencil(((demosaicked_1_s0_x/2) + -1), (demosaicked_1_s0_y/2)) + g_gr.stencil((demosaicked_1_s0_x/2), (demosaicked_1_s0_y/2))) + (uint16)1)/(uint16)2), (((g_gb.stencil(((demosaicked_1_s0_x/2) + -1), (demosaicked_1_s0_y/2)) + g_gb.stencil(((demosaicked_1_s0_x/2) + -1), ((demosaicked_1_s0_y/2) + -1))) + (uint16)1)/(uint16)2)) + select((absd(g_gr.stencil(((demosaicked_1_s0_x/2) + 1), ((demosaicked_1_s0_y/2) + 1)), g_gr.stencil((demosaicked_1_s0_x/2), ((demosaicked_1_s0_y/2) + 1))) < absd(g_gb.stencil((demosaicked_1_s0_x/2), (demosaicked_1_s0_y/2)), g_gb.stencil((demosaicked_1_s0_x/2), ((demosaicked_1_s0_y/2) + 1)))), (((g_gr.stencil(((demosaicked_1_s0_x/2) + 1), ((demosaicked_1_s0_y/2) + 1)) + g_gr.stencil((demosaicked_1_s0_x/2), ((demosaicked_1_s0_y/2) + 1))) + (uint16)1)/(uint16)2), (((g_gb.stencil((demosaicked_1_s0_x/2), ((demosaicked_1_s0_y/2) + 1)) + g_gb.stencil((demosaicked_1_s0_x/2), (demosaicked_1_s0_y/2))) + (uint16)1)/(uint16)2))) + (uint16)1)/(uint16)2))), ((g_gb.stencil((demosaicked_1_s0_x/2), (demosaicked_1_s0_y/2)) + (((r_r.stencil((demosaicked_1_s0_x/2), ((demosaicked_1_s0_y/2) + 1)) + r_r.stencil((demosaicked_1_s0_x/2), (demosaicked_1_s0_y/2))) + (uint16)1)/(uint16)2)) - (((select((absd(g_gr.stencil(((demosaicked_1_s0_x/2) + 1), (demosaicked_1_s0_y/2)), g_gr.stencil((demosaicked_1_s0_x/2), (demosaicked_1_s0_y/2))) < absd(g_gb.stencil((demosaicked_1_s0_x/2), ((demosaicked_1_s0_y/2) + -1)), g_gb.stencil((demosaicked_1_s0_x/2), (demosaicked_1_s0_y/2)))), (((g_gr.stencil((demosaicked_1_s0_x/2), (demosaicked_1_s0_y/2)) + g_gr.stencil(((demosaicked_1_s0_x/2) + 1), (demosaicked_1_s0_y/2))) + (uint16)1)/(uint16)2), (((g_gb.stencil((demosaicked_1_s0_x/2), (demosaicked_1_s0_y/2)) + g_gb.stencil((demosaicked_1_s0_x/2), ((demosaicked_1_s0_y/2) + -1))) + (uint16)1)/(uint16)2)) + select((absd(g_gr.stencil(((demosaicked_1_s0_x/2) + 1), ((demosaicked_1_s0_y/2) + 1)), g_gr.stencil((demosaicked_1_s0_x/2), ((demosaicked_1_s0_y/2) + 1))) < absd(g_gb.stencil((demosaicked_1_s0_x/2), (demosaicked_1_s0_y/2)), g_gb.stencil((demosaicked_1_s0_x/2), ((demosaicked_1_s0_y/2) + 1)))), (((g_gr.stencil(((demosaicked_1_s0_x/2) + 1), ((demosaicked_1_s0_y/2) + 1)) + g_gr.stencil((demosaicked_1_s0_x/2), ((demosaicked_1_s0_y/2) + 1))) + (uint16)1)/(uint16)2), (((g_gb.stencil((demosaicked_1_s0_x/2), ((demosaicked_1_s0_y/2) + 1)) + g_gb.stencil((demosaicked_1_s0_x/2), (demosaicked_1_s0_y/2))) + (uint16)1)/(uint16)2))) + (uint16)1)/(uint16)2))))
   auto hcompute_demosaicked_1_stencil = demosaicked_1_s0_x->add_op("op_hcompute_demosaicked_1_stencil");
   hcompute_demosaicked_1_stencil->add_function("hcompute_demosaicked_1_stencil");
-  hcompute_demosaicked_1_stencil->add_load("denoised_1_stencil", "demosaicked_1_s0_y", "demosaicked_1_s0_x");
-  hcompute_demosaicked_1_stencil->add_load("denoised_1_stencil", "demosaicked_1_s0_y", "(demosaicked_1_s0_x + 1)");
-  hcompute_demosaicked_1_stencil->add_load("denoised_1_stencil", "(demosaicked_1_s0_y + 1)", "(demosaicked_1_s0_x + 1)");
-  hcompute_demosaicked_1_stencil->add_load("denoised_1_stencil", "demosaicked_1_s0_y", "(demosaicked_1_s0_x + -1)");
-  hcompute_demosaicked_1_stencil->add_load("denoised_1_stencil", "(demosaicked_1_s0_y + 1)", "demosaicked_1_s0_x");
-  hcompute_demosaicked_1_stencil->add_load("denoised_1_stencil", "(demosaicked_1_s0_y + -1)", "(demosaicked_1_s0_x + 1)");
-  hcompute_demosaicked_1_stencil->add_load("denoised_1_stencil", "(demosaicked_1_s0_y + -1)", "demosaicked_1_s0_x");
-  hcompute_demosaicked_1_stencil->add_load("denoised_1_stencil", "(demosaicked_1_s0_y + -1)", "(demosaicked_1_s0_x + -1)");
+  hcompute_demosaicked_1_stencil->add_load("g_gb_stencil", "(floor((demosaicked_1_s0_y/2)) + -1)", "floor((demosaicked_1_s0_x/2))");
+  hcompute_demosaicked_1_stencil->add_load("g_gb_stencil", "floor((demosaicked_1_s0_y/2))", "floor((demosaicked_1_s0_x/2))");
+  hcompute_demosaicked_1_stencil->add_load("g_gb_stencil", "(floor((demosaicked_1_s0_y/2)) + -1)", "(floor((demosaicked_1_s0_x/2)) + -1)");
+  hcompute_demosaicked_1_stencil->add_load("g_gb_stencil", "floor((demosaicked_1_s0_y/2))", "(floor((demosaicked_1_s0_x/2)) + -1)");
+  hcompute_demosaicked_1_stencil->add_load("g_gb_stencil", "(floor((demosaicked_1_s0_y/2)) + 1)", "(floor((demosaicked_1_s0_x/2)) + -1)");
+  hcompute_demosaicked_1_stencil->add_load("g_gb_stencil", "(floor((demosaicked_1_s0_y/2)) + 1)", "floor((demosaicked_1_s0_x/2))");
+  hcompute_demosaicked_1_stencil->add_load("g_gr_stencil", "floor((demosaicked_1_s0_y/2))", "floor((demosaicked_1_s0_x/2))");
+  hcompute_demosaicked_1_stencil->add_load("g_gr_stencil", "floor((demosaicked_1_s0_y/2))", "(floor((demosaicked_1_s0_x/2)) + 1)");
+  hcompute_demosaicked_1_stencil->add_load("g_gr_stencil", "floor((demosaicked_1_s0_y/2))", "(floor((demosaicked_1_s0_x/2)) + -1)");
+  hcompute_demosaicked_1_stencil->add_load("g_gr_stencil", "(floor((demosaicked_1_s0_y/2)) + 1)", "floor((demosaicked_1_s0_x/2))");
+  hcompute_demosaicked_1_stencil->add_load("g_gr_stencil", "(floor((demosaicked_1_s0_y/2)) + 1)", "(floor((demosaicked_1_s0_x/2)) + -1)");
+  hcompute_demosaicked_1_stencil->add_load("g_gr_stencil", "(floor((demosaicked_1_s0_y/2)) + 1)", "(floor((demosaicked_1_s0_x/2)) + 1)");
+  hcompute_demosaicked_1_stencil->add_load("r_r_stencil", "floor((demosaicked_1_s0_y/2))", "(floor((demosaicked_1_s0_x/2)) + -1)");
+  hcompute_demosaicked_1_stencil->add_load("r_r_stencil", "floor((demosaicked_1_s0_y/2))", "floor((demosaicked_1_s0_x/2))");
+  hcompute_demosaicked_1_stencil->add_load("r_r_stencil", "(floor((demosaicked_1_s0_y/2)) + 1)", "(floor((demosaicked_1_s0_x/2)) + -1)");
+  hcompute_demosaicked_1_stencil->add_load("r_r_stencil", "(floor((demosaicked_1_s0_y/2)) + 1)", "floor((demosaicked_1_s0_x/2))");
   prg.buffer_port_widths["demosaicked_1_stencil"] = 16;
   hcompute_demosaicked_1_stencil->add_store("demosaicked_1_stencil", "0", "demosaicked_1_s0_y", "demosaicked_1_s0_x");
   hcompute_demosaicked_1_stencil->compute_unit_needs_index_variable("demosaicked_1_s0_x");
   hcompute_demosaicked_1_stencil->compute_unit_needs_index_variable("demosaicked_1_s0_y");
-  auto demosaicked_1_s0_y_1 = prg.add_loop("demosaicked_1_s0_y_1", 0, 58);
-  auto demosaicked_1_s0_x_1 = demosaicked_1_s0_y_1->add_loop("demosaicked_1_s0_x_1", 0, 58);
+  auto demosaicked_1_s0_y_1 = prg.add_loop("demosaicked_1_s0_y_1", 0, 56);
+  auto demosaicked_1_s0_x_1 = demosaicked_1_s0_y_1->add_loop("demosaicked_1_s0_x_1", 0, 56);
 
-//store is: demosaicked$1.stencil(demosaicked_1_s0_x_1, demosaicked_1_s0_y_1, 1) = select(((demosaicked_1_s0_y_1 % 2) == 0), select(((demosaicked_1_s0_x_1 % 2) == 0), denoised$1.stencil(demosaicked_1_s0_x_1, demosaicked_1_s0_y_1), select((absd(denoised$1.stencil(demosaicked_1_s0_x_1, demosaicked_1_s0_y_1), denoised$1.stencil((demosaicked_1_s0_x_1 + -1), demosaicked_1_s0_y_1)) < absd(denoised$1.stencil(demosaicked_1_s0_x_1, demosaicked_1_s0_y_1), denoised$1.stencil(demosaicked_1_s0_x_1, (demosaicked_1_s0_y_1 + 1)))), (((denoised$1.stencil((demosaicked_1_s0_x_1 + -1), demosaicked_1_s0_y_1) + denoised$1.stencil(demosaicked_1_s0_x_1, demosaicked_1_s0_y_1)) + (uint16)1)/(uint16)2), (((denoised$1.stencil(demosaicked_1_s0_x_1, (demosaicked_1_s0_y_1 + 1)) + denoised$1.stencil(demosaicked_1_s0_x_1, demosaicked_1_s0_y_1)) + (uint16)1)/(uint16)2))), select(((demosaicked_1_s0_x_1 % 2) == 0), select((absd(denoised$1.stencil(demosaicked_1_s0_x_1, demosaicked_1_s0_y_1), denoised$1.stencil((demosaicked_1_s0_x_1 + 1), demosaicked_1_s0_y_1)) < absd(denoised$1.stencil(demosaicked_1_s0_x_1, demosaicked_1_s0_y_1), denoised$1.stencil(demosaicked_1_s0_x_1, (demosaicked_1_s0_y_1 + -1)))), (((denoised$1.stencil((demosaicked_1_s0_x_1 + 1), demosaicked_1_s0_y_1) + denoised$1.stencil(demosaicked_1_s0_x_1, demosaicked_1_s0_y_1)) + (uint16)1)/(uint16)2), (((denoised$1.stencil(demosaicked_1_s0_x_1, (demosaicked_1_s0_y_1 + -1)) + denoised$1.stencil(demosaicked_1_s0_x_1, demosaicked_1_s0_y_1)) + (uint16)1)/(uint16)2)), denoised$1.stencil(demosaicked_1_s0_x_1, demosaicked_1_s0_y_1)))
+//store is: demosaicked$1.stencil(demosaicked_1_s0_x_1, demosaicked_1_s0_y_1, 1) = select(((demosaicked_1_s0_y_1 % 2) == 0), select(((demosaicked_1_s0_x_1 % 2) == 0), g_gr.stencil((demosaicked_1_s0_x_1/2), (demosaicked_1_s0_y_1/2)), select((absd(g_gr.stencil(((demosaicked_1_s0_x_1/2) + 1), (demosaicked_1_s0_y_1/2)), g_gr.stencil((demosaicked_1_s0_x_1/2), (demosaicked_1_s0_y_1/2))) < absd(g_gb.stencil((demosaicked_1_s0_x_1/2), ((demosaicked_1_s0_y_1/2) + -1)), g_gb.stencil((demosaicked_1_s0_x_1/2), (demosaicked_1_s0_y_1/2)))), (((g_gr.stencil((demosaicked_1_s0_x_1/2), (demosaicked_1_s0_y_1/2)) + g_gr.stencil(((demosaicked_1_s0_x_1/2) + 1), (demosaicked_1_s0_y_1/2))) + (uint16)1)/(uint16)2), (((g_gb.stencil((demosaicked_1_s0_x_1/2), (demosaicked_1_s0_y_1/2)) + g_gb.stencil((demosaicked_1_s0_x_1/2), ((demosaicked_1_s0_y_1/2) + -1))) + (uint16)1)/(uint16)2))), select(((demosaicked_1_s0_x_1 % 2) == 0), select((absd(g_gb.stencil(((demosaicked_1_s0_x_1/2) + -1), (demosaicked_1_s0_y_1/2)), g_gb.stencil((demosaicked_1_s0_x_1/2), (demosaicked_1_s0_y_1/2))) < absd(g_gr.stencil((demosaicked_1_s0_x_1/2), ((demosaicked_1_s0_y_1/2) + 1)), g_gr.stencil((demosaicked_1_s0_x_1/2), (demosaicked_1_s0_y_1/2)))), (((g_gb.stencil(((demosaicked_1_s0_x_1/2) + -1), (demosaicked_1_s0_y_1/2)) + g_gb.stencil((demosaicked_1_s0_x_1/2), (demosaicked_1_s0_y_1/2))) + (uint16)1)/(uint16)2), (((g_gr.stencil((demosaicked_1_s0_x_1/2), ((demosaicked_1_s0_y_1/2) + 1)) + g_gr.stencil((demosaicked_1_s0_x_1/2), (demosaicked_1_s0_y_1/2))) + (uint16)1)/(uint16)2)), g_gb.stencil((demosaicked_1_s0_x_1/2), (demosaicked_1_s0_y_1/2))))
   auto hcompute_demosaicked_1_stencil_1 = demosaicked_1_s0_x_1->add_op("op_hcompute_demosaicked_1_stencil_1");
   hcompute_demosaicked_1_stencil_1->add_function("hcompute_demosaicked_1_stencil_1");
-  hcompute_demosaicked_1_stencil_1->add_load("denoised_1_stencil", "demosaicked_1_s0_y_1", "(demosaicked_1_s0_x_1 + -1)");
-  hcompute_demosaicked_1_stencil_1->add_load("denoised_1_stencil", "(demosaicked_1_s0_y_1 + 1)", "demosaicked_1_s0_x_1");
-  hcompute_demosaicked_1_stencil_1->add_load("denoised_1_stencil", "demosaicked_1_s0_y_1", "(demosaicked_1_s0_x_1 + 1)");
-  hcompute_demosaicked_1_stencil_1->add_load("denoised_1_stencil", "(demosaicked_1_s0_y_1 + -1)", "demosaicked_1_s0_x_1");
-  hcompute_demosaicked_1_stencil_1->add_load("denoised_1_stencil", "demosaicked_1_s0_y_1", "demosaicked_1_s0_x_1");
+  hcompute_demosaicked_1_stencil_1->add_load("g_gb_stencil", "(floor((demosaicked_1_s0_y_1/2)) + -1)", "floor((demosaicked_1_s0_x_1/2))");
+  hcompute_demosaicked_1_stencil_1->add_load("g_gb_stencil", "floor((demosaicked_1_s0_y_1/2))", "floor((demosaicked_1_s0_x_1/2))");
+  hcompute_demosaicked_1_stencil_1->add_load("g_gb_stencil", "floor((demosaicked_1_s0_y_1/2))", "(floor((demosaicked_1_s0_x_1/2)) + -1)");
+  hcompute_demosaicked_1_stencil_1->add_load("g_gr_stencil", "floor((demosaicked_1_s0_y_1/2))", "floor((demosaicked_1_s0_x_1/2))");
+  hcompute_demosaicked_1_stencil_1->add_load("g_gr_stencil", "floor((demosaicked_1_s0_y_1/2))", "(floor((demosaicked_1_s0_x_1/2)) + 1)");
+  hcompute_demosaicked_1_stencil_1->add_load("g_gr_stencil", "(floor((demosaicked_1_s0_y_1/2)) + 1)", "floor((demosaicked_1_s0_x_1/2))");
   hcompute_demosaicked_1_stencil_1->add_store("demosaicked_1_stencil", "1", "demosaicked_1_s0_y_1", "demosaicked_1_s0_x_1");
   hcompute_demosaicked_1_stencil_1->compute_unit_needs_index_variable("demosaicked_1_s0_x_1");
   hcompute_demosaicked_1_stencil_1->compute_unit_needs_index_variable("demosaicked_1_s0_y_1");
-  auto demosaicked_1_s0_y_2 = prg.add_loop("demosaicked_1_s0_y_2", 0, 58);
-  auto demosaicked_1_s0_x_2 = demosaicked_1_s0_y_2->add_loop("demosaicked_1_s0_x_2", 0, 58);
+  auto demosaicked_1_s0_y_2 = prg.add_loop("demosaicked_1_s0_y_2", 0, 56);
+  auto demosaicked_1_s0_x_2 = demosaicked_1_s0_y_2->add_loop("demosaicked_1_s0_x_2", 0, 56);
 
-//store is: demosaicked$1.stencil(demosaicked_1_s0_x_2, demosaicked_1_s0_y_2, 2) = select(((demosaicked_1_s0_y_2 % 2) == 0), select(((demosaicked_1_s0_x_2 % 2) == 0), ((denoised$1.stencil(demosaicked_1_s0_x_2, demosaicked_1_s0_y_2) + (((denoised$1.stencil(demosaicked_1_s0_x_2, demosaicked_1_s0_y_2) + denoised$1.stencil(demosaicked_1_s0_x_2, (demosaicked_1_s0_y_2 + 1))) + (uint16)1)/(uint16)2)) - (((select((absd(denoised$1.stencil(demosaicked_1_s0_x_2, (demosaicked_1_s0_y_2 + 1)), denoised$1.stencil((demosaicked_1_s0_x_2 + 1), (demosaicked_1_s0_y_2 + 1))) < absd(denoised$1.stencil(demosaicked_1_s0_x_2, (demosaicked_1_s0_y_2 + 1)), denoised$1.stencil(demosaicked_1_s0_x_2, demosaicked_1_s0_y_2))), (((denoised$1.stencil((demosaicked_1_s0_x_2 + 1), (demosaicked_1_s0_y_2 + 1)) + denoised$1.stencil(demosaicked_1_s0_x_2, (demosaicked_1_s0_y_2 + 1))) + (uint16)1)/(uint16)2), (((denoised$1.stencil(demosaicked_1_s0_x_2, demosaicked_1_s0_y_2) + denoised$1.stencil(demosaicked_1_s0_x_2, (demosaicked_1_s0_y_2 + 1))) + (uint16)1)/(uint16)2)) + select((absd(denoised$1.stencil(demosaicked_1_s0_x_2, demosaicked_1_s0_y_2), denoised$1.stencil((demosaicked_1_s0_x_2 + 1), demosaicked_1_s0_y_2)) < absd(denoised$1.stencil(demosaicked_1_s0_x_2, demosaicked_1_s0_y_2), denoised$1.stencil(demosaicked_1_s0_x_2, (demosaicked_1_s0_y_2 + -1)))), (((denoised$1.stencil((demosaicked_1_s0_x_2 + 1), demosaicked_1_s0_y_2) + denoised$1.stencil(demosaicked_1_s0_x_2, demosaicked_1_s0_y_2)) + (uint16)1)/(uint16)2), (((denoised$1.stencil(demosaicked_1_s0_x_2, (demosaicked_1_s0_y_2 + -1)) + denoised$1.stencil(demosaicked_1_s0_x_2, demosaicked_1_s0_y_2)) + (uint16)1)/(uint16)2))) + (uint16)1)/(uint16)2)), select((absd(denoised$1.stencil((demosaicked_1_s0_x_2 + -1), (demosaicked_1_s0_y_2 + 1)), denoised$1.stencil(demosaicked_1_s0_x_2, demosaicked_1_s0_y_2)) < absd(denoised$1.stencil(demosaicked_1_s0_x_2, (demosaicked_1_s0_y_2 + 1)), denoised$1.stencil((demosaicked_1_s0_x_2 + -1), demosaicked_1_s0_y_2))), (((((denoised$1.stencil((demosaicked_1_s0_x_2 + -1), (demosaicked_1_s0_y_2 + 1)) + denoised$1.stencil(demosaicked_1_s0_x_2, demosaicked_1_s0_y_2)) + (uint16)1)/(uint16)2) + select((absd(denoised$1.stencil(demosaicked_1_s0_x_2, demosaicked_1_s0_y_2), denoised$1.stencil((demosaicked_1_s0_x_2 + -1), demosaicked_1_s0_y_2)) < absd(denoised$1.stencil(demosaicked_1_s0_x_2, demosaicked_1_s0_y_2), denoised$1.stencil(demosaicked_1_s0_x_2, (demosaicked_1_s0_y_2 + 1)))), (((denoised$1.stencil(demosaicked_1_s0_x_2, demosaicked_1_s0_y_2) + denoised$1.stencil((demosaicked_1_s0_x_2 + -1), demosaicked_1_s0_y_2)) + (uint16)1)/(uint16)2), (((denoised$1.stencil(demosaicked_1_s0_x_2, demosaicked_1_s0_y_2) + denoised$1.stencil(demosaicked_1_s0_x_2, (demosaicked_1_s0_y_2 + 1))) + (uint16)1)/(uint16)2))) - (((select((absd(denoised$1.stencil((demosaicked_1_s0_x_2 + -1), (demosaicked_1_s0_y_2 + 1)), denoised$1.stencil(demosaicked_1_s0_x_2, (demosaicked_1_s0_y_2 + 1))) < absd(denoised$1.stencil((demosaicked_1_s0_x_2 + -1), (demosaicked_1_s0_y_2 + 1)), denoised$1.stencil((demosaicked_1_s0_x_2 + -1), demosaicked_1_s0_y_2))), (((denoised$1.stencil((demosaicked_1_s0_x_2 + -1), (demosaicked_1_s0_y_2 + 1)) + denoised$1.stencil(demosaicked_1_s0_x_2, (demosaicked_1_s0_y_2 + 1))) + (uint16)1)/(uint16)2), (((denoised$1.stencil((demosaicked_1_s0_x_2 + -1), (demosaicked_1_s0_y_2 + 1)) + denoised$1.stencil((demosaicked_1_s0_x_2 + -1), demosaicked_1_s0_y_2)) + (uint16)1)/(uint16)2)) + select((absd(denoised$1.stencil(demosaicked_1_s0_x_2, demosaicked_1_s0_y_2), denoised$1.stencil((demosaicked_1_s0_x_2 + 1), demosaicked_1_s0_y_2)) < absd(denoised$1.stencil(demosaicked_1_s0_x_2, demosaicked_1_s0_y_2), denoised$1.stencil(demosaicked_1_s0_x_2, (demosaicked_1_s0_y_2 + -1)))), (((denoised$1.stencil((demosaicked_1_s0_x_2 + 1), demosaicked_1_s0_y_2) + denoised$1.stencil(demosaicked_1_s0_x_2, demosaicked_1_s0_y_2)) + (uint16)1)/(uint16)2), (((denoised$1.stencil(demosaicked_1_s0_x_2, (demosaicked_1_s0_y_2 + -1)) + denoised$1.stencil(demosaicked_1_s0_x_2, demosaicked_1_s0_y_2)) + (uint16)1)/(uint16)2))) + (uint16)1)/(uint16)2)), (((((denoised$1.stencil(demosaicked_1_s0_x_2, (demosaicked_1_s0_y_2 + 1)) + denoised$1.stencil((demosaicked_1_s0_x_2 + -1), demosaicked_1_s0_y_2)) + (uint16)1)/(uint16)2) + select((absd(denoised$1.stencil(demosaicked_1_s0_x_2, demosaicked_1_s0_y_2), denoised$1.stencil((demosaicked_1_s0_x_2 + -1), demosaicked_1_s0_y_2)) < absd(denoised$1.stencil(demosaicked_1_s0_x_2, demosaicked_1_s0_y_2), denoised$1.stencil(demosaicked_1_s0_x_2, (demosaicked_1_s0_y_2 + 1)))), (((denoised$1.stencil(demosaicked_1_s0_x_2, demosaicked_1_s0_y_2) + denoised$1.stencil((demosaicked_1_s0_x_2 + -1), demosaicked_1_s0_y_2)) + (uint16)1)/(uint16)2), (((denoised$1.stencil(demosaicked_1_s0_x_2, demosaicked_1_s0_y_2) + denoised$1.stencil(demosaicked_1_s0_x_2, (demosaicked_1_s0_y_2 + 1))) + (uint16)1)/(uint16)2))) - (((select((absd(denoised$1.stencil(demosaicked_1_s0_x_2, (demosaicked_1_s0_y_2 + 1)), denoised$1.stencil((demosaicked_1_s0_x_2 + 1), (demosaicked_1_s0_y_2 + 1))) < absd(denoised$1.stencil(demosaicked_1_s0_x_2, (demosaicked_1_s0_y_2 + 1)), denoised$1.stencil(demosaicked_1_s0_x_2, demosaicked_1_s0_y_2))), (((denoised$1.stencil((demosaicked_1_s0_x_2 + 1), (demosaicked_1_s0_y_2 + 1)) + denoised$1.stencil(demosaicked_1_s0_x_2, (demosaicked_1_s0_y_2 + 1))) + (uint16)1)/(uint16)2), (((denoised$1.stencil(demosaicked_1_s0_x_2, demosaicked_1_s0_y_2) + denoised$1.stencil(demosaicked_1_s0_x_2, (demosaicked_1_s0_y_2 + 1))) + (uint16)1)/(uint16)2)) + select((absd(denoised$1.stencil((demosaicked_1_s0_x_2 + -1), demosaicked_1_s0_y_2), denoised$1.stencil(demosaicked_1_s0_x_2, demosaicked_1_s0_y_2)) < absd(denoised$1.stencil((demosaicked_1_s0_x_2 + -1), demosaicked_1_s0_y_2), denoised$1.stencil((demosaicked_1_s0_x_2 + -1), (demosaicked_1_s0_y_2 + -1)))), (((denoised$1.stencil(demosaicked_1_s0_x_2, demosaicked_1_s0_y_2) + denoised$1.stencil((demosaicked_1_s0_x_2 + -1), demosaicked_1_s0_y_2)) + (uint16)1)/(uint16)2), (((denoised$1.stencil((demosaicked_1_s0_x_2 + -1), (demosaicked_1_s0_y_2 + -1)) + denoised$1.stencil((demosaicked_1_s0_x_2 + -1), demosaicked_1_s0_y_2)) + (uint16)1)/(uint16)2))) + (uint16)1)/(uint16)2)))), select(((demosaicked_1_s0_x_2 % 2) == 0), denoised$1.stencil(demosaicked_1_s0_x_2, demosaicked_1_s0_y_2), ((denoised$1.stencil(demosaicked_1_s0_x_2, demosaicked_1_s0_y_2) + (((denoised$1.stencil(demosaicked_1_s0_x_2, demosaicked_1_s0_y_2) + denoised$1.stencil((demosaicked_1_s0_x_2 + -1), demosaicked_1_s0_y_2)) + (uint16)1)/(uint16)2)) - (((select((absd(denoised$1.stencil(demosaicked_1_s0_x_2, demosaicked_1_s0_y_2), denoised$1.stencil((demosaicked_1_s0_x_2 + 1), demosaicked_1_s0_y_2)) < absd(denoised$1.stencil(demosaicked_1_s0_x_2, demosaicked_1_s0_y_2), denoised$1.stencil(demosaicked_1_s0_x_2, (demosaicked_1_s0_y_2 + -1)))), (((denoised$1.stencil((demosaicked_1_s0_x_2 + 1), demosaicked_1_s0_y_2) + denoised$1.stencil(demosaicked_1_s0_x_2, demosaicked_1_s0_y_2)) + (uint16)1)/(uint16)2), (((denoised$1.stencil(demosaicked_1_s0_x_2, (demosaicked_1_s0_y_2 + -1)) + denoised$1.stencil(demosaicked_1_s0_x_2, demosaicked_1_s0_y_2)) + (uint16)1)/(uint16)2)) + select((absd(denoised$1.stencil((demosaicked_1_s0_x_2 + -1), demosaicked_1_s0_y_2), denoised$1.stencil(demosaicked_1_s0_x_2, demosaicked_1_s0_y_2)) < absd(denoised$1.stencil((demosaicked_1_s0_x_2 + -1), demosaicked_1_s0_y_2), denoised$1.stencil((demosaicked_1_s0_x_2 + -1), (demosaicked_1_s0_y_2 + -1)))), (((denoised$1.stencil(demosaicked_1_s0_x_2, demosaicked_1_s0_y_2) + denoised$1.stencil((demosaicked_1_s0_x_2 + -1), demosaicked_1_s0_y_2)) + (uint16)1)/(uint16)2), (((denoised$1.stencil((demosaicked_1_s0_x_2 + -1), (demosaicked_1_s0_y_2 + -1)) + denoised$1.stencil((demosaicked_1_s0_x_2 + -1), demosaicked_1_s0_y_2)) + (uint16)1)/(uint16)2))) + (uint16)1)/(uint16)2))))
+//store is: demosaicked$1.stencil(demosaicked_1_s0_x_2, demosaicked_1_s0_y_2, 2) = select(((demosaicked_1_s0_y_2 % 2) == 0), select(((demosaicked_1_s0_x_2 % 2) == 0), ((g_gr.stencil((demosaicked_1_s0_x_2/2), (demosaicked_1_s0_y_2/2)) + (((b_b.stencil((demosaicked_1_s0_x_2/2), ((demosaicked_1_s0_y_2/2) + -1)) + b_b.stencil((demosaicked_1_s0_x_2/2), (demosaicked_1_s0_y_2/2))) + (uint16)1)/(uint16)2)) - (((select((absd(g_gb.stencil(((demosaicked_1_s0_x_2/2) + -1), (demosaicked_1_s0_y_2/2)), g_gb.stencil((demosaicked_1_s0_x_2/2), (demosaicked_1_s0_y_2/2))) < absd(g_gr.stencil((demosaicked_1_s0_x_2/2), ((demosaicked_1_s0_y_2/2) + 1)), g_gr.stencil((demosaicked_1_s0_x_2/2), (demosaicked_1_s0_y_2/2)))), (((g_gb.stencil(((demosaicked_1_s0_x_2/2) + -1), (demosaicked_1_s0_y_2/2)) + g_gb.stencil((demosaicked_1_s0_x_2/2), (demosaicked_1_s0_y_2/2))) + (uint16)1)/(uint16)2), (((g_gr.stencil((demosaicked_1_s0_x_2/2), ((demosaicked_1_s0_y_2/2) + 1)) + g_gr.stencil((demosaicked_1_s0_x_2/2), (demosaicked_1_s0_y_2/2))) + (uint16)1)/(uint16)2)) + select((absd(g_gb.stencil(((demosaicked_1_s0_x_2/2) + -1), ((demosaicked_1_s0_y_2/2) + -1)), g_gb.stencil((demosaicked_1_s0_x_2/2), ((demosaicked_1_s0_y_2/2) + -1))) < absd(g_gr.stencil((demosaicked_1_s0_x_2/2), (demosaicked_1_s0_y_2/2)), g_gr.stencil((demosaicked_1_s0_x_2/2), ((demosaicked_1_s0_y_2/2) + -1)))), (((g_gb.stencil(((demosaicked_1_s0_x_2/2) + -1), ((demosaicked_1_s0_y_2/2) + -1)) + g_gb.stencil((demosaicked_1_s0_x_2/2), ((demosaicked_1_s0_y_2/2) + -1))) + (uint16)1)/(uint16)2), (((g_gr.stencil((demosaicked_1_s0_x_2/2), ((demosaicked_1_s0_y_2/2) + -1)) + g_gr.stencil((demosaicked_1_s0_x_2/2), (demosaicked_1_s0_y_2/2))) + (uint16)1)/(uint16)2))) + (uint16)1)/(uint16)2)), select((absd(b_b.stencil((demosaicked_1_s0_x_2/2), (demosaicked_1_s0_y_2/2)), b_b.stencil(((demosaicked_1_s0_x_2/2) + 1), ((demosaicked_1_s0_y_2/2) + -1))) < absd(b_b.stencil(((demosaicked_1_s0_x_2/2) + 1), (demosaicked_1_s0_y_2/2)), b_b.stencil((demosaicked_1_s0_x_2/2), ((demosaicked_1_s0_y_2/2) + -1)))), (((((b_b.stencil(((demosaicked_1_s0_x_2/2) + 1), ((demosaicked_1_s0_y_2/2) + -1)) + b_b.stencil((demosaicked_1_s0_x_2/2), (demosaicked_1_s0_y_2/2))) + (uint16)1)/(uint16)2) + select((absd(g_gr.stencil(((demosaicked_1_s0_x_2/2) + 1), (demosaicked_1_s0_y_2/2)), g_gr.stencil((demosaicked_1_s0_x_2/2), (demosaicked_1_s0_y_2/2))) < absd(g_gb.stencil((demosaicked_1_s0_x_2/2), ((demosaicked_1_s0_y_2/2) + -1)), g_gb.stencil((demosaicked_1_s0_x_2/2), (demosaicked_1_s0_y_2/2)))), (((g_gr.stencil((demosaicked_1_s0_x_2/2), (demosaicked_1_s0_y_2/2)) + g_gr.stencil(((demosaicked_1_s0_x_2/2) + 1), (demosaicked_1_s0_y_2/2))) + (uint16)1)/(uint16)2), (((g_gb.stencil((demosaicked_1_s0_x_2/2), (demosaicked_1_s0_y_2/2)) + g_gb.stencil((demosaicked_1_s0_x_2/2), ((demosaicked_1_s0_y_2/2) + -1))) + (uint16)1)/(uint16)2))) - (((select((absd(g_gb.stencil((demosaicked_1_s0_x_2/2), ((demosaicked_1_s0_y_2/2) + -1)), g_gb.stencil(((demosaicked_1_s0_x_2/2) + 1), ((demosaicked_1_s0_y_2/2) + -1))) < absd(g_gr.stencil(((demosaicked_1_s0_x_2/2) + 1), (demosaicked_1_s0_y_2/2)), g_gr.stencil(((demosaicked_1_s0_x_2/2) + 1), ((demosaicked_1_s0_y_2/2) + -1)))), (((g_gb.stencil(((demosaicked_1_s0_x_2/2) + 1), ((demosaicked_1_s0_y_2/2) + -1)) + g_gb.stencil((demosaicked_1_s0_x_2/2), ((demosaicked_1_s0_y_2/2) + -1))) + (uint16)1)/(uint16)2), (((g_gr.stencil(((demosaicked_1_s0_x_2/2) + 1), ((demosaicked_1_s0_y_2/2) + -1)) + g_gr.stencil(((demosaicked_1_s0_x_2/2) + 1), (demosaicked_1_s0_y_2/2))) + (uint16)1)/(uint16)2)) + select((absd(g_gb.stencil(((demosaicked_1_s0_x_2/2) + -1), (demosaicked_1_s0_y_2/2)), g_gb.stencil((demosaicked_1_s0_x_2/2), (demosaicked_1_s0_y_2/2))) < absd(g_gr.stencil((demosaicked_1_s0_x_2/2), ((demosaicked_1_s0_y_2/2) + 1)), g_gr.stencil((demosaicked_1_s0_x_2/2), (demosaicked_1_s0_y_2/2)))), (((g_gb.stencil(((demosaicked_1_s0_x_2/2) + -1), (demosaicked_1_s0_y_2/2)) + g_gb.stencil((demosaicked_1_s0_x_2/2), (demosaicked_1_s0_y_2/2))) + (uint16)1)/(uint16)2), (((g_gr.stencil((demosaicked_1_s0_x_2/2), ((demosaicked_1_s0_y_2/2) + 1)) + g_gr.stencil((demosaicked_1_s0_x_2/2), (demosaicked_1_s0_y_2/2))) + (uint16)1)/(uint16)2))) + (uint16)1)/(uint16)2)), (((((b_b.stencil((demosaicked_1_s0_x_2/2), ((demosaicked_1_s0_y_2/2) + -1)) + b_b.stencil(((demosaicked_1_s0_x_2/2) + 1), (demosaicked_1_s0_y_2/2))) + (uint16)1)/(uint16)2) + select((absd(g_gr.stencil(((demosaicked_1_s0_x_2/2) + 1), (demosaicked_1_s0_y_2/2)), g_gr.stencil((demosaicked_1_s0_x_2/2), (demosaicked_1_s0_y_2/2))) < absd(g_gb.stencil((demosaicked_1_s0_x_2/2), ((demosaicked_1_s0_y_2/2) + -1)), g_gb.stencil((demosaicked_1_s0_x_2/2), (demosaicked_1_s0_y_2/2)))), (((g_gr.stencil((demosaicked_1_s0_x_2/2), (demosaicked_1_s0_y_2/2)) + g_gr.stencil(((demosaicked_1_s0_x_2/2) + 1), (demosaicked_1_s0_y_2/2))) + (uint16)1)/(uint16)2), (((g_gb.stencil((demosaicked_1_s0_x_2/2), (demosaicked_1_s0_y_2/2)) + g_gb.stencil((demosaicked_1_s0_x_2/2), ((demosaicked_1_s0_y_2/2) + -1))) + (uint16)1)/(uint16)2))) - (((select((absd(g_gb.stencil(((demosaicked_1_s0_x_2/2) + -1), ((demosaicked_1_s0_y_2/2) + -1)), g_gb.stencil((demosaicked_1_s0_x_2/2), ((demosaicked_1_s0_y_2/2) + -1))) < absd(g_gr.stencil((demosaicked_1_s0_x_2/2), (demosaicked_1_s0_y_2/2)), g_gr.stencil((demosaicked_1_s0_x_2/2), ((demosaicked_1_s0_y_2/2) + -1)))), (((g_gb.stencil(((demosaicked_1_s0_x_2/2) + -1), ((demosaicked_1_s0_y_2/2) + -1)) + g_gb.stencil((demosaicked_1_s0_x_2/2), ((demosaicked_1_s0_y_2/2) + -1))) + (uint16)1)/(uint16)2), (((g_gr.stencil((demosaicked_1_s0_x_2/2), ((demosaicked_1_s0_y_2/2) + -1)) + g_gr.stencil((demosaicked_1_s0_x_2/2), (demosaicked_1_s0_y_2/2))) + (uint16)1)/(uint16)2)) + select((absd(g_gb.stencil((demosaicked_1_s0_x_2/2), (demosaicked_1_s0_y_2/2)), g_gb.stencil(((demosaicked_1_s0_x_2/2) + 1), (demosaicked_1_s0_y_2/2))) < absd(g_gr.stencil(((demosaicked_1_s0_x_2/2) + 1), ((demosaicked_1_s0_y_2/2) + 1)), g_gr.stencil(((demosaicked_1_s0_x_2/2) + 1), (demosaicked_1_s0_y_2/2)))), (((g_gb.stencil(((demosaicked_1_s0_x_2/2) + 1), (demosaicked_1_s0_y_2/2)) + g_gb.stencil((demosaicked_1_s0_x_2/2), (demosaicked_1_s0_y_2/2))) + (uint16)1)/(uint16)2), (((g_gr.stencil(((demosaicked_1_s0_x_2/2) + 1), ((demosaicked_1_s0_y_2/2) + 1)) + g_gr.stencil(((demosaicked_1_s0_x_2/2) + 1), (demosaicked_1_s0_y_2/2))) + (uint16)1)/(uint16)2))) + (uint16)1)/(uint16)2)))), select(((demosaicked_1_s0_x_2 % 2) == 0), b_b.stencil((demosaicked_1_s0_x_2/2), (demosaicked_1_s0_y_2/2)), ((g_gb.stencil((demosaicked_1_s0_x_2/2), (demosaicked_1_s0_y_2/2)) + (((b_b.stencil(((demosaicked_1_s0_x_2/2) + 1), (demosaicked_1_s0_y_2/2)) + b_b.stencil((demosaicked_1_s0_x_2/2), (demosaicked_1_s0_y_2/2))) + (uint16)1)/(uint16)2)) - (((select((absd(g_gb.stencil(((demosaicked_1_s0_x_2/2) + -1), (demosaicked_1_s0_y_2/2)), g_gb.stencil((demosaicked_1_s0_x_2/2), (demosaicked_1_s0_y_2/2))) < absd(g_gr.stencil((demosaicked_1_s0_x_2/2), ((demosaicked_1_s0_y_2/2) + 1)), g_gr.stencil((demosaicked_1_s0_x_2/2), (demosaicked_1_s0_y_2/2)))), (((g_gb.stencil(((demosaicked_1_s0_x_2/2) + -1), (demosaicked_1_s0_y_2/2)) + g_gb.stencil((demosaicked_1_s0_x_2/2), (demosaicked_1_s0_y_2/2))) + (uint16)1)/(uint16)2), (((g_gr.stencil((demosaicked_1_s0_x_2/2), ((demosaicked_1_s0_y_2/2) + 1)) + g_gr.stencil((demosaicked_1_s0_x_2/2), (demosaicked_1_s0_y_2/2))) + (uint16)1)/(uint16)2)) + select((absd(g_gb.stencil((demosaicked_1_s0_x_2/2), (demosaicked_1_s0_y_2/2)), g_gb.stencil(((demosaicked_1_s0_x_2/2) + 1), (demosaicked_1_s0_y_2/2))) < absd(g_gr.stencil(((demosaicked_1_s0_x_2/2) + 1), ((demosaicked_1_s0_y_2/2) + 1)), g_gr.stencil(((demosaicked_1_s0_x_2/2) + 1), (demosaicked_1_s0_y_2/2)))), (((g_gb.stencil(((demosaicked_1_s0_x_2/2) + 1), (demosaicked_1_s0_y_2/2)) + g_gb.stencil((demosaicked_1_s0_x_2/2), (demosaicked_1_s0_y_2/2))) + (uint16)1)/(uint16)2), (((g_gr.stencil(((demosaicked_1_s0_x_2/2) + 1), ((demosaicked_1_s0_y_2/2) + 1)) + g_gr.stencil(((demosaicked_1_s0_x_2/2) + 1), (demosaicked_1_s0_y_2/2))) + (uint16)1)/(uint16)2))) + (uint16)1)/(uint16)2))))
   auto hcompute_demosaicked_1_stencil_2 = demosaicked_1_s0_x_2->add_op("op_hcompute_demosaicked_1_stencil_2");
   hcompute_demosaicked_1_stencil_2->add_function("hcompute_demosaicked_1_stencil_2");
-  hcompute_demosaicked_1_stencil_2->add_load("denoised_1_stencil", "demosaicked_1_s0_y_2", "demosaicked_1_s0_x_2");
-  hcompute_demosaicked_1_stencil_2->add_load("denoised_1_stencil", "(demosaicked_1_s0_y_2 + 1)", "demosaicked_1_s0_x_2");
-  hcompute_demosaicked_1_stencil_2->add_load("denoised_1_stencil", "(demosaicked_1_s0_y_2 + 1)", "(demosaicked_1_s0_x_2 + 1)");
-  hcompute_demosaicked_1_stencil_2->add_load("denoised_1_stencil", "demosaicked_1_s0_y_2", "(demosaicked_1_s0_x_2 + 1)");
-  hcompute_demosaicked_1_stencil_2->add_load("denoised_1_stencil", "(demosaicked_1_s0_y_2 + -1)", "demosaicked_1_s0_x_2");
-  hcompute_demosaicked_1_stencil_2->add_load("denoised_1_stencil", "(demosaicked_1_s0_y_2 + 1)", "(demosaicked_1_s0_x_2 + -1)");
-  hcompute_demosaicked_1_stencil_2->add_load("denoised_1_stencil", "demosaicked_1_s0_y_2", "(demosaicked_1_s0_x_2 + -1)");
-  hcompute_demosaicked_1_stencil_2->add_load("denoised_1_stencil", "(demosaicked_1_s0_y_2 + -1)", "(demosaicked_1_s0_x_2 + -1)");
+  hcompute_demosaicked_1_stencil_2->add_load("b_b_stencil", "(floor((demosaicked_1_s0_y_2/2)) + -1)", "floor((demosaicked_1_s0_x_2/2))");
+  hcompute_demosaicked_1_stencil_2->add_load("b_b_stencil", "floor((demosaicked_1_s0_y_2/2))", "floor((demosaicked_1_s0_x_2/2))");
+  hcompute_demosaicked_1_stencil_2->add_load("b_b_stencil", "(floor((demosaicked_1_s0_y_2/2)) + -1)", "(floor((demosaicked_1_s0_x_2/2)) + 1)");
+  hcompute_demosaicked_1_stencil_2->add_load("b_b_stencil", "floor((demosaicked_1_s0_y_2/2))", "(floor((demosaicked_1_s0_x_2/2)) + 1)");
+  hcompute_demosaicked_1_stencil_2->add_load("g_gb_stencil", "floor((demosaicked_1_s0_y_2/2))", "(floor((demosaicked_1_s0_x_2/2)) + -1)");
+  hcompute_demosaicked_1_stencil_2->add_load("g_gb_stencil", "floor((demosaicked_1_s0_y_2/2))", "floor((demosaicked_1_s0_x_2/2))");
+  hcompute_demosaicked_1_stencil_2->add_load("g_gb_stencil", "(floor((demosaicked_1_s0_y_2/2)) + -1)", "(floor((demosaicked_1_s0_x_2/2)) + -1)");
+  hcompute_demosaicked_1_stencil_2->add_load("g_gb_stencil", "(floor((demosaicked_1_s0_y_2/2)) + -1)", "floor((demosaicked_1_s0_x_2/2))");
+  hcompute_demosaicked_1_stencil_2->add_load("g_gb_stencil", "(floor((demosaicked_1_s0_y_2/2)) + -1)", "(floor((demosaicked_1_s0_x_2/2)) + 1)");
+  hcompute_demosaicked_1_stencil_2->add_load("g_gb_stencil", "floor((demosaicked_1_s0_y_2/2))", "(floor((demosaicked_1_s0_x_2/2)) + 1)");
+  hcompute_demosaicked_1_stencil_2->add_load("g_gr_stencil", "floor((demosaicked_1_s0_y_2/2))", "floor((demosaicked_1_s0_x_2/2))");
+  hcompute_demosaicked_1_stencil_2->add_load("g_gr_stencil", "(floor((demosaicked_1_s0_y_2/2)) + 1)", "floor((demosaicked_1_s0_x_2/2))");
+  hcompute_demosaicked_1_stencil_2->add_load("g_gr_stencil", "(floor((demosaicked_1_s0_y_2/2)) + -1)", "floor((demosaicked_1_s0_x_2/2))");
+  hcompute_demosaicked_1_stencil_2->add_load("g_gr_stencil", "floor((demosaicked_1_s0_y_2/2))", "(floor((demosaicked_1_s0_x_2/2)) + 1)");
+  hcompute_demosaicked_1_stencil_2->add_load("g_gr_stencil", "(floor((demosaicked_1_s0_y_2/2)) + -1)", "(floor((demosaicked_1_s0_x_2/2)) + 1)");
+  hcompute_demosaicked_1_stencil_2->add_load("g_gr_stencil", "(floor((demosaicked_1_s0_y_2/2)) + 1)", "(floor((demosaicked_1_s0_x_2/2)) + 1)");
   hcompute_demosaicked_1_stencil_2->add_store("demosaicked_1_stencil", "2", "demosaicked_1_s0_y_2", "demosaicked_1_s0_x_2");
   hcompute_demosaicked_1_stencil_2->compute_unit_needs_index_variable("demosaicked_1_s0_x_2");
   hcompute_demosaicked_1_stencil_2->compute_unit_needs_index_variable("demosaicked_1_s0_y_2");
 
 //consuming demosaicked$1.stencil
 ////producing corrected.stencil
-  auto corrected_s0_y = prg.add_loop("corrected_s0_y", 0, 58);
-  auto corrected_s0_x = corrected_s0_y->add_loop("corrected_s0_x", 0, 58);
+  auto corrected_s0_y = prg.add_loop("corrected_s0_y", 0, 56);
+  auto corrected_s0_x = corrected_s0_y->add_loop("corrected_s0_x", 0, 56);
 
-//store is: corrected.stencil(corrected_s0_x, corrected_s0_y, 0) = uint16((((((int16(demosaicked$1.stencil(corrected_s0_x, corrected_s0_y, 0))*(int16)200) + (int16(demosaicked$1.stencil(corrected_s0_x, corrected_s0_y, 2))*(int16)17)) - (int16(demosaicked$1.stencil(corrected_s0_x, corrected_s0_y, 1))*(int16)44)) + (int16)-3900)/(int16)256))
+//store is: corrected.stencil(corrected_s0_x, corrected_s0_y, 0) = int16((((((int32(demosaicked$1.stencil(corrected_s0_x, corrected_s0_y, 0))*549) + (int32(demosaicked$1.stencil(corrected_s0_x, corrected_s0_y, 2))*7)) - (int32(demosaicked$1.stencil(corrected_s0_x, corrected_s0_y, 1))*103)) + -10221)/256))
   auto hcompute_corrected_stencil = corrected_s0_x->add_op("op_hcompute_corrected_stencil");
   hcompute_corrected_stencil->add_function("hcompute_corrected_stencil");
   hcompute_corrected_stencil->add_load("demosaicked_1_stencil", "0", "corrected_s0_y", "corrected_s0_x");
@@ -2808,20 +2844,20 @@ prog camera_pipeline() {
   hcompute_corrected_stencil->add_load("demosaicked_1_stencil", "1", "corrected_s0_y", "corrected_s0_x");
   prg.buffer_port_widths["corrected_stencil"] = 16;
   hcompute_corrected_stencil->add_store("corrected_stencil", "0", "corrected_s0_y", "corrected_s0_x");
-  auto corrected_s0_y_1 = prg.add_loop("corrected_s0_y_1", 0, 58);
-  auto corrected_s0_x_1 = corrected_s0_y_1->add_loop("corrected_s0_x_1", 0, 58);
+  auto corrected_s0_y_1 = prg.add_loop("corrected_s0_y_1", 0, 56);
+  auto corrected_s0_x_1 = corrected_s0_y_1->add_loop("corrected_s0_x_1", 0, 56);
 
-//store is: corrected.stencil(corrected_s0_x_1, corrected_s0_y_1, 1) = uint16((((((int16(demosaicked$1.stencil(corrected_s0_x_1, corrected_s0_y_1, 1))*(int16)159) - (int16(demosaicked$1.stencil(corrected_s0_x_1, corrected_s0_y_1, 0))*(int16)38)) - (int16(demosaicked$1.stencil(corrected_s0_x_1, corrected_s0_y_1, 2))*(int16)21)) + (int16)-2541)/(int16)256))
+//store is: corrected.stencil(corrected_s0_x_1, corrected_s0_y_1, 1) = int16((((((int32(demosaicked$1.stencil(corrected_s0_x_1, corrected_s0_y_1, 1))*373) + (int32(demosaicked$1.stencil(corrected_s0_x_1, corrected_s0_y_1, 2))*62)) - (int32(demosaicked$1.stencil(corrected_s0_x_1, corrected_s0_y_1, 0))*96)) + -7254)/256))
   auto hcompute_corrected_stencil_1 = corrected_s0_x_1->add_op("op_hcompute_corrected_stencil_1");
   hcompute_corrected_stencil_1->add_function("hcompute_corrected_stencil_1");
   hcompute_corrected_stencil_1->add_load("demosaicked_1_stencil", "1", "corrected_s0_y_1", "corrected_s0_x_1");
-  hcompute_corrected_stencil_1->add_load("demosaicked_1_stencil", "0", "corrected_s0_y_1", "corrected_s0_x_1");
   hcompute_corrected_stencil_1->add_load("demosaicked_1_stencil", "2", "corrected_s0_y_1", "corrected_s0_x_1");
+  hcompute_corrected_stencil_1->add_load("demosaicked_1_stencil", "0", "corrected_s0_y_1", "corrected_s0_x_1");
   hcompute_corrected_stencil_1->add_store("corrected_stencil", "1", "corrected_s0_y_1", "corrected_s0_x_1");
-  auto corrected_s0_y_2 = prg.add_loop("corrected_s0_y_2", 0, 58);
-  auto corrected_s0_x_2 = corrected_s0_y_2->add_loop("corrected_s0_x_2", 0, 58);
+  auto corrected_s0_y_2 = prg.add_loop("corrected_s0_y_2", 0, 56);
+  auto corrected_s0_x_2 = corrected_s0_y_2->add_loop("corrected_s0_x_2", 0, 56);
 
-//store is: corrected.stencil(corrected_s0_x_2, corrected_s0_y_2, 2) = uint16((((((int16(demosaicked$1.stencil(corrected_s0_x_2, corrected_s0_y_2, 2))*(int16)228) - (int16(demosaicked$1.stencil(corrected_s0_x_2, corrected_s0_y_2, 1))*(int16)73)) - (int16(demosaicked$1.stencil(corrected_s0_x_2, corrected_s0_y_2, 0))*(int16)8)) + (int16)-2008)/(int16)256))
+//store is: corrected.stencil(corrected_s0_x_2, corrected_s0_y_2, 2) = int16((((((int32(demosaicked$1.stencil(corrected_s0_x_2, corrected_s0_y_2, 2))*883) - (int32(demosaicked$1.stencil(corrected_s0_x_2, corrected_s0_y_2, 1))*261)) - (int32(demosaicked$1.stencil(corrected_s0_x_2, corrected_s0_y_2, 0))*31)) + -5563)/256))
   auto hcompute_corrected_stencil_2 = corrected_s0_x_2->add_op("op_hcompute_corrected_stencil_2");
   hcompute_corrected_stencil_2->add_function("hcompute_corrected_stencil_2");
   hcompute_corrected_stencil_2->add_load("demosaicked_1_stencil", "2", "corrected_s0_y_2", "corrected_s0_x_2");
@@ -2834,51 +2870,51 @@ prog camera_pipeline() {
 
 //consuming curvea0
 ////producing curved.stencil
-  auto curved_s0_y = prg.add_loop("curved_s0_y", 0, 58);
-  auto curved_s0_x = curved_s0_y->add_loop("curved_s0_x", 0, 58);
+  auto curved_s0_y = prg.add_loop("curved_s0_y", 0, 56);
+  auto curved_s0_x = curved_s0_y->add_loop("curved_s0_x", 0, 56);
 
-//store is: curved.stencil(curved_s0_x, curved_s0_y, 0) = curvea0[int32(min(corrected.stencil(curved_s0_x, curved_s0_y, 0), (uint16)255))]
+//store is: curved.stencil(curved_s0_x, curved_s0_y, 0) = curvea0[int32(uint16(max(min(corrected.stencil(curved_s0_x, curved_s0_y, 0), (int16)1023), (int16)0)))]
   auto hcompute_curved_stencil = curved_s0_x->add_op("op_hcompute_curved_stencil");
   hcompute_curved_stencil->add_function("hcompute_curved_stencil");
   hcompute_curved_stencil->add_load("corrected_stencil", "0", "curved_s0_y", "curved_s0_x");
   prg.buffer_port_widths["curved_stencil"] = 16;
   hcompute_curved_stencil->add_store("curved_stencil", "0", "curved_s0_y", "curved_s0_x");
-  auto curved_s0_y_1 = prg.add_loop("curved_s0_y_1", 0, 58);
-  auto curved_s0_x_1 = curved_s0_y_1->add_loop("curved_s0_x_1", 0, 58);
+  auto curved_s0_y_1 = prg.add_loop("curved_s0_y_1", 0, 56);
+  auto curved_s0_x_1 = curved_s0_y_1->add_loop("curved_s0_x_1", 0, 56);
 
-//store is: curved.stencil(curved_s0_x_1, curved_s0_y_1, 1) = curvea0[int32(min(corrected.stencil(curved_s0_x_1, curved_s0_y_1, 1), (uint16)255))]
+//store is: curved.stencil(curved_s0_x_1, curved_s0_y_1, 1) = curvea0[int32(uint16(max(min(corrected.stencil(curved_s0_x_1, curved_s0_y_1, 1), (int16)1023), (int16)0)))]
   auto hcompute_curved_stencil_1 = curved_s0_x_1->add_op("op_hcompute_curved_stencil_1");
   hcompute_curved_stencil_1->add_function("hcompute_curved_stencil_1");
   hcompute_curved_stencil_1->add_load("corrected_stencil", "1", "curved_s0_y_1", "curved_s0_x_1");
   hcompute_curved_stencil_1->add_store("curved_stencil", "1", "curved_s0_y_1", "curved_s0_x_1");
-  auto curved_s0_y_2 = prg.add_loop("curved_s0_y_2", 0, 58);
-  auto curved_s0_x_2 = curved_s0_y_2->add_loop("curved_s0_x_2", 0, 58);
+  auto curved_s0_y_2 = prg.add_loop("curved_s0_y_2", 0, 56);
+  auto curved_s0_x_2 = curved_s0_y_2->add_loop("curved_s0_x_2", 0, 56);
 
-//store is: curved.stencil(curved_s0_x_2, curved_s0_y_2, 2) = curvea0[int32(min(corrected.stencil(curved_s0_x_2, curved_s0_y_2, 2), (uint16)255))]
+//store is: curved.stencil(curved_s0_x_2, curved_s0_y_2, 2) = curvea0[int32(uint16(max(min(corrected.stencil(curved_s0_x_2, curved_s0_y_2, 2), (int16)1023), (int16)0)))]
   auto hcompute_curved_stencil_2 = curved_s0_x_2->add_op("op_hcompute_curved_stencil_2");
   hcompute_curved_stencil_2->add_function("hcompute_curved_stencil_2");
   hcompute_curved_stencil_2->add_load("corrected_stencil", "2", "curved_s0_y_2", "curved_s0_x_2");
   hcompute_curved_stencil_2->add_store("curved_stencil", "2", "curved_s0_y_2", "curved_s0_x_2");
 
 //consuming curved.stencil
-  auto hw_output_s0_y_yi = prg.add_loop("hw_output_s0_y_yi", 0, 58);
-  auto hw_output_s0_x_xi = hw_output_s0_y_yi->add_loop("hw_output_s0_x_xi", 0, 58);
+  auto hw_output_s0_y_yi = prg.add_loop("hw_output_s0_y_yi", 0, 56);
+  auto hw_output_s0_x_xi = hw_output_s0_y_yi->add_loop("hw_output_s0_x_xi", 0, 56);
 
 //store is: hw_output.stencil(hw_output_s0_x_xi, hw_output_s0_y_yi, 0) = curved.stencil(hw_output_s0_x_xi, hw_output_s0_y_yi, 0)
   auto hcompute_hw_output_stencil = hw_output_s0_x_xi->add_op("op_hcompute_hw_output_stencil");
   hcompute_hw_output_stencil->add_function("hcompute_hw_output_stencil");
   hcompute_hw_output_stencil->add_load("curved_stencil", "0", "hw_output_s0_y_yi", "hw_output_s0_x_xi");
   hcompute_hw_output_stencil->add_store("hw_output_stencil", "0", "hw_output_s0_y_yi", "hw_output_s0_x_xi");
-  auto hw_output_s0_y_yi_1 = prg.add_loop("hw_output_s0_y_yi_1", 0, 58);
-  auto hw_output_s0_x_xi_1 = hw_output_s0_y_yi_1->add_loop("hw_output_s0_x_xi_1", 0, 58);
+  auto hw_output_s0_y_yi_1 = prg.add_loop("hw_output_s0_y_yi_1", 0, 56);
+  auto hw_output_s0_x_xi_1 = hw_output_s0_y_yi_1->add_loop("hw_output_s0_x_xi_1", 0, 56);
 
 //store is: hw_output.stencil(hw_output_s0_x_xi_1, hw_output_s0_y_yi_1, 1) = curved.stencil(hw_output_s0_x_xi_1, hw_output_s0_y_yi_1, 1)
   auto hcompute_hw_output_stencil_1 = hw_output_s0_x_xi_1->add_op("op_hcompute_hw_output_stencil_1");
   hcompute_hw_output_stencil_1->add_function("hcompute_hw_output_stencil_1");
   hcompute_hw_output_stencil_1->add_load("curved_stencil", "1", "hw_output_s0_y_yi_1", "hw_output_s0_x_xi_1");
   hcompute_hw_output_stencil_1->add_store("hw_output_stencil", "1", "hw_output_s0_y_yi_1", "hw_output_s0_x_xi_1");
-  auto hw_output_s0_y_yi_2 = prg.add_loop("hw_output_s0_y_yi_2", 0, 58);
-  auto hw_output_s0_x_xi_2 = hw_output_s0_y_yi_2->add_loop("hw_output_s0_x_xi_2", 0, 58);
+  auto hw_output_s0_y_yi_2 = prg.add_loop("hw_output_s0_y_yi_2", 0, 56);
+  auto hw_output_s0_x_xi_2 = hw_output_s0_y_yi_2->add_loop("hw_output_s0_x_xi_2", 0, 56);
 
 //store is: hw_output.stencil(hw_output_s0_x_xi_2, hw_output_s0_y_yi_2, 2) = curved.stencil(hw_output_s0_x_xi_2, hw_output_s0_y_yi_2, 2)
   auto hcompute_hw_output_stencil_2 = hw_output_s0_x_xi_2->add_op("op_hcompute_hw_output_stencil_2");
@@ -2888,6 +2924,7 @@ prog camera_pipeline() {
 
   return prg;
 }
+
 
 prog down_sample() {
   prog prg;
@@ -7617,6 +7654,350 @@ prog resnet_layer_gen() {
   hcompute_hw_output_stencil->add_function("hcompute_hw_output_stencil");
   hcompute_hw_output_stencil->add_load("conv_stencil", "hw_output_s0_w", "hw_output_s0_y_yi", "hw_output_s0_x_xi");
   hcompute_hw_output_stencil->add_store("hw_output_stencil", "hw_output_s0_w", "hw_output_s0_y_yi", "hw_output_s0_x_xi");
+
+  return prg;
+}
+
+prog laplacian_pyramid() {
+  prog prg;
+  prg.compute_unit_file = "laplacian_pyramid_compute.h";
+  prg.name = "laplacian_pyramid";
+
+// Stencil<uint16_t, 75, 75> &hw_input_stencil = arg_0;
+  prg.add_input("hw_input_stencil");
+  prg.buffer_port_widths["hw_input_stencil"] = 16;
+// Stencil<uint16_t, 64, 64> &hw_output_stencil = arg_1;
+  prg.add_output("hw_output_stencil");
+  prg.buffer_port_widths["hw_output_stencil"] = 16;
+
+////producing hw_input_global_wrapper.stencil
+  auto hw_input_global_wrapper_s0_y = prg.add_loop("hw_input_global_wrapper_s0_y", -7, 68);
+  auto hw_input_global_wrapper_s0_x = hw_input_global_wrapper_s0_y->add_loop("hw_input_global_wrapper_s0_x", -7, 68);
+
+//store is: hw_input_global_wrapper.stencil(hw_input_global_wrapper_s0_x, hw_input_global_wrapper_s0_y) = hw_input.stencil(hw_input_global_wrapper_s0_x, hw_input_global_wrapper_s0_y)
+  auto hcompute_hw_input_global_wrapper_stencil = hw_input_global_wrapper_s0_x->add_op("op_hcompute_hw_input_global_wrapper_stencil");
+  hcompute_hw_input_global_wrapper_stencil->add_function("hcompute_hw_input_global_wrapper_stencil");
+  hcompute_hw_input_global_wrapper_stencil->add_load("hw_input_stencil", "hw_input_global_wrapper_s0_y", "hw_input_global_wrapper_s0_x");
+  prg.buffer_port_widths["hw_input_global_wrapper_stencil"] = 16;
+  hcompute_hw_input_global_wrapper_stencil->add_store("hw_input_global_wrapper_stencil", "hw_input_global_wrapper_s0_y", "hw_input_global_wrapper_s0_x");
+
+//consuming hw_input_global_wrapper.stencil
+////producing blur_unnormalized.stencil
+  auto blur_unnormalized_s0_y = prg.add_loop("blur_unnormalized_s0_y", -7, 66);
+  auto blur_unnormalized_s0_x = blur_unnormalized_s0_y->add_loop("blur_unnormalized_s0_x", -7, 66);
+
+//store is: blur_unnormalized.stencil(blur_unnormalized_s0_x, blur_unnormalized_s0_y) = (uint16)0
+  auto hcompute_blur_unnormalized_stencil = blur_unnormalized_s0_x->add_op("op_hcompute_blur_unnormalized_stencil");
+  hcompute_blur_unnormalized_stencil->add_function("hcompute_blur_unnormalized_stencil");
+  prg.buffer_port_widths["blur_unnormalized_stencil"] = 16;
+  hcompute_blur_unnormalized_stencil->add_store("blur_unnormalized_stencil", "blur_unnormalized_s0_y", "blur_unnormalized_s0_x");
+  auto blur_unnormalized_s1_y = prg.add_loop("blur_unnormalized_s1_y", -7, 66);
+  auto blur_unnormalized_s1_x = blur_unnormalized_s1_y->add_loop("blur_unnormalized_s1_x", -7, 66);
+
+//store is: blur_unnormalized.stencil(blur_unnormalized_s1_x, blur_unnormalized_s1_y) = ((hw_input_global_wrapper.stencil(blur_unnormalized_s1_x, blur_unnormalized_s1_y)*(uint16)3) + (blur_unnormalized.stencil(blur_unnormalized_s1_x, blur_unnormalized_s1_y) + ((hw_input_global_wrapper.stencil((blur_unnormalized_s1_x + 1), blur_unnormalized_s1_y)*(uint16)21) + ((hw_input_global_wrapper.stencil((blur_unnormalized_s1_x + 2), blur_unnormalized_s1_y)*(uint16)3) + ((hw_input_global_wrapper.stencil(blur_unnormalized_s1_x, (blur_unnormalized_s1_y + 1))*(uint16)21) + ((((hw_input_global_wrapper.stencil((blur_unnormalized_s1_x + 2), (blur_unnormalized_s1_y + 1))*(uint16)7) + (hw_input_global_wrapper.stencil(blur_unnormalized_s1_x, (blur_unnormalized_s1_y + 2)) + (hw_input_global_wrapper.stencil((blur_unnormalized_s1_x + 2), (blur_unnormalized_s1_y + 2)) + (hw_input_global_wrapper.stencil((blur_unnormalized_s1_x + 1), (blur_unnormalized_s1_y + 2))*(uint16)7))))*(uint16)3) + (hw_input_global_wrapper.stencil((blur_unnormalized_s1_x + 1), (blur_unnormalized_s1_y + 1))*(uint16)158)))))))
+  auto hcompute_blur_unnormalized_stencil_1 = blur_unnormalized_s1_x->add_op("op_hcompute_blur_unnormalized_stencil_1");
+  hcompute_blur_unnormalized_stencil_1->add_function("hcompute_blur_unnormalized_stencil_1");
+  hcompute_blur_unnormalized_stencil_1->add_load("blur_unnormalized_stencil", "blur_unnormalized_s1_y", "blur_unnormalized_s1_x");
+  hcompute_blur_unnormalized_stencil_1->add_load("hw_input_global_wrapper_stencil", "blur_unnormalized_s1_y", "blur_unnormalized_s1_x");
+  hcompute_blur_unnormalized_stencil_1->add_load("hw_input_global_wrapper_stencil", "blur_unnormalized_s1_y", "(blur_unnormalized_s1_x + 1)");
+  hcompute_blur_unnormalized_stencil_1->add_load("hw_input_global_wrapper_stencil", "blur_unnormalized_s1_y", "(blur_unnormalized_s1_x + 2)");
+  hcompute_blur_unnormalized_stencil_1->add_load("hw_input_global_wrapper_stencil", "(blur_unnormalized_s1_y + 1)", "blur_unnormalized_s1_x");
+  hcompute_blur_unnormalized_stencil_1->add_load("hw_input_global_wrapper_stencil", "(blur_unnormalized_s1_y + 1)", "(blur_unnormalized_s1_x + 2)");
+  hcompute_blur_unnormalized_stencil_1->add_load("hw_input_global_wrapper_stencil", "(blur_unnormalized_s1_y + 2)", "blur_unnormalized_s1_x");
+  hcompute_blur_unnormalized_stencil_1->add_load("hw_input_global_wrapper_stencil", "(blur_unnormalized_s1_y + 2)", "(blur_unnormalized_s1_x + 2)");
+  hcompute_blur_unnormalized_stencil_1->add_load("hw_input_global_wrapper_stencil", "(blur_unnormalized_s1_y + 2)", "(blur_unnormalized_s1_x + 1)");
+  hcompute_blur_unnormalized_stencil_1->add_load("hw_input_global_wrapper_stencil", "(blur_unnormalized_s1_y + 1)", "(blur_unnormalized_s1_x + 1)");
+  hcompute_blur_unnormalized_stencil_1->add_store("blur_unnormalized_stencil", "blur_unnormalized_s1_y", "blur_unnormalized_s1_x");
+
+//consuming blur_unnormalized.stencil
+////producing l0$0.stencil
+  auto l0_0_s0_y = prg.add_loop("l0_0_s0_y", -6, 67);
+  auto l0_0_s0_x = l0_0_s0_y->add_loop("l0_0_s0_x", -6, 67);
+
+//store is: l0$0.stencil(l0_0_s0_x, l0_0_s0_y) = (blur_unnormalized.stencil((l0_0_s0_x + -1), (l0_0_s0_y + -1))/(uint16)256)
+  auto hcompute_l0_0_stencil = l0_0_s0_x->add_op("op_hcompute_l0_0_stencil");
+  hcompute_l0_0_stencil->add_function("hcompute_l0_0_stencil");
+  hcompute_l0_0_stencil->add_load("blur_unnormalized_stencil", "(l0_0_s0_y + -1)", "(l0_0_s0_x + -1)");
+  prg.buffer_port_widths["l0_0_stencil"] = 16;
+  hcompute_l0_0_stencil->add_store("l0_0_stencil", "l0_0_s0_y", "l0_0_s0_x");
+
+//consuming l0$0.stencil
+////producing h0$0.stencil
+  auto h0_0_s0_y = prg.add_loop("h0_0_s0_y", 0, 64);
+  auto h0_0_s0_x = h0_0_s0_y->add_loop("h0_0_s0_x", 0, 64);
+
+//store is: h0$0.stencil(h0_0_s0_x, h0_0_s0_y) = (hw_input_global_wrapper.stencil(h0_0_s0_x, h0_0_s0_y) - l0$0.stencil(h0_0_s0_x, h0_0_s0_y))
+  auto hcompute_h0_0_stencil = h0_0_s0_x->add_op("op_hcompute_h0_0_stencil");
+  hcompute_h0_0_stencil->add_function("hcompute_h0_0_stencil");
+  hcompute_h0_0_stencil->add_load("hw_input_global_wrapper_stencil", "h0_0_s0_y", "h0_0_s0_x");
+  hcompute_h0_0_stencil->add_load("l0_0_stencil", "h0_0_s0_y", "h0_0_s0_x");
+  prg.buffer_port_widths["h0_0_stencil"] = 16;
+  hcompute_h0_0_stencil->add_store("h0_0_stencil", "h0_0_s0_y", "h0_0_s0_x");
+
+//consuming h0$0.stencil
+////producing f1$0.stencil
+  auto f1_0_s0_y = prg.add_loop("f1_0_s0_y", -3, 34);
+  auto f1_0_s0_x = f1_0_s0_y->add_loop("f1_0_s0_x", -3, 34);
+
+//store is: f1$0.stencil(f1_0_s0_x, f1_0_s0_y) = l0$0.stencil((f1_0_s0_x*2), (f1_0_s0_y*2))
+  auto hcompute_f1_0_stencil = f1_0_s0_x->add_op("op_hcompute_f1_0_stencil");
+  hcompute_f1_0_stencil->add_function("hcompute_f1_0_stencil");
+  hcompute_f1_0_stencil->add_load("l0_0_stencil", "(f1_0_s0_y*2)", "(f1_0_s0_x*2)");
+  prg.buffer_port_widths["f1_0_stencil"] = 16;
+  hcompute_f1_0_stencil->add_store("f1_0_stencil", "f1_0_s0_y", "f1_0_s0_x");
+
+//consuming f1$0.stencil
+////producing f1_blur_unnormalized.stencil
+  auto f1_blur_unnormalized_s0_y = prg.add_loop("f1_blur_unnormalized_s0_y", -3, 32);
+  auto f1_blur_unnormalized_s0_x = f1_blur_unnormalized_s0_y->add_loop("f1_blur_unnormalized_s0_x", -3, 32);
+
+//store is: f1_blur_unnormalized.stencil(f1_blur_unnormalized_s0_x, f1_blur_unnormalized_s0_y) = (uint16)0
+  auto hcompute_f1_blur_unnormalized_stencil = f1_blur_unnormalized_s0_x->add_op("op_hcompute_f1_blur_unnormalized_stencil");
+  hcompute_f1_blur_unnormalized_stencil->add_function("hcompute_f1_blur_unnormalized_stencil");
+  prg.buffer_port_widths["f1_blur_unnormalized_stencil"] = 16;
+  hcompute_f1_blur_unnormalized_stencil->add_store("f1_blur_unnormalized_stencil", "f1_blur_unnormalized_s0_y", "f1_blur_unnormalized_s0_x");
+  auto f1_blur_unnormalized_s1_y = prg.add_loop("f1_blur_unnormalized_s1_y", -3, 32);
+  auto f1_blur_unnormalized_s1_x = f1_blur_unnormalized_s1_y->add_loop("f1_blur_unnormalized_s1_x", -3, 32);
+
+//store is: f1_blur_unnormalized.stencil(f1_blur_unnormalized_s1_x, f1_blur_unnormalized_s1_y) = ((f1$0.stencil(f1_blur_unnormalized_s1_x, f1_blur_unnormalized_s1_y)*(uint16)3) + (f1_blur_unnormalized.stencil(f1_blur_unnormalized_s1_x, f1_blur_unnormalized_s1_y) + ((f1$0.stencil((f1_blur_unnormalized_s1_x + 1), f1_blur_unnormalized_s1_y)*(uint16)21) + ((f1$0.stencil((f1_blur_unnormalized_s1_x + 2), f1_blur_unnormalized_s1_y)*(uint16)3) + ((f1$0.stencil(f1_blur_unnormalized_s1_x, (f1_blur_unnormalized_s1_y + 1))*(uint16)21) + ((((f1$0.stencil((f1_blur_unnormalized_s1_x + 2), (f1_blur_unnormalized_s1_y + 1))*(uint16)7) + (f1$0.stencil(f1_blur_unnormalized_s1_x, (f1_blur_unnormalized_s1_y + 2)) + (f1$0.stencil((f1_blur_unnormalized_s1_x + 2), (f1_blur_unnormalized_s1_y + 2)) + (f1$0.stencil((f1_blur_unnormalized_s1_x + 1), (f1_blur_unnormalized_s1_y + 2))*(uint16)7))))*(uint16)3) + (f1$0.stencil((f1_blur_unnormalized_s1_x + 1), (f1_blur_unnormalized_s1_y + 1))*(uint16)158)))))))
+  auto hcompute_f1_blur_unnormalized_stencil_1 = f1_blur_unnormalized_s1_x->add_op("op_hcompute_f1_blur_unnormalized_stencil_1");
+  hcompute_f1_blur_unnormalized_stencil_1->add_function("hcompute_f1_blur_unnormalized_stencil_1");
+  hcompute_f1_blur_unnormalized_stencil_1->add_load("f1_0_stencil", "f1_blur_unnormalized_s1_y", "f1_blur_unnormalized_s1_x");
+  hcompute_f1_blur_unnormalized_stencil_1->add_load("f1_0_stencil", "f1_blur_unnormalized_s1_y", "(f1_blur_unnormalized_s1_x + 1)");
+  hcompute_f1_blur_unnormalized_stencil_1->add_load("f1_0_stencil", "f1_blur_unnormalized_s1_y", "(f1_blur_unnormalized_s1_x + 2)");
+  hcompute_f1_blur_unnormalized_stencil_1->add_load("f1_0_stencil", "(f1_blur_unnormalized_s1_y + 1)", "f1_blur_unnormalized_s1_x");
+  hcompute_f1_blur_unnormalized_stencil_1->add_load("f1_0_stencil", "(f1_blur_unnormalized_s1_y + 1)", "(f1_blur_unnormalized_s1_x + 2)");
+  hcompute_f1_blur_unnormalized_stencil_1->add_load("f1_0_stencil", "(f1_blur_unnormalized_s1_y + 2)", "f1_blur_unnormalized_s1_x");
+  hcompute_f1_blur_unnormalized_stencil_1->add_load("f1_0_stencil", "(f1_blur_unnormalized_s1_y + 2)", "(f1_blur_unnormalized_s1_x + 2)");
+  hcompute_f1_blur_unnormalized_stencil_1->add_load("f1_0_stencil", "(f1_blur_unnormalized_s1_y + 2)", "(f1_blur_unnormalized_s1_x + 1)");
+  hcompute_f1_blur_unnormalized_stencil_1->add_load("f1_0_stencil", "(f1_blur_unnormalized_s1_y + 1)", "(f1_blur_unnormalized_s1_x + 1)");
+  hcompute_f1_blur_unnormalized_stencil_1->add_load("f1_blur_unnormalized_stencil", "f1_blur_unnormalized_s1_y", "f1_blur_unnormalized_s1_x");
+  hcompute_f1_blur_unnormalized_stencil_1->add_store("f1_blur_unnormalized_stencil", "f1_blur_unnormalized_s1_y", "f1_blur_unnormalized_s1_x");
+
+//consuming f1_blur_unnormalized.stencil
+////producing l1$0.stencil
+  auto l1_0_s0_y = prg.add_loop("l1_0_s0_y", -2, 33);
+  auto l1_0_s0_x = l1_0_s0_y->add_loop("l1_0_s0_x", -2, 33);
+
+//store is: l1$0.stencil(l1_0_s0_x, l1_0_s0_y) = (f1_blur_unnormalized.stencil((l1_0_s0_x + -1), (l1_0_s0_y + -1))/(uint16)256)
+  auto hcompute_l1_0_stencil = l1_0_s0_x->add_op("op_hcompute_l1_0_stencil");
+  hcompute_l1_0_stencil->add_function("hcompute_l1_0_stencil");
+  hcompute_l1_0_stencil->add_load("f1_blur_unnormalized_stencil", "(l1_0_s0_y + -1)", "(l1_0_s0_x + -1)");
+  prg.buffer_port_widths["l1_0_stencil"] = 16;
+  hcompute_l1_0_stencil->add_store("l1_0_stencil", "l1_0_s0_y", "l1_0_s0_x");
+
+//consuming l1$0.stencil
+////producing h1$0.stencil
+  auto h1_0_s0_y = prg.add_loop("h1_0_s0_y", -1, 33);
+  auto h1_0_s0_x = h1_0_s0_y->add_loop("h1_0_s0_x", -1, 33);
+
+//store is: h1$0.stencil(h1_0_s0_x, h1_0_s0_y) = (f1$0.stencil(h1_0_s0_x, h1_0_s0_y) - l1$0.stencil(h1_0_s0_x, h1_0_s0_y))
+  auto hcompute_h1_0_stencil = h1_0_s0_x->add_op("op_hcompute_h1_0_stencil");
+  hcompute_h1_0_stencil->add_function("hcompute_h1_0_stencil");
+  hcompute_h1_0_stencil->add_load("f1_0_stencil", "h1_0_s0_y", "h1_0_s0_x");
+  hcompute_h1_0_stencil->add_load("l1_0_stencil", "h1_0_s0_y", "h1_0_s0_x");
+  prg.buffer_port_widths["h1_0_stencil"] = 16;
+  hcompute_h1_0_stencil->add_store("h1_0_stencil", "h1_0_s0_y", "h1_0_s0_x");
+
+//consuming h1$0.stencil
+////producing f2$0.stencil
+  auto f2_0_s0_y = prg.add_loop("f2_0_s0_y", -1, 17);
+  auto f2_0_s0_x = f2_0_s0_y->add_loop("f2_0_s0_x", -1, 17);
+
+//store is: f2$0.stencil(f2_0_s0_x, f2_0_s0_y) = l1$0.stencil((f2_0_s0_x*2), (f2_0_s0_y*2))
+  auto hcompute_f2_0_stencil = f2_0_s0_x->add_op("op_hcompute_f2_0_stencil");
+  hcompute_f2_0_stencil->add_function("hcompute_f2_0_stencil");
+  hcompute_f2_0_stencil->add_load("l1_0_stencil", "(f2_0_s0_y*2)", "(f2_0_s0_x*2)");
+  prg.buffer_port_widths["f2_0_stencil"] = 16;
+  hcompute_f2_0_stencil->add_store("f2_0_stencil", "f2_0_s0_y", "f2_0_s0_x");
+
+//consuming f2$0.stencil
+////producing f2_temp.stencil
+  auto f2_temp_s0_y = prg.add_loop("f2_temp_s0_y", -2, 34);
+  auto f2_temp_s0_x = f2_temp_s0_y->add_loop("f2_temp_s0_x", -2, 34);
+
+//store is: f2_temp.stencil(f2_temp_s0_x, f2_temp_s0_y) = f2$0.stencil((f2_temp_s0_x/2), (f2_temp_s0_y/2))
+  auto hcompute_f2_temp_stencil = f2_temp_s0_x->add_op("op_hcompute_f2_temp_stencil");
+  hcompute_f2_temp_stencil->add_function("hcompute_f2_temp_stencil");
+  hcompute_f2_temp_stencil->add_load("f2_0_stencil", "floor((f2_temp_s0_y/2))", "floor((f2_temp_s0_x/2))");
+  prg.buffer_port_widths["f2_temp_stencil"] = 16;
+  hcompute_f2_temp_stencil->add_store("f2_temp_stencil", "f2_temp_s0_y", "f2_temp_s0_x");
+
+//consuming f2_temp.stencil
+////producing f2_temp_blur_unnormalized.stencil
+  auto f2_temp_blur_unnormalized_s0_y = prg.add_loop("f2_temp_blur_unnormalized_s0_y", -2, 32);
+  auto f2_temp_blur_unnormalized_s0_x = f2_temp_blur_unnormalized_s0_y->add_loop("f2_temp_blur_unnormalized_s0_x", -2, 32);
+
+//store is: f2_temp_blur_unnormalized.stencil(f2_temp_blur_unnormalized_s0_x, f2_temp_blur_unnormalized_s0_y) = (uint16)0
+  auto hcompute_f2_temp_blur_unnormalized_stencil = f2_temp_blur_unnormalized_s0_x->add_op("op_hcompute_f2_temp_blur_unnormalized_stencil");
+  hcompute_f2_temp_blur_unnormalized_stencil->add_function("hcompute_f2_temp_blur_unnormalized_stencil");
+  prg.buffer_port_widths["f2_temp_blur_unnormalized_stencil"] = 16;
+  hcompute_f2_temp_blur_unnormalized_stencil->add_store("f2_temp_blur_unnormalized_stencil", "f2_temp_blur_unnormalized_s0_y", "f2_temp_blur_unnormalized_s0_x");
+  auto f2_temp_blur_unnormalized_s1_y = prg.add_loop("f2_temp_blur_unnormalized_s1_y", -2, 32);
+  auto f2_temp_blur_unnormalized_s1_x = f2_temp_blur_unnormalized_s1_y->add_loop("f2_temp_blur_unnormalized_s1_x", -2, 32);
+
+//store is: f2_temp_blur_unnormalized.stencil(f2_temp_blur_unnormalized_s1_x, f2_temp_blur_unnormalized_s1_y) = ((f2_temp.stencil(f2_temp_blur_unnormalized_s1_x, f2_temp_blur_unnormalized_s1_y)*(uint16)3) + (f2_temp_blur_unnormalized.stencil(f2_temp_blur_unnormalized_s1_x, f2_temp_blur_unnormalized_s1_y) + ((f2_temp.stencil((f2_temp_blur_unnormalized_s1_x + 1), f2_temp_blur_unnormalized_s1_y)*(uint16)21) + ((f2_temp.stencil((f2_temp_blur_unnormalized_s1_x + 2), f2_temp_blur_unnormalized_s1_y)*(uint16)3) + ((f2_temp.stencil(f2_temp_blur_unnormalized_s1_x, (f2_temp_blur_unnormalized_s1_y + 1))*(uint16)21) + ((((f2_temp.stencil((f2_temp_blur_unnormalized_s1_x + 2), (f2_temp_blur_unnormalized_s1_y + 1))*(uint16)7) + (f2_temp.stencil(f2_temp_blur_unnormalized_s1_x, (f2_temp_blur_unnormalized_s1_y + 2)) + (f2_temp.stencil((f2_temp_blur_unnormalized_s1_x + 2), (f2_temp_blur_unnormalized_s1_y + 2)) + (f2_temp.stencil((f2_temp_blur_unnormalized_s1_x + 1), (f2_temp_blur_unnormalized_s1_y + 2))*(uint16)7))))*(uint16)3) + (f2_temp.stencil((f2_temp_blur_unnormalized_s1_x + 1), (f2_temp_blur_unnormalized_s1_y + 1))*(uint16)158)))))))
+  auto hcompute_f2_temp_blur_unnormalized_stencil_1 = f2_temp_blur_unnormalized_s1_x->add_op("op_hcompute_f2_temp_blur_unnormalized_stencil_1");
+  hcompute_f2_temp_blur_unnormalized_stencil_1->add_function("hcompute_f2_temp_blur_unnormalized_stencil_1");
+  hcompute_f2_temp_blur_unnormalized_stencil_1->add_load("f2_temp_stencil", "f2_temp_blur_unnormalized_s1_y", "f2_temp_blur_unnormalized_s1_x");
+  hcompute_f2_temp_blur_unnormalized_stencil_1->add_load("f2_temp_stencil", "f2_temp_blur_unnormalized_s1_y", "(f2_temp_blur_unnormalized_s1_x + 1)");
+  hcompute_f2_temp_blur_unnormalized_stencil_1->add_load("f2_temp_stencil", "f2_temp_blur_unnormalized_s1_y", "(f2_temp_blur_unnormalized_s1_x + 2)");
+  hcompute_f2_temp_blur_unnormalized_stencil_1->add_load("f2_temp_stencil", "(f2_temp_blur_unnormalized_s1_y + 1)", "f2_temp_blur_unnormalized_s1_x");
+  hcompute_f2_temp_blur_unnormalized_stencil_1->add_load("f2_temp_stencil", "(f2_temp_blur_unnormalized_s1_y + 1)", "(f2_temp_blur_unnormalized_s1_x + 2)");
+  hcompute_f2_temp_blur_unnormalized_stencil_1->add_load("f2_temp_stencil", "(f2_temp_blur_unnormalized_s1_y + 2)", "f2_temp_blur_unnormalized_s1_x");
+  hcompute_f2_temp_blur_unnormalized_stencil_1->add_load("f2_temp_stencil", "(f2_temp_blur_unnormalized_s1_y + 2)", "(f2_temp_blur_unnormalized_s1_x + 2)");
+  hcompute_f2_temp_blur_unnormalized_stencil_1->add_load("f2_temp_stencil", "(f2_temp_blur_unnormalized_s1_y + 2)", "(f2_temp_blur_unnormalized_s1_x + 1)");
+  hcompute_f2_temp_blur_unnormalized_stencil_1->add_load("f2_temp_stencil", "(f2_temp_blur_unnormalized_s1_y + 1)", "(f2_temp_blur_unnormalized_s1_x + 1)");
+  hcompute_f2_temp_blur_unnormalized_stencil_1->add_load("f2_temp_blur_unnormalized_stencil", "f2_temp_blur_unnormalized_s1_y", "f2_temp_blur_unnormalized_s1_x");
+  hcompute_f2_temp_blur_unnormalized_stencil_1->add_store("f2_temp_blur_unnormalized_stencil", "f2_temp_blur_unnormalized_s1_y", "f2_temp_blur_unnormalized_s1_x");
+
+//consuming f2_temp_blur_unnormalized.stencil
+////producing l1_up.stencil
+  auto l1_up_s0_y = prg.add_loop("l1_up_s0_y", -1, 33);
+  auto l1_up_s0_x = l1_up_s0_y->add_loop("l1_up_s0_x", -1, 33);
+
+//store is: l1_up.stencil(l1_up_s0_x, l1_up_s0_y) = (f2_temp_blur_unnormalized.stencil((l1_up_s0_x + -1), (l1_up_s0_y + -1))/(uint16)256)
+  auto hcompute_l1_up_stencil = l1_up_s0_x->add_op("op_hcompute_l1_up_stencil");
+  hcompute_l1_up_stencil->add_function("hcompute_l1_up_stencil");
+  hcompute_l1_up_stencil->add_load("f2_temp_blur_unnormalized_stencil", "(l1_up_s0_y + -1)", "(l1_up_s0_x + -1)");
+  prg.buffer_port_widths["l1_up_stencil"] = 16;
+  hcompute_l1_up_stencil->add_store("l1_up_stencil", "l1_up_s0_y", "l1_up_s0_x");
+
+//consuming l1_up.stencil
+////producing f1_up.stencil
+  auto f1_up_s0_y = prg.add_loop("f1_up_s0_y", -1, 33);
+  auto f1_up_s0_x = f1_up_s0_y->add_loop("f1_up_s0_x", -1, 33);
+
+//store is: f1_up.stencil(f1_up_s0_x, f1_up_s0_y) = (l1_up.stencil(f1_up_s0_x, f1_up_s0_y) + h1$0.stencil(f1_up_s0_x, f1_up_s0_y))
+  auto hcompute_f1_up_stencil_1 = f1_up_s0_x->add_op("op_hcompute_f1_up_stencil_1");
+  hcompute_f1_up_stencil_1->add_function("hcompute_f1_up_stencil_1");
+  hcompute_f1_up_stencil_1->add_load("h1_0_stencil", "f1_up_s0_y", "f1_up_s0_x");
+  hcompute_f1_up_stencil_1->add_load("l1_up_stencil", "f1_up_s0_y", "f1_up_s0_x");
+  prg.buffer_port_widths["f1_up_stencil"] = 16;
+  hcompute_f1_up_stencil_1->add_store("f1_up_stencil", "f1_up_s0_y", "f1_up_s0_x");
+
+//consuming f1_up.stencil
+////producing f1_temp.stencil
+  auto f1_temp_s0_y = prg.add_loop("f1_temp_s0_y", -1, 65);
+  auto f1_temp_s0_x = f1_temp_s0_y->add_loop("f1_temp_s0_x", -1, 65);
+
+//store is: f1_temp.stencil(f1_temp_s0_x, f1_temp_s0_y) = f1_up.stencil((f1_temp_s0_x/2), (f1_temp_s0_y/2))
+  auto hcompute_f1_temp_stencil = f1_temp_s0_x->add_op("op_hcompute_f1_temp_stencil");
+  hcompute_f1_temp_stencil->add_function("hcompute_f1_temp_stencil");
+  hcompute_f1_temp_stencil->add_load("f1_up_stencil", "floor((f1_temp_s0_y/2))", "floor((f1_temp_s0_x/2))");
+  prg.buffer_port_widths["f1_temp_stencil"] = 16;
+  hcompute_f1_temp_stencil->add_store("f1_temp_stencil", "f1_temp_s0_y", "f1_temp_s0_x");
+
+//consuming f1_temp.stencil
+////producing f1_temp_blur_unnormalized.stencil
+  auto f1_temp_blur_unnormalized_s0_y = prg.add_loop("f1_temp_blur_unnormalized_s0_y", -1, 63);
+  auto f1_temp_blur_unnormalized_s0_x = f1_temp_blur_unnormalized_s0_y->add_loop("f1_temp_blur_unnormalized_s0_x", -1, 63);
+
+//store is: f1_temp_blur_unnormalized.stencil(f1_temp_blur_unnormalized_s0_x, f1_temp_blur_unnormalized_s0_y) = (uint16)0
+  auto hcompute_f1_temp_blur_unnormalized_stencil = f1_temp_blur_unnormalized_s0_x->add_op("op_hcompute_f1_temp_blur_unnormalized_stencil");
+  hcompute_f1_temp_blur_unnormalized_stencil->add_function("hcompute_f1_temp_blur_unnormalized_stencil");
+  prg.buffer_port_widths["f1_temp_blur_unnormalized_stencil"] = 16;
+  hcompute_f1_temp_blur_unnormalized_stencil->add_store("f1_temp_blur_unnormalized_stencil", "f1_temp_blur_unnormalized_s0_y", "f1_temp_blur_unnormalized_s0_x");
+  auto f1_temp_blur_unnormalized_s1_y = prg.add_loop("f1_temp_blur_unnormalized_s1_y", -1, 63);
+  auto f1_temp_blur_unnormalized_s1_x = f1_temp_blur_unnormalized_s1_y->add_loop("f1_temp_blur_unnormalized_s1_x", -1, 63);
+
+//store is: f1_temp_blur_unnormalized.stencil(f1_temp_blur_unnormalized_s1_x, f1_temp_blur_unnormalized_s1_y) = ((f1_temp.stencil(f1_temp_blur_unnormalized_s1_x, f1_temp_blur_unnormalized_s1_y)*(uint16)3) + (f1_temp_blur_unnormalized.stencil(f1_temp_blur_unnormalized_s1_x, f1_temp_blur_unnormalized_s1_y) + ((f1_temp.stencil((f1_temp_blur_unnormalized_s1_x + 1), f1_temp_blur_unnormalized_s1_y)*(uint16)21) + ((f1_temp.stencil((f1_temp_blur_unnormalized_s1_x + 2), f1_temp_blur_unnormalized_s1_y)*(uint16)3) + ((f1_temp.stencil(f1_temp_blur_unnormalized_s1_x, (f1_temp_blur_unnormalized_s1_y + 1))*(uint16)21) + ((((f1_temp.stencil((f1_temp_blur_unnormalized_s1_x + 2), (f1_temp_blur_unnormalized_s1_y + 1))*(uint16)7) + (f1_temp.stencil(f1_temp_blur_unnormalized_s1_x, (f1_temp_blur_unnormalized_s1_y + 2)) + (f1_temp.stencil((f1_temp_blur_unnormalized_s1_x + 2), (f1_temp_blur_unnormalized_s1_y + 2)) + (f1_temp.stencil((f1_temp_blur_unnormalized_s1_x + 1), (f1_temp_blur_unnormalized_s1_y + 2))*(uint16)7))))*(uint16)3) + (f1_temp.stencil((f1_temp_blur_unnormalized_s1_x + 1), (f1_temp_blur_unnormalized_s1_y + 1))*(uint16)158)))))))
+  auto hcompute_f1_temp_blur_unnormalized_stencil_1 = f1_temp_blur_unnormalized_s1_x->add_op("op_hcompute_f1_temp_blur_unnormalized_stencil_1");
+  hcompute_f1_temp_blur_unnormalized_stencil_1->add_function("hcompute_f1_temp_blur_unnormalized_stencil_1");
+  hcompute_f1_temp_blur_unnormalized_stencil_1->add_load("f1_temp_stencil", "f1_temp_blur_unnormalized_s1_y", "f1_temp_blur_unnormalized_s1_x");
+  hcompute_f1_temp_blur_unnormalized_stencil_1->add_load("f1_temp_stencil", "f1_temp_blur_unnormalized_s1_y", "(f1_temp_blur_unnormalized_s1_x + 1)");
+  hcompute_f1_temp_blur_unnormalized_stencil_1->add_load("f1_temp_stencil", "f1_temp_blur_unnormalized_s1_y", "(f1_temp_blur_unnormalized_s1_x + 2)");
+  hcompute_f1_temp_blur_unnormalized_stencil_1->add_load("f1_temp_stencil", "(f1_temp_blur_unnormalized_s1_y + 1)", "f1_temp_blur_unnormalized_s1_x");
+  hcompute_f1_temp_blur_unnormalized_stencil_1->add_load("f1_temp_stencil", "(f1_temp_blur_unnormalized_s1_y + 1)", "(f1_temp_blur_unnormalized_s1_x + 2)");
+  hcompute_f1_temp_blur_unnormalized_stencil_1->add_load("f1_temp_stencil", "(f1_temp_blur_unnormalized_s1_y + 2)", "f1_temp_blur_unnormalized_s1_x");
+  hcompute_f1_temp_blur_unnormalized_stencil_1->add_load("f1_temp_stencil", "(f1_temp_blur_unnormalized_s1_y + 2)", "(f1_temp_blur_unnormalized_s1_x + 2)");
+  hcompute_f1_temp_blur_unnormalized_stencil_1->add_load("f1_temp_stencil", "(f1_temp_blur_unnormalized_s1_y + 2)", "(f1_temp_blur_unnormalized_s1_x + 1)");
+  hcompute_f1_temp_blur_unnormalized_stencil_1->add_load("f1_temp_stencil", "(f1_temp_blur_unnormalized_s1_y + 1)", "(f1_temp_blur_unnormalized_s1_x + 1)");
+  hcompute_f1_temp_blur_unnormalized_stencil_1->add_load("f1_temp_blur_unnormalized_stencil", "f1_temp_blur_unnormalized_s1_y", "f1_temp_blur_unnormalized_s1_x");
+  hcompute_f1_temp_blur_unnormalized_stencil_1->add_store("f1_temp_blur_unnormalized_stencil", "f1_temp_blur_unnormalized_s1_y", "f1_temp_blur_unnormalized_s1_x");
+
+//consuming f1_temp_blur_unnormalized.stencil
+////producing l0_up.stencil
+  auto l0_up_s0_y = prg.add_loop("l0_up_s0_y", 0, 64);
+  auto l0_up_s0_x = l0_up_s0_y->add_loop("l0_up_s0_x", 0, 64);
+
+//store is: l0_up.stencil(l0_up_s0_x, l0_up_s0_y) = (f1_temp_blur_unnormalized.stencil((l0_up_s0_x + -1), (l0_up_s0_y + -1))/(uint16)256)
+  auto hcompute_l0_up_stencil = l0_up_s0_x->add_op("op_hcompute_l0_up_stencil");
+  hcompute_l0_up_stencil->add_function("hcompute_l0_up_stencil");
+  hcompute_l0_up_stencil->add_load("f1_temp_blur_unnormalized_stencil", "(l0_up_s0_y + -1)", "(l0_up_s0_x + -1)");
+  prg.buffer_port_widths["l0_up_stencil"] = 16;
+  hcompute_l0_up_stencil->add_store("l0_up_stencil", "l0_up_s0_y", "l0_up_s0_x");
+
+//consuming l0_up.stencil
+////producing f0_up.stencil
+  auto f0_up_s0_y = prg.add_loop("f0_up_s0_y", 0, 64);
+  auto f0_up_s0_x = f0_up_s0_y->add_loop("f0_up_s0_x", 0, 64);
+
+//store is: f0_up.stencil(f0_up_s0_x, f0_up_s0_y) = (l0_up.stencil(f0_up_s0_x, f0_up_s0_y) + h0$0.stencil(f0_up_s0_x, f0_up_s0_y))
+  auto hcompute_f0_up_stencil = f0_up_s0_x->add_op("op_hcompute_f0_up_stencil");
+  hcompute_f0_up_stencil->add_function("hcompute_f0_up_stencil");
+  hcompute_f0_up_stencil->add_load("h0_0_stencil", "f0_up_s0_y", "f0_up_s0_x");
+  hcompute_f0_up_stencil->add_load("l0_up_stencil", "f0_up_s0_y", "f0_up_s0_x");
+  prg.buffer_port_widths["f0_up_stencil"] = 16;
+  hcompute_f0_up_stencil->add_store("f0_up_stencil", "f0_up_s0_y", "f0_up_s0_x");
+
+//consuming f0_up.stencil
+  auto hw_output_s0_y_yi = prg.add_loop("hw_output_s0_y_yi", 0, 64);
+  auto hw_output_s0_x_xi = hw_output_s0_y_yi->add_loop("hw_output_s0_x_xi", 0, 64);
+
+//store is: hw_output.stencil(hw_output_s0_x_xi, hw_output_s0_y_yi) = f0_up.stencil(hw_output_s0_x_xi, hw_output_s0_y_yi)
+  auto hcompute_hw_output_stencil = hw_output_s0_x_xi->add_op("op_hcompute_hw_output_stencil");
+  hcompute_hw_output_stencil->add_function("hcompute_hw_output_stencil");
+  hcompute_hw_output_stencil->add_load("f0_up_stencil", "hw_output_s0_y_yi", "hw_output_s0_x_xi");
+  hcompute_hw_output_stencil->add_store("hw_output_stencil", "hw_output_s0_y_yi", "hw_output_s0_x_xi");
+
+  return prg;
+}
+
+prog pointwise() {
+  prog prg;
+  prg.compute_unit_file = "pointwise_compute.h";
+  prg.name = "pointwise";
+
+// Stencil<uint16_t, 64, 64> &hw_input_stencil = arg_0;
+  prg.add_input("hw_input_stencil");
+  prg.buffer_port_widths["hw_input_stencil"] = 16;
+// Stencil<uint16_t, 64, 64> &hw_output_stencil = arg_1;
+  prg.add_output("hw_output_stencil");
+  prg.buffer_port_widths["hw_output_stencil"] = 16;
+
+////producing hw_input_global_wrapper.stencil
+  auto hw_input_global_wrapper_s0_y = prg.add_loop("hw_input_global_wrapper_s0_y", 0, 64);
+  auto hw_input_global_wrapper_s0_x = hw_input_global_wrapper_s0_y->add_loop("hw_input_global_wrapper_s0_x", 0, 64);
+
+//store is: hw_input_global_wrapper.stencil(hw_input_global_wrapper_s0_x, hw_input_global_wrapper_s0_y) = hw_input.stencil(hw_input_global_wrapper_s0_x, hw_input_global_wrapper_s0_y)
+  auto hcompute_hw_input_global_wrapper_stencil = hw_input_global_wrapper_s0_x->add_op("op_hcompute_hw_input_global_wrapper_stencil");
+  hcompute_hw_input_global_wrapper_stencil->add_function("hcompute_hw_input_global_wrapper_stencil");
+  hcompute_hw_input_global_wrapper_stencil->add_load("hw_input_stencil", "hw_input_global_wrapper_s0_y", "hw_input_global_wrapper_s0_x");
+  prg.buffer_port_widths["hw_input_global_wrapper_stencil"] = 16;
+  hcompute_hw_input_global_wrapper_stencil->add_store("hw_input_global_wrapper_stencil", "hw_input_global_wrapper_s0_y", "hw_input_global_wrapper_s0_x");
+
+//consuming hw_input_global_wrapper.stencil
+////producing mult.stencil
+  auto mult_s0_y = prg.add_loop("mult_s0_y", 0, 64);
+  auto mult_s0_x = mult_s0_y->add_loop("mult_s0_x", 0, 64);
+
+//store is: mult.stencil(mult_s0_x, mult_s0_y) = (hw_input_global_wrapper.stencil(mult_s0_x, mult_s0_y)*(uint16)2)
+  auto hcompute_mult_stencil = mult_s0_x->add_op("op_hcompute_mult_stencil");
+  hcompute_mult_stencil->add_function("hcompute_mult_stencil");
+  hcompute_mult_stencil->add_load("hw_input_global_wrapper_stencil", "mult_s0_y", "mult_s0_x");
+  prg.buffer_port_widths["mult_stencil"] = 16;
+  hcompute_mult_stencil->add_store("mult_stencil", "mult_s0_y", "mult_s0_x");
+
+//consuming mult.stencil
+  auto hw_output_s0_y_yi = prg.add_loop("hw_output_s0_y_yi", 0, 64);
+  auto hw_output_s0_x_xi = hw_output_s0_y_yi->add_loop("hw_output_s0_x_xi", 0, 64);
+
+//store is: hw_output.stencil(hw_output_s0_x_xi, hw_output_s0_y_yi) = mult.stencil(hw_output_s0_x_xi, hw_output_s0_y_yi)
+  auto hcompute_hw_output_stencil = hw_output_s0_x_xi->add_op("op_hcompute_hw_output_stencil");
+  hcompute_hw_output_stencil->add_function("hcompute_hw_output_stencil");
+  hcompute_hw_output_stencil->add_load("mult_stencil", "hw_output_s0_y_yi", "hw_output_s0_x_xi");
+  hcompute_hw_output_stencil->add_store("hw_output_stencil", "hw_output_s0_y_yi", "hw_output_s0_x_xi");
 
   return prg;
 }

@@ -17117,10 +17117,11 @@ void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
   sanity_check_iis(sched);
 }
 
-schedule_info garnet_schedule_info(CodegenOptions& options, prog& prg, bool use_dse_compute=false) {
+schedule_info garnet_schedule_info(CodegenOptions& options, prog& prg, bool use_dse_compute=false, string dse_compute_filename="") {
   schedule_info sched;
   sched.use_dse_compute = use_dse_compute;
-
+  sched.dse_compute_filename = dse_compute_filename;
+ 
   if (use_dse_compute) {
     json kernel_latencies;
     std::ifstream kernel_latencies_file("dse_kernel_latencies/" + prg.name + "_compute_kernel_latencies.json", std::ifstream::binary);
@@ -17131,13 +17132,15 @@ schedule_info garnet_schedule_info(CodegenOptions& options, prog& prg, bool use_
         sched.resource_requirements[op] = op->func;
       }
 
-      if (kernel_latencies[op->func] == NULL) {
-        cout << "NO KERNEL LATENCY " <<  op->func << " : NULL" << endl;
-        sched.compute_unit_latencies[op->func] = 0;
-      } else {
-        cout << "KERNEL LATENCY " <<  op->func << " : " << kernel_latencies[op->func] << endl;
-        sched.compute_unit_latencies[op->func] = kernel_latencies[op->func];
-      }
+      cout << op->func << endl;
+      sched.compute_unit_latencies[op->func] = kernel_latencies[op->func];
+      cout << "KERNEL LATENCY " <<  op->func << " : " << kernel_latencies[op->func] << endl;
+
+      // if (kernel_latencies[op->func] != NULL) {
+      // } else {
+      //   cout << "NO KERNEL LATENCY " <<  op->func << " : NULL" << endl;
+      //   sched.compute_unit_latencies[op->func] = 0;
+      // }
 // sched.compute_unit_latencies[op->func] = 0;
 
       for (auto b : op->buffers_referenced()) {
@@ -17190,7 +17193,6 @@ schedule_info garnet_schedule_info(CodegenOptions& options, prog& prg, bool use_
       }
     }
   }
-
     for (auto op : prg.all_ops()) {
       if (op->func != "") {
         if (options.rtl_options.use_pipelined_compute_units) {
@@ -17200,7 +17202,7 @@ schedule_info garnet_schedule_info(CodegenOptions& options, prog& prg, bool use_
         }
       }
     }
-
+ 
 #ifdef COREIR
   pipeline_compute_units(prg, sched);
 #endif
@@ -17535,7 +17537,6 @@ void compile_for_garnet_single_port_mem(prog& prg,
 
   //optimized schedule
   cmd("mkdir -p " + dir + "/" + prg.name);
-
   //auto iis = garnet_fuse_ii_level(prg);
   //auto buffers_opt = build_buffers(prg, clockwork_schedule(prg));
 
@@ -17544,7 +17545,8 @@ void compile_for_garnet_single_port_mem(prog& prg,
   options.config_gen_only = config_gen_only;
   if (multi_sram)
       options.mem_tile.multi_sram_accessor = true;
-  schedule_info sched = garnet_schedule_info(options, prg, use_dse_compute);
+  // assert(false);
+  schedule_info sched = garnet_schedule_info(options, prg, use_dse_compute, dse_compute_filename);
   garnet_single_port_ram_schedule(sched, prg.root, prg);
   auto sched_map = op_times_map(sched, prg);
   auto hw_sched = its(sched_map,
@@ -17578,7 +17580,7 @@ void compile_for_garnet_single_port_mem(prog& prg,
 #ifdef COREIR
   //PE_energy_cost_instance_model(power_params, power_stats, prg);
   //PE_energy_cost(power_params, power_stats, prg);
-
+  
   generate_garnet_coreir(buffers_opt, prg, options, sched, use_dse_compute, for_metamapper, dse_compute_filename);
   if (!options.config_gen_only) {
     generate_garnet_verilog_top(options, prg.name);

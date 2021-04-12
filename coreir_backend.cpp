@@ -1502,7 +1502,7 @@ void generate_coreir_compute_unit(CodegenOptions& options, bool found_compute,
       cout << "Found compute file for " << prg.name << endl;
       Instance* halide_cu = nullptr;
       if (hwinfo.use_dse_compute) {
-        halide_cu = def->addInstance("inner_compute", ns->getModule(op->func + "_mapped"));
+        halide_cu = def->addInstance("inner_compute", ns->getModule(op->func));
       } else {
         if (options.rtl_options.use_pipelined_compute_units) {
           halide_cu = def->addInstance("inner_compute", ns->getModule(op->func + "_pipelined"));
@@ -2654,19 +2654,48 @@ bool MemtileReplaceMetaMapper(Instance* cnst) {
   ModuleDef* def = cnst->getContainer();
   auto genargs = cnst->getModuleRef()->getGenArgs();
 
+  string ID = genargs.at("ID")->get<string>();
+  bool has_external_addrgen = genargs.at("has_external_addrgen")->get<bool>();
+  bool has_flush = genargs.at("has_flush")->get<bool>();
+  bool has_read_valid = genargs.at("has_read_valid")->get<bool>();
+  bool has_reset = genargs.at("has_reset")->get<bool>();
+  bool has_stencil_valid = genargs.at("has_stencil_valid")->get<bool>();
+  bool has_valid = genargs.at("has_valid")->get<bool>();
+  bool is_rom = genargs.at("is_rom")->get<bool>();
+  bool use_prebuilt_mem = genargs.at("use_prebuilt_mem")->get<bool>();
+  int num_inputs = genargs.at("num_inputs")->get<int>();
+  int num_outputs = genargs.at("num_outputs")->get<int>();
+  int width = genargs.at("width")->get<int>();
+
+
   auto config_file = cnst->getMetaData()["config"];
-  CoreIR::Values modargs = {
-      {"config", CoreIR::Const::make(c, config_file)},
-      {"mode", CoreIR::Const::make(c, "lake")}
-  };
+
+  config_file["ID"] = ID;
+  config_file["has_external_addrgen"] = has_external_addrgen;
+  config_file["has_flush"] = has_flush;
+  config_file["has_read_valid"] = has_read_valid;
+  config_file["has_reset"] = has_reset;
+  config_file["has_stencil_valid"] = has_stencil_valid;
+  config_file["has_valid"] = has_valid;
+  config_file["is_rom"] = is_rom;
+  config_file["use_prebuilt_mem"] = use_prebuilt_mem;
+  config_file["num_inputs"] = num_inputs;
+  config_file["num_outputs"] = num_outputs;
+  config_file["width"] = width;
+
+
 
   std::set<string> routable_ports = {"chain_data_in_0","chain_data_in_1", "flush", "ren_in", "wen_in", "addr_in_0", "addr_in_1", "data_in_0", "data_in_1"};
+
+  std::vector<string> routable_outputs = {"data_out_1", "empty", "stencil_valid", "full", "data_out_0", "sram_ready_out", "valid_out", "config_data_out_1", "config_data_out_0"};
 
   vector<Module*> loaded;
   if (!loadHeader(c, "memtile_header.json", loaded)) {c->die();}
 
-  Instance* buf = def->addInstance(cnst->getInstname()+"_metamapper", (Module*)loaded[0]);
- 
+  Instance* buf = def->addInstance(cnst->getInstname()+"_garnet", (Module*)loaded[0]);
+
+  buf->setMetaData(config_file);
+
   Module* cnst_mod_ref = cnst->getModuleRef();
   auto pt = addPassthrough(cnst, cnst->getInstname()+"_tmp");
 
@@ -2674,13 +2703,22 @@ bool MemtileReplaceMetaMapper(Instance* cnst) {
 
   for (auto cnst_port : cnst_ports) {
     if (routable_ports.count(cnst_port) > 0) {
+      cout << "Connecting cnst_port: " << cnst_port << endl;
       def->connect(pt->sel("in")->sel(cnst_port), buf->sel(cnst_port));
+    } else {
+      auto index = find(routable_outputs.begin(), routable_outputs.end(), cnst_port);
+      if (index != routable_outputs.end()){
+        int port_index = index - routable_outputs.begin();
+        cout << "Connecting output cnst_port: " << cnst_port << endl;
+        def->connect(buf->sel("O" + std::to_string(port_index)), pt->sel("in")->sel(cnst_port));
+      } else {
+        cout << "Not Connecting cnst_port: " << cnst_port << endl;
+      }
     }
   }
   
   def->removeInstance(cnst);
-  def->removeInstance(pt);
-  // def->connect(pt->sel("in"), buf);
+  inlineInstance(pt);
   inlineInstance(buf);
   return true;
 }
@@ -2694,6 +2732,61 @@ void MapperPasses::MemSubstituteMetaMapper::setVisitorInfo() {
   }
 
 }
+
+
+namespace MapperPasses {
+class PeSubstituteMetaMapper: public CoreIR::InstanceVisitorPass {
+  public :
+    static std::string ID;
+    PeSubstituteMetaMapper() : InstanceVisitorPass(ID,"replace PE to new coreir header pe") {}
+    void setVisitorInfo() override;
+};
+
+}
+
+
+bool PeReplaceMetaMapper(Instance* cnst) {
+  cout << tab(2) << "new pe syntax transformation!" << endl;
+  cout << tab(2) << toString(cnst) << endl;
+
+  Context* c = cnst->getContext();
+  auto allSels = cnst->getSelects();
+  for (auto itr: allSels) {
+    cout << tab(2) << "Sel: " << itr.first << endl;
+  }
+  ModuleDef* def = cnst->getContainer();
+
+  // c->getNamespace("global")->eraseModule("PE");
+  // c->getNamespace("global")->eraseModule("PE_wrapped");
+
+  vector<Module*> loaded;
+  if (!loadHeader(c, "petile_header.json", loaded)) {c->die();}
+
+  cout << "Loaded header" << endl;
+
+  Instance* buf = def->addInstance(cnst->getInstname()+"_garnet", (Module*)loaded[0]);
+
+
+  Module* cnst_mod_ref = cnst->getModuleRef();
+  auto pt = addPassthrough(cnst, cnst->getInstname()+"_tmp");
+  def->connect(pt->sel("in"), buf);
+  
+  def->removeInstance(cnst);
+  inlineInstance(pt);
+  inlineInstance(buf);
+  return true;
+}
+
+
+std::string MapperPasses::PeSubstituteMetaMapper::ID = "pesubstitutemetamapper";
+void MapperPasses::PeSubstituteMetaMapper::setVisitorInfo() {
+  Context* c = this->getContext();
+  if (c->hasModule("global.WrappedPE")) {
+    addVisitorFunction(c->getModule("global.WrappedPE"), PeReplaceMetaMapper);
+  }
+
+}
+
 
 namespace MapperPasses {
 class ConstDuplication : public CoreIR::InstanceVisitorPass {
@@ -2756,7 +2849,7 @@ void map_memory(Module* top) {
   auto c = top->getContext();
 
   // top->print();
-
+  LoadDefinition_cgralib(c);
   // Maps ROMS to memories
   load_mem_ext(c);
 
@@ -2773,6 +2866,8 @@ void map_memory(Module* top) {
   // if (garnet_syntax_trans) {
   c->addPass(new MapperPasses::MemSubstituteMetaMapper);
   c->runPasses({"memsubstitutemetamapper"});
+  // c->addPass(new MapperPasses::PeSubstituteMetaMapper);
+  // c->runPasses({"pesubstitutemetamapper"});
   // }
   // c->addPass(new MapperPasses::ConstDuplication);
   // c->runPasses({"constduplication"});
@@ -3030,12 +3125,12 @@ void generate_coreir_without_ctrl(CodegenOptions& options,
   add_raw_quad_port_memtile_generator(context);
   add_tahoe_memory_generator(context);
   ram_module(context, DATAPATH_WIDTH, 2048);
-  
 
   auto c = context;
 
   CoreIR::Module* prg_mod;
  
+
   prg_mod = generate_coreir_without_ctrl(options, buffers, prg, schedmap, context, hwinfo, dse_compute_filename);
 
   auto ns = context->getNamespace("global");
@@ -3057,6 +3152,7 @@ void generate_coreir_without_ctrl(CodegenOptions& options,
   c->runPasses({"coreirjson"},{"global"});
 
   context->runPasses({"rungenerators", "removewires", "cullgraph"});
+
 
   auto global = context->getNamespace("global");
   if(!saveToFile(global,  options.dir + prg.name+ "_to_metamapper.json", prg_mod)) {
@@ -4272,6 +4368,10 @@ void pipeline_compute_units(prog& prg, schedule_info& hwinfo) {
 
   bool found_compute = true;
   string compute_file = "./coreir_compute/" + prg.name + "_compute.json";
+  if (hwinfo.use_dse_compute) {
+    compute_file = hwinfo.dse_compute_filename;
+    cout << "Compute file dse found" << endl;
+  }
   ifstream cfile(compute_file);
   if (!cfile.good()) {
     cout << "No compute unit file: " << compute_file << endl;
@@ -4288,7 +4388,7 @@ void pipeline_compute_units(prog& prg, schedule_info& hwinfo) {
   auto ns = c->getNamespace("global");
   for (auto op : prg.all_ops()) {
     if (op->func != "") {
-      string compute_name = op->func;
+      string compute_name = op->func; 
       auto mod = ns->getModule(compute_name);
       vector<Instance*> instances;
       map<Instance*, std::set<Instance*> > instance_connections_dst_to_src;
