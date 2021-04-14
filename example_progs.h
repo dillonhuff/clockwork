@@ -18,6 +18,7 @@ prog conv_1_2(); //stencil
 prog unet_conv_3_3(); //reduce
 prog resnet(); //reduce
 prog resnet_layer_gen();
+// prog mobilenet();
 prog laplacian_pyramid();
 //prog mini_conv_halide_fixed();
 prog camera_pipeline(); //stencil

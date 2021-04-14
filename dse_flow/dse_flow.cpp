@@ -45,6 +45,7 @@ int main(int argc, char** argv) {
     func_map["conv_3_3"] = conv_3_3;
     func_map["conv_1_2"] = conv_1_2;
     func_map["resnet_layer_gen"] = resnet_layer_gen;
+    func_map["mobilenet"] = mobilenet;
     func_map["laplacian_pyramid"] = laplacian_pyramid;
 
    
@@ -55,9 +56,9 @@ int main(int argc, char** argv) {
         vector<prog> test_programs;
         test_programs.push_back(prg);
 
-        test_codegen(test_programs, compile_for_FPGA_BRAM_mem);
-        test_codegen(test_programs, compile_for_CGRA_M3_mem);
-        test_codegen(test_programs, compile_for_CGRA_M1_mem);
+        // test_codegen(test_programs, compile_for_FPGA_BRAM_mem);
+        // test_codegen(test_programs, compile_for_CGRA_M3_mem);
+        // test_codegen(test_programs, compile_for_CGRA_M1_mem);
 
         test_platonic_codegen(test_programs);
 

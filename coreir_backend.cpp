@@ -873,6 +873,7 @@ CoreIR::Module* generate_coreir(CodegenOptions& options, CoreIR::Context* contex
   return ub;
 }
 
+
 //Assumes common has been loaded
 void load_mem_ext(Context* c) {
   //Specialized extensions
@@ -1644,6 +1645,7 @@ void connect_op_control_wires(CodegenOptions& options, ModuleDef* def, op* op, s
         << ", read Latency: " << read_latency << endl;
 
   if (options.rtl_options.use_external_controllers || op->index_variables_needed_by_compute.size()) {
+  // if (false) {
     Wireable* op_start_wire = controller->sel("valid");
     Wireable* op_start_loop_vars = controller->sel("d");
     if (!options.rtl_options.use_external_controllers) {
@@ -1900,7 +1902,8 @@ Instance* generate_coreir_op_controller(CodegenOptions& options, ModuleDef* def,
 
   //For those op need loop index we need this controller
   bool need_index = op->index_variables_needed_by_compute.size() > 0;
-  if (options.rtl_options.use_external_controllers || need_index) {
+  // if (options.rtl_options.use_external_controllers || need_index) {
+  if (false) {
     auto aff_c = affine_controller(options, c, dom, aff);
     aff_c->print();
     controller = def->addInstance(controller_name(op->name), aff_c);
@@ -2516,20 +2519,7 @@ class CustomFlatten : public CoreIR::InstanceGraphPass {
     bool changed = false;
     // int i = 0;
     for (auto inst : node.getInstanceList()) {
-       //cout << "inlining " << inst->getName() << endl;
-       Module* m = inst->getModuleRef();
-       if (m->isGenerated()) {
-         auto g = m->getGenerator();
-         if (g->getName() == "raw_dual_port_sram_tile" ||
-             g->getName() == "raw_quad_port_memtile" ||
-             g->getName() == "rom2") {
-           continue;
-         }
-       } else {
-         if (m->getName() == "WrappedPE_wrapped") {
-           continue;
-         }
-       }
+       
       changed |= inlineInstance(inst);
     }
     return changed;
@@ -2734,6 +2724,79 @@ void MapperPasses::MemSubstituteMetaMapper::setVisitorInfo() {
 }
 
 
+
+namespace MapperPasses {
+class RomSubstituteMetaMapper: public CoreIR::InstanceVisitorPass {
+  public :
+    static std::string ID;
+    RomSubstituteMetaMapper() : InstanceVisitorPass(ID,"replace memory.rom2 to new coreir header mem") {}
+    void setVisitorInfo() override;
+};
+
+}
+
+
+bool RomReplaceMetaMapper(Instance* cnst) {
+  cout << tab(2) << "new rom syntax transformation!" << endl;
+  cout << tab(2) << toString(cnst) << endl;
+
+  Context* c = cnst->getContext();
+  auto allSels = cnst->getSelects();
+  for (auto itr: allSels) {
+    cout << tab(2) << "Sel: " << itr.first << endl;
+  }
+  ModuleDef* def = cnst->getContainer();
+  auto genargs = cnst->getModuleRef()->getGenArgs();
+
+  int depth = genargs.at("depth")->get<int>();
+  int width = genargs.at("width")->get<int>();
+
+  json config_file;
+
+  config_file["mode"] = "lake";
+  config_file["is_rom"] = true;
+  config_file["width"] = width;
+  config_file["depth"] = depth;
+  config_file["init"] = cnst->getModArgs().at("init")->get<Json>();
+
+  vector<Module*> loaded;
+  if (!loadHeader(c, "memtile_header.json", loaded)) {c->die();}
+
+  Instance* buf = def->addInstance(cnst->getInstname()+"_garnet", (Module*)loaded[0]);
+
+  buf->setMetaData(config_file); 
+
+  Module* cnst_mod_ref = cnst->getModuleRef();
+  auto pt = addPassthrough(cnst, cnst->getInstname()+"_tmp");
+
+  // vector<string> cnst_ports = cnst_mod_ref->getType()->getFields();
+
+  cout << "Wiring raddr" << endl;
+  def->connect(pt->sel("in")->sel("raddr"), buf->sel("addr_in_0"));
+
+  cout << "Wiring ren" << endl;
+  def->connect(pt->sel("in")->sel("ren"), buf->sel("ren_in_0"));
+
+  cout << "Wiring rdata" << endl;
+  def->connect(buf->sel("O0"), pt->sel("in")->sel("rdata"));
+
+  def->removeInstance(cnst);
+  inlineInstance(pt);
+  inlineInstance(buf);
+  return true;
+}
+
+
+std::string MapperPasses::RomSubstituteMetaMapper::ID = "romsubstitutemetamapper";
+void MapperPasses::RomSubstituteMetaMapper::setVisitorInfo() {
+  Context* c = this->getContext();
+  if (c->hasGenerator("memory.rom2")) {
+    addVisitorFunction(c->getGenerator("memory.rom2"), RomReplaceMetaMapper);
+  }
+
+}
+
+
 namespace MapperPasses {
 class PeSubstituteMetaMapper: public CoreIR::InstanceVisitorPass {
   public :
@@ -2849,9 +2912,10 @@ void map_memory(Module* top) {
   auto c = top->getContext();
 
   // top->print();
-  LoadDefinition_cgralib(c);
+  // LoadDefinition_cgralib(c);
   // Maps ROMS to memories
-  load_mem_ext(c);
+  // load_mem_ext(c);
+  // rom_to_mem(c);
 
   // c->runPasses({"rungenerators"});
   //A new pass to remove input enable signal affine controller
@@ -2861,11 +2925,13 @@ void map_memory(Module* top) {
   // c->runPasses({"removewires"});
   // addIOs(c,top);
   // c->runPasses({"cullgraph"});
-  // c->addPass(new CustomFlatten);
-  // c->runPasses({"customflatten"});
   // if (garnet_syntax_trans) {
+  c->addPass(new MapperPasses::RomSubstituteMetaMapper);
+  c->runPasses({"romsubstitutemetamapper"});
   c->addPass(new MapperPasses::MemSubstituteMetaMapper);
   c->runPasses({"memsubstitutemetamapper"});
+  // c->addPass(new CustomFlatten);
+  // c->runPasses({"customflatten"});
   // c->addPass(new MapperPasses::PeSubstituteMetaMapper);
   // c->runPasses({"pesubstitutemetamapper"});
   // }

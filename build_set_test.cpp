@@ -17133,8 +17133,12 @@ schedule_info garnet_schedule_info(CodegenOptions& options, prog& prg, bool use_
       }
 
       cout << op->func << endl;
-      sched.compute_unit_latencies[op->func] = kernel_latencies[op->func];
-      cout << "KERNEL LATENCY " <<  op->func << " : " << kernel_latencies[op->func] << endl;
+      if (kernel_latencies[op->func] == NULL || kernel_latencies[op->func] == "null") {
+        sched.compute_unit_latencies[op->func] = 0;
+      } else {
+        sched.compute_unit_latencies[op->func] = kernel_latencies[op->func];
+        cout << "KERNEL LATENCY " <<  op->func << " : " << kernel_latencies[op->func] << endl;
+      }
 
       // if (kernel_latencies[op->func] != NULL) {
       // } else {
