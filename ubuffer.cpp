@@ -2330,30 +2330,6 @@ string memDataoutPort(string mode, int pt_cnt) {
     }
 }
 
-<<<<<<< HEAD
-      CoreIR::Wireable* last_out;
-      for (size_t i = 0; i < reg_delay_length; i ++) {
-        auto reg = def->addInstance("d_reg_"+context->getUnique(), "coreir.reg",
-            {{"width", CoreIR::Const::make(context, port_widths)}});
-        //do not wire input for the first pass
-        //Wire the shift register chain
-        if (i == 0) {
-          if (isIn.at(pick(inpts))) {
-            def->connect(reg->sel("in"), pt2wire.at(pick(inpts)));
-          } else {
-            reg_in[pick(inpts)] = reg->sel("in");
-          }
-        } else {
-          def->connect(reg->sel("in"), last_out);
-        }
-        if (i == reg_delay_length - 1) {
-          def->connect(reg->sel("out"), pt2wire.at(pick(outpts)));
-          wire2out[pick(outpts)] = reg->sel("out");
-        } else {
-          last_out = reg->sel("out");
-        }
-      }
-=======
 //Helper function to find the last port in chaining path
 CoreIR::Wireable* findChainDataIn(CoreIR::Wireable* mem_data_out, int port_id) {
     auto last_bank =  mem_data_out->getTopParent();
@@ -2361,7 +2337,6 @@ CoreIR::Wireable* findChainDataIn(CoreIR::Wireable* mem_data_out, int port_id) {
     auto conns = getConnectWires(chain_in);
     if (conns.size() == 0) {
         return chain_in;
->>>>>>> origin/aha
     } else {
         assert(conns.size() == 1);
         return findChainDataIn(pick(conns), port_id);

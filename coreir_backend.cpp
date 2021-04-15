@@ -578,7 +578,7 @@ bool all_constant_accesses(UBuffer& buf) {
 
 pair<EmbarrassingBankingImpl, isl_map*> build_buffer_impl(prog& prg, UBuffer& buf, schedule_info& hwinfo) {
   EmbarrassingBankingImpl impl;
-  maybe<std::set<int> > embarassing_banking =
+  dbhc::maybe<std::set<int> > embarassing_banking =
     embarassing_partition(buf);
   bool has_embarassing_partition = embarassing_banking.has_value();
   assert(has_embarassing_partition);
@@ -1928,14 +1928,9 @@ Instance* generate_coreir_op_controller(CodegenOptions& options, ModuleDef* def,
 
   //For those op need loop index we need this controller
   bool need_index = op->index_variables_needed_by_compute.size() > 0;
-<<<<<<< HEAD
-  // if (options.rtl_options.use_external_controllers || need_index) {
-  if (false) {
-=======
   //TODO: remove the first statement after kavya add init to lakewrapper
-  if (options.rtl_options.use_external_controllers || need_index ) {
-  //if (options.rtl_options.use_external_controllers) {
->>>>>>> origin/aha
+  // if (options.rtl_options.use_external_controllers || need_index ) {
+  if (options.rtl_options.use_external_controllers) {
     auto aff_c = affine_controller(options, c, dom, aff);
     aff_c->print();
     controller = def->addInstance(controller_name(op->name), aff_c);
@@ -2777,33 +2772,20 @@ void MapperPasses::MemSubstitute::setVisitorInfo() {
 }
 
 namespace MapperPasses {
-<<<<<<< HEAD
 class MemSubstituteMetaMapper: public CoreIR::InstanceVisitorPass {
   public :
     static std::string ID;
     MemSubstituteMetaMapper() : InstanceVisitorPass(ID,"replace cgralib.Mem_amber to new coreir header mem") {}
-=======
-class RegfileSubstitute: public CoreIR::InstanceVisitorPass {
-  public :
-    static std::string ID;
-    RegfileSubstitute() : InstanceVisitorPass(ID,"replace cgralib.Mem_amber to cgralib.Mem") {}
->>>>>>> origin/aha
     void setVisitorInfo() override;
 };
 
 }
 
 
-<<<<<<< HEAD
 bool MemtileReplaceMetaMapper(Instance* cnst) {
   cout << tab(2) << "new memory syntax transformation!" << endl;
   cout << tab(2) << toString(cnst) << endl;
 
-=======
-bool RegfileReplace(Instance* cnst) {
-  cout << tab(2) << "memory syntax transformation!" << endl;
-  cout << tab(2) << toString(cnst) << endl;
->>>>>>> origin/aha
   Context* c = cnst->getContext();
   auto allSels = cnst->getSelects();
   for (auto itr: allSels) {
@@ -2811,7 +2793,6 @@ bool RegfileReplace(Instance* cnst) {
   }
   ModuleDef* def = cnst->getContainer();
   auto genargs = cnst->getModuleRef()->getGenArgs();
-<<<<<<< HEAD
 
   string ID = genargs.at("ID")->get<string>();
   bool has_external_addrgen = genargs.at("has_external_addrgen")->get<bool>();
@@ -3015,36 +2996,6 @@ void MapperPasses::PeSubstituteMetaMapper::setVisitorInfo() {
   Context* c = this->getContext();
   if (c->hasModule("global.WrappedPE")) {
     addVisitorFunction(c->getModule("global.WrappedPE"), PeReplaceMetaMapper);
-=======
-  auto config_file = cnst->getMetaData()["config"];
-  CoreIR::Values modargs = {
-      {"config", CoreIR::Const::make(c, config_file)},
-      {"mode", CoreIR::Const::make(c, "pond")}
-  };
-  auto pt = addPassthrough(cnst, cnst->getInstname()+"_tmp");
-  Instance* buf = def->addInstance(cnst->getInstname()+"_garnet",
-          "cgralib.Pond", genargs, modargs);
-  def->removeInstance(cnst);
-  def->connect(pt->sel("in"), buf);
-  inlineInstance(pt);
-  inlineInstance(buf);
-
-  //remove rst_n
-  auto rst_n_conSet = buf->sel("rst_n")->getConnectedWireables();
-  vector<Wireable*> conns(rst_n_conSet.begin(), rst_n_conSet.end());
-  assert(conns.size() == 1);
-  auto conn = conns[0];
-  def->disconnect(buf->sel("rst_n"),conn);
-
-  return true;
-}
-
-std::string MapperPasses::RegfileSubstitute::ID = "regfilesubstitute";
-void MapperPasses::RegfileSubstitute::setVisitorInfo() {
-  Context* c = this->getContext();
-  if (c->hasGenerator("cgralib.Pond_amber")) {
-    addVisitorFunction(c->getGenerator("cgralib.Pond_amber"), RegfileReplace);
->>>>>>> origin/aha
   }
 
 }
@@ -3170,8 +3121,8 @@ void garnet_map_module(Module* top, bool garnet_syntax_trans = false) {
     c->runPasses({"meminitcopy"});
     c->addPass(new MapperPasses::MemSubstitute);
     c->runPasses({"memsubstitute"});
-    c->addPass(new MapperPasses::RegfileSubstitute);
-    c->runPasses({"regfilesubstitute"});
+    // c->addPass(new MapperPasses::RegfileSubstitute);
+    // c->runPasses({"regfilesubstitute"});
   }
   c->addPass(new MapperPasses::ConstDuplication);
   c->runPasses({"constduplication"});

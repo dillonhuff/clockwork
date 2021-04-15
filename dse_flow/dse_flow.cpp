@@ -47,6 +47,7 @@ int main(int argc, char** argv) {
     func_map["resnet_layer_gen"] = resnet_layer_gen;
     func_map["mobilenet"] = mobilenet;
     func_map["laplacian_pyramid"] = laplacian_pyramid;
+    func_map["up_sample"] = up_sample;
 
    
     auto prg_ptr = func_map[app_name];
@@ -104,7 +105,7 @@ int main(int argc, char** argv) {
 
         auto cpu = unoptimized_result(prg);
 
-        compile_for_garnet_single_port_mem(prg, dir, false, gen_config_only, multi_accessor, use_dse_compute, true, dse_compute_filename);
+        compile_for_garnet_single_port_mem(prg, dir, false, gen_config_only, multi_accessor, use_dse_compute, true, dse_compute_filename, false);
         
         generate_regression_testbench(prg);
 

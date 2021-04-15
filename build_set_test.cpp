@@ -13769,155 +13769,6 @@ isl_union_map* generate_hardware_schedule_heu(isl_union_map* new_opt_sched,
   //}
 //}
 
-<<<<<<< HEAD
-void lake_resnet_test() {
-  auto prg = resnet_hc();
-  prg.pretty_print();
-
-  CodegenOptions options;
-  options.all_rams = true;
-  all_register_files(prg, options);
-  options.banking_strategies["conv_stencil"] = {"cyclic", {1, 1, 4}};
-  options.banking_strategies["hw_kernel_stencil"] = {"exhaustive"};
-  options.banking_strategies["hw_input_stencil"] = {"exhaustive"};
-  options.inner_bank_offset_mode =
-    INNER_BANK_OFFSET_MULTILINEAR;
-  //generate_optimized_code(options, prg);
-
-  auto sched_naive = its(prg.unoptimized_schedule(), prg.whole_iteration_domain());
-  //optimized schedule
-  auto buffers_opt = build_buffers(prg, sched_naive);
-  CodegenOptions opt;
-  opt.conditional_merge = true;
-  opt.merge_threshold = 4;
-  opt.rtl_options.max_inpt = 2;
-  opt.rtl_options.max_outpt = 2;
-  //buffers_opt.at("buf").generate_bank_and_merge(opt);
-  //cout << buffers_opt.at("buf") << endl;
-  //buffers_opt.at("buf").port_group2bank(2, 2);
-  //cout << buffers_opt.at("buf") << endl;
-
-  for (auto& b : buffers_opt) {
-    cout << b.first << endl << b.second << endl;
-    if ((b.second.get_in_ports().size() && b.second.get_out_ports().size()) == 0)
-        continue;
-    b.second.generate_banks_and_merge(options);
-    b.second.print_bank_info(); 
-
-    //Assign an configuration file,
-    //json config_reg_map = parse_config_file("conv33_configuration.txt");
-    //b.second.set_config(config_reg_map);
-
-    b.second.port_group2bank(opt);
-    b.second.print_bank_info();
-
-
-#ifdef COREIR
-    CoreIR::Context* context = CoreIR::newContext();
-    CoreIRLoadLibrary_commonlib(context);
-    CoreIRLoadLibrary_cwlib(context);
-    schedule_info hwinfo;
-    hwinfo.use_dse_compute = false;
-    auto def = generate_coreir_without_ctrl(opt, context, b.second, hwinfo);
-    if(!saveToFile(context->getNamespace("global"), "lake_"+b.first+".json", def)) {
-      cout << "Could not save ubuffer coreir!" << endl;
-      context->die();
-    }
-    CoreIR::deleteContext(context);
-#endif
-
-  }
-
-#ifdef COREIR
-  //generate_cgra_tb(buffers_opt, prg, opt);
-#endif
-
-  map<string, int> dim_id_map({{"hw_input_stencil", 1},
-          {"hw_kernel_stencil", 2},
-          {"conv_stencil", 2}});
-  auto post_proc_buffers = buffers_opt.at("hw_input_stencil").generate_ubuffer(opt);
-  //auto post_proc_buffers = buffers_opt.at("hw_kernel_stencil").generate_ubuffer(opt);
-  for (auto it: buffers_opt) {
-    if (it.second.get_out_ports().size() == 0 || it.second.get_in_ports().size() == 0) {
-        continue;
-    }
-  auto buf = it.second;
-  auto ubuf_name = it.first;
-  if (ubuf_name != "hw_input_stencil")
-      continue;
-  //auto post_proc_buffers = buffers_opt.at("conv_stencil").generate_ubuffer(opt);
-  auto post_proc_buffers = buf.generate_ubuffer(opt);
-  opt.conditional_merge = false;
-  //auto rewrite_buffers = buffers_opt.at("conv_stencil").generate_ubuffer(opt);
-  //auto rewrite_buffers = buffers_opt.at("hw_input_stencil").generate_ubuffer(opt);
-  auto rewrite_buffers = buf.generate_ubuffer(opt);
-  for (auto it: post_proc_buffers) {
-    cout << "\tpost: " << it.first << ": " << it.second << endl;
-  }
-  for (auto it: rewrite_buffers) {
-    cout << "\trewrite_buffers: " << it.first << ": " << it.second << endl;
-  }
-
-  for (auto it : post_proc_buffers) {
-    map<string, UBuffer> tmp;
-    map<string, UBuffer> temp;
-    tmp.insert(it);
-    cout << "Vectorizing " << it.first << endl;
-    cout << it.second << endl;
-    buffer_vectorization(it.first, 2, 4, tmp);
-    cout << "Done with vectorization" << endl;
-    for (auto it: tmp) {
-        auto buf = it.second;
-        if (buf.get_in_ports().size() == 4)
-            temp.insert(it);
-        cout << it.first<< endl;
-    }
-
-    //auto opt_sched = optimized_schedule_from_buffers_feautrier(buffers_opt, false);
-    //auto opt_sched = optimized_schedule_from_buffers_flatten(tmp, false);
-    //auto opt_sched = optimized_schedule_from_buffers_flatten(tmp, false);
-
-    //auto opt_sched = optimized_schedule_from_buffers_flatten(tmp, true, {"op_hcompute_hw_input_stencil_vec"});
-    //auto opt_sched = optimized_schedule_from_buffers_flatten(tmp, true, {"op_hcompute_conv_stencil_vec", "op_hcompute_conv_stencil_1_vec_in"});
-    //auto opt_sched = optimized_schedule_from_buffers_flatten(tmp, true, {"op_hcompute_hw_kernel_stencil_vec"});
-
-    isl_union_set* gb_domain = global_domain_from_buffers(tmp);
-    isl_ctx* ctx = ::ctx(gb_domain);
-    //auto um = isl_union_map_read_from_str(ctx,"{}");
-    //auto um = isl_union_map_read_from_str(ctx,"{op_hcompute_hw_input_stencil_agg2sram[root=0, i0, i1, i2, i3]->op_hcompute_conv_stencil_1_sram2tb[root, i0, i1', i2', i3', i4', i5', i6']}");
-    auto um = isl_union_map_read_from_str(ctx,"{op_hcompute_hw_input_stencil[root=0, 8191]->op_hcompute_conv_stencil_1_sram2tb[root, 0]}");
-    ////        //"{op_hcompute_hw_input_stencil[root=0, i0, i1, i2, i3]->op_hcompute_conv_stencil_1[root, i0, i1', i2', i3', i4', i5', i6']; op_hcompute_conv_stencil_1[root=0, i0, i1', i2', i3', i4', i5', i6']->op_hcompute_hw_input_stencil[root, i0+1, i1, i2, i3]}");
-    //cout << "\t global domain" << str(gb_domain) << endl;
-    //cout << "\tDouble buffer dependency: " << str(um) << endl;
-    //um = its(um, gb_domain);
-    //cout << "\tDouble buffer dependency: " << str(um) << endl;
-    //um = its_range(um, gb_domain);
-    //cout << "\tDouble buffer dependency: " << str(um) << endl;
-    //auto opt_sched = optimized_schedule_from_buffers_DB(tmp, vector<string>({"op_hcompute_hw_input_stencil_agg2sram"}), um);
-    //auto opt_sched = optimized_schedule_from_buffers_DB(temp, vector<string>({}), um);
-    //auto opt_sched = optimized_schedule_from_buffers_flatten(temp, false);
-    auto opt_sched = optimized_schedule_from_buffers_flatten_extra_with_validity(tmp, {"op_hcompute_hw_input_stencil_agg2sram"}, um);
-    //auto opt_sched = optimized_schedule_from_buffers_flatten_extra_with_validity(tmp, true, {"op_hcompute_conv_stencil_agg2sram", "op_hcompute_conv_stencil_1_agg2sram"});
-    cout << str(opt_sched) << endl;
-    cout << codegen_c(opt_sched) << endl;
-    auto multi_tile_sched = pad_identity_relation_to_umap(opt_sched, 1, 0, 0, 3);
-    cout << codegen_c(multi_tile_sched) << endl;
-    cout << str(multi_tile_sched) << endl;
-    map<pair<string, string>, int> latency({
-          {{"op_hcompute_hw_input_stencil", "op_hcompute_hw_input_stencil_agg2sram"}, 1},
-          {{"op_hcompute_hw_input_stencil_agg2sram", "op_hcompute_conv_stencil_1_sram2tb"}, 0},
-          {{"op_hcompute_conv_stencil_1_sram2tb", "op_hcompute_conv_stencil_1"}, 1}});
-    auto hsh = generate_hardware_schedule_heu_new(multi_tile_sched, tmp, latency, 1);
-    cout << codegen_c(hsh) << endl;
-    cmd("mkdir -p ./lake_controllers/resnet/");
-    //auto op_vec = emit_lake_config(tmp, hsh, "./lake_controllers/resnet/");
-    //assert(false);
-
-  }
-
-  }
-}
-=======
 //void lake_resnet_test() {
 //  auto prg = resnet_hc();
 //  prg.pretty_print();
@@ -14065,7 +13916,6 @@ void lake_resnet_test() {
 //
 //  }
 //}
->>>>>>> origin/aha
 
 void lake_cascade_autovec_test() {
   //prog prg = halide_cascade();
@@ -14429,16 +14279,11 @@ void Init_PE_energy_cost(power_analysis_params& power_params)  {
 }
 
 
-<<<<<<< HEAD
-void compile_for_garnet_single_port_mem(prog & prg, string dir, bool gen_smt_stream, bool gen_config_only,bool multi_accessor, bool use_dse_compute, bool for_metamapper, string dse_compute_filename);
-=======
-void compile_for_garnet_single_port_mem(prog & prg, string dir, bool gen_smt_stream, bool gen_config_only, bool multi_level_mem, bool use_dse_compute, bool energy_model = false);
->>>>>>> origin/aha
+void compile_for_garnet_single_port_mem(prog & prg, string dir, bool gen_smt_stream, bool gen_config_only,bool multi_accessor, bool use_dse_compute, bool for_metamapper, string dse_compute_filename, bool energy_model = false);
 void cpy_app_to_folder(const std::string& app_type, const std::string& prg_name);
 
 void test_pond(string dir, bool run_verilator=true) {
   vector<prog> test_apps;
-<<<<<<< HEAD
   test_apps.push_back(conv_3_3());
   // test_apps.push_back(gaussian());
   // test_apps.push_back(cascade());
@@ -14462,13 +14307,6 @@ void test_pond(string dir, bool run_verilator=true) {
   //test_apps.push_back(unsharp());
   //TODO:has issue  with multiple input
   //test_apps.push_back(demosaic_complex());
-=======
-  test_apps.push_back(resnet_simple());
-  test_apps.push_back(resnet());
-  test_apps.push_back(three_level_pond_copy());
-  test_apps.push_back(three_level_pond_rolled());
-  test_apps.push_back(fft8_unroll8_split());
->>>>>>> origin/aha
 
   //TODO: tobe tested with new pond
   //test_apps.push_back(three_level_pond());
@@ -14484,15 +14322,14 @@ void test_pond(string dir, bool run_verilator=true) {
     prg.pretty_print();
     bool gen_config_only = !run_verilator;
 
-<<<<<<< HEAD
-    //compile_for_garnet_platonic_mem(prg);
-    compile_for_garnet_single_port_mem(prg, dir, false, gen_config_only, multi_accessor, false, false, "");
-=======
     compile_for_garnet_single_port_mem(prg, dir,
             false, /*generate smt stream*/
             gen_config_only,/*gen_config_only*/
             true, /*multi level hierarchy*/
-            false/*use dse compute*/);
+            false/*use dse compute*/,
+            false,
+            "",
+            false);
     //generate_regression_testbench(prg);
 
     cout << "Output name: " << prg.name << endl;
@@ -14540,8 +14377,7 @@ void test_energy_model(string dir) {
     auto cpu = unoptimized_result(prg);
 
     //compile_for_garnet_platonic_mem(prg);
-    compile_for_garnet_single_port_mem(prg, dir, false, gen_config_only, false, false, true);
->>>>>>> origin/aha
+    compile_for_garnet_single_port_mem(prg, dir, false, gen_config_only, false, false, false, "", true);
     generate_regression_testbench(prg);
 
     cout << "Output name: " << prg.name << endl;
@@ -14575,7 +14411,7 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   //test_apps.push_back(fft8_unroll8());
   test_apps.push_back(gaussian());
   test_apps.push_back(conv_3_3());
-  test_apps.push_back(counter());
+  // test_apps.push_back(counter());
   test_apps.push_back(cascade());
   test_apps.push_back(harris());
   test_apps.push_back(rom());
@@ -14586,7 +14422,7 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   test_apps.push_back(unsharp());
 
   //DNN apps
-  test_apps.push_back(resnet_simple());
+  // test_apps.push_back(resnet_simple());
   test_apps.push_back(resnet());
 
   //Big applications
@@ -14613,7 +14449,7 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
     auto cpu = unoptimized_result(prg);
 
     //compile_for_garnet_platonic_mem(prg);
-    compile_for_garnet_single_port_mem(prg, dir, false, gen_config_only, false, false);
+    compile_for_garnet_single_port_mem(prg, dir, false, gen_config_only, false, false, false, "", false);
     cout << "Output name: " << prg.name << endl;
     //TODO: move to a function
     //run verilator on all the generated verilog
@@ -18181,16 +18017,11 @@ void compile_for_garnet_single_port_mem(prog& prg,
         string dir,
         bool gen_smt_stream,
         bool config_gen_only,
-<<<<<<< HEAD
         bool multi_sram,
         bool use_dse_compute,
         bool for_metamapper,
-        string dse_compute_filename) {
-=======
-        bool multi_level_mem,
-        bool use_dse_compute,
+        string dse_compute_filename,
         bool energy_model) {
->>>>>>> origin/aha
 
   //make sure the loop bound and address is positive
   normalize_bounds(prg);
@@ -18207,20 +18038,13 @@ void compile_for_garnet_single_port_mem(prog& prg,
 
   CodegenOptions options = garnet_codegen_single_port_with_addrgen_options(prg, dir);
   options.add_memory_hierarchy("mem");
-  if (multi_level_mem)
-      options.add_memory_hierarchy("regfile");
+  // if (multi_level_mem)
+  //     options.add_memory_hierarchy("regfile");
   options.emit_smt_stream = gen_smt_stream;
   options.config_gen_only = config_gen_only;
-<<<<<<< HEAD
-  if (multi_sram)
-      options.mem_tile.multi_sram_accessor = true;
-  // assert(false);
-  schedule_info sched = garnet_schedule_info(options, prg, use_dse_compute, dse_compute_filename);
-=======
   //if (multi_sram)
   //    options.mem_tile.multi_sram_accessor = true;
   schedule_info sched = garnet_schedule_info(options, prg, use_dse_compute);
->>>>>>> origin/aha
   garnet_single_port_ram_schedule(sched, prg.root, prg);
   auto sched_map = op_times_map(sched, prg);
   auto hw_sched = its(sched_map,
@@ -18247,18 +18071,14 @@ void compile_for_garnet_single_port_mem(prog& prg,
 
 
 #ifdef COREIR
-<<<<<<< HEAD
   //PE_energy_cost_instance_model(power_params, power_stats, prg);
   //PE_energy_cost(power_params, power_stats, prg);
   
   generate_garnet_coreir(buffers_opt, prg, options, sched, use_dse_compute, for_metamapper, dse_compute_filename);
-=======
-  generate_garnet_coreir(buffers_opt, prg, options, sched, use_dse_compute);
->>>>>>> origin/aha
-  if (!options.config_gen_only) {
-    generate_garnet_verilog_top(options, prg.name);
-    generate_garnet_verilator_tb(prg, hw_sched, buffers_opt);
-  }
+  // if (!options.config_gen_only) {
+  //   generate_garnet_verilog_top(options, prg.name);
+  //   generate_garnet_verilator_tb(prg, hw_sched, buffers_opt);
+  // }
 #endif
 }
 
@@ -18736,9 +18556,9 @@ void cgra_flow_tests() {
   vector<prog> M3_test_programs = isca_programs();
 
   //vector<prog> bram_test_programs{pointwise(), gaussian(), harris(), resnet()};
-  vector<prog> bram_test_programs{resnet88()};
+  // vector<prog> bram_test_programs{resnet88()};
   //vector<prog> bram_test_programs{pointwise()};
-  test_codegen(bram_test_programs, compile_for_FPGA_BRAM_mem);
+  // test_codegen(bram_test_programs, compile_for_FPGA_BRAM_mem);
 
   //vector<prog> M3_test_programs = harris_variants();
   //vector<prog> M3_test_programs{up_sample(), resnet()};
@@ -19920,7 +19740,7 @@ void gpu_codegen_test() {
 }
 
 void histogram1d_test() {
-  prog prg = histogram1d();
+  prog prg = resnet();
 
   prg.pretty_print();
   //assert(false);
@@ -23158,7 +22978,7 @@ void application_tests() {
   initial_soda_comparison();
   llf_grayscale_debugging();
 
-  resnet88_test();
+  // resnet88_test();
   histogram_test();
   histogram1d_test();
   iccad_tests();
@@ -24181,20 +24001,20 @@ void dhuff_playground() {
     resnet().pretty_print();
     assert(false);
   }
-  {
-    prog prg = mod_example();
-    prg.pretty_print();
+  // {
+  //   prog prg = mod_example();
+  //   prg.pretty_print();
 
-    //generate_unoptimized_code(prg);
+  //   //generate_unoptimized_code(prg);
 
-    auto res = unoptimized_result(prg);
-    assert(false);
-  }
-  {
-    prog prg = resnet88();
-    prg.pretty_print();
-    assert(false);
-  }
+  //   auto res = unoptimized_result(prg);
+  //   assert(false);
+  // }
+  // {
+  //   prog prg = resnet88();
+  //   prg.pretty_print();
+  //   assert(false);
+  // }
   {
     prog prg = harris();
     int num_buffers = all_buffers(prg).size();

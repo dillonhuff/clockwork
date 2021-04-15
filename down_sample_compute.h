@@ -1,44 +1,42 @@
 #pragma once
 #include "hw_classes.h"
-#include "conv_3x3.h"
+#include "clockwork_standard_compute_units.h"
 
 
-//store is: hw_input.stencil(hw_input_s0_x, hw_input_s0_y, hw_input_s0_z) = input_copy.stencil(hw_input_s0_x, hw_input_s0_y, hw_input_s0_z)
-hw_uint<16> hcompute_hw_input_stencil(hw_uint<16>& input_copy_stencil) {
-  uint16_t _input_copy_stencil_1 = (uint16_t) input_copy_stencil.extract<0, 15>();
-
-  return _input_copy_stencil_1;
-}
-
-//store is: avg_pool.stencil(avg_pool_s0_x, avg_pool_s0_y, avg_pool_s0_z) = (uint16)0
-hw_uint<16> hcompute_avg_pool_stencil() {
-  uint16_t _387 = (uint16_t)(0);
-  return _387;
-}
-
-//store is: avg_pool.stencil(avg_pool_s1_x, avg_pool_s1_y, avg_pool_s1_z) = (hw_input.stencil((avg_pool_s1_x*2), (avg_pool_s1_y*2), avg_pool_s1_z) + (avg_pool.stencil(avg_pool_s1_x, avg_pool_s1_y, avg_pool_s1_z) + (hw_input.stencil(((avg_pool_s1_x*2) + 1), (avg_pool_s1_y*2), avg_pool_s1_z) + (hw_input.stencil(((avg_pool_s1_x*2) + 1), ((avg_pool_s1_y*2) + 1), avg_pool_s1_z) + hw_input.stencil((avg_pool_s1_x*2), ((avg_pool_s1_y*2) + 1), avg_pool_s1_z)))))
-hw_uint<16> hcompute_avg_pool_stencil_1(hw_uint<16>& avg_pool_stencil, hw_uint<64>& hw_input_stencil) {
-  uint16_t _avg_pool_stencil_1 = (uint16_t) avg_pool_stencil.extract<0, 15>();
-
+//store is: hw_input_global_wrapper.stencil(hw_input_global_wrapper_s0_x, hw_input_global_wrapper_s0_y) = hw_input.stencil(hw_input_global_wrapper_s0_x, hw_input_global_wrapper_s0_y)
+hw_uint<16> hcompute_hw_input_global_wrapper_stencil(hw_uint<16>& hw_input_stencil) {
   uint16_t _hw_input_stencil_1 = (uint16_t) hw_input_stencil.extract<0, 15>();
-  uint16_t _hw_input_stencil_2 = (uint16_t) hw_input_stencil.extract<16, 31>();
-  uint16_t _hw_input_stencil_3 = (uint16_t) hw_input_stencil.extract<32, 47>();
-  uint16_t _hw_input_stencil_4 = (uint16_t) hw_input_stencil.extract<48, 63>();
 
-  uint16_t _390 = _hw_input_stencil_3 + _hw_input_stencil_4;
-  uint16_t _391 = _hw_input_stencil_2 + _390;
-  uint16_t _392 = _avg_pool_stencil_1 + _391;
-  uint16_t _393 = _hw_input_stencil_1 + _392;
-  return _393;
+  return _hw_input_stencil_1;
 }
 
-//store is: hw_output.stencil(hw_output_s0_x_yi, hw_output_s0_y_xo, hw_output_s0_z) = uint8((avg_pool.stencil(hw_output_s0_x_yi, hw_output_s0_y_xo, hw_output_s0_z)/(uint16)4))
-hw_uint<16> hcompute_hw_output_stencil(hw_uint<16>& avg_pool_stencil) {
-  uint16_t _avg_pool_stencil_2 = (uint16_t) avg_pool_stencil.extract<0, 15>();
+//store is: maximum.stencil(max_pool_s0_x, max_pool_s0_y) = (uint16)0
+hw_uint<16> hcompute_maximum_stencil() {
+  uint16_t _257 = (uint16_t)(0);
+  return _257;
+}
 
-  uint16_t _411 = (uint16_t)(2);
-  uint16_t _412 = _avg_pool_stencil_2 >> _411;
-  uint16_t _413 = (uint16_t)(_412);
-  return _413;
+//store is: maximum.stencil(max_pool_s0_x, max_pool_s0_y) = max(maximum.stencil(max_pool_s0_x, max_pool_s0_y), hw_input_global_wrapper.stencil(((max_pool_s0_x*2) + maximum_s1_r_x), ((max_pool_s0_y*2) + maximum_s1_r_y)))
+hw_uint<16> hcompute_maximum_stencil_1(hw_uint<16>& hw_input_global_wrapper_stencil, hw_uint<16>& maximum_stencil) {
+  uint16_t _hw_input_global_wrapper_stencil_1 = (uint16_t) hw_input_global_wrapper_stencil.extract<0, 15>();
+
+  uint16_t _maximum_stencil_1 = (uint16_t) maximum_stencil.extract<0, 15>();
+
+  uint16_t _260 = max(_maximum_stencil_1, _hw_input_global_wrapper_stencil_1);
+  return _260;
+}
+
+//store is: max_pool.stencil(max_pool_s0_x, max_pool_s0_y) = maximum.stencil(max_pool_s0_x, max_pool_s0_y)
+hw_uint<16> hcompute_max_pool_stencil(hw_uint<16>& maximum_stencil) {
+  uint16_t _maximum_stencil_2 = (uint16_t) maximum_stencil.extract<0, 15>();
+
+  return _maximum_stencil_2;
+}
+
+//store is: hw_output.stencil(hw_output_s0_x_xi, hw_output_s0_y_yi) = max_pool.stencil(hw_output_s0_x_xi, hw_output_s0_y_yi)
+hw_uint<16> hcompute_hw_output_stencil(hw_uint<16>& max_pool_stencil) {
+  uint16_t _max_pool_stencil_1 = (uint16_t) max_pool_stencil.extract<0, 15>();
+
+  return _max_pool_stencil_1;
 }
 
