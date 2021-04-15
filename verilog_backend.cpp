@@ -1,11 +1,10 @@
 #include "verilog_backend.h"
 
-#define SIM 0
+#define SIM 1
 
 string end_delay_with(ostream& out, const int width, const std::string& wire_in, prog& prg, const int delay) {
   vector<string> wires{wire_in};
   for (int d = 0; d < delay; d++) {
-    //string w = prg.un(wire_in);
     string w = prg.un("end_delay_wire_");
     out << tab(1) << "logic [" << (width - 1) << ":0] " << w << ";" << endl;
     wires.push_back(w);
@@ -14,7 +13,7 @@ string end_delay_with(ostream& out, const int width, const std::string& wire_in,
   reverse(wires);
   out << tab(1) << "always @(posedge clk) begin" << endl;
   for (int d = 1; d < delay + 1; d++) {
-    out << tab(2) << wires.at(d) << " <= " << wires.at(d - 1) << ";";
+    out << tab(2) << wires.at(d) << " <= " << wires.at(d - 1) << ";" << endl;
   }
   out << tab(1) << "end" << endl;
   return wires.at(0);
@@ -789,6 +788,7 @@ void instantiate_banks(
   maybe<std::set<int> > embarassing_banking =
     embarassing_partition(buf);
   bool has_embarassing_partition = embarassing_banking.has_value();
+
   //bool has_embarassing_partition = false;
 
   bank bnk = buf.compute_bank_info();
@@ -908,12 +908,17 @@ void instantiate_banks(
 
       out << tab(2) << "if (" << bundle_wen_fsm << ") begin" << endl;
       out << tab(3) << "case( " << bank_selector << ")" << endl;
+      string last_ram = "";
       for (int b = 0; b < num_banks; b++) {
         string source_ram = "bank_" + str(b);
         out << tab(4) << b << ":" << source_ram << "[" << addr << "]" << " <= " << input_wire << ";" << endl;
+        last_ram = source_ram;
       }
 #if SIM
       out << tab(4) << "default: $finish(-1);" << endl;
+#else
+      assert(last_ram != "");
+      out << tab(4) << "default" << ":" << last_ram << "[" << addr << "]" << " <= " << input_wire << ";" << endl;
 #endif
       out << tab(3) << "endcase" << endl;
       out << tab(2) << "end" << endl;
@@ -938,17 +943,19 @@ void instantiate_banks(
         string bank_selector = map_find(outpt, port_bank_selectors);
         string inner_bank_offset = map_find(outpt, port_inner_bank_offsets);
         string out_wire = map_find(outpt, port_data);
+        string assign_str = load_latency == 0 ? " = " : " <= ";
 
         out << tab(2) << "if (" << bundle_ren_fsm << ") begin" << endl;
         out << tab(3) << "case( " << bank_selector << ")" << endl;
         for (int b = 0; b < num_banks; b++) {
           string source_ram = "bank_" + str(b);
-          string assign_str = load_latency == 0 ? " = " : " <= ";
           out << tab(4) << b << ":" << out_wire << assign_str << source_ram << "[" << inner_bank_offset << "];" << endl;
         }
         counter++;
 #if SIM
         out << tab(4) << "default: $finish(-1);" << endl;
+#else
+        out << tab(4) << "default" << ":" << out_wire << assign_str << "327;" << endl;
 #endif
         out << tab(3) << "endcase" << endl;
         out << tab(2) << "end" << endl;
@@ -1037,6 +1044,9 @@ void generate_platonic_ubuffer(
   maybe<std::set<int> > embarassing_banking =
     embarassing_partition(buf);
   bool has_embarassing_partition = embarassing_banking.has_value();
+
+  out << "// " << buf.name << " has embarassing partition: " << has_embarassing_partition << endl;
+
   //bool has_embarassing_partition = false;
 
   int num_banks = card(bank_factors);

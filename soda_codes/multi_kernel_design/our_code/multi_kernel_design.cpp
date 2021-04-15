@@ -6,8 +6,8 @@ using namespace std;
   ofstream* global_debug_handle;
 
 #endif //__VIVADO_SYNTH__
-// compute file: local_laplacian_filters_compute.h_merged_compute_units.h
-#include "local_laplacian_filters_compute.h_merged_compute_units.h"
+// compute file: local_laplacian_filters_compute.h_merged_compute_units.h_merged_compute_units.h
+#include "local_laplacian_filters_compute.h_merged_compute_units.h_merged_compute_units.h"
 
 struct gray_all_inputs_to_all_outputs_cache {
 	// RAM Box: {[0, 3], [0, 3]}
@@ -123,31 +123,32 @@ inline hw_uint<32> gray_FIFO_buf12_pw_math_gray47_read_bundle_read(gray_FIFO_buf
 	return result;
 }
 
+// Total re-use buffer capacity: 1024 bits
 // Operation logic
-inline void load_to_gray_to_gp_1811(gray_cache& gray, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */gray_to_gp_18, int root, int gray_ld10, int gray_ld9) {
+inline void oc_load_in03(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */in, gray_cache& gray, int d0, int d1, int d2) {
   // Dynamic address computation
 
-	// Consume: gray
-	auto gray_gray_ld9_c__gray_ld10_value = gray_load_to_gray_to_gp_1811_read_bundle_read(gray/* source_delay */, root, gray_ld10, gray_ld9, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	// Produce: gray_to_gp_18
-	gray_to_gp_18.write(gray_gray_ld9_c__gray_ld10_value);
+	// Consume: in
+	auto in_oc_load_in02_p_0_c___oc_load_in01_p_0_value = in.read();
+	// Produce: gray
+	gray_oc_load_in03_write_bundle_write(/* arg names */in_oc_load_in02_p_0_c___oc_load_in01_p_0_value, gray, d0, d1, d2, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 
 }
 
-inline void oc_load_in03(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */in, gray_cache& gray, int root, int oc_load_in01, int oc_load_in02) {
+inline void load_to_gray_to_gp_1811(gray_cache& gray, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */gray_to_gp_18, int d0, int d1, int d2) {
   // Dynamic address computation
 
-	// Consume: in
-	auto in_oc_load_in02_p_0_c___oc_load_in01_p_0_value = in.read();
-	// Produce: gray
-	gray_oc_load_in03_write_bundle_write(/* arg names */in_oc_load_in02_p_0_c___oc_load_in01_p_0_value, gray, root, oc_load_in01, oc_load_in02, 0);
+	// Consume: gray
+	auto gray_gray_ld9_c__gray_ld10_value = gray_load_to_gray_to_gp_1811_read_bundle_read(gray/* source_delay */, d0, d1, d2, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	// Produce: gray_to_gp_18
+	gray_to_gp_18.write(gray_gray_ld9_c__gray_ld10_value);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -168,16 +169,16 @@ void Extracted_gray_ld10_oc_load_in01_(HWStream<hw_uint<32> >& /* no bundle get_
 #pragma HLS inline recursive
 #endif // __VIVADO_SYNTH__
 
-// schedule: { oc_load_in03[root = 0, oc_load_in01, oc_load_in02] -> [oc_load_in01, oc_load_in02, 0] : 0 <= oc_load_in01 <= 3 and 0 <= oc_load_in02 <= 3; load_to_gray_to_gp_1811[root = 0, gray_ld10, gray_ld9] -> [gray_ld10, gray_ld9, 1] : 0 <= gray_ld10 <= 3 and 0 <= gray_ld9 <= 3 }
-//   { oc_load_in03[root = 0, oc_load_in01, oc_load_in02] -> [oc_load_in01, oc_load_in02, 0] : 0 <= oc_load_in01 <= 3 and 0 <= oc_load_in02 <= 3 }
-// Condition for oc_load_in03(((((1*i2)) == 0) && (((1*i0)) >= 0) && (((3 + -1*i0)) >= 0) && (((1*i1)) >= 0) && (((3 + -1*i1)) >= 0)))
-//   { load_to_gray_to_gp_1811[root = 0, gray_ld10, gray_ld9] -> [gray_ld10, gray_ld9, 1] : 0 <= gray_ld10 <= 3 and 0 <= gray_ld9 <= 3 }
-// Condition for load_to_gray_to_gp_1811(((((-1 + 1*i2)) == 0) && (((1*i0)) >= 0) && (((3 + -1*i0)) >= 0) && (((1*i1)) >= 0) && (((3 + -1*i1)) >= 0)))
+// schedule: { oc_load_in03[d0 = 0, d1, d2] -> [0, d1, d2, 0] : 0 <= d1 <= 3 and 0 <= d2 <= 3; load_to_gray_to_gp_1811[d0 = 0, d1, d2] -> [0, d1, d2, 1] : 0 <= d1 <= 3 and 0 <= d2 <= 3 }
+//   { oc_load_in03[d0 = 0, d1, d2] -> [0, d1, d2, 0] : 0 <= d1 <= 3 and 0 <= d2 <= 3 }
+// Condition for oc_load_in03(((((1*i3)) == 0) && (((1*i0)) == 0) && (((1*i1)) >= 0) && (((3 + -1*i1)) >= 0) && (((1*i2)) >= 0) && (((3 + -1*i2)) >= 0)))
+//   { load_to_gray_to_gp_1811[d0 = 0, d1, d2] -> [0, d1, d2, 1] : 0 <= d1 <= 3 and 0 <= d2 <= 3 }
+// Condition for load_to_gray_to_gp_1811(((((-1 + 1*i3)) == 0) && (((1*i0)) == 0) && (((1*i1)) >= 0) && (((3 + -1*i1)) >= 0) && (((1*i2)) >= 0) && (((3 + -1*i2)) >= 0)))
 
-	for (int c0 = 0; c0 <= 3; c0 += 1)
-	  for (int c1 = 0; c1 <= 3; c1 += 1) {
-	    oc_load_in03(in /* buf name */, gray, 0, c0, c1);
-	    load_to_gray_to_gp_1811(gray /* buf name */, gray_to_gp_18, 0, c0, c1);
+	for (int c1 = 0; c1 <= 3; c1 += 1)
+	  for (int c2 = 0; c2 <= 3; c2 += 1) {
+	    oc_load_in03(in /* buf name */, gray, 0, c1, c2);
+	    load_to_gray_to_gp_1811(gray /* buf name */, gray_to_gp_18, 0, c1, c2);
 	  }
 	
 #ifndef __VIVADO_SYNTH__
@@ -186,11 +187,24 @@ void Extracted_gray_ld10_oc_load_in01_(HWStream<hw_uint<32> >& /* no bundle get_
 }
 
 // Operation logic
-inline void pw_math_gray47(gray_FIFO_buf12_cache& gray_FIFO_buf12, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */out, int root, int pw_math_gray45, int pw_math_gray46) {
+inline void load_to_gray_FIFO_buf1215(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */gray_to_gp_18, gray_FIFO_buf12_cache& gray_FIFO_buf12, int d0, int d1, int d2) {
+  // Dynamic address computation
+
+	// Consume: gray_to_gp_18
+	auto gray_to_gp_18_gray_to_gp_18_ld13_c__gray_to_gp_18_ld14_value = gray_to_gp_18.read();
+	// Produce: gray_FIFO_buf12
+	gray_FIFO_buf12_load_to_gray_FIFO_buf1215_write_bundle_write(/* arg names */gray_to_gp_18_gray_to_gp_18_ld13_c__gray_to_gp_18_ld14_value, gray_FIFO_buf12, d0, d1, d2, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void pw_math_gray47(gray_FIFO_buf12_cache& gray_FIFO_buf12, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */out, int d0, int d1, int d2) {
   // Dynamic address computation
 
 	// Consume: gray_FIFO_buf12
-	auto gray_FIFO_buf12_pw_math_gray46_p_0_c___pw_math_gray45_p_0_value = gray_FIFO_buf12_pw_math_gray47_read_bundle_read(gray_FIFO_buf12/* source_delay */, root, pw_math_gray45, pw_math_gray46, 0);
+	auto gray_FIFO_buf12_pw_math_gray46_p_0_c___pw_math_gray45_p_0_value = gray_FIFO_buf12_pw_math_gray47_read_bundle_read(gray_FIFO_buf12/* source_delay */, d0, d1, d2, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -198,19 +212,6 @@ inline void pw_math_gray47(gray_FIFO_buf12_cache& gray_FIFO_buf12, HWStream<hw_u
 	auto compute_result = id(gray_FIFO_buf12_pw_math_gray46_p_0_c___pw_math_gray45_p_0_value);
 	// Produce: out
 	out.write(compute_result);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void load_to_gray_FIFO_buf1215(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */gray_to_gp_18, gray_FIFO_buf12_cache& gray_FIFO_buf12, int root, int gray_to_gp_18_ld14, int gray_to_gp_18_ld13) {
-  // Dynamic address computation
-
-	// Consume: gray_to_gp_18
-	auto gray_to_gp_18_gray_to_gp_18_ld13_c__gray_to_gp_18_ld14_value = gray_to_gp_18.read();
-	// Produce: gray_FIFO_buf12
-	gray_FIFO_buf12_load_to_gray_FIFO_buf1215_write_bundle_write(/* arg names */gray_to_gp_18_gray_to_gp_18_ld13_c__gray_to_gp_18_ld14_value, gray_FIFO_buf12, root, gray_to_gp_18_ld14, gray_to_gp_18_ld13, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -231,16 +232,16 @@ void Extracted_gray_to_gp_18_ld14_pw_math_gray45_(HWStream<hw_uint<32> >& /* no 
 #pragma HLS inline recursive
 #endif // __VIVADO_SYNTH__
 
-// schedule: { load_to_gray_FIFO_buf1215[root = 0, gray_to_gp_18_ld14, gray_to_gp_18_ld13] -> [gray_to_gp_18_ld14, gray_to_gp_18_ld13, 2] : 0 <= gray_to_gp_18_ld14 <= 3 and 0 <= gray_to_gp_18_ld13 <= 3; pw_math_gray47[root = 0, pw_math_gray45, pw_math_gray46] -> [pw_math_gray45, pw_math_gray46, 3] : 0 <= pw_math_gray45 <= 3 and 0 <= pw_math_gray46 <= 3 }
-//   { load_to_gray_FIFO_buf1215[root = 0, gray_to_gp_18_ld14, gray_to_gp_18_ld13] -> [gray_to_gp_18_ld14, gray_to_gp_18_ld13, 2] : 0 <= gray_to_gp_18_ld14 <= 3 and 0 <= gray_to_gp_18_ld13 <= 3 }
-// Condition for load_to_gray_FIFO_buf1215(((((-2 + 1*i2)) == 0) && (((1*i0)) >= 0) && (((3 + -1*i0)) >= 0) && (((1*i1)) >= 0) && (((3 + -1*i1)) >= 0)))
-//   { pw_math_gray47[root = 0, pw_math_gray45, pw_math_gray46] -> [pw_math_gray45, pw_math_gray46, 3] : 0 <= pw_math_gray45 <= 3 and 0 <= pw_math_gray46 <= 3 }
-// Condition for pw_math_gray47(((((-3 + 1*i2)) == 0) && (((1*i0)) >= 0) && (((3 + -1*i0)) >= 0) && (((1*i1)) >= 0) && (((3 + -1*i1)) >= 0)))
+// schedule: { pw_math_gray47[d0 = 0, d1, d2] -> [0, d1, d2, 3] : 0 <= d1 <= 3 and 0 <= d2 <= 3; load_to_gray_FIFO_buf1215[d0 = 0, d1, d2] -> [0, d1, d2, 2] : 0 <= d1 <= 3 and 0 <= d2 <= 3 }
+//   { pw_math_gray47[d0 = 0, d1, d2] -> [0, d1, d2, 3] : 0 <= d1 <= 3 and 0 <= d2 <= 3 }
+// Condition for pw_math_gray47(((((-3 + 1*i3)) == 0) && (((1*i0)) == 0) && (((1*i1)) >= 0) && (((3 + -1*i1)) >= 0) && (((1*i2)) >= 0) && (((3 + -1*i2)) >= 0)))
+//   { load_to_gray_FIFO_buf1215[d0 = 0, d1, d2] -> [0, d1, d2, 2] : 0 <= d1 <= 3 and 0 <= d2 <= 3 }
+// Condition for load_to_gray_FIFO_buf1215(((((-2 + 1*i3)) == 0) && (((1*i0)) == 0) && (((1*i1)) >= 0) && (((3 + -1*i1)) >= 0) && (((1*i2)) >= 0) && (((3 + -1*i2)) >= 0)))
 
-	for (int c0 = 0; c0 <= 3; c0 += 1)
-	  for (int c1 = 0; c1 <= 3; c1 += 1) {
-	    load_to_gray_FIFO_buf1215(gray_to_gp_18 /* buf name */, gray_FIFO_buf12, 0, c0, c1);
-	    pw_math_gray47(gray_FIFO_buf12 /* buf name */, out, 0, c0, c1);
+	for (int c1 = 0; c1 <= 3; c1 += 1)
+	  for (int c2 = 0; c2 <= 3; c2 += 1) {
+	    load_to_gray_FIFO_buf1215(gray_to_gp_18 /* buf name */, gray_FIFO_buf12, 0, c1, c2);
+	    pw_math_gray47(gray_FIFO_buf12 /* buf name */, out, 0, c1, c2);
 	  }
 	
 #ifndef __VIVADO_SYNTH__
@@ -260,9 +261,17 @@ void multi_kernel_design(HWStream<hw_uint<32> >& /* no bundle get_args num ports
 #pragma HLS dataflow
 #endif //__VIVADO_SYNTH__
 
+  // channel width: 1
+  // port width   : 32
+  // dag size     : 500
+// Bits to slack match gray_to_gp_18 = 16000
+// Bits to slack match gray_to_gp_18 = 16000
+// Bits in internal re-use buffers               : 1024 bits
+// Bits in channels needed to guarantee causality: 0
+// Bits in channels needed to match slack        : 16000
   HWStream< hw_uint<32> > gray_to_gp_18;
 #ifdef __VIVADO_SYNTH__
-#pragma HLS stream variable=gray_to_gp_18.values depth=2048
+#pragma HLS stream variable=gray_to_gp_18.values depth=500
 #endif //__VIVADO_SYNTH__
 
 

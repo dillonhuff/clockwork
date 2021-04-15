@@ -19,8 +19,8 @@ hw_uint<16> hcompute_hw_input_stencil(hw_uint<16>& input_gb_stencil) {
 
 //store is: conv.stencil(((output_gb_s0_x_x_gb*64) + conv_s0_x), ((output_gb_s0_y_y_gb*64) + conv_s0_y)) = (uint16)0
 hw_uint<16> hcompute_conv_stencil() {
-  uint16_t _270 = (uint16_t)(0);
-  return _270;
+  uint16_t _266 = (uint16_t)(0);
+  return _266;
 }
 
 //store is: conv.stencil(((output_gb_s0_x_x_gb*64) + conv_s1_x), ((output_gb_s0_y_y_gb*64) + conv_s1_y)) = (hw_input.stencil(((output_gb_s0_x_x_gb*64) + conv_s1_x), ((output_gb_s0_y_y_gb*64) + conv_s1_y)) + (conv.stencil(((output_gb_s0_x_x_gb*64) + conv_s1_x), ((output_gb_s0_y_y_gb*64) + conv_s1_y)) + (hw_input.stencil((((output_gb_s0_x_x_gb*64) + conv_s1_x) + 1), ((output_gb_s0_y_y_gb*64) + conv_s1_y)) + (hw_input.stencil((((output_gb_s0_x_x_gb*64) + conv_s1_x) + 2), ((output_gb_s0_y_y_gb*64) + conv_s1_y)) + (hw_input.stencil(((output_gb_s0_x_x_gb*64) + conv_s1_x), (((output_gb_s0_y_y_gb*64) + conv_s1_y) + 1)) + (hw_input.stencil((((output_gb_s0_x_x_gb*64) + conv_s1_x) + 1), (((output_gb_s0_y_y_gb*64) + conv_s1_y) + 1)) + (hw_input.stencil((((output_gb_s0_x_x_gb*64) + conv_s1_x) + 2), (((output_gb_s0_y_y_gb*64) + conv_s1_y) + 1)) + (hw_input.stencil(((output_gb_s0_x_x_gb*64) + conv_s1_x), (((output_gb_s0_y_y_gb*64) + conv_s1_y) + 2)) + (hw_input.stencil((((output_gb_s0_x_x_gb*64) + conv_s1_x) + 2), (((output_gb_s0_y_y_gb*64) + conv_s1_y) + 2)) + hw_input.stencil((((output_gb_s0_x_x_gb*64) + conv_s1_x) + 1), (((output_gb_s0_y_y_gb*64) + conv_s1_y) + 2)))))))))))
@@ -37,16 +37,16 @@ hw_uint<16> hcompute_conv_stencil_1(hw_uint<16>& conv_stencil, hw_uint<144>& hw_
   uint16_t _hw_input_stencil_8 = (uint16_t) hw_input_stencil.extract<112, 127>();
   uint16_t _hw_input_stencil_9 = (uint16_t) hw_input_stencil.extract<128, 143>();
 
-  uint16_t _281 = _hw_input_stencil_8 + _hw_input_stencil_9;
-  uint16_t _282 = _hw_input_stencil_7 + _281;
-  uint16_t _283 = _hw_input_stencil_6 + _282;
-  uint16_t _284 = _hw_input_stencil_5 + _283;
-  uint16_t _285 = _hw_input_stencil_4 + _284;
-  uint16_t _286 = _hw_input_stencil_3 + _285;
-  uint16_t _287 = _hw_input_stencil_2 + _286;
-  uint16_t _288 = _conv_stencil_1 + _287;
-  uint16_t _289 = _hw_input_stencil_1 + _288;
-  return _289;
+  uint16_t _275 = _hw_input_stencil_8 + _hw_input_stencil_9;
+  uint16_t _276 = _hw_input_stencil_7 + _275;
+  uint16_t _277 = _hw_input_stencil_6 + _276;
+  uint16_t _278 = _hw_input_stencil_5 + _277;
+  uint16_t _279 = _hw_input_stencil_4 + _278;
+  uint16_t _280 = _hw_input_stencil_3 + _279;
+  uint16_t _281 = _hw_input_stencil_2 + _280;
+  uint16_t _282 = _conv_stencil_1 + _281;
+  uint16_t _283 = _hw_input_stencil_1 + _282;
+  return _283;
 }
 
 //store is: output_gb.stencil((output_gb_s0_x_x_cgra + (output_gb_s0_x_x_gb*64)), (output_gb_s0_y_y_cgra + (output_gb_s0_y_y_gb*64))) = conv.stencil((output_gb_s0_x_x_cgra + (output_gb_s0_x_x_gb*64)), (output_gb_s0_y_y_cgra + (output_gb_s0_y_y_gb*64)))
@@ -60,7 +60,7 @@ hw_uint<16> hcompute_output_gb_stencil(hw_uint<16>& conv_stencil) {
 hw_uint<8> hcompute_hw_output_stencil(hw_uint<16>& output_gb_stencil) {
   uint16_t _output_gb_stencil_1 = (uint16_t) output_gb_stencil.extract<0, 15>();
 
-  uint8_t _331 = (uint8_t)(_output_gb_stencil_1);
-  return _331;
+  uint8_t _325 = (uint8_t)(_output_gb_stencil_1);
+  return _325;
 }
 

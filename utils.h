@@ -57,7 +57,9 @@ string c_sanitize(const std::string& str) {
       res += "_m_";
     } else if (c == '/') {
       res += "_div_";
-    } else {
+    } else if (c == '%') {
+      res += "_mod_";
+    }else {
       res += c;
     }
   }
@@ -191,6 +193,13 @@ is_suffix( std::string const& lhs, std:: string const& rhs )
             lhs.end() - rhs.size(),
             lhs.end(),
             rhs.begin() );
+}
+
+template<typename A, typename B>
+static inline
+pair<A, B> pick(const unordered_map<A, B>& s) {
+  assert(s.size() > 0);
+  return *(begin(s));
 }
 
 template<typename A, typename B>
@@ -506,4 +515,6 @@ static
 std::string pg(const pair<string, string>& b) {
   return pg(b.first, b.second);
 }
+
+bool is_permutation(const vector<int>& level_permutation);
 

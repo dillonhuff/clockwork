@@ -1,5 +1,7 @@
 #pragma once
-
+#include "utils.h"
+#include <iostream>
+#include <cassert>
 #include <string>
 #include <vector>
 #include <map>
@@ -7,6 +9,16 @@
 #include <set>
 
 using namespace std;
+
+enum slack_matching_type {
+  SLACK_MATCHING_TYPE_FIXED,
+  SLACK_MATCHING_TYPE_PIPELINE_DEPTH_AWARE,
+};
+
+struct slack_matching_policy {
+  slack_matching_type tp;
+  int depth;
+};
 
 enum test_data_input_stream_type {
   TEST_DATA_INPUT_STREAM_TYPE_CONSTANT,
@@ -89,21 +101,63 @@ struct LakeCollateral {
     std::unordered_map<string, int> in_port_width;
     std::unordered_map<string, int> out_port_width;
     int fetch_width;
+    int max_chaining;
     bool multi_sram_accessor;
 
-    LakeCollateral():
+    //TODO: use the collateral kavya generated
+    LakeCollateral(string level = "mem"):
         fetch_width(4),
-        multi_sram_accessor(false),
+        max_chaining(4),
+        multi_sram_accessor(true),
         word_width({{"agg", 1}, {"sram", 4}, {"tb", 1}}),
         in_port_width({{"agg", 1}, {"sram", 4}, {"tb", 4}}),
         out_port_width({{"agg", 4}, {"sram", 4}, {"tb", 1}}),
         bank_num({{"agg", 2}, {"sram", 1}, {"tb", 2}}),
-        capacity({{"agg", 16}, {"sram", 512}, {"tb", 16}}) {}
+        capacity({{"agg", 16}, {"sram", 512}, {"tb", 16}}) {
+            if (level == "regfile") {
+                fetch_width = 1;
+                max_chaining = 1;
+                word_width = {{"regfile", 1}};
+                in_port_width= {{"regfile", 1}};
+                out_port_width = {{"regfile", 1}};
+                bank_num = {{"regfile", 1}};
+                capacity = {{"regfile", 32}};
+            } else if (level != "mem") {
+                cout << "\t\tERROR: Memory component not identified" << endl;
+                assert(false);
+            }
+        }
+
+    int get_max_capacity() const {
+        int c = 0;
+        for (auto it: capacity) {
+            c = std::max(c, it.second);
+        }
+        return c * max_chaining;
+    }
+
+    int get_inpt_num() {
+        if (bank_num.size() == 1)
+            return pick(bank_num).second;
+        else {
+            return bank_num.at("agg");
+        }
+    }
+
+    int get_outpt_num() {
+        if (bank_num.size() == 1)
+            return pick(bank_num).second;
+        else {
+            return bank_num.at("tb");
+        }
+    }
 };
 
 enum HLSLoopCodegen {
   HLS_LOOP_CODEGEN_ISL,
   HLS_LOOP_CODEGEN_PERFECT,
+  HLS_LOOP_CODEGEN_CYLINDRICAL,
+  HLS_LOOP_CODEGEN_NON_BLOCKING,
   HLS_LOOP_CODEGEN_CUSTOM
 };
 
@@ -112,7 +166,6 @@ struct CodegenOptions {
   bool all_rams;
   bool add_dependence_pragmas;
   HLSLoopCodegen hls_loop_codegen;
-  //bool use_custom_code_string;
   string code_string;
   bool simplify_address_expressions;
   bool unroll_factors_as_pad;
@@ -133,7 +186,6 @@ struct CodegenOptions {
 
   bool use_epochs;
   int num_input_epochs;
-  bool push_garbage_outputs;
   bool use_soda_casting;
   InnerBankOffsetMode inner_bank_offset_mode;
   ScheduleAlgorithm scheduling_algorithm;
@@ -147,24 +199,27 @@ struct CodegenOptions {
   RTLOptions rtl_options;
 
   DebugOptions debug_options;
-  LakeCollateral mem_tile;
+  map<string, LakeCollateral> mem_hierarchy;
+
+  slack_matching_policy slack_matching;
 
   CodegenOptions() : internal(true), all_rams(false), add_dependence_pragmas(true),
-  //use_custom_code_string(false),
   hls_loop_codegen(HLS_LOOP_CODEGEN_ISL), code_string(""), simplify_address_expressions(false),
   unroll_factors_as_pad(false), conditional_merge(false), merge_threshold(0),
   inline_vectorization(false), iis({}),
   pass_through_valid(false), emit_smt_stream(false), config_gen_only(false), dir(""),
   use_epochs(true),
   num_input_epochs(-1),
-  push_garbage_outputs(false),
   use_soda_casting(false),
   inner_bank_offset_mode(INNER_BANK_OFFSET_STACK),
   scheduling_algorithm(SCHEDULE_ALGORITHM_NAIVE),
   default_banking_strategy({"exhaustive"}),
   ignore_top_level_inter_deps(false),
-  num_pipelines(1)
+  num_pipelines(1),
+  slack_matching({SLACK_MATCHING_TYPE_FIXED, 500})
   {}
+
+  void add_memory_hierarchy(const std::string& level);
 
   banking_strategy get_banking_strategy(const std::string& buffer);
 

@@ -2,6 +2,14 @@ import re
 import matplotlib.pyplot as plt
 import numpy as np
 
+plt.style.use('seaborn-pastel')
+
+font = {'family' : 'normal',
+        'weight' : 'bold',
+        'size'   : 12}
+
+plt.rc('font', **font)
+
 # f = open('./misc/soda_resource_comparison_table.tex').readlines()
 f = open('./misc/soda_comparison_standalone_large.tex').readlines()
 
@@ -69,16 +77,11 @@ def table_op(table_lines, func):
             ind = np.arange(N)  # the x locations for the groups
             width = 0.35       # the width of the bars
 
-            # fig = plt.figure()
-            # ax[i, j] = fig.add_subplot(111)
-            rects1 = ax[i, j].bar(ind, menMeans, width)
+            rects1 = ax[i, j].bar(ind, menMeans, width, edgecolor='k')
 
             womenMeans= apps[resource][app]['CW']
-            rects2 = ax[i, j].bar(ind+width, womenMeans, width)
+            rects2 = ax[i, j].bar(ind+width, womenMeans, width, edgecolor='k')
 
-            # add some
-            # ax[i, j].set_ylabel('Counts')
-            # ax[i, j].set_title('{0} count for {1} by throughput'.format(resource, app))
             ax[i, j].set_xticks(ind + width / 2)
             ax[i, j].set_xticklabels( ('{0} 1'.format(app), '{0} 16'.format(app), '{0} 32'.format(app)))
 
@@ -88,16 +91,9 @@ def table_op(table_lines, func):
             j += 1
         i += 1
 
-    ax.flat[0].set(ylabel='LUT')
-    ax.flat[NumApps].set(ylabel='BRAM')
-    ax.flat[2*NumApps].set(ylabel='FF')
-    # ax.flat[1].set(ylabel='BRAM')
-    # ax.flat[2].set(ylabel='FF')
-    # i = 0
-    # for axi in ax.flat:
-        # print('axi =', i)
-        # axi.set(ylabel='LUT')
-        # i += 1
+    # ax.flat[0].set(ylabel='LUT')
+    # ax.flat[NumApps].set(ylabel='BRAM')
+    # ax.flat[2*NumApps].set(ylabel='FF')
 
     for axi in ax.flat:
         axi.label_outer()

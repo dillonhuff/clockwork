@@ -6,6 +6,8 @@
 #include "qexpr.h"
 #include "app.h"
 
+typedef vector<string> path;
+
 enum ir_node_type {
   IR_NODE_TYPE_OPERATION,
   IR_NODE_TYPE_LOOP,
@@ -134,11 +136,6 @@ struct ir_node {
 
       }
     }
-    //for (auto& b : produce_locs) {
-      //if (b.first == buf) {
-        //b.second = prefix + ", " + b.second;
-      //}
-    //}
   }
 
   void add_prefix_to_reads(const std::string& prefix,
@@ -320,9 +317,8 @@ struct ir_node {
     val_name = c_sanitize(val_name);
     return val_name;
 
-    //string val_name = c_sanitize(val_loc.first + "_" + val_loc.second + "_value");
-    //return val_name;
   }
+
   string consumed_value_name(pair<string, string>& val_loc) {
     string val_name = c_sanitize(val_loc.first + "_" + val_loc.second + "_value");
     return val_name;
@@ -578,40 +574,6 @@ struct ir_node {
 
   void add_dynamic_store(const std::string& buf,
       const std::string& addr_table,
-      const vector<std::string>& table_offset) {
-    //add_load(addr_table, table_offset);
-    //dynamic_load_addresses.push_back({buf, addr_table, table_offset});
-    //add_store(buf, "0");
-  }
-
-  void add_dynamic_load(const std::string& buf,
-      const std::string& addr_table,
-      const vector<std::string>& table_offset) {
-    //add_load(addr_table, table_offset);
-    //dynamic_store_addresses.push_back({buf, addr_table, table_offset});
-    //add_load(buf, "0");
-  }
-
-  void add_dynamic_store(const std::string& buf,
-      const std::string& addr_table,
-      const std::string& table_offset0,
-      const std::string& table_offset1) {
-    //add_load(addr_table, table_offset);
-    //dynamic_load_addresses.push_back({buf, addr_table, table_offset});
-    //add_store(buf, "0");
-  }
-
-  void add_dynamic_load(const std::string& buf,
-      const std::string& addr_table,
-      const std::string& table_offset0,
-      const std::string& table_offset1) {
-    //add_load(addr_table, table_offset);
-    //dynamic_store_addresses.push_back({buf, addr_table, table_offset});
-    //add_load(buf, "0");
-  }
-
-  void add_dynamic_store(const std::string& buf,
-      const std::string& addr_table,
       const std::string& table_offset) {
     add_load(addr_table, table_offset);
     dynamic_load_addresses.push_back({buf, addr_table, table_offset});
@@ -630,14 +592,6 @@ struct ir_node {
     assert(!is_loop());
     consume_locs_pair.push_back({b, loc});
     return consumed_value_name({b, loc});
-    //string val_name = b;
-    //for (auto val : loc) {
-      //val_name += "_";
-      //val_name += val.second;
-    //}
-    //val_name += "_value";
-    //val_name = c_sanitize(val_name);
-    //return val_name;
   }
 
   string add_load(const std::string& b, const std::string& d0, const std::string& d1, const std::string& d2, const std::string& d3, const std::string& d4) {
@@ -673,17 +627,6 @@ struct ir_node {
 
   std::vector<pair<buffer_name, piecewise_address> > produces_pair() const {
     return produce_locs;
-    //std::vector<pair<buffer_name, piecewise_address> > ps;
-    //for (auto p : produce_locs) {
-      //buffer_name b = p.first;
-      //address addr = p.second;
-      ////pair<buffer_name, address> pr{b, addr};
-      //pair<string, address> pr{"", addr};
-      //piecewise_address paddr{pr};
-      //pair<buffer_name, piecewise_address> psa{b, paddr};
-      //ps.push_back(psa);
-    //}
-    //return ps;
   }
 
   vector<string> produces() const {
@@ -868,6 +811,8 @@ struct prog {
   // The C++ source file which holds HLS code
   // for the compute unit implementations
   string compute_unit_file;
+
+  prog deep_copy();
 
   map<string, vector<int> > buffer_bounds;
 
@@ -1275,6 +1220,8 @@ struct prog {
 
   void shift_address_range(const std::string& buf, const std::vector<int>& min_locs);
 
+  isl_map* map_from_expr(op* op, pair<string, piecewise_address> & top_pair);
+
   map<op*, isl_map*> producer_maps() {
     map<op*, isl_map*> m;
     auto ivars = iter_vars();
@@ -1453,6 +1400,8 @@ map<string, UBuffer> build_buffers(prog& prg, umap* opt_sched);
 
 map<string, UBuffer> build_buffers(prog& prg);
 
+void tag_coarse_grained_loop_to_ubuf(map<string, UBuffer>& buffers, prog& prg);
+
 void generate_app_code(CodegenOptions& options, map<string, UBuffer>& buffers, prog& prg, umap* schedmap);
 
 prog duplicate_interface(prog& p);
@@ -1463,6 +1412,7 @@ vector<string> incoming_buffers(const map<string, UBuffer>& buffers, op* op, pro
 vector<string> outgoing_buffers(const map<string, UBuffer>& buffers, op* op, prog& prg);
 
 
+bool unoptimized_compiles(prog& prg);
 std::vector<string> unoptimized_result(prog& prg);
 void generate_regression_testbench(prog& prg);
 void generate_regression_testbench(prog& prg, map<string, UBuffer>& buffers);
@@ -1479,6 +1429,7 @@ void regression_test(prog& prg);
 void regression_test(CodegenOptions& options, prog& prg);
 
 std::set<std::string> get_kernels(prog& prg);
+std::set<std::string> get_kernels(op* root);
 
 std::vector<piecewise_address> addrs_referenced(op* p, const std::string& buffer);
 
@@ -1487,8 +1438,11 @@ vector<string> upsample_vars(const std::string& target_buf, op* reader, prog& pr
 void make_constant_dd(const std::string& target_op, const std::string& target_buf, prog& prg);
 
 std::vector<string> topologically_sort_kernels(prog& prg);
+std::vector<string> topologically_sort_kernels(op* root, prog& prg);
 
 std::set<string> buffers_written(op* p);
+std::set<string> buffers_read(op* p);
+
 std::set<string> buffers_written(prog& prg);
 std::set<string> buffers_read(prog& prg);
 
@@ -1497,6 +1451,8 @@ bool writes(const std::string& target_buf, op* p);
 op* find_writer(const std::string& target_buf, prog& prg);
 
 std::set<string> get_producers(string next_kernel, prog& prg);
+//in sub ast under root
+std::set<string> get_producers(string next_kernel, op* root, prog& prg);
 
 void deep_copy_child(op* dest, op* source, prog& original);
 
@@ -1522,6 +1478,8 @@ void generate_trace(prog& prg, umap* sched);
 
 void all_register_files(prog& prg, CodegenOptions& options);
 int compile_compute(const std::string& name);
+bool compile_regression_tb(const std::string& name);
+bool compile_regression_tb(prog& prg);
 
 vector<string> surrounding_vars(op* loop, prog& prg);
 vector<string> surrounding_vars(const std::string& op, prog& prg);
@@ -1590,6 +1548,7 @@ struct cu_val {
   bool is_arg;
   string name;
   int arg_buf_pos;
+  int width;
 
   std::string str() const {
     if (is_arg) {
@@ -1810,6 +1769,7 @@ umap* op_end_times_map(schedule_info& sched, prog& prg);
 
 map<string, isl_set*> op_start_times_domains(prog& prg);
 void normalize_address_offsets(prog& prg);
+void remove_div(prog& prg);
 
 vector<op*> ops_at_level(const int level, prog& prg);
 bool is_op_scheduled(op* op, schedule_info& sched, prog& prg);
@@ -1854,6 +1814,7 @@ void push_below(loop* outer, loop* inner, prog& prg);
 void add_reuse_buffer_no_delta(const std::string& level, const std::string& buffer, prog& prg);
 
 op* find_coarse_grained_pipeline_loop(op* lp);
+op* find_coarse_grained_pipeline_loop(op* lp, prog& prg);
 
 vector<pair<string, pair<string, int> >> determine_output_shift_reg_map(
     prog& prg,
@@ -1867,12 +1828,14 @@ map<string, pair<string, int> > determine_shift_reg_map(
 
 dgraph build_in_to_out_shift_register_graph(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_info& hwinfo);
 dgraph build_shift_registers(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_info& hwinfo);
-ubuffer_impl port_group2bank(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_info& hwinfo);
+UBufferImpl port_group2bank(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_info& hwinfo);
 
-isl_map* build_buffer_impl(prog& prg, UBuffer& buf, schedule_info& hwinfo, ubuffer_impl& impl);
+isl_map* build_buffer_impl_embarrassing_banking(UBuffer& buf, schedule_info& hwinfo, EmbarrassingBankingImpl& impl);
 
-void generate_banks_garnet(CodegenOptions& options, prog& prg, UBuffer& buf, ubuffer_impl& impl, schedule_info& hw_info);
+void generate_banks_garnet(CodegenOptions& options, UBuffer& buf, UBufferImpl& impl, schedule_info& hw_info);
 
+UBufferImpl generate_optimized_memory_implementation(
+        CodegenOptions& options, UBuffer & buf, prog & prg, schedule_info& hwinfo);
 
 void sanity_check_iis(schedule_info& sched);
 
@@ -1896,6 +1859,8 @@ void adjust_outer_delays(schedule_info& sched, prog& prg);
 void adjust_outer_pipeline_delays(schedule_info& sched, prog& prg);
 
 bool no_violated_cycle_accurate_dependencies(schedule_info& sched, prog& prg);
+bool sw_schedule_respects_deps(umap* schedule, umap* deps);
+bool no_violated_dependencies(umap* schedule, umap* deps);
 
 bool schedule_bounds_fit_controller_bitwidth(const int bitwidth, schedule_info& sched, prog& prg);
 
@@ -1904,6 +1869,7 @@ void adjust_inner_iis(schedule_info& sched, prog& prg);
 vector<int> analyze_memory_demands(prog& prg, UBuffer& buf, schedule_info& hwinfo);
 
 void pad_top_level_ops_with_loops(prog& prg);
+void pad_bottom_level_ops_with_loops(prog& prg);
 
 int max_loop_depth(prog& prg);
 
@@ -1923,6 +1889,7 @@ UBuffer write_latency_adjusted_buffer(
 
 vector<isl_multi_aff*> write_addrs(op* op, const std::string& buf, prog& prg);
 
+vector<isl_multi_aff*> write_addrs(op* op, prog& prg);
 vector<isl_multi_aff*> read_addrs(op* op, prog& prg);
 vector<isl_multi_aff*> read_addrs(op* op, const std::string& buf, prog& prg);
 
@@ -1934,11 +1901,50 @@ struct app_dag {
   map<string, prog> fusion_group_progs;
   map<string, int> channel_sizes;
 
+  string edge_between(const std::string& src, const std::string& dst);
 
-  vector<string> sorted_fusion_groups();
+  std::set<string> inter_group_channels();
+
+  vector<path> all_paths(const std::string& src, const std::string& dst);
+
+  std::set<string> all_nodes() {
+    std::set<string> nodes;
+    for (auto& g : fusion_groups) {
+      nodes.insert(g.first);
+    }
+    return nodes;
+  }
+
+  maybe<vector<string> > sorted_fusion_groups();
+
+  std::set<string> children(const std::string& location);
+  std::set<string> ancestors(const std::string& location);
 
   bool is_boundary(const std::string& buf) {
     return prg.is_boundary(buf);
+  }
+
+  vector<string> longest_reconvergent_path(const std::string& buf);
+
+  string consumer_group(const std::string& buf) {
+    assert(fusion_groups.size() == fusion_group_progs.size());
+
+    for (auto& gp : fusion_group_progs) {
+      if (elem(buf, buffers_read(gp.second))) {
+        return gp.first;
+      }
+    }
+    cout << "Error: No consumer group for: " << buf << endl;
+    cout << "Program..." << endl;
+    prg.pretty_print();
+    cout << endl;
+
+    cout << "Fusion group progs..." << endl;
+    for (auto& gp : fusion_group_progs) {
+      gp.second.pretty_print();
+      cout << endl;
+    }
+    assert(false);
   }
 
   string producer_group(const std::string& buf) {
@@ -1992,4 +1998,48 @@ insert_inter_group_buffers(const std::map<std::string, std::set<std::string> >& 
 
 map<std::string, std::set<string> > one_stage_per_group(prog& prg);
 
+map<std::string, std::set<string> > fuse_pointwise_stages(prog& prg);
+
 vector<string> buffer_arg_names(op* op, prog& prg);
+
+void set_channel_depths_to_constant(const int constant, app_dag& dag);
+
+void unroll_mismatched_inner_loops(prog& prg);
+
+
+std::set<string> children(const std::string& to_merge, map<string, std::set<string> >& fusion_groups, prog& prg);
+std::set<string> parents(const std::string& to_merge, map<string, std::set<string> >& fusion_groups, prog& prg);
+
+
+std::set<string> buffers_read(const std::string& to_merge, map<string, std::set<string> >& fusion_groups, prog& prg);
+std::set<string> buffers_written(const std::string& to_merge, map<string, std::set<string> >& fusion_groups, prog& prg);
+
+std::set<string> children(const std::string& kernel, prog& prg);
+std::set<string> parents(const std::string& kernel, prog& prg);
+
+
+bool groups_are_contiguous(const map<string, std::set<string> >& fusion_groups, prog& prg);
+
+bool no_violated_cycle_accurate_dependencies(umap* deps, schedule_info& sched, prog& prg);
+bool no_violated_cycle_accurate_dependencies(schedule_info& sched, prog& prg);
+
+umap* cycle_accurate_deps(prog& prg);
+
+void sanity_check_negative_starts(schedule_info& sched, prog& prg);
+
+int max_completion_time(schedule_info& sched, prog& prg);
+
+void prepare_for_clockwork_scheduling(prog& prg);
+
+bool inner_loops_unrollable(const std::string& buf, const int unroll_factor, prog& prg);
+
+void generate_resource_sharing_code(
+    CodegenOptions& options,
+    app_dag& dag);
+
+
+std::string resource_sharing_loop_codegen(umap* schedmap);
+std::string perfect_loop_codegen(umap* schedmap);
+
+umap* clockwork_schedule_prog(prog& prg);
+

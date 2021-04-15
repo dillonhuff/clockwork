@@ -4,6 +4,12 @@ import numpy as np
 
 plt.style.use('seaborn-pastel')
 
+font = {'family' : 'normal',
+        'weight' : 'bold',
+        'size'   : 13}
+
+plt.rc('font', **font)
+
 # f = open('./misc/soda_resource_comparison_table.tex').readlines()
 f = open('./misc/multi_rate_standalone.tex').readlines()
 
@@ -19,14 +25,15 @@ def save_plot(name, labels, speedups, use_log=True):
         bar_colors.append('C2')
     barlist = ax.bar(x_pos, speedups, color=bar_colors, edgecolor='k', linewidth=2.0)
     plt.axhline(y=1.0, linewidth=2, color='black', linestyle='--')
-    plt.title(name)
-    plt.xlabel("Application and Throughput")
-    plt.ylabel("Improvement vs. HLS Implementation")
+    # plt.title(name)
+    plt.xlabel("Application and Throughput", font=font)
+    plt.ylabel("Improvement vs. HLS Implementation", font=font)
     if use_log:
         ax.set_yscale('log')
     plt.xticks(x_pos, labels)
 
-    fig.set_size_inches(16, 10)
+    scale = 1
+    fig.set_size_inches(35*scale, 10*scale)
     plt.show()
     fig.savefig(name, format='eps')
 
@@ -99,76 +106,6 @@ def table_op(table_lines, func):
     save_plot('clockwork_multi_rate_ff.eps', labels, ff_savings)
     save_plot('clockwork_multi_rate_bram.eps', labels, bram_savings)
     save_plot('clockwork_multi_rate_dsp.eps', labels, dsp_savings)
-    # fig, ax = plt.subplots()
-    # x_pos = [i for i, _ in enumerate(labels)]
-    # bar_colors = []
-    # for i in range(6):
-        # bar_colors.append('C0')
-    # for i in range(6):
-        # bar_colors.append('C1')
-    # for i in range(6):
-        # bar_colors.append('C2')
-    # barlist = ax.bar(x_pos, speedups, color=bar_colors, edgecolor='k')
-    # plt.axhline(y=1.0, linewidth=2, color='black', linestyle='--')
-    # plt.xlabel("Application and Throughput")
-    # plt.ylabel("Improvement vs. HLS Implementation")
-    # ax.set_yscale('log')
-    # plt.xticks(x_pos, labels)
-
-    # fig.set_size_inches(16, 10)
-    # plt.show()
-    # fig.savefig('clockwork_multi_rate_speedup.eps', format='eps')
-    
-    # fig, ax = plt.subplots()
-    # x_pos = [i for i, _ in enumerate(labels)]
-    # barlist = ax.bar(x_pos, lut_savings)
-    # for i in range(6):
-        # barlist[i].set_color('C1')
-    # for i in range(6):
-        # barlist[6 + i].set_color('C2')
-    # plt.xlabel("Application and Throughput")
-    # plt.ylabel("LUT use vs. HLS Implementation")
-    # plt.title("Clockwork LUT Use vs. HLS Baseline")
-    # plt.xticks(x_pos, labels)
-
-    # fig.set_size_inches(16, 10)
-    # plt.show()
-    # fig.savefig('clockwork_multi_rate_lut.eps', format='eps')
-    
-    # fig, ax = plt.subplots()
-    # x_pos = [i for i, _ in enumerate(labels)]
-    # barlist = ax.bar(x_pos, ff_savings)
-
-    # for i in range(6):
-        # barlist[i].set_color('C1')
-    # for i in range(6):
-        # barlist[6 + i].set_color('C2')
-    # plt.xlabel("Application and Throughput")
-    # plt.ylabel("FF use vs. HLS Implementation")
-    # plt.title("Clockwork FF Use vs. HLS Baseline")
-    # plt.xticks(x_pos, labels)
-
-    # fig.set_size_inches(16, 10)
-    # plt.show()
-    # fig.savefig('clockwork_multi_rate_ff.eps', format='eps')
-
-    # fig, ax = plt.subplots()
-    # x_pos = [i for i, _ in enumerate(labels)]
-    # barlist = ax.bar(x_pos, bram_savings)
-    # for i in range(6):
-        # barlist[i].set_color('C1')
-    # for i in range(6):
-        # barlist[6 + i].set_color('C2')
-    # plt.xlabel("Application and Throughput")
-    # plt.ylabel("BRAM use vs. HLS Implementation")
-    # plt.title("Clockwork BRAM Use vs. HLS Baseline")
-    # plt.xticks(x_pos, labels)
-
-    # fig.set_size_inches(16, 10)
-    # plt.show()
-    # fig.savefig('clockwork_multi_rate_bram.eps', format='eps')
-
-    # fig, ax = plt.subplots()
     # x_pos = [i for i, _ in enumerate(labels)]
     # barlist = ax.bar(x_pos, dsp_savings)
     # for i in range(6):

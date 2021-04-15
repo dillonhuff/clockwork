@@ -53,6 +53,14 @@ print(res)
 assert(len(res) % 2 == 0)
 assert(len(res) == 4*2*3)
 
+lut_reductions_1 = []
+ff_reductions_1 = []
+bram_reductions_1 = []
+
+lut_reductions_32 = []
+bram_reductions_32 = []
+ff_reductions_32 = []
+
 lut_reductions = []
 bram_reductions = []
 ff_reductions = []
@@ -71,6 +79,10 @@ while i < len(res):
 
     pct_reduction = 100.0 * ((soda_luts - cw_luts) / soda_luts)
     lut_reductions.append(pct_reduction)
+    if soda_res[1] == '32':
+        lut_reductions_32.append(pct_reduction)
+    if soda_res[1] == '1':
+        lut_reductions_1.append(pct_reduction)
 
     print('SODA LUTs    :', soda_luts)
     print('CW LUTs      :', cw_luts)
@@ -82,6 +94,10 @@ while i < len(res):
 
     pct_reduction = 100.0 * ((soda_brams - cw_brams) / soda_brams)
     bram_reductions.append(pct_reduction)
+    if soda_res[1] == '32':
+        bram_reductions_32.append(pct_reduction)
+    if soda_res[1] == '1':
+        bram_reductions_1.append(pct_reduction)
 
     print('SODA BRAMs:', soda_brams)
     print('CW BRAMs  :', cw_brams)
@@ -93,6 +109,10 @@ while i < len(res):
 
     pct_reduction = 100.0 * ((soda_ffs - cw_ffs) / soda_ffs)
     ff_reductions.append(pct_reduction)
+    if soda_res[1] == '32':
+        ff_reductions_32.append(pct_reduction)
+    if soda_res[1] == '1':
+        ff_reductions_1.append(pct_reduction)
 
     print('SODA FFs  :', soda_ffs)
     print('CW FFs    :', cw_ffs)
@@ -105,6 +125,24 @@ print('Average LUT reduction :', statistics.mean(lut_reductions))
 print('Average FF reduction:', statistics.mean(ff_reductions))
 print('Average BRAM reduction:', statistics.mean(bram_reductions))
 print()
+
+assert(len(lut_reductions_1) == 4)
+assert(len(ff_reductions_1) == 4)
+assert(len(bram_reductions_1) == 4)
+
+assert(len(lut_reductions_32) == 4)
+assert(len(ff_reductions_32) == 4)
+assert(len(bram_reductions_32) == 4)
+
+print('Average LUT reduction 1pix / cycle:', statistics.mean(lut_reductions_1))
+print('Average bram reduction 1pix / cycle:', statistics.mean(bram_reductions_1))
+print('Average FF reduction 1pix / cycle:', statistics.mean(ff_reductions_1))
+print()
+print('Average LUT reduction 32pix / cycle:', statistics.mean(lut_reductions_32))
+print('Average bram reduction 32pix / cycle:', statistics.mean(bram_reductions_32))
+print('Average FF reduction 32pix / cycle:', statistics.mean(ff_reductions_32))
+print()
+
 # print('Geomean LUT reduction :', statistics.geometric_mean(lut_reductions))
 # print('Geomean FF reduction:', statistics.geometric_mean(ff_reductions))
 # print('Geomean BRAM reduction:', statistics.geometric_mean(bram_reductions))

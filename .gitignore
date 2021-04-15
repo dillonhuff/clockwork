@@ -64,3 +64,7 @@ warp_and_upsample*
 ef_*
 unoptimized_*
 aligner
+clockwork
+lib/
+include/
+barvinok-0.41/

@@ -27,11 +27,13 @@ typedef isl_union_set uset;
 #include <vector>
 #include <map>
 #include <string>
+#include <unordered_set>
 
 using std::vector;
 using std::pair;
 using std::map;
 using std::string;
+using std::unordered_set;
 
 std::string dim_name(isl_set* const a, const int d);
 std::string dim_name(isl_aff* const a, const int d);
@@ -118,6 +120,7 @@ bool equal(isl_map* const l, isl_map* const r);
 bool equal(isl_aff* const l, isl_aff* const r);
 bool equal(uset* const l, uset* const r);
 bool equal(umap* const l, umap* const r);
+bool equal_regardless_of_domain(isl_map* const l, isl_map* const r);
 
 bool empty(umap* const s);
 bool empty(isl_map* const s);
@@ -189,6 +192,8 @@ std::string str(isl_multi_union_pw_aff* const pma);
 
 isl_map* linear_address_map(isl_set* s);
 isl_map* linear_address_map_lake(isl_set* s, int fetch_width);
+isl_map* linear_address_map_with_index(isl_set* s, vector<int> index);
+isl_map* linear_domain_map_with_index(isl_set* s, unordered_set<int> index);
 isl_map* linear_address_map_with_index(isl_set* s, vector<int> index, int fetch_width);
 
 vector<vector<int> > get_access_matrix_from_map(isl_map* acc_map);
@@ -213,6 +218,7 @@ isl_map* gen_map_from_sched_vec(isl_ctx* ctx, vector<string> sched_vec, string o
 isl_map* gen_hw_sched_from_sched_vec(isl_ctx* ctx, vector<string> sched_vec, string op_name);
 isl_map* gen_hw_sched_from_sched_vec(isl_ctx* ctx, vector<string> sched_vec, vector<string> var_list, string op_name);
 vector<string> get_map_in_dim_id(isl_map* m);
+string get_in_dim_name(isl_map* m, int i);
 
 unsigned get_dim(isl_set* const s);
 
@@ -367,6 +373,16 @@ isl_point* lexmaxpt(isl_set* const m0);
 isl_val* lexminval(isl_set* const m0);
 isl_val* lexmaxval(isl_set* const m0);
 
+int get_domain_range(isl_set* const dom, int dim);
+int get_domain_span_range(isl_map* const m, int dim);
+pair<int, int> get_domain_merge_dims(isl_map* m );
+vector<pair<int, int>> get_all_domain_merge_dims(isl_map* m );
+isl_map* merge_domain_dim(isl_map* m);
+
+
+//vectorization transformation
+isl_map* get_domain_trans(isl_set* dom, int pos, int fetch_width);
+
 umap* lexmax(umap* const m0);
 
 isl_map* lexmax(isl_map* const m0);
@@ -404,7 +420,13 @@ isl_map* retrive_map_domain_with_dim(isl_map*, isl_set*);
 isl_map* get_domain_ii_transform(isl_ctx* ctx, isl_set* const s, int ii);
 isl_map* get_shift_map(isl_map* s);
 isl_map* delay_schedule_inner_most(isl_map* s, int delay);
+isl_map* set_schedule_delay(isl_map* m, int delay);
 isl_map* delay_schedule_domain_dim(isl_map* s, int dom_dim, int delay);
+
+isl_map* remove_irrelevant_in_dim(isl_map* m);
+isl_map* set_in_dim_to_val(isl_map* m, int in_dim, int val);
+isl_map* remove_in_dims(isl_map* m, vector<int> remove_dims);
+
 vector<bool> relation_map(isl_map* m);
 int get_involve_dim(isl_map* m, int out_dim);
 vector<int> out_involve_dim(isl_map* m, int in_dim);
@@ -413,6 +435,8 @@ isl_map* peel_schedule_domain_dim(isl_map* m, int dom_dim, int delay);
 int get_peel_schedule_domain_dim(isl_map* m, int dom_dim);
 
 //some map transformation from reconstruct constraints
+int get_pad_remainder(isl_map*, int, int);
+isl_map* reset_domain_coeff(isl_map* m, int dom_dim_id, int val);
 isl_map* pad_to_domain_map(isl_map* s, int depth);
 isl_map* pad_to_domain_ubuf_map(isl_map* s, int dom_dim_id, int depth);
 isl_map* shift_domain_map(isl_map* s, vector<int> shift_depth);
@@ -592,6 +616,8 @@ uset* gist(uset* base, uset* context);
 isl_set* gist(isl_set* base, isl_set* context);
 
 isl_map* project_all_but(isl_map* const dmap, const int d);
+isl_map* project_all_out_but(isl_map* const dmap, const int d);
+isl_map* project_all_in_but(isl_map* const dmap, const int d);
 isl_set* project_all_but(isl_set* const dmap, const int d);
 isl_set* project_out(isl_set* const dmap, const int d);
 isl_map* project_out(isl_map* const dmap, const int d);
@@ -649,6 +675,7 @@ isl_val* eval(isl_aff* a, isl_point* p);
 
 
 isl_union_set* diff(isl_union_set* const m0, isl_union_set* const m1);
+isl_set* diff(isl_set* const m0, isl_set* const m1);
 
 
 isl_union_map* diff(isl_union_map* const m0, isl_union_map* const m1);
