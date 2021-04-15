@@ -2438,6 +2438,7 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
 
     //New refactor method
     map<string, vector<umap*>> get_access_pattern_map(vector<pair<string, umap*>> rewrite_buf2op_map, map<string, isl_map*> & sched_map, int dim_id, int fetch_width);
+    vector<umap*> get_access_pattern_vector(umap* rewrite_buf2op, string pt_name, int dim_id, int fetch_width);
 
     map<string, isl_map*> produce_vectorized_schedule(string in_pt, string out_pt);
     map<string, isl_map*> produce_vectorized_schedule(string in_pt, string out_pt, int dim_id);

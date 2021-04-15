@@ -14402,7 +14402,8 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   //test_apps.push_back(demosaic_complex());
   //test_apps.push_back(fft8_unroll8());
   //
-  //test_apps.push_back(camera_pipeline_new());
+  test_apps.push_back(camera_pipeline_new_trunc());
+  test_apps.push_back(camera_pipeline_new());
   test_apps.push_back(down_sample());
   test_apps.push_back(gaussian());
   test_apps.push_back(conv_3_3());
@@ -16893,8 +16894,15 @@ void relax_delays_rate_matched(schedule_info& sched, prog& prg) {
             d += prod_ii * fetch_width + 6;
         } else if (equal_start_time && prod_need_index){
             d += 3;
+            //TODO: remove this hack with 2 round of delay optimization
+        } else if (contains(cons_op_name, "op_hcompute_demosaicked_1_stencil_1")) {
+            d += 96;
+            cout  << "add delay to" << cons_op_name << endl;
+            break;
         }
     }
+    if (lp->name == "r_r_s0_y")
+        continue;
     sched.op_offset_within_parent[lp] += d;
   }
 }
