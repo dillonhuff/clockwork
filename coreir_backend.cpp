@@ -52,7 +52,7 @@ static int not_fully_optimizable = 0;
 
 template<typename T, typename Q>
 void sort_lt_snd_2(std::vector<std::pair<T, Q> >& outputs) {
-  sort_lt(outputs, [](const std::pair<T,Q> &x){return x.second;});
+    dbhc::sort_lt(outputs, [](const std::pair<T,Q> &x){return x.second;});
 }
 
 int min_address(affine_controller_ctrl& ctrl) {
@@ -323,7 +323,7 @@ affine_controller_ctrl pack_controller(affine_controller_ctrl& unpacked) {
     map<int, int> outer_replacements;
     int n = 0;
     for (int d = 0; d < num_in_dims(unpacked.access_function); d++) {
-      if (!contains_key(d, split_dims)) {
+      if (!CoreIR::contains_key(d, split_dims)) {
         dvars.push_back("d" + str(n));
         iis.push_back(to_int(get_coeff(unpacked.sched, d)));
         ranges.push_back(dom_extents.at(d));
@@ -414,7 +414,7 @@ M3_config instantiate_M3_verilog(CodegenOptions& options, const std::string& lon
   map<int, affine_controller_ctrl> out_port_controllers;
 
   for(auto pt : impl.bank_writers[b]) {
-    int count = map_find({pt, b}, ubuffer_port_and_bank_to_bank_port);
+    int count = dbhc::map_find({pt, b}, ubuffer_port_and_bank_to_bank_port);
     string port_rep = pt;
     string op_rep_name = domain_name(to_map(buf.access_map.at(port_rep)));
     op* rep = prg.find_op(op_rep_name);
@@ -454,7 +454,7 @@ M3_config instantiate_M3_verilog(CodegenOptions& options, const std::string& lon
   }
 
   for(auto pt : impl.bank_readers[b]) {
-    int count = map_find({pt, b}, ubuffer_port_and_bank_to_bank_port);
+    int count = dbhc::map_find({pt, b}, ubuffer_port_and_bank_to_bank_port);
     string port_rep = pt;
     string op_rep_name = domain_name(to_map(buf.access_map.at(port_rep)));
     op* rep = prg.find_op(op_rep_name);
@@ -575,7 +575,7 @@ bool all_constant_accesses(UBuffer& buf) {
 
 pair<EmbarrassingBankingImpl, isl_map*> build_buffer_impl(prog& prg, UBuffer& buf, schedule_info& hwinfo) {
   EmbarrassingBankingImpl impl;
-  maybe<std::set<int> > embarassing_banking =
+  dbhc::maybe<std::set<int> > embarassing_banking =
     embarassing_partition(buf);
   bool has_embarassing_partition = embarassing_banking.has_value();
   assert(has_embarassing_partition);
@@ -650,7 +650,7 @@ build_ubuffer_to_bank_binding(const UBufferImpl& impl) {
     string pt = pt_srcs.first;
     for (int b : pt_srcs.second) {
       ubuffer_port_and_bank_to_bank_port[{pt, b}] =
-        map_find(b, bank_to_next_available_in_port);
+        dbhc::map_find(b, bank_to_next_available_in_port);
       bank_to_next_available_in_port[b]++;
     }
   }
@@ -662,7 +662,7 @@ build_ubuffer_to_bank_binding(const UBufferImpl& impl) {
     string pt = pt_srcs.first;
     for (int b : pt_srcs.second) {
       ubuffer_port_and_bank_to_bank_port[{pt, b}] =
-        map_find(b, bank_to_next_available_out_port);
+        dbhc::map_find(b, bank_to_next_available_out_port);
       bank_to_next_available_out_port[b]++;
     }
   }
@@ -793,7 +793,7 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
     for (int b = 0; b < num_banks; b++) {
       auto currbank = bank_map[b];
       for(auto pt : bank_writers[b]) {
-        int count = map_find({pt, b}, ubuffer_port_and_bank_to_bank_port);
+        int count = dbhc::map_find({pt, b}, ubuffer_port_and_bank_to_bank_port);
         def->connect(
             currbank->sel("data_in_" + str(count)),
             def->sel("self." + buf.container_bundle(pt) + "." + str(buf.bundle_offset(pt))));
@@ -805,7 +805,7 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
       vector<Wireable*> conds;
       vector<Wireable*> values;
       for (auto b : src_banks) {
-        int count = map_find({pt, b}, ubuffer_port_and_bank_to_bank_port);
+        int count = dbhc::map_find({pt, b}, ubuffer_port_and_bank_to_bank_port);
         conds.push_back(bank_map[b]->sel("data_out_" + str(count) + "_valid"));
         values.push_back(def->sel("bank_" + str(b) + ".data_out_" + str(count)));
       }
@@ -1471,7 +1471,7 @@ void generate_coreir_compute_unit(CodegenOptions& options, bool found_compute,
   for (pair<string, string> bundle : incoming_bundles(op, buffers, prg)) {
     string buf_name = bundle.first;
     string bundle_name = bundle.second;
-    auto buf = map_find(buf_name, buffers);
+    auto buf = dbhc::map_find(buf_name, buffers);
     int pixel_width = buf.port_widths;
     int pix_per_burst =
       buf.lanes_in_bundle(bundle_name);
@@ -1483,7 +1483,7 @@ void generate_coreir_compute_unit(CodegenOptions& options, bool found_compute,
   for (pair<string, string> bundle : outgoing_bundles(op, buffers, prg)) {
     string buf_name = bundle.first;
     string bundle_name = bundle.second;
-    auto buf = map_find(buf_name, buffers);
+    auto buf = dbhc::map_find(buf_name, buffers);
     int pixel_width = buf.port_widths;
     int pix_per_burst =
       buf.lanes_in_bundle(bundle_name);
@@ -1521,7 +1521,7 @@ void generate_coreir_compute_unit(CodegenOptions& options, bool found_compute,
       }
 
       for (pair<string, string> bundle : incoming_bundles(op, buffers, prg)) {
-        auto buf = map_find(bundle.first, buffers);
+        auto buf = dbhc::map_find(bundle.first, buffers);
         cout << "Looking for connection for " << buf.name << "." << bundle.second << endl;
 
         bool found = false;
@@ -1550,7 +1550,7 @@ void generate_coreir_compute_unit(CodegenOptions& options, bool found_compute,
 
       cout << "More than oune outgoing bundle" << endl;
       for (pair<string, string> bundle : outgoing_bundles(op, buffers, prg)) {
-        auto buf = map_find(bundle.first, buffers);
+        auto buf = dbhc::map_find(bundle.first, buffers);
         bool found = false;
         cout << "# of selects = " << halide_cu->getSelects().size() << endl;
         cout << CoreIR::toString(halide_cu) << endl;
@@ -1587,7 +1587,7 @@ void generate_coreir_compute_unit(CodegenOptions& options, bool found_compute,
 
         cout << tab(1) << "buf = " << buf_name << ", bundle = " << bundle_name << endl;
 
-        auto buf = map_find(buf_name, buffers);
+        auto buf = dbhc::map_find(buf_name, buffers);
         int pix_width = buf.port_widths;
         int nlanes = buf.lanes_in_bundle(bundle_name);
         int bundle_width = buf.port_bundle_width(bundle_name);
@@ -1637,13 +1637,13 @@ Wireable* write_start_wire(ModuleDef* def, const std::string& opname) {
 
 void connect_op_control_wires(CodegenOptions& options, ModuleDef* def, op* op, schedule_info& hwinfo, Instance* controller) {
   cout << "Find compute" << endl;
-  //int op_latency = map_find(op->name, hwinfo.op_compute_unit_latencies);
+  //int op_latency = dbhc::map_find(op->name, hwinfo.op_compute_unit_latencies);
   int op_latency = hwinfo.compute_latency(op);
-  //map_find(op->name, hwinfo.op_compute_unit_latencies);
+  //dbhc::map_find(op->name, hwinfo.op_compute_unit_latencies);
   int read_latency =
     op->buffers_read().size() == 0 ? 0 :
     hwinfo.load_latency(pick(op->buffers_read()));
-    //map_find(pick(op->buffers_read()), hwinfo.buffer_load_latencies);
+    //dbhc::map_find(pick(op->buffers_read()), hwinfo.buffer_load_latencies);
     cout << "Done Finding compute , op Latency : " << op_latency
         << ", read Latency: " << read_latency << endl;
 
@@ -2041,7 +2041,7 @@ coreir_moduledef(CodegenOptions& options,
     string out_rep = eb.first;
     string out_bundle = eb.second;
 
-    UBuffer out_buf = map_find(out_rep, buffers);
+    UBuffer out_buf = dbhc::map_find(out_rep, buffers);
 
     int pixel_width = out_buf.port_widths;
     int pix_per_burst =
@@ -2173,7 +2173,7 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
 
   //this is the flag to wire stencil valid signal
   bool need_pass_valid = false;
-  maybe<string> last_producer_buf_with_tile;
+  dbhc::maybe<string> last_producer_buf_with_tile;
 
   //TODO Clean the logic here
   for (auto op : ops_dft) {
@@ -2184,7 +2184,7 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
       generate_coreir_op_controller(options, def, op, sched_maps, hwinfo);
     }
     for (auto var : op->index_variables_needed_by_compute) {
-      int level = map_find(var, levels);
+      int level = dbhc::map_find(var, levels);
       auto var_wire = exe_start_control_vars(def, op->name)->sel(level);
       def->connect(def->sel(op->name)->sel(var), var_wire);
     }
@@ -2193,7 +2193,7 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
     for (pair<string, string> bundle : outgoing_bundles(op, buffers, prg)) {
       string buf_name = bundle.first;
       string bundle_name = bundle.second;
-      auto buf = map_find(buf_name, buffers);
+      auto buf = dbhc::map_find(buf_name, buffers);
       int pixel_width = buf.port_widths;
 
       assert(buf.is_input_bundle(bundle.second));
@@ -2231,7 +2231,7 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
     for (pair<string, string> bundle : incoming_bundles(op, buffers, prg)) {
       string buf_name = bundle.first;
       string bundle_name = bundle.second;
-      auto buf = map_find(buf_name, buffers);
+      auto buf = dbhc::map_find(buf_name, buffers);
 
       assert(buf.is_output_bundle(bundle.second));
 
@@ -2274,7 +2274,7 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
           if (need_pass_valid) {
             //skip the self loop I/O, or the node with init
             //FIXME this may not work with multiple input
-            if ( (!elem(buf_name, outgoing_buffers(buffers, op, prg))) &&
+            if ( (!dbhc::elem(buf_name, outgoing_buffers(buffers, op, prg))) &&
                     (!contains(buf_name, "clkwrk_dsa"))){
                def->connect(buf_name + "." + bundle_name +"_extra_ctrl", op->name + ".valid_pass_in" );
             }
@@ -2397,7 +2397,7 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
     vector<string> surrounding = surrounding_vars(op, prg);
     for (auto var : op->index_variables_needed_by_compute) {
       assert(options.rtl_options.use_external_controllers);
-      int level = map_find(var, levels);
+      int level = dbhc::map_find(var, levels);
       auto var_wire = exe_start_control_vars(def, op->name)->sel(level);
       def->connect(def->sel(op->name)->sel(var), var_wire);
     }
@@ -2407,7 +2407,7 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
     for (pair<string, string> bundle : outgoing_bundles(op, buffers, prg)) {
       string buf_name = bundle.first;
       string bundle_name = bundle.second;
-      auto buf = map_find(buf_name, buffers);
+      auto buf = dbhc::map_find(buf_name, buffers);
       int pixel_width = buf.port_widths;
 
       assert(buf.is_input_bundle(bundle.second));
@@ -2437,7 +2437,7 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
     for (pair<string, string> bundle : incoming_bundles(op, buffers, prg)) {
       string buf_name = bundle.first;
       string bundle_name = bundle.second;
-      auto buf = map_find(buf_name, buffers);
+      auto buf = dbhc::map_find(buf_name, buffers);
 
       assert(buf.is_output_bundle(bundle.second));
 
@@ -4675,7 +4675,7 @@ dgraph build_shift_registers_io(CodegenOptions& options, CoreIR::ModuleDef* def,
       for (auto dst : e.second) {
         pairs.push_back({dst, dg.weight(src, dst)});
       }
-      sort_lt(pairs, [](const pair<string, int>& pt) {
+      dbhc::sort_lt(pairs, [](const pair<string, int>& pt) {
           return pt.second;
           });
       if (pairs.size() > 0) {
@@ -4694,7 +4694,7 @@ dgraph build_shift_registers_io(CodegenOptions& options, CoreIR::ModuleDef* def,
       for (auto dst : e.second) {
         pairs.push_back({dst, dg.weight(src, dst)});
       }
-      sort_lt(pairs, [](const pair<string, int>& pt) {
+      dbhc::sort_lt(pairs, [](const pair<string, int>& pt) {
           return pt.second;
           });
       if (pairs.size() > 0) {
@@ -4727,13 +4727,13 @@ dgraph build_shift_registers(CodegenOptions& options, CoreIR::ModuleDef* def, pr
       for (auto v : shift_registers.out_edges.at(inpt)) {
         vals.push_back({v, shift_registers.weight(inpt, v)});
       }
-      sort_lt(vals, [](const pair<string, int> & v) {return v.second;});
+      dbhc::sort_lt(vals, [](const pair<string, int> & v) {return v.second;});
       for (auto v : vals) {
         cout << tab(1) << v.first << " -(" << v.second << ")-> " << v.second << endl;
       }
 
       vector<vector<pair<string, int> > > reg_chains;
-      split_by(vals, reg_chains, [](const pair<string, int>& a, const pair<string, int>& b) {
+      dbhc::split_by(vals, reg_chains, [](const pair<string, int>& a, const pair<string, int>& b) {
           return abs(a.second - b.second) < 20;
           });
 
@@ -4796,7 +4796,7 @@ dgraph build_shift_registers(CodegenOptions& options, CoreIR::ModuleDef* def, pr
   for (auto e : dg.out_edges) {
     string src = e.first;
     for (auto dst : e.second) {
-      if (!elem(dst, shift_registers.nodes)) {
+      if (!dbhc::elem(dst, shift_registers.nodes)) {
         shift_registers.add_edge(src, dst, dg.weight(src, dst));
       }
     }
@@ -4833,7 +4833,7 @@ bool allow_packed_sr(dgraph& shift_registers, UBuffer & buf, block_sreg * b)
 		return false;
 	}
 
-	sort_lt(outpts,[](const pair<string,int> &x){return x.second;});
+    dbhc::sort_lt(outpts,[](const pair<string,int> &x){return x.second;});
 	int diff = outpts[1].second - outpts[0].second;
 	b->chain_starts = {outpts[0].first,outpts[1].first};
 	b->init_delay = outpts[0].second;
@@ -5306,7 +5306,7 @@ void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
       string pt = pt_srcs.first;
       for (int b : pt_srcs.second) {
         ubuffer_port_and_bank_to_bank_port[{pt, b}] =
-          map_find(b, bank_to_next_available_in_port);
+          dbhc::map_find(b, bank_to_next_available_in_port);
         bank_to_next_available_in_port[b]++;
       }
     }
@@ -5318,7 +5318,7 @@ void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
       string pt = pt_srcs.first;
       for (int b : pt_srcs.second) {
         ubuffer_port_and_bank_to_bank_port[{pt, b}] =
-          map_find(b, bank_to_next_available_out_port);
+          dbhc::map_find(b, bank_to_next_available_out_port);
         bank_to_next_available_out_port[b]++;
       }
     }
@@ -5332,7 +5332,7 @@ void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
 
       for(auto pt : bank_readers[b])
       {
-        int count = map_find({pt, b}, ubuffer_port_and_bank_to_bank_port);
+        int count = dbhc::map_find({pt, b}, ubuffer_port_and_bank_to_bank_port);
         auto agen = ubuffer_port_agens[pt];
         def->connect(agen->sel("out"), currbank->sel("read_addr_" + str(count)));
         def->connect(currbank->sel("ren_" + str(count)),
@@ -5347,7 +5347,7 @@ void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
 
       for(auto pt : bank_readers[b])
       {
-        int count = map_find({pt, b}, ubuffer_port_and_bank_to_bank_port);
+        int count = dbhc::map_find({pt, b}, ubuffer_port_and_bank_to_bank_port);
         ubuffer_ports_to_bank_wires[pt].push_back(currbank->sel("data_out_" + str(count)));
         if (impl.outpt_to_bank[pt].size() > 1) {
           ubuffer_ports_to_bank_condition_wires[pt].push_back(eqConst(def, ubuffer_port_bank_selectors[pt], b));
@@ -5425,9 +5425,9 @@ isl_aff* bank_offset_aff(const std::string& reader, UBuffer& buf, const Embarras
   vector<string> coeffs;
   for (int d = 0; d < buf.logical_dimension(); d++) {
     dvs.push_back("d" + str(d));
-    if (elem(d, impl.partition_dims)) {
+    if (dbhc::elem(d, impl.partition_dims)) {
       coeffs.push_back(str(bank_stride) + "*" + dvs.at(d));
-      bank_stride *= map_find(d, impl.partitioned_dimension_extents);
+      bank_stride *= dbhc::map_find(d, impl.partitioned_dimension_extents);
     }
   }
 
@@ -5447,9 +5447,9 @@ CoreIR::Instance* build_bank_selector(const std::string& reader, UBuffer& buf, c
   vector<string> coeffs;
   for (int d = 0; d < buf.logical_dimension(); d++) {
     dvs.push_back("d" + str(d));
-    if (elem(d, impl.partition_dims)) {
+    if (dbhc::elem(d, impl.partition_dims)) {
       coeffs.push_back(str(bank_stride) + "*" + dvs.at(d));
-      bank_stride *= map_find(d, impl.partitioned_dimension_extents);
+      bank_stride *= dbhc::map_find(d, impl.partitioned_dimension_extents);
     }
   }
 
@@ -5474,7 +5474,7 @@ isl_aff* inner_bank_offset_aff(const std::string& reader, UBuffer& buf, const Em
   vector<string> coeffs;
   for (int d = 0; d < buf.logical_dimension(); d++) {
     dvs.push_back("d" + str(d));
-    if (!elem(d, impl.partition_dims)) {
+    if (!dbhc::elem(d, impl.partition_dims)) {
       coeffs.push_back(str(bank_stride) + "*" + dvs.at(d));
       bank_stride *= extents.at(d);
     }
@@ -5497,7 +5497,7 @@ CoreIR::Instance* build_inner_bank_offset(const std::string& reader, UBuffer& bu
   vector<string> coeffs;
   for (int d = 0; d < buf.logical_dimension(); d++) {
     dvs.push_back("d" + str(d));
-    if (!elem(d, impl.partition_dims)) {
+    if (!dbhc::elem(d, impl.partition_dims)) {
       coeffs.push_back(str(bank_stride) + "*" + dvs.at(d));
       bank_stride *= extents.at(d);
     }
@@ -5672,9 +5672,9 @@ double PE_energy_cost(power_analysis_params& power_params, power_analysis_info& 
   for (auto p : prg.all_ops()) {
     for (auto op : power_stats.PE_optype_counts[p->name]) {
       cout << tab(1) << op.first << " -> " << op.second << endl;
-      cout << tab(1) << "op_energy_cost : " << map_find(op.first, power_params.alu_op_energy_costs) << endl;
-      energy_cost += map_find(p->name, power_stats.op_counts) *
-        ((double) map_find(op.first, power_params.alu_op_energy_costs)) *
+      cout << tab(1) << "op_energy_cost : " << dbhc::map_find(op.first, power_params.alu_op_energy_costs) << endl;
+      energy_cost += dbhc::map_find(p->name, power_stats.op_counts) *
+        ((double) dbhc::map_find(op.first, power_params.alu_op_energy_costs)) *
         ((double)op.second);
       cout << "Total PE energy cost: " << energy_cost << endl;
     }
