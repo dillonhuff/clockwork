@@ -4686,20 +4686,32 @@ void generate_hls_code_unit_test(UBuffer& buf) {
     buf.port_bundles.at(pick(buf.get_in_bundles())).at(0) + "_delay";
   //buf.name;
 
-  for (auto b : buf.port_bundles) {
-    if (buf.is_out_pt(*(begin(b.second)))) {
+  //for (auto b : buf.port_bundles) {
+  //  if (buf.is_out_pt(*(begin(b.second)))) {
+  //  } else {
+  //    regex re(b.first + "(.*);");
+  //    string inpt = pick(b.second);
+  //    code_string = regex_replace(code_string, re, buf.name + "_" + b.first + "_bundle_write(" + b.first + ", " + delay_list + ", $1, 0"+");");
+  //  }
+  //}
+  //for (auto b : buf.port_bundles) {
+  //  if (buf.is_out_pt(*(begin(b.second)))) {
+  //    regex re0(b.first + "\\((.*)\\);");
+  //    code_string = regex_replace(code_string, re0, b.first + ".write(" + buf.name + "_" + b.first + "_bundle_read(" + delay_list + ", $1, 0" + "));");
+  //  } else {
+  //  }
+  //}
+
+  for (auto op: buf.get_ops()) {
+    string args;
+    if (elem(op, buf.get_write_ops())) {
+      args = sep_list({in_stream_name, buf.name + "_cache"},"", "", ", ");
     } else {
-      regex re(b.first + "(.*);");
-      string inpt = pick(b.second);
-      code_string = regex_replace(code_string, re, buf.name + "_" + b.first + "_bundle_write(" + b.first + ", " + delay_list + ", $1, 0"+");");
+      args = sep_list({buf.name + "_ubuf", out_stream_name},"", "", ", ");
     }
-  }
-  for (auto b : buf.port_bundles) {
-    if (buf.is_out_pt(*(begin(b.second)))) {
-      regex re0(b.first + "\\((.*)\\);");
-      code_string = regex_replace(code_string, re0, b.first + ".write(" + buf.name + "_" + b.first + "_bundle_read(" + delay_list + ", $1, 0" + "));");
-    } else {
-    }
+    regex re0(op + "\\((.*)\\);");
+    code_string = regex_replace(code_string, re0, op + "(" + args + ", $1" + ");");
+
   }
 
   out << "void " << buf.name << "(";
@@ -4712,9 +4724,7 @@ void generate_hls_code_unit_test(UBuffer& buf) {
     nargs++;
   }
   out << ") {" << endl;
-  for (auto inpt : buf.get_in_ports()) {
-    out << "\t" + buf.name + "_cache " + inpt + "_delay;\n\n";
-  }
+  out << "\t" + buf.name + "_cache " + buf.name + "_ubuf;\n\n";
   out << code_string << endl;
   out << "}" << endl;
 

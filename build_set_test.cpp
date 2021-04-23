@@ -1110,7 +1110,6 @@ void synth_conv_test() {
   for (auto it: buffers) {
     cout << it.second << endl;
     generate_hls_code_unit_test(it.second);
-    assert(false);
   }
 
   //int res = system("clang++ -std=c++11 tb_conv.cpp conv.cpp");
