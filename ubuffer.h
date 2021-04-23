@@ -1904,7 +1904,8 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
     std::string bundle_stream(const std::string& bundle_name) const {
       bool input_bundle = isIn.at(pick(port_bundles.at(bundle_name)));
       string bundle_type_str = bundle_type_string(bundle_name);
-      return string(input_bundle ? "Input" : "Output") + "Stream<" + bundle_type_str + " >& " + bundle_name;
+      //return string(input_bundle ? "Input" : "Output") + "Stream<" + bundle_type_str + " >& " + bundle_name;
+      return "HWStream<" + bundle_type_str + " >& " + bundle_name;
     }
 
     isl_union_set* all_memory() {
@@ -2785,6 +2786,7 @@ CoreIR::Module* affine_controller_use_lake_tile_counter(CodegenOptions& options,
 void generate_hls_code(CodegenOptions& options, std::ostream& out, UBuffer& buf);
 void generate_hls_code(std::ostream& out, UBuffer& buf);
 void generate_hls_code(UBuffer& buf);
+void generate_hls_code_unit_test(UBuffer& buf);
 
 map<string, isl_set*> input_ports_to_conditions(const std::string& outpt, UBuffer& buf);
 

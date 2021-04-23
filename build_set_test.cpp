@@ -1070,6 +1070,58 @@ void synth_sr_boundary_condition_test() {
 
 }
 
+void synth_conv_test() {
+  struct isl_ctx *ctx;
+  ctx = isl_ctx_alloc();
+
+  UBuffer buf;
+  buf.name = "conv";
+  buf.ctx = ctx;
+
+  buf.domain["write"] =
+    isl_set_read_from_str(ctx, "{ write[root = 0, i] : 0 <= i < 8}");
+  buf.access_map["write"] =
+    rdmap(ctx, "{ write[root = 0, i] -> conv[i] : 0 <= i < 8}");
+  buf.schedule["write"] =
+    isl_union_map_read_from_str(ctx, "{ write[root = 0, i] -> [i] : 0 <= i < 8 }");
+  buf.isIn["write"] = true;
+
+  // Read 0 through 7
+  buf.domain["read"] =
+    isl_set_read_from_str(ctx, "{ read[root = 0, i] : 0 <= i < 8}");
+  buf.access_map["read"] =
+    rdmap(ctx, "{ read[root = 0, i] -> conv[i] : 0 <= i < 8}");
+  buf.schedule["read"] =
+    isl_union_map_read_from_str(ctx, "{ read[root = 0, i] -> [i + 16] : 0 <= i < 8}");
+  //buf.domain["read"] =
+  //  isl_set_read_from_str(ctx, "{ read[i, j] : 0 <= i < 8 and 0 <= j < 3}");
+  //buf.access_map["read"] =
+  //  rdmap(ctx, "{ read[i, j] -> M[i + j] : 0 <= i < 8 and 0 <= j < 3}");
+  //buf.schedule["read"] =
+  //  isl_union_map_read_from_str(ctx, "{ read[i, j] -> [3*i + j + 6] : 0 <= i < 8 and 0 <= j < 3 }");
+  buf.isIn["read"] = false;
+
+  generate_hls_code_unit_test(buf);
+
+  map<string, UBuffer> buffers;
+  buffers.insert({"conv", buf});
+  buffer_vectorization({1}, {"conv"}, 4, buffers);
+
+  for (auto it: buffers) {
+    cout << it.second << endl;
+    generate_hls_code_unit_test(it.second);
+    assert(false);
+  }
+
+  //int res = system("clang++ -std=c++11 tb_conv.cpp conv.cpp");
+  //assert(res == 0);
+
+  //res = system("./a.out");
+  //assert(res == 0);
+
+  isl_ctx_free(buf.ctx);
+}
+
 void synth_wire_test() {
   struct isl_ctx *ctx;
   ctx = isl_ctx_alloc();
@@ -11165,6 +11217,9 @@ void blur_and_downsample_test() {
 }
 
 void playground() {
+    synth_wire_test();
+    synth_conv_test();
+    assert(false);
     {
         isl_ctx* ctx = isl_ctx_alloc();
         auto in_0 = isl_map_read_from_str(ctx,"{ input[i0, i1]-> data[i0, i1]: 0<=i0<=61 and 0<=i1<=61}");
@@ -14402,8 +14457,9 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   //test_apps.push_back(demosaic_complex());
   //test_apps.push_back(fft8_unroll8());
   //
-  test_apps.push_back(camera_pipeline_new_trunc());
-  test_apps.push_back(camera_pipeline_new());
+  test_apps.push_back(camera_pipeline_manual());
+  //test_apps.push_back(camera_pipeline_new_trunc());
+  //test_apps.push_back(camera_pipeline_new());
   test_apps.push_back(down_sample());
   test_apps.push_back(gaussian());
   test_apps.push_back(conv_3_3());
