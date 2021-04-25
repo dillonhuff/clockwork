@@ -2903,7 +2903,7 @@ bool RomReplaceMetaMapper(Instance* cnst) {
 
   json config_file;
 
-  config_file["mode"] = "lake";
+  config_file["mode"] = "sram";
   config_file["is_rom"] = true;
   config_file["width"] = width;
   config_file["depth"] = depth;
@@ -2928,7 +2928,7 @@ bool RomReplaceMetaMapper(Instance* cnst) {
   def->connect(pt->sel("in")->sel("ren"), buf->sel("ren_in_0"));
 
   cout << "Wiring rdata" << endl;
-  def->connect(buf->sel("O0"), pt->sel("in")->sel("rdata"));
+  def->connect(buf->sel("O4"), pt->sel("in")->sel("rdata"));
 
   def->removeInstance(cnst);
   inlineInstance(pt);
@@ -3068,7 +3068,7 @@ void map_memory(Module* top) {
   // rom_to_mem(c);
 
   // c->runPasses({"rungenerators"});
-  //A new pass to remove input enable signal affine controller
+  // A new pass to remove input enable signal affine controller
   // disconnect_input_enable(c, top);
 
   // c->runPasses({"cullgraph"});
@@ -3372,6 +3372,8 @@ void generate_coreir_without_ctrl(CodegenOptions& options,
   c->runPasses({"coreirjson"},{"global"});
 
   context->runPasses({"rungenerators", "removewires", "cullgraph"});
+  c->runPasses({"flatten"});
+  c->runPasses({"flattentypes"});
 
 
   auto global = context->getNamespace("global");

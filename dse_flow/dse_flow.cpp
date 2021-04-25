@@ -48,6 +48,9 @@ int main(int argc, char** argv) {
     func_map["mobilenet"] = mobilenet;
     func_map["laplacian_pyramid"] = laplacian_pyramid;
     func_map["up_sample"] = up_sample;
+    func_map["rom"] = rom;
+    func_map["counter"] = counter;
+    
 
    
     auto prg_ptr = func_map[app_name];
@@ -91,7 +94,7 @@ int main(int argc, char** argv) {
     } else {
 
 
-        bool gen_config_only = false; 
+        bool gen_config_only = true; 
         bool multi_accessor = true;
         
 
@@ -109,23 +112,23 @@ int main(int argc, char** argv) {
         
         generate_regression_testbench(prg);
 
-        //run verilator on all the generated verilog
-        // if (!gen_config_only) {
-        //     string name = prg.name;
-        //     auto verilog_files = get_files("./" + dir + "/"+name+"/verilog/");
-        //     verilog_files.push_back(name + ".v");
-        //     verilog_files.push_back("LakeWrapper.v");
-        //     bool extra_flag_for_lake = true;
-        //     int res = run_verilator_on(name, name + "_verilog_tb.cpp", verilog_files, extra_flag_for_lake);
-        //     assert(res == 0);
-        //     cmd("rm LakeWrapper.v");
+        // run verilator on all the generated verilog
+        if (!gen_config_only) {
+            string name = prg.name;
+            auto verilog_files = get_files("./" + dir + "/"+name+"/verilog/");
+            verilog_files.push_back(name + ".v");
+            verilog_files.push_back("LakeWrapper.v");
+            bool extra_flag_for_lake = true;
+            int res = run_verilator_on(name, name + "_verilog_tb.cpp", verilog_files, extra_flag_for_lake);
+            assert(res == 0);
+            cmd("rm LakeWrapper.v");
 
-        //     auto verilator_res = verilator_results(prg.name);
-        //     compare("cgra_" + prg.name + "_cpu_vs_verilog_comparison", verilator_res, cpu);
-        //     // //string app_type = "dualwithaddr";
-        //     // string app_type = "single_port_buffer";
-        //     // cpy_app_to_folder(app_type, prg.name);
-        // }
+            auto verilator_res = verilator_results(prg.name);
+            compare("cgra_" + prg.name + "_cpu_vs_verilog_comparison", verilator_res, cpu);
+            // //string app_type = "dualwithaddr";
+            // string app_type = "single_port_buffer";
+            // cpy_app_to_folder(app_type, prg.name);
+        }
         
         cout << "Passed!" << endl;
         cout << "Output name: " << dir << "/" << prg.name << endl;

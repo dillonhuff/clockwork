@@ -6,6 +6,15 @@
           ["out","Bit"]
         ]],
         "modparams":{"value":"Bool"}
+      },
+      "reg":{
+        "type":["Record",[
+          ["clk",["Named","coreir.clkIn"]],
+          ["in","BitIn"],
+          ["out","Bit"]
+        ]],
+        "modparams":{"clk_posedge":"Bool", "init":"Bool"},
+        "defaultmodargs":{"clk_posedge":["Bool",true], "init":["Bool",false]}
       }
     }
   },
@@ -16,23 +25,48 @@
         "genparams":{"width":"Int"},
         "modules":[
           [
-            {"width":["Int",52]},
+            {"width":["Int",54]},
             {
               "type":["Record",[
-                ["out",["Array",52,"Bit"]]
+                ["out",["Array",54,"Bit"]]
               ]],
-              "modparams":{"value":["BitVector",52]}
+              "modparams":{"value":["BitVector",54]}
+            }
+          ]
+        ]
+      },
+      "reg":{
+        "typegen":"coreir.regType",
+        "genparams":{"width":"Int"},
+        "modules":[
+          [
+            {"width":["Int",16]},
+            {
+              "type":["Record",[
+                ["clk",["Named","coreir.clkIn"]],
+                ["in",["Array",16,"BitIn"]],
+                ["out",["Array",16,"Bit"]]
+              ]],
+              "modparams":{"clk_posedge":"Bool", "init":["BitVector",16]},
+              "defaultmodargs":{"clk_posedge":["Bool",true], "init":[["BitVector",16],"16'hxxxx"]}
             }
           ]
         ]
       }
     },
     "typegens":{
+      "regType":[
+        {"width":"Int"},
+        "sparse",
+        [
+          [{"width":["Int",16]},["Record",[["clk",["Named","coreir.clkIn"]],["in",["Array",16,"BitIn"]],["out",["Array",16,"Bit"]]]]]
+        ]
+      ],
       "singleOutType":[
         {"width":"Int"},
         "sparse",
         [
-          [{"width":["Int",52]},["Record",[["out",["Array",52,"Bit"]]]]]
+          [{"width":["Int",54]},["Record",[["out",["Array",54,"Bit"]]]]]
         ]
       ]
     }
@@ -41,13 +75,16 @@
     "modules":{
       "PE":{
         "type":["Record",[
-          ["inst",["Array",52,"BitIn"]],
+          ["inst",["Array",54,"BitIn"]],
           ["inputs0",["Array",16,"BitIn"]],
           ["inputs1",["Array",16,"BitIn"]],
           ["inputs2",["Array",16,"BitIn"]],
-          ["inputs3","BitIn"],
-          ["inputs4","BitIn"],
-          ["inputs5","BitIn"],
+          ["inputs3",["Array",16,"BitIn"]],
+          ["inputs4",["Array",16,"BitIn"]],
+          ["inputs5",["Array",16,"BitIn"]],
+          ["inputs6","BitIn"],
+          ["inputs7","BitIn"],
+          ["inputs8","BitIn"],
           ["clk_en","BitIn"],
           ["O0",["Array",16,"Bit"]],
           ["O1","Bit"],
@@ -61,340 +98,480 @@
           ["out_cim_output_stencil",["Array",16,"Bit"]]
         ]],
         "instances":{
-          "c139638898174480":{
-            "genref":"coreir.const",
-            "genargs":{"width":["Int",52]},
-            "modargs":{"value":[["BitVector",52],"52'h0016000002c00"]}
-          },
-          "c139638907682960":{
+          "c139789444493840":{
             "modref":"corebit.const",
             "modargs":{"value":["Bool",true]}
           },
-          "c139638907683920":{
-            "genref":"coreir.const",
-            "genargs":{"width":["Int",52]},
-            "modargs":{"value":[["BitVector",52],"52'h88081000005ce"]}
-          },
-          "c139638907684304":{
+          "c139789444493904":{
             "modref":"corebit.const",
             "modargs":{"value":["Bool",true]}
           },
-          "c139638907684368":{
-            "genref":"coreir.const",
-            "genargs":{"width":["Int",52]},
-            "modargs":{"value":[["BitVector",52],"52'h0016000002c00"]}
-          },
-          "c139638907685136":{
-            "genref":"coreir.const",
-            "genargs":{"width":["Int",52]},
-            "modargs":{"value":[["BitVector",52],"52'h0016000002c00"]}
-          },
-          "c139638907685712":{
+          "c139789444494096":{
             "modref":"corebit.const",
             "modargs":{"value":["Bool",true]}
           },
-          "c139638907686224":{
+          "c139789444494416":{
             "genref":"coreir.const",
-            "genargs":{"width":["Int",52]},
-            "modargs":{"value":[["BitVector",52],"52'h0016000002c00"]}
+            "genargs":{"width":["Int",54]},
+            "modargs":{"value":[["BitVector",54],"54'h000a0000002c00"]}
           },
-          "c139638907686672":{
-            "modref":"corebit.const",
-            "modargs":{"value":["Bool",true]}
-          },
-          "c139638907686864":{
-            "modref":"corebit.const",
-            "modargs":{"value":["Bool",true]}
-          },
-          "c139638907733904":{
-            "modref":"corebit.const",
-            "modargs":{"value":["Bool",true]}
-          },
-          "c139638907735312":{
-            "modref":"corebit.const",
-            "modargs":{"value":["Bool",true]}
-          },
-          "c139638907887952":{
+          "c139789444494736":{
             "genref":"coreir.const",
-            "genargs":{"width":["Int",52]},
-            "modargs":{"value":[["BitVector",52],"52'h0016000002c00"]}
+            "genargs":{"width":["Int",54]},
+            "modargs":{"value":[["BitVector",54],"54'h3fc901000005c9"]}
           },
-          "c139638908161424":{
+          "c139789444495440":{
             "modref":"corebit.const",
             "modargs":{"value":["Bool",true]}
           },
-          "c139638908598352":{
+          "c139789444527824":{
             "modref":"corebit.const",
             "modargs":{"value":["Bool",true]}
           },
-          "c139638908729360":{
-            "genref":"coreir.const",
-            "genargs":{"width":["Int",52]},
-            "modargs":{"value":[["BitVector",52],"52'h88081000005ce"]}
-          },
-          "c139638908729424":{
+          "c139789444527888":{
             "modref":"corebit.const",
             "modargs":{"value":["Bool",true]}
           },
-          "c139638908730320":{
+          "c139789444528336":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",54]},
+            "modargs":{"value":[["BitVector",54],"54'h000a0000002c00"]}
+          },
+          "c139789444528592":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",54]},
+            "modargs":{"value":[["BitVector",54],"54'h000a0000002c00"]}
+          },
+          "c139789444529104":{
             "modref":"corebit.const",
             "modargs":{"value":["Bool",true]}
           },
-          "c139638908834384":{
+          "c139789444529424":{
             "modref":"corebit.const",
             "modargs":{"value":["Bool",true]}
           },
-          "c139638908834768":{
+          "c139789444529616":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",54]},
+            "modargs":{"value":[["BitVector",54],"54'h000a0000002c00"]}
+          },
+          "c139789444529872":{
             "modref":"corebit.const",
             "modargs":{"value":["Bool",true]}
           },
-          "c139638908835024":{
-            "genref":"coreir.const",
-            "genargs":{"width":["Int",52]},
-            "modargs":{"value":[["BitVector",52],"52'h88081000005ce"]}
-          },
-          "c139638911014800":{
-            "genref":"coreir.const",
-            "genargs":{"width":["Int",52]},
-            "modargs":{"value":[["BitVector",52],"52'h0016000002c00"]}
-          },
-          "c139638911071376":{
-            "genref":"coreir.const",
-            "genargs":{"width":["Int",52]},
-            "modargs":{"value":[["BitVector",52],"52'h0000400ff0000"]}
-          },
-          "c139638911072080":{
-            "genref":"coreir.const",
-            "genargs":{"width":["Int",52]},
-            "modargs":{"value":[["BitVector",52],"52'h00c1affffca52"]}
-          },
-          "c139638911435600":{
+          "c139789444530000":{
             "modref":"corebit.const",
             "modargs":{"value":["Bool",true]}
           },
-          "c139638911438608":{
-            "genref":"coreir.const",
-            "genargs":{"width":["Int",52]},
-            "modargs":{"value":[["BitVector",52],"52'h0000400010000"]}
-          },
-          "c139638911438672":{
-            "genref":"coreir.const",
-            "genargs":{"width":["Int",52]},
-            "modargs":{"value":[["BitVector",52],"52'hff3c1000031ce"]}
-          },
-          "c139638911532240":{
+          "c139789444530064":{
             "modref":"corebit.const",
             "modargs":{"value":["Bool",true]}
           },
-          "c139638911532304":{
+          "c139789444546640":{
             "genref":"coreir.const",
-            "genargs":{"width":["Int",52]},
-            "modargs":{"value":[["BitVector",52],"52'h0016000002c00"]}
+            "genargs":{"width":["Int",54]},
+            "modargs":{"value":[["BitVector",54],"54'h28008100000421"]}
           },
-          "c139638911532752":{
+          "c139789444547280":{
             "genref":"coreir.const",
-            "genargs":{"width":["Int",52]},
-            "modargs":{"value":[["BitVector",52],"52'h88081000005ce"]}
+            "genargs":{"width":["Int",54]},
+            "modargs":{"value":[["BitVector",54],"54'h28008100000421"]}
           },
-          "c139638911786960":{
+          "c139789444547408":{
             "genref":"coreir.const",
-            "genargs":{"width":["Int",52]},
-            "modargs":{"value":[["BitVector",52],"52'h0016000002c00"]}
+            "genargs":{"width":["Int",54]},
+            "modargs":{"value":[["BitVector",54],"54'h28008100000421"]}
           },
-          "c139638912496784":{
+          "c139789444548624":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",54]},
+            "modargs":{"value":[["BitVector",54],"54'h28008100000421"]}
+          },
+          "c139789444550288":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",54]},
+            "modargs":{"value":[["BitVector",54],"54'h28008100000421"]}
+          },
+          "c139789444800592":{
             "modref":"corebit.const",
             "modargs":{"value":["Bool",true]}
           },
-          "c139638912499344":{
+          "c139789444800848":{
             "genref":"coreir.const",
-            "genargs":{"width":["Int",52]},
-            "modargs":{"value":[["BitVector",52],"52'h88081000005ce"]}
+            "genargs":{"width":["Int",54]},
+            "modargs":{"value":[["BitVector",54],"54'h000a0000002c00"]}
           },
-          "c139638912499664":{
+          "c139789444801104":{
             "modref":"corebit.const",
             "modargs":{"value":["Bool",true]}
           },
-          "c139638912516432":{
-            "genref":"coreir.const",
-            "genargs":{"width":["Int",52]},
-            "modargs":{"value":[["BitVector",52],"52'h0000400000000"]}
-          },
-          "c139638912518160":{
+          "c139789444801552":{
             "modref":"corebit.const",
             "modargs":{"value":["Bool",true]}
           },
-          "c139638914943504":{
+          "c139789444801680":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",54]},
+            "modargs":{"value":[["BitVector",54],"54'h000a0000002c00"]}
+          },
+          "c139789444802256":{
             "modref":"corebit.const",
             "modargs":{"value":["Bool",true]}
           },
-          "c139638915128400":{
+          "c139789444803856":{
             "genref":"coreir.const",
-            "genargs":{"width":["Int",52]},
-            "modargs":{"value":[["BitVector",52],"52'h88081000005ce"]}
+            "genargs":{"width":["Int",54]},
+            "modargs":{"value":[["BitVector",54],"54'h000a0000002c00"]}
           },
-          "c139638916511952":{
+          "c139789444804304":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",54]},
+            "modargs":{"value":[["BitVector",54],"54'h28008100000421"]}
+          },
+          "c139789444867600":{
             "modref":"corebit.const",
             "modargs":{"value":["Bool",true]}
           },
-          "c139638916513296":{
+          "c139789444868496":{
             "genref":"coreir.const",
-            "genargs":{"width":["Int",52]},
-            "modargs":{"value":[["BitVector",52],"52'h88081000005ce"]}
+            "genargs":{"width":["Int",54]},
+            "modargs":{"value":[["BitVector",54],"54'h28008100000421"]}
           },
-          "c139638916785168":{
+          "c139789444868560":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",54]},
+            "modargs":{"value":[["BitVector",54],"54'h00003200009084"]}
+          },
+          "c139789444869904":{
             "modref":"corebit.const",
             "modargs":{"value":["Bool",true]}
           },
-          "c139638916787984":{
+          "c139789445232528":{
+            "modref":"corebit.const",
+            "modargs":{"value":["Bool",true]}
+          },
+          "c139789445233104":{
+            "modref":"corebit.const",
+            "modargs":{"value":["Bool",true]}
+          },
+          "c139789450047056":{
             "genref":"coreir.const",
-            "genargs":{"width":["Int",52]},
-            "modargs":{"value":[["BitVector",52],"52'h88081000005ce"]}
+            "genargs":{"width":["Int",54]},
+            "modargs":{"value":[["BitVector",54],"54'h000a0000002c00"]}
           },
-          "i139638899015760_i139638905285072":{
+          "c139789451263440":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",54]},
+            "modargs":{"value":[["BitVector",54],"54'h28008100000421"]}
+          },
+          "c139789451265680":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",54]},
+            "modargs":{"value":[["BitVector",54],"54'h00101a80009084"]}
+          },
+          "c139789456579792":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",54]},
+            "modargs":{"value":[["BitVector",54],"54'h00003200019084"]}
+          },
+          "c139789462630864":{
+            "modref":"corebit.const",
+            "modargs":{"value":["Bool",true]}
+          },
+          "c139789462631568":{
+            "modref":"corebit.const",
+            "modargs":{"value":["Bool",true]}
+          },
+          "c139789463118160":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",54]},
+            "modargs":{"value":[["BitVector",54],"54'h00003200ff9084"]}
+          },
+          "i139789444869584":{
+            "modref":"corebit.reg",
+            "modargs":{"clk_posedge":["Bool",true], "init":["Bool",false]}
+          },
+          "i139789449138768_i139789461134608":{
             "modref":"global.PE"
           },
-          "i139638899016272_i139638905285072":{
+          "i139789450044880":{
+            "modref":"corebit.reg",
+            "modargs":{"clk_posedge":["Bool",true], "init":["Bool",false]}
+          },
+          "i139789450045136":{
+            "modref":"corebit.reg",
+            "modargs":{"clk_posedge":["Bool",true], "init":["Bool",false]}
+          },
+          "i139789450045328":{
+            "modref":"corebit.reg",
+            "modargs":{"clk_posedge":["Bool",true], "init":["Bool",false]}
+          },
+          "i139789450045392":{
+            "modref":"corebit.reg",
+            "modargs":{"clk_posedge":["Bool",true], "init":["Bool",false]}
+          },
+          "i139789450045712":{
+            "modref":"corebit.reg",
+            "modargs":{"clk_posedge":["Bool",true], "init":["Bool",false]}
+          },
+          "i139789450045840":{
+            "modref":"corebit.reg",
+            "modargs":{"clk_posedge":["Bool",true], "init":["Bool",false]}
+          },
+          "i139789450046096":{
+            "modref":"corebit.reg",
+            "modargs":{"clk_posedge":["Bool",true], "init":["Bool",false]}
+          },
+          "i139789450046544":{
+            "modref":"corebit.reg",
+            "modargs":{"clk_posedge":["Bool",true], "init":["Bool",false]}
+          },
+          "i139789450047184":{
+            "modref":"corebit.reg",
+            "modargs":{"clk_posedge":["Bool",true], "init":["Bool",false]}
+          },
+          "i139789450047376":{
+            "modref":"corebit.reg",
+            "modargs":{"clk_posedge":["Bool",true], "init":["Bool",false]}
+          },
+          "i139789450798608":{
+            "modref":"corebit.reg",
+            "modargs":{"clk_posedge":["Bool",true], "init":["Bool",false]}
+          },
+          "i139789450831312":{
+            "modref":"corebit.reg",
+            "modargs":{"clk_posedge":["Bool",true], "init":["Bool",false]}
+          },
+          "i139789450832464":{
+            "modref":"corebit.reg",
+            "modargs":{"clk_posedge":["Bool",true], "init":["Bool",false]}
+          },
+          "i139789450832592":{
+            "modref":"corebit.reg",
+            "modargs":{"clk_posedge":["Bool",true], "init":["Bool",false]}
+          },
+          "i139789451291152":{
+            "modref":"corebit.reg",
+            "modargs":{"clk_posedge":["Bool",true], "init":["Bool",false]}
+          },
+          "i139789451291920":{
+            "modref":"corebit.reg",
+            "modargs":{"clk_posedge":["Bool",true], "init":["Bool",false]}
+          },
+          "i139789451292048":{
+            "modref":"corebit.reg",
+            "modargs":{"clk_posedge":["Bool",true], "init":["Bool",false]}
+          },
+          "i139789451292240":{
+            "modref":"corebit.reg",
+            "modargs":{"clk_posedge":["Bool",true], "init":["Bool",false]}
+          },
+          "i139789451292304":{
+            "modref":"corebit.reg",
+            "modargs":{"clk_posedge":["Bool",true], "init":["Bool",false]}
+          },
+          "i139789454561360_i139789455656272":{
             "modref":"global.PE"
           },
-          "i139638899017744_i139638905285072":{
+          "i139789454563024_i139789469798992":{
             "modref":"global.PE"
           },
-          "i139638899018320_i139638907716048":{
+          "i139789454563280_i139789463956048":{
             "modref":"global.PE"
           },
-          "i139638899019152_i139638907716048":{
+          "i139789454563920_i139789463956048":{
             "modref":"global.PE"
           },
-          "i139638899019344_i139638912662928":{
+          "i139789454565200_i139789463956048":{
             "modref":"global.PE"
           },
-          "i139638899019600_i139638912662928":{
+          "i139789454606480_i139789469798992":{
             "modref":"global.PE"
           },
-          "i139638899098000_i139638915128784":{
+          "i139789454607696_i139789469798992":{
             "modref":"global.PE"
           },
-          "i139638899099536_i139638907716048":{
+          "i139789454608208_i139789469798992":{
             "modref":"global.PE"
           },
-          "i139638899099792_i139638912662928":{
+          "i139789454608400_i139789455656272":{
             "modref":"global.PE"
           },
-          "i139638899100048_i139638912662928":{
+          "i139789454609680_i139789455656272":{
             "modref":"global.PE"
           },
-          "i139638899100304_i139638912662928":{
+          "i139789454610256_i139789455656272":{
             "modref":"global.PE"
           },
-          "i139638899100560_i139638907716048":{
+          "i139789454614608_i139789469798992":{
             "modref":"global.PE"
           },
-          "i139638899100752_i139638912662928":{
+          "i139789454614736_i139789455656272":{
             "modref":"global.PE"
           },
-          "i139638899100816_i139638907716048":{
+          "i139789454615440_i139789455656272":{
             "modref":"global.PE"
           },
-          "i139638899100944_i139638912662928":{
+          "i139789454615696_i139789469798992":{
             "modref":"global.PE"
           },
-          "i139638899101136_i139638907716048":{
+          "i139789454616080_i139789455656272":{
             "modref":"global.PE"
           },
-          "i139638899175888_i139638907716048":{
+          "i139789454616464_i139789469798992":{
             "modref":"global.PE"
           },
-          "i139638899176720_i139638907716048":{
+          "i139789454617616_i139789455656272":{
             "modref":"global.PE"
           },
-          "i139638899177616_i139638912662928":{
+          "i139789454697360_i139789469797200":{
             "modref":"global.PE"
           },
-          "i139638905306448_i139638912297488":{
+          "i139789454700112_i139789469798992":{
             "modref":"global.PE"
+          },
+          "i139789460300112":{
+            "modref":"corebit.reg",
+            "modargs":{"clk_posedge":["Bool",true], "init":["Bool",false]}
+          },
+          "i139789460303248":{
+            "modref":"corebit.reg",
+            "modargs":{"clk_posedge":["Bool",true], "init":["Bool",false]}
+          },
+          "i139789463044496":{
+            "modref":"corebit.reg",
+            "modargs":{"clk_posedge":["Bool",true], "init":["Bool",false]}
+          },
+          "i139789463120976":{
+            "modref":"corebit.reg",
+            "modargs":{"clk_posedge":["Bool",true], "init":["Bool",false]}
+          },
+          "i139789464333072":{
+            "modref":"corebit.reg",
+            "modargs":{"clk_posedge":["Bool",true], "init":["Bool",false]}
+          },
+          "i139789464333200":{
+            "modref":"corebit.reg",
+            "modargs":{"clk_posedge":["Bool",true], "init":["Bool",false]}
+          },
+          "i139789465174288":{
+            "modref":"corebit.reg",
+            "modargs":{"clk_posedge":["Bool",true], "init":["Bool",false]}
+          },
+          "i139789465177872":{
+            "modref":"corebit.reg",
+            "modargs":{"clk_posedge":["Bool",true], "init":["Bool",false]}
           }
         },
         "connections":[
-          ["i139638899100560_i139638907716048.inst","c139638898174480.out"],
-          ["i139638899100048_i139638912662928.clk_en","c139638907682960.out"],
-          ["i139638899099792_i139638912662928.inst","c139638907683920.out"],
-          ["i139638899099536_i139638907716048.clk_en","c139638907684304.out"],
-          ["i139638899101136_i139638907716048.inst","c139638907684368.out"],
-          ["i139638899175888_i139638907716048.inst","c139638907685136.out"],
-          ["i139638899101136_i139638907716048.clk_en","c139638907685712.out"],
-          ["i139638899099536_i139638907716048.inst","c139638907686224.out"],
-          ["i139638899099792_i139638912662928.clk_en","c139638907686672.out"],
-          ["i139638899175888_i139638907716048.clk_en","c139638907686864.out"],
-          ["i139638899177616_i139638912662928.clk_en","c139638907733904.out"],
-          ["i139638899176720_i139638907716048.clk_en","c139638907735312.out"],
-          ["i139638899176720_i139638907716048.inst","c139638907887952.out"],
-          ["i139638899100816_i139638907716048.clk_en","c139638908161424.out"],
-          ["i139638899017744_i139638905285072.clk_en","c139638908598352.out"],
-          ["i139638899100048_i139638912662928.inst","c139638908729360.out"],
-          ["i139638899100752_i139638912662928.clk_en","c139638908729424.out"],
-          ["i139638899100560_i139638907716048.clk_en","c139638908730320.out"],
-          ["i139638899098000_i139638915128784.clk_en","c139638908834384.out"],
-          ["i139638899100944_i139638912662928.clk_en","c139638908834768.out"],
-          ["i139638899177616_i139638912662928.inst","c139638908835024.out"],
-          ["i139638899018320_i139638907716048.inst","c139638911014800.out"],
-          ["i139638899017744_i139638905285072.inst","c139638911071376.out"],
-          ["i139638905306448_i139638912297488.inst","c139638911072080.out"],
-          ["i139638899015760_i139638905285072.clk_en","c139638911435600.out"],
-          ["i139638899015760_i139638905285072.inst","c139638911438608.out"],
-          ["i139638899098000_i139638915128784.inst","c139638911438672.out"],
-          ["i139638899019152_i139638907716048.clk_en","c139638911532240.out"],
-          ["i139638899019152_i139638907716048.inst","c139638911532304.out"],
-          ["i139638899100752_i139638912662928.inst","c139638911532752.out"],
-          ["i139638899100816_i139638907716048.inst","c139638911786960.out"],
-          ["i139638899018320_i139638907716048.clk_en","c139638912496784.out"],
-          ["i139638899019600_i139638912662928.inst","c139638912499344.out"],
-          ["i139638899019344_i139638912662928.clk_en","c139638912499664.out"],
-          ["i139638899016272_i139638905285072.inst","c139638912516432.out"],
-          ["i139638899016272_i139638905285072.clk_en","c139638912518160.out"],
-          ["i139638899019600_i139638912662928.clk_en","c139638914943504.out"],
-          ["i139638899100304_i139638912662928.inst","c139638915128400.out"],
-          ["i139638905306448_i139638912297488.clk_en","c139638916511952.out"],
-          ["i139638899100944_i139638912662928.inst","c139638916513296.out"],
-          ["i139638899100304_i139638912662928.clk_en","c139638916785168.out"],
-          ["i139638899019344_i139638912662928.inst","c139638916787984.out"],
-          ["i139638899098000_i139638915128784.inputs0","i139638899015760_i139638905285072.O0"],
-          ["i139638905306448_i139638912297488.inputs2","i139638899016272_i139638905285072.O0"],
-          ["i139638905306448_i139638912297488.inputs0","i139638899017744_i139638905285072.O0"],
-          ["i139638899019344_i139638912662928.inputs3","i139638899018320_i139638907716048.O1"],
-          ["self.in0_cim_stencil.6","i139638899018320_i139638907716048.inputs0"],
-          ["self.in0_cim_stencil.1","i139638899018320_i139638907716048.inputs1"],
-          ["i139638899019600_i139638912662928.inputs3","i139638899019152_i139638907716048.O1"],
-          ["self.in0_cim_stencil.5","i139638899019152_i139638907716048.inputs0"],
-          ["self.in0_cim_stencil.1","i139638899019152_i139638907716048.inputs1"],
-          ["i139638899100304_i139638912662928.inputs4","i139638899019344_i139638912662928.O1"],
-          ["i139638899019600_i139638912662928.O1","i139638899019344_i139638912662928.inputs4"],
-          ["i139638899100752_i139638912662928.O1","i139638899019600_i139638912662928.inputs4"],
-          ["i139638899100944_i139638912662928.inputs3","i139638899098000_i139638915128784.O1"],
-          ["self.in0_cim_stencil.1","i139638899098000_i139638915128784.inputs1"],
-          ["i139638899099792_i139638912662928.inputs3","i139638899099536_i139638907716048.O1"],
-          ["self.in0_cim_stencil.2","i139638899099536_i139638907716048.inputs0"],
-          ["self.in0_cim_stencil.1","i139638899099536_i139638907716048.inputs1"],
-          ["i139638899100048_i139638912662928.inputs4","i139638899099792_i139638912662928.O1"],
-          ["i139638899175888_i139638907716048.O1","i139638899099792_i139638912662928.inputs4"],
-          ["i139638899100752_i139638912662928.inputs4","i139638899100048_i139638912662928.O1"],
-          ["i139638899101136_i139638907716048.O1","i139638899100048_i139638912662928.inputs3"],
-          ["i139638899177616_i139638912662928.inputs4","i139638899100304_i139638912662928.O1"],
-          ["i139638899100816_i139638907716048.O1","i139638899100304_i139638912662928.inputs3"],
-          ["i139638899100752_i139638912662928.inputs3","i139638899100560_i139638907716048.O1"],
-          ["self.in0_cim_stencil.4","i139638899100560_i139638907716048.inputs0"],
-          ["self.in0_cim_stencil.1","i139638899100560_i139638907716048.inputs1"],
-          ["self.in0_cim_stencil.7","i139638899100816_i139638907716048.inputs0"],
-          ["self.in0_cim_stencil.1","i139638899100816_i139638907716048.inputs1"],
-          ["i139638905306448_i139638912297488.inputs3","i139638899100944_i139638912662928.O1"],
-          ["i139638899177616_i139638912662928.O1","i139638899100944_i139638912662928.inputs4"],
-          ["self.in0_cim_stencil.3","i139638899101136_i139638907716048.inputs0"],
-          ["self.in0_cim_stencil.1","i139638899101136_i139638907716048.inputs1"],
-          ["self.in0_cim_stencil.0","i139638899175888_i139638907716048.inputs0"],
-          ["self.in0_cim_stencil.1","i139638899175888_i139638907716048.inputs1"],
-          ["i139638899177616_i139638912662928.inputs3","i139638899176720_i139638907716048.O1"],
-          ["self.in0_cim_stencil.8","i139638899176720_i139638907716048.inputs0"],
-          ["self.in0_cim_stencil.1","i139638899176720_i139638907716048.inputs1"],
-          ["self.out_cim_output_stencil","i139638905306448_i139638912297488.O0"]
+          ["i139789454700112_i139789469798992.clk_en","c139789444493840.out"],
+          ["i139789454610256_i139789455656272.clk_en","c139789444493904.out"],
+          ["i139789454615440_i139789455656272.clk_en","c139789444494096.out"],
+          ["i139789454615440_i139789455656272.inst","c139789444494416.out"],
+          ["i139789454697360_i139789469797200.inst","c139789444494736.out"],
+          ["i139789449138768_i139789461134608.clk_en","c139789444495440.out"],
+          ["i139789454561360_i139789455656272.clk_en","c139789444527824.out"],
+          ["i139789454607696_i139789469798992.clk_en","c139789444527888.out"],
+          ["i139789454561360_i139789455656272.inst","c139789444528336.out"],
+          ["i139789454609680_i139789455656272.inst","c139789444528592.out"],
+          ["i139789454615696_i139789469798992.clk_en","c139789444529104.out"],
+          ["i139789454608400_i139789455656272.clk_en","c139789444529424.out"],
+          ["i139789454608400_i139789455656272.inst","c139789444529616.out"],
+          ["i139789454563024_i139789469798992.clk_en","c139789444529872.out"],
+          ["i139789454609680_i139789455656272.clk_en","c139789444530000.out"],
+          ["i139789454606480_i139789469798992.clk_en","c139789444530064.out"],
+          ["i139789454607696_i139789469798992.inst","c139789444546640.out"],
+          ["i139789454563024_i139789469798992.inst","c139789444547280.out"],
+          ["i139789454614608_i139789469798992.inst","c139789444547408.out"],
+          ["i139789454608208_i139789469798992.inst","c139789444548624.out"],
+          ["i139789454606480_i139789469798992.inst","c139789444550288.out"],
+          ["i139789454614608_i139789469798992.clk_en","c139789444800592.out"],
+          ["i139789454616080_i139789455656272.inst","c139789444800848.out"],
+          ["i139789454616464_i139789469798992.clk_en","c139789444801104.out"],
+          ["i139789454617616_i139789455656272.clk_en","c139789444801552.out"],
+          ["i139789454617616_i139789455656272.inst","c139789444801680.out"],
+          ["i139789454614736_i139789455656272.clk_en","c139789444802256.out"],
+          ["i139789454614736_i139789455656272.inst","c139789444803856.out"],
+          ["i139789454616464_i139789469798992.inst","c139789444804304.out"],
+          ["i139789454565200_i139789463956048.clk_en","c139789444867600.out"],
+          ["i139789454700112_i139789469798992.inst","c139789444868496.out"],
+          ["i139789454565200_i139789463956048.inst","c139789444868560.out"],
+          ["i139789454563280_i139789463956048.clk_en","c139789444869904.out"],
+          ["i139789454563920_i139789463956048.clk_en","c139789445232528.out"],
+          ["i139789454697360_i139789469797200.clk_en","c139789445233104.out"],
+          ["i139789454610256_i139789455656272.inst","c139789450047056.out"],
+          ["i139789454615696_i139789469798992.inst","c139789451263440.out"],
+          ["i139789449138768_i139789461134608.inst","c139789451265680.out"],
+          ["i139789454563920_i139789463956048.inst","c139789456579792.out"],
+          ["i139789454616080_i139789455656272.clk_en","c139789462630864.out"],
+          ["i139789454608208_i139789469798992.clk_en","c139789462631568.out"],
+          ["i139789454563280_i139789463956048.inst","c139789463118160.out"],
+          ["i139789454616080_i139789455656272.O1","i139789444869584.in"],
+          ["i139789454614608_i139789469798992.inputs8","i139789444869584.out"],
+          ["self.out_cim_output_stencil","i139789449138768_i139789461134608.O0"],
+          ["i139789454563280_i139789463956048.O0","i139789449138768_i139789461134608.inputs2"],
+          ["i139789454565200_i139789463956048.O0","i139789449138768_i139789461134608.inputs5"],
+          ["i139789454700112_i139789469798992.O1","i139789449138768_i139789461134608.inputs6"],
+          ["i139789450045328.out","i139789450044880.in"],
+          ["i139789450046544.in","i139789450044880.out"],
+          ["i139789450047184.out","i139789450045136.in"],
+          ["i139789450045328.in","i139789450045136.out"],
+          ["i139789465177872.out","i139789450045392.in"],
+          ["i139789450046096.in","i139789450045392.out"],
+          ["i139789454615440_i139789455656272.O1","i139789450045712.in"],
+          ["i139789450047184.in","i139789450045712.out"],
+          ["i139789450046096.out","i139789450045840.in"],
+          ["i139789454700112_i139789469798992.inputs8","i139789450045840.out"],
+          ["i139789454615696_i139789469798992.inputs8","i139789450046544.out"],
+          ["i139789464333200.out","i139789450047376.in"],
+          ["i139789454606480_i139789469798992.inputs8","i139789450047376.out"],
+          ["i139789454697360_i139789469797200.O1","i139789450798608.in"],
+          ["i139789460300112.in","i139789450798608.out"],
+          ["i139789454609680_i139789455656272.O1","i139789450831312.in"],
+          ["i139789450832464.in","i139789450831312.out"],
+          ["i139789450832592.in","i139789450832464.out"],
+          ["i139789454607696_i139789469798992.inputs8","i139789450832592.out"],
+          ["i139789451291920.out","i139789451291152.in"],
+          ["i139789454563024_i139789469798992.inputs8","i139789451291152.out"],
+          ["i139789451292048.out","i139789451291920.in"],
+          ["i139789451292240.out","i139789451292048.in"],
+          ["i139789454561360_i139789455656272.O1","i139789451292240.in"],
+          ["i139789460303248.out","i139789451292304.in"],
+          ["i139789464333072.in","i139789451292304.out"],
+          ["self.in0_cim_stencil.1","i139789454561360_i139789455656272.inputs2"],
+          ["self.in0_cim_stencil.6","i139789454561360_i139789455656272.inputs5"],
+          ["i139789454606480_i139789469798992.inputs6","i139789454563024_i139789469798992.O1"],
+          ["i139789454607696_i139789469798992.O1","i139789454563024_i139789469798992.inputs6"],
+          ["i139789454697360_i139789469797200.inputs5","i139789454563920_i139789463956048.O0"],
+          ["i139789454615696_i139789469798992.inputs6","i139789454606480_i139789469798992.O1"],
+          ["i139789454608208_i139789469798992.O1","i139789454607696_i139789469798992.inputs6"],
+          ["i139789454614608_i139789469798992.O1","i139789454608208_i139789469798992.inputs6"],
+          ["i139789463044496.out","i139789454608208_i139789469798992.inputs8"],
+          ["i139789463120976.in","i139789454608400_i139789455656272.O1"],
+          ["self.in0_cim_stencil.1","i139789454608400_i139789455656272.inputs2"],
+          ["self.in0_cim_stencil.4","i139789454608400_i139789455656272.inputs5"],
+          ["self.in0_cim_stencil.1","i139789454609680_i139789455656272.inputs2"],
+          ["self.in0_cim_stencil.5","i139789454609680_i139789455656272.inputs5"],
+          ["i139789460303248.in","i139789454610256_i139789455656272.O1"],
+          ["self.in0_cim_stencil.1","i139789454610256_i139789455656272.inputs2"],
+          ["self.in0_cim_stencil.7","i139789454610256_i139789455656272.inputs5"],
+          ["i139789454616464_i139789469798992.O1","i139789454614608_i139789469798992.inputs6"],
+          ["i139789454616464_i139789469798992.inputs8","i139789454614736_i139789455656272.O1"],
+          ["self.in0_cim_stencil.1","i139789454614736_i139789455656272.inputs2"],
+          ["self.in0_cim_stencil.2","i139789454614736_i139789455656272.inputs5"],
+          ["self.in0_cim_stencil.1","i139789454615440_i139789455656272.inputs2"],
+          ["self.in0_cim_stencil.8","i139789454615440_i139789455656272.inputs5"],
+          ["i139789454700112_i139789469798992.inputs6","i139789454615696_i139789469798992.O1"],
+          ["self.in0_cim_stencil.1","i139789454616080_i139789455656272.inputs2"],
+          ["self.in0_cim_stencil.3","i139789454616080_i139789455656272.inputs5"],
+          ["i139789454617616_i139789455656272.O1","i139789454616464_i139789469798992.inputs6"],
+          ["self.in0_cim_stencil.1","i139789454617616_i139789455656272.inputs2"],
+          ["self.in0_cim_stencil.0","i139789454617616_i139789455656272.inputs5"],
+          ["self.in0_cim_stencil.1","i139789454697360_i139789469797200.inputs2"],
+          ["i139789465174288.in","i139789460300112.out"],
+          ["i139789463120976.out","i139789463044496.in"],
+          ["i139789464333200.in","i139789464333072.out"],
+          ["i139789465177872.in","i139789465174288.out"]
         ]
       },
       "hcompute_cim_stencil":{
@@ -405,225 +582,231 @@
           ["out_cim_stencil",["Array",16,"Bit"]]
         ]],
         "instances":{
-          "c139638886792976":{
+          "c139789436766352":{
             "genref":"coreir.const",
-            "genargs":{"width":["Int",52]},
-            "modargs":{"value":[["BitVector",52],"52'h0000400060000"]}
+            "genargs":{"width":["Int",54]},
+            "modargs":{"value":[["BitVector",54],"54'h000078ffff4a52"]}
           },
-          "c139638887360016":{
+          "c139789436767824":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",54]},
+            "modargs":{"value":[["BitVector",54],"54'h00304a80009084"]}
+          },
+          "c139789436768016":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",54]},
+            "modargs":{"value":[["BitVector",54],"54'h003c160000c631"]}
+          },
+          "c139789449994576":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",54]},
+            "modargs":{"value":[["BitVector",54],"54'h00304a80009084"]}
+          },
+          "c139789449995408":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",54]},
+            "modargs":{"value":[["BitVector",54],"54'h003046ffffca52"]}
+          },
+          "c139789449997328":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",54]},
+            "modargs":{"value":[["BitVector",54],"54'h00003200049084"]}
+          },
+          "c139789450040144":{
             "modref":"corebit.const",
             "modargs":{"value":["Bool",true]}
           },
-          "c139638887360976":{
+          "c139789450042960":{
             "modref":"corebit.const",
             "modargs":{"value":["Bool",true]}
           },
-          "c139638887361808":{
+          "c139789450336336":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",54]},
+            "modargs":{"value":[["BitVector",54],"54'h000078ffff4a52"]}
+          },
+          "c139789450359888":{
             "modref":"corebit.const",
             "modargs":{"value":["Bool",true]}
           },
-          "c139638887362128":{
+          "c139789450369616":{
             "modref":"corebit.const",
             "modargs":{"value":["Bool",true]}
           },
-          "c139638887410576":{
-            "genref":"coreir.const",
-            "genargs":{"width":["Int",52]},
-            "modargs":{"value":[["BitVector",52],"52'h0000880001084"]}
-          },
-          "c139638887411088":{
+          "c139789451460752":{
             "modref":"corebit.const",
             "modargs":{"value":["Bool",true]}
           },
-          "c139638887420432":{
+          "c139789451461840":{
             "modref":"corebit.const",
             "modargs":{"value":["Bool",true]}
           },
-          "c139638887421200":{
+          "c139789451462288":{
             "modref":"corebit.const",
             "modargs":{"value":["Bool",true]}
           },
-          "c139638887431632":{
+          "c139789451462736":{
             "genref":"coreir.const",
-            "genargs":{"width":["Int",52]},
-            "modargs":{"value":[["BitVector",52],"52'h0000400060000"]}
+            "genargs":{"width":["Int",54]},
+            "modargs":{"value":[["BitVector",54],"54'h003046ffffca52"]}
           },
-          "c139638887438224":{
-            "genref":"coreir.const",
-            "genargs":{"width":["Int",52]},
-            "modargs":{"value":[["BitVector",52],"52'h00b160000c631"]}
-          },
-          "c139638887537296":{
-            "genref":"coreir.const",
-            "genargs":{"width":["Int",52]},
-            "modargs":{"value":[["BitVector",52],"52'h00c1effffca52"]}
-          },
-          "c139638887539152":{
+          "c139789451463632":{
             "modref":"corebit.const",
             "modargs":{"value":["Bool",true]}
           },
-          "c139638887540688":{
+          "c139789451464592":{
             "modref":"corebit.const",
             "modargs":{"value":["Bool",true]}
           },
-          "c139638887541904":{
+          "c139789462592208":{
             "genref":"coreir.const",
-            "genargs":{"width":["Int",52]},
-            "modargs":{"value":[["BitVector",52],"52'h0000400040000"]}
+            "genargs":{"width":["Int",54]},
+            "modargs":{"value":[["BitVector",54],"54'h00003200069084"]}
           },
-          "c139638887542224":{
+          "c139789463074640":{
             "modref":"corebit.const",
             "modargs":{"value":["Bool",true]}
           },
-          "c139638887554832":{
-            "genref":"coreir.const",
-            "genargs":{"width":["Int",52]},
-            "modargs":{"value":[["BitVector",52],"52'h00b160000c631"]}
-          },
-          "c139638887580624":{
-            "genref":"coreir.const",
-            "genargs":{"width":["Int",52]},
-            "modargs":{"value":[["BitVector",52],"52'h00b160000c631"]}
-          },
-          "c139638887581648":{
-            "genref":"coreir.const",
-            "genargs":{"width":["Int",52]},
-            "modargs":{"value":[["BitVector",52],"52'h0000880001084"]}
-          },
-          "c139638887888464":{
-            "genref":"coreir.const",
-            "genargs":{"width":["Int",52]},
-            "modargs":{"value":[["BitVector",52],"52'h00b160000c631"]}
-          },
-          "c139638887923024":{
+          "c139789464033296":{
             "modref":"corebit.const",
             "modargs":{"value":["Bool",true]}
           },
-          "c139638887923408":{
+          "c139789464033424":{
             "modref":"corebit.const",
             "modargs":{"value":["Bool",true]}
           },
-          "c139638888017872":{
+          "c139789464033552":{
             "genref":"coreir.const",
-            "genargs":{"width":["Int",52]},
-            "modargs":{"value":[["BitVector",52],"52'h0000400060000"]}
+            "genargs":{"width":["Int",54]},
+            "modargs":{"value":[["BitVector",54],"54'h00003200069084"]}
           },
-          "c139638888033168":{
+          "c139789464124752":{
             "genref":"coreir.const",
-            "genargs":{"width":["Int",52]},
-            "modargs":{"value":[["BitVector",52],"52'h00c12ffffca52"]}
+            "genargs":{"width":["Int",54]},
+            "modargs":{"value":[["BitVector",54],"54'h00304a80009084"]}
           },
-          "c139638888055184":{
+          "c139789464125200":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",54]},
+            "modargs":{"value":[["BitVector",54],"54'h000078ffff4a52"]}
+          },
+          "c139789468423376":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",54]},
+            "modargs":{"value":[["BitVector",54],"54'h00304a80009084"]}
+          },
+          "c139789468424912":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",54]},
+            "modargs":{"value":[["BitVector",54],"54'h00003200069084"]}
+          },
+          "c139789468425424":{
             "modref":"corebit.const",
             "modargs":{"value":["Bool",true]}
           },
-          "c139638888055440":{
+          "c139789470855056":{
             "modref":"corebit.const",
             "modargs":{"value":["Bool",true]}
           },
-          "c139638897319504":{
-            "genref":"coreir.const",
-            "genargs":{"width":["Int",52]},
-            "modargs":{"value":[["BitVector",52],"52'h00c1effffca52"]}
+          "i139789450132240":{
+            "genref":"coreir.reg",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"clk_posedge":["Bool",true], "init":[["BitVector",16],"16'hxxxx"]}
           },
-          "c139638909634128":{
-            "genref":"coreir.const",
-            "genargs":{"width":["Int",52]},
-            "modargs":{"value":[["BitVector",52],"52'h0000880001084"]}
-          },
-          "i139638901723856_i139638905285072":{
+          "i139789450277328_i139789463956048":{
             "modref":"global.PE"
           },
-          "i139638907716880_i139638905336848":{
+          "i139789450277520_i139789460273744":{
             "modref":"global.PE"
           },
-          "i139638907717840_i139638912297616":{
+          "i139789450278608_i139789460011472":{
             "modref":"global.PE"
           },
-          "i139638907764880_i139638905336848":{
+          "i139789450278800_i139789463956048":{
             "modref":"global.PE"
           },
-          "i139638907768144_i139638910662224":{
+          "i139789450279568_i139789459283472":{
             "modref":"global.PE"
           },
-          "i139638907868688_i139638905285072":{
+          "i139789450280208_i139789463956048":{
             "modref":"global.PE"
           },
-          "i139638907868944_i139638905285072":{
+          "i139789450280464_i139789460383312":{
             "modref":"global.PE"
           },
-          "i139638907869648_i139638905285072":{
+          "i139789450310672_i139789459283472":{
             "modref":"global.PE"
           },
-          "i139638908018000_i139638910662224":{
+          "i139789450310864_i139789460383312":{
             "modref":"global.PE"
           },
-          "i139638909326224_i139638915506576":{
+          "i139789450311312_i139789460011472":{
             "modref":"global.PE"
           },
-          "i139638909327248_i139638910662224":{
+          "i139789450312464_i139789460011472":{
             "modref":"global.PE"
           },
-          "i139638914941712_i139638905336848":{
+          "i139789450313104_i139789460383312":{
             "modref":"global.PE"
           },
-          "i139638914941776_i139638912297616":{
+          "i139789450313552_i139789460011472":{
             "modref":"global.PE"
           },
-          "i139638914942480_i139638905336848":{
+          "i139789455686800_i139789463956048":{
             "modref":"global.PE"
           }
         },
         "connections":[
-          ["i139638907868688_i139638905285072.inst","c139638886792976.out"],
-          ["i139638908018000_i139638910662224.clk_en","c139638887360016.out"],
-          ["i139638907716880_i139638905336848.clk_en","c139638887360976.out"],
-          ["i139638907869648_i139638905285072.clk_en","c139638887361808.out"],
-          ["i139638907717840_i139638912297616.clk_en","c139638887362128.out"],
-          ["i139638908018000_i139638910662224.inst","c139638887410576.out"],
-          ["i139638907768144_i139638910662224.clk_en","c139638887411088.out"],
-          ["i139638907764880_i139638905336848.clk_en","c139638887420432.out"],
-          ["i139638907868944_i139638905285072.clk_en","c139638887421200.out"],
-          ["i139638907868944_i139638905285072.inst","c139638887431632.out"],
-          ["i139638907716880_i139638905336848.inst","c139638887438224.out"],
-          ["i139638914941776_i139638912297616.inst","c139638887537296.out"],
-          ["i139638909326224_i139638915506576.clk_en","c139638887539152.out"],
-          ["i139638901723856_i139638905285072.clk_en","c139638887540688.out"],
-          ["i139638901723856_i139638905285072.inst","c139638887541904.out"],
-          ["i139638909327248_i139638910662224.clk_en","c139638887542224.out"],
-          ["i139638907764880_i139638905336848.inst","c139638887554832.out"],
-          ["i139638914942480_i139638905336848.inst","c139638887580624.out"],
-          ["i139638909327248_i139638910662224.inst","c139638887581648.out"],
-          ["i139638914941712_i139638905336848.inst","c139638887888464.out"],
-          ["i139638914941776_i139638912297616.clk_en","c139638887923024.out"],
-          ["i139638914942480_i139638905336848.clk_en","c139638887923408.out"],
-          ["i139638907869648_i139638905285072.inst","c139638888017872.out"],
-          ["i139638909326224_i139638915506576.inst","c139638888033168.out"],
-          ["i139638907868688_i139638905285072.clk_en","c139638888055184.out"],
-          ["i139638914941712_i139638905336848.clk_en","c139638888055440.out"],
-          ["i139638907717840_i139638912297616.inst","c139638897319504.out"],
-          ["i139638907768144_i139638910662224.inst","c139638909634128.out"],
-          ["i139638914942480_i139638905336848.inputs1","i139638901723856_i139638905285072.O0"],
-          ["i139638908018000_i139638910662224.inputs0","i139638907716880_i139638905336848.O0"],
-          ["i139638908018000_i139638910662224.inputs1","i139638907716880_i139638905336848.O0"],
-          ["self.in1_lgxy_stencil.0","i139638907716880_i139638905336848.inputs0"],
-          ["i139638907869648_i139638905285072.O0","i139638907716880_i139638905336848.inputs1"],
-          ["i139638914941776_i139638912297616.inputs0","i139638907717840_i139638912297616.O0"],
-          ["i139638907768144_i139638910662224.O0","i139638907717840_i139638912297616.inputs0"],
-          ["i139638908018000_i139638910662224.O0","i139638907717840_i139638912297616.inputs1"],
-          ["i139638907768144_i139638910662224.inputs1","i139638907764880_i139638905336848.O0"],
-          ["i139638909326224_i139638915506576.inputs0","i139638907764880_i139638905336848.O0"],
-          ["self.in2_lgyy_stencil.0","i139638907764880_i139638905336848.inputs0"],
-          ["i139638907868944_i139638905285072.O0","i139638907764880_i139638905336848.inputs1"],
-          ["i139638914941712_i139638905336848.O0","i139638907768144_i139638910662224.inputs0"],
-          ["i139638914941712_i139638905336848.inputs1","i139638907868688_i139638905285072.O0"],
-          ["i139638909327248_i139638910662224.inputs0","i139638909326224_i139638915506576.O0"],
-          ["i139638909327248_i139638910662224.inputs1","i139638909326224_i139638915506576.O0"],
-          ["i139638914941712_i139638905336848.O0","i139638909326224_i139638915506576.inputs2"],
-          ["i139638914942480_i139638905336848.inputs0","i139638909327248_i139638910662224.O0"],
-          ["self.in0_lgxx_stencil.0","i139638914941712_i139638905336848.inputs0"],
-          ["self.out_cim_stencil","i139638914941776_i139638912297616.O0"],
-          ["i139638914942480_i139638905336848.O0","i139638914941776_i139638912297616.inputs1"]
+          ["i139789450310864_i139789460383312.inst","c139789436766352.out"],
+          ["i139789450311312_i139789460011472.inst","c139789436767824.out"],
+          ["i139789450277520_i139789460273744.inst","c139789436768016.out"],
+          ["i139789450278608_i139789460011472.inst","c139789449994576.out"],
+          ["i139789450279568_i139789459283472.inst","c139789449995408.out"],
+          ["i139789450277328_i139789463956048.inst","c139789449997328.out"],
+          ["i139789450277328_i139789463956048.clk_en","c139789450040144.out"],
+          ["i139789450313104_i139789460383312.clk_en","c139789450042960.out"],
+          ["i139789450280464_i139789460383312.inst","c139789450336336.out"],
+          ["i139789450310672_i139789459283472.clk_en","c139789450359888.out"],
+          ["i139789450310864_i139789460383312.clk_en","c139789450369616.out"],
+          ["i139789450312464_i139789460011472.clk_en","c139789451460752.out"],
+          ["i139789450278608_i139789460011472.clk_en","c139789451461840.out"],
+          ["i139789450280464_i139789460383312.clk_en","c139789451462288.out"],
+          ["i139789450310672_i139789459283472.inst","c139789451462736.out"],
+          ["i139789450279568_i139789459283472.clk_en","c139789451463632.out"],
+          ["i139789450277520_i139789460273744.clk_en","c139789451464592.out"],
+          ["i139789455686800_i139789463956048.inst","c139789462592208.out"],
+          ["i139789455686800_i139789463956048.clk_en","c139789463074640.out"],
+          ["i139789450313552_i139789460011472.clk_en","c139789464033296.out"],
+          ["i139789450280208_i139789463956048.clk_en","c139789464033424.out"],
+          ["i139789450280208_i139789463956048.inst","c139789464033552.out"],
+          ["i139789450313552_i139789460011472.inst","c139789464124752.out"],
+          ["i139789450313104_i139789460383312.inst","c139789464125200.out"],
+          ["i139789450312464_i139789460011472.inst","c139789468423376.out"],
+          ["i139789450278800_i139789463956048.inst","c139789468424912.out"],
+          ["i139789450278800_i139789463956048.clk_en","c139789468425424.out"],
+          ["i139789450311312_i139789460011472.clk_en","c139789470855056.out"],
+          ["i139789450310672_i139789459283472.O0","i139789450132240.in"],
+          ["i139789450279568_i139789459283472.inputs5","i139789450132240.out"],
+          ["i139789450278608_i139789460011472.inputs2","i139789450277328_i139789463956048.O0"],
+          ["i139789450280464_i139789460383312.inputs2","i139789450277520_i139789460273744.O0"],
+          ["i139789450280464_i139789460383312.inputs5","i139789450277520_i139789460273744.O0"],
+          ["i139789450311312_i139789460011472.O0","i139789450277520_i139789460273744.inputs0"],
+          ["i139789450312464_i139789460011472.O0","i139789450277520_i139789460273744.inputs1"],
+          ["i139789450279568_i139789459283472.inputs2","i139789450278608_i139789460011472.O0"],
+          ["i139789450280464_i139789460383312.O0","i139789450278608_i139789460011472.inputs5"],
+          ["i139789450312464_i139789460011472.inputs2","i139789450278800_i139789463956048.O0"],
+          ["self.out_cim_stencil","i139789450279568_i139789459283472.O0"],
+          ["i139789450311312_i139789460011472.inputs2","i139789450280208_i139789463956048.O0"],
+          ["i139789450313104_i139789460383312.O0","i139789450310672_i139789459283472.inputs2"],
+          ["i139789450310864_i139789460383312.O0","i139789450310672_i139789459283472.inputs5"],
+          ["i139789450312464_i139789460011472.O0","i139789450310864_i139789460383312.inputs2"],
+          ["i139789450311312_i139789460011472.O0","i139789450310864_i139789460383312.inputs5"],
+          ["self.in0_lgxx_stencil.0","i139789450311312_i139789460011472.inputs5"],
+          ["self.in2_lgyy_stencil.0","i139789450312464_i139789460011472.inputs5"],
+          ["i139789450313552_i139789460011472.O0","i139789450313104_i139789460383312.inputs2"],
+          ["i139789450313552_i139789460011472.O0","i139789450313104_i139789460383312.inputs5"],
+          ["i139789455686800_i139789463956048.O0","i139789450313552_i139789460011472.inputs2"],
+          ["self.in1_lgxy_stencil.0","i139789450313552_i139789460011472.inputs5"]
         ]
       },
       "hcompute_grad_x_unclamp_stencil_1":{
@@ -633,150 +816,201 @@
           ["out_grad_x_unclamp_stencil",["Array",16,"Bit"]]
         ]],
         "instances":{
-          "c139638901547920":{
-            "genref":"coreir.const",
-            "genargs":{"width":["Int",52]},
-            "modargs":{"value":[["BitVector",52],"52'h00c1effffca52"]}
-          },
-          "c139638902022672":{
-            "genref":"coreir.const",
-            "genargs":{"width":["Int",52]},
-            "modargs":{"value":[["BitVector",52],"52'h0000880001084"]}
-          },
-          "c139638902023568":{
+          "c139789440323920":{
             "modref":"corebit.const",
             "modargs":{"value":["Bool",true]}
           },
-          "c139638902025168":{
+          "c139789440324048":{
             "modref":"corebit.const",
             "modargs":{"value":["Bool",true]}
           },
-          "c139638902025296":{
+          "c139789440324240":{
             "genref":"coreir.const",
-            "genargs":{"width":["Int",52]},
-            "modargs":{"value":[["BitVector",52],"52'h0000400020000"]}
+            "genargs":{"width":["Int",54]},
+            "modargs":{"value":[["BitVector",54],"54'h002c0a0000c631"]}
           },
-          "c139638902025424":{
-            "modref":"corebit.const",
-            "modargs":{"value":["Bool",true]}
-          },
-          "c139638902025552":{
-            "modref":"corebit.const",
-            "modargs":{"value":["Bool",true]}
-          },
-          "c139638902025616":{
-            "modref":"corebit.const",
-            "modargs":{"value":["Bool",true]}
-          },
-          "c139638902026192":{
+          "c139789440325648":{
             "genref":"coreir.const",
-            "genargs":{"width":["Int",52]},
-            "modargs":{"value":[["BitVector",52],"52'h0000400020000"]}
+            "genargs":{"width":["Int",54]},
+            "modargs":{"value":[["BitVector",54],"54'h000078ffff4a52"]}
           },
-          "c139638902034576":{
+          "c139789440326544":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",54]},
+            "modargs":{"value":[["BitVector",54],"54'h003046ffffca52"]}
+          },
+          "c139789440326736":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",54]},
+            "modargs":{"value":[["BitVector",54],"54'h00003200029084"]}
+          },
+          "c139789440327312":{
             "modref":"corebit.const",
             "modargs":{"value":["Bool",true]}
           },
-          "c139638902035024":{
+          "c139789440696656":{
             "modref":"corebit.const",
             "modargs":{"value":["Bool",true]}
           },
-          "c139638902035152":{
+          "c139789440698896":{
             "modref":"corebit.const",
             "modargs":{"value":["Bool",true]}
           },
-          "c139638902035536":{
+          "c139789440699088":{
             "modref":"corebit.const",
             "modargs":{"value":["Bool",true]}
           },
-          "c139638902055184":{
-            "genref":"coreir.const",
-            "genargs":{"width":["Int",52]},
-            "modargs":{"value":[["BitVector",52],"52'h00c1effffca52"]}
+          "c139789440699344":{
+            "modref":"corebit.const",
+            "modargs":{"value":["Bool",true]}
           },
-          "c139638902056016":{
+          "c139789440699856":{
             "genref":"coreir.const",
-            "genargs":{"width":["Int",52]},
-            "modargs":{"value":[["BitVector",52],"52'h00c12ffffca52"]}
+            "genargs":{"width":["Int",54]},
+            "modargs":{"value":[["BitVector",54],"54'h003046ffffca52"]}
           },
-          "c139638902057872":{
+          "c139789440868816":{
             "genref":"coreir.const",
-            "genargs":{"width":["Int",52]},
-            "modargs":{"value":[["BitVector",52],"52'h00c1effffca52"]}
+            "genargs":{"width":["Int",54]},
+            "modargs":{"value":[["BitVector",54],"54'h000078ffff4a52"]}
           },
-          "c139638902064080":{
+          "c139789440869264":{
             "genref":"coreir.const",
-            "genargs":{"width":["Int",52]},
-            "modargs":{"value":[["BitVector",52],"52'h0000880001084"]}
+            "genargs":{"width":["Int",54]},
+            "modargs":{"value":[["BitVector",54],"54'h00003200029084"]}
           },
-          "c139638902067088":{
+          "c139789440869520":{
             "genref":"coreir.const",
-            "genargs":{"width":["Int",52]},
-            "modargs":{"value":[["BitVector",52],"52'h00c10ffffca52"]}
+            "genargs":{"width":["Int",54]},
+            "modargs":{"value":[["BitVector",54],"54'h003046ffffca52"]}
           },
-          "i139638901883600_i139638905285072":{
+          "c139789463996880":{
+            "modref":"corebit.const",
+            "modargs":{"value":["Bool",true]}
+          },
+          "i139789440197008":{
+            "genref":"coreir.reg",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"clk_posedge":["Bool",true], "init":[["BitVector",16],"16'hxxxx"]}
+          },
+          "i139789440197200":{
+            "genref":"coreir.reg",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"clk_posedge":["Bool",true], "init":[["BitVector",16],"16'hxxxx"]}
+          },
+          "i139789440197648":{
+            "genref":"coreir.reg",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"clk_posedge":["Bool",true], "init":[["BitVector",16],"16'hxxxx"]}
+          },
+          "i139789440197712":{
+            "genref":"coreir.reg",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"clk_posedge":["Bool",true], "init":[["BitVector",16],"16'hxxxx"]}
+          },
+          "i139789440292880":{
+            "genref":"coreir.reg",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"clk_posedge":["Bool",true], "init":[["BitVector",16],"16'hxxxx"]}
+          },
+          "i139789440294224":{
+            "genref":"coreir.reg",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"clk_posedge":["Bool",true], "init":[["BitVector",16],"16'hxxxx"]}
+          },
+          "i139789440699920":{
+            "genref":"coreir.reg",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"clk_posedge":["Bool",true], "init":[["BitVector",16],"16'hxxxx"]}
+          },
+          "i139789440700176":{
+            "genref":"coreir.reg",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"clk_posedge":["Bool",true], "init":[["BitVector",16],"16'hxxxx"]}
+          },
+          "i139789440700240":{
+            "genref":"coreir.reg",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"clk_posedge":["Bool",true], "init":[["BitVector",16],"16'hxxxx"]}
+          },
+          "i139789440700304":{
+            "genref":"coreir.reg",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"clk_posedge":["Bool",true], "init":[["BitVector",16],"16'hxxxx"]}
+          },
+          "i139789445260432":{
+            "genref":"coreir.reg",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"clk_posedge":["Bool",true], "init":[["BitVector",16],"16'hxxxx"]}
+          },
+          "i139789448974608_i139789459283472":{
             "modref":"global.PE"
           },
-          "i139638901883664_i139638905285072":{
+          "i139789448976272_i139789439667792":{
             "modref":"global.PE"
           },
-          "i139638901884368_i139638910662224":{
+          "i139789448976912_i139789460383312":{
             "modref":"global.PE"
           },
-          "i139638901885968_i139638912297616":{
+          "i139789448977488_i139789459283472":{
             "modref":"global.PE"
           },
-          "i139638901886032_i139638912297616":{
+          "i139789448977616_i139789459283472":{
             "modref":"global.PE"
           },
-          "i139638901891728_i139638915506576":{
+          "i139789448978256_i139789460383312":{
             "modref":"global.PE"
           },
-          "i139638901893008_i139638906987280":{
+          "i139789454562512_i139789463956048":{
             "modref":"global.PE"
           },
-          "i139638901894992_i139638910662224":{
-            "modref":"global.PE"
-          },
-          "i139638901895120_i139638912297616":{
+          "i139789454614800_i139789463956048":{
             "modref":"global.PE"
           }
         },
         "connections":[
-          ["i139638901885968_i139638912297616.inst","c139638901547920.out"],
-          ["i139638901884368_i139638910662224.inst","c139638902022672.out"],
-          ["i139638901891728_i139638915506576.clk_en","c139638902023568.out"],
-          ["i139638901893008_i139638906987280.clk_en","c139638902025168.out"],
-          ["i139638901883600_i139638905285072.inst","c139638902025296.out"],
-          ["i139638901894992_i139638910662224.clk_en","c139638902025424.out"],
-          ["i139638901895120_i139638912297616.clk_en","c139638902025552.out"],
-          ["i139638901883664_i139638905285072.clk_en","c139638902025616.out"],
-          ["i139638901883664_i139638905285072.inst","c139638902026192.out"],
-          ["i139638901884368_i139638910662224.clk_en","c139638902034576.out"],
-          ["i139638901886032_i139638912297616.clk_en","c139638902035024.out"],
-          ["i139638901885968_i139638912297616.clk_en","c139638902035152.out"],
-          ["i139638901883600_i139638905285072.clk_en","c139638902035536.out"],
-          ["i139638901895120_i139638912297616.inst","c139638902055184.out"],
-          ["i139638901891728_i139638915506576.inst","c139638902056016.out"],
-          ["i139638901886032_i139638912297616.inst","c139638902057872.out"],
-          ["i139638901894992_i139638910662224.inst","c139638902064080.out"],
-          ["i139638901893008_i139638906987280.inst","c139638902067088.out"],
-          ["i139638901884368_i139638910662224.inputs1","i139638901883600_i139638905285072.O0"],
-          ["i139638901894992_i139638910662224.inputs1","i139638901883664_i139638905285072.O0"],
-          ["i139638901886032_i139638912297616.inputs1","i139638901884368_i139638910662224.O0"],
-          ["self.in1_padded16_global_wrapper_stencil.4","i139638901884368_i139638910662224.inputs0"],
-          ["self.out_grad_x_unclamp_stencil","i139638901885968_i139638912297616.O0"],
-          ["i139638901886032_i139638912297616.O0","i139638901885968_i139638912297616.inputs0"],
-          ["self.in1_padded16_global_wrapper_stencil.5","i139638901885968_i139638912297616.inputs1"],
-          ["i139638901895120_i139638912297616.O0","i139638901886032_i139638912297616.inputs0"],
-          ["i139638901895120_i139638912297616.inputs0","i139638901891728_i139638915506576.O0"],
-          ["i139638901893008_i139638906987280.O0","i139638901891728_i139638915506576.inputs0"],
-          ["self.in0_grad_x_unclamp_stencil.0","i139638901891728_i139638915506576.inputs2"],
-          ["self.in1_padded16_global_wrapper_stencil.1","i139638901893008_i139638906987280.inputs0"],
-          ["i139638901894992_i139638910662224.O0","i139638901893008_i139638906987280.inputs1"],
-          ["self.in1_padded16_global_wrapper_stencil.0","i139638901893008_i139638906987280.inputs2"],
-          ["self.in1_padded16_global_wrapper_stencil.2","i139638901894992_i139638910662224.inputs0"],
-          ["self.in1_padded16_global_wrapper_stencil.3","i139638901895120_i139638912297616.inputs1"]
+          ["i139789448978256_i139789460383312.clk_en","c139789440323920.out"],
+          ["i139789448976912_i139789460383312.clk_en","c139789440324048.out"],
+          ["i139789448976272_i139789439667792.inst","c139789440324240.out"],
+          ["i139789448978256_i139789460383312.inst","c139789440325648.out"],
+          ["i139789448977616_i139789459283472.inst","c139789440326544.out"],
+          ["i139789454562512_i139789463956048.inst","c139789440326736.out"],
+          ["i139789454562512_i139789463956048.clk_en","c139789440327312.out"],
+          ["i139789448977616_i139789459283472.clk_en","c139789440696656.out"],
+          ["i139789448974608_i139789459283472.clk_en","c139789440698896.out"],
+          ["i139789448976272_i139789439667792.clk_en","c139789440699088.out"],
+          ["i139789448977488_i139789459283472.clk_en","c139789440699344.out"],
+          ["i139789448977488_i139789459283472.inst","c139789440699856.out"],
+          ["i139789448976912_i139789460383312.inst","c139789440868816.out"],
+          ["i139789454614800_i139789463956048.inst","c139789440869264.out"],
+          ["i139789448974608_i139789459283472.inst","c139789440869520.out"],
+          ["i139789454614800_i139789463956048.clk_en","c139789463996880.out"],
+          ["i139789440700304.out","i139789440197008.in"],
+          ["i139789448977616_i139789459283472.inputs2","i139789440197008.out"],
+          ["self.in1_padded16_global_wrapper_stencil.1","i139789440197200.in"],
+          ["i139789448976272_i139789439667792.inputs0","i139789440197200.out"],
+          ["self.in1_padded16_global_wrapper_stencil.0","i139789440197648.in"],
+          ["i139789448976272_i139789439667792.inputs2","i139789440197648.out"],
+          ["self.in0_grad_x_unclamp_stencil.0","i139789440197712.in"],
+          ["i139789448976272_i139789439667792.inputs4","i139789440197712.out"],
+          ["i139789440294224.out","i139789440292880.in"],
+          ["i139789440700176.in","i139789440292880.out"],
+          ["i139789445260432.out","i139789440294224.in"],
+          ["i139789448976912_i139789460383312.O0","i139789440699920.in"],
+          ["i139789440700240.in","i139789440699920.out"],
+          ["i139789448977488_i139789459283472.inputs2","i139789440700176.out"],
+          ["i139789448974608_i139789459283472.inputs2","i139789440700240.out"],
+          ["self.in1_padded16_global_wrapper_stencil.3","i139789440700304.in"],
+          ["self.in1_padded16_global_wrapper_stencil.5","i139789445260432.in"],
+          ["i139789448977488_i139789459283472.inputs5","i139789448974608_i139789459283472.O0"],
+          ["i139789448977616_i139789459283472.O0","i139789448974608_i139789459283472.inputs5"],
+          ["i139789448977616_i139789459283472.inputs5","i139789448976272_i139789439667792.O0"],
+          ["i139789448978256_i139789460383312.O0","i139789448976272_i139789439667792.inputs1"],
+          ["i139789454614800_i139789463956048.O0","i139789448976912_i139789460383312.inputs2"],
+          ["self.in1_padded16_global_wrapper_stencil.4","i139789448976912_i139789460383312.inputs5"],
+          ["self.out_grad_x_unclamp_stencil","i139789448977488_i139789459283472.O0"],
+          ["i139789454562512_i139789463956048.O0","i139789448978256_i139789460383312.inputs2"],
+          ["self.in1_padded16_global_wrapper_stencil.2","i139789448978256_i139789460383312.inputs5"]
         ]
       },
       "hcompute_grad_x_unclamp_stencil":{
@@ -784,23 +1018,23 @@
           ["out_grad_x_unclamp_stencil",["Array",16,"Bit"]]
         ]],
         "instances":{
-          "c139638905746128":{
+          "c139789446861648":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",54]},
+            "modargs":{"value":[["BitVector",54],"54'h00003200009084"]}
+          },
+          "c139789463748368":{
             "modref":"corebit.const",
             "modargs":{"value":["Bool",true]}
           },
-          "c139638905746448":{
-            "genref":"coreir.const",
-            "genargs":{"width":["Int",52]},
-            "modargs":{"value":[["BitVector",52],"52'h0000400000000"]}
-          },
-          "i139638888526160_i139638905285072":{
+          "i139789467795792_i139789463956048":{
             "modref":"global.PE"
           }
         },
         "connections":[
-          ["i139638888526160_i139638905285072.clk_en","c139638905746128.out"],
-          ["i139638888526160_i139638905285072.inst","c139638905746448.out"],
-          ["self.out_grad_x_unclamp_stencil","i139638888526160_i139638905285072.O0"]
+          ["i139789467795792_i139789463956048.inst","c139789446861648.out"],
+          ["i139789467795792_i139789463956048.clk_en","c139789463748368.out"],
+          ["self.out_grad_x_unclamp_stencil","i139789467795792_i139789463956048.O0"]
         ]
       },
       "hcompute_grad_y_unclamp_stencil_1":{
@@ -810,150 +1044,201 @@
           ["out_grad_y_unclamp_stencil",["Array",16,"Bit"]]
         ]],
         "instances":{
-          "c139638898017680":{
+          "c139789438651664":{
             "modref":"corebit.const",
             "modargs":{"value":["Bool",true]}
           },
-          "c139638898017872":{
+          "c139789438678992":{
             "genref":"coreir.const",
-            "genargs":{"width":["Int",52]},
-            "modargs":{"value":[["BitVector",52],"52'h0000400020000"]}
+            "genargs":{"width":["Int",54]},
+            "modargs":{"value":[["BitVector",54],"54'h003046ffffca52"]}
           },
-          "c139638898018000":{
+          "c139789439017040":{
             "genref":"coreir.const",
-            "genargs":{"width":["Int",52]},
-            "modargs":{"value":[["BitVector",52],"52'h0000880001084"]}
+            "genargs":{"width":["Int",54]},
+            "modargs":{"value":[["BitVector",54],"54'h003046ffffca52"]}
           },
-          "c139638898019536":{
+          "c139789439017424":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",54]},
+            "modargs":{"value":[["BitVector",54],"54'h00003200029084"]}
+          },
+          "c139789439018704":{
             "modref":"corebit.const",
             "modargs":{"value":["Bool",true]}
           },
-          "c139638898020240":{
+          "c139789439019024":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",54]},
+            "modargs":{"value":[["BitVector",54],"54'h000078ffff4a52"]}
+          },
+          "c139789439019600":{
             "modref":"corebit.const",
             "modargs":{"value":["Bool",true]}
           },
-          "c139638898210448":{
+          "c139789439019664":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",54]},
+            "modargs":{"value":[["BitVector",54],"54'h002c0a0000c631"]}
+          },
+          "c139789439066704":{
             "modref":"corebit.const",
             "modargs":{"value":["Bool",true]}
           },
-          "c139638898210832":{
-            "genref":"coreir.const",
-            "genargs":{"width":["Int",52]},
-            "modargs":{"value":[["BitVector",52],"52'h0000400020000"]}
-          },
-          "c139638898211152":{
+          "c139789439067088":{
             "modref":"corebit.const",
             "modargs":{"value":["Bool",true]}
           },
-          "c139638898211472":{
+          "c139789439067152":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",54]},
+            "modargs":{"value":[["BitVector",54],"54'h000078ffff4a52"]}
+          },
+          "c139789439067664":{
             "modref":"corebit.const",
             "modargs":{"value":["Bool",true]}
           },
-          "c139638898211728":{
+          "c139789439067920":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",54]},
+            "modargs":{"value":[["BitVector",54],"54'h00003200029084"]}
+          },
+          "c139789439068624":{
             "modref":"corebit.const",
             "modargs":{"value":["Bool",true]}
           },
-          "c139638898212240":{
+          "c139789439068816":{
             "modref":"corebit.const",
             "modargs":{"value":["Bool",true]}
           },
-          "c139638898235216":{
-            "modref":"corebit.const",
-            "modargs":{"value":["Bool",true]}
-          },
-          "c139638898514448":{
+          "c139789439292240":{
             "genref":"coreir.const",
-            "genargs":{"width":["Int",52]},
-            "modargs":{"value":[["BitVector",52],"52'h00c1effffca52"]}
+            "genargs":{"width":["Int",54]},
+            "modargs":{"value":[["BitVector",54],"54'h003046ffffca52"]}
           },
-          "c139638898771216":{
-            "genref":"coreir.const",
-            "genargs":{"width":["Int",52]},
-            "modargs":{"value":[["BitVector",52],"52'h00c1effffca52"]}
-          },
-          "c139638898796304":{
-            "genref":"coreir.const",
-            "genargs":{"width":["Int",52]},
-            "modargs":{"value":[["BitVector",52],"52'h00c12ffffca52"]}
-          },
-          "c139638899844688":{
-            "genref":"coreir.const",
-            "genargs":{"width":["Int",52]},
-            "modargs":{"value":[["BitVector",52],"52'h00c10ffffca52"]}
-          },
-          "c139638905281232":{
-            "genref":"coreir.const",
-            "genargs":{"width":["Int",52]},
-            "modargs":{"value":[["BitVector",52],"52'h00c1effffca52"]}
-          },
-          "c139638905317456":{
-            "genref":"coreir.const",
-            "genargs":{"width":["Int",52]},
-            "modargs":{"value":[["BitVector",52],"52'h0000880001084"]}
-          },
-          "i139638901805904_i139638912297616":{
+          "i139789436826576_i139789460383312":{
             "modref":"global.PE"
           },
-          "i139638901850192_i139638906987280":{
+          "i139789436827856_i139789459283472":{
             "modref":"global.PE"
           },
-          "i139638901852496_i139638910662224":{
+          "i139789436828240_i139789439667792":{
             "modref":"global.PE"
           },
-          "i139638902282768_i139638912297616":{
+          "i139789436828368_i139789459283472":{
             "modref":"global.PE"
           },
-          "i139638902300048_i139638912297616":{
+          "i139789436829072_i139789459283472":{
             "modref":"global.PE"
           },
-          "i139638902300368_i139638910662224":{
+          "i139789436829456_i139789460383312":{
             "modref":"global.PE"
           },
-          "i139638905298896_i139638915506576":{
+          "i139789436884112_i139789463956048":{
             "modref":"global.PE"
           },
-          "i139638905317264_i139638905285072":{
+          "i139789436886160_i139789463956048":{
             "modref":"global.PE"
           },
-          "i139638905319248_i139638905285072":{
-            "modref":"global.PE"
+          "i139789438445648":{
+            "genref":"coreir.reg",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"clk_posedge":["Bool",true], "init":[["BitVector",16],"16'hxxxx"]}
+          },
+          "i139789438446608":{
+            "genref":"coreir.reg",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"clk_posedge":["Bool",true], "init":[["BitVector",16],"16'hxxxx"]}
+          },
+          "i139789438637008":{
+            "genref":"coreir.reg",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"clk_posedge":["Bool",true], "init":[["BitVector",16],"16'hxxxx"]}
+          },
+          "i139789438639760":{
+            "genref":"coreir.reg",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"clk_posedge":["Bool",true], "init":[["BitVector",16],"16'hxxxx"]}
+          },
+          "i139789438679888":{
+            "genref":"coreir.reg",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"clk_posedge":["Bool",true], "init":[["BitVector",16],"16'hxxxx"]}
+          },
+          "i139789438680656":{
+            "genref":"coreir.reg",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"clk_posedge":["Bool",true], "init":[["BitVector",16],"16'hxxxx"]}
+          },
+          "i139789438969424":{
+            "genref":"coreir.reg",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"clk_posedge":["Bool",true], "init":[["BitVector",16],"16'hxxxx"]}
+          },
+          "i139789438969744":{
+            "genref":"coreir.reg",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"clk_posedge":["Bool",true], "init":[["BitVector",16],"16'hxxxx"]}
+          },
+          "i139789438970128":{
+            "genref":"coreir.reg",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"clk_posedge":["Bool",true], "init":[["BitVector",16],"16'hxxxx"]}
+          },
+          "i139789438994384":{
+            "genref":"coreir.reg",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"clk_posedge":["Bool",true], "init":[["BitVector",16],"16'hxxxx"]}
+          },
+          "i139789438996112":{
+            "genref":"coreir.reg",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"clk_posedge":["Bool",true], "init":[["BitVector",16],"16'hxxxx"]}
           }
         },
         "connections":[
-          ["i139638902282768_i139638912297616.clk_en","c139638898017680.out"],
-          ["i139638905319248_i139638905285072.inst","c139638898017872.out"],
-          ["i139638902300368_i139638910662224.inst","c139638898018000.out"],
-          ["i139638902300368_i139638910662224.clk_en","c139638898019536.out"],
-          ["i139638905319248_i139638905285072.clk_en","c139638898020240.out"],
-          ["i139638901852496_i139638910662224.clk_en","c139638898210448.out"],
-          ["i139638905317264_i139638905285072.inst","c139638898210832.out"],
-          ["i139638905317264_i139638905285072.clk_en","c139638898211152.out"],
-          ["i139638901850192_i139638906987280.clk_en","c139638898211472.out"],
-          ["i139638901805904_i139638912297616.clk_en","c139638898211728.out"],
-          ["i139638905298896_i139638915506576.clk_en","c139638898212240.out"],
-          ["i139638902300048_i139638912297616.clk_en","c139638898235216.out"],
-          ["i139638902300048_i139638912297616.inst","c139638898514448.out"],
-          ["i139638902282768_i139638912297616.inst","c139638898771216.out"],
-          ["i139638905298896_i139638915506576.inst","c139638898796304.out"],
-          ["i139638901850192_i139638906987280.inst","c139638899844688.out"],
-          ["i139638901805904_i139638912297616.inst","c139638905281232.out"],
-          ["i139638901852496_i139638910662224.inst","c139638905317456.out"],
-          ["i139638902282768_i139638912297616.inputs0","i139638901805904_i139638912297616.O0"],
-          ["i139638905298896_i139638915506576.O0","i139638901805904_i139638912297616.inputs0"],
-          ["self.in1_padded16_global_wrapper_stencil.0","i139638901805904_i139638912297616.inputs1"],
-          ["i139638905298896_i139638915506576.inputs0","i139638901850192_i139638906987280.O0"],
-          ["self.in1_padded16_global_wrapper_stencil.4","i139638901850192_i139638906987280.inputs0"],
-          ["i139638901852496_i139638910662224.O0","i139638901850192_i139638906987280.inputs1"],
-          ["self.in1_padded16_global_wrapper_stencil.3","i139638901850192_i139638906987280.inputs2"],
-          ["self.in1_padded16_global_wrapper_stencil.5","i139638901852496_i139638910662224.inputs0"],
-          ["i139638905317264_i139638905285072.O0","i139638901852496_i139638910662224.inputs1"],
-          ["i139638902300048_i139638912297616.inputs0","i139638902282768_i139638912297616.O0"],
-          ["i139638902300368_i139638910662224.O0","i139638902282768_i139638912297616.inputs1"],
-          ["self.out_grad_y_unclamp_stencil","i139638902300048_i139638912297616.O0"],
-          ["self.in1_padded16_global_wrapper_stencil.2","i139638902300048_i139638912297616.inputs1"],
-          ["self.in1_padded16_global_wrapper_stencil.1","i139638902300368_i139638910662224.inputs0"],
-          ["i139638905319248_i139638905285072.O0","i139638902300368_i139638910662224.inputs1"],
-          ["self.in0_grad_y_unclamp_stencil.0","i139638905298896_i139638915506576.inputs2"]
+          ["i139789436826576_i139789460383312.clk_en","c139789438651664.out"],
+          ["i139789436829072_i139789459283472.inst","c139789438678992.out"],
+          ["i139789436828368_i139789459283472.inst","c139789439017040.out"],
+          ["i139789436884112_i139789463956048.inst","c139789439017424.out"],
+          ["i139789436884112_i139789463956048.clk_en","c139789439018704.out"],
+          ["i139789436829456_i139789460383312.inst","c139789439019024.out"],
+          ["i139789436829456_i139789460383312.clk_en","c139789439019600.out"],
+          ["i139789436828240_i139789439667792.inst","c139789439019664.out"],
+          ["i139789436829072_i139789459283472.clk_en","c139789439066704.out"],
+          ["i139789436828240_i139789439667792.clk_en","c139789439067088.out"],
+          ["i139789436826576_i139789460383312.inst","c139789439067152.out"],
+          ["i139789436828368_i139789459283472.clk_en","c139789439067664.out"],
+          ["i139789436886160_i139789463956048.inst","c139789439067920.out"],
+          ["i139789436886160_i139789463956048.clk_en","c139789439068624.out"],
+          ["i139789436827856_i139789459283472.clk_en","c139789439068816.out"],
+          ["i139789436827856_i139789459283472.inst","c139789439292240.out"],
+          ["i139789436828240_i139789439667792.inputs1","i139789436826576_i139789460383312.O0"],
+          ["i139789436886160_i139789463956048.O0","i139789436826576_i139789460383312.inputs2"],
+          ["self.in1_padded16_global_wrapper_stencil.5","i139789436826576_i139789460383312.inputs5"],
+          ["self.out_grad_y_unclamp_stencil","i139789436827856_i139789459283472.O0"],
+          ["i139789438969424.out","i139789436827856_i139789459283472.inputs2"],
+          ["i139789436829072_i139789459283472.O0","i139789436827856_i139789459283472.inputs5"],
+          ["i139789436828368_i139789459283472.inputs5","i139789436828240_i139789439667792.O0"],
+          ["i139789438637008.out","i139789436828240_i139789439667792.inputs0"],
+          ["i139789438680656.out","i139789436828240_i139789439667792.inputs2"],
+          ["i139789438679888.out","i139789436828240_i139789439667792.inputs4"],
+          ["i139789436829072_i139789459283472.inputs5","i139789436828368_i139789459283472.O0"],
+          ["i139789438639760.out","i139789436828368_i139789459283472.inputs2"],
+          ["i139789438445648.out","i139789436829072_i139789459283472.inputs2"],
+          ["i139789438969744.in","i139789436829456_i139789460383312.O0"],
+          ["i139789436884112_i139789463956048.O0","i139789436829456_i139789460383312.inputs2"],
+          ["self.in1_padded16_global_wrapper_stencil.1","i139789436829456_i139789460383312.inputs5"],
+          ["i139789438969744.out","i139789438445648.in"],
+          ["self.in1_padded16_global_wrapper_stencil.0","i139789438446608.in"],
+          ["i139789438639760.in","i139789438446608.out"],
+          ["self.in1_padded16_global_wrapper_stencil.4","i139789438637008.in"],
+          ["self.in0_grad_y_unclamp_stencil.0","i139789438679888.in"],
+          ["self.in1_padded16_global_wrapper_stencil.3","i139789438680656.in"],
+          ["i139789438970128.out","i139789438969424.in"],
+          ["i139789438994384.out","i139789438970128.in"],
+          ["i139789438996112.out","i139789438994384.in"],
+          ["self.in1_padded16_global_wrapper_stencil.2","i139789438996112.in"]
         ]
       },
       "hcompute_grad_y_unclamp_stencil":{
@@ -961,23 +1246,23 @@
           ["out_grad_y_unclamp_stencil",["Array",16,"Bit"]]
         ]],
         "instances":{
-          "c139638905998096":{
-            "genref":"coreir.const",
-            "genargs":{"width":["Int",52]},
-            "modargs":{"value":[["BitVector",52],"52'h0000400000000"]}
-          },
-          "c139638905998608":{
+          "c139789439606032":{
             "modref":"corebit.const",
             "modargs":{"value":["Bool",true]}
           },
-          "i139638887529872_i139638905285072":{
+          "c139789439626768":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",54]},
+            "modargs":{"value":[["BitVector",54],"54'h00003200009084"]}
+          },
+          "i139789440234064_i139789463956048":{
             "modref":"global.PE"
           }
         },
         "connections":[
-          ["i139638887529872_i139638905285072.inst","c139638905998096.out"],
-          ["i139638887529872_i139638905285072.clk_en","c139638905998608.out"],
-          ["self.out_grad_y_unclamp_stencil","i139638887529872_i139638905285072.O0"]
+          ["i139789440234064_i139789463956048.clk_en","c139789439606032.out"],
+          ["i139789440234064_i139789463956048.inst","c139789439626768.out"],
+          ["self.out_grad_y_unclamp_stencil","i139789440234064_i139789463956048.O0"]
         ]
       },
       "hcompute_hw_output_stencil":{
@@ -996,93 +1281,72 @@
           ["out_lgxx_stencil",["Array",16,"Bit"]]
         ]],
         "instances":{
-          "c139638907857040":{
+          "c139789451996624":{
             "genref":"coreir.const",
-            "genargs":{"width":["Int",52]},
-            "modargs":{"value":[["BitVector",52],"52'h00c10ffffca52"]}
+            "genargs":{"width":["Int",54]},
+            "modargs":{"value":[["BitVector",54],"54'h00103a00008c63"]}
           },
-          "c139638907857488":{
-            "genref":"coreir.const",
-            "genargs":{"width":["Int",52]},
-            "modargs":{"value":[["BitVector",52],"52'h00c10ffffca52"]}
-          },
-          "c139638909220560":{
+          "c139789453045840":{
             "modref":"corebit.const",
             "modargs":{"value":["Bool",true]}
           },
-          "c139638909221008":{
+          "c139789453046288":{
             "modref":"corebit.const",
             "modargs":{"value":["Bool",true]}
           },
-          "c139638909221072":{
-            "modref":"corebit.const",
-            "modargs":{"value":["Bool",true]}
-          },
-          "c139638909221200":{
-            "modref":"corebit.const",
-            "modargs":{"value":["Bool",true]}
-          },
-          "c139638909221520":{
-            "modref":"corebit.const",
-            "modargs":{"value":["Bool",true]}
-          },
-          "c139638909222352":{
+          "c139789453046608":{
             "genref":"coreir.const",
-            "genargs":{"width":["Int",52]},
-            "modargs":{"value":[["BitVector",52],"52'h00c10ffffca52"]}
+            "genargs":{"width":["Int",54]},
+            "modargs":{"value":[["BitVector",54],"54'h00003c80001084"]}
           },
-          "c139638912725904":{
-            "genref":"coreir.const",
-            "genargs":{"width":["Int",52]},
-            "modargs":{"value":[["BitVector",52],"52'h00c12ffffca52"]}
-          },
-          "c139638916766352":{
-            "genref":"coreir.const",
-            "genargs":{"width":["Int",52]},
-            "modargs":{"value":[["BitVector",52],"52'h00c10ffffca52"]}
-          },
-          "i139638902608144_i139638906987280":{
+          "i139789451638480_i139789439818320":{
             "modref":"global.PE"
           },
-          "i139638908948560_i139638915506576":{
+          "i139789451903440_i139789467921104":{
             "modref":"global.PE"
           },
-          "i139638908950608_i139638906987280":{
-            "modref":"global.PE"
+          "i139789461180496":{
+            "genref":"coreir.reg",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"clk_posedge":["Bool",true], "init":[["BitVector",16],"16'hxxxx"]}
           },
-          "i139638908951184_i139638906987280":{
-            "modref":"global.PE"
+          "i139789461180624":{
+            "genref":"coreir.reg",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"clk_posedge":["Bool",true], "init":[["BitVector",16],"16'hxxxx"]}
           },
-          "i139638909008208_i139638906987280":{
-            "modref":"global.PE"
+          "i139789462671568":{
+            "genref":"coreir.reg",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"clk_posedge":["Bool",true], "init":[["BitVector",16],"16'hxxxx"]}
+          },
+          "i139789462674000":{
+            "genref":"coreir.reg",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"clk_posedge":["Bool",true], "init":[["BitVector",16],"16'hxxxx"]}
           }
         },
         "connections":[
-          ["i139638902608144_i139638906987280.inst","c139638907857040.out"],
-          ["i139638909008208_i139638906987280.inst","c139638907857488.out"],
-          ["i139638908950608_i139638906987280.clk_en","c139638909220560.out"],
-          ["i139638902608144_i139638906987280.clk_en","c139638909221008.out"],
-          ["i139638909008208_i139638906987280.clk_en","c139638909221072.out"],
-          ["i139638908948560_i139638915506576.clk_en","c139638909221200.out"],
-          ["i139638908951184_i139638906987280.clk_en","c139638909221520.out"],
-          ["i139638908950608_i139638906987280.inst","c139638909222352.out"],
-          ["i139638908948560_i139638915506576.inst","c139638912725904.out"],
-          ["i139638908951184_i139638906987280.inst","c139638916766352.out"],
-          ["i139638908951184_i139638906987280.inputs1","i139638902608144_i139638906987280.O0"],
-          ["self.in1_lxx_stencil.3","i139638902608144_i139638906987280.inputs0"],
-          ["i139638909008208_i139638906987280.O0","i139638902608144_i139638906987280.inputs1"],
-          ["self.in1_lxx_stencil.2","i139638902608144_i139638906987280.inputs2"],
-          ["self.out_lgxx_stencil","i139638908948560_i139638915506576.O0"],
-          ["i139638908951184_i139638906987280.O0","i139638908948560_i139638915506576.inputs0"],
-          ["self.in1_lxx_stencil.0","i139638908948560_i139638915506576.inputs2"],
-          ["i139638909008208_i139638906987280.inputs1","i139638908950608_i139638906987280.O0"],
-          ["self.in1_lxx_stencil.7","i139638908950608_i139638906987280.inputs0"],
-          ["self.in1_lxx_stencil.8","i139638908950608_i139638906987280.inputs1"],
-          ["self.in1_lxx_stencil.6","i139638908950608_i139638906987280.inputs2"],
-          ["self.in1_lxx_stencil.1","i139638908951184_i139638906987280.inputs0"],
-          ["self.in0_lgxx_stencil.0","i139638908951184_i139638906987280.inputs2"],
-          ["self.in1_lxx_stencil.5","i139638909008208_i139638906987280.inputs0"],
-          ["self.in1_lxx_stencil.4","i139638909008208_i139638906987280.inputs2"]
+          ["i139789451638480_i139789439818320.inst","c139789451996624.out"],
+          ["i139789451903440_i139789467921104.clk_en","c139789453045840.out"],
+          ["i139789451638480_i139789439818320.clk_en","c139789453046288.out"],
+          ["i139789451903440_i139789467921104.inst","c139789453046608.out"],
+          ["self.out_lgxx_stencil","i139789451638480_i139789439818320.O0"],
+          ["i139789461180496.out","i139789451638480_i139789439818320.inputs0"],
+          ["i139789461180624.out","i139789451638480_i139789439818320.inputs1"],
+          ["i139789462671568.out","i139789451638480_i139789439818320.inputs2"],
+          ["i139789462674000.out","i139789451638480_i139789439818320.inputs4"],
+          ["i139789451903440_i139789467921104.O0","i139789451638480_i139789439818320.inputs5"],
+          ["self.in1_lxx_stencil.7","i139789451903440_i139789467921104.inputs0"],
+          ["self.in1_lxx_stencil.5","i139789451903440_i139789467921104.inputs1"],
+          ["self.in1_lxx_stencil.6","i139789451903440_i139789467921104.inputs2"],
+          ["self.in1_lxx_stencil.8","i139789451903440_i139789467921104.inputs3"],
+          ["self.in1_lxx_stencil.4","i139789451903440_i139789467921104.inputs4"],
+          ["self.in1_lxx_stencil.3","i139789451903440_i139789467921104.inputs5"],
+          ["self.in1_lxx_stencil.2","i139789461180496.in"],
+          ["self.in0_lgxx_stencil.0","i139789461180624.in"],
+          ["self.in1_lxx_stencil.1","i139789462671568.in"],
+          ["self.in1_lxx_stencil.0","i139789462674000.in"]
         ]
       },
       "hcompute_lgxx_stencil":{
@@ -1090,23 +1354,23 @@
           ["out_lgxx_stencil",["Array",16,"Bit"]]
         ]],
         "instances":{
-          "c139638905890896":{
+          "c139789455703888":{
             "genref":"coreir.const",
-            "genargs":{"width":["Int",52]},
-            "modargs":{"value":[["BitVector",52],"52'h0000400000000"]}
+            "genargs":{"width":["Int",54]},
+            "modargs":{"value":[["BitVector",54],"54'h00003200009084"]}
           },
-          "c139638905891344":{
+          "c139789465146128":{
             "modref":"corebit.const",
             "modargs":{"value":["Bool",true]}
           },
-          "i139638916177296_i139638905285072":{
+          "i139789437912080_i139789463956048":{
             "modref":"global.PE"
           }
         },
         "connections":[
-          ["i139638916177296_i139638905285072.inst","c139638905890896.out"],
-          ["i139638916177296_i139638905285072.clk_en","c139638905891344.out"],
-          ["self.out_lgxx_stencil","i139638916177296_i139638905285072.O0"]
+          ["i139789437912080_i139789463956048.inst","c139789455703888.out"],
+          ["i139789437912080_i139789463956048.clk_en","c139789465146128.out"],
+          ["self.out_lgxx_stencil","i139789437912080_i139789463956048.O0"]
         ]
       },
       "hcompute_lgxy_stencil_1":{
@@ -1116,93 +1380,72 @@
           ["out_lgxy_stencil",["Array",16,"Bit"]]
         ]],
         "instances":{
-          "c139638902998096":{
+          "c139789452079888":{
             "genref":"coreir.const",
-            "genargs":{"width":["Int",52]},
-            "modargs":{"value":[["BitVector",52],"52'h00c12ffffca52"]}
+            "genargs":{"width":["Int",54]},
+            "modargs":{"value":[["BitVector",54],"54'h00103a00008c63"]}
           },
-          "c139638902999568":{
+          "c139789455632784":{
             "modref":"corebit.const",
             "modargs":{"value":["Bool",true]}
           },
-          "c139638903001040":{
+          "c139789455633616":{
             "modref":"corebit.const",
             "modargs":{"value":["Bool",true]}
           },
-          "c139638906176400":{
-            "modref":"corebit.const",
-            "modargs":{"value":["Bool",true]}
-          },
-          "c139638906176912":{
+          "c139789455715344":{
             "genref":"coreir.const",
-            "genargs":{"width":["Int",52]},
-            "modargs":{"value":[["BitVector",52],"52'h00c10ffffca52"]}
+            "genargs":{"width":["Int",54]},
+            "modargs":{"value":[["BitVector",54],"54'h00003c80001084"]}
           },
-          "c139638906178768":{
-            "genref":"coreir.const",
-            "genargs":{"width":["Int",52]},
-            "modargs":{"value":[["BitVector",52],"52'h00c10ffffca52"]}
-          },
-          "c139638906179088":{
-            "modref":"corebit.const",
-            "modargs":{"value":["Bool",true]}
-          },
-          "c139638906179472":{
-            "genref":"coreir.const",
-            "genargs":{"width":["Int",52]},
-            "modargs":{"value":[["BitVector",52],"52'h00c10ffffca52"]}
-          },
-          "c139638916064720":{
-            "modref":"corebit.const",
-            "modargs":{"value":["Bool",true]}
-          },
-          "c139638916065296":{
-            "genref":"coreir.const",
-            "genargs":{"width":["Int",52]},
-            "modargs":{"value":[["BitVector",52],"52'h00c10ffffca52"]}
-          },
-          "i139638908491664_i139638915506576":{
+          "i139789450070480_i139789439818320":{
             "modref":"global.PE"
           },
-          "i139638914201232_i139638906987280":{
-            "modref":"global.PE"
+          "i139789451412496":{
+            "genref":"coreir.reg",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"clk_posedge":["Bool",true], "init":[["BitVector",16],"16'hxxxx"]}
           },
-          "i139638917247184_i139638906987280":{
-            "modref":"global.PE"
+          "i139789451943312":{
+            "genref":"coreir.reg",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"clk_posedge":["Bool",true], "init":[["BitVector",16],"16'hxxxx"]}
           },
-          "i139638917248272_i139638906987280":{
-            "modref":"global.PE"
+          "i139789455710800":{
+            "genref":"coreir.reg",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"clk_posedge":["Bool",true], "init":[["BitVector",16],"16'hxxxx"]}
           },
-          "i139638917248400_i139638906987280":{
+          "i139789455711440":{
+            "genref":"coreir.reg",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"clk_posedge":["Bool",true], "init":[["BitVector",16],"16'hxxxx"]}
+          },
+          "i139789463894352_i139789467921104":{
             "modref":"global.PE"
           }
         },
         "connections":[
-          ["i139638908491664_i139638915506576.inst","c139638902998096.out"],
-          ["i139638914201232_i139638906987280.clk_en","c139638902999568.out"],
-          ["i139638908491664_i139638915506576.clk_en","c139638903001040.out"],
-          ["i139638917248400_i139638906987280.clk_en","c139638906176400.out"],
-          ["i139638917248400_i139638906987280.inst","c139638906176912.out"],
-          ["i139638917248272_i139638906987280.inst","c139638906178768.out"],
-          ["i139638917248272_i139638906987280.clk_en","c139638906179088.out"],
-          ["i139638917247184_i139638906987280.inst","c139638906179472.out"],
-          ["i139638917247184_i139638906987280.clk_en","c139638916064720.out"],
-          ["i139638914201232_i139638906987280.inst","c139638916065296.out"],
-          ["self.out_lgxy_stencil","i139638908491664_i139638915506576.O0"],
-          ["i139638914201232_i139638906987280.O0","i139638908491664_i139638915506576.inputs0"],
-          ["self.in1_lxy_stencil.0","i139638908491664_i139638915506576.inputs2"],
-          ["self.in1_lxy_stencil.1","i139638914201232_i139638906987280.inputs0"],
-          ["i139638917247184_i139638906987280.O0","i139638914201232_i139638906987280.inputs1"],
-          ["self.in0_lgxy_stencil.0","i139638914201232_i139638906987280.inputs2"],
-          ["self.in1_lxy_stencil.3","i139638917247184_i139638906987280.inputs0"],
-          ["i139638917248400_i139638906987280.O0","i139638917247184_i139638906987280.inputs1"],
-          ["self.in1_lxy_stencil.2","i139638917247184_i139638906987280.inputs2"],
-          ["i139638917248400_i139638906987280.inputs1","i139638917248272_i139638906987280.O0"],
-          ["self.in1_lxy_stencil.7","i139638917248272_i139638906987280.inputs0"],
-          ["self.in1_lxy_stencil.8","i139638917248272_i139638906987280.inputs1"],
-          ["self.in1_lxy_stencil.6","i139638917248272_i139638906987280.inputs2"],
-          ["self.in1_lxy_stencil.5","i139638917248400_i139638906987280.inputs0"],
-          ["self.in1_lxy_stencil.4","i139638917248400_i139638906987280.inputs2"]
+          ["i139789450070480_i139789439818320.inst","c139789452079888.out"],
+          ["i139789450070480_i139789439818320.clk_en","c139789455632784.out"],
+          ["i139789463894352_i139789467921104.clk_en","c139789455633616.out"],
+          ["i139789463894352_i139789467921104.inst","c139789455715344.out"],
+          ["self.out_lgxy_stencil","i139789450070480_i139789439818320.O0"],
+          ["i139789455710800.out","i139789450070480_i139789439818320.inputs0"],
+          ["i139789455711440.out","i139789450070480_i139789439818320.inputs1"],
+          ["i139789451412496.out","i139789450070480_i139789439818320.inputs2"],
+          ["i139789451943312.out","i139789450070480_i139789439818320.inputs4"],
+          ["i139789463894352_i139789467921104.O0","i139789450070480_i139789439818320.inputs5"],
+          ["self.in1_lxy_stencil.1","i139789451412496.in"],
+          ["self.in1_lxy_stencil.0","i139789451943312.in"],
+          ["self.in1_lxy_stencil.2","i139789455710800.in"],
+          ["self.in0_lgxy_stencil.0","i139789455711440.in"],
+          ["self.in1_lxy_stencil.7","i139789463894352_i139789467921104.inputs0"],
+          ["self.in1_lxy_stencil.5","i139789463894352_i139789467921104.inputs1"],
+          ["self.in1_lxy_stencil.6","i139789463894352_i139789467921104.inputs2"],
+          ["self.in1_lxy_stencil.8","i139789463894352_i139789467921104.inputs3"],
+          ["self.in1_lxy_stencil.4","i139789463894352_i139789467921104.inputs4"],
+          ["self.in1_lxy_stencil.3","i139789463894352_i139789467921104.inputs5"]
         ]
       },
       "hcompute_lgxy_stencil":{
@@ -1210,23 +1453,23 @@
           ["out_lgxy_stencil",["Array",16,"Bit"]]
         ]],
         "instances":{
-          "c139638913799184":{
+          "c139789470149648":{
             "genref":"coreir.const",
-            "genargs":{"width":["Int",52]},
-            "modargs":{"value":[["BitVector",52],"52'h0000400000000"]}
+            "genargs":{"width":["Int",54]},
+            "modargs":{"value":[["BitVector",54],"54'h00003200009084"]}
           },
-          "c139638913844304":{
+          "c139789470149840":{
             "modref":"corebit.const",
             "modargs":{"value":["Bool",true]}
           },
-          "i139638908969680_i139638905285072":{
+          "i139789461541008_i139789463956048":{
             "modref":"global.PE"
           }
         },
         "connections":[
-          ["i139638908969680_i139638905285072.inst","c139638913799184.out"],
-          ["i139638908969680_i139638905285072.clk_en","c139638913844304.out"],
-          ["self.out_lgxy_stencil","i139638908969680_i139638905285072.O0"]
+          ["i139789461541008_i139789463956048.inst","c139789470149648.out"],
+          ["i139789461541008_i139789463956048.clk_en","c139789470149840.out"],
+          ["self.out_lgxy_stencil","i139789461541008_i139789463956048.O0"]
         ]
       },
       "hcompute_lgyy_stencil_1":{
@@ -1236,93 +1479,72 @@
           ["out_lgyy_stencil",["Array",16,"Bit"]]
         ]],
         "instances":{
-          "c139638885820112":{
+          "c139789433521296":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",54]},
+            "modargs":{"value":[["BitVector",54],"54'h00103a00008c63"]}
+          },
+          "c139789433546960":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",54]},
+            "modargs":{"value":[["BitVector",54],"54'h00003c80001084"]}
+          },
+          "c139789433547984":{
             "modref":"corebit.const",
             "modargs":{"value":["Bool",true]}
           },
-          "c139638885820624":{
+          "c139789433548048":{
             "modref":"corebit.const",
             "modargs":{"value":["Bool",true]}
           },
-          "c139638885821648":{
-            "genref":"coreir.const",
-            "genargs":{"width":["Int",52]},
-            "modargs":{"value":[["BitVector",52],"52'h00c12ffffca52"]}
+          "i139789433522384":{
+            "genref":"coreir.reg",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"clk_posedge":["Bool",true], "init":[["BitVector",16],"16'hxxxx"]}
           },
-          "c139638885821904":{
-            "modref":"corebit.const",
-            "modargs":{"value":["Bool",true]}
+          "i139789433522512":{
+            "genref":"coreir.reg",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"clk_posedge":["Bool",true], "init":[["BitVector",16],"16'hxxxx"]}
           },
-          "c139638885831248":{
-            "genref":"coreir.const",
-            "genargs":{"width":["Int",52]},
-            "modargs":{"value":[["BitVector",52],"52'h00c10ffffca52"]}
+          "i139789433523408":{
+            "genref":"coreir.reg",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"clk_posedge":["Bool",true], "init":[["BitVector",16],"16'hxxxx"]}
           },
-          "c139638885832976":{
-            "modref":"corebit.const",
-            "modargs":{"value":["Bool",true]}
+          "i139789433524112":{
+            "genref":"coreir.reg",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"clk_posedge":["Bool",true], "init":[["BitVector",16],"16'hxxxx"]}
           },
-          "c139638885848336":{
-            "genref":"coreir.const",
-            "genargs":{"width":["Int",52]},
-            "modargs":{"value":[["BitVector",52],"52'h00c10ffffca52"]}
-          },
-          "c139638885848464":{
-            "genref":"coreir.const",
-            "genargs":{"width":["Int",52]},
-            "modargs":{"value":[["BitVector",52],"52'h00c10ffffca52"]}
-          },
-          "c139638885849232":{
-            "genref":"coreir.const",
-            "genargs":{"width":["Int",52]},
-            "modargs":{"value":[["BitVector",52],"52'h00c10ffffca52"]}
-          },
-          "c139638885849872":{
-            "modref":"corebit.const",
-            "modargs":{"value":["Bool",true]}
-          },
-          "i139638904902480_i139638906987280":{
+          "i139789434360528_i139789467921104":{
             "modref":"global.PE"
           },
-          "i139638904902736_i139638906987280":{
-            "modref":"global.PE"
-          },
-          "i139638904902992_i139638915506576":{
-            "modref":"global.PE"
-          },
-          "i139638904904272_i139638906987280":{
-            "modref":"global.PE"
-          },
-          "i139638912182544_i139638906987280":{
+          "i139789434393424_i139789439818320":{
             "modref":"global.PE"
           }
         },
         "connections":[
-          ["i139638904902480_i139638906987280.clk_en","c139638885820112.out"],
-          ["i139638912182544_i139638906987280.clk_en","c139638885820624.out"],
-          ["i139638904902992_i139638915506576.inst","c139638885821648.out"],
-          ["i139638904902992_i139638915506576.clk_en","c139638885821904.out"],
-          ["i139638904902480_i139638906987280.inst","c139638885831248.out"],
-          ["i139638904902736_i139638906987280.clk_en","c139638885832976.out"],
-          ["i139638904902736_i139638906987280.inst","c139638885848336.out"],
-          ["i139638912182544_i139638906987280.inst","c139638885848464.out"],
-          ["i139638904904272_i139638906987280.inst","c139638885849232.out"],
-          ["i139638904904272_i139638906987280.clk_en","c139638885849872.out"],
-          ["i139638904902992_i139638915506576.inputs0","i139638904902480_i139638906987280.O0"],
-          ["self.in1_lyy_stencil.1","i139638904902480_i139638906987280.inputs0"],
-          ["i139638912182544_i139638906987280.O0","i139638904902480_i139638906987280.inputs1"],
-          ["self.in0_lgyy_stencil.0","i139638904902480_i139638906987280.inputs2"],
-          ["i139638912182544_i139638906987280.inputs1","i139638904902736_i139638906987280.O0"],
-          ["self.in1_lyy_stencil.5","i139638904902736_i139638906987280.inputs0"],
-          ["i139638904904272_i139638906987280.O0","i139638904902736_i139638906987280.inputs1"],
-          ["self.in1_lyy_stencil.4","i139638904902736_i139638906987280.inputs2"],
-          ["self.out_lgyy_stencil","i139638904902992_i139638915506576.O0"],
-          ["self.in1_lyy_stencil.0","i139638904902992_i139638915506576.inputs2"],
-          ["self.in1_lyy_stencil.7","i139638904904272_i139638906987280.inputs0"],
-          ["self.in1_lyy_stencil.8","i139638904904272_i139638906987280.inputs1"],
-          ["self.in1_lyy_stencil.6","i139638904904272_i139638906987280.inputs2"],
-          ["self.in1_lyy_stencil.3","i139638912182544_i139638906987280.inputs0"],
-          ["self.in1_lyy_stencil.2","i139638912182544_i139638906987280.inputs2"]
+          ["i139789434393424_i139789439818320.inst","c139789433521296.out"],
+          ["i139789434360528_i139789467921104.inst","c139789433546960.out"],
+          ["i139789434360528_i139789467921104.clk_en","c139789433547984.out"],
+          ["i139789434393424_i139789439818320.clk_en","c139789433548048.out"],
+          ["self.in1_lyy_stencil.2","i139789433522384.in"],
+          ["i139789434393424_i139789439818320.inputs0","i139789433522384.out"],
+          ["self.in0_lgyy_stencil.0","i139789433522512.in"],
+          ["i139789434393424_i139789439818320.inputs1","i139789433522512.out"],
+          ["self.in1_lyy_stencil.0","i139789433523408.in"],
+          ["i139789434393424_i139789439818320.inputs4","i139789433523408.out"],
+          ["self.in1_lyy_stencil.1","i139789433524112.in"],
+          ["i139789434393424_i139789439818320.inputs2","i139789433524112.out"],
+          ["i139789434393424_i139789439818320.inputs5","i139789434360528_i139789467921104.O0"],
+          ["self.in1_lyy_stencil.7","i139789434360528_i139789467921104.inputs0"],
+          ["self.in1_lyy_stencil.5","i139789434360528_i139789467921104.inputs1"],
+          ["self.in1_lyy_stencil.6","i139789434360528_i139789467921104.inputs2"],
+          ["self.in1_lyy_stencil.8","i139789434360528_i139789467921104.inputs3"],
+          ["self.in1_lyy_stencil.4","i139789434360528_i139789467921104.inputs4"],
+          ["self.in1_lyy_stencil.3","i139789434360528_i139789467921104.inputs5"],
+          ["self.out_lgyy_stencil","i139789434393424_i139789439818320.O0"]
         ]
       },
       "hcompute_lgyy_stencil":{
@@ -1330,23 +1552,23 @@
           ["out_lgyy_stencil",["Array",16,"Bit"]]
         ]],
         "instances":{
-          "c139638897168784":{
+          "c139789434275536":{
             "genref":"coreir.const",
-            "genargs":{"width":["Int",52]},
-            "modargs":{"value":[["BitVector",52],"52'h0000400000000"]}
+            "genargs":{"width":["Int",54]},
+            "modargs":{"value":[["BitVector",54],"54'h00003200009084"]}
           },
-          "c139638897172176":{
+          "c139789434290320":{
             "modref":"corebit.const",
             "modargs":{"value":["Bool",true]}
           },
-          "i139638899966352_i139638905285072":{
+          "i139789469800080_i139789463956048":{
             "modref":"global.PE"
           }
         },
         "connections":[
-          ["i139638899966352_i139638905285072.inst","c139638897168784.out"],
-          ["i139638899966352_i139638905285072.clk_en","c139638897172176.out"],
-          ["self.out_lgyy_stencil","i139638899966352_i139638905285072.O0"]
+          ["i139789469800080_i139789463956048.inst","c139789434275536.out"],
+          ["i139789469800080_i139789463956048.clk_en","c139789434290320.out"],
+          ["self.out_lgyy_stencil","i139789469800080_i139789463956048.O0"]
         ]
       },
       "hcompute_lxx_stencil":{
@@ -1355,115 +1577,115 @@
           ["out_lxx_stencil",["Array",16,"Bit"]]
         ]],
         "instances":{
-          "c139638884934992":{
+          "c139789432326800":{
             "genref":"coreir.const",
-            "genargs":{"width":["Int",52]},
-            "modargs":{"value":[["BitVector",52],"52'h0010000000000"]}
+            "genargs":{"width":["Int",54]},
+            "modargs":{"value":[["BitVector",54],"54'h00304a80009084"]}
           },
-          "c139638884958480":{
+          "c139789432349520":{
             "genref":"coreir.const",
-            "genargs":{"width":["Int",52]},
-            "modargs":{"value":[["BitVector",52],"52'h00f0e7001c631"]}
+            "genargs":{"width":["Int",54]},
+            "modargs":{"value":[["BitVector",54],"54'h000078ffff4a52"]}
           },
-          "c139638884959376":{
-            "genref":"coreir.const",
-            "genargs":{"width":["Int",52]},
-            "modargs":{"value":[["BitVector",52],"52'h0000880001084"]}
-          },
-          "c139638884961040":{
-            "genref":"coreir.const",
-            "genargs":{"width":["Int",52]},
-            "modargs":{"value":[["BitVector",52],"52'h00b160000c631"]}
-          },
-          "c139638884977552":{
-            "genref":"coreir.const",
-            "genargs":{"width":["Int",52]},
-            "modargs":{"value":[["BitVector",52],"52'h0000400060000"]}
-          },
-          "c139638884977680":{
+          "c139789432350032":{
             "modref":"corebit.const",
             "modargs":{"value":["Bool",true]}
           },
-          "c139638884978128":{
-            "modref":"corebit.const",
-            "modargs":{"value":["Bool",true]}
-          },
-          "c139638884978192":{
-            "modref":"corebit.const",
-            "modargs":{"value":["Bool",true]}
-          },
-          "c139638885392848":{
-            "modref":"corebit.const",
-            "modargs":{"value":["Bool",true]}
-          },
-          "c139638885393552":{
-            "modref":"corebit.const",
-            "modargs":{"value":["Bool",true]}
-          },
-          "c139638885393616":{
-            "modref":"corebit.const",
-            "modargs":{"value":["Bool",true]}
-          },
-          "c139638885395152":{
+          "c139789432350736":{
             "genref":"coreir.const",
-            "genargs":{"width":["Int",52]},
-            "modargs":{"value":[["BitVector",52],"52'h00004ff4c0000"]}
+            "genargs":{"width":["Int",54]},
+            "modargs":{"value":[["BitVector",54],"54'h003c2effffca52"]}
           },
-          "c139638885395920":{
+          "c139789432352656":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",54]},
+            "modargs":{"value":[["BitVector",54],"54'h000032ff4c9084"]}
+          },
+          "c139789432369360":{
             "modref":"corebit.const",
             "modargs":{"value":["Bool",true]}
           },
-          "c139638885411664":{
+          "c139789432370000":{
             "genref":"coreir.const",
-            "genargs":{"width":["Int",52]},
-            "modargs":{"value":[["BitVector",52],"52'h0000400b40000"]}
+            "genargs":{"width":["Int",54]},
+            "modargs":{"value":[["BitVector",54],"54'h00003200b49084"]}
           },
-          "i139638885950928_i139638905336848":{
+          "c139789432370576":{
+            "modref":"corebit.const",
+            "modargs":{"value":["Bool",true]}
+          },
+          "c139789432370896":{
+            "modref":"corebit.const",
+            "modargs":{"value":["Bool",true]}
+          },
+          "c139789432371216":{
+            "modref":"corebit.const",
+            "modargs":{"value":["Bool",true]}
+          },
+          "c139789432371408":{
+            "modref":"corebit.const",
+            "modargs":{"value":["Bool",true]}
+          },
+          "c139789432371536":{
+            "modref":"corebit.const",
+            "modargs":{"value":["Bool",true]}
+          },
+          "c139789432371792":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",54]},
+            "modargs":{"value":[["BitVector",54],"54'h00082280001084"]}
+          },
+          "c139789432829840":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",54]},
+            "modargs":{"value":[["BitVector",54],"54'h00003200069084"]}
+          },
+          "i139789433135184_i139789463956048":{
             "modref":"global.PE"
           },
-          "i139638885953616_i139638910662224":{
+          "i139789433137744_i139789463956048":{
             "modref":"global.PE"
           },
-          "i139638885955280_i139638899068432":{
+          "i139789433160016_i139789460383312":{
             "modref":"global.PE"
           },
-          "i139638885955408_i139638906904016":{
+          "i139789433160080_i139789440627856":{
             "modref":"global.PE"
           },
-          "i139638885955984_i139638905285072":{
+          "i139789433161296_i139789463956048":{
             "modref":"global.PE"
           },
-          "i139638885957264_i139638905285072":{
+          "i139789433162064_i139789460272400":{
             "modref":"global.PE"
           },
-          "i139638885957328_i139638905285072":{
+          "i139789433622480_i139789460011472":{
             "modref":"global.PE"
           }
         },
         "connections":[
-          ["i139638885955280_i139638899068432.inst","c139638884934992.out"],
-          ["i139638885955408_i139638906904016.inst","c139638884958480.out"],
-          ["i139638885953616_i139638910662224.inst","c139638884959376.out"],
-          ["i139638885950928_i139638905336848.inst","c139638884961040.out"],
-          ["i139638885957264_i139638905285072.inst","c139638884977552.out"],
-          ["i139638885953616_i139638910662224.clk_en","c139638884977680.out"],
-          ["i139638885950928_i139638905336848.clk_en","c139638884978128.out"],
-          ["i139638885957264_i139638905285072.clk_en","c139638884978192.out"],
-          ["i139638885955984_i139638905285072.clk_en","c139638885392848.out"],
-          ["i139638885957328_i139638905285072.clk_en","c139638885393552.out"],
-          ["i139638885955280_i139638899068432.clk_en","c139638885393616.out"],
-          ["i139638885957328_i139638905285072.inst","c139638885395152.out"],
-          ["i139638885955408_i139638906904016.clk_en","c139638885395920.out"],
-          ["i139638885955984_i139638905285072.inst","c139638885411664.out"],
-          ["self.out_lxx_stencil","i139638885950928_i139638905336848.O0"],
-          ["i139638885953616_i139638910662224.O0","i139638885950928_i139638905336848.inputs0"],
-          ["i139638885957264_i139638905285072.O0","i139638885950928_i139638905336848.inputs1"],
-          ["i139638885955408_i139638906904016.O0","i139638885953616_i139638910662224.inputs0"],
-          ["i139638885955408_i139638906904016.O0","i139638885953616_i139638910662224.inputs1"],
-          ["i139638885955408_i139638906904016.inputs0","i139638885955280_i139638899068432.O0"],
-          ["self.in0_grad_x_unclamp_stencil.0","i139638885955280_i139638899068432.inputs0"],
-          ["i139638885955984_i139638905285072.O0","i139638885955280_i139638899068432.inputs1"],
-          ["i139638885957328_i139638905285072.O0","i139638885955408_i139638906904016.inputs1"]
+          ["i139789433622480_i139789460011472.inst","c139789432326800.out"],
+          ["i139789433160016_i139789460383312.inst","c139789432349520.out"],
+          ["i139789433135184_i139789463956048.clk_en","c139789432350032.out"],
+          ["i139789433162064_i139789460272400.inst","c139789432350736.out"],
+          ["i139789433137744_i139789463956048.inst","c139789432352656.out"],
+          ["i139789433161296_i139789463956048.clk_en","c139789432369360.out"],
+          ["i139789433161296_i139789463956048.inst","c139789432370000.out"],
+          ["i139789433137744_i139789463956048.clk_en","c139789432370576.out"],
+          ["i139789433622480_i139789460011472.clk_en","c139789432370896.out"],
+          ["i139789433162064_i139789460272400.clk_en","c139789432371216.out"],
+          ["i139789433160016_i139789460383312.clk_en","c139789432371408.out"],
+          ["i139789433160080_i139789440627856.clk_en","c139789432371536.out"],
+          ["i139789433160080_i139789440627856.inst","c139789432371792.out"],
+          ["i139789433135184_i139789463956048.inst","c139789432829840.out"],
+          ["i139789433622480_i139789460011472.inputs2","i139789433135184_i139789463956048.O0"],
+          ["i139789433162064_i139789460272400.inputs2","i139789433137744_i139789463956048.O0"],
+          ["i139789433622480_i139789460011472.inputs5","i139789433160016_i139789460383312.O0"],
+          ["i139789433162064_i139789460272400.O0","i139789433160016_i139789460383312.inputs2"],
+          ["i139789433162064_i139789460272400.O0","i139789433160016_i139789460383312.inputs5"],
+          ["i139789433162064_i139789460272400.inputs5","i139789433160080_i139789440627856.O0"],
+          ["i139789433161296_i139789463956048.O0","i139789433160080_i139789440627856.inputs2"],
+          ["self.in0_grad_x_unclamp_stencil.0","i139789433160080_i139789440627856.inputs5"],
+          ["self.out_lxx_stencil","i139789433622480_i139789460011472.O0"]
         ]
       },
       "hcompute_lxy_stencil":{
@@ -1473,175 +1695,175 @@
           ["out_lxy_stencil",["Array",16,"Bit"]]
         ]],
         "instances":{
-          "c139638884149776":{
+          "c139789431276560":{
             "genref":"coreir.const",
-            "genargs":{"width":["Int",52]},
-            "modargs":{"value":[["BitVector",52],"52'h00b160000c631"]}
+            "genargs":{"width":["Int",54]},
+            "modargs":{"value":[["BitVector",54],"54'h000032ff4c9084"]}
           },
-          "c139638884165584":{
+          "c139789431277264":{
             "genref":"coreir.const",
-            "genargs":{"width":["Int",52]},
-            "modargs":{"value":[["BitVector",52],"52'h0000400b40000"]}
+            "genargs":{"width":["Int",54]},
+            "modargs":{"value":[["BitVector",54],"54'h003c2effffca52"]}
           },
-          "c139638884166544":{
-            "genref":"coreir.const",
-            "genargs":{"width":["Int",52]},
-            "modargs":{"value":[["BitVector",52],"52'h0010000000000"]}
-          },
-          "c139638884166992":{
-            "genref":"coreir.const",
-            "genargs":{"width":["Int",52]},
-            "modargs":{"value":[["BitVector",52],"52'h0000880001084"]}
-          },
-          "c139638884167376":{
-            "genref":"coreir.const",
-            "genargs":{"width":["Int",52]},
-            "modargs":{"value":[["BitVector",52],"52'h00f0e7001c631"]}
-          },
-          "c139638884188368":{
-            "genref":"coreir.const",
-            "genargs":{"width":["Int",52]},
-            "modargs":{"value":[["BitVector",52],"52'h00f0e7001c631"]}
-          },
-          "c139638884189072":{
-            "genref":"coreir.const",
-            "genargs":{"width":["Int",52]},
-            "modargs":{"value":[["BitVector",52],"52'h0010000000000"]}
-          },
-          "c139638884189328":{
+          "c139789431279440":{
             "modref":"corebit.const",
             "modargs":{"value":["Bool",true]}
           },
-          "c139638884190032":{
+          "c139789431320720":{
             "genref":"coreir.const",
-            "genargs":{"width":["Int",52]},
-            "modargs":{"value":[["BitVector",52],"52'h0000400b40000"]}
+            "genargs":{"width":["Int",54]},
+            "modargs":{"value":[["BitVector",54],"54'h003c2effffca52"]}
           },
-          "c139638884191120":{
-            "modref":"corebit.const",
-            "modargs":{"value":["Bool",true]}
-          },
-          "c139638884191184":{
-            "modref":"corebit.const",
-            "modargs":{"value":["Bool",true]}
-          },
-          "c139638884191568":{
-            "modref":"corebit.const",
-            "modargs":{"value":["Bool",true]}
-          },
-          "c139638884191888":{
+          "c139789431321360":{
             "genref":"coreir.const",
-            "genargs":{"width":["Int",52]},
-            "modargs":{"value":[["BitVector",52],"52'h00004ff4c0000"]}
+            "genargs":{"width":["Int",54]},
+            "modargs":{"value":[["BitVector",54],"54'h00003200b49084"]}
           },
-          "c139638884192208":{
+          "c139789431321552":{
             "modref":"corebit.const",
             "modargs":{"value":["Bool",true]}
           },
-          "c139638884221200":{
+          "c139789431322192":{
+            "modref":"corebit.const",
+            "modargs":{"value":["Bool",true]}
+          },
+          "c139789431322576":{
             "genref":"coreir.const",
-            "genargs":{"width":["Int",52]},
-            "modargs":{"value":[["BitVector",52],"52'h0000400060000"]}
+            "genargs":{"width":["Int",54]},
+            "modargs":{"value":[["BitVector",54],"54'h00082280001084"]}
           },
-          "c139638884221648":{
+          "c139789431322832":{
             "modref":"corebit.const",
             "modargs":{"value":["Bool",true]}
           },
-          "c139638884221776":{
+          "c139789431323856":{
             "modref":"corebit.const",
             "modargs":{"value":["Bool",true]}
           },
-          "c139638884574608":{
-            "modref":"corebit.const",
-            "modargs":{"value":["Bool",true]}
-          },
-          "c139638884575312":{
-            "modref":"corebit.const",
-            "modargs":{"value":["Bool",true]}
-          },
-          "c139638884651152":{
-            "modref":"corebit.const",
-            "modargs":{"value":["Bool",true]}
-          },
-          "c139638884652112":{
-            "modref":"corebit.const",
-            "modargs":{"value":["Bool",true]}
-          },
-          "c139638884654416":{
+          "c139789431324240":{
             "genref":"coreir.const",
-            "genargs":{"width":["Int",52]},
-            "modargs":{"value":[["BitVector",52],"52'h00004ff4c0000"]}
+            "genargs":{"width":["Int",54]},
+            "modargs":{"value":[["BitVector",54],"54'h000032ff4c9084"]}
           },
-          "i139638884672080_i139638910662224":{
+          "c139789431378128":{
+            "modref":"corebit.const",
+            "modargs":{"value":["Bool",true]}
+          },
+          "c139789431378192":{
+            "modref":"corebit.const",
+            "modargs":{"value":["Bool",true]}
+          },
+          "c139789431378256":{
+            "modref":"corebit.const",
+            "modargs":{"value":["Bool",true]}
+          },
+          "c139789431378320":{
+            "modref":"corebit.const",
+            "modargs":{"value":["Bool",true]}
+          },
+          "c139789431634256":{
+            "modref":"corebit.const",
+            "modargs":{"value":["Bool",true]}
+          },
+          "c139789431688528":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",54]},
+            "modargs":{"value":[["BitVector",54],"54'h00082280001084"]}
+          },
+          "c139789431721040":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",54]},
+            "modargs":{"value":[["BitVector",54],"54'h000078ffff4a52"]}
+          },
+          "c139789431736976":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",54]},
+            "modargs":{"value":[["BitVector",54],"54'h00003200b49084"]}
+          },
+          "c139789431766288":{
+            "modref":"corebit.const",
+            "modargs":{"value":["Bool",true]}
+          },
+          "c139789431781520":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",54]},
+            "modargs":{"value":[["BitVector",54],"54'h00304a80009084"]}
+          },
+          "c139789431783376":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",54]},
+            "modargs":{"value":[["BitVector",54],"54'h00003200069084"]}
+          },
+          "i139789432050320_i139789463956048":{
             "modref":"global.PE"
           },
-          "i139638884672848_i139638899068432":{
+          "i139789432050384_i139789440627856":{
             "modref":"global.PE"
           },
-          "i139638884672976_i139638906904016":{
+          "i139789432050576_i139789460383312":{
             "modref":"global.PE"
           },
-          "i139638884673616_i139638906904016":{
+          "i139789432050704_i139789460272400":{
             "modref":"global.PE"
           },
-          "i139638884675216_i139638899068432":{
+          "i139789432051088_i139789460011472":{
             "modref":"global.PE"
           },
-          "i139638884675536_i139638905336848":{
+          "i139789432051408_i139789463956048":{
             "modref":"global.PE"
           },
-          "i139638884700240_i139638905285072":{
+          "i139789432051472_i139789463956048":{
             "modref":"global.PE"
           },
-          "i139638884701136_i139638905285072":{
+          "i139789432051536_i139789463956048":{
             "modref":"global.PE"
           },
-          "i139638884701904_i139638905285072":{
+          "i139789432051792_i139789463956048":{
             "modref":"global.PE"
           },
-          "i139638884701968_i139638905285072":{
+          "i139789432543888_i139789460272400":{
             "modref":"global.PE"
           },
-          "i139638884702032_i139638905285072":{
+          "i139789432978896_i139789440627856":{
             "modref":"global.PE"
           }
         },
         "connections":[
-          ["i139638884675536_i139638905336848.inst","c139638884149776.out"],
-          ["i139638884701136_i139638905285072.inst","c139638884165584.out"],
-          ["i139638884672848_i139638899068432.inst","c139638884166544.out"],
-          ["i139638884672080_i139638910662224.inst","c139638884166992.out"],
-          ["i139638884672976_i139638906904016.inst","c139638884167376.out"],
-          ["i139638884673616_i139638906904016.inst","c139638884188368.out"],
-          ["i139638884675216_i139638899068432.inst","c139638884189072.out"],
-          ["i139638884675216_i139638899068432.clk_en","c139638884189328.out"],
-          ["i139638884701904_i139638905285072.inst","c139638884190032.out"],
-          ["i139638884673616_i139638906904016.clk_en","c139638884191120.out"],
-          ["i139638884702032_i139638905285072.clk_en","c139638884191184.out"],
-          ["i139638884701904_i139638905285072.clk_en","c139638884191568.out"],
-          ["i139638884702032_i139638905285072.inst","c139638884191888.out"],
-          ["i139638884672080_i139638910662224.clk_en","c139638884192208.out"],
-          ["i139638884701968_i139638905285072.inst","c139638884221200.out"],
-          ["i139638884701968_i139638905285072.clk_en","c139638884221648.out"],
-          ["i139638884675536_i139638905336848.clk_en","c139638884221776.out"],
-          ["i139638884672976_i139638906904016.clk_en","c139638884574608.out"],
-          ["i139638884700240_i139638905285072.clk_en","c139638884575312.out"],
-          ["i139638884672848_i139638899068432.clk_en","c139638884651152.out"],
-          ["i139638884701136_i139638905285072.clk_en","c139638884652112.out"],
-          ["i139638884700240_i139638905285072.inst","c139638884654416.out"],
-          ["i139638884675536_i139638905336848.inputs0","i139638884672080_i139638910662224.O0"],
-          ["i139638884672976_i139638906904016.O0","i139638884672080_i139638910662224.inputs0"],
-          ["i139638884673616_i139638906904016.O0","i139638884672080_i139638910662224.inputs1"],
-          ["i139638884672976_i139638906904016.inputs0","i139638884672848_i139638899068432.O0"],
-          ["self.in0_grad_x_unclamp_stencil.0","i139638884672848_i139638899068432.inputs0"],
-          ["i139638884701136_i139638905285072.O0","i139638884672848_i139638899068432.inputs1"],
-          ["i139638884700240_i139638905285072.O0","i139638884672976_i139638906904016.inputs1"],
-          ["i139638884675216_i139638899068432.O0","i139638884673616_i139638906904016.inputs0"],
-          ["i139638884702032_i139638905285072.O0","i139638884673616_i139638906904016.inputs1"],
-          ["self.in1_grad_y_unclamp_stencil.0","i139638884675216_i139638899068432.inputs0"],
-          ["i139638884701904_i139638905285072.O0","i139638884675216_i139638899068432.inputs1"],
-          ["self.out_lxy_stencil","i139638884675536_i139638905336848.O0"],
-          ["i139638884701968_i139638905285072.O0","i139638884675536_i139638905336848.inputs1"]
+          ["i139789432051472_i139789463956048.inst","c139789431276560.out"],
+          ["i139789432050704_i139789460272400.inst","c139789431277264.out"],
+          ["i139789432051472_i139789463956048.clk_en","c139789431279440.out"],
+          ["i139789432543888_i139789460272400.inst","c139789431320720.out"],
+          ["i139789432050320_i139789463956048.inst","c139789431321360.out"],
+          ["i139789432050384_i139789440627856.clk_en","c139789431321552.out"],
+          ["i139789432051792_i139789463956048.clk_en","c139789431322192.out"],
+          ["i139789432978896_i139789440627856.inst","c139789431322576.out"],
+          ["i139789432050320_i139789463956048.clk_en","c139789431322832.out"],
+          ["i139789432050704_i139789460272400.clk_en","c139789431323856.out"],
+          ["i139789432051792_i139789463956048.inst","c139789431324240.out"],
+          ["i139789432978896_i139789440627856.clk_en","c139789431378128.out"],
+          ["i139789432543888_i139789460272400.clk_en","c139789431378192.out"],
+          ["i139789432050576_i139789460383312.clk_en","c139789431378256.out"],
+          ["i139789432051088_i139789460011472.clk_en","c139789431378320.out"],
+          ["i139789432051408_i139789463956048.clk_en","c139789431634256.out"],
+          ["i139789432050384_i139789440627856.inst","c139789431688528.out"],
+          ["i139789432050576_i139789460383312.inst","c139789431721040.out"],
+          ["i139789432051536_i139789463956048.inst","c139789431736976.out"],
+          ["i139789432051536_i139789463956048.clk_en","c139789431766288.out"],
+          ["i139789432051088_i139789460011472.inst","c139789431781520.out"],
+          ["i139789432051408_i139789463956048.inst","c139789431783376.out"],
+          ["i139789432978896_i139789440627856.inputs2","i139789432050320_i139789463956048.O0"],
+          ["i139789432050704_i139789460272400.inputs5","i139789432050384_i139789440627856.O0"],
+          ["i139789432051536_i139789463956048.O0","i139789432050384_i139789440627856.inputs2"],
+          ["self.in1_grad_y_unclamp_stencil.0","i139789432050384_i139789440627856.inputs5"],
+          ["i139789432051088_i139789460011472.inputs5","i139789432050576_i139789460383312.O0"],
+          ["i139789432050704_i139789460272400.O0","i139789432050576_i139789460383312.inputs2"],
+          ["i139789432543888_i139789460272400.O0","i139789432050576_i139789460383312.inputs5"],
+          ["i139789432051472_i139789463956048.O0","i139789432050704_i139789460272400.inputs2"],
+          ["self.out_lxy_stencil","i139789432051088_i139789460011472.O0"],
+          ["i139789432051408_i139789463956048.O0","i139789432051088_i139789460011472.inputs2"],
+          ["i139789432543888_i139789460272400.inputs2","i139789432051792_i139789463956048.O0"],
+          ["i139789432978896_i139789440627856.O0","i139789432543888_i139789460272400.inputs5"],
+          ["self.in0_grad_x_unclamp_stencil.0","i139789432978896_i139789440627856.inputs5"]
         ]
       },
       "hcompute_lyy_stencil":{
@@ -1650,115 +1872,115 @@
           ["out_lyy_stencil",["Array",16,"Bit"]]
         ]],
         "instances":{
-          "c139638883366608":{
-            "genref":"coreir.const",
-            "genargs":{"width":["Int",52]},
-            "modargs":{"value":[["BitVector",52],"52'h0000880001084"]}
-          },
-          "c139638883367120":{
-            "genref":"coreir.const",
-            "genargs":{"width":["Int",52]},
-            "modargs":{"value":[["BitVector",52],"52'h00f0e7001c631"]}
-          },
-          "c139638883368336":{
-            "genref":"coreir.const",
-            "genargs":{"width":["Int",52]},
-            "modargs":{"value":[["BitVector",52],"52'h00b160000c631"]}
-          },
-          "c139638883390672":{
+          "c139789430563792":{
             "modref":"corebit.const",
             "modargs":{"value":["Bool",true]}
           },
-          "c139638883390864":{
+          "c139789430646032":{
             "genref":"coreir.const",
-            "genargs":{"width":["Int",52]},
-            "modargs":{"value":[["BitVector",52],"52'h0000400060000"]}
+            "genargs":{"width":["Int",54]},
+            "modargs":{"value":[["BitVector",54],"54'h00003200069084"]}
           },
-          "c139638883391248":{
-            "modref":"corebit.const",
-            "modargs":{"value":["Bool",true]}
-          },
-          "c139638883391504":{
+          "c139789430682704":{
             "genref":"coreir.const",
-            "genargs":{"width":["Int",52]},
-            "modargs":{"value":[["BitVector",52],"52'h00004ff4c0000"]}
+            "genargs":{"width":["Int",54]},
+            "modargs":{"value":[["BitVector",54],"54'h000078ffff4a52"]}
           },
-          "c139638883391568":{
-            "modref":"corebit.const",
-            "modargs":{"value":["Bool",true]}
-          },
-          "c139638883391888":{
-            "modref":"corebit.const",
-            "modargs":{"value":["Bool",true]}
-          },
-          "c139638883392144":{
-            "modref":"corebit.const",
-            "modargs":{"value":["Bool",true]}
-          },
-          "c139638883392400":{
-            "modref":"corebit.const",
-            "modargs":{"value":["Bool",true]}
-          },
-          "c139638883392848":{
-            "modref":"corebit.const",
-            "modargs":{"value":["Bool",true]}
-          },
-          "c139638883860560":{
+          "c139789430684048":{
             "genref":"coreir.const",
-            "genargs":{"width":["Int",52]},
-            "modargs":{"value":[["BitVector",52],"52'h0010000000000"]}
+            "genargs":{"width":["Int",54]},
+            "modargs":{"value":[["BitVector",54],"54'h000032ff4c9084"]}
           },
-          "c139638883863056":{
+          "c139789430684368":{
             "genref":"coreir.const",
-            "genargs":{"width":["Int",52]},
-            "modargs":{"value":[["BitVector",52],"52'h0000400b40000"]}
+            "genargs":{"width":["Int",54]},
+            "modargs":{"value":[["BitVector",54],"54'h003c2effffca52"]}
           },
-          "i139638884494992_i139638905285072":{
+          "c139789431143056":{
+            "modref":"corebit.const",
+            "modargs":{"value":["Bool",true]}
+          },
+          "c139789432324880":{
+            "modref":"corebit.const",
+            "modargs":{"value":["Bool",true]}
+          },
+          "c139789432325200":{
+            "modref":"corebit.const",
+            "modargs":{"value":["Bool",true]}
+          },
+          "c139789432326416":{
+            "modref":"corebit.const",
+            "modargs":{"value":["Bool",true]}
+          },
+          "c139789432326736":{
+            "modref":"corebit.const",
+            "modargs":{"value":["Bool",true]}
+          },
+          "c139789432327888":{
+            "modref":"corebit.const",
+            "modargs":{"value":["Bool",true]}
+          },
+          "c139789432749264":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",54]},
+            "modargs":{"value":[["BitVector",54],"54'h00082280001084"]}
+          },
+          "c139789432831952":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",54]},
+            "modargs":{"value":[["BitVector",54],"54'h00003200b49084"]}
+          },
+          "c139789463015312":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",54]},
+            "modargs":{"value":[["BitVector",54],"54'h00304a80009084"]}
+          },
+          "i139789431062672_i139789460011472":{
             "modref":"global.PE"
           },
-          "i139638884576336_i139638905285072":{
+          "i139789431065232_i139789440627856":{
             "modref":"global.PE"
           },
-          "i139638884576400_i139638905336848":{
+          "i139789431521424_i139789460383312":{
             "modref":"global.PE"
           },
-          "i139638884596688_i139638906904016":{
+          "i139789431521744_i139789463956048":{
             "modref":"global.PE"
           },
-          "i139638884596944_i139638899068432":{
+          "i139789431521872_i139789460272400":{
             "modref":"global.PE"
           },
-          "i139638884597008_i139638910662224":{
+          "i139789431522256_i139789463956048":{
             "modref":"global.PE"
           },
-          "i139638884613200_i139638905285072":{
+          "i139789431522896_i139789463956048":{
             "modref":"global.PE"
           }
         },
         "connections":[
-          ["i139638884597008_i139638910662224.inst","c139638883366608.out"],
-          ["i139638884596688_i139638906904016.inst","c139638883367120.out"],
-          ["i139638884576400_i139638905336848.inst","c139638883368336.out"],
-          ["i139638884494992_i139638905285072.clk_en","c139638883390672.out"],
-          ["i139638884576336_i139638905285072.inst","c139638883390864.out"],
-          ["i139638884596944_i139638899068432.clk_en","c139638883391248.out"],
-          ["i139638884613200_i139638905285072.inst","c139638883391504.out"],
-          ["i139638884576400_i139638905336848.clk_en","c139638883391568.out"],
-          ["i139638884596688_i139638906904016.clk_en","c139638883391888.out"],
-          ["i139638884613200_i139638905285072.clk_en","c139638883392144.out"],
-          ["i139638884597008_i139638910662224.clk_en","c139638883392400.out"],
-          ["i139638884576336_i139638905285072.clk_en","c139638883392848.out"],
-          ["i139638884596944_i139638899068432.inst","c139638883860560.out"],
-          ["i139638884494992_i139638905285072.inst","c139638883863056.out"],
-          ["i139638884596944_i139638899068432.inputs1","i139638884494992_i139638905285072.O0"],
-          ["i139638884576400_i139638905336848.inputs1","i139638884576336_i139638905285072.O0"],
-          ["self.out_lyy_stencil","i139638884576400_i139638905336848.O0"],
-          ["i139638884597008_i139638910662224.O0","i139638884576400_i139638905336848.inputs0"],
-          ["i139638884597008_i139638910662224.inputs0","i139638884596688_i139638906904016.O0"],
-          ["i139638884597008_i139638910662224.inputs1","i139638884596688_i139638906904016.O0"],
-          ["i139638884596944_i139638899068432.O0","i139638884596688_i139638906904016.inputs0"],
-          ["i139638884613200_i139638905285072.O0","i139638884596688_i139638906904016.inputs1"],
-          ["self.in0_grad_y_unclamp_stencil.0","i139638884596944_i139638899068432.inputs0"]
+          ["i139789431521744_i139789463956048.clk_en","c139789430563792.out"],
+          ["i139789431521744_i139789463956048.inst","c139789430646032.out"],
+          ["i139789431521424_i139789460383312.inst","c139789430682704.out"],
+          ["i139789431522896_i139789463956048.inst","c139789430684048.out"],
+          ["i139789431521872_i139789460272400.inst","c139789430684368.out"],
+          ["i139789431522896_i139789463956048.clk_en","c139789431143056.out"],
+          ["i139789431522256_i139789463956048.clk_en","c139789432324880.out"],
+          ["i139789431521424_i139789460383312.clk_en","c139789432325200.out"],
+          ["i139789431521872_i139789460272400.clk_en","c139789432326416.out"],
+          ["i139789431062672_i139789460011472.clk_en","c139789432326736.out"],
+          ["i139789431065232_i139789440627856.clk_en","c139789432327888.out"],
+          ["i139789431065232_i139789440627856.inst","c139789432749264.out"],
+          ["i139789431522256_i139789463956048.inst","c139789432831952.out"],
+          ["i139789431062672_i139789460011472.inst","c139789463015312.out"],
+          ["self.out_lyy_stencil","i139789431062672_i139789460011472.O0"],
+          ["i139789431521744_i139789463956048.O0","i139789431062672_i139789460011472.inputs2"],
+          ["i139789431521424_i139789460383312.O0","i139789431062672_i139789460011472.inputs5"],
+          ["i139789431521872_i139789460272400.inputs5","i139789431065232_i139789440627856.O0"],
+          ["i139789431522256_i139789463956048.O0","i139789431065232_i139789440627856.inputs2"],
+          ["self.in0_grad_y_unclamp_stencil.0","i139789431065232_i139789440627856.inputs5"],
+          ["i139789431521872_i139789460272400.O0","i139789431521424_i139789460383312.inputs2"],
+          ["i139789431521872_i139789460272400.O0","i139789431521424_i139789460383312.inputs5"],
+          ["i139789431522896_i139789463956048.O0","i139789431521872_i139789460272400.inputs2"]
         ]
       },
       "hcompute_padded16_global_wrapper_stencil":{

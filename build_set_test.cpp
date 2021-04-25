@@ -18075,10 +18075,10 @@ void compile_for_garnet_single_port_mem(prog& prg,
   //PE_energy_cost(power_params, power_stats, prg);
   
   generate_garnet_coreir(buffers_opt, prg, options, sched, use_dse_compute, for_metamapper, dse_compute_filename);
-  // if (!options.config_gen_only) {
-  //   generate_garnet_verilog_top(options, prg.name);
-  //   generate_garnet_verilator_tb(prg, hw_sched, buffers_opt);
-  // }
+  if (!options.config_gen_only) {
+    generate_garnet_verilog_top(options, prg.name);
+    generate_garnet_verilator_tb(prg, hw_sched, buffers_opt);
+  }
 #endif
 }
 
