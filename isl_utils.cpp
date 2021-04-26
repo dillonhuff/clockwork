@@ -2318,6 +2318,28 @@ isl_stat get_const(isl_set* s, isl_qpolynomial* qp, void* user) {
   return isl_stat_ok;
 }
 
+isl_map* check_dim_id(isl_map* m) {
+  cout << "before dim id set :" << str(m) << endl;
+
+  for (int i = 0; i < num_in_dims(m); i++) {
+      //cout << "DIM: " << i << "has dim_id : " << isl_map_has_dim_id(m, isl_dim_in, i) << endl;
+      //cout << "DIM: " << i << "has dim_name: " << isl_map_has_dim_name(m, isl_dim_in, i) << endl;
+      if ((!isl_map_has_dim_id(m, isl_dim_in, i)) && isl_map_has_dim_name(m, isl_dim_in, i)) {
+          cout << "Map :" << str(m) << "has name but without id" << endl;
+          assert(false);
+      }
+    if (!isl_map_has_dim_id(m, isl_dim_in, i)) {
+      string dn = "d" + to_string(i);
+      auto new_id = id(ctx(m), dn);
+      assert(new_id != nullptr);
+      m = isl_map_set_dim_id(m, isl_dim_in, i, new_id);
+    }
+  }
+  cout << "After dim id set: " << str(m) << endl;
+  return m;
+}
+
+
 string codegen_c_constraint(isl_constraint* c) {
   auto ct = ctx(c);
   isl_printer *p;

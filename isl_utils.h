@@ -219,6 +219,7 @@ isl_map* gen_map_from_sched_vec(isl_ctx* ctx, vector<string> sched_vec, string o
 isl_map* gen_hw_sched_from_sched_vec(isl_ctx* ctx, vector<string> sched_vec, string op_name);
 isl_map* gen_hw_sched_from_sched_vec(isl_ctx* ctx, vector<string> sched_vec, vector<string> var_list, string op_name);
 vector<string> get_map_in_dim_id(isl_map* m);
+isl_map* check_dim_id(isl_map* m);
 string get_in_dim_name(isl_map* m, int i);
 
 unsigned get_dim(isl_set* const s);

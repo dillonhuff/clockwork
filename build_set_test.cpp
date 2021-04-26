@@ -1107,18 +1107,18 @@ void synth_conv_test() {
   buffers.insert({"conv", buf});
   buffer_vectorization({1}, {"conv"}, 4, buffers);
 
+  vector<string> file_list;
   for (auto it: buffers) {
     cout << it.second << endl;
+    file_list.push_back(it.first + ".cpp");
     generate_hls_code_unit_test(it.second);
   }
 
-  //int res = system("clang++ -std=c++11 tb_conv.cpp conv.cpp");
-  //assert(res == 0);
+  int res = cmd("clang++ -std=c++11 tb_id_vec.cpp " + sep_list(file_list, "", "", " "));
+  assert(res == 0);
 
-  //res = system("./a.out");
-  //assert(res == 0);
-
-  isl_ctx_free(buf.ctx);
+  res = system("./a.out");
+  assert(res == 0);
 }
 
 void synth_wire_test() {

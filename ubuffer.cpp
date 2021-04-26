@@ -329,6 +329,7 @@ string generate_multilinear_ram_addr(const std::string& pt, bank& bnk, UBuffer& 
   }
 
   isl_map* m = to_map(buf.access_map.at(pt));
+
   auto svec = isl_pw_multi_aff_from_map(m);
   vector<pair<isl_set*, isl_multi_aff*> > pieces =
     get_pieces(svec);
@@ -4406,7 +4407,7 @@ void generate_hls_code(std::ostream& out, UBuffer& buf) {
 
 void generate_hls_code_unit_test(std::ostream& out, UBuffer& buf) {
   CodegenOptions options;
-  options.internal = false;
+  options.internal = true;
   options.inner_bank_offset_mode = INNER_BANK_OFFSET_MULTILINEAR;
 
   generate_hls_code(options, out, buf);
@@ -4486,7 +4487,7 @@ void generate_passthrough_op(
   }
   conv_out << endl;
   */
-  map<string, string> buf_vals;
+  //map<string, string> buf_vals;
   //TODO: maybe there are multiple producer
   //for (auto ib : in_buffers) {
     string in_buffer = producer_buffer;
@@ -4499,7 +4500,7 @@ void generate_passthrough_op(
     //string bundle_name = op_name + "_read";
 
     //if (prg.is_boundary(in_buffer)) {
-    if (contains(op_name, "in2agg")) {
+    if (contains(producer_buffer_args.first, "HWStream")) {
       conv_out << in_buffer << ".read();" << endl;
     } else {
       //if (op->dynamic_reads(in_buffer)) {
@@ -4514,7 +4515,7 @@ void generate_passthrough_op(
       //}
       vector<string> source_delays{in_buffer};
       cout << "op = " << op_name << endl;
-      conv_out << in_buffer << "_" << op_name << "_read_bundle_read(" << comma_list(source_delays) << "/* source_delay */, " << comma_list(dim_args) << ");" << endl;
+      conv_out << in_buffer << "_" << consumer_buffer_args.second << "_bundle_read(" << comma_list(source_delays) << "/* source_delay */, " << comma_list(dim_args) << ");" << endl;
 
       conv_out << endl;
       open_debug_scope(conv_out);
@@ -4554,7 +4555,7 @@ void generate_passthrough_op(
 
   cout << "Checking if program is a boundary" << endl;
 
-  if (contains(op_name, "agg2sram")) {
+  if (contains(consumer_buffer_args.first, "HWStream")) {
     conv_out << "\t" << out_buffer << ".write(" << "tmp"<< ");" << endl;
   } else {
     //assert(contains_key(out_buffer, buffers));
@@ -4562,7 +4563,7 @@ void generate_passthrough_op(
     //auto& buf = buffers.at(out_buffer);
     vector<string> arg_names{"tmp", out_buffer};
     concat(arg_names, dim_args);
-    conv_out << "\t" << out_buffer << "_" << op_name << "_write_bundle_write(" <<
+    conv_out << "\t" << out_buffer << "_" << producer_buffer_args.second << "_bundle_write(" <<
       "/* arg names */" + comma_list(arg_names) << ");" << endl;
   }
 
@@ -4592,7 +4593,7 @@ void generate_hls_code(UBuffer& buf) {
   std::ostream& out = os;
 
   os << "#include \""<< buf.name <<".h\"" << endl << endl;
-  generate_hls_code_unit_test(os, buf);
+  generate_hls_code(os, buf);
 
   // Generate driver function for this buffer.
   isl_union_map* res = its(buf.global_schedule(), buf.global_domain());
@@ -4663,7 +4664,7 @@ void generate_hls_code_unit_test(UBuffer& buf) {
   generate_passthrough_op(
     os,
     pick(buf.get_write_ops()),
-    {buf.name + "_cache " + buf.name, buf.name},
+    {buf.name + "_cache&" + buf.name, buf.name},
     {buf.bundle_stream(in_stream_name), in_stream_name},
     to_set(buf.global_write_domain()));
 
@@ -4673,7 +4674,7 @@ void generate_hls_code_unit_test(UBuffer& buf) {
     os,
     pick(buf.get_read_ops()),
     {buf.bundle_stream(out_stream_name), out_stream_name},
-    {buf.name + "_cache " + buf.name, buf.name},
+    {buf.name + "_cache& " + buf.name, buf.name},
     to_set(buf.global_read_domain()));
 
   // Generate driver function for this buffer.
@@ -4705,7 +4706,7 @@ void generate_hls_code_unit_test(UBuffer& buf) {
   for (auto op: buf.get_ops()) {
     string args;
     if (elem(op, buf.get_write_ops())) {
-      args = sep_list({in_stream_name, buf.name + "_cache"},"", "", ", ");
+      args = sep_list({in_stream_name, buf.name + "_ubuf"},"", "", ", ");
     } else {
       args = sep_list({buf.name + "_ubuf", out_stream_name},"", "", ", ");
     }
@@ -4715,14 +4716,15 @@ void generate_hls_code_unit_test(UBuffer& buf) {
   }
 
   out << "void " << buf.name << "(";
-  size_t nargs = 0;
-  for (auto pt : buf.port_bundles) {
-    out << buf.bundle_stream(pt.first);
-    if (nargs < buf.port_bundles.size() - 1) {
-      out << ", ";
-    }
-    nargs++;
+  vector<string> bd_args;
+  for (auto pt : buf.get_in_bundles()) {
+    bd_args.push_back(buf.bundle_stream(pt));
   }
+
+  for (auto pt : buf.get_out_bundles()) {
+    bd_args.push_back(buf.bundle_stream(pt));
+  }
+  out << sep_list(bd_args, "", "", ",");
   out << ") {" << endl;
   out << "\t" + buf.name + "_cache " + buf.name + "_ubuf;\n\n";
   out << code_string << endl;
@@ -7593,6 +7595,7 @@ void UBuffer::generate_banks(CodegenOptions& options) {
               add_vectorized_pt_to_ubuf(sram, rewrite_buf2op, sched, in_pt_name, bd_name, dim_id, fetch_width, agg_cnt, false);
             }
             agg_cnt ++;
+            agg_buf.set_dim_id();
             ret.insert({agg_buf.name, agg_buf});
             remove_deps.push_back(domain_name(agg_buf.access_map.at(pick(agg_buf.get_out_ports()))));
             cout << "AGG : " << agg_buf << endl;
@@ -7797,12 +7800,14 @@ void UBuffer::generate_banks(CodegenOptions& options) {
                 tb.add_out_pt(out_pt_name+"_out", sm_domain, sm_access_map, its(sm_sched, sm_domain));
                 tb.port_bundles[bd_name+"_tb_out"].push_back(out_pt_name + "_out");
               }
+              tb.set_dim_id();
               ret.insert({tb.name, tb});
               cout << "TB  : " << tb << endl;
               cout << "TB Schedule: " << str(tb.global_schedule())  << endl;
               tb_cnt ++;
             }
           }
+          sram.set_dim_id();
           cout << "SRAM: " << sram << endl;
           cout << "SRAM Schedule: " << str(sram.global_schedule()) << endl;
           ret.insert({sram.name, sram});
@@ -7905,6 +7910,18 @@ void UBuffer::generate_banks(CodegenOptions& options) {
 
         return inner_bank_offset_is_legal(slot_func, op_writes, op_reads, sched);
       }
+
+      void UBuffer::set_dim_id() {
+        for (auto inpt : get_all_ports()) {
+            auto acc_m = to_map(access_map.at(inpt));
+            acc_m = check_dim_id(acc_m);
+            domain[inpt] = ::domain(acc_m);
+            access_map[inpt] = to_umap(acc_m);
+            auto sched = to_map(schedule.at(inpt));
+            sched = check_dim_id(sched);
+            schedule[inpt] = to_umap(sched);
+        }
+    }
 
       std::ostream& operator<<(std::ostream& out, const UBuffer& buf) {
         out << "--- " << buf.name << endl;

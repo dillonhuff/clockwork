@@ -2320,7 +2320,7 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
         string new_buf_name = name + suffix;
         vector<string> addr_var;
         for (size_t i = 0; i < get_out_dim(to_map(origin_map)); i ++) {
-            addr_var.push_back("i" + to_string(i));
+            addr_var.push_back("d" + to_string(i));
         }
         string vars = sep_list(addr_var, "[", "]", ",");
         isl_map* buf_map = isl_map_read_from_str(ctx, string("{" + name + vars + " -> " + new_buf_name + vars + "}").c_str());
@@ -2559,6 +2559,9 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
 
     //Hack for single pixel input
     std::map<string, UBuffer> vectorization_single_pixel(int fetch_width);
+
+    //Post processing for codegen, adding dim id
+    void set_dim_id();
 
 };
 
