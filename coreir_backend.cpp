@@ -2807,8 +2807,7 @@ bool MemtileReplaceMetaMapper(Instance* cnst) {
   int num_outputs = genargs.at("num_outputs")->get<int>();
   int width = genargs.at("width")->get<int>();
 
-
-  auto config_file = cnst->getMetaData()["config"];
+  auto config_file = cnst->getMetaData();
 
   config_file["ID"] = ID;
   config_file["has_external_addrgen"] = has_external_addrgen;
