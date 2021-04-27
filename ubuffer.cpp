@@ -4432,21 +4432,58 @@ void generate_hls_header(const UBuffer& buf) {
 
 }
 
-void generate_passthrough_op(
+/*op centeric codegen, basically a pass through from a buffer to another
+ * Special case is that the buffer could be a bundary.
+ * return the variable
+ * */
+vector<string> generate_passthrough_op(
     ostream& conv_out,
     string op_name,
-    pair<string, string> consumer_buffer_args,
-    pair<string, string> producer_buffer_args,
+    maybe<UBuffer> consumer_buffer,
+    maybe<UBuffer> producer_buffer,
+    //pair<string, string> consumer_buffer_args,
+    //pair<string, string> producer_buffer_args,
     isl_set* domain) {
 
   cout << "Generating pass throughfor: " << op_name << endl;
 
   vector<string> buf_srcs;
+  string producer_var, consumer_var;
   //push buffers' name into arg list
-  buf_srcs.push_back(producer_buffer_args.first);
-  buf_srcs.push_back(consumer_buffer_args.first);
-  string producer_buffer = producer_buffer_args.second;
-  string consumer_buffer = consumer_buffer_args.second;
+  if (!consumer_buffer.has_value()) {
+    //output boundary
+    assert(producer_buffer.has_value());
+    auto prod_buf = producer_buffer.get_value();
+    string out_stream_name = pick(prod_buf.get_out_bundles());
+    producer_var = prod_buf.name;
+    consumer_var = out_stream_name;
+    buf_srcs.push_back(prod_buf.name + "_cache& " + prod_buf.name);
+    buf_srcs.push_back(prod_buf.bundle_stream(out_stream_name));
+  } else if (!producer_buffer.has_value()) {
+    //input boundary
+    assert(consumer_buffer.has_value());
+    auto cons_buf = consumer_buffer.get_value();
+    string in_stream_name = pick(cons_buf.get_in_bundles());
+    producer_var = in_stream_name;
+    consumer_var = cons_buf.name;
+    buf_srcs.push_back(cons_buf.bundle_stream(in_stream_name));
+    buf_srcs.push_back(cons_buf.name + "_cache& " + cons_buf.name);
+  } else {
+    //between two buffer
+    assert(producer_buffer.has_value());
+    assert(consumer_buffer.has_value());
+    auto prod_buf = producer_buffer.get_value();
+    auto cons_buf = consumer_buffer.get_value();
+    producer_var = prod_buf.name;
+    consumer_var = cons_buf.name;
+    buf_srcs.push_back(prod_buf.name + "_cache& " + prod_buf.name);
+    buf_srcs.push_back(cons_buf.name + "_cache& " + cons_buf.name);
+  }
+
+  //buf_srcs.push_back(producer_buffer_args.first);
+  //buf_srcs.push_back(consumer_buffer_args.first);
+  //string producer_buffer = producer_buffer_args.second;
+  //string consumer_buffer = consumer_buffer_args.second;
 
   cout << "Got srcs" << endl;
 
@@ -4464,8 +4501,8 @@ void generate_passthrough_op(
 
   cout << "Got iteration variables" << endl;
   conv_out << "inline void " << op_name << sep_list(buf_srcs, "(", ")", ", ") << " {" << endl;
-  vector<pair<string, vector< pair< string, string > > > > in_buffers;
   /*
+  vector<pair<string, vector< pair< string, string > > > > in_buffers;
   std::set<string> distinct;
   for (auto con : op->consume_locs_pair) {
     if (!elem(con.first, distinct)) {
@@ -4490,80 +4527,47 @@ void generate_passthrough_op(
   //map<string, string> buf_vals;
   //TODO: maybe there are multiple producer
   //for (auto ib : in_buffers) {
-    string in_buffer = producer_buffer;
-    conv_out << "\t// Consume: " << in_buffer << endl;
-    //string value_name = op->consumed_value_name(ib);
-    //buf_vals[in_buffer] = value_name;
-    //conv_out << "\tauto " << value_name << " = ";
-    conv_out << "\tauto tmp = ";
+  //string in_buffer = producer_buffer;
+  conv_out << "\t// Consume: " << producer_var << endl;
+  //string value_name = op->consumed_value_name(ib);
+  //buf_vals[in_buffer] = value_name;
+  //conv_out << "\tauto " << value_name << " = ";
+  conv_out << "\tauto tmp = ";
 
-    //string bundle_name = op_name + "_read";
+  //string bundle_name = op_name + "_read";
 
-    //if (prg.is_boundary(in_buffer)) {
-    if (contains(producer_buffer_args.first, "HWStream")) {
-      conv_out << in_buffer << ".read();" << endl;
-    } else {
-      //if (op->dynamic_reads(in_buffer)) {
-      //  string dynaddr = "";
-      //  for (auto dr : op->dynamic_load_addresses) {
-      //    if (dr.buffer == in_buffer) {
-      //      dynaddr = buf_vals[dr.table];
-      //    }
-      //  }
-      //  assert(dynaddr != "");
-      //  dim_args[dim_args.size() - 1] = dynaddr;
-      //}
-      vector<string> source_delays{in_buffer};
-      cout << "op = " << op_name << endl;
-      conv_out << in_buffer << "_" << consumer_buffer_args.second << "_bundle_read(" << comma_list(source_delays) << "/* source_delay */, " << comma_list(dim_args) << ");" << endl;
+  //if (prg.is_boundary(in_buffer)) {
+  if (!producer_buffer.has_value()) {
+    conv_out << pick(consumer_buffer.get_value().get_in_bundles()) << ".read();" << endl;
+  } else {
+    vector<string> source_delays{producer_var};
+    cout << "op = " << op_name << endl;
+    conv_out << producer_var << "_" << pick(producer_buffer.get_value().get_out_bundles()) << "_bundle_read(" <<
+        comma_list(source_delays) << "/* source_delay */, " << comma_list(dim_args) << ");" << endl;
 
-      conv_out << endl;
-      open_debug_scope(conv_out);
+    conv_out << endl;
+    open_debug_scope(conv_out);
 
-      close_debug_scope(conv_out);
-      conv_out << endl;
+    close_debug_scope(conv_out);
+    conv_out << endl;
 
-    }
-    //buf_args.push_back(value_name);
-    //res = value_name;
-  //}
-
-  //for (auto var : op->index_variables_needed_by_compute)  {
-  //  buf_args.push_back(var);
-  //}
-
-  //cout << "created res" << endl;
-  //if (op->func != "") {
-  //  conv_out << "\tauto compute_result = " << op->func << "(" << comma_list(buf_args) << ");" << endl;
-  //  res = "compute_result";
-  //}
+  }
 
   cout << "finding out buffers" << endl;
-  //std::set<string> out_buffers;
-  //for (auto con : op->buffers_written()) {
-  //  out_buffers.insert(con);
-  //}
-  //if (!(out_buffers.size() == 1)) {
-  //  cout << "Error: " << out_buffers.size() << " out_buffers in " << op->name << endl;
-  //}
-  //assert(out_buffers.size() == 1);
-  string out_buffer = consumer_buffer;
+  //string out_buffer = consumer_buffer;
 
-  conv_out << "\t// Produce: " << out_buffer << endl;
+  conv_out << "\t// Produce: " << consumer_var<< endl;
 
   //bundle_name = op->name + "_write";
 
   cout << "Checking if program is a boundary" << endl;
 
-  if (contains(consumer_buffer_args.first, "HWStream")) {
-    conv_out << "\t" << out_buffer << ".write(" << "tmp"<< ");" << endl;
+  if (!consumer_buffer.has_value()) {
+    conv_out << "\t" << consumer_var << ".write(" << "tmp"<< ");" << endl;
   } else {
-    //assert(contains_key(out_buffer, buffers));
-
-    //auto& buf = buffers.at(out_buffer);
-    vector<string> arg_names{"tmp", out_buffer};
+    vector<string> arg_names{"tmp", consumer_var};
     concat(arg_names, dim_args);
-    conv_out << "\t" << out_buffer << "_" << producer_buffer_args.second << "_bundle_write(" <<
+    conv_out << "\t" << consumer_var<< "_" << pick(consumer_buffer.get_value().get_in_bundles()) << "_bundle_write(" <<
       "/* arg names */" + comma_list(arg_names) << ");" << endl;
   }
 
@@ -4574,6 +4578,8 @@ void generate_passthrough_op(
   close_debug_scope(conv_out);
   conv_out << endl;
   conv_out << "}" << endl << endl;
+
+  return {producer_var+"_ubuf", consumer_var+"_ubuf"};
 
 }
 
@@ -4642,16 +4648,110 @@ void generate_hls_code(UBuffer& buf) {
   generate_vivado_tcl(buf);
 }
 
-void generate_hls_code_unit_test(UBuffer& buf) {
+void generate_hls_code_unit_test(map<string, UBuffer>& buffers, string buffer_name) {
 
-  if (buf.port_bundles.size() == 0) {
-    for (auto pt : buf.get_out_ports()) {
-      buf.port_bundles[pt] = {pt};
-    }
-    for (auto pt : buf.get_in_ports()) {
-      buf.port_bundles[pt] = {pt};
-    }
+  cout << "Code generation..." << endl;
+  ofstream out(buffer_name + "_vec.cpp");
+  out << "#include \""<< buffer_name + "_vec.h\"" << endl << endl;
+  for (auto it : buffers) {
+      auto buf = it.second;
+
+    generate_hls_code_unit_test(out, buf);
+    generate_hls_header(buf);
+
   }
+
+  // Generate driver function for these vectorized buffer.
+  //isl_union_map* res = its(buf.global_schedule(), buf.global_domain());
+  auto hardware_schedule = global_schedule_from_buffers(buffers);
+  auto global_domain = global_domain_from_buffers(buffers);
+  map<string, isl_set*> op_map = get_sets_in_map(global_domain);
+
+  string code_string = codegen_c(hardware_schedule);
+
+  code_string = "\t" + ReplaceString(code_string, "\n", "\n\t");
+
+  //op to buffer write and read, helper struct for codegen
+  //map<string, pair<string, string> > op2write_args, op2read_args;
+  map<string, maybe<UBuffer> > op2write_buf, op2read_buf;
+  string func_in_arg, func_out_arg;
+
+  for (auto it: buffers) {
+    auto buf = it.second;
+    string rdop = pick(buf.get_read_ops());
+    string wtop = pick(buf.get_write_ops());
+
+    if (contains(wtop, "in2agg")) {
+        op2read_buf[wtop] = maybe<UBuffer>();
+        string in_stream_name = pick(buf.get_in_bundles());
+        func_in_arg = buf.bundle_stream(in_stream_name);
+    }
+    op2write_buf[wtop] = buf;
+
+    if (contains(rdop, "tb2out")) {
+        op2write_buf[rdop] = maybe<UBuffer>();
+        string out_stream_name = pick(buf.get_out_bundles());
+        func_out_arg = buf.bundle_stream(out_stream_name);
+    }
+    op2read_buf[rdop] = buf;
+
+    //if (contains(wtop, "in2agg")) {
+    //  string in_stream_name = pick(buf.get_in_bundles());
+    //  func_in_arg = buf.bundle_stream(in_stream_name);
+    //  op2read_args[wtop] = {func_in_arg, in_stream_name};
+    //}
+    //op2write_args[wtop] = {buf.name + "_cache& "+buf.name, buf.name};
+
+    //if (contains(rdop, "tb2out")) {
+    //  string out_stream_name = pick(buf.get_out_bundles());
+    //  func_out_arg = buf.bundle_stream(out_stream_name);
+    //  op2write_args[rdop] = {func_out_arg, out_stream_name};
+    //}
+    //op2read_args[rdop] = {buf.name + "_cache& "+buf.name, buf.name};
+  }
+  //for (auto it: op2read_args) {
+  //    cout << it.first << ": " << it.second.first << ", " << it.second.second << endl;;
+  //}
+  //for (auto it: op2write_args) {
+  //    cout << it.first << ": " << it.second.first << ", " << it.second.second << endl;;
+  //}
+
+  //Generate the wrapper
+  for (auto it : op2read_buf) {
+    string op = it.first;
+    auto args_list = generate_passthrough_op(
+      out, op, op2write_buf.at(op), op2read_buf.at(op), op_map.at(op));
+
+      //string write_arg_name = op2write_args.at(op).second + "_ubuf";
+      //string read_arg_name = op2read_args.at(op).second + "_ubuf";
+      string args = sep_list(args_list, "", "", ", ");
+      regex re0(op + "\\((.*)\\);");
+      code_string = regex_replace(code_string, re0, op + "(" + args + ", $1" + ");");
+
+  }
+
+  std::stringstream ss_func;
+  ss_func << "void " << buffer_name<< "_vec(";
+  vector<string> bd_args;
+  ss_func << sep_list({func_in_arg + "_ubuf", func_out_arg + "_ubuf"}, "", "", ", ");
+  ss_func << ")";
+  out << ss_func.str() << " {" << endl;
+
+  for (auto it: buffers){
+    out << "\t" + it.first + "_cache " + it.first + "_ubuf;\n\n";
+  }
+  out << code_string << endl;
+  out << "}" << endl;
+  out.close();
+
+  ofstream of(buffer_name+ "_vec.h");
+  of << "#pragma once\n\n" << endl;
+  of << "#include \"hw_classes.h\"" << endl << endl;
+  of << ss_func.str() << ";" << endl;
+  of.close();
+}
+
+void generate_hls_code_unit_test(UBuffer& buf) {
 
   //cout << "Code generation..." << endl;
   ofstream os(buf.name + ".cpp");
@@ -4662,19 +4762,15 @@ void generate_hls_code_unit_test(UBuffer& buf) {
 
   string in_stream_name = pick(buf.get_in_bundles());
   generate_passthrough_op(
-    os,
-    pick(buf.get_write_ops()),
-    {buf.name + "_cache&" + buf.name, buf.name},
-    {buf.bundle_stream(in_stream_name), in_stream_name},
+    os, pick(buf.get_write_ops()),
+    buf, maybe<UBuffer>(),
     to_set(buf.global_write_domain()));
 
   string out_stream_name = pick(buf.get_out_bundles());
   cout << out_stream_name << endl;
   generate_passthrough_op(
-    os,
-    pick(buf.get_read_ops()),
-    {buf.bundle_stream(out_stream_name), out_stream_name},
-    {buf.name + "_cache& " + buf.name, buf.name},
+    os, pick(buf.get_read_ops()),
+    maybe<UBuffer>(), buf,
     to_set(buf.global_read_domain()));
 
   // Generate driver function for this buffer.
@@ -4683,25 +4779,8 @@ void generate_hls_code_unit_test(UBuffer& buf) {
   string code_string = codegen_c(res);
 
   code_string = "\t" + ReplaceString(code_string, "\n", "\n\t");
-  string delay_list =
-    buf.port_bundles.at(pick(buf.get_in_bundles())).at(0) + "_delay";
-  //buf.name;
-
-  //for (auto b : buf.port_bundles) {
-  //  if (buf.is_out_pt(*(begin(b.second)))) {
-  //  } else {
-  //    regex re(b.first + "(.*);");
-  //    string inpt = pick(b.second);
-  //    code_string = regex_replace(code_string, re, buf.name + "_" + b.first + "_bundle_write(" + b.first + ", " + delay_list + ", $1, 0"+");");
-  //  }
-  //}
-  //for (auto b : buf.port_bundles) {
-  //  if (buf.is_out_pt(*(begin(b.second)))) {
-  //    regex re0(b.first + "\\((.*)\\);");
-  //    code_string = regex_replace(code_string, re0, b.first + ".write(" + buf.name + "_" + b.first + "_bundle_read(" + delay_list + ", $1, 0" + "));");
-  //  } else {
-  //  }
-  //}
+  //string delay_list =
+  //  buf.port_bundles.at(pick(buf.get_in_bundles())).at(0) + "_delay";
 
   for (auto op: buf.get_ops()) {
     string args;
@@ -4724,7 +4803,7 @@ void generate_hls_code_unit_test(UBuffer& buf) {
   for (auto pt : buf.get_out_bundles()) {
     bd_args.push_back(buf.bundle_stream(pt));
   }
-  out << sep_list(bd_args, "", "", ",");
+  out << sep_list(bd_args, "", "", ", ");
   out << ") {" << endl;
   out << "\t" + buf.name + "_cache " + buf.name + "_ubuf;\n\n";
   out << code_string << endl;

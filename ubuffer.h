@@ -2790,6 +2790,7 @@ void generate_hls_code(CodegenOptions& options, std::ostream& out, UBuffer& buf)
 void generate_hls_code(std::ostream& out, UBuffer& buf);
 void generate_hls_code(UBuffer& buf);
 void generate_hls_code_unit_test(UBuffer& buf);
+void generate_hls_code_unit_test(map<string, UBuffer> & buf, string buffer_name);
 
 map<string, isl_set*> input_ports_to_conditions(const std::string& outpt, UBuffer& buf);
 

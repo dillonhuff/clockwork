@@ -1101,7 +1101,7 @@ void synth_conv_test() {
   //  isl_union_map_read_from_str(ctx, "{ read[i, j] -> [3*i + j + 6] : 0 <= i < 8 and 0 <= j < 3 }");
   buf.isIn["read"] = false;
 
-  generate_hls_code_unit_test(buf);
+  generate_hls_code(buf);
 
   map<string, UBuffer> buffers;
   buffers.insert({"conv", buf});
@@ -1115,6 +1115,46 @@ void synth_conv_test() {
   }
 
   int res = cmd("clang++ -std=c++11 tb_id_vec.cpp " + sep_list(file_list, "", "", " "));
+  assert(res == 0);
+
+  res = system("./a.out");
+  assert(res == 0);
+}
+
+void synth_id_vec_test() {
+  struct isl_ctx *ctx;
+  ctx = isl_ctx_alloc();
+
+  UBuffer buf;
+  buf.name = "conv";
+  buf.ctx = ctx;
+
+  buf.domain["write"] =
+    isl_set_read_from_str(ctx, "{ write[root = 0, i] : 0 <= i < 8}");
+  buf.access_map["write"] =
+    rdmap(ctx, "{ write[root = 0, i] -> conv[i] : 0 <= i < 8}");
+  buf.schedule["write"] =
+    isl_union_map_read_from_str(ctx, "{ write[root = 0, i] -> [i] : 0 <= i < 8 }");
+  buf.isIn["write"] = true;
+
+  // Read 0 through 7
+  buf.domain["read"] =
+    isl_set_read_from_str(ctx, "{ read[root = 0, i] : 0 <= i < 8}");
+  buf.access_map["read"] =
+    rdmap(ctx, "{ read[root = 0, i] -> conv[i] : 0 <= i < 8}");
+  buf.schedule["read"] =
+    isl_union_map_read_from_str(ctx, "{ read[root = 0, i] -> [i + 16] : 0 <= i < 8}");
+  buf.isIn["read"] = false;
+
+  generate_hls_code(buf);
+
+  map<string, UBuffer> buffers;
+  buffers.insert({"conv", buf});
+  buffer_vectorization({1}, {"conv"}, 4, buffers);
+
+  generate_hls_code_unit_test(buffers, buf.name);
+
+  int res = cmd("clang++ -std=c++11 tb_conv_vec.cpp conv_vec.cpp");
   assert(res == 0);
 
   res = system("./a.out");
@@ -11218,6 +11258,7 @@ void blur_and_downsample_test() {
 void playground() {
     synth_wire_test();
     synth_conv_test();
+    synth_id_vec_test();
     assert(false);
     {
         isl_ctx* ctx = isl_ctx_alloc();
