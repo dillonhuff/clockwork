@@ -6,10 +6,12 @@
 using namespace std;
 
 int main() {
+  srand(234);
   HWStream<hw_uint<32> > w0, w_gold;
   for (int i = 0; i < 8; i++) {
-    w0.write(i);
-    w_gold.write(i);
+    hw_uint<32> val = rand() % 256;
+    w0.write(val);
+    w_gold.write(val);
   }
   HWStream<hw_uint<32> > r0, r_gold;
   conv_vec(r0, w0);

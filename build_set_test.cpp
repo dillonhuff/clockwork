@@ -1154,7 +1154,15 @@ void synth_id_vec_test() {
 
   generate_hls_code_unit_test(buffers, buf.name);
 
+  generate_vectorization_unit_testbench(buf);
+
   int res = cmd("clang++ -std=c++11 tb_conv_vec.cpp conv_vec.cpp conv.cpp");
+  assert(res == 0);
+
+  res = system("./a.out");
+  assert(res == 0);
+
+  res = cmd("clang++ -std=c++11 unit_tb_conv.cpp conv_vec.cpp conv.cpp");
   assert(res == 0);
 
   res = system("./a.out");
