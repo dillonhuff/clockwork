@@ -1107,7 +1107,7 @@ void synth_conv_test() {
   buffers.insert({"conv", buf});
   buffer_vectorization({1}, {"conv"}, 4, buffers);
 
-  vector<string> file_list;
+  vector<string> file_list({"conv.cpp"});
   for (auto it: buffers) {
     cout << it.second << endl;
     file_list.push_back(it.first + ".cpp");
@@ -1154,7 +1154,7 @@ void synth_id_vec_test() {
 
   generate_hls_code_unit_test(buffers, buf.name);
 
-  int res = cmd("clang++ -std=c++11 tb_conv_vec.cpp conv_vec.cpp");
+  int res = cmd("clang++ -std=c++11 tb_conv_vec.cpp conv_vec.cpp conv.cpp");
   assert(res == 0);
 
   res = system("./a.out");

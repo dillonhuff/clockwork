@@ -4420,14 +4420,14 @@ void generate_hls_header(const UBuffer& buf) {
   of << "#pragma once\n\n" << endl;
   of << "#include \"hw_classes.h\"" << endl << endl;
   of << "void " << buf.name << "(";
-  int nargs = 0;
-  for (auto pt : buf.port_bundles) {
-    of << buf.bundle_stream(pt.first);
-    if (nargs < buf.port_bundles.size() - 1) {
-      of << ", ";
-    }
-    nargs++;
+  vector<string> bd_args;
+  for (auto pt : buf.get_out_bundles()) {
+      bd_args.push_back(buf.bundle_stream(pt));
   }
+  for (auto pt : buf.get_in_bundles()) {
+      bd_args.push_back(buf.bundle_stream(pt));
+  }
+  of << sep_list(bd_args, "", "", ", ");
   of << ");" << endl;
 
 }
@@ -4614,7 +4614,7 @@ void generate_hls_code(UBuffer& buf) {
   for (auto b : buf.port_bundles) {
     if (buf.is_out_pt(*(begin(b.second)))) {
     } else {
-      regex re(b.first + "(.*);");
+      regex re(b.first + "\\((.*)\\);");
       string inpt = pick(b.second);
       code_string = regex_replace(code_string, re, buf.name + "_" + b.first + "_bundle_write(" + b.first + ", " + delay_list + ", $1, 0"+");");
     }
@@ -4733,7 +4733,7 @@ void generate_hls_code_unit_test(map<string, UBuffer>& buffers, string buffer_na
   std::stringstream ss_func;
   ss_func << "void " << buffer_name<< "_vec(";
   vector<string> bd_args;
-  ss_func << sep_list({func_in_arg + "_ubuf", func_out_arg + "_ubuf"}, "", "", ", ");
+  ss_func << sep_list({func_out_arg + "_ubuf", func_in_arg + "_ubuf"}, "", "", ", ");
   ss_func << ")";
   out << ss_func.str() << " {" << endl;
 
@@ -4796,11 +4796,12 @@ void generate_hls_code_unit_test(UBuffer& buf) {
 
   out << "void " << buf.name << "(";
   vector<string> bd_args;
-  for (auto pt : buf.get_in_bundles()) {
+
+  for (auto pt : buf.get_out_bundles()) {
     bd_args.push_back(buf.bundle_stream(pt));
   }
 
-  for (auto pt : buf.get_out_bundles()) {
+  for (auto pt : buf.get_in_bundles()) {
     bd_args.push_back(buf.bundle_stream(pt));
   }
   out << sep_list(bd_args, "", "", ", ");
