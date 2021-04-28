@@ -1415,6 +1415,7 @@ vector<string> outgoing_buffers(const map<string, UBuffer>& buffers, op* op, pro
 bool unoptimized_compiles(prog& prg);
 std::vector<string> unoptimized_result(prog& prg);
 void generate_regression_testbench(prog& prg);
+void generate_vectorization_unit_testbench(UBuffer & buf);
 void generate_regression_testbench(prog& prg, map<string, UBuffer>& buffers);
 
 
