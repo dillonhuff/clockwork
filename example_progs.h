@@ -30,8 +30,8 @@ prog resnet_simple(); //for regfile debug
 //prog mini_conv_halide_fixed();
 prog camera_pipeline(); //stencil
 prog camera_pipeline_new(); //stencil
-prog camera_pipeline_new_trunc(); //stencil
-prog camera_pipeline_trunc(); //stencil
+//prog camera_pipeline_new_trunc(); //stencil
+//prog camera_pipeline_trunc(); //stencil
 prog up_sample();
 prog up_sample_exp();
 prog down_sample();
