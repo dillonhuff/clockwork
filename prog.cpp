@@ -7835,11 +7835,12 @@ dgraph build_shift_registers(CodegenOptions& options, prog& prg, UBuffer& buf, s
 UBufferImpl generate_optimized_memory_implementation(
         CodegenOptions& options, UBuffer & buf, prog & prg, schedule_info& hwinfo) {
     //TODO: possible bug to comment out
-    //if (prg.is_boundary(buf.name))
+    // if (prg.is_boundary(buf.name))
     //    return impl;
 
     cout << "create shift register for " << buf << endl;
     auto impl = port_group2bank(options, prg, buf, hwinfo);
+
 
     cout << "After shift register optimization: " << impl << endl;
     if (!impl.is_pure_shift_register(buf.get_out_ports()))

@@ -2179,7 +2179,6 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
   //this is the flag to wire stencil valid signal
   bool need_pass_valid = false;
   dbhc::maybe<string> last_producer_buf_with_tile;
-
   //TODO Clean the logic here
   for (auto op : ops_dft) {
     cout << "Visit op: " << op->name << endl;
@@ -3349,15 +3348,15 @@ void generate_coreir_without_ctrl(CodegenOptions& options,
 
   CoreIR::Module* prg_mod;
  
-
   prg_mod = generate_coreir_without_ctrl(options, buffers, prg, schedmap, context, hwinfo, dse_compute_filename);
+
 
   auto ns = context->getNamespace("global");
   if(!saveToFile(ns, options.dir + prg.name + ".json", prg_mod)) {
     cout << "Could not save ubuffer coreir" << endl;
     context->die();
   }
-
+  
   map_memory(prg_mod);
 
   for (auto op : prg.all_ops()) {

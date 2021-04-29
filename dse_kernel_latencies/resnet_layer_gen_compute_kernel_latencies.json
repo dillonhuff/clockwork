@@ -1,1 +1,1 @@
-{"hcompute_conv_stencil": 0, "hcompute_conv_stencil_1": 0, "hcompute_hw_input_global_wrapper_stencil": 0, "hcompute_hw_kernel_global_wrapper_stencil": 0, "hcompute_hw_output_stencil": 0}
+{"hcompute_conv_stencil": 0, "hcompute_conv_stencil_1": 0, "hcompute_conv_stencil_2": 0, "hcompute_conv_stencil_3": 0, "hcompute_conv_stencil_4": 0, "hcompute_hw_input_global_wrapper_stencil": 0, "hcompute_hw_input_global_wrapper_stencil_1": 0, "hcompute_hw_input_global_wrapper_stencil_2": 0, "hcompute_hw_input_global_wrapper_stencil_3": 0, "hcompute_hw_output_stencil": 0}

@@ -34,6 +34,7 @@ int main(int argc, char** argv) {
     std::map<string,prog (*)()> func_map;
 
     func_map["camera_pipeline"] = camera_pipeline;
+    func_map["camera_pipeline_new"] = camera_pipeline_new;
     func_map["unsharp"] = unsharp;
     func_map["gaussian"] = gaussian;
     func_map["pointwise"] = pointwise;
