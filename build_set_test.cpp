@@ -1156,13 +1156,13 @@ void synth_id_vec_test() {
 
   generate_vectorization_unit_testbench(buf);
 
-  int res = cmd("clang++ -std=c++11 tb_conv_vec.cpp conv_vec.cpp conv.cpp");
-  assert(res == 0);
+  //int res = cmd("clang++ -std=c++11 tb_conv_vec.cpp conv_vec.cpp conv.cpp");
+  //assert(res == 0);
 
-  res = system("./a.out");
-  assert(res == 0);
+  //res = system("./a.out");
+  //assert(res == 0);
 
-  res = cmd("clang++ -std=c++11 unit_tb_conv.cpp conv_vec.cpp conv.cpp");
+  int res = cmd("clang++ -std=c++11 unit_tb_conv.cpp conv_vec.cpp conv.cpp");
   assert(res == 0);
 
   res = system("./a.out");
@@ -14504,6 +14504,7 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   //TODO:has issue  with multiple input
   //test_apps.push_back(demosaic_complex());
   //test_apps.push_back(fft8_unroll8());
+  //test_apps.push_back(camera_pipeline_trunc());
   //
   test_apps.push_back(camera_pipeline_new());
   test_apps.push_back(down_sample());
@@ -14515,7 +14516,6 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   test_apps.push_back(rom());
   test_apps.push_back(conv_1_2());
   test_apps.push_back(demosaic_unrolled());
-  //test_apps.push_back(camera_pipeline_trunc());
   test_apps.push_back(camera_pipeline());
   test_apps.push_back(up_sample());
   test_apps.push_back(unsharp());
