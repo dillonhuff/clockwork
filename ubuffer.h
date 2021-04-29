@@ -2095,6 +2095,22 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
         return ret;
     }
 
+    string get_bundle_op(string bd_name) const {
+        //all pt in the same bundle should have same domain op name
+        string pt = pick(port_bundles.at(bd_name));
+        return ::name(domain.at(pt));
+    }
+
+    string get_bundle_from_op(string op_name) const {
+        for (auto pt: get_all_ports()) {
+            if (::name(domain.at(pt)) == op_name) {
+                return get_bundle(pt);
+            }
+        }
+        cout << "Did not find this op in this buffer" << endl;
+        assert(false);
+    }
+
     bool is_in_pt(const std::string& name) const {
       assert(contains_key(name, isIn));
       return isIn.at(name);

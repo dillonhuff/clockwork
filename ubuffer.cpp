@@ -4538,11 +4538,11 @@ vector<string> generate_passthrough_op(
 
   //if (prg.is_boundary(in_buffer)) {
   if (!producer_buffer.has_value()) {
-    conv_out << pick(consumer_buffer.get_value().get_in_bundles()) << ".read();" << endl;
+    conv_out << consumer_buffer.get_value().get_bundle_from_op(op_name) << ".read();" << endl;
   } else {
     vector<string> source_delays{producer_var};
     cout << "op = " << op_name << endl;
-    conv_out << producer_var << "_" << pick(producer_buffer.get_value().get_out_bundles()) << "_bundle_read(" <<
+    conv_out << producer_var << "_" << producer_buffer.get_value().get_bundle_from_op(op_name) << "_bundle_read(" <<
         comma_list(source_delays) << "/* source_delay */, " << comma_list(dim_args) << ");" << endl;
 
     conv_out << endl;
@@ -4674,26 +4674,49 @@ void generate_hls_code_unit_test(map<string, UBuffer>& buffers, string buffer_na
   //op to buffer write and read, helper struct for codegen
   //map<string, pair<string, string> > op2write_args, op2read_args;
   map<string, maybe<UBuffer> > op2write_buf, op2read_buf;
-  string func_in_arg, func_out_arg;
+  vector<string> func_in_args, func_out_args;
 
   for (auto it: buffers) {
     auto buf = it.second;
-    string rdop = pick(buf.get_read_ops());
-    string wtop = pick(buf.get_write_ops());
 
-    if (contains(wtop, "in2agg")) {
-        op2read_buf[wtop] = maybe<UBuffer>();
-        string in_stream_name = pick(buf.get_in_bundles());
-        func_in_arg = buf.bundle_stream(in_stream_name);
+    for (auto it: buf.port_bundles) {
+      string bd= it.first;
+      if (buf.isIn.at(pick(it.second))) {
+        //write op
+        string wtop = buf.get_bundle_op(bd);
+        if (contains(wtop, "in2agg")) {
+          op2read_buf[wtop] = maybe<UBuffer>();
+          string in_stream_name = pick(buf.get_in_bundles());
+          func_in_args.push_back (buf.bundle_stream(in_stream_name));
+        }
+        op2write_buf[wtop] = buf;
+      } else {
+        //read op
+        string rdop = buf.get_bundle_op(bd);
+        if (contains(rdop, "tb2out")) {
+          op2write_buf[rdop] = maybe<UBuffer>();
+          string out_stream_name = pick(buf.get_out_bundles());
+          func_out_args.push_back(buf.bundle_stream(out_stream_name));
+        }
+        op2read_buf[rdop] = buf;
+      }
     }
-    op2write_buf[wtop] = buf;
+    //string rdop = pick(buf.get_read_ops());
+    //string wtop = pick(buf.get_write_ops());
 
-    if (contains(rdop, "tb2out")) {
-        op2write_buf[rdop] = maybe<UBuffer>();
-        string out_stream_name = pick(buf.get_out_bundles());
-        func_out_arg = buf.bundle_stream(out_stream_name);
-    }
-    op2read_buf[rdop] = buf;
+    //if (contains(wtop, "in2agg")) {
+    //    op2read_buf[wtop] = maybe<UBuffer>();
+    //    string in_stream_name = pick(buf.get_in_bundles());
+    //    func_in_args.push_back (buf.bundle_stream(in_stream_name));
+    //}
+    //op2write_buf[wtop] = buf;
+
+    //if (contains(rdop, "tb2out")) {
+    //    op2write_buf[rdop] = maybe<UBuffer>();
+    //    string out_stream_name = pick(buf.get_out_bundles());
+    //    func_out_args.push_back(buf.bundle_stream(out_stream_name));
+    //}
+    //op2read_buf[rdop] = buf;
 
     //if (contains(wtop, "in2agg")) {
     //  string in_stream_name = pick(buf.get_in_bundles());
@@ -4733,7 +4756,15 @@ void generate_hls_code_unit_test(map<string, UBuffer>& buffers, string buffer_na
   std::stringstream ss_func;
   ss_func << "void " << buffer_name<< "_vec(";
   vector<string> bd_args;
-  ss_func << sep_list({func_out_arg + "_ubuf", func_in_arg + "_ubuf"}, "", "", ", ");
+  for (auto arg: func_out_args) {
+    bd_args.push_back(arg);
+  }
+  for (auto arg: func_in_args) {
+    bd_args.push_back(arg);
+  }
+  for_each(bd_args.begin(), bd_args.end(), [](string & arg) {arg += "_ubuf";});
+  //ss_func << sep_list({func_out_arg + "_ubuf", func_in_arg + "_ubuf"}, "", "", ", ");
+  ss_func << sep_list(bd_args, "", "", ", ");
   ss_func << ")";
   out << ss_func.str() << " {" << endl;
 

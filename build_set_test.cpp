@@ -1121,6 +1121,57 @@ void synth_conv_test() {
   assert(res == 0);
 }
 
+void twoport_vec_test() {
+  struct isl_ctx *ctx;
+  ctx = isl_ctx_alloc();
+
+  UBuffer buf;
+  buf.name = "two_pt";
+  buf.ctx = ctx;
+
+  buf.domain["write0"] =
+    isl_set_read_from_str(ctx, "{ write0[root = 0, i] : 0 <= i < 16}");
+  buf.access_map["write0"] =
+    rdmap(ctx, "{ write0[root = 0, i] -> two_pt[i] : 0 <= i < 16}");
+  buf.schedule["write0"] =
+    isl_union_map_read_from_str(ctx, "{ write0[root = 0, i] -> [i] : 0 <= i < 16 }");
+  buf.isIn["write0"] = true;
+
+  // Read 0 through 7
+  buf.domain["read0"] =
+    isl_set_read_from_str(ctx, "{ read0[root = 0, i] : 0 <= i < 8}");
+  buf.access_map["read0"] =
+    rdmap(ctx, "{ read0[root = 0, i] -> two_pt[i] : 0 <= i < 8}");
+  buf.schedule["read0"] =
+    isl_union_map_read_from_str(ctx, "{ read0[root = 0, i] -> [i + 32] : 0 <= i < 8}");
+  buf.isIn["read0"] = false;
+
+  // Read 0 through 7
+  buf.domain["read1"] =
+    isl_set_read_from_str(ctx, "{ read1[root = 0, i] : 0 <= i < 8}");
+  buf.access_map["read1"] =
+    rdmap(ctx, "{ read1[root = 0, i] -> two_pt[i+8] : 0 <= i < 8}");
+  buf.schedule["read1"] =
+    isl_union_map_read_from_str(ctx, "{ read1[root = 0, i] -> [i + 32] : 0 <= i < 8}");
+  buf.isIn["read1"] = false;
+
+  generate_hls_code(buf);
+
+  map<string, UBuffer> buffers;
+  buffers.insert({"two_pt", buf});
+  buffer_vectorization({1}, {"two_pt"}, 4, buffers);
+
+  generate_hls_code_unit_test(buffers, buf.name);
+
+  generate_vectorization_unit_testbench(buf);
+
+  int res = cmd("clang++ -std=c++11 unit_tb_two_pt.cpp two_pt_vec.cpp two_pt.cpp");
+  assert(res == 0);
+
+  res = system("./a.out");
+  assert(res == 0);
+}
+
 void synth_id_vec_test() {
   struct isl_ctx *ctx;
   ctx = isl_ctx_alloc();
@@ -1155,12 +1206,6 @@ void synth_id_vec_test() {
   generate_hls_code_unit_test(buffers, buf.name);
 
   generate_vectorization_unit_testbench(buf);
-
-  //int res = cmd("clang++ -std=c++11 tb_conv_vec.cpp conv_vec.cpp conv.cpp");
-  //assert(res == 0);
-
-  //res = system("./a.out");
-  //assert(res == 0);
 
   int res = cmd("clang++ -std=c++11 unit_tb_conv.cpp conv_vec.cpp conv.cpp");
   assert(res == 0);
@@ -11267,6 +11312,7 @@ void playground() {
     synth_wire_test();
     synth_conv_test();
     synth_id_vec_test();
+    twoport_vec_test();
     assert(false);
     {
         isl_ctx* ctx = isl_ctx_alloc();
