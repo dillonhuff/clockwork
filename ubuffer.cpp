@@ -6854,7 +6854,8 @@ void UBuffer::generate_banks(CodegenOptions& options) {
         }
         //adjust against read
         while(violate_deps(temp_sched, sram_rd)) {
-            temp_sched = linear_schedule(temp_sched, {1}, -out_fetch_ii * fetch_width / 2, false);
+            temp_sched = linear_schedule(temp_sched, {1}, -1, false);
+            //temp_sched = linear_schedule(temp_sched, {1}, -out_fetch_ii * fetch_width / 2, false);
             cout << "\tadjust temp sched: " << str(temp_sched) << endl;
             adjust = true;
         }
