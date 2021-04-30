@@ -1093,12 +1093,6 @@ void synth_conv_test() {
     rdmap(ctx, "{ read[root = 0, i] -> conv[i] : 0 <= i < 8}");
   buf.schedule["read"] =
     isl_union_map_read_from_str(ctx, "{ read[root = 0, i] -> [i + 16] : 0 <= i < 8}");
-  //buf.domain["read"] =
-  //  isl_set_read_from_str(ctx, "{ read[i, j] : 0 <= i < 8 and 0 <= j < 3}");
-  //buf.access_map["read"] =
-  //  rdmap(ctx, "{ read[i, j] -> M[i + j] : 0 <= i < 8 and 0 <= j < 3}");
-  //buf.schedule["read"] =
-  //  isl_union_map_read_from_str(ctx, "{ read[i, j] -> [3*i + j + 6] : 0 <= i < 8 and 0 <= j < 3 }");
   buf.isIn["read"] = false;
 
   generate_hls_code(buf);
@@ -1166,6 +1160,90 @@ void twoport_vec_test() {
   generate_vectorization_unit_testbench(buf);
 
   int res = cmd("clang++ -std=c++11 unit_tb_two_pt.cpp two_pt_vec.cpp two_pt.cpp");
+  assert(res == 0);
+
+  res = system("./a.out");
+  assert(res == 0);
+}
+
+void rolled_conv_reorder_test() {
+  struct isl_ctx *ctx;
+  ctx = isl_ctx_alloc();
+
+  UBuffer buf;
+  buf.name = "conv_rolled";
+  buf.ctx = ctx;
+
+  buf.domain["write"] =
+    isl_set_read_from_str(ctx, "{ write[root = 0, i] : 0 <= i < 16}");
+  buf.access_map["write"] =
+    rdmap(ctx, "{ write[root = 0, i] -> conv_rolled[i] : 0 <= i < 16}");
+  buf.schedule["write"] =
+    isl_union_map_read_from_str(ctx, "{ write[root = 0, i] -> [i] : 0 <= i < 16 }");
+  buf.isIn["write"] = true;
+
+  // Read 0 through 7
+  buf.domain["read"] =
+    isl_set_read_from_str(ctx, "{ read[root = 0, i, j] : 0 <= i <= 2 and 0 <= j < 12}");
+  buf.access_map["read"] =
+    rdmap(ctx, "{ read[root = 0, i, j] -> conv_rolled[i + j] : 0 <= i <= 2 and 0 <= j < 12}");
+  buf.schedule["read"] =
+    isl_union_map_read_from_str(ctx, "{ read[root = 0, i, j] -> [j + 3*i + 16] : 0 <= i <= 2 and 0 <= j < 12}");
+  buf.isIn["read"] = false;
+
+  generate_hls_code(buf);
+
+  map<string, UBuffer> buffers;
+  buffers.insert({"conv_rolled", buf});
+  buffer_vectorization({1}, {"conv_rolled"}, 4, buffers);
+
+  generate_hls_code_unit_test(buffers, buf.name);
+
+  generate_vectorization_unit_testbench(buf);
+
+  int res = cmd("clang++ -std=c++11 unit_tb_conv_rolled.cpp conv_rolled.cpp conv_rolled_vec.cpp" );
+  assert(res == 0);
+
+  res = system("./a.out");
+  assert(res == 0);
+}
+
+void rolled_conv_test() {
+  struct isl_ctx *ctx;
+  ctx = isl_ctx_alloc();
+
+  UBuffer buf;
+  buf.name = "conv_rolled";
+  buf.ctx = ctx;
+
+  buf.domain["write"] =
+    isl_set_read_from_str(ctx, "{ write[root = 0, i] : 0 <= i < 16}");
+  buf.access_map["write"] =
+    rdmap(ctx, "{ write[root = 0, i] -> conv_rolled[i] : 0 <= i < 16}");
+  buf.schedule["write"] =
+    isl_union_map_read_from_str(ctx, "{ write[root = 0, i] -> [i] : 0 <= i < 16 }");
+  buf.isIn["write"] = true;
+
+  // Read 0 through 7
+  buf.domain["read"] =
+    isl_set_read_from_str(ctx, "{ read[root = 0, i, j] : 0 <= i < 12 and 0 <= j <= 2}");
+  buf.access_map["read"] =
+    rdmap(ctx, "{ read[root = 0, i, j] -> conv_rolled[i + j] : 0 <= i < 12 and 0 <= j <= 2}");
+  buf.schedule["read"] =
+    isl_union_map_read_from_str(ctx, "{ read[root = 0, i, j] -> [j + 3*i + 16] : 0 <= i < 12 and 0 <= j <= 2}");
+  buf.isIn["read"] = false;
+
+  generate_hls_code(buf);
+
+  map<string, UBuffer> buffers;
+  buffers.insert({"conv_rolled", buf});
+  buffer_vectorization({1}, {"conv_rolled"}, 4, buffers);
+
+  generate_hls_code_unit_test(buffers, buf.name);
+
+  generate_vectorization_unit_testbench(buf);
+
+  int res = cmd("clang++ -std=c++11 unit_tb_conv_rolled.cpp conv_rolled.cpp conv_rolled_vec.cpp" );
   assert(res == 0);
 
   res = system("./a.out");
@@ -11309,10 +11387,6 @@ void blur_and_downsample_test() {
 }
 
 void playground() {
-    synth_wire_test();
-    synth_conv_test();
-    synth_id_vec_test();
-    twoport_vec_test();
     assert(false);
     {
         isl_ctx* ctx = isl_ctx_alloc();
@@ -16532,12 +16606,17 @@ void lake_smt_tests() {
   //assert (false);
 }
 
+void vectorization_unit_tests() {
+  //synth_wire_test();
+  //synth_conv_test();
+  //synth_id_vec_test();
+  //twoport_vec_test();
+  rolled_conv_reorder_test();
+  rolled_conv_test();
+}
+
 void lake_tests() {
-  //dual_port_lake_test();
-  //lake_agg_sram_tb_config_test();
-  //union_test();
-  //assert(false);
-  //playground();
+  //vectorization_unit_tests();
   test_single_port_mem(false, true, "aha_garnet_design_new");
   test_pond("aha_garnet_design_pond");
   //test_single_port_mem(false, false, "aha_garnet_design");
@@ -25143,6 +25222,11 @@ int main(int argc, char** argv) {
 
     if (cmd == "lake-tests") {
       lake_tests();
+      return 0;
+    }
+
+    if (cmd == "unit-tests") {
+      vectorization_unit_tests();
       return 0;
     }
 

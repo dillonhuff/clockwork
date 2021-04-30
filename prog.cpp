@@ -2938,8 +2938,9 @@ void generate_vectorization_unit_testbench(UBuffer & buf) {
     vector<string> results = split_bv(2, rgtb, "actual", lane_width, unroll);
     assert(results.size() == results_gold.size());
     for (int i = 0; i < results.size(); i ++ ) {
-      //rgtb << tab(2) << "fout << " << r << " << endl;" << endl;
-      rgtb << tab(2) << "assert (" << results.at(i) << "==" << results_gold.at(i) <<");" << endl;
+      rgtb << tab(2) << "cout << \"a: \" << (int)" << results.at(i) << " << \" \\tg: \" << (int)"
+          << results_gold.at(i) << " << endl;" << endl;
+      rgtb << tab(2) << "assert(" << results.at(i) << "==" << results_gold.at(i) <<");" << endl;
     }
 
     rgtb << tab(1) << "}" << endl << endl;
