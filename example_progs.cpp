@@ -13907,16 +13907,16 @@ prog resnet_one_input() {
   prg.compute_unit_file = "resnet_one_input_compute.h";
   prg.name = "resnet_one_input";
 
-// Stencil<int16_t, 2, 9, 9> &hw_input_stencil = arg_0;
+// Stencil<int16_t, 2, 18, 18> &hw_input_stencil = arg_0;
   prg.add_input("hw_input_stencil");
   prg.buffer_port_widths["hw_input_stencil"] = 16;
-// Stencil<int16_t, 7, 7, 2> &hw_output_stencil = arg_1;
+// Stencil<int16_t, 16, 16, 2> &hw_output_stencil = arg_1;
   prg.add_output("hw_output_stencil");
   prg.buffer_port_widths["hw_output_stencil"] = 16;
 
 ////producing hw_input_global_wrapper.stencil
-  auto hw_input_global_wrapper_s0_y = prg.add_loop("hw_input_global_wrapper_s0_y", 0, 9);
-  auto hw_input_global_wrapper_s0_x = hw_input_global_wrapper_s0_y->add_loop("hw_input_global_wrapper_s0_x", 0, 9);
+  auto hw_input_global_wrapper_s0_y = prg.add_loop("hw_input_global_wrapper_s0_y", 0, 18);
+  auto hw_input_global_wrapper_s0_x = hw_input_global_wrapper_s0_y->add_loop("hw_input_global_wrapper_s0_x", 0, 18);
 
 //store is: hw_input_global_wrapper.stencil(0, hw_input_global_wrapper_s0_x, hw_input_global_wrapper_s0_y) = hw_input.stencil(0, hw_input_global_wrapper_s0_x, hw_input_global_wrapper_s0_y)
   auto hcompute_hw_input_global_wrapper_stencil = hw_input_global_wrapper_s0_x->add_op("op_hcompute_hw_input_global_wrapper_stencil");
@@ -13933,8 +13933,8 @@ prog resnet_one_input() {
 
 //consuming hw_input_global_wrapper.stencil
 ////producing conv.stencil
-  auto conv_s0_y = prg.add_loop("conv_s0_y", 0, 7);
-  auto conv_s0_x = conv_s0_y->add_loop("conv_s0_x", 0, 7);
+  auto conv_s0_y = prg.add_loop("conv_s0_y", 0, 16);
+  auto conv_s0_x = conv_s0_y->add_loop("conv_s0_x", 0, 16);
   auto conv_s0_w = conv_s0_x->add_loop("conv_s0_w", 0, 2);
 
 //store is: conv.stencil(conv_s0_x, conv_s0_y, conv_s0_w) = (int16)0
@@ -13942,8 +13942,8 @@ prog resnet_one_input() {
   hcompute_conv_stencil->add_function("hcompute_conv_stencil");
   prg.buffer_port_widths["conv_stencil"] = 16;
   hcompute_conv_stencil->add_store("conv_stencil", "conv_s0_w", "conv_s0_y", "conv_s0_x");
-  auto conv_s1_y = prg.add_loop("conv_s1_y", 0, 7);
-  auto conv_s1_x = conv_s1_y->add_loop("conv_s1_x", 0, 7);
+  auto conv_s1_y = prg.add_loop("conv_s1_y", 0, 16);
+  auto conv_s1_x = conv_s1_y->add_loop("conv_s1_x", 0, 16);
 
 //store is: conv.stencil(conv_s1_x, conv_s1_y, 0) = (conv.stencil(conv_s1_x, conv_s1_y, 0) + int16((int32(hw_input_global_wrapper.stencil(0, (conv_s1_x + 2), (conv_s1_y + 2)))*13)))
   auto hcompute_conv_stencil_1 = conv_s1_x->add_op("op_hcompute_conv_stencil_1");
@@ -13971,8 +13971,8 @@ prog resnet_one_input() {
 
 //consuming conv.stencil
   auto hw_output_s0_w = prg.add_loop("hw_output_s0_w", 0, 2);
-  auto hw_output_s0_y_yi = hw_output_s0_w->add_loop("hw_output_s0_y_yi", 0, 7);
-  auto hw_output_s0_x_xi = hw_output_s0_y_yi->add_loop("hw_output_s0_x_xi", 0, 7);
+  auto hw_output_s0_y_yi = hw_output_s0_w->add_loop("hw_output_s0_y_yi", 0, 16);
+  auto hw_output_s0_x_xi = hw_output_s0_y_yi->add_loop("hw_output_s0_x_xi", 0, 16);
 
 //store is: hw_output.stencil(hw_output_s0_x_xi, hw_output_s0_y_yi, hw_output_s0_w) = conv.stencil(hw_output_s0_x_xi, hw_output_s0_y_yi, hw_output_s0_w)
   auto hcompute_hw_output_stencil = hw_output_s0_x_xi->add_op("op_hcompute_hw_output_stencil");
