@@ -11386,38 +11386,62 @@ void blur_and_downsample_test() {
   regression_test(prg);
 }
 
-void playground() {
-    assert(false);
-    {
-        isl_ctx* ctx = isl_ctx_alloc();
-        auto in_0 = isl_map_read_from_str(ctx,"{ input[i0, i1]-> data[i0, i1]: 0<=i0<=61 and 0<=i1<=61}");
-        auto in_sched = isl_map_read_from_str(ctx,"{ input[i0, i1]-> [62*i0 + i1]: 0<=i0<=61 and 0<=i1<=61}");
-
-        auto out_0 = isl_map_read_from_str(ctx,"{ output[i0, i1]-> data[i0, i1]: 0<=i0<=59 and 0<=i1<=61}");
-        auto out_1 = isl_map_read_from_str(ctx,"{ output[i0, i1]-> data[i0+1, i1]: 0<=i0<=59 and 0<=i1<=61}");
-        auto out_2 = isl_map_read_from_str(ctx,"{ output[i0, i1]-> data[i0+2, i1]: 0<=i0<=59 and 0<=i1<=61}");
-        auto out_sched = isl_map_read_from_str(ctx,"{ output[i0, i1]-> [124+62*i0 + i1]: 0<=i0<=59 and 0<=i1<=61}");
-        auto in_sched_shift = linear_schedule(in_sched, {1}, 62, false);
-        auto data2cycle = dot(inv(in_0), in_sched_shift);
-        auto new_outpt_acc = dot(out_sched, inv(data2cycle));
-        cout << str(in_sched_shift) << endl;
-        cout << str(data2cycle) << endl;
-        cout << str(simplify_expr(new_outpt_acc)) << endl;
-        assert(false);
-
+int get_inner_most_related_dom_dim(isl_map* m) {
+  vector<bool> rel_map = relation_map(m);
+  int inner_most_address_related_dim_id = rel_map.size() - 1;
+  for (int i = rel_map.size() - 1; i >= 0; i -- ) {
+    if (rel_map.at(i) != 0) {
+      inner_most_address_related_dim_id = i;
+      break;
     }
+  }
+  return inner_most_address_related_dim_id;
+}
+
+isl_map* get_vectorized_access_map(isl_map* acc_0, int fetch_width, int addr_dim) {
+    int vectorize_loop_dim = get_inner_most_related_dom_dim(acc_0);
+    auto trans =
+        get_domain_trans_with_reaccess_mask(domain(acc_0), vectorize_loop_dim, fetch_width);
+    auto acc_vec = dot(trans, acc_0);
+    auto slice = get_set_slice(range(acc_0), addr_dim, fetch_width);
+    acc_vec = dot(acc_vec, slice);
+    auto origin_slice = dot(acc_0, slice);
+    //if (get_dim_min(range(acc_vec), addr_dim) > get_dim_min(range(origin_slice), addr_dim)) {
+    //    //pad to the left
+    //}
+    cout << "trans max: " << get_dim_max(range(acc_vec), addr_dim) << " , origin max: " << get_dim_max(range(origin_slice), addr_dim) << endl;
+    if (get_dim_max(range(acc_vec), addr_dim) < get_dim_max(range(origin_slice), addr_dim)) {
+        //pad to the right
+        acc_vec = pad_to_domain_ubuf_map(acc_vec, vectorize_loop_dim, 1);
+    }
+    return acc_vec;
+}
+
+void playground() {
     {
         isl_ctx* ctx = isl_ctx_alloc();
-        auto acc_0 = isl_map_read_from_str(ctx,"{ sram2tb[i0, i2, i1]-> data[i0, i1+i2]: 0<=i0<=61 and 0<=i1<=61 and 0<=i2<=7}");
+        auto acc_0 = isl_map_read_from_str(ctx,"{ sram2tb[root = 0, i0, i2, i1]-> data[i0, i1+i2]: 0<=i0<=61 and 0<=i1<=61 and 0<=i2<=7}");
+        for (int i = 0; i < 4; i ++) {
+          cout << "min: " << get_dim_min(domain(acc_0), i);
+          cout << "max: " << get_dim_max(domain(acc_0), i) << endl;
 
-        auto trans = isl_map_read_from_str(ctx,"{ sram2tb[i0, i1]-> sram2tb[i0, i2, 4*i1+1]}");
-        auto slice = isl_map_read_from_str(ctx,"{ data[i0, i1]-> data[i0, floor(i1/4)]}");
-        //auto trans = get_domain_trans(domain(acc_0), 2, 4);
-        auto res = dot(trans, acc_0);
-        cout << "After vectorization: " << str(res) << endl;
-        res = simplify(dot(res, slice));
-        cout << "After vectorization: " << str(res) << endl;
-        assert(false);
+        }
+        AccessPattern acc_pattern = AccessPattern(acc_0, ctx);
+        auto trans_pair = acc_pattern.get_op_transform(ctx, 1, 4);
+        cout << "trans_op map: " << str(trans_pair.first) << endl;
+
+        //auto acc_1 = isl_map_read_from_str(ctx,"{ sram2tb[root = 0, i0, i1, i2]-> data[i0, i1+i2]: 0<=i0<=61 and 0<=i1<=61 and 0<=i2<=7}");
+        //AccessPattern acc_pattern_ = AccessPattern(acc_1, ctx);
+        //auto trans_pair_ = acc_pattern_.get_op_transform(ctx, 1, 4);
+        //cout << "trans_op map: " << str(trans_pair_.first) << endl;
+
+        //auto trans = isl_map_read_from_str(ctx,"{ sram2tb[root = 0, i0, i1]-> sram2tb[root = 0, i0, i2, 4*i1+1]}");
+        //auto slice = isl_map_read_from_str(ctx,"{ data[i0, i1]-> data[i0, floor(i1/4)]}");
+        ////auto trans = get_domain_trans(domain(acc_0), 2, 4);
+        //auto res = dot(trans, acc_0);
+        //cout << "After vectorization: " << str(res) << endl;
+        //res = simplify(dot(res, slice));
+        //cout << "After vectorization: " << str(res) << endl;
     }
     {
         isl_ctx* ctx = isl_ctx_alloc();
@@ -11450,6 +11474,24 @@ void playground() {
         //    }
         //}
         //cout << "Final trans: " << str(target) << endl;
+        assert(false);
+
+    }
+    {
+        isl_ctx* ctx = isl_ctx_alloc();
+        auto in_0 = isl_map_read_from_str(ctx,"{ input[i0, i1]-> data[i0, i1]: 0<=i0<=61 and 0<=i1<=61}");
+        auto in_sched = isl_map_read_from_str(ctx,"{ input[i0, i1]-> [62*i0 + i1]: 0<=i0<=61 and 0<=i1<=61}");
+
+        auto out_0 = isl_map_read_from_str(ctx,"{ output[i0, i1]-> data[i0, i1]: 0<=i0<=59 and 0<=i1<=61}");
+        auto out_1 = isl_map_read_from_str(ctx,"{ output[i0, i1]-> data[i0+1, i1]: 0<=i0<=59 and 0<=i1<=61}");
+        auto out_2 = isl_map_read_from_str(ctx,"{ output[i0, i1]-> data[i0+2, i1]: 0<=i0<=59 and 0<=i1<=61}");
+        auto out_sched = isl_map_read_from_str(ctx,"{ output[i0, i1]-> [124+62*i0 + i1]: 0<=i0<=59 and 0<=i1<=61}");
+        auto in_sched_shift = linear_schedule(in_sched, {1}, 62, false);
+        auto data2cycle = dot(inv(in_0), in_sched_shift);
+        auto new_outpt_acc = dot(out_sched, inv(data2cycle));
+        cout << str(in_sched_shift) << endl;
+        cout << str(data2cycle) << endl;
+        cout << str(simplify_expr(new_outpt_acc)) << endl;
         assert(false);
 
     }
@@ -14626,8 +14668,8 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   //test_apps.push_back(fft8_unroll8());
   //test_apps.push_back(camera_pipeline_trunc());
   //
-  test_apps.push_back(camera_pipeline_new());
-  test_apps.push_back(down_sample());
+  //test_apps.push_back(camera_pipeline_new());
+  //test_apps.push_back(down_sample());
   test_apps.push_back(gaussian());
   test_apps.push_back(conv_3_3());
   test_apps.push_back(counter());
@@ -16604,6 +16646,38 @@ void lake_smt_tests() {
   test_single_port_mem_smt_stream();
   assert(false);
   //assert (false);
+}
+
+void access_pattern_rewrite_unit_tests() {
+  isl_ctx* ctx = isl_ctx_alloc();
+  auto acc_0 = isl_map_read_from_str(ctx,"{ op[i0]-> data[i0+1]: 0<=i0<=10 }");
+  auto acc_vec = get_vectorized_access_map(acc_0, 4/*fetch_width*/, 0/*dom_dim*/);
+  cout << "before vectorization: " << str(acc_0) << endl;
+  cout << "after vectorization: " << str(acc_vec) << endl;
+  assert(get_dim_min(range(acc_vec), 0) == 0);
+  assert(get_dim_max(range(acc_vec), 0) == 2);
+
+  acc_0 = isl_map_read_from_str(ctx,"{ op[i0]-> data[i0]: 0<=i0<=11 }");
+  acc_vec = get_vectorized_access_map(acc_0, 4/*fetch_width*/, 0/*dom_dim*/);
+  cout << "before vectorization: " << str(acc_0) << endl;
+  cout << "after vectorization: " << str(acc_vec) << endl;
+  assert(get_dim_min(range(acc_vec), 0) == 0);
+  assert(get_dim_max(range(acc_vec), 0) == 2);
+
+  acc_0 = isl_map_read_from_str(ctx,"{ op[i0]-> data[i0+1]: 0<=i0<=11 }");
+  acc_vec = get_vectorized_access_map(acc_0, 4/*fetch_width*/, 0/*dom_dim*/);
+  cout << "before vectorization: " << str(acc_0) << endl;
+  cout << "after vectorization: " << str(acc_vec) << endl;
+  assert(get_dim_min(range(acc_vec), 0) == 0);
+  assert(get_dim_max(range(acc_vec), 0) == 3);
+
+  acc_0 = isl_map_read_from_str(ctx,"{ op[i0]-> data[i0+4]: 0<=i0<=11 }");
+  acc_vec = get_vectorized_access_map(acc_0, 4/*fetch_width*/, 0/*dom_dim*/);
+  cout << "before vectorization: " << str(acc_0) << endl;
+  cout << "after vectorization: " << str(acc_vec) << endl;
+  assert(get_dim_min(range(acc_vec), 0) == 1);
+  assert(get_dim_max(range(acc_vec), 0) == 3);
+
 }
 
 void vectorization_unit_tests() {

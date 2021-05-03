@@ -384,6 +384,8 @@ isl_map* merge_domain_dim(isl_map* m);
 
 //vectorization transformation
 isl_map* get_domain_trans(isl_set* dom, int pos, int fetch_width);
+isl_map* get_domain_trans_with_reaccess_mask(isl_set* dom, int pos, int fetch_width);
+isl_map* get_set_slice(isl_set* dom, int pos, int fetch_width);
 
 umap* lexmax(umap* const m0);
 

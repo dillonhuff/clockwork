@@ -3976,6 +3976,24 @@ isl_map* merge_domain_dim(isl_map* m) {
 }
 
 
+isl_map* get_set_slice(isl_set* dom, int pos, int fetch_width) {
+    string dom_name = name(dom);
+    int dim = num_dims(dom);
+    vector<string> var, rewrite_var;
+    for (int i = 0; i < dim; i ++) {
+        var.push_back("i"+str(i));
+        if (pos == i) {
+            //rewrite_var.push_back("i"+str(i) + "*" + str(fetch_width) + "+" + str(offset));
+            rewrite_var.push_back("floor(i"+str(i) + "/" + str(fetch_width) + ")" );
+        } else {
+            rewrite_var.push_back("i"+str(i));
+        }
+    }
+    string map_str = "{"+dom_name + bracket_list(var) + "->" + dom_name +bracket_list(rewrite_var)+ "}";
+    auto trans = isl_map_read_from_str(ctx(dom), map_str.c_str());
+    cout << "Autogen slice:" << str(trans) << endl;
+    return trans;
+}
 
 isl_map* get_domain_trans(isl_set* dom, int pos, int fetch_width) {
     string dom_name = name(dom);
@@ -3995,6 +4013,27 @@ isl_map* get_domain_trans(isl_set* dom, int pos, int fetch_width) {
     cout << "Autogen trans:" << str(trans) << endl;
     return trans;
 }
+
+//This is the advance version of domain transformation used in vectorization
+isl_map* get_domain_trans_with_reaccess_mask(isl_set* dom, int pos, int fetch_width) {
+    string dom_name = name(dom);
+    int dim = num_dims(dom);
+    vector<string> var, rewrite_var;
+    for (int i = 0; i < dim; i ++) {
+        var.push_back("i"+str(i));
+        if (pos == i) {
+            //rewrite_var.push_back("i"+str(i) + "*" + str(fetch_width) + "+" + str(offset));
+            rewrite_var.push_back("i"+str(i) + "*" + str(fetch_width) );
+        } else if (pos < i){
+            rewrite_var.push_back("i"+str(i));
+        }
+    }
+    string map_str = "{"+dom_name + bracket_list(var) + "->" + dom_name +bracket_list(rewrite_var)+ "}";
+    auto trans = isl_map_read_from_str(ctx(dom), map_str.c_str());
+    cout << "Autogen trans:" << str(trans) << endl;
+    return trans;
+}
+
 
 
 isl_local_space* local_set_space(isl_ctx* ctx, const int dims) {

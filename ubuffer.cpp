@@ -7651,7 +7651,7 @@ void UBuffer::generate_banks(CodegenOptions& options) {
                 padded_buf2op = to_umap(pad_to_domain_ubuf_map(buf2op, dim_id, fetch_width - rem));
               auto rewrite_buf2op = dot(padded_buf2op, op_trans);
               cout << "rewrite buf2op: " << str(rewrite_buf2op) << endl;
-              auto new_op_domain = pick(get_sets(range(rewrite_buf2op)));
+              //auto new_op_domain = pick(get_sets(range(rewrite_buf2op)));
               cout << "rewrite buffer to op map: " << str(access_map.at(in_pt_name)) << endl;
 
               //add in port to agg_buf
@@ -7728,7 +7728,7 @@ void UBuffer::generate_banks(CodegenOptions& options) {
 
 
               //map from input dim to denominator
-              //TODO: move this into a function
+              //TODO: move this into a function, and also move into vectorization preprocessing
               map<int, int> split_dims;
               for (auto aff : get_aff_vec(am)) {
                 cout << "\taff : " << str(aff) << endl;
@@ -8028,10 +8028,10 @@ void UBuffer::generate_banks(CodegenOptions& options) {
             auto acc_m = to_map(access_map.at(inpt));
             acc_m = check_dim_id(acc_m);
             domain[inpt] = ::domain(acc_m);
-            access_map[inpt] = to_umap(acc_m);
+            access_map[inpt] = to_umap(simplify_expr(acc_m));
             auto sched = to_map(schedule.at(inpt));
             sched = check_dim_id(sched);
-            schedule[inpt] = to_umap(sched);
+            schedule[inpt] = to_umap(simplify_expr(sched));
         }
     }
 

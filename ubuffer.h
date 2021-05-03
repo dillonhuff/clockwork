@@ -425,7 +425,7 @@ class AccessPattern {
 
           rel_map = relation_map(access_map);
 
-          auto mpa = isl_pw_multi_aff_from_map(access_map);
+          auto mpa = isl_pw_multi_aff_from_map(cpy(access_map));
           addr_dim = isl_pw_multi_aff_dim(mpa, isl_dim_out);
           map<string, int> var_related;
           for (int i = 0; i < addr_dim; i ++) {
