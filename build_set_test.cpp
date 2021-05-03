@@ -16681,16 +16681,18 @@ void access_pattern_rewrite_unit_tests() {
 }
 
 void vectorization_unit_tests() {
+  access_pattern_rewrite_unit_tests();
   //synth_wire_test();
-  //synth_conv_test();
-  //synth_id_vec_test();
-  //twoport_vec_test();
-  rolled_conv_reorder_test();
-  rolled_conv_test();
+  synth_conv_test();
+  synth_id_vec_test();
+  twoport_vec_test();
+  //rolled_conv_reorder_test();
+  //rolled_conv_test();
 }
 
 void lake_tests() {
   //vectorization_unit_tests();
+  vectorization_unit_tests();
   test_single_port_mem(false, true, "aha_garnet_design_new");
   test_pond("aha_garnet_design_pond");
   //test_single_port_mem(false, false, "aha_garnet_design");
