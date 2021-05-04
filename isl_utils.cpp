@@ -4020,11 +4020,14 @@ isl_map* get_domain_trans_with_reaccess_mask(isl_set* dom, int pos, int fetch_wi
     int dim = num_dims(dom);
     vector<string> var, rewrite_var;
     for (int i = 0; i < dim; i ++) {
-        var.push_back("i"+str(i));
         if (pos == i) {
             //rewrite_var.push_back("i"+str(i) + "*" + str(fetch_width) + "+" + str(offset));
+            var.push_back("i"+str(i));
             rewrite_var.push_back("i"+str(i) + "*" + str(fetch_width) );
-        } else if (pos < i){
+        } else if (i < pos){
+            var.push_back("i"+str(i));
+            rewrite_var.push_back("i"+str(i));
+        } else {
             rewrite_var.push_back("i"+str(i));
         }
     }
@@ -4034,6 +4037,21 @@ isl_map* get_domain_trans_with_reaccess_mask(isl_set* dom, int pos, int fetch_wi
     return trans;
 }
 
+isl_set* get_domain_trans_sched_domain(isl_set* dom, int pos, int fetch_width) {
+    string dom_name = name(dom);
+    int dim = num_dims(dom);
+    vector<string> var, stmt;
+    for (int i = 0; i < dim; i ++) {
+        var.push_back("i" + str(i) );
+        if (i > pos){
+            stmt.push_back("i" + str(i) + " = " + str(get_dim_min(dom, i)));
+        }
+    }
+    string map_str = "{"+dom_name + bracket_list(var) + ":" + sep_list(stmt, "", "", "and")+ "}";
+    auto trans = isl_set_read_from_str(ctx(dom), map_str.c_str());
+    cout << "sched domain: " << str(trans) << endl;
+    return trans;
+}
 
 
 isl_local_space* local_set_space(isl_ctx* ctx, const int dims) {

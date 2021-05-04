@@ -11398,10 +11398,22 @@ int get_inner_most_related_dom_dim(isl_map* m) {
   return inner_most_address_related_dim_id;
 }
 
-isl_map* get_vectorized_access_map(isl_map* acc_0, int fetch_width, int addr_dim) {
+pair<isl_map*, isl_map*> get_vectorized_write(isl_map* acc_0, isl_map* sched, int fetch_width, int addr_dim) {
     int vectorize_loop_dim = get_inner_most_related_dom_dim(acc_0);
     auto trans =
         get_domain_trans_with_reaccess_mask(domain(acc_0), vectorize_loop_dim, fetch_width);
+
+    isl_set* sched_dom = get_domain_trans_sched_domain(domain(acc_0), vectorize_loop_dim, fetch_width);
+    cout << "\tsched domain: " << str(sched_dom) << endl;
+    //schedule
+    auto sched_vec = dot(trans, its(sched, sched_dom));
+    cout << "\tsched after trans: " << str(sched_vec) << endl;
+    int fetch_ii = stride_in_dim(sched_vec, vectorize_loop_dim);
+    //TODO: may need to adjust the delay
+    auto final_sched = linear_schedule(sched_vec, {1}, fetch_ii, false);
+    cout << "\tfinal sched: " << str(final_sched) << endl;
+
+    //access map
     auto acc_vec = dot(trans, acc_0);
     auto slice = get_set_slice(range(acc_0), addr_dim, fetch_width);
     acc_vec = dot(acc_vec, slice);
@@ -11413,9 +11425,11 @@ isl_map* get_vectorized_access_map(isl_map* acc_0, int fetch_width, int addr_dim
     if (get_dim_max(range(acc_vec), addr_dim) < get_dim_max(range(origin_slice), addr_dim)) {
         //pad to the right
         acc_vec = pad_to_domain_ubuf_map(acc_vec, vectorize_loop_dim, 1);
+        final_sched = pad_to_domain_ubuf_map(final_sched, vectorize_loop_dim, 1);
     }
-    return acc_vec;
+    return make_pair(acc_vec, final_sched);
 }
+
 
 void playground() {
     {
@@ -16651,32 +16665,93 @@ void lake_smt_tests() {
 void access_pattern_rewrite_unit_tests() {
   isl_ctx* ctx = isl_ctx_alloc();
   auto acc_0 = isl_map_read_from_str(ctx,"{ op[i0]-> data[i0+1]: 0<=i0<=10 }");
-  auto acc_vec = get_vectorized_access_map(acc_0, 4/*fetch_width*/, 0/*dom_dim*/);
+  auto sched = isl_map_read_from_str(ctx, "{ op[i0] -> [i0]: 0 <=i0<=10 }");
+  auto ir_vec = get_vectorized_write(acc_0, sched, 4/*fetch_width*/, 0/*dom_dim*/);
+  auto acc_vec = ir_vec.first;
+  auto sched_vec = ir_vec.second;
   cout << "before vectorization: " << str(acc_0) << endl;
   cout << "after vectorization: " << str(acc_vec) << endl;
+  cout << "sched after vectorization: " << str(sched_vec) << endl;
   assert(get_dim_min(range(acc_vec), 0) == 0);
   assert(get_dim_max(range(acc_vec), 0) == 2);
+  assert(get_dim_min(range(sched_vec), 0) == 4);
+  assert(get_dim_max(range(sched_vec), 0) == 12);
+  assert(stride_in_dim(sched_vec, 0) == 4);
 
   acc_0 = isl_map_read_from_str(ctx,"{ op[i0]-> data[i0]: 0<=i0<=11 }");
-  acc_vec = get_vectorized_access_map(acc_0, 4/*fetch_width*/, 0/*dom_dim*/);
+  sched = isl_map_read_from_str(ctx, "{ op[i0] -> [i0]: 0 <=i0<=10 }");
+  ir_vec= get_vectorized_write(acc_0, sched, 4/*fetch_width*/, 0/*dom_dim*/);
+  acc_vec = ir_vec.first;
+  sched_vec = ir_vec.second;
   cout << "before vectorization: " << str(acc_0) << endl;
   cout << "after vectorization: " << str(acc_vec) << endl;
+  cout << "sched after vectorization: " << str(sched_vec) << endl;
   assert(get_dim_min(range(acc_vec), 0) == 0);
   assert(get_dim_max(range(acc_vec), 0) == 2);
+  assert(get_dim_min(range(sched_vec), 0) == 4);
+  assert(get_dim_max(range(sched_vec), 0) == 12);
+  assert(stride_in_dim(sched_vec, 0) == 4);
 
   acc_0 = isl_map_read_from_str(ctx,"{ op[i0]-> data[i0+1]: 0<=i0<=11 }");
-  acc_vec = get_vectorized_access_map(acc_0, 4/*fetch_width*/, 0/*dom_dim*/);
+  sched = isl_map_read_from_str(ctx, "{ op[i0] -> [i0]: 0 <=i0<=11 }");
+  ir_vec= get_vectorized_write(acc_0, sched, 4/*fetch_width*/, 0/*dom_dim*/);
+  acc_vec = ir_vec.first;
+  sched_vec = ir_vec.second;
   cout << "before vectorization: " << str(acc_0) << endl;
   cout << "after vectorization: " << str(acc_vec) << endl;
+  cout << "sched after vectorization: " << str(sched_vec) << endl;
   assert(get_dim_min(range(acc_vec), 0) == 0);
   assert(get_dim_max(range(acc_vec), 0) == 3);
+  assert(get_dim_min(range(sched_vec), 0) == 4);
+  assert(get_dim_max(range(sched_vec), 0) == 16);
+  assert(stride_in_dim(sched_vec, 0) == 4);
 
   acc_0 = isl_map_read_from_str(ctx,"{ op[i0]-> data[i0+4]: 0<=i0<=11 }");
-  acc_vec = get_vectorized_access_map(acc_0, 4/*fetch_width*/, 0/*dom_dim*/);
+  sched = isl_map_read_from_str(ctx, "{ op[i0] -> [i0]: 0 <=i0<=11 }");
+  ir_vec= get_vectorized_write(acc_0, sched, 4/*fetch_width*/, 0/*dom_dim*/);
+  acc_vec = ir_vec.first;
+  sched_vec = ir_vec.second;
   cout << "before vectorization: " << str(acc_0) << endl;
   cout << "after vectorization: " << str(acc_vec) << endl;
+  cout << "sched after vectorization: " << str(sched_vec) << endl;
   assert(get_dim_min(range(acc_vec), 0) == 1);
   assert(get_dim_max(range(acc_vec), 0) == 3);
+  assert(get_dim_min(range(sched_vec), 0) == 4);
+  assert(get_dim_max(range(sched_vec), 0) == 12);
+  assert(stride_in_dim(sched_vec, 0) == 4);
+
+  //2D case
+  acc_0 = isl_map_read_from_str(ctx,"{ op[i0, i1]-> data[i0, i1]: 0<=i0<=11 and 0 <=i1 <= 11 }");
+  sched = isl_map_read_from_str(ctx, "{ op[i0, i1] -> [12 * i0 + i1]: 0 <=i0<=11 and 0<= i1 <= 11 }");
+  ir_vec = get_vectorized_write(acc_0, sched,  4/*fetch_width*/, 1/*dom_dim*/);
+  acc_vec = ir_vec.first;
+  sched_vec = ir_vec.second;
+  cout << "before vectorization: " << str(acc_0) << endl;
+  cout << "after vectorization: " << str(acc_vec) << endl;
+  cout << "sched after vectorization: " << str(sched_vec) << endl;
+  assert(get_dim_min(range(acc_vec), 1) == 0);
+  assert(get_dim_max(range(acc_vec), 1) == 2);
+  assert(get_dim_min(range(sched_vec), 0) == 4);
+  assert(get_dim_max(range(sched_vec), 0) == 144);
+  assert(stride_in_dim(sched_vec, 1) == 4);
+  assert(stride_in_dim(sched_vec, 0) == 12);
+
+  //2D case with reaccess
+  acc_0 = isl_map_read_from_str(ctx,"{ op[i0, i1]-> data[i0]: 0<=i0<=11 and 0 <=i1 <= 11 }");
+  sched = isl_map_read_from_str(ctx, "{ op[i0, i1] -> [12 * i0 + i1]: 0 <=i0<=11 and 0<= i1 <= 11 }");
+  ir_vec = get_vectorized_write(acc_0, sched,  4/*fetch_width*/, 0/*dom_dim*/);
+  acc_vec = ir_vec.first;
+  sched_vec = ir_vec.second;
+  cout << "before vectorization: " << str(acc_0) << endl;
+  cout << "after vectorization: " << str(acc_vec) << endl;
+  cout << "sched after vectorization: " << str(sched_vec) << endl;
+  assert(get_dim_min(range(acc_vec), 0) == 0);
+  assert(get_dim_max(range(acc_vec), 0) == 2);
+  assert(get_dim_min(range(sched_vec), 0) == 48);
+  assert(get_dim_max(range(sched_vec), 0) == 144);
+  assert(get_in_dim(acc_vec) == 1);
+  assert(stride_in_dim(sched_vec, 0) == 48);
+  assert(false);
 
 }
 
