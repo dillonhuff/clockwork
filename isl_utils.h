@@ -386,8 +386,12 @@ isl_map* merge_domain_dim(isl_map* m);
 isl_map* get_domain_trans(isl_set* dom, int pos, int fetch_width);
 isl_map* get_domain_trans_with_reaccess_mask(isl_set* dom, int pos, int fetch_width);
 isl_set* get_domain_trans_sched_domain(isl_set* dom, int pos, int fetch_width);
+
+isl_map* get_div_trans(isl_map* am, map<int, int> split_dims);
+
 isl_map* get_set_slice(isl_set* dom, int pos, int fetch_width);
 vector<isl_map*> get_vectorize_interpolate(isl_set* dom, int pos, int fetch_width);
+int get_inner_most_related_dom_dim(isl_map* m);
 
 
 umap* lexmax(umap* const m0);
@@ -695,6 +699,7 @@ std::vector<isl_aff*> get_aff_vec(isl_map* m);
 
 string str(isl_mat* const ineqmat);
 
+map<int, int> get_dim2denom(isl_map* am);
 isl_basic_set* lift_divs(isl_basic_set* bm);
 isl_basic_set* flatten_bmap_to_bset(isl_basic_map* bm);
 isl_basic_set* negative(isl_basic_set* fs, const int var);

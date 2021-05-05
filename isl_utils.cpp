@@ -3975,6 +3975,18 @@ isl_map* merge_domain_dim(isl_map* m) {
     return mm;
 }
 
+int get_inner_most_related_dom_dim(isl_map* m) {
+  vector<bool> rel_map = relation_map(m);
+  int inner_most_address_related_dim_id = rel_map.size() - 1;
+  for (int i = rel_map.size() - 1; i >= 0; i -- ) {
+    if (rel_map.at(i) != 0) {
+      inner_most_address_related_dim_id = i;
+      break;
+    }
+  }
+  return inner_most_address_related_dim_id;
+}
+
 
 isl_map* get_set_slice(isl_set* dom, int pos, int fetch_width) {
     string dom_name = name(dom);
@@ -3993,6 +4005,35 @@ isl_map* get_set_slice(isl_set* dom, int pos, int fetch_width) {
     auto trans = isl_map_read_from_str(ctx(dom), map_str.c_str());
     cout << "Autogen slice:" << str(trans) << endl;
     return trans;
+}
+
+isl_map* get_div_trans(isl_map* am, map<int, int> split_dims) {
+
+    for (auto it: split_dims)
+      cout << "\tDim: " << it.first << " denom: " << it.second << endl;
+
+    //Get the stripmining expression
+    vector<string> dvars;
+    vector<string> origin_vars;
+    for (int d = 0; d < num_in_dims(am); d ++) {
+      if (contains_key(d, split_dims)) {
+        int denom = split_dims.at(d);
+        dvars.push_back("floor(d" + str(d) + "/" + str(denom) + ")");
+        dvars.push_back("d"+str(d) + "%" + str(denom));
+      } else {
+        dvars.push_back("d" + str(d));
+      }
+      origin_vars.push_back("d" + str(d));
+    }
+    string trans_str =
+      curlies(
+          ::domain_name(am) +  bracket_list(origin_vars)
+          + "->" +
+          ::domain_name(am) + bracket_list(dvars)
+          );
+    cout << "\tTrans str" << trans_str << endl;
+    auto trans_map = isl_map_read_from_str(ctx(am), trans_str.c_str());
+    return trans_map;
 }
 
 isl_map* get_domain_trans(isl_set* dom, int pos, int fetch_width) {
@@ -4240,6 +4281,27 @@ isl_basic_set* lift_divs(isl_basic_set* bm) {
 
   }
   return final_s;
+}
+
+//get a map from in dimension to denom
+map<int, int> get_dim2denom(isl_map* am) {
+  map<int, int> split_dims;
+  for (auto aff : get_aff_vec(am)) {
+    cout << "\taff : " << str(aff) << endl;
+    cout << "\tdiv dim: " << num_div_dims(aff) << endl;
+    for (int d = 0; d < num_div_dims(aff); d++) {
+      auto a = isl_aff_get_div(aff, d);
+      cout << tab(2) << "=== div: " << str(a) << endl;
+      int denom = to_int(isl_aff_get_denominator_val(a));
+      cout << tab(3) << "denom = " << denom << endl;
+      for (int di = 0; di < num_in_dims(a); di++) {
+        if (!is_zero(get_coeff(a, di))) {
+          split_dims[di] = denom;
+        }
+      }
+    }
+  }
+  return split_dims;
 }
 
 isl_basic_set* zero(isl_basic_set* fs, const int var) {

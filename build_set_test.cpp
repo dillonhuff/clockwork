@@ -11391,14 +11391,13 @@ void playground() {
     {
         isl_ctx* ctx = isl_ctx_alloc();
         auto acc_0 = isl_map_read_from_str(ctx,"{ sram2tb[root = 0, i0, i2, i1]-> data[i0, i1+i2]: 0<=i0<=61 and 0<=i1<=61 and 0<=i2<=7}");
-        for (int i = 0; i < 4; i ++) {
-          cout << "min: " << get_dim_min(domain(acc_0), i);
-          cout << "max: " << get_dim_max(domain(acc_0), i) << endl;
-
-        }
-        AccessPattern acc_pattern = AccessPattern(acc_0, ctx);
-        auto trans_pair = acc_pattern.get_op_transform(ctx, 1, 4);
-        cout << "trans_op map: " << str(trans_pair.first) << endl;
+        auto sched = isl_map_read_from_str(ctx,"{ sram2tb[root = 0, i0, i2, i1]-> [560*i0+ 70*i2+i1]: 0<=i0<=61 and 0<=i1<=61 and 0<=i2<=7}");
+        auto read_ir = get_vectorized_read(acc_0, sched, {}, 4, 1);
+        auto acc_vec = read_ir.first;
+        auto sched_vec = read_ir.second;
+        cout << "After vec read access map: " << str(acc_vec) << endl;
+        cout << "After vec read sched: " << str(sched_vec) << endl;
+        assert(false);
 
         //auto acc_1 = isl_map_read_from_str(ctx,"{ sram2tb[root = 0, i0, i1, i2]-> data[i0, i1+i2]: 0<=i0<=61 and 0<=i1<=61 and 0<=i2<=7}");
         //AccessPattern acc_pattern_ = AccessPattern(acc_1, ctx);
