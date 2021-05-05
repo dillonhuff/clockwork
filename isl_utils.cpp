@@ -392,19 +392,19 @@ umap* set_domain_name(umap* const m, string new_name) {
 isl_map* add_range_suffix(isl_map* const m, string suffix) {
     string origin_name = range_name(m);
     string new_name = origin_name + suffix;
-    return isl_map_set_tuple_name(m, isl_dim_out, new_name.c_str());
+    return isl_map_set_tuple_name(cpy(m), isl_dim_out, new_name.c_str());
 }
 
 isl_map* add_domain_suffix(isl_map* const m, string suffix) {
     string origin_name = domain_name(m);
     string new_name = origin_name + suffix;
-    return isl_map_set_tuple_name(m, isl_dim_in, new_name.c_str());
+    return isl_map_set_tuple_name(cpy(m), isl_dim_in, new_name.c_str());
 }
 
 isl_set* add_suffix(isl_set* const m, string suffix) {
     string origin_name = name(m);
     string new_name = origin_name + suffix;
-    return isl_set_set_tuple_name(m, new_name.c_str());
+    return isl_set_set_tuple_name(cpy(m), new_name.c_str());
 }
 
 isl_set* to_set(isl_union_set* const m) {
@@ -4047,10 +4047,32 @@ isl_set* get_domain_trans_sched_domain(isl_set* dom, int pos, int fetch_width) {
             stmt.push_back("i" + str(i) + " = " + str(get_dim_min(dom, i)));
         }
     }
-    string map_str = "{"+dom_name + bracket_list(var) + ":" + sep_list(stmt, "", "", "and")+ "}";
+    string map_str = "{"+dom_name + bracket_list(var) + ":" + sep_list(stmt, "", "", " and ")+ "}";
     auto trans = isl_set_read_from_str(ctx(dom), map_str.c_str());
     cout << "sched domain: " << str(trans) << endl;
     return trans;
+}
+
+vector<isl_map*> get_vectorize_interpolate(isl_set* dom, int pos, int fetch_width) {
+    string dom_name = name(dom);
+    int dim = num_dims(dom);
+    vector<isl_map*> ret;
+    for (int offset = 0; offset < fetch_width; offset ++) {
+      vector<string> var, var_trans;
+      for (int i = 0; i < dim; i ++) {
+        var.push_back("i" + str(i));
+        if (i == pos) {
+          var_trans.push_back("i" + str(i) +"*"+str(fetch_width) + "+" + str(offset));
+        } else {
+          var_trans.push_back("i" + str(i));
+        }
+      }
+      string map_str =
+          "{" + dom_name + bracket_list(var) + "->"
+          + dom_name + bracket_list(var_trans) + "}";
+      ret.push_back(isl_map_read_from_str(ctx(dom), map_str.c_str()));
+    }
+    return ret;
 }
 
 

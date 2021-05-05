@@ -2726,6 +2726,8 @@ vector<string> buffer_vectorization(string buf_name, int dim_id, int fetch_width
 
 vector<string> buffer_vectorization(vector<string> buf_name_vec, int dim_id, int fetch_width, map<string, UBuffer> & buffers);
 
+//helper function for the new vectorization pass
+pair<isl_map*, isl_map*> get_vectorized_write(isl_map* acc_0, isl_map* sched, int fetch_width, int addr_dim);
 
 static inline
 std::ostream& operator<<(std::ostream& out, const AccessPattern& acc_pattern) {

@@ -387,6 +387,8 @@ isl_map* get_domain_trans(isl_set* dom, int pos, int fetch_width);
 isl_map* get_domain_trans_with_reaccess_mask(isl_set* dom, int pos, int fetch_width);
 isl_set* get_domain_trans_sched_domain(isl_set* dom, int pos, int fetch_width);
 isl_map* get_set_slice(isl_set* dom, int pos, int fetch_width);
+vector<isl_map*> get_vectorize_interpolate(isl_set* dom, int pos, int fetch_width);
+
 
 umap* lexmax(umap* const m0);
 
