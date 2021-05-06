@@ -6899,8 +6899,8 @@ void UBuffer::generate_banks(CodegenOptions& options) {
   isl_map* get_sram2tb_schedule_with_check(isl_map* out_sched, map<string, isl_map*> sched_map, int ahead_step, int vectorize_loop_dim) {
     cout << "\t output sched: "  << str(out_sched)<< endl;
     int fetch_ii = stride_in_dim(out_sched, vectorize_loop_dim);
-    //TODO: may need to adjust the delay
-    auto temp_sched = linear_schedule(out_sched, {1}, -fetch_ii - ahead_step * fetch_ii + 1, false);
+    //TODO: may need to adjust the delay, /2 is made resnet work
+    auto temp_sched = linear_schedule(out_sched, {1}, -3 - ahead_step * fetch_ii/2, false);
     cout << "\t temp sched: " << str(temp_sched) << endl;
 
     //GET SRAM2TB list and AGG2SRAM list
@@ -7633,7 +7633,7 @@ void UBuffer::generate_banks(CodegenOptions& options) {
       }
 
     pair<isl_map*, isl_map*> get_vectorized_write(isl_map* acc_0, isl_map* sched, int fetch_width, int addr_dim) {
-        int vectorize_loop_dim = get_inner_most_related_dom_dim(acc_0);
+        int vectorize_loop_dim = get_inner_most_related_dom_dim(acc_0, addr_dim, fetch_width);
         auto trans =
             get_domain_trans_with_reaccess_mask(domain(acc_0), vectorize_loop_dim, fetch_width);
 
@@ -7668,9 +7668,16 @@ void UBuffer::generate_banks(CodegenOptions& options) {
 
 
     pair<isl_map*, isl_map*> get_vectorized_read(isl_map* acc_0, isl_map* sched, map<string, isl_map*> sched_record_map, int fetch_width, int addr_dim) {
-        int vectorize_loop_dim = get_inner_most_related_dom_dim(acc_0);
+        int vectorize_loop_dim = get_inner_most_related_dom_dim(acc_0, addr_dim, fetch_width);
         auto trans =
             get_domain_trans_with_reaccess_mask(domain(acc_0), vectorize_loop_dim, fetch_width);
+
+
+        ////TODO: This need unit test strided vectorization
+        ////at least pad to fetch_width, so that we can vectorize it
+        //while(get_dim_max(domain(acc_0), vectorize_loop_dim) < fetch_width) {
+        //    acc_0 = pad_to_domain_ubuf_map(acc_0, vectorize_loop_dim, 1);
+        //}
 
         isl_set* sched_dom = get_domain_trans_sched_domain(domain(acc_0), vectorize_loop_dim, fetch_width);
         cout << "\tsched domain: " << str(sched_dom) << endl;
@@ -7678,9 +7685,14 @@ void UBuffer::generate_banks(CodegenOptions& options) {
         auto sched_vec = dot(trans, its(sched, sched_dom));
         cout << "\tsched after trans: " << str(sched_vec) << endl;
 
+        //A special case the vectorization dimension range span is less than fetch width
+        //int offset = get_domain_span_range(acc_0, vectorize_loop_dim, addr_dim);
+        int offset = get_domain_span_range_new(acc_0, vectorize_loop_dim);
+        if (offset >= fetch_width)
+            offset = 0;
         //access map
         auto acc_vec = dot(trans, acc_0);
-        auto slice = get_set_slice(range(acc_0), addr_dim, fetch_width);
+        auto slice = get_set_slice(range(acc_0), addr_dim, offset, fetch_width);
         acc_vec = dot(acc_vec, slice);
 
         //Check if we have sliding window across domain
@@ -7697,7 +7709,7 @@ void UBuffer::generate_banks(CodegenOptions& options) {
         //if (get_dim_min(range(acc_vec), addr_dim) > get_dim_min(range(origin_slice), addr_dim)) {
         //    //pad to the left
         //}
-        cout << "trans max: " << get_dim_max(range(acc_vec), addr_dim)
+        cout << "\ttrans max: " << get_dim_max(range(acc_vec), addr_dim)
             << " , origin max: " << get_dim_max(range(origin_slice), addr_dim) << endl;
         int ahead_step = 0;
         if (get_dim_max(range(acc_vec), addr_dim) <
@@ -7911,6 +7923,7 @@ void UBuffer::generate_banks(CodegenOptions& options) {
 
               //FIX the sliding window cross fetch_width boundary
               //TODO: move this into a function
+              /*
               bool pad_schedule = false;
               int delay_step = 0;
               auto involve_in_dim = in_involve_dim(am, dim_id);
@@ -7952,15 +7965,26 @@ void UBuffer::generate_banks(CodegenOptions& options) {
                   cout << "\t\tbefore pad :" << str(am) << endl;
                   cout << "\t\tAfter pad :" << str(access_map.at(out_pt_name)) << endl;
                 }
-              }
+              }*/
 
 
+              //New method for sram read schedule
+              auto sram_ir = get_vectorized_read(
+                      to_map(access_map.at(out_pt_name)),
+                      to_map(schedule.at(out_pt_name)),
+                      sched_record_map, fetch_width, dim_id);
+
+              isl_map* vectorized_access = add_domain_suffix(sram_ir.first, "_sram2tb_" + str(tb_cnt));
+              isl_set* dom = ::domain(vectorized_access);
+              sched = add_domain_suffix(sram_ir.second, "_sram2tb_" + str(tb_cnt));
+              sched_record_map[domain_name(sched)] = sched;
 
               auto acc_pattern = AccessPattern(
                   to_map(access_map.at(out_pt_name)), ctx);
 
               std::cout << "before rewrite: " << acc_pattern << endl;
 
+              /*
               //produce the operation transfomation
               string suffix = "_sram2tb";
               auto trans_pair = acc_pattern.get_op_transform(ctx, dim_id, fetch_width, suffix);
@@ -7995,17 +8019,39 @@ void UBuffer::generate_banks(CodegenOptions& options) {
               }
 
 
-              vector<umap*> ap_vec = get_access_pattern_vector(rewrite_buf2op, out_pt_name, dim_id, fetch_width);
+              vector<umap*> ap_vec = get_access_pattern_vector(rewrite_buf2op, out_pt_name, dim_id, fetch_width);*/
 
               UBuffer tb;
               tb.name = name + "_" + to_string(tb_cnt) + "_tb";
               tb.ctx = ctx;
               tb.port_widths = port_widths;
               tb.hardware.in_port_width = fetch_width;
-              add_vectorized_pt_to_ubuf(sram, ap_vec, sched,
-                      bd_name + "_"+str(tb_cnt), dim_id, fetch_width, tb_cnt, true/*is output*/);
-              add_vectorized_pt_to_ubuf(tb, ap_vec, sched,
-                      bd_name+"_tb_in", dim_id, fetch_width, tb_cnt, false/*is input*/);
+
+              auto range_interpolation_maps = get_vectorize_interpolate(
+                      range(vectorized_access), dim_id, fetch_width);
+              int pt_cnt = 0;
+              for (auto interpolation: range_interpolation_maps) {
+                string tb_pt_name = out_pt_name + "_out_" + std::to_string(pt_cnt);
+                tb.port_bundles[bd_name + "_tb_in"].push_back(tb_pt_name);
+                isl_map* rewrite_access_map = dot(vectorized_access, interpolation);
+                cout << "\t rewrite access map: " << str(simplify_expr(rewrite_access_map)) << endl;
+                auto tb_in_access_map = add_range_suffix(rewrite_access_map, "_" + str(tb_cnt) + "_tb");
+                tb.add_in_pt(tb_pt_name, dom, tb_in_access_map, simplify_expr(its(sched, dom)));
+
+                //always decouple the output access
+                auto acc_pt = AccessPattern(tb_in_access_map, ctx);
+                auto decouple_acc_map = acc_pt.get_access_map_and_decouple_reuse(ctx, dim_id, true);
+                tb.access_map[tb_pt_name] = to_umap(decouple_acc_map);
+
+                auto sram_out_access_map = add_range_suffix(rewrite_access_map, "_sram");
+                string sram_pt_name = out_pt_name + "_out_" + std::to_string(pt_cnt++);
+                sram.port_bundles[bd_name].push_back(sram_pt_name);
+                sram.add_out_pt(sram_pt_name, dom, sram_out_access_map, simplify_expr(its(sched, dom)));
+              }
+              //add_vectorized_pt_to_ubuf(sram, ap_vec, sched,
+              //        bd_name + "_"+str(tb_cnt), dim_id, fetch_width, tb_cnt, true/*is output*/);
+              //add_vectorized_pt_to_ubuf(tb, ap_vec, sched,
+              //        bd_name+"_tb_in", dim_id, fetch_width, tb_cnt, false/*is input*/);
 
 
               cout << "\tAdd TB output port: " << out_pt_name << endl;
