@@ -1070,6 +1070,105 @@ void synth_sr_boundary_condition_test() {
 
 }
 
+void synth_conv_test() {
+  struct isl_ctx *ctx;
+  ctx = isl_ctx_alloc();
+
+  UBuffer buf;
+  buf.name = "conv";
+  buf.ctx = ctx;
+
+  buf.domain["write"] =
+    isl_set_read_from_str(ctx, "{ write[root = 0, i] : 0 <= i < 8}");
+  buf.access_map["write"] =
+    rdmap(ctx, "{ write[root = 0, i] -> conv[i] : 0 <= i < 8}");
+  buf.schedule["write"] =
+    isl_union_map_read_from_str(ctx, "{ write[root = 0, i] -> [i] : 0 <= i < 8 }");
+  buf.isIn["write"] = true;
+
+  // Read 0 through 7
+  buf.domain["read"] =
+    isl_set_read_from_str(ctx, "{ read[root = 0, i] : 0 <= i < 8}");
+  buf.access_map["read"] =
+    rdmap(ctx, "{ read[root = 0, i] -> conv[i] : 0 <= i < 8}");
+  buf.schedule["read"] =
+    isl_union_map_read_from_str(ctx, "{ read[root = 0, i] -> [i + 16] : 0 <= i < 8}");
+  //buf.domain["read"] =
+  //  isl_set_read_from_str(ctx, "{ read[i, j] : 0 <= i < 8 and 0 <= j < 3}");
+  //buf.access_map["read"] =
+  //  rdmap(ctx, "{ read[i, j] -> M[i + j] : 0 <= i < 8 and 0 <= j < 3}");
+  //buf.schedule["read"] =
+  //  isl_union_map_read_from_str(ctx, "{ read[i, j] -> [3*i + j + 6] : 0 <= i < 8 and 0 <= j < 3 }");
+  buf.isIn["read"] = false;
+
+  generate_hls_code(buf);
+
+  map<string, UBuffer> buffers;
+  buffers.insert({"conv", buf});
+  buffer_vectorization({1}, {"conv"}, 4, buffers);
+
+  vector<string> file_list({"conv.cpp"});
+  for (auto it: buffers) {
+    cout << it.second << endl;
+    file_list.push_back(it.first + ".cpp");
+    generate_hls_code_unit_test(it.second);
+  }
+
+  int res = cmd("clang++ -std=c++11 tb_id_vec.cpp " + sep_list(file_list, "", "", " "));
+  assert(res == 0);
+
+  res = system("./a.out");
+  assert(res == 0);
+}
+
+void synth_id_vec_test() {
+  struct isl_ctx *ctx;
+  ctx = isl_ctx_alloc();
+
+  UBuffer buf;
+  buf.name = "conv";
+  buf.ctx = ctx;
+
+  buf.domain["write"] =
+    isl_set_read_from_str(ctx, "{ write[root = 0, i] : 0 <= i < 8}");
+  buf.access_map["write"] =
+    rdmap(ctx, "{ write[root = 0, i] -> conv[i] : 0 <= i < 8}");
+  buf.schedule["write"] =
+    isl_union_map_read_from_str(ctx, "{ write[root = 0, i] -> [i] : 0 <= i < 8 }");
+  buf.isIn["write"] = true;
+
+  // Read 0 through 7
+  buf.domain["read"] =
+    isl_set_read_from_str(ctx, "{ read[root = 0, i] : 0 <= i < 8}");
+  buf.access_map["read"] =
+    rdmap(ctx, "{ read[root = 0, i] -> conv[i] : 0 <= i < 8}");
+  buf.schedule["read"] =
+    isl_union_map_read_from_str(ctx, "{ read[root = 0, i] -> [i + 16] : 0 <= i < 8}");
+  buf.isIn["read"] = false;
+
+  generate_hls_code(buf);
+
+  map<string, UBuffer> buffers;
+  buffers.insert({"conv", buf});
+  buffer_vectorization({1}, {"conv"}, 4, buffers);
+
+  generate_hls_code_unit_test(buffers, buf.name);
+
+  // generate_vectorization_unit_testbench(buf);
+
+  int res = cmd("clang++ -std=c++11 tb_conv_vec.cpp conv_vec.cpp conv.cpp");
+  assert(res == 0);
+
+  res = system("./a.out");
+  assert(res == 0);
+
+  res = cmd("clang++ -std=c++11 unit_tb_conv.cpp conv_vec.cpp conv.cpp");
+  assert(res == 0);
+
+  res = system("./a.out");
+  assert(res == 0);
+}
+
 void synth_wire_test() {
   struct isl_ctx *ctx;
   ctx = isl_ctx_alloc();
@@ -11165,6 +11264,28 @@ void blur_and_downsample_test() {
 }
 
 void playground() {
+    synth_wire_test();
+    synth_conv_test();
+    synth_id_vec_test();
+    assert(false);
+    {
+        isl_ctx* ctx = isl_ctx_alloc();
+        auto in_0 = isl_map_read_from_str(ctx,"{ input[i0, i1]-> data[i0, i1]: 0<=i0<=61 and 0<=i1<=61}");
+        auto in_sched = isl_map_read_from_str(ctx,"{ input[i0, i1]-> [62*i0 + i1]: 0<=i0<=61 and 0<=i1<=61}");
+
+        auto out_0 = isl_map_read_from_str(ctx,"{ output[i0, i1]-> data[i0, i1]: 0<=i0<=59 and 0<=i1<=61}");
+        auto out_1 = isl_map_read_from_str(ctx,"{ output[i0, i1]-> data[i0+1, i1]: 0<=i0<=59 and 0<=i1<=61}");
+        auto out_2 = isl_map_read_from_str(ctx,"{ output[i0, i1]-> data[i0+2, i1]: 0<=i0<=59 and 0<=i1<=61}");
+        auto out_sched = isl_map_read_from_str(ctx,"{ output[i0, i1]-> [124+62*i0 + i1]: 0<=i0<=59 and 0<=i1<=61}");
+        auto in_sched_shift = linear_schedule(in_sched, {1}, 62, false);
+        auto data2cycle = dot(inv(in_0), in_sched_shift);
+        auto new_outpt_acc = dot(out_sched, inv(data2cycle));
+        cout << str(in_sched_shift) << endl;
+        cout << str(data2cycle) << endl;
+        cout << str(simplify_expr(new_outpt_acc)) << endl;
+        assert(false);
+
+    }
     {
         isl_ctx* ctx = isl_ctx_alloc();
         auto acc_0 = isl_map_read_from_str(ctx,"{ sram2tb[i0, i2, i1]-> data[i0, i1+i2]: 0<=i0<=61 and 0<=i1<=61 and 0<=i2<=7}");
@@ -14407,8 +14528,10 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   vector<prog> test_apps;
   //TODO:has issue  with multiple input
   //test_apps.push_back(demosaic_complex());
-  //
   //test_apps.push_back(fft8_unroll8());
+  //
+  test_apps.push_back(camera_pipeline_new());
+  test_apps.push_back(down_sample());
   test_apps.push_back(gaussian());
   test_apps.push_back(conv_3_3());
   // test_apps.push_back(counter());
@@ -14417,6 +14540,7 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   test_apps.push_back(rom());
   test_apps.push_back(conv_1_2());
   test_apps.push_back(demosaic_unrolled());
+  //test_apps.push_back(camera_pipeline_trunc());
   test_apps.push_back(camera_pipeline());
   test_apps.push_back(up_sample());
   test_apps.push_back(unsharp());
@@ -14446,7 +14570,6 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
     break_up_multi_channel_outputs(prg);
     dsa_writers(prg);
     prg.pretty_print();
-    auto cpu = unoptimized_result(prg);
 
     //compile_for_garnet_platonic_mem(prg);
     compile_for_garnet_single_port_mem(prg, dir, false, gen_config_only, false, false, false, "", false);
@@ -14459,6 +14582,7 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
       verilog_files.push_back(name + ".v");
       verilog_files.push_back("LakeWrapper.v");
       bool extra_flag_for_lake = true;
+      auto cpu = unoptimized_result(prg);
       int res = run_verilator_on(name, name + "_verilog_tb.cpp", verilog_files, extra_flag_for_lake);
       assert(res == 0);
       cmd("rm LakeWrapper.v");
@@ -16897,8 +17021,15 @@ void relax_delays_rate_matched(schedule_info& sched, prog& prg) {
             d += prod_ii * fetch_width + 6;
         } else if (equal_start_time && prod_need_index){
             d += 3;
+            //TODO: remove this hack with 2 round of delay optimization
+        } else if (contains(cons_op_name, "op_hcompute_demosaicked_1_stencil_1")) {
+            d += 96;
+            cout  << "add delay to" << cons_op_name << endl;
+            break;
         }
     }
+    if (lp->name == "r_r_s0_y")
+        continue;
     sched.op_offset_within_parent[lp] += d;
   }
 }
@@ -17208,7 +17339,11 @@ void sanity_check_iis_for_vectorization(schedule_info& sched, prog& prg, int fet
 
 
 void garnet_single_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
-  if (is_rate_matchable(prg) && !contains(prg.name, "split")) {
+  if (contains(prg.name, "fft")) {
+    //An hack on the fft schedule
+    sequential_schedule(sched, root, prg);
+    return;
+  } else if (is_rate_matchable(prg)) {
     prg.pretty_print();
 
     //TODO: need another function to choose between pad bottom level or top level

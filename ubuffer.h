@@ -1823,6 +1823,20 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
         return false;
     }
 
+    void linear_address_space(isl_set* rddom, int fetch_width) {
+      auto reduce_map = linear_address_map_lake(rddom, fetch_width);
+      string dname = buf_range_name();
+      reduce_map = set_domain_name(reduce_map, dname);
+      reduce_map = set_range_name(reduce_map, dname);
+      cout << "reduce map: " << str(reduce_map) << endl;
+      for (auto& it: access_map) {
+        auto acc_map = to_map(it.second);
+        auto linear_acc_map = dot(acc_map, reduce_map);
+        cout << "linear map: " << str(linear_acc_map) << endl;
+        it.second = to_umap(linear_acc_map);
+      }
+    }
+
 
     int lanes_in_bundle(const std::string& bn) {
       assert(contains_key(bn, port_bundles));
@@ -1890,7 +1904,8 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
     std::string bundle_stream(const std::string& bundle_name) const {
       bool input_bundle = isIn.at(pick(port_bundles.at(bundle_name)));
       string bundle_type_str = bundle_type_string(bundle_name);
-      return string(input_bundle ? "Input" : "Output") + "Stream<" + bundle_type_str + " >& " + bundle_name;
+      //return string(input_bundle ? "Input" : "Output") + "Stream<" + bundle_type_str + " >& " + bundle_name;
+      return "HWStream<" + bundle_type_str + " >& " + bundle_name;
     }
 
     isl_union_set* all_memory() {
@@ -2305,7 +2320,7 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
         string new_buf_name = name + suffix;
         vector<string> addr_var;
         for (size_t i = 0; i < get_out_dim(to_map(origin_map)); i ++) {
-            addr_var.push_back("i" + to_string(i));
+            addr_var.push_back("d" + to_string(i));
         }
         string vars = sep_list(addr_var, "[", "]", ",");
         isl_map* buf_map = isl_map_read_from_str(ctx, string("{" + name + vars + " -> " + new_buf_name + vars + "}").c_str());
@@ -2424,6 +2439,7 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
 
     //New refactor method
     map<string, vector<umap*>> get_access_pattern_map(vector<pair<string, umap*>> rewrite_buf2op_map, map<string, isl_map*> & sched_map, int dim_id, int fetch_width);
+    vector<umap*> get_access_pattern_vector(umap* rewrite_buf2op, string pt_name, int dim_id, int fetch_width);
 
     map<string, isl_map*> produce_vectorized_schedule(string in_pt, string out_pt);
     map<string, isl_map*> produce_vectorized_schedule(string in_pt, string out_pt, int dim_id);
@@ -2543,6 +2559,9 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
 
     //Hack for single pixel input
     std::map<string, UBuffer> vectorization_single_pixel(int fetch_width);
+
+    //Post processing for codegen, adding dim id
+    void set_dim_id();
 
 };
 
@@ -2770,6 +2789,8 @@ CoreIR::Module* affine_controller_use_lake_tile_counter(CodegenOptions& options,
 void generate_hls_code(CodegenOptions& options, std::ostream& out, UBuffer& buf);
 void generate_hls_code(std::ostream& out, UBuffer& buf);
 void generate_hls_code(UBuffer& buf);
+void generate_hls_code_unit_test(UBuffer& buf);
+void generate_hls_code_unit_test(map<string, UBuffer> & buf, string buffer_name);
 
 map<string, isl_set*> input_ports_to_conditions(const std::string& outpt, UBuffer& buf);
 
@@ -3063,6 +3084,19 @@ struct UBufferImpl {
         }
     }
     return true;
+  }
+
+  bool is_shift_register_input(string input) const {
+    for (auto it: shift_registered_outputs) {
+      if (it.second.first == input)
+        return true;
+    }
+    return false;
+  }
+
+  bool is_shift_register_output(string output) const {
+    std::set<string> outpts = get_sr_outpts();
+    return outpts.count(output);
   }
 
   int get_bank_num() const {

@@ -2852,6 +2852,108 @@ void generate_regression_testbench(prog& prg, map<string, UBuffer>& buffers) {
   rgtb.close();
 }
 
+void generate_vectorization_unit_testbench(UBuffer & buf) {
+  ofstream rgtb("unit_tb_" + buf.name + ".cpp");
+  rgtb << "#include \"" << buf.name << ".h\"" << endl << endl;
+  rgtb << "#include \"" << buf.name << "_vec.h\"" << endl << endl;
+  rgtb << "using namespace std;" << endl << endl;
+
+  rgtb << "int main() {" << endl;
+  rgtb << tab(1) << "srand(234);" << endl;
+  //rgtb << tab(1) << "ofstream fout(\"" << "regression_result_" << prg.name << ".txt\");" << endl;
+
+  vector<string> origin_streams;
+  vector<string> vectorized_streams;
+  //map<string, int> unroll_factor;
+  for (auto in_bd : buf.get_in_bundles()) {
+    int width = 0;
+    for (auto input: buf.port_bundles.at(in_bd)) {
+      width += buf.port_widths;
+    }
+    rgtb << tab(1) << "HWStream<hw_uint<" << width << " > > " << in_bd << ";" << endl;
+    rgtb << tab(1) << "HWStream<hw_uint<" << width << " > > " << in_bd  + "_vec"<< ";" << endl;
+    origin_streams.push_back(in_bd);
+    vectorized_streams.push_back(in_bd + "_vec");
+  }
+
+  for (auto out_bd : buf.get_out_bundles()) {
+    int width = 0;
+    for (auto output: buf.port_bundles.at(out_bd)) {
+      width += buf.port_widths;
+    }
+    rgtb << tab(1) << "HWStream<hw_uint<" << width << " > > " << out_bd << ";" << endl;
+    rgtb << tab(1) << "HWStream<hw_uint<" << width << " > > " << out_bd  + "_vec" << ";" << endl;
+    origin_streams.push_back(out_bd);
+    vectorized_streams.push_back(out_bd + "_vec");
+  }
+
+
+  rgtb << endl << endl;
+
+  rgtb << tab(1) << "// Loading input data" << endl;
+  for (auto in_bd : buf.get_in_bundles()) {
+    auto read_map = buf.access_map.at(pick(buf.port_bundles.at(in_bd)));
+    auto rng = range(read_map);
+    auto range_card = card(rng);
+    int num_pushes = int_upper_bound(range_card);
+    int lane_width = buf.port_widths;
+    int unroll = 1;
+    int bundle_width = lane_width * unroll;
+
+    rgtb << tab(1) << "// read map: " << str(read_map) << endl;
+    rgtb << tab(1) << "// rng     : " << str(rng) << endl;
+    rgtb << tab(1) << "// rng card: " << str(range_card) << endl;
+    int num_transfers = num_pushes;
+    rgtb << tab(1) << "for (int i = 0; i < " << num_transfers << "; i++) {" << endl;
+    vector<string> inds;
+    for (int i = 0; i < unroll; i++) {
+      inds.push_back("rand() % 256");
+      //inds.push_back("(i) % 256");
+      //inds.push_back(str(unroll) + "*i + " + str(i));
+    }
+    pack_bv(2, rgtb, "value", inds, lane_width);
+    rgtb << tab(2) << in_bd << ".write(value);" << endl;
+    rgtb << tab(2) << in_bd << "_vec.write(value);" << endl;
+    rgtb << tab(1) << "}" << endl << endl;
+  }
+
+  std::reverse(origin_streams.begin(), origin_streams.end());
+  std::reverse(vectorized_streams.begin(), vectorized_streams.end());
+  rgtb << tab(1) << buf.name << "(" << comma_list(origin_streams) << ");" << endl;
+  rgtb << tab(1) << buf.name << "_vec(" << comma_list(vectorized_streams) << ");" << endl;
+
+  for (auto out_bd : buf.get_out_bundles()) {
+    auto write_map = buf.access_map.at(pick(buf.port_bundles.at(out_bd)));
+    auto rng = range(write_map);
+    auto range_card = card(rng);
+    int num_pops = int_upper_bound(range_card);
+    int unroll = 1;//map_find(out, unroll_factor);
+    int lane_width = buf.port_widths;
+    int bundle_width = lane_width*unroll;
+
+    rgtb << tab(1) << "for (int i = 0; i < " << num_pops << "; i++) {" << endl;
+    rgtb << tab(2) << "auto gold = " << out_bd << ".read();" << endl;
+    rgtb << tab(2) << "auto actual = " << out_bd << "_vec.read();" << endl;
+    vector<string> results_gold = split_bv(2, rgtb, "gold", lane_width, unroll);
+    vector<string> results = split_bv(2, rgtb, "actual", lane_width, unroll);
+    assert(results.size() == results_gold.size());
+    for (int i = 0; i < results.size(); i ++ ) {
+      //rgtb << tab(2) << "fout << " << r << " << endl;" << endl;
+      rgtb << tab(2) << "assert (" << results.at(i) << "==" << results_gold.at(i) <<");" << endl;
+    }
+
+    rgtb << tab(1) << "}" << endl << endl;
+  }
+  concat(vectorized_streams, origin_streams);
+  for (auto hw_stream: vectorized_streams) {
+    rgtb << tab(1) << "assert(" << hw_stream << ".is_empty());" << endl;
+  }
+
+  rgtb << tab(1) << "return 0;" << endl;
+  rgtb << "}" << endl;
+  rgtb.close();
+}
+
 void generate_regression_testbench(prog& prg) {
   ofstream rgtb("regression_tb_" + prg.name + ".cpp");
   rgtb << "#include <fstream>" << endl;

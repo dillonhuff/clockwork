@@ -51,6 +51,7 @@ int main(int argc, char** argv) {
     func_map["up_sample"] = up_sample;
     func_map["rom"] = rom;
     func_map["counter"] = counter;
+    func_map["resnet_one_input"] = resnet_one_input;
     
 
    

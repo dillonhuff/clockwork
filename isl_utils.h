@@ -192,6 +192,7 @@ std::string str(isl_multi_union_pw_aff* const pma);
 
 isl_map* linear_address_map(isl_set* s);
 isl_map* linear_address_map_lake(isl_set* s, int fetch_width);
+isl_map* linear_address_map_lake(isl_set* s);
 isl_map* linear_address_map_with_index(isl_set* s, vector<int> index);
 isl_map* linear_domain_map_with_index(isl_set* s, unordered_set<int> index);
 isl_map* linear_address_map_with_index(isl_set* s, vector<int> index, int fetch_width);
@@ -218,6 +219,7 @@ isl_map* gen_map_from_sched_vec(isl_ctx* ctx, vector<string> sched_vec, string o
 isl_map* gen_hw_sched_from_sched_vec(isl_ctx* ctx, vector<string> sched_vec, string op_name);
 isl_map* gen_hw_sched_from_sched_vec(isl_ctx* ctx, vector<string> sched_vec, vector<string> var_list, string op_name);
 vector<string> get_map_in_dim_id(isl_map* m);
+isl_map* check_dim_id(isl_map* m);
 string get_in_dim_name(isl_map* m, int i);
 
 unsigned get_dim(isl_set* const s);
@@ -740,6 +742,7 @@ isl_map* cyclic_function(isl_ctx* ctx, const std::string& name, const std::vecto
 vector<int> mins(isl_set* s);
 vector<int> maxs(isl_set* s);
 vector<int> extents(isl_set* s);
+isl_set* project_out_zero_dim(isl_set* s);
 
 bool is_cst(isl_multi_aff* ma);
 bool is_cst(isl_aff* aff);

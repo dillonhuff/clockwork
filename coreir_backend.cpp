@@ -55,7 +55,7 @@ static int not_fully_optimizable = 0;
 
 template<typename T, typename Q>
 void sort_lt_snd_2(std::vector<std::pair<T, Q> >& outputs) {
-  dbhc::sort_lt(outputs, [](const std::pair<T,Q> &x){return x.second;});
+    dbhc::sort_lt(outputs, [](const std::pair<T,Q> &x){return x.second;});
 }
 
 int min_address(affine_controller_ctrl& ctrl) {
@@ -326,7 +326,7 @@ affine_controller_ctrl pack_controller(affine_controller_ctrl& unpacked) {
     map<int, int> outer_replacements;
     int n = 0;
     for (int d = 0; d < num_in_dims(unpacked.access_function); d++) {
-      if (!dbhc::contains_key(d, split_dims)) {
+      if (!CoreIR::contains_key(d, split_dims)) {
         dvars.push_back("d" + str(n));
         iis.push_back(to_int(get_coeff(unpacked.sched, d)));
         ranges.push_back(dom_extents.at(d));
@@ -1765,7 +1765,7 @@ void run_lake_verilog_codegen(CodegenOptions& options, string v_name, string ub_
   //cout << "Runing cmd$ python /nobackup/joeyliu/aha/lake/tests/wrapper_lake.py -c " + options.dir + "lake_collateral/" + ub_ins_name + " -s True -n " + v_name  <<  endl;
   ASSERT(getenv("LAKE_PATH"), "Define env var $LAKE_PATH which is the /PathTo/lake");
   cmd("echo $LAKE_PATH");
-  int res_lake = cmd("python $LAKE_PATH/tests/wrapper_lake.py -c " + options.dir + "lake_collateral/" + ub_ins_name + " -s True -n " + v_name);
+  int res_lake = cmd("python $LAKE_PATH/lake/utils/wrapper_lake.py -c " + options.dir + "lake_collateral/" + ub_ins_name + " -s True -n " + v_name);
   assert(res_lake == 0);
   cmd("mkdir -p "+options.dir+"verilog");
   cmd("mv LakeWrapper_"+v_name+".v " + options.dir + "verilog");
@@ -1774,7 +1774,7 @@ void run_lake_verilog_codegen(CodegenOptions& options, string v_name, string ub_
 void run_pond_verilog_codegen(CodegenOptions& options, string v_name, string ub_ins_name) {
   //cmd("export LAKE_CONTROLLERS=$PWD");
   ASSERT(getenv("LAKE_PATH"), "Define env var $LAKE_PATH which is the /PathTo/lake");
-  int res_lake = cmd("python $LAKE_PATH/tests/wrapper_pond.py -c " + options.dir + "lake_collateral/" + ub_ins_name + " -n " + v_name + " -d 512");
+  int res_lake = cmd("python $LAKE_PATH/lake/utils/wrapper_lake.py -c " + options.dir + "lake_collateral/" + ub_ins_name + " -n " + v_name + " -p True -pl 4 -pd 32");
   assert(res_lake == 0);
   cmd("mkdir -p "+options.dir+"verilog");
   cmd("mv LakeWrapper_"+v_name+".v " + options.dir + "verilog");
@@ -2179,6 +2179,7 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
   //this is the flag to wire stencil valid signal
   bool need_pass_valid = false;
   dbhc::maybe<string> last_producer_buf_with_tile;
+
   //TODO Clean the logic here
   for (auto op : ops_dft) {
     cout << "Visit op: " << op->name << endl;
@@ -3350,7 +3351,7 @@ void generate_coreir_without_ctrl(CodegenOptions& options,
  
   prg_mod = generate_coreir_without_ctrl(options, buffers, prg, schedmap, context, hwinfo, dse_compute_filename);
 
-
+  
   auto ns = context->getNamespace("global");
   if(!saveToFile(ns, options.dir + prg.name + ".json", prg_mod)) {
     cout << "Could not save ubuffer coreir" << endl;
@@ -5098,7 +5099,7 @@ bool allow_packed_sr(dgraph& shift_registers, UBuffer & buf, block_sreg * b)
 		return false;
 	}
 
-	dbhc::sort_lt(outpts,[](const pair<string,int> &x){return x.second;});
+    dbhc::sort_lt(outpts,[](const pair<string,int> &x){return x.second;});
 	int diff = outpts[1].second - outpts[0].second;
 	b->chain_starts = {outpts[0].first,outpts[1].first};
 	b->init_delay = outpts[0].second;
