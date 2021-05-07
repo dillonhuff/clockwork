@@ -7686,8 +7686,7 @@ void UBuffer::generate_banks(CodegenOptions& options) {
         cout << "\tsched after trans: " << str(sched_vec) << endl;
 
         //A special case the vectorization dimension range span is less than fetch width
-        //int offset = get_domain_span_range(acc_0, vectorize_loop_dim, addr_dim);
-        int offset = get_domain_span_range_new(acc_0, vectorize_loop_dim);
+        int offset = get_domain_span_range(acc_0, vectorize_loop_dim, addr_dim);
         if (offset >= fetch_width)
             offset = 0;
         //access map

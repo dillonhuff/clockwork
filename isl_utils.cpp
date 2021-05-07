@@ -1835,6 +1835,7 @@ int stride_in_dim(isl_map* const m, size_t dim, size_t out_dim) {
 }
 
 int stride_in_dim(isl_map* const m, size_t dim) {
+    assert(num_out_dims(m) == 1);
     auto aff = get_aff(m);
     return to_int(get_coeff(aff, dim));
 }
@@ -3968,12 +3969,12 @@ int get_domain_span_range(isl_map* const m, int dim) {
 
 }
 
-int get_domain_span_range_new(isl_map* const m, int dim) {
+int get_domain_span_range(isl_map* const m, int dim, int out_dim) {
     cout << "input: " << str(m) << "m dim" << dim  << endl;
   auto mm = cpy(m);
   auto single_map = project_all_in_but(mm, dim);
   cout << "single_map : " << str(single_map) << endl;
-  return get_domain_range(domain(single_map), 0) * stride_in_dim(m, dim);
+  return get_domain_range(domain(single_map), 0) * stride_in_dim(m, dim, out_dim);
 
 }
 
