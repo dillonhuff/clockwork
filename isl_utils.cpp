@@ -3957,24 +3957,25 @@ int get_domain_range(isl_set* const dom, int dim) {
 }
 
 int get_domain_span_range(isl_map* const m, int dim) {
-    cout << "input: " << str(m) << "m dim" << dim  << endl;
+    //cout << "input: " << str(m) << ", m dim" << dim  << endl;
   auto mm = cpy(m);
-  for (int d = 0; d < num_in_dims(m); d ++) {
-      if (d != dim)
-          mm = reset_domain_coeff(mm, d, 0);
-  }
-  auto single_map = project_all_in_but(mm, dim);
-  cout << "single_map : " << str(single_map) << endl;
-  return get_domain_range(domain(single_map), 0) * stride_in_dim(m, dim);
+  //for (int d = 0; d < num_in_dims(m); d ++) {
+  //    if (d != dim)
+  //        mm = reset_domain_coeff(mm, d, 0);
+  //}
+  //cout << "before projection: " << str(mm) << endl;
+  //auto single_map = project_all_in_but(mm, dim);
+  //cout << "single_map : " << str(single_map) << endl;
+  return get_dim_extent(domain(mm), dim) * stride_in_dim(mm, dim);
 
 }
 
 int get_domain_span_range(isl_map* const m, int dim, int out_dim) {
-    cout << "input: " << str(m) << "m dim" << dim  << endl;
+    //cout << "input: " << str(m) << ", m dim" << dim  << endl;
   auto mm = cpy(m);
-  auto single_map = project_all_in_but(mm, dim);
-  cout << "single_map : " << str(single_map) << endl;
-  return get_domain_range(domain(single_map), 0) * stride_in_dim(m, dim, out_dim);
+  //auto single_map = project_all_in_but(mm, dim);
+  //cout << "single_map : " << str(single_map) << endl;
+  return get_dim_extent(domain(mm), dim) * stride_in_dim(mm, dim, out_dim);
 
 }
 
@@ -3999,7 +4000,8 @@ vector<pair<int, int>> get_all_domain_merge_dims(isl_map* m) {
     for (int dim = 2; dim < in_dims; dim ++) {
         int span_range = get_domain_span_range(m, dim);
         int up_level_stride = stride_in_dim(m, dim-1);
-        if (span_range == up_level_stride)
+        cout << "span range: " << span_range << ", up_level_stride : "<< up_level_stride << endl;
+        if ((span_range == up_level_stride) && (span_range != 0))
             ret.push_back({in_dims - dim - 1, in_dims -  dim});
     }
     return ret;
@@ -4103,6 +4105,26 @@ isl_map* get_div_trans(isl_map* am, map<int, int> split_dims) {
     cout << "\tTrans str" << trans_str << endl;
     auto trans_map = isl_map_read_from_str(ctx(am), trans_str.c_str());
     return trans_map;
+}
+
+isl_map* get_domain_mask(isl_map* m, int vec_dim) {
+    int dim = num_in_dims(m);
+    string dom_name = domain_name(m);
+    vector<string> var_new, var_mask;
+    for (int i = 0; i < dim; i++) {
+        if (i <= vec_dim) {
+            var_new.push_back("i" + str(i));
+            var_mask.push_back("i" + str(i));
+        } else {
+            auto dom = domain(m);
+            var_mask.push_back("i" + str(i) + "=" + str(get_dim_min(dom, i)));
+        }
+    }
+    string map_str = "{"+dom_name + bracket_list(var_new) + "->"
+        + dom_name + bracket_list(var_mask)+"}";
+    auto trans = isl_map_read_from_str(ctx(m), map_str.c_str());
+    cout << "mask : " << str(trans) << endl;
+    return trans;
 }
 
 isl_map* get_domain_trans(isl_set* dom, int pos, int fetch_width) {
@@ -4365,6 +4387,11 @@ map<int, int> get_dim2denom(isl_map* am) {
       cout << tab(3) << "denom = " << denom << endl;
       for (int di = 0; di < num_in_dims(a); di++) {
         if (!is_zero(get_coeff(a, di))) {
+          auto coeff = isl_aff_get_coefficient_val(a, isl_dim_in, di);
+          int num = isl_val_get_num_si(coeff);
+          cout << tab(3) << "coeff  = " << str(coeff) << endl;
+          cout << tab(3) << "num = " << isl_val_get_num_si(coeff) << endl;
+          assert (num == 1 && "require quasi affine accessor!");
           split_dims[di] = denom;
         }
       }

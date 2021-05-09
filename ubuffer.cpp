@@ -7403,7 +7403,7 @@ void UBuffer::generate_banks(CodegenOptions& options) {
         //pad the domain for both input port and output port
         std::set<int> merge_dim;
 
-        //merge the input dim
+        //Look through all the input dim, save the addr dim that need merging
         for (auto bd: get_in_bundles()) {
           for (auto pt: port_bundles.at(bd)) {
             auto am = to_map(access_map.at(pt));
@@ -7421,25 +7421,24 @@ void UBuffer::generate_banks(CodegenOptions& options) {
               for (auto inv: involve_vec) {
                 merge_dim.insert(inv);
               }
-              auto trans = flatten_set_trans_with_dim_set(dom, {dim_id - 1, dim_id});
-              auto flatten_am = to_map(simplify(dot(inv(trans), access_map.at(pt))));
-              auto flatten_sched = to_map(simplify(dot(inv(trans), sched)));
-              cout << "Map after flatten: " << str(flatten_am) << endl;
-              cout << "sched after flatten: " << str(flatten_sched) << endl;
-              replace_pt(pt, flatten_am, flatten_sched);
             }
           }
         }
 
-        //Merge the access(address) range
+        //Merge the access(address) range, and merge the iteration domain as well
         if (merge_dim.size()) {
           for (auto& it: access_map) {
             auto map = it.second;
             auto rng = to_set(range(map));
             auto trans = flatten_set_trans_with_dim_set(rng, merge_dim);
             //cout << "merge transform: " << str(trans) << endl;
-            it.second = simplify(dot(map, trans));
-            //cout << "\torigin access map: " << str(map) << "\n\tafter trans: " << str(it.second) << endl;
+            isl_map* map_ = to_map(simplify(dot(map, trans)));
+            auto sched = to_map(schedule.at(it.first));
+            cout << str(map_) << endl;
+            cout << str(sched) << endl;
+            auto optimized_ir = merge_dom_dim(sched, map_);
+            replace_pt(it.first, optimized_ir.second, optimized_ir.first);
+            cout << "\tmerged access map: " << str(optimized_ir.second) << "\n\tmerged schedule: " << str(optimized_ir.first) << endl;
           }
           return true;
         } else {
@@ -7651,10 +7650,8 @@ void UBuffer::generate_banks(CodegenOptions& options) {
         auto acc_vec = dot(trans, acc_0);
         auto slice = get_set_slice(range(acc_0), addr_dim, fetch_width);
         acc_vec = dot(acc_vec, slice);
+
         auto origin_slice = dot(acc_0, slice);
-        //if (get_dim_min(range(acc_vec), addr_dim) > get_dim_min(range(origin_slice), addr_dim)) {
-        //    //pad to the left
-        //}
         cout << "trans max: " << get_dim_max(range(acc_vec), addr_dim)
             << " , origin max: " << get_dim_max(range(origin_slice), addr_dim) << endl;
         if (get_dim_max(range(acc_vec), addr_dim) <
@@ -7686,12 +7683,15 @@ void UBuffer::generate_banks(CodegenOptions& options) {
         cout << "\tsched after trans: " << str(sched_vec) << endl;
 
         //A special case the vectorization dimension range span is less than fetch width
+        //The vectorization dimension is above
         int offset = get_domain_span_range(acc_0, vectorize_loop_dim, addr_dim);
+        cout << "Offset: " << offset << endl;
         if (offset >= fetch_width)
             offset = 0;
+
         //access map
         auto acc_vec = dot(trans, acc_0);
-        auto slice = get_set_slice(range(acc_0), addr_dim, offset, fetch_width);
+        auto slice = get_set_slice(range(acc_0), addr_dim, 0, fetch_width);
         acc_vec = dot(acc_vec, slice);
 
         //Check if we have sliding window across domain
@@ -7699,17 +7699,20 @@ void UBuffer::generate_banks(CodegenOptions& options) {
         if (dim2denom.size()) {
             auto div_trans = get_div_trans(acc_vec, dim2denom);
             acc_vec = dot(inv(div_trans), acc_vec);
-            sched_vec = dot(inv(div_trans), sched_vec);
-            vectorize_loop_dim += 1;
+            sched_vec = simplify_expr(dot(inv(div_trans), sched_vec));
+            if (offset == 0)
+                vectorize_loop_dim += 1;
+            else
+                vectorize_loop_dim -= 1;
         }
 
-
+        //fetch one more from SRAM
         auto origin_slice = dot(acc_0, slice);
-        //if (get_dim_min(range(acc_vec), addr_dim) > get_dim_min(range(origin_slice), addr_dim)) {
-        //    //pad to the left
-        //}
         cout << "\ttrans max: " << get_dim_max(range(acc_vec), addr_dim)
             << " , origin max: " << get_dim_max(range(origin_slice), addr_dim) << endl;
+        cout << "\tvectorize loop dim: " << vectorize_loop_dim << endl;
+        cout << "\taccess vec before padding: " << str(acc_vec) << endl;
+        cout << "\tsched vec before padding: "<< str(sched_vec) << endl;
         int ahead_step = 0;
         if (get_dim_max(range(acc_vec), addr_dim) <
                 get_dim_max(range(origin_slice), addr_dim)) {
@@ -7718,7 +7721,16 @@ void UBuffer::generate_banks(CodegenOptions& options) {
             sched_vec = pad_to_domain_ubuf_map(sched_vec, vectorize_loop_dim, 1);
             ahead_step = 1;
         }
+
+        //mask the refetch from SRAM if we keep fetching the same location
+        auto domain_mask = get_domain_mask(acc_vec, vectorize_loop_dim);
+        acc_vec = dot(domain_mask, acc_vec);
+        sched_vec = dot(domain_mask, sched_vec);
+        cout << "\tsched vec before moving: "<< str(sched_vec) << endl;
+
+        //Adjust the sram2tb fetch based on the schedule
         auto final_sched = get_sram2tb_schedule_with_check(sched_vec, sched_record_map, ahead_step, vectorize_loop_dim);
+        cout << "\tfinal access: " << str(acc_vec) << endl;
         cout << "\tfinal sched: " << str(final_sched) << endl;
         return make_pair(acc_vec, final_sched);
     }
@@ -7798,7 +7810,8 @@ void UBuffer::generate_banks(CodegenOptions& options) {
               //Strip mining the agg input
               //TODO: no need for input strip mining could be removed
               {
-                if (acc_pattern.can_stripmining(ctx, dim_id, fetch_width)) {
+                //if (acc_pattern.can_stripmining(ctx, dim_id, fetch_width)) {
+                if (false) {
 
                   isl_map* op_stripmining = acc_pattern.get_op_stripmining(ctx, dim_id, fetch_width, "");
                   std::cout << "\ttransform stripmining: " << str(op_stripmining) << endl;
@@ -8035,17 +8048,29 @@ void UBuffer::generate_banks(CodegenOptions& options) {
                 isl_map* rewrite_access_map = dot(vectorized_access, interpolation);
                 cout << "\t rewrite access map: " << str(simplify_expr(rewrite_access_map)) << endl;
                 auto tb_in_access_map = add_range_suffix(rewrite_access_map, "_" + str(tb_cnt) + "_tb");
-                tb.add_in_pt(tb_pt_name, dom, tb_in_access_map, simplify_expr(its(sched, dom)));
+                //tb.add_in_pt(tb_pt_name, dom, tb_in_access_map, simplify_expr(its(sched, dom)));
 
-                //always decouple the output access
+                //always decouple the output access, and remove refetch from SRAM
                 auto acc_pt = AccessPattern(tb_in_access_map, ctx);
-                auto decouple_acc_map = acc_pt.get_access_map_and_decouple_reuse(ctx, dim_id, true);
-                tb.access_map[tb_pt_name] = to_umap(decouple_acc_map);
+                tb_in_access_map = acc_pt.get_access_map_and_decouple_reuse(ctx, dim_id, true);
+                //tb.access_map[tb_pt_name] = to_umap(decouple_acc_map);
 
                 auto sram_out_access_map = add_range_suffix(rewrite_access_map, "_sram");
                 string sram_pt_name = out_pt_name + "_out_" + std::to_string(pt_cnt++);
                 sram.port_bundles[bd_name].push_back(sram_pt_name);
-                sram.add_out_pt(sram_pt_name, dom, sram_out_access_map, simplify_expr(its(sched, dom)));
+                auto final_sched = its(sched, dom);
+                //auto acc_pt_sram = AccessPattern(sram_out_access_map, ctx);
+                //isl_map* normalized_access = acc_pt_sram.get_access_map(ctx);
+                //auto  normalized_pair = acc_pt_sram.get_access_map_mask_refetch(ctx);
+                //isl_map* normalized_access = normalized_pair.first;
+                //auto domain_trans = normalized_pair.second;
+
+                //cout << "normalized access : " << str(normalized_access) << endl;
+                //auto final_sched = dot(domain_trans, its(sched, dom));
+                //sram_out_access_map = dot(domain_trans, sram_out_access_map);
+                //tb_in_access_map = dot(domain_trans, decouple_acc_map);
+                tb.add_in_pt(tb_pt_name, ::domain(tb_in_access_map), tb_in_access_map, simplify_expr(final_sched));
+                sram.add_out_pt(sram_pt_name, ::domain(sram_out_access_map), sram_out_access_map, simplify_expr(final_sched));
               }
               //add_vectorized_pt_to_ubuf(sram, ap_vec, sched,
               //        bd_name + "_"+str(tb_cnt), dim_id, fetch_width, tb_cnt, true/*is output*/);
@@ -8061,17 +8086,22 @@ void UBuffer::generate_banks(CodegenOptions& options) {
               outpt_acc_map = add_range_suffix(outpt_acc_map, "_" + to_string(tb_cnt) + "_tb");
 
               //Strip mining the output loop
+              //TODO: remove stripmining
               {
                 isl_map* op_stripmining = acc_pattern.get_op_stripmining(ctx, dim_id, fetch_width, "");
                 std::cout << "\ttransform stripmining: " << str(op_stripmining) << endl;
+                //isl_set* sm_domain = domain.at(out_pt_name);
                 isl_set* sm_domain = range(its(op_stripmining, domain.at(out_pt_name)));
                 std::cout << "\tdomain stripmining: " << str(sm_domain) << endl;
                 auto sm_access_map = dot(inv(op_stripmining), outpt_acc_map);
                 auto sm_sched = dot(inv(op_stripmining), to_map(schedule.at(out_pt_name)));
+                //auto sm_access_map = outpt_acc_map;
+                //auto sm_sched = to_map(schedule.at(out_pt_name));
                 sm_domain = add_suffix(sm_domain, "_tb2out_" + str(tb_cnt));
                 sm_access_map = add_domain_suffix(sm_access_map, "_tb2out_" + str(tb_cnt));
                 sm_sched = add_domain_suffix(sm_sched, "_tb2out_" + str(tb_cnt));
                 cout << "\tAccess map decouple reuse: " << str(outpt_acc_map) << endl;
+                //tb.add_out_pt(out_pt_name+"_out", sm_domain, sm_access_map, sm_sched);
                 tb.add_out_pt(out_pt_name+"_out", sm_domain, sm_access_map, its(sm_sched, sm_domain));
                 tb.port_bundles[bd_name+"_tb_out"].push_back(out_pt_name + "_out");
               }

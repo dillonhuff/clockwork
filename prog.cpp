@@ -2924,8 +2924,8 @@ void generate_vectorization_unit_testbench(UBuffer & buf) {
 
   for (auto out_bd : buf.get_out_bundles()) {
     auto write_map = buf.access_map.at(pick(buf.port_bundles.at(out_bd)));
-    auto rng = range(write_map);
-    auto range_card = card(rng);
+    auto dom= domain(write_map);
+    auto range_card = card(dom);
     int num_pops = int_upper_bound(range_card);
     int unroll = 1;//map_find(out, unroll_factor);
     int lane_width = buf.port_widths;

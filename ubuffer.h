@@ -302,7 +302,51 @@ class AccessPattern {
           }
       }
 
-      umap* get_access_map(isl_ctx* ctx) {
+      pair<isl_map*, isl_map*> get_access_map_mask_refetch(isl_ctx* ctx) {
+          vector<string> var_list(var_dim-1);
+          vector<string> var_new, var_trans;
+          int inner_most = get_inner_most_related_dom_dim();
+          for (auto itr: name2idx) {
+              if (itr.first == "const")
+                  continue;
+              var_list[itr.second-1] = itr.first;
+              if (itr.second - 1 > inner_most) {
+                var_trans.push_back(itr.first + "=0");
+              } else {
+                var_new.push_back(itr.first);
+                var_trans.push_back(itr.first);
+              }
+          }
+          //var_list[0] = "root=0";
+          auto vars = sep_list(var_list, "[", "]", "," );
+          vector<string> nd_expr;
+          for (auto row: access_matrix) {
+              vector<string> sum_list;
+              for (auto itr = row.begin()+1; itr != row.end(); itr ++ ){
+                  int item = *itr;
+                  int cnt = itr - row.begin() ;
+                  if (item == 0 ) {
+                      continue;
+                  }
+                  sum_list.push_back(get_expr(item, cnt, var_list));
+              }
+
+              //const
+              if (sum_list.size() == 0 || (row.front() != 0)) {
+                  sum_list.push_back(std::to_string(row.front()));
+              }
+              nd_expr.push_back(sep_list(sum_list, "", "", "+"));
+          }
+          string nd_expr_str = sep_list(nd_expr, "[", "]", ", ");
+          cout << "access map expr:" << nd_expr_str << endl;
+          auto access_map = isl_map_read_from_str(ctx, string("{ " + op_name + vars + " -> " + buf_name + nd_expr_str + "}").c_str());
+          auto trans_map = isl_map_read_from_str(ctx, string("{ " + op_name + bracket_list(var_new)+ " -> " + op_name + bracket_list(var_trans) + "}").c_str());
+          cout << "trans map: " << str(trans_map) << endl;
+          auto domain = get_domain(ctx);
+          return {its(access_map, domain), trans_map};
+      }
+
+      isl_map* get_access_map(isl_ctx* ctx) {
           vector<string> var_list(var_dim-1);
           for (auto itr: name2idx) {
               if (itr.first == "const")
@@ -333,7 +377,7 @@ class AccessPattern {
           cout << "access map expr:" << nd_expr_str << endl;
           auto access_map = isl_map_read_from_str(ctx, string("{ " + op_name + vars + " -> " + buf_name + nd_expr_str + "}").c_str());
           auto domain = get_domain(ctx);
-          return to_umap(its(access_map, domain));
+          return its(access_map, domain);
       }
 
       //vector<int> get_non_inner_most_reaccess_dim() {
