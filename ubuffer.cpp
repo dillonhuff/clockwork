@@ -7431,8 +7431,10 @@ void UBuffer::generate_banks(CodegenOptions& options) {
             auto map = it.second;
             auto rng = to_set(range(map));
             auto trans = flatten_set_trans_with_dim_set(rng, merge_dim);
-            //cout << "merge transform: " << str(trans) << endl;
+            cout << "merge transform: " << str(trans) << endl;
             isl_map* map_ = to_map(simplify(dot(map, trans)));
+            if(num_out_dims(map_) != 1)
+                continue;
             auto sched = to_map(schedule.at(it.first));
             cout << str(map_) << endl;
             cout << str(sched) << endl;
