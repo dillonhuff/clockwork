@@ -2188,14 +2188,17 @@ CoreIR::Module* affine_controller_use_lake_tile_counter(
     add_lake_config(config_file, config_sram2tb, num_dims(domain(res)), "sram2tb_0");
 
     buf = def->addInstance(ub_ins_name + "_Counter_" + str(dim), "cgralib.Mem_amber", genargs);
-    buf->getMetaData()["config"] = config_file;
-    buf->getMetaData()["mode"] = "lake";
-
     //assign the init value
     //TODO change 4 to fetch width
     std::vector<int> v(round_up_to_multiple_of(get_domain_range(dom, dim), 4));
     std::iota(v.begin(), v.end(), 0);
-    buf->getMetaData()["init"] = v;
+
+    //TODO: this is a temporary fix for lake counter, need to move to the root level
+    //buf->getMetaData()["init"] = v;
+    config_file["init"] = v;
+
+    buf->getMetaData()["config"] = config_file;
+    buf->getMetaData()["mode"] = "lake";
 
 
     //garnet wire reset to flush of memory
