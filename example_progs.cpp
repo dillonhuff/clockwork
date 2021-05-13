@@ -3503,6 +3503,7 @@ prog conv_1_3() {
   hcompute_conv_stencil_1->add_load("hw_input_global_wrapper_stencil", "conv_s1_y", "(conv_s1_r_x + conv_s1_x)");
   hcompute_conv_stencil_1->add_store("conv_stencil", "conv_s1_y", "conv_s1_x");
   hcompute_conv_stencil_1->compute_unit_needs_index_variable("conv_s1_r_x");
+  hcompute_conv_stencil_1->index_variable_prefetch_cycle(1);
 
 //consuming conv.stencil
   auto hw_output_s0_y_yi = prg.add_loop("hw_output_s0_y_yi", 0, 30);

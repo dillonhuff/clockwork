@@ -16932,6 +16932,9 @@ int get_vectorization_dim(isl_map* m, int fetch_width) {
 }
 
 bool need_relax(schedule_info& sched, op* loop, prog& prg, int fetch_width) {
+  //only look at loop op
+  if (!loop->is_loop())
+    return false;
   auto read_map = read_at(loop->name, prg);
   auto levels = get_variable_levels(prg);
   cout << "op name: " << loop->name << endl;

@@ -1919,6 +1919,9 @@ Instance* generate_coreir_op_controller(CodegenOptions& options, ModuleDef* def,
 
   // TODO: Assert multi size == 1
   auto aff = isl_multi_aff_get_aff(saff, 0);
+  if(op->index_variables_prefetch_cycle){
+    aff = sub(aff, op->index_variables_prefetch_cycle);
+  }
   Instance* controller;
 
   //For those op need loop index we need this controller
