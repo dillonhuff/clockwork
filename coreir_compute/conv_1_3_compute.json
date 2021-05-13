@@ -36,7 +36,7 @@
           "rom_kernela0":{
             "genref":"memory.rom2",
             "genargs":{"depth":["Int",3], "width":["Int",16]},
-            "modargs":{"init":["Json",[1,3,4]]}
+            "modargs":{"init":["Json",[1,1,1]]}
           },
           "rom_kernela0_ren":{
             "modref":"corebit.const",

@@ -14508,6 +14508,7 @@ void cpy_app_to_folder(const std::string& app_type, const std::string& prg_name)
 
 void test_pond(string dir, bool run_verilator=true) {
   vector<prog> test_apps;
+  test_apps.push_back(conv_1_3());
   test_apps.push_back(resnet_simple());
   test_apps.push_back(resnet());
   test_apps.push_back(three_level_pond_copy());
@@ -14548,6 +14549,7 @@ void test_pond(string dir, bool run_verilator=true) {
       bool extra_flag_for_lake = true;
       int res = run_verilator_on(name, name + "_verilog_tb.cpp", verilog_files, extra_flag_for_lake);
       assert(res == 0);
+      //assert(false);
       cmd("rm LakeWrapper.v");
       cmd("rm -rf ./" + dir + "/" + name + "/verilog/");
 
@@ -14613,12 +14615,13 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   //test_apps.push_back(fft8_unroll8());
   //test_apps.push_back(camera_pipeline_trunc());
   //
+
   //test_apps.push_back(conv_3_3_rolled());
-  test_apps.push_back(conv_1_3());
+
+  test_apps.push_back(counter());
   test_apps.push_back(gaussian());
   test_apps.push_back(conv_3_3());
   test_apps.push_back(down_sample());
-  test_apps.push_back(counter());
   test_apps.push_back(cascade());
   test_apps.push_back(harris());
   test_apps.push_back(rom());
@@ -16918,6 +16921,65 @@ void set_scheduled_loop_latency(schedule_info& hwinfo, op* op, prog& prg) {
   //hwinfo.instance_latencies[op] = latency;
 }
 
+int get_vectorization_dim(isl_map* m, int fetch_width) {
+  for(int i = num_out_dims(m)-1; i >= 0; i --) {
+    int ext = get_dim_extent(range(m), i);
+    if (ext >= fetch_width) {
+      return i;
+    }
+  }
+  return -1; //need merge or use single pixel vectorization
+}
+
+bool need_relax(schedule_info& sched, op* loop, prog& prg, int fetch_width) {
+  auto read_map = read_at(loop->name, prg);
+  auto levels = get_variable_levels(prg);
+  cout << "op name: " << loop->name << endl;
+  cout << "op level: " << levels.at(loop->name) << endl;
+  if(read_map == nullptr)
+      return false;
+  //cout << "Get read map: " << str(read_map) << endl;
+  for (auto rd_map: get_maps(read_map)) {
+    cout << tab(4) << "Read map: \n\t" << str(rd_map) << endl;
+    auto b_map = to_map(pick(get_basic_maps(rd_map)));
+    auto read_addr_involve_dim = out_involve_dim(b_map, levels.at(loop->name));
+    cout << tab(4) << "addr involve dim: " << read_addr_involve_dim << endl;
+
+    //Chances are that this dimension is fully unrolled
+    //Involve the vectorization dimension
+    int vec_dim = get_vectorization_dim(b_map, fetch_width);
+    if (read_addr_involve_dim.size() > 0
+            && (elem(vec_dim, read_addr_involve_dim))) {
+      assert(read_addr_involve_dim.size() == 1);
+      int packed_addr_dim = pick(read_addr_involve_dim);
+      auto in_involve_d = in_involve_dim(b_map, packed_addr_dim);
+      cout << "\tInvolve in dim: " << in_involve_d << endl;
+      //Do not have sliding window
+      if (in_involve_d.size() == 1) {
+          continue;
+      } else if (loop->trip_count() < fetch_width) {
+          continue;
+      } else {
+          int stride = stride_in_dim(b_map, levels.at(loop->name), packed_addr_dim);
+          cout << "Dim " << levels.at(loop->name)<< "\n\t hasStride : " << stride << endl;
+          if (stride % fetch_width != 0) {
+            cout << tab(4) << "Relax ii latency for op: " << loop->name << endl;
+            //cout << tab(4) << "Original offset within parent: " << sched.offset_in_parent(child) << endl;
+            cout << tab(4) << "Original offset within parent: " << sched.offset_in_parent(loop) << endl;
+            cout << tab(4) << "loop trip count: " << loop->trip_count() << endl;
+            if (is_inner_loop(loop))
+                sched.op_offset_within_parent.at(loop) = (loop->trip_count()) % fetch_width + fetch_width * (loop->trip_count()%fetch_width== 0);
+            else
+                sched.op_offset_within_parent.at(loop) = sched.II(loop) * fetch_width;
+            cout << tab(4) << "New offset within parent: " << sched.offset_in_parent(loop) << endl;
+          }
+          return true;
+      }
+    }
+  }
+  return false;
+}
+
 void relax_inner_delay_for_vec_read(schedule_info& sched, op* loop, prog& prg, int fetch_width);
 void relax_inner_delay_for_vec_write(schedule_info& sched, op* loop, prog& prg, int fetch_width);
 
@@ -16946,9 +17008,12 @@ void asap_inner_loops_schedule(schedule_info& sched, op* op, prog& prg, int fetc
     for (auto other : op->children) {
       int old_latency = latency;
       sched.op_offset_within_parent[other] = latency;
-      if (is_inner_loop(other)) {
-        //TODO: currently only need to pad read op
-        relax_inner_delay_for_vec_read(sched, other, prg, fetch_width);
+      //if (is_inner_loop(other)) {
+      //  //TODO: currently only need to pad read op
+      //  relax_inner_delay_for_vec_read(sched, other, prg, fetch_width);
+      //}
+      if (need_relax(sched, other, prg, fetch_width)) {
+        cout << tab(4) << other->name << "--> Enter relax condition loop!" << endl;
       }
       latency = sched.total_latency(other) + sched.offset_in_parent(other);
       if (old_latency == latency) {

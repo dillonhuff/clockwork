@@ -44,25 +44,33 @@
         "genparams":{"N":"Int"},
         "modules":[
           [{"N":["Int",3]},{
-            "type":["Record",[
-              ["in",["Array",3,"BitIn"]],
-              ["out","Bit"]
-            ]],
-            "modparams":{"init":["BitVector",8]},
-            "instances":{
-              "lut":{
-                "genref":"cgralib.PE",
-                "genargs":{"numbitports":["Int",3], "numdataports":["Int",2], "op_kind":["String","bit"], "width":["Int",16]},
-                "modargs":{"bit0_mode":["String","BYPASS"], "bit0_value":["Bool",false], "bit1_mode":["String","BYPASS"], "bit1_value":["Bool",false], "bit2_mode":["String","BYPASS"], "bit2_value":["Bool",false], "flag_sel":["String","lut"], "lut_value":[["BitVector",8],"Arg","init"]}
-              }
-            },
-            "connections":[
-              ["self.in","lut.bit.in"],
-              ["self.out","lut.bit.out"]
-            ]
-          }]
+              "type":["Record",[
+                ["in",["Array",3,"BitIn"]],
+                ["out","Bit"]
+              ]],
+              "modparams":{"init":["BitVector",8]},
+              "instances":{
+                "lut":{
+                  "genref":"cgralib.PE",
+                  "genargs":{"numbitports":["Int",3], "numdataports":["Int",2], "op_kind":["String","bit"], "width":["Int",16]},
+                  "modargs":{"bit0_mode":["String","BYPASS"], "bit0_value":["Bool",false], "bit1_mode":["String","BYPASS"], "bit1_value":["Bool",false], "bit2_mode":["String","BYPASS"], "bit2_value":["Bool",false], "flag_sel":["String","lut"], "lut_value":[["BitVector",8],"Arg","init"]}
+                }
+              },
+              "connections":[
+                ["self.in","lut.bit.in"],
+                ["self.out","lut.bit.out"]
+              ]
+            }]
         ],
         "metadata":{"verilog":{"definition":"  assign out = init[in];","interface":["input [N-1:0] in","output out"],"parameters":["init"]}}
+      },
+      "mult_high":{
+        "typegen":"coreir.binary",
+        "genparams":{"width":"Int"}
+      },
+      "mult_middle":{
+        "typegen":"coreir.binary",
+        "genparams":{"width":"Int"}
       },
       "muxn":{
         "typegen":"commonlib.muxN_type",
@@ -162,7 +170,7 @@
           "ub_conv_stencil_BANK_0_garnet":{
             "genref":"cgralib.Mem",
             "genargs":{"ID":["String","_U0"], "has_external_addrgen":["Bool",false], "has_flush":["Bool",true], "has_read_valid":["Bool",false], "has_reset":["Bool",false], "has_stencil_valid":["Bool",false], "has_valid":["Bool",false], "is_rom":["Bool",false], "num_inputs":["Int",2], "num_outputs":["Int",2], "use_prebuilt_mem":["Bool",true], "width":["Int",16]},
-            "modargs":{"config":["Json",{"agg2sram_0":{"cycle_starting_addr":[908],"cycle_stride":[4,32,896,2688],"dimensionality":4,"extent":[7,28,3,3],"read_data_starting_addr":[0],"read_data_stride":[1,3,0,0],"write_data_starting_addr":[0],"write_data_stride":[1,7,0,0]},"agg2sram_1":{"cycle_starting_addr":[4],"cycle_stride":[4,28],"dimensionality":2,"extent":[7,28],"read_data_starting_addr":[0],"read_data_stride":[1,3],"write_data_starting_addr":[0],"write_data_stride":[1,7]},"in2agg_0":{"cycle_starting_addr":[904],"cycle_stride":[1,4,32,896,2688],"dimensionality":5,"extent":[4,7,28,3,3],"write_data_starting_addr":[0],"write_data_stride":[1,4,12,0,0]},"in2agg_1":{"cycle_starting_addr":[0],"cycle_stride":[1,4,28],"dimensionality":3,"extent":[4,7,28],"write_data_starting_addr":[0],"write_data_stride":[1,4,12]},"sram2tb_0":{"cycle_starting_addr":[899],"cycle_stride":[4,32,896,2688],"dimensionality":4,"extent":[7,28,3,3],"read_data_starting_addr":[0],"read_data_stride":[1,7,0,0],"write_data_starting_addr":[0],"write_data_stride":[1,3,0,0]},"sram2tb_1":{"cycle_starting_addr":[8959],"cycle_stride":[4,28],"dimensionality":2,"extent":[7,28],"read_data_starting_addr":[0],"read_data_stride":[1,7],"write_data_starting_addr":[0],"write_data_stride":[1,3]},"tb2out_0":{"cycle_starting_addr":[904],"cycle_stride":[1,4,32,896,2688],"dimensionality":5,"extent":[4,7,28,3,3],"read_data_starting_addr":[0],"read_data_stride":[1,4,12,0,0]},"tb2out_1":{"cycle_starting_addr":[8964],"cycle_stride":[1,4,28],"dimensionality":3,"extent":[4,7,28],"read_data_starting_addr":[0],"read_data_stride":[1,4,12]}}], "init":["Json",null], "mode":["String","lake"]}
+            "modargs":{"config":["Json",{"agg2sram_0":{"cycle_starting_addr":[908],"cycle_stride":[4,32,896,2688],"dimensionality":4,"extent":[7,28,3,3],"read_data_starting_addr":[0],"read_data_stride":[1,3,0,0],"write_data_starting_addr":[0],"write_data_stride":[1,7,0,0]},"agg2sram_1":{"cycle_starting_addr":[4],"cycle_stride":[4,28],"dimensionality":2,"extent":[7,28],"read_data_starting_addr":[0],"read_data_stride":[1,3],"write_data_starting_addr":[0],"write_data_stride":[1,7]},"in2agg_0":{"cycle_starting_addr":[904],"cycle_stride":[1,32,896,2688],"dimensionality":4,"extent":[28,28,3,3],"write_data_starting_addr":[0],"write_data_stride":[1,12,0,0]},"in2agg_1":{"cycle_starting_addr":[0],"cycle_stride":[1,28],"dimensionality":2,"extent":[28,28],"write_data_starting_addr":[0],"write_data_stride":[1,12]},"sram2tb_0":{"cycle_starting_addr":[901],"cycle_stride":[4,32,896,2688],"dimensionality":4,"extent":[7,28,3,3],"read_data_starting_addr":[0],"read_data_stride":[1,7,0,0],"write_data_starting_addr":[0],"write_data_stride":[1,3,0,0]},"sram2tb_1":{"cycle_starting_addr":[8961],"cycle_stride":[4,28],"dimensionality":2,"extent":[7,28],"read_data_starting_addr":[0],"read_data_stride":[1,7],"write_data_starting_addr":[0],"write_data_stride":[1,3]},"tb2out_0":{"cycle_starting_addr":[904],"cycle_stride":[1,4,32,896,2688],"dimensionality":5,"extent":[4,7,28,3,3],"read_data_starting_addr":[0],"read_data_stride":[1,4,12,0,0]},"tb2out_1":{"cycle_starting_addr":[8964],"cycle_stride":[1,4,28],"dimensionality":3,"extent":[4,7,28],"read_data_starting_addr":[0],"read_data_stride":[1,4,12]}}], "init":["Json",null], "mode":["String","lake"]}
           }
         },
         "connections":[
@@ -502,7 +510,7 @@
           "conv_stencil$ub_conv_stencil_BANK_0_garnet":{
             "genref":"cgralib.Mem",
             "genargs":{"ID":["String","_U0"], "has_external_addrgen":["Bool",false], "has_flush":["Bool",true], "has_read_valid":["Bool",false], "has_reset":["Bool",false], "has_stencil_valid":["Bool",false], "has_valid":["Bool",false], "is_rom":["Bool",false], "num_inputs":["Int",2], "num_outputs":["Int",2], "use_prebuilt_mem":["Bool",true], "width":["Int",16]},
-            "modargs":{"config":["Json",{"agg2sram_0":{"cycle_starting_addr":[908],"cycle_stride":[4,32,896,2688],"dimensionality":4,"extent":[7,28,3,3],"read_data_starting_addr":[0],"read_data_stride":[1,3,0,0],"write_data_starting_addr":[0],"write_data_stride":[1,7,0,0]},"agg2sram_1":{"cycle_starting_addr":[4],"cycle_stride":[4,28],"dimensionality":2,"extent":[7,28],"read_data_starting_addr":[0],"read_data_stride":[1,3],"write_data_starting_addr":[0],"write_data_stride":[1,7]},"in2agg_0":{"cycle_starting_addr":[904],"cycle_stride":[1,4,32,896,2688],"dimensionality":5,"extent":[4,7,28,3,3],"write_data_starting_addr":[0],"write_data_stride":[1,4,12,0,0]},"in2agg_1":{"cycle_starting_addr":[0],"cycle_stride":[1,4,28],"dimensionality":3,"extent":[4,7,28],"write_data_starting_addr":[0],"write_data_stride":[1,4,12]},"sram2tb_0":{"cycle_starting_addr":[899],"cycle_stride":[4,32,896,2688],"dimensionality":4,"extent":[7,28,3,3],"read_data_starting_addr":[0],"read_data_stride":[1,7,0,0],"write_data_starting_addr":[0],"write_data_stride":[1,3,0,0]},"sram2tb_1":{"cycle_starting_addr":[8959],"cycle_stride":[4,28],"dimensionality":2,"extent":[7,28],"read_data_starting_addr":[0],"read_data_stride":[1,7],"write_data_starting_addr":[0],"write_data_stride":[1,3]},"tb2out_0":{"cycle_starting_addr":[904],"cycle_stride":[1,4,32,896,2688],"dimensionality":5,"extent":[4,7,28,3,3],"read_data_starting_addr":[0],"read_data_stride":[1,4,12,0,0]},"tb2out_1":{"cycle_starting_addr":[8964],"cycle_stride":[1,4,28],"dimensionality":3,"extent":[4,7,28],"read_data_starting_addr":[0],"read_data_stride":[1,4,12]}}], "init":["Json",null], "mode":["String","lake"]}
+            "modargs":{"config":["Json",{"agg2sram_0":{"cycle_starting_addr":[908],"cycle_stride":[4,32,896,2688],"dimensionality":4,"extent":[7,28,3,3],"read_data_starting_addr":[0],"read_data_stride":[1,3,0,0],"write_data_starting_addr":[0],"write_data_stride":[1,7,0,0]},"agg2sram_1":{"cycle_starting_addr":[4],"cycle_stride":[4,28],"dimensionality":2,"extent":[7,28],"read_data_starting_addr":[0],"read_data_stride":[1,3],"write_data_starting_addr":[0],"write_data_stride":[1,7]},"in2agg_0":{"cycle_starting_addr":[904],"cycle_stride":[1,32,896,2688],"dimensionality":4,"extent":[28,28,3,3],"write_data_starting_addr":[0],"write_data_stride":[1,12,0,0]},"in2agg_1":{"cycle_starting_addr":[0],"cycle_stride":[1,28],"dimensionality":2,"extent":[28,28],"write_data_starting_addr":[0],"write_data_stride":[1,12]},"sram2tb_0":{"cycle_starting_addr":[901],"cycle_stride":[4,32,896,2688],"dimensionality":4,"extent":[7,28,3,3],"read_data_starting_addr":[0],"read_data_stride":[1,7,0,0],"write_data_starting_addr":[0],"write_data_stride":[1,3,0,0]},"sram2tb_1":{"cycle_starting_addr":[8961],"cycle_stride":[4,28],"dimensionality":2,"extent":[7,28],"read_data_starting_addr":[0],"read_data_stride":[1,7],"write_data_starting_addr":[0],"write_data_stride":[1,3]},"tb2out_0":{"cycle_starting_addr":[904],"cycle_stride":[1,4,32,896,2688],"dimensionality":5,"extent":[4,7,28,3,3],"read_data_starting_addr":[0],"read_data_stride":[1,4,12,0,0]},"tb2out_1":{"cycle_starting_addr":[8964],"cycle_stride":[1,4,28],"dimensionality":3,"extent":[4,7,28],"read_data_starting_addr":[0],"read_data_stride":[1,4,12]}}], "init":["Json",null], "mode":["String","lake"]}
           },
           "hw_input_global_wrapper_stencil$chain_en_const_U3":{
             "modref":"corebit.const",
@@ -641,26 +649,26 @@
         "genparams":{"has_clr":"Bool", "has_en":"Bool", "has_rst":"Bool", "width":"Int"},
         "modules":[
           [{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},{
-            "type":["Record",[
-              ["in",["Array",16,"BitIn"]],
-              ["clk",["Named","coreir.clkIn"]],
-              ["out",["Array",16,"Bit"]]
-            ]],
-            "modparams":{"init":["BitVector",16]},
-            "defaultmodargs":{"init":[["BitVector",16],"16'h0000"]},
-            "instances":{
-              "reg0":{
-                "genref":"coreir.reg",
-                "genargs":{"width":["Int",16]},
-                "modargs":{"clk_posedge":["Bool",true], "init":[["BitVector",16],"Arg","init"]}
-              }
-            },
-            "connections":[
-              ["self.clk","reg0.clk"],
-              ["self.in","reg0.in"],
-              ["self.out","reg0.out"]
-            ]
-          }]
+              "type":["Record",[
+                ["in",["Array",16,"BitIn"]],
+                ["clk",["Named","coreir.clkIn"]],
+                ["out",["Array",16,"Bit"]]
+              ]],
+              "modparams":{"init":["BitVector",16]},
+              "defaultmodargs":{"init":[["BitVector",16],"16'h0000"]},
+              "instances":{
+                "reg0":{
+                  "genref":"coreir.reg",
+                  "genargs":{"width":["Int",16]},
+                  "modargs":{"clk_posedge":["Bool",true], "init":[["BitVector",16],"Arg","init"]}
+                }
+              },
+              "connections":[
+                ["self.clk","reg0.clk"],
+                ["self.in","reg0.in"],
+                ["self.out","reg0.out"]
+              ]
+            }]
         ],
         "defaultgenargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false]}
       },
