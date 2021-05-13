@@ -2155,6 +2155,26 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
         assert(false);
     }
 
+    isl_map* get_access_map_from_op(const std::string op) {
+        for(auto pt: get_all_ports()) {
+            auto access_m = access_map.at(pt);
+            if(::domain_name(access_m) == op) {
+                return to_map(access_m);
+            }
+        }
+        assert(false && "Did not find op!");
+    }
+
+    isl_map* get_schedule_from_op(const std::string op) {
+        for(auto pt: get_all_ports()) {
+            auto sched = schedule.at(pt);
+            if(::domain_name(sched) == op) {
+                return to_map(sched);
+            }
+        }
+        assert(false && "Did not find op!");
+    }
+
     bool is_in_pt(const std::string& name) const {
       assert(contains_key(name, isIn));
       return isIn.at(name);
@@ -2560,6 +2580,9 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
     void wire_ubuf_IO(CodegenOptions& options, CoreIR::ModuleDef* def, map<string, CoreIR::Wireable*> & pt2wire, CoreIR::Instance* buf, UBufferImpl & impl, int bank_id, bool with_ctrl);
     //Helper function for generate cgra mem instance
     CoreIR::Instance* map_ubuffer_to_cgra(CodegenOptions& options, CoreIR::ModuleDef* def, UBuffer& target_buf);
+    //Helper function for generate pond instance
+
+    CoreIR::Instance* generate_accum_reg_instance(CodegenOptions& options, CoreIR::ModuleDef* def);
 
     //Wrappers for generate coreir
     //original memory generation for memory tile with enable and valid

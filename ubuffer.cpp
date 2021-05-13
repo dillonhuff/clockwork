@@ -1774,6 +1774,7 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, UBuffer& ubuf) {
 
     //Go through all the ops and produce the read and write
     vector<string> ops = ubuf.get_ops_sorted_by_bundle();
+    cout << "Sorted ops: " << ops << endl;
     auto mem = options.mem_hierarchy.at("regfile");
     int word_width = mem.word_width.at("regfile");
     int capacity = mem.capacity.at("regfile");
@@ -2597,6 +2598,123 @@ void cgpl_post_processing(CoreIR::ModuleDef* def, CoreIR::Instance*buf, CoreIR::
   }
 }
 
+CoreIR::Instance* UBuffer::generate_accum_reg_instance(CodegenOptions& options, CoreIR::ModuleDef* def) {
+    //Save the config argument in ubuffer data structure
+    config_file = generate_ubuf_args(options, *this);
+
+    //TODO: check we define pond
+    auto buf_ins = generate_pond_instance(def, options, "ub_"+name,
+            num_in_ports(), num_out_ports());
+    return buf_ins;
+}
+
+void insert_accumulation_register(CodegenOptions & options, CoreIR::ModuleDef* def, UBuffer & buf, map<string, CoreIR::Wireable*> & pt2wire) {
+  vector<string> update_ops;
+  for(auto op: buf.get_ops()) {
+    if (buf.is_update_op(op)) {
+      update_ops.push_back(op);
+    }
+  }
+  if (update_ops.size() == 0) {
+    return;
+  }
+  assert(update_ops.size() == 1);
+  string op_name = pick(update_ops);
+  auto am = buf.get_access_map_from_op(op_name);
+  auto sched = buf.get_schedule_from_op(op_name);
+  cout << "\tupdate op access map: " << str(am) << endl
+      << "\tupdate op schedule: " << str(sched) << endl;
+  vector<bool> reaccess_dims = relation_map(am);
+  int mask_until = reaccess_dims.size();
+  for(auto it = reaccess_dims.rbegin(); it < reaccess_dims.rend(); it ++)
+    if ((*it) ) {
+      mask_until = (int)(reaccess_dims.rend() - 1 - it) ;
+      break;
+  }
+  cout <<"MASK dim: "<< mask_until << endl;
+  if (mask_until == reaccess_dims.size() - 1)
+    return;
+  isl_map* mask_map = get_domain_mask(am, mask_until);
+  auto am_mask = dot(mask_map, am);
+  auto sched_mask = dot(mask_map, sched);
+  cout << "\tupdate op access map: " << str(am_mask) << endl
+      << "\tupdate op schedule: " << str(sched_mask) << endl;
+
+  vector<int> domain_ext = extents(::domain(am));
+  cout << domain_ext << endl;
+  int accum_time = 1;
+  for(int i = mask_until + 1; i < num_in_dims(am); i ++) {
+    accum_time *= domain_ext.at(i);
+  }
+
+  cout << "Accumulation time: " << accum_time << endl;
+
+  //TODO double check this value make sense
+  auto in_sched_reg = linear_schedule(sched_mask, {1}, -1, false);
+  auto out_sched_reg = linear_schedule(sched_mask, {1}, accum_time - 1, false);
+
+  //Create the pond reg
+  UBuffer accum_reg;
+  accum_reg.name = buf.name + "_accum_reg";
+  accum_reg.ctx = buf.ctx;
+  accum_reg.port_widths = buf.port_widths;
+
+  vector<string> inpts, outpts;
+
+  for(string inpt: buf.get_in_ports()) {
+    if (::name(buf.domain.at(inpt)) == op_name) {
+      inpts.push_back(inpt);
+      string pt_name = inpt + "_accum_in_0";
+      auto reg_in_am = add_domain_suffix(am_mask, "_write");
+      auto reg_in_sched= add_domain_suffix(in_sched_reg, "_write");
+      accum_reg.port_bundles[op_name + "_write_0"].push_back(pt_name);
+      accum_reg.add_in_pt(pt_name, ::domain(reg_in_am), reg_in_am, reg_in_sched);
+
+      pt_name = inpt + "_accum_in_1";
+      reg_in_am = add_domain_suffix(am, "_write_pe");
+      reg_in_sched= add_domain_suffix(sched, "_write_pe");
+      accum_reg.port_bundles[op_name + "_write_1"].push_back(pt_name);
+      accum_reg.add_in_pt(pt_name, ::domain(reg_in_am), reg_in_am, reg_in_sched);
+    }
+  }
+
+  for(string outpt: buf.get_out_ports()) {
+    if (::name(buf.domain.at(outpt)) == op_name) {
+      outpts.push_back(outpt);
+      //string pt_name = outpt + "_accum_out_0";
+      //auto reg_out_am = add_domain_suffix(am_mask, "_read");
+      //auto reg_out_sched= add_domain_suffix(out_sched_reg, "_read");
+      //accum_reg.port_bundles[op_name + "_read_0"].push_back(pt_name);
+      //accum_reg.add_out_pt(pt_name, ::domain(reg_out_am), reg_out_am, reg_out_sched);
+
+      auto pt_name = outpt + "_accum_out_1";
+      auto reg_out_am = add_domain_suffix(am, "_read_pe");
+      auto reg_out_sched= add_domain_suffix(sched, "_read_pe");
+      accum_reg.port_bundles[op_name + "_read_1"].push_back(pt_name);
+      accum_reg.add_out_pt(pt_name, ::domain(reg_out_am), reg_out_am, reg_out_sched);
+    }
+  }
+  cout << accum_reg << endl;
+  assert(inpts.size()==1);
+  buf.replace_pt(pick(inpts), am_mask, out_sched_reg);
+  assert(outpts.size()==1);
+  buf.replace_pt(pick(outpts), am_mask, in_sched_reg);
+
+  //Wire the datapath
+  CoreIR::Instance* accum_reg_ins = accum_reg.generate_accum_reg_instance(options, def);
+  generate_lake_tile_verilog(options, accum_reg_ins);
+  string config_mode = accum_reg_ins->getMetaData()["mode"];
+
+  //Wire the PE interface with accumulation register
+  def->connect(accum_reg_ins->sel(memDatainPort(config_mode, 1)), pt2wire.at(pick(inpts)));
+  //pt2wire.at(pick(inpts)) = accum_reg_ins->sel(memDataoutPort(config_mode, 0));
+  def->connect(accum_reg_ins->sel(memDataoutPort(config_mode, 0)), pt2wire.at(pick(outpts)));
+  pt2wire.at(pick(outpts)) = accum_reg_ins->sel(memDatainPort(config_mode, 0));
+
+  cout << "original buffer for rewrite: " << buf << endl;
+
+}
+
 //generate/realize the rewrite structure inside ubuffer node
 void UBuffer::generate_coreir(CodegenOptions& options,
         UBufferImpl& impl,
@@ -2636,6 +2754,8 @@ void UBuffer::generate_coreir(CodegenOptions& options,
     //An optimization for coarse grained pipeline, save the iterator level
     CoreIR::Instance* cgpl_ctrl;
     bool decouple_ctrl = cgpl_ctrl_optimization(options, def, cgpl_ctrl, target_buf);
+
+    insert_accumulation_register(options, def, target_buf, pt2wire);
 
     //Generate the ubuffer module for CGRA
     //Lake/Pond coreir generation
