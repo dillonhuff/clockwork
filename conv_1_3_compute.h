@@ -29,8 +29,8 @@ hw_uint<16> hcompute_conv_stencil_1(hw_uint<16>& conv_stencil, hw_uint<16>& hw_i
    _kernela0[_kernel_s0_x] = 0;
   } // for _kernel_s0_x
   _kernela0[0] = 1;
-  _kernela0[1] = 1;
-  _kernela0[2] = 1;
+  _kernela0[1] = 3;
+  _kernela0[2] = 4;
 
   int32_t _260 = ((const int32_t *)_kernela0)[_conv_s1_r_x];
   uint16_t _261 = (uint16_t)(_260);

@@ -18119,9 +18119,7 @@ schedule_info garnet_schedule_info(CodegenOptions& options, prog& prg, bool use_
       sched.compute_unit_latencies[op->func] = 1;
       //sched.op_compute_unit_latencies[op->name] = 1;
     } else if (prg.name == "rom" && op->func == "hcompute_hw_output_stencil") {
-      //assert(false);
       sched.compute_unit_latencies[op->func] = 1;
-      //sched.op_compute_unit_latencies[op->name] = 1;
     } else if (op->func != "") {
       sched.compute_unit_latencies[op->func] = 0;
       //sched.op_compute_unit_latencies[op->name] = 0;
