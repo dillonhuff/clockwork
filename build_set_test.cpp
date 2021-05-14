@@ -14508,6 +14508,7 @@ void cpy_app_to_folder(const std::string& app_type, const std::string& prg_name)
 
 void test_pond(string dir, bool run_verilator=true) {
   vector<prog> test_apps;
+  test_apps.push_back(conv_rolled());
   test_apps.push_back(conv_1_3());
   test_apps.push_back(resnet_simple());
   test_apps.push_back(resnet());
@@ -14549,7 +14550,6 @@ void test_pond(string dir, bool run_verilator=true) {
       bool extra_flag_for_lake = true;
       int res = run_verilator_on(name, name + "_verilog_tb.cpp", verilog_files, extra_flag_for_lake);
       assert(res == 0);
-      //assert(false);
       cmd("rm LakeWrapper.v");
       cmd("rm -rf ./" + dir + "/" + name + "/verilog/");
 
@@ -14618,7 +14618,7 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
 
   //test_apps.push_back(conv_3_3_rolled());
 
-  test_apps.push_back(laplacian_pyramid());
+  //test_apps.push_back(laplacian_pyramid());
   test_apps.push_back(counter());
   test_apps.push_back(gaussian());
   test_apps.push_back(conv_3_3());
@@ -16973,8 +16973,11 @@ bool need_relax(schedule_info& sched, op* loop, prog& prg, int fetch_width) {
             cout << tab(4) << "loop trip count: " << loop->trip_count() << endl;
             if (is_inner_loop(loop))
                 sched.op_offset_within_parent.at(loop) = (loop->trip_count()) % fetch_width + fetch_width * (loop->trip_count()%fetch_width== 0);
-            else
+            else {
+                //int range_span = get_dim_extent(range(b_map), packed_addr_dim);
+                //if (range_span % fetch_width)
                 sched.op_offset_within_parent.at(loop) = sched.II(loop) * fetch_width;
+            }
             cout << tab(4) << "New offset within parent: " << sched.offset_in_parent(loop) << endl;
           }
           return true;
@@ -18506,6 +18509,10 @@ void compile_for_garnet_single_port_mem(prog& prg,
           prg.whole_iteration_domain());
   cout << "result schedule: " << str(hw_sched) << endl;
   auto buffers_opt = build_buffers(prg, hw_sched);
+  auto schedule_global = global_schedule_from_buffers(buffers_opt);
+  auto sched_max = lexmaxpt(range(schedule_global));
+  cout << "Latency of application is: " << str((sched_max)) << endl;
+
   tag_coarse_grained_loop_to_ubuf(buffers_opt, prg);
   //FIXME: put into separate pass for power analysis
   if (energy_model) {

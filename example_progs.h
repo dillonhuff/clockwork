@@ -26,6 +26,7 @@ prog conv_3_3_wide(); //stencil
 prog conv_3_3_rolled(); //stencil
 prog conv_1_2(); //stencil
 prog conv_1_3(); //stencil
+prog conv_rolled(); //stencil
 prog unet_conv_3_3(); //reduce
 prog resnet(); //reduce
 prog resnet_simple(); //for regfile debug

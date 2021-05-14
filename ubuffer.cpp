@@ -7849,6 +7849,10 @@ void UBuffer::generate_banks(CodegenOptions& options) {
 
         //mask the refetch from SRAM if we keep fetching the same location
         auto domain_mask = get_domain_mask(acc_vec, vectorize_loop_dim);
+        cout << "domain mask: " << str(domain_mask) << endl;
+        if(!isl_map_is_identity(domain_mask)) {
+            ahead_step = 1;
+        }
         acc_vec = dot(domain_mask, acc_vec);
         sched_vec = dot(domain_mask, sched_vec);
         cout << "\tsched vec before moving: "<< str(sched_vec) << endl;
@@ -8215,13 +8219,13 @@ void UBuffer::generate_banks(CodegenOptions& options) {
               {
                 isl_map* op_stripmining = acc_pattern.get_op_stripmining(ctx, dim_id, fetch_width, "");
                 std::cout << "\ttransform stripmining: " << str(op_stripmining) << endl;
-                //isl_set* sm_domain = domain.at(out_pt_name);
-                isl_set* sm_domain = range(its(op_stripmining, domain.at(out_pt_name)));
+                isl_set* sm_domain = domain.at(out_pt_name);
+                //isl_set* sm_domain = range(its(op_stripmining, domain.at(out_pt_name)));
                 std::cout << "\tdomain stripmining: " << str(sm_domain) << endl;
-                auto sm_access_map = dot(inv(op_stripmining), outpt_acc_map);
-                auto sm_sched = dot(inv(op_stripmining), to_map(schedule.at(out_pt_name)));
-                //auto sm_access_map = outpt_acc_map;
-                //auto sm_sched = to_map(schedule.at(out_pt_name));
+                //auto sm_access_map = dot(inv(op_stripmining), outpt_acc_map);
+                //auto sm_sched = dot(inv(op_stripmining), to_map(schedule.at(out_pt_name)));
+                auto sm_access_map = outpt_acc_map;
+                auto sm_sched = to_map(schedule.at(out_pt_name));
                 sm_domain = add_suffix(sm_domain, "_tb2out_" + str(tb_cnt));
                 sm_access_map = add_domain_suffix(sm_access_map, "_tb2out_" + str(tb_cnt));
                 sm_sched = add_domain_suffix(sm_sched, "_tb2out_" + str(tb_cnt));
