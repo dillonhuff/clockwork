@@ -14618,6 +14618,7 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
 
   //test_apps.push_back(conv_3_3_rolled());
 
+  test_apps.push_back(laplacian_pyramid());
   test_apps.push_back(counter());
   test_apps.push_back(gaussian());
   test_apps.push_back(conv_3_3());
