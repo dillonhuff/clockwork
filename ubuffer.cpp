@@ -8044,7 +8044,7 @@ void UBuffer::generate_banks(CodegenOptions& options) {
                 auto trans_map = get_div_trans(am, split_dims);
 
                 auto stripmining_am = dot(inv(trans_map), am);
-                cout << "\t After strip mining: " << str(stripmining_am) << endl;
+                cout << "\t After strip mining: " << str(simplify_expr(stripmining_am)) << endl;
                 access_map.at(out_pt_name) = to_umap(simplify(stripmining_am));
                 domain.at(out_pt_name) = ::domain(stripmining_am);
                 string dom_name = domain_name(am) + "_sram2tb";
@@ -8677,6 +8677,49 @@ void UBuffer::generate_banks(CodegenOptions& options) {
 
         auto writes = buf.access_map.at(inpt);
         auto reads = buf.access_map.at(outpt);
+        cout << "writes: " << str(writes) << endl;
+        cout << "reads : " << str(reads) << endl;
+        cout << "Schedule..." << endl;
+        for (auto m : get_maps(sched)) {
+          cout << tab(1) << str(m) << endl;
+          release(m);
+        }
+
+        auto time_to_write = dot(inv(sched), (writes));
+        auto time_to_read = dot(inv(sched), (reads));
+
+        cout << "Time to write: " << str(time_to_write) << endl;
+        cout << "Time to read : " << str(time_to_read) << endl;
+
+        auto pc_times = dot(time_to_write, inv(time_to_read));
+        cout << "PC times     : " << str(pc_times) << endl;
+        auto dds = isl_union_map_deltas(pc_times);
+        cout << "DDs          : " << str(dds) << endl;
+        if (!empty(dds)) {
+          auto ddc = to_set(dds);
+
+          if (!(isl_set_is_singleton(ddc))) {
+            return {};
+          }
+          assert(isl_set_is_singleton(ddc));
+
+          int dd = to_int(lexminval(ddc));
+          cout << "DD           : " << dd << endl;
+          string writer_name = domain_name(pick(get_maps(writes)));
+          cout << "writer op    : " << writer_name << endl;
+          dd = dd;
+
+          return {dd};
+        } else {
+          return {};
+        }
+        return {};
+      }
+
+      maybe<int> dependence_distance_singleton(umap* writes, umap* reads, umap* sched) {
+
+        //auto writes = buf.access_map.at(inpt);
+        //auto reads = buf.access_map.at(outpt);
         cout << "writes: " << str(writes) << endl;
         cout << "reads : " << str(reads) << endl;
         cout << "Schedule..." << endl;

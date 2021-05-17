@@ -14618,7 +14618,8 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
 
   //test_apps.push_back(conv_3_3_rolled());
 
-  //test_apps.push_back(laplacian_pyramid());
+  //test_apps.push_back(up_sample());
+  test_apps.push_back(laplacian_pyramid());
   test_apps.push_back(counter());
   test_apps.push_back(gaussian());
   test_apps.push_back(conv_3_3());
@@ -17346,14 +17347,23 @@ void relax_delays_rate_matched(schedule_info& sched, prog& prg) {
   cout << "Adjusting delays of " << prg.name << endl;
   int d = 0;
   int fetch_width = 4;
-  auto start_times = op_start_times(sched, prg);
+  //auto start_times = op_start_times(sched, prg);
+  auto start_times = its(op_times_map(sched, prg), prg.whole_iteration_domain());
+  auto start_times_map = get_maps_in_map(start_times);
   auto domains = prg.domains();
   for (auto name : topologically_sort_kernels(prg)) {
     auto lp = prg.find_loop(name);
     auto cons_op_vec = lp->all_ops();
     if (cons_op_vec.size() > 1)
         continue;
+    cout << cons_op_vec.size()  << endl;
     cout << "Adjusting delay of " << lp->name << endl;
+    auto read_map = read_at(lp->name, prg);
+    //chances are that a op does consume any buffer
+    if (!read_map) {
+      continue;
+    }
+    cout << "read map: " << str(read_map) << endl;
     for(auto prod: get_producers(name, prg)){
         auto prod_loop = prg.find_loop(prod);
         auto prod_op_vec = prod_loop->all_ops();
@@ -17361,11 +17371,18 @@ void relax_delays_rate_matched(schedule_info& sched, prog& prg) {
         if (prod_op_vec.size() > 1)
             continue;
         auto prod_op_name = pick(prod_op_vec)->name;
+        auto write_map = written_at(prod_loop->name, prg);
+        cout << "write map: " << str(write_map) << endl;
         auto cons_op_name = pick(cons_op_vec)->name;
         auto prod_dom = domains.at(pick(prod_op_vec));
         auto cons_dom = domains.at(pick(cons_op_vec));
-        auto prod_sched = to_map(start_times.at(pick(prod_op_vec)));
-        auto cons_sched = to_map(start_times.at(pick(cons_op_vec)));
+        auto prod_sched = (start_times_map.at(pick(prod_op_vec)->name));
+        auto cons_sched = (start_times_map.at(pick(cons_op_vec)->name));
+
+        auto dd = dependence_distance_singleton(write_map, read_map, start_times);
+        if (dd.has_value()) {
+          cout << tab(2) << "DD: " << dd.get_value() << endl;
+        }
 
         cout << tab(2) << "Producers: " << prod_op_name << endl;
         cout << tab(2) << "sched: " << str(prod_sched) << endl;
@@ -17380,11 +17397,11 @@ void relax_delays_rate_matched(schedule_info& sched, prog& prg) {
         bool prod_need_index = pick(cons_op_vec)->index_variables_needed_by_compute.size();
         cout << tab(4) << "Start cycle Is equal: " << equal_start_time << endl;
         cout << tab(4) << "domain is same: " << equal_rng << endl;
-        if (equal_start_time && !equal_rng) {
+        if (equal_start_time && !dd.has_value()) {
             int prod_ii = sched.II(pick(prod_op_vec)->parent);
             cout << "\t\top " << prod_op_name << " has ii: " << prod_ii << endl;
             //6 is a magic number which make upsample work
-            d += prod_ii * fetch_width + 6;
+            d += prod_ii * fetch_width + 4;
         } else if (equal_start_time && prod_need_index){
             d += 3;
             //TODO: remove this hack with 2 round of delay optimization
@@ -17398,6 +17415,7 @@ void relax_delays_rate_matched(schedule_info& sched, prog& prg) {
         continue;
     sched.op_offset_within_parent[lp] += d;
   }
+  assert(false);
 }
 
 void asap_input_iis(schedule_info& sched, prog& prg) {
@@ -18509,8 +18527,7 @@ void compile_for_garnet_single_port_mem(prog& prg,
           prg.whole_iteration_domain());
   cout << "result schedule: " << str(hw_sched) << endl;
   auto buffers_opt = build_buffers(prg, hw_sched);
-  auto schedule_global = global_schedule_from_buffers(buffers_opt);
-  auto sched_max = lexmaxpt(range(schedule_global));
+  auto sched_max = lexmaxpt(range(hw_sched));
   cout << "Latency of application is: " << str((sched_max)) << endl;
 
   tag_coarse_grained_loop_to_ubuf(buffers_opt, prg);

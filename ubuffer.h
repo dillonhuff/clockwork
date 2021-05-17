@@ -2892,8 +2892,8 @@ bool inner_bank_offset_is_legal(isl_map* slot_func,
 
 vector<string> generate_multilinear_address_components(const std::string& pt, bank& bnk, UBuffer& buf);
 
-maybe<int> dependence_distance_singleton(UBuffer& buf, const string& inpt, const string& outpt,
-    umap* sched);
+maybe<int> dependence_distance_singleton(UBuffer& buf, const string& inpt, const string& outpt, umap* sched);
+maybe<int> dependence_distance_singleton(umap* writes, umap* read, umap* sched);
 
 //For chaining and intile banking
 map<string, UBuffer> decouple_multi_tile_ubuffer(CodegenOptions& options, map<string, UBuffer> & vec_buf);
