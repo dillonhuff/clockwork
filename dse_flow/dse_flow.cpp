@@ -52,7 +52,7 @@ int main(int argc, char** argv) {
     func_map["rom"] = rom;
     func_map["counter"] = counter;
     func_map["resnet_one_input"] = resnet_one_input;
-    
+    func_map["mobilenet_one_input"] = mobilenet_one_input;
 
    
     auto prg_ptr = func_map[app_name];
@@ -96,7 +96,7 @@ int main(int argc, char** argv) {
     } else {
 
 
-        bool gen_config_only = true; 
+        bool gen_config_only = false; 
         bool multi_accessor = true;
         
 
@@ -131,6 +131,7 @@ int main(int argc, char** argv) {
             // string app_type = "single_port_buffer";
             // cpy_app_to_folder(app_type, prg.name);
         }
+        
         
         cout << "Passed!" << endl;
         cout << "Output name: " << dir << "/" << prg.name << endl;

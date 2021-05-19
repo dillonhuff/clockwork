@@ -377,13 +377,25 @@ isl_val* lexmaxval(isl_set* const m0);
 
 int get_domain_range(isl_set* const dom, int dim);
 int get_domain_span_range(isl_map* const m, int dim);
+int get_domain_span_range(isl_map* const m, int dim, int out_dim);
 pair<int, int> get_domain_merge_dims(isl_map* m );
 vector<pair<int, int>> get_all_domain_merge_dims(isl_map* m );
 isl_map* merge_domain_dim(isl_map* m);
 
 
 //vectorization transformation
+isl_map* get_domain_mask(isl_map* m, int vec_dim);
 isl_map* get_domain_trans(isl_set* dom, int pos, int fetch_width);
+isl_map* get_domain_trans_with_reaccess_mask(isl_set* dom, int pos, int fetch_width);
+isl_set* get_domain_trans_sched_domain(isl_set* dom, int pos, int fetch_width);
+
+isl_map* get_div_trans(isl_map* am, map<int, int> split_dims);
+
+isl_map* get_set_slice(isl_set* dom, int pos, int fetch_width);
+isl_map* get_set_slice(isl_set* dom, int pos, int offset, int fetch_width);
+vector<isl_map*> get_vectorize_interpolate(isl_set* dom, int pos, int fetch_width);
+int get_inner_most_related_dom_dim(isl_map* m, int dim_id, int fetch_width);
+
 
 umap* lexmax(umap* const m0);
 
@@ -441,6 +453,7 @@ int get_pad_remainder(isl_map*, int, int);
 isl_map* reset_domain_coeff(isl_map* m, int dom_dim_id, int val);
 isl_map* pad_to_domain_map(isl_map* s, int depth);
 isl_map* pad_to_domain_ubuf_map(isl_map* s, int dom_dim_id, int depth);
+isl_map* pad_to_domain_begin_ubuf_map(isl_map* m, int dom_dim_id, int shift_depth);
 isl_map* shift_domain_map(isl_map* s, vector<int> shift_depth);
 isl_map* shift_range_map(isl_map* s, vector<int> shift_depth);
 isl_map* assign_domain_to_map(isl_map* s, isl_set* new_domain);
@@ -521,6 +534,7 @@ isl_union_set* domain(isl_union_map* const m);
 int stride_in_dim(isl_set* const s, size_t dim);
 
 int stride_in_dim(isl_map* const m, size_t dim);
+int stride_in_dim(isl_map* const m, size_t dim, size_t dim_out);
 
 isl_set* range(isl_map* const m);
 
@@ -690,6 +704,7 @@ std::vector<isl_aff*> get_aff_vec(isl_map* m);
 
 string str(isl_mat* const ineqmat);
 
+map<int, int> get_dim2denom(isl_map* am);
 isl_basic_set* lift_divs(isl_basic_set* bm);
 isl_basic_set* flatten_bmap_to_bset(isl_basic_map* bm);
 isl_basic_set* negative(isl_basic_set* fs, const int var);

@@ -1753,6 +1753,8 @@ void emit_lake_config_collateral(CodegenOptions options, string tile_name, json 
     cmd("rm -rf " + file_dir);
     cmd("mkdir -p " + file_dir);
     for (auto it = config_file.begin(); it != config_file.end(); ++it) {
+        if (it.key() == "init")
+            continue;
         cout << "\t\tconfig key: " << it.key() << ", " << it.value() << endl;
         ofstream out(file_dir + "/" + it.key() + ".csv");
         emit_lake_config2csv(it.value(), out);
@@ -1929,7 +1931,7 @@ Instance* generate_coreir_op_controller(CodegenOptions& options, ModuleDef* def,
   //For those op need loop index we need this controller
   bool need_index = op->index_variables_needed_by_compute.size() > 0;
   //TODO: remove the first statement after kavya add init to lakewrapper
-  // if (options.rtl_options.use_external_controllers || need_index ) {
+  //if (options.rtl_options.use_external_controllers || need_index ) {
   if (options.rtl_options.use_external_controllers) {
     auto aff_c = affine_controller(options, c, dom, aff);
     aff_c->print();
@@ -3068,7 +3070,7 @@ void map_memory(Module* top) {
 
   // c->runPasses({"rungenerators"});
   // A new pass to remove input enable signal affine controller
-  // disconnect_input_enable(c, top);
+  disconnect_input_enable(c, top);
 
   // c->runPasses({"cullgraph"});
   // c->runPasses({"removewires"});

@@ -392,19 +392,19 @@ umap* set_domain_name(umap* const m, string new_name) {
 isl_map* add_range_suffix(isl_map* const m, string suffix) {
     string origin_name = range_name(m);
     string new_name = origin_name + suffix;
-    return isl_map_set_tuple_name(m, isl_dim_out, new_name.c_str());
+    return isl_map_set_tuple_name(cpy(m), isl_dim_out, new_name.c_str());
 }
 
 isl_map* add_domain_suffix(isl_map* const m, string suffix) {
     string origin_name = domain_name(m);
     string new_name = origin_name + suffix;
-    return isl_map_set_tuple_name(m, isl_dim_in, new_name.c_str());
+    return isl_map_set_tuple_name(cpy(m), isl_dim_in, new_name.c_str());
 }
 
 isl_set* add_suffix(isl_set* const m, string suffix) {
     string origin_name = name(m);
     string new_name = origin_name + suffix;
-    return isl_set_set_tuple_name(m, new_name.c_str());
+    return isl_set_set_tuple_name(cpy(m), new_name.c_str());
 }
 
 isl_set* to_set(isl_union_set* const m) {
@@ -1829,7 +1829,13 @@ int stride_in_dim(isl_set* const s, size_t dim) {
     return isl_val_get_num_si(isl_set_get_stride(cpy(s), dim));
 }
 
+int stride_in_dim(isl_map* const m, size_t dim, size_t out_dim) {
+    auto aff = get_aff_vec(m).at(out_dim);
+    return to_int(get_coeff(aff, dim));
+}
+
 int stride_in_dim(isl_map* const m, size_t dim) {
+    assert(num_out_dims(m) == 1);
     auto aff = get_aff(m);
     return to_int(get_coeff(aff, dim));
 }
@@ -2692,6 +2698,37 @@ isl_map* pad_to_domain_ubuf_map(isl_map* m, int dom_dim_id, int depth) {
       }
     }
   }
+  auto b_ret = isl_basic_map_universe(get_space(m));
+  for (auto c: c_vec) {
+      b_ret = isl_basic_map_add_constraint(b_ret, c);
+  }
+
+  return isl_map_from_basic_map(b_ret);
+}
+
+isl_map* pad_to_domain_begin_ubuf_map(isl_map* m, int dom_dim_id, int depth) {
+
+  auto c_vec = constraints(m);
+  for (auto & c: c_vec) {
+
+    bool involve;
+    involve =  isl_constraint_involves_dims(c, isl_dim_in, dom_dim_id, 1);
+
+    //shift the constraint by 1
+    if (involve) {
+      auto val = isl_val_get_num_si(isl_constraint_get_constant_val(c));
+      if (isl_constraint_is_equality(c)) {
+        auto stride = isl_val_get_num_si(
+                isl_constraint_get_coefficient_val(c, isl_dim_in, dom_dim_id));
+        cout << "stride: " << stride << endl;
+        c = isl_constraint_set_constant_si(c, val - depth*stride);
+      } else {
+        if (isl_constraint_is_upper_bound(c, isl_dim_in, dom_dim_id))
+          c = isl_constraint_set_constant_si(c , val + depth);
+      }
+    }
+  }
+
   auto b_ret = isl_basic_map_universe(get_space(m));
   for (auto c: c_vec) {
       b_ret = isl_basic_map_add_constraint(b_ret, c);
@@ -3920,13 +3957,25 @@ int get_domain_range(isl_set* const dom, int dim) {
 }
 
 int get_domain_span_range(isl_map* const m, int dim) {
+    //cout << "input: " << str(m) << ", m dim" << dim  << endl;
   auto mm = cpy(m);
-  for (int d = 0; d < num_in_dims(m); d ++) {
-      if (d != dim)
-          mm = reset_domain_coeff(mm, d, 0);
-  }
-  auto single_map = project_all_in_but(mm, dim);
-  return get_domain_range(domain(single_map), 0) * stride_in_dim(m, dim);
+  //for (int d = 0; d < num_in_dims(m); d ++) {
+  //    if (d != dim)
+  //        mm = reset_domain_coeff(mm, d, 0);
+  //}
+  //cout << "before projection: " << str(mm) << endl;
+  //auto single_map = project_all_in_but(mm, dim);
+  //cout << "single_map : " << str(single_map) << endl;
+  return get_dim_extent(domain(mm), dim) * stride_in_dim(mm, dim);
+
+}
+
+int get_domain_span_range(isl_map* const m, int dim, int out_dim) {
+    //cout << "input: " << str(m) << ", m dim" << dim  << endl;
+  auto mm = cpy(m);
+  //auto single_map = project_all_in_but(mm, dim);
+  //cout << "single_map : " << str(single_map) << endl;
+  return get_dim_extent(domain(mm), dim) * stride_in_dim(mm, dim, out_dim);
 
 }
 
@@ -3951,7 +4000,8 @@ vector<pair<int, int>> get_all_domain_merge_dims(isl_map* m) {
     for (int dim = 2; dim < in_dims; dim ++) {
         int span_range = get_domain_span_range(m, dim);
         int up_level_stride = stride_in_dim(m, dim-1);
-        if (span_range == up_level_stride)
+        cout << "span range: " << span_range << ", up_level_stride : "<< up_level_stride << endl;
+        if ((span_range == up_level_stride) && (span_range != 0))
             ret.push_back({in_dims - dim - 1, in_dims -  dim});
     }
     return ret;
@@ -3975,7 +4025,107 @@ isl_map* merge_domain_dim(isl_map* m) {
     return mm;
 }
 
+int get_inner_most_related_dom_dim(isl_map* m, int dim_id, int fetch_width) {
+  auto aff_vec = get_aff_vec(m);
+  assert(aff_vec.size() > dim_id);
+  auto am = to_map(aff_vec.at(dim_id));
+  vector<bool> rel_map = relation_map(am);
+  int inner_most_address_related_dim_id = rel_map.size() - 1;
+  for (int i = rel_map.size() - 1; i >= 0; i -- ) {
+    if ((rel_map.at(i) != 0) ) {//&& (get_domain_span_range(m, i) >= fetch_width)) {
+      inner_most_address_related_dim_id = i;
+      break;
+    }
+  }
+  return inner_most_address_related_dim_id;
+}
 
+isl_map* get_set_slice(isl_set* dom, int pos, int offset, int fetch_width) {
+    string dom_name = name(dom);
+    int dim = num_dims(dom);
+    vector<string> var, rewrite_var;
+    for (int i = 0; i < dim; i ++) {
+        var.push_back("i"+str(i));
+        if (pos == i) {
+            //rewrite_var.push_back("i"+str(i) + "*" + str(fetch_width) + "+" + str(offset));
+            rewrite_var.push_back("floor((i"+str(i) + "+" + str(offset) + ")/" + str(fetch_width) + ")" );
+        } else {
+            rewrite_var.push_back("i"+str(i));
+        }
+    }
+    string map_str = "{"+dom_name + bracket_list(var) + "->" + dom_name +bracket_list(rewrite_var)+ "}";
+    auto trans = isl_map_read_from_str(ctx(dom), map_str.c_str());
+    cout << "Autogen slice:" << str(trans) << endl;
+    return trans;
+}
+
+isl_map* get_set_slice(isl_set* dom, int pos, int fetch_width) {
+    string dom_name = name(dom);
+    int dim = num_dims(dom);
+    vector<string> var, rewrite_var;
+    for (int i = 0; i < dim; i ++) {
+        var.push_back("i"+str(i));
+        if (pos == i) {
+            //rewrite_var.push_back("i"+str(i) + "*" + str(fetch_width) + "+" + str(offset));
+            rewrite_var.push_back("floor(i"+str(i) + "/" + str(fetch_width) + ")" );
+        } else {
+            rewrite_var.push_back("i"+str(i));
+        }
+    }
+    string map_str = "{"+dom_name + bracket_list(var) + "->" + dom_name +bracket_list(rewrite_var)+ "}";
+    auto trans = isl_map_read_from_str(ctx(dom), map_str.c_str());
+    cout << "Autogen slice:" << str(trans) << endl;
+    return trans;
+}
+
+isl_map* get_div_trans(isl_map* am, map<int, int> split_dims) {
+
+    for (auto it: split_dims)
+      cout << "\tDim: " << it.first << " denom: " << it.second << endl;
+
+    //Get the stripmining expression
+    vector<string> dvars;
+    vector<string> origin_vars;
+    for (int d = 0; d < num_in_dims(am); d ++) {
+      if (contains_key(d, split_dims)) {
+        int denom = split_dims.at(d);
+        dvars.push_back("floor(d" + str(d) + "/" + str(denom) + ")");
+        dvars.push_back("d"+str(d) + "%" + str(denom));
+      } else {
+        dvars.push_back("d" + str(d));
+      }
+      origin_vars.push_back("d" + str(d));
+    }
+    string trans_str =
+      curlies(
+          ::domain_name(am) +  bracket_list(origin_vars)
+          + "->" +
+          ::domain_name(am) + bracket_list(dvars)
+          );
+    cout << "\tTrans str" << trans_str << endl;
+    auto trans_map = isl_map_read_from_str(ctx(am), trans_str.c_str());
+    return trans_map;
+}
+
+isl_map* get_domain_mask(isl_map* m, int vec_dim) {
+    int dim = num_in_dims(m);
+    string dom_name = domain_name(m);
+    vector<string> var_new, var_mask;
+    for (int i = 0; i < dim; i++) {
+        if (i <= vec_dim) {
+            var_new.push_back("i" + str(i));
+            var_mask.push_back("i" + str(i));
+        } else {
+            auto dom = domain(m);
+            var_mask.push_back("i" + str(i) + "=" + str(get_dim_min(dom, i)));
+        }
+    }
+    string map_str = "{"+dom_name + bracket_list(var_new) + "->"
+        + dom_name + bracket_list(var_mask)+"}";
+    auto trans = isl_map_read_from_str(ctx(m), map_str.c_str());
+    cout << "mask : " << str(trans) << endl;
+    return trans;
+}
 
 isl_map* get_domain_trans(isl_set* dom, int pos, int fetch_width) {
     string dom_name = name(dom);
@@ -3994,6 +4144,67 @@ isl_map* get_domain_trans(isl_set* dom, int pos, int fetch_width) {
     auto trans = isl_map_read_from_str(ctx(dom), map_str.c_str());
     cout << "Autogen trans:" << str(trans) << endl;
     return trans;
+}
+
+//This is the advance version of domain transformation used in vectorization
+isl_map* get_domain_trans_with_reaccess_mask(isl_set* dom, int pos, int fetch_width) {
+    string dom_name = name(dom);
+    int dim = num_dims(dom);
+    vector<string> var, rewrite_var;
+    for (int i = 0; i < dim; i ++) {
+        if (pos == i) {
+            //rewrite_var.push_back("i"+str(i) + "*" + str(fetch_width) + "+" + str(offset));
+            var.push_back("i"+str(i));
+            rewrite_var.push_back("i"+str(i) + "*" + str(fetch_width) );
+        } else if (i < pos){
+            var.push_back("i"+str(i));
+            rewrite_var.push_back("i"+str(i));
+        } else {
+            rewrite_var.push_back("i"+str(i));
+        }
+    }
+    string map_str = "{"+dom_name + bracket_list(var) + "->" + dom_name +bracket_list(rewrite_var)+ "}";
+    auto trans = isl_map_read_from_str(ctx(dom), map_str.c_str());
+    cout << "Autogen trans:" << str(trans) << endl;
+    return trans;
+}
+
+isl_set* get_domain_trans_sched_domain(isl_set* dom, int pos, int fetch_width) {
+    string dom_name = name(dom);
+    int dim = num_dims(dom);
+    vector<string> var, stmt;
+    for (int i = 0; i < dim; i ++) {
+        var.push_back("i" + str(i) );
+        if (i > pos){
+            stmt.push_back("i" + str(i) + " = " + str(get_dim_min(dom, i)));
+        }
+    }
+    string map_str = "{"+dom_name + bracket_list(var) + ":" + sep_list(stmt, "", "", " and ")+ "}";
+    auto trans = isl_set_read_from_str(ctx(dom), map_str.c_str());
+    cout << "sched domain: " << str(trans) << endl;
+    return trans;
+}
+
+vector<isl_map*> get_vectorize_interpolate(isl_set* dom, int pos, int fetch_width) {
+    string dom_name = name(dom);
+    int dim = num_dims(dom);
+    vector<isl_map*> ret;
+    for (int offset = 0; offset < fetch_width; offset ++) {
+      vector<string> var, var_trans;
+      for (int i = 0; i < dim; i ++) {
+        var.push_back("i" + str(i));
+        if (i == pos) {
+          var_trans.push_back("i" + str(i) +"*"+str(fetch_width) + "+" + str(offset));
+        } else {
+          var_trans.push_back("i" + str(i));
+        }
+      }
+      string map_str =
+          "{" + dom_name + bracket_list(var) + "->"
+          + dom_name + bracket_list(var_trans) + "}";
+      ret.push_back(isl_map_read_from_str(ctx(dom), map_str.c_str()));
+    }
+    return ret;
 }
 
 
@@ -4163,6 +4374,32 @@ isl_basic_set* lift_divs(isl_basic_set* bm) {
   return final_s;
 }
 
+//get a map from in dimension to denom
+map<int, int> get_dim2denom(isl_map* am) {
+  map<int, int> split_dims;
+  for (auto aff : get_aff_vec(am)) {
+    cout << "\taff : " << str(aff) << endl;
+    cout << "\tdiv dim: " << num_div_dims(aff) << endl;
+    for (int d = 0; d < num_div_dims(aff); d++) {
+      auto a = isl_aff_get_div(aff, d);
+      cout << tab(2) << "=== div: " << str(a) << endl;
+      int denom = to_int(isl_aff_get_denominator_val(a));
+      cout << tab(3) << "denom = " << denom << endl;
+      for (int di = 0; di < num_in_dims(a); di++) {
+        if (!is_zero(get_coeff(a, di))) {
+          auto coeff = isl_aff_get_coefficient_val(a, isl_dim_in, di);
+          int num = isl_val_get_num_si(coeff);
+          cout << tab(3) << "coeff  = " << str(coeff) << endl;
+          cout << tab(3) << "num = " << isl_val_get_num_si(coeff) << endl;
+          assert (num == 1 && "require quasi affine accessor!");
+          split_dims[di] = denom;
+        }
+      }
+    }
+  }
+  return split_dims;
+}
+
 isl_basic_set* zero(isl_basic_set* fs, const int var) {
   auto non_neg = isl_constraint_alloc_equality(get_local_space(fs));
   non_neg = isl_constraint_set_coefficient_si(non_neg, isl_dim_set, var, 1);
@@ -4262,7 +4499,6 @@ void release(isl_union_pw_qpolynomial* m) {
 }
 
 isl_map* linear_schedule(isl_map* in_sched, vector<int> iis, int offset, bool ignore_innermost) {
-    cout << "iis: " << iis << endl;
   auto sched_aff_vec = get_aff_vec(in_sched);
   if (ignore_innermost)
     sched_aff_vec.pop_back();
