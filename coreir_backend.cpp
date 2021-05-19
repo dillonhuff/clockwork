@@ -1926,12 +1926,15 @@ Instance* generate_coreir_op_controller(CodegenOptions& options, ModuleDef* def,
 
   // TODO: Assert multi size == 1
   auto aff = isl_multi_aff_get_aff(saff, 0);
+  if(op->index_variables_prefetch_cycle){
+    aff = sub(aff, op->index_variables_prefetch_cycle);
+  }
   Instance* controller;
 
   //For those op need loop index we need this controller
   bool need_index = op->index_variables_needed_by_compute.size() > 0;
   //TODO: remove the first statement after kavya add init to lakewrapper
-  //if (options.rtl_options.use_external_controllers || need_index ) {
+  // if (options.rtl_options.use_external_controllers || need_index ) {
   if (options.rtl_options.use_external_controllers) {
     auto aff_c = affine_controller(options, c, dom, aff);
     aff_c->print();

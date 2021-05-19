@@ -96,7 +96,7 @@ int main(int argc, char** argv) {
     } else {
 
 
-        bool gen_config_only = false; 
+        bool gen_config_only = true; 
         bool multi_accessor = true;
         
 

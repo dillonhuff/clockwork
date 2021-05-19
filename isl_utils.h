@@ -167,6 +167,7 @@ isl_set* to_set(isl_basic_set* const m);
 isl_set* to_set(isl_union_set* const m);
 isl_set* to_set(isl_point* const m);
 
+bool all_const(isl_set* s);
 vector<isl_point*> get_points(isl_set* m);
 
 isl_stat get_points(isl_set* m, void* user);
@@ -645,7 +646,6 @@ vector<string> space_var_decls(isl_space* s);
 
 isl_aff* add(isl_aff* a, isl_aff* b);
 isl_aff* div(isl_aff* a, isl_aff* b);
-
 isl_val* add(isl_val* a, isl_val* b);
 isl_val* sub(isl_val* a, isl_val* b);
 isl_val* mul(isl_val* a, isl_val* b);

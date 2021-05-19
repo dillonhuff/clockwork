@@ -14638,10 +14638,16 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   //test_apps.push_back(fft8_unroll8());
   //test_apps.push_back(camera_pipeline_trunc());
   //
+
+  //test_apps.push_back(conv_3_3_rolled());
+
+  //test_apps.push_back(up_sample());
+  test_apps.push_back(camera_pipeline_new());
+  test_apps.push_back(laplacian_pyramid());
+  test_apps.push_back(counter());
   test_apps.push_back(gaussian());
   test_apps.push_back(conv_3_3());
   test_apps.push_back(down_sample());
-  test_apps.push_back(counter());
   test_apps.push_back(cascade());
   test_apps.push_back(harris());
   test_apps.push_back(rom());
@@ -16822,6 +16828,7 @@ void access_pattern_write_unit_tests() {
 }
 
 void vectorization_unit_tests() {
+  //upsample_vectorization_test();
   access_pattern_write_unit_tests();
   access_pattern_read_unit_tests();
   synth_id_test();
@@ -16941,6 +16948,71 @@ void set_scheduled_loop_latency(schedule_info& hwinfo, op* op, prog& prg) {
   //hwinfo.instance_latencies[op] = latency;
 }
 
+int get_vectorization_dim(isl_map* m, int fetch_width) {
+  for(int i = num_out_dims(m)-1; i >= 0; i --) {
+    int ext = get_dim_extent(range(m), i);
+    if (ext >= fetch_width) {
+      return i;
+    }
+  }
+  return -1; //need merge or use single pixel vectorization
+}
+
+bool need_relax(schedule_info& sched, op* loop, prog& prg, int fetch_width) {
+  //only look at loop op
+  if (!loop->is_loop())
+    return false;
+  auto read_map = read_at(loop->name, prg);
+  auto levels = get_variable_levels(prg);
+  cout << "op name: " << loop->name << endl;
+  cout << "op level: " << levels.at(loop->name) << endl;
+  if(read_map == nullptr)
+      return false;
+  //cout << "Get read map: " << str(read_map) << endl;
+  for (auto rd_map: get_maps(read_map)) {
+    cout << tab(4) << "Read map: \n\t" << str(rd_map) << endl;
+    auto b_map = to_map(pick(get_basic_maps(rd_map)));
+    auto read_addr_involve_dim = out_involve_dim(b_map, levels.at(loop->name));
+    cout << tab(4) << "addr involve dim: " << read_addr_involve_dim << endl;
+
+    //Chances are that this dimension is fully unrolled
+    //Involve the vectorization dimension
+    int vec_dim = get_vectorization_dim(b_map, fetch_width);
+    if (read_addr_involve_dim.size() > 0
+            && (elem(vec_dim, read_addr_involve_dim))) {
+      assert(read_addr_involve_dim.size() == 1);
+      int packed_addr_dim = pick(read_addr_involve_dim);
+      auto in_involve_d = in_involve_dim(b_map, packed_addr_dim);
+      cout << "\tInvolve in dim: " << in_involve_d << endl;
+      //Do not have sliding window
+      if (in_involve_d.size() == 1) {
+          continue;
+      } else if (loop->trip_count() < fetch_width) {
+          continue;
+      } else {
+          int stride = stride_in_dim(b_map, levels.at(loop->name), packed_addr_dim);
+          cout << "Dim " << levels.at(loop->name)<< "\n\t hasStride : " << stride << endl;
+          if (stride % fetch_width != 0) {
+            cout << tab(4) << "Relax ii latency for op: " << loop->name << endl;
+            //cout << tab(4) << "Original offset within parent: " << sched.offset_in_parent(child) << endl;
+            cout << tab(4) << "Original offset within parent: " << sched.offset_in_parent(loop) << endl;
+            cout << tab(4) << "loop trip count: " << loop->trip_count() << endl;
+            if (is_inner_loop(loop))
+                sched.op_offset_within_parent.at(loop) = (loop->trip_count()) % fetch_width + fetch_width * (loop->trip_count()%fetch_width== 0);
+            else {
+                //int range_span = get_dim_extent(range(b_map), packed_addr_dim);
+                //if (range_span % fetch_width)
+                sched.op_offset_within_parent.at(loop) = sched.II(loop) * fetch_width;
+            }
+            cout << tab(4) << "New offset within parent: " << sched.offset_in_parent(loop) << endl;
+          }
+          return true;
+      }
+    }
+  }
+  return false;
+}
+
 void relax_inner_delay_for_vec_read(schedule_info& sched, op* loop, prog& prg, int fetch_width);
 void relax_inner_delay_for_vec_write(schedule_info& sched, op* loop, prog& prg, int fetch_width);
 
@@ -16969,9 +17041,12 @@ void asap_inner_loops_schedule(schedule_info& sched, op* op, prog& prg, int fetc
     for (auto other : op->children) {
       int old_latency = latency;
       sched.op_offset_within_parent[other] = latency;
-      if (is_inner_loop(other)) {
-        //TODO: currently only need to pad read op
-        relax_inner_delay_for_vec_read(sched, other, prg, fetch_width);
+      //if (is_inner_loop(other)) {
+      //  //TODO: currently only need to pad read op
+      //  relax_inner_delay_for_vec_read(sched, other, prg, fetch_width);
+      //}
+      if (need_relax(sched, other, prg, fetch_width)) {
+        cout << tab(4) << other->name << "--> Enter relax condition loop!" << endl;
       }
       latency = sched.total_latency(other) + sched.offset_in_parent(other);
       if (old_latency == latency) {
@@ -17295,60 +17370,88 @@ void adjust_outer_delays_sequentially(schedule_info& sched, prog& prg) {
 
 void relax_delays_rate_matched(schedule_info& sched, prog& prg) {
   cout << "Adjusting delays of " << prg.name << endl;
-  int d = 0;
+  map<string, int> delay_relaxation;
   int fetch_width = 4;
-  auto start_times = op_start_times(sched, prg);
+  auto start_times = its(op_times_map(sched, prg), prg.whole_iteration_domain());
+  auto start_times_map = get_maps_in_map(start_times);
   auto domains = prg.domains();
   for (auto name : topologically_sort_kernels(prg)) {
+    delay_relaxation[name] = 0;
     auto lp = prg.find_loop(name);
     auto cons_op_vec = lp->all_ops();
-    if (cons_op_vec.size() > 1)
-        continue;
+    int delay_max = 0;
     cout << "Adjusting delay of " << lp->name << endl;
-    for(auto prod: get_producers(name, prg)){
-        auto prod_loop = prg.find_loop(prod);
-        auto prod_op_vec = prod_loop->all_ops();
-        //Assume we only have one op under loop nest
-        if (prod_op_vec.size() > 1)
-            continue;
-        auto prod_op_name = pick(prod_op_vec)->name;
-        auto cons_op_name = pick(cons_op_vec)->name;
-        auto prod_dom = domains.at(pick(prod_op_vec));
-        auto cons_dom = domains.at(pick(cons_op_vec));
-        auto prod_sched = to_map(start_times.at(pick(prod_op_vec)));
-        auto cons_sched = to_map(start_times.at(pick(cons_op_vec)));
-
-        cout << tab(2) << "Producers: " << prod_op_name << endl;
-        cout << tab(2) << "sched: " << str(prod_sched) << endl;
-
-        cout << tab(2) << "Consumers: " << cons_op_name << endl;
-        cout << tab(2) << "sched: " << str(cons_sched) << endl;
-
-        auto equal_start_time =
-        equal(lexminpt(range(its(prod_sched, prod_dom))),
-                lexminpt(range(its(cons_sched, cons_dom))));
-        bool equal_rng = equal(range(prod_sched), range(cons_sched));
-        bool prod_need_index = pick(cons_op_vec)->index_variables_needed_by_compute.size();
-        cout << tab(4) << "Start cycle Is equal: " << equal_start_time << endl;
-        cout << tab(4) << "domain is same: " << equal_rng << endl;
-        if (equal_start_time && !equal_rng) {
-            int prod_ii = sched.II(pick(prod_op_vec)->parent);
-            cout << "\t\top " << prod_op_name << " has ii: " << prod_ii << endl;
-            //6 is a magic number which make upsample work
-            d += prod_ii * fetch_width + 6;
-        } else if (equal_start_time && prod_need_index){
-            d += 3;
-            //TODO: remove this hack with 2 round of delay optimization
-        } else if (contains(cons_op_name, "op_hcompute_demosaicked_1_stencil_1")) {
-            d += 96;
-            cout  << "add delay to" << cons_op_name << endl;
-            break;
-        }
+    auto kernel_read_map = read_at(lp->name, prg);
+    //chances are that a op does consume any buffer
+    if (!kernel_read_map) {
+      continue;
     }
-    if (lp->name == "r_r_s0_y")
-        continue;
-    sched.op_offset_within_parent[lp] += d;
-  }
+    cout << "read map: " << str(kernel_read_map) << endl;
+    for (auto cons_op: cons_op_vec) {
+      for(auto prod: get_producers(name, prg)){
+        auto prod_loop = prg.find_loop(prod);
+        auto kernel_write_map = written_at(prod_loop->name, prg);
+        auto write_maps = get_maps_in_map(kernel_write_map);
+        cout << "write map: " << str(kernel_write_map) << endl;
+        for (auto prod_op: prod_loop->all_ops()) {
+          auto prod_op_name = prod_op->name;
+          auto cons_op_name = cons_op->name;
+          auto prod_dom = domains.at(prod_op);
+          auto cons_dom = domains.at(cons_op);
+          auto prod_sched = (start_times_map.at(prod_op->name));
+          auto cons_sched = (start_times_map.at(cons_op->name));
+
+          //auto dd = dependence_distance_singleton(kernel_write_map, kernel_read_map, start_times);
+          //Get the dependency distance set
+          auto dds = dependence_distance_set(kernel_write_map, kernel_read_map, start_times);
+          bool need_relax = false;
+          if (empty(dds)) {
+            //The read op and write op does have data dependence
+            continue;
+          } else {
+            auto ddc = to_set(dds);
+            //All constant dependency distance can be optimized into shift registers
+            if(!all_const(ddc)) {
+              int min_dd = to_int(lexminval(ddc));
+              int max_dd = to_int(lexmaxval(ddc));
+              cout << tab(2) << "Min DD: " << min_dd << endl
+                << tab(2) << "Max DD: " << max_dd << endl;
+              int prod_ii = sched.II(prod_op->parent);
+              cout << "\t\top " << prod_op_name << " has ii: " << prod_ii << endl;
+              if (min_dd < prod_ii * fetch_width * 2)
+                need_relax = true;
+            }
+          }
+
+          cout << tab(2) << "Producers: " << prod_op_name << endl;
+          cout << tab(2) << "sched: " << str(prod_sched) << endl;
+
+          cout << tab(2) << "Consumers: " << cons_op_name << endl;
+          cout << tab(2) << "sched: " << str(cons_sched) << endl;
+
+          int cons_start_time = to_int(lexminval(range(its(cons_sched, cons_dom))));
+          int prod_start_time = to_int(lexminval(range(its(prod_sched, prod_dom))));
+
+          bool equal_start_time = (cons_start_time == prod_start_time);
+          bool prod_need_index = pick(cons_op_vec)->index_variables_needed_by_compute.size();
+          int offset = 0;
+          if (need_relax) {
+              int prod_ii = sched.II(prod_op->parent);
+              //Relaxation recipe input/output
+              offset = prod_ii * fetch_width * 2;
+          } else if (equal_start_time && prod_need_index && (cons_start_time < 3)) {
+              offset = 3 - cons_start_time;
+          }
+          //get the max delay relaxation from all producer
+          delay_max = max(delay_max, delay_relaxation.at(prod) + offset);
+        } // for each producer op
+      } //for each producer kernel
+    } //for each consumer op
+    delay_relaxation.at(name) = delay_max;
+    sched.op_offset_within_parent[lp] += delay_max;
+    cout  << "Kernel <" << name << "> has Delay slack: " << delay_max << endl;
+    cout  << "Offset with in parent: " << sched.op_offset_within_parent.at(lp) << endl;
+  } //for each kernel in topographical order
 }
 
 void asap_input_iis(schedule_info& sched, prog& prg) {
@@ -18073,6 +18176,27 @@ schedule_info garnet_schedule_info(CodegenOptions& options, prog& prg, bool use_
         sched.resource_requirements[op] = op->func;
       }
 
+
+    // Extremely hacky rom latency introduction
+    if (op->func == "hcompute_curved_stencil") {
+      sched.compute_unit_latencies[op->func] = 1;
+      //sched.op_compute_unit_latencies[op->name] = 1;
+    } else if (op->func == "hcompute_curved_stencil_1") {
+      sched.compute_unit_latencies[op->func] = 1;
+      //sched.op_compute_unit_latencies[op->name] = 1;
+    } else if (op->func == "hcompute_curved_stencil_2") {
+      sched.compute_unit_latencies[op->func] = 1;
+      //sched.op_compute_unit_latencies[op->name] = 1;
+    } else if (prg.name == "rom" && op->func == "hcompute_hw_output_stencil") {
+      sched.compute_unit_latencies[op->func] = 1;
+    } else if (op->func != "") {
+      sched.compute_unit_latencies[op->func] = 0;
+      //sched.op_compute_unit_latencies[op->name] = 0;
+    } else {
+      //sched.op_compute_unit_latencies[op->name] = 0;
+    }
+
+
       cout << op->func << endl;
       if (kernel_latencies[op->func] == NULL || kernel_latencies[op->func] == "null") {
         sched.compute_unit_latencies[op->func] = 0;
@@ -18503,6 +18627,9 @@ void compile_for_garnet_single_port_mem(prog& prg,
           prg.whole_iteration_domain());
   cout << "result schedule: " << str(hw_sched) << endl;
   auto buffers_opt = build_buffers(prg, hw_sched);
+  auto sched_max = lexmaxpt(range(hw_sched));
+  cout << "Latency of application is: " << str((sched_max)) << endl;
+
   tag_coarse_grained_loop_to_ubuf(buffers_opt, prg);
   //FIXME: put into separate pass for power analysis
   if (energy_model) {

@@ -470,6 +470,15 @@ isl_stat get_point(isl_point* m, void* user) {
   return isl_stat_ok;
 }
 
+bool all_const(isl_set* s) {
+  auto sets = get_basic_sets(s);
+  bool all_cst = true;
+  for (auto bs: sets) {
+    all_cst &= isl_set_is_singleton(to_set(bs));
+  }
+  return all_cst;
+}
+
 vector<isl_point*> get_points(isl_set* m) {
   assert(m != nullptr);
 

@@ -72,6 +72,8 @@ struct ir_node {
   std::string func;
   // Name of loop index variables used by this unit
   std::vector<std::string> index_variables_needed_by_compute;
+  // loop index variables used by memory has delay
+  int index_variables_prefetch_cycle = 0;
   // Annotation used for debug printouts
   int unroll_factor;
 
@@ -275,6 +277,10 @@ struct ir_node {
 
   void compute_unit_needs_index_variable(const std::string& v) {
     index_variables_needed_by_compute.push_back(v);
+  }
+
+  void index_variable_prefetch_cycle(const int v) {
+    index_variables_prefetch_cycle = v;
   }
 
   map<op*, Box> get_domain_boxes() {
