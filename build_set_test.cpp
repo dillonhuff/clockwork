@@ -1166,6 +1166,90 @@ void twoport_vec_test() {
   assert(res == 0);
 }
 
+void upsample_vectorization_test() {
+  struct isl_ctx *ctx;
+  ctx = isl_ctx_alloc();
+
+  UBuffer buf;
+  buf.name = "ups";
+  buf.ctx = ctx;
+
+  buf.domain["write"] =
+    isl_set_read_from_str(ctx, "{ write[root = 0, i] : 0 <= i < 16}");
+  buf.access_map["write"] =
+    rdmap(ctx, "{ write[root = 0, i] -> ups[i] : 0 <= i < 16}");
+  buf.schedule["write"] =
+    isl_union_map_read_from_str(ctx, "{ write[root = 0, i] -> [2*i] : 0 <= i < 16 }");
+  buf.isIn["write"] = true;
+
+  // Read 0 through 7
+  buf.domain["read"] =
+    isl_set_read_from_str(ctx, "{ read[root = 0, i] : 0 <= i < 32 }");
+  buf.access_map["read"] =
+    rdmap(ctx, "{ read[root = 0, i] -> ups[floor(i / 2)] : 0 <= i < 32 }");
+  buf.schedule["read"] =
+    isl_union_map_read_from_str(ctx, "{ read[root = 0, i] -> [i + 16] : 0 <= i < 32 }");
+  buf.isIn["read"] = false;
+
+  generate_hls_code(buf);
+
+  map<string, UBuffer> buffers;
+  buffers.insert({"ups", buf});
+  buffer_vectorization({1}, {"ups"}, 4, buffers);
+
+  generate_hls_code_unit_test(buffers, buf.name);
+
+  generate_vectorization_unit_testbench(buf);
+
+  int res = cmd("clang++ -std=c++11 unit_tb_ups.cpp ups.cpp ups_vec.cpp" );
+  assert(res == 0);
+
+  res = system("./a.out");
+  assert(res == 0);
+}
+
+void upsample_pad_test() {
+  struct isl_ctx *ctx;
+  ctx = isl_ctx_alloc();
+
+  UBuffer buf;
+  buf.name = "ups";
+  buf.ctx = ctx;
+
+  buf.domain["write"] =
+    isl_set_read_from_str(ctx, "{ write[root = 0, i] : 0 <= i < 16}");
+  buf.access_map["write"] =
+    rdmap(ctx, "{ write[root = 0, i] -> ups[i] : 0 <= i < 16}");
+  buf.schedule["write"] =
+    isl_union_map_read_from_str(ctx, "{ write[root = 0, i] -> [2*i] : 0 <= i < 16 }");
+  buf.isIn["write"] = true;
+
+  // Read 0 through 7
+  buf.domain["read"] =
+    isl_set_read_from_str(ctx, "{ read[root = 0, i] : 0 <= i < 30 }");
+  buf.access_map["read"] =
+    rdmap(ctx, "{ read[root = 0, i] -> ups[floor((i+1) / 2)] : 0 <= i < 30 }");
+  buf.schedule["read"] =
+    isl_union_map_read_from_str(ctx, "{ read[root = 0, i] -> [i + 16] : 0 <= i < 30 }");
+  buf.isIn["read"] = false;
+
+  generate_hls_code(buf);
+
+  map<string, UBuffer> buffers;
+  buffers.insert({"ups", buf});
+  buffer_vectorization({1}, {"ups"}, 4, buffers);
+
+  generate_hls_code_unit_test(buffers, buf.name);
+
+  generate_vectorization_unit_testbench(buf);
+
+  int res = cmd("clang++ -std=c++11 unit_tb_ups.cpp ups.cpp ups_vec.cpp" );
+  assert(res == 0);
+
+  res = system("./a.out");
+  assert(res == 0);
+}
+
 void rolled_conv_reorder_test() {
   struct isl_ctx *ctx;
   ctx = isl_ctx_alloc();
@@ -16805,7 +16889,8 @@ void access_pattern_write_unit_tests() {
 }
 
 void vectorization_unit_tests() {
-  //upsample_vectorization_test();
+  upsample_vectorization_test();
+  upsample_pad_test();
   access_pattern_write_unit_tests();
   access_pattern_read_unit_tests();
   synth_id_test();

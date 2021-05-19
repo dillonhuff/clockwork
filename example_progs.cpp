@@ -14312,8 +14312,8 @@ prog laplacian_pyramid() {
 
 //consuming f1_up.stencil
 ////producing f1_temp.stencil
-  auto f1_temp_s0_y = prg.add_loop("f1_temp_s0_y", -2, 64);
-  auto f1_temp_s0_x = f1_temp_s0_y->add_loop("f1_temp_s0_x", -2, 64);
+  auto f1_temp_s0_y = prg.add_loop("f1_temp_s0_y", -1, 65);
+  auto f1_temp_s0_x = f1_temp_s0_y->add_loop("f1_temp_s0_x", -1, 65);
 
 //store is: f1_temp.stencil(f1_temp_s0_x, f1_temp_s0_y) = f1_up.stencil((f1_temp_s0_x/2), (f1_temp_s0_y/2))
   auto hcompute_f1_temp_stencil = f1_temp_s0_x->add_op("op_hcompute_f1_temp_stencil");
