@@ -8672,6 +8672,30 @@ void UBuffer::generate_banks(CodegenOptions& options) {
         return {};
       }
 
+      uset* dependence_distance_set(umap* writes, umap* reads,
+          umap* sched) {
+
+        cout << "writes: " << str(writes) << endl;
+        cout << "reads : " << str(reads) << endl;
+        cout << "Schedule..." << endl;
+        for (auto m : get_maps(sched)) {
+          cout << tab(1) << str(m) << endl;
+          release(m);
+        }
+
+        auto time_to_write = dot(inv(sched), (writes));
+        auto time_to_read = dot(inv(sched), (reads));
+
+        cout << "Time to write: " << str(time_to_write) << endl;
+        cout << "Time to read : " << str(time_to_read) << endl;
+
+        auto pc_times = dot(time_to_write, inv(time_to_read));
+        cout << "PC times     : " << str(pc_times) << endl;
+        auto dds = isl_union_map_deltas(pc_times);
+        cout << "DDs          : " << str(dds) << endl;
+        return dds;
+      }
+
       maybe<int> dependence_distance_singleton(UBuffer& buf, const string& inpt, const string& outpt,
           umap* sched) {
 

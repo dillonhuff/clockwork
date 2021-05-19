@@ -14619,6 +14619,7 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   //test_apps.push_back(conv_3_3_rolled());
 
   //test_apps.push_back(up_sample());
+  test_apps.push_back(camera_pipeline_new());
   test_apps.push_back(laplacian_pyramid());
   test_apps.push_back(counter());
   test_apps.push_back(gaussian());
@@ -17345,77 +17346,129 @@ void adjust_outer_delays_sequentially(schedule_info& sched, prog& prg) {
 
 void relax_delays_rate_matched(schedule_info& sched, prog& prg) {
   cout << "Adjusting delays of " << prg.name << endl;
-  int d = 0;
+  map<string, int> delay_relaxation;
   int fetch_width = 4;
   //auto start_times = op_start_times(sched, prg);
   auto start_times = its(op_times_map(sched, prg), prg.whole_iteration_domain());
   auto start_times_map = get_maps_in_map(start_times);
   auto domains = prg.domains();
   for (auto name : topologically_sort_kernels(prg)) {
+    delay_relaxation[name] = 0;
     auto lp = prg.find_loop(name);
     auto cons_op_vec = lp->all_ops();
-    if (cons_op_vec.size() > 1)
-        continue;
-    cout << cons_op_vec.size()  << endl;
+    int delay_max = 0;
     cout << "Adjusting delay of " << lp->name << endl;
-    auto read_map = read_at(lp->name, prg);
+    auto kernel_read_map = read_at(lp->name, prg);
     //chances are that a op does consume any buffer
-    if (!read_map) {
+    if (!kernel_read_map) {
       continue;
     }
-    cout << "read map: " << str(read_map) << endl;
-    for(auto prod: get_producers(name, prg)){
+    for (auto cons_op: cons_op_vec) {
+      cout << "read map: " << str(kernel_read_map) << endl;
+
+      for(auto prod: get_producers(name, prg)){
         auto prod_loop = prg.find_loop(prod);
-        auto prod_op_vec = prod_loop->all_ops();
-        //Assume we only have one op under loop nest
-        if (prod_op_vec.size() > 1)
+        auto kernel_write_map = written_at(prod_loop->name, prg);
+        auto write_maps = get_maps_in_map(kernel_write_map);
+        for (auto prod_op: prod_loop->all_ops()) {
+          //if (prod_op_vec.size() > 1)
+          //    assert(false);
+          auto prod_op_name = prod_op->name;
+          cout << "write map: " << str(kernel_write_map) << endl;
+          auto cons_op_name = cons_op->name;
+          auto prod_dom = domains.at(prod_op);
+          auto cons_dom = domains.at(cons_op);
+          auto prod_sched = (start_times_map.at(prod_op->name));
+          auto cons_sched = (start_times_map.at(cons_op->name));
+
+          auto dd = dependence_distance_singleton(kernel_write_map, kernel_read_map, start_times);
+          auto dds = dependence_distance_set(kernel_write_map, kernel_read_map, start_times);
+          bool need_relax = false;
+          //if (dd.has_value()) {
+          //  cout << tab(2) << "DD: " << dd.get_value() << endl;
+          //} else if(!empty(dds)) {
+          //  auto ddc = to_set(dds);
+          //  if(!all_const(ddc)) {
+          //    cout << tab(2) << "Min DD: " << to_int(lexminval(ddc)) << endl
+          //      << tab(2) << "Max DD: " << to_int(lexmaxval(ddc)) << endl;
+          //    int prod_ii = sched.II(pick(prod_op_vec)->parent);
+          //    cout << "\t\top " << prod_op_name << " has ii: " << prod_ii << endl;
+          //    need_relax = true;
+          //  }
+          //}
+          if (empty(dds)) {
+            //The read op and write op does have data dependence
             continue;
-        auto prod_op_name = pick(prod_op_vec)->name;
-        auto write_map = written_at(prod_loop->name, prg);
-        cout << "write map: " << str(write_map) << endl;
-        auto cons_op_name = pick(cons_op_vec)->name;
-        auto prod_dom = domains.at(pick(prod_op_vec));
-        auto cons_dom = domains.at(pick(cons_op_vec));
-        auto prod_sched = (start_times_map.at(pick(prod_op_vec)->name));
-        auto cons_sched = (start_times_map.at(pick(cons_op_vec)->name));
+          } else {
+            auto ddc = to_set(dds);
+            if(!all_const(ddc)) {
+              int min_dd = to_int(lexminval(ddc));
+              int max_dd = to_int(lexmaxval(ddc));
+              cout << tab(2) << "Min DD: " << min_dd << endl
+                << tab(2) << "Max DD: " << max_dd << endl;
+              int prod_ii = sched.II(prod_op->parent);
+              cout << "\t\top " << prod_op_name << " has ii: " << prod_ii << endl;
+              if (min_dd < prod_ii * fetch_width * 2)
+                need_relax = true;
+            }
+          }
 
-        auto dd = dependence_distance_singleton(write_map, read_map, start_times);
-        if (dd.has_value()) {
-          cout << tab(2) << "DD: " << dd.get_value() << endl;
-        }
+          cout << tab(2) << "Producers: " << prod_op_name << endl;
+          cout << tab(2) << "sched: " << str(prod_sched) << endl;
 
-        cout << tab(2) << "Producers: " << prod_op_name << endl;
-        cout << tab(2) << "sched: " << str(prod_sched) << endl;
+          cout << tab(2) << "Consumers: " << cons_op_name << endl;
+          cout << tab(2) << "sched: " << str(cons_sched) << endl;
 
-        cout << tab(2) << "Consumers: " << cons_op_name << endl;
-        cout << tab(2) << "sched: " << str(cons_sched) << endl;
+          int cons_start_time = to_int(lexminval(range(its(cons_sched, cons_dom))));
+          int prod_start_time = to_int(lexminval(range(its(prod_sched, prod_dom))));
 
-        auto equal_start_time =
-        equal(lexminpt(range(its(prod_sched, prod_dom))),
-                lexminpt(range(its(cons_sched, cons_dom))));
-        bool equal_rng = equal(range(prod_sched), range(cons_sched));
-        bool prod_need_index = pick(cons_op_vec)->index_variables_needed_by_compute.size();
-        cout << tab(4) << "Start cycle Is equal: " << equal_start_time << endl;
-        cout << tab(4) << "domain is same: " << equal_rng << endl;
-        if (equal_start_time && !dd.has_value()) {
-            int prod_ii = sched.II(pick(prod_op_vec)->parent);
-            cout << "\t\top " << prod_op_name << " has ii: " << prod_ii << endl;
-            //6 is a magic number which make upsample work
-            d += prod_ii * fetch_width + 4;
-        } else if (equal_start_time && prod_need_index){
-            d += 3;
-            //TODO: remove this hack with 2 round of delay optimization
-        } else if (contains(cons_op_name, "op_hcompute_demosaicked_1_stencil_1")) {
-            d += 96;
-            cout  << "add delay to" << cons_op_name << endl;
-            break;
-        }
-    }
-    if (lp->name == "r_r_s0_y")
-        continue;
-    sched.op_offset_within_parent[lp] += d;
-  }
-  assert(false);
+          bool equal_start_time = (cons_start_time == prod_start_time);
+          //equal(lexminpt(range(its(prod_sched, prod_dom))),
+          //        lexminpt(range(its(cons_sched, cons_dom))));
+          //bool equal_rng = equal(range(prod_sched), range(cons_sched));
+          bool prod_need_index = pick(cons_op_vec)->index_variables_needed_by_compute.size();
+          int offset = 0;
+          if (need_relax) {
+              int prod_ii = sched.II(prod_op->parent);
+
+              //Relaxation recipe input/output
+              offset = prod_ii * fetch_width * 2;
+          } else if (equal_start_time && prod_need_index && (cons_start_time < 3)) {
+              offset = 3 - cons_start_time;
+          }
+          //cout << tab(4) << "Start cycle Is equal: " << equal_start_time << endl;
+          //cout << tab(4) << "domain is same: " << equal_rng << endl;
+          //if (equal_start_time && !dd.has_value()) {
+          //    int prod_ii = sched.II(pick(prod_op_vec)->parent);
+          //    cout << "\t\top " << prod_op_name << " has ii: " << prod_ii << endl;
+          //    //6 is a magic number which make upsample work
+          //    int offset = prod_ii * fetch_width + 4;
+          //    delay_max = max(delay_max, delay_relaxation.at(prod) + offset);
+          //} else if (equal_start_time && prod_need_index && (cons_start_time < 3)) {
+          //This is for the counter app which start too early
+              //offset = 3 - cons_start_time;
+          //} else if (contains(cons_op_name, "op_hcompute_demosaicked_1_stencil_1")) {
+          //    d += 16;
+          //    cout  << "add delay to" << cons_op_name << endl;
+          //    break;
+          //} else if(need_relax) {
+          //    delay_max = max(delay_max, delay_relaxation.at(prod) + 16);
+          //} else {
+          //    delay_max = max(delay_max, delay_relaxation.at(prod));
+          //}
+
+          //get the max delay relaxation from all producer
+          delay_max = max(delay_max, delay_relaxation.at(prod) + offset);
+        } // for each producer op
+      } //for each producer kernel
+    } //for each consumer op
+    //if (lp->name == "r_r_s0_y")
+    //    continue;
+    delay_relaxation.at(name) = delay_max;
+    sched.op_offset_within_parent[lp] += delay_max;
+    cout  << "Kernel <" << name << "> has Delay slack: " << delay_max << endl;
+    cout  << "Offset with in parent: " << sched.op_offset_within_parent.at(lp) << endl;
+  } //for each kernel in topographical order
 }
 
 void asap_input_iis(schedule_info& sched, prog& prg) {
