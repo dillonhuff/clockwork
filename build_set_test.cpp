@@ -14702,7 +14702,6 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
 
   //test_apps.push_back(conv_3_3_rolled());
 
-  //test_apps.push_back(up_sample());
   test_apps.push_back(camera_pipeline_new());
   test_apps.push_back(laplacian_pyramid());
   test_apps.push_back(counter());
@@ -16889,20 +16888,20 @@ void access_pattern_write_unit_tests() {
 }
 
 void vectorization_unit_tests() {
-  upsample_vectorization_test();
-  upsample_pad_test();
   access_pattern_write_unit_tests();
   access_pattern_read_unit_tests();
   synth_id_test();
   synth_id_auto_test();
   twoport_vec_test();
-  rolled_conv_reorder_test();
   rolled_conv_test();
+  rolled_conv_reorder_test();
+  upsample_vectorization_test();
+  upsample_pad_test();
 }
 
 void lake_tests() {
   //vectorization_unit_tests();
-  //vectorization_unit_tests();
+  vectorization_unit_tests();
   test_single_port_mem(false, true, "aha_garnet_design_new");
   test_pond("aha_garnet_design_pond");
   //test_single_port_mem(false, false, "aha_garnet_design");
