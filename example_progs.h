@@ -67,6 +67,7 @@ prog harris_sch7_bigtile();
 prog harris_sch8_endcim();
 prog three_level_memory_two();
 prog fft8_unroll8();
+prog resnet_one_input();
 
 //SMT test
 prog conv_3_3(int32_t, int32_t, string);
