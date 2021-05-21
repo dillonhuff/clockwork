@@ -1747,6 +1747,9 @@ void emit_lake_config_collateral(CodegenOptions options, string tile_name, json 
     string file_dir = options.dir + "lake_collateral/" + tile_name;
     cmd("rm -rf " + file_dir);
     cmd("mkdir -p " + file_dir);
+    ofstream out_config(file_dir + "/" + "config.json");
+    out_config << config_file << endl;
+    out_config.close();
     for (auto it = config_file.begin(); it != config_file.end(); ++it) {
         if (it.key() == "init")
             continue;

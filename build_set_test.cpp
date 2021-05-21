@@ -14756,7 +14756,7 @@ void test_fetchwidth2_mem(bool gen_config_only, bool multi_accessor=false, strin
   //test_apps.push_back(camera_pipeline_new());
 
   //DNN apps
-  //test_apps.push_back(resnet_simple());
+  test_apps.push_back(resnet_simple());
   //test_apps.push_back(resnet());
 
   //Big applications
