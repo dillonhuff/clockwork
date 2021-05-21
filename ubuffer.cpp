@@ -8216,14 +8216,24 @@ void UBuffer::generate_banks(CodegenOptions& options) {
 
               //Strip mining the output loop
               //TODO: remove stripmining
-              {
+              if (acc_pattern.can_stripmining(ctx, dim_id, fetch_width)) {
+              //if (true) {
                 isl_map* op_stripmining = acc_pattern.get_op_stripmining(ctx, dim_id, fetch_width, "");
                 std::cout << "\ttransform stripmining: " << str(op_stripmining) << endl;
-                isl_set* sm_domain = domain.at(out_pt_name);
-                //isl_set* sm_domain = range(its(op_stripmining, domain.at(out_pt_name)));
+                isl_set* sm_domain = range(its(op_stripmining, domain.at(out_pt_name)));
                 std::cout << "\tdomain stripmining: " << str(sm_domain) << endl;
-                //auto sm_access_map = dot(inv(op_stripmining), outpt_acc_map);
-                //auto sm_sched = dot(inv(op_stripmining), to_map(schedule.at(out_pt_name)));
+                auto sm_access_map = dot(inv(op_stripmining), outpt_acc_map);
+                auto sm_sched = dot(inv(op_stripmining), to_map(schedule.at(out_pt_name)));
+                sm_domain = add_suffix(sm_domain, "_tb2out_" + str(tb_cnt));
+                sm_access_map = add_domain_suffix(sm_access_map, "_tb2out_" + str(tb_cnt));
+                sm_sched = add_domain_suffix(sm_sched, "_tb2out_" + str(tb_cnt));
+                cout << "\tAccess map decouple reuse: " << str(outpt_acc_map) << endl;
+                //tb.add_out_pt(out_pt_name+"_out", sm_domain, sm_access_map, sm_sched);
+                tb.add_out_pt(out_pt_name+"_out", sm_domain, sm_access_map, its(sm_sched, sm_domain));
+                tb.port_bundles[bd_name+"_tb_out"].push_back(out_pt_name + "_out");
+
+              } else   {
+                isl_set* sm_domain = domain.at(out_pt_name);
                 auto sm_access_map = outpt_acc_map;
                 auto sm_sched = to_map(schedule.at(out_pt_name));
                 sm_domain = add_suffix(sm_domain, "_tb2out_" + str(tb_cnt));

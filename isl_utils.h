@@ -454,6 +454,7 @@ int get_pad_remainder(isl_map*, int, int);
 isl_map* reset_domain_coeff(isl_map* m, int dom_dim_id, int val);
 isl_map* pad_to_domain_map(isl_map* s, int depth);
 isl_map* pad_to_domain_ubuf_map(isl_map* s, int dom_dim_id, int depth);
+isl_map* pad_to_domain_left_ubuf_map(isl_map* m, int dom_dim_id, int shift_depth);
 isl_map* pad_to_domain_begin_ubuf_map(isl_map* m, int dom_dim_id, int shift_depth);
 isl_map* shift_domain_map(isl_map* s, vector<int> shift_depth);
 isl_map* shift_range_map(isl_map* s, vector<int> shift_depth);

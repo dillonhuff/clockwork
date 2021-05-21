@@ -2688,6 +2688,33 @@ int get_pad_remainder(isl_map* am, int dim_id, int fetch_width) {
   return (get_dim_max(::domain(am), dim_id) + 1) % fetch_width;
 }
 
+isl_map* pad_to_domain_left_ubuf_map(isl_map* m, int dom_dim_id, int depth) {
+
+  auto c_vec = constraints(m);
+  for (auto & c: c_vec) {
+
+    bool involve;
+    involve =  isl_constraint_involves_dims(c, isl_dim_in, dom_dim_id, 1);
+
+    //shift the constraint by 1
+    if (involve) {
+      auto val = isl_val_get_num_si(isl_constraint_get_constant_val(c));
+      if (isl_constraint_is_equality(c)) {
+          //c = isl_constraint_set_constant_si(c, val + depth);
+      } else {
+        if (isl_constraint_is_lower_bound(c, isl_dim_in, dom_dim_id))
+          c = isl_constraint_set_constant_si(c , val+depth);
+      }
+    }
+  }
+  auto b_ret = isl_basic_map_universe(get_space(m));
+  for (auto c: c_vec) {
+      b_ret = isl_basic_map_add_constraint(b_ret, c);
+  }
+
+  return isl_map_from_basic_map(b_ret);
+}
+
 isl_map* pad_to_domain_ubuf_map(isl_map* m, int dom_dim_id, int depth) {
 
   auto c_vec = constraints(m);
