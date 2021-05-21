@@ -2511,7 +2511,7 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
 
     //change the input and output and return the agg and tb ubuffer stucture
     pair<std::map<string, UBuffer>, vector<string> >
-        vectorization(int dim_id, int fetch_width, vector<int> iis);
+        vectorization(int dim_id, int fetch_width, vector<int> iis, bool is_dual_port);
 
     void add_vectorized_pt_to_ubuf(UBuffer& target_buf, vector<umap*> ap_vec, isl_map* merge_sched, string bd_name, int dim_id, int fetch_width, int cnt, bool is_out);
     void add_vectorized_pt_to_ubuf(UBuffer & target_buf, umap* rewrite_buf2op, isl_map* sched, string origin_pt_name, string bd_name, int dim_id, int fetch_width, int cnt, bool is_out);
@@ -2775,6 +2775,11 @@ lakeStream emit_top_address_stream(string fname, vector<int> read_cycle, vector<
 
 int compute_max_dd(UBuffer& buf, const string& inpt);
 
+//The current vectorization method that was using
+vector<string> buffer_vectorization(CodegenOptions& options,
+        vector<string> buf_name_vec,
+        map<string, UBuffer> & buffers);
+
 vector<string> buffer_vectorization(vector<int> iis,
         vector<string> buf_name_vec,
         int fetch_width,
@@ -2795,7 +2800,7 @@ vector<string> buffer_vectorization(vector<string> buf_name_vec, int dim_id, int
 
 //helper function for the new vectorization pass
 pair<isl_map*, isl_map*> get_vectorized_write(isl_map* acc_0, isl_map* sched, int fetch_width, int addr_dim);
-pair<isl_map*, isl_map*> get_vectorized_read(isl_map* acc_0, isl_map* sched, map<string, isl_map*> sched_record_map, int fetch_width, int addr_dim);
+pair<isl_map*, isl_map*> get_vectorized_read(isl_map* acc_0, isl_map* sched, map<string, isl_map*> sched_record_map, int fetch_width, int addr_dim, bool is_dual_port = false);
 
 static inline
 std::ostream& operator<<(std::ostream& out, const AccessPattern& acc_pattern) {

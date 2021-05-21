@@ -1376,6 +1376,49 @@ void synth_id_auto_test() {
   assert(res == 0);
 }
 
+
+void synth_id_fetch2_test() {
+  struct isl_ctx *ctx;
+  ctx = isl_ctx_alloc();
+
+  UBuffer buf;
+  buf.name = "conv";
+  buf.ctx = ctx;
+
+  buf.domain["write"] =
+    isl_set_read_from_str(ctx, "{ write[root = 0, i] : 0 <= i < 8}");
+  buf.access_map["write"] =
+    rdmap(ctx, "{ write[root = 0, i] -> conv[i] : 0 <= i < 8}");
+  buf.schedule["write"] =
+    isl_union_map_read_from_str(ctx, "{ write[root = 0, i] -> [i] : 0 <= i < 8 }");
+  buf.isIn["write"] = true;
+
+  // Read 0 through 7
+  buf.domain["read"] =
+    isl_set_read_from_str(ctx, "{ read[root = 0, i] : 0 <= i < 8}");
+  buf.access_map["read"] =
+    rdmap(ctx, "{ read[root = 0, i] -> conv[i] : 0 <= i < 8}");
+  buf.schedule["read"] =
+    isl_union_map_read_from_str(ctx, "{ read[root = 0, i] -> [i + 16] : 0 <= i < 8}");
+  buf.isIn["read"] = false;
+
+  generate_hls_code(buf);
+
+  map<string, UBuffer> buffers;
+  buffers.insert({"conv", buf});
+  buffer_vectorization({1}, {"conv"}, 2, buffers);
+
+  generate_hls_code_unit_test(buffers, buf.name);
+
+  generate_vectorization_unit_testbench(buf);
+
+  int res = cmd("clang++ -std=c++11 unit_tb_conv.cpp conv_vec.cpp conv.cpp");
+  assert(res == 0);
+
+  res = system("./a.out");
+  assert(res == 0);
+}
+
 void synth_wire_test() {
   struct isl_ctx *ctx;
   ctx = isl_ctx_alloc();
@@ -14588,6 +14631,7 @@ void Init_PE_energy_cost(power_analysis_params& power_params)  {
 
 
 void compile_for_garnet_single_port_mem(prog & prg, string dir, bool gen_smt_stream, bool gen_config_only, bool multi_level_mem, bool use_dse_compute, bool energy_model = false);
+void compile_for_garnet_fetch2_mem(prog & prg, string dir, bool gen_smt_stream, bool gen_config_only, bool multi_level_mem, bool use_dse_compute, bool energy_model = false);
 void cpy_app_to_folder(const std::string& app_type, const std::string& prg_name);
 
 void test_pond(string dir, bool run_verilator=true) {
@@ -14679,6 +14723,65 @@ void test_energy_model(string dir) {
       verilog_files.push_back(name + ".v");
       verilog_files.push_back("LakeWrapper.v");
       bool extra_flag_for_lake = true;
+      int res = run_verilator_on(name, name + "_verilog_tb.cpp", verilog_files, extra_flag_for_lake);
+      assert(res == 0);
+      cmd("rm LakeWrapper.v");
+
+      auto verilator_res = verilator_results(prg.name);
+      compare("cgra_" + prg.name + "_cpu_vs_verilog_comparison", verilator_res, cpu);
+      //string app_type = "dualwithaddr";
+      string app_type = "single_port_buffer";
+      cpy_app_to_folder(app_type, prg.name);
+    }
+  }
+}
+
+void test_fetchwidth2_mem(bool gen_config_only, bool multi_accessor=false, string dir="aha_garnet_design_fetch2") {
+  vector<prog> test_apps;
+
+  test_apps.push_back(conv_3_3());
+  //test_apps.push_back(camera_pipeline_new());
+  //test_apps.push_back(laplacian_pyramid());
+  //test_apps.push_back(counter());
+  //test_apps.push_back(gaussian());
+  //test_apps.push_back(down_sample());
+  //test_apps.push_back(cascade());
+  //test_apps.push_back(harris());
+  //test_apps.push_back(rom());
+  //test_apps.push_back(conv_1_2());
+  //test_apps.push_back(demosaic_unrolled());
+  //test_apps.push_back(camera_pipeline());
+  //test_apps.push_back(up_sample());
+  //test_apps.push_back(unsharp());
+  //test_apps.push_back(camera_pipeline_new());
+
+  //DNN apps
+  //test_apps.push_back(resnet_simple());
+  //test_apps.push_back(resnet());
+
+  //Big applications
+  //test_apps.push_back(mobilenet_unrolled());
+
+  for ( auto prg: test_apps) {
+    prg.sanity_check();
+
+    break_up_multi_channel_inputs(prg);
+    break_up_multi_channel_outputs(prg);
+    dsa_writers(prg);
+    prg.pretty_print();
+
+    //compile_for_garnet_platonic_mem(prg);
+    compile_for_garnet_fetch2_mem(prg, dir, false, gen_config_only, false, false);
+    cout << "Output name: " << prg.name << endl;
+    //TODO: move to a function
+    //run verilator on all the generated verilog
+    if (!gen_config_only) {
+      string name = prg.name;
+      auto verilog_files = get_files("./" + dir + "/"+name+"/verilog/");
+      verilog_files.push_back(name + ".v");
+      verilog_files.push_back("LakeWrapper.v");
+      bool extra_flag_for_lake = true;
+      auto cpu = unoptimized_result(prg);
       int res = run_verilator_on(name, name + "_verilog_tb.cpp", verilog_files, extra_flag_for_lake);
       assert(res == 0);
       cmd("rm LakeWrapper.v");
@@ -16694,11 +16797,11 @@ void access_pattern_read_unit_tests() {
   auto sched_vec = read_ir.second;
   cout << "After vec read access map: " << str(simplify_expr(acc_vec)) << endl;
   cout << "After vec read sched: " << str(sched_vec) << endl;
-  assert(get_dim_min(range(sched_vec), 0) == -3);
+  assert(get_dim_min(range(sched_vec), 0) == -2);
   assert(get_dim_max(domain(acc_vec), 0) == 15);
 
   acc_0 = isl_map_read_from_str(ctx,"{ op[i0]-> data[i0]: 0<=i0<=61}");
-  sched = isl_map_read_from_str(ctx,"{ op[i0]-> [16 + i0]: 0<=i0<=61 }");
+  sched = isl_map_read_from_str(ctx,"{ op[i0]-> [15 + i0]: 0<=i0<=61 }");
   auto sched_read = isl_map_read_from_str(ctx,"{ op_read[i0]-> [13 + 4*i0]: 0<=i0<=15 }");
   auto sched_write = isl_map_read_from_str(ctx,"{ op_write[i0]-> [4 + 4*i0]: 0<=i0<=15 }");
   read_ir = get_vectorized_read(acc_0, sched,
@@ -16719,7 +16822,7 @@ void access_pattern_read_unit_tests() {
   sched_vec = read_ir.second;
   cout << "After vec read access map: " << str(acc_vec) << endl;
   cout << "After vec read sched: " << str(sched_vec) << endl;
-  assert(get_dim_min(range(sched_vec), 0) == 11);
+  assert(get_dim_min(range(sched_vec), 0) == 14);
 
   acc_0 = isl_map_read_from_str(ctx,"{ op[i0, i1]-> data[i0]: 0<=i0<=7 and 0 <= i1 <= 1}");
   sched = isl_map_read_from_str(ctx,"{ op[i0, i1]-> [14 + i0*2+i1]: 0<=i0<=7 and 0 <= i1 <=1 }");
@@ -16730,7 +16833,7 @@ void access_pattern_read_unit_tests() {
   sched_vec = read_ir.second;
   cout << "After vec read access map: " << str(acc_vec) << endl;
   cout << "After vec read sched: " << str(sched_vec) << endl;
-  assert(get_dim_min(range(sched_vec), 0) == 11);
+  assert(get_dim_min(range(sched_vec), 0) == 12);
 
   //acc_0 = isl_map_read_from_str(ctx,"{ op[i0, i1]-> data[3*i0 + i1]: 0<=i0<=2 and 0 <= i1 <= 2}");
   //sched = isl_map_read_from_str(ctx,"{ op[i0, i1]-> [14 + i0*3 + i1]: 0<=i0<=2 and 0 <= i1 <= 2 }");
@@ -16892,6 +16995,7 @@ void vectorization_unit_tests() {
   access_pattern_read_unit_tests();
   synth_id_test();
   synth_id_auto_test();
+  synth_id_fetch2_test();
   twoport_vec_test();
   rolled_conv_test();
   rolled_conv_reorder_test();
@@ -16901,7 +17005,7 @@ void vectorization_unit_tests() {
 
 void lake_tests() {
   //vectorization_unit_tests();
-  vectorization_unit_tests();
+  //vectorization_unit_tests();
   test_single_port_mem(false, true, "aha_garnet_design_new");
   test_pond("aha_garnet_design_pond");
   //test_single_port_mem(false, false, "aha_garnet_design");
@@ -17429,10 +17533,10 @@ void adjust_outer_delays_sequentially(schedule_info& sched, prog& prg) {
   }
 }
 
-void relax_delays_rate_matched(schedule_info& sched, prog& prg) {
+void relax_delays_rate_matched(CodegenOptions& options, schedule_info& sched, prog& prg) {
   cout << "Adjusting delays of " << prg.name << endl;
   map<string, int> delay_relaxation;
-  int fetch_width = 4;
+  int fetch_width = options.mem_hierarchy.at("mem").fetch_width;
   auto start_times = its(op_times_map(sched, prg), prg.whole_iteration_domain());
   auto start_times_map = get_maps_in_map(start_times);
   auto domains = prg.domains();
@@ -17819,7 +17923,7 @@ void sanity_check_iis_for_vectorization(schedule_info& sched, prog& prg, int fet
 }
 
 
-void garnet_single_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
+void garnet_single_port_ram_schedule(CodegenOptions& options, schedule_info& sched, op* root, prog& prg) {
   if (contains(prg.name, "fft")) {
     //An hack on the fft schedule
     sequential_schedule(sched, root, prg);
@@ -17921,7 +18025,7 @@ void garnet_single_port_ram_schedule(schedule_info& sched, op* root, prog& prg) 
       adjust_schedule_forward(sched, prg, 0);
     }
     //Add delay for identity stream
-    relax_delays_rate_matched(sched, prg);
+    relax_delays_rate_matched(options, sched, prg);
 
     //Make input as fast as possible
     asap_input_iis(sched, prg);
@@ -17947,7 +18051,8 @@ void garnet_single_port_ram_schedule(schedule_info& sched, op* root, prog& prg) 
 
   /*
    * old method for ISCA deadline*/
-  asap_inner_loops_schedule(sched, root, prg, 4);
+  asap_inner_loops_schedule(sched, root, prg,
+          options.mem_hierarchy.at("mem").fetch_width);
   //sequential_schedule(sched, root, prg);
 
   adjust_inner_iis(sched, prg);
@@ -18502,7 +18607,7 @@ void generate_smt_stream_for_garnet_single_port_mem(prog& prg) {
   options.add_memory_hierarchy("mem");
   options.emit_smt_stream = true;
   schedule_info sched = garnet_schedule_info(options, prg);
-  garnet_single_port_ram_schedule(sched, prg.root, prg);
+  garnet_single_port_ram_schedule(options, sched, prg.root, prg);
   auto sched_map = op_times_map(sched, prg);
   auto hw_sched = its(sched_map,
           prg.whole_iteration_domain());
@@ -18587,6 +18692,73 @@ void emit_mem_access_count_to_csv(string dir, CodegenOptions& options, mem_acces
     wr.close();
 }
 
+void compile_for_garnet_fetch2_mem(prog& prg,
+        string dir,
+        bool gen_smt_stream,
+        bool config_gen_only,
+        bool multi_level_mem,
+        bool use_dse_compute,
+        bool energy_model) {
+
+  //make sure the loop bound and address is positive
+  normalize_bounds(prg);
+  normalize_address_offsets(prg);
+  //remove_div(prg);
+  prg.sanity_check();
+  prg.pretty_print();
+
+
+  //optimized schedule
+  cmd("mkdir -p " + dir + "/" + prg.name);
+
+  CodegenOptions options = garnet_codegen_single_port_with_addrgen_options(prg, dir);
+  options.add_memory_hierarchy("mem");
+  options.mem_hierarchy.at("mem").set_config_fetch2();
+  cout << options.mem_hierarchy.at("mem").fetch_width << endl;
+  if (multi_level_mem)
+      options.add_memory_hierarchy("regfile");
+  options.emit_smt_stream = gen_smt_stream;
+  options.config_gen_only = config_gen_only;
+  //if (multi_sram)
+  //    options.mem_tile.multi_sram_accessor = true;
+  schedule_info sched = garnet_schedule_info(options, prg, use_dse_compute);
+  garnet_single_port_ram_schedule(options, sched, prg.root, prg);
+  auto sched_map = op_times_map(sched, prg);
+  auto hw_sched = its(sched_map,
+          prg.whole_iteration_domain());
+  cout << "result schedule: " << str(hw_sched) << endl;
+  auto buffers_opt = build_buffers(prg, hw_sched);
+  auto sched_max = lexmaxpt(range(hw_sched));
+  cout << "Latency of application is: " << str((sched_max)) << endl;
+
+  tag_coarse_grained_loop_to_ubuf(buffers_opt, prg);
+  //FIXME: put into separate pass for power analysis
+  if (energy_model) {
+    mem_access_cnt mem_access;
+    Mem_access_count(options, buffers_opt, mem_access, prg);
+    emit_mem_access_count_to_csv(dir + "/MemCount/" + prg.name, options, mem_access);
+
+    power_analysis_params power_params;
+    power_analysis_info power_stats;
+    Init_PE_energy_cost(power_params);
+
+#ifdef COREIR
+    PE_energy_cost_instance_model(power_params, power_stats, prg);
+    PE_energy_cost(power_params, power_stats, prg);
+#endif
+
+  }
+
+
+#ifdef COREIR
+  generate_garnet_coreir(buffers_opt, prg, options, sched, use_dse_compute);
+  if (!options.config_gen_only) {
+    generate_garnet_verilog_top(options, prg.name);
+    generate_garnet_verilator_tb(prg, hw_sched, buffers_opt);
+  }
+#endif
+}
+
 void compile_for_garnet_single_port_mem(prog& prg,
         string dir,
         bool gen_smt_stream,
@@ -18618,7 +18790,7 @@ void compile_for_garnet_single_port_mem(prog& prg,
   //if (multi_sram)
   //    options.mem_tile.multi_sram_accessor = true;
   schedule_info sched = garnet_schedule_info(options, prg, use_dse_compute);
-  garnet_single_port_ram_schedule(sched, prg.root, prg);
+  garnet_single_port_ram_schedule(options, sched, prg.root, prg);
   auto sched_map = op_times_map(sched, prg);
   auto hw_sched = its(sched_map,
           prg.whole_iteration_domain());
@@ -25604,6 +25776,11 @@ int main(int argc, char** argv) {
 
     if (cmd == "lake-tests") {
       lake_tests();
+      return 0;
+    }
+
+    if (cmd == "fetchwidth-tests") {
+      test_fetchwidth2_mem(true, true, "aha_garnet_design_fetch2");
       return 0;
     }
 

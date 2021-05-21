@@ -2547,8 +2547,7 @@ CoreIR::Instance* UBuffer::map_ubuffer_to_cgra(CodegenOptions& options, CoreIR::
   } else {
     //buffer_vectorization(options.iis, bk.name + "_ubuf", 1, 4, rewrite_buffer);
     cout << "vectorization buf name: " << target_buf.name << endl;
-    buffer_vectorization(options.iis, {target_buf.name+ "_ubuf"},
-            options.mem_hierarchy.at("mem").fetch_width, vectorized_buf);
+    buffer_vectorization(options, {target_buf.name+ "_ubuf"}, vectorized_buf);
     vectorized_buf = decouple_multi_tile_ubuffer(options, vectorized_buf);
     for (auto buf: vectorized_buf) {
         cout << "After vectorization codegen: " << buf.first << endl << buf.second << endl;
@@ -6567,6 +6566,59 @@ void UBuffer::generate_banks(CodegenOptions& options) {
     return base;
   }
 
+  vector<string> buffer_vectorization(
+      CodegenOptions& options,
+      vector<string> buf_name_vec,
+      map<string, UBuffer> & buffers) {
+    /* Function to vectorize the buffer access, will rewrite the buffer access pattern,
+     * generate the new domain and access map and also add two other buffer on
+     * both input and output side
+     * */
+
+    int fetch_width = options.mem_hierarchy.at("mem").fetch_width;
+    vector<string> rem_deps, rem_origin_ubuf;
+    for(auto it : buffers) {
+      if (std::find(buf_name_vec.begin(), buf_name_vec.end(), it.first) != buf_name_vec.end()) {
+        rem_origin_ubuf.push_back(it.first);
+        auto target_buffer = it.second;
+
+        //Input must be take care
+        //need to first pad the buffer output to the multiplier of
+        target_buffer.merge_small_dim(fetch_width);
+        //target_buffer.pad_read_dom_inner_most(fetch_width);
+        target_buffer.pad_write_dom_inner_most(fetch_width);
+
+        int dim_id = target_buffer.get_vectorized_dim(fetch_width);
+        if (dim_id == -1) {
+          auto ret = target_buffer.vectorization_single_pixel(fetch_width);
+          for (auto itr: ret) {
+            buffers.insert(itr);
+          }
+        } else {
+          cout << tab(1) << "buffer_vectorization Vectorizing: " << target_buffer.name << endl
+            << tab(1)<< " On addr dim: " << dim_id << ", fetch_width: " << fetch_width
+            << endl;
+          cout << target_buffer << endl;
+
+          //TODO: remove the rem-dependency
+          //ret is a pair of vectorized_buffer and the dependency need to be removed
+          auto ret = target_buffer.vectorization(dim_id, fetch_width, options.iis,
+                  options.mem_hierarchy.at("mem").dual_port_sram);
+          for (auto itr: ret.first) {
+            buffers[itr.first] = itr.second;
+          }
+          for (auto deps: ret.second) {
+            rem_deps.push_back(deps);
+          }
+        }
+      }
+    }
+    for (auto rem: rem_origin_ubuf) {
+      buffers.erase(rem);
+    }
+    return rem_deps;
+  }
+
   vector<string> buffer_vectorization(vector<int> iis,
       vector<string> buf_name_vec,
       int fetch_width,
@@ -6601,7 +6653,7 @@ void UBuffer::generate_banks(CodegenOptions& options) {
 
           //TODO: remove the rem-dependency
           //ret is a pair of vectorized_buffer and the dependency need to be removed
-          auto ret = target_buffer.vectorization(dim_id, fetch_width, iis);
+          auto ret = target_buffer.vectorization(dim_id, fetch_width, iis, false);
           for (auto itr: ret.first) {
             buffers[itr.first] = itr.second;
           }
@@ -6641,7 +6693,7 @@ void UBuffer::generate_banks(CodegenOptions& options) {
         target_buffer.pad_write_dom_inner_most(fetch_width);
 
         //ret is a pair of vectorized_buffer and the dependency need to be removed
-        auto ret = target_buffer.vectorization(dim_id, fetch_width, iis);
+        auto ret = target_buffer.vectorization(dim_id, fetch_width, iis, false);
         for (auto itr: ret.first) {
           buffers[itr.first] = itr.second;
         }
@@ -6955,7 +7007,8 @@ void UBuffer::generate_banks(CodegenOptions& options) {
     int out_fetch_ii = get_vector_fetch_loop_ii(out_sched);
     auto out_sched_offset = linear_schedule(to_map(out_sched), {1},
             //TODO: add unit test to test this recipe
-            -out_fetch_ii*fetch_width - delay_step * out_fetch_ii * fetch_width / 2 + 1, false);
+            //-out_fetch_ii*fetch_width - delay_step * out_fetch_ii * fetch_width / 2 + 1, false);
+            - 2 - delay_step * out_fetch_ii * fetch_width / 2, false);
 
     //slice the access mod 4
     auto sched = its(out_sched_offset, slice_dim);
@@ -7019,11 +7072,11 @@ void UBuffer::generate_banks(CodegenOptions& options) {
   }
 
   //New method to find dynamic schedule
-  isl_map* get_sram2tb_schedule_with_check(isl_map* out_sched, map<string, isl_map*> sched_map, int ahead_step, int vectorize_loop_dim) {
+  isl_map* get_sram2tb_schedule_with_check(isl_map* out_sched, map<string, isl_map*> sched_map, int ahead_step, int vectorize_loop_dim, bool is_dual_port) {
     cout << "\t output sched: "  << str(out_sched)<< endl;
     int fetch_ii = stride_in_dim(out_sched, vectorize_loop_dim);
     //TODO: may need to adjust the delay, /2 is made resnet work
-    auto temp_sched = linear_schedule(out_sched, {1}, -3 - ahead_step * fetch_ii/2, false);
+    auto temp_sched = linear_schedule(out_sched, {1}, - 2 - ahead_step * fetch_ii/2, false);
     cout << "\t temp sched: " << str(temp_sched) << endl;
 
     //GET SRAM2TB list and AGG2SRAM list
@@ -7042,7 +7095,7 @@ void UBuffer::generate_banks(CodegenOptions& options) {
     while (adjust) {
         adjust = false;
         //adjust against write
-        while(violate_deps(temp_sched, sram_wr)) {
+        while(violate_deps(temp_sched, sram_wr) && (!is_dual_port)) {
             //check dependency against sram write
             temp_sched = linear_schedule(temp_sched, {1}, -1, false);
             adjust = true;
@@ -7789,7 +7842,7 @@ void UBuffer::generate_banks(CodegenOptions& options) {
     }
 
 
-    pair<isl_map*, isl_map*> get_vectorized_read(isl_map* acc_0, isl_map* sched, map<string, isl_map*> sched_record_map, int fetch_width, int addr_dim) {
+    pair<isl_map*, isl_map*> get_vectorized_read(isl_map* acc_0, isl_map* sched, map<string, isl_map*> sched_record_map, int fetch_width, int addr_dim, bool is_dual_port) {
         int vectorize_loop_dim = get_inner_most_related_dom_dim(acc_0, addr_dim, fetch_width);
         auto trans =
             get_domain_trans_with_reaccess_mask(domain(acc_0), vectorize_loop_dim, fetch_width);
@@ -7858,14 +7911,14 @@ void UBuffer::generate_banks(CodegenOptions& options) {
         cout << "\tsched vec before moving: "<< str(sched_vec) << endl;
 
         //Adjust the sram2tb fetch based on the schedule
-        auto final_sched = get_sram2tb_schedule_with_check(sched_vec, sched_record_map, ahead_step, vectorize_loop_dim);
+        auto final_sched = get_sram2tb_schedule_with_check(sched_vec, sched_record_map, ahead_step, vectorize_loop_dim, is_dual_port);
         cout << "\tfinal access: " << str(acc_vec) << endl;
         cout << "\tfinal sched: " << str(final_sched) << endl;
         return make_pair(acc_vec, final_sched);
     }
 
       pair<std::map<string, UBuffer>, vector<string> >
-        UBuffer::vectorization(int dim_id, int fetch_width, vector<int> iis) {
+        UBuffer::vectorization(int dim_id, int fetch_width, vector<int> iis, bool is_dual_port) {
 
           std::map<string, UBuffer> ret;
           std::vector<string> remove_deps;
@@ -8113,7 +8166,7 @@ void UBuffer::generate_banks(CodegenOptions& options) {
               auto sram_ir = get_vectorized_read(
                       to_map(access_map.at(out_pt_name)),
                       to_map(schedule.at(out_pt_name)),
-                      sched_record_map, fetch_width, dim_id);
+                      sched_record_map, fetch_width, dim_id, is_dual_port);
 
               isl_map* vectorized_access = add_domain_suffix(sram_ir.first, "_sram2tb_" + str(tb_cnt));
               isl_set* dom = ::domain(vectorized_access);

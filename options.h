@@ -103,12 +103,14 @@ struct LakeCollateral {
     int fetch_width;
     int max_chaining;
     bool multi_sram_accessor;
+    bool dual_port_sram;
 
     //TODO: use the collateral kavya generated
     LakeCollateral(string level = "mem"):
         fetch_width(4),
         max_chaining(4),
         multi_sram_accessor(true),
+        dual_port_sram(false),
         word_width({{"agg", 1}, {"sram", 4}, {"tb", 1}}),
         in_port_width({{"agg", 1}, {"sram", 4}, {"tb", 4}}),
         out_port_width({{"agg", 4}, {"sram", 4}, {"tb", 1}}),
@@ -127,6 +129,16 @@ struct LakeCollateral {
                 assert(false);
             }
         }
+    void set_config_fetch2() {
+       fetch_width = 2;
+       max_chaining = 4;
+       dual_port_sram = true;
+       word_width = {{"agg", 1}, {"sram", 2}, {"tb", 2}};
+       in_port_width = {{"agg", 1}, {"sram", 2}, {"tb", 2}};
+       out_port_width = {{"agg", 2}, {"sram", 2}, {"tb", 1}};
+       bank_num = {{"agg", 2}, {"sram", 1}, {"tb", 2}};
+       capacity = {{"agg", 16}, {"sram", 512}, {"tb", 16}};
+    }
 
     int get_max_capacity() const {
         int c = 0;
