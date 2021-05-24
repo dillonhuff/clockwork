@@ -14466,7 +14466,7 @@ prog laplacian_pyramid() {
   hcompute_f2_0_stencil->add_store("f2_0_stencil", "f2_0_s0_y", "f2_0_s0_x");
 
 //consuming f2$0.stencil
-//producing f2_temp.stencil
+////producing f2_temp.stencil
   auto f2_temp_s0_y = prg.add_loop("f2_temp_s0_y", -2, 34);
   auto f2_temp_s0_x = f2_temp_s0_y->add_loop("f2_temp_s0_x", -2, 34);
 
@@ -14607,7 +14607,6 @@ prog laplacian_pyramid() {
 
   return prg;
 }
-
 
 prog resnet_one_input() {
   prog prg;
