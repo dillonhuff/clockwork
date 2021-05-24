@@ -1751,7 +1751,7 @@ void emit_lake_config_collateral(CodegenOptions options, string tile_name, json 
     out_config << config_file << endl;
     out_config.close();
     for (auto it = config_file.begin(); it != config_file.end(); ++it) {
-        if (it.key() == "init")
+        if (it.key() == "init" || it.key() == "mode" || it.key() == "chain_en")
             continue;
         cout << "\t\tconfig key: " << it.key() << ", " << it.value() << endl;
         ofstream out(file_dir + "/" + it.key() + ".csv");
@@ -1765,8 +1765,13 @@ void run_lake_verilog_codegen(CodegenOptions& options, string v_name, string ub_
   //cout << "Runing cmd$ python /nobackup/joeyliu/aha/lake/tests/wrapper_lake.py -c " + options.dir + "lake_collateral/" + ub_ins_name + " -s True -n " + v_name  <<  endl;
   ASSERT(getenv("LAKE_PATH"), "Define env var $LAKE_PATH which is the /PathTo/lake");
   cmd("echo $LAKE_PATH");
-  int res_lake = cmd("python $LAKE_PATH/lake/utils/wrapper_lake.py -c " + options.dir + "lake_collateral/" + ub_ins_name + " -s True -n " + v_name);
-  assert(res_lake == 0);
+  if (options.mem_hierarchy.at("mem").fetch_width == 4) {
+    int res_lake = cmd("python $LAKE_PATH/lake/utils/wrapper_lake.py -c " + options.dir + "lake_collateral/" + ub_ins_name + " -s True -n " + v_name);
+    assert(res_lake == 0);
+  } else {
+    int res_lake = cmd("python $LAKE_PATH/tests/test_pohan_wrapper.py -f " + options.dir + "lake_collateral/" + ub_ins_name + "/config.json -b LakeWrapper -w " + v_name);
+    assert(res_lake == 0);
+  }
   cmd("mkdir -p "+options.dir+"verilog");
   cmd("mv LakeWrapper_"+v_name+".v " + options.dir + "verilog");
 }
@@ -1788,8 +1793,10 @@ void generate_lake_tile_verilog(CodegenOptions& options, Instance* buf) {
   string v_name =  get_coreir_genenerator_name(buf->getModuleRef()->toString());
 
   //dump the collateral file
-  emit_lake_config_collateral(options, ub_ins_name, buf->getMetaData()["config"]);
+  json config = buf->getMetaData()["config"];
   string config_mode = buf->getMetaData()["mode"];
+  config["mode"] = "UB";
+  emit_lake_config_collateral(options, ub_ins_name, config);
 
   if (options.config_gen_only)
     return;
@@ -1838,11 +1845,11 @@ Instance* generate_coreir_op_controller_verilog(CodegenOptions& options, ModuleD
     controller = def->addInstance(controller_name(op->name), aff_c);
   } else {
     assert(false);
-    controller = affine_controller_use_lake_tile(
-            def, c, dom, aff,
-            controller_name(op->name));
-    //generate verilog collateral
-    generate_lake_tile_verilog(options, controller);
+    //controller = affine_controller_use_lake_tile(
+    //        def, c, dom, aff,
+    //        controller_name(op->name));
+    ////generate verilog collateral
+    //generate_lake_tile_verilog(options, controller);
   }
 
   assert(verilog_collateral_file != nullptr);
@@ -1884,8 +1891,7 @@ Instance* generate_controller_coreir(CodegenOptions& options, ModuleDef* def, co
     controller = def->addInstance(name, aff_c);
   } else {
     controller = affine_controller_use_lake_tile(
-            def, c, dom, aff,
-            name);
+            options, def, c, dom, aff, name);
     //generate verilog collateral
     generate_lake_tile_verilog(options, controller);
   }
@@ -1945,7 +1951,7 @@ Instance* generate_coreir_op_controller(CodegenOptions& options, ModuleDef* def,
     controller = def->addInstance(controller_name(op->name), aff_c);
   } else {
     controller = affine_controller_use_lake_tile(
-            def, c, dom, aff,
+            options, def, c, dom, aff,
             controller_name(op->name));
     //generate verilog collateral
     generate_lake_tile_verilog(options, controller);
@@ -2768,13 +2774,14 @@ bool MemtileReplace(Instance* cnst) {
   auto conn = conns[0];
   def->disconnect(buf->sel("rst_n"),conn);
 
-  //remove chain_en
-  auto chain_en_conSet = buf->sel("chain_chain_en")->getConnectedWireables();
-  vector<Wireable*> conns_ce(chain_en_conSet.begin(), chain_en_conSet.end());
-  for (auto conn: conns_ce) {
-    def->disconnect(buf->sel("chain_chain_en"),conn);
+  //TODO:remove chain_en
+  if (genargs.at("has_chain_en")->get<bool>()) {
+    auto chain_en_conSet = buf->sel("chain_chain_en")->getConnectedWireables();
+    vector<Wireable*> conns_ce(chain_en_conSet.begin(), chain_en_conSet.end());
+    for (auto conn: conns_ce) {
+      def->disconnect(buf->sel("chain_chain_en"),conn);
+    }
   }
-
   return true;
 }
 

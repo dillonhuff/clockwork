@@ -1419,6 +1419,91 @@ void synth_id_fetch2_test() {
   assert(res == 0);
 }
 
+//TODO: need to fix the two dimensional address generation issue
+void sw_fetch2_2d_test() {
+  struct isl_ctx *ctx;
+  ctx = isl_ctx_alloc();
+
+  UBuffer buf;
+  buf.name = "sw";
+  buf.ctx = ctx;
+
+  buf.domain["write"] =
+    isl_set_read_from_str(ctx, "{ write[root = 0, i, j] : 0 <= i < 10 and 0 <= j < 10}");
+  buf.access_map["write"] =
+    rdmap(ctx, "{ write[root = 0, i, j] -> sw[i, j] : 0 <= i < 10 and 0 <= j < 10}");
+  buf.schedule["write"] =
+    isl_union_map_read_from_str(ctx, "{ write[root = 0, i, j] -> [10*i+j] : 0 <= i < 10and 0 <= j < 10}");
+  buf.isIn["write"] = true;
+
+  // Read 0 through 7
+  buf.domain["read"] =
+    isl_set_read_from_str(ctx, "{ read[root = 0, i, j, m, n] : 0 <= i < 3 and 0<=j < 3 and 0<=m<8 and 0<=n<8}");
+  buf.access_map["read"] =
+    rdmap(ctx, "{ read[root = 0, i, j, m, n] -> sw[i+m, j+n] : 0 <= i < 3 and 0<=j < 3 and 0<=m<8 and 0<=n<8}");
+  buf.schedule["read"] =
+    isl_union_map_read_from_str(ctx, "{ read[root = 0, i, j, m, n] -> [100 + n+ 10*m + 80*j+ 320*i] : 0 <= i < 3 and 0<=j < 3 and 0<=m<8 and 0<=n<8}");
+  buf.isIn["read"] = false;
+
+  generate_hls_code(buf);
+
+  map<string, UBuffer> buffers;
+  buffers.insert({"sw", buf});
+  buffer_vectorization({1}, {"sw"}, 2, buffers);
+
+  generate_hls_code_unit_test(buffers, buf.name);
+
+  generate_vectorization_unit_testbench(buf);
+
+  int res = cmd("clang++ -std=c++11 unit_tb_sw.cpp sw_vec.cpp sw.cpp");
+  assert(res == 0);
+
+  res = system("./a.out");
+  assert(res == 0);
+}
+
+void sw_fetch2_test() {
+  struct isl_ctx *ctx;
+  ctx = isl_ctx_alloc();
+
+  UBuffer buf;
+  buf.name = "sw";
+  buf.ctx = ctx;
+
+  buf.domain["write"] =
+    isl_set_read_from_str(ctx, "{ write[root = 0, i] : 0 <= i < 10 }");
+  buf.access_map["write"] =
+    rdmap(ctx, "{ write[root = 0, i] -> sw[i] : 0 <= i < 10 }");
+  buf.schedule["write"] =
+    isl_union_map_read_from_str(ctx, "{ write[root = 0, i] -> [i] : 0 <= i < 10}");
+  buf.isIn["write"] = true;
+
+  // Read 0 through 7
+  buf.domain["read"] =
+    isl_set_read_from_str(ctx, "{ read[root = 0, i, j] : 0 <= i < 3 and 0<=j < 8 }");
+  buf.access_map["read"] =
+    rdmap(ctx, "{ read[root = 0, i, j] -> sw[i+j] : 0 <= i < 3 and 0<=j < 8 }");
+  buf.schedule["read"] =
+    isl_union_map_read_from_str(ctx, "{ read[root = 0, i, j] -> [10 + j+ 10*i] : 0 <= i < 3 and 0<=j < 8}");
+  buf.isIn["read"] = false;
+
+  generate_hls_code(buf);
+
+  map<string, UBuffer> buffers;
+  buffers.insert({"sw", buf});
+  buffer_vectorization({1}, {"sw"}, 2, buffers);
+
+  generate_hls_code_unit_test(buffers, buf.name);
+
+  generate_vectorization_unit_testbench(buf);
+
+  int res = cmd("clang++ -std=c++11 unit_tb_sw.cpp sw_vec.cpp sw.cpp");
+  assert(res == 0);
+
+  res = system("./a.out");
+  assert(res == 0);
+}
+
 void synth_wire_test() {
   struct isl_ctx *ctx;
   ctx = isl_ctx_alloc();
@@ -14756,8 +14841,8 @@ void test_fetchwidth2_mem(bool gen_config_only, bool multi_accessor=false, strin
   //test_apps.push_back(camera_pipeline_new());
 
   //DNN apps
-  test_apps.push_back(resnet_simple());
-  //test_apps.push_back(resnet());
+  test_apps.push_back(resnet_tiny());
+  test_apps.push_back(resnet_multi_tiny());
 
   //Big applications
   //test_apps.push_back(mobilenet_unrolled());
@@ -14806,7 +14891,7 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   //test_apps.push_back(conv_3_3_rolled());
 
   //test_apps.push_back(up_sample());
-  test_apps.push_back(resnet_one_input());
+  //test_apps.push_back(resnet_one_input());
   test_apps.push_back(camera_pipeline_new());
   test_apps.push_back(laplacian_pyramid());
   test_apps.push_back(counter());
@@ -17003,6 +17088,7 @@ void vectorization_unit_tests() {
   rolled_conv_reorder_test();
   upsample_vectorization_test();
   upsample_pad_test();
+  sw_fetch2_test();
 }
 
 void lake_tests() {
@@ -25782,7 +25868,7 @@ int main(int argc, char** argv) {
     }
 
     if (cmd == "fetchwidth-tests") {
-      test_fetchwidth2_mem(true, true, "aha_garnet_design_fetch2");
+      test_fetchwidth2_mem(false, true, "aha_garnet_design_fetch2");
       return 0;
     }
 

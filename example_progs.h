@@ -30,6 +30,8 @@ prog conv_rolled(); //stencil
 prog unet_conv_3_3(); //reduce
 prog resnet(); //reduce
 prog resnet_simple(); //for regfile debug
+prog resnet_tiny(); //for regfile debug
+prog resnet_multi_tiny(); //for regfile debug
 //prog mini_conv_halide_fixed();
 prog camera_pipeline(); //stencil
 prog camera_pipeline_new(); //stencil

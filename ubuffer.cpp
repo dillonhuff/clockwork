@@ -2072,6 +2072,7 @@ CoreIR::Module* affine_controller_use_lake_tile_counter(
 
   //Create the coreIR submodule for affine controller
   auto ns = context->getNamespace("global");
+  bool has_chain_en = options.mem_hierarchy.at("mem").wire_chain_en;
   vector<pair<string, CoreIR::Type*> >
     ub_field{{"clk", context->Named("coreir.clkIn")},
       {"valid", context->Bit()}};
@@ -2113,6 +2114,7 @@ CoreIR::Module* affine_controller_use_lake_tile_counter(
       {"width", CoreIR::Const::make(context, 16)},
       {"num_inputs", CoreIR::Const::make(context, 0)},
       {"num_outputs", CoreIR::Const::make(context, 1)},
+      {"has_chain_en", CoreIR::Const::make(context, has_chain_en)},
       {"has_stencil_valid", CoreIR::Const::make(context, has_stencil_valid)},
       {"ID", CoreIR::Const::make(context, context->getUnique())},
       {"has_flush",  CoreIR::Const::make(context, true)},
@@ -2237,6 +2239,7 @@ CoreIR::Module* affine_controller_use_lake_tile_counter(
 }
 
 CoreIR::Instance* affine_controller_use_lake_tile(
+        CodegenOptions & options,
         ModuleDef* def,
         CoreIR::Context* context,
         isl_set* dom,
@@ -2244,11 +2247,13 @@ CoreIR::Instance* affine_controller_use_lake_tile(
         string ub_ins_name) {
 
   CoreIR::Instance* buf;
+  bool has_chain_en = options.mem_hierarchy.at("mem").wire_chain_en;
   CoreIR::Values genargs = {
     {"width", CoreIR::Const::make(context, 16)},
     {"num_inputs", CoreIR::Const::make(context, 0)},
     {"num_outputs", CoreIR::Const::make(context, 0)},
     {"has_stencil_valid", CoreIR::Const::make(context, true)},
+    {"has_chain_en", CoreIR::Const::make(context, has_chain_en)},
     {"ID", CoreIR::Const::make(context, context->getUnique())},
     {"has_flush",  CoreIR::Const::make(context, true)},
     {"use_prebuilt_mem",  CoreIR::Const::make(context, true)}
@@ -2319,11 +2324,13 @@ CoreIR::Instance* UBuffer::generate_lake_tile_instance(
         bool has_stencil_valid, bool has_flush) {
 
   auto context = def->getContext();
+  bool has_chain_en = options.mem_hierarchy.at("mem").wire_chain_en;
   CoreIR::Instance* buf;
   CoreIR::Values genargs = {
     {"width", CoreIR::Const::make(context, port_widths)},
     {"num_inputs", CoreIR::Const::make(context, input_num)},
     {"num_outputs", CoreIR::Const::make(context, output_num)},
+    {"has_chain_en", CoreIR::Const::make(context, has_chain_en)},
     {"has_stencil_valid", CoreIR::Const::make(context, has_stencil_valid)},
     {"ID", CoreIR::Const::make(context, context->getUnique())},
     {"has_flush",  CoreIR::Const::make(context, has_flush)},
@@ -2476,15 +2483,18 @@ void UBuffer::wire_ubuf_IO(CodegenOptions& options,CoreIR::ModuleDef* def, map<s
 
   if (config_mode == "lake") {
     if (!chain_en) {
-      auto chain_en_const = def->addInstance("chain_en_const"+context->getUnique(), "corebit.const",
-          {{"value", CoreIR::Const::make(context, false)}});
-      def->connect(buf->sel("chain_chain_en"), chain_en_const->sel("out"));
-
+      if (options.mem_hierarchy.at("mem").wire_chain_en) {
+        auto chain_en_const = def->addInstance("chain_en_const"+context->getUnique(), "corebit.const",
+            {{"value", CoreIR::Const::make(context, false)}});
+        def->connect(buf->sel("chain_chain_en"), chain_en_const->sel("out"));
+      }
     } else {
       //Need chaining
-      auto chain_en_const = def->addInstance("chain_en_const"+context->getUnique(), "corebit.const",
-          {{"value", CoreIR::Const::make(context, true)}});
-      def->connect(buf->sel("chain_chain_en"), chain_en_const->sel("out"));
+      if (options.mem_hierarchy.at("mem").wire_chain_en) {
+        auto chain_en_const = def->addInstance("chain_en_const"+context->getUnique(), "corebit.const",
+            {{"value", CoreIR::Const::make(context, true)}});
+        def->connect(buf->sel("chain_chain_en"), chain_en_const->sel("out"));
+      }
 
       //Add the chainenable config
       buf->getMetaData()["config"]["chain_en"] = 1;
@@ -2581,7 +2591,7 @@ bool cgpl_ctrl_optimization(CodegenOptions& options, CoreIR::ModuleDef* def, Cor
         target_buf.get_coarse_grained_pipeline_schedule(new_target_buf);
     //connect with the new ctrl stencil valid port
      cgpl_ctrl = affine_controller_use_lake_tile(
-            def, context, ::domain(cgpl_schedule),
+            options, def, context, ::domain(cgpl_schedule),
             get_aff(cgpl_schedule), ub_ins_name + "_cgpl_ctrl");
     generate_lake_tile_verilog(options, cgpl_ctrl);
     target_buf = new_target_buf;
@@ -2767,11 +2777,11 @@ void UBuffer::generate_coreir(CodegenOptions& options,
     //if we can optmize for coarse grained pipeline scheduler
     cgpl_post_processing(def, buf, cgpl_ctrl, decouple_ctrl);
 
-    //generate verilog collateral
-    generate_lake_tile_verilog(options, buf);
-
     //Wiring the port after generate verilog
     wire_ubuf_IO(options, def, pt2wire, buf, impl, bank_id, with_ctrl);
+
+    //generate verilog collateral
+    generate_lake_tile_verilog(options, buf);
   }
 
   //Generate the shift register connection
@@ -7844,6 +7854,7 @@ void UBuffer::generate_banks(CodegenOptions& options) {
 
     pair<isl_map*, isl_map*> get_vectorized_read(isl_map* acc_0, isl_map* sched, map<string, isl_map*> sched_record_map, int fetch_width, int addr_dim, bool is_dual_port) {
         int vectorize_loop_dim = get_inner_most_related_dom_dim(acc_0, addr_dim, fetch_width);
+        int vectorize_loop_dim_origin = vectorize_loop_dim;
         auto trans =
             get_domain_trans_with_reaccess_mask(domain(acc_0), vectorize_loop_dim, fetch_width);
 
@@ -7874,7 +7885,16 @@ void UBuffer::generate_banks(CodegenOptions& options) {
 
         //Check if we have sliding window across domain
         auto dim2denom = get_dim2denom(acc_vec);
+        bool slide_over_one_fetch = false;
         if (dim2denom.size()) {
+            //check if we slide over more than one wide fetch
+            for(auto it: dim2denom) {
+                if (get_dim_extent(::domain(acc_vec), it.first) > it.second) {
+                    slide_over_one_fetch = true;
+                }
+            }
+
+            //Do the transformation
             auto div_trans = get_div_trans(acc_vec, dim2denom);
             acc_vec = dot(inv(div_trans), acc_vec);
             sched_vec = simplify_expr(dot(inv(div_trans), sched_vec));
@@ -7886,14 +7906,23 @@ void UBuffer::generate_banks(CodegenOptions& options) {
 
         //fetch one more from SRAM
         auto origin_slice = dot(acc_0, slice);
+        cout << "\t slide over more than one fetch: " << slide_over_one_fetch << endl;
+        cout << "\t acc 0 : " << str(acc_0) << endl;
+        cout << "\t acc vec: " << str(acc_vec) << endl;
+        cout << "\t origin_slice: " << str(origin_slice) << endl;
         cout << "\ttrans max: " << get_dim_max(range(acc_vec), addr_dim)
             << " , origin max: " << get_dim_max(range(origin_slice), addr_dim) << endl;
+        cout << "\ttrans max: " << get_domain_span_range(acc_vec, vectorize_loop_dim, addr_dim)
+            << " , origin max: " << get_domain_span_range(origin_slice, vectorize_loop_dim_origin, addr_dim) << endl;
         cout << "\tvectorize loop dim: " << vectorize_loop_dim << endl;
+        cout << "\torigin vectorize loop dim: " << vectorize_loop_dim_origin<< endl;
         cout << "\taccess vec before padding: " << str(acc_vec) << endl;
         cout << "\tsched vec before padding: "<< str(sched_vec) << endl;
         int ahead_step = 0;
+        //pad condition complex, put into a function
         if (get_dim_max(range(acc_vec), addr_dim) <
-                get_dim_max(range(origin_slice), addr_dim)) {
+                get_dim_max(range(origin_slice), addr_dim) ||
+                slide_over_one_fetch) {
             //pad to the right
             acc_vec = pad_to_domain_ubuf_map(acc_vec, vectorize_loop_dim, 1);
             sched_vec = pad_to_domain_ubuf_map(sched_vec, vectorize_loop_dim, 1);
