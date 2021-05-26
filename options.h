@@ -126,6 +126,15 @@ struct LakeCollateral {
                 out_port_width = {{"regfile", 1}};
                 bank_num = {{"regfile", 1}};
                 capacity = {{"regfile", 32}};
+
+            } else if (level == "glb") {
+                fetch_width = 1;
+                max_chaining = 1;
+                word_width = {{"glb", 1}};
+                in_port_width= {{"glb", 1}};
+                out_port_width = {{"glb", 1}};
+                bank_num = {{"glb", 1}};
+                capacity = {{"glb", 65536}};
             } else if (level != "mem") {
                 cout << "\t\tERROR: Memory component not identified" << endl;
                 assert(false);

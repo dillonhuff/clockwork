@@ -188,6 +188,7 @@ isl_aff* inner_bank_offset_aff(const std::string& reader, UBuffer& buf, const Em
 isl_aff* bank_offset_aff(const std::string& reader, UBuffer& buf, const EmbarrassingBankingImpl& impl);
 
 void garnet_map_module(CoreIR::Module* top, bool garnet_syntax_trans);
+void garnet_map_module(CoreIR::Module* top, map<string, UBuffer> & buffers, bool garnet_syntax_trans);
 
 double PE_energy_cost(power_analysis_params& power_params, power_analysis_info& power_stats, prog& prg);
 

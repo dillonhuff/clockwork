@@ -2591,7 +2591,7 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
     void generate_coreir_without_ctrl(CodegenOptions& options, UBufferImpl& impl, CoreIR::ModuleDef* def, schedule_info& info);
     Json generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> &rewrite_buffer);
     Json generate_ubuf_args_old(CodegenOptions& options, map<string, UBuffer> & rewrite_buffer);
-    Json generate_ubuf_args(CodegenOptions& options, UBuffer& rewrite_buffer);
+    Json generate_ubuf_args(CodegenOptions& options, UBuffer& rewrite_buffer, string mem_name);
 
     void generate_stencil_valid_config(CodegenOptions& options, string bk_name);
     CoreIR::Instance* generate_lake_tile_instance(

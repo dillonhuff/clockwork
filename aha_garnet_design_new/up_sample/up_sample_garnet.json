@@ -338,12 +338,14 @@
           "io16_hw_output_stencil_op_hcompute_hw_output_stencil_write_0":{
             "genref":"cgralib.IO",
             "genargs":{"width":["Int",16]},
-            "modargs":{"mode":["String","out"]}
+            "modargs":{"mode":["String","out"]},
+            "metadata":{"in2glb_0":{"cycle_starting_addr":[16],"cycle_stride":[1],"dimensionality":1,"extent":[16384],"write_data_starting_addr":[0],"write_data_stride":[1]}}
           },
           "io16in_input_copy_stencil_op_hcompute_hw_input_stencil_read_0":{
             "genref":"cgralib.IO",
             "genargs":{"width":["Int",16]},
-            "modargs":{"mode":["String","in"]}
+            "modargs":{"mode":["String","in"]},
+            "metadata":{"glb2out_0":{"cycle_starting_addr":[0],"cycle_stride":[2,256],"dimensionality":2,"extent":[64,64],"read_data_starting_addr":[0],"read_data_stride":[1,64]}}
           },
           "io1_hw_output_stencil_op_hcompute_hw_output_stencil_write_valid":{
             "modref":"cgralib.BitIO",
