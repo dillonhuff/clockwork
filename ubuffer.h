@@ -3132,8 +3132,8 @@ struct UBufferImpl {
     int capacity = int_upper_bound(card(to_uset(bank_rddom.at(bank_id))));
     auto mem_hierarchy = options.mem_hierarchy;
     cout << "mem hierarchy size: " << mem_hierarchy.size() << endl;
-    if (mem_hierarchy.size() == 1)
-        return pick(mem_hierarchy).first;
+    if (mem_hierarchy.count("regfile") == 0)
+        return "mem";
     vector<pair<string, LakeCollateral> > mem_vec(mem_hierarchy.begin(), mem_hierarchy.end());
     cout << mem_vec.size() << endl;
     sort(mem_vec.begin(), mem_vec.end(),
