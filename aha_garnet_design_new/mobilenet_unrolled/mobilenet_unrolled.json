@@ -326,7 +326,7 @@
           ["clk",["Named","coreir.clkIn"]],
           ["valid_pass_in","BitIn"],
           ["valid_pass_out","Bit"],
-          ["hw_input_stencil_clkwrk_4_op_hcompute_hw_input_global_wrapper_stencil_read",["Array",1,["Array",16,"BitIn"]]],
+          ["hw_input_stencil_clkwrk_6_op_hcompute_hw_input_global_wrapper_stencil_read",["Array",1,["Array",16,"BitIn"]]],
           ["hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_write",["Array",1,["Array",16,"Bit"]]]
         ]],
         "instances":{
@@ -335,7 +335,7 @@
           }
         },
         "connections":[
-          ["self.hw_input_stencil_clkwrk_4_op_hcompute_hw_input_global_wrapper_stencil_read.0","inner_compute.in0_hw_input_stencil.0"],
+          ["self.hw_input_stencil_clkwrk_6_op_hcompute_hw_input_global_wrapper_stencil_read.0","inner_compute.in0_hw_input_stencil.0"],
           ["self.hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_write.0","inner_compute.out_hw_input_global_wrapper_stencil"],
           ["self.valid_pass_out","self.valid_pass_in"]
         ]
@@ -345,7 +345,7 @@
           ["clk",["Named","coreir.clkIn"]],
           ["valid_pass_in","BitIn"],
           ["valid_pass_out","Bit"],
-          ["hw_input_stencil_clkwrk_5_op_hcompute_hw_input_global_wrapper_stencil_1_read",["Array",1,["Array",16,"BitIn"]]],
+          ["hw_input_stencil_clkwrk_7_op_hcompute_hw_input_global_wrapper_stencil_1_read",["Array",1,["Array",16,"BitIn"]]],
           ["hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_1_write",["Array",1,["Array",16,"Bit"]]]
         ]],
         "instances":{
@@ -354,7 +354,7 @@
           }
         },
         "connections":[
-          ["self.hw_input_stencil_clkwrk_5_op_hcompute_hw_input_global_wrapper_stencil_1_read.0","inner_compute.in0_hw_input_stencil.0"],
+          ["self.hw_input_stencil_clkwrk_7_op_hcompute_hw_input_global_wrapper_stencil_1_read.0","inner_compute.in0_hw_input_stencil.0"],
           ["self.hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_1_write.0","inner_compute.out_hw_input_global_wrapper_stencil"],
           ["self.valid_pass_out","self.valid_pass_in"]
         ]
@@ -364,7 +364,7 @@
           ["clk",["Named","coreir.clkIn"]],
           ["valid_pass_in","BitIn"],
           ["valid_pass_out","Bit"],
-          ["hw_input_stencil_clkwrk_6_op_hcompute_hw_input_global_wrapper_stencil_2_read",["Array",1,["Array",16,"BitIn"]]],
+          ["hw_input_stencil_clkwrk_5_op_hcompute_hw_input_global_wrapper_stencil_2_read",["Array",1,["Array",16,"BitIn"]]],
           ["hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2_write",["Array",1,["Array",16,"Bit"]]]
         ]],
         "instances":{
@@ -373,7 +373,7 @@
           }
         },
         "connections":[
-          ["self.hw_input_stencil_clkwrk_6_op_hcompute_hw_input_global_wrapper_stencil_2_read.0","inner_compute.in0_hw_input_stencil.0"],
+          ["self.hw_input_stencil_clkwrk_5_op_hcompute_hw_input_global_wrapper_stencil_2_read.0","inner_compute.in0_hw_input_stencil.0"],
           ["self.hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2_write.0","inner_compute.out_hw_input_global_wrapper_stencil"],
           ["self.valid_pass_out","self.valid_pass_in"]
         ]
@@ -383,7 +383,7 @@
           ["clk",["Named","coreir.clkIn"]],
           ["valid_pass_in","BitIn"],
           ["valid_pass_out","Bit"],
-          ["hw_input_stencil_clkwrk_7_op_hcompute_hw_input_global_wrapper_stencil_3_read",["Array",1,["Array",16,"BitIn"]]],
+          ["hw_input_stencil_clkwrk_4_op_hcompute_hw_input_global_wrapper_stencil_3_read",["Array",1,["Array",16,"BitIn"]]],
           ["hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_3_write",["Array",1,["Array",16,"Bit"]]]
         ]],
         "instances":{
@@ -392,7 +392,7 @@
           }
         },
         "connections":[
-          ["self.hw_input_stencil_clkwrk_7_op_hcompute_hw_input_global_wrapper_stencil_3_read.0","inner_compute.in0_hw_input_stencil.0"],
+          ["self.hw_input_stencil_clkwrk_4_op_hcompute_hw_input_global_wrapper_stencil_3_read.0","inner_compute.in0_hw_input_stencil.0"],
           ["self.hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_3_write.0","inner_compute.out_hw_input_global_wrapper_stencil"],
           ["self.valid_pass_out","self.valid_pass_in"]
         ]
@@ -3370,14 +3370,14 @@
           ["hw_filter_dw_stencil_clkwrk_3_op_hcompute_hw_filter_dw_global_wrapper_stencil_3_read",["Array",1,["Array",16,"BitIn"]]],
           ["hw_filter_pw_stencil_op_hcompute_hw_filter_pw_global_wrapper_stencil_read_en","Bit"],
           ["hw_filter_pw_stencil_op_hcompute_hw_filter_pw_global_wrapper_stencil_read",["Array",1,["Array",16,"BitIn"]]],
-          ["hw_input_stencil_clkwrk_4_op_hcompute_hw_input_global_wrapper_stencil_read_en","Bit"],
-          ["hw_input_stencil_clkwrk_4_op_hcompute_hw_input_global_wrapper_stencil_read",["Array",1,["Array",16,"BitIn"]]],
-          ["hw_input_stencil_clkwrk_5_op_hcompute_hw_input_global_wrapper_stencil_1_read_en","Bit"],
-          ["hw_input_stencil_clkwrk_5_op_hcompute_hw_input_global_wrapper_stencil_1_read",["Array",1,["Array",16,"BitIn"]]],
-          ["hw_input_stencil_clkwrk_6_op_hcompute_hw_input_global_wrapper_stencil_2_read_en","Bit"],
-          ["hw_input_stencil_clkwrk_6_op_hcompute_hw_input_global_wrapper_stencil_2_read",["Array",1,["Array",16,"BitIn"]]],
-          ["hw_input_stencil_clkwrk_7_op_hcompute_hw_input_global_wrapper_stencil_3_read_en","Bit"],
-          ["hw_input_stencil_clkwrk_7_op_hcompute_hw_input_global_wrapper_stencil_3_read",["Array",1,["Array",16,"BitIn"]]],
+          ["hw_input_stencil_clkwrk_4_op_hcompute_hw_input_global_wrapper_stencil_3_read_en","Bit"],
+          ["hw_input_stencil_clkwrk_4_op_hcompute_hw_input_global_wrapper_stencil_3_read",["Array",1,["Array",16,"BitIn"]]],
+          ["hw_input_stencil_clkwrk_5_op_hcompute_hw_input_global_wrapper_stencil_2_read_en","Bit"],
+          ["hw_input_stencil_clkwrk_5_op_hcompute_hw_input_global_wrapper_stencil_2_read",["Array",1,["Array",16,"BitIn"]]],
+          ["hw_input_stencil_clkwrk_6_op_hcompute_hw_input_global_wrapper_stencil_read_en","Bit"],
+          ["hw_input_stencil_clkwrk_6_op_hcompute_hw_input_global_wrapper_stencil_read",["Array",1,["Array",16,"BitIn"]]],
+          ["hw_input_stencil_clkwrk_7_op_hcompute_hw_input_global_wrapper_stencil_1_read_en","Bit"],
+          ["hw_input_stencil_clkwrk_7_op_hcompute_hw_input_global_wrapper_stencil_1_read",["Array",1,["Array",16,"BitIn"]]],
           ["hw_output_stencil_clkwrk_10_op_hcompute_hw_output_stencil_2_write_valid","Bit"],
           ["hw_output_stencil_clkwrk_10_op_hcompute_hw_output_stencil_2_write",["Array",1,["Array",16,"Bit"]]],
           ["hw_output_stencil_clkwrk_8_op_hcompute_hw_output_stencil_write_valid","Bit"],
@@ -3751,13 +3751,13 @@
           ["self.clk","_U238.clk"],
           ["self.hw_filter_pw_stencil_op_hcompute_hw_filter_pw_global_wrapper_stencil_read.0","_U238.in"],
           ["self.clk","_U243.clk"],
-          ["self.hw_input_stencil_clkwrk_7_op_hcompute_hw_input_global_wrapper_stencil_3_read.0","_U243.in"],
+          ["self.hw_input_stencil_clkwrk_4_op_hcompute_hw_input_global_wrapper_stencil_3_read.0","_U243.in"],
           ["self.clk","_U248.clk"],
-          ["self.hw_input_stencil_clkwrk_6_op_hcompute_hw_input_global_wrapper_stencil_2_read.0","_U248.in"],
+          ["self.hw_input_stencil_clkwrk_5_op_hcompute_hw_input_global_wrapper_stencil_2_read.0","_U248.in"],
           ["self.clk","_U253.clk"],
-          ["self.hw_input_stencil_clkwrk_5_op_hcompute_hw_input_global_wrapper_stencil_1_read.0","_U253.in"],
+          ["self.hw_input_stencil_clkwrk_7_op_hcompute_hw_input_global_wrapper_stencil_1_read.0","_U253.in"],
           ["self.clk","_U258.clk"],
-          ["self.hw_input_stencil_clkwrk_4_op_hcompute_hw_input_global_wrapper_stencil_read.0","_U258.in"],
+          ["self.hw_input_stencil_clkwrk_6_op_hcompute_hw_input_global_wrapper_stencil_read.0","_U258.in"],
           ["self.clk","_U263.clk"],
           ["self.hw_filter_dw_stencil_clkwrk_3_op_hcompute_hw_filter_dw_global_wrapper_stencil_3_read.0","_U263.in"],
           ["self.clk","_U268.clk"],
@@ -3870,9 +3870,9 @@
           ["op_hcompute_hw_filter_pw_global_wrapper_stencil_write_start.in","op_hcompute_hw_filter_pw_global_wrapper_stencil_port_controller.stencil_valid"],
           ["self.hw_filter_pw_stencil_op_hcompute_hw_filter_pw_global_wrapper_stencil_read_en","op_hcompute_hw_filter_pw_global_wrapper_stencil_read_start.out"],
           ["self.clk","op_hcompute_hw_input_global_wrapper_stencil.clk"],
-          ["self.hw_input_stencil_clkwrk_4_op_hcompute_hw_input_global_wrapper_stencil_read","op_hcompute_hw_input_global_wrapper_stencil.hw_input_stencil_clkwrk_4_op_hcompute_hw_input_global_wrapper_stencil_read"],
+          ["self.hw_input_stencil_clkwrk_6_op_hcompute_hw_input_global_wrapper_stencil_read","op_hcompute_hw_input_global_wrapper_stencil.hw_input_stencil_clkwrk_6_op_hcompute_hw_input_global_wrapper_stencil_read"],
           ["self.clk","op_hcompute_hw_input_global_wrapper_stencil_1.clk"],
-          ["self.hw_input_stencil_clkwrk_5_op_hcompute_hw_input_global_wrapper_stencil_1_read","op_hcompute_hw_input_global_wrapper_stencil_1.hw_input_stencil_clkwrk_5_op_hcompute_hw_input_global_wrapper_stencil_1_read"],
+          ["self.hw_input_stencil_clkwrk_7_op_hcompute_hw_input_global_wrapper_stencil_1_read","op_hcompute_hw_input_global_wrapper_stencil_1.hw_input_stencil_clkwrk_7_op_hcompute_hw_input_global_wrapper_stencil_1_read"],
           ["op_hcompute_hw_input_global_wrapper_stencil_1_port_controller.stencil_valid","op_hcompute_hw_input_global_wrapper_stencil_1_exe_start.in"],
           ["self.clk","op_hcompute_hw_input_global_wrapper_stencil_1_port_controller.clk"],
           ["op_hcompute_hw_input_global_wrapper_stencil_1_port_controller_clk_en_const.out","op_hcompute_hw_input_global_wrapper_stencil_1_port_controller.clk_en"],
@@ -3880,9 +3880,9 @@
           ["op_hcompute_hw_input_global_wrapper_stencil_1_port_controller_clk_en_const.out","op_hcompute_hw_input_global_wrapper_stencil_1_port_controller.rst_n"],
           ["op_hcompute_hw_input_global_wrapper_stencil_1_read_start.in","op_hcompute_hw_input_global_wrapper_stencil_1_port_controller.stencil_valid"],
           ["op_hcompute_hw_input_global_wrapper_stencil_1_write_start.in","op_hcompute_hw_input_global_wrapper_stencil_1_port_controller.stencil_valid"],
-          ["self.hw_input_stencil_clkwrk_5_op_hcompute_hw_input_global_wrapper_stencil_1_read_en","op_hcompute_hw_input_global_wrapper_stencil_1_read_start.out"],
+          ["self.hw_input_stencil_clkwrk_7_op_hcompute_hw_input_global_wrapper_stencil_1_read_en","op_hcompute_hw_input_global_wrapper_stencil_1_read_start.out"],
           ["self.clk","op_hcompute_hw_input_global_wrapper_stencil_2.clk"],
-          ["self.hw_input_stencil_clkwrk_6_op_hcompute_hw_input_global_wrapper_stencil_2_read","op_hcompute_hw_input_global_wrapper_stencil_2.hw_input_stencil_clkwrk_6_op_hcompute_hw_input_global_wrapper_stencil_2_read"],
+          ["self.hw_input_stencil_clkwrk_5_op_hcompute_hw_input_global_wrapper_stencil_2_read","op_hcompute_hw_input_global_wrapper_stencil_2.hw_input_stencil_clkwrk_5_op_hcompute_hw_input_global_wrapper_stencil_2_read"],
           ["op_hcompute_hw_input_global_wrapper_stencil_2_port_controller.stencil_valid","op_hcompute_hw_input_global_wrapper_stencil_2_exe_start.in"],
           ["self.clk","op_hcompute_hw_input_global_wrapper_stencil_2_port_controller.clk"],
           ["op_hcompute_hw_input_global_wrapper_stencil_2_port_controller_clk_en_const.out","op_hcompute_hw_input_global_wrapper_stencil_2_port_controller.clk_en"],
@@ -3890,9 +3890,9 @@
           ["op_hcompute_hw_input_global_wrapper_stencil_2_port_controller_clk_en_const.out","op_hcompute_hw_input_global_wrapper_stencil_2_port_controller.rst_n"],
           ["op_hcompute_hw_input_global_wrapper_stencil_2_read_start.in","op_hcompute_hw_input_global_wrapper_stencil_2_port_controller.stencil_valid"],
           ["op_hcompute_hw_input_global_wrapper_stencil_2_write_start.in","op_hcompute_hw_input_global_wrapper_stencil_2_port_controller.stencil_valid"],
-          ["self.hw_input_stencil_clkwrk_6_op_hcompute_hw_input_global_wrapper_stencil_2_read_en","op_hcompute_hw_input_global_wrapper_stencil_2_read_start.out"],
+          ["self.hw_input_stencil_clkwrk_5_op_hcompute_hw_input_global_wrapper_stencil_2_read_en","op_hcompute_hw_input_global_wrapper_stencil_2_read_start.out"],
           ["self.clk","op_hcompute_hw_input_global_wrapper_stencil_3.clk"],
-          ["self.hw_input_stencil_clkwrk_7_op_hcompute_hw_input_global_wrapper_stencil_3_read","op_hcompute_hw_input_global_wrapper_stencil_3.hw_input_stencil_clkwrk_7_op_hcompute_hw_input_global_wrapper_stencil_3_read"],
+          ["self.hw_input_stencil_clkwrk_4_op_hcompute_hw_input_global_wrapper_stencil_3_read","op_hcompute_hw_input_global_wrapper_stencil_3.hw_input_stencil_clkwrk_4_op_hcompute_hw_input_global_wrapper_stencil_3_read"],
           ["op_hcompute_hw_input_global_wrapper_stencil_3_port_controller.stencil_valid","op_hcompute_hw_input_global_wrapper_stencil_3_exe_start.in"],
           ["self.clk","op_hcompute_hw_input_global_wrapper_stencil_3_port_controller.clk"],
           ["op_hcompute_hw_input_global_wrapper_stencil_3_port_controller_clk_en_const.out","op_hcompute_hw_input_global_wrapper_stencil_3_port_controller.clk_en"],
@@ -3900,7 +3900,7 @@
           ["op_hcompute_hw_input_global_wrapper_stencil_3_port_controller_clk_en_const.out","op_hcompute_hw_input_global_wrapper_stencil_3_port_controller.rst_n"],
           ["op_hcompute_hw_input_global_wrapper_stencil_3_read_start.in","op_hcompute_hw_input_global_wrapper_stencil_3_port_controller.stencil_valid"],
           ["op_hcompute_hw_input_global_wrapper_stencil_3_write_start.in","op_hcompute_hw_input_global_wrapper_stencil_3_port_controller.stencil_valid"],
-          ["self.hw_input_stencil_clkwrk_7_op_hcompute_hw_input_global_wrapper_stencil_3_read_en","op_hcompute_hw_input_global_wrapper_stencil_3_read_start.out"],
+          ["self.hw_input_stencil_clkwrk_4_op_hcompute_hw_input_global_wrapper_stencil_3_read_en","op_hcompute_hw_input_global_wrapper_stencil_3_read_start.out"],
           ["op_hcompute_hw_input_global_wrapper_stencil_port_controller.stencil_valid","op_hcompute_hw_input_global_wrapper_stencil_exe_start.in"],
           ["self.clk","op_hcompute_hw_input_global_wrapper_stencil_port_controller.clk"],
           ["op_hcompute_hw_input_global_wrapper_stencil_port_controller_clk_en_const.out","op_hcompute_hw_input_global_wrapper_stencil_port_controller.clk_en"],
@@ -3908,7 +3908,7 @@
           ["op_hcompute_hw_input_global_wrapper_stencil_port_controller_clk_en_const.out","op_hcompute_hw_input_global_wrapper_stencil_port_controller.rst_n"],
           ["op_hcompute_hw_input_global_wrapper_stencil_read_start.in","op_hcompute_hw_input_global_wrapper_stencil_port_controller.stencil_valid"],
           ["op_hcompute_hw_input_global_wrapper_stencil_write_start.in","op_hcompute_hw_input_global_wrapper_stencil_port_controller.stencil_valid"],
-          ["self.hw_input_stencil_clkwrk_4_op_hcompute_hw_input_global_wrapper_stencil_read_en","op_hcompute_hw_input_global_wrapper_stencil_read_start.out"],
+          ["self.hw_input_stencil_clkwrk_6_op_hcompute_hw_input_global_wrapper_stencil_read_en","op_hcompute_hw_input_global_wrapper_stencil_read_start.out"],
           ["self.clk","op_hcompute_hw_output_stencil.clk"],
           ["self.hw_output_stencil_clkwrk_8_op_hcompute_hw_output_stencil_write","op_hcompute_hw_output_stencil.hw_output_stencil_clkwrk_8_op_hcompute_hw_output_stencil_write"],
           ["pw_conv_reduction_stencil.op_hcompute_hw_output_stencil_read","op_hcompute_hw_output_stencil.pw_conv_reduction_stencil_op_hcompute_hw_output_stencil_read"],
