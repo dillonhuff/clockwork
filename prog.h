@@ -72,8 +72,12 @@ struct ir_node {
   std::string func;
   // Name of loop index variables used by this unit
   std::vector<std::string> index_variables_needed_by_compute;
+
   // loop index variables used by memory has delay
   int index_variables_prefetch_cycle = 0;
+  // latency which further extract by schedule into
+  int latency = 0;
+
   // Annotation used for debug printouts
   int unroll_factor;
 
@@ -333,6 +337,10 @@ struct ir_node {
   void add_function(const std::string& n) {
     //assert(n != name);
     func = n;
+  }
+
+  void add_latency(const int l) {
+    latency = l;
   }
 
   void add_function(const std::string& n, const vector<string>& args) {

@@ -14892,6 +14892,7 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
 
   //test_apps.push_back(up_sample());
   //test_apps.push_back(resnet_one_input());
+  test_apps.push_back(unsharp_with_rom());
   test_apps.push_back(camera_pipeline_new());
   test_apps.push_back(laplacian_pyramid());
   test_apps.push_back(counter());
@@ -18436,7 +18437,7 @@ schedule_info garnet_schedule_info(CodegenOptions& options, prog& prg, bool use_
     } else if (prg.name == "rom" && op->func == "hcompute_hw_output_stencil") {
       sched.compute_unit_latencies[op->func] = 1;
     } else if (op->func != "") {
-      sched.compute_unit_latencies[op->func] = 0;
+      sched.compute_unit_latencies[op->func] = op->latency;
       //sched.op_compute_unit_latencies[op->name] = 0;
     } else {
       //sched.op_compute_unit_latencies[op->name] = 0;
@@ -18452,6 +18453,7 @@ schedule_info garnet_schedule_info(CodegenOptions& options, prog& prg, bool use_
       }
     }
   }
+  cout << sched.compute_unit_latencies << endl;
 
   for (auto op : prg.all_ops()) {
     if (op->func != "") {
