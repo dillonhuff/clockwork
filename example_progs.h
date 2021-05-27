@@ -14,7 +14,7 @@ prog conv_multi(); //multiple-tile-cnn
 prog strided_conv();
 prog accumulation(); //reduce
 prog unsharp();
-prog unsharp_with_rom();
+prog unsharp_new();
 prog cascade(); //stencil
 prog gaussian(); //stencil
 prog harris(); //stencil
