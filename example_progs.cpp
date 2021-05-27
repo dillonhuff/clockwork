@@ -4803,20 +4803,6 @@ prog camera_pipeline_new() {
 // Stencil<uint16_t, 56, 56, 3> &hw_output_stencil = arg_1;
   prg.add_output("hw_output_stencil");
   prg.buffer_port_widths["hw_output_stencil"] = 16;
-  //prg.add_output("curved_stencil");
-  //prg.buffer_port_widths["curved_stencil"] = 16;
-  //prg.add_output("corrected_stencil");
-  //prg.buffer_port_widths["corrected_stencil"] = 16;
-  //prg.add_output("demosaicked_1_stencil");
-  //prg.buffer_port_widths["demosaicked_1_stencil"] = 16;
-  //prg.add_output("b_b_stencil");
-  //prg.buffer_port_widths["b_b_stencil"] = 16;
-  //prg.add_output("g_gb_stencil");
-  //prg.buffer_port_widths["g_gb_stencil"] = 16;
-  //prg.add_output("g_gr_stencil");
-  //prg.buffer_port_widths["g_gr_stencil"] = 16;
-  //prg.add_output("r_r_stencil");
-  //prg.buffer_port_widths["r_r_stencil"] = 16;
 
 ////producing hw_input_global_wrapper.stencil
   auto hw_input_global_wrapper_s0_y = prg.add_loop("hw_input_global_wrapper_s0_y", -4, 60);
@@ -5009,6 +4995,7 @@ prog camera_pipeline_new() {
 
 //store is: curved.stencil(curved_s0_x, curved_s0_y, 0) = curvea0[int32(uint16(max(min(corrected.stencil(curved_s0_x, curved_s0_y, 0), (int16)1023), (int16)0)))]
   auto hcompute_curved_stencil = curved_s0_x->add_op("op_hcompute_curved_stencil");
+  hcompute_curved_stencil->add_latency(1);
   hcompute_curved_stencil->add_function("hcompute_curved_stencil");
   hcompute_curved_stencil->add_load("corrected_stencil", "0", "curved_s0_y", "curved_s0_x");
   prg.buffer_port_widths["curved_stencil"] = 16;
@@ -5018,6 +5005,7 @@ prog camera_pipeline_new() {
 
 //store is: curved.stencil(curved_s0_x_1, curved_s0_y_1, 1) = curvea0[int32(uint16(max(min(corrected.stencil(curved_s0_x_1, curved_s0_y_1, 1), (int16)1023), (int16)0)))]
   auto hcompute_curved_stencil_1 = curved_s0_x_1->add_op("op_hcompute_curved_stencil_1");
+  hcompute_curved_stencil_1->add_latency(1);
   hcompute_curved_stencil_1->add_function("hcompute_curved_stencil_1");
   hcompute_curved_stencil_1->add_load("corrected_stencil", "1", "curved_s0_y_1", "curved_s0_x_1");
   hcompute_curved_stencil_1->add_store("curved_stencil", "1", "curved_s0_y_1", "curved_s0_x_1");
@@ -5026,6 +5014,7 @@ prog camera_pipeline_new() {
 
 //store is: curved.stencil(curved_s0_x_2, curved_s0_y_2, 2) = curvea0[int32(uint16(max(min(corrected.stencil(curved_s0_x_2, curved_s0_y_2, 2), (int16)1023), (int16)0)))]
   auto hcompute_curved_stencil_2 = curved_s0_x_2->add_op("op_hcompute_curved_stencil_2");
+  hcompute_curved_stencil_2->add_latency(1);
   hcompute_curved_stencil_2->add_function("hcompute_curved_stencil_2");
   hcompute_curved_stencil_2->add_load("corrected_stencil", "2", "curved_s0_y_2", "curved_s0_x_2");
   hcompute_curved_stencil_2->add_store("curved_stencil", "2", "curved_s0_y_2", "curved_s0_x_2");
@@ -5195,6 +5184,7 @@ prog camera_pipeline() {
 
 //store is: curved.stencil(curved_s0_x, curved_s0_y, 0) = curvea0[int32(min(corrected.stencil(curved_s0_x, curved_s0_y, 0), (uint16)255))]
   auto hcompute_curved_stencil = curved_s0_x->add_op("op_hcompute_curved_stencil");
+  hcompute_curved_stencil->add_latency(1);
   hcompute_curved_stencil->add_function("hcompute_curved_stencil");
   hcompute_curved_stencil->add_load("corrected_stencil", "0", "curved_s0_y", "curved_s0_x");
   prg.buffer_port_widths["curved_stencil"] = 16;
@@ -5204,6 +5194,7 @@ prog camera_pipeline() {
 
 //store is: curved.stencil(curved_s0_x_1, curved_s0_y_1, 1) = curvea0[int32(min(corrected.stencil(curved_s0_x_1, curved_s0_y_1, 1), (uint16)255))]
   auto hcompute_curved_stencil_1 = curved_s0_x_1->add_op("op_hcompute_curved_stencil_1");
+  hcompute_curved_stencil_1->add_latency(1);
   hcompute_curved_stencil_1->add_function("hcompute_curved_stencil_1");
   hcompute_curved_stencil_1->add_load("corrected_stencil", "1", "curved_s0_y_1", "curved_s0_x_1");
   hcompute_curved_stencil_1->add_store("curved_stencil", "1", "curved_s0_y_1", "curved_s0_x_1");
@@ -5212,6 +5203,7 @@ prog camera_pipeline() {
 
 //store is: curved.stencil(curved_s0_x_2, curved_s0_y_2, 2) = curvea0[int32(min(corrected.stencil(curved_s0_x_2, curved_s0_y_2, 2), (uint16)255))]
   auto hcompute_curved_stencil_2 = curved_s0_x_2->add_op("op_hcompute_curved_stencil_2");
+  hcompute_curved_stencil_2->add_latency(1);
   hcompute_curved_stencil_2->add_function("hcompute_curved_stencil_2");
   hcompute_curved_stencil_2->add_load("corrected_stencil", "2", "curved_s0_y_2", "curved_s0_x_2");
   hcompute_curved_stencil_2->add_store("curved_stencil", "2", "curved_s0_y_2", "curved_s0_x_2");
@@ -6169,6 +6161,7 @@ prog rom() {
 //store is: hw_output.stencil(hw_output_s0_x_xi, hw_output_s0_y_yi) = curvea0[int32(max(min(hw_input_global_wrapper.stencil(hw_output_s0_x_xi, hw_output_s0_y_yi), (int16)1023), (int16)0))]
   auto hcompute_hw_output_stencil = hw_output_s0_x_xi->add_op("op_hcompute_hw_output_stencil");
   hcompute_hw_output_stencil->add_function("hcompute_hw_output_stencil");
+  hcompute_hw_output_stencil->add_latency(1);
   hcompute_hw_output_stencil->add_load("hw_input_global_wrapper_stencil", "hw_output_s0_y_yi", "hw_output_s0_x_xi");
   hcompute_hw_output_stencil->add_store("hw_output_stencil", "hw_output_s0_y_yi", "hw_output_s0_x_xi");
 

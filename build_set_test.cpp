@@ -14892,8 +14892,10 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
 
   //test_apps.push_back(up_sample());
   //test_apps.push_back(resnet_one_input());
-  test_apps.push_back(unsharp_new());
+  test_apps.push_back(rom());
   test_apps.push_back(camera_pipeline_new());
+  test_apps.push_back(camera_pipeline());
+  test_apps.push_back(unsharp_new());
   test_apps.push_back(laplacian_pyramid());
   test_apps.push_back(counter());
   test_apps.push_back(gaussian());
@@ -14901,13 +14903,10 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   test_apps.push_back(down_sample());
   test_apps.push_back(cascade());
   test_apps.push_back(harris());
-  test_apps.push_back(rom());
   test_apps.push_back(conv_1_2());
   test_apps.push_back(demosaic_unrolled());
-  test_apps.push_back(camera_pipeline());
   test_apps.push_back(up_sample());
   test_apps.push_back(unsharp());
-  test_apps.push_back(camera_pipeline_new());
 
   //DNN apps
   test_apps.push_back(resnet_simple());
@@ -18424,19 +18423,7 @@ schedule_info garnet_schedule_info(CodegenOptions& options, prog& prg, bool use_
       sched.resource_requirements[op] = op->func;
     }
 
-    // Extremely hacky rom latency introduction
-    if (op->func == "hcompute_curved_stencil") {
-      sched.compute_unit_latencies[op->func] = 1;
-      //sched.op_compute_unit_latencies[op->name] = 1;
-    } else if (op->func == "hcompute_curved_stencil_1") {
-      sched.compute_unit_latencies[op->func] = 1;
-      //sched.op_compute_unit_latencies[op->name] = 1;
-    } else if (op->func == "hcompute_curved_stencil_2") {
-      sched.compute_unit_latencies[op->func] = 1;
-      //sched.op_compute_unit_latencies[op->name] = 1;
-    } else if (prg.name == "rom" && op->func == "hcompute_hw_output_stencil") {
-      sched.compute_unit_latencies[op->func] = 1;
-    } else if (op->func != "") {
+    if (op->func != "") {
       sched.compute_unit_latencies[op->func] = op->latency;
       //sched.op_compute_unit_latencies[op->name] = 0;
     } else {
