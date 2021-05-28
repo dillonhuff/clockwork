@@ -1,0 +1,3050 @@
+#ifndef __VIVADO_SYNTH__
+#include <fstream>
+using namespace std;
+
+  // Debug utility
+  ofstream* global_debug_handle;
+
+#endif //__VIVADO_SYNTH__
+// compute file: blurx7_16_opt_compute_units.h_merged_compute_units.h_merged_compute_units.h_merged_compute_units.h_merged_compute_units.h_merged_compute_units.h
+#include "blurx7_16_opt_compute_units.h_merged_compute_units.h_merged_compute_units.h_merged_compute_units.h_merged_compute_units.h_merged_compute_units.h"
+
+struct input_input_1_merged146_64_to_input_input_ld1_merged143_48_cache {
+	// RAM Box: {[0, 1920], [0, 1079]}
+	// Capacity: 1
+	// # of read delays: 2
+  // 0, 0
+	fifo<hw_uint<16>, 1> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.peek(0 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.push(value);
+  }
+
+};
+
+struct input_input_1_merged146_65_to_input_input_ld1_merged143_49_cache {
+	// RAM Box: {[1, 1921], [0, 1079]}
+	// Capacity: 1
+	// # of read delays: 2
+  // 0, 0
+	fifo<hw_uint<16>, 1> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.peek(0 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.push(value);
+  }
+
+};
+
+struct input_input_1_merged146_66_to_input_input_ld1_merged143_50_cache {
+	// RAM Box: {[2, 1922], [0, 1079]}
+	// Capacity: 1
+	// # of read delays: 2
+  // 0, 0
+	fifo<hw_uint<16>, 1> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.peek(0 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.push(value);
+  }
+
+};
+
+struct input_input_1_merged146_67_to_input_input_ld1_merged143_51_cache {
+	// RAM Box: {[3, 1923], [0, 1079]}
+	// Capacity: 1
+	// # of read delays: 2
+  // 0, 0
+	fifo<hw_uint<16>, 1> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.peek(0 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.push(value);
+  }
+
+};
+
+struct input_input_1_merged146_68_to_input_input_ld1_merged143_52_cache {
+	// RAM Box: {[4, 1924], [0, 1079]}
+	// Capacity: 1
+	// # of read delays: 2
+  // 0, 0
+	fifo<hw_uint<16>, 1> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.peek(0 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.push(value);
+  }
+
+};
+
+struct input_input_1_merged146_69_to_input_input_ld1_merged143_53_cache {
+	// RAM Box: {[5, 1925], [0, 1079]}
+	// Capacity: 1
+	// # of read delays: 2
+  // 0, 0
+	fifo<hw_uint<16>, 1> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.peek(0 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.push(value);
+  }
+
+};
+
+struct input_input_1_merged146_70_to_input_input_ld1_merged143_54_cache {
+	// RAM Box: {[6, 1926], [0, 1079]}
+	// Capacity: 1
+	// # of read delays: 2
+  // 0, 0
+	fifo<hw_uint<16>, 1> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.peek(0 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.push(value);
+  }
+
+};
+
+struct input_input_1_merged146_71_to_input_input_ld1_merged143_55_cache {
+	// RAM Box: {[7, 1927], [0, 1079]}
+	// Capacity: 1
+	// # of read delays: 2
+  // 0, 0
+	fifo<hw_uint<16>, 1> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.peek(0 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.push(value);
+  }
+
+};
+
+struct input_input_1_merged146_72_to_input_input_ld1_merged143_56_cache {
+	// RAM Box: {[8, 1928], [0, 1079]}
+	// Capacity: 1
+	// # of read delays: 2
+  // 0, 0
+	fifo<hw_uint<16>, 1> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.peek(0 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.push(value);
+  }
+
+};
+
+struct input_input_1_merged146_73_to_input_input_ld1_merged143_57_cache {
+	// RAM Box: {[9, 1929], [0, 1079]}
+	// Capacity: 1
+	// # of read delays: 2
+  // 0, 0
+	fifo<hw_uint<16>, 1> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.peek(0 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.push(value);
+  }
+
+};
+
+struct input_input_1_merged146_74_to_input_input_ld1_merged143_58_cache {
+	// RAM Box: {[10, 1930], [0, 1079]}
+	// Capacity: 1
+	// # of read delays: 2
+  // 0, 0
+	fifo<hw_uint<16>, 1> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.peek(0 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.push(value);
+  }
+
+};
+
+struct input_input_1_merged146_75_to_input_input_ld1_merged143_59_cache {
+	// RAM Box: {[11, 1931], [0, 1079]}
+	// Capacity: 1
+	// # of read delays: 2
+  // 0, 0
+	fifo<hw_uint<16>, 1> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.peek(0 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.push(value);
+  }
+
+};
+
+struct input_input_1_merged146_76_to_input_input_ld1_merged143_60_cache {
+	// RAM Box: {[12, 1932], [0, 1079]}
+	// Capacity: 1
+	// # of read delays: 2
+  // 0, 0
+	fifo<hw_uint<16>, 1> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.peek(0 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.push(value);
+  }
+
+};
+
+struct input_input_1_merged146_77_to_input_input_ld1_merged143_61_cache {
+	// RAM Box: {[13, 1933], [0, 1079]}
+	// Capacity: 1
+	// # of read delays: 2
+  // 0, 0
+	fifo<hw_uint<16>, 1> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.peek(0 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.push(value);
+  }
+
+};
+
+struct input_input_1_merged146_78_to_input_input_ld1_merged143_62_cache {
+	// RAM Box: {[14, 1934], [0, 1079]}
+	// Capacity: 1
+	// # of read delays: 2
+  // 0, 0
+	fifo<hw_uint<16>, 1> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.peek(0 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.push(value);
+  }
+
+};
+
+struct input_input_1_merged146_79_to_input_input_ld1_merged143_63_cache {
+	// RAM Box: {[15, 1935], [0, 1079]}
+	// Capacity: 1
+	// # of read delays: 2
+  // 0, 0
+	fifo<hw_uint<16>, 1> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.peek(0 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.push(value);
+  }
+
+};
+
+struct input_cache {
+  // Reader addrs...
+    // { input_ld1_merged143[root = 0, input_ld2, input_ld1] -> input[16input_ld1, input_ld2] : 0 <= input_ld2 <= 1079 and 0 <= input_ld1 <= 120 }
+    // { input_ld1_merged143[root = 0, input_ld2, input_ld1] -> input[1 + 16input_ld1, input_ld2] : 0 <= input_ld2 <= 1079 and 0 <= input_ld1 <= 120 }
+    // { input_ld1_merged143[root = 0, input_ld2, input_ld1] -> input[2 + 16input_ld1, input_ld2] : 0 <= input_ld2 <= 1079 and 0 <= input_ld1 <= 120 }
+    // { input_ld1_merged143[root = 0, input_ld2, input_ld1] -> input[3 + 16input_ld1, input_ld2] : 0 <= input_ld2 <= 1079 and 0 <= input_ld1 <= 120 }
+    // { input_ld1_merged143[root = 0, input_ld2, input_ld1] -> input[4 + 16input_ld1, input_ld2] : 0 <= input_ld2 <= 1079 and 0 <= input_ld1 <= 120 }
+    // { input_ld1_merged143[root = 0, input_ld2, input_ld1] -> input[5 + 16input_ld1, input_ld2] : 0 <= input_ld2 <= 1079 and 0 <= input_ld1 <= 120 }
+    // { input_ld1_merged143[root = 0, input_ld2, input_ld1] -> input[6 + 16input_ld1, input_ld2] : 0 <= input_ld2 <= 1079 and 0 <= input_ld1 <= 120 }
+    // { input_ld1_merged143[root = 0, input_ld2, input_ld1] -> input[7 + 16input_ld1, input_ld2] : 0 <= input_ld2 <= 1079 and 0 <= input_ld1 <= 120 }
+    // { input_ld1_merged143[root = 0, input_ld2, input_ld1] -> input[8 + 16input_ld1, input_ld2] : 0 <= input_ld2 <= 1079 and 0 <= input_ld1 <= 120 }
+    // { input_ld1_merged143[root = 0, input_ld2, input_ld1] -> input[9 + 16input_ld1, input_ld2] : 0 <= input_ld2 <= 1079 and 0 <= input_ld1 <= 120 }
+    // { input_ld1_merged143[root = 0, input_ld2, input_ld1] -> input[10 + 16input_ld1, input_ld2] : 0 <= input_ld2 <= 1079 and 0 <= input_ld1 <= 120 }
+    // { input_ld1_merged143[root = 0, input_ld2, input_ld1] -> input[11 + 16input_ld1, input_ld2] : 0 <= input_ld2 <= 1079 and 0 <= input_ld1 <= 120 }
+    // { input_ld1_merged143[root = 0, input_ld2, input_ld1] -> input[12 + 16input_ld1, input_ld2] : 0 <= input_ld2 <= 1079 and 0 <= input_ld1 <= 120 }
+    // { input_ld1_merged143[root = 0, input_ld2, input_ld1] -> input[13 + 16input_ld1, input_ld2] : 0 <= input_ld2 <= 1079 and 0 <= input_ld1 <= 120 }
+    // { input_ld1_merged143[root = 0, input_ld2, input_ld1] -> input[14 + 16input_ld1, input_ld2] : 0 <= input_ld2 <= 1079 and 0 <= input_ld1 <= 120 }
+    // { input_ld1_merged143[root = 0, input_ld2, input_ld1] -> input[15 + 16input_ld1, input_ld2] : 0 <= input_ld2 <= 1079 and 0 <= input_ld1 <= 120 }
+  // # of banks: 16
+  input_input_1_merged146_64_to_input_input_ld1_merged143_48_cache input_input_1_merged146_64_to_input_input_ld1_merged143_48;
+  input_input_1_merged146_65_to_input_input_ld1_merged143_49_cache input_input_1_merged146_65_to_input_input_ld1_merged143_49;
+  input_input_1_merged146_66_to_input_input_ld1_merged143_50_cache input_input_1_merged146_66_to_input_input_ld1_merged143_50;
+  input_input_1_merged146_67_to_input_input_ld1_merged143_51_cache input_input_1_merged146_67_to_input_input_ld1_merged143_51;
+  input_input_1_merged146_68_to_input_input_ld1_merged143_52_cache input_input_1_merged146_68_to_input_input_ld1_merged143_52;
+  input_input_1_merged146_69_to_input_input_ld1_merged143_53_cache input_input_1_merged146_69_to_input_input_ld1_merged143_53;
+  input_input_1_merged146_70_to_input_input_ld1_merged143_54_cache input_input_1_merged146_70_to_input_input_ld1_merged143_54;
+  input_input_1_merged146_71_to_input_input_ld1_merged143_55_cache input_input_1_merged146_71_to_input_input_ld1_merged143_55;
+  input_input_1_merged146_72_to_input_input_ld1_merged143_56_cache input_input_1_merged146_72_to_input_input_ld1_merged143_56;
+  input_input_1_merged146_73_to_input_input_ld1_merged143_57_cache input_input_1_merged146_73_to_input_input_ld1_merged143_57;
+  input_input_1_merged146_74_to_input_input_ld1_merged143_58_cache input_input_1_merged146_74_to_input_input_ld1_merged143_58;
+  input_input_1_merged146_75_to_input_input_ld1_merged143_59_cache input_input_1_merged146_75_to_input_input_ld1_merged143_59;
+  input_input_1_merged146_76_to_input_input_ld1_merged143_60_cache input_input_1_merged146_76_to_input_input_ld1_merged143_60;
+  input_input_1_merged146_77_to_input_input_ld1_merged143_61_cache input_input_1_merged146_77_to_input_input_ld1_merged143_61;
+  input_input_1_merged146_78_to_input_input_ld1_merged143_62_cache input_input_1_merged146_78_to_input_input_ld1_merged143_62;
+  input_input_1_merged146_79_to_input_input_ld1_merged143_63_cache input_input_1_merged146_79_to_input_input_ld1_merged143_63;
+};
+
+
+
+inline void input_input_1_merged146_64_write(hw_uint<16>& input_input_1_merged146_64, input_cache& input, int root, int input_0, int input_1, int dynamic_address) {
+  input.input_input_1_merged146_64_to_input_input_ld1_merged143_48.push(input_input_1_merged146_64);
+}
+
+inline void input_input_1_merged146_65_write(hw_uint<16>& input_input_1_merged146_65, input_cache& input, int root, int input_0, int input_1, int dynamic_address) {
+  input.input_input_1_merged146_65_to_input_input_ld1_merged143_49.push(input_input_1_merged146_65);
+}
+
+inline void input_input_1_merged146_66_write(hw_uint<16>& input_input_1_merged146_66, input_cache& input, int root, int input_0, int input_1, int dynamic_address) {
+  input.input_input_1_merged146_66_to_input_input_ld1_merged143_50.push(input_input_1_merged146_66);
+}
+
+inline void input_input_1_merged146_67_write(hw_uint<16>& input_input_1_merged146_67, input_cache& input, int root, int input_0, int input_1, int dynamic_address) {
+  input.input_input_1_merged146_67_to_input_input_ld1_merged143_51.push(input_input_1_merged146_67);
+}
+
+inline void input_input_1_merged146_68_write(hw_uint<16>& input_input_1_merged146_68, input_cache& input, int root, int input_0, int input_1, int dynamic_address) {
+  input.input_input_1_merged146_68_to_input_input_ld1_merged143_52.push(input_input_1_merged146_68);
+}
+
+inline void input_input_1_merged146_69_write(hw_uint<16>& input_input_1_merged146_69, input_cache& input, int root, int input_0, int input_1, int dynamic_address) {
+  input.input_input_1_merged146_69_to_input_input_ld1_merged143_53.push(input_input_1_merged146_69);
+}
+
+inline void input_input_1_merged146_70_write(hw_uint<16>& input_input_1_merged146_70, input_cache& input, int root, int input_0, int input_1, int dynamic_address) {
+  input.input_input_1_merged146_70_to_input_input_ld1_merged143_54.push(input_input_1_merged146_70);
+}
+
+inline void input_input_1_merged146_71_write(hw_uint<16>& input_input_1_merged146_71, input_cache& input, int root, int input_0, int input_1, int dynamic_address) {
+  input.input_input_1_merged146_71_to_input_input_ld1_merged143_55.push(input_input_1_merged146_71);
+}
+
+inline void input_input_1_merged146_72_write(hw_uint<16>& input_input_1_merged146_72, input_cache& input, int root, int input_0, int input_1, int dynamic_address) {
+  input.input_input_1_merged146_72_to_input_input_ld1_merged143_56.push(input_input_1_merged146_72);
+}
+
+inline void input_input_1_merged146_73_write(hw_uint<16>& input_input_1_merged146_73, input_cache& input, int root, int input_0, int input_1, int dynamic_address) {
+  input.input_input_1_merged146_73_to_input_input_ld1_merged143_57.push(input_input_1_merged146_73);
+}
+
+inline void input_input_1_merged146_74_write(hw_uint<16>& input_input_1_merged146_74, input_cache& input, int root, int input_0, int input_1, int dynamic_address) {
+  input.input_input_1_merged146_74_to_input_input_ld1_merged143_58.push(input_input_1_merged146_74);
+}
+
+inline void input_input_1_merged146_75_write(hw_uint<16>& input_input_1_merged146_75, input_cache& input, int root, int input_0, int input_1, int dynamic_address) {
+  input.input_input_1_merged146_75_to_input_input_ld1_merged143_59.push(input_input_1_merged146_75);
+}
+
+inline void input_input_1_merged146_76_write(hw_uint<16>& input_input_1_merged146_76, input_cache& input, int root, int input_0, int input_1, int dynamic_address) {
+  input.input_input_1_merged146_76_to_input_input_ld1_merged143_60.push(input_input_1_merged146_76);
+}
+
+inline void input_input_1_merged146_77_write(hw_uint<16>& input_input_1_merged146_77, input_cache& input, int root, int input_0, int input_1, int dynamic_address) {
+  input.input_input_1_merged146_77_to_input_input_ld1_merged143_61.push(input_input_1_merged146_77);
+}
+
+inline void input_input_1_merged146_78_write(hw_uint<16>& input_input_1_merged146_78, input_cache& input, int root, int input_0, int input_1, int dynamic_address) {
+  input.input_input_1_merged146_78_to_input_input_ld1_merged143_62.push(input_input_1_merged146_78);
+}
+
+inline void input_input_1_merged146_79_write(hw_uint<16>& input_input_1_merged146_79, input_cache& input, int root, int input_0, int input_1, int dynamic_address) {
+  input.input_input_1_merged146_79_to_input_input_ld1_merged143_63.push(input_input_1_merged146_79);
+}
+
+inline hw_uint<16> input_input_ld1_merged143_48_select(input_cache& input, int root, int input_ld2, int input_ld1, int dynamic_address) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // input_input_ld1_merged143_48 read pattern: { input_ld1_merged143[root = 0, input_ld2, input_ld1] -> input[16input_ld1, input_ld2] : 0 <= input_ld2 <= 1079 and 0 <= input_ld1 <= 120 }
+  // Read schedule : { input_ld1_merged143[d0 = 0, d1, d2] -> [0, d1, d2, 1] : 0 <= d1 <= 1079 and 0 <= d2 <= 120 }
+  // Write schedule: { input_1_merged146[d0 = 0, d1, d2] -> [0, d1, d2, 0] : 0 <= d1 <= 1079 and 0 <= d2 <= 120 }
+  auto value_input_input_1_merged146_64 = input.input_input_1_merged146_64_to_input_input_ld1_merged143_48.peek(/* one reader or all rams */ 0);
+  return value_input_input_1_merged146_64;
+  return 0;
+}
+
+inline hw_uint<16> input_input_ld1_merged143_49_select(input_cache& input, int root, int input_ld2, int input_ld1, int dynamic_address) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // input_input_ld1_merged143_49 read pattern: { input_ld1_merged143[root = 0, input_ld2, input_ld1] -> input[1 + 16input_ld1, input_ld2] : 0 <= input_ld2 <= 1079 and 0 <= input_ld1 <= 120 }
+  // Read schedule : { input_ld1_merged143[d0 = 0, d1, d2] -> [0, d1, d2, 1] : 0 <= d1 <= 1079 and 0 <= d2 <= 120 }
+  // Write schedule: { input_1_merged146[d0 = 0, d1, d2] -> [0, d1, d2, 0] : 0 <= d1 <= 1079 and 0 <= d2 <= 120 }
+  auto value_input_input_1_merged146_65 = input.input_input_1_merged146_65_to_input_input_ld1_merged143_49.peek(/* one reader or all rams */ 0);
+  return value_input_input_1_merged146_65;
+  return 0;
+}
+
+inline hw_uint<16> input_input_ld1_merged143_50_select(input_cache& input, int root, int input_ld2, int input_ld1, int dynamic_address) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // input_input_ld1_merged143_50 read pattern: { input_ld1_merged143[root = 0, input_ld2, input_ld1] -> input[2 + 16input_ld1, input_ld2] : 0 <= input_ld2 <= 1079 and 0 <= input_ld1 <= 120 }
+  // Read schedule : { input_ld1_merged143[d0 = 0, d1, d2] -> [0, d1, d2, 1] : 0 <= d1 <= 1079 and 0 <= d2 <= 120 }
+  // Write schedule: { input_1_merged146[d0 = 0, d1, d2] -> [0, d1, d2, 0] : 0 <= d1 <= 1079 and 0 <= d2 <= 120 }
+  auto value_input_input_1_merged146_66 = input.input_input_1_merged146_66_to_input_input_ld1_merged143_50.peek(/* one reader or all rams */ 0);
+  return value_input_input_1_merged146_66;
+  return 0;
+}
+
+inline hw_uint<16> input_input_ld1_merged143_51_select(input_cache& input, int root, int input_ld2, int input_ld1, int dynamic_address) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // input_input_ld1_merged143_51 read pattern: { input_ld1_merged143[root = 0, input_ld2, input_ld1] -> input[3 + 16input_ld1, input_ld2] : 0 <= input_ld2 <= 1079 and 0 <= input_ld1 <= 120 }
+  // Read schedule : { input_ld1_merged143[d0 = 0, d1, d2] -> [0, d1, d2, 1] : 0 <= d1 <= 1079 and 0 <= d2 <= 120 }
+  // Write schedule: { input_1_merged146[d0 = 0, d1, d2] -> [0, d1, d2, 0] : 0 <= d1 <= 1079 and 0 <= d2 <= 120 }
+  auto value_input_input_1_merged146_67 = input.input_input_1_merged146_67_to_input_input_ld1_merged143_51.peek(/* one reader or all rams */ 0);
+  return value_input_input_1_merged146_67;
+  return 0;
+}
+
+inline hw_uint<16> input_input_ld1_merged143_52_select(input_cache& input, int root, int input_ld2, int input_ld1, int dynamic_address) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // input_input_ld1_merged143_52 read pattern: { input_ld1_merged143[root = 0, input_ld2, input_ld1] -> input[4 + 16input_ld1, input_ld2] : 0 <= input_ld2 <= 1079 and 0 <= input_ld1 <= 120 }
+  // Read schedule : { input_ld1_merged143[d0 = 0, d1, d2] -> [0, d1, d2, 1] : 0 <= d1 <= 1079 and 0 <= d2 <= 120 }
+  // Write schedule: { input_1_merged146[d0 = 0, d1, d2] -> [0, d1, d2, 0] : 0 <= d1 <= 1079 and 0 <= d2 <= 120 }
+  auto value_input_input_1_merged146_68 = input.input_input_1_merged146_68_to_input_input_ld1_merged143_52.peek(/* one reader or all rams */ 0);
+  return value_input_input_1_merged146_68;
+  return 0;
+}
+
+inline hw_uint<16> input_input_ld1_merged143_53_select(input_cache& input, int root, int input_ld2, int input_ld1, int dynamic_address) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // input_input_ld1_merged143_53 read pattern: { input_ld1_merged143[root = 0, input_ld2, input_ld1] -> input[5 + 16input_ld1, input_ld2] : 0 <= input_ld2 <= 1079 and 0 <= input_ld1 <= 120 }
+  // Read schedule : { input_ld1_merged143[d0 = 0, d1, d2] -> [0, d1, d2, 1] : 0 <= d1 <= 1079 and 0 <= d2 <= 120 }
+  // Write schedule: { input_1_merged146[d0 = 0, d1, d2] -> [0, d1, d2, 0] : 0 <= d1 <= 1079 and 0 <= d2 <= 120 }
+  auto value_input_input_1_merged146_69 = input.input_input_1_merged146_69_to_input_input_ld1_merged143_53.peek(/* one reader or all rams */ 0);
+  return value_input_input_1_merged146_69;
+  return 0;
+}
+
+inline hw_uint<16> input_input_ld1_merged143_54_select(input_cache& input, int root, int input_ld2, int input_ld1, int dynamic_address) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // input_input_ld1_merged143_54 read pattern: { input_ld1_merged143[root = 0, input_ld2, input_ld1] -> input[6 + 16input_ld1, input_ld2] : 0 <= input_ld2 <= 1079 and 0 <= input_ld1 <= 120 }
+  // Read schedule : { input_ld1_merged143[d0 = 0, d1, d2] -> [0, d1, d2, 1] : 0 <= d1 <= 1079 and 0 <= d2 <= 120 }
+  // Write schedule: { input_1_merged146[d0 = 0, d1, d2] -> [0, d1, d2, 0] : 0 <= d1 <= 1079 and 0 <= d2 <= 120 }
+  auto value_input_input_1_merged146_70 = input.input_input_1_merged146_70_to_input_input_ld1_merged143_54.peek(/* one reader or all rams */ 0);
+  return value_input_input_1_merged146_70;
+  return 0;
+}
+
+inline hw_uint<16> input_input_ld1_merged143_55_select(input_cache& input, int root, int input_ld2, int input_ld1, int dynamic_address) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // input_input_ld1_merged143_55 read pattern: { input_ld1_merged143[root = 0, input_ld2, input_ld1] -> input[7 + 16input_ld1, input_ld2] : 0 <= input_ld2 <= 1079 and 0 <= input_ld1 <= 120 }
+  // Read schedule : { input_ld1_merged143[d0 = 0, d1, d2] -> [0, d1, d2, 1] : 0 <= d1 <= 1079 and 0 <= d2 <= 120 }
+  // Write schedule: { input_1_merged146[d0 = 0, d1, d2] -> [0, d1, d2, 0] : 0 <= d1 <= 1079 and 0 <= d2 <= 120 }
+  auto value_input_input_1_merged146_71 = input.input_input_1_merged146_71_to_input_input_ld1_merged143_55.peek(/* one reader or all rams */ 0);
+  return value_input_input_1_merged146_71;
+  return 0;
+}
+
+inline hw_uint<16> input_input_ld1_merged143_56_select(input_cache& input, int root, int input_ld2, int input_ld1, int dynamic_address) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // input_input_ld1_merged143_56 read pattern: { input_ld1_merged143[root = 0, input_ld2, input_ld1] -> input[8 + 16input_ld1, input_ld2] : 0 <= input_ld2 <= 1079 and 0 <= input_ld1 <= 120 }
+  // Read schedule : { input_ld1_merged143[d0 = 0, d1, d2] -> [0, d1, d2, 1] : 0 <= d1 <= 1079 and 0 <= d2 <= 120 }
+  // Write schedule: { input_1_merged146[d0 = 0, d1, d2] -> [0, d1, d2, 0] : 0 <= d1 <= 1079 and 0 <= d2 <= 120 }
+  auto value_input_input_1_merged146_72 = input.input_input_1_merged146_72_to_input_input_ld1_merged143_56.peek(/* one reader or all rams */ 0);
+  return value_input_input_1_merged146_72;
+  return 0;
+}
+
+inline hw_uint<16> input_input_ld1_merged143_57_select(input_cache& input, int root, int input_ld2, int input_ld1, int dynamic_address) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // input_input_ld1_merged143_57 read pattern: { input_ld1_merged143[root = 0, input_ld2, input_ld1] -> input[9 + 16input_ld1, input_ld2] : 0 <= input_ld2 <= 1079 and 0 <= input_ld1 <= 120 }
+  // Read schedule : { input_ld1_merged143[d0 = 0, d1, d2] -> [0, d1, d2, 1] : 0 <= d1 <= 1079 and 0 <= d2 <= 120 }
+  // Write schedule: { input_1_merged146[d0 = 0, d1, d2] -> [0, d1, d2, 0] : 0 <= d1 <= 1079 and 0 <= d2 <= 120 }
+  auto value_input_input_1_merged146_73 = input.input_input_1_merged146_73_to_input_input_ld1_merged143_57.peek(/* one reader or all rams */ 0);
+  return value_input_input_1_merged146_73;
+  return 0;
+}
+
+inline hw_uint<16> input_input_ld1_merged143_58_select(input_cache& input, int root, int input_ld2, int input_ld1, int dynamic_address) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // input_input_ld1_merged143_58 read pattern: { input_ld1_merged143[root = 0, input_ld2, input_ld1] -> input[10 + 16input_ld1, input_ld2] : 0 <= input_ld2 <= 1079 and 0 <= input_ld1 <= 120 }
+  // Read schedule : { input_ld1_merged143[d0 = 0, d1, d2] -> [0, d1, d2, 1] : 0 <= d1 <= 1079 and 0 <= d2 <= 120 }
+  // Write schedule: { input_1_merged146[d0 = 0, d1, d2] -> [0, d1, d2, 0] : 0 <= d1 <= 1079 and 0 <= d2 <= 120 }
+  auto value_input_input_1_merged146_74 = input.input_input_1_merged146_74_to_input_input_ld1_merged143_58.peek(/* one reader or all rams */ 0);
+  return value_input_input_1_merged146_74;
+  return 0;
+}
+
+inline hw_uint<16> input_input_ld1_merged143_59_select(input_cache& input, int root, int input_ld2, int input_ld1, int dynamic_address) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // input_input_ld1_merged143_59 read pattern: { input_ld1_merged143[root = 0, input_ld2, input_ld1] -> input[11 + 16input_ld1, input_ld2] : 0 <= input_ld2 <= 1079 and 0 <= input_ld1 <= 120 }
+  // Read schedule : { input_ld1_merged143[d0 = 0, d1, d2] -> [0, d1, d2, 1] : 0 <= d1 <= 1079 and 0 <= d2 <= 120 }
+  // Write schedule: { input_1_merged146[d0 = 0, d1, d2] -> [0, d1, d2, 0] : 0 <= d1 <= 1079 and 0 <= d2 <= 120 }
+  auto value_input_input_1_merged146_75 = input.input_input_1_merged146_75_to_input_input_ld1_merged143_59.peek(/* one reader or all rams */ 0);
+  return value_input_input_1_merged146_75;
+  return 0;
+}
+
+inline hw_uint<16> input_input_ld1_merged143_60_select(input_cache& input, int root, int input_ld2, int input_ld1, int dynamic_address) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // input_input_ld1_merged143_60 read pattern: { input_ld1_merged143[root = 0, input_ld2, input_ld1] -> input[12 + 16input_ld1, input_ld2] : 0 <= input_ld2 <= 1079 and 0 <= input_ld1 <= 120 }
+  // Read schedule : { input_ld1_merged143[d0 = 0, d1, d2] -> [0, d1, d2, 1] : 0 <= d1 <= 1079 and 0 <= d2 <= 120 }
+  // Write schedule: { input_1_merged146[d0 = 0, d1, d2] -> [0, d1, d2, 0] : 0 <= d1 <= 1079 and 0 <= d2 <= 120 }
+  auto value_input_input_1_merged146_76 = input.input_input_1_merged146_76_to_input_input_ld1_merged143_60.peek(/* one reader or all rams */ 0);
+  return value_input_input_1_merged146_76;
+  return 0;
+}
+
+inline hw_uint<16> input_input_ld1_merged143_61_select(input_cache& input, int root, int input_ld2, int input_ld1, int dynamic_address) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // input_input_ld1_merged143_61 read pattern: { input_ld1_merged143[root = 0, input_ld2, input_ld1] -> input[13 + 16input_ld1, input_ld2] : 0 <= input_ld2 <= 1079 and 0 <= input_ld1 <= 120 }
+  // Read schedule : { input_ld1_merged143[d0 = 0, d1, d2] -> [0, d1, d2, 1] : 0 <= d1 <= 1079 and 0 <= d2 <= 120 }
+  // Write schedule: { input_1_merged146[d0 = 0, d1, d2] -> [0, d1, d2, 0] : 0 <= d1 <= 1079 and 0 <= d2 <= 120 }
+  auto value_input_input_1_merged146_77 = input.input_input_1_merged146_77_to_input_input_ld1_merged143_61.peek(/* one reader or all rams */ 0);
+  return value_input_input_1_merged146_77;
+  return 0;
+}
+
+inline hw_uint<16> input_input_ld1_merged143_62_select(input_cache& input, int root, int input_ld2, int input_ld1, int dynamic_address) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // input_input_ld1_merged143_62 read pattern: { input_ld1_merged143[root = 0, input_ld2, input_ld1] -> input[14 + 16input_ld1, input_ld2] : 0 <= input_ld2 <= 1079 and 0 <= input_ld1 <= 120 }
+  // Read schedule : { input_ld1_merged143[d0 = 0, d1, d2] -> [0, d1, d2, 1] : 0 <= d1 <= 1079 and 0 <= d2 <= 120 }
+  // Write schedule: { input_1_merged146[d0 = 0, d1, d2] -> [0, d1, d2, 0] : 0 <= d1 <= 1079 and 0 <= d2 <= 120 }
+  auto value_input_input_1_merged146_78 = input.input_input_1_merged146_78_to_input_input_ld1_merged143_62.peek(/* one reader or all rams */ 0);
+  return value_input_input_1_merged146_78;
+  return 0;
+}
+
+inline hw_uint<16> input_input_ld1_merged143_63_select(input_cache& input, int root, int input_ld2, int input_ld1, int dynamic_address) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // input_input_ld1_merged143_63 read pattern: { input_ld1_merged143[root = 0, input_ld2, input_ld1] -> input[15 + 16input_ld1, input_ld2] : 0 <= input_ld2 <= 1079 and 0 <= input_ld1 <= 120 }
+  // Read schedule : { input_ld1_merged143[d0 = 0, d1, d2] -> [0, d1, d2, 1] : 0 <= d1 <= 1079 and 0 <= d2 <= 120 }
+  // Write schedule: { input_1_merged146[d0 = 0, d1, d2] -> [0, d1, d2, 0] : 0 <= d1 <= 1079 and 0 <= d2 <= 120 }
+  auto value_input_input_1_merged146_79 = input.input_input_1_merged146_79_to_input_input_ld1_merged143_63.peek(/* one reader or all rams */ 0);
+  return value_input_input_1_merged146_79;
+  return 0;
+}
+
+// # of bundles = 2
+// input_1_merged146_write
+//	input_input_1_merged146_64
+//	input_input_1_merged146_65
+//	input_input_1_merged146_66
+//	input_input_1_merged146_67
+//	input_input_1_merged146_68
+//	input_input_1_merged146_69
+//	input_input_1_merged146_70
+//	input_input_1_merged146_71
+//	input_input_1_merged146_72
+//	input_input_1_merged146_73
+//	input_input_1_merged146_74
+//	input_input_1_merged146_75
+//	input_input_1_merged146_76
+//	input_input_1_merged146_77
+//	input_input_1_merged146_78
+//	input_input_1_merged146_79
+inline void input_input_1_merged146_write_bundle_write(hw_uint<256>& input_1_merged146_write, input_cache& input, int root, int input_0, int input_1, int dynamic_address) {
+	hw_uint<16> input_input_1_merged146_64_res = input_1_merged146_write.extract<0, 15>();
+	input_input_1_merged146_64_write(input_input_1_merged146_64_res, input, root, input_0, input_1, dynamic_address);
+	hw_uint<16> input_input_1_merged146_65_res = input_1_merged146_write.extract<16, 31>();
+	input_input_1_merged146_65_write(input_input_1_merged146_65_res, input, root, input_0, input_1, dynamic_address);
+	hw_uint<16> input_input_1_merged146_66_res = input_1_merged146_write.extract<32, 47>();
+	input_input_1_merged146_66_write(input_input_1_merged146_66_res, input, root, input_0, input_1, dynamic_address);
+	hw_uint<16> input_input_1_merged146_67_res = input_1_merged146_write.extract<48, 63>();
+	input_input_1_merged146_67_write(input_input_1_merged146_67_res, input, root, input_0, input_1, dynamic_address);
+	hw_uint<16> input_input_1_merged146_68_res = input_1_merged146_write.extract<64, 79>();
+	input_input_1_merged146_68_write(input_input_1_merged146_68_res, input, root, input_0, input_1, dynamic_address);
+	hw_uint<16> input_input_1_merged146_69_res = input_1_merged146_write.extract<80, 95>();
+	input_input_1_merged146_69_write(input_input_1_merged146_69_res, input, root, input_0, input_1, dynamic_address);
+	hw_uint<16> input_input_1_merged146_70_res = input_1_merged146_write.extract<96, 111>();
+	input_input_1_merged146_70_write(input_input_1_merged146_70_res, input, root, input_0, input_1, dynamic_address);
+	hw_uint<16> input_input_1_merged146_71_res = input_1_merged146_write.extract<112, 127>();
+	input_input_1_merged146_71_write(input_input_1_merged146_71_res, input, root, input_0, input_1, dynamic_address);
+	hw_uint<16> input_input_1_merged146_72_res = input_1_merged146_write.extract<128, 143>();
+	input_input_1_merged146_72_write(input_input_1_merged146_72_res, input, root, input_0, input_1, dynamic_address);
+	hw_uint<16> input_input_1_merged146_73_res = input_1_merged146_write.extract<144, 159>();
+	input_input_1_merged146_73_write(input_input_1_merged146_73_res, input, root, input_0, input_1, dynamic_address);
+	hw_uint<16> input_input_1_merged146_74_res = input_1_merged146_write.extract<160, 175>();
+	input_input_1_merged146_74_write(input_input_1_merged146_74_res, input, root, input_0, input_1, dynamic_address);
+	hw_uint<16> input_input_1_merged146_75_res = input_1_merged146_write.extract<176, 191>();
+	input_input_1_merged146_75_write(input_input_1_merged146_75_res, input, root, input_0, input_1, dynamic_address);
+	hw_uint<16> input_input_1_merged146_76_res = input_1_merged146_write.extract<192, 207>();
+	input_input_1_merged146_76_write(input_input_1_merged146_76_res, input, root, input_0, input_1, dynamic_address);
+	hw_uint<16> input_input_1_merged146_77_res = input_1_merged146_write.extract<208, 223>();
+	input_input_1_merged146_77_write(input_input_1_merged146_77_res, input, root, input_0, input_1, dynamic_address);
+	hw_uint<16> input_input_1_merged146_78_res = input_1_merged146_write.extract<224, 239>();
+	input_input_1_merged146_78_write(input_input_1_merged146_78_res, input, root, input_0, input_1, dynamic_address);
+	hw_uint<16> input_input_1_merged146_79_res = input_1_merged146_write.extract<240, 255>();
+	input_input_1_merged146_79_write(input_input_1_merged146_79_res, input, root, input_0, input_1, dynamic_address);
+}
+
+// input_ld1_merged143_read
+//	input_input_ld1_merged143_48
+//	input_input_ld1_merged143_49
+//	input_input_ld1_merged143_50
+//	input_input_ld1_merged143_51
+//	input_input_ld1_merged143_52
+//	input_input_ld1_merged143_53
+//	input_input_ld1_merged143_54
+//	input_input_ld1_merged143_55
+//	input_input_ld1_merged143_56
+//	input_input_ld1_merged143_57
+//	input_input_ld1_merged143_58
+//	input_input_ld1_merged143_59
+//	input_input_ld1_merged143_60
+//	input_input_ld1_merged143_61
+//	input_input_ld1_merged143_62
+//	input_input_ld1_merged143_63
+inline hw_uint<256> input_input_ld1_merged143_read_bundle_read(input_cache& input, int root, int input_ld2, int input_ld1, int dynamic_address) {
+  // # of ports in bundle: 16
+    // input_input_ld1_merged143_48
+    // input_input_ld1_merged143_49
+    // input_input_ld1_merged143_50
+    // input_input_ld1_merged143_51
+    // input_input_ld1_merged143_52
+    // input_input_ld1_merged143_53
+    // input_input_ld1_merged143_54
+    // input_input_ld1_merged143_55
+    // input_input_ld1_merged143_56
+    // input_input_ld1_merged143_57
+    // input_input_ld1_merged143_58
+    // input_input_ld1_merged143_59
+    // input_input_ld1_merged143_60
+    // input_input_ld1_merged143_61
+    // input_input_ld1_merged143_62
+    // input_input_ld1_merged143_63
+
+	hw_uint<256> result;
+	hw_uint<16> input_input_ld1_merged143_48_res = input_input_ld1_merged143_48_select(input, root, input_ld2, input_ld1, dynamic_address);
+	set_at<0, 256>(result, input_input_ld1_merged143_48_res);
+	hw_uint<16> input_input_ld1_merged143_49_res = input_input_ld1_merged143_49_select(input, root, input_ld2, input_ld1, dynamic_address);
+	set_at<16, 256>(result, input_input_ld1_merged143_49_res);
+	hw_uint<16> input_input_ld1_merged143_50_res = input_input_ld1_merged143_50_select(input, root, input_ld2, input_ld1, dynamic_address);
+	set_at<32, 256>(result, input_input_ld1_merged143_50_res);
+	hw_uint<16> input_input_ld1_merged143_51_res = input_input_ld1_merged143_51_select(input, root, input_ld2, input_ld1, dynamic_address);
+	set_at<48, 256>(result, input_input_ld1_merged143_51_res);
+	hw_uint<16> input_input_ld1_merged143_52_res = input_input_ld1_merged143_52_select(input, root, input_ld2, input_ld1, dynamic_address);
+	set_at<64, 256>(result, input_input_ld1_merged143_52_res);
+	hw_uint<16> input_input_ld1_merged143_53_res = input_input_ld1_merged143_53_select(input, root, input_ld2, input_ld1, dynamic_address);
+	set_at<80, 256>(result, input_input_ld1_merged143_53_res);
+	hw_uint<16> input_input_ld1_merged143_54_res = input_input_ld1_merged143_54_select(input, root, input_ld2, input_ld1, dynamic_address);
+	set_at<96, 256>(result, input_input_ld1_merged143_54_res);
+	hw_uint<16> input_input_ld1_merged143_55_res = input_input_ld1_merged143_55_select(input, root, input_ld2, input_ld1, dynamic_address);
+	set_at<112, 256>(result, input_input_ld1_merged143_55_res);
+	hw_uint<16> input_input_ld1_merged143_56_res = input_input_ld1_merged143_56_select(input, root, input_ld2, input_ld1, dynamic_address);
+	set_at<128, 256>(result, input_input_ld1_merged143_56_res);
+	hw_uint<16> input_input_ld1_merged143_57_res = input_input_ld1_merged143_57_select(input, root, input_ld2, input_ld1, dynamic_address);
+	set_at<144, 256>(result, input_input_ld1_merged143_57_res);
+	hw_uint<16> input_input_ld1_merged143_58_res = input_input_ld1_merged143_58_select(input, root, input_ld2, input_ld1, dynamic_address);
+	set_at<160, 256>(result, input_input_ld1_merged143_58_res);
+	hw_uint<16> input_input_ld1_merged143_59_res = input_input_ld1_merged143_59_select(input, root, input_ld2, input_ld1, dynamic_address);
+	set_at<176, 256>(result, input_input_ld1_merged143_59_res);
+	hw_uint<16> input_input_ld1_merged143_60_res = input_input_ld1_merged143_60_select(input, root, input_ld2, input_ld1, dynamic_address);
+	set_at<192, 256>(result, input_input_ld1_merged143_60_res);
+	hw_uint<16> input_input_ld1_merged143_61_res = input_input_ld1_merged143_61_select(input, root, input_ld2, input_ld1, dynamic_address);
+	set_at<208, 256>(result, input_input_ld1_merged143_61_res);
+	hw_uint<16> input_input_ld1_merged143_62_res = input_input_ld1_merged143_62_select(input, root, input_ld2, input_ld1, dynamic_address);
+	set_at<224, 256>(result, input_input_ld1_merged143_62_res);
+	hw_uint<16> input_input_ld1_merged143_63_res = input_input_ld1_merged143_63_select(input, root, input_ld2, input_ld1, dynamic_address);
+	set_at<240, 256>(result, input_input_ld1_merged143_63_res);
+	return result;
+}
+
+struct input_FIFO_buf4_input_to_gp_00_ld5_merged141_0_to_input_FIFO_buf4_blurx7_16_1_merged149_112_cache {
+	// RAM Box: {[0, 1904], [0, 1079]}
+	// Capacity: 2
+	// # of read delays: 2
+  // 0, 1
+	fifo<hw_uint<16>, 2> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.peek(1 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.push(value);
+  }
+
+};
+
+struct input_FIFO_buf4_input_to_gp_00_ld5_merged141_1_to_input_FIFO_buf4_blurx7_16_1_merged149_113_cache {
+	// RAM Box: {[1, 1905], [0, 1079]}
+	// Capacity: 2
+	// # of read delays: 2
+  // 0, 1
+	fifo<hw_uint<16>, 2> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.peek(1 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.push(value);
+  }
+
+};
+
+struct input_FIFO_buf4_input_to_gp_00_ld5_merged141_2_to_input_FIFO_buf4_blurx7_16_1_merged149_114_cache {
+	// RAM Box: {[2, 1906], [0, 1079]}
+	// Capacity: 2
+	// # of read delays: 2
+  // 0, 1
+	fifo<hw_uint<16>, 2> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.peek(1 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.push(value);
+  }
+
+};
+
+struct input_FIFO_buf4_input_to_gp_00_ld5_merged141_1_to_input_FIFO_buf4_blurx7_16_1_merged149_115_cache {
+	// RAM Box: {[1, 1905], [0, 1079]}
+	// Capacity: 2
+	// # of read delays: 2
+  // 0, 1
+	fifo<hw_uint<16>, 2> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.peek(1 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.push(value);
+  }
+
+};
+
+struct input_FIFO_buf4_input_to_gp_00_ld5_merged141_2_to_input_FIFO_buf4_blurx7_16_1_merged149_116_cache {
+	// RAM Box: {[2, 1906], [0, 1079]}
+	// Capacity: 2
+	// # of read delays: 2
+  // 0, 1
+	fifo<hw_uint<16>, 2> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.peek(1 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.push(value);
+  }
+
+};
+
+struct input_FIFO_buf4_input_to_gp_00_ld5_merged141_3_to_input_FIFO_buf4_blurx7_16_1_merged149_117_cache {
+	// RAM Box: {[3, 1907], [0, 1079]}
+	// Capacity: 2
+	// # of read delays: 2
+  // 0, 1
+	fifo<hw_uint<16>, 2> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.peek(1 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.push(value);
+  }
+
+};
+
+struct input_FIFO_buf4_input_to_gp_00_ld5_merged141_2_to_input_FIFO_buf4_blurx7_16_1_merged149_118_cache {
+	// RAM Box: {[2, 1906], [0, 1079]}
+	// Capacity: 2
+	// # of read delays: 2
+  // 0, 1
+	fifo<hw_uint<16>, 2> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.peek(1 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.push(value);
+  }
+
+};
+
+struct input_FIFO_buf4_input_to_gp_00_ld5_merged141_3_to_input_FIFO_buf4_blurx7_16_1_merged149_119_cache {
+	// RAM Box: {[3, 1907], [0, 1079]}
+	// Capacity: 2
+	// # of read delays: 2
+  // 0, 1
+	fifo<hw_uint<16>, 2> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.peek(1 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.push(value);
+  }
+
+};
+
+struct input_FIFO_buf4_input_to_gp_00_ld5_merged141_4_to_input_FIFO_buf4_blurx7_16_1_merged149_120_cache {
+	// RAM Box: {[4, 1908], [0, 1079]}
+	// Capacity: 2
+	// # of read delays: 2
+  // 0, 1
+	fifo<hw_uint<16>, 2> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.peek(1 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.push(value);
+  }
+
+};
+
+struct input_FIFO_buf4_input_to_gp_00_ld5_merged141_3_to_input_FIFO_buf4_blurx7_16_1_merged149_121_cache {
+	// RAM Box: {[3, 1907], [0, 1079]}
+	// Capacity: 2
+	// # of read delays: 2
+  // 0, 1
+	fifo<hw_uint<16>, 2> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.peek(1 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.push(value);
+  }
+
+};
+
+struct input_FIFO_buf4_input_to_gp_00_ld5_merged141_4_to_input_FIFO_buf4_blurx7_16_1_merged149_122_cache {
+	// RAM Box: {[4, 1908], [0, 1079]}
+	// Capacity: 2
+	// # of read delays: 2
+  // 0, 1
+	fifo<hw_uint<16>, 2> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.peek(1 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.push(value);
+  }
+
+};
+
+struct input_FIFO_buf4_input_to_gp_00_ld5_merged141_5_to_input_FIFO_buf4_blurx7_16_1_merged149_123_cache {
+	// RAM Box: {[5, 1909], [0, 1079]}
+	// Capacity: 2
+	// # of read delays: 2
+  // 0, 1
+	fifo<hw_uint<16>, 2> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.peek(1 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.push(value);
+  }
+
+};
+
+struct input_FIFO_buf4_input_to_gp_00_ld5_merged141_4_to_input_FIFO_buf4_blurx7_16_1_merged149_124_cache {
+	// RAM Box: {[4, 1908], [0, 1079]}
+	// Capacity: 2
+	// # of read delays: 2
+  // 0, 1
+	fifo<hw_uint<16>, 2> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.peek(1 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.push(value);
+  }
+
+};
+
+struct input_FIFO_buf4_input_to_gp_00_ld5_merged141_5_to_input_FIFO_buf4_blurx7_16_1_merged149_125_cache {
+	// RAM Box: {[5, 1909], [0, 1079]}
+	// Capacity: 2
+	// # of read delays: 2
+  // 0, 1
+	fifo<hw_uint<16>, 2> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.peek(1 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.push(value);
+  }
+
+};
+
+struct input_FIFO_buf4_input_to_gp_00_ld5_merged141_6_to_input_FIFO_buf4_blurx7_16_1_merged149_126_cache {
+	// RAM Box: {[6, 1910], [0, 1079]}
+	// Capacity: 2
+	// # of read delays: 2
+  // 0, 1
+	fifo<hw_uint<16>, 2> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.peek(1 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.push(value);
+  }
+
+};
+
+struct input_FIFO_buf4_input_to_gp_00_ld5_merged141_5_to_input_FIFO_buf4_blurx7_16_1_merged149_127_cache {
+	// RAM Box: {[5, 1909], [0, 1079]}
+	// Capacity: 2
+	// # of read delays: 2
+  // 0, 1
+	fifo<hw_uint<16>, 2> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.peek(1 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.push(value);
+  }
+
+};
+
+struct input_FIFO_buf4_input_to_gp_00_ld5_merged141_6_to_input_FIFO_buf4_blurx7_16_1_merged149_128_cache {
+	// RAM Box: {[6, 1910], [0, 1079]}
+	// Capacity: 2
+	// # of read delays: 2
+  // 0, 1
+	fifo<hw_uint<16>, 2> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.peek(1 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.push(value);
+  }
+
+};
+
+struct input_FIFO_buf4_input_to_gp_00_ld5_merged141_7_to_input_FIFO_buf4_blurx7_16_1_merged149_129_cache {
+	// RAM Box: {[7, 1911], [0, 1079]}
+	// Capacity: 2
+	// # of read delays: 2
+  // 0, 1
+	fifo<hw_uint<16>, 2> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.peek(1 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.push(value);
+  }
+
+};
+
+struct input_FIFO_buf4_input_to_gp_00_ld5_merged141_6_to_input_FIFO_buf4_blurx7_16_1_merged149_130_cache {
+	// RAM Box: {[6, 1910], [0, 1079]}
+	// Capacity: 2
+	// # of read delays: 2
+  // 0, 1
+	fifo<hw_uint<16>, 2> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.peek(1 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.push(value);
+  }
+
+};
+
+struct input_FIFO_buf4_input_to_gp_00_ld5_merged141_7_to_input_FIFO_buf4_blurx7_16_1_merged149_131_cache {
+	// RAM Box: {[7, 1911], [0, 1079]}
+	// Capacity: 2
+	// # of read delays: 2
+  // 0, 1
+	fifo<hw_uint<16>, 2> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.peek(1 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.push(value);
+  }
+
+};
+
+struct input_FIFO_buf4_input_to_gp_00_ld5_merged141_8_to_input_FIFO_buf4_blurx7_16_1_merged149_132_cache {
+	// RAM Box: {[8, 1912], [0, 1079]}
+	// Capacity: 2
+	// # of read delays: 2
+  // 0, 1
+	fifo<hw_uint<16>, 2> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.peek(1 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.push(value);
+  }
+
+};
+
+struct input_FIFO_buf4_input_to_gp_00_ld5_merged141_7_to_input_FIFO_buf4_blurx7_16_1_merged149_133_cache {
+	// RAM Box: {[7, 1911], [0, 1079]}
+	// Capacity: 2
+	// # of read delays: 2
+  // 0, 1
+	fifo<hw_uint<16>, 2> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.peek(1 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.push(value);
+  }
+
+};
+
+struct input_FIFO_buf4_input_to_gp_00_ld5_merged141_8_to_input_FIFO_buf4_blurx7_16_1_merged149_134_cache {
+	// RAM Box: {[8, 1912], [0, 1079]}
+	// Capacity: 2
+	// # of read delays: 2
+  // 0, 1
+	fifo<hw_uint<16>, 2> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.peek(1 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.push(value);
+  }
+
+};
+
+struct input_FIFO_buf4_input_to_gp_00_ld5_merged141_9_to_input_FIFO_buf4_blurx7_16_1_merged149_135_cache {
+	// RAM Box: {[9, 1913], [0, 1079]}
+	// Capacity: 2
+	// # of read delays: 2
+  // 0, 1
+	fifo<hw_uint<16>, 2> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.peek(1 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.push(value);
+  }
+
+};
+
+struct input_FIFO_buf4_input_to_gp_00_ld5_merged141_8_to_input_FIFO_buf4_blurx7_16_1_merged149_136_cache {
+	// RAM Box: {[8, 1912], [0, 1079]}
+	// Capacity: 2
+	// # of read delays: 2
+  // 0, 1
+	fifo<hw_uint<16>, 2> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.peek(1 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.push(value);
+  }
+
+};
+
+struct input_FIFO_buf4_input_to_gp_00_ld5_merged141_9_to_input_FIFO_buf4_blurx7_16_1_merged149_137_cache {
+	// RAM Box: {[9, 1913], [0, 1079]}
+	// Capacity: 2
+	// # of read delays: 2
+  // 0, 1
+	fifo<hw_uint<16>, 2> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.peek(1 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.push(value);
+  }
+
+};
+
+struct input_FIFO_buf4_input_to_gp_00_ld5_merged141_10_to_input_FIFO_buf4_blurx7_16_1_merged149_138_cache {
+	// RAM Box: {[10, 1914], [0, 1079]}
+	// Capacity: 2
+	// # of read delays: 2
+  // 0, 1
+	fifo<hw_uint<16>, 2> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.peek(1 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.push(value);
+  }
+
+};
+
+struct input_FIFO_buf4_input_to_gp_00_ld5_merged141_9_to_input_FIFO_buf4_blurx7_16_1_merged149_139_cache {
+	// RAM Box: {[9, 1913], [0, 1079]}
+	// Capacity: 2
+	// # of read delays: 2
+  // 0, 1
+	fifo<hw_uint<16>, 2> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.peek(1 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.push(value);
+  }
+
+};
+
+struct input_FIFO_buf4_input_to_gp_00_ld5_merged141_10_to_input_FIFO_buf4_blurx7_16_1_merged149_140_cache {
+	// RAM Box: {[10, 1914], [0, 1079]}
+	// Capacity: 2
+	// # of read delays: 2
+  // 0, 1
+	fifo<hw_uint<16>, 2> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.peek(1 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.push(value);
+  }
+
+};
+
+struct input_FIFO_buf4_input_to_gp_00_ld5_merged141_11_to_input_FIFO_buf4_blurx7_16_1_merged149_141_cache {
+	// RAM Box: {[11, 1915], [0, 1079]}
+	// Capacity: 2
+	// # of read delays: 2
+  // 0, 1
+	fifo<hw_uint<16>, 2> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.peek(1 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.push(value);
+  }
+
+};
+
+struct input_FIFO_buf4_input_to_gp_00_ld5_merged141_10_to_input_FIFO_buf4_blurx7_16_1_merged149_142_cache {
+	// RAM Box: {[10, 1914], [0, 1079]}
+	// Capacity: 2
+	// # of read delays: 2
+  // 0, 1
+	fifo<hw_uint<16>, 2> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.peek(1 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.push(value);
+  }
+
+};
+
+struct input_FIFO_buf4_input_to_gp_00_ld5_merged141_11_to_input_FIFO_buf4_blurx7_16_1_merged149_143_cache {
+	// RAM Box: {[11, 1915], [0, 1079]}
+	// Capacity: 2
+	// # of read delays: 2
+  // 0, 1
+	fifo<hw_uint<16>, 2> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.peek(1 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.push(value);
+  }
+
+};
+
+struct input_FIFO_buf4_input_to_gp_00_ld5_merged141_12_to_input_FIFO_buf4_blurx7_16_1_merged149_144_cache {
+	// RAM Box: {[12, 1916], [0, 1079]}
+	// Capacity: 2
+	// # of read delays: 2
+  // 0, 1
+	fifo<hw_uint<16>, 2> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.peek(1 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.push(value);
+  }
+
+};
+
+struct input_FIFO_buf4_input_to_gp_00_ld5_merged141_11_to_input_FIFO_buf4_blurx7_16_1_merged149_145_cache {
+	// RAM Box: {[11, 1915], [0, 1079]}
+	// Capacity: 2
+	// # of read delays: 2
+  // 0, 1
+	fifo<hw_uint<16>, 2> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.peek(1 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.push(value);
+  }
+
+};
+
+struct input_FIFO_buf4_input_to_gp_00_ld5_merged141_12_to_input_FIFO_buf4_blurx7_16_1_merged149_146_cache {
+	// RAM Box: {[12, 1916], [0, 1079]}
+	// Capacity: 2
+	// # of read delays: 2
+  // 0, 1
+	fifo<hw_uint<16>, 2> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.peek(1 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.push(value);
+  }
+
+};
+
+struct input_FIFO_buf4_input_to_gp_00_ld5_merged141_13_to_input_FIFO_buf4_blurx7_16_1_merged149_147_cache {
+	// RAM Box: {[13, 1917], [0, 1079]}
+	// Capacity: 2
+	// # of read delays: 2
+  // 0, 1
+	fifo<hw_uint<16>, 2> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.peek(1 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.push(value);
+  }
+
+};
+
+struct input_FIFO_buf4_input_to_gp_00_ld5_merged141_12_to_input_FIFO_buf4_blurx7_16_1_merged149_148_cache {
+	// RAM Box: {[12, 1916], [0, 1079]}
+	// Capacity: 2
+	// # of read delays: 2
+  // 0, 1
+	fifo<hw_uint<16>, 2> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.peek(1 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.push(value);
+  }
+
+};
+
+struct input_FIFO_buf4_input_to_gp_00_ld5_merged141_13_to_input_FIFO_buf4_blurx7_16_1_merged149_149_cache {
+	// RAM Box: {[13, 1917], [0, 1079]}
+	// Capacity: 2
+	// # of read delays: 2
+  // 0, 1
+	fifo<hw_uint<16>, 2> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.peek(1 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.push(value);
+  }
+
+};
+
+struct input_FIFO_buf4_input_to_gp_00_ld5_merged141_14_to_input_FIFO_buf4_blurx7_16_1_merged149_150_cache {
+	// RAM Box: {[14, 1918], [0, 1079]}
+	// Capacity: 2
+	// # of read delays: 2
+  // 0, 1
+	fifo<hw_uint<16>, 2> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.peek(1 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.push(value);
+  }
+
+};
+
+struct input_FIFO_buf4_input_to_gp_00_ld5_merged141_13_to_input_FIFO_buf4_blurx7_16_1_merged149_151_cache {
+	// RAM Box: {[13, 1917], [0, 1079]}
+	// Capacity: 2
+	// # of read delays: 2
+  // 0, 1
+	fifo<hw_uint<16>, 2> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.peek(1 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.push(value);
+  }
+
+};
+
+struct input_FIFO_buf4_input_to_gp_00_ld5_merged141_14_to_input_FIFO_buf4_blurx7_16_1_merged149_152_cache {
+	// RAM Box: {[14, 1918], [0, 1079]}
+	// Capacity: 2
+	// # of read delays: 2
+  // 0, 1
+	fifo<hw_uint<16>, 2> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.peek(1 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.push(value);
+  }
+
+};
+
+struct input_FIFO_buf4_input_to_gp_00_ld5_merged141_15_to_input_FIFO_buf4_blurx7_16_1_merged149_153_cache {
+	// RAM Box: {[15, 1919], [0, 1079]}
+	// Capacity: 2
+	// # of read delays: 2
+  // 0, 1
+	fifo<hw_uint<16>, 2> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.peek(1 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.push(value);
+  }
+
+};
+
+struct input_FIFO_buf4_input_to_gp_00_ld5_merged141_14_to_input_FIFO_buf4_blurx7_16_1_merged149_154_cache {
+	// RAM Box: {[14, 1918], [0, 1079]}
+	// Capacity: 2
+	// # of read delays: 2
+  // 0, 1
+	fifo<hw_uint<16>, 2> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.peek(1 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.push(value);
+  }
+
+};
+
+struct input_FIFO_buf4_input_to_gp_00_ld5_merged141_15_to_input_FIFO_buf4_blurx7_16_1_merged149_155_cache {
+	// RAM Box: {[15, 1919], [0, 1079]}
+	// Capacity: 2
+	// # of read delays: 2
+  // 0, 1
+	fifo<hw_uint<16>, 2> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.peek(1 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.push(value);
+  }
+
+};
+
+struct input_FIFO_buf4_input_to_gp_00_ld5_merged141_0_to_input_FIFO_buf4_blurx7_16_1_merged149_156_cache {
+	// RAM Box: {[16, 1920], [0, 1079]}
+	// Capacity: 1
+	// # of read delays: 2
+  // 0, 0
+	fifo<hw_uint<16>, 1> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.peek(0 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.push(value);
+  }
+
+};
+
+struct input_FIFO_buf4_input_to_gp_00_ld5_merged141_15_to_input_FIFO_buf4_blurx7_16_1_merged149_157_cache {
+	// RAM Box: {[15, 1919], [0, 1079]}
+	// Capacity: 2
+	// # of read delays: 2
+  // 0, 1
+	fifo<hw_uint<16>, 2> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.peek(1 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.push(value);
+  }
+
+};
+
+struct input_FIFO_buf4_input_to_gp_00_ld5_merged141_0_to_input_FIFO_buf4_blurx7_16_1_merged149_158_cache {
+	// RAM Box: {[16, 1920], [0, 1079]}
+	// Capacity: 1
+	// # of read delays: 2
+  // 0, 0
+	fifo<hw_uint<16>, 1> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.peek(0 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.push(value);
+  }
+
+};
+
+struct input_FIFO_buf4_input_to_gp_00_ld5_merged141_1_to_input_FIFO_buf4_blurx7_16_1_merged149_159_cache {
+	// RAM Box: {[17, 1921], [0, 1079]}
+	// Capacity: 1
+	// # of read delays: 2
+  // 0, 0
+	fifo<hw_uint<16>, 1> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.peek(0 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.push(value);
+  }
+
+};
+
+struct input_FIFO_buf4_cache {
+  // Reader addrs...
+    // { blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> input_FIFO_buf4[16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119 }
+    // { blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> input_FIFO_buf4[1 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119 }
+    // { blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> input_FIFO_buf4[2 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119 }
+    // { blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> input_FIFO_buf4[1 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119 }
+    // { blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> input_FIFO_buf4[2 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119 }
+    // { blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> input_FIFO_buf4[3 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119 }
+    // { blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> input_FIFO_buf4[2 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119 }
+    // { blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> input_FIFO_buf4[3 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119 }
+    // { blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> input_FIFO_buf4[4 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119 }
+    // { blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> input_FIFO_buf4[3 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119 }
+    // { blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> input_FIFO_buf4[4 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119 }
+    // { blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> input_FIFO_buf4[5 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119 }
+    // { blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> input_FIFO_buf4[4 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119 }
+    // { blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> input_FIFO_buf4[5 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119 }
+    // { blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> input_FIFO_buf4[6 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119 }
+    // { blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> input_FIFO_buf4[5 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119 }
+    // { blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> input_FIFO_buf4[6 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119 }
+    // { blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> input_FIFO_buf4[7 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119 }
+    // { blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> input_FIFO_buf4[6 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119 }
+    // { blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> input_FIFO_buf4[7 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119 }
+    // { blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> input_FIFO_buf4[8 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119 }
+    // { blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> input_FIFO_buf4[7 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119 }
+    // { blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> input_FIFO_buf4[8 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119 }
+    // { blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> input_FIFO_buf4[9 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119 }
+    // { blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> input_FIFO_buf4[8 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119 }
+    // { blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> input_FIFO_buf4[9 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119 }
+    // { blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> input_FIFO_buf4[10 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119 }
+    // { blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> input_FIFO_buf4[9 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119 }
+    // { blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> input_FIFO_buf4[10 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119 }
+    // { blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> input_FIFO_buf4[11 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119 }
+    // { blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> input_FIFO_buf4[10 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119 }
+    // { blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> input_FIFO_buf4[11 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119 }
+    // { blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> input_FIFO_buf4[12 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119 }
+    // { blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> input_FIFO_buf4[11 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119 }
+    // { blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> input_FIFO_buf4[12 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119 }
+    // { blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> input_FIFO_buf4[13 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119 }
+    // { blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> input_FIFO_buf4[12 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119 }
+    // { blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> input_FIFO_buf4[13 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119 }
+    // { blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> input_FIFO_buf4[14 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119 }
+    // { blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> input_FIFO_buf4[13 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119 }
+    // { blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> input_FIFO_buf4[14 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119 }
+    // { blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> input_FIFO_buf4[15 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119 }
+    // { blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> input_FIFO_buf4[14 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119 }
+    // { blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> input_FIFO_buf4[15 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119 }
+    // { blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> input_FIFO_buf4[16 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119 }
+    // { blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> input_FIFO_buf4[15 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119 }
+    // { blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> input_FIFO_buf4[16 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119 }
+    // { blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> input_FIFO_buf4[17 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119 }
+  // # of banks: 48
+  input_FIFO_buf4_input_to_gp_00_ld5_merged141_0_to_input_FIFO_buf4_blurx7_16_1_merged149_112_cache input_FIFO_buf4_input_to_gp_00_ld5_merged141_0_to_input_FIFO_buf4_blurx7_16_1_merged149_112;
+  input_FIFO_buf4_input_to_gp_00_ld5_merged141_1_to_input_FIFO_buf4_blurx7_16_1_merged149_113_cache input_FIFO_buf4_input_to_gp_00_ld5_merged141_1_to_input_FIFO_buf4_blurx7_16_1_merged149_113;
+  input_FIFO_buf4_input_to_gp_00_ld5_merged141_2_to_input_FIFO_buf4_blurx7_16_1_merged149_114_cache input_FIFO_buf4_input_to_gp_00_ld5_merged141_2_to_input_FIFO_buf4_blurx7_16_1_merged149_114;
+  input_FIFO_buf4_input_to_gp_00_ld5_merged141_1_to_input_FIFO_buf4_blurx7_16_1_merged149_115_cache input_FIFO_buf4_input_to_gp_00_ld5_merged141_1_to_input_FIFO_buf4_blurx7_16_1_merged149_115;
+  input_FIFO_buf4_input_to_gp_00_ld5_merged141_2_to_input_FIFO_buf4_blurx7_16_1_merged149_116_cache input_FIFO_buf4_input_to_gp_00_ld5_merged141_2_to_input_FIFO_buf4_blurx7_16_1_merged149_116;
+  input_FIFO_buf4_input_to_gp_00_ld5_merged141_3_to_input_FIFO_buf4_blurx7_16_1_merged149_117_cache input_FIFO_buf4_input_to_gp_00_ld5_merged141_3_to_input_FIFO_buf4_blurx7_16_1_merged149_117;
+  input_FIFO_buf4_input_to_gp_00_ld5_merged141_2_to_input_FIFO_buf4_blurx7_16_1_merged149_118_cache input_FIFO_buf4_input_to_gp_00_ld5_merged141_2_to_input_FIFO_buf4_blurx7_16_1_merged149_118;
+  input_FIFO_buf4_input_to_gp_00_ld5_merged141_3_to_input_FIFO_buf4_blurx7_16_1_merged149_119_cache input_FIFO_buf4_input_to_gp_00_ld5_merged141_3_to_input_FIFO_buf4_blurx7_16_1_merged149_119;
+  input_FIFO_buf4_input_to_gp_00_ld5_merged141_4_to_input_FIFO_buf4_blurx7_16_1_merged149_120_cache input_FIFO_buf4_input_to_gp_00_ld5_merged141_4_to_input_FIFO_buf4_blurx7_16_1_merged149_120;
+  input_FIFO_buf4_input_to_gp_00_ld5_merged141_3_to_input_FIFO_buf4_blurx7_16_1_merged149_121_cache input_FIFO_buf4_input_to_gp_00_ld5_merged141_3_to_input_FIFO_buf4_blurx7_16_1_merged149_121;
+  input_FIFO_buf4_input_to_gp_00_ld5_merged141_4_to_input_FIFO_buf4_blurx7_16_1_merged149_122_cache input_FIFO_buf4_input_to_gp_00_ld5_merged141_4_to_input_FIFO_buf4_blurx7_16_1_merged149_122;
+  input_FIFO_buf4_input_to_gp_00_ld5_merged141_5_to_input_FIFO_buf4_blurx7_16_1_merged149_123_cache input_FIFO_buf4_input_to_gp_00_ld5_merged141_5_to_input_FIFO_buf4_blurx7_16_1_merged149_123;
+  input_FIFO_buf4_input_to_gp_00_ld5_merged141_4_to_input_FIFO_buf4_blurx7_16_1_merged149_124_cache input_FIFO_buf4_input_to_gp_00_ld5_merged141_4_to_input_FIFO_buf4_blurx7_16_1_merged149_124;
+  input_FIFO_buf4_input_to_gp_00_ld5_merged141_5_to_input_FIFO_buf4_blurx7_16_1_merged149_125_cache input_FIFO_buf4_input_to_gp_00_ld5_merged141_5_to_input_FIFO_buf4_blurx7_16_1_merged149_125;
+  input_FIFO_buf4_input_to_gp_00_ld5_merged141_6_to_input_FIFO_buf4_blurx7_16_1_merged149_126_cache input_FIFO_buf4_input_to_gp_00_ld5_merged141_6_to_input_FIFO_buf4_blurx7_16_1_merged149_126;
+  input_FIFO_buf4_input_to_gp_00_ld5_merged141_5_to_input_FIFO_buf4_blurx7_16_1_merged149_127_cache input_FIFO_buf4_input_to_gp_00_ld5_merged141_5_to_input_FIFO_buf4_blurx7_16_1_merged149_127;
+  input_FIFO_buf4_input_to_gp_00_ld5_merged141_6_to_input_FIFO_buf4_blurx7_16_1_merged149_128_cache input_FIFO_buf4_input_to_gp_00_ld5_merged141_6_to_input_FIFO_buf4_blurx7_16_1_merged149_128;
+  input_FIFO_buf4_input_to_gp_00_ld5_merged141_7_to_input_FIFO_buf4_blurx7_16_1_merged149_129_cache input_FIFO_buf4_input_to_gp_00_ld5_merged141_7_to_input_FIFO_buf4_blurx7_16_1_merged149_129;
+  input_FIFO_buf4_input_to_gp_00_ld5_merged141_6_to_input_FIFO_buf4_blurx7_16_1_merged149_130_cache input_FIFO_buf4_input_to_gp_00_ld5_merged141_6_to_input_FIFO_buf4_blurx7_16_1_merged149_130;
+  input_FIFO_buf4_input_to_gp_00_ld5_merged141_7_to_input_FIFO_buf4_blurx7_16_1_merged149_131_cache input_FIFO_buf4_input_to_gp_00_ld5_merged141_7_to_input_FIFO_buf4_blurx7_16_1_merged149_131;
+  input_FIFO_buf4_input_to_gp_00_ld5_merged141_8_to_input_FIFO_buf4_blurx7_16_1_merged149_132_cache input_FIFO_buf4_input_to_gp_00_ld5_merged141_8_to_input_FIFO_buf4_blurx7_16_1_merged149_132;
+  input_FIFO_buf4_input_to_gp_00_ld5_merged141_7_to_input_FIFO_buf4_blurx7_16_1_merged149_133_cache input_FIFO_buf4_input_to_gp_00_ld5_merged141_7_to_input_FIFO_buf4_blurx7_16_1_merged149_133;
+  input_FIFO_buf4_input_to_gp_00_ld5_merged141_8_to_input_FIFO_buf4_blurx7_16_1_merged149_134_cache input_FIFO_buf4_input_to_gp_00_ld5_merged141_8_to_input_FIFO_buf4_blurx7_16_1_merged149_134;
+  input_FIFO_buf4_input_to_gp_00_ld5_merged141_9_to_input_FIFO_buf4_blurx7_16_1_merged149_135_cache input_FIFO_buf4_input_to_gp_00_ld5_merged141_9_to_input_FIFO_buf4_blurx7_16_1_merged149_135;
+  input_FIFO_buf4_input_to_gp_00_ld5_merged141_8_to_input_FIFO_buf4_blurx7_16_1_merged149_136_cache input_FIFO_buf4_input_to_gp_00_ld5_merged141_8_to_input_FIFO_buf4_blurx7_16_1_merged149_136;
+  input_FIFO_buf4_input_to_gp_00_ld5_merged141_9_to_input_FIFO_buf4_blurx7_16_1_merged149_137_cache input_FIFO_buf4_input_to_gp_00_ld5_merged141_9_to_input_FIFO_buf4_blurx7_16_1_merged149_137;
+  input_FIFO_buf4_input_to_gp_00_ld5_merged141_10_to_input_FIFO_buf4_blurx7_16_1_merged149_138_cache input_FIFO_buf4_input_to_gp_00_ld5_merged141_10_to_input_FIFO_buf4_blurx7_16_1_merged149_138;
+  input_FIFO_buf4_input_to_gp_00_ld5_merged141_9_to_input_FIFO_buf4_blurx7_16_1_merged149_139_cache input_FIFO_buf4_input_to_gp_00_ld5_merged141_9_to_input_FIFO_buf4_blurx7_16_1_merged149_139;
+  input_FIFO_buf4_input_to_gp_00_ld5_merged141_10_to_input_FIFO_buf4_blurx7_16_1_merged149_140_cache input_FIFO_buf4_input_to_gp_00_ld5_merged141_10_to_input_FIFO_buf4_blurx7_16_1_merged149_140;
+  input_FIFO_buf4_input_to_gp_00_ld5_merged141_11_to_input_FIFO_buf4_blurx7_16_1_merged149_141_cache input_FIFO_buf4_input_to_gp_00_ld5_merged141_11_to_input_FIFO_buf4_blurx7_16_1_merged149_141;
+  input_FIFO_buf4_input_to_gp_00_ld5_merged141_10_to_input_FIFO_buf4_blurx7_16_1_merged149_142_cache input_FIFO_buf4_input_to_gp_00_ld5_merged141_10_to_input_FIFO_buf4_blurx7_16_1_merged149_142;
+  input_FIFO_buf4_input_to_gp_00_ld5_merged141_11_to_input_FIFO_buf4_blurx7_16_1_merged149_143_cache input_FIFO_buf4_input_to_gp_00_ld5_merged141_11_to_input_FIFO_buf4_blurx7_16_1_merged149_143;
+  input_FIFO_buf4_input_to_gp_00_ld5_merged141_12_to_input_FIFO_buf4_blurx7_16_1_merged149_144_cache input_FIFO_buf4_input_to_gp_00_ld5_merged141_12_to_input_FIFO_buf4_blurx7_16_1_merged149_144;
+  input_FIFO_buf4_input_to_gp_00_ld5_merged141_11_to_input_FIFO_buf4_blurx7_16_1_merged149_145_cache input_FIFO_buf4_input_to_gp_00_ld5_merged141_11_to_input_FIFO_buf4_blurx7_16_1_merged149_145;
+  input_FIFO_buf4_input_to_gp_00_ld5_merged141_12_to_input_FIFO_buf4_blurx7_16_1_merged149_146_cache input_FIFO_buf4_input_to_gp_00_ld5_merged141_12_to_input_FIFO_buf4_blurx7_16_1_merged149_146;
+  input_FIFO_buf4_input_to_gp_00_ld5_merged141_13_to_input_FIFO_buf4_blurx7_16_1_merged149_147_cache input_FIFO_buf4_input_to_gp_00_ld5_merged141_13_to_input_FIFO_buf4_blurx7_16_1_merged149_147;
+  input_FIFO_buf4_input_to_gp_00_ld5_merged141_12_to_input_FIFO_buf4_blurx7_16_1_merged149_148_cache input_FIFO_buf4_input_to_gp_00_ld5_merged141_12_to_input_FIFO_buf4_blurx7_16_1_merged149_148;
+  input_FIFO_buf4_input_to_gp_00_ld5_merged141_13_to_input_FIFO_buf4_blurx7_16_1_merged149_149_cache input_FIFO_buf4_input_to_gp_00_ld5_merged141_13_to_input_FIFO_buf4_blurx7_16_1_merged149_149;
+  input_FIFO_buf4_input_to_gp_00_ld5_merged141_14_to_input_FIFO_buf4_blurx7_16_1_merged149_150_cache input_FIFO_buf4_input_to_gp_00_ld5_merged141_14_to_input_FIFO_buf4_blurx7_16_1_merged149_150;
+  input_FIFO_buf4_input_to_gp_00_ld5_merged141_13_to_input_FIFO_buf4_blurx7_16_1_merged149_151_cache input_FIFO_buf4_input_to_gp_00_ld5_merged141_13_to_input_FIFO_buf4_blurx7_16_1_merged149_151;
+  input_FIFO_buf4_input_to_gp_00_ld5_merged141_14_to_input_FIFO_buf4_blurx7_16_1_merged149_152_cache input_FIFO_buf4_input_to_gp_00_ld5_merged141_14_to_input_FIFO_buf4_blurx7_16_1_merged149_152;
+  input_FIFO_buf4_input_to_gp_00_ld5_merged141_15_to_input_FIFO_buf4_blurx7_16_1_merged149_153_cache input_FIFO_buf4_input_to_gp_00_ld5_merged141_15_to_input_FIFO_buf4_blurx7_16_1_merged149_153;
+  input_FIFO_buf4_input_to_gp_00_ld5_merged141_14_to_input_FIFO_buf4_blurx7_16_1_merged149_154_cache input_FIFO_buf4_input_to_gp_00_ld5_merged141_14_to_input_FIFO_buf4_blurx7_16_1_merged149_154;
+  input_FIFO_buf4_input_to_gp_00_ld5_merged141_15_to_input_FIFO_buf4_blurx7_16_1_merged149_155_cache input_FIFO_buf4_input_to_gp_00_ld5_merged141_15_to_input_FIFO_buf4_blurx7_16_1_merged149_155;
+  input_FIFO_buf4_input_to_gp_00_ld5_merged141_0_to_input_FIFO_buf4_blurx7_16_1_merged149_156_cache input_FIFO_buf4_input_to_gp_00_ld5_merged141_0_to_input_FIFO_buf4_blurx7_16_1_merged149_156;
+  input_FIFO_buf4_input_to_gp_00_ld5_merged141_15_to_input_FIFO_buf4_blurx7_16_1_merged149_157_cache input_FIFO_buf4_input_to_gp_00_ld5_merged141_15_to_input_FIFO_buf4_blurx7_16_1_merged149_157;
+  input_FIFO_buf4_input_to_gp_00_ld5_merged141_0_to_input_FIFO_buf4_blurx7_16_1_merged149_158_cache input_FIFO_buf4_input_to_gp_00_ld5_merged141_0_to_input_FIFO_buf4_blurx7_16_1_merged149_158;
+  input_FIFO_buf4_input_to_gp_00_ld5_merged141_1_to_input_FIFO_buf4_blurx7_16_1_merged149_159_cache input_FIFO_buf4_input_to_gp_00_ld5_merged141_1_to_input_FIFO_buf4_blurx7_16_1_merged149_159;
+};
+
+
+
+inline void input_FIFO_buf4_input_to_gp_00_ld5_merged141_0_write(hw_uint<16>& input_FIFO_buf4_input_to_gp_00_ld5_merged141_0, input_FIFO_buf4_cache& input_FIFO_buf4, int root, int input_to_gp_00_ld6, int input_to_gp_00_ld5, int dynamic_address) {
+  input_FIFO_buf4.input_FIFO_buf4_input_to_gp_00_ld5_merged141_0_to_input_FIFO_buf4_blurx7_16_1_merged149_112.push(input_FIFO_buf4_input_to_gp_00_ld5_merged141_0);
+  input_FIFO_buf4.input_FIFO_buf4_input_to_gp_00_ld5_merged141_0_to_input_FIFO_buf4_blurx7_16_1_merged149_156.push(input_FIFO_buf4_input_to_gp_00_ld5_merged141_0);
+  input_FIFO_buf4.input_FIFO_buf4_input_to_gp_00_ld5_merged141_0_to_input_FIFO_buf4_blurx7_16_1_merged149_158.push(input_FIFO_buf4_input_to_gp_00_ld5_merged141_0);
+}
+
+inline void input_FIFO_buf4_input_to_gp_00_ld5_merged141_1_write(hw_uint<16>& input_FIFO_buf4_input_to_gp_00_ld5_merged141_1, input_FIFO_buf4_cache& input_FIFO_buf4, int root, int input_to_gp_00_ld6, int input_to_gp_00_ld5, int dynamic_address) {
+  input_FIFO_buf4.input_FIFO_buf4_input_to_gp_00_ld5_merged141_1_to_input_FIFO_buf4_blurx7_16_1_merged149_113.push(input_FIFO_buf4_input_to_gp_00_ld5_merged141_1);
+  input_FIFO_buf4.input_FIFO_buf4_input_to_gp_00_ld5_merged141_1_to_input_FIFO_buf4_blurx7_16_1_merged149_115.push(input_FIFO_buf4_input_to_gp_00_ld5_merged141_1);
+  input_FIFO_buf4.input_FIFO_buf4_input_to_gp_00_ld5_merged141_1_to_input_FIFO_buf4_blurx7_16_1_merged149_159.push(input_FIFO_buf4_input_to_gp_00_ld5_merged141_1);
+}
+
+inline void input_FIFO_buf4_input_to_gp_00_ld5_merged141_10_write(hw_uint<16>& input_FIFO_buf4_input_to_gp_00_ld5_merged141_10, input_FIFO_buf4_cache& input_FIFO_buf4, int root, int input_to_gp_00_ld6, int input_to_gp_00_ld5, int dynamic_address) {
+  input_FIFO_buf4.input_FIFO_buf4_input_to_gp_00_ld5_merged141_10_to_input_FIFO_buf4_blurx7_16_1_merged149_138.push(input_FIFO_buf4_input_to_gp_00_ld5_merged141_10);
+  input_FIFO_buf4.input_FIFO_buf4_input_to_gp_00_ld5_merged141_10_to_input_FIFO_buf4_blurx7_16_1_merged149_140.push(input_FIFO_buf4_input_to_gp_00_ld5_merged141_10);
+  input_FIFO_buf4.input_FIFO_buf4_input_to_gp_00_ld5_merged141_10_to_input_FIFO_buf4_blurx7_16_1_merged149_142.push(input_FIFO_buf4_input_to_gp_00_ld5_merged141_10);
+}
+
+inline void input_FIFO_buf4_input_to_gp_00_ld5_merged141_11_write(hw_uint<16>& input_FIFO_buf4_input_to_gp_00_ld5_merged141_11, input_FIFO_buf4_cache& input_FIFO_buf4, int root, int input_to_gp_00_ld6, int input_to_gp_00_ld5, int dynamic_address) {
+  input_FIFO_buf4.input_FIFO_buf4_input_to_gp_00_ld5_merged141_11_to_input_FIFO_buf4_blurx7_16_1_merged149_141.push(input_FIFO_buf4_input_to_gp_00_ld5_merged141_11);
+  input_FIFO_buf4.input_FIFO_buf4_input_to_gp_00_ld5_merged141_11_to_input_FIFO_buf4_blurx7_16_1_merged149_143.push(input_FIFO_buf4_input_to_gp_00_ld5_merged141_11);
+  input_FIFO_buf4.input_FIFO_buf4_input_to_gp_00_ld5_merged141_11_to_input_FIFO_buf4_blurx7_16_1_merged149_145.push(input_FIFO_buf4_input_to_gp_00_ld5_merged141_11);
+}
+
+inline void input_FIFO_buf4_input_to_gp_00_ld5_merged141_12_write(hw_uint<16>& input_FIFO_buf4_input_to_gp_00_ld5_merged141_12, input_FIFO_buf4_cache& input_FIFO_buf4, int root, int input_to_gp_00_ld6, int input_to_gp_00_ld5, int dynamic_address) {
+  input_FIFO_buf4.input_FIFO_buf4_input_to_gp_00_ld5_merged141_12_to_input_FIFO_buf4_blurx7_16_1_merged149_144.push(input_FIFO_buf4_input_to_gp_00_ld5_merged141_12);
+  input_FIFO_buf4.input_FIFO_buf4_input_to_gp_00_ld5_merged141_12_to_input_FIFO_buf4_blurx7_16_1_merged149_146.push(input_FIFO_buf4_input_to_gp_00_ld5_merged141_12);
+  input_FIFO_buf4.input_FIFO_buf4_input_to_gp_00_ld5_merged141_12_to_input_FIFO_buf4_blurx7_16_1_merged149_148.push(input_FIFO_buf4_input_to_gp_00_ld5_merged141_12);
+}
+
+inline void input_FIFO_buf4_input_to_gp_00_ld5_merged141_13_write(hw_uint<16>& input_FIFO_buf4_input_to_gp_00_ld5_merged141_13, input_FIFO_buf4_cache& input_FIFO_buf4, int root, int input_to_gp_00_ld6, int input_to_gp_00_ld5, int dynamic_address) {
+  input_FIFO_buf4.input_FIFO_buf4_input_to_gp_00_ld5_merged141_13_to_input_FIFO_buf4_blurx7_16_1_merged149_147.push(input_FIFO_buf4_input_to_gp_00_ld5_merged141_13);
+  input_FIFO_buf4.input_FIFO_buf4_input_to_gp_00_ld5_merged141_13_to_input_FIFO_buf4_blurx7_16_1_merged149_149.push(input_FIFO_buf4_input_to_gp_00_ld5_merged141_13);
+  input_FIFO_buf4.input_FIFO_buf4_input_to_gp_00_ld5_merged141_13_to_input_FIFO_buf4_blurx7_16_1_merged149_151.push(input_FIFO_buf4_input_to_gp_00_ld5_merged141_13);
+}
+
+inline void input_FIFO_buf4_input_to_gp_00_ld5_merged141_14_write(hw_uint<16>& input_FIFO_buf4_input_to_gp_00_ld5_merged141_14, input_FIFO_buf4_cache& input_FIFO_buf4, int root, int input_to_gp_00_ld6, int input_to_gp_00_ld5, int dynamic_address) {
+  input_FIFO_buf4.input_FIFO_buf4_input_to_gp_00_ld5_merged141_14_to_input_FIFO_buf4_blurx7_16_1_merged149_150.push(input_FIFO_buf4_input_to_gp_00_ld5_merged141_14);
+  input_FIFO_buf4.input_FIFO_buf4_input_to_gp_00_ld5_merged141_14_to_input_FIFO_buf4_blurx7_16_1_merged149_152.push(input_FIFO_buf4_input_to_gp_00_ld5_merged141_14);
+  input_FIFO_buf4.input_FIFO_buf4_input_to_gp_00_ld5_merged141_14_to_input_FIFO_buf4_blurx7_16_1_merged149_154.push(input_FIFO_buf4_input_to_gp_00_ld5_merged141_14);
+}
+
+inline void input_FIFO_buf4_input_to_gp_00_ld5_merged141_15_write(hw_uint<16>& input_FIFO_buf4_input_to_gp_00_ld5_merged141_15, input_FIFO_buf4_cache& input_FIFO_buf4, int root, int input_to_gp_00_ld6, int input_to_gp_00_ld5, int dynamic_address) {
+  input_FIFO_buf4.input_FIFO_buf4_input_to_gp_00_ld5_merged141_15_to_input_FIFO_buf4_blurx7_16_1_merged149_153.push(input_FIFO_buf4_input_to_gp_00_ld5_merged141_15);
+  input_FIFO_buf4.input_FIFO_buf4_input_to_gp_00_ld5_merged141_15_to_input_FIFO_buf4_blurx7_16_1_merged149_155.push(input_FIFO_buf4_input_to_gp_00_ld5_merged141_15);
+  input_FIFO_buf4.input_FIFO_buf4_input_to_gp_00_ld5_merged141_15_to_input_FIFO_buf4_blurx7_16_1_merged149_157.push(input_FIFO_buf4_input_to_gp_00_ld5_merged141_15);
+}
+
+inline void input_FIFO_buf4_input_to_gp_00_ld5_merged141_2_write(hw_uint<16>& input_FIFO_buf4_input_to_gp_00_ld5_merged141_2, input_FIFO_buf4_cache& input_FIFO_buf4, int root, int input_to_gp_00_ld6, int input_to_gp_00_ld5, int dynamic_address) {
+  input_FIFO_buf4.input_FIFO_buf4_input_to_gp_00_ld5_merged141_2_to_input_FIFO_buf4_blurx7_16_1_merged149_114.push(input_FIFO_buf4_input_to_gp_00_ld5_merged141_2);
+  input_FIFO_buf4.input_FIFO_buf4_input_to_gp_00_ld5_merged141_2_to_input_FIFO_buf4_blurx7_16_1_merged149_116.push(input_FIFO_buf4_input_to_gp_00_ld5_merged141_2);
+  input_FIFO_buf4.input_FIFO_buf4_input_to_gp_00_ld5_merged141_2_to_input_FIFO_buf4_blurx7_16_1_merged149_118.push(input_FIFO_buf4_input_to_gp_00_ld5_merged141_2);
+}
+
+inline void input_FIFO_buf4_input_to_gp_00_ld5_merged141_3_write(hw_uint<16>& input_FIFO_buf4_input_to_gp_00_ld5_merged141_3, input_FIFO_buf4_cache& input_FIFO_buf4, int root, int input_to_gp_00_ld6, int input_to_gp_00_ld5, int dynamic_address) {
+  input_FIFO_buf4.input_FIFO_buf4_input_to_gp_00_ld5_merged141_3_to_input_FIFO_buf4_blurx7_16_1_merged149_117.push(input_FIFO_buf4_input_to_gp_00_ld5_merged141_3);
+  input_FIFO_buf4.input_FIFO_buf4_input_to_gp_00_ld5_merged141_3_to_input_FIFO_buf4_blurx7_16_1_merged149_119.push(input_FIFO_buf4_input_to_gp_00_ld5_merged141_3);
+  input_FIFO_buf4.input_FIFO_buf4_input_to_gp_00_ld5_merged141_3_to_input_FIFO_buf4_blurx7_16_1_merged149_121.push(input_FIFO_buf4_input_to_gp_00_ld5_merged141_3);
+}
+
+inline void input_FIFO_buf4_input_to_gp_00_ld5_merged141_4_write(hw_uint<16>& input_FIFO_buf4_input_to_gp_00_ld5_merged141_4, input_FIFO_buf4_cache& input_FIFO_buf4, int root, int input_to_gp_00_ld6, int input_to_gp_00_ld5, int dynamic_address) {
+  input_FIFO_buf4.input_FIFO_buf4_input_to_gp_00_ld5_merged141_4_to_input_FIFO_buf4_blurx7_16_1_merged149_120.push(input_FIFO_buf4_input_to_gp_00_ld5_merged141_4);
+  input_FIFO_buf4.input_FIFO_buf4_input_to_gp_00_ld5_merged141_4_to_input_FIFO_buf4_blurx7_16_1_merged149_122.push(input_FIFO_buf4_input_to_gp_00_ld5_merged141_4);
+  input_FIFO_buf4.input_FIFO_buf4_input_to_gp_00_ld5_merged141_4_to_input_FIFO_buf4_blurx7_16_1_merged149_124.push(input_FIFO_buf4_input_to_gp_00_ld5_merged141_4);
+}
+
+inline void input_FIFO_buf4_input_to_gp_00_ld5_merged141_5_write(hw_uint<16>& input_FIFO_buf4_input_to_gp_00_ld5_merged141_5, input_FIFO_buf4_cache& input_FIFO_buf4, int root, int input_to_gp_00_ld6, int input_to_gp_00_ld5, int dynamic_address) {
+  input_FIFO_buf4.input_FIFO_buf4_input_to_gp_00_ld5_merged141_5_to_input_FIFO_buf4_blurx7_16_1_merged149_123.push(input_FIFO_buf4_input_to_gp_00_ld5_merged141_5);
+  input_FIFO_buf4.input_FIFO_buf4_input_to_gp_00_ld5_merged141_5_to_input_FIFO_buf4_blurx7_16_1_merged149_125.push(input_FIFO_buf4_input_to_gp_00_ld5_merged141_5);
+  input_FIFO_buf4.input_FIFO_buf4_input_to_gp_00_ld5_merged141_5_to_input_FIFO_buf4_blurx7_16_1_merged149_127.push(input_FIFO_buf4_input_to_gp_00_ld5_merged141_5);
+}
+
+inline void input_FIFO_buf4_input_to_gp_00_ld5_merged141_6_write(hw_uint<16>& input_FIFO_buf4_input_to_gp_00_ld5_merged141_6, input_FIFO_buf4_cache& input_FIFO_buf4, int root, int input_to_gp_00_ld6, int input_to_gp_00_ld5, int dynamic_address) {
+  input_FIFO_buf4.input_FIFO_buf4_input_to_gp_00_ld5_merged141_6_to_input_FIFO_buf4_blurx7_16_1_merged149_126.push(input_FIFO_buf4_input_to_gp_00_ld5_merged141_6);
+  input_FIFO_buf4.input_FIFO_buf4_input_to_gp_00_ld5_merged141_6_to_input_FIFO_buf4_blurx7_16_1_merged149_128.push(input_FIFO_buf4_input_to_gp_00_ld5_merged141_6);
+  input_FIFO_buf4.input_FIFO_buf4_input_to_gp_00_ld5_merged141_6_to_input_FIFO_buf4_blurx7_16_1_merged149_130.push(input_FIFO_buf4_input_to_gp_00_ld5_merged141_6);
+}
+
+inline void input_FIFO_buf4_input_to_gp_00_ld5_merged141_7_write(hw_uint<16>& input_FIFO_buf4_input_to_gp_00_ld5_merged141_7, input_FIFO_buf4_cache& input_FIFO_buf4, int root, int input_to_gp_00_ld6, int input_to_gp_00_ld5, int dynamic_address) {
+  input_FIFO_buf4.input_FIFO_buf4_input_to_gp_00_ld5_merged141_7_to_input_FIFO_buf4_blurx7_16_1_merged149_129.push(input_FIFO_buf4_input_to_gp_00_ld5_merged141_7);
+  input_FIFO_buf4.input_FIFO_buf4_input_to_gp_00_ld5_merged141_7_to_input_FIFO_buf4_blurx7_16_1_merged149_131.push(input_FIFO_buf4_input_to_gp_00_ld5_merged141_7);
+  input_FIFO_buf4.input_FIFO_buf4_input_to_gp_00_ld5_merged141_7_to_input_FIFO_buf4_blurx7_16_1_merged149_133.push(input_FIFO_buf4_input_to_gp_00_ld5_merged141_7);
+}
+
+inline void input_FIFO_buf4_input_to_gp_00_ld5_merged141_8_write(hw_uint<16>& input_FIFO_buf4_input_to_gp_00_ld5_merged141_8, input_FIFO_buf4_cache& input_FIFO_buf4, int root, int input_to_gp_00_ld6, int input_to_gp_00_ld5, int dynamic_address) {
+  input_FIFO_buf4.input_FIFO_buf4_input_to_gp_00_ld5_merged141_8_to_input_FIFO_buf4_blurx7_16_1_merged149_132.push(input_FIFO_buf4_input_to_gp_00_ld5_merged141_8);
+  input_FIFO_buf4.input_FIFO_buf4_input_to_gp_00_ld5_merged141_8_to_input_FIFO_buf4_blurx7_16_1_merged149_134.push(input_FIFO_buf4_input_to_gp_00_ld5_merged141_8);
+  input_FIFO_buf4.input_FIFO_buf4_input_to_gp_00_ld5_merged141_8_to_input_FIFO_buf4_blurx7_16_1_merged149_136.push(input_FIFO_buf4_input_to_gp_00_ld5_merged141_8);
+}
+
+inline void input_FIFO_buf4_input_to_gp_00_ld5_merged141_9_write(hw_uint<16>& input_FIFO_buf4_input_to_gp_00_ld5_merged141_9, input_FIFO_buf4_cache& input_FIFO_buf4, int root, int input_to_gp_00_ld6, int input_to_gp_00_ld5, int dynamic_address) {
+  input_FIFO_buf4.input_FIFO_buf4_input_to_gp_00_ld5_merged141_9_to_input_FIFO_buf4_blurx7_16_1_merged149_135.push(input_FIFO_buf4_input_to_gp_00_ld5_merged141_9);
+  input_FIFO_buf4.input_FIFO_buf4_input_to_gp_00_ld5_merged141_9_to_input_FIFO_buf4_blurx7_16_1_merged149_137.push(input_FIFO_buf4_input_to_gp_00_ld5_merged141_9);
+  input_FIFO_buf4.input_FIFO_buf4_input_to_gp_00_ld5_merged141_9_to_input_FIFO_buf4_blurx7_16_1_merged149_139.push(input_FIFO_buf4_input_to_gp_00_ld5_merged141_9);
+}
+
+inline hw_uint<16> input_FIFO_buf4_blurx7_16_1_merged149_112_select(input_FIFO_buf4_cache& input_FIFO_buf4, int root, int blurx7_16_0, int blurx7_16_1, int dynamic_address) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // input_FIFO_buf4_blurx7_16_1_merged149_112 read pattern: { blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> input_FIFO_buf4[16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119 }
+  // Read schedule : { blurx7_16_1_merged149[d0 = 0, d1, d2] -> [0, d1, 1 + d2, 3] : 0 <= d1 <= 1079 and 0 <= d2 <= 119 }
+  // Write schedule: { input_to_gp_00_ld5_merged141[d0 = 0, d1, d2] -> [0, d1, d2, 2] : 0 <= d1 <= 1079 and 0 <= d2 <= 120 }
+  auto value_input_FIFO_buf4_input_to_gp_00_ld5_merged141_0 = input_FIFO_buf4.input_FIFO_buf4_input_to_gp_00_ld5_merged141_0_to_input_FIFO_buf4_blurx7_16_1_merged149_112.peek(/* one reader or all rams */ 1);
+  return value_input_FIFO_buf4_input_to_gp_00_ld5_merged141_0;
+  return 0;
+}
+
+inline hw_uint<16> input_FIFO_buf4_blurx7_16_1_merged149_113_select(input_FIFO_buf4_cache& input_FIFO_buf4, int root, int blurx7_16_0, int blurx7_16_1, int dynamic_address) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // input_FIFO_buf4_blurx7_16_1_merged149_113 read pattern: { blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> input_FIFO_buf4[1 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119 }
+  // Read schedule : { blurx7_16_1_merged149[d0 = 0, d1, d2] -> [0, d1, 1 + d2, 3] : 0 <= d1 <= 1079 and 0 <= d2 <= 119 }
+  // Write schedule: { input_to_gp_00_ld5_merged141[d0 = 0, d1, d2] -> [0, d1, d2, 2] : 0 <= d1 <= 1079 and 0 <= d2 <= 120 }
+  auto value_input_FIFO_buf4_input_to_gp_00_ld5_merged141_1 = input_FIFO_buf4.input_FIFO_buf4_input_to_gp_00_ld5_merged141_1_to_input_FIFO_buf4_blurx7_16_1_merged149_113.peek(/* one reader or all rams */ 1);
+  return value_input_FIFO_buf4_input_to_gp_00_ld5_merged141_1;
+  return 0;
+}
+
+inline hw_uint<16> input_FIFO_buf4_blurx7_16_1_merged149_114_select(input_FIFO_buf4_cache& input_FIFO_buf4, int root, int blurx7_16_0, int blurx7_16_1, int dynamic_address) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // input_FIFO_buf4_blurx7_16_1_merged149_114 read pattern: { blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> input_FIFO_buf4[2 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119 }
+  // Read schedule : { blurx7_16_1_merged149[d0 = 0, d1, d2] -> [0, d1, 1 + d2, 3] : 0 <= d1 <= 1079 and 0 <= d2 <= 119 }
+  // Write schedule: { input_to_gp_00_ld5_merged141[d0 = 0, d1, d2] -> [0, d1, d2, 2] : 0 <= d1 <= 1079 and 0 <= d2 <= 120 }
+  auto value_input_FIFO_buf4_input_to_gp_00_ld5_merged141_2 = input_FIFO_buf4.input_FIFO_buf4_input_to_gp_00_ld5_merged141_2_to_input_FIFO_buf4_blurx7_16_1_merged149_114.peek(/* one reader or all rams */ 1);
+  return value_input_FIFO_buf4_input_to_gp_00_ld5_merged141_2;
+  return 0;
+}
+
+inline hw_uint<16> input_FIFO_buf4_blurx7_16_1_merged149_115_select(input_FIFO_buf4_cache& input_FIFO_buf4, int root, int blurx7_16_0, int blurx7_16_1, int dynamic_address) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // input_FIFO_buf4_blurx7_16_1_merged149_115 read pattern: { blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> input_FIFO_buf4[1 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119 }
+  // Read schedule : { blurx7_16_1_merged149[d0 = 0, d1, d2] -> [0, d1, 1 + d2, 3] : 0 <= d1 <= 1079 and 0 <= d2 <= 119 }
+  // Write schedule: { input_to_gp_00_ld5_merged141[d0 = 0, d1, d2] -> [0, d1, d2, 2] : 0 <= d1 <= 1079 and 0 <= d2 <= 120 }
+  auto value_input_FIFO_buf4_input_to_gp_00_ld5_merged141_1 = input_FIFO_buf4.input_FIFO_buf4_input_to_gp_00_ld5_merged141_1_to_input_FIFO_buf4_blurx7_16_1_merged149_115.peek(/* one reader or all rams */ 1);
+  return value_input_FIFO_buf4_input_to_gp_00_ld5_merged141_1;
+  return 0;
+}
+
+inline hw_uint<16> input_FIFO_buf4_blurx7_16_1_merged149_116_select(input_FIFO_buf4_cache& input_FIFO_buf4, int root, int blurx7_16_0, int blurx7_16_1, int dynamic_address) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // input_FIFO_buf4_blurx7_16_1_merged149_116 read pattern: { blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> input_FIFO_buf4[2 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119 }
+  // Read schedule : { blurx7_16_1_merged149[d0 = 0, d1, d2] -> [0, d1, 1 + d2, 3] : 0 <= d1 <= 1079 and 0 <= d2 <= 119 }
+  // Write schedule: { input_to_gp_00_ld5_merged141[d0 = 0, d1, d2] -> [0, d1, d2, 2] : 0 <= d1 <= 1079 and 0 <= d2 <= 120 }
+  auto value_input_FIFO_buf4_input_to_gp_00_ld5_merged141_2 = input_FIFO_buf4.input_FIFO_buf4_input_to_gp_00_ld5_merged141_2_to_input_FIFO_buf4_blurx7_16_1_merged149_116.peek(/* one reader or all rams */ 1);
+  return value_input_FIFO_buf4_input_to_gp_00_ld5_merged141_2;
+  return 0;
+}
+
+inline hw_uint<16> input_FIFO_buf4_blurx7_16_1_merged149_117_select(input_FIFO_buf4_cache& input_FIFO_buf4, int root, int blurx7_16_0, int blurx7_16_1, int dynamic_address) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // input_FIFO_buf4_blurx7_16_1_merged149_117 read pattern: { blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> input_FIFO_buf4[3 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119 }
+  // Read schedule : { blurx7_16_1_merged149[d0 = 0, d1, d2] -> [0, d1, 1 + d2, 3] : 0 <= d1 <= 1079 and 0 <= d2 <= 119 }
+  // Write schedule: { input_to_gp_00_ld5_merged141[d0 = 0, d1, d2] -> [0, d1, d2, 2] : 0 <= d1 <= 1079 and 0 <= d2 <= 120 }
+  auto value_input_FIFO_buf4_input_to_gp_00_ld5_merged141_3 = input_FIFO_buf4.input_FIFO_buf4_input_to_gp_00_ld5_merged141_3_to_input_FIFO_buf4_blurx7_16_1_merged149_117.peek(/* one reader or all rams */ 1);
+  return value_input_FIFO_buf4_input_to_gp_00_ld5_merged141_3;
+  return 0;
+}
+
+inline hw_uint<16> input_FIFO_buf4_blurx7_16_1_merged149_118_select(input_FIFO_buf4_cache& input_FIFO_buf4, int root, int blurx7_16_0, int blurx7_16_1, int dynamic_address) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // input_FIFO_buf4_blurx7_16_1_merged149_118 read pattern: { blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> input_FIFO_buf4[2 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119 }
+  // Read schedule : { blurx7_16_1_merged149[d0 = 0, d1, d2] -> [0, d1, 1 + d2, 3] : 0 <= d1 <= 1079 and 0 <= d2 <= 119 }
+  // Write schedule: { input_to_gp_00_ld5_merged141[d0 = 0, d1, d2] -> [0, d1, d2, 2] : 0 <= d1 <= 1079 and 0 <= d2 <= 120 }
+  auto value_input_FIFO_buf4_input_to_gp_00_ld5_merged141_2 = input_FIFO_buf4.input_FIFO_buf4_input_to_gp_00_ld5_merged141_2_to_input_FIFO_buf4_blurx7_16_1_merged149_118.peek(/* one reader or all rams */ 1);
+  return value_input_FIFO_buf4_input_to_gp_00_ld5_merged141_2;
+  return 0;
+}
+
+inline hw_uint<16> input_FIFO_buf4_blurx7_16_1_merged149_119_select(input_FIFO_buf4_cache& input_FIFO_buf4, int root, int blurx7_16_0, int blurx7_16_1, int dynamic_address) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // input_FIFO_buf4_blurx7_16_1_merged149_119 read pattern: { blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> input_FIFO_buf4[3 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119 }
+  // Read schedule : { blurx7_16_1_merged149[d0 = 0, d1, d2] -> [0, d1, 1 + d2, 3] : 0 <= d1 <= 1079 and 0 <= d2 <= 119 }
+  // Write schedule: { input_to_gp_00_ld5_merged141[d0 = 0, d1, d2] -> [0, d1, d2, 2] : 0 <= d1 <= 1079 and 0 <= d2 <= 120 }
+  auto value_input_FIFO_buf4_input_to_gp_00_ld5_merged141_3 = input_FIFO_buf4.input_FIFO_buf4_input_to_gp_00_ld5_merged141_3_to_input_FIFO_buf4_blurx7_16_1_merged149_119.peek(/* one reader or all rams */ 1);
+  return value_input_FIFO_buf4_input_to_gp_00_ld5_merged141_3;
+  return 0;
+}
+
+inline hw_uint<16> input_FIFO_buf4_blurx7_16_1_merged149_120_select(input_FIFO_buf4_cache& input_FIFO_buf4, int root, int blurx7_16_0, int blurx7_16_1, int dynamic_address) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // input_FIFO_buf4_blurx7_16_1_merged149_120 read pattern: { blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> input_FIFO_buf4[4 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119 }
+  // Read schedule : { blurx7_16_1_merged149[d0 = 0, d1, d2] -> [0, d1, 1 + d2, 3] : 0 <= d1 <= 1079 and 0 <= d2 <= 119 }
+  // Write schedule: { input_to_gp_00_ld5_merged141[d0 = 0, d1, d2] -> [0, d1, d2, 2] : 0 <= d1 <= 1079 and 0 <= d2 <= 120 }
+  auto value_input_FIFO_buf4_input_to_gp_00_ld5_merged141_4 = input_FIFO_buf4.input_FIFO_buf4_input_to_gp_00_ld5_merged141_4_to_input_FIFO_buf4_blurx7_16_1_merged149_120.peek(/* one reader or all rams */ 1);
+  return value_input_FIFO_buf4_input_to_gp_00_ld5_merged141_4;
+  return 0;
+}
+
+inline hw_uint<16> input_FIFO_buf4_blurx7_16_1_merged149_121_select(input_FIFO_buf4_cache& input_FIFO_buf4, int root, int blurx7_16_0, int blurx7_16_1, int dynamic_address) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // input_FIFO_buf4_blurx7_16_1_merged149_121 read pattern: { blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> input_FIFO_buf4[3 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119 }
+  // Read schedule : { blurx7_16_1_merged149[d0 = 0, d1, d2] -> [0, d1, 1 + d2, 3] : 0 <= d1 <= 1079 and 0 <= d2 <= 119 }
+  // Write schedule: { input_to_gp_00_ld5_merged141[d0 = 0, d1, d2] -> [0, d1, d2, 2] : 0 <= d1 <= 1079 and 0 <= d2 <= 120 }
+  auto value_input_FIFO_buf4_input_to_gp_00_ld5_merged141_3 = input_FIFO_buf4.input_FIFO_buf4_input_to_gp_00_ld5_merged141_3_to_input_FIFO_buf4_blurx7_16_1_merged149_121.peek(/* one reader or all rams */ 1);
+  return value_input_FIFO_buf4_input_to_gp_00_ld5_merged141_3;
+  return 0;
+}
+
+inline hw_uint<16> input_FIFO_buf4_blurx7_16_1_merged149_122_select(input_FIFO_buf4_cache& input_FIFO_buf4, int root, int blurx7_16_0, int blurx7_16_1, int dynamic_address) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // input_FIFO_buf4_blurx7_16_1_merged149_122 read pattern: { blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> input_FIFO_buf4[4 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119 }
+  // Read schedule : { blurx7_16_1_merged149[d0 = 0, d1, d2] -> [0, d1, 1 + d2, 3] : 0 <= d1 <= 1079 and 0 <= d2 <= 119 }
+  // Write schedule: { input_to_gp_00_ld5_merged141[d0 = 0, d1, d2] -> [0, d1, d2, 2] : 0 <= d1 <= 1079 and 0 <= d2 <= 120 }
+  auto value_input_FIFO_buf4_input_to_gp_00_ld5_merged141_4 = input_FIFO_buf4.input_FIFO_buf4_input_to_gp_00_ld5_merged141_4_to_input_FIFO_buf4_blurx7_16_1_merged149_122.peek(/* one reader or all rams */ 1);
+  return value_input_FIFO_buf4_input_to_gp_00_ld5_merged141_4;
+  return 0;
+}
+
+inline hw_uint<16> input_FIFO_buf4_blurx7_16_1_merged149_123_select(input_FIFO_buf4_cache& input_FIFO_buf4, int root, int blurx7_16_0, int blurx7_16_1, int dynamic_address) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // input_FIFO_buf4_blurx7_16_1_merged149_123 read pattern: { blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> input_FIFO_buf4[5 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119 }
+  // Read schedule : { blurx7_16_1_merged149[d0 = 0, d1, d2] -> [0, d1, 1 + d2, 3] : 0 <= d1 <= 1079 and 0 <= d2 <= 119 }
+  // Write schedule: { input_to_gp_00_ld5_merged141[d0 = 0, d1, d2] -> [0, d1, d2, 2] : 0 <= d1 <= 1079 and 0 <= d2 <= 120 }
+  auto value_input_FIFO_buf4_input_to_gp_00_ld5_merged141_5 = input_FIFO_buf4.input_FIFO_buf4_input_to_gp_00_ld5_merged141_5_to_input_FIFO_buf4_blurx7_16_1_merged149_123.peek(/* one reader or all rams */ 1);
+  return value_input_FIFO_buf4_input_to_gp_00_ld5_merged141_5;
+  return 0;
+}
+
+inline hw_uint<16> input_FIFO_buf4_blurx7_16_1_merged149_124_select(input_FIFO_buf4_cache& input_FIFO_buf4, int root, int blurx7_16_0, int blurx7_16_1, int dynamic_address) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // input_FIFO_buf4_blurx7_16_1_merged149_124 read pattern: { blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> input_FIFO_buf4[4 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119 }
+  // Read schedule : { blurx7_16_1_merged149[d0 = 0, d1, d2] -> [0, d1, 1 + d2, 3] : 0 <= d1 <= 1079 and 0 <= d2 <= 119 }
+  // Write schedule: { input_to_gp_00_ld5_merged141[d0 = 0, d1, d2] -> [0, d1, d2, 2] : 0 <= d1 <= 1079 and 0 <= d2 <= 120 }
+  auto value_input_FIFO_buf4_input_to_gp_00_ld5_merged141_4 = input_FIFO_buf4.input_FIFO_buf4_input_to_gp_00_ld5_merged141_4_to_input_FIFO_buf4_blurx7_16_1_merged149_124.peek(/* one reader or all rams */ 1);
+  return value_input_FIFO_buf4_input_to_gp_00_ld5_merged141_4;
+  return 0;
+}
+
+inline hw_uint<16> input_FIFO_buf4_blurx7_16_1_merged149_125_select(input_FIFO_buf4_cache& input_FIFO_buf4, int root, int blurx7_16_0, int blurx7_16_1, int dynamic_address) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // input_FIFO_buf4_blurx7_16_1_merged149_125 read pattern: { blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> input_FIFO_buf4[5 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119 }
+  // Read schedule : { blurx7_16_1_merged149[d0 = 0, d1, d2] -> [0, d1, 1 + d2, 3] : 0 <= d1 <= 1079 and 0 <= d2 <= 119 }
+  // Write schedule: { input_to_gp_00_ld5_merged141[d0 = 0, d1, d2] -> [0, d1, d2, 2] : 0 <= d1 <= 1079 and 0 <= d2 <= 120 }
+  auto value_input_FIFO_buf4_input_to_gp_00_ld5_merged141_5 = input_FIFO_buf4.input_FIFO_buf4_input_to_gp_00_ld5_merged141_5_to_input_FIFO_buf4_blurx7_16_1_merged149_125.peek(/* one reader or all rams */ 1);
+  return value_input_FIFO_buf4_input_to_gp_00_ld5_merged141_5;
+  return 0;
+}
+
+inline hw_uint<16> input_FIFO_buf4_blurx7_16_1_merged149_126_select(input_FIFO_buf4_cache& input_FIFO_buf4, int root, int blurx7_16_0, int blurx7_16_1, int dynamic_address) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // input_FIFO_buf4_blurx7_16_1_merged149_126 read pattern: { blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> input_FIFO_buf4[6 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119 }
+  // Read schedule : { blurx7_16_1_merged149[d0 = 0, d1, d2] -> [0, d1, 1 + d2, 3] : 0 <= d1 <= 1079 and 0 <= d2 <= 119 }
+  // Write schedule: { input_to_gp_00_ld5_merged141[d0 = 0, d1, d2] -> [0, d1, d2, 2] : 0 <= d1 <= 1079 and 0 <= d2 <= 120 }
+  auto value_input_FIFO_buf4_input_to_gp_00_ld5_merged141_6 = input_FIFO_buf4.input_FIFO_buf4_input_to_gp_00_ld5_merged141_6_to_input_FIFO_buf4_blurx7_16_1_merged149_126.peek(/* one reader or all rams */ 1);
+  return value_input_FIFO_buf4_input_to_gp_00_ld5_merged141_6;
+  return 0;
+}
+
+inline hw_uint<16> input_FIFO_buf4_blurx7_16_1_merged149_127_select(input_FIFO_buf4_cache& input_FIFO_buf4, int root, int blurx7_16_0, int blurx7_16_1, int dynamic_address) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // input_FIFO_buf4_blurx7_16_1_merged149_127 read pattern: { blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> input_FIFO_buf4[5 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119 }
+  // Read schedule : { blurx7_16_1_merged149[d0 = 0, d1, d2] -> [0, d1, 1 + d2, 3] : 0 <= d1 <= 1079 and 0 <= d2 <= 119 }
+  // Write schedule: { input_to_gp_00_ld5_merged141[d0 = 0, d1, d2] -> [0, d1, d2, 2] : 0 <= d1 <= 1079 and 0 <= d2 <= 120 }
+  auto value_input_FIFO_buf4_input_to_gp_00_ld5_merged141_5 = input_FIFO_buf4.input_FIFO_buf4_input_to_gp_00_ld5_merged141_5_to_input_FIFO_buf4_blurx7_16_1_merged149_127.peek(/* one reader or all rams */ 1);
+  return value_input_FIFO_buf4_input_to_gp_00_ld5_merged141_5;
+  return 0;
+}
+
+inline hw_uint<16> input_FIFO_buf4_blurx7_16_1_merged149_128_select(input_FIFO_buf4_cache& input_FIFO_buf4, int root, int blurx7_16_0, int blurx7_16_1, int dynamic_address) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // input_FIFO_buf4_blurx7_16_1_merged149_128 read pattern: { blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> input_FIFO_buf4[6 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119 }
+  // Read schedule : { blurx7_16_1_merged149[d0 = 0, d1, d2] -> [0, d1, 1 + d2, 3] : 0 <= d1 <= 1079 and 0 <= d2 <= 119 }
+  // Write schedule: { input_to_gp_00_ld5_merged141[d0 = 0, d1, d2] -> [0, d1, d2, 2] : 0 <= d1 <= 1079 and 0 <= d2 <= 120 }
+  auto value_input_FIFO_buf4_input_to_gp_00_ld5_merged141_6 = input_FIFO_buf4.input_FIFO_buf4_input_to_gp_00_ld5_merged141_6_to_input_FIFO_buf4_blurx7_16_1_merged149_128.peek(/* one reader or all rams */ 1);
+  return value_input_FIFO_buf4_input_to_gp_00_ld5_merged141_6;
+  return 0;
+}
+
+inline hw_uint<16> input_FIFO_buf4_blurx7_16_1_merged149_129_select(input_FIFO_buf4_cache& input_FIFO_buf4, int root, int blurx7_16_0, int blurx7_16_1, int dynamic_address) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // input_FIFO_buf4_blurx7_16_1_merged149_129 read pattern: { blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> input_FIFO_buf4[7 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119 }
+  // Read schedule : { blurx7_16_1_merged149[d0 = 0, d1, d2] -> [0, d1, 1 + d2, 3] : 0 <= d1 <= 1079 and 0 <= d2 <= 119 }
+  // Write schedule: { input_to_gp_00_ld5_merged141[d0 = 0, d1, d2] -> [0, d1, d2, 2] : 0 <= d1 <= 1079 and 0 <= d2 <= 120 }
+  auto value_input_FIFO_buf4_input_to_gp_00_ld5_merged141_7 = input_FIFO_buf4.input_FIFO_buf4_input_to_gp_00_ld5_merged141_7_to_input_FIFO_buf4_blurx7_16_1_merged149_129.peek(/* one reader or all rams */ 1);
+  return value_input_FIFO_buf4_input_to_gp_00_ld5_merged141_7;
+  return 0;
+}
+
+inline hw_uint<16> input_FIFO_buf4_blurx7_16_1_merged149_130_select(input_FIFO_buf4_cache& input_FIFO_buf4, int root, int blurx7_16_0, int blurx7_16_1, int dynamic_address) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // input_FIFO_buf4_blurx7_16_1_merged149_130 read pattern: { blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> input_FIFO_buf4[6 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119 }
+  // Read schedule : { blurx7_16_1_merged149[d0 = 0, d1, d2] -> [0, d1, 1 + d2, 3] : 0 <= d1 <= 1079 and 0 <= d2 <= 119 }
+  // Write schedule: { input_to_gp_00_ld5_merged141[d0 = 0, d1, d2] -> [0, d1, d2, 2] : 0 <= d1 <= 1079 and 0 <= d2 <= 120 }
+  auto value_input_FIFO_buf4_input_to_gp_00_ld5_merged141_6 = input_FIFO_buf4.input_FIFO_buf4_input_to_gp_00_ld5_merged141_6_to_input_FIFO_buf4_blurx7_16_1_merged149_130.peek(/* one reader or all rams */ 1);
+  return value_input_FIFO_buf4_input_to_gp_00_ld5_merged141_6;
+  return 0;
+}
+
+inline hw_uint<16> input_FIFO_buf4_blurx7_16_1_merged149_131_select(input_FIFO_buf4_cache& input_FIFO_buf4, int root, int blurx7_16_0, int blurx7_16_1, int dynamic_address) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // input_FIFO_buf4_blurx7_16_1_merged149_131 read pattern: { blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> input_FIFO_buf4[7 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119 }
+  // Read schedule : { blurx7_16_1_merged149[d0 = 0, d1, d2] -> [0, d1, 1 + d2, 3] : 0 <= d1 <= 1079 and 0 <= d2 <= 119 }
+  // Write schedule: { input_to_gp_00_ld5_merged141[d0 = 0, d1, d2] -> [0, d1, d2, 2] : 0 <= d1 <= 1079 and 0 <= d2 <= 120 }
+  auto value_input_FIFO_buf4_input_to_gp_00_ld5_merged141_7 = input_FIFO_buf4.input_FIFO_buf4_input_to_gp_00_ld5_merged141_7_to_input_FIFO_buf4_blurx7_16_1_merged149_131.peek(/* one reader or all rams */ 1);
+  return value_input_FIFO_buf4_input_to_gp_00_ld5_merged141_7;
+  return 0;
+}
+
+inline hw_uint<16> input_FIFO_buf4_blurx7_16_1_merged149_132_select(input_FIFO_buf4_cache& input_FIFO_buf4, int root, int blurx7_16_0, int blurx7_16_1, int dynamic_address) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // input_FIFO_buf4_blurx7_16_1_merged149_132 read pattern: { blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> input_FIFO_buf4[8 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119 }
+  // Read schedule : { blurx7_16_1_merged149[d0 = 0, d1, d2] -> [0, d1, 1 + d2, 3] : 0 <= d1 <= 1079 and 0 <= d2 <= 119 }
+  // Write schedule: { input_to_gp_00_ld5_merged141[d0 = 0, d1, d2] -> [0, d1, d2, 2] : 0 <= d1 <= 1079 and 0 <= d2 <= 120 }
+  auto value_input_FIFO_buf4_input_to_gp_00_ld5_merged141_8 = input_FIFO_buf4.input_FIFO_buf4_input_to_gp_00_ld5_merged141_8_to_input_FIFO_buf4_blurx7_16_1_merged149_132.peek(/* one reader or all rams */ 1);
+  return value_input_FIFO_buf4_input_to_gp_00_ld5_merged141_8;
+  return 0;
+}
+
+inline hw_uint<16> input_FIFO_buf4_blurx7_16_1_merged149_133_select(input_FIFO_buf4_cache& input_FIFO_buf4, int root, int blurx7_16_0, int blurx7_16_1, int dynamic_address) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // input_FIFO_buf4_blurx7_16_1_merged149_133 read pattern: { blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> input_FIFO_buf4[7 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119 }
+  // Read schedule : { blurx7_16_1_merged149[d0 = 0, d1, d2] -> [0, d1, 1 + d2, 3] : 0 <= d1 <= 1079 and 0 <= d2 <= 119 }
+  // Write schedule: { input_to_gp_00_ld5_merged141[d0 = 0, d1, d2] -> [0, d1, d2, 2] : 0 <= d1 <= 1079 and 0 <= d2 <= 120 }
+  auto value_input_FIFO_buf4_input_to_gp_00_ld5_merged141_7 = input_FIFO_buf4.input_FIFO_buf4_input_to_gp_00_ld5_merged141_7_to_input_FIFO_buf4_blurx7_16_1_merged149_133.peek(/* one reader or all rams */ 1);
+  return value_input_FIFO_buf4_input_to_gp_00_ld5_merged141_7;
+  return 0;
+}
+
+inline hw_uint<16> input_FIFO_buf4_blurx7_16_1_merged149_134_select(input_FIFO_buf4_cache& input_FIFO_buf4, int root, int blurx7_16_0, int blurx7_16_1, int dynamic_address) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // input_FIFO_buf4_blurx7_16_1_merged149_134 read pattern: { blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> input_FIFO_buf4[8 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119 }
+  // Read schedule : { blurx7_16_1_merged149[d0 = 0, d1, d2] -> [0, d1, 1 + d2, 3] : 0 <= d1 <= 1079 and 0 <= d2 <= 119 }
+  // Write schedule: { input_to_gp_00_ld5_merged141[d0 = 0, d1, d2] -> [0, d1, d2, 2] : 0 <= d1 <= 1079 and 0 <= d2 <= 120 }
+  auto value_input_FIFO_buf4_input_to_gp_00_ld5_merged141_8 = input_FIFO_buf4.input_FIFO_buf4_input_to_gp_00_ld5_merged141_8_to_input_FIFO_buf4_blurx7_16_1_merged149_134.peek(/* one reader or all rams */ 1);
+  return value_input_FIFO_buf4_input_to_gp_00_ld5_merged141_8;
+  return 0;
+}
+
+inline hw_uint<16> input_FIFO_buf4_blurx7_16_1_merged149_135_select(input_FIFO_buf4_cache& input_FIFO_buf4, int root, int blurx7_16_0, int blurx7_16_1, int dynamic_address) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // input_FIFO_buf4_blurx7_16_1_merged149_135 read pattern: { blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> input_FIFO_buf4[9 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119 }
+  // Read schedule : { blurx7_16_1_merged149[d0 = 0, d1, d2] -> [0, d1, 1 + d2, 3] : 0 <= d1 <= 1079 and 0 <= d2 <= 119 }
+  // Write schedule: { input_to_gp_00_ld5_merged141[d0 = 0, d1, d2] -> [0, d1, d2, 2] : 0 <= d1 <= 1079 and 0 <= d2 <= 120 }
+  auto value_input_FIFO_buf4_input_to_gp_00_ld5_merged141_9 = input_FIFO_buf4.input_FIFO_buf4_input_to_gp_00_ld5_merged141_9_to_input_FIFO_buf4_blurx7_16_1_merged149_135.peek(/* one reader or all rams */ 1);
+  return value_input_FIFO_buf4_input_to_gp_00_ld5_merged141_9;
+  return 0;
+}
+
+inline hw_uint<16> input_FIFO_buf4_blurx7_16_1_merged149_136_select(input_FIFO_buf4_cache& input_FIFO_buf4, int root, int blurx7_16_0, int blurx7_16_1, int dynamic_address) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // input_FIFO_buf4_blurx7_16_1_merged149_136 read pattern: { blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> input_FIFO_buf4[8 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119 }
+  // Read schedule : { blurx7_16_1_merged149[d0 = 0, d1, d2] -> [0, d1, 1 + d2, 3] : 0 <= d1 <= 1079 and 0 <= d2 <= 119 }
+  // Write schedule: { input_to_gp_00_ld5_merged141[d0 = 0, d1, d2] -> [0, d1, d2, 2] : 0 <= d1 <= 1079 and 0 <= d2 <= 120 }
+  auto value_input_FIFO_buf4_input_to_gp_00_ld5_merged141_8 = input_FIFO_buf4.input_FIFO_buf4_input_to_gp_00_ld5_merged141_8_to_input_FIFO_buf4_blurx7_16_1_merged149_136.peek(/* one reader or all rams */ 1);
+  return value_input_FIFO_buf4_input_to_gp_00_ld5_merged141_8;
+  return 0;
+}
+
+inline hw_uint<16> input_FIFO_buf4_blurx7_16_1_merged149_137_select(input_FIFO_buf4_cache& input_FIFO_buf4, int root, int blurx7_16_0, int blurx7_16_1, int dynamic_address) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // input_FIFO_buf4_blurx7_16_1_merged149_137 read pattern: { blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> input_FIFO_buf4[9 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119 }
+  // Read schedule : { blurx7_16_1_merged149[d0 = 0, d1, d2] -> [0, d1, 1 + d2, 3] : 0 <= d1 <= 1079 and 0 <= d2 <= 119 }
+  // Write schedule: { input_to_gp_00_ld5_merged141[d0 = 0, d1, d2] -> [0, d1, d2, 2] : 0 <= d1 <= 1079 and 0 <= d2 <= 120 }
+  auto value_input_FIFO_buf4_input_to_gp_00_ld5_merged141_9 = input_FIFO_buf4.input_FIFO_buf4_input_to_gp_00_ld5_merged141_9_to_input_FIFO_buf4_blurx7_16_1_merged149_137.peek(/* one reader or all rams */ 1);
+  return value_input_FIFO_buf4_input_to_gp_00_ld5_merged141_9;
+  return 0;
+}
+
+inline hw_uint<16> input_FIFO_buf4_blurx7_16_1_merged149_138_select(input_FIFO_buf4_cache& input_FIFO_buf4, int root, int blurx7_16_0, int blurx7_16_1, int dynamic_address) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // input_FIFO_buf4_blurx7_16_1_merged149_138 read pattern: { blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> input_FIFO_buf4[10 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119 }
+  // Read schedule : { blurx7_16_1_merged149[d0 = 0, d1, d2] -> [0, d1, 1 + d2, 3] : 0 <= d1 <= 1079 and 0 <= d2 <= 119 }
+  // Write schedule: { input_to_gp_00_ld5_merged141[d0 = 0, d1, d2] -> [0, d1, d2, 2] : 0 <= d1 <= 1079 and 0 <= d2 <= 120 }
+  auto value_input_FIFO_buf4_input_to_gp_00_ld5_merged141_10 = input_FIFO_buf4.input_FIFO_buf4_input_to_gp_00_ld5_merged141_10_to_input_FIFO_buf4_blurx7_16_1_merged149_138.peek(/* one reader or all rams */ 1);
+  return value_input_FIFO_buf4_input_to_gp_00_ld5_merged141_10;
+  return 0;
+}
+
+inline hw_uint<16> input_FIFO_buf4_blurx7_16_1_merged149_139_select(input_FIFO_buf4_cache& input_FIFO_buf4, int root, int blurx7_16_0, int blurx7_16_1, int dynamic_address) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // input_FIFO_buf4_blurx7_16_1_merged149_139 read pattern: { blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> input_FIFO_buf4[9 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119 }
+  // Read schedule : { blurx7_16_1_merged149[d0 = 0, d1, d2] -> [0, d1, 1 + d2, 3] : 0 <= d1 <= 1079 and 0 <= d2 <= 119 }
+  // Write schedule: { input_to_gp_00_ld5_merged141[d0 = 0, d1, d2] -> [0, d1, d2, 2] : 0 <= d1 <= 1079 and 0 <= d2 <= 120 }
+  auto value_input_FIFO_buf4_input_to_gp_00_ld5_merged141_9 = input_FIFO_buf4.input_FIFO_buf4_input_to_gp_00_ld5_merged141_9_to_input_FIFO_buf4_blurx7_16_1_merged149_139.peek(/* one reader or all rams */ 1);
+  return value_input_FIFO_buf4_input_to_gp_00_ld5_merged141_9;
+  return 0;
+}
+
+inline hw_uint<16> input_FIFO_buf4_blurx7_16_1_merged149_140_select(input_FIFO_buf4_cache& input_FIFO_buf4, int root, int blurx7_16_0, int blurx7_16_1, int dynamic_address) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // input_FIFO_buf4_blurx7_16_1_merged149_140 read pattern: { blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> input_FIFO_buf4[10 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119 }
+  // Read schedule : { blurx7_16_1_merged149[d0 = 0, d1, d2] -> [0, d1, 1 + d2, 3] : 0 <= d1 <= 1079 and 0 <= d2 <= 119 }
+  // Write schedule: { input_to_gp_00_ld5_merged141[d0 = 0, d1, d2] -> [0, d1, d2, 2] : 0 <= d1 <= 1079 and 0 <= d2 <= 120 }
+  auto value_input_FIFO_buf4_input_to_gp_00_ld5_merged141_10 = input_FIFO_buf4.input_FIFO_buf4_input_to_gp_00_ld5_merged141_10_to_input_FIFO_buf4_blurx7_16_1_merged149_140.peek(/* one reader or all rams */ 1);
+  return value_input_FIFO_buf4_input_to_gp_00_ld5_merged141_10;
+  return 0;
+}
+
+inline hw_uint<16> input_FIFO_buf4_blurx7_16_1_merged149_141_select(input_FIFO_buf4_cache& input_FIFO_buf4, int root, int blurx7_16_0, int blurx7_16_1, int dynamic_address) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // input_FIFO_buf4_blurx7_16_1_merged149_141 read pattern: { blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> input_FIFO_buf4[11 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119 }
+  // Read schedule : { blurx7_16_1_merged149[d0 = 0, d1, d2] -> [0, d1, 1 + d2, 3] : 0 <= d1 <= 1079 and 0 <= d2 <= 119 }
+  // Write schedule: { input_to_gp_00_ld5_merged141[d0 = 0, d1, d2] -> [0, d1, d2, 2] : 0 <= d1 <= 1079 and 0 <= d2 <= 120 }
+  auto value_input_FIFO_buf4_input_to_gp_00_ld5_merged141_11 = input_FIFO_buf4.input_FIFO_buf4_input_to_gp_00_ld5_merged141_11_to_input_FIFO_buf4_blurx7_16_1_merged149_141.peek(/* one reader or all rams */ 1);
+  return value_input_FIFO_buf4_input_to_gp_00_ld5_merged141_11;
+  return 0;
+}
+
+inline hw_uint<16> input_FIFO_buf4_blurx7_16_1_merged149_142_select(input_FIFO_buf4_cache& input_FIFO_buf4, int root, int blurx7_16_0, int blurx7_16_1, int dynamic_address) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // input_FIFO_buf4_blurx7_16_1_merged149_142 read pattern: { blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> input_FIFO_buf4[10 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119 }
+  // Read schedule : { blurx7_16_1_merged149[d0 = 0, d1, d2] -> [0, d1, 1 + d2, 3] : 0 <= d1 <= 1079 and 0 <= d2 <= 119 }
+  // Write schedule: { input_to_gp_00_ld5_merged141[d0 = 0, d1, d2] -> [0, d1, d2, 2] : 0 <= d1 <= 1079 and 0 <= d2 <= 120 }
+  auto value_input_FIFO_buf4_input_to_gp_00_ld5_merged141_10 = input_FIFO_buf4.input_FIFO_buf4_input_to_gp_00_ld5_merged141_10_to_input_FIFO_buf4_blurx7_16_1_merged149_142.peek(/* one reader or all rams */ 1);
+  return value_input_FIFO_buf4_input_to_gp_00_ld5_merged141_10;
+  return 0;
+}
+
+inline hw_uint<16> input_FIFO_buf4_blurx7_16_1_merged149_143_select(input_FIFO_buf4_cache& input_FIFO_buf4, int root, int blurx7_16_0, int blurx7_16_1, int dynamic_address) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // input_FIFO_buf4_blurx7_16_1_merged149_143 read pattern: { blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> input_FIFO_buf4[11 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119 }
+  // Read schedule : { blurx7_16_1_merged149[d0 = 0, d1, d2] -> [0, d1, 1 + d2, 3] : 0 <= d1 <= 1079 and 0 <= d2 <= 119 }
+  // Write schedule: { input_to_gp_00_ld5_merged141[d0 = 0, d1, d2] -> [0, d1, d2, 2] : 0 <= d1 <= 1079 and 0 <= d2 <= 120 }
+  auto value_input_FIFO_buf4_input_to_gp_00_ld5_merged141_11 = input_FIFO_buf4.input_FIFO_buf4_input_to_gp_00_ld5_merged141_11_to_input_FIFO_buf4_blurx7_16_1_merged149_143.peek(/* one reader or all rams */ 1);
+  return value_input_FIFO_buf4_input_to_gp_00_ld5_merged141_11;
+  return 0;
+}
+
+inline hw_uint<16> input_FIFO_buf4_blurx7_16_1_merged149_144_select(input_FIFO_buf4_cache& input_FIFO_buf4, int root, int blurx7_16_0, int blurx7_16_1, int dynamic_address) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // input_FIFO_buf4_blurx7_16_1_merged149_144 read pattern: { blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> input_FIFO_buf4[12 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119 }
+  // Read schedule : { blurx7_16_1_merged149[d0 = 0, d1, d2] -> [0, d1, 1 + d2, 3] : 0 <= d1 <= 1079 and 0 <= d2 <= 119 }
+  // Write schedule: { input_to_gp_00_ld5_merged141[d0 = 0, d1, d2] -> [0, d1, d2, 2] : 0 <= d1 <= 1079 and 0 <= d2 <= 120 }
+  auto value_input_FIFO_buf4_input_to_gp_00_ld5_merged141_12 = input_FIFO_buf4.input_FIFO_buf4_input_to_gp_00_ld5_merged141_12_to_input_FIFO_buf4_blurx7_16_1_merged149_144.peek(/* one reader or all rams */ 1);
+  return value_input_FIFO_buf4_input_to_gp_00_ld5_merged141_12;
+  return 0;
+}
+
+inline hw_uint<16> input_FIFO_buf4_blurx7_16_1_merged149_145_select(input_FIFO_buf4_cache& input_FIFO_buf4, int root, int blurx7_16_0, int blurx7_16_1, int dynamic_address) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // input_FIFO_buf4_blurx7_16_1_merged149_145 read pattern: { blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> input_FIFO_buf4[11 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119 }
+  // Read schedule : { blurx7_16_1_merged149[d0 = 0, d1, d2] -> [0, d1, 1 + d2, 3] : 0 <= d1 <= 1079 and 0 <= d2 <= 119 }
+  // Write schedule: { input_to_gp_00_ld5_merged141[d0 = 0, d1, d2] -> [0, d1, d2, 2] : 0 <= d1 <= 1079 and 0 <= d2 <= 120 }
+  auto value_input_FIFO_buf4_input_to_gp_00_ld5_merged141_11 = input_FIFO_buf4.input_FIFO_buf4_input_to_gp_00_ld5_merged141_11_to_input_FIFO_buf4_blurx7_16_1_merged149_145.peek(/* one reader or all rams */ 1);
+  return value_input_FIFO_buf4_input_to_gp_00_ld5_merged141_11;
+  return 0;
+}
+
+inline hw_uint<16> input_FIFO_buf4_blurx7_16_1_merged149_146_select(input_FIFO_buf4_cache& input_FIFO_buf4, int root, int blurx7_16_0, int blurx7_16_1, int dynamic_address) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // input_FIFO_buf4_blurx7_16_1_merged149_146 read pattern: { blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> input_FIFO_buf4[12 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119 }
+  // Read schedule : { blurx7_16_1_merged149[d0 = 0, d1, d2] -> [0, d1, 1 + d2, 3] : 0 <= d1 <= 1079 and 0 <= d2 <= 119 }
+  // Write schedule: { input_to_gp_00_ld5_merged141[d0 = 0, d1, d2] -> [0, d1, d2, 2] : 0 <= d1 <= 1079 and 0 <= d2 <= 120 }
+  auto value_input_FIFO_buf4_input_to_gp_00_ld5_merged141_12 = input_FIFO_buf4.input_FIFO_buf4_input_to_gp_00_ld5_merged141_12_to_input_FIFO_buf4_blurx7_16_1_merged149_146.peek(/* one reader or all rams */ 1);
+  return value_input_FIFO_buf4_input_to_gp_00_ld5_merged141_12;
+  return 0;
+}
+
+inline hw_uint<16> input_FIFO_buf4_blurx7_16_1_merged149_147_select(input_FIFO_buf4_cache& input_FIFO_buf4, int root, int blurx7_16_0, int blurx7_16_1, int dynamic_address) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // input_FIFO_buf4_blurx7_16_1_merged149_147 read pattern: { blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> input_FIFO_buf4[13 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119 }
+  // Read schedule : { blurx7_16_1_merged149[d0 = 0, d1, d2] -> [0, d1, 1 + d2, 3] : 0 <= d1 <= 1079 and 0 <= d2 <= 119 }
+  // Write schedule: { input_to_gp_00_ld5_merged141[d0 = 0, d1, d2] -> [0, d1, d2, 2] : 0 <= d1 <= 1079 and 0 <= d2 <= 120 }
+  auto value_input_FIFO_buf4_input_to_gp_00_ld5_merged141_13 = input_FIFO_buf4.input_FIFO_buf4_input_to_gp_00_ld5_merged141_13_to_input_FIFO_buf4_blurx7_16_1_merged149_147.peek(/* one reader or all rams */ 1);
+  return value_input_FIFO_buf4_input_to_gp_00_ld5_merged141_13;
+  return 0;
+}
+
+inline hw_uint<16> input_FIFO_buf4_blurx7_16_1_merged149_148_select(input_FIFO_buf4_cache& input_FIFO_buf4, int root, int blurx7_16_0, int blurx7_16_1, int dynamic_address) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // input_FIFO_buf4_blurx7_16_1_merged149_148 read pattern: { blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> input_FIFO_buf4[12 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119 }
+  // Read schedule : { blurx7_16_1_merged149[d0 = 0, d1, d2] -> [0, d1, 1 + d2, 3] : 0 <= d1 <= 1079 and 0 <= d2 <= 119 }
+  // Write schedule: { input_to_gp_00_ld5_merged141[d0 = 0, d1, d2] -> [0, d1, d2, 2] : 0 <= d1 <= 1079 and 0 <= d2 <= 120 }
+  auto value_input_FIFO_buf4_input_to_gp_00_ld5_merged141_12 = input_FIFO_buf4.input_FIFO_buf4_input_to_gp_00_ld5_merged141_12_to_input_FIFO_buf4_blurx7_16_1_merged149_148.peek(/* one reader or all rams */ 1);
+  return value_input_FIFO_buf4_input_to_gp_00_ld5_merged141_12;
+  return 0;
+}
+
+inline hw_uint<16> input_FIFO_buf4_blurx7_16_1_merged149_149_select(input_FIFO_buf4_cache& input_FIFO_buf4, int root, int blurx7_16_0, int blurx7_16_1, int dynamic_address) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // input_FIFO_buf4_blurx7_16_1_merged149_149 read pattern: { blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> input_FIFO_buf4[13 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119 }
+  // Read schedule : { blurx7_16_1_merged149[d0 = 0, d1, d2] -> [0, d1, 1 + d2, 3] : 0 <= d1 <= 1079 and 0 <= d2 <= 119 }
+  // Write schedule: { input_to_gp_00_ld5_merged141[d0 = 0, d1, d2] -> [0, d1, d2, 2] : 0 <= d1 <= 1079 and 0 <= d2 <= 120 }
+  auto value_input_FIFO_buf4_input_to_gp_00_ld5_merged141_13 = input_FIFO_buf4.input_FIFO_buf4_input_to_gp_00_ld5_merged141_13_to_input_FIFO_buf4_blurx7_16_1_merged149_149.peek(/* one reader or all rams */ 1);
+  return value_input_FIFO_buf4_input_to_gp_00_ld5_merged141_13;
+  return 0;
+}
+
+inline hw_uint<16> input_FIFO_buf4_blurx7_16_1_merged149_150_select(input_FIFO_buf4_cache& input_FIFO_buf4, int root, int blurx7_16_0, int blurx7_16_1, int dynamic_address) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // input_FIFO_buf4_blurx7_16_1_merged149_150 read pattern: { blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> input_FIFO_buf4[14 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119 }
+  // Read schedule : { blurx7_16_1_merged149[d0 = 0, d1, d2] -> [0, d1, 1 + d2, 3] : 0 <= d1 <= 1079 and 0 <= d2 <= 119 }
+  // Write schedule: { input_to_gp_00_ld5_merged141[d0 = 0, d1, d2] -> [0, d1, d2, 2] : 0 <= d1 <= 1079 and 0 <= d2 <= 120 }
+  auto value_input_FIFO_buf4_input_to_gp_00_ld5_merged141_14 = input_FIFO_buf4.input_FIFO_buf4_input_to_gp_00_ld5_merged141_14_to_input_FIFO_buf4_blurx7_16_1_merged149_150.peek(/* one reader or all rams */ 1);
+  return value_input_FIFO_buf4_input_to_gp_00_ld5_merged141_14;
+  return 0;
+}
+
+inline hw_uint<16> input_FIFO_buf4_blurx7_16_1_merged149_151_select(input_FIFO_buf4_cache& input_FIFO_buf4, int root, int blurx7_16_0, int blurx7_16_1, int dynamic_address) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // input_FIFO_buf4_blurx7_16_1_merged149_151 read pattern: { blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> input_FIFO_buf4[13 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119 }
+  // Read schedule : { blurx7_16_1_merged149[d0 = 0, d1, d2] -> [0, d1, 1 + d2, 3] : 0 <= d1 <= 1079 and 0 <= d2 <= 119 }
+  // Write schedule: { input_to_gp_00_ld5_merged141[d0 = 0, d1, d2] -> [0, d1, d2, 2] : 0 <= d1 <= 1079 and 0 <= d2 <= 120 }
+  auto value_input_FIFO_buf4_input_to_gp_00_ld5_merged141_13 = input_FIFO_buf4.input_FIFO_buf4_input_to_gp_00_ld5_merged141_13_to_input_FIFO_buf4_blurx7_16_1_merged149_151.peek(/* one reader or all rams */ 1);
+  return value_input_FIFO_buf4_input_to_gp_00_ld5_merged141_13;
+  return 0;
+}
+
+inline hw_uint<16> input_FIFO_buf4_blurx7_16_1_merged149_152_select(input_FIFO_buf4_cache& input_FIFO_buf4, int root, int blurx7_16_0, int blurx7_16_1, int dynamic_address) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // input_FIFO_buf4_blurx7_16_1_merged149_152 read pattern: { blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> input_FIFO_buf4[14 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119 }
+  // Read schedule : { blurx7_16_1_merged149[d0 = 0, d1, d2] -> [0, d1, 1 + d2, 3] : 0 <= d1 <= 1079 and 0 <= d2 <= 119 }
+  // Write schedule: { input_to_gp_00_ld5_merged141[d0 = 0, d1, d2] -> [0, d1, d2, 2] : 0 <= d1 <= 1079 and 0 <= d2 <= 120 }
+  auto value_input_FIFO_buf4_input_to_gp_00_ld5_merged141_14 = input_FIFO_buf4.input_FIFO_buf4_input_to_gp_00_ld5_merged141_14_to_input_FIFO_buf4_blurx7_16_1_merged149_152.peek(/* one reader or all rams */ 1);
+  return value_input_FIFO_buf4_input_to_gp_00_ld5_merged141_14;
+  return 0;
+}
+
+inline hw_uint<16> input_FIFO_buf4_blurx7_16_1_merged149_153_select(input_FIFO_buf4_cache& input_FIFO_buf4, int root, int blurx7_16_0, int blurx7_16_1, int dynamic_address) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // input_FIFO_buf4_blurx7_16_1_merged149_153 read pattern: { blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> input_FIFO_buf4[15 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119 }
+  // Read schedule : { blurx7_16_1_merged149[d0 = 0, d1, d2] -> [0, d1, 1 + d2, 3] : 0 <= d1 <= 1079 and 0 <= d2 <= 119 }
+  // Write schedule: { input_to_gp_00_ld5_merged141[d0 = 0, d1, d2] -> [0, d1, d2, 2] : 0 <= d1 <= 1079 and 0 <= d2 <= 120 }
+  auto value_input_FIFO_buf4_input_to_gp_00_ld5_merged141_15 = input_FIFO_buf4.input_FIFO_buf4_input_to_gp_00_ld5_merged141_15_to_input_FIFO_buf4_blurx7_16_1_merged149_153.peek(/* one reader or all rams */ 1);
+  return value_input_FIFO_buf4_input_to_gp_00_ld5_merged141_15;
+  return 0;
+}
+
+inline hw_uint<16> input_FIFO_buf4_blurx7_16_1_merged149_154_select(input_FIFO_buf4_cache& input_FIFO_buf4, int root, int blurx7_16_0, int blurx7_16_1, int dynamic_address) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // input_FIFO_buf4_blurx7_16_1_merged149_154 read pattern: { blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> input_FIFO_buf4[14 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119 }
+  // Read schedule : { blurx7_16_1_merged149[d0 = 0, d1, d2] -> [0, d1, 1 + d2, 3] : 0 <= d1 <= 1079 and 0 <= d2 <= 119 }
+  // Write schedule: { input_to_gp_00_ld5_merged141[d0 = 0, d1, d2] -> [0, d1, d2, 2] : 0 <= d1 <= 1079 and 0 <= d2 <= 120 }
+  auto value_input_FIFO_buf4_input_to_gp_00_ld5_merged141_14 = input_FIFO_buf4.input_FIFO_buf4_input_to_gp_00_ld5_merged141_14_to_input_FIFO_buf4_blurx7_16_1_merged149_154.peek(/* one reader or all rams */ 1);
+  return value_input_FIFO_buf4_input_to_gp_00_ld5_merged141_14;
+  return 0;
+}
+
+inline hw_uint<16> input_FIFO_buf4_blurx7_16_1_merged149_155_select(input_FIFO_buf4_cache& input_FIFO_buf4, int root, int blurx7_16_0, int blurx7_16_1, int dynamic_address) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // input_FIFO_buf4_blurx7_16_1_merged149_155 read pattern: { blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> input_FIFO_buf4[15 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119 }
+  // Read schedule : { blurx7_16_1_merged149[d0 = 0, d1, d2] -> [0, d1, 1 + d2, 3] : 0 <= d1 <= 1079 and 0 <= d2 <= 119 }
+  // Write schedule: { input_to_gp_00_ld5_merged141[d0 = 0, d1, d2] -> [0, d1, d2, 2] : 0 <= d1 <= 1079 and 0 <= d2 <= 120 }
+  auto value_input_FIFO_buf4_input_to_gp_00_ld5_merged141_15 = input_FIFO_buf4.input_FIFO_buf4_input_to_gp_00_ld5_merged141_15_to_input_FIFO_buf4_blurx7_16_1_merged149_155.peek(/* one reader or all rams */ 1);
+  return value_input_FIFO_buf4_input_to_gp_00_ld5_merged141_15;
+  return 0;
+}
+
+inline hw_uint<16> input_FIFO_buf4_blurx7_16_1_merged149_156_select(input_FIFO_buf4_cache& input_FIFO_buf4, int root, int blurx7_16_0, int blurx7_16_1, int dynamic_address) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // input_FIFO_buf4_blurx7_16_1_merged149_156 read pattern: { blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> input_FIFO_buf4[16 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119 }
+  // Read schedule : { blurx7_16_1_merged149[d0 = 0, d1, d2] -> [0, d1, 1 + d2, 3] : 0 <= d1 <= 1079 and 0 <= d2 <= 119 }
+  // Write schedule: { input_to_gp_00_ld5_merged141[d0 = 0, d1, d2] -> [0, d1, d2, 2] : 0 <= d1 <= 1079 and 0 <= d2 <= 120 }
+  auto value_input_FIFO_buf4_input_to_gp_00_ld5_merged141_0 = input_FIFO_buf4.input_FIFO_buf4_input_to_gp_00_ld5_merged141_0_to_input_FIFO_buf4_blurx7_16_1_merged149_156.peek(/* one reader or all rams */ 0);
+  return value_input_FIFO_buf4_input_to_gp_00_ld5_merged141_0;
+  return 0;
+}
+
+inline hw_uint<16> input_FIFO_buf4_blurx7_16_1_merged149_157_select(input_FIFO_buf4_cache& input_FIFO_buf4, int root, int blurx7_16_0, int blurx7_16_1, int dynamic_address) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // input_FIFO_buf4_blurx7_16_1_merged149_157 read pattern: { blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> input_FIFO_buf4[15 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119 }
+  // Read schedule : { blurx7_16_1_merged149[d0 = 0, d1, d2] -> [0, d1, 1 + d2, 3] : 0 <= d1 <= 1079 and 0 <= d2 <= 119 }
+  // Write schedule: { input_to_gp_00_ld5_merged141[d0 = 0, d1, d2] -> [0, d1, d2, 2] : 0 <= d1 <= 1079 and 0 <= d2 <= 120 }
+  auto value_input_FIFO_buf4_input_to_gp_00_ld5_merged141_15 = input_FIFO_buf4.input_FIFO_buf4_input_to_gp_00_ld5_merged141_15_to_input_FIFO_buf4_blurx7_16_1_merged149_157.peek(/* one reader or all rams */ 1);
+  return value_input_FIFO_buf4_input_to_gp_00_ld5_merged141_15;
+  return 0;
+}
+
+inline hw_uint<16> input_FIFO_buf4_blurx7_16_1_merged149_158_select(input_FIFO_buf4_cache& input_FIFO_buf4, int root, int blurx7_16_0, int blurx7_16_1, int dynamic_address) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // input_FIFO_buf4_blurx7_16_1_merged149_158 read pattern: { blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> input_FIFO_buf4[16 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119 }
+  // Read schedule : { blurx7_16_1_merged149[d0 = 0, d1, d2] -> [0, d1, 1 + d2, 3] : 0 <= d1 <= 1079 and 0 <= d2 <= 119 }
+  // Write schedule: { input_to_gp_00_ld5_merged141[d0 = 0, d1, d2] -> [0, d1, d2, 2] : 0 <= d1 <= 1079 and 0 <= d2 <= 120 }
+  auto value_input_FIFO_buf4_input_to_gp_00_ld5_merged141_0 = input_FIFO_buf4.input_FIFO_buf4_input_to_gp_00_ld5_merged141_0_to_input_FIFO_buf4_blurx7_16_1_merged149_158.peek(/* one reader or all rams */ 0);
+  return value_input_FIFO_buf4_input_to_gp_00_ld5_merged141_0;
+  return 0;
+}
+
+inline hw_uint<16> input_FIFO_buf4_blurx7_16_1_merged149_159_select(input_FIFO_buf4_cache& input_FIFO_buf4, int root, int blurx7_16_0, int blurx7_16_1, int dynamic_address) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // input_FIFO_buf4_blurx7_16_1_merged149_159 read pattern: { blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> input_FIFO_buf4[17 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119 }
+  // Read schedule : { blurx7_16_1_merged149[d0 = 0, d1, d2] -> [0, d1, 1 + d2, 3] : 0 <= d1 <= 1079 and 0 <= d2 <= 119 }
+  // Write schedule: { input_to_gp_00_ld5_merged141[d0 = 0, d1, d2] -> [0, d1, d2, 2] : 0 <= d1 <= 1079 and 0 <= d2 <= 120 }
+  auto value_input_FIFO_buf4_input_to_gp_00_ld5_merged141_1 = input_FIFO_buf4.input_FIFO_buf4_input_to_gp_00_ld5_merged141_1_to_input_FIFO_buf4_blurx7_16_1_merged149_159.peek(/* one reader or all rams */ 0);
+  return value_input_FIFO_buf4_input_to_gp_00_ld5_merged141_1;
+  return 0;
+}
+
+// # of bundles = 2
+// blurx7_16_1_merged149_read
+//	input_FIFO_buf4_blurx7_16_1_merged149_112
+//	input_FIFO_buf4_blurx7_16_1_merged149_113
+//	input_FIFO_buf4_blurx7_16_1_merged149_114
+//	input_FIFO_buf4_blurx7_16_1_merged149_115
+//	input_FIFO_buf4_blurx7_16_1_merged149_116
+//	input_FIFO_buf4_blurx7_16_1_merged149_117
+//	input_FIFO_buf4_blurx7_16_1_merged149_118
+//	input_FIFO_buf4_blurx7_16_1_merged149_119
+//	input_FIFO_buf4_blurx7_16_1_merged149_120
+//	input_FIFO_buf4_blurx7_16_1_merged149_121
+//	input_FIFO_buf4_blurx7_16_1_merged149_122
+//	input_FIFO_buf4_blurx7_16_1_merged149_123
+//	input_FIFO_buf4_blurx7_16_1_merged149_124
+//	input_FIFO_buf4_blurx7_16_1_merged149_125
+//	input_FIFO_buf4_blurx7_16_1_merged149_126
+//	input_FIFO_buf4_blurx7_16_1_merged149_127
+//	input_FIFO_buf4_blurx7_16_1_merged149_128
+//	input_FIFO_buf4_blurx7_16_1_merged149_129
+//	input_FIFO_buf4_blurx7_16_1_merged149_130
+//	input_FIFO_buf4_blurx7_16_1_merged149_131
+//	input_FIFO_buf4_blurx7_16_1_merged149_132
+//	input_FIFO_buf4_blurx7_16_1_merged149_133
+//	input_FIFO_buf4_blurx7_16_1_merged149_134
+//	input_FIFO_buf4_blurx7_16_1_merged149_135
+//	input_FIFO_buf4_blurx7_16_1_merged149_136
+//	input_FIFO_buf4_blurx7_16_1_merged149_137
+//	input_FIFO_buf4_blurx7_16_1_merged149_138
+//	input_FIFO_buf4_blurx7_16_1_merged149_139
+//	input_FIFO_buf4_blurx7_16_1_merged149_140
+//	input_FIFO_buf4_blurx7_16_1_merged149_141
+//	input_FIFO_buf4_blurx7_16_1_merged149_142
+//	input_FIFO_buf4_blurx7_16_1_merged149_143
+//	input_FIFO_buf4_blurx7_16_1_merged149_144
+//	input_FIFO_buf4_blurx7_16_1_merged149_145
+//	input_FIFO_buf4_blurx7_16_1_merged149_146
+//	input_FIFO_buf4_blurx7_16_1_merged149_147
+//	input_FIFO_buf4_blurx7_16_1_merged149_148
+//	input_FIFO_buf4_blurx7_16_1_merged149_149
+//	input_FIFO_buf4_blurx7_16_1_merged149_150
+//	input_FIFO_buf4_blurx7_16_1_merged149_151
+//	input_FIFO_buf4_blurx7_16_1_merged149_152
+//	input_FIFO_buf4_blurx7_16_1_merged149_153
+//	input_FIFO_buf4_blurx7_16_1_merged149_154
+//	input_FIFO_buf4_blurx7_16_1_merged149_155
+//	input_FIFO_buf4_blurx7_16_1_merged149_156
+//	input_FIFO_buf4_blurx7_16_1_merged149_157
+//	input_FIFO_buf4_blurx7_16_1_merged149_158
+//	input_FIFO_buf4_blurx7_16_1_merged149_159
+inline hw_uint<768> input_FIFO_buf4_blurx7_16_1_merged149_read_bundle_read(input_FIFO_buf4_cache& input_FIFO_buf4, int root, int blurx7_16_0, int blurx7_16_1, int dynamic_address) {
+  // # of ports in bundle: 48
+    // input_FIFO_buf4_blurx7_16_1_merged149_112
+    // input_FIFO_buf4_blurx7_16_1_merged149_113
+    // input_FIFO_buf4_blurx7_16_1_merged149_114
+    // input_FIFO_buf4_blurx7_16_1_merged149_115
+    // input_FIFO_buf4_blurx7_16_1_merged149_116
+    // input_FIFO_buf4_blurx7_16_1_merged149_117
+    // input_FIFO_buf4_blurx7_16_1_merged149_118
+    // input_FIFO_buf4_blurx7_16_1_merged149_119
+    // input_FIFO_buf4_blurx7_16_1_merged149_120
+    // input_FIFO_buf4_blurx7_16_1_merged149_121
+    // input_FIFO_buf4_blurx7_16_1_merged149_122
+    // input_FIFO_buf4_blurx7_16_1_merged149_123
+    // input_FIFO_buf4_blurx7_16_1_merged149_124
+    // input_FIFO_buf4_blurx7_16_1_merged149_125
+    // input_FIFO_buf4_blurx7_16_1_merged149_126
+    // input_FIFO_buf4_blurx7_16_1_merged149_127
+    // input_FIFO_buf4_blurx7_16_1_merged149_128
+    // input_FIFO_buf4_blurx7_16_1_merged149_129
+    // input_FIFO_buf4_blurx7_16_1_merged149_130
+    // input_FIFO_buf4_blurx7_16_1_merged149_131
+    // input_FIFO_buf4_blurx7_16_1_merged149_132
+    // input_FIFO_buf4_blurx7_16_1_merged149_133
+    // input_FIFO_buf4_blurx7_16_1_merged149_134
+    // input_FIFO_buf4_blurx7_16_1_merged149_135
+    // input_FIFO_buf4_blurx7_16_1_merged149_136
+    // input_FIFO_buf4_blurx7_16_1_merged149_137
+    // input_FIFO_buf4_blurx7_16_1_merged149_138
+    // input_FIFO_buf4_blurx7_16_1_merged149_139
+    // input_FIFO_buf4_blurx7_16_1_merged149_140
+    // input_FIFO_buf4_blurx7_16_1_merged149_141
+    // input_FIFO_buf4_blurx7_16_1_merged149_142
+    // input_FIFO_buf4_blurx7_16_1_merged149_143
+    // input_FIFO_buf4_blurx7_16_1_merged149_144
+    // input_FIFO_buf4_blurx7_16_1_merged149_145
+    // input_FIFO_buf4_blurx7_16_1_merged149_146
+    // input_FIFO_buf4_blurx7_16_1_merged149_147
+    // input_FIFO_buf4_blurx7_16_1_merged149_148
+    // input_FIFO_buf4_blurx7_16_1_merged149_149
+    // input_FIFO_buf4_blurx7_16_1_merged149_150
+    // input_FIFO_buf4_blurx7_16_1_merged149_151
+    // input_FIFO_buf4_blurx7_16_1_merged149_152
+    // input_FIFO_buf4_blurx7_16_1_merged149_153
+    // input_FIFO_buf4_blurx7_16_1_merged149_154
+    // input_FIFO_buf4_blurx7_16_1_merged149_155
+    // input_FIFO_buf4_blurx7_16_1_merged149_156
+    // input_FIFO_buf4_blurx7_16_1_merged149_157
+    // input_FIFO_buf4_blurx7_16_1_merged149_158
+    // input_FIFO_buf4_blurx7_16_1_merged149_159
+
+	hw_uint<768> result;
+	hw_uint<16> input_FIFO_buf4_blurx7_16_1_merged149_112_res = input_FIFO_buf4_blurx7_16_1_merged149_112_select(input_FIFO_buf4, root, blurx7_16_0, blurx7_16_1, dynamic_address);
+	set_at<0, 768>(result, input_FIFO_buf4_blurx7_16_1_merged149_112_res);
+	hw_uint<16> input_FIFO_buf4_blurx7_16_1_merged149_113_res = input_FIFO_buf4_blurx7_16_1_merged149_113_select(input_FIFO_buf4, root, blurx7_16_0, blurx7_16_1, dynamic_address);
+	set_at<16, 768>(result, input_FIFO_buf4_blurx7_16_1_merged149_113_res);
+	hw_uint<16> input_FIFO_buf4_blurx7_16_1_merged149_114_res = input_FIFO_buf4_blurx7_16_1_merged149_114_select(input_FIFO_buf4, root, blurx7_16_0, blurx7_16_1, dynamic_address);
+	set_at<32, 768>(result, input_FIFO_buf4_blurx7_16_1_merged149_114_res);
+	hw_uint<16> input_FIFO_buf4_blurx7_16_1_merged149_115_res = input_FIFO_buf4_blurx7_16_1_merged149_115_select(input_FIFO_buf4, root, blurx7_16_0, blurx7_16_1, dynamic_address);
+	set_at<48, 768>(result, input_FIFO_buf4_blurx7_16_1_merged149_115_res);
+	hw_uint<16> input_FIFO_buf4_blurx7_16_1_merged149_116_res = input_FIFO_buf4_blurx7_16_1_merged149_116_select(input_FIFO_buf4, root, blurx7_16_0, blurx7_16_1, dynamic_address);
+	set_at<64, 768>(result, input_FIFO_buf4_blurx7_16_1_merged149_116_res);
+	hw_uint<16> input_FIFO_buf4_blurx7_16_1_merged149_117_res = input_FIFO_buf4_blurx7_16_1_merged149_117_select(input_FIFO_buf4, root, blurx7_16_0, blurx7_16_1, dynamic_address);
+	set_at<80, 768>(result, input_FIFO_buf4_blurx7_16_1_merged149_117_res);
+	hw_uint<16> input_FIFO_buf4_blurx7_16_1_merged149_118_res = input_FIFO_buf4_blurx7_16_1_merged149_118_select(input_FIFO_buf4, root, blurx7_16_0, blurx7_16_1, dynamic_address);
+	set_at<96, 768>(result, input_FIFO_buf4_blurx7_16_1_merged149_118_res);
+	hw_uint<16> input_FIFO_buf4_blurx7_16_1_merged149_119_res = input_FIFO_buf4_blurx7_16_1_merged149_119_select(input_FIFO_buf4, root, blurx7_16_0, blurx7_16_1, dynamic_address);
+	set_at<112, 768>(result, input_FIFO_buf4_blurx7_16_1_merged149_119_res);
+	hw_uint<16> input_FIFO_buf4_blurx7_16_1_merged149_120_res = input_FIFO_buf4_blurx7_16_1_merged149_120_select(input_FIFO_buf4, root, blurx7_16_0, blurx7_16_1, dynamic_address);
+	set_at<128, 768>(result, input_FIFO_buf4_blurx7_16_1_merged149_120_res);
+	hw_uint<16> input_FIFO_buf4_blurx7_16_1_merged149_121_res = input_FIFO_buf4_blurx7_16_1_merged149_121_select(input_FIFO_buf4, root, blurx7_16_0, blurx7_16_1, dynamic_address);
+	set_at<144, 768>(result, input_FIFO_buf4_blurx7_16_1_merged149_121_res);
+	hw_uint<16> input_FIFO_buf4_blurx7_16_1_merged149_122_res = input_FIFO_buf4_blurx7_16_1_merged149_122_select(input_FIFO_buf4, root, blurx7_16_0, blurx7_16_1, dynamic_address);
+	set_at<160, 768>(result, input_FIFO_buf4_blurx7_16_1_merged149_122_res);
+	hw_uint<16> input_FIFO_buf4_blurx7_16_1_merged149_123_res = input_FIFO_buf4_blurx7_16_1_merged149_123_select(input_FIFO_buf4, root, blurx7_16_0, blurx7_16_1, dynamic_address);
+	set_at<176, 768>(result, input_FIFO_buf4_blurx7_16_1_merged149_123_res);
+	hw_uint<16> input_FIFO_buf4_blurx7_16_1_merged149_124_res = input_FIFO_buf4_blurx7_16_1_merged149_124_select(input_FIFO_buf4, root, blurx7_16_0, blurx7_16_1, dynamic_address);
+	set_at<192, 768>(result, input_FIFO_buf4_blurx7_16_1_merged149_124_res);
+	hw_uint<16> input_FIFO_buf4_blurx7_16_1_merged149_125_res = input_FIFO_buf4_blurx7_16_1_merged149_125_select(input_FIFO_buf4, root, blurx7_16_0, blurx7_16_1, dynamic_address);
+	set_at<208, 768>(result, input_FIFO_buf4_blurx7_16_1_merged149_125_res);
+	hw_uint<16> input_FIFO_buf4_blurx7_16_1_merged149_126_res = input_FIFO_buf4_blurx7_16_1_merged149_126_select(input_FIFO_buf4, root, blurx7_16_0, blurx7_16_1, dynamic_address);
+	set_at<224, 768>(result, input_FIFO_buf4_blurx7_16_1_merged149_126_res);
+	hw_uint<16> input_FIFO_buf4_blurx7_16_1_merged149_127_res = input_FIFO_buf4_blurx7_16_1_merged149_127_select(input_FIFO_buf4, root, blurx7_16_0, blurx7_16_1, dynamic_address);
+	set_at<240, 768>(result, input_FIFO_buf4_blurx7_16_1_merged149_127_res);
+	hw_uint<16> input_FIFO_buf4_blurx7_16_1_merged149_128_res = input_FIFO_buf4_blurx7_16_1_merged149_128_select(input_FIFO_buf4, root, blurx7_16_0, blurx7_16_1, dynamic_address);
+	set_at<256, 768>(result, input_FIFO_buf4_blurx7_16_1_merged149_128_res);
+	hw_uint<16> input_FIFO_buf4_blurx7_16_1_merged149_129_res = input_FIFO_buf4_blurx7_16_1_merged149_129_select(input_FIFO_buf4, root, blurx7_16_0, blurx7_16_1, dynamic_address);
+	set_at<272, 768>(result, input_FIFO_buf4_blurx7_16_1_merged149_129_res);
+	hw_uint<16> input_FIFO_buf4_blurx7_16_1_merged149_130_res = input_FIFO_buf4_blurx7_16_1_merged149_130_select(input_FIFO_buf4, root, blurx7_16_0, blurx7_16_1, dynamic_address);
+	set_at<288, 768>(result, input_FIFO_buf4_blurx7_16_1_merged149_130_res);
+	hw_uint<16> input_FIFO_buf4_blurx7_16_1_merged149_131_res = input_FIFO_buf4_blurx7_16_1_merged149_131_select(input_FIFO_buf4, root, blurx7_16_0, blurx7_16_1, dynamic_address);
+	set_at<304, 768>(result, input_FIFO_buf4_blurx7_16_1_merged149_131_res);
+	hw_uint<16> input_FIFO_buf4_blurx7_16_1_merged149_132_res = input_FIFO_buf4_blurx7_16_1_merged149_132_select(input_FIFO_buf4, root, blurx7_16_0, blurx7_16_1, dynamic_address);
+	set_at<320, 768>(result, input_FIFO_buf4_blurx7_16_1_merged149_132_res);
+	hw_uint<16> input_FIFO_buf4_blurx7_16_1_merged149_133_res = input_FIFO_buf4_blurx7_16_1_merged149_133_select(input_FIFO_buf4, root, blurx7_16_0, blurx7_16_1, dynamic_address);
+	set_at<336, 768>(result, input_FIFO_buf4_blurx7_16_1_merged149_133_res);
+	hw_uint<16> input_FIFO_buf4_blurx7_16_1_merged149_134_res = input_FIFO_buf4_blurx7_16_1_merged149_134_select(input_FIFO_buf4, root, blurx7_16_0, blurx7_16_1, dynamic_address);
+	set_at<352, 768>(result, input_FIFO_buf4_blurx7_16_1_merged149_134_res);
+	hw_uint<16> input_FIFO_buf4_blurx7_16_1_merged149_135_res = input_FIFO_buf4_blurx7_16_1_merged149_135_select(input_FIFO_buf4, root, blurx7_16_0, blurx7_16_1, dynamic_address);
+	set_at<368, 768>(result, input_FIFO_buf4_blurx7_16_1_merged149_135_res);
+	hw_uint<16> input_FIFO_buf4_blurx7_16_1_merged149_136_res = input_FIFO_buf4_blurx7_16_1_merged149_136_select(input_FIFO_buf4, root, blurx7_16_0, blurx7_16_1, dynamic_address);
+	set_at<384, 768>(result, input_FIFO_buf4_blurx7_16_1_merged149_136_res);
+	hw_uint<16> input_FIFO_buf4_blurx7_16_1_merged149_137_res = input_FIFO_buf4_blurx7_16_1_merged149_137_select(input_FIFO_buf4, root, blurx7_16_0, blurx7_16_1, dynamic_address);
+	set_at<400, 768>(result, input_FIFO_buf4_blurx7_16_1_merged149_137_res);
+	hw_uint<16> input_FIFO_buf4_blurx7_16_1_merged149_138_res = input_FIFO_buf4_blurx7_16_1_merged149_138_select(input_FIFO_buf4, root, blurx7_16_0, blurx7_16_1, dynamic_address);
+	set_at<416, 768>(result, input_FIFO_buf4_blurx7_16_1_merged149_138_res);
+	hw_uint<16> input_FIFO_buf4_blurx7_16_1_merged149_139_res = input_FIFO_buf4_blurx7_16_1_merged149_139_select(input_FIFO_buf4, root, blurx7_16_0, blurx7_16_1, dynamic_address);
+	set_at<432, 768>(result, input_FIFO_buf4_blurx7_16_1_merged149_139_res);
+	hw_uint<16> input_FIFO_buf4_blurx7_16_1_merged149_140_res = input_FIFO_buf4_blurx7_16_1_merged149_140_select(input_FIFO_buf4, root, blurx7_16_0, blurx7_16_1, dynamic_address);
+	set_at<448, 768>(result, input_FIFO_buf4_blurx7_16_1_merged149_140_res);
+	hw_uint<16> input_FIFO_buf4_blurx7_16_1_merged149_141_res = input_FIFO_buf4_blurx7_16_1_merged149_141_select(input_FIFO_buf4, root, blurx7_16_0, blurx7_16_1, dynamic_address);
+	set_at<464, 768>(result, input_FIFO_buf4_blurx7_16_1_merged149_141_res);
+	hw_uint<16> input_FIFO_buf4_blurx7_16_1_merged149_142_res = input_FIFO_buf4_blurx7_16_1_merged149_142_select(input_FIFO_buf4, root, blurx7_16_0, blurx7_16_1, dynamic_address);
+	set_at<480, 768>(result, input_FIFO_buf4_blurx7_16_1_merged149_142_res);
+	hw_uint<16> input_FIFO_buf4_blurx7_16_1_merged149_143_res = input_FIFO_buf4_blurx7_16_1_merged149_143_select(input_FIFO_buf4, root, blurx7_16_0, blurx7_16_1, dynamic_address);
+	set_at<496, 768>(result, input_FIFO_buf4_blurx7_16_1_merged149_143_res);
+	hw_uint<16> input_FIFO_buf4_blurx7_16_1_merged149_144_res = input_FIFO_buf4_blurx7_16_1_merged149_144_select(input_FIFO_buf4, root, blurx7_16_0, blurx7_16_1, dynamic_address);
+	set_at<512, 768>(result, input_FIFO_buf4_blurx7_16_1_merged149_144_res);
+	hw_uint<16> input_FIFO_buf4_blurx7_16_1_merged149_145_res = input_FIFO_buf4_blurx7_16_1_merged149_145_select(input_FIFO_buf4, root, blurx7_16_0, blurx7_16_1, dynamic_address);
+	set_at<528, 768>(result, input_FIFO_buf4_blurx7_16_1_merged149_145_res);
+	hw_uint<16> input_FIFO_buf4_blurx7_16_1_merged149_146_res = input_FIFO_buf4_blurx7_16_1_merged149_146_select(input_FIFO_buf4, root, blurx7_16_0, blurx7_16_1, dynamic_address);
+	set_at<544, 768>(result, input_FIFO_buf4_blurx7_16_1_merged149_146_res);
+	hw_uint<16> input_FIFO_buf4_blurx7_16_1_merged149_147_res = input_FIFO_buf4_blurx7_16_1_merged149_147_select(input_FIFO_buf4, root, blurx7_16_0, blurx7_16_1, dynamic_address);
+	set_at<560, 768>(result, input_FIFO_buf4_blurx7_16_1_merged149_147_res);
+	hw_uint<16> input_FIFO_buf4_blurx7_16_1_merged149_148_res = input_FIFO_buf4_blurx7_16_1_merged149_148_select(input_FIFO_buf4, root, blurx7_16_0, blurx7_16_1, dynamic_address);
+	set_at<576, 768>(result, input_FIFO_buf4_blurx7_16_1_merged149_148_res);
+	hw_uint<16> input_FIFO_buf4_blurx7_16_1_merged149_149_res = input_FIFO_buf4_blurx7_16_1_merged149_149_select(input_FIFO_buf4, root, blurx7_16_0, blurx7_16_1, dynamic_address);
+	set_at<592, 768>(result, input_FIFO_buf4_blurx7_16_1_merged149_149_res);
+	hw_uint<16> input_FIFO_buf4_blurx7_16_1_merged149_150_res = input_FIFO_buf4_blurx7_16_1_merged149_150_select(input_FIFO_buf4, root, blurx7_16_0, blurx7_16_1, dynamic_address);
+	set_at<608, 768>(result, input_FIFO_buf4_blurx7_16_1_merged149_150_res);
+	hw_uint<16> input_FIFO_buf4_blurx7_16_1_merged149_151_res = input_FIFO_buf4_blurx7_16_1_merged149_151_select(input_FIFO_buf4, root, blurx7_16_0, blurx7_16_1, dynamic_address);
+	set_at<624, 768>(result, input_FIFO_buf4_blurx7_16_1_merged149_151_res);
+	hw_uint<16> input_FIFO_buf4_blurx7_16_1_merged149_152_res = input_FIFO_buf4_blurx7_16_1_merged149_152_select(input_FIFO_buf4, root, blurx7_16_0, blurx7_16_1, dynamic_address);
+	set_at<640, 768>(result, input_FIFO_buf4_blurx7_16_1_merged149_152_res);
+	hw_uint<16> input_FIFO_buf4_blurx7_16_1_merged149_153_res = input_FIFO_buf4_blurx7_16_1_merged149_153_select(input_FIFO_buf4, root, blurx7_16_0, blurx7_16_1, dynamic_address);
+	set_at<656, 768>(result, input_FIFO_buf4_blurx7_16_1_merged149_153_res);
+	hw_uint<16> input_FIFO_buf4_blurx7_16_1_merged149_154_res = input_FIFO_buf4_blurx7_16_1_merged149_154_select(input_FIFO_buf4, root, blurx7_16_0, blurx7_16_1, dynamic_address);
+	set_at<672, 768>(result, input_FIFO_buf4_blurx7_16_1_merged149_154_res);
+	hw_uint<16> input_FIFO_buf4_blurx7_16_1_merged149_155_res = input_FIFO_buf4_blurx7_16_1_merged149_155_select(input_FIFO_buf4, root, blurx7_16_0, blurx7_16_1, dynamic_address);
+	set_at<688, 768>(result, input_FIFO_buf4_blurx7_16_1_merged149_155_res);
+	hw_uint<16> input_FIFO_buf4_blurx7_16_1_merged149_156_res = input_FIFO_buf4_blurx7_16_1_merged149_156_select(input_FIFO_buf4, root, blurx7_16_0, blurx7_16_1, dynamic_address);
+	set_at<704, 768>(result, input_FIFO_buf4_blurx7_16_1_merged149_156_res);
+	hw_uint<16> input_FIFO_buf4_blurx7_16_1_merged149_157_res = input_FIFO_buf4_blurx7_16_1_merged149_157_select(input_FIFO_buf4, root, blurx7_16_0, blurx7_16_1, dynamic_address);
+	set_at<720, 768>(result, input_FIFO_buf4_blurx7_16_1_merged149_157_res);
+	hw_uint<16> input_FIFO_buf4_blurx7_16_1_merged149_158_res = input_FIFO_buf4_blurx7_16_1_merged149_158_select(input_FIFO_buf4, root, blurx7_16_0, blurx7_16_1, dynamic_address);
+	set_at<736, 768>(result, input_FIFO_buf4_blurx7_16_1_merged149_158_res);
+	hw_uint<16> input_FIFO_buf4_blurx7_16_1_merged149_159_res = input_FIFO_buf4_blurx7_16_1_merged149_159_select(input_FIFO_buf4, root, blurx7_16_0, blurx7_16_1, dynamic_address);
+	set_at<752, 768>(result, input_FIFO_buf4_blurx7_16_1_merged149_159_res);
+	return result;
+}
+
+// input_to_gp_00_ld5_merged141_write
+//	input_FIFO_buf4_input_to_gp_00_ld5_merged141_0
+//	input_FIFO_buf4_input_to_gp_00_ld5_merged141_1
+//	input_FIFO_buf4_input_to_gp_00_ld5_merged141_2
+//	input_FIFO_buf4_input_to_gp_00_ld5_merged141_3
+//	input_FIFO_buf4_input_to_gp_00_ld5_merged141_4
+//	input_FIFO_buf4_input_to_gp_00_ld5_merged141_5
+//	input_FIFO_buf4_input_to_gp_00_ld5_merged141_6
+//	input_FIFO_buf4_input_to_gp_00_ld5_merged141_7
+//	input_FIFO_buf4_input_to_gp_00_ld5_merged141_8
+//	input_FIFO_buf4_input_to_gp_00_ld5_merged141_9
+//	input_FIFO_buf4_input_to_gp_00_ld5_merged141_10
+//	input_FIFO_buf4_input_to_gp_00_ld5_merged141_11
+//	input_FIFO_buf4_input_to_gp_00_ld5_merged141_12
+//	input_FIFO_buf4_input_to_gp_00_ld5_merged141_13
+//	input_FIFO_buf4_input_to_gp_00_ld5_merged141_14
+//	input_FIFO_buf4_input_to_gp_00_ld5_merged141_15
+inline void input_FIFO_buf4_input_to_gp_00_ld5_merged141_write_bundle_write(hw_uint<256>& input_to_gp_00_ld5_merged141_write, input_FIFO_buf4_cache& input_FIFO_buf4, int root, int input_to_gp_00_ld6, int input_to_gp_00_ld5, int dynamic_address) {
+	hw_uint<16> input_FIFO_buf4_input_to_gp_00_ld5_merged141_0_res = input_to_gp_00_ld5_merged141_write.extract<0, 15>();
+	input_FIFO_buf4_input_to_gp_00_ld5_merged141_0_write(input_FIFO_buf4_input_to_gp_00_ld5_merged141_0_res, input_FIFO_buf4, root, input_to_gp_00_ld6, input_to_gp_00_ld5, dynamic_address);
+	hw_uint<16> input_FIFO_buf4_input_to_gp_00_ld5_merged141_1_res = input_to_gp_00_ld5_merged141_write.extract<16, 31>();
+	input_FIFO_buf4_input_to_gp_00_ld5_merged141_1_write(input_FIFO_buf4_input_to_gp_00_ld5_merged141_1_res, input_FIFO_buf4, root, input_to_gp_00_ld6, input_to_gp_00_ld5, dynamic_address);
+	hw_uint<16> input_FIFO_buf4_input_to_gp_00_ld5_merged141_2_res = input_to_gp_00_ld5_merged141_write.extract<32, 47>();
+	input_FIFO_buf4_input_to_gp_00_ld5_merged141_2_write(input_FIFO_buf4_input_to_gp_00_ld5_merged141_2_res, input_FIFO_buf4, root, input_to_gp_00_ld6, input_to_gp_00_ld5, dynamic_address);
+	hw_uint<16> input_FIFO_buf4_input_to_gp_00_ld5_merged141_3_res = input_to_gp_00_ld5_merged141_write.extract<48, 63>();
+	input_FIFO_buf4_input_to_gp_00_ld5_merged141_3_write(input_FIFO_buf4_input_to_gp_00_ld5_merged141_3_res, input_FIFO_buf4, root, input_to_gp_00_ld6, input_to_gp_00_ld5, dynamic_address);
+	hw_uint<16> input_FIFO_buf4_input_to_gp_00_ld5_merged141_4_res = input_to_gp_00_ld5_merged141_write.extract<64, 79>();
+	input_FIFO_buf4_input_to_gp_00_ld5_merged141_4_write(input_FIFO_buf4_input_to_gp_00_ld5_merged141_4_res, input_FIFO_buf4, root, input_to_gp_00_ld6, input_to_gp_00_ld5, dynamic_address);
+	hw_uint<16> input_FIFO_buf4_input_to_gp_00_ld5_merged141_5_res = input_to_gp_00_ld5_merged141_write.extract<80, 95>();
+	input_FIFO_buf4_input_to_gp_00_ld5_merged141_5_write(input_FIFO_buf4_input_to_gp_00_ld5_merged141_5_res, input_FIFO_buf4, root, input_to_gp_00_ld6, input_to_gp_00_ld5, dynamic_address);
+	hw_uint<16> input_FIFO_buf4_input_to_gp_00_ld5_merged141_6_res = input_to_gp_00_ld5_merged141_write.extract<96, 111>();
+	input_FIFO_buf4_input_to_gp_00_ld5_merged141_6_write(input_FIFO_buf4_input_to_gp_00_ld5_merged141_6_res, input_FIFO_buf4, root, input_to_gp_00_ld6, input_to_gp_00_ld5, dynamic_address);
+	hw_uint<16> input_FIFO_buf4_input_to_gp_00_ld5_merged141_7_res = input_to_gp_00_ld5_merged141_write.extract<112, 127>();
+	input_FIFO_buf4_input_to_gp_00_ld5_merged141_7_write(input_FIFO_buf4_input_to_gp_00_ld5_merged141_7_res, input_FIFO_buf4, root, input_to_gp_00_ld6, input_to_gp_00_ld5, dynamic_address);
+	hw_uint<16> input_FIFO_buf4_input_to_gp_00_ld5_merged141_8_res = input_to_gp_00_ld5_merged141_write.extract<128, 143>();
+	input_FIFO_buf4_input_to_gp_00_ld5_merged141_8_write(input_FIFO_buf4_input_to_gp_00_ld5_merged141_8_res, input_FIFO_buf4, root, input_to_gp_00_ld6, input_to_gp_00_ld5, dynamic_address);
+	hw_uint<16> input_FIFO_buf4_input_to_gp_00_ld5_merged141_9_res = input_to_gp_00_ld5_merged141_write.extract<144, 159>();
+	input_FIFO_buf4_input_to_gp_00_ld5_merged141_9_write(input_FIFO_buf4_input_to_gp_00_ld5_merged141_9_res, input_FIFO_buf4, root, input_to_gp_00_ld6, input_to_gp_00_ld5, dynamic_address);
+	hw_uint<16> input_FIFO_buf4_input_to_gp_00_ld5_merged141_10_res = input_to_gp_00_ld5_merged141_write.extract<160, 175>();
+	input_FIFO_buf4_input_to_gp_00_ld5_merged141_10_write(input_FIFO_buf4_input_to_gp_00_ld5_merged141_10_res, input_FIFO_buf4, root, input_to_gp_00_ld6, input_to_gp_00_ld5, dynamic_address);
+	hw_uint<16> input_FIFO_buf4_input_to_gp_00_ld5_merged141_11_res = input_to_gp_00_ld5_merged141_write.extract<176, 191>();
+	input_FIFO_buf4_input_to_gp_00_ld5_merged141_11_write(input_FIFO_buf4_input_to_gp_00_ld5_merged141_11_res, input_FIFO_buf4, root, input_to_gp_00_ld6, input_to_gp_00_ld5, dynamic_address);
+	hw_uint<16> input_FIFO_buf4_input_to_gp_00_ld5_merged141_12_res = input_to_gp_00_ld5_merged141_write.extract<192, 207>();
+	input_FIFO_buf4_input_to_gp_00_ld5_merged141_12_write(input_FIFO_buf4_input_to_gp_00_ld5_merged141_12_res, input_FIFO_buf4, root, input_to_gp_00_ld6, input_to_gp_00_ld5, dynamic_address);
+	hw_uint<16> input_FIFO_buf4_input_to_gp_00_ld5_merged141_13_res = input_to_gp_00_ld5_merged141_write.extract<208, 223>();
+	input_FIFO_buf4_input_to_gp_00_ld5_merged141_13_write(input_FIFO_buf4_input_to_gp_00_ld5_merged141_13_res, input_FIFO_buf4, root, input_to_gp_00_ld6, input_to_gp_00_ld5, dynamic_address);
+	hw_uint<16> input_FIFO_buf4_input_to_gp_00_ld5_merged141_14_res = input_to_gp_00_ld5_merged141_write.extract<224, 239>();
+	input_FIFO_buf4_input_to_gp_00_ld5_merged141_14_write(input_FIFO_buf4_input_to_gp_00_ld5_merged141_14_res, input_FIFO_buf4, root, input_to_gp_00_ld6, input_to_gp_00_ld5, dynamic_address);
+	hw_uint<16> input_FIFO_buf4_input_to_gp_00_ld5_merged141_15_res = input_to_gp_00_ld5_merged141_write.extract<240, 255>();
+	input_FIFO_buf4_input_to_gp_00_ld5_merged141_15_write(input_FIFO_buf4_input_to_gp_00_ld5_merged141_15_res, input_FIFO_buf4, root, input_to_gp_00_ld6, input_to_gp_00_ld5, dynamic_address);
+}
+
+// Total re-use buffer capacity: 720 bits
+// Operation logic
+inline void input_to_gp_00_ld5_merged141(HWStream<hw_uint<256> >& /* buffer_args num ports = 16 */input_to_gp_00, input_FIFO_buf4_cache& input_FIFO_buf4, int d0, int d1, int d2) {
+  // Dynamic address computation
+
+	// Consume: input_to_gp_00
+	auto input_to_gp_00__lp_16_m_input_to_gp_00_ld5__p__0_rp__c____input_to_gp_00_ld6_value = input_to_gp_00.read();
+	auto compute_result = input_to_gp_00_ld5_cu140(input_to_gp_00__lp_16_m_input_to_gp_00_ld5__p__0_rp__c____input_to_gp_00_ld6_value);
+	// Produce: input_FIFO_buf4
+	input_FIFO_buf4_input_to_gp_00_ld5_merged141_write_bundle_write(/* arg names */compute_result, input_FIFO_buf4, d0, d1, d2, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void blurx7_16_1_merged149(input_FIFO_buf4_cache& input_FIFO_buf4, HWStream<hw_uint<256> >& /* buffer_args num ports = 16 */blurx7_16, int d0, int d1, int d2) {
+  // Dynamic address computation
+
+	// Consume: input_FIFO_buf4
+	auto input_FIFO_buf4_1_m__lp_16_m_blurx7_16_1__p__0_rp___p__0_p_0_c_____1_m_blurx7_16_0__p__0_p_0_value = input_FIFO_buf4_blurx7_16_1_merged149_read_bundle_read(input_FIFO_buf4/* source_delay */, d0, d1, d2, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = blurx7_16_1_cu147(input_FIFO_buf4_1_m__lp_16_m_blurx7_16_1__p__0_rp___p__0_p_0_c_____1_m_blurx7_16_0__p__0_p_0_value);
+	// Produce: blurx7_16
+	blurx7_16.write(compute_result);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+// Driver function
+void Extracted_blurx7_16_0_input_to_gp_00_ld6_(HWStream<hw_uint<256> >& /* get_args num ports = 16 */input_to_gp_00, HWStream<hw_uint<256> >& /* get_args num ports = 16 */blurx7_16) {
+
+#ifndef __VIVADO_SYNTH__
+  ofstream debug_file("Extracted_blurx7_16_0_input_to_gp_00_ld6__debug.csv");
+  global_debug_handle = &debug_file;
+#endif //__VIVADO_SYNTH__
+  input_FIFO_buf4_cache input_FIFO_buf4;
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+#ifdef __VIVADO_SYNTH__
+#pragma HLS inline recursive
+#endif // __VIVADO_SYNTH__
+
+// schedule: { blurx7_16_1_merged149[d0 = 0, d1, d2] -> [0, d1, 1 + d2, 3] : 0 <= d1 <= 1079 and 0 <= d2 <= 119; input_to_gp_00_ld5_merged141[d0 = 0, d1, d2] -> [0, d1, d2, 2] : 0 <= d1 <= 1079 and 0 <= d2 <= 120 }
+//   { blurx7_16_1_merged149[d0 = 0, d1, d2] -> [0, d1, 1 + d2, 3] : 0 <= d1 <= 1079 and 0 <= d2 <= 119 }
+// Condition for blurx7_16_1_merged149(((((-3 + 1*i3)) == 0) && (((1*i0)) == 0) && (((1*i1)) >= 0) && (((1079 + -1*i1)) >= 0) && (((-1 + 1*i2)) >= 0) && (((120 + -1*i2)) >= 0)))
+//   { input_to_gp_00_ld5_merged141[d0 = 0, d1, d2] -> [0, d1, d2, 2] : 0 <= d1 <= 1079 and 0 <= d2 <= 120 }
+// Condition for input_to_gp_00_ld5_merged141(((((-2 + 1*i3)) == 0) && (((1*i0)) == 0) && (((1*i1)) >= 0) && (((1079 + -1*i1)) >= 0) && (((1*i2)) >= 0) && (((120 + -1*i2)) >= 0)))
+
+	// time range: { [0, i1, i2, i3] : 0 <= i1 <= 1079 and i2 <= 120 and 2 <= i3 <= 3 and i3 <= 2 + i2 }
+	// # sets: 1
+	int i0 = 0;
+	  for (int i1 = 0; i1 <= 1079; i1++) {
+	    for (int i2 = 0; i2 <= 120; i2++) {
+	#pragma HLS pipeline II=1
+	        // { [i0, i1, i2] }
+	        // { [i0, i1, i2] :  }
+	        if ((true)) {
+	          input_to_gp_00_ld5_merged141(input_to_gp_00 /* buf name */, input_FIFO_buf4, 0, ((1*i1)), ((1*i2)));
+	        }
+	        // { [i0, i1, i2] : i2 > 0 }
+	        // { [i0, i1, i2] : i2 > 0 }
+	          // { [i0, i1, i2] : -1 + i2 >= 0 }
+	        if ((((((-1 + 1*i2)) >= 0)))) {
+	          blurx7_16_1_merged149(input_FIFO_buf4 /* buf name */, blurx7_16, 0, ((1*i1)), ((-1 + 1*i2)));
+	        }
+	    }
+	  }
+	
+#ifndef __VIVADO_SYNTH__
+  debug_file.close();
+#endif //__VIVADO_SYNTH__
+}
+
+// Operation logic
+inline void input_ld1_merged143(input_cache& input, HWStream<hw_uint<256> >& /* buffer_args num ports = 16 */input_to_gp_00, int d0, int d1, int d2) {
+  // Dynamic address computation
+
+	// Consume: input
+	auto input__lp_16_m_input_ld1__p__0_rp__c____input_ld2_value = input_input_ld1_merged143_read_bundle_read(input/* source_delay */, d0, d1, d2, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = input_ld1_cu142(input__lp_16_m_input_ld1__p__0_rp__c____input_ld2_value);
+	// Produce: input_to_gp_00
+	input_to_gp_00.write(compute_result);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void input_1_merged146(HWStream<hw_uint<256> >& /* buffer_args num ports = 16 */input_arg, input_cache& input, int d0, int d1, int d2) {
+  // Dynamic address computation
+
+	// Consume: input_arg
+	auto input_arg_1_m__lp_16_m_input_1__p__0_rp___p__0_p_0_c_____1_m_input_0__p__0_p_0_value = input_arg.read();
+	auto compute_result = input_1_cu144(input_arg_1_m__lp_16_m_input_1__p__0_rp___p__0_p_0_c_____1_m_input_0__p__0_p_0_value);
+	// Produce: input
+	input_input_1_merged146_write_bundle_write(/* arg names */compute_result, input, d0, d1, d2, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+// Driver function
+void Extracted_input_0_input_ld2_(HWStream<hw_uint<256> >& /* no bundle get_args num ports = 16 */input_arg, HWStream<hw_uint<256> >& /* get_args num ports = 16 */input_to_gp_00) {
+
+#ifndef __VIVADO_SYNTH__
+  ofstream debug_file("Extracted_input_0_input_ld2__debug.csv");
+  global_debug_handle = &debug_file;
+#endif //__VIVADO_SYNTH__
+  input_cache input;
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+#ifdef __VIVADO_SYNTH__
+#pragma HLS inline recursive
+#endif // __VIVADO_SYNTH__
+
+// schedule: { input_ld1_merged143[d0 = 0, d1, d2] -> [0, d1, d2, 1] : 0 <= d1 <= 1079 and 0 <= d2 <= 120; input_1_merged146[d0 = 0, d1, d2] -> [0, d1, d2, 0] : 0 <= d1 <= 1079 and 0 <= d2 <= 120 }
+//   { input_ld1_merged143[d0 = 0, d1, d2] -> [0, d1, d2, 1] : 0 <= d1 <= 1079 and 0 <= d2 <= 120 }
+// Condition for input_ld1_merged143(((((-1 + 1*i3)) == 0) && (((1*i0)) == 0) && (((1*i1)) >= 0) && (((1079 + -1*i1)) >= 0) && (((1*i2)) >= 0) && (((120 + -1*i2)) >= 0)))
+//   { input_1_merged146[d0 = 0, d1, d2] -> [0, d1, d2, 0] : 0 <= d1 <= 1079 and 0 <= d2 <= 120 }
+// Condition for input_1_merged146(((((1*i3)) == 0) && (((1*i0)) == 0) && (((1*i1)) >= 0) && (((1079 + -1*i1)) >= 0) && (((1*i2)) >= 0) && (((120 + -1*i2)) >= 0)))
+
+	// time range: { [0, i1, i2, i3] : 0 <= i1 <= 1079 and 0 <= i2 <= 120 and 0 <= i3 <= 1 }
+	// # sets: 1
+	int i0 = 0;
+	  for (int i1 = 0; i1 <= 1079; i1++) {
+	    for (int i2 = 0; i2 <= 120; i2++) {
+	#pragma HLS pipeline II=1
+	        // { [i0, i1, i2] }
+	        // { [i0, i1, i2] :  }
+	        if ((true)) {
+	          input_1_merged146(input_arg /* buf name */, input, 0, ((1*i1)), ((1*i2)));
+	        }
+	        // { [i0, i1, i2] }
+	        // { [i0, i1, i2] :  }
+	        if ((true)) {
+	          input_ld1_merged143(input /* buf name */, input_to_gp_00, 0, ((1*i1)), ((1*i2)));
+	        }
+	    }
+	  }
+	
+#ifndef __VIVADO_SYNTH__
+  debug_file.close();
+#endif //__VIVADO_SYNTH__
+}
+
+// Driver function
+void blurx7_16_opt_dis(HWStream<hw_uint<256> >& /* no bundle get_args num ports = 16 */input_arg, HWStream<hw_uint<256> >& /* get_args num ports = 16 */blurx7_16) {
+
+#ifndef __VIVADO_SYNTH__
+  ofstream debug_file("blurx7_16_opt_dis_debug.csv");
+  global_debug_handle = &debug_file;
+#endif //__VIVADO_SYNTH__
+
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dataflow
+#endif //__VIVADO_SYNTH__
+
+  // channel width: 16
+  // port width   : 16
+  // dag size     : 2
+// Bits to slack match input_to_gp_00 = 512
+// Bits to slack match input_to_gp_00 = 512
+// Bits in internal re-use buffers               : 720 bits
+// Bits in channels needed to guarantee causality: 0
+// Bits in channels needed to match slack        : 512
+  HWStream< hw_uint<256> > input_to_gp_00;
+#ifdef __VIVADO_SYNTH__
+#pragma HLS stream variable=input_to_gp_00.values depth=2
+#endif //__VIVADO_SYNTH__
+
+
+  Extracted_input_0_input_ld2_(input_arg, input_to_gp_00);
+  Extracted_blurx7_16_0_input_to_gp_00_ld6_(input_to_gp_00, blurx7_16);
+
+#ifndef __VIVADO_SYNTH__
+  debug_file.close();
+#endif //__VIVADO_SYNTH__
+}
+
+void blurx7_16_opt_dis_wrapper(HWStream<hw_uint<256> >& /* no bundle get_args num ports = 16 */input_arg, HWStream<hw_uint<256> >& /* get_args num ports = 16 */blurx7_16, const int num_epochs) {
+
+  for (int epoch = 0; epoch < num_epochs; epoch++) {
+    blurx7_16_opt_dis(input_arg, blurx7_16);
+  }
+}
+#ifdef __VIVADO_SYNTH__
+  // { blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> blurx7_16[15 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119; blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> blurx7_16[14 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119; blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> blurx7_16[13 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119; blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> blurx7_16[12 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119; blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> blurx7_16[11 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119; blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> blurx7_16[10 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119; blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> blurx7_16[9 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119; blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> blurx7_16[8 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119; blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> blurx7_16[7 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119; blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> blurx7_16[6 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119; blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> blurx7_16[5 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119; blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> blurx7_16[4 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119; blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> blurx7_16[3 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119; blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> blurx7_16[2 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119; blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> blurx7_16[1 + 16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119; blurx7_16_1_merged149[root = 0, blurx7_16_0, blurx7_16_1] -> blurx7_16[16blurx7_16_1, blurx7_16_0] : 0 <= blurx7_16_0 <= 1079 and 0 <= blurx7_16_1 <= 119 }
+const int blurx7_16_1_merged149_write_pipe0_num_transfers = 129600;
+  // { input_1_merged146[root = 0, input_0, input_1] -> input_arg[15 + 16input_1, input_0] : 0 <= input_0 <= 1079 and 0 <= input_1 <= 120; input_1_merged146[root = 0, input_0, input_1] -> input_arg[14 + 16input_1, input_0] : 0 <= input_0 <= 1079 and 0 <= input_1 <= 120; input_1_merged146[root = 0, input_0, input_1] -> input_arg[13 + 16input_1, input_0] : 0 <= input_0 <= 1079 and 0 <= input_1 <= 120; input_1_merged146[root = 0, input_0, input_1] -> input_arg[12 + 16input_1, input_0] : 0 <= input_0 <= 1079 and 0 <= input_1 <= 120; input_1_merged146[root = 0, input_0, input_1] -> input_arg[11 + 16input_1, input_0] : 0 <= input_0 <= 1079 and 0 <= input_1 <= 120; input_1_merged146[root = 0, input_0, input_1] -> input_arg[10 + 16input_1, input_0] : 0 <= input_0 <= 1079 and 0 <= input_1 <= 120; input_1_merged146[root = 0, input_0, input_1] -> input_arg[9 + 16input_1, input_0] : 0 <= input_0 <= 1079 and 0 <= input_1 <= 120; input_1_merged146[root = 0, input_0, input_1] -> input_arg[8 + 16input_1, input_0] : 0 <= input_0 <= 1079 and 0 <= input_1 <= 120; input_1_merged146[root = 0, input_0, input_1] -> input_arg[7 + 16input_1, input_0] : 0 <= input_0 <= 1079 and 0 <= input_1 <= 120; input_1_merged146[root = 0, input_0, input_1] -> input_arg[6 + 16input_1, input_0] : 0 <= input_0 <= 1079 and 0 <= input_1 <= 120; input_1_merged146[root = 0, input_0, input_1] -> input_arg[5 + 16input_1, input_0] : 0 <= input_0 <= 1079 and 0 <= input_1 <= 120; input_1_merged146[root = 0, input_0, input_1] -> input_arg[4 + 16input_1, input_0] : 0 <= input_0 <= 1079 and 0 <= input_1 <= 120; input_1_merged146[root = 0, input_0, input_1] -> input_arg[3 + 16input_1, input_0] : 0 <= input_0 <= 1079 and 0 <= input_1 <= 120; input_1_merged146[root = 0, input_0, input_1] -> input_arg[2 + 16input_1, input_0] : 0 <= input_0 <= 1079 and 0 <= input_1 <= 120; input_1_merged146[root = 0, input_0, input_1] -> input_arg[1 + 16input_1, input_0] : 0 <= input_0 <= 1079 and 0 <= input_1 <= 120; input_1_merged146[root = 0, input_0, input_1] -> input_arg[16input_1, input_0] : 0 <= input_0 <= 1079 and 0 <= input_1 <= 120 }
+const int input_1_merged146_read_pipe0_num_transfers = 130680;
+
+
+extern "C" {
+
+void blurx7_16_opt_dis_accel(hw_uint<256>* input_1_merged146_read_pipe0, hw_uint<256>* blurx7_16_1_merged149_write_pipe0, const int size) { 
+#pragma HLS dataflow
+#pragma HLS INTERFACE m_axi port = input_1_merged146_read_pipe0 offset = slave depth = 65536 bundle = gmem0
+#pragma HLS INTERFACE m_axi port = blurx7_16_1_merged149_write_pipe0 offset = slave depth = 65536 bundle = gmem1
+
+#pragma HLS INTERFACE s_axilite port = input_1_merged146_read_pipe0 bundle = control
+#pragma HLS INTERFACE s_axilite port = blurx7_16_1_merged149_write_pipe0 bundle = control
+#pragma HLS INTERFACE s_axilite port = size bundle = control
+#pragma HLS INTERFACE s_axilite port = return bundle = control
+
+
+  // Pipeline # 0
+  static HWStream<hw_uint<256> > input_1_merged146_read_pipe0_channel;
+  static HWStream<hw_uint<256> > blurx7_16_1_merged149_write_pipe0_channel;
+
+  burst_read<256>(input_1_merged146_read_pipe0, input_1_merged146_read_pipe0_channel, input_1_merged146_read_pipe0_num_transfers*size);
+
+  blurx7_16_opt_dis_wrapper(input_1_merged146_read_pipe0_channel, blurx7_16_1_merged149_write_pipe0_channel, size);
+
+  burst_write<256>(blurx7_16_1_merged149_write_pipe0, blurx7_16_1_merged149_write_pipe0_channel, blurx7_16_1_merged149_write_pipe0_num_transfers*size);
+}
+
+}
+extern "C" {
+
+void blurx7_16_opt_dis_rdai(HWStream<hw_uint<256> >& input_1_merged146_read_pipe0, HWStream<hw_uint<256> >&  blurx7_16_1_merged149_write_pipe0) { 
+#pragma HLS dataflow
+#pragma HLS INTERFACE axis register port = input_1_merged146_read_pipe0
+#pragma HLS INTERFACE axis register port = blurx7_16_1_merged149_write_pipe0
+
+#pragma HLS INTERFACE ap_ctrl_none port = return
+
+
+  // Pipeline # 0
+
+  blurx7_16_opt_dis(input_1_merged146_read_pipe0, blurx7_16_1_merged149_write_pipe0);
+
+}
+
+}
+#endif //__VIVADO_SYNTH__
+

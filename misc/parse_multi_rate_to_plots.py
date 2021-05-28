@@ -13,8 +13,10 @@ plt.rc('font', **font)
 # f = open('./misc/soda_resource_comparison_table.tex').readlines()
 f = open('./misc/multi_rate_standalone.tex').readlines()
 
-def save_plot(name, labels, speedups, use_log=True):
+def save_plot(name, labels, speedups, use_log=False):
     fig, ax = plt.subplots()
+    ax.grid(axis='y')
+    ax.set_axisbelow(True)
     x_pos = [i for i, _ in enumerate(labels)]
     bar_colors = []
     for i in range(6):
@@ -101,7 +103,7 @@ def table_op(table_lines, func):
             labels.append(l[0] + ' ' + l[1])
             print()
 
-    save_plot('clockwork_multi_rate_speedup.eps', labels, speedups, True)
+    save_plot('clockwork_multi_rate_speedup.eps', labels, speedups)
     save_plot('clockwork_multi_rate_lut.eps', labels, lut_savings)
     save_plot('clockwork_multi_rate_ff.eps', labels, ff_savings)
     save_plot('clockwork_multi_rate_bram.eps', labels, bram_savings)

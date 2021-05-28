@@ -2828,6 +2828,7 @@ bool RegfileReplace(Instance* cnst) {
   inlineInstance(pt);
   inlineInstance(buf);
 
+  //TODO: possible bug master comment this out
   //remove rst_n
   auto rst_n_conSet = buf->sel("rst_n")->getConnectedWireables();
   vector<Wireable*> conns(rst_n_conSet.begin(), rst_n_conSet.end());

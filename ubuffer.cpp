@@ -2511,7 +2511,6 @@ void UBuffer::wire_ubuf_IO(CodegenOptions& options,CoreIR::ModuleDef* def, map<s
 //helper function to generate shift register
 void UBuffer::generate_sreg_and_wire(CodegenOptions& options, UBufferImpl& impl, CoreIR::ModuleDef* def, map<string, CoreIR::Wireable*> & pt2wire){
   auto context = def->getContext();
-
   for (auto it: impl.get_shift_registered_ports()) {
     //add pt for it.first(an output port)
     string dst = it.first;
@@ -4361,6 +4360,9 @@ void generate_select(CodegenOptions& options, std::ostream& out, const string& o
   out << tab(1) << "// " << outpt << " read pattern: " << str(buf.access_map.at(outpt)) << endl;
 
   if (buf.banking.partition == "register_file" || buf.banking.partition == "none") {
+    if (!(buf.bank_list.size() == 1)) {
+      cout << buf << endl;
+    }
     assert(buf.bank_list.size() == 1);
     // Port is irrelevant here
     // TODO: Extract inner bank offset
@@ -7611,7 +7613,7 @@ void UBuffer::generate_banks(CodegenOptions& options) {
           }
         }
 
-        //Merge the access(address) range, and merge the iteration domain as well
+        //Merge the access(address) range
         if (merge_dim.size()) {
           for (auto& it: access_map) {
             auto map = it.second;
@@ -7964,7 +7966,6 @@ void UBuffer::generate_banks(CodegenOptions& options) {
 
           cout << "in bundle  = " << in_bundle.size() << endl;
           cout << "out bundle = " << out_bundle.size() << endl;
-
           //recording the new schedule in order to prevent SRAM collision
           map<string, isl_map*> sched_record_map;
 
@@ -8144,53 +8145,6 @@ void UBuffer::generate_banks(CodegenOptions& options) {
 
 
 
-              //FIX the sliding window cross fetch_width boundary
-              //TODO: move this into a function
-              /*
-              bool pad_schedule = false;
-              int delay_step = 0;
-              auto involve_in_dim = in_involve_dim(am, dim_id);
-              if (involve_in_dim.size() > 1) {
-                bool slide_cross = false;
-                //Case one has sliding window
-                for (int in_dim : involve_in_dim) {
-                    if (in_dim != num_in_dims(am) - 1) {
-                        auto proj_map = project_all_out_but(am, dim_id);
-                        auto aff = get_aff(proj_map);
-                        int stride = int_coeff(aff, in_dim);
-                        if (stride % 4) {
-                            slide_cross = true;
-                        }
-                    }
-                }
-                if (slide_cross) {
-                  //TODO: pad access domain by one does not make sense, fix this hack
-                  int pad_domain_offset = 1 + (split_dims.size() != 0);
-                  cout << "access map before padding: " << str(am) << "\n\tpadding dim: " << pad_domain_offset << endl;
-                  access_map.at(out_pt_name) =
-                    to_umap(pad_to_domain_ubuf_map(am, num_in_dims(am) - pad_domain_offset, 1));
-                  delay_step = 1;
-
-                }
-
-              } else {
-                //Case two do not slide but just start from middle of the fetchwidth
-                int min_vec_dim = get_dim_min(range(am), dim_id);
-                int max_vec_dim = get_dim_max(range(am), dim_id) + 1;
-                cout << "\tmin: " << min_vec_dim << endl << "\tmax: " << max_vec_dim << endl;
-                if ( (min_vec_dim % fetch_width != 0) &&
-                    (max_vec_dim % fetch_width != 0) ) {
-                  int pad_domain_offset = 1 + (split_dims.size() != 0);
-                  cout << "access map before padding: " << str(am) << "\n\tpadding dim: " << pad_domain_offset << endl;
-                  access_map.at(out_pt_name) =
-                    to_umap(pad_to_domain_ubuf_map(am, num_in_dims(am) - pad_domain_offset, 1));
-                  delay_step = 2;
-                  cout << "\t\tbefore pad :" << str(am) << endl;
-                  cout << "\t\tAfter pad :" << str(access_map.at(out_pt_name)) << endl;
-                }
-              }*/
-
-
               //New method for sram read schedule
               auto sram_ir = get_vectorized_read(
                       to_map(access_map.at(out_pt_name)),
@@ -8287,7 +8241,6 @@ void UBuffer::generate_banks(CodegenOptions& options) {
               //        bd_name + "_"+str(tb_cnt), dim_id, fetch_width, tb_cnt, true/*is output*/);
               //add_vectorized_pt_to_ubuf(tb, ap_vec, sched,
               //        bd_name+"_tb_in", dim_id, fetch_width, tb_cnt, false/*is input*/);
-
 
               cout << "\tAdd TB output port: " << out_pt_name << endl;
 

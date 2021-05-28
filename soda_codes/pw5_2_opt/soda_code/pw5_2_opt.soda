@@ -1,0 +1,12 @@
+kernel: pw5_2_opt
+unroll factor: 2
+burst width: 64
+
+input uint32: t1_arg(1920, *)
+
+local uint32: t1(0, 0) = t1_arg(0, 0)
+
+output uint32: pw5_2(0, 0) = t1(0, 0)
+
+
+iterate: 1

@@ -7,7 +7,7 @@ from matplotlib.ticker import PercentFormatter
 from cycler import cycler
 
 plt.style.use('seaborn-pastel')
-f = open('./tables/dynamic_static_comparison.tex').readlines()
+f = open('./tables/dynamic_static_comparison_2.tex').readlines()
 
 def intersperse(lst, item):
     result = [item] * (len(lst) * 2 - 1)
@@ -78,7 +78,7 @@ def extract_lut(values):
             print('Group2:', m[2])
             fvalues.append(m[1])
             bvalues.append(float(m[1]))
-        # LUTASMEM 
+        # LUTASMEM
         elif i == 4:
             m = re.match(rm, v)
             print(v, 'matches, now false')
@@ -94,7 +94,7 @@ def extract_lut(values):
             print('Group1:', m[1])
             print('Group2:', m[2])
             ff.append(float(m[2]))
-        # BRAM 
+        # BRAM
         elif i == 6:
             m = re.match(rm, v)
             print(v, 'matches, now false')

@@ -8,7 +8,7 @@ from cycler import cycler
 
 plt.style.use('seaborn-pastel')
 
-f = open('./tables/dynamic_static_comparison.tex').readlines()
+f = open('./tables/dynamic_static_comparison_2.tex').readlines()
 
 def intersperse(lst, item):
     result = [item] * (len(lst) * 2 - 1)

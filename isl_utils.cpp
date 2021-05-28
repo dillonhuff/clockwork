@@ -4012,7 +4012,6 @@ int get_domain_span_range(isl_map* const m, int dim, int out_dim) {
   //auto single_map = project_all_in_but(mm, dim);
   //cout << "single_map : " << str(single_map) << endl;
   return get_dim_extent(domain(mm), dim) * stride_in_dim(mm, dim, out_dim);
-
 }
 
 pair<int, int> get_domain_merge_dims(isl_map* m ){

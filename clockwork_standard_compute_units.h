@@ -64,6 +64,14 @@ comp_r02d(const hw_uint<32>& u,
   return u*f*5;
 }
 
+
+static inline
+hw_uint<32>
+float_square(const hw_uint<32>& ub) {
+  auto u = to_float(ub);
+  return to_bits(u*u);
+}
+
 static inline
 hw_uint<32>
 fmag2d(const hw_uint<32>& ub,
