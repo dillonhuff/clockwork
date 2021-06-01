@@ -7853,6 +7853,91 @@ void UBuffer::generate_banks(CodegenOptions& options) {
         return make_pair(acc_vec, final_sched);
     }
 
+  int get_prefetch_step(isl_map* acc_vec_new, isl_map* acc_vec_rem, int vectorized_dim, int addr_dim) {
+
+    int ahead_step = 0;
+    auto new_dim2denom = get_dim2denom(acc_vec_new);
+    vector<int> unmask_dims;
+    //Collect the div dimension on top of vectorization dimension
+    for (auto it: new_dim2denom) {
+        if (it.first < vectorized_dim) {
+            cout << "div dimension: " << it.first << endl;
+            unmask_dims.push_back(it.first);
+        }
+    }
+    //Go through each iteration domain point for div dimension
+    for(isl_set* s: get_domain_unmask_set(acc_vec_new, vectorized_dim, unmask_dims)){
+        cout << "\t" << str(s) << endl;
+        int origin_max = get_dim_max(range(its(acc_vec_new, s)), addr_dim);
+        int trans_max = get_dim_max(range(its(acc_vec_rem, s)), addr_dim);
+        ahead_step = max(ahead_step, origin_max - trans_max);
+    }
+    cout << "ahead_step : " << ahead_step << endl;
+    return ahead_step;
+  }
+
+  pair<isl_map*, isl_map*> get_vectorized_read_simplified(isl_map* acc_0, isl_map* sched, map<string, isl_map*> sched_record_map, int fetch_width, int addr_dim, bool is_dual_port) {
+
+    isl_ctx* ctx = ::ctx(acc_0);
+
+    //First slice the range get the access range transform
+    auto slice = get_set_slice(range(acc_0), addr_dim, 0/*offset*/, fetch_width);
+    cout << "Range slice: " << str(slice) << endl;
+    auto acc_slice = dot(acc_0, slice);
+    cout << "after slice" << str(get_aff(acc_slice)) << endl;
+
+    //From the range transform get the domain transform
+    auto dim2denom = get_dim2denom(acc_slice);
+    auto div_trans = get_div_trans(acc_slice, dim2denom);
+    cout << str(div_trans) << endl;
+    auto acc_vec_new = simplify_expr(dot(inv(div_trans), acc_slice));
+    auto sched_vec_new = simplify_expr(dot(inv(div_trans), sched));
+
+    //chances are that we have floor div in the new expression,
+    //We need to remove the floor div, that this the acc_vec_rem
+    auto acc_pattern = AccessPattern(acc_vec_new, ctx);
+    auto acc_vec_rem = acc_pattern.get_access_map(ctx);
+    cout << str(get_aff(acc_vec_new)) << endl;
+    cout << str(get_aff(acc_vec_rem)) << endl;
+
+    //Get the vectorized dimension
+    int vectorized_dim =
+        get_inner_most_related_dom_dim(acc_vec_rem, addr_dim, fetch_width);
+    cout << "Vectorization dimension: " << vectorized_dim << endl;
+
+    //Get ahead step to make sure that
+    //we still get the correct data in time after remove floor div
+    int ahead_step = get_prefetch_step(acc_vec_new, acc_vec_rem, vectorized_dim, addr_dim);
+
+    //projected out the reaccessing dimension
+    isl_set* sched_dom =
+        get_domain_trans_sched_domain(domain(sched_vec_new), vectorized_dim, fetch_width);
+    cout << "sched domain: " << str(sched_dom) << endl;
+    sched_vec_new = its(sched_vec_new, sched_dom);
+    sched_vec_new = remove_irrelevant_in_dim(sched_vec_new);
+    acc_vec_rem = its(acc_vec_rem, sched_dom);
+    acc_vec_rem = remove_irrelevant_in_dim(acc_vec_rem);
+    cout << "sched before projection: " << str(sched_vec_new) << endl;
+    cout << "access: " << str(acc_vec_rem) << endl;
+
+    //Getting the newer access dimension after irrelevant dim projection
+    vectorized_dim = get_inner_most_related_dom_dim(acc_vec_rem, addr_dim, fetch_width);
+    cout << "vectorization dimension after irrelevant dimension removal: " << vectorized_dim << endl;
+
+    //Move the schedule ahead and pad the domain
+    if (ahead_step) {
+      acc_vec_rem = pad_to_domain_ubuf_map(acc_vec_rem, vectorized_dim, ahead_step);
+      sched_vec_new = pad_to_domain_ubuf_map(sched_vec_new, vectorized_dim, ahead_step);
+    }
+    cout << "sched before adjust: " << str(sched_vec_new) << endl;
+
+    //Get final schedule
+    auto final_sched =
+        get_sram2tb_schedule_with_check(sched_vec_new, sched_record_map, ahead_step, vectorized_dim, false);
+    cout << "final schedule: " << str(final_sched) << endl;
+    cout << "final access: " << str(acc_vec_rem) << endl;
+    return make_pair(acc_vec_rem, final_sched);
+  }
 
     pair<isl_map*, isl_map*> get_vectorized_read(isl_map* acc_0, isl_map* sched, map<string, isl_map*> sched_record_map, int fetch_width, int addr_dim, bool is_dual_port) {
         int vectorize_loop_dim = get_inner_most_related_dom_dim(acc_0, addr_dim, fetch_width);
@@ -8146,7 +8231,7 @@ void UBuffer::generate_banks(CodegenOptions& options) {
 
 
               //New method for sram read schedule
-              auto sram_ir = get_vectorized_read(
+              auto sram_ir = get_vectorized_read_simplified(
                       to_map(access_map.at(out_pt_name)),
                       to_map(schedule.at(out_pt_name)),
                       sched_record_map, fetch_width, dim_id, is_dual_port);

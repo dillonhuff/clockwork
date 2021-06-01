@@ -360,7 +360,7 @@ class AccessPattern {
               vector<string> sum_list;
               for (auto itr = row.begin()+1; itr != row.end(); itr ++ ){
                   int item = *itr;
-                  int cnt = itr - row.begin() ;
+                  int cnt = itr - row.begin() -1;
                   if (item == 0 ) {
                       continue;
                   }
@@ -2798,9 +2798,15 @@ vector<string> buffer_vectorization(string buf_name, int dim_id, int fetch_width
 
 vector<string> buffer_vectorization(vector<string> buf_name_vec, int dim_id, int fetch_width, map<string, UBuffer> & buffers);
 
+
 //helper function for the new vectorization pass
 pair<isl_map*, isl_map*> get_vectorized_write(isl_map* acc_0, isl_map* sched, int fetch_width, int addr_dim);
 pair<isl_map*, isl_map*> get_vectorized_read(isl_map* acc_0, isl_map* sched, map<string, isl_map*> sched_record_map, int fetch_width, int addr_dim, bool is_dual_port = false);
+pair<isl_map*, isl_map*> get_vectorized_read_simplified(isl_map* acc_0, isl_map* sched, map<string, isl_map*> sched_record_map, int fetch_width, int addr_dim, bool is_dual_port = false);
+//Helper function to get schedule
+isl_map* get_sram2tb_schedule_with_check(isl_map* out_sched, map<string, isl_map*> sched_map, int ahead_step, int vectorize_loop_dim, bool is_dual_port);
+
+
 
 static inline
 std::ostream& operator<<(std::ostream& out, const AccessPattern& acc_pattern) {
@@ -2892,8 +2898,6 @@ bool inner_bank_offset_is_legal(isl_map* slot_func,
     umap* op_writes,
     umap* op_reads,
     umap* sched);
-
-
 
 vector<string> generate_multilinear_address_components(const std::string& pt, bank& bnk, UBuffer& buf);
 

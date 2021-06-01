@@ -4162,6 +4162,48 @@ isl_map* get_domain_mask(isl_map* m, int vec_dim) {
     return trans;
 }
 
+vector<isl_set*> get_domain_unmask_set(isl_map* m, int vec_dim, vector<int> unmask_dims) {
+    int dim = num_in_dims(m);
+    auto dom = domain(m);
+    string dom_name = domain_name(m);
+    vector<string> var_mask;
+    for (int i = 0; i < dim; i++) {
+        if (i <= vec_dim && !elem(i, unmask_dims)) {
+            var_mask.push_back("i" + str(i) + "=" + str(get_dim_min(dom, i)));
+        } else {
+            var_mask.push_back("i" + str(i));
+        }
+    }
+    string base_str = "{" + dom_name + bracket_list(var_mask) + "}";
+    cout << "base_str : " << base_str << endl;
+    auto base_set = isl_set_read_from_str(ctx(m), base_str.c_str());
+    vector<isl_set*> prev, next;
+    prev.push_back(base_set);
+    for (int unmask_dim: unmask_dims){
+      for (int dim_val = get_dim_min(dom, unmask_dim); dim_val <= get_dim_max(dom, unmask_dim); dim_val ++) {
+        vector<string> var_mask_its;
+        for (int i = 0; i < dim; i++) {
+          if (elem(i, unmask_dims)) {
+            var_mask_its.push_back("i" + str(i) + "=" + str(dim_val));
+          } else {
+            var_mask_its.push_back("i" + str(i));
+          }
+        }
+        string its_str = "{" + dom_name + bracket_list(var_mask_its) + "}";
+        cout << "its_str: " << its_str << endl;
+        auto its_set = isl_set_read_from_str(ctx(m), its_str.c_str());
+
+        //add product set
+        for (auto prev_set : prev) {
+            next.push_back(its(prev_set, its_set));
+        }
+      }
+      prev = next;
+      next = vector<isl_set*>();
+    }
+    return prev;
+}
+
 isl_map* get_domain_trans(isl_set* dom, int pos, int fetch_width) {
     string dom_name = name(dom);
     int dim = num_dims(dom);

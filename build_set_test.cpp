@@ -11610,6 +11610,29 @@ void blur_and_downsample_test() {
 
 void playground() {
     {
+      isl_ctx* ctx = isl_ctx_alloc();
+      auto acc_0 = isl_map_read_from_str(ctx,"{ op[i0, i1]-> data[i0 + i1]: 0<=i0<3 and 0 <= i1 <= 7}");
+      auto sched = isl_map_read_from_str(ctx,"{ op[i0, i1]-> [10 + i0*10 + i1]: 0<=i0<3and 0 <= i1 <= 7 }");
+      auto read_ir = get_vectorized_read_simplified(acc_0, sched, {}, 2, 0);
+      auto acc_vec = read_ir.first;
+      auto sched_vec = read_ir.second;
+      cout << "After vec read access map: " << str(simplify_expr(acc_vec)) << endl;
+      cout << "After vec read sched: " << str(sched_vec) << endl;
+      assert(false);
+    }
+    {
+      isl_ctx* ctx = isl_ctx_alloc();
+      auto acc_0 = isl_map_read_from_str(ctx,"{ op[i0, i1]-> data[i0 + i1]: 0<=i0<8 and 0 <= i1 <= 2}");
+      auto sched = isl_map_read_from_str(ctx,"{ op[i0, i1]-> [14 + i0*3 + i1]: 0<=i0<8and 0 <= i1 <= 2 }");
+      get_vectorized_read_simplified(acc_0, sched, {}, 0, 0, false);
+      auto read_ir = get_vectorized_read(acc_0, sched, {}, 4, 0);
+      auto acc_vec = read_ir.first;
+      auto sched_vec = read_ir.second;
+      cout << "After vec read access map: " << str(simplify_expr(acc_vec)) << endl;
+      cout << "After vec read sched: " << str(sched_vec) << endl;
+      assert(false);
+    }
+    {
         isl_ctx* ctx = isl_ctx_alloc();
         auto acc_0 = isl_map_read_from_str(ctx,"{ sram2tb[i0, i2, i1]-> data[i0, i1+i2]: 0<=i0<=61 and 0<=i1<=61 and 0<=i2<=7}");
 
@@ -16900,7 +16923,8 @@ void access_pattern_read_unit_tests() {
 
   auto acc_0 = isl_map_read_from_str(ctx,"{ op[i0]-> data[i0]: 0<=i0<=61}");
   auto sched = isl_map_read_from_str(ctx,"{ op[i0]-> [i0]: 0<=i0<=61 }");
-  auto read_ir = get_vectorized_read(acc_0, sched, {}, 4, 0);
+  //auto read_ir = get_vectorized_read(acc_0, sched, {}, 4, 0);
+  auto read_ir = get_vectorized_read_simplified(acc_0, sched, {}, 4, 0);
   auto acc_vec = read_ir.first;
   auto sched_vec = read_ir.second;
   cout << "After vec read access map: " << str(simplify_expr(acc_vec)) << endl;
@@ -16912,7 +16936,8 @@ void access_pattern_read_unit_tests() {
   sched = isl_map_read_from_str(ctx,"{ op[i0]-> [15 + i0]: 0<=i0<=61 }");
   auto sched_read = isl_map_read_from_str(ctx,"{ op_read[i0]-> [13 + 4*i0]: 0<=i0<=15 }");
   auto sched_write = isl_map_read_from_str(ctx,"{ op_write[i0]-> [4 + 4*i0]: 0<=i0<=15 }");
-  read_ir = get_vectorized_read(acc_0, sched,
+  //read_ir = get_vectorized_read(acc_0, sched,
+  read_ir = get_vectorized_read_simplified(acc_0, sched,
           {{"sram2tb_0", sched_read}, {"agg2sram_0", sched_write}}, 4, 0);
   acc_vec = read_ir.first;
   sched_vec = read_ir.second;
@@ -16920,22 +16945,25 @@ void access_pattern_read_unit_tests() {
   cout << "After vec read sched: " << str(sched_vec) << endl;
   assert(get_dim_min(range(sched_vec), 0) == 11);
 
+  //Need prefetch 1 word
   acc_0 = isl_map_read_from_str(ctx,"{ op[i0]-> data[2+i0]: 0<=i0<=61}");
   sched = isl_map_read_from_str(ctx,"{ op[i0]-> [16 + i0]: 0<=i0<=61 }");
   sched_read = isl_map_read_from_str(ctx,"{ op_read[i0]-> [13 + 4*i0]: 0<=i0<=15 }");
   sched_write = isl_map_read_from_str(ctx,"{ op_write[i0]-> [4 + 4*i0]: 0<=i0<=15 }");
-  read_ir = get_vectorized_read(acc_0, sched,
+  //read_ir = get_vectorized_read(acc_0, sched,
+  read_ir = get_vectorized_read_simplified(acc_0, sched,
           {{"sram2tb_0", sched_read}, {"agg2sram_0", sched_write}}, 4, 0);
   acc_vec = read_ir.first;
   sched_vec = read_ir.second;
   cout << "After vec read access map: " << str(acc_vec) << endl;
   cout << "After vec read sched: " << str(sched_vec) << endl;
-  assert(get_dim_min(range(sched_vec), 0) == 14);
+  assert(get_dim_min(range(sched_vec), 0) == 11);
 
   acc_0 = isl_map_read_from_str(ctx,"{ op[i0, i1]-> data[i0]: 0<=i0<=7 and 0 <= i1 <= 1}");
   sched = isl_map_read_from_str(ctx,"{ op[i0, i1]-> [14 + i0*2+i1]: 0<=i0<=7 and 0 <= i1 <=1 }");
   sched_write = isl_map_read_from_str(ctx,"{ op_write[i0]-> [8 + 8*i0]: 0<=i0<=7 }");
-  read_ir = get_vectorized_read(acc_0, sched,
+  //read_ir = get_vectorized_read(acc_0, sched,
+  read_ir = get_vectorized_read_simplified(acc_0, sched,
           {{"agg2sram_0", sched_write}}, 4, 0);
   acc_vec = read_ir.first;
   sched_vec = read_ir.second;
@@ -16958,7 +16986,8 @@ void access_pattern_read_unit_tests() {
 
   acc_0 = isl_map_read_from_str(ctx,"{ sram2tb[root = 0, i0, i2, i1]-> data[i0, i1+i2]: 0<=i0<=61 and 0<=i1<=61 and 0<=i2<=7}");
   sched = isl_map_read_from_str(ctx,"{ sram2tb[root = 0, i0, i2, i1]-> [560*i0+ 70*i2+i1]: 0<=i0<=61 and 0<=i1<=61 and 0<=i2<=7}");
-  read_ir = get_vectorized_read(acc_0, sched, {}, 4, 1);
+  read_ir = get_vectorized_read_simplified(acc_0, sched, {}, 4, 1);
+  //read_ir = get_vectorized_read(acc_0, sched, {}, 4, 1);
   acc_vec = read_ir.first;
   sched_vec = read_ir.second;
   assert(stride_in_dim(sched_vec, 2) == 280);
@@ -16968,7 +16997,8 @@ void access_pattern_read_unit_tests() {
 
   acc_0 = isl_map_read_from_str(ctx,"{ op[i0, i1]-> data[i0 + i1]: 0<=i0<8 and 0 <= i1 <= 2}");
   sched = isl_map_read_from_str(ctx,"{ op[i0, i1]-> [14 + i0*3 + i1]: 0<=i0<8and 0 <= i1 <= 2 }");
-  read_ir = get_vectorized_read(acc_0, sched, {}, 4, 0);
+  //read_ir = get_vectorized_read(acc_0, sched, {}, 4, 0);
+  read_ir = get_vectorized_read_simplified(acc_0, sched, {}, 4, 0);
   acc_vec = read_ir.first;
   sched_vec = read_ir.second;
   cout << "After vec read access map: " << str(simplify_expr(acc_vec)) << endl;
