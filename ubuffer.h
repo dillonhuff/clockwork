@@ -2591,7 +2591,7 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
     void generate_coreir_without_ctrl(CodegenOptions& options, UBufferImpl& impl, CoreIR::ModuleDef* def, schedule_info& info);
     Json generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> &rewrite_buffer);
     Json generate_ubuf_args_old(CodegenOptions& options, map<string, UBuffer> & rewrite_buffer);
-    Json generate_ubuf_args(CodegenOptions& options, UBuffer& rewrite_buffer);
+    Json generate_ubuf_args(CodegenOptions& options, UBuffer& rewrite_buffer, string mem_name);
 
     void generate_stencil_valid_config(CodegenOptions& options, string bk_name);
     CoreIR::Instance* generate_lake_tile_instance(
@@ -3136,8 +3136,8 @@ struct UBufferImpl {
     int capacity = int_upper_bound(card(to_uset(bank_rddom.at(bank_id))));
     auto mem_hierarchy = options.mem_hierarchy;
     cout << "mem hierarchy size: " << mem_hierarchy.size() << endl;
-    if (mem_hierarchy.size() == 1)
-        return pick(mem_hierarchy).first;
+    if (mem_hierarchy.count("regfile") == 0)
+        return "mem";
     vector<pair<string, LakeCollateral> > mem_vec(mem_hierarchy.begin(), mem_hierarchy.end());
     cout << mem_vec.size() << endl;
     sort(mem_vec.begin(), mem_vec.end(),

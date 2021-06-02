@@ -2312,22 +2312,26 @@
           "io16_hw_output_stencil_clkwrk_0_op_hcompute_hw_output_stencil_write_0":{
             "genref":"cgralib.IO",
             "genargs":{"width":["Int",16]},
-            "modargs":{"mode":["String","out"]}
+            "modargs":{"mode":["String","out"]},
+            "metadata":{"in2glb_0":{"cycle_starting_addr":[613],"cycle_stride":[1,65],"dimensionality":2,"extent":[56,56],"write_data_starting_addr":[0],"write_data_stride":[1,56]}}
           },
           "io16_hw_output_stencil_clkwrk_1_op_hcompute_hw_output_stencil_1_write_0":{
             "genref":"cgralib.IO",
             "genargs":{"width":["Int",16]},
-            "modargs":{"mode":["String","out"]}
+            "modargs":{"mode":["String","out"]},
+            "metadata":{"in2glb_0":{"cycle_starting_addr":[613],"cycle_stride":[1,65],"dimensionality":2,"extent":[56,56],"write_data_starting_addr":[0],"write_data_stride":[1,56]}}
           },
           "io16_hw_output_stencil_clkwrk_2_op_hcompute_hw_output_stencil_2_write_0":{
             "genref":"cgralib.IO",
             "genargs":{"width":["Int",16]},
-            "modargs":{"mode":["String","out"]}
+            "modargs":{"mode":["String","out"]},
+            "metadata":{"in2glb_0":{"cycle_starting_addr":[613],"cycle_stride":[1,65],"dimensionality":2,"extent":[56,56],"write_data_starting_addr":[0],"write_data_stride":[1,56]}}
           },
           "io16in_hw_input_stencil_op_hcompute_hw_input_global_wrapper_stencil_read_0":{
             "genref":"cgralib.IO",
             "genargs":{"width":["Int",16]},
-            "modargs":{"mode":["String","in"]}
+            "modargs":{"mode":["String","in"]},
+            "metadata":{"glb2out_0":{"cycle_starting_addr":[0],"cycle_stride":[1,65],"dimensionality":2,"extent":[64,64],"read_data_starting_addr":[0],"read_data_stride":[1,64]}}
           },
           "io1_hw_output_stencil_clkwrk_0_op_hcompute_hw_output_stencil_write_valid":{
             "modref":"cgralib.BitIO",
@@ -5890,8 +5894,8 @@
           ["op_hcompute_corrected_stencil_2$inner_compute$umin_demosaicked_1_stencil_8_1457_1465$min_mux$mux.data.in.1","op_hcompute_corrected_stencil_2$inner_compute$const_p10000__1457$11.out"],
           ["op_hcompute_corrected_stencil_2$inner_compute$umin_demosaicked_1_stencil_9_1457_1472$ucomp$compop.data.in.1","op_hcompute_corrected_stencil_2$inner_compute$const_p10000__1457$2.out"],
           ["op_hcompute_corrected_stencil_2$inner_compute$umin_demosaicked_1_stencil_9_1457_1472$min_mux$mux.data.in.1","op_hcompute_corrected_stencil_2$inner_compute$const_p10000__1457$21.out"],
-          ["op_hcompute_corrected_stencil_2$inner_compute$umin_demosaicked_1_stencil_7_1457_1458$ucomp$compop.data.in.1","op_hcompute_corrected_stencil_2$inner_compute$const_p10000__1457.out"],
-          ["op_hcompute_corrected_stencil_2$inner_compute$umin_demosaicked_1_stencil_7_1457_1458$min_mux$mux.data.in.1","op_hcompute_corrected_stencil_2$inner_compute$const_p10000__14571.out"],
+          ["op_hcompute_corrected_stencil_2$inner_compute$umin_demosaicked_1_stencil_7_1457_1458$min_mux$mux.data.in.1","op_hcompute_corrected_stencil_2$inner_compute$const_p10000__1457.out"],
+          ["op_hcompute_corrected_stencil_2$inner_compute$umin_demosaicked_1_stencil_7_1457_1458$ucomp$compop.data.in.1","op_hcompute_corrected_stencil_2$inner_compute$const_p10000__14571.out"],
           ["op_hcompute_corrected_stencil_2$inner_compute$mult_middle_1473883_1477$sextb.in","op_hcompute_corrected_stencil_2$inner_compute$const_p883_883$1.out"],
           ["op_hcompute_corrected_stencil_2$inner_compute$mult_middle_1459n31_1464$sexta.out","op_hcompute_corrected_stencil_2$inner_compute$mult_middle_1459n31_1464$mult.in0"],
           ["op_hcompute_corrected_stencil_2$inner_compute$mult_middle_1459n31_1464$sextb.out","op_hcompute_corrected_stencil_2$inner_compute$mult_middle_1459n31_1464$mult.in1"],
@@ -5929,8 +5933,8 @@
           ["op_hcompute_curved_stencil_1$inner_compute$smin_corrected_stencil_2_4605_4606$min_mux$mux.data.out","op_hcompute_curved_stencil_1$inner_compute$smax_4606_4607_4608$cgramax.data.in.0"],
           ["op_hcompute_curved_stencil_1$inner_compute$smin_corrected_stencil_2_4605_4606$scomp$compop.bit.out","op_hcompute_curved_stencil_1$inner_compute$smin_corrected_stencil_2_4605_4606$min_mux$mux.bit.in.0"],
           ["op_hcompute_curved_stencil_2$inner_compute$smax_5652_5653_5654$cgramax.data.in.1","op_hcompute_curved_stencil_2$inner_compute$const_p0__5653.out"],
-          ["op_hcompute_curved_stencil_2$inner_compute$smin_corrected_stencil_3_5651_5652$scomp$compop.data.in.1","op_hcompute_curved_stencil_2$inner_compute$const_p1023__5651.out"],
-          ["op_hcompute_curved_stencil_2$inner_compute$smin_corrected_stencil_3_5651_5652$min_mux$mux.data.in.1","op_hcompute_curved_stencil_2$inner_compute$const_p1023__56511.out"],
+          ["op_hcompute_curved_stencil_2$inner_compute$smin_corrected_stencil_3_5651_5652$min_mux$mux.data.in.1","op_hcompute_curved_stencil_2$inner_compute$const_p1023__5651.out"],
+          ["op_hcompute_curved_stencil_2$inner_compute$smin_corrected_stencil_3_5651_5652$scomp$compop.data.in.1","op_hcompute_curved_stencil_2$inner_compute$const_p1023__56511.out"],
           ["op_hcompute_curved_stencil_2$inner_compute$rom_curvea0$2_rom.ren_in_0","op_hcompute_curved_stencil_2$inner_compute$rom_curvea0$2_ren_lutcnst.bit.out"],
           ["op_hcompute_curved_stencil_2$inner_compute$smax_5652_5653_5654$cgramax.data.out","op_hcompute_curved_stencil_2$inner_compute$rom_curvea0$2_rom.addr_in_0"],
           ["op_hcompute_curved_stencil_2$inner_compute$smin_corrected_stencil_3_5651_5652$min_mux$mux.data.out","op_hcompute_curved_stencil_2$inner_compute$smax_5652_5653_5654$cgramax.data.in.0"],
@@ -7173,8 +7177,8 @@
           ["inner_compute$umin_demosaicked_1_stencil_8_1457_1465$min_mux$mux.data.in.1","inner_compute$const_p10000__1457$11.out"],
           ["inner_compute$umin_demosaicked_1_stencil_9_1457_1472$ucomp$compop.data.in.1","inner_compute$const_p10000__1457$2.out"],
           ["inner_compute$umin_demosaicked_1_stencil_9_1457_1472$min_mux$mux.data.in.1","inner_compute$const_p10000__1457$21.out"],
-          ["inner_compute$umin_demosaicked_1_stencil_7_1457_1458$ucomp$compop.data.in.1","inner_compute$const_p10000__1457.out"],
-          ["inner_compute$umin_demosaicked_1_stencil_7_1457_1458$min_mux$mux.data.in.1","inner_compute$const_p10000__14571.out"],
+          ["inner_compute$umin_demosaicked_1_stencil_7_1457_1458$min_mux$mux.data.in.1","inner_compute$const_p10000__1457.out"],
+          ["inner_compute$umin_demosaicked_1_stencil_7_1457_1458$ucomp$compop.data.in.1","inner_compute$const_p10000__14571.out"],
           ["inner_compute$mult_middle_1473883_1477$sextb.in","inner_compute$const_p883_883$1.out"],
           ["inner_compute$mult_middle_1459n31_1464$sexta.out","inner_compute$mult_middle_1459n31_1464$mult.in0"],
           ["inner_compute$mult_middle_1459n31_1464$sextb.out","inner_compute$mult_middle_1459n31_1464$mult.in1"],
@@ -7380,8 +7384,8 @@
         },
         "connections":[
           ["inner_compute$smax_5652_5653_5654$cgramax.data.in.1","inner_compute$const_p0__5653.out"],
-          ["inner_compute$smin_corrected_stencil_3_5651_5652$scomp$compop.data.in.1","inner_compute$const_p1023__5651.out"],
-          ["inner_compute$smin_corrected_stencil_3_5651_5652$min_mux$mux.data.in.1","inner_compute$const_p1023__56511.out"],
+          ["inner_compute$smin_corrected_stencil_3_5651_5652$min_mux$mux.data.in.1","inner_compute$const_p1023__5651.out"],
+          ["inner_compute$smin_corrected_stencil_3_5651_5652$scomp$compop.data.in.1","inner_compute$const_p1023__56511.out"],
           ["inner_compute$rom_curvea0$2_rom.ren_in_0","inner_compute$rom_curvea0$2_ren_lutcnst.bit.out"],
           ["inner_compute$smax_5652_5653_5654$cgramax.data.out","inner_compute$rom_curvea0$2_rom.addr_in_0"],
           ["self.curved_stencil_op_hcompute_curved_stencil_2_write.0","inner_compute$rom_curvea0$2_rom.data_out_0"],

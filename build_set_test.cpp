@@ -15178,6 +15178,7 @@ void lake_identity_stream_SMT_test(int x, int y, string suffix) {
   //emit_lake_stream(buffers_opt, hsh, "./lake_stream/identity_stream/");
   CodegenOptions options;
   options.add_memory_hierarchy("mem");
+  options.add_memory_hierarchy("glb");
   UBuffer tmp;
   //options.mem_tile.multi_sram_accessor = true;
   options.dir = "./lake_controllers/identity_stream/";
@@ -18734,6 +18735,7 @@ void generate_smt_stream_for_garnet_single_port_mem(prog& prg) {
 
   CodegenOptions options = garnet_codegen_single_port_with_addrgen_options(prg, "aha_garnet_smt");
   options.add_memory_hierarchy("mem");
+  options.add_memory_hierarchy("glb");
   options.emit_smt_stream = true;
   schedule_info sched = garnet_schedule_info(options, prg);
   garnet_single_port_ram_schedule(options, sched, prg.root, prg);
@@ -18842,6 +18844,7 @@ void compile_for_garnet_fetch2_mem(prog& prg,
 
   CodegenOptions options = garnet_codegen_single_port_with_addrgen_options(prg, dir);
   options.add_memory_hierarchy("mem");
+  options.add_memory_hierarchy("glb");
   options.mem_hierarchy.at("mem").set_config_fetch2();
   cout << options.mem_hierarchy.at("mem").fetch_width << endl;
   if (multi_level_mem)
@@ -18912,6 +18915,7 @@ void compile_for_garnet_single_port_mem(prog& prg,
 
   CodegenOptions options = garnet_codegen_single_port_with_addrgen_options(prg, dir);
   options.add_memory_hierarchy("mem");
+  options.add_memory_hierarchy("glb");
   if (multi_level_mem)
       options.add_memory_hierarchy("regfile");
   options.emit_smt_stream = gen_smt_stream;

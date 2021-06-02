@@ -1600,7 +1600,9 @@ pair<isl_map*, isl_map*> merge_dom_dim(isl_map* schedule, isl_map* acc_map) {
         auto pa = all_pair_a.front();
         auto ps = all_pair_s.front();
         if (pa.first == ps.first) {
-            unordered_set<int> tmp({pa.first - merge_cnt, pa.second - merge_cnt});
+            cout << pa << ", " << ps << endl;
+            cout << str(a_map) << endl;
+            unordered_set<int> tmp({pa.first , pa.second });
             auto reduce_map = linear_domain_map_with_index(domain(a_map), tmp);
             a_map = to_map(dot_domain(to_umap(a_map), to_umap(reduce_map)));
             sched = to_map(dot_domain(to_umap(sched), to_umap(reduce_map)));
@@ -1740,7 +1742,7 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> &
 }
 
 //Simplify the single fetch width memory codegen
-Json UBuffer::generate_ubuf_args(CodegenOptions& options, UBuffer& ubuf) {
+Json UBuffer::generate_ubuf_args(CodegenOptions& options, UBuffer& ubuf, string mem_name) {
 
     Json ret;
 
@@ -1775,9 +1777,9 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, UBuffer& ubuf) {
     //Go through all the ops and produce the read and write
     vector<string> ops = ubuf.get_ops_sorted_by_bundle();
     cout << "Sorted ops: " << ops << endl;
-    auto mem = options.mem_hierarchy.at("regfile");
-    int word_width = mem.word_width.at("regfile");
-    int capacity = mem.capacity.at("regfile");
+    auto mem = options.mem_hierarchy.at(mem_name);
+    int word_width = mem.word_width.at(mem_name);
+    int capacity = mem.capacity.at(mem_name);
     int in_cnt = 0, out_cnt = 0;
     for (auto op_name: ops) {
         auto sched = op2sched.at(op_name);
@@ -1802,13 +1804,13 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, UBuffer& ubuf) {
                 auto aff = get_aff(new_sched);
                 auto dom = ::domain(new_sched);
                 auto config_info = generate_accessor_config_from_aff_expr(dom, aff);
-                int port_width = mem.in_port_width.at("regfile");
+                int port_width = mem.in_port_width.at(mem_name);
                 auto addressor = generate_addressor_config_from_aff_expr(
                         get_aff(m_pair.second), false, false, word_width, capacity, port_width);
                         //get_aff(to_map(linear_acc_map)), false, false, word_width, capacity, port_width);
                 config_info.merge(addressor);
                 cout << "\tWrite map: " << str(acc_map) << endl;
-            add_lake_config(ret, config_info, num_in_dims(aff), "in2regfile_" + str(in_cnt));
+            add_lake_config(ret, config_info, num_in_dims(aff), "in2"+mem_name +"_" + str(in_cnt));
             in_cnt ++;
         }
         if(op2read_map.count(op_name)) {
@@ -1829,13 +1831,13 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, UBuffer& ubuf) {
                 auto aff = get_aff(new_sched);
                 auto dom = ::domain(new_sched);
                 auto config_info = generate_accessor_config_from_aff_expr(dom, aff);
-                int port_width = mem.out_port_width.at("regfile");
+                int port_width = mem.out_port_width.at(mem_name);
                 auto addressor = generate_addressor_config_from_aff_expr(
                         get_aff(m_pair.second), true, false, word_width, capacity, port_width);
                         //get_aff(linear_acc_map), true, false, word_width, capacity, port_width);
                 config_info.merge(addressor);
                 cout << "\tRead map: " << str(acc_map) << endl;
-            add_lake_config(ret, config_info, num_in_dims(aff), "regfile2out_" + str(out_cnt));
+            add_lake_config(ret, config_info, num_in_dims(aff), mem_name +"2out_" + str(out_cnt));
             out_cnt ++;
         }
     }
@@ -2551,7 +2553,7 @@ CoreIR::Instance* UBuffer::map_ubuffer_to_cgra(CodegenOptions& options, CoreIR::
   if (capacity <= 32 && multi_level_mem ) {
     cout << "Generate config for register file!" << endl;
     //TODO generate the config file on the fly
-    config_file = generate_ubuf_args(options, target_buf);
+    config_file = generate_ubuf_args(options, target_buf, "regfile");
     config_mode = "pond";
   } else {
     //buffer_vectorization(options.iis, bk.name + "_ubuf", 1, 4, rewrite_buffer);
@@ -2611,7 +2613,7 @@ void cgpl_post_processing(CoreIR::ModuleDef* def, CoreIR::Instance*buf, CoreIR::
 
 CoreIR::Instance* UBuffer::generate_accum_reg_instance(CodegenOptions& options, CoreIR::ModuleDef* def) {
     //Save the config argument in ubuffer data structure
-    config_file = generate_ubuf_args(options, *this);
+    config_file = generate_ubuf_args(options, *this, "regfile");
 
     //TODO: check we define pond
     auto buf_ins = generate_pond_instance(def, options, "ub_"+name,

@@ -2175,6 +2175,12 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
       def->connect(def->sel(buf.first + ".reset"), def->sel("self.reset"));
       //def->connect(def->sel(buf.first + ".rst_n"), def->sel("self.rst_n"));
       //def->connect(def->sel(buf.first + ".flush"), def->sel("self.flush"));
+    } else {
+      //is boundary buffer
+      //generate the global buffer configuration and save in edge buffers' config file
+      auto& eb = buf.second;
+      auto eb_config = eb.generate_ubuf_args(options, eb, "glb");
+      eb.config_file = eb_config;
     }
   }
 
@@ -2535,6 +2541,57 @@ void getAllIOPaths(Wireable* w, IOpaths& paths) {
 
 }
 
+void addIOsWithGLBConfig(Context* c, Module* top, map<string, UBuffer>& buffers) {
+  ModuleDef* mdef = top->getDef();
+
+  Values aWidth({{"width",Const::make(c,16)}});
+  IOpaths iopaths;
+  getAllIOPaths(mdef->getInterface(), iopaths);
+  Instance* pt = addPassthrough(mdef->getInterface(),"_self");
+  for (auto path : iopaths.IO16) {
+    string path_name = *(path.begin()+1);
+    //TODO: this is a hacky way to parse the buf name
+    string buf_name = take_until_str(path_name, "_op");
+    auto in_buf =  buffers.at(buf_name);
+    string ioname = "io16in_" + join(++path.begin(),path.end(),string("_"));
+    auto inst = mdef->addInstance(ioname,"cgralib.IO",aWidth,{{"mode",Const::make(c,"in")}});
+    inst->getMetaData() = in_buf.config_file;
+    path[0] = "in";
+    path.insert(path.begin(),"_self");
+    mdef->connect({ioname,"out"},path);
+  }
+  for (auto path : iopaths.IO16in) {
+    string path_name = *(path.begin()+1);
+    //TODO: this is a hacky way to parse the buf name
+    string buf_name = take_until_str(path_name, "_op");
+    auto out_buf =  buffers.at(buf_name);
+    string ioname = "io16_" + join(++path.begin(),path.end(),string("_"));
+    auto inst = mdef->addInstance(ioname,"cgralib.IO",aWidth,{{"mode",Const::make(c,"out")}});
+    inst->getMetaData() = out_buf.config_file;
+    path[0] = "in";
+    path.insert(path.begin(),"_self");
+    mdef->connect({ioname,"in"},path);
+  }
+  for (auto path : iopaths.IO1) {
+    string ioname = "io1in_" + join(++path.begin(),path.end(),string("_"));
+    mdef->addInstance(ioname,"cgralib.BitIO",{{"mode",Const::make(c,"in")}});
+    path[0] = "in";
+    path.insert(path.begin(),"_self");
+    mdef->connect({ioname,"out"},path);
+  }
+  for (auto path : iopaths.IO1in) {
+    string ioname = "io1_" + join(++path.begin(),path.end(),string("_"));
+    mdef->addInstance(ioname,"cgralib.BitIO",{{"mode",Const::make(c,"out")}});
+    path[0] = "in";
+    path.insert(path.begin(),"_self");
+    mdef->connect({ioname,"in"},path);
+    //TODO: A hack to keep single valid should check with other apps
+    //break;
+  }
+  mdef->disconnect(mdef->getInterface());
+  inlineInstance(pt);
+}
+
 void addIOs(Context* c, Module* top) {
   ModuleDef* mdef = top->getDef();
 
@@ -2544,6 +2601,8 @@ void addIOs(Context* c, Module* top) {
   Instance* pt = addPassthrough(mdef->getInterface(),"_self");
   for (auto path : iopaths.IO16) {
     string ioname = "io16in_" + join(++path.begin(),path.end(),string("_"));
+    for (auto p: path)
+        cout << "path: " << p << endl;
     mdef->addInstance(ioname,"cgralib.IO",aWidth,{{"mode",Const::make(c,"in")}});
     path[0] = "in";
     path.insert(path.begin(),"_self");
@@ -2574,6 +2633,7 @@ void addIOs(Context* c, Module* top) {
   }
   mdef->disconnect(mdef->getInterface());
   inlineInstance(pt);
+  assert(false);
 }
 
 
@@ -2950,6 +3010,52 @@ void garnet_map_module(Module* top, bool garnet_syntax_trans = false) {
   jpass->writeToStream(file,top->getRefName());
 }
 
+void garnet_map_module(Module* top, map<string, UBuffer> & buffers, bool garnet_syntax_trans = false) {
+  auto c = top->getContext();
+
+  top->print();
+
+  //load_cgramapping(c);
+  LoadDefinition_cgralib(c);
+
+  c->runPasses({"rungenerators"});
+  //A new pass to remove input enable signal affine controller
+  disconnect_input_enable(c, top);
+  c->runPasses({"deletedeadinstances"});
+
+  c->runPasses({"cullgraph"});
+  c->runPasses({"removewires"});
+  //addIOs(c,top);
+  addIOsWithGLBConfig(c, top, buffers);
+  c->runPasses({"cullgraph"});
+  c->addPass(new CustomFlatten);
+  c->runPasses({"customflatten"});
+  if (garnet_syntax_trans) {
+    c->addPass(new MapperPasses::MemInitCopy);
+    c->runPasses({"meminitcopy"});
+    c->addPass(new MapperPasses::MemSubstitute);
+    c->runPasses({"memsubstitute"});
+    c->addPass(new MapperPasses::RegfileSubstitute);
+    c->runPasses({"regfilesubstitute"});
+  }
+  c->addPass(new MapperPasses::ConstDuplication);
+  c->runPasses({"constduplication"});
+  c->addPass(new MapperPasses::MemConst);
+  c->runPasses({"memconst"});
+
+  c->runPasses({"cullgraph"});
+  c->getPassManager()->printLog();
+  cout << "Trying to save" << endl;
+  c->runPasses({"coreirjson"},{"global","commonlib","mantle"});
+  c->runPasses({"removewires"});
+
+  auto jpass = static_cast<CoreIR::Passes::CoreIRJson*>(c->getPassManager()->getAnalysisPass("coreirjson"));
+  string postmap = "after_mapping_" + top->getName() + ".json";
+  ////Create file here.
+  std::ofstream file(postmap);
+  jpass->writeToStream(file,top->getRefName());
+}
+
 
 void generate_coreir(CodegenOptions& options,
     map<string, UBuffer>& buffers,
@@ -3115,7 +3221,7 @@ void generate_coreir(CodegenOptions& options,
   auto ns_new = context->getNamespace("global");
   //Garnet pass
   if (options.rtl_options.use_prebuilt_memory) {
-    garnet_map_module(prg_mod, true);
+    garnet_map_module(prg_mod, buffers, true);
     context->runPasses({"rungenerators", "flatten", "removewires", "cullgraph"});
 
     if(!saveToFile(ns_new,  options.dir + prg.name+ "_garnet.json", prg_mod)) {
