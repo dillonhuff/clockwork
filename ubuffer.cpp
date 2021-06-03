@@ -1682,6 +1682,7 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> &
             out_acc_map = remove_irrelevant_in_dim(out_acc_map);
 
             //linearize access map before codegen
+            cout << str(ubuf.global_range()) << endl;
             auto reduce_map = linear_address_map_lake(to_set(ubuf.global_range()), mem.fetch_width);
             auto linear_acc_map = dot(out_acc_map, reduce_map);
             map_insert(op2write_map, domain_name(out_acc_map), to_umap(linear_acc_map));

@@ -608,6 +608,10 @@ struct ir_node {
     return consumed_value_name({b, loc});
   }
 
+  string add_load(const std::string& b, const std::string& d0, const std::string& d1, const std::string& d2, const std::string& d3, const std::string& d4, const std::string& d5) {
+    return add_load(b, d0 + ", " + d1 + ", " + d2 + ", " + d3 + ", " + d4 + ", " + d5);
+  }
+
   string add_load(const std::string& b, const std::string& d0, const std::string& d1, const std::string& d2, const std::string& d3, const std::string& d4) {
     return add_load(b, d0 + ", " + d1 + ", " + d2 + ", " + d3 + ", " + d4);
   }
@@ -650,6 +654,9 @@ struct ir_node {
     }
     return ps;
 
+  }
+  void add_store(const std::string& b, const std::string& d0, const std::string& d1, const std::string& d2, const std::string& d3, const std::string& d4, const std::string& d5) {
+    add_store(b, d0 + ", " + d1 + ", " + d2 + ", " + d3 + ", " + d4 + ", " + d5);
   }
 
   void add_store(const std::string& b, const std::string& d0, const std::string& d1, const std::string& d2, const std::string& d3, const std::string& d4) {
