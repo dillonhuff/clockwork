@@ -2579,10 +2579,14 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
     //helper function for wire IO connection
     void wire_ubuf_IO(CodegenOptions& options, CoreIR::ModuleDef* def, map<string, CoreIR::Wireable*> & pt2wire, CoreIR::Instance* buf, UBufferImpl & impl, int bank_id, bool with_ctrl);
     //Helper function for generate cgra mem instance
-    CoreIR::Instance* map_ubuffer_to_cgra(CodegenOptions& options, CoreIR::ModuleDef* def, UBuffer& target_buf);
+    CoreIR::Instance* map_ubuffer_to_cgra(CodegenOptions& options, CoreIR::ModuleDef* def, UBuffer& target_buf, string config_mode);
     //Helper function for generate pond instance
 
+    //optimization pass for accumulation register insert
     CoreIR::Instance* generate_accum_reg_instance(CodegenOptions& options, CoreIR::ModuleDef* def);
+
+    //Helper function to determine the memory level
+    string determine_config_mode(CodegenOptions& options, UBuffer& target_buf);
 
     //Wrappers for generate coreir
     //original memory generation for memory tile with enable and valid

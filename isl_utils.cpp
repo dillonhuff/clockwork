@@ -2562,6 +2562,8 @@ isl_map* peel_schedule_domain_dim(isl_map* m, int dom_dim, int delay) {
 
 isl_map* remove_irrelevant_in_dim(isl_map* m) {
     vector<bool> rel_map = relation_map(m);
+    if (rel_map.size() == 0)
+        return m;
     vector<int> rem_dim;
     isl_map* ret = cpy(m);
     isl_set* dom = domain(m);
@@ -4359,14 +4361,15 @@ std::vector<isl_aff*> get_affs(isl_multi_aff* saff) {
 }
 
 std::vector<isl_aff*> get_aff_vec(isl_map* m) {
+  vector<isl_aff*> ret;
   auto lm = isl_pw_multi_aff_from_map(cpy(m));
+  if (!lm)
+      return ret;
   //cout << tab(1) << str(m) << endl;
   //cout << tab(2) << "lexmax: " << str(lm) << endl;
   vector<pair<isl_set*, isl_multi_aff*> > pieces =
     get_pieces(lm);
   assert(pieces.size() == 1);
-
-  vector<isl_aff*> ret;
   auto saff = pieces.at(0).second;
   for (int i = 0; i < get_size(saff); i ++) {
     auto aff = isl_multi_aff_get_aff(saff, i);

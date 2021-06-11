@@ -2540,7 +2540,33 @@ void UBuffer::generate_sreg_and_wire(CodegenOptions& options, UBufferImpl& impl,
   }
 }
 
-CoreIR::Instance* UBuffer::map_ubuffer_to_cgra(CodegenOptions& options, CoreIR::ModuleDef* def, UBuffer& target_buf) {
+string UBuffer::determine_config_mode(CodegenOptions& options, UBuffer& target_buf) {
+  auto capacity = total_capacity(target_buf);
+
+  cout << "Vectorization buffer capacity: " << capacity << endl;
+  string config_mode;
+  bool multi_level_mem = options.mem_hierarchy.count("regfile");
+  if (capacity <= 96 && multi_level_mem ) {
+    cout << "Generate config for register file!" << endl;
+    //TODO generate the config file on the fly
+    //config_file = generate_ubuf_args(options, target_buf, "regfile");
+    config_mode = "pond";
+  } else {
+    //buffer_vectorization(options.iis, bk.name + "_ubuf", 1, 4, rewrite_buffer);
+    //cout << "vectorization buf name: " << target_buf.name << endl;
+    //buffer_vectorization(options, {target_buf.name+ "_ubuf"}, vectorized_buf);
+    //vectorized_buf = decouple_multi_tile_ubuffer(options, vectorized_buf);
+    //for (auto buf: vectorized_buf) {
+        //cout << "After vectorization codegen: " << buf.first << endl << buf.second << endl;
+    //}
+    //TODO generate the config file on the fly
+    //config_file = generate_ubuf_args(options, vectorized_buf);
+    config_mode = "lake";
+  }
+  return config_mode;
+}
+
+CoreIR::Instance* UBuffer::map_ubuffer_to_cgra(CodegenOptions& options, CoreIR::ModuleDef* def, UBuffer& target_buf, string config_mode) {
 
   map<string, UBuffer> vectorized_buf;
   string ub_ins_name = "ub_" + target_buf.name;
@@ -2549,9 +2575,8 @@ CoreIR::Instance* UBuffer::map_ubuffer_to_cgra(CodegenOptions& options, CoreIR::
   auto capacity = total_capacity(target_buf);
 
   cout << "Vectorization buffer capacity: " << capacity << endl;
-  string config_mode;
   bool multi_level_mem = options.mem_hierarchy.count("regfile");
-  if (capacity <= 32 && multi_level_mem ) {
+  /*if (capacity <= 32 && multi_level_mem ) {
     cout << "Generate config for register file!" << endl;
     //TODO generate the config file on the fly
     config_file = generate_ubuf_args(options, target_buf, "regfile");
@@ -2567,15 +2592,24 @@ CoreIR::Instance* UBuffer::map_ubuffer_to_cgra(CodegenOptions& options, CoreIR::
     //TODO generate the config file on the fly
     config_file = generate_ubuf_args(options, vectorized_buf);
     config_mode = "lake";
-  }
+  }*/
   CoreIR::Instance* buf;
   if (config_mode == "lake") {
+    cout << "vectorization buf name: " << target_buf.name << endl;
+    buffer_vectorization(options, {target_buf.name+ "_ubuf"}, vectorized_buf);
+    vectorized_buf = decouple_multi_tile_ubuffer(options, vectorized_buf);
+    for (auto buf: vectorized_buf) {
+        cout << "After vectorization codegen: " << buf.first << endl << buf.second << endl;
+    }
+    //TODO generate the config file on the fly
+    config_file = generate_ubuf_args(options, vectorized_buf);
     buf = generate_lake_tile_instance(def, options,
       ub_ins_name, target_buf.name,
       target_buf.num_in_ports(), target_buf.num_out_ports(),
       false/*TODO: exclude stencil valid signal*/, true);
 
   } else if (config_mode == "pond") {
+    config_file = generate_ubuf_args(options, target_buf, "regfile");
     buf = generate_pond_instance(def, options, ub_ins_name,
             target_buf.num_in_ports(), target_buf.num_out_ports());
   }
@@ -2622,7 +2656,13 @@ CoreIR::Instance* UBuffer::generate_accum_reg_instance(CodegenOptions& options, 
     return buf_ins;
 }
 
-void insert_accumulation_register(CodegenOptions & options, CoreIR::ModuleDef* def, UBuffer & buf, map<string, CoreIR::Wireable*> & pt2wire) {
+void insert_accumulation_register(CodegenOptions & options, CoreIR::ModuleDef* def, UBuffer & buf,
+        map<string, CoreIR::Wireable*> & pt2wire, string config_mode) {
+  //only evoke this opitimization for lake
+  if (config_mode != "lake") {
+    return;
+  }
+
   vector<string> update_ops;
   for(auto op: buf.get_ops()) {
     if (buf.is_update_op(op)) {
@@ -2717,13 +2757,13 @@ void insert_accumulation_register(CodegenOptions & options, CoreIR::ModuleDef* d
   //Wire the datapath
   CoreIR::Instance* accum_reg_ins = accum_reg.generate_accum_reg_instance(options, def);
   generate_lake_tile_verilog(options, accum_reg_ins);
-  string config_mode = accum_reg_ins->getMetaData()["mode"];
+  string config_mode_ = accum_reg_ins->getMetaData()["mode"];
 
   //Wire the PE interface with accumulation register
-  def->connect(accum_reg_ins->sel(memDatainPort(config_mode, 1)), pt2wire.at(pick(inpts)));
+  def->connect(accum_reg_ins->sel(memDatainPort(config_mode_, 1)), pt2wire.at(pick(inpts)));
   //pt2wire.at(pick(inpts)) = accum_reg_ins->sel(memDataoutPort(config_mode, 0));
-  def->connect(accum_reg_ins->sel(memDataoutPort(config_mode, 0)), pt2wire.at(pick(outpts)));
-  pt2wire.at(pick(outpts)) = accum_reg_ins->sel(memDatainPort(config_mode, 0));
+  def->connect(accum_reg_ins->sel(memDataoutPort(config_mode_, 0)), pt2wire.at(pick(outpts)));
+  pt2wire.at(pick(outpts)) = accum_reg_ins->sel(memDatainPort(config_mode_, 0));
 
   cout << "original buffer for rewrite: " << buf << endl;
 
@@ -2769,11 +2809,13 @@ void UBuffer::generate_coreir(CodegenOptions& options,
     CoreIR::Instance* cgpl_ctrl;
     bool decouple_ctrl = cgpl_ctrl_optimization(options, def, cgpl_ctrl, target_buf);
 
-    insert_accumulation_register(options, def, target_buf, pt2wire);
+    string config_mode = determine_config_mode(options, target_buf);
+
+    insert_accumulation_register(options, def, target_buf, pt2wire, config_mode);
 
     //Generate the ubuffer module for CGRA
     //Lake/Pond coreir generation
-    CoreIR::Instance* buf = map_ubuffer_to_cgra(options, def, target_buf);
+    CoreIR::Instance* buf = map_ubuffer_to_cgra(options, def, target_buf, config_mode);
 
     //Wire the stencil valid to flush of ubuffer module
     //if we can optmize for coarse grained pipeline scheduler
@@ -8339,7 +8381,9 @@ void UBuffer::generate_banks(CodegenOptions& options) {
 
               //Strip mining the output loop
               //TODO: remove stripmining
-              if (acc_pattern.can_stripmining(ctx, dim_id, fetch_width)) {
+              //Strip mining is needed for unit test
+              //if (acc_pattern.can_stripmining(ctx, dim_id, fetch_width)) {
+              if (false) {
               //if (true) {
                 isl_map* op_stripmining = acc_pattern.get_op_stripmining(ctx, dim_id, fetch_width, "");
                 std::cout << "\ttransform stripmining: " << str(op_stripmining) << endl;
