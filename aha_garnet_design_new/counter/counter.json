@@ -296,7 +296,7 @@
           },
           "op_hcompute_hw_input_global_wrapper_stencil_port_controller":{
             "genref":"cgralib.Mem_amber",
-            "genargs":{"ID":["String","_U26"], "has_external_addrgen":["Bool",false], "has_flush":["Bool",true], "has_read_valid":["Bool",false], "has_reset":["Bool",false], "has_stencil_valid":["Bool",true], "has_valid":["Bool",false], "is_rom":["Bool",false], "num_inputs":["Int",0], "num_outputs":["Int",0], "use_prebuilt_mem":["Bool",true], "width":["Int",16]},
+            "genargs":{"ID":["String","_U26"], "has_chain_en":["Bool",true], "has_external_addrgen":["Bool",false], "has_flush":["Bool",true], "has_read_valid":["Bool",false], "has_reset":["Bool",false], "has_stencil_valid":["Bool",true], "has_valid":["Bool",false], "is_rom":["Bool",false], "num_inputs":["Int",0], "num_outputs":["Int",0], "use_prebuilt_mem":["Bool",true], "width":["Int",16]},
             "metadata":{"config":{"stencil_valid":{"cycle_starting_addr":[0],"cycle_stride":[1,64],"dimensionality":2,"extent":[64,64]}},"mode":"lake"}
           },
           "op_hcompute_hw_input_global_wrapper_stencil_port_controller_clk_en_const":{
@@ -482,8 +482,7 @@
           ["self.clk","d_reg__U1.clk"],
           ["d_reg__U2.in","d_reg__U1.out"],
           ["self.clk","d_reg__U2.clk"],
-          ["self.op_hcompute_hw_output_stencil_read.0","d_reg__U2.out"],
-          ["self.op_hcompute_hw_output_stencil_read_extra_ctrl","self.op_hcompute_hw_input_global_wrapper_stencil_write_extra_ctrl"]
+          ["self.op_hcompute_hw_output_stencil_read.0","d_reg__U2.out"]
         ]
       },
       "op_hcompute_hw_input_global_wrapper_stencil_exe_start_pt__U28":{

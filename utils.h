@@ -197,6 +197,13 @@ is_suffix( std::string const& lhs, std:: string const& rhs )
 
 template<typename A, typename B>
 static inline
+pair<A, B> pick(const unordered_map<A, B>& s) {
+  assert(s.size() > 0);
+  return *(begin(s));
+}
+
+template<typename A, typename B>
+static inline
 pair<A, B> pick(const map<A, B>& s) {
   assert(s.size() > 0);
   return *(begin(s));

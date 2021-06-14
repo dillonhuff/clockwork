@@ -72,6 +72,12 @@ struct ir_node {
   std::string func;
   // Name of loop index variables used by this unit
   std::vector<std::string> index_variables_needed_by_compute;
+
+  // loop index variables used by memory has delay
+  int index_variables_prefetch_cycle = 0;
+  // latency which further extract by schedule into
+  int latency = 0;
+
   // Annotation used for debug printouts
   int unroll_factor;
 
@@ -277,6 +283,10 @@ struct ir_node {
     index_variables_needed_by_compute.push_back(v);
   }
 
+  void index_variable_prefetch_cycle(const int v) {
+    index_variables_prefetch_cycle = v;
+  }
+
   map<op*, Box> get_domain_boxes() {
       Box empty;
       map<op*, Box> domain_map;
@@ -327,6 +337,10 @@ struct ir_node {
   void add_function(const std::string& n) {
     //assert(n != name);
     func = n;
+  }
+
+  void add_latency(const int l) {
+    latency = l;
   }
 
   void add_function(const std::string& n, const vector<string>& args) {
@@ -1220,6 +1234,8 @@ struct prog {
 
   void shift_address_range(const std::string& buf, const std::vector<int>& min_locs);
 
+  isl_map* map_from_expr(op* op, pair<string, piecewise_address> & top_pair);
+
   map<op*, isl_map*> producer_maps() {
     map<op*, isl_map*> m;
     auto ivars = iter_vars();
@@ -1413,6 +1429,7 @@ vector<string> outgoing_buffers(const map<string, UBuffer>& buffers, op* op, pro
 bool unoptimized_compiles(prog& prg);
 std::vector<string> unoptimized_result(prog& prg);
 void generate_regression_testbench(prog& prg);
+void generate_vectorization_unit_testbench(UBuffer & buf);
 void generate_regression_testbench(prog& prg, map<string, UBuffer>& buffers);
 
 
@@ -1767,6 +1784,7 @@ umap* op_end_times_map(schedule_info& sched, prog& prg);
 
 map<string, isl_set*> op_start_times_domains(prog& prg);
 void normalize_address_offsets(prog& prg);
+void remove_div(prog& prg);
 
 vector<op*> ops_at_level(const int level, prog& prg);
 bool is_op_scheduled(op* op, schedule_info& sched, prog& prg);
@@ -1825,12 +1843,14 @@ map<string, pair<string, int> > determine_shift_reg_map(
 
 dgraph build_in_to_out_shift_register_graph(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_info& hwinfo);
 dgraph build_shift_registers(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_info& hwinfo);
-ubuffer_impl port_group2bank(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_info& hwinfo);
+UBufferImpl port_group2bank(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_info& hwinfo);
 
-isl_map* build_buffer_impl(prog& prg, UBuffer& buf, schedule_info& hwinfo, ubuffer_impl& impl);
+isl_map* build_buffer_impl_embarrassing_banking(UBuffer& buf, schedule_info& hwinfo, EmbarrassingBankingImpl& impl);
 
-void generate_banks_garnet(CodegenOptions& options, prog& prg, UBuffer& buf, ubuffer_impl& impl, schedule_info& hw_info);
+void generate_banks_garnet(CodegenOptions& options, UBuffer& buf, UBufferImpl& impl, schedule_info& hw_info);
 
+UBufferImpl generate_optimized_memory_implementation(
+        CodegenOptions& options, UBuffer & buf, prog & prg, schedule_info& hwinfo);
 
 void sanity_check_iis(schedule_info& sched);
 

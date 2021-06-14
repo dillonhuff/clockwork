@@ -1070,6 +1070,440 @@ void synth_sr_boundary_condition_test() {
 
 }
 
+void synth_id_test() {
+  struct isl_ctx *ctx;
+  ctx = isl_ctx_alloc();
+
+  UBuffer buf;
+  buf.name = "conv";
+  buf.ctx = ctx;
+
+  buf.domain["write"] =
+    isl_set_read_from_str(ctx, "{ write[root = 0, i] : 0 <= i < 8}");
+  buf.access_map["write"] =
+    rdmap(ctx, "{ write[root = 0, i] -> conv[i] : 0 <= i < 8}");
+  buf.schedule["write"] =
+    isl_union_map_read_from_str(ctx, "{ write[root = 0, i] -> [i] : 0 <= i < 8 }");
+  buf.isIn["write"] = true;
+
+  // Read 0 through 7
+  buf.domain["read"] =
+    isl_set_read_from_str(ctx, "{ read[root = 0, i] : 0 <= i < 8}");
+  buf.access_map["read"] =
+    rdmap(ctx, "{ read[root = 0, i] -> conv[i] : 0 <= i < 8}");
+  buf.schedule["read"] =
+    isl_union_map_read_from_str(ctx, "{ read[root = 0, i] -> [i + 16] : 0 <= i < 8}");
+  buf.isIn["read"] = false;
+
+  generate_hls_code(buf);
+
+  map<string, UBuffer> buffers;
+  buffers.insert({"conv", buf});
+  buffer_vectorization({1}, {"conv"}, 4, buffers);
+
+  vector<string> file_list({"conv.cpp"});
+  for (auto it: buffers) {
+    cout << it.second << endl;
+    file_list.push_back(it.first + ".cpp");
+    generate_hls_code_unit_test(it.second);
+  }
+
+  int res = cmd("clang++ -std=c++11 tb_id_vec.cpp " + sep_list(file_list, "", "", " "));
+  assert(res == 0);
+
+  res = system("./a.out");
+  assert(res == 0);
+}
+
+void twoport_vec_test() {
+  struct isl_ctx *ctx;
+  ctx = isl_ctx_alloc();
+
+  UBuffer buf;
+  buf.name = "two_pt";
+  buf.ctx = ctx;
+
+  buf.domain["write0"] =
+    isl_set_read_from_str(ctx, "{ write0[root = 0, i] : 0 <= i < 16}");
+  buf.access_map["write0"] =
+    rdmap(ctx, "{ write0[root = 0, i] -> two_pt[i] : 0 <= i < 16}");
+  buf.schedule["write0"] =
+    isl_union_map_read_from_str(ctx, "{ write0[root = 0, i] -> [i] : 0 <= i < 16 }");
+  buf.isIn["write0"] = true;
+
+  // Read 0 through 7
+  buf.domain["read0"] =
+    isl_set_read_from_str(ctx, "{ read0[root = 0, i] : 0 <= i < 8}");
+  buf.access_map["read0"] =
+    rdmap(ctx, "{ read0[root = 0, i] -> two_pt[i] : 0 <= i < 8}");
+  buf.schedule["read0"] =
+    isl_union_map_read_from_str(ctx, "{ read0[root = 0, i] -> [i + 32] : 0 <= i < 8}");
+  buf.isIn["read0"] = false;
+
+  // Read 0 through 7
+  buf.domain["read1"] =
+    isl_set_read_from_str(ctx, "{ read1[root = 0, i] : 0 <= i < 8}");
+  buf.access_map["read1"] =
+    rdmap(ctx, "{ read1[root = 0, i] -> two_pt[i+8] : 0 <= i < 8}");
+  buf.schedule["read1"] =
+    isl_union_map_read_from_str(ctx, "{ read1[root = 0, i] -> [i + 32] : 0 <= i < 8}");
+  buf.isIn["read1"] = false;
+
+  generate_hls_code(buf);
+
+  map<string, UBuffer> buffers;
+  buffers.insert({"two_pt", buf});
+  buffer_vectorization({1}, {"two_pt"}, 4, buffers);
+
+  generate_hls_code_unit_test(buffers, buf.name);
+
+  generate_vectorization_unit_testbench(buf);
+
+  int res = cmd("clang++ -std=c++11 unit_tb_two_pt.cpp two_pt_vec.cpp two_pt.cpp");
+  assert(res == 0);
+
+  res = system("./a.out");
+  assert(res == 0);
+}
+
+void upsample_vectorization_test() {
+  struct isl_ctx *ctx;
+  ctx = isl_ctx_alloc();
+
+  UBuffer buf;
+  buf.name = "ups";
+  buf.ctx = ctx;
+
+  buf.domain["write"] =
+    isl_set_read_from_str(ctx, "{ write[root = 0, i] : 0 <= i < 16}");
+  buf.access_map["write"] =
+    rdmap(ctx, "{ write[root = 0, i] -> ups[i] : 0 <= i < 16}");
+  buf.schedule["write"] =
+    isl_union_map_read_from_str(ctx, "{ write[root = 0, i] -> [2*i] : 0 <= i < 16 }");
+  buf.isIn["write"] = true;
+
+  // Read 0 through 7
+  buf.domain["read"] =
+    isl_set_read_from_str(ctx, "{ read[root = 0, i] : 0 <= i < 32 }");
+  buf.access_map["read"] =
+    rdmap(ctx, "{ read[root = 0, i] -> ups[floor(i / 2)] : 0 <= i < 32 }");
+  buf.schedule["read"] =
+    isl_union_map_read_from_str(ctx, "{ read[root = 0, i] -> [i + 16] : 0 <= i < 32 }");
+  buf.isIn["read"] = false;
+
+  generate_hls_code(buf);
+
+  map<string, UBuffer> buffers;
+  buffers.insert({"ups", buf});
+  buffer_vectorization({1}, {"ups"}, 4, buffers);
+
+  generate_hls_code_unit_test(buffers, buf.name);
+
+  generate_vectorization_unit_testbench(buf);
+
+  int res = cmd("clang++ -std=c++11 unit_tb_ups.cpp ups.cpp ups_vec.cpp" );
+  assert(res == 0);
+
+  res = system("./a.out");
+  assert(res == 0);
+}
+
+void upsample_pad_test() {
+  struct isl_ctx *ctx;
+  ctx = isl_ctx_alloc();
+
+  UBuffer buf;
+  buf.name = "ups";
+  buf.ctx = ctx;
+
+  buf.domain["write"] =
+    isl_set_read_from_str(ctx, "{ write[root = 0, i] : 0 <= i < 16}");
+  buf.access_map["write"] =
+    rdmap(ctx, "{ write[root = 0, i] -> ups[i] : 0 <= i < 16}");
+  buf.schedule["write"] =
+    isl_union_map_read_from_str(ctx, "{ write[root = 0, i] -> [2*i] : 0 <= i < 16 }");
+  buf.isIn["write"] = true;
+
+  // Read 0 through 7
+  buf.domain["read"] =
+    isl_set_read_from_str(ctx, "{ read[root = 0, i] : 0 <= i < 30 }");
+  buf.access_map["read"] =
+    rdmap(ctx, "{ read[root = 0, i] -> ups[floor((i+1) / 2)] : 0 <= i < 30 }");
+  buf.schedule["read"] =
+    isl_union_map_read_from_str(ctx, "{ read[root = 0, i] -> [i + 16] : 0 <= i < 30 }");
+  buf.isIn["read"] = false;
+
+  generate_hls_code(buf);
+
+  map<string, UBuffer> buffers;
+  buffers.insert({"ups", buf});
+  buffer_vectorization({1}, {"ups"}, 4, buffers);
+
+  generate_hls_code_unit_test(buffers, buf.name);
+
+  generate_vectorization_unit_testbench(buf);
+
+  int res = cmd("clang++ -std=c++11 unit_tb_ups.cpp ups.cpp ups_vec.cpp" );
+  assert(res == 0);
+
+  res = system("./a.out");
+  assert(res == 0);
+}
+
+void rolled_conv_reorder_test() {
+  struct isl_ctx *ctx;
+  ctx = isl_ctx_alloc();
+
+  UBuffer buf;
+  buf.name = "conv_rolled";
+  buf.ctx = ctx;
+
+  buf.domain["write"] =
+    isl_set_read_from_str(ctx, "{ write[root = 0, i] : 0 <= i < 16}");
+  buf.access_map["write"] =
+    rdmap(ctx, "{ write[root = 0, i] -> conv_rolled[i] : 0 <= i < 16}");
+  buf.schedule["write"] =
+    isl_union_map_read_from_str(ctx, "{ write[root = 0, i] -> [i] : 0 <= i < 16 }");
+  buf.isIn["write"] = true;
+
+  // Read 0 through 7
+  buf.domain["read"] =
+    isl_set_read_from_str(ctx, "{ read[root = 0, i, j] : 0 <= i <= 2 and 0 <= j < 12}");
+  buf.access_map["read"] =
+    rdmap(ctx, "{ read[root = 0, i, j] -> conv_rolled[i + j] : 0 <= i <= 2 and 0 <= j < 12}");
+  buf.schedule["read"] =
+    isl_union_map_read_from_str(ctx, "{ read[root = 0, i, j] -> [j + 3*i + 16] : 0 <= i <= 2 and 0 <= j < 12}");
+  buf.isIn["read"] = false;
+
+  generate_hls_code(buf);
+
+  map<string, UBuffer> buffers;
+  buffers.insert({"conv_rolled", buf});
+  buffer_vectorization({1}, {"conv_rolled"}, 4, buffers);
+
+  generate_hls_code_unit_test(buffers, buf.name);
+
+  generate_vectorization_unit_testbench(buf);
+
+  int res = cmd("clang++ -std=c++11 unit_tb_conv_rolled.cpp conv_rolled.cpp conv_rolled_vec.cpp" );
+  assert(res == 0);
+
+  res = system("./a.out");
+  assert(res == 0);
+}
+
+void rolled_conv_test() {
+  struct isl_ctx *ctx;
+  ctx = isl_ctx_alloc();
+
+  UBuffer buf;
+  buf.name = "conv_rolled";
+  buf.ctx = ctx;
+
+  buf.domain["write"] =
+    isl_set_read_from_str(ctx, "{ write[root = 0, i] : 0 <= i < 16}");
+  buf.access_map["write"] =
+    rdmap(ctx, "{ write[root = 0, i] -> conv_rolled[i] : 0 <= i < 16}");
+  buf.schedule["write"] =
+    isl_union_map_read_from_str(ctx, "{ write[root = 0, i] -> [i] : 0 <= i < 16 }");
+  buf.isIn["write"] = true;
+
+  // Read 0 through 7
+  buf.domain["read"] =
+    isl_set_read_from_str(ctx, "{ read[root = 0, i, j] : 0 <= i < 12 and 0 <= j <= 2}");
+  buf.access_map["read"] =
+    rdmap(ctx, "{ read[root = 0, i, j] -> conv_rolled[i + j] : 0 <= i < 12 and 0 <= j <= 2}");
+  buf.schedule["read"] =
+    isl_union_map_read_from_str(ctx, "{ read[root = 0, i, j] -> [j + 3*i + 16] : 0 <= i < 12 and 0 <= j <= 2}");
+  buf.isIn["read"] = false;
+
+  generate_hls_code(buf);
+
+  map<string, UBuffer> buffers;
+  buffers.insert({"conv_rolled", buf});
+  buffer_vectorization({1}, {"conv_rolled"}, 4, buffers);
+
+  generate_hls_code_unit_test(buffers, buf.name);
+
+  generate_vectorization_unit_testbench(buf);
+
+  int res = cmd("clang++ -std=c++11 unit_tb_conv_rolled.cpp conv_rolled.cpp conv_rolled_vec.cpp" );
+  assert(res == 0);
+
+  res = system("./a.out");
+  assert(res == 0);
+}
+
+void synth_id_auto_test() {
+  struct isl_ctx *ctx;
+  ctx = isl_ctx_alloc();
+
+  UBuffer buf;
+  buf.name = "conv";
+  buf.ctx = ctx;
+
+  buf.domain["write"] =
+    isl_set_read_from_str(ctx, "{ write[root = 0, i] : 0 <= i < 8}");
+  buf.access_map["write"] =
+    rdmap(ctx, "{ write[root = 0, i] -> conv[i] : 0 <= i < 8}");
+  buf.schedule["write"] =
+    isl_union_map_read_from_str(ctx, "{ write[root = 0, i] -> [i] : 0 <= i < 8 }");
+  buf.isIn["write"] = true;
+
+  // Read 0 through 7
+  buf.domain["read"] =
+    isl_set_read_from_str(ctx, "{ read[root = 0, i] : 0 <= i < 8}");
+  buf.access_map["read"] =
+    rdmap(ctx, "{ read[root = 0, i] -> conv[i] : 0 <= i < 8}");
+  buf.schedule["read"] =
+    isl_union_map_read_from_str(ctx, "{ read[root = 0, i] -> [i + 16] : 0 <= i < 8}");
+  buf.isIn["read"] = false;
+
+  generate_hls_code(buf);
+
+  map<string, UBuffer> buffers;
+  buffers.insert({"conv", buf});
+  buffer_vectorization({1}, {"conv"}, 4, buffers);
+
+  generate_hls_code_unit_test(buffers, buf.name);
+
+  generate_vectorization_unit_testbench(buf);
+
+  int res = cmd("clang++ -std=c++11 unit_tb_conv.cpp conv_vec.cpp conv.cpp");
+  assert(res == 0);
+
+  res = system("./a.out");
+  assert(res == 0);
+}
+
+
+void synth_id_fetch2_test() {
+  struct isl_ctx *ctx;
+  ctx = isl_ctx_alloc();
+
+  UBuffer buf;
+  buf.name = "conv";
+  buf.ctx = ctx;
+
+  buf.domain["write"] =
+    isl_set_read_from_str(ctx, "{ write[root = 0, i] : 0 <= i < 8}");
+  buf.access_map["write"] =
+    rdmap(ctx, "{ write[root = 0, i] -> conv[i] : 0 <= i < 8}");
+  buf.schedule["write"] =
+    isl_union_map_read_from_str(ctx, "{ write[root = 0, i] -> [i] : 0 <= i < 8 }");
+  buf.isIn["write"] = true;
+
+  // Read 0 through 7
+  buf.domain["read"] =
+    isl_set_read_from_str(ctx, "{ read[root = 0, i] : 0 <= i < 8}");
+  buf.access_map["read"] =
+    rdmap(ctx, "{ read[root = 0, i] -> conv[i] : 0 <= i < 8}");
+  buf.schedule["read"] =
+    isl_union_map_read_from_str(ctx, "{ read[root = 0, i] -> [i + 16] : 0 <= i < 8}");
+  buf.isIn["read"] = false;
+
+  generate_hls_code(buf);
+
+  map<string, UBuffer> buffers;
+  buffers.insert({"conv", buf});
+  buffer_vectorization({1}, {"conv"}, 2, buffers);
+
+  generate_hls_code_unit_test(buffers, buf.name);
+
+  generate_vectorization_unit_testbench(buf);
+
+  int res = cmd("clang++ -std=c++11 unit_tb_conv.cpp conv_vec.cpp conv.cpp");
+  assert(res == 0);
+
+  res = system("./a.out");
+  assert(res == 0);
+}
+
+//TODO: need to fix the two dimensional address generation issue
+void sw_fetch2_2d_test() {
+  struct isl_ctx *ctx;
+  ctx = isl_ctx_alloc();
+
+  UBuffer buf;
+  buf.name = "sw";
+  buf.ctx = ctx;
+
+  buf.domain["write"] =
+    isl_set_read_from_str(ctx, "{ write[root = 0, i, j] : 0 <= i < 10 and 0 <= j < 10}");
+  buf.access_map["write"] =
+    rdmap(ctx, "{ write[root = 0, i, j] -> sw[i, j] : 0 <= i < 10 and 0 <= j < 10}");
+  buf.schedule["write"] =
+    isl_union_map_read_from_str(ctx, "{ write[root = 0, i, j] -> [10*i+j] : 0 <= i < 10and 0 <= j < 10}");
+  buf.isIn["write"] = true;
+
+  // Read 0 through 7
+  buf.domain["read"] =
+    isl_set_read_from_str(ctx, "{ read[root = 0, i, j, m, n] : 0 <= i < 3 and 0<=j < 3 and 0<=m<8 and 0<=n<8}");
+  buf.access_map["read"] =
+    rdmap(ctx, "{ read[root = 0, i, j, m, n] -> sw[i+m, j+n] : 0 <= i < 3 and 0<=j < 3 and 0<=m<8 and 0<=n<8}");
+  buf.schedule["read"] =
+    isl_union_map_read_from_str(ctx, "{ read[root = 0, i, j, m, n] -> [100 + n+ 10*m + 80*j+ 320*i] : 0 <= i < 3 and 0<=j < 3 and 0<=m<8 and 0<=n<8}");
+  buf.isIn["read"] = false;
+
+  generate_hls_code(buf);
+
+  map<string, UBuffer> buffers;
+  buffers.insert({"sw", buf});
+  buffer_vectorization({1}, {"sw"}, 2, buffers);
+
+  generate_hls_code_unit_test(buffers, buf.name);
+
+  generate_vectorization_unit_testbench(buf);
+
+  int res = cmd("clang++ -std=c++11 unit_tb_sw.cpp sw_vec.cpp sw.cpp");
+  assert(res == 0);
+
+  res = system("./a.out");
+  assert(res == 0);
+}
+
+void sw_fetch2_test() {
+  struct isl_ctx *ctx;
+  ctx = isl_ctx_alloc();
+
+  UBuffer buf;
+  buf.name = "sw";
+  buf.ctx = ctx;
+
+  buf.domain["write"] =
+    isl_set_read_from_str(ctx, "{ write[root = 0, i] : 0 <= i < 10 }");
+  buf.access_map["write"] =
+    rdmap(ctx, "{ write[root = 0, i] -> sw[i] : 0 <= i < 10 }");
+  buf.schedule["write"] =
+    isl_union_map_read_from_str(ctx, "{ write[root = 0, i] -> [i] : 0 <= i < 10}");
+  buf.isIn["write"] = true;
+
+  // Read 0 through 7
+  buf.domain["read"] =
+    isl_set_read_from_str(ctx, "{ read[root = 0, i, j] : 0 <= i < 3 and 0<=j < 8 }");
+  buf.access_map["read"] =
+    rdmap(ctx, "{ read[root = 0, i, j] -> sw[i+j] : 0 <= i < 3 and 0<=j < 8 }");
+  buf.schedule["read"] =
+    isl_union_map_read_from_str(ctx, "{ read[root = 0, i, j] -> [10 + j+ 10*i] : 0 <= i < 3 and 0<=j < 8}");
+  buf.isIn["read"] = false;
+
+  generate_hls_code(buf);
+
+  map<string, UBuffer> buffers;
+  buffers.insert({"sw", buf});
+  buffer_vectorization({1}, {"sw"}, 2, buffers);
+
+  generate_hls_code_unit_test(buffers, buf.name);
+
+  generate_vectorization_unit_testbench(buf);
+
+  int res = cmd("clang++ -std=c++11 unit_tb_sw.cpp sw_vec.cpp sw.cpp");
+  assert(res == 0);
+
+  res = system("./a.out");
+  assert(res == 0);
+}
+
 void synth_wire_test() {
   struct isl_ctx *ctx;
   ctx = isl_ctx_alloc();
@@ -11173,6 +11607,7 @@ void blur_and_downsample_test() {
   regression_test(prg);
 }
 
+
 void playground() {
     {
         isl_ctx* ctx = isl_ctx_alloc();
@@ -11218,6 +11653,24 @@ void playground() {
         //    }
         //}
         //cout << "Final trans: " << str(target) << endl;
+        assert(false);
+
+    }
+    {
+        isl_ctx* ctx = isl_ctx_alloc();
+        auto in_0 = isl_map_read_from_str(ctx,"{ input[i0, i1]-> data[i0, i1]: 0<=i0<=61 and 0<=i1<=61}");
+        auto in_sched = isl_map_read_from_str(ctx,"{ input[i0, i1]-> [62*i0 + i1]: 0<=i0<=61 and 0<=i1<=61}");
+
+        auto out_0 = isl_map_read_from_str(ctx,"{ output[i0, i1]-> data[i0, i1]: 0<=i0<=59 and 0<=i1<=61}");
+        auto out_1 = isl_map_read_from_str(ctx,"{ output[i0, i1]-> data[i0+1, i1]: 0<=i0<=59 and 0<=i1<=61}");
+        auto out_2 = isl_map_read_from_str(ctx,"{ output[i0, i1]-> data[i0+2, i1]: 0<=i0<=59 and 0<=i1<=61}");
+        auto out_sched = isl_map_read_from_str(ctx,"{ output[i0, i1]-> [124+62*i0 + i1]: 0<=i0<=59 and 0<=i1<=61}");
+        auto in_sched_shift = linear_schedule(in_sched, {1}, 62, false);
+        auto data2cycle = dot(inv(in_0), in_sched_shift);
+        auto new_outpt_acc = dot(out_sched, inv(data2cycle));
+        cout << str(in_sched_shift) << endl;
+        cout << str(data2cycle) << endl;
+        cout << str(simplify_expr(new_outpt_acc)) << endl;
         assert(false);
 
     }
@@ -13774,153 +14227,153 @@ isl_union_map* generate_hardware_schedule_heu(isl_union_map* new_opt_sched,
   //}
 //}
 
-void lake_resnet_test() {
-  auto prg = resnet_hc();
-  prg.pretty_print();
-
-  CodegenOptions options;
-  options.all_rams = true;
-  all_register_files(prg, options);
-  options.banking_strategies["conv_stencil"] = {"cyclic", {1, 1, 4}};
-  options.banking_strategies["hw_kernel_stencil"] = {"exhaustive"};
-  options.banking_strategies["hw_input_stencil"] = {"exhaustive"};
-  options.inner_bank_offset_mode =
-    INNER_BANK_OFFSET_MULTILINEAR;
-  //generate_optimized_code(options, prg);
-
-  auto sched_naive = its(prg.unoptimized_schedule(), prg.whole_iteration_domain());
-  //optimized schedule
-  auto buffers_opt = build_buffers(prg, sched_naive);
-  CodegenOptions opt;
-  opt.conditional_merge = true;
-  opt.merge_threshold = 4;
-  opt.rtl_options.max_inpt = 2;
-  opt.rtl_options.max_outpt = 2;
-  //buffers_opt.at("buf").generate_bank_and_merge(opt);
-  //cout << buffers_opt.at("buf") << endl;
-  //buffers_opt.at("buf").port_group2bank(2, 2);
-  //cout << buffers_opt.at("buf") << endl;
-
-  for (auto& b : buffers_opt) {
-    cout << b.first << endl << b.second << endl;
-    if ((b.second.get_in_ports().size() && b.second.get_out_ports().size()) == 0)
-        continue;
-    b.second.generate_banks_and_merge(options);
-    b.second.print_bank_info();
-
-    //Assign an configuration file,
-    //json config_reg_map = parse_config_file("conv33_configuration.txt");
-    //b.second.set_config(config_reg_map);
-
-    b.second.port_group2bank(opt);
-    b.second.print_bank_info();
-
-
-#ifdef COREIR
-    CoreIR::Context* context = CoreIR::newContext();
-    CoreIRLoadLibrary_commonlib(context);
-    CoreIRLoadLibrary_cwlib(context);
-    schedule_info hwinfo;
-    hwinfo.use_dse_compute = false;
-    auto def = generate_coreir_without_ctrl(opt, context, b.second, hwinfo);
-    if(!saveToFile(context->getNamespace("global"), "lake_"+b.first+".json", def)) {
-      cout << "Could not save ubuffer coreir!" << endl;
-      context->die();
-    }
-    CoreIR::deleteContext(context);
-#endif
-
-  }
-
-#ifdef COREIR
-  //generate_cgra_tb(buffers_opt, prg, opt);
-#endif
-
-  map<string, int> dim_id_map({{"hw_input_stencil", 1},
-          {"hw_kernel_stencil", 2},
-          {"conv_stencil", 2}});
-  auto post_proc_buffers = buffers_opt.at("hw_input_stencil").generate_ubuffer(opt);
-  //auto post_proc_buffers = buffers_opt.at("hw_kernel_stencil").generate_ubuffer(opt);
-  for (auto it: buffers_opt) {
-    if (it.second.get_out_ports().size() == 0 || it.second.get_in_ports().size() == 0) {
-        continue;
-    }
-  auto buf = it.second;
-  auto ubuf_name = it.first;
-  if (ubuf_name != "hw_input_stencil")
-      continue;
-  //auto post_proc_buffers = buffers_opt.at("conv_stencil").generate_ubuffer(opt);
-  auto post_proc_buffers = buf.generate_ubuffer(opt);
-  opt.conditional_merge = false;
-  //auto rewrite_buffers = buffers_opt.at("conv_stencil").generate_ubuffer(opt);
-  //auto rewrite_buffers = buffers_opt.at("hw_input_stencil").generate_ubuffer(opt);
-  auto rewrite_buffers = buf.generate_ubuffer(opt);
-  for (auto it: post_proc_buffers) {
-    cout << "\tpost: " << it.first << ": " << it.second << endl;
-  }
-  for (auto it: rewrite_buffers) {
-    cout << "\trewrite_buffers: " << it.first << ": " << it.second << endl;
-  }
-
-  for (auto it : post_proc_buffers) {
-    map<string, UBuffer> tmp;
-    map<string, UBuffer> temp;
-    tmp.insert(it);
-    cout << "Vectorizing " << it.first << endl;
-    cout << it.second << endl;
-    buffer_vectorization(it.first, 2, 4, tmp);
-    cout << "Done with vectorization" << endl;
-    for (auto it: tmp) {
-        auto buf = it.second;
-        if (buf.get_in_ports().size() == 4)
-            temp.insert(it);
-        cout << it.first<< endl;
-    }
-
-    //auto opt_sched = optimized_schedule_from_buffers_feautrier(buffers_opt, false);
-    //auto opt_sched = optimized_schedule_from_buffers_flatten(tmp, false);
-    //auto opt_sched = optimized_schedule_from_buffers_flatten(tmp, false);
-
-    //auto opt_sched = optimized_schedule_from_buffers_flatten(tmp, true, {"op_hcompute_hw_input_stencil_vec"});
-    //auto opt_sched = optimized_schedule_from_buffers_flatten(tmp, true, {"op_hcompute_conv_stencil_vec", "op_hcompute_conv_stencil_1_vec_in"});
-    //auto opt_sched = optimized_schedule_from_buffers_flatten(tmp, true, {"op_hcompute_hw_kernel_stencil_vec"});
-
-    isl_union_set* gb_domain = global_domain_from_buffers(tmp);
-    isl_ctx* ctx = ::ctx(gb_domain);
-    //auto um = isl_union_map_read_from_str(ctx,"{}");
-    //auto um = isl_union_map_read_from_str(ctx,"{op_hcompute_hw_input_stencil_agg2sram[root=0, i0, i1, i2, i3]->op_hcompute_conv_stencil_1_sram2tb[root, i0, i1', i2', i3', i4', i5', i6']}");
-    auto um = isl_union_map_read_from_str(ctx,"{op_hcompute_hw_input_stencil[root=0, 8191]->op_hcompute_conv_stencil_1_sram2tb[root, 0]}");
-    ////        //"{op_hcompute_hw_input_stencil[root=0, i0, i1, i2, i3]->op_hcompute_conv_stencil_1[root, i0, i1', i2', i3', i4', i5', i6']; op_hcompute_conv_stencil_1[root=0, i0, i1', i2', i3', i4', i5', i6']->op_hcompute_hw_input_stencil[root, i0+1, i1, i2, i3]}");
-    //cout << "\t global domain" << str(gb_domain) << endl;
-    //cout << "\tDouble buffer dependency: " << str(um) << endl;
-    //um = its(um, gb_domain);
-    //cout << "\tDouble buffer dependency: " << str(um) << endl;
-    //um = its_range(um, gb_domain);
-    //cout << "\tDouble buffer dependency: " << str(um) << endl;
-    //auto opt_sched = optimized_schedule_from_buffers_DB(tmp, vector<string>({"op_hcompute_hw_input_stencil_agg2sram"}), um);
-    //auto opt_sched = optimized_schedule_from_buffers_DB(temp, vector<string>({}), um);
-    //auto opt_sched = optimized_schedule_from_buffers_flatten(temp, false);
-    auto opt_sched = optimized_schedule_from_buffers_flatten_extra_with_validity(tmp, {"op_hcompute_hw_input_stencil_agg2sram"}, um);
-    //auto opt_sched = optimized_schedule_from_buffers_flatten_extra_with_validity(tmp, true, {"op_hcompute_conv_stencil_agg2sram", "op_hcompute_conv_stencil_1_agg2sram"});
-    cout << str(opt_sched) << endl;
-    cout << codegen_c(opt_sched) << endl;
-    auto multi_tile_sched = pad_identity_relation_to_umap(opt_sched, 1, 0, 0, 3);
-    cout << codegen_c(multi_tile_sched) << endl;
-    cout << str(multi_tile_sched) << endl;
-    map<pair<string, string>, int> latency({
-          {{"op_hcompute_hw_input_stencil", "op_hcompute_hw_input_stencil_agg2sram"}, 1},
-          {{"op_hcompute_hw_input_stencil_agg2sram", "op_hcompute_conv_stencil_1_sram2tb"}, 0},
-          {{"op_hcompute_conv_stencil_1_sram2tb", "op_hcompute_conv_stencil_1"}, 1}});
-    auto hsh = generate_hardware_schedule_heu_new(multi_tile_sched, tmp, latency, 1);
-    cout << codegen_c(hsh) << endl;
-    cmd("mkdir -p ./lake_controllers/resnet/");
-    //auto op_vec = emit_lake_config(tmp, hsh, "./lake_controllers/resnet/");
-    //assert(false);
-
-  }
-
-  }
-}
+//void lake_resnet_test() {
+//  auto prg = resnet_hc();
+//  prg.pretty_print();
+//
+//  CodegenOptions options;
+//  options.all_rams = true;
+//  all_register_files(prg, options);
+//  options.banking_strategies["conv_stencil"] = {"cyclic", {1, 1, 4}};
+//  options.banking_strategies["hw_kernel_stencil"] = {"exhaustive"};
+//  options.banking_strategies["hw_input_stencil"] = {"exhaustive"};
+//  options.inner_bank_offset_mode =
+//    INNER_BANK_OFFSET_MULTILINEAR;
+//  //generate_optimized_code(options, prg);
+//
+//  auto sched_naive = its(prg.unoptimized_schedule(), prg.whole_iteration_domain());
+//  //optimized schedule
+//  auto buffers_opt = build_buffers(prg, sched_naive);
+//  CodegenOptions opt;
+//  opt.conditional_merge = true;
+//  opt.merge_threshold = 4;
+//  opt.rtl_options.max_inpt = 2;
+//  opt.rtl_options.max_outpt = 2;
+//  //buffers_opt.at("buf").generate_bank_and_merge(opt);
+//  //cout << buffers_opt.at("buf") << endl;
+//  //buffers_opt.at("buf").port_group2bank(2, 2);
+//  //cout << buffers_opt.at("buf") << endl;
+//
+//  for (auto& b : buffers_opt) {
+//    cout << b.first << endl << b.second << endl;
+//    if ((b.second.get_in_ports().size() && b.second.get_out_ports().size()) == 0)
+//        continue;
+//    b.second.generate_banks_and_merge(options);
+//    b.second.print_bank_info();
+//
+//    //Assign an configuration file,
+//    //json config_reg_map = parse_config_file("conv33_configuration.txt");
+//    //b.second.set_config(config_reg_map);
+//
+//    b.second.port_group2bank(opt);
+//    b.second.print_bank_info();
+//
+//
+//#ifdef COREIR
+//    CoreIR::Context* context = CoreIR::newContext();
+//    CoreIRLoadLibrary_commonlib(context);
+//    CoreIRLoadLibrary_cwlib(context);
+//    schedule_info hwinfo;
+//    hwinfo.use_dse_compute = false;
+//    auto def = generate_coreir_without_ctrl(opt, context, b.second, hwinfo);
+//    if(!saveToFile(context->getNamespace("global"), "lake_"+b.first+".json", def)) {
+//      cout << "Could not save ubuffer coreir!" << endl;
+//      context->die();
+//    }
+//    CoreIR::deleteContext(context);
+//#endif
+//
+//  }
+//
+//#ifdef COREIR
+//  //generate_cgra_tb(buffers_opt, prg, opt);
+//#endif
+//
+//  map<string, int> dim_id_map({{"hw_input_stencil", 1},
+//          {"hw_kernel_stencil", 2},
+//          {"conv_stencil", 2}});
+//  auto post_proc_buffers = buffers_opt.at("hw_input_stencil").generate_ubuffer(opt);
+//  //auto post_proc_buffers = buffers_opt.at("hw_kernel_stencil").generate_ubuffer(opt);
+//  for (auto it: buffers_opt) {
+//    if (it.second.get_out_ports().size() == 0 || it.second.get_in_ports().size() == 0) {
+//        continue;
+//    }
+//  auto buf = it.second;
+//  auto ubuf_name = it.first;
+//  if (ubuf_name != "hw_input_stencil")
+//      continue;
+//  //auto post_proc_buffers = buffers_opt.at("conv_stencil").generate_ubuffer(opt);
+//  auto post_proc_buffers = buf.generate_ubuffer(opt);
+//  opt.conditional_merge = false;
+//  //auto rewrite_buffers = buffers_opt.at("conv_stencil").generate_ubuffer(opt);
+//  //auto rewrite_buffers = buffers_opt.at("hw_input_stencil").generate_ubuffer(opt);
+//  auto rewrite_buffers = buf.generate_ubuffer(opt);
+//  for (auto it: post_proc_buffers) {
+//    cout << "\tpost: " << it.first << ": " << it.second << endl;
+//  }
+//  for (auto it: rewrite_buffers) {
+//    cout << "\trewrite_buffers: " << it.first << ": " << it.second << endl;
+//  }
+//
+//  for (auto it : post_proc_buffers) {
+//    map<string, UBuffer> tmp;
+//    map<string, UBuffer> temp;
+//    tmp.insert(it);
+//    cout << "Vectorizing " << it.first << endl;
+//    cout << it.second << endl;
+//    buffer_vectorization(it.first, 2, 4, tmp);
+//    cout << "Done with vectorization" << endl;
+//    for (auto it: tmp) {
+//        auto buf = it.second;
+//        if (buf.get_in_ports().size() == 4)
+//            temp.insert(it);
+//        cout << it.first<< endl;
+//    }
+//
+//    //auto opt_sched = optimized_schedule_from_buffers_feautrier(buffers_opt, false);
+//    //auto opt_sched = optimized_schedule_from_buffers_flatten(tmp, false);
+//    //auto opt_sched = optimized_schedule_from_buffers_flatten(tmp, false);
+//
+//    //auto opt_sched = optimized_schedule_from_buffers_flatten(tmp, true, {"op_hcompute_hw_input_stencil_vec"});
+//    //auto opt_sched = optimized_schedule_from_buffers_flatten(tmp, true, {"op_hcompute_conv_stencil_vec", "op_hcompute_conv_stencil_1_vec_in"});
+//    //auto opt_sched = optimized_schedule_from_buffers_flatten(tmp, true, {"op_hcompute_hw_kernel_stencil_vec"});
+//
+//    isl_union_set* gb_domain = global_domain_from_buffers(tmp);
+//    isl_ctx* ctx = ::ctx(gb_domain);
+//    //auto um = isl_union_map_read_from_str(ctx,"{}");
+//    //auto um = isl_union_map_read_from_str(ctx,"{op_hcompute_hw_input_stencil_agg2sram[root=0, i0, i1, i2, i3]->op_hcompute_conv_stencil_1_sram2tb[root, i0, i1', i2', i3', i4', i5', i6']}");
+//    auto um = isl_union_map_read_from_str(ctx,"{op_hcompute_hw_input_stencil[root=0, 8191]->op_hcompute_conv_stencil_1_sram2tb[root, 0]}");
+//    ////        //"{op_hcompute_hw_input_stencil[root=0, i0, i1, i2, i3]->op_hcompute_conv_stencil_1[root, i0, i1', i2', i3', i4', i5', i6']; op_hcompute_conv_stencil_1[root=0, i0, i1', i2', i3', i4', i5', i6']->op_hcompute_hw_input_stencil[root, i0+1, i1, i2, i3]}");
+//    //cout << "\t global domain" << str(gb_domain) << endl;
+//    //cout << "\tDouble buffer dependency: " << str(um) << endl;
+//    //um = its(um, gb_domain);
+//    //cout << "\tDouble buffer dependency: " << str(um) << endl;
+//    //um = its_range(um, gb_domain);
+//    //cout << "\tDouble buffer dependency: " << str(um) << endl;
+//    //auto opt_sched = optimized_schedule_from_buffers_DB(tmp, vector<string>({"op_hcompute_hw_input_stencil_agg2sram"}), um);
+//    //auto opt_sched = optimized_schedule_from_buffers_DB(temp, vector<string>({}), um);
+//    //auto opt_sched = optimized_schedule_from_buffers_flatten(temp, false);
+//    auto opt_sched = optimized_schedule_from_buffers_flatten_extra_with_validity(tmp, {"op_hcompute_hw_input_stencil_agg2sram"}, um);
+//    //auto opt_sched = optimized_schedule_from_buffers_flatten_extra_with_validity(tmp, true, {"op_hcompute_conv_stencil_agg2sram", "op_hcompute_conv_stencil_1_agg2sram"});
+//    cout << str(opt_sched) << endl;
+//    cout << codegen_c(opt_sched) << endl;
+//    auto multi_tile_sched = pad_identity_relation_to_umap(opt_sched, 1, 0, 0, 3);
+//    cout << codegen_c(multi_tile_sched) << endl;
+//    cout << str(multi_tile_sched) << endl;
+//    map<pair<string, string>, int> latency({
+//          {{"op_hcompute_hw_input_stencil", "op_hcompute_hw_input_stencil_agg2sram"}, 1},
+//          {{"op_hcompute_hw_input_stencil_agg2sram", "op_hcompute_conv_stencil_1_sram2tb"}, 0},
+//          {{"op_hcompute_conv_stencil_1_sram2tb", "op_hcompute_conv_stencil_1"}, 1}});
+//    auto hsh = generate_hardware_schedule_heu_new(multi_tile_sched, tmp, latency, 1);
+//    cout << codegen_c(hsh) << endl;
+//    cmd("mkdir -p ./lake_controllers/resnet/");
+//    //auto op_vec = emit_lake_config(tmp, hsh, "./lake_controllers/resnet/");
+//    //assert(false);
+//
+//  }
+//
+//  }
+//}
 
 void lake_cascade_autovec_test() {
   //prog prg = halide_cascade();
@@ -14285,16 +14738,22 @@ void Init_PE_energy_cost(power_analysis_params& power_params)  {
 
 
 void compile_for_garnet_single_port_mem(prog & prg, string dir, bool gen_smt_stream, bool gen_config_only, bool multi_level_mem, bool use_dse_compute, bool energy_model = false);
+void compile_for_garnet_fetch2_mem(prog & prg, string dir, bool gen_smt_stream, bool gen_config_only, bool multi_level_mem, bool use_dse_compute, bool energy_model = false);
 void cpy_app_to_folder(const std::string& app_type, const std::string& prg_name);
 
-void test_pond(string dir) {
+void test_pond(string dir, bool run_verilator=true) {
   vector<prog> test_apps;
+  test_apps.push_back(conv_rolled());
+  test_apps.push_back(conv_1_3());
   test_apps.push_back(resnet_simple());
   test_apps.push_back(resnet());
+  test_apps.push_back(three_level_pond_copy());
+  test_apps.push_back(three_level_pond_rolled());
+  test_apps.push_back(fft8_unroll8_split());
+
+  //TODO: tobe tested with new pond
   //test_apps.push_back(three_level_pond());
   //test_apps.push_back(three_level_pond_rolled());
-  test_apps.push_back(three_level_pond_copy());
-
   for ( auto prg: test_apps) {
     cout << "====== Running CGRA Single Port test for " << prg.name << endl;
     prg.pretty_print();
@@ -14304,21 +14763,21 @@ void test_pond(string dir) {
     break_up_multi_channel_outputs(prg);
     dsa_writers(prg);
     prg.pretty_print();
-    auto cpu = unoptimized_result(prg);
+    bool gen_config_only = !run_verilator;
 
-    bool gen_config_only = false;
     compile_for_garnet_single_port_mem(prg, dir,
             false, /*generate smt stream*/
             gen_config_only,/*gen_config_only*/
             true, /*multi level hierarchy*/
             false/*use dse compute*/);
-    generate_regression_testbench(prg);
+    //generate_regression_testbench(prg);
 
     cout << "Output name: " << prg.name << endl;
     //run_verilator_tb(prg.name);
     //TODO: move to a function
     //run verilator on all the generated verilog
     if (!gen_config_only) {
+      auto cpu = unoptimized_result(prg);
       string name = prg.name;
       auto verilog_files = get_files("./" + dir + "/"+name+"/verilog/");
       verilog_files.push_back(name + ".v");
@@ -14327,6 +14786,7 @@ void test_pond(string dir) {
       int res = run_verilator_on(name, name + "_verilog_tb.cpp", verilog_files, extra_flag_for_lake);
       assert(res == 0);
       cmd("rm LakeWrapper.v");
+      cmd("rm -rf ./" + dir + "/" + name + "/verilog/");
 
       auto verilator_res = verilator_results(prg.name);
       compare("cgra_" + prg.name + "_cpu_vs_verilog_comparison", verilator_res, cpu);
@@ -14383,20 +14843,90 @@ void test_energy_model(string dir) {
   }
 }
 
+void test_fetchwidth2_mem(bool gen_config_only, bool multi_accessor=false, string dir="aha_garnet_design_fetch2") {
+  vector<prog> test_apps;
+
+  test_apps.push_back(conv_3_3());
+  //test_apps.push_back(camera_pipeline_new());
+  //test_apps.push_back(laplacian_pyramid());
+  //test_apps.push_back(counter());
+  //test_apps.push_back(gaussian());
+  //test_apps.push_back(down_sample());
+  //test_apps.push_back(cascade());
+  //test_apps.push_back(harris());
+  //test_apps.push_back(rom());
+  //test_apps.push_back(conv_1_2());
+  //test_apps.push_back(demosaic_unrolled());
+  //test_apps.push_back(camera_pipeline());
+  //test_apps.push_back(up_sample());
+  //test_apps.push_back(unsharp());
+  //test_apps.push_back(camera_pipeline_new());
+
+  //DNN apps
+  test_apps.push_back(resnet_tiny());
+  test_apps.push_back(resnet_multi_tiny());
+
+  //Big applications
+  //test_apps.push_back(mobilenet_unrolled());
+
+  for ( auto prg: test_apps) {
+    prg.sanity_check();
+
+    break_up_multi_channel_inputs(prg);
+    break_up_multi_channel_outputs(prg);
+    dsa_writers(prg);
+    prg.pretty_print();
+
+    //compile_for_garnet_platonic_mem(prg);
+    compile_for_garnet_fetch2_mem(prg, dir, false, gen_config_only, false, false);
+    cout << "Output name: " << prg.name << endl;
+    //TODO: move to a function
+    //run verilator on all the generated verilog
+    if (!gen_config_only) {
+      string name = prg.name;
+      auto verilog_files = get_files("./" + dir + "/"+name+"/verilog/");
+      verilog_files.push_back(name + ".v");
+      verilog_files.push_back("LakeWrapper.v");
+      bool extra_flag_for_lake = true;
+      auto cpu = unoptimized_result(prg);
+      int res = run_verilator_on(name, name + "_verilog_tb.cpp", verilog_files, extra_flag_for_lake);
+      assert(res == 0);
+      cmd("rm LakeWrapper.v");
+
+      auto verilator_res = verilator_results(prg.name);
+      compare("cgra_" + prg.name + "_cpu_vs_verilog_comparison", verilator_res, cpu);
+      //string app_type = "dualwithaddr";
+      string app_type = "single_port_buffer";
+      cpy_app_to_folder(app_type, prg.name);
+    }
+  }
+}
+
 void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, string dir="aha_garnet_design") {
   vector<prog> test_apps;
   //TODO:has issue  with multiple input
   //test_apps.push_back(demosaic_complex());
+  //test_apps.push_back(fft8_unroll8());
+  //test_apps.push_back(camera_pipeline_trunc());
   //
-  test_apps.push_back(gaussian());
-  test_apps.push_back(conv_3_3());
-  test_apps.push_back(counter());
-  test_apps.push_back(cascade());
-  test_apps.push_back(harris());
-  test_apps.push_back(rom());
-  test_apps.push_back(conv_1_2());
+
+  //test_apps.push_back(conv_3_3_rolled());
+
+  //test_apps.push_back(up_sample());
+  //test_apps.push_back(resnet_one_input());
+  //test_apps.push_back(rom());
+  //test_apps.push_back(camera_pipeline_new());
+  //test_apps.push_back(camera_pipeline());
+  //test_apps.push_back(unsharp_new());
+  //test_apps.push_back(laplacian_pyramid());
+  //test_apps.push_back(counter());
+  //test_apps.push_back(gaussian());
+  //test_apps.push_back(conv_3_3());
+  //test_apps.push_back(down_sample());
+  //test_apps.push_back(cascade());
+  //test_apps.push_back(harris());
+  //test_apps.push_back(conv_1_2());
   test_apps.push_back(demosaic_unrolled());
-  test_apps.push_back(camera_pipeline());
   test_apps.push_back(up_sample());
   test_apps.push_back(unsharp());
 
@@ -14419,15 +14949,12 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   //test_apps.push_back(down_sample());
 
   for ( auto prg: test_apps) {
-    cout << "====== Running CGRA Single Port test for " << prg.name << endl;
-    prg.pretty_print();
     prg.sanity_check();
 
     break_up_multi_channel_inputs(prg);
     break_up_multi_channel_outputs(prg);
     dsa_writers(prg);
     prg.pretty_print();
-    auto cpu = unoptimized_result(prg);
 
     //compile_for_garnet_platonic_mem(prg);
     compile_for_garnet_single_port_mem(prg, dir, false, gen_config_only, false, false);
@@ -14440,9 +14967,10 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
       verilog_files.push_back(name + ".v");
       verilog_files.push_back("LakeWrapper.v");
       bool extra_flag_for_lake = true;
+      auto cpu = unoptimized_result(prg);
       int res = run_verilator_on(name, name + "_verilog_tb.cpp", verilog_files, extra_flag_for_lake);
       assert(res == 0);
-      //cmd("rm LakeWrapper.v");
+      cmd("rm LakeWrapper.v");
 
       auto verilator_res = verilator_results(prg.name);
       compare("cgra_" + prg.name + "_cpu_vs_verilog_comparison", verilator_res, cpu);
@@ -16368,12 +16896,226 @@ void lake_smt_tests() {
   //assert (false);
 }
 
+void access_pattern_read_unit_tests() {
+  isl_ctx* ctx = isl_ctx_alloc();
+
+  auto acc_0 = isl_map_read_from_str(ctx,"{ op[i0]-> data[i0]: 0<=i0<=61}");
+  auto sched = isl_map_read_from_str(ctx,"{ op[i0]-> [i0]: 0<=i0<=61 }");
+  auto read_ir = get_vectorized_read(acc_0, sched, {}, 4, 0);
+  auto acc_vec = read_ir.first;
+  auto sched_vec = read_ir.second;
+  cout << "After vec read access map: " << str(simplify_expr(acc_vec)) << endl;
+  cout << "After vec read sched: " << str(sched_vec) << endl;
+  assert(get_dim_min(range(sched_vec), 0) == -2);
+  assert(get_dim_max(domain(acc_vec), 0) == 15);
+
+  acc_0 = isl_map_read_from_str(ctx,"{ op[i0]-> data[i0]: 0<=i0<=61}");
+  sched = isl_map_read_from_str(ctx,"{ op[i0]-> [15 + i0]: 0<=i0<=61 }");
+  auto sched_read = isl_map_read_from_str(ctx,"{ op_read[i0]-> [13 + 4*i0]: 0<=i0<=15 }");
+  auto sched_write = isl_map_read_from_str(ctx,"{ op_write[i0]-> [4 + 4*i0]: 0<=i0<=15 }");
+  read_ir = get_vectorized_read(acc_0, sched,
+          {{"sram2tb_0", sched_read}, {"agg2sram_0", sched_write}}, 4, 0);
+  acc_vec = read_ir.first;
+  sched_vec = read_ir.second;
+  cout << "After vec read access map: " << str(acc_vec) << endl;
+  cout << "After vec read sched: " << str(sched_vec) << endl;
+  assert(get_dim_min(range(sched_vec), 0) == 11);
+
+  acc_0 = isl_map_read_from_str(ctx,"{ op[i0]-> data[2+i0]: 0<=i0<=61}");
+  sched = isl_map_read_from_str(ctx,"{ op[i0]-> [16 + i0]: 0<=i0<=61 }");
+  sched_read = isl_map_read_from_str(ctx,"{ op_read[i0]-> [13 + 4*i0]: 0<=i0<=15 }");
+  sched_write = isl_map_read_from_str(ctx,"{ op_write[i0]-> [4 + 4*i0]: 0<=i0<=15 }");
+  read_ir = get_vectorized_read(acc_0, sched,
+          {{"sram2tb_0", sched_read}, {"agg2sram_0", sched_write}}, 4, 0);
+  acc_vec = read_ir.first;
+  sched_vec = read_ir.second;
+  cout << "After vec read access map: " << str(acc_vec) << endl;
+  cout << "After vec read sched: " << str(sched_vec) << endl;
+  assert(get_dim_min(range(sched_vec), 0) == 14);
+
+  acc_0 = isl_map_read_from_str(ctx,"{ op[i0, i1]-> data[i0]: 0<=i0<=7 and 0 <= i1 <= 1}");
+  sched = isl_map_read_from_str(ctx,"{ op[i0, i1]-> [14 + i0*2+i1]: 0<=i0<=7 and 0 <= i1 <=1 }");
+  sched_write = isl_map_read_from_str(ctx,"{ op_write[i0]-> [8 + 8*i0]: 0<=i0<=7 }");
+  read_ir = get_vectorized_read(acc_0, sched,
+          {{"agg2sram_0", sched_write}}, 4, 0);
+  acc_vec = read_ir.first;
+  sched_vec = read_ir.second;
+  cout << "After vec read access map: " << str(acc_vec) << endl;
+  cout << "After vec read sched: " << str(sched_vec) << endl;
+  assert(get_dim_min(range(sched_vec), 0) == 12);
+
+  //acc_0 = isl_map_read_from_str(ctx,"{ op[i0, i1]-> data[3*i0 + i1]: 0<=i0<=2 and 0 <= i1 <= 2}");
+  //sched = isl_map_read_from_str(ctx,"{ op[i0, i1]-> [14 + i0*3 + i1]: 0<=i0<=2 and 0 <= i1 <= 2 }");
+  //read_ir = get_vectorized_read(acc_0, sched, {}, 4, 0);
+  //acc_vec = read_ir.first;
+  //sched_vec = read_ir.second;
+  //cout << str(range(simplify_expr(acc_vec))) << endl;
+  //auto range_interpolation = get_vectorize_interpolate(range(acc_vec), 0, 4);
+  //for (auto inte: range_interpolation) {
+  //    cout << "rewrite access map: " << str(get_aff(dot(acc_vec, inte))) << endl;
+  //}
+  //cout << "After vec read access map: " << str(simplify_expr(acc_vec)) << endl;
+  //cout << "After vec read sched: " << str(sched_vec) << endl;
+
+  acc_0 = isl_map_read_from_str(ctx,"{ sram2tb[root = 0, i0, i2, i1]-> data[i0, i1+i2]: 0<=i0<=61 and 0<=i1<=61 and 0<=i2<=7}");
+  sched = isl_map_read_from_str(ctx,"{ sram2tb[root = 0, i0, i2, i1]-> [560*i0+ 70*i2+i1]: 0<=i0<=61 and 0<=i1<=61 and 0<=i2<=7}");
+  read_ir = get_vectorized_read(acc_0, sched, {}, 4, 1);
+  acc_vec = read_ir.first;
+  sched_vec = read_ir.second;
+  assert(stride_in_dim(sched_vec, 2) == 280);
+  assert(stride_in_dim(acc_vec, 2, 1) == 1);
+  cout << "After vec read access map: " << str(acc_vec) << endl;
+  cout << "After vec read sched: " << str(sched_vec) << endl;
+
+  acc_0 = isl_map_read_from_str(ctx,"{ op[i0, i1]-> data[i0 + i1]: 0<=i0<8 and 0 <= i1 <= 2}");
+  sched = isl_map_read_from_str(ctx,"{ op[i0, i1]-> [14 + i0*3 + i1]: 0<=i0<8and 0 <= i1 <= 2 }");
+  read_ir = get_vectorized_read(acc_0, sched, {}, 4, 0);
+  acc_vec = read_ir.first;
+  sched_vec = read_ir.second;
+  cout << "After vec read access map: " << str(simplify_expr(acc_vec)) << endl;
+  cout << "stride vec dim: " << stride_in_dim(acc_vec, 0) << endl;
+  cout << "After vec read sched: " << str(sched_vec) << endl;
+
+  //auto acc_1 = isl_map_read_from_str(ctx,"{ sram2tb[root = 0, i0, i1, i2]-> data[i0, i1+i2]: 0<=i0<=61 and 0<=i1<=61 and 0<=i2<=7}");
+  //AccessPattern acc_pattern_ = AccessPattern(acc_1, ctx);
+  //auto trans_pair_ = acc_pattern_.get_op_transform(ctx, 1, 4);
+  //cout << "trans_op map: " << str(trans_pair_.first) << endl;
+
+  //auto trans = isl_map_read_from_str(ctx,"{ sram2tb[root = 0, i0, i1]-> sram2tb[root = 0, i0, i2, 4*i1+1]}");
+  //auto slice = isl_map_read_from_str(ctx,"{ data[i0, i1]-> data[i0, floor(i1/4)]}");
+  ////auto trans = get_domain_trans(domain(acc_0), 2, 4);
+  //auto res = dot(trans, acc_0);
+  //cout << "After vectorization: " << str(res) << endl;
+  //res = simplify(dot(res, slice));
+  //cout << "After vectorization: " << str(res) << endl;
+
+}
+
+void access_pattern_write_unit_tests() {
+  isl_ctx* ctx = isl_ctx_alloc();
+  auto acc_0 = isl_map_read_from_str(ctx,"{ op[i0]-> data[i0+1]: 0<=i0<=10 }");
+  auto sched = isl_map_read_from_str(ctx, "{ op[i0] -> [i0]: 0 <=i0<=10 }");
+  auto ir_vec = get_vectorized_write(acc_0, sched, 4/*fetch_width*/, 0/*dom_dim*/);
+  auto acc_vec = ir_vec.first;
+  auto sched_vec = ir_vec.second;
+  cout << "before vectorization: " << str(acc_0) << endl;
+  cout << "after vectorization: " << str(acc_vec) << endl;
+  cout << "sched after vectorization: " << str(sched_vec) << endl;
+  assert(get_dim_min(range(acc_vec), 0) == 0);
+  assert(get_dim_max(range(acc_vec), 0) == 2);
+  assert(get_dim_min(range(sched_vec), 0) == 4);
+  assert(get_dim_max(range(sched_vec), 0) == 12);
+  assert(stride_in_dim(sched_vec, 0) == 4);
+
+  for (auto buf_interpolation: get_vectorize_interpolate(range(acc_vec), 0, 4)) {
+    cout << "after interpolate" << str(dot(acc_vec, buf_interpolation)) << endl;
+  }
+
+  acc_0 = isl_map_read_from_str(ctx,"{ op[i0]-> data[i0]: 0<=i0<=11 }");
+  sched = isl_map_read_from_str(ctx, "{ op[i0] -> [i0]: 0 <=i0<=10 }");
+  ir_vec= get_vectorized_write(acc_0, sched, 4/*fetch_width*/, 0/*dom_dim*/);
+  acc_vec = ir_vec.first;
+  sched_vec = ir_vec.second;
+  cout << "before vectorization: " << str(acc_0) << endl;
+  cout << "after vectorization: " << str(acc_vec) << endl;
+  cout << "sched after vectorization: " << str(sched_vec) << endl;
+  assert(get_dim_min(range(acc_vec), 0) == 0);
+  assert(get_dim_max(range(acc_vec), 0) == 2);
+  assert(get_dim_min(range(sched_vec), 0) == 4);
+  assert(get_dim_max(range(sched_vec), 0) == 12);
+  assert(stride_in_dim(sched_vec, 0) == 4);
+
+  acc_0 = isl_map_read_from_str(ctx,"{ op[i0]-> data[i0+1]: 0<=i0<=11 }");
+  sched = isl_map_read_from_str(ctx, "{ op[i0] -> [i0]: 0 <=i0<=11 }");
+  ir_vec= get_vectorized_write(acc_0, sched, 4/*fetch_width*/, 0/*dom_dim*/);
+  acc_vec = ir_vec.first;
+  sched_vec = ir_vec.second;
+  cout << "before vectorization: " << str(acc_0) << endl;
+  cout << "after vectorization: " << str(acc_vec) << endl;
+  cout << "sched after vectorization: " << str(sched_vec) << endl;
+  assert(get_dim_min(range(acc_vec), 0) == 0);
+  assert(get_dim_max(range(acc_vec), 0) == 3);
+  assert(get_dim_min(range(sched_vec), 0) == 4);
+  assert(get_dim_max(range(sched_vec), 0) == 16);
+  assert(stride_in_dim(sched_vec, 0) == 4);
+
+  acc_0 = isl_map_read_from_str(ctx,"{ op[i0]-> data[i0+4]: 0<=i0<=11 }");
+  sched = isl_map_read_from_str(ctx, "{ op[i0] -> [i0]: 0 <=i0<=11 }");
+  ir_vec= get_vectorized_write(acc_0, sched, 4/*fetch_width*/, 0/*dom_dim*/);
+  acc_vec = ir_vec.first;
+  sched_vec = ir_vec.second;
+  cout << "before vectorization: " << str(acc_0) << endl;
+  cout << "after vectorization: " << str(acc_vec) << endl;
+  cout << "sched after vectorization: " << str(sched_vec) << endl;
+  assert(get_dim_min(range(acc_vec), 0) == 1);
+  assert(get_dim_max(range(acc_vec), 0) == 3);
+  assert(get_dim_min(range(sched_vec), 0) == 4);
+  assert(get_dim_max(range(sched_vec), 0) == 12);
+  assert(stride_in_dim(sched_vec, 0) == 4);
+
+  //2D case
+  acc_0 = isl_map_read_from_str(ctx,"{ op[i0, i1]-> data[i0, i1]: 0<=i0<=11 and 0 <=i1 <= 11 }");
+  sched = isl_map_read_from_str(ctx, "{ op[i0, i1] -> [12 * i0 + i1]: 0 <=i0<=11 and 0<= i1 <= 11 }");
+  ir_vec = get_vectorized_write(acc_0, sched,  4/*fetch_width*/, 1/*dom_dim*/);
+  acc_vec = ir_vec.first;
+  sched_vec = ir_vec.second;
+  cout << "before vectorization: " << str(acc_0) << endl;
+  cout << "after vectorization: " << str(acc_vec) << endl;
+  cout << "sched after vectorization: " << str(sched_vec) << endl;
+  assert(get_dim_min(range(acc_vec), 1) == 0);
+  assert(get_dim_max(range(acc_vec), 1) == 2);
+  assert(get_dim_min(range(sched_vec), 0) == 4);
+  assert(get_dim_max(range(sched_vec), 0) == 144);
+  assert(stride_in_dim(sched_vec, 1) == 4);
+  assert(stride_in_dim(sched_vec, 0) == 12);
+
+  //2D case with reaccess
+  acc_0 = isl_map_read_from_str(ctx,"{ op[i0, i1]-> data[i0]: 0<=i0<=11 and 0 <=i1 <= 11 }");
+  sched = isl_map_read_from_str(ctx, "{ op[i0, i1] -> [12 * i0 + i1]: 0 <=i0<=11 and 0<= i1 <= 11 }");
+  ir_vec = get_vectorized_write(acc_0, sched,  4/*fetch_width*/, 0/*dom_dim*/);
+  acc_vec = ir_vec.first;
+  sched_vec = ir_vec.second;
+  cout << "before vectorization: " << str(acc_0) << endl;
+  cout << "after vectorization: " << str(acc_vec) << endl;
+  cout << "sched after vectorization: " << str(sched_vec) << endl;
+  assert(get_dim_min(range(acc_vec), 0) == 0);
+  assert(get_dim_max(range(acc_vec), 0) == 2);
+  assert(get_dim_min(range(sched_vec), 0) == 48);
+  assert(get_dim_max(range(sched_vec), 0) == 144);
+  assert(get_in_dim(acc_vec) == 1);
+  assert(stride_in_dim(sched_vec, 0) == 48);
+
+  //3D case with reaccess
+  acc_0 = isl_map_read_from_str(ctx,"{ op[i0, i1, i2]-> data[i0]: 0<=i0<=11 and 0 <=i1 <= 11 and 0 <= i2 <= 3}");
+  sched = isl_map_read_from_str(ctx, "{ op[i0, i1, i2] -> [48 * i0 + 4*i1 + i2]: 0 <=i0<=11 and 0<= i1 <= 11 and 0 <= i2 <= 3}");
+  ir_vec = get_vectorized_write(acc_0, sched,  4/*fetch_width*/, 0/*dom_dim*/);
+  acc_vec = ir_vec.first;
+  sched_vec = ir_vec.second;
+  cout << "before vectorization: " << str(acc_0) << endl;
+  cout << "after vectorization: " << str(acc_vec) << endl;
+  cout << "sched after vectorization: " << str(sched_vec) << endl;
+  assert(get_dim_min(range(acc_vec), 0) == 0);
+  assert(get_dim_max(range(acc_vec), 0) == 2);
+  assert(get_in_dim(acc_vec) == 1);
+}
+
+void vectorization_unit_tests() {
+  access_pattern_write_unit_tests();
+  access_pattern_read_unit_tests();
+  synth_id_test();
+  synth_id_auto_test();
+  synth_id_fetch2_test();
+  twoport_vec_test();
+  rolled_conv_test();
+  rolled_conv_reorder_test();
+  upsample_vectorization_test();
+  upsample_pad_test();
+  sw_fetch2_test();
+}
+
 void lake_tests() {
-  //dual_port_lake_test();
-  //lake_agg_sram_tb_config_test();
-  //union_test();
-  //assert(false);
-  //playground();
+  //vectorization_unit_tests();
+  //vectorization_unit_tests();
   test_single_port_mem(false, true, "aha_garnet_design_new");
   test_pond("aha_garnet_design_pond");
   //test_single_port_mem(false, false, "aha_garnet_design");
@@ -16481,6 +17223,71 @@ void set_scheduled_loop_latency(schedule_info& hwinfo, op* op, prog& prg) {
   //hwinfo.instance_latencies[op] = latency;
 }
 
+int get_vectorization_dim(isl_map* m, int fetch_width) {
+  for(int i = num_out_dims(m)-1; i >= 0; i --) {
+    int ext = get_dim_extent(range(m), i);
+    if (ext >= fetch_width) {
+      return i;
+    }
+  }
+  return -1; //need merge or use single pixel vectorization
+}
+
+bool need_relax(schedule_info& sched, op* loop, prog& prg, int fetch_width) {
+  //only look at loop op
+  if (!loop->is_loop())
+    return false;
+  auto read_map = read_at(loop->name, prg);
+  auto levels = get_variable_levels(prg);
+  cout << "op name: " << loop->name << endl;
+  cout << "op level: " << levels.at(loop->name) << endl;
+  if(read_map == nullptr)
+      return false;
+  //cout << "Get read map: " << str(read_map) << endl;
+  for (auto rd_map: get_maps(read_map)) {
+    cout << tab(4) << "Read map: \n\t" << str(rd_map) << endl;
+    auto b_map = to_map(pick(get_basic_maps(rd_map)));
+    auto read_addr_involve_dim = out_involve_dim(b_map, levels.at(loop->name));
+    cout << tab(4) << "addr involve dim: " << read_addr_involve_dim << endl;
+
+    //Chances are that this dimension is fully unrolled
+    //Involve the vectorization dimension
+    int vec_dim = get_vectorization_dim(b_map, fetch_width);
+    if (read_addr_involve_dim.size() > 0
+            && (elem(vec_dim, read_addr_involve_dim))) {
+      assert(read_addr_involve_dim.size() == 1);
+      int packed_addr_dim = pick(read_addr_involve_dim);
+      auto in_involve_d = in_involve_dim(b_map, packed_addr_dim);
+      cout << "\tInvolve in dim: " << in_involve_d << endl;
+      //Do not have sliding window
+      if (in_involve_d.size() == 1) {
+          continue;
+      } else if (loop->trip_count() < fetch_width) {
+          continue;
+      } else {
+          int stride = stride_in_dim(b_map, levels.at(loop->name), packed_addr_dim);
+          cout << "Dim " << levels.at(loop->name)<< "\n\t hasStride : " << stride << endl;
+          if (stride % fetch_width != 0) {
+            cout << tab(4) << "Relax ii latency for op: " << loop->name << endl;
+            //cout << tab(4) << "Original offset within parent: " << sched.offset_in_parent(child) << endl;
+            cout << tab(4) << "Original offset within parent: " << sched.offset_in_parent(loop) << endl;
+            cout << tab(4) << "loop trip count: " << loop->trip_count() << endl;
+            if (is_inner_loop(loop))
+                sched.op_offset_within_parent.at(loop) = (loop->trip_count()) % fetch_width + fetch_width * (loop->trip_count()%fetch_width== 0);
+            else {
+                //int range_span = get_dim_extent(range(b_map), packed_addr_dim);
+                //if (range_span % fetch_width)
+                sched.op_offset_within_parent.at(loop) = sched.II(loop) * fetch_width;
+            }
+            cout << tab(4) << "New offset within parent: " << sched.offset_in_parent(loop) << endl;
+          }
+          return true;
+      }
+    }
+  }
+  return false;
+}
+
 void relax_inner_delay_for_vec_read(schedule_info& sched, op* loop, prog& prg, int fetch_width);
 void relax_inner_delay_for_vec_write(schedule_info& sched, op* loop, prog& prg, int fetch_width);
 
@@ -16509,9 +17316,12 @@ void asap_inner_loops_schedule(schedule_info& sched, op* op, prog& prg, int fetc
     for (auto other : op->children) {
       int old_latency = latency;
       sched.op_offset_within_parent[other] = latency;
-      if (is_inner_loop(other)) {
-        //TODO: currently only need to pad read op
-        relax_inner_delay_for_vec_read(sched, other, prg, fetch_width);
+      //if (is_inner_loop(other)) {
+      //  //TODO: currently only need to pad read op
+      //  relax_inner_delay_for_vec_read(sched, other, prg, fetch_width);
+      //}
+      if (need_relax(sched, other, prg, fetch_width)) {
+        cout << tab(4) << other->name << "--> Enter relax condition loop!" << endl;
       }
       latency = sched.total_latency(other) + sched.offset_in_parent(other);
       if (old_latency == latency) {
@@ -16833,55 +17643,90 @@ void adjust_outer_delays_sequentially(schedule_info& sched, prog& prg) {
   }
 }
 
-void relax_delays_rate_matched(schedule_info& sched, prog& prg) {
+void relax_delays_rate_matched(CodegenOptions& options, schedule_info& sched, prog& prg) {
   cout << "Adjusting delays of " << prg.name << endl;
-  int d = 0;
-  int fetch_width = 4;
-  auto start_times = op_start_times(sched, prg);
+  map<string, int> delay_relaxation;
+  int fetch_width = options.mem_hierarchy.at("mem").fetch_width;
+  auto start_times = its(op_times_map(sched, prg), prg.whole_iteration_domain());
+  auto start_times_map = get_maps_in_map(start_times);
   auto domains = prg.domains();
-  for (auto name : get_kernels_in_order(prg)) {
+  for (auto name : topologically_sort_kernels(prg)) {
+    delay_relaxation[name] = 0;
     auto lp = prg.find_loop(name);
     auto cons_op_vec = lp->all_ops();
-    if (cons_op_vec.size() > 1)
-        continue;
+    int delay_max = 0;
     cout << "Adjusting delay of " << lp->name << endl;
-    for(auto prod: get_producers(name, prg)){
-        auto prod_loop = prg.find_loop(prod);
-        auto prod_op_vec = prod_loop->all_ops();
-        //Assume we only have one op under loop nest
-        if (prod_op_vec.size() > 1)
-            continue;
-        auto prod_op_name = pick(prod_op_vec)->name;
-        auto cons_op_name = pick(cons_op_vec)->name;
-        auto prod_dom = domains.at(pick(prod_op_vec));
-        auto cons_dom = domains.at(pick(cons_op_vec));
-        auto prod_sched = to_map(start_times.at(pick(prod_op_vec)));
-        auto cons_sched = to_map(start_times.at(pick(cons_op_vec)));
-
-        cout << tab(2) << "Producers: " << prod_op_name << endl;
-        cout << tab(2) << "sched: " << str(prod_sched) << endl;
-
-        cout << tab(2) << "Consumers: " << cons_op_name << endl;
-        cout << tab(2) << "sched: " << str(cons_sched) << endl;
-
-        auto equal_start_time =
-        equal(lexminpt(range(its(prod_sched, prod_dom))),
-                lexminpt(range(its(cons_sched, cons_dom))));
-        bool equal_rng = equal(range(prod_sched), range(cons_sched));
-        bool prod_need_index = pick(cons_op_vec)->index_variables_needed_by_compute.size();
-        cout << tab(4) << "Start cycle Is equal: " << equal_start_time << endl;
-        cout << tab(4) << "domain is same: " << equal_rng << endl;
-        if (equal_start_time && !equal_rng) {
-            int prod_ii = sched.II(pick(prod_op_vec)->parent);
-            cout << "\t\top " << prod_op_name << " has ii: " << prod_ii << endl;
-            //6 is a magic number which make upsample work
-            d += prod_ii * fetch_width + 6;
-        } else if (equal_start_time && prod_need_index){
-            d += 3;
-        }
+    auto kernel_read_map = read_at(lp->name, prg);
+    //chances are that a op does consume any buffer
+    if (!kernel_read_map) {
+      continue;
     }
-    sched.op_offset_within_parent[lp] += d;
-  }
+    cout << "read map: " << str(kernel_read_map) << endl;
+    for (auto cons_op: cons_op_vec) {
+      for(auto prod: get_producers(name, prg)){
+        auto prod_loop = prg.find_loop(prod);
+        auto kernel_write_map = written_at(prod_loop->name, prg);
+        auto write_maps = get_maps_in_map(kernel_write_map);
+        cout << "write map: " << str(kernel_write_map) << endl;
+        for (auto prod_op: prod_loop->all_ops()) {
+          auto prod_op_name = prod_op->name;
+          auto cons_op_name = cons_op->name;
+          auto prod_dom = domains.at(prod_op);
+          auto cons_dom = domains.at(cons_op);
+          auto prod_sched = (start_times_map.at(prod_op->name));
+          auto cons_sched = (start_times_map.at(cons_op->name));
+
+          //auto dd = dependence_distance_singleton(kernel_write_map, kernel_read_map, start_times);
+          //Get the dependency distance set
+          auto dds = dependence_distance_set(kernel_write_map, kernel_read_map, start_times);
+          bool need_relax = false;
+          if (empty(dds)) {
+            //The read op and write op does have data dependence
+            continue;
+          } else {
+            auto ddc = to_set(dds);
+            //All constant dependency distance can be optimized into shift registers
+            if(!all_const(ddc)) {
+              int min_dd = to_int(lexminval(ddc));
+              int max_dd = to_int(lexmaxval(ddc));
+              cout << tab(2) << "Min DD: " << min_dd << endl
+                << tab(2) << "Max DD: " << max_dd << endl;
+              int prod_ii = sched.II(prod_op->parent);
+              cout << "\t\top " << prod_op_name << " has ii: " << prod_ii << endl;
+              if (min_dd < prod_ii * fetch_width * 2)
+                need_relax = true;
+            }
+          }
+
+          cout << tab(2) << "Producers: " << prod_op_name << endl;
+          cout << tab(2) << "sched: " << str(prod_sched) << endl;
+
+          cout << tab(2) << "Consumers: " << cons_op_name << endl;
+          cout << tab(2) << "sched: " << str(cons_sched) << endl;
+
+          int cons_start_time = to_int(lexminval(range(its(cons_sched, cons_dom))));
+          int prod_start_time = to_int(lexminval(range(its(prod_sched, prod_dom))));
+
+          bool equal_start_time = (cons_start_time == prod_start_time);
+          bool prod_need_index = pick(cons_op_vec)->index_variables_needed_by_compute.size();
+          int offset = 0;
+          if (need_relax) {
+              int prod_ii = sched.II(prod_op->parent);
+              //Relaxation recipe input/output
+              offset = prod_ii * fetch_width * 2;
+          } else if (equal_start_time && prod_need_index && (cons_start_time < 3)) {
+              offset = 3 - cons_start_time;
+          }
+          //get the max delay relaxation from all producer
+          delay_max = max(delay_max, delay_relaxation.at(prod) + offset);
+        } // for each producer op
+      } //for each producer kernel
+    } //for each consumer op
+    delay_relaxation.at(name) = delay_max;
+    sched.op_offset_within_parent[lp] += delay_max;
+    cout  << "Kernel <" << name << "> has Delay slack: " << delay_max << endl;
+    cout  << "Offset with in parent: " << sched.op_offset_within_parent.at(lp) << endl;
+  } //for each kernel in topographical order
 }
 
 void asap_input_iis(schedule_info& sched, prog& prg) {
@@ -17188,8 +18033,13 @@ void sanity_check_iis_for_vectorization(schedule_info& sched, prog& prg, int fet
 }
 
 
-void garnet_single_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
-  if (is_rate_matchable(prg)) {
+void garnet_single_port_ram_schedule(CodegenOptions& options, schedule_info& sched, op* root, prog& prg) {
+    //FIXME: remove this hack for fft
+  if (contains(prg.name, "fft")) {
+    //An hack on the fft schedule
+    sequential_schedule(sched, root, prg);
+    return;
+  } else if (is_rate_matchable(prg)) {
     prg.pretty_print();
 
     //TODO: need another function to choose between pad bottom level or top level
@@ -17286,12 +18136,18 @@ void garnet_single_port_ram_schedule(schedule_info& sched, op* root, prog& prg) 
       adjust_schedule_forward(sched, prg, 0);
     }
     //Add delay for identity stream
-    relax_delays_rate_matched(sched, prg);
+    relax_delays_rate_matched(options, sched, prg);
 
     //Make input as fast as possible
     asap_input_iis(sched, prg);
     auto op_sched = op_start_times_map(sched, prg);
     cout << "Final schedule after relax: " << str(op_sched)  << endl;
+    return;
+  } else if (contains(prg.name, "split")) {
+    sequential_schedule(sched, root, prg);
+    auto op_sched = op_start_times_map(sched, prg);
+    cout << "\tFinal schedule : " << str(op_sched)  << endl;
+    sanity_check_hw_schedule(sched, prg);
     return;
   }
 
@@ -17306,7 +18162,8 @@ void garnet_single_port_ram_schedule(schedule_info& sched, op* root, prog& prg) 
 
   /*
    * old method for ISCA deadline*/
-  asap_inner_loops_schedule(sched, root, prg, 4);
+  asap_inner_loops_schedule(sched, root, prg,
+          options.mem_hierarchy.at("mem").fetch_width);
   //sequential_schedule(sched, root, prg);
 
   adjust_inner_iis(sched, prg);
@@ -17321,7 +18178,6 @@ void garnet_single_port_ram_schedule(schedule_info& sched, op* root, prog& prg) 
 
   auto op_sched = op_start_times_map(sched, prg);
   cout << "\tFinal schedule : " << str(op_sched)  << endl;
-  //assert(false);
 
   adjust_schedule_forward(sched, prg, 0);
   sanity_check_hw_schedule(sched, prg);
@@ -17590,22 +18446,8 @@ schedule_info garnet_schedule_info(CodegenOptions& options, prog& prg, bool use_
       sched.resource_requirements[op] = op->func;
     }
 
-    // Extremely hacky rom latency introduction
-    if (op->func == "hcompute_curved_stencil") {
-      sched.compute_unit_latencies[op->func] = 1;
-      //sched.op_compute_unit_latencies[op->name] = 1;
-    } else if (op->func == "hcompute_curved_stencil_1") {
-      sched.compute_unit_latencies[op->func] = 1;
-      //sched.op_compute_unit_latencies[op->name] = 1;
-    } else if (op->func == "hcompute_curved_stencil_2") {
-      sched.compute_unit_latencies[op->func] = 1;
-      //sched.op_compute_unit_latencies[op->name] = 1;
-    } else if (prg.name == "rom" && op->func == "hcompute_hw_output_stencil") {
-      //assert(false);
-      sched.compute_unit_latencies[op->func] = 1;
-      //sched.op_compute_unit_latencies[op->name] = 1;
-    } else if (op->func != "") {
-      sched.compute_unit_latencies[op->func] = 0;
+    if (op->func != "") {
+      sched.compute_unit_latencies[op->func] = op->latency;
       //sched.op_compute_unit_latencies[op->name] = 0;
     } else {
       //sched.op_compute_unit_latencies[op->name] = 0;
@@ -17621,6 +18463,7 @@ schedule_info garnet_schedule_info(CodegenOptions& options, prog& prg, bool use_
       }
     }
   }
+  cout << sched.compute_unit_latencies << endl;
 
   for (auto op : prg.all_ops()) {
     if (op->func != "") {
@@ -17864,7 +18707,7 @@ void generate_smt_stream_for_garnet_single_port_mem(prog& prg) {
   options.add_memory_hierarchy("mem");
   options.emit_smt_stream = true;
   schedule_info sched = garnet_schedule_info(options, prg);
-  garnet_single_port_ram_schedule(sched, prg.root, prg);
+  garnet_single_port_ram_schedule(options, sched, prg.root, prg);
   auto sched_map = op_times_map(sched, prg);
   auto hw_sched = its(sched_map,
           prg.whole_iteration_domain());
@@ -17949,6 +18792,73 @@ void emit_mem_access_count_to_csv(string dir, CodegenOptions& options, mem_acces
     wr.close();
 }
 
+void compile_for_garnet_fetch2_mem(prog& prg,
+        string dir,
+        bool gen_smt_stream,
+        bool config_gen_only,
+        bool multi_level_mem,
+        bool use_dse_compute,
+        bool energy_model) {
+
+  //make sure the loop bound and address is positive
+  normalize_bounds(prg);
+  normalize_address_offsets(prg);
+  //remove_div(prg);
+  prg.sanity_check();
+  prg.pretty_print();
+
+
+  //optimized schedule
+  cmd("mkdir -p " + dir + "/" + prg.name);
+
+  CodegenOptions options = garnet_codegen_single_port_with_addrgen_options(prg, dir);
+  options.add_memory_hierarchy("mem");
+  options.mem_hierarchy.at("mem").set_config_fetch2();
+  cout << options.mem_hierarchy.at("mem").fetch_width << endl;
+  if (multi_level_mem)
+      options.add_memory_hierarchy("regfile");
+  options.emit_smt_stream = gen_smt_stream;
+  options.config_gen_only = config_gen_only;
+  //if (multi_sram)
+  //    options.mem_tile.multi_sram_accessor = true;
+  schedule_info sched = garnet_schedule_info(options, prg, use_dse_compute);
+  garnet_single_port_ram_schedule(options, sched, prg.root, prg);
+  auto sched_map = op_times_map(sched, prg);
+  auto hw_sched = its(sched_map,
+          prg.whole_iteration_domain());
+  cout << "result schedule: " << str(hw_sched) << endl;
+  auto buffers_opt = build_buffers(prg, hw_sched);
+  auto sched_max = lexmaxpt(range(hw_sched));
+  cout << "Latency of application is: " << str((sched_max)) << endl;
+
+  tag_coarse_grained_loop_to_ubuf(buffers_opt, prg);
+  //FIXME: put into separate pass for power analysis
+  if (energy_model) {
+    mem_access_cnt mem_access;
+    Mem_access_count(options, buffers_opt, mem_access, prg);
+    emit_mem_access_count_to_csv(dir + "/MemCount/" + prg.name, options, mem_access);
+
+    power_analysis_params power_params;
+    power_analysis_info power_stats;
+    Init_PE_energy_cost(power_params);
+
+#ifdef COREIR
+    PE_energy_cost_instance_model(power_params, power_stats, prg);
+    PE_energy_cost(power_params, power_stats, prg);
+#endif
+
+  }
+
+
+#ifdef COREIR
+  generate_garnet_coreir(buffers_opt, prg, options, sched, use_dse_compute);
+  if (!options.config_gen_only) {
+    generate_garnet_verilog_top(options, prg.name);
+    generate_garnet_verilator_tb(prg, hw_sched, buffers_opt);
+  }
+#endif
+}
+
 void compile_for_garnet_single_port_mem(prog& prg,
         string dir,
         bool gen_smt_stream,
@@ -17960,6 +18870,7 @@ void compile_for_garnet_single_port_mem(prog& prg,
   //make sure the loop bound and address is positive
   normalize_bounds(prg);
   normalize_address_offsets(prg);
+  //remove_div(prg);
   prg.sanity_check();
   prg.pretty_print();
 
@@ -17979,27 +18890,16 @@ void compile_for_garnet_single_port_mem(prog& prg,
   //if (multi_sram)
   //    options.mem_tile.multi_sram_accessor = true;
   schedule_info sched = garnet_schedule_info(options, prg, use_dse_compute);
-  garnet_single_port_ram_schedule(sched, prg.root, prg);
+  garnet_single_port_ram_schedule(options, sched, prg.root, prg);
   auto sched_map = op_times_map(sched, prg);
   auto hw_sched = its(sched_map,
           prg.whole_iteration_domain());
   cout << "result schedule: " << str(hw_sched) << endl;
   auto buffers_opt = build_buffers(prg, hw_sched);
+  auto sched_max = lexmaxpt(range(hw_sched));
+  cout << "Latency of application is: " << str((sched_max)) << endl;
+
   tag_coarse_grained_loop_to_ubuf(buffers_opt, prg);
-  for (auto & b: buffers_opt) {
-    cout << "create shift register for " << b.first << endl;
-    if (b.second.num_in_ports() == 0 || b.second.num_out_ports() == 0)
-        continue;
-
-    auto& buf = b.second;
-    auto impl = port_group2bank(options, prg, b.second, sched);
-
-    cout << "After shift register optimization: " << impl << endl;
-    if (impl.is_pure_shift_register(buf.get_out_ports()))
-      continue;
-
-    generate_banks_garnet(options, prg, buf, impl, sched);
-  }
   //FIXME: put into separate pass for power analysis
   if (energy_model) {
     mem_access_cnt mem_access;
@@ -18016,7 +18916,6 @@ void compile_for_garnet_single_port_mem(prog& prg,
 #endif
 
   }
-
 
 #ifdef COREIR
   generate_garnet_coreir(buffers_opt, prg, options, sched, use_dse_compute);
@@ -26279,8 +27178,25 @@ int main(int argc, char** argv) {
       return 0;
     }
 
+    if (cmd == "fetchwidth-tests") {
+      test_fetchwidth2_mem(false, true, "aha_garnet_design_fetch2");
+      return 0;
+    }
+
+    if (cmd == "unit-tests") {
+      vectorization_unit_tests();
+      return 0;
+    }
+
     if (cmd == "pond-tests") {
-      test_pond("aha_garnet_design_pond");
+      bool run_verilator = true;
+      test_pond("aha_garnet_design_pond", run_verilator);
+      return 0;
+    }
+
+    if (cmd == "pond-exp") {
+      bool run_verilator = false;
+      test_pond("aha_garnet_design_pond", run_verilator);
       return 0;
     }
 

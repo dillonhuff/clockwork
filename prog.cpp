@@ -1339,8 +1339,6 @@ map<string, UBuffer> build_buffers(prog& prg, umap* opt_sched) {
       }
       auto op_sched_its = its(opt_sched, to_uset(domains.at(op)));
       cout << "ITS      : " << str(op_sched_its) << endl;
-      cout << "sched ctx: " << ctx(opt_sched) << endl;
-      cout << "dom   ctx: " << ctx(domains.at(op)) << endl;
 
       assert(ctx(opt_sched) == ctx(domains.at(op)));
 
@@ -2014,7 +2012,7 @@ std::string resource_sharing_loop_codegen(umap* schedmap, const int d) {
       vars.push_back(v);
       if (di == d) {
         constraints.push_back(str(i.first) + " <= " + v + ((idx == (int) intervals.size() - 1) ? " <= " : " < ") + str(i.second));
-      } 
+      }
     }
     isl_set* is = mk_set(ctx(s), vars, constraints);
     interval_sets.push_back(is);
@@ -2849,6 +2847,109 @@ void generate_regression_testbench(prog& prg, map<string, UBuffer>& buffers) {
 
   rgtb << tab(1) << "in_pix.close();" << endl;
   rgtb << tab(1) << "fout.close();" << endl;
+  rgtb << tab(1) << "return 0;" << endl;
+  rgtb << "}" << endl;
+  rgtb.close();
+}
+
+void generate_vectorization_unit_testbench(UBuffer & buf) {
+  ofstream rgtb("unit_tb_" + buf.name + ".cpp");
+  rgtb << "#include \"" << buf.name << ".h\"" << endl << endl;
+  rgtb << "#include \"" << buf.name << "_vec.h\"" << endl << endl;
+  rgtb << "using namespace std;" << endl << endl;
+
+  rgtb << "int main() {" << endl;
+  rgtb << tab(1) << "srand(234);" << endl;
+  //rgtb << tab(1) << "ofstream fout(\"" << "regression_result_" << prg.name << ".txt\");" << endl;
+
+  vector<string> origin_streams;
+  vector<string> vectorized_streams;
+  //map<string, int> unroll_factor;
+  for (auto in_bd : buf.get_in_bundles()) {
+    int width = 0;
+    for (auto input: buf.port_bundles.at(in_bd)) {
+      width += buf.port_widths;
+    }
+    rgtb << tab(1) << "HWStream<hw_uint<" << width << " > > " << in_bd << ";" << endl;
+    rgtb << tab(1) << "HWStream<hw_uint<" << width << " > > " << in_bd  + "_vec"<< ";" << endl;
+    origin_streams.push_back(in_bd);
+    vectorized_streams.push_back(in_bd + "_vec");
+  }
+
+  for (auto out_bd : buf.get_out_bundles()) {
+    int width = 0;
+    for (auto output: buf.port_bundles.at(out_bd)) {
+      width += buf.port_widths;
+    }
+    rgtb << tab(1) << "HWStream<hw_uint<" << width << " > > " << out_bd << ";" << endl;
+    rgtb << tab(1) << "HWStream<hw_uint<" << width << " > > " << out_bd  + "_vec" << ";" << endl;
+    origin_streams.push_back(out_bd);
+    vectorized_streams.push_back(out_bd + "_vec");
+  }
+
+
+  rgtb << endl << endl;
+
+  rgtb << tab(1) << "// Loading input data" << endl;
+  for (auto in_bd : buf.get_in_bundles()) {
+    auto read_map = buf.access_map.at(pick(buf.port_bundles.at(in_bd)));
+    auto rng = range(read_map);
+    auto range_card = card(rng);
+    int num_pushes = int_upper_bound(range_card);
+    int lane_width = buf.port_widths;
+    int unroll = 1;
+    int bundle_width = lane_width * unroll;
+
+    rgtb << tab(1) << "// read map: " << str(read_map) << endl;
+    rgtb << tab(1) << "// rng     : " << str(rng) << endl;
+    rgtb << tab(1) << "// rng card: " << str(range_card) << endl;
+    int num_transfers = num_pushes;
+    rgtb << tab(1) << "for (int i = 0; i < " << num_transfers << "; i++) {" << endl;
+    vector<string> inds;
+    for (int i = 0; i < unroll; i++) {
+      inds.push_back("rand() % 256");
+      //inds.push_back("(i) % 256");
+      //inds.push_back(str(unroll) + "*i + " + str(i));
+    }
+    pack_bv(2, rgtb, "value", inds, lane_width);
+    rgtb << tab(2) << in_bd << ".write(value);" << endl;
+    rgtb << tab(2) << in_bd << "_vec.write(value);" << endl;
+    rgtb << tab(1) << "}" << endl << endl;
+  }
+
+  std::reverse(origin_streams.begin(), origin_streams.end());
+  std::reverse(vectorized_streams.begin(), vectorized_streams.end());
+  rgtb << tab(1) << buf.name << "(" << comma_list(origin_streams) << ");" << endl;
+  rgtb << tab(1) << buf.name << "_vec(" << comma_list(vectorized_streams) << ");" << endl;
+
+  for (auto out_bd : buf.get_out_bundles()) {
+    auto write_map = buf.access_map.at(pick(buf.port_bundles.at(out_bd)));
+    auto dom= domain(write_map);
+    auto range_card = card(dom);
+    int num_pops = int_upper_bound(range_card);
+    int unroll = 1;//map_find(out, unroll_factor);
+    int lane_width = buf.port_widths;
+    int bundle_width = lane_width*unroll;
+
+    rgtb << tab(1) << "for (int i = 0; i < " << num_pops << "; i++) {" << endl;
+    rgtb << tab(2) << "auto gold = " << out_bd << ".read();" << endl;
+    rgtb << tab(2) << "auto actual = " << out_bd << "_vec.read();" << endl;
+    vector<string> results_gold = split_bv(2, rgtb, "gold", lane_width, unroll);
+    vector<string> results = split_bv(2, rgtb, "actual", lane_width, unroll);
+    assert(results.size() == results_gold.size());
+    for (int i = 0; i < results.size(); i ++ ) {
+      rgtb << tab(2) << "cout << \"a: \" << (int)" << results.at(i) << " << \" \\tg: \" << (int)"
+          << results_gold.at(i) << " << endl;" << endl;
+      rgtb << tab(2) << "assert(" << results.at(i) << "==" << results_gold.at(i) <<");" << endl;
+    }
+
+    rgtb << tab(1) << "}" << endl << endl;
+  }
+  concat(vectorized_streams, origin_streams);
+  for (auto hw_stream: vectorized_streams) {
+    rgtb << tab(1) << "assert(" << hw_stream << ".is_empty());" << endl;
+  }
+
   rgtb << tab(1) << "return 0;" << endl;
   rgtb << "}" << endl;
   rgtb.close();
@@ -6429,6 +6530,118 @@ umap* op_end_times_map(schedule_info& sched, prog& prg) {
   return to_umap(hs);
 }
 
+
+isl_map* prog::map_from_expr(op* op, pair<string, piecewise_address>& top_pair) {
+  auto ivars = iter_vars();
+  auto doms = domains();
+  auto vars = map_find(op, ivars);
+  auto dom = map_find(op, doms);
+  string ivar_str = sep_list(vars, "[", "]", ", ");
+  string cond = "{ ";
+  for (auto sec_pair : top_pair.second) {
+    cond = cond + string(op->name + ivar_str + " -> " + top_pair.first + "[" + sec_pair.second + "] : " + sec_pair.first + "; ");
+  }
+  cond = cond.substr(0, cond.length() - 2);
+  cond = cond + string(" }");
+  isl_map* vmap = its(isl_map_read_from_str(ctx, cond.c_str()), dom);
+  return vmap;
+}
+
+void remove_div(prog& prg) {
+  prg.pretty_print();
+  /*
+  for (auto b : all_buffers(prg)) {
+    cout << "Buffer: " << b << endl;
+    map<op*, isl_map*> prods = prg.producer_maps(b);
+    cout << tab(1) << "Producers..." << endl;
+    for (auto opm : prods) {
+      cout << "\tProducer map: " << str(opm.second) << endl;
+      auto aff = get_aff(opm.second);
+      for (int d = 0; d < num_div_dims(aff); d++) {
+        auto div_dim = isl_aff_get_div(aff, d);
+        cout << tab(2) << "===div: " << str(div_dim) << endl;
+        int denom = to_int(isl_aff_get_denominator_val(div_dim));
+        cout << tab(2) << "denom: " << denom << endl;
+      }
+    }
+
+    map<op*, isl_map*> cons = prg.consumer_maps(b);
+
+    cout << "Got consumers" << endl;
+    for (auto opm : cons) {
+      cout << "\t op: " << opm.first->name << endl;
+      if (opm.second != nullptr) {
+        cout << "\t Consumer map: " << str(opm.second) << endl;
+        //for (auto buffer_addr: opm.first->consume_locs_pair) {
+        //  isl_map* rdmap = prg.map_from_expr(opm.first, buffer_addr);
+        //  cout << "\t\t sub map: " << str(rdmap) << endl;
+        //}
+        for (auto bmap: get_basic_maps(opm.second)) {
+          cout << "\t\t bmap: " << str(bmap) << endl;
+          for (auto aff: get_aff_vec(to_map(bmap))) {
+            cout << "\t\t\t" << str(aff) << endl;
+          }
+        }
+      }
+    }
+  }*/
+  for (auto op: prg.all_ops()) {
+    cout << "\tVisit op: " << op->name << endl;
+    for (auto read_buf_addr_pair : op->consume_locs_pair) {
+      isl_map* rdmap = prg.map_from_expr(op, read_buf_addr_pair);
+      cout << "\t\tread sub map: " << str(simplify(rdmap)) << endl;
+      for (auto aff: get_aff_vec(rdmap)) {
+        cout << "\t\t\t" << str(aff) << endl;
+        map<int, int> split_dims;
+        for (int d = 0; d < num_div_dims(aff); d++) {
+          auto div_dim = isl_aff_get_div(aff, d);
+          cout << tab(8) << "===div: " << str(div_dim) << endl;
+          int denom = to_int(isl_aff_get_denominator_val(div_dim));
+          cout << tab(8) << "denom: " << denom << endl;
+
+          for (int di = 0; di < num_in_dims(rdmap); di++) {
+            if (!is_zero(get_coeff(aff, di))) {
+              split_dims[di] = denom;
+            }
+          }
+          break;
+        }
+        if (split_dims.size()) {
+          for (auto it: split_dims)
+            cout << "\tDim: " << it.first << " denom: " << it.second << endl;
+          vector<string> dvars;
+          vector<string> origin_vars;
+          for (int d = 0; d < num_in_dims(rdmap); d ++) {
+            if (contains_key(d, split_dims)) {
+              int denom = split_dims.at(d);
+              dvars.push_back("floor(d" + str(d) + "/" + str(denom) + ")");
+              dvars.push_back("d"+str(d) + "%" + str(denom));
+            } else {
+              dvars.push_back("d" + str(d));
+            }
+            origin_vars.push_back("d" + str(d));
+          }
+          string trans_str =
+            curlies(
+                ::domain_name(rdmap) +  bracket_list(origin_vars)
+                + "->" +
+                ::domain_name(rdmap) + bracket_list(dvars)
+                );
+          cout << "\tTrans str" << trans_str << endl;
+          auto trans_map = isl_map_read_from_str(ctx(rdmap), trans_str.c_str());
+          auto stripmining_rdmap= dot(inv(trans_map), rdmap);
+          cout << "\t After strip mining: " << str(simplify_expr(stripmining_rdmap)) << endl;
+        }
+      }
+    }
+    for (auto write_buf_addr_pair : op->produce_locs) {
+      isl_map* wtmap = prg.map_from_expr(op, write_buf_addr_pair);
+      cout << "\t\twrite map: " << str(wtmap) << endl;
+    }
+  }
+  assert(false);
+}
+
 void normalize_address_offsets(prog& prg) {
   prg.pretty_print();
   for (auto b : all_buffers(prg)) {
@@ -7666,7 +7879,7 @@ dgraph build_in_to_out_shift_register_graph(CodegenOptions& options, prog& prg, 
 }
 
 //helper function to create all the shift registered port
-void create_subbranch(const std::string& out_pt, dgraph& sr_graph, UBuffer& buf, ubuffer_impl &impl) {
+void create_subbranch(const std::string& out_pt, dgraph& sr_graph, UBuffer& buf, UBufferImpl &impl) {
     auto src2dst = sr_graph.get_sub_branch(out_pt);
     cout << "\tsubbranch size: " << src2dst.size() << endl;
     for (auto io_pair: src2dst) {
@@ -7676,8 +7889,8 @@ void create_subbranch(const std::string& out_pt, dgraph& sr_graph, UBuffer& buf,
         if (delay == 0) {
             inpt = sr_graph.find_origin(inpt);
         }
-        auto bk = buf.compute_bank_info(inpt, outpt, delay);
-        buf.add_bank_between(inpt, outpt, bk);
+        //auto bk = buf.compute_bank_info(inpt, outpt, delay);
+        //buf.add_bank_between(inpt, outpt, bk);
         impl.add_o2o_info(inpt, outpt, delay);
     }
 }
@@ -7726,9 +7939,31 @@ dgraph build_shift_registers(CodegenOptions& options, prog& prg, UBuffer& buf, s
   return dg;
 }
 
+UBufferImpl generate_optimized_memory_implementation(
+        CodegenOptions& options, UBuffer & buf, prog & prg, schedule_info& hwinfo) {
+    //TODO: possible bug to comment out
+    //if (prg.is_boundary(buf.name))
+    //    return impl;
 
-ubuffer_impl port_group2bank(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
-    ubuffer_impl impl;
+    cout << "create shift register for " << buf << endl;
+    auto impl = port_group2bank(options, prg, buf, hwinfo);
+
+    cout << "After shift register optimization: " << impl << endl;
+    if (!impl.is_pure_shift_register(buf.get_out_ports()))
+        generate_banks_garnet(options, buf, impl, hwinfo);
+
+
+
+    cout << "After banking optimization: " << impl << endl;
+    impl.bank_merging(options);
+    cout << "After bank merging: " << impl << endl;
+    return impl;
+}
+
+
+
+UBufferImpl port_group2bank(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
+    UBufferImpl impl;
 
     int in_port_width = options.rtl_options.max_inpt;
     int out_port_width = options.rtl_options.max_outpt;
@@ -7754,8 +7989,8 @@ ubuffer_impl port_group2bank(CodegenOptions& options, prog& prg, UBuffer& buf, s
         }
 
         //The data structure that carry the port and delay informations
-        std::set<string> out_pts;
-        map<string, int> read_delay;
+        //std::set<string> out_pts;
+        //map<string, int> read_delay;
         while(out_delays.size()) {
             auto pt_delay_pair = out_delays.back();
             out_delays.pop_back();
@@ -7765,62 +8000,71 @@ ubuffer_impl port_group2bank(CodegenOptions& options, prog& prg, UBuffer& buf, s
             //Rewrite the ubuffer prepare for vectorization
             int depth = sr_graph.max_delay_to_leaf(pt_name);
             if (depth > 0) {
-                auto outpt_info = buf.get_shift_pt_access_with_sched(pt_name, depth);
-                auto new_access_map = outpt_info.first;
-                auto new_sched = outpt_info.second;
-                buf.replace_pt(pt_name, new_access_map, new_sched);
+                //Only save this meta data in shift register impl
+                impl.shift_depth[pt_name] = depth;
+
+                //TODO: move the access pattern rewrite into ubuffer generation
+                //auto outpt_info = buf.get_shift_pt_access_with_sched(pt_name, depth);
+                //auto new_access_map = outpt_info.first;
+                //auto new_sched = outpt_info.second;
+                //buf.replace_pt(pt_name, new_access_map, new_sched);
             }
 
             if (pt_delay_pair.second <= options.merge_threshold) {
                 //add new sr only chain
                 //Rewrite the access map and schedule
-                auto sr_bank = buf.compute_bank_info(src, pt_name, delay);
-                buf.add_bank_between(src, pt_name, sr_bank);
+                //auto sr_bank = buf.compute_bank_info(src, pt_name, delay);
+                //buf.add_bank_between(src, pt_name, sr_bank);
                 create_subbranch(pt_name, sr_graph, buf, impl);
 
-                //TODO: use ubuffer_impl to substite bank in ubuffer
+                //TODO: use UBufferImpl to substite bank in ubuffer
                 impl.add_i2o_info(src, pt_name, delay);
+                //No need to add a memory tile
             } else {
-                out_pts.insert(pt_name);
-                read_delay.insert(pt_delay_pair);
-                //saturize the output ports or the last remaining port
-                if ((out_pts.size() == out_port_width) || (out_delays.size() == 0)) {
-                    //add the bank that require memory tile
-                    auto super_bank = buf.compute_bank_info({src}, out_pts, read_delay);
-                    for (auto out_pt: out_pts) {
-                        buf.add_bank_between(src, out_pt, super_bank);
-                        create_subbranch(out_pt, sr_graph, buf, impl);
+                //out_pts.insert(pt_name);
+                //read_delay.insert(pt_delay_pair);
+                ////saturize the output ports or the last remaining port
+                //if ((out_pts.size() == out_port_width) || (out_delays.size() == 0)) {
+                //    //add the bank that require memory tile
+                //    auto super_bank = buf.compute_bank_info({src}, out_pts, read_delay);
+                //    int bank = impl.add_new_bank_between({src}, out_pts, to_set(buf.global_range()));
+                //    impl.sequentially_assign_inpt({src}, bank);
+                //    impl.sequentially_assign_outpt(buf.sort_pt_by_bundle(out_pts), bank);
+                //    for (auto out_pt: out_pts) {
+                //        buf.add_bank_between(src, out_pt, super_bank);
+                //        create_subbranch(out_pt, sr_graph, buf, impl);
 
-                        //TODO: use ubuffer_impl to substite bank in ubuffer
-                        impl.add_i2o_info(src, out_pt, delay);
-                    }
-                    read_delay.clear();
-                    out_pts.clear();
-                }
+                //        //TODO: use UBufferImpl to substite bank in ubuffer
+                //        impl.add_i2o_info(src, out_pt, read_delay.at(out_pt));
+                //    }
+                //    read_delay.clear();
+                //    out_pts.clear();
+                //}
+                impl.add_i2o_info(src, pt_name, pt_delay_pair.second);
+                //Need to add a bank of memory tile
+                //TODO: possible bug rddom set to the whole buffer
+                int bank = impl.add_new_bank_between({src}, {pt_name},
+                        //to_set(buf.global_range()));
+                        to_set(unn(range(buf.access_map.at(src)), range(buf.access_map.at(pt_name)))));
+                map_insert(impl.bank_inpt2writers, bank, {src});
+                map_insert(impl.bank_outpt2readers, bank, {pt_name});
+                create_subbranch(pt_name, sr_graph, buf, impl);
             }
         }
 
     }
     buf.print_bank_info();
+    cout << sr_graph;
+    cout << impl;
 
     return impl;
 
     //Add a visit pass on the sr graph for all input, take the data use the threshold
 }
 
-isl_map* build_buffer_impl(prog& prg, UBuffer& buf, schedule_info& hwinfo, ubuffer_impl& impl) {
-  cout << "Building implementation of " << buf.name << endl;
+isl_map* build_buffer_impl_embarrassing_banking(UBuffer& buf, schedule_info& hwinfo, EmbarrassingBankingImpl& impl) {
+  cout << "Building implementation of " << buf.name << " Using Embarassing Banking. " << endl;
 
-  maybe<std::set<int> > embarassing_banking =
-    embarassing_partition(buf);
-  bool has_embarassing_partition = embarassing_banking.has_value();
-  assert(has_embarassing_partition);
-
-  if (embarassing_banking.get_value().size() == buf.logical_dimension()) {
-    cout << buf.name << " is really a register file" << endl;
-  }
-
-  impl.partition_dims = embarassing_banking.get_value();
   vector<int> extents;
   extents = extents_by_dimension(buf);
   for (auto d : impl.partition_dims) {
@@ -7849,10 +8093,10 @@ isl_map* build_buffer_impl(prog& prg, UBuffer& buf, schedule_info& hwinfo, ubuff
 
   cout << "Bank map: " << bank_func << endl;
   //assert(false);
-  isl_map* m = isl_map_read_from_str(prg.ctx, bank_func.c_str());
+  isl_map* m = isl_map_read_from_str(buf.ctx, bank_func.c_str());
   for (auto pt : buf.get_all_ports()) {
     for (int b = 0; b < num_banks; b++) {
-      isl_set* bnk = isl_set_read_from_str(prg.ctx, curlies("Bank[" + str(b) + "]").c_str());
+      isl_set* bnk = isl_set_read_from_str(buf.ctx, curlies("Bank[" + str(b) + "]").c_str());
       assert(!empty(bnk));
 
       isl_map* bnk_map = dot(to_map(buf.access_map.at(pt)), m);
@@ -7873,28 +8117,87 @@ isl_map* build_buffer_impl(prog& prg, UBuffer& buf, schedule_info& hwinfo, ubuff
 }
 
 
-void generate_banks_garnet(CodegenOptions& options, prog& prg, UBuffer& buf, ubuffer_impl& impl, schedule_info& hw_info) {
+void generate_banks_garnet(CodegenOptions& options, UBuffer& buf, UBufferImpl& impl, schedule_info& hw_info) {
 
     //TODO: implement more banking strategies
-    buf.banking.partition = "cyclic";
-    auto bank_func = build_buffer_impl(prg, buf, hw_info, impl);
+    maybe<std::set<int> > embarassing_banking =
+      embarassing_partition(buf);
+    bool has_embarassing_partition = embarassing_banking.has_value();
+    if (has_embarassing_partition) {
+      buf.banking.partition = "cyclic";
+      if (embarassing_banking.get_value().size() == buf.logical_dimension()) {
+        cout << buf.name << " is really a register file" << endl;
+      }
 
-    cout << "bank func: " << str(bank_func) << endl;
-    cout << "After banking: " << impl << endl;
+      EmbarrassingBankingImpl bank_impl(impl);
 
-    //take the ubuffer implementation add bank to ubuffer
-    for (int bank_id = 0; bank_id < impl.get_bank_num(); bank_id ++) {
-      isl_set* bnk = isl_set_read_from_str(prg.ctx, curlies("Bank["+str(bank_id) + "]").c_str());
-      auto rddom = to_uset(domain(its_range(bank_func, bnk)));
-      cout << "rddom before its: " << str(rddom) << endl;
-      rddom = coalesce(its(rddom, buf.global_range()));
-      cout << "rddom after its: " << str(rddom) << endl;
-      auto point = pick(get_points(bnk));
-      cout << "ADD BANK!\n Bank id: " << str(point) << endl;
-      std::set<string> input_sets = impl.bank_writers.at(bank_id);
-      std::set<string> output_sets = impl.bank_readers.at(bank_id);
-      auto bnk_info = buf.compute_bank_info(rddom, point, input_sets, output_sets);
-      buf.add_bank_between(input_sets, output_sets, bnk_info);
+      bank_impl.partition_dims = embarassing_banking.get_value();
+      auto bank_func = build_buffer_impl_embarrassing_banking(buf, hw_info, bank_impl);
+
+      cout << "bank func: " << str(bank_func) << endl;
+      cout << "After banking: " << bank_impl << endl;
+
+      //take the ubuffer implementation add bank to ubuffer
+      for (int bank_id = 0; bank_id < bank_impl.get_bank_num(); bank_id ++) {
+        isl_set* bnk = isl_set_read_from_str(buf.ctx, curlies("Bank["+str(bank_id) + "]").c_str());
+        auto rddom = to_uset(domain(its_range(bank_func, bnk)));
+        cout << "rddom before its: " << str(rddom) << endl;
+        rddom = coalesce(its(rddom, buf.global_range()));
+        cout << "rddom after its: " << str(rddom) << endl;
+        auto point = pick(get_points(bnk));
+        cout << "ADD BANK!\n Bank id: " << str(point) << endl;
+        std::set<string> input_sets = bank_impl.bank_writers.at(bank_id);
+        std::set<string> output_sets = bank_impl.bank_readers.at(bank_id);
+        auto bank_IOs = buf.port_grouping(options, impl, rddom, input_sets, output_sets);
+        for (auto bank_IO_pair: bank_IOs) {
+            cout << "input group: " << bank_IO_pair.first << endl;
+            cout << "output group: " << bank_IO_pair.second << endl;
+          //TODO potential bug for multi bank with broad casting case
+          //TODO bank is not a good intermediate representation and contains too much internal data
+          //     use buffer impl then
+          if ((bank_IO_pair.first.size() == 1) && (bank_IO_pair.second.size() == 1)){
+            string inpt = pick(bank_IO_pair.first);
+            string outpt = pick(bank_IO_pair.second);
+            maybe<int> delay_info = buf.dependence_distance_max(inpt, outpt);
+            assert(delay_info.has_value());
+            auto bnk_info = buf.compute_bank_info(inpt, outpt, delay_info.get_value());
+            buf.add_bank_between(inpt, outpt, bnk_info);
+
+            //impl.add_new_bank_between({inpt}, {outpt}, to_set(rddom));
+          } else {
+            auto input_sets = bank_IO_pair.first;
+            auto output_sets = bank_IO_pair.second;
+            auto bnk_info = buf.compute_bank_info(rddom, point, input_sets, output_sets);
+            buf.add_bank_between(input_sets, output_sets, bnk_info);
+
+            //impl.add_new_bank_between(input_sets, output_sets, to_set(rddom));
+          }
+        }
+        //if (buf.overlap_schedule(input_sets) || buf.overlap_schedule(output_sets)) {
+        //    cout << "inputs for bank: " << input_sets << endl;
+        //    cout << "outputs for bank: " << output_sets << endl;
+        //    assert(input_sets.size() == 1);
+        //  for (string inpt : input_sets) {
+        //    for (string outpt: output_sets) {
+        //      //auto bnk_info = buf.compute_bank_info(rddom, point, {inpt}, {outpt});
+        //      maybe<int> delay_info = buf.dependence_distance_max(inpt, outpt);
+        //      assert(delay_info.has_value());
+        //      auto bnk_info = buf.compute_bank_info(inpt, outpt, delay_info.get_value());
+        //      buf.add_bank_between(inpt, outpt, bnk_info);
+        //    }
+        //    buf.merge_bank_broadcast(inpt);
+        //  }
+        //} else {
+        //    auto bnk_info = buf.compute_bank_info(rddom, point, input_sets, output_sets);
+        //    buf.add_bank_between(input_sets, output_sets, bnk_info);
+        //}
+      }
+    } else {
+        cout << "Use exhaustive banking! " << endl;
+        buf.generate_banks_and_merge(options);
+        buf.parse_exhaustive_banking_into_impl(impl);
+        cout << "After exhaustive banking:\n " << impl << endl;
+        //cout << "CANNOT support by current banking strategies!" << endl;
     }
 }
 
@@ -9264,7 +9567,7 @@ void generate_resource_sharing_code(
 
   // What are the major changes that are needed?
   //  - We have to have one C++ function that takes in
-  //    inputs from every channel and does compute ops on them 
+  //    inputs from every channel and does compute ops on them
   //  - Compute units in other operations have to be done
   //    by writing data to a channel and then reading it back
   //    from another channel
@@ -9327,7 +9630,7 @@ void generate_app_code(
     }
   }
   conv_out << "// Total re-use buffer capacity: " << capacity << " bits" << endl;
-  
+
 
   for (auto& gp : dag.fusion_group_progs) {
     vector<umap*> sched_maps;
@@ -9817,7 +10120,7 @@ insert_inter_group_buffers(const std::map<std::string, std::set<std::string> >& 
       isl_set* s = map_find({group_name, b.first}, read_by_gp);
 
       string broadcast = prg.un(b.first + "_to_" + group_name);
-      string incoming_channel = broadcast; 
+      string incoming_channel = broadcast;
       string producer_group = map_find(b.first, producer_groups);
 
       prg.buffer_port_widths[broadcast] = prg.buffer_port_width(name(s));

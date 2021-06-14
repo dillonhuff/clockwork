@@ -3,4 +3,4 @@
 
 #include "hw_classes.h"
 
-void shift_reg(OutputStream<hw_uint<32> >& read0, OutputStream<hw_uint<32> >& read1, OutputStream<hw_uint<32> >& read2, InputStream<hw_uint<32> >& write);
+void shift_reg(HWStream<hw_uint<32> >& read0, HWStream<hw_uint<32> >& read1, HWStream<hw_uint<32> >& read2, HWStream<hw_uint<32> >& write);

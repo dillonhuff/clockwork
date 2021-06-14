@@ -120,6 +120,7 @@ bool equal(isl_map* const l, isl_map* const r);
 bool equal(isl_aff* const l, isl_aff* const r);
 bool equal(uset* const l, uset* const r);
 bool equal(umap* const l, umap* const r);
+bool equal_regardless_of_domain(isl_map* const l, isl_map* const r);
 
 bool empty(umap* const s);
 bool empty(isl_map* const s);
@@ -166,6 +167,7 @@ isl_set* to_set(isl_basic_set* const m);
 isl_set* to_set(isl_union_set* const m);
 isl_set* to_set(isl_point* const m);
 
+bool all_const(isl_set* s);
 vector<isl_point*> get_points(isl_set* m);
 
 isl_stat get_points(isl_set* m, void* user);
@@ -191,6 +193,7 @@ std::string str(isl_multi_union_pw_aff* const pma);
 
 isl_map* linear_address_map(isl_set* s);
 isl_map* linear_address_map_lake(isl_set* s, int fetch_width);
+isl_map* linear_address_map_lake(isl_set* s);
 isl_map* linear_address_map_with_index(isl_set* s, vector<int> index);
 isl_map* linear_domain_map_with_index(isl_set* s, unordered_set<int> index);
 isl_map* linear_address_map_with_index(isl_set* s, vector<int> index, int fetch_width);
@@ -217,6 +220,7 @@ isl_map* gen_map_from_sched_vec(isl_ctx* ctx, vector<string> sched_vec, string o
 isl_map* gen_hw_sched_from_sched_vec(isl_ctx* ctx, vector<string> sched_vec, string op_name);
 isl_map* gen_hw_sched_from_sched_vec(isl_ctx* ctx, vector<string> sched_vec, vector<string> var_list, string op_name);
 vector<string> get_map_in_dim_id(isl_map* m);
+isl_map* check_dim_id(isl_map* m);
 string get_in_dim_name(isl_map* m, int i);
 
 unsigned get_dim(isl_set* const s);
@@ -374,13 +378,25 @@ isl_val* lexmaxval(isl_set* const m0);
 
 int get_domain_range(isl_set* const dom, int dim);
 int get_domain_span_range(isl_map* const m, int dim);
+int get_domain_span_range(isl_map* const m, int dim, int out_dim);
 pair<int, int> get_domain_merge_dims(isl_map* m );
 vector<pair<int, int>> get_all_domain_merge_dims(isl_map* m );
 isl_map* merge_domain_dim(isl_map* m);
 
 
 //vectorization transformation
+isl_map* get_domain_mask(isl_map* m, int vec_dim);
 isl_map* get_domain_trans(isl_set* dom, int pos, int fetch_width);
+isl_map* get_domain_trans_with_reaccess_mask(isl_set* dom, int pos, int fetch_width);
+isl_set* get_domain_trans_sched_domain(isl_set* dom, int pos, int fetch_width);
+
+isl_map* get_div_trans(isl_map* am, map<int, int> split_dims);
+
+isl_map* get_set_slice(isl_set* dom, int pos, int fetch_width);
+isl_map* get_set_slice(isl_set* dom, int pos, int offset, int fetch_width);
+vector<isl_map*> get_vectorize_interpolate(isl_set* dom, int pos, int fetch_width);
+int get_inner_most_related_dom_dim(isl_map* m, int dim_id, int fetch_width);
+
 
 umap* lexmax(umap* const m0);
 
@@ -438,6 +454,8 @@ int get_pad_remainder(isl_map*, int, int);
 isl_map* reset_domain_coeff(isl_map* m, int dom_dim_id, int val);
 isl_map* pad_to_domain_map(isl_map* s, int depth);
 isl_map* pad_to_domain_ubuf_map(isl_map* s, int dom_dim_id, int depth);
+isl_map* pad_to_domain_left_ubuf_map(isl_map* m, int dom_dim_id, int shift_depth);
+isl_map* pad_to_domain_begin_ubuf_map(isl_map* m, int dom_dim_id, int shift_depth);
 isl_map* shift_domain_map(isl_map* s, vector<int> shift_depth);
 isl_map* shift_range_map(isl_map* s, vector<int> shift_depth);
 isl_map* assign_domain_to_map(isl_map* s, isl_set* new_domain);
@@ -518,6 +536,7 @@ isl_union_set* domain(isl_union_map* const m);
 int stride_in_dim(isl_set* const s, size_t dim);
 
 int stride_in_dim(isl_map* const m, size_t dim);
+int stride_in_dim(isl_map* const m, size_t dim, size_t dim_out);
 
 isl_set* range(isl_map* const m);
 
@@ -628,7 +647,6 @@ vector<string> space_var_decls(isl_space* s);
 
 isl_aff* add(isl_aff* a, isl_aff* b);
 isl_aff* div(isl_aff* a, isl_aff* b);
-
 isl_val* add(isl_val* a, isl_val* b);
 isl_val* sub(isl_val* a, isl_val* b);
 isl_val* mul(isl_val* a, isl_val* b);
@@ -687,6 +705,7 @@ std::vector<isl_aff*> get_aff_vec(isl_map* m);
 
 string str(isl_mat* const ineqmat);
 
+map<int, int> get_dim2denom(isl_map* am);
 isl_basic_set* lift_divs(isl_basic_set* bm);
 isl_basic_set* flatten_bmap_to_bset(isl_basic_map* bm);
 isl_basic_set* negative(isl_basic_set* fs, const int var);
@@ -739,6 +758,7 @@ isl_map* cyclic_function(isl_ctx* ctx, const std::string& name, const std::vecto
 vector<int> mins(isl_set* s);
 vector<int> maxs(isl_set* s);
 vector<int> extents(isl_set* s);
+isl_set* project_out_zero_dim(isl_set* s);
 
 bool is_cst(isl_multi_aff* ma);
 bool is_cst(isl_aff* aff);

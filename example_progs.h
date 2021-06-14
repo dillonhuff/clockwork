@@ -1,11 +1,20 @@
 #pragma once
 #include "prog.h"
 
+prog fft8_unroll0();
+prog fft8_unroll2();
+prog fft8_unroll4();
+prog fft8_unroll8();
+prog fft8_unroll8_ratematch();
+prog fft8_unroll8_pease();
+prog fft8_unroll8_split();
+prog laplacian_pyramid();
 prog counter();
 prog conv_multi(); //multiple-tile-cnn
 prog strided_conv();
 prog accumulation(); //reduce
 prog unsharp();
+prog unsharp_new();
 prog cascade(); //stencil
 prog gaussian(); //stencil
 prog harris(); //stencil
@@ -15,13 +24,20 @@ prog brighten_blur(); //stencil
 prog halide_harris();
 prog conv_3_3(); //stencil
 prog conv_3_3_wide(); //stencil
+prog conv_3_3_rolled(); //stencil
 prog conv_1_2(); //stencil
+prog conv_1_3(); //stencil
+prog conv_rolled(); //stencil
 prog unet_conv_3_3(); //reduce
 prog resnet(); //reduce
 prog resnet_simple(); //for regfile debug
+prog resnet_tiny(); //for regfile debug
+prog resnet_multi_tiny(); //for regfile debug
 //prog mini_conv_halide_fixed();
 prog camera_pipeline(); //stencil
-prog camera_pipeline_trunc(); //stencil
+prog camera_pipeline_new(); //stencil
+//prog camera_pipeline_new_trunc(); //stencil
+//prog camera_pipeline_trunc(); //stencil
 prog up_sample();
 prog up_sample_exp();
 prog down_sample();
@@ -53,6 +69,8 @@ prog harris_sch6_2ppc();
 prog harris_sch7_bigtile();
 prog harris_sch8_endcim();
 prog three_level_memory_two();
+prog fft8_unroll8();
+prog resnet_one_input();
 
 //SMT test
 prog conv_3_3(int32_t, int32_t, string);

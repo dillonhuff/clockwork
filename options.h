@@ -1,5 +1,5 @@
 #pragma once
-
+#include "utils.h"
 #include <iostream>
 #include <cassert>
 #include <string>
@@ -101,12 +101,18 @@ struct LakeCollateral {
     std::unordered_map<string, int> in_port_width;
     std::unordered_map<string, int> out_port_width;
     int fetch_width;
+    int max_chaining;
     bool multi_sram_accessor;
+    bool dual_port_sram;
+    bool wire_chain_en;
 
     //TODO: use the collateral kavya generated
     LakeCollateral(string level = "mem"):
         fetch_width(4),
+        max_chaining(4),
         multi_sram_accessor(true),
+        dual_port_sram(false),
+        wire_chain_en(true),
         word_width({{"agg", 1}, {"sram", 4}, {"tb", 1}}),
         in_port_width({{"agg", 1}, {"sram", 4}, {"tb", 4}}),
         out_port_width({{"agg", 4}, {"sram", 4}, {"tb", 1}}),
@@ -114,6 +120,7 @@ struct LakeCollateral {
         capacity({{"agg", 16}, {"sram", 512}, {"tb", 16}}) {
             if (level == "regfile") {
                 fetch_width = 1;
+                max_chaining = 1;
                 word_width = {{"regfile", 1}};
                 in_port_width= {{"regfile", 1}};
                 out_port_width = {{"regfile", 1}};
@@ -124,6 +131,41 @@ struct LakeCollateral {
                 assert(false);
             }
         }
+    void set_config_fetch2() {
+       fetch_width = 2;
+       max_chaining = 4;
+       dual_port_sram = true;
+       wire_chain_en = false;
+       word_width = {{"agg", 1}, {"sram", 2}, {"tb", 2}};
+       in_port_width = {{"agg", 1}, {"sram", 2}, {"tb", 2}};
+       out_port_width = {{"agg", 2}, {"sram", 2}, {"tb", 1}};
+       bank_num = {{"agg", 2}, {"sram", 1}, {"tb", 2}};
+       capacity = {{"agg", 8}, {"sram", 512}, {"tb", 8}};
+    }
+
+    int get_max_capacity() const {
+        int c = 0;
+        for (auto it: capacity) {
+            c = std::max(c, it.second);
+        }
+        return c * max_chaining;
+    }
+
+    int get_inpt_num() {
+        if (bank_num.size() == 1)
+            return pick(bank_num).second;
+        else {
+            return bank_num.at("agg");
+        }
+    }
+
+    int get_outpt_num() {
+        if (bank_num.size() == 1)
+            return pick(bank_num).second;
+        else {
+            return bank_num.at("tb");
+        }
+    }
 };
 
 enum HLSLoopCodegen {
