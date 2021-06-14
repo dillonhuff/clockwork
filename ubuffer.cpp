@@ -7878,7 +7878,7 @@ void UBuffer::generate_banks(CodegenOptions& options) {
         cout << "\tsched after trans: " << str(sched_vec) << endl;
         int fetch_ii = stride_in_dim(sched_vec, vectorize_loop_dim);
         //TODO: may need to adjust the delay
-        auto final_sched = linear_schedule(sched_vec, {1}, fetch_ii, false);
+        auto final_sched = linear_schedule(sched_vec, {1}, fetch_ii / fetch_width * (fetch_width - 1) + 1, false);
         cout << "\tfinal sched: " << str(final_sched) << endl;
 
         //access map

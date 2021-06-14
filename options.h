@@ -36,9 +36,10 @@ struct test_data_input_stream {
 
 struct DebugOptions {
   bool expect_all_linebuffers;
+  bool traceWave;
   test_data_input_stream test_inputs;
 
-  DebugOptions() : expect_all_linebuffers(false) {}
+  DebugOptions() : traceWave(false), expect_all_linebuffers(false) {}
 };
 
 enum ScheduleAlgorithm {

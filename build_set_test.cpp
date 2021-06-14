@@ -12832,9 +12832,9 @@ int run_verilator_on(const std::string& top_module,
   if (extra_flag) {
 #ifdef CGRAFLOW
       cmd("echo $CLKWRK_PATH");
-      verilator_build = cmd("verilator -Wall --cc " + sep_list(verilog_files, "", "", " ") + " --exe --build " + tb_file + " -CFLAGS -I$CLKWRK_PATH --top-module " + top_module + " -Wno-UNUSED -Wno-PINMISSING -Wno-DECLFILENAME -Wno-WIDTH -Wno-UNDRIVEN -Wno-CASEINCOMPLETE -Wno-MODDUP -Wno-UNOPTFLAT -Wno-CMPCONST");
+      verilator_build = cmd("verilator -Wall --cc " + sep_list(verilog_files, "", "", " ") + " --exe --build --trace " + tb_file + " -CFLAGS -I$CLKWRK_PATH --top-module " + top_module + " -Wno-UNUSED -Wno-PINMISSING -Wno-DECLFILENAME -Wno-WIDTH -Wno-UNDRIVEN -Wno-CASEINCOMPLETE -Wno-MODDUP -Wno-UNOPTFLAT -Wno-CMPCONST");
 #else
-      verilator_build = cmd("verilator -Wall --cc " + sep_list(verilog_files, "", "", " ") + " --exe --build " + tb_file + " --top-module " + top_module + " -Wno-UNUSED -Wno-PINMISSING -Wno-DECLFILENAME -Wno-WIDTH -Wno-UNDRIVEN -Wno-CASEINCOMPLETE -Wno-MODDUP -Wno-UNOPTFLAT -Wno-CMPCONST");
+      verilator_build = cmd("verilator -Wall --cc " + sep_list(verilog_files, "", "", " ") + " --exe --build --trace " + tb_file + " --top-module " + top_module + " -Wno-UNUSED -Wno-PINMISSING -Wno-DECLFILENAME -Wno-WIDTH -Wno-UNDRIVEN -Wno-CASEINCOMPLETE -Wno-MODDUP -Wno-UNOPTFLAT -Wno-CMPCONST");
 #endif
   } else {
       verilator_build = cmd("verilator -Wall --cc " + sep_list(verilog_files, "", "", " ") + " --exe --build " + tb_file + " --top-module " + top_module + " -Wno-UNUSED -Wno-WIDTH -Wno-PINMISSING -Wno-DECLFILENAME");
@@ -18888,7 +18888,7 @@ void compile_for_garnet_fetch2_mem(prog& prg,
   generate_garnet_coreir(buffers_opt, prg, options, sched, use_dse_compute);
   if (!options.config_gen_only) {
     generate_garnet_verilog_top(options, prg.name);
-    generate_garnet_verilator_tb(prg, hw_sched, buffers_opt);
+    generate_garnet_verilator_tb(options, prg, hw_sched, buffers_opt);
   }
 #endif
 }
@@ -18916,6 +18916,7 @@ void compile_for_garnet_single_port_mem(prog& prg,
   //auto buffers_opt = build_buffers(prg, clockwork_schedule(prg));
 
   CodegenOptions options = garnet_codegen_single_port_with_addrgen_options(prg, dir);
+  options.debug_options.traceWave = true;
   options.add_memory_hierarchy("mem");
   options.add_memory_hierarchy("glb");
   if (multi_level_mem)
@@ -18956,7 +18957,7 @@ void compile_for_garnet_single_port_mem(prog& prg,
   generate_garnet_coreir(buffers_opt, prg, options, sched, use_dse_compute);
   if (!options.config_gen_only) {
     generate_garnet_verilog_top(options, prg.name);
-    generate_garnet_verilator_tb(prg, hw_sched, buffers_opt);
+    generate_garnet_verilator_tb(options, prg, hw_sched, buffers_opt);
   }
 #endif
 }

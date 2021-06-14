@@ -5861,7 +5861,16 @@ void generate_verilator_tb_in_streams(
   }
 }
 
-void generate_garnet_verilator_tb(prog& prg,
+void eval(CodegenOptions& options, ostream& rgtb, int indent) {
+    rgtb << tab(indent) << "dut.eval();" << endl;
+    if (options.debug_options.traceWave) {
+        rgtb << tab(indent) << "dump_trace(tfp);" << endl;
+    }
+}
+
+void generate_garnet_verilator_tb(
+    CodegenOptions& options,
+    prog& prg,
     umap* hw_sched,
     map<string, UBuffer>& buffers) {
 
@@ -5871,6 +5880,21 @@ void generate_garnet_verilator_tb(prog& prg,
   rgtb << "#include \"verilated.h\"" << endl;
   rgtb << "#include \"V" << prg.name << ".h\"" << endl << endl;
 
+  //Add waveform trace dump options for debugging inverilator
+  if (options.debug_options.traceWave) {
+    rgtb << "#include \"verilated_vcd_c.h\"" << endl << endl;
+    rgtb << "vluint64_t main_time = 0;" << endl;
+    rgtb << "double sc_time_stamp() {" << endl;
+    rgtb << tab(1) <<  "return main_time;" << endl;
+    rgtb << "}" << endl << endl;
+
+    rgtb << "void dump_trace(VerilatedVcdC* tfp) {" << endl;
+    rgtb << tab(1) << "for (int i = 0; i < 5; i ++) {" << endl;
+    rgtb << tab(2) << "tfp->dump(main_time);" << endl;
+    rgtb << tab(2) << "main_time++;" << endl;
+    rgtb << tab(1) << "}" << endl;
+    rgtb << "}" << endl << endl;
+  }
 
   rgtb << "int main() {" << endl;
   rgtb << tab(1) << "ofstream fout(\"" << "regression_result_" << prg.name << "_verilog.txt\");" << endl;
@@ -5898,8 +5922,6 @@ void generate_garnet_verilator_tb(prog& prg,
   }
 
 
-  //Use rst input enable, match the garnet test
-  CodegenOptions options;
   generate_verilator_tb_in_streams(
       options,
       rgtb,
@@ -5908,22 +5930,34 @@ void generate_garnet_verilator_tb(prog& prg,
       buffers);
 
   rgtb << tab(1) << "V" << prg.name << " dut;" << endl;
-  rgtb << "dut.clk = 0;" << endl;
-  rgtb << "dut.eval();" << endl;
+  if (options.debug_options.traceWave) {
+    rgtb << tab(1) << "V"<< prg.name << "* dut_ptr = &dut;" << endl;
+    rgtb << tab(1) << "Verilated::traceEverOn(true);" << endl;
+    rgtb << tab(1) << "VerilatedVcdC* tfp = new VerilatedVcdC;" << endl;
+    rgtb << tab(1) << "dut_ptr->trace(tfp, 99);" << endl;
+    rgtb << tab(1) << "tfp->open(\"sim_wave.vcd\");" << endl << endl;
+  }
+  rgtb << tab(1) << "dut.clk = 0;" << endl;
+  //rgtb << tab(1) << "dut.eval();" << endl;
+  eval(options, rgtb, 1);
 
-  rgtb << "dut.reset= 1;" << endl;
-  rgtb << "dut.clk = 1;" << endl;
-  rgtb << "dut.eval();" << endl;
+  rgtb << tab(1) << "dut.reset= 1;" << endl;
+  rgtb << tab(1) << "dut.clk = 1;" << endl;
+  //rgtb << tab(1) << "dut.eval();" << endl;
+  eval(options, rgtb, 1);
 
   //Add a posedge during  reset
-  rgtb << "dut.clk = 0;" << endl;
-  rgtb << "dut.eval();" << endl;
-  rgtb << "dut.clk = 1;" << endl;
-  rgtb << "dut.eval();" << endl;
+  rgtb << tab(1) << "dut.clk = 0;" << endl;
+  //rgtb << tab(1) << "dut.eval();" << endl;
+  eval(options, rgtb, 1);
+  rgtb << tab(1) << "dut.clk = 1;" << endl;
+  //rgtb << tab(1) << "dut.eval();" << endl;
+  eval(options, rgtb, 1);
 
-  rgtb << "dut.reset= 0;" << endl;
-  rgtb << "dut.clk = 0;" << endl;
-  rgtb << "dut.eval();" << endl;
+  rgtb << tab(1) << "dut.reset= 0;" << endl;
+  rgtb << tab(1) << "dut.clk = 0;" << endl;
+  //rgtb << tab(1) << "dut.eval();" << endl;
+  eval(options, rgtb, 1);
   for (auto out : inputs(buffers, prg)) {
     string data_name =
       out.first + "_" + out.second;
@@ -5938,7 +5972,8 @@ void generate_garnet_verilator_tb(prog& prg,
   }
 
   rgtb << tab(1) << "dut.clk = 0;" << endl;
-  rgtb << tab(1) << "dut.eval();" << endl;
+  //rgtb << tab(1) << "dut.eval();" << endl;
+  eval(options, rgtb, 1);
   rgtb << tab(1) << "for (int t = 0; t < (int) pow(2, 16); t++) {" << endl;
   //rgtb << tab(1) << "for (int t = 0; t < 30000; t++) {" << endl;
   //rgtb << tab(1) << "for (int t = 0; t < 300; t++) {" << endl;
@@ -5957,7 +5992,8 @@ void generate_garnet_verilator_tb(prog& prg,
   }
 
   rgtb << tab(1) << tab(1) << "dut.clk = 0;" << endl;
-  rgtb << tab(1) << tab(1) << "dut.eval();" << endl;
+  //rgtb << tab(1) << tab(1) << "dut.eval();" << endl;
+  eval(options, rgtb, 1);
 
   for (auto out : outputs(buffers, prg)) {
     string ctrl_name =
@@ -5975,7 +6011,8 @@ void generate_garnet_verilator_tb(prog& prg,
   }
 
   rgtb << tab(1) << tab(1) << "dut.clk = 1;" << endl;
-  rgtb << tab(1) << tab(1) << "dut.eval();" << endl;
+  //rgtb << tab(1) << tab(1) << "dut.eval();" << endl;
+  eval(options, rgtb, 1);
   rgtb << tab(1) << "}" << endl;
 
   for (auto out : outputs(buffers, prg)) {
@@ -6014,24 +6051,29 @@ void generate_garnet_verilator_tb(prog& prg,
 }
 
 void generate_verilator_tb_reset_sequence(CodegenOptions& options, ostream& rgtb) {
-  rgtb << "dut.clk = 0;" << endl;
-  rgtb << "dut.eval();" << endl;
-  rgtb << "dut.rst_n = 0;" << endl;
-  rgtb << "dut.eval();" << endl;
+  rgtb << tab(1) << "dut.clk = 0;" << endl;
+  //rgtb << tab(1) << "dut.eval();" << endl;
+  eval(options, rgtb, 1);
+  rgtb << tab(1) << "dut.rst_n = 0;" << endl;
+  //rgtb << tab(1) << "dut.eval();" << endl;
 
-  rgtb << "dut.rst_n = 1;" << endl;
-  rgtb << "dut.eval();" << endl;
+  rgtb << tab(1) << "dut.rst_n = 1;" << endl;
+  //rgtb << tab(1) << "dut.eval();" << endl;
+  eval(options, rgtb, 1);
 
-  rgtb << "dut.clk = 0;" << endl;
-  rgtb << "dut.eval();" << endl;
+  rgtb << tab(1) << "dut.clk = 0;" << endl;
+  //rgtb << tab(1) << "dut.eval();" << endl;
+  eval(options, rgtb, 1);
 
-  rgtb << "dut.flush = 1;" << endl;
-  rgtb << "dut.clk = 1;" << endl;
-  rgtb << "dut.eval();" << endl;
+  rgtb << tab(1) << "dut.flush = 1;" << endl;
+  rgtb << tab(1) << "dut.clk = 1;" << endl;
+  //rgtb << tab(1) << "dut.eval();" << endl;
+  eval(options, rgtb, 1);
 
-  rgtb << "dut.flush = 0;" << endl;
-  rgtb << "dut.clk = 0;" << endl;
-  rgtb << "dut.eval();" << endl;
+  rgtb << tab(1) << "dut.flush = 0;" << endl;
+  rgtb << tab(1) << "dut.clk = 0;" << endl;
+  //rgtb << tab(1) << "dut.eval();" << endl;
+  eval(options, rgtb, 1);
 
 }
 
@@ -6046,6 +6088,22 @@ void generate_verilator_tb(
   rgtb << "#include <fstream>" << endl;
   rgtb << "#include \"verilated.h\"" << endl;
   rgtb << "#include \"V" << prg.name << ".h\"" << endl << endl;
+
+  //Add waveform trace dump options for debugging inverilator
+  if (options.debug_options.traceWave) {
+    rgtb << "#include \"verilated_vcd_c.h\"" << endl << endl;
+    rgtb << "vluint64_t main_time = 0;" << endl;
+    rgtb << "double sc_time_stamp() {" << endl;
+    rgtb << tab(1) <<  "return main_time;" << endl;
+    rgtb << "}" << endl << endl;
+
+    rgtb << "void dump_trace(VerilatedVcdC* tfp) {" << endl;
+    rgtb << tab(1) << "for (int i = 0; i < 5; i ++) {" << endl;
+    rgtb << tab(2) << "tfp->dump(main_time);" << endl;
+    rgtb << tab(2) << "main_time++;" << endl;
+    rgtb << tab(1) << "}" << endl;
+    rgtb << "}" << endl << endl;
+  }
 
 
   rgtb << "int main() {" << endl;
@@ -6081,25 +6139,17 @@ void generate_verilator_tb(
       buffers);
 
   rgtb << tab(1) << "V" << prg.name << " dut;" << endl;
+
+  if (options.debug_options.traceWave) {
+    rgtb << tab(1) << "V"<< prg.name << "* dut_ptr = &dut;" << endl;
+    rgtb << tab(1) << "Verilated::traceEverOn(true);" << endl;
+    rgtb << tab(1) << "VerilatedVcdC* tfp = new VerilatedVcdC;" << endl;
+    rgtb << tab(1) << "dut_ptr->trace(tfp, 99);" << endl;
+    rgtb << tab(1) << "tfp->open(\"sim_wave.vcd\");" << endl << endl;
+  }
+
   generate_verilator_tb_reset_sequence(options, rgtb);
-  //rgtb << "dut.clk = 0;" << endl;
-  //rgtb << "dut.eval();" << endl;
-  //rgtb << "dut.rst_n = 0;" << endl;
-  //rgtb << "dut.eval();" << endl;
 
-  //rgtb << "dut.rst_n = 1;" << endl;
-  //rgtb << "dut.eval();" << endl;
-
-  //rgtb << "dut.clk = 0;" << endl;
-  //rgtb << "dut.eval();" << endl;
-
-  //rgtb << "dut.flush = 1;" << endl;
-  //rgtb << "dut.clk = 1;" << endl;
-  //rgtb << "dut.eval();" << endl;
-
-  //rgtb << "dut.flush = 0;" << endl;
-  //rgtb << "dut.clk = 0;" << endl;
-  //rgtb << "dut.eval();" << endl;
   for (auto out : inputs(buffers, prg)) {
     string data_name =
       out.first + "_" + out.second;
@@ -6114,7 +6164,8 @@ void generate_verilator_tb(
   }
 
   rgtb << tab(1) << "dut.clk = 0;" << endl;
-  rgtb << tab(1) << "dut.eval();" << endl;
+  //rgtb << tab(1) << "dut.eval();" << endl;
+  eval(options, rgtb, 1);
   rgtb << tab(1) << "for (int t = 0; t < (int) pow(2, 16); t++) {" << endl;
   //rgtb << tab(1) << "for (int t = 0; t < 30000; t++) {" << endl;
   //rgtb << tab(1) << "for (int t = 0; t < 300; t++) {" << endl;
@@ -6147,9 +6198,11 @@ void generate_verilator_tb(
   }
 
   rgtb << tab(1) << tab(1) << "dut.clk = 0;" << endl;
-  rgtb << tab(1) << tab(1) << "dut.eval();" << endl;
+  //rgtb << tab(1) << tab(1) << "dut.eval();" << endl;
+  eval(options, rgtb, 2);
   rgtb << tab(1) << tab(1) << "dut.clk = 1;" << endl;
-  rgtb << tab(1) << tab(1) << "dut.eval();" << endl;
+  //rgtb << tab(1) << tab(1) << "dut.eval();" << endl;
+  eval(options, rgtb, 2);
   rgtb << tab(1) << "}" << endl;
 
   for (auto out : outputs(buffers, prg)) {

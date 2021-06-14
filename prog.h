@@ -1665,7 +1665,9 @@ void generate_verilator_tb(
     umap* hw_sched,
     map<string, UBuffer>& buffers);
 
-void generate_garnet_verilator_tb(prog& prg,
+void generate_garnet_verilator_tb(
+    CodegenOptions& options,
+    prog& prg,
     umap* hw_sched,
     map<string, UBuffer>& buffers);
 
