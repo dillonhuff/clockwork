@@ -6056,6 +6056,7 @@ void generate_verilator_tb_reset_sequence(CodegenOptions& options, ostream& rgtb
   eval(options, rgtb, 1);
   rgtb << tab(1) << "dut.rst_n = 0;" << endl;
   //rgtb << tab(1) << "dut.eval();" << endl;
+  eval(options, rgtb, 1);
 
   rgtb << tab(1) << "dut.rst_n = 1;" << endl;
   //rgtb << tab(1) << "dut.eval();" << endl;

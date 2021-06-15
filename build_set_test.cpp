@@ -14939,6 +14939,7 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
 
   //test_apps.push_back(up_sample());
   //test_apps.push_back(resnet_one_input());
+  test_apps.push_back(rom());
   test_apps.push_back(conv_3_3());
   test_apps.push_back(unsharp_new());
   test_apps.push_back(camera_pipeline_new());
@@ -14948,7 +14949,6 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   test_apps.push_back(down_sample());
   test_apps.push_back(cascade());
   test_apps.push_back(harris());
-  test_apps.push_back(rom());
   test_apps.push_back(conv_1_2());
   test_apps.push_back(demosaic_unrolled());
   test_apps.push_back(up_sample());
@@ -18162,11 +18162,11 @@ void garnet_single_port_ram_schedule(CodegenOptions& options, schedule_info& sch
 
     //Hack for rom, Rom need to be conservative
     //because the affine controller output on cycle of flush is undeterministic
-    if (prg.name == "rom" ) {
-      adjust_schedule_forward(sched, prg, 1);
-    } else {
-      adjust_schedule_forward(sched, prg, 0);
-    }
+    //if (prg.name == "rom" ) {
+      //adjust_schedule_forward(sched, prg, 1);
+    //} else {
+    adjust_schedule_forward(sched, prg, 0);
+    //}
     //Add delay for identity stream
     relax_delays_rate_matched(options, sched, prg);
 
