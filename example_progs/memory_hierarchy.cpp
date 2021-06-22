@@ -259,6 +259,7 @@ prog three_level_pond_rolled() {
   return prg;
 }
 
+//A 2D image copy in and copy out
 prog three_level_pond_copy() {
   prog prg;
   prg.compute_unit_file = "three_level_pond_copy_compute.h";

@@ -716,8 +716,11 @@ isl_map* UBuffer::get_coarse_grained_pipeline_schedule(UBuffer& new_ub) {
 
     std::vector<int> inner_levels(num_in_dims(sched) - in_dim - 1);
     std::iota (std::begin(inner_levels), std::end(inner_levels), in_dim + 1);
+    cout << "inner levels: " << inner_levels << endl;
     cgpl_sched = remove_in_dims(sched, inner_levels);
-    min_offset = min( min_offset, int_const_coeff(get_aff(cgpl_sched)));
+    cout << "pt schedule: " << str(sched) << endl;
+    cout << "cgpl schedule: " << str(cgpl_sched) << endl;
+    min_offset = min(min_offset, int_const_coeff(get_aff(cgpl_sched)));
   }
   cout << "\tcgpls chedule: " << str(cgpl_sched) << endl;
   cgpl_sched = set_schedule_delay(cgpl_sched, min_offset-1);
@@ -5935,7 +5938,8 @@ void UBuffer::generate_banks(CodegenOptions& options) {
                     make_pair(inpts, outpts)
                     );
         } else {
-            cout << "Need to implement a partition algorithm" << endl;
+            //In this case you need to implement a bank selection logic, output could just broad cast but input must mux
+            cout << "Need to implement a selection hardware" << endl;
             assert(false);
         }
     } else {

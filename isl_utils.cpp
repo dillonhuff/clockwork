@@ -2604,7 +2604,10 @@ isl_map* remove_in_dims(isl_map* m, vector<int> remove_dims) {
     std::sort(remove_dims.begin(), remove_dims.end(), std::greater<int>());
     auto tmp = cpy(m);
     for (int dim: remove_dims) {
-      tmp = set_in_dim_to_val(tmp, dim, 0);
+      if (get_dim_extent(domain(tmp), dim) > 1) {
+        //if in dim span more than 1, set the dim to the left most point
+        tmp = set_in_dim_to_val(tmp, dim, get_dim_min(domain(tmp), dim));
+      }
       tmp = isl_map_project_out(tmp, isl_dim_in, dim, 1);
     }
     isl_map_set_tuple_id(tmp, isl_dim_in, id(ctx(m), domain_name(m)));
