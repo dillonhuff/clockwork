@@ -782,6 +782,8 @@ UBuffer UBuffer::generate_ubuffer(UBufferImpl& impl, schedule_info & info, int b
     */
     int usuffix = 0;
     bool sr = false;
+    int op_latency = 0;
+
     for (string inpt: inpts) {
       auto acc_map = to_map(access_map.at(inpt));
 
@@ -791,8 +793,9 @@ UBuffer UBuffer::generate_ubuffer(UBufferImpl& impl, schedule_info & info, int b
       acc_map = set_range_name(acc_map, bname);
       auto dom = ::domain(acc_map);
 
-      int op_latency = info.compute_latency(::domain_name(acc_map));
-      //assert(op_latency == 0);
+      //update op latency
+      op_latency = info.compute_latency(::domain_name(acc_map));
+
 
       string pt_name = bname + "_" + ::name(dom) + "_" + to_string(usuffix);
       //buf.port_bundles[get_bundle(inpt)].push_back(pt_name);
@@ -809,11 +812,14 @@ UBuffer UBuffer::generate_ubuffer(UBufferImpl& impl, schedule_info & info, int b
         //auto linear_acc_map = dot(acc_map, reduce_map);
         //cout << "linear map: " << str(linear_acc_map) << endl;
         //buf.add_in_pt(inpt, dom, linear_acc_map, its(schedule.at(inpt), dom));
-        buf.add_in_pt(inpt, dom, acc_map, its(schedule.at(inpt), dom));
+        //buf.add_in_pt(inpt, dom, acc_map, its(schedule.at(inpt), dom));
         sr = true;
-      } else {
-        buf.add_in_pt(inpt, dom, acc_map, its(schedule.at(inpt), dom));
-      }
+      } 
+      auto sched_aff = get_aff(schedule.at(inpt));
+      sched_aff = add(sched_aff, op_latency);
+      isl_map* sched = its(to_map(sched_aff), dom);
+      
+      buf.add_in_pt(inpt, dom, acc_map, sched);
       usuffix ++;
     }
 
@@ -848,7 +854,9 @@ UBuffer UBuffer::generate_ubuffer(UBufferImpl& impl, schedule_info & info, int b
         sched = add_domain_suffix(sched, domain_name(sched) + "_delay_"+str(delay));
 
         auto dom = ::domain(acc_map);
-        sched = linear_schedule(sched, {1}, delay, false);
+
+        //Take consider of the latency in delay
+        sched = linear_schedule(sched, {1}, delay+op_latency, false);
        // auto reduce_map = linear_address_map_lake(rddom, 4);
        // cout << "Reduce map: " << str(reduce_map) << endl;
        // reduce_map = set_range_name(reduce_map, bname);
@@ -2200,6 +2208,10 @@ CoreIR::Module* affine_controller_use_lake_tile_counter(
     }
     add_lake_config(config_file, config_sram2tb, num_dims(domain(res)), "sram2tb_0");
 
+    auto* g = context->getGenerator("cgralib.Mem_amber");
+    //auto* generatedModule = g->getModule(genargs);
+    g->getMetaData()["verilog_name"] = 
+      "aff_ctrl_"+genargs.at("ID")->get<string>();
     buf = def->addInstance(ub_ins_name + "_Counter_" + str(dim), "cgralib.Mem_amber", genargs);
     //assign the init value
     //TODO change 4 to fetch width
@@ -2212,7 +2224,7 @@ CoreIR::Module* affine_controller_use_lake_tile_counter(
 
     buf->getMetaData()["config"] = config_file;
     buf->getMetaData()["mode"] = "lake";
-    buf->getMetaData()["verilog_name"] = "aff_ctrl_"+genargs.at("ID")->get<string>();
+    //buf->getMetaData()["verilog_name"] = "aff_ctrl_"+genargs.at("ID")->get<string>();
 
 
     //garnet wire reset to flush of memory
@@ -2275,10 +2287,14 @@ CoreIR::Instance* affine_controller_use_lake_tile(
   add_lake_config(config_file, stencil_valid, num_in_dims(aff), "stencil_valid");
   cout << "Add ub node to be aff ctrl"  << endl;
 
+  auto* g = context->getGenerator("cgralib.Mem_amber");
+  //auto* generatedModule = g->getModule(genargs);
+  g->getMetaData()["verilog_name"] = 
+    "aff_ctrl_counter_"+genargs.at("ID")->get<string>();
   buf = def->addInstance(ub_ins_name, "cgralib.Mem_amber", genargs);
   buf->getMetaData()["config"] = config_file;
   buf->getMetaData()["mode"] = "lake";
-  buf->getMetaData()["verilog_name"] = "aff_ctrl_counter_"+genargs.at("ID")->get<string>();
+  //buf->getMetaData()["verilog_name"] = "aff_ctrl_counter_"+genargs.at("ID")->get<string>();
 
   auto clk_en_const = def->addInstance(ub_ins_name+"_clk_en_const", "corebit.const",
           {{"value", CoreIR::Const::make(context, true)}});
@@ -2310,10 +2326,14 @@ CoreIR::Instance* UBuffer::generate_pond_instance(
   };
   cout << "Add pond node with input_num = " << input_num
       << ", output_num = " << output_num << endl;
+  auto* g = context->getGenerator("cgralib.Pond_amber");
+  //auto* generatedModule = g->getModule(genargs);
+  g->getMetaData()["verilog_name"] = 
+    "pond_"+genargs.at("ID")->get<string>();
   buf = def->addInstance(ub_ins_name, "cgralib.Pond_amber", genargs);
   buf->getMetaData()["config"] = config_file;
   buf->getMetaData()["mode"] = "pond";
-  buf->getMetaData()["verilog_name"] = "pond_"+genargs.at("ID")->get<string>();
+  //buf->getMetaData()["verilog_name"] = "pond_"+genargs.at("ID")->get<string>();
 
   auto clk_en_const = def->addInstance(ub_ins_name+"_clk_en_const", "corebit.const",
           {{"value", CoreIR::Const::make(context, true)}});
@@ -2360,6 +2380,10 @@ CoreIR::Instance* UBuffer::generate_lake_tile_instance(
       << ", output_num = " << output_num << endl;
   if (options.pass_through_valid) {
     //modargs["config"] = CoreIR::Const::make(context, config_file);
+    auto* g = context->getGenerator("cgralib.Mem_amber");
+    //auto* generatedModule = g->getModule(genargs);
+    g->getMetaData()["verilog_name"] = 
+      "lake_"+genargs.at("ID")->get<string>();
     buf = def->addInstance(ub_ins_name, "cgralib.Mem_amber", genargs);
     buf->getMetaData()["config"] = config_file;
     buf->getMetaData()["mode"] = string("lake");

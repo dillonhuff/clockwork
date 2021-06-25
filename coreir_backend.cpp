@@ -1818,7 +1818,7 @@ void generate_lake_tile_verilog(CodegenOptions& options, Instance* buf) {
   string ub_ins_name = buf->toString();
   //FIXME: a hack to get correct module name, fix this after coreIR update
   //string v_name =  get_coreir_genenerator_name(buf->getModuleRef()->toString());
-  string v_name =  buf->getMetaData()["verilog_name"];
+  string v_name =  buf->getModuleRef()->getGenerator()->getMetaData()["verilog_name"];
 
   //dump the collateral file
   json config = buf->getMetaData()["config"];
