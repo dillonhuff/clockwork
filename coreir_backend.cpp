@@ -1818,6 +1818,7 @@ void generate_lake_tile_verilog(CodegenOptions& options, Instance* buf) {
   string ub_ins_name = buf->toString();
   //FIXME: a hack to get correct module name, fix this after coreIR update
   //string v_name =  get_coreir_genenerator_name(buf->getModuleRef()->toString());
+  //string v_name =  buf->getModuleRef()->getMetaData()["verilog_name"];
   string v_name =  buf->getMetaData()["verilog_name"];
 
   //dump the collateral file
@@ -3241,6 +3242,12 @@ void generate_coreir(CodegenOptions& options,
   }
 
   auto ns = context->getNamespace("global");
+  /*context->setTop(prg_mod);
+  if(!serializeToFile(context, options.dir + prg.name + ".json")) {
+    cout << "Could not save ubuffer coreir" << endl;
+    context->die();
+  }*/
+
   if(!saveToFile(ns, options.dir + prg.name + ".json", prg_mod)) {
     cout << "Could not save ubuffer coreir" << endl;
     context->die();
