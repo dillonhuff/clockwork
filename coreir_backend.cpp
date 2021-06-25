@@ -1030,6 +1030,33 @@ void load_commonlib_ext(Context* c) {
     def->connect("self.out","abs.data.out");
 
   });
+  Generator* mult_middle = c->getGenerator("commonlib.mult_middle");
+  mult_middle->setGeneratorDefFromFun([](Context* c, Values args, ModuleDef* def) {
+      uint width = args.at("width")->get<int>();
+      ASSERT(width==DATAPATH_WIDTH,"NYI non 16");
+
+      Values PEArgs({
+          {"alu_op",Const::make(c,"mult_1")},
+          {"signed",Const::make(c,false)}
+          });
+      def->addInstance("mult_1","cgralib.PE",{{"op_kind",Const::make(c,"alu")}},PEArgs);
+      def->connect("self.in0","mult_1.data.in.0");
+      def->connect("self.in1","mult_1.data.in.1");
+      def->connect("self.out","mult_1.data.out");
+  });
+  Generator* mult_high = c->getGenerator("commonlib.mult_high");
+  mult_high->setGeneratorDefFromFun([](Context* c, Values args, ModuleDef* def) {
+      uint width = args.at("width")->get<int>();
+      ASSERT(width==DATAPATH_WIDTH,"NYI non 16");
+      Values PEArgs({
+          {"alu_op",Const::make(c,"mult_2")},
+          {"signed",Const::make(c,false)}
+          });
+      def->addInstance("mult_2","cgralib.PE",{{"op_kind",Const::make(c,"alu")}},PEArgs);
+      def->connect("self.in0","mult_2.data.in.0");
+      def->connect("self.in1","mult_2.data.in.1");
+      def->connect("self.out","mult_2.data.out");
+  });
 
 }
 
@@ -1791,6 +1818,7 @@ void generate_lake_tile_verilog(CodegenOptions& options, Instance* buf) {
   string ub_ins_name = buf->toString();
   //FIXME: a hack to get correct module name, fix this after coreIR update
   string v_name =  get_coreir_genenerator_name(buf->getModuleRef()->toString());
+  //string v_name =  buf->getMetaData()["verilog_name"];
 
   //dump the collateral file
   json config = buf->getMetaData()["config"];
