@@ -754,7 +754,7 @@ isl_map* UBuffer::get_coarse_grained_pipeline_schedule(UBuffer& new_ub) {
   return cgpl_sched;
 }
 
-UBuffer UBuffer::generate_ubuffer(UBufferImpl& impl, int bank) {
+UBuffer UBuffer::generate_ubuffer(UBufferImpl& impl, schedule_info & info, int bank) {
   //for(auto it: impl.bank_rddom) {
     //int bank = it.first;
     string bname = name + "_BANK_" + str(bank);
@@ -790,6 +790,10 @@ UBuffer UBuffer::generate_ubuffer(UBufferImpl& impl, int bank) {
 
       acc_map = set_range_name(acc_map, bname);
       auto dom = ::domain(acc_map);
+
+      int op_latency = info.compute_latency(::domain_name(acc_map));
+      //assert(op_latency == 0);
+
       string pt_name = bname + "_" + ::name(dom) + "_" + to_string(usuffix);
       //buf.port_bundles[get_bundle(inpt)].push_back(pt_name);
 
@@ -2208,6 +2212,7 @@ CoreIR::Module* affine_controller_use_lake_tile_counter(
 
     buf->getMetaData()["config"] = config_file;
     buf->getMetaData()["mode"] = "lake";
+    buf->getMetaData()["verilog_name"] = "aff_ctrl_"+genargs.at("ID")->get<string>();
 
 
     //garnet wire reset to flush of memory
@@ -2273,6 +2278,7 @@ CoreIR::Instance* affine_controller_use_lake_tile(
   buf = def->addInstance(ub_ins_name, "cgralib.Mem_amber", genargs);
   buf->getMetaData()["config"] = config_file;
   buf->getMetaData()["mode"] = "lake";
+  buf->getMetaData()["verilog_name"] = "aff_ctrl_counter_"+genargs.at("ID")->get<string>();
 
   auto clk_en_const = def->addInstance(ub_ins_name+"_clk_en_const", "corebit.const",
           {{"value", CoreIR::Const::make(context, true)}});
@@ -2307,6 +2313,7 @@ CoreIR::Instance* UBuffer::generate_pond_instance(
   buf = def->addInstance(ub_ins_name, "cgralib.Pond_amber", genargs);
   buf->getMetaData()["config"] = config_file;
   buf->getMetaData()["mode"] = "pond";
+  buf->getMetaData()["verilog_name"] = "pond_"+genargs.at("ID")->get<string>();
 
   auto clk_en_const = def->addInstance(ub_ins_name+"_clk_en_const", "corebit.const",
           {{"value", CoreIR::Const::make(context, true)}});
@@ -2356,6 +2363,7 @@ CoreIR::Instance* UBuffer::generate_lake_tile_instance(
     buf = def->addInstance(ub_ins_name, "cgralib.Mem_amber", genargs);
     buf->getMetaData()["config"] = config_file;
     buf->getMetaData()["mode"] = string("lake");
+    buf->getMetaData()["verilog_name"] = "lake_"+genargs.at("ID")->get<string>();
   } else {
     //TODO: remove cwlib in the future
     genargs["config"] = CoreIR::Const::make(context, config_file);
@@ -2806,7 +2814,7 @@ void UBuffer::generate_coreir(CodegenOptions& options,
   //Go through the banks and generate connection and config
   for (auto it: impl.bank_rddom) {
     auto bank_id = it.first;
-    UBuffer target_buf = generate_ubuffer(impl, bank_id);
+    UBuffer target_buf = generate_ubuffer(impl, info, bank_id);
 
     //An optimization for coarse grained pipeline, save the iterator level
     CoreIR::Instance* cgpl_ctrl;
