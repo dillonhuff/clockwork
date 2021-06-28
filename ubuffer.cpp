@@ -814,11 +814,11 @@ UBuffer UBuffer::generate_ubuffer(UBufferImpl& impl, schedule_info & info, int b
         //buf.add_in_pt(inpt, dom, linear_acc_map, its(schedule.at(inpt), dom));
         //buf.add_in_pt(inpt, dom, acc_map, its(schedule.at(inpt), dom));
         sr = true;
-      } 
+      }
       auto sched_aff = get_aff(schedule.at(inpt));
       sched_aff = add(sched_aff, op_latency);
       isl_map* sched = its(to_map(sched_aff), dom);
-      
+
       buf.add_in_pt(inpt, dom, acc_map, sched);
       usuffix ++;
     }
@@ -2210,7 +2210,7 @@ CoreIR::Module* affine_controller_use_lake_tile_counter(
 
     auto* g = context->getGenerator("cgralib.Mem_amber");
     //auto* generatedModule = g->getModule(genargs);
-    g->getMetaData()["verilog_name"] = 
+    g->getMetaData()["verilog_name"] =
       "aff_ctrl_"+genargs.at("ID")->get<string>();
     buf = def->addInstance(ub_ins_name + "_Counter_" + str(dim), "cgralib.Mem_amber", genargs);
     //assign the init value
@@ -2289,7 +2289,7 @@ CoreIR::Instance* affine_controller_use_lake_tile(
 
   auto* g = context->getGenerator("cgralib.Mem_amber");
   //auto* generatedModule = g->getModule(genargs);
-  g->getMetaData()["verilog_name"] = 
+  g->getMetaData()["verilog_name"] =
     "aff_ctrl_counter_"+genargs.at("ID")->get<string>();
   buf = def->addInstance(ub_ins_name, "cgralib.Mem_amber", genargs);
   buf->getMetaData()["config"] = config_file;
@@ -2328,7 +2328,7 @@ CoreIR::Instance* UBuffer::generate_pond_instance(
       << ", output_num = " << output_num << endl;
   auto* g = context->getGenerator("cgralib.Pond_amber");
   //auto* generatedModule = g->getModule(genargs);
-  g->getMetaData()["verilog_name"] = 
+  g->getMetaData()["verilog_name"] =
     "pond_"+genargs.at("ID")->get<string>();
   buf = def->addInstance(ub_ins_name, "cgralib.Pond_amber", genargs);
   buf->getMetaData()["config"] = config_file;
@@ -2382,7 +2382,7 @@ CoreIR::Instance* UBuffer::generate_lake_tile_instance(
     //modargs["config"] = CoreIR::Const::make(context, config_file);
     auto* g = context->getGenerator("cgralib.Mem_amber");
     //auto* generatedModule = g->getModule(genargs);
-    g->getMetaData()["verilog_name"] = 
+    g->getMetaData()["verilog_name"] =
       "lake_"+genargs.at("ID")->get<string>();
     buf = def->addInstance(ub_ins_name, "cgralib.Mem_amber", genargs);
     buf->getMetaData()["config"] = config_file;

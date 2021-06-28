@@ -1707,8 +1707,10 @@ void connect_op_control_wires(CodegenOptions& options, ModuleDef* def, op* op, s
     Wireable* exe_start_wire =
       delay_by(def, exe_start_name(op->name), op_start_wire, read_latency);
     cout << "Delaying writes" << endl;
+    //op latency has been taken into the stencil valid signal
     Wireable* write_start_wire =
-      delay_by(def, write_start_name(op->name), op_start_wire, read_latency + op_latency);
+      //delay_by(def, write_start_name(op->name), op_start_wire, read_latency + op_latency);
+      delay_by(def, write_start_name(op->name), op_start_wire, read_latency);
   }
 
   //auto c = def->getContext();
@@ -1817,8 +1819,8 @@ void generate_lake_tile_verilog(CodegenOptions& options, Instance* buf) {
       << buf->getModuleRef()->toString() << endl;
   string ub_ins_name = buf->toString();
   //FIXME: a hack to get correct module name, fix this after coreIR update
-  //string v_name =  get_coreir_genenerator_name(buf->getModuleRef()->toString());
-  string v_name =  buf->getModuleRef()->getGenerator()->getMetaData()["verilog_name"];
+  string v_name =  get_coreir_genenerator_name(buf->getModuleRef()->toString());
+  //string v_name =  buf->getModuleRef()->getGenerator()->getMetaData()["verilog_name"];
 
   //dump the collateral file
   json config = buf->getMetaData()["config"];
@@ -1978,6 +1980,10 @@ Instance* generate_coreir_op_controller(CodegenOptions& options, ModuleDef* def,
     cout << aff_c->toString() <<endl;
     controller = def->addInstance(controller_name(op->name), aff_c);
   } else {
+    //update the latency into the stencil valid signal, to fix rom
+    int op_latency = hwinfo.compute_latency(op);
+    aff = add(aff, op_latency);
+
     controller = affine_controller_use_lake_tile(
             options, def, c, dom, aff,
             controller_name(op->name));

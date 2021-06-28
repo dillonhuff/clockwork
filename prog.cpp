@@ -5942,17 +5942,18 @@ void generate_garnet_verilator_tb(
   eval(options, rgtb, 1);
 
   rgtb << tab(1) << "dut.reset= 1;" << endl;
+  eval(options, rgtb, 1);
   rgtb << tab(1) << "dut.clk = 1;" << endl;
   //rgtb << tab(1) << "dut.eval();" << endl;
   eval(options, rgtb, 1);
 
   //Add a posedge during  reset
-  rgtb << tab(1) << "dut.clk = 0;" << endl;
-  //rgtb << tab(1) << "dut.eval();" << endl;
-  eval(options, rgtb, 1);
-  rgtb << tab(1) << "dut.clk = 1;" << endl;
-  //rgtb << tab(1) << "dut.eval();" << endl;
-  eval(options, rgtb, 1);
+  //rgtb << tab(1) << "dut.clk = 0;" << endl;
+  ////rgtb << tab(1) << "dut.eval();" << endl;
+  //eval(options, rgtb, 1);
+  //rgtb << tab(1) << "dut.clk = 1;" << endl;
+  ////rgtb << tab(1) << "dut.eval();" << endl;
+  //eval(options, rgtb, 1);
 
   rgtb << tab(1) << "dut.reset= 0;" << endl;
   rgtb << tab(1) << "dut.clk = 0;" << endl;
