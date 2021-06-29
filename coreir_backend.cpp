@@ -1819,8 +1819,9 @@ void generate_lake_tile_verilog(CodegenOptions& options, Instance* buf) {
       << buf->getModuleRef()->toString() << endl;
   string ub_ins_name = buf->toString();
   //FIXME: a hack to get correct module name, fix this after coreIR update
-  string v_name =  get_coreir_genenerator_name(buf->getModuleRef()->toString());
-  //string v_name =  buf->getModuleRef()->getGenerator()->getMetaData()["verilog_name"];
+  //string v_name =  get_coreir_genenerator_name(buf->getModuleRef()->toString());
+  //string v_name =  buf->getModuleRef()->getMetaData()["verilog_name"];
+  string v_name =  buf->getMetaData()["verilog_name"];
 
   //dump the collateral file
   json config = buf->getMetaData()["config"];
@@ -1968,8 +1969,8 @@ Instance* generate_coreir_op_controller(CodegenOptions& options, ModuleDef* def,
   //For those op need loop index we need this controller
   bool need_index = op->index_variables_needed_by_compute.size() > 0;
   //TODO: remove the first statement after kavya add init to lakewrapper
-  if (options.rtl_options.use_external_controllers || need_index ) {
-  //if (options.rtl_options.use_external_controllers) {
+  //if (options.rtl_options.use_external_controllers || need_index ) {
+  if (options.rtl_options.use_external_controllers) {
     auto aff_c = affine_controller(options, c, dom, aff);
     aff_c->print();
     controller = def->addInstance(controller_name(op->name), aff_c);
@@ -3247,6 +3248,12 @@ void generate_coreir(CodegenOptions& options,
   }
 
   auto ns = context->getNamespace("global");
+  /*context->setTop(prg_mod);
+  if(!serializeToFile(context, options.dir + prg.name + ".json")) {
+    cout << "Could not save ubuffer coreir" << endl;
+    context->die();
+  }*/
+
   if(!saveToFile(ns, options.dir + prg.name + ".json", prg_mod)) {
     cout << "Could not save ubuffer coreir" << endl;
     context->die();

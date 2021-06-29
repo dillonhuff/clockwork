@@ -2210,8 +2210,8 @@ CoreIR::Module* affine_controller_use_lake_tile_counter(
 
     auto* g = context->getGenerator("cgralib.Mem_amber");
     //auto* generatedModule = g->getModule(genargs);
-    g->getMetaData()["verilog_name"] =
-      "aff_ctrl_"+genargs.at("ID")->get<string>();
+    //g->getMetaData()["verilog_name"] = 
+    //  "aff_ctrl_"+genargs.at("ID")->get<string>();
     buf = def->addInstance(ub_ins_name + "_Counter_" + str(dim), "cgralib.Mem_amber", genargs);
     //assign the init value
     //TODO change 4 to fetch width
@@ -2224,7 +2224,8 @@ CoreIR::Module* affine_controller_use_lake_tile_counter(
 
     buf->getMetaData()["config"] = config_file;
     buf->getMetaData()["mode"] = "lake";
-    //buf->getMetaData()["verilog_name"] = "aff_ctrl_"+genargs.at("ID")->get<string>();
+    //buf->getModuleRef()->getMetaData()["verilog_name"] = "aff_ctrl_"+genargs.at("ID")->get<string>();
+    buf->getMetaData()["verilog_name"] = "aff_ctrl_"+genargs.at("ID")->get<string>();
 
 
     //garnet wire reset to flush of memory
@@ -2289,12 +2290,12 @@ CoreIR::Instance* affine_controller_use_lake_tile(
 
   auto* g = context->getGenerator("cgralib.Mem_amber");
   //auto* generatedModule = g->getModule(genargs);
-  g->getMetaData()["verilog_name"] =
-    "aff_ctrl_counter_"+genargs.at("ID")->get<string>();
+  //  "aff_ctrl_counter_"+genargs.at("ID")->get<string>();
   buf = def->addInstance(ub_ins_name, "cgralib.Mem_amber", genargs);
   buf->getMetaData()["config"] = config_file;
   buf->getMetaData()["mode"] = "lake";
-  //buf->getMetaData()["verilog_name"] = "aff_ctrl_counter_"+genargs.at("ID")->get<string>();
+  //buf->getModuleRef()->getMetaData()["verilog_name"] = "aff_ctrl_counter_"+genargs.at("ID")->get<string>();
+  buf->getMetaData()["verilog_name"] = "aff_ctrl_counter_"+genargs.at("ID")->get<string>();
 
   auto clk_en_const = def->addInstance(ub_ins_name+"_clk_en_const", "corebit.const",
           {{"value", CoreIR::Const::make(context, true)}});
@@ -2328,12 +2329,13 @@ CoreIR::Instance* UBuffer::generate_pond_instance(
       << ", output_num = " << output_num << endl;
   auto* g = context->getGenerator("cgralib.Pond_amber");
   //auto* generatedModule = g->getModule(genargs);
-  g->getMetaData()["verilog_name"] =
-    "pond_"+genargs.at("ID")->get<string>();
+  //g->getMetaData()["verilog_name"] = 
+  //  "pond_"+genargs.at("ID")->get<string>();
   buf = def->addInstance(ub_ins_name, "cgralib.Pond_amber", genargs);
   buf->getMetaData()["config"] = config_file;
   buf->getMetaData()["mode"] = "pond";
-  //buf->getMetaData()["verilog_name"] = "pond_"+genargs.at("ID")->get<string>();
+  //buf->getModuleRef()->getMetaData()["verilog_name"] = "pond_"+genargs.at("ID")->get<string>();
+  buf->getMetaData()["verilog_name"] = "pond_"+genargs.at("ID")->get<string>();
 
   auto clk_en_const = def->addInstance(ub_ins_name+"_clk_en_const", "corebit.const",
           {{"value", CoreIR::Const::make(context, true)}});
@@ -2382,11 +2384,12 @@ CoreIR::Instance* UBuffer::generate_lake_tile_instance(
     //modargs["config"] = CoreIR::Const::make(context, config_file);
     auto* g = context->getGenerator("cgralib.Mem_amber");
     //auto* generatedModule = g->getModule(genargs);
-    g->getMetaData()["verilog_name"] =
-      "lake_"+genargs.at("ID")->get<string>();
+    //g->getMetaData()["verilog_name"] = 
+    //  "lake_"+genargs.at("ID")->get<string>();
     buf = def->addInstance(ub_ins_name, "cgralib.Mem_amber", genargs);
     buf->getMetaData()["config"] = config_file;
     buf->getMetaData()["mode"] = string("lake");
+    //buf->getModuleRef()->getMetaData()["verilog_name"] = "lake_"+genargs.at("ID")->get<string>();
     buf->getMetaData()["verilog_name"] = "lake_"+genargs.at("ID")->get<string>();
   } else {
     //TODO: remove cwlib in the future
