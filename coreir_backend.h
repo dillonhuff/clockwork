@@ -141,6 +141,8 @@ void generate_platonic_ubuffer(CodegenOptions& options,
 
 void generate_lake_tile_verilog(CodegenOptions& options, CoreIR::Instance* buf);
 
+void add_default_initial_block();
+
 CoreIR::Wireable* delay_by(CoreIR::ModuleDef* bdef,
     CoreIR::Wireable* w,
     const int cycles);

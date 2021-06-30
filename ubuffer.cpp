@@ -1192,6 +1192,7 @@ void UBufferImpl::bank_merging(CodegenOptions & options) {
 
 #ifdef COREIR
 
+//void UBuffer::generate_bank_select()
 
 void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, schedule_info & info) {
   UBufferImpl impl;
@@ -2210,7 +2211,7 @@ CoreIR::Module* affine_controller_use_lake_tile_counter(
 
     auto* g = context->getGenerator("cgralib.Mem_amber");
     //auto* generatedModule = g->getModule(genargs);
-    //g->getMetaData()["verilog_name"] = 
+    //g->getMetaData()["verilog_name"] =
     //  "aff_ctrl_"+genargs.at("ID")->get<string>();
     buf = def->addInstance(ub_ins_name + "_Counter_" + str(dim), "cgralib.Mem_amber", genargs);
     //assign the init value
@@ -2329,7 +2330,7 @@ CoreIR::Instance* UBuffer::generate_pond_instance(
       << ", output_num = " << output_num << endl;
   auto* g = context->getGenerator("cgralib.Pond_amber");
   //auto* generatedModule = g->getModule(genargs);
-  //g->getMetaData()["verilog_name"] = 
+  //g->getMetaData()["verilog_name"] =
   //  "pond_"+genargs.at("ID")->get<string>();
   buf = def->addInstance(ub_ins_name, "cgralib.Pond_amber", genargs);
   buf->getMetaData()["config"] = config_file;
@@ -2384,7 +2385,7 @@ CoreIR::Instance* UBuffer::generate_lake_tile_instance(
     //modargs["config"] = CoreIR::Const::make(context, config_file);
     auto* g = context->getGenerator("cgralib.Mem_amber");
     //auto* generatedModule = g->getModule(genargs);
-    //g->getMetaData()["verilog_name"] = 
+    //g->getMetaData()["verilog_name"] =
     //  "lake_"+genargs.at("ID")->get<string>();
     buf = def->addInstance(ub_ins_name, "cgralib.Mem_amber", genargs);
     buf->getMetaData()["config"] = config_file;
@@ -5975,7 +5976,15 @@ void UBuffer::generate_banks(CodegenOptions& options) {
         } else {
             //In this case you need to implement a bank selection logic, output could just broad cast but input must mux
             cout << "Need to implement a selection hardware" << endl;
-            assert(false);
+            //just add multiple input port and output port to the same bank
+            int bank = impl.add_new_bank_between(inpts, outpts, to_set(rddom));
+            cout << "inpts: " << inpts << endl;
+            cout << "outpts: " << outpts << endl;
+            impl.sequentially_assign_inpt(sort_pt_by_bundle(inpts), bank);
+            impl.sequentially_assign_outpt(sort_pt_by_bundle(outpts), bank);
+            ret.push_back(
+                    make_pair(inpts, outpts)
+                    );
         }
     } else {
 

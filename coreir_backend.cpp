@@ -1789,6 +1789,32 @@ void emit_lake_config_collateral(CodegenOptions options, string tile_name, json 
     }
 }
 
+void add_default_initial_block() {
+    ifstream lake_top("LakeTop_W.v");
+    ofstream lake_new("LakeTop_W_new.v");
+    string loc;
+    if (lake_top.is_open() && lake_new.is_open()) {
+        while(getline(lake_top, loc)) {
+            if (loc == "endmodule   // sram_stub") {
+                lake_new << "//Add initial block here" << endl;
+                lake_new << "initial begin" << endl;
+                lake_new << tab(1) << "integer i = 0;" << endl;
+                lake_new << tab(1) << "for(i = 0; i < 512; i ++) begin" << endl;
+                lake_new << tab(2) << "integer big_addr = i >> 2;" << endl;
+                lake_new << tab(2) << "integer small_addr = i & 3;" << endl;
+                lake_new << tab(2) << "data_array[big_addr][small_addr] = i;" << endl;
+                lake_new << tab(1) << "end" << endl << "end" << endl;
+            }
+            lake_new << loc << endl;
+        }
+        lake_top.close();
+        lake_new.close();
+    } else {
+        cout << "Cannot open file!" << endl;
+        assert(false);
+    }
+}
+
 void run_lake_verilog_codegen(CodegenOptions& options, string v_name, string ub_ins_name) {
   //cmd("export LAKE_CONTROLLERS=$PWD");
   //cout << "Runing cmd$ python /nobackup/joeyliu/aha/lake/tests/wrapper_lake.py -c " + options.dir + "lake_collateral/" + ub_ins_name + " -s True -n " + v_name  <<  endl;
@@ -1819,9 +1845,9 @@ void generate_lake_tile_verilog(CodegenOptions& options, Instance* buf) {
       << buf->getModuleRef()->toString() << endl;
   string ub_ins_name = buf->toString();
   //FIXME: a hack to get correct module name, fix this after coreIR update
-  //string v_name =  get_coreir_genenerator_name(buf->getModuleRef()->toString());
+  string v_name =  get_coreir_genenerator_name(buf->getModuleRef()->toString());
   //string v_name =  buf->getModuleRef()->getMetaData()["verilog_name"];
-  string v_name =  buf->getMetaData()["verilog_name"];
+  //string v_name =  buf->getMetaData()["verilog_name"];
 
   //dump the collateral file
   json config = buf->getMetaData()["config"];

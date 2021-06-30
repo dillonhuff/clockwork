@@ -14939,12 +14939,12 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
 
   //test_apps.push_back(up_sample());
   //test_apps.push_back(resnet_one_input());
+  test_apps.push_back(counter());
+  test_apps.push_back(camera_pipeline_new());
   test_apps.push_back(rom());
   test_apps.push_back(unsharp_new());
   test_apps.push_back(conv_3_3());
-  test_apps.push_back(camera_pipeline_new());
   test_apps.push_back(laplacian_pyramid());
-  test_apps.push_back(counter());
   test_apps.push_back(gaussian());
   test_apps.push_back(down_sample());
   test_apps.push_back(cascade());
@@ -14989,11 +14989,13 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
       string name = prg.name;
       auto verilog_files = get_files("./" + dir + "/"+name+"/verilog/");
       verilog_files.push_back(name + ".v");
-      verilog_files.push_back("LakeWrapper.v");
+      verilog_files.push_back("LakeTop_W_new.v");
+      add_default_initial_block();
       bool extra_flag_for_lake = true;
       auto cpu = unoptimized_result(prg);
       int res = run_verilator_on(name, name + "_verilog_tb.cpp", verilog_files, extra_flag_for_lake);
       assert(res == 0);
+      cmd("rm LakeTop_W_new.v");
       cmd("rm LakeWrapper.v");
 
       auto verilator_res = verilator_results(prg.name);
