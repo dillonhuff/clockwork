@@ -14806,11 +14806,15 @@ void test_pond(string dir, bool run_verilator=true) {
       string name = prg.name;
       auto verilog_files = get_files("./" + dir + "/"+name+"/verilog/");
       verilog_files.push_back(name + ".v");
-      verilog_files.push_back("LakeWrapper.v");
+      verilog_files.push_back("Pond_W.v");
+      verilog_files.push_back("LakeTop_W_new.v");
+      add_default_initial_block();
       bool extra_flag_for_lake = true;
       int res = run_verilator_on(name, name + "_verilog_tb.cpp", verilog_files, extra_flag_for_lake);
       assert(res == 0);
       cmd("rm LakeWrapper.v");
+      cmd("rm Pond_W.v");
+      cmd("rm LakeTop_W_new.v");
       cmd("rm -rf ./" + dir + "/" + name + "/verilog/");
 
       auto verilator_res = verilator_results(prg.name);
