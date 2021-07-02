@@ -8176,7 +8176,7 @@ void generate_banks_garnet(CodegenOptions& options, UBuffer& buf, UBufferImpl& i
 
     //TODO: implement more banking strategies
     maybe<std::set<int> > embarassing_banking =
-      embarassing_partition(buf);
+      embarassing_partition(options, buf);
     bool has_embarassing_partition = embarassing_banking.has_value();
     if (has_embarassing_partition) {
       buf.banking.partition = "cyclic";

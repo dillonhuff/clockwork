@@ -2557,6 +2557,7 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
 
     //from bank to ubuffer
     map<string, UBuffer> generate_ubuffer(CodegenOptions& opt);
+    pair<isl_map*, isl_map*> get_bank_pt_IR(string inpt, isl_set* rddom, schedule_info & info);
     UBuffer generate_ubuffer(UBufferImpl& impl, schedule_info & info, int bank);
 
     //optimization pass to add an coarse grained controller, save iteration counter
@@ -2577,7 +2578,7 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
     //helper function for sreg generation
     void generate_sreg_and_wire(CodegenOptions& options, UBufferImpl& impl, CoreIR::ModuleDef* def, map<string, CoreIR::Wireable*> & pt2wire);
     //helper function for wire IO connection
-    void wire_ubuf_IO(CodegenOptions& options, CoreIR::ModuleDef* def, map<string, CoreIR::Wireable*> & pt2wire, CoreIR::Instance* buf, UBufferImpl & impl, int bank_id, bool with_ctrl);
+    void wire_ubuf_IO(CodegenOptions& options, CoreIR::ModuleDef* def, map<string, CoreIR::Wireable*> & pt2wire, CoreIR::Instance* buf, UBufferImpl & impl, schedule_info& info, int bank_id, bool with_ctrl);
     //Helper function for generate cgra mem instance
     CoreIR::Instance* map_ubuffer_to_cgra(CodegenOptions& options, CoreIR::ModuleDef* def, UBuffer& target_buf, string config_mode);
     //Helper function for generate pond instance
@@ -2913,6 +2914,7 @@ uset* dependence_distance_set(umap* writes, umap* read, umap* sched);
 map<string, UBuffer> decouple_multi_tile_ubuffer(CodegenOptions& options, map<string, UBuffer> & vec_buf);
 
 maybe<std::set<int> > embarassing_partition(UBuffer& buf);
+maybe<std::set<int> > embarassing_partition(CodegenOptions& options, UBuffer& buf);
 vector<vector<string> > overlapping_large_io_port_groups(UBuffer& buf, const int ports_per_direction);
 vector<int> get_cyclic_partition_factor_from_embarassing_partition(UBuffer & buf, std::set<int> & partition);
 

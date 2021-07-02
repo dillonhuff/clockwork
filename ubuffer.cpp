@@ -754,6 +754,28 @@ isl_map* UBuffer::get_coarse_grained_pipeline_schedule(UBuffer& new_ub) {
   return cgpl_sched;
 }
 
+//helper function to get schedule for port
+pair<isl_map*, isl_map*> UBuffer::get_bank_pt_IR(string inpt, isl_set* rddom, schedule_info & info) {
+
+  auto acc_map = to_map(access_map.at(inpt));
+
+  //get the bank specific access map
+  acc_map = coalesce(its_range(acc_map, rddom));
+
+  auto dom = ::domain(acc_map);
+
+  auto sched_aff = get_aff(schedule.at(inpt));
+
+  if (isIn.at(inpt)) {
+    //update op latency, if it's input port
+    int op_latency = info.compute_latency(::domain_name(acc_map));
+    sched_aff = add(sched_aff, op_latency);
+  }
+
+  isl_map* sched = its(to_map(sched_aff), dom);
+  return {acc_map, sched};
+}
+
 UBuffer UBuffer::generate_ubuffer(UBufferImpl& impl, schedule_info & info, int bank) {
   //for(auto it: impl.bank_rddom) {
     //int bank = it.first;
@@ -790,14 +812,17 @@ UBuffer UBuffer::generate_ubuffer(UBufferImpl& impl, schedule_info & info, int b
       //get the bank specific access map
       acc_map = coalesce(its_range(acc_map, rddom));
 
-      acc_map = set_range_name(acc_map, bname);
       auto dom = ::domain(acc_map);
 
       //update op latency
       op_latency = info.compute_latency(::domain_name(acc_map));
 
 
-      string pt_name = bname + "_" + ::name(dom) + "_" + to_string(usuffix);
+      auto sched_aff = get_aff(schedule.at(inpt));
+      sched_aff = add(sched_aff, op_latency);
+      isl_map* sched = its(to_map(sched_aff), dom);
+
+      //string pt_name = bname + "_" + ::name(dom) + "_" + to_string(usuffix);
       //buf.port_bundles[get_bundle(inpt)].push_back(pt_name);
 
       //Put into separate bundle if we have different domain name
@@ -815,10 +840,7 @@ UBuffer UBuffer::generate_ubuffer(UBufferImpl& impl, schedule_info & info, int b
         //buf.add_in_pt(inpt, dom, acc_map, its(schedule.at(inpt), dom));
         sr = true;
       }
-      auto sched_aff = get_aff(schedule.at(inpt));
-      sched_aff = add(sched_aff, op_latency);
-      isl_map* sched = its(to_map(sched_aff), dom);
-
+      acc_map = set_range_name(acc_map, bname);
       buf.add_in_pt(inpt, dom, acc_map, sched);
       usuffix ++;
     }
@@ -838,7 +860,7 @@ UBuffer UBuffer::generate_ubuffer(UBufferImpl& impl, schedule_info & info, int b
           acc_map = outpt_info.first;
           sched = to_umap(outpt_info.second);
       }*/
-      string pt_name = bname + "_" + ::name(dom) + "_" + to_string(usuffix);
+      //string pt_name = bname + "_" + ::name(dom) + "_" + to_string(usuffix);
 
       if (impl.is_shift_register_output(outpt)) {
         int delay = impl.shift_registered_outputs.at(outpt).second;;
@@ -2469,11 +2491,12 @@ CoreIR::Wireable* findChainDataIn(CoreIR::Wireable* mem_data_out, int port_id) {
 }
 
 void UBuffer::wire_ubuf_IO(CodegenOptions& options,CoreIR::ModuleDef* def, map<string, CoreIR::Wireable*> & pt2wire,
-        CoreIR::Instance* buf, UBufferImpl & impl, int bank_id, bool with_ctrl) {
+        CoreIR::Instance* buf, UBufferImpl & impl, schedule_info & info, int bank_id, bool with_ctrl) {
   auto context = def->getContext();
 
   int inpt_cnt = 0, outpt_cnt = 0;
   string config_mode = buf->getMetaData()["mode"];
+  cout << "Config mode: " << config_mode << endl;
   //TODO: remove this
   for (auto inpt_broadcast_set: impl.bank_inpt2writers.at(bank_id)) {
     //Cannot wire multiple wire into one memory port
@@ -2494,6 +2517,7 @@ void UBuffer::wire_ubuf_IO(CodegenOptions& options,CoreIR::ModuleDef* def, map<s
     inpt_cnt ++;
   }
   bool chain_en = false;
+  //TODO: rewrite the chaining logic it's messy
   for (auto outpt_broadcast_set: impl.bank_outpt2readers.at(bank_id)) {
     for (auto outpt: outpt_broadcast_set) {
       //need a second pass push all wire into a list
@@ -2506,16 +2530,48 @@ void UBuffer::wire_ubuf_IO(CodegenOptions& options,CoreIR::ModuleDef* def, map<s
         //no chaining
         def->connect(buf->sel(memDataoutPort(config_mode, outpt_cnt)), pt2wire.at(outpt));
       } else {
+
         chain_en = true;
         auto conns = getConnectWires(pt2wire.at(outpt));
-        if(conns.size() == 0) {
-          //First chaining wiring, wire to the output
-          def->connect(buf->sel(memDataoutPort(config_mode, outpt_cnt)), pt2wire.at(outpt));
-        } else {
-          assert(conns.size() == 1);
-          CoreIR::Wireable* last_dangling_chain_data_in =
+        if (config_mode == "lake") {
+          //lake chaining wiring method
+          if(conns.size() == 0) {
+            //First chaining wiring, wire to the output
+            def->connect(buf->sel(memDataoutPort(config_mode, outpt_cnt)), pt2wire.at(outpt));
+          } else {
+            assert(conns.size() == 1);
+            CoreIR::Wireable* last_dangling_chain_data_in =
               findChainDataIn(pick(conns), outpt_cnt);
-          def->connect(buf->sel(memDataoutPort(config_mode, outpt_cnt)), last_dangling_chain_data_in);
+            def->connect(buf->sel(memDataoutPort(config_mode, outpt_cnt)), last_dangling_chain_data_in);
+          }
+
+        } else if (config_mode == "pond") {
+          if (bank_id == impl.outpt_to_bank.at(outpt).size() - 1) {
+            //last port directly connec to the wire
+            def->connect(buf->sel(memDataoutPort(config_mode, outpt_cnt)),  pt2wire.at(outpt));
+          } else {
+            Instance* dataout_pth = addPassthrough(
+                    pt2wire.at(outpt), "dataout_pt_" + context->getUnique());
+            cout << "read domain:" << str(impl.bank_rddom.at(bank_id)) << endl;
+            auto IR_pair = get_bank_pt_IR(outpt, impl.bank_rddom.at(bank_id), info);
+            isl_aff* sched_aff = get_aff(IR_pair.second);
+            cout << "pt schedule: " << str(sched_aff) << endl;
+            auto mux_ctrl = affine_controller_use_lake_tile(
+                    options, def, context, ::domain(IR_pair.second),
+                    sched_aff, "dataout_pt_mux_ctl_" + context->getUnique());
+            generate_lake_tile_verilog(options, mux_ctrl);
+
+            //create a mux
+            auto next_val = def->addInstance(
+                    def->getContext()->getUnique() + "_mux",
+                    "coreir.mux",
+                    {{"width", CoreIR::Const::make(context, this->port_widths)}});
+            def->connect(dataout_pth->sel("out"), next_val->sel("out"));
+            def->connect(buf->sel(memDataoutPort(config_mode, outpt_cnt)), next_val->sel("in0"));
+            def->connect(mux_ctrl->sel("stencil_valid"), next_val->sel("sel"));
+            inlineInstance(dataout_pth);
+            pt2wire.at(outpt) = next_val->sel("in1");
+          }
         }
       }
 
@@ -2544,8 +2600,7 @@ void UBuffer::wire_ubuf_IO(CodegenOptions& options,CoreIR::ModuleDef* def, map<s
     }
   } else {
     if (chain_en) {
-      cout << "Pond does not support chaining!" << endl;
-      assert(false);
+      cout << "Does not need to do anything for pond chaining!" << endl;
     }
   }
 }
@@ -2861,7 +2916,7 @@ void UBuffer::generate_coreir(CodegenOptions& options,
     cgpl_post_processing(def, buf, cgpl_ctrl, decouple_ctrl);
 
     //Wiring the port after generate verilog
-    wire_ubuf_IO(options, def, pt2wire, buf, impl, bank_id, with_ctrl);
+    wire_ubuf_IO(options, def, pt2wire, buf, impl, info, bank_id, with_ctrl);
 
     //generate verilog collateral
     generate_lake_tile_verilog(options, buf);
@@ -5974,17 +6029,8 @@ void UBuffer::generate_banks(CodegenOptions& options) {
                     make_pair(inpts, outpts)
                     );
         } else {
-            //In this case you need to implement a bank selection logic, output could just broad cast but input must mux
-            cout << "Need to implement a selection hardware" << endl;
-            //just add multiple input port and output port to the same bank
-            int bank = impl.add_new_bank_between(inpts, outpts, to_set(rddom));
-            cout << "inpts: " << inpts << endl;
-            cout << "outpts: " << outpts << endl;
-            impl.sequentially_assign_inpt(sort_pt_by_bundle(inpts), bank);
-            impl.sequentially_assign_outpt(sort_pt_by_bundle(outpts), bank);
-            ret.push_back(
-                    make_pair(inpts, outpts)
-                    );
+            cout << "need to rebank the ubuffer ! " << endl;
+            assert(false);
         }
     } else {
 
@@ -8720,6 +8766,52 @@ void UBuffer::generate_banks(CodegenOptions& options) {
         return filtered_io_groups;
       }
 
+      vector<vector<string> > overlapping_large_io_port_groups(CodegenOptions& options, UBuffer& buf){
+        vector<vector<string> > overlapping = overlapping_ports(buf);
+
+        int grouped = 0;
+        for (auto& grp : overlapping) {
+          grouped += grp.size();
+        }
+
+        assert(grouped == buf.get_all_ports().size());
+
+        vector<vector<string> > filtered_io_groups;
+        for (auto& g : overlapping) {
+          vector<string> ins;
+          vector<string> outs;
+          for (auto pt : g) {
+            if (buf.is_in_pt(pt)) {
+              ins.push_back(pt);
+            } else {
+              assert(buf.is_out_pt(pt));
+              outs.push_back(pt);
+            }
+          }
+          cout << "overlapping input:" << ins << endl;
+          cout << "overlapping output:" << outs << endl << endl;
+          //TODO should take conside the hardware constraint here
+          if (ins.size() > 1) {
+            filtered_io_groups.push_back(ins);
+          }
+          if (outs.size() > 1) {
+            filtered_io_groups.push_back(outs);
+          }
+        }
+
+        //If we do not need banking make sure each bank did not exceeded hardware port constraints
+        if (filtered_io_groups.size() == 0) {
+          if (buf.num_in_ports() > options.rtl_options.max_inpt) {
+            filtered_io_groups.push_back(buf.get_in_ports());
+          }
+          if (buf.num_out_ports() > options.rtl_options.max_outpt) {
+            filtered_io_groups.push_back(buf.get_out_ports());
+          }
+        }
+
+        return filtered_io_groups;
+      }
+
       isl_multi_aff* embarassing_partition_function(UBuffer& buf, const std::set<int>& dims) {
         vector<string> vars;
         vector<string> outs;
@@ -8751,6 +8843,52 @@ void UBuffer::generate_banks(CodegenOptions& options) {
           cout << tab(2) << "Partition: " << dim << endl;
         }
         return cyclic_partition_factor;
+      }
+
+      //This is the embarrassing partition was used in garnet mapping
+      maybe<std::set<int> > embarassing_partition(CodegenOptions& options, UBuffer& buf) {
+        vector<vector<string> > filtered_io_groups =
+          overlapping_large_io_port_groups(options, buf);
+
+        if (filtered_io_groups.size() == 0) {
+          std::set<int> empty;
+          return maybe<std::set<int> >(empty);
+        }
+
+        std::set<int> dims;
+        for (auto g : filtered_io_groups) {
+          assert(g.size() > 0);
+
+          auto parts = find_fixed_subaddresses(g, buf);
+          cout << "Error: No viable banking strategy for " << buf.name << endl;
+          cout << tab(1) << "Cannot partition group: " << endl;
+          for (auto pt : g) {
+            cout << tab(2) << pt << endl;
+            cout << tab(3) << str(buf.access_map.at(pt)) << endl;
+            cout << tab(3) << str(buf.schedule.at(pt)) << endl;
+          }
+          if (parts.size() < g.size()) {
+            return {};
+          }
+          for (auto ent : parts) {
+            for (auto d : ent.second) {
+              dims.insert(d.first);
+            }
+          }
+        }
+
+        cout << "FOUND EMBARASSING PARTITION OF "
+          << buf.name << " in " << dims.size() << " dimensions..." << endl;
+        for (auto d : dims) {
+          cout << tab(1) << d << endl;
+        }
+
+        isl_multi_aff* bank_func = embarassing_partition_function(buf, dims);
+        cout << tab(1) << "bank func: " << str(bank_func) << endl;
+        //bool legal = banking_scheme_is_legal(to_map(bank_func), buf);
+        //cout << tab(2) << "Legal: " << legal << endl;
+        //assert(false);
+        return dims;
       }
 
       maybe<std::set<int> > embarassing_partition(UBuffer& buf) {

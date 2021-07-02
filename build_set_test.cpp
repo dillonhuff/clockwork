@@ -14766,7 +14766,6 @@ void cpy_app_to_folder(const std::string& app_type, const std::string& prg_name)
 
 void test_pond(string dir, bool run_verilator=true) {
   vector<prog> test_apps;
-  //test_apps.push_back(complex_mem_pond());
   test_apps.push_back(complex_mem_pond_rolled());
   test_apps.push_back(conv_rolled());
   test_apps.push_back(conv_1_3());
@@ -14774,6 +14773,7 @@ void test_pond(string dir, bool run_verilator=true) {
   test_apps.push_back(resnet());
   test_apps.push_back(three_level_pond_copy());
   test_apps.push_back(three_level_pond_rolled());
+  test_apps.push_back(complex_mem_pond());
   test_apps.push_back(fft8_unroll8_split());
 
   //TODO: tobe tested with new pond
