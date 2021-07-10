@@ -1647,7 +1647,7 @@ pair<isl_map*, isl_map*> merge_dom_dim(isl_map* schedule, isl_map* acc_map) {
             all_pair_a.erase(all_pair_a.begin());
             all_pair_s.erase(all_pair_s.begin());
             merge_cnt ++;
-        } else if(pa.first < ps.first) {
+        } else if(pa.first > ps.first) {
             all_pair_a.erase(all_pair_a.begin());
         } else {
             all_pair_s.erase(all_pair_s.begin());
@@ -1759,22 +1759,74 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> &
         string ctrl_name = get_ctrl_name(op_name);
         auto aff = get_aff(sched);
         auto dom = ::domain(sched);
-        auto config_info = generate_accessor_config_from_aff_expr(dom, aff);
-        if(op2write_map.count(op_name)) {
-            for (auto acc_map : op2write_map.at(op_name)) {
-                ConfigMap addressor =
-                    generate_addressor_config_from_access_map(acc_map, mem, false/*is write*/);
-                config_info.merge(addressor);
+
+        //Check if we have loop iteration larger than hardware limit,
+        //root will be removed so we add 1
+        if (num_in_dims(sched) > mem.iteration_level+1) {
+
+          isl_map* new_sched = isl_map_read_from_str(ctx, "{}");
+          ConfigMap config_info;
+          if (op2write_map.count(op_name) > 0) {
+            assert(op2write_map.count(op_name) == 1);
+            auto access_map = pick(op2write_map.at(op_name));
+            auto m_pair = merge_dom_dim(sched, to_map(access_map));
+            if(empty(new_sched)) {
+              new_sched = m_pair.first;
+              auto aff = get_aff(new_sched);
+              auto dom = ::domain(new_sched);
+                cout << tab(1) << "After Merge: " << endl;
+                cout << tab(2) << "schedule: " << str(new_sched) << endl;
+                cout << tab(2) << "access map: " << str(m_pair.second) << endl;
+              config_info = generate_accessor_config_from_aff_expr(dom, aff);
+            } else {
+                cout << "cannot merge iteration domain, cannot map to current hardware" << endl;
+                assert(equal(m_pair.first, new_sched));
             }
-        }
-        if(op2read_map.count(op_name)) {
-            for (auto acc_map : op2read_map.at(op_name)) {
-                ConfigMap addressor =
-                    generate_addressor_config_from_access_map(acc_map, mem, true/*is read*/);
-                config_info.merge(addressor);
+            ConfigMap addressor =
+              generate_addressor_config_from_access_map(to_umap(m_pair.second), mem, false);
+            config_info.merge(addressor);
+          }
+          if (op2read_map.count(op_name) > 0){
+            assert(op2read_map.count(op_name) == 1);
+            auto access_map = pick(op2read_map.at(op_name));
+            auto m_pair = merge_dom_dim(sched, to_map(access_map));
+            if(empty(new_sched)) {
+              new_sched = m_pair.first;
+              auto aff = get_aff(new_sched);
+              auto dom = ::domain(new_sched);
+              cout << tab(1) << "After Merge: " << endl;
+              cout << tab(2) << "schedule: " << str(new_sched) << endl;
+              cout << tab(2) << "access map: " << str(m_pair.second) << endl;
+              config_info = generate_accessor_config_from_aff_expr(dom, aff);
+            } else {
+                cout << str(m_pair.first) << endl << str(new_sched) << endl;
+                cout << "cannot merge iteration domain, cannot map to current hardware" << endl;
+                assert(equal(m_pair.first, new_sched));
             }
+            ConfigMap addressor =
+              generate_addressor_config_from_access_map(to_umap(m_pair.second), mem, true);
+            config_info.merge(addressor);
+          }
+
+          add_lake_config(ret, config_info, num_in_dims(new_sched), ctrl_name);
+        } else {
+          auto config_info = generate_accessor_config_from_aff_expr(dom, aff);
+          if(op2write_map.count(op_name)) {
+              for (auto acc_map : op2write_map.at(op_name)) {
+                  ConfigMap addressor =
+                      generate_addressor_config_from_access_map(acc_map, mem, false/*is write*/);
+                  config_info.merge(addressor);
+              }
+          }
+          if(op2read_map.count(op_name)) {
+              for (auto acc_map : op2read_map.at(op_name)) {
+                  ConfigMap addressor =
+                      generate_addressor_config_from_access_map(acc_map, mem, true/*is read*/);
+                  config_info.merge(addressor);
+              }
+          }
+          add_lake_config(ret, config_info, num_in_dims(aff), ctrl_name);
         }
-        add_lake_config(ret, config_info, num_in_dims(aff), ctrl_name);
     }
     cout << ret << endl;
     return ret;
@@ -2558,7 +2610,7 @@ void UBuffer::wire_ubuf_IO(CodegenOptions& options,CoreIR::ModuleDef* def, map<s
             cout << "pt schedule: " << str(sched_aff) << endl;
             auto mux_ctrl = affine_controller_use_lake_tile(
                     options, def, context, ::domain(IR_pair.second),
-                    sched_aff, "dataout_pt_mux_ctl_" + context->getUnique());
+                    sched_aff, "dataout_pt_mux_ctrl_" + context->getUnique());
             generate_lake_tile_verilog(options, mux_ctrl);
 
             //create a mux
@@ -2567,10 +2619,10 @@ void UBuffer::wire_ubuf_IO(CodegenOptions& options,CoreIR::ModuleDef* def, map<s
                     "coreir.mux",
                     {{"width", CoreIR::Const::make(context, this->port_widths)}});
             def->connect(dataout_pth->sel("out"), next_val->sel("out"));
-            def->connect(buf->sel(memDataoutPort(config_mode, outpt_cnt)), next_val->sel("in0"));
+            def->connect(buf->sel(memDataoutPort(config_mode, outpt_cnt)), next_val->sel("in1"));
             def->connect(mux_ctrl->sel("stencil_valid"), next_val->sel("sel"));
             inlineInstance(dataout_pth);
-            pt2wire.at(outpt) = next_val->sel("in1");
+            pt2wire.at(outpt) = next_val->sel("in0");
           }
         }
       }

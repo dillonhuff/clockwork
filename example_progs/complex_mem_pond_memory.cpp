@@ -25,7 +25,7 @@ prog complex_mem_pond() {
 //store is: input_cgra.stencil(input_cgra_s0_zz, input_cgra_s0_z, input_cgra_s0_x, input_cgra_s0_y) = input_host.stencil(((input_cgra_s0_z*4) + input_cgra_s0_zz), input_cgra_s0_x, input_cgra_s0_y)
   auto hcompute_input_cgra_stencil = input_cgra_s0_zz->add_op("op_hcompute_input_cgra_stencil");
   hcompute_input_cgra_stencil->add_function("hcompute_input_cgra_stencil");
-  hcompute_input_cgra_stencil->add_load("input_host_stencil", "input_cgra_s0_y", "input_cgra_s0_x", "((input_cgra_s0_z*4) + input_cgra_s0_zz)");
+  hcompute_input_cgra_stencil->add_load("input_host_stencil", "input_cgra_s0_y", "input_cgra_s0_x", "((input_cgra_s0_z*8) + input_cgra_s0_zz)");
   prg.buffer_port_widths["input_cgra_stencil"] = 16;
   hcompute_input_cgra_stencil->add_store("input_cgra_stencil", "input_cgra_s0_y", "input_cgra_s0_x", "input_cgra_s0_z", "input_cgra_s0_zz");
 
@@ -40,7 +40,7 @@ prog complex_mem_pond() {
 //store is: kernel_cgra.stencil(kernel_cgra_s0_z, kernel_cgra_s0_w, kernel_cgra_s0_x, kernel_cgra_s0_y) = kernel_host.stencil(kernel_cgra_s0_z, kernel_cgra_s0_w, kernel_cgra_s0_x, kernel_cgra_s0_y)
   auto hcompute_kernel_cgra_stencil = kernel_cgra_s0_zz->add_op("op_hcompute_kernel_cgra_stencil");
   hcompute_kernel_cgra_stencil->add_function("hcompute_kernel_cgra_stencil");
-  hcompute_kernel_cgra_stencil->add_load("kernel_host_stencil", "kernel_cgra_s0_y", "kernel_cgra_s0_x", "kernel_cgra_s0_w", "kernel_cgra_s0_z*4+kernel_cgra_s0_zz");
+  hcompute_kernel_cgra_stencil->add_load("kernel_host_stencil", "kernel_cgra_s0_y", "kernel_cgra_s0_x", "kernel_cgra_s0_w", "kernel_cgra_s0_z*8+kernel_cgra_s0_zz");
   prg.buffer_port_widths["kernel_cgra_stencil"] = 16;
   hcompute_kernel_cgra_stencil->add_store("kernel_cgra_stencil", "kernel_cgra_s0_y", "kernel_cgra_s0_x", "kernel_cgra_s0_w", "kernel_cgra_s0_z", "kernel_cgra_s0_zz");
 

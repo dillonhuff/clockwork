@@ -103,6 +103,8 @@ struct LakeCollateral {
     std::unordered_map<string, int> out_port_width;
     int fetch_width;
     int max_chaining;
+    int iteration_level;
+    int counter_ub;
     bool multi_sram_accessor;
     bool dual_port_sram;
     bool wire_chain_en;
@@ -111,6 +113,8 @@ struct LakeCollateral {
     LakeCollateral(string level = "mem"):
         fetch_width(4),
         max_chaining(4),
+        iteration_level(6),
+        counter_ub(65535),
         multi_sram_accessor(true),
         dual_port_sram(false),
         wire_chain_en(true),
@@ -127,6 +131,7 @@ struct LakeCollateral {
                 out_port_width = {{"regfile", 1}};
                 bank_num = {{"regfile", 1}};
                 capacity = {{"regfile", 32}};
+                iteration_level = 3;
 
             } else if (level == "glb") {
                 fetch_width = 1;
