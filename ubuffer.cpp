@@ -1691,6 +1691,29 @@ isl_map* pick_left_most_access(isl_map* wide_fetch_access) {
     return simplify(to_map(bmap_vec.front()));
 }
 
+//An optimization pass for iteration domain merge
+//1. Try the merge the iteration domain
+//2. Add accessor information to config info if the opt_sched is empty
+isl_map* add_config_with_dom_dim_merge(ConfigMap& config_info, isl_map* & opt_sched, vector<umap*> &access_map_vec, isl_map* sched) {
+  assert(access_map_vec.size() == 1);
+  auto access_map = pick(access_map_vec);
+  auto m_pair = merge_dom_dim(sched, to_map(access_map));
+  if(empty(opt_sched)) {
+    opt_sched = m_pair.first;
+    auto aff = get_aff(opt_sched);
+    auto dom = ::domain(opt_sched);
+      cout << tab(1) << "After Merge: " << endl;
+      cout << tab(2) << "schedule: " << str(opt_sched) << endl;
+      cout << tab(2) << "access map: " << str(m_pair.second) << endl;
+    config_info = generate_accessor_config_from_aff_expr(dom, aff);
+  } else if (!equal(m_pair.first, opt_sched)){
+      cout << str(m_pair.first) << endl << str(opt_sched) << endl;
+      cout << "cannot merge iteration domain, cannot map to current hardware" << endl;
+      assert(false);
+  }
+  return m_pair.second;
+}
+
 //Wide fetch width codegen
 Json UBuffer::generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> & rewrite_buffer) {
 
@@ -1757,59 +1780,32 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> &
         auto sched = op2sched.at(op_name);
         cout << "\tSched: " << str(sched) << endl;
         string ctrl_name = get_ctrl_name(op_name);
-        auto aff = get_aff(sched);
-        auto dom = ::domain(sched);
 
         //Check if we have loop iteration larger than hardware limit,
         //root will be removed so we add 1
         if (num_in_dims(sched) > mem.iteration_level+1) {
 
-          isl_map* new_sched = isl_map_read_from_str(ctx, "{}");
+          isl_map* opt_sched = isl_map_read_from_str(ctx, "{}");
           ConfigMap config_info;
           if (op2write_map.count(op_name) > 0) {
-            assert(op2write_map.count(op_name) == 1);
-            auto access_map = pick(op2write_map.at(op_name));
-            auto m_pair = merge_dom_dim(sched, to_map(access_map));
-            if(empty(new_sched)) {
-              new_sched = m_pair.first;
-              auto aff = get_aff(new_sched);
-              auto dom = ::domain(new_sched);
-                cout << tab(1) << "After Merge: " << endl;
-                cout << tab(2) << "schedule: " << str(new_sched) << endl;
-                cout << tab(2) << "access map: " << str(m_pair.second) << endl;
-              config_info = generate_accessor_config_from_aff_expr(dom, aff);
-            } else {
-                cout << "cannot merge iteration domain, cannot map to current hardware" << endl;
-                assert(equal(m_pair.first, new_sched));
-            }
+            isl_map* opt_access_map =
+                add_config_with_dom_dim_merge(config_info, opt_sched, op2write_map.at(op_name), sched);
             ConfigMap addressor =
-              generate_addressor_config_from_access_map(to_umap(m_pair.second), mem, false);
+              generate_addressor_config_from_access_map(to_umap(opt_access_map), mem, false);
             config_info.merge(addressor);
           }
           if (op2read_map.count(op_name) > 0){
-            assert(op2read_map.count(op_name) == 1);
-            auto access_map = pick(op2read_map.at(op_name));
-            auto m_pair = merge_dom_dim(sched, to_map(access_map));
-            if(empty(new_sched)) {
-              new_sched = m_pair.first;
-              auto aff = get_aff(new_sched);
-              auto dom = ::domain(new_sched);
-              cout << tab(1) << "After Merge: " << endl;
-              cout << tab(2) << "schedule: " << str(new_sched) << endl;
-              cout << tab(2) << "access map: " << str(m_pair.second) << endl;
-              config_info = generate_accessor_config_from_aff_expr(dom, aff);
-            } else {
-                cout << str(m_pair.first) << endl << str(new_sched) << endl;
-                cout << "cannot merge iteration domain, cannot map to current hardware" << endl;
-                assert(equal(m_pair.first, new_sched));
-            }
+            isl_map* opt_access_map =
+                add_config_with_dom_dim_merge(config_info, opt_sched, op2read_map.at(op_name), sched);
             ConfigMap addressor =
-              generate_addressor_config_from_access_map(to_umap(m_pair.second), mem, true);
+              generate_addressor_config_from_access_map(to_umap(opt_access_map), mem, true);
             config_info.merge(addressor);
           }
 
-          add_lake_config(ret, config_info, num_in_dims(new_sched), ctrl_name);
+          add_lake_config(ret, config_info, num_in_dims(opt_sched), ctrl_name);
         } else {
+          auto aff = get_aff(sched);
+          auto dom = ::domain(sched);
           auto config_info = generate_accessor_config_from_aff_expr(dom, aff);
           if(op2write_map.count(op_name)) {
               for (auto acc_map : op2write_map.at(op_name)) {
