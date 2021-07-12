@@ -21,7 +21,7 @@ struct affine_controller_ctrl {
 
 
 CoreIR::Wireable* mkConst(CoreIR::ModuleDef* def, const int width, const int val);
-CoreIR::Wireable* addList(CoreIR::ModuleDef* def, const std::vector<CoreIR::Wireable*>& vals);
+CoreIR::Wireable* addList(CoreIR::ModuleDef* def, const std::vector<CoreIR::Wireable*>& vals, int width);
 CoreIR::Wireable* orList(CoreIR::ModuleDef* def, const std::vector<CoreIR::Wireable*>& vals);
 CoreIR::Wireable* andList(CoreIR::ModuleDef* def, const std::vector<CoreIR::Wireable*>& vals);
 
@@ -35,6 +35,8 @@ CoreIR::Module* coreir_for_set(CoreIR::Context* context, isl_set* dom);
 
 CoreIR::Module* affine_controller(CodegenOptions& options, CoreIR::Context* context, isl_set* dom, isl_aff* aff);
 CoreIR::Module* affine_controller(CoreIR::Context* context, isl_set* dom, isl_aff* aff);
+
+CoreIR::Instance* affine_controller(CoreIR::ModuleDef* def, isl_set* dom, isl_aff* aff, int width);
 
 affine_controller_ctrl pack_controller(affine_controller_ctrl& unpacked);
 

@@ -2688,21 +2688,15 @@ string UBuffer::determine_config_mode(CodegenOptions& options, UBuffer& target_b
   cout << "Vectorization buffer capacity: " << capacity << endl;
   string config_mode;
   bool multi_level_mem = options.mem_hierarchy.count("regfile");
-  if (capacity <= 96 && multi_level_mem ) {
+  //TODO: this mode determine is hacky
+  //Changing the size of pond threshold
+  if (contains(target_buf.name, "_gb_")) {
+    config_mode = "glb";
+    assert(false);
+  } else if (capacity <= 96 && multi_level_mem ) {
     cout << "Generate config for register file!" << endl;
-    //TODO generate the config file on the fly
-    //config_file = generate_ubuf_args(options, target_buf, "regfile");
     config_mode = "pond";
   } else {
-    //buffer_vectorization(options.iis, bk.name + "_ubuf", 1, 4, rewrite_buffer);
-    //cout << "vectorization buf name: " << target_buf.name << endl;
-    //buffer_vectorization(options, {target_buf.name+ "_ubuf"}, vectorized_buf);
-    //vectorized_buf = decouple_multi_tile_ubuffer(options, vectorized_buf);
-    //for (auto buf: vectorized_buf) {
-        //cout << "After vectorization codegen: " << buf.first << endl << buf.second << endl;
-    //}
-    //TODO generate the config file on the fly
-    //config_file = generate_ubuf_args(options, vectorized_buf);
     config_mode = "lake";
   }
   return config_mode;
@@ -2758,6 +2752,11 @@ CoreIR::Instance* UBuffer::map_ubuffer_to_cgra(CodegenOptions& options, CoreIR::
   return buf;
 }
 
+bool sanity_check_controller_bitwidth(CodegenOptions& options, isl_map* sched) {
+    int sched_max = to_int(lexmaxval(range(sched)));
+    return sched_max < options.mem_hierarchy.at("mem").counter_ub;
+}
+
 bool cgpl_ctrl_optimization(CodegenOptions& options, CoreIR::ModuleDef* def, CoreIR::Instance* &cgpl_ctrl, UBuffer& target_buf) {
   string ub_ins_name = "ub_" + target_buf.name;
   auto context = def->getContext();
@@ -2768,10 +2767,14 @@ bool cgpl_ctrl_optimization(CodegenOptions& options, CoreIR::ModuleDef* def, Cor
     auto cgpl_schedule =
         target_buf.get_coarse_grained_pipeline_schedule(new_target_buf);
     //connect with the new ctrl stencil valid port
-     cgpl_ctrl = affine_controller_use_lake_tile(
+    if (sanity_check_controller_bitwidth(options, cgpl_schedule)) {
+      cgpl_ctrl = affine_controller_use_lake_tile(
             options, def, context, ::domain(cgpl_schedule),
             get_aff(cgpl_schedule), ub_ins_name + "_cgpl_ctrl");
-    generate_lake_tile_verilog(options, cgpl_ctrl);
+      generate_lake_tile_verilog(options, cgpl_ctrl);
+    } else {
+      cgpl_ctrl = affine_controller(def, ::domain(cgpl_schedule), get_aff(cgpl_schedule), 32);
+    }
     target_buf = new_target_buf;
   }
   return decouple_ctrl;
@@ -2784,7 +2787,12 @@ void cgpl_post_processing(CoreIR::ModuleDef* def, CoreIR::Instance*buf, CoreIR::
     for (auto conn: conns) {
       def->disconnect(buf->sel("flush"), conn);
     }
-    def->connect(cgpl_ctrl->sel("stencil_valid"), buf->sel("flush"));
+    //Use lake tile to generate control
+    if (cgpl_ctrl->getModuleRef()->isGenerated())
+      def->connect(cgpl_ctrl->sel("stencil_valid"), buf->sel("flush"));
+    //Use coreir built affine control
+    else
+      def->connect(cgpl_ctrl->sel("valid"), buf->sel("flush"));
   }
 }
 

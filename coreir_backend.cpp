@@ -1398,6 +1398,15 @@ CoreIR::Wireable* addVals(CoreIR::ModuleDef* def, CoreIR::Wireable* a, CoreIR::W
   return ad->sel("out");
 }
 
+CoreIR::Wireable* addVals(CoreIR::ModuleDef* def, CoreIR::Wireable* a, CoreIR::Wireable* b, int width) {
+  auto context = def->getContext();
+  auto ad = def->addInstance("add_all_" + def->getContext()->getUnique(), "coreir.add", {{"width", COREMK(context, width)}});
+  def->connect(ad->sel("in0"), a);
+  def->connect(ad->sel("in1"), b);
+
+  return ad->sel("out");
+}
+
 CoreIR::Wireable* orList(CoreIR::ModuleDef* def, const std::vector<CoreIR::Wireable*>& vals) {
   assert(vals.size() > 0);
   auto context = def->getContext();
@@ -1425,9 +1434,9 @@ CoreIR::Wireable* mkConst(CoreIR::ModuleDef* def, const int width, const int val
 }
 
 
-CoreIR::Wireable* addList(CoreIR::ModuleDef* def, const std::vector<CoreIR::Wireable*>& vals) {
+CoreIR::Wireable* addList(CoreIR::ModuleDef* def, const std::vector<CoreIR::Wireable*>& vals, int width) {
   if (vals.size() == 0) {
-    return mkConst(def, 16, 0);
+    return mkConst(def, width, 0);
   }
   assert(vals.size() > 0);
   auto context = def->getContext();
@@ -1439,7 +1448,7 @@ CoreIR::Wireable* addList(CoreIR::ModuleDef* def, const std::vector<CoreIR::Wire
 
   val = vals[0];
   for (int i = 1; i < ((int) vals.size()); i++) {
-    val = addVals(def, val, vals[i]);
+    val = addVals(def, val, vals[i], width);
   }
   return val;
 }
@@ -1625,7 +1634,7 @@ void generate_coreir_compute_unit(CodegenOptions& options, bool found_compute,
           inputs.push_back(bsel->sel(l));
         }
       }
-      auto result = addList(def, inputs);
+      auto result = addList(def, inputs, CONTROLPATH_WIDTH);
 
       for (pair<string, string> bundle : outgoing_bundles(op, buffers, prg)) {
         def->connect(result, def->sel("self")->sel(pg(bundle))->sel(0));
@@ -3463,10 +3472,10 @@ CoreIR::Wireable* delay(CoreIR::ModuleDef* bdef,
   return r->sel("out");
 }
 
-CoreIR::Wireable* sum_term_numerators(ModuleDef* def, isl_aff* aff) {
+CoreIR::Wireable* sum_term_numerators(ModuleDef* def, isl_aff* aff, int width) {
   vector<CoreIR::Wireable*> terms;
 
-  int width = CONTROLPATH_WIDTH;
+  //int width = CONTROLPATH_WIDTH;
   auto context = def->getContext();
   auto c = context;
   auto ns = c->getNamespace("global");
@@ -3510,7 +3519,7 @@ CoreIR::Wireable* sum_term_numerators(ModuleDef* def, isl_aff* aff) {
       {{"width", CoreIR::Const::make(c, width)}},
       {{"value", CoreIR::Const::make(c, BitVector(width, v))}});
   terms.push_back(constant->sel("out"));
-  auto out = addList(def, terms);
+  auto out = addList(def, terms, width);
   return out;
 }
 
@@ -3538,17 +3547,16 @@ CoreIR::Wireable* shiftr(ModuleDef* def, CoreIR::Wireable* a, const int val) {
   return m->sel("out");
 }
 
-CoreIR::Module* coreir_for_aff(CoreIR::Context* context, isl_aff* aff) {
+CoreIR::Module* coreir_for_aff(CoreIR::Context* context, isl_aff* aff, int width) {
 
   auto ns = context->getNamespace("global");
 
-  int width = CONTROLPATH_WIDTH;
   vector<pair<string, CoreIR::Type*> >
     ub_field{{"out", context->Bit()->Arr(width)}};
   cout << "aff = " << str(aff) << endl;
   int dims = num_in_dims(aff);
   cout << "dims = " << dims << endl;
-  ub_field.push_back({"d", context->BitIn()->Arr(16)->Arr(dims)});
+  ub_field.push_back({"d", context->BitIn()->Arr(width)->Arr(dims)});
 
   CoreIR::RecordType* utp = context->Record(ub_field);
   auto m = ns->newModuleDecl("aff_" + context->getUnique(), utp);
@@ -3566,18 +3574,24 @@ CoreIR::Module* coreir_for_aff(CoreIR::Context* context, isl_aff* aff) {
     assert(denom == 2);
     cout << tab(3) << "denom = " << denom << endl;
     int coeff = to_int(isl_aff_get_coefficient_val(aff, isl_dim_div, d));
-    auto res = sum_term_numerators(def, a);
+    auto res = sum_term_numerators(def, a, width);
     auto val = mul(def, shiftr(def, res, 1), coeff);
     terms.push_back(val);
   }
 
-  auto outr = sum_term_numerators(def, aff);
+  auto outr = sum_term_numerators(def, aff, width);
   terms.push_back(outr);
-  auto out = addList(def, terms);
+  auto out = addList(def, terms, width);
   def->connect(def->sel("self.out"), out);
   m->setDef(def);
 
   return m;
+}
+
+
+CoreIR::Module* coreir_for_aff(CoreIR::Context* context, isl_aff* aff) {
+  int width = CONTROLPATH_WIDTH;
+  return coreir_for_aff(context, aff, width);
 }
 
 CoreIR::Module* coreir_for_multi_aff(CoreIR::Context* context, isl_multi_aff* aff) {
@@ -3724,18 +3738,17 @@ CoreIR::Instance* build_counter(CoreIR::ModuleDef* def,
     return ins;
 }
 
-CoreIR::Module* affine_controller_primitive(CodegenOptions& options, CoreIR::Context* context, isl_set* dom, isl_aff* aff) {
+CoreIR::Module* affine_controller_primitive(CodegenOptions& options, CoreIR::Context* context, isl_set* dom, isl_aff* aff, int width) {
   cout << tab(1) << "dom = " << str(dom) << endl;
 
   auto ns = context->getNamespace("global");
   auto c = context;
 
-  int width = CONTROLPATH_WIDTH;
   vector<pair<string, CoreIR::Type*> >
     ub_field{{"clk", c->Named("coreir.clkIn")},
       {"valid", c->Bit()}};
   int dims = num_in_dims(aff);
-  ub_field.push_back({"d", context->Bit()->Arr(16)->Arr(dims)});
+  ub_field.push_back({"d", context->Bit()->Arr(width)->Arr(dims)});
   if (options.rtl_options.use_prebuilt_memory) {
     ub_field.push_back({"rst_n", c->BitIn()});
   }
@@ -3743,7 +3756,7 @@ CoreIR::Module* affine_controller_primitive(CodegenOptions& options, CoreIR::Con
   CoreIR::RecordType* utp = context->Record(ub_field);
   auto m = ns->newModuleDecl("affine_controller_" + context->getUnique(), utp);
   auto def = m->newModuleDef();
-  auto aff_mod = coreir_for_aff(c, aff);
+  auto aff_mod = coreir_for_aff(c, aff, width);
   auto aff_func = def->addInstance("affine_func", aff_mod);
 
   auto one = def->addInstance(context->getUnique(),
@@ -3757,7 +3770,7 @@ CoreIR::Module* affine_controller_primitive(CodegenOptions& options, CoreIR::Con
 
   CoreIR::Wireable* cycle_time_reg;
   if (options.rtl_options.use_prebuilt_memory) {
-    cycle_time_reg = build_counter(def, "cycle_time", 16, 0, 65535, 1);
+    cycle_time_reg = build_counter(def, "cycle_time", width, 0, (unsigned int)(pow(2, width-1)-1), 1);
     def->connect(cycle_time_reg->sel("reset"), def->sel("self.rst_n"));
     def->connect(cycle_time_reg->sel("en"), tinc->sel("out"));
   } else {
@@ -3901,16 +3914,30 @@ addrgen(ModuleDef* def, isl_set* rddom, isl_aff* acc_aff) {
 CoreIR::Module* affine_controller(CoreIR::Context* context, isl_set* dom, isl_aff* aff) {
   CodegenOptions options;
   options.rtl_options.use_prebuilt_memory = false;
-  return affine_controller_primitive(options, context, dom, aff);
+  int width = CONTROLPATH_WIDTH;
+  return affine_controller_primitive(options, context, dom, aff, width);
+}
+
+CoreIR::Module* affine_controller(CoreIR::Context* context, isl_set* dom, isl_aff* aff, int width) {
+  CodegenOptions options;
+  options.rtl_options.use_prebuilt_memory = true;
+  return affine_controller_primitive(options, context, dom, aff, width);
 }
 
 CoreIR::Module* affine_controller(CodegenOptions& options, CoreIR::Context* context, isl_set* dom, isl_aff* aff) {
-  return affine_controller_primitive(options, context, dom, aff);
+  int width = CONTROLPATH_WIDTH;
+  return affine_controller_primitive(options, context, dom, aff, width);
 }
 
 CoreIR::Instance* affine_controller(CodegenOptions options, CoreIR::ModuleDef* def, isl_set* dom, isl_aff* aff) {
   auto c = def->getContext();
   auto ctrl = def->addInstance("ctrl_" + c->getUnique(), affine_controller(options, c, dom, aff));
+  return ctrl;
+}
+
+CoreIR::Instance* affine_controller(CoreIR::ModuleDef* def, isl_set* dom, isl_aff* aff, int width) {
+  auto c = def->getContext();
+  auto ctrl = def->addInstance("ctrl_" + c->getUnique(), affine_controller(c, dom, aff, width));
   return ctrl;
 }
 
