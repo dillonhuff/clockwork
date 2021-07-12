@@ -122,7 +122,7 @@
           ["self.op_hcompute_hw_output_stencil_read.0","self.op_hcompute_hw_input_global_wrapper_stencil_write.0"]
         ]
       },
-      "op_hcompute_hw_input_global_wrapper_stencil_exe_start_pt__U7":{
+      "op_hcompute_hw_input_global_wrapper_stencil_exe_start_pt__U6":{
         "type":["Record",[
           ["in","BitIn"],
           ["out","Bit"]
@@ -131,7 +131,7 @@
           ["self.out","self.in"]
         ]
       },
-      "op_hcompute_hw_input_global_wrapper_stencil_read_start_pt__U6":{
+      "op_hcompute_hw_input_global_wrapper_stencil_read_start_pt__U5":{
         "type":["Record",[
           ["in","BitIn"],
           ["out","Bit"]
@@ -140,7 +140,7 @@
           ["self.out","self.in"]
         ]
       },
-      "op_hcompute_hw_input_global_wrapper_stencil_write_start_pt__U8":{
+      "op_hcompute_hw_input_global_wrapper_stencil_write_start_pt__U7":{
         "type":["Record",[
           ["in","BitIn"],
           ["out","Bit"]
@@ -186,14 +186,10 @@
           ["hw_output_stencil_op_hcompute_hw_output_stencil_write",["Array",1,["Array",16,"Bit"]]]
         ]],
         "instances":{
-          "_U9":{
+          "_U8":{
             "genref":"mantle.reg",
             "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
             "modargs":{"init":[["BitVector",16],"16'h0000"]}
-          },
-          "delay_reg__U4":{
-            "modref":"corebit.reg",
-            "modargs":{"clk_posedge":["Bool",true], "init":["Bool",false]}
           },
           "hw_input_global_wrapper_stencil":{
             "modref":"global.hw_input_global_wrapper_stencil_ub"
@@ -202,22 +198,22 @@
             "modref":"global.cu_op_hcompute_hw_input_global_wrapper_stencil"
           },
           "op_hcompute_hw_input_global_wrapper_stencil_exe_start":{
-            "modref":"global.op_hcompute_hw_input_global_wrapper_stencil_exe_start_pt__U7"
+            "modref":"global.op_hcompute_hw_input_global_wrapper_stencil_exe_start_pt__U6"
           },
           "op_hcompute_hw_input_global_wrapper_stencil_port_controller":{
             "genref":"cgralib.Mem_amber",
-            "genargs":{"ID":["String","_U5"], "has_chain_en":["Bool",true], "has_external_addrgen":["Bool",false], "has_flush":["Bool",true], "has_read_valid":["Bool",false], "has_reset":["Bool",false], "has_stencil_valid":["Bool",true], "has_valid":["Bool",false], "is_rom":["Bool",false], "num_inputs":["Int",0], "num_outputs":["Int",0], "use_prebuilt_mem":["Bool",true], "width":["Int",16]},
-            "metadata":{"config":{"stencil_valid":{"cycle_starting_addr":[1],"cycle_stride":[1,64],"dimensionality":2,"extent":[64,64]}},"mode":"lake"}
+            "genargs":{"ID":["String","_U4"], "has_chain_en":["Bool",true], "has_external_addrgen":["Bool",false], "has_flush":["Bool",true], "has_read_valid":["Bool",false], "has_reset":["Bool",false], "has_stencil_valid":["Bool",true], "has_valid":["Bool",false], "is_rom":["Bool",false], "num_inputs":["Int",0], "num_outputs":["Int",0], "use_prebuilt_mem":["Bool",true], "width":["Int",16]},
+            "metadata":{"config":{"stencil_valid":{"cycle_starting_addr":[0],"cycle_stride":[1,64],"dimensionality":2,"extent":[64,64]}},"mode":"lake","verilog_name":"aff_ctrl_counter__U4"}
           },
           "op_hcompute_hw_input_global_wrapper_stencil_port_controller_clk_en_const":{
             "modref":"corebit.const",
             "modargs":{"value":["Bool",true]}
           },
           "op_hcompute_hw_input_global_wrapper_stencil_read_start":{
-            "modref":"global.op_hcompute_hw_input_global_wrapper_stencil_read_start_pt__U6"
+            "modref":"global.op_hcompute_hw_input_global_wrapper_stencil_read_start_pt__U5"
           },
           "op_hcompute_hw_input_global_wrapper_stencil_write_start":{
-            "modref":"global.op_hcompute_hw_input_global_wrapper_stencil_write_start_pt__U8"
+            "modref":"global.op_hcompute_hw_input_global_wrapper_stencil_write_start_pt__U7"
           },
           "op_hcompute_hw_output_stencil":{
             "modref":"global.cu_op_hcompute_hw_output_stencil"
@@ -228,7 +224,7 @@
           "op_hcompute_hw_output_stencil_port_controller":{
             "genref":"cgralib.Mem_amber",
             "genargs":{"ID":["String","_U0"], "has_chain_en":["Bool",true], "has_external_addrgen":["Bool",false], "has_flush":["Bool",true], "has_read_valid":["Bool",false], "has_reset":["Bool",false], "has_stencil_valid":["Bool",true], "has_valid":["Bool",false], "is_rom":["Bool",false], "num_inputs":["Int",0], "num_outputs":["Int",0], "use_prebuilt_mem":["Bool",true], "width":["Int",16]},
-            "metadata":{"config":{"stencil_valid":{"cycle_starting_addr":[1],"cycle_stride":[1,64],"dimensionality":2,"extent":[64,64]}},"mode":"lake"}
+            "metadata":{"config":{"stencil_valid":{"cycle_starting_addr":[1],"cycle_stride":[1,64],"dimensionality":2,"extent":[64,64]}},"mode":"lake","verilog_name":"aff_ctrl_counter__U0"}
           },
           "op_hcompute_hw_output_stencil_port_controller_clk_en_const":{
             "modref":"corebit.const",
@@ -242,11 +238,8 @@
           }
         },
         "connections":[
-          ["self.clk","_U9.clk"],
-          ["self.hw_input_stencil_op_hcompute_hw_input_global_wrapper_stencil_read.0","_U9.in"],
-          ["self.clk","delay_reg__U4.clk"],
-          ["op_hcompute_hw_output_stencil_port_controller.stencil_valid","delay_reg__U4.in"],
-          ["op_hcompute_hw_output_stencil_write_start.in","delay_reg__U4.out"],
+          ["self.clk","_U8.clk"],
+          ["self.hw_input_stencil_op_hcompute_hw_input_global_wrapper_stencil_read.0","_U8.in"],
           ["self.clk","hw_input_global_wrapper_stencil.clk"],
           ["op_hcompute_hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_write","hw_input_global_wrapper_stencil.op_hcompute_hw_input_global_wrapper_stencil_write"],
           ["op_hcompute_hw_output_stencil.hw_input_global_wrapper_stencil_op_hcompute_hw_output_stencil_read","hw_input_global_wrapper_stencil.op_hcompute_hw_output_stencil_read"],
@@ -269,6 +262,7 @@
           ["self.reset","op_hcompute_hw_output_stencil_port_controller.flush"],
           ["op_hcompute_hw_output_stencil_port_controller_clk_en_const.out","op_hcompute_hw_output_stencil_port_controller.rst_n"],
           ["op_hcompute_hw_output_stencil_read_start.in","op_hcompute_hw_output_stencil_port_controller.stencil_valid"],
+          ["op_hcompute_hw_output_stencil_write_start.in","op_hcompute_hw_output_stencil_port_controller.stencil_valid"],
           ["self.hw_output_stencil_op_hcompute_hw_output_stencil_write_valid","op_hcompute_hw_output_stencil_write_start.out"]
         ]
       }
