@@ -86,37 +86,37 @@
       "hcompute_hw_input_stencil":{
         "type":["Record",[
           ["out_hw_input_stencil",["Array",16,"Bit"]],
-          ["in0_input_gb_stencil",["Array",1,["Array",16,"BitIn"]]]
+          ["in0_input_glb_stencil",["Array",1,["Array",16,"BitIn"]]]
         ]],
         "connections":[
-          ["self.out_hw_input_stencil","self.in0_input_gb_stencil.0"]
+          ["self.out_hw_input_stencil","self.in0_input_glb_stencil.0"]
         ]
       },
       "hcompute_hw_output_stencil":{
         "type":["Record",[
           ["out_hw_output_stencil",["Array",16,"Bit"]],
-          ["in0_output_gb_stencil",["Array",1,["Array",16,"BitIn"]]]
+          ["in0_output_glb_stencil",["Array",1,["Array",16,"BitIn"]]]
         ]],
         "connections":[
-          ["self.out_hw_output_stencil","self.in0_output_gb_stencil.0"]
+          ["self.out_hw_output_stencil","self.in0_output_glb_stencil.0"]
         ]
       },
       "hcompute_input_gb_stencil":{
         "type":["Record",[
-          ["out_input_gb_stencil",["Array",16,"Bit"]],
+          ["out_input_glb_stencil",["Array",16,"Bit"]],
           ["in0_input_host_stencil",["Array",1,["Array",16,"BitIn"]]]
         ]],
         "connections":[
-          ["self.out_input_gb_stencil","self.in0_input_host_stencil.0"]
+          ["self.out_input_glb_stencil","self.in0_input_host_stencil.0"]
         ]
       },
       "hcompute_output_gb_stencil":{
         "type":["Record",[
-          ["out_output_gb_stencil",["Array",16,"Bit"]],
+          ["out_output_glb_stencil",["Array",16,"Bit"]],
           ["in0_conv_stencil",["Array",1,["Array",16,"BitIn"]]]
         ]],
         "connections":[
-          ["self.out_output_gb_stencil","self.in0_conv_stencil.0"]
+          ["self.out_output_glb_stencil","self.in0_conv_stencil.0"]
         ]
       }
     }

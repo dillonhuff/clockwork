@@ -1683,7 +1683,7 @@ void connect_op_control_wires(CodegenOptions& options, ModuleDef* def, op* op, s
     cout << "Done Finding compute , op Latency : " << op_latency
         << ", read Latency: " << read_latency << endl;
 
-  if (options.rtl_options.use_external_controllers || op->index_variables_needed_by_compute.size()) {
+  if (!controller->getModuleRef()->isGenerated()) {
     Wireable* op_start_wire = controller->sel("valid");
     Wireable* op_start_loop_vars = controller->sel("d");
     if (!options.rtl_options.use_external_controllers) {
@@ -1849,23 +1849,89 @@ void run_pond_verilog_codegen(CodegenOptions& options, string v_name, string ub_
   cmd("mv LakeWrapper_"+v_name+".v " + options.dir + "verilog");
 }
 
+void run_glb_verilog_codegen(CodegenOptions& options, const std::string& long_name, int num_inpt, int num_outpt, int width) {
+  std::ofstream verilog_collateral_file;
+  verilog_collateral_file.open(long_name + ".v");
+
+  vector<string> port_decls = {};
+  port_decls.push_back("input clk");
+  port_decls.push_back("input rst_n");
+  port_decls.push_back("input clk_en");
+  port_decls.push_back("input chain_chain_en");
+  for(int i = 0; i < num_inpt; i++)
+  {
+    port_decls.push_back("input [15:0] data_in_" + str(i));
+    port_decls.push_back("input ["+ str(width)+":0] write_addr_" + str(i));
+    port_decls.push_back("input wen_" + str(i));
+  }
+  for(int i = 0; i < num_outpt; i++)
+  {
+    port_decls.push_back("output logic [15:0] data_out_" + str(i));
+    port_decls.push_back("input ["+ str(width)+":0] read_addr_" + str(i));
+    port_decls.push_back("input ren_" + str(i));
+  }
+  port_decls.push_back("input [15:0] chain_data_in");
+  port_decls.push_back("output [15:0] chain_data_out");
+
+  verilog_collateral_file << "module " << long_name <<" ("<< sep_list(port_decls,"","",",") <<"); "<< endl;
+  //128 KB per GLB tile
+  verilog_collateral_file << tab(1) << "logic [15:0] SRAM [131071:0];" << endl;
+  verilog_collateral_file << tab(1) << "logic chain_ren;" << endl << endl;
+  for (int i = 0; i < num_outpt; i++) {
+    verilog_collateral_file << tab(1) << "logic [15:0] data_out_" << i << "_tmp;" << endl;
+  }
+
+  verilog_collateral_file << tab(1) << "always @(posedge clk) begin" << endl;
+  verilog_collateral_file << tab(2) << "chain_ren <= " << "ren_" << num_outpt - 1 << ";" << endl;
+  for (int i = 0; i < num_outpt; i++) {
+    verilog_collateral_file << tab(2) << "data_out_" << str(i) << "_tmp <= SRAM[read_addr_" << i << "];" << endl;
+    verilog_collateral_file << tab(2) << "$display(\"output data %d, raddr %d\", data_out_" << str(i) << "_tmp, read_addr_"<< str(i) <<");" << endl;
+  }
+  for (int i = 0; i < num_inpt; i++) {
+    verilog_collateral_file << tab(2) << "if (wen_" << i << " & (rst_n==0)) begin" << endl;
+    verilog_collateral_file << tab(3) << "SRAM[write_addr_" << i << "] <= " << "data_in_" << str(i) << ";" << endl;
+    verilog_collateral_file << tab(3) << "$display(\"input data %d, waddr %d\", data_in_" << str(i)  << ", write_addr_" << str(i) << ");"<< endl;
+    verilog_collateral_file << tab(2) << "end" << endl;
+  }
+  verilog_collateral_file << tab(1) << "end" << endl;
+  //verilog_collateral_file << tab(1) << "assign chain_ren = ren_0; " << endl;
+  //verilog_collateral_file << tab(1) << "assign chain_data_out = chain_ren ? " << "data_out_" << bank_readers[b].size() - 1 << "_tmp : chain_data_in;" << endl;
+  verilog_collateral_file << tab(1) << "assign chain_data_out = chain_ren ? " << "data_out_" << num_outpt - 1 << "_tmp : 0;" << endl;
+  for (int i = 0; i < num_outpt; i++) {
+    if (i == num_outpt - 1) {
+      verilog_collateral_file << tab(1) << "assign data_out_" << i << " = chain_data_out;" << endl;
+    } else {
+      verilog_collateral_file << tab(1) << "assign data_out_" << i << " = data_out_" << i << "_tmp;" << endl;
+    }
+  }
+  verilog_collateral_file << "endmodule" << endl << endl;
+  verilog_collateral_file.close();
+  cmd("mkdir -p "+options.dir+"verilog");
+  cmd("mv " + long_name+".v " + options.dir + "verilog");
+}
+
 void generate_lake_tile_verilog(CodegenOptions& options, Instance* buf) {
   cout << "Generating Verilog Testing Collateral for: " << buf->toString() << endl
       << buf->getModuleRef()->toString() << endl;
   string ub_ins_name = buf->toString();
+  string config_mode = buf->getMetaData()["mode"];
   //FIXME: a hack to get correct module name, fix this after coreIR update
-  string v_name =  get_coreir_genenerator_name(buf->getModuleRef()->toString());
+  //string v_name =  get_coreir_genenerator_name(buf->getModuleRef()->toString());
   //string v_name =  buf->getModuleRef()->getMetaData()["verilog_name"];
-  //string v_name =  buf->getMetaData()["verilog_name"];
-
+  string v_name =  buf->getMetaData()["verilog_name"];
+  if (options.config_gen_only)
+    return;
+  //TODO: apply the verilog codegen here
+  if (config_mode == "glb") {
+    auto genargs = buf->getModuleRef()->getGenArgs();
+    run_glb_verilog_codegen(options, v_name, genargs.at("num_inputs")->get<int>(), genargs.at("num_outputs")->get<int>(), 32);
+    return;
+  }
   //dump the collateral file
   json config = buf->getMetaData()["config"];
-  string config_mode = buf->getMetaData()["mode"];
   config["mode"] = "UB";
   emit_lake_config_collateral(options, ub_ins_name, config);
 
-  if (options.config_gen_only)
-    return;
   //run the lake generation cmd
   if (config_mode == "lake")
       run_lake_verilog_codegen(options, v_name, ub_ins_name);
@@ -2007,6 +2073,12 @@ Instance* generate_coreir_op_controller(CodegenOptions& options, ModuleDef* def,
   //if (options.rtl_options.use_external_controllers || need_index ) {
   if (options.rtl_options.use_external_controllers) {
     auto aff_c = affine_controller(options, c, dom, aff);
+    aff_c->print();
+    controller = def->addInstance(controller_name(op->name), aff_c);
+
+  } else if (to_int(const_coeff(aff)) >= options.mem_hierarchy.at("mem").counter_ub) {
+
+    auto aff_c = affine_controller(options, c, dom, aff, 32);
     aff_c->print();
     controller = def->addInstance(controller_name(op->name), aff_c);
   } else if (need_index) {
@@ -2882,6 +2954,8 @@ bool MemtileReplace(Instance* cnst) {
   }
   ModuleDef* def = cnst->getContainer();
   auto genargs = cnst->getModuleRef()->getGenArgs();
+  if(genargs.at("has_external_addrgen"))
+    return false;
   auto config_file = cnst->getMetaData()["config"];
   auto init = cnst->getMetaData()["init"];
   CoreIR::Values modargs = {
@@ -3801,12 +3875,16 @@ CoreIR::Module* affine_controller_primitive(CodegenOptions& options, CoreIR::Con
   vector<CoreIR::Instance*> domain_regs;
   vector<CoreIR::Wireable*> domain_at_max;
   for (int d = 0; d < num_dims(dom); d++) {
-    auto dom_reg = def->addInstance("d_" + str(d) + "_reg",
-        "mantle.reg",
-      {{"width", CoreIR::Const::make(context, width)},
+    Values reg_genargs({{"width", CoreIR::Const::make(context, width)},
       {"has_en", CoreIR::Const::make(context, true)}});
+    if (options.rtl_options.use_prebuilt_memory)
+      reg_genargs.insert({"has_clr", CoreIR::Const::make(context, true)});
+    auto dom_reg = def->addInstance("d_" + str(d) + "_reg",
+        "mantle.reg", reg_genargs);
     domain_regs.push_back(dom_reg);
     def->connect(def->sel("self")->sel("d")->sel(d), domain_regs.back()->sel("out"));
+    if (options.rtl_options.use_prebuilt_memory)
+      def->connect(def->sel("self")->sel("rst_n"), domain_regs.back()->sel("clr"));
     def->connect(aff_func->sel("d")->sel(d), domain_regs.back()->sel("out"));
     def->connect(cmp->sel("out"), domain_regs.back()->sel("en"));
 
@@ -3926,6 +4004,10 @@ CoreIR::Module* affine_controller(CoreIR::Context* context, isl_set* dom, isl_af
 
 CoreIR::Module* affine_controller(CodegenOptions& options, CoreIR::Context* context, isl_set* dom, isl_aff* aff) {
   int width = CONTROLPATH_WIDTH;
+  return affine_controller_primitive(options, context, dom, aff, width);
+}
+
+CoreIR::Module* affine_controller(CodegenOptions& options, CoreIR::Context* context, isl_set* dom, isl_aff* aff, int width) {
   return affine_controller_primitive(options, context, dom, aff, width);
 }
 
@@ -5738,7 +5820,7 @@ CoreIR::Instance* build_inner_bank_offset(const std::string& reader, UBuffer& bu
   return agen;
 }
 
-CoreIR::Instance* build_addrgen(const std::string& reader, UBuffer& buf, CoreIR::ModuleDef* def) {
+CoreIR::Instance* build_addrgen(const std::string& reader, UBuffer& buf, CoreIR::ModuleDef* def, int width) {
   auto c = def->getContext();
 
   cout << "Building addrgen for " << reader << endl;
@@ -5758,9 +5840,13 @@ CoreIR::Instance* build_addrgen(const std::string& reader, UBuffer& buf, CoreIR:
   auto addr_expr_aff = get_aff(addr_expr);
   cout << tab(3) << "==== addr expr aff: " << str(addr_expr_aff) << endl;
 
-  auto aff_gen_mod = coreir_for_aff(c, addr_expr_aff);
+  auto aff_gen_mod = coreir_for_aff(c, addr_expr_aff, width);
   auto agen = def->addInstance("addrgen_" + reader + c->getUnique(), aff_gen_mod);
   return agen;
+}
+
+CoreIR::Instance* build_addrgen(const std::string& reader, UBuffer& buf, CoreIR::ModuleDef* def) {
+  return build_addrgen(reader, buf, def, CONTROLPATH_WIDTH);
 }
 
 CoreIR::Wireable* control_vars(CoreIR::ModuleDef* def, const std::string& reader, UBuffer& buf) {

@@ -2503,7 +2503,7 @@ void UBuffer::generate_stencil_valid_config(CodegenOptions& options, string bank
 }
 
 string memDatainPort(string mode, int pt_cnt) {
-    if (mode == "lake")
+    if (mode == "lake" || mode == "glb")
         return "data_in_" + to_string(pt_cnt);
     else if (mode == "pond") {
         return "data_in_pond_" + to_string(pt_cnt);
@@ -2514,7 +2514,7 @@ string memDatainPort(string mode, int pt_cnt) {
 }
 
 string memDataoutPort(string mode, int pt_cnt) {
-    if (mode == "lake")
+    if (mode == "lake" || mode == "glb")
         return "data_out_" + to_string(pt_cnt);
     else if (mode == "pond") {
         return "data_out_pond_" + to_string(pt_cnt);
@@ -2581,7 +2581,7 @@ void UBuffer::wire_ubuf_IO(CodegenOptions& options,CoreIR::ModuleDef* def, map<s
 
         chain_en = true;
         auto conns = getConnectWires(pt2wire.at(outpt));
-        if (config_mode == "lake") {
+        if (config_mode == "lake" || config_mode == "glb") {
           //lake chaining wiring method
           if(conns.size() == 0) {
             //First chaining wiring, wire to the output
@@ -2646,9 +2646,17 @@ void UBuffer::wire_ubuf_IO(CodegenOptions& options,CoreIR::ModuleDef* def, map<s
       buf->getMetaData()["config"]["chain_en"] = 1;
 
     }
-  } else {
-    if (chain_en) {
-      cout << "Does not need to do anything for pond chaining!" << endl;
+
+  } else if (config_mode == "glb") {
+    if (!chain_en) {
+        auto chain_en_const = def->addInstance("chain_en_const"+context->getUnique(), "corebit.const",
+            {{"value", CoreIR::Const::make(context, false)}});
+        def->connect(buf->sel("chain_chain_en"), chain_en_const->sel("out"));
+    } else {
+      //Need chaining
+        auto chain_en_const = def->addInstance("chain_en_const"+context->getUnique(), "corebit.const",
+            {{"value", CoreIR::Const::make(context, true)}});
+        def->connect(buf->sel("chain_chain_en"), chain_en_const->sel("out"));
     }
   }
 }
@@ -2690,9 +2698,8 @@ string UBuffer::determine_config_mode(CodegenOptions& options, UBuffer& target_b
   bool multi_level_mem = options.mem_hierarchy.count("regfile");
   //TODO: this mode determine is hacky
   //Changing the size of pond threshold
-  if (contains(target_buf.name, "_gb_")) {
+  if (contains(target_buf.name, "_glb_stencil")) {
     config_mode = "glb";
-    assert(false);
   } else if (capacity <= 96 && multi_level_mem ) {
     cout << "Generate config for register file!" << endl;
     config_mode = "pond";
@@ -2748,6 +2755,50 @@ CoreIR::Instance* UBuffer::map_ubuffer_to_cgra(CodegenOptions& options, CoreIR::
     config_file = generate_ubuf_args(options, target_buf, "regfile");
     buf = generate_pond_instance(def, options, ub_ins_name,
             target_buf.num_in_ports(), target_buf.num_out_ports());
+  } else if (config_mode == "glb") {
+    auto c = def->getContext();
+    Values tile_params{
+      {"width", COREMK(c, 16)},
+      {"ctrl_width", COREMK(c, 32)},
+      {"ID", COREMK(c, target_buf.name)},
+      {"has_external_addrgen", COREMK(c, true)},
+      {"num_inputs",COREMK(c,target_buf.num_in_ports())},
+      {"num_outputs",COREMK(c,target_buf.num_out_ports())}};
+
+    buf = def->addInstance(
+            target_buf.name + "_ubuf",
+            "cgralib.Mem_amber", tile_params);
+    buf->getMetaData()["mode"] = "glb";
+    buf->getMetaData()["verilog_name"] = "glb_"+ c->getUnique();
+    int count = 0;
+    for (auto inpt: target_buf.get_in_ports()) {
+      isl_set* dom = target_buf.domain.at(inpt);
+      isl_aff* aff = get_aff(to_map(target_buf.schedule.at(inpt)));
+      auto accessor = ::affine_controller(def, dom, aff, 32);
+      auto agen = build_addrgen(inpt, target_buf, def, 32);
+      def->connect(agen->sel("d"), accessor->sel("d"));
+      def->connect(accessor->sel("rst_n"), def->sel("self.reset"));
+      def->connect(agen->sel("out"), buf->sel("write_addr_" + str(count)));
+      def->connect(buf->sel("wen_" + str(count)),
+              accessor->sel("valid"));
+      count ++;
+    }
+    count = 0;
+    for (auto outpt: target_buf.get_out_ports()) {
+      isl_set* dom = target_buf.domain.at(outpt);
+      isl_aff* aff = get_aff(to_map(target_buf.schedule.at(outpt)));
+      //read have one cycle latency
+      aff = add(aff, -1);
+      auto accessor = ::affine_controller(def, dom, aff, 32);
+      auto agen = build_addrgen(outpt, target_buf, def, 32);
+      def->connect(agen->sel("d"), accessor->sel("d"));
+      def->connect(accessor->sel("rst_n"), def->sel("self.reset"));
+      def->connect(agen->sel("out"), buf->sel("read_addr_" + str(count)));
+      def->connect(buf->sel("ren_" + str(count)),
+              accessor->sel("valid"));
+      count ++;
+    }
+    def->connect(buf->sel("rst_n"), def->sel("self.reset"));
   }
   return buf;
 }
@@ -2767,14 +2818,14 @@ bool cgpl_ctrl_optimization(CodegenOptions& options, CoreIR::ModuleDef* def, Cor
     auto cgpl_schedule =
         target_buf.get_coarse_grained_pipeline_schedule(new_target_buf);
     //connect with the new ctrl stencil valid port
-    if (sanity_check_controller_bitwidth(options, cgpl_schedule)) {
+    //if (sanity_check_controller_bitwidth(options, cgpl_schedule)) {
       cgpl_ctrl = affine_controller_use_lake_tile(
             options, def, context, ::domain(cgpl_schedule),
             get_aff(cgpl_schedule), ub_ins_name + "_cgpl_ctrl");
       generate_lake_tile_verilog(options, cgpl_ctrl);
-    } else {
-      cgpl_ctrl = affine_controller(def, ::domain(cgpl_schedule), get_aff(cgpl_schedule), 32);
-    }
+    //} else {
+    //  cgpl_ctrl = affine_controller(def, ::domain(cgpl_schedule), get_aff(cgpl_schedule), 32);
+    //}
     target_buf = new_target_buf;
   }
   return decouple_ctrl;

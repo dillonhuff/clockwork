@@ -11,8 +11,8 @@ hw_uint<16> hcompute_input_gb_stencil(hw_uint<16>& input_host_stencil) {
 }
 
 //store is: hw_input.stencil((((output_gb_s0_x_x_gb*62) + hw_input_s0_x) - (output_gb_s0_x_x_gb*62)), (((output_gb_s0_y_y_gb*62) + hw_input_s0_y) - (output_gb_s0_y_y_gb*62))) = input_gb.stencil(((output_gb_s0_x_x_gb*62) + hw_input_s0_x), ((output_gb_s0_y_y_gb*62) + hw_input_s0_y))
-hw_uint<16> hcompute_hw_input_stencil(hw_uint<16>& input_gb_stencil) {
-  uint16_t _input_gb_stencil_1 = (uint16_t) input_gb_stencil.extract<0, 15>();
+hw_uint<16> hcompute_hw_input_stencil(hw_uint<16>& input_glb_stencil) {
+  uint16_t _input_gb_stencil_1 = (uint16_t) input_glb_stencil.extract<0, 15>();
 
   return _input_gb_stencil_1;
 }
@@ -57,8 +57,8 @@ hw_uint<16> hcompute_output_gb_stencil(hw_uint<16>& conv_stencil) {
 }
 
 //store is: hw_output.stencil(hw_output_s0_x_x_host_1, hw_output_s0_y_y_host_1) = output_gb.stencil(hw_output_s0_x_x_host_1, hw_output_s0_y_y_host_1)
-hw_uint<16> hcompute_hw_output_stencil(hw_uint<16>& output_gb_stencil) {
-  uint16_t _output_gb_stencil_1 = (uint16_t) output_gb_stencil.extract<0, 15>();
+hw_uint<16> hcompute_hw_output_stencil(hw_uint<16>& output_glb_stencil) {
+  uint16_t _output_gb_stencil_1 = (uint16_t) output_glb_stencil.extract<0, 15>();
 
   return _output_gb_stencil_1;
 }

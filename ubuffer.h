@@ -2570,7 +2570,7 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
     void generate_smt_stream(CodegenOptions& options);
     void collect_memory_cnt(CodegenOptions& options, mem_access_cnt& mem_access);
 #ifdef COREIR
-    CoreIR::Module* affine_controller(CoreIR::Context* context, isl_set* dom, isl_aff* aff);
+    //CoreIR::Module* affine_controller(CoreIR::Context* context, isl_set* dom, isl_aff* aff);
 
     //kernel function for generate coreir
     void generate_coreir(CodegenOptions& options, UBufferImpl& impl, CoreIR::ModuleDef* def, schedule_info& info, bool with_ctrl=true);

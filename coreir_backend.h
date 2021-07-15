@@ -34,7 +34,9 @@ CoreIR::Module* coreir_for_basic_set(CoreIR::Context* context, isl_basic_set* do
 CoreIR::Module* coreir_for_set(CoreIR::Context* context, isl_set* dom);
 
 CoreIR::Module* affine_controller(CodegenOptions& options, CoreIR::Context* context, isl_set* dom, isl_aff* aff);
+CoreIR::Module* affine_controller(CodegenOptions& options, CoreIR::Context* context, isl_set* dom, isl_aff* aff, int width);
 CoreIR::Module* affine_controller(CoreIR::Context* context, isl_set* dom, isl_aff* aff);
+CoreIR::Module* affine_controller(CoreIR::Context* context, isl_set* dom, isl_aff* aff, int width);
 
 CoreIR::Instance* affine_controller(CoreIR::ModuleDef* def, isl_set* dom, isl_aff* aff, int width);
 
@@ -170,6 +172,7 @@ void pipeline_compute_units(prog& prg, schedule_info& hwinfo);
 int generate_compute_unit_regression_tb(op* op, prog& prg);
 
 CoreIR::Instance* build_addrgen(const std::string& reader, UBuffer& buf, CoreIR::ModuleDef* def);
+CoreIR::Instance* build_addrgen(const std::string& reader, UBuffer& buf, CoreIR::ModuleDef* def, int width);
 
 CoreIR::Wireable* control_vars(CoreIR::ModuleDef* def, const std::string& reader, UBuffer& buf);
 
