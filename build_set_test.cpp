@@ -14943,7 +14943,8 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
 
   //test_apps.push_back(up_sample());
   //test_apps.push_back(resnet_one_input());
-  test_apps.push_back(glb_conv33());
+  test_apps.push_back(glb_channel_reduction());
+  //test_apps.push_back(glb_conv33());
   test_apps.push_back(counter());
   test_apps.push_back(camera_pipeline_new());
   test_apps.push_back(rom());

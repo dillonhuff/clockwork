@@ -140,7 +140,7 @@ struct LakeCollateral {
                 in_port_width= {{"glb", 1}};
                 out_port_width = {{"glb", 1}};
                 bank_num = {{"glb", 1}};
-                capacity = {{"glb", 65536}};
+                capacity = {{"glb", 131072}};
             } else if (level != "mem") {
                 cout << "\t\tERROR: Memory component not identified" << endl;
                 assert(false);

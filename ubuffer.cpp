@@ -2757,6 +2757,7 @@ CoreIR::Instance* UBuffer::map_ubuffer_to_cgra(CodegenOptions& options, CoreIR::
             target_buf.num_in_ports(), target_buf.num_out_ports());
   } else if (config_mode == "glb") {
     auto c = def->getContext();
+    config_file = generate_ubuf_args(options, target_buf, "glb");
     Values tile_params{
       {"width", COREMK(c, 16)},
       {"ctrl_width", COREMK(c, 32)},
@@ -2769,6 +2770,7 @@ CoreIR::Instance* UBuffer::map_ubuffer_to_cgra(CodegenOptions& options, CoreIR::
             target_buf.name + "_ubuf",
             "cgralib.Mem_amber", tile_params);
     buf->getMetaData()["mode"] = "glb";
+    buf->getMetaData()["config"] = config_file;
     buf->getMetaData()["verilog_name"] = "glb_"+ c->getUnique();
     int count = 0;
     for (auto inpt: target_buf.get_in_ports()) {
@@ -2833,6 +2835,7 @@ bool cgpl_ctrl_optimization(CodegenOptions& options, CoreIR::ModuleDef* def, Cor
 
 void cgpl_post_processing(CoreIR::ModuleDef* def, CoreIR::Instance*buf, CoreIR::Instance* cgpl_ctrl, bool decouple_ctrl) {
   if (decouple_ctrl) {
+    buf->getMetaData()["drive_by_cgpl_ctrl"] = true;
     //Disconnect the original connection from flush port
     auto conns = buf->sel("flush")->getConnectedWireables();
     for (auto conn: conns) {

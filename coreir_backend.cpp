@@ -1885,12 +1885,12 @@ void run_glb_verilog_codegen(CodegenOptions& options, const std::string& long_na
   verilog_collateral_file << tab(2) << "chain_ren <= " << "ren_" << num_outpt - 1 << ";" << endl;
   for (int i = 0; i < num_outpt; i++) {
     verilog_collateral_file << tab(2) << "data_out_" << str(i) << "_tmp <= SRAM[read_addr_" << i << "];" << endl;
-    verilog_collateral_file << tab(2) << "$display(\"output data %d, raddr %d\", data_out_" << str(i) << "_tmp, read_addr_"<< str(i) <<");" << endl;
+    //verilog_collateral_file << tab(2) << "$display(\"output data %d, raddr %d\", data_out_" << str(i) << "_tmp, read_addr_"<< str(i) <<");" << endl;
   }
   for (int i = 0; i < num_inpt; i++) {
     verilog_collateral_file << tab(2) << "if (wen_" << i << " & (rst_n==0)) begin" << endl;
     verilog_collateral_file << tab(3) << "SRAM[write_addr_" << i << "] <= " << "data_in_" << str(i) << ";" << endl;
-    verilog_collateral_file << tab(3) << "$display(\"input data %d, waddr %d\", data_in_" << str(i)  << ", write_addr_" << str(i) << ");"<< endl;
+    //verilog_collateral_file << tab(3) << "$display(\"input data %d, waddr %d\", data_in_" << str(i)  << ", write_addr_" << str(i) << ");"<< endl;
     verilog_collateral_file << tab(2) << "end" << endl;
   }
   verilog_collateral_file << tab(1) << "end" << endl;
@@ -2683,7 +2683,42 @@ void getAllIOPaths(Wireable* w, IOpaths& paths) {
 
 }
 
-void addIOsWithGLBConfig(Context* c, Module* top, map<string, UBuffer>& buffers) {
+class GetGLBConfig: public CoreIR::InstanceGraphPass {
+ public:
+  static std::string ID;
+  int latency;
+  json glb2cgra, cgra2glb;
+  GetGLBConfig() : latency(0),
+    InstanceGraphPass("getglbconfig", "Find the glb load latency!") {}
+  bool runOnInstanceGraphNode(CoreIR::InstanceGraphNode& node) {
+    bool changed = false;
+    for (auto inst : node.getInstanceList()) {
+       Module* m = inst->getModuleRef();
+       if (m->isGenerated()) {
+         auto g = m->getGenerator();
+         if (g->getName() == "Mem_amber") {
+           auto genargs = inst->getModuleRef()->getGenArgs();
+           if(!genargs.at("has_external_addrgen")->get<bool>())
+             continue;
+           auto config_file = inst->getMetaData()["config"];
+           cout << "Config file: " << config_file << endl;
+           if(config_file.count("in2glb_0") && config_file.count("glb2out_0")) {
+             if (config_file.at("in2glb_0").at("cycle_starting_addr")[0] == 0) {
+               latency = config_file.at("glb2out_0").at("cycle_starting_addr")[0];
+               glb2cgra = config_file.at("glb2out_0");
+             } else {
+               cgra2glb = config_file.at("in2glb_0");
+             }
+          }
+        }
+      }
+    }
+    return changed;
+  }
+};
+
+
+void addIOsWithGLBConfig(Context* c, Module* top, map<string, UBuffer>& buffers, GetGLBConfig* glb_metadata) {
   ModuleDef* mdef = top->getDef();
 
   Values aWidth({{"width",Const::make(c,16)}});
@@ -2698,6 +2733,14 @@ void addIOsWithGLBConfig(Context* c, Module* top, map<string, UBuffer>& buffers)
     string ioname = "io16in_" + join(++path.begin(),path.end(),string("_"));
     auto inst = mdef->addInstance(ioname,"cgralib.IO",aWidth,{{"mode",Const::make(c,"in")}});
     inst->getMetaData() = in_buf.config_file;
+
+    //Add the multi-tile glb informations
+    if(glb_metadata->latency != 0) {
+      inst->getMetaData()["glb2out_0"] = glb_metadata->glb2cgra;
+      int old_offset = inst->getMetaData()["glb2out_0"]["cycle_starting_addr"][0] ;
+      inst->getMetaData()["glb2out_0"]["cycle_starting_addr"][0] = old_offset - glb_metadata->latency;
+    }
+
     path[0] = "in";
     path.insert(path.begin(),"_self");
     mdef->connect({ioname,"out"},path);
@@ -2710,6 +2753,13 @@ void addIOsWithGLBConfig(Context* c, Module* top, map<string, UBuffer>& buffers)
     string ioname = "io16_" + join(++path.begin(),path.end(),string("_"));
     auto inst = mdef->addInstance(ioname,"cgralib.IO",aWidth,{{"mode",Const::make(c,"out")}});
     inst->getMetaData() = out_buf.config_file;
+
+    //Add the multi-tile glb informations
+    if(glb_metadata->latency != 0) {
+      inst->getMetaData()["in2glb_0"] = glb_metadata->cgra2glb;
+      int old_offset = inst->getMetaData()["in2glb_0"]["cycle_starting_addr"][0] ;
+      inst->getMetaData()["in2glb_0"]["cycle_starting_addr"][0] = old_offset - glb_metadata->latency;
+    }
     path[0] = "in";
     path.insert(path.begin(),"_self");
     mdef->connect({ioname,"in"},path);
@@ -2802,6 +2852,44 @@ class CustomFlatten : public CoreIR::InstanceGraphPass {
          }
        }
       changed |= inlineInstance(inst);
+    }
+    return changed;
+  }
+};
+
+void substract_glb_latency(json& config_file, int latency) {
+    for (auto & ctrl: config_file.items()) {
+        auto & val = ctrl.value();
+        if ((val.count("cycle_starting_addr")))
+          val.at("cycle_starting_addr")[0] =
+            (int)val.at("cycle_starting_addr")[0] - latency;
+    }
+}
+
+class SubstructGLBLatency: public CoreIR::InstanceGraphPass {
+ public:
+  static std::string ID;
+  int glb_load_latency;
+  SubstructGLBLatency(int latency) : glb_load_latency(latency),
+    InstanceGraphPass("substractglblatency", "Move the affine controller timing forward!") {}
+  bool runOnInstanceGraphNode(CoreIR::InstanceGraphNode& node) {
+    bool changed = false;
+    // int i = 0;
+    for (auto & inst : node.getInstanceList()) {
+       //cout << "inlining " << inst->getName() << endl;
+       Module* m = inst->getModuleRef();
+       if (m->isGenerated()) {
+         auto g = m->getGenerator();
+         if (g->getName() == "Mem_amber" ||
+           g->getName() == "Pond_amber") {
+           auto config_file = inst->getMetaData()["config"];
+           if (!inst->getMetaData().count("drive_by_cgpl_ctrl")) {
+             substract_glb_latency(config_file, glb_load_latency);
+             inst->getMetaData()["config"] = config_file;
+             changed = true;
+           }
+         }
+       }
     }
     return changed;
   }
@@ -2935,6 +3023,44 @@ void MapperPasses::MemInitCopy::setVisitorInfo() {
 
 
 namespace MapperPasses {
+class StripGLB: public CoreIR::InstanceVisitorPass {
+  public :
+    static std::string ID;
+    StripGLB() : InstanceVisitorPass(ID,"Remove glb ubuffer in garnet mapping") {}
+    void setVisitorInfo() override;
+};
+
+}
+
+bool BypassGLB(Instance* cnst) {
+  cout << tab(2) << "Connect the read directly to write port of GLB!" << endl;
+  cout << tab(2) << toString(cnst) << endl;
+  Context* c = cnst->getContext();
+  auto allSels = cnst->getSelects();
+  for (auto itr: allSels) {
+    cout << tab(2) << "Sel: " << itr.first << endl;
+  }
+  ModuleDef* def = cnst->getContainer();
+  auto genargs = cnst->getModuleRef()->getGenArgs();
+  if(!genargs.at("has_external_addrgen")->get<bool>())
+    return false;
+  auto write_wire = pick(cnst->sel("data_in_0")->getConnectedWireables());
+  for (auto read_wire: cnst->sel("data_out_0")->getConnectedWireables()) {
+    def->connect(write_wire, read_wire);
+  }
+  def->removeInstance(cnst);
+  return true;
+}
+
+std::string MapperPasses::StripGLB::ID = "stripglb";
+void MapperPasses::StripGLB::setVisitorInfo() {
+  Context* c = this->getContext();
+  if (c->hasGenerator("cgralib.Mem_amber")) {
+    addVisitorFunction(c->getGenerator("cgralib.Mem_amber"), BypassGLB);
+  }
+}
+
+namespace MapperPasses {
 class MemSubstitute: public CoreIR::InstanceVisitorPass {
   public :
     static std::string ID;
@@ -2954,8 +3080,9 @@ bool MemtileReplace(Instance* cnst) {
   }
   ModuleDef* def = cnst->getContainer();
   auto genargs = cnst->getModuleRef()->getGenArgs();
-  if(genargs.at("has_external_addrgen"))
+  if(genargs.at("has_external_addrgen")->get<bool>())
     return false;
+  cout << "enter here\n";
   auto config_file = cnst->getMetaData()["config"];
   auto init = cnst->getMetaData()["init"];
   CoreIR::Values modargs = {
@@ -3170,16 +3297,28 @@ void garnet_map_module(Module* top, map<string, UBuffer> & buffers, bool garnet_
   c->runPasses({"cullgraph"});
   c->runPasses({"removewires"});
   //addIOs(c,top);
-  addIOsWithGLBConfig(c, top, buffers);
+  //
+  auto glb_pass = new GetGLBConfig();
+  c->addPass(glb_pass);
+  c->runPasses({"getglbconfig"});
+  cout << "Latency: " << glb_pass->latency << endl;
+  cout << "glb2fabric: " << glb_pass->glb2cgra << endl;
+  cout << "fabric2glb: " << glb_pass->cgra2glb << endl;
+  addIOsWithGLBConfig(c, top, buffers, glb_pass);
   c->runPasses({"cullgraph"});
   c->addPass(new CustomFlatten);
   c->runPasses({"customflatten"});
   if (garnet_syntax_trans) {
+
     c->addPass(new MapperPasses::MemInitCopy);
     c->runPasses({"meminitcopy"});
-    c->addPass(new MapperPasses::MemSubstitute);
+    c->addPass(new MapperPasses::StripGLB);
+    c->runPasses({"stripglb"});
+    c->addPass(new SubstructGLBLatency(glb_pass->latency));
+    c->runPasses({"substractglblatency"});
+    c->addPass(new MapperPasses::MemSubstitute());
     c->runPasses({"memsubstitute"});
-    c->addPass(new MapperPasses::RegfileSubstitute);
+    c->addPass(new MapperPasses::RegfileSubstitute());
     c->runPasses({"regfilesubstitute"});
   }
   c->addPass(new MapperPasses::ConstDuplication);

@@ -84,7 +84,10 @@ prog jitnet();
 prog conv1x1();
 prog mod_example();
 prog three_level_pond_copy();
+
+//GLB applications
 prog glb_conv33();
+prog glb_channel_reduction();
 
 //pond resnet test
 prog complex_mem_pond_rolled();
