@@ -2682,8 +2682,8 @@ void generate_unoptimized_code(prog& prg) {
   options.all_rams = true;
   all_unbanked(prg, options);
   options.inner_bank_offset_mode =
-    INNER_BANK_OFFSET_MULTILINEAR;
-    //INNER_BANK_OFFSET_LINEAR;
+    //INNER_BANK_OFFSET_MULTILINEAR;
+    INNER_BANK_OFFSET_LINEAR;
   //assert(false);
   generate_unoptimized_code(options, prg);
 }
