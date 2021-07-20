@@ -2777,6 +2777,7 @@ CoreIR::Instance* UBuffer::map_ubuffer_to_cgra(CodegenOptions& options, CoreIR::
       isl_set* dom = target_buf.domain.at(inpt);
       isl_aff* aff = get_aff(to_map(target_buf.schedule.at(inpt)));
       auto accessor = ::affine_controller(def, dom, aff, 32);
+      accessor->getMetaData()["garnet_remove"] = true;
       auto agen = build_addrgen(inpt, target_buf, def, 32);
       def->connect(agen->sel("d"), accessor->sel("d"));
       def->connect(accessor->sel("rst_n"), def->sel("self.reset"));
@@ -2792,6 +2793,7 @@ CoreIR::Instance* UBuffer::map_ubuffer_to_cgra(CodegenOptions& options, CoreIR::
       //read have one cycle latency
       aff = add(aff, -1);
       auto accessor = ::affine_controller(def, dom, aff, 32);
+      accessor->getMetaData()["garnet_remove"] = true;
       auto agen = build_addrgen(outpt, target_buf, def, 32);
       def->connect(agen->sel("d"), accessor->sel("d"));
       def->connect(accessor->sel("rst_n"), def->sel("self.reset"));
@@ -2820,14 +2822,23 @@ bool cgpl_ctrl_optimization(CodegenOptions& options, CoreIR::ModuleDef* def, Cor
     auto cgpl_schedule =
         target_buf.get_coarse_grained_pipeline_schedule(new_target_buf);
     //connect with the new ctrl stencil valid port
-    //if (sanity_check_controller_bitwidth(options, cgpl_schedule)) {
+    if (sanity_check_controller_bitwidth(options, cgpl_schedule)) {
       cgpl_ctrl = affine_controller_use_lake_tile(
             options, def, context, ::domain(cgpl_schedule),
             get_aff(cgpl_schedule), ub_ins_name + "_cgpl_ctrl");
       generate_lake_tile_verilog(options, cgpl_ctrl);
-    //} else {
-    //  cgpl_ctrl = affine_controller(def, ::domain(cgpl_schedule), get_aff(cgpl_schedule), 32);
-    //}
+    } else {
+      auto sched_aff = get_aff(cgpl_schedule);
+      auto dom = ::domain(cgpl_schedule);
+      cgpl_ctrl = affine_controller(def, dom, add(sched_aff, 1), 32);
+
+      //Dump the metadata and rewrite it to lake tile in garnet mapping:
+      auto stencil_valid = generate_accessor_config_from_aff_expr(dom, sched_aff);
+      json config_file;
+      add_lake_config(config_file, stencil_valid, num_in_dims(sched_aff), "stencil_valid");
+      cgpl_ctrl->getMetaData()["lake_config"] = config_file;
+
+    }
     target_buf = new_target_buf;
   }
   return decouple_ctrl;

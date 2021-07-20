@@ -227,7 +227,7 @@ class hw_uint {
     int to_int() const {
       return val;
     }
-    
+
     operator int() const { return to_int(); }
 
 #else

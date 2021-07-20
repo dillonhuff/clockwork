@@ -11,15 +11,45 @@ using namespace std;
 
 struct conv_stencil_all_inputs_to_all_outputs_cache {
 	// RAM Box: {[0, 61]}
+	// Capacity: 62
+#ifdef __VIVADO_SYNTH__
   hw_uint<16> RAM[62];
-  inline hw_uint<16> read(int d0) {
-    return RAM[d0];
+#endif //__VIVADO_SYNTH__
+#ifndef __VIVADO_SYNTH__
+  hw_uint<16>* RAM;
+  conv_stencil_all_inputs_to_all_outputs_cache() {
+    RAM = (hw_uint<16>*) malloc(sizeof(hw_uint<16>)*62);
+  }
+  ~conv_stencil_all_inputs_to_all_outputs_cache() {
+    free(RAM);
+  }
+#endif //__VIVADO_SYNTH__
+  inline hw_uint<16> read(const int addr) {
+#ifndef __VIVADO_SYNTH__
+    if (addr < 0 || !(addr < 62)) {
+    cout << "Read error: Address " << addr << " is out of bounds" << endl;
+    }
+    assert(addr < 62);
+    assert(addr >= 0);
+#endif //__VIVADO_SYNTH__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return RAM[addr];
   }
 
 
 
-	inline void write(const hw_uint<16> value, int d0) {
-    RAM[d0] = value;
+	inline void write(const hw_uint<16> value, const int addr) {
+#ifndef __VIVADO_SYNTH__
+    if (addr < 0 || !(addr < 62)) {
+    cout << "Write error: Address " << addr << " is out of bounds" << endl;
+    }
+    assert(addr < 62);
+    assert(addr >= 0);
+#endif //__VIVADO_SYNTH__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    RAM[addr] = value;
   }
 
 };
@@ -34,14 +64,14 @@ struct conv_stencil_cache {
 
 
 inline void conv_stencil_hcompute_conv_stencil_1_4_write(hw_uint<16>& conv_stencil_hcompute_conv_stencil_1_4, conv_stencil_cache& conv_stencil, int root, int hw_output_s0_x_xo, int dynamic_address) {
-  conv_stencil.conv_stencil_all_inputs_to_all_outputs.write(conv_stencil_hcompute_conv_stencil_1_4, ((1*hw_output_s0_x_xo)) - 0);
+  conv_stencil.conv_stencil_all_inputs_to_all_outputs.write(conv_stencil_hcompute_conv_stencil_1_4, (((1*hw_output_s0_x_xo)) - 0) * 1);
 }
 
 inline hw_uint<16> conv_stencil_hcompute_hw_output_stencil_1_select(conv_stencil_cache& conv_stencil, int root, int hw_output_s0_x_xo, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // conv_stencil_hcompute_hw_output_stencil_1 read pattern: { hcompute_hw_output_stencil[root = 0, hw_output_s0_x_xo] -> conv_stencil[hw_output_s0_x_xo] : 0 <= hw_output_s0_x_xo <= 61 }
-  auto value_conv_stencil_hcompute_conv_stencil_1_4 = conv_stencil.conv_stencil_all_inputs_to_all_outputs.read(((1*hw_output_s0_x_xo)) - 0);
+  auto value_conv_stencil_hcompute_conv_stencil_1_4 = conv_stencil.conv_stencil_all_inputs_to_all_outputs.read(/*ram type address*/ (((1*hw_output_s0_x_xo)) - 0) * 1);
   return value_conv_stencil_hcompute_conv_stencil_1_4;
   return 0;
 }
@@ -68,15 +98,45 @@ inline hw_uint<16> conv_stencil_hcompute_hw_output_stencil_read_bundle_read(conv
 
 struct conv_stencil_init_all_inputs_to_all_outputs_cache {
 	// RAM Box: {[0, 61]}
+	// Capacity: 62
+#ifdef __VIVADO_SYNTH__
   hw_uint<16> RAM[62];
-  inline hw_uint<16> read(int d0) {
-    return RAM[d0];
+#endif //__VIVADO_SYNTH__
+#ifndef __VIVADO_SYNTH__
+  hw_uint<16>* RAM;
+  conv_stencil_init_all_inputs_to_all_outputs_cache() {
+    RAM = (hw_uint<16>*) malloc(sizeof(hw_uint<16>)*62);
+  }
+  ~conv_stencil_init_all_inputs_to_all_outputs_cache() {
+    free(RAM);
+  }
+#endif //__VIVADO_SYNTH__
+  inline hw_uint<16> read(const int addr) {
+#ifndef __VIVADO_SYNTH__
+    if (addr < 0 || !(addr < 62)) {
+    cout << "Read error: Address " << addr << " is out of bounds" << endl;
+    }
+    assert(addr < 62);
+    assert(addr >= 0);
+#endif //__VIVADO_SYNTH__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return RAM[addr];
   }
 
 
 
-	inline void write(const hw_uint<16> value, int d0) {
-    RAM[d0] = value;
+	inline void write(const hw_uint<16> value, const int addr) {
+#ifndef __VIVADO_SYNTH__
+    if (addr < 0 || !(addr < 62)) {
+    cout << "Write error: Address " << addr << " is out of bounds" << endl;
+    }
+    assert(addr < 62);
+    assert(addr >= 0);
+#endif //__VIVADO_SYNTH__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    RAM[addr] = value;
   }
 
 };
@@ -91,14 +151,14 @@ struct conv_stencil_init_cache {
 
 
 inline void conv_stencil_init_hcompute_conv_stencil_7_write(hw_uint<16>& conv_stencil_init_hcompute_conv_stencil_7, conv_stencil_init_cache& conv_stencil_init, int root, int hw_output_s0_x_xo, int dynamic_address) {
-  conv_stencil_init.conv_stencil_init_all_inputs_to_all_outputs.write(conv_stencil_init_hcompute_conv_stencil_7, ((1*hw_output_s0_x_xo)) - 0);
+  conv_stencil_init.conv_stencil_init_all_inputs_to_all_outputs.write(conv_stencil_init_hcompute_conv_stencil_7, (((1*hw_output_s0_x_xo)) - 0) * 1);
 }
 
 inline hw_uint<16> conv_stencil_init_hcompute_conv_stencil_1_5_select(conv_stencil_init_cache& conv_stencil_init, int root, int hw_output_s0_x_xo, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // conv_stencil_init_hcompute_conv_stencil_1_5 read pattern: { hcompute_conv_stencil_1[root = 0, hw_output_s0_x_xo] -> conv_stencil_init[hw_output_s0_x_xo] : 0 <= hw_output_s0_x_xo <= 61 }
-  auto value_conv_stencil_init_hcompute_conv_stencil_7 = conv_stencil_init.conv_stencil_init_all_inputs_to_all_outputs.read(((1*hw_output_s0_x_xo)) - 0);
+  auto value_conv_stencil_init_hcompute_conv_stencil_7 = conv_stencil_init.conv_stencil_init_all_inputs_to_all_outputs.read(/*ram type address*/ (((1*hw_output_s0_x_xo)) - 0) * 1);
   return value_conv_stencil_init_hcompute_conv_stencil_7;
   return 0;
 }
@@ -125,15 +185,45 @@ inline void conv_stencil_init_hcompute_conv_stencil_write_bundle_write(hw_uint<1
 
 struct hw_input_copy_stencil_all_inputs_to_all_outputs_cache {
 	// RAM Box: {[0, 63]}
+	// Capacity: 64
+#ifdef __VIVADO_SYNTH__
   hw_uint<16> RAM[64];
-  inline hw_uint<16> read(int d0) {
-    return RAM[d0];
+#endif //__VIVADO_SYNTH__
+#ifndef __VIVADO_SYNTH__
+  hw_uint<16>* RAM;
+  hw_input_copy_stencil_all_inputs_to_all_outputs_cache() {
+    RAM = (hw_uint<16>*) malloc(sizeof(hw_uint<16>)*64);
+  }
+  ~hw_input_copy_stencil_all_inputs_to_all_outputs_cache() {
+    free(RAM);
+  }
+#endif //__VIVADO_SYNTH__
+  inline hw_uint<16> read(const int addr) {
+#ifndef __VIVADO_SYNTH__
+    if (addr < 0 || !(addr < 64)) {
+    cout << "Read error: Address " << addr << " is out of bounds" << endl;
+    }
+    assert(addr < 64);
+    assert(addr >= 0);
+#endif //__VIVADO_SYNTH__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return RAM[addr];
   }
 
 
 
-	inline void write(const hw_uint<16> value, int d0) {
-    RAM[d0] = value;
+	inline void write(const hw_uint<16> value, const int addr) {
+#ifndef __VIVADO_SYNTH__
+    if (addr < 0 || !(addr < 64)) {
+    cout << "Write error: Address " << addr << " is out of bounds" << endl;
+    }
+    assert(addr < 64);
+    assert(addr >= 0);
+#endif //__VIVADO_SYNTH__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    RAM[addr] = value;
   }
 
 };
@@ -148,14 +238,14 @@ struct hw_input_copy_stencil_cache {
 
 
 inline void hw_input_copy_stencil_hcompute_hw_input_copy_stencil_2_write(hw_uint<16>& hw_input_copy_stencil_hcompute_hw_input_copy_stencil_2, hw_input_copy_stencil_cache& hw_input_copy_stencil, int root, int hw_input_copy_s0_x, int dynamic_address) {
-  hw_input_copy_stencil.hw_input_copy_stencil_all_inputs_to_all_outputs.write(hw_input_copy_stencil_hcompute_hw_input_copy_stencil_2, ((1*hw_input_copy_s0_x)) - 0);
+  hw_input_copy_stencil.hw_input_copy_stencil_all_inputs_to_all_outputs.write(hw_input_copy_stencil_hcompute_hw_input_copy_stencil_2, (((1*hw_input_copy_s0_x)) - 0) * 1);
 }
 
 inline hw_uint<16> hw_input_copy_stencil_hcompute_conv_stencil_1_6_select(hw_input_copy_stencil_cache& hw_input_copy_stencil, int root, int hw_output_s0_x_xo, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // hw_input_copy_stencil_hcompute_conv_stencil_1_6 read pattern: { hcompute_conv_stencil_1[root = 0, hw_output_s0_x_xo] -> hw_input_copy_stencil[hw_output_s0_x_xo] : 0 <= hw_output_s0_x_xo <= 61 }
-  auto value_hw_input_copy_stencil_hcompute_hw_input_copy_stencil_2 = hw_input_copy_stencil.hw_input_copy_stencil_all_inputs_to_all_outputs.read(((1*hw_output_s0_x_xo)) - 0);
+  auto value_hw_input_copy_stencil_hcompute_hw_input_copy_stencil_2 = hw_input_copy_stencil.hw_input_copy_stencil_all_inputs_to_all_outputs.read(/*ram type address*/ (((1*hw_output_s0_x_xo)) - 0) * 1);
   return value_hw_input_copy_stencil_hcompute_hw_input_copy_stencil_2;
   return 0;
 }
@@ -184,6 +274,32 @@ inline void hw_input_copy_stencil_hcompute_hw_input_copy_stencil_write_bundle_wr
 
 
 // Operation logic
+inline void hcompute_hw_input_copy_stencil(HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */hw_input_stencil, hw_input_copy_stencil_cache& hw_input_copy_stencil, int root, int hw_input_copy_s0_x) {
+  // Dynamic address computation
+
+	// Consume: hw_input_stencil
+	auto hw_input_stencil_hw_input_copy_s0_x_value = hw_input_stencil.read();
+	auto compute_result = hcompute_hw_input_copy_stencil(hw_input_stencil_hw_input_copy_s0_x_value);
+	// Produce: hw_input_copy_stencil
+	hw_input_copy_stencil_hcompute_hw_input_copy_stencil_write_bundle_write(/* arg names */compute_result, hw_input_copy_stencil, root, hw_input_copy_s0_x, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void hcompute_conv_stencil(conv_stencil_init_cache& conv_stencil_init, int root, int hw_output_s0_x_xo) {
+  // Dynamic address computation
+
+	auto compute_result = hcompute_conv_stencil();
+	// Produce: conv_stencil_init
+	conv_stencil_init_hcompute_conv_stencil_write_bundle_write(/* arg names */compute_result, conv_stencil_init, root, hw_output_s0_x_xo, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
 inline void hcompute_conv_stencil_1(conv_stencil_init_cache& conv_stencil_init, hw_input_copy_stencil_cache& hw_input_copy_stencil, conv_stencil_cache& conv_stencil, int root, int hw_output_s0_x_xo) {
   // Dynamic address computation
 
@@ -220,32 +336,6 @@ inline void hcompute_hw_output_stencil(conv_stencil_cache& conv_stencil, HWStrea
 	auto compute_result = hcompute_hw_output_stencil(conv_stencil_hw_output_s0_x_xo_value);
 	// Produce: hw_output_stencil
 	hw_output_stencil.write(compute_result);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void hcompute_hw_input_copy_stencil(HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */hw_input_stencil, hw_input_copy_stencil_cache& hw_input_copy_stencil, int root, int hw_input_copy_s0_x) {
-  // Dynamic address computation
-
-	// Consume: hw_input_stencil
-	auto hw_input_stencil_hw_input_copy_s0_x_value = hw_input_stencil.read();
-	auto compute_result = hcompute_hw_input_copy_stencil(hw_input_stencil_hw_input_copy_s0_x_value);
-	// Produce: hw_input_copy_stencil
-	hw_input_copy_stencil_hcompute_hw_input_copy_stencil_write_bundle_write(/* arg names */compute_result, hw_input_copy_stencil, root, hw_input_copy_s0_x, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void hcompute_conv_stencil(conv_stencil_init_cache& conv_stencil_init, int root, int hw_output_s0_x_xo) {
-  // Dynamic address computation
-
-	auto compute_result = hcompute_conv_stencil();
-	// Produce: conv_stencil_init
-	conv_stencil_init_hcompute_conv_stencil_write_bundle_write(/* arg names */compute_result, conv_stencil_init, root, hw_output_s0_x_xo, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__

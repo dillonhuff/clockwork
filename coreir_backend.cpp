@@ -2895,6 +2895,63 @@ class SubstructGLBLatency: public CoreIR::InstanceGraphPass {
   }
 };
 
+class ReplaceCoarseGrainedAffCtrl: public CoreIR::InstanceGraphPass {
+ public:
+  static std::string ID;
+  ReplaceCoarseGrainedAffCtrl() :
+    InstanceGraphPass("replacecoarsegrainedaffctrl", "change prebuild aff control with lake tile!") {}
+  bool runOnInstanceGraphNode(CoreIR::InstanceGraphNode& node) {
+    bool changed = false;
+    // int i = 0;
+    for (auto & inst : node.getInstanceList()) {
+        if (inst->getMetaData().count("lake_config") ){
+           cout << "Substitute " << inst->toString() << endl;
+           auto def= inst->getContainer();
+           auto context = inst->getContext();
+           auto config_file = inst->getMetaData().at("lake_config");
+           Instance* flush_pth = addPassthrough(inst->sel("valid"),
+                   "flush_pth_"+inst->toString());
+           def->disconnect(inst->sel("clk"));
+           def->disconnect(inst->sel("valid"));
+
+           //TODO put this into a function
+           auto* g = context->getGenerator("cgralib.Mem_amber");
+           CoreIR::Values genargs = {
+             {"width", CoreIR::Const::make(context, 16)},
+             {"num_inputs", CoreIR::Const::make(context, 0)},
+             {"num_outputs", CoreIR::Const::make(context, 0)},
+             {"has_stencil_valid", CoreIR::Const::make(context, true)},
+             {"has_chain_en", CoreIR::Const::make(context, true)},
+             {"ID", CoreIR::Const::make(context, context->getUnique())},
+             {"has_flush",  CoreIR::Const::make(context, true)},
+             {"use_prebuilt_mem",  CoreIR::Const::make(context, true)}
+           };
+           auto ctrl = def->addInstance(inst->toString() + "_lake", "cgralib.Mem_amber", genargs);
+           ctrl->getMetaData()["config"] = config_file;
+           ctrl->getMetaData()["mode"] = "lake";
+           ctrl->getMetaData()["verilog_name"] = "aff_ctrl_counter_"+genargs.at("ID")->get<string>();
+
+           auto clk_en_const = def->addInstance(inst->toString()+"_clk_en_const", "corebit.const",
+                   {{"value", CoreIR::Const::make(context, true)}});
+
+           //garnet wire reset to flush of memory
+           def->connect(ctrl->sel("flush"), def->sel("self.reset"));
+           def->connect(ctrl->sel("clk"), def->sel("self.clk"));
+           def->connect(ctrl->sel("clk_en"), clk_en_const->sel("out"));
+           def->connect(ctrl->sel("rst_n"), clk_en_const->sel("out"));
+           def->connect(flush_pth->sel("in"), ctrl->sel("stencil_valid"));
+           inlineInstance(flush_pth);
+           def->removeInstance(inst);
+           changed = true;
+        } else if (inst->getMetaData().count("garnet_remove")){
+          auto def= inst->getContainer();
+          def->removeInstance(inst);
+        }
+    }
+    return changed;
+  }
+};
+
 namespace MapperPasses {
 class MemConst : public CoreIR::InstanceVisitorPass {
   public :
@@ -3292,7 +3349,8 @@ void garnet_map_module(Module* top, map<string, UBuffer> & buffers, bool garnet_
   c->runPasses({"rungenerators"});
   //A new pass to remove input enable signal affine controller
   disconnect_input_enable(c, top);
-  c->runPasses({"deletedeadinstances"});
+  c->addPass(new ReplaceCoarseGrainedAffCtrl);
+  c->runPasses({"replacecoarsegrainedaffctrl"});
 
   c->runPasses({"cullgraph"});
   c->runPasses({"removewires"});
@@ -3327,6 +3385,7 @@ void garnet_map_module(Module* top, map<string, UBuffer> & buffers, bool garnet_
   c->runPasses({"memconst"});
 
   c->runPasses({"cullgraph"});
+  c->runPasses({"deletedeadinstances"});
   c->getPassManager()->printLog();
   cout << "Trying to save" << endl;
   c->runPasses({"coreirjson"},{"global","commonlib","mantle"});

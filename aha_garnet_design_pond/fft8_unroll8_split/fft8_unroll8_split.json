@@ -17,12 +17,12 @@
           },
           "op_hcompute_f5_1_stencil_port_controller_Counter_1":{
             "genref":"cgralib.Mem_amber",
-            "genargs":{"ID":["String","_U103"], "has_chain_en":["Bool",true], "has_external_addrgen":["Bool",false], "has_flush":["Bool",true], "has_read_valid":["Bool",false], "has_reset":["Bool",false], "has_stencil_valid":["Bool",true], "has_valid":["Bool",false], "is_rom":["Bool",false], "num_inputs":["Int",0], "num_outputs":["Int",1], "use_prebuilt_mem":["Bool",true], "width":["Int",16]},
+            "genargs":{"ID":["String","_U103"], "ctrl_width":["Int",16], "has_chain_en":["Bool",true], "has_external_addrgen":["Bool",false], "has_flush":["Bool",true], "has_read_valid":["Bool",false], "has_reset":["Bool",false], "has_stencil_valid":["Bool",true], "has_valid":["Bool",false], "is_rom":["Bool",false], "num_inputs":["Int",0], "num_outputs":["Int",1], "use_prebuilt_mem":["Bool",true], "width":["Int",16]},
             "metadata":{"config":{"init":[0,1,2,3],"sram2tb_0":{"cycle_starting_addr":[90],"cycle_stride":[0],"dimensionality":1,"extent":[1],"read_data_starting_addr":[0],"read_data_stride":[0],"write_data_starting_addr":[0],"write_data_stride":[0]},"stencil_valid":{"cycle_starting_addr":[93],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2]},"tb2out_0":{"cycle_starting_addr":[93],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[0],"read_data_stride":[0,1]}},"mode":"lake","verilog_name":"aff_ctrl__U103"}
           },
           "op_hcompute_f5_1_stencil_port_controller_Counter_2":{
             "genref":"cgralib.Mem_amber",
-            "genargs":{"ID":["String","_U104"], "has_chain_en":["Bool",true], "has_external_addrgen":["Bool",false], "has_flush":["Bool",true], "has_read_valid":["Bool",false], "has_reset":["Bool",false], "has_stencil_valid":["Bool",false], "has_valid":["Bool",false], "is_rom":["Bool",false], "num_inputs":["Int",0], "num_outputs":["Int",1], "use_prebuilt_mem":["Bool",true], "width":["Int",16]},
+            "genargs":{"ID":["String","_U104"], "ctrl_width":["Int",16], "has_chain_en":["Bool",true], "has_external_addrgen":["Bool",false], "has_flush":["Bool",true], "has_read_valid":["Bool",false], "has_reset":["Bool",false], "has_stencil_valid":["Bool",false], "has_valid":["Bool",false], "is_rom":["Bool",false], "num_inputs":["Int",0], "num_outputs":["Int",1], "use_prebuilt_mem":["Bool",true], "width":["Int",16]},
             "metadata":{"config":{"init":[0,1,2,3],"sram2tb_0":{"cycle_starting_addr":[90],"cycle_stride":[7],"dimensionality":1,"extent":[2],"read_data_starting_addr":[0],"read_data_stride":[0],"write_data_starting_addr":[0],"write_data_stride":[0]},"tb2out_0":{"cycle_starting_addr":[93],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[0],"read_data_stride":[1,0]}},"mode":"lake","verilog_name":"aff_ctrl__U104"}
           },
           "op_hcompute_f5_1_stencil_port_controller_clk_en_const":{
@@ -60,12 +60,12 @@
           },
           "op_hcompute_f5_0_stencil_port_controller_Counter_1":{
             "genref":"cgralib.Mem_amber",
-            "genargs":{"ID":["String","_U112"], "has_chain_en":["Bool",true], "has_external_addrgen":["Bool",false], "has_flush":["Bool",true], "has_read_valid":["Bool",false], "has_reset":["Bool",false], "has_stencil_valid":["Bool",true], "has_valid":["Bool",false], "is_rom":["Bool",false], "num_inputs":["Int",0], "num_outputs":["Int",1], "use_prebuilt_mem":["Bool",true], "width":["Int",16]},
+            "genargs":{"ID":["String","_U112"], "ctrl_width":["Int",16], "has_chain_en":["Bool",true], "has_external_addrgen":["Bool",false], "has_flush":["Bool",true], "has_read_valid":["Bool",false], "has_reset":["Bool",false], "has_stencil_valid":["Bool",true], "has_valid":["Bool",false], "is_rom":["Bool",false], "num_inputs":["Int",0], "num_outputs":["Int",1], "use_prebuilt_mem":["Bool",true], "width":["Int",16]},
             "metadata":{"config":{"init":[0,1,2,3],"sram2tb_0":{"cycle_starting_addr":[89],"cycle_stride":[0],"dimensionality":1,"extent":[1],"read_data_starting_addr":[0],"read_data_stride":[0],"write_data_starting_addr":[0],"write_data_stride":[0]},"stencil_valid":{"cycle_starting_addr":[92],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2]},"tb2out_0":{"cycle_starting_addr":[92],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[0],"read_data_stride":[0,1]}},"mode":"lake","verilog_name":"aff_ctrl__U112"}
           },
           "op_hcompute_f5_0_stencil_port_controller_Counter_2":{
             "genref":"cgralib.Mem_amber",
-            "genargs":{"ID":["String","_U113"], "has_chain_en":["Bool",true], "has_external_addrgen":["Bool",false], "has_flush":["Bool",true], "has_read_valid":["Bool",false], "has_reset":["Bool",false], "has_stencil_valid":["Bool",false], "has_valid":["Bool",false], "is_rom":["Bool",false], "num_inputs":["Int",0], "num_outputs":["Int",1], "use_prebuilt_mem":["Bool",true], "width":["Int",16]},
+            "genargs":{"ID":["String","_U113"], "ctrl_width":["Int",16], "has_chain_en":["Bool",true], "has_external_addrgen":["Bool",false], "has_flush":["Bool",true], "has_read_valid":["Bool",false], "has_reset":["Bool",false], "has_stencil_valid":["Bool",false], "has_valid":["Bool",false], "is_rom":["Bool",false], "num_inputs":["Int",0], "num_outputs":["Int",1], "use_prebuilt_mem":["Bool",true], "width":["Int",16]},
             "metadata":{"config":{"init":[0,1,2,3],"sram2tb_0":{"cycle_starting_addr":[89],"cycle_stride":[7],"dimensionality":1,"extent":[2],"read_data_starting_addr":[0],"read_data_stride":[0],"write_data_starting_addr":[0],"write_data_stride":[0]},"tb2out_0":{"cycle_starting_addr":[92],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[0],"read_data_stride":[1,0]}},"mode":"lake","verilog_name":"aff_ctrl__U113"}
           },
           "op_hcompute_f5_0_stencil_port_controller_clk_en_const":{
@@ -103,12 +103,12 @@
           },
           "op_hcompute_f4_1_stencil_port_controller_Counter_1":{
             "genref":"cgralib.Mem_amber",
-            "genargs":{"ID":["String","_U121"], "has_chain_en":["Bool",true], "has_external_addrgen":["Bool",false], "has_flush":["Bool",true], "has_read_valid":["Bool",false], "has_reset":["Bool",false], "has_stencil_valid":["Bool",true], "has_valid":["Bool",false], "is_rom":["Bool",false], "num_inputs":["Int",0], "num_outputs":["Int",1], "use_prebuilt_mem":["Bool",true], "width":["Int",16]},
+            "genargs":{"ID":["String","_U121"], "ctrl_width":["Int",16], "has_chain_en":["Bool",true], "has_external_addrgen":["Bool",false], "has_flush":["Bool",true], "has_read_valid":["Bool",false], "has_reset":["Bool",false], "has_stencil_valid":["Bool",true], "has_valid":["Bool",false], "is_rom":["Bool",false], "num_inputs":["Int",0], "num_outputs":["Int",1], "use_prebuilt_mem":["Bool",true], "width":["Int",16]},
             "metadata":{"config":{"init":[0,1,2,3],"sram2tb_0":{"cycle_starting_addr":[76],"cycle_stride":[0],"dimensionality":1,"extent":[1],"read_data_starting_addr":[0],"read_data_stride":[0],"write_data_starting_addr":[0],"write_data_stride":[0]},"stencil_valid":{"cycle_starting_addr":[79],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2]},"tb2out_0":{"cycle_starting_addr":[79],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[0],"read_data_stride":[0,1]}},"mode":"lake","verilog_name":"aff_ctrl__U121"}
           },
           "op_hcompute_f4_1_stencil_port_controller_Counter_2":{
             "genref":"cgralib.Mem_amber",
-            "genargs":{"ID":["String","_U122"], "has_chain_en":["Bool",true], "has_external_addrgen":["Bool",false], "has_flush":["Bool",true], "has_read_valid":["Bool",false], "has_reset":["Bool",false], "has_stencil_valid":["Bool",false], "has_valid":["Bool",false], "is_rom":["Bool",false], "num_inputs":["Int",0], "num_outputs":["Int",1], "use_prebuilt_mem":["Bool",true], "width":["Int",16]},
+            "genargs":{"ID":["String","_U122"], "ctrl_width":["Int",16], "has_chain_en":["Bool",true], "has_external_addrgen":["Bool",false], "has_flush":["Bool",true], "has_read_valid":["Bool",false], "has_reset":["Bool",false], "has_stencil_valid":["Bool",false], "has_valid":["Bool",false], "is_rom":["Bool",false], "num_inputs":["Int",0], "num_outputs":["Int",1], "use_prebuilt_mem":["Bool",true], "width":["Int",16]},
             "metadata":{"config":{"init":[0,1,2,3],"sram2tb_0":{"cycle_starting_addr":[76],"cycle_stride":[7],"dimensionality":1,"extent":[2],"read_data_starting_addr":[0],"read_data_stride":[0],"write_data_starting_addr":[0],"write_data_stride":[0]},"tb2out_0":{"cycle_starting_addr":[79],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[0],"read_data_stride":[1,0]}},"mode":"lake","verilog_name":"aff_ctrl__U122"}
           },
           "op_hcompute_f4_1_stencil_port_controller_clk_en_const":{
@@ -146,12 +146,12 @@
           },
           "op_hcompute_f4_0_stencil_port_controller_Counter_1":{
             "genref":"cgralib.Mem_amber",
-            "genargs":{"ID":["String","_U130"], "has_chain_en":["Bool",true], "has_external_addrgen":["Bool",false], "has_flush":["Bool",true], "has_read_valid":["Bool",false], "has_reset":["Bool",false], "has_stencil_valid":["Bool",true], "has_valid":["Bool",false], "is_rom":["Bool",false], "num_inputs":["Int",0], "num_outputs":["Int",1], "use_prebuilt_mem":["Bool",true], "width":["Int",16]},
+            "genargs":{"ID":["String","_U130"], "ctrl_width":["Int",16], "has_chain_en":["Bool",true], "has_external_addrgen":["Bool",false], "has_flush":["Bool",true], "has_read_valid":["Bool",false], "has_reset":["Bool",false], "has_stencil_valid":["Bool",true], "has_valid":["Bool",false], "is_rom":["Bool",false], "num_inputs":["Int",0], "num_outputs":["Int",1], "use_prebuilt_mem":["Bool",true], "width":["Int",16]},
             "metadata":{"config":{"init":[0,1,2,3],"sram2tb_0":{"cycle_starting_addr":[75],"cycle_stride":[0],"dimensionality":1,"extent":[1],"read_data_starting_addr":[0],"read_data_stride":[0],"write_data_starting_addr":[0],"write_data_stride":[0]},"stencil_valid":{"cycle_starting_addr":[78],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2]},"tb2out_0":{"cycle_starting_addr":[78],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[0],"read_data_stride":[0,1]}},"mode":"lake","verilog_name":"aff_ctrl__U130"}
           },
           "op_hcompute_f4_0_stencil_port_controller_Counter_2":{
             "genref":"cgralib.Mem_amber",
-            "genargs":{"ID":["String","_U131"], "has_chain_en":["Bool",true], "has_external_addrgen":["Bool",false], "has_flush":["Bool",true], "has_read_valid":["Bool",false], "has_reset":["Bool",false], "has_stencil_valid":["Bool",false], "has_valid":["Bool",false], "is_rom":["Bool",false], "num_inputs":["Int",0], "num_outputs":["Int",1], "use_prebuilt_mem":["Bool",true], "width":["Int",16]},
+            "genargs":{"ID":["String","_U131"], "ctrl_width":["Int",16], "has_chain_en":["Bool",true], "has_external_addrgen":["Bool",false], "has_flush":["Bool",true], "has_read_valid":["Bool",false], "has_reset":["Bool",false], "has_stencil_valid":["Bool",false], "has_valid":["Bool",false], "is_rom":["Bool",false], "num_inputs":["Int",0], "num_outputs":["Int",1], "use_prebuilt_mem":["Bool",true], "width":["Int",16]},
             "metadata":{"config":{"init":[0,1,2,3],"sram2tb_0":{"cycle_starting_addr":[75],"cycle_stride":[7],"dimensionality":1,"extent":[2],"read_data_starting_addr":[0],"read_data_stride":[0],"write_data_starting_addr":[0],"write_data_stride":[0]},"tb2out_0":{"cycle_starting_addr":[78],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[0],"read_data_stride":[1,0]}},"mode":"lake","verilog_name":"aff_ctrl__U131"}
           },
           "op_hcompute_f4_0_stencil_port_controller_clk_en_const":{
@@ -189,12 +189,12 @@
           },
           "op_hcompute_f3_1_stencil_port_controller_Counter_1":{
             "genref":"cgralib.Mem_amber",
-            "genargs":{"ID":["String","_U139"], "has_chain_en":["Bool",true], "has_external_addrgen":["Bool",false], "has_flush":["Bool",true], "has_read_valid":["Bool",false], "has_reset":["Bool",false], "has_stencil_valid":["Bool",true], "has_valid":["Bool",false], "is_rom":["Bool",false], "num_inputs":["Int",0], "num_outputs":["Int",1], "use_prebuilt_mem":["Bool",true], "width":["Int",16]},
+            "genargs":{"ID":["String","_U139"], "ctrl_width":["Int",16], "has_chain_en":["Bool",true], "has_external_addrgen":["Bool",false], "has_flush":["Bool",true], "has_read_valid":["Bool",false], "has_reset":["Bool",false], "has_stencil_valid":["Bool",true], "has_valid":["Bool",false], "is_rom":["Bool",false], "num_inputs":["Int",0], "num_outputs":["Int",1], "use_prebuilt_mem":["Bool",true], "width":["Int",16]},
             "metadata":{"config":{"init":[0,1,2,3],"sram2tb_0":{"cycle_starting_addr":[62],"cycle_stride":[0],"dimensionality":1,"extent":[1],"read_data_starting_addr":[0],"read_data_stride":[0],"write_data_starting_addr":[0],"write_data_stride":[0]},"stencil_valid":{"cycle_starting_addr":[65],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2]},"tb2out_0":{"cycle_starting_addr":[65],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[0],"read_data_stride":[0,1]}},"mode":"lake","verilog_name":"aff_ctrl__U139"}
           },
           "op_hcompute_f3_1_stencil_port_controller_Counter_2":{
             "genref":"cgralib.Mem_amber",
-            "genargs":{"ID":["String","_U140"], "has_chain_en":["Bool",true], "has_external_addrgen":["Bool",false], "has_flush":["Bool",true], "has_read_valid":["Bool",false], "has_reset":["Bool",false], "has_stencil_valid":["Bool",false], "has_valid":["Bool",false], "is_rom":["Bool",false], "num_inputs":["Int",0], "num_outputs":["Int",1], "use_prebuilt_mem":["Bool",true], "width":["Int",16]},
+            "genargs":{"ID":["String","_U140"], "ctrl_width":["Int",16], "has_chain_en":["Bool",true], "has_external_addrgen":["Bool",false], "has_flush":["Bool",true], "has_read_valid":["Bool",false], "has_reset":["Bool",false], "has_stencil_valid":["Bool",false], "has_valid":["Bool",false], "is_rom":["Bool",false], "num_inputs":["Int",0], "num_outputs":["Int",1], "use_prebuilt_mem":["Bool",true], "width":["Int",16]},
             "metadata":{"config":{"init":[0,1,2,3],"sram2tb_0":{"cycle_starting_addr":[62],"cycle_stride":[7],"dimensionality":1,"extent":[2],"read_data_starting_addr":[0],"read_data_stride":[0],"write_data_starting_addr":[0],"write_data_stride":[0]},"tb2out_0":{"cycle_starting_addr":[65],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[0],"read_data_stride":[1,0]}},"mode":"lake","verilog_name":"aff_ctrl__U140"}
           },
           "op_hcompute_f3_1_stencil_port_controller_clk_en_const":{
@@ -232,12 +232,12 @@
           },
           "op_hcompute_f3_0_stencil_port_controller_Counter_1":{
             "genref":"cgralib.Mem_amber",
-            "genargs":{"ID":["String","_U148"], "has_chain_en":["Bool",true], "has_external_addrgen":["Bool",false], "has_flush":["Bool",true], "has_read_valid":["Bool",false], "has_reset":["Bool",false], "has_stencil_valid":["Bool",true], "has_valid":["Bool",false], "is_rom":["Bool",false], "num_inputs":["Int",0], "num_outputs":["Int",1], "use_prebuilt_mem":["Bool",true], "width":["Int",16]},
+            "genargs":{"ID":["String","_U148"], "ctrl_width":["Int",16], "has_chain_en":["Bool",true], "has_external_addrgen":["Bool",false], "has_flush":["Bool",true], "has_read_valid":["Bool",false], "has_reset":["Bool",false], "has_stencil_valid":["Bool",true], "has_valid":["Bool",false], "is_rom":["Bool",false], "num_inputs":["Int",0], "num_outputs":["Int",1], "use_prebuilt_mem":["Bool",true], "width":["Int",16]},
             "metadata":{"config":{"init":[0,1,2,3],"sram2tb_0":{"cycle_starting_addr":[61],"cycle_stride":[0],"dimensionality":1,"extent":[1],"read_data_starting_addr":[0],"read_data_stride":[0],"write_data_starting_addr":[0],"write_data_stride":[0]},"stencil_valid":{"cycle_starting_addr":[64],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2]},"tb2out_0":{"cycle_starting_addr":[64],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[0],"read_data_stride":[0,1]}},"mode":"lake","verilog_name":"aff_ctrl__U148"}
           },
           "op_hcompute_f3_0_stencil_port_controller_Counter_2":{
             "genref":"cgralib.Mem_amber",
-            "genargs":{"ID":["String","_U149"], "has_chain_en":["Bool",true], "has_external_addrgen":["Bool",false], "has_flush":["Bool",true], "has_read_valid":["Bool",false], "has_reset":["Bool",false], "has_stencil_valid":["Bool",false], "has_valid":["Bool",false], "is_rom":["Bool",false], "num_inputs":["Int",0], "num_outputs":["Int",1], "use_prebuilt_mem":["Bool",true], "width":["Int",16]},
+            "genargs":{"ID":["String","_U149"], "ctrl_width":["Int",16], "has_chain_en":["Bool",true], "has_external_addrgen":["Bool",false], "has_flush":["Bool",true], "has_read_valid":["Bool",false], "has_reset":["Bool",false], "has_stencil_valid":["Bool",false], "has_valid":["Bool",false], "is_rom":["Bool",false], "num_inputs":["Int",0], "num_outputs":["Int",1], "use_prebuilt_mem":["Bool",true], "width":["Int",16]},
             "metadata":{"config":{"init":[0,1,2,3],"sram2tb_0":{"cycle_starting_addr":[61],"cycle_stride":[7],"dimensionality":1,"extent":[2],"read_data_starting_addr":[0],"read_data_stride":[0],"write_data_starting_addr":[0],"write_data_stride":[0]},"tb2out_0":{"cycle_starting_addr":[64],"cycle_stride":[2,7],"dimensionality":2,"extent":[4,2],"read_data_starting_addr":[0],"read_data_stride":[1,0]}},"mode":"lake","verilog_name":"aff_ctrl__U149"}
           },
           "op_hcompute_f3_0_stencil_port_controller_clk_en_const":{
@@ -275,12 +275,12 @@
           },
           "op_hcompute_hw_output_stencil_port_controller_Counter_1":{
             "genref":"cgralib.Mem_amber",
-            "genargs":{"ID":["String","_U94"], "has_chain_en":["Bool",true], "has_external_addrgen":["Bool",false], "has_flush":["Bool",true], "has_read_valid":["Bool",false], "has_reset":["Bool",false], "has_stencil_valid":["Bool",true], "has_valid":["Bool",false], "is_rom":["Bool",false], "num_inputs":["Int",0], "num_outputs":["Int",1], "use_prebuilt_mem":["Bool",true], "width":["Int",16]},
+            "genargs":{"ID":["String","_U94"], "ctrl_width":["Int",16], "has_chain_en":["Bool",true], "has_external_addrgen":["Bool",false], "has_flush":["Bool",true], "has_read_valid":["Bool",false], "has_reset":["Bool",false], "has_stencil_valid":["Bool",true], "has_valid":["Bool",false], "is_rom":["Bool",false], "num_inputs":["Int",0], "num_outputs":["Int",1], "use_prebuilt_mem":["Bool",true], "width":["Int",16]},
             "metadata":{"config":{"init":[0,1,2,3],"sram2tb_0":{"cycle_starting_addr":[103],"cycle_stride":[0],"dimensionality":1,"extent":[1],"read_data_starting_addr":[0],"read_data_stride":[0],"write_data_starting_addr":[0],"write_data_stride":[0]},"stencil_valid":{"cycle_starting_addr":[106],"cycle_stride":[1,8],"dimensionality":2,"extent":[8,2]},"tb2out_0":{"cycle_starting_addr":[106],"cycle_stride":[1,8],"dimensionality":2,"extent":[8,2],"read_data_starting_addr":[0],"read_data_stride":[0,1]}},"mode":"lake","verilog_name":"aff_ctrl__U94"}
           },
           "op_hcompute_hw_output_stencil_port_controller_Counter_2":{
             "genref":"cgralib.Mem_amber",
-            "genargs":{"ID":["String","_U95"], "has_chain_en":["Bool",true], "has_external_addrgen":["Bool",false], "has_flush":["Bool",true], "has_read_valid":["Bool",false], "has_reset":["Bool",false], "has_stencil_valid":["Bool",false], "has_valid":["Bool",false], "is_rom":["Bool",false], "num_inputs":["Int",0], "num_outputs":["Int",1], "use_prebuilt_mem":["Bool",true], "width":["Int",16]},
+            "genargs":{"ID":["String","_U95"], "ctrl_width":["Int",16], "has_chain_en":["Bool",true], "has_external_addrgen":["Bool",false], "has_flush":["Bool",true], "has_read_valid":["Bool",false], "has_reset":["Bool",false], "has_stencil_valid":["Bool",false], "has_valid":["Bool",false], "is_rom":["Bool",false], "num_inputs":["Int",0], "num_outputs":["Int",1], "use_prebuilt_mem":["Bool",true], "width":["Int",16]},
             "metadata":{"config":{"init":[0,1,2,3,4,5,6,7],"sram2tb_0":{"cycle_starting_addr":[103],"cycle_stride":[4,8],"dimensionality":2,"extent":[2,2],"read_data_starting_addr":[0],"read_data_stride":[1,0],"write_data_starting_addr":[0],"write_data_stride":[1,0]},"tb2out_0":{"cycle_starting_addr":[106],"cycle_stride":[1,8],"dimensionality":2,"extent":[8,2],"read_data_starting_addr":[0],"read_data_stride":[1,0]}},"mode":"lake","verilog_name":"aff_ctrl__U95"}
           },
           "op_hcompute_hw_output_stencil_port_controller_clk_en_const":{
@@ -1276,7 +1276,7 @@
           },
           "op_hcompute_hw_input_global_wrapper_stencil_port_controller":{
             "genref":"cgralib.Mem_amber",
-            "genargs":{"ID":["String","_U156"], "has_chain_en":["Bool",true], "has_external_addrgen":["Bool",false], "has_flush":["Bool",true], "has_read_valid":["Bool",false], "has_reset":["Bool",false], "has_stencil_valid":["Bool",true], "has_valid":["Bool",false], "is_rom":["Bool",false], "num_inputs":["Int",0], "num_outputs":["Int",0], "use_prebuilt_mem":["Bool",true], "width":["Int",16]},
+            "genargs":{"ID":["String","_U156"], "ctrl_width":["Int",16], "has_chain_en":["Bool",true], "has_external_addrgen":["Bool",false], "has_flush":["Bool",true], "has_read_valid":["Bool",false], "has_reset":["Bool",false], "has_stencil_valid":["Bool",true], "has_valid":["Bool",false], "is_rom":["Bool",false], "num_inputs":["Int",0], "num_outputs":["Int",0], "use_prebuilt_mem":["Bool",true], "width":["Int",16]},
             "metadata":{"config":{"stencil_valid":{"cycle_starting_addr":[48],"cycle_stride":[1,8],"dimensionality":2,"extent":[8,2]}},"mode":"lake","verilog_name":"aff_ctrl_counter__U156"}
           },
           "op_hcompute_hw_input_global_wrapper_stencil_port_controller_clk_en_const":{
@@ -1321,7 +1321,7 @@
           },
           "op_hcompute_hw_twi_global_wrapper_stencil_port_controller":{
             "genref":"cgralib.Mem_amber",
-            "genargs":{"ID":["String","_U161"], "has_chain_en":["Bool",true], "has_external_addrgen":["Bool",false], "has_flush":["Bool",true], "has_read_valid":["Bool",false], "has_reset":["Bool",false], "has_stencil_valid":["Bool",true], "has_valid":["Bool",false], "is_rom":["Bool",false], "num_inputs":["Int",0], "num_outputs":["Int",0], "use_prebuilt_mem":["Bool",true], "width":["Int",16]},
+            "genargs":{"ID":["String","_U161"], "ctrl_width":["Int",16], "has_chain_en":["Bool",true], "has_external_addrgen":["Bool",false], "has_flush":["Bool",true], "has_read_valid":["Bool",false], "has_reset":["Bool",false], "has_stencil_valid":["Bool",true], "has_valid":["Bool",false], "is_rom":["Bool",false], "num_inputs":["Int",0], "num_outputs":["Int",0], "use_prebuilt_mem":["Bool",true], "width":["Int",16]},
             "metadata":{"config":{"stencil_valid":{"cycle_starting_addr":[0],"cycle_stride":[1,8,16],"dimensionality":3,"extent":[8,2,3]}},"mode":"lake","verilog_name":"aff_ctrl_counter__U161"}
           },
           "op_hcompute_hw_twi_global_wrapper_stencil_port_controller_clk_en_const":{
