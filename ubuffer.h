@@ -1429,11 +1429,14 @@ class UBuffer {
         int in_dim = coarse_grained_pipeline_loop_level;
         cout << get_in_dim_name(sched, in_dim) << endl;
 
-        //sanity check
+        //TODO: double check this after ddl;
+        //if we found this is not the cgpl, due to reduction of DNN loop
+        //we take the inner most non-related loop as new cgpl loop
         for (int i = 0; i <= in_dim; i ++) {
           if (rel_map.at(i) == true) {
             cout << "Cannot separate this loop" << endl;
-            assert(false);
+            cout << "New cgpl level: " << get_in_dim_name(sched, i-1) << endl;;
+            coarse_grained_pipeline_loop_level = i-1;
           }
         }
       }

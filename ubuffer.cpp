@@ -2771,6 +2771,7 @@ CoreIR::Instance* UBuffer::map_ubuffer_to_cgra(CodegenOptions& options, CoreIR::
             "cgralib.Mem_amber", tile_params);
     buf->getMetaData()["mode"] = "glb";
     buf->getMetaData()["config"] = config_file;
+    //buf->getModuleRef()->getMetaData()["verilog_name"] = "glb_"+ c->getUnique();
     buf->getMetaData()["verilog_name"] = "glb_"+ c->getUnique();
     int count = 0;
     for (auto inpt: target_buf.get_in_ports()) {

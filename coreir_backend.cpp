@@ -2929,7 +2929,7 @@ class ReplaceCoarseGrainedAffCtrl: public CoreIR::InstanceGraphPass {
            auto ctrl = def->addInstance(inst->toString() + "_lake", "cgralib.Mem_amber", genargs);
            ctrl->getMetaData()["config"] = config_file;
            ctrl->getMetaData()["mode"] = "lake";
-           ctrl->getMetaData()["verilog_name"] = "aff_ctrl_counter_"+genargs.at("ID")->get<string>();
+           ctrl->getMetaData()["verilog"] = "aff_ctrl_counter_"+genargs.at("ID")->get<string>();
 
            auto clk_en_const = def->addInstance(inst->toString()+"_clk_en_const", "corebit.const",
                    {{"value", CoreIR::Const::make(context, true)}});
@@ -3545,7 +3545,6 @@ void generate_coreir(CodegenOptions& options,
   add_tahoe_memory_generator(context);
   ram_module(context, DATAPATH_WIDTH, 2048);
 
-  auto c = context;
 
   CoreIR::Module* prg_mod;
   if (options.rtl_options.use_prebuilt_memory) {
@@ -3555,17 +3554,15 @@ void generate_coreir(CodegenOptions& options,
   }
 
   auto ns = context->getNamespace("global");
-  /*context->setTop(prg_mod);
-  if(!serializeToFile(context, options.dir + prg.name + ".json")) {
-    cout << "Could not save ubuffer coreir" << endl;
-    context->die();
-  }*/
 
-  if(!saveToFile(ns, options.dir + prg.name + ".json", prg_mod)) {
+  //Change into serializetofile
+  context->setTop(prg_mod);
+  if(!serializeToFile(context, options.dir + prg.name + ".json")) {
     cout << "Could not save ubuffer coreir" << endl;
     context->die();
   }
 
+  context->removeTop();
   auto ns_new = context->getNamespace("global");
   //Garnet pass
   if (options.rtl_options.use_prebuilt_memory) {
