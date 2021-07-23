@@ -284,7 +284,8 @@ class AccessPattern {
               if (itr.first == "const")
                   continue;
               var_list[itr.second-1] = itr.first;
-              string bd = "0 <= " + itr.first + " <= " + std::to_string(in_range[itr.second-1]-1);
+              string bd = std::to_string(in_start.at(itr.second-1)) + " <= " + itr.first +
+                 " <= " + std::to_string(in_start[itr.second - 1] + in_range[itr.second-1]-1);
               bd_list[itr.second-1] = bd;
           }
           //var_list[0] = "root=0";

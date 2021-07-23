@@ -8176,7 +8176,9 @@ void UBuffer::generate_banks(CodegenOptions& options) {
     cout << "sched domain: " << str(sched_dom) << endl;
     sched_vec_new = its(sched_vec_new, sched_dom);
     sched_vec_new = remove_irrelevant_in_dim(sched_vec_new);
+    cout << "before:"  <<str(acc_vec_rem) << endl;
     acc_vec_rem = its(acc_vec_rem, sched_dom);
+    cout << "after:"  <<str(acc_vec_rem) << endl;
     acc_vec_rem = remove_irrelevant_in_dim(acc_vec_rem);
     cout << "sched before projection: " << str(sched_vec_new) << endl;
     cout << "access: " << str(acc_vec_rem) << endl;

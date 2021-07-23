@@ -2617,6 +2617,7 @@ isl_map* remove_in_dims(isl_map* m, vector<int> remove_dims) {
 vector<bool> relation_map(isl_map* m) {
   size_t dom_dim = num_in_dims(m);
   vector<bool> rel(dom_dim, false);
+  cout << str(m) << endl;
   for (auto aff: get_aff_vec(m)){
       for (int i = 0; i < dom_dim; i ++) {
         if (isl_aff_involves_dims(aff, isl_dim_in, i, 1)) {

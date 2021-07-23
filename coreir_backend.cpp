@@ -1874,8 +1874,10 @@ void run_glb_verilog_codegen(CodegenOptions& options, const std::string& long_na
   port_decls.push_back("output [15:0] chain_data_out");
 
   verilog_collateral_file << "module " << long_name <<" ("<< sep_list(port_decls,"","",",") <<"); "<< endl;
-  //128 KB per GLB tile
-  verilog_collateral_file << tab(1) << "logic [15:0] SRAM [131071:0];" << endl;
+  //128 KB per GLB bank
+  //verilog_collateral_file << tab(1) << "logic [15:0] SRAM [131071:0];" << endl;
+  //double the size for tile
+  verilog_collateral_file << tab(1) << "logic [15:0] SRAM [262143:0];" << endl;
   verilog_collateral_file << tab(1) << "logic chain_ren;" << endl << endl;
   for (int i = 0; i < num_outpt; i++) {
     verilog_collateral_file << tab(1) << "logic [15:0] data_out_" << i << "_tmp;" << endl;

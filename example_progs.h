@@ -88,6 +88,9 @@ prog three_level_pond_copy();
 //GLB applications
 prog glb_conv33();
 prog glb_channel_reduction();
+prog resnet_glb();
+prog resnet_output_stationary_i16();
+prog resnet_output_stationary_i8();
 
 //pond resnet test
 prog complex_mem_pond_rolled();

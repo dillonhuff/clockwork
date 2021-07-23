@@ -1,6 +1,6 @@
 #include "example_progs.h"
 
-prog resnet_glb() {
+prog resnet_glb_i64() {
   prog prg;
   prg.compute_unit_file = "resnet_glb.h";
   prg.name = "resnet_glb";
