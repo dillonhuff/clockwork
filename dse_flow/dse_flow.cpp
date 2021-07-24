@@ -64,9 +64,10 @@ int main(int argc, char** argv) {
 
         // test_codegen(test_programs, compile_for_FPGA_BRAM_mem);
         // test_codegen(test_programs, compile_for_CGRA_M3_mem);
-        // test_codegen(test_programs, compile_for_CGRA_M1_mem);
+        test_codegen(test_programs, compile_for_CGRA_M1_mem);
 
-        test_platonic_codegen(test_programs);
+        // compile_for_generic_SRAM_mem
+        // test_codegen(test_programs, compile_for_generic_SRAM_mem);
 
         cout << "Passed!" << endl;
         cout << "Output name: " << "./coreir_apps/platonic_buffer/" << prg.name << endl;

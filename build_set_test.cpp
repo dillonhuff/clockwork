@@ -17763,7 +17763,8 @@ void garnet_single_port_ram_schedule(schedule_info& sched, op* root, prog& prg) 
     //An hack on the fft schedule
     sequential_schedule(sched, root, prg);
     return;
-  } else if (is_rate_matchable(prg)) {
+  } else if (is_rate_matchable(prg) && !contains(prg.name, "resnet") && !contains(prg.name, "mobilenet")) {
+    // assert(false);
     prg.pretty_print();
 
     //TODO: need another function to choose between pad bottom level or top level
@@ -18666,6 +18667,7 @@ void compile_for_garnet_single_port_mem(prog& prg,
       auto buf = buffers_opt.at(buffer_name);
       auto out_sched = buf.global_schedule();
       cout << "Latency of application is: " << str(lexminpt(range(out_sched))) << endl;
+      cout << "Duration of the application is: " << str(lexmaxpt(range(out_sched))) << endl;
     } 
   }
 

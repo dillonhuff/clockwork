@@ -21,3 +21,7 @@ void test_codegen(vector<prog>& test_programs, CodegenFunction& codegen);
 void compile_for_FPGA_BRAM_mem(prog& prg);
 void compile_for_CGRA_M3_mem(prog& prg);
 void compile_for_CGRA_M1_mem(prog& prg);
+void compile_for_generic_SRAM_mem(prog& prg);
+
+template<typename CodegenFunction>
+void test_codegen(vector<prog>& test_programs, CodegenFunction& codegen);

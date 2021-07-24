@@ -2278,23 +2278,23 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
       } else {
         def->connect(buf_name + "." + bundle_name, op->name + "." + pg(buf_name, bundle_name));
 
-        //wire the stencil valid from last buffer to the next one
-        if (options.pass_through_valid) {
-          //we disable wiring if we found first memory tile
-          if (need_pass_valid) {
-            //skip the self loop I/O, or the node with init
-            //FIXME this may not work with multiple input
-            if ( (!dbhc::elem(buf_name, outgoing_buffers(buffers, op, prg))) &&
-                    (!contains(buf_name, "clkwrk_dsa"))){
-               def->connect(buf_name + "." + bundle_name +"_extra_ctrl", op->name + ".valid_pass_in" );
-            }
-            //Stop at the ubuffer with memory tile inside
-            if (buffers.at(buf_name).contain_memory_tile && !last_producer_buf_with_tile.has_value()) {
-              cout << "Stop wiring stencil valid up from buf: " << buf_name << endl;
-              last_producer_buf_with_tile = buf_name;
-            }
-          }
-        }
+        // //wire the stencil valid from last buffer to the next one
+        // if (options.pass_through_valid) {
+        //   //we disable wiring if we found first memory tile
+        //   if (need_pass_valid) {
+        //     //skip the self loop I/O, or the node with init
+        //     //FIXME this may not work with multiple input
+        //     if ( (!dbhc::elem(buf_name, outgoing_buffers(buffers, op, prg))) &&
+        //             (!contains(buf_name, "clkwrk_dsa"))){
+        //        def->connect(buf_name + "." + bundle_name +"_extra_ctrl", op->name + ".valid_pass_in" );
+        //     }
+        //     //Stop at the ubuffer with memory tile inside
+        //     if (buffers.at(buf_name).contain_memory_tile && !last_producer_buf_with_tile.has_value()) {
+        //       cout << "Stop wiring stencil valid up from buf: " << buf_name << endl;
+        //       last_producer_buf_with_tile = buf_name;
+        //     }
+        //   }
+        // }
         //def->connect(def->sel(buf_name + "." + bundle_name + "_ren"),
         //    read_start_wire(def, op->name));
         //def->connect(def->sel(buf_name + "." + bundle_name + "_ctrl_vars"),
