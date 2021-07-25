@@ -2080,11 +2080,14 @@ Instance* generate_coreir_op_controller(CodegenOptions& options, ModuleDef* def,
 
   } else if (to_int(const_coeff(aff)) >= options.mem_hierarchy.at("mem").counter_ub) {
 
+    //add a 32 bit controller for multi-tile application ctrl generation
     auto aff_c = affine_controller(options, c, dom, aff, 32);
     aff_c->print();
     controller = def->addInstance(controller_name(op->name), aff_c);
+
     //This controller will be substitute with lake stencil valid in garnet mapping
-    controller->getMetaData()["garnet_remove"] = true;
+    //Dump the metadata and rewrite it to lake tile in garnet mapping:
+    add_lake_config_to_aff_ctrl_for_garnet_mapping(dom, aff, controller);
   } else if (need_index) {
     auto aff_c = affine_controller_use_lake_tile_counter(
             options, c, dom, aff,
@@ -2777,50 +2780,10 @@ void addIOsWithGLBConfig(Context* c, Module* top, map<string, UBuffer>& buffers,
   }
   for (auto path : iopaths.IO1in) {
     string ioname = "io1_" + join(++path.begin(),path.end(),string("_"));
-    auto IO = mdef->addInstance(ioname,"cgralib.BitIO",{{"mode",Const::make(c,"out")}});
-    auto context = IO->getContext();
+    mdef->addInstance(ioname,"cgralib.BitIO",{{"mode",Const::make(c,"out")}});
     path[0] = "in";
     path.insert(path.begin(),"_self");
-    //Need to rewire the output valid
-    if(glb_metadata->latency != 0) {
-      json in2glb= glb_metadata->cgra2glb;
-      //int old_offset = in2glb["cycle_starting_addr"][0] ;
-      //in2glb["cycle_starting_addr"][0] = old_offset - glb_metadata->latency;
-      //Add an instance,
-      //TODO: put this into a function, this has been existing in multiple placess
-      CoreIR::Values genargs = {
-        {"width", CoreIR::Const::make(context, 16)},
-        {"num_inputs", CoreIR::Const::make(context, 0)},
-        {"num_outputs", CoreIR::Const::make(context, 0)},
-        {"has_stencil_valid", CoreIR::Const::make(context, true)},
-        {"has_chain_en", CoreIR::Const::make(context, true)},
-        {"ID", CoreIR::Const::make(context, context->getUnique())},
-        {"has_flush",  CoreIR::Const::make(context, true)},
-        {"use_prebuilt_mem",  CoreIR::Const::make(context, true)}
-      };
-      auto* g = context->getGenerator("cgralib.Mem_amber");
-      auto buf = mdef->addInstance(ioname + "_glb_port_ctrl", "cgralib.Mem_amber", genargs);
-      buf->getMetaData()["config"]["stencil_valid"] = in2glb;
-      buf->getMetaData()["mode"] = "lake";
-      //buf->getModuleRef()->getMetaData()["verilog_name"] = "aff_ctrl_counter_"+genargs.at("ID")->get<string>();
-      buf->getMetaData()["verilog_name"] = "aff_ctrl_counter_"+genargs.at("ID")->get<string>();
-
-      auto clk_en_const = mdef->addInstance(ioname+"_clk_en_const", "corebit.const",
-              {{"value", CoreIR::Const::make(context, true)}});
-
-      //garnet wire reset to flush of memory
-      //TODO: this may not be safe try to put into a separate pass
-      mdef->connect(buf->sel("flush"), mdef->sel("io1in_reset.out"));
-      //mdef->connect(buf->sel("clk"), mdef->sel("self.clk"));
-      mdef->connect(buf->sel("clk_en"), clk_en_const->sel("out"));
-      mdef->connect(buf->sel("rst_n"), clk_en_const->sel("out"));
-
-      mdef->connect(IO->sel("in"), buf->sel("stencil_valid"));
-    } else {
-      mdef->connect({ioname,"in"},path);
-    }
-    //TODO: A hack to keep single valid should check with other apps
-    //break;
+    mdef->connect({ioname,"in"},path);
   }
   mdef->disconnect(mdef->getInterface());
   inlineInstance(pt);
@@ -2937,7 +2900,67 @@ class SubstructGLBLatency: public CoreIR::InstanceGraphPass {
   }
 };
 
-class ReplaceCoarseGrainedAffCtrl: public CoreIR::InstanceGraphPass {
+class ReplaceCoarseGrainedAffCtrl: public CoreIR::InstancePass {
+    public:
+ReplaceCoarseGrainedAffCtrl():
+    InstancePass(
+            "replacecoarsegrainedaffctrl",
+            "Replace Coarsegrainedaffctrl with lake tile stencil valid"
+            ) {}
+bool runOnInstance(Instance* inst) {
+    //define the pass here
+    if (inst->getMetaData().count("lake_config") ){
+       cout << "Substitute " << inst->toString() << endl;
+       auto def= inst->getContainer();
+       auto context = inst->getContext();
+       auto config_file = inst->getMetaData().at("lake_config");
+       Instance* flush_pth = addPassthrough(inst->sel("valid"),
+               "flush_pth_"+inst->toString());
+       def->disconnect(inst->sel("clk"));
+       def->disconnect(inst->sel("valid"));
+
+       //TODO put this into a function
+       auto* g = context->getGenerator("cgralib.Mem_amber");
+       CoreIR::Values genargs = {
+         {"width", CoreIR::Const::make(context, 16)},
+         {"num_inputs", CoreIR::Const::make(context, 0)},
+         {"num_outputs", CoreIR::Const::make(context, 0)},
+         {"has_stencil_valid", CoreIR::Const::make(context, true)},
+         {"has_chain_en", CoreIR::Const::make(context, true)},
+         {"ID", CoreIR::Const::make(context, context->getUnique())},
+         {"has_flush",  CoreIR::Const::make(context, true)},
+         {"use_prebuilt_mem",  CoreIR::Const::make(context, true)}
+       };
+       auto ctrl = def->addInstance(inst->toString() + "_lake", "cgralib.Mem_amber", genargs);
+       ctrl->getMetaData()["config"] = config_file;
+       ctrl->getMetaData()["mode"] = "lake";
+       ctrl->getMetaData()["verilog"] = "aff_ctrl_counter_"+genargs.at("ID")->get<string>();
+
+       auto clk_en_const = def->addInstance(inst->toString()+"_clk_en_const", "corebit.const",
+               {{"value", CoreIR::Const::make(context, true)}});
+
+       //garnet wire reset to flush of memory
+       def->connect(ctrl->sel("flush"), def->sel("self.reset"));
+       def->connect(ctrl->sel("clk"), def->sel("self.clk"));
+       def->connect(ctrl->sel("clk_en"), clk_en_const->sel("out"));
+       def->connect(ctrl->sel("rst_n"), clk_en_const->sel("out"));
+       def->connect(flush_pth->sel("in"), ctrl->sel("stencil_valid"));
+       inlineInstance(flush_pth);
+       def->removeInstance(inst);
+       //def->disconnect(def->getInterface());
+       return true;
+    } else if (inst->getMetaData().count("garnet_remove")){
+      auto def= inst->getContainer();
+      def->removeInstance(inst);
+      //def->disconnect(def->getInterface());
+      return true;
+    }
+    return false;
+}
+
+};
+
+/*class ReplaceCoarseGrainedAffCtrl: public CoreIR::InstanceGraphPass {
  public:
   static std::string ID;
   ReplaceCoarseGrainedAffCtrl() :
@@ -2995,7 +3018,7 @@ class ReplaceCoarseGrainedAffCtrl: public CoreIR::InstanceGraphPass {
     }
     return changed;
   }
-};
+};*/
 
 namespace MapperPasses {
 class MemConst : public CoreIR::InstanceVisitorPass {
@@ -3392,10 +3415,13 @@ void garnet_map_module(Module* top, map<string, UBuffer> & buffers, bool garnet_
   LoadDefinition_cgralib(c);
 
   c->runPasses({"rungenerators"});
+
   //A new pass to remove input enable signal affine controller
   disconnect_input_enable(c, top);
   c->runPasses({"deletedeadinstances"});
   c->runPasses({"cullgraph"});
+
+  //GLB passes
   c->addPass(new ReplaceCoarseGrainedAffCtrl);
   c->runPasses({"replacecoarsegrainedaffctrl"});
 

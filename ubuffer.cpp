@@ -2813,6 +2813,13 @@ bool sanity_check_controller_bitwidth(CodegenOptions& options, isl_map* sched) {
     return sched_max < options.mem_hierarchy.at("mem").counter_ub;
 }
 
+void add_lake_config_to_aff_ctrl_for_garnet_mapping(isl_set* dom, isl_aff* aff, CoreIR::Instance* &aff_ctrl) {
+  auto stencil_valid = generate_accessor_config_from_aff_expr(dom, aff);
+  json config_file;
+  add_lake_config(config_file, stencil_valid, num_in_dims(aff), "stencil_valid");
+  aff_ctrl->getMetaData()["lake_config"] = config_file;
+}
+
 bool cgpl_ctrl_optimization(CodegenOptions& options, CoreIR::ModuleDef* def, CoreIR::Instance* &cgpl_ctrl, UBuffer& target_buf) {
   string ub_ins_name = "ub_" + target_buf.name;
   auto context = def->getContext();
@@ -2831,13 +2838,12 @@ bool cgpl_ctrl_optimization(CodegenOptions& options, CoreIR::ModuleDef* def, Cor
     } else {
       auto sched_aff = get_aff(cgpl_schedule);
       auto dom = ::domain(cgpl_schedule);
+
+      //Add one because we did not wire reset
       cgpl_ctrl = affine_controller(def, dom, add(sched_aff, 1), 32);
 
       //Dump the metadata and rewrite it to lake tile in garnet mapping:
-      auto stencil_valid = generate_accessor_config_from_aff_expr(dom, sched_aff);
-      json config_file;
-      add_lake_config(config_file, stencil_valid, num_in_dims(sched_aff), "stencil_valid");
-      cgpl_ctrl->getMetaData()["lake_config"] = config_file;
+      add_lake_config_to_aff_ctrl_for_garnet_mapping(dom, sched_aff, cgpl_ctrl);
 
     }
     target_buf = new_target_buf;

@@ -5288,7 +5288,7 @@
           },
           "op_hcompute_hw_output_stencil_port_controller":{
             "modref":"global.affine_controller__U362",
-            "metadata":{"garnet_remove":true}
+            "metadata":{"lake_config":{"stencil_valid":{"cycle_starting_addr":[311296],"cycle_stride":[1,128],"dimensionality":2,"extent":[128,128]}}}
           },
           "op_hcompute_hw_output_stencil_read_start":{
             "modref":"global.op_hcompute_hw_output_stencil_read_start_pt__U379"

@@ -2890,6 +2890,10 @@ void generate_synthesizable_functional_model(CodegenOptions& options, UBuffer& b
 
 CoreIR::Instance* affine_controller_use_lake_tile(CodegenOptions& options, CoreIR::ModuleDef*, CoreIR::Context*, isl_set*, isl_aff*, string);
 CoreIR::Module* affine_controller_use_lake_tile_counter(CodegenOptions& options, CoreIR::Context*, isl_set*, isl_aff*, string);
+
+//helper function for dump metadata for post garnet mapping
+void add_lake_config_to_aff_ctrl_for_garnet_mapping(isl_set* dom, isl_aff* aff, CoreIR::Instance* &aff_ctrl);
+
 #endif
 
 void generate_hls_code(CodegenOptions& options, std::ostream& out, UBuffer& buf);
