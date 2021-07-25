@@ -18169,33 +18169,13 @@ schedule_info garnet_schedule_info(CodegenOptions& options, prog& prg, bool use_
  
   if (use_dse_compute) {
     json kernel_latencies;
-    std::ifstream kernel_latencies_file("dse_kernel_latencies/" + prg.name + "_compute_kernel_latencies.json", std::ifstream::binary);
+    std::ifstream kernel_latencies_file(prg.name + "_compute_kernel_latencies.json", std::ifstream::binary);
     kernel_latencies_file >> kernel_latencies;
 
     for (auto op : prg.all_ops()) {
       if (op->func != "") {
         sched.resource_requirements[op] = op->func;
       }
-
-
-    // Extremely hacky rom latency introduction
-    if (op->func == "hcompute_curved_stencil") {
-      sched.compute_unit_latencies[op->func] = 1;
-      //sched.op_compute_unit_latencies[op->name] = 1;
-    } else if (op->func == "hcompute_curved_stencil_1") {
-      sched.compute_unit_latencies[op->func] = 1;
-      //sched.op_compute_unit_latencies[op->name] = 1;
-    } else if (op->func == "hcompute_curved_stencil_2") {
-      sched.compute_unit_latencies[op->func] = 1;
-      //sched.op_compute_unit_latencies[op->name] = 1;
-    } else if (prg.name == "rom" && op->func == "hcompute_hw_output_stencil") {
-      sched.compute_unit_latencies[op->func] = 1;
-    } else if (op->func != "") {
-      sched.compute_unit_latencies[op->func] = 0;
-      //sched.op_compute_unit_latencies[op->name] = 0;
-    } else {
-      //sched.op_compute_unit_latencies[op->name] = 0;
-    }
 
 
       cout << op->func << endl;
@@ -18205,13 +18185,6 @@ schedule_info garnet_schedule_info(CodegenOptions& options, prog& prg, bool use_
         sched.compute_unit_latencies[op->func] = kernel_latencies[op->func];
         cout << "KERNEL LATENCY " <<  op->func << " : " << kernel_latencies[op->func] << endl;
       }
-
-      // if (kernel_latencies[op->func] != NULL) {
-      // } else {
-      //   cout << "NO KERNEL LATENCY " <<  op->func << " : NULL" << endl;
-      //   sched.compute_unit_latencies[op->func] = 0;
-      // }
-// sched.compute_unit_latencies[op->func] = 0;
 
       for (auto b : op->buffers_referenced()) {
         if (!prg.is_boundary(b)) {
