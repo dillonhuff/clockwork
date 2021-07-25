@@ -1,5 +1,1077 @@
 {"top":"global.fft8_unroll8_split",
 "namespaces":{
+  "cgralib":{
+    "generators":{
+      "Mem_amber":{
+        "typegen":"cgralib.cgralib_mem_amber_type",
+        "genparams":{"ID":"String", "ctrl_width":"Int", "has_chain_en":"Bool", "has_external_addrgen":"Bool", "has_flush":"Bool", "has_read_valid":"Bool", "has_reset":"Bool", "has_stencil_valid":"Bool", "has_valid":"Bool", "is_rom":"Bool", "num_inputs":"Int", "num_outputs":"Int", "use_prebuilt_mem":"Bool", "width":"Int"},
+        "modules":[
+          [
+            {"ID":["String","_U95"], "ctrl_width":["Int",16], "has_chain_en":["Bool",true], "has_external_addrgen":["Bool",false], "has_flush":["Bool",true], "has_read_valid":["Bool",false], "has_reset":["Bool",false], "has_stencil_valid":["Bool",false], "has_valid":["Bool",false], "is_rom":["Bool",false], "num_inputs":["Int",0], "num_outputs":["Int",1], "use_prebuilt_mem":["Bool",true], "width":["Int",16]},
+            {
+              "type":["Record",[
+                ["rst_n","BitIn"],
+                ["clk_en","BitIn"],
+                ["clk",["Named","coreir.clkIn"]],
+                ["data_out_0",["Array",16,"Bit"]],
+                ["flush","BitIn"],
+                ["chain_chain_en","BitIn"]
+              ]]
+            }
+          ],
+          [
+            {"ID":["String","_U94"], "ctrl_width":["Int",16], "has_chain_en":["Bool",true], "has_external_addrgen":["Bool",false], "has_flush":["Bool",true], "has_read_valid":["Bool",false], "has_reset":["Bool",false], "has_stencil_valid":["Bool",true], "has_valid":["Bool",false], "is_rom":["Bool",false], "num_inputs":["Int",0], "num_outputs":["Int",1], "use_prebuilt_mem":["Bool",true], "width":["Int",16]},
+            {
+              "type":["Record",[
+                ["rst_n","BitIn"],
+                ["clk_en","BitIn"],
+                ["clk",["Named","coreir.clkIn"]],
+                ["data_out_0",["Array",16,"Bit"]],
+                ["stencil_valid","Bit"],
+                ["flush","BitIn"],
+                ["chain_chain_en","BitIn"]
+              ]]
+            }
+          ],
+          [
+            {"ID":["String","_U161"], "ctrl_width":["Int",16], "has_chain_en":["Bool",true], "has_external_addrgen":["Bool",false], "has_flush":["Bool",true], "has_read_valid":["Bool",false], "has_reset":["Bool",false], "has_stencil_valid":["Bool",true], "has_valid":["Bool",false], "is_rom":["Bool",false], "num_inputs":["Int",0], "num_outputs":["Int",0], "use_prebuilt_mem":["Bool",true], "width":["Int",16]},
+            {
+              "type":["Record",[
+                ["rst_n","BitIn"],
+                ["clk_en","BitIn"],
+                ["clk",["Named","coreir.clkIn"]],
+                ["stencil_valid","Bit"],
+                ["flush","BitIn"],
+                ["chain_chain_en","BitIn"]
+              ]]
+            }
+          ],
+          [
+            {"ID":["String","_U156"], "ctrl_width":["Int",16], "has_chain_en":["Bool",true], "has_external_addrgen":["Bool",false], "has_flush":["Bool",true], "has_read_valid":["Bool",false], "has_reset":["Bool",false], "has_stencil_valid":["Bool",true], "has_valid":["Bool",false], "is_rom":["Bool",false], "num_inputs":["Int",0], "num_outputs":["Int",0], "use_prebuilt_mem":["Bool",true], "width":["Int",16]},
+            {
+              "type":["Record",[
+                ["rst_n","BitIn"],
+                ["clk_en","BitIn"],
+                ["clk",["Named","coreir.clkIn"]],
+                ["stencil_valid","Bit"],
+                ["flush","BitIn"],
+                ["chain_chain_en","BitIn"]
+              ]]
+            }
+          ],
+          [
+            {"ID":["String","_U149"], "ctrl_width":["Int",16], "has_chain_en":["Bool",true], "has_external_addrgen":["Bool",false], "has_flush":["Bool",true], "has_read_valid":["Bool",false], "has_reset":["Bool",false], "has_stencil_valid":["Bool",false], "has_valid":["Bool",false], "is_rom":["Bool",false], "num_inputs":["Int",0], "num_outputs":["Int",1], "use_prebuilt_mem":["Bool",true], "width":["Int",16]},
+            {
+              "type":["Record",[
+                ["rst_n","BitIn"],
+                ["clk_en","BitIn"],
+                ["clk",["Named","coreir.clkIn"]],
+                ["data_out_0",["Array",16,"Bit"]],
+                ["flush","BitIn"],
+                ["chain_chain_en","BitIn"]
+              ]]
+            }
+          ],
+          [
+            {"ID":["String","_U148"], "ctrl_width":["Int",16], "has_chain_en":["Bool",true], "has_external_addrgen":["Bool",false], "has_flush":["Bool",true], "has_read_valid":["Bool",false], "has_reset":["Bool",false], "has_stencil_valid":["Bool",true], "has_valid":["Bool",false], "is_rom":["Bool",false], "num_inputs":["Int",0], "num_outputs":["Int",1], "use_prebuilt_mem":["Bool",true], "width":["Int",16]},
+            {
+              "type":["Record",[
+                ["rst_n","BitIn"],
+                ["clk_en","BitIn"],
+                ["clk",["Named","coreir.clkIn"]],
+                ["data_out_0",["Array",16,"Bit"]],
+                ["stencil_valid","Bit"],
+                ["flush","BitIn"],
+                ["chain_chain_en","BitIn"]
+              ]]
+            }
+          ],
+          [
+            {"ID":["String","_U140"], "ctrl_width":["Int",16], "has_chain_en":["Bool",true], "has_external_addrgen":["Bool",false], "has_flush":["Bool",true], "has_read_valid":["Bool",false], "has_reset":["Bool",false], "has_stencil_valid":["Bool",false], "has_valid":["Bool",false], "is_rom":["Bool",false], "num_inputs":["Int",0], "num_outputs":["Int",1], "use_prebuilt_mem":["Bool",true], "width":["Int",16]},
+            {
+              "type":["Record",[
+                ["rst_n","BitIn"],
+                ["clk_en","BitIn"],
+                ["clk",["Named","coreir.clkIn"]],
+                ["data_out_0",["Array",16,"Bit"]],
+                ["flush","BitIn"],
+                ["chain_chain_en","BitIn"]
+              ]]
+            }
+          ],
+          [
+            {"ID":["String","_U139"], "ctrl_width":["Int",16], "has_chain_en":["Bool",true], "has_external_addrgen":["Bool",false], "has_flush":["Bool",true], "has_read_valid":["Bool",false], "has_reset":["Bool",false], "has_stencil_valid":["Bool",true], "has_valid":["Bool",false], "is_rom":["Bool",false], "num_inputs":["Int",0], "num_outputs":["Int",1], "use_prebuilt_mem":["Bool",true], "width":["Int",16]},
+            {
+              "type":["Record",[
+                ["rst_n","BitIn"],
+                ["clk_en","BitIn"],
+                ["clk",["Named","coreir.clkIn"]],
+                ["data_out_0",["Array",16,"Bit"]],
+                ["stencil_valid","Bit"],
+                ["flush","BitIn"],
+                ["chain_chain_en","BitIn"]
+              ]]
+            }
+          ],
+          [
+            {"ID":["String","_U131"], "ctrl_width":["Int",16], "has_chain_en":["Bool",true], "has_external_addrgen":["Bool",false], "has_flush":["Bool",true], "has_read_valid":["Bool",false], "has_reset":["Bool",false], "has_stencil_valid":["Bool",false], "has_valid":["Bool",false], "is_rom":["Bool",false], "num_inputs":["Int",0], "num_outputs":["Int",1], "use_prebuilt_mem":["Bool",true], "width":["Int",16]},
+            {
+              "type":["Record",[
+                ["rst_n","BitIn"],
+                ["clk_en","BitIn"],
+                ["clk",["Named","coreir.clkIn"]],
+                ["data_out_0",["Array",16,"Bit"]],
+                ["flush","BitIn"],
+                ["chain_chain_en","BitIn"]
+              ]]
+            }
+          ],
+          [
+            {"ID":["String","_U130"], "ctrl_width":["Int",16], "has_chain_en":["Bool",true], "has_external_addrgen":["Bool",false], "has_flush":["Bool",true], "has_read_valid":["Bool",false], "has_reset":["Bool",false], "has_stencil_valid":["Bool",true], "has_valid":["Bool",false], "is_rom":["Bool",false], "num_inputs":["Int",0], "num_outputs":["Int",1], "use_prebuilt_mem":["Bool",true], "width":["Int",16]},
+            {
+              "type":["Record",[
+                ["rst_n","BitIn"],
+                ["clk_en","BitIn"],
+                ["clk",["Named","coreir.clkIn"]],
+                ["data_out_0",["Array",16,"Bit"]],
+                ["stencil_valid","Bit"],
+                ["flush","BitIn"],
+                ["chain_chain_en","BitIn"]
+              ]]
+            }
+          ],
+          [
+            {"ID":["String","_U122"], "ctrl_width":["Int",16], "has_chain_en":["Bool",true], "has_external_addrgen":["Bool",false], "has_flush":["Bool",true], "has_read_valid":["Bool",false], "has_reset":["Bool",false], "has_stencil_valid":["Bool",false], "has_valid":["Bool",false], "is_rom":["Bool",false], "num_inputs":["Int",0], "num_outputs":["Int",1], "use_prebuilt_mem":["Bool",true], "width":["Int",16]},
+            {
+              "type":["Record",[
+                ["rst_n","BitIn"],
+                ["clk_en","BitIn"],
+                ["clk",["Named","coreir.clkIn"]],
+                ["data_out_0",["Array",16,"Bit"]],
+                ["flush","BitIn"],
+                ["chain_chain_en","BitIn"]
+              ]]
+            }
+          ],
+          [
+            {"ID":["String","_U121"], "ctrl_width":["Int",16], "has_chain_en":["Bool",true], "has_external_addrgen":["Bool",false], "has_flush":["Bool",true], "has_read_valid":["Bool",false], "has_reset":["Bool",false], "has_stencil_valid":["Bool",true], "has_valid":["Bool",false], "is_rom":["Bool",false], "num_inputs":["Int",0], "num_outputs":["Int",1], "use_prebuilt_mem":["Bool",true], "width":["Int",16]},
+            {
+              "type":["Record",[
+                ["rst_n","BitIn"],
+                ["clk_en","BitIn"],
+                ["clk",["Named","coreir.clkIn"]],
+                ["data_out_0",["Array",16,"Bit"]],
+                ["stencil_valid","Bit"],
+                ["flush","BitIn"],
+                ["chain_chain_en","BitIn"]
+              ]]
+            }
+          ],
+          [
+            {"ID":["String","_U113"], "ctrl_width":["Int",16], "has_chain_en":["Bool",true], "has_external_addrgen":["Bool",false], "has_flush":["Bool",true], "has_read_valid":["Bool",false], "has_reset":["Bool",false], "has_stencil_valid":["Bool",false], "has_valid":["Bool",false], "is_rom":["Bool",false], "num_inputs":["Int",0], "num_outputs":["Int",1], "use_prebuilt_mem":["Bool",true], "width":["Int",16]},
+            {
+              "type":["Record",[
+                ["rst_n","BitIn"],
+                ["clk_en","BitIn"],
+                ["clk",["Named","coreir.clkIn"]],
+                ["data_out_0",["Array",16,"Bit"]],
+                ["flush","BitIn"],
+                ["chain_chain_en","BitIn"]
+              ]]
+            }
+          ],
+          [
+            {"ID":["String","_U112"], "ctrl_width":["Int",16], "has_chain_en":["Bool",true], "has_external_addrgen":["Bool",false], "has_flush":["Bool",true], "has_read_valid":["Bool",false], "has_reset":["Bool",false], "has_stencil_valid":["Bool",true], "has_valid":["Bool",false], "is_rom":["Bool",false], "num_inputs":["Int",0], "num_outputs":["Int",1], "use_prebuilt_mem":["Bool",true], "width":["Int",16]},
+            {
+              "type":["Record",[
+                ["rst_n","BitIn"],
+                ["clk_en","BitIn"],
+                ["clk",["Named","coreir.clkIn"]],
+                ["data_out_0",["Array",16,"Bit"]],
+                ["stencil_valid","Bit"],
+                ["flush","BitIn"],
+                ["chain_chain_en","BitIn"]
+              ]]
+            }
+          ],
+          [
+            {"ID":["String","_U104"], "ctrl_width":["Int",16], "has_chain_en":["Bool",true], "has_external_addrgen":["Bool",false], "has_flush":["Bool",true], "has_read_valid":["Bool",false], "has_reset":["Bool",false], "has_stencil_valid":["Bool",false], "has_valid":["Bool",false], "is_rom":["Bool",false], "num_inputs":["Int",0], "num_outputs":["Int",1], "use_prebuilt_mem":["Bool",true], "width":["Int",16]},
+            {
+              "type":["Record",[
+                ["rst_n","BitIn"],
+                ["clk_en","BitIn"],
+                ["clk",["Named","coreir.clkIn"]],
+                ["data_out_0",["Array",16,"Bit"]],
+                ["flush","BitIn"],
+                ["chain_chain_en","BitIn"]
+              ]]
+            }
+          ],
+          [
+            {"ID":["String","_U103"], "ctrl_width":["Int",16], "has_chain_en":["Bool",true], "has_external_addrgen":["Bool",false], "has_flush":["Bool",true], "has_read_valid":["Bool",false], "has_reset":["Bool",false], "has_stencil_valid":["Bool",true], "has_valid":["Bool",false], "is_rom":["Bool",false], "num_inputs":["Int",0], "num_outputs":["Int",1], "use_prebuilt_mem":["Bool",true], "width":["Int",16]},
+            {
+              "type":["Record",[
+                ["rst_n","BitIn"],
+                ["clk_en","BitIn"],
+                ["clk",["Named","coreir.clkIn"]],
+                ["data_out_0",["Array",16,"Bit"]],
+                ["stencil_valid","Bit"],
+                ["flush","BitIn"],
+                ["chain_chain_en","BitIn"]
+              ]]
+            }
+          ]
+        ]
+      },
+      "Pond_amber":{
+        "typegen":"cgralib.cgralib_pond_amber_type",
+        "genparams":{"ID":"String", "num_inputs":"Int", "num_outputs":"Int", "width":"Int"},
+        "modules":[
+          [
+            {"ID":["String","_U92"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
+            {
+              "type":["Record",[
+                ["rst_n","BitIn"],
+                ["clk_en","BitIn"],
+                ["clk",["Named","coreir.clkIn"]],
+                ["data_in_pond_0",["Array",16,"BitIn"]],
+                ["data_out_pond_0",["Array",16,"Bit"]],
+                ["valid_out_pond","Bit"],
+                ["flush","BitIn"]
+              ]]
+            }
+          ],
+          [
+            {"ID":["String","_U91"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
+            {
+              "type":["Record",[
+                ["rst_n","BitIn"],
+                ["clk_en","BitIn"],
+                ["clk",["Named","coreir.clkIn"]],
+                ["data_in_pond_0",["Array",16,"BitIn"]],
+                ["data_out_pond_0",["Array",16,"Bit"]],
+                ["valid_out_pond","Bit"],
+                ["flush","BitIn"]
+              ]]
+            }
+          ],
+          [
+            {"ID":["String","_U90"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
+            {
+              "type":["Record",[
+                ["rst_n","BitIn"],
+                ["clk_en","BitIn"],
+                ["clk",["Named","coreir.clkIn"]],
+                ["data_in_pond_0",["Array",16,"BitIn"]],
+                ["data_out_pond_0",["Array",16,"Bit"]],
+                ["valid_out_pond","Bit"],
+                ["flush","BitIn"]
+              ]]
+            }
+          ],
+          [
+            {"ID":["String","_U89"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
+            {
+              "type":["Record",[
+                ["rst_n","BitIn"],
+                ["clk_en","BitIn"],
+                ["clk",["Named","coreir.clkIn"]],
+                ["data_in_pond_0",["Array",16,"BitIn"]],
+                ["data_out_pond_0",["Array",16,"Bit"]],
+                ["valid_out_pond","Bit"],
+                ["flush","BitIn"]
+              ]]
+            }
+          ],
+          [
+            {"ID":["String","_U88"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
+            {
+              "type":["Record",[
+                ["rst_n","BitIn"],
+                ["clk_en","BitIn"],
+                ["clk",["Named","coreir.clkIn"]],
+                ["data_in_pond_0",["Array",16,"BitIn"]],
+                ["data_out_pond_0",["Array",16,"Bit"]],
+                ["valid_out_pond","Bit"],
+                ["flush","BitIn"]
+              ]]
+            }
+          ],
+          [
+            {"ID":["String","_U87"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
+            {
+              "type":["Record",[
+                ["rst_n","BitIn"],
+                ["clk_en","BitIn"],
+                ["clk",["Named","coreir.clkIn"]],
+                ["data_in_pond_0",["Array",16,"BitIn"]],
+                ["data_out_pond_0",["Array",16,"Bit"]],
+                ["valid_out_pond","Bit"],
+                ["flush","BitIn"]
+              ]]
+            }
+          ],
+          [
+            {"ID":["String","_U86"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
+            {
+              "type":["Record",[
+                ["rst_n","BitIn"],
+                ["clk_en","BitIn"],
+                ["clk",["Named","coreir.clkIn"]],
+                ["data_in_pond_0",["Array",16,"BitIn"]],
+                ["data_out_pond_0",["Array",16,"Bit"]],
+                ["valid_out_pond","Bit"],
+                ["flush","BitIn"]
+              ]]
+            }
+          ],
+          [
+            {"ID":["String","_U85"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
+            {
+              "type":["Record",[
+                ["rst_n","BitIn"],
+                ["clk_en","BitIn"],
+                ["clk",["Named","coreir.clkIn"]],
+                ["data_in_pond_0",["Array",16,"BitIn"]],
+                ["data_out_pond_0",["Array",16,"Bit"]],
+                ["valid_out_pond","Bit"],
+                ["flush","BitIn"]
+              ]]
+            }
+          ],
+          [
+            {"ID":["String","_U84"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
+            {
+              "type":["Record",[
+                ["rst_n","BitIn"],
+                ["clk_en","BitIn"],
+                ["clk",["Named","coreir.clkIn"]],
+                ["data_in_pond_0",["Array",16,"BitIn"]],
+                ["data_out_pond_0",["Array",16,"Bit"]],
+                ["valid_out_pond","Bit"],
+                ["flush","BitIn"]
+              ]]
+            }
+          ],
+          [
+            {"ID":["String","_U83"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
+            {
+              "type":["Record",[
+                ["rst_n","BitIn"],
+                ["clk_en","BitIn"],
+                ["clk",["Named","coreir.clkIn"]],
+                ["data_in_pond_0",["Array",16,"BitIn"]],
+                ["data_out_pond_0",["Array",16,"Bit"]],
+                ["valid_out_pond","Bit"],
+                ["flush","BitIn"]
+              ]]
+            }
+          ],
+          [
+            {"ID":["String","_U82"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
+            {
+              "type":["Record",[
+                ["rst_n","BitIn"],
+                ["clk_en","BitIn"],
+                ["clk",["Named","coreir.clkIn"]],
+                ["data_in_pond_0",["Array",16,"BitIn"]],
+                ["data_out_pond_0",["Array",16,"Bit"]],
+                ["valid_out_pond","Bit"],
+                ["flush","BitIn"]
+              ]]
+            }
+          ],
+          [
+            {"ID":["String","_U81"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
+            {
+              "type":["Record",[
+                ["rst_n","BitIn"],
+                ["clk_en","BitIn"],
+                ["clk",["Named","coreir.clkIn"]],
+                ["data_in_pond_0",["Array",16,"BitIn"]],
+                ["data_out_pond_0",["Array",16,"Bit"]],
+                ["valid_out_pond","Bit"],
+                ["flush","BitIn"]
+              ]]
+            }
+          ],
+          [
+            {"ID":["String","_U80"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
+            {
+              "type":["Record",[
+                ["rst_n","BitIn"],
+                ["clk_en","BitIn"],
+                ["clk",["Named","coreir.clkIn"]],
+                ["data_in_pond_0",["Array",16,"BitIn"]],
+                ["data_out_pond_0",["Array",16,"Bit"]],
+                ["valid_out_pond","Bit"],
+                ["flush","BitIn"]
+              ]]
+            }
+          ],
+          [
+            {"ID":["String","_U79"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
+            {
+              "type":["Record",[
+                ["rst_n","BitIn"],
+                ["clk_en","BitIn"],
+                ["clk",["Named","coreir.clkIn"]],
+                ["data_in_pond_0",["Array",16,"BitIn"]],
+                ["data_out_pond_0",["Array",16,"Bit"]],
+                ["valid_out_pond","Bit"],
+                ["flush","BitIn"]
+              ]]
+            }
+          ],
+          [
+            {"ID":["String","_U78"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
+            {
+              "type":["Record",[
+                ["rst_n","BitIn"],
+                ["clk_en","BitIn"],
+                ["clk",["Named","coreir.clkIn"]],
+                ["data_in_pond_0",["Array",16,"BitIn"]],
+                ["data_out_pond_0",["Array",16,"Bit"]],
+                ["valid_out_pond","Bit"],
+                ["flush","BitIn"]
+              ]]
+            }
+          ],
+          [
+            {"ID":["String","_U77"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
+            {
+              "type":["Record",[
+                ["rst_n","BitIn"],
+                ["clk_en","BitIn"],
+                ["clk",["Named","coreir.clkIn"]],
+                ["data_in_pond_0",["Array",16,"BitIn"]],
+                ["data_out_pond_0",["Array",16,"Bit"]],
+                ["valid_out_pond","Bit"],
+                ["flush","BitIn"]
+              ]]
+            }
+          ],
+          [
+            {"ID":["String","_U76"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
+            {
+              "type":["Record",[
+                ["rst_n","BitIn"],
+                ["clk_en","BitIn"],
+                ["clk",["Named","coreir.clkIn"]],
+                ["data_in_pond_0",["Array",16,"BitIn"]],
+                ["data_out_pond_0",["Array",16,"Bit"]],
+                ["valid_out_pond","Bit"],
+                ["flush","BitIn"]
+              ]]
+            }
+          ],
+          [
+            {"ID":["String","_U75"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
+            {
+              "type":["Record",[
+                ["rst_n","BitIn"],
+                ["clk_en","BitIn"],
+                ["clk",["Named","coreir.clkIn"]],
+                ["data_in_pond_0",["Array",16,"BitIn"]],
+                ["data_out_pond_0",["Array",16,"Bit"]],
+                ["valid_out_pond","Bit"],
+                ["flush","BitIn"]
+              ]]
+            }
+          ],
+          [
+            {"ID":["String","_U74"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
+            {
+              "type":["Record",[
+                ["rst_n","BitIn"],
+                ["clk_en","BitIn"],
+                ["clk",["Named","coreir.clkIn"]],
+                ["data_in_pond_0",["Array",16,"BitIn"]],
+                ["data_out_pond_0",["Array",16,"Bit"]],
+                ["valid_out_pond","Bit"],
+                ["flush","BitIn"]
+              ]]
+            }
+          ],
+          [
+            {"ID":["String","_U73"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
+            {
+              "type":["Record",[
+                ["rst_n","BitIn"],
+                ["clk_en","BitIn"],
+                ["clk",["Named","coreir.clkIn"]],
+                ["data_in_pond_0",["Array",16,"BitIn"]],
+                ["data_out_pond_0",["Array",16,"Bit"]],
+                ["valid_out_pond","Bit"],
+                ["flush","BitIn"]
+              ]]
+            }
+          ],
+          [
+            {"ID":["String","_U72"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
+            {
+              "type":["Record",[
+                ["rst_n","BitIn"],
+                ["clk_en","BitIn"],
+                ["clk",["Named","coreir.clkIn"]],
+                ["data_in_pond_0",["Array",16,"BitIn"]],
+                ["data_out_pond_0",["Array",16,"Bit"]],
+                ["valid_out_pond","Bit"],
+                ["flush","BitIn"]
+              ]]
+            }
+          ],
+          [
+            {"ID":["String","_U71"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
+            {
+              "type":["Record",[
+                ["rst_n","BitIn"],
+                ["clk_en","BitIn"],
+                ["clk",["Named","coreir.clkIn"]],
+                ["data_in_pond_0",["Array",16,"BitIn"]],
+                ["data_out_pond_0",["Array",16,"Bit"]],
+                ["valid_out_pond","Bit"],
+                ["flush","BitIn"]
+              ]]
+            }
+          ],
+          [
+            {"ID":["String","_U70"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
+            {
+              "type":["Record",[
+                ["rst_n","BitIn"],
+                ["clk_en","BitIn"],
+                ["clk",["Named","coreir.clkIn"]],
+                ["data_in_pond_0",["Array",16,"BitIn"]],
+                ["data_out_pond_0",["Array",16,"Bit"]],
+                ["valid_out_pond","Bit"],
+                ["flush","BitIn"]
+              ]]
+            }
+          ],
+          [
+            {"ID":["String","_U69"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
+            {
+              "type":["Record",[
+                ["rst_n","BitIn"],
+                ["clk_en","BitIn"],
+                ["clk",["Named","coreir.clkIn"]],
+                ["data_in_pond_0",["Array",16,"BitIn"]],
+                ["data_out_pond_0",["Array",16,"Bit"]],
+                ["valid_out_pond","Bit"],
+                ["flush","BitIn"]
+              ]]
+            }
+          ],
+          [
+            {"ID":["String","_U68"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
+            {
+              "type":["Record",[
+                ["rst_n","BitIn"],
+                ["clk_en","BitIn"],
+                ["clk",["Named","coreir.clkIn"]],
+                ["data_in_pond_0",["Array",16,"BitIn"]],
+                ["data_out_pond_0",["Array",16,"Bit"]],
+                ["valid_out_pond","Bit"],
+                ["flush","BitIn"]
+              ]]
+            }
+          ],
+          [
+            {"ID":["String","_U67"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
+            {
+              "type":["Record",[
+                ["rst_n","BitIn"],
+                ["clk_en","BitIn"],
+                ["clk",["Named","coreir.clkIn"]],
+                ["data_in_pond_0",["Array",16,"BitIn"]],
+                ["data_out_pond_0",["Array",16,"Bit"]],
+                ["valid_out_pond","Bit"],
+                ["flush","BitIn"]
+              ]]
+            }
+          ],
+          [
+            {"ID":["String","_U66"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
+            {
+              "type":["Record",[
+                ["rst_n","BitIn"],
+                ["clk_en","BitIn"],
+                ["clk",["Named","coreir.clkIn"]],
+                ["data_in_pond_0",["Array",16,"BitIn"]],
+                ["data_out_pond_0",["Array",16,"Bit"]],
+                ["valid_out_pond","Bit"],
+                ["flush","BitIn"]
+              ]]
+            }
+          ],
+          [
+            {"ID":["String","_U65"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
+            {
+              "type":["Record",[
+                ["rst_n","BitIn"],
+                ["clk_en","BitIn"],
+                ["clk",["Named","coreir.clkIn"]],
+                ["data_in_pond_0",["Array",16,"BitIn"]],
+                ["data_out_pond_0",["Array",16,"Bit"]],
+                ["valid_out_pond","Bit"],
+                ["flush","BitIn"]
+              ]]
+            }
+          ],
+          [
+            {"ID":["String","_U64"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
+            {
+              "type":["Record",[
+                ["rst_n","BitIn"],
+                ["clk_en","BitIn"],
+                ["clk",["Named","coreir.clkIn"]],
+                ["data_in_pond_0",["Array",16,"BitIn"]],
+                ["data_out_pond_0",["Array",16,"Bit"]],
+                ["valid_out_pond","Bit"],
+                ["flush","BitIn"]
+              ]]
+            }
+          ],
+          [
+            {"ID":["String","_U63"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
+            {
+              "type":["Record",[
+                ["rst_n","BitIn"],
+                ["clk_en","BitIn"],
+                ["clk",["Named","coreir.clkIn"]],
+                ["data_in_pond_0",["Array",16,"BitIn"]],
+                ["data_out_pond_0",["Array",16,"Bit"]],
+                ["valid_out_pond","Bit"],
+                ["flush","BitIn"]
+              ]]
+            }
+          ],
+          [
+            {"ID":["String","_U62"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
+            {
+              "type":["Record",[
+                ["rst_n","BitIn"],
+                ["clk_en","BitIn"],
+                ["clk",["Named","coreir.clkIn"]],
+                ["data_in_pond_0",["Array",16,"BitIn"]],
+                ["data_out_pond_0",["Array",16,"Bit"]],
+                ["valid_out_pond","Bit"],
+                ["flush","BitIn"]
+              ]]
+            }
+          ],
+          [
+            {"ID":["String","_U61"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
+            {
+              "type":["Record",[
+                ["rst_n","BitIn"],
+                ["clk_en","BitIn"],
+                ["clk",["Named","coreir.clkIn"]],
+                ["data_in_pond_0",["Array",16,"BitIn"]],
+                ["data_out_pond_0",["Array",16,"Bit"]],
+                ["valid_out_pond","Bit"],
+                ["flush","BitIn"]
+              ]]
+            }
+          ],
+          [
+            {"ID":["String","_U60"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
+            {
+              "type":["Record",[
+                ["rst_n","BitIn"],
+                ["clk_en","BitIn"],
+                ["clk",["Named","coreir.clkIn"]],
+                ["data_in_pond_0",["Array",16,"BitIn"]],
+                ["data_out_pond_0",["Array",16,"Bit"]],
+                ["valid_out_pond","Bit"],
+                ["flush","BitIn"]
+              ]]
+            }
+          ],
+          [
+            {"ID":["String","_U59"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
+            {
+              "type":["Record",[
+                ["rst_n","BitIn"],
+                ["clk_en","BitIn"],
+                ["clk",["Named","coreir.clkIn"]],
+                ["data_in_pond_0",["Array",16,"BitIn"]],
+                ["data_out_pond_0",["Array",16,"Bit"]],
+                ["valid_out_pond","Bit"],
+                ["flush","BitIn"]
+              ]]
+            }
+          ],
+          [
+            {"ID":["String","_U58"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
+            {
+              "type":["Record",[
+                ["rst_n","BitIn"],
+                ["clk_en","BitIn"],
+                ["clk",["Named","coreir.clkIn"]],
+                ["data_in_pond_0",["Array",16,"BitIn"]],
+                ["data_out_pond_0",["Array",16,"Bit"]],
+                ["valid_out_pond","Bit"],
+                ["flush","BitIn"]
+              ]]
+            }
+          ],
+          [
+            {"ID":["String","_U57"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
+            {
+              "type":["Record",[
+                ["rst_n","BitIn"],
+                ["clk_en","BitIn"],
+                ["clk",["Named","coreir.clkIn"]],
+                ["data_in_pond_0",["Array",16,"BitIn"]],
+                ["data_out_pond_0",["Array",16,"Bit"]],
+                ["valid_out_pond","Bit"],
+                ["flush","BitIn"]
+              ]]
+            }
+          ],
+          [
+            {"ID":["String","_U56"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
+            {
+              "type":["Record",[
+                ["rst_n","BitIn"],
+                ["clk_en","BitIn"],
+                ["clk",["Named","coreir.clkIn"]],
+                ["data_in_pond_0",["Array",16,"BitIn"]],
+                ["data_out_pond_0",["Array",16,"Bit"]],
+                ["valid_out_pond","Bit"],
+                ["flush","BitIn"]
+              ]]
+            }
+          ],
+          [
+            {"ID":["String","_U55"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
+            {
+              "type":["Record",[
+                ["rst_n","BitIn"],
+                ["clk_en","BitIn"],
+                ["clk",["Named","coreir.clkIn"]],
+                ["data_in_pond_0",["Array",16,"BitIn"]],
+                ["data_out_pond_0",["Array",16,"Bit"]],
+                ["valid_out_pond","Bit"],
+                ["flush","BitIn"]
+              ]]
+            }
+          ],
+          [
+            {"ID":["String","_U54"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
+            {
+              "type":["Record",[
+                ["rst_n","BitIn"],
+                ["clk_en","BitIn"],
+                ["clk",["Named","coreir.clkIn"]],
+                ["data_in_pond_0",["Array",16,"BitIn"]],
+                ["data_out_pond_0",["Array",16,"Bit"]],
+                ["valid_out_pond","Bit"],
+                ["flush","BitIn"]
+              ]]
+            }
+          ],
+          [
+            {"ID":["String","_U53"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
+            {
+              "type":["Record",[
+                ["rst_n","BitIn"],
+                ["clk_en","BitIn"],
+                ["clk",["Named","coreir.clkIn"]],
+                ["data_in_pond_0",["Array",16,"BitIn"]],
+                ["data_out_pond_0",["Array",16,"Bit"]],
+                ["valid_out_pond","Bit"],
+                ["flush","BitIn"]
+              ]]
+            }
+          ],
+          [
+            {"ID":["String","_U52"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
+            {
+              "type":["Record",[
+                ["rst_n","BitIn"],
+                ["clk_en","BitIn"],
+                ["clk",["Named","coreir.clkIn"]],
+                ["data_in_pond_0",["Array",16,"BitIn"]],
+                ["data_out_pond_0",["Array",16,"Bit"]],
+                ["valid_out_pond","Bit"],
+                ["flush","BitIn"]
+              ]]
+            }
+          ],
+          [
+            {"ID":["String","_U51"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
+            {
+              "type":["Record",[
+                ["rst_n","BitIn"],
+                ["clk_en","BitIn"],
+                ["clk",["Named","coreir.clkIn"]],
+                ["data_in_pond_0",["Array",16,"BitIn"]],
+                ["data_out_pond_0",["Array",16,"Bit"]],
+                ["valid_out_pond","Bit"],
+                ["flush","BitIn"]
+              ]]
+            }
+          ],
+          [
+            {"ID":["String","_U50"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
+            {
+              "type":["Record",[
+                ["rst_n","BitIn"],
+                ["clk_en","BitIn"],
+                ["clk",["Named","coreir.clkIn"]],
+                ["data_in_pond_0",["Array",16,"BitIn"]],
+                ["data_out_pond_0",["Array",16,"Bit"]],
+                ["valid_out_pond","Bit"],
+                ["flush","BitIn"]
+              ]]
+            }
+          ],
+          [
+            {"ID":["String","_U49"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
+            {
+              "type":["Record",[
+                ["rst_n","BitIn"],
+                ["clk_en","BitIn"],
+                ["clk",["Named","coreir.clkIn"]],
+                ["data_in_pond_0",["Array",16,"BitIn"]],
+                ["data_out_pond_0",["Array",16,"Bit"]],
+                ["valid_out_pond","Bit"],
+                ["flush","BitIn"]
+              ]]
+            }
+          ],
+          [
+            {"ID":["String","_U48"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
+            {
+              "type":["Record",[
+                ["rst_n","BitIn"],
+                ["clk_en","BitIn"],
+                ["clk",["Named","coreir.clkIn"]],
+                ["data_in_pond_0",["Array",16,"BitIn"]],
+                ["data_out_pond_0",["Array",16,"Bit"]],
+                ["valid_out_pond","Bit"],
+                ["flush","BitIn"]
+              ]]
+            }
+          ],
+          [
+            {"ID":["String","_U47"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
+            {
+              "type":["Record",[
+                ["rst_n","BitIn"],
+                ["clk_en","BitIn"],
+                ["clk",["Named","coreir.clkIn"]],
+                ["data_in_pond_0",["Array",16,"BitIn"]],
+                ["data_out_pond_0",["Array",16,"Bit"]],
+                ["valid_out_pond","Bit"],
+                ["flush","BitIn"]
+              ]]
+            }
+          ],
+          [
+            {"ID":["String","_U46"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
+            {
+              "type":["Record",[
+                ["rst_n","BitIn"],
+                ["clk_en","BitIn"],
+                ["clk",["Named","coreir.clkIn"]],
+                ["data_in_pond_0",["Array",16,"BitIn"]],
+                ["data_out_pond_0",["Array",16,"Bit"]],
+                ["valid_out_pond","Bit"],
+                ["flush","BitIn"]
+              ]]
+            }
+          ],
+          [
+            {"ID":["String","_U45"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
+            {
+              "type":["Record",[
+                ["rst_n","BitIn"],
+                ["clk_en","BitIn"],
+                ["clk",["Named","coreir.clkIn"]],
+                ["data_in_pond_0",["Array",16,"BitIn"]],
+                ["data_out_pond_0",["Array",16,"Bit"]],
+                ["valid_out_pond","Bit"],
+                ["flush","BitIn"]
+              ]]
+            }
+          ],
+          [
+            {"ID":["String","_U44"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
+            {
+              "type":["Record",[
+                ["rst_n","BitIn"],
+                ["clk_en","BitIn"],
+                ["clk",["Named","coreir.clkIn"]],
+                ["data_in_pond_0",["Array",16,"BitIn"]],
+                ["data_out_pond_0",["Array",16,"Bit"]],
+                ["valid_out_pond","Bit"],
+                ["flush","BitIn"]
+              ]]
+            }
+          ],
+          [
+            {"ID":["String","_U43"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
+            {
+              "type":["Record",[
+                ["rst_n","BitIn"],
+                ["clk_en","BitIn"],
+                ["clk",["Named","coreir.clkIn"]],
+                ["data_in_pond_0",["Array",16,"BitIn"]],
+                ["data_out_pond_0",["Array",16,"Bit"]],
+                ["valid_out_pond","Bit"],
+                ["flush","BitIn"]
+              ]]
+            }
+          ]
+        ]
+      }
+    },
+    "typegens":{
+      "cgralib_mem_amber_type":[
+        {"ID":"String", "ctrl_width":"Int", "has_chain_en":"Bool", "has_external_addrgen":"Bool", "has_flush":"Bool", "has_read_valid":"Bool", "has_reset":"Bool", "has_stencil_valid":"Bool", "has_valid":"Bool", "is_rom":"Bool", "num_inputs":"Int", "num_outputs":"Int", "use_prebuilt_mem":"Bool", "width":"Int"},
+        "sparse",
+        [
+          [{"ID":["String","_U103"], "ctrl_width":["Int",16], "has_chain_en":["Bool",true], "has_external_addrgen":["Bool",false], "has_flush":["Bool",true], "has_read_valid":["Bool",false], "has_reset":["Bool",false], "has_stencil_valid":["Bool",true], "has_valid":["Bool",false], "is_rom":["Bool",false], "num_inputs":["Int",0], "num_outputs":["Int",1], "use_prebuilt_mem":["Bool",true], "width":["Int",16]},["Record",[["rst_n","BitIn"],["clk_en","BitIn"],["clk",["Named","coreir.clkIn"]],["data_out_0",["Array",16,"Bit"]],["stencil_valid","Bit"],["flush","BitIn"],["chain_chain_en","BitIn"]]]],
+          [{"ID":["String","_U104"], "ctrl_width":["Int",16], "has_chain_en":["Bool",true], "has_external_addrgen":["Bool",false], "has_flush":["Bool",true], "has_read_valid":["Bool",false], "has_reset":["Bool",false], "has_stencil_valid":["Bool",false], "has_valid":["Bool",false], "is_rom":["Bool",false], "num_inputs":["Int",0], "num_outputs":["Int",1], "use_prebuilt_mem":["Bool",true], "width":["Int",16]},["Record",[["rst_n","BitIn"],["clk_en","BitIn"],["clk",["Named","coreir.clkIn"]],["data_out_0",["Array",16,"Bit"]],["flush","BitIn"],["chain_chain_en","BitIn"]]]],
+          [{"ID":["String","_U112"], "ctrl_width":["Int",16], "has_chain_en":["Bool",true], "has_external_addrgen":["Bool",false], "has_flush":["Bool",true], "has_read_valid":["Bool",false], "has_reset":["Bool",false], "has_stencil_valid":["Bool",true], "has_valid":["Bool",false], "is_rom":["Bool",false], "num_inputs":["Int",0], "num_outputs":["Int",1], "use_prebuilt_mem":["Bool",true], "width":["Int",16]},["Record",[["rst_n","BitIn"],["clk_en","BitIn"],["clk",["Named","coreir.clkIn"]],["data_out_0",["Array",16,"Bit"]],["stencil_valid","Bit"],["flush","BitIn"],["chain_chain_en","BitIn"]]]],
+          [{"ID":["String","_U113"], "ctrl_width":["Int",16], "has_chain_en":["Bool",true], "has_external_addrgen":["Bool",false], "has_flush":["Bool",true], "has_read_valid":["Bool",false], "has_reset":["Bool",false], "has_stencil_valid":["Bool",false], "has_valid":["Bool",false], "is_rom":["Bool",false], "num_inputs":["Int",0], "num_outputs":["Int",1], "use_prebuilt_mem":["Bool",true], "width":["Int",16]},["Record",[["rst_n","BitIn"],["clk_en","BitIn"],["clk",["Named","coreir.clkIn"]],["data_out_0",["Array",16,"Bit"]],["flush","BitIn"],["chain_chain_en","BitIn"]]]],
+          [{"ID":["String","_U121"], "ctrl_width":["Int",16], "has_chain_en":["Bool",true], "has_external_addrgen":["Bool",false], "has_flush":["Bool",true], "has_read_valid":["Bool",false], "has_reset":["Bool",false], "has_stencil_valid":["Bool",true], "has_valid":["Bool",false], "is_rom":["Bool",false], "num_inputs":["Int",0], "num_outputs":["Int",1], "use_prebuilt_mem":["Bool",true], "width":["Int",16]},["Record",[["rst_n","BitIn"],["clk_en","BitIn"],["clk",["Named","coreir.clkIn"]],["data_out_0",["Array",16,"Bit"]],["stencil_valid","Bit"],["flush","BitIn"],["chain_chain_en","BitIn"]]]],
+          [{"ID":["String","_U122"], "ctrl_width":["Int",16], "has_chain_en":["Bool",true], "has_external_addrgen":["Bool",false], "has_flush":["Bool",true], "has_read_valid":["Bool",false], "has_reset":["Bool",false], "has_stencil_valid":["Bool",false], "has_valid":["Bool",false], "is_rom":["Bool",false], "num_inputs":["Int",0], "num_outputs":["Int",1], "use_prebuilt_mem":["Bool",true], "width":["Int",16]},["Record",[["rst_n","BitIn"],["clk_en","BitIn"],["clk",["Named","coreir.clkIn"]],["data_out_0",["Array",16,"Bit"]],["flush","BitIn"],["chain_chain_en","BitIn"]]]],
+          [{"ID":["String","_U130"], "ctrl_width":["Int",16], "has_chain_en":["Bool",true], "has_external_addrgen":["Bool",false], "has_flush":["Bool",true], "has_read_valid":["Bool",false], "has_reset":["Bool",false], "has_stencil_valid":["Bool",true], "has_valid":["Bool",false], "is_rom":["Bool",false], "num_inputs":["Int",0], "num_outputs":["Int",1], "use_prebuilt_mem":["Bool",true], "width":["Int",16]},["Record",[["rst_n","BitIn"],["clk_en","BitIn"],["clk",["Named","coreir.clkIn"]],["data_out_0",["Array",16,"Bit"]],["stencil_valid","Bit"],["flush","BitIn"],["chain_chain_en","BitIn"]]]],
+          [{"ID":["String","_U131"], "ctrl_width":["Int",16], "has_chain_en":["Bool",true], "has_external_addrgen":["Bool",false], "has_flush":["Bool",true], "has_read_valid":["Bool",false], "has_reset":["Bool",false], "has_stencil_valid":["Bool",false], "has_valid":["Bool",false], "is_rom":["Bool",false], "num_inputs":["Int",0], "num_outputs":["Int",1], "use_prebuilt_mem":["Bool",true], "width":["Int",16]},["Record",[["rst_n","BitIn"],["clk_en","BitIn"],["clk",["Named","coreir.clkIn"]],["data_out_0",["Array",16,"Bit"]],["flush","BitIn"],["chain_chain_en","BitIn"]]]],
+          [{"ID":["String","_U139"], "ctrl_width":["Int",16], "has_chain_en":["Bool",true], "has_external_addrgen":["Bool",false], "has_flush":["Bool",true], "has_read_valid":["Bool",false], "has_reset":["Bool",false], "has_stencil_valid":["Bool",true], "has_valid":["Bool",false], "is_rom":["Bool",false], "num_inputs":["Int",0], "num_outputs":["Int",1], "use_prebuilt_mem":["Bool",true], "width":["Int",16]},["Record",[["rst_n","BitIn"],["clk_en","BitIn"],["clk",["Named","coreir.clkIn"]],["data_out_0",["Array",16,"Bit"]],["stencil_valid","Bit"],["flush","BitIn"],["chain_chain_en","BitIn"]]]],
+          [{"ID":["String","_U140"], "ctrl_width":["Int",16], "has_chain_en":["Bool",true], "has_external_addrgen":["Bool",false], "has_flush":["Bool",true], "has_read_valid":["Bool",false], "has_reset":["Bool",false], "has_stencil_valid":["Bool",false], "has_valid":["Bool",false], "is_rom":["Bool",false], "num_inputs":["Int",0], "num_outputs":["Int",1], "use_prebuilt_mem":["Bool",true], "width":["Int",16]},["Record",[["rst_n","BitIn"],["clk_en","BitIn"],["clk",["Named","coreir.clkIn"]],["data_out_0",["Array",16,"Bit"]],["flush","BitIn"],["chain_chain_en","BitIn"]]]],
+          [{"ID":["String","_U148"], "ctrl_width":["Int",16], "has_chain_en":["Bool",true], "has_external_addrgen":["Bool",false], "has_flush":["Bool",true], "has_read_valid":["Bool",false], "has_reset":["Bool",false], "has_stencil_valid":["Bool",true], "has_valid":["Bool",false], "is_rom":["Bool",false], "num_inputs":["Int",0], "num_outputs":["Int",1], "use_prebuilt_mem":["Bool",true], "width":["Int",16]},["Record",[["rst_n","BitIn"],["clk_en","BitIn"],["clk",["Named","coreir.clkIn"]],["data_out_0",["Array",16,"Bit"]],["stencil_valid","Bit"],["flush","BitIn"],["chain_chain_en","BitIn"]]]],
+          [{"ID":["String","_U149"], "ctrl_width":["Int",16], "has_chain_en":["Bool",true], "has_external_addrgen":["Bool",false], "has_flush":["Bool",true], "has_read_valid":["Bool",false], "has_reset":["Bool",false], "has_stencil_valid":["Bool",false], "has_valid":["Bool",false], "is_rom":["Bool",false], "num_inputs":["Int",0], "num_outputs":["Int",1], "use_prebuilt_mem":["Bool",true], "width":["Int",16]},["Record",[["rst_n","BitIn"],["clk_en","BitIn"],["clk",["Named","coreir.clkIn"]],["data_out_0",["Array",16,"Bit"]],["flush","BitIn"],["chain_chain_en","BitIn"]]]],
+          [{"ID":["String","_U156"], "ctrl_width":["Int",16], "has_chain_en":["Bool",true], "has_external_addrgen":["Bool",false], "has_flush":["Bool",true], "has_read_valid":["Bool",false], "has_reset":["Bool",false], "has_stencil_valid":["Bool",true], "has_valid":["Bool",false], "is_rom":["Bool",false], "num_inputs":["Int",0], "num_outputs":["Int",0], "use_prebuilt_mem":["Bool",true], "width":["Int",16]},["Record",[["rst_n","BitIn"],["clk_en","BitIn"],["clk",["Named","coreir.clkIn"]],["stencil_valid","Bit"],["flush","BitIn"],["chain_chain_en","BitIn"]]]],
+          [{"ID":["String","_U161"], "ctrl_width":["Int",16], "has_chain_en":["Bool",true], "has_external_addrgen":["Bool",false], "has_flush":["Bool",true], "has_read_valid":["Bool",false], "has_reset":["Bool",false], "has_stencil_valid":["Bool",true], "has_valid":["Bool",false], "is_rom":["Bool",false], "num_inputs":["Int",0], "num_outputs":["Int",0], "use_prebuilt_mem":["Bool",true], "width":["Int",16]},["Record",[["rst_n","BitIn"],["clk_en","BitIn"],["clk",["Named","coreir.clkIn"]],["stencil_valid","Bit"],["flush","BitIn"],["chain_chain_en","BitIn"]]]],
+          [{"ID":["String","_U94"], "ctrl_width":["Int",16], "has_chain_en":["Bool",true], "has_external_addrgen":["Bool",false], "has_flush":["Bool",true], "has_read_valid":["Bool",false], "has_reset":["Bool",false], "has_stencil_valid":["Bool",true], "has_valid":["Bool",false], "is_rom":["Bool",false], "num_inputs":["Int",0], "num_outputs":["Int",1], "use_prebuilt_mem":["Bool",true], "width":["Int",16]},["Record",[["rst_n","BitIn"],["clk_en","BitIn"],["clk",["Named","coreir.clkIn"]],["data_out_0",["Array",16,"Bit"]],["stencil_valid","Bit"],["flush","BitIn"],["chain_chain_en","BitIn"]]]],
+          [{"ID":["String","_U95"], "ctrl_width":["Int",16], "has_chain_en":["Bool",true], "has_external_addrgen":["Bool",false], "has_flush":["Bool",true], "has_read_valid":["Bool",false], "has_reset":["Bool",false], "has_stencil_valid":["Bool",false], "has_valid":["Bool",false], "is_rom":["Bool",false], "num_inputs":["Int",0], "num_outputs":["Int",1], "use_prebuilt_mem":["Bool",true], "width":["Int",16]},["Record",[["rst_n","BitIn"],["clk_en","BitIn"],["clk",["Named","coreir.clkIn"]],["data_out_0",["Array",16,"Bit"]],["flush","BitIn"],["chain_chain_en","BitIn"]]]]
+        ]
+      ],
+      "cgralib_pond_amber_type":[
+        {"ID":"String", "num_inputs":"Int", "num_outputs":"Int", "width":"Int"},
+        "sparse",
+        [
+          [{"ID":["String","_U43"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},["Record",[["rst_n","BitIn"],["clk_en","BitIn"],["clk",["Named","coreir.clkIn"]],["data_in_pond_0",["Array",16,"BitIn"]],["data_out_pond_0",["Array",16,"Bit"]],["valid_out_pond","Bit"],["flush","BitIn"]]]],
+          [{"ID":["String","_U44"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},["Record",[["rst_n","BitIn"],["clk_en","BitIn"],["clk",["Named","coreir.clkIn"]],["data_in_pond_0",["Array",16,"BitIn"]],["data_out_pond_0",["Array",16,"Bit"]],["valid_out_pond","Bit"],["flush","BitIn"]]]],
+          [{"ID":["String","_U45"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},["Record",[["rst_n","BitIn"],["clk_en","BitIn"],["clk",["Named","coreir.clkIn"]],["data_in_pond_0",["Array",16,"BitIn"]],["data_out_pond_0",["Array",16,"Bit"]],["valid_out_pond","Bit"],["flush","BitIn"]]]],
+          [{"ID":["String","_U46"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},["Record",[["rst_n","BitIn"],["clk_en","BitIn"],["clk",["Named","coreir.clkIn"]],["data_in_pond_0",["Array",16,"BitIn"]],["data_out_pond_0",["Array",16,"Bit"]],["valid_out_pond","Bit"],["flush","BitIn"]]]],
+          [{"ID":["String","_U47"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},["Record",[["rst_n","BitIn"],["clk_en","BitIn"],["clk",["Named","coreir.clkIn"]],["data_in_pond_0",["Array",16,"BitIn"]],["data_out_pond_0",["Array",16,"Bit"]],["valid_out_pond","Bit"],["flush","BitIn"]]]],
+          [{"ID":["String","_U48"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},["Record",[["rst_n","BitIn"],["clk_en","BitIn"],["clk",["Named","coreir.clkIn"]],["data_in_pond_0",["Array",16,"BitIn"]],["data_out_pond_0",["Array",16,"Bit"]],["valid_out_pond","Bit"],["flush","BitIn"]]]],
+          [{"ID":["String","_U49"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},["Record",[["rst_n","BitIn"],["clk_en","BitIn"],["clk",["Named","coreir.clkIn"]],["data_in_pond_0",["Array",16,"BitIn"]],["data_out_pond_0",["Array",16,"Bit"]],["valid_out_pond","Bit"],["flush","BitIn"]]]],
+          [{"ID":["String","_U50"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},["Record",[["rst_n","BitIn"],["clk_en","BitIn"],["clk",["Named","coreir.clkIn"]],["data_in_pond_0",["Array",16,"BitIn"]],["data_out_pond_0",["Array",16,"Bit"]],["valid_out_pond","Bit"],["flush","BitIn"]]]],
+          [{"ID":["String","_U51"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},["Record",[["rst_n","BitIn"],["clk_en","BitIn"],["clk",["Named","coreir.clkIn"]],["data_in_pond_0",["Array",16,"BitIn"]],["data_out_pond_0",["Array",16,"Bit"]],["valid_out_pond","Bit"],["flush","BitIn"]]]],
+          [{"ID":["String","_U52"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},["Record",[["rst_n","BitIn"],["clk_en","BitIn"],["clk",["Named","coreir.clkIn"]],["data_in_pond_0",["Array",16,"BitIn"]],["data_out_pond_0",["Array",16,"Bit"]],["valid_out_pond","Bit"],["flush","BitIn"]]]],
+          [{"ID":["String","_U53"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},["Record",[["rst_n","BitIn"],["clk_en","BitIn"],["clk",["Named","coreir.clkIn"]],["data_in_pond_0",["Array",16,"BitIn"]],["data_out_pond_0",["Array",16,"Bit"]],["valid_out_pond","Bit"],["flush","BitIn"]]]],
+          [{"ID":["String","_U54"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},["Record",[["rst_n","BitIn"],["clk_en","BitIn"],["clk",["Named","coreir.clkIn"]],["data_in_pond_0",["Array",16,"BitIn"]],["data_out_pond_0",["Array",16,"Bit"]],["valid_out_pond","Bit"],["flush","BitIn"]]]],
+          [{"ID":["String","_U55"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},["Record",[["rst_n","BitIn"],["clk_en","BitIn"],["clk",["Named","coreir.clkIn"]],["data_in_pond_0",["Array",16,"BitIn"]],["data_out_pond_0",["Array",16,"Bit"]],["valid_out_pond","Bit"],["flush","BitIn"]]]],
+          [{"ID":["String","_U56"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},["Record",[["rst_n","BitIn"],["clk_en","BitIn"],["clk",["Named","coreir.clkIn"]],["data_in_pond_0",["Array",16,"BitIn"]],["data_out_pond_0",["Array",16,"Bit"]],["valid_out_pond","Bit"],["flush","BitIn"]]]],
+          [{"ID":["String","_U57"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},["Record",[["rst_n","BitIn"],["clk_en","BitIn"],["clk",["Named","coreir.clkIn"]],["data_in_pond_0",["Array",16,"BitIn"]],["data_out_pond_0",["Array",16,"Bit"]],["valid_out_pond","Bit"],["flush","BitIn"]]]],
+          [{"ID":["String","_U58"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},["Record",[["rst_n","BitIn"],["clk_en","BitIn"],["clk",["Named","coreir.clkIn"]],["data_in_pond_0",["Array",16,"BitIn"]],["data_out_pond_0",["Array",16,"Bit"]],["valid_out_pond","Bit"],["flush","BitIn"]]]],
+          [{"ID":["String","_U59"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},["Record",[["rst_n","BitIn"],["clk_en","BitIn"],["clk",["Named","coreir.clkIn"]],["data_in_pond_0",["Array",16,"BitIn"]],["data_out_pond_0",["Array",16,"Bit"]],["valid_out_pond","Bit"],["flush","BitIn"]]]],
+          [{"ID":["String","_U60"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},["Record",[["rst_n","BitIn"],["clk_en","BitIn"],["clk",["Named","coreir.clkIn"]],["data_in_pond_0",["Array",16,"BitIn"]],["data_out_pond_0",["Array",16,"Bit"]],["valid_out_pond","Bit"],["flush","BitIn"]]]],
+          [{"ID":["String","_U61"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},["Record",[["rst_n","BitIn"],["clk_en","BitIn"],["clk",["Named","coreir.clkIn"]],["data_in_pond_0",["Array",16,"BitIn"]],["data_out_pond_0",["Array",16,"Bit"]],["valid_out_pond","Bit"],["flush","BitIn"]]]],
+          [{"ID":["String","_U62"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},["Record",[["rst_n","BitIn"],["clk_en","BitIn"],["clk",["Named","coreir.clkIn"]],["data_in_pond_0",["Array",16,"BitIn"]],["data_out_pond_0",["Array",16,"Bit"]],["valid_out_pond","Bit"],["flush","BitIn"]]]],
+          [{"ID":["String","_U63"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},["Record",[["rst_n","BitIn"],["clk_en","BitIn"],["clk",["Named","coreir.clkIn"]],["data_in_pond_0",["Array",16,"BitIn"]],["data_out_pond_0",["Array",16,"Bit"]],["valid_out_pond","Bit"],["flush","BitIn"]]]],
+          [{"ID":["String","_U64"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},["Record",[["rst_n","BitIn"],["clk_en","BitIn"],["clk",["Named","coreir.clkIn"]],["data_in_pond_0",["Array",16,"BitIn"]],["data_out_pond_0",["Array",16,"Bit"]],["valid_out_pond","Bit"],["flush","BitIn"]]]],
+          [{"ID":["String","_U65"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},["Record",[["rst_n","BitIn"],["clk_en","BitIn"],["clk",["Named","coreir.clkIn"]],["data_in_pond_0",["Array",16,"BitIn"]],["data_out_pond_0",["Array",16,"Bit"]],["valid_out_pond","Bit"],["flush","BitIn"]]]],
+          [{"ID":["String","_U66"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},["Record",[["rst_n","BitIn"],["clk_en","BitIn"],["clk",["Named","coreir.clkIn"]],["data_in_pond_0",["Array",16,"BitIn"]],["data_out_pond_0",["Array",16,"Bit"]],["valid_out_pond","Bit"],["flush","BitIn"]]]],
+          [{"ID":["String","_U67"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},["Record",[["rst_n","BitIn"],["clk_en","BitIn"],["clk",["Named","coreir.clkIn"]],["data_in_pond_0",["Array",16,"BitIn"]],["data_out_pond_0",["Array",16,"Bit"]],["valid_out_pond","Bit"],["flush","BitIn"]]]],
+          [{"ID":["String","_U68"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},["Record",[["rst_n","BitIn"],["clk_en","BitIn"],["clk",["Named","coreir.clkIn"]],["data_in_pond_0",["Array",16,"BitIn"]],["data_out_pond_0",["Array",16,"Bit"]],["valid_out_pond","Bit"],["flush","BitIn"]]]],
+          [{"ID":["String","_U69"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},["Record",[["rst_n","BitIn"],["clk_en","BitIn"],["clk",["Named","coreir.clkIn"]],["data_in_pond_0",["Array",16,"BitIn"]],["data_out_pond_0",["Array",16,"Bit"]],["valid_out_pond","Bit"],["flush","BitIn"]]]],
+          [{"ID":["String","_U70"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},["Record",[["rst_n","BitIn"],["clk_en","BitIn"],["clk",["Named","coreir.clkIn"]],["data_in_pond_0",["Array",16,"BitIn"]],["data_out_pond_0",["Array",16,"Bit"]],["valid_out_pond","Bit"],["flush","BitIn"]]]],
+          [{"ID":["String","_U71"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},["Record",[["rst_n","BitIn"],["clk_en","BitIn"],["clk",["Named","coreir.clkIn"]],["data_in_pond_0",["Array",16,"BitIn"]],["data_out_pond_0",["Array",16,"Bit"]],["valid_out_pond","Bit"],["flush","BitIn"]]]],
+          [{"ID":["String","_U72"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},["Record",[["rst_n","BitIn"],["clk_en","BitIn"],["clk",["Named","coreir.clkIn"]],["data_in_pond_0",["Array",16,"BitIn"]],["data_out_pond_0",["Array",16,"Bit"]],["valid_out_pond","Bit"],["flush","BitIn"]]]],
+          [{"ID":["String","_U73"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},["Record",[["rst_n","BitIn"],["clk_en","BitIn"],["clk",["Named","coreir.clkIn"]],["data_in_pond_0",["Array",16,"BitIn"]],["data_out_pond_0",["Array",16,"Bit"]],["valid_out_pond","Bit"],["flush","BitIn"]]]],
+          [{"ID":["String","_U74"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},["Record",[["rst_n","BitIn"],["clk_en","BitIn"],["clk",["Named","coreir.clkIn"]],["data_in_pond_0",["Array",16,"BitIn"]],["data_out_pond_0",["Array",16,"Bit"]],["valid_out_pond","Bit"],["flush","BitIn"]]]],
+          [{"ID":["String","_U75"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},["Record",[["rst_n","BitIn"],["clk_en","BitIn"],["clk",["Named","coreir.clkIn"]],["data_in_pond_0",["Array",16,"BitIn"]],["data_out_pond_0",["Array",16,"Bit"]],["valid_out_pond","Bit"],["flush","BitIn"]]]],
+          [{"ID":["String","_U76"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},["Record",[["rst_n","BitIn"],["clk_en","BitIn"],["clk",["Named","coreir.clkIn"]],["data_in_pond_0",["Array",16,"BitIn"]],["data_out_pond_0",["Array",16,"Bit"]],["valid_out_pond","Bit"],["flush","BitIn"]]]],
+          [{"ID":["String","_U77"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},["Record",[["rst_n","BitIn"],["clk_en","BitIn"],["clk",["Named","coreir.clkIn"]],["data_in_pond_0",["Array",16,"BitIn"]],["data_out_pond_0",["Array",16,"Bit"]],["valid_out_pond","Bit"],["flush","BitIn"]]]],
+          [{"ID":["String","_U78"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},["Record",[["rst_n","BitIn"],["clk_en","BitIn"],["clk",["Named","coreir.clkIn"]],["data_in_pond_0",["Array",16,"BitIn"]],["data_out_pond_0",["Array",16,"Bit"]],["valid_out_pond","Bit"],["flush","BitIn"]]]],
+          [{"ID":["String","_U79"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},["Record",[["rst_n","BitIn"],["clk_en","BitIn"],["clk",["Named","coreir.clkIn"]],["data_in_pond_0",["Array",16,"BitIn"]],["data_out_pond_0",["Array",16,"Bit"]],["valid_out_pond","Bit"],["flush","BitIn"]]]],
+          [{"ID":["String","_U80"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},["Record",[["rst_n","BitIn"],["clk_en","BitIn"],["clk",["Named","coreir.clkIn"]],["data_in_pond_0",["Array",16,"BitIn"]],["data_out_pond_0",["Array",16,"Bit"]],["valid_out_pond","Bit"],["flush","BitIn"]]]],
+          [{"ID":["String","_U81"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},["Record",[["rst_n","BitIn"],["clk_en","BitIn"],["clk",["Named","coreir.clkIn"]],["data_in_pond_0",["Array",16,"BitIn"]],["data_out_pond_0",["Array",16,"Bit"]],["valid_out_pond","Bit"],["flush","BitIn"]]]],
+          [{"ID":["String","_U82"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},["Record",[["rst_n","BitIn"],["clk_en","BitIn"],["clk",["Named","coreir.clkIn"]],["data_in_pond_0",["Array",16,"BitIn"]],["data_out_pond_0",["Array",16,"Bit"]],["valid_out_pond","Bit"],["flush","BitIn"]]]],
+          [{"ID":["String","_U83"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},["Record",[["rst_n","BitIn"],["clk_en","BitIn"],["clk",["Named","coreir.clkIn"]],["data_in_pond_0",["Array",16,"BitIn"]],["data_out_pond_0",["Array",16,"Bit"]],["valid_out_pond","Bit"],["flush","BitIn"]]]],
+          [{"ID":["String","_U84"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},["Record",[["rst_n","BitIn"],["clk_en","BitIn"],["clk",["Named","coreir.clkIn"]],["data_in_pond_0",["Array",16,"BitIn"]],["data_out_pond_0",["Array",16,"Bit"]],["valid_out_pond","Bit"],["flush","BitIn"]]]],
+          [{"ID":["String","_U85"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},["Record",[["rst_n","BitIn"],["clk_en","BitIn"],["clk",["Named","coreir.clkIn"]],["data_in_pond_0",["Array",16,"BitIn"]],["data_out_pond_0",["Array",16,"Bit"]],["valid_out_pond","Bit"],["flush","BitIn"]]]],
+          [{"ID":["String","_U86"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},["Record",[["rst_n","BitIn"],["clk_en","BitIn"],["clk",["Named","coreir.clkIn"]],["data_in_pond_0",["Array",16,"BitIn"]],["data_out_pond_0",["Array",16,"Bit"]],["valid_out_pond","Bit"],["flush","BitIn"]]]],
+          [{"ID":["String","_U87"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},["Record",[["rst_n","BitIn"],["clk_en","BitIn"],["clk",["Named","coreir.clkIn"]],["data_in_pond_0",["Array",16,"BitIn"]],["data_out_pond_0",["Array",16,"Bit"]],["valid_out_pond","Bit"],["flush","BitIn"]]]],
+          [{"ID":["String","_U88"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},["Record",[["rst_n","BitIn"],["clk_en","BitIn"],["clk",["Named","coreir.clkIn"]],["data_in_pond_0",["Array",16,"BitIn"]],["data_out_pond_0",["Array",16,"Bit"]],["valid_out_pond","Bit"],["flush","BitIn"]]]],
+          [{"ID":["String","_U89"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},["Record",[["rst_n","BitIn"],["clk_en","BitIn"],["clk",["Named","coreir.clkIn"]],["data_in_pond_0",["Array",16,"BitIn"]],["data_out_pond_0",["Array",16,"Bit"]],["valid_out_pond","Bit"],["flush","BitIn"]]]],
+          [{"ID":["String","_U90"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},["Record",[["rst_n","BitIn"],["clk_en","BitIn"],["clk",["Named","coreir.clkIn"]],["data_in_pond_0",["Array",16,"BitIn"]],["data_out_pond_0",["Array",16,"Bit"]],["valid_out_pond","Bit"],["flush","BitIn"]]]],
+          [{"ID":["String","_U91"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},["Record",[["rst_n","BitIn"],["clk_en","BitIn"],["clk",["Named","coreir.clkIn"]],["data_in_pond_0",["Array",16,"BitIn"]],["data_out_pond_0",["Array",16,"Bit"]],["valid_out_pond","Bit"],["flush","BitIn"]]]],
+          [{"ID":["String","_U92"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},["Record",[["rst_n","BitIn"],["clk_en","BitIn"],["clk",["Named","coreir.clkIn"]],["data_in_pond_0",["Array",16,"BitIn"]],["data_out_pond_0",["Array",16,"Bit"]],["valid_out_pond","Bit"],["flush","BitIn"]]]]
+        ]
+      ]
+    }
+  },
+  "corebit":{
+    "modules":{
+      "const":{
+        "type":["Record",[
+          ["out","Bit"]
+        ]],
+        "modparams":{"value":"Bool"}
+      }
+    }
+  },
+  "coreir":{
+    "generators":{
+      "add":{
+        "typegen":"coreir.binary",
+        "genparams":{"width":"Int"},
+        "modules":[
+          [
+            {"width":["Int",16]},
+            {
+              "type":["Record",[
+                ["in0",["Array",16,"BitIn"]],
+                ["in1",["Array",16,"BitIn"]],
+                ["out",["Array",16,"Bit"]]
+              ]]
+            }
+          ]
+        ]
+      },
+      "const":{
+        "typegen":"coreir.singleOutType",
+        "genparams":{"width":"Int"},
+        "modules":[
+          [
+            {"width":["Int",16]},
+            {
+              "type":["Record",[
+                ["out",["Array",16,"Bit"]]
+              ]],
+              "modparams":{"value":["BitVector",16]}
+            }
+          ]
+        ]
+      }
+    },
+    "typegens":{
+      "binary":[
+        {"width":"Int"},
+        "sparse",
+        [
+          [{"width":["Int",16]},["Record",[["in0",["Array",16,"BitIn"]],["in1",["Array",16,"BitIn"]],["out",["Array",16,"Bit"]]]]]
+        ]
+      ],
+      "singleOutType":[
+        {"width":"Int"},
+        "sparse",
+        [
+          [{"width":["Int",16]},["Record",[["out",["Array",16,"Bit"]]]]]
+        ]
+      ]
+    }
+  },
   "global":{
     "modules":{
       "affine_controller__U102":{
@@ -1476,78 +2548,6 @@
           ["self.hw_twi_stencil_op_hcompute_hw_twi_global_wrapper_stencil_read_en","op_hcompute_hw_twi_global_wrapper_stencil_read_start.out"]
         ]
       },
-      "hcompute_f3_0_stencil":{
-        "type":["Record",[
-          ["out_f3_0_stencil",["Array",16,"Bit"]],
-          ["in0_hw_input_global_wrapper_stencil",["Array",4,["Array",16,"BitIn"]]],
-          ["in1_hw_twi_global_wrapper_stencil",["Array",4,["Array",16,"BitIn"]]],
-          ["f3_s0_x_xo_3",["Array",16,"BitIn"]]
-        ]]
-      },
-      "hcompute_f3_1_stencil":{
-        "type":["Record",[
-          ["out_f3_1_stencil",["Array",16,"Bit"]],
-          ["in0_hw_input_global_wrapper_stencil",["Array",4,["Array",16,"BitIn"]]],
-          ["in1_hw_twi_global_wrapper_stencil",["Array",4,["Array",16,"BitIn"]]],
-          ["f3_s0_x_xo_3",["Array",16,"BitIn"]]
-        ]]
-      },
-      "hcompute_f4_0_stencil":{
-        "type":["Record",[
-          ["out_f4_0_stencil",["Array",16,"Bit"]],
-          ["in0_f3_0_stencil",["Array",2,["Array",16,"BitIn"]]],
-          ["in1_f3_1_stencil",["Array",2,["Array",16,"BitIn"]]],
-          ["in2_hw_twi_global_wrapper_stencil",["Array",4,["Array",16,"BitIn"]]],
-          ["f4_s0_x_xo_3",["Array",16,"BitIn"]]
-        ]]
-      },
-      "hcompute_f4_1_stencil":{
-        "type":["Record",[
-          ["out_f4_1_stencil",["Array",16,"Bit"]],
-          ["in0_f3_0_stencil",["Array",2,["Array",16,"BitIn"]]],
-          ["in1_f3_1_stencil",["Array",2,["Array",16,"BitIn"]]],
-          ["in2_hw_twi_global_wrapper_stencil",["Array",4,["Array",16,"BitIn"]]],
-          ["f4_s0_x_xo_3",["Array",16,"BitIn"]]
-        ]]
-      },
-      "hcompute_f5_0_stencil":{
-        "type":["Record",[
-          ["out_f5_0_stencil",["Array",16,"Bit"]],
-          ["in0_f4_0_stencil",["Array",2,["Array",16,"BitIn"]]],
-          ["in1_f4_1_stencil",["Array",2,["Array",16,"BitIn"]]],
-          ["in2_hw_twi_global_wrapper_stencil",["Array",4,["Array",16,"BitIn"]]],
-          ["f5_s0_x_xo_3",["Array",16,"BitIn"]]
-        ]]
-      },
-      "hcompute_f5_1_stencil":{
-        "type":["Record",[
-          ["out_f5_1_stencil",["Array",16,"Bit"]],
-          ["in0_f4_0_stencil",["Array",2,["Array",16,"BitIn"]]],
-          ["in1_f4_1_stencil",["Array",2,["Array",16,"BitIn"]]],
-          ["in2_hw_twi_global_wrapper_stencil",["Array",4,["Array",16,"BitIn"]]],
-          ["f5_s0_x_xo_3",["Array",16,"BitIn"]]
-        ]]
-      },
-      "hcompute_hw_input_global_wrapper_stencil":{
-        "type":["Record",[
-          ["out_hw_input_global_wrapper_stencil",["Array",16,"Bit"]],
-          ["in0_hw_input_stencil",["Array",1,["Array",16,"BitIn"]]]
-        ]]
-      },
-      "hcompute_hw_output_stencil":{
-        "type":["Record",[
-          ["out_hw_output_stencil",["Array",16,"Bit"]],
-          ["in0_f5_0_stencil",["Array",1,["Array",16,"BitIn"]]],
-          ["in1_f5_1_stencil",["Array",1,["Array",16,"BitIn"]]],
-          ["hw_output_s0_y_yi",["Array",16,"BitIn"]]
-        ]]
-      },
-      "hcompute_hw_twi_global_wrapper_stencil":{
-        "type":["Record",[
-          ["out_hw_twi_global_wrapper_stencil",["Array",16,"Bit"]],
-          ["in0_hw_twi_stencil",["Array",1,["Array",16,"BitIn"]]]
-        ]]
-      },
       "hw_input_global_wrapper_stencil_ub":{
         "type":["Record",[
           ["clk",["Named","coreir.clkIn"]],
@@ -2502,30 +3502,37 @@
           ["self.out","self.in"]
         ]
       }
-    },
+    }
+  },
+  "mantle":{
     "generators":{
-      "delay_tile":{
-        "typegen":"global.delay_tile_TG",
-        "genparams":{"delay":"Int"}
-      },
-      "raw_dual_port_sram_tile":{
-        "typegen":"global.raw_dual_port_sram_TG",
-        "genparams":{"depth":"Int"}
-      },
-      "raw_quad_port_memtile":{
-        "typegen":"global.raw_quad_port_memtile_TG",
-        "genparams":{"depth":"Int"}
-      },
-      "tahoe":{
-        "typegen":"global.tahoe_TG",
-        "genparams":{"depth":"Int"}
+      "reg":{
+        "typegen":"mantle.regType",
+        "genparams":{"has_clr":"Bool", "has_en":"Bool", "has_rst":"Bool", "width":"Int"},
+        "modules":[
+          [
+            {"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            {
+              "type":["Record",[
+                ["in",["Array",16,"BitIn"]],
+                ["clk",["Named","coreir.clkIn"]],
+                ["out",["Array",16,"Bit"]]
+              ]],
+              "modparams":{"init":["BitVector",16]},
+              "defaultmodargs":{"init":[["BitVector",16],"16'h0000"]}
+            }
+          ]
+        ]
       }
     },
     "typegens":{
-      "delay_tile_TG":[{"delay":"Int"},"implicit"],
-      "raw_dual_port_sram_TG":[{"depth":"Int"},"implicit"],
-      "raw_quad_port_memtile_TG":[{"depth":"Int"},"implicit"],
-      "tahoe_TG":[{"depth":"Int"},"implicit"]
+      "regType":[
+        {"has_clr":"Bool", "has_en":"Bool", "has_rst":"Bool", "width":"Int"},
+        "sparse",
+        [
+          [{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},["Record",[["in",["Array",16,"BitIn"]],["clk",["Named","coreir.clkIn"]],["out",["Array",16,"Bit"]]]]]
+        ]
+      ]
     }
   }
 }
