@@ -3630,8 +3630,12 @@ void generate_coreir(CodegenOptions& options,
   auto ns = context->getNamespace("global");
 
   //Change into serializetofile
-  context->setTop(prg_mod);
-  if(!serializeToFile(context, options.dir + prg.name + ".json")) {
+  //context->setTop(prg_mod);
+  //if(!serializeToFile(context, options.dir + prg.name + ".json")) {
+  //  cout << "Could not save ubuffer coreir" << endl;
+  //  context->die();
+  //}
+  if(!saveToFile(ns, options.dir + prg.name + ".json", prg_mod)) {
     cout << "Could not save ubuffer coreir" << endl;
     context->die();
   }

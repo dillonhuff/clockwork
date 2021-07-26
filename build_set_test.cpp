@@ -14946,14 +14946,15 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   //test_apps.push_back(resnet_output_stationary_i16());
   //test_apps.push_back(resnet_output_stationary_i8());
   //test_apps.push_back(resnet_glb());
-  test_apps.push_back(glb_channel_reduction());
+  //test_apps.push_back(glb_channel_reduction());
+  test_apps.push_back(glb_conv33());
   test_apps.push_back(counter());
-  //test_apps.push_back(glb_conv33());
   test_apps.push_back(camera_pipeline_new());
   test_apps.push_back(rom());
   test_apps.push_back(unsharp_new());
   test_apps.push_back(conv_3_3());
   test_apps.push_back(laplacian_pyramid());
+  test_apps.push_back(laplacian_pyramid_docker());
   test_apps.push_back(gaussian());
   test_apps.push_back(down_sample());
   test_apps.push_back(cascade());
