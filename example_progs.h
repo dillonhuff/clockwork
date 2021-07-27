@@ -93,6 +93,10 @@ prog resnet_glb();
 prog resnet_output_stationary_i16();
 prog resnet_output_stationary_i8();
 
+//Full layer simulation
+prog resnet_output_stationary();
+prog resnet_output_stationary_small();
+
 //pond resnet test
 prog complex_mem_pond_rolled();
 prog complex_mem_pond();

@@ -1839,6 +1839,7 @@ void add_reuse_buffer_no_delta(const std::string& level, const std::string& buff
 
 op* find_coarse_grained_pipeline_loop(op* lp);
 op* find_coarse_grained_pipeline_loop(op* lp, prog& prg);
+void find_coarse_grained_pipeline_loops(op* lp, vector<op*> & cgpl_lps, prog& prg);
 
 vector<pair<string, pair<string, int> >> determine_output_shift_reg_map(
     prog& prg,

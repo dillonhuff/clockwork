@@ -2312,6 +2312,9 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
   }
 
   for (auto& buf : buffers) {
+    //if (!contains(buf.first, "output_cgra")) {
+    //    continue;
+    //}
     if (!prg.is_boundary(buf.first)) {
       //all the memory optimization pass goes here
       auto impl = generate_optimized_memory_implementation(options, buf.second, prg, hwinfo);

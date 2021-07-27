@@ -14937,17 +14937,15 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   //test_apps.push_back(demosaic_complex());
   //test_apps.push_back(fft8_unroll8());
   //test_apps.push_back(camera_pipeline_trunc());
-  //
 
-  //test_apps.push_back(conv_3_3_rolled());
-
-  //test_apps.push_back(up_sample());
-  //test_apps.push_back(resnet_one_input());
+  //GLB tests
   //test_apps.push_back(resnet_output_stationary_i16());
   //test_apps.push_back(resnet_output_stationary_i8());
-  //test_apps.push_back(resnet_glb());
+  test_apps.push_back(resnet_output_stationary_small());
   //test_apps.push_back(glb_channel_reduction());
   test_apps.push_back(glb_conv33());
+
+  //CGRA tests
   test_apps.push_back(counter());
   test_apps.push_back(camera_pipeline_new());
   test_apps.push_back(rom());
@@ -14970,6 +14968,7 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
 
   //Big applications
   test_apps.push_back(mobilenet_unrolled());
+  //test_apps.push_back(resnet_one_input());
   //test_apps.push_back(resnet88());
   //test_apps.push_back(resnet88_chain());
 
