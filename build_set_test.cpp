@@ -14944,7 +14944,7 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   //test_apps.push_back(resnet_output_stationary_tiny());
   //test_apps.push_back(resnet_output_stationary_small());
   //test_apps.push_back(resnet_output_stationary_full());
-  //test_apps.push_back(glb_channel_reduction());
+  test_apps.push_back(glb_channel_reduction());
   test_apps.push_back(glb_db());
   //test_apps.push_back(glb_conv33());
 
@@ -18544,7 +18544,7 @@ CodegenOptions garnet_codegen_single_port_with_addrgen_options(prog& prg, string
   //coreIR codegen options
   options.rtl_options.use_prebuilt_memory = true;
   options.rtl_options.use_external_controllers = false;
-  options.rtl_options.double_buffer_optimization = true;
+  options.rtl_options.double_buffer_optimization = false;
   options.inline_vectorization = true;
   options.pass_through_valid= true;
   options.dir = dir + "/" + prg.name + "/";

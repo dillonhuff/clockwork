@@ -2903,6 +2903,43 @@ class SubstructGLBLatency: public CoreIR::InstanceGraphPass {
   }
 };
 
+class ReplaceGLBValid: public CoreIR::InstancePass {
+    public:
+    json valid_config;
+    int latency;
+ReplaceGLBValid(GetGLBConfig* glb_pass):
+    InstancePass(
+            "replaceglbvalid",
+            "Replace output affine port controller using cgra to glb config"
+            ), valid_config(glb_pass->cgra2glb), latency(glb_pass->latency) {}
+bool runOnInstance(Instance* inst) {
+    //define the pass here
+    if(latency == 0)
+        return false;
+    if (inst->getModuleRef()->isGenerated())
+    if (inst->getModuleRef()->getGenerator()->getName() == "Mem_amber" &&
+            inst->canSel("stencil_valid")) {
+      auto conns = inst->sel("stencil_valid")->getConnectedWireables();
+      bool connect2IO = false;
+      for (auto conn: conns) {
+          auto inst_conn = dyn_cast<Instance>(conn->getTopParent());
+          if (inst_conn->getModuleRef()->getRefName() == "cgralib.BitIO") {
+              cout << inst_conn->getModuleRef()->toString() << endl;
+              connect2IO = true;
+              break;
+          }
+      }
+      if (connect2IO) {
+          //valid_config.at("cycle_starting_addr")[0] = (int)valid_config.at("cycle_starting_addr")[0] - latency;
+          inst->getMetaData()["config"]["stencil_valid"] = valid_config;
+          return true;
+      }
+    }
+    return false;
+}
+
+};
+
 class ReplaceCoarseGrainedAffCtrl: public CoreIR::InstancePass {
     public:
 ReplaceCoarseGrainedAffCtrl():
@@ -3440,12 +3477,14 @@ void garnet_map_module(Module* top, map<string, UBuffer> & buffers, bool garnet_
   c->runPasses({"removeunconnected"});
   c->runPasses({"cullgraph"});
   c->runPasses({"removewires"});
-  //addIOs(c,top);
-  //
   addIOsWithGLBConfig(c, top, buffers, glb_pass);
   c->runPasses({"cullgraph"});
   c->addPass(new CustomFlatten);
   c->runPasses({"customflatten"});
+
+  //Change the stencil valid signal to cgra to glb
+  c->addPass(new ReplaceGLBValid(glb_pass));
+  c->runPasses({"replaceglbvalid"});
   if (garnet_syntax_trans) {
 
     c->addPass(new MapperPasses::MemInitCopy);
