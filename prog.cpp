@@ -8272,7 +8272,25 @@ void generate_banks_garnet(CodegenOptions& options, UBuffer& buf, UBufferImpl& i
         //    buf.add_bank_between(input_sets, output_sets, bnk_info);
         //}
       }
-    } else {
+    }
+    //FIXME: ASPLOSHACK
+    //This is a hack , we do not know which hierarchy of memory to map at this point
+    else if (buf.num_in_ports() <= options.mem_hierarchy.at("mem").get_inpt_num() &&
+            buf.num_out_ports() <= options.mem_hierarchy.at("mem").get_outpt_num()) {
+        auto rddom = buf.global_range();
+        auto inpts = buf.get_in_ports();
+        auto outpts = buf.get_out_ports();
+        std::set<string> in_port_set = std::set<string>(inpts.begin(), inpts.end());
+        std::set<string> out_port_set = std::set<string>(outpts.begin(), outpts.end());
+        auto bnk_info = buf.compute_bank_info(in_port_set, out_port_set);
+        buf.add_bank_between(in_port_set, out_port_set, bnk_info);
+        int impl_bank = impl.add_new_bank_between(in_port_set, out_port_set, to_set(buf.global_range()));
+        cout << "IO of ubuffer: " << in_port_set << out_port_set << endl;
+        impl.sequentially_assign_inpt(buf.sort_pt_by_bundle(in_port_set), impl_bank);
+        impl.sequentially_assign_outpt(buf.sort_pt_by_bundle(out_port_set), impl_bank);
+    }
+    else {
+
         cout << "Use exhaustive banking! " << endl;
         buf.generate_banks_and_merge(options);
         buf.parse_exhaustive_banking_into_impl(impl);

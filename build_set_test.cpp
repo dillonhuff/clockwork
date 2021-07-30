@@ -14941,9 +14941,12 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   //GLB tests
   //test_apps.push_back(resnet_output_stationary_i16());
   //test_apps.push_back(resnet_output_stationary_i8());
-  test_apps.push_back(resnet_output_stationary_small());
+  //test_apps.push_back(resnet_output_stationary_tiny());
+  //test_apps.push_back(resnet_output_stationary_small());
+  //test_apps.push_back(resnet_output_stationary_full());
   //test_apps.push_back(glb_channel_reduction());
-  test_apps.push_back(glb_conv33());
+  test_apps.push_back(glb_db());
+  //test_apps.push_back(glb_conv33());
 
   //CGRA tests
   test_apps.push_back(counter());
@@ -18214,17 +18217,20 @@ void garnet_single_port_ram_schedule(CodegenOptions& options, schedule_info& sch
   tighten_iis(sched, prg);
 
 
-  //adjust_coarse_grained_loop_iis(sched, prg);
-  //adjust_coarse_grained_loop_delays_sequentially(sched, prg);
+  //only adjust coarse grained ii while optimize double buffer
+  if (options.rtl_options.double_buffer_optimization) {
+    adjust_coarse_grained_loop_iis(sched, prg);
+    adjust_coarse_grained_loop_delays_sequentially(sched, prg);
+  }
 
   //adjust_outer_delays(sched, prg);
   adjust_outer_delays_sequentially(sched, prg);
 
   auto op_sched = op_start_times_map(sched, prg);
-  cout << "\tFinal schedule : " << str(op_sched)  << endl;
 
   adjust_schedule_forward(sched, prg, 0);
   sanity_check_hw_schedule(sched, prg);
+  cout << "\tFinal schedule : " << str(op_sched)  << endl;
   return;
 }
 
@@ -18538,6 +18544,7 @@ CodegenOptions garnet_codegen_single_port_with_addrgen_options(prog& prg, string
   //coreIR codegen options
   options.rtl_options.use_prebuilt_memory = true;
   options.rtl_options.use_external_controllers = false;
+  options.rtl_options.double_buffer_optimization = true;
   options.inline_vectorization = true;
   options.pass_through_valid= true;
   options.dir = dir + "/" + prg.name + "/";
@@ -18663,7 +18670,7 @@ bool all_operations_assigned_to_resources(schedule_info& sched, prog& prg) {
 void sanity_check_hw_schedule(schedule_info& sched, prog& prg) {
   assert(all_ops_scheduled(sched, prg));
   //assert(all_operations_assigned_to_resources(sched, prg));
-  //assert(no_violated_resource_assignments(sched, prg));
+  assert(no_violated_resource_assignments(sched, prg));
   assert(no_violated_cycle_accurate_dependencies(sched, prg));
   //assert(schedule_bounds_fit_controller_bitwidth(16, sched, prg));
 }
@@ -18931,8 +18938,10 @@ void compile_for_garnet_single_port_mem(prog& prg,
   options.debug_options.traceWave = true;
   options.add_memory_hierarchy("mem");
   options.add_memory_hierarchy("glb");
-  if (multi_level_mem)
-      options.add_memory_hierarchy("regfile");
+  if (multi_level_mem) {
+    options.add_memory_hierarchy("regfile");
+    options.rtl_options.double_buffer_optimization = false;
+  }
   options.emit_smt_stream = gen_smt_stream;
   options.config_gen_only = config_gen_only;
   //if (multi_sram)

@@ -83,13 +83,14 @@ struct RTLOptions {
   bool pack_controllers_in_memtiles;
   bool use_prebuilt_memory;
   bool use_pipelined_compute_units;
+  bool double_buffer_optimization;
   int max_inpt, max_outpt;
   TargetTile target_tile;
   global_signals_policy global_signals;
   int hls_clock_target_Hz;
 
   RTLOptions() : use_external_controllers(true), pack_controllers_in_memtiles(false),
-  use_pipelined_compute_units(false),
+  use_pipelined_compute_units(false), double_buffer_optimization(false),
     max_inpt(1), max_outpt(1),
     target_tile(TARGET_TILE_DUAL_SRAM_WITH_ADDRGEN), use_prebuilt_memory(false),
     hls_clock_target_Hz(250000000) {}
@@ -164,6 +165,15 @@ struct LakeCollateral {
             c = std::max(c, it.second);
         }
         return c * max_chaining;
+    }
+
+    int get_single_tile_capacity() const {
+        int c = 0;
+        for (auto it: capacity) {
+            c = std::max(c, it.second)
+                * word_width.at(it.first);
+        }
+        return c;
     }
 
     int get_inpt_num() {
