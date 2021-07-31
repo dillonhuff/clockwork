@@ -1749,6 +1749,18 @@ struct schedule_info {
     return last_delay;
   }
 
+  int doublebuffer_update_delay(op* op) {
+    assert(op->is_loop());
+    int last_delay = 0;
+    for (auto c : op->children) {
+      int delay = II(c) * c->trip_count();
+      if (delay > last_delay) {
+        last_delay = delay;
+      }
+    }
+    return last_delay;
+  }
+
   int total_latency(op* op);
 
   int instance_latency(op* op);

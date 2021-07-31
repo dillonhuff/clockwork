@@ -14944,7 +14944,7 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   //test_apps.push_back(resnet_output_stationary_tiny());
   //test_apps.push_back(resnet_output_stationary_small());
   //test_apps.push_back(resnet_output_stationary_full());
-  test_apps.push_back(glb_channel_reduction());
+  //test_apps.push_back(glb_channel_reduction());
   test_apps.push_back(glb_db());
   //test_apps.push_back(glb_conv33());
 
@@ -17495,6 +17495,38 @@ void tighten_iis(schedule_info& sched, prog& prg) {
   }
 }
 
+void tighten_coarse_grained_iis(schedule_info& sched, prog& prg) {
+  bool tightened = true;
+  vector<op*> cgpl_lps;
+  find_coarse_grained_pipeline_loops(prg.root, cgpl_lps, prg);
+  while (tightened) {
+    tightened = false;
+    for (auto loop : prg.all_loops()) {
+      auto lower_ops = loop->descendants();
+      bool outside_cgpl = false;
+      for(op* lp: cgpl_lps){
+        if(elem(lp, lower_ops)) {
+          outside_cgpl = true;
+          break;
+        }
+      }
+      if (!outside_cgpl)
+          continue;
+      int ii = sched.II(loop);
+      if (ii != 1) {
+        int L = sched.doublebuffer_update_delay(loop);
+        cout << "Double buffer update delay  for loop: " << loop->name << ": " << L << endl;
+        if (ii > L) {
+          cout << "Tightening ii " << loop->name << " from " << ii << " to " << L << endl;
+          sched.loop_iis[loop->name] = max(L, 1);
+          tightened = true;
+          break;
+        }
+      }
+    }
+  }
+}
+
 
 void relax_inner_iis(schedule_info& sched, op* loop, umap* read_map, int fetch_width) {
 
@@ -17670,6 +17702,7 @@ void adjust_outer_delays_sequentially(schedule_info& sched, prog& prg) {
     cout << "TP: " << (lp)->trip_count() << endl;
     for (auto prod:  get_producers(name, prg))
         cout << "\tprod: " << prod << endl;
+    //This only works for the schedule without pipeline should change into total latency
     coarse_pipeline_II[name] = sched.II(lp) * lp->trip_count();
     sched.op_offset_within_parent[lp] = 0;
   }
@@ -18221,16 +18254,18 @@ void garnet_single_port_ram_schedule(CodegenOptions& options, schedule_info& sch
   if (options.rtl_options.double_buffer_optimization) {
     adjust_coarse_grained_loop_iis(sched, prg);
     adjust_coarse_grained_loop_delays_sequentially(sched, prg);
+    tighten_coarse_grained_iis(sched, prg);
+  } else {
+    //adjust_outer_delays(sched, prg);
+    adjust_outer_delays_sequentially(sched, prg);
   }
 
-  //adjust_outer_delays(sched, prg);
-  adjust_outer_delays_sequentially(sched, prg);
 
   auto op_sched = op_start_times_map(sched, prg);
+  cout << "\tFinal schedule : " << str(op_sched)  << endl;
 
   adjust_schedule_forward(sched, prg, 0);
   sanity_check_hw_schedule(sched, prg);
-  cout << "\tFinal schedule : " << str(op_sched)  << endl;
   return;
 }
 
@@ -18544,7 +18579,7 @@ CodegenOptions garnet_codegen_single_port_with_addrgen_options(prog& prg, string
   //coreIR codegen options
   options.rtl_options.use_prebuilt_memory = true;
   options.rtl_options.use_external_controllers = false;
-  options.rtl_options.double_buffer_optimization = false;
+  options.rtl_options.double_buffer_optimization = true;
   options.inline_vectorization = true;
   options.pass_through_valid= true;
   options.dir = dir + "/" + prg.name + "/";
