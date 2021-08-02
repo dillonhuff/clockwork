@@ -95,12 +95,15 @@ prog resnet_glb();
 //resnet without input tiling
 prog resnet_output_stationary_i16();
 prog resnet_output_stationary_i8();
+prog resnet_init_unroll();
+prog resnet_init_unroll_tile();
 
 //Full layer simulation
 prog resnet_output_stationary_small();
 prog resnet_output_stationary_tiny();
 prog resnet_output_stationary();
 prog resnet_output_stationary_full();
+
 
 //pond resnet test
 prog complex_mem_pond_rolled();

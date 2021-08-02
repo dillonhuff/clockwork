@@ -11611,6 +11611,12 @@ void blur_and_downsample_test() {
 void playground() {
     {
       isl_ctx* ctx = isl_ctx_alloc();
+      auto acc_0 = isl_map_read_from_str(ctx,"{ op[i0, i1]-> [4000 + i1]: i0=0 and i1=0}");
+      auto aff = get_aff(acc_0);
+      assert(false);
+    }
+    {
+      isl_ctx* ctx = isl_ctx_alloc();
       auto acc_0 = isl_map_read_from_str(ctx,"{ op[i0, i1]-> data[i0 + i1]: 0<=i0<3 and 0 <= i1 <= 7}");
       auto sched = isl_map_read_from_str(ctx,"{ op[i0, i1]-> [10 + i0*10 + i1]: 0<=i0<3and 0 <= i1 <= 7 }");
       auto read_ir = get_vectorized_read_simplified(acc_0, sched, {}, 2, 0);
@@ -14939,14 +14945,20 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   //test_apps.push_back(camera_pipeline_trunc());
 
   //GLB tests
+  test_apps.push_back(glb_channel_reduction());
+  test_apps.push_back(glb_db());
+  //test_apps.push_back(glb_conv33());
   //test_apps.push_back(resnet_output_stationary_i16());
+
+  //double buffer is not working with this, size issue, need to test 14x14
   //test_apps.push_back(resnet_output_stationary_i8());
+
+  //Test with non double buffer, not tested with db
   //test_apps.push_back(resnet_output_stationary_tiny());
   //test_apps.push_back(resnet_output_stationary_small());
   //test_apps.push_back(resnet_output_stationary_full());
-  //test_apps.push_back(glb_channel_reduction());
-  test_apps.push_back(glb_db());
-  //test_apps.push_back(glb_conv33());
+  test_apps.push_back(resnet_init_unroll_tile());
+  test_apps.push_back(resnet_init_unroll());
 
   //CGRA tests
   test_apps.push_back(counter());
@@ -17659,35 +17671,57 @@ void relax_iis_for_vectorization(schedule_info& sched, prog& prg) {
 void adjust_coarse_grained_loop_delays_sequentially(schedule_info& sched, prog& prg) {
   int d = 0;
   map<string, int> coarse_pipeline_II;
-  op* coarse_pipeline_loop = find_coarse_grained_pipeline_loop(prg.root, prg);
-  vector<string> sorted_kernels = topologically_sort_kernels(coarse_pipeline_loop, prg);
-  for (auto name : sorted_kernels) {
-    auto lp = prg.find_loop(name);
-    cout << "Push kernel <" << lp->name << "> into delay adjusting queue." << endl;
-    cout << "II: " << sched.II(lp) << endl;
-    cout << "TP: " << (lp)->trip_count() << endl;
-    for (auto prod:  get_producers(name, coarse_pipeline_loop, prg))
-        cout << "\tprod: " << prod << endl;
+  //op* coarse_pipeline_loop = find_coarse_grained_pipeline_loop(prg.root, prg);
 
-    //reset the delay
-    coarse_pipeline_II[name] = sched.II(lp) * lp->trip_count();
-    sched.op_offset_within_parent[lp] = 0;
-  }
 
-  for (auto name : sorted_kernels) {
-    auto lp = prg.find_loop(name);
-    cout << "Adjusting delay of " << lp->name << endl;
-    cout << "II: " << sched.II(lp) << endl;
-    int max_delay = 0;
-    for (string prod: get_producers(name, coarse_pipeline_loop, prg)){
-        op* prod_op = prg.find_loop(prod);
-        max_delay = max(coarse_pipeline_II.at(prod)
-                + sched.op_offset_within_parent.at(prod_op), max_delay);
+  //you need to adjust delay for each block sequentially
+  vector<op*> cgpl_lps;
+  find_coarse_grained_pipeline_loops(prg.root, cgpl_lps, prg);
+  for (op* coarse_pipeline_loop: cgpl_lps) {
+    vector<string> sorted_kernels = topologically_sort_kernels(coarse_pipeline_loop, prg);
+    map<string, int> head_op_latency;
+    for (auto name : sorted_kernels) {
+      auto lp = prg.find_loop(name);
+      cout << "Push kernel <" << lp->name << "> into delay adjusting queue." << endl;
+      cout << "II: " << sched.II(lp) << endl;
+      cout << "TP: " << (lp)->trip_count() << endl;
+      auto producers = get_producers(name, coarse_pipeline_loop, prg);
+      for (auto prod:  producers)
+          cout << "\tprod: " << prod << endl;
+
+      //reset the delay
+      //coarse_pipeline_II[name] = sched.II(lp) * lp->trip_count();
+      coarse_pipeline_II[name] = sched.total_latency(lp);
+      sched.op_offset_within_parent[lp] = 0;
+      if (producers.size() == 0)
+          head_op_latency[name] = coarse_pipeline_II.at(name);
     }
 
-    sched.op_offset_within_parent.at(lp) = max_delay;
-    cout << "final delay of " << lp->name <<
-        ": \n\t"<< max_delay << endl;
+    int max_head_op_latency = 0;
+    for (auto it: head_op_latency) {
+        max_head_op_latency = max(it.second, max_head_op_latency);
+    }
+
+    for (auto name : sorted_kernels) {
+      auto lp = prg.find_loop(name);
+      cout << "Adjusting delay of " << lp->name << endl;
+      cout << "II: " << sched.II(lp) << endl;
+      int max_delay = 0;
+      auto producers = get_producers(name, coarse_pipeline_loop, prg);
+      for (string prod: producers){
+          op* prod_op = prg.find_loop(prod);
+          max_delay = max(coarse_pipeline_II.at(prod)
+                  + sched.op_offset_within_parent.at(prod_op), max_delay);
+      }
+      //An optimization, if this the head of the graph, push it back
+      if (producers.size() == 0) {
+        max_delay = max_head_op_latency - head_op_latency.at(name);
+      }
+
+      sched.op_offset_within_parent.at(lp) = max_delay;
+      cout << "final delay of " << lp->name <<
+          ": \n\t"<< max_delay << endl;
+    }
   }
 }
 
@@ -17704,6 +17738,48 @@ void adjust_outer_delays_sequentially(schedule_info& sched, prog& prg) {
         cout << "\tprod: " << prod << endl;
     //This only works for the schedule without pipeline should change into total latency
     coarse_pipeline_II[name] = sched.II(lp) * lp->trip_count();
+    sched.op_offset_within_parent[lp] = 0;
+  }
+  for (auto name : topologically_sort_kernels(prg)) {
+    auto lp = prg.find_loop(name);
+    cout << "Adjusting delay of " << lp->name << endl;
+    cout << "II: " << sched.II(lp) << endl;
+    int max_delay = 0;
+    for (string prod: get_producers(name, prg)){
+        op* prod_op = prg.find_loop(prod);
+        max_delay = max(coarse_pipeline_II.at(prod)
+                + sched.op_offset_within_parent.at(prod_op), max_delay);
+    }
+
+    sched.op_offset_within_parent.at(lp) = max_delay;
+    cout << "final delay of " << lp->name <<
+        ": \n\t"<< max_delay << endl;
+  }
+}
+
+void adjust_outer_delays_sequentially_cgpl(schedule_info& sched, prog& prg) {
+  cout << "Adjusting delays of " << prg.name << "After vectorization" << endl;
+  int d = 0;
+  map<string, int> coarse_pipeline_II;
+  op* coarse_pipeline_loop = find_coarse_grained_pipeline_loop(prg.root, prg);
+  for (auto name : topologically_sort_kernels(prg)) {
+    auto lp = prg.find_loop(name);
+    cout << "Push kernel <" << lp->name << "> into delay adjusting queue." << endl;
+    cout << "II: " << sched.II(lp) << endl;
+    cout << "TP: " << (lp)->trip_count() << endl;
+    for (auto prod:  get_producers(name, prg))
+        cout << "\tprod: " << prod << endl;
+    auto lower_ops = lp->descendants();
+    int cgpl_offset = 0;
+    if(elem(coarse_pipeline_loop, lower_ops)){
+        for(auto child: coarse_pipeline_loop->children) {
+            int delay = map_find(child, sched.op_offset_within_parent);
+            cgpl_offset = max(cgpl_offset, delay);
+            cout << "Child: " << child->name << "has delay: " << cgpl_offset << endl;
+        }
+    }
+    //This only works for the schedule without pipeline should change into total latency
+    coarse_pipeline_II[name] = sched.II(lp) * lp->trip_count() + cgpl_offset;
     sched.op_offset_within_parent[lp] = 0;
   }
   for (auto name : topologically_sort_kernels(prg)) {
@@ -18078,6 +18154,7 @@ void sanity_check_hw_schedule(schedule_info& sched, prog& prg);
 void pad_to_single_depth(schedule_info& sched, op* root, prog& prg);
 
 void adjust_coarse_grained_loop_iis(schedule_info& sched, prog & prg) {
+  //fix me need to take a look
   op* coarse_pipeline_loop = find_coarse_grained_pipeline_loop(prg.root, prg);
   if (coarse_pipeline_loop != nullptr &&
       coarse_pipeline_loop->name != "root") {
@@ -18255,6 +18332,7 @@ void garnet_single_port_ram_schedule(CodegenOptions& options, schedule_info& sch
     adjust_coarse_grained_loop_iis(sched, prg);
     adjust_coarse_grained_loop_delays_sequentially(sched, prg);
     tighten_coarse_grained_iis(sched, prg);
+    adjust_outer_delays_sequentially_cgpl(sched, prg);
   } else {
     //adjust_outer_delays(sched, prg);
     adjust_outer_delays_sequentially(sched, prg);
