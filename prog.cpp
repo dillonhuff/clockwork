@@ -7769,6 +7769,8 @@ void find_coarse_grained_pipeline_loops(op* lp_visit, vector<op*> & cgpl_lp,  pr
   //we traverse the AST in post order
   //If a loop with more than one children
   //Then this is a cgpli loop node.
+  //
+  //Post order visit guarantee that descendant is ahead of its ancestor
 
   for (auto child: lp_visit->children) {
     find_coarse_grained_pipeline_loops(child, cgpl_lp, prg);

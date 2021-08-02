@@ -1844,8 +1844,9 @@ int stride_in_dim(isl_map* const m, size_t dim, size_t out_dim) {
 }
 
 int stride_in_dim(isl_map* const m, size_t dim) {
-    assert(num_out_dims(m) == 1);
-    auto aff = get_aff(m);
+    //assert(num_out_dims(m) == 1);
+    //TODO: fix this by default take 0 dimension but not always correct
+    auto aff = get_aff_vec(m).at(num_out_dims(m) - 1);
     return to_int(get_coeff(aff, dim));
 }
 
