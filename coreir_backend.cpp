@@ -2311,6 +2311,23 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
     generate_coreir_compute_unit(options, found_compute, def, op, prg, buffers, hwinfo);
   }
 
+  //Add a pass to see if there is a glb
+  for (auto& it: buffers) {
+    if (contains(it.first, "glb_stencil")){
+        cout << "Contains glb" << endl;
+        auto buf = it.second;
+        int starting_cycle = buf.starting_cycle();
+        cout << starting_cycle << endl;
+        if(starting_cycle == 0) {
+            auto in_sched = buf.global_inpt_sched();
+            auto host2glb_latency = to_int(lexmaxval(to_set(range(in_sched))));
+            cout << "Host to glb latency: " << host2glb_latency << endl;
+            options.host2glb_latency =
+                max(options.host2glb_latency, host2glb_latency);
+        }
+    }
+  }
+
   for (auto& buf : buffers) {
     //if (!contains(buf.first, "output_cgra")) {
     //    continue;
@@ -2993,6 +3010,15 @@ bool runOnInstance(Instance* inst) {
       auto def= inst->getContainer();
       def->removeInstance(inst);
       //def->disconnect(def->getInterface());
+      return true;
+    } else if (inst->getMetaData().count("garnet_rewire_flush")){
+      //replace the emulated fabric flush into the real flush
+      auto def= inst->getContainer();
+      auto conns = inst->sel("valid")->getConnectedWireables();
+      assert(conns.size() == 1);
+      def->disconnect(def->getInterface());
+      def->connect(pick(conns), def->sel("self.reset"));
+      def->removeInstance(inst);
       return true;
     }
     return false;

@@ -1466,6 +1466,14 @@ class UBuffer {
       return ret;
     }
 
+    isl_union_map* global_inpt_sched() const {
+      auto ret = isl_union_map_read_from_str(ctx, "{}");
+      for (auto pt: get_in_ports()) {
+        ret = unn(ret, schedule.at(pt));
+      }
+      return ret;
+    }
+
     bank get_bank(const std::string& name) const {
       for (auto bank : bank_list) {
         if (bank.name == name) {
@@ -2063,6 +2071,13 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
       return s;
     }
 
+    int starting_cycle() const {
+        isl_point* start_pt = (lexminpt(range(global_schedule())));
+        vector<int> pt_vec = parse_pt(start_pt);
+        assert(pt_vec.size() == 1);
+        return pick(pt_vec);
+    }
+
     isl_union_map* global_schedule_with_guard() const {
       umap* s = isl_union_map_read_from_str(ctx, "{ }");
       for (auto other : schedule) {
@@ -2569,7 +2584,8 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
     UBuffer generate_ubuffer(UBufferImpl& impl, schedule_info & info, int bank);
 
     //optimization pass to add an coarse grained controller, save iteration counter
-    isl_map* get_coarse_grained_pipeline_schedule(CodegenOptions& opt, UBuffer& new_ub, string config_mode, bool & decouple_ctrl);
+    isl_map* get_coarse_grained_pipeline_schedule(CodegenOptions& opt, UBuffer& new_ub, string config_mode,
+            bool & decouple_ctrl, bool & substract_instance_latency);
 
     //for chaining and create subbank
     vector<UBuffer> decouple_ubuffer_from_bank_map(isl_map* bank_map);

@@ -14946,7 +14946,7 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
 
   //GLB tests
   test_apps.push_back(glb_channel_reduction());
-  test_apps.push_back(glb_db());
+  //test_apps.push_back(glb_db());
   //test_apps.push_back(glb_conv33());
   //test_apps.push_back(resnet_output_stationary_i16());
 

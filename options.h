@@ -222,6 +222,7 @@ struct CodegenOptions {
   bool pass_through_valid;
   bool emit_smt_stream;
   bool config_gen_only;
+  int host2glb_latency;
   string dir;
 
   bool use_epochs;
@@ -246,7 +247,7 @@ struct CodegenOptions {
   CodegenOptions() : internal(true), all_rams(false), add_dependence_pragmas(true),
   hls_loop_codegen(HLS_LOOP_CODEGEN_ISL), code_string(""), simplify_address_expressions(false),
   unroll_factors_as_pad(false), conditional_merge(false), merge_threshold(0),
-  inline_vectorization(false), iis({}),
+  inline_vectorization(false), iis({}), host2glb_latency(0),
   pass_through_valid(false), emit_smt_stream(false), config_gen_only(false), dir(""),
   use_epochs(true),
   num_input_epochs(-1),

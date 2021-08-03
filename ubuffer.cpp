@@ -701,7 +701,8 @@ void generate_vivado_tcl(UBuffer& buf) {
 //}
 //
 
-isl_map* UBuffer::get_coarse_grained_pipeline_schedule(CodegenOptions& options, UBuffer& new_ub, string config_mode, bool & decouple_ctrl) {
+isl_map* UBuffer::get_coarse_grained_pipeline_schedule(CodegenOptions& options, UBuffer& new_ub, string config_mode,
+        bool & decouple_ctrl, bool & substract_glb_latency) {
   new_ub.name = name;
   new_ub.ctx = ctx;
   new_ub.port_widths = port_widths;
@@ -744,11 +745,13 @@ isl_map* UBuffer::get_coarse_grained_pipeline_schedule(CodegenOptions& options, 
   cout << "cgpls chedule: \n" << str(cgpl_sched) << endl;
 
   //TODO: check capacity as well
-  bool need_double_buffer = inner_ii < (max_offset - min_offset);
+  //bool need_double_buffer = inner_ii < (max_offset - min_offset);
+  //FIXME: always using db
+  bool need_double_buffer = true;
   if (options.rtl_options.double_buffer_optimization == false)
     need_double_buffer = false;
   cout << "\tNeed double buffer optimization: " << need_double_buffer << endl;
-  //assert(max_start< options.mem_hierarchy.at("mem").counter_ub);
+  substract_glb_latency = (max_start >= options.mem_hierarchy.at("mem").counter_ub);
 
   isl_map* merged_sched;
   if (need_double_buffer) {
@@ -795,14 +798,15 @@ isl_map* UBuffer::get_coarse_grained_pipeline_schedule(CodegenOptions& options, 
         new_acc_map = add_more_dim_to_map_domain_and_range(new_acc_map, 1, 0, 1, bd);
         cout << "new pt access map after db optimization: " << str(new_acc_map) << endl;
         decouple_ctrl = false;
+        //TODO: remove this if
         //need to create the late reset
-        if(max_start >= options.mem_hierarchy.at("mem").counter_ub) {
-          new_pt_sched = linear_schedule(new_pt_sched, {1}, -min_offset, false);
-          decouple_ctrl = true;
+        //if(max_start >= options.mem_hierarchy.at("mem").counter_ub) {
+        //  new_pt_sched = linear_schedule(new_pt_sched, {1}, -min_offset, false);
+        //  decouple_ctrl = true;
 
-          //Just multiply a large value to force using 32 bit
-          cgpl_sched = isl_map_read_from_str(ctx, ("{op[root=0, i0]->["+str(min_offset-1)+" + i0*655360]: 0<=i0<=1}").c_str());
-        }
+        //  //Just multiply a large value to force using 32 bit
+        //  cgpl_sched = isl_map_read_from_str(ctx, ("{op[root=0, i0]->["+str(min_offset-1)+" + i0*655360]: 0<=i0<=1}").c_str());
+        //}
     } else {
       new_pt_sched = linear_schedule(new_pt_sched, {1}, -min_offset, false);
     }
@@ -815,6 +819,7 @@ isl_map* UBuffer::get_coarse_grained_pipeline_schedule(CodegenOptions& options, 
         new_ub.add_out_pt(pt_name, ::domain(new_pt_sched), new_acc_map, new_pt_sched);
   }
   cout << "pt min offset : " << min_offset << endl;
+  assert(!(substract_glb_latency && decouple_ctrl));
 
   return cgpl_sched;
 }
@@ -2909,20 +2914,20 @@ CoreIR::Instance* generate_cgpl_ctrl(CodegenOptions& options, CoreIR::ModuleDef*
   return cgpl_ctrl;
 }
 
-bool cgpl_ctrl_optimization(CodegenOptions& options, CoreIR::ModuleDef* def, isl_map*& cgpl_schedule, UBuffer& target_buf, string config_mode) {
+void cgpl_ctrl_optimization(CodegenOptions& options, CoreIR::ModuleDef* def, UBuffer& target_buf, string config_mode,
+        isl_map*& cgpl_schedule, bool& decouple_ctrl, bool& substract_glb_latency) {
   string ub_ins_name = "ub_" + target_buf.name;
-  bool decouple_ctrl =
+  decouple_ctrl =
       target_buf.check_decouple_coarse_grained_pipeline_ctrl();
   if (decouple_ctrl) {
     UBuffer new_target_buf;
     //Also pass in the decouple_ctrl boolean, it's possible that we use double buffer
     //and not decouple ctrl anymore
     cgpl_schedule =
-        target_buf.get_coarse_grained_pipeline_schedule(options, new_target_buf, config_mode, decouple_ctrl);
+        target_buf.get_coarse_grained_pipeline_schedule(options, new_target_buf, config_mode, decouple_ctrl, substract_glb_latency);
     //Just get the schedule, push back the logic generation we may need to change it due to double buffer optimization
     target_buf = new_target_buf;
   }
-  return decouple_ctrl;
 }
 
 void cgpl_post_processing(CodegenOptions& options,
@@ -2941,6 +2946,47 @@ void cgpl_post_processing(CodegenOptions& options,
     //Use coreir built affine control
     else
       def->connect(cgpl_ctrl->sel("valid"), buf->sel("flush"));
+  }
+}
+
+void substract_glb_latency_in_config_file(json& config_file, int latency) {
+    for (auto & ctrl: config_file.items()) {
+        auto & val = ctrl.value();
+        if ((val.count("cycle_starting_addr")))
+          val.at("cycle_starting_addr")[0] =
+            (int)val.at("cycle_starting_addr")[0] - latency;
+    }
+}
+
+void host2glb_optimization(CodegenOptions& options,
+        CoreIR::ModuleDef* def, CoreIR::Instance*buf, bool substract_glb_latency) {
+  if (substract_glb_latency) {
+    buf->getMetaData()["drive_by_cgpl_ctrl"] = true;
+    assert(options.host2glb_latency != 0);
+    int glb_load_latency= options.host2glb_latency;
+    //Substract all the cycle starting address in configuration
+
+    auto config_file = buf->getMetaData()["config"];
+    substract_glb_latency_in_config_file(config_file, glb_load_latency);
+    buf->getMetaData()["config"] = config_file;
+
+    isl_ctx* ctx = isl_ctx_alloc();
+    isl_map* cgpl_sched = isl_map_read_from_str(ctx, ("{op[root=0, i0]->["+str(glb_load_latency-1)+" + i0]: i0=0}").c_str());
+    auto sched_aff = get_aff(cgpl_sched);
+    auto dom = ::domain(cgpl_sched);
+
+    //Add one because we did not wire reset
+    auto cgpl_ctrl = affine_controller(def, dom, add(sched_aff, 1), 32);
+    //cgpl_ctrl->getMetaData()["garnet_remove"] = true;
+    cgpl_ctrl->getMetaData()["garnet_rewire_flush"] = true;
+
+    //Disconnect the original connection from flush port
+    auto conns = buf->sel("flush")->getConnectedWireables();
+    for (auto conn: conns) {
+      def->disconnect(buf->sel("flush"), conn);
+    }
+    //connect the new flush
+    def->connect(cgpl_ctrl->sel("valid"), buf->sel("flush"));
   }
 }
 
@@ -3113,7 +3159,10 @@ void UBuffer::generate_coreir(CodegenOptions& options,
     //If this is memory do double buffer optimization
     //rewrite the ubuffer IR and change the cgpl control
     isl_map* cgpl_schedule;
-    bool decouple_ctrl = cgpl_ctrl_optimization(options, def, cgpl_schedule, target_buf, config_mode);
+    bool decouple_ctrl = false;
+    bool substract_glb_latency = false;
+    cgpl_ctrl_optimization(options, def, target_buf, config_mode,
+            cgpl_schedule, decouple_ctrl, substract_glb_latency);
 
 
     insert_accumulation_register(options, def, target_buf, pt2wire, config_mode);
@@ -3125,6 +3174,9 @@ void UBuffer::generate_coreir(CodegenOptions& options,
     //Wire the stencil valid to flush of ubuffer module
     //if we can optmize for coarse grained pipeline scheduler
     cgpl_post_processing(options, def, buf, cgpl_schedule, decouple_ctrl);
+
+    //add a flush for memory tile if have glb load latency
+    host2glb_optimization(options, def, buf, substract_glb_latency);
 
     //Wiring the port after generate verilog
     wire_ubuf_IO(options, def, pt2wire, buf, impl, info, bank_id, with_ctrl);
