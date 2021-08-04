@@ -14950,15 +14950,16 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   //test_apps.push_back(glb_conv33());
   //test_apps.push_back(resnet_output_stationary_i16());
 
-  //double buffer is not working with this, size issue, need to test 14x14
-  //test_apps.push_back(resnet_output_stationary_i8());
-
   //Test with non double buffer, not tested with db
   //test_apps.push_back(resnet_output_stationary_tiny());
   //test_apps.push_back(resnet_output_stationary_small());
   //test_apps.push_back(resnet_output_stationary_full());
   test_apps.push_back(resnet_init_unroll_tile());
-  test_apps.push_back(resnet_init_unroll());
+  //test_apps.push_back(resnet_init_unroll());
+
+  //double buffer is not working with this, size issue, need to test 14x14
+  test_apps.push_back(resnet_output_stationary_i8());
+
 
   //CGRA tests
   test_apps.push_back(counter());
@@ -14978,6 +14979,7 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   test_apps.push_back(unsharp());
 
   //DNN apps
+  test_apps.push_back(resnet_tiny());
   test_apps.push_back(resnet_simple());
   test_apps.push_back(resnet());
 

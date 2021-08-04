@@ -8272,11 +8272,15 @@ void UBuffer::generate_banks(CodegenOptions& options) {
             unmask_dims.push_back(it.first);
         }
     }
+    cout << "rem: " << str(acc_vec_rem) << endl;
+    cout << "new: " << str(acc_vec_new) << endl;
     //Go through each iteration domain point for div dimension
     for(isl_set* s: get_domain_unmask_set(acc_vec_new, vectorized_dim, unmask_dims)){
         cout << "\t" << str(s) << endl;
         int origin_max = get_dim_max(range(its(acc_vec_new, s)), addr_dim);
         int trans_max = get_dim_max(range(its(acc_vec_rem, s)), addr_dim);
+        cout << "origin max: " << str(origin_max) << endl;
+        cout << "trans max: " << str(trans_max) << endl;
         ahead_step = max(ahead_step, origin_max - trans_max);
     }
     cout << "ahead_step : " << ahead_step << endl;
@@ -8314,6 +8318,8 @@ void UBuffer::generate_banks(CodegenOptions& options) {
 
     //Get ahead step to make sure that
     //we still get the correct data in time after remove floor div
+    //FIXME: Need to rewrite this after ASPLOS
+    //ahead does not mean we need to fetch more item
     int ahead_step = get_prefetch_step(acc_vec_new, acc_vec_rem, vectorized_dim, addr_dim);
 
     //projected out the reaccessing dimension
@@ -8334,7 +8340,9 @@ void UBuffer::generate_banks(CodegenOptions& options) {
     cout << "vectorization dimension after irrelevant dimension removal: " << vectorized_dim << endl;
 
     //Move the schedule ahead and pad the domain
-    if (ahead_step) {
+    //if (ahead_step) {
+    if (get_dim_max(range(acc_vec_rem), addr_dim) <
+                get_dim_max(range(acc_slice), addr_dim) ) {
       acc_vec_rem = pad_to_domain_ubuf_map(acc_vec_rem, vectorized_dim, ahead_step);
       sched_vec_new = pad_to_domain_ubuf_map(sched_vec_new, vectorized_dim, ahead_step);
     }
