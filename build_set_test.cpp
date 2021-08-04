@@ -14943,6 +14943,9 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   //test_apps.push_back(demosaic_complex());
   //test_apps.push_back(fft8_unroll8());
   //test_apps.push_back(camera_pipeline_trunc());
+  //
+  //double buffer is not working with this, size issue, need to test 14x14
+  test_apps.push_back(resnet_output_stationary_i8());
 
   //GLB tests
   test_apps.push_back(glb_channel_reduction());
@@ -14957,8 +14960,6 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   test_apps.push_back(resnet_init_unroll_tile());
   //test_apps.push_back(resnet_init_unroll());
 
-  //double buffer is not working with this, size issue, need to test 14x14
-  test_apps.push_back(resnet_output_stationary_i8());
 
 
   //CGRA tests
@@ -17055,7 +17056,7 @@ void access_pattern_write_unit_tests() {
   isl_ctx* ctx = isl_ctx_alloc();
   auto acc_0 = isl_map_read_from_str(ctx,"{ op[i0]-> data[i0+1]: 0<=i0<=10 }");
   auto sched = isl_map_read_from_str(ctx, "{ op[i0] -> [i0]: 0 <=i0<=10 }");
-  auto ir_vec = get_vectorized_write(acc_0, sched, 4/*fetch_width*/, 0/*dom_dim*/);
+  auto ir_vec = get_vectorized_write(acc_0, sched, {}, 4/*fetch_width*/, 0/*dom_dim*/);
   auto acc_vec = ir_vec.first;
   auto sched_vec = ir_vec.second;
   cout << "before vectorization: " << str(acc_0) << endl;
@@ -17073,7 +17074,7 @@ void access_pattern_write_unit_tests() {
 
   acc_0 = isl_map_read_from_str(ctx,"{ op[i0]-> data[i0]: 0<=i0<=11 }");
   sched = isl_map_read_from_str(ctx, "{ op[i0] -> [i0]: 0 <=i0<=10 }");
-  ir_vec= get_vectorized_write(acc_0, sched, 4/*fetch_width*/, 0/*dom_dim*/);
+  ir_vec= get_vectorized_write(acc_0, sched, {}, 4/*fetch_width*/, 0/*dom_dim*/);
   acc_vec = ir_vec.first;
   sched_vec = ir_vec.second;
   cout << "before vectorization: " << str(acc_0) << endl;
@@ -17087,7 +17088,7 @@ void access_pattern_write_unit_tests() {
 
   acc_0 = isl_map_read_from_str(ctx,"{ op[i0]-> data[i0+1]: 0<=i0<=11 }");
   sched = isl_map_read_from_str(ctx, "{ op[i0] -> [i0]: 0 <=i0<=11 }");
-  ir_vec= get_vectorized_write(acc_0, sched, 4/*fetch_width*/, 0/*dom_dim*/);
+  ir_vec= get_vectorized_write(acc_0, sched, {}, 4/*fetch_width*/, 0/*dom_dim*/);
   acc_vec = ir_vec.first;
   sched_vec = ir_vec.second;
   cout << "before vectorization: " << str(acc_0) << endl;
@@ -17101,7 +17102,7 @@ void access_pattern_write_unit_tests() {
 
   acc_0 = isl_map_read_from_str(ctx,"{ op[i0]-> data[i0+4]: 0<=i0<=11 }");
   sched = isl_map_read_from_str(ctx, "{ op[i0] -> [i0]: 0 <=i0<=11 }");
-  ir_vec= get_vectorized_write(acc_0, sched, 4/*fetch_width*/, 0/*dom_dim*/);
+  ir_vec= get_vectorized_write(acc_0, sched, {}, 4/*fetch_width*/, 0/*dom_dim*/);
   acc_vec = ir_vec.first;
   sched_vec = ir_vec.second;
   cout << "before vectorization: " << str(acc_0) << endl;
@@ -17116,7 +17117,7 @@ void access_pattern_write_unit_tests() {
   //2D case
   acc_0 = isl_map_read_from_str(ctx,"{ op[i0, i1]-> data[i0, i1]: 0<=i0<=11 and 0 <=i1 <= 11 }");
   sched = isl_map_read_from_str(ctx, "{ op[i0, i1] -> [12 * i0 + i1]: 0 <=i0<=11 and 0<= i1 <= 11 }");
-  ir_vec = get_vectorized_write(acc_0, sched,  4/*fetch_width*/, 1/*dom_dim*/);
+  ir_vec = get_vectorized_write(acc_0, sched, {}, 4/*fetch_width*/, 1/*dom_dim*/);
   acc_vec = ir_vec.first;
   sched_vec = ir_vec.second;
   cout << "before vectorization: " << str(acc_0) << endl;
@@ -17132,7 +17133,7 @@ void access_pattern_write_unit_tests() {
   //2D case with reaccess
   acc_0 = isl_map_read_from_str(ctx,"{ op[i0, i1]-> data[i0]: 0<=i0<=11 and 0 <=i1 <= 11 }");
   sched = isl_map_read_from_str(ctx, "{ op[i0, i1] -> [12 * i0 + i1]: 0 <=i0<=11 and 0<= i1 <= 11 }");
-  ir_vec = get_vectorized_write(acc_0, sched,  4/*fetch_width*/, 0/*dom_dim*/);
+  ir_vec = get_vectorized_write(acc_0, sched, {},  4/*fetch_width*/, 0/*dom_dim*/);
   acc_vec = ir_vec.first;
   sched_vec = ir_vec.second;
   cout << "before vectorization: " << str(acc_0) << endl;
@@ -17148,7 +17149,7 @@ void access_pattern_write_unit_tests() {
   //3D case with reaccess
   acc_0 = isl_map_read_from_str(ctx,"{ op[i0, i1, i2]-> data[i0]: 0<=i0<=11 and 0 <=i1 <= 11 and 0 <= i2 <= 3}");
   sched = isl_map_read_from_str(ctx, "{ op[i0, i1, i2] -> [48 * i0 + 4*i1 + i2]: 0 <=i0<=11 and 0<= i1 <= 11 and 0 <= i2 <= 3}");
-  ir_vec = get_vectorized_write(acc_0, sched,  4/*fetch_width*/, 0/*dom_dim*/);
+  ir_vec = get_vectorized_write(acc_0, sched, {},  4/*fetch_width*/, 0/*dom_dim*/);
   acc_vec = ir_vec.first;
   sched_vec = ir_vec.second;
   cout << "before vectorization: " << str(acc_0) << endl;

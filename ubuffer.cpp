@@ -7415,7 +7415,6 @@ void UBuffer::generate_banks(CodegenOptions& options) {
     return sched;
   }
 
-
   isl_map* get_sram2tb_schedule(umap* out_sched,
           isl_set* slice_dim, isl_map* op_trans, isl_set* sched_domain,
           int delay_step, int fetch_width) {
@@ -8226,7 +8225,7 @@ void UBuffer::generate_banks(CodegenOptions& options) {
         return ret;
       }
 
-    pair<isl_map*, isl_map*> get_vectorized_write(isl_map* acc_0, isl_map* sched, int fetch_width, int addr_dim, int agg_cnt) {
+    pair<isl_map*, isl_map*> get_vectorized_write(isl_map* acc_0, isl_map* sched, map<string, isl_map*> sched_record_map, int fetch_width, int addr_dim, int agg_cnt) {
         int vectorize_loop_dim = get_inner_most_related_dom_dim(acc_0, addr_dim, fetch_width);
         cout << "vec loop dim: " << vectorize_loop_dim << endl;
         auto trans =
@@ -8238,9 +8237,19 @@ void UBuffer::generate_banks(CodegenOptions& options) {
         auto sched_vec = dot(trans, its(sched, sched_dom));
         cout << "\tsched after trans: " << str(sched_vec) << endl;
         int fetch_ii = stride_in_dim(sched_vec, vectorize_loop_dim);
-        //TODO: may need to adjust the delay
-        //FIXME: use agg cnt, should dynamically fix it
-        auto final_sched = linear_schedule(sched_vec, {1}, fetch_ii / fetch_width * (fetch_width - 1) + 1 + agg_cnt, false);
+
+        //get the write schedule with check
+        auto final_sched = linear_schedule(sched_vec, {1}, fetch_ii / fetch_width * (fetch_width - 1) + 1, false);
+        bool adjust = true;
+        while (adjust) {
+            adjust = false;
+            //adjust against write
+            while(violate_deps(final_sched, sched_record_map)) {
+                //check dependency against sram write
+                final_sched = linear_schedule(final_sched, {1}, 1, false);
+                adjust = true;
+            }
+        }
         cout << "\tfinal sched: " << str(final_sched) << endl;
 
         //access map
@@ -8551,10 +8560,11 @@ void UBuffer::generate_banks(CodegenOptions& options) {
                 }
                 agg_buf.port_bundles[bd_name+"_agg_in"].push_back(in_pt_name + "_in");
               }
+              //Add sched_record_map in also to avoid overlapping
               auto sram_ir = get_vectorized_write(
                       to_map(access_map.at(in_pt_name)),
                       to_map(schedule.at(in_pt_name)),
-                      fetch_width, dim_id, agg_cnt);
+                      sched_record_map, fetch_width, dim_id, agg_cnt);
 
               isl_map* vectorized_access = add_domain_suffix(sram_ir.first, "_agg2sram_" + str(agg_cnt));
               isl_set* dom = ::domain(vectorized_access);
