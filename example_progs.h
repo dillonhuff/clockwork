@@ -114,3 +114,5 @@ prog lucas_kanade();
 prog bc_const();
 prog bc_repeat();
 prog bc_mirror();
+
+prog gaussian_unroll();
