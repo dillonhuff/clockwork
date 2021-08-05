@@ -4610,8 +4610,10 @@ map<int, int> get_dim2denom(isl_map* am) {
           int num = isl_val_get_num_si(coeff);
           cout << tab(3) << "coeff  = " << str(coeff) << endl;
           cout << tab(3) << "num = " << isl_val_get_num_si(coeff) << endl;
+          cout << tab(3) << "denom= " << isl_val_get_den_si(coeff) << endl;
           assert (num == 1 && "require quasi affine accessor!");
-          split_dims[di] = denom;
+          //split_dims[di] = denom;
+          split_dims[di] = isl_val_get_den_si(coeff);
         }
       }
     }

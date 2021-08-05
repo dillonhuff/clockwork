@@ -8533,8 +8533,8 @@ void UBuffer::generate_banks(CodegenOptions& options) {
               //Strip mining the agg input
               //TODO: no need for input strip mining could be removed
               {
-                //if (acc_pattern.can_stripmining(ctx, dim_id, fetch_width)) {
-                if (false) {
+                if (acc_pattern.can_stripmining(ctx, dim_id, fetch_width)) {
+                //if (false) {
 
                   isl_map* op_stripmining = acc_pattern.get_op_stripmining(ctx, dim_id, fetch_width, "");
                   std::cout << "\ttransform stripmining: " << str(op_stripmining) << endl;
@@ -8764,8 +8764,8 @@ void UBuffer::generate_banks(CodegenOptions& options) {
               //Strip mining the output loop
               //TODO: remove stripmining
               //Strip mining is needed for unit test
-              //if (acc_pattern.can_stripmining(ctx, dim_id, fetch_width)) {
-              if (false) {
+              if (acc_pattern.can_stripmining(ctx, dim_id, fetch_width)) {
+              //if (false) {
               //if (true) {
                 isl_map* op_stripmining = acc_pattern.get_op_stripmining(ctx, dim_id, fetch_width, "");
                 std::cout << "\ttransform stripmining: " << str(op_stripmining) << endl;

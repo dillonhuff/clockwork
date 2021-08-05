@@ -2716,7 +2716,8 @@ class GetGLBConfig: public CoreIR::InstanceGraphPass {
   int latency;
 
   //There are more than one input GLB
-  map<string, json> glb2cgra, cgra2glb;
+  map<string, json> glb2cgra;
+  json cgra2glb;
   GetGLBConfig() : latency(0),
     InstanceGraphPass("getglbconfig", "Find the glb load latency!") {}
   bool runOnInstanceGraphNode(CoreIR::InstanceGraphNode& node) {
@@ -2739,7 +2740,8 @@ class GetGLBConfig: public CoreIR::InstanceGraphPass {
                latency = config_file.at("glb2out_0").at("cycle_starting_addr")[0];
                glb2cgra.insert({buf_name, config_file.at("glb2out_0")});
              } else {
-               cgra2glb.insert({buf_name, config_file.at("in2glb_0")});
+               cgra2glb = config_file.at("in2glb_0");
+               //cgra2glb.insert({buf_name, config_file.at("in2glb_0")});
              }
           }
         }
@@ -2791,8 +2793,9 @@ void addIOsWithGLBConfig(Context* c, Module* top, map<string, UBuffer>& buffers,
     //Add the multi-tile glb informations
     if(glb_metadata->latency != 0) {
       cout << "buf_name" << buf_name << endl;
-      string key = split_at(buf_name, "_").at(1);
-      inst->getMetaData()["in2glb_0"] = glb_metadata->cgra2glb.at(key);
+      //string key = split_at(buf_name, "_").at(1);
+      //inst->getMetaData()["in2glb_0"] = glb_metadata->cgra2glb.at(key);
+      inst->getMetaData()["in2glb_0"] = glb_metadata->cgra2glb;
       int old_offset = inst->getMetaData()["in2glb_0"]["cycle_starting_addr"][0] ;
       inst->getMetaData()["in2glb_0"]["cycle_starting_addr"][0] = old_offset - glb_metadata->latency;
     }
@@ -2937,7 +2940,7 @@ ReplaceGLBValid(GetGLBConfig* glb_pass):
     InstancePass(
             "replaceglbvalid",
             "Replace output affine port controller using cgra to glb config"
-            ), valid_config(pick(glb_pass->cgra2glb)), latency(glb_pass->latency) {}
+            ), valid_config(glb_pass->cgra2glb), latency(glb_pass->latency) {}
 bool runOnInstance(Instance* inst) {
     //define the pass here
     if(latency == 0)
@@ -3506,10 +3509,8 @@ void garnet_map_module(Module* top, map<string, UBuffer> & buffers, bool garnet_
   cout << "Latency: " << glb_pass->latency << endl;
   for (auto it: glb_pass->glb2cgra)
     cout << "buf: "<< it.first << "\n\tglb2fabric: " << it.second  << endl;
-  for (auto it: glb_pass->cgra2glb)
-    cout << "buf:" << it.first << "\n\tfabric2glb: " << it.second  << endl;
-  //Can only support one valid now
-  assert(glb_pass->cgra2glb.size() == 1);
+  //for (auto it: glb_pass->cgra2glb)
+  //  cout << "buf:" << it.first << "\n\tfabric2glb: " << it.second  << endl;
   c->addPass(new MapperPasses::StripGLB);
   c->runPasses({"stripglb"});
 

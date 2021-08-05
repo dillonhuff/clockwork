@@ -1292,6 +1292,91 @@ void rolled_conv_reorder_test() {
   assert(res == 0);
 }
 
+void stride_id_test() {
+  struct isl_ctx *ctx;
+  ctx = isl_ctx_alloc();
+
+  UBuffer buf;
+  buf.name = "id_stride";
+  buf.ctx = ctx;
+
+  buf.domain["write"] =
+    isl_set_read_from_str(ctx, "{ write[root = 0, i] : 0 <= i < 16}");
+  buf.access_map["write"] =
+    rdmap(ctx, "{ write[root = 0, i] -> id_stride[i] : 0 <= i < 16}");
+  buf.schedule["write"] =
+    isl_union_map_read_from_str(ctx, "{ write[root = 0, i] -> [i] : 0 <= i < 16 }");
+  buf.isIn["write"] = true;
+
+  // Read 0 through 7
+  buf.domain["read"] =
+    isl_set_read_from_str(ctx, "{ read[root = 0, i] : 0 <= i < 8}");
+  buf.access_map["read"] =
+    rdmap(ctx, "{ read[root = 0, i] -> id_stride[i*2] : 0 <= i < 8}");
+  buf.schedule["read"] =
+    isl_union_map_read_from_str(ctx, "{ read[root = 0, i] -> [i + 16] : 0 <= i < 8 }");
+  buf.isIn["read"] = false;
+
+  generate_hls_code(buf);
+
+  map<string, UBuffer> buffers;
+  buffers.insert({"id_stride", buf});
+  buffer_vectorization({1}, {"id_stride"}, 4, buffers);
+
+  generate_hls_code_unit_test(buffers, buf.name);
+
+  generate_vectorization_unit_testbench(buf);
+
+  int res = cmd("clang++ -std=c++11 unit_tb_id_stride.cpp id_stride.cpp id_stride_vec.cpp" );
+  assert(res == 0);
+
+  res = system("./a.out");
+  assert(res == 0);
+}
+
+void stride_conv_test() {
+  struct isl_ctx *ctx;
+  ctx = isl_ctx_alloc();
+
+  UBuffer buf;
+  buf.name = "conv_stride";
+  buf.ctx = ctx;
+
+  buf.domain["write"] =
+    isl_set_read_from_str(ctx, "{ write[root = 0, i] : 0 <= i < 20}");
+  buf.access_map["write"] =
+    rdmap(ctx, "{ write[root = 0, i] -> conv_stride[i] : 0 <= i < 20}");
+  buf.schedule["write"] =
+    isl_union_map_read_from_str(ctx, "{ write[root = 0, i] -> [i] : 0 <= i < 20 }");
+  buf.isIn["write"] = true;
+
+  // Read 0 through 7
+  buf.domain["read"] =
+    isl_set_read_from_str(ctx, "{ read[root = 0, j, i] : 0 <= i < 8 and 0 <= j <= 2}");
+  buf.access_map["read"] =
+    rdmap(ctx, "{ read[root = 0, j, i] -> conv_stride[i*2 + j] : 0 <= i < 8 and 0<=j<=2}");
+  buf.schedule["read"] =
+    isl_union_map_read_from_str(ctx, "{ read[root = 0, j, i] -> [i + 8*j + 20] : 0 <= i < 8 and 0<=j<=2}");
+  buf.isIn["read"] = false;
+
+  generate_hls_code(buf);
+
+  map<string, UBuffer> buffers;
+  buffers.insert({"conv_stride", buf});
+  buffer_vectorization({1}, {"conv_stride"}, 4, buffers);
+
+  generate_hls_code_unit_test(buffers, buf.name);
+
+  generate_vectorization_unit_testbench(buf);
+
+  int res = cmd("clang++ -std=c++11 unit_tb_conv_stride.cpp conv_stride.cpp conv_stride_vec.cpp" );
+  assert(res == 0);
+
+  res = system("./a.out");
+  assert(res == 0);
+}
+
+
 void rolled_conv_test() {
   struct isl_ctx *ctx;
   ctx = isl_ctx_alloc();
@@ -14944,9 +15029,9 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   //test_apps.push_back(fft8_unroll8());
   //test_apps.push_back(camera_pipeline_trunc());
   //
-  test_apps.push_back(resnet3_1());
+  //test_apps.push_back(resnet3_1());
   test_apps.push_back(mobilenet_unrolled());
-  test_apps.push_back(resnet_output_stationary_i8());
+  //test_apps.push_back(resnet_output_stationary_i8());
 
   //GLB tests
   test_apps.push_back(glb_channel_reduction());
@@ -17162,8 +17247,8 @@ void access_pattern_write_unit_tests() {
 }
 
 void vectorization_unit_tests() {
-  access_pattern_write_unit_tests();
-  access_pattern_read_unit_tests();
+  //access_pattern_write_unit_tests();
+  //access_pattern_read_unit_tests();
   synth_id_test();
   synth_id_auto_test();
   synth_id_fetch2_test();
@@ -17172,6 +17257,10 @@ void vectorization_unit_tests() {
   rolled_conv_reorder_test();
   upsample_vectorization_test();
   upsample_pad_test();
+  stride_id_test();
+  stride_conv_test();
+
+  //FIXME: Did not work need to test after ASPLOS
   sw_fetch2_test();
 }
 
