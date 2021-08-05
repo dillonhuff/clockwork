@@ -14944,7 +14944,8 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   //test_apps.push_back(fft8_unroll8());
   //test_apps.push_back(camera_pipeline_trunc());
   //
-  //double buffer is not working with this, size issue, need to test 14x14
+  test_apps.push_back(resnet3_1());
+  test_apps.push_back(mobilenet_unrolled());
   test_apps.push_back(resnet_output_stationary_i8());
 
   //GLB tests
@@ -14954,7 +14955,7 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   //test_apps.push_back(resnet_output_stationary_i16());
 
   //Test with non double buffer, not tested with db
-  //test_apps.push_back(resnet_output_stationary_tiny());
+  test_apps.push_back(resnet_output_stationary_tiny());
   //test_apps.push_back(resnet_output_stationary_small());
   //test_apps.push_back(resnet_output_stationary_full());
   test_apps.push_back(resnet_init_unroll_tile());
