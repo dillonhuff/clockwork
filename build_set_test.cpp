@@ -15029,6 +15029,7 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   //test_apps.push_back(fft8_unroll8());
   //test_apps.push_back(camera_pipeline_trunc());
   //
+  test_apps.push_back(resnet5_x());
   test_apps.push_back(resnet3_1());
   test_apps.push_back(resnet_multi_channel());
   //test_apps.push_back(mobilenet_unrolled());
@@ -17418,23 +17419,31 @@ bool need_relax(schedule_info& sched, op* loop, prog& prg, int fetch_width) {
       } else if (loop->trip_count() < fetch_width) {
           continue;
       } else {
-          int stride = stride_in_dim(b_map, levels.at(loop->name), packed_addr_dim);
-          cout << "Dim " << levels.at(loop->name)<< "\n\t hasStride : " << stride << endl;
-          if (stride % fetch_width != 0) {
-            cout << tab(4) << "Relax ii latency for op: " << loop->name << endl;
-            //cout << tab(4) << "Original offset within parent: " << sched.offset_in_parent(child) << endl;
-            cout << tab(4) << "Original offset within parent: " << sched.offset_in_parent(loop) << endl;
-            cout << tab(4) << "loop trip count: " << loop->trip_count() << endl;
-            if (is_inner_loop(loop))
-                sched.op_offset_within_parent.at(loop) = (loop->trip_count()) % fetch_width + fetch_width * (loop->trip_count()%fetch_width== 0);
-            else {
-                //int range_span = get_dim_extent(range(b_map), packed_addr_dim);
-                //if (range_span % fetch_width)
-                sched.op_offset_within_parent.at(loop) = sched.II(loop) * fetch_width;
+          //int stride = stride_in_dim(b_map, levels.at(loop->name), packed_addr_dim);
+          //TODO: double check if this correct
+          //double check this logic we need to go over all the involve dimension
+          //except the innermost
+          for (int i = 0; i < in_involve_d.size()-1; i ++) {
+            int in_involve_dim = in_involve_d.at(i);
+
+            int stride = stride_in_dim(b_map, in_involve_dim, packed_addr_dim);
+            cout << "Dim " << levels.at(loop->name)<< "\n\t hasStride : " << stride << endl;
+            if (stride % fetch_width != 0) {
+              cout << tab(4) << "Relax ii latency for op: " << loop->name << endl;
+              //cout << tab(4) << "Original offset within parent: " << sched.offset_in_parent(child) << endl;
+              cout << tab(4) << "Original offset within parent: " << sched.offset_in_parent(loop) << endl;
+              cout << tab(4) << "loop trip count: " << loop->trip_count() << endl;
+              if (is_inner_loop(loop))
+                  sched.op_offset_within_parent.at(loop) = (loop->trip_count()) % fetch_width + fetch_width * (loop->trip_count()%fetch_width== 0);
+              else {
+                  //int range_span = get_dim_extent(range(b_map), packed_addr_dim);
+                  //if (range_span % fetch_width)
+                  sched.op_offset_within_parent.at(loop) = sched.II(loop) * fetch_width;
+              }
+              cout << tab(4) << "New offset within parent: " << sched.offset_in_parent(loop) << endl;
+              return true;
             }
-            cout << tab(4) << "New offset within parent: " << sched.offset_in_parent(loop) << endl;
           }
-          return true;
       }
     }
   }

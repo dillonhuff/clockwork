@@ -4177,7 +4177,8 @@ vector<pair<int, int>> get_all_domain_merge_dims(isl_map* m) {
         int span_range = get_domain_span_range(m, dim);
         int up_level_stride = stride_in_dim(m, dim-1);
         cout << "span range: " << span_range << ", up_level_stride : "<< up_level_stride << endl;
-        if ((span_range == up_level_stride) && (span_range != 0))
+        //TODO: why span range = 0 cannot be merged?
+        if ((span_range == up_level_stride))// && (span_range != 0))
             ret.push_back({in_dims - dim - 1, in_dims -  dim});
     }
     return ret;
