@@ -8235,8 +8235,16 @@ void UBuffer::generate_banks(CodegenOptions& options) {
         cout << "\tsched domain: " << str(sched_dom) << endl;
         //schedule
         auto sched_vec = dot(trans, its(sched, sched_dom));
+        cout << "\tsched before trans: " << str(sched) << endl;
         cout << "\tsched after trans: " << str(sched_vec) << endl;
         int fetch_ii = stride_in_dim(sched_vec, vectorize_loop_dim);
+
+        //We may get to a loop that is projected out
+        while(fetch_ii == 0) {
+            fetch_ii = stride_in_dim(sched_vec, --vectorize_loop_dim);
+        }
+        cout << "Fetch_ii: " << fetch_ii << endl;
+        assert(fetch_ii % fetch_width == 0);
 
         //get the write schedule with check
         auto final_sched = linear_schedule(sched_vec, {1}, fetch_ii / fetch_width * (fetch_width - 1) + 1, false);
@@ -8526,15 +8534,15 @@ void UBuffer::generate_banks(CodegenOptions& options) {
 
               //If it's a self loop(update operation), we need to decouple the reuse
               if (is_self_loop(in_pt_name)){
-                inpt_acc_map = acc_pattern.get_access_map_and_decouple_reuse(ctx, dim_id, true);
+                inpt_acc_map = acc_pattern.get_access_map_and_decouple_reuse(ctx, dim_id, false);
                 inpt_acc_map = add_range_suffix(inpt_acc_map, "_" + to_string(agg_cnt) + "_agg");
               }
 
               //Strip mining the agg input
               //TODO: no need for input strip mining could be removed
               {
-                if (acc_pattern.can_stripmining(ctx, dim_id, fetch_width)) {
-                //if (false) {
+                //if (acc_pattern.can_stripmining(ctx, dim_id, fetch_width)) {
+                if (false) {
 
                   isl_map* op_stripmining = acc_pattern.get_op_stripmining(ctx, dim_id, fetch_width, "");
                   std::cout << "\ttransform stripmining: " << str(op_stripmining) << endl;
@@ -8587,7 +8595,7 @@ void UBuffer::generate_banks(CodegenOptions& options) {
                 //decouple the access map
                 if(is_self_loop_in(in_pt_name)) {
                   auto acc_pt = AccessPattern(agg_out_access_map, ctx);
-                  auto decouple_acc_map = acc_pt.get_access_map_and_decouple_reuse(ctx, dim_id, true);
+                  auto decouple_acc_map = acc_pt.get_access_map_and_decouple_reuse(ctx, dim_id, false);
                   agg_buf.access_map[agg_pt_name] = to_umap(decouple_acc_map);
                 }
 
@@ -8729,7 +8737,7 @@ void UBuffer::generate_banks(CodegenOptions& options) {
 
                 //always decouple the output access, and remove refetch from SRAM
                 auto acc_pt = AccessPattern(tb_in_access_map, ctx);
-                tb_in_access_map = acc_pt.get_access_map_and_decouple_reuse(ctx, dim_id, true);
+                tb_in_access_map = acc_pt.get_access_map_and_decouple_reuse(ctx, dim_id, false);
                 //tb.access_map[tb_pt_name] = to_umap(decouple_acc_map);
 
                 auto sram_out_access_map = add_range_suffix(rewrite_access_map, "_sram");
@@ -8758,14 +8766,14 @@ void UBuffer::generate_banks(CodegenOptions& options) {
 
 
               auto outpt_acc_map = remap_access_to_new_buffer(out_pt_name, "_" + to_string(tb_cnt) + "_tb");
-              outpt_acc_map = acc_pattern.get_access_map_and_decouple_reuse(ctx, dim_id, true);
+              outpt_acc_map = acc_pattern.get_access_map_and_decouple_reuse(ctx, dim_id, false);
               outpt_acc_map = add_range_suffix(outpt_acc_map, "_" + to_string(tb_cnt) + "_tb");
 
               //Strip mining the output loop
               //TODO: remove stripmining
               //Strip mining is needed for unit test
-              if (acc_pattern.can_stripmining(ctx, dim_id, fetch_width)) {
-              //if (false) {
+              //if (acc_pattern.can_stripmining(ctx, dim_id, fetch_width)) {
+              if (false) {
               //if (true) {
                 isl_map* op_stripmining = acc_pattern.get_op_stripmining(ctx, dim_id, fetch_width, "");
                 std::cout << "\ttransform stripmining: " << str(op_stripmining) << endl;

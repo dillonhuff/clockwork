@@ -15029,8 +15029,9 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   //test_apps.push_back(fft8_unroll8());
   //test_apps.push_back(camera_pipeline_trunc());
   //
-  //test_apps.push_back(resnet3_1());
-  test_apps.push_back(mobilenet_unrolled());
+  test_apps.push_back(resnet3_1());
+  test_apps.push_back(resnet_multi_channel());
+  //test_apps.push_back(mobilenet_unrolled());
   //test_apps.push_back(resnet_output_stationary_i8());
 
   //GLB tests
@@ -17854,7 +17855,9 @@ void adjust_outer_delays_sequentially_cgpl(schedule_info& sched, prog& prg) {
   cout << "Adjusting delays of " << prg.name << "After vectorization" << endl;
   int d = 0;
   map<string, int> coarse_pipeline_II;
-  op* coarse_pipeline_loop = find_coarse_grained_pipeline_loop(prg.root, prg);
+  //op* coarse_pipeline_loop = find_coarse_grained_pipeline_loop(prg.root, prg);
+  vector<op*> cgpl_lps;
+  find_coarse_grained_pipeline_loops(prg.root, cgpl_lps, prg);
   for (auto name : topologically_sort_kernels(prg)) {
     auto lp = prg.find_loop(name);
     cout << "Push kernel <" << lp->name << "> into delay adjusting queue." << endl;
@@ -17864,15 +17867,19 @@ void adjust_outer_delays_sequentially_cgpl(schedule_info& sched, prog& prg) {
         cout << "\tprod: " << prod << endl;
     auto lower_ops = lp->descendants();
     int cgpl_offset = 0;
-    if(elem(coarse_pipeline_loop, lower_ops)){
+    for (op* coarse_pipeline_loop: cgpl_lps){
+      if(elem(coarse_pipeline_loop, lower_ops)){
         for(auto child: coarse_pipeline_loop->children) {
-            int delay = map_find(child, sched.op_offset_within_parent);
-            cgpl_offset = max(cgpl_offset, delay);
-            cout << "Child: " << child->name << "has delay: " << cgpl_offset << endl;
+          int delay = map_find(child, sched.op_offset_within_parent);
+          cgpl_offset = max(cgpl_offset, delay);
+          cout << "Child: " << child->name << "has delay: " << delay << endl;
         }
+      }
     }
+    cout << "final initial delay of KERNEL [" << name << "] : " << cgpl_offset << endl;
     //This only works for the schedule without pipeline should change into total latency
     coarse_pipeline_II[name] = sched.II(lp) * lp->trip_count() + cgpl_offset;
+    cout << "coarse pipeline outer latency: " << coarse_pipeline_II.at(name) << endl;
     sched.op_offset_within_parent[lp] = 0;
   }
   for (auto name : topologically_sort_kernels(prg)) {

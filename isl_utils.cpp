@@ -4202,15 +4202,27 @@ isl_map* merge_domain_dim(isl_map* m) {
 }
 
 int get_inner_most_related_dom_dim(isl_map* m, int dim_id, int fetch_width) {
+  cout << "access map : " << str(m) << "need to find inner dim" << endl;
+  cout << "dim id: " << dim_id << endl;
   auto aff_vec = get_aff_vec(m);
   assert(aff_vec.size() > dim_id);
   auto am = to_map(aff_vec.at(dim_id));
   vector<bool> rel_map = relation_map(am);
+  cout << "Relation map" << rel_map << endl;
   int inner_most_address_related_dim_id = rel_map.size() - 1;
   for (int i = rel_map.size() - 1; i >= 0; i -- ) {
     if ((rel_map.at(i) != 0) ) {//&& (get_domain_span_range(m, i) >= fetch_width)) {
       inner_most_address_related_dim_id = i;
+      //cout << "dimension: " << i << "  ext : " << get_dim_extent(domain(m), i) << endl;
+      //if ((get_dim_extent(domain(m), i) == 1))
+      //    inner_most_address_related_dim_id --;
       break;
+    }
+    if (i == 0) {
+      //FIXME: ASPLOS Hack:
+      //change to -2 since if we did not find any related loop, lp bd = 4
+      //it means we are project out this dimension
+      inner_most_address_related_dim_id --;
     }
   }
   return inner_most_address_related_dim_id;
