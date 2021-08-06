@@ -97,6 +97,8 @@ prog resnet_output_stationary_i16();
 prog resnet_output_stationary_i8();
 prog resnet_init_unroll();
 prog resnet_init_unroll_tile();
+prog resnet3_1();
+prog resnet_multi_channel();
 
 //Full layer simulation
 prog resnet_output_stationary_small();
