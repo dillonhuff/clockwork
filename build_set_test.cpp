@@ -15029,10 +15029,11 @@ void test_fetchwidth2_mem(bool gen_config_only, bool multi_accessor=false, strin
 void resnet_profiling() {
 
   vector<prog> test_apps;
-  test_apps.push_back(resnet4_1_full());
+  test_apps.push_back(resnet1_full());
   test_apps.push_back(resnet2_x_full());
   test_apps.push_back(resnet3_1_full());
   test_apps.push_back(resnet3_x_full());
+  test_apps.push_back(resnet4_1_full());
   test_apps.push_back(resnet4_x_full());
   test_apps.push_back(resnet5_1_full());
   test_apps.push_back(resnet5_x_full());
@@ -15061,6 +15062,8 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   //test_apps.push_back(fft8_unroll8());
   //test_apps.push_back(camera_pipeline_trunc());
   //
+  test_apps.push_back(resnet5_1());
+  test_apps.push_back(resnet1());
   test_apps.push_back(resnet3_1());
   test_apps.push_back(resnet4_x());
   test_apps.push_back(resnet5_x());
@@ -17456,12 +17459,24 @@ bool need_relax(schedule_info& sched, op* loop, prog& prg, int fetch_width) {
           //TODO: double check if this correct
           //double check this logic we need to go over all the involve dimension
           //except the innermost
-          for (int i = 0; i < in_involve_d.size()-1; i ++) {
+          //for (int i = 0; i < /*in_involve_d.size()-*/1; i ++) {
+          //  int in_involve_dim = in_involve_d.at(i);
+          //
+          //The logic here should be if we have multiple access check if upper level access go across wide fetch width
+          bool need_relax = false;
+          for (int i = 0; i < in_involve_d.size() - 1; i ++) {
             int in_involve_dim = in_involve_d.at(i);
-
             int stride = stride_in_dim(b_map, in_involve_dim, packed_addr_dim);
-            cout << "Dim " << levels.at(loop->name)<< "\n\t hasStride : " << stride << endl;
+            cout << "Dim " << in_involve_dim << "\n\t hasStride : " << stride << endl;
             if (stride % fetch_width != 0) {
+              need_relax = true;
+            }
+          }
+
+          //  int stride = stride_in_dim(b_map, in_involve_dim, packed_addr_dim);
+            //cout << "Dim " << in_involve_dim << "\n\t hasStride : " << stride << endl;
+            //if (stride % fetch_width != 0) {
+            if (need_relax) {
               cout << tab(4) << "Relax ii latency for op: " << loop->name << endl;
               //cout << tab(4) << "Original offset within parent: " << sched.offset_in_parent(child) << endl;
               cout << tab(4) << "Original offset within parent: " << sched.offset_in_parent(loop) << endl;
@@ -17471,12 +17486,13 @@ bool need_relax(schedule_info& sched, op* loop, prog& prg, int fetch_width) {
               else {
                   //int range_span = get_dim_extent(range(b_map), packed_addr_dim);
                   //if (range_span % fetch_width)
-                  sched.op_offset_within_parent.at(loop) = sched.II(loop) * fetch_width;
+                  //TODO: also check the logic here, this is conservative
+                  sched.op_offset_within_parent.at(loop) = sched.II(loop) * ((4- (loop->trip_count()) % fetch_width));
               }
               cout << tab(4) << "New offset within parent: " << sched.offset_in_parent(loop) << endl;
               return true;
             }
-          }
+          //}
       }
     }
   }
