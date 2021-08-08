@@ -98,6 +98,7 @@ prog resnet_output_stationary_i8();
 prog resnet_init_unroll();
 prog resnet_init_unroll_tile();
 prog resnet3_1();
+prog resnet4_x();
 prog resnet5_x();
 prog resnet_multi_channel();
 
@@ -107,6 +108,14 @@ prog resnet_output_stationary_tiny();
 prog resnet_output_stationary();
 prog resnet_output_stationary_full();
 
+//Full Resnet experiement
+prog resnet5_x_full();
+prog resnet5_1_full();
+prog resnet4_x_full();
+prog resnet4_1_full();
+prog resnet3_x_full();
+prog resnet3_1_full();
+prog resnet2_x_full();
 
 //pond resnet test
 prog complex_mem_pond_rolled();

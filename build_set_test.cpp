@@ -14854,6 +14854,10 @@ void Init_PE_energy_cost(power_analysis_params& power_params)  {
 void compile_for_garnet_single_port_mem(prog & prg, string dir, bool gen_smt_stream, bool gen_config_only, bool multi_level_mem, bool use_dse_compute, bool energy_model = false);
 void compile_for_garnet_fetch2_mem(prog & prg, string dir, bool gen_smt_stream, bool gen_config_only, bool multi_level_mem, bool use_dse_compute, bool energy_model = false);
 void cpy_app_to_folder(const std::string& app_type, const std::string& prg_name);
+void generate_resnet_latency_experiment(prog& prg,
+        ofstream& profiling_file,
+        string dir,
+        bool use_dse_compute = false);
 
 void test_pond(string dir, bool run_verilator=true) {
   vector<prog> test_apps;
@@ -15022,6 +15026,34 @@ void test_fetchwidth2_mem(bool gen_config_only, bool multi_accessor=false, strin
   }
 }
 
+void resnet_profiling() {
+
+  vector<prog> test_apps;
+  test_apps.push_back(resnet4_1_full());
+  test_apps.push_back(resnet2_x_full());
+  test_apps.push_back(resnet3_1_full());
+  test_apps.push_back(resnet3_x_full());
+  test_apps.push_back(resnet4_x_full());
+  test_apps.push_back(resnet5_1_full());
+  test_apps.push_back(resnet5_x_full());
+  //test_apps.push_back(resnet3_1());
+
+  ofstream out("resnet_profiling.csv");
+  for ( auto prg: test_apps) {
+    prg.sanity_check();
+
+    break_up_multi_channel_inputs(prg);
+    break_up_multi_channel_outputs(prg);
+    dsa_writers(prg);
+    prg.pretty_print();
+
+    //compile_for_garnet_platonic_mem(prg);
+    generate_resnet_latency_experiment(prg, out, "aha_garnet_design");
+  }
+  out.close();
+  cout << "FINISH Full Resnet profiling! Check <./resnet_profiling.csv>. " << endl;
+}
+
 void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, string dir="aha_garnet_design") {
   vector<prog> test_apps;
   //TODO:has issue  with multiple input
@@ -15029,8 +15061,9 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   //test_apps.push_back(fft8_unroll8());
   //test_apps.push_back(camera_pipeline_trunc());
   //
-  test_apps.push_back(resnet5_x());
   test_apps.push_back(resnet3_1());
+  test_apps.push_back(resnet4_x());
+  test_apps.push_back(resnet5_x());
   test_apps.push_back(resnet_multi_channel());
   //test_apps.push_back(mobilenet_unrolled());
   //test_apps.push_back(resnet_output_stationary_i8());
@@ -17828,6 +17861,23 @@ void adjust_coarse_grained_loop_delays_sequentially(schedule_info& sched, prog& 
   }
 }
 
+void dump_DNN_delays(schedule_info& sched, prog& prg, ofstream& out) {
+  cout << "Showing delay of " << prg.name << endl;
+  int d = 0;
+  map<string, int> coarse_pipeline_II;
+  int start = INT_MAX, end = 0;
+  for (auto name : topologically_sort_kernels(prg)) {
+    auto lp = prg.find_loop(name);
+    cout << "Kernel, " << name << ", " << sched.op_offset_within_parent.at(lp) << endl;
+    if (sched.op_offset_within_parent.at(lp) != 0){
+        start = min(sched.op_offset_within_parent.at(lp), start);
+        end = max(sched.op_offset_within_parent.at(lp), end);
+    }
+  }
+  cout << "CGRA latency: " <<  end - start << endl;
+  out <<  end-start;
+}
+
 void adjust_outer_delays_sequentially(schedule_info& sched, prog& prg) {
   cout << "Adjusting delays of " << prg.name << "After vectorization" << endl;
   int d = 0;
@@ -17840,6 +17890,7 @@ void adjust_outer_delays_sequentially(schedule_info& sched, prog& prg) {
     for (auto prod:  get_producers(name, prg))
         cout << "\tprod: " << prod << endl;
     //This only works for the schedule without pipeline should change into total latency
+    //coarse_pipeline_II[name] = sched.II(lp) * lp->trip_count();
     coarse_pipeline_II[name] = sched.II(lp) * lp->trip_count();
     sched.op_offset_within_parent[lp] = 0;
   }
@@ -18298,6 +18349,40 @@ void sanity_check_iis_for_vectorization(schedule_info& sched, prog& prg, int fet
     }
 }
 
+void dump_resnet_latency(CodegenOptions& options, schedule_info& sched, op* root, prog& prg, ofstream& out, bool db_opt) {
+  options.rtl_options.double_buffer_optimization = db_opt;
+  prg.pretty_print();
+  /*
+   * old method for ISCA deadline*/
+  asap_inner_loops_schedule(sched, root, prg,
+          options.mem_hierarchy.at("mem").fetch_width);
+  //sequential_schedule(sched, root, prg);
+
+  adjust_inner_iis(sched, prg);
+  tighten_iis(sched, prg);
+
+
+  //only adjust coarse grained ii while optimize double buffer
+  if (options.rtl_options.double_buffer_optimization) {
+    adjust_coarse_grained_loop_iis(sched, prg);
+    adjust_coarse_grained_loop_delays_sequentially(sched, prg);
+    tighten_coarse_grained_iis(sched, prg);
+    adjust_outer_delays_sequentially_cgpl(sched, prg);
+  } else {
+    //adjust_outer_delays(sched, prg);
+    adjust_outer_delays_sequentially(sched, prg);
+  }
+
+  dump_DNN_delays(sched, prg, out);
+
+  auto op_sched = op_start_times_map(sched, prg);
+  cout << "\tFinal schedule : " << str(op_sched)  << endl;
+
+  adjust_schedule_forward(sched, prg, 0);
+  sanity_check_hw_schedule(sched, prg);
+  return;
+}
+
 
 void garnet_single_port_ram_schedule(CodegenOptions& options, schedule_info& sched, op* root, prog& prg) {
     //FIXME: remove this hack for fft
@@ -18447,6 +18532,7 @@ void garnet_single_port_ram_schedule(CodegenOptions& options, schedule_info& sch
     adjust_outer_delays_sequentially(sched, prg);
   }
 
+  //dump_DNN_delays(sched, prg);
 
   auto op_sched = op_start_times_map(sched, prg);
   cout << "\tFinal schedule : " << str(op_sched)  << endl;
@@ -19132,6 +19218,37 @@ void compile_for_garnet_fetch2_mem(prog& prg,
     generate_garnet_verilator_tb(options, prg, hw_sched, buffers_opt);
   }
 #endif
+}
+
+void generate_resnet_latency_experiment(prog& prg,
+        ofstream& profiling_file,
+        string dir,
+        bool use_dse_compute) {
+
+  //make sure the loop bound and address is positive
+  normalize_bounds(prg);
+  normalize_address_offsets(prg);
+  //remove_div(prg);
+  prg.sanity_check();
+  prg.pretty_print();
+
+
+  //optimized schedule
+  cmd("mkdir -p " + dir + "/" + prg.name);
+
+  //auto iis = garnet_fuse_ii_level(prg);
+  //auto buffers_opt = build_buffers(prg, clockwork_schedule(prg));
+
+  CodegenOptions options = garnet_codegen_single_port_with_addrgen_options(prg, dir);
+  options.add_memory_hierarchy("mem");
+  options.add_memory_hierarchy("glb");
+  profiling_file << prg.name << ", ";
+  schedule_info sched = garnet_schedule_info(options, prg, use_dse_compute);
+  dump_resnet_latency(options, sched, prg.root, prg, profiling_file, false/*double buffer optimization*/);
+  profiling_file << ", ";
+  schedule_info sched_db = garnet_schedule_info(options, prg, use_dse_compute);
+  dump_resnet_latency(options, sched_db, prg.root, prg, profiling_file, true/*double buffer optimization*/);
+  profiling_file << endl;
 }
 
 void compile_for_garnet_single_port_mem(prog& prg,
@@ -27495,6 +27612,11 @@ int main(int argc, char** argv) {
       bool use_multi_accessor_tile = true;
       bool gen_config_only = true;
       test_single_port_mem(gen_config_only, use_multi_accessor_tile, "aha_garnet_design_new");
+      return 0;
+    }
+
+    if (cmd == "resnet-exp") {
+      resnet_profiling();
       return 0;
     }
 
