@@ -92,6 +92,7 @@ prog glb_db();
 prog glb_channel_reduction();
 prog resnet_glb();
 prog gaussian_glb();
+prog gaussian_glb8();
 
 //resnet without input tiling
 prog resnet_output_stationary_i16();

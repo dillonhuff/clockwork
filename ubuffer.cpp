@@ -975,7 +975,10 @@ UBuffer UBuffer::generate_ubuffer(UBufferImpl& impl, schedule_info & info, int b
     }
   buf.simplify_address_space();
   if (sr) {
-    buf.linear_address_space(project_out_zero_dim(rddom), 4);
+
+      //ASPLOS: this is a hack for high throughput
+    buf.linear_address_space(project_out_zero_dim(rddom),
+            max(4/*fetch_width*/, stride_in_dim(rddom, ::num_dims(rddom) - 1)));
     buf.tighten_address_space();
   }
   cout << "after ubuffer regen: " << buf << endl;
