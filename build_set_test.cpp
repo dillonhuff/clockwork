@@ -15062,7 +15062,7 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   //test_apps.push_back(fft8_unroll8());
   //test_apps.push_back(camera_pipeline_trunc());
   //
-  //test_apps.push_back(up_sample_glb());
+  test_apps.push_back(up_sample_glb());
   test_apps.push_back(unsharp_glb());
   test_apps.push_back(gaussian_glb8());
   test_apps.push_back(gaussian_glb());
