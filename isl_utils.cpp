@@ -1850,6 +1850,16 @@ int stride_in_dim(isl_map* const m, size_t dim) {
     return to_int(get_coeff(aff, dim));
 }
 
+int common_max_stride(isl_map* const m) {
+    int cms = 0;
+    //Skip root start from 1
+    for (int in_dim=1; in_dim < num_in_dims(m); in_dim++){
+        int s = stride_in_dim(m, in_dim);
+        cms = std::gcd(cms, s);
+    }
+    return cms;
+}
+
 
 isl_set* domain(isl_map* const m) {
   return isl_map_domain(cpy(m));

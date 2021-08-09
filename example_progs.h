@@ -91,6 +91,7 @@ prog glb_conv33();
 prog glb_db();
 prog glb_channel_reduction();
 prog resnet_glb();
+prog gaussian_glb();
 
 //resnet without input tiling
 prog resnet_output_stationary_i16();

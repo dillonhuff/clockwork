@@ -1897,6 +1897,27 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
       }
     }
 
+    //ubuffer rewrite pass remove common-minimum stride
+void tighten_address_space() {
+    int cms = 0;
+    for (auto it: access_map) {
+        auto am = to_map(it.second);
+        //only work for linearized address
+        assert(num_out_dims(am) == 1);
+        cms = std::gcd(cms, common_max_stride(am));
+    }
+    cout << "common max stride = " << cms << endl;
+    if (cms > 1) {
+        cout << "Could tighten address! " << endl;
+        for (auto& it: access_map){
+          auto am = to_map(it.second);
+          auto trans= get_set_slice(range(am), 0, cms);
+          it.second = to_umap(dot(am, (trans)));
+          cout <<"\tTighten access map to: " << str(it.second) << endl;
+        }
+    }
+}
+
 
     int lanes_in_bundle(const std::string& bn) {
       assert(contains_key(bn, port_bundles));

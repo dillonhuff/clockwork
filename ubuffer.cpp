@@ -976,6 +976,7 @@ UBuffer UBuffer::generate_ubuffer(UBufferImpl& impl, schedule_info & info, int b
   buf.simplify_address_space();
   if (sr) {
     buf.linear_address_space(project_out_zero_dim(rddom), 4);
+    buf.tighten_address_space();
   }
   cout << "after ubuffer regen: " << buf << endl;
 
