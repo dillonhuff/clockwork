@@ -15055,42 +15055,70 @@ void resnet_profiling() {
   cout << "FINISH Full Resnet profiling! Check <./resnet_profiling.csv>. " << endl;
 }
 
-void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, string dir="aha_garnet_design") {
+void test_glb(bool gen_config_only, bool multi_accessor=false, string dir="aha_garnet_design") {
   vector<prog> test_apps;
-  //TODO:has issue  with multiple input
-  //test_apps.push_back(demosaic_complex());
-  //test_apps.push_back(fft8_unroll8());
-  //test_apps.push_back(camera_pipeline_trunc());
-  //
+  //GLB tests
   test_apps.push_back(camera_pipeline_glb());
   test_apps.push_back(harris_glb2());
   test_apps.push_back(up_sample_glb());
   test_apps.push_back(unsharp_glb());
-  test_apps.push_back(gaussian_glb8());
   test_apps.push_back(gaussian_glb());
+  test_apps.push_back(gaussian_glb8());
+  test_apps.push_back(glb_channel_reduction());
+
+  //Sample DNN Layers
   test_apps.push_back(resnet1());
   test_apps.push_back(resnet3_1());
   test_apps.push_back(resnet4_x());
   test_apps.push_back(resnet5_1());
   test_apps.push_back(resnet5_x());
   test_apps.push_back(resnet_multi_channel());
-  //test_apps.push_back(mobilenet_unrolled());
-  //test_apps.push_back(resnet_output_stationary_i8());
-
-  //GLB tests
-  test_apps.push_back(glb_channel_reduction());
-  //test_apps.push_back(glb_db());
-  //test_apps.push_back(glb_conv33());
-  //test_apps.push_back(resnet_output_stationary_i16());
 
   //Test with non double buffer, not tested with db
   test_apps.push_back(resnet_output_stationary_tiny());
-  //test_apps.push_back(resnet_output_stationary_small());
-  //test_apps.push_back(resnet_output_stationary_full());
   test_apps.push_back(resnet_init_unroll_tile());
-  //test_apps.push_back(resnet_init_unroll());
 
+  for ( auto prg: test_apps) {
+    prg.sanity_check();
 
+    break_up_multi_channel_inputs(prg);
+    break_up_multi_channel_outputs(prg);
+    dsa_writers(prg);
+    prg.pretty_print();
+
+    //compile_for_garnet_platonic_mem(prg);
+    compile_for_garnet_single_port_mem(prg, dir, false, gen_config_only, false, false);
+    cout << "Output name: " << prg.name << endl;
+    //TODO: move to a function
+    //run verilator on all the generated verilog
+    if (!gen_config_only) {
+      string name = prg.name;
+      auto verilog_files = get_files("./" + dir + "/"+name+"/verilog/");
+      verilog_files.push_back(name + ".v");
+      verilog_files.push_back("LakeTop_W_new.v");
+      add_default_initial_block();
+      bool extra_flag_for_lake = true;
+      auto cpu = unoptimized_result(prg);
+      int res = run_verilator_on(name, name + "_verilog_tb.cpp", verilog_files, extra_flag_for_lake);
+      assert(res == 0);
+      cmd("rm LakeTop_W_new.v");
+      cmd("rm LakeWrapper.v");
+
+      auto verilator_res = verilator_results(prg.name);
+      compare("cgra_" + prg.name + "_cpu_vs_verilog_comparison", verilator_res, cpu);
+      //string app_typssive "dualwithaddr";
+      string app_type = "single_port_buffer";
+      cpy_app_to_folder(app_type, prg.name);
+    }
+  }
+}
+
+void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, string dir="aha_garnet_design") {
+  vector<prog> test_apps;
+  //TODO:has issue  with multiple input
+  //test_apps.push_back(demosaic_complex());
+  //test_apps.push_back(fft8_unroll8());
+  //test_apps.push_back(camera_pipeline_trunc());
 
   //CGRA tests
   test_apps.push_back(counter());
@@ -27627,6 +27655,13 @@ int main(int argc, char** argv) {
 
     if (cmd == "energy-tests") {
       test_energy_model("aha_energy_model");
+      return 0;
+    }
+
+    if (cmd == "glb-tests") {
+      bool use_multi_accessor_tile = true;
+      bool gen_config_only = false;
+      test_single_port_mem(gen_config_only, use_multi_accessor_tile, "aha_garnet_design_new");
       return 0;
     }
 
