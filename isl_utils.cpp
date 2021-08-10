@@ -658,6 +658,38 @@ isl_map* linear_address_map_lake(isl_set* s, int fetch_width) {
   return isl_map_read_from_str(ctx(s), map_str.c_str());
 }
 
+isl_map* linear_address_map_lake_SR(isl_set* s, int fetch_width) {
+  string domain = name(s);
+  int dim = num_dims(s);
+  vector<string> var_names;
+  vector<string> exprs;
+  isl_val* stride = one(ctx(s));
+  //Inner stride
+  int stride_innermost = stride_in_dim(s, dim - 1);
+  cout << "Stride inner most:  " << stride_innermost << endl;
+  fetch_width *= stride_innermost;
+  for (int i = dim-1; i >= 0; i--) {
+    string var = "d" + str(i);
+    var_names.push_back(var);
+    string stridestr = str(stride);
+    exprs.push_back(stridestr + "*" + var);
+    auto interval = project_all_but(s, i);
+    isl_val* extend = add(sub(lexmaxval(interval), lexminval(interval)), one(ctx(s)));
+    stride = mul(stride, extend);
+    if (to_int(stride) % fetch_width != 0) {
+        stride = isl_val_int_from_si(ctx(s),
+                to_int(stride) + fetch_width - to_int(stride) % fetch_width);
+    }
+  }
+  std::reverse(var_names.begin(), var_names.end());
+
+  //Add a floor divide to remove the extra dimension
+  string map_str = "{" + domain + sep_list(var_names, "[", "]", ", ") + " -> " +
+      domain + "[floor(" + sep_list(exprs, "(", ")", " + ") + "/" + str(stride_innermost) + ")] }";
+  cout << map_str << endl;
+  return isl_map_read_from_str(ctx(s), map_str.c_str());
+}
+
 isl_map* linear_address_map_with_index(isl_set* s, vector<int> index) {
     return linear_address_map_with_index(s, index, 1);
 }

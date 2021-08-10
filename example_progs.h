@@ -95,6 +95,9 @@ prog gaussian_glb();
 prog gaussian_glb8();
 prog unsharp_glb();
 prog up_sample_glb();
+prog harris_color();
+prog harris_glb2();
+prog camera_pipeline_glb();
 
 //resnet without input tiling
 prog resnet_output_stationary_i16();

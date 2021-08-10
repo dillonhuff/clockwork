@@ -1884,7 +1884,7 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
     }
 
     void linear_address_space(isl_set* rddom, int fetch_width) {
-      auto reduce_map = linear_address_map_lake(rddom, fetch_width);
+      auto reduce_map = linear_address_map_lake_SR(rddom, fetch_width);
       string dname = buf_range_name();
       reduce_map = set_domain_name(reduce_map, dname);
       reduce_map = set_range_name(reduce_map, dname);
