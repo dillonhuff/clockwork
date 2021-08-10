@@ -109,6 +109,8 @@ prog resnet1();
 prog resnet4_x();
 prog resnet5_x();
 prog resnet5_1();
+prog resnet5_1_new();
+prog resnet5_x_new();
 prog resnet_multi_channel();
 
 //Full layer simulation
