@@ -226,12 +226,12 @@
         "connections":[
           ["self.d.0","const_0.out"],
           ["self.clk","op_hcompute_demosaicked_1_stencil_2_port_controller_Counter_1_garnet.clk"],
-          ["op_hcompute_demosaicked_1_stencil_2_port_controller_clk_en_const1_lutcnst.bit.out","op_hcompute_demosaicked_1_stencil_2_port_controller_Counter_1_garnet.clk_en"],
+          ["op_hcompute_demosaicked_1_stencil_2_port_controller_clk_en_const_lutcnst.bit.out","op_hcompute_demosaicked_1_stencil_2_port_controller_Counter_1_garnet.clk_en"],
           ["self.d.1","op_hcompute_demosaicked_1_stencil_2_port_controller_Counter_1_garnet.data_out_0"],
           ["self.rst_n","op_hcompute_demosaicked_1_stencil_2_port_controller_Counter_1_garnet.flush"],
           ["self.valid","op_hcompute_demosaicked_1_stencil_2_port_controller_Counter_1_garnet.stencil_valid"],
           ["self.clk","op_hcompute_demosaicked_1_stencil_2_port_controller_Counter_2_garnet.clk"],
-          ["op_hcompute_demosaicked_1_stencil_2_port_controller_clk_en_const_lutcnst.bit.out","op_hcompute_demosaicked_1_stencil_2_port_controller_Counter_2_garnet.clk_en"],
+          ["op_hcompute_demosaicked_1_stencil_2_port_controller_clk_en_const1_lutcnst.bit.out","op_hcompute_demosaicked_1_stencil_2_port_controller_Counter_2_garnet.clk_en"],
           ["self.d.2","op_hcompute_demosaicked_1_stencil_2_port_controller_Counter_2_garnet.data_out_0"],
           ["self.rst_n","op_hcompute_demosaicked_1_stencil_2_port_controller_Counter_2_garnet.flush"]
         ]
@@ -320,12 +320,12 @@
         "connections":[
           ["self.d.0","const_0.out"],
           ["self.clk","op_hcompute_demosaicked_1_stencil_port_controller_Counter_1_garnet.clk"],
-          ["op_hcompute_demosaicked_1_stencil_port_controller_clk_en_const_lutcnst.bit.out","op_hcompute_demosaicked_1_stencil_port_controller_Counter_1_garnet.clk_en"],
+          ["op_hcompute_demosaicked_1_stencil_port_controller_clk_en_const1_lutcnst.bit.out","op_hcompute_demosaicked_1_stencil_port_controller_Counter_1_garnet.clk_en"],
           ["self.d.1","op_hcompute_demosaicked_1_stencil_port_controller_Counter_1_garnet.data_out_0"],
           ["self.rst_n","op_hcompute_demosaicked_1_stencil_port_controller_Counter_1_garnet.flush"],
           ["self.valid","op_hcompute_demosaicked_1_stencil_port_controller_Counter_1_garnet.stencil_valid"],
           ["self.clk","op_hcompute_demosaicked_1_stencil_port_controller_Counter_2_garnet.clk"],
-          ["op_hcompute_demosaicked_1_stencil_port_controller_clk_en_const1_lutcnst.bit.out","op_hcompute_demosaicked_1_stencil_port_controller_Counter_2_garnet.clk_en"],
+          ["op_hcompute_demosaicked_1_stencil_port_controller_clk_en_const_lutcnst.bit.out","op_hcompute_demosaicked_1_stencil_port_controller_Counter_2_garnet.clk_en"],
           ["self.d.2","op_hcompute_demosaicked_1_stencil_port_controller_Counter_2_garnet.data_out_0"],
           ["self.rst_n","op_hcompute_demosaicked_1_stencil_port_controller_Counter_2_garnet.flush"]
         ]
@@ -4452,8 +4452,8 @@
           ["op_hcompute_demosaicked_1_stencil_2$inner_compute$ult_957_958_959$compop.bit.out","op_hcompute_demosaicked_1_stencil_2$inner_compute$mux_959_962_928$mux.bit.in.0"],
           ["op_hcompute_demosaicked_1_stencil_2$inner_compute$ult_965_966_967$compop.bit.out","op_hcompute_demosaicked_1_stencil_2$inner_compute$mux_967_970_973$mux.bit.in.0"],
           ["op_hcompute_demosaicked_1_stencil_2$inner_compute$ult_983_984_985$compop.bit.out","op_hcompute_demosaicked_1_stencil_2$inner_compute$mux_985_962_988$mux.bit.in.0"],
-          ["op_hcompute_demosaicked_1_stencil_2_port_controller$op_hcompute_demosaicked_1_stencil_2_port_controller_clk_en_const1_lutcnst.bit.out","op_hcompute_demosaicked_1_stencil_2_port_controller$op_hcompute_demosaicked_1_stencil_2_port_controller_Counter_1_garnet.clk_en"],
-          ["op_hcompute_demosaicked_1_stencil_2_port_controller$op_hcompute_demosaicked_1_stencil_2_port_controller_clk_en_const_lutcnst.bit.out","op_hcompute_demosaicked_1_stencil_2_port_controller$op_hcompute_demosaicked_1_stencil_2_port_controller_Counter_2_garnet.clk_en"],
+          ["op_hcompute_demosaicked_1_stencil_2_port_controller$op_hcompute_demosaicked_1_stencil_2_port_controller_clk_en_const_lutcnst.bit.out","op_hcompute_demosaicked_1_stencil_2_port_controller$op_hcompute_demosaicked_1_stencil_2_port_controller_Counter_1_garnet.clk_en"],
+          ["op_hcompute_demosaicked_1_stencil_2_port_controller$op_hcompute_demosaicked_1_stencil_2_port_controller_clk_en_const1_lutcnst.bit.out","op_hcompute_demosaicked_1_stencil_2_port_controller$op_hcompute_demosaicked_1_stencil_2_port_controller_Counter_2_garnet.clk_en"],
           ["op_hcompute_demosaicked_1_stencil_port_controller$op_hcompute_demosaicked_1_stencil_port_controller_clk_en_const_lutcnst.bit.out","op_hcompute_demosaicked_1_stencil_port_controller$op_hcompute_demosaicked_1_stencil_port_controller_Counter_1_garnet.clk_en"],
           ["op_hcompute_demosaicked_1_stencil_port_controller$op_hcompute_demosaicked_1_stencil_port_controller_clk_en_const1_lutcnst.bit.out","op_hcompute_demosaicked_1_stencil_port_controller$op_hcompute_demosaicked_1_stencil_port_controller_Counter_2_garnet.clk_en"],
           ["op_hcompute_hw_output_stencil_1_port_controller_garnet.clk_en","op_hcompute_hw_output_stencil_1_port_controller_clk_en_const_lutcnst.bit.out"],

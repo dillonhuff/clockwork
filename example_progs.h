@@ -110,6 +110,7 @@ prog resnet4_x();
 prog resnet5_x();
 prog resnet5_1();
 prog resnet5_1_new();
+prog resnet5_1_unroll();
 prog resnet5_x_new();
 prog resnet_multi_channel();
 
@@ -120,6 +121,8 @@ prog resnet_output_stationary();
 prog resnet_output_stationary_full();
 
 //Full Resnet experiement
+prog resnet5_1_unroll_full();
+prog resnet5_x_unroll_full();
 prog resnet5_x_full();
 prog resnet5_1_full();
 prog resnet4_x_full();

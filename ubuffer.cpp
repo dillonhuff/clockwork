@@ -2853,6 +2853,8 @@ CoreIR::Instance* UBuffer::map_ubuffer_to_cgra(CodegenOptions& options, CoreIR::
     //buf->getModuleRef()->getMetaData()["verilog_name"] = "glb_"+ c->getUnique();
     buf->getMetaData()["verilog_name"] = "glb_"+ c->getUnique();
     int count = 0;
+    target_buf.remove_bank_dim();
+    cout << "After simplify: " << target_buf << endl;
     for (auto inpt: target_buf.get_in_ports()) {
       isl_set* dom = target_buf.domain.at(inpt);
       isl_aff* aff = get_aff(to_map(target_buf.schedule.at(inpt)));

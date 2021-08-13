@@ -1883,6 +1883,17 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
         return false;
     }
 
+    void remove_bank_dim() {
+        for (auto pt: get_all_ports()) {
+            auto sched = to_map(schedule.at(pt));
+            schedule.at(pt) = to_umap(remove_irrelevant_in_dim(sched));
+            auto acc_m = to_map(access_map.at(pt));
+            auto acc_rem = remove_irrelevant_in_dim(acc_m);
+            access_map.at(pt) = to_umap(acc_rem);
+            domain.at(pt) = ::domain(acc_rem);
+        }
+    }
+
     void linear_address_space(isl_set* rddom, int fetch_width) {
       auto reduce_map = linear_address_map_lake_SR(rddom, fetch_width);
       string dname = buf_range_name();

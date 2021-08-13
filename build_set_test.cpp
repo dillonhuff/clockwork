@@ -15029,14 +15029,16 @@ void test_fetchwidth2_mem(bool gen_config_only, bool multi_accessor=false, strin
 void resnet_profiling() {
 
   vector<prog> test_apps;
-  test_apps.push_back(resnet1_full());
-  test_apps.push_back(resnet2_x_full());
-  test_apps.push_back(resnet3_1_full());
-  test_apps.push_back(resnet3_x_full());
-  test_apps.push_back(resnet4_1_full());
-  test_apps.push_back(resnet4_x_full());
-  test_apps.push_back(resnet5_1_full());
-  test_apps.push_back(resnet5_x_full());
+  //test_apps.push_back(resnet1_full());
+  //test_apps.push_back(resnet2_x_full());
+  //test_apps.push_back(resnet3_1_full());
+  //test_apps.push_back(resnet3_x_full());
+  //test_apps.push_back(resnet4_1_full());
+  //test_apps.push_back(resnet4_x_full());
+  //test_apps.push_back(resnet5_1_full());
+  //test_apps.push_back(resnet5_x_full());
+  test_apps.push_back(resnet5_1_unroll_full());
+  test_apps.push_back(resnet5_x_unroll_full());
   //test_apps.push_back(resnet3_1());
 
   ofstream out("resnet_profiling.csv");
@@ -15058,30 +15060,32 @@ void resnet_profiling() {
 void test_glb(bool gen_config_only, bool multi_accessor=false, string dir="aha_garnet_design") {
   vector<prog> test_apps;
 
-  test_apps.push_back(resnet5_x_new());
-  test_apps.push_back(resnet5_1_new());
+  //test_apps.push_back(resnet5_1_full());
   //test_apps.push_back(resnet2_x_full());
 
   //GLB tests
-  //test_apps.push_back(camera_pipeline_glb());
-  //test_apps.push_back(harris_glb2());
-  //test_apps.push_back(up_sample_glb());
-  //test_apps.push_back(unsharp_glb());
-  //test_apps.push_back(gaussian_glb());
-  //test_apps.push_back(gaussian_glb8());
-  //test_apps.push_back(glb_channel_reduction());
+  test_apps.push_back(camera_pipeline_glb());
+  test_apps.push_back(harris_glb2());
+  test_apps.push_back(up_sample_glb());
+  test_apps.push_back(unsharp_glb());
+  test_apps.push_back(gaussian_glb());
+  test_apps.push_back(gaussian_glb8());
+  test_apps.push_back(glb_channel_reduction());
 
-  ////Sample DNN Layers
-  //test_apps.push_back(resnet1());
-  //test_apps.push_back(resnet3_1());
-  //test_apps.push_back(resnet4_x());
-  //test_apps.push_back(resnet5_1());
-  //test_apps.push_back(resnet5_x());
-  //test_apps.push_back(resnet_multi_channel());
+  //Sample DNN Layers
+  test_apps.push_back(resnet1());
+  test_apps.push_back(resnet3_1());
+  test_apps.push_back(resnet4_x());
+  test_apps.push_back(resnet5_1());
+  test_apps.push_back(resnet5_x());
+  test_apps.push_back(resnet5_x_new());
+  test_apps.push_back(resnet5_1_new());
+  test_apps.push_back(resnet5_1_unroll());
+  test_apps.push_back(resnet_multi_channel());
 
-  ////Test with non double buffer, not tested with db
-  //test_apps.push_back(resnet_output_stationary_tiny());
-  //test_apps.push_back(resnet_init_unroll_tile());
+  //Test with non double buffer, not tested with db
+  test_apps.push_back(resnet_output_stationary_tiny());
+  test_apps.push_back(resnet_init_unroll_tile());
 
   for ( auto prg: test_apps) {
     prg.sanity_check();
