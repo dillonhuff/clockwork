@@ -14,7 +14,7 @@ def index2vector(ind, extends)->list:
 #input_file = "../aha_garnet_design_new/resnet3_1/resnet3_1_garnet.json"
 assert len(sys.argv) == 2, "python shuffer.py coreir.json"
 input_file = sys.argv[1]
-input_file = "../aha_garnet_design_new/resnet_init_unroll_tile/resnet_init_unroll_tile_garnet.json"
+#input_file = "../aha_garnet_design_new/resnet_init_unroll_tile/resnet_init_unroll_tile_garnet.json"
 with open(input_file) as f:
     data = json.load(f)
     val_list = (data["top"]).split(".")
