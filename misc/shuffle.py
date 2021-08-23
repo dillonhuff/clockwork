@@ -130,7 +130,9 @@ with open(input_file) as f:
 
             #save new file
             scipy.io.savemat(img_file_name + "_shuffle.mat", {img_file_name: data_shuffle})
-            print ("SAVE reordered image into ",img_file_name, "_shuffle.mat!\n")
+            print ("SAVE reordered image into ",img_file_name + "_shuffle.mat!\n")
+            data_shuffle.astype('int16').tofile(img_file_name + '_shuffle.raw')
+            print ("SAVE reordered image into ",img_file_name + "_shuffle.raw!\n")
 
             #optimize the level of iteration ?
             print ("\tnew stride: \t", new_stride)
