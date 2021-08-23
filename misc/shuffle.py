@@ -12,8 +12,8 @@ def index2vector(ind, extends)->list:
     return ret
 
 #input_file = "../aha_garnet_design_new/resnet3_1/resnet3_1_garnet.json"
+assert len(sys.argv) == 2, "python shuffer.py coreir.json"
 input_file = sys.argv[1]
-#output_file = sys.argv[2]
 input_file = "../aha_garnet_design_new/resnet_init_unroll_tile/resnet_init_unroll_tile_garnet.json"
 with open(input_file) as f:
     data = json.load(f)
@@ -130,6 +130,7 @@ with open(input_file) as f:
 
             #save new file
             scipy.io.savemat(img_file_name + "_shuffle.mat", {img_file_name: data_shuffle})
+            print ("SAVE reordered image into ",img_file_name, "_shuffle.mat!\n")
 
             #optimize the level of iteration ?
             print ("\tnew stride: \t", new_stride)
@@ -196,5 +197,6 @@ with open('design_top_reorder.json', 'w') as out_file:
     json_data = json.dumps(data, indent=4)
     out_file.write(json_data)
 
+print ("\nSave new coreir json into design_top_reorder.json")
 
 
