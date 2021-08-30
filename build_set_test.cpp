@@ -11696,6 +11696,13 @@ void blur_and_downsample_test() {
 void playground() {
     {
       isl_ctx* ctx = isl_ctx_alloc();
+      auto acc_0 = isl_map_read_from_str(ctx,"{ [i0]-> [3*i0]: 0<=i0<8}");
+      auto delta_set = isl_map_deltas(acc_0);
+      cout << "Delta: " << str(delta_set) << endl;
+      assert(false);
+    }
+    {
+      isl_ctx* ctx = isl_ctx_alloc();
       auto acc_0 = isl_map_read_from_str(ctx,"{ op[i0, i1]-> [4000 + i1]: i0=0 and i1=0}");
       auto aff = get_aff(acc_0);
       assert(false);
@@ -14861,6 +14868,7 @@ void generate_resnet_latency_experiment(prog& prg,
 
 void test_pond(string dir, bool run_verilator=true) {
   vector<prog> test_apps;
+  test_apps.push_back(complex_mem_pond_input());
   test_apps.push_back(complex_mem_pond());
   test_apps.push_back(complex_mem_pond_rolled());
   test_apps.push_back(conv_rolled());
@@ -15071,8 +15079,10 @@ void test_glb(bool gen_config_only, bool multi_accessor=false, string dir="aha_g
   test_apps.push_back(gaussian_glb());
   test_apps.push_back(gaussian_glb8());
   test_apps.push_back(glb_channel_reduction());
+  //
+  test_apps.push_back(matmul());
 
-  //Sample DNN Layers
+  ////Sample DNN Layers
   test_apps.push_back(resnet1());
   test_apps.push_back(resnet3_1());
   test_apps.push_back(resnet4_x());
@@ -17470,9 +17480,9 @@ bool need_relax(schedule_info& sched, op* loop, prog& prg, int fetch_width) {
   //only look at loop op
   if (!loop->is_loop())
     return false;
+  cout << "op name: " << loop->name << endl;
   auto read_map = read_at(loop->name, prg);
   auto levels = get_variable_levels(prg);
-  cout << "op name: " << loop->name << endl;
   cout << "op level: " << levels.at(loop->name) << endl;
   if(read_map == nullptr)
       return false;
