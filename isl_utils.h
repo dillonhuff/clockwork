@@ -297,6 +297,8 @@ isl_map* pad_one_more_dim_to_sched_map_innermost(isl_map* const um, int pad_val)
 isl_map* add_more_dim_to_map_with_stride(isl_map* const um, int in_dim, int out_dim, int stride, int bd);
 isl_map* add_more_dim_to_map_domain_and_range(isl_map* const um, int in_dim, int out_dim, int stride, int bd);
 umap* pad_one_more_dim_to_sched_map_with_id(umap* const um, int dim_id, int pad_val);
+//umap* pad_one_more_dim_relation_to_map(umap* const um, int in_dim, int out_dim, int stride);
+umap* pad_one_more_dim_relation_to_map(umap* const um, vector<int> in_dims, int out_dim, int stride);
 
 std::string codegen_c(isl_set* const bset);
 std::string codegen_c(isl_union_set* bset);
@@ -395,6 +397,7 @@ vector<isl_set*> get_domain_unmask_set(isl_map* m, int vec_dim, vector<int> unma
 isl_map* get_domain_trans(isl_set* dom, int pos, int fetch_width);
 isl_map* get_domain_trans_with_reaccess_mask(isl_set* dom, int pos, int fetch_width);
 isl_set* get_domain_trans_sched_domain(isl_set* dom, int pos, int fetch_width);
+isl_set* get_domain_trans_sched_domain(isl_map* dom, int pos, int fetch_width);
 
 isl_map* get_div_trans(isl_map* am, map<int, int> split_dims);
 
@@ -402,6 +405,8 @@ isl_map* get_set_slice(isl_set* dom, int pos, int fetch_width);
 isl_map* get_set_slice(isl_set* dom, int pos, int offset, int fetch_width);
 vector<isl_map*> get_vectorize_interpolate(isl_set* dom, int pos, int fetch_width);
 int get_inner_most_related_dom_dim(isl_map* m, int dim_id, int fetch_width);
+int get_inner_most_related_dom_dim_debug(isl_map* m, int dim_id, int fetch_width);
+int get_inner_most_related_dom_dim(isl_map* m);
 
 
 umap* lexmax(umap* const m0);
@@ -452,6 +457,8 @@ vector<bool> relation_map(isl_map* m);
 int get_involve_dim(isl_map* m, int out_dim);
 vector<int> out_involve_dim(isl_map* m, int in_dim);
 vector<int> in_involve_dim(isl_map* m, int in_dim);
+int get_out_padding_dimension(isl_map* m, int in_dim);
+
 isl_map* peel_schedule_domain_dim(isl_map* m, int dom_dim, int delay);
 int get_peel_schedule_domain_dim(isl_map* m, int dom_dim);
 

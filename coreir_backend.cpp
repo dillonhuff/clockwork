@@ -2359,6 +2359,7 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
       eb.config_file = eb_config;
     }
   }
+  assert(false);
 
   auto levels = get_variable_levels(prg);
   // Connect compute units to buffers

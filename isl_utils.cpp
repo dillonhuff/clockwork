@@ -2660,7 +2660,7 @@ isl_map* remove_in_dims(isl_map* m, vector<int> remove_dims) {
 vector<bool> relation_map(isl_map* m) {
   size_t dom_dim = num_in_dims(m);
   vector<bool> rel(dom_dim, false);
-  cout << str(m) << endl;
+  //cout << str(m) << endl;
   for (auto aff: get_aff_vec(m)){
       for (int i = 0; i < dom_dim; i ++) {
         if (isl_aff_involves_dims(aff, isl_dim_in, i, 1)) {
@@ -2704,6 +2704,32 @@ int get_involve_dim(isl_map* m, int out_dim) {
   }
   cout << "Error: no input dim involve with this out dim" << endl;
   assert(false);
+}
+
+int get_out_padding_dimension(isl_map* m, int in_dim) {
+    vector<pair<int, int>> maxElementVec;
+    for(int i = 0; i < num_out_dims(m); i ++) {
+        vector<int> involve_dim = in_involve_dim(m, i);
+        if (involve_dim.size() == 0) {
+            continue;
+        }
+        cout << "dim: " << i << " involve : " << involve_dim << endl;
+        maxElementVec.push_back( {i,
+                *(std::max_element(involve_dim.begin(), involve_dim.end()))});
+    }
+    for(auto it = maxElementVec.begin(); it != maxElementVec.end()-1; it ++ ) {
+        if (it == maxElementVec.begin() && (in_dim < it->second)) {
+            cout << "Insert reaccess indim: " << in_dim << " to outdim : " << it->first << endl;
+            return it->first;
+        }
+        if ((in_dim > it->second) && (in_dim <= (it+1)->second)) {
+            cout << "Insert reaccess indim: " << in_dim << " to outdim : " << (it + 1)->first << endl;
+            return (it + 1)->first;
+
+        }
+    }
+    cout << "WARMING: fall back plan just pad in beginning" << endl;
+    return 0;
 }
 
 //Get the map for shift reg
@@ -3414,6 +3440,50 @@ umap* pad_one_more_dim_to_sched_map_with_id(umap* const um, int dim_id, int pad_
     }
 
     auto ret_m = isl_map_from_basic_map(ret);
+    return to_umap(ret_m);
+}
+//umap* pad_one_more_dim_relation_to_map(umap* const um, int in_dim, int out_dim, int stride) {
+//    return pad_one_more_dim_relation_to_map(um, {in_dim}, out_dim, stride);
+//}
+
+umap* pad_one_more_dim_relation_to_map(umap* const um, vector<int> in_dims, int out_dim, int stride) {
+  auto sched_map = to_map(um);
+  auto c_vec = constraints(sched_map);
+  vector<isl_constraint*> new_c;
+
+  //pad the space for the original constraints
+  for (auto c : c_vec) {
+      auto tmp = pad_dim_to_constraint(c, out_dim);
+      new_c.push_back(tmp);
+  }
+
+  auto sp = get_space(pick(new_c));
+  auto cons = isl_constraint_alloc_equality(isl_local_space_from_space(cpy(sp)));
+  int st = stride;
+  cons = isl_constraint_set_coefficient_si(cons, isl_dim_out, out_dim, -1);
+  for (int in_dim : in_dims) {
+    cons = isl_constraint_set_coefficient_si(cons, isl_dim_in, in_dim, st);
+    st *= get_domain_range(::domain(sched_map), in_dim);
+  }
+  new_c.push_back(cons);
+
+  auto ret = isl_basic_map_universe(sp);
+  for (auto c : new_c) {
+      ret = isl_basic_map_add_constraint(ret, c);
+  }
+
+  auto ct = ctx(um);
+  auto ret_m = isl_map_from_basic_map(ret);
+  string rname;
+  if (isl_map_get_tuple_id(sched_map, isl_dim_out) != nullptr) {
+    rname = range_name(sched_map);
+  }
+
+
+  if (isl_map_get_tuple_id(sched_map, isl_dim_out) != nullptr) {
+    isl_map_set_tuple_id(ret_m, isl_dim_out, id(ct, rname));
+  }
+
     return to_umap(ret_m);
 }
 
@@ -4244,7 +4314,50 @@ isl_map* merge_domain_dim(isl_map* m) {
     return mm;
 }
 
+int get_inner_most_related_dom_dim(isl_map* m) {
+  vector<bool> rel_dim = relation_map(m);
+  for (auto it = rel_dim.rbegin(); it < rel_dim.rend(); it ++) {
+    if (*it == true) {
+      cout << "find related dimension!" << endl;
+      return rel_dim.rend() - it - 1;
+    }
+  }
+  cout << "should find at least one dimension related in dim" << endl;
+  assert(false);
+}
+
+
 int get_inner_most_related_dom_dim(isl_map* m, int dim_id, int fetch_width) {
+  cout << "access map : " << str(m) << "need to find inner dim" << endl;
+  cout << "dim id: " << dim_id << endl;
+  auto aff_vec = get_aff_vec(m);
+  assert(aff_vec.size() > dim_id);
+  auto am = to_map(aff_vec.at(dim_id));
+  vector<bool> rel_map = relation_map(am);
+  cout << "Relation map" << rel_map << endl;
+  int inner_most_address_related_dim_id = rel_map.size() - 1;
+  for (int i = rel_map.size() - 1; i >= 0; i -- ) {
+    if ((rel_map.at(i) != 0) ) {//&& (get_domain_span_range(m, i) >= fetch_width)) {
+      inner_most_address_related_dim_id = i;
+      //cout << "dimension: " << i << "  ext : " << get_dim_extent(domain(m), i) << endl;
+      //if ((get_dim_extent(domain(m), i) == 1))
+      //    inner_most_address_related_dim_id --;
+      break;
+    }
+    if (i == 0) {
+      //FIXME: ASPLOS Hack:
+      //change to -2 since if we did not find any related loop, lp bd = 4
+      //it means we are project out this dimension
+      //inner_most_address_related_dim_id --;
+      //
+      //Did not find related_dom_dim
+      return -1;
+    }
+  }
+  return inner_most_address_related_dim_id;
+}
+
+int get_inner_most_related_dom_dim_debug(isl_map* m, int dim_id, int fetch_width) {
   cout << "access map : " << str(m) << "need to find inner dim" << endl;
   cout << "dim id: " << dim_id << endl;
   auto aff_vec = get_aff_vec(m);
@@ -4449,6 +4562,26 @@ isl_set* get_domain_trans_sched_domain(isl_set* dom, int pos, int fetch_width) {
     for (int i = 0; i < dim; i ++) {
         var.push_back("i" + str(i) );
         if (i > pos){
+            stmt.push_back("i" + str(i) + " = " + str(get_dim_min(dom, i)));
+        }
+    }
+    string map_str = "{"+dom_name + bracket_list(var) + ":" + sep_list(stmt, "", "", " and ")+ "}";
+    auto trans = isl_set_read_from_str(ctx(dom), map_str.c_str());
+    cout << "sched domain: " << str(trans) << endl;
+    return trans;
+}
+
+isl_set* get_domain_trans_sched_domain(isl_map* access_map, int pos, int fetch_width) {
+    auto dom = domain(access_map);
+    auto rel_map = relation_map(access_map);
+    string dom_name = name(dom);
+    int dim = num_dims(dom);
+    vector<string> var, stmt;
+    for (int i = 0; i < dim; i ++) {
+        var.push_back("i" + str(i) );
+
+        //Project out the dimension if they inside vectorization dimension and reaccess
+        if ((i > pos) && (rel_map.at(i) == 0)){
             stmt.push_back("i" + str(i) + " = " + str(get_dim_min(dom, i)));
         }
     }
