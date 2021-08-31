@@ -14868,7 +14868,7 @@ void generate_resnet_latency_experiment(prog& prg,
 
 void test_pond(string dir, bool run_verilator=true) {
   vector<prog> test_apps;
-  test_apps.push_back(complex_mem_pond_input());
+  //test_apps.push_back(complex_mem_pond_input());
   test_apps.push_back(complex_mem_pond());
   test_apps.push_back(complex_mem_pond_rolled());
   test_apps.push_back(conv_rolled());
