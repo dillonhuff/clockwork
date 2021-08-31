@@ -1844,8 +1844,9 @@ int stride_in_dim(isl_map* const m, size_t dim, size_t out_dim) {
 }
 
 int stride_in_dim(isl_map* const m, size_t dim) {
-    assert(num_out_dims(m) == 1);
-    auto aff = get_aff(m);
+    //assert(num_out_dims(m) == 1);
+    //TODO: fix this by default take 0 dimension but not always correct
+    auto aff = get_aff_vec(m).at(num_out_dims(m) - 1);
     return to_int(get_coeff(aff, dim));
 }
 
@@ -3131,6 +3132,140 @@ isl_constraint* pad_dim_to_constraint(isl_constraint* c) {
   }
   //cout << "rewrite constraits: " << str(cons) << endl;
   return cons;
+}
+
+//Pad an empty dimension
+isl_constraint* pad_dim_to_constraint_domain(isl_constraint* c, int dim_in, int dim_out, int stride) {
+  auto sp = get_space(c);
+  sp = isl_space_insert_dims(sp, isl_dim_in, dim_in, 1);
+  isl_constraint* cons;
+  if (isl_constraint_is_equality(c)) {
+    cons = isl_constraint_alloc_equality(isl_local_space_from_space(cpy(sp)));
+  } else {
+    cons = isl_constraint_alloc_inequality(isl_local_space_from_space(cpy(sp)));
+  }
+  cons = isl_constraint_set_constant_val(cons, isl_constraint_get_constant_val(c));
+  for (size_t i = 0; i < isl_constraint_dim(c, isl_dim_in)+1; i ++) {
+    if (i < dim_in) {
+      cons = isl_constraint_set_coefficient_val(cons, isl_dim_in, i,
+            isl_constraint_get_coefficient_val(c, isl_dim_in, i));
+    } else if (i > dim_in) {
+      cons = isl_constraint_set_coefficient_val(cons, isl_dim_in, i,
+            isl_constraint_get_coefficient_val(c, isl_dim_in, i-1));
+    }
+  }
+  for (size_t i = 0; i < isl_constraint_dim(c, isl_dim_out); i ++) {
+    if (isl_constraint_involves_dims(c, isl_dim_out, i, 1)) {
+      cons = isl_constraint_set_coefficient_val(cons, isl_dim_out, i,
+           isl_constraint_get_coefficient_val(c, isl_dim_out, i));
+      if (i == dim_out) {
+        cons = isl_constraint_set_coefficient_si(cons, isl_dim_in, dim_in, -stride);
+      }
+    }
+  }
+  //cout << "rewrite constraits: " << str(cons) << endl;
+  return cons;
+}
+
+isl_map* add_more_dim_to_map_with_stride(isl_map* const um, int in_dim, int out_dim, int stride, int bd) {
+    auto sched_map = um;
+    auto c_vec = constraints(sched_map);
+    vector<isl_constraint*> new_c;
+
+    //pad the space for the original constraints
+    for (auto c : c_vec) {
+        auto tmp = pad_dim_to_constraint_domain(c, in_dim, out_dim, stride);
+        new_c.push_back(tmp);
+    }
+
+    auto sp = get_space(pick(new_c));
+    auto lb= isl_constraint_alloc_inequality(isl_local_space_from_space(cpy(sp)));
+    lb = isl_constraint_set_constant_si(lb, 0);
+    lb = isl_constraint_set_coefficient_si(lb, isl_dim_in, in_dim, 1);
+    new_c.push_back(lb);
+
+    auto ub= isl_constraint_alloc_inequality(isl_local_space_from_space(cpy(sp)));
+    ub = isl_constraint_set_constant_si(ub, bd-1);
+    ub = isl_constraint_set_coefficient_si(ub, isl_dim_in, in_dim, -1);
+    new_c.push_back(ub);
+
+    auto ret = isl_basic_map_universe(sp);
+    for (auto c : new_c) {
+        ret = isl_basic_map_add_constraint(ret, c);
+    }
+
+    auto ret_m = isl_map_from_basic_map(ret);
+    ret_m = isl_map_set_tuple_id(ret_m, isl_dim_in, isl_map_get_tuple_id(um, isl_dim_in));
+    //ret_m = isl_map_set_tuple_id(ret_m, isl_dim_out, isl_map_get_tuple_id(um, isl_dim_out));
+    return ret_m;
+}
+
+isl_constraint* pad_dim_to_constraint_domain_and_range(isl_constraint* c, int dim_in, int dim_out) {
+  auto sp = get_space(c);
+  sp = isl_space_insert_dims(sp, isl_dim_in, dim_in, 1);
+  sp = isl_space_add_dims(sp, isl_dim_out, 1);
+  isl_constraint* cons;
+  if (isl_constraint_is_equality(c)) {
+    cons = isl_constraint_alloc_equality(isl_local_space_from_space(cpy(sp)));
+  } else {
+    cons = isl_constraint_alloc_inequality(isl_local_space_from_space(cpy(sp)));
+  }
+  cons = isl_constraint_set_constant_val(cons, isl_constraint_get_constant_val(c));
+  for (size_t i = 0; i < isl_constraint_dim(c, isl_dim_in)+1; i ++) {
+    if (i < dim_in) {
+      cons = isl_constraint_set_coefficient_val(cons, isl_dim_in, i,
+            isl_constraint_get_coefficient_val(c, isl_dim_in, i));
+    } else if (i > dim_in) {
+      cons = isl_constraint_set_coefficient_val(cons, isl_dim_in, i,
+            isl_constraint_get_coefficient_val(c, isl_dim_in, i-1));
+    }
+  }
+  for (size_t i = 0; i < isl_constraint_dim(c, isl_dim_out); i ++) {
+    if (isl_constraint_involves_dims(c, isl_dim_out, i, 1)) {
+      cons = isl_constraint_set_coefficient_val(cons, isl_dim_out, i+1,
+           isl_constraint_get_coefficient_val(c, isl_dim_out, i));
+    }
+  }
+  //cout << "rewrite constraits: " << str(cons) << endl;
+  return cons;
+}
+
+isl_map* add_more_dim_to_map_domain_and_range(isl_map* const um, int in_dim, int out_dim, int stride, int bd) {
+    auto sched_map = um;
+    auto c_vec = constraints(sched_map);
+    vector<isl_constraint*> new_c;
+
+    //pad the space for the original constraints
+    for (auto c : c_vec) {
+        auto tmp = pad_dim_to_constraint_domain_and_range(c, in_dim, out_dim);
+        new_c.push_back(tmp);
+    }
+
+    auto sp = get_space(pick(new_c));
+    auto lb= isl_constraint_alloc_inequality(isl_local_space_from_space(cpy(sp)));
+    lb = isl_constraint_set_constant_si(lb, 0);
+    lb = isl_constraint_set_coefficient_si(lb, isl_dim_in, in_dim, 1);
+    new_c.push_back(lb);
+
+    auto ub= isl_constraint_alloc_inequality(isl_local_space_from_space(cpy(sp)));
+    ub = isl_constraint_set_constant_si(ub, bd-1);
+    ub = isl_constraint_set_coefficient_si(ub, isl_dim_in, in_dim, -1);
+    new_c.push_back(ub);
+
+    auto cons = isl_constraint_alloc_equality(isl_local_space_from_space(cpy(sp)));
+    cons = isl_constraint_set_coefficient_si(cons, isl_dim_out, out_dim , stride);
+    cons = isl_constraint_set_coefficient_si(cons, isl_dim_in, in_dim , -1);
+    new_c.push_back(cons);
+
+    auto ret = isl_basic_map_universe(sp);
+    for (auto c : new_c) {
+        ret = isl_basic_map_add_constraint(ret, c);
+    }
+
+    auto ret_m = isl_map_from_basic_map(ret);
+    ret_m = isl_map_set_tuple_id(ret_m, isl_dim_in, isl_map_get_tuple_id(um, isl_dim_in));
+    ret_m = isl_map_set_tuple_id(ret_m, isl_dim_out, isl_map_get_tuple_id(um, isl_dim_out));
+    return ret_m;
 }
 
 isl_map* pad_one_more_dim_to_sched_map_innermost(isl_map* const um, int pad_val) {

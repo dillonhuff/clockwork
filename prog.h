@@ -1749,6 +1749,18 @@ struct schedule_info {
     return last_delay;
   }
 
+  int doublebuffer_update_delay(op* op) {
+    assert(op->is_loop());
+    int last_delay = 0;
+    for (auto c : op->children) {
+      int delay = II(c) * c->trip_count();
+      if (delay > last_delay) {
+        last_delay = delay;
+      }
+    }
+    return last_delay;
+  }
+
   int total_latency(op* op);
 
   int instance_latency(op* op);
@@ -1839,6 +1851,7 @@ void add_reuse_buffer_no_delta(const std::string& level, const std::string& buff
 
 op* find_coarse_grained_pipeline_loop(op* lp);
 op* find_coarse_grained_pipeline_loop(op* lp, prog& prg);
+void find_coarse_grained_pipeline_loops(op* lp, vector<op*> & cgpl_lps, prog& prg);
 
 vector<pair<string, pair<string, int> >> determine_output_shift_reg_map(
     prog& prg,

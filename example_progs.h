@@ -9,6 +9,7 @@ prog fft8_unroll8_ratematch();
 prog fft8_unroll8_pease();
 prog fft8_unroll8_split();
 prog laplacian_pyramid();
+prog laplacian_pyramid_docker();
 prog counter();
 prog conv_multi(); //multiple-tile-cnn
 prog strided_conv();
@@ -87,10 +88,22 @@ prog three_level_pond_copy();
 
 //GLB applications
 prog glb_conv33();
+prog glb_db();
 prog glb_channel_reduction();
 prog resnet_glb();
+
+//resnet without input tiling
 prog resnet_output_stationary_i16();
 prog resnet_output_stationary_i8();
+prog resnet_init_unroll();
+prog resnet_init_unroll_tile();
+
+//Full layer simulation
+prog resnet_output_stationary_small();
+prog resnet_output_stationary_tiny();
+prog resnet_output_stationary();
+prog resnet_output_stationary_full();
+
 
 //pond resnet test
 prog complex_mem_pond_rolled();

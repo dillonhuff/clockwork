@@ -1431,11 +1431,15 @@ class UBuffer {
         cout << get_in_dim_name(sched, in_dim) << endl;
 
         //TODO: double check this after ddl;
+        //UPDATE on 7.26.2022:
+        //  use multiple coarse grained pipeline ctrl level for different buffer
+        //  TODO: this should be derived from loop level not distribute into ubuf
         //if we found this is not the cgpl, due to reduction of DNN loop
         //we take the inner most non-related loop as new cgpl loop
         for (int i = 0; i <= in_dim; i ++) {
           if (rel_map.at(i) == true) {
             cout << "Cannot separate this loop" << endl;
+            assert(false);
             cout << "New cgpl level: " << get_in_dim_name(sched, i-1) << endl;;
             coarse_grained_pipeline_loop_level = i-1;
           }
@@ -1457,6 +1461,14 @@ class UBuffer {
     isl_union_map* global_outpt_sched() const {
       auto ret = isl_union_map_read_from_str(ctx, "{}");
       for (auto pt: get_out_ports()) {
+        ret = unn(ret, schedule.at(pt));
+      }
+      return ret;
+    }
+
+    isl_union_map* global_inpt_sched() const {
+      auto ret = isl_union_map_read_from_str(ctx, "{}");
+      for (auto pt: get_in_ports()) {
         ret = unn(ret, schedule.at(pt));
       }
       return ret;
@@ -2059,6 +2071,13 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
       return s;
     }
 
+    int starting_cycle() const {
+        isl_point* start_pt = (lexminpt(range(global_schedule())));
+        vector<int> pt_vec = parse_pt(start_pt);
+        assert(pt_vec.size() == 1);
+        return pick(pt_vec);
+    }
+
     isl_union_map* global_schedule_with_guard() const {
       umap* s = isl_union_map_read_from_str(ctx, "{ }");
       for (auto other : schedule) {
@@ -2408,7 +2427,7 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
         }
         string vars = sep_list(addr_var, "[", "]", ",");
         isl_map* buf_map = isl_map_read_from_str(ctx, string("{" + name + vars + " -> " + new_buf_name + vars + "}").c_str());
-        //cout <<"origin: " << str(origin_map) <<", transform: " << str(buf_map) << endl;
+        cout <<"origin: " << str(origin_map) <<", transform: " << str(buf_map) << endl;
         return to_map(dot(origin_map, buf_map));
     }
 
@@ -2565,7 +2584,8 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
     UBuffer generate_ubuffer(UBufferImpl& impl, schedule_info & info, int bank);
 
     //optimization pass to add an coarse grained controller, save iteration counter
-    isl_map* get_coarse_grained_pipeline_schedule(UBuffer& new_ub);
+    isl_map* get_coarse_grained_pipeline_schedule(CodegenOptions& opt, UBuffer& new_ub, string config_mode,
+            bool & decouple_ctrl, bool & substract_instance_latency);
 
     //for chaining and create subbank
     vector<UBuffer> decouple_ubuffer_from_bank_map(isl_map* bank_map);
@@ -2809,7 +2829,7 @@ vector<string> buffer_vectorization(vector<string> buf_name_vec, int dim_id, int
 
 
 //helper function for the new vectorization pass
-pair<isl_map*, isl_map*> get_vectorized_write(isl_map* acc_0, isl_map* sched, int fetch_width, int addr_dim);
+pair<isl_map*, isl_map*> get_vectorized_write(isl_map* acc_0, isl_map* sched, int fetch_width, int addr_dim, int agg_cnt=0);
 pair<isl_map*, isl_map*> get_vectorized_read(isl_map* acc_0, isl_map* sched, map<string, isl_map*> sched_record_map, int fetch_width, int addr_dim, bool is_dual_port = false);
 pair<isl_map*, isl_map*> get_vectorized_read_simplified(isl_map* acc_0, isl_map* sched, map<string, isl_map*> sched_record_map, int fetch_width, int addr_dim, bool is_dual_port = false);
 //Helper function to get schedule
@@ -2890,6 +2910,10 @@ void generate_synthesizable_functional_model(CodegenOptions& options, UBuffer& b
 
 CoreIR::Instance* affine_controller_use_lake_tile(CodegenOptions& options, CoreIR::ModuleDef*, CoreIR::Context*, isl_set*, isl_aff*, string);
 CoreIR::Module* affine_controller_use_lake_tile_counter(CodegenOptions& options, CoreIR::Context*, isl_set*, isl_aff*, string);
+
+//helper function for dump metadata for post garnet mapping
+void add_lake_config_to_aff_ctrl_for_garnet_mapping(isl_set* dom, isl_aff* aff, CoreIR::Instance* &aff_ctrl);
+
 #endif
 
 void generate_hls_code(CodegenOptions& options, std::ostream& out, UBuffer& buf);

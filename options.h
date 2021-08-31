@@ -83,13 +83,14 @@ struct RTLOptions {
   bool pack_controllers_in_memtiles;
   bool use_prebuilt_memory;
   bool use_pipelined_compute_units;
+  bool double_buffer_optimization;
   int max_inpt, max_outpt;
   TargetTile target_tile;
   global_signals_policy global_signals;
   int hls_clock_target_Hz;
 
   RTLOptions() : use_external_controllers(true), pack_controllers_in_memtiles(false),
-  use_pipelined_compute_units(false),
+  use_pipelined_compute_units(false), double_buffer_optimization(false),
     max_inpt(1), max_outpt(1),
     target_tile(TARGET_TILE_DUAL_SRAM_WITH_ADDRGEN), use_prebuilt_memory(false),
     hls_clock_target_Hz(250000000) {}
@@ -166,6 +167,15 @@ struct LakeCollateral {
         return c * max_chaining;
     }
 
+    int get_single_tile_capacity() const {
+        int c = 0;
+        for (auto it: capacity) {
+            c = std::max(c, it.second)
+                * word_width.at(it.first);
+        }
+        return c;
+    }
+
     int get_inpt_num() {
         if (bank_num.size() == 1)
             return pick(bank_num).second;
@@ -212,6 +222,7 @@ struct CodegenOptions {
   bool pass_through_valid;
   bool emit_smt_stream;
   bool config_gen_only;
+  int host2glb_latency;
   string dir;
 
   bool use_epochs;
@@ -236,7 +247,7 @@ struct CodegenOptions {
   CodegenOptions() : internal(true), all_rams(false), add_dependence_pragmas(true),
   hls_loop_codegen(HLS_LOOP_CODEGEN_ISL), code_string(""), simplify_address_expressions(false),
   unroll_factors_as_pad(false), conditional_merge(false), merge_threshold(0),
-  inline_vectorization(false), iis({}),
+  inline_vectorization(false), iis({}), host2glb_latency(0),
   pass_through_valid(false), emit_smt_stream(false), config_gen_only(false), dir(""),
   use_epochs(true),
   num_input_epochs(-1),

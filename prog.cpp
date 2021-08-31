@@ -1176,24 +1176,30 @@ void tag_coarse_grained_loop_to_ubuf(map<string, UBuffer> & buffers, prog& prg) 
   //to avoid uncertainty in buffer name
   vector<op*> all_op_vec(all_op.begin(), all_op.end());
   std::sort(all_op_vec.begin(), all_op_vec.end(), [](op* l, op* r){return l->name > r->name;});
-  op* cgpl_lp = find_coarse_grained_pipeline_loop(prg.root, prg);
-  cout << "Coarse grained loop: " << cgpl_lp->name << endl;
-  if (cgpl_lp == nullptr || cgpl_lp->name == "root") {
-    return;
-  }
-  auto op_under_cgpl = cgpl_lp->descendant_op_names();
-  //for (auto op_name: op_under_cgpl) {
-  //  cout << "OP: " << op_name << " is under coarse granularity loop" << endl;
+  //op* cgpl_lp = find_coarse_grained_pipeline_loop(prg.root, prg);
+  //cout << "Coarse grained loop: " << cgpl_lp->name << endl;
+  vector<op*> cgpl_lps;
+  find_coarse_grained_pipeline_loops(prg.root, cgpl_lps,  prg);
+  //if (cgpl_lp == nullptr || cgpl_lp->name == "root") {
+  //  return;
   //}
-  for (auto & it: buffers) {
-    auto & buf = it.second;
-    auto buf_ops = buf.get_ops();
-    bool buffer_under_cgpl = std::includes(
-            op_under_cgpl.begin(), op_under_cgpl.end(),
-            buf_ops.begin(), buf_ops.end());
-    if (buffer_under_cgpl) {
-      cout << "\tBuffer: " << buf.name << " should be tagged coarse grained pipeline loop" << endl;
-      buf.coarse_grained_pipeline_loop_level = max_loop_depth(prg) - loop_depth(cgpl_lp);
+  for (auto lp : cgpl_lps) {
+    cout << "All cgpl loop: " << lp->name << endl;
+    auto op_under_cgpl = lp->descendant_op_names();
+    //for (auto op_name: op_under_cgpl) {
+    //  cout << "OP: " << op_name << " is under coarse granularity loop" << endl;
+    //}
+    for (auto & it: buffers) {
+      auto & buf = it.second;
+      auto buf_ops = buf.get_ops();
+      bool buffer_under_cgpl = std::includes(
+              op_under_cgpl.begin(), op_under_cgpl.end(),
+              buf_ops.begin(), buf_ops.end());
+      if (buffer_under_cgpl) {
+        buf.coarse_grained_pipeline_loop_level =
+            max(buf.coarse_grained_pipeline_loop_level, max_loop_depth(prg) - loop_depth(lp));
+        cout << "\tBuffer: " << buf.name << " was tagged coarse grained pipeline loop, level = " << buf.coarse_grained_pipeline_loop_level << endl;
+      }
     }
   }
 }
@@ -7758,6 +7764,23 @@ op* find_coarse_grained_pipeline_loop(op* lp) {
   return find_coarse_grained_pipeline_loop(lp->children.back());
 }
 
+void find_coarse_grained_pipeline_loops(op* lp_visit, vector<op*> & cgpl_lp,  prog& prg) {
+  //this is the new cgpl loop finding function
+  //we traverse the AST in post order
+  //If a loop with more than one children
+  //Then this is a cgpli loop node.
+  //
+  //Post order visit guarantee that descendant is ahead of its ancestor
+
+  for (auto child: lp_visit->children) {
+    find_coarse_grained_pipeline_loops(child, cgpl_lp, prg);
+  }
+  if ((lp_visit->children).size() > 1 && !(is_inner_loop(lp_visit))) {
+    if (lp_visit != prg.root)
+      cgpl_lp.push_back(lp_visit);
+  }
+}
+
 op* find_coarse_grained_pipeline_loop(op* lp, prog& prg) {
   assert(lp->is_loop());
   cout << "\t Visit loop " << lp->name << " for searching coarse pipeline loop" << endl;
@@ -8251,7 +8274,25 @@ void generate_banks_garnet(CodegenOptions& options, UBuffer& buf, UBufferImpl& i
         //    buf.add_bank_between(input_sets, output_sets, bnk_info);
         //}
       }
-    } else {
+    }
+    //FIXME: ASPLOSHACK
+    //This is a hack , we do not know which hierarchy of memory to map at this point
+    else if (buf.num_in_ports() <= options.mem_hierarchy.at("mem").get_inpt_num() &&
+            buf.num_out_ports() <= options.mem_hierarchy.at("mem").get_outpt_num()) {
+        auto rddom = buf.global_range();
+        auto inpts = buf.get_in_ports();
+        auto outpts = buf.get_out_ports();
+        std::set<string> in_port_set = std::set<string>(inpts.begin(), inpts.end());
+        std::set<string> out_port_set = std::set<string>(outpts.begin(), outpts.end());
+        auto bnk_info = buf.compute_bank_info(in_port_set, out_port_set);
+        buf.add_bank_between(in_port_set, out_port_set, bnk_info);
+        int impl_bank = impl.add_new_bank_between(in_port_set, out_port_set, to_set(buf.global_range()));
+        cout << "IO of ubuffer: " << in_port_set << out_port_set << endl;
+        impl.sequentially_assign_inpt(buf.sort_pt_by_bundle(in_port_set), impl_bank);
+        impl.sequentially_assign_outpt(buf.sort_pt_by_bundle(out_port_set), impl_bank);
+    }
+    else {
+
         cout << "Use exhaustive banking! " << endl;
         buf.generate_banks_and_merge(options);
         buf.parse_exhaustive_banking_into_impl(impl);

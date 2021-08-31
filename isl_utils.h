@@ -293,6 +293,8 @@ vector<string> collect_sched_vec(isl_union_map* const um);
 umap* pad_one_more_dim_to_sched_map(isl_ctx* ctx, umap* const um, string pad_val);
 umap* pad_one_more_dim_to_sched_map_innermost(umap* const um, int pad_val);
 isl_map* pad_one_more_dim_to_sched_map_innermost(isl_map* const um, int pad_val);
+isl_map* add_more_dim_to_map_with_stride(isl_map* const um, int in_dim, int out_dim, int stride, int bd);
+isl_map* add_more_dim_to_map_domain_and_range(isl_map* const um, int in_dim, int out_dim, int stride, int bd);
 umap* pad_one_more_dim_to_sched_map_with_id(umap* const um, int dim_id, int pad_val);
 
 std::string codegen_c(isl_set* const bset);

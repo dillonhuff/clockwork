@@ -2080,9 +2080,14 @@ Instance* generate_coreir_op_controller(CodegenOptions& options, ModuleDef* def,
 
   } else if (to_int(const_coeff(aff)) >= options.mem_hierarchy.at("mem").counter_ub) {
 
+    //add a 32 bit controller for multi-tile application ctrl generation
     auto aff_c = affine_controller(options, c, dom, aff, 32);
     aff_c->print();
     controller = def->addInstance(controller_name(op->name), aff_c);
+
+    //This controller will be substitute with lake stencil valid in garnet mapping
+    //Dump the metadata and rewrite it to lake tile in garnet mapping:
+    add_lake_config_to_aff_ctrl_for_garnet_mapping(dom, aff, controller);
   } else if (need_index) {
     auto aff_c = affine_controller_use_lake_tile_counter(
             options, c, dom, aff,
@@ -2306,7 +2311,27 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
     generate_coreir_compute_unit(options, found_compute, def, op, prg, buffers, hwinfo);
   }
 
+  //Add a pass to see if there is a glb
+  for (auto& it: buffers) {
+    if (contains(it.first, "glb_stencil")){
+        cout << "Contains glb" << endl;
+        auto buf = it.second;
+        int starting_cycle = buf.starting_cycle();
+        cout << starting_cycle << endl;
+        if(starting_cycle == 0) {
+            auto in_sched = buf.global_inpt_sched();
+            auto host2glb_latency = to_int(lexmaxval(to_set(range(in_sched))));
+            cout << "Host to glb latency: " << host2glb_latency << endl;
+            options.host2glb_latency =
+                max(options.host2glb_latency, host2glb_latency);
+        }
+    }
+  }
+
   for (auto& buf : buffers) {
+    //if (!contains(buf.first, "output_cgra")) {
+    //    continue;
+    //}
     if (!prg.is_boundary(buf.first)) {
       //all the memory optimization pass goes here
       auto impl = generate_optimized_memory_implementation(options, buf.second, prg, hwinfo);
@@ -2779,8 +2804,6 @@ void addIOsWithGLBConfig(Context* c, Module* top, map<string, UBuffer>& buffers,
     path[0] = "in";
     path.insert(path.begin(),"_self");
     mdef->connect({ioname,"in"},path);
-    //TODO: A hack to keep single valid should check with other apps
-    //break;
   }
   mdef->disconnect(mdef->getInterface());
   inlineInstance(pt);
@@ -2839,7 +2862,7 @@ class CustomFlatten : public CoreIR::InstanceGraphPass {
     bool changed = false;
     // int i = 0;
     for (auto inst : node.getInstanceList()) {
-       //cout << "inlining " << inst->getName() << endl;
+       cout << "inlining " << inst->toString() << endl;
        Module* m = inst->getModuleRef();
        if (m->isGenerated()) {
          auto g = m->getGenerator();
@@ -2897,7 +2920,113 @@ class SubstructGLBLatency: public CoreIR::InstanceGraphPass {
   }
 };
 
-class ReplaceCoarseGrainedAffCtrl: public CoreIR::InstanceGraphPass {
+class ReplaceGLBValid: public CoreIR::InstancePass {
+    public:
+    json valid_config;
+    int latency;
+ReplaceGLBValid(GetGLBConfig* glb_pass):
+    InstancePass(
+            "replaceglbvalid",
+            "Replace output affine port controller using cgra to glb config"
+            ), valid_config(glb_pass->cgra2glb), latency(glb_pass->latency) {}
+bool runOnInstance(Instance* inst) {
+    //define the pass here
+    if(latency == 0)
+        return false;
+    if (inst->getModuleRef()->isGenerated())
+    if (inst->getModuleRef()->getGenerator()->getName() == "Mem_amber" &&
+            inst->canSel("stencil_valid")) {
+      auto conns = inst->sel("stencil_valid")->getConnectedWireables();
+      bool connect2IO = false;
+      for (auto conn: conns) {
+          auto inst_conn = dyn_cast<Instance>(conn->getTopParent());
+          if (inst_conn->getModuleRef()->getRefName() == "cgralib.BitIO") {
+              cout << inst_conn->getModuleRef()->toString() << endl;
+              connect2IO = true;
+              break;
+          }
+      }
+      if (connect2IO) {
+          //valid_config.at("cycle_starting_addr")[0] = (int)valid_config.at("cycle_starting_addr")[0] - latency;
+          inst->getMetaData()["config"]["stencil_valid"] = valid_config;
+          return true;
+      }
+    }
+    return false;
+}
+
+};
+
+class ReplaceCoarseGrainedAffCtrl: public CoreIR::InstancePass {
+    public:
+ReplaceCoarseGrainedAffCtrl():
+    InstancePass(
+            "replacecoarsegrainedaffctrl",
+            "Replace Coarsegrainedaffctrl with lake tile stencil valid"
+            ) {}
+bool runOnInstance(Instance* inst) {
+    //define the pass here
+    if (inst->getMetaData().count("lake_config") ){
+       cout << "Substitute " << inst->toString() << endl;
+       auto def= inst->getContainer();
+       auto context = inst->getContext();
+       auto config_file = inst->getMetaData().at("lake_config");
+       Instance* flush_pth = addPassthrough(inst->sel("valid"),
+               "flush_pth_"+inst->toString());
+       def->disconnect(inst->sel("clk"));
+       def->disconnect(inst->sel("valid"));
+
+       //TODO put this into a function
+       auto* g = context->getGenerator("cgralib.Mem_amber");
+       CoreIR::Values genargs = {
+         {"width", CoreIR::Const::make(context, 16)},
+         {"num_inputs", CoreIR::Const::make(context, 0)},
+         {"num_outputs", CoreIR::Const::make(context, 0)},
+         {"has_stencil_valid", CoreIR::Const::make(context, true)},
+         {"has_chain_en", CoreIR::Const::make(context, true)},
+         {"ID", CoreIR::Const::make(context, context->getUnique())},
+         {"has_flush",  CoreIR::Const::make(context, true)},
+         {"use_prebuilt_mem",  CoreIR::Const::make(context, true)}
+       };
+       auto ctrl = def->addInstance(inst->toString() + "_lake", "cgralib.Mem_amber", genargs);
+       ctrl->getMetaData()["config"] = config_file;
+       ctrl->getMetaData()["mode"] = "lake";
+       ctrl->getMetaData()["verilog"] = "aff_ctrl_counter_"+genargs.at("ID")->get<string>();
+
+       auto clk_en_const = def->addInstance(inst->toString()+"_clk_en_const", "corebit.const",
+               {{"value", CoreIR::Const::make(context, true)}});
+
+       //garnet wire reset to flush of memory
+       def->connect(ctrl->sel("flush"), def->sel("self.reset"));
+       def->connect(ctrl->sel("clk"), def->sel("self.clk"));
+       def->connect(ctrl->sel("clk_en"), clk_en_const->sel("out"));
+       def->connect(ctrl->sel("rst_n"), clk_en_const->sel("out"));
+       def->connect(flush_pth->sel("in"), ctrl->sel("stencil_valid"));
+       inlineInstance(flush_pth);
+       def->removeInstance(inst);
+       //def->disconnect(def->getInterface());
+       return true;
+    } else if (inst->getMetaData().count("garnet_remove")){
+      auto def= inst->getContainer();
+      def->removeInstance(inst);
+      //def->disconnect(def->getInterface());
+      return true;
+    } else if (inst->getMetaData().count("garnet_rewire_flush")){
+      //replace the emulated fabric flush into the real flush
+      auto def= inst->getContainer();
+      auto conns = inst->sel("valid")->getConnectedWireables();
+      assert(conns.size() == 1);
+      def->disconnect(def->getInterface());
+      def->connect(pick(conns), def->sel("self.reset"));
+      def->removeInstance(inst);
+      return true;
+    }
+    return false;
+}
+
+};
+
+/*class ReplaceCoarseGrainedAffCtrl: public CoreIR::InstanceGraphPass {
  public:
   static std::string ID;
   ReplaceCoarseGrainedAffCtrl() :
@@ -2944,15 +3073,18 @@ class ReplaceCoarseGrainedAffCtrl: public CoreIR::InstanceGraphPass {
            def->connect(flush_pth->sel("in"), ctrl->sel("stencil_valid"));
            inlineInstance(flush_pth);
            def->removeInstance(inst);
+           //def->disconnect(def->getInterface());
            changed = true;
         } else if (inst->getMetaData().count("garnet_remove")){
           auto def= inst->getContainer();
           def->removeInstance(inst);
+          //def->disconnect(def->getInterface());
+          changed = true;
         }
     }
     return changed;
   }
-};
+};*/
 
 namespace MapperPasses {
 class MemConst : public CoreIR::InstanceVisitorPass {
@@ -3349,31 +3481,40 @@ void garnet_map_module(Module* top, map<string, UBuffer> & buffers, bool garnet_
   LoadDefinition_cgralib(c);
 
   c->runPasses({"rungenerators"});
+
   //A new pass to remove input enable signal affine controller
   disconnect_input_enable(c, top);
+  c->runPasses({"deletedeadinstances"});
+  c->runPasses({"cullgraph"});
+
+  //GLB passes
   c->addPass(new ReplaceCoarseGrainedAffCtrl);
   c->runPasses({"replacecoarsegrainedaffctrl"});
 
-  c->runPasses({"cullgraph"});
-  c->runPasses({"removewires"});
-  //addIOs(c,top);
-  //
   auto glb_pass = new GetGLBConfig();
   c->addPass(glb_pass);
   c->runPasses({"getglbconfig"});
   cout << "Latency: " << glb_pass->latency << endl;
   cout << "glb2fabric: " << glb_pass->glb2cgra << endl;
   cout << "fabric2glb: " << glb_pass->cgra2glb << endl;
+  c->addPass(new MapperPasses::StripGLB);
+  c->runPasses({"stripglb"});
+
+  c->runPasses({"removeunconnected"});
+  c->runPasses({"cullgraph"});
+  c->runPasses({"removewires"});
   addIOsWithGLBConfig(c, top, buffers, glb_pass);
   c->runPasses({"cullgraph"});
   c->addPass(new CustomFlatten);
   c->runPasses({"customflatten"});
+
+  //Change the stencil valid signal to cgra to glb
+  c->addPass(new ReplaceGLBValid(glb_pass));
+  c->runPasses({"replaceglbvalid"});
   if (garnet_syntax_trans) {
 
     c->addPass(new MapperPasses::MemInitCopy);
     c->runPasses({"meminitcopy"});
-    c->addPass(new MapperPasses::StripGLB);
-    c->runPasses({"stripglb"});
     c->addPass(new SubstructGLBLatency(glb_pass->latency));
     c->runPasses({"substractglblatency"});
     c->addPass(new MapperPasses::MemSubstitute());
@@ -3387,7 +3528,6 @@ void garnet_map_module(Module* top, map<string, UBuffer> & buffers, bool garnet_
   c->runPasses({"memconst"});
 
   c->runPasses({"cullgraph"});
-  c->runPasses({"deletedeadinstances"});
   c->getPassManager()->printLog();
   cout << "Trying to save" << endl;
   c->runPasses({"coreirjson"},{"global","commonlib","mantle"});
@@ -3558,8 +3698,12 @@ void generate_coreir(CodegenOptions& options,
   auto ns = context->getNamespace("global");
 
   //Change into serializetofile
-  context->setTop(prg_mod);
-  if(!serializeToFile(context, options.dir + prg.name + ".json")) {
+  //context->setTop(prg_mod);
+  //if(!serializeToFile(context, options.dir + prg.name + ".json")) {
+  //  cout << "Could not save ubuffer coreir" << endl;
+  //  context->die();
+  //}
+  if(!saveToFile(ns, options.dir + prg.name + ".json", prg_mod)) {
     cout << "Could not save ubuffer coreir" << endl;
     context->die();
   }
