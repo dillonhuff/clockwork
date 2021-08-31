@@ -92,6 +92,7 @@ prog glb_db();
 prog glb_channel_reduction();
 prog resnet_glb();
 prog gaussian_glb();
+prog gaussian_glb2();
 prog gaussian_glb8();
 prog unsharp_glb();
 prog up_sample_glb();
