@@ -381,25 +381,26 @@ class AccessPattern {
           return its(access_map, domain);
       }
 
-      //vector<int> get_non_inner_most_reaccess_dim() {
-      //  vector<int> acc_map, ret;
-      //  int cnt = 0;
-      //  acc_map.push_back(0);
-      //  for (auto rel: rel_map) {
-      //    if (rel)
-      //      cnt ++;
-      //    acc_map.push_back(cnt);
-      //  }
-      //  int total = acc_map.back();
-      //  for (int i = 1; i < acc_map.size(); i++) {
-      //      if (acc_map[i] - acc_map[i-1] == 0) {
-      //          if (acc_map[i] != total){
-      //              ret.push_back(i-1);
-      //          }
-      //      }
-      //  }
-      //  return ret;
-      //}
+      //Should change into the vectorization dimension
+      vector<int> get_non_inner_most_reaccess_dim() {
+        vector<int> acc_map, ret;
+        int cnt = 0;
+        acc_map.push_back(0);
+        for (auto rel: rel_map) {
+          if (rel)
+            cnt ++;
+          acc_map.push_back(cnt);
+        }
+        int total = acc_map.back();
+        for (int i = 1; i < acc_map.size(); i++) {
+            if (acc_map[i] - acc_map[i-1] == 0) {
+                if (acc_map[i] != total){
+                    ret.push_back(i-1);
+                }
+            }
+        }
+        return ret;
+      }
 
       isl_map* get_access_map_and_decouple_reuse(isl_ctx* ctx, int dim_id, bool rm_const=false) {
           vector<string> var_list(var_dim-1);
@@ -439,15 +440,17 @@ class AccessPattern {
                       nd_expr.push_back(std::to_string(row.front()));
               }
           }
+          ////auto tb_pad = get_reaccess_dim_non_vectorized(dim_id);
           //auto tb_pad = get_non_inner_most_reaccess_dim();
           //cout << "tb pad dim: " << tb_pad << endl;
-          vector<string> nd_expr_new ;
           //for (auto cnt: tb_pad) {
           //    if (cnt == 0)
           //      continue;
           //    auto it = nd_expr.begin();
+          //    //get_expr(stride, id, all the var)
           //    nd_expr.insert(it, get_expr(1, cnt, var_list));
           //}
+          vector<string> nd_expr_new ;
           if (rm_const) {
             for (auto expr: nd_expr) {
               if (!is_number(expr)) {
@@ -1102,6 +1105,10 @@ class UBuffer {
 
     bool is_overlap_with_port(string pt, isl_map* acc) {
       return !empty(its(range(access_map.at(pt)), range(to_umap(acc))));
+    }
+
+    bool pts_are_overlapped(string pt1, string pt2) {
+      return is_overlap_with_port(pt1, to_map(access_map.at(pt2)));
     }
 
     map<string, bool> get_connection_map_to_outpt(isl_map* acc) {
@@ -1913,16 +1920,15 @@ void tighten_address_space() {
     int cms = 0;
     for (auto it: access_map) {
         auto am = to_map(it.second);
-        //only work for linearized address
-        assert(num_out_dims(am) == 1);
-        cms = std::gcd(cms, common_max_stride(am));
+        //FIXME: support all dimension
+        cms = std::gcd(cms, common_max_stride(am, num_out_dims(am)-1));
     }
     cout << "common max stride = " << cms << endl;
     if (cms > 1) {
         cout << "Could tighten address! " << endl;
         for (auto& it: access_map){
           auto am = to_map(it.second);
-          auto trans= get_set_slice(range(am), 0, cms);
+          auto trans= get_set_slice(range(am), num_out_dims(am)-1, cms);
           it.second = to_umap(dot(am, (trans)));
           cout <<"\tTighten access map to: " << str(it.second) << endl;
         }
@@ -2536,18 +2542,30 @@ void tighten_address_space() {
     int capacity(string inpt) {
         int m = 0;
         for (auto outpt: get_out_ports()){
-            auto dd = dependence_distance_max(outpt, inpt);
+          if (pts_are_overlapped(inpt, outpt)){
+            auto dd = dependence_distance_max(inpt, outpt);
+            //auto dd_space = compute_dd(outpt, inpt);
+            int dd_space = compute_capacity_hw_schedule(inpt, outpt);
+
             assert(dd.has_value());
-            int depth = -dd.get_value();
-            std::cout << "Got depth: " << depth << endl;
-            m = std::max(m, depth);
+            int depth = dd.get_value();
+            std::cout << "Got timing depth: " << depth << endl;
+            std::cout << "Write btw: " << (dd_space) << endl;
+            m = std::max(m, dd_space);
+          }
         }
+        //m is the max time dd for this buffer you need to get the capacity
+        //which is the max number of data write to this buffer to get the buffer size
+
         return m;
     }
 
     int capacity() {
-        auto pt = pick(get_in_ports());
-        return capacity(pt);
+        int cap = 0;
+        for(auto pt : get_in_ports()) {
+            cap = max(cap, capacity(pt));
+        }
+        return cap;
     }
 
     umap* pad_dom_buf2op(AccessPattern , umap* , int);
@@ -2566,7 +2584,7 @@ void tighten_address_space() {
 
     //change the input and output and return the agg and tb ubuffer stucture
     pair<std::map<string, UBuffer>, vector<string> >
-        vectorization(int dim_id, int fetch_width, vector<int> iis, bool is_dual_port);
+        vectorization(CodegenOptions& options, int dim_id);
 
     void add_vectorized_pt_to_ubuf(UBuffer& target_buf, vector<umap*> ap_vec, isl_map* merge_sched, string bd_name, int dim_id, int fetch_width, int cnt, bool is_out);
     void add_vectorized_pt_to_ubuf(UBuffer & target_buf, umap* rewrite_buf2op, isl_map* sched, string origin_pt_name, string bd_name, int dim_id, int fetch_width, int cnt, bool is_out);
@@ -2592,6 +2610,7 @@ void tighten_address_space() {
     isl_union_pw_qpolynomial* compute_dd(const std::string& read_port, const std::string& write_port);
 
     isl_union_set* compute_dd_hw_schedule(const string& inpt, const string& outpt);
+    int compute_capacity_hw_schedule(const string& inpt, const string& outpt);
     isl_union_set* compute_dd_hw_schedule_decouple(const string& inpt, const string& outpt);
 
     bank compute_bank_info();
@@ -2700,13 +2719,14 @@ void tighten_address_space() {
     int get_vectorized_dim(int fetch_width);
     maybe<int> dependence_distance_singleton(const string& inpt, const string& outpt, bool decouple=false);
     maybe<int> dependence_distance_max(const string& inpt, const string& outpt);
+    maybe<int> dependence_distance_min(const string& inpt, const string& outpt);
 
     //Hack for single pixel input
     std::map<string, UBuffer> vectorization_single_pixel(int fetch_width);
 
     //Post processing for codegen, adding dim id
     void set_dim_id();
-
+    void pad_reaccess_dimension(int fetch_width);
 };
 
 string toBracketList(const vector<vector<int>> & data);

@@ -1919,6 +1919,7 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, UBuffer& ubuf, string 
     map<string, isl_map*>  op2sched;
     map<string, vector<umap*>> op2write_map, op2read_map;
     auto hardware_schedule = ubuf.global_schedule();
+    cout << "Global range: " << str(ubuf.global_range()) << endl;
 
     for (auto m : get_maps(hardware_schedule)) {
         string op_name = domain_name(m);
@@ -5559,19 +5560,19 @@ isl_union_pw_qpolynomial* UBuffer::compute_dd(const std::string& read_port, cons
   //cout << "rewrite wr sched:" << str(wrsched) << endl;
   auto WritesBeforeRead =
     lex_gt(rdsched, wrsched);
-  //cout << "\trdsched: " << str(rdsched) << "\n wrsched: " << str(wrsched) << "\n wbr: " << str(WritesBeforeRead) << endl;
+  cout << "\trdsched: " << str(rdsched) << "\n wrsched: " << str(wrsched) << "\n wbr: " << str(WritesBeforeRead) << endl;
 
   //TODO: test these new method
   auto WriteThatProducesReadData = get_lexmax_events(wrsched, rdsched, write_port, read_port);
-  //cout << "\twpr: " << str(WriteThatProducesReadData) << "\nwaw:" << str(WritesAfterWrite) << endl;
+  cout << "\twpr: " << str(WriteThatProducesReadData) << "\nwaw:" << str(WritesAfterWrite) << endl;
 
   auto WritesAfterProduction = dot(WriteThatProducesReadData, WritesAfterWrite);
 
-  //cout << "\twap: " << str(WritesAfterProduction) << endl;
+  cout << "\twap: " << str(WritesAfterProduction) << endl;
   auto WritesBtwn = its_range((its(WritesAfterProduction, WritesBeforeRead)),
       to_uset(domain.at(write_port)));
-  //cout << "\tits:" << str(its(WritesAfterProduction, WritesBeforeRead)) << endl;
-  //cout << "\tWritesBtwn: " << str(WritesBtwn) << endl;
+  cout << "\tits:" << str(its(WritesAfterProduction, WritesBeforeRead)) << endl;
+  cout << "\tWritesBtwn: " << str(WritesBtwn) << endl;
 
   auto c = card(WritesBtwn);
   release(WritesBtwn);
@@ -5586,6 +5587,7 @@ isl_union_pw_qpolynomial* UBuffer::compute_dd(const std::string& read_port, cons
 int UBuffer::compute_dd_bound(const std::string& read_port, const std::string& write_port, bool is_max) {
   auto c = compute_dd(read_port, write_port);
   //cout << "DD: " << str(c) << endl;
+
   int tight;
   int* b = &tight;
   if (is_max){
@@ -7026,8 +7028,7 @@ void UBuffer::generate_banks(CodegenOptions& options) {
 
           //TODO: remove the rem-dependency
           //ret is a pair of vectorized_buffer and the dependency need to be removed
-          auto ret = target_buffer.vectorization(dim_id, fetch_width, options.iis,
-                  options.mem_hierarchy.at("mem").dual_port_sram);
+          auto ret = target_buffer.vectorization(options, dim_id);
           for (auto itr: ret.first) {
             buffers[itr.first] = itr.second;
           }
@@ -7043,6 +7044,7 @@ void UBuffer::generate_banks(CodegenOptions& options) {
     return rem_deps;
   }
 
+  //Deprecate all the method below
   vector<string> buffer_vectorization(vector<int> iis,
       vector<string> buf_name_vec,
       int fetch_width,
@@ -7077,7 +7079,10 @@ void UBuffer::generate_banks(CodegenOptions& options) {
 
           //TODO: remove the rem-dependency
           //ret is a pair of vectorized_buffer and the dependency need to be removed
-          auto ret = target_buffer.vectorization(dim_id, fetch_width, iis, false);
+          CodegenOptions options;
+          options.add_memory_hierarchy("mem");
+          options.mem_hierarchy.at("mem").fetch_width= fetch_width;
+          auto ret = target_buffer.vectorization(options, dim_id);
           for (auto itr: ret.first) {
             buffers[itr.first] = itr.second;
           }
@@ -7117,7 +7122,8 @@ void UBuffer::generate_banks(CodegenOptions& options) {
         target_buffer.pad_write_dom_inner_most(fetch_width);
 
         //ret is a pair of vectorized_buffer and the dependency need to be removed
-        auto ret = target_buffer.vectorization(dim_id, fetch_width, iis, false);
+        CodegenOptions options;
+        auto ret = target_buffer.vectorization(options, dim_id);
         for (auto itr: ret.first) {
           buffers[itr.first] = itr.second;
         }
@@ -8339,8 +8345,26 @@ void UBuffer::generate_banks(CodegenOptions& options) {
 
     //Get the vectorized dimension
     int vectorized_dim =
-        get_inner_most_related_dom_dim(acc_vec_rem, addr_dim, fetch_width);
+        get_inner_most_related_dom_dim_debug(acc_vec_rem, addr_dim, fetch_width);
     cout << "Vectorization dimension: " << vectorized_dim << endl;
+    //cout << "Relation map: " << relation_map(acc_vec_rem) << endl;
+
+    //Could not find a vectorization dimension,
+    // dimension is too only one fetch or less, just take the inner most dimension
+    //if (vectorized_dim < 0) {
+    //    vectorized_dim = get_inner_most_related_dom_dim(acc_slice, addr_dim, fetch_width) - 1;
+    //    if (vectorized_dim < 0)
+    //    {
+    //    vectorized_dim = get_inner_most_related_dom_dim(acc_0, addr_dim, fetch_width) - 1;
+    //    cout << vectorized_dim << endl;
+
+    //    }
+    //}
+
+    //int safer_vectorizaed_dim = get_inner_most_related_dom_dim(acc_vec_rem);
+    ////assert(vectorized_dim == safer_vectorizaed_dim);
+    //vectorized_dim = max(vectorized_dim, safer_vectorizaed_dim);
+
 
     //Get ahead step to make sure that
     //we still get the correct data in time after remove floor div
@@ -8350,7 +8374,8 @@ void UBuffer::generate_banks(CodegenOptions& options) {
 
     //projected out the reaccessing dimension
     isl_set* sched_dom =
-        get_domain_trans_sched_domain(domain(sched_vec_new), vectorized_dim, fetch_width);
+        //get_domain_trans_sched_domain(domain(sched_vec_new), vectorized_dim, fetch_width);
+        get_domain_trans_sched_domain(acc_vec_rem, vectorized_dim, fetch_width);
     cout << "sched domain: " << str(sched_dom) << endl;
     sched_vec_new = its(sched_vec_new, sched_dom);
     sched_vec_new = remove_irrelevant_in_dim(sched_vec_new);
@@ -8362,8 +8387,15 @@ void UBuffer::generate_banks(CodegenOptions& options) {
     cout << "access: " << str(acc_vec_rem) << endl;
 
     //Getting the newer access dimension after irrelevant dim projection
-    vectorized_dim = get_inner_most_related_dom_dim(acc_vec_rem, addr_dim, fetch_width);
+    vectorized_dim = get_inner_most_related_dom_dim_debug(acc_vec_rem, addr_dim, fetch_width);
     cout << "vectorization dimension after irrelevant dimension removal: " << vectorized_dim << endl;
+    //After vectorization we just pick the inner most dimension
+    //if (vectorized_dim < 0) {
+    //    vectorized_dim = num_in_dims(acc_vec_rem) - 2;
+    //    cout << "new vectorized_dim: " << vectorized_dim << endl;
+    //   int  vectorized_dim_debug = get_inner_most_related_dom_dim_debug(acc_vec_rem, addr_dim, fetch_width);
+    //   cout << "DEBUG: " << vectorized_dim_debug << endl;
+    //}
 
     //Move the schedule ahead and pad the domain
     //if (ahead_step) {
@@ -8477,7 +8509,11 @@ void UBuffer::generate_banks(CodegenOptions& options) {
     }
 
       pair<std::map<string, UBuffer>, vector<string> >
-        UBuffer::vectorization(int dim_id, int fetch_width, vector<int> iis, bool is_dual_port) {
+        UBuffer::vectorization(CodegenOptions& options, int dim_id) {
+          int fetch_width = options.mem_hierarchy.at("mem").fetch_width;
+          vector<int> iis = options.iis;
+          bool is_dual_port = options.mem_hierarchy.at("mem").dual_port_sram;
+
 
           std::map<string, UBuffer> ret;
           std::vector<string> remove_deps;
@@ -8810,9 +8846,21 @@ void UBuffer::generate_banks(CodegenOptions& options) {
                 tb.add_out_pt(out_pt_name+"_out", sm_domain, sm_access_map, its(sm_sched, sm_domain));
                 tb.port_bundles[bd_name+"_tb_out"].push_back(out_pt_name + "_out");
               }
+
+              cout << "TB  : " << tb << endl;
+              //Add one more step to pad reacess dimension
+              //tb.pad_reaccess_dimension(fetch_width);
+
+              //Check capacity of tb
+              //auto capacity = tb.capacity();
+              //cout << "TB size: " << capacity << endl;
+              //auto mem = options.mem_hierarchy.at("mem");
+              //assert(capacity <= mem.capacity.at("tb") / mem.in_port_width.at("tb"));
+
               tb.set_dim_id();
               ret.insert({tb.name, tb});
               cout << "TB  : " << tb << endl;
+
               cout << "TB Schedule: " << str(tb.global_schedule())  << endl;
               tb_cnt ++;
             }
@@ -8822,6 +8870,90 @@ void UBuffer::generate_banks(CodegenOptions& options) {
           cout << "SRAM Schedule: " << str(sram.global_schedule()) << endl;
           ret.insert({sram.name, sram});
           return make_pair(ret, remove_deps);
+        }
+
+        void UBuffer::pad_reaccess_dimension(int fetch_width) {
+          //Post processing method on the address domain of unified buffer
+          //Chances are that we have reaccess from SRAM and those reaccess is above the vectorization dimension
+          //so those data saved in new location in TB, we need to extend the address dimension to
+          //differentiate the data with the data Previously fetched into TB
+
+          //Check the condition if we need refetch
+          //And they are also not related to the output
+          std::set<int> in_pad_dim_set;
+          for (auto inpt: get_in_ports()){
+            auto am = to_map(access_map.at(inpt));
+            auto rel_map = relation_map(am);
+            cout << rel_map << endl;
+            for (auto it = rel_map.begin() + 1; it < rel_map.end(); it ++) {
+              int id = it - rel_map.begin();
+              if (*it == false)
+                in_pad_dim_set.insert(id);
+            }
+          }
+          std::set<int> out_pad_dim_set;
+          for (auto outpt: get_out_ports()){
+            auto am = to_map(access_map.at(outpt));
+            auto rel_map = relation_map(am);
+            cout << rel_map << endl;
+            for (auto it = rel_map.begin() + 1; it < rel_map.end(); it ++) {
+              int id = it - rel_map.begin();
+              if (*it == false)
+                out_pad_dim_set.insert(id);
+            }
+          }
+          //TODO: this is a little heuristic base,
+          //we need to figure out a better way, discuss with Fred
+          //How can we group the input and output pairs
+          std::set<vector<int>> pad_dim_set;
+          for (auto pad_dim : in_pad_dim_set) {
+              if (out_pad_dim_set.count(pad_dim)) {
+                  //Basic situation that two dimension are upper reaccess dimension
+                  pad_dim_set.insert({pad_dim});
+              } else {
+                  auto out_dom = domain.at(pick(get_out_ports()));
+                  auto in_dom = domain.at(pick(get_in_ports()));
+                  int out_ext = get_domain_range(out_dom, pad_dim);
+                  int in_ext = get_domain_range(in_dom, pad_dim);
+                  if (out_ext == in_ext) {
+                    //This is the case that sliding between wide fetch
+                    //with ext less than fetch width
+                    pad_dim_set.insert({pad_dim});
+                  } else {
+                    int in_upper_ext = get_domain_range(in_dom, pad_dim - 1);
+                    int out_upper_ext = get_domain_range(out_dom, pad_dim - 1);
+                    if (in_upper_ext * in_ext == round_up_to_multiple_of(out_upper_ext, fetch_width)) {
+                        pad_dim_set.insert({pad_dim, pad_dim-1});
+                    }
+                  }
+
+              }
+          }
+
+
+          cout << "All dimensions need to be padded: " << pad_dim_set << endl;
+          if (pad_dim_set.size() == 0)
+              return;
+          for (auto pt: get_in_ports()) {
+            umap* am = access_map.at(pt);
+            for (vector<int> pad_in_dim_vec: pad_dim_set) {
+              assert(pad_in_dim_vec.size() <= 2);
+              int out_pad_dim = get_out_padding_dimension(to_map(am), pad_in_dim_vec.at(0));
+              am = pad_one_more_dim_relation_to_map(am, pad_in_dim_vec, out_pad_dim, 1);
+            }
+            access_map.at(pt) = am;
+          }
+          for (auto pt: get_out_ports()) {
+            umap* am = access_map.at(pt);
+            for (vector<int> pad_in_dim_vec: pad_dim_set) {
+              int out_pad_dim = get_out_padding_dimension(to_map(am), pad_in_dim_vec.at(0));
+              if (pad_in_dim_vec.size() == 2)
+                am = pad_one_more_dim_relation_to_map(am, {pad_in_dim_vec.at(1)}, out_pad_dim, 1);
+              else if (pad_in_dim_vec.size() == 1)
+                am = pad_one_more_dim_relation_to_map(am, pad_in_dim_vec, out_pad_dim, 1);
+            }
+            access_map.at(pt) = am;
+          }
         }
 
       bool banking_scheme_is_legal(isl_map* bank_func, UBuffer& buf) {
@@ -9300,6 +9432,57 @@ void UBuffer::generate_banks(CodegenOptions& options) {
         return dds;
       }
 
+      int UBuffer::compute_capacity_hw_schedule(const string& inpt, const string& outpt) {
+        auto writes = access_map.at(inpt);
+        auto reads = access_map.at(outpt);
+        cout << "writes: " << str(writes) << endl;
+        cout << "reads : " << str(reads) << endl;
+        cout << "Schedule..." << endl;
+        umap* sched = global_schedule();
+        for (auto m : get_maps(sched)) {
+          cout << tab(1) << str(m) << endl;
+          release(m);
+        }
+
+        auto time_to_write = dot(inv(sched), (writes));
+        auto time_to_read = dot(inv(sched), (reads));
+
+        cout << "Time to write: " << str(time_to_write) << endl;
+        cout << "Time to read : " << str(time_to_read) << endl;
+
+        auto pc_times = dot(time_to_write, inv(time_to_read));
+        cout << "PC times     : " << str(pc_times) << endl;
+        auto wr_sched = schedule.at(inpt);
+        auto wr_after_wr = lex_lt(wr_sched, wr_sched);
+        cout << "wr after wr: " << str(wr_after_wr) << endl;
+        auto rd_sched = schedule.at(outpt);
+        auto wr_before_rd= lex_gt(rd_sched, wr_sched);
+        cout << "wr before rd: " << str(wr_before_rd) << endl;
+        auto writeOP2readOP = dot(dot(wr_sched, pc_times), inv(rd_sched));
+        cout << "wr2rd: " << str(writeOP2readOP) << endl;
+        auto write_btw = isl_union_map_intersect(dot(inv(writeOP2readOP), wr_after_wr),
+                wr_before_rd);
+        auto pt_set = get_points(::domain(write_btw));
+        std::set<int> card_set;
+        int max_wr_btw = 0;
+        for (auto pt: pt_set) {
+          auto image = its(write_btw, to_set(pt));
+          //cout << "pt: " << str(pt) << endl;//" \n\thas image: " << str(image) << endl;
+          //for (auto rng_pt: get_points(range(image))) {
+          //  cout << "\tpt need to buffer: " << str(rng_pt) << endl;
+          //}
+          auto card_capacity = int_upper_bound(card(image));
+          //cout << "\tcard: " << card_capacity << endl;
+          card_set.insert(card_capacity);
+          max_wr_btw = max(max_wr_btw, card_capacity);
+        }
+
+        cout << "Possible DD: " << card_set << endl;
+        return max_wr_btw;
+        //auto dds = isl_union_map_deltas(pc_times);
+        //return dds;
+      }
+
       maybe<int> UBuffer::dependence_distance_max(const string& inpt, const string& outpt) {
 
         auto dds = compute_dd_hw_schedule(inpt, outpt);
@@ -9308,6 +9491,21 @@ void UBuffer::generate_banks(CodegenOptions& options) {
           auto ddc = to_set(dds);
 
           int dd = to_int(lexmaxval(ddc));
+          cout << "DD           : " << dd << endl;
+          return {dd};
+        } else {
+          return {};
+        }
+      }
+
+      maybe<int> UBuffer::dependence_distance_min(const string& inpt, const string& outpt) {
+
+        auto dds = compute_dd_hw_schedule(inpt, outpt);
+        cout << "DDs          : " << str(dds) << endl;
+        if (!empty(dds)) {
+          auto ddc = to_set(dds);
+
+          int dd = to_int(lexminval(ddc));
           cout << "DD           : " << dd << endl;
           return {dd};
         } else {

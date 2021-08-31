@@ -2355,6 +2355,7 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
       //is boundary buffer
       //generate the global buffer configuration and save in edge buffers' config file
       auto& eb = buf.second;
+      eb.tighten_address_space();
       auto eb_config = eb.generate_ubuf_args(options, eb, "glb");
       eb.config_file = eb_config;
     }
