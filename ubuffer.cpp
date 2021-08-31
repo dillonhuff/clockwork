@@ -975,7 +975,14 @@ UBuffer UBuffer::generate_ubuffer(UBufferImpl& impl, schedule_info & info, int b
     }
   buf.simplify_address_space();
   if (sr) {
+
+      //FIXME: should do this after figure out vectorization dimension
+      //Maybe it's correct ???
+      //ASPLOS: this need to be tested for high throughput
     buf.linear_address_space(project_out_zero_dim(rddom), 4);
+    //buf.linear_address_space(project_out_zero_dim(rddom),
+    //        max(4/*fetch_width*/, stride_in_dim(rddom, ::num_dims(rddom) - 1)));
+    //buf.tighten_address_space();
   }
   cout << "after ubuffer regen: " << buf << endl;
 
@@ -2846,6 +2853,8 @@ CoreIR::Instance* UBuffer::map_ubuffer_to_cgra(CodegenOptions& options, CoreIR::
     //buf->getModuleRef()->getMetaData()["verilog_name"] = "glb_"+ c->getUnique();
     buf->getMetaData()["verilog_name"] = "glb_"+ c->getUnique();
     int count = 0;
+    target_buf.remove_bank_dim();
+    cout << "After simplify: " << target_buf << endl;
     for (auto inpt: target_buf.get_in_ports()) {
       isl_set* dom = target_buf.domain.at(inpt);
       isl_aff* aff = get_aff(to_map(target_buf.schedule.at(inpt)));
@@ -7415,7 +7424,6 @@ void UBuffer::generate_banks(CodegenOptions& options) {
     return sched;
   }
 
-
   isl_map* get_sram2tb_schedule(umap* out_sched,
           isl_set* slice_dim, isl_map* op_trans, isl_set* sched_domain,
           int delay_step, int fetch_width) {
@@ -8226,7 +8234,7 @@ void UBuffer::generate_banks(CodegenOptions& options) {
         return ret;
       }
 
-    pair<isl_map*, isl_map*> get_vectorized_write(isl_map* acc_0, isl_map* sched, int fetch_width, int addr_dim, int agg_cnt) {
+    pair<isl_map*, isl_map*> get_vectorized_write(isl_map* acc_0, isl_map* sched, map<string, isl_map*> sched_record_map, int fetch_width, int addr_dim, int agg_cnt) {
         int vectorize_loop_dim = get_inner_most_related_dom_dim(acc_0, addr_dim, fetch_width);
         cout << "vec loop dim: " << vectorize_loop_dim << endl;
         auto trans =
@@ -8236,11 +8244,29 @@ void UBuffer::generate_banks(CodegenOptions& options) {
         cout << "\tsched domain: " << str(sched_dom) << endl;
         //schedule
         auto sched_vec = dot(trans, its(sched, sched_dom));
+        cout << "\tsched before trans: " << str(sched) << endl;
         cout << "\tsched after trans: " << str(sched_vec) << endl;
         int fetch_ii = stride_in_dim(sched_vec, vectorize_loop_dim);
-        //TODO: may need to adjust the delay
-        //FIXME: use agg cnt, should dynamically fix it
-        auto final_sched = linear_schedule(sched_vec, {1}, fetch_ii / fetch_width * (fetch_width - 1) + 1 + agg_cnt, false);
+
+        //We may get to a loop that is projected out
+        while(fetch_ii == 0) {
+            fetch_ii = stride_in_dim(sched_vec, --vectorize_loop_dim);
+        }
+        cout << "Fetch_ii: " << fetch_ii << endl;
+        assert(fetch_ii % fetch_width == 0);
+
+        //get the write schedule with check
+        auto final_sched = linear_schedule(sched_vec, {1}, fetch_ii / fetch_width * (fetch_width - 1) + 1, false);
+        bool adjust = true;
+        while (adjust) {
+            adjust = false;
+            //adjust against write
+            while(violate_deps(final_sched, sched_record_map)) {
+                //check dependency against sram write
+                final_sched = linear_schedule(final_sched, {1}, 1, false);
+                adjust = true;
+            }
+        }
         cout << "\tfinal sched: " << str(final_sched) << endl;
 
         //access map
@@ -8272,11 +8298,15 @@ void UBuffer::generate_banks(CodegenOptions& options) {
             unmask_dims.push_back(it.first);
         }
     }
+    cout << "rem: " << str(acc_vec_rem) << endl;
+    cout << "new: " << str(acc_vec_new) << endl;
     //Go through each iteration domain point for div dimension
     for(isl_set* s: get_domain_unmask_set(acc_vec_new, vectorized_dim, unmask_dims)){
         cout << "\t" << str(s) << endl;
         int origin_max = get_dim_max(range(its(acc_vec_new, s)), addr_dim);
         int trans_max = get_dim_max(range(its(acc_vec_rem, s)), addr_dim);
+        cout << "origin max: " << str(origin_max) << endl;
+        cout << "trans max: " << str(trans_max) << endl;
         ahead_step = max(ahead_step, origin_max - trans_max);
     }
     cout << "ahead_step : " << ahead_step << endl;
@@ -8314,6 +8344,8 @@ void UBuffer::generate_banks(CodegenOptions& options) {
 
     //Get ahead step to make sure that
     //we still get the correct data in time after remove floor div
+    //FIXME: Need to rewrite this after ASPLOS
+    //ahead does not mean we need to fetch more item
     int ahead_step = get_prefetch_step(acc_vec_new, acc_vec_rem, vectorized_dim, addr_dim);
 
     //projected out the reaccessing dimension
@@ -8334,7 +8366,9 @@ void UBuffer::generate_banks(CodegenOptions& options) {
     cout << "vectorization dimension after irrelevant dimension removal: " << vectorized_dim << endl;
 
     //Move the schedule ahead and pad the domain
-    if (ahead_step) {
+    //if (ahead_step) {
+    if (get_dim_max(range(acc_vec_rem), addr_dim) <
+                get_dim_max(range(acc_slice), addr_dim) ) {
       acc_vec_rem = pad_to_domain_ubuf_map(acc_vec_rem, vectorized_dim, ahead_step);
       sched_vec_new = pad_to_domain_ubuf_map(sched_vec_new, vectorized_dim, ahead_step);
     }
@@ -8509,7 +8543,7 @@ void UBuffer::generate_banks(CodegenOptions& options) {
 
               //If it's a self loop(update operation), we need to decouple the reuse
               if (is_self_loop(in_pt_name)){
-                inpt_acc_map = acc_pattern.get_access_map_and_decouple_reuse(ctx, dim_id, true);
+                inpt_acc_map = acc_pattern.get_access_map_and_decouple_reuse(ctx, dim_id, false);
                 inpt_acc_map = add_range_suffix(inpt_acc_map, "_" + to_string(agg_cnt) + "_agg");
               }
 
@@ -8543,10 +8577,11 @@ void UBuffer::generate_banks(CodegenOptions& options) {
                 }
                 agg_buf.port_bundles[bd_name+"_agg_in"].push_back(in_pt_name + "_in");
               }
+              //Add sched_record_map in also to avoid overlapping
               auto sram_ir = get_vectorized_write(
                       to_map(access_map.at(in_pt_name)),
                       to_map(schedule.at(in_pt_name)),
-                      fetch_width, dim_id, agg_cnt);
+                      sched_record_map, fetch_width, dim_id, agg_cnt);
 
               isl_map* vectorized_access = add_domain_suffix(sram_ir.first, "_agg2sram_" + str(agg_cnt));
               isl_set* dom = ::domain(vectorized_access);
@@ -8569,7 +8604,7 @@ void UBuffer::generate_banks(CodegenOptions& options) {
                 //decouple the access map
                 if(is_self_loop_in(in_pt_name)) {
                   auto acc_pt = AccessPattern(agg_out_access_map, ctx);
-                  auto decouple_acc_map = acc_pt.get_access_map_and_decouple_reuse(ctx, dim_id, true);
+                  auto decouple_acc_map = acc_pt.get_access_map_and_decouple_reuse(ctx, dim_id, false);
                   agg_buf.access_map[agg_pt_name] = to_umap(decouple_acc_map);
                 }
 
@@ -8711,7 +8746,7 @@ void UBuffer::generate_banks(CodegenOptions& options) {
 
                 //always decouple the output access, and remove refetch from SRAM
                 auto acc_pt = AccessPattern(tb_in_access_map, ctx);
-                tb_in_access_map = acc_pt.get_access_map_and_decouple_reuse(ctx, dim_id, true);
+                tb_in_access_map = acc_pt.get_access_map_and_decouple_reuse(ctx, dim_id, false);
                 //tb.access_map[tb_pt_name] = to_umap(decouple_acc_map);
 
                 auto sram_out_access_map = add_range_suffix(rewrite_access_map, "_sram");
@@ -8740,7 +8775,7 @@ void UBuffer::generate_banks(CodegenOptions& options) {
 
 
               auto outpt_acc_map = remap_access_to_new_buffer(out_pt_name, "_" + to_string(tb_cnt) + "_tb");
-              outpt_acc_map = acc_pattern.get_access_map_and_decouple_reuse(ctx, dim_id, true);
+              outpt_acc_map = acc_pattern.get_access_map_and_decouple_reuse(ctx, dim_id, false);
               outpt_acc_map = add_range_suffix(outpt_acc_map, "_" + to_string(tb_cnt) + "_tb");
 
               //Strip mining the output loop

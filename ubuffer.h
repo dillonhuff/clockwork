@@ -1883,8 +1883,19 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
         return false;
     }
 
+    void remove_bank_dim() {
+        for (auto pt: get_all_ports()) {
+            auto sched = to_map(schedule.at(pt));
+            schedule.at(pt) = to_umap(remove_irrelevant_in_dim(sched));
+            auto acc_m = to_map(access_map.at(pt));
+            auto acc_rem = remove_irrelevant_in_dim(acc_m);
+            access_map.at(pt) = to_umap(acc_rem);
+            domain.at(pt) = ::domain(acc_rem);
+        }
+    }
+
     void linear_address_space(isl_set* rddom, int fetch_width) {
-      auto reduce_map = linear_address_map_lake(rddom, fetch_width);
+      auto reduce_map = linear_address_map_lake_SR(rddom, fetch_width);
       string dname = buf_range_name();
       reduce_map = set_domain_name(reduce_map, dname);
       reduce_map = set_range_name(reduce_map, dname);
@@ -1896,6 +1907,27 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
         it.second = to_umap(linear_acc_map);
       }
     }
+
+    //ubuffer rewrite pass remove common-minimum stride
+void tighten_address_space() {
+    int cms = 0;
+    for (auto it: access_map) {
+        auto am = to_map(it.second);
+        //only work for linearized address
+        assert(num_out_dims(am) == 1);
+        cms = std::gcd(cms, common_max_stride(am));
+    }
+    cout << "common max stride = " << cms << endl;
+    if (cms > 1) {
+        cout << "Could tighten address! " << endl;
+        for (auto& it: access_map){
+          auto am = to_map(it.second);
+          auto trans= get_set_slice(range(am), 0, cms);
+          it.second = to_umap(dot(am, (trans)));
+          cout <<"\tTighten access map to: " << str(it.second) << endl;
+        }
+    }
+}
 
 
     int lanes_in_bundle(const std::string& bn) {
@@ -2829,7 +2861,7 @@ vector<string> buffer_vectorization(vector<string> buf_name_vec, int dim_id, int
 
 
 //helper function for the new vectorization pass
-pair<isl_map*, isl_map*> get_vectorized_write(isl_map* acc_0, isl_map* sched, int fetch_width, int addr_dim, int agg_cnt=0);
+pair<isl_map*, isl_map*> get_vectorized_write(isl_map* acc_0, isl_map* sched, map<string, isl_map*> sched_record_map, int fetch_width, int addr_dim, int agg_cnt=0);
 pair<isl_map*, isl_map*> get_vectorized_read(isl_map* acc_0, isl_map* sched, map<string, isl_map*> sched_record_map, int fetch_width, int addr_dim, bool is_dual_port = false);
 pair<isl_map*, isl_map*> get_vectorized_read_simplified(isl_map* acc_0, isl_map* sched, map<string, isl_map*> sched_record_map, int fetch_width, int addr_dim, bool is_dual_port = false);
 //Helper function to get schedule

@@ -91,12 +91,31 @@ prog glb_conv33();
 prog glb_db();
 prog glb_channel_reduction();
 prog resnet_glb();
+prog gaussian_glb();
+prog gaussian_glb8();
+prog unsharp_glb();
+prog up_sample_glb();
+prog harris_color();
+prog harris_glb2();
+prog camera_pipeline_glb();
+
+prog matmul();
 
 //resnet without input tiling
 prog resnet_output_stationary_i16();
 prog resnet_output_stationary_i8();
 prog resnet_init_unroll();
 prog resnet_init_unroll_tile();
+prog resnet3_1();
+prog resnet1();
+prog resnet4_x();
+prog resnet3_x_tiny();
+prog resnet5_x();
+prog resnet5_1();
+prog resnet5_1_new();
+prog resnet5_1_unroll();
+prog resnet5_x_new();
+prog resnet_multi_channel();
 
 //Full layer simulation
 prog resnet_output_stationary_small();
@@ -104,13 +123,27 @@ prog resnet_output_stationary_tiny();
 prog resnet_output_stationary();
 prog resnet_output_stationary_full();
 
+//Full Resnet experiement
+prog resnet5_1_unroll_full();
+prog resnet5_x_unroll_full();
+prog resnet5_x_full();
+prog resnet5_1_full();
+prog resnet4_x_full();
+prog resnet4_1_full();
+prog resnet3_x_full();
+prog resnet3_1_full();
+prog resnet2_x_full();
+prog resnet1_full();
 
 //pond resnet test
 prog complex_mem_pond_rolled();
 prog complex_mem_pond();
+prog complex_mem_pond_input();
 
 prog lucas_kanade();
 
 prog bc_const();
 prog bc_repeat();
 prog bc_mirror();
+
+prog gaussian_unroll();

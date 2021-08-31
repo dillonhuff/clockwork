@@ -65,8 +65,21 @@
           ["out_hw_output_stencil",["Array",16,"Bit"]],
           ["in0_conv_stencil",["Array",1,["Array",16,"BitIn"]]]
         ]],
+        "instances":{
+          "const_p0__677":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0000"]}
+          },
+          "smax_conv_stencil_2_677_678":{
+            "genref":"commonlib.smax",
+            "genargs":{"width":["Int",16]}
+          }
+        },
         "connections":[
-          ["self.out_hw_output_stencil","self.in0_conv_stencil.0"]
+          ["smax_conv_stencil_2_677_678.in1","const_p0__677.out"],
+          ["smax_conv_stencil_2_677_678.in0","self.in0_conv_stencil.0"],
+          ["smax_conv_stencil_2_677_678.out","self.out_hw_output_stencil"]
         ]
       }
     }

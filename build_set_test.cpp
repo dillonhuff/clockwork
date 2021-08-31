@@ -1292,6 +1292,91 @@ void rolled_conv_reorder_test() {
   assert(res == 0);
 }
 
+void stride_id_test() {
+  struct isl_ctx *ctx;
+  ctx = isl_ctx_alloc();
+
+  UBuffer buf;
+  buf.name = "id_stride";
+  buf.ctx = ctx;
+
+  buf.domain["write"] =
+    isl_set_read_from_str(ctx, "{ write[root = 0, i] : 0 <= i < 16}");
+  buf.access_map["write"] =
+    rdmap(ctx, "{ write[root = 0, i] -> id_stride[i] : 0 <= i < 16}");
+  buf.schedule["write"] =
+    isl_union_map_read_from_str(ctx, "{ write[root = 0, i] -> [i] : 0 <= i < 16 }");
+  buf.isIn["write"] = true;
+
+  // Read 0 through 7
+  buf.domain["read"] =
+    isl_set_read_from_str(ctx, "{ read[root = 0, i] : 0 <= i < 8}");
+  buf.access_map["read"] =
+    rdmap(ctx, "{ read[root = 0, i] -> id_stride[i*2] : 0 <= i < 8}");
+  buf.schedule["read"] =
+    isl_union_map_read_from_str(ctx, "{ read[root = 0, i] -> [i + 16] : 0 <= i < 8 }");
+  buf.isIn["read"] = false;
+
+  generate_hls_code(buf);
+
+  map<string, UBuffer> buffers;
+  buffers.insert({"id_stride", buf});
+  buffer_vectorization({1}, {"id_stride"}, 4, buffers);
+
+  generate_hls_code_unit_test(buffers, buf.name);
+
+  generate_vectorization_unit_testbench(buf);
+
+  int res = cmd("clang++ -std=c++11 unit_tb_id_stride.cpp id_stride.cpp id_stride_vec.cpp" );
+  assert(res == 0);
+
+  res = system("./a.out");
+  assert(res == 0);
+}
+
+void stride_conv_test() {
+  struct isl_ctx *ctx;
+  ctx = isl_ctx_alloc();
+
+  UBuffer buf;
+  buf.name = "conv_stride";
+  buf.ctx = ctx;
+
+  buf.domain["write"] =
+    isl_set_read_from_str(ctx, "{ write[root = 0, i] : 0 <= i < 20}");
+  buf.access_map["write"] =
+    rdmap(ctx, "{ write[root = 0, i] -> conv_stride[i] : 0 <= i < 20}");
+  buf.schedule["write"] =
+    isl_union_map_read_from_str(ctx, "{ write[root = 0, i] -> [i] : 0 <= i < 20 }");
+  buf.isIn["write"] = true;
+
+  // Read 0 through 7
+  buf.domain["read"] =
+    isl_set_read_from_str(ctx, "{ read[root = 0, j, i] : 0 <= i < 8 and 0 <= j <= 2}");
+  buf.access_map["read"] =
+    rdmap(ctx, "{ read[root = 0, j, i] -> conv_stride[i*2 + j] : 0 <= i < 8 and 0<=j<=2}");
+  buf.schedule["read"] =
+    isl_union_map_read_from_str(ctx, "{ read[root = 0, j, i] -> [i + 8*j + 20] : 0 <= i < 8 and 0<=j<=2}");
+  buf.isIn["read"] = false;
+
+  generate_hls_code(buf);
+
+  map<string, UBuffer> buffers;
+  buffers.insert({"conv_stride", buf});
+  buffer_vectorization({1}, {"conv_stride"}, 4, buffers);
+
+  generate_hls_code_unit_test(buffers, buf.name);
+
+  generate_vectorization_unit_testbench(buf);
+
+  int res = cmd("clang++ -std=c++11 unit_tb_conv_stride.cpp conv_stride.cpp conv_stride_vec.cpp" );
+  assert(res == 0);
+
+  res = system("./a.out");
+  assert(res == 0);
+}
+
+
 void rolled_conv_test() {
   struct isl_ctx *ctx;
   ctx = isl_ctx_alloc();
@@ -11611,6 +11696,13 @@ void blur_and_downsample_test() {
 void playground() {
     {
       isl_ctx* ctx = isl_ctx_alloc();
+      auto acc_0 = isl_map_read_from_str(ctx,"{ [i0]-> [3*i0]: 0<=i0<8}");
+      auto delta_set = isl_map_deltas(acc_0);
+      cout << "Delta: " << str(delta_set) << endl;
+      assert(false);
+    }
+    {
+      isl_ctx* ctx = isl_ctx_alloc();
       auto acc_0 = isl_map_read_from_str(ctx,"{ op[i0, i1]-> [4000 + i1]: i0=0 and i1=0}");
       auto aff = get_aff(acc_0);
       assert(false);
@@ -14769,9 +14861,14 @@ void Init_PE_energy_cost(power_analysis_params& power_params)  {
 void compile_for_garnet_single_port_mem(prog & prg, string dir, bool gen_smt_stream, bool gen_config_only, bool multi_level_mem, bool use_dse_compute, bool energy_model = false);
 void compile_for_garnet_fetch2_mem(prog & prg, string dir, bool gen_smt_stream, bool gen_config_only, bool multi_level_mem, bool use_dse_compute, bool energy_model = false);
 void cpy_app_to_folder(const std::string& app_type, const std::string& prg_name);
+void generate_resnet_latency_experiment(prog& prg,
+        ofstream& profiling_file,
+        string dir,
+        bool use_dse_compute = false);
 
 void test_pond(string dir, bool run_verilator=true) {
   vector<prog> test_apps;
+  test_apps.push_back(complex_mem_pond_input());
   test_apps.push_back(complex_mem_pond());
   test_apps.push_back(complex_mem_pond_rolled());
   test_apps.push_back(conv_rolled());
@@ -14937,28 +15034,110 @@ void test_fetchwidth2_mem(bool gen_config_only, bool multi_accessor=false, strin
   }
 }
 
+void resnet_profiling() {
+
+  vector<prog> test_apps;
+  //test_apps.push_back(resnet1_full());
+  //test_apps.push_back(resnet2_x_full());
+  //test_apps.push_back(resnet3_1_full());
+  //test_apps.push_back(resnet3_x_full());
+  //test_apps.push_back(resnet4_1_full());
+  //test_apps.push_back(resnet4_x_full());
+  //test_apps.push_back(resnet5_1_full());
+  //test_apps.push_back(resnet5_x_full());
+  test_apps.push_back(resnet5_1_unroll_full());
+  test_apps.push_back(resnet5_x_unroll_full());
+  //test_apps.push_back(resnet3_1());
+
+  ofstream out("resnet_profiling.csv");
+  for ( auto prg: test_apps) {
+    prg.sanity_check();
+
+    break_up_multi_channel_inputs(prg);
+    break_up_multi_channel_outputs(prg);
+    dsa_writers(prg);
+    prg.pretty_print();
+
+    //compile_for_garnet_platonic_mem(prg);
+    generate_resnet_latency_experiment(prg, out, "aha_garnet_design");
+  }
+  out.close();
+  cout << "FINISH Full Resnet profiling! Check <./resnet_profiling.csv>. " << endl;
+}
+
+void test_glb(bool gen_config_only, bool multi_accessor=false, string dir="aha_garnet_design") {
+  vector<prog> test_apps;
+
+  //test_apps.push_back(resnet5_1_full());
+  //test_apps.push_back(resnet2_x_full());
+
+  //GLB tests
+  test_apps.push_back(camera_pipeline_glb());
+  test_apps.push_back(harris_glb2());
+  test_apps.push_back(up_sample_glb());
+  test_apps.push_back(unsharp_glb());
+  test_apps.push_back(gaussian_glb());
+  test_apps.push_back(gaussian_glb8());
+  test_apps.push_back(glb_channel_reduction());
+  //
+  test_apps.push_back(matmul());
+
+  ////Sample DNN Layers
+  test_apps.push_back(resnet1());
+  test_apps.push_back(resnet3_1());
+  test_apps.push_back(resnet4_x());
+  test_apps.push_back(resnet5_1());
+  test_apps.push_back(resnet5_x());
+  test_apps.push_back(resnet5_x_new());
+  test_apps.push_back(resnet5_1_new());
+  test_apps.push_back(resnet5_1_unroll());
+  test_apps.push_back(resnet_multi_channel());
+
+  //Test with non double buffer, not tested with db
+  test_apps.push_back(resnet_output_stationary_tiny());
+  test_apps.push_back(resnet_init_unroll_tile());
+
+  for ( auto prg: test_apps) {
+    prg.sanity_check();
+
+    break_up_multi_channel_inputs(prg);
+    break_up_multi_channel_outputs(prg);
+    dsa_writers(prg);
+    prg.pretty_print();
+
+    //compile_for_garnet_platonic_mem(prg);
+    compile_for_garnet_single_port_mem(prg, dir, false, gen_config_only, false, false);
+    cout << "Output name: " << prg.name << endl;
+    //TODO: move to a function
+    //run verilator on all the generated verilog
+    if (!gen_config_only) {
+      string name = prg.name;
+      auto verilog_files = get_files("./" + dir + "/"+name+"/verilog/");
+      verilog_files.push_back(name + ".v");
+      verilog_files.push_back("LakeTop_W_new.v");
+      add_default_initial_block();
+      bool extra_flag_for_lake = true;
+      auto cpu = unoptimized_result(prg);
+      int res = run_verilator_on(name, name + "_verilog_tb.cpp", verilog_files, extra_flag_for_lake);
+      assert(res == 0);
+      cmd("rm LakeTop_W_new.v");
+      cmd("rm LakeWrapper.v");
+
+      auto verilator_res = verilator_results(prg.name);
+      compare("cgra_" + prg.name + "_cpu_vs_verilog_comparison", verilator_res, cpu);
+      //string app_typssive "dualwithaddr";
+      string app_type = "single_port_buffer";
+      cpy_app_to_folder(app_type, prg.name);
+    }
+  }
+}
+
 void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, string dir="aha_garnet_design") {
   vector<prog> test_apps;
   //TODO:has issue  with multiple input
   //test_apps.push_back(demosaic_complex());
   //test_apps.push_back(fft8_unroll8());
   //test_apps.push_back(camera_pipeline_trunc());
-
-  //GLB tests
-  test_apps.push_back(glb_channel_reduction());
-  //test_apps.push_back(glb_db());
-  //test_apps.push_back(glb_conv33());
-  //test_apps.push_back(resnet_output_stationary_i16());
-
-  //double buffer is not working with this, size issue, need to test 14x14
-  //test_apps.push_back(resnet_output_stationary_i8());
-
-  //Test with non double buffer, not tested with db
-  //test_apps.push_back(resnet_output_stationary_tiny());
-  //test_apps.push_back(resnet_output_stationary_small());
-  //test_apps.push_back(resnet_output_stationary_full());
-  test_apps.push_back(resnet_init_unroll_tile());
-  test_apps.push_back(resnet_init_unroll());
 
   //CGRA tests
   test_apps.push_back(counter());
@@ -14978,6 +15157,7 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   test_apps.push_back(unsharp());
 
   //DNN apps
+  test_apps.push_back(resnet_tiny());
   test_apps.push_back(resnet_simple());
   test_apps.push_back(resnet());
 
@@ -17053,7 +17233,7 @@ void access_pattern_write_unit_tests() {
   isl_ctx* ctx = isl_ctx_alloc();
   auto acc_0 = isl_map_read_from_str(ctx,"{ op[i0]-> data[i0+1]: 0<=i0<=10 }");
   auto sched = isl_map_read_from_str(ctx, "{ op[i0] -> [i0]: 0 <=i0<=10 }");
-  auto ir_vec = get_vectorized_write(acc_0, sched, 4/*fetch_width*/, 0/*dom_dim*/);
+  auto ir_vec = get_vectorized_write(acc_0, sched, {}, 4/*fetch_width*/, 0/*dom_dim*/);
   auto acc_vec = ir_vec.first;
   auto sched_vec = ir_vec.second;
   cout << "before vectorization: " << str(acc_0) << endl;
@@ -17071,7 +17251,7 @@ void access_pattern_write_unit_tests() {
 
   acc_0 = isl_map_read_from_str(ctx,"{ op[i0]-> data[i0]: 0<=i0<=11 }");
   sched = isl_map_read_from_str(ctx, "{ op[i0] -> [i0]: 0 <=i0<=10 }");
-  ir_vec= get_vectorized_write(acc_0, sched, 4/*fetch_width*/, 0/*dom_dim*/);
+  ir_vec= get_vectorized_write(acc_0, sched, {}, 4/*fetch_width*/, 0/*dom_dim*/);
   acc_vec = ir_vec.first;
   sched_vec = ir_vec.second;
   cout << "before vectorization: " << str(acc_0) << endl;
@@ -17085,7 +17265,7 @@ void access_pattern_write_unit_tests() {
 
   acc_0 = isl_map_read_from_str(ctx,"{ op[i0]-> data[i0+1]: 0<=i0<=11 }");
   sched = isl_map_read_from_str(ctx, "{ op[i0] -> [i0]: 0 <=i0<=11 }");
-  ir_vec= get_vectorized_write(acc_0, sched, 4/*fetch_width*/, 0/*dom_dim*/);
+  ir_vec= get_vectorized_write(acc_0, sched, {}, 4/*fetch_width*/, 0/*dom_dim*/);
   acc_vec = ir_vec.first;
   sched_vec = ir_vec.second;
   cout << "before vectorization: " << str(acc_0) << endl;
@@ -17099,7 +17279,7 @@ void access_pattern_write_unit_tests() {
 
   acc_0 = isl_map_read_from_str(ctx,"{ op[i0]-> data[i0+4]: 0<=i0<=11 }");
   sched = isl_map_read_from_str(ctx, "{ op[i0] -> [i0]: 0 <=i0<=11 }");
-  ir_vec= get_vectorized_write(acc_0, sched, 4/*fetch_width*/, 0/*dom_dim*/);
+  ir_vec= get_vectorized_write(acc_0, sched, {}, 4/*fetch_width*/, 0/*dom_dim*/);
   acc_vec = ir_vec.first;
   sched_vec = ir_vec.second;
   cout << "before vectorization: " << str(acc_0) << endl;
@@ -17114,7 +17294,7 @@ void access_pattern_write_unit_tests() {
   //2D case
   acc_0 = isl_map_read_from_str(ctx,"{ op[i0, i1]-> data[i0, i1]: 0<=i0<=11 and 0 <=i1 <= 11 }");
   sched = isl_map_read_from_str(ctx, "{ op[i0, i1] -> [12 * i0 + i1]: 0 <=i0<=11 and 0<= i1 <= 11 }");
-  ir_vec = get_vectorized_write(acc_0, sched,  4/*fetch_width*/, 1/*dom_dim*/);
+  ir_vec = get_vectorized_write(acc_0, sched, {}, 4/*fetch_width*/, 1/*dom_dim*/);
   acc_vec = ir_vec.first;
   sched_vec = ir_vec.second;
   cout << "before vectorization: " << str(acc_0) << endl;
@@ -17130,7 +17310,7 @@ void access_pattern_write_unit_tests() {
   //2D case with reaccess
   acc_0 = isl_map_read_from_str(ctx,"{ op[i0, i1]-> data[i0]: 0<=i0<=11 and 0 <=i1 <= 11 }");
   sched = isl_map_read_from_str(ctx, "{ op[i0, i1] -> [12 * i0 + i1]: 0 <=i0<=11 and 0<= i1 <= 11 }");
-  ir_vec = get_vectorized_write(acc_0, sched,  4/*fetch_width*/, 0/*dom_dim*/);
+  ir_vec = get_vectorized_write(acc_0, sched, {},  4/*fetch_width*/, 0/*dom_dim*/);
   acc_vec = ir_vec.first;
   sched_vec = ir_vec.second;
   cout << "before vectorization: " << str(acc_0) << endl;
@@ -17146,7 +17326,7 @@ void access_pattern_write_unit_tests() {
   //3D case with reaccess
   acc_0 = isl_map_read_from_str(ctx,"{ op[i0, i1, i2]-> data[i0]: 0<=i0<=11 and 0 <=i1 <= 11 and 0 <= i2 <= 3}");
   sched = isl_map_read_from_str(ctx, "{ op[i0, i1, i2] -> [48 * i0 + 4*i1 + i2]: 0 <=i0<=11 and 0<= i1 <= 11 and 0 <= i2 <= 3}");
-  ir_vec = get_vectorized_write(acc_0, sched,  4/*fetch_width*/, 0/*dom_dim*/);
+  ir_vec = get_vectorized_write(acc_0, sched, {},  4/*fetch_width*/, 0/*dom_dim*/);
   acc_vec = ir_vec.first;
   sched_vec = ir_vec.second;
   cout << "before vectorization: " << str(acc_0) << endl;
@@ -17158,8 +17338,8 @@ void access_pattern_write_unit_tests() {
 }
 
 void vectorization_unit_tests() {
-  access_pattern_write_unit_tests();
-  access_pattern_read_unit_tests();
+  //access_pattern_write_unit_tests();
+  //access_pattern_read_unit_tests();
   synth_id_test();
   synth_id_auto_test();
   synth_id_fetch2_test();
@@ -17168,6 +17348,10 @@ void vectorization_unit_tests() {
   rolled_conv_reorder_test();
   upsample_vectorization_test();
   upsample_pad_test();
+  stride_id_test();
+  stride_conv_test();
+
+  //FIXME: Did not work need to test after ASPLOS
   sw_fetch2_test();
 }
 
@@ -17296,9 +17480,9 @@ bool need_relax(schedule_info& sched, op* loop, prog& prg, int fetch_width) {
   //only look at loop op
   if (!loop->is_loop())
     return false;
+  cout << "op name: " << loop->name << endl;
   auto read_map = read_at(loop->name, prg);
   auto levels = get_variable_levels(prg);
-  cout << "op name: " << loop->name << endl;
   cout << "op level: " << levels.at(loop->name) << endl;
   if(read_map == nullptr)
       return false;
@@ -17324,23 +17508,44 @@ bool need_relax(schedule_info& sched, op* loop, prog& prg, int fetch_width) {
       } else if (loop->trip_count() < fetch_width) {
           continue;
       } else {
-          int stride = stride_in_dim(b_map, levels.at(loop->name), packed_addr_dim);
-          cout << "Dim " << levels.at(loop->name)<< "\n\t hasStride : " << stride << endl;
-          if (stride % fetch_width != 0) {
-            cout << tab(4) << "Relax ii latency for op: " << loop->name << endl;
-            //cout << tab(4) << "Original offset within parent: " << sched.offset_in_parent(child) << endl;
-            cout << tab(4) << "Original offset within parent: " << sched.offset_in_parent(loop) << endl;
-            cout << tab(4) << "loop trip count: " << loop->trip_count() << endl;
-            if (is_inner_loop(loop))
-                sched.op_offset_within_parent.at(loop) = (loop->trip_count()) % fetch_width + fetch_width * (loop->trip_count()%fetch_width== 0);
-            else {
-                //int range_span = get_dim_extent(range(b_map), packed_addr_dim);
-                //if (range_span % fetch_width)
-                sched.op_offset_within_parent.at(loop) = sched.II(loop) * fetch_width;
+          //int stride = stride_in_dim(b_map, levels.at(loop->name), packed_addr_dim);
+          //TODO: double check if this correct
+          //double check this logic we need to go over all the involve dimension
+          //except the innermost
+          //for (int i = 0; i < /*in_involve_d.size()-*/1; i ++) {
+          //  int in_involve_dim = in_involve_d.at(i);
+          //
+          //The logic here should be if we have multiple access check if upper level access go across wide fetch width
+          bool need_relax = false;
+          for (int i = 0; i < in_involve_d.size() - 1; i ++) {
+            int in_involve_dim = in_involve_d.at(i);
+            int stride = stride_in_dim(b_map, in_involve_dim, packed_addr_dim);
+            cout << "Dim " << in_involve_dim << "\n\t hasStride : " << stride << endl;
+            if (stride % fetch_width != 0) {
+              need_relax = true;
             }
-            cout << tab(4) << "New offset within parent: " << sched.offset_in_parent(loop) << endl;
           }
-          return true;
+
+          //  int stride = stride_in_dim(b_map, in_involve_dim, packed_addr_dim);
+            //cout << "Dim " << in_involve_dim << "\n\t hasStride : " << stride << endl;
+            //if (stride % fetch_width != 0) {
+            if (need_relax) {
+              cout << tab(4) << "Relax ii latency for op: " << loop->name << endl;
+              //cout << tab(4) << "Original offset within parent: " << sched.offset_in_parent(child) << endl;
+              cout << tab(4) << "Original offset within parent: " << sched.offset_in_parent(loop) << endl;
+              cout << tab(4) << "loop trip count: " << loop->trip_count() << endl;
+              if (is_inner_loop(loop))
+                  sched.op_offset_within_parent.at(loop) = (loop->trip_count()) % fetch_width + fetch_width * (loop->trip_count()%fetch_width== 0);
+              else {
+                  //int range_span = get_dim_extent(range(b_map), packed_addr_dim);
+                  //if (range_span % fetch_width)
+                  //TODO: also check the logic here, this is conservative
+                  sched.op_offset_within_parent.at(loop) = sched.II(loop) * ((4- (loop->trip_count()) % fetch_width));
+              }
+              cout << tab(4) << "New offset within parent: " << sched.offset_in_parent(loop) << endl;
+              return true;
+            }
+          //}
       }
     }
   }
@@ -17725,6 +17930,23 @@ void adjust_coarse_grained_loop_delays_sequentially(schedule_info& sched, prog& 
   }
 }
 
+void dump_DNN_delays(schedule_info& sched, prog& prg, ofstream& out) {
+  cout << "Showing delay of " << prg.name << endl;
+  int d = 0;
+  map<string, int> coarse_pipeline_II;
+  int start = INT_MAX, end = 0;
+  for (auto name : topologically_sort_kernels(prg)) {
+    auto lp = prg.find_loop(name);
+    cout << "Kernel, " << name << ", " << sched.op_offset_within_parent.at(lp) << endl;
+    if (sched.op_offset_within_parent.at(lp) != 0){
+        start = min(sched.op_offset_within_parent.at(lp), start);
+        end = max(sched.op_offset_within_parent.at(lp), end);
+    }
+  }
+  cout << "CGRA latency: " <<  end - start << endl;
+  out <<  end-start;
+}
+
 void adjust_outer_delays_sequentially(schedule_info& sched, prog& prg) {
   cout << "Adjusting delays of " << prg.name << "After vectorization" << endl;
   int d = 0;
@@ -17737,6 +17959,7 @@ void adjust_outer_delays_sequentially(schedule_info& sched, prog& prg) {
     for (auto prod:  get_producers(name, prg))
         cout << "\tprod: " << prod << endl;
     //This only works for the schedule without pipeline should change into total latency
+    //coarse_pipeline_II[name] = sched.II(lp) * lp->trip_count();
     coarse_pipeline_II[name] = sched.II(lp) * lp->trip_count();
     sched.op_offset_within_parent[lp] = 0;
   }
@@ -17761,7 +17984,9 @@ void adjust_outer_delays_sequentially_cgpl(schedule_info& sched, prog& prg) {
   cout << "Adjusting delays of " << prg.name << "After vectorization" << endl;
   int d = 0;
   map<string, int> coarse_pipeline_II;
-  op* coarse_pipeline_loop = find_coarse_grained_pipeline_loop(prg.root, prg);
+  //op* coarse_pipeline_loop = find_coarse_grained_pipeline_loop(prg.root, prg);
+  vector<op*> cgpl_lps;
+  find_coarse_grained_pipeline_loops(prg.root, cgpl_lps, prg);
   for (auto name : topologically_sort_kernels(prg)) {
     auto lp = prg.find_loop(name);
     cout << "Push kernel <" << lp->name << "> into delay adjusting queue." << endl;
@@ -17771,15 +17996,19 @@ void adjust_outer_delays_sequentially_cgpl(schedule_info& sched, prog& prg) {
         cout << "\tprod: " << prod << endl;
     auto lower_ops = lp->descendants();
     int cgpl_offset = 0;
-    if(elem(coarse_pipeline_loop, lower_ops)){
+    for (op* coarse_pipeline_loop: cgpl_lps){
+      if(elem(coarse_pipeline_loop, lower_ops)){
         for(auto child: coarse_pipeline_loop->children) {
-            int delay = map_find(child, sched.op_offset_within_parent);
-            cgpl_offset = max(cgpl_offset, delay);
-            cout << "Child: " << child->name << "has delay: " << cgpl_offset << endl;
+          int delay = map_find(child, sched.op_offset_within_parent);
+          cgpl_offset = max(cgpl_offset, delay);
+          cout << "Child: " << child->name << "has delay: " << delay << endl;
         }
+      }
     }
+    cout << "final initial delay of KERNEL [" << name << "] : " << cgpl_offset << endl;
     //This only works for the schedule without pipeline should change into total latency
     coarse_pipeline_II[name] = sched.II(lp) * lp->trip_count() + cgpl_offset;
+    cout << "coarse pipeline outer latency: " << coarse_pipeline_II.at(name) << endl;
     sched.op_offset_within_parent[lp] = 0;
   }
   for (auto name : topologically_sort_kernels(prg)) {
@@ -18189,6 +18418,40 @@ void sanity_check_iis_for_vectorization(schedule_info& sched, prog& prg, int fet
     }
 }
 
+void dump_resnet_latency(CodegenOptions& options, schedule_info& sched, op* root, prog& prg, ofstream& out, bool db_opt) {
+  options.rtl_options.double_buffer_optimization = db_opt;
+  prg.pretty_print();
+  /*
+   * old method for ISCA deadline*/
+  asap_inner_loops_schedule(sched, root, prg,
+          options.mem_hierarchy.at("mem").fetch_width);
+  //sequential_schedule(sched, root, prg);
+
+  adjust_inner_iis(sched, prg);
+  tighten_iis(sched, prg);
+
+
+  //only adjust coarse grained ii while optimize double buffer
+  if (options.rtl_options.double_buffer_optimization) {
+    adjust_coarse_grained_loop_iis(sched, prg);
+    adjust_coarse_grained_loop_delays_sequentially(sched, prg);
+    tighten_coarse_grained_iis(sched, prg);
+    adjust_outer_delays_sequentially_cgpl(sched, prg);
+  } else {
+    //adjust_outer_delays(sched, prg);
+    adjust_outer_delays_sequentially(sched, prg);
+  }
+
+  dump_DNN_delays(sched, prg, out);
+
+  auto op_sched = op_start_times_map(sched, prg);
+  cout << "\tFinal schedule : " << str(op_sched)  << endl;
+
+  adjust_schedule_forward(sched, prg, 0);
+  sanity_check_hw_schedule(sched, prg);
+  return;
+}
+
 
 void garnet_single_port_ram_schedule(CodegenOptions& options, schedule_info& sched, op* root, prog& prg) {
     //FIXME: remove this hack for fft
@@ -18338,6 +18601,7 @@ void garnet_single_port_ram_schedule(CodegenOptions& options, schedule_info& sch
     adjust_outer_delays_sequentially(sched, prg);
   }
 
+  //dump_DNN_delays(sched, prg);
 
   auto op_sched = op_start_times_map(sched, prg);
   cout << "\tFinal schedule : " << str(op_sched)  << endl;
@@ -19023,6 +19287,37 @@ void compile_for_garnet_fetch2_mem(prog& prg,
     generate_garnet_verilator_tb(options, prg, hw_sched, buffers_opt);
   }
 #endif
+}
+
+void generate_resnet_latency_experiment(prog& prg,
+        ofstream& profiling_file,
+        string dir,
+        bool use_dse_compute) {
+
+  //make sure the loop bound and address is positive
+  normalize_bounds(prg);
+  normalize_address_offsets(prg);
+  //remove_div(prg);
+  prg.sanity_check();
+  prg.pretty_print();
+
+
+  //optimized schedule
+  cmd("mkdir -p " + dir + "/" + prg.name);
+
+  //auto iis = garnet_fuse_ii_level(prg);
+  //auto buffers_opt = build_buffers(prg, clockwork_schedule(prg));
+
+  CodegenOptions options = garnet_codegen_single_port_with_addrgen_options(prg, dir);
+  options.add_memory_hierarchy("mem");
+  options.add_memory_hierarchy("glb");
+  profiling_file << prg.name << ", ";
+  schedule_info sched = garnet_schedule_info(options, prg, use_dse_compute);
+  dump_resnet_latency(options, sched, prg.root, prg, profiling_file, false/*double buffer optimization*/);
+  profiling_file << ", ";
+  schedule_info sched_db = garnet_schedule_info(options, prg, use_dse_compute);
+  dump_resnet_latency(options, sched_db, prg.root, prg, profiling_file, true/*double buffer optimization*/);
+  profiling_file << endl;
 }
 
 void compile_for_garnet_single_port_mem(prog& prg,
@@ -27382,10 +27677,22 @@ int main(int argc, char** argv) {
       return 0;
     }
 
+    if (cmd == "glb-tests") {
+      bool use_multi_accessor_tile = true;
+      bool gen_config_only = false;
+      test_glb(gen_config_only, use_multi_accessor_tile, "aha_garnet_design_new");
+      return 0;
+    }
+
     if (cmd == "lake-exp") {
       bool use_multi_accessor_tile = true;
       bool gen_config_only = true;
       test_single_port_mem(gen_config_only, use_multi_accessor_tile, "aha_garnet_design_new");
+      return 0;
+    }
+
+    if (cmd == "resnet-exp") {
+      resnet_profiling();
       return 0;
     }
 

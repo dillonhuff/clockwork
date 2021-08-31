@@ -53,7 +53,6 @@ void compile_app_for_garnet_single_port_mem(prog& prg, string dir, bool gen_conf
     cout << "Running CGRA flow on " << prg.name << endl;
 
     //TODO: make this argument explicit to user
-    bool multi_level_memory = false;
     bool gen_smt = false;
     bool use_dse_compute = false;
 

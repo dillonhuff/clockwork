@@ -658,6 +658,38 @@ isl_map* linear_address_map_lake(isl_set* s, int fetch_width) {
   return isl_map_read_from_str(ctx(s), map_str.c_str());
 }
 
+isl_map* linear_address_map_lake_SR(isl_set* s, int fetch_width) {
+  string domain = name(s);
+  int dim = num_dims(s);
+  vector<string> var_names;
+  vector<string> exprs;
+  isl_val* stride = one(ctx(s));
+  //Inner stride
+  int stride_innermost = stride_in_dim(s, dim - 1);
+  cout << "Stride inner most:  " << stride_innermost << endl;
+  fetch_width *= stride_innermost;
+  for (int i = dim-1; i >= 0; i--) {
+    string var = "d" + str(i);
+    var_names.push_back(var);
+    string stridestr = str(stride);
+    exprs.push_back(stridestr + "*" + var);
+    auto interval = project_all_but(s, i);
+    isl_val* extend = add(sub(lexmaxval(interval), lexminval(interval)), one(ctx(s)));
+    stride = mul(stride, extend);
+    if (to_int(stride) % fetch_width != 0) {
+        stride = isl_val_int_from_si(ctx(s),
+                to_int(stride) + fetch_width - to_int(stride) % fetch_width);
+    }
+  }
+  std::reverse(var_names.begin(), var_names.end());
+
+  //Add a floor divide to remove the extra dimension
+  string map_str = "{" + domain + sep_list(var_names, "[", "]", ", ") + " -> " +
+      domain + "[floor(" + sep_list(exprs, "(", ")", " + ") + "/" + str(stride_innermost) + ")] }";
+  cout << map_str << endl;
+  return isl_map_read_from_str(ctx(s), map_str.c_str());
+}
+
 isl_map* linear_address_map_with_index(isl_set* s, vector<int> index) {
     return linear_address_map_with_index(s, index, 1);
 }
@@ -1848,6 +1880,16 @@ int stride_in_dim(isl_map* const m, size_t dim) {
     //TODO: fix this by default take 0 dimension but not always correct
     auto aff = get_aff_vec(m).at(num_out_dims(m) - 1);
     return to_int(get_coeff(aff, dim));
+}
+
+int common_max_stride(isl_map* const m) {
+    int cms = 0;
+    //Skip root start from 1
+    for (int in_dim=1; in_dim < num_in_dims(m); in_dim++){
+        int s = stride_in_dim(m, in_dim);
+        cms = std::gcd(cms, s);
+    }
+    return cms;
 }
 
 
@@ -4177,7 +4219,8 @@ vector<pair<int, int>> get_all_domain_merge_dims(isl_map* m) {
         int span_range = get_domain_span_range(m, dim);
         int up_level_stride = stride_in_dim(m, dim-1);
         cout << "span range: " << span_range << ", up_level_stride : "<< up_level_stride << endl;
-        if ((span_range == up_level_stride) && (span_range != 0))
+        //TODO: why span range = 0 cannot be merged?
+        if ((span_range == up_level_stride))// && (span_range != 0))
             ret.push_back({in_dims - dim - 1, in_dims -  dim});
     }
     return ret;
@@ -4202,15 +4245,27 @@ isl_map* merge_domain_dim(isl_map* m) {
 }
 
 int get_inner_most_related_dom_dim(isl_map* m, int dim_id, int fetch_width) {
+  cout << "access map : " << str(m) << "need to find inner dim" << endl;
+  cout << "dim id: " << dim_id << endl;
   auto aff_vec = get_aff_vec(m);
   assert(aff_vec.size() > dim_id);
   auto am = to_map(aff_vec.at(dim_id));
   vector<bool> rel_map = relation_map(am);
+  cout << "Relation map" << rel_map << endl;
   int inner_most_address_related_dim_id = rel_map.size() - 1;
   for (int i = rel_map.size() - 1; i >= 0; i -- ) {
     if ((rel_map.at(i) != 0) ) {//&& (get_domain_span_range(m, i) >= fetch_width)) {
       inner_most_address_related_dim_id = i;
+      //cout << "dimension: " << i << "  ext : " << get_dim_extent(domain(m), i) << endl;
+      //if ((get_dim_extent(domain(m), i) == 1))
+      //    inner_most_address_related_dim_id --;
       break;
+    }
+    if (i == 0) {
+      //FIXME: ASPLOS Hack:
+      //change to -2 since if we did not find any related loop, lp bd = 4
+      //it means we are project out this dimension
+      inner_most_address_related_dim_id --;
     }
   }
   return inner_most_address_related_dim_id;
@@ -4610,8 +4665,10 @@ map<int, int> get_dim2denom(isl_map* am) {
           int num = isl_val_get_num_si(coeff);
           cout << tab(3) << "coeff  = " << str(coeff) << endl;
           cout << tab(3) << "num = " << isl_val_get_num_si(coeff) << endl;
+          cout << tab(3) << "denom= " << isl_val_get_den_si(coeff) << endl;
           assert (num == 1 && "require quasi affine accessor!");
-          split_dims[di] = denom;
+          //split_dims[di] = denom;
+          split_dims[di] = isl_val_get_den_si(coeff);
         }
       }
     }
