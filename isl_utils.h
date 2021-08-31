@@ -550,7 +550,7 @@ int stride_in_dim(isl_set* const s, size_t dim);
 
 int stride_in_dim(isl_map* const m, size_t dim);
 int stride_in_dim(isl_map* const m, size_t dim, size_t dim_out);
-int common_max_stride(isl_map* const m);
+int common_max_stride(isl_map* const m, int out_dim);
 
 isl_set* range(isl_map* const m);
 
