@@ -1,6 +1,6 @@
 #include "verilog_backend.h"
-
-#define SIM 1
+//SET SIM to 0 for vivado synthesis
+#define SIM 0
 
 string end_delay_with(ostream& out, const int width, const std::string& wire_in, prog& prg, const int delay) {
   vector<string> wires{wire_in};
@@ -485,7 +485,7 @@ void print_shift_registers(
 
       string out_reg = delay_wire(out, 16, "in", prg, delay + 1);
       out << tab(1) << "assign out = " << out_reg << ";" << endl;
-    
+
     } else {
       out << tab(1) << "assign out = in;" << endl;
     }

@@ -8851,7 +8851,7 @@ void UBuffer::generate_banks(CodegenOptions& options) {
               //Add one more step to pad reacess dimension
               //tb.pad_reaccess_dimension(fetch_width);
 
-              //Check capacity of tb
+              ////Check capacity of tb
               //auto capacity = tb.capacity();
               //cout << "TB size: " << capacity << endl;
               //auto mem = options.mem_hierarchy.at("mem");
@@ -9467,15 +9467,21 @@ void UBuffer::generate_banks(CodegenOptions& options) {
         int max_wr_btw = 0;
         for (auto pt: pt_set) {
           auto image = its(write_btw, to_set(pt));
-          //cout << "pt: " << str(pt) << endl;//" \n\thas image: " << str(image) << endl;
+          cout << "domain point: " << str(pt) << endl;//" \n\thas image: " << str(image) << endl;
           //for (auto rng_pt: get_points(range(image))) {
-          //  cout << "\tpt need to buffer: " << str(rng_pt) << endl;
+          //  cout << "\timage of domain point need to buffer: " << str(rng_pt) << endl;
           //}
           auto card_capacity = int_upper_bound(card(image));
-          //cout << "\tcard: " << card_capacity << endl;
+          cout << "\tcard: " << card_capacity << endl;
           card_set.insert(card_capacity);
           max_wr_btw = max(max_wr_btw, card_capacity);
         }
+        auto range_card = card(write_btw);
+        int max_capacity = int_upper_bound(range_card);
+        cout << "\tmax capacity from card of map: " << max_capacity << endl;
+        cout << "\twrite btw: " << str(write_btw) << endl;
+        cout << "\trange card: " << str(range_card) << endl;
+        cout << "\tdomain of write btw: " << str(::domain(write_btw)) << endl;
 
         cout << "Possible DD: " << card_set << endl;
         return max_wr_btw;
