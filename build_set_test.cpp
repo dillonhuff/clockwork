@@ -15070,6 +15070,8 @@ void resnet_profiling() {
 void test_glb(bool gen_config_only, bool multi_accessor=false, string dir="aha_garnet_design") {
   vector<prog> test_apps;
 
+  test_apps.push_back(resnet_output_stationary_small());
+  test_apps.push_back(resnet_output_stationary_tiny());
   //test_apps.push_back(resnet5_1_full());
   //test_apps.push_back(resnet2_x_full());
 
@@ -17886,13 +17888,15 @@ void adjust_coarse_grained_loop_delays_sequentially(schedule_info& sched, prog& 
   vector<op*> cgpl_lps;
   find_coarse_grained_pipeline_loops(prg.root, cgpl_lps, prg);
   for (op* coarse_pipeline_loop: cgpl_lps) {
+    cout << "adjust delay under coarse loop: "
+        << coarse_pipeline_loop->name << endl;
     vector<string> sorted_kernels = topologically_sort_kernels(coarse_pipeline_loop, prg);
     map<string, int> head_op_latency;
     for (auto name : sorted_kernels) {
       auto lp = prg.find_loop(name);
-      cout << "Push kernel <" << lp->name << "> into delay adjusting queue." << endl;
-      cout << "II: " << sched.II(lp) << endl;
-      cout << "TP: " << (lp)->trip_count() << endl;
+      cout << tab(1) << "Push kernel <" << lp->name << "> into delay adjusting queue." << endl;
+      cout << tab(2) << "II: " << sched.II(lp) << endl;
+      cout << tab(2) << "TP: " << (lp)->trip_count() << endl;
       auto producers = get_producers(name, coarse_pipeline_loop, prg);
       for (auto prod:  producers)
           cout << "\tprod: " << prod << endl;
@@ -17901,8 +17905,9 @@ void adjust_coarse_grained_loop_delays_sequentially(schedule_info& sched, prog& 
       //coarse_pipeline_II[name] = sched.II(lp) * lp->trip_count();
       coarse_pipeline_II[name] = sched.total_latency(lp);
       sched.op_offset_within_parent[lp] = 0;
-      if (producers.size() == 0)
+      if (producers.size() == 0) {
           head_op_latency[name] = coarse_pipeline_II.at(name);
+      }
     }
 
     int max_head_op_latency = 0;
@@ -17912,23 +17917,24 @@ void adjust_coarse_grained_loop_delays_sequentially(schedule_info& sched, prog& 
 
     for (auto name : sorted_kernels) {
       auto lp = prg.find_loop(name);
-      cout << "Adjusting delay of " << lp->name << endl;
-      cout << "II: " << sched.II(lp) << endl;
+      cout << tab(2) << "Adjusting delay of " << lp->name << endl;
+      cout << tab(2) << "II: " << sched.II(lp) << endl;
       int max_delay = 0;
       auto producers = get_producers(name, coarse_pipeline_loop, prg);
       for (string prod: producers){
           op* prod_op = prg.find_loop(prod);
-          max_delay = max(coarse_pipeline_II.at(prod)
-                  + sched.op_offset_within_parent.at(prod_op), max_delay);
+          max_delay = max(max_delay,
+                  coarse_pipeline_II.at(prod) + sched.op_offset_within_parent.at(prod_op));
       }
       //An optimization, if this the head of the graph, push it back
-      if (producers.size() == 0) {
+      auto all_producers = get_producers(name, prg);
+      if ((producers.size() == 0) && (all_producers.size() == 0)) {
         max_delay = max_head_op_latency - head_op_latency.at(name);
       }
 
       sched.op_offset_within_parent.at(lp) = max_delay;
-      cout << "final delay of " << lp->name <<
-          ": \n\t"<< max_delay << endl;
+      cout << tab(1) << "final delay of " << lp->name <<
+          ": \t"<< max_delay << endl << endl;
     }
   }
 }
