@@ -2358,6 +2358,9 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
       eb.tighten_address_space();
       auto eb_config = eb.generate_ubuf_args(options, eb, "glb");
       eb.config_file = eb_config;
+      //if(prg.is_input(buf.first)) {
+      //    assert(false);
+      //}
     }
   }
 

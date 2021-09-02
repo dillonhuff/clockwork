@@ -32,7 +32,7 @@ int main() {
   // rng card: { 900 }
   for (int i = 0; i < 900; i++) {
     hw_uint<16 > value;
-    set_at<0, 16, 16>(value, rand() % 256);
+    set_at<0, 16, 16>(value, (i) % 256);
     hw_input_stencil_clkwrk_0.write(value);
   }
 
@@ -42,7 +42,7 @@ int main() {
   // rng card: { 900 }
   for (int i = 0; i < 900; i++) {
     hw_uint<16 > value;
-    set_at<0, 16, 16>(value, rand() % 256);
+    set_at<0, 16, 16>(value, (i) % 256);
     hw_input_stencil_clkwrk_1.write(value);
   }
 
@@ -52,7 +52,7 @@ int main() {
   // rng card: { 900 }
   for (int i = 0; i < 900; i++) {
     hw_uint<16 > value;
-    set_at<0, 16, 16>(value, rand() % 256);
+    set_at<0, 16, 16>(value, (i) % 256);
     hw_input_stencil_clkwrk_2.write(value);
   }
 
@@ -62,7 +62,7 @@ int main() {
   // rng card: { 900 }
   for (int i = 0; i < 900; i++) {
     hw_uint<16 > value;
-    set_at<0, 16, 16>(value, rand() % 256);
+    set_at<0, 16, 16>(value, (i) % 256);
     hw_input_stencil_clkwrk_3.write(value);
   }
 
@@ -72,7 +72,7 @@ int main() {
   // rng card: { 900 }
   for (int i = 0; i < 900; i++) {
     hw_uint<16 > value;
-    set_at<0, 16, 16>(value, rand() % 256);
+    set_at<0, 16, 16>(value, (i) % 256);
     hw_input_stencil_clkwrk_4.write(value);
   }
 
@@ -82,7 +82,7 @@ int main() {
   // rng card: { 900 }
   for (int i = 0; i < 900; i++) {
     hw_uint<16 > value;
-    set_at<0, 16, 16>(value, rand() % 256);
+    set_at<0, 16, 16>(value, (i) % 256);
     hw_input_stencil_clkwrk_5.write(value);
   }
 
@@ -92,7 +92,7 @@ int main() {
   // rng card: { 900 }
   for (int i = 0; i < 900; i++) {
     hw_uint<16 > value;
-    set_at<0, 16, 16>(value, rand() % 256);
+    set_at<0, 16, 16>(value, (i) % 256);
     hw_input_stencil_clkwrk_6.write(value);
   }
 
@@ -102,7 +102,7 @@ int main() {
   // rng card: { 900 }
   for (int i = 0; i < 900; i++) {
     hw_uint<16 > value;
-    set_at<0, 16, 16>(value, rand() % 256);
+    set_at<0, 16, 16>(value, (i) % 256);
     hw_input_stencil_clkwrk_7.write(value);
   }
 
@@ -112,7 +112,7 @@ int main() {
   // rng card: { 576 }
   for (int i = 0; i < 576; i++) {
     hw_uint<16 > value;
-    set_at<0, 16, 16>(value, rand() % 256);
+    set_at<0, 16, 16>(value, (i) % 256);
     hw_kernel_stencil.write(value);
   }
 

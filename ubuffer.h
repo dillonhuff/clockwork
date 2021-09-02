@@ -1918,20 +1918,35 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
     //ubuffer rewrite pass remove common-minimum stride
 void tighten_address_space() {
     int cms = 0;
+    //Find the unrolling dimension
+    std::set<int> addr_need_tight;
     for (auto it: access_map) {
         auto am = to_map(it.second);
-        //FIXME: support all dimension
-        cms = std::gcd(cms, common_max_stride(am, num_out_dims(am)-1));
-    }
-    cout << "common max stride = " << cms << endl;
-    if (cms > 1) {
-        cout << "Could tighten address! " << endl;
-        for (auto& it: access_map){
-          auto am = to_map(it.second);
-          auto trans= get_set_slice(range(am), num_out_dims(am)-1, cms);
-          it.second = to_umap(dot(am, (trans)));
-          cout <<"\tTighten access map to: " << str(it.second) << endl;
+        cout << str(am) << endl;
+        isl_set* addr_range = range(am);
+        int addr_dim = ::num_dims(addr_range);
+        for (int i = 0; i < addr_dim; i ++) {
+            if (stride_in_dim(addr_range, i) != 1)
+                addr_need_tight.insert(i);
         }
+    }
+    cout << "addr need tight: " << addr_need_tight << endl;
+    for (int addr_dim: addr_need_tight) {
+      for (auto it: access_map) {
+          auto am = to_map(it.second);
+          cms = std::gcd(cms, common_max_stride(am, addr_dim));
+      }
+      cout << "common max stride = " << cms << endl;
+      if (cms > 1) {
+          cout << "Could tighten address! " << endl;
+          for (auto& it: access_map){
+            auto am = to_map(it.second);
+            auto trans= get_set_slice(range(am), addr_dim, cms);
+            it.second = to_umap(dot(am, (trans)));
+            cout <<"\tTighten access map to: " << str(it.second) << endl;
+          }
+      }
+
     }
 }
 

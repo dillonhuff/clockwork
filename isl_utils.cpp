@@ -1886,7 +1886,7 @@ int common_max_stride(isl_map* const m, int out_dim) {
     int cms = 0;
     //Skip root start from 1
     for (int in_dim=1; in_dim < num_in_dims(m); in_dim++){
-        int s = stride_in_dim(m, in_dim), out_dim;
+        int s = stride_in_dim(m, in_dim, out_dim);
         cms = std::gcd(cms, s);
     }
     return cms;

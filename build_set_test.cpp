@@ -14868,7 +14868,9 @@ void generate_resnet_latency_experiment(prog& prg,
 
 void test_pond(string dir, bool run_verilator=true) {
   vector<prog> test_apps;
+  //Need to change the schedule for vectorization
   test_apps.push_back(complex_mem_pond_input());
+
   test_apps.push_back(complex_mem_pond());
   test_apps.push_back(complex_mem_pond_rolled());
   test_apps.push_back(conv_rolled());
@@ -15072,11 +15074,11 @@ void test_glb(bool gen_config_only, bool multi_accessor=false, string dir="aha_g
   //test_apps.push_back(resnet2_x_full());
 
   //GLB tests
-  test_apps.push_back(gaussian_glb());
+  test_apps.push_back(unsharp_glb());
+  test_apps.push_back(gaussian_glb2());
   test_apps.push_back(camera_pipeline_glb());
   test_apps.push_back(harris_glb2());
   test_apps.push_back(up_sample_glb());
-  test_apps.push_back(unsharp_glb());
   test_apps.push_back(gaussian_glb8());
   test_apps.push_back(glb_channel_reduction());
   //
@@ -15140,6 +15142,7 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   //test_apps.push_back(camera_pipeline_trunc());
 
   //CGRA tests
+  test_apps.push_back(matmul_single());
   test_apps.push_back(counter());
   test_apps.push_back(camera_pipeline_new());
   test_apps.push_back(rom());
@@ -19840,7 +19843,7 @@ void generate_fpga_clockwork_code(prog& prg) {
 void fpga_asplos_tests() {
 
   //auto test_programs = stencil_programs();
-  auto test_programs = {gaussian()};
+  auto test_programs = {resnet88()};
   for (auto prg : test_programs) {
     cout << "==== FPGA clockwork code for " << prg.name << endl;
     break_up_multi_channel_inputs(prg);

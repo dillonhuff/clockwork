@@ -3054,358 +3054,6 @@ conv_stencil_embarassing_bank_selector conv_stencil_conv_stencil_op_hcompute_hw_
     op_hcompute_hw_output_stencil_7_read[0] <= end_delay_wire_95;
   end
   always @(posedge clk) begin
-    if(op_hcompute_conv_stencil_10_write_wen)begin
-      if(op_hcompute_conv_stencil_10_write_ctrl_vars!=op_hcompute_conv_stencil_10_write_ctrl_vars_fsm_out) begin
-        $display("Different");
-        $finish(-1);
-      end
-    end
-    if (op_hcompute_conv_stencil_10_write_wen!=op_hcompute_conv_stencil_10_write_wen_fsm_out) begin
-        $display(op_hcompute_conv_stencil_10_write_wen);
-        $display(op_hcompute_conv_stencil_10_write_wen_fsm_out);
-      $finish(-1);
-    end
-    if(op_hcompute_conv_stencil_11_write_wen)begin
-      if(op_hcompute_conv_stencil_11_write_ctrl_vars!=op_hcompute_conv_stencil_11_write_ctrl_vars_fsm_out) begin
-        $display("Different");
-        $finish(-1);
-      end
-    end
-    if (op_hcompute_conv_stencil_11_write_wen!=op_hcompute_conv_stencil_11_write_wen_fsm_out) begin
-        $display(op_hcompute_conv_stencil_11_write_wen);
-        $display(op_hcompute_conv_stencil_11_write_wen_fsm_out);
-      $finish(-1);
-    end
-    if(op_hcompute_conv_stencil_12_write_wen)begin
-      if(op_hcompute_conv_stencil_12_write_ctrl_vars!=op_hcompute_conv_stencil_12_write_ctrl_vars_fsm_out) begin
-        $display("Different");
-        $finish(-1);
-      end
-    end
-    if (op_hcompute_conv_stencil_12_write_wen!=op_hcompute_conv_stencil_12_write_wen_fsm_out) begin
-        $display(op_hcompute_conv_stencil_12_write_wen);
-        $display(op_hcompute_conv_stencil_12_write_wen_fsm_out);
-      $finish(-1);
-    end
-    if(op_hcompute_conv_stencil_13_write_wen)begin
-      if(op_hcompute_conv_stencil_13_write_ctrl_vars!=op_hcompute_conv_stencil_13_write_ctrl_vars_fsm_out) begin
-        $display("Different");
-        $finish(-1);
-      end
-    end
-    if (op_hcompute_conv_stencil_13_write_wen!=op_hcompute_conv_stencil_13_write_wen_fsm_out) begin
-        $display(op_hcompute_conv_stencil_13_write_wen);
-        $display(op_hcompute_conv_stencil_13_write_wen_fsm_out);
-      $finish(-1);
-    end
-    if(op_hcompute_conv_stencil_14_write_wen)begin
-      if(op_hcompute_conv_stencil_14_write_ctrl_vars!=op_hcompute_conv_stencil_14_write_ctrl_vars_fsm_out) begin
-        $display("Different");
-        $finish(-1);
-      end
-    end
-    if (op_hcompute_conv_stencil_14_write_wen!=op_hcompute_conv_stencil_14_write_wen_fsm_out) begin
-        $display(op_hcompute_conv_stencil_14_write_wen);
-        $display(op_hcompute_conv_stencil_14_write_wen_fsm_out);
-      $finish(-1);
-    end
-    if(op_hcompute_conv_stencil_15_write_wen)begin
-      if(op_hcompute_conv_stencil_15_write_ctrl_vars!=op_hcompute_conv_stencil_15_write_ctrl_vars_fsm_out) begin
-        $display("Different");
-        $finish(-1);
-      end
-    end
-    if (op_hcompute_conv_stencil_15_write_wen!=op_hcompute_conv_stencil_15_write_wen_fsm_out) begin
-        $display(op_hcompute_conv_stencil_15_write_wen);
-        $display(op_hcompute_conv_stencil_15_write_wen_fsm_out);
-      $finish(-1);
-    end
-    if(op_hcompute_conv_stencil_write_wen)begin
-      if(op_hcompute_conv_stencil_write_ctrl_vars!=op_hcompute_conv_stencil_write_ctrl_vars_fsm_out) begin
-        $display("Different");
-        $finish(-1);
-      end
-    end
-    if (op_hcompute_conv_stencil_write_wen!=op_hcompute_conv_stencil_write_wen_fsm_out) begin
-        $display(op_hcompute_conv_stencil_write_wen);
-        $display(op_hcompute_conv_stencil_write_wen_fsm_out);
-      $finish(-1);
-    end
-    if(op_hcompute_conv_stencil_1_write_wen)begin
-      if(op_hcompute_conv_stencil_1_write_ctrl_vars!=op_hcompute_conv_stencil_1_write_ctrl_vars_fsm_out) begin
-        $display("Different");
-        $finish(-1);
-      end
-    end
-    if (op_hcompute_conv_stencil_1_write_wen!=op_hcompute_conv_stencil_1_write_wen_fsm_out) begin
-        $display(op_hcompute_conv_stencil_1_write_wen);
-        $display(op_hcompute_conv_stencil_1_write_wen_fsm_out);
-      $finish(-1);
-    end
-    if(op_hcompute_conv_stencil_2_write_wen)begin
-      if(op_hcompute_conv_stencil_2_write_ctrl_vars!=op_hcompute_conv_stencil_2_write_ctrl_vars_fsm_out) begin
-        $display("Different");
-        $finish(-1);
-      end
-    end
-    if (op_hcompute_conv_stencil_2_write_wen!=op_hcompute_conv_stencil_2_write_wen_fsm_out) begin
-        $display(op_hcompute_conv_stencil_2_write_wen);
-        $display(op_hcompute_conv_stencil_2_write_wen_fsm_out);
-      $finish(-1);
-    end
-    if(op_hcompute_conv_stencil_3_write_wen)begin
-      if(op_hcompute_conv_stencil_3_write_ctrl_vars!=op_hcompute_conv_stencil_3_write_ctrl_vars_fsm_out) begin
-        $display("Different");
-        $finish(-1);
-      end
-    end
-    if (op_hcompute_conv_stencil_3_write_wen!=op_hcompute_conv_stencil_3_write_wen_fsm_out) begin
-        $display(op_hcompute_conv_stencil_3_write_wen);
-        $display(op_hcompute_conv_stencil_3_write_wen_fsm_out);
-      $finish(-1);
-    end
-    if(op_hcompute_conv_stencil_4_write_wen)begin
-      if(op_hcompute_conv_stencil_4_write_ctrl_vars!=op_hcompute_conv_stencil_4_write_ctrl_vars_fsm_out) begin
-        $display("Different");
-        $finish(-1);
-      end
-    end
-    if (op_hcompute_conv_stencil_4_write_wen!=op_hcompute_conv_stencil_4_write_wen_fsm_out) begin
-        $display(op_hcompute_conv_stencil_4_write_wen);
-        $display(op_hcompute_conv_stencil_4_write_wen_fsm_out);
-      $finish(-1);
-    end
-    if(op_hcompute_conv_stencil_5_write_wen)begin
-      if(op_hcompute_conv_stencil_5_write_ctrl_vars!=op_hcompute_conv_stencil_5_write_ctrl_vars_fsm_out) begin
-        $display("Different");
-        $finish(-1);
-      end
-    end
-    if (op_hcompute_conv_stencil_5_write_wen!=op_hcompute_conv_stencil_5_write_wen_fsm_out) begin
-        $display(op_hcompute_conv_stencil_5_write_wen);
-        $display(op_hcompute_conv_stencil_5_write_wen_fsm_out);
-      $finish(-1);
-    end
-    if(op_hcompute_conv_stencil_6_write_wen)begin
-      if(op_hcompute_conv_stencil_6_write_ctrl_vars!=op_hcompute_conv_stencil_6_write_ctrl_vars_fsm_out) begin
-        $display("Different");
-        $finish(-1);
-      end
-    end
-    if (op_hcompute_conv_stencil_6_write_wen!=op_hcompute_conv_stencil_6_write_wen_fsm_out) begin
-        $display(op_hcompute_conv_stencil_6_write_wen);
-        $display(op_hcompute_conv_stencil_6_write_wen_fsm_out);
-      $finish(-1);
-    end
-    if(op_hcompute_conv_stencil_7_write_wen)begin
-      if(op_hcompute_conv_stencil_7_write_ctrl_vars!=op_hcompute_conv_stencil_7_write_ctrl_vars_fsm_out) begin
-        $display("Different");
-        $finish(-1);
-      end
-    end
-    if (op_hcompute_conv_stencil_7_write_wen!=op_hcompute_conv_stencil_7_write_wen_fsm_out) begin
-        $display(op_hcompute_conv_stencil_7_write_wen);
-        $display(op_hcompute_conv_stencil_7_write_wen_fsm_out);
-      $finish(-1);
-    end
-    if(op_hcompute_conv_stencil_8_write_wen)begin
-      if(op_hcompute_conv_stencil_8_write_ctrl_vars!=op_hcompute_conv_stencil_8_write_ctrl_vars_fsm_out) begin
-        $display("Different");
-        $finish(-1);
-      end
-    end
-    if (op_hcompute_conv_stencil_8_write_wen!=op_hcompute_conv_stencil_8_write_wen_fsm_out) begin
-        $display(op_hcompute_conv_stencil_8_write_wen);
-        $display(op_hcompute_conv_stencil_8_write_wen_fsm_out);
-      $finish(-1);
-    end
-    if(op_hcompute_conv_stencil_9_write_wen)begin
-      if(op_hcompute_conv_stencil_9_write_ctrl_vars!=op_hcompute_conv_stencil_9_write_ctrl_vars_fsm_out) begin
-        $display("Different");
-        $finish(-1);
-      end
-    end
-    if (op_hcompute_conv_stencil_9_write_wen!=op_hcompute_conv_stencil_9_write_wen_fsm_out) begin
-        $display(op_hcompute_conv_stencil_9_write_wen);
-        $display(op_hcompute_conv_stencil_9_write_wen_fsm_out);
-      $finish(-1);
-    end
-    if(op_hcompute_conv_stencil_10_read_ren)begin
-      if(op_hcompute_conv_stencil_10_read_ctrl_vars!=op_hcompute_conv_stencil_10_read_ctrl_vars_fsm_out) begin
-        $display("Different");
-        $finish(-1);
-      end
-    end
-    if (op_hcompute_conv_stencil_10_read_ren!=op_hcompute_conv_stencil_10_read_ren_fsm_out) begin
-        $display(op_hcompute_conv_stencil_10_read_ren);
-        $display(op_hcompute_conv_stencil_10_read_ren_fsm_out);
-      $finish(-1);
-    end
-    if(op_hcompute_conv_stencil_11_read_ren)begin
-      if(op_hcompute_conv_stencil_11_read_ctrl_vars!=op_hcompute_conv_stencil_11_read_ctrl_vars_fsm_out) begin
-        $display("Different");
-        $finish(-1);
-      end
-    end
-    if (op_hcompute_conv_stencil_11_read_ren!=op_hcompute_conv_stencil_11_read_ren_fsm_out) begin
-        $display(op_hcompute_conv_stencil_11_read_ren);
-        $display(op_hcompute_conv_stencil_11_read_ren_fsm_out);
-      $finish(-1);
-    end
-    if(op_hcompute_conv_stencil_12_read_ren)begin
-      if(op_hcompute_conv_stencil_12_read_ctrl_vars!=op_hcompute_conv_stencil_12_read_ctrl_vars_fsm_out) begin
-        $display("Different");
-        $finish(-1);
-      end
-    end
-    if (op_hcompute_conv_stencil_12_read_ren!=op_hcompute_conv_stencil_12_read_ren_fsm_out) begin
-        $display(op_hcompute_conv_stencil_12_read_ren);
-        $display(op_hcompute_conv_stencil_12_read_ren_fsm_out);
-      $finish(-1);
-    end
-    if(op_hcompute_conv_stencil_13_read_ren)begin
-      if(op_hcompute_conv_stencil_13_read_ctrl_vars!=op_hcompute_conv_stencil_13_read_ctrl_vars_fsm_out) begin
-        $display("Different");
-        $finish(-1);
-      end
-    end
-    if (op_hcompute_conv_stencil_13_read_ren!=op_hcompute_conv_stencil_13_read_ren_fsm_out) begin
-        $display(op_hcompute_conv_stencil_13_read_ren);
-        $display(op_hcompute_conv_stencil_13_read_ren_fsm_out);
-      $finish(-1);
-    end
-    if(op_hcompute_conv_stencil_14_read_ren)begin
-      if(op_hcompute_conv_stencil_14_read_ctrl_vars!=op_hcompute_conv_stencil_14_read_ctrl_vars_fsm_out) begin
-        $display("Different");
-        $finish(-1);
-      end
-    end
-    if (op_hcompute_conv_stencil_14_read_ren!=op_hcompute_conv_stencil_14_read_ren_fsm_out) begin
-        $display(op_hcompute_conv_stencil_14_read_ren);
-        $display(op_hcompute_conv_stencil_14_read_ren_fsm_out);
-      $finish(-1);
-    end
-    if(op_hcompute_conv_stencil_15_read_ren)begin
-      if(op_hcompute_conv_stencil_15_read_ctrl_vars!=op_hcompute_conv_stencil_15_read_ctrl_vars_fsm_out) begin
-        $display("Different");
-        $finish(-1);
-      end
-    end
-    if (op_hcompute_conv_stencil_15_read_ren!=op_hcompute_conv_stencil_15_read_ren_fsm_out) begin
-        $display(op_hcompute_conv_stencil_15_read_ren);
-        $display(op_hcompute_conv_stencil_15_read_ren_fsm_out);
-      $finish(-1);
-    end
-    if(op_hcompute_conv_stencil_8_read_ren)begin
-      if(op_hcompute_conv_stencil_8_read_ctrl_vars!=op_hcompute_conv_stencil_8_read_ctrl_vars_fsm_out) begin
-        $display("Different");
-        $finish(-1);
-      end
-    end
-    if (op_hcompute_conv_stencil_8_read_ren!=op_hcompute_conv_stencil_8_read_ren_fsm_out) begin
-        $display(op_hcompute_conv_stencil_8_read_ren);
-        $display(op_hcompute_conv_stencil_8_read_ren_fsm_out);
-      $finish(-1);
-    end
-    if(op_hcompute_conv_stencil_9_read_ren)begin
-      if(op_hcompute_conv_stencil_9_read_ctrl_vars!=op_hcompute_conv_stencil_9_read_ctrl_vars_fsm_out) begin
-        $display("Different");
-        $finish(-1);
-      end
-    end
-    if (op_hcompute_conv_stencil_9_read_ren!=op_hcompute_conv_stencil_9_read_ren_fsm_out) begin
-        $display(op_hcompute_conv_stencil_9_read_ren);
-        $display(op_hcompute_conv_stencil_9_read_ren_fsm_out);
-      $finish(-1);
-    end
-    if(op_hcompute_hw_output_stencil_read_ren)begin
-      if(op_hcompute_hw_output_stencil_read_ctrl_vars!=op_hcompute_hw_output_stencil_read_ctrl_vars_fsm_out) begin
-        $display("Different");
-        $finish(-1);
-      end
-    end
-    if (op_hcompute_hw_output_stencil_read_ren!=op_hcompute_hw_output_stencil_read_ren_fsm_out) begin
-        $display(op_hcompute_hw_output_stencil_read_ren);
-        $display(op_hcompute_hw_output_stencil_read_ren_fsm_out);
-      $finish(-1);
-    end
-    if(op_hcompute_hw_output_stencil_1_read_ren)begin
-      if(op_hcompute_hw_output_stencil_1_read_ctrl_vars!=op_hcompute_hw_output_stencil_1_read_ctrl_vars_fsm_out) begin
-        $display("Different");
-        $finish(-1);
-      end
-    end
-    if (op_hcompute_hw_output_stencil_1_read_ren!=op_hcompute_hw_output_stencil_1_read_ren_fsm_out) begin
-        $display(op_hcompute_hw_output_stencil_1_read_ren);
-        $display(op_hcompute_hw_output_stencil_1_read_ren_fsm_out);
-      $finish(-1);
-    end
-    if(op_hcompute_hw_output_stencil_2_read_ren)begin
-      if(op_hcompute_hw_output_stencil_2_read_ctrl_vars!=op_hcompute_hw_output_stencil_2_read_ctrl_vars_fsm_out) begin
-        $display("Different");
-        $finish(-1);
-      end
-    end
-    if (op_hcompute_hw_output_stencil_2_read_ren!=op_hcompute_hw_output_stencil_2_read_ren_fsm_out) begin
-        $display(op_hcompute_hw_output_stencil_2_read_ren);
-        $display(op_hcompute_hw_output_stencil_2_read_ren_fsm_out);
-      $finish(-1);
-    end
-    if(op_hcompute_hw_output_stencil_3_read_ren)begin
-      if(op_hcompute_hw_output_stencil_3_read_ctrl_vars!=op_hcompute_hw_output_stencil_3_read_ctrl_vars_fsm_out) begin
-        $display("Different");
-        $finish(-1);
-      end
-    end
-    if (op_hcompute_hw_output_stencil_3_read_ren!=op_hcompute_hw_output_stencil_3_read_ren_fsm_out) begin
-        $display(op_hcompute_hw_output_stencil_3_read_ren);
-        $display(op_hcompute_hw_output_stencil_3_read_ren_fsm_out);
-      $finish(-1);
-    end
-    if(op_hcompute_hw_output_stencil_4_read_ren)begin
-      if(op_hcompute_hw_output_stencil_4_read_ctrl_vars!=op_hcompute_hw_output_stencil_4_read_ctrl_vars_fsm_out) begin
-        $display("Different");
-        $finish(-1);
-      end
-    end
-    if (op_hcompute_hw_output_stencil_4_read_ren!=op_hcompute_hw_output_stencil_4_read_ren_fsm_out) begin
-        $display(op_hcompute_hw_output_stencil_4_read_ren);
-        $display(op_hcompute_hw_output_stencil_4_read_ren_fsm_out);
-      $finish(-1);
-    end
-    if(op_hcompute_hw_output_stencil_5_read_ren)begin
-      if(op_hcompute_hw_output_stencil_5_read_ctrl_vars!=op_hcompute_hw_output_stencil_5_read_ctrl_vars_fsm_out) begin
-        $display("Different");
-        $finish(-1);
-      end
-    end
-    if (op_hcompute_hw_output_stencil_5_read_ren!=op_hcompute_hw_output_stencil_5_read_ren_fsm_out) begin
-        $display(op_hcompute_hw_output_stencil_5_read_ren);
-        $display(op_hcompute_hw_output_stencil_5_read_ren_fsm_out);
-      $finish(-1);
-    end
-    if(op_hcompute_hw_output_stencil_6_read_ren)begin
-      if(op_hcompute_hw_output_stencil_6_read_ctrl_vars!=op_hcompute_hw_output_stencil_6_read_ctrl_vars_fsm_out) begin
-        $display("Different");
-        $finish(-1);
-      end
-    end
-    if (op_hcompute_hw_output_stencil_6_read_ren!=op_hcompute_hw_output_stencil_6_read_ren_fsm_out) begin
-        $display(op_hcompute_hw_output_stencil_6_read_ren);
-        $display(op_hcompute_hw_output_stencil_6_read_ren_fsm_out);
-      $finish(-1);
-    end
-    if(op_hcompute_hw_output_stencil_7_read_ren)begin
-      if(op_hcompute_hw_output_stencil_7_read_ctrl_vars!=op_hcompute_hw_output_stencil_7_read_ctrl_vars_fsm_out) begin
-        $display("Different");
-        $finish(-1);
-      end
-    end
-    if (op_hcompute_hw_output_stencil_7_read_ren!=op_hcompute_hw_output_stencil_7_read_ren_fsm_out) begin
-        $display(op_hcompute_hw_output_stencil_7_read_ren);
-        $display(op_hcompute_hw_output_stencil_7_read_ren_fsm_out);
-      $finish(-1);
-    end
     if (delay_wire_18) begin
       case( delay_wire_17)
         0:bank_0[delay_wire_16] <= delay_wire_19;
@@ -3416,7 +3064,7 @@ conv_stencil_embarassing_bank_selector conv_stencil_conv_stencil_op_hcompute_hw_
         5:bank_5[delay_wire_16] <= delay_wire_19;
         6:bank_6[delay_wire_16] <= delay_wire_19;
         7:bank_7[delay_wire_16] <= delay_wire_19;
-        default: $finish(-1);
+        default:bank_7[delay_wire_16] <= delay_wire_19;
       endcase
     end
     if (delay_wire_22) begin
@@ -3429,7 +3077,7 @@ conv_stencil_embarassing_bank_selector conv_stencil_conv_stencil_op_hcompute_hw_
         5:bank_5[delay_wire_20] <= delay_wire_23;
         6:bank_6[delay_wire_20] <= delay_wire_23;
         7:bank_7[delay_wire_20] <= delay_wire_23;
-        default: $finish(-1);
+        default:bank_7[delay_wire_20] <= delay_wire_23;
       endcase
     end
     if (delay_wire_26) begin
@@ -3442,7 +3090,7 @@ conv_stencil_embarassing_bank_selector conv_stencil_conv_stencil_op_hcompute_hw_
         5:bank_5[delay_wire_24] <= delay_wire_27;
         6:bank_6[delay_wire_24] <= delay_wire_27;
         7:bank_7[delay_wire_24] <= delay_wire_27;
-        default: $finish(-1);
+        default:bank_7[delay_wire_24] <= delay_wire_27;
       endcase
     end
     if (delay_wire_30) begin
@@ -3455,7 +3103,7 @@ conv_stencil_embarassing_bank_selector conv_stencil_conv_stencil_op_hcompute_hw_
         5:bank_5[delay_wire_28] <= delay_wire_31;
         6:bank_6[delay_wire_28] <= delay_wire_31;
         7:bank_7[delay_wire_28] <= delay_wire_31;
-        default: $finish(-1);
+        default:bank_7[delay_wire_28] <= delay_wire_31;
       endcase
     end
     if (delay_wire_34) begin
@@ -3468,7 +3116,7 @@ conv_stencil_embarassing_bank_selector conv_stencil_conv_stencil_op_hcompute_hw_
         5:bank_5[delay_wire_32] <= delay_wire_35;
         6:bank_6[delay_wire_32] <= delay_wire_35;
         7:bank_7[delay_wire_32] <= delay_wire_35;
-        default: $finish(-1);
+        default:bank_7[delay_wire_32] <= delay_wire_35;
       endcase
     end
     if (delay_wire_38) begin
@@ -3481,7 +3129,7 @@ conv_stencil_embarassing_bank_selector conv_stencil_conv_stencil_op_hcompute_hw_
         5:bank_5[delay_wire_36] <= delay_wire_39;
         6:bank_6[delay_wire_36] <= delay_wire_39;
         7:bank_7[delay_wire_36] <= delay_wire_39;
-        default: $finish(-1);
+        default:bank_7[delay_wire_36] <= delay_wire_39;
       endcase
     end
     if (delay_wire_42) begin
@@ -3494,7 +3142,7 @@ conv_stencil_embarassing_bank_selector conv_stencil_conv_stencil_op_hcompute_hw_
         5:bank_5[delay_wire_40] <= delay_wire_43;
         6:bank_6[delay_wire_40] <= delay_wire_43;
         7:bank_7[delay_wire_40] <= delay_wire_43;
-        default: $finish(-1);
+        default:bank_7[delay_wire_40] <= delay_wire_43;
       endcase
     end
     if (delay_wire_46) begin
@@ -3507,7 +3155,7 @@ conv_stencil_embarassing_bank_selector conv_stencil_conv_stencil_op_hcompute_hw_
         5:bank_5[delay_wire_44] <= delay_wire_47;
         6:bank_6[delay_wire_44] <= delay_wire_47;
         7:bank_7[delay_wire_44] <= delay_wire_47;
-        default: $finish(-1);
+        default:bank_7[delay_wire_44] <= delay_wire_47;
       endcase
     end
     if (delay_wire_50) begin
@@ -3520,7 +3168,7 @@ conv_stencil_embarassing_bank_selector conv_stencil_conv_stencil_op_hcompute_hw_
         5:bank_5[delay_wire_48] <= delay_wire_51;
         6:bank_6[delay_wire_48] <= delay_wire_51;
         7:bank_7[delay_wire_48] <= delay_wire_51;
-        default: $finish(-1);
+        default:bank_7[delay_wire_48] <= delay_wire_51;
       endcase
     end
     if (delay_wire_54) begin
@@ -3533,7 +3181,7 @@ conv_stencil_embarassing_bank_selector conv_stencil_conv_stencil_op_hcompute_hw_
         5:bank_5[delay_wire_52] <= delay_wire_55;
         6:bank_6[delay_wire_52] <= delay_wire_55;
         7:bank_7[delay_wire_52] <= delay_wire_55;
-        default: $finish(-1);
+        default:bank_7[delay_wire_52] <= delay_wire_55;
       endcase
     end
     if (delay_wire_58) begin
@@ -3546,7 +3194,7 @@ conv_stencil_embarassing_bank_selector conv_stencil_conv_stencil_op_hcompute_hw_
         5:bank_5[delay_wire_56] <= delay_wire_59;
         6:bank_6[delay_wire_56] <= delay_wire_59;
         7:bank_7[delay_wire_56] <= delay_wire_59;
-        default: $finish(-1);
+        default:bank_7[delay_wire_56] <= delay_wire_59;
       endcase
     end
     if (delay_wire_62) begin
@@ -3559,7 +3207,7 @@ conv_stencil_embarassing_bank_selector conv_stencil_conv_stencil_op_hcompute_hw_
         5:bank_5[delay_wire_60] <= delay_wire_63;
         6:bank_6[delay_wire_60] <= delay_wire_63;
         7:bank_7[delay_wire_60] <= delay_wire_63;
-        default: $finish(-1);
+        default:bank_7[delay_wire_60] <= delay_wire_63;
       endcase
     end
     if (delay_wire_66) begin
@@ -3572,7 +3220,7 @@ conv_stencil_embarassing_bank_selector conv_stencil_conv_stencil_op_hcompute_hw_
         5:bank_5[delay_wire_64] <= delay_wire_67;
         6:bank_6[delay_wire_64] <= delay_wire_67;
         7:bank_7[delay_wire_64] <= delay_wire_67;
-        default: $finish(-1);
+        default:bank_7[delay_wire_64] <= delay_wire_67;
       endcase
     end
     if (delay_wire_70) begin
@@ -3585,7 +3233,7 @@ conv_stencil_embarassing_bank_selector conv_stencil_conv_stencil_op_hcompute_hw_
         5:bank_5[delay_wire_68] <= delay_wire_71;
         6:bank_6[delay_wire_68] <= delay_wire_71;
         7:bank_7[delay_wire_68] <= delay_wire_71;
-        default: $finish(-1);
+        default:bank_7[delay_wire_68] <= delay_wire_71;
       endcase
     end
     if (delay_wire_74) begin
@@ -3598,7 +3246,7 @@ conv_stencil_embarassing_bank_selector conv_stencil_conv_stencil_op_hcompute_hw_
         5:bank_5[delay_wire_72] <= delay_wire_75;
         6:bank_6[delay_wire_72] <= delay_wire_75;
         7:bank_7[delay_wire_72] <= delay_wire_75;
-        default: $finish(-1);
+        default:bank_7[delay_wire_72] <= delay_wire_75;
       endcase
     end
     if (delay_wire_78) begin
@@ -3611,7 +3259,7 @@ conv_stencil_embarassing_bank_selector conv_stencil_conv_stencil_op_hcompute_hw_
         5:bank_5[delay_wire_76] <= delay_wire_79;
         6:bank_6[delay_wire_76] <= delay_wire_79;
         7:bank_7[delay_wire_76] <= delay_wire_79;
-        default: $finish(-1);
+        default:bank_7[delay_wire_76] <= delay_wire_79;
       endcase
     end
   end
@@ -3626,7 +3274,7 @@ conv_stencil_embarassing_bank_selector conv_stencil_conv_stencil_op_hcompute_hw_
         5:end_delay_wire_80 <= bank_5[addr16];
         6:end_delay_wire_80 <= bank_6[addr16];
         7:end_delay_wire_80 <= bank_7[addr16];
-        default: $finish(-1);
+        default:end_delay_wire_80 <= 327;
       endcase
     end
     if (op_hcompute_conv_stencil_11_read_ren_fsm_out) begin
@@ -3639,7 +3287,7 @@ conv_stencil_embarassing_bank_selector conv_stencil_conv_stencil_op_hcompute_hw_
         5:end_delay_wire_81 <= bank_5[addr17];
         6:end_delay_wire_81 <= bank_6[addr17];
         7:end_delay_wire_81 <= bank_7[addr17];
-        default: $finish(-1);
+        default:end_delay_wire_81 <= 327;
       endcase
     end
     if (op_hcompute_conv_stencil_12_read_ren_fsm_out) begin
@@ -3652,7 +3300,7 @@ conv_stencil_embarassing_bank_selector conv_stencil_conv_stencil_op_hcompute_hw_
         5:end_delay_wire_82 <= bank_5[addr18];
         6:end_delay_wire_82 <= bank_6[addr18];
         7:end_delay_wire_82 <= bank_7[addr18];
-        default: $finish(-1);
+        default:end_delay_wire_82 <= 327;
       endcase
     end
     if (op_hcompute_conv_stencil_13_read_ren_fsm_out) begin
@@ -3665,7 +3313,7 @@ conv_stencil_embarassing_bank_selector conv_stencil_conv_stencil_op_hcompute_hw_
         5:end_delay_wire_83 <= bank_5[addr19];
         6:end_delay_wire_83 <= bank_6[addr19];
         7:end_delay_wire_83 <= bank_7[addr19];
-        default: $finish(-1);
+        default:end_delay_wire_83 <= 327;
       endcase
     end
     if (op_hcompute_conv_stencil_14_read_ren_fsm_out) begin
@@ -3678,7 +3326,7 @@ conv_stencil_embarassing_bank_selector conv_stencil_conv_stencil_op_hcompute_hw_
         5:end_delay_wire_84 <= bank_5[addr20];
         6:end_delay_wire_84 <= bank_6[addr20];
         7:end_delay_wire_84 <= bank_7[addr20];
-        default: $finish(-1);
+        default:end_delay_wire_84 <= 327;
       endcase
     end
     if (op_hcompute_conv_stencil_15_read_ren_fsm_out) begin
@@ -3691,7 +3339,7 @@ conv_stencil_embarassing_bank_selector conv_stencil_conv_stencil_op_hcompute_hw_
         5:end_delay_wire_85 <= bank_5[addr21];
         6:end_delay_wire_85 <= bank_6[addr21];
         7:end_delay_wire_85 <= bank_7[addr21];
-        default: $finish(-1);
+        default:end_delay_wire_85 <= 327;
       endcase
     end
     if (op_hcompute_conv_stencil_8_read_ren_fsm_out) begin
@@ -3704,7 +3352,7 @@ conv_stencil_embarassing_bank_selector conv_stencil_conv_stencil_op_hcompute_hw_
         5:end_delay_wire_86 <= bank_5[addr22];
         6:end_delay_wire_86 <= bank_6[addr22];
         7:end_delay_wire_86 <= bank_7[addr22];
-        default: $finish(-1);
+        default:end_delay_wire_86 <= 327;
       endcase
     end
     if (op_hcompute_conv_stencil_9_read_ren_fsm_out) begin
@@ -3717,7 +3365,7 @@ conv_stencil_embarassing_bank_selector conv_stencil_conv_stencil_op_hcompute_hw_
         5:end_delay_wire_87 <= bank_5[addr23];
         6:end_delay_wire_87 <= bank_6[addr23];
         7:end_delay_wire_87 <= bank_7[addr23];
-        default: $finish(-1);
+        default:end_delay_wire_87 <= 327;
       endcase
     end
     if (op_hcompute_hw_output_stencil_read_ren_fsm_out) begin
@@ -3730,7 +3378,7 @@ conv_stencil_embarassing_bank_selector conv_stencil_conv_stencil_op_hcompute_hw_
         5:end_delay_wire_88 <= bank_5[addr24];
         6:end_delay_wire_88 <= bank_6[addr24];
         7:end_delay_wire_88 <= bank_7[addr24];
-        default: $finish(-1);
+        default:end_delay_wire_88 <= 327;
       endcase
     end
     if (op_hcompute_hw_output_stencil_1_read_ren_fsm_out) begin
@@ -3743,7 +3391,7 @@ conv_stencil_embarassing_bank_selector conv_stencil_conv_stencil_op_hcompute_hw_
         5:end_delay_wire_89 <= bank_5[addr25];
         6:end_delay_wire_89 <= bank_6[addr25];
         7:end_delay_wire_89 <= bank_7[addr25];
-        default: $finish(-1);
+        default:end_delay_wire_89 <= 327;
       endcase
     end
     if (op_hcompute_hw_output_stencil_2_read_ren_fsm_out) begin
@@ -3756,7 +3404,7 @@ conv_stencil_embarassing_bank_selector conv_stencil_conv_stencil_op_hcompute_hw_
         5:end_delay_wire_90 <= bank_5[addr26];
         6:end_delay_wire_90 <= bank_6[addr26];
         7:end_delay_wire_90 <= bank_7[addr26];
-        default: $finish(-1);
+        default:end_delay_wire_90 <= 327;
       endcase
     end
     if (op_hcompute_hw_output_stencil_3_read_ren_fsm_out) begin
@@ -3769,7 +3417,7 @@ conv_stencil_embarassing_bank_selector conv_stencil_conv_stencil_op_hcompute_hw_
         5:end_delay_wire_91 <= bank_5[addr27];
         6:end_delay_wire_91 <= bank_6[addr27];
         7:end_delay_wire_91 <= bank_7[addr27];
-        default: $finish(-1);
+        default:end_delay_wire_91 <= 327;
       endcase
     end
     if (op_hcompute_hw_output_stencil_4_read_ren_fsm_out) begin
@@ -3782,7 +3430,7 @@ conv_stencil_embarassing_bank_selector conv_stencil_conv_stencil_op_hcompute_hw_
         5:end_delay_wire_92 <= bank_5[addr28];
         6:end_delay_wire_92 <= bank_6[addr28];
         7:end_delay_wire_92 <= bank_7[addr28];
-        default: $finish(-1);
+        default:end_delay_wire_92 <= 327;
       endcase
     end
     if (op_hcompute_hw_output_stencil_5_read_ren_fsm_out) begin
@@ -3795,7 +3443,7 @@ conv_stencil_embarassing_bank_selector conv_stencil_conv_stencil_op_hcompute_hw_
         5:end_delay_wire_93 <= bank_5[addr29];
         6:end_delay_wire_93 <= bank_6[addr29];
         7:end_delay_wire_93 <= bank_7[addr29];
-        default: $finish(-1);
+        default:end_delay_wire_93 <= 327;
       endcase
     end
     if (op_hcompute_hw_output_stencil_6_read_ren_fsm_out) begin
@@ -3808,7 +3456,7 @@ conv_stencil_embarassing_bank_selector conv_stencil_conv_stencil_op_hcompute_hw_
         5:end_delay_wire_94 <= bank_5[addr30];
         6:end_delay_wire_94 <= bank_6[addr30];
         7:end_delay_wire_94 <= bank_7[addr30];
-        default: $finish(-1);
+        default:end_delay_wire_94 <= 327;
       endcase
     end
     if (op_hcompute_hw_output_stencil_7_read_ren_fsm_out) begin
@@ -3821,7 +3469,7 @@ conv_stencil_embarassing_bank_selector conv_stencil_conv_stencil_op_hcompute_hw_
         5:end_delay_wire_95 <= bank_5[addr31];
         6:end_delay_wire_95 <= bank_6[addr31];
         7:end_delay_wire_95 <= bank_7[addr31];
-        default: $finish(-1);
+        default:end_delay_wire_95 <= 327;
       endcase
     end
   end
@@ -7615,182 +7263,6 @@ hw_input_global_wrapper_stencil_embarassing_bank_selector hw_input_global_wrappe
     op_hcompute_conv_stencil_9_read[7] <= end_delay_wire_135;
   end
   always @(posedge clk) begin
-    if(op_hcompute_hw_input_global_wrapper_stencil_1_write_wen)begin
-      if(op_hcompute_hw_input_global_wrapper_stencil_1_write_ctrl_vars!=op_hcompute_hw_input_global_wrapper_stencil_1_write_ctrl_vars_fsm_out) begin
-        $display("Different");
-        $finish(-1);
-      end
-    end
-    if (op_hcompute_hw_input_global_wrapper_stencil_1_write_wen!=op_hcompute_hw_input_global_wrapper_stencil_1_write_wen_fsm_out) begin
-        $display(op_hcompute_hw_input_global_wrapper_stencil_1_write_wen);
-        $display(op_hcompute_hw_input_global_wrapper_stencil_1_write_wen_fsm_out);
-      $finish(-1);
-    end
-    if(op_hcompute_hw_input_global_wrapper_stencil_2_write_wen)begin
-      if(op_hcompute_hw_input_global_wrapper_stencil_2_write_ctrl_vars!=op_hcompute_hw_input_global_wrapper_stencil_2_write_ctrl_vars_fsm_out) begin
-        $display("Different");
-        $finish(-1);
-      end
-    end
-    if (op_hcompute_hw_input_global_wrapper_stencil_2_write_wen!=op_hcompute_hw_input_global_wrapper_stencil_2_write_wen_fsm_out) begin
-        $display(op_hcompute_hw_input_global_wrapper_stencil_2_write_wen);
-        $display(op_hcompute_hw_input_global_wrapper_stencil_2_write_wen_fsm_out);
-      $finish(-1);
-    end
-    if(op_hcompute_hw_input_global_wrapper_stencil_write_wen)begin
-      if(op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars!=op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars_fsm_out) begin
-        $display("Different");
-        $finish(-1);
-      end
-    end
-    if (op_hcompute_hw_input_global_wrapper_stencil_write_wen!=op_hcompute_hw_input_global_wrapper_stencil_write_wen_fsm_out) begin
-        $display(op_hcompute_hw_input_global_wrapper_stencil_write_wen);
-        $display(op_hcompute_hw_input_global_wrapper_stencil_write_wen_fsm_out);
-      $finish(-1);
-    end
-    if(op_hcompute_hw_input_global_wrapper_stencil_3_write_wen)begin
-      if(op_hcompute_hw_input_global_wrapper_stencil_3_write_ctrl_vars!=op_hcompute_hw_input_global_wrapper_stencil_3_write_ctrl_vars_fsm_out) begin
-        $display("Different");
-        $finish(-1);
-      end
-    end
-    if (op_hcompute_hw_input_global_wrapper_stencil_3_write_wen!=op_hcompute_hw_input_global_wrapper_stencil_3_write_wen_fsm_out) begin
-        $display(op_hcompute_hw_input_global_wrapper_stencil_3_write_wen);
-        $display(op_hcompute_hw_input_global_wrapper_stencil_3_write_wen_fsm_out);
-      $finish(-1);
-    end
-    if(op_hcompute_hw_input_global_wrapper_stencil_4_write_wen)begin
-      if(op_hcompute_hw_input_global_wrapper_stencil_4_write_ctrl_vars!=op_hcompute_hw_input_global_wrapper_stencil_4_write_ctrl_vars_fsm_out) begin
-        $display("Different");
-        $finish(-1);
-      end
-    end
-    if (op_hcompute_hw_input_global_wrapper_stencil_4_write_wen!=op_hcompute_hw_input_global_wrapper_stencil_4_write_wen_fsm_out) begin
-        $display(op_hcompute_hw_input_global_wrapper_stencil_4_write_wen);
-        $display(op_hcompute_hw_input_global_wrapper_stencil_4_write_wen_fsm_out);
-      $finish(-1);
-    end
-    if(op_hcompute_hw_input_global_wrapper_stencil_5_write_wen)begin
-      if(op_hcompute_hw_input_global_wrapper_stencil_5_write_ctrl_vars!=op_hcompute_hw_input_global_wrapper_stencil_5_write_ctrl_vars_fsm_out) begin
-        $display("Different");
-        $finish(-1);
-      end
-    end
-    if (op_hcompute_hw_input_global_wrapper_stencil_5_write_wen!=op_hcompute_hw_input_global_wrapper_stencil_5_write_wen_fsm_out) begin
-        $display(op_hcompute_hw_input_global_wrapper_stencil_5_write_wen);
-        $display(op_hcompute_hw_input_global_wrapper_stencil_5_write_wen_fsm_out);
-      $finish(-1);
-    end
-    if(op_hcompute_hw_input_global_wrapper_stencil_6_write_wen)begin
-      if(op_hcompute_hw_input_global_wrapper_stencil_6_write_ctrl_vars!=op_hcompute_hw_input_global_wrapper_stencil_6_write_ctrl_vars_fsm_out) begin
-        $display("Different");
-        $finish(-1);
-      end
-    end
-    if (op_hcompute_hw_input_global_wrapper_stencil_6_write_wen!=op_hcompute_hw_input_global_wrapper_stencil_6_write_wen_fsm_out) begin
-        $display(op_hcompute_hw_input_global_wrapper_stencil_6_write_wen);
-        $display(op_hcompute_hw_input_global_wrapper_stencil_6_write_wen_fsm_out);
-      $finish(-1);
-    end
-    if(op_hcompute_hw_input_global_wrapper_stencil_7_write_wen)begin
-      if(op_hcompute_hw_input_global_wrapper_stencil_7_write_ctrl_vars!=op_hcompute_hw_input_global_wrapper_stencil_7_write_ctrl_vars_fsm_out) begin
-        $display("Different");
-        $finish(-1);
-      end
-    end
-    if (op_hcompute_hw_input_global_wrapper_stencil_7_write_wen!=op_hcompute_hw_input_global_wrapper_stencil_7_write_wen_fsm_out) begin
-        $display(op_hcompute_hw_input_global_wrapper_stencil_7_write_wen);
-        $display(op_hcompute_hw_input_global_wrapper_stencil_7_write_wen_fsm_out);
-      $finish(-1);
-    end
-    if(op_hcompute_conv_stencil_10_read_ren)begin
-      if(op_hcompute_conv_stencil_10_read_ctrl_vars!=op_hcompute_conv_stencil_10_read_ctrl_vars_fsm_out) begin
-        $display("Different");
-        $finish(-1);
-      end
-    end
-    if (op_hcompute_conv_stencil_10_read_ren!=op_hcompute_conv_stencil_10_read_ren_fsm_out) begin
-        $display(op_hcompute_conv_stencil_10_read_ren);
-        $display(op_hcompute_conv_stencil_10_read_ren_fsm_out);
-      $finish(-1);
-    end
-    if(op_hcompute_conv_stencil_11_read_ren)begin
-      if(op_hcompute_conv_stencil_11_read_ctrl_vars!=op_hcompute_conv_stencil_11_read_ctrl_vars_fsm_out) begin
-        $display("Different");
-        $finish(-1);
-      end
-    end
-    if (op_hcompute_conv_stencil_11_read_ren!=op_hcompute_conv_stencil_11_read_ren_fsm_out) begin
-        $display(op_hcompute_conv_stencil_11_read_ren);
-        $display(op_hcompute_conv_stencil_11_read_ren_fsm_out);
-      $finish(-1);
-    end
-    if(op_hcompute_conv_stencil_12_read_ren)begin
-      if(op_hcompute_conv_stencil_12_read_ctrl_vars!=op_hcompute_conv_stencil_12_read_ctrl_vars_fsm_out) begin
-        $display("Different");
-        $finish(-1);
-      end
-    end
-    if (op_hcompute_conv_stencil_12_read_ren!=op_hcompute_conv_stencil_12_read_ren_fsm_out) begin
-        $display(op_hcompute_conv_stencil_12_read_ren);
-        $display(op_hcompute_conv_stencil_12_read_ren_fsm_out);
-      $finish(-1);
-    end
-    if(op_hcompute_conv_stencil_13_read_ren)begin
-      if(op_hcompute_conv_stencil_13_read_ctrl_vars!=op_hcompute_conv_stencil_13_read_ctrl_vars_fsm_out) begin
-        $display("Different");
-        $finish(-1);
-      end
-    end
-    if (op_hcompute_conv_stencil_13_read_ren!=op_hcompute_conv_stencil_13_read_ren_fsm_out) begin
-        $display(op_hcompute_conv_stencil_13_read_ren);
-        $display(op_hcompute_conv_stencil_13_read_ren_fsm_out);
-      $finish(-1);
-    end
-    if(op_hcompute_conv_stencil_14_read_ren)begin
-      if(op_hcompute_conv_stencil_14_read_ctrl_vars!=op_hcompute_conv_stencil_14_read_ctrl_vars_fsm_out) begin
-        $display("Different");
-        $finish(-1);
-      end
-    end
-    if (op_hcompute_conv_stencil_14_read_ren!=op_hcompute_conv_stencil_14_read_ren_fsm_out) begin
-        $display(op_hcompute_conv_stencil_14_read_ren);
-        $display(op_hcompute_conv_stencil_14_read_ren_fsm_out);
-      $finish(-1);
-    end
-    if(op_hcompute_conv_stencil_15_read_ren)begin
-      if(op_hcompute_conv_stencil_15_read_ctrl_vars!=op_hcompute_conv_stencil_15_read_ctrl_vars_fsm_out) begin
-        $display("Different");
-        $finish(-1);
-      end
-    end
-    if (op_hcompute_conv_stencil_15_read_ren!=op_hcompute_conv_stencil_15_read_ren_fsm_out) begin
-        $display(op_hcompute_conv_stencil_15_read_ren);
-        $display(op_hcompute_conv_stencil_15_read_ren_fsm_out);
-      $finish(-1);
-    end
-    if(op_hcompute_conv_stencil_8_read_ren)begin
-      if(op_hcompute_conv_stencil_8_read_ctrl_vars!=op_hcompute_conv_stencil_8_read_ctrl_vars_fsm_out) begin
-        $display("Different");
-        $finish(-1);
-      end
-    end
-    if (op_hcompute_conv_stencil_8_read_ren!=op_hcompute_conv_stencil_8_read_ren_fsm_out) begin
-        $display(op_hcompute_conv_stencil_8_read_ren);
-        $display(op_hcompute_conv_stencil_8_read_ren_fsm_out);
-      $finish(-1);
-    end
-    if(op_hcompute_conv_stencil_9_read_ren)begin
-      if(op_hcompute_conv_stencil_9_read_ctrl_vars!=op_hcompute_conv_stencil_9_read_ctrl_vars_fsm_out) begin
-        $display("Different");
-        $finish(-1);
-      end
-    end
-    if (op_hcompute_conv_stencil_9_read_ren!=op_hcompute_conv_stencil_9_read_ren_fsm_out) begin
-        $display(op_hcompute_conv_stencil_9_read_ren);
-        $display(op_hcompute_conv_stencil_9_read_ren_fsm_out);
-      $finish(-1);
-    end
     if (delay_wire_98) begin
       case( delay_wire_97)
         0:bank_0[delay_wire_96] <= delay_wire_99;
@@ -7801,7 +7273,7 @@ hw_input_global_wrapper_stencil_embarassing_bank_selector hw_input_global_wrappe
         5:bank_5[delay_wire_96] <= delay_wire_99;
         6:bank_6[delay_wire_96] <= delay_wire_99;
         7:bank_7[delay_wire_96] <= delay_wire_99;
-        default: $finish(-1);
+        default:bank_7[delay_wire_96] <= delay_wire_99;
       endcase
     end
     if (delay_wire_102) begin
@@ -7814,7 +7286,7 @@ hw_input_global_wrapper_stencil_embarassing_bank_selector hw_input_global_wrappe
         5:bank_5[delay_wire_100] <= delay_wire_103;
         6:bank_6[delay_wire_100] <= delay_wire_103;
         7:bank_7[delay_wire_100] <= delay_wire_103;
-        default: $finish(-1);
+        default:bank_7[delay_wire_100] <= delay_wire_103;
       endcase
     end
     if (delay_wire_106) begin
@@ -7827,7 +7299,7 @@ hw_input_global_wrapper_stencil_embarassing_bank_selector hw_input_global_wrappe
         5:bank_5[delay_wire_104] <= delay_wire_107;
         6:bank_6[delay_wire_104] <= delay_wire_107;
         7:bank_7[delay_wire_104] <= delay_wire_107;
-        default: $finish(-1);
+        default:bank_7[delay_wire_104] <= delay_wire_107;
       endcase
     end
     if (delay_wire_110) begin
@@ -7840,7 +7312,7 @@ hw_input_global_wrapper_stencil_embarassing_bank_selector hw_input_global_wrappe
         5:bank_5[delay_wire_108] <= delay_wire_111;
         6:bank_6[delay_wire_108] <= delay_wire_111;
         7:bank_7[delay_wire_108] <= delay_wire_111;
-        default: $finish(-1);
+        default:bank_7[delay_wire_108] <= delay_wire_111;
       endcase
     end
     if (delay_wire_114) begin
@@ -7853,7 +7325,7 @@ hw_input_global_wrapper_stencil_embarassing_bank_selector hw_input_global_wrappe
         5:bank_5[delay_wire_112] <= delay_wire_115;
         6:bank_6[delay_wire_112] <= delay_wire_115;
         7:bank_7[delay_wire_112] <= delay_wire_115;
-        default: $finish(-1);
+        default:bank_7[delay_wire_112] <= delay_wire_115;
       endcase
     end
     if (delay_wire_118) begin
@@ -7866,7 +7338,7 @@ hw_input_global_wrapper_stencil_embarassing_bank_selector hw_input_global_wrappe
         5:bank_5[delay_wire_116] <= delay_wire_119;
         6:bank_6[delay_wire_116] <= delay_wire_119;
         7:bank_7[delay_wire_116] <= delay_wire_119;
-        default: $finish(-1);
+        default:bank_7[delay_wire_116] <= delay_wire_119;
       endcase
     end
     if (delay_wire_122) begin
@@ -7879,7 +7351,7 @@ hw_input_global_wrapper_stencil_embarassing_bank_selector hw_input_global_wrappe
         5:bank_5[delay_wire_120] <= delay_wire_123;
         6:bank_6[delay_wire_120] <= delay_wire_123;
         7:bank_7[delay_wire_120] <= delay_wire_123;
-        default: $finish(-1);
+        default:bank_7[delay_wire_120] <= delay_wire_123;
       endcase
     end
     if (delay_wire_126) begin
@@ -7892,7 +7364,7 @@ hw_input_global_wrapper_stencil_embarassing_bank_selector hw_input_global_wrappe
         5:bank_5[delay_wire_124] <= delay_wire_127;
         6:bank_6[delay_wire_124] <= delay_wire_127;
         7:bank_7[delay_wire_124] <= delay_wire_127;
-        default: $finish(-1);
+        default:bank_7[delay_wire_124] <= delay_wire_127;
       endcase
     end
   end
@@ -7907,7 +7379,7 @@ hw_input_global_wrapper_stencil_embarassing_bank_selector hw_input_global_wrappe
         5:end_delay_wire_128 <= bank_5[addr8];
         6:end_delay_wire_128 <= bank_6[addr8];
         7:end_delay_wire_128 <= bank_7[addr8];
-        default: $finish(-1);
+        default:end_delay_wire_128 <= 327;
       endcase
     end
     if (op_hcompute_conv_stencil_9_read_ren_fsm_out) begin
@@ -7920,7 +7392,7 @@ hw_input_global_wrapper_stencil_embarassing_bank_selector hw_input_global_wrappe
         5:end_delay_wire_129 <= bank_5[addr9];
         6:end_delay_wire_129 <= bank_6[addr9];
         7:end_delay_wire_129 <= bank_7[addr9];
-        default: $finish(-1);
+        default:end_delay_wire_129 <= 327;
       endcase
     end
     if (op_hcompute_conv_stencil_9_read_ren_fsm_out) begin
@@ -7933,7 +7405,7 @@ hw_input_global_wrapper_stencil_embarassing_bank_selector hw_input_global_wrappe
         5:end_delay_wire_130 <= bank_5[addr10];
         6:end_delay_wire_130 <= bank_6[addr10];
         7:end_delay_wire_130 <= bank_7[addr10];
-        default: $finish(-1);
+        default:end_delay_wire_130 <= 327;
       endcase
     end
     if (op_hcompute_conv_stencil_9_read_ren_fsm_out) begin
@@ -7946,7 +7418,7 @@ hw_input_global_wrapper_stencil_embarassing_bank_selector hw_input_global_wrappe
         5:end_delay_wire_131 <= bank_5[addr11];
         6:end_delay_wire_131 <= bank_6[addr11];
         7:end_delay_wire_131 <= bank_7[addr11];
-        default: $finish(-1);
+        default:end_delay_wire_131 <= 327;
       endcase
     end
     if (op_hcompute_conv_stencil_9_read_ren_fsm_out) begin
@@ -7959,7 +7431,7 @@ hw_input_global_wrapper_stencil_embarassing_bank_selector hw_input_global_wrappe
         5:end_delay_wire_132 <= bank_5[addr12];
         6:end_delay_wire_132 <= bank_6[addr12];
         7:end_delay_wire_132 <= bank_7[addr12];
-        default: $finish(-1);
+        default:end_delay_wire_132 <= 327;
       endcase
     end
     if (op_hcompute_conv_stencil_9_read_ren_fsm_out) begin
@@ -7972,7 +7444,7 @@ hw_input_global_wrapper_stencil_embarassing_bank_selector hw_input_global_wrappe
         5:end_delay_wire_133 <= bank_5[addr13];
         6:end_delay_wire_133 <= bank_6[addr13];
         7:end_delay_wire_133 <= bank_7[addr13];
-        default: $finish(-1);
+        default:end_delay_wire_133 <= 327;
       endcase
     end
     if (op_hcompute_conv_stencil_9_read_ren_fsm_out) begin
@@ -7985,7 +7457,7 @@ hw_input_global_wrapper_stencil_embarassing_bank_selector hw_input_global_wrappe
         5:end_delay_wire_134 <= bank_5[addr14];
         6:end_delay_wire_134 <= bank_6[addr14];
         7:end_delay_wire_134 <= bank_7[addr14];
-        default: $finish(-1);
+        default:end_delay_wire_134 <= 327;
       endcase
     end
     if (op_hcompute_conv_stencil_9_read_ren_fsm_out) begin
@@ -7998,7 +7470,7 @@ hw_input_global_wrapper_stencil_embarassing_bank_selector hw_input_global_wrappe
         5:end_delay_wire_135 <= bank_5[addr15];
         6:end_delay_wire_135 <= bank_6[addr15];
         7:end_delay_wire_135 <= bank_7[addr15];
-        default: $finish(-1);
+        default:end_delay_wire_135 <= 327;
       endcase
     end
   end
@@ -9878,105 +9350,6 @@ hw_kernel_global_wrapper_stencil_embarassing_bank_selector hw_kernel_global_wrap
     op_hcompute_conv_stencil_9_read[7] <= end_delay_wire_203;
   end
   always @(posedge clk) begin
-    if(op_hcompute_hw_kernel_global_wrapper_stencil_write_wen)begin
-      if(op_hcompute_hw_kernel_global_wrapper_stencil_write_ctrl_vars!=op_hcompute_hw_kernel_global_wrapper_stencil_write_ctrl_vars_fsm_out) begin
-        $display("Different");
-        $finish(-1);
-      end
-    end
-    if (op_hcompute_hw_kernel_global_wrapper_stencil_write_wen!=op_hcompute_hw_kernel_global_wrapper_stencil_write_wen_fsm_out) begin
-        $display(op_hcompute_hw_kernel_global_wrapper_stencil_write_wen);
-        $display(op_hcompute_hw_kernel_global_wrapper_stencil_write_wen_fsm_out);
-      $finish(-1);
-    end
-    if(op_hcompute_conv_stencil_10_read_ren)begin
-      if(op_hcompute_conv_stencil_10_read_ctrl_vars!=op_hcompute_conv_stencil_10_read_ctrl_vars_fsm_out) begin
-        $display("Different");
-        $finish(-1);
-      end
-    end
-    if (op_hcompute_conv_stencil_10_read_ren!=op_hcompute_conv_stencil_10_read_ren_fsm_out) begin
-        $display(op_hcompute_conv_stencil_10_read_ren);
-        $display(op_hcompute_conv_stencil_10_read_ren_fsm_out);
-      $finish(-1);
-    end
-    if(op_hcompute_conv_stencil_11_read_ren)begin
-      if(op_hcompute_conv_stencil_11_read_ctrl_vars!=op_hcompute_conv_stencil_11_read_ctrl_vars_fsm_out) begin
-        $display("Different");
-        $finish(-1);
-      end
-    end
-    if (op_hcompute_conv_stencil_11_read_ren!=op_hcompute_conv_stencil_11_read_ren_fsm_out) begin
-        $display(op_hcompute_conv_stencil_11_read_ren);
-        $display(op_hcompute_conv_stencil_11_read_ren_fsm_out);
-      $finish(-1);
-    end
-    if(op_hcompute_conv_stencil_12_read_ren)begin
-      if(op_hcompute_conv_stencil_12_read_ctrl_vars!=op_hcompute_conv_stencil_12_read_ctrl_vars_fsm_out) begin
-        $display("Different");
-        $finish(-1);
-      end
-    end
-    if (op_hcompute_conv_stencil_12_read_ren!=op_hcompute_conv_stencil_12_read_ren_fsm_out) begin
-        $display(op_hcompute_conv_stencil_12_read_ren);
-        $display(op_hcompute_conv_stencil_12_read_ren_fsm_out);
-      $finish(-1);
-    end
-    if(op_hcompute_conv_stencil_13_read_ren)begin
-      if(op_hcompute_conv_stencil_13_read_ctrl_vars!=op_hcompute_conv_stencil_13_read_ctrl_vars_fsm_out) begin
-        $display("Different");
-        $finish(-1);
-      end
-    end
-    if (op_hcompute_conv_stencil_13_read_ren!=op_hcompute_conv_stencil_13_read_ren_fsm_out) begin
-        $display(op_hcompute_conv_stencil_13_read_ren);
-        $display(op_hcompute_conv_stencil_13_read_ren_fsm_out);
-      $finish(-1);
-    end
-    if(op_hcompute_conv_stencil_14_read_ren)begin
-      if(op_hcompute_conv_stencil_14_read_ctrl_vars!=op_hcompute_conv_stencil_14_read_ctrl_vars_fsm_out) begin
-        $display("Different");
-        $finish(-1);
-      end
-    end
-    if (op_hcompute_conv_stencil_14_read_ren!=op_hcompute_conv_stencil_14_read_ren_fsm_out) begin
-        $display(op_hcompute_conv_stencil_14_read_ren);
-        $display(op_hcompute_conv_stencil_14_read_ren_fsm_out);
-      $finish(-1);
-    end
-    if(op_hcompute_conv_stencil_15_read_ren)begin
-      if(op_hcompute_conv_stencil_15_read_ctrl_vars!=op_hcompute_conv_stencil_15_read_ctrl_vars_fsm_out) begin
-        $display("Different");
-        $finish(-1);
-      end
-    end
-    if (op_hcompute_conv_stencil_15_read_ren!=op_hcompute_conv_stencil_15_read_ren_fsm_out) begin
-        $display(op_hcompute_conv_stencil_15_read_ren);
-        $display(op_hcompute_conv_stencil_15_read_ren_fsm_out);
-      $finish(-1);
-    end
-    if(op_hcompute_conv_stencil_8_read_ren)begin
-      if(op_hcompute_conv_stencil_8_read_ctrl_vars!=op_hcompute_conv_stencil_8_read_ctrl_vars_fsm_out) begin
-        $display("Different");
-        $finish(-1);
-      end
-    end
-    if (op_hcompute_conv_stencil_8_read_ren!=op_hcompute_conv_stencil_8_read_ren_fsm_out) begin
-        $display(op_hcompute_conv_stencil_8_read_ren);
-        $display(op_hcompute_conv_stencil_8_read_ren_fsm_out);
-      $finish(-1);
-    end
-    if(op_hcompute_conv_stencil_9_read_ren)begin
-      if(op_hcompute_conv_stencil_9_read_ctrl_vars!=op_hcompute_conv_stencil_9_read_ctrl_vars_fsm_out) begin
-        $display("Different");
-        $finish(-1);
-      end
-    end
-    if (op_hcompute_conv_stencil_9_read_ren!=op_hcompute_conv_stencil_9_read_ren_fsm_out) begin
-        $display(op_hcompute_conv_stencil_9_read_ren);
-        $display(op_hcompute_conv_stencil_9_read_ren_fsm_out);
-      $finish(-1);
-    end
     if (delay_wire_138) begin
       case( delay_wire_137)
         0:bank_0[delay_wire_136] <= delay_wire_139;
@@ -10043,7 +9416,7 @@ hw_kernel_global_wrapper_stencil_embarassing_bank_selector hw_kernel_global_wrap
         61:bank_61[delay_wire_136] <= delay_wire_139;
         62:bank_62[delay_wire_136] <= delay_wire_139;
         63:bank_63[delay_wire_136] <= delay_wire_139;
-        default: $finish(-1);
+        default:bank_63[delay_wire_136] <= delay_wire_139;
       endcase
     end
   end
@@ -10114,7 +9487,7 @@ hw_kernel_global_wrapper_stencil_embarassing_bank_selector hw_kernel_global_wrap
         61:end_delay_wire_140 <= bank_61[addr1];
         62:end_delay_wire_140 <= bank_62[addr1];
         63:end_delay_wire_140 <= bank_63[addr1];
-        default: $finish(-1);
+        default:end_delay_wire_140 <= 327;
       endcase
     end
     if (op_hcompute_conv_stencil_10_read_ren_fsm_out) begin
@@ -10183,7 +9556,7 @@ hw_kernel_global_wrapper_stencil_embarassing_bank_selector hw_kernel_global_wrap
         61:end_delay_wire_141 <= bank_61[addr2];
         62:end_delay_wire_141 <= bank_62[addr2];
         63:end_delay_wire_141 <= bank_63[addr2];
-        default: $finish(-1);
+        default:end_delay_wire_141 <= 327;
       endcase
     end
     if (op_hcompute_conv_stencil_10_read_ren_fsm_out) begin
@@ -10252,7 +9625,7 @@ hw_kernel_global_wrapper_stencil_embarassing_bank_selector hw_kernel_global_wrap
         61:end_delay_wire_142 <= bank_61[addr3];
         62:end_delay_wire_142 <= bank_62[addr3];
         63:end_delay_wire_142 <= bank_63[addr3];
-        default: $finish(-1);
+        default:end_delay_wire_142 <= 327;
       endcase
     end
     if (op_hcompute_conv_stencil_10_read_ren_fsm_out) begin
@@ -10321,7 +9694,7 @@ hw_kernel_global_wrapper_stencil_embarassing_bank_selector hw_kernel_global_wrap
         61:end_delay_wire_143 <= bank_61[addr4];
         62:end_delay_wire_143 <= bank_62[addr4];
         63:end_delay_wire_143 <= bank_63[addr4];
-        default: $finish(-1);
+        default:end_delay_wire_143 <= 327;
       endcase
     end
     if (op_hcompute_conv_stencil_10_read_ren_fsm_out) begin
@@ -10390,7 +9763,7 @@ hw_kernel_global_wrapper_stencil_embarassing_bank_selector hw_kernel_global_wrap
         61:end_delay_wire_144 <= bank_61[addr5];
         62:end_delay_wire_144 <= bank_62[addr5];
         63:end_delay_wire_144 <= bank_63[addr5];
-        default: $finish(-1);
+        default:end_delay_wire_144 <= 327;
       endcase
     end
     if (op_hcompute_conv_stencil_10_read_ren_fsm_out) begin
@@ -10459,7 +9832,7 @@ hw_kernel_global_wrapper_stencil_embarassing_bank_selector hw_kernel_global_wrap
         61:end_delay_wire_145 <= bank_61[addr6];
         62:end_delay_wire_145 <= bank_62[addr6];
         63:end_delay_wire_145 <= bank_63[addr6];
-        default: $finish(-1);
+        default:end_delay_wire_145 <= 327;
       endcase
     end
     if (op_hcompute_conv_stencil_10_read_ren_fsm_out) begin
@@ -10528,7 +9901,7 @@ hw_kernel_global_wrapper_stencil_embarassing_bank_selector hw_kernel_global_wrap
         61:end_delay_wire_146 <= bank_61[addr7];
         62:end_delay_wire_146 <= bank_62[addr7];
         63:end_delay_wire_146 <= bank_63[addr7];
-        default: $finish(-1);
+        default:end_delay_wire_146 <= 327;
       endcase
     end
     if (op_hcompute_conv_stencil_10_read_ren_fsm_out) begin
@@ -10597,7 +9970,7 @@ hw_kernel_global_wrapper_stencil_embarassing_bank_selector hw_kernel_global_wrap
         61:end_delay_wire_147 <= bank_61[addr8];
         62:end_delay_wire_147 <= bank_62[addr8];
         63:end_delay_wire_147 <= bank_63[addr8];
-        default: $finish(-1);
+        default:end_delay_wire_147 <= 327;
       endcase
     end
     if (op_hcompute_conv_stencil_11_read_ren_fsm_out) begin
@@ -10666,7 +10039,7 @@ hw_kernel_global_wrapper_stencil_embarassing_bank_selector hw_kernel_global_wrap
         61:end_delay_wire_148 <= bank_61[addr9];
         62:end_delay_wire_148 <= bank_62[addr9];
         63:end_delay_wire_148 <= bank_63[addr9];
-        default: $finish(-1);
+        default:end_delay_wire_148 <= 327;
       endcase
     end
     if (op_hcompute_conv_stencil_11_read_ren_fsm_out) begin
@@ -10735,7 +10108,7 @@ hw_kernel_global_wrapper_stencil_embarassing_bank_selector hw_kernel_global_wrap
         61:end_delay_wire_149 <= bank_61[addr10];
         62:end_delay_wire_149 <= bank_62[addr10];
         63:end_delay_wire_149 <= bank_63[addr10];
-        default: $finish(-1);
+        default:end_delay_wire_149 <= 327;
       endcase
     end
     if (op_hcompute_conv_stencil_11_read_ren_fsm_out) begin
@@ -10804,7 +10177,7 @@ hw_kernel_global_wrapper_stencil_embarassing_bank_selector hw_kernel_global_wrap
         61:end_delay_wire_150 <= bank_61[addr11];
         62:end_delay_wire_150 <= bank_62[addr11];
         63:end_delay_wire_150 <= bank_63[addr11];
-        default: $finish(-1);
+        default:end_delay_wire_150 <= 327;
       endcase
     end
     if (op_hcompute_conv_stencil_11_read_ren_fsm_out) begin
@@ -10873,7 +10246,7 @@ hw_kernel_global_wrapper_stencil_embarassing_bank_selector hw_kernel_global_wrap
         61:end_delay_wire_151 <= bank_61[addr12];
         62:end_delay_wire_151 <= bank_62[addr12];
         63:end_delay_wire_151 <= bank_63[addr12];
-        default: $finish(-1);
+        default:end_delay_wire_151 <= 327;
       endcase
     end
     if (op_hcompute_conv_stencil_11_read_ren_fsm_out) begin
@@ -10942,7 +10315,7 @@ hw_kernel_global_wrapper_stencil_embarassing_bank_selector hw_kernel_global_wrap
         61:end_delay_wire_152 <= bank_61[addr13];
         62:end_delay_wire_152 <= bank_62[addr13];
         63:end_delay_wire_152 <= bank_63[addr13];
-        default: $finish(-1);
+        default:end_delay_wire_152 <= 327;
       endcase
     end
     if (op_hcompute_conv_stencil_11_read_ren_fsm_out) begin
@@ -11011,7 +10384,7 @@ hw_kernel_global_wrapper_stencil_embarassing_bank_selector hw_kernel_global_wrap
         61:end_delay_wire_153 <= bank_61[addr14];
         62:end_delay_wire_153 <= bank_62[addr14];
         63:end_delay_wire_153 <= bank_63[addr14];
-        default: $finish(-1);
+        default:end_delay_wire_153 <= 327;
       endcase
     end
     if (op_hcompute_conv_stencil_11_read_ren_fsm_out) begin
@@ -11080,7 +10453,7 @@ hw_kernel_global_wrapper_stencil_embarassing_bank_selector hw_kernel_global_wrap
         61:end_delay_wire_154 <= bank_61[addr15];
         62:end_delay_wire_154 <= bank_62[addr15];
         63:end_delay_wire_154 <= bank_63[addr15];
-        default: $finish(-1);
+        default:end_delay_wire_154 <= 327;
       endcase
     end
     if (op_hcompute_conv_stencil_11_read_ren_fsm_out) begin
@@ -11149,7 +10522,7 @@ hw_kernel_global_wrapper_stencil_embarassing_bank_selector hw_kernel_global_wrap
         61:end_delay_wire_155 <= bank_61[addr16];
         62:end_delay_wire_155 <= bank_62[addr16];
         63:end_delay_wire_155 <= bank_63[addr16];
-        default: $finish(-1);
+        default:end_delay_wire_155 <= 327;
       endcase
     end
     if (op_hcompute_conv_stencil_12_read_ren_fsm_out) begin
@@ -11218,7 +10591,7 @@ hw_kernel_global_wrapper_stencil_embarassing_bank_selector hw_kernel_global_wrap
         61:end_delay_wire_156 <= bank_61[addr17];
         62:end_delay_wire_156 <= bank_62[addr17];
         63:end_delay_wire_156 <= bank_63[addr17];
-        default: $finish(-1);
+        default:end_delay_wire_156 <= 327;
       endcase
     end
     if (op_hcompute_conv_stencil_12_read_ren_fsm_out) begin
@@ -11287,7 +10660,7 @@ hw_kernel_global_wrapper_stencil_embarassing_bank_selector hw_kernel_global_wrap
         61:end_delay_wire_157 <= bank_61[addr18];
         62:end_delay_wire_157 <= bank_62[addr18];
         63:end_delay_wire_157 <= bank_63[addr18];
-        default: $finish(-1);
+        default:end_delay_wire_157 <= 327;
       endcase
     end
     if (op_hcompute_conv_stencil_12_read_ren_fsm_out) begin
@@ -11356,7 +10729,7 @@ hw_kernel_global_wrapper_stencil_embarassing_bank_selector hw_kernel_global_wrap
         61:end_delay_wire_158 <= bank_61[addr19];
         62:end_delay_wire_158 <= bank_62[addr19];
         63:end_delay_wire_158 <= bank_63[addr19];
-        default: $finish(-1);
+        default:end_delay_wire_158 <= 327;
       endcase
     end
     if (op_hcompute_conv_stencil_12_read_ren_fsm_out) begin
@@ -11425,7 +10798,7 @@ hw_kernel_global_wrapper_stencil_embarassing_bank_selector hw_kernel_global_wrap
         61:end_delay_wire_159 <= bank_61[addr20];
         62:end_delay_wire_159 <= bank_62[addr20];
         63:end_delay_wire_159 <= bank_63[addr20];
-        default: $finish(-1);
+        default:end_delay_wire_159 <= 327;
       endcase
     end
     if (op_hcompute_conv_stencil_12_read_ren_fsm_out) begin
@@ -11494,7 +10867,7 @@ hw_kernel_global_wrapper_stencil_embarassing_bank_selector hw_kernel_global_wrap
         61:end_delay_wire_160 <= bank_61[addr21];
         62:end_delay_wire_160 <= bank_62[addr21];
         63:end_delay_wire_160 <= bank_63[addr21];
-        default: $finish(-1);
+        default:end_delay_wire_160 <= 327;
       endcase
     end
     if (op_hcompute_conv_stencil_12_read_ren_fsm_out) begin
@@ -11563,7 +10936,7 @@ hw_kernel_global_wrapper_stencil_embarassing_bank_selector hw_kernel_global_wrap
         61:end_delay_wire_161 <= bank_61[addr22];
         62:end_delay_wire_161 <= bank_62[addr22];
         63:end_delay_wire_161 <= bank_63[addr22];
-        default: $finish(-1);
+        default:end_delay_wire_161 <= 327;
       endcase
     end
     if (op_hcompute_conv_stencil_12_read_ren_fsm_out) begin
@@ -11632,7 +11005,7 @@ hw_kernel_global_wrapper_stencil_embarassing_bank_selector hw_kernel_global_wrap
         61:end_delay_wire_162 <= bank_61[addr23];
         62:end_delay_wire_162 <= bank_62[addr23];
         63:end_delay_wire_162 <= bank_63[addr23];
-        default: $finish(-1);
+        default:end_delay_wire_162 <= 327;
       endcase
     end
     if (op_hcompute_conv_stencil_12_read_ren_fsm_out) begin
@@ -11701,7 +11074,7 @@ hw_kernel_global_wrapper_stencil_embarassing_bank_selector hw_kernel_global_wrap
         61:end_delay_wire_163 <= bank_61[addr24];
         62:end_delay_wire_163 <= bank_62[addr24];
         63:end_delay_wire_163 <= bank_63[addr24];
-        default: $finish(-1);
+        default:end_delay_wire_163 <= 327;
       endcase
     end
     if (op_hcompute_conv_stencil_13_read_ren_fsm_out) begin
@@ -11770,7 +11143,7 @@ hw_kernel_global_wrapper_stencil_embarassing_bank_selector hw_kernel_global_wrap
         61:end_delay_wire_164 <= bank_61[addr25];
         62:end_delay_wire_164 <= bank_62[addr25];
         63:end_delay_wire_164 <= bank_63[addr25];
-        default: $finish(-1);
+        default:end_delay_wire_164 <= 327;
       endcase
     end
     if (op_hcompute_conv_stencil_13_read_ren_fsm_out) begin
@@ -11839,7 +11212,7 @@ hw_kernel_global_wrapper_stencil_embarassing_bank_selector hw_kernel_global_wrap
         61:end_delay_wire_165 <= bank_61[addr26];
         62:end_delay_wire_165 <= bank_62[addr26];
         63:end_delay_wire_165 <= bank_63[addr26];
-        default: $finish(-1);
+        default:end_delay_wire_165 <= 327;
       endcase
     end
     if (op_hcompute_conv_stencil_13_read_ren_fsm_out) begin
@@ -11908,7 +11281,7 @@ hw_kernel_global_wrapper_stencil_embarassing_bank_selector hw_kernel_global_wrap
         61:end_delay_wire_166 <= bank_61[addr27];
         62:end_delay_wire_166 <= bank_62[addr27];
         63:end_delay_wire_166 <= bank_63[addr27];
-        default: $finish(-1);
+        default:end_delay_wire_166 <= 327;
       endcase
     end
     if (op_hcompute_conv_stencil_13_read_ren_fsm_out) begin
@@ -11977,7 +11350,7 @@ hw_kernel_global_wrapper_stencil_embarassing_bank_selector hw_kernel_global_wrap
         61:end_delay_wire_167 <= bank_61[addr28];
         62:end_delay_wire_167 <= bank_62[addr28];
         63:end_delay_wire_167 <= bank_63[addr28];
-        default: $finish(-1);
+        default:end_delay_wire_167 <= 327;
       endcase
     end
     if (op_hcompute_conv_stencil_13_read_ren_fsm_out) begin
@@ -12046,7 +11419,7 @@ hw_kernel_global_wrapper_stencil_embarassing_bank_selector hw_kernel_global_wrap
         61:end_delay_wire_168 <= bank_61[addr29];
         62:end_delay_wire_168 <= bank_62[addr29];
         63:end_delay_wire_168 <= bank_63[addr29];
-        default: $finish(-1);
+        default:end_delay_wire_168 <= 327;
       endcase
     end
     if (op_hcompute_conv_stencil_13_read_ren_fsm_out) begin
@@ -12115,7 +11488,7 @@ hw_kernel_global_wrapper_stencil_embarassing_bank_selector hw_kernel_global_wrap
         61:end_delay_wire_169 <= bank_61[addr30];
         62:end_delay_wire_169 <= bank_62[addr30];
         63:end_delay_wire_169 <= bank_63[addr30];
-        default: $finish(-1);
+        default:end_delay_wire_169 <= 327;
       endcase
     end
     if (op_hcompute_conv_stencil_13_read_ren_fsm_out) begin
@@ -12184,7 +11557,7 @@ hw_kernel_global_wrapper_stencil_embarassing_bank_selector hw_kernel_global_wrap
         61:end_delay_wire_170 <= bank_61[addr31];
         62:end_delay_wire_170 <= bank_62[addr31];
         63:end_delay_wire_170 <= bank_63[addr31];
-        default: $finish(-1);
+        default:end_delay_wire_170 <= 327;
       endcase
     end
     if (op_hcompute_conv_stencil_13_read_ren_fsm_out) begin
@@ -12253,7 +11626,7 @@ hw_kernel_global_wrapper_stencil_embarassing_bank_selector hw_kernel_global_wrap
         61:end_delay_wire_171 <= bank_61[addr32];
         62:end_delay_wire_171 <= bank_62[addr32];
         63:end_delay_wire_171 <= bank_63[addr32];
-        default: $finish(-1);
+        default:end_delay_wire_171 <= 327;
       endcase
     end
     if (op_hcompute_conv_stencil_14_read_ren_fsm_out) begin
@@ -12322,7 +11695,7 @@ hw_kernel_global_wrapper_stencil_embarassing_bank_selector hw_kernel_global_wrap
         61:end_delay_wire_172 <= bank_61[addr33];
         62:end_delay_wire_172 <= bank_62[addr33];
         63:end_delay_wire_172 <= bank_63[addr33];
-        default: $finish(-1);
+        default:end_delay_wire_172 <= 327;
       endcase
     end
     if (op_hcompute_conv_stencil_14_read_ren_fsm_out) begin
@@ -12391,7 +11764,7 @@ hw_kernel_global_wrapper_stencil_embarassing_bank_selector hw_kernel_global_wrap
         61:end_delay_wire_173 <= bank_61[addr34];
         62:end_delay_wire_173 <= bank_62[addr34];
         63:end_delay_wire_173 <= bank_63[addr34];
-        default: $finish(-1);
+        default:end_delay_wire_173 <= 327;
       endcase
     end
     if (op_hcompute_conv_stencil_14_read_ren_fsm_out) begin
@@ -12460,7 +11833,7 @@ hw_kernel_global_wrapper_stencil_embarassing_bank_selector hw_kernel_global_wrap
         61:end_delay_wire_174 <= bank_61[addr35];
         62:end_delay_wire_174 <= bank_62[addr35];
         63:end_delay_wire_174 <= bank_63[addr35];
-        default: $finish(-1);
+        default:end_delay_wire_174 <= 327;
       endcase
     end
     if (op_hcompute_conv_stencil_14_read_ren_fsm_out) begin
@@ -12529,7 +11902,7 @@ hw_kernel_global_wrapper_stencil_embarassing_bank_selector hw_kernel_global_wrap
         61:end_delay_wire_175 <= bank_61[addr36];
         62:end_delay_wire_175 <= bank_62[addr36];
         63:end_delay_wire_175 <= bank_63[addr36];
-        default: $finish(-1);
+        default:end_delay_wire_175 <= 327;
       endcase
     end
     if (op_hcompute_conv_stencil_14_read_ren_fsm_out) begin
@@ -12598,7 +11971,7 @@ hw_kernel_global_wrapper_stencil_embarassing_bank_selector hw_kernel_global_wrap
         61:end_delay_wire_176 <= bank_61[addr37];
         62:end_delay_wire_176 <= bank_62[addr37];
         63:end_delay_wire_176 <= bank_63[addr37];
-        default: $finish(-1);
+        default:end_delay_wire_176 <= 327;
       endcase
     end
     if (op_hcompute_conv_stencil_14_read_ren_fsm_out) begin
@@ -12667,7 +12040,7 @@ hw_kernel_global_wrapper_stencil_embarassing_bank_selector hw_kernel_global_wrap
         61:end_delay_wire_177 <= bank_61[addr38];
         62:end_delay_wire_177 <= bank_62[addr38];
         63:end_delay_wire_177 <= bank_63[addr38];
-        default: $finish(-1);
+        default:end_delay_wire_177 <= 327;
       endcase
     end
     if (op_hcompute_conv_stencil_14_read_ren_fsm_out) begin
@@ -12736,7 +12109,7 @@ hw_kernel_global_wrapper_stencil_embarassing_bank_selector hw_kernel_global_wrap
         61:end_delay_wire_178 <= bank_61[addr39];
         62:end_delay_wire_178 <= bank_62[addr39];
         63:end_delay_wire_178 <= bank_63[addr39];
-        default: $finish(-1);
+        default:end_delay_wire_178 <= 327;
       endcase
     end
     if (op_hcompute_conv_stencil_14_read_ren_fsm_out) begin
@@ -12805,7 +12178,7 @@ hw_kernel_global_wrapper_stencil_embarassing_bank_selector hw_kernel_global_wrap
         61:end_delay_wire_179 <= bank_61[addr40];
         62:end_delay_wire_179 <= bank_62[addr40];
         63:end_delay_wire_179 <= bank_63[addr40];
-        default: $finish(-1);
+        default:end_delay_wire_179 <= 327;
       endcase
     end
     if (op_hcompute_conv_stencil_15_read_ren_fsm_out) begin
@@ -12874,7 +12247,7 @@ hw_kernel_global_wrapper_stencil_embarassing_bank_selector hw_kernel_global_wrap
         61:end_delay_wire_180 <= bank_61[addr41];
         62:end_delay_wire_180 <= bank_62[addr41];
         63:end_delay_wire_180 <= bank_63[addr41];
-        default: $finish(-1);
+        default:end_delay_wire_180 <= 327;
       endcase
     end
     if (op_hcompute_conv_stencil_15_read_ren_fsm_out) begin
@@ -12943,7 +12316,7 @@ hw_kernel_global_wrapper_stencil_embarassing_bank_selector hw_kernel_global_wrap
         61:end_delay_wire_181 <= bank_61[addr42];
         62:end_delay_wire_181 <= bank_62[addr42];
         63:end_delay_wire_181 <= bank_63[addr42];
-        default: $finish(-1);
+        default:end_delay_wire_181 <= 327;
       endcase
     end
     if (op_hcompute_conv_stencil_15_read_ren_fsm_out) begin
@@ -13012,7 +12385,7 @@ hw_kernel_global_wrapper_stencil_embarassing_bank_selector hw_kernel_global_wrap
         61:end_delay_wire_182 <= bank_61[addr43];
         62:end_delay_wire_182 <= bank_62[addr43];
         63:end_delay_wire_182 <= bank_63[addr43];
-        default: $finish(-1);
+        default:end_delay_wire_182 <= 327;
       endcase
     end
     if (op_hcompute_conv_stencil_15_read_ren_fsm_out) begin
@@ -13081,7 +12454,7 @@ hw_kernel_global_wrapper_stencil_embarassing_bank_selector hw_kernel_global_wrap
         61:end_delay_wire_183 <= bank_61[addr44];
         62:end_delay_wire_183 <= bank_62[addr44];
         63:end_delay_wire_183 <= bank_63[addr44];
-        default: $finish(-1);
+        default:end_delay_wire_183 <= 327;
       endcase
     end
     if (op_hcompute_conv_stencil_15_read_ren_fsm_out) begin
@@ -13150,7 +12523,7 @@ hw_kernel_global_wrapper_stencil_embarassing_bank_selector hw_kernel_global_wrap
         61:end_delay_wire_184 <= bank_61[addr45];
         62:end_delay_wire_184 <= bank_62[addr45];
         63:end_delay_wire_184 <= bank_63[addr45];
-        default: $finish(-1);
+        default:end_delay_wire_184 <= 327;
       endcase
     end
     if (op_hcompute_conv_stencil_15_read_ren_fsm_out) begin
@@ -13219,7 +12592,7 @@ hw_kernel_global_wrapper_stencil_embarassing_bank_selector hw_kernel_global_wrap
         61:end_delay_wire_185 <= bank_61[addr46];
         62:end_delay_wire_185 <= bank_62[addr46];
         63:end_delay_wire_185 <= bank_63[addr46];
-        default: $finish(-1);
+        default:end_delay_wire_185 <= 327;
       endcase
     end
     if (op_hcompute_conv_stencil_15_read_ren_fsm_out) begin
@@ -13288,7 +12661,7 @@ hw_kernel_global_wrapper_stencil_embarassing_bank_selector hw_kernel_global_wrap
         61:end_delay_wire_186 <= bank_61[addr47];
         62:end_delay_wire_186 <= bank_62[addr47];
         63:end_delay_wire_186 <= bank_63[addr47];
-        default: $finish(-1);
+        default:end_delay_wire_186 <= 327;
       endcase
     end
     if (op_hcompute_conv_stencil_15_read_ren_fsm_out) begin
@@ -13357,7 +12730,7 @@ hw_kernel_global_wrapper_stencil_embarassing_bank_selector hw_kernel_global_wrap
         61:end_delay_wire_187 <= bank_61[addr48];
         62:end_delay_wire_187 <= bank_62[addr48];
         63:end_delay_wire_187 <= bank_63[addr48];
-        default: $finish(-1);
+        default:end_delay_wire_187 <= 327;
       endcase
     end
     if (op_hcompute_conv_stencil_8_read_ren_fsm_out) begin
@@ -13426,7 +12799,7 @@ hw_kernel_global_wrapper_stencil_embarassing_bank_selector hw_kernel_global_wrap
         61:end_delay_wire_188 <= bank_61[addr49];
         62:end_delay_wire_188 <= bank_62[addr49];
         63:end_delay_wire_188 <= bank_63[addr49];
-        default: $finish(-1);
+        default:end_delay_wire_188 <= 327;
       endcase
     end
     if (op_hcompute_conv_stencil_8_read_ren_fsm_out) begin
@@ -13495,7 +12868,7 @@ hw_kernel_global_wrapper_stencil_embarassing_bank_selector hw_kernel_global_wrap
         61:end_delay_wire_189 <= bank_61[addr50];
         62:end_delay_wire_189 <= bank_62[addr50];
         63:end_delay_wire_189 <= bank_63[addr50];
-        default: $finish(-1);
+        default:end_delay_wire_189 <= 327;
       endcase
     end
     if (op_hcompute_conv_stencil_8_read_ren_fsm_out) begin
@@ -13564,7 +12937,7 @@ hw_kernel_global_wrapper_stencil_embarassing_bank_selector hw_kernel_global_wrap
         61:end_delay_wire_190 <= bank_61[addr51];
         62:end_delay_wire_190 <= bank_62[addr51];
         63:end_delay_wire_190 <= bank_63[addr51];
-        default: $finish(-1);
+        default:end_delay_wire_190 <= 327;
       endcase
     end
     if (op_hcompute_conv_stencil_8_read_ren_fsm_out) begin
@@ -13633,7 +13006,7 @@ hw_kernel_global_wrapper_stencil_embarassing_bank_selector hw_kernel_global_wrap
         61:end_delay_wire_191 <= bank_61[addr52];
         62:end_delay_wire_191 <= bank_62[addr52];
         63:end_delay_wire_191 <= bank_63[addr52];
-        default: $finish(-1);
+        default:end_delay_wire_191 <= 327;
       endcase
     end
     if (op_hcompute_conv_stencil_8_read_ren_fsm_out) begin
@@ -13702,7 +13075,7 @@ hw_kernel_global_wrapper_stencil_embarassing_bank_selector hw_kernel_global_wrap
         61:end_delay_wire_192 <= bank_61[addr53];
         62:end_delay_wire_192 <= bank_62[addr53];
         63:end_delay_wire_192 <= bank_63[addr53];
-        default: $finish(-1);
+        default:end_delay_wire_192 <= 327;
       endcase
     end
     if (op_hcompute_conv_stencil_8_read_ren_fsm_out) begin
@@ -13771,7 +13144,7 @@ hw_kernel_global_wrapper_stencil_embarassing_bank_selector hw_kernel_global_wrap
         61:end_delay_wire_193 <= bank_61[addr54];
         62:end_delay_wire_193 <= bank_62[addr54];
         63:end_delay_wire_193 <= bank_63[addr54];
-        default: $finish(-1);
+        default:end_delay_wire_193 <= 327;
       endcase
     end
     if (op_hcompute_conv_stencil_8_read_ren_fsm_out) begin
@@ -13840,7 +13213,7 @@ hw_kernel_global_wrapper_stencil_embarassing_bank_selector hw_kernel_global_wrap
         61:end_delay_wire_194 <= bank_61[addr55];
         62:end_delay_wire_194 <= bank_62[addr55];
         63:end_delay_wire_194 <= bank_63[addr55];
-        default: $finish(-1);
+        default:end_delay_wire_194 <= 327;
       endcase
     end
     if (op_hcompute_conv_stencil_8_read_ren_fsm_out) begin
@@ -13909,7 +13282,7 @@ hw_kernel_global_wrapper_stencil_embarassing_bank_selector hw_kernel_global_wrap
         61:end_delay_wire_195 <= bank_61[addr56];
         62:end_delay_wire_195 <= bank_62[addr56];
         63:end_delay_wire_195 <= bank_63[addr56];
-        default: $finish(-1);
+        default:end_delay_wire_195 <= 327;
       endcase
     end
     if (op_hcompute_conv_stencil_9_read_ren_fsm_out) begin
@@ -13978,7 +13351,7 @@ hw_kernel_global_wrapper_stencil_embarassing_bank_selector hw_kernel_global_wrap
         61:end_delay_wire_196 <= bank_61[addr57];
         62:end_delay_wire_196 <= bank_62[addr57];
         63:end_delay_wire_196 <= bank_63[addr57];
-        default: $finish(-1);
+        default:end_delay_wire_196 <= 327;
       endcase
     end
     if (op_hcompute_conv_stencil_9_read_ren_fsm_out) begin
@@ -14047,7 +13420,7 @@ hw_kernel_global_wrapper_stencil_embarassing_bank_selector hw_kernel_global_wrap
         61:end_delay_wire_197 <= bank_61[addr58];
         62:end_delay_wire_197 <= bank_62[addr58];
         63:end_delay_wire_197 <= bank_63[addr58];
-        default: $finish(-1);
+        default:end_delay_wire_197 <= 327;
       endcase
     end
     if (op_hcompute_conv_stencil_9_read_ren_fsm_out) begin
@@ -14116,7 +13489,7 @@ hw_kernel_global_wrapper_stencil_embarassing_bank_selector hw_kernel_global_wrap
         61:end_delay_wire_198 <= bank_61[addr59];
         62:end_delay_wire_198 <= bank_62[addr59];
         63:end_delay_wire_198 <= bank_63[addr59];
-        default: $finish(-1);
+        default:end_delay_wire_198 <= 327;
       endcase
     end
     if (op_hcompute_conv_stencil_9_read_ren_fsm_out) begin
@@ -14185,7 +13558,7 @@ hw_kernel_global_wrapper_stencil_embarassing_bank_selector hw_kernel_global_wrap
         61:end_delay_wire_199 <= bank_61[addr60];
         62:end_delay_wire_199 <= bank_62[addr60];
         63:end_delay_wire_199 <= bank_63[addr60];
-        default: $finish(-1);
+        default:end_delay_wire_199 <= 327;
       endcase
     end
     if (op_hcompute_conv_stencil_9_read_ren_fsm_out) begin
@@ -14254,7 +13627,7 @@ hw_kernel_global_wrapper_stencil_embarassing_bank_selector hw_kernel_global_wrap
         61:end_delay_wire_200 <= bank_61[addr61];
         62:end_delay_wire_200 <= bank_62[addr61];
         63:end_delay_wire_200 <= bank_63[addr61];
-        default: $finish(-1);
+        default:end_delay_wire_200 <= 327;
       endcase
     end
     if (op_hcompute_conv_stencil_9_read_ren_fsm_out) begin
@@ -14323,7 +13696,7 @@ hw_kernel_global_wrapper_stencil_embarassing_bank_selector hw_kernel_global_wrap
         61:end_delay_wire_201 <= bank_61[addr62];
         62:end_delay_wire_201 <= bank_62[addr62];
         63:end_delay_wire_201 <= bank_63[addr62];
-        default: $finish(-1);
+        default:end_delay_wire_201 <= 327;
       endcase
     end
     if (op_hcompute_conv_stencil_9_read_ren_fsm_out) begin
@@ -14392,7 +13765,7 @@ hw_kernel_global_wrapper_stencil_embarassing_bank_selector hw_kernel_global_wrap
         61:end_delay_wire_202 <= bank_61[addr63];
         62:end_delay_wire_202 <= bank_62[addr63];
         63:end_delay_wire_202 <= bank_63[addr63];
-        default: $finish(-1);
+        default:end_delay_wire_202 <= 327;
       endcase
     end
     if (op_hcompute_conv_stencil_9_read_ren_fsm_out) begin
@@ -14461,7 +13834,7 @@ hw_kernel_global_wrapper_stencil_embarassing_bank_selector hw_kernel_global_wrap
         61:end_delay_wire_203 <= bank_61[addr64];
         62:end_delay_wire_203 <= bank_62[addr64];
         63:end_delay_wire_203 <= bank_63[addr64];
-        default: $finish(-1);
+        default:end_delay_wire_203 <= 327;
       endcase
     end
   end
