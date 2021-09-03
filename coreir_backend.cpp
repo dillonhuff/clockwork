@@ -2319,6 +2319,13 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
         int starting_cycle = buf.starting_cycle();
         cout << starting_cycle << endl;
         if(starting_cycle == 0) {
+            //Take the output starting cycle instead of input latency
+            //auto out_sched = buf.global_outpt_sched();
+            //auto host2glb_latency = to_int(lexminval(to_set(range(out_sched))));
+            //cout << "Host to glb latency: " << host2glb_latency << endl;
+            //options.host2glb_latency =
+            //    min(options.host2glb_latency, host2glb_latency);
+
             auto in_sched = buf.global_inpt_sched();
             auto host2glb_latency = to_int(lexmaxval(to_set(range(in_sched))));
             cout << "Host to glb latency: " << host2glb_latency << endl;
@@ -3495,7 +3502,7 @@ void garnet_map_module(Module* top, bool garnet_syntax_trans = false) {
   jpass->writeToStream(file,top->getRefName());
 }
 
-void garnet_map_module(Module* top, map<string, UBuffer> & buffers, bool garnet_syntax_trans = false) {
+void garnet_map_module(CodegenOptions& options, Module* top, map<string, UBuffer> & buffers, bool garnet_syntax_trans = false) {
   auto c = top->getContext();
 
   top->print();
@@ -3517,6 +3524,9 @@ void garnet_map_module(Module* top, map<string, UBuffer> & buffers, bool garnet_
   auto glb_pass = new GetGLBConfig();
   c->addPass(glb_pass);
   c->runPasses({"getglbconfig"});
+  //override latency using the input
+  if (options.host2glb_latency != 0)
+     glb_pass->latency = options.host2glb_latency;
   cout << "Latency: " << glb_pass->latency << endl;
   for (auto it: glb_pass->glb2cgra)
     cout << "buf: "<< it.first << "\n\tglb2fabric: " << it.second  << endl;
@@ -3737,7 +3747,7 @@ void generate_coreir(CodegenOptions& options,
   auto ns_new = context->getNamespace("global");
   //Garnet pass
   if (options.rtl_options.use_prebuilt_memory) {
-    garnet_map_module(prg_mod, buffers, true);
+    garnet_map_module(options, prg_mod, buffers, true);
     context->runPasses({"rungenerators", "flatten", "removewires", "cullgraph"});
 
     if(!saveToFile(ns_new,  options.dir + prg.name+ "_garnet.json", prg_mod)) {
