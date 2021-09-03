@@ -3524,8 +3524,9 @@ void garnet_map_module(CodegenOptions& options, Module* top, map<string, UBuffer
   auto glb_pass = new GetGLBConfig();
   c->addPass(glb_pass);
   c->runPasses({"getglbconfig"});
-  //override latency using the input
-  if (options.host2glb_latency != 0)
+  //override latency using the input,
+  //FIXME: this hack will break stencil apps
+  if ((options.host2glb_latency != 0) && (glb_pass->latency != 0))
      glb_pass->latency = options.host2glb_latency;
   cout << "Latency: " << glb_pass->latency << endl;
   for (auto it: glb_pass->glb2cgra)
