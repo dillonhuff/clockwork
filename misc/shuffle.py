@@ -72,8 +72,10 @@ with open(input_file) as f:
             compressed_ext = np.asarray(compressed_ext)
             compressed_stride = np.asarray(compressed_stride)
             compressed_new_stride= np.asarray(compressed_new_stride)
-            print("compressed ext: ", compressed_ext)
-            print ("image size: ", img_size)
+            print ("\timage size: ", img_size)
+            print("\tcompressed ext: ", compressed_ext)
+            print("\tcompressed stride: ", compressed_stride)
+            print("\tcompressed new stride: ", compressed_new_stride)
 
             #create a dummy data now
             #TODO: should use a json file to save the input name
@@ -115,6 +117,9 @@ with open(input_file) as f:
                 nd_idx = np.asarray(index2vector(idx, compressed_ext))
                 origin_addr = nd_idx.dot(compressed_stride)
                 new_addr = nd_idx.dot(compressed_new_stride)
+                print(f"\tDEBUG: read {nd_idx} from {origin_addr} into {new_addr}")
+                if (origin_addr in access_addr_set):
+                    print(f"\t\t DEBUG: reuse address {origin_addr}, iter domain: {nd_idx}" )
                 access_addr_set.add(origin_addr)
                 assert(new_addr not in save_addr_set)
                 save_addr_set.add(new_addr)
@@ -125,6 +130,8 @@ with open(input_file) as f:
                 for addr in range(img_size):
                     assert(addr in addr_set)
 
+            print(f"data_org size: {data_org.size}")
+            print(f"data_shufflesize: {data_shuffle.size}")
             sanity_check_all_addr_visit(data_org.size, access_addr_set)
             sanity_check_all_addr_visit(data_shuffle.size, save_addr_set)
 
