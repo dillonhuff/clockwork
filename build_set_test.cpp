@@ -14869,7 +14869,7 @@ void generate_resnet_latency_experiment(prog& prg,
 void test_pond(string dir, bool run_verilator=true) {
   vector<prog> test_apps;
   //Need to change the schedule for vectorization
-  test_apps.push_back(complex_mem_pond_input());
+  //test_apps.push_back(complex_mem_pond_input());
 
   test_apps.push_back(complex_mem_pond());
   test_apps.push_back(complex_mem_pond_rolled());
@@ -15075,7 +15075,7 @@ void test_glb(bool gen_config_only, bool multi_accessor=false, string dir="aha_g
   //test_apps.push_back(resnet2_x_full());
 
   //GLB tests
-  //test_apps.push_back(unsharp_glb());
+  test_apps.push_back(unsharp_glb());
   test_apps.push_back(gaussian_glb2());
   test_apps.push_back(camera_pipeline_glb());
   test_apps.push_back(harris_glb2());
@@ -17926,18 +17926,23 @@ void adjust_coarse_grained_loop_delays_sequentially(schedule_info& sched, prog& 
                   coarse_pipeline_II.at(prod) + sched.op_offset_within_parent.at(prod_op));
       }
       //An optimization, if this the head of the graph, push it back
-      auto all_producers = get_producers(name, prg);
-      if ((producers.size() == 0) && (all_producers.size() == 0)) {
-
-        //max_delay = max_head_op_latency - head_op_latency.at(name);
-        //FIXME: this 784 is only for resnet
-        cout << "HACK: " << name << endl;
+      if (producers.size() == 0 ) {
         max_delay = max_head_op_latency - head_op_latency.at(name);
-        //TODO: save this delay
       }
-      else if ((producers.size() == 0) && (all_producers.size() != 0)) {
-        max_delay -= 785;
-      }
+
+      //TODO: this code is commented out, glb can only support 0 latency
+      //auto all_producers = get_producers(name, prg);
+      //if ((producers.size() == 0) && (all_producers.size() == 0)) {
+
+      //  //max_delay = max_head_op_latency - head_op_latency.at(name);
+      //  //FIXME: this 784 is only for resnet
+      //  cout << "HACK: " << name << endl;
+      //  max_delay = max_head_op_latency - head_op_latency.at(name);
+      //  //TODO: save this delay
+      //}
+      //else if ((producers.size() == 0) && (all_producers.size() != 0)) {
+      //  max_delay -= 785;
+      //}
 
       sched.op_offset_within_parent.at(lp) = max_delay;
       cout << tab(1) << "final delay of " << lp->name <<
@@ -27695,6 +27700,13 @@ int main(int argc, char** argv) {
     if (cmd == "glb-tests") {
       bool use_multi_accessor_tile = true;
       bool gen_config_only = false;
+      test_glb(gen_config_only, use_multi_accessor_tile, "aha_garnet_design_new");
+      return 0;
+    }
+
+    if (cmd == "glb-exp") {
+      bool use_multi_accessor_tile = true;
+      bool gen_config_only = true;
       test_glb(gen_config_only, use_multi_accessor_tile, "aha_garnet_design_new");
       return 0;
     }

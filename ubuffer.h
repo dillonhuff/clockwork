@@ -926,6 +926,7 @@ struct MemConnSch {
 };
 
 struct UBufferImpl;
+struct CyclicBankingImpl;
 
 class UBuffer {
 
@@ -1915,23 +1916,77 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
       }
     }
 
-    //ubuffer rewrite pass remove common-minimum stride
-void tighten_address_space() {
-    int cms = 0;
-    //Find the unrolling dimension
-    std::set<int> addr_need_tight;
-    for (auto it: access_map) {
-        auto am = to_map(it.second);
-        cout << str(am) << endl;
-        isl_set* addr_range = range(am);
-        int addr_dim = ::num_dims(addr_range);
-        for (int i = 0; i < addr_dim; i ++) {
-            if (stride_in_dim(addr_range, i) != 1)
-                addr_need_tight.insert(i);
+    //go through all port and tighten the iteartion domain
+    void tighten_iteration_domain() {
+        for (auto pt: get_all_ports()) {
+            auto dom = domain.at(pt);
+            vector<int> stride_vec;
+            int accumulated_stride = 1;
+            for (int dim = 0; dim < ::num_dims(dom); dim ++) {
+                int stride = stride_in_dim(dom, dim);
+                stride_vec.push_back(stride);
+                accumulated_stride *= stride;
+            }
+
+            if(accumulated_stride != 1) {
+                auto trans = get_domain_trans(dom, stride_vec);
+                cout << "Trans for iteration domain: " << str(trans) << endl;
+                access_map.at(pt) = dot(to_umap(trans), access_map.at(pt));
+                cout << str(access_map.at(pt)) << endl;
+                schedule.at(pt) = dot(to_umap(trans), schedule.at(pt));
+                domain.at(pt) = ::domain(to_map(access_map.at(pt)));
+            }
         }
     }
-    cout << "addr need tight: " << addr_need_tight << endl;
-    for (int addr_dim: addr_need_tight) {
+
+    std::set<int> get_unroll_dimensions() {
+      //Find the unrolling dimension
+      std::set<int> addr_need_tight;
+      for (auto it: access_map) {
+          auto am = to_map(it.second);
+          isl_set* addr_range = range(am);
+          int addr_dim = ::num_dims(addr_range);
+          for (int i = 0; i < addr_dim; i ++) {
+              if (stride_in_dim(addr_range, i) != 1)
+                  addr_need_tight.insert(i);
+          }
+      }
+      cout << "addr need tight: " << addr_need_tight << endl;
+      return addr_need_tight;
+    }
+
+
+    CyclicBankingImpl get_cyclic_banking_implement(UBufferImpl & impl);
+
+    //return a vector<int> size equals to dimension
+    vector<int> get_cyclic_banking_factors() {
+      vector<int> cyclic_banking_factors(num_dims(), 1);
+      std::set<int> addr_need_tight = get_unroll_dimensions();
+      for (int addr_dim: addr_need_tight) {
+        int cms_in = 0, cms_out = 0;
+        for (auto inpt: get_in_ports()) {
+            auto am = to_map(access_map.at(inpt));
+            cout << str(am) << endl;
+            cms_in = std::gcd(cms_in, common_max_stride(am, addr_dim));
+            cout << "cms in: " << cms_out << endl;
+        }
+        for (auto outpt: get_out_ports()) {
+            auto am = to_map(access_map.at(outpt));
+            cout << str(am) << endl;
+            cms_out = std::gcd(cms_out, common_max_stride(am, addr_dim));
+            cout << "cms out: " << cms_out << endl;
+        }
+        cyclic_banking_factors.at(addr_dim) = std::max(cms_in, cms_out);
+      }
+      cout << cyclic_banking_factors << endl;
+      return cyclic_banking_factors;
+    }
+
+    //ubuffer rewrite pass remove common-minimum stride
+void tighten_address_space() {
+    std::set<int> addr_need_tight = get_unroll_dimensions();
+    for(int addr_dim: addr_need_tight) {
+      int cms = 0;
       for (auto it: access_map) {
           auto am = to_map(it.second);
           cms = std::gcd(cms, common_max_stride(am, addr_dim));
@@ -3356,6 +3411,50 @@ struct EmbarrassingBankingImpl: public UBufferImpl {
     }
   }
 
+};
+
+struct CyclicBankingImpl:  public UBufferImpl {
+    vector<int> cyclic_banking_factor;
+    CyclicBankingImpl(UBufferImpl const & impl): UBufferImpl(impl) {}
+    CyclicBankingImpl(UBufferImpl const & impl, vector<int> const & cb_factor):
+        UBufferImpl(impl), cyclic_banking_factor(cb_factor) {}
+
+    int get_bank_num() const {
+    int bank_num = 1;
+    for (auto it: cyclic_banking_factor) {
+      bank_num *= it;
+    }
+    return bank_num;
+  }
+
+  isl_map* get_bank_map(UBuffer& buf) const {
+  //iteration domain to bank id
+    vector<string> dvs;
+    vector<string> addrs;
+    int bank_stride = 1;
+    for (int i = 0; i < cyclic_banking_factor.size(); i++) {
+      assert(cyclic_banking_factor.at(i) > 0);
+      dvs.push_back("a_" + str(i));
+      addrs.push_back("(a_" + str(i) + " % " +
+              str(cyclic_banking_factor.at(i)) + ")*" + str(bank_stride) );
+      bank_stride *= cyclic_banking_factor.at(i);
+    }
+
+    string bank_func =
+      curlies(buf.buf_range_name() + bracket_list(dvs) + " -> Bank" + sep_list(addrs, "[", "]", "+"));
+
+    //bank map: from address to the bank ID
+    cout << "bank func = " << bank_func << endl;
+    auto bank_map = isl_map_read_from_str(buf.ctx, bank_func.c_str());
+    return bank_map;
+  }
+
+  void print_info(std::ostream& out) const {
+
+    UBufferImpl::print_info(out);
+    out << "==========Embarrassing Banking ============" << endl;
+    out << "cyclic_banking_factor: " << cyclic_banking_factor << endl;
+  }
 };
 
 std::ostream& operator<<(std::ostream& out, dgraph& dg);

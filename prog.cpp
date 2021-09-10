@@ -8237,7 +8237,7 @@ void generate_banks_garnet(CodegenOptions& options, UBuffer& buf, UBufferImpl& i
           //TODO potential bug for multi bank with broad casting case
           //TODO bank is not a good intermediate representation and contains too much internal data
           //     use buffer impl then
-          if ((bank_IO_pair.first.size() == 1) && (bank_IO_pair.second.size() == 1)){
+          if ((bank_IO_pair.first.size() == 1) && (bank_IO_pair.second.size() == 1)) {
             string inpt = pick(bank_IO_pair.first);
             string outpt = pick(bank_IO_pair.second);
             maybe<int> delay_info = buf.dependence_distance_max(inpt, outpt);
@@ -8274,6 +8274,42 @@ void generate_banks_garnet(CodegenOptions& options, UBuffer& buf, UBufferImpl& i
         //    buf.add_bank_between(input_sets, output_sets, bnk_info);
         //}
       }
+    }
+    else if (auto bank_impl = buf.get_cyclic_banking_implement(impl);
+                bank_impl.get_bank_num() > 1) {
+                //false) {
+        isl_map* bank_partition_map = bank_impl.get_bank_map(buf);
+        for (int b = 0; b < bank_impl.get_bank_num(); b++) {
+          isl_set* bnk = isl_set_read_from_str(buf.ctx, curlies("Bank[" + str(b) + "]").c_str());
+          //This is rddom
+          isl_set* accesses_to_bank =::domain( its_range(bank_partition_map, bnk));
+          cout << "rddom: " << str(accesses_to_bank) << endl;
+
+          //Add port
+          for (auto pt : buf.get_all_ports()) {
+            assert(!empty(bnk));
+
+            //cout << "am: " << str(buf.access_map.at(pt)) << endl;
+            isl_map* bnk_map = its_range(to_map(buf.access_map.at(pt)), accesses_to_bank);
+            //cout << "bank map: " << str(bnk_map) << endl;
+            if (!empty(bnk_map)) {
+              if (buf.is_out_pt(pt)) {
+                impl.bank_readers[b].insert(pt);
+                impl.outpt_to_bank[pt].insert(b);
+              } else {
+                impl.bank_writers[b].insert(pt);
+                impl.inpt_to_bank[pt].insert(b);
+              }
+            }
+          }
+          cout << "ADD BANK!\n Bank id: " << b << endl;
+          std::set<string> input_sets = impl.bank_writers.at(b);
+          std::set<string> output_sets = impl.bank_readers.at(b);
+          auto bank_IOs = buf.port_grouping(options, impl,
+                  to_uset(accesses_to_bank),
+                  input_sets, output_sets);
+        }
+        cout << impl << endl;
     }
     //FIXME: ASPLOSHACK
     //This is a hack , we do not know which hierarchy of memory to map at this point

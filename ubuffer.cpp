@@ -3159,6 +3159,10 @@ void UBuffer::generate_coreir(CodegenOptions& options,
     auto bank_id = it.first;
     UBuffer target_buf = generate_ubuffer(impl, info, bank_id);
 
+    //This is used for tighten the cyclic banking space
+    target_buf.tighten_iteration_domain();
+    target_buf.tighten_address_space();
+
     //An optimization for coarse grained pipeline, save the iterator level
     //CoreIR::Instance* cgpl_ctrl;
     //bool decouple_ctrl = cgpl_ctrl_optimization(options, def, cgpl_ctrl, target_buf);
@@ -6265,6 +6269,12 @@ void UBuffer::generate_banks(CodegenOptions& options) {
 
       }
     }
+  }
+
+  CyclicBankingImpl UBuffer::get_cyclic_banking_implement(UBufferImpl & impl) {
+    vector<int> cb_factor = get_cyclic_banking_factors();
+    CyclicBankingImpl bank_impl(impl, cb_factor);
+    return bank_impl;
   }
 
   void UBuffer::parse_exhaustive_banking_into_impl(UBufferImpl & impl) {
