@@ -279,14 +279,26 @@
           ["blur_unnormalized_stencil_clkwrk_dsa6_op_hcompute_blur_unnormalized_stencil_write",["Array",1,["Array",16,"Bit"]]]
         ]],
         "instances":{
-          "inner_compute$const_p0__427":{
+          "PE_init_U59":{
+            "genref":"cgralib.PE",
+            "genargs":{"numbitports":["Int",3], "numdataports":["Int",2], "op_kind":["String","alu"], "width":["Int",16]},
+            "modargs":{"alu_op":["String","add"], "data0_mode":["String","BYPASS"], "data0_value":[["BitVector",16],"16'h0000"], "data1_mode":["String","BYPASS"], "data1_value":[["BitVector",16],"16'h0000"], "signed":["Bool",false]}
+          },
+          "_U57":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0000"]}
+          },
+          "_U58":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
             "modargs":{"value":[["BitVector",16],"16'h0000"]}
           }
         },
         "connections":[
-          ["self.blur_unnormalized_stencil_clkwrk_dsa6_op_hcompute_blur_unnormalized_stencil_write.0","inner_compute$const_p0__427.out"],
+          ["_U57.out","PE_init_U59.data.in.0"],
+          ["_U58.out","PE_init_U59.data.in.1"],
+          ["self.blur_unnormalized_stencil_clkwrk_dsa6_op_hcompute_blur_unnormalized_stencil_write.0","PE_init_U59.data.out"],
           ["self.valid_pass_out","self.valid_pass_in"]
         ]
       },
@@ -1440,14 +1452,26 @@
           ["out_blur_unnormalized_stencil",["Array",16,"Bit"]]
         ]],
         "instances":{
-          "const_p0__427":{
+          "PE_init_U62":{
+            "genref":"cgralib.PE",
+            "genargs":{"numbitports":["Int",3], "numdataports":["Int",2], "op_kind":["String","alu"], "width":["Int",16]},
+            "modargs":{"alu_op":["String","add"], "data0_mode":["String","BYPASS"], "data0_value":[["BitVector",16],"16'h0000"], "data1_mode":["String","BYPASS"], "data1_value":[["BitVector",16],"16'h0000"], "signed":["Bool",false]}
+          },
+          "_U60":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0000"]}
+          },
+          "_U61":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
             "modargs":{"value":[["BitVector",16],"16'h0000"]}
           }
         },
         "connections":[
-          ["self.out_blur_unnormalized_stencil","const_p0__427.out"]
+          ["_U60.out","PE_init_U62.data.in.0"],
+          ["_U61.out","PE_init_U62.data.in.1"],
+          ["self.out_blur_unnormalized_stencil","PE_init_U62.data.out"]
         ]
       },
       "hcompute_blur_unnormalized_stencil_1":{
