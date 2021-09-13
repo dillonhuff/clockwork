@@ -21,6 +21,7 @@ prog gaussian(); //stencil
 prog harris(); //stencil
 prog harris_remove(); //manually edit
 prog pointwise(); //point
+prog pointwise_conv(); //use for buffet test
 prog brighten_blur(); //stencil
 prog halide_harris();
 prog conv_3_3(); //stencil

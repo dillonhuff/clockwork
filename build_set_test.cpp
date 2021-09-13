@@ -19881,6 +19881,11 @@ void fpga_asplos_tests() {
   }
 }
 
+void buffet_tests() {
+  vector<prog> buffet_test_programs = {pointwise_conv()};
+  test_codegen(buffet_test_programs, compile_for_CGRA_M1_mem);
+}
+
 void cgra_flow_tests() {
 
   vector<prog> M3_test_programs = isca_programs();
@@ -27621,6 +27626,11 @@ int main(int argc, char** argv) {
 
     if (cmd == "cgra-flow") {
       cgra_flow_tests();
+      return 0;
+    }
+
+    if (cmd == "buffet-flow") {
+      buffet_tests();
       return 0;
     }
 
