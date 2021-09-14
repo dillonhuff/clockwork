@@ -68,6 +68,7 @@ enum TargetTile {
   TARGET_TILE_PLATONIC,
   TARGET_TILE_GENERIC_SRAM,
   TARGET_TILE_BRAM,
+  TARGET_TILE_BUFFET,
   TARGET_TILE_M3,
   TARGET_TILE_M1
 };
@@ -80,6 +81,7 @@ struct global_signals_policy {
 
 struct RTLOptions {
   bool use_external_controllers;
+  bool has_ready;
   bool pack_controllers_in_memtiles;
   bool use_prebuilt_memory;
   bool use_pipelined_compute_units;
@@ -89,7 +91,7 @@ struct RTLOptions {
   global_signals_policy global_signals;
   int hls_clock_target_Hz;
 
-  RTLOptions() : use_external_controllers(true), pack_controllers_in_memtiles(false),
+  RTLOptions() : use_external_controllers(true), has_ready(false), pack_controllers_in_memtiles(false),
   use_pipelined_compute_units(false), double_buffer_optimization(false),
     max_inpt(1), max_outpt(1),
     target_tile(TARGET_TILE_DUAL_SRAM_WITH_ADDRGEN), use_prebuilt_memory(false),

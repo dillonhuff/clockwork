@@ -19018,6 +19018,16 @@ CodegenOptions CGRA_M1_codegen_options(prog& prg) {
   return options;
 }
 
+CodegenOptions Buffet_codegen_options(prog& prg) {
+  CodegenOptions options;
+  options.rtl_options.use_external_controllers = true;
+  options.rtl_options.has_ready= true;
+  options.rtl_options.target_tile =
+    TARGET_TILE_BUFFET;
+  all_unbanked(prg, options);
+  return options;
+}
+
 CodegenOptions CGRA_M3_codegen_options(prog& prg) {
   CodegenOptions options;
   options.rtl_options.use_external_controllers = true;
@@ -19106,6 +19116,12 @@ void compile_for_generic_SRAM_mem(prog& prg) {
 
 void compile_for_CGRA_M1_mem(prog& prg) {
   auto options = CGRA_M1_codegen_options(prg);
+  schedule_info sched = garnet_schedule_info(options, prg);
+  compile_cycle_accurate_hw(options, sched, prg);
+}
+
+void compile_for_Buffet(prog& prg) {
+  auto options = Buffet_codegen_options(prg);
   schedule_info sched = garnet_schedule_info(options, prg);
   compile_cycle_accurate_hw(options, sched, prg);
 }
@@ -19883,7 +19899,7 @@ void fpga_asplos_tests() {
 
 void buffet_tests() {
   vector<prog> buffet_test_programs = {pointwise_conv()};
-  test_codegen(buffet_test_programs, compile_for_CGRA_M1_mem);
+  test_codegen(buffet_test_programs, compile_for_Buffet);
 }
 
 void cgra_flow_tests() {

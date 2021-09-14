@@ -822,6 +822,7 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
   }
 }
 
+//COREIR codegen for single ubuffer
 CoreIR::Module* generate_coreir(CodegenOptions& options, CoreIR::Context* context, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
   auto ns = context->getNamespace("global");
 
@@ -850,6 +851,9 @@ CoreIR::Module* generate_coreir(CodegenOptions& options, CoreIR::Context* contex
       } else if (options.rtl_options.use_external_controllers) {
         ub_field.push_back(make_pair(name + "_ren", context->BitIn()));
         ub_field.push_back(make_pair(name + "_ctrl_vars", context->BitIn()->Arr(CONTROLPATH_WIDTH)->Arr(control_dimension)));
+        if (options.rtl_options.has_ready) {
+            ub_field.push_back(make_pair(name + "_rready", context->Bit()));
+        }
       }
       ub_field.push_back(make_pair(name, context->Bit()->Arr(pt_width)->Arr(bd_width)));
     }
@@ -1343,9 +1347,18 @@ std::string read_start_name(const std::string& n) {
   return n + "_read_start";
 }
 
+std::string read_ready_name(const std::string& n) {
+  return n + "_read_ready";
+}
+
 std::string write_start_name(const std::string& n) {
   return n + "_write_start";
 }
+
+std::string write_ready_name(const std::string& n) {
+  return n + "_write_ready";
+}
+
 std::string cu_name(const std::string& n) {
   return "cu_" + n;
 }
@@ -1671,6 +1684,15 @@ Wireable* write_start_wire(ModuleDef* def, const std::string& opname) {
   return def->sel(write_start_name(opname))->sel("out");
 }
 
+//Although it called out but it's the input port
+Wireable* write_ready_wire(ModuleDef* def, const std::string& opname) {
+  return def->sel(write_ready_name(opname))->sel("out");
+}
+
+Wireable* read_ready_wire(ModuleDef* def, const std::string& opname) {
+  return def->sel(read_ready_name(opname))->sel("out");
+}
+
 void connect_op_control_wires(CodegenOptions& options, ModuleDef* def, op* op, schedule_info& hwinfo, Instance* controller) {
   cout << "Find compute" << endl;
   //int op_latency = dbhc::map_find(op->name, hwinfo.op_compute_unit_latencies);
@@ -1687,7 +1709,15 @@ void connect_op_control_wires(CodegenOptions& options, ModuleDef* def, op* op, s
     Wireable* op_start_wire = controller->sel("valid");
     Wireable* op_start_loop_vars = controller->sel("d");
     if (!options.rtl_options.use_external_controllers) {
-        def->connect(controller->sel("rst_n"), def->sel("self.reset"));
+      def->connect(controller->sel("rst_n"), def->sel("self.reset"));
+    }
+
+    //Only need to create read ready wire
+    if (options.rtl_options.has_ready) {
+      //TODO: Delay by 0 work here, it just create a wrapper for wire name matching
+      Wireable* op_ready_wire = controller->sel("ready");
+      Wireable* read_ready_wire =
+        delay_by(def, read_ready_name(op->name), op_ready_wire, 0);
     }
 
     cout << "Delaying read" << endl;
@@ -2077,6 +2107,10 @@ Instance* generate_coreir_op_controller(CodegenOptions& options, ModuleDef* def,
     auto aff_c = affine_controller(options, c, dom, aff);
     aff_c->print();
     controller = def->addInstance(controller_name(op->name), aff_c);
+    if (options.rtl_options.has_ready) {
+        //TODO: duplicate affine controller for each ubuffer
+        assert(op->buffers_read().size() <= 1);
+    }
 
   } else if (to_int(const_coeff(aff)) >= options.mem_hierarchy.at("mem").counter_ub) {
 
@@ -2543,6 +2577,7 @@ void instantiate_controllers(CodegenOptions& options,
 
 }
 
+//CoreIR codegen for whole application
 CoreIR::Module* generate_coreir(CodegenOptions& options,
     map<string, UBuffer>& buffers,
     prog& prg,
@@ -2635,6 +2670,10 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
               write_start_wire(def, op->name));
           def->connect(def->sel(buf_name + "." + bundle_name + "_ctrl_vars"),
               write_start_control_vars(def, op->name));
+          //if (options.rtl_options.has_ready) {
+          //  def->connect(def->sel(buf_name + "." + bundle_name + "_wready"),
+          //      write_ready_wire(def, op->name))
+          //}
         }
 
         def->connect(buf_name + "." + bundle_name, op->name + "." + pg(buf_name, bundle_name));
@@ -2668,6 +2707,10 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
               read_start_wire(def, op->name));
           def->connect(def->sel(buf_name + "." + bundle_name + "_ctrl_vars"),
               read_start_control_vars(def, op->name));
+          if (options.rtl_options.has_ready) {
+            def->connect(def->sel(buf_name + "." + bundle_name + "_rready"),
+                read_ready_wire(def, op->name));
+          }
         }
 
         def->connect(buf_name + "." + bundle_name, op->name + "." + pg(buf_name, bundle_name));
@@ -4287,6 +4330,9 @@ CoreIR::Module* affine_controller_primitive(CodegenOptions& options, CoreIR::Con
   if (options.rtl_options.use_prebuilt_memory) {
     ub_field.push_back({"rst_n", c->BitIn()});
   }
+  if (options.rtl_options.has_ready) {
+    ub_field.push_back({"ready", c->BitIn()});
+  }
 
   CoreIR::RecordType* utp = context->Record(ub_field);
   auto m = ns->newModuleDecl("affine_controller_" + context->getUnique(), utp);
@@ -4298,16 +4344,59 @@ CoreIR::Module* affine_controller_primitive(CodegenOptions& options, CoreIR::Con
       "coreir.const",
       {{"width", CoreIR::Const::make(c, width)}},
       {{"value", CoreIR::Const::make(c, BitVector(width, 1))}});
+  auto zero = def->addInstance(context->getUnique(),
+      "coreir.const",
+      {{"width", CoreIR::Const::make(c, width)}},
+      {{"value", CoreIR::Const::make(c, BitVector(width, 0))}});
+
 
   auto tinc = def->addInstance("true",
     "corebit.const",
     {{"value", CoreIR::Const::make(c, true)}});
 
   CoreIR::Wireable* cycle_time_reg;
+  CoreIR::Instance* cmp;
   if (options.rtl_options.use_prebuilt_memory) {
     cycle_time_reg = build_counter(def, "cycle_time", width, 0, (unsigned int)(pow(2, width-1)-1), 1);
     def->connect(cycle_time_reg->sel("reset"), def->sel("self.rst_n"));
     def->connect(cycle_time_reg->sel("en"), tinc->sel("out"));
+
+    auto diff = def->addInstance("time_diff", "coreir.sub", {{"width", CoreIR::Const::make(c, width)}});
+    def->connect(cycle_time_reg->sel("out"), diff->sel("in1"));
+    def->connect(aff_func->sel("out"), diff->sel("in0"));
+
+    cmp = def->addInstance("cmp_time", "coreir.eq", {{"width", CoreIR::Const::make(c, width)}});
+    def->connect(cmp->sel("in0"), diff->sel("out"));
+    def->connect(cmp->sel("in1"), zero->sel("out"));
+    def->connect(cmp->sel("out"), def->sel("self")->sel("valid"));
+  } else if (options.rtl_options.has_ready) {
+    cycle_time_reg = def->addInstance("cycle_time", "mantle.reg",
+        {{"width", CoreIR::Const::make(context, width)},
+        {"has_en", CoreIR::Const::make(context, false)}});
+
+    auto diff = def->addInstance("time_diff", "coreir.sub", {{"width", CoreIR::Const::make(c, width)}});
+    def->connect(cycle_time_reg->sel("out"), diff->sel("in1"));
+    def->connect(aff_func->sel("out"), diff->sel("in0"));
+
+    cmp = def->addInstance("cmp_time", "coreir.eq", {{"width", CoreIR::Const::make(c, width)}});
+    def->connect(cmp->sel("in0"), diff->sel("out"));
+    def->connect(cmp->sel("in1"), zero->sel("out"));
+    def->connect(cmp->sel("out"), def->sel("self")->sel("valid"));
+
+    //ADD a mux to choose 0 or 1, if ready == 0, do not inc local counter
+    auto inc_val= def->addInstance("inc_time_value", "coreir.mux", {{"width", CoreIR::Const::make(c, width)}});
+    auto inv_ready = def->addInstance("readyInvert", "corebit.not");
+    def->connect("self.ready", "readyInvert.in");
+    def->connect(inc_val->sel("sel"),
+            andList(def, {cmp->sel("out"), inv_ready->sel("out")}));
+    def->connect(inc_val->sel("in0"), zero->sel("out"));
+    def->connect(inc_val->sel("in1"), one->sel("out"));
+
+    auto inc_time = def->addInstance("inc_time", "coreir.add", {{"width", CoreIR::Const::make(c, width)}});
+    def->connect(inc_time->sel("in0"), cycle_time_reg->sel("out"));
+    def->connect(inc_time->sel("in1"), inc_val->sel("out"));
+    def->connect(inc_time->sel("out"), cycle_time_reg->sel("in"));
+
   } else {
     cycle_time_reg = def->addInstance("cycle_time", "mantle.reg",
         {{"width", CoreIR::Const::make(context, width)},
@@ -4317,21 +4406,17 @@ CoreIR::Module* affine_controller_primitive(CodegenOptions& options, CoreIR::Con
     def->connect(inc_time->sel("in0"), cycle_time_reg->sel("out"));
     def->connect(inc_time->sel("in1"), one->sel("out"));
     def->connect(inc_time->sel("out"), cycle_time_reg->sel("in"));
+
+    auto diff = def->addInstance("time_diff", "coreir.sub", {{"width", CoreIR::Const::make(c, width)}});
+    def->connect(cycle_time_reg->sel("out"), diff->sel("in1"));
+    def->connect(aff_func->sel("out"), diff->sel("in0"));
+
+    cmp = def->addInstance("cmp_time", "coreir.eq", {{"width", CoreIR::Const::make(c, width)}});
+    def->connect(cmp->sel("in0"), diff->sel("out"));
+    def->connect(cmp->sel("in1"), zero->sel("out"));
+    def->connect(cmp->sel("out"), def->sel("self")->sel("valid"));
   }
 
-  auto diff = def->addInstance("time_diff", "coreir.sub", {{"width", CoreIR::Const::make(c, width)}});
-  def->connect(cycle_time_reg->sel("out"), diff->sel("in1"));
-  def->connect(aff_func->sel("out"), diff->sel("in0"));
-
-  auto zero = def->addInstance(context->getUnique(),
-      "coreir.const",
-      {{"width", CoreIR::Const::make(c, width)}},
-      {{"value", CoreIR::Const::make(c, BitVector(width, 0))}});
-
-  auto cmp = def->addInstance("cmp_time", "coreir.eq", {{"width", CoreIR::Const::make(c, width)}});
-  def->connect(cmp->sel("in0"), diff->sel("out"));
-  def->connect(cmp->sel("in1"), zero->sel("out"));
-  def->connect(cmp->sel("out"), def->sel("self")->sel("valid"));
 
   vector<CoreIR::Instance*> domain_regs;
   vector<CoreIR::Wireable*> domain_at_max;
