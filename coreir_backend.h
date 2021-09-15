@@ -178,11 +178,18 @@ CoreIR::Wireable* control_vars(CoreIR::ModuleDef* def, const std::string& reader
 
 CoreIR::Wireable* control_en(CoreIR::ModuleDef* def, const std::string& reader, UBuffer& buf);
 
+//Towards ready valid
+CoreIR::Wireable* control_ready(CoreIR::ModuleDef* def, const std::string& reader, UBuffer& buf);
+
 CoreIR::Instance* build_bank_selector(const std::string& reader, UBuffer& buf, const EmbarrassingBankingImpl& impl, CoreIR::ModuleDef* def);
 
+//Helper function for get inner bank offset
+isl_map* get_inner_bank_access_map(const std::string& reader, UBuffer & buf, const EmbarrassingBankingImpl& impl);
 CoreIR::Instance* build_inner_bank_offset(const std::string& reader, UBuffer& buf, const EmbarrassingBankingImpl& impl, CoreIR::ModuleDef* def);
 
 std::set<string> generate_M1_shift_registers(CodegenOptions& options, CoreIR::ModuleDef* def, prog& prg, UBuffer& buf, schedule_info& hwinfo);
+void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& prg, UBuffer& orig_buf, schedule_info& hwinfo);
+void generate_Buffet_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& prg, UBuffer& orig_buf, schedule_info& hwinfo);
 
 void instantiate_M1_verilog(const std::string& long_name, const int b, const UBufferImpl& impl, UBuffer& buf);
 

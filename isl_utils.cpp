@@ -4315,6 +4315,20 @@ isl_map* merge_domain_dim(isl_map* m) {
     return mm;
 }
 
+bool check_contigous_access(isl_map* m) {
+    assert(num_out_dims(m) == 1);
+    auto merge_m = remove_irrelevant_in_dim(merge_domain_dim(m));
+    cout << "After flatten: " << str(merge_m) << endl;
+    int in_dim = num_in_dims(merge_m);
+    if (in_dim > 2)
+        return false;
+    int stride = stride_in_dim(merge_m, 1);
+    if (stride != 1)
+        return false;
+    else
+        return true;;
+}
+
 int get_inner_most_related_dom_dim(isl_map* m) {
   vector<bool> rel_dim = relation_map(m);
   for (auto it = rel_dim.rbegin(); it < rel_dim.rend(); it ++) {

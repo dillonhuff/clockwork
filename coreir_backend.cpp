@@ -604,7 +604,6 @@ int wire_width(CoreIR::Wireable* w) {
   assert(false);
 }
 
-void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& prg, UBuffer& orig_buf, schedule_info& hwinfo);
 
 Wireable* mkOneHot(ModuleDef* def, vector<Wireable*>& conds, vector<Wireable*>& vals) {
   assert(vals.size() == conds.size());
@@ -873,6 +872,8 @@ CoreIR::Module* generate_coreir(CodegenOptions& options, CoreIR::Context* contex
     generate_M3_coreir(options, def, prg, buf, hwinfo);
   } else if (options.rtl_options.target_tile == TARGET_TILE_M1) {
     generate_M1_coreir(options, def, prg, buf, hwinfo);
+  } else if (options.rtl_options.target_tile == TARGET_TILE_BUFFET) {
+    generate_Buffet_coreir(options, def, prg, buf, hwinfo);
   } else {
     generate_synthesizable_functional_model(options, buf, def, hwinfo);
   }
@@ -1499,6 +1500,47 @@ void connect_signal(const std::string& signal, CoreIR::Module* m) {
   }
 }
 
+CoreIR::Module* generate_flow_control(CoreIR::Context* context, int in_num, int out_num) {
+  auto ns = context->getNamespace("global");
+
+  //This is a combinational circuit
+  vector<pair<string, CoreIR::Type*> > ub_field = {};
+  for(int i = 0; i < in_num; i ++) {
+    ub_field.push_back({"valid_in_" + to_string(i) , context->BitIn()});
+    ub_field.push_back({"ready_in_" + to_string(i), context->Bit()});
+  }
+  for(int i = 0; i < out_num; i ++) {
+    ub_field.push_back({"valid_out_" + to_string(i) , context->Bit()});
+    ub_field.push_back({"ready_out_" + to_string(i), context->BitIn()});
+  }
+  CoreIR::RecordType* utp = context->Record(ub_field);
+  auto ctrl_unit=
+    ns->newModuleDecl("flow_ctrl_" + context->getUnique(), utp);
+
+  auto def = ctrl_unit->newModuleDef();
+  vector<CoreIR::Wireable*> valid_in_vec, ready_out_vec;
+  for (int i = 0; i < in_num; i ++) {
+    valid_in_vec.push_back(def->sel("self")->sel("valid_in_"+str(i)));
+  }
+  for (int i = 0; i < out_num; i ++) {
+    ready_out_vec.push_back(def->sel("self")->sel("ready_out_"+str(i)));
+  }
+
+  //Wire the valid out
+  auto valid_out = andList(def, valid_in_vec);
+  for (int i = 0; i < out_num; i ++) {
+    def->connect(valid_out, def->sel("self.valid_out_"+str(i)));
+  }
+
+  ready_out_vec.push_back(valid_out);
+  auto ready_in = andList(def, ready_out_vec);
+  for (int i = 0; i < in_num; i ++) {
+    def->connect(ready_in, def->sel("self.ready_in_"+str(i)));
+  }
+
+  return ctrl_unit;
+}
+
 void generate_coreir_compute_unit(CodegenOptions& options, bool found_compute,
         CoreIR::ModuleDef* def, op* op, prog& prg, map<string, UBuffer>& buffers, schedule_info& hwinfo) {
   auto context = def->getContext();
@@ -1527,6 +1569,10 @@ void generate_coreir_compute_unit(CodegenOptions& options, bool found_compute,
 
     assert(buf.is_output_bundle(bundle.second));
     ub_field.push_back(make_pair(buf_name + "_" + bundle_name, context->BitIn()->Arr(pixel_width)->Arr(pix_per_burst)));
+    if (options.rtl_options.has_ready) {
+        ub_field.push_back(make_pair(pg(buf_name, bundle_name + "_ready"), context->Bit()));
+        ub_field.push_back(make_pair(pg(buf_name, bundle_name + "_valid"), context->BitIn()));
+    }
   }
 
   for (pair<string, string> bundle : outgoing_bundles(op, buffers, prg)) {
@@ -1539,18 +1585,51 @@ void generate_coreir_compute_unit(CodegenOptions& options, bool found_compute,
 
     assert(buf.is_input_bundle(bundle.second));
     ub_field.push_back(make_pair(buf_name + "_" + bundle_name, context->Bit()->Arr(pixel_width)->Arr(pix_per_burst)));
+    if (options.rtl_options.has_ready) {
+        ub_field.push_back(make_pair(pg(buf_name, bundle_name + "_ready"), context->BitIn()));
+        ub_field.push_back(make_pair(pg(buf_name, bundle_name + "_valid"), context->Bit()));
+    }
   }
 
   CoreIR::RecordType* utp = context->Record(ub_field);
   auto compute_unit =
     ns->newModuleDecl(cu_name(op->name), utp);
 
+
   {
     auto def = compute_unit->newModuleDef();
+    //TODO: remove valid pass through
     if (options.pass_through_valid) {
-      //TODO: check the computation kernel delay
       def->connect(def->sel("self.valid_pass_in"), def->sel("self.valid_pass_out"));
     }
+    //TODO: check the computation kernel delay
+    if(options.rtl_options.has_ready) {
+      int in_bd_size = outgoing_bundles(op, buffers, prg).size();
+      int out_bd_size = incoming_bundles(op, buffers, prg).size();
+      //Add the ready valid control circuit
+
+      auto ctrl_mod = generate_flow_control(def->getContext(), in_bd_size, out_bd_size);
+      auto fork_join_ctrl = def->addInstance(op->name + "_flow_ctrl", ctrl_mod);
+      int count = 0;
+      //Output/read port
+      for (pair<string, string> bundle : outgoing_bundles(op, buffers, prg)) {
+        string buf_name = bundle.first;
+        string bundle_name = bundle.second;
+        def->connect(def->sel("self." + pg(buf_name, bundle_name) + "_valid"), fork_join_ctrl->sel("valid_out_"+str(count)));
+        def->connect(def->sel("self." + pg(buf_name, bundle_name) + "_ready"), fork_join_ctrl->sel("ready_out_"+str(count)));
+        count ++;
+      }
+      count = 0;
+      //input read port
+      for (pair<string, string> bundle : incoming_bundles(op, buffers, prg)) {
+        string buf_name = bundle.first;
+        string bundle_name = bundle.second;
+        def->connect(def->sel("self." + pg(buf_name, bundle_name) + "_valid"), fork_join_ctrl->sel("valid_in_"+str(count)));
+        def->connect(def->sel("self." + pg(buf_name, bundle_name) + "_ready"), fork_join_ctrl->sel("ready_in_"+str(count)));
+        count ++;
+      }
+    }
+
     if (found_compute) {
       cout << "Found compute file for " << prg.name << endl;
       Instance* halide_cu = nullptr;
@@ -6041,6 +6120,246 @@ void instantiate_M1_verilog(const std::string& long_name, const int b, const UBu
     *verilog_collateral_file << "endmodule" << endl << endl;
 }
 
+void generate_Buffet_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& prg, UBuffer& orig_buf, schedule_info& hwinfo) {
+
+  CoreIR::Context* c = def->getContext();
+  for (auto out : orig_buf.get_out_ports()) {
+    auto w = def->addInstance(out + "_net", "coreir.wire", {{"width", COREMK(c, 16)}});
+    def->connect(
+        w->sel("out"),
+        def->sel("self." + orig_buf.container_bundle(out) + "." + str(orig_buf.bundle_offset(out))));
+  }
+
+  std::set<string> done_outpt = generate_M1_shift_registers(options, def, prg, orig_buf, hwinfo);
+
+  UBuffer buf = delete_ports(done_outpt, orig_buf);
+
+  if (buf.num_out_ports() > 0) {
+    auto implm = build_buffer_impl(prg, buf, hwinfo);
+    auto impl = implm.first;
+
+    int num_banks = 1;
+    for (auto ent : impl.partitioned_dimension_extents) {
+      num_banks *= ent.second;
+    }
+
+    M1_sanity_check_port_counts(impl);
+
+    map<int, std::set<string> > bank_readers = impl.bank_readers;
+    map<int, std::set<string> > bank_writers = impl.bank_writers;
+    map<string, std::set<int>> outpt_to_bank = impl.outpt_to_bank;
+    map<string, std::set<int>> inpt_to_bank = impl.inpt_to_bank;
+
+    string chain_pt = "";
+    for (auto pt: outpt_to_bank)
+    {
+      if(pt.second.size() > 1) {
+        assert(chain_pt == "");
+        chain_pt = pt.first;
+        cout << pt.first << " needs chaining" << endl;
+      }
+    }
+
+    Select* one = def->addInstance("one_cst", "corebit.const", {{"value", COREMK(c, true)}})->sel("out");
+    Select* zero = def->addInstance("zero_cst", "corebit.const", {{"value", COREMK(c, false)}})->sel("out");
+
+    map<int, Instance*> bank_map;
+    for (int b = 0; b < num_banks; b++) {
+
+      //create buffet instance
+      Values tile_params{{"data_width", COREMK(c, 16)},
+        {"ID", COREMK(c, buf.name + "_" + str(b))},
+        {"idx_width",COREMK(c,16)}};
+
+      CoreIR::Instance * currbank = def->addInstance("bank_" + str(b), "cgralib.Buffet", tile_params);
+
+      /*if (chain_pt != "") {
+        def->connect(currbank->sel("chain_chain_en"),one);
+      } else {
+        def->connect(currbank->sel("chain_chain_en"),zero);
+      }*/
+
+      //instantiate_M1_verilog(currbank->getModuleRef()->getLongName(), b, impl, buf);
+      bank_map[b] = currbank;
+      def->connect(currbank->sel("nreset_i"),def->sel("self.rst_n"));
+    }
+
+    map<string, Instance*> ubuffer_port_agens;
+    map<string, Wireable*> ubuffer_port_bank_selectors;
+    for (auto pt : buf.get_all_ports()) {
+      if (buf.is_in_pt(pt)) {
+        auto adjusted_buf = write_latency_adjusted_buffer(options, prg, buf, hwinfo);
+        auto acc_map_inner_bank = get_inner_bank_access_map(pt, adjusted_buf, impl);
+        assert(check_contigous_access(acc_map_inner_bank));
+
+        //DO not generated agen , only check access pattern is linear
+        //auto agen = build_inner_bank_offset(pt, adjusted_buf, impl, def);
+        //def->connect(agen->sel("d"),
+        //    control_vars(def, pt, adjusted_buf));
+        //ubuffer_port_agens[pt] = agen;
+
+        //Broad cast this bank into multiple buffet
+        if (impl.inpt_to_bank[pt].size() > 1) {
+          assert(false);
+          //auto bank_sel = build_bank_selector(pt, adjusted_buf, impl, def);
+          //def->connect(bank_sel->sel("d"),
+          //    control_vars(def, pt, adjusted_buf));
+          //ubuffer_port_bank_selectors[pt] = delay_by(def, bank_sel->sel("out"), 0);
+        }
+      } else {
+        auto agen = build_inner_bank_offset(pt, buf, impl, def);
+        def->connect(agen->sel("d"),
+            control_vars(def, pt, buf));
+        ubuffer_port_agens[pt] = agen;
+
+        if (impl.outpt_to_bank[pt].size() > 1) {
+          assert(false);
+          //auto bank_sel = build_bank_selector(pt, buf, impl, def);
+          //def->connect(bank_sel->sel("d"),
+          //    control_vars(def, pt, buf));
+          //const int READ_LATENCY = 1;
+          //ubuffer_port_bank_selectors[pt] = delay_by(def, bank_sel->sel("out"), READ_LATENCY);
+        }
+      }
+    }
+
+    map<pair<string, int>, int> ubuffer_port_and_bank_to_bank_port;
+    map<int, int> bank_to_next_available_out_port;
+    map<int, int> bank_to_next_available_in_port;
+    for (int b = 0; b < num_banks; b++) {
+      bank_to_next_available_out_port[b] = 0;
+      bank_to_next_available_in_port[b] = 0;
+    }
+    for (auto pt_srcs : impl.inpt_to_bank) {
+      string pt = pt_srcs.first;
+      for (int b : pt_srcs.second) {
+        ubuffer_port_and_bank_to_bank_port[{pt, b}] =
+          dbhc::map_find(b, bank_to_next_available_in_port);
+        bank_to_next_available_in_port[b]++;
+      }
+    }
+    for (auto bp : bank_to_next_available_in_port) {
+      cout << tab(1) << bp.first << " -> " << bp.second << endl;
+      assert(bp.second <= 2);
+    }
+    for (auto pt_srcs : impl.outpt_to_bank) {
+      string pt = pt_srcs.first;
+      for (int b : pt_srcs.second) {
+        ubuffer_port_and_bank_to_bank_port[{pt, b}] =
+          dbhc::map_find(b, bank_to_next_available_out_port);
+        bank_to_next_available_out_port[b]++;
+      }
+    }
+    for (auto bp : bank_to_next_available_out_port) {
+      cout << tab(1) << bp.first << " -> " << bp.second << endl;
+      assert(bp.second <= 2);
+    }
+
+    for (int b = 0; b < num_banks; b++) {
+      auto currbank = bank_map[b];
+
+      for(auto pt : bank_readers[b])
+      {
+        int count = dbhc::map_find({pt, b}, ubuffer_port_and_bank_to_bank_port);
+        auto agen = ubuffer_port_agens[pt];
+        assert(count == 0);
+        def->connect(agen->sel("out"), currbank->sel("read_idx"));
+        def->connect(currbank->sel("read_idx_valid"),
+            control_en(def, pt, buf));
+        def->connect(currbank->sel("read_idx_ready"),
+            control_ready(def, pt, buf));
+      }
+    }
+
+    map<string, std::vector<Wireable*> > ubuffer_ports_to_bank_wires;
+    map<string, std::vector<Wireable*> > ubuffer_ports_to_bank_condition_wires;
+    for (int b = 0; b < num_banks; b++) {
+      auto currbank = bank_map[b];
+
+      for(auto pt : bank_readers[b])
+      {
+        int count = dbhc::map_find({pt, b}, ubuffer_port_and_bank_to_bank_port);
+        assert(count == 0);
+        ubuffer_ports_to_bank_wires[pt].push_back(currbank->sel("read_data"));
+        if (impl.outpt_to_bank[pt].size() > 1) {
+          assert(false);
+          ubuffer_ports_to_bank_condition_wires[pt].push_back(eqConst(def, ubuffer_port_bank_selectors[pt], b));
+        } else {
+          ubuffer_ports_to_bank_condition_wires[pt].push_back(one);
+        }
+      }
+    }
+
+    for (auto conn : ubuffer_ports_to_bank_wires) {
+      vector<Wireable*> conds = ubuffer_ports_to_bank_condition_wires[conn.first];
+      vector<Wireable*> vals = conn.second;
+      assert(conds.size() == vals.size());
+
+      if (conds.size() == 1) {
+        def->connect(def->sel(conn.first + "_net.in"), pick(conn.second));
+      } else {
+        assert(false);
+        /*TODO not implement this
+        assert(conds.size() == 3);
+        Wireable* out = def->sel(conn.first + "_net.in");
+
+        auto snd_mux =
+          def->addInstance("chain_mux" + c->getUnique(), "coreir.mux", {{"width", CoreIR::Const::make(c, 16)}});
+        def->connect(snd_mux->sel("in0"), vals[1]);
+        def->connect(snd_mux->sel("in1"), vals[2]);
+        def->connect(snd_mux->sel("sel"), conds[2]);
+
+        auto last_mux =
+          def->addInstance("chain_mux" + c->getUnique(), "coreir.mux", {{"width", CoreIR::Const::make(c, 16)}});
+        def->connect(last_mux->sel("in0"), snd_mux->sel("out"));
+        def->connect(last_mux->sel("in1"), vals[0]);
+        def->connect(last_mux->sel("sel"), conds[0]);
+
+        def->connect(last_mux->sel("out"), out);
+      */
+      }
+    }
+
+    for (int b = 0; b < num_banks; b++) {
+      auto currbank = bank_map[b];
+      int count = 0;
+      for(auto pt : bank_writers[b])
+      {
+
+        auto adjusted_buf = write_latency_adjusted_buffer(options, prg, buf, hwinfo);
+        //auto agen = ubuffer_port_agens[pt];
+
+        Wireable* enable = nullptr;
+        if (inpt_to_bank[pt].size() > 1) {
+          cout << "NOT IMPLEMENT YET! " << endl;
+          assert(false);
+          //enable =
+          //  andList(def, {control_en(def, pt, adjusted_buf), eqConst(def, ubuffer_port_bank_selectors[pt], b)});
+        } else {
+          enable =
+            control_en(def, pt, adjusted_buf);
+        }
+        assert(enable != nullptr);
+
+        //TODO: check the input agen make sure everything is sequential
+        //def->connect(agen->sel("out"), currbank->sel("write_addr_" + str(count)));
+
+        //FIXME: wire this in the compute path
+        assert(count == 0);
+        def->connect(currbank->sel("push_data_valid"), enable);
+
+        def->connect(
+            currbank->sel("push_data"),
+            def->sel("self." + buf.container_bundle(pt) + "." + str(buf.bundle_offset(pt))));
+        count++;
+      }
+    }
+
+  }
+
+
+}
+
 void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& prg, UBuffer& orig_buf, schedule_info& hwinfo) {
 
   CoreIR::Context* c = def->getContext();
@@ -6334,7 +6653,7 @@ isl_aff* inner_bank_offset_aff(const std::string& reader, UBuffer& buf, const Em
   return addr_expr_aff;
 }
 
-CoreIR::Instance* build_inner_bank_offset(const std::string& reader, UBuffer& buf, const EmbarrassingBankingImpl& impl, CoreIR::ModuleDef* def) {
+isl_map* get_inner_bank_access_map(const std::string& reader, UBuffer & buf, const EmbarrassingBankingImpl& impl) {
   vector<int> extents = extents_by_dimension(buf);
   int bank_stride = 1;
   vector<string> dvs;
@@ -6352,13 +6671,18 @@ CoreIR::Instance* build_inner_bank_offset(const std::string& reader, UBuffer& bu
   auto bank_map = isl_map_read_from_str(buf.ctx, bank_func.c_str());
   cout << "bank map for " << reader << ": " << str(bank_map) << endl;
 
-  auto c = def->getContext();
-
   auto acc_map = to_map(buf.access_map.at(reader));
 
-  auto addr_expr_aff = get_aff(dot(acc_map, bank_map));
+  return dot(acc_map, bank_map);
+}
 
+CoreIR::Instance* build_inner_bank_offset(const std::string& reader, UBuffer& buf, const EmbarrassingBankingImpl& impl, CoreIR::ModuleDef* def) {
+  auto inner_bank_acc_map = get_inner_bank_access_map(reader, buf, impl);
+
+  auto addr_expr_aff = get_aff(inner_bank_acc_map);
   cout << "addrgen for " << reader << ": " << str(addr_expr_aff) << endl;
+
+  auto c = def->getContext();
 
   auto aff_gen_mod = coreir_for_aff(c, addr_expr_aff);
 
@@ -6406,6 +6730,15 @@ CoreIR::Wireable* control_en(CoreIR::ModuleDef* def, const std::string& reader, 
     return def->sel("self." + bundle + "_wen");
   } else {
     return def->sel("self." + bundle + "_ren");
+  }
+}
+
+CoreIR::Wireable* control_ready(CoreIR::ModuleDef* def, const std::string& reader, UBuffer& buf) {
+  string bundle = buf.container_bundle(reader);
+  if (!buf.is_in_pt(reader)) {
+    return def->sel("self." + bundle + "_rready");
+  } else {
+      assert(false);
   }
 }
 

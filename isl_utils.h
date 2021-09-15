@@ -387,6 +387,7 @@ int get_domain_span_range(isl_map* const m, int dim, int out_dim);
 pair<int, int> get_domain_merge_dims(isl_map* m );
 vector<pair<int, int>> get_all_domain_merge_dims(isl_map* m );
 isl_map* merge_domain_dim(isl_map* m);
+bool check_contigous_access(isl_map* m);
 
 
 //vectorization transformation
