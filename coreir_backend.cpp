@@ -845,6 +845,10 @@ CoreIR::Module* generate_coreir(CodegenOptions& options, CoreIR::Context* contex
         ub_field.push_back(make_pair(name + "_ctrl_vars", context->BitIn()->Arr(CONTROLPATH_WIDTH)->Arr(control_dimension)));
       }
       ub_field.push_back(make_pair(name, context->BitIn()->Arr(pt_width)->Arr(bd_width)));
+      if (options.rtl_options.use_external_controllers) {
+        ub_field.push_back(make_pair(name + "_data_ready", context->Bit()));
+        ub_field.push_back(make_pair(name + "_data_valid", context->BitIn()));
+      }
     } else {
       if (options.rtl_options.target_tile == TARGET_TILE_M3) {
       } else if (options.rtl_options.use_external_controllers) {
@@ -852,6 +856,8 @@ CoreIR::Module* generate_coreir(CodegenOptions& options, CoreIR::Context* contex
         ub_field.push_back(make_pair(name + "_ctrl_vars", context->BitIn()->Arr(CONTROLPATH_WIDTH)->Arr(control_dimension)));
         if (options.rtl_options.has_ready) {
             ub_field.push_back(make_pair(name + "_rready", context->Bit()));
+            ub_field.push_back(make_pair(name + "_data_ready", context->BitIn()));
+            ub_field.push_back(make_pair(name + "_data_valid", context->Bit()));
         }
       }
       ub_field.push_back(make_pair(name, context->Bit()->Arr(pt_width)->Arr(bd_width)));
@@ -2756,6 +2762,10 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
         }
 
         def->connect(buf_name + "." + bundle_name, op->name + "." + pg(buf_name, bundle_name));
+        if (options.rtl_options.use_external_controllers) {
+          def->connect(buf_name + "." + bundle_name + "_data_ready", op->name + "." + pg(buf_name, bundle_name) + "_ready");
+          def->connect(buf_name + "." + bundle_name + "_data_valid", op->name + "." + pg(buf_name, bundle_name) + "_valid");
+        }
       }
     }
 
@@ -2793,6 +2803,10 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
         }
 
         def->connect(buf_name + "." + bundle_name, op->name + "." + pg(buf_name, bundle_name));
+        if (options.rtl_options.use_external_controllers) {
+          def->connect(buf_name + "." + bundle_name + "_data_ready", op->name + "." + pg(buf_name, bundle_name) + "_ready");
+          def->connect(buf_name + "." + bundle_name + "_data_valid", op->name + "." + pg(buf_name, bundle_name) + "_valid");
+        }
       }
     }
   }
@@ -6128,6 +6142,20 @@ void generate_Buffet_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, pro
     def->connect(
         w->sel("out"),
         def->sel("self." + orig_buf.container_bundle(out) + "." + str(orig_buf.bundle_offset(out))));
+
+    //FIXME: may have problem when we have multiple port
+
+    //If there is a bank slection logic, valid will be select
+    auto w_valid= def->addInstance(out + "_valid_net", "corebit.wire");
+    def->connect(
+        w_valid->sel("out"),
+        def->sel("self." + orig_buf.container_bundle(out) + "_data_valid"));
+
+    //ready will be broadcasted back to all buffers' read ready
+    auto w_ready = def->addInstance(out + "_ready_net", "corebit.wire");
+    def->connect(
+        w_ready->sel("in"),
+        def->sel("self." + orig_buf.container_bundle(out) +  "_data_ready"));
   }
 
   std::set<string> done_outpt = generate_M1_shift_registers(options, def, prg, orig_buf, hwinfo);
@@ -6271,7 +6299,8 @@ void generate_Buffet_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, pro
       }
     }
 
-    map<string, std::vector<Wireable*> > ubuffer_ports_to_bank_wires;
+    map<string, std::vector<Wireable*> > ubuffer_ports_to_bank_wires,
+        ubuffer_ports_to_bank_ready, ubuffer_ports_to_bank_valid;
     map<string, std::vector<Wireable*> > ubuffer_ports_to_bank_condition_wires;
     for (int b = 0; b < num_banks; b++) {
       auto currbank = bank_map[b];
@@ -6281,6 +6310,8 @@ void generate_Buffet_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, pro
         int count = dbhc::map_find({pt, b}, ubuffer_port_and_bank_to_bank_port);
         assert(count == 0);
         ubuffer_ports_to_bank_wires[pt].push_back(currbank->sel("read_data"));
+        ubuffer_ports_to_bank_valid[pt].push_back(currbank->sel("read_data_valid"));
+        ubuffer_ports_to_bank_ready[pt].push_back(currbank->sel("read_data_ready"));
         if (impl.outpt_to_bank[pt].size() > 1) {
           assert(false);
           ubuffer_ports_to_bank_condition_wires[pt].push_back(eqConst(def, ubuffer_port_bank_selectors[pt], b));
@@ -6296,7 +6327,11 @@ void generate_Buffet_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, pro
       assert(conds.size() == vals.size());
 
       if (conds.size() == 1) {
+        vector<Wireable*> valid_ports = ubuffer_ports_to_bank_valid.at(conn.first);
+        vector<Wireable*> ready_ports = ubuffer_ports_to_bank_ready.at(conn.first);
         def->connect(def->sel(conn.first + "_net.in"), pick(conn.second));
+        def->connect(def->sel(conn.first + "_valid_net.in"), pick(valid_ports));
+        def->connect(def->sel(conn.first + "_ready_net.out"), pick(ready_ports));
       } else {
         assert(false);
         /*TODO not implement this
@@ -6346,7 +6381,10 @@ void generate_Buffet_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, pro
 
         //FIXME: wire this in the compute path
         assert(count == 0);
-        def->connect(currbank->sel("push_data_valid"), enable);
+        def->connect(currbank->sel("push_data_valid"),
+                def->sel("self." + buf.container_bundle(pt) + "_data_valid"));
+        def->connect(currbank->sel("push_data_ready"),
+                def->sel("self." + buf.container_bundle(pt) + "_data_ready"));
 
         def->connect(
             currbank->sel("push_data"),
