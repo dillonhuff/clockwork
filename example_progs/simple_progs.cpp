@@ -135,7 +135,7 @@ prog pointwise_conv() {
   hcompute_mult_stencil->add_function("hcompute_mult_stencil");
   hcompute_mult_stencil->add_load("hw_input_global_wrapper_stencil", "mult_s0_y");
   prg.buffer_port_widths["mult_stencil"] = 16;
-  hcompute_mult_stencil->add_store("mult_stencil", "mult_s0_y", "mult_s0_x");
+  hcompute_mult_stencil->add_store("mult_stencil", "mult_s0_x", "mult_s0_y");
 
 //consuming mult.stencil
   auto hw_output_s0_y_yi = prg.add_loop("hw_output_s0_y_yi", 0, 62);
@@ -144,8 +144,8 @@ prog pointwise_conv() {
 //store is: hw_output.stencil(hw_output_s0_x_xi, hw_output_s0_y_yi) = mult.stencil(hw_output_s0_x_xi, hw_output_s0_y_yi)
   auto hcompute_hw_output_stencil = hw_output_s0_x_xi->add_op("op_hcompute_hw_output_stencil");
   hcompute_hw_output_stencil->add_function("hcompute_hw_output_stencil");
-  hcompute_hw_output_stencil->add_load("mult_stencil", "hw_output_s0_y_yi", "hw_output_s0_x_xi");
-  hcompute_hw_output_stencil->add_store("hw_output_stencil", "hw_output_s0_y_yi", "hw_output_s0_x_xi");
+  hcompute_hw_output_stencil->add_load("mult_stencil", "hw_output_s0_x_xi", "hw_output_s0_y_yi");
+  hcompute_hw_output_stencil->add_store("hw_output_stencil", "hw_output_s0_x_xi", "hw_output_s0_y_yi");
 
   return prg;
 }

@@ -2335,12 +2335,20 @@ coreir_moduledef(CodegenOptions& options,
         ub_field.push_back(make_pair(pg(out_rep, out_bundle) + "_en", context->Bit()));
       //}
       ub_field.push_back(make_pair(pg(out_rep, out_bundle), context->BitIn()->Arr(pixel_width)->Arr(pix_per_burst)));
+      if (options.rtl_options.has_ready) {
+        ub_field.push_back(make_pair(pg(out_rep, out_bundle) + "_valid", context->BitIn()));
+        ub_field.push_back(make_pair(pg(out_rep, out_bundle) + "_ready", context->Bit()));
+        ub_field.push_back(make_pair(pg(out_rep, out_bundle) + "_en_ready", context->BitIn()));
+      }
     } else {
       //if (options.rtl_options.use_external_controllers ||
       //        (options.rtl_options.use_prebuilt_memory == false)) {
         ub_field.push_back(make_pair(pg(out_rep, out_bundle) + "_valid", context->Bit()));
       //}
       ub_field.push_back(make_pair(pg(out_rep, out_bundle), context->Bit()->Arr(pixel_width)->Arr(pix_per_burst)));
+      if (options.rtl_options.has_ready) {
+        ub_field.push_back(make_pair(pg(out_rep, out_bundle) + "_ready", context->BitIn()));
+      }
     }
   }
 
@@ -2740,13 +2748,20 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
       assert(buf.is_input_bundle(bundle.second));
 
       if (prg.is_output(buf_name)) {
-        if (options.rtl_options.use_external_controllers) {
+        auto output_bus = "self." + pg(buf_name, bundle_name);
+        if (options.rtl_options.has_ready) {
+          def->connect(def->sel(output_bus + "_valid"),
+                  def->sel(op->name + "." + pg(buf_name, bundle_name) + "_valid"));
+          def->connect(def->sel(output_bus + "_ready"),
+                  def->sel(op->name + "." + pg(buf_name, bundle_name) + "_ready"));
+        }
+        else if (options.rtl_options.use_external_controllers) {
           auto output_en = "self." + pg(buf_name, bundle_name) + "_valid";
           def->connect(def->sel(output_en),
               write_start_wire(def, op->name));
         }
 
-        def->connect("self." + pg(buf_name, bundle_name), op->name + "." + pg(buf_name, bundle_name));
+        def->connect(def->sel(output_bus), def->sel(op->name + "." + pg(buf_name, bundle_name)));
       } else {
         if (options.rtl_options.target_tile == TARGET_TILE_M3) {
         //if (false) {
@@ -2762,7 +2777,7 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
         }
 
         def->connect(buf_name + "." + bundle_name, op->name + "." + pg(buf_name, bundle_name));
-        if (options.rtl_options.use_external_controllers) {
+        if (options.rtl_options.has_ready) {
           def->connect(buf_name + "." + bundle_name + "_data_ready", op->name + "." + pg(buf_name, bundle_name) + "_ready");
           def->connect(buf_name + "." + bundle_name + "_data_valid", op->name + "." + pg(buf_name, bundle_name) + "_valid");
         }
@@ -2787,6 +2802,16 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
 
         def->connect(def->sel(input_bus),
             def->sel(op->name + "." + pg(buf_name, bundle_name)));
+        if (options.rtl_options.has_ready) {
+          def->connect(def->sel(input_bus + "_valid"),
+                  def->sel(op->name + "." + pg(buf_name, bundle_name) + "_valid"));
+          def->connect(def->sel(input_bus + "_ready"),
+                  def->sel(op->name + "." + pg(buf_name, bundle_name) + "_ready"));
+
+          //Also wire the enable ready wire, just keep the interface unified
+          def->connect(def->sel(output_valid + "_ready"),
+              read_ready_wire(def, op->name));
+        }
 
       } else {
         if (options.rtl_options.target_tile == TARGET_TILE_M3) {
@@ -2803,7 +2828,7 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
         }
 
         def->connect(buf_name + "." + bundle_name, op->name + "." + pg(buf_name, bundle_name));
-        if (options.rtl_options.use_external_controllers) {
+        if (options.rtl_options.has_ready) {
           def->connect(buf_name + "." + bundle_name + "_data_ready", op->name + "." + pg(buf_name, bundle_name) + "_ready");
           def->connect(buf_name + "." + bundle_name + "_data_valid", op->name + "." + pg(buf_name, bundle_name) + "_valid");
         }
@@ -6158,9 +6183,11 @@ void generate_Buffet_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, pro
         def->sel("self." + orig_buf.container_bundle(out) +  "_data_ready"));
   }
 
-  std::set<string> done_outpt = generate_M1_shift_registers(options, def, prg, orig_buf, hwinfo);
+  //std::set<string> done_outpt = generate_M1_shift_registers(options, def, prg, orig_buf, hwinfo);
 
-  UBuffer buf = delete_ports(done_outpt, orig_buf);
+  //UBuffer buf = delete_ports(done_outpt, orig_buf);
+  //Disable shift register optimization
+  UBuffer buf = orig_buf;
 
   if (buf.num_out_ports() > 0) {
     auto implm = build_buffer_impl(prg, buf, hwinfo);
