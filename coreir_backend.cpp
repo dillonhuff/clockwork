@@ -4480,6 +4480,7 @@ CoreIR::Module* affine_controller_primitive(CodegenOptions& options, CoreIR::Con
     {{"value", CoreIR::Const::make(c, true)}});
 
   CoreIR::Wireable* cycle_time_reg;
+  CoreIR::Wireable* dom_reg_en;
   CoreIR::Instance* cmp;
   if (options.rtl_options.use_prebuilt_memory) {
     cycle_time_reg = build_counter(def, "cycle_time", width, 0, (unsigned int)(pow(2, width-1)-1), 1);
@@ -4494,6 +4495,8 @@ CoreIR::Module* affine_controller_primitive(CodegenOptions& options, CoreIR::Con
     def->connect(cmp->sel("in0"), diff->sel("out"));
     def->connect(cmp->sel("in1"), zero->sel("out"));
     def->connect(cmp->sel("out"), def->sel("self")->sel("valid"));
+
+    dom_reg_en = cmp->sel("out");
   } else if (options.rtl_options.has_ready) {
     cycle_time_reg = def->addInstance("cycle_time", "mantle.reg",
         {{"width", CoreIR::Const::make(context, width)},
@@ -4514,14 +4517,15 @@ CoreIR::Module* affine_controller_primitive(CodegenOptions& options, CoreIR::Con
     def->connect("self.ready", "readyInvert.in");
     def->connect(inc_val->sel("sel"),
             andList(def, {cmp->sel("out"), inv_ready->sel("out")}));
-    def->connect(inc_val->sel("in0"), zero->sel("out"));
-    def->connect(inc_val->sel("in1"), one->sel("out"));
+    def->connect(inc_val->sel("in1"), zero->sel("out"));
+    def->connect(inc_val->sel("in0"), one->sel("out"));
 
     auto inc_time = def->addInstance("inc_time", "coreir.add", {{"width", CoreIR::Const::make(c, width)}});
     def->connect(inc_time->sel("in0"), cycle_time_reg->sel("out"));
     def->connect(inc_time->sel("in1"), inc_val->sel("out"));
     def->connect(inc_time->sel("out"), cycle_time_reg->sel("in"));
 
+    dom_reg_en = andList(def, {cmp->sel("out"), def->sel("self")->sel("ready")});
   } else {
     cycle_time_reg = def->addInstance("cycle_time", "mantle.reg",
         {{"width", CoreIR::Const::make(context, width)},
@@ -4540,6 +4544,8 @@ CoreIR::Module* affine_controller_primitive(CodegenOptions& options, CoreIR::Con
     def->connect(cmp->sel("in0"), diff->sel("out"));
     def->connect(cmp->sel("in1"), zero->sel("out"));
     def->connect(cmp->sel("out"), def->sel("self")->sel("valid"));
+
+    dom_reg_en = cmp->sel("out");
   }
 
 
@@ -4557,7 +4563,8 @@ CoreIR::Module* affine_controller_primitive(CodegenOptions& options, CoreIR::Con
     if (options.rtl_options.use_prebuilt_memory)
       def->connect(def->sel("self")->sel("rst_n"), domain_regs.back()->sel("clr"));
     def->connect(aff_func->sel("d")->sel(d), domain_regs.back()->sel("out"));
-    def->connect(cmp->sel("out"), domain_regs.back()->sel("en"));
+    //def->connect(cmp->sel("out"), domain_regs.back()->sel("en"));
+    def->connect(dom_reg_en, domain_regs.back()->sel("en"));
 
     int max_pt = to_int(lexmaxval(project_all_but(dom, d)));
     cout << "controller max point for dimension " << d << " = " << max_pt << endl;
