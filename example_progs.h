@@ -23,6 +23,7 @@ prog harris_remove(); //manually edit
 prog pointwise(); //point
 prog pointwise_conv(); //use for buffet test
 prog brighten_blur(); //stencil
+prog brighten_blur_paper(); //stencil
 prog halide_harris();
 prog conv_3_3(); //stencil
 prog conv_3_3_wide(); //stencil

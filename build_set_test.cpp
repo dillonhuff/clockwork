@@ -12923,7 +12923,8 @@ std::vector<string> verilator_results(const std::string& name) {
 int run_verilator_on(const std::string& top_module,
     const std::string& tb_file,
     const std::vector<string>& verilog_files,
-    bool extra_flag = false) {
+    bool extra_flag = false,
+    const std::vector<string> flags = {}) {
 
   //int verilator_build = cmd("verilator -Wall --cc " + sep_list(verilog_files, "", "", " ") + " --exe --build " + tb_file + " --top-module " + top_module + " -Wno-lint");
   int verilator_build = 0;
@@ -12932,7 +12933,7 @@ int run_verilator_on(const std::string& top_module,
       cmd("echo $CLKWRK_PATH");
       verilator_build = cmd("verilator -Wall --cc " + sep_list(verilog_files, "", "", " ") + " --exe --build --trace " + tb_file + " -CFLAGS -I$CLKWRK_PATH --top-module " + top_module + " -Wno-UNUSED -Wno-PINMISSING -Wno-DECLFILENAME -Wno-WIDTH -Wno-UNDRIVEN -Wno-CASEINCOMPLETE -Wno-MODDUP -Wno-UNOPTFLAT -Wno-CMPCONST");
 #else
-      verilator_build = cmd("verilator -Wall --cc " + sep_list(verilog_files, "", "", " ") + " --exe --build --trace " + tb_file + " --top-module " + top_module + " -Wno-UNUSED -Wno-PINMISSING -Wno-DECLFILENAME -Wno-WIDTH -Wno-UNDRIVEN -Wno-CASEINCOMPLETE -Wno-MODDUP -Wno-UNOPTFLAT -Wno-CMPCONST");
+      verilator_build = cmd("verilator -Wall --cc " + sep_list(verilog_files, "", "", " ") + " " + sep_list(flags, "", "", " ") + " --exe --build --trace " + tb_file + " --top-module " + top_module + " -Wno-UNUSED -Wno-PINMISSING -Wno-DECLFILENAME -Wno-WIDTH -Wno-UNDRIVEN -Wno-CASEINCOMPLETE -Wno-MODDUP -Wno-UNOPTFLAT -Wno-CMPCONST");
 #endif
   } else {
       verilator_build = cmd("verilator -Wall --cc " + sep_list(verilog_files, "", "", " ") + " --exe --build " + tb_file + " --top-module " + top_module + " -Wno-UNUSED -Wno-WIDTH -Wno-PINMISSING -Wno-DECLFILENAME");
@@ -12953,6 +12954,29 @@ void run_verilator_verilog_tb(const std::string& name) {
 
   int res = run_verilator_on(name, name + "_verilog_tb.cpp", {name + ".v", name + "_verilog_collateral.sv", "./lake_components/dualwithadd/lake_top.sv", name + "_compute.v"});
   assert(res == 0);
+}
+
+void run_verilator_tb_buffet(const std::string& name) {
+
+  int to_verilog_res = cmd("${COREIR_PATH}/bin/coreir --inline --load_libs commonlib,cgralib --input " + name + ".json --output " + name + ".v -p \"rungenerators; wireclocks-arst; wireclocks-clk\"");
+  assert(to_verilog_res == 0);
+
+  int res = run_verilator_on(name,
+      name + "_verilog_tb.cpp",
+      {name + ".v", name + "_verilog_collateral.sv",
+      "./lake_components/dualwithadd/lake_top.sv",
+      "./buffet_defines.v",
+      "./../../../buffets/dut/*.v",
+      "./../../../buffets/dut/utils/*.v",
+      "./lake_components/inner_affine_controller.sv"},
+      true, {"-I./buffet_defines.v", "-Wno-PINCONNECTEMPTY"});
+  cmd("rm -rf obj_dir/");
+  assert(res == 0);
+  //int verilator_build = cmd("verilator -Wall --cc " + name + ".v --exe --build " + name + "_verilog_tb.cpp --top-module " + name + " -Wno-lint");
+  //assert(verilator_build == 0);
+
+  //int verilator_run = cmd("./obj_dir/V" + name);
+  //assert(verilator_run == 0);
 }
 
 void run_verilator_tb(const std::string& name) {
@@ -15143,6 +15167,7 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   //test_apps.push_back(camera_pipeline_trunc());
 
   //CGRA tests
+  //test_apps.push_back(brighten_blur_paper());
   test_apps.push_back(matmul_single());
   test_apps.push_back(counter());
   test_apps.push_back(camera_pipeline_new());
@@ -18582,7 +18607,9 @@ void garnet_single_port_ram_schedule(CodegenOptions& options, schedule_info& sch
     //Make input as fast as possible
     asap_input_iis(sched, prg);
     auto op_sched = op_start_times_map(sched, prg);
-    cout << "Final schedule after relax: " << str(op_sched)  << endl;
+    cout << "Final schedule in ISL notation: " << str(op_sched)  << endl;
+    auto global_schedule = its(op_sched, op_start_times_domain(prg));
+    cout << "After codegen: \n" <<codegen_c(global_schedule);
     return;
   } else if (contains(prg.name, "split")) {
     sequential_schedule(sched, root, prg);
@@ -19022,6 +19049,7 @@ CodegenOptions Buffet_codegen_options(prog& prg) {
   CodegenOptions options;
   options.rtl_options.use_external_controllers = true;
   options.rtl_options.has_ready= true;
+  options.debug_options.traceWave = true;
   options.rtl_options.target_tile =
     TARGET_TILE_BUFFET;
   all_unbanked(prg, options);
@@ -19635,6 +19663,33 @@ void test_platonic_codegen(vector<prog>& test_programs) {
   test_codegen(test_programs, compile_for_garnet_platonic_mem);
 }
 
+void test_buffet_codegen(vector<prog>& test_programs) {
+  for (auto& prg : test_programs) {
+    cout << "====== Running CGRA test for " << prg.name << endl;
+    prg.pretty_print();
+    prg.sanity_check();
+
+    break_up_multi_channel_inputs(prg);
+    break_up_multi_channel_outputs(prg);
+    dsa_writers(prg);
+
+    prg.pretty_print();
+    prg.sanity_check();
+
+    auto cpu = unoptimized_result(prg);
+
+    compile_for_Buffet(prg);
+    generate_regression_testbench(prg);
+
+    cout << "Output name: " << prg.name << endl;
+    run_verilator_tb_buffet(prg.name);
+    auto verilator_res = verilator_results(prg.name);
+    compare("cgra_" + prg.name + "_cpu_vs_verilog_comparison", verilator_res, cpu);
+    string app_type = "platonic_buffer";
+    cpy_app_to_folder(app_type, prg.name);
+  }
+}
+
 void cw_print_body(int level,
     ostream& out,
     const vector<string>& op_order,
@@ -19899,7 +19954,7 @@ void fpga_asplos_tests() {
 
 void buffet_tests() {
   vector<prog> buffet_test_programs = {pointwise_conv()};
-  test_codegen(buffet_test_programs, compile_for_Buffet);
+  test_buffet_codegen(buffet_test_programs);
 }
 
 void cgra_flow_tests() {
