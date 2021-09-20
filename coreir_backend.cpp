@@ -1538,11 +1538,14 @@ CoreIR::Module* generate_flow_control(CoreIR::Context* context, int in_num, int 
     def->connect(valid_out, def->sel("self.valid_out_"+str(i)));
   }
 
-  ready_out_vec.push_back(valid_out);
+  //ready_out_vec.push_back(valid_out);
+  //Ready in is and of output ready
   auto ready_in = andList(def, ready_out_vec);
   for (int i = 0; i < in_num; i ++) {
     def->connect(ready_in, def->sel("self.ready_in_"+str(i)));
   }
+
+  ctrl_unit->setDef(def);
 
   return ctrl_unit;
 }
