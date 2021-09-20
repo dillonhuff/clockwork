@@ -2673,6 +2673,8 @@ void instantiate_controllers(CodegenOptions& options,
 
 }
 
+void dump_Buffet_definition();
+
 //CoreIR codegen for whole application
 CoreIR::Module* generate_coreir(CodegenOptions& options,
     map<string, UBuffer>& buffers,
@@ -2697,6 +2699,8 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
 
 
   assert(verilog_collateral_file != nullptr);
+  if (options.rtl_options.target_tile == TARGET_TILE_BUFFET)
+    dump_Buffet_definition();
 
   bool found_compute = load_compute_file(options, buffers, prg, schedmap, context, hwinfo);
 
@@ -6109,6 +6113,77 @@ void M1_sanity_check_port_counts(const UBufferImpl& impl) {
     }
 }
 
+void dump_Buffet_definition() {
+    int data_width = 16;
+    int ctrl_width = 8;
+
+    ofstream buffet_collateral_file("buffet_defines.v");
+    buffet_collateral_file << "`define IDX_WIDTH" << tab(4) << ctrl_width << endl;
+    buffet_collateral_file << "`define DATA_WIDTH" << tab(4) << data_width << endl;
+    buffet_collateral_file << "`define SIZE" << tab(4) <<"2 **" << data_width << "-1" << endl;
+    buffet_collateral_file << "`define SEPARATE_WRITE_PORTS    1" << endl;
+    buffet_collateral_file << "`define SUPPORTS_UPDATE         1" << endl;
+    buffet_collateral_file << "`define READREQ_FIFO_DEPTH      8" << endl;
+    buffet_collateral_file << "`define UPDATE_FIFO_DEPTH       8" << endl;
+    buffet_collateral_file << "`define READRESP_FIFO_DEPTH     8" << endl;
+    buffet_collateral_file << "`define PUSH_FIFO_DEPTH         8" << endl << endl;
+    buffet_collateral_file << "`define SCOREBOARD_SIZE         8" << endl;
+    buffet_collateral_file.close();
+}
+
+void instantiate_Buffet_verilog_wrapper(const std::string& long_name, const int b, const UBufferImpl& impl, UBuffer& buf) {
+    assert(verilog_collateral_file != nullptr);
+    int data_width = 16;
+    int ctrl_width = 8;
+
+    vector<string> port_decls = {};
+    port_decls.push_back("input clk");
+    port_decls.push_back("input nreset_i");
+    assert( impl.bank_writers.at(b).size() == 1);
+    {
+      port_decls.push_back("input ["+str(data_width) + ":0] push_data");
+      port_decls.push_back("input push_data_valid" );
+      port_decls.push_back("output push_data_ready");
+    }
+    assert(impl.bank_readers.at(b).size() == 1);
+    {
+      port_decls.push_back("output [" + str(data_width) + ":0] read_data");
+      port_decls.push_back("output read_data_valid" );
+      port_decls.push_back("input read_data_ready");
+
+      port_decls.push_back("input [" + str(ctrl_width) + ":0] read_idx");
+      port_decls.push_back("input read_idx_valid" );
+      port_decls.push_back("output read_idx_ready");
+    }
+
+    *verilog_collateral_file << "module " << long_name <<" ("<< sep_list(port_decls,"","",",\n") <<"); "<< endl;
+
+    *verilog_collateral_file << tab(1) << "reg update_idx_valid = 0;" <<  endl;
+    *verilog_collateral_file << tab(1) << "reg credit = 0;" <<  endl;
+    *verilog_collateral_file << tab(1) << "reg is_shrink = 0;" <<  endl;
+    *verilog_collateral_file << tab(1) << "reg read_will_update= 0;" <<  endl;
+
+    *verilog_collateral_file << tab(1) << "buffet buffet_core (" << endl;
+    *verilog_collateral_file << tab(2) << ".nreset_i(nreset_i), " << endl;
+    *verilog_collateral_file << tab(2) << ".clk(clk), " << endl;
+    *verilog_collateral_file << tab(2) << ".read_data(read_data), " << endl;
+    *verilog_collateral_file << tab(2) << ".read_data_valid(read_data_valid), " << endl;
+    *verilog_collateral_file << tab(2) << ".read_data_ready(read_data_ready), " << endl;
+    *verilog_collateral_file << tab(2) << ".push_data(push_data), " << endl;
+    *verilog_collateral_file << tab(2) << ".read_idx(read_idx), " << endl;
+    *verilog_collateral_file << tab(2) << ".read_idx_valid(read_idx_valid), " << endl;
+    *verilog_collateral_file << tab(2) << ".read_idx_ready(read_idx_ready), " << endl;
+    *verilog_collateral_file << tab(2) << ".push_data_valid(push_data_valid), " << endl;
+    *verilog_collateral_file << tab(2) << ".push_data_ready(push_data_ready), " << endl;
+    *verilog_collateral_file << tab(2) << ".read_will_update(read_will_update), " << endl;
+    *verilog_collateral_file << tab(2) << ".update_idx_valid(update_idx_valid), " << endl;
+    *verilog_collateral_file << tab(2) << ".credit_ready(credit), " << endl;
+    *verilog_collateral_file << tab(2) << ".is_shrink(is_shrink) " << endl;
+    *verilog_collateral_file << tab(1) << ");" << endl;
+
+    *verilog_collateral_file << "endmodule" << endl << endl;
+}
+
 void instantiate_M1_verilog(const std::string& long_name, const int b, const UBufferImpl& impl, UBuffer& buf) {
     assert(verilog_collateral_file != nullptr);
 
@@ -6238,6 +6313,7 @@ void generate_Buffet_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, pro
       }*/
 
       //instantiate_M1_verilog(currbank->getModuleRef()->getLongName(), b, impl, buf);
+     instantiate_Buffet_verilog_wrapper(currbank->getModuleRef()->getLongName(), b, impl, buf);
       bank_map[b] = currbank;
       def->connect(currbank->sel("nreset_i"),def->sel("self.rst_n"));
     }
