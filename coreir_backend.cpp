@@ -4509,7 +4509,7 @@ CoreIR::Module* affine_controller_primitive(CodegenOptions& options, CoreIR::Con
     cmp = def->addInstance("cmp_time", "coreir.eq", {{"width", CoreIR::Const::make(c, width)}});
     def->connect(cmp->sel("in0"), diff->sel("out"));
     def->connect(cmp->sel("in1"), zero->sel("out"));
-    def->connect(cmp->sel("out"), def->sel("self")->sel("valid"));
+    //def->connect(cmp->sel("out"), def->sel("self")->sel("valid"));
 
     //ADD a mux to choose 0 or 1, if ready == 0, do not inc local counter
     auto inc_val= def->addInstance("inc_time_value", "coreir.mux", {{"width", CoreIR::Const::make(c, width)}});
@@ -4526,6 +4526,7 @@ CoreIR::Module* affine_controller_primitive(CodegenOptions& options, CoreIR::Con
     def->connect(inc_time->sel("out"), cycle_time_reg->sel("in"));
 
     dom_reg_en = andList(def, {cmp->sel("out"), def->sel("self")->sel("ready")});
+    def->connect(dom_reg_en, def->sel("self")->sel("valid"));
   } else {
     cycle_time_reg = def->addInstance("cycle_time", "mantle.reg",
         {{"width", CoreIR::Const::make(context, width)},
