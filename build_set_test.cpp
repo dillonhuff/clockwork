@@ -18560,13 +18560,40 @@ void garnet_single_port_ram_schedule(CodegenOptions& options, schedule_info& sch
         cout << tab(2) << "ii = " << sched.II(container) << endl;
       }
     }
+    //int total_latency = 0;
+    //for (auto op : inner_ops(prg)) {
+    //    cout << "inner ops: " << op->name << ", total latency: "<< total_latency << endl;
+    //  sched.op_offset_within_parent[op] = total_latency;
+    //  //sched.instance_latencies[op] = op_latency(op, sched);
+    //  //total_latency += op_latency(op, sched) + 2;
+    //  total_latency += op_latency(op, sched);
+    //}
     int total_latency = 0;
+    vector<op*> scheduled;
     for (auto op : inner_ops(prg)) {
-        cout << "inner ops: " << op->name << endl;
-      sched.op_offset_within_parent[op] = total_latency;
-      //sched.instance_latencies[op] = op_latency(op, sched);
-      //total_latency += op_latency(op, sched) + 2;
-      total_latency += op_latency(op, sched);
+      cout << "inner ops: " << op->name << endl;
+      auto read = op->buffers_read();
+      int offset = 0;
+      std::vector<::op*> init_ops;
+      for (auto other : scheduled) {
+        if (intersection(other->buffers_written(), read).size() > 0) {
+          offset = max(offset, sched.op_offset_within_parent[other] + op_latency(other, sched));
+          if (contains(pick(other->buffers_written()), "clkwrk_dsa")) {
+              //This is the op which need forcing to have the same offset
+              init_ops.push_back(other);
+          }
+        }
+      }
+      sched.op_offset_within_parent[op] = offset;
+      for (auto init_op: init_ops) {
+        assert(sched.op_offset_within_parent[init_op] <= offset);
+        sched.op_offset_within_parent[init_op] = offset;
+        cout << "force inner op: " << init_op->name << ", has same offset as update: " << offset << endl;
+      }
+      cout << "inner ops: " << op->name << ", offset: "<< offset << endl;
+      //sched.op_offset_within_parent[op] = total_latency;
+      //total_latency += op_latency(op, sched);
+      scheduled.push_back(op);
     }
 
     //Hack for rom, Rom need to be conservative
@@ -18583,6 +18610,8 @@ void garnet_single_port_ram_schedule(CodegenOptions& options, schedule_info& sch
     asap_input_iis(sched, prg);
     auto op_sched = op_start_times_map(sched, prg);
     cout << "Final schedule after relax: " << str(op_sched)  << endl;
+    op_sched = op_end_times_map(sched, prg);
+    cout << "Final end schedule after relax: " << str(op_sched)  << endl;
     return;
   } else if (contains(prg.name, "split")) {
     sequential_schedule(sched, root, prg);
