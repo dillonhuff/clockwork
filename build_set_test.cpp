@@ -11692,8 +11692,9 @@ void blur_and_downsample_test() {
   regression_test(prg);
 }
 
-
+void test_if_complex();
 void playground() {
+  test_if_complex();
     {
       isl_ctx* ctx = isl_ctx_alloc();
       auto acc_0 = isl_map_read_from_str(ctx,"{ [i0]-> [3*i0]: 0<=i0<8}");
@@ -17574,7 +17575,7 @@ void relax_inner_delay_for_vec_write(schedule_info& sched, op* loop, prog& prg, 
 void asap_inner_loops_schedule(schedule_info& sched, op* op, prog& prg, int fetch_width) {
   //cout << "scheduling: " << op->name << endl;
 
-  if (!op->is_loop()) {
+  if (op->is_op()) {
     int total_latency = op_latency(op, sched);
     return;
   }
@@ -17591,7 +17592,7 @@ void asap_inner_loops_schedule(schedule_info& sched, op* op, prog& prg, int fetc
       latency = max(latency, sched.total_latency(other));
     }
     sched.loop_iis[op->name] = max(latency, 1);
-  } else {
+  } else if(op->is_loop()) {
     int latency = 0;
     for (auto other : op->children) {
       int old_latency = latency;
@@ -17604,11 +17605,20 @@ void asap_inner_loops_schedule(schedule_info& sched, op* op, prog& prg, int fetc
         cout << tab(4) << other->name << "--> Enter relax condition loop!" << endl;
       }
       latency = sched.total_latency(other) + sched.offset_in_parent(other);
+      //TODO:  this offset by 1 is trying to pipeline instead of braodacsting
       if (old_latency == latency) {
         latency += 1;
       }
     }
     sched.loop_iis[op->name] = max(latency, 1);
+  } else if (op->is_if()) {
+    assert(op->children.size() == 1);
+    auto child = pick(op->children);
+    sched.op_offset_within_parent[child] = 0;
+    sched.loop_iis[op->name] = sched.total_latency(child) + sched.offset_in_parent(child);
+  } else {
+    cout << "Did not implemented visitor pass for IR Node type: " << op->tp << endl;
+    assert(false);
   }
 }
 
@@ -17714,6 +17724,7 @@ void tighten_iis(schedule_info& sched, prog& prg) {
   while (tightened) {
     tightened = false;
     for (auto loop : prg.all_loops()) {
+      cout << loop->name << endl;
       int ii = sched.II(loop);
       if (ii != 1) {
         int L = sched.last_update_delay(loop);
@@ -17904,10 +17915,10 @@ void adjust_coarse_grained_loop_delays_sequentially(schedule_info& sched, prog& 
     vector<string> sorted_kernels = topologically_sort_kernels(coarse_pipeline_loop, prg);
     map<string, int> head_op_latency;
     for (auto name : sorted_kernels) {
-      auto lp = prg.find_loop(name);
+      auto lp = prg.find_non_op(name);
       cout << tab(1) << "Push kernel <" << lp->name << "> into delay adjusting queue." << endl;
-      cout << tab(2) << "II: " << sched.II(lp) << endl;
-      cout << tab(2) << "TP: " << (lp)->trip_count() << endl;
+      //cout << tab(2) << "II: " << sched.II(lp) << endl;
+      //cout << tab(2) << "TP: " << (lp)->trip_count() << endl;
       auto producers = get_producers(name, coarse_pipeline_loop, prg);
       for (auto prod:  producers)
           cout << "\tprod: " << prod << endl;
@@ -17927,13 +17938,13 @@ void adjust_coarse_grained_loop_delays_sequentially(schedule_info& sched, prog& 
     }
 
     for (auto name : sorted_kernels) {
-      auto lp = prg.find_loop(name);
+      auto lp = prg.find_non_op(name);
       cout << tab(2) << "Adjusting delay of " << lp->name << endl;
-      cout << tab(2) << "II: " << sched.II(lp) << endl;
+      //cout << tab(2) << "II: " << sched.II(lp) << endl;
       int max_delay = 0;
       auto producers = get_producers(name, coarse_pipeline_loop, prg);
       for (string prod: producers){
-          op* prod_op = prg.find_loop(prod);
+          op* prod_op = prg.find_non_op(prod);
           max_delay = max(max_delay,
                   coarse_pipeline_II.at(prod) + sched.op_offset_within_parent.at(prod_op));
       }
@@ -18885,7 +18896,8 @@ void coarse_pipeline_schedule(schedule_info& sched, op* root, prog& prg) {
   cout << "Adjusting outer pipeline delays" << endl;
   sanity_check_iis(sched);
 
-  adjust_outer_pipeline_delays(sched, prg);
+  //adjust_outer_pipeline_delays(sched, prg);
+  adjust_coarse_grained_loop_delays_sequentially(sched, prg);
 
   cout << "Done Adjusting outer pipeline delays" << endl;
   sanity_check_iis(sched);
@@ -26554,6 +26566,48 @@ void test_if_construction() {
   assert(to_int(lexmaxval(dom)) == 5);
 
   //assert(false);
+}
+
+void test_if_complex() {
+  prog prg("if_example");
+  auto lp = prg.add_loop("c", 0, 10);
+  auto ifs = lp->add_if("c = 0");
+  auto ifs_lp = ifs->add_loop("x_init", 0, 10);
+  auto init_op = ifs_lp->add_op("init");
+  init_op->add_store("output", "x_init");
+  auto lp_input = lp->add_loop("x_input", 0, 20);
+  auto input_op = lp_input->add_op("input");
+  input_op->add_store("input", "input");
+  input_op->add_store("input_dram", "c", "input");
+  auto lp_comp_x = lp->add_loop("x_comp", 0, 10);
+  auto lp_comp_y = lp_comp_x->add_loop("y_comp", 0, 10);
+  auto comp_op = lp_comp_y->add_op("comp");
+  comp_op->add_load("output", "x_comp");
+  comp_op->add_load("input", "x_comp+y_comp");
+  comp_op->add_store("output", "x_comp");
+  auto if_wb = lp->add_if("c=9");
+  auto lp_wb_x = if_wb->add_loop("x_wb", 0, 10);
+  auto wb_op = lp_wb_x->add_op("write_back");
+  wb_op->add_load("output", "x_wb");
+  wb_op->add_store("output_dram", "x_wb");
+  prg.pretty_print();
+
+  auto doms = prg.domains();
+  //assert(doms.size() == 1);
+  for (auto d : doms) {
+    cout << tab(1) << d.first->name << " -> " << str(d.second) << endl;
+  }
+
+  CodegenOptions options;
+  schedule_info sched =
+    garnet_schedule_info(options, prg);
+  garnet_dual_port_ram_schedule(sched, prg.root, prg);
+
+  //auto dom = project_all_but(pick(doms).second, 1);
+  //assert(to_int(lexminval(dom)) == 0);
+  //assert(to_int(lexmaxval(dom)) == 5);
+
+  assert(false);
 }
 
 void load_pe_power_stats(power_analysis_params& power_params, const std::string& file) {
