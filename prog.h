@@ -14,6 +14,8 @@ enum ir_node_type {
   IR_NODE_TYPE_IF
 };
 
+std::ostream& operator << ( ostream& strm, ir_node_type tt);
+
 struct ir_node;
 struct prog;
 
@@ -251,7 +253,7 @@ struct ir_node {
     std::set<op*> dec = descendants();
     std::set<op*> ops;
     for (auto d : dec) {
-      if (!d->is_loop()) {
+      if (d->is_op()) {
         ops.insert(d);
       }
     }
@@ -496,6 +498,21 @@ struct ir_node {
     assert(!is_op());
 
     auto lp = new op();
+    lp->name = this->name + "_if_" + str(children.size());
+    lp->condition = condition;
+    lp->ctx = ctx;
+    lp->parent = this;
+    lp->tp = IR_NODE_TYPE_IF;
+    children.push_back(lp);
+
+    return lp;
+  }
+
+  op* add_if(const std::string& name, const std::string& condition) {
+    assert(!is_op());
+
+    auto lp = new op();
+    lp->name = name;
     lp->condition = condition;
     lp->ctx = ctx;
     lp->parent = this;
@@ -506,7 +523,8 @@ struct ir_node {
   }
 
   op* add_loop(const std::string& name, const int l, const int u) {
-    assert(is_loop());
+    //TODO: remove this assert due to the if optimization
+    //assert(is_loop());
     assert(name != "");
     //assert(!elem(name, all_existing_loop_names()));
 
@@ -603,7 +621,7 @@ struct ir_node {
   }
 
   string add_load(const std::string& b, const std::vector<std::pair<std::string, std::string>> loc) {
-    assert(!is_loop());
+    assert(is_op());
     consume_locs_pair.push_back({b, loc});
     return consumed_value_name({b, loc});
   }
@@ -682,17 +700,26 @@ struct ir_node {
   }
 
   void populate_iteration_domains(map<op*, vector<string> >& sched_vecs, vector<string>& active_vecs) {
-    if (!is_op()) {
+    if (is_loop()) {
       auto nds = active_vecs;
       nds.push_back(to_string(start) + " <= " + name + " < " + to_string(end_exclusive));
       for (auto c : children) {
         c->populate_iteration_domains(sched_vecs, nds);
       }
-    } else {
+    } else if(is_if()) {
+      auto nds = active_vecs;
+      nds.push_back(condition);
+      for (auto c : children) {
+        c->populate_iteration_domains(sched_vecs, nds);
+      }
+    } else if(is_op()){
       sched_vecs[this] = active_vecs;
       for (auto c : children) {
         c->populate_iteration_domains(sched_vecs, active_vecs);
       }
+    } else {
+      cout << "Have not implemented this IR Node type: " << this->tp << endl;
+      assert(false);
     }
   }
 
@@ -707,11 +734,19 @@ struct ir_node {
         c->populate_schedule_vectors(sched_vecs, nds);
         nds[nds.size() - 1] = to_string(safe_stoi(nds[nds.size() - 1]) + 1);
       }
-    } else {
+    } else if(is_if()) {
+      //Skip the if node
+      for (auto c : children) {
+        c->populate_schedule_vectors(sched_vecs, active_vecs);
+      }
+    } else if(is_op()) {
       sched_vecs[this] = active_vecs;
       for (auto c : children) {
         c->populate_schedule_vectors(sched_vecs, active_vecs);
       }
+    } else {
+      cout << "Have not implemented this IR Node type: " << this->tp << endl;
+      assert(false);
     }
 
     size_t max_len = 1;
@@ -737,12 +772,29 @@ struct ir_node {
       for (auto c : children) {
         c->populate_iter_vars(varmap, nv);
       }
+    } else if (is_if()) {
+      for (auto c : children) {
+        c->populate_iter_vars(varmap, active_vars);
+      }
     } else {
       varmap[this] = active_vars;
       for (auto c : children) {
         c->populate_iter_vars(varmap, active_vars);
       }
     }
+  }
+
+  std::set<op*> all_non_ops() {
+    std::set<op*> loops{this};
+    if (is_op()){
+      loops = {};
+    }
+    for (auto c : children) {
+      for (auto op : c->all_non_ops()) {
+        loops.insert(op);
+      }
+    }
+    return loops;
   }
 
   std::set<op*> all_loops() {
@@ -771,7 +823,7 @@ struct ir_node {
   std::set<std::string> all_existing_op_names() {
     std::set<string> names;
     for (auto op : all_root_ops()) {
-      if (!op->is_loop()) {
+      if (op->is_op()) {
         names.insert(op->name);
       }
     }
@@ -801,7 +853,7 @@ struct ir_node {
 
   std::set<op*> all_ops() {
     std::set<op*> ops{this};
-    if (is_loop()) {
+    if (is_loop() || is_if()) {
       ops = {};
     }
     for (auto c : children) {
@@ -903,6 +955,17 @@ struct prog {
       }
     }
     cout << "Error: No loop named " << target_op << " in" << endl;
+    pretty_print();
+    assert(false);
+  }
+
+  op* find_non_op(const std::string& target_op) {
+    for (auto v : all_non_ops()) {
+      if (v->name == target_op) {
+        return v;
+      }
+    }
+    cout << "Error: No op named " << target_op << " in" << endl;
     pretty_print();
     assert(false);
   }
@@ -1121,6 +1184,7 @@ struct prog {
 
   std::set<op*> all_loops() { return root->all_loops(); }
   std::set<op*> all_ops() { return root->all_ops(); }
+  std::set<op*> all_non_ops() { return root->all_non_ops(); }
 
   op* add_op(const std::string& name) {
     return root->add_op(name);
@@ -1181,7 +1245,14 @@ struct prog {
     map<op*, vector<string> > ivars;
     root->populate_iter_vars(ivars, act);
 
+    //Check what's all the domain
+    for (auto it: idoms) {
+        cout << "OP name: " << it.first->name << endl;
+        cout << "dom bd: " << it.second << endl << endl;
+    }
+
     for (auto op : vecs) {
+      cout << op.first->name << endl;
       auto iters = map_find(op.first, ivars);
       auto vars = sep_list(iters, "[", "]", ", ");
 
@@ -1300,6 +1371,7 @@ struct prog {
     for (auto op : ops) {
       auto vars = map_find(op, ivars);
       string ivar_str = sep_list(vars, "[", "]", ", ");
+      cout << "Find op: " << op->name << endl;
       auto dom = map_find(op, doms);
 
       umap* pmap = isl_union_map_read_from_str(ctx, "{}");

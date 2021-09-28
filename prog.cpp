@@ -3,6 +3,15 @@
 #include "app.h"
 #include "rdai_collateral.h"
 
+std::ostream& operator << ( ostream& strm, ir_node_type tt) {
+  const string nameTT[] = {
+      "OP",
+      "LOOP",
+      "IF"
+  };
+  return strm << nameTT[tt];
+}
+
 void prog::pretty_print() {
   cout << "program: " << name << endl;
   cout << "Inputs..." << endl;
@@ -3170,7 +3179,7 @@ void regression_test(CodegenOptions& options,
 std::vector<std::string> get_kernels_in_order(prog& prg) {
   std::vector<string> kernels;
   for (auto child : prg.root->children) {
-    if (child->is_loop()) {
+    if (child->is_loop() || child->is_if()) {
       kernels.push_back(child->name);
     }
   }
@@ -3191,7 +3200,7 @@ void insert_perfect_loop_kernel(prog& prg, op* root, std::set<std::string> & ker
 std::set<std::string> get_kernels(op* root) {
   std::set<string> kernels;
   for (auto child : root->children) {
-    if (child->is_loop()) {
+    if (child->is_loop() || child->is_if()) {
       kernels.insert(child->name);
     }
   }
@@ -3691,10 +3700,10 @@ std::set<string> get_producers(string next_kernel, op* root, prog& prg) {
 
   //   cout << "next kernel: " << next_kernel<< endl;
   std::set<string> producers;
-  op* loop = prg.find_loop(next_kernel);
+  op* loop = prg.find_non_op(next_kernel);
 
   std::set<string> buffers_read;
-  for (auto op : prg.find_loop(next_kernel)->descendant_ops()) {
+  for (auto op : prg.find_non_op(next_kernel)->descendant_ops()) {
     for (auto buff : op->buffers_read()){
       buffers_read.insert(buff);
       //             cout << tab(1) << buff << endl;
@@ -3705,7 +3714,7 @@ std::set<string> get_producers(string next_kernel, op* root, prog& prg) {
   for (auto other_kernel : get_kernels(root)) {
     if (other_kernel != next_kernel) {
       std::set<string> buffers_written;
-      for (auto op : prg.find_loop(other_kernel)->descendant_ops()) {
+      for (auto op : prg.find_non_op(other_kernel)->descendant_ops()) {
         for (auto buff : op -> buffers_written()) {
           buffers_written.insert(buff);
         }
@@ -4853,9 +4862,15 @@ map<string, int> get_op_levels(prog& prg){
 }
 
 void get_variable_levels(op* node, map<string,int>& variable_map, int current_level){
-	if(!node->is_loop()){
+	if(node->is_op()){
 		return;
-	}else{
+
+	}if (node->is_if()){
+        //Do not increment level but look into it's children
+		for(auto child : node->children){
+			get_variable_levels(child, variable_map, current_level);
+		}
+    }else{
 		variable_map[node->name] = current_level;
 		current_level++;
 		for(auto child : node->children){
@@ -6286,7 +6301,6 @@ void generate_verilator_tb(
 bool is_inner_loop(op* op) {
   if (!op->is_loop()) {
     return false;
-
   }
 
   for (auto c : op->children) {
@@ -8450,12 +8464,20 @@ int schedule_info::compute_latency(op* op) {
 }
 
 int schedule_info::total_latency(op* op) {
-  if (!op->is_loop()) {
+  if (op->is_op()) {
     return instance_latency(op);
     //assert(contains_key(op, instance_latencies));
     //return map_find(op, instance_latencies);
   }
-  return II(op)*(op->trip_count() - 1) + instance_latency(op);
+  else if (op->is_loop()) {
+    return II(op)*(op->trip_count() - 1) + instance_latency(op);
+  } else if (op->is_if()) {
+    assert(op->children.size() == 1);
+    return total_latency(pick(op->children));
+  } else {
+    cout << "Did not implement total latency method for IR node type :" << op->tp << endl;
+    assert(false);
+  }
 }
 
 int op_latency(op* op, schedule_info& hwinfo) {
