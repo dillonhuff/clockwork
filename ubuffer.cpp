@@ -19,6 +19,7 @@ using CoreIR::Type;
 using CoreIR::Values;
 
 #endif
+#include "prog.h"
 #include "coreir_backend.h"
 typedef std::unordered_map<std::string, std::vector<int>> ConfigMap;
 
@@ -1581,41 +1582,6 @@ void add_lake_config(Json& jdata, ConfigMap data, int dimensionality, string dom
     }
 }
 
-//This is an optimization pass
-//take both access map and schedule and merge the dimension
-pair<isl_map*, isl_map*> merge_dom_dim(isl_map* schedule, isl_map* acc_map) {
-    auto a_map = cpy(acc_map);
-    auto sched = cpy(schedule);
-    int merge_cnt = 0;
-
-    //Get all mergeable dim in order from inner to outer
-    vector<pair<int, int>> all_pair_a =
-        get_all_domain_merge_dims(a_map);
-    vector<pair<int, int>> all_pair_s =
-        get_all_domain_merge_dims(sched);
-
-    cout << "\taccess map merge pair: " << all_pair_a << endl;
-    cout << "\tschedule merge pair: " << all_pair_s << endl;
-    while(!empty(all_pair_a) && !empty(all_pair_s)) {
-        auto pa = all_pair_a.front();
-        auto ps = all_pair_s.front();
-        if (pa.first == ps.first) {
-            unordered_set<int> tmp({pa.first - merge_cnt, pa.second - merge_cnt});
-            auto reduce_map = linear_domain_map_with_index(domain(a_map), tmp);
-            a_map = to_map(dot_domain(to_umap(a_map), to_umap(reduce_map)));
-            sched = to_map(dot_domain(to_umap(sched), to_umap(reduce_map)));
-            all_pair_a.erase(all_pair_a.begin());
-            all_pair_s.erase(all_pair_s.begin());
-            merge_cnt ++;
-        } else if(pa.first < ps.first) {
-            all_pair_a.erase(all_pair_a.begin());
-        } else {
-            all_pair_s.erase(all_pair_s.begin());
-        }
-    }
-    return make_pair(sched, a_map);
-}
-
 ConfigMap generate_addressor_config_from_access_map(umap* acc_map, LakeCollateral mem, bool is_read) {
      string buf_name = range_name(to_map(acc_map));
      string micro_buf_name = get_micro_buf_name(buf_name);
@@ -3148,95 +3114,6 @@ void UBuffer::generate_coreir(CodegenOptions& options,
     }
   }
 
-bool UBuffer::overlap_schedule(std::set<string> & ptset) {
-    for (string lpt: ptset) {
-        for (string rpt: ptset) {
-            if (lpt < rpt) {
-                auto overlap =
-                    dot(schedule.at(lpt), inv(schedule.at(rpt)));
-                if (!empty(overlap))
-                    return true;
-            }
-        }
-    }
-    return false;
-}
-
-bool build_delay_map(UBuffer& buf, map<string, vector<pair<string, int> > >& delay_maps, umap* sched, schedule_info& hwinfo) {
-  bool built_dm = true;
-  for (auto outpt : buf.get_out_ports()) {
-    std::set<string> ins;
-    {
-      auto reads = range(buf.access_map.at(outpt));
-      for (auto inpt : buf.get_in_ports()) {
-        auto writes = range(buf.access_map.at(inpt));
-        auto overlap = its(writes, reads);
-        if (!empty(overlap)) {
-          ins.insert(inpt);
-        }
-      }
-    }
-
-    assert(ins.size() == 1);
-    auto inpt = pick(ins);
-
-    auto writes = buf.access_map.at(inpt);
-    auto reads = buf.access_map.at(outpt);
-    cout << "writes: " << str(writes) << endl;
-    cout << "reads : " << str(reads) << endl;
-    cout << "Schedule..." << endl;
-    for (auto m : get_maps(sched)) {
-      cout << tab(1) << str(m) << endl;
-      release(m);
-    }
-
-    auto time_to_write = dot(inv(sched), (writes));
-    auto time_to_read = dot(inv(sched), (reads));
-
-    cout << "Time to write: " << str(time_to_write) << endl;
-    cout << "Time to read : " << str(time_to_read) << endl;
-
-    auto pc_times = dot(time_to_write, inv(time_to_read));
-    cout << "PC times     : " << str(pc_times) << endl;
-    auto dds = isl_union_map_deltas(pc_times);
-    cout << "DDs          : " << str(dds) << endl;
-    if (!empty(dds)) {
-      auto ddc = to_set(dds);
-
-      if (!(isl_set_is_singleton(ddc))) {
-        built_dm = false;
-        break;
-      }
-      assert(isl_set_is_singleton(ddc));
-
-      int dd = to_int(lexminval(ddc));
-      cout << "DD           : " << dd << endl;
-      string writer_name = domain_name(pick(get_maps(writes)));
-      //auto write_op = prg.find_op(writer_name);
-      //cout << "writer op    : " << writer_name << endl;
-      //for (auto e : hwinfo.op_compute_unit_latencies) {
-        //cout << tab(1) << e.first << " -> " << e.second << endl;
-      //}
-      //assert(false);
-      //int op_latency = map_find(writer_name, hwinfo.op_compute_unit_latencies);
-      //int op_latency = map_find(writer_name, hwinfo.op_compute_unit_latencies);
-      //int op_latency = hwinfo.compute_latency(write_op);
-      //assert(op_latency == 0);
-
-      int op_latency = hwinfo.compute_latency(writer_name);
-      //map_find(writer_name, hwinfo.op_compute_unit_latencies);
-      dd = dd - op_latency;
-
-      delay_maps[inpt].push_back({outpt, dd});
-
-    } else {
-      cout << tab(1) << "No overlap" << endl;
-      assert(false);
-    }
-  }
-  return built_dm;
-}
-
   void generate_synthesizable_functional_model(CodegenOptions& options, UBuffer& buf, CoreIR::ModuleDef* def, schedule_info& hwinfo) {
 
     //generate_platonic_ubuffer(options, buf, hwinfo);
@@ -3509,6 +3386,131 @@ bool build_delay_map(UBuffer& buf, map<string, vector<pair<string, int> > >& del
   }
 
 #endif
+
+
+bool UBuffer::overlap_schedule(std::set<string> & ptset) {
+    for (string lpt: ptset) {
+        for (string rpt: ptset) {
+            if (lpt < rpt) {
+                auto overlap =
+                    dot(schedule.at(lpt), inv(schedule.at(rpt)));
+                if (!empty(overlap))
+                    return true;
+            }
+        }
+    }
+    return false;
+}
+
+bool build_delay_map(UBuffer& buf, map<string, vector<pair<string, int> > >& delay_maps, umap* sched, schedule_info& hwinfo) {
+  bool built_dm = true;
+  for (auto outpt : buf.get_out_ports()) {
+    std::set<string> ins;
+    {
+      auto reads = range(buf.access_map.at(outpt));
+      for (auto inpt : buf.get_in_ports()) {
+        auto writes = range(buf.access_map.at(inpt));
+        auto overlap = its(writes, reads);
+        if (!empty(overlap)) {
+          ins.insert(inpt);
+        }
+      }
+    }
+
+    assert(ins.size() == 1);
+    auto inpt = pick(ins);
+
+    auto writes = buf.access_map.at(inpt);
+    auto reads = buf.access_map.at(outpt);
+    cout << "writes: " << str(writes) << endl;
+    cout << "reads : " << str(reads) << endl;
+    cout << "Schedule..." << endl;
+    for (auto m : get_maps(sched)) {
+      cout << tab(1) << str(m) << endl;
+      release(m);
+    }
+
+    auto time_to_write = dot(inv(sched), (writes));
+    auto time_to_read = dot(inv(sched), (reads));
+
+    cout << "Time to write: " << str(time_to_write) << endl;
+    cout << "Time to read : " << str(time_to_read) << endl;
+
+    auto pc_times = dot(time_to_write, inv(time_to_read));
+    cout << "PC times     : " << str(pc_times) << endl;
+    auto dds = isl_union_map_deltas(pc_times);
+    cout << "DDs          : " << str(dds) << endl;
+    if (!empty(dds)) {
+      auto ddc = to_set(dds);
+
+      if (!(isl_set_is_singleton(ddc))) {
+        built_dm = false;
+        break;
+      }
+      assert(isl_set_is_singleton(ddc));
+
+      int dd = to_int(lexminval(ddc));
+      cout << "DD           : " << dd << endl;
+      string writer_name = domain_name(pick(get_maps(writes)));
+      //auto write_op = prg.find_op(writer_name);
+      //cout << "writer op    : " << writer_name << endl;
+      //for (auto e : hwinfo.op_compute_unit_latencies) {
+        //cout << tab(1) << e.first << " -> " << e.second << endl;
+      //}
+      //assert(false);
+      //int op_latency = map_find(writer_name, hwinfo.op_compute_unit_latencies);
+      //int op_latency = map_find(writer_name, hwinfo.op_compute_unit_latencies);
+      //int op_latency = hwinfo.compute_latency(write_op);
+      //assert(op_latency == 0);
+
+      int op_latency = hwinfo.compute_latency(writer_name);
+      //map_find(writer_name, hwinfo.op_compute_unit_latencies);
+      dd = dd - op_latency;
+
+      delay_maps[inpt].push_back({outpt, dd});
+
+    } else {
+      cout << tab(1) << "No overlap" << endl;
+      assert(false);
+    }
+  }
+  return built_dm;
+}
+
+//This is an optimization pass
+//take both access map and schedule and merge the dimension
+pair<isl_map*, isl_map*> merge_dom_dim(isl_map* schedule, isl_map* acc_map) {
+    auto a_map = cpy(acc_map);
+    auto sched = cpy(schedule);
+    int merge_cnt = 0;
+
+    //Get all mergeable dim in order from inner to outer
+    vector<pair<int, int>> all_pair_a =
+        get_all_domain_merge_dims(a_map);
+    vector<pair<int, int>> all_pair_s =
+        get_all_domain_merge_dims(sched);
+
+    cout << "\taccess map merge pair: " << all_pair_a << endl;
+    cout << "\tschedule merge pair: " << all_pair_s << endl;
+    while(!empty(all_pair_a) && !empty(all_pair_s)) {
+        auto pa = all_pair_a.front();
+        auto ps = all_pair_s.front();
+        if (pa.first == ps.first) {
+            unordered_set<int> tmp({pa.first - merge_cnt, pa.second - merge_cnt});
+            auto reduce_map = linear_domain_map_with_index(domain(a_map), tmp);
+            a_map = to_map(dot_domain(to_umap(a_map), to_umap(reduce_map)));
+            sched = to_map(dot_domain(to_umap(sched), to_umap(reduce_map)));
+            all_pair_a.erase(all_pair_a.begin());
+            all_pair_s.erase(all_pair_s.begin());
+            merge_cnt ++;
+        } else if(pa.first < ps.first) {
+            all_pair_a.erase(all_pair_a.begin());
+        } else {
+            all_pair_s.erase(all_pair_s.begin());
+        }
+    }
+    return make_pair(sched, a_map);
+}
 
 string get_buf_type(string buf_name) {
     if (contains(buf_name, "agg")) {

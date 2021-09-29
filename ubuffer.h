@@ -9,8 +9,6 @@
 
 using namespace std;
 
-struct schedule_info;
-
 struct dynamic_address {
   std::string buffer;
   std::string table;
