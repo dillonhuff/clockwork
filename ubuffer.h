@@ -9,8 +9,6 @@
 
 using namespace std;
 
-struct schedule_info;
-
 struct dynamic_address {
   std::string buffer;
   std::string table;
@@ -2701,8 +2699,6 @@ void tighten_address_space() {
 
     //from bank to ubuffer
     map<string, UBuffer> generate_ubuffer(CodegenOptions& opt);
-    pair<isl_map*, isl_map*> get_bank_pt_IR(string inpt, isl_set* rddom, schedule_info & info);
-    UBuffer generate_ubuffer(UBufferImpl& impl, schedule_info & info, int bank);
 
     //optimization pass to add an coarse grained controller, save iteration counter
     isl_map* get_coarse_grained_pipeline_schedule(CodegenOptions& opt, UBuffer& new_ub, string config_mode,
@@ -2715,6 +2711,8 @@ void tighten_address_space() {
     void generate_smt_stream(CodegenOptions& options);
     void collect_memory_cnt(CodegenOptions& options, mem_access_cnt& mem_access);
 #ifdef COREIR
+    pair<isl_map*, isl_map*> get_bank_pt_IR(string inpt, isl_set* rddom, schedule_info & info);
+    UBuffer generate_ubuffer(UBufferImpl& impl, schedule_info & info, int bank);
     //CoreIR::Module* affine_controller(CoreIR::Context* context, isl_set* dom, isl_aff* aff);
 
     //kernel function for generate coreir

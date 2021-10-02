@@ -19,6 +19,7 @@ using CoreIR::Type;
 using CoreIR::Values;
 
 #endif
+#include "prog.h"
 #include "coreir_backend.h"
 typedef std::unordered_map<std::string, std::vector<int>> ConfigMap;
 
@@ -824,171 +825,6 @@ isl_map* UBuffer::get_coarse_grained_pipeline_schedule(CodegenOptions& options, 
   return cgpl_sched;
 }
 
-//helper function to get schedule for port
-pair<isl_map*, isl_map*> UBuffer::get_bank_pt_IR(string inpt, isl_set* rddom, schedule_info & info) {
-
-  auto acc_map = to_map(access_map.at(inpt));
-
-  //get the bank specific access map
-  acc_map = coalesce(its_range(acc_map, rddom));
-
-  auto dom = ::domain(acc_map);
-
-  auto sched_aff = get_aff(schedule.at(inpt));
-
-  if (isIn.at(inpt)) {
-    //update op latency, if it's input port
-    int op_latency = info.compute_latency(::domain_name(acc_map));
-    sched_aff = add(sched_aff, op_latency);
-  }
-
-  isl_map* sched = its(to_map(sched_aff), dom);
-  return {acc_map, sched};
-}
-
-UBuffer UBuffer::generate_ubuffer(UBufferImpl& impl, schedule_info & info, int bank) {
-  //for(auto it: impl.bank_rddom) {
-    //int bank = it.first;
-    string bname = name + "_BANK_" + str(bank);
-    auto rddom = impl.bank_rddom.at(bank);
-
-    //create ubuffer for codegen
-    UBuffer buf;
-    buf.name = bname;
-    buf.ctx = ctx;
-    buf.port_widths = port_widths;
-    buf.coarse_grained_pipeline_loop_level = coarse_grained_pipeline_loop_level;
-    cout << "CGPL level :" << coarse_grained_pipeline_loop_level << endl;
-
-    auto inpts = impl.get_unique_inpts(bank);
-    auto outpts = impl.get_unique_outpts(bank);
-    cout <<"impl inputs: "<< inpts << endl;
-    cout <<"impl outpts: "<< inpts << endl;
-
-    //TODO: may need a sort
-    //add a sort of output make sure we have positive stride when coalesce
-    //vector<string> outpt_vec(outpts.begin(), outpts.end());
-    /*sort(pt_vec.begin(), pt_vec.end(), [this](const string l, const string r) {
-              auto l_start = lexminpt(range(access_map.at(l)));
-              auto r_start = lexminpt(range(access_map.at(r)));
-              return lex_lt_pt(l_start, r_start);
-              });
-    */
-    int usuffix = 0;
-    bool sr = false;
-    int op_latency = 0;
-
-    for (string inpt: inpts) {
-      auto acc_map = to_map(access_map.at(inpt));
-
-      //get the bank specific access map
-      acc_map = coalesce(its_range(acc_map, rddom));
-
-      auto dom = ::domain(acc_map);
-
-      //update op latency
-      op_latency = info.compute_latency(::domain_name(acc_map));
-
-
-      auto sched_aff = get_aff(schedule.at(inpt));
-      sched_aff = add(sched_aff, op_latency);
-      isl_map* sched = its(to_map(sched_aff), dom);
-
-      //string pt_name = bname + "_" + ::name(dom) + "_" + to_string(usuffix);
-      //buf.port_bundles[get_bundle(inpt)].push_back(pt_name);
-
-      //Put into separate bundle if we have different domain name
-      buf.port_bundles[::name(dom) + "_write"].push_back(inpt);
-      if (impl.is_shift_register_input(inpt)) {
-        //rewrite for shift register
-        //TODO pass codegenoptions
-        //auto reduce_map = linear_address_map_lake(rddom, 4);
-        //cout << "Reduce map: " << str(reduce_map) << endl;
-        //reduce_map = set_range_name(reduce_map, bname);
-        //reduce_map = set_domain_name(reduce_map, bname);
-        //auto linear_acc_map = dot(acc_map, reduce_map);
-        //cout << "linear map: " << str(linear_acc_map) << endl;
-        //buf.add_in_pt(inpt, dom, linear_acc_map, its(schedule.at(inpt), dom));
-        //buf.add_in_pt(inpt, dom, acc_map, its(schedule.at(inpt), dom));
-        sr = true;
-      }
-      acc_map = set_range_name(acc_map, bname);
-      buf.add_in_pt(inpt, dom, acc_map, sched);
-      usuffix ++;
-    }
-
-    for (string outpt: outpts) {
-      auto acc_map = to_map(access_map.at(outpt));
-      //get the bank specific access map
-      acc_map = coalesce(its_range(acc_map, rddom));
-      auto sched = schedule.at(outpt);
-
-      acc_map = set_range_name(acc_map, bname);
-      auto dom = ::domain(acc_map);
-      //Shift register need preprocess the schedule and access pattern
-      /*if (impl.shift_depth.count(outpt) > 0) {
-          auto outpt_info =
-              get_shift_pt_access_with_sched(outpt, impl.shift_depth.at(outpt));
-          acc_map = outpt_info.first;
-          sched = to_umap(outpt_info.second);
-      }*/
-      //string pt_name = bname + "_" + ::name(dom) + "_" + to_string(usuffix);
-
-      if (impl.is_shift_register_output(outpt)) {
-        int delay = impl.shift_registered_outputs.at(outpt).second;;
-        string inpt = impl.shift_registered_outputs.at(outpt).first;
-
-        auto acc_map = to_map(access_map.at(inpt));
-        //get the bank specific access map
-        acc_map = coalesce(its_range(acc_map, rddom));
-        auto sched = to_map(schedule.at(inpt));
-
-        acc_map = set_range_name(acc_map, bname);
-        acc_map = add_domain_suffix(acc_map, domain_name(acc_map) + "_delay_"+str(delay));
-        sched = add_domain_suffix(sched, domain_name(sched) + "_delay_"+str(delay));
-
-        auto dom = ::domain(acc_map);
-
-        //Take consider of the latency in delay
-        sched = linear_schedule(sched, {1}, delay+op_latency, false);
-       // auto reduce_map = linear_address_map_lake(rddom, 4);
-       // cout << "Reduce map: " << str(reduce_map) << endl;
-       // reduce_map = set_range_name(reduce_map, bname);
-       // reduce_map = set_domain_name(reduce_map, bname);
-       // auto linear_acc_map = dot(acc_map, reduce_map);
-       // cout << "linear map: " << str(linear_acc_map) << endl;
-
-        //change bundle naming strategy to keep same sequence
-        buf.port_bundles[outpt + "_read"].push_back(outpt);
-        //buf.add_out_pt(outpt, dom, linear_acc_map, its(to_umap(sched), dom));
-        buf.add_out_pt(outpt, dom, acc_map, its(to_umap(sched), dom));
-      } else {
-
-        //buf.port_bundles[get_bundle(outpt)].push_back(pt_name);
-
-        //Put into separate bundle if we have different domain name
-        buf.port_bundles[::name(dom) + "_read"].push_back(outpt);
-
-        buf.add_out_pt(outpt, dom, acc_map, its(sched, dom));
-      }
-      usuffix ++;
-    }
-  buf.simplify_address_space();
-  if (sr) {
-
-      //FIXME: should do this after figure out vectorization dimension
-      //Maybe it's correct ???
-      //ASPLOS: this need to be tested for high throughput
-    buf.linear_address_space(project_out_zero_dim(rddom), 4);
-    //buf.linear_address_space(project_out_zero_dim(rddom),
-    //        max(4/*fetch_width*/, stride_in_dim(rddom, ::num_dims(rddom) - 1)));
-    //buf.tighten_address_space();
-  }
-  cout << "after ubuffer regen: " << buf << endl;
-
-  return buf;
-}
-
 //Post processing get the ubuffer for each bank
 /*
  * This will generate the ubuffer for vectorization,
@@ -1292,6 +1128,172 @@ void UBufferImpl::bank_merging(CodegenOptions & options) {
 }
 
 #ifdef COREIR
+
+//helper function to get schedule for port
+pair<isl_map*, isl_map*> UBuffer::get_bank_pt_IR(string inpt, isl_set* rddom, schedule_info & info) {
+
+  auto acc_map = to_map(access_map.at(inpt));
+
+  //get the bank specific access map
+  acc_map = coalesce(its_range(acc_map, rddom));
+
+  auto dom = ::domain(acc_map);
+
+  auto sched_aff = get_aff(schedule.at(inpt));
+
+  if (isIn.at(inpt)) {
+    //update op latency, if it's input port
+    int op_latency = info.compute_latency(::domain_name(acc_map));
+    sched_aff = add(sched_aff, op_latency);
+  }
+
+  isl_map* sched = its(to_map(sched_aff), dom);
+  return {acc_map, sched};
+}
+
+UBuffer UBuffer::generate_ubuffer(UBufferImpl& impl, schedule_info & info, int bank) {
+  //for(auto it: impl.bank_rddom) {
+    //int bank = it.first;
+    string bname = name + "_BANK_" + str(bank);
+    auto rddom = impl.bank_rddom.at(bank);
+
+    //create ubuffer for codegen
+    UBuffer buf;
+    buf.name = bname;
+    buf.ctx = ctx;
+    buf.port_widths = port_widths;
+    buf.coarse_grained_pipeline_loop_level = coarse_grained_pipeline_loop_level;
+    cout << "CGPL level :" << coarse_grained_pipeline_loop_level << endl;
+
+    auto inpts = impl.get_unique_inpts(bank);
+    auto outpts = impl.get_unique_outpts(bank);
+    cout <<"impl inputs: "<< inpts << endl;
+    cout <<"impl outpts: "<< inpts << endl;
+
+    //TODO: may need a sort
+    //add a sort of output make sure we have positive stride when coalesce
+    //vector<string> outpt_vec(outpts.begin(), outpts.end());
+    /*sort(pt_vec.begin(), pt_vec.end(), [this](const string l, const string r) {
+              auto l_start = lexminpt(range(access_map.at(l)));
+              auto r_start = lexminpt(range(access_map.at(r)));
+              return lex_lt_pt(l_start, r_start);
+              });
+    */
+    int usuffix = 0;
+    bool sr = false;
+    int op_latency = 0;
+
+    for (string inpt: inpts) {
+      auto acc_map = to_map(access_map.at(inpt));
+
+      //get the bank specific access map
+      acc_map = coalesce(its_range(acc_map, rddom));
+
+      auto dom = ::domain(acc_map);
+
+      //update op latency
+      op_latency = info.compute_latency(::domain_name(acc_map));
+
+
+      auto sched_aff = get_aff(schedule.at(inpt));
+      sched_aff = add(sched_aff, op_latency);
+      isl_map* sched = its(to_map(sched_aff), dom);
+
+      //string pt_name = bname + "_" + ::name(dom) + "_" + to_string(usuffix);
+      //buf.port_bundles[get_bundle(inpt)].push_back(pt_name);
+
+      //Put into separate bundle if we have different domain name
+      buf.port_bundles[::name(dom) + "_write"].push_back(inpt);
+      if (impl.is_shift_register_input(inpt)) {
+        //rewrite for shift register
+        //TODO pass codegenoptions
+        //auto reduce_map = linear_address_map_lake(rddom, 4);
+        //cout << "Reduce map: " << str(reduce_map) << endl;
+        //reduce_map = set_range_name(reduce_map, bname);
+        //reduce_map = set_domain_name(reduce_map, bname);
+        //auto linear_acc_map = dot(acc_map, reduce_map);
+        //cout << "linear map: " << str(linear_acc_map) << endl;
+        //buf.add_in_pt(inpt, dom, linear_acc_map, its(schedule.at(inpt), dom));
+        //buf.add_in_pt(inpt, dom, acc_map, its(schedule.at(inpt), dom));
+        sr = true;
+      }
+      acc_map = set_range_name(acc_map, bname);
+      buf.add_in_pt(inpt, dom, acc_map, sched);
+      usuffix ++;
+    }
+
+    for (string outpt: outpts) {
+      auto acc_map = to_map(access_map.at(outpt));
+      //get the bank specific access map
+      acc_map = coalesce(its_range(acc_map, rddom));
+      auto sched = schedule.at(outpt);
+
+      acc_map = set_range_name(acc_map, bname);
+      auto dom = ::domain(acc_map);
+      //Shift register need preprocess the schedule and access pattern
+      /*if (impl.shift_depth.count(outpt) > 0) {
+          auto outpt_info =
+              get_shift_pt_access_with_sched(outpt, impl.shift_depth.at(outpt));
+          acc_map = outpt_info.first;
+          sched = to_umap(outpt_info.second);
+      }*/
+      //string pt_name = bname + "_" + ::name(dom) + "_" + to_string(usuffix);
+
+      if (impl.is_shift_register_output(outpt)) {
+        int delay = impl.shift_registered_outputs.at(outpt).second;;
+        string inpt = impl.shift_registered_outputs.at(outpt).first;
+
+        auto acc_map = to_map(access_map.at(inpt));
+        //get the bank specific access map
+        acc_map = coalesce(its_range(acc_map, rddom));
+        auto sched = to_map(schedule.at(inpt));
+
+        acc_map = set_range_name(acc_map, bname);
+        acc_map = add_domain_suffix(acc_map, domain_name(acc_map) + "_delay_"+str(delay));
+        sched = add_domain_suffix(sched, domain_name(sched) + "_delay_"+str(delay));
+
+        auto dom = ::domain(acc_map);
+
+        //Take consider of the latency in delay
+        sched = linear_schedule(sched, {1}, delay+op_latency, false);
+       // auto reduce_map = linear_address_map_lake(rddom, 4);
+       // cout << "Reduce map: " << str(reduce_map) << endl;
+       // reduce_map = set_range_name(reduce_map, bname);
+       // reduce_map = set_domain_name(reduce_map, bname);
+       // auto linear_acc_map = dot(acc_map, reduce_map);
+       // cout << "linear map: " << str(linear_acc_map) << endl;
+
+        //change bundle naming strategy to keep same sequence
+        buf.port_bundles[outpt + "_read"].push_back(outpt);
+        //buf.add_out_pt(outpt, dom, linear_acc_map, its(to_umap(sched), dom));
+        buf.add_out_pt(outpt, dom, acc_map, its(to_umap(sched), dom));
+      } else {
+
+        //buf.port_bundles[get_bundle(outpt)].push_back(pt_name);
+
+        //Put into separate bundle if we have different domain name
+        buf.port_bundles[::name(dom) + "_read"].push_back(outpt);
+
+        buf.add_out_pt(outpt, dom, acc_map, its(sched, dom));
+      }
+      usuffix ++;
+    }
+  buf.simplify_address_space();
+  if (sr) {
+
+      //FIXME: should do this after figure out vectorization dimension
+      //Maybe it's correct ???
+      //ASPLOS: this need to be tested for high throughput
+    buf.linear_address_space(project_out_zero_dim(rddom), 4);
+    //buf.linear_address_space(project_out_zero_dim(rddom),
+    //        max(4/*fetch_width*/, stride_in_dim(rddom, ::num_dims(rddom) - 1)));
+    //buf.tighten_address_space();
+  }
+  cout << "after ubuffer regen: " << buf << endl;
+
+  return buf;
+}
+
 
 //void UBuffer::generate_bank_select()
 
@@ -1696,43 +1698,6 @@ void add_lake_config(Json& jdata, ConfigMap data, int dimensionality, string dom
     for (auto it: tmp.vals) {
         jdata[domain_name][it.first] = it.second;
     }
-}
-
-//This is an optimization pass
-//take both access map and schedule and merge the dimension
-pair<isl_map*, isl_map*> merge_dom_dim(isl_map* schedule, isl_map* acc_map) {
-    auto a_map = cpy(acc_map);
-    auto sched = cpy(schedule);
-    int merge_cnt = 0;
-
-    //Get all mergeable dim in order from inner to outer
-    vector<pair<int, int>> all_pair_a =
-        get_all_domain_merge_dims(a_map);
-    vector<pair<int, int>> all_pair_s =
-        get_all_domain_merge_dims(sched);
-
-    cout << "\taccess map merge pair: " << all_pair_a << endl;
-    cout << "\tschedule merge pair: " << all_pair_s << endl;
-    while(!empty(all_pair_a) && !empty(all_pair_s)) {
-        auto pa = all_pair_a.front();
-        auto ps = all_pair_s.front();
-        if (pa.first == ps.first) {
-            cout << pa << ", " << ps << endl;
-            cout << str(a_map) << endl;
-            unordered_set<int> tmp({pa.first , pa.second });
-            auto reduce_map = linear_domain_map_with_index(domain(a_map), tmp);
-            a_map = to_map(dot_domain(to_umap(a_map), to_umap(reduce_map)));
-            sched = to_map(dot_domain(to_umap(sched), to_umap(reduce_map)));
-            all_pair_a.erase(all_pair_a.begin());
-            all_pair_s.erase(all_pair_s.begin());
-            merge_cnt ++;
-        } else if(pa.first > ps.first) {
-            all_pair_a.erase(all_pair_a.begin());
-        } else {
-            all_pair_s.erase(all_pair_s.begin());
-        }
-    }
-    return make_pair(sched, a_map);
 }
 
 ConfigMap generate_addressor_config_from_access_map(umap* acc_map, LakeCollateral mem, bool is_read) {
@@ -3564,95 +3529,6 @@ void UBuffer::generate_coreir(CodegenOptions& options,
     }
   }
 
-bool UBuffer::overlap_schedule(std::set<string> & ptset) {
-    for (string lpt: ptset) {
-        for (string rpt: ptset) {
-            if (lpt < rpt) {
-                auto overlap =
-                    dot(schedule.at(lpt), inv(schedule.at(rpt)));
-                if (!empty(overlap))
-                    return true;
-            }
-        }
-    }
-    return false;
-}
-
-bool build_delay_map(UBuffer& buf, map<string, vector<pair<string, int> > >& delay_maps, umap* sched, schedule_info& hwinfo) {
-  bool built_dm = true;
-  for (auto outpt : buf.get_out_ports()) {
-    std::set<string> ins;
-    {
-      auto reads = range(buf.access_map.at(outpt));
-      for (auto inpt : buf.get_in_ports()) {
-        auto writes = range(buf.access_map.at(inpt));
-        auto overlap = its(writes, reads);
-        if (!empty(overlap)) {
-          ins.insert(inpt);
-        }
-      }
-    }
-
-    assert(ins.size() == 1);
-    auto inpt = pick(ins);
-
-    auto writes = buf.access_map.at(inpt);
-    auto reads = buf.access_map.at(outpt);
-    cout << "writes: " << str(writes) << endl;
-    cout << "reads : " << str(reads) << endl;
-    cout << "Schedule..." << endl;
-    for (auto m : get_maps(sched)) {
-      cout << tab(1) << str(m) << endl;
-      release(m);
-    }
-
-    auto time_to_write = dot(inv(sched), (writes));
-    auto time_to_read = dot(inv(sched), (reads));
-
-    cout << "Time to write: " << str(time_to_write) << endl;
-    cout << "Time to read : " << str(time_to_read) << endl;
-
-    auto pc_times = dot(time_to_write, inv(time_to_read));
-    cout << "PC times     : " << str(pc_times) << endl;
-    auto dds = isl_union_map_deltas(pc_times);
-    cout << "DDs          : " << str(dds) << endl;
-    if (!empty(dds)) {
-      auto ddc = to_set(dds);
-
-      if (!(isl_set_is_singleton(ddc))) {
-        built_dm = false;
-        break;
-      }
-      assert(isl_set_is_singleton(ddc));
-
-      int dd = to_int(lexminval(ddc));
-      cout << "DD           : " << dd << endl;
-      string writer_name = domain_name(pick(get_maps(writes)));
-      //auto write_op = prg.find_op(writer_name);
-      //cout << "writer op    : " << writer_name << endl;
-      //for (auto e : hwinfo.op_compute_unit_latencies) {
-        //cout << tab(1) << e.first << " -> " << e.second << endl;
-      //}
-      //assert(false);
-      //int op_latency = map_find(writer_name, hwinfo.op_compute_unit_latencies);
-      //int op_latency = map_find(writer_name, hwinfo.op_compute_unit_latencies);
-      //int op_latency = hwinfo.compute_latency(write_op);
-      //assert(op_latency == 0);
-
-      int op_latency = hwinfo.compute_latency(writer_name);
-      //map_find(writer_name, hwinfo.op_compute_unit_latencies);
-      dd = dd - op_latency;
-
-      delay_maps[inpt].push_back({outpt, dd});
-
-    } else {
-      cout << tab(1) << "No overlap" << endl;
-      assert(false);
-    }
-  }
-  return built_dm;
-}
-
   void generate_synthesizable_functional_model(CodegenOptions& options, UBuffer& buf, CoreIR::ModuleDef* def, schedule_info& hwinfo) {
 
     //generate_platonic_ubuffer(options, buf, hwinfo);
@@ -3925,6 +3801,131 @@ bool build_delay_map(UBuffer& buf, map<string, vector<pair<string, int> > >& del
   }
 
 #endif
+
+
+bool UBuffer::overlap_schedule(std::set<string> & ptset) {
+    for (string lpt: ptset) {
+        for (string rpt: ptset) {
+            if (lpt < rpt) {
+                auto overlap =
+                    dot(schedule.at(lpt), inv(schedule.at(rpt)));
+                if (!empty(overlap))
+                    return true;
+            }
+        }
+    }
+    return false;
+}
+
+bool build_delay_map(UBuffer& buf, map<string, vector<pair<string, int> > >& delay_maps, umap* sched, schedule_info& hwinfo) {
+  bool built_dm = true;
+  for (auto outpt : buf.get_out_ports()) {
+    std::set<string> ins;
+    {
+      auto reads = range(buf.access_map.at(outpt));
+      for (auto inpt : buf.get_in_ports()) {
+        auto writes = range(buf.access_map.at(inpt));
+        auto overlap = its(writes, reads);
+        if (!empty(overlap)) {
+          ins.insert(inpt);
+        }
+      }
+    }
+
+    assert(ins.size() == 1);
+    auto inpt = pick(ins);
+
+    auto writes = buf.access_map.at(inpt);
+    auto reads = buf.access_map.at(outpt);
+    cout << "writes: " << str(writes) << endl;
+    cout << "reads : " << str(reads) << endl;
+    cout << "Schedule..." << endl;
+    for (auto m : get_maps(sched)) {
+      cout << tab(1) << str(m) << endl;
+      release(m);
+    }
+
+    auto time_to_write = dot(inv(sched), (writes));
+    auto time_to_read = dot(inv(sched), (reads));
+
+    cout << "Time to write: " << str(time_to_write) << endl;
+    cout << "Time to read : " << str(time_to_read) << endl;
+
+    auto pc_times = dot(time_to_write, inv(time_to_read));
+    cout << "PC times     : " << str(pc_times) << endl;
+    auto dds = isl_union_map_deltas(pc_times);
+    cout << "DDs          : " << str(dds) << endl;
+    if (!empty(dds)) {
+      auto ddc = to_set(dds);
+
+      if (!(isl_set_is_singleton(ddc))) {
+        built_dm = false;
+        break;
+      }
+      assert(isl_set_is_singleton(ddc));
+
+      int dd = to_int(lexminval(ddc));
+      cout << "DD           : " << dd << endl;
+      string writer_name = domain_name(pick(get_maps(writes)));
+      //auto write_op = prg.find_op(writer_name);
+      //cout << "writer op    : " << writer_name << endl;
+      //for (auto e : hwinfo.op_compute_unit_latencies) {
+        //cout << tab(1) << e.first << " -> " << e.second << endl;
+      //}
+      //assert(false);
+      //int op_latency = map_find(writer_name, hwinfo.op_compute_unit_latencies);
+      //int op_latency = map_find(writer_name, hwinfo.op_compute_unit_latencies);
+      //int op_latency = hwinfo.compute_latency(write_op);
+      //assert(op_latency == 0);
+
+      int op_latency = hwinfo.compute_latency(writer_name);
+      //map_find(writer_name, hwinfo.op_compute_unit_latencies);
+      dd = dd - op_latency;
+
+      delay_maps[inpt].push_back({outpt, dd});
+
+    } else {
+      cout << tab(1) << "No overlap" << endl;
+      assert(false);
+    }
+  }
+  return built_dm;
+}
+
+//This is an optimization pass
+//take both access map and schedule and merge the dimension
+pair<isl_map*, isl_map*> merge_dom_dim(isl_map* schedule, isl_map* acc_map) {
+    auto a_map = cpy(acc_map);
+    auto sched = cpy(schedule);
+    int merge_cnt = 0;
+
+    //Get all mergeable dim in order from inner to outer
+    vector<pair<int, int>> all_pair_a =
+        get_all_domain_merge_dims(a_map);
+    vector<pair<int, int>> all_pair_s =
+        get_all_domain_merge_dims(sched);
+
+    cout << "\taccess map merge pair: " << all_pair_a << endl;
+    cout << "\tschedule merge pair: " << all_pair_s << endl;
+    while(!empty(all_pair_a) && !empty(all_pair_s)) {
+        auto pa = all_pair_a.front();
+        auto ps = all_pair_s.front();
+        if (pa.first == ps.first) {
+            unordered_set<int> tmp({pa.first - merge_cnt, pa.second - merge_cnt});
+            auto reduce_map = linear_domain_map_with_index(domain(a_map), tmp);
+            a_map = to_map(dot_domain(to_umap(a_map), to_umap(reduce_map)));
+            sched = to_map(dot_domain(to_umap(sched), to_umap(reduce_map)));
+            all_pair_a.erase(all_pair_a.begin());
+            all_pair_s.erase(all_pair_s.begin());
+            merge_cnt ++;
+        } else if(pa.first < ps.first) {
+            all_pair_a.erase(all_pair_a.begin());
+        } else {
+            all_pair_s.erase(all_pair_s.begin());
+        }
+    }
+    return make_pair(sched, a_map);
+}
 
 string get_buf_type(string buf_name) {
     if (contains(buf_name, "agg")) {

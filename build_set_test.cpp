@@ -14895,6 +14895,7 @@ void test_pond(string dir, bool run_verilator=true) {
     prg.pretty_print();
     bool gen_config_only = !run_verilator;
 
+#ifdef COREIR
     compile_for_garnet_single_port_mem(prg, dir,
             false, /*generate smt stream*/
             gen_config_only,/*gen_config_only*/
@@ -14928,6 +14929,8 @@ void test_pond(string dir, bool run_verilator=true) {
       string app_type = "single_port_buffer";
       cpy_app_to_folder(app_type, prg.name);
     }
+
+#endif
   }
 }
 
@@ -15114,6 +15117,7 @@ void test_glb(bool gen_config_only, bool multi_accessor=false, string dir="aha_g
     dsa_writers(prg);
     prg.pretty_print();
 
+#ifdef COREIR
     //compile_for_garnet_platonic_mem(prg);
     compile_for_garnet_single_port_mem(prg, dir, false, gen_config_only, false, false);
     cout << "Output name: " << prg.name << endl;
@@ -15138,6 +15142,7 @@ void test_glb(bool gen_config_only, bool multi_accessor=false, string dir="aha_g
       string app_type = "single_port_buffer";
       cpy_app_to_folder(app_type, prg.name);
     }
+#endif
   }
 }
 
@@ -15193,7 +15198,7 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
     break_up_multi_channel_outputs(prg);
     dsa_writers(prg);
     prg.pretty_print();
-
+#ifdef COREIR
     //compile_for_garnet_platonic_mem(prg);
     compile_for_garnet_single_port_mem(prg, dir, false, gen_config_only, false, false);
     cout << "Output name: " << prg.name << endl;
@@ -15218,6 +15223,7 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
       string app_type = "single_port_buffer";
       cpy_app_to_folder(app_type, prg.name);
     }
+#endif
   }
 }
 
