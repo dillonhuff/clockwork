@@ -15070,9 +15070,11 @@ void resnet_profiling() {
 void test_glb(bool gen_config_only, bool multi_accessor=false, string dir="aha_garnet_design") {
   vector<prog> test_apps;
 
-  test_apps.push_back(resnet_init_unroll_tile());
-  //test_apps.push_back(resnet5_1_full());
-  //test_apps.push_back(resnet2_x_full());
+  //ISSCC application without unroll
+  test_apps.push_back(harris_color());
+  test_apps.push_back(gaussian_isscc());
+  test_apps.push_back(camera_pipeline_isscc());
+  test_apps.push_back(unsharp_isscc());
 
   //GLB tests
   test_apps.push_back(unsharp_glb());
@@ -15084,6 +15086,10 @@ void test_glb(bool gen_config_only, bool multi_accessor=false, string dir="aha_g
   test_apps.push_back(glb_channel_reduction());
   //
   test_apps.push_back(matmul());
+
+  test_apps.push_back(resnet_init_unroll_tile());
+  //test_apps.push_back(resnet5_1_full());
+  //test_apps.push_back(resnet2_x_full());
 
   ////Sample DNN Layers
   test_apps.push_back(resnet1());
@@ -18983,6 +18989,24 @@ CodegenOptions garnet_codegen_single_port_with_addrgen_options(prog& prg, string
 
   return options;
 }
+
+CodegenOptions garnet_baseline_codegen_options(prog& prg) {
+  CodegenOptions options;
+  options.rtl_options.use_external_controllers = true;
+  options.rtl_options.target_tile =
+    TARGET_TILE_DUAL_SRAM_WITH_ADDRGEN;
+
+  if (is_rate_matchable(prg)) {
+    options.inner_bank_offset_mode =
+      INNER_BANK_OFFSET_CYCLE_DELAY;
+  } else {
+    options.inner_bank_offset_mode =
+      INNER_BANK_OFFSET_LINEAR;
+  }
+
+  return options;
+}
+
 
 CodegenOptions garnet_codegen_dual_port_with_addrgen_options(prog& prg) {
   CodegenOptions options;
@@ -27338,6 +27362,50 @@ void dhuff_playground() {
 
 }
 
+void unoptimized_mem_baseline() {
+    //vector<prog> isscc_programs = {gaussian(), unsharp_new(), harris(), camera_pipeline_new()};
+    vector<prog> isscc_programs;
+    isscc_programs.push_back(gaussian_isscc());
+    isscc_programs.push_back(unsharp_isscc());
+    isscc_programs.push_back(harris_color());
+    isscc_programs.push_back(camera_pipeline_isscc());
+
+    for (auto prg : isscc_programs) {
+      auto options = garnet_baseline_codegen_options(prg);
+      schedule_info sched = garnet_schedule_info(options, prg);
+      //compile_cycle_accurate_hw(options, sched, prg);
+      normalize_bounds(prg);
+      sequential_schedule(sched, prg.root, prg);
+
+      auto hw_sched = its(op_times_map(sched, prg), prg.whole_iteration_domain());
+      auto sched_max = lexmaxpt(range(hw_sched));
+      cout << "Latency of application is: " << str((sched_max)) << endl;
+
+      auto buffers = build_buffers(prg, hw_sched);
+
+
+      int total_capacity = 0;
+      int total_tile = 0;
+      for (auto b : buffers) {
+        if (!prg.is_boundary(b.first)) {
+          int buf_size = card(extents_by_dimension(b.second));
+          total_capacity += buf_size;
+          int mem_tile_num_by_capacity = (buf_size + 2047) / 2048;
+          options.default_banking_strategy = {"exhausive"};
+          b.second.generate_banks(options);
+          int mem_tile_num_by_bank = b.second.get_banks().size();
+          cout << tab(4) << "naive capacity tile number: " << mem_tile_num_by_capacity << endl;
+          cout << tab(4) << "naive banking number: " << mem_tile_num_by_bank << endl;
+          total_tile += max(mem_tile_num_by_capacity, mem_tile_num_by_bank);
+        }
+      }
+      cout << tab(1) << "=== SRAM bytes for " << prg.name << ": " << total_capacity << endl;
+      cout << tab(1) << "=== Memory tile for " << prg.name << ": " << total_tile << endl;
+    }
+    assert(false);
+}
+
+
 void stencil_chain_multi_kernel_test() {
   auto prgs = stencil_chain("sc_stat");
   generate_optimized_code(prgs);
@@ -27696,6 +27764,11 @@ int main(int argc, char** argv) {
 
     if (cmd == "lake-tests") {
       lake_tests();
+      return 0;
+    }
+
+    if (cmd == "baseline-tests") {
+      unoptimized_mem_baseline();
       return 0;
     }
 

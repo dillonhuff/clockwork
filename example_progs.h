@@ -37,6 +37,7 @@ prog resnet_multi_tiny(); //for regfile debug
 //prog mini_conv_halide_fixed();
 prog camera_pipeline(); //stencil
 prog camera_pipeline_new(); //stencil
+prog camera_pipeline_isscc(); //stencil
 //prog camera_pipeline_new_trunc(); //stencil
 //prog camera_pipeline_trunc(); //stencil
 prog up_sample();
@@ -91,10 +92,12 @@ prog glb_conv33();
 prog glb_db();
 prog glb_channel_reduction();
 prog resnet_glb();
+prog gaussian_isscc();
 prog gaussian_glb();
 prog gaussian_glb2();
 prog gaussian_glb8();
 prog unsharp_glb();
+prog unsharp_isscc();
 prog up_sample_glb();
 prog harris_color();
 prog harris_glb2();
