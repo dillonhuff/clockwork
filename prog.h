@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ubuffer.h"
+//#include "ubuffer.h"
 #include "isl_utils.h"
 #include "utils.h"
 #include "qexpr.h"
@@ -22,6 +22,12 @@ typedef op loop;
 typedef std::string buffer_name;
 typedef std::string address;
 typedef std::vector<std::pair<std::string, std::string> > piecewise_address;
+
+struct dynamic_address {
+  std::string buffer;
+  std::string table;
+  std::string table_offset;
+};
 
 static inline
 std::string pipe_cpy(const std::string& a, const int pipe) {
@@ -1387,58 +1393,11 @@ struct prog {
   }
 };
 
-// Schedules all loops in sequential order
-// and emits HLS C++ code for the program
-void generate_vanilla_hls_code(prog& prg);
-void generate_unoptimized_code(prog& prg);
-void generate_unoptimized_code(CodegenOptions& options, prog& prg);
-
-// Re-schedules all loops using ISL
-// and then emits HLS C++ code for the program
-void generate_optimized_code(prog& prg);
-void generate_optimized_code(CodegenOptions& options, prog& prg);
-
-std::set<pair<string, string> > edge_buffers(map<string, UBuffer>& buffers, prog& prg);
-
-std::set<pair<string, string> > outputs(map<string, UBuffer>& buffers, prog& prg);
-
-std::set<pair<string, string> > inputs(map<string, UBuffer>& buffers, prog& prg);
-
-// Variants on code generation functions
-void generate_app_code(CodegenOptions& options,
-    map<string, UBuffer>& buffers,
-    prog& prg,
-    umap* schedmap,
-    map<string, isl_set*>& domain_map);
-
-void generate_app_code(map<string, UBuffer>& buffers, prog& prg, umap* sched);
-
-void generate_app_code(CodegenOptions& options, map<string, UBuffer>& buffers, prog& prg, umap* schedmap);
-
-void generate_app_code(map<string, UBuffer>& buffers, prog& prg);
-
-map<string, UBuffer> build_buffers(prog& prg, umap* opt_sched);
-
-map<string, UBuffer> build_buffers(prog& prg);
-
-void tag_coarse_grained_loop_to_ubuf(map<string, UBuffer>& buffers, prog& prg);
-
-void generate_app_code(CodegenOptions& options, map<string, UBuffer>& buffers, prog& prg, umap* schedmap);
-
 prog duplicate_interface(prog& p);
-
-vector<pair<string, string> > incoming_bundles(op* op, map<string, UBuffer>& buffers, prog& prg);
-vector<pair<string, string> > outgoing_bundles(op* op, map<string, UBuffer>& buffers, prog& prg);
-vector<string> incoming_buffers(const map<string, UBuffer>& buffers, op* op, prog& prg);
-vector<string> outgoing_buffers(const map<string, UBuffer>& buffers, op* op, prog& prg);
-
 
 bool unoptimized_compiles(prog& prg);
 std::vector<string> unoptimized_result(prog& prg);
 void generate_regression_testbench(prog& prg);
-void generate_vectorization_unit_testbench(UBuffer & buf);
-void generate_regression_testbench(prog& prg, map<string, UBuffer>& buffers);
-
 
 std::vector<std::string> run_regression_tb(const std::string& name);
 
@@ -1486,11 +1445,6 @@ std::set<string> get_produced_buffers(const std::set<std::string>& group, prog& 
 
 
 std::set<string> get_produced_buffers(const std::set<std::string>& group, prog& original);
-
-void generate_verilog(CodegenOptions& options,
-    map<string, UBuffer>& buffers,
-    prog& prg,
-    umap* schedmap);
 
 umap* hardware_schedule(prog& prg);
 
@@ -1647,30 +1601,6 @@ vector<string> reduce_vars(prog& prg);
 
 void sanity_check_all_reads_defined(prog& prg);
 
-void generate_vivado_rtl_tb(
-    CodegenOptions& options,
-    prog& prg,
-    umap* hw_sched,
-    map<string, UBuffer>& buffers);
-
-void generate_deepak_power_flow_rtl_tb(
-    CodegenOptions& options,
-    prog& prg,
-    umap* hw_sched,
-    map<string, UBuffer>& buffers);
-
-void generate_verilator_tb(
-    CodegenOptions& options,
-    prog& prg,
-    umap* hw_sched,
-    map<string, UBuffer>& buffers);
-
-void generate_garnet_verilator_tb(
-    CodegenOptions& options,
-    prog& prg,
-    umap* hw_sched,
-    map<string, UBuffer>& buffers);
-
 template<typename T>
 void print_box_bounds(const std::string& name, T* pr){
   auto lmin = lexmin(pr);
@@ -1820,29 +1750,6 @@ void read_in_no_dsa(op* loop, isl_set* read_data, const vector<int>& scan_order,
 
 void write_out_no_dsa(op* loop, isl_set* read_data, const vector<int>& scan_order, const std::string& rb_name, prog& prg);
 
-void generate_app_prefix(CodegenOptions& options, ofstream& conv_out, prog& prg);
-void generate_app_collateral(CodegenOptions& options,
-    ostream& conv_out,
-    map<string, UBuffer>& buffers,
-    prog& prg,
-    umap* schedmap);
-
-
-void generate_driver_function_prefix(CodegenOptions& options, ostream& conv_out, map<string, UBuffer>& buffers, prog& prg);
-
-
-void generate_driver_function_suffix(CodegenOptions& options, ostream& conv_out, map<string, UBuffer>& buffers, prog& prg);
-
-void generate_app_code_body(CodegenOptions& options,
-    ostream& conv_out,
-    map<string, UBuffer>& buffers,
-    prog& prg,
-    umap* schedmap,
-    map<string, isl_set*>& domain_map);
-
-vector<string> get_args(const map<string, UBuffer>& buffers, prog& prg);
-vector<string> get_arg_names(const map<string, UBuffer>& buffers, prog& prg);
-
 void push_to_bottom_of_band_ignoring(const vector<loop*>& base, loop* lp, prog& prg);
 
 void push_below(loop* outer, loop* inner, prog& prg);
@@ -1852,27 +1759,6 @@ void add_reuse_buffer_no_delta(const std::string& level, const std::string& buff
 op* find_coarse_grained_pipeline_loop(op* lp);
 op* find_coarse_grained_pipeline_loop(op* lp, prog& prg);
 void find_coarse_grained_pipeline_loops(op* lp, vector<op*> & cgpl_lps, prog& prg);
-
-vector<pair<string, pair<string, int> >> determine_output_shift_reg_map(
-    prog& prg,
-    UBuffer& buf,
-    schedule_info& hwinfo);
-
-map<string, pair<string, int> > determine_shift_reg_map(
-        prog& prg,
-    UBuffer& buf,
-    schedule_info& hwinfo);
-
-dgraph build_in_to_out_shift_register_graph(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_info& hwinfo);
-dgraph build_shift_registers(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_info& hwinfo);
-UBufferImpl port_group2bank(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_info& hwinfo);
-
-isl_map* build_buffer_impl_embarrassing_banking(UBuffer& buf, schedule_info& hwinfo, EmbarrassingBankingImpl& impl);
-
-void generate_banks_garnet(CodegenOptions& options, UBuffer& buf, UBufferImpl& impl, schedule_info& hw_info);
-
-UBufferImpl generate_optimized_memory_implementation(
-        CodegenOptions& options, UBuffer & buf, prog & prg, schedule_info& hwinfo);
 
 void sanity_check_iis(schedule_info& sched);
 
@@ -1903,8 +1789,6 @@ bool schedule_bounds_fit_controller_bitwidth(const int bitwidth, schedule_info& 
 
 void adjust_inner_iis(schedule_info& sched, prog& prg);
 
-vector<int> analyze_memory_demands(prog& prg, UBuffer& buf, schedule_info& hwinfo);
-
 void pad_top_level_ops_with_loops(prog& prg);
 void pad_bottom_level_ops_with_loops(prog& prg);
 
@@ -1917,12 +1801,6 @@ void dsa_readers(prog& prg);
 int buffer_store_latency(CodegenOptions& options);
 int buffer_load_latency(CodegenOptions& options);
 
-
-UBuffer write_latency_adjusted_buffer(
-    CodegenOptions& options,
-    prog& prg,
-    UBuffer& buf,
-    schedule_info& hwinfo);
 
 vector<isl_multi_aff*> write_addrs(op* op, const std::string& buf, prog& prg);
 
@@ -2040,6 +1918,10 @@ map<std::string, std::set<string> > fuse_pointwise_stages(prog& prg);
 vector<string> buffer_arg_names(op* op, prog& prg);
 
 void set_channel_depths_to_constant(const int constant, app_dag& dag);
+void set_channel_depths_ilp(const int kernel_depth, app_dag& dag);
+void set_channel_depths_by_assumed_stage_depth(const int kernel_depth, app_dag& dag);
+void set_channel_depths_by_stage_depths(app_dag& dag);
+void set_channel_depths_by_kernel_depth(const int kernel_depth, app_dag& dag);
 
 void unroll_mismatched_inner_loops(prog& prg);
 

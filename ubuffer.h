@@ -6,14 +6,9 @@
 #endif
 
 #include "qexpr.h"
+#include "prog.h"
 
 using namespace std;
-
-struct dynamic_address {
-  std::string buffer;
-  std::string table;
-  std::string table_offset;
-};
 
 template <typename T>
 std::ostream& operator<< (std::ostream& out, const std::pair<T, T>& v) {
@@ -923,8 +918,11 @@ struct MemConnSch {
   }
 };
 
+//TODO put this into separate header
 struct UBufferImpl;
+struct EmbarrassingBankingImpl;
 struct CyclicBankingImpl;
+struct dgraph;
 
 class UBuffer {
 
@@ -3461,3 +3459,33 @@ std::ostream& operator<<(std::ostream& out, UBufferImpl& impl);
 bool all_schedules_defined(UBuffer& buf);
 
 bool is_register(UBuffer& buf);
+
+//This is an optimization pass
+//take both access map and schedule and merge the dimension
+pair<isl_map*, isl_map*> merge_dom_dim(isl_map* schedule, isl_map* acc_map);
+
+//Shift register optimizations
+vector<pair<string, pair<string, int> >> determine_output_shift_reg_map(
+    prog& prg,
+    UBuffer& buf,
+    schedule_info& hwinfo);
+
+map<string, pair<string, int> > determine_shift_reg_map(
+        prog& prg,
+    UBuffer& buf,
+    schedule_info& hwinfo);
+
+dgraph build_in_to_out_shift_register_graph(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_info& hwinfo);
+dgraph build_shift_registers(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_info& hwinfo);
+UBufferImpl port_group2bank(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_info& hwinfo);
+
+isl_map* build_buffer_impl_embarrassing_banking(UBuffer& buf, schedule_info& hwinfo, EmbarrassingBankingImpl& impl);
+
+void generate_banks_garnet(CodegenOptions& options, UBuffer& buf, UBufferImpl& impl, schedule_info& hw_info);
+
+UBufferImpl generate_optimized_memory_implementation(
+        CodegenOptions& options, UBuffer & buf, prog & prg, schedule_info& hwinfo);
+
+vector<int> analyze_memory_demands(prog& prg, UBuffer& buf, schedule_info& hwinfo);
+
+int buffer_capacity(UBuffer& buf);
