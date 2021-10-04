@@ -11693,8 +11693,9 @@ void blur_and_downsample_test() {
 }
 
 void test_if_complex();
+void test_loop_perfection();
 void playground() {
-  test_if_complex();
+  test_loop_perfection();
     {
       isl_ctx* ctx = isl_ctx_alloc();
       auto acc_0 = isl_map_read_from_str(ctx,"{ [i0]-> [3*i0]: 0<=i0<8}");
@@ -26608,6 +26609,41 @@ void test_if_complex() {
   //assert(to_int(lexmaxval(dom)) == 5);
 
   assert(false);
+}
+
+void test_loop_perfection() {
+  prog prg("loop_perfection_example");
+  auto lp_0 = prg.add_loop("r", 0, 10);
+  auto ifs_lp = lp_0->add_loop("x_init", 0, 10);
+  auto init_op = ifs_lp->add_op("init");
+  init_op->add_store("output", "x_init");
+  auto lp = lp_0->add_loop("c", 0, 10);
+  auto lp_input = lp->add_loop("x_input", 0, 20);
+  auto input_op = lp_input->add_op("input");
+  input_op->add_store("input", "input");
+  input_op->add_store("input_dram", "c", "input");
+  auto lp_comp_x = lp->add_loop("x_comp", 0, 10);
+  auto lp_comp_y = lp_comp_x->add_loop("y_comp", 0, 10);
+  auto comp_op = lp_comp_y->add_op("comp");
+  comp_op->add_load("output", "x_comp");
+  comp_op->add_load("input", "x_comp+y_comp");
+  comp_op->add_store("output", "x_comp");
+  auto lp_wb_x = lp_0->add_loop("x_wb", 0, 10);
+  auto wb_op = lp_wb_x->add_op("write_back");
+  wb_op->add_load("output", "x_wb");
+  wb_op->add_store("output_dram", "x_wb");
+  prg.pretty_print();
+
+  loop_perfection(prg);
+  cout << "After Loop perfection" << endl;
+  prg.pretty_print();
+
+  assert(single_coarse_pipeline_loop_nests(prg));
+
+  CodegenOptions options;
+  schedule_info sched =
+    garnet_schedule_info(options, prg);
+  garnet_dual_port_ram_schedule(sched, prg.root, prg);
 }
 
 void load_pe_power_stats(power_analysis_params& power_params, const std::string& file) {

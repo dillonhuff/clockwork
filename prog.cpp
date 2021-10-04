@@ -4302,6 +4302,97 @@ op* find_coarse_grained_pipeline_loop(op* lp, prog& prg) {
   //return nullptr;
 }
 
+vector<string> get_lb_condition(op* root_op, op* inner_most_cgpl_lp) {
+    if (root_op == inner_most_cgpl_lp) {
+        string cond = "(" + root_op->name + "=" + str(root_op->start) + ")";
+        return {cond};
+    }
+    assert(root_op->children.size() == 1);
+    op* child = pick(root_op->children);
+    assert(child->is_loop());
+    auto str_child = get_lb_condition(child, inner_most_cgpl_lp);
+    string cond = "(" + root_op->name + "=" + str(root_op->start) + ")";
+    str_child.push_back(cond);
+    return str_child;
+}
+
+vector<string> get_ub_condition(op* root_op, op* inner_most_cgpl_lp) {
+    if (root_op == inner_most_cgpl_lp) {
+        string cond = "(" + root_op->name + "=" + str(root_op->end_exclusive - 1) + ")";
+        return {cond};
+    }
+    assert(root_op->children.size() == 1);
+    op* child = pick(root_op->children);
+    assert(child->is_loop());
+    vector<string> str_child = get_ub_condition(child, inner_most_cgpl_lp);
+    string cond = "(" + root_op->name + "=" + str(root_op->end_exclusive - 1) + ")";
+    str_child.push_back(cond);
+    return str_child;
+}
+
+void add_prelogue_op(op* op_tbm, op* imperfect_child_lp, op* inner_most_cgpl_lp) {
+  //iteratively find the loops under this imperfect_child_loop
+  vector<string> lb_condition_string_vec = get_lb_condition(imperfect_child_lp, inner_most_cgpl_lp);
+  string cond = sep_list(lb_condition_string_vec, "", "", "&&");
+  op* if_node = inner_most_cgpl_lp->add_if_front(op_tbm->name + "_if_prelogue_guard", cond);
+  //op_tbm->parent->delete_child(op_tbm);
+  //if_node->children.push_back(op_tbm);
+  //op_tbm->parent = if_node;
+  op_tbm->attach_to(if_node);
+}
+
+void add_epilogue_op(op* op_tbm, op* imperfect_child_lp, op* inner_most_cgpl_lp) {
+  //iteratively find the loops under this imperfect_child_loop
+  vector<string> ub_condition_string_vec = get_ub_condition(imperfect_child_lp, inner_most_cgpl_lp);
+  string cond = sep_list(ub_condition_string_vec, "", "", "&&");
+  op* if_node = inner_most_cgpl_lp->add_if(op_tbm->name + "_if_epilogue_guard", cond);
+  //op_tbm->parent->delete_child(op_tbm);
+  //if_node->children.push_back(op_tbm);
+  //op_tbm->parent = if_node;
+  op_tbm->attach_to(if_node);
+}
+
+void loop_perfection(op* target_lp, op* inner_most_cgpl_lp, prog& prg) {
+  //pc id is the location of loop child that will subsume all the other children
+  int pc_id = -1;
+  int child_count = 0;
+  for (auto child: target_lp->children) {
+    if (!is_perfect(child, prg)) {
+        //Can only has one child exist
+        assert(pc_id == -1);
+        pc_id = child_count;
+    }
+    child_count ++;
+  }
+  assert(pc_id != -1);
+  for (int i = pc_id-1; i >= 0; i --) {
+    add_prelogue_op(target_lp->children.at(i), target_lp->children.at(pc_id), inner_most_cgpl_lp);
+    //Move one loop inside need to decrease the index
+    pc_id --;
+  }
+  for (int i = pc_id+1; i < target_lp->children.size(); i ++) {
+    add_epilogue_op(target_lp->children.at(i), target_lp->children.at(pc_id), inner_most_cgpl_lp);
+  }
+}
+
+void loop_perfection(prog& prg) {
+  vector<op*> cgpl_lps;
+  find_coarse_grained_pipeline_loops(prg.root, cgpl_lps, prg);
+  if (cgpl_lps.size() == 0)
+    return;
+  op* inner_most_cgpl_lp = cgpl_lps.front();
+  for(auto it = cgpl_lps.begin() + 1; it != cgpl_lps.end(); it ++) {
+    //Move the ir node under *it into the inner most coarse grained pipeline loop
+    loop_perfection(*it, inner_most_cgpl_lp, prg);
+  }
+}
+
+bool single_coarse_pipeline_loop_nests(prog& prg) {
+  vector<op*> cgpl_lps;
+  find_coarse_grained_pipeline_loops(prg.root, cgpl_lps, prg);
+  return (cgpl_lps.size() == 1);
+}
+
 umap* prog::validity_deps() {
 
   //umap* naive_sched = unoptimized_schedule();

@@ -117,6 +117,12 @@ struct ir_node {
     children = new_children;
   }
 
+  void attach_to(op* new_parent) {
+    parent->delete_child(this);
+    new_parent->children.push_back(this);
+    parent = new_parent;
+  }
+
   bool dynamic_writes(const std::string& buf) {
     for (auto d : dynamic_store_addresses) {
       if (d.buffer == buf) {
@@ -524,6 +530,20 @@ struct ir_node {
     lp->parent = this;
     lp->tp = IR_NODE_TYPE_IF;
     children.push_back(lp);
+
+    return lp;
+  }
+
+  op* add_if_front(const std::string& name, const std::string& condition) {
+    assert(!is_op());
+
+    auto lp = new op();
+    lp->name = name;
+    lp->condition = condition;
+    lp->ctx = ctx;
+    lp->parent = this;
+    lp->tp = IR_NODE_TYPE_IF;
+    children.insert(begin(children), lp);
 
     return lp;
   }
@@ -1377,11 +1397,11 @@ struct prog {
     for (auto op : ops) {
       auto vars = map_find(op, ivars);
       string ivar_str = sep_list(vars, "[", "]", ", ");
-      cout << "Find op: " << op->name << endl;
+      //cout << "Find op: " << op->name << endl;
       auto dom = map_find(op, doms);
 
       umap* pmap = isl_union_map_read_from_str(ctx, "{}");
-     // adding vector pair
+      //adding vector pair
       for (auto top_pair : op->consumes_pair()) {
         if (top_pair.first == buf_name) {
           string cond = "{ ";
@@ -1788,6 +1808,7 @@ bool all_loop_nests_same_depth(prog& prg);
 
 bool is_perfect(op* loop, prog& prg);
 bool all_perfect_loop_nests(prog& prg);
+bool single_coarse_pipeline_loop_nests(prog& prg);
 std::vector<op*> get_dft_ops(prog& prg);
 
 
@@ -1832,6 +1853,7 @@ op* find_coarse_grained_pipeline_loop(op* lp);
 op* find_coarse_grained_pipeline_loop(op* lp, prog& prg);
 void find_coarse_grained_pipeline_loops(op* lp, vector<op*> & cgpl_lps, prog& prg);
 
+void loop_perfection(prog& prg);
 void sanity_check_iis(schedule_info& sched);
 
 int logical_dimension(const std::string& buf, prog& prg);
