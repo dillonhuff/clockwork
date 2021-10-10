@@ -18264,6 +18264,8 @@ void break_up_multi_channel_inputs(prog& prg) {
 
 void adjust_schedule_forward(schedule_info& sched, prog& prg, int offset = 1) {
   assert(all_ops_scheduled(sched, prg));
+  //cout << "schedule: " << str(op_start_times_map(sched, prg)) << endl;;
+  //cout << "iteration domain: " << str(op_start_times_domain(prg)) << endl;;
 
   auto start_times = its(op_start_times_map(sched, prg), op_start_times_domain(prg));
   cout << "Start times..." << endl;
@@ -18451,6 +18453,7 @@ void adjust_coarse_grained_loop_iis(schedule_info& sched, prog & prg) {
     cout << tab(1) << "Current II        : " << sched.II(coarse_pipeline_loop) << endl;
     sched.loop_iis[coarse_pipeline_loop->name] =
       max(sched.total_latency(most_compute_intensive_stage), 1);
+    cout << tab(1) << "Adjusting II to   : " << sched.II(coarse_pipeline_loop) << endl;
   }
 }
 
@@ -18899,6 +18902,7 @@ void coarse_pipeline_schedule(schedule_info& sched, op* root, prog& prg) {
 
   //adjust_outer_pipeline_delays(sched, prg);
   adjust_coarse_grained_loop_delays_sequentially(sched, prg);
+  tighten_coarse_grained_iis(sched, prg);
 
   cout << "Done Adjusting outer pipeline delays" << endl;
   sanity_check_iis(sched);
@@ -19447,6 +19451,11 @@ void compile_for_garnet_single_port_mem(prog& prg,
   options.config_gen_only = config_gen_only;
   //if (multi_sram)
   //    options.mem_tile.multi_sram_accessor = true;
+
+  loop_perfection(prg);
+  cout << "After Loop Perfection" << endl;
+  prg.pretty_print();
+
   schedule_info sched = garnet_schedule_info(options, prg, use_dse_compute);
   garnet_single_port_ram_schedule(options, sched, prg.root, prg);
   auto sched_map = op_times_map(sched, prg);
@@ -19934,6 +19943,7 @@ void fpga_asplos_tests() {
 
   //auto test_programs = stencil_programs();
   auto test_programs = {resnet88()};
+  //auto test_programs = {pointwise()};
   for (auto prg : test_programs) {
     cout << "==== FPGA clockwork code for " << prg.name << endl;
     break_up_multi_channel_inputs(prg);

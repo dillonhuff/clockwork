@@ -1771,11 +1771,22 @@ struct schedule_info {
     return last_delay;
   }
 
+  //Above the Coarse grained loop, the II will follow the db update delay
+  //We do not need to wait for the latency, since we have N buffer
   int doublebuffer_update_delay(op* op) {
     assert(op->is_loop());
     int last_delay = 0;
     for (auto c : op->children) {
-      int delay = II(c) * c->trip_count();
+      int delay = 0;
+      if (c->is_loop()) {
+        delay = II(c) * c->trip_count();
+      } else if (c->is_if()){
+        auto lp_under_if = pick(c->children);
+        delay = II(lp_under_if) * lp_under_if->trip_count();
+      } else {
+        cout << "Not implemented this op" << endl;
+        assert(false);
+      }
       if (delay > last_delay) {
         last_delay = delay;
       }

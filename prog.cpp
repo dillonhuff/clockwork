@@ -1193,7 +1193,8 @@ vector<string> surrounding_vars(op* loop, prog& prg) {
   vector<string> surrounding;
   op* current = prg.root;
   while (current != loop) {
-    surrounding.push_back(current->name);
+    if (current->is_loop())
+      surrounding.push_back(current->name);
     current = current->container_child(loop);
   }
   return surrounding;
@@ -2996,7 +2997,7 @@ bool all_perfect_loop_nests(prog& prg) {
 }
 
 void build_schedule_exprs(op* parent, map<op*, QExpr>& schedule_exprs, schedule_info& sched, prog& prg) {
-  if (!parent->is_loop()) {
+  if (!parent->is_op()) {
     return;
   }
 

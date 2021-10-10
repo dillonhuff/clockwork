@@ -713,6 +713,24 @@ isl_map* UBuffer::get_coarse_grained_pipeline_schedule(CodegenOptions& options, 
   int max_offset = INT_MIN;
   int max_start = INT_MIN;
   isl_map* cgpl_sched;
+
+  //First pass to get the coarse loop level information, there may be loops with if guard
+  for (auto it: schedule) {
+    auto sched = to_map(it.second);
+    int in_dim = coarse_grained_pipeline_loop_level;
+    std::vector<int> inner_levels(num_in_dims(sched) - in_dim - 1);
+    std::iota (std::begin(inner_levels), std::end(inner_levels), in_dim + 1);
+    cout << "inner levels: " << inner_levels << endl;
+    cgpl_sched = remove_in_dims(cpy(sched), inner_levels);
+    while (get_dim_extent(::domain(cgpl_sched), coarse_grained_pipeline_loop_level) == 1) {
+      cgpl_sched = remove_in_dims(cpy(cgpl_sched), {coarse_grained_pipeline_loop_level});
+      coarse_grained_pipeline_loop_level --;
+    }
+  }
+
+  cout << "Final CGPL after remove the if guard dimension: "
+      << coarse_grained_pipeline_loop_level << endl;
+
   for (auto it: schedule) {
     auto sched = to_map(it.second);
     auto pt_name = it.first;
