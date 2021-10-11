@@ -2997,7 +2997,7 @@ bool all_perfect_loop_nests(prog& prg) {
 }
 
 void build_schedule_exprs(op* parent, map<op*, QExpr>& schedule_exprs, schedule_info& sched, prog& prg) {
-  if (!parent->is_op()) {
+  if (parent->is_op()) {
     return;
   }
 
