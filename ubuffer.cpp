@@ -731,6 +731,7 @@ isl_map* UBuffer::get_coarse_grained_pipeline_schedule(CodegenOptions& options, 
   cout << "Final CGPL after remove the if guard dimension: "
       << coarse_grained_pipeline_loop_level << endl;
 
+  //get the coarse grained schedule
   for (auto it: schedule) {
     auto sched = to_map(it.second);
     auto pt_name = it.first;
@@ -772,6 +773,8 @@ isl_map* UBuffer::get_coarse_grained_pipeline_schedule(CodegenOptions& options, 
   cout << "\tNeed double buffer optimization: " << need_double_buffer << endl;
   substract_glb_latency = (max_start >= options.mem_hierarchy.at("mem").counter_ub);
 
+  //This is an optimization
+  //flatten the coarse grained schedule for tiling loop
   isl_map* merged_sched;
   if (need_double_buffer) {
     //TODO: only implement double buffer for lake

@@ -107,6 +107,28 @@ struct ir_node {
   void replace_variable(const std::string& var, const std::string& val);
   void shift_address(const std::string& var, const std::vector<int>& min_locs);
 
+  bool is_inner_loop() const {
+    if (this->is_loop()) {
+      return false;
+    }
+    for (auto c : children) {
+      if (c->is_loop()) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  bool is_coarse_grained_loop() const {
+    if (!is_loop()) {
+      return false;
+    } else if ((children.size() > 1) && (!is_inner_loop())) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   void delete_child(op* c) {
     vector<op*> new_children;
     for (auto ch : children) {

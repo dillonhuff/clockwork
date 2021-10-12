@@ -48,6 +48,13 @@ enum ScheduleAlgorithm {
   SCHEDULE_ALGORITHM_CW
 };
 
+enum DNNScheduleAlgorithm {
+    ASPLOS_SCHEDULE, //An over optimized schedule which will be refactored
+    VANILLA_DB_SCHEDULE,
+    SEQUENTIAL_SCHEDULE
+};
+
+
 enum InnerBankOffsetMode {
   INNER_BANK_OFFSET_STACK,
   INNER_BANK_OFFSET_LINEAR,
@@ -92,7 +99,8 @@ struct RTLOptions {
   RTLOptions() : use_external_controllers(true), pack_controllers_in_memtiles(false),
   use_pipelined_compute_units(false), double_buffer_optimization(false),
     max_inpt(1), max_outpt(1),
-    target_tile(TARGET_TILE_DUAL_SRAM_WITH_ADDRGEN), use_prebuilt_memory(false),
+    target_tile(TARGET_TILE_DUAL_SRAM_WITH_ADDRGEN),
+    use_prebuilt_memory(false),
     hls_clock_target_Hz(250000000) {}
 };
 
@@ -230,6 +238,7 @@ struct CodegenOptions {
   bool use_soda_casting;
   InnerBankOffsetMode inner_bank_offset_mode;
   ScheduleAlgorithm scheduling_algorithm;
+  DNNScheduleAlgorithm fallback_schedule;
   bool ignore_top_level_inter_deps;
 
   banking_strategy default_banking_strategy;
@@ -254,6 +263,7 @@ struct CodegenOptions {
   use_soda_casting(false),
   inner_bank_offset_mode(INNER_BANK_OFFSET_STACK),
   scheduling_algorithm(SCHEDULE_ALGORITHM_NAIVE),
+  fallback_schedule(SEQUENTIAL_SCHEDULE),
   default_banking_strategy({"exhaustive"}),
   ignore_top_level_inter_deps(false),
   num_pipelines(1),
