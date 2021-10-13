@@ -264,14 +264,26 @@
           ["conv_stencil_clkwrk_dsa0_op_hcompute_conv_stencil_write",["Array",1,["Array",16,"Bit"]]]
         ]],
         "instances":{
-          "inner_compute$const_p0__258":{
+          "PE_init_U12":{
+            "genref":"cgralib.PE",
+            "genargs":{"numbitports":["Int",3], "numdataports":["Int",2], "op_kind":["String","alu"], "width":["Int",16]},
+            "modargs":{"alu_op":["String","add"], "data0_mode":["String","BYPASS"], "data0_value":[["BitVector",16],"16'h0000"], "data1_mode":["String","BYPASS"], "data1_value":[["BitVector",16],"16'h0000"], "signed":["Bool",false]}
+          },
+          "_U10":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0000"]}
+          },
+          "_U11":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
             "modargs":{"value":[["BitVector",16],"16'h0000"]}
           }
         },
         "connections":[
-          ["self.conv_stencil_clkwrk_dsa0_op_hcompute_conv_stencil_write.0","inner_compute$const_p0__258.out"],
+          ["_U10.out","PE_init_U12.data.in.0"],
+          ["_U11.out","PE_init_U12.data.in.1"],
+          ["self.conv_stencil_clkwrk_dsa0_op_hcompute_conv_stencil_write.0","PE_init_U12.data.out"],
           ["self.valid_pass_out","self.valid_pass_in"]
         ]
       },
@@ -348,14 +360,26 @@
           ["out_conv_stencil",["Array",16,"Bit"]]
         ]],
         "instances":{
-          "const_p0__258":{
+          "PE_init_U15":{
+            "genref":"cgralib.PE",
+            "genargs":{"numbitports":["Int",3], "numdataports":["Int",2], "op_kind":["String","alu"], "width":["Int",16]},
+            "modargs":{"alu_op":["String","add"], "data0_mode":["String","BYPASS"], "data0_value":[["BitVector",16],"16'h0000"], "data1_mode":["String","BYPASS"], "data1_value":[["BitVector",16],"16'h0000"], "signed":["Bool",false]}
+          },
+          "_U13":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0000"]}
+          },
+          "_U14":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
             "modargs":{"value":[["BitVector",16],"16'h0000"]}
           }
         },
         "connections":[
-          ["self.out_conv_stencil","const_p0__258.out"]
+          ["_U13.out","PE_init_U15.data.in.0"],
+          ["_U14.out","PE_init_U15.data.in.1"],
+          ["self.out_conv_stencil","PE_init_U15.data.out"]
         ]
       },
       "hcompute_conv_stencil_1":{

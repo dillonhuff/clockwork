@@ -2319,6 +2319,13 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
         int starting_cycle = buf.starting_cycle();
         cout << starting_cycle << endl;
         if(starting_cycle == 0) {
+            //Take the output starting cycle instead of input latency
+            //auto out_sched = buf.global_outpt_sched();
+            //auto host2glb_latency = to_int(lexminval(to_set(range(out_sched))));
+            //cout << "Host to glb latency: " << host2glb_latency << endl;
+            //options.host2glb_latency =
+            //    min(options.host2glb_latency, host2glb_latency);
+
             auto in_sched = buf.global_inpt_sched();
             auto host2glb_latency = to_int(lexmaxval(to_set(range(in_sched))));
             cout << "Host to glb latency: " << host2glb_latency << endl;
@@ -2358,6 +2365,9 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
       eb.tighten_address_space();
       auto eb_config = eb.generate_ubuf_args(options, eb, "glb");
       eb.config_file = eb_config;
+      //if(prg.is_input(buf.first)) {
+      //    assert(false);
+      //}
     }
   }
 
@@ -3106,14 +3116,96 @@ bool runOnInstance(Instance* inst) {
   }
 };*/
 
+/*
+namespace MapperPasses {
+class InitConst : public CoreIR::InstanceVisitorPass {
+  public :
+    static std::string ID;
+    InitConst() : InstanceVisitorPass(ID,"replace mem init const with PE of dummy add.") {}
+    void setVisitorInfo() override;
+};
+
+}*/
+
+class ReplaceMemInitWithPE: public CoreIR::InstancePass {
+    public:
+ReplaceMemInitWithPE():
+    InstancePass(
+            "replacememinitwithpe",
+            "Replace Mem const init with PE"
+            ) {}
+
+bool runOnInstance(Instance* cnst) {
+    //define the pass here
+    if (cnst->getModuleRef()->getRefName() == "coreir.const") {
+      Context* c = cnst->getContext();
+      auto conns = cnst->sel("out")->getConnectedWireables();
+      //cout << "Connections=" << conns.size() << endl;
+      if (conns.size()==0) {
+        return false;
+      }
+      ASSERT(conns.size()==1,"size: " + to_string(conns.size()));
+      for (auto conn : conns) {
+        if (auto conInst = dyn_cast<Instance>(conn->getTopParent())) {
+          cout << "  coninst= " << toString(conInst) << endl;
+          //cout << "  conn= " << toString(conn->getSelectPath()) << endl;
+          //if (conInst->getModuleRef()->getRefName() != "cgralib.Mem" || conn->getSelectPath().back()!="wen") {
+          if (conInst->getModuleRef()->getRefName() != "cgralib.Mem") {
+            return false;
+          }
+        }
+      }
+      cout << "REPLACING!" << endl;
+      ModuleDef* def = cnst->getContainer();
+      auto bv = cnst->getModArgs().at("value")->get<BitVector>();
+      int width = cnst->getModuleRef()->getGenArgs().at("width")->get<int>();
+      auto init_const= def->addInstance(c->getUnique(),
+          "coreir.const",
+          {{"width", CoreIR::Const::make(c, width)}},
+          {{"value", CoreIR::Const::make(c, bv)}});
+      auto init_zero = def->addInstance(c->getUnique(),
+          "coreir.const",
+          {{"width", CoreIR::Const::make(c, width)}},
+          {{"value", CoreIR::Const::make(c, BitVector(width, 0))}});
+
+      //Add PE
+      Values dataPEArgs({
+        {"alu_op",Const::make(c,"add")},
+        {"signed",Const::make(c,false)}});
+      auto pe = def->addInstance("PE_init"+c->getUnique(), "cgralib.PE",{{"op_kind",Const::make(c,"alu")}},dataPEArgs);
+
+      def->connect(init_const->sel("out"), pe->sel("data")->sel("in")->sel("0"));
+      def->connect(init_zero->sel("out"), pe->sel("data")->sel("in")->sel("1"));
+      for (auto conn : conns) {
+        def->connect(conn, pe->sel("data")->sel("out"));
+      }
+      def->removeInstance(cnst);
+      return true;
+
+    } else {
+      return false;
+    }
+  }
+};
+/*
+std::string MapperPasses::InitConst::ID = "initconst";
+void MapperPasses::InitConst::setVisitorInfo() {
+  Context* c = this->getContext();
+  if (c->hasModule("coreir.const")) {
+      assert(false);
+    addVisitorFunction(c->getModule("coreir.const"),InitConstReplace);
+  }
+
+}
+}*/
+
 namespace MapperPasses {
 class MemConst : public CoreIR::InstanceVisitorPass {
   public :
     static std::string ID;
     MemConst() : InstanceVisitorPass(ID,"replace mem wen const with lut") {}
     void setVisitorInfo() override;
-};
-
+ };
 }
 
 bool ConstReplace(Instance* cnst) {
@@ -3492,7 +3584,7 @@ void garnet_map_module(Module* top, bool garnet_syntax_trans = false) {
   jpass->writeToStream(file,top->getRefName());
 }
 
-void garnet_map_module(Module* top, map<string, UBuffer> & buffers, bool garnet_syntax_trans = false) {
+void garnet_map_module(CodegenOptions& options, Module* top, map<string, UBuffer> & buffers, bool garnet_syntax_trans = false) {
   auto c = top->getContext();
 
   top->print();
@@ -3514,6 +3606,10 @@ void garnet_map_module(Module* top, map<string, UBuffer> & buffers, bool garnet_
   auto glb_pass = new GetGLBConfig();
   c->addPass(glb_pass);
   c->runPasses({"getglbconfig"});
+  //override latency using the input,
+  //FIXME: this hack will break stencil apps
+  if ((options.host2glb_latency != 0) && (glb_pass->latency != 0))
+     glb_pass->latency = options.host2glb_latency;
   cout << "Latency: " << glb_pass->latency << endl;
   for (auto it: glb_pass->glb2cgra)
     cout << "buf: "<< it.first << "\n\tglb2fabric: " << it.second  << endl;
@@ -3548,6 +3644,8 @@ void garnet_map_module(Module* top, map<string, UBuffer> & buffers, bool garnet_
   c->runPasses({"constduplication"});
   c->addPass(new MapperPasses::MemConst);
   c->runPasses({"memconst"});
+  c->addPass(new ReplaceMemInitWithPE);
+  c->runPasses({"replacememinitwithpe"});
 
   c->runPasses({"cullgraph"});
   c->getPassManager()->printLog();
@@ -3734,7 +3832,7 @@ void generate_coreir(CodegenOptions& options,
   auto ns_new = context->getNamespace("global");
   //Garnet pass
   if (options.rtl_options.use_prebuilt_memory) {
-    garnet_map_module(prg_mod, buffers, true);
+    garnet_map_module(options, prg_mod, buffers, true);
     context->runPasses({"rungenerators", "flatten", "removewires", "cullgraph"});
 
     if(!saveToFile(ns_new,  options.dir + prg.name+ "_garnet.json", prg_mod)) {

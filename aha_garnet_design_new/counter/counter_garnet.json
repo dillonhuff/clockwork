@@ -151,7 +151,17 @@
           ["rst_n","BitIn"]
         ]],
         "instances":{
-          "const_0":{
+          "PE_init_U19":{
+            "genref":"cgralib.PE",
+            "genargs":{"numbitports":["Int",3], "numdataports":["Int",2], "op_kind":["String","alu"], "width":["Int",16]},
+            "modargs":{"alu_op":["String","add"], "data0_mode":["String","BYPASS"], "data0_value":[["BitVector",16],"16'h0000"], "data1_mode":["String","BYPASS"], "data1_value":[["BitVector",16],"16'h0000"], "signed":["Bool",false]}
+          },
+          "_U17":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0000"]}
+          },
+          "_U18":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
             "modargs":{"value":[["BitVector",16],"16'h0000"]}
@@ -178,7 +188,9 @@
           }
         },
         "connections":[
-          ["self.d.0","const_0.out"],
+          ["_U17.out","PE_init_U19.data.in.0"],
+          ["_U18.out","PE_init_U19.data.in.1"],
+          ["self.d.0","PE_init_U19.data.out"],
           ["self.clk","op_hcompute_hw_output_stencil_port_controller_Counter_1_garnet.clk"],
           ["op_hcompute_hw_output_stencil_port_controller_clk_en_const_lutcnst.bit.out","op_hcompute_hw_output_stencil_port_controller_Counter_1_garnet.clk_en"],
           ["self.d.1","op_hcompute_hw_output_stencil_port_controller_Counter_1_garnet.data_out_0"],

@@ -395,6 +395,7 @@ isl_map* get_domain_mask(isl_map* m, int vec_dim);
 vector<isl_set*> get_domain_unmask_set(isl_map* m, int vec_dim, vector<int> unmask_dims);
 
 isl_map* get_domain_trans(isl_set* dom, int pos, int fetch_width);
+isl_map* get_domain_trans(isl_set* dom, vector<int> stride_vec);
 isl_map* get_domain_trans_with_reaccess_mask(isl_set* dom, int pos, int fetch_width);
 isl_set* get_domain_trans_sched_domain(isl_set* dom, int pos, int fetch_width);
 isl_set* get_domain_trans_sched_domain(isl_map* dom, int pos, int fetch_width);

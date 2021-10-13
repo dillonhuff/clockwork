@@ -81,7 +81,7 @@ prog resnet_full_layer();
 prog histogram1d();
 
 prog jitnet();
-//prog exposure_fusion();
+prog exposure_fusion_halide();
 prog conv1x1();
 prog mod_example();
 prog three_level_pond_copy();
@@ -101,6 +101,8 @@ prog harris_glb2();
 prog camera_pipeline_glb();
 
 prog matmul();
+prog matmul_single();
+prog matmul_fpga();
 
 //resnet without input tiling
 prog resnet_output_stationary_i16();

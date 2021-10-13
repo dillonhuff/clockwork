@@ -3159,6 +3159,10 @@ void UBuffer::generate_coreir(CodegenOptions& options,
     auto bank_id = it.first;
     UBuffer target_buf = generate_ubuffer(impl, info, bank_id);
 
+    //This is used for tighten the cyclic banking space
+    target_buf.tighten_iteration_domain();
+    target_buf.tighten_address_space();
+
     //An optimization for coarse grained pipeline, save the iterator level
     //CoreIR::Instance* cgpl_ctrl;
     //bool decouple_ctrl = cgpl_ctrl_optimization(options, def, cgpl_ctrl, target_buf);
@@ -6267,6 +6271,12 @@ void UBuffer::generate_banks(CodegenOptions& options) {
     }
   }
 
+  CyclicBankingImpl UBuffer::get_cyclic_banking_implement(UBufferImpl & impl) {
+    vector<int> cb_factor = get_cyclic_banking_factors();
+    CyclicBankingImpl bank_impl(impl, cb_factor);
+    return bank_impl;
+  }
+
   void UBuffer::parse_exhaustive_banking_into_impl(UBufferImpl & impl) {
     for(auto bank: get_banks()) {
       auto inpts = banks_to_inputs.at(bank.name);
@@ -8851,7 +8861,7 @@ void UBuffer::generate_banks(CodegenOptions& options) {
               //Add one more step to pad reacess dimension
               //tb.pad_reaccess_dimension(fetch_width);
 
-              //Check capacity of tb
+              ////Check capacity of tb
               //auto capacity = tb.capacity();
               //cout << "TB size: " << capacity << endl;
               //auto mem = options.mem_hierarchy.at("mem");
@@ -9467,15 +9477,21 @@ void UBuffer::generate_banks(CodegenOptions& options) {
         int max_wr_btw = 0;
         for (auto pt: pt_set) {
           auto image = its(write_btw, to_set(pt));
-          //cout << "pt: " << str(pt) << endl;//" \n\thas image: " << str(image) << endl;
+          cout << "domain point: " << str(pt) << endl;//" \n\thas image: " << str(image) << endl;
           //for (auto rng_pt: get_points(range(image))) {
-          //  cout << "\tpt need to buffer: " << str(rng_pt) << endl;
+          //  cout << "\timage of domain point need to buffer: " << str(rng_pt) << endl;
           //}
           auto card_capacity = int_upper_bound(card(image));
-          //cout << "\tcard: " << card_capacity << endl;
+          cout << "\tcard: " << card_capacity << endl;
           card_set.insert(card_capacity);
           max_wr_btw = max(max_wr_btw, card_capacity);
         }
+        auto range_card = card(write_btw);
+        int max_capacity = int_upper_bound(range_card);
+        cout << "\tmax capacity from card of map: " << max_capacity << endl;
+        cout << "\twrite btw: " << str(write_btw) << endl;
+        cout << "\trange card: " << str(range_card) << endl;
+        cout << "\tdomain of write btw: " << str(::domain(write_btw)) << endl;
 
         cout << "Possible DD: " << card_set << endl;
         return max_wr_btw;

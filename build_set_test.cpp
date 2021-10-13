@@ -14869,6 +14869,9 @@ void generate_resnet_latency_experiment(prog& prg,
 void test_pond(string dir, bool run_verilator=true) {
   vector<prog> test_apps;
   //test_apps.push_back(complex_mem_pond_input());
+  //Need to change the schedule for vectorization
+  //test_apps.push_back(complex_mem_pond_input());
+
   test_apps.push_back(complex_mem_pond());
   test_apps.push_back(complex_mem_pond_rolled());
   test_apps.push_back(conv_rolled());
@@ -15068,15 +15071,16 @@ void resnet_profiling() {
 void test_glb(bool gen_config_only, bool multi_accessor=false, string dir="aha_garnet_design") {
   vector<prog> test_apps;
 
+  test_apps.push_back(resnet_init_unroll_tile());
   //test_apps.push_back(resnet5_1_full());
   //test_apps.push_back(resnet2_x_full());
 
   //GLB tests
-  test_apps.push_back(gaussian_glb());
+  test_apps.push_back(unsharp_glb());
+  test_apps.push_back(gaussian_glb2());
   test_apps.push_back(camera_pipeline_glb());
   test_apps.push_back(harris_glb2());
   test_apps.push_back(up_sample_glb());
-  test_apps.push_back(unsharp_glb());
   test_apps.push_back(gaussian_glb8());
   test_apps.push_back(glb_channel_reduction());
   //
@@ -15094,8 +15098,8 @@ void test_glb(bool gen_config_only, bool multi_accessor=false, string dir="aha_g
   test_apps.push_back(resnet_multi_channel());
 
   //Test with non double buffer, not tested with db
+  test_apps.push_back(resnet_output_stationary_small());
   test_apps.push_back(resnet_output_stationary_tiny());
-  test_apps.push_back(resnet_init_unroll_tile());
 
   for ( auto prg: test_apps) {
     prg.sanity_check();
@@ -15140,6 +15144,7 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   //test_apps.push_back(camera_pipeline_trunc());
 
   //CGRA tests
+  test_apps.push_back(matmul_single());
   test_apps.push_back(counter());
   test_apps.push_back(camera_pipeline_new());
   test_apps.push_back(rom());
@@ -17883,13 +17888,15 @@ void adjust_coarse_grained_loop_delays_sequentially(schedule_info& sched, prog& 
   vector<op*> cgpl_lps;
   find_coarse_grained_pipeline_loops(prg.root, cgpl_lps, prg);
   for (op* coarse_pipeline_loop: cgpl_lps) {
+    cout << "adjust delay under coarse loop: "
+        << coarse_pipeline_loop->name << endl;
     vector<string> sorted_kernels = topologically_sort_kernels(coarse_pipeline_loop, prg);
     map<string, int> head_op_latency;
     for (auto name : sorted_kernels) {
       auto lp = prg.find_loop(name);
-      cout << "Push kernel <" << lp->name << "> into delay adjusting queue." << endl;
-      cout << "II: " << sched.II(lp) << endl;
-      cout << "TP: " << (lp)->trip_count() << endl;
+      cout << tab(1) << "Push kernel <" << lp->name << "> into delay adjusting queue." << endl;
+      cout << tab(2) << "II: " << sched.II(lp) << endl;
+      cout << tab(2) << "TP: " << (lp)->trip_count() << endl;
       auto producers = get_producers(name, coarse_pipeline_loop, prg);
       for (auto prod:  producers)
           cout << "\tprod: " << prod << endl;
@@ -17898,8 +17905,9 @@ void adjust_coarse_grained_loop_delays_sequentially(schedule_info& sched, prog& 
       //coarse_pipeline_II[name] = sched.II(lp) * lp->trip_count();
       coarse_pipeline_II[name] = sched.total_latency(lp);
       sched.op_offset_within_parent[lp] = 0;
-      if (producers.size() == 0)
+      if (producers.size() == 0) {
           head_op_latency[name] = coarse_pipeline_II.at(name);
+      }
     }
 
     int max_head_op_latency = 0;
@@ -17909,23 +17917,37 @@ void adjust_coarse_grained_loop_delays_sequentially(schedule_info& sched, prog& 
 
     for (auto name : sorted_kernels) {
       auto lp = prg.find_loop(name);
-      cout << "Adjusting delay of " << lp->name << endl;
-      cout << "II: " << sched.II(lp) << endl;
+      cout << tab(2) << "Adjusting delay of " << lp->name << endl;
+      cout << tab(2) << "II: " << sched.II(lp) << endl;
       int max_delay = 0;
       auto producers = get_producers(name, coarse_pipeline_loop, prg);
       for (string prod: producers){
           op* prod_op = prg.find_loop(prod);
-          max_delay = max(coarse_pipeline_II.at(prod)
-                  + sched.op_offset_within_parent.at(prod_op), max_delay);
+          max_delay = max(max_delay,
+                  coarse_pipeline_II.at(prod) + sched.op_offset_within_parent.at(prod_op));
       }
       //An optimization, if this the head of the graph, push it back
-      if (producers.size() == 0) {
+      if (producers.size() == 0 ) {
         max_delay = max_head_op_latency - head_op_latency.at(name);
       }
 
+      //TODO: this code is commented out, glb can only support 0 latency
+      //auto all_producers = get_producers(name, prg);
+      //if ((producers.size() == 0) && (all_producers.size() == 0)) {
+
+      //  //max_delay = max_head_op_latency - head_op_latency.at(name);
+      //  //FIXME: this 784 is only for resnet
+      //  cout << "HACK: " << name << endl;
+      //  max_delay = max_head_op_latency - head_op_latency.at(name);
+      //  //TODO: save this delay
+      //}
+      //else if ((producers.size() == 0) && (all_producers.size() != 0)) {
+      //  max_delay -= 785;
+      //}
+
       sched.op_offset_within_parent.at(lp) = max_delay;
-      cout << "final delay of " << lp->name <<
-          ": \n\t"<< max_delay << endl;
+      cout << tab(1) << "final delay of " << lp->name <<
+          ": \t"<< max_delay << endl << endl;
     }
   }
 }
@@ -18539,13 +18561,40 @@ void garnet_single_port_ram_schedule(CodegenOptions& options, schedule_info& sch
         cout << tab(2) << "ii = " << sched.II(container) << endl;
       }
     }
+    //int total_latency = 0;
+    //for (auto op : inner_ops(prg)) {
+    //    cout << "inner ops: " << op->name << ", total latency: "<< total_latency << endl;
+    //  sched.op_offset_within_parent[op] = total_latency;
+    //  //sched.instance_latencies[op] = op_latency(op, sched);
+    //  //total_latency += op_latency(op, sched) + 2;
+    //  total_latency += op_latency(op, sched);
+    //}
     int total_latency = 0;
+    vector<op*> scheduled;
     for (auto op : inner_ops(prg)) {
-        cout << "inner ops: " << op->name << endl;
-      sched.op_offset_within_parent[op] = total_latency;
-      //sched.instance_latencies[op] = op_latency(op, sched);
-      //total_latency += op_latency(op, sched) + 2;
-      total_latency += op_latency(op, sched);
+      cout << "inner ops: " << op->name << endl;
+      auto read = op->buffers_read();
+      int offset = 0;
+      std::vector<::op*> init_ops;
+      for (auto other : scheduled) {
+        if (intersection(other->buffers_written(), read).size() > 0) {
+          offset = max(offset, sched.op_offset_within_parent[other] + op_latency(other, sched));
+          if (contains(pick(other->buffers_written()), "clkwrk_dsa")) {
+              //This is the op which need forcing to have the same offset
+              init_ops.push_back(other);
+          }
+        }
+      }
+      sched.op_offset_within_parent[op] = offset;
+      for (auto init_op: init_ops) {
+        assert(sched.op_offset_within_parent[init_op] <= offset);
+        sched.op_offset_within_parent[init_op] = offset;
+        cout << "force inner op: " << init_op->name << ", has same offset as update: " << offset << endl;
+      }
+      cout << "inner ops: " << op->name << ", offset: "<< offset << endl;
+      //sched.op_offset_within_parent[op] = total_latency;
+      //total_latency += op_latency(op, sched);
+      scheduled.push_back(op);
     }
 
     //Hack for rom, Rom need to be conservative
@@ -18562,6 +18611,8 @@ void garnet_single_port_ram_schedule(CodegenOptions& options, schedule_info& sch
     asap_input_iis(sched, prg);
     auto op_sched = op_start_times_map(sched, prg);
     cout << "Final schedule after relax: " << str(op_sched)  << endl;
+    op_sched = op_end_times_map(sched, prg);
+    cout << "Final end schedule after relax: " << str(op_sched)  << endl;
     return;
   } else if (contains(prg.name, "split")) {
     sequential_schedule(sched, root, prg);
@@ -19840,7 +19891,7 @@ void generate_fpga_clockwork_code(prog& prg) {
 void fpga_asplos_tests() {
 
   //auto test_programs = stencil_programs();
-  auto test_programs = {gaussian()};
+  auto test_programs = {resnet88()};
   for (auto prg : test_programs) {
     cout << "==== FPGA clockwork code for " << prg.name << endl;
     break_up_multi_channel_inputs(prg);
@@ -27679,6 +27730,13 @@ int main(int argc, char** argv) {
     if (cmd == "glb-tests") {
       bool use_multi_accessor_tile = true;
       bool gen_config_only = false;
+      test_glb(gen_config_only, use_multi_accessor_tile, "aha_garnet_design_new");
+      return 0;
+    }
+
+    if (cmd == "glb-exp") {
+      bool use_multi_accessor_tile = true;
+      bool gen_config_only = true;
       test_glb(gen_config_only, use_multi_accessor_tile, "aha_garnet_design_new");
       return 0;
     }

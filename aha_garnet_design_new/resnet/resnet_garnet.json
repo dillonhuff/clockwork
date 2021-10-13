@@ -245,14 +245,26 @@
           ["conv_stencil_op_hcompute_conv_stencil_write",["Array",1,["Array",16,"Bit"]]]
         ]],
         "instances":{
-          "inner_compute$const_p0__667":{
+          "PE_init_U86":{
+            "genref":"cgralib.PE",
+            "genargs":{"numbitports":["Int",3], "numdataports":["Int",2], "op_kind":["String","alu"], "width":["Int",16]},
+            "modargs":{"alu_op":["String","add"], "data0_mode":["String","BYPASS"], "data0_value":[["BitVector",16],"16'h0000"], "data1_mode":["String","BYPASS"], "data1_value":[["BitVector",16],"16'h0000"], "signed":["Bool",false]}
+          },
+          "_U84":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0000"]}
+          },
+          "_U85":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
             "modargs":{"value":[["BitVector",16],"16'h0000"]}
           }
         },
         "connections":[
-          ["self.conv_stencil_op_hcompute_conv_stencil_write.0","inner_compute$const_p0__667.out"],
+          ["_U84.out","PE_init_U86.data.in.0"],
+          ["_U85.out","PE_init_U86.data.in.1"],
+          ["self.conv_stencil_op_hcompute_conv_stencil_write.0","PE_init_U86.data.out"],
           ["self.valid_pass_out","self.valid_pass_in"]
         ]
       },
@@ -264,14 +276,26 @@
           ["conv_stencil_op_hcompute_conv_stencil_1_write",["Array",1,["Array",16,"Bit"]]]
         ]],
         "instances":{
-          "inner_compute$const_p0__670":{
+          "PE_init_U89":{
+            "genref":"cgralib.PE",
+            "genargs":{"numbitports":["Int",3], "numdataports":["Int",2], "op_kind":["String","alu"], "width":["Int",16]},
+            "modargs":{"alu_op":["String","add"], "data0_mode":["String","BYPASS"], "data0_value":[["BitVector",16],"16'h0000"], "data1_mode":["String","BYPASS"], "data1_value":[["BitVector",16],"16'h0000"], "signed":["Bool",false]}
+          },
+          "_U87":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0000"]}
+          },
+          "_U88":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
             "modargs":{"value":[["BitVector",16],"16'h0000"]}
           }
         },
         "connections":[
-          ["self.conv_stencil_op_hcompute_conv_stencil_1_write.0","inner_compute$const_p0__670.out"],
+          ["_U87.out","PE_init_U89.data.in.0"],
+          ["_U88.out","PE_init_U89.data.in.1"],
+          ["self.conv_stencil_op_hcompute_conv_stencil_1_write.0","PE_init_U89.data.out"],
           ["self.valid_pass_out","self.valid_pass_in"]
         ]
       },
@@ -283,14 +307,26 @@
           ["conv_stencil_op_hcompute_conv_stencil_2_write",["Array",1,["Array",16,"Bit"]]]
         ]],
         "instances":{
-          "inner_compute$const_p0__673":{
+          "PE_init_U92":{
+            "genref":"cgralib.PE",
+            "genargs":{"numbitports":["Int",3], "numdataports":["Int",2], "op_kind":["String","alu"], "width":["Int",16]},
+            "modargs":{"alu_op":["String","add"], "data0_mode":["String","BYPASS"], "data0_value":[["BitVector",16],"16'h0000"], "data1_mode":["String","BYPASS"], "data1_value":[["BitVector",16],"16'h0000"], "signed":["Bool",false]}
+          },
+          "_U90":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0000"]}
+          },
+          "_U91":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
             "modargs":{"value":[["BitVector",16],"16'h0000"]}
           }
         },
         "connections":[
-          ["self.conv_stencil_op_hcompute_conv_stencil_2_write.0","inner_compute$const_p0__673.out"],
+          ["_U90.out","PE_init_U92.data.in.0"],
+          ["_U91.out","PE_init_U92.data.in.1"],
+          ["self.conv_stencil_op_hcompute_conv_stencil_2_write.0","PE_init_U92.data.out"],
           ["self.valid_pass_out","self.valid_pass_in"]
         ]
       },
@@ -725,14 +761,26 @@
           ["out_conv_stencil",["Array",16,"Bit"]]
         ]],
         "instances":{
-          "const_p0__667":{
+          "PE_init_U95":{
+            "genref":"cgralib.PE",
+            "genargs":{"numbitports":["Int",3], "numdataports":["Int",2], "op_kind":["String","alu"], "width":["Int",16]},
+            "modargs":{"alu_op":["String","add"], "data0_mode":["String","BYPASS"], "data0_value":[["BitVector",16],"16'h0000"], "data1_mode":["String","BYPASS"], "data1_value":[["BitVector",16],"16'h0000"], "signed":["Bool",false]}
+          },
+          "_U93":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0000"]}
+          },
+          "_U94":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
             "modargs":{"value":[["BitVector",16],"16'h0000"]}
           }
         },
         "connections":[
-          ["self.out_conv_stencil","const_p0__667.out"]
+          ["_U93.out","PE_init_U95.data.in.0"],
+          ["_U94.out","PE_init_U95.data.in.1"],
+          ["self.out_conv_stencil","PE_init_U95.data.out"]
         ]
       },
       "hcompute_conv_stencil_1":{
@@ -740,14 +788,26 @@
           ["out_conv_stencil",["Array",16,"Bit"]]
         ]],
         "instances":{
-          "const_p0__670":{
+          "PE_init_U98":{
+            "genref":"cgralib.PE",
+            "genargs":{"numbitports":["Int",3], "numdataports":["Int",2], "op_kind":["String","alu"], "width":["Int",16]},
+            "modargs":{"alu_op":["String","add"], "data0_mode":["String","BYPASS"], "data0_value":[["BitVector",16],"16'h0000"], "data1_mode":["String","BYPASS"], "data1_value":[["BitVector",16],"16'h0000"], "signed":["Bool",false]}
+          },
+          "_U96":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0000"]}
+          },
+          "_U97":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
             "modargs":{"value":[["BitVector",16],"16'h0000"]}
           }
         },
         "connections":[
-          ["self.out_conv_stencil","const_p0__670.out"]
+          ["_U96.out","PE_init_U98.data.in.0"],
+          ["_U97.out","PE_init_U98.data.in.1"],
+          ["self.out_conv_stencil","PE_init_U98.data.out"]
         ]
       },
       "hcompute_conv_stencil_2":{
@@ -755,14 +815,26 @@
           ["out_conv_stencil",["Array",16,"Bit"]]
         ]],
         "instances":{
-          "const_p0__673":{
+          "PE_init_U101":{
+            "genref":"cgralib.PE",
+            "genargs":{"numbitports":["Int",3], "numdataports":["Int",2], "op_kind":["String","alu"], "width":["Int",16]},
+            "modargs":{"alu_op":["String","add"], "data0_mode":["String","BYPASS"], "data0_value":[["BitVector",16],"16'h0000"], "data1_mode":["String","BYPASS"], "data1_value":[["BitVector",16],"16'h0000"], "signed":["Bool",false]}
+          },
+          "_U100":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0000"]}
+          },
+          "_U99":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
             "modargs":{"value":[["BitVector",16],"16'h0000"]}
           }
         },
         "connections":[
-          ["self.out_conv_stencil","const_p0__673.out"]
+          ["_U99.out","PE_init_U101.data.in.0"],
+          ["_U100.out","PE_init_U101.data.in.1"],
+          ["self.out_conv_stencil","PE_init_U101.data.out"]
         ]
       },
       "hcompute_conv_stencil_3":{
@@ -1922,6 +1994,51 @@
           ["hw_output_stencil_op_hcompute_hw_output_stencil_write",["Array",1,["Array",16,"Bit"]]]
         ]],
         "instances":{
+          "PE_init_U104":{
+            "genref":"cgralib.PE",
+            "genargs":{"numbitports":["Int",3], "numdataports":["Int",2], "op_kind":["String","alu"], "width":["Int",16]},
+            "modargs":{"alu_op":["String","add"], "data0_mode":["String","BYPASS"], "data0_value":[["BitVector",16],"16'h0000"], "data1_mode":["String","BYPASS"], "data1_value":[["BitVector",16],"16'h0000"], "signed":["Bool",false]}
+          },
+          "PE_init_U107":{
+            "genref":"cgralib.PE",
+            "genargs":{"numbitports":["Int",3], "numdataports":["Int",2], "op_kind":["String","alu"], "width":["Int",16]},
+            "modargs":{"alu_op":["String","add"], "data0_mode":["String","BYPASS"], "data0_value":[["BitVector",16],"16'h0000"], "data1_mode":["String","BYPASS"], "data1_value":[["BitVector",16],"16'h0000"], "signed":["Bool",false]}
+          },
+          "PE_init_U110":{
+            "genref":"cgralib.PE",
+            "genargs":{"numbitports":["Int",3], "numdataports":["Int",2], "op_kind":["String","alu"], "width":["Int",16]},
+            "modargs":{"alu_op":["String","add"], "data0_mode":["String","BYPASS"], "data0_value":[["BitVector",16],"16'h0000"], "data1_mode":["String","BYPASS"], "data1_value":[["BitVector",16],"16'h0000"], "signed":["Bool",false]}
+          },
+          "_U102":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0000"]}
+          },
+          "_U103":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0000"]}
+          },
+          "_U105":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0000"]}
+          },
+          "_U106":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0000"]}
+          },
+          "_U108":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0000"]}
+          },
+          "_U109":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0000"]}
+          },
           "conv_stencil$chain_en_const_U1":{
             "modref":"corebit.const",
             "modargs":{"value":["Bool",true]}
@@ -2438,21 +2555,6 @@
             "modref":"cgralib.BitIO",
             "modargs":{"mode":["String","in"]}
           },
-          "op_hcompute_conv_stencil$inner_compute$const_p0__667":{
-            "genref":"coreir.const",
-            "genargs":{"width":["Int",16]},
-            "modargs":{"value":[["BitVector",16],"16'h0000"]}
-          },
-          "op_hcompute_conv_stencil_1$inner_compute$const_p0__670":{
-            "genref":"coreir.const",
-            "genargs":{"width":["Int",16]},
-            "modargs":{"value":[["BitVector",16],"16'h0000"]}
-          },
-          "op_hcompute_conv_stencil_2$inner_compute$const_p0__673":{
-            "genref":"coreir.const",
-            "genargs":{"width":["Int",16]},
-            "modargs":{"value":[["BitVector",16],"16'h0000"]}
-          },
           "op_hcompute_conv_stencil_3$inner_compute$add_691_705_706$binop":{
             "genref":"cgralib.PE",
             "genargs":{"numbitports":["Int",3], "numdataports":["Int",2], "op_kind":["String","alu"], "width":["Int",16]},
@@ -2705,21 +2807,27 @@
           }
         },
         "connections":[
+          ["_U102.out","PE_init_U104.data.in.0"],
+          ["_U103.out","PE_init_U104.data.in.1"],
+          ["conv_stencil$ub_conv_stencil_BANK_0_garnet.data_in_1","PE_init_U104.data.out"],
+          ["_U105.out","PE_init_U107.data.in.0"],
+          ["_U106.out","PE_init_U107.data.in.1"],
+          ["conv_stencil$ub_conv_stencil_BANK_1_garnet.data_in_0","PE_init_U107.data.out"],
+          ["_U108.out","PE_init_U110.data.in.0"],
+          ["_U109.out","PE_init_U110.data.in.1"],
+          ["conv_stencil$ub_conv_stencil_BANK_2_garnet.data_in_0","PE_init_U110.data.out"],
           ["conv_stencil$ub_conv_stencil_BANK_0_garnet.clk_en","conv_stencil$ub_conv_stencil_BANK_0_clk_en_const_lutcnst.bit.out"],
           ["conv_stencil$ub_conv_stencil_BANK_1_garnet.data_out_1","conv_stencil$ub_conv_stencil_BANK_0_garnet.chain_data_in_1"],
           ["op_hcompute_conv_stencil_3$inner_compute$add_691_705_706$binop.data.out","conv_stencil$ub_conv_stencil_BANK_0_garnet.data_in_0"],
-          ["op_hcompute_conv_stencil$inner_compute$const_p0__667.out","conv_stencil$ub_conv_stencil_BANK_0_garnet.data_in_1"],
           ["op_hcompute_conv_stencil_3$inner_compute$add_conv_stencil_1_704_705$binop.data.in.0","conv_stencil$ub_conv_stencil_BANK_0_garnet.data_out_0"],
           ["io16_hw_output_stencil_op_hcompute_hw_output_stencil_write_0.in","conv_stencil$ub_conv_stencil_BANK_0_garnet.data_out_1"],
           ["io1in_reset.out","conv_stencil$ub_conv_stencil_BANK_0_garnet.flush"],
           ["conv_stencil$ub_conv_stencil_BANK_1_garnet.clk_en","conv_stencil$ub_conv_stencil_BANK_1_clk_en_const_lutcnst.bit.out"],
           ["conv_stencil$ub_conv_stencil_BANK_2_garnet.data_out_1","conv_stencil$ub_conv_stencil_BANK_1_garnet.chain_data_in_1"],
-          ["op_hcompute_conv_stencil_1$inner_compute$const_p0__670.out","conv_stencil$ub_conv_stencil_BANK_1_garnet.data_in_0"],
           ["op_hcompute_conv_stencil_4$inner_compute$add_758_772_773$binop.data.out","conv_stencil$ub_conv_stencil_BANK_1_garnet.data_in_1"],
           ["op_hcompute_conv_stencil_4$inner_compute$add_conv_stencil_2_771_772$binop.data.in.0","conv_stencil$ub_conv_stencil_BANK_1_garnet.data_out_0"],
           ["io1in_reset.out","conv_stencil$ub_conv_stencil_BANK_1_garnet.flush"],
           ["conv_stencil$ub_conv_stencil_BANK_2_garnet.clk_en","conv_stencil$ub_conv_stencil_BANK_2_clk_en_const_lutcnst.bit.out"],
-          ["op_hcompute_conv_stencil_2$inner_compute$const_p0__673.out","conv_stencil$ub_conv_stencil_BANK_2_garnet.data_in_0"],
           ["op_hcompute_conv_stencil_5$inner_compute$add_825_839_840$binop.data.out","conv_stencil$ub_conv_stencil_BANK_2_garnet.data_in_1"],
           ["op_hcompute_conv_stencil_5$inner_compute$add_conv_stencil_3_838_839$binop.data.in.0","conv_stencil$ub_conv_stencil_BANK_2_garnet.data_out_0"],
           ["io1in_reset.out","conv_stencil$ub_conv_stencil_BANK_2_garnet.flush"],

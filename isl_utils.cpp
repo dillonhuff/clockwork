@@ -1886,8 +1886,9 @@ int common_max_stride(isl_map* const m, int out_dim) {
     int cms = 0;
     //Skip root start from 1
     for (int in_dim=1; in_dim < num_in_dims(m); in_dim++){
-        int s = stride_in_dim(m, in_dim), out_dim;
-        cms = std::gcd(cms, s);
+        int s = stride_in_dim(m, in_dim, out_dim);
+        if (s > 0)
+          cms = std::gcd(cms, s);
     }
     return cms;
 }
@@ -4528,6 +4529,20 @@ isl_map* get_domain_trans(isl_set* dom, int pos, int fetch_width) {
     }
     string map_str = "{"+dom_name + bracket_list(var) + "->" + dom_name +bracket_list(rewrite_var)+ "}";
     auto trans = isl_map_read_from_str(ctx(dom), map_str.c_str());
+    cout << "Autogen trans:" << str(trans) << endl;
+    return trans;
+}
+
+isl_map* get_domain_trans(isl_set* dom, vector<int> stride_vec) {
+    string dom_name = name(dom);
+    int dim = num_dims(dom);
+    vector<string> var, rewrite_var;
+    for (int i = 0; i < dim; i ++) {
+        var.push_back("i"+str(i));
+        rewrite_var.push_back("floor(i"+str(i) + "/" + str(stride_vec.at(i)) + ")" );
+    }
+    string map_str = "{"+dom_name + bracket_list(var) + "->" + dom_name +bracket_list(rewrite_var)+ "}";
+    auto trans = inv(isl_map_read_from_str(ctx(dom), map_str.c_str()));
     cout << "Autogen trans:" << str(trans) << endl;
     return trans;
 }

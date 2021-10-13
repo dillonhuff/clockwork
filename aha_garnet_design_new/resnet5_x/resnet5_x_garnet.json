@@ -16499,14 +16499,14 @@
           ["cycle_time$ult.in1","cycle_time$add.out"],
           ["cycle_time$and$lut$lut.bit.in.2","cycle_time$and$c0_lutcnst.bit.out"],
           ["cycle_time$ult.out","cycle_time$and$lut$lut.bit.in.0"],
-          ["true4_lutcnst.bit.out","cycle_time$and$lut$lut.bit.in.1"],
+          ["true5_lutcnst.bit.out","cycle_time$and$lut$lut.bit.in.1"],
           ["cycle_time$resetOr$lut$lut.bit.in.0","cycle_time$and$lut$lut.bit.out"],
           ["cycle_time$count$clrMux.in1","cycle_time$count$c0.out"],
           ["cycle_time$count$enMux.out","cycle_time$count$clrMux.in0"],
           ["cycle_time$count$reg0.in","cycle_time$count$clrMux.out"],
           ["cycle_time$resetOr$lut$lut.bit.out","cycle_time$count$clrMux.sel"],
           ["cycle_time$count$reg0.out","cycle_time$count$enMux.in0"],
-          ["true5_lutcnst.bit.out","cycle_time$count$enMux.sel"],
+          ["true4_lutcnst.bit.out","cycle_time$count$enMux.sel"],
           ["time_diff.in1","cycle_time$count$reg0.out"],
           ["cycle_time$ult.in0","cycle_time$max.out"],
           ["cycle_time$resetOr$lut$lut.bit.in.2","cycle_time$resetOr$c0_lutcnst.bit.out"],
@@ -17055,14 +17055,14 @@
           ["cycle_time$ult.in1","cycle_time$add.out"],
           ["cycle_time$and$lut$lut.bit.in.2","cycle_time$and$c0_lutcnst.bit.out"],
           ["cycle_time$ult.out","cycle_time$and$lut$lut.bit.in.0"],
-          ["true5_lutcnst.bit.out","cycle_time$and$lut$lut.bit.in.1"],
+          ["true4_lutcnst.bit.out","cycle_time$and$lut$lut.bit.in.1"],
           ["cycle_time$resetOr$lut$lut.bit.in.0","cycle_time$and$lut$lut.bit.out"],
           ["cycle_time$count$clrMux.in1","cycle_time$count$c0.out"],
           ["cycle_time$count$enMux.out","cycle_time$count$clrMux.in0"],
           ["cycle_time$count$reg0.in","cycle_time$count$clrMux.out"],
           ["cycle_time$resetOr$lut$lut.bit.out","cycle_time$count$clrMux.sel"],
           ["cycle_time$count$reg0.out","cycle_time$count$enMux.in0"],
-          ["true4_lutcnst.bit.out","cycle_time$count$enMux.sel"],
+          ["true5_lutcnst.bit.out","cycle_time$count$enMux.sel"],
           ["time_diff.in1","cycle_time$count$reg0.out"],
           ["cycle_time$ult.in0","cycle_time$max.out"],
           ["cycle_time$resetOr$lut$lut.bit.in.2","cycle_time$resetOr$c0_lutcnst.bit.out"],
@@ -36287,14 +36287,26 @@
           ["output_cgra_stencil_op_hcompute_output_cgra_stencil_write",["Array",1,["Array",16,"Bit"]]]
         ]],
         "instances":{
-          "inner_compute$const_p0__701":{
+          "PE_init_U1606":{
+            "genref":"cgralib.PE",
+            "genargs":{"numbitports":["Int",3], "numdataports":["Int",2], "op_kind":["String","alu"], "width":["Int",16]},
+            "modargs":{"alu_op":["String","add"], "data0_mode":["String","BYPASS"], "data0_value":[["BitVector",16],"16'h0000"], "data1_mode":["String","BYPASS"], "data1_value":[["BitVector",16],"16'h0000"], "signed":["Bool",false]}
+          },
+          "_U1604":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0000"]}
+          },
+          "_U1605":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
             "modargs":{"value":[["BitVector",16],"16'h0000"]}
           }
         },
         "connections":[
-          ["self.output_cgra_stencil_op_hcompute_output_cgra_stencil_write.0","inner_compute$const_p0__701.out"],
+          ["_U1604.out","PE_init_U1606.data.in.0"],
+          ["_U1605.out","PE_init_U1606.data.in.1"],
+          ["self.output_cgra_stencil_op_hcompute_output_cgra_stencil_write.0","PE_init_U1606.data.out"],
           ["self.valid_pass_out","self.valid_pass_in"]
         ]
       },
@@ -36306,14 +36318,26 @@
           ["output_cgra_stencil_op_hcompute_output_cgra_stencil_1_write",["Array",1,["Array",16,"Bit"]]]
         ]],
         "instances":{
-          "inner_compute$const_p0__710":{
+          "PE_init_U1609":{
+            "genref":"cgralib.PE",
+            "genargs":{"numbitports":["Int",3], "numdataports":["Int",2], "op_kind":["String","alu"], "width":["Int",16]},
+            "modargs":{"alu_op":["String","add"], "data0_mode":["String","BYPASS"], "data0_value":[["BitVector",16],"16'h0000"], "data1_mode":["String","BYPASS"], "data1_value":[["BitVector",16],"16'h0000"], "signed":["Bool",false]}
+          },
+          "_U1607":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0000"]}
+          },
+          "_U1608":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
             "modargs":{"value":[["BitVector",16],"16'h0000"]}
           }
         },
         "connections":[
-          ["self.output_cgra_stencil_op_hcompute_output_cgra_stencil_1_write.0","inner_compute$const_p0__710.out"],
+          ["_U1607.out","PE_init_U1609.data.in.0"],
+          ["_U1608.out","PE_init_U1609.data.in.1"],
+          ["self.output_cgra_stencil_op_hcompute_output_cgra_stencil_1_write.0","PE_init_U1609.data.out"],
           ["self.valid_pass_out","self.valid_pass_in"]
         ]
       },
@@ -37099,14 +37123,26 @@
           ["output_cgra_stencil_op_hcompute_output_cgra_stencil_2_write",["Array",1,["Array",16,"Bit"]]]
         ]],
         "instances":{
-          "inner_compute$const_p0__719":{
+          "PE_init_U1612":{
+            "genref":"cgralib.PE",
+            "genargs":{"numbitports":["Int",3], "numdataports":["Int",2], "op_kind":["String","alu"], "width":["Int",16]},
+            "modargs":{"alu_op":["String","add"], "data0_mode":["String","BYPASS"], "data0_value":[["BitVector",16],"16'h0000"], "data1_mode":["String","BYPASS"], "data1_value":[["BitVector",16],"16'h0000"], "signed":["Bool",false]}
+          },
+          "_U1610":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0000"]}
+          },
+          "_U1611":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
             "modargs":{"value":[["BitVector",16],"16'h0000"]}
           }
         },
         "connections":[
-          ["self.output_cgra_stencil_op_hcompute_output_cgra_stencil_2_write.0","inner_compute$const_p0__719.out"],
+          ["_U1610.out","PE_init_U1612.data.in.0"],
+          ["_U1611.out","PE_init_U1612.data.in.1"],
+          ["self.output_cgra_stencil_op_hcompute_output_cgra_stencil_2_write.0","PE_init_U1612.data.out"],
           ["self.valid_pass_out","self.valid_pass_in"]
         ]
       },
@@ -37118,14 +37154,26 @@
           ["output_cgra_stencil_op_hcompute_output_cgra_stencil_3_write",["Array",1,["Array",16,"Bit"]]]
         ]],
         "instances":{
-          "inner_compute$const_p0__728":{
+          "PE_init_U1615":{
+            "genref":"cgralib.PE",
+            "genargs":{"numbitports":["Int",3], "numdataports":["Int",2], "op_kind":["String","alu"], "width":["Int",16]},
+            "modargs":{"alu_op":["String","add"], "data0_mode":["String","BYPASS"], "data0_value":[["BitVector",16],"16'h0000"], "data1_mode":["String","BYPASS"], "data1_value":[["BitVector",16],"16'h0000"], "signed":["Bool",false]}
+          },
+          "_U1613":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0000"]}
+          },
+          "_U1614":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
             "modargs":{"value":[["BitVector",16],"16'h0000"]}
           }
         },
         "connections":[
-          ["self.output_cgra_stencil_op_hcompute_output_cgra_stencil_3_write.0","inner_compute$const_p0__728.out"],
+          ["_U1613.out","PE_init_U1615.data.in.0"],
+          ["_U1614.out","PE_init_U1615.data.in.1"],
+          ["self.output_cgra_stencil_op_hcompute_output_cgra_stencil_3_write.0","PE_init_U1615.data.out"],
           ["self.valid_pass_out","self.valid_pass_in"]
         ]
       },
@@ -37137,14 +37185,26 @@
           ["output_cgra_stencil_op_hcompute_output_cgra_stencil_4_write",["Array",1,["Array",16,"Bit"]]]
         ]],
         "instances":{
-          "inner_compute$const_p0__737":{
+          "PE_init_U1618":{
+            "genref":"cgralib.PE",
+            "genargs":{"numbitports":["Int",3], "numdataports":["Int",2], "op_kind":["String","alu"], "width":["Int",16]},
+            "modargs":{"alu_op":["String","add"], "data0_mode":["String","BYPASS"], "data0_value":[["BitVector",16],"16'h0000"], "data1_mode":["String","BYPASS"], "data1_value":[["BitVector",16],"16'h0000"], "signed":["Bool",false]}
+          },
+          "_U1616":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0000"]}
+          },
+          "_U1617":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
             "modargs":{"value":[["BitVector",16],"16'h0000"]}
           }
         },
         "connections":[
-          ["self.output_cgra_stencil_op_hcompute_output_cgra_stencil_4_write.0","inner_compute$const_p0__737.out"],
+          ["_U1616.out","PE_init_U1618.data.in.0"],
+          ["_U1617.out","PE_init_U1618.data.in.1"],
+          ["self.output_cgra_stencil_op_hcompute_output_cgra_stencil_4_write.0","PE_init_U1618.data.out"],
           ["self.valid_pass_out","self.valid_pass_in"]
         ]
       },
@@ -37156,14 +37216,26 @@
           ["output_cgra_stencil_op_hcompute_output_cgra_stencil_5_write",["Array",1,["Array",16,"Bit"]]]
         ]],
         "instances":{
-          "inner_compute$const_p0__746":{
+          "PE_init_U1621":{
+            "genref":"cgralib.PE",
+            "genargs":{"numbitports":["Int",3], "numdataports":["Int",2], "op_kind":["String","alu"], "width":["Int",16]},
+            "modargs":{"alu_op":["String","add"], "data0_mode":["String","BYPASS"], "data0_value":[["BitVector",16],"16'h0000"], "data1_mode":["String","BYPASS"], "data1_value":[["BitVector",16],"16'h0000"], "signed":["Bool",false]}
+          },
+          "_U1619":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0000"]}
+          },
+          "_U1620":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
             "modargs":{"value":[["BitVector",16],"16'h0000"]}
           }
         },
         "connections":[
-          ["self.output_cgra_stencil_op_hcompute_output_cgra_stencil_5_write.0","inner_compute$const_p0__746.out"],
+          ["_U1619.out","PE_init_U1621.data.in.0"],
+          ["_U1620.out","PE_init_U1621.data.in.1"],
+          ["self.output_cgra_stencil_op_hcompute_output_cgra_stencil_5_write.0","PE_init_U1621.data.out"],
           ["self.valid_pass_out","self.valid_pass_in"]
         ]
       },
@@ -37175,14 +37247,26 @@
           ["output_cgra_stencil_op_hcompute_output_cgra_stencil_6_write",["Array",1,["Array",16,"Bit"]]]
         ]],
         "instances":{
-          "inner_compute$const_p0__755":{
+          "PE_init_U1624":{
+            "genref":"cgralib.PE",
+            "genargs":{"numbitports":["Int",3], "numdataports":["Int",2], "op_kind":["String","alu"], "width":["Int",16]},
+            "modargs":{"alu_op":["String","add"], "data0_mode":["String","BYPASS"], "data0_value":[["BitVector",16],"16'h0000"], "data1_mode":["String","BYPASS"], "data1_value":[["BitVector",16],"16'h0000"], "signed":["Bool",false]}
+          },
+          "_U1622":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0000"]}
+          },
+          "_U1623":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
             "modargs":{"value":[["BitVector",16],"16'h0000"]}
           }
         },
         "connections":[
-          ["self.output_cgra_stencil_op_hcompute_output_cgra_stencil_6_write.0","inner_compute$const_p0__755.out"],
+          ["_U1622.out","PE_init_U1624.data.in.0"],
+          ["_U1623.out","PE_init_U1624.data.in.1"],
+          ["self.output_cgra_stencil_op_hcompute_output_cgra_stencil_6_write.0","PE_init_U1624.data.out"],
           ["self.valid_pass_out","self.valid_pass_in"]
         ]
       },
@@ -37194,14 +37278,26 @@
           ["output_cgra_stencil_op_hcompute_output_cgra_stencil_7_write",["Array",1,["Array",16,"Bit"]]]
         ]],
         "instances":{
-          "inner_compute$const_p0__764":{
+          "PE_init_U1627":{
+            "genref":"cgralib.PE",
+            "genargs":{"numbitports":["Int",3], "numdataports":["Int",2], "op_kind":["String","alu"], "width":["Int",16]},
+            "modargs":{"alu_op":["String","add"], "data0_mode":["String","BYPASS"], "data0_value":[["BitVector",16],"16'h0000"], "data1_mode":["String","BYPASS"], "data1_value":[["BitVector",16],"16'h0000"], "signed":["Bool",false]}
+          },
+          "_U1625":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0000"]}
+          },
+          "_U1626":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
             "modargs":{"value":[["BitVector",16],"16'h0000"]}
           }
         },
         "connections":[
-          ["self.output_cgra_stencil_op_hcompute_output_cgra_stencil_7_write.0","inner_compute$const_p0__764.out"],
+          ["_U1625.out","PE_init_U1627.data.in.0"],
+          ["_U1626.out","PE_init_U1627.data.in.1"],
+          ["self.output_cgra_stencil_op_hcompute_output_cgra_stencil_7_write.0","PE_init_U1627.data.out"],
           ["self.valid_pass_out","self.valid_pass_in"]
         ]
       },
@@ -37526,14 +37622,26 @@
           ["out_output_cgra_stencil",["Array",16,"Bit"]]
         ]],
         "instances":{
-          "const_p0__701":{
+          "PE_init_U1630":{
+            "genref":"cgralib.PE",
+            "genargs":{"numbitports":["Int",3], "numdataports":["Int",2], "op_kind":["String","alu"], "width":["Int",16]},
+            "modargs":{"alu_op":["String","add"], "data0_mode":["String","BYPASS"], "data0_value":[["BitVector",16],"16'h0000"], "data1_mode":["String","BYPASS"], "data1_value":[["BitVector",16],"16'h0000"], "signed":["Bool",false]}
+          },
+          "_U1628":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0000"]}
+          },
+          "_U1629":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
             "modargs":{"value":[["BitVector",16],"16'h0000"]}
           }
         },
         "connections":[
-          ["self.out_output_cgra_stencil","const_p0__701.out"]
+          ["_U1628.out","PE_init_U1630.data.in.0"],
+          ["_U1629.out","PE_init_U1630.data.in.1"],
+          ["self.out_output_cgra_stencil","PE_init_U1630.data.out"]
         ]
       },
       "hcompute_output_cgra_stencil_1":{
@@ -37541,14 +37649,26 @@
           ["out_output_cgra_stencil",["Array",16,"Bit"]]
         ]],
         "instances":{
-          "const_p0__710":{
+          "PE_init_U1633":{
+            "genref":"cgralib.PE",
+            "genargs":{"numbitports":["Int",3], "numdataports":["Int",2], "op_kind":["String","alu"], "width":["Int",16]},
+            "modargs":{"alu_op":["String","add"], "data0_mode":["String","BYPASS"], "data0_value":[["BitVector",16],"16'h0000"], "data1_mode":["String","BYPASS"], "data1_value":[["BitVector",16],"16'h0000"], "signed":["Bool",false]}
+          },
+          "_U1631":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0000"]}
+          },
+          "_U1632":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
             "modargs":{"value":[["BitVector",16],"16'h0000"]}
           }
         },
         "connections":[
-          ["self.out_output_cgra_stencil","const_p0__710.out"]
+          ["_U1631.out","PE_init_U1633.data.in.0"],
+          ["_U1632.out","PE_init_U1633.data.in.1"],
+          ["self.out_output_cgra_stencil","PE_init_U1633.data.out"]
         ]
       },
       "hcompute_output_cgra_stencil_10":{
@@ -38306,14 +38426,26 @@
           ["out_output_cgra_stencil",["Array",16,"Bit"]]
         ]],
         "instances":{
-          "const_p0__719":{
+          "PE_init_U1636":{
+            "genref":"cgralib.PE",
+            "genargs":{"numbitports":["Int",3], "numdataports":["Int",2], "op_kind":["String","alu"], "width":["Int",16]},
+            "modargs":{"alu_op":["String","add"], "data0_mode":["String","BYPASS"], "data0_value":[["BitVector",16],"16'h0000"], "data1_mode":["String","BYPASS"], "data1_value":[["BitVector",16],"16'h0000"], "signed":["Bool",false]}
+          },
+          "_U1634":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0000"]}
+          },
+          "_U1635":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
             "modargs":{"value":[["BitVector",16],"16'h0000"]}
           }
         },
         "connections":[
-          ["self.out_output_cgra_stencil","const_p0__719.out"]
+          ["_U1634.out","PE_init_U1636.data.in.0"],
+          ["_U1635.out","PE_init_U1636.data.in.1"],
+          ["self.out_output_cgra_stencil","PE_init_U1636.data.out"]
         ]
       },
       "hcompute_output_cgra_stencil_3":{
@@ -38321,14 +38453,26 @@
           ["out_output_cgra_stencil",["Array",16,"Bit"]]
         ]],
         "instances":{
-          "const_p0__728":{
+          "PE_init_U1639":{
+            "genref":"cgralib.PE",
+            "genargs":{"numbitports":["Int",3], "numdataports":["Int",2], "op_kind":["String","alu"], "width":["Int",16]},
+            "modargs":{"alu_op":["String","add"], "data0_mode":["String","BYPASS"], "data0_value":[["BitVector",16],"16'h0000"], "data1_mode":["String","BYPASS"], "data1_value":[["BitVector",16],"16'h0000"], "signed":["Bool",false]}
+          },
+          "_U1637":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0000"]}
+          },
+          "_U1638":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
             "modargs":{"value":[["BitVector",16],"16'h0000"]}
           }
         },
         "connections":[
-          ["self.out_output_cgra_stencil","const_p0__728.out"]
+          ["_U1637.out","PE_init_U1639.data.in.0"],
+          ["_U1638.out","PE_init_U1639.data.in.1"],
+          ["self.out_output_cgra_stencil","PE_init_U1639.data.out"]
         ]
       },
       "hcompute_output_cgra_stencil_4":{
@@ -38336,14 +38480,26 @@
           ["out_output_cgra_stencil",["Array",16,"Bit"]]
         ]],
         "instances":{
-          "const_p0__737":{
+          "PE_init_U1642":{
+            "genref":"cgralib.PE",
+            "genargs":{"numbitports":["Int",3], "numdataports":["Int",2], "op_kind":["String","alu"], "width":["Int",16]},
+            "modargs":{"alu_op":["String","add"], "data0_mode":["String","BYPASS"], "data0_value":[["BitVector",16],"16'h0000"], "data1_mode":["String","BYPASS"], "data1_value":[["BitVector",16],"16'h0000"], "signed":["Bool",false]}
+          },
+          "_U1640":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0000"]}
+          },
+          "_U1641":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
             "modargs":{"value":[["BitVector",16],"16'h0000"]}
           }
         },
         "connections":[
-          ["self.out_output_cgra_stencil","const_p0__737.out"]
+          ["_U1640.out","PE_init_U1642.data.in.0"],
+          ["_U1641.out","PE_init_U1642.data.in.1"],
+          ["self.out_output_cgra_stencil","PE_init_U1642.data.out"]
         ]
       },
       "hcompute_output_cgra_stencil_5":{
@@ -38351,14 +38507,26 @@
           ["out_output_cgra_stencil",["Array",16,"Bit"]]
         ]],
         "instances":{
-          "const_p0__746":{
+          "PE_init_U1645":{
+            "genref":"cgralib.PE",
+            "genargs":{"numbitports":["Int",3], "numdataports":["Int",2], "op_kind":["String","alu"], "width":["Int",16]},
+            "modargs":{"alu_op":["String","add"], "data0_mode":["String","BYPASS"], "data0_value":[["BitVector",16],"16'h0000"], "data1_mode":["String","BYPASS"], "data1_value":[["BitVector",16],"16'h0000"], "signed":["Bool",false]}
+          },
+          "_U1643":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0000"]}
+          },
+          "_U1644":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
             "modargs":{"value":[["BitVector",16],"16'h0000"]}
           }
         },
         "connections":[
-          ["self.out_output_cgra_stencil","const_p0__746.out"]
+          ["_U1643.out","PE_init_U1645.data.in.0"],
+          ["_U1644.out","PE_init_U1645.data.in.1"],
+          ["self.out_output_cgra_stencil","PE_init_U1645.data.out"]
         ]
       },
       "hcompute_output_cgra_stencil_6":{
@@ -38366,14 +38534,26 @@
           ["out_output_cgra_stencil",["Array",16,"Bit"]]
         ]],
         "instances":{
-          "const_p0__755":{
+          "PE_init_U1648":{
+            "genref":"cgralib.PE",
+            "genargs":{"numbitports":["Int",3], "numdataports":["Int",2], "op_kind":["String","alu"], "width":["Int",16]},
+            "modargs":{"alu_op":["String","add"], "data0_mode":["String","BYPASS"], "data0_value":[["BitVector",16],"16'h0000"], "data1_mode":["String","BYPASS"], "data1_value":[["BitVector",16],"16'h0000"], "signed":["Bool",false]}
+          },
+          "_U1646":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0000"]}
+          },
+          "_U1647":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
             "modargs":{"value":[["BitVector",16],"16'h0000"]}
           }
         },
         "connections":[
-          ["self.out_output_cgra_stencil","const_p0__755.out"]
+          ["_U1646.out","PE_init_U1648.data.in.0"],
+          ["_U1647.out","PE_init_U1648.data.in.1"],
+          ["self.out_output_cgra_stencil","PE_init_U1648.data.out"]
         ]
       },
       "hcompute_output_cgra_stencil_7":{
@@ -38381,14 +38561,26 @@
           ["out_output_cgra_stencil",["Array",16,"Bit"]]
         ]],
         "instances":{
-          "const_p0__764":{
+          "PE_init_U1651":{
+            "genref":"cgralib.PE",
+            "genargs":{"numbitports":["Int",3], "numdataports":["Int",2], "op_kind":["String","alu"], "width":["Int",16]},
+            "modargs":{"alu_op":["String","add"], "data0_mode":["String","BYPASS"], "data0_value":[["BitVector",16],"16'h0000"], "data1_mode":["String","BYPASS"], "data1_value":[["BitVector",16],"16'h0000"], "signed":["Bool",false]}
+          },
+          "_U1649":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0000"]}
+          },
+          "_U1650":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
             "modargs":{"value":[["BitVector",16],"16'h0000"]}
           }
         },
         "connections":[
-          ["self.out_output_cgra_stencil","const_p0__764.out"]
+          ["_U1649.out","PE_init_U1651.data.in.0"],
+          ["_U1650.out","PE_init_U1651.data.in.1"],
+          ["self.out_output_cgra_stencil","PE_init_U1651.data.out"]
         ]
       },
       "hcompute_output_cgra_stencil_8":{
@@ -40523,6 +40715,126 @@
           ["kernel_host_stencil_op_hcompute_kernel_glb_stencil_read",["Array",1,["Array",16,"BitIn"]]]
         ]],
         "instances":{
+          "PE_init_U1654":{
+            "genref":"cgralib.PE",
+            "genargs":{"numbitports":["Int",3], "numdataports":["Int",2], "op_kind":["String","alu"], "width":["Int",16]},
+            "modargs":{"alu_op":["String","add"], "data0_mode":["String","BYPASS"], "data0_value":[["BitVector",16],"16'h0000"], "data1_mode":["String","BYPASS"], "data1_value":[["BitVector",16],"16'h0000"], "signed":["Bool",false]}
+          },
+          "PE_init_U1657":{
+            "genref":"cgralib.PE",
+            "genargs":{"numbitports":["Int",3], "numdataports":["Int",2], "op_kind":["String","alu"], "width":["Int",16]},
+            "modargs":{"alu_op":["String","add"], "data0_mode":["String","BYPASS"], "data0_value":[["BitVector",16],"16'h0000"], "data1_mode":["String","BYPASS"], "data1_value":[["BitVector",16],"16'h0000"], "signed":["Bool",false]}
+          },
+          "PE_init_U1660":{
+            "genref":"cgralib.PE",
+            "genargs":{"numbitports":["Int",3], "numdataports":["Int",2], "op_kind":["String","alu"], "width":["Int",16]},
+            "modargs":{"alu_op":["String","add"], "data0_mode":["String","BYPASS"], "data0_value":[["BitVector",16],"16'h0000"], "data1_mode":["String","BYPASS"], "data1_value":[["BitVector",16],"16'h0000"], "signed":["Bool",false]}
+          },
+          "PE_init_U1663":{
+            "genref":"cgralib.PE",
+            "genargs":{"numbitports":["Int",3], "numdataports":["Int",2], "op_kind":["String","alu"], "width":["Int",16]},
+            "modargs":{"alu_op":["String","add"], "data0_mode":["String","BYPASS"], "data0_value":[["BitVector",16],"16'h0000"], "data1_mode":["String","BYPASS"], "data1_value":[["BitVector",16],"16'h0000"], "signed":["Bool",false]}
+          },
+          "PE_init_U1666":{
+            "genref":"cgralib.PE",
+            "genargs":{"numbitports":["Int",3], "numdataports":["Int",2], "op_kind":["String","alu"], "width":["Int",16]},
+            "modargs":{"alu_op":["String","add"], "data0_mode":["String","BYPASS"], "data0_value":[["BitVector",16],"16'h0000"], "data1_mode":["String","BYPASS"], "data1_value":[["BitVector",16],"16'h0000"], "signed":["Bool",false]}
+          },
+          "PE_init_U1669":{
+            "genref":"cgralib.PE",
+            "genargs":{"numbitports":["Int",3], "numdataports":["Int",2], "op_kind":["String","alu"], "width":["Int",16]},
+            "modargs":{"alu_op":["String","add"], "data0_mode":["String","BYPASS"], "data0_value":[["BitVector",16],"16'h0000"], "data1_mode":["String","BYPASS"], "data1_value":[["BitVector",16],"16'h0000"], "signed":["Bool",false]}
+          },
+          "PE_init_U1672":{
+            "genref":"cgralib.PE",
+            "genargs":{"numbitports":["Int",3], "numdataports":["Int",2], "op_kind":["String","alu"], "width":["Int",16]},
+            "modargs":{"alu_op":["String","add"], "data0_mode":["String","BYPASS"], "data0_value":[["BitVector",16],"16'h0000"], "data1_mode":["String","BYPASS"], "data1_value":[["BitVector",16],"16'h0000"], "signed":["Bool",false]}
+          },
+          "PE_init_U1675":{
+            "genref":"cgralib.PE",
+            "genargs":{"numbitports":["Int",3], "numdataports":["Int",2], "op_kind":["String","alu"], "width":["Int",16]},
+            "modargs":{"alu_op":["String","add"], "data0_mode":["String","BYPASS"], "data0_value":[["BitVector",16],"16'h0000"], "data1_mode":["String","BYPASS"], "data1_value":[["BitVector",16],"16'h0000"], "signed":["Bool",false]}
+          },
+          "_U1652":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0000"]}
+          },
+          "_U1653":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0000"]}
+          },
+          "_U1655":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0000"]}
+          },
+          "_U1656":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0000"]}
+          },
+          "_U1658":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0000"]}
+          },
+          "_U1659":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0000"]}
+          },
+          "_U1661":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0000"]}
+          },
+          "_U1662":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0000"]}
+          },
+          "_U1664":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0000"]}
+          },
+          "_U1665":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0000"]}
+          },
+          "_U1667":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0000"]}
+          },
+          "_U1668":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0000"]}
+          },
+          "_U1670":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0000"]}
+          },
+          "_U1671":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0000"]}
+          },
+          "_U1673":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0000"]}
+          },
+          "_U1674":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0000"]}
+          },
           "input_cgra_stencil$chain_en_const_U104":{
             "modref":"corebit.const",
             "modargs":{"value":["Bool",false]}
@@ -40639,19 +40951,19 @@
             "genref":"cgralib.IO",
             "genargs":{"width":["Int",16]},
             "modargs":{"mode":["String","out"]},
-            "metadata":{"in2glb_0":{"cycle_starting_addr":[35136],"cycle_stride":[1,64,36864],"dimensionality":3,"extent":[64,49,2],"write_data_starting_addr":[0],"write_data_stride":[1,128,64]}}
+            "metadata":{"in2glb_0":{"cycle_starting_addr":[51369],"cycle_stride":[1,64,36864],"dimensionality":3,"extent":[64,49,2],"write_data_starting_addr":[0],"write_data_stride":[1,128,64]}}
           },
           "io16in_input_host_stencil_op_hcompute_input_glb_stencil_read_0":{
             "genref":"cgralib.IO",
             "genargs":{"width":["Int",16]},
             "modargs":{"mode":["String","in"]},
-            "metadata":{"glb2out_0":{"cycle_starting_addr":[0],"cycle_stride":[1,32,18432,36864],"dimensionality":4,"extent":[32,81,2,2],"read_data_starting_addr":[0],"read_data_stride":[1,64,32,0]}}
+            "metadata":{"glb2out_0":{"cycle_starting_addr":[16233],"cycle_stride":[1,32,18432,36864],"dimensionality":4,"extent":[32,81,2,2],"read_data_starting_addr":[0],"read_data_stride":[1,64,32,0]}}
           },
           "io16in_kernel_host_stencil_op_hcompute_kernel_glb_stencil_read_0":{
             "genref":"cgralib.IO",
             "genargs":{"width":["Int",16]},
             "modargs":{"mode":["String","in"]},
-            "metadata":{"glb2out_0":{"cycle_starting_addr":[-15840],"cycle_stride":[1,64,2048,18432,36864],"dimensionality":5,"extent":[64,32,9,2,2],"read_data_starting_addr":[0],"read_data_stride":[1,128,8192,4096,64]}}
+            "metadata":{"glb2out_0":{"cycle_starting_addr":[393],"cycle_stride":[1,64,2048,18432,36864],"dimensionality":5,"extent":[64,32,9,2,2],"read_data_starting_addr":[0],"read_data_stride":[1,128,8192,4096,64]}}
           },
           "io1_hw_output_stencil_op_hcompute_hw_output_stencil_write_valid":{
             "modref":"cgralib.BitIO",
@@ -41565,17 +41877,7 @@
           "op_hcompute_hw_output_stencil_port_controller_lake_garnet":{
             "genref":"cgralib.Mem",
             "genargs":{"ID":["String","_U1603"], "ctrl_width":["Int",16], "has_chain_en":["Bool",true], "has_external_addrgen":["Bool",false], "has_flush":["Bool",true], "has_read_valid":["Bool",false], "has_reset":["Bool",false], "has_stencil_valid":["Bool",true], "has_valid":["Bool",false], "is_rom":["Bool",false], "num_inputs":["Int",0], "num_outputs":["Int",0], "use_prebuilt_mem":["Bool",true], "width":["Int",16]},
-            "modargs":{"config":["Json",{"stencil_valid":{"cycle_starting_addr":[35136],"cycle_stride":[1,64,36864],"dimensionality":3,"extent":[64,49,2],"write_data_starting_addr":[0],"write_data_stride":[1,128,64]}}], "init":["Json",null], "mode":["String","lake"]}
-          },
-          "op_hcompute_output_cgra_stencil$inner_compute$const_p0__701":{
-            "genref":"coreir.const",
-            "genargs":{"width":["Int",16]},
-            "modargs":{"value":[["BitVector",16],"16'h0000"]}
-          },
-          "op_hcompute_output_cgra_stencil_1$inner_compute$const_p0__710":{
-            "genref":"coreir.const",
-            "genargs":{"width":["Int",16]},
-            "modargs":{"value":[["BitVector",16],"16'h0000"]}
+            "modargs":{"config":["Json",{"stencil_valid":{"cycle_starting_addr":[51369],"cycle_stride":[1,64,36864],"dimensionality":3,"extent":[64,49,2],"write_data_starting_addr":[0],"write_data_stride":[1,128,64]}}], "init":["Json",null], "mode":["String","lake"]}
           },
           "op_hcompute_output_cgra_stencil_10$inner_compute$add_957_971_972$binop":{
             "genref":"cgralib.PE",
@@ -42057,36 +42359,6 @@
             "genargs":{"numbitports":["Int",3], "numdataports":["Int",2], "op_kind":["String","alu"], "width":["Int",16]},
             "modargs":{"alu_op":["String","mult_0"], "data0_mode":["String","BYPASS"], "data0_value":[["BitVector",16],"16'h0000"], "data1_mode":["String","BYPASS"], "data1_value":[["BitVector",16],"16'h0000"], "signed":["Bool",false]}
           },
-          "op_hcompute_output_cgra_stencil_2$inner_compute$const_p0__719":{
-            "genref":"coreir.const",
-            "genargs":{"width":["Int",16]},
-            "modargs":{"value":[["BitVector",16],"16'h0000"]}
-          },
-          "op_hcompute_output_cgra_stencil_3$inner_compute$const_p0__728":{
-            "genref":"coreir.const",
-            "genargs":{"width":["Int",16]},
-            "modargs":{"value":[["BitVector",16],"16'h0000"]}
-          },
-          "op_hcompute_output_cgra_stencil_4$inner_compute$const_p0__737":{
-            "genref":"coreir.const",
-            "genargs":{"width":["Int",16]},
-            "modargs":{"value":[["BitVector",16],"16'h0000"]}
-          },
-          "op_hcompute_output_cgra_stencil_5$inner_compute$const_p0__746":{
-            "genref":"coreir.const",
-            "genargs":{"width":["Int",16]},
-            "modargs":{"value":[["BitVector",16],"16'h0000"]}
-          },
-          "op_hcompute_output_cgra_stencil_6$inner_compute$const_p0__755":{
-            "genref":"coreir.const",
-            "genargs":{"width":["Int",16]},
-            "modargs":{"value":[["BitVector",16],"16'h0000"]}
-          },
-          "op_hcompute_output_cgra_stencil_7$inner_compute$const_p0__764":{
-            "genref":"coreir.const",
-            "genargs":{"width":["Int",16]},
-            "modargs":{"value":[["BitVector",16],"16'h0000"]}
-          },
           "op_hcompute_output_cgra_stencil_8$inner_compute$add_807_821_822$binop":{
             "genref":"cgralib.PE",
             "genargs":{"numbitports":["Int",3], "numdataports":["Int",2], "op_kind":["String","alu"], "width":["Int",16]},
@@ -42361,6 +42633,30 @@
           }
         },
         "connections":[
+          ["_U1652.out","PE_init_U1654.data.in.0"],
+          ["_U1653.out","PE_init_U1654.data.in.1"],
+          ["output_cgra_stencil$ub_output_cgra_stencil_BANK_0_garnet.data_in_1","PE_init_U1654.data.out"],
+          ["_U1655.out","PE_init_U1657.data.in.0"],
+          ["_U1656.out","PE_init_U1657.data.in.1"],
+          ["output_cgra_stencil$ub_output_cgra_stencil_BANK_1_garnet.data_in_0","PE_init_U1657.data.out"],
+          ["_U1658.out","PE_init_U1660.data.in.0"],
+          ["_U1659.out","PE_init_U1660.data.in.1"],
+          ["output_cgra_stencil$ub_output_cgra_stencil_BANK_2_garnet.data_in_1","PE_init_U1660.data.out"],
+          ["_U1661.out","PE_init_U1663.data.in.0"],
+          ["_U1662.out","PE_init_U1663.data.in.1"],
+          ["output_cgra_stencil$ub_output_cgra_stencil_BANK_3_garnet.data_in_1","PE_init_U1663.data.out"],
+          ["_U1664.out","PE_init_U1666.data.in.0"],
+          ["_U1665.out","PE_init_U1666.data.in.1"],
+          ["output_cgra_stencil$ub_output_cgra_stencil_BANK_4_garnet.data_in_1","PE_init_U1666.data.out"],
+          ["_U1667.out","PE_init_U1669.data.in.0"],
+          ["_U1668.out","PE_init_U1669.data.in.1"],
+          ["output_cgra_stencil$ub_output_cgra_stencil_BANK_5_garnet.data_in_1","PE_init_U1669.data.out"],
+          ["_U1670.out","PE_init_U1672.data.in.0"],
+          ["_U1671.out","PE_init_U1672.data.in.1"],
+          ["output_cgra_stencil$ub_output_cgra_stencil_BANK_6_garnet.data_in_1","PE_init_U1672.data.out"],
+          ["_U1673.out","PE_init_U1675.data.in.0"],
+          ["_U1674.out","PE_init_U1675.data.in.1"],
+          ["output_cgra_stencil$ub_output_cgra_stencil_BANK_7_garnet.data_in_1","PE_init_U1675.data.out"],
           ["input_cgra_stencil$ub_input_cgra_stencil_BANK_0_garnet.clk_en","input_cgra_stencil$ub_input_cgra_stencil_BANK_0_clk_en_const_lutcnst.bit.out"],
           ["io16in_input_host_stencil_op_hcompute_input_glb_stencil_read_0.out","input_cgra_stencil$ub_input_cgra_stencil_BANK_0_garnet.data_in_0"],
           ["op_hcompute_output_cgra_stencil_10$inner_compute$mul_kernel_cgra_stencil_17_input_cgra_stencil_17_957$binop.data.in.1","input_cgra_stencil$ub_input_cgra_stencil_BANK_0_garnet.data_out_0"],
@@ -42717,8 +43013,6 @@
           ["kernel_cgra_stencil$ub_kernel_cgra_stencil_BANK_9_garnet.clk_en","kernel_cgra_stencil$ub_kernel_cgra_stencil_BANK_9_clk_en_const_lutcnst.bit.out"],
           ["op_hcompute_output_cgra_stencil_9$inner_compute$mul_kernel_cgra_stencil_10_input_cgra_stencil_10_883$binop.data.in.0","kernel_cgra_stencil$ub_kernel_cgra_stencil_BANK_9_garnet.data_out_0"],
           ["op_hcompute_hw_output_stencil_port_controller_lake_garnet.clk_en","op_hcompute_hw_output_stencil_port_controller_clk_en_const_lutcnst.bit.out"],
-          ["output_cgra_stencil$ub_output_cgra_stencil_BANK_0_garnet.data_in_1","op_hcompute_output_cgra_stencil$inner_compute$const_p0__701.out"],
-          ["output_cgra_stencil$ub_output_cgra_stencil_BANK_1_garnet.data_in_0","op_hcompute_output_cgra_stencil_1$inner_compute$const_p0__710.out"],
           ["op_hcompute_output_cgra_stencil_10$inner_compute$mul_kernel_cgra_stencil_17_input_cgra_stencil_17_957$binop.data.out","op_hcompute_output_cgra_stencil_10$inner_compute$add_957_971_972$binop.data.in.0"],
           ["op_hcompute_output_cgra_stencil_10$inner_compute$add_output_cgra_stencil_3_970_971$binop.data.out","op_hcompute_output_cgra_stencil_10$inner_compute$add_957_971_972$binop.data.in.1"],
           ["output_cgra_stencil$ub_output_cgra_stencil_BANK_2_garnet.data_in_0","op_hcompute_output_cgra_stencil_10$inner_compute$add_957_971_972$binop.data.out"],
@@ -42821,12 +43115,6 @@
           ["op_hcompute_output_cgra_stencil_15$inner_compute$mul_kernel_cgra_stencil_63_input_cgra_stencil_63_1338$binop.data.out","op_hcompute_output_cgra_stencil_15$inner_compute$add_1338_1339_1340$binop.data.in.0"],
           ["op_hcompute_output_cgra_stencil_15$inner_compute$mul_kernel_cgra_stencil_64_input_cgra_stencil_64_1339$binop.data.out","op_hcompute_output_cgra_stencil_15$inner_compute$add_1338_1339_1340$binop.data.in.1"],
           ["output_cgra_stencil$ub_output_cgra_stencil_BANK_7_garnet.data_out_0","op_hcompute_output_cgra_stencil_15$inner_compute$add_output_cgra_stencil_8_1345_1346$binop.data.in.0"],
-          ["output_cgra_stencil$ub_output_cgra_stencil_BANK_2_garnet.data_in_1","op_hcompute_output_cgra_stencil_2$inner_compute$const_p0__719.out"],
-          ["output_cgra_stencil$ub_output_cgra_stencil_BANK_3_garnet.data_in_1","op_hcompute_output_cgra_stencil_3$inner_compute$const_p0__728.out"],
-          ["output_cgra_stencil$ub_output_cgra_stencil_BANK_4_garnet.data_in_1","op_hcompute_output_cgra_stencil_4$inner_compute$const_p0__737.out"],
-          ["output_cgra_stencil$ub_output_cgra_stencil_BANK_5_garnet.data_in_1","op_hcompute_output_cgra_stencil_5$inner_compute$const_p0__746.out"],
-          ["output_cgra_stencil$ub_output_cgra_stencil_BANK_6_garnet.data_in_1","op_hcompute_output_cgra_stencil_6$inner_compute$const_p0__755.out"],
-          ["output_cgra_stencil$ub_output_cgra_stencil_BANK_7_garnet.data_in_1","op_hcompute_output_cgra_stencil_7$inner_compute$const_p0__764.out"],
           ["op_hcompute_output_cgra_stencil_8$inner_compute$mul_kernel_cgra_stencil_1_input_cgra_stencil_1_807$binop.data.out","op_hcompute_output_cgra_stencil_8$inner_compute$add_807_821_822$binop.data.in.0"],
           ["op_hcompute_output_cgra_stencil_8$inner_compute$add_output_cgra_stencil_1_820_821$binop.data.out","op_hcompute_output_cgra_stencil_8$inner_compute$add_807_821_822$binop.data.in.1"],
           ["output_cgra_stencil$ub_output_cgra_stencil_BANK_0_garnet.data_in_0","op_hcompute_output_cgra_stencil_8$inner_compute$add_807_821_822$binop.data.out"],
