@@ -2327,7 +2327,8 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
             //    min(options.host2glb_latency, host2glb_latency);
 
             auto in_sched = buf.global_inpt_sched();
-            auto host2glb_latency = to_int(lexmaxval(to_set(range(in_sched))));
+            //change to +1 make sure glb start with 0
+            auto host2glb_latency = to_int(lexmaxval(to_set(range(in_sched)))) + 1;
             cout << "Host to glb latency: " << host2glb_latency << endl;
             options.host2glb_latency =
                 max(options.host2glb_latency, host2glb_latency);

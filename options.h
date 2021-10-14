@@ -50,6 +50,7 @@ enum ScheduleAlgorithm {
 
 enum DNNScheduleAlgorithm {
     ASPLOS_SCHEDULE, //An over optimized schedule which will be refactored
+    ISCA_SCHEDULE, //new schedule with refactor
     VANILLA_DB_SCHEDULE,
     SEQUENTIAL_SCHEDULE
 };

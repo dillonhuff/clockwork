@@ -15089,7 +15089,7 @@ void test_glb(bool gen_config_only, bool multi_accessor=false, string dir="aha_g
   test_apps.push_back(up_sample_glb());
   test_apps.push_back(gaussian_glb8());
 
-  //Linear algebra
+  //Dense Linear algebra
   test_apps.push_back(glb_channel_reduction());
   test_apps.push_back(matmul());
 
@@ -17744,6 +17744,24 @@ void tighten_iis(schedule_info& sched, prog& prg) {
   }
 }
 
+std::set<op*> find_perfect_lp_outside_cgpl(schedule_info& sched, prog& prg) {
+  vector<op*> cgpl_lps;
+  std::set<op*> ret;
+  find_coarse_grained_pipeline_loops(prg.root, cgpl_lps, prg);
+  for (auto loop : prg.all_loops()) {
+    auto lower_ops = loop->descendants();
+    bool outside_cgpl = false;
+    for(op* lp: cgpl_lps){
+      if(elem(lp, lower_ops)) {
+        ret.insert(lp);
+        break;
+      }
+    }
+  }
+  return ret;
+}
+
+//This is the loop flatten pass
 void tighten_coarse_grained_iis(schedule_info& sched, prog& prg) {
   bool tightened = true;
   vector<op*> cgpl_lps;
@@ -18599,10 +18617,17 @@ void dump_resnet_latency(CodegenOptions& options, schedule_info& sched, op* root
     adjust_coarse_grained_loop_iis(sched, prg);
     adjust_coarse_grained_loop_delays_sequentially(sched, prg);
     tighten_coarse_grained_iis(sched, prg);
-    adjust_outer_delays_sequentially_cgpl(sched, prg);
+    //adjust_outer_delays_sequentially_cgpl(sched, prg);
+    adjust_outer_delays_sequentially(sched, prg);
   } else if(options.fallback_schedule == VANILLA_DB_SCHEDULE) {
     coarse_grained_pipeline_optimization(sched, prg);
     adjust_coarse_grained_loop_delays_sequentially_without_opt(sched, prg);
+    adjust_outer_delays_sequentially(sched, prg);
+
+  } else if(options.fallback_schedule == ISCA_SCHEDULE) {
+    coarse_grained_pipeline_optimization(sched, prg);
+    adjust_coarse_grained_loop_delays_sequentially_without_opt(sched, prg);
+    tighten_coarse_grained_iis(sched, prg);
     adjust_outer_delays_sequentially(sched, prg);
 
   } else if (options.fallback_schedule == SEQUENTIAL_SCHEDULE){
@@ -18786,18 +18811,28 @@ void garnet_single_port_ram_schedule(CodegenOptions& options, schedule_info& sch
   adjust_inner_iis(sched, prg);
   tighten_iis(sched, prg);
 
-
   //only adjust coarse grained ii while optimize double buffer
-  if (options.rtl_options.double_buffer_optimization) {
+  if (options.fallback_schedule == ASPLOS_SCHEDULE) {
     adjust_coarse_grained_loop_iis(sched, prg);
     adjust_coarse_grained_loop_delays_sequentially(sched, prg);
     tighten_coarse_grained_iis(sched, prg);
-    adjust_outer_delays_sequentially_cgpl(sched, prg);
-  } else {
+    //adjust_outer_delays_sequentially_cgpl(sched, prg);
+    adjust_outer_delays_sequentially(sched, prg);
+  } else if(options.fallback_schedule == VANILLA_DB_SCHEDULE) {
+    coarse_grained_pipeline_optimization(sched, prg);
+    adjust_coarse_grained_loop_delays_sequentially_without_opt(sched, prg);
+    adjust_outer_delays_sequentially(sched, prg);
+
+  } else if(options.fallback_schedule == ISCA_SCHEDULE) {
+    coarse_grained_pipeline_optimization(sched, prg);
+    adjust_coarse_grained_loop_delays_sequentially_without_opt(sched, prg);
+    tighten_coarse_grained_iis(sched, prg);
+    adjust_outer_delays_sequentially(sched, prg);
+
+  } else if (options.fallback_schedule == SEQUENTIAL_SCHEDULE){
     //adjust_outer_delays(sched, prg);
     adjust_outer_delays_sequentially(sched, prg);
   }
-
   //dump_DNN_delays(sched, prg);
 
   auto op_sched = op_start_times_map(sched, prg);
@@ -19111,6 +19146,7 @@ CodegenOptions garnet_codegen_single_port_with_addrgen_options(prog& prg, string
   CodegenOptions options;
   options.rtl_options.target_tile = TARGET_TILE_WIDE_FETCH_WITH_ADDRGEN;
   options.conditional_merge = true;
+  options.fallback_schedule = ISCA_SCHEDULE;
   options.merge_threshold = 10;
   options.iis = {1};
   options.rtl_options.max_inpt = 2;
@@ -19529,6 +19565,7 @@ void generate_resnet_latency_experiment(prog& prg,
   options.add_memory_hierarchy("mem");
   options.add_memory_hierarchy("glb");
   profiling_file << prg.name << ", ";
+
   schedule_info sched = garnet_schedule_info(options, prg, use_dse_compute);
   dump_resnet_latency(options, sched, prg.root, prg, profiling_file, false);
   profiling_file << ", ";
@@ -19538,11 +19575,12 @@ void generate_resnet_latency_experiment(prog& prg,
   dump_resnet_latency(options, sched_db_vanilla, prg.root, prg, profiling_file, false);
   profiling_file << ", ";
 
-  options.fallback_schedule = ASPLOS_SCHEDULE;
-  schedule_info sched_db = garnet_schedule_info(options, prg, use_dse_compute);
-  dump_resnet_latency(options, sched_db, prg.root, prg, profiling_file, false);
-  profiling_file << ", ";
+  //options.fallback_schedule = ASPLOS_SCHEDULE;
+  //schedule_info sched_db = garnet_schedule_info(options, prg, use_dse_compute);
+  //dump_resnet_latency(options, sched_db, prg.root, prg, profiling_file, false);
+  //profiling_file << ", ";
 
+  options.fallback_schedule = ISCA_SCHEDULE;
   schedule_info sched_db_loop_perfect = garnet_schedule_info(options, prg, use_dse_compute);
   dump_resnet_latency(options, sched_db_loop_perfect, prg.root, prg, profiling_file, true);
   profiling_file << endl;
@@ -19577,15 +19615,18 @@ void compile_for_garnet_single_port_mem(prog& prg,
   if (multi_level_mem) {
     options.add_memory_hierarchy("regfile");
     options.rtl_options.double_buffer_optimization = false;
+    options.fallback_schedule = SEQUENTIAL_SCHEDULE;
   }
   options.emit_smt_stream = gen_smt_stream;
   options.config_gen_only = config_gen_only;
   //if (multi_sram)
   //    options.mem_tile.multi_sram_accessor = true;
 
-  loop_perfection(prg);
-  cout << "After Loop Perfection" << endl;
-  prg.pretty_print();
+  if(options.fallback_schedule == ISCA_SCHEDULE) {
+    loop_perfection(prg);
+    cout << "After Loop Perfection" << endl;
+    prg.pretty_print();
+  }
 
   schedule_info sched = garnet_schedule_info(options, prg, use_dse_compute);
   garnet_single_port_ram_schedule(options, sched, prg.root, prg);
