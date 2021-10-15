@@ -15076,22 +15076,22 @@ void test_glb(bool gen_config_only, bool multi_accessor=false, string dir="aha_g
   vector<prog> test_apps;
 
   //ISSCC application without unroll
-  test_apps.push_back(harris_color());
-  test_apps.push_back(gaussian_isscc());
-  test_apps.push_back(camera_pipeline_isscc());
-  test_apps.push_back(unsharp_isscc());
+  //test_apps.push_back(harris_color());
+  //test_apps.push_back(gaussian_isscc());
+  //test_apps.push_back(camera_pipeline_isscc());
+  //test_apps.push_back(unsharp_isscc());
 
-  //GLB tests
-  test_apps.push_back(unsharp_glb());
-  test_apps.push_back(gaussian_glb2());
-  test_apps.push_back(camera_pipeline_glb());
-  test_apps.push_back(harris_glb2());
-  test_apps.push_back(up_sample_glb());
-  test_apps.push_back(gaussian_glb8());
+  ////GLB tests
+  //test_apps.push_back(unsharp_glb());
+  //test_apps.push_back(gaussian_glb2());
+  //test_apps.push_back(camera_pipeline_glb());
+  //test_apps.push_back(harris_glb2());
+  //test_apps.push_back(up_sample_glb());
+  //test_apps.push_back(gaussian_glb8());
 
-  //Dense Linear algebra
-  test_apps.push_back(glb_channel_reduction());
-  test_apps.push_back(matmul());
+  ////Dense Linear algebra
+  //test_apps.push_back(glb_channel_reduction());
+  //test_apps.push_back(matmul());
 
   //Simplified multi-tile DNN application
   test_apps.push_back(resnet_init_unroll_tile());
@@ -19055,9 +19055,9 @@ void coarse_pipeline_schedule(schedule_info& sched, op* root, prog& prg) {
   cout << "Adjusting outer pipeline delays" << endl;
   sanity_check_iis(sched);
 
-  //adjust_outer_pipeline_delays(sched, prg);
-  adjust_coarse_grained_loop_delays_sequentially(sched, prg);
-  tighten_coarse_grained_iis(sched, prg);
+  adjust_outer_pipeline_delays(sched, prg);
+  //adjust_coarse_grained_loop_delays_sequentially(sched, prg);
+  //tighten_coarse_grained_iis(sched, prg);
 
   cout << "Done Adjusting outer pipeline delays" << endl;
   sanity_check_iis(sched);
