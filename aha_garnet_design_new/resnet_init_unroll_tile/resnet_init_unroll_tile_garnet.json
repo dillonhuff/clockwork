@@ -5676,8 +5676,8 @@
           }
         },
         "connections":[
-          ["d_1_inc.in1","_U460.out"],
-          ["d_0_inc.in1","_U4601.out"],
+          ["d_0_inc.in1","_U460.out"],
+          ["d_1_inc.in1","_U4601.out"],
           ["cmp_time.in1","_U461.out"],
           ["affine_func$mul_d0__U454.out","affine_func$add_all__U458.in0"],
           ["affine_func$mul_d1__U456.out","affine_func$add_all__U458.in1"],

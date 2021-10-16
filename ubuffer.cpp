@@ -3940,7 +3940,7 @@ pair<isl_map*, isl_map*> merge_dom_dim(isl_map* schedule, isl_map* acc_map) {
             sched = to_map(dot_domain(to_umap(sched), to_umap(reduce_map)));
             all_pair_a.erase(all_pair_a.begin());
             all_pair_s.erase(all_pair_s.begin());
-        } else if(pa.first < ps.first) {
+        } else if(pa.first > ps.first) {
             all_pair_a.erase(all_pair_a.begin());
         } else {
             all_pair_s.erase(all_pair_s.begin());

@@ -15076,22 +15076,22 @@ void test_glb(bool gen_config_only, bool multi_accessor=false, string dir="aha_g
   vector<prog> test_apps;
 
   //ISSCC application without unroll
-  //test_apps.push_back(harris_color());
-  //test_apps.push_back(gaussian_isscc());
-  //test_apps.push_back(camera_pipeline_isscc());
-  //test_apps.push_back(unsharp_isscc());
+  test_apps.push_back(harris_color());
+  test_apps.push_back(gaussian_isscc());
+  test_apps.push_back(camera_pipeline_isscc());
+  test_apps.push_back(unsharp_isscc());
 
-  ////GLB tests
-  //test_apps.push_back(unsharp_glb());
-  //test_apps.push_back(gaussian_glb2());
-  //test_apps.push_back(camera_pipeline_glb());
-  //test_apps.push_back(harris_glb2());
-  //test_apps.push_back(up_sample_glb());
-  //test_apps.push_back(gaussian_glb8());
+  //GLB tests
+  test_apps.push_back(unsharp_glb());
+  test_apps.push_back(gaussian_glb2());
+  test_apps.push_back(camera_pipeline_glb());
+  test_apps.push_back(harris_glb2());
+  test_apps.push_back(up_sample_glb());
+  test_apps.push_back(gaussian_glb8());
 
-  ////Dense Linear algebra
-  //test_apps.push_back(glb_channel_reduction());
-  //test_apps.push_back(matmul());
+  //Dense Linear algebra
+  test_apps.push_back(glb_channel_reduction());
+  test_apps.push_back(matmul());
 
   //Simplified multi-tile DNN application
   test_apps.push_back(resnet_init_unroll_tile());
@@ -15160,12 +15160,12 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   //test_apps.push_back(camera_pipeline_trunc());
 
   //CGRA tests
+  test_apps.push_back(conv_3_3());
   test_apps.push_back(matmul_single());
   test_apps.push_back(counter());
   test_apps.push_back(camera_pipeline_new());
   test_apps.push_back(rom());
   test_apps.push_back(unsharp_new());
-  test_apps.push_back(conv_3_3());
   test_apps.push_back(laplacian_pyramid());
   test_apps.push_back(laplacian_pyramid_docker());
   test_apps.push_back(gaussian());
@@ -17383,13 +17383,13 @@ void lake_tests() {
   test_single_port_mem(false, true, "aha_garnet_design_new");
   test_pond("aha_garnet_design_pond");
   //test_single_port_mem(false, false, "aha_garnet_design");
-  assert(false);
-  vectorization_unit_tests();
-  //double_buffer_test();
-  //lake_identity_stream_autovec_test();
-  lake_gaussian_autovec_test();
-  //lake_dual_port_test();
-  lake_cascade_autovec_test();
+  //assert(false);
+  //vectorization_unit_tests();
+  ////double_buffer_test();
+  ////lake_identity_stream_autovec_test();
+  //lake_gaussian_autovec_test();
+  ////lake_dual_port_test();
+  //lake_cascade_autovec_test();
   //lake_harris_autovec_test();
   //lake_resnet_multitile_test();
   //lake_resnet_test();
@@ -28037,6 +28037,9 @@ int main(int argc, char** argv) {
       dhuff_tests();
       cgra_flow_tests();
       lake_tests();
+      bool use_multi_accessor_tile = true;
+      bool gen_config_only = false;
+      test_glb(gen_config_only, use_multi_accessor_tile, "aha_garnet_design_new");
       return 0;
     }
 
