@@ -1,8 +1,6 @@
 #pragma once
 #include "prog.h"
 
-<<<<<<< HEAD
-=======
 prog fft8_unroll0();
 prog fft8_unroll2();
 prog fft8_unroll4();
@@ -13,7 +11,6 @@ prog fft8_unroll8_split();
 prog laplacian_pyramid();
 prog laplacian_pyramid_docker();
 prog counter();
->>>>>>> origin/glb
 prog conv_multi(); //multiple-tile-cnn
 prog strided_conv();
 prog accumulation(); //reduce
@@ -40,15 +37,16 @@ prog resnet_multi_tiny(); //for regfile debug
 //prog mini_conv_halide_fixed();
 prog camera_pipeline(); //stencil
 prog camera_pipeline_new(); //stencil
-prog camera_pipeline_trunc(); //stencil
+//prog camera_pipeline_new_trunc(); //stencil
+//prog camera_pipeline_trunc(); //stencil
 prog up_sample();
 prog up_sample_exp();
 prog down_sample();
 prog conv_layer(); //reduce
 prog camera_pipeline_dse_1();
 prog rom();
-prog counter();
 prog demosaic_complex();
+prog demosaic_2x2();
 prog demosaic_unrolled();
 prog bilateral();
 prog stereo();
@@ -56,7 +54,11 @@ prog histogram();
 prog mobilenet();
 prog mobilenet_small();
 prog three_level_memory();
+prog three_level_pond();
+prog three_level_pond_rolled();
 prog resnet_unrolled();
+prog resnet88();
+prog resnet88_chain();
 prog resnet_coarse_pipeline_loop();
 prog mobilenet_unrolled();
 prog harris_sch1_onebuf();

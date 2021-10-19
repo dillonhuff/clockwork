@@ -3510,6 +3510,16 @@ bool MemtileReplaceMetaMapper(Instance* cnst) {
 }
 
 
+namespace MapperPasses {
+class RegfileSubstitute: public CoreIR::InstanceVisitorPass {
+  public :
+    static std::string ID;
+    RegfileSubstitute() : InstanceVisitorPass(ID,"replace cgralib.Mem_amber to cgralib.Mem") {}
+    void setVisitorInfo() override;
+};
+
+}
+
 bool RegfileReplace(Instance* cnst) {
   cout << tab(2) << "memory syntax transformation!" << endl;
   cout << tab(2) << toString(cnst) << endl;
