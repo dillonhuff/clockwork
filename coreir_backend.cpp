@@ -1034,6 +1034,33 @@ void load_commonlib_ext(Context* c) {
     def->connect("self.out","abs.data.out");
 
   });
+  Generator* mult_middle = c->getGenerator("commonlib.mult_middle");
+  mult_middle->setGeneratorDefFromFun([](Context* c, Values args, ModuleDef* def) {
+      uint width = args.at("width")->get<int>();
+      ASSERT(width==DATAPATH_WIDTH,"NYI non 16");
+
+      Values PEArgs({
+          {"alu_op",Const::make(c,"mult_1")},
+          {"signed",Const::make(c,false)}
+          });
+      def->addInstance("mult_1","cgralib.PE",{{"op_kind",Const::make(c,"alu")}},PEArgs);
+      def->connect("self.in0","mult_1.data.in.0");
+      def->connect("self.in1","mult_1.data.in.1");
+      def->connect("self.out","mult_1.data.out");
+  });
+  Generator* mult_high = c->getGenerator("commonlib.mult_high");
+  mult_high->setGeneratorDefFromFun([](Context* c, Values args, ModuleDef* def) {
+      uint width = args.at("width")->get<int>();
+      ASSERT(width==DATAPATH_WIDTH,"NYI non 16");
+      Values PEArgs({
+          {"alu_op",Const::make(c,"mult_2")},
+          {"signed",Const::make(c,false)}
+          });
+      def->addInstance("mult_2","cgralib.PE",{{"op_kind",Const::make(c,"alu")}},PEArgs);
+      def->connect("self.in0","mult_2.data.in.0");
+      def->connect("self.in1","mult_2.data.in.1");
+      def->connect("self.out","mult_2.data.out");
+  });
 
 }
 
@@ -1375,6 +1402,15 @@ CoreIR::Wireable* addVals(CoreIR::ModuleDef* def, CoreIR::Wireable* a, CoreIR::W
   return ad->sel("out");
 }
 
+CoreIR::Wireable* addVals(CoreIR::ModuleDef* def, CoreIR::Wireable* a, CoreIR::Wireable* b, int width) {
+  auto context = def->getContext();
+  auto ad = def->addInstance("add_all_" + def->getContext()->getUnique(), "coreir.add", {{"width", COREMK(context, width)}});
+  def->connect(ad->sel("in0"), a);
+  def->connect(ad->sel("in1"), b);
+
+  return ad->sel("out");
+}
+
 CoreIR::Wireable* orList(CoreIR::ModuleDef* def, const std::vector<CoreIR::Wireable*>& vals) {
   assert(vals.size() > 0);
   auto context = def->getContext();
@@ -1402,9 +1438,9 @@ CoreIR::Wireable* mkConst(CoreIR::ModuleDef* def, const int width, const int val
 }
 
 
-CoreIR::Wireable* addList(CoreIR::ModuleDef* def, const std::vector<CoreIR::Wireable*>& vals) {
+CoreIR::Wireable* addList(CoreIR::ModuleDef* def, const std::vector<CoreIR::Wireable*>& vals, int width) {
   if (vals.size() == 0) {
-    return mkConst(def, 16, 0);
+    return mkConst(def, width, 0);
   }
   assert(vals.size() > 0);
   auto context = def->getContext();
@@ -1416,7 +1452,7 @@ CoreIR::Wireable* addList(CoreIR::ModuleDef* def, const std::vector<CoreIR::Wire
 
   val = vals[0];
   for (int i = 1; i < ((int) vals.size()); i++) {
-    val = addVals(def, val, vals[i]);
+    val = addVals(def, val, vals[i], width);
   }
   return val;
 }
@@ -1602,7 +1638,7 @@ void generate_coreir_compute_unit(CodegenOptions& options, bool found_compute,
           inputs.push_back(bsel->sel(l));
         }
       }
-      auto result = addList(def, inputs);
+      auto result = addList(def, inputs, CONTROLPATH_WIDTH);
 
       for (pair<string, string> bundle : outgoing_bundles(op, buffers, prg)) {
         def->connect(result, def->sel("self")->sel(pg(bundle))->sel(0));
@@ -1651,8 +1687,7 @@ void connect_op_control_wires(CodegenOptions& options, ModuleDef* def, op* op, s
     cout << "Done Finding compute , op Latency : " << op_latency
         << ", read Latency: " << read_latency << endl;
 
-  if (options.rtl_options.use_external_controllers || op->index_variables_needed_by_compute.size()) {
-  // if (false) {
+  if (!controller->getModuleRef()->isGenerated()) {
     Wireable* op_start_wire = controller->sel("valid");
     Wireable* op_start_loop_vars = controller->sel("d");
     if (!options.rtl_options.use_external_controllers) {
@@ -1685,8 +1720,10 @@ void connect_op_control_wires(CodegenOptions& options, ModuleDef* def, op* op, s
     Wireable* exe_start_wire =
       delay_by(def, exe_start_name(op->name), op_start_wire, read_latency);
     cout << "Delaying writes" << endl;
+    //op latency has been taken into the stencil valid signal
     Wireable* write_start_wire =
-      delay_by(def, write_start_name(op->name), op_start_wire, read_latency + op_latency);
+      //delay_by(def, write_start_name(op->name), op_start_wire, read_latency + op_latency);
+      delay_by(def, write_start_name(op->name), op_start_wire, read_latency);
   }
 
   //auto c = def->getContext();
@@ -1752,8 +1789,11 @@ void emit_lake_config_collateral(CodegenOptions options, string tile_name, json 
     string file_dir = options.dir + "lake_collateral/" + tile_name;
     cmd("rm -rf " + file_dir);
     cmd("mkdir -p " + file_dir);
+    ofstream out_config(file_dir + "/" + "config.json");
+    out_config << config_file << endl;
+    out_config.close();
     for (auto it = config_file.begin(); it != config_file.end(); ++it) {
-        if (it.key() == "init")
+        if (it.key() == "init" || it.key() == "mode" || it.key() == "chain_en")
             continue;
         cout << "\t\tconfig key: " << it.key() << ", " << it.value() << endl;
         ofstream out(file_dir + "/" + it.key() + ".csv");
@@ -1762,13 +1802,44 @@ void emit_lake_config_collateral(CodegenOptions options, string tile_name, json 
     }
 }
 
+void add_default_initial_block() {
+    ifstream lake_top("LakeTop_W.v");
+    ofstream lake_new("LakeTop_W_new.v");
+    string loc;
+    if (lake_top.is_open() && lake_new.is_open()) {
+        while(getline(lake_top, loc)) {
+            if (loc == "endmodule   // sram_stub") {
+                lake_new << "//Add initial block here" << endl;
+                lake_new << "initial begin" << endl;
+                lake_new << tab(1) << "integer i = 0;" << endl;
+                lake_new << tab(1) << "for(i = 0; i < 512; i ++) begin" << endl;
+                lake_new << tab(2) << "integer big_addr = i >> 2;" << endl;
+                lake_new << tab(2) << "integer small_addr = i & 3;" << endl;
+                lake_new << tab(2) << "data_array[big_addr][small_addr] = i;" << endl;
+                lake_new << tab(1) << "end" << endl << "end" << endl;
+            }
+            lake_new << loc << endl;
+        }
+        lake_top.close();
+        lake_new.close();
+    } else {
+        cout << "Cannot open file!" << endl;
+        assert(false);
+    }
+}
+
 void run_lake_verilog_codegen(CodegenOptions& options, string v_name, string ub_ins_name) {
   //cmd("export LAKE_CONTROLLERS=$PWD");
   //cout << "Runing cmd$ python /nobackup/joeyliu/aha/lake/tests/wrapper_lake.py -c " + options.dir + "lake_collateral/" + ub_ins_name + " -s True -n " + v_name  <<  endl;
   ASSERT(getenv("LAKE_PATH"), "Define env var $LAKE_PATH which is the /PathTo/lake");
   cmd("echo $LAKE_PATH");
-  int res_lake = cmd("python $LAKE_PATH/lake/utils/wrapper_lake.py -c " + options.dir + "lake_collateral/" + ub_ins_name + " -s True -n " + v_name);
-  assert(res_lake == 0);
+  if (options.mem_hierarchy.at("mem").fetch_width == 4) {
+    int res_lake = cmd("python $LAKE_PATH/lake/utils/wrapper_lake.py -c " + options.dir + "lake_collateral/" + ub_ins_name + " -s True -n " + v_name);
+    assert(res_lake == 0);
+  } else {
+    int res_lake = cmd("python $LAKE_PATH/tests/test_pohan_wrapper.py -f " + options.dir + "lake_collateral/" + ub_ins_name + "/config.json -b LakeWrapper -w " + v_name);
+    assert(res_lake == 0);
+  }
   cmd("mkdir -p "+options.dir+"verilog");
   cmd("mv LakeWrapper_"+v_name+".v " + options.dir + "verilog");
 }
@@ -1776,25 +1847,97 @@ void run_lake_verilog_codegen(CodegenOptions& options, string v_name, string ub_
 void run_pond_verilog_codegen(CodegenOptions& options, string v_name, string ub_ins_name) {
   //cmd("export LAKE_CONTROLLERS=$PWD");
   ASSERT(getenv("LAKE_PATH"), "Define env var $LAKE_PATH which is the /PathTo/lake");
-  int res_lake = cmd("python $LAKE_PATH/lake/utils/wrapper_lake.py -c " + options.dir + "lake_collateral/" + ub_ins_name + " -n " + v_name + " -p True -pl 4 -pd 32");
+  int res_lake = cmd("python $LAKE_PATH/lake/utils/wrapper_lake.py -c " + options.dir + "lake_collateral/" + ub_ins_name + " -n " + v_name + " -p True -pl 4 -pd 128");
   assert(res_lake == 0);
   cmd("mkdir -p "+options.dir+"verilog");
   cmd("mv LakeWrapper_"+v_name+".v " + options.dir + "verilog");
+}
+
+void run_glb_verilog_codegen(CodegenOptions& options, const std::string& long_name, int num_inpt, int num_outpt, int width) {
+  std::ofstream verilog_collateral_file;
+  verilog_collateral_file.open(long_name + ".v");
+
+  vector<string> port_decls = {};
+  port_decls.push_back("input clk");
+  port_decls.push_back("input rst_n");
+  port_decls.push_back("input clk_en");
+  port_decls.push_back("input chain_chain_en");
+  for(int i = 0; i < num_inpt; i++)
+  {
+    port_decls.push_back("input [15:0] data_in_" + str(i));
+    port_decls.push_back("input ["+ str(width)+":0] write_addr_" + str(i));
+    port_decls.push_back("input wen_" + str(i));
+  }
+  for(int i = 0; i < num_outpt; i++)
+  {
+    port_decls.push_back("output logic [15:0] data_out_" + str(i));
+    port_decls.push_back("input ["+ str(width)+":0] read_addr_" + str(i));
+    port_decls.push_back("input ren_" + str(i));
+  }
+  port_decls.push_back("input [15:0] chain_data_in");
+  port_decls.push_back("output [15:0] chain_data_out");
+
+  verilog_collateral_file << "module " << long_name <<" ("<< sep_list(port_decls,"","",",") <<"); "<< endl;
+  //128 KB per GLB bank
+  //verilog_collateral_file << tab(1) << "logic [15:0] SRAM [131071:0];" << endl;
+  //double the size for tile
+  verilog_collateral_file << tab(1) << "logic [15:0] SRAM [262143:0];" << endl;
+  verilog_collateral_file << tab(1) << "logic chain_ren;" << endl << endl;
+  for (int i = 0; i < num_outpt; i++) {
+    verilog_collateral_file << tab(1) << "logic [15:0] data_out_" << i << "_tmp;" << endl;
+  }
+
+  verilog_collateral_file << tab(1) << "always @(posedge clk) begin" << endl;
+  verilog_collateral_file << tab(2) << "chain_ren <= " << "ren_" << num_outpt - 1 << ";" << endl;
+  for (int i = 0; i < num_outpt; i++) {
+    verilog_collateral_file << tab(2) << "data_out_" << str(i) << "_tmp <= SRAM[read_addr_" << i << "];" << endl;
+    //verilog_collateral_file << tab(2) << "$display(\"output data %d, raddr %d\", data_out_" << str(i) << "_tmp, read_addr_"<< str(i) <<");" << endl;
+  }
+  for (int i = 0; i < num_inpt; i++) {
+    verilog_collateral_file << tab(2) << "if (wen_" << i << " & (rst_n==0)) begin" << endl;
+    verilog_collateral_file << tab(3) << "SRAM[write_addr_" << i << "] <= " << "data_in_" << str(i) << ";" << endl;
+    //verilog_collateral_file << tab(3) << "$display(\"input data %d, waddr %d\", data_in_" << str(i)  << ", write_addr_" << str(i) << ");"<< endl;
+    verilog_collateral_file << tab(2) << "end" << endl;
+  }
+  verilog_collateral_file << tab(1) << "end" << endl;
+  //verilog_collateral_file << tab(1) << "assign chain_ren = ren_0; " << endl;
+  //verilog_collateral_file << tab(1) << "assign chain_data_out = chain_ren ? " << "data_out_" << bank_readers[b].size() - 1 << "_tmp : chain_data_in;" << endl;
+  verilog_collateral_file << tab(1) << "assign chain_data_out = chain_ren ? " << "data_out_" << num_outpt - 1 << "_tmp : 0;" << endl;
+  for (int i = 0; i < num_outpt; i++) {
+    if (i == num_outpt - 1) {
+      verilog_collateral_file << tab(1) << "assign data_out_" << i << " = chain_data_out;" << endl;
+    } else {
+      verilog_collateral_file << tab(1) << "assign data_out_" << i << " = data_out_" << i << "_tmp;" << endl;
+    }
+  }
+  verilog_collateral_file << "endmodule" << endl << endl;
+  verilog_collateral_file.close();
+  cmd("mkdir -p "+options.dir+"verilog");
+  cmd("mv " + long_name+".v " + options.dir + "verilog");
 }
 
 void generate_lake_tile_verilog(CodegenOptions& options, Instance* buf) {
   cout << "Generating Verilog Testing Collateral for: " << buf->toString() << endl
       << buf->getModuleRef()->toString() << endl;
   string ub_ins_name = buf->toString();
-  //FIXME: a hack to get correct module name, fix this after coreIR update
-  string v_name =  get_coreir_genenerator_name(buf->getModuleRef()->toString());
-
-  //dump the collateral file
-  emit_lake_config_collateral(options, ub_ins_name, buf->getMetaData()["config"]);
   string config_mode = buf->getMetaData()["mode"];
-
+  //FIXME: a hack to get correct module name, fix this after coreIR update
+  //string v_name =  get_coreir_genenerator_name(buf->getModuleRef()->toString());
+  //string v_name =  buf->getModuleRef()->getMetaData()["verilog_name"];
+  string v_name =  buf->getMetaData()["verilog_name"];
   if (options.config_gen_only)
     return;
+  //TODO: apply the verilog codegen here
+  if (config_mode == "glb") {
+    auto genargs = buf->getModuleRef()->getGenArgs();
+    run_glb_verilog_codegen(options, v_name, genargs.at("num_inputs")->get<int>(), genargs.at("num_outputs")->get<int>(), 32);
+    return;
+  }
+  //dump the collateral file
+  json config = buf->getMetaData()["config"];
+  config["mode"] = "UB";
+  emit_lake_config_collateral(options, ub_ins_name, config);
+
   //run the lake generation cmd
   if (config_mode == "lake")
       run_lake_verilog_codegen(options, v_name, ub_ins_name);
@@ -1840,11 +1983,11 @@ Instance* generate_coreir_op_controller_verilog(CodegenOptions& options, ModuleD
     controller = def->addInstance(controller_name(op->name), aff_c);
   } else {
     assert(false);
-    controller = affine_controller_use_lake_tile(
-            def, c, dom, aff,
-            controller_name(op->name));
-    //generate verilog collateral
-    generate_lake_tile_verilog(options, controller);
+    //controller = affine_controller_use_lake_tile(
+    //        def, c, dom, aff,
+    //        controller_name(op->name));
+    ////generate verilog collateral
+    //generate_lake_tile_verilog(options, controller);
   }
 
   assert(verilog_collateral_file != nullptr);
@@ -1886,8 +2029,7 @@ Instance* generate_controller_coreir(CodegenOptions& options, ModuleDef* def, co
     controller = def->addInstance(name, aff_c);
   } else {
     controller = affine_controller_use_lake_tile(
-            def, c, dom, aff,
-            name);
+            options, def, c, dom, aff, name);
     //generate verilog collateral
     generate_lake_tile_verilog(options, controller);
   }
@@ -1934,11 +2076,22 @@ Instance* generate_coreir_op_controller(CodegenOptions& options, ModuleDef* def,
   //For those op need loop index we need this controller
   bool need_index = op->index_variables_needed_by_compute.size() > 0;
   //TODO: remove the first statement after kavya add init to lakewrapper
-  // if (options.rtl_options.use_external_controllers || need_index ) {
+  //if (options.rtl_options.use_external_controllers || need_index ) {
   if (options.rtl_options.use_external_controllers) {
     auto aff_c = affine_controller(options, c, dom, aff);
     aff_c->print();
     controller = def->addInstance(controller_name(op->name), aff_c);
+
+  } else if (to_int(const_coeff(aff)) >= options.mem_hierarchy.at("mem").counter_ub) {
+
+    //add a 32 bit controller for multi-tile application ctrl generation
+    auto aff_c = affine_controller(options, c, dom, aff, 32);
+    aff_c->print();
+    controller = def->addInstance(controller_name(op->name), aff_c);
+
+    //This controller will be substitute with lake stencil valid in garnet mapping
+    //Dump the metadata and rewrite it to lake tile in garnet mapping:
+    add_lake_config_to_aff_ctrl_for_garnet_mapping(dom, aff, controller);
   } else if (need_index) {
     auto aff_c = affine_controller_use_lake_tile_counter(
             options, c, dom, aff,
@@ -1946,8 +2099,12 @@ Instance* generate_coreir_op_controller(CodegenOptions& options, ModuleDef* def,
     cout << aff_c->toString() <<endl;
     controller = def->addInstance(controller_name(op->name), aff_c);
   } else {
+    //update the latency into the stencil valid signal, to fix rom
+    int op_latency = hwinfo.compute_latency(op);
+    aff = add(aff, op_latency);
+
     controller = affine_controller_use_lake_tile(
-            def, c, dom, aff,
+            options, def, c, dom, aff,
             controller_name(op->name));
     //generate verilog collateral
     generate_lake_tile_verilog(options, controller);
@@ -2158,7 +2315,41 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
     generate_coreir_compute_unit(options, found_compute, def, op, prg, buffers, hwinfo);
   }
 
+  //Add a pass to see if there is a glb
+  for (auto& it: buffers) {
+    if (contains(it.first, "glb_stencil")){
+        cout << "Contains glb" << endl;
+        auto buf = it.second;
+        int starting_cycle = buf.starting_cycle();
+        cout << starting_cycle << endl;
+        if(starting_cycle == 0) {
+            //Take the output starting cycle instead of input latency
+            //auto out_sched = buf.global_outpt_sched();
+            //auto host2glb_latency = to_int(lexminval(to_set(range(out_sched))));
+            //cout << "Host to glb latency: " << host2glb_latency << endl;
+            //options.host2glb_latency =
+            //    min(options.host2glb_latency, host2glb_latency);
+
+            auto in_sched = buf.global_inpt_sched();
+            auto host2glb_latency = to_int(lexmaxval(to_set(range(in_sched))));
+            cout << "Host to glb latency: " << host2glb_latency << endl;
+            options.host2glb_latency =
+                max(options.host2glb_latency, host2glb_latency);
+        }
+    }
+  }
+
   for (auto& buf : buffers) {
+    //Help for DEBUG
+    //if (!contains(buf.first, "output_cgra")) {
+    //    continue;
+    //}
+    //if (!contains(buf.first, "kernel_cgra")) {
+    //    continue;
+    //}
+    //if (!contains(buf.first, "input_glb")) {
+    //    continue;
+    //}
     if (!prg.is_boundary(buf.first)) {
       //all the memory optimization pass goes here
       auto impl = generate_optimized_memory_implementation(options, buf.second, prg, hwinfo);
@@ -2171,6 +2362,16 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
       def->connect(def->sel(buf.first + ".reset"), def->sel("self.reset"));
       //def->connect(def->sel(buf.first + ".rst_n"), def->sel("self.rst_n"));
       //def->connect(def->sel(buf.first + ".flush"), def->sel("self.flush"));
+    } else {
+      //is boundary buffer
+      //generate the global buffer configuration and save in edge buffers' config file
+      auto& eb = buf.second;
+      eb.tighten_address_space();
+      auto eb_config = eb.generate_ubuf_args(options, eb, "glb");
+      eb.config_file = eb_config;
+      //if(prg.is_input(buf.first)) {
+      //    assert(false);
+      //}
     }
   }
 
@@ -2531,6 +2732,117 @@ void getAllIOPaths(Wireable* w, IOpaths& paths) {
 
 }
 
+class GetGLBConfig: public CoreIR::InstanceGraphPass {
+ public:
+  static std::string ID;
+  int latency;
+
+  //There are more than one input GLB
+  map<string, json> glb2cgra;
+  json cgra2glb;
+  GetGLBConfig() : latency(0),
+    InstanceGraphPass("getglbconfig", "Find the glb load latency!") {}
+  bool runOnInstanceGraphNode(CoreIR::InstanceGraphNode& node) {
+    bool changed = false;
+    for (auto inst : node.getInstanceList()) {
+       Module* m = inst->getModuleRef();
+       if (m->isGenerated()) {
+         auto g = m->getGenerator();
+         if (g->getName() == "Mem_amber") {
+           auto genargs = inst->getModuleRef()->getGenArgs();
+           if(!genargs.at("has_external_addrgen")->get<bool>())
+             continue;
+           string buf_name = genargs.at("ID")->get<string>();
+           buf_name = pick(split_at(buf_name, "_"));
+           auto config_file = inst->getMetaData()["config"];
+           cout << "Buf_name: " << buf_name << endl;
+           cout << "Config file: " << config_file << endl;
+           if(config_file.count("in2glb_0") && config_file.count("glb2out_0")) {
+             if (config_file.at("in2glb_0").at("cycle_starting_addr")[0] == 0) {
+               latency = config_file.at("glb2out_0").at("cycle_starting_addr")[0];
+               glb2cgra.insert({buf_name, config_file.at("glb2out_0")});
+             } else {
+               cgra2glb = config_file.at("in2glb_0");
+               //cgra2glb.insert({buf_name, config_file.at("in2glb_0")});
+             }
+          }
+        }
+      }
+    }
+    return changed;
+  }
+};
+
+
+void addIOsWithGLBConfig(Context* c, Module* top, map<string, UBuffer>& buffers, GetGLBConfig* glb_metadata) {
+  ModuleDef* mdef = top->getDef();
+
+  Values aWidth({{"width",Const::make(c,16)}});
+  IOpaths iopaths;
+  getAllIOPaths(mdef->getInterface(), iopaths);
+  Instance* pt = addPassthrough(mdef->getInterface(),"_self");
+  for (auto path : iopaths.IO16) {
+    string path_name = *(path.begin()+1);
+    //TODO: this is a hacky way to parse the buf name
+    string buf_name = take_until_str(path_name, "_op");
+    auto in_buf =  buffers.at(buf_name);
+    string ioname = "io16in_" + join(++path.begin(),path.end(),string("_"));
+    auto inst = mdef->addInstance(ioname,"cgralib.IO",aWidth,{{"mode",Const::make(c,"in")}});
+    inst->getMetaData() = in_buf.config_file;
+
+    //Add the multi-tile glb informations
+    if(glb_metadata->latency != 0) {
+      cout << "buf name: " << buf_name << endl;
+      string key = pick(split_at(buf_name, "_"));
+      inst->getMetaData()["glb2out_0"] = glb_metadata->glb2cgra.at(key);
+      int old_offset = inst->getMetaData()["glb2out_0"]["cycle_starting_addr"][0] ;
+      inst->getMetaData()["glb2out_0"]["cycle_starting_addr"][0] = old_offset - glb_metadata->latency;
+    }
+
+    path[0] = "in";
+    path.insert(path.begin(),"_self");
+    mdef->connect({ioname,"out"},path);
+  }
+  for (auto path : iopaths.IO16in) {
+    string path_name = *(path.begin()+1);
+    //TODO: this is a hacky way to parse the buf name
+    string buf_name = take_until_str(path_name, "_op");
+    auto out_buf =  buffers.at(buf_name);
+    string ioname = "io16_" + join(++path.begin(),path.end(),string("_"));
+    auto inst = mdef->addInstance(ioname,"cgralib.IO",aWidth,{{"mode",Const::make(c,"out")}});
+    inst->getMetaData() = out_buf.config_file;
+
+    //Add the multi-tile glb informations
+    if(glb_metadata->latency != 0) {
+      cout << "buf_name" << buf_name << endl;
+      //string key = split_at(buf_name, "_").at(1);
+      //inst->getMetaData()["in2glb_0"] = glb_metadata->cgra2glb.at(key);
+      inst->getMetaData()["in2glb_0"] = glb_metadata->cgra2glb;
+      int old_offset = inst->getMetaData()["in2glb_0"]["cycle_starting_addr"][0] ;
+      inst->getMetaData()["in2glb_0"]["cycle_starting_addr"][0] = old_offset - glb_metadata->latency;
+    }
+    path[0] = "in";
+    path.insert(path.begin(),"_self");
+    mdef->connect({ioname,"in"},path);
+  }
+  for (auto path : iopaths.IO1) {
+    string ioname = "io1in_" + join(++path.begin(),path.end(),string("_"));
+    mdef->addInstance(ioname,"cgralib.BitIO",{{"mode",Const::make(c,"in")}});
+    path[0] = "in";
+    path.insert(path.begin(),"_self");
+    mdef->connect({ioname,"out"},path);
+  }
+  for (auto path : iopaths.IO1in) {
+    string ioname = "io1_" + join(++path.begin(),path.end(),string("_"));
+    mdef->addInstance(ioname,"cgralib.BitIO",{{"mode",Const::make(c,"out")}});
+    path[0] = "in";
+    path.insert(path.begin(),"_self");
+    mdef->connect({ioname,"in"},path);
+  }
+  mdef->disconnect(mdef->getInterface());
+  inlineInstance(pt);
+}
+
 void addIOs(Context* c, Module* top) {
   ModuleDef* mdef = top->getDef();
 
@@ -2540,6 +2852,8 @@ void addIOs(Context* c, Module* top) {
   Instance* pt = addPassthrough(mdef->getInterface(),"_self");
   for (auto path : iopaths.IO16) {
     string ioname = "io16in_" + join(++path.begin(),path.end(),string("_"));
+    for (auto p: path)
+        cout << "path: " << p << endl;
     mdef->addInstance(ioname,"cgralib.IO",aWidth,{{"mode",Const::make(c,"in")}});
     path[0] = "in";
     path.insert(path.begin(),"_self");
@@ -2570,6 +2884,7 @@ void addIOs(Context* c, Module* top) {
   }
   mdef->disconnect(mdef->getInterface());
   inlineInstance(pt);
+  assert(false);
 }
 
 
@@ -2581,12 +2896,298 @@ class CustomFlatten : public CoreIR::InstanceGraphPass {
     bool changed = false;
     // int i = 0;
     for (auto inst : node.getInstanceList()) {
-       
       changed |= inlineInstance(inst);
     }
     return changed;
   }
 };
+
+void substract_glb_latency(json& config_file, int latency) {
+    for (auto & ctrl: config_file.items()) {
+        auto & val = ctrl.value();
+        if ((val.count("cycle_starting_addr")))
+          val.at("cycle_starting_addr")[0] =
+            (int)val.at("cycle_starting_addr")[0] - latency;
+    }
+}
+
+class SubstructGLBLatency: public CoreIR::InstanceGraphPass {
+ public:
+  static std::string ID;
+  int glb_load_latency;
+  SubstructGLBLatency(int latency) : glb_load_latency(latency),
+    InstanceGraphPass("substractglblatency", "Move the affine controller timing forward!") {}
+  bool runOnInstanceGraphNode(CoreIR::InstanceGraphNode& node) {
+    bool changed = false;
+    // int i = 0;
+    for (auto & inst : node.getInstanceList()) {
+       //cout << "inlining " << inst->getName() << endl;
+       Module* m = inst->getModuleRef();
+       if (m->isGenerated()) {
+         auto g = m->getGenerator();
+         if (g->getName() == "Mem_amber" ||
+           g->getName() == "Pond_amber") {
+           auto config_file = inst->getMetaData()["config"];
+           if (!inst->getMetaData().count("drive_by_cgpl_ctrl")) {
+             substract_glb_latency(config_file, glb_load_latency);
+             inst->getMetaData()["config"] = config_file;
+             changed = true;
+           }
+         }
+       }
+    }
+    return changed;
+  }
+};
+
+class ReplaceGLBValid: public CoreIR::InstancePass {
+    public:
+    json valid_config;
+    int latency;
+ReplaceGLBValid(GetGLBConfig* glb_pass):
+    InstancePass(
+            "replaceglbvalid",
+            "Replace output affine port controller using cgra to glb config"
+            ), valid_config(glb_pass->cgra2glb), latency(glb_pass->latency) {}
+bool runOnInstance(Instance* inst) {
+    //define the pass here
+    if(latency == 0)
+        return false;
+    if (inst->getModuleRef()->isGenerated())
+    if (inst->getModuleRef()->getGenerator()->getName() == "Mem_amber" &&
+            inst->canSel("stencil_valid")) {
+      auto conns = inst->sel("stencil_valid")->getConnectedWireables();
+      bool connect2IO = false;
+      for (auto conn: conns) {
+          auto inst_conn = dyn_cast<Instance>(conn->getTopParent());
+          if (inst_conn->getModuleRef()->getRefName() == "cgralib.BitIO") {
+              cout << inst_conn->getModuleRef()->toString() << endl;
+              connect2IO = true;
+              break;
+          }
+      }
+      if (connect2IO) {
+          //valid_config.at("cycle_starting_addr")[0] = (int)valid_config.at("cycle_starting_addr")[0] - latency;
+          inst->getMetaData()["config"]["stencil_valid"] = valid_config;
+          return true;
+      }
+    }
+    return false;
+}
+
+};
+
+class ReplaceCoarseGrainedAffCtrl: public CoreIR::InstancePass {
+    public:
+ReplaceCoarseGrainedAffCtrl():
+    InstancePass(
+            "replacecoarsegrainedaffctrl",
+            "Replace Coarsegrainedaffctrl with lake tile stencil valid"
+            ) {}
+bool runOnInstance(Instance* inst) {
+    //define the pass here
+    if (inst->getMetaData().count("lake_config") ){
+       cout << "Substitute " << inst->toString() << endl;
+       auto def= inst->getContainer();
+       auto context = inst->getContext();
+       auto config_file = inst->getMetaData().at("lake_config");
+       Instance* flush_pth = addPassthrough(inst->sel("valid"),
+               "flush_pth_"+inst->toString());
+       def->disconnect(inst->sel("clk"));
+       def->disconnect(inst->sel("valid"));
+
+       //TODO put this into a function
+       auto* g = context->getGenerator("cgralib.Mem_amber");
+       CoreIR::Values genargs = {
+         {"width", CoreIR::Const::make(context, 16)},
+         {"num_inputs", CoreIR::Const::make(context, 0)},
+         {"num_outputs", CoreIR::Const::make(context, 0)},
+         {"has_stencil_valid", CoreIR::Const::make(context, true)},
+         {"has_chain_en", CoreIR::Const::make(context, true)},
+         {"ID", CoreIR::Const::make(context, context->getUnique())},
+         {"has_flush",  CoreIR::Const::make(context, true)},
+         {"use_prebuilt_mem",  CoreIR::Const::make(context, true)}
+       };
+       auto ctrl = def->addInstance(inst->toString() + "_lake", "cgralib.Mem_amber", genargs);
+       ctrl->getMetaData()["config"] = config_file;
+       ctrl->getMetaData()["mode"] = "lake";
+       ctrl->getMetaData()["verilog"] = "aff_ctrl_counter_"+genargs.at("ID")->get<string>();
+
+       auto clk_en_const = def->addInstance(inst->toString()+"_clk_en_const", "corebit.const",
+               {{"value", CoreIR::Const::make(context, true)}});
+
+       //garnet wire reset to flush of memory
+       def->connect(ctrl->sel("flush"), def->sel("self.reset"));
+       def->connect(ctrl->sel("clk"), def->sel("self.clk"));
+       def->connect(ctrl->sel("clk_en"), clk_en_const->sel("out"));
+       def->connect(ctrl->sel("rst_n"), clk_en_const->sel("out"));
+       def->connect(flush_pth->sel("in"), ctrl->sel("stencil_valid"));
+       inlineInstance(flush_pth);
+       def->removeInstance(inst);
+       //def->disconnect(def->getInterface());
+       return true;
+    } else if (inst->getMetaData().count("garnet_remove")){
+      auto def= inst->getContainer();
+      def->removeInstance(inst);
+      //def->disconnect(def->getInterface());
+      return true;
+    } else if (inst->getMetaData().count("garnet_rewire_flush")){
+      //replace the emulated fabric flush into the real flush
+      auto def= inst->getContainer();
+      auto conns = inst->sel("valid")->getConnectedWireables();
+      assert(conns.size() == 1);
+      def->disconnect(def->getInterface());
+      def->connect(pick(conns), def->sel("self.reset"));
+      def->removeInstance(inst);
+      return true;
+    }
+    return false;
+}
+
+};
+
+/*class ReplaceCoarseGrainedAffCtrl: public CoreIR::InstanceGraphPass {
+ public:
+  static std::string ID;
+  ReplaceCoarseGrainedAffCtrl() :
+    InstanceGraphPass("replacecoarsegrainedaffctrl", "change prebuild aff control with lake tile!") {}
+  bool runOnInstanceGraphNode(CoreIR::InstanceGraphNode& node) {
+    bool changed = false;
+    // int i = 0;
+    for (auto & inst : node.getInstanceList()) {
+        if (inst->getMetaData().count("lake_config") ){
+           cout << "Substitute " << inst->toString() << endl;
+           auto def= inst->getContainer();
+           auto context = inst->getContext();
+           auto config_file = inst->getMetaData().at("lake_config");
+           Instance* flush_pth = addPassthrough(inst->sel("valid"),
+                   "flush_pth_"+inst->toString());
+           def->disconnect(inst->sel("clk"));
+           def->disconnect(inst->sel("valid"));
+
+           //TODO put this into a function
+           auto* g = context->getGenerator("cgralib.Mem_amber");
+           CoreIR::Values genargs = {
+             {"width", CoreIR::Const::make(context, 16)},
+             {"num_inputs", CoreIR::Const::make(context, 0)},
+             {"num_outputs", CoreIR::Const::make(context, 0)},
+             {"has_stencil_valid", CoreIR::Const::make(context, true)},
+             {"has_chain_en", CoreIR::Const::make(context, true)},
+             {"ID", CoreIR::Const::make(context, context->getUnique())},
+             {"has_flush",  CoreIR::Const::make(context, true)},
+             {"use_prebuilt_mem",  CoreIR::Const::make(context, true)}
+           };
+           auto ctrl = def->addInstance(inst->toString() + "_lake", "cgralib.Mem_amber", genargs);
+           ctrl->getMetaData()["config"] = config_file;
+           ctrl->getMetaData()["mode"] = "lake";
+           ctrl->getMetaData()["verilog"] = "aff_ctrl_counter_"+genargs.at("ID")->get<string>();
+
+           auto clk_en_const = def->addInstance(inst->toString()+"_clk_en_const", "corebit.const",
+                   {{"value", CoreIR::Const::make(context, true)}});
+
+           //garnet wire reset to flush of memory
+           def->connect(ctrl->sel("flush"), def->sel("self.reset"));
+           def->connect(ctrl->sel("clk"), def->sel("self.clk"));
+           def->connect(ctrl->sel("clk_en"), clk_en_const->sel("out"));
+           def->connect(ctrl->sel("rst_n"), clk_en_const->sel("out"));
+           def->connect(flush_pth->sel("in"), ctrl->sel("stencil_valid"));
+           inlineInstance(flush_pth);
+           def->removeInstance(inst);
+           //def->disconnect(def->getInterface());
+           changed = true;
+        } else if (inst->getMetaData().count("garnet_remove")){
+          auto def= inst->getContainer();
+          def->removeInstance(inst);
+          //def->disconnect(def->getInterface());
+          changed = true;
+        }
+    }
+    return changed;
+  }
+};*/
+
+/*
+namespace MapperPasses {
+class InitConst : public CoreIR::InstanceVisitorPass {
+  public :
+    static std::string ID;
+    InitConst() : InstanceVisitorPass(ID,"replace mem init const with PE of dummy add.") {}
+    void setVisitorInfo() override;
+};
+
+}*/
+
+class ReplaceMemInitWithPE: public CoreIR::InstancePass {
+    public:
+ReplaceMemInitWithPE():
+    InstancePass(
+            "replacememinitwithpe",
+            "Replace Mem const init with PE"
+            ) {}
+
+bool runOnInstance(Instance* cnst) {
+    //define the pass here
+    if (cnst->getModuleRef()->getRefName() == "coreir.const") {
+      Context* c = cnst->getContext();
+      auto conns = cnst->sel("out")->getConnectedWireables();
+      //cout << "Connections=" << conns.size() << endl;
+      if (conns.size()==0) {
+        return false;
+      }
+      ASSERT(conns.size()==1,"size: " + to_string(conns.size()));
+      for (auto conn : conns) {
+        if (auto conInst = dyn_cast<Instance>(conn->getTopParent())) {
+          cout << "  coninst= " << toString(conInst) << endl;
+          //cout << "  conn= " << toString(conn->getSelectPath()) << endl;
+          //if (conInst->getModuleRef()->getRefName() != "cgralib.Mem" || conn->getSelectPath().back()!="wen") {
+          if (conInst->getModuleRef()->getRefName() != "cgralib.Mem") {
+            return false;
+          }
+        }
+      }
+      cout << "REPLACING!" << endl;
+      ModuleDef* def = cnst->getContainer();
+      auto bv = cnst->getModArgs().at("value")->get<BitVector>();
+      int width = cnst->getModuleRef()->getGenArgs().at("width")->get<int>();
+      auto init_const= def->addInstance(c->getUnique(),
+          "coreir.const",
+          {{"width", CoreIR::Const::make(c, width)}},
+          {{"value", CoreIR::Const::make(c, bv)}});
+      auto init_zero = def->addInstance(c->getUnique(),
+          "coreir.const",
+          {{"width", CoreIR::Const::make(c, width)}},
+          {{"value", CoreIR::Const::make(c, BitVector(width, 0))}});
+
+      //Add PE
+      Values dataPEArgs({
+        {"alu_op",Const::make(c,"add")},
+        {"signed",Const::make(c,false)}});
+      auto pe = def->addInstance("PE_init"+c->getUnique(), "cgralib.PE",{{"op_kind",Const::make(c,"alu")}},dataPEArgs);
+
+      def->connect(init_const->sel("out"), pe->sel("data")->sel("in")->sel("0"));
+      def->connect(init_zero->sel("out"), pe->sel("data")->sel("in")->sel("1"));
+      for (auto conn : conns) {
+        def->connect(conn, pe->sel("data")->sel("out"));
+      }
+      def->removeInstance(cnst);
+      return true;
+
+    } else {
+      return false;
+    }
+  }
+};
+/*
+std::string MapperPasses::InitConst::ID = "initconst";
+void MapperPasses::InitConst::setVisitorInfo() {
+  Context* c = this->getContext();
+  if (c->hasModule("coreir.const")) {
+      assert(false);
+    addVisitorFunction(c->getModule("coreir.const"),InitConstReplace);
+  }
+
+}
+}*/
 
 namespace MapperPasses {
 class MemConst : public CoreIR::InstanceVisitorPass {
@@ -2594,8 +3195,7 @@ class MemConst : public CoreIR::InstanceVisitorPass {
     static std::string ID;
     MemConst() : InstanceVisitorPass(ID,"replace mem wen const with lut") {}
     void setVisitorInfo() override;
-};
-
+ };
 }
 
 bool ConstReplace(Instance* cnst) {
@@ -2716,6 +3316,44 @@ void MapperPasses::MemInitCopy::setVisitorInfo() {
 
 
 namespace MapperPasses {
+class StripGLB: public CoreIR::InstanceVisitorPass {
+  public :
+    static std::string ID;
+    StripGLB() : InstanceVisitorPass(ID,"Remove glb ubuffer in garnet mapping") {}
+    void setVisitorInfo() override;
+};
+
+}
+
+bool BypassGLB(Instance* cnst) {
+  cout << tab(2) << "Connect the read directly to write port of GLB!" << endl;
+  cout << tab(2) << toString(cnst) << endl;
+  Context* c = cnst->getContext();
+  auto allSels = cnst->getSelects();
+  for (auto itr: allSels) {
+    cout << tab(2) << "Sel: " << itr.first << endl;
+  }
+  ModuleDef* def = cnst->getContainer();
+  auto genargs = cnst->getModuleRef()->getGenArgs();
+  if(!genargs.at("has_external_addrgen")->get<bool>())
+    return false;
+  auto write_wire = pick(cnst->sel("data_in_0")->getConnectedWireables());
+  for (auto read_wire: cnst->sel("data_out_0")->getConnectedWireables()) {
+    def->connect(write_wire, read_wire);
+  }
+  def->removeInstance(cnst);
+  return true;
+}
+
+std::string MapperPasses::StripGLB::ID = "stripglb";
+void MapperPasses::StripGLB::setVisitorInfo() {
+  Context* c = this->getContext();
+  if (c->hasGenerator("cgralib.Mem_amber")) {
+    addVisitorFunction(c->getGenerator("cgralib.Mem_amber"), BypassGLB);
+  }
+}
+
+namespace MapperPasses {
 class MemSubstitute: public CoreIR::InstanceVisitorPass {
   public :
     static std::string ID;
@@ -2735,6 +3373,9 @@ bool MemtileReplace(Instance* cnst) {
   }
   ModuleDef* def = cnst->getContainer();
   auto genargs = cnst->getModuleRef()->getGenArgs();
+  if(genargs.at("has_external_addrgen")->get<bool>())
+    return false;
+  cout << "enter here\n";
   auto config_file = cnst->getMetaData()["config"];
   auto init = cnst->getMetaData()["init"];
   CoreIR::Values modargs = {
@@ -2757,13 +3398,14 @@ bool MemtileReplace(Instance* cnst) {
   auto conn = conns[0];
   def->disconnect(buf->sel("rst_n"),conn);
 
-  //remove chain_en
-  auto chain_en_conSet = buf->sel("chain_chain_en")->getConnectedWireables();
-  vector<Wireable*> conns_ce(chain_en_conSet.begin(), chain_en_conSet.end());
-  for (auto conn: conns_ce) {
-    def->disconnect(buf->sel("chain_chain_en"),conn);
+  //TODO:remove chain_en
+  if (genargs.at("has_chain_en")->get<bool>()) {
+    auto chain_en_conSet = buf->sel("chain_chain_en")->getConnectedWireables();
+    vector<Wireable*> conns_ce(chain_en_conSet.begin(), chain_en_conSet.end());
+    for (auto conn: conns_ce) {
+      def->disconnect(buf->sel("chain_chain_en"),conn);
+    }
   }
-
   return true;
 }
 
@@ -2867,6 +3509,49 @@ bool MemtileReplaceMetaMapper(Instance* cnst) {
   return true;
 }
 
+
+bool RegfileReplace(Instance* cnst) {
+  cout << tab(2) << "memory syntax transformation!" << endl;
+  cout << tab(2) << toString(cnst) << endl;
+  Context* c = cnst->getContext();
+  auto allSels = cnst->getSelects();
+  for (auto itr: allSels) {
+    cout << tab(2) << "Sel: " << itr.first << endl;
+  }
+  ModuleDef* def = cnst->getContainer();
+  auto genargs = cnst->getModuleRef()->getGenArgs();
+  auto config_file = cnst->getMetaData()["config"];
+  CoreIR::Values modargs = {
+      {"config", CoreIR::Const::make(c, config_file)},
+      {"mode", CoreIR::Const::make(c, "pond")}
+  };
+  auto pt = addPassthrough(cnst, cnst->getInstname()+"_tmp");
+  Instance* buf = def->addInstance(cnst->getInstname()+"_garnet",
+          "cgralib.Pond", genargs, modargs);
+  def->removeInstance(cnst);
+  def->connect(pt->sel("in"), buf);
+  inlineInstance(pt);
+  inlineInstance(buf);
+
+  //TODO: possible bug master comment this out
+  //remove rst_n
+  auto rst_n_conSet = buf->sel("rst_n")->getConnectedWireables();
+  vector<Wireable*> conns(rst_n_conSet.begin(), rst_n_conSet.end());
+  assert(conns.size() == 1);
+  auto conn = conns[0];
+  def->disconnect(buf->sel("rst_n"),conn);
+
+  return true;
+}
+
+std::string MapperPasses::RegfileSubstitute::ID = "regfilesubstitute";
+void MapperPasses::RegfileSubstitute::setVisitorInfo() {
+  Context* c = this->getContext();
+  if (c->hasGenerator("cgralib.Pond_amber")) {
+    addVisitorFunction(c->getGenerator("cgralib.Pond_amber"), RegfileReplace);
+  }
+
+}
 
 std::string MapperPasses::MemSubstituteMetaMapper::ID = "memsubstitutemetamapper";
 void MapperPasses::MemSubstituteMetaMapper::setVisitorInfo() {
@@ -3146,6 +3831,82 @@ void garnet_map_module(Module* top, bool garnet_syntax_trans = false) {
   jpass->writeToStream(file,top->getRefName());
 }
 
+void garnet_map_module(CodegenOptions& options, Module* top, map<string, UBuffer> & buffers, bool garnet_syntax_trans = false) {
+  auto c = top->getContext();
+
+  top->print();
+
+  //load_cgramapping(c);
+  LoadDefinition_cgralib(c);
+
+  c->runPasses({"rungenerators"});
+
+  //A new pass to remove input enable signal affine controller
+  disconnect_input_enable(c, top);
+  c->runPasses({"deletedeadinstances"});
+  c->runPasses({"cullgraph"});
+
+  //GLB passes
+  c->addPass(new ReplaceCoarseGrainedAffCtrl);
+  c->runPasses({"replacecoarsegrainedaffctrl"});
+
+  auto glb_pass = new GetGLBConfig();
+  c->addPass(glb_pass);
+  c->runPasses({"getglbconfig"});
+  //override latency using the input,
+  //FIXME: this hack will break stencil apps
+  if ((options.host2glb_latency != 0) && (glb_pass->latency != 0))
+     glb_pass->latency = options.host2glb_latency;
+  cout << "Latency: " << glb_pass->latency << endl;
+  for (auto it: glb_pass->glb2cgra)
+    cout << "buf: "<< it.first << "\n\tglb2fabric: " << it.second  << endl;
+  //for (auto it: glb_pass->cgra2glb)
+  //  cout << "buf:" << it.first << "\n\tfabric2glb: " << it.second  << endl;
+  c->addPass(new MapperPasses::StripGLB);
+  c->runPasses({"stripglb"});
+
+  c->runPasses({"removeunconnected"});
+  c->runPasses({"cullgraph"});
+  c->runPasses({"removewires"});
+  addIOsWithGLBConfig(c, top, buffers, glb_pass);
+  c->runPasses({"cullgraph"});
+  c->addPass(new CustomFlatten);
+  c->runPasses({"customflatten"});
+
+  //Change the stencil valid signal to cgra to glb
+  c->addPass(new ReplaceGLBValid(glb_pass));
+  c->runPasses({"replaceglbvalid"});
+  if (garnet_syntax_trans) {
+
+    c->addPass(new MapperPasses::MemInitCopy);
+    c->runPasses({"meminitcopy"});
+    c->addPass(new SubstructGLBLatency(glb_pass->latency));
+    c->runPasses({"substractglblatency"});
+    c->addPass(new MapperPasses::MemSubstitute());
+    c->runPasses({"memsubstitute"});
+    c->addPass(new MapperPasses::RegfileSubstitute());
+    c->runPasses({"regfilesubstitute"});
+  }
+  c->addPass(new MapperPasses::ConstDuplication);
+  c->runPasses({"constduplication"});
+  c->addPass(new MapperPasses::MemConst);
+  c->runPasses({"memconst"});
+  c->addPass(new ReplaceMemInitWithPE);
+  c->runPasses({"replacememinitwithpe"});
+
+  c->runPasses({"cullgraph"});
+  c->getPassManager()->printLog();
+  cout << "Trying to save" << endl;
+  c->runPasses({"coreirjson"},{"global","commonlib","mantle"});
+  c->runPasses({"removewires"});
+
+  auto jpass = static_cast<CoreIR::Passes::CoreIRJson*>(c->getPassManager()->getAnalysisPass("coreirjson"));
+  string postmap = "after_mapping_" + top->getName() + ".json";
+  ////Create file here.
+  std::ofstream file(postmap);
+  jpass->writeToStream(file,top->getRefName());
+}
+
 
 void generate_coreir(CodegenOptions& options,
     map<string, UBuffer>& buffers,
@@ -3293,7 +4054,6 @@ void generate_coreir(CodegenOptions& options,
   add_tahoe_memory_generator(context);
   ram_module(context, DATAPATH_WIDTH, 2048);
 
-  auto c = context;
 
   CoreIR::Module* prg_mod;
   if (options.rtl_options.use_prebuilt_memory) {
@@ -3303,15 +4063,23 @@ void generate_coreir(CodegenOptions& options,
   }
 
   auto ns = context->getNamespace("global");
+
+  //Change into serializetofile
+  //context->setTop(prg_mod);
+  //if(!serializeToFile(context, options.dir + prg.name + ".json")) {
+  //  cout << "Could not save ubuffer coreir" << endl;
+  //  context->die();
+  //}
   if(!saveToFile(ns, options.dir + prg.name + ".json", prg_mod)) {
     cout << "Could not save ubuffer coreir" << endl;
     context->die();
   }
 
+  context->removeTop();
   auto ns_new = context->getNamespace("global");
   //Garnet pass
   if (options.rtl_options.use_prebuilt_memory) {
-    garnet_map_module(prg_mod, true);
+    garnet_map_module(options, prg_mod, buffers, true);
     context->runPasses({"rungenerators", "flatten", "removewires", "cullgraph"});
 
     if(!saveToFile(ns_new,  options.dir + prg.name+ "_garnet.json", prg_mod)) {
@@ -3542,10 +4310,10 @@ CoreIR::Wireable* delay(CoreIR::ModuleDef* bdef,
   return r->sel("out");
 }
 
-CoreIR::Wireable* sum_term_numerators(ModuleDef* def, isl_aff* aff) {
+CoreIR::Wireable* sum_term_numerators(ModuleDef* def, isl_aff* aff, int width) {
   vector<CoreIR::Wireable*> terms;
 
-  int width = CONTROLPATH_WIDTH;
+  //int width = CONTROLPATH_WIDTH;
   auto context = def->getContext();
   auto c = context;
   auto ns = c->getNamespace("global");
@@ -3589,7 +4357,7 @@ CoreIR::Wireable* sum_term_numerators(ModuleDef* def, isl_aff* aff) {
       {{"width", CoreIR::Const::make(c, width)}},
       {{"value", CoreIR::Const::make(c, BitVector(width, v))}});
   terms.push_back(constant->sel("out"));
-  auto out = addList(def, terms);
+  auto out = addList(def, terms, width);
   return out;
 }
 
@@ -3617,17 +4385,16 @@ CoreIR::Wireable* shiftr(ModuleDef* def, CoreIR::Wireable* a, const int val) {
   return m->sel("out");
 }
 
-CoreIR::Module* coreir_for_aff(CoreIR::Context* context, isl_aff* aff) {
+CoreIR::Module* coreir_for_aff(CoreIR::Context* context, isl_aff* aff, int width) {
 
   auto ns = context->getNamespace("global");
 
-  int width = CONTROLPATH_WIDTH;
   vector<pair<string, CoreIR::Type*> >
     ub_field{{"out", context->Bit()->Arr(width)}};
   cout << "aff = " << str(aff) << endl;
   int dims = num_in_dims(aff);
   cout << "dims = " << dims << endl;
-  ub_field.push_back({"d", context->BitIn()->Arr(16)->Arr(dims)});
+  ub_field.push_back({"d", context->BitIn()->Arr(width)->Arr(dims)});
 
   CoreIR::RecordType* utp = context->Record(ub_field);
   auto m = ns->newModuleDecl("aff_" + context->getUnique(), utp);
@@ -3645,18 +4412,24 @@ CoreIR::Module* coreir_for_aff(CoreIR::Context* context, isl_aff* aff) {
     assert(denom == 2);
     cout << tab(3) << "denom = " << denom << endl;
     int coeff = to_int(isl_aff_get_coefficient_val(aff, isl_dim_div, d));
-    auto res = sum_term_numerators(def, a);
+    auto res = sum_term_numerators(def, a, width);
     auto val = mul(def, shiftr(def, res, 1), coeff);
     terms.push_back(val);
   }
 
-  auto outr = sum_term_numerators(def, aff);
+  auto outr = sum_term_numerators(def, aff, width);
   terms.push_back(outr);
-  auto out = addList(def, terms);
+  auto out = addList(def, terms, width);
   def->connect(def->sel("self.out"), out);
   m->setDef(def);
 
   return m;
+}
+
+
+CoreIR::Module* coreir_for_aff(CoreIR::Context* context, isl_aff* aff) {
+  int width = CONTROLPATH_WIDTH;
+  return coreir_for_aff(context, aff, width);
 }
 
 CoreIR::Module* coreir_for_multi_aff(CoreIR::Context* context, isl_multi_aff* aff) {
@@ -3803,18 +4576,17 @@ CoreIR::Instance* build_counter(CoreIR::ModuleDef* def,
     return ins;
 }
 
-CoreIR::Module* affine_controller_primitive(CodegenOptions& options, CoreIR::Context* context, isl_set* dom, isl_aff* aff) {
+CoreIR::Module* affine_controller_primitive(CodegenOptions& options, CoreIR::Context* context, isl_set* dom, isl_aff* aff, int width) {
   cout << tab(1) << "dom = " << str(dom) << endl;
 
   auto ns = context->getNamespace("global");
   auto c = context;
 
-  int width = CONTROLPATH_WIDTH;
   vector<pair<string, CoreIR::Type*> >
     ub_field{{"clk", c->Named("coreir.clkIn")},
       {"valid", c->Bit()}};
   int dims = num_in_dims(aff);
-  ub_field.push_back({"d", context->Bit()->Arr(16)->Arr(dims)});
+  ub_field.push_back({"d", context->Bit()->Arr(width)->Arr(dims)});
   if (options.rtl_options.use_prebuilt_memory) {
     ub_field.push_back({"rst_n", c->BitIn()});
   }
@@ -3822,7 +4594,7 @@ CoreIR::Module* affine_controller_primitive(CodegenOptions& options, CoreIR::Con
   CoreIR::RecordType* utp = context->Record(ub_field);
   auto m = ns->newModuleDecl("affine_controller_" + context->getUnique(), utp);
   auto def = m->newModuleDef();
-  auto aff_mod = coreir_for_aff(c, aff);
+  auto aff_mod = coreir_for_aff(c, aff, width);
   auto aff_func = def->addInstance("affine_func", aff_mod);
 
   auto one = def->addInstance(context->getUnique(),
@@ -3836,7 +4608,7 @@ CoreIR::Module* affine_controller_primitive(CodegenOptions& options, CoreIR::Con
 
   CoreIR::Wireable* cycle_time_reg;
   if (options.rtl_options.use_prebuilt_memory) {
-    cycle_time_reg = build_counter(def, "cycle_time", 16, 0, 65535, 1);
+    cycle_time_reg = build_counter(def, "cycle_time", width, 0, (unsigned int)(pow(2, width-1)-1), 1);
     def->connect(cycle_time_reg->sel("reset"), def->sel("self.rst_n"));
     def->connect(cycle_time_reg->sel("en"), tinc->sel("out"));
   } else {
@@ -3866,12 +4638,16 @@ CoreIR::Module* affine_controller_primitive(CodegenOptions& options, CoreIR::Con
   vector<CoreIR::Instance*> domain_regs;
   vector<CoreIR::Wireable*> domain_at_max;
   for (int d = 0; d < num_dims(dom); d++) {
-    auto dom_reg = def->addInstance("d_" + str(d) + "_reg",
-        "mantle.reg",
-      {{"width", CoreIR::Const::make(context, width)},
+    Values reg_genargs({{"width", CoreIR::Const::make(context, width)},
       {"has_en", CoreIR::Const::make(context, true)}});
+    if (options.rtl_options.use_prebuilt_memory)
+      reg_genargs.insert({"has_clr", CoreIR::Const::make(context, true)});
+    auto dom_reg = def->addInstance("d_" + str(d) + "_reg",
+        "mantle.reg", reg_genargs);
     domain_regs.push_back(dom_reg);
     def->connect(def->sel("self")->sel("d")->sel(d), domain_regs.back()->sel("out"));
+    if (options.rtl_options.use_prebuilt_memory)
+      def->connect(def->sel("self")->sel("rst_n"), domain_regs.back()->sel("clr"));
     def->connect(aff_func->sel("d")->sel(d), domain_regs.back()->sel("out"));
     def->connect(cmp->sel("out"), domain_regs.back()->sel("en"));
 
@@ -3979,16 +4755,34 @@ addrgen(ModuleDef* def, isl_set* rddom, isl_aff* acc_aff) {
 CoreIR::Module* affine_controller(CoreIR::Context* context, isl_set* dom, isl_aff* aff) {
   CodegenOptions options;
   options.rtl_options.use_prebuilt_memory = false;
-  return affine_controller_primitive(options, context, dom, aff);
+  int width = CONTROLPATH_WIDTH;
+  return affine_controller_primitive(options, context, dom, aff, width);
+}
+
+CoreIR::Module* affine_controller(CoreIR::Context* context, isl_set* dom, isl_aff* aff, int width) {
+  CodegenOptions options;
+  options.rtl_options.use_prebuilt_memory = true;
+  return affine_controller_primitive(options, context, dom, aff, width);
 }
 
 CoreIR::Module* affine_controller(CodegenOptions& options, CoreIR::Context* context, isl_set* dom, isl_aff* aff) {
-  return affine_controller_primitive(options, context, dom, aff);
+  int width = CONTROLPATH_WIDTH;
+  return affine_controller_primitive(options, context, dom, aff, width);
+}
+
+CoreIR::Module* affine_controller(CodegenOptions& options, CoreIR::Context* context, isl_set* dom, isl_aff* aff, int width) {
+  return affine_controller_primitive(options, context, dom, aff, width);
 }
 
 CoreIR::Instance* affine_controller(CodegenOptions options, CoreIR::ModuleDef* def, isl_set* dom, isl_aff* aff) {
   auto c = def->getContext();
   auto ctrl = def->addInstance("ctrl_" + c->getUnique(), affine_controller(options, c, dom, aff));
+  return ctrl;
+}
+
+CoreIR::Instance* affine_controller(CoreIR::ModuleDef* def, isl_set* dom, isl_aff* aff, int width) {
+  auto c = def->getContext();
+  auto ctrl = def->addInstance("ctrl_" + c->getUnique(), affine_controller(c, dom, aff, width));
   return ctrl;
 }
 
@@ -5793,7 +6587,7 @@ CoreIR::Instance* build_inner_bank_offset(const std::string& reader, UBuffer& bu
   return agen;
 }
 
-CoreIR::Instance* build_addrgen(const std::string& reader, UBuffer& buf, CoreIR::ModuleDef* def) {
+CoreIR::Instance* build_addrgen(const std::string& reader, UBuffer& buf, CoreIR::ModuleDef* def, int width) {
   auto c = def->getContext();
 
   cout << "Building addrgen for " << reader << endl;
@@ -5813,9 +6607,13 @@ CoreIR::Instance* build_addrgen(const std::string& reader, UBuffer& buf, CoreIR:
   auto addr_expr_aff = get_aff(addr_expr);
   cout << tab(3) << "==== addr expr aff: " << str(addr_expr_aff) << endl;
 
-  auto aff_gen_mod = coreir_for_aff(c, addr_expr_aff);
+  auto aff_gen_mod = coreir_for_aff(c, addr_expr_aff, width);
   auto agen = def->addInstance("addrgen_" + reader + c->getUnique(), aff_gen_mod);
   return agen;
+}
+
+CoreIR::Instance* build_addrgen(const std::string& reader, UBuffer& buf, CoreIR::ModuleDef* def) {
+  return build_addrgen(reader, buf, def, CONTROLPATH_WIDTH);
 }
 
 CoreIR::Wireable* control_vars(CoreIR::ModuleDef* def, const std::string& reader, UBuffer& buf) {

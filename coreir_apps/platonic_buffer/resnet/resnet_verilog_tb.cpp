@@ -33,20 +33,20 @@ int main() {
   }
 
   Vresnet dut;
-dut.clk = 0;
-dut.eval();
-dut.rst_n = 0;
-dut.eval();
-dut.rst_n = 1;
-dut.eval();
-dut.clk = 0;
-dut.eval();
-dut.flush = 1;
-dut.clk = 1;
-dut.eval();
-dut.flush = 0;
-dut.clk = 0;
-dut.eval();
+  dut.clk = 0;
+  dut.eval();
+  dut.rst_n = 0;
+  dut.eval();
+  dut.rst_n = 1;
+  dut.eval();
+  dut.clk = 0;
+  dut.eval();
+  dut.flush = 1;
+  dut.clk = 1;
+  dut.eval();
+  dut.flush = 0;
+  dut.clk = 0;
+  dut.eval();
   *(dut.hw_input_stencil_op_hcompute_hw_input_global_wrapper_stencil_read) = 0;
   *(dut.hw_kernel_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_read) = 0;
   int hw_output_stencil_op_hcompute_hw_output_stencil_write_valid_count = 0;

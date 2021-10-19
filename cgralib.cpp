@@ -288,10 +288,12 @@ CoreIR::Namespace* CoreIRLoadLibrary_cgralib(Context* c) {
   // cgralib.Mem_amber
   Params cgralibmemamberparams = Params({
         {"width", c->Int()}, // for m3 16
+        {"ctrl_width", c->Int()}, // for m3 16
         {"num_inputs", c->Int()}, // the number of ports you *actually use in a given config*
         {"num_outputs", c->Int()}, // ''
         //{"config", c->Json()},
         {"has_valid", c->Bool()},
+        {"has_chain_en", c->Bool()},
         {"has_stencil_valid", c->Bool()},
         {"has_flush", c->Bool()},
         {"is_rom", c->Bool()},
@@ -307,13 +309,14 @@ CoreIR::Namespace* CoreIRLoadLibrary_cgralib(Context* c) {
           cgralibmemamberparams,
           [](Context* c, Values genargs){
             uint width = genargs.at("width")->get<int>();
+            uint ctrl_width = genargs.at("ctrl_width")->get<int>();
             uint num_input = genargs.at("num_inputs")->get<int>();
             uint num_output = genargs.at("num_outputs")->get<int>();
             //Json config = genargs.at("config")->get<Json>();
 
             RecordParams recordparams = {
                 {"rst_n", c->BitIn()},
-                {"chain_chain_en", c->BitIn()},
+                //{"chain_chain_en", c->BitIn()},
 		        //{"chain_data_in", c->BitIn()->Arr(16)},
 		        //{"chain_data_out", c->Bit()->Arr(16)},
                 {"clk_en", c->BitIn()},
@@ -347,7 +350,7 @@ CoreIR::Namespace* CoreIRLoadLibrary_cgralib(Context* c) {
 
                 if (has_external_addrgen) {
                   recordparams.push_back({"write_addr_" + std::to_string(i),
-                      c->BitIn()->Arr(16)});
+                      c->BitIn()->Arr(ctrl_width)});
                   recordparams.push_back({"wen_" + std::to_string(i),
                       c->BitIn()});
 
@@ -364,7 +367,7 @@ CoreIR::Namespace* CoreIRLoadLibrary_cgralib(Context* c) {
 
                 if (has_external_addrgen) {
                   recordparams.push_back({"read_addr_" + std::to_string(i),
-                      c->BitIn()->Arr(16)});
+                      c->BitIn()->Arr(ctrl_width)});
                   recordparams.push_back({"ren_" + std::to_string(i),
                       c->BitIn()});
                 }
@@ -373,6 +376,7 @@ CoreIR::Namespace* CoreIRLoadLibrary_cgralib(Context* c) {
             bool has_stencil_valid = genargs.at("has_stencil_valid")->get<bool>();
             bool has_flush = genargs.at("has_flush")->get<bool>();
             bool has_reset = genargs.at("has_reset")->get<bool>();
+            bool has_chain_en = genargs.at("has_chain_en")->get<bool>();
 
             if (has_valid) {
               recordparams.push_back({"valid", c->Bit()});
@@ -386,6 +390,9 @@ CoreIR::Namespace* CoreIRLoadLibrary_cgralib(Context* c) {
             if (has_reset) {
               recordparams.push_back({"reset", c->BitIn()});
             }
+            if (has_chain_en) {
+                recordparams.push_back({"chain_chain_en", c->BitIn()});
+            }
 
         return c->Record(recordparams);
     }
@@ -394,10 +401,12 @@ CoreIR::Namespace* CoreIRLoadLibrary_cgralib(Context* c) {
 
   auto cgralib_mem_amber_gen = cgralib->newGeneratorDecl("Mem_amber", cgralib->getTypeGen("cgralib_mem_amber_type"), cgralibmemamberparams);
   cgralib_mem_amber_gen->addDefaultGenArgs({{"num_inputs", Const::make(c, 1)}});
+  cgralib_mem_amber_gen->addDefaultGenArgs({{"ctrl_width", Const::make(c, 16)}});
   cgralib_mem_amber_gen->addDefaultGenArgs({{"is_rom", Const::make(c, false)}});
   cgralib_mem_amber_gen->addDefaultGenArgs({{"ID", Const::make(c, "")}});
   cgralib_mem_amber_gen->addDefaultGenArgs({{"num_outputs", Const::make(c, 1)}});
   cgralib_mem_amber_gen->addDefaultGenArgs({{"has_valid", Const::make(c, false)}});
+  cgralib_mem_amber_gen->addDefaultGenArgs({{"has_chain_en", Const::make(c, true)}});
   cgralib_mem_amber_gen->addDefaultGenArgs({{"has_stencil_valid", Const::make(c, false)}});
   cgralib_mem_amber_gen->addDefaultGenArgs({{"has_flush", Const::make(c, false)}});
   cgralib_mem_amber_gen->addDefaultGenArgs({{"has_reset", Const::make(c, false)}});
@@ -423,10 +432,12 @@ CoreIR::Namespace* CoreIRLoadLibrary_cgralib(Context* c) {
   // cgralib.Mem
   Params cgralibmemparams = Params({
         {"width", c->Int()},
+        {"ctrl_width", c->Int()},
         {"num_inputs", c->Int()},
         {"num_outputs", c->Int()},
         //{"config", c->Json()},
         {"has_valid", c->Bool()},
+        {"has_chain_en", c->Bool()},
         {"is_rom", c->Bool()},
         {"has_stencil_valid", c->Bool()},
         {"has_flush", c->Bool()},
@@ -442,13 +453,14 @@ CoreIR::Namespace* CoreIRLoadLibrary_cgralib(Context* c) {
           cgralibmemparams,
           [](Context* c, Values genargs){
             uint width = genargs.at("width")->get<int>();
+            uint ctrl_width = genargs.at("ctrl_width")->get<int>();
             uint num_input = genargs.at("num_inputs")->get<int>();
             uint num_output = genargs.at("num_outputs")->get<int>();
             //Json config = genargs.at("config")->get<Json>();
 
             RecordParams recordparams = {
                 {"rst_n", c->BitIn()},
-                {"chain_chain_en", c->BitIn()},
+                //{"chain_chain_en", c->BitIn()},
                 {"clk_en", c->BitIn()},
                 {"clk", c->Named("coreir.clkIn")}
             };
@@ -462,7 +474,7 @@ CoreIR::Namespace* CoreIRLoadLibrary_cgralib(Context* c) {
 
                 if (has_external_addrgen) {
                   recordparams.push_back({"write_addr_" + std::to_string(i),
-                      c->BitIn()->Arr(16)});
+                      c->BitIn()->Arr(ctrl_width)});
                   recordparams.push_back({"wen_" + std::to_string(i),
                       c->BitIn()});
                 }
@@ -480,13 +492,14 @@ CoreIR::Namespace* CoreIRLoadLibrary_cgralib(Context* c) {
                 }
                 if (has_external_addrgen) {
                   recordparams.push_back({"read_addr_" + std::to_string(i),
-                      c->BitIn()->Arr(16)});
+                      c->BitIn()->Arr(ctrl_width)});
                   recordparams.push_back({"ren_" + std::to_string(i),
                       c->BitIn()});
                 }
             }
 
             bool has_valid = genargs.at("has_valid")->get<bool>();
+            bool has_chain_en = genargs.at("has_chain_en")->get<bool>();
             bool has_stencil_valid = genargs.at("has_stencil_valid")->get<bool>();
             bool has_flush = genargs.at("has_flush")->get<bool>();
             bool has_reset = genargs.at("has_reset")->get<bool>();
@@ -510,6 +523,9 @@ CoreIR::Namespace* CoreIRLoadLibrary_cgralib(Context* c) {
             if (has_reset) {
               recordparams.push_back({"reset", c->BitIn()});
             }
+            if (has_chain_en) {
+              recordparams.push_back({"chain_chain_en", c->BitIn()});
+            }
 
         return c->Record(recordparams);
     }
@@ -518,9 +534,11 @@ CoreIR::Namespace* CoreIRLoadLibrary_cgralib(Context* c) {
 
   auto cgralib_mem_gen = cgralib->newGeneratorDecl("Mem", cgralib->getTypeGen("cgralib_mem_type"), cgralibmemparams);
   cgralib_mem_gen->addDefaultGenArgs({{"num_inputs", Const::make(c, 1)}});
+  cgralib_mem_gen->addDefaultGenArgs({{"ctrl_width", Const::make(c, 16)}});
   cgralib_mem_gen->addDefaultGenArgs({{"ID", Const::make(c, "")}});
   cgralib_mem_gen->addDefaultGenArgs({{"num_outputs", Const::make(c, 1)}});
   cgralib_mem_gen->addDefaultGenArgs({{"has_valid", Const::make(c, false)}});
+  cgralib_mem_gen->addDefaultGenArgs({{"has_chain_en", Const::make(c, true)}});
   cgralib_mem_gen->addDefaultGenArgs({{"has_stencil_valid", Const::make(c, false)}});
   cgralib_mem_gen->addDefaultGenArgs({{"use_prebuilt_mem", Const::make(c, false)}});
   cgralib_mem_amber_gen->addDefaultGenArgs({{"is_rom", Const::make(c, false)}});

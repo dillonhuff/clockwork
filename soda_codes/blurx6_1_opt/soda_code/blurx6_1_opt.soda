@@ -1,0 +1,12 @@
+kernel: blurx6_1_opt
+unroll factor: 1
+burst width: 16
+
+input uint16: input_arg(1922, *)
+
+local uint16: input(0, 0) = input_arg(0, 0)
+
+output uint16: blurx6_1(0, 0) = (input(0, 0) + (input(1, 0) + input(2, 0)))
+
+
+iterate: 1

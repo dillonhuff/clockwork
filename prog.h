@@ -72,8 +72,12 @@ struct ir_node {
   std::string func;
   // Name of loop index variables used by this unit
   std::vector<std::string> index_variables_needed_by_compute;
+
   // loop index variables used by memory has delay
   int index_variables_prefetch_cycle = 0;
+  // latency which further extract by schedule into
+  int latency = 0;
+
   // Annotation used for debug printouts
   int unroll_factor;
 
@@ -333,6 +337,10 @@ struct ir_node {
   void add_function(const std::string& n) {
     //assert(n != name);
     func = n;
+  }
+
+  void add_latency(const int l) {
+    latency = l;
   }
 
   void add_function(const std::string& n, const vector<string>& args) {
@@ -600,6 +608,10 @@ struct ir_node {
     return consumed_value_name({b, loc});
   }
 
+  string add_load(const std::string& b, const std::string& d0, const std::string& d1, const std::string& d2, const std::string& d3, const std::string& d4, const std::string& d5) {
+    return add_load(b, d0 + ", " + d1 + ", " + d2 + ", " + d3 + ", " + d4 + ", " + d5);
+  }
+
   string add_load(const std::string& b, const std::string& d0, const std::string& d1, const std::string& d2, const std::string& d3, const std::string& d4) {
     return add_load(b, d0 + ", " + d1 + ", " + d2 + ", " + d3 + ", " + d4);
   }
@@ -642,6 +654,9 @@ struct ir_node {
     }
     return ps;
 
+  }
+  void add_store(const std::string& b, const std::string& d0, const std::string& d1, const std::string& d2, const std::string& d3, const std::string& d4, const std::string& d5) {
+    add_store(b, d0 + ", " + d1 + ", " + d2 + ", " + d3 + ", " + d4 + ", " + d5);
   }
 
   void add_store(const std::string& b, const std::string& d0, const std::string& d1, const std::string& d2, const std::string& d3, const std::string& d4) {
@@ -1650,7 +1665,9 @@ void generate_verilator_tb(
     umap* hw_sched,
     map<string, UBuffer>& buffers);
 
-void generate_garnet_verilator_tb(prog& prg,
+void generate_garnet_verilator_tb(
+    CodegenOptions& options,
+    prog& prg,
     umap* hw_sched,
     map<string, UBuffer>& buffers);
 
@@ -1725,6 +1742,18 @@ struct schedule_info {
     int last_delay = 0;
     for (auto c : op->children) {
       int delay = offset_in_parent(c) + total_latency(c);
+      if (delay > last_delay) {
+        last_delay = delay;
+      }
+    }
+    return last_delay;
+  }
+
+  int doublebuffer_update_delay(op* op) {
+    assert(op->is_loop());
+    int last_delay = 0;
+    for (auto c : op->children) {
+      int delay = II(c) * c->trip_count();
       if (delay > last_delay) {
         last_delay = delay;
       }
@@ -1822,6 +1851,7 @@ void add_reuse_buffer_no_delta(const std::string& level, const std::string& buff
 
 op* find_coarse_grained_pipeline_loop(op* lp);
 op* find_coarse_grained_pipeline_loop(op* lp, prog& prg);
+void find_coarse_grained_pipeline_loops(op* lp, vector<op*> & cgpl_lps, prog& prg);
 
 vector<pair<string, pair<string, int> >> determine_output_shift_reg_map(
     prog& prg,
@@ -2050,3 +2080,4 @@ std::string perfect_loop_codegen(umap* schedmap);
 
 umap* clockwork_schedule_prog(prog& prg);
 
+std::vector<std::string> get_kernels_in_order(prog& prg);

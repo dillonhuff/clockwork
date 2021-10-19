@@ -1,0 +1,12 @@
+kernel: blurx7_16_opt
+unroll factor: 16
+burst width: 256
+
+input uint16: input_arg(1936, *)
+
+local uint16: input(0, 0) = input_arg(0, 0)
+
+output uint16: blurx7_16(0, 0) = (input(0, 0) + (input(1, 0) + input(2, 0)))
+
+
+iterate: 1

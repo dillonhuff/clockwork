@@ -1,0 +1,14 @@
+kernel: blur9_32_opt
+unroll factor: 32
+burst width: 512
+
+input uint16: input_arg(1952, *)
+
+local uint16: input(0, 0) = input_arg(0, 0)
+
+local uint16: blurx(0, 0) = ((input(0, 0) + (input(0, 1) + input(0, 2))) / 3)
+
+output uint16: blur9_32(0, 0) = ((blurx(0, 0) + (blurx(1, 0) + blurx(2, 0))) / 3)
+
+
+iterate: 1

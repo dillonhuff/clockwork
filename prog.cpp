@@ -1176,24 +1176,30 @@ void tag_coarse_grained_loop_to_ubuf(map<string, UBuffer> & buffers, prog& prg) 
   //to avoid uncertainty in buffer name
   vector<op*> all_op_vec(all_op.begin(), all_op.end());
   std::sort(all_op_vec.begin(), all_op_vec.end(), [](op* l, op* r){return l->name > r->name;});
-  op* cgpl_lp = find_coarse_grained_pipeline_loop(prg.root, prg);
-  cout << "Coarse grained loop: " << cgpl_lp->name << endl;
-  if (cgpl_lp == nullptr || cgpl_lp->name == "root") {
-    return;
-  }
-  auto op_under_cgpl = cgpl_lp->descendant_op_names();
-  //for (auto op_name: op_under_cgpl) {
-  //  cout << "OP: " << op_name << " is under coarse granularity loop" << endl;
+  //op* cgpl_lp = find_coarse_grained_pipeline_loop(prg.root, prg);
+  //cout << "Coarse grained loop: " << cgpl_lp->name << endl;
+  vector<op*> cgpl_lps;
+  find_coarse_grained_pipeline_loops(prg.root, cgpl_lps,  prg);
+  //if (cgpl_lp == nullptr || cgpl_lp->name == "root") {
+  //  return;
   //}
-  for (auto & it: buffers) {
-    auto & buf = it.second;
-    auto buf_ops = buf.get_ops();
-    bool buffer_under_cgpl = std::includes(
-            op_under_cgpl.begin(), op_under_cgpl.end(),
-            buf_ops.begin(), buf_ops.end());
-    if (buffer_under_cgpl) {
-      cout << "\tBuffer: " << buf.name << " should be tagged coarse grained pipeline loop" << endl;
-      buf.coarse_grained_pipeline_loop_level = max_loop_depth(prg) - loop_depth(cgpl_lp);
+  for (auto lp : cgpl_lps) {
+    cout << "All cgpl loop: " << lp->name << endl;
+    auto op_under_cgpl = lp->descendant_op_names();
+    //for (auto op_name: op_under_cgpl) {
+    //  cout << "OP: " << op_name << " is under coarse granularity loop" << endl;
+    //}
+    for (auto & it: buffers) {
+      auto & buf = it.second;
+      auto buf_ops = buf.get_ops();
+      bool buffer_under_cgpl = std::includes(
+              op_under_cgpl.begin(), op_under_cgpl.end(),
+              buf_ops.begin(), buf_ops.end());
+      if (buffer_under_cgpl) {
+        buf.coarse_grained_pipeline_loop_level =
+            max(buf.coarse_grained_pipeline_loop_level, max_loop_depth(prg) - loop_depth(lp));
+        cout << "\tBuffer: " << buf.name << " was tagged coarse grained pipeline loop, level = " << buf.coarse_grained_pipeline_loop_level << endl;
+      }
     }
   }
 }
@@ -2682,8 +2688,8 @@ void generate_unoptimized_code(prog& prg) {
   options.all_rams = true;
   all_unbanked(prg, options);
   options.inner_bank_offset_mode =
-    INNER_BANK_OFFSET_MULTILINEAR;
-    //INNER_BANK_OFFSET_LINEAR;
+    //INNER_BANK_OFFSET_MULTILINEAR;
+    INNER_BANK_OFFSET_LINEAR;
   //assert(false);
   generate_unoptimized_code(options, prg);
 }
@@ -4371,14 +4377,16 @@ void unroll(prog& prg, const std::string& var) {
   vector<op*> children = p->children;
   op* container = prg.parent(p);
 
+  op* last_position = p;
   for (auto v : indexes(p)) {
     for (auto child : children) {
       if (!child->is_loop()) {
         string name = prg.unique_name(isl_sanitize(child->name + "_" + var + "_" + str(v)));
-        auto val = container->add_op_after(p, prg.unique_name(child->name + "_" + var + "_" + str(v)));
+        auto val = container->add_op_after(last_position, prg.unique_name(child->name + "_" + var + "_" + str(v)));
         val->copy_fields_from(child);
         val->replace_variable(var, v);
         val->name = name;
+        last_position = val;
       } else {
         cout << "Error: Unrolling loop that contains a loop" << endl;
         assert(false);
@@ -5235,8 +5243,11 @@ compute_unit_internals compound_compute_unit(op* loop, prog& prg) {
   for (auto op : cu.operations) {
     cu.arg_names[op] = {};
 
-    for (auto b : op->buffers_read()) {
-      for (auto ar : op->read_addrs(b)) {
+    //for (auto b : op->buffers_read()) {
+      //for (auto ar : op->read_addrs(b)) {
+      for (auto cp : op->consume_locs_pair) {
+        string b = cp.first;
+        auto ar = cp.second;
         simplified_addr as = simplify(ar);
         as = b + brackets(as);
         if (contains_key(as, addr_sources)) {
@@ -5248,7 +5259,8 @@ compute_unit_internals compound_compute_unit(op* loop, prog& prg) {
           cu.raddrs.push_back({b, ar});
         }
       }
-    }
+      //}
+    //}
 
     for (auto b : op->buffers_written()) {
       // Update addr_sources
@@ -5855,7 +5867,16 @@ void generate_verilator_tb_in_streams(
   }
 }
 
-void generate_garnet_verilator_tb(prog& prg,
+void eval(CodegenOptions& options, ostream& rgtb, int indent) {
+    rgtb << tab(indent) << "dut.eval();" << endl;
+    if (options.debug_options.traceWave) {
+        rgtb << tab(indent) << "dump_trace(tfp);" << endl;
+    }
+}
+
+void generate_garnet_verilator_tb(
+    CodegenOptions& options,
+    prog& prg,
     umap* hw_sched,
     map<string, UBuffer>& buffers) {
 
@@ -5865,6 +5886,21 @@ void generate_garnet_verilator_tb(prog& prg,
   rgtb << "#include \"verilated.h\"" << endl;
   rgtb << "#include \"V" << prg.name << ".h\"" << endl << endl;
 
+  //Add waveform trace dump options for debugging inverilator
+  if (options.debug_options.traceWave) {
+    rgtb << "#include \"verilated_vcd_c.h\"" << endl << endl;
+    rgtb << "vluint64_t main_time = 0;" << endl;
+    rgtb << "double sc_time_stamp() {" << endl;
+    rgtb << tab(1) <<  "return main_time;" << endl;
+    rgtb << "}" << endl << endl;
+
+    rgtb << "void dump_trace(VerilatedVcdC* tfp) {" << endl;
+    rgtb << tab(1) << "for (int i = 0; i < 5; i ++) {" << endl;
+    rgtb << tab(2) << "tfp->dump(main_time);" << endl;
+    rgtb << tab(2) << "main_time++;" << endl;
+    rgtb << tab(1) << "}" << endl;
+    rgtb << "}" << endl << endl;
+  }
 
   rgtb << "int main() {" << endl;
   rgtb << tab(1) << "ofstream fout(\"" << "regression_result_" << prg.name << "_verilog.txt\");" << endl;
@@ -5892,8 +5928,6 @@ void generate_garnet_verilator_tb(prog& prg,
   }
 
 
-  //Use rst input enable, match the garnet test
-  CodegenOptions options;
   generate_verilator_tb_in_streams(
       options,
       rgtb,
@@ -5902,22 +5936,35 @@ void generate_garnet_verilator_tb(prog& prg,
       buffers);
 
   rgtb << tab(1) << "V" << prg.name << " dut;" << endl;
-  rgtb << "dut.clk = 0;" << endl;
-  rgtb << "dut.eval();" << endl;
+  if (options.debug_options.traceWave) {
+    rgtb << tab(1) << "V"<< prg.name << "* dut_ptr = &dut;" << endl;
+    rgtb << tab(1) << "Verilated::traceEverOn(true);" << endl;
+    rgtb << tab(1) << "VerilatedVcdC* tfp = new VerilatedVcdC;" << endl;
+    rgtb << tab(1) << "dut_ptr->trace(tfp, 99);" << endl;
+    rgtb << tab(1) << "tfp->open(\"sim_wave.vcd\");" << endl << endl;
+  }
+  rgtb << tab(1) << "dut.clk = 0;" << endl;
+  //rgtb << tab(1) << "dut.eval();" << endl;
+  eval(options, rgtb, 1);
 
-  rgtb << "dut.reset= 1;" << endl;
-  rgtb << "dut.clk = 1;" << endl;
-  rgtb << "dut.eval();" << endl;
+  rgtb << tab(1) << "dut.reset= 1;" << endl;
+  eval(options, rgtb, 1);
+  rgtb << tab(1) << "dut.clk = 1;" << endl;
+  //rgtb << tab(1) << "dut.eval();" << endl;
+  eval(options, rgtb, 1);
 
   //Add a posedge during  reset
-  rgtb << "dut.clk = 0;" << endl;
-  rgtb << "dut.eval();" << endl;
-  rgtb << "dut.clk = 1;" << endl;
-  rgtb << "dut.eval();" << endl;
+  //rgtb << tab(1) << "dut.clk = 0;" << endl;
+  ////rgtb << tab(1) << "dut.eval();" << endl;
+  //eval(options, rgtb, 1);
+  //rgtb << tab(1) << "dut.clk = 1;" << endl;
+  ////rgtb << tab(1) << "dut.eval();" << endl;
+  //eval(options, rgtb, 1);
 
-  rgtb << "dut.reset= 0;" << endl;
-  rgtb << "dut.clk = 0;" << endl;
-  rgtb << "dut.eval();" << endl;
+  rgtb << tab(1) << "dut.reset= 0;" << endl;
+  rgtb << tab(1) << "dut.clk = 0;" << endl;
+  //rgtb << tab(1) << "dut.eval();" << endl;
+  eval(options, rgtb, 1);
   for (auto out : inputs(buffers, prg)) {
     string data_name =
       out.first + "_" + out.second;
@@ -5932,8 +5979,15 @@ void generate_garnet_verilator_tb(prog& prg,
   }
 
   rgtb << tab(1) << "dut.clk = 0;" << endl;
-  rgtb << tab(1) << "dut.eval();" << endl;
-  rgtb << tab(1) << "for (int t = 0; t < (int) pow(2, 16); t++) {" << endl;
+  //rgtb << tab(1) << "dut.eval();" << endl;
+  eval(options, rgtb, 1);
+
+  int max_time = to_int(lexmaxval(to_set(range(hw_sched)))) + 10;
+
+  //change to the upper bound of hw schedule
+  rgtb << tab(1) << "for (int t = 0; t < (int) " + str(max_time) + "; t++) {" << endl;
+
+  //rgtb << tab(1) << "for (int t = 0; t < (int) pow(2, 16); t++) {" << endl;
   //rgtb << tab(1) << "for (int t = 0; t < 30000; t++) {" << endl;
   //rgtb << tab(1) << "for (int t = 0; t < 300; t++) {" << endl;
 
@@ -5953,7 +6007,8 @@ void generate_garnet_verilator_tb(prog& prg,
   }
 
   rgtb << tab(1) << tab(1) << "dut.clk = 0;" << endl;
-  rgtb << tab(1) << tab(1) << "dut.eval();" << endl;
+  //rgtb << tab(1) << tab(1) << "dut.eval();" << endl;
+  eval(options, rgtb, 1);
 
   for (auto out : outputs(buffers, prg)) {
     string ctrl_name =
@@ -5971,7 +6026,8 @@ void generate_garnet_verilator_tb(prog& prg,
   }
 
   rgtb << tab(1) << tab(1) << "dut.clk = 1;" << endl;
-  rgtb << tab(1) << tab(1) << "dut.eval();" << endl;
+  //rgtb << tab(1) << tab(1) << "dut.eval();" << endl;
+  eval(options, rgtb, 1);
   rgtb << tab(1) << "}" << endl;
 
   for (auto out : outputs(buffers, prg)) {
@@ -6010,24 +6066,30 @@ void generate_garnet_verilator_tb(prog& prg,
 }
 
 void generate_verilator_tb_reset_sequence(CodegenOptions& options, ostream& rgtb) {
-  rgtb << "dut.clk = 0;" << endl;
-  rgtb << "dut.eval();" << endl;
-  rgtb << "dut.rst_n = 0;" << endl;
-  rgtb << "dut.eval();" << endl;
+  rgtb << tab(1) << "dut.clk = 0;" << endl;
+  //rgtb << tab(1) << "dut.eval();" << endl;
+  eval(options, rgtb, 1);
+  rgtb << tab(1) << "dut.rst_n = 0;" << endl;
+  //rgtb << tab(1) << "dut.eval();" << endl;
+  eval(options, rgtb, 1);
 
-  rgtb << "dut.rst_n = 1;" << endl;
-  rgtb << "dut.eval();" << endl;
+  rgtb << tab(1) << "dut.rst_n = 1;" << endl;
+  //rgtb << tab(1) << "dut.eval();" << endl;
+  eval(options, rgtb, 1);
 
-  rgtb << "dut.clk = 0;" << endl;
-  rgtb << "dut.eval();" << endl;
+  rgtb << tab(1) << "dut.clk = 0;" << endl;
+  //rgtb << tab(1) << "dut.eval();" << endl;
+  eval(options, rgtb, 1);
 
-  rgtb << "dut.flush = 1;" << endl;
-  rgtb << "dut.clk = 1;" << endl;
-  rgtb << "dut.eval();" << endl;
+  rgtb << tab(1) << "dut.flush = 1;" << endl;
+  rgtb << tab(1) << "dut.clk = 1;" << endl;
+  //rgtb << tab(1) << "dut.eval();" << endl;
+  eval(options, rgtb, 1);
 
-  rgtb << "dut.flush = 0;" << endl;
-  rgtb << "dut.clk = 0;" << endl;
-  rgtb << "dut.eval();" << endl;
+  rgtb << tab(1) << "dut.flush = 0;" << endl;
+  rgtb << tab(1) << "dut.clk = 0;" << endl;
+  //rgtb << tab(1) << "dut.eval();" << endl;
+  eval(options, rgtb, 1);
 
 }
 
@@ -6042,6 +6104,22 @@ void generate_verilator_tb(
   rgtb << "#include <fstream>" << endl;
   rgtb << "#include \"verilated.h\"" << endl;
   rgtb << "#include \"V" << prg.name << ".h\"" << endl << endl;
+
+  //Add waveform trace dump options for debugging inverilator
+  if (options.debug_options.traceWave) {
+    rgtb << "#include \"verilated_vcd_c.h\"" << endl << endl;
+    rgtb << "vluint64_t main_time = 0;" << endl;
+    rgtb << "double sc_time_stamp() {" << endl;
+    rgtb << tab(1) <<  "return main_time;" << endl;
+    rgtb << "}" << endl << endl;
+
+    rgtb << "void dump_trace(VerilatedVcdC* tfp) {" << endl;
+    rgtb << tab(1) << "for (int i = 0; i < 5; i ++) {" << endl;
+    rgtb << tab(2) << "tfp->dump(main_time);" << endl;
+    rgtb << tab(2) << "main_time++;" << endl;
+    rgtb << tab(1) << "}" << endl;
+    rgtb << "}" << endl << endl;
+  }
 
 
   rgtb << "int main() {" << endl;
@@ -6077,25 +6155,17 @@ void generate_verilator_tb(
       buffers);
 
   rgtb << tab(1) << "V" << prg.name << " dut;" << endl;
+
+  if (options.debug_options.traceWave) {
+    rgtb << tab(1) << "V"<< prg.name << "* dut_ptr = &dut;" << endl;
+    rgtb << tab(1) << "Verilated::traceEverOn(true);" << endl;
+    rgtb << tab(1) << "VerilatedVcdC* tfp = new VerilatedVcdC;" << endl;
+    rgtb << tab(1) << "dut_ptr->trace(tfp, 99);" << endl;
+    rgtb << tab(1) << "tfp->open(\"sim_wave.vcd\");" << endl << endl;
+  }
+
   generate_verilator_tb_reset_sequence(options, rgtb);
-  //rgtb << "dut.clk = 0;" << endl;
-  //rgtb << "dut.eval();" << endl;
-  //rgtb << "dut.rst_n = 0;" << endl;
-  //rgtb << "dut.eval();" << endl;
 
-  //rgtb << "dut.rst_n = 1;" << endl;
-  //rgtb << "dut.eval();" << endl;
-
-  //rgtb << "dut.clk = 0;" << endl;
-  //rgtb << "dut.eval();" << endl;
-
-  //rgtb << "dut.flush = 1;" << endl;
-  //rgtb << "dut.clk = 1;" << endl;
-  //rgtb << "dut.eval();" << endl;
-
-  //rgtb << "dut.flush = 0;" << endl;
-  //rgtb << "dut.clk = 0;" << endl;
-  //rgtb << "dut.eval();" << endl;
   for (auto out : inputs(buffers, prg)) {
     string data_name =
       out.first + "_" + out.second;
@@ -6110,10 +6180,9 @@ void generate_verilator_tb(
   }
 
   rgtb << tab(1) << "dut.clk = 0;" << endl;
-  rgtb << tab(1) << "dut.eval();" << endl;
+  //rgtb << tab(1) << "dut.eval();" << endl;
+  eval(options, rgtb, 1);
   rgtb << tab(1) << "for (int t = 0; t < (int) pow(2, 16); t++) {" << endl;
-  //rgtb << tab(1) << "for (int t = 0; t < 30000; t++) {" << endl;
-  //rgtb << tab(1) << "for (int t = 0; t < 300; t++) {" << endl;
 
   rgtb << tab(2) << "cout << \"t = \" << t << endl;" << endl;
   for (auto out : inputs(buffers, prg)) {
@@ -6143,9 +6212,11 @@ void generate_verilator_tb(
   }
 
   rgtb << tab(1) << tab(1) << "dut.clk = 0;" << endl;
-  rgtb << tab(1) << tab(1) << "dut.eval();" << endl;
+  //rgtb << tab(1) << tab(1) << "dut.eval();" << endl;
+  eval(options, rgtb, 2);
   rgtb << tab(1) << tab(1) << "dut.clk = 1;" << endl;
-  rgtb << tab(1) << tab(1) << "dut.eval();" << endl;
+  //rgtb << tab(1) << tab(1) << "dut.eval();" << endl;
+  eval(options, rgtb, 2);
   rgtb << tab(1) << "}" << endl;
 
   for (auto out : outputs(buffers, prg)) {
@@ -7695,6 +7766,23 @@ op* find_coarse_grained_pipeline_loop(op* lp) {
   return find_coarse_grained_pipeline_loop(lp->children.back());
 }
 
+void find_coarse_grained_pipeline_loops(op* lp_visit, vector<op*> & cgpl_lp,  prog& prg) {
+  //this is the new cgpl loop finding function
+  //we traverse the AST in post order
+  //If a loop with more than one children
+  //Then this is a cgpli loop node.
+  //
+  //Post order visit guarantee that descendant is ahead of its ancestor
+
+  for (auto child: lp_visit->children) {
+    find_coarse_grained_pipeline_loops(child, cgpl_lp, prg);
+  }
+  if ((lp_visit->children).size() > 1 && !(is_inner_loop(lp_visit))) {
+    if (lp_visit != prg.root)
+      cgpl_lp.push_back(lp_visit);
+  }
+}
+
 op* find_coarse_grained_pipeline_loop(op* lp, prog& prg) {
   assert(lp->is_loop());
   cout << "\t Visit loop " << lp->name << " for searching coarse pipeline loop" << endl;
@@ -8118,7 +8206,7 @@ void generate_banks_garnet(CodegenOptions& options, UBuffer& buf, UBufferImpl& i
 
     //TODO: implement more banking strategies
     maybe<std::set<int> > embarassing_banking =
-      embarassing_partition(buf);
+      embarassing_partition(options, buf);
     bool has_embarassing_partition = embarassing_banking.has_value();
     if (has_embarassing_partition) {
       buf.banking.partition = "cyclic";
@@ -8152,7 +8240,7 @@ void generate_banks_garnet(CodegenOptions& options, UBuffer& buf, UBufferImpl& i
           //TODO potential bug for multi bank with broad casting case
           //TODO bank is not a good intermediate representation and contains too much internal data
           //     use buffer impl then
-          if ((bank_IO_pair.first.size() == 1) && (bank_IO_pair.second.size() == 1)){
+          if ((bank_IO_pair.first.size() == 1) && (bank_IO_pair.second.size() == 1)) {
             string inpt = pick(bank_IO_pair.first);
             string outpt = pick(bank_IO_pair.second);
             maybe<int> delay_info = buf.dependence_distance_max(inpt, outpt);
@@ -8189,7 +8277,61 @@ void generate_banks_garnet(CodegenOptions& options, UBuffer& buf, UBufferImpl& i
         //    buf.add_bank_between(input_sets, output_sets, bnk_info);
         //}
       }
-    } else {
+    }
+    else if (auto bank_impl = buf.get_cyclic_banking_implement(impl);
+                bank_impl.get_bank_num() > 1) {
+                //false) {
+        isl_map* bank_partition_map = bank_impl.get_bank_map(buf);
+        for (int b = 0; b < bank_impl.get_bank_num(); b++) {
+          isl_set* bnk = isl_set_read_from_str(buf.ctx, curlies("Bank[" + str(b) + "]").c_str());
+          //This is rddom
+          isl_set* accesses_to_bank =::domain( its_range(bank_partition_map, bnk));
+          cout << "rddom: " << str(accesses_to_bank) << endl;
+
+          //Add port
+          for (auto pt : buf.get_all_ports()) {
+            assert(!empty(bnk));
+
+            //cout << "am: " << str(buf.access_map.at(pt)) << endl;
+            isl_map* bnk_map = its_range(to_map(buf.access_map.at(pt)), accesses_to_bank);
+            //cout << "bank map: " << str(bnk_map) << endl;
+            if (!empty(bnk_map)) {
+              if (buf.is_out_pt(pt)) {
+                impl.bank_readers[b].insert(pt);
+                impl.outpt_to_bank[pt].insert(b);
+              } else {
+                impl.bank_writers[b].insert(pt);
+                impl.inpt_to_bank[pt].insert(b);
+              }
+            }
+          }
+          cout << "ADD BANK!\n Bank id: " << b << endl;
+          std::set<string> input_sets = impl.bank_writers.at(b);
+          std::set<string> output_sets = impl.bank_readers.at(b);
+          auto bank_IOs = buf.port_grouping(options, impl,
+                  to_uset(accesses_to_bank),
+                  input_sets, output_sets);
+        }
+        cout << impl << endl;
+    }
+    //FIXME: ASPLOSHACK
+    //This is a hack , we do not know which hierarchy of memory to map at this point
+    else if (buf.num_in_ports() <= options.mem_hierarchy.at("mem").get_inpt_num() &&
+            buf.num_out_ports() <= options.mem_hierarchy.at("mem").get_outpt_num()) {
+        auto rddom = buf.global_range();
+        auto inpts = buf.get_in_ports();
+        auto outpts = buf.get_out_ports();
+        std::set<string> in_port_set = std::set<string>(inpts.begin(), inpts.end());
+        std::set<string> out_port_set = std::set<string>(outpts.begin(), outpts.end());
+        auto bnk_info = buf.compute_bank_info(in_port_set, out_port_set);
+        buf.add_bank_between(in_port_set, out_port_set, bnk_info);
+        int impl_bank = impl.add_new_bank_between(in_port_set, out_port_set, to_set(buf.global_range()));
+        cout << "IO of ubuffer: " << in_port_set << out_port_set << endl;
+        impl.sequentially_assign_inpt(buf.sort_pt_by_bundle(in_port_set), impl_bank);
+        impl.sequentially_assign_outpt(buf.sort_pt_by_bundle(out_port_set), impl_bank);
+    }
+    else {
+
         cout << "Use exhaustive banking! " << endl;
         buf.generate_banks_and_merge(options);
         buf.parse_exhaustive_banking_into_impl(impl);

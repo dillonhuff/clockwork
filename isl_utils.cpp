@@ -658,6 +658,38 @@ isl_map* linear_address_map_lake(isl_set* s, int fetch_width) {
   return isl_map_read_from_str(ctx(s), map_str.c_str());
 }
 
+isl_map* linear_address_map_lake_SR(isl_set* s, int fetch_width) {
+  string domain = name(s);
+  int dim = num_dims(s);
+  vector<string> var_names;
+  vector<string> exprs;
+  isl_val* stride = one(ctx(s));
+  //Inner stride
+  int stride_innermost = stride_in_dim(s, dim - 1);
+  cout << "Stride inner most:  " << stride_innermost << endl;
+  fetch_width *= stride_innermost;
+  for (int i = dim-1; i >= 0; i--) {
+    string var = "d" + str(i);
+    var_names.push_back(var);
+    string stridestr = str(stride);
+    exprs.push_back(stridestr + "*" + var);
+    auto interval = project_all_but(s, i);
+    isl_val* extend = add(sub(lexmaxval(interval), lexminval(interval)), one(ctx(s)));
+    stride = mul(stride, extend);
+    if (to_int(stride) % fetch_width != 0) {
+        stride = isl_val_int_from_si(ctx(s),
+                to_int(stride) + fetch_width - to_int(stride) % fetch_width);
+    }
+  }
+  std::reverse(var_names.begin(), var_names.end());
+
+  //Add a floor divide to remove the extra dimension
+  string map_str = "{" + domain + sep_list(var_names, "[", "]", ", ") + " -> " +
+      domain + "[floor(" + sep_list(exprs, "(", ")", " + ") + "/" + str(stride_innermost) + ")] }";
+  cout << map_str << endl;
+  return isl_map_read_from_str(ctx(s), map_str.c_str());
+}
+
 isl_map* linear_address_map_with_index(isl_set* s, vector<int> index) {
     return linear_address_map_with_index(s, index, 1);
 }
@@ -1844,9 +1876,21 @@ int stride_in_dim(isl_map* const m, size_t dim, size_t out_dim) {
 }
 
 int stride_in_dim(isl_map* const m, size_t dim) {
-    assert(num_out_dims(m) == 1);
-    auto aff = get_aff(m);
+    //assert(num_out_dims(m) == 1);
+    //TODO: fix this by default take 0 dimension but not always correct
+    auto aff = get_aff_vec(m).at(num_out_dims(m) - 1);
     return to_int(get_coeff(aff, dim));
+}
+
+int common_max_stride(isl_map* const m, int out_dim) {
+    int cms = 0;
+    //Skip root start from 1
+    for (int in_dim=1; in_dim < num_in_dims(m); in_dim++){
+        int s = stride_in_dim(m, in_dim, out_dim);
+        if (s > 0)
+          cms = std::gcd(cms, s);
+    }
+    return cms;
 }
 
 
@@ -2562,6 +2606,8 @@ isl_map* peel_schedule_domain_dim(isl_map* m, int dom_dim, int delay) {
 
 isl_map* remove_irrelevant_in_dim(isl_map* m) {
     vector<bool> rel_map = relation_map(m);
+    if (rel_map.size() == 0)
+        return m;
     vector<int> rem_dim;
     isl_map* ret = cpy(m);
     isl_set* dom = domain(m);
@@ -2602,7 +2648,10 @@ isl_map* remove_in_dims(isl_map* m, vector<int> remove_dims) {
     std::sort(remove_dims.begin(), remove_dims.end(), std::greater<int>());
     auto tmp = cpy(m);
     for (int dim: remove_dims) {
-      tmp = set_in_dim_to_val(tmp, dim, 0);
+      if (get_dim_extent(domain(tmp), dim) > 1) {
+        //if in dim span more than 1, set the dim to the left most point
+        tmp = set_in_dim_to_val(tmp, dim, get_dim_min(domain(tmp), dim));
+      }
       tmp = isl_map_project_out(tmp, isl_dim_in, dim, 1);
     }
     isl_map_set_tuple_id(tmp, isl_dim_in, id(ctx(m), domain_name(m)));
@@ -2612,6 +2661,7 @@ isl_map* remove_in_dims(isl_map* m, vector<int> remove_dims) {
 vector<bool> relation_map(isl_map* m) {
   size_t dom_dim = num_in_dims(m);
   vector<bool> rel(dom_dim, false);
+  //cout << str(m) << endl;
   for (auto aff: get_aff_vec(m)){
       for (int i = 0; i < dom_dim; i ++) {
         if (isl_aff_involves_dims(aff, isl_dim_in, i, 1)) {
@@ -2657,6 +2707,32 @@ int get_involve_dim(isl_map* m, int out_dim) {
   assert(false);
 }
 
+int get_out_padding_dimension(isl_map* m, int in_dim) {
+    vector<pair<int, int>> maxElementVec;
+    for(int i = 0; i < num_out_dims(m); i ++) {
+        vector<int> involve_dim = in_involve_dim(m, i);
+        if (involve_dim.size() == 0) {
+            continue;
+        }
+        cout << "dim: " << i << " involve : " << involve_dim << endl;
+        maxElementVec.push_back( {i,
+                *(std::max_element(involve_dim.begin(), involve_dim.end()))});
+    }
+    for(auto it = maxElementVec.begin(); it != maxElementVec.end()-1; it ++ ) {
+        if (it == maxElementVec.begin() && (in_dim < it->second)) {
+            cout << "Insert reaccess indim: " << in_dim << " to outdim : " << it->first << endl;
+            return it->first;
+        }
+        if ((in_dim > it->second) && (in_dim <= (it+1)->second)) {
+            cout << "Insert reaccess indim: " << in_dim << " to outdim : " << (it + 1)->first << endl;
+            return (it + 1)->first;
+
+        }
+    }
+    cout << "WARMING: fall back plan just pad in beginning" << endl;
+    return 0;
+}
+
 //Get the map for shift reg
 isl_map* get_shift_map(isl_map* m) {
 
@@ -2686,6 +2762,33 @@ isl_map* get_shift_map(isl_map* m) {
 
 int get_pad_remainder(isl_map* am, int dim_id, int fetch_width) {
   return (get_dim_max(::domain(am), dim_id) + 1) % fetch_width;
+}
+
+isl_map* pad_to_domain_left_ubuf_map(isl_map* m, int dom_dim_id, int depth) {
+
+  auto c_vec = constraints(m);
+  for (auto & c: c_vec) {
+
+    bool involve;
+    involve =  isl_constraint_involves_dims(c, isl_dim_in, dom_dim_id, 1);
+
+    //shift the constraint by 1
+    if (involve) {
+      auto val = isl_val_get_num_si(isl_constraint_get_constant_val(c));
+      if (isl_constraint_is_equality(c)) {
+          //c = isl_constraint_set_constant_si(c, val + depth);
+      } else {
+        if (isl_constraint_is_lower_bound(c, isl_dim_in, dom_dim_id))
+          c = isl_constraint_set_constant_si(c , val+depth);
+      }
+    }
+  }
+  auto b_ret = isl_basic_map_universe(get_space(m));
+  for (auto c: c_vec) {
+      b_ret = isl_basic_map_add_constraint(b_ret, c);
+  }
+
+  return isl_map_from_basic_map(b_ret);
 }
 
 isl_map* pad_to_domain_ubuf_map(isl_map* m, int dom_dim_id, int depth) {
@@ -3100,6 +3203,140 @@ isl_constraint* pad_dim_to_constraint(isl_constraint* c) {
   return cons;
 }
 
+//Pad an empty dimension
+isl_constraint* pad_dim_to_constraint_domain(isl_constraint* c, int dim_in, int dim_out, int stride) {
+  auto sp = get_space(c);
+  sp = isl_space_insert_dims(sp, isl_dim_in, dim_in, 1);
+  isl_constraint* cons;
+  if (isl_constraint_is_equality(c)) {
+    cons = isl_constraint_alloc_equality(isl_local_space_from_space(cpy(sp)));
+  } else {
+    cons = isl_constraint_alloc_inequality(isl_local_space_from_space(cpy(sp)));
+  }
+  cons = isl_constraint_set_constant_val(cons, isl_constraint_get_constant_val(c));
+  for (size_t i = 0; i < isl_constraint_dim(c, isl_dim_in)+1; i ++) {
+    if (i < dim_in) {
+      cons = isl_constraint_set_coefficient_val(cons, isl_dim_in, i,
+            isl_constraint_get_coefficient_val(c, isl_dim_in, i));
+    } else if (i > dim_in) {
+      cons = isl_constraint_set_coefficient_val(cons, isl_dim_in, i,
+            isl_constraint_get_coefficient_val(c, isl_dim_in, i-1));
+    }
+  }
+  for (size_t i = 0; i < isl_constraint_dim(c, isl_dim_out); i ++) {
+    if (isl_constraint_involves_dims(c, isl_dim_out, i, 1)) {
+      cons = isl_constraint_set_coefficient_val(cons, isl_dim_out, i,
+           isl_constraint_get_coefficient_val(c, isl_dim_out, i));
+      if (i == dim_out) {
+        cons = isl_constraint_set_coefficient_si(cons, isl_dim_in, dim_in, -stride);
+      }
+    }
+  }
+  //cout << "rewrite constraits: " << str(cons) << endl;
+  return cons;
+}
+
+isl_map* add_more_dim_to_map_with_stride(isl_map* const um, int in_dim, int out_dim, int stride, int bd) {
+    auto sched_map = um;
+    auto c_vec = constraints(sched_map);
+    vector<isl_constraint*> new_c;
+
+    //pad the space for the original constraints
+    for (auto c : c_vec) {
+        auto tmp = pad_dim_to_constraint_domain(c, in_dim, out_dim, stride);
+        new_c.push_back(tmp);
+    }
+
+    auto sp = get_space(pick(new_c));
+    auto lb= isl_constraint_alloc_inequality(isl_local_space_from_space(cpy(sp)));
+    lb = isl_constraint_set_constant_si(lb, 0);
+    lb = isl_constraint_set_coefficient_si(lb, isl_dim_in, in_dim, 1);
+    new_c.push_back(lb);
+
+    auto ub= isl_constraint_alloc_inequality(isl_local_space_from_space(cpy(sp)));
+    ub = isl_constraint_set_constant_si(ub, bd-1);
+    ub = isl_constraint_set_coefficient_si(ub, isl_dim_in, in_dim, -1);
+    new_c.push_back(ub);
+
+    auto ret = isl_basic_map_universe(sp);
+    for (auto c : new_c) {
+        ret = isl_basic_map_add_constraint(ret, c);
+    }
+
+    auto ret_m = isl_map_from_basic_map(ret);
+    ret_m = isl_map_set_tuple_id(ret_m, isl_dim_in, isl_map_get_tuple_id(um, isl_dim_in));
+    //ret_m = isl_map_set_tuple_id(ret_m, isl_dim_out, isl_map_get_tuple_id(um, isl_dim_out));
+    return ret_m;
+}
+
+isl_constraint* pad_dim_to_constraint_domain_and_range(isl_constraint* c, int dim_in, int dim_out) {
+  auto sp = get_space(c);
+  sp = isl_space_insert_dims(sp, isl_dim_in, dim_in, 1);
+  sp = isl_space_add_dims(sp, isl_dim_out, 1);
+  isl_constraint* cons;
+  if (isl_constraint_is_equality(c)) {
+    cons = isl_constraint_alloc_equality(isl_local_space_from_space(cpy(sp)));
+  } else {
+    cons = isl_constraint_alloc_inequality(isl_local_space_from_space(cpy(sp)));
+  }
+  cons = isl_constraint_set_constant_val(cons, isl_constraint_get_constant_val(c));
+  for (size_t i = 0; i < isl_constraint_dim(c, isl_dim_in)+1; i ++) {
+    if (i < dim_in) {
+      cons = isl_constraint_set_coefficient_val(cons, isl_dim_in, i,
+            isl_constraint_get_coefficient_val(c, isl_dim_in, i));
+    } else if (i > dim_in) {
+      cons = isl_constraint_set_coefficient_val(cons, isl_dim_in, i,
+            isl_constraint_get_coefficient_val(c, isl_dim_in, i-1));
+    }
+  }
+  for (size_t i = 0; i < isl_constraint_dim(c, isl_dim_out); i ++) {
+    if (isl_constraint_involves_dims(c, isl_dim_out, i, 1)) {
+      cons = isl_constraint_set_coefficient_val(cons, isl_dim_out, i+1,
+           isl_constraint_get_coefficient_val(c, isl_dim_out, i));
+    }
+  }
+  //cout << "rewrite constraits: " << str(cons) << endl;
+  return cons;
+}
+
+isl_map* add_more_dim_to_map_domain_and_range(isl_map* const um, int in_dim, int out_dim, int stride, int bd) {
+    auto sched_map = um;
+    auto c_vec = constraints(sched_map);
+    vector<isl_constraint*> new_c;
+
+    //pad the space for the original constraints
+    for (auto c : c_vec) {
+        auto tmp = pad_dim_to_constraint_domain_and_range(c, in_dim, out_dim);
+        new_c.push_back(tmp);
+    }
+
+    auto sp = get_space(pick(new_c));
+    auto lb= isl_constraint_alloc_inequality(isl_local_space_from_space(cpy(sp)));
+    lb = isl_constraint_set_constant_si(lb, 0);
+    lb = isl_constraint_set_coefficient_si(lb, isl_dim_in, in_dim, 1);
+    new_c.push_back(lb);
+
+    auto ub= isl_constraint_alloc_inequality(isl_local_space_from_space(cpy(sp)));
+    ub = isl_constraint_set_constant_si(ub, bd-1);
+    ub = isl_constraint_set_coefficient_si(ub, isl_dim_in, in_dim, -1);
+    new_c.push_back(ub);
+
+    auto cons = isl_constraint_alloc_equality(isl_local_space_from_space(cpy(sp)));
+    cons = isl_constraint_set_coefficient_si(cons, isl_dim_out, out_dim , stride);
+    cons = isl_constraint_set_coefficient_si(cons, isl_dim_in, in_dim , -1);
+    new_c.push_back(cons);
+
+    auto ret = isl_basic_map_universe(sp);
+    for (auto c : new_c) {
+        ret = isl_basic_map_add_constraint(ret, c);
+    }
+
+    auto ret_m = isl_map_from_basic_map(ret);
+    ret_m = isl_map_set_tuple_id(ret_m, isl_dim_in, isl_map_get_tuple_id(um, isl_dim_in));
+    ret_m = isl_map_set_tuple_id(ret_m, isl_dim_out, isl_map_get_tuple_id(um, isl_dim_out));
+    return ret_m;
+}
+
 isl_map* pad_one_more_dim_to_sched_map_innermost(isl_map* const um, int pad_val) {
     auto sched_map = um;
     auto c_vec = constraints(sched_map);
@@ -3204,6 +3441,50 @@ umap* pad_one_more_dim_to_sched_map_with_id(umap* const um, int dim_id, int pad_
     }
 
     auto ret_m = isl_map_from_basic_map(ret);
+    return to_umap(ret_m);
+}
+//umap* pad_one_more_dim_relation_to_map(umap* const um, int in_dim, int out_dim, int stride) {
+//    return pad_one_more_dim_relation_to_map(um, {in_dim}, out_dim, stride);
+//}
+
+umap* pad_one_more_dim_relation_to_map(umap* const um, vector<int> in_dims, int out_dim, int stride) {
+  auto sched_map = to_map(um);
+  auto c_vec = constraints(sched_map);
+  vector<isl_constraint*> new_c;
+
+  //pad the space for the original constraints
+  for (auto c : c_vec) {
+      auto tmp = pad_dim_to_constraint(c, out_dim);
+      new_c.push_back(tmp);
+  }
+
+  auto sp = get_space(pick(new_c));
+  auto cons = isl_constraint_alloc_equality(isl_local_space_from_space(cpy(sp)));
+  int st = stride;
+  cons = isl_constraint_set_coefficient_si(cons, isl_dim_out, out_dim, -1);
+  for (int in_dim : in_dims) {
+    cons = isl_constraint_set_coefficient_si(cons, isl_dim_in, in_dim, st);
+    st *= get_domain_range(::domain(sched_map), in_dim);
+  }
+  new_c.push_back(cons);
+
+  auto ret = isl_basic_map_universe(sp);
+  for (auto c : new_c) {
+      ret = isl_basic_map_add_constraint(ret, c);
+  }
+
+  auto ct = ctx(um);
+  auto ret_m = isl_map_from_basic_map(ret);
+  string rname;
+  if (isl_map_get_tuple_id(sched_map, isl_dim_out) != nullptr) {
+    rname = range_name(sched_map);
+  }
+
+
+  if (isl_map_get_tuple_id(sched_map, isl_dim_out) != nullptr) {
+    isl_map_set_tuple_id(ret_m, isl_dim_out, id(ct, rname));
+  }
+
     return to_umap(ret_m);
 }
 
@@ -3985,7 +4266,6 @@ int get_domain_span_range(isl_map* const m, int dim, int out_dim) {
   //auto single_map = project_all_in_but(mm, dim);
   //cout << "single_map : " << str(single_map) << endl;
   return get_dim_extent(domain(mm), dim) * stride_in_dim(mm, dim, out_dim);
-
 }
 
 pair<int, int> get_domain_merge_dims(isl_map* m ){
@@ -4010,7 +4290,8 @@ vector<pair<int, int>> get_all_domain_merge_dims(isl_map* m) {
         int span_range = get_domain_span_range(m, dim);
         int up_level_stride = stride_in_dim(m, dim-1);
         cout << "span range: " << span_range << ", up_level_stride : "<< up_level_stride << endl;
-        if ((span_range == up_level_stride) && (span_range != 0))
+        //TODO: why span range = 0 cannot be merged?
+        if ((span_range == up_level_stride))// && (span_range != 0))
             ret.push_back({in_dims - dim - 1, in_dims -  dim});
     }
     return ret;
@@ -4034,16 +4315,71 @@ isl_map* merge_domain_dim(isl_map* m) {
     return mm;
 }
 
+int get_inner_most_related_dom_dim(isl_map* m) {
+  vector<bool> rel_dim = relation_map(m);
+  for (auto it = rel_dim.rbegin(); it < rel_dim.rend(); it ++) {
+    if (*it == true) {
+      cout << "find related dimension!" << endl;
+      return rel_dim.rend() - it - 1;
+    }
+  }
+  cout << "should find at least one dimension related in dim" << endl;
+  assert(false);
+}
+
+
 int get_inner_most_related_dom_dim(isl_map* m, int dim_id, int fetch_width) {
+  cout << "access map : " << str(m) << "need to find inner dim" << endl;
+  cout << "dim id: " << dim_id << endl;
   auto aff_vec = get_aff_vec(m);
   assert(aff_vec.size() > dim_id);
   auto am = to_map(aff_vec.at(dim_id));
   vector<bool> rel_map = relation_map(am);
+  cout << "Relation map" << rel_map << endl;
   int inner_most_address_related_dim_id = rel_map.size() - 1;
   for (int i = rel_map.size() - 1; i >= 0; i -- ) {
     if ((rel_map.at(i) != 0) ) {//&& (get_domain_span_range(m, i) >= fetch_width)) {
       inner_most_address_related_dim_id = i;
+      //cout << "dimension: " << i << "  ext : " << get_dim_extent(domain(m), i) << endl;
+      //if ((get_dim_extent(domain(m), i) == 1))
+      //    inner_most_address_related_dim_id --;
       break;
+    }
+    if (i == 0) {
+      //FIXME: ASPLOS Hack:
+      //change to -2 since if we did not find any related loop, lp bd = 4
+      //it means we are project out this dimension
+      //inner_most_address_related_dim_id --;
+      //
+      //Did not find related_dom_dim
+      return -1;
+    }
+  }
+  return inner_most_address_related_dim_id;
+}
+
+int get_inner_most_related_dom_dim_debug(isl_map* m, int dim_id, int fetch_width) {
+  cout << "access map : " << str(m) << "need to find inner dim" << endl;
+  cout << "dim id: " << dim_id << endl;
+  auto aff_vec = get_aff_vec(m);
+  assert(aff_vec.size() > dim_id);
+  auto am = to_map(aff_vec.at(dim_id));
+  vector<bool> rel_map = relation_map(am);
+  cout << "Relation map" << rel_map << endl;
+  int inner_most_address_related_dim_id = rel_map.size() - 1;
+  for (int i = rel_map.size() - 1; i >= 0; i -- ) {
+    if ((rel_map.at(i) != 0) ) {//&& (get_domain_span_range(m, i) >= fetch_width)) {
+      inner_most_address_related_dim_id = i;
+      //cout << "dimension: " << i << "  ext : " << get_dim_extent(domain(m), i) << endl;
+      //if ((get_dim_extent(domain(m), i) == 1))
+      //    inner_most_address_related_dim_id --;
+      break;
+    }
+    if (i == 0) {
+      //FIXME: ASPLOS Hack:
+      //change to -2 since if we did not find any related loop, lp bd = 4
+      //it means we are project out this dimension
+      inner_most_address_related_dim_id --;
     }
   }
   return inner_most_address_related_dim_id;
@@ -4136,6 +4472,48 @@ isl_map* get_domain_mask(isl_map* m, int vec_dim) {
     return trans;
 }
 
+vector<isl_set*> get_domain_unmask_set(isl_map* m, int vec_dim, vector<int> unmask_dims) {
+    int dim = num_in_dims(m);
+    auto dom = domain(m);
+    string dom_name = domain_name(m);
+    vector<string> var_mask;
+    for (int i = 0; i < dim; i++) {
+        if (i <= vec_dim && !elem(i, unmask_dims)) {
+            var_mask.push_back("i" + str(i) + "=" + str(get_dim_min(dom, i)));
+        } else {
+            var_mask.push_back("i" + str(i));
+        }
+    }
+    string base_str = "{" + dom_name + bracket_list(var_mask) + "}";
+    cout << "base_str : " << base_str << endl;
+    auto base_set = isl_set_read_from_str(ctx(m), base_str.c_str());
+    vector<isl_set*> prev, next;
+    prev.push_back(base_set);
+    for (int unmask_dim: unmask_dims){
+      for (int dim_val = get_dim_min(dom, unmask_dim); dim_val <= get_dim_max(dom, unmask_dim); dim_val ++) {
+        vector<string> var_mask_its;
+        for (int i = 0; i < dim; i++) {
+          if (elem(i, unmask_dims)) {
+            var_mask_its.push_back("i" + str(i) + "=" + str(dim_val));
+          } else {
+            var_mask_its.push_back("i" + str(i));
+          }
+        }
+        string its_str = "{" + dom_name + bracket_list(var_mask_its) + "}";
+        cout << "its_str: " << its_str << endl;
+        auto its_set = isl_set_read_from_str(ctx(m), its_str.c_str());
+
+        //add product set
+        for (auto prev_set : prev) {
+            next.push_back(its(prev_set, its_set));
+        }
+      }
+      prev = next;
+      next = vector<isl_set*>();
+    }
+    return prev;
+}
+
 isl_map* get_domain_trans(isl_set* dom, int pos, int fetch_width) {
     string dom_name = name(dom);
     int dim = num_dims(dom);
@@ -4151,6 +4529,20 @@ isl_map* get_domain_trans(isl_set* dom, int pos, int fetch_width) {
     }
     string map_str = "{"+dom_name + bracket_list(var) + "->" + dom_name +bracket_list(rewrite_var)+ "}";
     auto trans = isl_map_read_from_str(ctx(dom), map_str.c_str());
+    cout << "Autogen trans:" << str(trans) << endl;
+    return trans;
+}
+
+isl_map* get_domain_trans(isl_set* dom, vector<int> stride_vec) {
+    string dom_name = name(dom);
+    int dim = num_dims(dom);
+    vector<string> var, rewrite_var;
+    for (int i = 0; i < dim; i ++) {
+        var.push_back("i"+str(i));
+        rewrite_var.push_back("floor(i"+str(i) + "/" + str(stride_vec.at(i)) + ")" );
+    }
+    string map_str = "{"+dom_name + bracket_list(var) + "->" + dom_name +bracket_list(rewrite_var)+ "}";
+    auto trans = inv(isl_map_read_from_str(ctx(dom), map_str.c_str()));
     cout << "Autogen trans:" << str(trans) << endl;
     return trans;
 }
@@ -4185,6 +4577,26 @@ isl_set* get_domain_trans_sched_domain(isl_set* dom, int pos, int fetch_width) {
     for (int i = 0; i < dim; i ++) {
         var.push_back("i" + str(i) );
         if (i > pos){
+            stmt.push_back("i" + str(i) + " = " + str(get_dim_min(dom, i)));
+        }
+    }
+    string map_str = "{"+dom_name + bracket_list(var) + ":" + sep_list(stmt, "", "", " and ")+ "}";
+    auto trans = isl_set_read_from_str(ctx(dom), map_str.c_str());
+    cout << "sched domain: " << str(trans) << endl;
+    return trans;
+}
+
+isl_set* get_domain_trans_sched_domain(isl_map* access_map, int pos, int fetch_width) {
+    auto dom = domain(access_map);
+    auto rel_map = relation_map(access_map);
+    string dom_name = name(dom);
+    int dim = num_dims(dom);
+    vector<string> var, stmt;
+    for (int i = 0; i < dim; i ++) {
+        var.push_back("i" + str(i) );
+
+        //Project out the dimension if they inside vectorization dimension and reaccess
+        if ((i > pos) && (rel_map.at(i) == 0)){
             stmt.push_back("i" + str(i) + " = " + str(get_dim_min(dom, i)));
         }
     }
@@ -4291,14 +4703,15 @@ std::vector<isl_aff*> get_affs(isl_multi_aff* saff) {
 }
 
 std::vector<isl_aff*> get_aff_vec(isl_map* m) {
+  vector<isl_aff*> ret;
   auto lm = isl_pw_multi_aff_from_map(cpy(m));
+  if (!lm)
+      return ret;
   //cout << tab(1) << str(m) << endl;
   //cout << tab(2) << "lexmax: " << str(lm) << endl;
   vector<pair<isl_set*, isl_multi_aff*> > pieces =
     get_pieces(lm);
   assert(pieces.size() == 1);
-
-  vector<isl_aff*> ret;
   auto saff = pieces.at(0).second;
   for (int i = 0; i < get_size(saff); i ++) {
     auto aff = isl_multi_aff_get_aff(saff, i);
@@ -4400,8 +4813,10 @@ map<int, int> get_dim2denom(isl_map* am) {
           int num = isl_val_get_num_si(coeff);
           cout << tab(3) << "coeff  = " << str(coeff) << endl;
           cout << tab(3) << "num = " << isl_val_get_num_si(coeff) << endl;
+          cout << tab(3) << "denom= " << isl_val_get_den_si(coeff) << endl;
           assert (num == 1 && "require quasi affine accessor!");
-          split_dims[di] = denom;
+          //split_dims[di] = denom;
+          split_dims[di] = isl_val_get_den_si(coeff);
         }
       }
     }
