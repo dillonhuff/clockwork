@@ -36,9 +36,10 @@ struct test_data_input_stream {
 
 struct DebugOptions {
   bool expect_all_linebuffers;
+  bool traceWave;
   test_data_input_stream test_inputs;
 
-  DebugOptions() : expect_all_linebuffers(false) {}
+  DebugOptions() : traceWave(false), expect_all_linebuffers(false) {}
 };
 
 enum ScheduleAlgorithm {
@@ -46,6 +47,14 @@ enum ScheduleAlgorithm {
   SCHEDULE_ALGORITHM_ISL,
   SCHEDULE_ALGORITHM_CW
 };
+
+enum DNNScheduleAlgorithm {
+    ASPLOS_SCHEDULE, //An over optimized schedule which will be refactored
+    ISCA_SCHEDULE, //new schedule with refactor
+    VANILLA_DB_SCHEDULE,
+    SEQUENTIAL_SCHEDULE
+};
+
 
 enum InnerBankOffsetMode {
   INNER_BANK_OFFSET_STACK,
@@ -82,15 +91,17 @@ struct RTLOptions {
   bool pack_controllers_in_memtiles;
   bool use_prebuilt_memory;
   bool use_pipelined_compute_units;
+  bool double_buffer_optimization;
   int max_inpt, max_outpt;
   TargetTile target_tile;
   global_signals_policy global_signals;
   int hls_clock_target_Hz;
 
   RTLOptions() : use_external_controllers(true), pack_controllers_in_memtiles(false),
-  use_pipelined_compute_units(false),
+  use_pipelined_compute_units(false), double_buffer_optimization(false),
     max_inpt(1), max_outpt(1),
-    target_tile(TARGET_TILE_DUAL_SRAM_WITH_ADDRGEN), use_prebuilt_memory(false),
+    target_tile(TARGET_TILE_DUAL_SRAM_WITH_ADDRGEN),
+    use_prebuilt_memory(false),
     hls_clock_target_Hz(250000000) {}
 };
 
@@ -102,6 +113,8 @@ struct LakeCollateral {
     std::unordered_map<string, int> out_port_width;
     int fetch_width;
     int max_chaining;
+    int iteration_level;
+    int counter_ub;
     bool multi_sram_accessor;
     bool dual_port_sram;
     bool wire_chain_en;
@@ -110,6 +123,8 @@ struct LakeCollateral {
     LakeCollateral(string level = "mem"):
         fetch_width(4),
         max_chaining(4),
+        iteration_level(6),
+        counter_ub(65535),
         multi_sram_accessor(true),
         dual_port_sram(false),
         wire_chain_en(true),
@@ -126,6 +141,16 @@ struct LakeCollateral {
                 out_port_width = {{"regfile", 1}};
                 bank_num = {{"regfile", 1}};
                 capacity = {{"regfile", 32}};
+                iteration_level = 3;
+
+            } else if (level == "glb") {
+                fetch_width = 1;
+                max_chaining = 1;
+                word_width = {{"glb", 1}};
+                in_port_width= {{"glb", 1}};
+                out_port_width = {{"glb", 1}};
+                bank_num = {{"glb", 1}};
+                capacity = {{"glb", 131072}};
             } else if (level != "mem") {
                 cout << "\t\tERROR: Memory component not identified" << endl;
                 assert(false);
@@ -149,6 +174,15 @@ struct LakeCollateral {
             c = std::max(c, it.second);
         }
         return c * max_chaining;
+    }
+
+    int get_single_tile_capacity() const {
+        int c = 0;
+        for (auto it: capacity) {
+            c = std::max(c, it.second)
+                * word_width.at(it.first);
+        }
+        return c;
     }
 
     int get_inpt_num() {
@@ -197,6 +231,7 @@ struct CodegenOptions {
   bool pass_through_valid;
   bool emit_smt_stream;
   bool config_gen_only;
+  int host2glb_latency;
   string dir;
 
   bool use_epochs;
@@ -204,6 +239,7 @@ struct CodegenOptions {
   bool use_soda_casting;
   InnerBankOffsetMode inner_bank_offset_mode;
   ScheduleAlgorithm scheduling_algorithm;
+  DNNScheduleAlgorithm fallback_schedule;
   bool ignore_top_level_inter_deps;
 
   banking_strategy default_banking_strategy;
@@ -221,13 +257,14 @@ struct CodegenOptions {
   CodegenOptions() : internal(true), all_rams(false), add_dependence_pragmas(true),
   hls_loop_codegen(HLS_LOOP_CODEGEN_ISL), code_string(""), simplify_address_expressions(false),
   unroll_factors_as_pad(false), conditional_merge(false), merge_threshold(0),
-  inline_vectorization(false), iis({}),
+  inline_vectorization(false), iis({}), host2glb_latency(0),
   pass_through_valid(false), emit_smt_stream(false), config_gen_only(false), dir(""),
   use_epochs(true),
   num_input_epochs(-1),
   use_soda_casting(false),
   inner_bank_offset_mode(INNER_BANK_OFFSET_STACK),
   scheduling_algorithm(SCHEDULE_ALGORITHM_NAIVE),
+  fallback_schedule(SEQUENTIAL_SCHEDULE),
   default_banking_strategy({"exhaustive"}),
   ignore_top_level_inter_deps(false),
   num_pipelines(1),

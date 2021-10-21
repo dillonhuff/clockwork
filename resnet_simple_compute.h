@@ -36,10 +36,12 @@ hw_uint<16> hcompute_conv_stencil_1(hw_uint<16>& conv_stencil, hw_uint<16>& hw_i
   return _665;
 }
 
-//store is: hw_output.stencil(hw_output_s0_x_xi, hw_output_s0_y_yi, 0) = conv.stencil(hw_output_s0_x_xi, hw_output_s0_y_yi, 0)
+//store is: hw_output.stencil(hw_output_s0_x_xi, hw_output_s0_y_yi, 0) = max(conv.stencil(hw_output_s0_x_xi, hw_output_s0_y_yi, 0), (int16)0)
 hw_uint<16> hcompute_hw_output_stencil(hw_uint<16>& conv_stencil) {
   int16_t _conv_stencil_2 = (int16_t) conv_stencil.extract<0, 15>();
 
-  return _conv_stencil_2;
+  int16_t _675 = (int16_t)(0);
+  int16_t _676 = max(_conv_stencil_2, _675);
+  return _676;
 }
 

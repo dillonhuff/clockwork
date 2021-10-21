@@ -21,7 +21,7 @@ struct affine_controller_ctrl {
 
 
 CoreIR::Wireable* mkConst(CoreIR::ModuleDef* def, const int width, const int val);
-CoreIR::Wireable* addList(CoreIR::ModuleDef* def, const std::vector<CoreIR::Wireable*>& vals);
+CoreIR::Wireable* addList(CoreIR::ModuleDef* def, const std::vector<CoreIR::Wireable*>& vals, int width);
 CoreIR::Wireable* orList(CoreIR::ModuleDef* def, const std::vector<CoreIR::Wireable*>& vals);
 CoreIR::Wireable* andList(CoreIR::ModuleDef* def, const std::vector<CoreIR::Wireable*>& vals);
 
@@ -34,7 +34,11 @@ CoreIR::Module* coreir_for_basic_set(CoreIR::Context* context, isl_basic_set* do
 CoreIR::Module* coreir_for_set(CoreIR::Context* context, isl_set* dom);
 
 CoreIR::Module* affine_controller(CodegenOptions& options, CoreIR::Context* context, isl_set* dom, isl_aff* aff);
+CoreIR::Module* affine_controller(CodegenOptions& options, CoreIR::Context* context, isl_set* dom, isl_aff* aff, int width);
 CoreIR::Module* affine_controller(CoreIR::Context* context, isl_set* dom, isl_aff* aff);
+CoreIR::Module* affine_controller(CoreIR::Context* context, isl_set* dom, isl_aff* aff, int width);
+
+CoreIR::Instance* affine_controller(CoreIR::ModuleDef* def, isl_set* dom, isl_aff* aff, int width);
 
 affine_controller_ctrl pack_controller(affine_controller_ctrl& unpacked);
 
@@ -141,6 +145,8 @@ void generate_platonic_ubuffer(CodegenOptions& options,
 
 void generate_lake_tile_verilog(CodegenOptions& options, CoreIR::Instance* buf);
 
+void add_default_initial_block();
+
 CoreIR::Wireable* delay_by(CoreIR::ModuleDef* bdef,
     CoreIR::Wireable* w,
     const int cycles);
@@ -166,6 +172,7 @@ void pipeline_compute_units(prog& prg, schedule_info& hwinfo);
 int generate_compute_unit_regression_tb(op* op, prog& prg);
 
 CoreIR::Instance* build_addrgen(const std::string& reader, UBuffer& buf, CoreIR::ModuleDef* def);
+CoreIR::Instance* build_addrgen(const std::string& reader, UBuffer& buf, CoreIR::ModuleDef* def, int width);
 
 CoreIR::Wireable* control_vars(CoreIR::ModuleDef* def, const std::string& reader, UBuffer& buf);
 
@@ -188,6 +195,7 @@ isl_aff* inner_bank_offset_aff(const std::string& reader, UBuffer& buf, const Em
 isl_aff* bank_offset_aff(const std::string& reader, UBuffer& buf, const EmbarrassingBankingImpl& impl);
 
 void garnet_map_module(CoreIR::Module* top, bool garnet_syntax_trans);
+void garnet_map_module(CoreIR::Module* top, map<string, UBuffer> & buffers, bool garnet_syntax_trans);
 
 double PE_energy_cost(power_analysis_params& power_params, power_analysis_info& power_stats, prog& prg);
 

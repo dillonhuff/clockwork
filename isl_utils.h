@@ -193,6 +193,7 @@ std::string str(isl_multi_union_pw_aff* const pma);
 
 isl_map* linear_address_map(isl_set* s);
 isl_map* linear_address_map_lake(isl_set* s, int fetch_width);
+isl_map* linear_address_map_lake_SR(isl_set* s, int fetch_width);
 isl_map* linear_address_map_lake(isl_set* s);
 isl_map* linear_address_map_with_index(isl_set* s, vector<int> index);
 isl_map* linear_domain_map_with_index(isl_set* s, unordered_set<int> index);
@@ -293,7 +294,11 @@ vector<string> collect_sched_vec(isl_union_map* const um);
 umap* pad_one_more_dim_to_sched_map(isl_ctx* ctx, umap* const um, string pad_val);
 umap* pad_one_more_dim_to_sched_map_innermost(umap* const um, int pad_val);
 isl_map* pad_one_more_dim_to_sched_map_innermost(isl_map* const um, int pad_val);
+isl_map* add_more_dim_to_map_with_stride(isl_map* const um, int in_dim, int out_dim, int stride, int bd);
+isl_map* add_more_dim_to_map_domain_and_range(isl_map* const um, int in_dim, int out_dim, int stride, int bd);
 umap* pad_one_more_dim_to_sched_map_with_id(umap* const um, int dim_id, int pad_val);
+//umap* pad_one_more_dim_relation_to_map(umap* const um, int in_dim, int out_dim, int stride);
+umap* pad_one_more_dim_relation_to_map(umap* const um, vector<int> in_dims, int out_dim, int stride);
 
 std::string codegen_c(isl_set* const bset);
 std::string codegen_c(isl_union_set* bset);
@@ -386,9 +391,14 @@ isl_map* merge_domain_dim(isl_map* m);
 
 //vectorization transformation
 isl_map* get_domain_mask(isl_map* m, int vec_dim);
+//For checking loop bound
+vector<isl_set*> get_domain_unmask_set(isl_map* m, int vec_dim, vector<int> unmask_dims);
+
 isl_map* get_domain_trans(isl_set* dom, int pos, int fetch_width);
+isl_map* get_domain_trans(isl_set* dom, vector<int> stride_vec);
 isl_map* get_domain_trans_with_reaccess_mask(isl_set* dom, int pos, int fetch_width);
 isl_set* get_domain_trans_sched_domain(isl_set* dom, int pos, int fetch_width);
+isl_set* get_domain_trans_sched_domain(isl_map* dom, int pos, int fetch_width);
 
 isl_map* get_div_trans(isl_map* am, map<int, int> split_dims);
 
@@ -396,6 +406,8 @@ isl_map* get_set_slice(isl_set* dom, int pos, int fetch_width);
 isl_map* get_set_slice(isl_set* dom, int pos, int offset, int fetch_width);
 vector<isl_map*> get_vectorize_interpolate(isl_set* dom, int pos, int fetch_width);
 int get_inner_most_related_dom_dim(isl_map* m, int dim_id, int fetch_width);
+int get_inner_most_related_dom_dim_debug(isl_map* m, int dim_id, int fetch_width);
+int get_inner_most_related_dom_dim(isl_map* m);
 
 
 umap* lexmax(umap* const m0);
@@ -446,6 +458,8 @@ vector<bool> relation_map(isl_map* m);
 int get_involve_dim(isl_map* m, int out_dim);
 vector<int> out_involve_dim(isl_map* m, int in_dim);
 vector<int> in_involve_dim(isl_map* m, int in_dim);
+int get_out_padding_dimension(isl_map* m, int in_dim);
+
 isl_map* peel_schedule_domain_dim(isl_map* m, int dom_dim, int delay);
 int get_peel_schedule_domain_dim(isl_map* m, int dom_dim);
 
@@ -537,6 +551,7 @@ int stride_in_dim(isl_set* const s, size_t dim);
 
 int stride_in_dim(isl_map* const m, size_t dim);
 int stride_in_dim(isl_map* const m, size_t dim, size_t dim_out);
+int common_max_stride(isl_map* const m, int out_dim);
 
 isl_set* range(isl_map* const m);
 

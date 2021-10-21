@@ -6,14 +6,9 @@
 #endif
 
 #include "qexpr.h"
+#include "prog.h"
 
 using namespace std;
-
-struct dynamic_address {
-  std::string buffer;
-  std::string table;
-  std::string table_offset;
-};
 
 template <typename T>
 std::ostream& operator<< (std::ostream& out, const std::pair<T, T>& v) {
@@ -282,7 +277,8 @@ class AccessPattern {
               if (itr.first == "const")
                   continue;
               var_list[itr.second-1] = itr.first;
-              string bd = "0 <= " + itr.first + " <= " + std::to_string(in_range[itr.second-1]-1);
+              string bd = std::to_string(in_start.at(itr.second-1)) + " <= " + itr.first +
+                 " <= " + std::to_string(in_start[itr.second - 1] + in_range[itr.second-1]-1);
               bd_list[itr.second-1] = bd;
           }
           //var_list[0] = "root=0";
@@ -358,7 +354,7 @@ class AccessPattern {
               vector<string> sum_list;
               for (auto itr = row.begin()+1; itr != row.end(); itr ++ ){
                   int item = *itr;
-                  int cnt = itr - row.begin() ;
+                  int cnt = itr - row.begin() -1;
                   if (item == 0 ) {
                       continue;
                   }
@@ -378,25 +374,26 @@ class AccessPattern {
           return its(access_map, domain);
       }
 
-      //vector<int> get_non_inner_most_reaccess_dim() {
-      //  vector<int> acc_map, ret;
-      //  int cnt = 0;
-      //  acc_map.push_back(0);
-      //  for (auto rel: rel_map) {
-      //    if (rel)
-      //      cnt ++;
-      //    acc_map.push_back(cnt);
-      //  }
-      //  int total = acc_map.back();
-      //  for (int i = 1; i < acc_map.size(); i++) {
-      //      if (acc_map[i] - acc_map[i-1] == 0) {
-      //          if (acc_map[i] != total){
-      //              ret.push_back(i-1);
-      //          }
-      //      }
-      //  }
-      //  return ret;
-      //}
+      //Should change into the vectorization dimension
+      vector<int> get_non_inner_most_reaccess_dim() {
+        vector<int> acc_map, ret;
+        int cnt = 0;
+        acc_map.push_back(0);
+        for (auto rel: rel_map) {
+          if (rel)
+            cnt ++;
+          acc_map.push_back(cnt);
+        }
+        int total = acc_map.back();
+        for (int i = 1; i < acc_map.size(); i++) {
+            if (acc_map[i] - acc_map[i-1] == 0) {
+                if (acc_map[i] != total){
+                    ret.push_back(i-1);
+                }
+            }
+        }
+        return ret;
+      }
 
       isl_map* get_access_map_and_decouple_reuse(isl_ctx* ctx, int dim_id, bool rm_const=false) {
           vector<string> var_list(var_dim-1);
@@ -436,15 +433,17 @@ class AccessPattern {
                       nd_expr.push_back(std::to_string(row.front()));
               }
           }
+          ////auto tb_pad = get_reaccess_dim_non_vectorized(dim_id);
           //auto tb_pad = get_non_inner_most_reaccess_dim();
           //cout << "tb pad dim: " << tb_pad << endl;
-          vector<string> nd_expr_new ;
           //for (auto cnt: tb_pad) {
           //    if (cnt == 0)
           //      continue;
           //    auto it = nd_expr.begin();
+          //    //get_expr(stride, id, all the var)
           //    nd_expr.insert(it, get_expr(1, cnt, var_list));
           //}
+          vector<string> nd_expr_new ;
           if (rm_const) {
             for (auto expr: nd_expr) {
               if (!is_number(expr)) {
@@ -919,7 +918,11 @@ struct MemConnSch {
   }
 };
 
+//TODO put this into separate header
 struct UBufferImpl;
+struct EmbarrassingBankingImpl;
+struct CyclicBankingImpl;
+struct dgraph;
 
 class UBuffer {
 
@@ -1099,6 +1102,10 @@ class UBuffer {
 
     bool is_overlap_with_port(string pt, isl_map* acc) {
       return !empty(its(range(access_map.at(pt)), range(to_umap(acc))));
+    }
+
+    bool pts_are_overlapped(string pt1, string pt2) {
+      return is_overlap_with_port(pt1, to_map(access_map.at(pt2)));
     }
 
     map<string, bool> get_connection_map_to_outpt(isl_map* acc) {
@@ -1427,11 +1434,18 @@ class UBuffer {
         int in_dim = coarse_grained_pipeline_loop_level;
         cout << get_in_dim_name(sched, in_dim) << endl;
 
-        //sanity check
+        //TODO: double check this after ddl;
+        //UPDATE on 7.26.2022:
+        //  use multiple coarse grained pipeline ctrl level for different buffer
+        //  TODO: this should be derived from loop level not distribute into ubuf
+        //if we found this is not the cgpl, due to reduction of DNN loop
+        //we take the inner most non-related loop as new cgpl loop
         for (int i = 0; i <= in_dim; i ++) {
           if (rel_map.at(i) == true) {
             cout << "Cannot separate this loop" << endl;
             assert(false);
+            cout << "New cgpl level: " << get_in_dim_name(sched, i-1) << endl;;
+            coarse_grained_pipeline_loop_level = i-1;
           }
         }
       }
@@ -1451,6 +1465,14 @@ class UBuffer {
     isl_union_map* global_outpt_sched() const {
       auto ret = isl_union_map_read_from_str(ctx, "{}");
       for (auto pt: get_out_ports()) {
+        ret = unn(ret, schedule.at(pt));
+      }
+      return ret;
+    }
+
+    isl_union_map* global_inpt_sched() const {
+      auto ret = isl_union_map_read_from_str(ctx, "{}");
+      for (auto pt: get_in_ports()) {
         ret = unn(ret, schedule.at(pt));
       }
       return ret;
@@ -1865,8 +1887,19 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
         return false;
     }
 
+    void remove_bank_dim() {
+        for (auto pt: get_all_ports()) {
+            auto sched = to_map(schedule.at(pt));
+            schedule.at(pt) = to_umap(remove_irrelevant_in_dim(sched));
+            auto acc_m = to_map(access_map.at(pt));
+            auto acc_rem = remove_irrelevant_in_dim(acc_m);
+            access_map.at(pt) = to_umap(acc_rem);
+            domain.at(pt) = ::domain(acc_rem);
+        }
+    }
+
     void linear_address_space(isl_set* rddom, int fetch_width) {
-      auto reduce_map = linear_address_map_lake(rddom, fetch_width);
+      auto reduce_map = linear_address_map_lake_SR(rddom, fetch_width);
       string dname = buf_range_name();
       reduce_map = set_domain_name(reduce_map, dname);
       reduce_map = set_range_name(reduce_map, dname);
@@ -1878,6 +1911,95 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
         it.second = to_umap(linear_acc_map);
       }
     }
+
+    //go through all port and tighten the iteartion domain
+    void tighten_iteration_domain() {
+        for (auto pt: get_all_ports()) {
+            auto dom = domain.at(pt);
+            vector<int> stride_vec;
+            int accumulated_stride = 1;
+            for (int dim = 0; dim < ::num_dims(dom); dim ++) {
+                int stride = stride_in_dim(dom, dim);
+                stride_vec.push_back(stride);
+                accumulated_stride *= stride;
+            }
+
+            if(accumulated_stride != 1) {
+                auto trans = get_domain_trans(dom, stride_vec);
+                cout << "Trans for iteration domain: " << str(trans) << endl;
+                access_map.at(pt) = dot(to_umap(trans), access_map.at(pt));
+                cout << str(access_map.at(pt)) << endl;
+                schedule.at(pt) = dot(to_umap(trans), schedule.at(pt));
+                domain.at(pt) = ::domain(to_map(access_map.at(pt)));
+            }
+        }
+    }
+
+    std::set<int> get_unroll_dimensions() {
+      //Find the unrolling dimension
+      std::set<int> addr_need_tight;
+      for (auto it: access_map) {
+          auto am = to_map(it.second);
+          isl_set* addr_range = range(am);
+          int addr_dim = ::num_dims(addr_range);
+          for (int i = 0; i < addr_dim; i ++) {
+              if (stride_in_dim(addr_range, i) != 1)
+                  addr_need_tight.insert(i);
+          }
+      }
+      cout << "addr need tight: " << addr_need_tight << endl;
+      return addr_need_tight;
+    }
+
+
+    CyclicBankingImpl get_cyclic_banking_implement(UBufferImpl & impl);
+
+    //return a vector<int> size equals to dimension
+    vector<int> get_cyclic_banking_factors() {
+      vector<int> cyclic_banking_factors(num_dims(), 1);
+      std::set<int> addr_need_tight = get_unroll_dimensions();
+      for (int addr_dim: addr_need_tight) {
+        int cms_in = 0, cms_out = 0;
+        for (auto inpt: get_in_ports()) {
+            auto am = to_map(access_map.at(inpt));
+            cout << str(am) << endl;
+            cms_in = std::gcd(cms_in, common_max_stride(am, addr_dim));
+            cout << "cms in: " << cms_out << endl;
+        }
+        for (auto outpt: get_out_ports()) {
+            auto am = to_map(access_map.at(outpt));
+            cout << str(am) << endl;
+            cms_out = std::gcd(cms_out, common_max_stride(am, addr_dim));
+            cout << "cms out: " << cms_out << endl;
+        }
+        cyclic_banking_factors.at(addr_dim) = std::max(cms_in, cms_out);
+      }
+      cout << cyclic_banking_factors << endl;
+      return cyclic_banking_factors;
+    }
+
+    //ubuffer rewrite pass remove common-minimum stride
+void tighten_address_space() {
+    std::set<int> addr_need_tight = get_unroll_dimensions();
+    for(int addr_dim: addr_need_tight) {
+      int cms = 0;
+      for (auto it: access_map) {
+          auto am = to_map(it.second);
+          cms = std::gcd(cms, common_max_stride(am, addr_dim));
+      }
+      cout << "common max stride = " << cms << endl;
+      if (cms > 1) {
+          cout << "Could tighten address! " << endl;
+          for (auto& it: access_map){
+            auto am = to_map(it.second);
+            auto trans= get_set_slice(range(am), addr_dim, cms);
+            it.second = to_umap(dot(am, (trans)));
+            cout <<"\tTighten access map to: " << str(it.second) << endl;
+          }
+      }
+
+    }
+}
 
 
     int lanes_in_bundle(const std::string& bn) {
@@ -2051,6 +2173,13 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
       }
 
       return s;
+    }
+
+    int starting_cycle() const {
+        isl_point* start_pt = (lexminpt(range(global_schedule())));
+        vector<int> pt_vec = parse_pt(start_pt);
+        assert(pt_vec.size() == 1);
+        return pick(pt_vec);
     }
 
     isl_union_map* global_schedule_with_guard() const {
@@ -2402,7 +2531,7 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
         }
         string vars = sep_list(addr_var, "[", "]", ",");
         isl_map* buf_map = isl_map_read_from_str(ctx, string("{" + name + vars + " -> " + new_buf_name + vars + "}").c_str());
-        //cout <<"origin: " << str(origin_map) <<", transform: " << str(buf_map) << endl;
+        cout <<"origin: " << str(origin_map) <<", transform: " << str(buf_map) << endl;
         return to_map(dot(origin_map, buf_map));
     }
 
@@ -2479,18 +2608,30 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
     int capacity(string inpt) {
         int m = 0;
         for (auto outpt: get_out_ports()){
-            auto dd = dependence_distance_max(outpt, inpt);
+          if (pts_are_overlapped(inpt, outpt)){
+            auto dd = dependence_distance_max(inpt, outpt);
+            //auto dd_space = compute_dd(outpt, inpt);
+            int dd_space = compute_capacity_hw_schedule(inpt, outpt);
+
             assert(dd.has_value());
-            int depth = -dd.get_value();
-            std::cout << "Got depth: " << depth << endl;
-            m = std::max(m, depth);
+            int depth = dd.get_value();
+            std::cout << "Got timing depth: " << depth << endl;
+            std::cout << "Write btw: " << (dd_space) << endl;
+            m = std::max(m, dd_space);
+          }
         }
+        //m is the max time dd for this buffer you need to get the capacity
+        //which is the max number of data write to this buffer to get the buffer size
+
         return m;
     }
 
     int capacity() {
-        auto pt = pick(get_in_ports());
-        return capacity(pt);
+        int cap = 0;
+        for(auto pt : get_in_ports()) {
+            cap = max(cap, capacity(pt));
+        }
+        return cap;
     }
 
     umap* pad_dom_buf2op(AccessPattern , umap* , int);
@@ -2509,7 +2650,7 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
 
     //change the input and output and return the agg and tb ubuffer stucture
     pair<std::map<string, UBuffer>, vector<string> >
-        vectorization(int dim_id, int fetch_width, vector<int> iis, bool is_dual_port);
+        vectorization(CodegenOptions& options, int dim_id);
 
     void add_vectorized_pt_to_ubuf(UBuffer& target_buf, vector<umap*> ap_vec, isl_map* merge_sched, string bd_name, int dim_id, int fetch_width, int cnt, bool is_out);
     void add_vectorized_pt_to_ubuf(UBuffer & target_buf, umap* rewrite_buf2op, isl_map* sched, string origin_pt_name, string bd_name, int dim_id, int fetch_width, int cnt, bool is_out);
@@ -2535,6 +2676,7 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
     isl_union_pw_qpolynomial* compute_dd(const std::string& read_port, const std::string& write_port);
 
     isl_union_set* compute_dd_hw_schedule(const string& inpt, const string& outpt);
+    int compute_capacity_hw_schedule(const string& inpt, const string& outpt);
     isl_union_set* compute_dd_hw_schedule_decouple(const string& inpt, const string& outpt);
 
     bank compute_bank_info();
@@ -2555,10 +2697,10 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
 
     //from bank to ubuffer
     map<string, UBuffer> generate_ubuffer(CodegenOptions& opt);
-    UBuffer generate_ubuffer(UBufferImpl& impl, int bank);
 
     //optimization pass to add an coarse grained controller, save iteration counter
-    isl_map* get_coarse_grained_pipeline_schedule(UBuffer& new_ub);
+    isl_map* get_coarse_grained_pipeline_schedule(CodegenOptions& opt, UBuffer& new_ub, string config_mode,
+            bool & decouple_ctrl, bool & substract_instance_latency);
 
     //for chaining and create subbank
     vector<UBuffer> decouple_ubuffer_from_bank_map(isl_map* bank_map);
@@ -2567,7 +2709,9 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
     void generate_smt_stream(CodegenOptions& options);
     void collect_memory_cnt(CodegenOptions& options, mem_access_cnt& mem_access);
 #ifdef COREIR
-    CoreIR::Module* affine_controller(CoreIR::Context* context, isl_set* dom, isl_aff* aff);
+    pair<isl_map*, isl_map*> get_bank_pt_IR(string inpt, isl_set* rddom, schedule_info & info);
+    UBuffer generate_ubuffer(UBufferImpl& impl, schedule_info & info, int bank);
+    //CoreIR::Module* affine_controller(CoreIR::Context* context, isl_set* dom, isl_aff* aff);
 
     //kernel function for generate coreir
     void generate_coreir(CodegenOptions& options, UBufferImpl& impl, CoreIR::ModuleDef* def, schedule_info& info, bool with_ctrl=true);
@@ -2575,12 +2719,16 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
     //helper function for sreg generation
     void generate_sreg_and_wire(CodegenOptions& options, UBufferImpl& impl, CoreIR::ModuleDef* def, map<string, CoreIR::Wireable*> & pt2wire);
     //helper function for wire IO connection
-    void wire_ubuf_IO(CodegenOptions& options, CoreIR::ModuleDef* def, map<string, CoreIR::Wireable*> & pt2wire, CoreIR::Instance* buf, UBufferImpl & impl, int bank_id, bool with_ctrl);
+    void wire_ubuf_IO(CodegenOptions& options, CoreIR::ModuleDef* def, map<string, CoreIR::Wireable*> & pt2wire, CoreIR::Instance* buf, UBufferImpl & impl, schedule_info& info, int bank_id, bool with_ctrl);
     //Helper function for generate cgra mem instance
-    CoreIR::Instance* map_ubuffer_to_cgra(CodegenOptions& options, CoreIR::ModuleDef* def, UBuffer& target_buf);
+    CoreIR::Instance* map_ubuffer_to_cgra(CodegenOptions& options, CoreIR::ModuleDef* def, UBuffer& target_buf, string config_mode);
     //Helper function for generate pond instance
 
+    //optimization pass for accumulation register insert
     CoreIR::Instance* generate_accum_reg_instance(CodegenOptions& options, CoreIR::ModuleDef* def);
+
+    //Helper function to determine the memory level
+    string determine_config_mode(CodegenOptions& options, UBuffer& target_buf);
 
     //Wrappers for generate coreir
     //original memory generation for memory tile with enable and valid
@@ -2589,7 +2737,7 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
     void generate_coreir_without_ctrl(CodegenOptions& options, UBufferImpl& impl, CoreIR::ModuleDef* def, schedule_info& info);
     Json generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> &rewrite_buffer);
     Json generate_ubuf_args_old(CodegenOptions& options, map<string, UBuffer> & rewrite_buffer);
-    Json generate_ubuf_args(CodegenOptions& options, UBuffer& rewrite_buffer);
+    Json generate_ubuf_args(CodegenOptions& options, UBuffer& rewrite_buffer, string mem_name);
 
     void generate_stencil_valid_config(CodegenOptions& options, string bk_name);
     CoreIR::Instance* generate_lake_tile_instance(
@@ -2637,13 +2785,14 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
     int get_vectorized_dim(int fetch_width);
     maybe<int> dependence_distance_singleton(const string& inpt, const string& outpt, bool decouple=false);
     maybe<int> dependence_distance_max(const string& inpt, const string& outpt);
+    maybe<int> dependence_distance_min(const string& inpt, const string& outpt);
 
     //Hack for single pixel input
     std::map<string, UBuffer> vectorization_single_pixel(int fetch_width);
 
     //Post processing for codegen, adding dim id
     void set_dim_id();
-
+    void pad_reaccess_dimension(int fetch_width);
 };
 
 string toBracketList(const vector<vector<int>> & data);
@@ -2796,9 +2945,15 @@ vector<string> buffer_vectorization(string buf_name, int dim_id, int fetch_width
 
 vector<string> buffer_vectorization(vector<string> buf_name_vec, int dim_id, int fetch_width, map<string, UBuffer> & buffers);
 
+
 //helper function for the new vectorization pass
-pair<isl_map*, isl_map*> get_vectorized_write(isl_map* acc_0, isl_map* sched, int fetch_width, int addr_dim);
+pair<isl_map*, isl_map*> get_vectorized_write(isl_map* acc_0, isl_map* sched, map<string, isl_map*> sched_record_map, int fetch_width, int addr_dim, int agg_cnt=0);
 pair<isl_map*, isl_map*> get_vectorized_read(isl_map* acc_0, isl_map* sched, map<string, isl_map*> sched_record_map, int fetch_width, int addr_dim, bool is_dual_port = false);
+pair<isl_map*, isl_map*> get_vectorized_read_simplified(isl_map* acc_0, isl_map* sched, map<string, isl_map*> sched_record_map, int fetch_width, int addr_dim, bool is_dual_port = false);
+//Helper function to get schedule
+isl_map* get_sram2tb_schedule_with_check(isl_map* out_sched, map<string, isl_map*> sched_map, int ahead_step, int vectorize_loop_dim, bool is_dual_port);
+
+
 
 static inline
 std::ostream& operator<<(std::ostream& out, const AccessPattern& acc_pattern) {
@@ -2873,6 +3028,10 @@ void generate_synthesizable_functional_model(CodegenOptions& options, UBuffer& b
 
 CoreIR::Instance* affine_controller_use_lake_tile(CodegenOptions& options, CoreIR::ModuleDef*, CoreIR::Context*, isl_set*, isl_aff*, string);
 CoreIR::Module* affine_controller_use_lake_tile_counter(CodegenOptions& options, CoreIR::Context*, isl_set*, isl_aff*, string);
+
+//helper function for dump metadata for post garnet mapping
+void add_lake_config_to_aff_ctrl_for_garnet_mapping(isl_set* dom, isl_aff* aff, CoreIR::Instance* &aff_ctrl);
+
 #endif
 
 void generate_hls_code(CodegenOptions& options, std::ostream& out, UBuffer& buf);
@@ -2891,8 +3050,6 @@ bool inner_bank_offset_is_legal(isl_map* slot_func,
     umap* op_reads,
     umap* sched);
 
-
-
 vector<string> generate_multilinear_address_components(const std::string& pt, bank& bnk, UBuffer& buf);
 
 maybe<int> dependence_distance_singleton(UBuffer& buf, const string& inpt, const string& outpt, umap* sched);
@@ -2903,6 +3060,7 @@ uset* dependence_distance_set(umap* writes, umap* read, umap* sched);
 map<string, UBuffer> decouple_multi_tile_ubuffer(CodegenOptions& options, map<string, UBuffer> & vec_buf);
 
 maybe<std::set<int> > embarassing_partition(UBuffer& buf);
+maybe<std::set<int> > embarassing_partition(CodegenOptions& options, UBuffer& buf);
 vector<vector<string> > overlapping_large_io_port_groups(UBuffer& buf, const int ports_per_direction);
 vector<int> get_cyclic_partition_factor_from_embarassing_partition(UBuffer & buf, std::set<int> & partition);
 
@@ -3130,8 +3288,8 @@ struct UBufferImpl {
     int capacity = int_upper_bound(card(to_uset(bank_rddom.at(bank_id))));
     auto mem_hierarchy = options.mem_hierarchy;
     cout << "mem hierarchy size: " << mem_hierarchy.size() << endl;
-    if (mem_hierarchy.size() == 1)
-        return pick(mem_hierarchy).first;
+    if (mem_hierarchy.count("regfile") == 0)
+        return "mem";
     vector<pair<string, LakeCollateral> > mem_vec(mem_hierarchy.begin(), mem_hierarchy.end());
     cout << mem_vec.size() << endl;
     sort(mem_vec.begin(), mem_vec.end(),
@@ -3251,9 +3409,83 @@ struct EmbarrassingBankingImpl: public UBufferImpl {
 
 };
 
+struct CyclicBankingImpl:  public UBufferImpl {
+    vector<int> cyclic_banking_factor;
+    CyclicBankingImpl(UBufferImpl const & impl): UBufferImpl(impl) {}
+    CyclicBankingImpl(UBufferImpl const & impl, vector<int> const & cb_factor):
+        UBufferImpl(impl), cyclic_banking_factor(cb_factor) {}
+
+    int get_bank_num() const {
+    int bank_num = 1;
+    for (auto it: cyclic_banking_factor) {
+      bank_num *= it;
+    }
+    return bank_num;
+  }
+
+  isl_map* get_bank_map(UBuffer& buf) const {
+  //iteration domain to bank id
+    vector<string> dvs;
+    vector<string> addrs;
+    int bank_stride = 1;
+    for (int i = 0; i < cyclic_banking_factor.size(); i++) {
+      assert(cyclic_banking_factor.at(i) > 0);
+      dvs.push_back("a_" + str(i));
+      addrs.push_back("(a_" + str(i) + " % " +
+              str(cyclic_banking_factor.at(i)) + ")*" + str(bank_stride) );
+      bank_stride *= cyclic_banking_factor.at(i);
+    }
+
+    string bank_func =
+      curlies(buf.buf_range_name() + bracket_list(dvs) + " -> Bank" + sep_list(addrs, "[", "]", "+"));
+
+    //bank map: from address to the bank ID
+    cout << "bank func = " << bank_func << endl;
+    auto bank_map = isl_map_read_from_str(buf.ctx, bank_func.c_str());
+    return bank_map;
+  }
+
+  void print_info(std::ostream& out) const {
+
+    UBufferImpl::print_info(out);
+    out << "==========Embarrassing Banking ============" << endl;
+    out << "cyclic_banking_factor: " << cyclic_banking_factor << endl;
+  }
+};
+
 std::ostream& operator<<(std::ostream& out, dgraph& dg);
 std::ostream& operator<<(std::ostream& out, UBufferImpl& impl);
 
 bool all_schedules_defined(UBuffer& buf);
 
 bool is_register(UBuffer& buf);
+
+//This is an optimization pass
+//take both access map and schedule and merge the dimension
+pair<isl_map*, isl_map*> merge_dom_dim(isl_map* schedule, isl_map* acc_map);
+
+//Shift register optimizations
+vector<pair<string, pair<string, int> >> determine_output_shift_reg_map(
+    prog& prg,
+    UBuffer& buf,
+    schedule_info& hwinfo);
+
+map<string, pair<string, int> > determine_shift_reg_map(
+        prog& prg,
+    UBuffer& buf,
+    schedule_info& hwinfo);
+
+dgraph build_in_to_out_shift_register_graph(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_info& hwinfo);
+dgraph build_shift_registers(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_info& hwinfo);
+UBufferImpl port_group2bank(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_info& hwinfo);
+
+isl_map* build_buffer_impl_embarrassing_banking(UBuffer& buf, schedule_info& hwinfo, EmbarrassingBankingImpl& impl);
+
+void generate_banks_garnet(CodegenOptions& options, UBuffer& buf, UBufferImpl& impl, schedule_info& hw_info);
+
+UBufferImpl generate_optimized_memory_implementation(
+        CodegenOptions& options, UBuffer & buf, prog & prg, schedule_info& hwinfo);
+
+vector<int> analyze_memory_demands(prog& prg, UBuffer& buf, schedule_info& hwinfo);
+
+int buffer_capacity(UBuffer& buf);

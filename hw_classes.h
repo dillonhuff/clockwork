@@ -11,7 +11,7 @@
 // can make Vivado HLS take a *very* long
 // time even for tiny designs. Avoid it
 // unless absolutely necessary.
-#define AP_INT_MAX_W 32768
+//#define AP_INT_MAX_W 16384
 #include "ap_int.h"
 
 #include "hls_stream.h"
@@ -227,7 +227,7 @@ class hw_uint {
     int to_int() const {
       return val;
     }
-    
+
     operator int() const { return to_int(); }
 
 #else

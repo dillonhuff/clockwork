@@ -288,6 +288,7 @@ CoreIR::Namespace* CoreIRLoadLibrary_cgralib(Context* c) {
   // cgralib.Mem_amber
   Params cgralibmemamberparams = Params({
         {"width", c->Int()}, // for m3 16
+        {"ctrl_width", c->Int()}, // for m3 16
         {"num_inputs", c->Int()}, // the number of ports you *actually use in a given config*
         {"num_outputs", c->Int()}, // ''
         //{"config", c->Json()},
@@ -308,6 +309,7 @@ CoreIR::Namespace* CoreIRLoadLibrary_cgralib(Context* c) {
           cgralibmemamberparams,
           [](Context* c, Values genargs){
             uint width = genargs.at("width")->get<int>();
+            uint ctrl_width = genargs.at("ctrl_width")->get<int>();
             uint num_input = genargs.at("num_inputs")->get<int>();
             uint num_output = genargs.at("num_outputs")->get<int>();
             //Json config = genargs.at("config")->get<Json>();
@@ -348,7 +350,7 @@ CoreIR::Namespace* CoreIRLoadLibrary_cgralib(Context* c) {
 
                 if (has_external_addrgen) {
                   recordparams.push_back({"write_addr_" + std::to_string(i),
-                      c->BitIn()->Arr(16)});
+                      c->BitIn()->Arr(ctrl_width)});
                   recordparams.push_back({"wen_" + std::to_string(i),
                       c->BitIn()});
 
@@ -365,7 +367,7 @@ CoreIR::Namespace* CoreIRLoadLibrary_cgralib(Context* c) {
 
                 if (has_external_addrgen) {
                   recordparams.push_back({"read_addr_" + std::to_string(i),
-                      c->BitIn()->Arr(16)});
+                      c->BitIn()->Arr(ctrl_width)});
                   recordparams.push_back({"ren_" + std::to_string(i),
                       c->BitIn()});
                 }
@@ -399,6 +401,7 @@ CoreIR::Namespace* CoreIRLoadLibrary_cgralib(Context* c) {
 
   auto cgralib_mem_amber_gen = cgralib->newGeneratorDecl("Mem_amber", cgralib->getTypeGen("cgralib_mem_amber_type"), cgralibmemamberparams);
   cgralib_mem_amber_gen->addDefaultGenArgs({{"num_inputs", Const::make(c, 1)}});
+  cgralib_mem_amber_gen->addDefaultGenArgs({{"ctrl_width", Const::make(c, 16)}});
   cgralib_mem_amber_gen->addDefaultGenArgs({{"is_rom", Const::make(c, false)}});
   cgralib_mem_amber_gen->addDefaultGenArgs({{"ID", Const::make(c, "")}});
   cgralib_mem_amber_gen->addDefaultGenArgs({{"num_outputs", Const::make(c, 1)}});
@@ -429,6 +432,7 @@ CoreIR::Namespace* CoreIRLoadLibrary_cgralib(Context* c) {
   // cgralib.Mem
   Params cgralibmemparams = Params({
         {"width", c->Int()},
+        {"ctrl_width", c->Int()},
         {"num_inputs", c->Int()},
         {"num_outputs", c->Int()},
         //{"config", c->Json()},
@@ -449,6 +453,7 @@ CoreIR::Namespace* CoreIRLoadLibrary_cgralib(Context* c) {
           cgralibmemparams,
           [](Context* c, Values genargs){
             uint width = genargs.at("width")->get<int>();
+            uint ctrl_width = genargs.at("ctrl_width")->get<int>();
             uint num_input = genargs.at("num_inputs")->get<int>();
             uint num_output = genargs.at("num_outputs")->get<int>();
             //Json config = genargs.at("config")->get<Json>();
@@ -469,7 +474,7 @@ CoreIR::Namespace* CoreIRLoadLibrary_cgralib(Context* c) {
 
                 if (has_external_addrgen) {
                   recordparams.push_back({"write_addr_" + std::to_string(i),
-                      c->BitIn()->Arr(16)});
+                      c->BitIn()->Arr(ctrl_width)});
                   recordparams.push_back({"wen_" + std::to_string(i),
                       c->BitIn()});
                 }
@@ -487,7 +492,7 @@ CoreIR::Namespace* CoreIRLoadLibrary_cgralib(Context* c) {
                 }
                 if (has_external_addrgen) {
                   recordparams.push_back({"read_addr_" + std::to_string(i),
-                      c->BitIn()->Arr(16)});
+                      c->BitIn()->Arr(ctrl_width)});
                   recordparams.push_back({"ren_" + std::to_string(i),
                       c->BitIn()});
                 }
@@ -529,6 +534,7 @@ CoreIR::Namespace* CoreIRLoadLibrary_cgralib(Context* c) {
 
   auto cgralib_mem_gen = cgralib->newGeneratorDecl("Mem", cgralib->getTypeGen("cgralib_mem_type"), cgralibmemparams);
   cgralib_mem_gen->addDefaultGenArgs({{"num_inputs", Const::make(c, 1)}});
+  cgralib_mem_gen->addDefaultGenArgs({{"ctrl_width", Const::make(c, 16)}});
   cgralib_mem_gen->addDefaultGenArgs({{"ID", Const::make(c, "")}});
   cgralib_mem_gen->addDefaultGenArgs({{"num_outputs", Const::make(c, 1)}});
   cgralib_mem_gen->addDefaultGenArgs({{"has_valid", Const::make(c, false)}});

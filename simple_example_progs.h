@@ -1,5 +1,5 @@
 #pragma once
 
-#include "prog.h"
+#include "codegen.h"
 
 void generate_simple_example_progs();
