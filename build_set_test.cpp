@@ -17737,13 +17737,14 @@ void tighten_coarse_grained_iis(schedule_info& sched, prog& prg) {
       auto lower_ops = loop->descendants();
       bool outside_cgpl = false;
       for(op* lp: cgpl_lps){
-        if(elem(lp, lower_ops)) {
+        if(elem(lp, lower_ops) && (lp!=loop)) {
           outside_cgpl = true;
           break;
         }
       }
       if (!outside_cgpl)
           continue;
+      cout << "\tOP: " << loop->name << "is a loop outside cgpl " << endl;
       int ii = sched.II(loop);
       if (ii != 1) {
         int L = sched.doublebuffer_update_delay(loop);

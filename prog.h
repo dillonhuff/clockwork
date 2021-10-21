@@ -1246,13 +1246,13 @@ struct prog {
     root->populate_iter_vars(ivars, act);
 
     //Check what's all the domain
-    for (auto it: idoms) {
-        cout << "OP name: " << it.first->name << endl;
-        cout << "dom bd: " << it.second << endl << endl;
-    }
+    //for (auto it: idoms) {
+    //    cout << "OP name: " << it.first->name << endl;
+    //    cout << "dom bd: " << it.second << endl << endl;
+    //}
 
     for (auto op : vecs) {
-      cout << op.first->name << endl;
+      //cout << op.first->name << endl;
       auto iters = map_find(op.first, ivars);
       auto vars = sep_list(iters, "[", "]", ", ");
 
@@ -1371,7 +1371,7 @@ struct prog {
     for (auto op : ops) {
       auto vars = map_find(op, ivars);
       string ivar_str = sep_list(vars, "[", "]", ", ");
-      cout << "Find op: " << op->name << endl;
+      //cout << "Find op: " << op->name << endl;
       auto dom = map_find(op, doms);
 
       umap* pmap = isl_union_map_read_from_str(ctx, "{}");
