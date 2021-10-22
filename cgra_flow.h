@@ -54,26 +54,11 @@ void compile_app_for_garnet_single_port_mem(prog& prg, string dir, bool gen_conf
 
     //TODO: make this argument explicit to user
     bool gen_smt = false;
-    bool use_dse_compute = false;
+    bool use_dse_compute = true;
 
 
 
     compile_for_garnet_single_port_mem(prg, dir,
-            gen_smt, gen_config_only, multi_level_memory, use_dse_compute);
-
-}
-
-void compile_app_for_garnet_single_port_mem(prog& prg, string dir, bool gen_config_only) {
-    cout << "Running CGRA flow on " << prg.name << endl;
-
-    //TODO: make this argument explicit to user
-    bool multi_level_memory = false;
-    bool gen_smt = false;
-    bool use_dse_compute = false;
-
-
-
-    compile_for_garnet_single_port_mem(prg, dir,
-            gen_smt, gen_config_only, multi_level_memory, use_dse_compute);
+            gen_smt, gen_config_only, multi_level_memory, use_dse_compute, true, prg.name + "_compute_mapped.json", false);
 
 }

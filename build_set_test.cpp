@@ -18928,14 +18928,13 @@ schedule_info garnet_schedule_info(CodegenOptions& options, prog& prg, bool use_
 
   if (use_dse_compute) {
     json kernel_latencies;
-    std::ifstream kernel_latencies_file("dse_kernel_latencies/" + prg.name + "_compute_kernel_latencies.json", std::ifstream::binary);
+    std::ifstream kernel_latencies_file(prg.name + "_compute_kernel_latencies.json", std::ifstream::binary);
     kernel_latencies_file >> kernel_latencies;
 
     for (auto op : prg.all_ops()) {
       if (op->func != "") {
         sched.resource_requirements[op] = op->func;
       }
-
       cout << op->func << endl;
       if (kernel_latencies[op->func] == NULL || kernel_latencies[op->func] == "null") {
         sched.compute_unit_latencies[op->func] = 0;
@@ -18943,13 +18942,6 @@ schedule_info garnet_schedule_info(CodegenOptions& options, prog& prg, bool use_
         sched.compute_unit_latencies[op->func] = kernel_latencies[op->func];
         cout << "KERNEL LATENCY " <<  op->func << " : " << kernel_latencies[op->func] << endl;
       }
-
-      // if (kernel_latencies[op->func] != NULL) {
-      // } else {
-      //   cout << "NO KERNEL LATENCY " <<  op->func << " : NULL" << endl;
-      //   sched.compute_unit_latencies[op->func] = 0;
-      // }
-// sched.compute_unit_latencies[op->func] = 0;
 
       for (auto b : op->buffers_referenced()) {
         if (!prg.is_boundary(b)) {
@@ -18961,7 +18953,7 @@ schedule_info garnet_schedule_info(CodegenOptions& options, prog& prg, bool use_
         }
       }
     }
-
+    cout << sched.compute_unit_latencies << endl;
   } else {
 
   for (auto op : prg.all_ops()) {
@@ -19441,7 +19433,6 @@ void compile_for_garnet_single_port_mem(prog& prg,
 
   //auto iis = garnet_fuse_ii_level(prg);
   //auto buffers_opt = build_buffers(prg, clockwork_schedule(prg));
-
   CodegenOptions options = garnet_codegen_single_port_with_addrgen_options(prg, dir);
   options.debug_options.traceWave = true;
   options.add_memory_hierarchy("mem");
