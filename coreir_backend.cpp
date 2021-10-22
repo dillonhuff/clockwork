@@ -1,6 +1,8 @@
 #include "coreir_backend.h"
 #include "lake_target.h"
 
+#include <set>
+
 #ifdef COREIR
 #include "cwlib.h"
 #include "cgralib.h"
@@ -1030,33 +1032,6 @@ void load_commonlib_ext(Context* c) {
     def->connect("self.out","abs.data.out");
 
   });
-  Generator* mult_middle = c->getGenerator("commonlib.mult_middle");
-  mult_middle->setGeneratorDefFromFun([](Context* c, Values args, ModuleDef* def) {
-      uint width = args.at("width")->get<int>();
-      ASSERT(width==DATAPATH_WIDTH,"NYI non 16");
-
-      Values PEArgs({
-          {"alu_op",Const::make(c,"mult_1")},
-          {"signed",Const::make(c,false)}
-          });
-      def->addInstance("mult_1","cgralib.PE",{{"op_kind",Const::make(c,"alu")}},PEArgs);
-      def->connect("self.in0","mult_1.data.in.0");
-      def->connect("self.in1","mult_1.data.in.1");
-      def->connect("self.out","mult_1.data.out");
-  });
-  Generator* mult_high = c->getGenerator("commonlib.mult_high");
-  mult_high->setGeneratorDefFromFun([](Context* c, Values args, ModuleDef* def) {
-      uint width = args.at("width")->get<int>();
-      ASSERT(width==DATAPATH_WIDTH,"NYI non 16");
-      Values PEArgs({
-          {"alu_op",Const::make(c,"mult_2")},
-          {"signed",Const::make(c,false)}
-          });
-      def->addInstance("mult_2","cgralib.PE",{{"op_kind",Const::make(c,"alu")}},PEArgs);
-      def->connect("self.in0","mult_2.data.in.0");
-      def->connect("self.in1","mult_2.data.in.1");
-      def->connect("self.out","mult_2.data.out");
-  });
 
 }
 
@@ -1542,7 +1517,7 @@ void generate_coreir_compute_unit(CodegenOptions& options, bool found_compute,
       cout << "Found compute file for " << prg.name << endl;
       Instance* halide_cu = nullptr;
       if (hwinfo.use_dse_compute) {
-        halide_cu = def->addInstance("inner_compute", ns->getModule(op->func + "_mapped"));
+        halide_cu = def->addInstance("inner_compute", ns->getModule(op->func));
       } else {
         if (options.rtl_options.use_pipelined_compute_units) {
           halide_cu = def->addInstance("inner_compute", ns->getModule(op->func + "_pipelined"));
@@ -1612,7 +1587,7 @@ void generate_coreir_compute_unit(CodegenOptions& options, bool found_compute,
         }
         assert(found);
       }
-
+      inlineInstance(halide_cu);
     } else {
       // Generate dummy compute logic
       cout << "generating dummy compute" << endl;
@@ -2277,7 +2252,8 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
     prog& prg,
     umap* schedmap,
     CoreIR::Context* context,
-    schedule_info& hwinfo) {
+    schedule_info& hwinfo,
+    string dse_compute_filename) {
 
   Module* ub = coreir_moduledef(options, buffers, prg, schedmap, context, hwinfo);
 
@@ -2288,8 +2264,7 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
   string compute_file = "./" + prg.name + "_compute.json";
 #endif
   if (hwinfo.use_dse_compute) {
-    compute_file = "./dse_compute/" + prg.name + "_mapped.json";
-    //compute_file = "./dse_apps/" + prg.name + ".json";
+    compute_file = dse_compute_filename;
   }
   ifstream cfile(compute_file);
   if (!cfile.good()) {
@@ -2880,7 +2855,6 @@ void addIOs(Context* c, Module* top) {
   }
   mdef->disconnect(mdef->getInterface());
   inlineInstance(pt);
-  assert(false);
 }
 
 
@@ -2892,20 +2866,7 @@ class CustomFlatten : public CoreIR::InstanceGraphPass {
     bool changed = false;
     // int i = 0;
     for (auto inst : node.getInstanceList()) {
-       cout << "inlining " << inst->toString() << endl;
-       Module* m = inst->getModuleRef();
-       if (m->isGenerated()) {
-         auto g = m->getGenerator();
-         if (g->getName() == "raw_dual_port_sram_tile" ||
-             g->getName() == "raw_quad_port_memtile" ||
-             g->getName() == "rom2") {
-           continue;
-         }
-       } else {
-         if (m->getName() == "WrappedPE_wrapped") {
-           continue;
-         }
-       }
+       
       changed |= inlineInstance(inst);
     }
     return changed;
@@ -3483,6 +3444,236 @@ void MapperPasses::RegfileSubstitute::setVisitorInfo() {
 }
 
 
+
+namespace MapperPasses {
+class MemSubstituteMetaMapper: public CoreIR::InstanceVisitorPass {
+  public :
+    static std::string ID;
+    MemSubstituteMetaMapper() : InstanceVisitorPass(ID,"replace cgralib.Mem_amber to new coreir header mem") {}
+    void setVisitorInfo() override;
+};
+
+}
+
+
+bool MemtileReplaceMetaMapper(Instance* cnst) {
+  cout << tab(2) << "new memory syntax transformation!" << endl;
+  cout << tab(2) << toString(cnst) << endl;
+
+  Context* c = cnst->getContext();
+  auto allSels = cnst->getSelects();
+  for (auto itr: allSels) {
+    cout << tab(2) << "Sel: " << itr.first << endl;
+  }
+  ModuleDef* def = cnst->getContainer();
+  auto genargs = cnst->getModuleRef()->getGenArgs();
+
+  string ID = genargs.at("ID")->get<string>();
+  bool has_external_addrgen = genargs.at("has_external_addrgen")->get<bool>();
+  bool has_flush = genargs.at("has_flush")->get<bool>();
+  bool has_read_valid = genargs.at("has_read_valid")->get<bool>();
+  bool has_reset = genargs.at("has_reset")->get<bool>();
+  bool has_stencil_valid = genargs.at("has_stencil_valid")->get<bool>();
+  bool has_valid = genargs.at("has_valid")->get<bool>();
+  bool is_rom = genargs.at("is_rom")->get<bool>();
+  bool use_prebuilt_mem = genargs.at("use_prebuilt_mem")->get<bool>();
+  int num_inputs = genargs.at("num_inputs")->get<int>();
+  int num_outputs = genargs.at("num_outputs")->get<int>();
+  int width = genargs.at("width")->get<int>();
+
+  auto config_file = cnst->getMetaData();
+
+  config_file["ID"] = ID;
+  config_file["has_external_addrgen"] = has_external_addrgen;
+  config_file["has_flush"] = has_flush;
+  config_file["has_read_valid"] = has_read_valid;
+  config_file["has_reset"] = has_reset;
+  config_file["has_stencil_valid"] = has_stencil_valid;
+  config_file["has_valid"] = has_valid;
+  config_file["is_rom"] = is_rom;
+  config_file["use_prebuilt_mem"] = use_prebuilt_mem;
+  config_file["num_inputs"] = num_inputs;
+  config_file["num_outputs"] = num_outputs;
+  config_file["width"] = width;
+
+
+
+  std::set<string> routable_ports = {"chain_data_in_0","chain_data_in_1", "flush", "ren_in", "wen_in", "addr_in_0", "addr_in_1", "data_in_0", "data_in_1"};
+
+  std::vector<string> routable_outputs = {"data_out_1", "empty", "stencil_valid", "full", "data_out_0", "sram_ready_out", "valid_out", "config_data_out_1", "config_data_out_0"};
+
+  vector<Module*> loaded;
+  if (!loadHeader(c, "memtile_header.json", loaded)) {c->die();}
+
+  Instance* buf = def->addInstance(cnst->getInstname()+"_garnet", (Module*)loaded[0]);
+
+  buf->setMetaData(config_file);
+
+  Module* cnst_mod_ref = cnst->getModuleRef();
+  auto pt = addPassthrough(cnst, cnst->getInstname()+"_tmp");
+
+  vector<string> cnst_ports = cnst_mod_ref->getType()->getFields();
+
+  for (auto cnst_port : cnst_ports) {
+    if (routable_ports.count(cnst_port) > 0) {
+      cout << "Connecting cnst_port: " << cnst_port << endl;
+      def->connect(pt->sel("in")->sel(cnst_port), buf->sel(cnst_port));
+    } else {
+      auto index = find(routable_outputs.begin(), routable_outputs.end(), cnst_port);
+      if (index != routable_outputs.end()){
+        int port_index = index - routable_outputs.begin();
+        cout << "Connecting output cnst_port: " << cnst_port << endl;
+        def->connect(buf->sel("O" + std::to_string(port_index)), pt->sel("in")->sel(cnst_port));
+      } else {
+        cout << "Not Connecting cnst_port: " << cnst_port << endl;
+      }
+    }
+  }
+  
+  def->removeInstance(cnst);
+  inlineInstance(pt);
+  inlineInstance(buf);
+  return true;
+}
+
+
+std::string MapperPasses::MemSubstituteMetaMapper::ID = "memsubstitutemetamapper";
+void MapperPasses::MemSubstituteMetaMapper::setVisitorInfo() {
+  Context* c = this->getContext();
+  if (c->hasGenerator("cgralib.Mem_amber")) {
+    addVisitorFunction(c->getGenerator("cgralib.Mem_amber"), MemtileReplaceMetaMapper);
+  }
+
+}
+
+
+
+namespace MapperPasses {
+class RomSubstituteMetaMapper: public CoreIR::InstanceVisitorPass {
+  public :
+    static std::string ID;
+    RomSubstituteMetaMapper() : InstanceVisitorPass(ID,"replace memory.rom2 to new coreir header mem") {}
+    void setVisitorInfo() override;
+};
+
+}
+
+
+bool RomReplaceMetaMapper(Instance* cnst) {
+  cout << tab(2) << "new rom syntax transformation!" << endl;
+  cout << tab(2) << toString(cnst) << endl;
+
+  Context* c = cnst->getContext();
+  auto allSels = cnst->getSelects();
+  for (auto itr: allSels) {
+    cout << tab(2) << "Sel: " << itr.first << endl;
+  }
+  ModuleDef* def = cnst->getContainer();
+  auto genargs = cnst->getModuleRef()->getGenArgs();
+
+  int depth = genargs.at("depth")->get<int>();
+  int width = genargs.at("width")->get<int>();
+
+  json config_file;
+
+  config_file["mode"] = "sram";
+  config_file["is_rom"] = true;
+  config_file["width"] = width;
+  config_file["depth"] = depth;
+  config_file["init"] = cnst->getModArgs().at("init")->get<Json>();
+
+  vector<Module*> loaded;
+  if (!loadHeader(c, "memtile_header.json", loaded)) {c->die();}
+
+  Instance* buf = def->addInstance(cnst->getInstname()+"_garnet", (Module*)loaded[0]);
+
+  buf->setMetaData(config_file); 
+
+  Module* cnst_mod_ref = cnst->getModuleRef();
+  auto pt = addPassthrough(cnst, cnst->getInstname()+"_tmp");
+
+  // vector<string> cnst_ports = cnst_mod_ref->getType()->getFields();
+
+  cout << "Wiring raddr" << endl;
+  def->connect(pt->sel("in")->sel("raddr"), buf->sel("addr_in_0"));
+
+  cout << "Wiring ren" << endl;
+  def->connect(pt->sel("in")->sel("ren"), buf->sel("ren_in_0"));
+
+  cout << "Wiring rdata" << endl;
+  def->connect(buf->sel("O4"), pt->sel("in")->sel("rdata"));
+
+  def->removeInstance(cnst);
+  inlineInstance(pt);
+  inlineInstance(buf);
+  return true;
+}
+
+
+std::string MapperPasses::RomSubstituteMetaMapper::ID = "romsubstitutemetamapper";
+void MapperPasses::RomSubstituteMetaMapper::setVisitorInfo() {
+  Context* c = this->getContext();
+  if (c->hasGenerator("memory.rom2")) {
+    addVisitorFunction(c->getGenerator("memory.rom2"), RomReplaceMetaMapper);
+  }
+
+}
+
+
+namespace MapperPasses {
+class PeSubstituteMetaMapper: public CoreIR::InstanceVisitorPass {
+  public :
+    static std::string ID;
+    PeSubstituteMetaMapper() : InstanceVisitorPass(ID,"replace PE to new coreir header pe") {}
+    void setVisitorInfo() override;
+};
+
+}
+
+
+bool PeReplaceMetaMapper(Instance* cnst) {
+  cout << tab(2) << "new pe syntax transformation!" << endl;
+  cout << tab(2) << toString(cnst) << endl;
+
+  Context* c = cnst->getContext();
+  auto allSels = cnst->getSelects();
+  for (auto itr: allSels) {
+    cout << tab(2) << "Sel: " << itr.first << endl;
+  }
+  ModuleDef* def = cnst->getContainer();
+
+  // c->getNamespace("global")->eraseModule("PE");
+  // c->getNamespace("global")->eraseModule("PE_wrapped");
+
+  vector<Module*> loaded;
+  if (!loadHeader(c, "petile_header.json", loaded)) {c->die();}
+
+  cout << "Loaded header" << endl;
+
+  Instance* buf = def->addInstance(cnst->getInstname()+"_garnet", (Module*)loaded[0]);
+
+
+  Module* cnst_mod_ref = cnst->getModuleRef();
+  auto pt = addPassthrough(cnst, cnst->getInstname()+"_tmp");
+  def->connect(pt->sel("in"), buf);
+  
+  def->removeInstance(cnst);
+  inlineInstance(pt);
+  inlineInstance(buf);
+  return true;
+}
+
+
+std::string MapperPasses::PeSubstituteMetaMapper::ID = "pesubstitutemetamapper";
+void MapperPasses::PeSubstituteMetaMapper::setVisitorInfo() {
+  Context* c = this->getContext();
+  if (c->hasModule("global.WrappedPE")) {
+    addVisitorFunction(c->getModule("global.WrappedPE"), PeReplaceMetaMapper);
+  }
+
+}
+
+
 namespace MapperPasses {
 class ConstDuplication : public CoreIR::InstanceVisitorPass {
   public :
@@ -3538,6 +3729,47 @@ void disconnect_input_enable(Context* c, Module* top) {
     }
   }
 }
+
+
+// Pass to map Tahoe memory tile intended for metamapper
+void map_memory(Module* top) {
+  auto c = top->getContext();
+
+  // top->print();
+  // LoadDefinition_cgralib(c);
+  // Maps ROMS to memories
+  // load_mem_ext(c);
+  // rom_to_mem(c);
+
+  // c->runPasses({"rungenerators"});
+  // A new pass to remove input enable signal affine controller
+  disconnect_input_enable(c, top);
+
+  // c->runPasses({"cullgraph"});
+  // c->runPasses({"removewires"});
+  // addIOs(c,top);
+  // c->runPasses({"cullgraph"});
+  // if (garnet_syntax_trans) {
+  c->addPass(new MapperPasses::RomSubstituteMetaMapper);
+  c->runPasses({"romsubstitutemetamapper"});
+  c->addPass(new MapperPasses::MemSubstituteMetaMapper);
+  c->runPasses({"memsubstitutemetamapper"});
+  // c->addPass(new CustomFlatten);
+  // c->runPasses({"customflatten"});
+  // c->addPass(new MapperPasses::PeSubstituteMetaMapper);
+  // c->runPasses({"pesubstitutemetamapper"});
+  // }
+  // c->addPass(new MapperPasses::ConstDuplication);
+  // c->runPasses({"constduplication"});
+  // c->addPass(new MapperPasses::MemConst);
+  // c->runPasses({"memconst"});
+
+  // c->runPasses({"cullgraph"});
+  // c->getPassManager()->printLog();
+  // c->runPasses({"deletedeadinstances"});
+  // c->runPasses({"removewires"});
+}
+
 
 void garnet_map_module(Module* top, bool garnet_syntax_trans = false) {
   auto c = top->getContext();
@@ -3810,7 +4042,7 @@ void generate_coreir(CodegenOptions& options,
 
   CoreIR::Module* prg_mod;
   if (options.rtl_options.use_prebuilt_memory) {
-    prg_mod = generate_coreir_without_ctrl(options, buffers, prg, schedmap, context, hwinfo);
+    prg_mod = generate_coreir_without_ctrl(options, buffers, prg, schedmap, context, hwinfo, "");
   } else {
     prg_mod = generate_coreir(options, buffers, prg, schedmap, context, hwinfo);
   }
@@ -3851,6 +4083,62 @@ void generate_coreir(CodegenOptions& options,
   prg_mod->print();
   //assert(false);
 
+  deleteContext(context);
+}
+
+void generate_coreir_without_ctrl(CodegenOptions& options,
+    map<string, UBuffer>& buffers,
+    prog& prg,
+    umap* schedmap,
+    schedule_info& hwinfo, 
+    string dse_compute_filename) {
+
+
+  CoreIR::Context* context = CoreIR::newContext();
+  CoreIRLoadLibrary_commonlib(context);
+  CoreIRLoadLibrary_cgralib(context);
+  CoreIRLoadLibrary_cwlib(context);
+  add_delay_tile_generator(context);
+  add_raw_quad_port_memtile_generator(context);
+  add_tahoe_memory_generator(context);
+  ram_module(context, DATAPATH_WIDTH, 2048);
+
+  auto c = context;
+
+  CoreIR::Module* prg_mod;
+ 
+  prg_mod = generate_coreir_without_ctrl(options, buffers, prg, schedmap, context, hwinfo, dse_compute_filename);
+
+  
+  auto ns = context->getNamespace("global");
+  if(!saveToFile(ns, options.dir + prg.name + ".json", prg_mod)) {
+    cout << "Could not save ubuffer coreir" << endl;
+    context->die();
+  }
+  
+  map_memory(prg_mod);
+
+  for (auto op : prg.all_ops()) {
+    cout << "Inlining " << op->name << endl;
+    CoreIR::Instance* kernel = prg_mod->getDef()->getInstances().at(op->name);
+    inlineInstance(kernel);
+  }
+
+  c->runPasses({"deletedeadinstances"});
+  c->runPasses({"removewires"});
+  c->runPasses({"coreirjson"},{"global"});
+
+  context->runPasses({"rungenerators", "removewires", "cullgraph"});
+  c->runPasses({"flatten"});
+  c->runPasses({"flattentypes"});
+
+
+  auto global = context->getNamespace("global");
+  if(!saveToFile(global,  options.dir + prg.name+ "_to_metamapper.json", prg_mod)) {
+    cout << "Could not save ubuffer coreir" << endl;
+    context->die();
+  }
+  
   deleteContext(context);
 }
 
@@ -4309,9 +4597,8 @@ CoreIR::Module* affine_controller_primitive(CodegenOptions& options, CoreIR::Con
     def->connect(cycle_time_reg->sel("reset"), def->sel("self.rst_n"));
     def->connect(cycle_time_reg->sel("en"), tinc->sel("out"));
   } else {
-    cycle_time_reg = def->addInstance("cycle_time", "mantle.reg",
-        {{"width", CoreIR::Const::make(context, width)},
-        {"has_en", CoreIR::Const::make(context, false)}});
+    cycle_time_reg = def->addInstance("cycle_time", "coreir.reg",
+        {{"width", CoreIR::Const::make(context, width)}});
 
     auto inc_time = def->addInstance("inc_time", "coreir.add", {{"width", CoreIR::Const::make(c, width)}});
     def->connect(inc_time->sel("in0"), cycle_time_reg->sel("out"));
@@ -5086,6 +5373,10 @@ void pipeline_compute_units(prog& prg, schedule_info& hwinfo) {
 
   bool found_compute = true;
   string compute_file = "./coreir_compute/" + prg.name + "_compute.json";
+  if (hwinfo.use_dse_compute) {
+    compute_file = hwinfo.dse_compute_filename;
+    cout << "Compute file dse found" << endl;
+  }
   ifstream cfile(compute_file);
   if (!cfile.good()) {
     cout << "No compute unit file: " << compute_file << endl;
