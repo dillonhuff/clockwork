@@ -12934,7 +12934,8 @@ int run_verilator_on(const std::string& top_module,
       cmd("echo $CLKWRK_PATH");
       verilator_build = cmd("verilator -Wall --cc " + sep_list(verilog_files, "", "", " ") + " --exe --build --trace " + tb_file + " -CFLAGS -I$CLKWRK_PATH --top-module " + top_module + " -Wno-UNUSED -Wno-PINMISSING -Wno-DECLFILENAME -Wno-WIDTH -Wno-UNDRIVEN -Wno-CASEINCOMPLETE -Wno-MODDUP -Wno-UNOPTFLAT -Wno-CMPCONST");
 #else
-      verilator_build = cmd("verilator -Wall --cc " + sep_list(verilog_files, "", "", " ") + " --exe --build --trace " + tb_file + " --top-module " + top_module + " -Wno-UNUSED -Wno-PINMISSING -Wno-DECLFILENAME -Wno-WIDTH -Wno-UNDRIVEN -Wno-CASEINCOMPLETE -Wno-MODDUP -Wno-UNOPTFLAT -Wno-CMPCONST");
+      //verilator_build = cmd("verilator -Wall --cc " + sep_list(verilog_files, "", "", " ") + " --exe --build --trace " + tb_file + " --top-module " + top_module + " -Wno-UNUSED -Wno-PINMISSING -Wno-DECLFILENAME -Wno-WIDTH -Wno-UNDRIVEN -Wno-CASEINCOMPLETE -Wno-MODDUP -Wno-UNOPTFLAT -Wno-CMPCONST");
+      verilator_build = cmd("verilator -Wall --cc memory_module_wrapper.sv --exe " + sep_list(verilog_files, "", "", " ") + " --build --trace " + tb_file + " --top-module " + top_module + " -Wno-UNUSED -Wno-PINMISSING -Wno-DECLFILENAME -Wno-WIDTH -Wno-UNDRIVEN -Wno-CASEINCOMPLETE -Wno-MODDUP -Wno-UNOPTFLAT -Wno-CMPCONST");
 #endif
   } else {
       verilator_build = cmd("verilator -Wall --cc " + sep_list(verilog_files, "", "", " ") + " --exe --build " + tb_file + " --top-module " + top_module + " -Wno-UNUSED -Wno-WIDTH -Wno-PINMISSING -Wno-DECLFILENAME");
@@ -15161,7 +15162,6 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
 
   //CGRA tests
   test_apps.push_back(conv_3_3());
-  test_apps.push_back(matmul_single());
   test_apps.push_back(counter());
   test_apps.push_back(camera_pipeline_new());
   test_apps.push_back(rom());
@@ -15178,6 +15178,7 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   test_apps.push_back(unsharp());
 
   //DNN apps
+  test_apps.push_back(matmul_single());
   test_apps.push_back(resnet_tiny());
   test_apps.push_back(resnet_simple());
   test_apps.push_back(resnet());
@@ -15212,9 +15213,10 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
     //run verilator on all the generated verilog
     if (!gen_config_only) {
       string name = prg.name;
-      auto verilog_files = get_files("./" + dir + "/"+name+"/verilog/");
+      vector<string> verilog_files;// = get_files("./" + dir + "/"+name+"/verilog/");
       verilog_files.push_back(name + ".v");
-      verilog_files.push_back("LakeTop_W_new.v");
+      verilog_files.push_back("laketop.sv");
+      verilog_files.push_back("LakeTop_flat.sv");
       add_default_initial_block();
       bool extra_flag_for_lake = true;
       auto cpu = unoptimized_result(prg);
@@ -15222,6 +15224,9 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
       assert(res == 0);
       cmd("rm LakeTop_W_new.v");
       cmd("rm LakeWrapper.v");
+      cmd("rm memory_module_wrapper.sv");
+      cmd("rm laketop.sv");
+      cmd("rm LakeTop_flat.v");
 
       auto verilator_res = verilator_results(prg.name);
       compare("cgra_" + prg.name + "_cpu_vs_verilog_comparison", verilator_res, cpu);

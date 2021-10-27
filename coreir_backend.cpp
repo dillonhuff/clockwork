@@ -1829,15 +1829,21 @@ void run_lake_verilog_codegen(CodegenOptions& options, string v_name, string ub_
   //cout << "Runing cmd$ python /nobackup/joeyliu/aha/lake/tests/wrapper_lake.py -c " + options.dir + "lake_collateral/" + ub_ins_name + " -s True -n " + v_name  <<  endl;
   ASSERT(getenv("LAKE_PATH"), "Define env var $LAKE_PATH which is the /PathTo/lake");
   cmd("echo $LAKE_PATH");
-  if (options.mem_hierarchy.at("mem").fetch_width == 4) {
-    int res_lake = cmd("python $LAKE_PATH/lake/utils/wrapper_lake.py -c " + options.dir + "lake_collateral/" + ub_ins_name + " -s True -n " + v_name);
-    assert(res_lake == 0);
-  } else {
-    int res_lake = cmd("python $LAKE_PATH/tests/test_pohan_wrapper.py -f " + options.dir + "lake_collateral/" + ub_ins_name + "/config.json -b LakeWrapper -w " + v_name);
-    assert(res_lake == 0);
-  }
-  cmd("mkdir -p "+options.dir+"verilog");
-  cmd("mv LakeWrapper_"+v_name+".v " + options.dir + "verilog");
+  //if (options.mem_hierarchy.at("mem").fetch_width == 4) {
+  //  int res_lake = cmd("python $LAKE_PATH/lake/utils/wrapper_lake.py -c " + options.dir + "lake_collateral/" + ub_ins_name + " -s True -n " + v_name);
+  //  assert(res_lake == 0);
+  //} else {
+  //  int res_lake = cmd("python $LAKE_PATH/tests/test_pohan_wrapper.py -f " + options.dir + "lake_collateral/" + ub_ins_name + "/config.json -b LakeWrapper -w " + v_name);
+  //  assert(res_lake == 0);
+  //}
+  //cmd("mkdir -p "+options.dir+"verilog");
+  //cmd("mv LakeWrapper_"+v_name+".v " + options.dir + "verilog");
+
+  int res_lake = cmd("python $LAKE_PATH/lake/utils/wrapper.py -c " + options.dir + "lake_collateral/" + ub_ins_name +
+          "/config.json -s true -wmn "+ v_name + " -wfn memory_module_wrapper.sv -a -v");
+  assert(res_lake == 0);
+
+
 }
 
 void run_pond_verilog_codegen(CodegenOptions& options, string v_name, string ub_ins_name) {
