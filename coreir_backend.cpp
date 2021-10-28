@@ -1799,19 +1799,23 @@ void emit_lake_config_collateral(CodegenOptions options, string tile_name, json 
 }
 
 void add_default_initial_block() {
-    ifstream lake_top("LakeTop_W.v");
-    ofstream lake_new("LakeTop_W_new.v");
+    //ifstream lake_top("LakeTop_W.v");
+    //ofstream lake_new("LakeTop_W_new.v");
+    ifstream lake_top("laketop.sv");
+    ofstream lake_new("laketop_new.sv");
     string loc;
     if (lake_top.is_open() && lake_new.is_open()) {
         while(getline(lake_top, loc)) {
-            if (loc == "endmodule   // sram_stub") {
+            //if (loc == "endmodule   // sram_stub") {
+            if (loc == "endmodule   // sram_idk_0") {
                 lake_new << "//Add initial block here" << endl;
                 lake_new << "initial begin" << endl;
                 lake_new << tab(1) << "integer i = 0;" << endl;
                 lake_new << tab(1) << "for(i = 0; i < 512; i ++) begin" << endl;
                 lake_new << tab(2) << "integer big_addr = i >> 2;" << endl;
-                lake_new << tab(2) << "integer small_addr = i & 3;" << endl;
-                lake_new << tab(2) << "data_array[big_addr][small_addr] = i;" << endl;
+                lake_new << tab(2) << "integer small_addr = (i & 3) << 4;" << endl;
+                //lake_new << tab(2) << "data_array[big_addr][small_addr] = i;" << endl;
+                lake_new << tab(2) << "data_array[big_addr][small_addr +: 8] = i;" << endl;
                 lake_new << tab(1) << "end" << endl << "end" << endl;
             }
             lake_new << loc << endl;
@@ -1840,7 +1844,7 @@ void run_lake_verilog_codegen(CodegenOptions& options, string v_name, string ub_
   //cmd("mv LakeWrapper_"+v_name+".v " + options.dir + "verilog");
 
   int res_lake = cmd("python $LAKE_PATH/lake/utils/wrapper.py -c " + options.dir + "lake_collateral/" + ub_ins_name +
-          "/config.json -s true -wmn "+ v_name + " -wfn memory_module_wrapper.sv -a -v");
+          "/config.json -s -wmn "+ v_name + " -wfn memory_module_wrapper.sv -a -v");
   assert(res_lake == 0);
 
 

@@ -127,7 +127,7 @@ struct LakeCollateral {
         counter_ub(65535),
         multi_sram_accessor(true),
         dual_port_sram(false),
-        wire_chain_en(true),
+        wire_chain_en(false),
         word_width({{"agg", 1}, {"sram", 4}, {"tb", 1}}),
         in_port_width({{"agg", 1}, {"sram", 4}, {"tb", 4}}),
         out_port_width({{"agg", 4}, {"sram", 4}, {"tb", 1}}),
