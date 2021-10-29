@@ -2758,7 +2758,7 @@ void addIOsWithGLBConfig(Context* c, Module* top, map<string, UBuffer>& buffers,
     string buf_name = take_until_str(path_name, "_op");
     auto in_buf =  buffers.at(buf_name);
     string ioname = "io16in_" + join(++path.begin(),path.end(),string("_"));
-    auto inst = mdef->addInstance(ioname,"cgralib.IO",aWidth,{{"mode",Const::make(c,"in")}});
+    auto inst = mdef->addInstance(ioname,"global.IO",aWidth,{{"mode",Const::make(c,"in")}});
     inst->getMetaData() = in_buf.config_file;
 
     //Add the multi-tile glb informations
@@ -2780,7 +2780,7 @@ void addIOsWithGLBConfig(Context* c, Module* top, map<string, UBuffer>& buffers,
     string buf_name = take_until_str(path_name, "_op");
     auto out_buf =  buffers.at(buf_name);
     string ioname = "io16_" + join(++path.begin(),path.end(),string("_"));
-    auto inst = mdef->addInstance(ioname,"cgralib.IO",aWidth,{{"mode",Const::make(c,"out")}});
+    auto inst = mdef->addInstance(ioname,"global.IO",aWidth,{{"mode",Const::make(c,"out")}});
     inst->getMetaData() = out_buf.config_file;
 
     //Add the multi-tile glb informations
@@ -2798,14 +2798,14 @@ void addIOsWithGLBConfig(Context* c, Module* top, map<string, UBuffer>& buffers,
   }
   for (auto path : iopaths.IO1) {
     string ioname = "io1in_" + join(++path.begin(),path.end(),string("_"));
-    mdef->addInstance(ioname,"cgralib.BitIO",{{"mode",Const::make(c,"in")}});
+    mdef->addInstance(ioname,"global.BitIO",{{"mode",Const::make(c,"in")}});
     path[0] = "in";
     path.insert(path.begin(),"_self");
     mdef->connect({ioname,"out"},path);
   }
   for (auto path : iopaths.IO1in) {
     string ioname = "io1_" + join(++path.begin(),path.end(),string("_"));
-    mdef->addInstance(ioname,"cgralib.BitIO",{{"mode",Const::make(c,"out")}});
+    mdef->addInstance(ioname,"global.BitIO",{{"mode",Const::make(c,"out")}});
     path[0] = "in";
     path.insert(path.begin(),"_self");
     mdef->connect({ioname,"in"},path);
@@ -3732,42 +3732,38 @@ void disconnect_input_enable(Context* c, Module* top) {
 
 
 // Pass to map Tahoe memory tile intended for metamapper
-void map_memory(Module* top) {
+void map_memory(CodegenOptions& options, Module* top, map<string, UBuffer> & buffers, bool garnet_syntax_trans = false) {
   auto c = top->getContext();
-
-  // top->print();
-  // LoadDefinition_cgralib(c);
-  // Maps ROMS to memories
-  // load_mem_ext(c);
-  // rom_to_mem(c);
-
-  // c->runPasses({"rungenerators"});
-  // A new pass to remove input enable signal affine controller
   disconnect_input_enable(c, top);
+  
+   //GLB passes
+  c->addPass(new ReplaceCoarseGrainedAffCtrl);
+  c->runPasses({"replacecoarsegrainedaffctrl"});
 
-  // c->runPasses({"cullgraph"});
-  // c->runPasses({"removewires"});
-  // addIOs(c,top);
-  // c->runPasses({"cullgraph"});
-  // if (garnet_syntax_trans) {
+  auto glb_pass = new GetGLBConfig();
+  c->addPass(glb_pass);
+  c->runPasses({"getglbconfig"});
+  //override latency using the input,
+  //FIXME: this hack will break stencil apps
+  if ((options.host2glb_latency != 0) && (glb_pass->latency != 0))
+     glb_pass->latency = options.host2glb_latency;
+
+  c->addPass(new MapperPasses::StripGLB);
+  c->runPasses({"stripglb"});
+  addIOsWithGLBConfig(c, top, buffers, glb_pass);
+
+  //Change the stencil valid signal to cgra to glb
+  c->addPass(new ReplaceGLBValid(glb_pass));
+  c->runPasses({"replaceglbvalid"});
+  if (garnet_syntax_trans) {
+    c->addPass(new SubstructGLBLatency(glb_pass->latency));
+    c->runPasses({"substractglblatency"});
+  }
+
   c->addPass(new MapperPasses::RomSubstituteMetaMapper);
   c->runPasses({"romsubstitutemetamapper"});
   c->addPass(new MapperPasses::MemSubstituteMetaMapper);
   c->runPasses({"memsubstitutemetamapper"});
-  // c->addPass(new CustomFlatten);
-  // c->runPasses({"customflatten"});
-  // c->addPass(new MapperPasses::PeSubstituteMetaMapper);
-  // c->runPasses({"pesubstitutemetamapper"});
-  // }
-  // c->addPass(new MapperPasses::ConstDuplication);
-  // c->runPasses({"constduplication"});
-  // c->addPass(new MapperPasses::MemConst);
-  // c->runPasses({"memconst"});
-
-  // c->runPasses({"cullgraph"});
-  // c->getPassManager()->printLog();
-  // c->runPasses({"deletedeadinstances"});
-  // c->runPasses({"removewires"});
 }
 
 
@@ -4116,7 +4112,8 @@ void generate_coreir_without_ctrl(CodegenOptions& options,
     context->die();
   }
   
-  map_memory(prg_mod);
+  map_memory(options, prg_mod, buffers, true);
+
 
   for (auto op : prg.all_ops()) {
     cout << "Inlining " << op->name << endl;
@@ -4124,7 +4121,7 @@ void generate_coreir_without_ctrl(CodegenOptions& options,
     inlineInstance(kernel);
   }
 
-  c->runPasses({"deletedeadinstances"});
+ // c->runPasses({"deletedeadinstances"});
   c->runPasses({"removewires"});
   c->runPasses({"coreirjson"},{"global"});
 
