@@ -2747,18 +2747,25 @@ class GetGLBConfig: public CoreIR::InstanceGraphPass {
 
 void addIOsWithGLBConfig(Context* c, Module* top, map<string, UBuffer>& buffers, GetGLBConfig* glb_metadata) {
   ModuleDef* mdef = top->getDef();
-
+  vector<Module*> loaded;
+  if (!loadHeader(c, "io_header.json", loaded)) {c->die();}
+  vector<Module*> loaded_bit;
+  if (!loadHeader(c, "bit_io_header.json", loaded_bit)) {c->die();}
   Values aWidth({{"width",Const::make(c,16)}});
   IOpaths iopaths;
   getAllIOPaths(mdef->getInterface(), iopaths);
   Instance* pt = addPassthrough(mdef->getInterface(),"_self");
+  mdef->disconnect(mdef->getInterface());
   for (auto path : iopaths.IO16) {
     string path_name = *(path.begin()+1);
     //TODO: this is a hacky way to parse the buf name
     string buf_name = take_until_str(path_name, "_op");
     auto in_buf =  buffers.at(buf_name);
     string ioname = "io16in_" + join(++path.begin(),path.end(),string("_"));
-    auto inst = mdef->addInstance(ioname,"global.IO",aWidth,{{"mode",Const::make(c,"in")}});
+ 
+    auto inst = mdef->addInstance(ioname,(Module*)loaded[0],{{"mode",Const::make(c,"in")}});
+
+
     inst->getMetaData() = in_buf.config_file;
 
     //Add the multi-tile glb informations
@@ -2769,6 +2776,8 @@ void addIOsWithGLBConfig(Context* c, Module* top, map<string, UBuffer>& buffers,
       int old_offset = inst->getMetaData()["glb2out_0"]["cycle_starting_addr"][0] ;
       inst->getMetaData()["glb2out_0"]["cycle_starting_addr"][0] = old_offset - glb_metadata->latency;
     }
+  
+    mdef->connect(path, {ioname,"in"});
 
     path[0] = "in";
     path.insert(path.begin(),"_self");
@@ -2780,7 +2789,9 @@ void addIOsWithGLBConfig(Context* c, Module* top, map<string, UBuffer>& buffers,
     string buf_name = take_until_str(path_name, "_op");
     auto out_buf =  buffers.at(buf_name);
     string ioname = "io16_" + join(++path.begin(),path.end(),string("_"));
-    auto inst = mdef->addInstance(ioname,"global.IO",aWidth,{{"mode",Const::make(c,"out")}});
+    
+    auto inst = mdef->addInstance(ioname,(Module*)loaded[0],{{"mode",Const::make(c,"out")}});
+  
     inst->getMetaData() = out_buf.config_file;
 
     //Add the multi-tile glb informations
@@ -2792,25 +2803,30 @@ void addIOsWithGLBConfig(Context* c, Module* top, map<string, UBuffer>& buffers,
       int old_offset = inst->getMetaData()["in2glb_0"]["cycle_starting_addr"][0] ;
       inst->getMetaData()["in2glb_0"]["cycle_starting_addr"][0] = old_offset - glb_metadata->latency;
     }
+    
+    mdef->connect(path, {ioname,"out"});
     path[0] = "in";
     path.insert(path.begin(),"_self");
     mdef->connect({ioname,"in"},path);
   }
   for (auto path : iopaths.IO1) {
     string ioname = "io1in_" + join(++path.begin(),path.end(),string("_"));
-    mdef->addInstance(ioname,"global.BitIO",{{"mode",Const::make(c,"in")}});
+    
+    mdef->addInstance(ioname,(Module*)loaded_bit[0],{{"mode",Const::make(c,"in")}});
+    mdef->connect(path, {ioname,"in"});
     path[0] = "in";
     path.insert(path.begin(),"_self");
     mdef->connect({ioname,"out"},path);
   }
   for (auto path : iopaths.IO1in) {
     string ioname = "io1_" + join(++path.begin(),path.end(),string("_"));
-    mdef->addInstance(ioname,"global.BitIO",{{"mode",Const::make(c,"out")}});
+    
+    mdef->addInstance(ioname,(Module*)loaded_bit[0],{{"mode",Const::make(c,"out")}});
+    mdef->connect(path, {ioname,"out"});
     path[0] = "in";
     path.insert(path.begin(),"_self");
     mdef->connect({ioname,"in"},path);
   }
-  mdef->disconnect(mdef->getInterface());
   inlineInstance(pt);
 }
 
@@ -4121,7 +4137,7 @@ void generate_coreir_without_ctrl(CodegenOptions& options,
     inlineInstance(kernel);
   }
 
- // c->runPasses({"deletedeadinstances"});
+  c->runPasses({"deletedeadinstances"});
   c->runPasses({"removewires"});
   c->runPasses({"coreirjson"},{"global"});
 
