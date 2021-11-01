@@ -2362,7 +2362,7 @@ CoreIR::Module* affine_controller_use_lake_tile_counter(
     buf->getMetaData()["config"] = config_file;
     buf->getMetaData()["mode"] = "lake";
     //buf->getModuleRef()->getMetaData()["verilog_name"] = "aff_ctrl_"+genargs.at("ID")->get<string>();
-    buf->getMetaData()["verilog_name"] = "aff_ctrl_"+genargs.at("ID")->get<string>();
+    //buf->getMetaData()["verilog_name"] = "aff_ctrl_"+genargs.at("ID")->get<string>();
 
 
     //garnet wire reset to flush of memory
@@ -2432,7 +2432,7 @@ CoreIR::Instance* affine_controller_use_lake_tile(
   buf->getMetaData()["config"] = config_file;
   buf->getMetaData()["mode"] = "lake";
   //buf->getModuleRef()->getMetaData()["verilog_name"] = "aff_ctrl_counter_"+genargs.at("ID")->get<string>();
-  buf->getMetaData()["verilog_name"] = "aff_ctrl_counter_"+genargs.at("ID")->get<string>();
+  //buf->getMetaData()["verilog_name"] = "aff_ctrl_counter_"+genargs.at("ID")->get<string>();
 
   auto clk_en_const = def->addInstance(ub_ins_name+"_clk_en_const", "corebit.const",
           {{"value", CoreIR::Const::make(context, true)}});
@@ -2472,7 +2472,7 @@ CoreIR::Instance* UBuffer::generate_pond_instance(
   buf->getMetaData()["config"] = config_file;
   buf->getMetaData()["mode"] = "pond";
   //buf->getModuleRef()->getMetaData()["verilog_name"] = "pond_"+genargs.at("ID")->get<string>();
-  buf->getMetaData()["verilog_name"] = "pond_"+genargs.at("ID")->get<string>();
+  //buf->getMetaData()["verilog_name"] = "pond_"+genargs.at("ID")->get<string>();
 
   auto clk_en_const = def->addInstance(ub_ins_name+"_clk_en_const", "corebit.const",
           {{"value", CoreIR::Const::make(context, true)}});
@@ -2527,7 +2527,7 @@ CoreIR::Instance* UBuffer::generate_lake_tile_instance(
     buf->getMetaData()["config"] = config_file;
     buf->getMetaData()["mode"] = string("lake");
     //buf->getModuleRef()->getMetaData()["verilog_name"] = "lake_"+genargs.at("ID")->get<string>();
-    buf->getMetaData()["verilog_name"] = "lake_"+genargs.at("ID")->get<string>();
+    //buf->getMetaData()["verilog_name"] = "lake_"+genargs.at("ID")->get<string>();
   } else {
     //TODO: remove cwlib in the future
     genargs["config"] = CoreIR::Const::make(context, config_file);
@@ -2838,7 +2838,7 @@ CoreIR::Instance* UBuffer::map_ubuffer_to_cgra(CodegenOptions& options, CoreIR::
     buf->getMetaData()["mode"] = "glb";
     buf->getMetaData()["config"] = config_file;
     //buf->getModuleRef()->getMetaData()["verilog_name"] = "glb_"+ c->getUnique();
-    buf->getMetaData()["verilog_name"] = "glb_"+ c->getUnique();
+    //buf->getMetaData()["verilog_name"] = "glb_"+ c->getUnique();
     int count = 0;
     target_buf.remove_bank_dim();
     cout << "After simplify: " << target_buf << endl;

@@ -1939,9 +1939,9 @@ void generate_lake_tile_verilog(CodegenOptions& options, Instance* buf) {
   string ub_ins_name = buf->toString();
   string config_mode = buf->getMetaData()["mode"];
   //FIXME: a hack to get correct module name, fix this after coreIR update
-  //string v_name =  get_coreir_genenerator_name(buf->getModuleRef()->toString());
+  string v_name =  get_coreir_genenerator_name(buf->getModuleRef()->toString());
   //string v_name =  buf->getModuleRef()->getMetaData()["verilog_name"];
-  string v_name =  buf->getMetaData()["verilog_name"];
+  //string v_name =  buf->getMetaData()["verilog_name"];
   if (options.config_gen_only)
     return;
   //TODO: apply the verilog codegen here
