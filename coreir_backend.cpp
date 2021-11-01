@@ -1804,10 +1804,13 @@ void add_default_initial_block() {
     ifstream lake_top("laketop.sv");
     ofstream lake_new("laketop_new.sv");
     string loc;
+    bool find_macro = false;
     if (lake_top.is_open() && lake_new.is_open()) {
-        while(getline(lake_top, loc)) {
+        while(getline(lake_top, loc) ) {
             //if (loc == "endmodule   // sram_stub") {
-            if (loc == "endmodule   // sram_idk_0") {
+            //TODO: this is a little hacky, we need to find a better way to init
+            if (loc == "endmodule   // sram_sp__0") {
+                find_macro = true;
                 lake_new << "//Add initial block here" << endl;
                 lake_new << "initial begin" << endl;
                 lake_new << tab(1) << "integer i = 0;" << endl;
@@ -1820,6 +1823,11 @@ void add_default_initial_block() {
             }
             lake_new << loc << endl;
         }
+        if (!find_macro) {
+          cout << "Cannot find sram macro in the generated laketop.sv" << endl;
+          assert(false);
+        }
+
         lake_top.close();
         lake_new.close();
     } else {
@@ -1844,7 +1852,7 @@ void run_lake_verilog_codegen(CodegenOptions& options, string v_name, string ub_
   //cmd("mv LakeWrapper_"+v_name+".v " + options.dir + "verilog");
 
   int res_lake = cmd("python $LAKE_PATH/lake/utils/wrapper.py -c " + options.dir + "lake_collateral/" + ub_ins_name +
-          "/config.json -s -wmn "+ v_name + " -wfn memory_module_wrapper.sv -a -v");
+          "/config.json -s -wmn "+ v_name + " -wfn lake_module_wrappers.v -a -v -d 512");
   assert(res_lake == 0);
 
 
@@ -1853,15 +1861,18 @@ void run_lake_verilog_codegen(CodegenOptions& options, string v_name, string ub_
 void run_pond_verilog_codegen(CodegenOptions& options, string v_name, string ub_ins_name) {
   //cmd("export LAKE_CONTROLLERS=$PWD");
   ASSERT(getenv("LAKE_PATH"), "Define env var $LAKE_PATH which is the /PathTo/lake");
-  int res_lake = cmd("python $LAKE_PATH/lake/utils/wrapper_lake.py -c " + options.dir + "lake_collateral/" + ub_ins_name + " -n " + v_name + " -p True -pl 4 -pd 128");
+  //int res_lake = cmd("python $LAKE_PATH/lake/utils/wrapper_lake.py -c " + options.dir + "lake_collateral/" + ub_ins_name + " -n " + v_name + " -p True -pl 4 -pd 128");
+  int res_lake = cmd("python $LAKE_PATH/lake/utils/wrapper.py -c " + options.dir + "lake_collateral/" + ub_ins_name +
+          "/config.json -s -wmn "+ v_name + " -wfn pond_module_wrappers.v -vmn PondTop -vfn pondtop.v -a -v -dp -ii 4 -oi 4 -rd 0 -d 128 -mw 16");
   assert(res_lake == 0);
-  cmd("mkdir -p "+options.dir+"verilog");
-  cmd("mv LakeWrapper_"+v_name+".v " + options.dir + "verilog");
+  //cmd("mkdir -p "+options.dir+"verilog");
+  //cmd("mv LakeWrapper_"+v_name+".v " + options.dir + "verilog");
 }
 
 void run_glb_verilog_codegen(CodegenOptions& options, const std::string& long_name, int num_inpt, int num_outpt, int width) {
   std::ofstream verilog_collateral_file;
-  verilog_collateral_file.open(long_name + ".v");
+  //verilog_collateral_file.open(long_name + ".v");
+  verilog_collateral_file.open("lake_module_wrappers.v", std::ios_base::app);
 
   vector<string> port_decls = {};
   port_decls.push_back("input clk");
@@ -1918,8 +1929,8 @@ void run_glb_verilog_codegen(CodegenOptions& options, const std::string& long_na
   }
   verilog_collateral_file << "endmodule" << endl << endl;
   verilog_collateral_file.close();
-  cmd("mkdir -p "+options.dir+"verilog");
-  cmd("mv " + long_name+".v " + options.dir + "verilog");
+  //cmd("mkdir -p "+options.dir+"verilog_glb");
+  //cmd("mv " + long_name+".v " + options.dir + "verilog");
 }
 
 void generate_lake_tile_verilog(CodegenOptions& options, Instance* buf) {

@@ -12935,7 +12935,7 @@ int run_verilator_on(const std::string& top_module,
       verilator_build = cmd("verilator -Wall --cc " + sep_list(verilog_files, "", "", " ") + " --exe --build --trace " + tb_file + " -CFLAGS -I$CLKWRK_PATH --top-module " + top_module + " -Wno-UNUSED -Wno-PINMISSING -Wno-DECLFILENAME -Wno-WIDTH -Wno-UNDRIVEN -Wno-CASEINCOMPLETE -Wno-MODDUP -Wno-UNOPTFLAT -Wno-CMPCONST");
 #else
       //verilator_build = cmd("verilator -Wall --cc " + sep_list(verilog_files, "", "", " ") + " --exe --build --trace " + tb_file + " --top-module " + top_module + " -Wno-UNUSED -Wno-PINMISSING -Wno-DECLFILENAME -Wno-WIDTH -Wno-UNDRIVEN -Wno-CASEINCOMPLETE -Wno-MODDUP -Wno-UNOPTFLAT -Wno-CMPCONST");
-      verilator_build = cmd("verilator -Wall --cc memory_module_wrapper.sv --exe " + sep_list(verilog_files, "", "", " ") + " --build --trace " + tb_file + " --top-module " + top_module + " -Wno-UNUSED -Wno-PINMISSING -Wno-DECLFILENAME -Wno-WIDTH -Wno-UNDRIVEN -Wno-CASEINCOMPLETE -Wno-MODDUP -Wno-UNOPTFLAT -Wno-CMPCONST");
+      verilator_build = cmd("verilator -Wall --cc " + sep_list(verilog_files, "", "", " ") + " -exe --build --trace " + tb_file + " --top-module " + top_module + " -Wno-UNUSED -Wno-PINMISSING -Wno-DECLFILENAME -Wno-WIDTH -Wno-UNDRIVEN -Wno-CASEINCOMPLETE -Wno-MODDUP -Wno-UNOPTFLAT -Wno-CMPCONST");
 #endif
   } else {
       verilator_build = cmd("verilator -Wall --cc " + sep_list(verilog_files, "", "", " ") + " --exe --build " + tb_file + " --top-module " + top_module + " -Wno-UNUSED -Wno-WIDTH -Wno-PINMISSING -Wno-DECLFILENAME");
@@ -14869,19 +14869,52 @@ void generate_resnet_latency_experiment(prog& prg,
         string dir,
         bool use_dse_compute = false);
 
+void verilator_regression_test(prog& prg, vector<string>& collateral_files, string app_type) {
+
+  string name = prg.name;
+  auto cpu = unoptimized_result(prg);
+  vector<string> verilog_files;// = get_files("./" + dir + "/"+name+"/verilog/");
+  verilog_files.push_back(name + ".v");
+  for (auto file: collateral_files) {
+    verilog_files.push_back(file);
+  }
+  //verilog_files.push_back("laketop_new.sv");
+  //verilog_files.push_back("LakeTop_flat.v");
+  //verilog_files.push_back("lake_module_wrappers.v");
+  add_default_initial_block();
+  //cmd("mv laketop_new.sv laketop.sv");
+  bool extra_flag_for_lake = true;
+  int res = run_verilator_on(name, name + "_verilog_tb.cpp", verilog_files, extra_flag_for_lake);
+  assert(res == 0);
+  //cmd("rm LakeTop_W_new.v");
+  //cmd("rm LakeWrapper.v");
+  //cmd("rm lake_module_wrappers.v");
+  //cmd("rm laketop_new.sv");
+  //cmd("rm LakeTop_flat.v");
+  for (auto file: collateral_files) {
+    cmd("rm " + file);
+  }
+
+  auto verilator_res = verilator_results(prg.name);
+  compare("cgra_" + prg.name + "_cpu_vs_verilog_comparison", verilator_res, cpu);
+  //string app_type = "dualwithaddr";
+  //string app_type = "single_port_buffer";
+  cpy_app_to_folder(app_type, prg.name);
+}
+
 void test_pond(string dir, bool run_verilator=true) {
   vector<prog> test_apps;
   //Need to change the schedule for vectorization
   //test_apps.push_back(complex_mem_pond_input());
 
+  //test_apps.push_back(resnet_simple());
+  //test_apps.push_back(resnet());
+  //test_apps.push_back(three_level_pond_copy());
+  test_apps.push_back(three_level_pond_rolled());
   test_apps.push_back(complex_mem_pond());
   test_apps.push_back(complex_mem_pond_rolled());
-  test_apps.push_back(conv_rolled());
   test_apps.push_back(conv_1_3());
-  test_apps.push_back(resnet_simple());
-  test_apps.push_back(resnet());
-  test_apps.push_back(three_level_pond_copy());
-  test_apps.push_back(three_level_pond_rolled());
+  test_apps.push_back(conv_rolled());
   test_apps.push_back(fft8_unroll8_split());
 
   //TODO: tobe tested with new pond
@@ -14910,27 +14943,15 @@ void test_pond(string dir, bool run_verilator=true) {
     //run_verilator_tb(prg.name);
     //TODO: move to a function
     //run verilator on all the generated verilog
+    vector<string> verilog_files;
+    verilog_files.push_back("LakeTop_flat.v");
+    verilog_files.push_back("laketop_new.sv");
+    verilog_files.push_back("PondTop_flat.v");
+    verilog_files.push_back("pondtop.v");
+    verilog_files.push_back("pond_module_wrappers.v");
+    verilog_files.push_back("lake_module_wrappers.v");
     if (!gen_config_only) {
-      auto cpu = unoptimized_result(prg);
-      string name = prg.name;
-      auto verilog_files = get_files("./" + dir + "/"+name+"/verilog/");
-      verilog_files.push_back(name + ".v");
-      verilog_files.push_back("Pond_W.v");
-      verilog_files.push_back("LakeTop_W_new.v");
-      add_default_initial_block();
-      bool extra_flag_for_lake = true;
-      int res = run_verilator_on(name, name + "_verilog_tb.cpp", verilog_files, extra_flag_for_lake);
-      assert(res == 0);
-      cmd("rm LakeWrapper.v");
-      cmd("rm Pond_W.v");
-      cmd("rm LakeTop_W_new.v");
-      cmd("rm -rf ./" + dir + "/" + name + "/verilog/");
-
-      auto verilator_res = verilator_results(prg.name);
-      compare("cgra_" + prg.name + "_cpu_vs_verilog_comparison", verilator_res, cpu);
-      //string app_type = "dualwithaddr";
-      string app_type = "single_port_buffer";
-      cpy_app_to_folder(app_type, prg.name);
+      verilator_regression_test(prg, verilog_files, "single_port_buffer");
     }
 
 #endif
@@ -15130,24 +15151,12 @@ void test_glb(bool gen_config_only, bool multi_accessor=false, string dir="aha_g
     cout << "Output name: " << prg.name << endl;
     //TODO: move to a function
     //run verilator on all the generated verilog
+    vector<string> verilog_files;// = get_files("./" + dir + "/"+name+"/verilog/");
+    verilog_files.push_back("laketop_new.sv");
+    verilog_files.push_back("LakeTop_flat.v");
+    verilog_files.push_back("lake_module_wrappers.v");
     if (!gen_config_only) {
-      string name = prg.name;
-      auto verilog_files = get_files("./" + dir + "/"+name+"/verilog/");
-      verilog_files.push_back(name + ".v");
-      verilog_files.push_back("LakeTop_W_new.v");
-      add_default_initial_block();
-      bool extra_flag_for_lake = true;
-      auto cpu = unoptimized_result(prg);
-      int res = run_verilator_on(name, name + "_verilog_tb.cpp", verilog_files, extra_flag_for_lake);
-      assert(res == 0);
-      cmd("rm LakeTop_W_new.v");
-      cmd("rm LakeWrapper.v");
-
-      auto verilator_res = verilator_results(prg.name);
-      compare("cgra_" + prg.name + "_cpu_vs_verilog_comparison", verilator_res, cpu);
-      //string app_typssive "dualwithaddr";
-      string app_type = "single_port_buffer";
-      cpy_app_to_folder(app_type, prg.name);
+      verilator_regression_test(prg, verilog_files, "single_port_buffer");
     }
 #endif
   }
@@ -15209,31 +15218,13 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
     //compile_for_garnet_platonic_mem(prg);
     compile_for_garnet_single_port_mem(prg, dir, false, gen_config_only, false, false);
     cout << "Output name: " << prg.name << endl;
-    //TODO: move to a function
     //run verilator on all the generated verilog
+    vector<string> verilog_files;;
+    verilog_files.push_back("laketop_new.sv");
+    verilog_files.push_back("LakeTop_flat.v");
+    verilog_files.push_back("lake_module_wrappers.v");
     if (!gen_config_only) {
-      string name = prg.name;
-      vector<string> verilog_files;// = get_files("./" + dir + "/"+name+"/verilog/");
-      verilog_files.push_back(name + ".v");
-      verilog_files.push_back("laketop_new.sv");
-      verilog_files.push_back("LakeTop_flat.v");
-      add_default_initial_block();
-      //cmd("mv laketop_new.sv laketop.sv");
-      bool extra_flag_for_lake = true;
-      auto cpu = unoptimized_result(prg);
-      int res = run_verilator_on(name, name + "_verilog_tb.cpp", verilog_files, extra_flag_for_lake);
-      assert(res == 0);
-      //cmd("rm LakeTop_W_new.v");
-      //cmd("rm LakeWrapper.v");
-      cmd("rm memory_module_wrapper.sv");
-      cmd("rm laketop.sv");
-      cmd("rm LakeTop_flat.v");
-
-      auto verilator_res = verilator_results(prg.name);
-      compare("cgra_" + prg.name + "_cpu_vs_verilog_comparison", verilator_res, cpu);
-      //string app_type = "dualwithaddr";
-      string app_type = "single_port_buffer";
-      cpy_app_to_folder(app_type, prg.name);
+      verilator_regression_test(prg, verilog_files, "single_port_buffer");
     }
 #endif
   }
