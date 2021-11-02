@@ -25,20 +25,7 @@ void preprocess_prog(prog& prg) {
     dsa_writers(prg);
 }
 
-vector<string> cgra_flow_result(prog& prg, string dir) {
-
-    string name = prg.name;
-    auto verilog_files = get_files("./" + dir + "/"+name+"/verilog/");
-    verilog_files.push_back(name + ".v");
-    verilog_files.push_back("LakeWrapper.v");
-    bool extra_flag_for_lake = true;
-    int res = run_verilator_on(name, name + "_verilog_tb.cpp", verilog_files, extra_flag_for_lake);
-    assert(res == 0);
-    cmd("rm LakeWrapper.v");
-
-    auto verilator_res = verilator_results(prg.name);
-    return verilator_res;
-}
+vector<string> cgra_flow_result(prog& prg, string dir); 
 
 void sanity_check(prog& prg, vector<string>& cpu, vector<string> & verilator_res) {
     compare("cgra_" + prg.name + "_cpu_vs_verilog_comparison", verilator_res, cpu);
