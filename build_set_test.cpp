@@ -14863,6 +14863,13 @@ void Init_PE_energy_cost(power_analysis_params& power_params)  {
 
 void compile_for_garnet_single_port_mem(prog & prg, string dir, bool gen_smt_stream, bool gen_config_only, bool multi_level_mem, bool use_dse_compute, bool energy_model = false);
 void compile_for_garnet_fetch2_mem(prog & prg, string dir, bool gen_smt_stream, bool gen_config_only, bool multi_level_mem, bool use_dse_compute, bool energy_model = false);
+void compile_for_garnet_dual_port_mem(prog& prg,
+        string dir,
+        bool gen_smt_stream,
+        bool config_gen_only,
+        bool multi_level_mem,
+        bool use_dse_compute,
+        bool energy_model =false);
 void cpy_app_to_folder(const std::string& app_type, const std::string& prg_name);
 void generate_resnet_latency_experiment(prog& prg,
         ofstream& profiling_file,
@@ -15223,6 +15230,74 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
     verilog_files.push_back("laketop_new.sv");
     verilog_files.push_back("LakeTop_flat.v");
     verilog_files.push_back("lake_module_wrappers.v");
+    if (!gen_config_only) {
+      verilator_regression_test(prg, verilog_files, "single_port_buffer");
+    }
+#endif
+  }
+}
+
+void test_dual_port_mem(bool gen_config_only, bool multi_accessor=false, string dir="aha_garnet_dp") {
+  vector<prog> test_apps;
+
+  //CGRA tests
+  //test_apps.push_back(conv_3_3());
+  test_apps.push_back(gaussian());
+  //test_apps.push_back(cascade());
+  test_apps.push_back(harris());
+  //test_apps.push_back(down_sample());
+  //test_apps.push_back(unsharp());
+  //test_apps.push_back(unsharp_new());
+  //Not work but not in testbenches
+  //test_apps.push_back(laplacian_pyramid_docker());
+  test_apps.push_back(laplacian_pyramid());
+  test_apps.push_back(rom());
+  test_apps.push_back(conv_1_2());
+  test_apps.push_back(demosaic_unrolled());
+  test_apps.push_back(up_sample());
+  test_apps.push_back(counter());
+  test_apps.push_back(camera_pipeline_new());
+
+  ////DNN apps
+  //test_apps.push_back(matmul_single());
+  //test_apps.push_back(resnet_tiny());
+  //test_apps.push_back(resnet_simple());
+  //test_apps.push_back(resnet());
+
+  ////Big applications
+  //test_apps.push_back(mobilenet_unrolled());
+  //test_apps.push_back(resnet_one_input());
+  //test_apps.push_back(resnet88());
+  //test_apps.push_back(resnet88_chain());
+
+  //test_apps.push_back(resnet_coarse_pipeline_loop());
+
+  //coarse grained pipeline
+  //test_apps.push_back(resnet_coarse_pipeline_loop());
+
+  //test_apps.push_back(conv_3_3_wide());
+  //TODO: break in the middle of vectorization
+  //test_apps.push_back(down_sample());
+
+  for ( auto prg: test_apps) {
+    prg.sanity_check();
+
+    break_up_multi_channel_inputs(prg);
+    break_up_multi_channel_outputs(prg);
+    dsa_writers(prg);
+    prg.pretty_print();
+#ifdef COREIR
+    //compile_for_garnet_platonic_mem(prg);
+    compile_for_garnet_dual_port_mem(prg, dir, false, gen_config_only, false, false);
+    cout << "Output name: " << prg.name << endl;
+    //run verilator on all the generated verilog
+    vector<string> verilog_files;;
+    verilog_files.push_back("laketop_new.sv");
+    verilog_files.push_back("LakeTop_flat.v");
+    verilog_files.push_back("lake_module_wrappers.v");
+    verilog_files.push_back("PondTop_flat.v");
+    verilog_files.push_back("pondtop.v");
+    verilog_files.push_back("pond_module_wrappers.v");
     if (!gen_config_only) {
       verilator_regression_test(prg, verilog_files, "single_port_buffer");
     }
@@ -19167,6 +19242,33 @@ CodegenOptions garnet_codegen_single_port_with_addrgen_options(prog& prg, string
   return options;
 }
 
+CodegenOptions garnet_codegen_dual_port_with_addrgen_options(prog& prg, string dir) {
+  CodegenOptions options;
+  options.rtl_options.target_tile = TARGET_TILE_WIDE_FETCH_WITH_ADDRGEN;
+  options.conditional_merge = true;
+  options.fallback_schedule = ISCA_SCHEDULE;
+  options.merge_threshold = 10;
+  options.iis = {1};
+  options.rtl_options.max_inpt = 1;
+  options.rtl_options.max_outpt = 1;
+  //all_unbanked(prg, options);
+
+  //coreIR codegen options
+  options.rtl_options.use_prebuilt_memory = true;
+  options.rtl_options.use_external_controllers = false;
+  options.rtl_options.double_buffer_optimization = true;
+  options.inline_vectorization = true;
+  options.pass_through_valid= true;
+  options.dir = dir + "/" + prg.name + "/";
+
+  if (!is_rate_matchable(prg)) {
+    options.inner_bank_offset_mode =
+      INNER_BANK_OFFSET_LINEAR;
+  }
+
+  return options;
+}
+
 CodegenOptions garnet_baseline_codegen_options(prog& prg) {
   CodegenOptions options;
   options.rtl_options.use_external_controllers = true;
@@ -19582,6 +19684,87 @@ void generate_resnet_latency_experiment(prog& prg,
   schedule_info sched_db_loop_perfect = garnet_schedule_info(options, prg, use_dse_compute);
   dump_resnet_latency(options, sched_db_loop_perfect, prg.root, prg, profiling_file, true);
   profiling_file << endl;
+}
+
+
+void compile_for_garnet_dual_port_mem(prog& prg,
+        string dir,
+        bool gen_smt_stream,
+        bool config_gen_only,
+        bool multi_level_mem,
+        bool use_dse_compute,
+        bool energy_model) {
+
+  //make sure the loop bound and address is positive
+  normalize_bounds(prg);
+  normalize_address_offsets(prg);
+  //remove_div(prg);
+  prg.sanity_check();
+  prg.pretty_print();
+
+
+  //optimized schedule
+  cmd("mkdir -p " + dir + "/" + prg.name);
+
+  //auto iis = garnet_fuse_ii_level(prg);
+  //auto buffers_opt = build_buffers(prg, clockwork_schedule(prg));
+
+  CodegenOptions options = garnet_codegen_dual_port_with_addrgen_options(prg, dir);
+  options.debug_options.traceWave = true;
+  options.add_memory_hierarchy("mem");
+  options.add_memory_hierarchy("glb");
+  options.mem_hierarchy.at("mem").set_config_dp();
+  if (multi_level_mem) {
+    options.add_memory_hierarchy("regfile");
+    options.rtl_options.double_buffer_optimization = false;
+    options.fallback_schedule = SEQUENTIAL_SCHEDULE;
+  }
+  options.emit_smt_stream = gen_smt_stream;
+  options.config_gen_only = config_gen_only;
+  //if (multi_sram)
+  //    options.mem_tile.multi_sram_accessor = true;
+
+  if(options.fallback_schedule == ISCA_SCHEDULE) {
+    loop_perfection(prg);
+    cout << "After Loop Perfection" << endl;
+    prg.pretty_print();
+  }
+
+  schedule_info sched = garnet_schedule_info(options, prg, use_dse_compute);
+  garnet_single_port_ram_schedule(options, sched, prg.root, prg);
+  auto sched_map = op_times_map(sched, prg);
+  auto hw_sched = its(sched_map,
+          prg.whole_iteration_domain());
+  cout << "result schedule: " << str(hw_sched) << endl;
+  auto buffers_opt = build_buffers(prg, hw_sched);
+  auto sched_max = lexmaxpt(range(hw_sched));
+  cout << "Latency of application is: " << str((sched_max)) << endl;
+
+  tag_coarse_grained_loop_to_ubuf(buffers_opt, prg);
+  //FIXME: put into separate pass for power analysis
+  if (energy_model) {
+    mem_access_cnt mem_access;
+    Mem_access_count(options, buffers_opt, mem_access, prg);
+    emit_mem_access_count_to_csv(dir + "/MemCount/" + prg.name, options, mem_access);
+
+    power_analysis_params power_params;
+    power_analysis_info power_stats;
+    Init_PE_energy_cost(power_params);
+
+#ifdef COREIR
+    PE_energy_cost_instance_model(power_params, power_stats, prg);
+    PE_energy_cost(power_params, power_stats, prg);
+#endif
+
+  }
+
+#ifdef COREIR
+  generate_garnet_coreir(buffers_opt, prg, options, sched, use_dse_compute);
+  if (!options.config_gen_only) {
+    generate_garnet_verilog_top(options, prg.name);
+    generate_garnet_verilator_tb(options, prg, hw_sched, buffers_opt);
+  }
+#endif
 }
 
 void compile_for_garnet_single_port_mem(prog& prg,
@@ -28064,6 +28247,13 @@ int main(int argc, char** argv) {
     if (cmd == "pond-tests") {
       bool run_verilator = true;
       test_pond("aha_garnet_design_pond", run_verilator);
+      return 0;
+    }
+
+    if (cmd == "dp-tests") {
+      bool gen_config_only = false;
+      bool use_multi_accessor_tile = true;
+      test_dual_port_mem(gen_config_only, use_multi_accessor_tile, "aha_garnet_design_dp");
       return 0;
     }
 

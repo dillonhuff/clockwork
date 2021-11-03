@@ -111,6 +111,7 @@ struct LakeCollateral {
     std::unordered_map<string, int> capacity;
     std::unordered_map<string, int> in_port_width;
     std::unordered_map<string, int> out_port_width;
+    vector<string> controller_name; //use for identify the controller name in configuration
     int fetch_width;
     int max_chaining;
     int iteration_level;
@@ -128,6 +129,7 @@ struct LakeCollateral {
         multi_sram_accessor(true),
         dual_port_sram(false),
         wire_chain_en(false),
+        controller_name({"agg", "sram", "tb"}),
         word_width({{"agg", 1}, {"sram", 4}, {"tb", 1}}),
         in_port_width({{"agg", 1}, {"sram", 4}, {"tb", 4}}),
         out_port_width({{"agg", 4}, {"sram", 4}, {"tb", 1}}),
@@ -141,6 +143,7 @@ struct LakeCollateral {
                 out_port_width = {{"regfile", 1}};
                 bank_num = {{"regfile", 1}};
                 capacity = {{"regfile", 32}};
+                controller_name = {"regfile"};
                 iteration_level = 3;
 
             } else if (level == "glb") {
@@ -151,6 +154,7 @@ struct LakeCollateral {
                 out_port_width = {{"glb", 1}};
                 bank_num = {{"glb", 1}};
                 capacity = {{"glb", 131072}};
+                controller_name = {"glb"};
             } else if (level != "mem") {
                 cout << "\t\tERROR: Memory component not identified" << endl;
                 assert(false);
@@ -166,6 +170,18 @@ struct LakeCollateral {
        out_port_width = {{"agg", 2}, {"sram", 2}, {"tb", 1}};
        bank_num = {{"agg", 2}, {"sram", 1}, {"tb", 2}};
        capacity = {{"agg", 8}, {"sram", 512}, {"tb", 8}};
+    }
+
+    void set_config_dp() {
+      fetch_width = 1;
+      dual_port_sram = true;
+      wire_chain_en = false;
+      word_width = {{"mem", 1}};
+      in_port_width = {{"mem", 1}};
+      out_port_width = {{"mem", 1}};
+      bank_num = {{"mem", 1}};
+      capacity = {{"mem", 512}};
+      controller_name = {"regfile"};
     }
 
     int get_max_capacity() const {

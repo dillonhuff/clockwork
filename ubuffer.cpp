@@ -1724,6 +1724,7 @@ void add_lake_config(Json& jdata, ConfigMap data, int dimensionality, string dom
 ConfigMap generate_addressor_config_from_access_map(umap* acc_map, LakeCollateral mem, bool is_read) {
      string buf_name = range_name(to_map(acc_map));
      string micro_buf_name = get_micro_buf_name(buf_name);
+     cout << "\tMicro buf name: " << micro_buf_name << endl;
      int word_width = mem.word_width.at(micro_buf_name);
      int capacity = mem.capacity.at(micro_buf_name);
      int port_width;
@@ -1934,6 +1935,7 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, UBuffer& ubuf, string 
     int word_width = mem.word_width.at(mem_name);
     int capacity = mem.capacity.at(mem_name);
     int in_cnt = 0, out_cnt = 0;
+    string ctrl_name = pick(mem.controller_name);
     for (auto op_name: ops) {
         auto sched = op2sched.at(op_name);
         if(op2write_map.count(op_name)) {
@@ -1963,7 +1965,7 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, UBuffer& ubuf, string 
                         //get_aff(to_map(linear_acc_map)), false, false, word_width, capacity, port_width);
                 config_info.merge(addressor);
                 cout << "\tWrite map: " << str(acc_map) << endl;
-            add_lake_config(ret, config_info, num_in_dims(aff), "in2"+mem_name +"_" + str(in_cnt));
+            add_lake_config(ret, config_info, num_in_dims(aff), "in2"+ctrl_name+"_" + str(in_cnt));
             in_cnt ++;
         }
         if(op2read_map.count(op_name)) {
@@ -1990,7 +1992,7 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, UBuffer& ubuf, string 
                         //get_aff(linear_acc_map), true, false, word_width, capacity, port_width);
                 config_info.merge(addressor);
                 cout << "\tRead map: " << str(acc_map) << endl;
-            add_lake_config(ret, config_info, num_in_dims(aff), mem_name +"2out_" + str(out_cnt));
+            add_lake_config(ret, config_info, num_in_dims(aff), ctrl_name+"2out_" + str(out_cnt));
             out_cnt ++;
         }
     }
@@ -2448,10 +2450,12 @@ CoreIR::Instance* affine_controller_use_lake_tile(
   return buf;
 }
 
+//TODO: we should rewrite this function to include both dp memory and sp memory
 CoreIR::Instance* UBuffer::generate_pond_instance(
         ModuleDef* def,
         CodegenOptions options,
         string ub_ins_name,
+        string config_mode,
         size_t input_num, size_t output_num) {
 
   auto context = def->getContext();
@@ -2470,7 +2474,7 @@ CoreIR::Instance* UBuffer::generate_pond_instance(
   //  "pond_"+genargs.at("ID")->get<string>();
   buf = def->addInstance(ub_ins_name, "cgralib.Pond_amber", genargs);
   buf->getMetaData()["config"] = config_file;
-  buf->getMetaData()["mode"] = "pond";
+  buf->getMetaData()["mode"] = config_mode;
   //buf->getModuleRef()->getMetaData()["verilog_name"] = "pond_"+genargs.at("ID")->get<string>();
   //buf->getMetaData()["verilog_name"] = "pond_"+genargs.at("ID")->get<string>();
 
@@ -2569,9 +2573,9 @@ void UBuffer::generate_stencil_valid_config(CodegenOptions& options, string bank
 }
 
 string memDatainPort(string mode, int pt_cnt) {
-    if (mode == "lake" || mode == "glb")
+    if (mode == "lake"  || mode == "glb")
         return "data_in_" + to_string(pt_cnt);
-    else if (mode == "pond") {
+    else if (mode == "pond" || mode == "lake_dp") {
         return "data_in_pond_" + to_string(pt_cnt);
     } else {
         cout << "Mode: " << mode << " is not implemented yet" << endl;
@@ -2582,7 +2586,7 @@ string memDatainPort(string mode, int pt_cnt) {
 string memDataoutPort(string mode, int pt_cnt) {
     if (mode == "lake" || mode == "glb")
         return "data_out_" + to_string(pt_cnt);
-    else if (mode == "pond") {
+    else if (mode == "pond" || mode == "lake_dp") {
         return "data_out_pond_" + to_string(pt_cnt);
     } else {
         cout << "Mode: " << mode << " is not implemented yet" << endl;
@@ -2769,6 +2773,9 @@ string UBuffer::determine_config_mode(CodegenOptions& options, UBuffer& target_b
   } else if (capacity <= 96 && multi_level_mem ) {
     cout << "Generate config for register file!" << endl;
     config_mode = "pond";
+
+  } else if (options.mem_hierarchy.at("mem").fetch_width == 1) {
+    config_mode = "lake_dp";
   } else {
     config_mode = "lake";
   }
@@ -2817,9 +2824,13 @@ CoreIR::Instance* UBuffer::map_ubuffer_to_cgra(CodegenOptions& options, CoreIR::
       target_buf.num_in_ports(), target_buf.num_out_ports(),
       false/*TODO: exclude stencil valid signal*/, true);
 
+  } else if (config_mode == "lake_dp") {
+    config_file = generate_ubuf_args(options, target_buf, "mem");
+    buf = generate_pond_instance(def, options, ub_ins_name, "lake_dp",
+            target_buf.num_in_ports(), target_buf.num_out_ports());
   } else if (config_mode == "pond") {
     config_file = generate_ubuf_args(options, target_buf, "regfile");
-    buf = generate_pond_instance(def, options, ub_ins_name,
+    buf = generate_pond_instance(def, options, ub_ins_name, "pond",
             target_buf.num_in_ports(), target_buf.num_out_ports());
   } else if (config_mode == "glb") {
     auto c = def->getContext();
@@ -2991,7 +3002,7 @@ CoreIR::Instance* UBuffer::generate_accum_reg_instance(CodegenOptions& options, 
     config_file = generate_ubuf_args(options, *this, "regfile");
 
     //TODO: check we define pond
-    auto buf_ins = generate_pond_instance(def, options, "ub_"+name,
+    auto buf_ins = generate_pond_instance(def, options, "ub_"+name, "pond",
             num_in_ports(), num_out_ports());
     return buf_ins;
 }

@@ -2751,6 +2751,7 @@ void tighten_address_space() {
         CoreIR::ModuleDef* def,
         CodegenOptions options,
         string ub_ins_name,
+        string config_mode,
         size_t input_num, size_t output_num);
 
     void emit_lake_config_collateral(CodegenOptions options, string dir);
