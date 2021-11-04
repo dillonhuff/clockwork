@@ -3276,6 +3276,7 @@ void UBuffer::generate_coreir(CodegenOptions& options,
 
     //Generate the ubuffer module for CGRA
     //Lake/Pond coreir generation
+    target_buf.simplify_floor_div_expr();
     CoreIR::Instance* buf = map_ubuffer_to_cgra(options, def, target_buf, config_mode);
 
     //Wire the stencil valid to flush of ubuffer module
@@ -8459,6 +8460,36 @@ void UBuffer::generate_banks(CodegenOptions& options) {
     return ahead_step;
   }
 
+  void UBuffer::simplify_floor_div_expr() {
+    for (auto bd_name: get_out_bundles()) {
+      for (auto out_pt_name : port_bundles.at(bd_name) ) {
+
+        auto am = to_map(access_map.at(out_pt_name));
+        auto sched = to_map(schedule.at(out_pt_name));
+
+
+        //map from input dim to denominator
+        map<int, int> split_dims = get_dim2denom(am);
+        if (split_dims.size()) {
+          cout << "\tSimplify output port: " << out_pt_name << endl;
+          auto trans_map = get_div_trans(am, split_dims);
+
+          auto stripmining_am = dot(inv(trans_map), am);
+          cout << "\t\t After strip mining: " << str(simplify_expr(stripmining_am)) << endl;
+          access_map.at(out_pt_name) = to_umap(simplify(stripmining_am));
+          domain.at(out_pt_name) = ::domain(stripmining_am);
+
+          cout << "\t\tsched before rewrite: " << str(sched) << endl;
+          sched = dot(inv(trans_map), sched);
+          cout << "\t\tsplit new sched: " << str(sched) << endl;
+
+          //update the original schedule for output port schedule generation
+          schedule.at(out_pt_name) = to_umap(sched);
+        }
+      }
+    }
+  }
+
   pair<isl_map*, isl_map*> get_vectorized_read_simplified(isl_map* acc_0, isl_map* sched, map<string, isl_map*> sched_record_map, int fetch_width, int addr_dim, bool is_dual_port) {
 
     isl_ctx* ctx = ::ctx(acc_0);
@@ -8823,31 +8854,6 @@ void UBuffer::generate_banks(CodegenOptions& options) {
 
               auto am = to_map(access_map.at(out_pt_name));
               auto sched = to_map(schedule.at(out_pt_name));
-
-
-              //map from input dim to denominator
-              //TODO: move this into a function, and also move into vectorization preprocessing
-              map<int, int> split_dims = get_dim2denom(am);
-              if (split_dims.size()) {
-                auto trans_map = get_div_trans(am, split_dims);
-
-                auto stripmining_am = dot(inv(trans_map), am);
-                cout << "\t After strip mining: " << str(simplify_expr(stripmining_am)) << endl;
-                access_map.at(out_pt_name) = to_umap(simplify(stripmining_am));
-                domain.at(out_pt_name) = ::domain(stripmining_am);
-                string dom_name = domain_name(am) + "_sram2tb";
-
-                cout << "before rewrite: " << str(sched) << endl;
-                sched = dot(inv(trans_map), sched);
-                cout << "split new sched: " << str(sched) << endl;
-
-                //update the original schedule for output port schedule generation
-                schedule.at(out_pt_name) = to_umap(sched);
-
-                //update the access name
-                am = to_map(access_map.at(out_pt_name));
-              }
-
 
 
               //New method for sram read schedule

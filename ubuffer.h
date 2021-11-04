@@ -2646,6 +2646,9 @@ void tighten_address_space() {
     bool merge_small_dim(int fetch_width);
     void merge_out_bundle();
 
+    //Preprocessing pass for generate configuration
+    void simplify_floor_div_expr();
+
     bool overlap_schedule(std::set<string> & ptset);
 
     //change the input and output and return the agg and tb ubuffer stucture

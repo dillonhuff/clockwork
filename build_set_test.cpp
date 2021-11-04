@@ -15254,12 +15254,12 @@ void test_dual_port_mem(bool gen_config_only, bool multi_accessor=false, string 
   test_apps.push_back(rom());
   test_apps.push_back(conv_1_2());
   test_apps.push_back(demosaic_unrolled());
+  test_apps.push_back(up_sample());
+  test_apps.push_back(camera_pipeline_new());
 
   //Not work yet
   //test_apps.push_back(laplacian_pyramid_docker());
   //test_apps.push_back(laplacian_pyramid());
-  //test_apps.push_back(up_sample());
-  //test_apps.push_back(camera_pipeline_new());
 
   ////DNN apps
   //test_apps.push_back(matmul_single());
