@@ -12,7 +12,7 @@ vector<string> cgra_flow_result(prog& prg, string dir) {
     //verilog_files.push_back("laketop.sv");
     verilog_files.push_back("LakeTop_flat.v");
     verilog_files.push_back("lake_module_wrappers.v");
-    add_default_initial_block();
+    add_default_initial_block("laketop", "endmodule  // sp_sram__0");
     bool extra_flag_for_lake = true;
     int res = run_verilator_on(name, name + "_verilog_tb.cpp", verilog_files, extra_flag_for_lake);
     assert(res == 0);

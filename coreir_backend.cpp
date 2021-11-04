@@ -1671,6 +1671,18 @@ Wireable* write_start_wire(ModuleDef* def, const std::string& opname) {
   return def->sel(write_start_name(opname))->sel("out");
 }
 
+CoreIR::Wireable* op_control_wires(Instance* ctrl) {
+    string mode = ctrl->getMetaData()["mode"];
+    if (mode == "lake") {
+        return ctrl->sel("stencil_valid");
+    } else if (mode == "lake_dp") {
+        return ctrl->sel("valid_out_pond");
+    } else {
+        cout << "Config mode: " << mode << "Not implemented" << endl;
+        assert(false);
+    }
+}
+
 void connect_op_control_wires(CodegenOptions& options, ModuleDef* def, op* op, schedule_info& hwinfo, Instance* controller) {
   cout << "Find compute" << endl;
   //int op_latency = dbhc::map_find(op->name, hwinfo.op_compute_unit_latencies);
@@ -1708,7 +1720,8 @@ void connect_op_control_wires(CodegenOptions& options, ModuleDef* def, op* op, s
     Wireable* write_start_loop_vars =
       delay_by(def, write_start_control_vars_name(op->name), op_start_loop_vars, read_latency + op_latency);
   } else {
-    Wireable* op_start_wire = controller->sel("stencil_valid");
+    //Wireable* op_start_wire = controller->sel("stencil_valid");
+    Wireable* op_start_wire = op_control_wires(controller);
     cout << "Delaying read" << endl;
     Wireable* read_start_wire =
       delay_by(def, read_start_name(op->name), op_start_wire, 0);
@@ -1797,29 +1810,43 @@ void emit_lake_config_collateral(CodegenOptions options, string tile_name, json 
         out.close();
     }
 }
+void add_init_code(ofstream& lake_new, string keyword) {
+    if (contains(keyword, "sp")) {
+      lake_new << "//Add initial block here" << endl;
+      lake_new << "initial begin" << endl;
+      lake_new << tab(1) << "integer i = 0;" << endl;
+      lake_new << tab(1) << "for(i = 0; i < 512; i ++) begin" << endl;
+      lake_new << tab(2) << "integer big_addr = i >> 2;" << endl;
+      lake_new << tab(2) << "integer small_addr = (i & 3) << 4;" << endl;
+      //lake_new << tab(2) << "data_array[big_addr][small_addr] = i;" << endl;
+      lake_new << tab(2) << "data_array[big_addr][small_addr +: 8] = i;" << endl;
+      lake_new << tab(1) << "end" << endl << "end" << endl;
+    } else {
+      lake_new << "//Add initial block here" << endl;
+      lake_new << "initial begin" << endl;
+      lake_new << tab(1) << "integer i = 0;" << endl;
+      lake_new << tab(1) << "for(i = 0; i < 512; i ++) begin" << endl;
+      //lake_new << tab(2) << "data_array[big_addr][small_addr] = i;" << endl;
+      lake_new << tab(2) << "data_array[i] = i;" << endl;
+      lake_new << tab(1) << "end" << endl << "end" << endl;
+    }
+}
 
-void add_default_initial_block() {
+void add_default_initial_block(string filename, string keyword) {
     //ifstream lake_top("LakeTop_W.v");
     //ofstream lake_new("LakeTop_W_new.v");
-    ifstream lake_top("laketop.sv");
-    ofstream lake_new("laketop_new.sv");
+    ifstream lake_top(filename + ".sv");
+    ofstream lake_new(filename + "_new.sv");
     string loc;
     bool find_macro = false;
     if (lake_top.is_open() && lake_new.is_open()) {
         while(getline(lake_top, loc) ) {
             //if (loc == "endmodule   // sram_stub") {
             //TODO: this is a little hacky, we need to find a better way to init
-            if (loc == "endmodule   // sram_sp__0") {
+            //if (loc == "endmodule   // sram_sp__0") {
+            if (loc == keyword) {
                 find_macro = true;
-                lake_new << "//Add initial block here" << endl;
-                lake_new << "initial begin" << endl;
-                lake_new << tab(1) << "integer i = 0;" << endl;
-                lake_new << tab(1) << "for(i = 0; i < 512; i ++) begin" << endl;
-                lake_new << tab(2) << "integer big_addr = i >> 2;" << endl;
-                lake_new << tab(2) << "integer small_addr = (i & 3) << 4;" << endl;
-                //lake_new << tab(2) << "data_array[big_addr][small_addr] = i;" << endl;
-                lake_new << tab(2) << "data_array[big_addr][small_addr +: 8] = i;" << endl;
-                lake_new << tab(1) << "end" << endl << "end" << endl;
+                add_init_code(lake_new, keyword);
             }
             lake_new << loc << endl;
         }
@@ -1863,7 +1890,7 @@ void run_lake_dp_verilog_codegen(CodegenOptions& options, string v_name, string 
   ASSERT(getenv("LAKE_PATH"), "Define env var $LAKE_PATH which is the /PathTo/lake");
   //int res_lake = cmd("python $LAKE_PATH/lake/utils/wrapper_lake.py -c " + options.dir + "lake_collateral/" + ub_ins_name + " -n " + v_name + " -p True -pl 4 -pd 128");
   int res_lake = cmd("python $LAKE_PATH/lake/utils/wrapper.py -c " + options.dir + "lake_collateral/" + ub_ins_name +
-          "/config.json -s -wmn "+ v_name + " -wfn pond_module_wrappers.v -vmn PondTop -vfn pondtop.v  -a -v -dp -ii 6 -oi 6 -rd 0 -d 2048 -mw 16");
+          "/config.json -s -wmn "+ v_name + " -wfn pond_module_wrappers.v -vmn PondTop -vfn pondtop.sv  -a -v -dp -ii 6 -oi 6 -rd 0 -d 2048 -mw 16");
   assert(res_lake == 0);
   //cmd("mkdir -p "+options.dir+"verilog");
   //cmd("mv LakeWrapper_"+v_name+".v " + options.dir + "verilog");
@@ -1874,7 +1901,7 @@ void run_pond_verilog_codegen(CodegenOptions& options, string v_name, string ub_
   ASSERT(getenv("LAKE_PATH"), "Define env var $LAKE_PATH which is the /PathTo/lake");
   //int res_lake = cmd("python $LAKE_PATH/lake/utils/wrapper_lake.py -c " + options.dir + "lake_collateral/" + ub_ins_name + " -n " + v_name + " -p True -pl 4 -pd 128");
   int res_lake = cmd("python $LAKE_PATH/lake/utils/wrapper.py -c " + options.dir + "lake_collateral/" + ub_ins_name +
-          "/config.json -s -wmn "+ v_name + " -wfn pond_module_wrappers.v -vmn PondTop -vfn pondtop.v -a -v -dp -ii 4 -oi 4 -rd 0 -d 128 -mw 16");
+          "/config.json -s -wmn "+ v_name + " -wfn pond_module_wrappers.v -vmn PondTop -vfn pondtop.sv -a -v -dp -ii 4 -oi 4 -rd 0 -d 128 -mw 16");
   assert(res_lake == 0);
   //cmd("mkdir -p "+options.dir+"verilog");
   //cmd("mv LakeWrapper_"+v_name+".v " + options.dir + "verilog");
@@ -1974,6 +2001,7 @@ void generate_lake_tile_verilog(CodegenOptions& options, Instance* buf) {
   else if (config_mode == "pond")
       run_pond_verilog_codegen(options, v_name, ub_ins_name);
   else {
+      cout << "Config mode: " << config_mode << endl;
       cout << "Not implemented yet. " << endl;
       assert(false);
   }

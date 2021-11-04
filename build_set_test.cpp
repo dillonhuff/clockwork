@@ -14888,7 +14888,6 @@ void verilator_regression_test(prog& prg, vector<string>& collateral_files, stri
   //verilog_files.push_back("laketop_new.sv");
   //verilog_files.push_back("LakeTop_flat.v");
   //verilog_files.push_back("lake_module_wrappers.v");
-  add_default_initial_block();
   //cmd("mv laketop_new.sv laketop.sv");
   bool extra_flag_for_lake = true;
   int res = run_verilator_on(name, name + "_verilog_tb.cpp", verilog_files, extra_flag_for_lake);
@@ -14914,9 +14913,9 @@ void test_pond(string dir, bool run_verilator=true) {
   //Need to change the schedule for vectorization
   //test_apps.push_back(complex_mem_pond_input());
 
-  //test_apps.push_back(resnet_simple());
-  //test_apps.push_back(resnet());
-  //test_apps.push_back(three_level_pond_copy());
+  test_apps.push_back(resnet_simple());
+  test_apps.push_back(resnet());
+  test_apps.push_back(three_level_pond_copy());
   test_apps.push_back(three_level_pond_rolled());
   test_apps.push_back(complex_mem_pond());
   test_apps.push_back(complex_mem_pond_rolled());
@@ -14950,14 +14949,15 @@ void test_pond(string dir, bool run_verilator=true) {
     //run_verilator_tb(prg.name);
     //TODO: move to a function
     //run verilator on all the generated verilog
-    vector<string> verilog_files;
-    verilog_files.push_back("LakeTop_flat.v");
-    verilog_files.push_back("laketop_new.sv");
-    verilog_files.push_back("PondTop_flat.v");
-    verilog_files.push_back("pondtop.v");
-    verilog_files.push_back("pond_module_wrappers.v");
-    verilog_files.push_back("lake_module_wrappers.v");
     if (!gen_config_only) {
+      vector<string> verilog_files;
+      verilog_files.push_back("LakeTop_flat.v");
+      verilog_files.push_back("laketop_new.sv");
+      verilog_files.push_back("PondTop_flat.v");
+      verilog_files.push_back("pondtop.sv");
+      verilog_files.push_back("pond_module_wrappers.v");
+      verilog_files.push_back("lake_module_wrappers.v");
+      add_default_initial_block("laketop", "endmodule   // sram_sp__0");
       verilator_regression_test(prg, verilog_files, "single_port_buffer");
     }
 
@@ -15158,11 +15158,12 @@ void test_glb(bool gen_config_only, bool multi_accessor=false, string dir="aha_g
     cout << "Output name: " << prg.name << endl;
     //TODO: move to a function
     //run verilator on all the generated verilog
-    vector<string> verilog_files;// = get_files("./" + dir + "/"+name+"/verilog/");
-    verilog_files.push_back("laketop_new.sv");
-    verilog_files.push_back("LakeTop_flat.v");
-    verilog_files.push_back("lake_module_wrappers.v");
     if (!gen_config_only) {
+      vector<string> verilog_files;// = get_files("./" + dir + "/"+name+"/verilog/");
+      verilog_files.push_back("laketop_new.sv");
+      verilog_files.push_back("LakeTop_flat.v");
+      verilog_files.push_back("lake_module_wrappers.v");
+      add_default_initial_block("laketop", "endmodule   // sram_sp__0");
       verilator_regression_test(prg, verilog_files, "single_port_buffer");
     }
 #endif
@@ -15226,11 +15227,12 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
     compile_for_garnet_single_port_mem(prg, dir, false, gen_config_only, false, false);
     cout << "Output name: " << prg.name << endl;
     //run verilator on all the generated verilog
-    vector<string> verilog_files;;
-    verilog_files.push_back("laketop_new.sv");
-    verilog_files.push_back("LakeTop_flat.v");
-    verilog_files.push_back("lake_module_wrappers.v");
     if (!gen_config_only) {
+      vector<string> verilog_files;;
+      verilog_files.push_back("laketop_new.sv");
+      verilog_files.push_back("LakeTop_flat.v");
+      verilog_files.push_back("lake_module_wrappers.v");
+      add_default_initial_block("laketop", "endmodule   // sram_sp__0");
       verilator_regression_test(prg, verilog_files, "single_port_buffer");
     }
 #endif
@@ -15240,23 +15242,24 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
 void test_dual_port_mem(bool gen_config_only, bool multi_accessor=false, string dir="aha_garnet_dp") {
   vector<prog> test_apps;
 
-  //CGRA tests
-  //test_apps.push_back(conv_3_3());
+  //CGRA tests that pass dual port test
+  test_apps.push_back(conv_3_3());
   test_apps.push_back(gaussian());
-  //test_apps.push_back(cascade());
+  test_apps.push_back(cascade());
   test_apps.push_back(harris());
-  //test_apps.push_back(down_sample());
-  //test_apps.push_back(unsharp());
-  //test_apps.push_back(unsharp_new());
-  //Not work but not in testbenches
-  //test_apps.push_back(laplacian_pyramid_docker());
-  test_apps.push_back(laplacian_pyramid());
+  test_apps.push_back(down_sample());
+  test_apps.push_back(unsharp());
+  test_apps.push_back(unsharp_new());
+  test_apps.push_back(counter());
   test_apps.push_back(rom());
   test_apps.push_back(conv_1_2());
   test_apps.push_back(demosaic_unrolled());
-  test_apps.push_back(up_sample());
-  test_apps.push_back(counter());
-  test_apps.push_back(camera_pipeline_new());
+
+  //Not work yet
+  //test_apps.push_back(laplacian_pyramid_docker());
+  //test_apps.push_back(laplacian_pyramid());
+  //test_apps.push_back(up_sample());
+  //test_apps.push_back(camera_pipeline_new());
 
   ////DNN apps
   //test_apps.push_back(matmul_single());
@@ -15291,15 +15294,13 @@ void test_dual_port_mem(bool gen_config_only, bool multi_accessor=false, string 
     compile_for_garnet_dual_port_mem(prg, dir, false, gen_config_only, false, false);
     cout << "Output name: " << prg.name << endl;
     //run verilator on all the generated verilog
-    vector<string> verilog_files;;
-    verilog_files.push_back("laketop_new.sv");
-    verilog_files.push_back("LakeTop_flat.v");
-    verilog_files.push_back("lake_module_wrappers.v");
-    verilog_files.push_back("PondTop_flat.v");
-    verilog_files.push_back("pondtop.v");
-    verilog_files.push_back("pond_module_wrappers.v");
     if (!gen_config_only) {
-      verilator_regression_test(prg, verilog_files, "single_port_buffer");
+      vector<string> verilog_files;;
+      verilog_files.push_back("PondTop_flat.v");
+      verilog_files.push_back("pondtop_new.sv");
+      verilog_files.push_back("pond_module_wrappers.v");
+      add_default_initial_block("pondtop", "endmodule   // sram_dp__0");
+      verilator_regression_test(prg, verilog_files, "dual_port_buffer");
     }
 #endif
   }

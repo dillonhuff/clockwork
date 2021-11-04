@@ -2220,6 +2220,49 @@ Json UBuffer::generate_ubuf_args_old(CodegenOptions& options, map<string, UBuffe
     return create_lake_config(data);
 }
 
+CoreIR::Instance* generate_pond_instance(
+        ModuleDef* def,
+        CodegenOptions options,
+        string ub_ins_name,
+        string rst_name,
+        string config_mode,
+        json config_file,
+        size_t input_num, size_t output_num) {
+
+  auto context = def->getContext();
+  CoreIR::Instance* buf;
+  CoreIR::Values genargs = {
+    {"width", CoreIR::Const::make(context, 16)},
+    {"num_inputs", CoreIR::Const::make(context, input_num)},
+    {"num_outputs", CoreIR::Const::make(context, output_num)},
+    {"ID", CoreIR::Const::make(context, context->getUnique())},
+  };
+  cout << "Add pond node with input_num = " << input_num
+      << ", output_num = " << output_num << endl;
+  auto* g = context->getGenerator("cgralib.Pond_amber");
+  //auto* generatedModule = g->getModule(genargs);
+  //g->getMetaData()["verilog_name"] =
+  //  "pond_"+genargs.at("ID")->get<string>();
+  buf = def->addInstance(ub_ins_name, "cgralib.Pond_amber", genargs);
+  buf->getMetaData()["config"] = config_file;
+  buf->getMetaData()["mode"] = config_mode;
+  //buf->getModuleRef()->getMetaData()["verilog_name"] = "pond_"+genargs.at("ID")->get<string>();
+  //buf->getMetaData()["verilog_name"] = "pond_"+genargs.at("ID")->get<string>();
+
+  auto clk_en_const = def->addInstance(ub_ins_name+"_clk_en_const", "corebit.const",
+          {{"value", CoreIR::Const::make(context, true)}});
+
+  //garnet wire reset to flush of memory
+  def->connect(buf->sel("flush"), def->sel("self." + rst_name));
+  //def->connect(buf->sel("flush"), def->sel("self.flush"));
+  //def->connect(buf->sel("rst_n"), def->sel("self.rst_n"));
+  def->connect(buf->sel("clk"), def->sel("self.clk"));
+  def->connect(buf->sel("clk_en"), clk_en_const->sel("out"));
+  def->connect(buf->sel("rst_n"), clk_en_const->sel("out"));
+
+  return buf;
+}
+
 CoreIR::Module* affine_controller_use_lake_tile_counter(
         CodegenOptions& options,
         CoreIR::Context* context,
@@ -2284,99 +2327,132 @@ CoreIR::Module* affine_controller_use_lake_tile_counter(
       add_lake_config(config_file, stencil_valid, num_in_dims(aff), "stencil_valid");
     }
 
-    //generate tb accessor
-    auto config_tb2out = generate_accessor_config_from_aff_expr(dom, aff);
 
     auto mem = options.mem_hierarchy.at("mem");
 
     //generate tb address
     auto index_addr = project_all_out_but(cpy(addr), dim);
     cout << "Index address: " << str(index_addr) << endl;
-    {
-      int word_width = mem.word_width.at("tb");
-      int capacity = mem.capacity.at("tb");
-      int port_width = mem.out_port_width.at("tb");
-      //is_read = true, is_mux = false
-      auto addressor_tb2out = generate_addressor_config_from_aff_expr(get_aff(index_addr), true, false, word_width, capacity, port_width);
-      config_tb2out.merge(addressor_tb2out);
+
+    if (mem.fetch_width > 1) {
+      //generate tb accessor
+      auto config_tb2out = generate_accessor_config_from_aff_expr(dom, aff);
+      {
+        int word_width = mem.word_width.at("tb");
+        int capacity = mem.capacity.at("tb");
+        int port_width = mem.out_port_width.at("tb");
+        //is_read = true, is_mux = false
+        auto addressor_tb2out = generate_addressor_config_from_aff_expr(get_aff(index_addr), true, false, word_width, capacity, port_width);
+        config_tb2out.merge(addressor_tb2out);
+      }
+      add_lake_config(config_file, config_tb2out, num_dims(dom), "tb2out_0");
+
+      //generate sram2tb controller
+      //TODO: change 4 to fetch width
+      auto trans = get_domain_trans(dom, dim, 4);
+      cout << "Vectorization Trans: " << str(trans) << endl;
+
+      //Apply the vectorization trans on both accessor and addressor
+      auto acc_0 = its(to_map(aff), dom);
+      auto res = dot(trans, acc_0);
+      auto vec_index_addr = dot(trans, index_addr);
+
+      //project all the inner dim
+      for (int reset_dim = dim+1; reset_dim < num_in_dims(acc_0); reset_dim ++) {
+          res = reset_domain_coeff(res, reset_dim, 0);
+          cout << "\treset: " << str(res) << endl;
+      }
+
+      if (dim < num_in_dims(acc_0) - 1) {
+         vec_index_addr = isl_map_project_out(cpy(vec_index_addr), isl_dim_in, dim+1, num_in_dims(acc_0) - dim - 1);
+         res = isl_map_project_out(cpy(res), isl_dim_in, dim+1, num_in_dims(acc_0) - dim - 1);
+      }
+      cout << "\tAfter trans: " << str(res) << endl;
+      cout << "\tVec index address: " << str(vec_index_addr) << endl;
+
+      //bring the sram2tb forward for 3 cycle
+      res = shift_range_map(res, {-3});
+      auto config_sram2tb = generate_accessor_config_from_aff_expr(domain(res), get_aff(res));
+
+      //Getthe addressor
+      {
+        int word_width = mem.word_width.at("tb");
+        int capacity = mem.capacity.at("tb");
+        int port_width = mem.in_port_width.at("tb");
+        auto addressor_sram2tb_write = generate_addressor_config_from_aff_expr(get_aff(vec_index_addr), false, false, word_width, capacity, port_width);
+        config_sram2tb.merge(addressor_sram2tb_write);
+      }
+
+      {
+        int word_width = mem.word_width.at("sram");
+        int capacity = mem.capacity.at("sram");
+        int port_width = mem.out_port_width.at("sram");
+        auto addressor_sram2tb_read = generate_addressor_config_from_aff_expr(get_aff(vec_index_addr), true, false, word_width, capacity, port_width);
+        config_sram2tb.merge(addressor_sram2tb_read);
+      }
+      add_lake_config(config_file, config_sram2tb, num_dims(domain(res)), "sram2tb_0");
+
+      auto* g = context->getGenerator("cgralib.Mem_amber");
+      //auto* generatedModule = g->getModule(genargs);
+      //g->getMetaData()["verilog_name"] =
+      //  "aff_ctrl_"+genargs.at("ID")->get<string>();
+      buf = def->addInstance(ub_ins_name + "_Counter_" + str(dim), "cgralib.Mem_amber", genargs);
+      //assign the init value
+      //TODO change 4 to fetch width
+      std::vector<int> v(round_up_to_multiple_of(get_domain_range(dom, dim), 4));
+      std::iota(v.begin(), v.end(), 0);
+
+      //TODO: this is a temporary fix for lake counter, need to move to the root level
+      //buf->getMetaData()["init"] = v;
+      config_file["init"] = v;
+
+      buf->getMetaData()["config"] = config_file;
+      buf->getMetaData()["mode"] = "lake";
+      //buf->getModuleRef()->getMetaData()["verilog_name"] = "aff_ctrl_"+genargs.at("ID")->get<string>();
+      //buf->getMetaData()["verilog_name"] = "aff_ctrl_"+genargs.at("ID")->get<string>();
+
+
+      //garnet wire reset to flush of memory
+      def->connect(buf->sel("flush"), def->sel("self.rst_n"));
+      def->connect(buf->sel("clk"), def->sel("self.clk"));
+      def->connect(buf->sel("clk_en"), clk_en_const->sel("out"));
+      def->connect(buf->sel("rst_n"), clk_en_const->sel("out"));
+      def->connect(buf->sel("data_out_0"), def->sel("self")->sel("d")->sel(dim));
+      if (has_stencil_valid) {
+        def->connect(buf->sel("stencil_valid"), def->sel("self.valid"));
+      }
+      generate_lake_tile_verilog(options, buf);
+
+    } else {
+      //This is the dual port version
+      auto config_mem2out = generate_accessor_config_from_aff_expr(dom, aff);
+      {
+        int word_width = mem.word_width.at("mem");
+        int capacity = mem.capacity.at("mem");
+        int port_width = mem.out_port_width.at("mem");
+        //is_read = true, is_mux = false
+        auto addressor_mem2out = generate_addressor_config_from_aff_expr(get_aff(index_addr), true, false, word_width, capacity, port_width);
+        config_mem2out.merge(addressor_mem2out);
+      }
+      add_lake_config(config_file, config_mem2out, num_dims(dom), pick(mem.controller_name)+"2out_0");
+
+      std::vector<int> v(get_domain_range(dom, dim));
+      std::iota(v.begin(), v.end(), 0);
+
+      //TODO: this is a temporary fix for lake counter, need to move to the root level
+      //buf->getMetaData()["init"] = v;
+      config_file["init"] = v;
+      auto dp_buf_for_counter = generate_pond_instance(def, options, ub_ins_name + "_counter_" + str(dim),
+              "rst_n", "lake_dp", config_file, 1, 1);
+
+      //Wire the output data
+      def->connect(dp_buf_for_counter->sel("data_out_pond_0"), def->sel("self")->sel("d")->sel(dim));
+      generate_lake_tile_verilog(options, dp_buf_for_counter);
+      if (has_stencil_valid) {
+        def->connect(dp_buf_for_counter->sel("valid_out_pond"), def->sel("self.valid"));
+      }
+
     }
-    add_lake_config(config_file, config_tb2out, num_dims(dom), "tb2out_0");
-
-    //generate sram2tb controller
-    //TODO: change 4 to fetch width
-    auto trans = get_domain_trans(dom, dim, 4);
-    cout << "Vectorization Trans: " << str(trans) << endl;
-
-    //Apply the vectorization trans on both accessor and addressor
-    auto acc_0 = its(to_map(aff), dom);
-    auto res = dot(trans, acc_0);
-    auto vec_index_addr = dot(trans, index_addr);
-
-    //project all the inner dim
-    for (int reset_dim = dim+1; reset_dim < num_in_dims(acc_0); reset_dim ++) {
-        res = reset_domain_coeff(res, reset_dim, 0);
-        cout << "\treset: " << str(res) << endl;
-    }
-
-    if (dim < num_in_dims(acc_0) - 1) {
-       vec_index_addr = isl_map_project_out(cpy(vec_index_addr), isl_dim_in, dim+1, num_in_dims(acc_0) - dim - 1);
-       res = isl_map_project_out(cpy(res), isl_dim_in, dim+1, num_in_dims(acc_0) - dim - 1);
-    }
-    cout << "\tAfter trans: " << str(res) << endl;
-    cout << "\tVec index address: " << str(vec_index_addr) << endl;
-
-    //bring the sram2tb forward for 3 cycle
-    res = shift_range_map(res, {-3});
-    auto config_sram2tb = generate_accessor_config_from_aff_expr(domain(res), get_aff(res));
-
-    //Getthe addressor
-    {
-      int word_width = mem.word_width.at("tb");
-      int capacity = mem.capacity.at("tb");
-      int port_width = mem.in_port_width.at("tb");
-      auto addressor_sram2tb_write = generate_addressor_config_from_aff_expr(get_aff(vec_index_addr), false, false, word_width, capacity, port_width);
-      config_sram2tb.merge(addressor_sram2tb_write);
-    }
-
-    {
-      int word_width = mem.word_width.at("sram");
-      int capacity = mem.capacity.at("sram");
-      int port_width = mem.out_port_width.at("sram");
-      auto addressor_sram2tb_read = generate_addressor_config_from_aff_expr(get_aff(vec_index_addr), true, false, word_width, capacity, port_width);
-      config_sram2tb.merge(addressor_sram2tb_read);
-    }
-    add_lake_config(config_file, config_sram2tb, num_dims(domain(res)), "sram2tb_0");
-
-    auto* g = context->getGenerator("cgralib.Mem_amber");
-    //auto* generatedModule = g->getModule(genargs);
-    //g->getMetaData()["verilog_name"] =
-    //  "aff_ctrl_"+genargs.at("ID")->get<string>();
-    buf = def->addInstance(ub_ins_name + "_Counter_" + str(dim), "cgralib.Mem_amber", genargs);
-    //assign the init value
-    //TODO change 4 to fetch width
-    std::vector<int> v(round_up_to_multiple_of(get_domain_range(dom, dim), 4));
-    std::iota(v.begin(), v.end(), 0);
-
-    //TODO: this is a temporary fix for lake counter, need to move to the root level
-    //buf->getMetaData()["init"] = v;
-    config_file["init"] = v;
-
-    buf->getMetaData()["config"] = config_file;
-    buf->getMetaData()["mode"] = "lake";
-    //buf->getModuleRef()->getMetaData()["verilog_name"] = "aff_ctrl_"+genargs.at("ID")->get<string>();
-    //buf->getMetaData()["verilog_name"] = "aff_ctrl_"+genargs.at("ID")->get<string>();
-
-
-    //garnet wire reset to flush of memory
-    def->connect(buf->sel("flush"), def->sel("self.rst_n"));
-    def->connect(buf->sel("clk"), def->sel("self.clk"));
-    def->connect(buf->sel("clk_en"), clk_en_const->sel("out"));
-    def->connect(buf->sel("rst_n"), clk_en_const->sel("out"));
-    def->connect(buf->sel("data_out_0"), def->sel("self")->sel("d")->sel(dim));
-    if (has_stencil_valid) {
-      def->connect(buf->sel("stencil_valid"), def->sel("self.valid"));
-    }
-    generate_lake_tile_verilog(options, buf);
   }
   m->setDef(def);
 
@@ -2409,40 +2485,60 @@ CoreIR::Instance* affine_controller_use_lake_tile(
         isl_aff* aff,
         string ub_ins_name) {
 
-  CoreIR::Instance* buf;
-  bool has_chain_en = options.mem_hierarchy.at("mem").wire_chain_en;
-  CoreIR::Values genargs = {
-    {"width", CoreIR::Const::make(context, 16)},
-    {"num_inputs", CoreIR::Const::make(context, 0)},
-    {"num_outputs", CoreIR::Const::make(context, 0)},
-    {"has_stencil_valid", CoreIR::Const::make(context, true)},
-    {"has_chain_en", CoreIR::Const::make(context, has_chain_en)},
-    {"ID", CoreIR::Const::make(context, context->getUnique())},
-    {"has_flush",  CoreIR::Const::make(context, true)},
-    {"use_prebuilt_mem",  CoreIR::Const::make(context, true)}
-  };
-  auto stencil_valid = generate_accessor_config_from_aff_expr(dom, aff);
-  //FIXME:possible bug if one ubuffer contains more than one tile
-  json config_file;
-  add_lake_config(config_file, stencil_valid, num_in_dims(aff), "stencil_valid");
   cout << "Add ub node to be aff ctrl"  << endl;
 
-  auto* g = context->getGenerator("cgralib.Mem_amber");
-  //auto* generatedModule = g->getModule(genargs);
-  //  "aff_ctrl_counter_"+genargs.at("ID")->get<string>();
-  buf = def->addInstance(ub_ins_name, "cgralib.Mem_amber", genargs);
-  buf->getMetaData()["config"] = config_file;
-  buf->getMetaData()["mode"] = "lake";
-  //buf->getModuleRef()->getMetaData()["verilog_name"] = "aff_ctrl_counter_"+genargs.at("ID")->get<string>();
-  //buf->getMetaData()["verilog_name"] = "aff_ctrl_counter_"+genargs.at("ID")->get<string>();
+  //Generate the configuration
+  auto stencil_valid = generate_accessor_config_from_aff_expr(dom, aff);
+  json config_file;
+  add_lake_config(config_file, stencil_valid, num_in_dims(aff), "stencil_valid");
+
+  CoreIR::Instance* buf;
+  auto mem = options.mem_hierarchy.at("mem");
+  if (mem.fetch_width > 1) {
+    //TODO: put this into a function
+    bool has_chain_en = options.mem_hierarchy.at("mem").wire_chain_en;
+    CoreIR::Values genargs = {
+      {"width", CoreIR::Const::make(context, 16)},
+      {"num_inputs", CoreIR::Const::make(context, 1)},
+      {"num_outputs", CoreIR::Const::make(context, 1)},
+      {"has_stencil_valid", CoreIR::Const::make(context, true)},
+      {"has_chain_en", CoreIR::Const::make(context, has_chain_en)},
+      {"ID", CoreIR::Const::make(context, context->getUnique())},
+      {"has_flush",  CoreIR::Const::make(context, true)},
+      {"use_prebuilt_mem",  CoreIR::Const::make(context, true)}
+    };
+    auto* g = context->getGenerator("cgralib.Mem_amber");
+    buf = def->addInstance(ub_ins_name, "cgralib.Mem_amber", genargs);
+    buf->getMetaData()["config"] = config_file;
+    buf->getMetaData()["mode"] = "lake";
+    //buf->getModuleRef()->getMetaData()["verilog_name"] = "aff_ctrl_counter_"+genargs.at("ID")->get<string>();
+    //buf->getMetaData()["verilog_name"] = "aff_ctrl_counter_"+genargs.at("ID")->get<string>();
+
+  } else {
+    CoreIR::Values genargs = {
+      {"width", CoreIR::Const::make(context, 16)},
+      {"num_inputs", CoreIR::Const::make(context, 1)},
+      {"num_outputs", CoreIR::Const::make(context, 1)},
+      {"ID", CoreIR::Const::make(context, context->getUnique())},
+    };
+    auto* g = context->getGenerator("cgralib.Pond_amber");
+    //auto* generatedModule = g->getModule(genargs);
+    //g->getMetaData()["verilog_name"] =
+    //  "pond_"+genargs.at("ID")->get<string>();
+    buf = def->addInstance(ub_ins_name, "cgralib.Pond_amber", genargs);
+    buf->getMetaData()["config"] = config_file;
+    buf->getMetaData()["mode"] = "lake_dp";
+    //buf->getModuleRef()->getMetaData()["verilog_name"] = "pond_"+genargs.at("ID")->get<string>();
+    //buf->getMetaData()["verilog_name"] = "pond_"+genargs.at("ID")->get<string>();
+
+  }
+
 
   auto clk_en_const = def->addInstance(ub_ins_name+"_clk_en_const", "corebit.const",
           {{"value", CoreIR::Const::make(context, true)}});
 
-  //garnet wire reset to flush of memory
+  //Wire some default logic
   def->connect(buf->sel("flush"), def->sel("self.reset"));
-  //def->connect(buf->sel("flush"), def->sel("self.flush"));
-  //def->connect(buf->sel("rst_n"), def->sel("self.rst_n"));
   def->connect(buf->sel("clk"), def->sel("self.clk"));
   def->connect(buf->sel("clk_en"), clk_en_const->sel("out"));
   def->connect(buf->sel("rst_n"), clk_en_const->sel("out"));
