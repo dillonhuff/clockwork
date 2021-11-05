@@ -19,6 +19,7 @@ struct affine_controller_ctrl {
   isl_set* dom;
 };
 
+CoreIR::Wireable* op_control_wires(CoreIR::Instance* ctrl);
 
 CoreIR::Wireable* mkConst(CoreIR::ModuleDef* def, const int width, const int val);
 CoreIR::Wireable* addList(CoreIR::ModuleDef* def, const std::vector<CoreIR::Wireable*>& vals, int width);

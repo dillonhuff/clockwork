@@ -15257,18 +15257,19 @@ void test_dual_port_mem(bool gen_config_only, bool multi_accessor=false, string 
   test_apps.push_back(up_sample());
   test_apps.push_back(camera_pipeline_new());
 
-  //Not work yet
-  //test_apps.push_back(laplacian_pyramid_docker());
-  //test_apps.push_back(laplacian_pyramid());
+  test_apps.push_back(laplacian_pyramid_docker());
+  test_apps.push_back(laplacian_pyramid());
 
   ////DNN apps
+  //Not working
   //test_apps.push_back(matmul_single());
-  //test_apps.push_back(resnet_tiny());
-  //test_apps.push_back(resnet_simple());
-  //test_apps.push_back(resnet());
+
+  test_apps.push_back(resnet_tiny());
+  test_apps.push_back(resnet_simple());
+  test_apps.push_back(resnet());
 
   ////Big applications
-  //test_apps.push_back(mobilenet_unrolled());
+  test_apps.push_back(mobilenet_unrolled());
   //test_apps.push_back(resnet_one_input());
   //test_apps.push_back(resnet88());
   //test_apps.push_back(resnet88_chain());
@@ -19250,8 +19251,8 @@ CodegenOptions garnet_codegen_dual_port_with_addrgen_options(prog& prg, string d
   options.fallback_schedule = ISCA_SCHEDULE;
   options.merge_threshold = 10;
   options.iis = {1};
-  options.rtl_options.max_inpt = 1;
-  options.rtl_options.max_outpt = 1;
+  options.rtl_options.max_inpt = 2;
+  options.rtl_options.max_outpt = 2;
   //all_unbanked(prg, options);
 
   //coreIR codegen options

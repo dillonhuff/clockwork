@@ -2759,7 +2759,7 @@ void UBuffer::wire_ubuf_IO(CodegenOptions& options,CoreIR::ModuleDef* def, map<s
             def->connect(buf->sel(memDataoutPort(config_mode, outpt_cnt)), last_dangling_chain_data_in);
           }
 
-        } else if (config_mode == "pond") {
+        } else if (config_mode == "pond" || config_mode == "lake_dp") {
           if (bank_id == impl.outpt_to_bank.at(outpt).size() - 1) {
             //last port directly connec to the wire
             def->connect(buf->sel(memDataoutPort(config_mode, outpt_cnt)),  pt2wire.at(outpt));
@@ -2782,7 +2782,7 @@ void UBuffer::wire_ubuf_IO(CodegenOptions& options,CoreIR::ModuleDef* def, map<s
                     {{"width", CoreIR::Const::make(context, this->port_widths)}});
             def->connect(dataout_pth->sel("out"), next_val->sel("out"));
             def->connect(buf->sel(memDataoutPort(config_mode, outpt_cnt)), next_val->sel("in1"));
-            def->connect(mux_ctrl->sel("stencil_valid"), next_val->sel("sel"));
+            def->connect(op_control_wires(mux_ctrl), next_val->sel("sel"));
             inlineInstance(dataout_pth);
             pt2wire.at(outpt) = next_val->sel("in0");
           }
@@ -9454,7 +9454,7 @@ void UBuffer::generate_banks(CodegenOptions& options) {
           cout << "\tg size: " << g.size() << endl;
           bool is_in_group = buf.is_in_pt(pick(g));
           int ports = is_in_group ?
-              options.rtl_options.max_inpt : options.rtl_options.max_inpt;
+              options.rtl_options.max_inpt : options.rtl_options.max_outpt;
           if (parts.size() * ports < g.size()) {
             //may need banking
             return {};
@@ -10484,6 +10484,9 @@ void generate_banks_garnet(CodegenOptions& options, UBuffer& buf, UBufferImpl& i
         cout << "ADD BANK!\n Bank id: " << str(point) << endl;
         std::set<string> input_sets = bank_impl.bank_writers.at(bank_id);
         std::set<string> output_sets = bank_impl.bank_readers.at(bank_id);
+        cout << "Before grouping: " << endl;
+        cout << "\tinput set: " << input_sets << endl;
+        cout << "\toutput set: " << output_sets << endl;
         auto bank_IOs = buf.port_grouping(options, impl, rddom, input_sets, output_sets);
         for (auto bank_IO_pair: bank_IOs) {
             cout << "input group: " << bank_IO_pair.first << endl;
