@@ -3831,6 +3831,14 @@ void count_post_mapped_memory_accesses(Module* gmod) {
   //assert(false);
 }
 
+void analyze_latency(CodegenOptions& options, umap* sched_map) {
+  auto sched_max = lexmaxval(to_set(range(sched_map)));
+  ofstream out(options.dir + "/cgra_resource_estimation.csv", std::ios_base::app);
+  out << "latency, " << str(sched_max) << endl;
+  cout << "latency, " << str(sched_max) << endl;
+  out.close();
+}
+
 void analyze_post_mapped_app(CodegenOptions& options, prog& prg, map<string, UBuffer>& buffers, Module* gmod) {
   //count_post_mapped_memory_use(gmod);
   //count_post_mapped_memory_accesses(gmod);
@@ -3852,6 +3860,26 @@ void analyze_post_mapped_app(CodegenOptions& options, prog& prg, map<string, UBu
     context->die();
   }
   //assert(false);
+}
+
+void analyze_post_mapped_app_emit_to_file(CodegenOptions& options, prog& prg, map<string, UBuffer>& buffers, Module* gmod) {
+  //count_post_mapped_memory_use(gmod);
+  //count_post_mapped_memory_accesses(gmod);
+  ofstream out(options.dir + "/cgra_resource_estimation.csv");
+  auto context = gmod->getContext();
+  auto ns = context->getNamespace("global");
+  //cout << "=== Post mapping instances for " << prg.name << endl;
+  map<string, int> counts;
+  for (auto inst : gmod->getDef()->getInstances()) {
+    //cout << tab(1) << inst.second->getModuleRef()->getName() << endl;
+    counts[inst.second->getModuleRef()->getName()]++;
+  }
+  cout << prg.name << " Post Mapping Resource Counts..." << endl;
+  for (auto c : counts) {
+    cout << tab(1) << c.first << " -> " << c.second << endl;
+    out << tab(1) << c.first << ", " << c.second << endl;
+  }
+  out.close();
 }
 
 //This is the top_level coreIR generation function
@@ -3898,6 +3926,9 @@ void generate_coreir(CodegenOptions& options,
     garnet_map_module(options, prg_mod, buffers, true);
     context->runPasses({"rungenerators", "flatten", "removewires", "cullgraph"});
 
+    Module* gmod = ns_new->getModule(prg.name);
+    analyze_post_mapped_app_emit_to_file(options, prg, buffers, gmod);
+    analyze_latency(options, schedmap);
     if(!saveToFile(ns_new,  options.dir + prg.name+ "_garnet.json", prg_mod)) {
       cout << "Could not save ubuffer coreir" << endl;
       context->die();

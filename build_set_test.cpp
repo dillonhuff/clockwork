@@ -15256,7 +15256,6 @@ void test_dual_port_mem(bool gen_config_only, bool multi_accessor=false, string 
   test_apps.push_back(demosaic_unrolled());
   test_apps.push_back(up_sample());
   test_apps.push_back(camera_pipeline_new());
-
   test_apps.push_back(laplacian_pyramid_docker());
   test_apps.push_back(laplacian_pyramid());
 
