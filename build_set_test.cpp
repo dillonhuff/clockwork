@@ -12938,7 +12938,7 @@ int run_verilator_on(const std::string& top_module,
       verilator_build = cmd("verilator -Wall --cc " + sep_list(verilog_files, "", "", " ") + " -exe --build --trace " + tb_file + " --top-module " + top_module + " -Wno-UNUSED -Wno-PINMISSING -Wno-DECLFILENAME -Wno-WIDTH -Wno-UNDRIVEN -Wno-CASEINCOMPLETE -Wno-MODDUP -Wno-UNOPTFLAT -Wno-CMPCONST");
 #endif
   } else {
-      verilator_build = cmd("verilator -Wall --cc " + sep_list(verilog_files, "", "", " ") + " --exe --build " + tb_file + " --top-module " + top_module + " -Wno-UNUSED -Wno-WIDTH -Wno-PINMISSING -Wno-DECLFILENAME");
+      verilator_build = cmd("verilator -Wall --cc " + sep_list(verilog_files, "", "", " ") + " --exe --build --trace " + tb_file + " --top-module " + top_module + " -Wno-UNUSED -Wno-WIDTH -Wno-PINMISSING -Wno-DECLFILENAME");
   }
 
   assert(verilator_build == 0);
@@ -19347,6 +19347,7 @@ CodegenOptions CGRA_M1_codegen_options(prog& prg) {
   options.rtl_options.use_external_controllers = true;
   options.rtl_options.target_tile =
     TARGET_TILE_M1;
+  options.debug_options.traceWave = true;
   all_unbanked(prg, options);
   return options;
 }
@@ -19951,25 +19952,53 @@ vector<prog> harris_variants() {
   return test_programs;
 }
 
-vector<prog> isca_programs() {
+vector<prog> isca_programs_m3() {
   vector<prog> test_programs;
   //test_programs.push_back(harris_sch5_1ppc());
-  //test_programs.push_back(harris());
   //test_programs.push_back(harris_sch6_2ppc());
   //test_programs.push_back(harris_sch7_bigtile());
   //test_programs.push_back(harris_sch8_endcim());
   //test_programs.back().pretty_print();
 
   //FIXME: not work for M1 and M3
-  //test_programs.push_back(up_sample());
-  //test_programs.push_back(unsharp());
   //test_programs.push_back(three_level_pond_rolled());
-  test_programs.push_back(camera_pipeline());
+
   test_programs.push_back(gaussian());
-  test_programs.push_back(mobilenet_unrolled());
-  test_programs.push_back(resnet());
   test_programs.push_back(cascade());
   test_programs.push_back(down_sample());
+  test_programs.push_back(harris());
+  test_programs.push_back(camera_pipeline());
+  test_programs.push_back(unsharp());
+  test_programs.push_back(unsharp_new());
+  test_programs.push_back(mobilenet_unrolled());
+  test_programs.push_back(resnet());
+
+
+  return test_programs;
+}
+
+vector<prog> isca_programs() {
+  vector<prog> test_programs;
+  //test_programs.push_back(harris_sch5_1ppc());
+  //test_programs.push_back(harris_sch6_2ppc());
+  //test_programs.push_back(harris_sch7_bigtile());
+  //test_programs.push_back(harris_sch8_endcim());
+  //test_programs.back().pretty_print();
+
+  //FIXME: not work for M1 and M3
+  //test_programs.push_back(three_level_pond_rolled());
+
+  test_programs.push_back(gaussian());
+  test_programs.push_back(cascade());
+  test_programs.push_back(down_sample());
+  test_programs.push_back(harris());
+  test_programs.push_back(camera_pipeline());
+  test_programs.push_back(up_sample());
+  test_programs.push_back(unsharp());
+  test_programs.push_back(unsharp_new());
+  test_programs.push_back(mobilenet_unrolled());
+  test_programs.push_back(resnet());
+
 
   return test_programs;
 }
@@ -20319,7 +20348,6 @@ void fpga_asplos_tests() {
 
 void cgra_flow_tests() {
 
-  vector<prog> M3_test_programs = isca_programs();
 
   //vector<prog> bram_test_programs{pointwise(), gaussian(), harris(), resnet()};
   vector<prog> bram_test_programs{resnet88()};
@@ -20330,19 +20358,16 @@ void cgra_flow_tests() {
   //vector<prog> M3_test_programs{up_sample(), resnet()};
   //vector<prog> M3_test_programs{resnet()};
   //vector<prog> M3_test_programs{gaussian()};
+  vector<prog> M3_test_programs = isca_programs_m3();
   test_codegen(M3_test_programs, compile_for_CGRA_M3_mem);
   //assert(false);
 
-  vector<prog> M1_test_programs = isca_programs();
   //vector<prog> M1_test_programs{gaussian()};
+  vector<prog> M1_test_programs = isca_programs();
   test_codegen(M1_test_programs, compile_for_CGRA_M1_mem);
 
-  auto test_programs =
-    all_cgra_programs();
+  auto test_programs = all_cgra_programs();
   test_platonic_codegen(test_programs);
-
-
-
 
   vector<prog> sram_test_programs{pointwise(), camera_pipeline(), resnet()};
   test_codegen(sram_test_programs, compile_for_generic_SRAM_mem);

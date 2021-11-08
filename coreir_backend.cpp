@@ -3854,7 +3854,7 @@ void analyze_post_mapped_app(CodegenOptions& options, prog& prg, map<string, UBu
   for (auto c : counts) {
     cout << tab(1) << c.first << " -> " << c.second << endl;
   }
-  //assert(false);
+  assert(false);
   if(!saveToFile(ns, prg.name + "_post_mapping.json", gmod)) {
     cout << "Could not save ubuffer coreir" << endl;
     context->die();
@@ -5777,9 +5777,9 @@ std::set<string> generate_block_shift_register(CodegenOptions& options, CoreIR::
   Wireable * delayed_src = delay_by(def, "sr_ito_all_" + c->getUnique(), src_wire, b_sreg.init_delay);
   def->connect(def->sel(b_sreg.chain_starts.at(0) + "_net.in"), delayed_src);
 
-  cout << tab(1) << b_sreg.difference << endl;
+  cout << tab(1) << "block SR difference: " << b_sreg.difference << endl;
   for (auto b : b_sreg.chain_starts) {
-    cout << tab(2) << b << endl;
+    cout << tab(2) << "b SR chain start: " << b << endl;
   }
   assert(b_sreg.chain_starts.size() % 2 == 1);
 
@@ -5918,7 +5918,10 @@ std::set<string> generate_M1_shift_registers(CodegenOptions& options, CoreIR::Mo
   dgraph shift_registers = build_shift_registers(options, def, prg, buf, hwinfo);
 
   block_sreg b_sreg;
-  auto packed_sr = allow_packed_sr(shift_registers, buf,& b_sreg);
+
+  //FIXME: permanently disable packed shift register do not packed for m1 / m3
+  //auto packed_sr = allow_packed_sr(shift_registers, buf,& b_sreg);
+  auto packed_sr = false;
 
   auto c = def->getContext();
 
@@ -6348,11 +6351,20 @@ CoreIR::Instance* build_inner_bank_offset(const std::string& reader, UBuffer& bu
   int bank_stride = 1;
   vector<string> dvs;
   vector<string> coeffs;
+  //for (int d = 0; d < buf.logical_dimension(); d++) {
+  //  dvs.push_back("d" + str(d));
+  //  if (!dbhc::elem(d, impl.partition_dims)) {
+  //    coeffs.push_back(str(bank_stride) + "*" + dvs.at(d));
+  //    bank_stride *= extents.at(d);
+  //  }
+  //}
+
+  //new linear algorithm accumulate stride from inner most dimension
   for (int d = 0; d < buf.logical_dimension(); d++) {
-    dvs.push_back("d" + str(d));
-    if (!dbhc::elem(d, impl.partition_dims)) {
-      coeffs.push_back(str(bank_stride) + "*" + dvs.at(d));
-      bank_stride *= extents.at(d);
+    dvs.insert(dvs.begin(), "d" + str(d));
+    if (!dbhc::elem(buf.logical_dimension()-1-d, impl.partition_dims)) {
+      coeffs.push_back(str(bank_stride) + "*" + dvs.front());
+      bank_stride *= extents.at(buf.logical_dimension() - 1- d);
     }
   }
 
