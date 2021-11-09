@@ -15243,32 +15243,33 @@ void test_dual_port_mem(bool gen_config_only, bool multi_accessor=false, string 
   vector<prog> test_apps;
 
   //CGRA tests that pass dual port test
-  test_apps.push_back(conv_3_3());
-  test_apps.push_back(gaussian());
-  test_apps.push_back(cascade());
-  test_apps.push_back(harris());
-  test_apps.push_back(down_sample());
-  test_apps.push_back(unsharp());
-  test_apps.push_back(unsharp_new());
-  test_apps.push_back(counter());
-  test_apps.push_back(rom());
-  test_apps.push_back(conv_1_2());
-  test_apps.push_back(demosaic_unrolled());
-  test_apps.push_back(up_sample());
-  test_apps.push_back(camera_pipeline_new());
-  test_apps.push_back(laplacian_pyramid_docker());
-  test_apps.push_back(laplacian_pyramid());
+  test_apps.push_back(resnet88());
+  //test_apps.push_back(conv_3_3());
+  //test_apps.push_back(gaussian());
+  //test_apps.push_back(cascade());
+  //test_apps.push_back(harris());
+  //test_apps.push_back(down_sample());
+  //test_apps.push_back(unsharp());
+  //test_apps.push_back(unsharp_new());
+  //test_apps.push_back(counter());
+  //test_apps.push_back(rom());
+  //test_apps.push_back(conv_1_2());
+  //test_apps.push_back(demosaic_unrolled());
+  //test_apps.push_back(up_sample());
+  //test_apps.push_back(camera_pipeline_new());
+  //test_apps.push_back(laplacian_pyramid_docker());
+  //test_apps.push_back(laplacian_pyramid());
 
-  ////DNN apps
-  //Not working
-  //test_apps.push_back(matmul_single());
+  //////DNN apps
+  ////Not working
+  ////test_apps.push_back(matmul_single());
 
-  test_apps.push_back(resnet_tiny());
-  test_apps.push_back(resnet_simple());
-  test_apps.push_back(resnet());
+  //test_apps.push_back(resnet_tiny());
+  //test_apps.push_back(resnet_simple());
+  //test_apps.push_back(resnet());
 
-  ////Big applications
-  test_apps.push_back(mobilenet_unrolled());
+  //////Big applications
+  //test_apps.push_back(mobilenet_unrolled());
   //test_apps.push_back(resnet_one_input());
   //test_apps.push_back(resnet88());
   //test_apps.push_back(resnet88_chain());
@@ -19996,8 +19997,8 @@ vector<prog> isca_programs() {
   test_programs.push_back(up_sample());
   test_programs.push_back(unsharp());
   test_programs.push_back(unsharp_new());
-  test_programs.push_back(mobilenet_unrolled());
   test_programs.push_back(resnet());
+  test_programs.push_back(mobilenet_unrolled());
 
 
   return test_programs;
@@ -20041,6 +20042,7 @@ void cpy_app_to_folder(const std::string& app_type, const std::string& prg_name)
   cmd("mkdir -p ./coreir_apps/" + app_type + "/" + prg_name);
   //cmd("mv LakeWrapper.v ./coreir_apps/coreir_apps/" + app_type +"/" + prg_name + "/");
   cmd("mv " + prg_name + ".json ./coreir_apps/" + app_type + "/" + prg_name + "/");
+  cmd("mv cgra_resource_estimation.csv ./coreir_apps/" + app_type + "/" + prg_name + "/");
   cmd("mv " + prg_name + "_post_mapping.json ./coreir_apps/" + app_type + "/" + prg_name + "/");
   cmd("mv " + prg_name + ".v ./coreir_apps/" + app_type + "/" + prg_name + "/");
   cmd("mv " + prg_name + "_verilog_collateral.sv ./coreir_apps/" + app_type + "/" + prg_name + "/");
@@ -20350,27 +20352,27 @@ void cgra_flow_tests() {
 
 
   //vector<prog> bram_test_programs{pointwise(), gaussian(), harris(), resnet()};
-  vector<prog> bram_test_programs{resnet88()};
+  //vector<prog> bram_test_programs{resnet88()};
   //vector<prog> bram_test_programs{pointwise()};
-  test_codegen(bram_test_programs, compile_for_FPGA_BRAM_mem);
+  //test_codegen(bram_test_programs, compile_for_FPGA_BRAM_mem);
 
   //vector<prog> M3_test_programs = harris_variants();
   //vector<prog> M3_test_programs{up_sample(), resnet()};
   //vector<prog> M3_test_programs{resnet()};
   //vector<prog> M3_test_programs{gaussian()};
-  vector<prog> M3_test_programs = isca_programs_m3();
-  test_codegen(M3_test_programs, compile_for_CGRA_M3_mem);
+  //vector<prog> M3_test_programs = isca_programs_m3();
+  //test_codegen(M3_test_programs, compile_for_CGRA_M3_mem);
   //assert(false);
 
   //vector<prog> M1_test_programs{gaussian()};
   vector<prog> M1_test_programs = isca_programs();
   test_codegen(M1_test_programs, compile_for_CGRA_M1_mem);
 
-  auto test_programs = all_cgra_programs();
-  test_platonic_codegen(test_programs);
+  //auto test_programs = all_cgra_programs();
+  //test_platonic_codegen(test_programs);
 
-  vector<prog> sram_test_programs{pointwise(), camera_pipeline(), resnet()};
-  test_codegen(sram_test_programs, compile_for_generic_SRAM_mem);
+  //vector<prog> sram_test_programs{pointwise(), camera_pipeline(), resnet()};
+  //test_codegen(sram_test_programs, compile_for_generic_SRAM_mem);
 
 }
 

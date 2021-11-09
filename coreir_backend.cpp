@@ -3854,12 +3854,64 @@ void analyze_post_mapped_app(CodegenOptions& options, prog& prg, map<string, UBu
   for (auto c : counts) {
     cout << tab(1) << c.first << " -> " << c.second << endl;
   }
-  assert(false);
+  //assert(false);
   if(!saveToFile(ns, prg.name + "_post_mapping.json", gmod)) {
     cout << "Could not save ubuffer coreir" << endl;
     context->die();
   }
   //assert(false);
+}
+
+void analyze_post_mapped_app_M1(CodegenOptions& options, prog& prg, map<string, UBuffer>& buffers, Module* gmod) {
+  ofstream out("cgra_resource_estimation.csv");
+  auto context = gmod->getContext();
+  auto ns = context->getNamespace("global");
+  //cout << "=== Post mapping instances for " << prg.name << endl;
+  map<int, int> affine_controller;
+  map<int, int> affine_func;
+  int mem = 0;
+  for (auto inst : gmod->getDef()->getInstances()) {
+    //cout << tab(1) << inst.second->getModuleRef()->getName() << endl;
+    string module_name = inst.second->getModuleRef()->getName();
+    if (contains(module_name, "affine_controller")) {
+       auto tp = inst.second->sel("d")->getType();
+       assert(isa<ArrayType>(tp));
+       auto atp = dyn_cast<ArrayType>(tp);
+       affine_controller[atp->getLen()] ++;
+    }
+    else if (contains(module_name, "_ub")) {
+      for(auto sub_inst : inst.second->getModuleRef()->getDef()->getInstances()) {
+        string module_name = sub_inst.second->getModuleRef()->getName();
+        if (contains(module_name, "Mem_amber")) {
+          mem ++;
+        } else if (contains(module_name, "affine_controller")) {
+          auto tp = sub_inst.second->sel("d")->getType();
+          assert(isa<ArrayType>(tp));
+          auto atp = dyn_cast<ArrayType>(tp);
+          affine_controller[atp->getLen()] ++;
+        } else if (contains(module_name, "aff__U")) {
+          auto tp = sub_inst.second->sel("d")->getType();
+          assert(isa<ArrayType>(tp));
+          auto atp = dyn_cast<ArrayType>(tp);
+          affine_func[atp->getLen()] ++;
+        }
+      }
+    }
+  }
+  int aff_ctrl_pe = 0;
+  for (auto it: affine_controller) {
+    aff_ctrl_pe += it.second * (it.first * 2 - 3);
+  }
+  int aff_func_pe = 0;
+  for (auto it: affine_func) {
+    aff_func_pe += it.second * (it.first);
+  }
+  //cout << prg.name << " Post Mapping Resource Counts..." << endl;
+  out << tab(2) << " affine_controller: " << affine_controller << endl;
+  out << tab(2) << " affine_func: " << affine_func<< endl;
+  out << tab(2) << " aff_ctrl pe: " << aff_ctrl_pe << endl;
+  out << tab(2) << " aff_func pe: " << aff_func_pe << endl;
+  out << tab(2) << " mem:  " << mem << endl;
 }
 
 void analyze_post_mapped_app_emit_to_file(CodegenOptions& options, prog& prg, map<string, UBuffer>& buffers, Module* gmod) {
@@ -3939,8 +3991,8 @@ void generate_coreir(CodegenOptions& options,
       options.rtl_options.target_tile == TARGET_TILE_M3) {
     //count_memory_tiles(prg_mod);
     //garnet_map_module(prg_mod);
-    //Module* gmod = ns_new->getModule(prg.name);
-    //analyze_post_mapped_app(options, prg, buffers, gmod);
+    Module* gmod = ns_new->getModule(prg.name);
+    analyze_post_mapped_app_M1(options, prg, buffers, gmod);
   }
   prg_mod->print();
   //assert(false);

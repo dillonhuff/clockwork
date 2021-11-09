@@ -10,46 +10,6 @@
 
 using namespace std;
 
-template <typename T>
-std::ostream& operator<< (std::ostream& out, const std::pair<T, T>& v) {
-    out << "{" << v.first << ", " << v.second << "} ";
-    return out;
-}
-
-template <typename T>
-std::ostream& operator<< (std::ostream& out, const std::vector<T>& v) {
-    if ( !v.empty()  ) {
-        out << '[';
-        std::copy (v.begin(), v.end(), std::ostream_iterator<T>(out, ", "));
-        out << "\b\b]";
-    }
-    return out;
-}
-
-template <typename T>
-std::ostream& operator<< (std::ostream& out, const std::set<T>& v) {
-    if ( !v.empty()  ) {
-        out << '{';
-        std::copy (v.begin(), v.end(), std::ostream_iterator<T>(out, ", "));
-        out << "\b\b}";
-    }
-    return out;
-}
-
-template <typename T>
-std::ostream& operator<< (std::ostream& out, const std::map<string, T>& m) {
-    if ( !m.empty()  ) {
-      for (const auto &p : m)
-      {
-        out << p.first << ": ";
-        out << p.second << ' ';
-        out << std::endl;
-      }
-
-    }
-    return out;
-}
-
 //This is assuming read after write if they are scheduled
 //for the same hardware cycle
 umap* schedule_guard(umap* sched, bool is_rd);
