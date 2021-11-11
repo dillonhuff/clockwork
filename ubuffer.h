@@ -3312,11 +3312,7 @@ struct UBufferImpl {
   }
 
   int get_bank_num() const {
-    int cnt = 0;
-    for (auto it: bank_readers) {
-      cnt ++;
-    }
-    return cnt;
+    return bank_readers.size();
   }
 
   void print_info(std::ostream& out) const {
@@ -3352,7 +3348,8 @@ struct EmbarrassingBankingImpl: public UBufferImpl {
   EmbarrassingBankingImpl() {}
   EmbarrassingBankingImpl(UBufferImpl const & impl) : UBufferImpl(impl) {}
 
-  int get_bank_num() const {
+  //Embarrassing banking intialize from exhaustive banking
+  int get_partition_bank_num() const {
     int bank_num = 1;
     for (auto it: partitioned_dimension_extents) {
       bank_num *= it.second;

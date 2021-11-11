@@ -573,20 +573,28 @@ bool all_constant_accesses(UBuffer& buf) {
   return true;
 }
 
-pair<EmbarrassingBankingImpl, isl_map*> build_buffer_impl(prog& prg, UBuffer& buf, schedule_info& hwinfo) {
-  EmbarrassingBankingImpl impl;
+EmbarrassingBankingImpl build_buffer_impl(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
+  UBufferImpl impl;
   dbhc::maybe<std::set<int> > embarassing_banking =
     embarassing_partition(buf);
   bool has_embarassing_partition = embarassing_banking.has_value();
-  assert(has_embarassing_partition);
+  if (has_embarassing_partition) {
+    if (embarassing_banking.get_value().size() == buf.logical_dimension()) {
+      cout << buf.name << " is really a register file" << endl;
+    }
+    auto emb_impl = static_cast<EmbarrassingBankingImpl>(impl);
 
-  if (embarassing_banking.get_value().size() == buf.logical_dimension()) {
-    cout << buf.name << " is really a register file" << endl;
+    emb_impl.partition_dims = embarassing_banking.get_value();
+    auto bank_map = build_buffer_impl_embarrassing_banking(buf, hwinfo, emb_impl);
+    return emb_impl;
+  } else {
+    cout << "Use exhaustive banking! " << endl;
+    buf.generate_banks_and_merge(options);
+    buf.parse_exhaustive_banking_into_impl(impl);
+    cout << "After exhaustive banking:\n " << impl << endl;
+    return static_cast<EmbarrassingBankingImpl>(impl);
+    //cout << "CANNOT support by current banking strategies!" << endl;
   }
-
-  impl.partition_dims = embarassing_banking.get_value();
-  auto bank_map = build_buffer_impl_embarrassing_banking(buf, hwinfo, impl);
-  return {impl, bank_map};
 }
 
 
@@ -737,16 +745,17 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
   UBuffer buf = delete_ports(done_outpt, orig_buf);
 
   if (buf.num_out_ports() > 0) {
-    auto implm = build_buffer_impl(prg, buf, hwinfo);
-    auto impl = implm.first;
+    auto impl = build_buffer_impl(options, prg, buf, hwinfo);
+    //auto impl = implm.first;
 
     map<pair<string, int>, int> ubuffer_port_and_bank_to_bank_port =
       build_ubuffer_to_bank_binding(impl);
 
-    int num_banks = 1;
-    for (auto ent : impl.partitioned_dimension_extents) {
-      num_banks *= ent.second;
-    }
+    //int num_banks = 1;
+    //for (auto ent : impl.partitioned_dimension_extents) {
+    //  num_banks *= ent.second;
+    //}
+    int num_banks = impl.get_bank_num();
 
     M1_sanity_check_port_counts(impl);
 
@@ -6120,13 +6129,15 @@ void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
   UBuffer buf = delete_ports(done_outpt, orig_buf);
 
   if (buf.num_out_ports() > 0) {
-    auto implm = build_buffer_impl(prg, buf, hwinfo);
-    auto impl = implm.first;
+    auto impl = build_buffer_impl(options, prg, buf, hwinfo);
+    //auto impl = implm.first;
 
-    int num_banks = 1;
-    for (auto ent : impl.partitioned_dimension_extents) {
-      num_banks *= ent.second;
-    }
+    //int num_banks = 1;
+    //for (auto ent : impl.partitioned_dimension_extents) {
+    //  num_banks *= ent.second;
+    //}
+    int num_banks = impl.get_bank_num();
+    cout << impl << "\tnum banks: "  << num_banks<< endl;
 
     M1_sanity_check_port_counts(impl);
 
@@ -6181,7 +6192,7 @@ void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
             control_vars(def, pt, adjusted_buf));
         ubuffer_port_agens[pt] = agen;
 
-        if (impl.inpt_to_bank[pt].size() > 1) {
+        if ((impl.inpt_to_bank[pt].size() > 1) && (impl.partition_dims.size())) {
           auto bank_sel = build_bank_selector(pt, adjusted_buf, impl, def);
           def->connect(bank_sel->sel("d"),
               control_vars(def, pt, adjusted_buf));
@@ -6302,7 +6313,7 @@ void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
         auto agen = ubuffer_port_agens[pt];
 
         Wireable* enable = nullptr;
-        if (inpt_to_bank[pt].size() > 1) {
+        if ((inpt_to_bank[pt].size() > 1) && (impl.partition_dims.size() != 0)) {
           enable =
             andList(def, {control_en(def, pt, adjusted_buf), eqConst(def, ubuffer_port_bank_selectors[pt], b)});
         } else {
