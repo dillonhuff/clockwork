@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ubuffer.h"
+//#include "ubuffer.h"
 #include "isl_utils.h"
 #include "utils.h"
 #include "qexpr.h"
@@ -14,6 +14,8 @@ enum ir_node_type {
   IR_NODE_TYPE_IF
 };
 
+std::ostream& operator << ( ostream& strm, ir_node_type tt);
+
 struct ir_node;
 struct prog;
 
@@ -22,6 +24,12 @@ typedef op loop;
 typedef std::string buffer_name;
 typedef std::string address;
 typedef std::vector<std::pair<std::string, std::string> > piecewise_address;
+
+struct dynamic_address {
+  std::string buffer;
+  std::string table;
+  std::string table_offset;
+};
 
 static inline
 std::string pipe_cpy(const std::string& a, const int pipe) {
@@ -99,6 +107,28 @@ struct ir_node {
   void replace_variable(const std::string& var, const std::string& val);
   void shift_address(const std::string& var, const std::vector<int>& min_locs);
 
+  bool is_inner_loop() const {
+    if (this->is_loop()) {
+      return false;
+    }
+    for (auto c : children) {
+      if (c->is_loop()) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  bool is_coarse_grained_loop() const {
+    if (!is_loop()) {
+      return false;
+    } else if ((children.size() > 1) && (!is_inner_loop())) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   void delete_child(op* c) {
     vector<op*> new_children;
     for (auto ch : children) {
@@ -107,6 +137,12 @@ struct ir_node {
       }
     }
     children = new_children;
+  }
+
+  void attach_to(op* new_parent) {
+    parent->delete_child(this);
+    new_parent->children.push_back(this);
+    parent = new_parent;
   }
 
   bool dynamic_writes(const std::string& buf) {
@@ -251,7 +287,7 @@ struct ir_node {
     std::set<op*> dec = descendants();
     std::set<op*> ops;
     for (auto d : dec) {
-      if (!d->is_loop()) {
+      if (d->is_op()) {
         ops.insert(d);
       }
     }
@@ -496,6 +532,7 @@ struct ir_node {
     assert(!is_op());
 
     auto lp = new op();
+    lp->name = this->name + "_if_" + str(children.size());
     lp->condition = condition;
     lp->ctx = ctx;
     lp->parent = this;
@@ -505,8 +542,37 @@ struct ir_node {
     return lp;
   }
 
+  op* add_if(const std::string& name, const std::string& condition) {
+    assert(!is_op());
+
+    auto lp = new op();
+    lp->name = name;
+    lp->condition = condition;
+    lp->ctx = ctx;
+    lp->parent = this;
+    lp->tp = IR_NODE_TYPE_IF;
+    children.push_back(lp);
+
+    return lp;
+  }
+
+  op* add_if_front(const std::string& name, const std::string& condition) {
+    assert(!is_op());
+
+    auto lp = new op();
+    lp->name = name;
+    lp->condition = condition;
+    lp->ctx = ctx;
+    lp->parent = this;
+    lp->tp = IR_NODE_TYPE_IF;
+    children.insert(begin(children), lp);
+
+    return lp;
+  }
+
   op* add_loop(const std::string& name, const int l, const int u) {
-    assert(is_loop());
+    //TODO: remove this assert due to the if optimization
+    //assert(is_loop());
     assert(name != "");
     //assert(!elem(name, all_existing_loop_names()));
 
@@ -603,7 +669,7 @@ struct ir_node {
   }
 
   string add_load(const std::string& b, const std::vector<std::pair<std::string, std::string>> loc) {
-    assert(!is_loop());
+    assert(is_op());
     consume_locs_pair.push_back({b, loc});
     return consumed_value_name({b, loc});
   }
@@ -682,17 +748,26 @@ struct ir_node {
   }
 
   void populate_iteration_domains(map<op*, vector<string> >& sched_vecs, vector<string>& active_vecs) {
-    if (!is_op()) {
+    if (is_loop()) {
       auto nds = active_vecs;
       nds.push_back(to_string(start) + " <= " + name + " < " + to_string(end_exclusive));
       for (auto c : children) {
         c->populate_iteration_domains(sched_vecs, nds);
       }
-    } else {
+    } else if(is_if()) {
+      auto nds = active_vecs;
+      nds.push_back(condition);
+      for (auto c : children) {
+        c->populate_iteration_domains(sched_vecs, nds);
+      }
+    } else if(is_op()){
       sched_vecs[this] = active_vecs;
       for (auto c : children) {
         c->populate_iteration_domains(sched_vecs, active_vecs);
       }
+    } else {
+      cout << "Have not implemented this IR Node type: " << this->tp << endl;
+      assert(false);
     }
   }
 
@@ -707,11 +782,19 @@ struct ir_node {
         c->populate_schedule_vectors(sched_vecs, nds);
         nds[nds.size() - 1] = to_string(safe_stoi(nds[nds.size() - 1]) + 1);
       }
-    } else {
+    } else if(is_if()) {
+      //Skip the if node
+      for (auto c : children) {
+        c->populate_schedule_vectors(sched_vecs, active_vecs);
+      }
+    } else if(is_op()) {
       sched_vecs[this] = active_vecs;
       for (auto c : children) {
         c->populate_schedule_vectors(sched_vecs, active_vecs);
       }
+    } else {
+      cout << "Have not implemented this IR Node type: " << this->tp << endl;
+      assert(false);
     }
 
     size_t max_len = 1;
@@ -737,12 +820,29 @@ struct ir_node {
       for (auto c : children) {
         c->populate_iter_vars(varmap, nv);
       }
+    } else if (is_if()) {
+      for (auto c : children) {
+        c->populate_iter_vars(varmap, active_vars);
+      }
     } else {
       varmap[this] = active_vars;
       for (auto c : children) {
         c->populate_iter_vars(varmap, active_vars);
       }
     }
+  }
+
+  std::set<op*> all_non_ops() {
+    std::set<op*> loops{this};
+    if (is_op()){
+      loops = {};
+    }
+    for (auto c : children) {
+      for (auto op : c->all_non_ops()) {
+        loops.insert(op);
+      }
+    }
+    return loops;
   }
 
   std::set<op*> all_loops() {
@@ -771,7 +871,7 @@ struct ir_node {
   std::set<std::string> all_existing_op_names() {
     std::set<string> names;
     for (auto op : all_root_ops()) {
-      if (!op->is_loop()) {
+      if (op->is_op()) {
         names.insert(op->name);
       }
     }
@@ -801,7 +901,7 @@ struct ir_node {
 
   std::set<op*> all_ops() {
     std::set<op*> ops{this};
-    if (is_loop()) {
+    if (is_loop() || is_if()) {
       ops = {};
     }
     for (auto c : children) {
@@ -903,6 +1003,17 @@ struct prog {
       }
     }
     cout << "Error: No loop named " << target_op << " in" << endl;
+    pretty_print();
+    assert(false);
+  }
+
+  op* find_non_op(const std::string& target_op) {
+    for (auto v : all_non_ops()) {
+      if (v->name == target_op) {
+        return v;
+      }
+    }
+    cout << "Error: No op named " << target_op << " in" << endl;
     pretty_print();
     assert(false);
   }
@@ -1121,6 +1232,7 @@ struct prog {
 
   std::set<op*> all_loops() { return root->all_loops(); }
   std::set<op*> all_ops() { return root->all_ops(); }
+  std::set<op*> all_non_ops() { return root->all_non_ops(); }
 
   op* add_op(const std::string& name) {
     return root->add_op(name);
@@ -1181,7 +1293,14 @@ struct prog {
     map<op*, vector<string> > ivars;
     root->populate_iter_vars(ivars, act);
 
+    //Check what's all the domain
+    for (auto it: idoms) {
+        cout << "OP name: " << it.first->name << endl;
+        cout << "dom bd: " << it.second << endl << endl;
+    }
+
     for (auto op : vecs) {
+      cout << op.first->name << endl;
       auto iters = map_find(op.first, ivars);
       auto vars = sep_list(iters, "[", "]", ", ");
 
@@ -1300,10 +1419,11 @@ struct prog {
     for (auto op : ops) {
       auto vars = map_find(op, ivars);
       string ivar_str = sep_list(vars, "[", "]", ", ");
+      //cout << "Find op: " << op->name << endl;
       auto dom = map_find(op, doms);
 
       umap* pmap = isl_union_map_read_from_str(ctx, "{}");
-     // adding vector pair
+      //adding vector pair
       for (auto top_pair : op->consumes_pair()) {
         if (top_pair.first == buf_name) {
           string cond = "{ ";
@@ -1387,58 +1507,11 @@ struct prog {
   }
 };
 
-// Schedules all loops in sequential order
-// and emits HLS C++ code for the program
-void generate_vanilla_hls_code(prog& prg);
-void generate_unoptimized_code(prog& prg);
-void generate_unoptimized_code(CodegenOptions& options, prog& prg);
-
-// Re-schedules all loops using ISL
-// and then emits HLS C++ code for the program
-void generate_optimized_code(prog& prg);
-void generate_optimized_code(CodegenOptions& options, prog& prg);
-
-std::set<pair<string, string> > edge_buffers(map<string, UBuffer>& buffers, prog& prg);
-
-std::set<pair<string, string> > outputs(map<string, UBuffer>& buffers, prog& prg);
-
-std::set<pair<string, string> > inputs(map<string, UBuffer>& buffers, prog& prg);
-
-// Variants on code generation functions
-void generate_app_code(CodegenOptions& options,
-    map<string, UBuffer>& buffers,
-    prog& prg,
-    umap* schedmap,
-    map<string, isl_set*>& domain_map);
-
-void generate_app_code(map<string, UBuffer>& buffers, prog& prg, umap* sched);
-
-void generate_app_code(CodegenOptions& options, map<string, UBuffer>& buffers, prog& prg, umap* schedmap);
-
-void generate_app_code(map<string, UBuffer>& buffers, prog& prg);
-
-map<string, UBuffer> build_buffers(prog& prg, umap* opt_sched);
-
-map<string, UBuffer> build_buffers(prog& prg);
-
-void tag_coarse_grained_loop_to_ubuf(map<string, UBuffer>& buffers, prog& prg);
-
-void generate_app_code(CodegenOptions& options, map<string, UBuffer>& buffers, prog& prg, umap* schedmap);
-
 prog duplicate_interface(prog& p);
-
-vector<pair<string, string> > incoming_bundles(op* op, map<string, UBuffer>& buffers, prog& prg);
-vector<pair<string, string> > outgoing_bundles(op* op, map<string, UBuffer>& buffers, prog& prg);
-vector<string> incoming_buffers(const map<string, UBuffer>& buffers, op* op, prog& prg);
-vector<string> outgoing_buffers(const map<string, UBuffer>& buffers, op* op, prog& prg);
-
 
 bool unoptimized_compiles(prog& prg);
 std::vector<string> unoptimized_result(prog& prg);
 void generate_regression_testbench(prog& prg);
-void generate_vectorization_unit_testbench(UBuffer & buf);
-void generate_regression_testbench(prog& prg, map<string, UBuffer>& buffers);
-
 
 std::vector<std::string> run_regression_tb(const std::string& name);
 
@@ -1486,11 +1559,6 @@ std::set<string> get_produced_buffers(const std::set<std::string>& group, prog& 
 
 
 std::set<string> get_produced_buffers(const std::set<std::string>& group, prog& original);
-
-void generate_verilog(CodegenOptions& options,
-    map<string, UBuffer>& buffers,
-    prog& prg,
-    umap* schedmap);
 
 umap* hardware_schedule(prog& prg);
 
@@ -1647,30 +1715,6 @@ vector<string> reduce_vars(prog& prg);
 
 void sanity_check_all_reads_defined(prog& prg);
 
-void generate_vivado_rtl_tb(
-    CodegenOptions& options,
-    prog& prg,
-    umap* hw_sched,
-    map<string, UBuffer>& buffers);
-
-void generate_deepak_power_flow_rtl_tb(
-    CodegenOptions& options,
-    prog& prg,
-    umap* hw_sched,
-    map<string, UBuffer>& buffers);
-
-void generate_verilator_tb(
-    CodegenOptions& options,
-    prog& prg,
-    umap* hw_sched,
-    map<string, UBuffer>& buffers);
-
-void generate_garnet_verilator_tb(
-    CodegenOptions& options,
-    prog& prg,
-    umap* hw_sched,
-    map<string, UBuffer>& buffers);
-
 template<typename T>
 void print_box_bounds(const std::string& name, T* pr){
   auto lmin = lexmin(pr);
@@ -1749,11 +1793,22 @@ struct schedule_info {
     return last_delay;
   }
 
+  //Above the Coarse grained loop, the II will follow the db update delay
+  //We do not need to wait for the latency, since we have N buffer
   int doublebuffer_update_delay(op* op) {
     assert(op->is_loop());
     int last_delay = 0;
     for (auto c : op->children) {
-      int delay = II(c) * c->trip_count();
+      int delay = 0;
+      if (c->is_loop()) {
+        delay = II(c) * c->trip_count();
+      } else if (c->is_if()){
+        auto lp_under_if = pick(c->children);
+        delay = II(lp_under_if) * lp_under_if->trip_count();
+      } else {
+        cout << "Not implemented this op" << endl;
+        assert(false);
+      }
       if (delay > last_delay) {
         last_delay = delay;
       }
@@ -1786,6 +1841,7 @@ bool all_loop_nests_same_depth(prog& prg);
 
 bool is_perfect(op* loop, prog& prg);
 bool all_perfect_loop_nests(prog& prg);
+bool single_coarse_pipeline_loop_nests(prog& prg);
 std::vector<op*> get_dft_ops(prog& prg);
 
 
@@ -1820,29 +1876,6 @@ void read_in_no_dsa(op* loop, isl_set* read_data, const vector<int>& scan_order,
 
 void write_out_no_dsa(op* loop, isl_set* read_data, const vector<int>& scan_order, const std::string& rb_name, prog& prg);
 
-void generate_app_prefix(CodegenOptions& options, ofstream& conv_out, prog& prg);
-void generate_app_collateral(CodegenOptions& options,
-    ostream& conv_out,
-    map<string, UBuffer>& buffers,
-    prog& prg,
-    umap* schedmap);
-
-
-void generate_driver_function_prefix(CodegenOptions& options, ostream& conv_out, map<string, UBuffer>& buffers, prog& prg);
-
-
-void generate_driver_function_suffix(CodegenOptions& options, ostream& conv_out, map<string, UBuffer>& buffers, prog& prg);
-
-void generate_app_code_body(CodegenOptions& options,
-    ostream& conv_out,
-    map<string, UBuffer>& buffers,
-    prog& prg,
-    umap* schedmap,
-    map<string, isl_set*>& domain_map);
-
-vector<string> get_args(const map<string, UBuffer>& buffers, prog& prg);
-vector<string> get_arg_names(const map<string, UBuffer>& buffers, prog& prg);
-
 void push_to_bottom_of_band_ignoring(const vector<loop*>& base, loop* lp, prog& prg);
 
 void push_below(loop* outer, loop* inner, prog& prg);
@@ -1853,27 +1886,7 @@ op* find_coarse_grained_pipeline_loop(op* lp);
 op* find_coarse_grained_pipeline_loop(op* lp, prog& prg);
 void find_coarse_grained_pipeline_loops(op* lp, vector<op*> & cgpl_lps, prog& prg);
 
-vector<pair<string, pair<string, int> >> determine_output_shift_reg_map(
-    prog& prg,
-    UBuffer& buf,
-    schedule_info& hwinfo);
-
-map<string, pair<string, int> > determine_shift_reg_map(
-        prog& prg,
-    UBuffer& buf,
-    schedule_info& hwinfo);
-
-dgraph build_in_to_out_shift_register_graph(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_info& hwinfo);
-dgraph build_shift_registers(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_info& hwinfo);
-UBufferImpl port_group2bank(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_info& hwinfo);
-
-isl_map* build_buffer_impl_embarrassing_banking(UBuffer& buf, schedule_info& hwinfo, EmbarrassingBankingImpl& impl);
-
-void generate_banks_garnet(CodegenOptions& options, UBuffer& buf, UBufferImpl& impl, schedule_info& hw_info);
-
-UBufferImpl generate_optimized_memory_implementation(
-        CodegenOptions& options, UBuffer & buf, prog & prg, schedule_info& hwinfo);
-
+void loop_perfection(prog& prg);
 void sanity_check_iis(schedule_info& sched);
 
 int logical_dimension(const std::string& buf, prog& prg);
@@ -1903,8 +1916,6 @@ bool schedule_bounds_fit_controller_bitwidth(const int bitwidth, schedule_info& 
 
 void adjust_inner_iis(schedule_info& sched, prog& prg);
 
-vector<int> analyze_memory_demands(prog& prg, UBuffer& buf, schedule_info& hwinfo);
-
 void pad_top_level_ops_with_loops(prog& prg);
 void pad_bottom_level_ops_with_loops(prog& prg);
 
@@ -1917,12 +1928,6 @@ void dsa_readers(prog& prg);
 int buffer_store_latency(CodegenOptions& options);
 int buffer_load_latency(CodegenOptions& options);
 
-
-UBuffer write_latency_adjusted_buffer(
-    CodegenOptions& options,
-    prog& prg,
-    UBuffer& buf,
-    schedule_info& hwinfo);
 
 vector<isl_multi_aff*> write_addrs(op* op, const std::string& buf, prog& prg);
 
@@ -2040,6 +2045,10 @@ map<std::string, std::set<string> > fuse_pointwise_stages(prog& prg);
 vector<string> buffer_arg_names(op* op, prog& prg);
 
 void set_channel_depths_to_constant(const int constant, app_dag& dag);
+void set_channel_depths_ilp(const int kernel_depth, app_dag& dag);
+void set_channel_depths_by_assumed_stage_depth(const int kernel_depth, app_dag& dag);
+void set_channel_depths_by_stage_depths(app_dag& dag);
+void set_channel_depths_by_kernel_depth(const int kernel_depth, app_dag& dag);
 
 void unroll_mismatched_inner_loops(prog& prg);
 

@@ -9,7 +9,7 @@ endif
 
 TARGET = clockwork
 
-CXX_FLAGS = -std=c++17 -g -O0 -I $(BARVINOK_PATH) -I $(OPT_PATH)
+CXX_FLAGS = -std=c++17 -g -O0 -I $(BARVINOK_PATH) -I $(OPT_PATH) -I .
 
 #ifneq ($(COREIR),1)
 #CXX_FLAGS = -std=c++11 -I $(BARVINOK_PATH) -I $(OPT_PATH)
@@ -29,7 +29,7 @@ $(info CoreIR Path is [${COREIR_PATH}])
 COREIR_INCLUDE = $(COREIR_PATH)/include
 COREIR_LIB = $(COREIR_PATH)/lib
 
-CXX_FLAGS += -I . -I $(COREIR_INCLUDE) -D COREIR
+CXX_FLAGS += -I $(COREIR_INCLUDE) -D COREIR
 LINK_FLAGS += -L $(COREIR_LIB) -Wl,-rpath $(COREIR_LIB) -lcoreir -lcoreirsim -lcoreir-commonlib
 endif
 

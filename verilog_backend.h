@@ -1,6 +1,7 @@
 #pragma once
 
 #include "prog.h"
+#include "codegen.h"
 
 static int DATAPATH_WIDTH = 16;
 static int CONTROLPATH_WIDTH = 16;
