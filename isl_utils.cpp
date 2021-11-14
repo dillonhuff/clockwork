@@ -1786,7 +1786,9 @@ isl_union_set* simplify(uset* const m) {
 }
 
 isl_map* simplify(isl_map* const m) {
-  return isl_map_remove_redundancies(cpy(m));
+  auto tmp = isl_map_remove_redundancies(cpy(m));
+  isl_map_detect_equalities(tmp);
+  return tmp;
 }
 
 isl_set* simplify(isl_set* const m) {

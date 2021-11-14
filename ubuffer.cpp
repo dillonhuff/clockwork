@@ -1217,7 +1217,7 @@ UBuffer UBuffer::generate_ubuffer(UBufferImpl& impl, schedule_info & info, int b
       auto acc_map = to_map(access_map.at(inpt));
 
       //get the bank specific access map
-      acc_map = coalesce(its_range(acc_map, rddom));
+      acc_map = simplify(coalesce(its_range(acc_map, rddom)));
 
       auto dom = ::domain(acc_map);
 
@@ -1255,7 +1255,7 @@ UBuffer UBuffer::generate_ubuffer(UBufferImpl& impl, schedule_info & info, int b
     for (string outpt: outpts) {
       auto acc_map = to_map(access_map.at(outpt));
       //get the bank specific access map
-      acc_map = coalesce(its_range(acc_map, rddom));
+      acc_map = simplify(coalesce(its_range(acc_map, rddom)));
       auto sched = schedule.at(outpt);
 
       acc_map = set_range_name(acc_map, bname);
