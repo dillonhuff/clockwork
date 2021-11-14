@@ -15105,6 +15105,7 @@ void test_glb(bool gen_config_only, bool multi_accessor=false, string dir="aha_g
   vector<prog> test_apps;
 
   //ISSCC application without unroll
+  test_apps.push_back(resnet_1x1());
   test_apps.push_back(harris_color());
   test_apps.push_back(gaussian_isscc());
   test_apps.push_back(camera_pipeline_isscc());

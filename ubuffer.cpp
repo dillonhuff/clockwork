@@ -810,6 +810,11 @@ isl_map* UBuffer::get_coarse_grained_pipeline_schedule(CodegenOptions& options, 
     auto new_pt_sched = remove_in_dims(sched, cgpl_levels);
     auto new_acc_map = remove_in_dims(acc_map, cgpl_levels);
 
+    //Thanks GOD! this function save my life!! can remove the implicit division and turn it into equality
+    //TODO: move this into simplify
+    isl_map_detect_equalities(new_pt_sched);
+    isl_map_detect_equalities(new_acc_map);
+
     cout << "\tnew pt schedule: " << str(new_pt_sched) << endl;
     cout << "\tnew acc_pattern: " << str(new_acc_map) << endl;
 
@@ -1129,13 +1134,16 @@ void UBufferImpl::bank_merging(CodegenOptions & options) {
   map<int, vector<int>, decltype(comp)> merge_map(comp);
   for (auto it: bank_rddom) {
       int bank_id = it.first;
+      //cout << "BANK ID: " << bank_id << "\n\tbank_map:" << str(it.second) << endl;
       if (merge_map.count(bank_id)) {
           merge_map[bank_id].push_back(it.first);
       } else {
           merge_map[bank_id] = {bank_id};
       }
   }
+
   for (auto it: merge_map) {
+      //cout << "Merge map: " << it.first << ", " << it.second << endl;
       if (it.second.size() > 1) {
           cout << "\tGroup: " << it.first << ": " << it.second << endl;
           cout << "\tPerform bank merging!" << endl;
@@ -1190,6 +1198,7 @@ UBuffer UBuffer::generate_ubuffer(UBufferImpl& impl, schedule_info & info, int b
     auto outpts = impl.get_unique_outpts(bank);
     cout <<"impl inputs: "<< inpts << endl;
     cout <<"impl outpts: "<< inpts << endl;
+    cout << "rddom: " << str(rddom) << endl;
 
     //TODO: may need a sort
     //add a sort of output make sure we have positive stride when coalesce
@@ -3255,6 +3264,9 @@ void UBuffer::generate_coreir(CodegenOptions& options,
     //This is used for tighten the cyclic banking space
     target_buf.tighten_iteration_domain();
     target_buf.tighten_address_space();
+    target_buf.set_dim_id();
+
+    cout << "\n\tUBuffer after address tighten" << target_buf << endl;
 
     //An optimization for coarse grained pipeline, save the iterator level
     //CoreIR::Instance* cgpl_ctrl;
@@ -3271,6 +3283,7 @@ void UBuffer::generate_coreir(CodegenOptions& options,
     cgpl_ctrl_optimization(options, def, target_buf, config_mode,
             cgpl_schedule, decouple_ctrl, substract_glb_latency);
 
+    cout << "\n\tUBuffer after cgpl optimization" << target_buf << endl;
 
     insert_accumulation_register(options, def, target_buf, pt2wire, config_mode);
 
@@ -9270,14 +9283,30 @@ void UBuffer::generate_banks(CodegenOptions& options) {
       // at that component
       typedef std::map<int, int> fixed_subaddress;
 
-      map<string, fixed_subaddress> find_fixed_subaddresses(const vector<string>& ports, UBuffer& buf) {
-        map<string, fixed_subaddress> addrs;
+      //This is not correct
+      //map<string, fixed_subaddress> find_fixed_subaddresses(const vector<string>& ports, UBuffer& buf) {
+      //  map<string, fixed_subaddress> addrs;
+      //  for (auto pt : ports) {
+      //    isl_multi_aff* access = get_multi_aff(buf.access_map.at(pt));
+      //    map<int, isl_val*> constant_offsets = constant_components(access);
+      //    for (auto ent : constant_offsets) {
+      //      addrs[pt][ent.first] = to_int(ent.second);
+      //    }
+      //  }
+      //  return addrs;
+      //}
+
+
+      map<fixed_subaddress, vector<string>> find_fixed_subaddresses(const vector<string>& ports, UBuffer& buf) {
+        map<fixed_subaddress, vector<string>> addrs;
         for (auto pt : ports) {
           isl_multi_aff* access = get_multi_aff(buf.access_map.at(pt));
           map<int, isl_val*> constant_offsets = constant_components(access);
+          fixed_subaddress tmp;
           for (auto ent : constant_offsets) {
-            addrs[pt][ent.first] = to_int(ent.second);
+            tmp.insert({ent.first, to_int(ent.second)});
           }
+          dbhc::map_insert(addrs, tmp, pt);
         }
         return addrs;
       }
@@ -9460,7 +9489,8 @@ void UBuffer::generate_banks(CodegenOptions& options) {
             return {};
           }
           for (auto ent : parts) {
-            for (auto d : ent.second) {
+            //for (auto d : ent.second) {
+            for (auto d : ent.first) {
               dims.insert(d.first);
             }
           }
@@ -9505,7 +9535,8 @@ void UBuffer::generate_banks(CodegenOptions& options) {
             return {};
           }
           for (auto ent : parts) {
-            for (auto d : ent.second) {
+            //for (auto d : ent.second) {
+            for (auto d : ent.first) {
               dims.insert(d.first);
             }
           }
@@ -10535,11 +10566,12 @@ void generate_banks_garnet(CodegenOptions& options, UBuffer& buf, UBufferImpl& i
     else if (auto bank_impl = buf.get_cyclic_banking_implement(impl);
                 bank_impl.get_bank_num() > 1) {
                 //false) {
+        buf.banking.partition = "cyclic";
         isl_map* bank_partition_map = bank_impl.get_bank_map(buf);
         for (int b = 0; b < bank_impl.get_bank_num(); b++) {
           isl_set* bnk = isl_set_read_from_str(buf.ctx, curlies("Bank[" + str(b) + "]").c_str());
           //This is rddom
-          isl_set* accesses_to_bank =::domain( its_range(bank_partition_map, bnk));
+          isl_set* accesses_to_bank = simplify(::domain( its_range(bank_partition_map, bnk)));
           cout << "rddom: " << str(accesses_to_bank) << endl;
 
           //Add port

@@ -1895,6 +1895,8 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
         }
     }
 
+
+    //FIXME: this is a heuristic, it's overaproximation, may not be the unroll
     std::set<int> get_unroll_dimensions() {
       //Find the unrolling dimension
       std::set<int> addr_need_tight;
@@ -1911,12 +1913,31 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
       return addr_need_tight;
     }
 
+    //dimension are fully unrolled
+    std::set<int> get_fully_unroll_dimensions() {
+      //Find the unrolling dimension
+      std::set<int> fully_unrolled_dim;
+      for (auto it: access_map) {
+          auto am = to_map(it.second);
+          isl_set* addr_range = range(am);
+          int addr_dim = ::num_dims(addr_range);
+          for (int i = 0; i < addr_dim; i ++) {
+              int dom_rng = get_domain_range(addr_range, i);
+              if (dom_rng == 1)
+                  fully_unrolled_dim.insert(i);
+          }
+      }
+      cout << "addr dim fully unrolled: " << fully_unrolled_dim << endl;
+      return fully_unrolled_dim;
+    }
+
 
     CyclicBankingImpl get_cyclic_banking_implement(UBufferImpl & impl);
 
     //return a vector<int> size equals to dimension
     vector<int> get_cyclic_banking_factors() {
       vector<int> cyclic_banking_factors(num_dims(), 1);
+
       std::set<int> addr_need_tight = get_unroll_dimensions();
       for (int addr_dim: addr_need_tight) {
         int cms_in = 0, cms_out = 0;
@@ -1934,7 +1955,19 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
         }
         cyclic_banking_factors.at(addr_dim) = std::max(cms_in, cms_out);
       }
-      cout << cyclic_banking_factors << endl;
+
+      //TODO: Fully unrolled dimension should be caught by cyclic banking,
+      //we may not need embarassing banking at all
+      std::set<int> addr_fully_unrolled = get_fully_unroll_dimensions();
+      auto gb_domain= to_set(global_range());
+      for (int addr_dim: addr_fully_unrolled) {
+        int banking_factor = get_domain_range(gb_domain, addr_dim);
+        if (banking_factor != 1) {
+            cyclic_banking_factors.at(addr_dim) = banking_factor;
+        }
+      }
+
+      cout << "Cyclic banking factors: " << cyclic_banking_factors << endl;
       return cyclic_banking_factors;
     }
 
@@ -1944,8 +1977,10 @@ void tighten_address_space() {
     for(int addr_dim: addr_need_tight) {
       int cms = 0;
       for (auto it: access_map) {
-          auto am = to_map(it.second);
-          cms = std::gcd(cms, common_max_stride(am, addr_dim));
+          auto am = coalesce(to_map(it.second));
+          auto am_cms = common_max_stride(am, addr_dim);
+          //cout << "\t common max stride for am: " << str(am) << endl << "\t" << am_cms << endl;
+          cms = std::gcd(cms, am_cms);
       }
       cout << "common max stride = " << cms << endl;
       if (cms > 1) {

@@ -113,6 +113,7 @@ prog resnet_output_stationary_i8();
 prog resnet_init_unroll();
 prog resnet_init_unroll_tile();
 prog resnet3_1();
+prog resnet_1x1();
 prog resnet1();
 prog resnet4_x();
 prog resnet3_x_tiny();

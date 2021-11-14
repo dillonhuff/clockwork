@@ -1887,7 +1887,9 @@ int common_max_stride(isl_map* const m, int out_dim) {
     //Skip root start from 1
     for (int in_dim=1; in_dim < num_in_dims(m); in_dim++){
         int s = stride_in_dim(m, in_dim, out_dim);
-        if (s > 0)
+        int domain_range = get_domain_range(::domain(m), in_dim);
+        // only count the stride with domain range large than 1
+        if ((s > 0) && (domain_range > 1))
           cms = std::gcd(cms, s);
     }
     return cms;
@@ -3243,7 +3245,9 @@ isl_map* add_more_dim_to_map_with_stride(isl_map* const um, int in_dim, int out_
 
     //pad the space for the original constraints
     for (auto c : c_vec) {
+        //cout << "\tconstraints before padding: " << str(c) << endl;
         auto tmp = pad_dim_to_constraint_domain(c, in_dim, out_dim, stride);
+        //cout << "\tconstraints after padding: " << str(tmp) << endl;
         new_c.push_back(tmp);
     }
 
@@ -3261,6 +3265,7 @@ isl_map* add_more_dim_to_map_with_stride(isl_map* const um, int in_dim, int out_
     auto ret = isl_basic_map_universe(sp);
     for (auto c : new_c) {
         ret = isl_basic_map_add_constraint(ret, c);
+        //cout << "new map in construction: " << str(ret) << endl;
     }
 
     auto ret_m = isl_map_from_basic_map(ret);
