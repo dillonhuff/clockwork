@@ -6199,7 +6199,9 @@ void generate_verilator_tb(
   rgtb << tab(1) << "dut.clk = 0;" << endl;
   //rgtb << tab(1) << "dut.eval();" << endl;
   eval(options, rgtb, 1);
-  rgtb << tab(1) << "for (int t = 0; t < (int) pow(2, 16); t++) {" << endl;
+  int max_time = to_int(lexmaxval(to_set(range(hw_sched)))) + 10;
+  //rgtb << tab(1) << "for (int t = 0; t < (int) pow(2, 16); t++) {" << endl;
+  rgtb << tab(1) << "for (int t = 0; t < " + str(max_time) + "; t++) {" << endl;
 
   rgtb << tab(2) << "cout << \"t = \" << t << endl;" << endl;
   for (auto out : inputs(buffers, prg)) {
@@ -9295,9 +9297,11 @@ int buffer_load_latency(CodegenOptions& options) {
   }
 
   if (options.rtl_options.target_tile == TARGET_TILE_M3 ||
-      options.rtl_options.target_tile == TARGET_TILE_M1 ||
-      options.rtl_options.target_tile == TARGET_TILE_BUFFET) {
+      options.rtl_options.target_tile == TARGET_TILE_M1 ) {
     return 1;
+  }
+  if (options.rtl_options.target_tile == TARGET_TILE_BUFFET) {
+    return 0;
   }
   assert(false);
 }
