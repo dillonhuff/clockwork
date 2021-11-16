@@ -2948,7 +2948,8 @@ bool runOnInstance(Instance* inst) {
       bool connect2IO = false;
       for (auto conn: conns) {
           auto inst_conn = dyn_cast<Instance>(conn->getTopParent());
-          if (inst_conn->getModuleRef()->getRefName() == "cgralib.BitIO") {
+          if (inst_conn->getModuleRef()->getRefName() == "global.BitIO") {
+              cout << "found cgpl in subtract" << endl;
               cout << inst_conn->getModuleRef()->toString() << endl;
               connect2IO = true;
               break;
@@ -3751,6 +3752,7 @@ void disconnect_input_enable(Context* c, Module* top) {
 // Pass to map Tahoe memory tile intended for metamapper
 void map_memory(CodegenOptions& options, Module* top, map<string, UBuffer> & buffers, bool garnet_syntax_trans = false) {
   auto c = top->getContext();
+  //LoadDefinition_cgralib(c);
   disconnect_input_enable(c, top);
   
    //GLB passes
@@ -3768,6 +3770,9 @@ void map_memory(CodegenOptions& options, Module* top, map<string, UBuffer> & buf
   c->addPass(new MapperPasses::StripGLB);
   c->runPasses({"stripglb"});
   addIOsWithGLBConfig(c, top, buffers, glb_pass);
+
+  c->addPass(new CustomFlatten);
+  c->runPasses({"customflatten"});
 
   //Change the stencil valid signal to cgra to glb
   c->addPass(new ReplaceGLBValid(glb_pass));
@@ -4132,11 +4137,15 @@ void generate_coreir_without_ctrl(CodegenOptions& options,
   map_memory(options, prg_mod, buffers, true);
 
 
-  for (auto op : prg.all_ops()) {
-    cout << "Inlining " << op->name << endl;
-    CoreIR::Instance* kernel = prg_mod->getDef()->getInstances().at(op->name);
-    inlineInstance(kernel);
-  }
+//  for (auto op : prg.all_ops()) {
+//    cout << "Inlining " << op->name << endl;
+//    prg_mod->print();
+//    for (auto inst: prg_mod->getDef()->getInstances()){
+//        inlineInstance(inst.second);
+//    }
+    //CoreIR::Instance* kernel = prg_mod->getDef()->getInstances().at(op->name);
+    //inlineInstance(kernel);
+//  }
 
   c->runPasses({"deletedeadinstances"});
   c->runPasses({"removewires"});
@@ -4145,6 +4154,7 @@ void generate_coreir_without_ctrl(CodegenOptions& options,
   context->runPasses({"rungenerators", "removewires", "cullgraph"});
   c->runPasses({"flatten"});
   c->runPasses({"flattentypes"});
+  c->runPasses({"deletedeadinstances"});
 
 
   auto global = context->getNamespace("global");
