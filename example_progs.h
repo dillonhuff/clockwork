@@ -14,6 +14,7 @@ prog counter();
 prog conv_multi(); //multiple-tile-cnn
 prog strided_conv();
 prog accumulation(); //reduce
+prog accumulation_simple(); //reduce
 prog unsharp();
 prog unsharp_new();
 prog cascade(); //stencil
