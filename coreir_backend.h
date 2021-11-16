@@ -7,8 +7,92 @@
 #define COREMK(ctx, v) CoreIR::Const::make((ctx), (v))
 
 static inline
+std::string exe_start_name(const std::string& n) {
+  return n + "_exe_start";
+}
+
+static inline
+std::string exe_start_control_vars_name(const std::string& n) {
+  return n + "_exe_start_control_vars";
+}
+
+static inline
+std::string read_start_control_vars_name(const std::string& n) {
+  return n + "_read_start_control_vars";
+}
+
+static inline
+std::string write_start_control_vars_name(const std::string& n) {
+  return n + "_write_start_control_vars";
+}
+
+static inline
+std::string read_start_name(const std::string& n) {
+  return n + "_read_start";
+}
+
+static inline
+std::string read_ready_name(const std::string& n) {
+  return n + "_read_ready";
+}
+
+static inline
+std::string write_start_name(const std::string& n) {
+  return n + "_write_start";
+}
+
+static inline
+std::string write_ready_name(const std::string& n) {
+  return n + "_write_ready";
+}
+
+static inline
+std::string cu_name(const std::string& n) {
+  return "cu_" + n;
+}
+
+
+static inline
 std::string controller_name(const std::string& n) {
   return n + "_port_controller";
+}
+
+static inline
+CoreIR::Wireable* exe_start_control_vars(CoreIR::ModuleDef* def, const std::string& opname) {
+  return def->sel(exe_start_control_vars_name(opname))->sel("out");
+}
+
+static inline
+CoreIR::Wireable* read_start_control_vars(CoreIR::ModuleDef* def, const std::string& opname) {
+  return def->sel(controller_name(opname))->sel("d");
+  //return def->sel(read_start_control_vars_name(opname))->sel("out");
+}
+
+static inline
+CoreIR::Wireable* write_start_control_vars(CoreIR::ModuleDef* def, const std::string& opname) {
+  //return def->sel(controller_name(opname))->sel("d");
+  return def->sel(write_start_control_vars_name(opname))->sel("out");
+}
+
+static inline
+CoreIR::Wireable* read_start_wire(CoreIR::ModuleDef* def, const std::string& opname) {
+  return def->sel(read_start_name(opname))->sel("out");
+}
+
+static inline
+CoreIR::Wireable* write_start_wire(CoreIR::ModuleDef* def, const std::string& opname) {
+  return def->sel(write_start_name(opname))->sel("out");
+}
+
+//Although it called out but it's the input port
+static inline
+CoreIR::Wireable* write_ready_wire(CoreIR::ModuleDef* def, const std::string& opname) {
+  return def->sel(write_ready_name(opname))->sel("out");
+}
+
+static inline
+CoreIR::Wireable* read_ready_wire(CoreIR::ModuleDef* def, const std::string& opname) {
+  return def->sel(read_ready_name(opname))->sel("out");
 }
 
 vector<CoreIR::Wireable*> getConnectWires(CoreIR::Wireable* wire);

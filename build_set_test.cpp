@@ -20018,7 +20018,10 @@ void fpga_asplos_tests() {
 }
 
 void buffet_tests() {
-  vector<prog> buffet_test_programs = {pointwise_conv()};
+  //vector<prog> buffet_test_programs = {pointwise_conv()};
+  vector<prog> buffet_test_programs;
+  buffet_test_programs.push_back(pointwise_conv());
+  buffet_test_programs.push_back(accumulation_simple());
   test_buffet_codegen(buffet_test_programs);
 }
 

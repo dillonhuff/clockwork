@@ -1334,42 +1334,6 @@ void LoadDefinition_cgralib(Context* c) {
   //lad_float(c);
 }
 
-std::string exe_start_name(const std::string& n) {
-  return n + "_exe_start";
-}
-
-std::string exe_start_control_vars_name(const std::string& n) {
-  return n + "_exe_start_control_vars";
-}
-
-std::string read_start_control_vars_name(const std::string& n) {
-  return n + "_read_start_control_vars";
-}
-
-std::string write_start_control_vars_name(const std::string& n) {
-  return n + "_write_start_control_vars";
-}
-
-std::string read_start_name(const std::string& n) {
-  return n + "_read_start";
-}
-
-std::string read_ready_name(const std::string& n) {
-  return n + "_read_ready";
-}
-
-std::string write_start_name(const std::string& n) {
-  return n + "_write_start";
-}
-
-std::string write_ready_name(const std::string& n) {
-  return n + "_write_ready";
-}
-
-std::string cu_name(const std::string& n) {
-  return "cu_" + n;
-}
-
   CoreIR::Wireable* wire(CoreIR::ModuleDef* bdef,
       const int width,
       const std::string& name,
@@ -1506,6 +1470,41 @@ void connect_signal(const std::string& signal, CoreIR::Module* m) {
   }
 }
 
+CoreIR::Module* ready_and_mod(CoreIR::Context* c, op* compute_op) {
+  auto ns = c->getNamespace("global");
+  vector<pair<string, CoreIR::Type*> > ub_field = {};
+  auto buffers = compute_op->buffers_read();
+  for(auto buf: buffers) {
+    ub_field.push_back({"ready_in_" + buf, c->BitIn()});
+  }
+  ub_field.push_back({"ready_out", c->Bit()});
+  CoreIR::RecordType* utp = c->Record(ub_field);
+  auto and_mod =
+    ns->newModuleDecl("ready_and_mod_" + compute_op->name, utp);
+
+  auto def = and_mod->newModuleDef();
+  vector<CoreIR::Wireable*> inList;
+  for (string buf: buffers) {
+    inList.push_back(def->sel("self")->sel("ready_in_" + buf));
+  }
+
+  auto outWire = andList(def, inList);
+
+  def->connect(outWire, def->sel("self")->sel("ready_out"));
+
+  and_mod->setDef(def);
+  return and_mod;
+}
+
+CoreIR::Instance* generate_ready_join(CoreIR::ModuleDef* def, op* compute_op) {
+  auto ctrl_mod = ready_and_mod(def->getContext(), compute_op);
+  auto ready_join = def->addInstance(compute_op->name + "_ready_join", ctrl_mod);
+
+  //Wire the output to the ready port of affine contrl module
+  def->connect(ready_join->sel("ready_out"), read_ready_wire(def, compute_op->name));
+  return ready_join;
+}
+
 CoreIR::Module* generate_flow_control(CoreIR::Context* context, int in_num, int out_num) {
   auto ns = context->getNamespace("global");
 
@@ -1615,9 +1614,13 @@ void generate_coreir_compute_unit(CodegenOptions& options, bool found_compute,
     if(options.rtl_options.has_ready) {
       int in_bd_size = outgoing_bundles(op, buffers, prg).size();
       int out_bd_size = incoming_bundles(op, buffers, prg).size();
-      //Add the ready valid control circuit
 
-      auto ctrl_mod = generate_flow_control(def->getContext(), in_bd_size, out_bd_size);
+      //cout << "in bundle size: " << in_bd_size << endl;
+      //cout << "out bundle size: " << out_bd_size << endl;
+
+      //Add the ready valid control circuit
+      //NOTE: out going bundle get the output of compute unit input of buffer
+      auto ctrl_mod = generate_flow_control(def->getContext(), out_bd_size, in_bd_size);
       auto fork_join_ctrl = def->addInstance(op->name + "_flow_ctrl", ctrl_mod);
       int count = 0;
       //Output/read port
@@ -1748,37 +1751,6 @@ void generate_coreir_compute_unit(CodegenOptions& options, bool found_compute,
   }
 
   def->addInstance(op->name, compute_unit);
-}
-
-Wireable* exe_start_control_vars(ModuleDef* def, const std::string& opname) {
-  return def->sel(exe_start_control_vars_name(opname))->sel("out");
-}
-
-Wireable* read_start_control_vars(ModuleDef* def, const std::string& opname) {
-  return def->sel(controller_name(opname))->sel("d");
-  //return def->sel(read_start_control_vars_name(opname))->sel("out");
-}
-
-Wireable* write_start_control_vars(ModuleDef* def, const std::string& opname) {
-  //return def->sel(controller_name(opname))->sel("d");
-  return def->sel(write_start_control_vars_name(opname))->sel("out");
-}
-
-Wireable* read_start_wire(ModuleDef* def, const std::string& opname) {
-  return def->sel(read_start_name(opname))->sel("out");
-}
-
-Wireable* write_start_wire(ModuleDef* def, const std::string& opname) {
-  return def->sel(write_start_name(opname))->sel("out");
-}
-
-//Although it called out but it's the input port
-Wireable* write_ready_wire(ModuleDef* def, const std::string& opname) {
-  return def->sel(write_ready_name(opname))->sel("out");
-}
-
-Wireable* read_ready_wire(ModuleDef* def, const std::string& opname) {
-  return def->sel(read_ready_name(opname))->sel("out");
 }
 
 void connect_op_control_wires(CodegenOptions& options, ModuleDef* def, op* op, schedule_info& hwinfo, Instance* controller) {
@@ -2197,7 +2169,11 @@ Instance* generate_coreir_op_controller(CodegenOptions& options, ModuleDef* def,
     controller = def->addInstance(controller_name(op->name), aff_c);
     if (options.rtl_options.has_ready) {
         //TODO: duplicate affine controller for each ubuffer
-        assert(op->buffers_read().size() <= 1);
+        //TODO: no need to duplicate the read controller,
+        //just need to and the read_idx ready from previous stage
+        cout << tab(2) << op->name << endl;
+        cout << tab(2) << "NEED to AND read_idx_ready from those two buffer: " << endl;
+        cout << tab(2) << op->buffers_read() << endl;
     }
 
   } else if (to_int(const_coeff(aff)) >= options.mem_hierarchy.at("mem").counter_ub) {
@@ -2791,6 +2767,10 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
       }
     }
 
+
+    //Create a AND module for all the read_idx_read, make sure we could send the correct idx in
+    auto ready_join = generate_ready_join(def, op);
+
     for (pair<string, string> bundle : incoming_bundles(op, buffers, prg)) {
       string buf_name = bundle.first;
       string bundle_name = bundle.second;
@@ -2817,7 +2797,7 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
 
           //Also wire the enable ready wire, just keep the interface unified
           def->connect(def->sel(output_valid + "_ready"),
-              read_ready_wire(def, op->name));
+              ready_join->sel("ready_in_" + buf_name));
         }
 
       } else {
@@ -2830,7 +2810,7 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
               read_start_control_vars(def, op->name));
           if (options.rtl_options.has_ready) {
             def->connect(def->sel(buf_name + "." + bundle_name + "_rready"),
-                read_ready_wire(def, op->name));
+                ready_join->sel("ready_in_"+buf_name));
           }
         }
 
@@ -6472,8 +6452,7 @@ void generate_Buffet_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, pro
     for (int b = 0; b < num_banks; b++) {
       auto currbank = bank_map[b];
       int count = 0;
-      for(auto pt : bank_writers[b])
-      {
+      for(auto pt : bank_writers[b]) {
 
         auto adjusted_buf = write_latency_adjusted_buffer(options, prg, buf, hwinfo);
         //auto agen = ubuffer_port_agens[pt];
