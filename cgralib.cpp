@@ -204,6 +204,16 @@ CoreIR::Namespace* CoreIRLoadLibrary_cgralib(Context* c) {
             recordparams.push_back({"read_idx_valid", c->BitIn()});
             recordparams.push_back({"read_idx_ready", c->Bit()});
 
+            recordparams.push_back({"update_data", c->BitIn()->Arr(width)});
+            recordparams.push_back({"update_data_valid", c->BitIn()});
+            recordparams.push_back({"update_data_ready", c->Bit()});
+
+            recordparams.push_back({"update_idx", c->BitIn()->Arr(idx_width)});
+            recordparams.push_back({"update_idx_valid", c->BitIn()});
+            recordparams.push_back({"update_idx_ready", c->Bit()});
+
+            recordparams.push_back({"read_will_update", c->BitIn()});
+
             recordparams.push_back({"push_data", c->BitIn()->Arr(width)});
             recordparams.push_back({"push_data_valid", c->BitIn()});
             recordparams.push_back({"push_data_ready", c->Bit()});

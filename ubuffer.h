@@ -2257,6 +2257,10 @@ void tighten_address_space() {
         return ret;
     }
 
+    string get_op(const string pt) const {
+        return domain_name(schedule.at(pt));
+    }
+
     //Use for Garnet Codegen
     vector<string> get_ops_sorted_by_bundle() const {
         vector<string> ret;

@@ -926,6 +926,11 @@ struct prog {
     assert(false);
   }
 
+  bool is_init_op(const std::string& target_op) {
+    op* v = find_op(target_op);
+    return v->read_addrs().size() == 0;
+  }
+
   int trip_count(const std::string& loop_level) {
     return find_loop(loop_level)->trip_count();
   }

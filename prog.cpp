@@ -6200,8 +6200,8 @@ void generate_verilator_tb(
   //rgtb << tab(1) << "dut.eval();" << endl;
   eval(options, rgtb, 1);
   int max_time = to_int(lexmaxval(to_set(range(hw_sched)))) + 10;
-  //rgtb << tab(1) << "for (int t = 0; t < (int) pow(2, 16); t++) {" << endl;
-  rgtb << tab(1) << "for (int t = 0; t < " + str(max_time) + "; t++) {" << endl;
+  rgtb << tab(1) << "for (int t = 0; t < (int) pow(2, 16); t++) {" << endl;
+  //rgtb << tab(1) << "for (int t = 0; t < " + str(max_time) + "; t++) {" << endl;
 
   rgtb << tab(2) << "cout << \"t = \" << t << endl;" << endl;
   for (auto out : inputs(buffers, prg)) {

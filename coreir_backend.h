@@ -255,6 +255,13 @@ void pipeline_compute_units(prog& prg, schedule_info& hwinfo);
 
 int generate_compute_unit_regression_tb(op* op, prog& prg);
 
+CoreIR::Instance* build_counter(CoreIR::ModuleDef* def,
+        string name,
+        const int width,
+        const int min_val,
+        const int max_val,
+        const int inc_val);
+
 CoreIR::Instance* build_addrgen(const std::string& reader, UBuffer& buf, CoreIR::ModuleDef* def);
 CoreIR::Instance* build_addrgen(const std::string& reader, UBuffer& buf, CoreIR::ModuleDef* def, int width);
 

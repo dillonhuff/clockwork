@@ -1454,6 +1454,28 @@ CoreIR::Wireable* andList(CoreIR::ModuleDef* def, const std::vector<CoreIR::Wire
   return val;
 }
 
+CoreIR::Wireable* selectList(CoreIR::ModuleDef* def, const std::vector<pair<CoreIR::Wireable*, CoreIR::Wireable*>>& enable_map, int bitwidth) {
+  CoreIR::Wireable* wire = nullptr;
+  if (enable_map.size() == 1) {
+    return pick(enable_map).first;
+  }
+
+  wire = enable_map.begin()->first;
+  for (auto it =enable_map.begin(); it < enable_map.end() - 1; it ++) {
+    auto next_wire = (it + 1)->first;
+    auto enable_signal = it->second;
+    auto context = def->getContext();
+    auto next_val = def->addInstance(context->getUnique() + "_mux",
+            "coreir.mux",
+            { {"width", CoreIR::Const::make(context, bitwidth)}});
+    def->connect(enable_signal, next_val->sel("sel"));
+    def->connect(wire, next_val->sel("in1"));
+    def->connect(next_wire, next_val->sel("in0"));
+    wire = next_val->sel("out");
+  }
+  return wire;
+}
+
 bool connected(CoreIR::Wireable* w) {
   return w->getConnectedWireables().size() > 0;
 }
@@ -1494,6 +1516,77 @@ CoreIR::Module* ready_and_mod(CoreIR::Context* c, op* compute_op) {
 
   and_mod->setDef(def);
   return and_mod;
+}
+
+CoreIR::Module* update_drain_fork_mod(CoreIR::Context* c, UBuffer& buf, int bank_id,
+        map<string, string> & read_map){
+  auto ns = c->getNamespace("global");
+  vector<pair<string, CoreIR::Type*> > ub_field = {};
+  for (auto it: read_map) {
+    string pt_name = it.second;
+    ub_field.push_back({"ready_in_" + pt_name, c->BitIn()});
+    ub_field.push_back({"valid_out_" + pt_name, c->Bit()});
+  }
+  ub_field.push_back({"valid_in", c->BitIn()});
+  ub_field.push_back({"ready_out", c->Bit()});
+  ub_field.push_back({"rst_n", c->BitIn()});
+  CoreIR::RecordType* utp = c->Record(ub_field);
+  auto fork_mod =
+      ns->newModuleDecl("update_drain_fork_mod_" + buf.name + "_BANK_" + str(bank_id), utp);
+  auto def = fork_mod->newModuleDef();
+  if (read_map.size() == 1) {
+    auto type = pick(read_map).first;
+    auto pt_name = pick(read_map).second;
+    assert(type == "read");
+    def->connect(def->sel("self")->sel("ready_in_"+pt_name), def->sel("self")->sel("ready_out"));
+    def->connect(def->sel("self")->sel("valid_out_"+pt_name), def->sel("self")->sel("valid_in"));
+  } else {
+
+    string update_pt = read_map.at("update");
+    string drain_pt = read_map.at("read");
+    int update_card = int_upper_bound(card(buf.domain.at(update_pt)));
+    int drain_card = int_upper_bound(card(buf.domain.at(drain_pt)));
+    cout << "update card: " << update_card << "\nDrain card " << drain_card << endl;
+
+    int width = 16;
+    auto bd = def->addInstance(c->getUnique(),
+      "coreir.const",
+      {{"width", CoreIR::Const::make(c, width)}},
+      {{"value", CoreIR::Const::make(c, BitVector(width, update_card))}});
+
+    CoreIR::Wireable* cycle_time_reg = build_counter(def, "cycle_time", width, 0, update_card + drain_card, 1);
+    auto inv_rst = def->addInstance("Invert_rst", "corebit.not");
+    def->connect(def->sel("self.rst_n"), def->sel("Invert_rst.in"));
+    def->connect(cycle_time_reg->sel("reset"), def->sel("Invert_rst.out"));
+    def->connect(cycle_time_reg->sel("en"), def->sel("self")->sel("valid_in"));
+
+    CoreIR::Instance* cmp = def->addInstance("cmp_time", "coreir.uge", {{"width", CoreIR::Const::make(c, width)}});
+    def->connect(cmp->sel("in0"), cycle_time_reg->sel("out"));
+    def->connect(cmp->sel("in1"), bd->sel("out"));
+    auto inv_cmp_out = def->addInstance("Invert", "corebit.not");
+    def->connect("cmp_time.out", "Invert.in");
+
+    //Connect the one bit output of compare to and gate with the valid in
+    def->addInstance("and0", "corebit.and");
+    def->connect("and0.in0", "self.valid_in");
+    def->connect("and0.in1", "cmp_time.out");
+    def->connect("and0.out", "self.valid_out_" + drain_pt);
+
+    def->addInstance("and1", "corebit.and");
+    def->connect("and1.in0", "self.valid_in");
+    def->connect("and1.in1", "Invert.out");
+    def->connect("and1.out", "self.valid_out_" + update_pt);
+
+    //mux the ready from two different downstream data path into the only buffer read port
+    def->addInstance("ready_mux", "corebit.mux");
+    def->connect("ready_mux.in0", "self.ready_in_" + update_pt);
+    def->connect("ready_mux.in1", "self.ready_in_" + drain_pt);
+    def->connect("ready_mux.sel", "cmp_time.out");
+    def->connect("ready_mux.out", "self.ready_out");
+  }
+
+  fork_mod->setDef(def);
+  return fork_mod;
 }
 
 CoreIR::Instance* generate_ready_join(CoreIR::ModuleDef* def, op* compute_op) {
@@ -1537,11 +1630,20 @@ CoreIR::Module* generate_flow_control(CoreIR::Context* context, int in_num, int 
     def->connect(valid_out, def->sel("self.valid_out_"+str(i)));
   }
 
-  //ready_out_vec.push_back(valid_out);
   //Ready in is and of output ready
+  //
+  //I am ready only if the downstream is ready and I am not valid or all of input are valid
   auto ready_in = andList(def, ready_out_vec);
   for (int i = 0; i < in_num; i ++) {
-    def->connect(ready_in, def->sel("self.ready_in_"+str(i)));
+    auto vld_check_or = def->addInstance("valid_check_or_" + str(i), "corebit.or");
+    auto vld_check_and = def->addInstance("valid_check_and_" + str(i), "corebit.and");
+    auto inv = def->addInstance("inv_" + str(i), "corebit.not");
+    def->connect(vld_check_or->sel("in0"), valid_out);
+    def->connect(def->sel("self.valid_in_" + str(i)), inv->sel("in"));
+    def->connect(vld_check_or->sel("in1"), inv->sel("out"));
+    def->connect(vld_check_and->sel("in0"), vld_check_or->sel("out"));
+    def->connect(vld_check_and->sel("in1"), ready_in);
+    def->connect(vld_check_and->sel("out"), def->sel("self.ready_in_"+str(i)));
   }
 
   ctrl_unit->setDef(def);
@@ -1622,6 +1724,7 @@ void generate_coreir_compute_unit(CodegenOptions& options, bool found_compute,
       //NOTE: out going bundle get the output of compute unit input of buffer
       auto ctrl_mod = generate_flow_control(def->getContext(), out_bd_size, in_bd_size);
       auto fork_join_ctrl = def->addInstance(op->name + "_flow_ctrl", ctrl_mod);
+
       int count = 0;
       //Output/read port
       for (pair<string, string> bundle : outgoing_bundles(op, buffers, prg)) {
@@ -2828,7 +2931,9 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
   ub->print();
 
   connect_signal("reset", ub);
-  context->runPasses({"rungenerators", "wireclocks-clk"});
+  //TODO: remove wire clk to fix the counter error
+  //context->runPasses({"rungenerators", "wireclocks-clk"});
+  context->runPasses({"rungenerators"});
 
   verilog_collateral.close();
   verilog_collateral_file = nullptr;
@@ -6127,13 +6232,23 @@ void instantiate_Buffet_verilog_wrapper(const std::string& long_name, const int 
     vector<string> port_decls = {};
     port_decls.push_back("input clk");
     port_decls.push_back("input nreset_i");
-    assert( impl.bank_writers.at(b).size() == 1);
+
+    //one for push one for update
+    assert( impl.bank_writers.at(b).size() <= 2);
     {
       port_decls.push_back("input ["+str(data_width) + ":0] push_data");
       port_decls.push_back("input push_data_valid" );
       port_decls.push_back("output push_data_ready");
+
+      port_decls.push_back("input ["+str(data_width) + ":0] update_data");
+      port_decls.push_back("input update_data_valid" );
+      port_decls.push_back("output reg update_data_ready");
+      port_decls.push_back("output update_idx_ready");
+      port_decls.push_back("input update_idx_valid");
+      port_decls.push_back("input [" + str(ctrl_width) + ":0] update_idx");
     }
-    assert(impl.bank_readers.at(b).size() == 1);
+    //two read port
+    assert(impl.bank_readers.at(b).size() <= 2);
     {
       port_decls.push_back("output [" + str(data_width) + ":0] read_data");
       port_decls.push_back("output read_data_valid" );
@@ -6141,15 +6256,17 @@ void instantiate_Buffet_verilog_wrapper(const std::string& long_name, const int 
 
       port_decls.push_back("input [" + str(ctrl_width) + ":0] read_idx");
       port_decls.push_back("input read_idx_valid" );
+
       port_decls.push_back("output read_idx_ready");
     }
 
+    port_decls.push_back("input read_will_update" );
+
     *verilog_collateral_file << "module " << long_name <<" ("<< sep_list(port_decls,"","",",\n") <<"); "<< endl;
 
-    *verilog_collateral_file << tab(1) << "reg update_idx_valid = 0;" <<  endl;
     *verilog_collateral_file << tab(1) << "reg credit = 0;" <<  endl;
     *verilog_collateral_file << tab(1) << "reg is_shrink = 0;" <<  endl;
-    *verilog_collateral_file << tab(1) << "reg read_will_update= 0;" <<  endl;
+    *verilog_collateral_file << tab(1) << "assign update_data_ready = 1; " << endl;
 
     *verilog_collateral_file << tab(1) << "buffet buffet_core (" << endl;
     *verilog_collateral_file << tab(2) << ".nreset_i(nreset_i), " << endl;
@@ -6161,13 +6278,20 @@ void instantiate_Buffet_verilog_wrapper(const std::string& long_name, const int 
     *verilog_collateral_file << tab(2) << ".read_idx(read_idx), " << endl;
     *verilog_collateral_file << tab(2) << ".read_idx_valid(read_idx_valid), " << endl;
     *verilog_collateral_file << tab(2) << ".read_idx_ready(read_idx_ready), " << endl;
+
+    *verilog_collateral_file << tab(2) << ".update_data(update_data), " << endl;
+    *verilog_collateral_file << tab(2) << ".update_data_valid(update_data_valid), " << endl;
+    *verilog_collateral_file << tab(2) << ".update_idx(update_idx), " << endl;
+    *verilog_collateral_file << tab(2) << ".update_idx_valid(update_idx_valid), " << endl;
+    *verilog_collateral_file << tab(2) << ".update_ready(update_idx_ready), " << endl;
+
     *verilog_collateral_file << tab(2) << ".push_data_valid(push_data_valid), " << endl;
     *verilog_collateral_file << tab(2) << ".push_data_ready(push_data_ready), " << endl;
     *verilog_collateral_file << tab(2) << ".read_will_update(read_will_update), " << endl;
-    *verilog_collateral_file << tab(2) << ".update_idx_valid(update_idx_valid), " << endl;
     *verilog_collateral_file << tab(2) << ".credit_ready(credit), " << endl;
     *verilog_collateral_file << tab(2) << ".is_shrink(is_shrink) " << endl;
     *verilog_collateral_file << tab(1) << ");" << endl;
+
 
     *verilog_collateral_file << "endmodule" << endl << endl;
 }
@@ -6308,11 +6432,23 @@ void generate_Buffet_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, pro
 
     map<string, Instance*> ubuffer_port_agens;
     map<string, Wireable*> ubuffer_port_bank_selectors;
+    map<int, Wireable*> ubuffer_read_selector;
     for (auto pt : buf.get_all_ports()) {
       if (buf.is_in_pt(pt)) {
         auto adjusted_buf = write_latency_adjusted_buffer(options, prg, buf, hwinfo);
         auto acc_map_inner_bank = get_inner_bank_access_map(pt, adjusted_buf, impl);
-        assert(check_contigous_access(acc_map_inner_bank));
+        string op_name = buf.get_op(pt);
+
+        if (buf.is_update_op(op_name)) {
+          auto agen = build_inner_bank_offset(pt, adjusted_buf, impl, def);
+          def->connect(agen->sel("d"),
+              control_vars(def, pt, adjusted_buf));
+          ubuffer_port_agens[pt] = agen;
+
+        } else {
+          assert(check_contigous_access(acc_map_inner_bank));
+
+        }
 
         //DO not generated agen , only check access pattern is linear
         //auto agen = build_inner_bank_offset(pt, adjusted_buf, impl, def);
@@ -6377,35 +6513,100 @@ void generate_Buffet_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, pro
       assert(bp.second <= 2);
     }
 
-    for (int b = 0; b < num_banks; b++) {
-      auto currbank = bank_map[b];
-
-      for(auto pt : bank_readers[b])
-      {
-        int count = dbhc::map_find({pt, b}, ubuffer_port_and_bank_to_bank_port);
-        auto agen = ubuffer_port_agens[pt];
-        assert(count == 0);
-        def->connect(agen->sel("out"), currbank->sel("read_idx"));
-        def->connect(currbank->sel("read_idx_valid"),
-            control_en(def, pt, buf));
-        def->connect(currbank->sel("read_idx_ready"),
-            control_ready(def, pt, buf));
-      }
-    }
-
     map<string, std::vector<Wireable*> > ubuffer_ports_to_bank_wires,
         ubuffer_ports_to_bank_ready, ubuffer_ports_to_bank_valid;
     map<string, std::vector<Wireable*> > ubuffer_ports_to_bank_condition_wires;
+
     for (int b = 0; b < num_banks; b++) {
       auto currbank = bank_map[b];
 
+      map<string, string> read_map;
       for(auto pt : bank_readers[b])
       {
         int count = dbhc::map_find({pt, b}, ubuffer_port_and_bank_to_bank_port);
-        assert(count == 0);
+        assert(count < 2);
+
+        if (buf.is_update_op(buf.get_op(pt))) {
+          read_map["update"] = pt;
+        } else {
+          read_map["read"] = pt;
+        }
+      }
+
+      vector<CoreIR::Wireable*> read_idx_valid_wires;
+      vector<pair<Wireable*, Wireable*>> agen2ctrl;
+      //This logic is hardcoded for Buffet
+      if (read_map.size() > 1) {
+        //need select between two ready
+        assert(read_map.size() == 2);
+        auto update_pt = read_map.at("update");
+        auto control_wire = control_en(def, update_pt, buf);
+
+        def->connect(currbank->sel("read_will_update"), control_wire);
+
+
+        for (auto pt: bank_readers[b]) {
+          auto control_wire = control_en(def, pt, buf);
+          auto agen = ubuffer_port_agens[pt];
+          agen2ctrl.push_back({agen->sel("out"), control_wire});
+          read_idx_valid_wires.push_back(control_wire);
+          def->connect(currbank->sel("read_idx_ready"),
+              control_ready(def, pt, buf));
+        }
+      } else {
+        assert(read_map.size() == 1);
+        auto pt = read_map["read"];
+        auto control_wire = control_en(def, pt, buf);
+        auto agen = ubuffer_port_agens[pt];
+        agen2ctrl.push_back({agen->sel("out"), control_wire});
+        read_idx_valid_wires.push_back(control_wire);
+
+        def->connect(currbank->sel("read_idx_ready"),
+            control_ready(def, pt, buf));
+
+        def->connect(currbank->sel("read_will_update"), zero);
+
+        //Wire the update idx if we did not use it
+        def->connect(agen->sel("out"), currbank->sel("update_idx"));
+        def->connect(currbank->sel("update_idx_valid"),
+            control_en(def, pt, buf));
+      }
+
+      auto agen_sel = selectList(def, agen2ctrl, 16);
+      def->connect(agen_sel, currbank->sel("read_idx"));
+      def->connect(currbank->sel("read_idx_valid"),
+            orList(def, read_idx_valid_wires));
+
+//    }
+
+//    for (int b = 0; b < num_banks; b++) {
+//      auto currbank = bank_map[b];
+
+      //For buffet backend, an accumulation can have two read port
+      //but they are going to share the same read port from buffet
+      //So we need to create a selection logic for the control path
+      //
+      //AS for datapath we could not broad cast
+      //Need to fork the data base on counting
+
+      CoreIR::Module* fork_mod = update_drain_fork_mod(def->getContext(), buf, b, read_map);
+
+      auto read_fork = def->addInstance(buf.name + "_Bank" + str(b) + "_read_ctrl_fork", fork_mod);
+
+      def->connect(read_fork->sel("valid_in"), currbank->sel("read_data_valid"));
+      def->connect(read_fork->sel("ready_out"), currbank->sel("read_data_ready"));
+      def->connect(read_fork->sel("rst_n"), def->sel("self.rst_n"));
+
+      for(auto pt : bank_readers[b])
+      {
+        //int count = dbhc::map_find({pt, b}, ubuffer_port_and_bank_to_bank_port);
+        //assert(count == 0);
         ubuffer_ports_to_bank_wires[pt].push_back(currbank->sel("read_data"));
-        ubuffer_ports_to_bank_valid[pt].push_back(currbank->sel("read_data_valid"));
-        ubuffer_ports_to_bank_ready[pt].push_back(currbank->sel("read_data_ready"));
+        //ubuffer_ports_to_bank_valid[pt].push_back(currbank->sel("read_data_valid"));
+        //ubuffer_ports_to_bank_ready[pt].push_back(currbank->sel("read_data_ready"));
+        ubuffer_ports_to_bank_valid[pt].push_back(read_fork->sel("valid_out_" + pt));
+        ubuffer_ports_to_bank_ready[pt].push_back(read_fork->sel("ready_in_" + pt));
+
         if (impl.outpt_to_bank[pt].size() > 1) {
           assert(false);
           ubuffer_ports_to_bank_condition_wires[pt].push_back(eqConst(def, ubuffer_port_bank_selectors[pt], b));
@@ -6469,26 +6670,67 @@ void generate_Buffet_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, pro
         }
         assert(enable != nullptr);
 
-        //TODO: check the input agen make sure everything is sequential
-        //def->connect(agen->sel("out"), currbank->sel("write_addr_" + str(count)));
+        string op_name = buf.get_op(pt);
+        if (buf.is_update_op(op_name)) {
+          //wire the update port
+          def->connect(currbank->sel("update_data"),
+              def->sel("self." + buf.container_bundle(pt) + "." + str(buf.bundle_offset(pt))));
+          def->connect(currbank->sel("update_data_valid"),
+                  def->sel("self." + buf.container_bundle(pt) + "_data_valid"));
+          def->connect(currbank->sel("update_data_ready"),
+                  def->sel("self." + buf.container_bundle(pt) + "_data_ready"));
 
-        //FIXME: wire this in the compute path
-        assert(count == 0);
-        def->connect(currbank->sel("push_data_valid"),
-                def->sel("self." + buf.container_bundle(pt) + "_data_valid"));
-        def->connect(currbank->sel("push_data_ready"),
-                def->sel("self." + buf.container_bundle(pt) + "_data_ready"));
+          //Create a address gen and schedule gen only for update
+          //Wire the data valid in data path to enable the increment of the schedule generator
 
-        def->connect(
-            currbank->sel("push_data"),
-            def->sel("self." + buf.container_bundle(pt) + "." + str(buf.bundle_offset(pt))));
+          auto dom = buf.domain.at(pt);
+          auto access_map = to_map(buf.access_map.at(pt));
+          cout << str(dom) << endl;
+          auto linear_aff = get_aff(linear_address_map_lake(dom));
+          cout << str(linear_aff) << endl;
+          CoreIR::Instance* update_dom_iterator = affine_controller(options, def, dom, linear_aff);
+          auto update_agen = build_inner_bank_offset(pt, buf, impl, def);
+
+          def->connect(update_dom_iterator->sel("ready"),
+                  def->sel("self." + buf.container_bundle(pt) + "_data_valid"));
+          def->connect(update_agen->sel("d"), update_dom_iterator->sel("d"));
+          def->connect(update_agen->sel("out"), currbank->sel("update_idx"));
+          def->connect(update_dom_iterator->sel("valid"), currbank->sel("update_idx_valid"));
+        } else {
+          //TODO: check the input agen make sure everything is sequential
+          //def->connect(agen->sel("out"), currbank->sel("write_addr_" + str(count)));
+
+          //assert(count == 0);
+          //Wire the data path valid to control path if it's an initialization op
+          if (prg.is_init_op(op_name)) {
+            def->connect(currbank->sel("push_data_valid"),
+                    control_en(def, pt, buf));
+          } else {
+            def->connect(currbank->sel("push_data_valid"),
+                    def->sel("self." + buf.container_bundle(pt) + "_data_valid"));
+
+          }
+          def->connect(currbank->sel("push_data_ready"),
+                  def->sel("self." + buf.container_bundle(pt) + "_data_ready"));
+
+          def->connect(
+              currbank->sel("push_data"),
+              def->sel("self." + buf.container_bundle(pt) + "." + str(buf.bundle_offset(pt))));
+
+        }
+
         count++;
       }
+
+      //still wire the update port if there is only push
+      if (bank_writers[b].size() == 1) {
+        string pt = pick(bank_writers[b]);
+        def->connect(currbank->sel("update_data"),
+        def->sel("self." + buf.container_bundle(pt) + "." + str(buf.bundle_offset(pt))));
+        def->connect(currbank->sel("update_data_valid"), zero);
+      }
     }
-
   }
-
-
 }
 
 void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& prg, UBuffer& orig_buf, schedule_info& hwinfo) {
