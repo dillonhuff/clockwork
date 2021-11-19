@@ -14,7 +14,7 @@ hw_uint<16> hcompute_hw_input_global_wrapper_stencil(hw_uint<16>& hw_input_stenc
 
 //store is: conv.stencil(conv_s0_x, conv_s0_y, 0) = (int16)0
 hw_uint<16> hcompute_conv_stencil() {
-  int16_t _661 = (int16_t)(0);
+  int16_t _661 = (int16_t)(1);
   return _661;
 }
 
