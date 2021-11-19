@@ -576,6 +576,8 @@ std::string codegen_c(isl_pw_qpolynomial* pqp);
 int bnd_int(isl_union_pw_qpolynomial_fold* bound);
 int int_lower_bound(isl_union_pw_qpolynomial* range_card);
 int int_upper_bound(isl_union_pw_qpolynomial* range_card);
+int int_lower_bound(isl_pw_qpolynomial* range_card);
+int int_upper_bound(isl_pw_qpolynomial* range_card);
 
 //TODO: rename it to get in/out card
 isl_union_pw_qpolynomial* get_out_range(isl_map* m, int dim);

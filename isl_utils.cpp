@@ -3660,6 +3660,21 @@ int int_upper_bound(isl_union_pw_qpolynomial* range_card) {
   return bnd_int(bound);
 }
 
+int int_lower_bound(isl_pw_qpolynomial* range_card) {
+  int tight;
+  int* b = &tight;
+  auto bound = isl_union_pw_qpolynomial_bound(isl_union_pw_qpolynomial_from_pw_qpolynomial(range_card), isl_fold_min, b);
+  return bnd_int(bound);
+}
+
+int int_upper_bound(isl_pw_qpolynomial* range_card) {
+  int tight;
+  int* b = &tight;
+  auto bound = isl_union_pw_qpolynomial_bound(isl_union_pw_qpolynomial_from_pw_qpolynomial(range_card), isl_fold_max, b);
+  return bnd_int(bound);
+}
+
+
 isl_set* universe(isl_space* s) {
   return isl_set_universe(s);
 }
