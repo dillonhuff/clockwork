@@ -1598,6 +1598,63 @@ CoreIR::Instance* generate_ready_join(CoreIR::ModuleDef* def, op* compute_op) {
   return ready_join;
 }
 
+//This flow control assume producer can generate valid data even if the consumer is not ready
+//It just hold the data
+CoreIR::Module* generate_flow_control_v2(CoreIR::Context* context, int in_num, int out_num) {
+  auto ns = context->getNamespace("global");
+
+  //This is a combinational circuit
+  vector<pair<string, CoreIR::Type*> > ub_field = {};
+  for(int i = 0; i < in_num; i ++) {
+    ub_field.push_back({"valid_in_" + to_string(i) , context->BitIn()});
+    ub_field.push_back({"ready_in_" + to_string(i), context->Bit()});
+  }
+  for(int i = 0; i < out_num; i ++) {
+    ub_field.push_back({"valid_out_" + to_string(i) , context->Bit()});
+    ub_field.push_back({"ready_out_" + to_string(i), context->BitIn()});
+  }
+  CoreIR::RecordType* utp = context->Record(ub_field);
+  auto ctrl_unit=
+    ns->newModuleDecl("flow_ctrl_" + context->getUnique(), utp);
+
+  auto def = ctrl_unit->newModuleDef();
+  vector<CoreIR::Wireable*> valid_in_vec, ready_out_vec;
+  for (int i = 0; i < in_num; i ++) {
+    valid_in_vec.push_back(def->sel("self")->sel("valid_in_"+str(i)));
+  }
+  for (int i = 0; i < out_num; i ++) {
+    ready_out_vec.push_back(def->sel("self")->sel("ready_out_"+str(i)));
+  }
+
+  //Wire the valid out
+  auto valid_out = andList(def, valid_in_vec);
+  for (int i = 0; i < out_num; i ++) {
+    def->connect(valid_out, def->sel("self.valid_out_"+str(i)));
+  }
+
+  //Ready in is and of output ready
+  //
+  //I am ready only if the downstream is ready and I am not valid or all of input are valid
+  auto ready_in = andList(def, ready_out_vec);
+  for (int i = 0; i < in_num; i ++) {
+
+    vector<CoreIR::Wireable*> valid_except_me;
+    for (int j = 0; j < in_num; j ++) {
+      if (j != i) {
+        valid_except_me.push_back(def->sel("self.valid_in_" + str(i)));
+      }
+    }
+    auto other_valid = andList(def, valid_except_me);
+
+    def->connect(andList(def, {other_valid, ready_in}), def->sel("self.ready_in_"+str(i)));
+  }
+
+  ctrl_unit->setDef(def);
+
+  return ctrl_unit;
+}
+
+//This flow control assume producer won't generate valid data until I send ready
 CoreIR::Module* generate_flow_control(CoreIR::Context* context, int in_num, int out_num) {
   auto ns = context->getNamespace("global");
 
@@ -1638,12 +1695,12 @@ CoreIR::Module* generate_flow_control(CoreIR::Context* context, int in_num, int 
     auto vld_check_or = def->addInstance("valid_check_or_" + str(i), "corebit.or");
     auto vld_check_and = def->addInstance("valid_check_and_" + str(i), "corebit.and");
     auto inv = def->addInstance("inv_" + str(i), "corebit.not");
-    def->connect(vld_check_or->sel("in0"), valid_out);
+    def->connect(vld_check_and->sel("in0"), valid_out);
+    def->connect(vld_check_and->sel("in1"), ready_in);
+    def->connect(vld_check_or->sel("in0"), vld_check_and->sel("out"));
     def->connect(def->sel("self.valid_in_" + str(i)), inv->sel("in"));
     def->connect(vld_check_or->sel("in1"), inv->sel("out"));
-    def->connect(vld_check_and->sel("in0"), vld_check_or->sel("out"));
-    def->connect(vld_check_and->sel("in1"), ready_in);
-    def->connect(vld_check_and->sel("out"), def->sel("self.ready_in_"+str(i)));
+    def->connect(vld_check_or->sel("out"), def->sel("self.ready_in_"+str(i)));
   }
 
   ctrl_unit->setDef(def);
@@ -6224,7 +6281,49 @@ void dump_Buffet_definition() {
     buffet_collateral_file.close();
 }
 
-void instantiate_Buffet_verilog_wrapper(const std::string& long_name, const int b, const UBufferImpl& impl, UBuffer& buf) {
+void instantiate_Buffet_shift_register(const std::string& long_name, const int out_num, const int row_size) {
+    vector<string> port_decls = {"input clk", "input rst_n",
+        "input valid_in", "output ready_in",
+        "output reg valid_out", "input ready_out"
+    };
+    int data_width = 16 - 1;
+    port_decls.push_back("input [" + str(data_width) + ":0] in_data");
+    port_decls.push_back("output [" + str(data_width) + ":0] out_data  [" + str(out_num) + ": 0] ");
+
+    *verilog_collateral_file << "module " << long_name <<" ("<< sep_list(port_decls,"","",",\n") <<"); "<< endl;
+    *verilog_collateral_file << tab(1) << "logic [" + str(data_width) + ":0] temp [" + str(out_num ) + ":0];" << endl;
+    *verilog_collateral_file << tab(1) << "reg [16:0] counter;" << endl << endl;;
+    *verilog_collateral_file << tab(1) << "reg valid_delay;" << endl << endl;;
+    *verilog_collateral_file << tab(1) << "integer i;" << endl << endl;;
+
+    *verilog_collateral_file << tab(1) << "always @(posedge clk or negedge rst_n) begin" << endl;
+    *verilog_collateral_file << tab(2) << "if(!rst_n) begin" << endl;
+    *verilog_collateral_file << tab(3) << "counter <= 16'd0;" << endl;
+    *verilog_collateral_file << tab(2) << "end else if(valid_in && ready_out) begin" << endl;
+    *verilog_collateral_file << tab(3) << "temp[0] <= in_data;" << endl;
+    *verilog_collateral_file << tab(3) << "for (i = 1; i < " + str(out_num+1) + "; i ++)" << endl;
+    *verilog_collateral_file << tab(4) << "temp[i] <=  temp[i - 1];" << endl;
+    *verilog_collateral_file << tab(3) << "if (counter == 16'd" + str(row_size) + ")" << endl;
+    *verilog_collateral_file << tab(4) << "counter <= 16'd0;" << endl;
+    *verilog_collateral_file << tab(3) << "else" << endl;
+    *verilog_collateral_file << tab(4) << "counter <= counter + 1;" << endl;
+    *verilog_collateral_file << tab(2) << "end" << endl << endl;
+
+    //Add one cycle delay to the shift register
+    *verilog_collateral_file << tab(2) << "valid_out <= valid_delay;" << endl << endl;
+
+    *verilog_collateral_file << tab(1) << "end" << endl << endl;
+
+    *verilog_collateral_file << tab(1) << "assign out_data = temp;" << endl;
+    *verilog_collateral_file << tab(1) << "assign ready_in = ready_out;" << endl;
+
+    //TODO: should we modify the valid in shift register?
+    *verilog_collateral_file << tab(1) << "assign valid_delay = valid_in && (counter >= "+ str(out_num) + ");" << endl;
+    //*verilog_collateral_file << tab(1) << "assign valid_out = valid_delay;" << endl;
+    *verilog_collateral_file << tab(1) << "endmodule" << endl;
+}
+
+void instantiate_Buffet_verilog_wrapper(const std::string& long_name) {
     assert(verilog_collateral_file != nullptr);
     int data_width = 16;
     int ctrl_width = 8;
@@ -6233,8 +6332,6 @@ void instantiate_Buffet_verilog_wrapper(const std::string& long_name, const int 
     port_decls.push_back("input clk");
     port_decls.push_back("input nreset_i");
 
-    //one for push one for update
-    assert( impl.bank_writers.at(b).size() <= 2);
     {
       port_decls.push_back("input ["+str(data_width) + ":0] push_data");
       port_decls.push_back("input push_data_valid" );
@@ -6247,8 +6344,6 @@ void instantiate_Buffet_verilog_wrapper(const std::string& long_name, const int 
       port_decls.push_back("input update_idx_valid");
       port_decls.push_back("input [" + str(ctrl_width) + ":0] update_idx");
     }
-    //two read port
-    assert(impl.bank_readers.at(b).size() <= 2);
     {
       port_decls.push_back("output [" + str(data_width) + ":0] read_data");
       port_decls.push_back("output read_data_valid" );
@@ -6349,35 +6444,188 @@ void instantiate_M1_verilog(const std::string& long_name, const int b, const UBu
     *verilog_collateral_file << "endmodule" << endl << endl;
 }
 
+std::set<string> generate_buffet_shift_registers(CodegenOptions& options, CoreIR::ModuleDef* def, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
+    std::set<string> delete_ports;
+    if (buf.num_out_ports() == 1)
+        return delete_ports;
+  CoreIR::Context* c = def->getContext();
+  auto impl = port_group2bank(options, prg, buf, hwinfo);
+  cout << impl.shift_depth << endl;
+
+  //Save all the ready wires, and later and them together to wire the input valid
+  map<string, vector<CoreIR::Wireable*>> pt2ready;
+
+  //generate buffet shift register module
+  for (auto it: impl.shift_registered_outputs) {
+    string buffet_outpt = it.first;
+    string buffet_inpt = it.second.first;
+
+    //Generate buffet from input to output
+    Values tile_params{{"data_width", COREMK(c, 16)},
+      {"ID", COREMK(c, buf.name + "_sr_" + c->getUnique())},
+      {"idx_width",COREMK(c,16)}};
+
+    CoreIR::Instance * row_buf=
+        def->addInstance("row_buf_" + buffet_inpt + "_to_" + buffet_outpt,
+            "cgralib.Buffet", tile_params);
+
+    instantiate_Buffet_verilog_wrapper(row_buf->getModuleRef()->getLongName());
+    def->connect(row_buf->sel("nreset_i"),def->sel("self.rst_n"));
+
+
+    //Wiring the write
+    def->connect(
+        row_buf->sel("push_data"),
+        def->sel("self." + buf.container_bundle(buffet_inpt) + "."
+            + str(buf.bundle_offset(buffet_inpt))));
+    def->connect(row_buf->sel("push_data_valid"),
+        def->sel("self." + buf.container_bundle(buffet_inpt) + "_data_valid"));
+
+    //Push ready to a map
+    dbhc::map_insert(pt2ready, buffet_inpt,
+            static_cast<CoreIR::Wireable*>(row_buf->sel("push_data_ready")));
+
+    //Wiring the read
+    auto w = def->addInstance(buffet_outpt+ "_sr_net", "coreir.wire", {{"width", COREMK(c, 16)}});
+    def->connect(w->sel("in"), row_buf->sel("read_data"));
+
+
+    //TODO: output generate the same read address as input
+    //but apply a valid mask on it
+    auto w_valid= def->addInstance(buffet_outpt+ "_sr_valid_net", "corebit.wire");
+    def->connect(w_valid->sel("in"), row_buf->sel("read_data_valid"));
+
+    auto w_ready = def->addInstance(buffet_outpt + "_sr_ready_net", "corebit.wire");
+    def->connect(w_ready->sel("out"), row_buf->sel("read_data_ready"));
+
+
+    //Use the iteration domain of input to drive the output agen
+    //Create a op controller
+    //create a address gen
+    auto acc_map_inner_bank = get_inner_bank_access_map(buffet_inpt, buf, impl);
+    assert(check_contigous_access(acc_map_inner_bank));
+    auto dom = buf.domain.at(buffet_inpt);
+    auto linear_aff = get_aff(linear_address_map_lake(cpy(dom)));
+    CoreIR::Instance* rowbuf_dom_iterator = affine_controller(options, def, dom, linear_aff);
+    auto rowbuf_rd_agen = build_inner_bank_offset(buffet_inpt, buf, impl, def);
+
+    //Wire the iteration domain counter
+    def->connect(rowbuf_rd_agen->sel("d"), rowbuf_dom_iterator->sel("d"));
+
+    //wire the idx interface
+    def->connect(rowbuf_rd_agen->sel("out"), row_buf->sel("read_idx"));
+    def->connect(rowbuf_dom_iterator->sel("ready"),
+            row_buf->sel("read_idx_ready"));
+
+    def->connect(rowbuf_dom_iterator->sel("valid"), row_buf->sel("read_idx_valid"));
+
+    //This port will never update
+    Select* zero = def->addInstance("zero_cst", "corebit.const",
+            {{"value", COREMK(c, false)}})->sel("out");
+    def->connect(row_buf->sel("read_will_update"), zero);
+
+    //Generate the shift register connect to the port
+    int sr_depth = impl.shift_depth.at(buffet_outpt);
+    int num_dim = num_dims(dom);
+    int innermost_dim = get_domain_range(dom, num_dim - 1);
+    cout << "inner most dim: " << innermost_dim << endl;
+    cout << "access_map : " << str(buf.access_map.at(buffet_outpt)) << endl;
+
+    //Add buffet shift register module
+    Values sr_params{{"data_width", COREMK(c, 16)},
+    {"depth", COREMK(c, sr_depth)}};
+
+    CoreIR::Instance * sr = def->addInstance(buffet_outpt + "_sr", "cgralib.SIPO_reg", sr_params);
+
+    def->connect(sr->sel("rst_n"),def->sel("self.rst_n"));
+
+
+    //Wire the ready valid from row buffer to shift register
+    def->connect(sr->sel("valid_in"), w_valid->sel("out"));
+    def->connect(sr->sel("ready_in"), w_ready->sel("in"));
+    def->connect(sr->sel("in_data"), w->sel("out"));
+
+    //Wire the output and output ready valid
+    unordered_map<string, int> delay_map = impl.get_delay(buffet_outpt);
+    vector<CoreIR::Wireable*> ready_and_wire;
+    for (auto it: delay_map) {
+      string pt = it.first;
+      def->connect(def->sel( pt + "_net.in"), sr->sel("out_data")->sel(str(it.second)));
+      def->connect(def->sel( pt + "_valid_net.in"), sr->sel("valid_out"));
+      ready_and_wire.push_back(def->sel( pt + "_ready_net.out"));
+      delete_ports.insert(pt);
+    }
+    def->connect(sr->sel("ready_out"), andList(def, ready_and_wire));
+
+    instantiate_Buffet_shift_register(sr->getModuleRef()->getLongName(), sr_depth, innermost_dim + sr_depth);
+
+    delete_ports.insert(buffet_outpt);
+
+  }
+
+  //TODO: potential problem with multiple input
+  //Wire the input ready
+  for (auto it: pt2ready) {
+    def->connect(andList(def, it.second), def->sel("self." + buf.container_bundle(it.first) + "_data_ready"));
+  }
+  //assert(impl.get_sr_outpts().size() <= 1);
+
+  return delete_ports;
+}
+
 void generate_Buffet_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& prg, UBuffer& orig_buf, schedule_info& hwinfo) {
 
   CoreIR::Context* c = def->getContext();
-  for (auto out : orig_buf.get_out_ports()) {
-    auto w = def->addInstance(out + "_net", "coreir.wire", {{"width", COREMK(c, 16)}});
-    def->connect(
-        w->sel("out"),
-        def->sel("self." + orig_buf.container_bundle(out) + "." + str(orig_buf.bundle_offset(out))));
-
+  for (auto out_bd: orig_buf.get_out_bundles()) {
     //FIXME: may have problem when we have multiple port
+    //need a bundle to pt flow control unit
+    auto ctrl_mod = generate_flow_control(def->getContext(), orig_buf.lanes_in_bundle(out_bd), 1);
+    auto fork_join_ctrl = def->addInstance(out_bd + "_flow_ctrl", ctrl_mod);
+    int count = 0;
+    for (auto out : orig_buf.port_bundles.at(out_bd)) {
+      auto w = def->addInstance(out + "_net", "coreir.wire", {{"width", COREMK(c, 16)}});
+      def->connect(
+          w->sel("out"),
+          def->sel("self." + out_bd + "." + str(orig_buf.bundle_offset(out))));
+      auto w_valid= def->addInstance(out + "_valid_net", "corebit.wire");
+      //w_valids.push_back(w_valid->sel("out"));
 
-    //If there is a bank slection logic, valid will be select
-    auto w_valid= def->addInstance(out + "_valid_net", "corebit.wire");
-    def->connect(
-        w_valid->sel("out"),
-        def->sel("self." + orig_buf.container_bundle(out) + "_data_valid"));
+      auto w_ready = def->addInstance(out + "_ready_net", "corebit.wire");
+      //w_valid.push_back(w_ready->sel("in"));
 
-    //ready will be broadcasted back to all buffers' read ready
-    auto w_ready = def->addInstance(out + "_ready_net", "corebit.wire");
-    def->connect(
-        w_ready->sel("in"),
-        def->sel("self." + orig_buf.container_bundle(out) +  "_data_ready"));
+      //If there is a bank slection logic, valid will be select
+      def->connect(
+          w_valid->sel("out"),
+          fork_join_ctrl->sel("valid_in_" + str(count) ));
+
+      //ready will be broadcasted back to all buffers' read ready
+      def->connect(
+          w_ready->sel("in"),
+          fork_join_ctrl->sel("ready_in_" + str(count) ));
+      count ++;
+    }
+    def->connect(fork_join_ctrl->sel("valid_out_0"),
+            def->sel("self." + out_bd + "_data_valid"));
+    def->connect(fork_join_ctrl->sel("ready_out_0"),
+            def->sel("self." + out_bd + "_data_ready"));
   }
 
-  //std::set<string> done_outpt = generate_M1_shift_registers(options, def, prg, orig_buf, hwinfo);
 
-  //UBuffer buf = delete_ports(done_outpt, orig_buf);
+  std::set<string> done_outpt = generate_buffet_shift_registers(options, def, prg, orig_buf, hwinfo);
+
+  UBuffer buf = delete_ports(done_outpt, orig_buf);
+
+  Select* one = def->addInstance("one_cst", "corebit.const", {{"value", COREMK(c, true)}})->sel("out");
+
+  //TODO this is a hack actually we did not use the read port ready port any more
+  for (auto pt: done_outpt){
+    if (!connected(control_ready(def, pt, orig_buf))) {
+      def->connect(one,
+        control_ready(def, pt, orig_buf));
+    }
+  }
   //Disable shift register optimization
-  UBuffer buf = orig_buf;
+  //UBuffer buf = orig_buf;
 
   if (buf.num_out_ports() > 0) {
     auto implm = build_buffer_impl(prg, buf, hwinfo);
@@ -6405,9 +6653,7 @@ void generate_Buffet_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, pro
       }
     }
 
-    Select* one = def->addInstance("one_cst", "corebit.const", {{"value", COREMK(c, true)}})->sel("out");
     Select* zero = def->addInstance("zero_cst", "corebit.const", {{"value", COREMK(c, false)}})->sel("out");
-
     map<int, Instance*> bank_map;
     for (int b = 0; b < num_banks; b++) {
 
@@ -6425,7 +6671,12 @@ void generate_Buffet_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, pro
       }*/
 
       //instantiate_M1_verilog(currbank->getModuleRef()->getLongName(), b, impl, buf);
-     instantiate_Buffet_verilog_wrapper(currbank->getModuleRef()->getLongName(), b, impl, buf);
+
+      //one for push one for update
+    assert( impl.bank_writers.at(b).size() <= 2);
+    //two read port
+    assert(impl.bank_readers.at(b).size() <= 2);
+     instantiate_Buffet_verilog_wrapper(currbank->getModuleRef()->getLongName());
       bank_map[b] = currbank;
       def->connect(currbank->sel("nreset_i"),def->sel("self.rst_n"));
     }
@@ -7031,13 +7282,15 @@ isl_map* get_inner_bank_access_map(const std::string& reader, UBuffer & buf, con
   int bank_stride = 1;
   vector<string> dvs;
   vector<string> coeffs;
-  for (int d = 0; d < buf.logical_dimension(); d++) {
+  int dim = buf.logical_dimension();
+  for (int d = dim - 1; d >= 0 ; d--) {
     dvs.push_back("d" + str(d));
     if (!dbhc::elem(d, impl.partition_dims)) {
-      coeffs.push_back(str(bank_stride) + "*" + dvs.at(d));
+      coeffs.push_back(str(bank_stride) + "*" + dvs.back());
       bank_stride *= extents.at(d);
     }
   }
+  std::reverse(dvs.begin(), dvs.end());
 
   coeffs.push_back("0");
   string bank_func = curlies(buf.name + bracket_list(dvs) + " -> InnerBank[" + sep_list(coeffs, "", "", " + ") + "]");

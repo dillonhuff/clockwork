@@ -254,6 +254,55 @@ CoreIR::Namespace* CoreIRLoadLibrary_cgralib(Context* c) {
   //
   //Buffet library Generator module define done
   //
+
+
+  // cgralib.sreg
+   Params cgralibsregparams = Params({
+        {"depth", c->Int()},
+        {"data_width", c->Int()}
+    });
+
+  cgralib->newTypeGen(
+          "cgralib_sreg_type",
+          cgralibsregparams,
+          [](Context* c, Values genargs){
+            uint width = genargs.at("data_width")->get<int>();
+            uint depth = genargs.at("depth")->get<int>();
+
+            RecordParams recordparams = {
+                {"rst_n", c->BitIn()},
+                {"clk", c->Named("coreir.clkIn")}
+            };
+
+            recordparams.push_back({"in_data", c->BitIn()->Arr(width)});
+            recordparams.push_back({"valid_in", c->BitIn()});
+            recordparams.push_back({"ready_in", c->Bit()});
+
+            recordparams.push_back({"out_data", c->Bit()->Arr(width)->Arr(depth+1)});
+            recordparams.push_back({"valid_out", c->Bit()});
+            recordparams.push_back({"ready_out", c->BitIn()});
+
+
+        return c->Record(recordparams);
+    }
+
+  );
+
+  auto cgralib_sreg_gen = cgralib->newGeneratorDecl("SIPO_reg", cgralib->getTypeGen("cgralib_sreg_type"), cgralibsregparams);
+  cgralib_sreg_gen->addDefaultGenArgs({{"depth", Const::make(c, 1)}});
+  cgralib_sreg_gen->addDefaultGenArgs({{"data_width", Const::make(c, 16)}});
+
+  auto CGRALibSregModParamFun = [](Context* c,Values genargs) -> std::pair<Params,Values> {
+    Params p; //params
+    Values d; //defaults
+
+    return {p,d};
+  };
+  cgralib_sreg_gen->setModParamsGen(CGRALibSregModParamFun);
+  //
+  //
+  //shift reg library Generator module define done
+  //
   //
 
   // cgralib.Pond_amber

@@ -3355,6 +3355,20 @@ struct UBufferImpl {
     return outpts.count(output);
   }
 
+  unordered_map<string, int> get_delay(string src) const {
+    unordered_map<string, int> delay_map;
+    delay_map.insert({src, 0});
+    for (auto it: shift_registered_outputs_to_outputs) {
+      int delay = it.second.second;
+      for (auto cand : delay_map) {
+        if (it.second.first == cand.first) {
+            delay_map.insert({it.first, delay + cand.second});
+        }
+      }
+    }
+    return delay_map;
+  }
+
   int get_bank_num() const {
     int cnt = 0;
     for (auto it: bank_readers) {
