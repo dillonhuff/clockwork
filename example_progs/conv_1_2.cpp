@@ -13,7 +13,7 @@ prog conv_1_2() {
   prg.buffer_port_widths["hw_output_stencil"] = 16;
 
 ////producing hw_input_global_wrapper.stencil
-  auto hw_input_global_wrapper_s0_y = prg.add_loop("hw_input_global_wrapper_s0_y", 0, 64);
+  auto hw_input_global_wrapper_s0_y = prg.add_loop("hw_input_global_wrapper_s0_y", 0, 2);
   auto hw_input_global_wrapper_s0_x = hw_input_global_wrapper_s0_y->add_loop("hw_input_global_wrapper_s0_x", 0, 64);
 
 //store is: hw_input_global_wrapper.stencil(hw_input_global_wrapper_s0_x, hw_input_global_wrapper_s0_y) = hw_input.stencil(hw_input_global_wrapper_s0_x, hw_input_global_wrapper_s0_y)
@@ -25,7 +25,7 @@ prog conv_1_2() {
 
 //consuming hw_input_global_wrapper.stencil
 ////producing conv.stencil
-  auto conv_s0_y = prg.add_loop("conv_s0_y", 0, 64);
+  auto conv_s0_y = prg.add_loop("conv_s0_y", 0, 2);
   auto conv_s0_x = conv_s0_y->add_loop("conv_s0_x", 0, 63);
 
 //store is: conv.stencil(conv_s0_x, conv_s0_y) = (uint16)0
@@ -33,7 +33,7 @@ prog conv_1_2() {
   hcompute_conv_stencil->add_function("hcompute_conv_stencil");
   prg.buffer_port_widths["conv_stencil"] = 16;
   hcompute_conv_stencil->add_store("conv_stencil", "conv_s0_y", "conv_s0_x");
-  auto conv_s1_y = prg.add_loop("conv_s1_y", 0, 64);
+  auto conv_s1_y = prg.add_loop("conv_s1_y", 0, 2);
   auto conv_s1_x = conv_s1_y->add_loop("conv_s1_x", 0, 63);
 
 //store is: conv.stencil(conv_s1_x, conv_s1_y) = (hw_input_global_wrapper.stencil(conv_s1_x, conv_s1_y) + (conv.stencil(conv_s1_x, conv_s1_y) + (hw_input_global_wrapper.stencil((conv_s1_x + 1), conv_s1_y)*(uint16)3)))
@@ -45,7 +45,7 @@ prog conv_1_2() {
   hcompute_conv_stencil_1->add_store("conv_stencil", "conv_s1_y", "conv_s1_x");
 
 //consuming conv.stencil
-  auto hw_output_s0_y_yi = prg.add_loop("hw_output_s0_y_yi", 0, 64);
+  auto hw_output_s0_y_yi = prg.add_loop("hw_output_s0_y_yi", 0, 2);
   auto hw_output_s0_x_xi = hw_output_s0_y_yi->add_loop("hw_output_s0_x_xi", 0, 63);
 
 //store is: hw_output.stencil(hw_output_s0_x_xi, hw_output_s0_y_yi) = conv.stencil(hw_output_s0_x_xi, hw_output_s0_y_yi)
