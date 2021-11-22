@@ -6053,8 +6053,8 @@
           }
         },
         "connections":[
-          ["d_0_inc.in1","_U426.out"],
-          ["d_1_inc.in1","_U4261.out"],
+          ["d_1_inc.in1","_U426.out"],
+          ["d_0_inc.in1","_U4261.out"],
           ["cmp_time.in1","_U427.out"],
           ["affine_func$mul_d0__U420.out","affine_func$add_all__U424.in0"],
           ["affine_func$mul_d1__U422.out","affine_func$add_all__U424.in1"],
@@ -6675,8 +6675,8 @@
           }
         },
         "connections":[
-          ["d_0_inc.in1","_U454.out"],
-          ["d_1_inc.in1","_U4541.out"],
+          ["d_1_inc.in1","_U454.out"],
+          ["d_0_inc.in1","_U4541.out"],
           ["cmp_time.in1","_U455.out"],
           ["affine_func$mul_d0__U448.out","affine_func$add_all__U452.in0"],
           ["affine_func$mul_d1__U450.out","affine_func$add_all__U452.in1"],
