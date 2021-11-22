@@ -1270,6 +1270,7 @@ UBuffer UBuffer::generate_ubuffer(UBufferImpl& impl, schedule_info & info, int b
       //string pt_name = bname + "_" + ::name(dom) + "_" + to_string(usuffix);
 
       if (impl.is_shift_register_output(outpt)) {
+        cout << impl << endl;
         int delay = impl.shift_registered_outputs.at(outpt).second;;
         string inpt = impl.shift_registered_outputs.at(outpt).first;
 
@@ -2853,7 +2854,10 @@ void UBuffer::generate_sreg_and_wire(CodegenOptions& options, UBufferImpl& impl,
       assert(conns.size() == 1);
       last_out = pick(conns);
     }
-    CoreIR::Wireable* final_out = pt2wire.at(dst);
+    //CoreIR::Wireable* final_out = pt2wire.at(dst);
+
+    cout << *this << endl;
+    CoreIR::Wireable* final_out = def->sel("self." + container_bundle(dst) + "." + str(bundle_offset(dst)));
     for (size_t i = 0; i < delay; i ++) {
       auto reg = def->addInstance("d_reg_"+context->getUnique(), "mantle.reg",
           {{"width", CoreIR::Const::make(context, port_widths)},
@@ -9934,8 +9938,9 @@ void UBuffer::generate_banks(CodegenOptions& options) {
         out << "# nodes: " << dg.nodes.size() << endl;
         out << "# edges: " << dg.weights.size() << endl;
         for (auto e : dg.out_edges) {
+          out << "Group: "<< tab(2) << e.first << endl;
           for (auto dst : e.second) {
-            out << tab(1) << e.first << " -> (" << dg.weight(e.first, dst) << ") " << dst << endl;
+            out << tab(4) << e.first << " -> (" << dg.weight(e.first, dst) << ") " << dst << endl;
           }
         }
         return out;
@@ -10119,8 +10124,8 @@ vector<pair<string, pair<string, int> >> determine_output_shift_reg_map(
 
         auto reads = buf.access_map.at(outpt);
         auto reads_src = buf.access_map.at(outpt_src);
-        cout << "reads: " << str(reads) << endl;
-        cout << "reads_src: " << str(reads_src) << endl;
+        //cout << "reads: " << str(reads) << endl;
+        //cout << "reads_src: " << str(reads_src) << endl;
 
         auto outpt_read_data = range(reads);
         auto outpt_src_read_data = range(reads_src);
@@ -10134,8 +10139,8 @@ vector<pair<string, pair<string, int> >> determine_output_shift_reg_map(
           continue;
         }
 
-        cout << str(buf.schedule.at(outpt)) << endl;
-        cout << str(buf.schedule.at(outpt_src)) << endl;
+        //cout << str(buf.schedule.at(outpt)) << endl;
+        //cout << str(buf.schedule.at(outpt_src)) << endl;
         isl_aff * outpt_sched = get_aff(buf.schedule.at(outpt));
         isl_aff * outpt_src_sched = get_aff(buf.schedule.at(outpt_src));
         outpt_sched = set_name(outpt_sched,"bump");
@@ -10147,7 +10152,7 @@ vector<pair<string, pair<string, int> >> determine_output_shift_reg_map(
         reads_src_aff = set_name(reads_src_aff,"bump");
         isl_aff * diff_loc = sub(reads_aff, reads_src_aff);
 
-        cout << str(diff) << endl;
+        //cout << str(diff) << endl;
 
         if(!isl_aff_is_cst(diff) || to_int(const_coeff(diff)) < 0)
         {
@@ -10245,6 +10250,59 @@ dgraph build_in_to_out_shift_register_graph(CodegenOptions& options, prog& prg, 
   return dg;
 }
 
+//This pass will be called after shift register optimization, in order to find the port reuse,
+//now we only find the ports with same schedule,
+//but we give the threshold to give user a capability to find extra port sharing opportunity
+dgraph build_out_to_out_shift_register_graph(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_info& hwinfo, int threshold) {
+
+  dgraph dg;
+  vector<pair<string,pair<string,int>>> shift_registered_outputs_to_outputs = determine_output_shift_reg_map(prg, buf, hwinfo);
+
+  cout << "out -> out srs: " << shift_registered_outputs_to_outputs.size() << endl;
+  for (auto pt : shift_registered_outputs_to_outputs) {
+    if (pt.second.second <= threshold) {
+      dg.add_edge(pt.second.first, pt.first, pt.second.second);
+    }
+  }
+
+  cout << "out2out DG: ..." << endl;
+  cout << dg << endl;
+  return dg;
+}
+
+std::set<string> output_port_sharing(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_info& hwinfo, UBufferImpl& impl) {
+    std::set<string> done_pt;
+  if (impl.get_sr_outpts().size())
+    return done_pt;
+  dgraph dg = build_out_to_out_shift_register_graph(options, prg, buf, hwinfo, 0);
+  vector<std::set<string>> port_groups;
+  for (auto it: dg.out_edges) {
+    bool added = false;
+    for (auto& group: port_groups) {
+      if (group.count(it.first)) {
+        group.insert(it.second.begin(), it.second.end());
+        added = true;
+        break;
+      }
+    }
+    if (!added) {
+      std::set<string> tmp = it.second;
+      tmp.insert(it.first);
+      port_groups.push_back(it.second);
+    }
+  }
+  for (auto grp: port_groups) {
+    cout << "port sharing groups: " << grp << endl;
+    for (auto it = grp.begin(); it != grp.end(); it ++) {
+      if (it != grp.begin()) {
+        impl.add_o2o_info(*grp.begin(), *it, 0);
+        done_pt.insert(*it);
+      }
+    }
+  }
+  return done_pt;
+}
+
 //helper function to create all the shift registered port
 void create_subbranch(const std::string& out_pt, dgraph& sr_graph, UBuffer& buf, UBufferImpl &impl) {
     auto src2dst = sr_graph.get_sub_branch(out_pt);
@@ -10312,12 +10370,19 @@ UBufferImpl generate_optimized_memory_implementation(
     //if (prg.is_boundary(buf.name))
     //    return impl;
 
+
+    //create ubufferimpl from analysis ubuffer data structure
+
     cout << "create shift register for " << buf << endl;
     auto impl = port_group2bank(options, prg, buf, hwinfo);
+    cout << impl << endl;
+    std::set<string> done_outpt= output_port_sharing(options, prg, buf, hwinfo, impl);
 
+    auto new_buf = delete_ports(done_outpt, buf);
     cout << "After shift register optimization: " << impl << endl;
-    if (!impl.is_pure_shift_register(buf.get_out_ports()))
-        generate_banks_garnet(options, buf, impl, hwinfo);
+
+    if (!impl.is_pure_shift_register(new_buf.get_out_ports()))
+        generate_banks_garnet(options, new_buf, impl, hwinfo);
 
 
 

@@ -15181,9 +15181,9 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   //test_apps.push_back(camera_pipeline_trunc());
 
   //CGRA tests
+  test_apps.push_back(camera_pipeline_new());
   test_apps.push_back(conv_3_3());
   test_apps.push_back(counter());
-  test_apps.push_back(camera_pipeline_new());
   test_apps.push_back(rom());
   test_apps.push_back(unsharp_new());
   test_apps.push_back(laplacian_pyramid());
@@ -15246,22 +15246,22 @@ void test_dual_port_mem(bool gen_config_only, bool multi_accessor=false, string 
   vector<prog> test_apps;
 
   //CGRA tests that pass dual port test
+  test_apps.push_back(conv_3_3());
+  test_apps.push_back(gaussian());
+  test_apps.push_back(cascade());
+  test_apps.push_back(harris());
+  test_apps.push_back(down_sample());
+  test_apps.push_back(unsharp());
+  test_apps.push_back(unsharp_new());
+  test_apps.push_back(counter());
+  test_apps.push_back(rom());
+  test_apps.push_back(conv_1_2());
+  test_apps.push_back(demosaic_unrolled());
+  test_apps.push_back(up_sample());
+  test_apps.push_back(camera_pipeline_new());
   test_apps.push_back(resnet88());
-  //test_apps.push_back(conv_3_3());
-  //test_apps.push_back(gaussian());
-  //test_apps.push_back(cascade());
-  //test_apps.push_back(harris());
-  //test_apps.push_back(down_sample());
-  //test_apps.push_back(unsharp());
-  //test_apps.push_back(unsharp_new());
-  //test_apps.push_back(counter());
-  //test_apps.push_back(rom());
-  //test_apps.push_back(conv_1_2());
-  //test_apps.push_back(demosaic_unrolled());
-  //test_apps.push_back(up_sample());
-  //test_apps.push_back(camera_pipeline_new());
-  //test_apps.push_back(laplacian_pyramid_docker());
-  //test_apps.push_back(laplacian_pyramid());
+  test_apps.push_back(laplacian_pyramid_docker());
+  test_apps.push_back(laplacian_pyramid());
 
   //////DNN apps
   ////Not working
@@ -19994,16 +19994,17 @@ vector<prog> isca_programs() {
   //test_programs.push_back(three_level_pond_rolled());
 
   test_programs.push_back(camera_pipeline_new());
-  test_programs.push_back(gaussian());
-  test_programs.push_back(cascade());
-  test_programs.push_back(down_sample());
-  test_programs.push_back(harris());
-  test_programs.push_back(camera_pipeline());
-  test_programs.push_back(up_sample());
-  test_programs.push_back(unsharp());
-  test_programs.push_back(unsharp_new());
-  test_programs.push_back(resnet());
-  test_programs.push_back(mobilenet_unrolled());
+  //test_programs.push_back(gaussian());
+  //test_programs.push_back(cascade());
+  //test_programs.push_back(down_sample());
+  //test_programs.push_back(harris());
+  //test_programs.push_back(camera_pipeline());
+  //test_programs.push_back(up_sample());
+  //test_programs.push_back(unsharp());
+  //test_programs.push_back(unsharp_new());
+  //test_programs.push_back(resnet());
+  //test_programs.push_back(resnet88_chain());
+  //test_programs.push_back(mobilenet_unrolled());
 
 
   return test_programs;
@@ -20369,7 +20370,7 @@ void cgra_flow_tests() {
   test_codegen(M3_test_programs, compile_for_CGRA_M3_mem);
   //assert(false);
 
-  //vector<prog> M1_test_programs{gaussian()};
+  //vector<prog> M1_test_programs{resnet88_chain()};
   vector<prog> M1_test_programs = isca_programs();
   test_codegen(M1_test_programs, compile_for_CGRA_M1_mem);
 
