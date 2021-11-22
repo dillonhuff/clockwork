@@ -7189,22 +7189,34 @@ void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
       if (conds.size() == 1) {
         def->connect(def->sel(conn.first + "_net.in"), pick(conn.second));
       } else {
-        assert(conds.size() == 3);
+      //  assert(conds.size() == 3);
+      //  Wireable* out = def->sel(conn.first + "_net.in");
+
+      //  auto snd_mux =
+      //    def->addInstance("chain_mux" + c->getUnique(), "coreir.mux", {{"width", CoreIR::Const::make(c, 16)}});
+      //  def->connect(snd_mux->sel("in0"), vals[1]);
+      //  def->connect(snd_mux->sel("in1"), vals[2]);
+      //  def->connect(snd_mux->sel("sel"), conds[2]);
+
+      //  auto last_mux =
+      //    def->addInstance("chain_mux" + c->getUnique(), "coreir.mux", {{"width", CoreIR::Const::make(c, 16)}});
+      //  def->connect(last_mux->sel("in0"), snd_mux->sel("out"));
+      //  def->connect(last_mux->sel("in1"), vals[0]);
+      //  def->connect(last_mux->sel("sel"), conds[0]);
+
+      //  def->connect(last_mux->sel("out"), out);
+      //} else {
         Wireable* out = def->sel(conn.first + "_net.in");
-
-        auto snd_mux =
-          def->addInstance("chain_mux" + c->getUnique(), "coreir.mux", {{"width", CoreIR::Const::make(c, 16)}});
-        def->connect(snd_mux->sel("in0"), vals[1]);
-        def->connect(snd_mux->sel("in1"), vals[2]);
-        def->connect(snd_mux->sel("sel"), conds[2]);
-
-        auto last_mux =
-          def->addInstance("chain_mux" + c->getUnique(), "coreir.mux", {{"width", CoreIR::Const::make(c, 16)}});
-        def->connect(last_mux->sel("in0"), snd_mux->sel("out"));
-        def->connect(last_mux->sel("in1"), vals[0]);
-        def->connect(last_mux->sel("sel"), conds[0]);
-
-        def->connect(last_mux->sel("out"), out);
+        CoreIR::Wireable* out_wire = vals.at(0);
+        for (auto i = 1; i < conds.size(); i ++ ) {
+          auto mux = def->addInstance("chain_mux" + c->getUnique(),
+                  "coreir.mux", {{"width", CoreIR::Const::make(c, 16)}});
+          def->connect(out_wire, mux->sel("in0"));
+          def->connect(vals[i], mux->sel("in1"));
+          def->connect(conds[i], mux->sel("sel"));
+          out_wire = mux->sel("out");
+        }
+        def->connect(out_wire, out);
       }
     }
 
