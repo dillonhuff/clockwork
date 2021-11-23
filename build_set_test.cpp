@@ -15246,6 +15246,8 @@ void test_dual_port_mem(bool gen_config_only, bool multi_accessor=false, string 
   vector<prog> test_apps;
 
   //CGRA tests that pass dual port test
+  test_apps.push_back(unsharp_large());
+  test_apps.push_back(harris_color());
   test_apps.push_back(conv_3_3());
   test_apps.push_back(gaussian());
   test_apps.push_back(cascade());
@@ -19993,7 +19995,9 @@ vector<prog> isca_programs() {
   //FIXME: not work for M1 and M3
   //test_programs.push_back(three_level_pond_rolled());
 
-  test_programs.push_back(camera_pipeline_new());
+  test_programs.push_back(unsharp_large());
+  test_programs.push_back(harris_color());
+  //test_programs.push_back(camera_pipeline_new());
   //test_programs.push_back(gaussian());
   //test_programs.push_back(cascade());
   //test_programs.push_back(down_sample());
