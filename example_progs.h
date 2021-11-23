@@ -16,6 +16,7 @@ prog strided_conv();
 prog accumulation(); //reduce
 prog unsharp();
 prog unsharp_new();
+prog unsharp_large();
 prog cascade(); //stencil
 prog gaussian(); //stencil
 prog harris(); //stencil
