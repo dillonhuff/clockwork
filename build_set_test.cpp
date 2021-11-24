@@ -18943,9 +18943,9 @@ void buffet_schedule(schedule_info& sched, op* root, prog& prg) {
   //  }
   //}
 
-  cycle_accurate_clockwork_schedule(sched, root, prg);
+  //cycle_accurate_clockwork_schedule(sched, root, prg);
   //Force to use sequential schedule
-  //sequential_schedule(sched, root, prg);
+  sequential_schedule(sched, root, prg);
 
   sanity_check_iis(sched);
 
@@ -20022,9 +20022,10 @@ void buffet_tests() {
   //vector<prog> buffet_test_programs = {pointwise_conv()};
   vector<prog> buffet_test_programs;
   //buffet_test_programs.push_back(pointwise_conv());
-  //buffet_test_programs.push_back(accumulation_simple());
   //buffet_test_programs.push_back(up_sample());
+  buffet_test_programs.push_back(accumulation_simple());
   //buffet_test_programs.push_back(resnet_tiny());
+  //buffet_test_programs.push_back(matmul_tiny());
   buffet_test_programs.push_back(conv_1_2());
   buffet_test_programs.push_back(conv_3_3());
   test_buffet_codegen(buffet_test_programs);
