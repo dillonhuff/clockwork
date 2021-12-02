@@ -11695,6 +11695,11 @@ void blur_and_downsample_test() {
 void test_if_complex();
 void test_loop_perfection();
 void playground() {
+    {
+      auto sp_mem = create_single_port_wide_fetch_memory(4, 512, 2);
+      sp_mem.print_points();
+      assert(false);
+    }
   test_loop_perfection();
     {
       isl_ctx* ctx = isl_ctx_alloc();
