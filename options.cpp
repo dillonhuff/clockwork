@@ -51,3 +51,25 @@ LakeCollateral create_single_port_wide_fetch_memory(int fetch_width, int capacit
 
     return mem;
 }
+
+LakeCollateral create_dual_port_memory(int capacity) {
+    LakeCollateral mem;
+
+    //Misc information
+    mem.set_fetch_width(1);
+    mem.set_max_chaining(4);
+    mem.set_iteration_level(6);
+    mem.set_counter_ub(65535);
+    mem.set_multi_sram_accessor(true);
+    mem.set_dual_port_sram(false);
+    mem.set_wire_chain_en(true);
+
+    mem.add_memory_component("mem", false);
+    mem.add_read_port("mem", 1);
+    mem.add_write_port("mem", 1);
+    mem.set_capacity("mem", capacity);
+
+    mem.infer_word_width();
+
+    return mem;
+}

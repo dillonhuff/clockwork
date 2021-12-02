@@ -11698,6 +11698,9 @@ void playground() {
     {
       auto sp_mem = create_single_port_wide_fetch_memory(4, 512, 2);
       sp_mem.print_points();
+
+      auto dp_mem = create_dual_port_memory(512);
+      dp_mem.print_points();
       assert(false);
     }
   test_loop_perfection();
