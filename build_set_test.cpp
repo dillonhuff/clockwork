@@ -5585,6 +5585,7 @@ struct App {
 
   int default_pixel_width;
   num_type default_num_type;
+  int unroll_factor_helper;
 
   App() {
     ctx = isl_ctx_alloc();
@@ -5599,6 +5600,11 @@ struct App {
   void compute_unit_needs_index_variable(const int index, const std::string& func) {
     app_dag[func].updates[0].index_variables_needed.push_back("d" + str(index));
   }
+
+  void set_unroll_factor_helper(int unroll_factor){
+    unroll_factor_helper = unroll_factor;
+  }
+
 
   void update(const string& func,
       const string& accum,
@@ -6783,6 +6789,127 @@ struct App {
     generate_soda_file(prg.name);
   }
 
+//New Addition Ritvik
+  void populate_program_catapult(CodegenOptions& options,
+      prog& prg,
+      const string& name,
+      const std::vector<string>& outputs,
+      umap* m,
+      map<string, UBuffer>& buffers) {
+
+    generate_compute_unit_file(prg.compute_unit_file);
+
+    uset* whole_dom = whole_compute_domain();
+    auto sorted_functions = sort_functions();
+
+    auto action_domain = cpy(whole_dom);
+    map<string, isl_set*> domain_map;
+    for (auto f : sorted_functions) {
+      prg.buffer_port_widths[f] =
+        app_dag.at(f).pixel_width;
+
+      Box domain = data_domain(f);
+      vector<int> lens;
+      for (int i = 0; i < domain.dimension(); i++) {
+        lens.push_back(domain.length(i));
+        //prg.buffer_bounds[f].push_back(domain.length(i));
+      }
+      //reverse(lens);
+      prg.buffer_bounds[f] = lens;
+
+      for (auto u : app_dag.at(f).updates) {
+        if (u.get_srcs().size() == 0) {
+          prg.ins.insert(f);
+          action_domain =
+            isl_union_set_subtract(action_domain,
+                to_uset(compute_domain(u.name())));
+        } else {
+          Box compute_b =
+            compute_box(u.name());
+          op* nest = prg.root;
+          int i = 0;
+
+          auto intervals = compute_b.intervals;
+          reverse(intervals);
+          for (auto r : intervals) {
+            nest = nest->add_nest(f + "_" + to_string(i), r.min, r.max + 1);
+            i++;
+          }
+          auto op = nest->add_op(u.name());
+          cout << "added op " << op->name << endl;
+          auto surrounding = surrounding_vars(op, prg);
+          vector<string> offsets;
+          for (auto var : surrounding) {
+            if (var != "root") {
+              offsets.push_back(var);
+            }
+          }
+          assert(offsets.size() == 2);
+          // TODO: Replace with real description of apps
+          reverse(offsets);
+          op->add_store(f, sep_list(offsets, "", "", ", "));
+          //cout << "offsets: " << offsets << endl;
+
+          vector<string> fargs;
+          for (auto p : u.get_srcs()) {
+            vector<string> vars;
+            for (auto var : surrounding) {
+              if (var != "root") {
+                vars.push_back(var);
+              }
+            }
+            assert(vars.size() == 2);
+
+            cout << tab(1) << " op loads " << p.name << endl;
+            for (auto off : p.offsets) {
+              assert(off.size() == 2);
+              vector<string> terms;
+              int i = 0;
+              reverse(off);
+              for (auto offt : off) {
+                QAV stride = p.stride(i);
+                if (stride.denom != 1) {
+                  int num = stride.num;
+                  int denom = stride.denom;
+                  terms.push_back("floor((" + str(num) + "*" + vars.at(i) + ")/" + str(denom) + ")" + " + " + str(offt));
+                } else {
+                  terms.push_back(to_string(stride) + "*" + vars.at(i) + " + " + str(offt));
+                }
+                i++;
+              }
+              reverse(terms);
+              op->add_load(p.name, comma_list(terms));
+            }
+
+            if (!elem(p.name, fargs)) {
+              fargs.push_back(p.name);
+            }
+          }
+
+          op->add_function(u.compute_name() + "_unrolled_" + str(u.unroll_factor));
+          for (auto index : u.index_variables_needed_by_compute()) {
+            op->compute_unit_needs_index_variable(index);
+          }
+          op->unroll_factor = u.unroll_factor;
+
+          domain_map[u.name()] =
+            compute_domain(u.name());
+        }
+      }
+    }
+
+    for (auto out : outputs) {
+      prg.add_output(out);
+    }
+    
+    generate_app_code_catapult(options, buffers, prg, its(m, action_domain), domain_map);
+    generate_regression_testbench_catapult_unrolled(prg, options.unroll_factor_value);
+    generate_soda_file(prg.name);
+  }
+
+
+
+
   string num_type_cstring() const {
     if (default_num_type == NUM_TYPE_FLOAT) {
       return "float";
@@ -6941,6 +7068,11 @@ struct App {
   void realize_naive(CodegenOptions& options, const std::string& name, const int d0, const int d1) {
     realize_naive(options, name, {d0, d1});
   }
+ //New Addition Ritvik
+  void realize_naive_catapult(CodegenOptions& options, const std::string& name, const int d0, const int d1) {
+    realize_naive_catapult(options, name, {d0, d1});
+  }
+
 
   void realize_naive(CodegenOptions& options, const std::string& name, const std::vector<int>& dims) {
     if (!options.unroll_factors_as_pad) {
@@ -6979,6 +7111,45 @@ struct App {
 
     return;
   }
+//New Addition
+  void realize_naive_catapult(CodegenOptions& options, const std::string& name, const std::vector<int>& dims) {
+    if (!options.unroll_factors_as_pad) {
+      const int unroll_factor = 1;
+      set_unroll_factors(name, name, unroll_factor);
+    } else {
+      cout << "realizing naive with padded unroll factors" << endl;
+    }
+
+    fill_data_domain(name, dims);
+    set_unroll_factors(name, name, 1);
+
+    fill_compute_domain();
+
+    umap* m = nullptr;
+    if (options.scheduling_algorithm == SCHEDULE_ALGORITHM_NAIVE) {
+      m = schedule_naive();
+    } else {
+      assert(options.scheduling_algorithm == SCHEDULE_ALGORITHM_ISL);
+      m = schedule_isl();
+    }
+
+    assert(m != nullptr);
+    cout << "Schedule: " << str(m) << endl;
+
+    map<string, UBuffer> buffers = build_buffers(m);
+
+    prog prg;
+    prg.name = name + "_naive";
+    prg.compute_unit_file = prg.name + "_compute_units.h";
+
+    options.inner_bank_offset_mode =
+      INNER_BANK_OFFSET_MULTILINEAR;
+    options.default_banking_strategy = {"none"};
+    populate_program_catapult(options, prg, name, {name}, m, buffers);
+
+    return;
+  }
+
 
   void realize_naive(const std::string& name, const vector<int>& dims) {
     CodegenOptions options;
@@ -6986,6 +7157,14 @@ struct App {
     options.all_rams = true;
     realize_naive(options, name, dims);
   }
+//New Addition Ritvik
+  void realize_naive_catapult(const std::string& name, const vector<int>& dims) {
+    CodegenOptions options;
+    options.internal = true;
+    options.all_rams = true;
+    realize_naive_catapult(options, name, dims);
+  }
+
 
   void realize_naive(const std::string& name, const int d0, const int d1) {
     CodegenOptions options;
@@ -6994,6 +7173,15 @@ struct App {
 
     realize_naive(options, name, d0, d1);
   }
+//New Addition Ritvik
+  void realize_naive_catapult(const std::string& name, const int d0, const int d1) {
+    CodegenOptions options;
+    options.internal = true;
+    options.all_rams = true;
+
+    realize_naive_catapult(options, name, d0, d1);
+  }
+
 
   map<string, vector<QExpr> > schedule_opt() {
 
@@ -7188,6 +7376,54 @@ struct App {
     return prg;
   }
 
+  prog schedule_and_codegen_catapult(CodegenOptions& options, const std::string& name, const std::vector<string>& outputs, int unroll_factor) {
+    time_t rawtime;
+    struct tm * timeinfo;
+    char buffer[80];
+
+    time (&rawtime);
+    timeinfo = localtime(&rawtime);
+
+    strftime(buffer,sizeof(buffer),"%d-%m-%Y %H:%M:%S",timeinfo);
+    std::string time_str(buffer);
+
+    //auto m = schedule_isl();
+
+    auto scheds = schedule_opt();
+    umap* m = qschedule_to_map(ctx, scheds);
+    assert(m != nullptr);
+
+    map<string, Box> compute_domains;
+    vector<string> ops;
+    for (auto u : sort_updates()) {
+      if (!is_external(u)) {
+        ops.push_back(u);
+        compute_domains[u] = compute_box(u);
+      }
+    }
+
+    string cgn = box_codegen(options, ops, scheds, compute_domains);
+    options.code_string = cgn;
+
+    map<string, UBuffer> buffers = build_buffers(m);
+
+    uset* whole_dom =
+      whole_compute_domain();
+    auto sorted_functions = sort_functions();
+
+    prog prg;
+    prg.name = name + "_opt";
+    prg.compute_unit_file = prg.name + "_compute_units.h";
+//    ofstream f("file_sample_test.txt");
+//    f << prg.name << end;
+//    f.close();
+    populate_program_catapult(options, prg, name, outputs, m, buffers);
+
+    return prg;
+  }
+
+
+
   void no_unrolling() {
     for (auto& r : app_dag) {
       for (auto& u : r.second.updates) {
@@ -7265,6 +7501,73 @@ struct App {
     }
     //assert(false);
   }
+//New Addition Ritvik
+  void set_unroll_factors_catapult(
+      const std::vector<std::pair<std::string, std::vector<int> > >& bounds,
+      const std::string& to_unroll_function,
+      const int unroll_factor) {
+    cout << "Unrolling " << to_unroll_function << " by " << unroll_factor << endl;
+
+
+    // Preprocess application graph to compute qfactors
+    App cpy = *this;
+    //// TODO: Update to fill with ndims dimensions
+    cpy.no_unrolling();
+    //cpy.fill_data_domain(reference_function, {dummy_value, dummy_value});
+    cpy.fill_data_domain(bounds);
+    //reference_function, {dummy_value, dummy_value});
+    cpy.fill_compute_domain();
+    cpy.set_unroll_factor_helper(unroll_factor);
+    cout << "Padding validity deps..." << endl;
+
+    umap* deps = pad_map(cpy.validity_deps());
+    cout << "Done padding validity deps" << endl;
+    auto umaps = get_maps(deps);
+    vector<isl_map*> projected_deps;
+    for (auto m : umaps) {
+      isl_map* projected = project_all_but(m, 0);
+      projected_deps.push_back(projected);
+    }
+    cout << "Computing qfactors..." << endl;
+    map<string, isl_val*> qfs = compute_qfactors(projected_deps);
+    cout << "Got qfactors..." << endl;
+    for (auto q : qfs) {
+      cout << tab(1) << q.first << " -> " << str(q.second) << endl;
+    }
+
+    string reference_update =
+      sched_var_name(last_update(to_unroll_function).name());
+    cout << "reference: " << reference_update << endl;
+
+    cout << "to unroll: " << to_unroll_function << endl;
+
+    int ref_q = to_int(map_find(reference_update, qfs));
+    cout << "ref_q = " << ref_q << endl;
+    int umax = ref_q * unroll_factor;
+    cout << "umax  = " << umax << endl;
+
+    // Use these factors to set unrolled behavior
+    for (auto& r : app_dag) {
+      for (auto& u : r.second.updates) {
+        cout << "finding factor for: " << u.name() << endl;
+        int u_qfactor = to_int(map_find(sched_var_name(u.name()), qfs));
+        cout << tab(1) << "u_qfactor = " << u_qfactor << endl;
+        cout << tab(1) << "ref update= " << umax << endl;
+        int fres = (int) max(1.0f, floor(((float) umax) / (float) u_qfactor));
+        int u_unroll_factor = fres;
+        u.unroll_factor = u_unroll_factor;
+        cout << tab(1) << u.unroll_factor << endl;
+        if (r.first == to_unroll_function) {
+          assert(u.unroll_factor == unroll_factor);
+        }
+      }
+    }
+    //assert(false);
+  }
+
+
+
+
 
   void realize_no_unroll(CodegenOptions& options,
       const std::string& name,
@@ -7283,6 +7586,20 @@ struct App {
     string concat_name = sep_list(names, "", "", "_");
     return schedule_and_codegen(options, concat_name, names);
   }
+//New Addition Ritvik
+  prog realize_no_unroll_catapult(CodegenOptions& options,
+      const std::vector<std::pair<std::string, std::vector<int> > >& bounds, int unroll_factor) {
+    fill_data_domain(bounds);
+    fill_compute_domain();
+    vector<string> names;
+    for (auto n : bounds) {
+      names.push_back(n.first);
+    }
+    string concat_name = sep_list(names, "", "", "_");
+    return schedule_and_codegen_catapult(options, concat_name, names, unroll_factor);
+  }
+
+
 
   prog realize(const std::string& name, const int d0, const int d1) {
     CodegenOptions options;
@@ -7291,6 +7608,15 @@ struct App {
     options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
     return realize(options, name, d0, d1);
   }
+//New Addition Ritvik
+  prog realize_catapult(const std::string& name, const int d0, const int d1) {
+    CodegenOptions options;
+    options.internal = true;
+    options.simplify_address_expressions = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
+    return realize_catapult(options, name, d0, d1);
+  }
+
 
   prog realize(CodegenOptions& options,
       const std::string& name,
@@ -7298,14 +7624,31 @@ struct App {
       const int d1) {
     return realize(options, name, {d0, d1}, 1);
   }
+//New Addition Ritvik
+  prog realize_catapult(CodegenOptions& options,
+      const std::string& name,
+      const int d0,
+      const int d1) {
+    return realize_catapult(options, name, {d0, d1}, 1);
+  }
+
 
   prog realize(CodegenOptions& options, const std::string& name, const int d0, const int d1, const int unroll_factor) {
     return realize(options, name, {d0, d1}, unroll_factor);
+  }
+//New Addition Ritvik
+  prog realize_catapult(CodegenOptions& options, const std::string& name, const int d0, const int d1, const int unroll_factor) {
+    return realize_catapult(options, name, {d0, d1}, unroll_factor);
   }
 
   prog realize(CodegenOptions& options, const std::string& name, const vector<int>& dims, const int unroll_factor) {
     return realize(options, name, dims, name, unroll_factor);
   }
+//New Addition Ritvik
+  prog realize_catapult(CodegenOptions& options, const std::string& name, const vector<int>& dims, const int unroll_factor) {
+    return realize_catapult(options, name, dims, name, unroll_factor);
+  }
+
 
   prog realize(CodegenOptions& options,
       const std::string& out_name,
@@ -7314,6 +7657,15 @@ struct App {
       const int unroll_factor) {
     return realize(options, {{out_name, dims}}, unroll_target, unroll_factor);
   }
+//New Addition Ritvik
+  prog realize_catapult(CodegenOptions& options,
+      const std::string& out_name,
+      const vector<int>& dims,
+      const std::string& unroll_target,
+      const int unroll_factor) {
+    return realize_catapult(options, {{out_name, dims}}, unroll_target, unroll_factor);
+  }
+
 
   prog realize(CodegenOptions& options,
       const std::vector<std::pair<std::string, std::vector<int> > >& bounds,
@@ -7340,6 +7692,34 @@ struct App {
 
     return prg;
   }
+// New Addition Ritvik
+  prog realize_catapult(CodegenOptions& options,
+      const std::vector<std::pair<std::string, std::vector<int> > >& bounds,
+      const std::string& unroll_target,
+      const int unroll_factor) {
+
+    double total_elapsed = 0.;
+    auto start = std::chrono::system_clock::now();
+
+    assert(bounds.size() > 0);
+
+    string out_name = bounds.at(0).first;
+    vector<int> dims = bounds.at(0).second;
+
+    set_unroll_factors_catapult(bounds, unroll_target, unroll_factor);
+    prog prg = realize_no_unroll_catapult(options, bounds, unroll_factor);
+
+    auto end = std::chrono::system_clock::now();
+    std::chrono::duration<double> elapsed = end - start;
+    total_elapsed += elapsed.count();
+    ofstream schedule_info("./scratch/" + out_name + ".txt");
+    schedule_info << "time to realize " << out_name << ": " << total_elapsed << endl;
+    schedule_info.close();
+
+    return prg;
+  }
+
+
 
   prog realize(const std::string& name, const int d0, const int d1, const int unroll_factor) {
     CodegenOptions options;
@@ -7348,6 +7728,15 @@ struct App {
 
     return realize(options, name, {d0, d1}, unroll_factor);
   }
+//New Addition Ritvik
+ prog realize_catapult(const std::string& name, const int d0, const int d1, const int unroll_factor) {
+    CodegenOptions options;
+    options.internal = true;
+    options.simplify_address_expressions = true;
+
+    return realize_catapult(options, name, {d0, d1}, unroll_factor);
+  }
+
 
 };
 
@@ -7870,6 +8259,7 @@ void tricky_shift_register_reconvergence_test() {
     run_regression_tb("D_opt");
   cout << "Optimized: " << optimized << endl;
   assert(naive == optimized);
+  move_to_benchmarks_folder("D_opt");
 }
 void mismatched_stencil_test() {
   App sobel;
@@ -8655,6 +9045,57 @@ void camera_pipeline_test(const std::string& prefix) {
     move_to_benchmarks_folder(out_name + "_opt");
   }
 }
+//New Addition Ritvik
+void camera_pipeline_test_catapult(const std::string& prefix) {
+  //string app_name = "camera_mini";
+  //int mini_rows = 30;
+  //int mini_cols = 100;
+  //auto hmini = camera_pipeline(app_name);
+  //hmini.realize_naive(app_name, mini_cols, mini_rows);
+  //hmini.realize(app_name, mini_cols, mini_rows, 1);
+
+  //std::vector<std::string> naive =
+    //run_regression_tb(app_name + "_naive");
+  //std::vector<std::string> optimized =
+    //run_regression_tb(app_name + "_opt");
+  //assert(naive == optimized);
+  //move_to_benchmarks_folder(app_name + "_opt");
+
+
+  int rows = 1080;
+  int cols = 1920;
+  //vector<int> factors{1, 2, 4};
+  vector<int> factors{1, 16, 32};
+  for (int i = 0; i < (int) factors.size(); i++) {
+    int unroll_factor = factors.at(i);
+    //cout << tab(1) << "harris unroll factor: " << unroll_factor << endl;
+    string out_name = prefix + "_" + str(unroll_factor);
+    {
+       CodegenOptions options;
+       options.internal = true;
+       options.simplify_address_expressions = true;
+       options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
+       options.debug_options.expect_all_linebuffers = true;
+       options.num_input_epochs = 30;
+       camera_pipeline(out_name).realize_catapult(options, out_name, cols, rows, unroll_factor);
+   } 
+   {
+      CodegenOptions options;
+      options.internal = true;
+      options.all_rams = true;
+      options.unroll_factors_as_pad = true;
+     // camera_pipeline(out_name).realize_naive_catapult(options, out_name, cols, rows, unroll_factor);
+    }
+    std::vector<std::string> naive =
+    run_regression_tb(out_name+"_naive");
+    std::vector<std::string> optimized =
+    run_regression_tb(out_name+"_opt");
+    assert(naive == optimized);
+
+
+    move_to_benchmarks_folder(out_name + "_opt");
+  }
+}
 
 void different_path_latencies_test(const std::string& prefix) {
   int mini_size = 32;
@@ -8957,6 +9398,38 @@ void max_pooling_test(const std::string& prefix) {
     //run_regression_tb("max_pool_naive");
   //assert(naive == optimized);
 }
+void max_pooling_test_catapult(const std::string& prefix) {
+  int W = 64;
+  int H = 64;
+  int D = 64;
+
+  vector<int> unroll_factors{1, 2, 4, 8, 16, 32};
+  //vector<int> unroll_factors{32};
+  for (auto factor : unroll_factors) {
+    string name = prefix + "_" + str(factor);
+    CodegenOptions options;
+    options.internal = true;
+    options.simplify_address_expressions = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
+
+    max_pooling(name).realize_catapult(options, name, {H, W, D}, "in", factor);
+    move_to_benchmarks_folder(name + "_opt");
+  }
+
+  //CodegenOptions options;
+  //options.internal = true;
+  //options.all_rams = true;
+  //options.unroll_factors_as_pad = true;
+  //max_pooling("mp_naive").realize_naive(options, "mp_naive", {H, W, D});
+  //move_to_benchmarks_folder("mp_naive");
+
+  //std::vector<std::string> naive =
+    //run_regression_tb("max_pool_opt");
+  //std::vector<std::string> optimized =
+    //run_regression_tb("max_pool_naive");
+  //assert(naive == optimized);
+}
+
 
 App gauss_pyramid_fpga(const std::string& out_name) {
   App lp;
@@ -10053,11 +10526,44 @@ void gauss_pyramid_iccad_apps(const std::string& prefix) {
   }
   //assert(false);
 }
+//New Addition Ritvik
+void gauss_pyramid_iccad_apps_catapult(const std::string& prefix) {
+  vector<int> throughputs{1, 2, 4, 8, 16};
+  for (auto throughput : throughputs) {
+    string name = prefix + "_" + str(throughput);
+    App lp = gauss_pyramid_fpga(name);
+    int rows = 1080 / pow(2, 4 - 1);
+    int cols = 1920 / pow(2, 4 - 1);
+    {
+	CodegenOptions options;
+    	options.internal = true;
+    	options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
+    	lp.realize_catapult(options, name, {cols, rows}, "in", throughput);
+     }
+    {
+         CodegenOptions options;
+         options.internal = true;
+         options.all_rams = true;
+         options.unroll_factors_as_pad = true;
+     //    lp.realize_naive_catapult(options, out_name, cols, rows, unroll_factor);
+    }
+    std::vector<std::string> naive =
+    run_regression_tb(name+"_naive");
+    std::vector<std::string> optimized =
+    run_regression_tb(name+"_opt");
+    assert(naive == optimized);
+
+
+    move_to_benchmarks_folder(name + "_opt");
+  }
+  //assert(false);
+}
+
 
 void exposure_fusion_iccad_apps(const std::string& prefix) {
-  vector<int> throughputs{1};
+  //vector<int> throughputs{1};
   //, 2, 4, 8, 16};
-  //vector<int> throughputs{1, 2, 4, 8, 16};
+  vector<int> throughputs{1, 2, 4, 8, 16};
   //vector<int> throughputs{16};
   for (auto throughput : throughputs) {
     string name = prefix + "_" + str(throughput);
@@ -10070,6 +10576,44 @@ void exposure_fusion_iccad_apps(const std::string& prefix) {
     options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
     lp.realize(options, name, cols, rows, throughput);
 
+    move_to_benchmarks_folder(name + "_opt");
+  }
+  //assert(false);
+}
+//New Addition Ritvik
+void exposure_fusion_iccad_apps_catapult(const std::string& prefix) {
+  //vector<int> throughputs{1};
+  //, 2, 4, 8, 16};
+  vector<int> throughputs{1, 2, 4, 8, 16};
+  //vector<int> throughputs{16};
+  for (auto throughput : throughputs) {
+    string name = prefix + "_" + str(throughput);
+    App lp = exposure_fusion_app(name);
+    int rows = 1080;
+    int cols = 1920;
+    {
+	CodegenOptions options;
+    	options.internal = true;
+    	options.simplify_address_expressions = true;
+    	options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
+    	options.debug_options.expect_all_linebuffers = true; 
+    	lp.realize_catapult(options, name, cols, rows, throughput);
+    }
+    {
+    CodegenOptions options;
+    options.internal = true;
+    options.all_rams = true;
+    options.unroll_factors_as_pad = true;
+   // lp.realize_naive_catapult(options, name, cols, rows, throughput);
+    }
+  std::vector<std::string> naive =
+    run_regression_tb(name+"_naive");
+  std::vector<std::string> optimized =
+    run_regression_tb(name+"_opt");
+  assert(naive == optimized);
+
+
+  
     move_to_benchmarks_folder(name + "_opt");
   }
   //assert(false);
@@ -10176,7 +10720,7 @@ void exposure_fusion() {
   //}
 
 
-  lp.realize("pyramid_synthetic_exposure_fusion", size, size, 1);
+  lp.realize_catapult("pyramid_synthetic_exposure_fusion", size, size, 1);
   //move_to_benchmarks_folder("pyramid_synthetic_exposure_fusion_opt");
 
   //lp.realize("pyramid_synthetic_exposure_fusion", size, size, 4);
@@ -10185,13 +10729,17 @@ void exposure_fusion() {
   options.internal = true;
   options.all_rams = true;
   options.unroll_factors_as_pad = true;
-  lp.realize_naive(options, "pyramid_synthetic_exposure_fusion", size, size);
+  lp.realize_naive_catapult(options, "pyramid_synthetic_exposure_fusion", size, size);
 
   std::vector<std::string> naive =
     run_regression_tb("pyramid_synthetic_exposure_fusion_naive");
   std::vector<std::string> optimized =
     run_regression_tb("pyramid_synthetic_exposure_fusion_opt");
   assert(naive == optimized);
+move_to_benchmarks_folder("pyramid_synthetic_exposure_fusion_naive");
+move_to_benchmarks_folder("pyramid_synthetic_exposure_fusion_opt");
+
+
 }
 
 void laplacian_pyramid_app_test() {
@@ -10818,7 +11366,52 @@ void sobel_16_app_test(const std::string& prefix) {
   }
 
 }
+//New Addition Ritvik
+void sobel_16_app_test_catapult(const std::string& prefix) {
+  int cols = 1920;
+  int rows = 1080;
 
+  //int cols = 10;
+  //int rows = 10;
+  //vector<int> factors{1, 2, 4, 8};
+  vector<int> factors{1, 16, 32};
+  //for (int i = 0; i < 5; i++) {
+  for (auto factor : factors) {
+    int unroll_factor = factor;
+      //pow(2, i);
+    cout << tab(1) << "unroll factor: " << unroll_factor << endl;
+    string out_name = prefix + "_" + str(unroll_factor);
+    {
+   	 CodegenOptions options;
+   	 options.internal = true;
+   	 options.simplify_address_expressions = true;
+   	 options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
+   	 options.num_input_epochs = 30;
+   	 options.debug_options.expect_all_linebuffers = true;
+   	 sobel16(out_name).realize_catapult(options, out_name, cols, rows, unroll_factor);
+    }
+    {
+         CodegenOptions options;
+         options.internal = true;
+         options.all_rams = true;
+         options.unroll_factors_as_pad = true;
+      //   sobel16(out_name).realize_naive_catapult(options, out_name, cols, rows, unroll_factor);
+    }
+    std::vector<std::string> naive =
+    run_regression_tb(out_name+"_naive");
+    std::vector<std::string> optimized =
+    run_regression_tb(out_name+"_opt");
+    assert(naive == optimized);
+
+
+    //std::vector<std::string> optimized =
+      //run_regression_tb(out_name + "_opt");
+
+    move_to_benchmarks_folder(out_name + "_opt");
+  }
+
+}
+    
 void sobel_app_test() {
   int cols = 1920;
   int rows = 1080;
@@ -10843,7 +11436,7 @@ void blur_xy_16_app_test(const std::string& prefix) {
   int rows = 1080;
 
   //vector<int> factors{1, 2, 4, 8};
-  vector<int> factors{1, 16, 32};
+  vector<int> factors{1,2, 4, 8, 16, 32};
   for (auto f : factors) {
     int unroll_factor = f;
     cout << tab(1) << "unroll factor: " << unroll_factor << endl;
@@ -10854,6 +11447,46 @@ void blur_xy_16_app_test(const std::string& prefix) {
     options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
     options.debug_options.expect_all_linebuffers = true;
     blur_xy_16(out_name).realize(options, out_name, cols, rows, unroll_factor);
+
+    move_to_benchmarks_folder(out_name + "_opt");
+  }
+}
+
+//New Addition Ritvik
+void blur_xy_16_app_test_catapult(const std::string& prefix) {
+  int cols = 1920;
+  int rows = 1080;
+
+  //vector<int> factors{1, 2, 4, 8};
+  vector<int> factors{1,2,  16, 32};
+  for (auto f : factors) {
+    int unroll_factor = f;
+    cout << tab(1) << "unroll factor: " << unroll_factor << endl;
+    string out_name = prefix + "_" + str(unroll_factor);
+    {
+	CodegenOptions options;
+        options.internal = true;
+        options.simplify_address_expressions = true;
+        options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
+        options.debug_options.expect_all_linebuffers = true;
+        options.unroll_factor_value = unroll_factor;
+        blur_xy_16(out_name).realize_catapult(options, out_name, cols, rows, unroll_factor);
+    }
+    {
+         CodegenOptions options;
+         options.internal = true;
+         options.all_rams = true;
+         options.unroll_factor_value = unroll_factor;
+         options.unroll_factors_as_pad = true;
+//         blur_xy_16(out_name).realize_naive_catapult(options, out_name, cols, rows, unroll_factor);
+    }
+ //   std::vector<std::string> naive =
+ //   run_regression_tb(out_name+"_naive");
+  //  std::vector<std::string> optimized =
+   // run_regression_tb(out_name+"_opt");
+   // assert(naive == optimized);
+
+
 
     move_to_benchmarks_folder(out_name + "_opt");
   }
@@ -12317,6 +12950,33 @@ void iccad_tests() {
   harris_test();
   pointwise_app_test();
 }
+
+//New Addition Ritvik
+void catapult_tests() {
+
+  // exposure_fusion_app
+//  exposure_fusion_iccad_apps_catapult("ef_asic_rerun");
+
+  // exposure_fusion_app
+  //exposure_fusion();
+//  camera_pipeline_test_catapult("cp_noinit_ln1c");
+//  sobel_16_app_test_catapult("sbl_ln");
+  blur_xy_16_app_test_catapult("bxy_noinit_ln");
+
+//  gauss_pyramid_iccad_apps_catapult("gp_fpga");
+ // gauss_pyramid_test("gp_fpga");
+//  max_pooling_test_catapult("mpr16b_32");
+
+
+  //App gp = gauss_pyramid_fpga("gp_sm");
+  //generate_app_benchmark("gp_sm", gp, {64, 64}, 1);
+
+  //gauss_pyramid_fpga_test("gp_fpga");
+
+
+}
+
+
 
 void mini_application_tests() {
   reduce_2d_test();
@@ -19886,11 +20546,100 @@ void generate_fpga_clockwork_code(prog& prg) {
     generate_app_code(options, buffers, prg, sched);
   }
 }
+// New Addition Ritvik
+void generate_fpga_clockwork_code_catapult(prog& prg) {
+
+  if (is_rate_matchable(prg)) {
+    auto valid = prg.validity_deps();
+    auto dom = prg.whole_iteration_domain();
+    map<string, vector<isl_aff*> > cwsched =
+      clockwork_schedule(dom, valid, cpy(valid));
+
+    cout << "Clockwork sched..." << endl;
+    std::vector<op*> dft_ops = get_dft_ops(prg);
+    cout << "DFT op order" << endl;
+    int pos = 0;
+    map<string, int> positions;
+    vector<string> ops;
+    for (auto op : dft_ops) {
+      cout << tab(1) << op->name << endl;
+      positions[op->name] = pos;
+      ops.push_back(op->name);
+      pos++;
+    }
+
+    map<string, vector<QExpr> > scheds;
+    for (auto s : cwsched) {
+      string name = s.first;
+      vector<isl_aff*> vals = s.second;
+
+      scheds[name] = {};
+      int i = 0;
+      for (auto v : vals) {
+        QExpr rate = qexpr("d" + str(i));
+        auto rate_coeff =
+          qexpr(int_coeff(v, 0));
+        auto delay =
+          qexpr(int_const_coeff(v));
+
+        QExpr expr =
+          rate_coeff*rate + delay;
+        scheds[name].push_back(expr);
+        i++;
+      }
+    }
+
+    cout << "Final schedule..." << endl;
+    for (auto s : scheds) {
+      cout << tab(1) << s.first << endl;
+      for (auto v : s.second) {
+        cout << tab(2) << v << endl;
+      }
+      cout << endl;
+    }
+
+    auto sched = qschedule_to_map_final_sort(prg.ctx, scheds, positions);
+    sched = its(sched, dom);
+
+    cout << "Optimized schedule..." << endl;
+    for (auto s : get_maps(sched)) {
+      cout << tab(1) << str(s) << endl;
+    }
+
+    //assert(false);
+    //cout << tab(1) << ": " << str(sched) << endl << endl;
+    //cout << codegen_c(sched) << endl;
+
+    auto buffers = build_buffers(prg, sched);
+
+    assert(prg.compute_unit_file != "");
+    cout << "Compute unit file: "
+      << prg.compute_unit_file << endl;
+    CodegenOptions options;
+    options.internal = true;
+    generate_app_code_catapult(options, buffers, prg, sched);
+
+    release(sched);
+  } else {
+    auto sched = prg.unoptimized_schedule();
+
+    auto buffers = build_buffers(prg, prg.unoptimized_schedule());
+
+    CodegenOptions options;
+    options.internal = true;
+    options.all_rams = true;
+    all_unbanked(prg, options);
+    options.inner_bank_offset_mode =
+      INNER_BANK_OFFSET_MULTILINEAR;
+    generate_app_code_catapult(options, buffers, prg, sched);
+  }
+}
+
 
 void fpga_asplos_tests() {
 
   //auto test_programs = stencil_programs();
-  auto test_programs = {resnet88()};
+  auto test_programs = {harris()};
   for (auto prg : test_programs) {
     cout << "==== FPGA clockwork code for " << prg.name << endl;
     break_up_multi_channel_inputs(prg);
@@ -19909,6 +20658,101 @@ void fpga_asplos_tests() {
     move_to_benchmarks_folder(prg.name);
   }
 }
+//////////////////////////////////////////////////////////
+void tricky_shift_register_reconvergence_test_catapult() {
+  App sobel;
+  sobel.func2d("C_oc");
+  sobel.func2d("C", v("C_oc"));
+
+  sobel.func2d("B", add(v("C", -2, 0), v("C", -1, 0), v("C", 0, 0)));
+  sobel.func2d("A", add(v("C", 2, 0), v("C", 3, 0), v("C", 4, 0)));
+
+  sobel.func2d("D", add({
+        v("A", 0, 0), v("A", 1, 0), v("A", 2, 0),
+        v("B", 0, 0), v("B", 1, 0), v("B", 2, 0)}));
+
+  int size = 10;
+  CodegenOptions options;
+  options.internal = true;
+  options.simplify_address_expressions = true;
+  options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
+  options.debug_options.expect_all_linebuffers = true;
+  sobel.realize_catapult(options, "D", size, 1, 1);
+
+  sobel.realize_naive_catapult("D", size, 1);
+
+  std::vector<std::string> naive =
+    run_regression_tb("D_naive");
+  cout << "Naive    : " << naive << endl;
+  std::vector<std::string> optimized =
+    run_regression_tb("D_opt");
+  cout << "Optimized: " << optimized << endl;
+  assert(naive == optimized);
+  move_to_benchmarks_folder("D_opt");
+}
+
+void harris_unrolled_test_1() {
+  int rows = 1;
+  int cols = 1;
+  int unroll_factor = 2;
+  cout << tab(1) << "harris unroll factor: " << unroll_factor << endl;
+  string out_name = "harris_" + str(unroll_factor);
+
+  App h = harris_cartoon(out_name);
+  {
+    CodegenOptions options;
+    options.internal = true;
+    options.simplify_address_expressions = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
+    options.debug_options.expect_all_linebuffers = true;
+    h.realize_catapult(options, out_name, cols, rows, unroll_factor);
+  }
+
+  {
+    CodegenOptions options;
+    options.internal = true;
+    options.all_rams = true;
+    options.unroll_factors_as_pad = true;
+    h.realize_naive_catapult(options, out_name, cols, rows);
+  }
+//   break_up_multi_channel_inputs();
+  //  break_up_multi_channel_outputs(prg);
+   // dsa_writers();
+   // pad_to_single_depth();
+  
+  std::vector<std::string> naive =
+    run_regression_tb("harris_2_naive");
+  std::vector<std::string> optimized =
+    run_regression_tb("harris_2_opt");
+  assert(naive == optimized);
+
+  move_to_benchmarks_folder(out_name + "_opt");
+}
+// New Addition Ritvik
+void fpga_asplos_tests_catapult() {
+
+  //auto test_programs = stencil_programs();
+  auto test_programs = {gaussian_glb8()};
+  for (auto prg : test_programs) {
+    cout << "==== FPGA clockwork code for " << prg.name << endl;
+    break_up_multi_channel_inputs(prg);
+    break_up_multi_channel_outputs(prg);
+    dsa_writers(prg);
+    pad_to_single_depth(prg);
+    std::vector<string> no_opt =
+      unoptimized_result(prg);
+
+    generate_fpga_clockwork_code_catapult(prg);
+  //  generate_regression_testbench_catapult(prg);
+
+  //  std::vector<std::string> opt =
+  //    run_regression_tb(prg);
+  //  compare(prg.name + " ASPLOS FPGA flow", opt, no_opt);
+    move_to_benchmarks_folder(prg.name);
+  }
+}
+
+
 
 void cgra_flow_tests() {
 
@@ -27647,6 +28491,33 @@ int main(int argc, char** argv) {
       fpga_asplos_tests();
       return 0;
     }
+     if (cmd == "harris-test-catapult") {
+      harris_unrolled_test_1();
+      return 0;
+    }
+    if (cmd == "harris-test-hls") {
+      //harris_unrolled_test();
+    // tricky_shift_register_reconvergence_test_catapult();
+    	exposure_fusion();
+	 return 0;
+    }
+   if (cmd == "catapult-full-hls-flow") {
+      //harris_unrolled_test();
+    // tricky_shift_register_reconvergence_test_catapult();
+    	catapult_tests();
+	 return 0;
+    }
+    
+ 
+  if (cmd == "sobel-app-test") {
+      sobel_app_test();
+      return 0;
+    }
+   if (cmd == "fpga-asplos-flow-catapult") {
+      fpga_asplos_tests_catapult();
+      return 0;
+    }
+
 
     if (cmd == "cgra-flow") {
       cgra_flow_tests();

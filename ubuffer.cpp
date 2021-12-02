@@ -498,6 +498,84 @@ void generate_linear_bank(CodegenOptions& options,
 
   out << "};" << endl << endl;
 }
+// New Additions Ritvik
+void generate_linear_bank_catapult(CodegenOptions& options,
+    std::ostream& out,
+    stack_bank& bank) {
+
+  auto name = bank.name;
+  auto pt_type_string = bank.pt_type_string;
+  auto read_delays = bank.read_delays;
+  auto num_readers = bank.num_readers;
+  auto maxdelay = bank.maxdelay;
+  auto layout = bank.extract_layout();
+
+  auto partitions =
+    bank.get_partitions();
+  int partition_size = partitions.size();
+  //add a ram capacity compute pass is different from stack bank
+  int capacity = 1;
+  auto dsets = get_sets(bank.rddom);
+  int dims = dsets.size() > 0 ? num_dims(pick(get_sets(bank.rddom))) : 0;
+  for (int i = 0; i < dims; i++) {
+    auto s = project_all_but(to_set(bank.rddom), i);
+    auto min = to_int(lexminval(s));
+    auto max = to_int(lexmaxval(s));
+    int length = max - min + 1;
+    capacity *= length;
+  }
+
+  //int_upper_bound(card(bank.rddom));
+  out << "\t// Capacity: " << capacity << endl;
+  open_synth_scope_catapult(out);
+  out << tab(1) << pt_type_string << " RAM[" << capacity << "];" << endl;
+  close_synth_scope_catapult(out);
+
+  open_debug_scope_catapult(out);
+  out << tab(1) << pt_type_string << "* RAM;" << endl;
+  out << tab(1) << name << "_cache()" <<  " {" << endl;
+  out << tab(2) << "RAM = (" << pt_type_string << "*) malloc(sizeof(" << pt_type_string << ")*" << capacity << ");" << endl;
+  out << tab(1) << "}" << endl;
+
+  out << tab(1) << "~" << name << "_cache()" <<  " {" << endl;
+  out << tab(2) << "free(RAM);" << endl;
+  out << tab(1) << "}" << endl;
+  close_debug_scope_catapult(out);
+
+  out << tab(1) << "inline " + pt_type_string + " read(const int addr) {" << endl;
+
+  open_debug_scope_catapult(out);
+  out << tab(2) << "if (addr < 0 || !(addr < " << capacity << ")) {" << endl;
+  out << tab(2) << "cout << \"Read error: Address \" << addr << \" is out of bounds\" << endl;" << endl;
+  out << tab(2) << "}" << endl;
+  out << tab(2) << "assert(addr < " << capacity << ");" << endl;
+  out << tab(2) << "assert(addr >= " << (int) 0 << ");" << endl;
+  close_debug_scope_catapult(out);
+
+  ignore_inter_deps_catapult(out, "RAM");
+  out << tab(2) << "return RAM[addr];" << endl;
+  out << tab(1) << "}" << endl << endl;
+
+  out << endl << endl;
+
+  out << "\tinline void write(const " + pt_type_string + " value, const int addr) {" << endl;
+  open_debug_scope_catapult(out);
+  out << tab(2) << "if (addr < 0 || !(addr < " << capacity << ")) {" << endl;
+  out << tab(2) << "cout << \"Write error: Address \" << addr << \" is out of bounds\" << endl;" << endl;
+  out << tab(2) << "}" << endl;
+  out << tab(2) << "assert(addr < " << capacity << ");" << endl;
+  out << tab(2) << "assert(addr >= " << (int) 0 << ");" << endl;
+  close_debug_scope_catapult(out);
+
+  if (options.add_dependence_pragmas) {
+    ignore_inter_deps_catapult(out, "RAM");
+  }
+  out << tab(2) << "RAM[addr] = value;" << endl;
+  out << tab(1) << "}" << endl << endl;
+
+  out << "};" << endl << endl;
+}
+
 
 // There is a mismatch between this bank construction function
 // and the delay string. The sign of this is that sometimes
@@ -633,6 +711,111 @@ void generate_bank(CodegenOptions& options,
     out << "};" << endl << endl;
   }
 }
+// New Addition Ritvik
+void generate_bank_catapult(CodegenOptions& options,
+    std::ostream& out,
+    stack_bank& bank) {
+
+  auto name = bank.name;
+  auto pt_type_string = bank.pt_type_string;
+  auto read_delays = bank.read_delays;
+  auto num_readers = bank.num_readers;
+  auto maxdelay = bank.maxdelay;
+  auto layout = bank.extract_layout();
+
+  out << "struct " << name << "_cache" <<  " {" << endl;
+  out << "\t// RAM Box: " << layout << endl;
+
+  //C array with read and write method
+  if (bank.tp == INNER_BANK_OFFSET_LINEAR) {
+    generate_linear_bank_catapult(options, out, bank);
+  } else if (bank.tp == INNER_BANK_OFFSET_MULTILINEAR) {
+    generate_multilinear_bank(options, out, bank);
+  } else {
+    assert(bank.tp == INNER_BANK_OFFSET_STACK);
+
+    out << "\t// Capacity: " << maxdelay + 1 << endl;
+    out << "\t// # of read delays: " << read_delays.size() << endl;
+    out << tab(1) << "// " << comma_list(read_delays) << endl;
+
+    read_delays = sort_unique(read_delays);
+
+    if (num_readers == 1 || options.all_rams) {
+      int partition_capacity = 1 + maxdelay;
+      out << "\tfifo<" << pt_type_string << ", " << partition_capacity << "> f" << ";" << endl;
+      out << "\tinline " + pt_type_string + " peek(const int offset) {" << endl;
+      ignore_inter_deps_catapult(out, "f");
+      out << tab(2) << "return f.peek(" << partition_capacity - 1 << " - offset);" << endl;
+      out << tab(1) << "}" << endl << endl;
+
+      out << endl << endl;
+      out << "\tinline void push(const " + pt_type_string + " value) {" << endl;
+      if (options.add_dependence_pragmas) {
+        ignore_inter_deps_catapult(out, "f");
+      }
+      out << tab(2) << "return f.push(value);" << endl;
+      out << tab(1) << "}" << endl << endl;
+    } else {
+      auto break_points = bank.get_break_points();
+      read_delays = break_points;
+
+      auto partitions =
+        bank.get_partitions();
+      vector<int> end_inds =
+        bank.get_end_inds();
+
+      for (auto p : partitions) {
+
+        auto partition_capacity = p.second;
+        //out << "\t// Parition [" << current.first << ", " << next.first << ") capacity = " << partition_capacity << endl;
+        if (partition_capacity > 1) {
+          out << "\tfifo<" << pt_type_string << ", " << partition_capacity << "> " << p.first << ";" << endl;
+        } else {
+          out << "\t" << pt_type_string << " " << p.first << ";" << endl;
+        }
+      }
+
+      out << endl << endl;
+      int nind = 0;
+      for (auto p : partitions) {
+        int dv = end_inds[nind];
+        //int capacity = capacities.at(nind);
+        int capacity = p.second;
+        assert(dv >= 0);
+        out << "\tinline " << pt_type_string << " peek_" << to_string(dv) << "() {" << endl;
+        if (capacity > 1) {
+          ignore_inter_deps_catapult(out, p.first);
+          out << "\t\treturn " << p.first << ".back();" << endl;
+        } else {
+          out << "\t\treturn " << p.first << ";" << endl;
+        }
+        out << "\t}" << endl << endl;
+        nind++;
+      }
+      out << endl << endl;
+
+      out << "\tinline void push(const " + pt_type_string + " value) {" << endl;
+      for (size_t i = partitions.size() - 1; i >= 1; i--) {
+        auto current = partitions[i];
+        auto prior = partitions[i - 1];
+        auto last_capacity = prior.second;
+        auto capacity = current.second;
+
+        if (options.add_dependence_pragmas) {
+          ignore_inter_deps_catapult(out, current.first);
+        }
+
+        out << tab(2) << "// cap: " << capacity << " reading from capacity: " << last_capacity << endl;
+        out << tab(2) << write_partition(current.first, capacity, read_partition(prior.first, last_capacity)) << ";" << endl;
+      }
+      out << tab(2) << "// cap: " << partitions.at(0).second << endl;
+      out << tab(2) << write_partition(partitions.at(0).first, partitions.at(0).second, "value") << ";" << endl;
+      out << "\t}" << endl << endl;
+    }
+    out << "};" << endl << endl;
+  }
+}
+
 
 
 vector<string> dimension_var_args(const std::string& pt, UBuffer& buf) {
@@ -4530,7 +4713,36 @@ void generate_code_prefix(CodegenOptions& options,
   out << endl << endl;
 
 }
+//New Addition Ritvik
+void generate_code_prefix_catapult(CodegenOptions& options,
+    std::ostream& out,
+    UBuffer& buf) {
 
+  //banking and merge pass
+  buf.generate_banks_and_merge(options);
+
+  for (auto b : buf.get_banks()) {
+    generate_bank_catapult(options, out, b);
+  }
+
+  out << "struct " << buf.name << "_cache {" << endl;
+  out << tab(1) << "// Reader addrs..." << endl;
+  for (auto outpt : buf.get_out_ports()) {
+    out << tab(2) << "// " << str(buf.access_map.at(outpt)) << endl;
+  }
+  out << tab(1) << "// # of banks: " << buf.get_banks().size() << endl;
+  for (auto b : buf.get_banks()) {
+    out << tab(1)
+      << b.name << "_cache "
+      << b.name
+      << ";" << endl;
+  }
+
+  out << "};" << endl << endl;
+
+  out << endl << endl;
+
+}
 bool is_optimizable_constant_dd(const string& inpt, const string& outpt, UBuffer& buf) {
   auto out_domain = buf.domain.at(outpt);
   auto qpd = compute_dd(buf, outpt, inpt);
@@ -4572,7 +4784,21 @@ void generate_select_decl(CodegenOptions& options, std::ostream& out, const stri
   out << ") {" << endl;
   ignore_inter_deps(out, buf.name);
 }
+//New Addition Ritvik
+void generate_select_decl_catapult(CodegenOptions& options, std::ostream& out, const string& outpt, UBuffer& buf) {
+  isl_space* s = get_space(buf.domain.at(outpt));
+  auto dim_decls = space_var_decls(s);
+  dim_decls.push_back("int dynamic_address");
 
+  out << "inline " + buf.port_type_string() + " " + outpt + "_select(";
+  size_t nargs = 0;
+  out << buf.name << "_cache& " << buf.name << ", ";
+  nargs++;
+  out << sep_list(dim_decls, "", "", ", ");
+
+  out << ") {" << endl;
+  ignore_inter_deps_catapult(out, buf.name);
+}
 void select_debug_assertions(CodegenOptions& options, std::ostream& out, const string& outpt, UBuffer& buf) {
   out << tab(1) << "return 0;" << endl;
   return;
@@ -4591,6 +4817,26 @@ void select_debug_assertions(CodegenOptions& options, std::ostream& out, const s
   out << "\tassert(false);\n\treturn 0;\n";
   close_debug_scope(out);
 }
+//New Addition Ritvik
+void select_debug_assertions_catapult(CodegenOptions& options, std::ostream& out, const string& outpt, UBuffer& buf) {
+  out << tab(1) << "return 0;" << endl;
+  return;
+  // ------------ Error printouts only
+  vector<string> offset_printouts;
+  isl_space* s = get_space(buf.domain.at(outpt));
+  auto vars = space_var_args(s);
+
+  assert(isl_space_is_set(s));
+  for (int i = 0; i < num_dims(s); i++) {
+    offset_printouts.push_back("\" " + vars.at(i) + " = \" << " + vars.at(i) + " ");
+  }
+
+  open_debug_scope_catapult(out);
+  out << "\tcout << \"Error: Unsupported offsets: \" << " << sep_list(offset_printouts, "", "", " << ") << " << endl;" << endl;
+  out << "\tassert(false);\n\treturn 0;\n";
+  close_debug_scope_catapult(out);
+}
+
 
 string delay_string(CodegenOptions& options,
     ostream& out,
@@ -4829,6 +5075,67 @@ void generate_select(CodegenOptions& options, std::ostream& out, const string& o
   select_debug_assertions(options, out, outpt, buf);
   out << "}" << endl << endl;
 }
+//New Addition Ritvik
+void generate_select_catapult(CodegenOptions& options, std::ostream& out, const string& outpt, UBuffer& buf) {
+  generate_select_decl_catapult(options, out, outpt, buf);
+
+  out << tab(1) << "// " << outpt << " read pattern: " << str(buf.access_map.at(outpt)) << endl;
+
+  if (buf.banking.partition == "register_file" || buf.banking.partition == "none") {
+    if (!(buf.bank_list.size() == 1)) {
+      cout << buf << endl;
+    }
+    assert(buf.bank_list.size() == 1);
+    // Port is irrelevant here
+    // TODO: Extract inner bank offset
+    string inpt = pick(buf.get_in_ports());
+    string peeked_val = delay_string(options, out, inpt, outpt, buf);
+    out << tab(1) << "auto value_" << inpt << " = " << peeked_val << ";" << endl;
+    out << tab(1) << "return value_" << inpt << ";" << endl;
+  } else if (buf.banking.partition != "cyclic") {
+    cout << "partition = " << buf.banking.partition << endl;
+    vector<string> possible_ports;
+    for (auto pt : buf.get_in_ports()) {
+      if (buf.has_bank_between(pt, outpt)) {
+        possible_ports.push_back(pt);
+      }
+    }
+
+    map<string, string> in_ports_to_conditions;
+    map<string, isl_set*> input_ports_to_condition_sets = input_ports_to_conditions(outpt, buf);
+    for (auto s : input_ports_to_condition_sets) {
+      in_ports_to_conditions[s.first] = codegen_c(s.second);
+    }
+
+    if (in_ports_to_conditions.size() == 1) {
+      string inpt = pick(in_ports_to_conditions).first;
+      string peeked_val = delay_string(options, out, inpt, outpt, buf);
+
+      out << tab(1) << "auto value_" << inpt << " = " << peeked_val << ";" << endl;
+      out << tab(1) << "return value_" << inpt << ";" << endl;
+    } else {
+      for (auto pc : in_ports_to_conditions) {
+        string port = pc.first;
+        out << tab(1) << "if (" << map_find(port, in_ports_to_conditions) << ") {" << endl;
+        string peeked_val = delay_string(options, out, port, outpt, buf);
+
+        out << tab(2) << "auto value_" << port << " = " << peeked_val << ";" << endl;
+        out << tab(2) << "return value_" << port << ";" << endl;
+        out << tab(1) << "}" << endl << endl;
+        out << tab(1) << endl;
+      }
+    }
+
+  } else {
+    // TODO: Fix this dummy implementation
+    string bank = pick(buf.get_banks()).name;
+    out << tab(1) << "auto value " << " = " << buf.name << "." << bank << ".RAM[0];" << endl;
+    out << tab(1) << "return value;" << endl;
+  }
+  select_debug_assertions_catapult(options, out, outpt, buf);
+  out << "}" << endl << endl;
+}
+
 
 void generate_bundles(CodegenOptions& options, std::ostream& out, UBuffer& buf) {
 
@@ -4940,6 +5247,21 @@ void generate_hls_code(CodegenOptions& options, std::ostream& out, UBuffer& buf)
 
   generate_bundles(options, out, buf);
 }
+//New Addition Ritvik
+void generate_hls_code_catapult(CodegenOptions& options, std::ostream& out, UBuffer& buf) {
+  generate_code_prefix_catapult(options, out, buf);
+
+  for (auto inpt : buf.get_in_ports()) {
+    generate_broadcast(options, out, inpt, buf);
+  }
+
+  for (auto outpt : buf.get_out_ports()) {
+    generate_select_catapult(options, out, outpt, buf);
+  }
+
+  generate_bundles(options, out, buf);
+}
+
 
 void generate_hls_code_internal(std::ostream& out, UBuffer& buf) {
   CodegenOptions options;

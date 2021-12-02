@@ -38,6 +38,44 @@ void close_debug_scope(std::ostream& out) {
   out << "#endif //__VIVADO_SYNTH__" << endl;
 }
 
+// New Additons
+static inline
+void ignore_inter_deps_catapult(std::ostream& out, const string& var) {
+  out << "#ifdef __SYTHESIS__" << endl;
+  //out << "#pragma HLS dependence variable=" << var << " inter false" << endl;
+  out << "#endif //__SYNTHESIS__" << endl;
+}
+
+static inline
+void ignore_inter_deps_array_catapult(std::ostream& out) {
+  out << "#ifdef __SYNTHESIS__" << endl;
+  //out << "#pragma HLS dependence array inter false" << endl;
+  out << "#endif //__SYNTHESIS__" << endl;
+}
+
+static inline
+void open_synth_scope_catapult(std::ostream& out) {
+  out << "#ifdef __SYNTHESIS__" << endl;
+}
+
+static inline
+void close_synth_scope_catapult(std::ostream& out) {
+  out << "#endif //__SYNTHESIS__" << endl;
+}
+
+static inline
+void open_debug_scope_catapult(std::ostream& out) {
+  out << "#ifndef __SYNTHESIS__" << endl;
+}
+
+static inline
+void close_debug_scope_catapult(std::ostream& out) {
+  out << "#endif //__SYNTHESIS__" << endl;
+}
+
+
+//
+
 static inline
 string read_partition(const string& p, const int cap) {
   if (cap > 1) {

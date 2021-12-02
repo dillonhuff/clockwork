@@ -1410,10 +1410,20 @@ void generate_app_code(CodegenOptions& options,
     prog& prg,
     umap* schedmap,
     map<string, isl_set*>& domain_map);
+//New Addition Ritvik
+void generate_app_code_catapult(CodegenOptions& options,
+    map<string, UBuffer>& buffers,
+    prog& prg,
+    umap* schedmap,
+    map<string, isl_set*>& domain_map);
+
 
 void generate_app_code(map<string, UBuffer>& buffers, prog& prg, umap* sched);
 
 void generate_app_code(CodegenOptions& options, map<string, UBuffer>& buffers, prog& prg, umap* schedmap);
+//New addition Ritvik
+void generate_app_code_catapult(CodegenOptions& options, map<string, UBuffer>& buffers, prog& prg, umap* schedmap);
+
 
 void generate_app_code(map<string, UBuffer>& buffers, prog& prg);
 
@@ -1438,6 +1448,11 @@ std::vector<string> unoptimized_result(prog& prg);
 void generate_regression_testbench(prog& prg);
 void generate_vectorization_unit_testbench(UBuffer & buf);
 void generate_regression_testbench(prog& prg, map<string, UBuffer>& buffers);
+void generate_regression_testbench_catapult(prog& prg);
+void generate_regression_testbench_catapult(prog& prg, map<string, UBuffer>& buffers);
+
+void generate_regression_testbench_catapult_unrolled(prog& prg, int size_);
+
 
 
 std::vector<std::string> run_regression_tb(const std::string& name);

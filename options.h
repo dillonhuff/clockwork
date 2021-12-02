@@ -209,7 +209,7 @@ struct CodegenOptions {
   string code_string;
   bool simplify_address_expressions;
   bool unroll_factors_as_pad;
-
+  int unroll_factor_value;
   //TODO:for merge banks, we should separate codegen from rewrite
   bool conditional_merge;
   size_t merge_threshold;
@@ -263,6 +263,11 @@ struct CodegenOptions {
   void add_memory_hierarchy(const std::string& level);
 
   banking_strategy get_banking_strategy(const std::string& buffer);
+  
+  void set_unroll_factor(int unroll_fact)
+  {
+	unroll_factor_value = unroll_fact;
+  }
 
 };
 

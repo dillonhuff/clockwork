@@ -1,0 +1,14 @@
+kernel: harris_2_naive
+unroll factor: 1
+burst width: 16
+
+input uint16: img_oc(10, *)
+
+local uint16: img(0, 0) = img_oc(0, 0)
+
+local uint16: grad_x(0, 0) = (img(-1, 0) + (img(0, 0) + img(1, 0)))
+
+output uint16: harris_2(0, 0) = (grad_x(-1, 0) + (grad_x(0, 0) + grad_x(1, 0)))
+
+
+iterate: 1

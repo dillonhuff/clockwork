@@ -1729,6 +1729,17 @@ void generate_app_code_header(const map<string, UBuffer>& buffers, prog& prg) {
   of.close();
 }
 
+//New Addition Ritvik
+void generate_app_code_header_catapult(const map<string, UBuffer>& buffers, prog& prg) {
+  string arg_buffers = sep_list(get_args(buffers, prg), "(", ")", ", ");
+  ofstream of(prg.name + ".h");
+  of << "#pragma once\n\n" << endl;
+  of << "#include \"hw_classes_ac_channel.h\"" << endl << endl;
+  of << "void " << prg.name << arg_buffers << ";" << endl;
+  of.close();
+}
+
+
 
 //vector<string> buffer_arg_names(const map<string, UBuffer>& buffers, op* op, prog& prg) {
 vector<string> buffer_arg_names(op* op, prog& prg) {
@@ -1956,6 +1967,143 @@ void generate_compute_op(
   conv_out << "}" << endl << endl;
 
 }
+//New Addition Ritvik
+void generate_compute_op_catapult(
+    ostream& conv_out,
+    prog& prg,
+    op* op,
+    map<string, UBuffer>& buffers,
+    map<string, isl_set*>& domain_map) {
+
+  cout << "Generating compute for: " << op->name << endl;
+
+  vector<string> buf_srcs;
+  concat(buf_srcs, buffer_args(buffers, op, prg));
+
+  cout << "Got srcs" << endl;
+
+  auto s = get_space(domain_map.at(op->name));
+  vector<string> dim_args;
+  for (auto a : space_var_args(s)) {
+    dim_args.push_back(a);
+  }
+  dim_args.push_back("0");
+
+  for (auto a : space_var_decls(s)) {
+    buf_srcs.push_back(a);
+  }
+
+  cout << "Got iteration variables" << endl;
+  conv_out << "inline void " << op->name << sep_list(buf_srcs, "(", ")", ", ") << " {" << endl;
+  vector<pair<string, vector< pair< string, string > > > > in_buffers;
+  std::set<string> distinct;
+  for (auto con : op->consume_locs_pair) {
+    if (!elem(con.first, distinct)) {
+      in_buffers.push_back(con);
+      distinct.insert(con.first);
+    }
+  }
+
+  cout << "got in_buffers" << endl;
+  string res;
+  vector<string> buf_args;
+
+  conv_out << tab(1) << "// Dynamic address computation" << endl;
+  for (auto da : op->dynamic_load_addresses) {
+    conv_out << tab(1) << "// " << da.table << "[" << da.table_offset << "]" << endl;
+  }
+  for (auto da : op->dynamic_store_addresses) {
+    conv_out << tab(1) << "// " << da.table << "[" << da.table_offset << "]" << endl;
+  }
+  conv_out << endl;
+
+  map<string, string> buf_vals;
+  for (auto ib : in_buffers) {
+    auto in_buffer = ib.first;
+    conv_out << "\t// Consume: " << in_buffer << endl;
+    string value_name = op->consumed_value_name(ib);
+    buf_vals[in_buffer] = value_name;
+    conv_out << "\tauto " << value_name << " = ";
+
+    string bundle_name = op->name + "_read";
+
+    if (prg.is_boundary(in_buffer)) {
+      conv_out << in_buffer << ".read();" << endl;
+    } else {
+      if (op->dynamic_reads(in_buffer)) {
+        string dynaddr = "";
+        for (auto dr : op->dynamic_load_addresses) {
+          if (dr.buffer == in_buffer) {
+            dynaddr = buf_vals[dr.table];
+          }
+        }
+        assert(dynaddr != "");
+        dim_args[dim_args.size() - 1] = dynaddr;
+      }
+      vector<string> source_delays{in_buffer};
+      cout << "op = " << op->name << endl;
+      conv_out << in_buffer << "_" << op->name << "_read_bundle_read(" << comma_list(source_delays) << "/* source_delay */, " << comma_list(dim_args) << ");" << endl;
+
+      conv_out << endl;
+      open_debug_scope_catapult(conv_out);
+
+      close_debug_scope_catapult(conv_out);
+      conv_out << endl;
+
+    }
+    buf_args.push_back(value_name);
+    res = value_name;
+  }
+
+  for (auto var : op->index_variables_needed_by_compute)  {
+    buf_args.push_back(var);
+  }
+
+  cout << "created res" << endl;
+  if (op->func != "") {
+    conv_out << "\tauto compute_result = " << op->func << "(" << comma_list(buf_args) << ");" << endl;
+    res = "compute_result";
+  }
+
+  cout << "finding out buffers" << endl;
+  std::set<string> out_buffers;
+  for (auto con : op->buffers_written()) {
+    out_buffers.insert(con);
+  }
+  if (!(out_buffers.size() == 1)) {
+    cout << "Error: " << out_buffers.size() << " out_buffers in " << op->name << endl;
+  }
+  assert(out_buffers.size() == 1);
+  string out_buffer = pick(out_buffers);
+
+  conv_out << "\t// Produce: " << out_buffer << endl;
+
+  string bundle_name = op->name + "_write";
+
+  cout << "Checking if program is a boundary" << endl;
+
+  if (prg.is_boundary(out_buffer)) {
+    conv_out << "\t" << out_buffer << ".write(" << res << ");" << endl;
+  } else {
+    assert(contains_key(out_buffer, buffers));
+
+    auto& buf = buffers.at(out_buffer);
+    vector<string> arg_names{res, buf.name};
+    concat(arg_names, dim_args);
+    conv_out << "\t" << out_buffer << "_" << op->name << "_write_bundle_write(" <<
+      "/* arg names */" + comma_list(arg_names) << ");" << endl;
+  }
+
+  conv_out << endl;
+  open_debug_scope_catapult(conv_out);
+
+
+  close_debug_scope_catapult(conv_out);
+  conv_out << endl;
+  conv_out << "}" << endl << endl;
+
+}
+
 
 isl_set* mk_set(isl_ctx* c, const vector<string>& vars, const vector<string>& constraints) {
   string s = curlies(bracket_list(vars) + " : " + sep_list(constraints, "", "", " and "));
@@ -2342,6 +2490,20 @@ void generate_app_prefix(CodegenOptions& options, ofstream& conv_out, prog& prg)
   conv_out << "// compute file: " << prg.compute_unit_file << endl;
   conv_out << "#include \"" << prg.compute_unit_file << "\"" << endl << endl;
 }
+// New Addition Ritvik
+void generate_app_prefix_catapult(CodegenOptions& options, ofstream& conv_out, prog& prg) {
+  open_debug_scope_catapult(conv_out);
+  conv_out << "#include <fstream>" << endl;
+  conv_out << "using namespace std;" << endl << endl;
+  conv_out << tab(1) << "// Debug utility" << endl;
+  conv_out << tab(1) << "ofstream* global_debug_handle;" << endl << endl;
+  close_debug_scope_catapult(conv_out);
+
+  assert(prg.compute_unit_file != "");
+  conv_out << "// compute file: " << prg.compute_unit_file << endl;
+  conv_out << "#include \"" << prg.compute_unit_file << "\"" << endl << endl;
+}
+
 
 void generate_app_epoch_wrapper(CodegenOptions& options,
     ostream& conv_out,
@@ -2385,6 +2547,33 @@ void generate_app_collateral(CodegenOptions& options,
   generate_tb_compare_scripts(options, buffers, prg);
 
 }
+// New Addition Ritvik
+void generate_app_collateral_catapult(CodegenOptions& options,
+    ostream& conv_out,
+    map<string, UBuffer>& buffers,
+    prog& prg,
+    umap* schedmap) {
+
+  open_synth_scope_catapult(conv_out);
+  generate_xilinx_accel_wrapper(options, conv_out, buffers, prg);
+  generate_xilinx_accel_rdai_wrapper(options, conv_out, buffers, prg);
+  close_synth_scope_catapult(conv_out);
+
+  conv_out << endl;
+
+  // Collateral generation
+  generate_vivado_tcl(prg.name);
+  generate_sw_bmp_test_harness(buffers, prg);
+  generate_app_code_header_catapult(buffers, prg);
+  generate_soda_tb(options, buffers, prg);
+  generate_xilinx_aws_ddr_config(options, buffers, prg);
+  generate_xilinx_accel_soda_host(options, buffers, prg);
+  generate_xilinx_accel_host(options, buffers, prg);
+  generate_tb_run_scripts(prg);
+  generate_tb_compare_scripts(options, buffers, prg);
+
+}
+
 
 void generate_driver_function_prefix(CodegenOptions& options, ostream& conv_out, map<string, UBuffer>& buffers, prog& prg) {
 
@@ -2400,6 +2589,22 @@ void generate_driver_function_prefix(CodegenOptions& options, ostream& conv_out,
   conv_out << tab(1) << "global_debug_handle = &debug_file;" << endl;
   close_debug_scope(conv_out);
 }
+//New Addition Ritvik
+void generate_driver_function_prefix_catapult(CodegenOptions& options, ostream& conv_out, map<string, UBuffer>& buffers, prog& prg) {
+
+  conv_out << "// Driver function" << endl;
+  vector<string> arg_buf_list = get_args(buffers, prg);
+  auto inner_args = arg_buf_list;
+  string inner_arg_buffers = sep_list(inner_args, "(", ")", ", ");
+
+  conv_out << "void " << prg.name << inner_arg_buffers << " {" << endl << endl;
+
+  open_debug_scope_catapult(conv_out);
+  conv_out << tab(1) << "ofstream debug_file(\"" << prg.name + "_debug.csv\");" << endl;
+  conv_out << tab(1) << "global_debug_handle = &debug_file;" << endl;
+  close_debug_scope_catapult(conv_out);
+}
+
 
 void generate_driver_function_suffix(CodegenOptions& options, ostream& conv_out, map<string, UBuffer>& buffers, prog& prg) {
   open_debug_scope(conv_out);
@@ -2408,6 +2613,15 @@ void generate_driver_function_suffix(CodegenOptions& options, ostream& conv_out,
 
   conv_out << "}" << endl << endl;
 }
+//New Additoin Ritvik
+void generate_driver_function_suffix_catapult(CodegenOptions& options, ostream& conv_out, map<string, UBuffer>& buffers, prog& prg) {
+  open_debug_scope_catapult(conv_out);
+  conv_out << tab(1) << "debug_file.close();" << endl;
+  close_debug_scope_catapult(conv_out);
+
+  conv_out << "}" << endl << endl;
+}
+
 
 void generate_buffer_code(
     CodegenOptions& options,
@@ -2433,6 +2647,32 @@ void generate_buffer_code(
 
   conv_out << endl << endl;
 }
+//New Addition Ritvik
+void generate_buffer_code_catapult(
+    CodegenOptions& options,
+    ostream& conv_out,
+    map<string, UBuffer>& buffers,
+    prog& prg) {
+
+  for (auto& b : buffers) {
+    if (!prg.is_boundary(b.first)) {
+      generate_hls_code_catapult(options, conv_out, b.second);
+    }
+  }
+
+  int capacity = 0;
+  for (auto& b : buffers) {
+    if (!prg.is_boundary(b.first)) {
+      capacity += buffer_capacity(b.second);
+    }
+  }
+
+
+  conv_out << "// Total re-use buffer capacity: " << capacity << " bits" << endl;
+
+  conv_out << endl << endl;
+}
+
 
 void generate_app_code_op_logic(
     CodegenOptions& options,
@@ -2512,6 +2752,86 @@ void generate_app_code_op_logic(
 
   generate_driver_function_suffix(options, conv_out, buffers, prg);
 }
+// New Addition Ritvik
+void generate_app_code_op_logic_catapult(
+    CodegenOptions& options,
+    ostream& conv_out,
+    map<string, UBuffer>& buffers,
+    prog& prg,
+    umap* schedmap,
+    map<string, isl_set*>& domain_map) {
+
+  conv_out << "// Operation logic" << endl;
+  for (auto op : prg.all_ops()) {
+    generate_compute_op_catapult(conv_out, prg, op, buffers, domain_map);
+  }
+
+  generate_driver_function_prefix_catapult(options, conv_out, buffers, prg);
+
+  for (auto& b : buffers) {
+    if (!prg.is_boundary(b.first)) {
+      conv_out << tab(1) << b.first << "_cache " << b.second.name << ";" << endl;
+      open_synth_scope_catapult(conv_out);
+      if (b.second.banking.partition == "register_file") {
+        assert(b.second.bank_list.size() == 1);
+        string var = b.second.name + "." + pick(b.second.bank_list).name + ".RAM";
+        conv_out << "#pragma HLS array_partition variable=" << var << " dim=0 complete" << endl;
+      } else if (b.second.banking.partition == "cyclic") {
+        assert(false);
+        //assert(b.second.bank_list.size() == 1);
+        for (int d = 0; d < b.second.logical_dimension(); d++) {
+          string var = b.second.name + "." + pick(b.second.bank_list).name + ".RAM";
+          assert(d < (int) b.second.banking.cycle_factors.size());
+          int factor = b.second.banking.cycle_factors.at(d);
+          conv_out << "#pragma HLS array_partition variable=" << var << " dim=" << d << " factor=" << factor << endl;
+        }
+      }
+      close_synth_scope_catapult(conv_out);
+    }
+  }
+
+
+  string code_string =
+    options.code_string;
+  if (options.hls_loop_codegen == HLS_LOOP_CODEGEN_CUSTOM) {
+    // Do nothing, leave code string
+  } else if (options.hls_loop_codegen == HLS_LOOP_CODEGEN_PERFECT) {
+    code_string = perfect_loop_codegen(schedmap);
+  } else if (options.hls_loop_codegen == HLS_LOOP_CODEGEN_CYLINDRICAL) {
+    code_string = resource_sharing_loop_codegen(schedmap);
+  } else if (options.hls_loop_codegen == HLS_LOOP_CODEGEN_NON_BLOCKING) {
+    code_string = non_blocking_loop_codegen(schedmap, prg);
+  } else {
+    assert(options.hls_loop_codegen == HLS_LOOP_CODEGEN_ISL);
+    code_string = codegen_c(schedmap);
+  }
+
+  string original_isl_code_string = code_string;
+
+  code_string = "\t" + ReplaceString(code_string, "\n", "\n\t");
+
+  for (auto op : prg.all_ops()) {
+    regex re("(\n\t\\s+)" + op->name + "\\((.*)\\);");
+    string args_list = sep_list(buffer_arg_names(op, prg), "", "", ", ");
+    code_string = regex_replace(code_string, re, "$1" + op->name + "(" + args_list + ", $2);");
+  }
+
+  conv_out << "#ifdef __SYNTHESIS__" << endl;
+  conv_out << "#pragma HLS inline recursive" << endl;
+  conv_out << "#endif // __SYNTHESIS__" << endl << endl;
+
+  conv_out << "// schedule: " << str(schedmap) << endl;
+  for (auto s : get_maps(schedmap)) {
+    conv_out << "// " << tab(1) << str(s) << endl;
+    conv_out << "// Condition for " << domain_name(s) << codegen_c(range(s)) << endl;
+  }
+  conv_out << endl;
+
+  conv_out << code_string << endl;
+
+  generate_driver_function_suffix_catapult(options, conv_out, buffers, prg);
+}
+
 
 void generate_app_code_body(
     CodegenOptions& options,
@@ -2538,6 +2858,33 @@ void generate_app_code_body(
     domain_map);
 
 }
+//New Addition Ritvik
+void generate_app_code_body_catapult(
+    CodegenOptions& options,
+    ostream& conv_out,
+    map<string, UBuffer>& buffers,
+    prog& prg,
+    umap* schedmap,
+    map<string, isl_set*>& domain_map) {
+
+  generate_buffer_code_catapult(
+    options,
+    conv_out,
+    buffers,
+    prg);
+
+  cout << "Prog: " << prg.name << endl;
+
+  generate_app_code_op_logic_catapult(
+    options,
+    conv_out,
+    buffers,
+    prg,
+    schedmap,
+    domain_map);
+
+}
+
 
 void generate_app_code(CodegenOptions& options,
     map<string, UBuffer>& buffers,
@@ -2570,6 +2917,39 @@ void generate_app_code(CodegenOptions& options,
 
   conv_out.close();
 }
+// New Addition Ritvik
+void generate_app_code_catapult(CodegenOptions& options,
+    map<string, UBuffer>& buffers,
+    prog& prg,
+    umap* schedmap,
+    map<string, isl_set*>& domain_map) {
+
+  ofstream conv_out(prg.name + ".cpp");
+  generate_app_prefix_catapult(options, conv_out, prg);
+
+  generate_app_code_body_catapult(options,
+      conv_out,
+      buffers,
+      prg,
+      schedmap,
+      domain_map);
+
+  generate_app_epoch_wrapper(options,
+      conv_out,
+      buffers,
+      prg,
+      schedmap);
+
+
+  generate_app_collateral_catapult(options,
+      conv_out,
+      buffers,
+      prg,
+      schedmap);
+
+  conv_out.close();
+}
+
 
 void generate_app_code(CodegenOptions& options, map<string, UBuffer>& buffers, prog& prg, umap* schedmap) {
   auto domains = prg.domains();
@@ -2580,6 +2960,17 @@ void generate_app_code(CodegenOptions& options, map<string, UBuffer>& buffers, p
 
   generate_app_code(options, buffers, prg, schedmap, domain_map);
 }
+//New Additions Ritvik
+void generate_app_code_catapult(CodegenOptions& options, map<string, UBuffer>& buffers, prog& prg, umap* schedmap) {
+  auto domains = prg.domains();
+  map<string, isl_set*> domain_map;
+  for (auto d : domains) {
+    domain_map[d.first->name] = d.second;
+  }
+
+  generate_app_code_catapult(options, buffers, prg, schedmap, domain_map);
+}
+
 
 void generate_optimized_code(CodegenOptions& options, prog& prg) {
   umap* sched = nullptr;
@@ -2858,6 +3249,154 @@ void generate_regression_testbench(prog& prg, map<string, UBuffer>& buffers) {
   rgtb.close();
 }
 
+
+
+void generate_regression_testbench_catapult(prog& prg, map<string, UBuffer>& buffers) {
+  ofstream rgtb("regression_tb_" + prg.name + ".cpp");
+  rgtb << "#include <fstream>" << endl;
+  rgtb << "#include <mc_scverify.h>" << endl;
+  rgtb << "#include \"" << prg.name << ".h\"" << endl;
+  rgtb << "#include \"clockwork_standard_compute_units.h\"" << endl << endl;
+
+
+  rgtb << "CCS_MAIN(int argc, char *argv[]) {" << endl;
+  rgtb << tab(1) << "srand(234);" << endl;
+  rgtb << tab(1) << "ofstream in_pix(\"" << "input_pixels_regression_result_" << prg.name << ".txt\");" << endl;
+  rgtb << tab(1) << "ofstream fout(\"" << "regression_result_" << prg.name << ".txt\");" << endl;
+
+  vector<string> optimized_streams;
+  for (auto in : prg.ins) {
+    assert(contains_key(in, buffers));
+    auto& buf = buffers.at(in);
+    assert(buf.get_out_bundles().size() == 1);
+    auto bundle = pick(buf.get_out_bundles());
+
+    rgtb << tab(1) << "HWStream<" << buf.bundle_type_string(bundle) << " > " << bundle << ";" << endl;
+    optimized_streams.push_back(bundle);
+  }
+
+  for (auto out : prg.outs) {
+    assert(contains_key(out, buffers));
+    auto& buf = buffers.at(out);
+    assert(buf.get_in_bundles().size() == 1);
+    auto bundle = pick(buf.get_in_bundles());
+
+    rgtb << tab(1) << "HWStream<" << buf.bundle_type_string(bundle) << " > " << bundle << ";" << endl;
+    optimized_streams.push_back(bundle);
+  }
+
+  rgtb << endl << endl;
+
+  rgtb << tab(1) << "// Loading input data" << endl;
+  for (auto in : prg.ins) {
+    assert(contains_key(in, buffers));
+    auto& buf = buffers.at(in);
+    assert(buf.get_out_bundles().size() == 1);
+    auto bundle = pick(buf.get_out_bundles());
+    int port_width = buf.port_width(in);
+    int bundle_width = buf.port_bundle_width(bundle);
+
+    auto cmap = prg.consumer_map(in);
+    auto read_map = inv(cmap);
+    auto rng = range(read_map);
+    auto range_card = card(rng);
+    int num_pushes = int_upper_bound(range_card);
+
+    vector<string> pts = buf.port_bundles.at(bundle);
+    int num_ports = pts.size();
+
+    rgtb << tab(1) << "// cmap    : " << str(cmap) << endl;
+    rgtb << tab(1) << "// read map: " << str(read_map) << endl;
+    rgtb << tab(1) << "// rng     : " << str(rng) << endl;
+
+    rgtb << tab(1) << "for (int i = 0; i < " << num_pushes << "; i++) {" << endl;
+    rgtb << tab(2) << buf.bundle_type_string(bundle) << " in_val;" << endl;
+    for (int p = 0; p < num_ports; p++) {
+      string next_val = parens(str(num_ports) + "*i + " + str(p));
+      //rgtb << tab(2) << "set_at<" << p << "*" << port_width << ", " << bundle_width << ", " << port_width << ">(in_val, " << next_val << ");" << endl;
+      rgtb << "#ifdef __INT_OUTPUT__" << endl;
+      rgtb << tab(2) << "set_at<" << p << "*" << port_width << ", " << bundle_width << ", " << port_width << ">(in_val, " << next_val << ");" << endl;
+      rgtb << "#elif defined(__FLOAT_OUTPUT__)" << endl;
+      string fval = "static_cast <float> (rand()) / static_cast <float> (RAND_MAX)";
+      //rgtb << tab(2) << "set_at<" << p << "*" << port_width << ", " << bundle_width << ", " << port_width << ">(in_val, " << parens("to_bits" + parens(parens("float") + next_val)) << ");" << endl;
+      rgtb << tab(2) << "set_at<" << p << "*" << port_width << ", " << bundle_width << ", " << port_width << ">(in_val, " << parens("to_bits" + parens(parens("float") + fval)) << ");" << endl;
+      //rgtb << tab(2) << "fout << to_float(actual_lane_" << p << ") << endl;" << endl;
+      rgtb << "#else // No specified output type" << endl;
+      rgtb << tab(2) << "set_at<" << p << "*" << port_width << ", " << bundle_width << ", " << port_width << ">(in_val, " << next_val << ");" << endl;
+      //rgtb << tab(2) << "fout << actual_lane_" << p << " << endl;" << endl;
+      rgtb << "#endif" << endl;
+
+
+      rgtb << "#ifdef __INT_OUTPUT__" << endl;
+      rgtb << tab(2) << "in_pix << in_val << endl;" << endl;
+      //rgtb << tab(2) << "set_at<" << p << "*" << port_width << ", " << bundle_width << ", " << port_width << ">(in_val, " << next_val << ");" << endl;
+      rgtb << "#elif defined(__FLOAT_OUTPUT__)" << endl;
+      rgtb << tab(2) << "in_pix << to_float(in_val) << endl;" << endl;
+      //rgtb << tab(2) << "set_at<" << p << "*" << port_width << ", " << bundle_width << ", " << port_width << ">(in_val, " << parens("to_bits" + parens(parens("float") + next_val)) << ");" << endl;
+      //rgtb << tab(2) << "fout << to_float(actual_lane_" << p << ") << endl;" << endl;
+      rgtb << "#else // No specified output type" << endl;
+      rgtb << tab(2) << "in_pix << in_val << endl;" << endl;
+      //rgtb << tab(2) << "set_at<" << p << "*" << port_width << ", " << bundle_width << ", " << port_width << ">(in_val, " << next_val << ");" << endl;
+      rgtb << "#endif" << endl;
+      //rgtb << tab(2) << "in_pix << in_val << endl;" << endl;
+    }
+    rgtb << tab(2) << bundle << ".write(in_val);" << endl;
+    rgtb << tab(1) << "}" << endl << endl;
+  }
+
+  rgtb << tab(1) <<"CCS_DESIGN(" << prg.name << ")" << "(" << comma_list(optimized_streams) << ");" << endl << endl;
+
+  for (auto out : prg.outs) {
+    assert(contains_key(out, buffers));
+    auto& buf = buffers.at(out);
+    assert(buf.get_in_bundles().size() == 1);
+    auto bundle = pick(buf.get_in_bundles());
+
+    auto cmap = prg.producer_map(out);
+    auto read_map = inv(cmap);
+    auto rng = range(read_map);
+    auto range_card = card(rng);
+    int num_pops = int_upper_bound(range_card);
+    int port_width = buf.port_width(out);
+
+    vector<string> pts = buf.port_bundles.at(bundle);
+    int num_ports = pts.size();
+
+    rgtb << tab(1) << "for (int i = 0; i < " << (num_pops) << "; i++) {" << endl;
+    rgtb << tab(2) << buf.bundle_type_string(bundle) << " actual = " << bundle << ".read();" << endl;
+    for (int p = 0; p < num_ports; p++) {
+      rgtb << tab(2) << "auto actual_lane_" << p
+        << " = actual.extract<" << p << "*" << port_width << ", "
+        << (p + 1)*port_width - 1 << ">();" << endl;
+
+      rgtb << "#ifdef __INT_OUTPUT__" << endl;
+      rgtb << tab(2) << "fout << (int) actual_lane_" << p << " << endl;" << endl;
+      rgtb << "#elif defined(__FLOAT_OUTPUT__)" << endl;
+      rgtb << tab(2) << "fout << to_float(actual_lane_" << p << ") << endl;" << endl;
+      rgtb << "#else // No specified output type" << endl;
+      rgtb << tab(2) << "fout << actual_lane_" << p << " << endl;" << endl;
+      rgtb << "#endif" << endl;
+    }
+
+    rgtb << tab(1) << "}" << endl << endl;
+  }
+
+  for (auto b : prg.boundary_buffers()) {
+    rgtb << tab(1) << "assert(" << b << ".is_empty());" << endl;
+  }
+
+  rgtb << tab(1) << "in_pix.close();" << endl;
+  rgtb << tab(1) << "fout.close();" << endl;
+  rgtb << tab(1) << "CCS_RETURN(0);" << endl;
+  rgtb << "}" << endl;
+  rgtb.close();
+}
+
+
+
+
+
+
 void generate_vectorization_unit_testbench(UBuffer & buf) {
   ofstream rgtb("unit_tb_" + buf.name + ".cpp");
   rgtb << "#include \"" << buf.name << ".h\"" << endl << endl;
@@ -3064,6 +3603,224 @@ void generate_regression_testbench(prog& prg) {
   rgtb.close();
 }
 
+void generate_regression_testbench_catapult(prog& prg) {
+  ofstream rgtb("regression_tb_" + prg.name + ".cpp");
+  rgtb << "#include <fstream>" << endl;
+   rgtb << "#include <mc_scverify.h>" << endl;
+  rgtb << "#include \"" << prg.name << ".h\"" << endl << endl;
+
+  rgtb << "CCS_MAIN(int argc, char *argv[]) {" << endl;
+ 
+  rgtb << tab(1) << "srand(234);" << endl;
+  rgtb << tab(1) << "ofstream fout(\"" << "regression_result_" << prg.name << ".txt\");" << endl;
+
+  vector<string> optimized_streams;
+  map<string, int> unroll_factor;
+  for (auto in : prg.ins) {
+    auto readers = find_readers(in, prg);
+    int width = 0;
+    int unroll = 0;
+    for (auto reader : readers) {
+      for (auto addr : reader->read_addrs(in)) {
+        width += prg.buffer_port_width(in);
+        unroll++;
+      }
+    }
+    unroll_factor[in] = unroll;
+    rgtb << tab(1) << "HWStream<hw_uint<" << width << " > > " << in << ";" << endl;
+    rgtb << "/////////////////// # " << unroll << endl;
+    optimized_streams.push_back(in);
+  }
+
+  for (auto out : prg.outs) {
+    auto readers = find_writers(out, prg);
+    int width = 0;
+    int unroll = 0;
+    for (auto reader : readers) {
+      for (auto addr : reader->write_addrs(out)) {
+        width += prg.buffer_port_width(out);
+        unroll++;
+      }
+    }
+    unroll_factor[out] = unroll;
+    rgtb << tab(1) << "HWStream<hw_uint<" << width << " > > " << out << ";" << endl;
+    rgtb << "/////////////////// " << unroll << endl;
+    optimized_streams.push_back(out);
+  }
+
+  rgtb << endl << endl;
+
+  rgtb << tab(1) << "// Loading input data" << endl;
+  rgtb << tab(1) << "srand(1);" << endl;
+  for (auto in : prg.ins) {
+    auto cmap = prg.consumer_map(in);
+    auto read_map = inv(cmap);
+    auto rng = range(read_map);
+    auto range_card = card(rng);
+    int num_pushes = int_upper_bound(range_card);
+    int unroll = map_find(in, unroll_factor);
+    int lane_width = prg.buffer_port_width(in);
+    int bundle_width = lane_width*unroll;
+
+    rgtb << tab(1) << "// cmap    : " << str(cmap) << endl;
+    rgtb << tab(1) << "// read map: " << str(read_map) << endl;
+    rgtb << tab(1) << "// rng     : " << str(rng) << endl;
+    rgtb << tab(1) << "// rng card: " << str(range_card) << endl;
+    int num_transfers = num_pushes;
+    rgtb << tab(1) << "for (int i = 0; i < " << num_transfers << "; i++) {" << endl;
+    vector<string> inds;
+    for (int i = 0; i < unroll; i++) {
+      inds.push_back("rand() % 256");
+      //inds.push_back("(i) % 256");
+      //inds.push_back(str(unroll) + "*i + " + str(i));
+    }
+    pack_bv(2, rgtb, "value", inds, lane_width);
+    rgtb << tab(2) << in << ".write(value);" << endl;
+    rgtb << tab(1) << "}" << endl << endl;
+  }
+  rgtb << tab(1) << "CCS_DESIGN(" << prg.name << ")(" << comma_list(optimized_streams) << ");" << endl;
+
+  for (auto out : prg.outs) {
+    auto cmap = prg.producer_map(out);
+    auto read_map = inv(cmap);
+    auto rng = range(read_map);
+    auto range_card = card(rng);
+    int num_pops = int_upper_bound(range_card);
+    int unroll = map_find(out, unroll_factor);
+    int lane_width = prg.buffer_port_width(out);
+    int bundle_width = lane_width*unroll;
+
+    rgtb << tab(1) << "for (int i = 0; i < " << num_pops << "; i++) {" << endl;
+    rgtb << tab(2) << "auto actual = " << out << ".read();" << endl;
+    vector<string> results = split_bv(2, rgtb, "actual", lane_width, unroll);
+    for (auto r : results) {
+      rgtb << tab(2) << "fout << " << r << " << endl;" << endl;
+    }
+
+    //rgtb << tab(2) << "fout << actual << endl;" << endl;
+    rgtb << tab(1) << "}" << endl << endl;
+  }
+
+  for (auto b : prg.boundary_buffers()) {
+    rgtb << tab(1) << "assert(" << b << ".is_empty());" << endl;
+  }
+
+  rgtb << tab(1) << "CCS_RETURN(0);" << endl;
+  rgtb << "}" << endl;
+  rgtb.close();
+}
+
+
+
+void generate_regression_testbench_catapult_unrolled(prog& prg, int size_) {
+  ofstream rgtb("regression_tb_" + prg.name + ".cpp");
+  rgtb << "#include <fstream>" << endl;
+   rgtb << "#include <mc_scverify.h>" << endl;
+  rgtb << "#include \"" << prg.name << ".h\"" << endl << endl;
+
+  rgtb << "CCS_MAIN(int argc, char *argv[]) {" << endl;
+ 
+  rgtb << tab(1) << "srand(234);" << endl;
+  rgtb << tab(1) << "ofstream fout(\"" << "regression_result_" << prg.name << ".txt\");" << endl;
+
+  vector<string> optimized_streams;
+  map<string, int> unroll_factor;
+  for (auto in : prg.ins) {
+    auto readers = find_readers(in, prg);
+    int width = 0;
+    int unroll = 0;
+    for (auto reader : readers) {
+      for (auto addr : reader->read_addrs(in)) {
+        width += prg.buffer_port_width(in);
+        unroll++;
+      }
+    }
+    unroll_factor[in] = unroll;
+    rgtb << tab(1) << "HWStream<hw_uint<" << width*size_ << " > > " << in << ";" << endl;
+    rgtb << "/////////////////// # " << unroll << endl;
+    optimized_streams.push_back(in);
+  }
+
+  for (auto out : prg.outs) {
+    auto readers = find_writers(out, prg);
+    int width = 0;
+    int unroll = 0;
+    for (auto reader : readers) {
+      for (auto addr : reader->write_addrs(out)) {
+        width += prg.buffer_port_width(out);
+        unroll++;
+      }
+    }
+    unroll_factor[out] = unroll;
+    rgtb << tab(1) << "HWStream<hw_uint<" << width*size_ << " > > " << out << ";" << endl;
+    rgtb << "/////////////////// " << unroll << endl;
+    optimized_streams.push_back(out);
+  }
+
+  rgtb << endl << endl;
+
+  rgtb << tab(1) << "// Loading input data" << endl;
+  rgtb << tab(1) << "srand(1);" << endl;
+  for (auto in : prg.ins) {
+    auto cmap = prg.consumer_map(in);
+    auto read_map = inv(cmap);
+    auto rng = range(read_map);
+    auto range_card = card(rng);
+    int num_pushes = int_upper_bound(range_card);
+    int unroll = map_find(in, unroll_factor);
+    int lane_width = prg.buffer_port_width(in);
+    int bundle_width = lane_width*unroll;
+
+    rgtb << tab(1) << "// cmap    : " << str(cmap) << endl;
+    rgtb << tab(1) << "// read map: " << str(read_map) << endl;
+    rgtb << tab(1) << "// rng     : " << str(rng) << endl;
+    rgtb << tab(1) << "// rng card: " << str(range_card) << endl;
+    int num_transfers = num_pushes;
+    rgtb << tab(1) << "for (int i = 0; i < " << num_transfers << "; i++) {" << endl;
+    vector<string> inds;
+    for (int i = 0; i < unroll; i++) {
+      inds.push_back("rand() % 256");
+      //inds.push_back("(i) % 256");
+      //inds.push_back(str(unroll) + "*i + " + str(i));
+    }
+    pack_bv(2, rgtb, "value", inds, lane_width);
+    rgtb << tab(2) << in << ".write(value);" << endl;
+    rgtb << tab(1) << "}" << endl << endl;
+  }
+  rgtb << tab(1) << "CCS_DESIGN(" << prg.name << ")(" << comma_list(optimized_streams) << ");" << endl;
+
+  for (auto out : prg.outs) {
+    auto cmap = prg.producer_map(out);
+    auto read_map = inv(cmap);
+    auto rng = range(read_map);
+    auto range_card = card(rng);
+    int num_pops = int_upper_bound(range_card);
+    int unroll = map_find(out, unroll_factor);
+    int lane_width = prg.buffer_port_width(out);
+    int bundle_width = lane_width*unroll;
+
+    rgtb << tab(1) << "for (int i = 0; i < " << num_pops << "; i++) {" << endl;
+    rgtb << tab(2) << "auto actual = " << out << ".read();" << endl;
+    vector<string> results = split_bv(2, rgtb, "actual", lane_width, unroll);
+    for (auto r : results) {
+      rgtb << tab(2) << "fout << " << r << " << endl;" << endl;
+    }
+
+    //rgtb << tab(2) << "fout << actual << endl;" << endl;
+    rgtb << tab(1) << "}" << endl << endl;
+  }
+
+  for (auto b : prg.boundary_buffers()) {
+    rgtb << tab(1) << "assert(" << b << ".is_empty());" << endl;
+  }
+
+  rgtb << tab(1) << "CCS_RETURN(0);" << endl;
+  rgtb << "}" << endl;
+  rgtb.close();
+}
+
+
+
 int compile_compute(const std::string& name) {
   int res = cmd("g++ -c -fstack-protector-all -std=c++11 " + name);
   return res;
@@ -3082,6 +3839,7 @@ std::vector<std::string> run_regression_tb(const std::string& name) {
 #ifndef CGRAFLOW
   int res = system(string("g++ -fstack-protector-all -std=c++11 regression_tb_" + name + ".cpp " + name + ".cpp").c_str());
 #else
+  // int res = system(string("g++ -fstack-protector-all -std=c++11 regression_tb_" + name + ".cpp " + name + ".cpp").c_str());
   cmd("echo $CLKWRK_PATH");
   int res = cmd("g++ -fstack-protector-all -std=c++11 -I $CLKWRK_PATH regression_tb_" + name + ".cpp " + name + ".cpp");
 #endif

@@ -3039,6 +3039,8 @@ void add_lake_config_to_aff_ctrl_for_garnet_mapping(isl_set* dom, isl_aff* aff, 
 #endif
 
 void generate_hls_code(CodegenOptions& options, std::ostream& out, UBuffer& buf);
+//New Addition Ritvik
+void generate_hls_code_catapult(CodegenOptions& options, std::ostream& out, UBuffer& buf);
 void generate_hls_code(std::ostream& out, UBuffer& buf);
 void generate_hls_code(UBuffer& buf);
 void generate_hls_code_unit_test(UBuffer& buf);
