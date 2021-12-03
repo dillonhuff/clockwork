@@ -261,28 +261,29 @@ struct LakeCollateral {
         cout << " # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #  # # # # # # ## 3  ## # # 3 3 #  3 # # 3 3  # #  # # # #  # # # # # #  # # # # # # # # # # # # # # # # # # # # # # " << endl;
 //	  cout << " # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #  # # # # # # ## 3  ## # # 3 3 #  3 # # 3 3  # #  # # # #  # # # # # #  # # # # # # # # # # # # # # # # # # # # # # " << endl;
 //	  cout << " # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #  # # # # # # ## 3  ## # # 3 3 #  3 # # 3 3  # #  # # # #  # # # # # #  # # # # # # # # # # # # # # # # # # # # # # " << endl;
-	cout << "fetch-width " << fetch_width << endl;
-	cout << "max-chaining " << max_chaining << endl;
-	cout << "iteration-level " << iteration_level << endl;
-	cout << "counter-ub " << counter_ub << endl;
-	cout << "multi-sram-accessor " << multi_sram_accessor << endl;
-	cout << "dual-port-sram " << dual_port_sram << endl;
-	cout << "wire-chain-en " << wire_chain_en << endl;
-	cout << "word-width " << endl;
+	cout << tab(2) << "fetch-width " << fetch_width << endl;
+	cout << tab(2) << "max-chaining " << max_chaining << endl;
+	cout << tab(2) << "iteration-level " << iteration_level << endl;
+	cout << tab(2) << "counter-ub " << counter_ub << endl;
+	cout << tab(2) << "multi-sram-accessor " << multi_sram_accessor << endl;
+	cout << tab(2) << "dual-port-sram " << dual_port_sram << endl;
+	cout << tab(2) << "wire-chain-en " << wire_chain_en << endl;
+    cout << "=======================================" << endl;
+	cout << tab(2) << "word-width " << endl;
 	for(auto i: word_width)
-		cout << i.first << " " << i.second << endl;
-	cout << "capacity " << endl;
+		cout << tab(4) << i.first << " " << i.second << endl;
+	cout << tab(2) << "capacity " << endl;
 	for(auto i: capacity)
-		cout << i.first << " " << i.second << endl;
-	cout << "in-port-width " << endl;
+		cout << tab(4) << i.first << " " << i.second << endl;
+	cout << tab(2) <<  "in-port-width " << endl;
 	for(auto i: in_port_width)
-		cout << i.first << " " << i.second << endl;
-	cout << "out-port-width " << endl;
+		cout << tab(4) << i.first << " " << i.second << endl;
+	cout << tab(2) << "out-port-width " << endl;
 	for(auto i: out_port_width)
-		cout << i.first << " " << i.second << endl;
-	cout << "controller-name " << endl;
+		cout << tab(4) << i.first << " " << i.second << endl;
+	cout << tab(2) << "controller-name " << endl;
   	for(auto i: controller_name)
-		cout << i  << " " << endl;
+		cout << tab(4) << i  << " " << endl;
     }
 
     void print_points(string a){
@@ -466,3 +467,4 @@ struct mem_access_cnt {
 };
 
 LakeCollateral create_single_port_wide_fetch_memory(int fetch_width, int capacity, int SIPO_num);
+LakeCollateral create_dual_port_memory(int capacity);
