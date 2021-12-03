@@ -19655,9 +19655,10 @@ void compile_for_garnet_single_port_mem(prog& prg,
   options.add_memory_hierarchy("glb");
   if (multi_level_mem) {
     options.add_memory_hierarchy("regfile");
-    options.rtl_options.double_buffer_optimization = false;
+    options.rtl_options.double_buffer_optimization = true;
     options.fallback_schedule = SEQUENTIAL_SCHEDULE;
   }
+  options.rtl_options.double_buffer_optimization = true;
   options.emit_smt_stream = gen_smt_stream;
   options.config_gen_only = config_gen_only;
   //if (multi_sram)

@@ -3564,7 +3564,104 @@ void MapperPasses::MemSubstituteMetaMapper::setVisitorInfo() {
 
 }
 
+namespace MapperPasses {
+class RegfileSubstituteMetaMapper: public CoreIR::InstanceVisitorPass {
+  public :
+    static std::string ID;
+    RegfileSubstituteMetaMapper() : InstanceVisitorPass(ID,"replace cgralib.pond_amber to global.pond") {}
+    void setVisitorInfo() override;
+};
 
+}
+
+
+bool RegfileReplaceMetaMapper(Instance* cnst) {
+  cout << tab(2) << "memory syntax transformation!" << endl;
+  cout << tab(2) << toString(cnst) << endl;
+  Context* c = cnst->getContext();
+
+
+  auto allSels = cnst->getSelects();
+  for (auto itr: allSels) {
+    cout << tab(2) << "Sel: " << itr.first << endl;
+  }
+
+
+  ModuleDef* def = cnst->getContainer();
+  auto genargs = cnst->getModuleRef()->getGenArgs();
+
+  string ID = genargs.at("ID")->get<string>();
+  int num_inputs = genargs.at("num_inputs")->get<int>();
+  int num_outputs = genargs.at("num_outputs")->get<int>();
+  int width = genargs.at("width")->get<int>();
+
+
+  auto config_file = cnst->getMetaData();
+
+  config_file["ID"] = ID;
+  config_file["num_inputs"] = num_inputs;
+  config_file["num_outputs"] = num_outputs;
+  config_file["width"] = width;
+
+  std::set<string> routable_ports = {"flush", "data_in_pond_0"};
+
+  std::vector<string> routable_outputs = {"data_out_pond_0", "valid_out_pond"};
+
+
+  auto pt = addPassthrough(cnst, cnst->getInstname()+"_tmp");
+
+  vector<Module*> loaded;
+  if (!loadHeader(c, "pond_header.json", loaded)) {c->die();}
+
+  Instance* buf = def->addInstance(cnst->getInstname()+"_garnet", (Module*)loaded[0]);
+
+  buf->setMetaData(config_file);
+
+  Module* cnst_mod_ref = cnst->getModuleRef();
+
+  vector<string> cnst_ports = cnst_mod_ref->getType()->getFields();
+
+  for (auto cnst_port : cnst_ports) {
+    if (routable_ports.count(cnst_port) > 0) {
+      cout << "Connecting cnst_port: " << cnst_port << endl;
+      def->connect(pt->sel("in")->sel(cnst_port), buf->sel(cnst_port));
+    } else {
+      auto index = find(routable_outputs.begin(), routable_outputs.end(), cnst_port);
+      if (index != routable_outputs.end()){
+        int port_index = index - routable_outputs.begin();
+        cout << "Connecting output cnst_port: " << cnst_port << endl;
+        def->connect(buf->sel("O" + std::to_string(port_index)), pt->sel("in")->sel(cnst_port));
+      } else {
+        cout << "Not Connecting cnst_port: " << cnst_port << endl;
+      }
+    }
+  }
+
+
+  def->removeInstance(cnst);
+  inlineInstance(pt);
+  inlineInstance(buf);
+
+  //TODO: possible bug master comment this out
+  //remove rst_n
+/*
+  auto rst_n_conSet = buf->sel("rst_n")->getConnectedWireables();
+  vector<Wireable*> conns(rst_n_conSet.begin(), rst_n_conSet.end());
+  assert(conns.size() == 1);
+  auto conn = conns[0];
+  def->disconnect(buf->sel("rst_n"),conn);
+*/
+  return true;
+}
+
+std::string MapperPasses::RegfileSubstituteMetaMapper::ID = "regfilesubstitutemetamapper";
+void MapperPasses::RegfileSubstituteMetaMapper::setVisitorInfo() {
+  Context* c = this->getContext();
+  if (c->hasGenerator("cgralib.Pond_amber")) {
+    addVisitorFunction(c->getGenerator("cgralib.Pond_amber"), RegfileReplaceMetaMapper);
+  }
+
+}
 
 namespace MapperPasses {
 class RomSubstituteMetaMapper: public CoreIR::InstanceVisitorPass {
@@ -3786,6 +3883,8 @@ void map_memory(CodegenOptions& options, Module* top, map<string, UBuffer> & buf
   c->runPasses({"romsubstitutemetamapper"});
   c->addPass(new MapperPasses::MemSubstituteMetaMapper);
   c->runPasses({"memsubstitutemetamapper"});
+  c->addPass(new MapperPasses::RegfileSubstituteMetaMapper);
+  c->runPasses({"regfilesubstitutemetamapper"});
 }
 
 
