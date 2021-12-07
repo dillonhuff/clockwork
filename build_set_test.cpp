@@ -18157,6 +18157,55 @@ void dump_DNN_delays(schedule_info& sched, prog& prg, ofstream& out) {
   out <<  end-start;
 }
 
+void adjust_outer_delays_sequentially_with_glb_guard(schedule_info& sched, prog& prg) {
+  cout << "Adjusting delays of " << prg.name << "After vectorization" << endl;
+  int d = 0;
+  int glb_load_latency = 0;
+  for (auto name : topologically_sort_kernels(prg)) {
+    auto lp = prg.find_loop(name);
+    auto prods =  get_producers(name, prg);
+    if (prods.size() == 0 && contains(name, "glb")) {
+      cout << "\tkernel <" << lp->name << "> is the glb loading kernel." << endl;
+      cout << "\tname<" << name << endl;
+      glb_load_latency = std::max(sched.total_latency(lp), glb_load_latency);
+    }
+  }
+  cout << "Find GLB load latency = " << glb_load_latency << endl; 
+  map<string, int> coarse_pipeline_II;
+  for (auto name : topologically_sort_kernels(prg)) {
+    auto lp = prg.find_loop(name);
+    cout << "Push kernel <" << lp->name << "> into delay adjusting queue." << endl;
+    cout << "II: " << sched.II(lp) << endl;
+    cout << "TP: " << (lp)->trip_count() << endl;
+    for (auto prod:  get_producers(name, prg))
+        cout << "\tprod: " << prod << endl;
+    //This only works for the schedule without pipeline should change into total latency
+    //coarse_pipeline_II[name] = sched.II(lp) * lp->trip_count();
+    coarse_pipeline_II[name] = sched.total_latency(lp);
+    sched.op_offset_within_parent[lp] = 0;
+  }
+  for (auto name : topologically_sort_kernels(prg)) {
+    auto lp = prg.find_loop(name);
+    cout << "Adjusting delay of " << lp->name << endl;
+    cout << "II: " << sched.II(lp) << endl;
+    int max_delay = 0;
+    for (string prod: get_producers(name, prg)){
+        op* prod_op = prg.find_loop(prod);
+        max_delay = max(coarse_pipeline_II.at(prod)
+                + sched.op_offset_within_parent.at(prod_op), max_delay);
+    }
+    //FIXME: Hack for glb latency sync nothing can start before glb transfer
+    if (!contains(name, "glb")) {
+      max_delay = max(glb_load_latency, max_delay);
+    }
+
+    sched.op_offset_within_parent.at(lp) = max_delay;
+    cout << "final delay of " << lp->name <<
+        ": \n\t"<< max_delay << endl;
+  }
+}
+
+
 void adjust_outer_delays_sequentially(schedule_info& sched, prog& prg) {
   cout << "Adjusting delays of " << prg.name << "After vectorization" << endl;
   int d = 0;
@@ -18717,6 +18766,8 @@ void dump_resnet_latency(CodegenOptions& options, schedule_info& sched, op* root
     adjust_coarse_grained_loop_delays_sequentially_without_opt(sched, prg);
     tighten_coarse_grained_iis(sched, prg);
     adjust_outer_delays_sequentially(sched, prg);
+    //adjust_outer_delays_sequentially_with_glb_guard(sched, prg);
+
 
   } else if (options.fallback_schedule == SEQUENTIAL_SCHEDULE){
     //adjust_outer_delays(sched, prg);
@@ -18915,7 +18966,8 @@ void garnet_single_port_ram_schedule(CodegenOptions& options, schedule_info& sch
     coarse_grained_pipeline_optimization(sched, prg);
     adjust_coarse_grained_loop_delays_sequentially_without_opt(sched, prg);
     tighten_coarse_grained_iis(sched, prg);
-    adjust_outer_delays_sequentially(sched, prg);
+    //adjust_outer_delays_sequentially(sched, prg);
+    adjust_outer_delays_sequentially_with_glb_guard(sched, prg);
 
   } else if (options.fallback_schedule == SEQUENTIAL_SCHEDULE){
     //adjust_outer_delays(sched, prg);
