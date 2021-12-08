@@ -18170,7 +18170,7 @@ void adjust_outer_delays_sequentially_with_glb_guard(schedule_info& sched, prog&
       glb_load_latency = std::max(sched.total_latency(lp), glb_load_latency);
     }
   }
-  cout << "Find GLB load latency = " << glb_load_latency << endl; 
+  cout << "Find GLB load latency = " << glb_load_latency << endl;
   map<string, int> coarse_pipeline_II;
   for (auto name : topologically_sort_kernels(prg)) {
     auto lp = prg.find_loop(name);
@@ -18206,10 +18206,23 @@ void adjust_outer_delays_sequentially_with_glb_guard(schedule_info& sched, prog&
 }
 
 
-void adjust_outer_delays_sequentially(schedule_info& sched, prog& prg) {
+void adjust_outer_delays_sequentially(schedule_info& sched, prog& prg, bool glb_sync = true) {
   cout << "Adjusting delays of " << prg.name << "After vectorization" << endl;
   int d = 0;
   map<string, int> coarse_pipeline_II;
+  int glb_load_latency = 0;
+  if (glb_sync) {
+    for (auto name : topologically_sort_kernels(prg)) {
+      auto lp = prg.find_loop(name);
+      auto prods =  get_producers(name, prg);
+      if (prods.size() == 0 && contains(name, "glb")) {
+        cout << "\tkernel <" << lp->name << "> is the glb loading kernel." << endl;
+        cout << "\tname<" << name << endl;
+        glb_load_latency = std::max(sched.total_latency(lp), glb_load_latency);
+      }
+    }
+    cout << "Find GLB load latency = " << glb_load_latency << endl;
+  }
   for (auto name : topologically_sort_kernels(prg)) {
     auto lp = prg.find_loop(name);
     cout << "Push kernel <" << lp->name << "> into delay adjusting queue." << endl;
@@ -18231,6 +18244,12 @@ void adjust_outer_delays_sequentially(schedule_info& sched, prog& prg) {
         op* prod_op = prg.find_loop(prod);
         max_delay = max(coarse_pipeline_II.at(prod)
                 + sched.op_offset_within_parent.at(prod_op), max_delay);
+    }
+    //FIXME: Hack for glb latency sync nothing can start before glb transfer
+    if (glb_sync) {
+      if (!contains(name, "glb")) {
+        max_delay = max(glb_load_latency, max_delay);
+      }
     }
 
     sched.op_offset_within_parent.at(lp) = max_delay;
@@ -18766,7 +18785,6 @@ void dump_resnet_latency(CodegenOptions& options, schedule_info& sched, op* root
     adjust_coarse_grained_loop_delays_sequentially_without_opt(sched, prg);
     tighten_coarse_grained_iis(sched, prg);
     adjust_outer_delays_sequentially(sched, prg);
-    //adjust_outer_delays_sequentially_with_glb_guard(sched, prg);
 
 
   } else if (options.fallback_schedule == SEQUENTIAL_SCHEDULE){
@@ -18966,8 +18984,7 @@ void garnet_single_port_ram_schedule(CodegenOptions& options, schedule_info& sch
     coarse_grained_pipeline_optimization(sched, prg);
     adjust_coarse_grained_loop_delays_sequentially_without_opt(sched, prg);
     tighten_coarse_grained_iis(sched, prg);
-    //adjust_outer_delays_sequentially(sched, prg);
-    adjust_outer_delays_sequentially_with_glb_guard(sched, prg);
+    adjust_outer_delays_sequentially(sched, prg);
 
   } else if (options.fallback_schedule == SEQUENTIAL_SCHEDULE){
     //adjust_outer_delays(sched, prg);
