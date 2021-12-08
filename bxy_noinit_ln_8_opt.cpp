@@ -1,11 +1,11 @@
-#ifndef __VIVADO_SYNTH__
+#ifndef __SYNTHESIS__
 #include <fstream>
 using namespace std;
 
   // Debug utility
   ofstream* global_debug_handle;
 
-#endif //__VIVADO_SYNTH__
+#endif //__SYNTHESIS__
 // compute file: bxy_noinit_ln_8_opt_compute_units.h
 #include "bxy_noinit_ln_8_opt_compute_units.h"
 
@@ -16,16 +16,16 @@ struct blurx_blurx_update_0_write0_to_bxy_noinit_ln_8_rd0_cache {
   // 0, 1
 	fifo<hw_uint<16>, 2> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(1 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -38,16 +38,16 @@ struct blurx_blurx_update_0_write1_to_bxy_noinit_ln_8_rd1_cache {
   // 0, 1
 	fifo<hw_uint<16>, 2> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(1 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -60,16 +60,16 @@ struct blurx_blurx_update_0_write4_to_bxy_noinit_ln_8_rd10_cache {
   // 0, 1
 	fifo<hw_uint<16>, 2> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(1 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -82,16 +82,16 @@ struct blurx_blurx_update_0_write5_to_bxy_noinit_ln_8_rd11_cache {
   // 0, 1
 	fifo<hw_uint<16>, 2> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(1 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -104,16 +104,16 @@ struct blurx_blurx_update_0_write4_to_bxy_noinit_ln_8_rd12_cache {
   // 0, 1
 	fifo<hw_uint<16>, 2> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(1 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -126,16 +126,16 @@ struct blurx_blurx_update_0_write5_to_bxy_noinit_ln_8_rd13_cache {
   // 0, 1
 	fifo<hw_uint<16>, 2> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(1 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -148,16 +148,16 @@ struct blurx_blurx_update_0_write6_to_bxy_noinit_ln_8_rd14_cache {
   // 0, 1
 	fifo<hw_uint<16>, 2> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(1 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -170,16 +170,16 @@ struct blurx_blurx_update_0_write5_to_bxy_noinit_ln_8_rd15_cache {
   // 0, 1
 	fifo<hw_uint<16>, 2> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(1 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -192,16 +192,16 @@ struct blurx_blurx_update_0_write6_to_bxy_noinit_ln_8_rd16_cache {
   // 0, 1
 	fifo<hw_uint<16>, 2> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(1 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -214,16 +214,16 @@ struct blurx_blurx_update_0_write7_to_bxy_noinit_ln_8_rd17_cache {
   // 0, 1
 	fifo<hw_uint<16>, 2> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(1 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -236,16 +236,16 @@ struct blurx_blurx_update_0_write6_to_bxy_noinit_ln_8_rd18_cache {
   // 0, 1
 	fifo<hw_uint<16>, 2> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(1 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -258,16 +258,16 @@ struct blurx_blurx_update_0_write7_to_bxy_noinit_ln_8_rd19_cache {
   // 0, 1
 	fifo<hw_uint<16>, 2> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(1 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -280,16 +280,16 @@ struct blurx_blurx_update_0_write2_to_bxy_noinit_ln_8_rd2_cache {
   // 0, 1
 	fifo<hw_uint<16>, 2> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(1 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -302,16 +302,16 @@ struct blurx_blurx_update_0_write0_to_bxy_noinit_ln_8_rd20_cache {
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -324,16 +324,16 @@ struct blurx_blurx_update_0_write7_to_bxy_noinit_ln_8_rd21_cache {
   // 0, 1
 	fifo<hw_uint<16>, 2> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(1 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -346,16 +346,16 @@ struct blurx_blurx_update_0_write0_to_bxy_noinit_ln_8_rd22_cache {
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -368,16 +368,16 @@ struct blurx_blurx_update_0_write1_to_bxy_noinit_ln_8_rd23_cache {
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -390,16 +390,16 @@ struct blurx_blurx_update_0_write1_to_bxy_noinit_ln_8_rd3_cache {
   // 0, 1
 	fifo<hw_uint<16>, 2> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(1 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -412,16 +412,16 @@ struct blurx_blurx_update_0_write2_to_bxy_noinit_ln_8_rd4_cache {
   // 0, 1
 	fifo<hw_uint<16>, 2> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(1 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -434,16 +434,16 @@ struct blurx_blurx_update_0_write3_to_bxy_noinit_ln_8_rd5_cache {
   // 0, 1
 	fifo<hw_uint<16>, 2> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(1 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -456,16 +456,16 @@ struct blurx_blurx_update_0_write2_to_bxy_noinit_ln_8_rd6_cache {
   // 0, 1
 	fifo<hw_uint<16>, 2> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(1 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -478,16 +478,16 @@ struct blurx_blurx_update_0_write3_to_bxy_noinit_ln_8_rd7_cache {
   // 0, 1
 	fifo<hw_uint<16>, 2> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(1 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -500,16 +500,16 @@ struct blurx_blurx_update_0_write4_to_bxy_noinit_ln_8_rd8_cache {
   // 0, 1
 	fifo<hw_uint<16>, 2> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(1 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -522,16 +522,16 @@ struct blurx_blurx_update_0_write3_to_bxy_noinit_ln_8_rd9_cache {
   // 0, 1
 	fifo<hw_uint<16>, 2> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(1 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -641,8 +641,8 @@ inline void blurx_blurx_update_0_write7_write(hw_uint<16>& blurx_blurx_update_0_
 }
 
 inline hw_uint<16> bxy_noinit_ln_8_rd0_select(blurx_cache& blurx, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // bxy_noinit_ln_8_rd0 read pattern: { bxy_noinit_ln_8_update_0[d0, d1] -> blurx[8d0, d1] : 0 <= d0 <= 239 and 0 <= d1 <= 1079 }
   // Read schedule : { bxy_noinit_ln_8_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : 0 <= d0 <= 239 and 0 <= d1 <= 1079 }
   // Write schedule: { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 240 and 0 <= d1 <= 1079 }
@@ -652,8 +652,8 @@ inline hw_uint<16> bxy_noinit_ln_8_rd0_select(blurx_cache& blurx, int d0, int d1
 }
 
 inline hw_uint<16> bxy_noinit_ln_8_rd1_select(blurx_cache& blurx, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // bxy_noinit_ln_8_rd1 read pattern: { bxy_noinit_ln_8_update_0[d0, d1] -> blurx[1 + 8d0, d1] : 0 <= d0 <= 239 and 0 <= d1 <= 1079 }
   // Read schedule : { bxy_noinit_ln_8_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : 0 <= d0 <= 239 and 0 <= d1 <= 1079 }
   // Write schedule: { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 240 and 0 <= d1 <= 1079 }
@@ -663,8 +663,8 @@ inline hw_uint<16> bxy_noinit_ln_8_rd1_select(blurx_cache& blurx, int d0, int d1
 }
 
 inline hw_uint<16> bxy_noinit_ln_8_rd10_select(blurx_cache& blurx, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // bxy_noinit_ln_8_rd10 read pattern: { bxy_noinit_ln_8_update_0[d0, d1] -> blurx[4 + 8d0, d1] : 0 <= d0 <= 239 and 0 <= d1 <= 1079 }
   // Read schedule : { bxy_noinit_ln_8_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : 0 <= d0 <= 239 and 0 <= d1 <= 1079 }
   // Write schedule: { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 240 and 0 <= d1 <= 1079 }
@@ -674,8 +674,8 @@ inline hw_uint<16> bxy_noinit_ln_8_rd10_select(blurx_cache& blurx, int d0, int d
 }
 
 inline hw_uint<16> bxy_noinit_ln_8_rd11_select(blurx_cache& blurx, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // bxy_noinit_ln_8_rd11 read pattern: { bxy_noinit_ln_8_update_0[d0, d1] -> blurx[5 + 8d0, d1] : 0 <= d0 <= 239 and 0 <= d1 <= 1079 }
   // Read schedule : { bxy_noinit_ln_8_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : 0 <= d0 <= 239 and 0 <= d1 <= 1079 }
   // Write schedule: { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 240 and 0 <= d1 <= 1079 }
@@ -685,8 +685,8 @@ inline hw_uint<16> bxy_noinit_ln_8_rd11_select(blurx_cache& blurx, int d0, int d
 }
 
 inline hw_uint<16> bxy_noinit_ln_8_rd12_select(blurx_cache& blurx, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // bxy_noinit_ln_8_rd12 read pattern: { bxy_noinit_ln_8_update_0[d0, d1] -> blurx[4 + 8d0, d1] : 0 <= d0 <= 239 and 0 <= d1 <= 1079 }
   // Read schedule : { bxy_noinit_ln_8_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : 0 <= d0 <= 239 and 0 <= d1 <= 1079 }
   // Write schedule: { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 240 and 0 <= d1 <= 1079 }
@@ -696,8 +696,8 @@ inline hw_uint<16> bxy_noinit_ln_8_rd12_select(blurx_cache& blurx, int d0, int d
 }
 
 inline hw_uint<16> bxy_noinit_ln_8_rd13_select(blurx_cache& blurx, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // bxy_noinit_ln_8_rd13 read pattern: { bxy_noinit_ln_8_update_0[d0, d1] -> blurx[5 + 8d0, d1] : 0 <= d0 <= 239 and 0 <= d1 <= 1079 }
   // Read schedule : { bxy_noinit_ln_8_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : 0 <= d0 <= 239 and 0 <= d1 <= 1079 }
   // Write schedule: { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 240 and 0 <= d1 <= 1079 }
@@ -707,8 +707,8 @@ inline hw_uint<16> bxy_noinit_ln_8_rd13_select(blurx_cache& blurx, int d0, int d
 }
 
 inline hw_uint<16> bxy_noinit_ln_8_rd14_select(blurx_cache& blurx, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // bxy_noinit_ln_8_rd14 read pattern: { bxy_noinit_ln_8_update_0[d0, d1] -> blurx[6 + 8d0, d1] : 0 <= d0 <= 239 and 0 <= d1 <= 1079 }
   // Read schedule : { bxy_noinit_ln_8_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : 0 <= d0 <= 239 and 0 <= d1 <= 1079 }
   // Write schedule: { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 240 and 0 <= d1 <= 1079 }
@@ -718,8 +718,8 @@ inline hw_uint<16> bxy_noinit_ln_8_rd14_select(blurx_cache& blurx, int d0, int d
 }
 
 inline hw_uint<16> bxy_noinit_ln_8_rd15_select(blurx_cache& blurx, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // bxy_noinit_ln_8_rd15 read pattern: { bxy_noinit_ln_8_update_0[d0, d1] -> blurx[5 + 8d0, d1] : 0 <= d0 <= 239 and 0 <= d1 <= 1079 }
   // Read schedule : { bxy_noinit_ln_8_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : 0 <= d0 <= 239 and 0 <= d1 <= 1079 }
   // Write schedule: { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 240 and 0 <= d1 <= 1079 }
@@ -729,8 +729,8 @@ inline hw_uint<16> bxy_noinit_ln_8_rd15_select(blurx_cache& blurx, int d0, int d
 }
 
 inline hw_uint<16> bxy_noinit_ln_8_rd16_select(blurx_cache& blurx, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // bxy_noinit_ln_8_rd16 read pattern: { bxy_noinit_ln_8_update_0[d0, d1] -> blurx[6 + 8d0, d1] : 0 <= d0 <= 239 and 0 <= d1 <= 1079 }
   // Read schedule : { bxy_noinit_ln_8_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : 0 <= d0 <= 239 and 0 <= d1 <= 1079 }
   // Write schedule: { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 240 and 0 <= d1 <= 1079 }
@@ -740,8 +740,8 @@ inline hw_uint<16> bxy_noinit_ln_8_rd16_select(blurx_cache& blurx, int d0, int d
 }
 
 inline hw_uint<16> bxy_noinit_ln_8_rd17_select(blurx_cache& blurx, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // bxy_noinit_ln_8_rd17 read pattern: { bxy_noinit_ln_8_update_0[d0, d1] -> blurx[7 + 8d0, d1] : 0 <= d0 <= 239 and 0 <= d1 <= 1079 }
   // Read schedule : { bxy_noinit_ln_8_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : 0 <= d0 <= 239 and 0 <= d1 <= 1079 }
   // Write schedule: { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 240 and 0 <= d1 <= 1079 }
@@ -751,8 +751,8 @@ inline hw_uint<16> bxy_noinit_ln_8_rd17_select(blurx_cache& blurx, int d0, int d
 }
 
 inline hw_uint<16> bxy_noinit_ln_8_rd18_select(blurx_cache& blurx, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // bxy_noinit_ln_8_rd18 read pattern: { bxy_noinit_ln_8_update_0[d0, d1] -> blurx[6 + 8d0, d1] : 0 <= d0 <= 239 and 0 <= d1 <= 1079 }
   // Read schedule : { bxy_noinit_ln_8_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : 0 <= d0 <= 239 and 0 <= d1 <= 1079 }
   // Write schedule: { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 240 and 0 <= d1 <= 1079 }
@@ -762,8 +762,8 @@ inline hw_uint<16> bxy_noinit_ln_8_rd18_select(blurx_cache& blurx, int d0, int d
 }
 
 inline hw_uint<16> bxy_noinit_ln_8_rd19_select(blurx_cache& blurx, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // bxy_noinit_ln_8_rd19 read pattern: { bxy_noinit_ln_8_update_0[d0, d1] -> blurx[7 + 8d0, d1] : 0 <= d0 <= 239 and 0 <= d1 <= 1079 }
   // Read schedule : { bxy_noinit_ln_8_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : 0 <= d0 <= 239 and 0 <= d1 <= 1079 }
   // Write schedule: { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 240 and 0 <= d1 <= 1079 }
@@ -773,8 +773,8 @@ inline hw_uint<16> bxy_noinit_ln_8_rd19_select(blurx_cache& blurx, int d0, int d
 }
 
 inline hw_uint<16> bxy_noinit_ln_8_rd2_select(blurx_cache& blurx, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // bxy_noinit_ln_8_rd2 read pattern: { bxy_noinit_ln_8_update_0[d0, d1] -> blurx[2 + 8d0, d1] : 0 <= d0 <= 239 and 0 <= d1 <= 1079 }
   // Read schedule : { bxy_noinit_ln_8_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : 0 <= d0 <= 239 and 0 <= d1 <= 1079 }
   // Write schedule: { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 240 and 0 <= d1 <= 1079 }
@@ -784,8 +784,8 @@ inline hw_uint<16> bxy_noinit_ln_8_rd2_select(blurx_cache& blurx, int d0, int d1
 }
 
 inline hw_uint<16> bxy_noinit_ln_8_rd20_select(blurx_cache& blurx, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // bxy_noinit_ln_8_rd20 read pattern: { bxy_noinit_ln_8_update_0[d0, d1] -> blurx[8 + 8d0, d1] : 0 <= d0 <= 239 and 0 <= d1 <= 1079 }
   // Read schedule : { bxy_noinit_ln_8_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : 0 <= d0 <= 239 and 0 <= d1 <= 1079 }
   // Write schedule: { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 240 and 0 <= d1 <= 1079 }
@@ -795,8 +795,8 @@ inline hw_uint<16> bxy_noinit_ln_8_rd20_select(blurx_cache& blurx, int d0, int d
 }
 
 inline hw_uint<16> bxy_noinit_ln_8_rd21_select(blurx_cache& blurx, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // bxy_noinit_ln_8_rd21 read pattern: { bxy_noinit_ln_8_update_0[d0, d1] -> blurx[7 + 8d0, d1] : 0 <= d0 <= 239 and 0 <= d1 <= 1079 }
   // Read schedule : { bxy_noinit_ln_8_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : 0 <= d0 <= 239 and 0 <= d1 <= 1079 }
   // Write schedule: { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 240 and 0 <= d1 <= 1079 }
@@ -806,8 +806,8 @@ inline hw_uint<16> bxy_noinit_ln_8_rd21_select(blurx_cache& blurx, int d0, int d
 }
 
 inline hw_uint<16> bxy_noinit_ln_8_rd22_select(blurx_cache& blurx, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // bxy_noinit_ln_8_rd22 read pattern: { bxy_noinit_ln_8_update_0[d0, d1] -> blurx[8 + 8d0, d1] : 0 <= d0 <= 239 and 0 <= d1 <= 1079 }
   // Read schedule : { bxy_noinit_ln_8_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : 0 <= d0 <= 239 and 0 <= d1 <= 1079 }
   // Write schedule: { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 240 and 0 <= d1 <= 1079 }
@@ -817,8 +817,8 @@ inline hw_uint<16> bxy_noinit_ln_8_rd22_select(blurx_cache& blurx, int d0, int d
 }
 
 inline hw_uint<16> bxy_noinit_ln_8_rd23_select(blurx_cache& blurx, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // bxy_noinit_ln_8_rd23 read pattern: { bxy_noinit_ln_8_update_0[d0, d1] -> blurx[9 + 8d0, d1] : 0 <= d0 <= 239 and 0 <= d1 <= 1079 }
   // Read schedule : { bxy_noinit_ln_8_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : 0 <= d0 <= 239 and 0 <= d1 <= 1079 }
   // Write schedule: { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 240 and 0 <= d1 <= 1079 }
@@ -828,8 +828,8 @@ inline hw_uint<16> bxy_noinit_ln_8_rd23_select(blurx_cache& blurx, int d0, int d
 }
 
 inline hw_uint<16> bxy_noinit_ln_8_rd3_select(blurx_cache& blurx, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // bxy_noinit_ln_8_rd3 read pattern: { bxy_noinit_ln_8_update_0[d0, d1] -> blurx[1 + 8d0, d1] : 0 <= d0 <= 239 and 0 <= d1 <= 1079 }
   // Read schedule : { bxy_noinit_ln_8_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : 0 <= d0 <= 239 and 0 <= d1 <= 1079 }
   // Write schedule: { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 240 and 0 <= d1 <= 1079 }
@@ -839,8 +839,8 @@ inline hw_uint<16> bxy_noinit_ln_8_rd3_select(blurx_cache& blurx, int d0, int d1
 }
 
 inline hw_uint<16> bxy_noinit_ln_8_rd4_select(blurx_cache& blurx, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // bxy_noinit_ln_8_rd4 read pattern: { bxy_noinit_ln_8_update_0[d0, d1] -> blurx[2 + 8d0, d1] : 0 <= d0 <= 239 and 0 <= d1 <= 1079 }
   // Read schedule : { bxy_noinit_ln_8_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : 0 <= d0 <= 239 and 0 <= d1 <= 1079 }
   // Write schedule: { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 240 and 0 <= d1 <= 1079 }
@@ -850,8 +850,8 @@ inline hw_uint<16> bxy_noinit_ln_8_rd4_select(blurx_cache& blurx, int d0, int d1
 }
 
 inline hw_uint<16> bxy_noinit_ln_8_rd5_select(blurx_cache& blurx, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // bxy_noinit_ln_8_rd5 read pattern: { bxy_noinit_ln_8_update_0[d0, d1] -> blurx[3 + 8d0, d1] : 0 <= d0 <= 239 and 0 <= d1 <= 1079 }
   // Read schedule : { bxy_noinit_ln_8_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : 0 <= d0 <= 239 and 0 <= d1 <= 1079 }
   // Write schedule: { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 240 and 0 <= d1 <= 1079 }
@@ -861,8 +861,8 @@ inline hw_uint<16> bxy_noinit_ln_8_rd5_select(blurx_cache& blurx, int d0, int d1
 }
 
 inline hw_uint<16> bxy_noinit_ln_8_rd6_select(blurx_cache& blurx, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // bxy_noinit_ln_8_rd6 read pattern: { bxy_noinit_ln_8_update_0[d0, d1] -> blurx[2 + 8d0, d1] : 0 <= d0 <= 239 and 0 <= d1 <= 1079 }
   // Read schedule : { bxy_noinit_ln_8_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : 0 <= d0 <= 239 and 0 <= d1 <= 1079 }
   // Write schedule: { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 240 and 0 <= d1 <= 1079 }
@@ -872,8 +872,8 @@ inline hw_uint<16> bxy_noinit_ln_8_rd6_select(blurx_cache& blurx, int d0, int d1
 }
 
 inline hw_uint<16> bxy_noinit_ln_8_rd7_select(blurx_cache& blurx, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // bxy_noinit_ln_8_rd7 read pattern: { bxy_noinit_ln_8_update_0[d0, d1] -> blurx[3 + 8d0, d1] : 0 <= d0 <= 239 and 0 <= d1 <= 1079 }
   // Read schedule : { bxy_noinit_ln_8_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : 0 <= d0 <= 239 and 0 <= d1 <= 1079 }
   // Write schedule: { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 240 and 0 <= d1 <= 1079 }
@@ -883,8 +883,8 @@ inline hw_uint<16> bxy_noinit_ln_8_rd7_select(blurx_cache& blurx, int d0, int d1
 }
 
 inline hw_uint<16> bxy_noinit_ln_8_rd8_select(blurx_cache& blurx, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // bxy_noinit_ln_8_rd8 read pattern: { bxy_noinit_ln_8_update_0[d0, d1] -> blurx[4 + 8d0, d1] : 0 <= d0 <= 239 and 0 <= d1 <= 1079 }
   // Read schedule : { bxy_noinit_ln_8_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : 0 <= d0 <= 239 and 0 <= d1 <= 1079 }
   // Write schedule: { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 240 and 0 <= d1 <= 1079 }
@@ -894,8 +894,8 @@ inline hw_uint<16> bxy_noinit_ln_8_rd8_select(blurx_cache& blurx, int d0, int d1
 }
 
 inline hw_uint<16> bxy_noinit_ln_8_rd9_select(blurx_cache& blurx, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // bxy_noinit_ln_8_rd9 read pattern: { bxy_noinit_ln_8_update_0[d0, d1] -> blurx[3 + 8d0, d1] : 0 <= d0 <= 239 and 0 <= d1 <= 1079 }
   // Read schedule : { bxy_noinit_ln_8_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : 0 <= d0 <= 239 and 0 <= d1 <= 1079 }
   // Write schedule: { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 240 and 0 <= d1 <= 1079 }
@@ -1054,8 +1054,8 @@ struct input_input_update_0_write0_merged_banks_3_cache {
 	}
 
 	inline hw_uint<16> peek_240() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f1.back();
 	}
 
@@ -1064,8 +1064,8 @@ struct input_input_update_0_write0_merged_banks_3_cache {
 	}
 
 	inline hw_uint<16> peek_481() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f3.back();
 	}
 
@@ -1076,20 +1076,20 @@ struct input_input_update_0_write0_merged_banks_3_cache {
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 240
     f4 = f3.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 240 reading from capacity: 1
     f3.push(f2);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 240
     f2 = f1.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 240 reading from capacity: 1
     f1.push(f0);
     // cap: 1
@@ -1115,8 +1115,8 @@ struct input_input_update_0_write1_merged_banks_3_cache {
 	}
 
 	inline hw_uint<16> peek_240() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f1.back();
 	}
 
@@ -1125,8 +1125,8 @@ struct input_input_update_0_write1_merged_banks_3_cache {
 	}
 
 	inline hw_uint<16> peek_481() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f3.back();
 	}
 
@@ -1137,20 +1137,20 @@ struct input_input_update_0_write1_merged_banks_3_cache {
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 240
     f4 = f3.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 240 reading from capacity: 1
     f3.push(f2);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 240
     f2 = f1.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 240 reading from capacity: 1
     f1.push(f0);
     // cap: 1
@@ -1176,8 +1176,8 @@ struct input_input_update_0_write2_merged_banks_3_cache {
 	}
 
 	inline hw_uint<16> peek_240() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f1.back();
 	}
 
@@ -1186,8 +1186,8 @@ struct input_input_update_0_write2_merged_banks_3_cache {
 	}
 
 	inline hw_uint<16> peek_481() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f3.back();
 	}
 
@@ -1198,20 +1198,20 @@ struct input_input_update_0_write2_merged_banks_3_cache {
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 240
     f4 = f3.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 240 reading from capacity: 1
     f3.push(f2);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 240
     f2 = f1.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 240 reading from capacity: 1
     f1.push(f0);
     // cap: 1
@@ -1237,8 +1237,8 @@ struct input_input_update_0_write3_merged_banks_3_cache {
 	}
 
 	inline hw_uint<16> peek_240() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f1.back();
 	}
 
@@ -1247,8 +1247,8 @@ struct input_input_update_0_write3_merged_banks_3_cache {
 	}
 
 	inline hw_uint<16> peek_481() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f3.back();
 	}
 
@@ -1259,20 +1259,20 @@ struct input_input_update_0_write3_merged_banks_3_cache {
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 240
     f4 = f3.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 240 reading from capacity: 1
     f3.push(f2);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 240
     f2 = f1.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 240 reading from capacity: 1
     f1.push(f0);
     // cap: 1
@@ -1298,8 +1298,8 @@ struct input_input_update_0_write4_merged_banks_3_cache {
 	}
 
 	inline hw_uint<16> peek_240() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f1.back();
 	}
 
@@ -1308,8 +1308,8 @@ struct input_input_update_0_write4_merged_banks_3_cache {
 	}
 
 	inline hw_uint<16> peek_481() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f3.back();
 	}
 
@@ -1320,20 +1320,20 @@ struct input_input_update_0_write4_merged_banks_3_cache {
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 240
     f4 = f3.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 240 reading from capacity: 1
     f3.push(f2);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 240
     f2 = f1.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 240 reading from capacity: 1
     f1.push(f0);
     // cap: 1
@@ -1359,8 +1359,8 @@ struct input_input_update_0_write5_merged_banks_3_cache {
 	}
 
 	inline hw_uint<16> peek_240() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f1.back();
 	}
 
@@ -1369,8 +1369,8 @@ struct input_input_update_0_write5_merged_banks_3_cache {
 	}
 
 	inline hw_uint<16> peek_481() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f3.back();
 	}
 
@@ -1381,20 +1381,20 @@ struct input_input_update_0_write5_merged_banks_3_cache {
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 240
     f4 = f3.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 240 reading from capacity: 1
     f3.push(f2);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 240
     f2 = f1.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 240 reading from capacity: 1
     f1.push(f0);
     // cap: 1
@@ -1420,8 +1420,8 @@ struct input_input_update_0_write6_merged_banks_3_cache {
 	}
 
 	inline hw_uint<16> peek_240() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f1.back();
 	}
 
@@ -1430,8 +1430,8 @@ struct input_input_update_0_write6_merged_banks_3_cache {
 	}
 
 	inline hw_uint<16> peek_481() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f3.back();
 	}
 
@@ -1442,20 +1442,20 @@ struct input_input_update_0_write6_merged_banks_3_cache {
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 240
     f4 = f3.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 240 reading from capacity: 1
     f3.push(f2);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 240
     f2 = f1.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 240 reading from capacity: 1
     f1.push(f0);
     // cap: 1
@@ -1481,8 +1481,8 @@ struct input_input_update_0_write7_merged_banks_3_cache {
 	}
 
 	inline hw_uint<16> peek_240() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f1.back();
 	}
 
@@ -1491,8 +1491,8 @@ struct input_input_update_0_write7_merged_banks_3_cache {
 	}
 
 	inline hw_uint<16> peek_481() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f3.back();
 	}
 
@@ -1503,20 +1503,20 @@ struct input_input_update_0_write7_merged_banks_3_cache {
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 240
     f4 = f3.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 240 reading from capacity: 1
     f3.push(f2);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 240
     f2 = f1.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 240 reading from capacity: 1
     f1.push(f0);
     // cap: 1
@@ -1597,8 +1597,8 @@ inline void input_input_update_0_write7_write(hw_uint<16>& input_input_update_0_
 }
 
 inline hw_uint<16> blurx_rd0_select(input_cache& input, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // blurx_rd0 read pattern: { blurx_update_0[d0, d1] -> input[8d0, d1] : 0 <= d0 <= 240 and 0 <= d1 <= 1079 }
   // Read schedule : { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 240 and 0 <= d1 <= 1079 }
   // Write schedule: { input_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 240 and 0 <= d1 <= 1081 }
@@ -1608,8 +1608,8 @@ inline hw_uint<16> blurx_rd0_select(input_cache& input, int d0, int d1, int dyna
 }
 
 inline hw_uint<16> blurx_rd1_select(input_cache& input, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // blurx_rd1 read pattern: { blurx_update_0[d0, d1] -> input[8d0, 1 + d1] : 0 <= d0 <= 240 and 0 <= d1 <= 1079 }
   // Read schedule : { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 240 and 0 <= d1 <= 1079 }
   // Write schedule: { input_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 240 and 0 <= d1 <= 1081 }
@@ -1619,8 +1619,8 @@ inline hw_uint<16> blurx_rd1_select(input_cache& input, int d0, int d1, int dyna
 }
 
 inline hw_uint<16> blurx_rd10_select(input_cache& input, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // blurx_rd10 read pattern: { blurx_update_0[d0, d1] -> input[3 + 8d0, 1 + d1] : 0 <= d0 <= 240 and 0 <= d1 <= 1079 }
   // Read schedule : { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 240 and 0 <= d1 <= 1079 }
   // Write schedule: { input_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 240 and 0 <= d1 <= 1081 }
@@ -1630,8 +1630,8 @@ inline hw_uint<16> blurx_rd10_select(input_cache& input, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> blurx_rd11_select(input_cache& input, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // blurx_rd11 read pattern: { blurx_update_0[d0, d1] -> input[3 + 8d0, 2 + d1] : 0 <= d0 <= 240 and 0 <= d1 <= 1079 }
   // Read schedule : { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 240 and 0 <= d1 <= 1079 }
   // Write schedule: { input_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 240 and 0 <= d1 <= 1081 }
@@ -1641,8 +1641,8 @@ inline hw_uint<16> blurx_rd11_select(input_cache& input, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> blurx_rd12_select(input_cache& input, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // blurx_rd12 read pattern: { blurx_update_0[d0, d1] -> input[4 + 8d0, d1] : 0 <= d0 <= 240 and 0 <= d1 <= 1079 }
   // Read schedule : { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 240 and 0 <= d1 <= 1079 }
   // Write schedule: { input_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 240 and 0 <= d1 <= 1081 }
@@ -1652,8 +1652,8 @@ inline hw_uint<16> blurx_rd12_select(input_cache& input, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> blurx_rd13_select(input_cache& input, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // blurx_rd13 read pattern: { blurx_update_0[d0, d1] -> input[4 + 8d0, 1 + d1] : 0 <= d0 <= 240 and 0 <= d1 <= 1079 }
   // Read schedule : { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 240 and 0 <= d1 <= 1079 }
   // Write schedule: { input_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 240 and 0 <= d1 <= 1081 }
@@ -1663,8 +1663,8 @@ inline hw_uint<16> blurx_rd13_select(input_cache& input, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> blurx_rd14_select(input_cache& input, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // blurx_rd14 read pattern: { blurx_update_0[d0, d1] -> input[4 + 8d0, 2 + d1] : 0 <= d0 <= 240 and 0 <= d1 <= 1079 }
   // Read schedule : { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 240 and 0 <= d1 <= 1079 }
   // Write schedule: { input_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 240 and 0 <= d1 <= 1081 }
@@ -1674,8 +1674,8 @@ inline hw_uint<16> blurx_rd14_select(input_cache& input, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> blurx_rd15_select(input_cache& input, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // blurx_rd15 read pattern: { blurx_update_0[d0, d1] -> input[5 + 8d0, d1] : 0 <= d0 <= 240 and 0 <= d1 <= 1079 }
   // Read schedule : { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 240 and 0 <= d1 <= 1079 }
   // Write schedule: { input_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 240 and 0 <= d1 <= 1081 }
@@ -1685,8 +1685,8 @@ inline hw_uint<16> blurx_rd15_select(input_cache& input, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> blurx_rd16_select(input_cache& input, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // blurx_rd16 read pattern: { blurx_update_0[d0, d1] -> input[5 + 8d0, 1 + d1] : 0 <= d0 <= 240 and 0 <= d1 <= 1079 }
   // Read schedule : { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 240 and 0 <= d1 <= 1079 }
   // Write schedule: { input_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 240 and 0 <= d1 <= 1081 }
@@ -1696,8 +1696,8 @@ inline hw_uint<16> blurx_rd16_select(input_cache& input, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> blurx_rd17_select(input_cache& input, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // blurx_rd17 read pattern: { blurx_update_0[d0, d1] -> input[5 + 8d0, 2 + d1] : 0 <= d0 <= 240 and 0 <= d1 <= 1079 }
   // Read schedule : { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 240 and 0 <= d1 <= 1079 }
   // Write schedule: { input_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 240 and 0 <= d1 <= 1081 }
@@ -1707,8 +1707,8 @@ inline hw_uint<16> blurx_rd17_select(input_cache& input, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> blurx_rd18_select(input_cache& input, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // blurx_rd18 read pattern: { blurx_update_0[d0, d1] -> input[6 + 8d0, d1] : 0 <= d0 <= 240 and 0 <= d1 <= 1079 }
   // Read schedule : { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 240 and 0 <= d1 <= 1079 }
   // Write schedule: { input_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 240 and 0 <= d1 <= 1081 }
@@ -1718,8 +1718,8 @@ inline hw_uint<16> blurx_rd18_select(input_cache& input, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> blurx_rd19_select(input_cache& input, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // blurx_rd19 read pattern: { blurx_update_0[d0, d1] -> input[6 + 8d0, 1 + d1] : 0 <= d0 <= 240 and 0 <= d1 <= 1079 }
   // Read schedule : { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 240 and 0 <= d1 <= 1079 }
   // Write schedule: { input_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 240 and 0 <= d1 <= 1081 }
@@ -1729,8 +1729,8 @@ inline hw_uint<16> blurx_rd19_select(input_cache& input, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> blurx_rd2_select(input_cache& input, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // blurx_rd2 read pattern: { blurx_update_0[d0, d1] -> input[8d0, 2 + d1] : 0 <= d0 <= 240 and 0 <= d1 <= 1079 }
   // Read schedule : { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 240 and 0 <= d1 <= 1079 }
   // Write schedule: { input_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 240 and 0 <= d1 <= 1081 }
@@ -1740,8 +1740,8 @@ inline hw_uint<16> blurx_rd2_select(input_cache& input, int d0, int d1, int dyna
 }
 
 inline hw_uint<16> blurx_rd20_select(input_cache& input, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // blurx_rd20 read pattern: { blurx_update_0[d0, d1] -> input[6 + 8d0, 2 + d1] : 0 <= d0 <= 240 and 0 <= d1 <= 1079 }
   // Read schedule : { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 240 and 0 <= d1 <= 1079 }
   // Write schedule: { input_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 240 and 0 <= d1 <= 1081 }
@@ -1751,8 +1751,8 @@ inline hw_uint<16> blurx_rd20_select(input_cache& input, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> blurx_rd21_select(input_cache& input, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // blurx_rd21 read pattern: { blurx_update_0[d0, d1] -> input[7 + 8d0, d1] : 0 <= d0 <= 240 and 0 <= d1 <= 1079 }
   // Read schedule : { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 240 and 0 <= d1 <= 1079 }
   // Write schedule: { input_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 240 and 0 <= d1 <= 1081 }
@@ -1762,8 +1762,8 @@ inline hw_uint<16> blurx_rd21_select(input_cache& input, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> blurx_rd22_select(input_cache& input, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // blurx_rd22 read pattern: { blurx_update_0[d0, d1] -> input[7 + 8d0, 1 + d1] : 0 <= d0 <= 240 and 0 <= d1 <= 1079 }
   // Read schedule : { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 240 and 0 <= d1 <= 1079 }
   // Write schedule: { input_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 240 and 0 <= d1 <= 1081 }
@@ -1773,8 +1773,8 @@ inline hw_uint<16> blurx_rd22_select(input_cache& input, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> blurx_rd23_select(input_cache& input, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // blurx_rd23 read pattern: { blurx_update_0[d0, d1] -> input[7 + 8d0, 2 + d1] : 0 <= d0 <= 240 and 0 <= d1 <= 1079 }
   // Read schedule : { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 240 and 0 <= d1 <= 1079 }
   // Write schedule: { input_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 240 and 0 <= d1 <= 1081 }
@@ -1784,8 +1784,8 @@ inline hw_uint<16> blurx_rd23_select(input_cache& input, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> blurx_rd3_select(input_cache& input, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // blurx_rd3 read pattern: { blurx_update_0[d0, d1] -> input[1 + 8d0, d1] : 0 <= d0 <= 240 and 0 <= d1 <= 1079 }
   // Read schedule : { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 240 and 0 <= d1 <= 1079 }
   // Write schedule: { input_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 240 and 0 <= d1 <= 1081 }
@@ -1795,8 +1795,8 @@ inline hw_uint<16> blurx_rd3_select(input_cache& input, int d0, int d1, int dyna
 }
 
 inline hw_uint<16> blurx_rd4_select(input_cache& input, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // blurx_rd4 read pattern: { blurx_update_0[d0, d1] -> input[1 + 8d0, 1 + d1] : 0 <= d0 <= 240 and 0 <= d1 <= 1079 }
   // Read schedule : { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 240 and 0 <= d1 <= 1079 }
   // Write schedule: { input_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 240 and 0 <= d1 <= 1081 }
@@ -1806,8 +1806,8 @@ inline hw_uint<16> blurx_rd4_select(input_cache& input, int d0, int d1, int dyna
 }
 
 inline hw_uint<16> blurx_rd5_select(input_cache& input, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // blurx_rd5 read pattern: { blurx_update_0[d0, d1] -> input[1 + 8d0, 2 + d1] : 0 <= d0 <= 240 and 0 <= d1 <= 1079 }
   // Read schedule : { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 240 and 0 <= d1 <= 1079 }
   // Write schedule: { input_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 240 and 0 <= d1 <= 1081 }
@@ -1817,8 +1817,8 @@ inline hw_uint<16> blurx_rd5_select(input_cache& input, int d0, int d1, int dyna
 }
 
 inline hw_uint<16> blurx_rd6_select(input_cache& input, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // blurx_rd6 read pattern: { blurx_update_0[d0, d1] -> input[2 + 8d0, d1] : 0 <= d0 <= 240 and 0 <= d1 <= 1079 }
   // Read schedule : { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 240 and 0 <= d1 <= 1079 }
   // Write schedule: { input_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 240 and 0 <= d1 <= 1081 }
@@ -1828,8 +1828,8 @@ inline hw_uint<16> blurx_rd6_select(input_cache& input, int d0, int d1, int dyna
 }
 
 inline hw_uint<16> blurx_rd7_select(input_cache& input, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // blurx_rd7 read pattern: { blurx_update_0[d0, d1] -> input[2 + 8d0, 1 + d1] : 0 <= d0 <= 240 and 0 <= d1 <= 1079 }
   // Read schedule : { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 240 and 0 <= d1 <= 1079 }
   // Write schedule: { input_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 240 and 0 <= d1 <= 1081 }
@@ -1839,8 +1839,8 @@ inline hw_uint<16> blurx_rd7_select(input_cache& input, int d0, int d1, int dyna
 }
 
 inline hw_uint<16> blurx_rd8_select(input_cache& input, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // blurx_rd8 read pattern: { blurx_update_0[d0, d1] -> input[2 + 8d0, 2 + d1] : 0 <= d0 <= 240 and 0 <= d1 <= 1079 }
   // Read schedule : { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 240 and 0 <= d1 <= 1079 }
   // Write schedule: { input_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 240 and 0 <= d1 <= 1081 }
@@ -1850,8 +1850,8 @@ inline hw_uint<16> blurx_rd8_select(input_cache& input, int d0, int d1, int dyna
 }
 
 inline hw_uint<16> blurx_rd9_select(input_cache& input, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // blurx_rd9 read pattern: { blurx_update_0[d0, d1] -> input[3 + 8d0, d1] : 0 <= d0 <= 240 and 0 <= d1 <= 1079 }
   // Read schedule : { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 240 and 0 <= d1 <= 1079 }
   // Write schedule: { input_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 240 and 0 <= d1 <= 1081 }
@@ -2006,8 +2006,8 @@ inline void input_update_0(HWStream<hw_uint<128> >& /* buffer_args num ports = 8
 	// Produce: input
 	input_input_update_0_write_bundle_write(/* arg names */compute_result, input, d0, d1, 0);
 
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifndef __SYNTHESIS__
+#endif //__SYNTHESIS__
 
 }
 
@@ -2017,15 +2017,15 @@ inline void blurx_update_0(input_cache& input, blurx_cache& blurx, int d0, int d
 	// Consume: input
 	auto input_1_m_blurx_1__p__0_c__1_m_blurx_0__p__0_value = input_blurx_update_0_read_bundle_read(input/* source_delay */, d0, d1, 0);
 
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifndef __SYNTHESIS__
+#endif //__SYNTHESIS__
 
 	auto compute_result = blurx_generated_compute_unrolled_8(input_1_m_blurx_1__p__0_c__1_m_blurx_0__p__0_value);
 	// Produce: blurx
 	blurx_blurx_update_0_write_bundle_write(/* arg names */compute_result, blurx, d0, d1, 0);
 
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifndef __SYNTHESIS__
+#endif //__SYNTHESIS__
 
 }
 
@@ -2035,34 +2035,34 @@ inline void bxy_noinit_ln_8_update_0(blurx_cache& blurx, HWStream<hw_uint<128> >
 	// Consume: blurx
 	auto blurx_1_m_bxy_noinit_ln_8_1__p__0_c__1_m_bxy_noinit_ln_8_0__p__0_value = blurx_bxy_noinit_ln_8_update_0_read_bundle_read(blurx/* source_delay */, d0, d1, 0);
 
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifndef __SYNTHESIS__
+#endif //__SYNTHESIS__
 
 	auto compute_result = bxy_noinit_ln_8_generated_compute_unrolled_8(blurx_1_m_bxy_noinit_ln_8_1__p__0_c__1_m_bxy_noinit_ln_8_0__p__0_value);
 	// Produce: bxy_noinit_ln_8
 	bxy_noinit_ln_8.write(compute_result);
 
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifndef __SYNTHESIS__
+#endif //__SYNTHESIS__
 
 }
 
 // Driver function
 void bxy_noinit_ln_8_opt(HWStream<hw_uint<128> >& /* get_args num ports = 8 */input_arg, HWStream<hw_uint<128> >& /* get_args num ports = 8 */bxy_noinit_ln_8) {
 
-#ifndef __VIVADO_SYNTH__
+#ifndef __SYNTHESIS__
   ofstream debug_file("bxy_noinit_ln_8_opt_debug.csv");
   global_debug_handle = &debug_file;
-#endif //__VIVADO_SYNTH__
+#endif //__SYNTHESIS__
   blurx_cache blurx;
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYNTHESIS__
+#endif //__SYNTHESIS__
   input_cache input;
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
+#ifdef __SYNTHESIS__
+#endif //__SYNTHESIS__
+#ifdef __SYNTHESIS__
 #pragma HLS inline recursive
-#endif // __VIVADO_SYNTH__
+#endif // __SYNTHESIS__
 
 // schedule: { input_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 240 and 0 <= d1 <= 1081; bxy_noinit_ln_8_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : 0 <= d0 <= 239 and 0 <= d1 <= 1079; blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 240 and 0 <= d1 <= 1079 }
 //   { input_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 240 and 0 <= d1 <= 1081 }
@@ -2099,9 +2099,9 @@ void bxy_noinit_ln_8_opt(HWStream<hw_uint<128> >& /* get_args num ports = 8 */in
 	  }
 	}
 	
-#ifndef __VIVADO_SYNTH__
+#ifndef __SYNTHESIS__
   debug_file.close();
-#endif //__VIVADO_SYNTH__
+#endif //__SYNTHESIS__
 }
 
 void bxy_noinit_ln_8_opt_wrapper(HWStream<hw_uint<128> >& /* get_args num ports = 8 */input_arg, HWStream<hw_uint<128> >& /* get_args num ports = 8 */bxy_noinit_ln_8, const int num_epochs) {
@@ -2110,7 +2110,7 @@ void bxy_noinit_ln_8_opt_wrapper(HWStream<hw_uint<128> >& /* get_args num ports 
     bxy_noinit_ln_8_opt(input_arg, bxy_noinit_ln_8);
   }
 }
-#ifdef __VIVADO_SYNTH__
+#ifdef __SYNTHESIS__
   // { bxy_noinit_ln_8_update_0[root = 0, bxy_noinit_ln_8_0, bxy_noinit_ln_8_1] -> bxy_noinit_ln_8[bxy_noinit_ln_8_1, bxy_noinit_ln_8_0] : 0 <= bxy_noinit_ln_8_0 <= 1079 and 0 <= bxy_noinit_ln_8_1 <= 239 }
 const int bxy_noinit_ln_8_update_0_write_pipe0_num_transfers = 259200;
   // { input_update_0[root = 0, input_0, input_1] -> input_arg[input_1, input_0] : 0 <= input_0 <= 1081 and 0 <= input_1 <= 240 }
@@ -2159,5 +2159,5 @@ void bxy_noinit_ln_8_opt_rdai(HWStream<hw_uint<128> >& input_update_0_read_pipe0
 }
 
 }
-#endif //__VIVADO_SYNTH__
+#endif //__SYNTHESIS__
 

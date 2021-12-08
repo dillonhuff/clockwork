@@ -9086,11 +9086,11 @@ void camera_pipeline_test_catapult(const std::string& prefix) {
       options.unroll_factors_as_pad = true;
      // camera_pipeline(out_name).realize_naive_catapult(options, out_name, cols, rows, unroll_factor);
     }
-    std::vector<std::string> naive =
-    run_regression_tb(out_name+"_naive");
-    std::vector<std::string> optimized =
-    run_regression_tb(out_name+"_opt");
-    assert(naive == optimized);
+   // std::vector<std::string> naive =
+ //   run_regression_tb(out_name+"_naive");
+ //   std::vector<std::string> optimized =
+ //   run_regression_tb(out_name+"_opt");
+//    assert(naive == optimized);
 
 
     move_to_benchmarks_folder(out_name + "_opt");
@@ -9421,7 +9421,7 @@ void max_pooling_test_catapult(const std::string& prefix) {
   //options.all_rams = true;
   //options.unroll_factors_as_pad = true;
   //max_pooling("mp_naive").realize_naive(options, "mp_naive", {H, W, D});
-  //move_to_benchmarks_folder("mp_naive");
+//  move_to_benchmarks_folder("mp_naive");
 
   //std::vector<std::string> naive =
     //run_regression_tb("max_pool_opt");
@@ -10547,11 +10547,11 @@ void gauss_pyramid_iccad_apps_catapult(const std::string& prefix) {
          options.unroll_factors_as_pad = true;
      //    lp.realize_naive_catapult(options, out_name, cols, rows, unroll_factor);
     }
-    std::vector<std::string> naive =
-    run_regression_tb(name+"_naive");
-    std::vector<std::string> optimized =
-    run_regression_tb(name+"_opt");
-    assert(naive == optimized);
+//    std::vector<std::string> naive =
+  //  run_regression_tb(name+"_naive");
+   // std::vector<std::string> optimized =
+//    run_regression_tb(name+"_opt");
+  ///  assert(naive == optimized);
 
 
     move_to_benchmarks_folder(name + "_opt");
@@ -10584,7 +10584,7 @@ void exposure_fusion_iccad_apps(const std::string& prefix) {
 void exposure_fusion_iccad_apps_catapult(const std::string& prefix) {
   //vector<int> throughputs{1};
   //, 2, 4, 8, 16};
-  vector<int> throughputs{1, 2, 4, 8, 16};
+  vector<int> throughputs{1, 16};
   //vector<int> throughputs{16};
   for (auto throughput : throughputs) {
     string name = prefix + "_" + str(throughput);
@@ -10606,11 +10606,11 @@ void exposure_fusion_iccad_apps_catapult(const std::string& prefix) {
     options.unroll_factors_as_pad = true;
    // lp.realize_naive_catapult(options, name, cols, rows, throughput);
     }
-  std::vector<std::string> naive =
-    run_regression_tb(name+"_naive");
-  std::vector<std::string> optimized =
-    run_regression_tb(name+"_opt");
-  assert(naive == optimized);
+//  std::vector<std::string> naive =
+  //  run_regression_tb(name+"_naive");
+ // std::vector<std::string> optimized =
+   // run_regression_tb(name+"_opt");
+ // assert(naive == optimized);
 
 
   
@@ -11374,7 +11374,7 @@ void sobel_16_app_test_catapult(const std::string& prefix) {
   //int cols = 10;
   //int rows = 10;
   //vector<int> factors{1, 2, 4, 8};
-  vector<int> factors{1, 16, 32};
+  vector<int> factors{1};
   //for (int i = 0; i < 5; i++) {
   for (auto factor : factors) {
     int unroll_factor = factor;
@@ -11397,11 +11397,11 @@ void sobel_16_app_test_catapult(const std::string& prefix) {
          options.unroll_factors_as_pad = true;
       //   sobel16(out_name).realize_naive_catapult(options, out_name, cols, rows, unroll_factor);
     }
-    std::vector<std::string> naive =
-    run_regression_tb(out_name+"_naive");
-    std::vector<std::string> optimized =
-    run_regression_tb(out_name+"_opt");
-    assert(naive == optimized);
+//    std::vector<std::string> naive =
+  //  run_regression_tb(out_name+"_naive");
+   // std::vector<std::string> optimized =
+//    run_regression_tb(out_name+"_opt");
+  //  assert(naive == optimized);
 
 
     //std::vector<std::string> optimized =
@@ -11458,7 +11458,7 @@ void blur_xy_16_app_test_catapult(const std::string& prefix) {
   int rows = 1080;
 
   //vector<int> factors{1, 2, 4, 8};
-  vector<int> factors{1,2,  16, 32};
+  vector<int> factors{1, 2, 4, 8};
   for (auto f : factors) {
     int unroll_factor = f;
     cout << tab(1) << "unroll factor: " << unroll_factor << endl;
@@ -12955,17 +12955,17 @@ void iccad_tests() {
 void catapult_tests() {
 
   // exposure_fusion_app
-//  exposure_fusion_iccad_apps_catapult("ef_asic_rerun");
+ exposure_fusion_iccad_apps_catapult("ef_asic_rerun");
 
   // exposure_fusion_app
   //exposure_fusion();
-//  camera_pipeline_test_catapult("cp_noinit_ln1c");
-//  sobel_16_app_test_catapult("sbl_ln");
-  blur_xy_16_app_test_catapult("bxy_noinit_ln");
+//  camera_pipeline_test_catapult("cp_noinit_ln1_cata");
+//  sobel_16_app_test_catapult("sbl_ln_cata");
+ // blur_xy_16_app_test_catapult("bxy_noinit_ln");
 
-//  gauss_pyramid_iccad_apps_catapult("gp_fpga");
+ // gauss_pyramid_iccad_apps_catapult("gp_fpga_cata");
  // gauss_pyramid_test("gp_fpga");
-//  max_pooling_test_catapult("mpr16b_32");
+ // max_pooling_test_catapult("mpr16b_32");
 
 
   //App gp = gauss_pyramid_fpga("gp_sm");
@@ -20732,7 +20732,7 @@ void harris_unrolled_test_1() {
 void fpga_asplos_tests_catapult() {
 
   //auto test_programs = stencil_programs();
-  auto test_programs = {gaussian_glb8()};
+  auto test_programs = {gaussian(), harris(), conv_3_3(), laplacian_pyramid(), gaussian_glb(), gaussian_glb2()};
   for (auto prg : test_programs) {
     cout << "==== FPGA clockwork code for " << prg.name << endl;
     break_up_multi_channel_inputs(prg);
@@ -20743,7 +20743,7 @@ void fpga_asplos_tests_catapult() {
       unoptimized_result(prg);
 
     generate_fpga_clockwork_code_catapult(prg);
-  //  generate_regression_testbench_catapult(prg);
+    generate_regression_testbench_catapult(prg);
 
   //  std::vector<std::string> opt =
   //    run_regression_tb(prg);

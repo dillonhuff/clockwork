@@ -1,11 +1,11 @@
-#ifndef __VIVADO_SYNTH__
+#ifndef __SYNTHESIS__
 #include <fstream>
 using namespace std;
 
   // Debug utility
   ofstream* global_debug_handle;
 
-#endif //__VIVADO_SYNTH__
+#endif //__SYNTHESIS__
 // compute file: gaussian_compute.h
 #include "gaussian_compute.h"
 
@@ -16,16 +16,16 @@ struct blur_stencil_op_hcompute_blur_stencil_16_to_blur_stencil_op_hcompute_hw_o
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -45,8 +45,8 @@ inline void blur_stencil_op_hcompute_blur_stencil_16_write(hw_uint<16>& blur_ste
 }
 
 inline hw_uint<16> blur_stencil_op_hcompute_hw_output_stencil_1_select(blur_stencil_cache& blur_stencil, int root, int hw_output_s0_y_yi, int hw_output_s0_x_xi, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // blur_stencil_op_hcompute_hw_output_stencil_1 read pattern: { op_hcompute_hw_output_stencil[root = 0, hw_output_s0_y_yi, hw_output_s0_x_xi] -> blur_stencil[hw_output_s0_y_yi, hw_output_s0_x_xi] : 0 <= hw_output_s0_y_yi <= 61 and 0 <= hw_output_s0_x_xi <= 61 }
   // Read schedule : { op_hcompute_hw_output_stencil[d0 = 0, d1, d2] -> [0, 2 + d1, 2 + d2, 4] : 0 <= d1 <= 61 and 0 <= d2 <= 61 }
   // Write schedule: { op_hcompute_blur_stencil[d0 = 0, d1, d2] -> [0, 2 + d1, 2 + d2, 3] : 0 <= d1 <= 61 and 0 <= d2 <= 61 }
@@ -82,16 +82,16 @@ struct blur_unnormalized_stencil_op_hcompute_blur_unnormalized_stencil_1_4_to_bl
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -111,8 +111,8 @@ inline void blur_unnormalized_stencil_op_hcompute_blur_unnormalized_stencil_1_4_
 }
 
 inline hw_uint<16> blur_unnormalized_stencil_op_hcompute_blur_stencil_17_select(blur_unnormalized_stencil_cache& blur_unnormalized_stencil, int root, int blur_s0_y, int blur_s0_x, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // blur_unnormalized_stencil_op_hcompute_blur_stencil_17 read pattern: { op_hcompute_blur_stencil[root = 0, blur_s0_y, blur_s0_x] -> blur_unnormalized_stencil[blur_s0_y, blur_s0_x] : 0 <= blur_s0_y <= 61 and 0 <= blur_s0_x <= 61 }
   // Read schedule : { op_hcompute_blur_stencil[d0 = 0, d1, d2] -> [0, 2 + d1, 2 + d2, 3] : 0 <= d1 <= 61 and 0 <= d2 <= 61 }
   // Write schedule: { op_hcompute_blur_unnormalized_stencil_1[d0 = 0, d1, d2] -> [0, 2 + d1, 2 + d2, 2] : 0 <= d1 <= 61 and 0 <= d2 <= 61 }
@@ -148,16 +148,16 @@ struct blur_unnormalized_stencil_clkwrk_dsa0_op_hcompute_blur_unnormalized_stenc
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -177,8 +177,8 @@ inline void blur_unnormalized_stencil_clkwrk_dsa0_op_hcompute_blur_unnormalized_
 }
 
 inline hw_uint<16> blur_unnormalized_stencil_clkwrk_dsa0_op_hcompute_blur_unnormalized_stencil_1_5_select(blur_unnormalized_stencil_clkwrk_dsa0_cache& blur_unnormalized_stencil_clkwrk_dsa0, int root, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // blur_unnormalized_stencil_clkwrk_dsa0_op_hcompute_blur_unnormalized_stencil_1_5 read pattern: { op_hcompute_blur_unnormalized_stencil_1[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x] -> blur_unnormalized_stencil_clkwrk_dsa0[blur_unnormalized_s1_y, blur_unnormalized_s1_x] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x <= 61 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_1[d0 = 0, d1, d2] -> [0, 2 + d1, 2 + d2, 2] : 0 <= d1 <= 61 and 0 <= d2 <= 61 }
   // Write schedule: { op_hcompute_blur_unnormalized_stencil[d0 = 0, d1, d2] -> [0, 2 + d1, 2 + d2, 1] : 0 <= d1 <= 61 and 0 <= d2 <= 61 }
@@ -238,8 +238,8 @@ struct hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stenc
 	}
 
 	inline hw_uint<16> peek_63() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f5.back();
 	}
 
@@ -256,8 +256,8 @@ struct hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stenc
 	}
 
 	inline hw_uint<16> peek_127() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f11.back();
 	}
 
@@ -276,44 +276,44 @@ struct hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stenc
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 1
     f16 = f14;
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 1
     f14 = f12;
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 61
     f12 = f11.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 61 reading from capacity: 1
     f11.push(f10);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 1
     f10 = f8;
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 1
     f8 = f6;
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 61
     f6 = f5.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 61 reading from capacity: 1
     f5.push(f4);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 1
     f4 = f2;
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 1
     f2 = f0;
     // cap: 1
@@ -344,8 +344,8 @@ inline void hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_
 }
 
 inline hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_1_10_select(hw_input_global_wrapper_stencil_cache& hw_input_global_wrapper_stencil, int root, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // hw_input_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_1_10 read pattern: { op_hcompute_blur_unnormalized_stencil_1[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x] -> hw_input_global_wrapper_stencil[1 + blur_unnormalized_s1_y, 1 + blur_unnormalized_s1_x] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x <= 61 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_1[d0 = 0, d1, d2] -> [0, 2 + d1, 2 + d2, 2] : 0 <= d1 <= 61 and 0 <= d2 <= 61 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_stencil[d0 = 0, d1, d2] -> [0, d1, d2, 0] : 0 <= d1 <= 63 and 0 <= d2 <= 63 }
@@ -355,8 +355,8 @@ inline hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_blur_unnormalized
 }
 
 inline hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_1_11_select(hw_input_global_wrapper_stencil_cache& hw_input_global_wrapper_stencil, int root, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // hw_input_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_1_11 read pattern: { op_hcompute_blur_unnormalized_stencil_1[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x] -> hw_input_global_wrapper_stencil[1 + blur_unnormalized_s1_y, 2 + blur_unnormalized_s1_x] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x <= 61 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_1[d0 = 0, d1, d2] -> [0, 2 + d1, 2 + d2, 2] : 0 <= d1 <= 61 and 0 <= d2 <= 61 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_stencil[d0 = 0, d1, d2] -> [0, d1, d2, 0] : 0 <= d1 <= 63 and 0 <= d2 <= 63 }
@@ -366,8 +366,8 @@ inline hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_blur_unnormalized
 }
 
 inline hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_1_12_select(hw_input_global_wrapper_stencil_cache& hw_input_global_wrapper_stencil, int root, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // hw_input_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_1_12 read pattern: { op_hcompute_blur_unnormalized_stencil_1[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x] -> hw_input_global_wrapper_stencil[2 + blur_unnormalized_s1_y, blur_unnormalized_s1_x] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x <= 61 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_1[d0 = 0, d1, d2] -> [0, 2 + d1, 2 + d2, 2] : 0 <= d1 <= 61 and 0 <= d2 <= 61 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_stencil[d0 = 0, d1, d2] -> [0, d1, d2, 0] : 0 <= d1 <= 63 and 0 <= d2 <= 63 }
@@ -377,8 +377,8 @@ inline hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_blur_unnormalized
 }
 
 inline hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_1_13_select(hw_input_global_wrapper_stencil_cache& hw_input_global_wrapper_stencil, int root, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // hw_input_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_1_13 read pattern: { op_hcompute_blur_unnormalized_stencil_1[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x] -> hw_input_global_wrapper_stencil[2 + blur_unnormalized_s1_y, 2 + blur_unnormalized_s1_x] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x <= 61 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_1[d0 = 0, d1, d2] -> [0, 2 + d1, 2 + d2, 2] : 0 <= d1 <= 61 and 0 <= d2 <= 61 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_stencil[d0 = 0, d1, d2] -> [0, d1, d2, 0] : 0 <= d1 <= 63 and 0 <= d2 <= 63 }
@@ -388,8 +388,8 @@ inline hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_blur_unnormalized
 }
 
 inline hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_1_14_select(hw_input_global_wrapper_stencil_cache& hw_input_global_wrapper_stencil, int root, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // hw_input_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_1_14 read pattern: { op_hcompute_blur_unnormalized_stencil_1[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x] -> hw_input_global_wrapper_stencil[2 + blur_unnormalized_s1_y, 1 + blur_unnormalized_s1_x] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x <= 61 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_1[d0 = 0, d1, d2] -> [0, 2 + d1, 2 + d2, 2] : 0 <= d1 <= 61 and 0 <= d2 <= 61 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_stencil[d0 = 0, d1, d2] -> [0, d1, d2, 0] : 0 <= d1 <= 63 and 0 <= d2 <= 63 }
@@ -399,8 +399,8 @@ inline hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_blur_unnormalized
 }
 
 inline hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_1_6_select(hw_input_global_wrapper_stencil_cache& hw_input_global_wrapper_stencil, int root, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // hw_input_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_1_6 read pattern: { op_hcompute_blur_unnormalized_stencil_1[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x] -> hw_input_global_wrapper_stencil[blur_unnormalized_s1_y, blur_unnormalized_s1_x] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x <= 61 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_1[d0 = 0, d1, d2] -> [0, 2 + d1, 2 + d2, 2] : 0 <= d1 <= 61 and 0 <= d2 <= 61 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_stencil[d0 = 0, d1, d2] -> [0, d1, d2, 0] : 0 <= d1 <= 63 and 0 <= d2 <= 63 }
@@ -410,8 +410,8 @@ inline hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_blur_unnormalized
 }
 
 inline hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_1_7_select(hw_input_global_wrapper_stencil_cache& hw_input_global_wrapper_stencil, int root, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // hw_input_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_1_7 read pattern: { op_hcompute_blur_unnormalized_stencil_1[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x] -> hw_input_global_wrapper_stencil[blur_unnormalized_s1_y, 1 + blur_unnormalized_s1_x] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x <= 61 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_1[d0 = 0, d1, d2] -> [0, 2 + d1, 2 + d2, 2] : 0 <= d1 <= 61 and 0 <= d2 <= 61 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_stencil[d0 = 0, d1, d2] -> [0, d1, d2, 0] : 0 <= d1 <= 63 and 0 <= d2 <= 63 }
@@ -421,8 +421,8 @@ inline hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_blur_unnormalized
 }
 
 inline hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_1_8_select(hw_input_global_wrapper_stencil_cache& hw_input_global_wrapper_stencil, int root, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // hw_input_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_1_8 read pattern: { op_hcompute_blur_unnormalized_stencil_1[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x] -> hw_input_global_wrapper_stencil[blur_unnormalized_s1_y, 2 + blur_unnormalized_s1_x] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x <= 61 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_1[d0 = 0, d1, d2] -> [0, 2 + d1, 2 + d2, 2] : 0 <= d1 <= 61 and 0 <= d2 <= 61 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_stencil[d0 = 0, d1, d2] -> [0, d1, d2, 0] : 0 <= d1 <= 63 and 0 <= d2 <= 63 }
@@ -432,8 +432,8 @@ inline hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_blur_unnormalized
 }
 
 inline hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_1_9_select(hw_input_global_wrapper_stencil_cache& hw_input_global_wrapper_stencil, int root, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // hw_input_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_1_9 read pattern: { op_hcompute_blur_unnormalized_stencil_1[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x] -> hw_input_global_wrapper_stencil[1 + blur_unnormalized_s1_y, blur_unnormalized_s1_x] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x <= 61 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_1[d0 = 0, d1, d2] -> [0, 2 + d1, 2 + d2, 2] : 0 <= d1 <= 61 and 0 <= d2 <= 61 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_stencil[d0 = 0, d1, d2] -> [0, d1, d2, 0] : 0 <= d1 <= 63 and 0 <= d2 <= 63 }
@@ -507,8 +507,8 @@ inline void op_hcompute_hw_input_global_wrapper_stencil(HWStream<hw_uint<16> >& 
 	// Produce: hw_input_global_wrapper_stencil
 	hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_write_bundle_write(/* arg names */compute_result, hw_input_global_wrapper_stencil, root, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x, 0);
 
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifndef __SYNTHESIS__
+#endif //__SYNTHESIS__
 
 }
 
@@ -519,8 +519,8 @@ inline void op_hcompute_blur_unnormalized_stencil(blur_unnormalized_stencil_clkw
 	// Produce: blur_unnormalized_stencil_clkwrk_dsa0
 	blur_unnormalized_stencil_clkwrk_dsa0_op_hcompute_blur_unnormalized_stencil_write_bundle_write(/* arg names */compute_result, blur_unnormalized_stencil_clkwrk_dsa0, root, blur_unnormalized_s0_y, blur_unnormalized_s0_x, 0);
 
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifndef __SYNTHESIS__
+#endif //__SYNTHESIS__
 
 }
 
@@ -530,21 +530,21 @@ inline void op_hcompute_blur_unnormalized_stencil_1(blur_unnormalized_stencil_cl
 	// Consume: blur_unnormalized_stencil_clkwrk_dsa0
 	auto blur_unnormalized_stencil_clkwrk_dsa0_blur_unnormalized_s1_y_c__blur_unnormalized_s1_x_value = blur_unnormalized_stencil_clkwrk_dsa0_op_hcompute_blur_unnormalized_stencil_1_read_bundle_read(blur_unnormalized_stencil_clkwrk_dsa0/* source_delay */, root, blur_unnormalized_s1_y, blur_unnormalized_s1_x, 0);
 
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifndef __SYNTHESIS__
+#endif //__SYNTHESIS__
 
 	// Consume: hw_input_global_wrapper_stencil
 	auto hw_input_global_wrapper_stencil_blur_unnormalized_s1_y_c__blur_unnormalized_s1_x_value = hw_input_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_1_read_bundle_read(hw_input_global_wrapper_stencil/* source_delay */, root, blur_unnormalized_s1_y, blur_unnormalized_s1_x, 0);
 
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifndef __SYNTHESIS__
+#endif //__SYNTHESIS__
 
 	auto compute_result = hcompute_blur_unnormalized_stencil_1(blur_unnormalized_stencil_clkwrk_dsa0_blur_unnormalized_s1_y_c__blur_unnormalized_s1_x_value, hw_input_global_wrapper_stencil_blur_unnormalized_s1_y_c__blur_unnormalized_s1_x_value);
 	// Produce: blur_unnormalized_stencil
 	blur_unnormalized_stencil_op_hcompute_blur_unnormalized_stencil_1_write_bundle_write(/* arg names */compute_result, blur_unnormalized_stencil, root, blur_unnormalized_s1_y, blur_unnormalized_s1_x, 0);
 
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifndef __SYNTHESIS__
+#endif //__SYNTHESIS__
 
 }
 
@@ -554,15 +554,15 @@ inline void op_hcompute_blur_stencil(blur_unnormalized_stencil_cache& blur_unnor
 	// Consume: blur_unnormalized_stencil
 	auto blur_unnormalized_stencil_blur_s0_y_c__blur_s0_x_value = blur_unnormalized_stencil_op_hcompute_blur_stencil_read_bundle_read(blur_unnormalized_stencil/* source_delay */, root, blur_s0_y, blur_s0_x, 0);
 
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifndef __SYNTHESIS__
+#endif //__SYNTHESIS__
 
 	auto compute_result = hcompute_blur_stencil(blur_unnormalized_stencil_blur_s0_y_c__blur_s0_x_value);
 	// Produce: blur_stencil
 	blur_stencil_op_hcompute_blur_stencil_write_bundle_write(/* arg names */compute_result, blur_stencil, root, blur_s0_y, blur_s0_x, 0);
 
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifndef __SYNTHESIS__
+#endif //__SYNTHESIS__
 
 }
 
@@ -572,40 +572,40 @@ inline void op_hcompute_hw_output_stencil(blur_stencil_cache& blur_stencil, HWSt
 	// Consume: blur_stencil
 	auto blur_stencil_hw_output_s0_y_yi_c__hw_output_s0_x_xi_value = blur_stencil_op_hcompute_hw_output_stencil_read_bundle_read(blur_stencil/* source_delay */, root, hw_output_s0_y_yi, hw_output_s0_x_xi, 0);
 
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifndef __SYNTHESIS__
+#endif //__SYNTHESIS__
 
 	auto compute_result = hcompute_hw_output_stencil(blur_stencil_hw_output_s0_y_yi_c__hw_output_s0_x_xi_value);
 	// Produce: hw_output_stencil
 	hw_output_stencil.write(compute_result);
 
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifndef __SYNTHESIS__
+#endif //__SYNTHESIS__
 
 }
 
 // Driver function
 void gaussian(HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */hw_input_stencil, HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */hw_output_stencil) {
 
-#ifndef __VIVADO_SYNTH__
+#ifndef __SYNTHESIS__
   ofstream debug_file("gaussian_debug.csv");
   global_debug_handle = &debug_file;
-#endif //__VIVADO_SYNTH__
+#endif //__SYNTHESIS__
   blur_stencil_cache blur_stencil;
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYNTHESIS__
+#endif //__SYNTHESIS__
   blur_unnormalized_stencil_cache blur_unnormalized_stencil;
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYNTHESIS__
+#endif //__SYNTHESIS__
   blur_unnormalized_stencil_clkwrk_dsa0_cache blur_unnormalized_stencil_clkwrk_dsa0;
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYNTHESIS__
+#endif //__SYNTHESIS__
   hw_input_global_wrapper_stencil_cache hw_input_global_wrapper_stencil;
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
+#ifdef __SYNTHESIS__
+#endif //__SYNTHESIS__
+#ifdef __SYNTHESIS__
 #pragma HLS inline recursive
-#endif // __VIVADO_SYNTH__
+#endif // __SYNTHESIS__
 
 // schedule: { op_hcompute_hw_output_stencil[d0 = 0, d1, d2] -> [0, 2 + d1, 2 + d2, 4] : 0 <= d1 <= 61 and 0 <= d2 <= 61; op_hcompute_hw_input_global_wrapper_stencil[d0 = 0, d1, d2] -> [0, d1, d2, 0] : 0 <= d1 <= 63 and 0 <= d2 <= 63; op_hcompute_blur_unnormalized_stencil[d0 = 0, d1, d2] -> [0, 2 + d1, 2 + d2, 1] : 0 <= d1 <= 61 and 0 <= d2 <= 61; op_hcompute_blur_unnormalized_stencil_1[d0 = 0, d1, d2] -> [0, 2 + d1, 2 + d2, 2] : 0 <= d1 <= 61 and 0 <= d2 <= 61; op_hcompute_blur_stencil[d0 = 0, d1, d2] -> [0, 2 + d1, 2 + d2, 3] : 0 <= d1 <= 61 and 0 <= d2 <= 61 }
 //   { op_hcompute_hw_output_stencil[d0 = 0, d1, d2] -> [0, 2 + d1, 2 + d2, 4] : 0 <= d1 <= 61 and 0 <= d2 <= 61 }
@@ -630,9 +630,9 @@ void gaussian(HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */hw_i
 	    }
 	  }
 	
-#ifndef __VIVADO_SYNTH__
+#ifndef __SYNTHESIS__
   debug_file.close();
-#endif //__VIVADO_SYNTH__
+#endif //__SYNTHESIS__
 }
 
 void gaussian_wrapper(HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */hw_input_stencil, HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */hw_output_stencil, const int num_epochs) {
@@ -641,7 +641,7 @@ void gaussian_wrapper(HWStream<hw_uint<16> >& /* no bundle get_args num ports = 
     gaussian(hw_input_stencil, hw_output_stencil);
   }
 }
-#ifdef __VIVADO_SYNTH__
+#ifdef __SYNTHESIS__
   // { op_hcompute_hw_input_global_wrapper_stencil[root = 0, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x] -> hw_input_stencil[hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x] : 0 <= hw_input_global_wrapper_s0_y <= 63 and 0 <= hw_input_global_wrapper_s0_x <= 63 }
 const int op_hcompute_hw_input_global_wrapper_stencil_read_pipe0_num_transfers = 4096;
   // { op_hcompute_hw_output_stencil[root = 0, hw_output_s0_y_yi, hw_output_s0_x_xi] -> hw_output_stencil[hw_output_s0_y_yi, hw_output_s0_x_xi] : 0 <= hw_output_s0_y_yi <= 61 and 0 <= hw_output_s0_x_xi <= 61 }
@@ -690,5 +690,5 @@ void gaussian_rdai(HWStream<hw_uint<16> >& op_hcompute_hw_input_global_wrapper_s
 }
 
 }
-#endif //__VIVADO_SYNTH__
+#endif //__SYNTHESIS__
 
