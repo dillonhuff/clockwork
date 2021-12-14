@@ -7150,6 +7150,7 @@ void UBuffer::generate_banks(CodegenOptions& options) {
     return base;
   }
 
+  //This is the interface we are using in garnet mapping
   vector<string> buffer_vectorization(
       CodegenOptions& options,
       vector<string> buf_name_vec,
@@ -7169,8 +7170,10 @@ void UBuffer::generate_banks(CodegenOptions& options) {
         //Input must be take care
         //need to first pad the buffer output to the multiplier of
         target_buffer.merge_small_dim(fetch_width);
+
+        //comment out dimension padding, only pad the cycle ctride
         //target_buffer.pad_read_dom_inner_most(fetch_width);
-        target_buffer.pad_write_dom_inner_most(fetch_width);
+        //target_buffer.pad_write_dom_inner_most(fetch_width);
 
         int dim_id = target_buffer.get_vectorized_dim(fetch_width);
         if (dim_id == -1) {

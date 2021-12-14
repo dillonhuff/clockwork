@@ -15115,7 +15115,6 @@ void test_glb(bool gen_config_only, bool multi_accessor=false, string dir="aha_g
   vector<prog> test_apps;
 
   //ISSCC application without unroll
-  test_apps.push_back(resnet_1x1());
   test_apps.push_back(harris_color());
   test_apps.push_back(gaussian_isscc());
   test_apps.push_back(camera_pipeline_isscc());
@@ -15140,8 +15139,12 @@ void test_glb(bool gen_config_only, bool multi_accessor=false, string dir="aha_g
   //test_apps.push_back(resnet5_1_full());
   //test_apps.push_back(resnet2_x_full());
 
-  ////Sample DNN Layers
+  //For debug the 7x7 layer
+  test_apps.push_back(resnet_last());
+
+  //Sample DNN Layers
   test_apps.push_back(resnet1());
+  test_apps.push_back(resnet_1x1());
   test_apps.push_back(resnet3_1());
   test_apps.push_back(resnet4_x());
   test_apps.push_back(resnet5_1());
@@ -15186,7 +15189,6 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   //TODO:has issue  with multiple input
   //test_apps.push_back(demosaic_complex());
   //test_apps.push_back(fft8_unroll8());
-  //test_apps.push_back(camera_pipeline_trunc());
 
   //CGRA tests
   test_apps.push_back(camera_pipeline_new());
@@ -15209,6 +15211,7 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   test_apps.push_back(matmul_single());
   test_apps.push_back(resnet_tiny());
   test_apps.push_back(resnet_simple());
+  test_apps.push_back(resnet_size_test());
   test_apps.push_back(resnet());
 
   //Big applications
@@ -17585,6 +17588,48 @@ int get_vectorization_dim(isl_map* m, int fetch_width) {
   return -1; //need merge or use single pixel vectorization
 }
 
+void relax_write(schedule_info& sched, op* loop, prog& prg, int fetch_width) {
+  //only look at loop op
+  if (!loop->is_loop())
+    return;
+  cout << "op name: " << loop->name << endl;
+  auto write_map = written_at(loop->name, prg);
+  auto levels = get_variable_levels(prg);
+  cout << "op level: " << levels.at(loop->name) << endl;
+  if(write_map == nullptr)
+      return;
+  //Do  not pad glb loop
+  if (contains(loop->name, "glb"))
+      return;
+  for (auto wr_map: get_maps(write_map)) {
+    cout << tab(4) << "write map: \n\t" << str(wr_map) << endl;
+    auto b_map = to_map(pick(get_basic_maps(wr_map)));
+    auto write_addr_involve_dim = out_involve_dim(b_map, levels.at(loop->name));
+    cout << tab(4) << "addr involve dim: " << write_addr_involve_dim << endl;
+
+    //Chances are that this dimension is fully unrolled
+    //Involve the vectorization dimension
+    int vec_dim = get_vectorization_dim(b_map, fetch_width);
+    if (write_addr_involve_dim.size() > 0
+            && (elem(vec_dim, write_addr_involve_dim))) {
+      assert(write_addr_involve_dim.size() == 1);
+      int packed_addr_dim = pick(write_addr_involve_dim);
+      auto in_involve_d = in_involve_dim(b_map, packed_addr_dim);
+      cout << "\tInvolve in dim: " << in_involve_d << endl;
+
+      //Do not pad if this dimension will be merged
+      if (loop->trip_count() < fetch_width) {
+          continue;
+      } else {
+          sched.op_offset_within_parent[loop] += (fetch_width - (loop->trip_count() * sched.II(loop)) % fetch_width) % fetch_width;
+          cout << "\t change loop : " << loop->name << "'s offset to " << sched.op_offset_within_parent.at(loop) << endl;
+      }
+    }
+    //Should only go over one time
+    return;
+  }
+}
+
 bool need_relax(schedule_info& sched, op* loop, prog& prg, int fetch_width) {
   //only look at loop op
   if (!loop->is_loop())
@@ -17693,9 +17738,13 @@ void asap_inner_loops_schedule(schedule_info& sched, op* op, prog& prg, int fetc
       //  //TODO: currently only need to pad read op
       //  relax_inner_delay_for_vec_read(sched, other, prg, fetch_width);
       //}
+      relax_write(sched, other, prg, fetch_width);
       if (need_relax(sched, other, prg, fetch_width)) {
         cout << tab(4) << other->name << "--> Enter relax condition loop!" << endl;
       }
+      //if (other->is_loop())
+      //    sched.op_offset_within_parent[other] += (fetch_width -
+      //        (other->trip_count() * sched.II(other) % fetch_width)) % fetch_width;
       latency = sched.total_latency(other) + sched.offset_in_parent(other);
       //TODO:  this offset by 1 is trying to pipeline instead of braodacsting
       if (old_latency == latency) {
