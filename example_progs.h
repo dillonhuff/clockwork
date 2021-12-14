@@ -34,6 +34,7 @@ prog unet_conv_3_3(); //reduce
 prog resnet(); //reduce
 prog resnet_simple(); //for regfile debug
 prog resnet_tiny(); //for regfile debug
+prog resnet_size_test(); //for schedule debug
 prog resnet_multi_tiny(); //for regfile debug
 //prog mini_conv_halide_fixed();
 prog camera_pipeline(); //stencil
@@ -142,6 +143,7 @@ prog resnet3_x_full();
 prog resnet3_1_full();
 prog resnet2_x_full();
 prog resnet1_full();
+prog resnet_last();
 
 //pond resnet test
 prog complex_mem_pond_rolled();
