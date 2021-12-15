@@ -15143,6 +15143,7 @@ void test_glb(bool gen_config_only, bool multi_accessor=false, string dir="aha_g
   test_apps.push_back(resnet_last());
 
   //Sample DNN Layers
+  test_apps.push_back(resnet1_docker());
   test_apps.push_back(resnet1());
   test_apps.push_back(resnet_1x1());
   test_apps.push_back(resnet3_1());

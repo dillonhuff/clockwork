@@ -117,6 +117,7 @@ prog resnet_init_unroll_tile();
 prog resnet3_1();
 prog resnet_1x1();
 prog resnet1();
+prog resnet1_docker();
 prog resnet4_x();
 prog resnet3_x_tiny();
 prog resnet5_x();
