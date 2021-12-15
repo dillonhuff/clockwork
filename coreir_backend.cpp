@@ -3564,6 +3564,140 @@ void MapperPasses::MemSubstituteMetaMapper::setVisitorInfo() {
 
 }
 
+
+namespace MapperPasses {
+class PondSubstituteMetaMapper: public CoreIR::InstancePass {
+  public :
+    Module* topm;
+    //static std::string ID;
+    
+    PondSubstituteMetaMapper(Module* top) : InstancePass("pondsubstitutemetamapper", "add global.pond schedules") {topm = top;}
+    //void setVisitorInfo() override;
+
+
+bool runOnInstance(Instance* cnst) {
+
+if (cnst->getModuleRef()->getName() == "Pond") {
+
+  cout << tab(2) << "pond syntax transformation!" << endl;
+  cout << tab(2) << toString(cnst) << endl;
+  Context* c = cnst->getContext();
+
+
+  auto allSels = cnst->getSelects();
+  for (auto itr: allSels) {
+    cout << tab(2) << "Sel: " << itr.first << endl;
+  }
+
+
+  ModuleDef* def = cnst->getContainer();
+  //auto genargs = cnst->getModuleRef()->getGenArgs();
+
+  //string ID = genargs.at("ID")->get<string>();
+  //int num_inputs = genargs.at("num_inputs")->get<int>();
+  //int num_outputs = genargs.at("num_outputs")->get<int>();
+  //int width = genargs.at("width")->get<int>();
+  int num_inputs = 1;
+  int num_outputs = 1;
+  int width = 16;
+  string mode = "pond";
+
+  json config_file;
+
+  //config_file["ID"] = ID;
+  config_file["num_inputs"] = num_inputs;
+  config_file["num_outputs"] = num_outputs;
+  config_file["width"] = width;
+  config_file["mode"] = mode;
+
+  json config;
+  json in2regfile_0;
+  json regfile2out_0;
+
+  in2regfile_0["cycle_starting_addr"] = {0};
+  in2regfile_0["cycle_stride"] = {1};
+  in2regfile_0["dimensionality"] = 1;
+  in2regfile_0["extent"] = {4096};
+  in2regfile_0["write_data_starting_addr"] = {0};
+  in2regfile_0["write_data_stride"] = {1};
+
+
+  regfile2out_0["cycle_starting_addr"] = {1};
+  regfile2out_0["cycle_stride"] = {1};
+  regfile2out_0["dimensionality"] = 1;
+  regfile2out_0["extent"] = {4096};
+  regfile2out_0["read_data_starting_addr"] = {0};
+  regfile2out_0["read_data_stride"] = {1};
+
+  config["in2regfile"] = in2regfile_0;
+  config["regfile2out"] = regfile2out_0;
+
+  config_file["config"] = config;
+
+  std::set<string> routable_ports = {"data_in_pond_0"};
+
+  std::vector<string> routable_outputs = {"O0", "O1"};
+
+
+  auto pt = addPassthrough(cnst, cnst->getInstname()+"_tmp");
+
+  vector<Module*> loaded;
+  if (!loadHeader(c, "pond_header.json", loaded)) {c->die();}
+
+  Instance* buf = def->addInstance(cnst->getInstname()+"_garnet", (Module*)loaded[0]);
+
+  buf->setMetaData(config_file);
+
+  Module* cnst_mod_ref = cnst->getModuleRef();
+
+  vector<string> cnst_ports = cnst_mod_ref->getType()->getFields();
+ 
+  for (auto cnst_port : cnst_ports) {
+    if (routable_ports.count(cnst_port) > 0) {
+      cout << "Connecting cnst_port: " << cnst_port << endl;
+      def->connect(pt->sel("in")->sel(cnst_port), buf->sel(cnst_port));
+    } else {
+      auto index = find(routable_outputs.begin(), routable_outputs.end(), cnst_port);
+      if (index != routable_outputs.end()){
+        int port_index = index - routable_outputs.begin();
+        cout << "Connecting output cnst_port: " << cnst_port << endl;
+        def->connect(buf->sel("O" + std::to_string(port_index)), pt->sel("in")->sel(cnst_port));
+      } else {
+        cout << "Not Connecting cnst_port: " << cnst_port << endl;
+      }
+    }
+  }
+
+  
+
+  ModuleDef* mdef = topm->getDef();
+  
+  if (def == mdef) {
+    def->connect(buf->sel("flush"), mdef->sel("io1in_reset.out"));
+  }
+
+  def->removeInstance(cnst);
+  inlineInstance(pt);
+  inlineInstance(buf);
+
+ 
+  return true;
+}
+return false;
+}
+
+//void setVisitorInfo() {
+//  Context* c = this->getContext();
+//  if (c->hasModule("global.Pond")) {
+//    addVisitorFunction(c->getModule("global.Pond"), PondReplaceMetaMapper);
+//  }
+
+//}
+
+};
+}
+
+
 namespace MapperPasses {
 class RegfileSubstituteMetaMapper: public CoreIR::InstanceVisitorPass {
   public :
@@ -3879,12 +4013,16 @@ void map_memory(CodegenOptions& options, Module* top, map<string, UBuffer> & buf
     c->runPasses({"substractglblatency"});
   }
 
+
   c->addPass(new MapperPasses::RomSubstituteMetaMapper);
   c->runPasses({"romsubstitutemetamapper"});
   c->addPass(new MapperPasses::MemSubstituteMetaMapper);
   c->runPasses({"memsubstitutemetamapper"});
+  c->addPass(new MapperPasses::PondSubstituteMetaMapper(top));
+  c->runPasses({"pondsubstitutemetamapper"});
   c->addPass(new MapperPasses::RegfileSubstituteMetaMapper);
   c->runPasses({"regfilesubstitutemetamapper"});
+
 }
 
 
