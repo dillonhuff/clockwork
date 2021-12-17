@@ -1,6 +1,8 @@
 #pragma once
 #include "prog.h"
 
+prog fp_arith();
+
 prog fft8_unroll0();
 prog fft8_unroll2();
 prog fft8_unroll4();
