@@ -9489,8 +9489,12 @@ void UBuffer::generate_banks(CodegenOptions& options) {
           cout << "\tpart size:" <<parts.size() << endl;
           cout << "\tg size: " << g.size() << endl;
           bool is_in_group = buf.is_in_pt(pick(g));
+
           int ports = is_in_group ?
               options.rtl_options.max_inpt : options.rtl_options.max_outpt;
+
+          if (contains(buf.name, "glb"))
+               ports = 1;
           if (parts.size() * ports < g.size()) {
             //may need banking
             return {};
@@ -10530,12 +10534,16 @@ isl_map* build_buffer_impl_embarrassing_banking(UBuffer& buf, schedule_info& hwi
   //assert(false);
   isl_map* m = isl_map_read_from_str(buf.ctx, bank_func.c_str());
   for (auto pt : buf.get_all_ports()) {
+    //cout << "pt :" << pt << endl;
     for (int b = 0; b < num_banks; b++) {
       isl_set* bnk = isl_set_read_from_str(buf.ctx, curlies("Bank[" + str(b) + "]").c_str());
       assert(!empty(bnk));
 
       isl_map* bnk_map = dot(to_map(buf.access_map.at(pt)), m);
+      //cout << "\tBank map NO: " << b << " is " << str(bnk_map) << endl;
       isl_set* accesses_to_bank = its(range(bnk_map), bnk);
+
+      //cout << "\taccess to_ bank: " << str(accesses_to_bank) << endl;
       if (!empty(accesses_to_bank)) {
         if (buf.is_out_pt(pt)) {
           impl.bank_readers[b].insert(pt);

@@ -18,30 +18,28 @@ prog resnet5_1_unroll_cyclic() {
 ////producing input_glb.stencil
   auto input_glb_s0_y = prg.add_loop("input_glb_s0_y", 0, 16);
   auto input_glb_s0_x = input_glb_s0_y->add_loop("input_glb_s0_x", 0, 16);
-  auto input_glb_s0_z = input_glb_s0_x->add_loop("input_glb_s0_z", 0, 8);
-  auto input_glb_s0_z_z = input_glb_s0_z->add_loop("input_glb_s0_z_z", 0, 2);
+  auto input_glb_s0_z = input_glb_s0_x->add_loop("input_glb_s0_z", 0, 16);
 
 //store is: input_glb.stencil((input_glb_s0_z + 256), input_glb_s0_x, input_glb_s0_y) = input_host.stencil(input_glb_s0_z, input_glb_s0_x, input_glb_s0_y)
-  auto hcompute_input_glb_stencil = input_glb_s0_z_z->add_op("op_hcompute_input_glb_stencil");
+  auto hcompute_input_glb_stencil = input_glb_s0_z->add_op("op_hcompute_input_glb_stencil");
   hcompute_input_glb_stencil->add_function("hcompute_input_glb_stencil");
-  hcompute_input_glb_stencil->add_load("input_host_stencil", "input_glb_s0_y", "input_glb_s0_x", "input_glb_s0_z", "input_glb_s0_z_z");
+  hcompute_input_glb_stencil->add_load("input_host_stencil", "input_glb_s0_y", "input_glb_s0_x", "input_glb_s0_z");
   prg.buffer_port_widths["input_glb_stencil"] = 16;
-  hcompute_input_glb_stencil->add_store("input_glb_stencil", "input_glb_s0_y", "input_glb_s0_x", "(input_glb_s0_z)", "input_glb_s0_z_z");
+  hcompute_input_glb_stencil->add_store("input_glb_stencil", "input_glb_s0_y", "input_glb_s0_x", "(input_glb_s0_z)");
 
 //consuming input_glb.stencil
 ////producing kernel_glb.stencil
   auto kernel_glb_s0_y = prg.add_loop("kernel_glb_s0_y", 0, 3);
   auto kernel_glb_s0_x = kernel_glb_s0_y->add_loop("kernel_glb_s0_x", 0, 3);
   auto kernel_glb_s0_w = kernel_glb_s0_x->add_loop("kernel_glb_s0_w", 0, 64);
-  auto kernel_glb_s0_z = kernel_glb_s0_w->add_loop("kernel_glb_s0_z", 0, 8);
-  auto kernel_glb_s0_z_z = kernel_glb_s0_z->add_loop("kernel_glb_s0_z_z", 0, 2);
+  auto kernel_glb_s0_z = kernel_glb_s0_w->add_loop("kernel_glb_s0_z", 0, 16);
 
 //store is: kernel_glb.stencil(kernel_glb_s0_z, (kernel_glb_s0_w + 504), kernel_glb_s0_x, kernel_glb_s0_y) = kernel_host.stencil(kernel_glb_s0_z, kernel_glb_s0_w, kernel_glb_s0_x, kernel_glb_s0_y)
-  auto hcompute_kernel_glb_stencil = kernel_glb_s0_z_z->add_op("op_hcompute_kernel_glb_stencil");
+  auto hcompute_kernel_glb_stencil = kernel_glb_s0_z->add_op("op_hcompute_kernel_glb_stencil");
   hcompute_kernel_glb_stencil->add_function("hcompute_kernel_glb_stencil");
-  hcompute_kernel_glb_stencil->add_load("kernel_host_stencil", "kernel_glb_s0_y", "kernel_glb_s0_x", "kernel_glb_s0_w", "kernel_glb_s0_z", "kernel_glb_s0_z_z");
+  hcompute_kernel_glb_stencil->add_load("kernel_host_stencil", "kernel_glb_s0_y", "kernel_glb_s0_x", "kernel_glb_s0_w", "kernel_glb_s0_z");
   prg.buffer_port_widths["kernel_glb_stencil"] = 16;
-  hcompute_kernel_glb_stencil->add_store("kernel_glb_stencil", "kernel_glb_s0_y", "kernel_glb_s0_x", "(kernel_glb_s0_w)", "kernel_glb_s0_z", "kernel_glb_s0_z_z");
+  hcompute_kernel_glb_stencil->add_store("kernel_glb_stencil", "kernel_glb_s0_y", "kernel_glb_s0_x", "(kernel_glb_s0_w)", "kernel_glb_s0_z");
 
 //consuming kernel_glb.stencil
 ////producing output_glb.stencil
@@ -49,48 +47,48 @@ prog resnet5_1_unroll_cyclic() {
 ////producing output_cgra.stencil
   auto output_cgra_s0_y = output_glb_s0_w_w_glb->add_loop("output_cgra_s0_y", 0, 7);
   auto output_cgra_s0_x = output_cgra_s0_y->add_loop("output_cgra_s0_x", 0, 7);
-  auto output_cgra_s0_w = output_cgra_s0_x->add_loop("output_cgra_s0_w", 0, 4);
+  auto output_cgra_s0_w = output_cgra_s0_x->add_loop("output_cgra_s0_w", 0, 8);
 
 //store is: output_cgra.stencil(0, output_cgra_s0_x, output_cgra_s0_y) = (int16)0
   auto hcompute_output_cgra_stencil = output_cgra_s0_w->add_op("op_hcompute_output_cgra_stencil");
   hcompute_output_cgra_stencil->add_function("hcompute_output_cgra_stencil");
   prg.buffer_port_widths["output_cgra_stencil"] = 16;
-  hcompute_output_cgra_stencil->add_store("output_cgra_stencil", "output_cgra_s0_y", "output_cgra_s0_x", "output_cgra_s0_w", "0");
+  hcompute_output_cgra_stencil->add_store("output_cgra_stencil", "output_cgra_s0_y", "output_cgra_s0_x", "8*output_cgra_s0_w");
 
 //store is: output_cgra.stencil(1, output_cgra_s0_x, output_cgra_s0_y) = (int16)0
   auto hcompute_output_cgra_stencil_1 = output_cgra_s0_w->add_op("op_hcompute_output_cgra_stencil_1");
   hcompute_output_cgra_stencil_1->add_function("hcompute_output_cgra_stencil_1");
-  hcompute_output_cgra_stencil_1->add_store("output_cgra_stencil", "output_cgra_s0_y", "output_cgra_s0_x", "output_cgra_s0_w", "1");
+  hcompute_output_cgra_stencil_1->add_store("output_cgra_stencil", "output_cgra_s0_y", "output_cgra_s0_x", "8*output_cgra_s0_w+1");
 
 //store is: output_cgra.stencil(2, output_cgra_s0_x, output_cgra_s0_y) = (int16)0
   auto hcompute_output_cgra_stencil_2 = output_cgra_s0_w->add_op("op_hcompute_output_cgra_stencil_2");
   hcompute_output_cgra_stencil_2->add_function("hcompute_output_cgra_stencil_2");
-  hcompute_output_cgra_stencil_2->add_store("output_cgra_stencil", "output_cgra_s0_y", "output_cgra_s0_x", "output_cgra_s0_w", "2");
+  hcompute_output_cgra_stencil_2->add_store("output_cgra_stencil", "output_cgra_s0_y", "output_cgra_s0_x", "8*output_cgra_s0_w+2");
 
 //store is: output_cgra.stencil(3, output_cgra_s0_x, output_cgra_s0_y) = (int16)0
   auto hcompute_output_cgra_stencil_3 = output_cgra_s0_w->add_op("op_hcompute_output_cgra_stencil_3");
   hcompute_output_cgra_stencil_3->add_function("hcompute_output_cgra_stencil_3");
-  hcompute_output_cgra_stencil_3->add_store("output_cgra_stencil", "output_cgra_s0_y", "output_cgra_s0_x", "output_cgra_s0_w", "3");
+  hcompute_output_cgra_stencil_3->add_store("output_cgra_stencil", "output_cgra_s0_y", "output_cgra_s0_x", "8*output_cgra_s0_w+3");
 
 //store is: output_cgra.stencil(4, output_cgra_s0_x, output_cgra_s0_y) = (int16)0
   auto hcompute_output_cgra_stencil_4 = output_cgra_s0_w->add_op("op_hcompute_output_cgra_stencil_4");
   hcompute_output_cgra_stencil_4->add_function("hcompute_output_cgra_stencil_4");
-  hcompute_output_cgra_stencil_4->add_store("output_cgra_stencil", "output_cgra_s0_y", "output_cgra_s0_x", "output_cgra_s0_w", "4");
+  hcompute_output_cgra_stencil_4->add_store("output_cgra_stencil", "output_cgra_s0_y", "output_cgra_s0_x", "8*output_cgra_s0_w+4");
 
 //store is: output_cgra.stencil(5, output_cgra_s0_x, output_cgra_s0_y) = (int16)0
   auto hcompute_output_cgra_stencil_5 = output_cgra_s0_w->add_op("op_hcompute_output_cgra_stencil_5");
   hcompute_output_cgra_stencil_5->add_function("hcompute_output_cgra_stencil_5");
-  hcompute_output_cgra_stencil_5->add_store("output_cgra_stencil", "output_cgra_s0_y", "output_cgra_s0_x", "output_cgra_s0_w", "5");
+  hcompute_output_cgra_stencil_5->add_store("output_cgra_stencil", "output_cgra_s0_y", "output_cgra_s0_x", "8*output_cgra_s0_w+5");
 
 //store is: output_cgra.stencil(6, output_cgra_s0_x, output_cgra_s0_y) = (int16)0
   auto hcompute_output_cgra_stencil_6 = output_cgra_s0_w->add_op("op_hcompute_output_cgra_stencil_6");
   hcompute_output_cgra_stencil_6->add_function("hcompute_output_cgra_stencil_6");
-  hcompute_output_cgra_stencil_6->add_store("output_cgra_stencil", "output_cgra_s0_y", "output_cgra_s0_x", "output_cgra_s0_w", "6");
+  hcompute_output_cgra_stencil_6->add_store("output_cgra_stencil", "output_cgra_s0_y", "output_cgra_s0_x", "8*output_cgra_s0_w+6");
 
 //store is: output_cgra.stencil(7, output_cgra_s0_x, output_cgra_s0_y) = (int16)0
   auto hcompute_output_cgra_stencil_7 = output_cgra_s0_w->add_op("op_hcompute_output_cgra_stencil_7");
   hcompute_output_cgra_stencil_7->add_function("hcompute_output_cgra_stencil_7");
-  hcompute_output_cgra_stencil_7->add_store("output_cgra_stencil", "output_cgra_s0_y", "output_cgra_s0_x", "output_cgra_s0_w", "7");
+  hcompute_output_cgra_stencil_7->add_store("output_cgra_stencil", "output_cgra_s0_y", "output_cgra_s0_x", "8*output_cgra_s0_w+7");
   auto output_cgra_s1_r_z_rz_glb = output_glb_s0_w_w_glb->add_loop("output_cgra_s1_r_z_rz_glb", 0, 2);
 ////producing input_cgra.stencil
   auto input_cgra_s0_y = output_cgra_s1_r_z_rz_glb->add_loop("input_cgra_s0_y", 0, 16);
@@ -100,14 +98,14 @@ prog resnet5_1_unroll_cyclic() {
 //store is: input_cgra.stencil((input_cgra_s0_z_z_z_cgra*2), input_cgra_s0_x, input_cgra_s0_y) = input_glb.stencil(((((output_cgra_s1_r_z_rz_glb*4) + input_cgra_s0_z_z_z_cgra)*2) + 248), input_cgra_s0_x, input_cgra_s0_y)
   auto hcompute_input_cgra_stencil = input_cgra_s0_z_z_z_cgra->add_op("op_hcompute_input_cgra_stencil");
   hcompute_input_cgra_stencil->add_function("hcompute_input_cgra_stencil");
-  hcompute_input_cgra_stencil->add_load("input_glb_stencil", "input_cgra_s0_y", "input_cgra_s0_x", "((output_cgra_s1_r_z_rz_glb*4) + input_cgra_s0_z_z_z_cgra)", "0");
+  hcompute_input_cgra_stencil->add_load("input_glb_stencil", "input_cgra_s0_y", "input_cgra_s0_x", "((output_cgra_s1_r_z_rz_glb*8) + input_cgra_s0_z_z_z_cgra*2)");
   prg.buffer_port_widths["input_cgra_stencil"] = 16;
   hcompute_input_cgra_stencil->add_store("input_cgra_stencil", "input_cgra_s0_y", "input_cgra_s0_x", "input_cgra_s0_z_z_z_cgra*2" );
 
 //store is: input_cgra.stencil(((input_cgra_s0_z_z_z_cgra*2) + 1), input_cgra_s0_x, input_cgra_s0_y) = input_glb.stencil(((((output_cgra_s1_r_z_rz_glb*4) + input_cgra_s0_z_z_z_cgra)*2) + 249), input_cgra_s0_x, input_cgra_s0_y)
   auto hcompute_input_cgra_stencil_1 = input_cgra_s0_z_z_z_cgra->add_op("op_hcompute_input_cgra_stencil_1");
   hcompute_input_cgra_stencil_1->add_function("hcompute_input_cgra_stencil_1");
-  hcompute_input_cgra_stencil_1->add_load("input_glb_stencil", "input_cgra_s0_y", "input_cgra_s0_x", "((((output_cgra_s1_r_z_rz_glb*4) + input_cgra_s0_z_z_z_cgra)))", "1");
+  hcompute_input_cgra_stencil_1->add_load("input_glb_stencil", "input_cgra_s0_y", "input_cgra_s0_x", "((output_cgra_s1_r_z_rz_glb*8) + input_cgra_s0_z_z_z_cgra*2)+1");
   hcompute_input_cgra_stencil_1->add_store("input_cgra_stencil", "input_cgra_s0_y", "input_cgra_s0_x", "((input_cgra_s0_z_z_z_cgra*2 + 1))");
 
 //consuming input_cgra.stencil
@@ -115,21 +113,21 @@ prog resnet5_1_unroll_cyclic() {
   auto kernel_cgra_s0_y = output_cgra_s1_r_z_rz_glb->add_loop("kernel_cgra_s0_y", 0, 3);
   auto kernel_cgra_s0_x = kernel_cgra_s0_y->add_loop("kernel_cgra_s0_x", 0, 3);
   auto kernel_cgra_s0_w_cgra = kernel_cgra_s0_x->add_loop("kernel_cgra_s0_w_cgra", 0, 4);
-  auto kernel_cgra_s0_w_w_cgra = kernel_cgra_s0_w_cgra->add_loop("kernel_cgra_s0_w_w_cgra", 0, 4);
+  auto kernel_cgra_s0_w_w_cgra = kernel_cgra_s0_w_cgra->add_loop("kernel_cgra_s0_w_w_cgra", 0, 8);
   auto kernel_cgra_s0_z_z_z_cgra = kernel_cgra_s0_w_w_cgra->add_loop("kernel_cgra_s0_z_z_z_cgra", 0, 4);
 
 //store is: kernel_cgra.stencil((kernel_cgra_s0_z_z_z_cgra*2), kernel_cgra_s0_w_w_cgra, kernel_cgra_s0_x, kernel_cgra_s0_y) = kernel_glb.stencil(((((output_cgra_s1_r_z_rz_glb*4) + kernel_cgra_s0_z_z_z_cgra)*2) + -8), (((output_glb_s0_w_w_glb*8) + kernel_cgra_s0_w_w_cgra) + 504), kernel_cgra_s0_x, kernel_cgra_s0_y)
   auto hcompute_kernel_cgra_stencil = kernel_cgra_s0_z_z_z_cgra->add_op("op_hcompute_kernel_cgra_stencil");
   hcompute_kernel_cgra_stencil->add_function("hcompute_kernel_cgra_stencil");
-  hcompute_kernel_cgra_stencil->add_load("kernel_glb_stencil", "kernel_cgra_s0_y", "kernel_cgra_s0_x", "(((output_glb_s0_w_w_glb*32) + (kernel_cgra_s0_w_cgra*8) + kernel_cgra_s0_w_w_cgra))", "((((output_cgra_s1_r_z_rz_glb*4) + kernel_cgra_s0_z_z_z_cgra)))", "0");
+  hcompute_kernel_cgra_stencil->add_load("kernel_glb_stencil", "kernel_cgra_s0_y", "kernel_cgra_s0_x", "(((output_glb_s0_w_w_glb*32) + (kernel_cgra_s0_w_cgra*8) + kernel_cgra_s0_w_w_cgra))", "((output_cgra_s1_r_z_rz_glb*8) + kernel_cgra_s0_z_z_z_cgra*2)");
   prg.buffer_port_widths["kernel_cgra_stencil"] = 16;
-  hcompute_kernel_cgra_stencil->add_store("kernel_cgra_stencil", "kernel_cgra_s0_y", "kernel_cgra_s0_x", "kernel_cgra_s0_w_cgra", "kernel_cgra_s0_w_w_cgra", "(kernel_cgra_s0_z_z_z_cgra*2)" );
+  hcompute_kernel_cgra_stencil->add_store("kernel_cgra_stencil", "kernel_cgra_s0_y", "kernel_cgra_s0_x", "8*kernel_cgra_s0_w_cgra + kernel_cgra_s0_w_w_cgra", "(kernel_cgra_s0_z_z_z_cgra*2)" );
 
 //store is: kernel_cgra.stencil(((kernel_cgra_s0_z_z_z_cgra*2) + 1), kernel_cgra_s0_w_w_cgra, kernel_cgra_s0_x, kernel_cgra_s0_y) = kernel_glb.stencil(((((output_cgra_s1_r_z_rz_glb*4) + kernel_cgra_s0_z_z_z_cgra)*2) + -7), (((output_glb_s0_w_w_glb*8) + kernel_cgra_s0_w_w_cgra) + 504), kernel_cgra_s0_x, kernel_cgra_s0_y)
   auto hcompute_kernel_cgra_stencil_1 = kernel_cgra_s0_z_z_z_cgra->add_op("op_hcompute_kernel_cgra_stencil_1");
   hcompute_kernel_cgra_stencil_1->add_function("hcompute_kernel_cgra_stencil_1");
-  hcompute_kernel_cgra_stencil_1->add_load("kernel_glb_stencil", "kernel_cgra_s0_y", "kernel_cgra_s0_x", "(((output_glb_s0_w_w_glb*32) + (kernel_cgra_s0_w_cgra*8) + kernel_cgra_s0_w_w_cgra))", "((((output_cgra_s1_r_z_rz_glb*4) + kernel_cgra_s0_z_z_z_cgra)))", "1");
-  hcompute_kernel_cgra_stencil_1->add_store("kernel_cgra_stencil", "kernel_cgra_s0_y", "kernel_cgra_s0_x", "kernel_cgra_s0_w_cgra", "kernel_cgra_s0_w_w_cgra", "((kernel_cgra_s0_z_z_z_cgra*2) + 1)");
+  hcompute_kernel_cgra_stencil_1->add_load("kernel_glb_stencil", "kernel_cgra_s0_y", "kernel_cgra_s0_x", "(((output_glb_s0_w_w_glb*32) + (kernel_cgra_s0_w_cgra*8) + kernel_cgra_s0_w_w_cgra))", "((output_cgra_s1_r_z_rz_glb*4) + kernel_cgra_s0_z_z_z_cgra*2) + 1");
+  hcompute_kernel_cgra_stencil_1->add_store("kernel_cgra_stencil", "kernel_cgra_s0_y", "kernel_cgra_s0_x", "8*kernel_cgra_s0_w_cgra + kernel_cgra_s0_w_w_cgra", "((kernel_cgra_s0_z_z_z_cgra*2) + 1)");
 
 //consuming kernel_cgra.stencil
   auto output_cgra_s1_r_y = output_cgra_s1_r_z_rz_glb->add_loop("output_cgra_s1_r_y", 0, 3);
@@ -149,16 +147,16 @@ prog resnet5_1_unroll_cyclic() {
   hcompute_output_cgra_stencil_8->add_load("input_cgra_stencil", "((output_cgra_s1_y*2) + output_cgra_s1_r_y)", "((output_cgra_s1_x*2) + output_cgra_s1_r_x)", "5");
   hcompute_output_cgra_stencil_8->add_load("input_cgra_stencil", "((output_cgra_s1_y*2) + output_cgra_s1_r_y)", "((output_cgra_s1_x*2) + output_cgra_s1_r_x)", "7");
   hcompute_output_cgra_stencil_8->add_load("input_cgra_stencil", "((output_cgra_s1_y*2) + output_cgra_s1_r_y)", "((output_cgra_s1_x*2) + output_cgra_s1_r_x)", "6");
-  hcompute_output_cgra_stencil_8->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "output_cgra_s1_w","0", "0");
-  hcompute_output_cgra_stencil_8->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "output_cgra_s1_w","0", "1");
-  hcompute_output_cgra_stencil_8->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "output_cgra_s1_w","0", "2");
-  hcompute_output_cgra_stencil_8->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "output_cgra_s1_w","0", "3");
-  hcompute_output_cgra_stencil_8->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "output_cgra_s1_w","0", "4");
-  hcompute_output_cgra_stencil_8->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "output_cgra_s1_w","0", "5");
-  hcompute_output_cgra_stencil_8->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "output_cgra_s1_w","0", "7");
-  hcompute_output_cgra_stencil_8->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "output_cgra_s1_w","0", "6");
-  hcompute_output_cgra_stencil_8->add_load("output_cgra_stencil", "output_cgra_s1_y", "output_cgra_s1_x", "output_cgra_s1_w","0");
-  hcompute_output_cgra_stencil_8->add_store("output_cgra_stencil", "output_cgra_s1_y", "output_cgra_s1_x","output_cgra_s1_w", "0");
+  hcompute_output_cgra_stencil_8->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "8*output_cgra_s1_w", "0");
+  hcompute_output_cgra_stencil_8->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "8*output_cgra_s1_w", "1");
+  hcompute_output_cgra_stencil_8->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "8*output_cgra_s1_w", "2");
+  hcompute_output_cgra_stencil_8->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "8*output_cgra_s1_w", "3");
+  hcompute_output_cgra_stencil_8->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "8*output_cgra_s1_w", "4");
+  hcompute_output_cgra_stencil_8->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "8*output_cgra_s1_w", "5");
+  hcompute_output_cgra_stencil_8->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "8*output_cgra_s1_w", "7");
+  hcompute_output_cgra_stencil_8->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "8*output_cgra_s1_w", "6");
+  hcompute_output_cgra_stencil_8->add_load("output_cgra_stencil", "output_cgra_s1_y", "output_cgra_s1_x", "8*output_cgra_s1_w");
+  hcompute_output_cgra_stencil_8->add_store("output_cgra_stencil", "output_cgra_s1_y", "output_cgra_s1_x","8*output_cgra_s1_w");
 
 //store is: output_cgra.stencil(1, output_cgra_s1_x, output_cgra_s1_y) = ((kernel_cgra.stencil(8, 1, output_cgra_s1_r_x, output_cgra_s1_r_y)*input_cgra.stencil(8, ((output_cgra_s1_x*2) + output_cgra_s1_r_x), ((output_cgra_s1_y*2) + output_cgra_s1_r_y))) + (output_cgra.stencil(1, output_cgra_s1_x, output_cgra_s1_y) + ((kernel_cgra.stencil(9, 1, output_cgra_s1_r_x, output_cgra_s1_r_y)*input_cgra.stencil(9, ((output_cgra_s1_x*2) + output_cgra_s1_r_x), ((output_cgra_s1_y*2) + output_cgra_s1_r_y))) + ((kernel_cgra.stencil(10, 1, output_cgra_s1_r_x, output_cgra_s1_r_y)*input_cgra.stencil(10, ((output_cgra_s1_x*2) + output_cgra_s1_r_x), ((output_cgra_s1_y*2) + output_cgra_s1_r_y))) + ((kernel_cgra.stencil(11, 1, output_cgra_s1_r_x, output_cgra_s1_r_y)*input_cgra.stencil(11, ((output_cgra_s1_x*2) + output_cgra_s1_r_x), ((output_cgra_s1_y*2) + output_cgra_s1_r_y))) + ((kernel_cgra.stencil(12, 1, output_cgra_s1_r_x, output_cgra_s1_r_y)*input_cgra.stencil(12, ((output_cgra_s1_x*2) + output_cgra_s1_r_x), ((output_cgra_s1_y*2) + output_cgra_s1_r_y))) + ((kernel_cgra.stencil(13, 1, output_cgra_s1_r_x, output_cgra_s1_r_y)*input_cgra.stencil(13, ((output_cgra_s1_x*2) + output_cgra_s1_r_x), ((output_cgra_s1_y*2) + output_cgra_s1_r_y))) + ((kernel_cgra.stencil(15, 1, output_cgra_s1_r_x, output_cgra_s1_r_y)*input_cgra.stencil(15, ((output_cgra_s1_x*2) + output_cgra_s1_r_x), ((output_cgra_s1_y*2) + output_cgra_s1_r_y))) + (kernel_cgra.stencil(14, 1, output_cgra_s1_r_x, output_cgra_s1_r_y)*input_cgra.stencil(14, ((output_cgra_s1_x*2) + output_cgra_s1_r_x), ((output_cgra_s1_y*2) + output_cgra_s1_r_y)))))))))))
   auto hcompute_output_cgra_stencil_9 = output_cgra_s1_w->add_op("op_hcompute_output_cgra_stencil_9");
@@ -171,16 +169,16 @@ prog resnet5_1_unroll_cyclic() {
   hcompute_output_cgra_stencil_9->add_load("input_cgra_stencil", "((output_cgra_s1_y*2) + output_cgra_s1_r_y)", "((output_cgra_s1_x*2) + output_cgra_s1_r_x)", "5");
   hcompute_output_cgra_stencil_9->add_load("input_cgra_stencil", "((output_cgra_s1_y*2) + output_cgra_s1_r_y)", "((output_cgra_s1_x*2) + output_cgra_s1_r_x)", "7");
   hcompute_output_cgra_stencil_9->add_load("input_cgra_stencil", "((output_cgra_s1_y*2) + output_cgra_s1_r_y)", "((output_cgra_s1_x*2) + output_cgra_s1_r_x)", "6");
-  hcompute_output_cgra_stencil_9->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "output_cgra_s1_w","1", "0");
-  hcompute_output_cgra_stencil_9->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "output_cgra_s1_w","1", "1");
-  hcompute_output_cgra_stencil_9->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "output_cgra_s1_w","1", "2");
-  hcompute_output_cgra_stencil_9->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "output_cgra_s1_w","1", "3");
-  hcompute_output_cgra_stencil_9->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "output_cgra_s1_w","1", "4");
-  hcompute_output_cgra_stencil_9->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "output_cgra_s1_w","1", "5");
-  hcompute_output_cgra_stencil_9->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "output_cgra_s1_w","1", "7");
-  hcompute_output_cgra_stencil_9->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "output_cgra_s1_w","1", "6");
-  hcompute_output_cgra_stencil_9->add_load("output_cgra_stencil", "output_cgra_s1_y", "output_cgra_s1_x", "output_cgra_s1_w",  "1");
-  hcompute_output_cgra_stencil_9->add_store("output_cgra_stencil", "output_cgra_s1_y","output_cgra_s1_x", "output_cgra_s1_w",  "1");
+  hcompute_output_cgra_stencil_9->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "8*output_cgra_s1_w+1", "0");
+  hcompute_output_cgra_stencil_9->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "8*output_cgra_s1_w+1", "1");
+  hcompute_output_cgra_stencil_9->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "8*output_cgra_s1_w+1", "2");
+  hcompute_output_cgra_stencil_9->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "8*output_cgra_s1_w+1", "3");
+  hcompute_output_cgra_stencil_9->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "8*output_cgra_s1_w+1", "4");
+  hcompute_output_cgra_stencil_9->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "8*output_cgra_s1_w+1", "5");
+  hcompute_output_cgra_stencil_9->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "8*output_cgra_s1_w+1", "7");
+  hcompute_output_cgra_stencil_9->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "8*output_cgra_s1_w+1", "6");
+  hcompute_output_cgra_stencil_9->add_load("output_cgra_stencil", "output_cgra_s1_y", "output_cgra_s1_x", "8*output_cgra_s1_w+1");
+  hcompute_output_cgra_stencil_9->add_store("output_cgra_stencil", "output_cgra_s1_y","output_cgra_s1_x", "8*output_cgra_s1_w+1");
 
 //store is: output_cgra.stencil(2, output_cgra_s1_x, output_cgra_s1_y) = ((kernel_cgra.stencil(8, 2, output_cgra_s1_r_x, output_cgra_s1_r_y)*input_cgra.stencil(8, ((output_cgra_s1_x*2) + output_cgra_s1_r_x), ((output_cgra_s1_y*2) + output_cgra_s1_r_y))) + (output_cgra.stencil(2, output_cgra_s1_x, output_cgra_s1_y) + ((kernel_cgra.stencil(9, 2, output_cgra_s1_r_x, output_cgra_s1_r_y)*input_cgra.stencil(9, ((output_cgra_s1_x*2) + output_cgra_s1_r_x), ((output_cgra_s1_y*2) + output_cgra_s1_r_y))) + ((kernel_cgra.stencil(10, 2, output_cgra_s1_r_x, output_cgra_s1_r_y)*input_cgra.stencil(10, ((output_cgra_s1_x*2) + output_cgra_s1_r_x), ((output_cgra_s1_y*2) + output_cgra_s1_r_y))) + ((kernel_cgra.stencil(11, 2, output_cgra_s1_r_x, output_cgra_s1_r_y)*input_cgra.stencil(11, ((output_cgra_s1_x*2) + output_cgra_s1_r_x), ((output_cgra_s1_y*2) + output_cgra_s1_r_y))) + ((kernel_cgra.stencil(12, 2, output_cgra_s1_r_x, output_cgra_s1_r_y)*input_cgra.stencil(12, ((output_cgra_s1_x*2) + output_cgra_s1_r_x), ((output_cgra_s1_y*2) + output_cgra_s1_r_y))) + ((kernel_cgra.stencil(13, 2, output_cgra_s1_r_x, output_cgra_s1_r_y)*input_cgra.stencil(13, ((output_cgra_s1_x*2) + output_cgra_s1_r_x), ((output_cgra_s1_y*2) + output_cgra_s1_r_y))) + ((kernel_cgra.stencil(15, 2, output_cgra_s1_r_x, output_cgra_s1_r_y)*input_cgra.stencil(15, ((output_cgra_s1_x*2) + output_cgra_s1_r_x), ((output_cgra_s1_y*2) + output_cgra_s1_r_y))) + (kernel_cgra.stencil(14, 2, output_cgra_s1_r_x, output_cgra_s1_r_y)*input_cgra.stencil(14, ((output_cgra_s1_x*2) + output_cgra_s1_r_x), ((output_cgra_s1_y*2) + output_cgra_s1_r_y)))))))))))
   auto hcompute_output_cgra_stencil_10 = output_cgra_s1_w->add_op("op_hcompute_output_cgra_stencil_10");
@@ -193,16 +191,16 @@ prog resnet5_1_unroll_cyclic() {
   hcompute_output_cgra_stencil_10->add_load("input_cgra_stencil", "((output_cgra_s1_y*2) + output_cgra_s1_r_y)", "((output_cgra_s1_x*2) + output_cgra_s1_r_x)", "5");
   hcompute_output_cgra_stencil_10->add_load("input_cgra_stencil", "((output_cgra_s1_y*2) + output_cgra_s1_r_y)", "((output_cgra_s1_x*2) + output_cgra_s1_r_x)", "7");
   hcompute_output_cgra_stencil_10->add_load("input_cgra_stencil", "((output_cgra_s1_y*2) + output_cgra_s1_r_y)", "((output_cgra_s1_x*2) + output_cgra_s1_r_x)", "6");
-  hcompute_output_cgra_stencil_10->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "output_cgra_s1_w","2", "0");
-  hcompute_output_cgra_stencil_10->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "output_cgra_s1_w","2", "1");
-  hcompute_output_cgra_stencil_10->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "output_cgra_s1_w","2", "2");
-  hcompute_output_cgra_stencil_10->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "output_cgra_s1_w","2", "3");
-  hcompute_output_cgra_stencil_10->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "output_cgra_s1_w","2", "4");
-  hcompute_output_cgra_stencil_10->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "output_cgra_s1_w","2", "5");
-  hcompute_output_cgra_stencil_10->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "output_cgra_s1_w","2", "7");
-  hcompute_output_cgra_stencil_10->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "output_cgra_s1_w","2", "6");
-  hcompute_output_cgra_stencil_10->add_load("output_cgra_stencil", "output_cgra_s1_y", "output_cgra_s1_x", "output_cgra_s1_w", "2");
-  hcompute_output_cgra_stencil_10->add_store("output_cgra_stencil", "output_cgra_s1_y", "output_cgra_s1_x","output_cgra_s1_w",  "2");
+  hcompute_output_cgra_stencil_10->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "8*output_cgra_s1_w+2", "0");
+  hcompute_output_cgra_stencil_10->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "8*output_cgra_s1_w+2", "1");
+  hcompute_output_cgra_stencil_10->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "8*output_cgra_s1_w+2", "2");
+  hcompute_output_cgra_stencil_10->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "8*output_cgra_s1_w+2", "3");
+  hcompute_output_cgra_stencil_10->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "8*output_cgra_s1_w+2", "4");
+  hcompute_output_cgra_stencil_10->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "8*output_cgra_s1_w+2", "5");
+  hcompute_output_cgra_stencil_10->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "8*output_cgra_s1_w+2", "7");
+  hcompute_output_cgra_stencil_10->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "8*output_cgra_s1_w+2", "6");
+  hcompute_output_cgra_stencil_10->add_load("output_cgra_stencil", "output_cgra_s1_y", "output_cgra_s1_x", "8*output_cgra_s1_w+2");
+  hcompute_output_cgra_stencil_10->add_store("output_cgra_stencil", "output_cgra_s1_y", "output_cgra_s1_x","8*output_cgra_s1_w+2");
 
 //store is: output_cgra.stencil(3, output_cgra_s1_x, output_cgra_s1_y) = ((kernel_cgra.stencil(8, 3, output_cgra_s1_r_x, output_cgra_s1_r_y)*input_cgra.stencil(8, ((output_cgra_s1_x*2) + output_cgra_s1_r_x), ((output_cgra_s1_y*2) + output_cgra_s1_r_y))) + (output_cgra.stencil(3, output_cgra_s1_x, output_cgra_s1_y) + ((kernel_cgra.stencil(9, 3, output_cgra_s1_r_x, output_cgra_s1_r_y)*input_cgra.stencil(9, ((output_cgra_s1_x*2) + output_cgra_s1_r_x), ((output_cgra_s1_y*2) + output_cgra_s1_r_y))) + ((kernel_cgra.stencil(10, 3, output_cgra_s1_r_x, output_cgra_s1_r_y)*input_cgra.stencil(10, ((output_cgra_s1_x*2) + output_cgra_s1_r_x), ((output_cgra_s1_y*2) + output_cgra_s1_r_y))) + ((kernel_cgra.stencil(11, 3, output_cgra_s1_r_x, output_cgra_s1_r_y)*input_cgra.stencil(11, ((output_cgra_s1_x*2) + output_cgra_s1_r_x), ((output_cgra_s1_y*2) + output_cgra_s1_r_y))) + ((kernel_cgra.stencil(12, 3, output_cgra_s1_r_x, output_cgra_s1_r_y)*input_cgra.stencil(12, ((output_cgra_s1_x*2) + output_cgra_s1_r_x), ((output_cgra_s1_y*2) + output_cgra_s1_r_y))) + ((kernel_cgra.stencil(13, 3, output_cgra_s1_r_x, output_cgra_s1_r_y)*input_cgra.stencil(13, ((output_cgra_s1_x*2) + output_cgra_s1_r_x), ((output_cgra_s1_y*2) + output_cgra_s1_r_y))) + ((kernel_cgra.stencil(15, 3, output_cgra_s1_r_x, output_cgra_s1_r_y)*input_cgra.stencil(15, ((output_cgra_s1_x*2) + output_cgra_s1_r_x), ((output_cgra_s1_y*2) + output_cgra_s1_r_y))) + (kernel_cgra.stencil(14, 3, output_cgra_s1_r_x, output_cgra_s1_r_y)*input_cgra.stencil(14, ((output_cgra_s1_x*2) + output_cgra_s1_r_x), ((output_cgra_s1_y*2) + output_cgra_s1_r_y)))))))))))
   auto hcompute_output_cgra_stencil_11 = output_cgra_s1_w->add_op("op_hcompute_output_cgra_stencil_11");
@@ -215,16 +213,16 @@ prog resnet5_1_unroll_cyclic() {
   hcompute_output_cgra_stencil_11->add_load("input_cgra_stencil", "((output_cgra_s1_y*2) + output_cgra_s1_r_y)", "((output_cgra_s1_x*2) + output_cgra_s1_r_x)", "5");
   hcompute_output_cgra_stencil_11->add_load("input_cgra_stencil", "((output_cgra_s1_y*2) + output_cgra_s1_r_y)", "((output_cgra_s1_x*2) + output_cgra_s1_r_x)", "7");
   hcompute_output_cgra_stencil_11->add_load("input_cgra_stencil", "((output_cgra_s1_y*2) + output_cgra_s1_r_y)", "((output_cgra_s1_x*2) + output_cgra_s1_r_x)", "6");
-  hcompute_output_cgra_stencil_11->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "output_cgra_s1_w","3", "0");
-  hcompute_output_cgra_stencil_11->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "output_cgra_s1_w","3", "1");
-  hcompute_output_cgra_stencil_11->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "output_cgra_s1_w","3", "2");
-  hcompute_output_cgra_stencil_11->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "output_cgra_s1_w","3", "3");
-  hcompute_output_cgra_stencil_11->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "output_cgra_s1_w","3", "4");
-  hcompute_output_cgra_stencil_11->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "output_cgra_s1_w","3", "5");
-  hcompute_output_cgra_stencil_11->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "output_cgra_s1_w","3", "7");
-  hcompute_output_cgra_stencil_11->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "output_cgra_s1_w","3", "6");
-  hcompute_output_cgra_stencil_11->add_load("output_cgra_stencil", "output_cgra_s1_y", "output_cgra_s1_x", "output_cgra_s1_w", "3");
-  hcompute_output_cgra_stencil_11->add_store("output_cgra_stencil", "output_cgra_s1_y", "output_cgra_s1_x","output_cgra_s1_w",  "3");
+  hcompute_output_cgra_stencil_11->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "8*output_cgra_s1_w+3", "0");
+  hcompute_output_cgra_stencil_11->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "8*output_cgra_s1_w+3", "1");
+  hcompute_output_cgra_stencil_11->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "8*output_cgra_s1_w+3", "2");
+  hcompute_output_cgra_stencil_11->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "8*output_cgra_s1_w+3", "3");
+  hcompute_output_cgra_stencil_11->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "8*output_cgra_s1_w+3", "4");
+  hcompute_output_cgra_stencil_11->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "8*output_cgra_s1_w+3", "5");
+  hcompute_output_cgra_stencil_11->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "8*output_cgra_s1_w+3", "7");
+  hcompute_output_cgra_stencil_11->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "8*output_cgra_s1_w+3", "6");
+  hcompute_output_cgra_stencil_11->add_load("output_cgra_stencil", "output_cgra_s1_y", "output_cgra_s1_x", "8*output_cgra_s1_w+3");
+  hcompute_output_cgra_stencil_11->add_store("output_cgra_stencil", "output_cgra_s1_y", "output_cgra_s1_x","8*output_cgra_s1_w+3");
 
 //store is: output_cgra.stencil(4, output_cgra_s1_x, output_cgra_s1_y) = ((kernel_cgra.stencil(8, 4, output_cgra_s1_r_x, output_cgra_s1_r_y)*input_cgra.stencil(8, ((output_cgra_s1_x*2) + output_cgra_s1_r_x), ((output_cgra_s1_y*2) + output_cgra_s1_r_y))) + (output_cgra.stencil(4, output_cgra_s1_x, output_cgra_s1_y) + ((kernel_cgra.stencil(9, 4, output_cgra_s1_r_x, output_cgra_s1_r_y)*input_cgra.stencil(9, ((output_cgra_s1_x*2) + output_cgra_s1_r_x), ((output_cgra_s1_y*2) + output_cgra_s1_r_y))) + ((kernel_cgra.stencil(10, 4, output_cgra_s1_r_x, output_cgra_s1_r_y)*input_cgra.stencil(10, ((output_cgra_s1_x*2) + output_cgra_s1_r_x), ((output_cgra_s1_y*2) + output_cgra_s1_r_y))) + ((kernel_cgra.stencil(11, 4, output_cgra_s1_r_x, output_cgra_s1_r_y)*input_cgra.stencil(11, ((output_cgra_s1_x*2) + output_cgra_s1_r_x), ((output_cgra_s1_y*2) + output_cgra_s1_r_y))) + ((kernel_cgra.stencil(12, 4, output_cgra_s1_r_x, output_cgra_s1_r_y)*input_cgra.stencil(12, ((output_cgra_s1_x*2) + output_cgra_s1_r_x), ((output_cgra_s1_y*2) + output_cgra_s1_r_y))) + ((kernel_cgra.stencil(13, 4, output_cgra_s1_r_x, output_cgra_s1_r_y)*input_cgra.stencil(13, ((output_cgra_s1_x*2) + output_cgra_s1_r_x), ((output_cgra_s1_y*2) + output_cgra_s1_r_y))) + ((kernel_cgra.stencil(15, 4, output_cgra_s1_r_x, output_cgra_s1_r_y)*input_cgra.stencil(15, ((output_cgra_s1_x*2) + output_cgra_s1_r_x), ((output_cgra_s1_y*2) + output_cgra_s1_r_y))) + (kernel_cgra.stencil(14, 4, output_cgra_s1_r_x, output_cgra_s1_r_y)*input_cgra.stencil(14, ((output_cgra_s1_x*2) + output_cgra_s1_r_x), ((output_cgra_s1_y*2) + output_cgra_s1_r_y)))))))))))
   auto hcompute_output_cgra_stencil_12 = output_cgra_s1_w->add_op("op_hcompute_output_cgra_stencil_12");
@@ -237,16 +235,16 @@ prog resnet5_1_unroll_cyclic() {
   hcompute_output_cgra_stencil_12->add_load("input_cgra_stencil", "((output_cgra_s1_y*2) + output_cgra_s1_r_y)", "((output_cgra_s1_x*2) + output_cgra_s1_r_x)", "5");
   hcompute_output_cgra_stencil_12->add_load("input_cgra_stencil", "((output_cgra_s1_y*2) + output_cgra_s1_r_y)", "((output_cgra_s1_x*2) + output_cgra_s1_r_x)", "7");
   hcompute_output_cgra_stencil_12->add_load("input_cgra_stencil", "((output_cgra_s1_y*2) + output_cgra_s1_r_y)", "((output_cgra_s1_x*2) + output_cgra_s1_r_x)", "6");
-  hcompute_output_cgra_stencil_12->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x","output_cgra_s1_w", "4", "0");
-  hcompute_output_cgra_stencil_12->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x","output_cgra_s1_w", "4", "1");
-  hcompute_output_cgra_stencil_12->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x","output_cgra_s1_w", "4", "2");
-  hcompute_output_cgra_stencil_12->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x","output_cgra_s1_w", "4", "3");
-  hcompute_output_cgra_stencil_12->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x","output_cgra_s1_w", "4", "4");
-  hcompute_output_cgra_stencil_12->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x","output_cgra_s1_w", "4", "5");
-  hcompute_output_cgra_stencil_12->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x","output_cgra_s1_w", "4", "7");
-  hcompute_output_cgra_stencil_12->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x","output_cgra_s1_w", "4", "6");
-  hcompute_output_cgra_stencil_12->add_load("output_cgra_stencil", "output_cgra_s1_y",  "output_cgra_s1_x", "output_cgra_s1_w","4");
-  hcompute_output_cgra_stencil_12->add_store("output_cgra_stencil", "output_cgra_s1_y",  "output_cgra_s1_x","output_cgra_s1_w", "4");
+  hcompute_output_cgra_stencil_12->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x","8*output_cgra_s1_w+4", "0");
+  hcompute_output_cgra_stencil_12->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x","8*output_cgra_s1_w+4", "1");
+  hcompute_output_cgra_stencil_12->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x","8*output_cgra_s1_w+4", "2");
+  hcompute_output_cgra_stencil_12->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x","8*output_cgra_s1_w+4", "3");
+  hcompute_output_cgra_stencil_12->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x","8*output_cgra_s1_w+4", "4");
+  hcompute_output_cgra_stencil_12->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x","8*output_cgra_s1_w+4", "5");
+  hcompute_output_cgra_stencil_12->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x","8*output_cgra_s1_w+4", "7");
+  hcompute_output_cgra_stencil_12->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x","8*output_cgra_s1_w+4", "6");
+  hcompute_output_cgra_stencil_12->add_load("output_cgra_stencil", "output_cgra_s1_y",  "output_cgra_s1_x", "8*output_cgra_s1_w+4");
+  hcompute_output_cgra_stencil_12->add_store("output_cgra_stencil", "output_cgra_s1_y",  "output_cgra_s1_x","8*output_cgra_s1_w+4");
 
 //store is: output_cgra.stencil(5, output_cgra_s1_x, output_cgra_s1_y) = ((kernel_cgra.stencil(8, 5, output_cgra_s1_r_x, output_cgra_s1_r_y)*input_cgra.stencil(8, ((output_cgra_s1_x*2) + output_cgra_s1_r_x), ((output_cgra_s1_y*2) + output_cgra_s1_r_y))) + (output_cgra.stencil(5, output_cgra_s1_x, output_cgra_s1_y) + ((kernel_cgra.stencil(9, 5, output_cgra_s1_r_x, output_cgra_s1_r_y)*input_cgra.stencil(9, ((output_cgra_s1_x*2) + output_cgra_s1_r_x), ((output_cgra_s1_y*2) + output_cgra_s1_r_y))) + ((kernel_cgra.stencil(10, 5, output_cgra_s1_r_x, output_cgra_s1_r_y)*input_cgra.stencil(10, ((output_cgra_s1_x*2) + output_cgra_s1_r_x), ((output_cgra_s1_y*2) + output_cgra_s1_r_y))) + ((kernel_cgra.stencil(11, 5, output_cgra_s1_r_x, output_cgra_s1_r_y)*input_cgra.stencil(11, ((output_cgra_s1_x*2) + output_cgra_s1_r_x), ((output_cgra_s1_y*2) + output_cgra_s1_r_y))) + ((kernel_cgra.stencil(12, 5, output_cgra_s1_r_x, output_cgra_s1_r_y)*input_cgra.stencil(12, ((output_cgra_s1_x*2) + output_cgra_s1_r_x), ((output_cgra_s1_y*2) + output_cgra_s1_r_y))) + ((kernel_cgra.stencil(13, 5, output_cgra_s1_r_x, output_cgra_s1_r_y)*input_cgra.stencil(13, ((output_cgra_s1_x*2) + output_cgra_s1_r_x), ((output_cgra_s1_y*2) + output_cgra_s1_r_y))) + ((kernel_cgra.stencil(15, 5, output_cgra_s1_r_x, output_cgra_s1_r_y)*input_cgra.stencil(15, ((output_cgra_s1_x*2) + output_cgra_s1_r_x), ((output_cgra_s1_y*2) + output_cgra_s1_r_y))) + (kernel_cgra.stencil(14, 5, output_cgra_s1_r_x, output_cgra_s1_r_y)*input_cgra.stencil(14, ((output_cgra_s1_x*2) + output_cgra_s1_r_x), ((output_cgra_s1_y*2) + output_cgra_s1_r_y)))))))))))
   auto hcompute_output_cgra_stencil_13 = output_cgra_s1_w->add_op("op_hcompute_output_cgra_stencil_13");
@@ -259,16 +257,16 @@ prog resnet5_1_unroll_cyclic() {
   hcompute_output_cgra_stencil_13->add_load("input_cgra_stencil", "((output_cgra_s1_y*2) + output_cgra_s1_r_y)", "((output_cgra_s1_x*2) + output_cgra_s1_r_x)", "5");
   hcompute_output_cgra_stencil_13->add_load("input_cgra_stencil", "((output_cgra_s1_y*2) + output_cgra_s1_r_y)", "((output_cgra_s1_x*2) + output_cgra_s1_r_x)", "7");
   hcompute_output_cgra_stencil_13->add_load("input_cgra_stencil", "((output_cgra_s1_y*2) + output_cgra_s1_r_y)", "((output_cgra_s1_x*2) + output_cgra_s1_r_x)", "6");
-  hcompute_output_cgra_stencil_13->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "output_cgra_s1_w","5", "0");
-  hcompute_output_cgra_stencil_13->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "output_cgra_s1_w","5", "1");
-  hcompute_output_cgra_stencil_13->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "output_cgra_s1_w","5", "2");
-  hcompute_output_cgra_stencil_13->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "output_cgra_s1_w","5", "3");
-  hcompute_output_cgra_stencil_13->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "output_cgra_s1_w","5", "4");
-  hcompute_output_cgra_stencil_13->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "output_cgra_s1_w","5", "5");
-  hcompute_output_cgra_stencil_13->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "output_cgra_s1_w","5", "7");
-  hcompute_output_cgra_stencil_13->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "output_cgra_s1_w","5", "6");
-  hcompute_output_cgra_stencil_13->add_load("output_cgra_stencil", "output_cgra_s1_y", "output_cgra_s1_x", "output_cgra_s1_w", "5");
-  hcompute_output_cgra_stencil_13->add_store("output_cgra_stencil", "output_cgra_s1_y", "output_cgra_s1_x","output_cgra_s1_w",  "5");
+  hcompute_output_cgra_stencil_13->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "8*output_cgra_s1_w+5", "0");
+  hcompute_output_cgra_stencil_13->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "8*output_cgra_s1_w+5", "1");
+  hcompute_output_cgra_stencil_13->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "8*output_cgra_s1_w+5", "2");
+  hcompute_output_cgra_stencil_13->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "8*output_cgra_s1_w+5", "3");
+  hcompute_output_cgra_stencil_13->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "8*output_cgra_s1_w+5", "4");
+  hcompute_output_cgra_stencil_13->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "8*output_cgra_s1_w+5", "5");
+  hcompute_output_cgra_stencil_13->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "8*output_cgra_s1_w+5", "7");
+  hcompute_output_cgra_stencil_13->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "8*output_cgra_s1_w+5", "6");
+  hcompute_output_cgra_stencil_13->add_load("output_cgra_stencil", "output_cgra_s1_y", "output_cgra_s1_x", "8*output_cgra_s1_w+5");
+  hcompute_output_cgra_stencil_13->add_store("output_cgra_stencil", "output_cgra_s1_y", "output_cgra_s1_x","8*output_cgra_s1_w+5");
 
 //store is: output_cgra.stencil(6, output_cgra_s1_x, output_cgra_s1_y) = ((kernel_cgra.stencil(8, 6, output_cgra_s1_r_x, output_cgra_s1_r_y)*input_cgra.stencil(8, ((output_cgra_s1_x*2) + output_cgra_s1_r_x), ((output_cgra_s1_y*2) + output_cgra_s1_r_y))) + (output_cgra.stencil(6, output_cgra_s1_x, output_cgra_s1_y) + ((kernel_cgra.stencil(9, 6, output_cgra_s1_r_x, output_cgra_s1_r_y)*input_cgra.stencil(9, ((output_cgra_s1_x*2) + output_cgra_s1_r_x), ((output_cgra_s1_y*2) + output_cgra_s1_r_y))) + ((kernel_cgra.stencil(10, 6, output_cgra_s1_r_x, output_cgra_s1_r_y)*input_cgra.stencil(10, ((output_cgra_s1_x*2) + output_cgra_s1_r_x), ((output_cgra_s1_y*2) + output_cgra_s1_r_y))) + ((kernel_cgra.stencil(11, 6, output_cgra_s1_r_x, output_cgra_s1_r_y)*input_cgra.stencil(11, ((output_cgra_s1_x*2) + output_cgra_s1_r_x), ((output_cgra_s1_y*2) + output_cgra_s1_r_y))) + ((kernel_cgra.stencil(12, 6, output_cgra_s1_r_x, output_cgra_s1_r_y)*input_cgra.stencil(12, ((output_cgra_s1_x*2) + output_cgra_s1_r_x), ((output_cgra_s1_y*2) + output_cgra_s1_r_y))) + ((kernel_cgra.stencil(13, 6, output_cgra_s1_r_x, output_cgra_s1_r_y)*input_cgra.stencil(13, ((output_cgra_s1_x*2) + output_cgra_s1_r_x), ((output_cgra_s1_y*2) + output_cgra_s1_r_y))) + ((kernel_cgra.stencil(15, 6, output_cgra_s1_r_x, output_cgra_s1_r_y)*input_cgra.stencil(15, ((output_cgra_s1_x*2) + output_cgra_s1_r_x), ((output_cgra_s1_y*2) + output_cgra_s1_r_y))) + (kernel_cgra.stencil(14, 6, output_cgra_s1_r_x, output_cgra_s1_r_y)*input_cgra.stencil(14, ((output_cgra_s1_x*2) + output_cgra_s1_r_x), ((output_cgra_s1_y*2) + output_cgra_s1_r_y)))))))))))
   auto hcompute_output_cgra_stencil_14 = output_cgra_s1_w->add_op("op_hcompute_output_cgra_stencil_14");
@@ -281,16 +279,16 @@ prog resnet5_1_unroll_cyclic() {
   hcompute_output_cgra_stencil_14->add_load("input_cgra_stencil", "((output_cgra_s1_y*2) + output_cgra_s1_r_y)", "((output_cgra_s1_x*2) + output_cgra_s1_r_x)", "5");
   hcompute_output_cgra_stencil_14->add_load("input_cgra_stencil", "((output_cgra_s1_y*2) + output_cgra_s1_r_y)", "((output_cgra_s1_x*2) + output_cgra_s1_r_x)", "7");
   hcompute_output_cgra_stencil_14->add_load("input_cgra_stencil", "((output_cgra_s1_y*2) + output_cgra_s1_r_y)", "((output_cgra_s1_x*2) + output_cgra_s1_r_x)", "6");
-  hcompute_output_cgra_stencil_14->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "output_cgra_s1_w","6", "0");
-  hcompute_output_cgra_stencil_14->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "output_cgra_s1_w","6", "1");
-  hcompute_output_cgra_stencil_14->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "output_cgra_s1_w","6", "2");
-  hcompute_output_cgra_stencil_14->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "output_cgra_s1_w","6", "3");
-  hcompute_output_cgra_stencil_14->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "output_cgra_s1_w","6", "4");
-  hcompute_output_cgra_stencil_14->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "output_cgra_s1_w","6", "5");
-  hcompute_output_cgra_stencil_14->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "output_cgra_s1_w","6", "7");
-  hcompute_output_cgra_stencil_14->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "output_cgra_s1_w","6", "6");
-  hcompute_output_cgra_stencil_14->add_load("output_cgra_stencil", "output_cgra_s1_y", "output_cgra_s1_x","output_cgra_s1_w",  "6");
-  hcompute_output_cgra_stencil_14->add_store("output_cgra_stencil", "output_cgra_s1_y", "output_cgra_s1_x", "output_cgra_s1_w" , "6");
+  hcompute_output_cgra_stencil_14->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "8*output_cgra_s1_w+6", "0");
+  hcompute_output_cgra_stencil_14->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "8*output_cgra_s1_w+6", "1");
+  hcompute_output_cgra_stencil_14->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "8*output_cgra_s1_w+6", "2");
+  hcompute_output_cgra_stencil_14->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "8*output_cgra_s1_w+6", "3");
+  hcompute_output_cgra_stencil_14->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "8*output_cgra_s1_w+6", "4");
+  hcompute_output_cgra_stencil_14->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "8*output_cgra_s1_w+6", "5");
+  hcompute_output_cgra_stencil_14->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "8*output_cgra_s1_w+6", "7");
+  hcompute_output_cgra_stencil_14->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "8*output_cgra_s1_w+6", "6");
+  hcompute_output_cgra_stencil_14->add_load("output_cgra_stencil", "output_cgra_s1_y", "output_cgra_s1_x","8*output_cgra_s1_w+6");
+  hcompute_output_cgra_stencil_14->add_store("output_cgra_stencil", "output_cgra_s1_y", "output_cgra_s1_x", "8*output_cgra_s1_w+6");
 
 //store is: output_cgra.stencil(7, output_cgra_s1_x, output_cgra_s1_y) = ((kernel_cgra.stencil(8, 7, output_cgra_s1_r_x, output_cgra_s1_r_y)*input_cgra.stencil(8, ((output_cgra_s1_x*2) + output_cgra_s1_r_x), ((output_cgra_s1_y*2) + output_cgra_s1_r_y))) + (output_cgra.stencil(7, output_cgra_s1_x, output_cgra_s1_y) + ((kernel_cgra.stencil(9, 7, output_cgra_s1_r_x, output_cgra_s1_r_y)*input_cgra.stencil(9, ((output_cgra_s1_x*2) + output_cgra_s1_r_x), ((output_cgra_s1_y*2) + output_cgra_s1_r_y))) + ((kernel_cgra.stencil(10, 7, output_cgra_s1_r_x, output_cgra_s1_r_y)*input_cgra.stencil(10, ((output_cgra_s1_x*2) + output_cgra_s1_r_x), ((output_cgra_s1_y*2) + output_cgra_s1_r_y))) + ((kernel_cgra.stencil(11, 7, output_cgra_s1_r_x, output_cgra_s1_r_y)*input_cgra.stencil(11, ((output_cgra_s1_x*2) + output_cgra_s1_r_x), ((output_cgra_s1_y*2) + output_cgra_s1_r_y))) + ((kernel_cgra.stencil(12, 7, output_cgra_s1_r_x, output_cgra_s1_r_y)*input_cgra.stencil(12, ((output_cgra_s1_x*2) + output_cgra_s1_r_x), ((output_cgra_s1_y*2) + output_cgra_s1_r_y))) + ((kernel_cgra.stencil(13, 7, output_cgra_s1_r_x, output_cgra_s1_r_y)*input_cgra.stencil(13, ((output_cgra_s1_x*2) + output_cgra_s1_r_x), ((output_cgra_s1_y*2) + output_cgra_s1_r_y))) + ((kernel_cgra.stencil(15, 7, output_cgra_s1_r_x, output_cgra_s1_r_y)*input_cgra.stencil(15, ((output_cgra_s1_x*2) + output_cgra_s1_r_x), ((output_cgra_s1_y*2) + output_cgra_s1_r_y))) + (kernel_cgra.stencil(14, 7, output_cgra_s1_r_x, output_cgra_s1_r_y)*input_cgra.stencil(14, ((output_cgra_s1_x*2) + output_cgra_s1_r_x), ((output_cgra_s1_y*2) + output_cgra_s1_r_y)))))))))))
   auto hcompute_output_cgra_stencil_15 = output_cgra_s1_w->add_op("op_hcompute_output_cgra_stencil_15");
@@ -303,16 +301,16 @@ prog resnet5_1_unroll_cyclic() {
   hcompute_output_cgra_stencil_15->add_load("input_cgra_stencil", "((output_cgra_s1_y*2) + output_cgra_s1_r_y)", "((output_cgra_s1_x*2) + output_cgra_s1_r_x)", "5");
   hcompute_output_cgra_stencil_15->add_load("input_cgra_stencil", "((output_cgra_s1_y*2) + output_cgra_s1_r_y)", "((output_cgra_s1_x*2) + output_cgra_s1_r_x)", "7");
   hcompute_output_cgra_stencil_15->add_load("input_cgra_stencil", "((output_cgra_s1_y*2) + output_cgra_s1_r_y)", "((output_cgra_s1_x*2) + output_cgra_s1_r_x)", "6");
-  hcompute_output_cgra_stencil_15->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "output_cgra_s1_w", "7", "0");
-  hcompute_output_cgra_stencil_15->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "output_cgra_s1_w", "7", "1");
-  hcompute_output_cgra_stencil_15->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "output_cgra_s1_w", "7", "2");
-  hcompute_output_cgra_stencil_15->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "output_cgra_s1_w", "7", "3");
-  hcompute_output_cgra_stencil_15->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "output_cgra_s1_w", "7", "4");
-  hcompute_output_cgra_stencil_15->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "output_cgra_s1_w", "7", "5");
-  hcompute_output_cgra_stencil_15->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "output_cgra_s1_w", "7", "7");
-  hcompute_output_cgra_stencil_15->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "output_cgra_s1_w", "7", "6");
-  hcompute_output_cgra_stencil_15->add_load("output_cgra_stencil", "output_cgra_s1_y", "output_cgra_s1_x", "output_cgra_s1_w", "7");
-  hcompute_output_cgra_stencil_15->add_store("output_cgra_stencil", "output_cgra_s1_y", "output_cgra_s1_x","output_cgra_s1_w",  "7");
+  hcompute_output_cgra_stencil_15->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "8*output_cgra_s1_w+7", "0");
+  hcompute_output_cgra_stencil_15->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "8*output_cgra_s1_w+7", "1");
+  hcompute_output_cgra_stencil_15->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "8*output_cgra_s1_w+7", "2");
+  hcompute_output_cgra_stencil_15->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "8*output_cgra_s1_w+7", "3");
+  hcompute_output_cgra_stencil_15->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "8*output_cgra_s1_w+7", "4");
+  hcompute_output_cgra_stencil_15->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "8*output_cgra_s1_w+7", "5");
+  hcompute_output_cgra_stencil_15->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "8*output_cgra_s1_w+7", "7");
+  hcompute_output_cgra_stencil_15->add_load("kernel_cgra_stencil", "output_cgra_s1_r_y", "output_cgra_s1_r_x", "8*output_cgra_s1_w+7", "6");
+  hcompute_output_cgra_stencil_15->add_load("output_cgra_stencil", "output_cgra_s1_y", "output_cgra_s1_x", "8*output_cgra_s1_w+7");
+  hcompute_output_cgra_stencil_15->add_store("output_cgra_stencil", "output_cgra_s1_y", "output_cgra_s1_x","8*output_cgra_s1_w+7");
 
 //consuming output_cgra.stencil
   auto output_glb_s0_y_y_cgra = output_glb_s0_w_w_glb->add_loop("output_glb_s0_y_y_cgra", 0, 7);
@@ -323,7 +321,7 @@ prog resnet5_1_unroll_cyclic() {
 //store is: output_glb.stencil(((output_glb_s0_w_w_glb*8) + output_glb_s0_w_w_cgra), output_glb_s0_x_x_cgra, output_glb_s0_y_y_cgra) = output_cgra.stencil(output_glb_s0_w_w_cgra, output_glb_s0_x_x_cgra, output_glb_s0_y_y_cgra)
   auto hcompute_output_glb_stencil = output_glb_s0_w_w_cgra->add_op("op_hcompute_output_glb_stencil");
   hcompute_output_glb_stencil->add_function("hcompute_output_glb_stencil");
-  hcompute_output_glb_stencil->add_load("output_cgra_stencil", "output_glb_s0_y_y_cgra", "output_glb_s0_x_x_cgra", "output_glb_s0_w_cgra", "output_glb_s0_w_w_cgra");
+  hcompute_output_glb_stencil->add_load("output_cgra_stencil", "output_glb_s0_y_y_cgra", "output_glb_s0_x_x_cgra", "8*output_glb_s0_w_cgra+output_glb_s0_w_w_cgra");
   prg.buffer_port_widths["output_glb_stencil"] = 16;
   hcompute_output_glb_stencil->add_store("output_glb_stencil", "output_glb_s0_y_y_cgra", "output_glb_s0_x_x_cgra", "((output_glb_s0_w_w_glb*32) + (output_glb_s0_w_cgra*8) + output_glb_s0_w_w_cgra)");
 

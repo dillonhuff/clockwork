@@ -1,5 +1,7 @@
 #include "cgra_flow.h"
+#include "coreir_backend.h"
 
+#ifdef CGRAFLOW
 vector<string> cgra_flow_result(prog& prg, string dir) {
 
     string name = prg.name;
@@ -24,3 +26,4 @@ vector<string> cgra_flow_result(prog& prg, string dir) {
     return verilator_res;
 
 }
+#endif
