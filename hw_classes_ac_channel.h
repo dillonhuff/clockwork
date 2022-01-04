@@ -435,8 +435,9 @@ void burst_read(hw_uint<burst_width>* input,
     const int num_transfers) {
 
   hw_uint<burst_width> burst_reg;
+  #pragma hls_pipeline_init_interval 1
   for (int i = 0; i < num_transfers; i++) {
-    #pragma HLS pipeline II=1
+    //#pragma HLS pipeline II=1
     burst_reg = input[i];
     v.write(burst_reg);
   }
@@ -448,9 +449,9 @@ void burst_write(hw_uint<burst_width>* output,
     const int num_transfers) {
 
   hw_uint<burst_width> burst_reg;
-
+  #pragma hls_pipeline_init_interval 1 
   for (int i = 0; i < num_transfers; i++) {
-    #pragma HLS pipeline II=1
+    //#pragma HLS pipeline II=1
     burst_reg = v.read();
     output[i] = burst_reg;
   }

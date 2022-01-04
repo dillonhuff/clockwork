@@ -1,5 +1,6 @@
 #include "prog.h"
 #include "codegen.h"
+#include "codegen_catapult.h"
 #include "app.h"
 #include "rdai_collateral.h"
 
@@ -2110,7 +2111,7 @@ isl_set* mk_set(isl_ctx* c, const vector<string>& vars, const vector<string>& co
   return isl_set_read_from_str(c, s.c_str());
 }
 
-std::string resource_sharing_loop_codegen(umap* schedmap, const int d) {
+std::string resource_sharing_loop_codegen(umap* schedmap, const int d, bool is_catapult_backend = false) {
   auto time_range = coalesce(range(schedmap));
   auto sets = get_sets(time_range);
 
@@ -2119,7 +2120,7 @@ std::string resource_sharing_loop_codegen(umap* schedmap, const int d) {
   assert(s != nullptr);
 
   if (d == num_dims(s) - 1) {
-    return perfect_loop_codegen(schedmap);
+    return perfect_loop_codegen(schedmap, is_catapult_backend);
   }
 
   vector<isl_map*> maps = get_maps(schedmap);
@@ -2151,7 +2152,7 @@ std::string resource_sharing_loop_codegen(umap* schedmap, const int d) {
   }
 
   if (intervals.size() == 0) {
-    return resource_sharing_loop_codegen(schedmap, d + 1);
+    return resource_sharing_loop_codegen(schedmap, d + 1, is_catapult_backend);
   }
 
   cout << "Intervals..." << endl;
@@ -2183,7 +2184,7 @@ std::string resource_sharing_loop_codegen(umap* schedmap, const int d) {
     //cout << "for (" << var << " = " << i.first << "; " << var << " " << ((idx == (int) intervals.size() - 1) ? " <= " : " < ") << " " << i.second << "; " << var << "++)" << endl;
     umap* r = its_range(schedmap, to_uset(is));
     //out << perfect_loop_codegen(r) << endl << endl;
-    out << resource_sharing_loop_codegen(r, d + 1) << endl << endl;
+    out << resource_sharing_loop_codegen(r, d + 1, is_catapult_backend) << endl << endl;
     out << tab(1) << "}" << endl;
     idx++;
   }
@@ -2193,11 +2194,11 @@ std::string resource_sharing_loop_codegen(umap* schedmap, const int d) {
   return out.str();
 }
 
-std::string resource_sharing_loop_codegen(umap* schedmap) {
-  return resource_sharing_loop_codegen(schedmap, 0);
+std::string resource_sharing_loop_codegen(umap* schedmap, bool is_catapult_backend = false) {
+  return resource_sharing_loop_codegen(schedmap, 0, is_catapult_backend);
 }
 
-std::string non_blocking_loop_codegen(umap* schedmap, prog& prg) {
+std::string non_blocking_loop_codegen(umap* schedmap, prog& prg, bool is_catapult_backend = false) {
   ostringstream conv_out;
   auto time_range = coalesce(range(schedmap));
   conv_out << "// time range: " << str(time_range) << endl;
@@ -2241,6 +2242,11 @@ std::string non_blocking_loop_codegen(umap* schedmap, prog& prg) {
       conv_out << tab(i) << "int i" << str(i) << " = " << lower_bounds.at(i) << ";" << endl;
       conv_out << tab(i) << "while (" << var << " <= " << upper_bounds.at(i) << ") {" << endl;
     }
+    if(is_catapult_backend == true)
+    if (i == ((int) lower_bounds.size()) - 3) {
+      conv_out << "#pragma hls_pipeline_init_interval 1" << endl;
+    }
+    if(is_catapult_backend == false)
     if (i == ((int) lower_bounds.size()) - 2) {
       conv_out << "#pragma HLS pipeline II=1" << endl;
     }
@@ -2334,7 +2340,7 @@ std::string non_blocking_loop_codegen(umap* schedmap, prog& prg) {
   return conv_out.str();
 }
 
-std::string perfect_loop_codegen(umap* schedmap) {
+std::string perfect_loop_codegen(umap* schedmap, bool is_catapult_backend = false) {
   ostringstream conv_out;
   auto time_range = coalesce(range(schedmap));
   conv_out << "// time range: " << str(time_range) << endl;
@@ -2375,6 +2381,13 @@ std::string perfect_loop_codegen(umap* schedmap) {
     } else {
       conv_out << tab(i) << "for (int i" << str(i) << " = " << lower_bounds.at(i) << "; i" << str(i) << " <= " << upper_bounds.at(i) << "; i" << i << "++) {" << endl;
     }
+		
+    if(is_catapult_backend = true)
+    if (i == ((int) lower_bounds.size()) - 3) {
+      conv_out << "#pragma hls_pipeline_init_interval 1" << endl;
+    }
+
+    if(is_catapult_backend = false)
     if (i == ((int) lower_bounds.size()) - 2) {
       conv_out << "#pragma HLS pipeline II=1" << endl;
     }
@@ -2563,6 +2576,7 @@ void generate_app_collateral_catapult(CodegenOptions& options,
 
   // Collateral generation
   generate_vivado_tcl(prg.name);
+  generate_catapult_tcl(prg.name, false);
   generate_sw_bmp_test_harness(buffers, prg);
   generate_app_code_header_catapult(buffers, prg);
   generate_soda_tb(options, buffers, prg);
@@ -2796,11 +2810,11 @@ void generate_app_code_op_logic_catapult(
   if (options.hls_loop_codegen == HLS_LOOP_CODEGEN_CUSTOM) {
     // Do nothing, leave code string
   } else if (options.hls_loop_codegen == HLS_LOOP_CODEGEN_PERFECT) {
-    code_string = perfect_loop_codegen(schedmap);
+    code_string = perfect_loop_codegen(schedmap, true);
   } else if (options.hls_loop_codegen == HLS_LOOP_CODEGEN_CYLINDRICAL) {
-    code_string = resource_sharing_loop_codegen(schedmap);
+    code_string = resource_sharing_loop_codegen(schedmap, true);
   } else if (options.hls_loop_codegen == HLS_LOOP_CODEGEN_NON_BLOCKING) {
-    code_string = non_blocking_loop_codegen(schedmap, prg);
+    code_string = non_blocking_loop_codegen(schedmap, prg, true);
   } else {
     assert(options.hls_loop_codegen == HLS_LOOP_CODEGEN_ISL);
     code_string = codegen_c(schedmap);
@@ -3839,9 +3853,9 @@ std::vector<std::string> run_regression_tb(const std::string& name) {
 #ifndef CGRAFLOW
   int res = system(string("g++ -fstack-protector-all -std=c++11 regression_tb_" + name + ".cpp " + name + ".cpp").c_str());
 #else
-  // int res = system(string("g++ -fstack-protector-all -std=c++11 regression_tb_" + name + ".cpp " + name + ".cpp").c_str());
-  cmd("echo $CLKWRK_PATH");
-  int res = cmd("g++ -fstack-protector-all -std=c++11 -I $CLKWRK_PATH regression_tb_" + name + ".cpp " + name + ".cpp");
+   int res = system(string("g++ -fstack-protector-all -std=c++11 regression_tb_" + name + ".cpp " + name + ".cpp").c_str());
+  //cmd("echo $CLKWRK_PATH");
+  //int res = cmd("g++ -fstack-protector-all -std=c++11 -I $CLKWRK_PATH regression_tb_" + name + ".cpp " + name + ".cpp");
 #endif
   assert(res == 0);
 

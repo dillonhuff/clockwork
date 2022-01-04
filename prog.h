@@ -2090,8 +2090,8 @@ void generate_resource_sharing_code(
     app_dag& dag);
 
 
-std::string resource_sharing_loop_codegen(umap* schedmap);
-std::string perfect_loop_codegen(umap* schedmap);
+std::string resource_sharing_loop_codegen(umap* schedmap, bool is_catapult_backend);
+std::string perfect_loop_codegen(umap* schedmap, bool is_catapult_backend);
 
 umap* clockwork_schedule_prog(prog& prg);
 
