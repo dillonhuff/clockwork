@@ -18117,6 +18117,40 @@ void adjust_coarse_grained_loop_delays_sequentially_without_opt(schedule_info& s
   }
 }
 
+void align_glb_load_start_cycle(schedule_info& sched, prog& prg) {
+  vector<op*> cgpl_lps;
+  find_coarse_grained_pipeline_loops(prg.root, cgpl_lps, prg);
+  for (op* coarse_pipeline_loop: cgpl_lps) {
+    cout << "adjust delay under coarse loop: "
+        << coarse_pipeline_loop->name << endl;
+    vector<string> sorted_kernels = topologically_sort_kernels(coarse_pipeline_loop, prg);
+    vector<string> kernels_to_be_aligned;
+    for (auto name : sorted_kernels) {
+      //cout << tab(2) << "II: " << sched.II(lp) << endl;
+      //cout << tab(2) << "TP: " << (lp)->trip_count() << endl;
+      auto producers = get_producers(name, coarse_pipeline_loop, prg);
+
+      if (producers.size() == 0) {
+         kernels_to_be_aligned.push_back(name); 
+         cout << tab(1) << "Push kernel <" << name << "> into GLB alignment list." << endl;
+      }
+    }
+
+
+    int max_delay = 0;
+    map<string, int> delay_map;
+    for (auto name : kernels_to_be_aligned) {
+      auto lp = prg.find_non_op(name);
+      delay_map[name] = sched.starting_delay_to_leaf(lp);
+      max_delay = max(delay_map.at(name), max_delay);
+    }
+    for (auto name : kernels_to_be_aligned) {
+      auto lp = prg.find_non_op(name);
+      sched.op_offset_within_parent.at(lp) =  - delay_map.at(name);
+    }
+  }
+}
+
 void adjust_coarse_grained_loop_delays_sequentially(schedule_info& sched, prog& prg) {
   int d = 0;
   map<string, int> coarse_pipeline_II;
@@ -19034,6 +19068,7 @@ void garnet_single_port_ram_schedule(CodegenOptions& options, schedule_info& sch
   } else if(options.fallback_schedule == ISCA_SCHEDULE) {
     coarse_grained_pipeline_optimization(sched, prg);
     adjust_coarse_grained_loop_delays_sequentially_without_opt(sched, prg);
+    align_glb_load_start_cycle(sched, prg);
     tighten_coarse_grained_iis(sched, prg);
     adjust_outer_delays_sequentially(sched, prg);
 

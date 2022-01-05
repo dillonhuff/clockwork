@@ -1793,6 +1793,19 @@ struct schedule_info {
     return last_delay;
   }
 
+  int starting_delay_to_leaf(op* op) {
+    if (!op->is_loop()) {
+      return offset_in_parent(op);
+    } else {
+      int min_delay = INT_MAX;
+      for (auto c: op->children) {
+        min_delay = std::min(min_delay, starting_delay_to_leaf(c));
+      }
+      return offset_in_parent(op) + min_delay;
+    
+    }
+  }
+
   //Above the Coarse grained loop, the II will follow the db update delay
   //We do not need to wait for the latency, since we have N buffer
   int doublebuffer_update_delay(op* op) {
