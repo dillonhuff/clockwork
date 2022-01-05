@@ -2576,7 +2576,7 @@ void generate_app_collateral_catapult(CodegenOptions& options,
 
   // Collateral generation
   generate_vivado_tcl(prg.name);
-  generate_catapult_tcl(prg.name, false);
+  //generate_catapult_tcl(prg.name, false);
   generate_sw_bmp_test_harness(buffers, prg);
   generate_app_code_header_catapult(buffers, prg);
   generate_soda_tb(options, buffers, prg);

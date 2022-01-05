@@ -1,4 +1,6 @@
 //#include "codegen.h"
+#include "codegen_catapult.h"
+
 
 void generate_catapult_tcl(std::string& name, bool is_halide_app) {
   ofstream of(name + "_catapult_hls.tcl");

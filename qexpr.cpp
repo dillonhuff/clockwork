@@ -123,16 +123,19 @@ void print_body(int level,
     const vector<string>& op_order,
     const Box& whole_dom,
     map<string, Box>& index_bounds,
-    map<string, vector<QExpr> >& scheds) {
+    map<string, vector<QExpr> >& scheds, bool is_catapult_backend) {
 
   int ndims = pick(index_bounds).second.intervals.size();
   int next_level = level + 1;
   out << endl;
+  if(is_catapult_backend == false){
   out << "#ifdef __VIVADO_SYNTH__" << endl;
   //out << "#pragma HLS dependence inter false" << endl;
   out << "#pragma HLS pipeline II=1" << endl;
   out << "#endif // __VIVADO_SYNTH__" << endl << endl;
-
+  }
+  //else
+  //out << "#pragma hls_pipeline_init_interval 1" << endl;
   vector<string> vars;
   for (int i = 0; i < ndims; i++) {
     vars.push_back("c" + str(i));

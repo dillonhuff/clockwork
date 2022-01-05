@@ -377,11 +377,8 @@ void bxy_noinit_ln_1_opt(HWStream<hw_uint<16> >& /* get_args num ports = 1 */inp
 	    // input_arg_update_0 -> [1*d1*1*1 + 1*0,1*d0*1*1 + 1*0,1*0]
 	    // input_update_0 -> [1*d1*1*1 + 1*0,1*d0*1*1 + 1*0,1*1]
 	for (int c0 = 0; c0 <= 1081; c0++) {
+	  #pragma hls_pipeline_init_interval 1
 	  for (int c1 = 0; c1 <= 1921; c1++) {
-	
-	#ifdef __VIVADO_SYNTH__
-	#pragma HLS pipeline II=1
-	#endif // __VIVADO_SYNTH__
 	
 	    if ((0 <= c1 && c1 <= 1921) && ((c1 - 0) % 1 == 0) && (0 <= c0 && c0 <= 1081) && ((c0 - 0) % 1 == 0)) {
 	      input_update_0(input_arg /* buf name */, input, (c1 - 0) / 1, (c0 - 0) / 1);

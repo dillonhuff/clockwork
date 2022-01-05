@@ -1150,7 +1150,7 @@ void print_body(int level,
     const vector<string>& op_order,
     const Box& whole_dom,
     map<string, Box>& index_bounds,
-    map<string, vector<QExpr> >& scheds);
+    map<string, vector<QExpr> >& scheds, bool is_catapult_backend = false);
 
 static inline
 void print_loops(int level,
@@ -1158,7 +1158,7 @@ void print_loops(int level,
     const vector<string>& op_order,
     const Box& whole_dom,
     map<string, Box>& index_bounds,
-    map<string, vector<QExpr> >& scheds) {
+    map<string, vector<QExpr> >& scheds, bool is_catapult_backend = false) {
 
   int ndims = pick(index_bounds).second.intervals.size();
 
@@ -1166,13 +1166,16 @@ void print_loops(int level,
   int max = whole_dom.intervals.at(level).max;
 
   string ivar = "c" + str(level);
+  if (level == ndims-1)
+    if(is_catapult_backend == true)
+	out << tab(level) << "#pragma hls_pipeline_init_interval 1" << endl;
   out << tab(level) << "for (int " << ivar << " = " << min << "; " << ivar << " <= " << max << "; " << ivar << "++) {" << endl;
   int next_level = level + 1;
   if (next_level == ndims) {
-    print_body(level, out, op_order, whole_dom, index_bounds, scheds);
+    print_body(level, out, op_order, whole_dom, index_bounds, scheds, is_catapult_backend);
 
   } else {
-    print_loops(level + 1, out, op_order, whole_dom, index_bounds, scheds);
+    print_loops(level + 1, out, op_order, whole_dom, index_bounds, scheds, is_catapult_backend);
   }
   out << tab(level) << "}" << endl;
 }
@@ -1181,7 +1184,7 @@ static inline
 std::string box_codegen(CodegenOptions& options,
     const vector<string>& op_order,
     map<string, vector<QExpr> >& scheds,
-    map<string, Box>& compute_domains) {
+    map<string, Box>& compute_domains, bool is_catapult_backend = false) {
 
   assert(compute_domains.size() > 0);
 
@@ -1241,7 +1244,7 @@ std::string box_codegen(CodegenOptions& options,
   //ss << "#ifdef __VIVADO_SYNTH__" << endl;
   //ss << "#pragma HLS inline recursive" << endl;
   //ss << "#endif // __VIVADO_SYNTH__" << endl << endl;
-  print_loops(0, ss, op_order, whole_dom, index_bounds, scheds);
+  print_loops(0, ss, op_order, whole_dom, index_bounds, scheds, is_catapult_backend);
   //print_while_loop(0, ss, op_order, whole_dom, index_bounds, scheds);
 
   return ss.str();

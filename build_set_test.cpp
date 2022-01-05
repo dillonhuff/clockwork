@@ -6,6 +6,7 @@
 #include "app.h"
 #include "prog_splitting_test.h"
 #include "codegen.h"
+#include "codegen_catapult.h"
 #include "example_progs.h"
 #include "lake_target.h"
 #include "simple_example_progs.h"
@@ -7402,7 +7403,7 @@ struct App {
       }
     }
 
-    string cgn = box_codegen(options, ops, scheds, compute_domains);
+    string cgn = box_codegen(options, ops, scheds, compute_domains, true);
     options.code_string = cgn;
 
     map<string, UBuffer> buffers = build_buffers(m);
@@ -11458,7 +11459,7 @@ void blur_xy_16_app_test_catapult(const std::string& prefix) {
   int rows = 1080;
 
   //vector<int> factors{1, 2, 4, 8};
-  vector<int> factors{1, 2, 4, 8};
+  vector<int> factors{1};
   for (auto f : factors) {
     int unroll_factor = f;
     cout << tab(1) << "unroll factor: " << unroll_factor << endl;
@@ -12955,13 +12956,13 @@ void iccad_tests() {
 void catapult_tests() {
 
   // exposure_fusion_app
- exposure_fusion_iccad_apps_catapult("ef_asic_rerun");
+ //exposure_fusion_iccad_apps_catapult("ef_asic_rerun");
 
   // exposure_fusion_app
   //exposure_fusion();
 //  camera_pipeline_test_catapult("cp_noinit_ln1_cata");
 //  sobel_16_app_test_catapult("sbl_ln_cata");
- // blur_xy_16_app_test_catapult("bxy_noinit_ln");
+ blur_xy_16_app_test_catapult("bxy_noinit_ln");
 
  // gauss_pyramid_iccad_apps_catapult("gp_fpga_cata");
  // gauss_pyramid_test("gp_fpga");
@@ -20732,7 +20733,8 @@ void harris_unrolled_test_1() {
 void fpga_asplos_tests_catapult() {
 
   //auto test_programs = stencil_programs();
-  auto test_programs = {gaussian(), harris(), conv_3_3(), laplacian_pyramid(), gaussian_glb(), gaussian_glb2()};
+ // auto test_programs = {gaussian(), harris(), conv_3_3(), laplacian_pyramid(), gaussian_glb(), gaussian_glb2()};
+  auto test_programs = {gaussian()};
   for (auto prg : test_programs) {
     cout << "==== FPGA clockwork code for " << prg.name << endl;
     break_up_multi_channel_inputs(prg);
