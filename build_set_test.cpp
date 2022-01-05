@@ -15113,9 +15113,9 @@ void resnet_profiling() {
 
 void test_glb(bool gen_config_only, bool multi_accessor=false, string dir="aha_garnet_design") {
   vector<prog> test_apps;
+  test_apps.push_back(camera_pipeline_extra_buf());
 
   //ISSCC application without unroll
-  test_apps.push_back(resnet5_1_unroll_cyclic());
   test_apps.push_back(harris_color());
   test_apps.push_back(gaussian_isscc());
   test_apps.push_back(camera_pipeline_isscc());
@@ -15154,6 +15154,7 @@ void test_glb(bool gen_config_only, bool multi_accessor=false, string dir="aha_g
   test_apps.push_back(resnet5_x_new());
   test_apps.push_back(resnet5_1_new());
   test_apps.push_back(resnet5_1_unroll());
+  test_apps.push_back(resnet5_1_unroll_cyclic());
   test_apps.push_back(resnet_multi_channel());
 
   ////Test with non double buffer, not tested with db
@@ -17600,7 +17601,7 @@ void relax_write(schedule_info& sched, op* loop, prog& prg, int fetch_width) {
   cout << "op level: " << levels.at(loop->name) << endl;
   if(write_map == nullptr)
       return;
-  //Do  not pad glb loop
+  //Do not pad glb loop
   if (contains(loop->name, "glb"))
       return;
   for (auto wr_map: get_maps(write_map)) {

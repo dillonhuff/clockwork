@@ -6429,6 +6429,7 @@ void UBuffer::generate_banks(CodegenOptions& options) {
     for(auto bank: get_banks()) {
       auto inpts = banks_to_inputs.at(bank.name);
       auto outpts = banks_to_outputs.at(bank.name);
+      cout << banks_to_outputs.at(bank.name) << endl;
       assert(banks_to_inputs.at(bank.name).size() == 1);
       assert(banks_to_outputs.at(bank.name).size() == 1);
       //int impl_bank = impl.add_new_bank_between(inpts, outpts, to_set(bank.rddom));
@@ -10278,8 +10279,8 @@ dgraph build_out_to_out_shift_register_graph(CodegenOptions& options, prog& prg,
 }
 
 std::set<string> output_port_sharing(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_info& hwinfo, UBufferImpl& impl) {
-    std::set<string> done_pt;
-  if (impl.get_sr_outpts().size())
+    std::set<string> done_pt = impl.get_sr_outpts();
+  if (done_pt.size())
     return done_pt;
   dgraph dg = build_out_to_out_shift_register_graph(options, prg, buf, hwinfo, 0);
   vector<std::set<string>> port_groups;
@@ -10387,6 +10388,8 @@ UBufferImpl generate_optimized_memory_implementation(
 
     auto new_buf = delete_ports(done_outpt, buf);
     cout << "After shift register optimization: " << impl << endl;
+    cout << "Done ports: " << done_outpt << endl;
+    cout << "reduced buffer: " << new_buf << endl;
 
     if (!impl.is_pure_shift_register(new_buf.get_out_ports()))
         generate_banks_garnet(options, new_buf, impl, hwinfo);
@@ -10533,6 +10536,35 @@ isl_map* build_buffer_impl_embarrassing_banking(UBuffer& buf, schedule_info& hwi
   cout << "Bank map: " << bank_func << endl;
   //assert(false);
   isl_map* m = isl_map_read_from_str(buf.ctx, bank_func.c_str());
+
+  //There could have been some banks for shift register
+  int cur_bank_number = impl.get_bank_num();
+
+  //TODO: think a more systematic way to keep both delay buffer and banking
+  //TODO: should move this into a separate function
+  if (cur_bank_number != 0) {
+    //move the shift register back in banking
+    for (int b = 0; b < cur_bank_number; b ++) {
+      impl.bank_readers[b + num_banks] = impl.bank_readers.at(b);
+      impl.bank_readers.erase(b);
+      impl.bank_writers[b + num_banks] = impl.bank_writers.at(b);
+      impl.bank_writers.erase(b);
+      impl.bank_rddom[b+num_banks] = impl.bank_rddom.at(b);
+      for (auto& it: impl.outpt_to_bank) {
+        if (it.second.count(b)) {
+          it.second.erase(b);
+          it.second.insert(b+num_banks);
+        }
+      }
+      for (auto& it: impl.inpt_to_bank) {
+        if (it.second.count(b)) {
+          it.second.erase(b);
+          it.second.insert(b+num_banks);
+        }
+      }
+    }
+  }
+
   for (auto pt : buf.get_all_ports()) {
     //cout << "pt :" << pt << endl;
     for (int b = 0; b < num_banks; b++) {
@@ -10581,7 +10613,7 @@ void generate_banks_garnet(CodegenOptions& options, UBuffer& buf, UBufferImpl& i
       cout << "After banking: " << bank_impl << endl;
 
       //take the ubuffer implementation add bank to ubuffer
-      for (int bank_id = 0; bank_id < bank_impl.get_bank_num(); bank_id ++) {
+      for (int bank_id = 0; bank_id < bank_impl.get_partition_bank_num(); bank_id ++) {
         isl_set* bnk = isl_set_read_from_str(buf.ctx, curlies("Bank["+str(bank_id) + "]").c_str());
         auto rddom = to_uset(domain(its_range(bank_func, bnk)));
         cout << "rddom before its: " << str(rddom) << endl;
@@ -10695,7 +10727,7 @@ void generate_banks_garnet(CodegenOptions& options, UBuffer& buf, UBufferImpl& i
     else {
 
         cout << "Use exhaustive banking! " << endl;
-        buf.generate_banks_and_merge(options);
+        buf.generate_banks(options);
         buf.parse_exhaustive_banking_into_impl(impl);
         cout << "After exhaustive banking:\n " << impl << endl;
         //cout << "CANNOT support by current banking strategies!" << endl;

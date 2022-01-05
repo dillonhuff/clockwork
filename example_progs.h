@@ -40,6 +40,7 @@ prog resnet_multi_tiny(); //for regfile debug
 prog camera_pipeline(); //stencil
 prog camera_pipeline_new(); //stencil
 prog camera_pipeline_isscc(); //stencil
+prog camera_pipeline_extra_buf(); //stencil
 //prog camera_pipeline_new_trunc(); //stencil
 //prog camera_pipeline_trunc(); //stencil
 prog up_sample();
