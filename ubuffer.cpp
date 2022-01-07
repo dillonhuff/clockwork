@@ -1156,6 +1156,23 @@ void UBufferImpl::bank_merging(CodegenOptions & options) {
   }
 }
 
+//A post processing make sure each banks' port are sorted by its name
+void UBufferImpl::sort_bank_port() {
+    for (auto& it: bank_outpt2readers) {
+        vector<std::set<string>>& outpt2readers = it.second;
+        sort(outpt2readers.begin(), outpt2readers.end(),
+                [](std::set<string>& l, std::set<string>& r)
+                { return pick(l) < pick(r); });
+    }
+
+    for (auto& it: bank_inpt2writers) {
+        vector<std::set<string>>& in2writers = it.second;
+        sort(in2writers.begin(), in2writers.end(),
+                [](std::set<string>& l, std::set<string>& r)
+                { return pick(l) < pick(r); });
+    }
+}
+
 #ifdef COREIR
 
 //helper function to get schedule for port
@@ -1197,7 +1214,7 @@ UBuffer UBuffer::generate_ubuffer(UBufferImpl& impl, schedule_info & info, int b
     auto inpts = impl.get_unique_inpts(bank);
     auto outpts = impl.get_unique_outpts(bank);
     cout <<"impl inputs: "<< inpts << endl;
-    cout <<"impl outpts: "<< inpts << endl;
+    cout <<"impl outpts: "<< outpts << endl;
     cout << "rddom: " << str(rddom) << endl;
 
     //TODO: may need a sort
@@ -1233,7 +1250,8 @@ UBuffer UBuffer::generate_ubuffer(UBufferImpl& impl, schedule_info & info, int b
       //buf.port_bundles[get_bundle(inpt)].push_back(pt_name);
 
       //Put into separate bundle if we have different domain name
-      buf.port_bundles[::name(dom) + "_write"].push_back(inpt);
+      buf.port_bundles[inpt + "_write"].push_back(inpt);
+      //buf.port_bundles[::name(dom)+ "_write"].push_back(inpt);
       if (impl.is_shift_register_input(inpt)) {
         //rewrite for shift register
         //TODO pass codegenoptions
@@ -1303,7 +1321,8 @@ UBuffer UBuffer::generate_ubuffer(UBufferImpl& impl, schedule_info & info, int b
         //buf.port_bundles[get_bundle(outpt)].push_back(pt_name);
 
         //Put into separate bundle if we have different domain name
-        buf.port_bundles[::name(dom) + "_read"].push_back(outpt);
+        buf.port_bundles[outpt + "_read"].push_back(outpt);
+        //buf.port_bundles[::name(dom)+ "_read"].push_back(outpt);
 
         buf.add_out_pt(outpt, dom, acc_map, its(sched, dom));
       }
@@ -10398,6 +10417,7 @@ UBufferImpl generate_optimized_memory_implementation(
 
     cout << "After banking optimization: " << impl << endl;
     impl.bank_merging(options);
+    impl.sort_bank_port();
     cout << "After bank merging: " << impl << endl;
     return impl;
 }

@@ -3280,6 +3280,7 @@ struct UBufferImpl {
   void merge_banks(vector<int> banks_tobe_merged);
   void conditional_merging(CodegenOptions & options, const vector<int> & banks_tobe_merged);
   void bank_merging(CodegenOptions & options);
+  void sort_bank_port();
 
   void sanity_check_memory_hierarchy(CodegenOptions& options, const vector<int> & banks);
 

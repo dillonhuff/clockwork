@@ -20100,14 +20100,14 @@ vector<prog> isca_programs_m3() {
   //test_programs.push_back(three_level_pond_rolled());
 
   test_programs.push_back(gaussian());
-  test_programs.push_back(cascade());
-  test_programs.push_back(down_sample());
-  test_programs.push_back(harris());
-  test_programs.push_back(camera_pipeline());
-  test_programs.push_back(unsharp());
-  test_programs.push_back(unsharp_new());
-  test_programs.push_back(mobilenet_unrolled());
-  test_programs.push_back(resnet());
+  //test_programs.push_back(cascade());
+  //test_programs.push_back(down_sample());
+  //test_programs.push_back(harris());
+  //test_programs.push_back(camera_pipeline());
+  //test_programs.push_back(unsharp());
+  //test_programs.push_back(unsharp_new());
+  //test_programs.push_back(mobilenet_unrolled());
+  //test_programs.push_back(resnet());
 
 
   return test_programs;
@@ -20491,9 +20491,9 @@ void cgra_flow_tests() {
 
 
   //vector<prog> bram_test_programs{pointwise(), gaussian(), harris(), resnet()};
-  vector<prog> bram_test_programs{resnet88()};
+  //vector<prog> bram_test_programs{resnet88()};
   //vector<prog> bram_test_programs{pointwise()};
-  test_codegen(bram_test_programs, compile_for_FPGA_BRAM_mem);
+  //test_codegen(bram_test_programs, compile_for_FPGA_BRAM_mem);
 
   //vector<prog> M3_test_programs = harris_variants();
   //vector<prog> M3_test_programs{up_sample(), resnet()};
@@ -20504,14 +20504,14 @@ void cgra_flow_tests() {
   //assert(false);
 
   //vector<prog> M1_test_programs{resnet88_chain()};
-  vector<prog> M1_test_programs = isca_programs();
-  test_codegen(M1_test_programs, compile_for_CGRA_M1_mem);
+  //vector<prog> M1_test_programs = isca_programs();
+  //test_codegen(M1_test_programs, compile_for_CGRA_M1_mem);
 
-  auto test_programs = all_cgra_programs();
-  test_platonic_codegen(test_programs);
+  //auto test_programs = all_cgra_programs();
+  //test_platonic_codegen(test_programs);
 
-  vector<prog> sram_test_programs{pointwise(), camera_pipeline(), resnet()};
-  test_codegen(sram_test_programs, compile_for_generic_SRAM_mem);
+  //vector<prog> sram_test_programs{pointwise(), camera_pipeline(), resnet()};
+  //test_codegen(sram_test_programs, compile_for_generic_SRAM_mem);
 
 }
 
