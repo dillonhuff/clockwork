@@ -456,7 +456,7 @@ void move_naive_to_benchmarks_folder(const std::string& app_name) {
 
 void move_to_synthesis_folder(const std::string& app_name);
 
-void move_to_benchmarks_folder(const std::string& app_name);
+void move_to_benchmarks_folder(const std::string& app_name, bool is_catapult_back = false);
 
 static inline
 void compare_to_gold(const std::string& name, const std::string& gold_name) {

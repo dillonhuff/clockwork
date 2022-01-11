@@ -32,7 +32,7 @@ void generate_catapult_tcl(std::string& name, bool is_halide_app) {
   of << "go extract" << endl;
   of << "flow run /SCVerify/launch_make ./scverify/Verify_orig_cxx_osci.mk {} SIMTOOL=osci sim" << endl;
   of << "flow run /SCVerify/launch_make ./scverify/Verify_concat_sim_rtl_v_ncsim.mk {} SIMTOOL=ncsim simgui" << endl;
-  of << "project save" << endl
+  of << "project save" << endl;
   of.close();
 }
 

@@ -92,7 +92,7 @@ void compare(const std::string& name,
   }
 }
 
-void move_to_benchmarks_folder(const std::string& app_name) {
+void move_to_benchmarks_folder(const std::string& app_name, bool is_catapult_backend) {
   string out_name = app_name;
   string app_dir =
     "./soda_codes/" + app_name;
@@ -132,7 +132,13 @@ void move_to_benchmarks_folder(const std::string& app_name) {
   system(("cp " + out_name + "*.cpp " + synth_dir).c_str());
   system(("cp conv_3x3.h " + synth_dir).c_str());
   system(("cp static_quad_value_bit_vector.h " + synth_dir).c_str());
-  system(("cp hw_classes_ac_channel.h " + synth_dir).c_str());
+  if(is_catapult_backend == true)
+  {
+     system(("cp hw_classes_ac_channel.h " + synth_dir).c_str());
+     system(("mv " + synth_dir + "hw_classes_ac_channel.h " + synth_dir + "hw_classes.h").c_str()); 
+  }
+ // system(("cp hw_classes.h " + synth_dir).c_str());
+//  system(("mv " + synth_dir + hw_classes_ac_channel.h " + synth_dir).c_str());
   system(("cp clockwork_standard_compute_units.h " + synth_dir).c_str());
   system(("cp regression_tb_" + out_name + ".cpp " + synth_dir).c_str());
   system(("cp " + out_name + "*.h " + synth_dir).c_str());

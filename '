@@ -1735,7 +1735,7 @@ void generate_app_code_header_catapult(const map<string, UBuffer>& buffers, prog
   string arg_buffers = sep_list(get_args(buffers, prg), "(", ")", ", ");
   ofstream of(prg.name + ".h");
   of << "#pragma once\n\n" << endl;
-  of << "#include \"hw_classes.h\"" << endl << endl;
+  of << "#include \"hw_classes_ac_channel.h\"" << endl << endl;
   of << "void " << prg.name << arg_buffers << ";" << endl;
   of.close();
 }
@@ -2576,7 +2576,7 @@ void generate_app_collateral_catapult(CodegenOptions& options,
 
   // Collateral generation
   generate_vivado_tcl(prg.name);
-  generate_catapult_tcl(prg.name, false);
+  //generate_catapult_tcl(prg.name, false);
   generate_sw_bmp_test_harness(buffers, prg);
   generate_app_code_header_catapult(buffers, prg);
   generate_soda_tb(options, buffers, prg);
@@ -3270,7 +3270,7 @@ void generate_regression_testbench_catapult(prog& prg, map<string, UBuffer>& buf
   rgtb << "#include <fstream>" << endl;
   rgtb << "#include <mc_scverify.h>" << endl;
   rgtb << "#include \"" << prg.name << ".h\"" << endl;
-  rgtb << "#include \"clockwork_standard_compute_units_catapult.h\"" << endl << endl;
+  rgtb << "#include \"clockwork_standard_compute_units.h\"" << endl << endl;
 
 
   rgtb << "CCS_MAIN(int argc, char *argv[]) {" << endl;
@@ -3853,7 +3853,7 @@ std::vector<std::string> run_regression_tb(const std::string& name) {
 #ifndef CGRAFLOW
   int res = system(string("g++ -fstack-protector-all -std=c++11 regression_tb_" + name + ".cpp " + name + ".cpp").c_str());
 #else
-   int res = system(string("g++ -fstack-protector-all -std=c++11 regression_tb_" + name + ".cpp "+ name + ".cpp").c_str());
+   int res = system(string("g++ -fstack-protector-all -std=c++11 regression_tb_" + name + ".cpp " + name + ".cpp").c_str());
   //cmd("echo $CLKWRK_PATH");
   //int res = cmd("g++ -fstack-protector-all -std=c++11 -I $CLKWRK_PATH regression_tb_" + name + ".cpp " + name + ".cpp");
 #endif
