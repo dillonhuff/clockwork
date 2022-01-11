@@ -41,6 +41,7 @@ prog camera_pipeline(); //stencil
 prog camera_pipeline_new(); //stencil
 prog camera_pipeline_isscc(); //stencil
 prog camera_pipeline_extra_buf(); //stencil
+prog camera_pipeline_extra_buf_glb(); //stencil
 //prog camera_pipeline_new_trunc(); //stencil
 //prog camera_pipeline_trunc(); //stencil
 prog up_sample();
@@ -125,6 +126,7 @@ prog resnet5_x();
 prog resnet5_1();
 prog resnet5_1_new();
 prog resnet5_1_unroll();
+prog resnet5_glb_unroll();
 prog resnet5_1_unroll_cyclic();
 prog resnet5_x_new();
 prog resnet_multi_channel();

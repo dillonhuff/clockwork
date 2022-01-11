@@ -15113,6 +15113,7 @@ void resnet_profiling() {
 
 void test_glb(bool gen_config_only, bool multi_accessor=false, string dir="aha_garnet_design") {
   vector<prog> test_apps;
+  test_apps.push_back(camera_pipeline_extra_buf_glb());
   test_apps.push_back(camera_pipeline_extra_buf());
 
   //ISSCC application without unroll
@@ -15155,7 +15156,8 @@ void test_glb(bool gen_config_only, bool multi_accessor=false, string dir="aha_g
   test_apps.push_back(resnet5_1_new());
   test_apps.push_back(resnet5_1_unroll());
   test_apps.push_back(resnet5_1_unroll_cyclic());
-  test_apps.push_back(resnet_multi_channel());
+  test_apps.push_back(resnet5_glb_unroll());
+  //test_apps.push_back(resnet_multi_channel());
 
   ////Test with non double buffer, not tested with db
   //test_apps.push_back(resnet_output_stationary_small());
@@ -18132,7 +18134,7 @@ void align_glb_load_start_cycle(schedule_info& sched, prog& prg) {
       auto producers = get_producers(name, coarse_pipeline_loop, prg);
 
       if (producers.size() == 0) {
-         kernels_to_be_aligned.push_back(name); 
+         kernels_to_be_aligned.push_back(name);
          cout << tab(1) << "Push kernel <" << name << "> into GLB alignment list." << endl;
       }
     }
@@ -18289,6 +18291,21 @@ void adjust_outer_delays_sequentially_with_glb_guard(schedule_info& sched, prog&
     cout << "final delay of " << lp->name <<
         ": \n\t"<< max_delay << endl;
   }
+}
+
+int find_glb_load_latency(schedule_info& sched, prog& prg) {
+  int glb_load_latency = 0;
+  for (auto name : topologically_sort_kernels(prg)) {
+    auto lp = prg.find_loop(name);
+    auto prods =  get_producers(name, prg);
+    if (prods.size() == 0 && contains(name, "glb")) {
+      cout << "\tkernel <" << lp->name << "> is the glb loading kernel." << endl;
+      cout << "\tname<" << name << endl;
+      glb_load_latency = std::max(sched.total_latency(lp), glb_load_latency);
+    }
+  }
+  cout << "Find GLB load latency = " << glb_load_latency << endl;
+  return glb_load_latency;
 }
 
 
@@ -19072,6 +19089,8 @@ void garnet_single_port_ram_schedule(CodegenOptions& options, schedule_info& sch
     align_glb_load_start_cycle(sched, prg);
     tighten_coarse_grained_iis(sched, prg);
     adjust_outer_delays_sequentially(sched, prg);
+    //int glb_load_latency = find_glb_load_latency(sched, prg);
+    //adjust_outer_delays_exhaustively(sched, prg, glb_load_latency);
 
   } else if (options.fallback_schedule == SEQUENTIAL_SCHEDULE){
     //adjust_outer_delays(sched, prg);
