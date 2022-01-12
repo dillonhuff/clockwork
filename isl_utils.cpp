@@ -2649,6 +2649,7 @@ isl_map* set_in_dim_to_val(isl_map* m, int in_dim, int val) {
 }
 
 isl_map* remove_in_dims(isl_map* m, vector<int> remove_dims) {
+    //cout << "map need to remove in dim: " << str(m) << endl;
     std::sort(remove_dims.begin(), remove_dims.end(), std::greater<int>());
     auto tmp = cpy(m);
     for (int dim: remove_dims) {

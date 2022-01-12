@@ -4388,6 +4388,52 @@ void loop_perfection(prog& prg) {
   }
 }
 
+void loop_perfection_without_glb_op(op* target_lp, op* inner_most_cgpl_lp, prog& prg) {
+  //pc id is the location of loop child that will subsume all the other children
+  int pc_id = -1;
+  int child_count = 0;
+  for (auto child: target_lp->children) {
+    if (!is_perfect(child, prg)) {
+        //Can only has one child exist
+        assert(pc_id == -1);
+        pc_id = child_count;
+    }
+    child_count ++;
+  }
+  assert(pc_id != -1);
+  for (int i = pc_id-1; i >= 0; i --) {
+    op* move_op = target_lp->children.at(i);
+    auto name = move_op->name;
+    if (contains(name, "glb"))
+        continue;
+    cout << "\tADD Prelogue op: " << name << endl;
+    add_prelogue_op(move_op, target_lp->children.at(pc_id), inner_most_cgpl_lp);
+    //Move one loop inside need to decrease the index
+    pc_id --;
+  }
+  cout << "pc id: " << pc_id << endl;
+  cout << "kernel need to be consider: " << target_lp->children << endl;
+  for (int i = pc_id+1; i < target_lp->children.size(); i ++) {
+    op* move_op = target_lp->children.at(i);
+    auto name = move_op->name;
+    cout << "\tepilogue op: " << name << endl;
+    add_epilogue_op(move_op, target_lp->children.at(pc_id), inner_most_cgpl_lp);
+  }
+}
+
+void loop_perfection_with_root_op(prog& prg) {
+  vector<op*> cgpl_lps;
+  find_coarse_grained_pipeline_loops(prg.root, cgpl_lps, prg);
+  if (cgpl_lps.size() == 0)
+    return;
+  cgpl_lps.push_back(prg.root);
+  op* inner_most_cgpl_lp = cgpl_lps.front();
+  for(auto it = cgpl_lps.begin() + 1; it != cgpl_lps.end(); it ++) {
+    //Move the ir node under *it into the inner most coarse grained pipeline loop
+    loop_perfection_without_glb_op(*it, inner_most_cgpl_lp, prg);
+  }
+}
+
 bool single_coarse_pipeline_loop_nests(prog& prg) {
   vector<op*> cgpl_lps;
   find_coarse_grained_pipeline_loops(prg.root, cgpl_lps, prg);
@@ -4604,6 +4650,52 @@ int op_latency(op* op, schedule_info& hwinfo) {
   }
 
   return total_latency;
+}
+
+
+//Binary search the smallest outer delay
+void adjust_outer_delays_exhaustively(schedule_info& sched, prog& prg, int glb_load_latency) {
+  auto deps = cycle_accurate_deps(prg);
+  cout << "Adjusting delays of " << prg.name << endl;
+  //for (auto lp : prg.root->children) {
+  //  string name = lp->name;
+  for (auto name : topologically_sort_kernels(prg)) {
+    auto lp = prg.find_loop(name);
+    cout << "Adjusting delay of " << lp->name << endl;
+
+    int earliest_possible_delay = 0;
+    int latest_legal_delay =
+      map_find(lp, sched.op_offset_within_parent);
+
+    int current_delay = latest_legal_delay;
+
+    assert(latest_legal_delay >= earliest_possible_delay);
+    while (latest_legal_delay - earliest_possible_delay > 0) {
+      assert(latest_legal_delay >= earliest_possible_delay);
+      int try_delay = (latest_legal_delay + earliest_possible_delay) / 2;
+      sched.op_offset_within_parent[lp] = try_delay;
+      if (no_violated_cycle_accurate_dependencies(deps, sched, prg)) {
+        latest_legal_delay = try_delay;
+      } else {
+        earliest_possible_delay = try_delay + 1;
+      }
+      cout << "Earliest legal: " << earliest_possible_delay << endl;
+      cout << "Latest legal  : " << latest_legal_delay << endl;
+    }
+
+    if (!contains(name, "glb_s0"))
+        latest_legal_delay = std::max(latest_legal_delay, glb_load_latency);
+    if (contains(name, "hw_output")){
+        //FIXME: override GLB output latency with sequential schedule
+        latest_legal_delay = 0;
+        for (string prod: get_producers(name, prg)) {
+            op* prod_op = prg.find_loop(prod);
+            latest_legal_delay = std::max(latest_legal_delay,
+                    sched.total_latency(prod_op) + sched.op_offset_within_parent.at(prod_op));
+        }
+    }
+    sched.op_offset_within_parent[lp] = latest_legal_delay;
+  }
 }
 
 void adjust_outer_delays(schedule_info& sched, prog& prg) {

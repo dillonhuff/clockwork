@@ -1802,7 +1802,7 @@ struct schedule_info {
         min_delay = std::min(min_delay, starting_delay_to_leaf(c));
       }
       return offset_in_parent(op) + min_delay;
-    
+
     }
   }
 
@@ -1900,6 +1900,7 @@ op* find_coarse_grained_pipeline_loop(op* lp, prog& prg);
 void find_coarse_grained_pipeline_loops(op* lp, vector<op*> & cgpl_lps, prog& prg);
 
 void loop_perfection(prog& prg);
+void loop_perfection_with_root_op(prog& prg);
 void sanity_check_iis(schedule_info& sched);
 
 int logical_dimension(const std::string& buf, prog& prg);
@@ -1918,6 +1919,7 @@ bool all_ops_scheduled(schedule_info& sched, prog& prg);
 int op_latency(op* op, schedule_info& hwinfo);
 
 void adjust_outer_delays(schedule_info& sched, prog& prg);
+void adjust_outer_delays_exhaustively(schedule_info& sched, prog& prg, int glb_load_latency);
 
 void adjust_outer_pipeline_delays(schedule_info& sched, prog& prg);
 
