@@ -15113,7 +15113,11 @@ void resnet_profiling() {
 
 void test_glb(bool gen_config_only, bool multi_accessor=false, string dir="aha_garnet_design") {
   vector<prog> test_apps;
-  test_apps.push_back(camera_pipeline_extra_buf_glb());
+
+  //camera pipeline variant tests
+  //test_apps.push_back(camera_pipeline_extra_buf());
+  test_apps.push_back(camera_pipeline_unrolly());
+  test_apps.push_back(camera_pipeline_2x2());
   test_apps.push_back(camera_pipeline_extra_buf());
 
   //ISSCC application without unroll

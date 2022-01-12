@@ -37,11 +37,18 @@ prog resnet_tiny(); //for regfile debug
 prog resnet_size_test(); //for schedule debug
 prog resnet_multi_tiny(); //for regfile debug
 //prog mini_conv_halide_fixed();
+
+//all camera pipeline variants
 prog camera_pipeline(); //stencil
 prog camera_pipeline_new(); //stencil
 prog camera_pipeline_isscc(); //stencil
+prog camera_pipeline_2x2(); //compute demosaic directly from denoised
+prog camera_pipeline_unrolly(); //stencil
 prog camera_pipeline_extra_buf(); //stencil
+
+//This doesn't work in scheduler
 prog camera_pipeline_extra_buf_glb(); //stencil
+
 //prog camera_pipeline_new_trunc(); //stencil
 //prog camera_pipeline_trunc(); //stencil
 prog up_sample();
