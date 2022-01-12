@@ -2807,7 +2807,7 @@ class GetGLBConfig: public CoreIR::InstanceGraphPass {
 
   //There are more than one input GLB
   map<string, json> glb2cgra;
-  json cgra2glb;
+  map<string, json> cgra2glb;
   GetGLBConfig() : latency(0),
     InstanceGraphPass("getglbconfig", "Find the glb load latency!") {}
   bool runOnInstanceGraphNode(CoreIR::InstanceGraphNode& node) {
@@ -2821,19 +2821,20 @@ class GetGLBConfig: public CoreIR::InstanceGraphPass {
            if(!genargs.at("has_external_addrgen")->get<bool>())
              continue;
            string buf_name = genargs.at("ID")->get<string>();
+           cout << "ID buf name: " << buf_name << endl;
            buf_name = pick(split_at(buf_name, "_"));
            auto config_file = inst->getMetaData()["config"];
            cout << "Buf_name: " << buf_name << endl;
            cout << "Config file: " << config_file << endl;
-           if(config_file.count("in2glb_0") && config_file.count("glb2out_0")) {
-             if (config_file.at("in2glb_0").at("cycle_starting_addr")[0] == 0) {
-               latency = config_file.at("glb2out_0").at("cycle_starting_addr")[0];
-               glb2cgra.insert({buf_name, config_file.at("glb2out_0")});
-             } else {
-               cgra2glb = config_file.at("in2glb_0");
-               //cgra2glb.insert({buf_name, config_file.at("in2glb_0")});
-             }
-          }
+           int write_to_glb = config_file.at("in2glb_0").at("cycle_starting_addr")[0];
+           int read_from_glb = config_file.at("glb2out_0").at("cycle_starting_addr")[0];
+           if(write_to_glb == 0) {
+             latency = std::max(latency, (int)config_file.at("glb2out_0").at("cycle_starting_addr")[0]);
+             glb2cgra.insert({buf_name, config_file.at("glb2out_0")});
+           } else {
+             cgra2glb.insert({buf_name, config_file.at("in2glb_0")});
+             //cgra2glb.insert({buf_name, config_file.at("in2glb_0")});
+           }
         }
       }
     }
@@ -2860,7 +2861,7 @@ void addIOsWithGLBConfig(Context* c, Module* top, map<string, UBuffer>& buffers,
 
     //Add the multi-tile glb informations
     if(glb_metadata->latency != 0) {
-      cout << "buf name: " << buf_name << endl;
+      cout << "INPUT GLB buf name: " << buf_name << endl;
       string key = pick(split_at(buf_name, "_"));
       inst->getMetaData()["glb2out_0"] = glb_metadata->glb2cgra.at(key);
       int old_offset = inst->getMetaData()["glb2out_0"]["cycle_starting_addr"][0] ;
@@ -2882,10 +2883,10 @@ void addIOsWithGLBConfig(Context* c, Module* top, map<string, UBuffer>& buffers,
 
     //Add the multi-tile glb informations
     if(glb_metadata->latency != 0) {
-      cout << "buf_name" << buf_name << endl;
-      //string key = split_at(buf_name, "_").at(1);
-      //inst->getMetaData()["in2glb_0"] = glb_metadata->cgra2glb.at(key);
-      inst->getMetaData()["in2glb_0"] = glb_metadata->cgra2glb;
+      cout << "OUTPUT GLB buf_name: " << buf_name << endl;
+      string key = (split_at(buf_name, "_")).at(1);
+      inst->getMetaData()["in2glb_0"] = glb_metadata->cgra2glb.at(key);
+      //inst->getMetaData()["in2glb_0"] = glb_metadata->cgra2glb;
       int old_offset = inst->getMetaData()["in2glb_0"]["cycle_starting_addr"][0] ;
       inst->getMetaData()["in2glb_0"]["cycle_starting_addr"][0] = old_offset - glb_metadata->latency;
     }
