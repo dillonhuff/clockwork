@@ -19427,6 +19427,13 @@ schedule_info garnet_schedule_info(CodegenOptions& options, prog& prg, bool use_
         cout << "KERNEL LATENCY " <<  op->func << " : " << kernel_latencies[op->func] << endl;
       }
 
+
+    for (auto b: op->buffers_written()) {
+      //assign a write
+      sched.assign_memory_write_resource(options, op, b);
+    }
+
+
       for (auto b : op->buffers_referenced()) {
         if (!prg.is_boundary(b)) {
           sched.buffer_load_latencies[b] = buffer_load_latency(options);
