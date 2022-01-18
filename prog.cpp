@@ -3474,6 +3474,7 @@ bool share_buf_write_port(const std::string& op0, const std::string& op1, schedu
     //Check if those two op can partition
     umap* pmap0 = producer_umap(prg.find_op(op0), prg);
     umap* pmap1 = producer_umap(prg.find_op(op1), prg);
+    cout << "buf " << buf0 << endl;
     bool is_pond =
       sched.buf2level.at(buf0) == "regfile";
     return is_pond && !empty(its(range(pmap0), range(pmap1)));
@@ -3490,6 +3491,9 @@ bool no_violated_buf_write_port_assignments(CodegenOptions& options, schedule_in
     for (auto op1 : get_maps(sched_exprs)) {
       string name0 = domain_name(op0);
       string name1 = domain_name(op1);
+        cout << "name0: " << name0 << endl;
+        cout << "name1: " << name1 << endl;
+
       if (name0 != name1 && share_buf_write_port(name0, name1, sched, prg)) {
         auto times = range(op0);
         auto times1 = range(op1);
