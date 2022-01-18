@@ -15,6 +15,16 @@ void CodegenOptions::add_memory_hierarchy(const std::string& level) {
     mem_hierarchy.insert({level, mem});
 }
 
+string CodegenOptions::get_hierarchy_level(int capacity) {
+    map<int, string> capacity2level;
+    for (auto it: mem_hierarchy) {
+        string level = it.first;
+        capacity2level[it.second.get_single_tile_capacity()] = level;
+    }
+    return capacity2level.lower_bound(capacity)->second;
+
+}
+
 LakeCollateral create_single_port_wide_fetch_memory(int fetch_width, int capacity, int SIPO_num) {
     LakeCollateral mem;
 

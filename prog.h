@@ -1698,6 +1698,8 @@ umap* consumer_umap(op* loop, prog& prg);
 isl_map* consumer_map(op* loop, const std::string& b, prog& prg);
 isl_map* producer_map(op* loop, const std::string& b, prog& prg);
 
+int logical_capacity(const std::string& buf, prog& prg);
+
 umap* read_at(const std::string& level, const std::string& buffer, prog& prg);
 umap* read_at(const std::string& level, prog& prg);
 
@@ -1743,6 +1745,11 @@ bool operator==(const resource_instance& a, const resource_instance& b) {
 struct schedule_info {
   // Miscellaneous
   bool use_dse_compute;
+
+  //Memory constraints
+  map<op*, string> buf_write_assignment;
+  map<string, string> buf2level;
+
 
   // Schedule constraints
   map<string, int> buffer_load_latencies;
@@ -1839,6 +1846,11 @@ struct schedule_info {
     return map_find(op->name, loop_iis);
   }
 
+  void assign_memory_write_resource(CodegenOptions& options, op* op_, string buf) {
+    buf_write_assignment[op_] = buf;
+  }
+
+
 };
 
 std::set<string> all_buffers(prog& prg);
@@ -1926,6 +1938,7 @@ void adjust_outer_pipeline_delays(schedule_info& sched, prog& prg);
 bool no_violated_cycle_accurate_dependencies(schedule_info& sched, prog& prg);
 bool sw_schedule_respects_deps(umap* schedule, umap* deps);
 bool no_violated_dependencies(umap* schedule, umap* deps);
+bool no_violated_buf_write_port_assignments(CodegenOptions& options, schedule_info& sched, prog& prg);
 
 bool schedule_bounds_fit_controller_bitwidth(const int bitwidth, schedule_info& sched, prog& prg);
 

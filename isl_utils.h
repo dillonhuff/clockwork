@@ -388,7 +388,8 @@ pair<int, int> get_domain_merge_dims(isl_map* m );
 vector<pair<int, int>> get_all_domain_merge_dims(isl_map* m );
 isl_map* merge_domain_dim(isl_map* m);
 
-
+map<int, int> get_all_domain_pad_dims(isl_map* sched, isl_map* acc)
+;
 //vectorization transformation
 isl_map* get_domain_mask(isl_map* m, int vec_dim);
 //For checking loop bound

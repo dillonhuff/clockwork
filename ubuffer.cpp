@@ -778,7 +778,7 @@ isl_map* UBuffer::get_coarse_grained_pipeline_schedule(CodegenOptions& options, 
   isl_map* merged_sched;
   if (need_double_buffer) {
     //TODO: only implement double buffer for lake
-    assert(config_mode == "lake");
+    //assert(config_mode == "lake");
     //optimize the double buffer
     isl_set* cgpl_dom = ::domain(cgpl_sched);
     int stripmine_ext = get_dim_extent(cgpl_dom, coarse_grained_pipeline_loop_level);
@@ -1923,6 +1923,19 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> &
     return ret;
 }
 
+
+//Helper function to optimize the pond dimension
+pair<isl_map*, isl_map*> pad_domain( isl_map* sched, isl_map* acc) {
+    map<int, int> dim2pad = get_all_domain_pad_dims(sched, acc);
+    for (auto it: dim2pad) {
+        int dim = it.first;
+        int pad_depth = it.second;
+        sched = pad_to_domain_ubuf_map(sched, dim, pad_depth);
+        acc = pad_to_domain_ubuf_map(acc, dim, pad_depth);
+    }
+    return {sched, acc};
+}
+
 //Simplify the single fetch width memory codegen
 Json UBuffer::generate_ubuf_args(CodegenOptions& options, UBuffer& ubuf, string mem_name) {
 
@@ -1980,7 +1993,8 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, UBuffer& ubuf, string 
                 cout << tab(2) << "1d acc map: " << str(linear_acc_map) << endl;
                 //add a simplify optimization pass,
                 //reutrn:    pair(schedulem access_map)
-                auto m_pair = merge_dom_dim(sched, to_map(linear_acc_map));
+                auto pad_pair = pad_domain(sched, to_map(linear_acc_map));
+                auto m_pair = merge_dom_dim(pad_pair.first, pad_pair.second);
                 auto new_sched = m_pair.first;
                 cout << tab(1) << "After Merge: " << endl;
                 cout << tab(2) << "schedule: " << str(new_sched) << endl;
@@ -2007,7 +2021,8 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, UBuffer& ubuf, string 
                 cout << tab(2) << "acc map: " << str(acc_map) << endl;
                 cout << tab(2) << "sched: " << str(sched) << endl;
                 cout << tab(2) << "reduce_map: " << str(reduce_map) << endl;
-                auto m_pair = merge_dom_dim(sched, to_map(linear_acc_map));
+                auto pad_pair = pad_domain(sched, to_map(linear_acc_map));
+                auto m_pair = merge_dom_dim(pad_pair.first, pad_pair.second);
                 auto new_sched = m_pair.first;
                 cout << tab(1) << "After Merge: " << endl;
                 cout << tab(2) << "schedule: " << str(new_sched) << endl;

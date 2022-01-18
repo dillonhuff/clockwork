@@ -4305,6 +4305,46 @@ vector<pair<int, int>> get_all_domain_merge_dims(isl_map* m) {
     return ret;
 }
 
+map<int, int> get_all_domain_pad_dims(isl_map* sched, isl_map* acc) {
+    int sched_in_dims = num_in_dims(sched);
+    int acc_in_dims = num_in_dims(acc);
+    assert(sched_in_dims == acc_in_dims);
+
+    map<int, int> dim2pad;
+    if (acc_in_dims < 3)
+        return dim2pad;
+
+    //skip the root loop
+    for (int dim = 2; dim < acc_in_dims; dim ++) {
+        int sched_dom_range = get_dim_extent(domain(sched), dim);
+        int acc_dom_range = get_dim_extent(domain(acc), dim);
+        int sched_stride = stride_in_dim(sched, dim);
+        int acc_stride = stride_in_dim(acc, dim);
+        int sched_up_level_stride = stride_in_dim(sched, dim-1);
+        int acc_up_level_stride = stride_in_dim(acc, dim-1);
+        cout << tab(1)<< "Dim: " << dim << endl;
+        cout << tab(2)<< "Schedule dom range: " << sched_dom_range
+            << ", current_level_stride : "<< sched_stride
+            << ", up_level_stride : "<< sched_up_level_stride
+            << endl;
+        cout << tab(2)<< "Address dom range: " << acc_dom_range
+            << ", current_level_stride : "<< acc_stride
+            << ", up_level_stride : "<< acc_up_level_stride
+            << endl;
+        //TODO: why span range = 0 cannot be merged?
+        if ((sched_dom_range*sched_stride != sched_up_level_stride))// && (span_range != 0))
+        {
+            int pad = sched_up_level_stride / sched_stride - sched_dom_range;
+            cout << "Find dim: " << dim << " pad = "<<pad <<endl;
+            //assert(pad != 0);
+            if ((acc_dom_range + pad) * acc_stride == acc_up_level_stride){
+                dim2pad[dim] = pad;
+            }
+        }
+    }
+    return dim2pad;
+}
+
 
 isl_map* merge_domain_dim(isl_map* m) {
     auto mm = cpy(m);

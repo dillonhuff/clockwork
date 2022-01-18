@@ -11696,6 +11696,20 @@ void test_if_complex();
 void test_loop_perfection();
 void playground() {
     {
+      isl_ctx* ctx = isl_ctx_alloc();
+      auto aff = isl_aff_read_from_str(ctx, "{ op_hcompute_g_r_stencil[g_r_s0_x] -> [(g_r_s0_x - floor((g_r_s0_x)/2))]  }");
+      cout << "Aff: " << str(aff) << endl;
+      assert(false);
+    }
+    {
+      isl_ctx* ctx = isl_ctx_alloc();
+      auto acc_0 = isl_map_read_from_str(ctx,"{ a[root=0, i0, i1]-> [0]: 0<=i0<8 and 0<=i1<8}");
+      auto sched_0 = isl_map_read_from_str(ctx,"{ s[root = 0, i0, i1]-> [10*i0+i1]: 0<=i0<8 and 0<=i1<8}");
+      map<int, int> dim2pad = get_all_domain_pad_dims(sched_0, acc_0);
+      cout << "Dim2pad: " << dim2pad << endl;
+      assert(false);
+    }
+    {
       auto sp_mem = create_single_port_wide_fetch_memory(4, 512, 2);
       sp_mem.print_points();
 
@@ -14921,14 +14935,16 @@ void test_pond(string dir, bool run_verilator=true) {
   //Need to change the schedule for vectorization
   //test_apps.push_back(complex_mem_pond_input());
 
+
   test_apps.push_back(resnet_simple());
   test_apps.push_back(resnet());
   test_apps.push_back(three_level_pond_copy());
   test_apps.push_back(three_level_pond_rolled());
-  test_apps.push_back(complex_mem_pond());
-  test_apps.push_back(complex_mem_pond_rolled());
   test_apps.push_back(conv_1_3());
   test_apps.push_back(conv_rolled());
+  test_apps.push_back(complex_mem_pond_rolled());
+  test_apps.push_back(complex_mem_pond());
+  test_apps.push_back(resnet_init_unroll_tile());
 
   //TODO:Currently not work because of floating point, also need to check the cyclic banking condition
   //test_apps.push_back(fft8_unroll8_split());
@@ -15114,47 +15130,50 @@ void resnet_profiling() {
 void test_glb(bool gen_config_only, bool multi_accessor=false, string dir="aha_garnet_design") {
   vector<prog> test_apps;
 
+  //resnet5 with unroll not work
+  //test_apps.push_back(resnet5_x_unroll());
+
   //camera pipeline variant tests
+  //test_apps.push_back(camera_pipeline_extra_buf_glb());
+  //test_apps.push_back(camera_pipeline_unrolly());
+  //test_apps.push_back(camera_pipeline_2x2());
   //test_apps.push_back(camera_pipeline_extra_buf());
-  test_apps.push_back(camera_pipeline_unrolly());
-  test_apps.push_back(camera_pipeline_2x2());
-  test_apps.push_back(camera_pipeline_extra_buf());
 
-  //ISSCC application without unroll
-  test_apps.push_back(harris_color());
-  test_apps.push_back(gaussian_isscc());
-  test_apps.push_back(camera_pipeline_isscc());
-  test_apps.push_back(unsharp_isscc());
+  ////ISSCC application without unroll
+  //test_apps.push_back(harris_color());
+  //test_apps.push_back(gaussian_isscc());
+  //test_apps.push_back(camera_pipeline_isscc());
+  //test_apps.push_back(unsharp_isscc());
 
-  //GLB tests
-  test_apps.push_back(unsharp_glb());
-  test_apps.push_back(gaussian_glb2());
-  test_apps.push_back(camera_pipeline_glb());
-  test_apps.push_back(harris_glb2());
-  test_apps.push_back(up_sample_glb());
-  test_apps.push_back(gaussian_glb8());
+  ////GLB tests
+  //test_apps.push_back(unsharp_glb());
+  //test_apps.push_back(gaussian_glb2());
+  //test_apps.push_back(camera_pipeline_glb());
+  //test_apps.push_back(harris_glb2());
+  //test_apps.push_back(up_sample_glb());
+  //test_apps.push_back(gaussian_glb8());
 
-  //Dense Linear algebra
-  test_apps.push_back(glb_channel_reduction());
-  test_apps.push_back(matmul());
+  ////Dense Linear algebra
+  //test_apps.push_back(glb_channel_reduction());
+  //test_apps.push_back(matmul());
 
-  //Simplified multi-tile DNN application
-  test_apps.push_back(resnet_init_unroll_tile());
+  ////Simplified multi-tile DNN application
+  //test_apps.push_back(resnet_init_unroll_tile());
 
-  //Too large which will go beyound the 64k counter ub
-  //test_apps.push_back(resnet5_1_full());
-  //test_apps.push_back(resnet2_x_full());
+  ////Too large which will go beyound the 64k counter ub
+  ////test_apps.push_back(resnet5_1_full());
+  ////test_apps.push_back(resnet2_x_full());
 
-  //For debug the 7x7 layer
-  test_apps.push_back(resnet_last());
+  ////For debug the 7x7 layer
+  //test_apps.push_back(resnet_last());
 
-  //Sample DNN Layers
-  test_apps.push_back(resnet1_docker());
-  test_apps.push_back(resnet1());
-  test_apps.push_back(resnet_1x1());
-  test_apps.push_back(resnet3_1());
-  test_apps.push_back(resnet4_x());
-  test_apps.push_back(resnet5_1());
+  ////Sample DNN Layers
+  //test_apps.push_back(resnet1_docker());
+  //test_apps.push_back(resnet1());
+  //test_apps.push_back(resnet_1x1());
+  //test_apps.push_back(resnet3_1());
+  //test_apps.push_back(resnet4_x());
+  //test_apps.push_back(resnet5_1());
   test_apps.push_back(resnet5_x());
   test_apps.push_back(resnet5_x_new());
   test_apps.push_back(resnet5_1_new());
@@ -18905,7 +18924,7 @@ void dump_resnet_latency(CodegenOptions& options, schedule_info& sched, op* root
   cout << "\tFinal schedule : " << str(op_sched)  << endl;
 
   adjust_schedule_forward(sched, prg, 0);
-  sanity_check_hw_schedule(sched, prg);
+  sanity_check_hw_schedule(sched, prg);;
   return;
 }
 
@@ -19066,44 +19085,54 @@ void garnet_single_port_ram_schedule(CodegenOptions& options, schedule_info& sch
   //}
   //assert(false);
 
-  /*
-   * old method for ISCA deadline*/
-  asap_inner_loops_schedule(sched, root, prg,
-          options.mem_hierarchy.at("mem").fetch_width);
-  //sequential_schedule(sched, root, prg);
+  do {
+    options.rtl_options.double_buffer_optimization = options.fallback_schedule < 3;
+    /*
+     * old method for ISCA deadline*/
+    asap_inner_loops_schedule(sched, root, prg,
+            options.mem_hierarchy.at("mem").fetch_width);
+    //sequential_schedule(sched, root, prg);
 
-  adjust_inner_iis(sched, prg);
-  tighten_iis(sched, prg);
+    adjust_inner_iis(sched, prg);
+    tighten_iis(sched, prg);
 
-  //only adjust coarse grained ii while optimize double buffer
-  if (options.fallback_schedule == ASPLOS_SCHEDULE) {
-    adjust_coarse_grained_loop_iis(sched, prg);
-    adjust_coarse_grained_loop_delays_sequentially(sched, prg);
-    tighten_coarse_grained_iis(sched, prg);
-    //adjust_outer_delays_sequentially_cgpl(sched, prg);
-    adjust_outer_delays_sequentially(sched, prg);
-  } else if(options.fallback_schedule == VANILLA_DB_SCHEDULE) {
-    coarse_grained_pipeline_optimization(sched, prg);
-    adjust_coarse_grained_loop_delays_sequentially_without_opt(sched, prg);
-    adjust_outer_delays_sequentially(sched, prg);
+    //only adjust coarse grained ii while optimize double buffer
+    if (options.fallback_schedule == ASPLOS_SCHEDULE) {
+      adjust_coarse_grained_loop_iis(sched, prg);
+      adjust_coarse_grained_loop_delays_sequentially(sched, prg);
+      tighten_coarse_grained_iis(sched, prg);
+      //adjust_outer_delays_sequentially_cgpl(sched, prg);
+      adjust_outer_delays_sequentially(sched, prg);
+    } else if(options.fallback_schedule == VANILLA_DB_SCHEDULE) {
+      coarse_grained_pipeline_optimization(sched, prg);
+      adjust_coarse_grained_loop_delays_sequentially_without_opt(sched, prg);
+      adjust_outer_delays_sequentially(sched, prg);
 
-  } else if(options.fallback_schedule == ISCA_SCHEDULE) {
-    coarse_grained_pipeline_optimization(sched, prg);
-    adjust_coarse_grained_loop_delays_sequentially_without_opt(sched, prg);
-    align_glb_load_start_cycle(sched, prg);
-    tighten_coarse_grained_iis(sched, prg);
-    adjust_outer_delays_sequentially(sched, prg);
-    //int glb_load_latency = find_glb_load_latency(sched, prg);
-    //adjust_outer_delays_exhaustively(sched, prg, glb_load_latency);
+    } else if(options.fallback_schedule == ISCA_SCHEDULE) {
+      coarse_grained_pipeline_optimization(sched, prg);
+      adjust_coarse_grained_loop_delays_sequentially_without_opt(sched, prg);
+      align_glb_load_start_cycle(sched, prg);
+      tighten_coarse_grained_iis(sched, prg);
+      adjust_outer_delays_sequentially(sched, prg);
+      //int glb_load_latency = find_glb_load_latency(sched, prg);
+      //adjust_outer_delays_exhaustively(sched, prg, glb_load_latency);
 
-  } else if (options.fallback_schedule == SEQUENTIAL_SCHEDULE){
-    //adjust_outer_delays(sched, prg);
-    adjust_outer_delays_sequentially(sched, prg);
-  }
+    } else if (options.fallback_schedule == SEQUENTIAL_SCHEDULE){
+      //adjust_outer_delays(sched, prg);
+      adjust_outer_delays_sequentially(sched, prg);
+    } else {
+      cout << "No schedule works..." << endl;
+      assert(false);
+    }
+    //change to the fallback schedule
+    options.fallback_schedule =  DNNScheduleAlgorithm(options.fallback_schedule + 1);
+    cout << " Fall back schedule No. "  << options.fallback_schedule << endl;
+  } while (!no_violated_buf_write_port_assignments(options, sched, prg));
   //dump_DNN_delays(sched, prg);
 
   auto op_sched = op_start_times_map(sched, prg);
   cout << "\tFinal schedule : " << str(op_sched)  << endl;
+  assert(no_violated_buf_write_port_assignments(options, sched, prg));
 
   adjust_schedule_forward(sched, prg, 0);
   sanity_check_hw_schedule(sched, prg);
@@ -19381,6 +19410,11 @@ schedule_info garnet_schedule_info(CodegenOptions& options, prog& prg, bool use_
       //sched.op_compute_unit_latencies[op->name] = 0;
     }
 
+    for (auto b: op->buffers_written()) {
+      //assign a write
+      sched.assign_memory_write_resource(options, op, b);
+    }
+
     for (auto b : op->buffers_referenced()) {
       if (!prg.is_boundary(b)) {
         sched.buffer_load_latencies[b] = buffer_load_latency(options);
@@ -19389,6 +19423,11 @@ schedule_info garnet_schedule_info(CodegenOptions& options, prog& prg, bool use_
         sched.buffer_load_latencies[b] = 0;
         sched.buffer_store_latencies[b] = 0;
       }
+      auto pmap = prg.producer_map(b);
+      cout << "\tBuffer <" << b << "> \n\tproducer map: "<< str(pmap)
+          << "\n\tcapacity: " << logical_capacity(b, prg) << endl <<
+          "\thierarchy level: " << options.get_hierarchy_level(logical_capacity(b, prg)) << endl;
+      sched.buf2level[b] = options.get_hierarchy_level(logical_capacity(b, prg));
     }
   }
   cout << sched.compute_unit_latencies << endl;
@@ -19991,8 +20030,8 @@ void compile_for_garnet_single_port_mem(prog& prg,
   options.add_memory_hierarchy("glb");
   if (multi_level_mem) {
     options.add_memory_hierarchy("regfile");
-    options.rtl_options.double_buffer_optimization = false;
-    options.fallback_schedule = SEQUENTIAL_SCHEDULE;
+    //options.rtl_options.double_buffer_optimization = false;
+    //options.fallback_schedule = SEQUENTIAL_SCHEDULE;
   }
   options.emit_smt_stream = gen_smt_stream;
   options.config_gen_only = config_gen_only;

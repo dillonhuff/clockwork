@@ -50,8 +50,8 @@ enum ScheduleAlgorithm {
 
 enum DNNScheduleAlgorithm {
     ASPLOS_SCHEDULE, //An over optimized schedule which will be refactored
-    ISCA_SCHEDULE, //new schedule with refactor
     VANILLA_DB_SCHEDULE,
+    ISCA_SCHEDULE, //new schedule with refactor
     SEQUENTIAL_SCHEDULE
 };
 
@@ -370,6 +370,7 @@ struct LakeCollateral {
             return bank_num.at("tb");
         }
     }
+
 };
 
 enum HLSLoopCodegen {
@@ -444,6 +445,7 @@ struct CodegenOptions {
   void add_memory_hierarchy(const std::string& level);
 
   banking_strategy get_banking_strategy(const std::string& buffer);
+  string get_hierarchy_level(int capacity);
 
 };
 

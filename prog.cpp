@@ -3414,10 +3414,10 @@ bool is_op_scheduled(op* op, schedule_info& sched, prog& prg) {
     //return has_latency && has_ii && has_offset;
     return has_ii && has_offset;
   }
-
   //return has_latency && has_offset;
   return has_offset;
 }
+
 
 bool share_resource(const std::string& op0, const std::string& op1, schedule_info& sched) {
   resource_instance i0;
@@ -3458,6 +3458,56 @@ bool no_violated_resource_assignments(schedule_info& sched, prog& prg) {
   return true;
 }
 
+bool share_buf_write_port(const std::string& op0, const std::string& op1, schedule_info& sched, prog& prg) {
+  string buf0, buf1;
+  for (auto r : sched.buf_write_assignment) {
+    if (r.first->name == op0) {
+      buf0 = r.second;
+    }
+  }
+  for (auto r : sched.buf_write_assignment) {
+    if (r.first->name == op1) {
+      buf1 = r.second;
+    }
+  }
+  if (buf0 == buf1) {
+    //Check if those two op can partition
+    umap* pmap0 = producer_umap(prg.find_op(op0), prg);
+    umap* pmap1 = producer_umap(prg.find_op(op1), prg);
+    bool is_pond =
+      sched.buf2level.at(buf0) == "regfile";
+    return is_pond && !empty(its(range(pmap0), range(pmap1)));
+  } else {
+    return false;
+  }
+}
+
+bool no_violated_buf_write_port_assignments(CodegenOptions& options, schedule_info& sched, prog& prg) {
+  auto sched_exprs =
+    its(op_times_map(sched, prg), prg.whole_iteration_domain());
+  //cout << "Times: " << str(sched_exprs) << endl;
+  for (auto op0 : get_maps(sched_exprs)) {
+    for (auto op1 : get_maps(sched_exprs)) {
+      string name0 = domain_name(op0);
+      string name1 = domain_name(op1);
+      if (name0 != name1 && share_buf_write_port(name0, name1, sched, prg)) {
+        auto times = range(op0);
+        auto times1 = range(op1);
+        auto overlap = its(times, times1);
+        cout << "name0: " << name0 << endl;
+        cout << "name1: " << name1 << endl;
+        cout << "overlap: " << str(overlap) << endl;
+        if (!empty(overlap)) {
+          cout << tab(1) << name0 << " and " << name1 << " use the same resource" << endl;
+          cout << tab(2) << "Overlap: " << str(overlap) << endl;
+          return false;
+        }
+      }
+    }
+  }
+  return true;
+
+}
 
 
 void ir_node::replace_writes_to(const std::string& source_buf, const std::string& replacement) {
@@ -4500,6 +4550,18 @@ int logical_dimension(const std::string& buf, prog& prg) {
   } else {
     return num_out_dims(consumer_map(prg.root, buf, prg));
   }
+}
+
+int logical_capacity(const std::string& buf, prog& prg) {
+
+  uset* addr_range;
+  if (!prg.is_input(buf)) {
+    addr_range = range(prg.producer_map(buf));
+  } else {
+    addr_range = range(prg.consumer_map(buf));
+  }
+  auto range_card = card(addr_range);
+  return int_upper_bound(range_card);
 }
 
 vector<op*> fully_scheduled_nodes(schedule_info& sched, prog& prg)  {
