@@ -20083,7 +20083,6 @@ void compile_for_garnet_single_port_mem(prog& prg,
 
   //auto iis = garnet_fuse_ii_level(prg);
   //auto buffers_opt = build_buffers(prg, clockwork_schedule(prg));
-
   CodegenOptions options = garnet_codegen_single_port_with_addrgen_options(prg, dir);
   options.debug_options.traceWave = true;
   options.add_memory_hierarchy("mem");
@@ -20093,6 +20092,7 @@ void compile_for_garnet_single_port_mem(prog& prg,
     //options.rtl_options.double_buffer_optimization = false;
     //options.fallback_schedule = SEQUENTIAL_SCHEDULE;
   }
+  options.rtl_options.double_buffer_optimization = true;
   options.emit_smt_stream = gen_smt_stream;
   options.config_gen_only = config_gen_only;
   //if (multi_sram)
