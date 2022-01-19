@@ -3029,7 +3029,8 @@ bool runOnInstance(Instance* inst) {
       }
       if (connect2IO) {
           //valid_config.at("cycle_starting_addr")[0] = (int)valid_config.at("cycle_starting_addr")[0] - latency;
-          inst->getMetaData()["config"]["stencil_valid"] = valid_config;
+          //TODO: This is a hack, need to make sure the output always called hw_output
+          inst->getMetaData()["config"]["stencil_valid"] = valid_config.at("output");
           return true;
       }
     }
