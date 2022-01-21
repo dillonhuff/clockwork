@@ -11697,8 +11697,20 @@ void test_loop_perfection();
 void playground() {
     {
       isl_ctx* ctx = isl_ctx_alloc();
-      auto aff = isl_aff_read_from_str(ctx, "{ op_hcompute_g_r_stencil[g_r_s0_x] -> [(g_r_s0_x - floor((g_r_s0_x)/2))]  }");
-      cout << "Aff: " << str(aff) << endl;
+      auto sched_wr = isl_map_read_from_str(ctx,"{ wr[root=0, i0, i1]-> [8*i0 + i1, 0]: 0<=i0<8 and 0<=i1<8}");
+      auto sched_rd = isl_map_read_from_str(ctx,"{ rd[root=0, i0, i1]-> [8*i0 + i1 + 9, 1]: 0<=i0<7 and 0<=i1<7}");
+      auto lexm = simplify(lex_gt(sched_rd, sched_wr));
+      cout << "read deps" << str(lexmax(lexm)) << endl;
+      //for (auto pt: get_points(domain(sched_rd))) {
+      //    auto m = lexmax(its(lexm, to_set(pt)));
+      //    cout << "\t pt: " << str(pt) << "\n\t\t" << str(m) << endl;
+      //}
+      auto lexm_wr = simplify(lex_gt(sched_wr, sched_rd));
+      cout << "wr deps" << str(lexmax(lexm_wr)) << endl;
+      for (auto pt: get_points(domain(sched_wr))) {
+          auto m = lexmax(its(lexm_wr, to_set(pt)));
+          cout << "\t pt: " << str(pt) << "\n\t\t" << str(m) << endl;
+      }
       assert(false);
     }
     {
@@ -15131,7 +15143,10 @@ void test_glb(bool gen_config_only, bool multi_accessor=false, string dir="aha_g
   vector<prog> test_apps;
 
   //resnet5 with unroll not work
-  //test_apps.push_back(resnet5_x_unroll());
+  //schedule need pad more
+  test_apps.push_back(resnet5_x_unroll());
+  //stuck in vectorization which finding the padding
+  test_apps.push_back(resnet5_x_unroll_mic());
 
   //camera pipeline variant tests
   //test_apps.push_back(camera_pipeline_extra_buf_glb());
