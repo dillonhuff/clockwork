@@ -913,35 +913,6 @@ private:
 //  return (*f);
 //}
 //
-union {
-  uint32_t val;
-  float f;
-} union_var;
-
-uint16_t round_to_even(float a) {
-  //uint32_t e = reinterpret_cast<uint32_t&>(a);
-  union_var.f = a;
-  uint32_t e = union_var.val;
-
-  // round float to even, comment out this codeblock for truncation
-  uint32_t half = 0x00008000;
-  uint32_t sum = e + half;
-
-  // check if bottom bits are all zero
-  uint32_t mantissa_mask = 0x0000ffff;
-  bool is_zeroed = (sum & mantissa_mask) == 0;
-
-  // clear last bit (round even) on tie
-  uint32_t clear_mask = ~( ((uint32_t)is_zeroed) << 16);
-  e = sum & clear_mask;
-
-  // clear bottom bits
-  e = e >> 16;
-  return (uint16_t)e;
-
-  //return bfloat16_t::make_from_bits(float_to_bfloat16( expf(bfloat16_to_float(a.to_bits())) ));
-  //return bfloat16_t::make_from_bits( (uint16_t)e );
-}
 
 float bfloat16_to_float(uint16_t b) {
     // Assume little-endian floats
