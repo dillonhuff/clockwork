@@ -15192,6 +15192,7 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   //test_apps.push_back(fft8_unroll8());
 
   //CGRA tests
+  test_apps.push_back(fp_pointwise());
   test_apps.push_back(fp_arith());
   test_apps.push_back(counter());
   test_apps.push_back(rom());

@@ -2,6 +2,7 @@
 #include "prog.h"
 
 prog fp_arith();
+prog fp_pointwise();
 
 prog fft8_unroll0();
 prog fft8_unroll2();
