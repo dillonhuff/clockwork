@@ -15142,53 +15142,48 @@ void resnet_profiling() {
 void test_glb(bool gen_config_only, bool multi_accessor=false, string dir="aha_garnet_design") {
   vector<prog> test_apps;
 
-  //resnet5 with unroll not work
-  //schedule need pad more
-  test_apps.push_back(resnet5_x_unroll());
-  //stuck in vectorization which finding the padding
-  test_apps.push_back(resnet5_x_unroll_mic());
 
   //camera pipeline variant tests
-  //test_apps.push_back(camera_pipeline_extra_buf_glb());
-  //test_apps.push_back(camera_pipeline_unrolly());
-  //test_apps.push_back(camera_pipeline_2x2());
-  //test_apps.push_back(camera_pipeline_extra_buf());
+  test_apps.push_back(camera_pipeline_extra_buf_glb());
+  test_apps.push_back(camera_pipeline_unrolly());
+  test_apps.push_back(camera_pipeline_2x2());
+  test_apps.push_back(camera_pipeline_extra_buf());
 
-  ////ISSCC application without unroll
-  //test_apps.push_back(harris_color());
-  //test_apps.push_back(gaussian_isscc());
-  //test_apps.push_back(camera_pipeline_isscc());
-  //test_apps.push_back(unsharp_isscc());
+  //ISSCC application without unroll
+  test_apps.push_back(harris_color());
+  test_apps.push_back(gaussian_isscc());
+  test_apps.push_back(camera_pipeline_isscc());
+  test_apps.push_back(unsharp_isscc());
 
-  ////GLB tests
-  //test_apps.push_back(unsharp_glb());
-  //test_apps.push_back(gaussian_glb2());
-  //test_apps.push_back(camera_pipeline_glb());
-  //test_apps.push_back(harris_glb2());
-  //test_apps.push_back(up_sample_glb());
-  //test_apps.push_back(gaussian_glb8());
+  //GLB tests
+  test_apps.push_back(unsharp_glb());
+  test_apps.push_back(gaussian_glb2());
+  test_apps.push_back(camera_pipeline_glb());
+  test_apps.push_back(harris_glb2());
+  test_apps.push_back(up_sample_glb());
+  test_apps.push_back(gaussian_glb8());
 
-  ////Dense Linear algebra
-  //test_apps.push_back(glb_channel_reduction());
-  //test_apps.push_back(matmul());
+  //Dense Linear algebra
+  test_apps.push_back(glb_channel_reduction());
+  test_apps.push_back(matmul());
 
-  ////Simplified multi-tile DNN application
-  //test_apps.push_back(resnet_init_unroll_tile());
+  //Simplified multi-tile DNN application
+  test_apps.push_back(resnet_init_unroll_tile());
 
-  ////Too large which will go beyound the 64k counter ub
-  ////test_apps.push_back(resnet5_1_full());
-  ////test_apps.push_back(resnet2_x_full());
+  //Too large which will go beyound the 64k counter ub
+  //test_apps.push_back(resnet5_1_full());
+  //test_apps.push_back(resnet2_x_full());
 
-  ////For debug the 7x7 layer
-  //test_apps.push_back(resnet_last());
+  //For debug the 7x7 layer
+  test_apps.push_back(resnet_last());
 
-  ////Sample DNN Layers
+  //Sample DNN Layers
   //test_apps.push_back(resnet1_docker());
-  //test_apps.push_back(resnet1());
-  //test_apps.push_back(resnet_1x1());
-  //test_apps.push_back(resnet3_1());
-  //test_apps.push_back(resnet4_x());
-  //test_apps.push_back(resnet5_1());
+  test_apps.push_back(resnet1());
+  test_apps.push_back(resnet_1x1());
+  test_apps.push_back(resnet3_1());
+  test_apps.push_back(resnet4_x());
+  test_apps.push_back(resnet5_1());
   test_apps.push_back(resnet5_x());
   test_apps.push_back(resnet5_x_new());
   test_apps.push_back(resnet5_1_new());
@@ -15196,6 +15191,10 @@ void test_glb(bool gen_config_only, bool multi_accessor=false, string dir="aha_g
   test_apps.push_back(resnet5_1_unroll_cyclic());
   test_apps.push_back(resnet5_glb_unroll());
   //test_apps.push_back(resnet_multi_channel());
+
+  //two different resnet5x tests
+  test_apps.push_back(resnet5_x_unroll());
+  test_apps.push_back(resnet5_x_unroll_mic());
 
   ////Test with non double buffer, not tested with db
   //test_apps.push_back(resnet_output_stationary_small());
@@ -17731,9 +17730,11 @@ bool need_relax(schedule_info& sched, op* loop, prog& prg, int fetch_width) {
               //cout << tab(4) << "Original offset within parent: " << sched.offset_in_parent(child) << endl;
               cout << tab(4) << "Original offset within parent: " << sched.offset_in_parent(loop) << endl;
               cout << tab(4) << "loop trip count: " << loop->trip_count() << endl;
-              if (is_inner_loop(loop))
-                  sched.op_offset_within_parent.at(loop) = (loop->trip_count()) % fetch_width + fetch_width * (loop->trip_count()%fetch_width== 0);
-              else {
+
+              //This loop is the innermost loop that access the vectorized dimension
+              if (levels.at(loop->name) == in_involve_d.back()) {
+                  sched.op_offset_within_parent.at(loop) = sched.II(loop) * ((loop->trip_count()) % fetch_width + fetch_width * (loop->trip_count()%fetch_width== 0));
+             } else {
                   //int range_span = get_dim_extent(range(b_map), packed_addr_dim);
                   //if (range_span % fetch_width)
                   //TODO: also check the logic here, this is conservative
