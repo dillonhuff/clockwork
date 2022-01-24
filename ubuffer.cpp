@@ -2913,7 +2913,7 @@ string UBuffer::determine_config_mode(CodegenOptions& options, UBuffer& target_b
   //Changing the size of pond threshold
   if (contains(target_buf.name, "_glb_stencil")) {
     config_mode = "glb";
-  } else if (capacity <= 96 && multi_level_mem ) {
+  } else if (capacity <= 32 && multi_level_mem ) {
     cout << "Generate config for register file!" << endl;
     config_mode = "pond";
 
