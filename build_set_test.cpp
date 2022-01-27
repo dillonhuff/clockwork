@@ -12966,10 +12966,11 @@ int run_verilator_on(const std::string& top_module,
   if (extra_flag) {
 #ifdef CGRAFLOW
       cmd("echo $CLKWRK_PATH");
-      verilator_build = cmd("verilator -Wall --cc " + sep_list(verilog_files, "", "", " ") + " --exe --build --trace " + tb_file + " -CFLAGS -I$CLKWRK_PATH --top-module " + top_module + " -Wno-UNUSED -Wno-PINMISSING -Wno-DECLFILENAME -Wno-WIDTH -Wno-UNDRIVEN -Wno-CASEINCOMPLETE -Wno-MODDUP -Wno-UNOPTFLAT -Wno-CMPCONST");
+      cmd("echo $FP_COMPT_PATH");
+      verilator_build = cmd("verilator -Wall --cc " + sep_list(verilog_files, "", "", " ") + " --exe --build --trace " + tb_file + " -CFLAGS -I$CLKWRK_PATH -I$FP_COMP_PATH --top-module " + top_module + " -Wno-UNUSED -Wno-PINMISSING -Wno-DECLFILENAME -Wno-WIDTH -Wno-UNDRIVEN -Wno-CASEINCOMPLETE -Wno-MODDUP -Wno-UNOPTFLAT -Wno-CMPCONST -Wno-LATCH -Wno-VARHIDDEN");
 #else
       //verilator_build = cmd("verilator -Wall --cc " + sep_list(verilog_files, "", "", " ") + " --exe --build --trace " + tb_file + " --top-module " + top_module + " -Wno-UNUSED -Wno-PINMISSING -Wno-DECLFILENAME -Wno-WIDTH -Wno-UNDRIVEN -Wno-CASEINCOMPLETE -Wno-MODDUP -Wno-UNOPTFLAT -Wno-CMPCONST");
-      verilator_build = cmd("verilator -Wall --cc " + sep_list(verilog_files, "", "", " ") + " -exe --build --trace " + tb_file + " --top-module " + top_module + " -Wno-UNUSED -Wno-PINMISSING -Wno-DECLFILENAME -Wno-WIDTH -Wno-UNDRIVEN -Wno-CASEINCOMPLETE -Wno-MODDUP -Wno-UNOPTFLAT -Wno-CMPCONST");
+      verilator_build = cmd("verilator -Wall --cc " + sep_list(verilog_files, "", "", " ") + " -exe --build --trace " + tb_file + " --top-module " + top_module + " -I$FP_COMP_PATH  -Wno-UNUSED -Wno-PINMISSING -Wno-DECLFILENAME -Wno-WIDTH -Wno-UNDRIVEN -Wno-CASEINCOMPLETE -Wno-MODDUP -Wno-UNOPTFLAT -Wno-CMPCONST -Wno-VARHIDDEN");
 #endif
   } else {
       verilator_build = cmd("verilator -Wall --cc " + sep_list(verilog_files, "", "", " ") + " --exe --build --trace " + tb_file + " --top-module " + top_module + " -Wno-UNUSED -Wno-WIDTH -Wno-PINMISSING -Wno-DECLFILENAME");
@@ -13026,7 +13027,7 @@ void generate_verilog_tb(const std::string& name) {
 void generate_garnet_verilog_top(CodegenOptions& options, const std::string& name) {
 
     cmd("echo $LD_LIBRARY_PATH");
-  int to_verilog_res = cmd("${COREIR_PATH}/bin/coreir --inline --load_libs commonlib,cwlib,cgralib --input " + options.dir  + "/"+name +".json --output " + name + ".v -p \"rungenerators; wireclocks-clk; deletedeadinstances; add-dummy-inputs\"");
+  int to_verilog_res = cmd("${COREIR_PATH}/bin/coreir --inline --load_libs float,float_DW,commonlib,cwlib,cgralib --input " + options.dir  + "/"+name +".json --output " + name + ".v -p \"rungenerators; wireclocks-clk; deletedeadinstances; add-dummy-inputs\"");
   assert(to_verilog_res == 0);
 
   //run verilator on all the generated verilog
@@ -15233,10 +15234,12 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   //test_apps.push_back(fft8_unroll8());
 
   //CGRA tests
-  test_apps.push_back(camera_pipeline_new());
-  test_apps.push_back(conv_3_3());
+  test_apps.push_back(fp_pointwise());
+  test_apps.push_back(fp_arith());
   test_apps.push_back(counter());
   test_apps.push_back(rom());
+  test_apps.push_back(camera_pipeline_new());
+  test_apps.push_back(conv_3_3());
   test_apps.push_back(unsharp_new());
   test_apps.push_back(laplacian_pyramid());
   test_apps.push_back(laplacian_pyramid_docker());

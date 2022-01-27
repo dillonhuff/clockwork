@@ -4,6 +4,8 @@
 #ifdef COREIR
 #include "cwlib.h"
 #include "cgralib.h"
+#include "coreir/libs/float.h"
+#include "coreir/libs/float_DW.h"
 
 #include "coreir/passes/analysis/coreirjson.h"
 
@@ -3956,6 +3958,9 @@ void generate_coreir(CodegenOptions& options,
   CoreIRLoadLibrary_commonlib(context);
   CoreIRLoadLibrary_cgralib(context);
   CoreIRLoadLibrary_cwlib(context);
+  CoreIRLoadLibrary_float(context);
+  CoreIRLoadLibrary_float_DW(context);
+  //load_float(context);
   add_delay_tile_generator(context);
   add_raw_quad_port_memtile_generator(context);
   add_tahoe_memory_generator(context);
