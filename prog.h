@@ -311,8 +311,8 @@ struct ir_node {
   void pretty_print(int level) const {
     pretty_print(std::cout, level);
   }
-
-  void pretty_print(std::ostream& out, int level) const;
+  void pretty_print(ostream& out, int level) const;
+  void pretty_print(ofstream& out, int level) const;
 
   string consumed_value_name(const pair<string, vector<pair<string, string> > >& val_loc) {
     string b = val_loc.first;
@@ -953,7 +953,9 @@ struct prog {
       return root->get_domain_boxes();
   }
 
-  void pretty_print();
+  void pretty_print(ostream& cust_out = cout);
+  void pretty_print(ofstream& cust_out);
+
 
   int buffer_port_width(const string& name) const {
     if (!contains_key(name, buffer_port_widths)) {

@@ -5712,6 +5712,9 @@ struct App {
     string compute_name = name + "_generated_compute";
 
     map<string, vector<FunctionCall*> > calls;
+    // Below is same as visit_function_calls(def, [this, &calls](FunctionCall* c) {if (contains_key(c->name, app_dag)) {calls[c->name].push_back(c); }});
+
+
     visit_function_calls(def, [this, &calls](FunctionCall* c) {
         if (contains_key(c->name, app_dag)) {
         calls[c->name].push_back(c);
@@ -6330,18 +6333,18 @@ struct App {
     assert(writes != nullptr);
     assert(reads != nullptr);
 
-    uset* domain = whole_compute_domain();
+    uset* domain = whole_compute_domain(); ///
     assert(domain != nullptr);
 
     umap* naive_sched = schedule_naive();
     auto before = lex_lt(naive_sched, naive_sched);
 
     isl_union_map *validity =
-      its(dot(writes, inv(reads)), before);
+      its(dot(writes, inv(reads)), before);  ///
     cout << "validity: " << str(validity) << endl;
 
     isl_union_map *proximity =
-      cpy(validity);
+      cpy(validity);  ///
 
     isl_union_map *coincidence =
       cpy(validity);
@@ -6359,7 +6362,7 @@ struct App {
     }
     cout << endl;
 
-    map<string, vector<string> > high_bandwidth_deps;
+    map<string, vector<string> > high_bandwidth_deps;  ///
     for (auto un : sort_updates()) {
       auto u = get_update(un);
       for (auto w : u.get_srcs()) {
@@ -6788,6 +6791,10 @@ struct App {
     generate_app_code(options, buffers, prg, its(m, action_domain), domain_map);
     generate_regression_testbench(prg);
     generate_soda_file(prg.name);
+    cout << "custom application pretty print";   
+ 
+  ofstream of("cp_custom.txt");
+   prg.pretty_print(of);
   }
 
 //New Addition Ritvik
@@ -7372,7 +7379,9 @@ struct App {
     prg.name = name + "_opt";
     prg.compute_unit_file = prg.name + "_compute_units.h";
 
-    populate_program(options, prg, name, outputs, m, buffers);
+    //populate_program(options, prg, name, outputs, m, buffers);
+     generate_compute_unit_file(prg.compute_unit_file);
+
 
     return prg;
   }
@@ -8902,6 +8911,8 @@ App camera_pipeline(const std::string& out_name) {
   cp.func2d("denoise", div(v("denoiseb"), 25));
   cp.func2d("demosaicb", stencilv(-1, 1, -1, 1, "denoise"));
   cp.func2d("demosaic", div(v("demosaicb"), 9));
+//  lp.func2d("up_stencil_down", "id", {downsample(2, "us")});
+
 
   string sharpened = sharpen(cp, "demosaic");
 
@@ -9046,6 +9057,88 @@ void camera_pipeline_test(const std::string& prefix) {
     move_to_benchmarks_folder(out_name + "_opt");
   }
 }
+/*
+void camera_pipeline_test(const std::string& prefix) {
+  int rows = 1080;
+  int cols = 1920;
+  vector<int> factors{1, 16, 32};
+  for (int i = 0; i < (int) factors.size(); i++) {
+    int unroll_factor = factors.at(i);
+    string out_name = prefix + "_" + str(unroll_factor);
+
+    CodegenOptions options;
+    options.internal = true;
+    options.simplify_address_expressions = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
+    options.debug_options.expect_all_linebuffers = true;
+    options.num_input_epochs = 30;
+    camera_pipeline(out_name).realize(options, out_name, cols, rows, unroll_factor);
+
+    move_to_benchmarks_folder(out_name + "_opt");
+  }
+}
+
+void cgra_backend_dillon_app(bool gen_config_only, bool multi_accessor=false, string dir="aha_garnet_design") {
+  const std::string& prefix = "cp_dillon_version_in_cgra";
+  int rows = 1080;
+  int cols = 1920;
+  vector<int> factors{1};
+  vector<prog> test_apps;
+  for (int i = 0; i < (int) factors.size(); i++) {
+    int unroll_factor = factors.at(i);
+    string out_name = prefix + "_" + str(unroll_factor);
+
+    CodegenOptions options;
+    options.internal = true;
+    options.simplify_address_expressions = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
+    options.debug_options.expect_all_linebuffers = true;
+    options.num_input_epochs = 30;
+    test_apps.push_back(camera_pipeline(out_name).realize(options, out_name, cols, rows, unroll_factor));
+
+    move_to_benchmarks_folder(out_name + "_opt");
+  }
+
+  for ( auto prg: test_apps) {
+    prg.sanity_check();
+
+    break_up_multi_channel_inputs(prg);
+    break_up_multi_channel_outputs(prg);
+    dsa_writers(prg);
+    prg.pretty_print();
+
+    //compile_for_garnet_platonic_mem(prg);
+    compile_for_garnet_single_port_mem(prg, dir, false, gen_config_only, false, false);
+    cout << "Output name: " << prg.name << endl;
+    //TODO: move to a function
+    //run verilator on all the generated verilog
+    if (!gen_config_only) {
+      string name = prg.name;
+      auto verilog_files = get_files("./" + dir + "/"+name+"/verilog/");
+      verilog_files.push_back(name + ".v");
+      verilog_files.push_back("LakeTop_W_new.v");
+      add_default_initial_block();
+      bool extra_flag_for_lake = true;
+      auto cpu = unoptimized_result(prg);
+      int res = run_verilator_on(name, name + "_verilog_tb.cpp", verilog_files, extra_flag_for_lake);
+      assert(res == 0);
+      cmd("rm LakeTop_W_new.v");
+      cmd("rm LakeWrapper.v");
+
+      auto verilator_res = verilator_results(prg.name);
+      compare("cgra_" + prg.name + "_cpu_vs_verilog_comparison", verilator_res, cpu);
+      //string app_type = "dualwithaddr";
+      string app_type = "single_port_buffer";
+      cpy_app_to_folder(app_type, prg.name);
+    }
+    ofstream ofa("fil_complete.txt");
+    ofa << "Done";
+    ofa.close();
+ 
+  }
+}
+*/
+
 //New Addition Ritvik
 void camera_pipeline_test_catapult(const std::string& prefix) {
   //string app_name = "camera_mini";
@@ -12960,9 +13053,9 @@ void catapult_tests() {
 
   // exposure_fusion_app
   //exposure_fusion();
-//  camera_pipeline_test_catapult("cp_noinit_ln1_cata");
+  camera_pipeline_test_catapult("cp_noinit_ln1_cata");
 //  sobel_16_app_test_catapult("sbl_ln_cata");
- blur_xy_16_app_test_catapult("bxy_noinit_ln");
+// blur_xy_16_app_test_catapult("bxy_noinit_ln");
 
  // gauss_pyramid_iccad_apps_catapult("gp_fpga_cata");
  // gauss_pyramid_test("gp_fpga");
@@ -12973,9 +13066,33 @@ void catapult_tests() {
   //generate_app_benchmark("gp_sm", gp, {64, 64}, 1);
 
   //gauss_pyramid_fpga_test("gp_fpga");
-
-
 }
+
+/*void program_file_format_checker()
+{
+  camera_pipeline_test("cp_noinit_ln1");
+  auto test_programs = {camera_pipeline_glb()};
+  for (auto prg : test_programs) {
+    break_up_multi_channel_inputs(prg);
+    break_up_multi_channel_outputs(prg);
+    dsa_writers(prg);
+    pad_to_single_depth(prg);
+    std::vector<string> no_opt =
+      unoptimized_result(prg);
+
+    generate_fpga_clockwork_code(prg);
+    generate_regression_testbench(prg);
+
+    std::vector<std::string> opt =
+      run_regression_tb(prg);
+    compare(prg.name + " ASPLOS FPGA flow", opt, no_opt);
+    move_to_benchmarks_folder(prg.name);
+    cout << "halide_app_pretty_print"<< endl;
+    //prg.pretty_print();
+  }
+}
+
+*/
 
 
 
@@ -20659,6 +20776,101 @@ void fpga_asplos_tests() {
     move_to_benchmarks_folder(prg.name);
   }
 }
+
+void program_file_format_checker()
+{ 
+ //camera_pipeline_test("cp_noinit_ln1");
+  auto test_programs = {camera_pipeline_2x2()};//camera_pipeline_glb()};
+  for (auto prg : test_programs) {
+    break_up_multi_channel_inputs(prg);
+    break_up_multi_channel_outputs(prg);
+    dsa_writers(prg);
+    pad_to_single_depth(prg);
+    std::vector<string> no_opt =
+      unoptimized_result(prg);
+    ofstream of2("cp_halide.txt");
+    prg.pretty_print(of2);
+ 
+    generate_fpga_clockwork_code(prg);
+    generate_regression_testbench(prg);
+    ofstream of3("cp_halide2.txt");
+    prg.pretty_print(of3);
+ 
+    std::vector<std::string> opt =
+      run_regression_tb(prg);
+    compare(prg.name + " ASPLOS FPGA flow", opt, no_opt);
+    move_to_benchmarks_folder(prg.name);
+    //cout << "halide_app_pretty_print"<< endl;
+   
+  ofstream of4("cp_halide3.txt");
+  prg.pretty_print(of4);
+  }
+}
+
+void cgra_backend_dillon_app(bool gen_config_only, bool multi_accessor=false, string dir="aha_garnet_design") {
+  const std::string& prefix = "cp_dillon_version_in_cgra";
+  int rows = 1080;
+  int cols = 1920;
+  vector<int> factors{1};
+  vector<prog> test_apps;
+  for (int i = 0; i < (int) factors.size(); i++) {
+    int unroll_factor = factors.at(i);
+    string out_name = prefix + "_" + str(unroll_factor);
+
+    CodegenOptions options;
+    options.internal = true;
+    options.simplify_address_expressions = true;
+    options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
+    options.debug_options.expect_all_linebuffers = true;
+    options.num_input_epochs = 30;
+    test_apps.push_back(camera_pipeline(out_name).realize(options, out_name, cols, rows, unroll_factor));
+
+    move_to_benchmarks_folder(out_name + "_opt");
+  }
+
+  for ( auto prg: test_apps) {
+    prg.sanity_check();
+
+    break_up_multi_channel_inputs(prg);
+    break_up_multi_channel_outputs(prg);
+    dsa_writers(prg);
+    prg.pretty_print();
+
+    //compile_for_garnet_platonic_mem(prg);
+    compile_for_garnet_single_port_mem(prg, dir, false, gen_config_only, false, false);
+    cout << "Output name: " << prg.name << endl;
+    //TODO: move to a function
+    //run verilator on all the generated verilog
+    if (!gen_config_only) {
+      string name = prg.name;
+      auto verilog_files = get_files("./" + dir + "/"+name+"/verilog/");
+      verilog_files.push_back(name + ".v");
+      verilog_files.push_back("LakeTop_W_new.v");
+      add_default_initial_block();
+      bool extra_flag_for_lake = true;
+      auto cpu = unoptimized_result(prg);
+      int res = run_verilator_on(name, name + "_verilog_tb.cpp", verilog_files, extra_flag_for_lake);
+      assert(res == 0);
+      cmd("rm LakeTop_W_new.v");
+      cmd("rm LakeWrapper.v");
+
+      auto verilator_res = verilator_results(prg.name);
+      compare("cgra_" + prg.name + "_cpu_vs_verilog_comparison", verilator_res, cpu);
+      //string app_type = "dualwithaddr";
+      string app_type = "single_port_buffer";
+      cpy_app_to_folder(app_type, prg.name);
+    }
+    ofstream ofa("fil_complete.txt");
+    ofa << "Done";
+    ofa.close();
+ 
+  }
+}
+
+
+
+
+
 //////////////////////////////////////////////////////////
 void tricky_shift_register_reconvergence_test_catapult() {
   App sobel;
@@ -28503,13 +28715,24 @@ int main(int argc, char** argv) {
     	exposure_fusion();
 	 return 0;
     }
-   if (cmd == "catapult-full-hls-flow") {
+   if (cmd == "catapult-full-hls-flow" || cmd == "catapult-tests-flow" || cmd == "catapult-flow") {
       //harris_unrolled_test();
     // tricky_shift_register_reconvergence_test_catapult();
     	catapult_tests();
 	 return 0;
     }
-    
+   if (cmd ==  "file-format-check" || cmd ==  "file-format-checker"){
+	program_file_format_checker();
+        return 0;
+   }
+   if (cmd ==  "cgra-dillon-app-true"){
+	cgra_backend_dillon_app(true);
+        return 0;
+   }
+   if (cmd ==  "cgra-dillon-app-false"){
+	cgra_backend_dillon_app(false);
+        return 0;
+   }
  
   if (cmd == "sobel-app-test") {
       sobel_app_test();

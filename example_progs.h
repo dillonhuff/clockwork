@@ -36,6 +36,7 @@ prog resnet_tiny(); //for regfile debug
 prog resnet_multi_tiny(); //for regfile debug
 //prog mini_conv_halide_fixed();
 prog camera_pipeline(); //stencil
+prog camera_pipeline_2x2(); //stencil
 prog camera_pipeline_new(); //stencil
 //prog camera_pipeline_new_trunc(); //stencil
 //prog camera_pipeline_trunc(); //stencil
