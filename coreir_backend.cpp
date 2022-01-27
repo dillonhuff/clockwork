@@ -3844,6 +3844,70 @@ void count_post_mapped_memory_accesses(Module* gmod) {
   //assert(false);
 }
 
+
+//You should consider
+//Max extend bitwidth
+//Max cycle stride
+//Max starting cycle address
+struct MemCtrl{
+    map<string, int> val_map;
+    map<string, int> bw_map;
+
+    void init_key(const string & key) {
+        val_map[key] = 0;
+        bw_map[key] = 0;
+    }
+
+    void register_max_val(const string & ctrl_key, json & config) {
+      for (auto & ctrl: config.items()) {
+          auto & val = ctrl.value();
+          if(val.count(ctrl_key)) {
+              vector<int> ext = val[ctrl_key].get<vector<int>>();
+              cout << ctrl_key  << ctrl.key() << "->" << ext << endl;
+              int this_ctrl_max_ext = *std::max_element(ext.begin(), ext.end());
+              val_map.at(ctrl_key) = std::max(val_map.at(ctrl_key), this_ctrl_max_ext);
+              bw_map.at(ctrl_key) = std::max(bw_map.at(ctrl_key), (int)round(log2(this_ctrl_max_ext)));
+          }
+      }
+
+    }
+
+    void dumpToFile(ofstream& out) {
+        out << tab(1) << "controller value MAX: " << endl;
+        for (auto it: val_map) {
+          string key = it.first;
+          out << tab(2) << key << ": " << val_map.at(key) << ", bitwidth: " << bw_map.at(key) << endl;
+        }
+    }
+};
+
+MemCtrl post_mapped_memory_controller_bitwidth(Module* gmod) {
+  int min_ext = 0, min_ext_bw = 0;
+  MemCtrl lakeController;
+  vector<string> ctrl_names = {"extent", "cycle_starting_addr", "cycle_stride"};
+  for (auto inst : gmod->getDef()->getInstances()) {
+    if (inst.second->getModuleRef()->getName() == "Mem") {
+      auto config = inst.second->getModArgs().at("config")->get<Json>();
+      cout << "Metadata...\n\t" << config << endl;
+      for (string& ctrl_key: ctrl_names) {
+          lakeController.init_key(ctrl_key);
+          lakeController.register_max_val(ctrl_key, config);
+      }
+      //for (auto & ctrl: config.items()) {
+      //    auto & val = ctrl.value();
+      //    if(val.count("extent")) {
+      //        vector<int> ext = val["extent"].get<vector<int>>();
+      //        cout << "ctrl: " << ctrl.key() << "->" << ext << endl;
+      //        int this_ctrl_min_ext = *std::max_element(ext.begin(), ext.end());
+      //        min_ext = std::max(min_ext, this_ctrl_min_ext);
+      //        min_ext_bw = std::max(min_ext_bw, (int)round(log2(this_ctrl_min_ext)));
+      //    }
+      //}
+    }
+  }
+  return lakeController;
+}
+
 void analyze_latency(CodegenOptions& options, umap* sched_map) {
   auto sched_max = lexmaxval(to_set(range(sched_map)));
   ofstream out(options.dir + "/cgra_resource_estimation.csv", std::ios_base::app);
@@ -3944,6 +4008,9 @@ void analyze_post_mapped_app_emit_to_file(CodegenOptions& options, prog& prg, ma
     cout << tab(1) << c.first << " -> " << c.second << endl;
     out << tab(1) << c.first << ", " << c.second << endl;
   }
+  auto ctrl_bw_info = post_mapped_memory_controller_bitwidth(gmod);
+  out << endl;
+  ctrl_bw_info.dumpToFile(out);
   out.close();
 }
 
