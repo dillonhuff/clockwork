@@ -2960,6 +2960,21 @@ int loop_depth(op* op) {
 
 }
 
+vector<int> loop_depth_vector(op* op) {
+  if( op->is_loop()){
+    int depth = op->trip_count();
+
+    vector<int> vec = loop_depth_vector(pick(op->children));
+    vec.insert(vec.begin(), depth);
+    return vec;
+  } else if (op->is_if()) {
+    vector<int> vec = loop_depth_vector(pick(op->children));
+    return vec;
+  } else {
+    return {};
+  }
+}
+
 bool all_loop_nests_same_depth(prog& prg) {
   auto ops = prg.all_ops();
 

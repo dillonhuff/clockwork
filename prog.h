@@ -1862,6 +1862,7 @@ int num_read_ports(const std::string& b, prog& prg);
 bool is_rate_matchable(prog& prg);
 
 int loop_depth(op* op);
+vector<int> loop_depth_vector(op* op);
 bool all_loop_nests_same_depth(prog& prg);
 
 bool is_perfect(op* loop, prog& prg);

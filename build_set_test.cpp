@@ -11694,7 +11694,94 @@ void blur_and_downsample_test() {
 
 void test_if_complex();
 void test_loop_perfection();
+
+
+
+  /*
+   * l is the long sequence, s is the short sequence,
+   * This function will return a array with length of s,
+   * each item of the array is the align position in the long sequence
+   * it will also return the min diff
+   */
+pair<int, vector<int> > find_best_alignment(vector<int> & l, vector<int> & s) {
+    if (s.size() == 1) {
+        int val = pick(s);
+        int min_diff = INT_MAX;
+        int target_idx = -1;
+        for (int i = 0; i < l.size(); i ++) {
+            int diff = abs(val - l.at(i));
+            if (diff < min_diff) {
+                target_idx = i;
+                min_diff = diff;
+            }
+        }
+        assert(target_idx >= 0);
+        return {min_diff, {target_idx}};
+    } else {
+        int range = l.size() - s.size() + 1;
+        int min_diff = INT_MAX;
+        vector<int> align_idx;
+        for (int i = 0; i < range; i ++) {
+            vector<int> s_tail(s.begin() + 1, s.end());
+            vector<int> l_tail(l.begin() + i + 1, l.end());
+            auto ret = find_best_alignment(l_tail, s_tail);
+            int cur_diff = ret.first + abs(l.at(i) - s.at(0));
+            if (cur_diff < min_diff) {
+                min_diff = cur_diff;
+
+                //update the align idx array
+                align_idx.clear();
+                align_idx.push_back(i);
+                for (auto idx: ret.second) {
+                    align_idx.push_back(idx + i + 1);
+                }
+            }
+        }
+        return {min_diff, align_idx};
+    }
+}
+
+void print_alignment(vector<int> & a, vector<int> & b) {
+
+    auto val_alignment_pair = find_best_alignment(a, b);
+    cout << "min diff : " << val_alignment_pair.first << endl;
+    cout << "alignment array: " << val_alignment_pair.second << endl << endl;;
+}
+
+vector<int> get_alignment_array(vector<int>& a, vector<int>& b) {
+    auto val_alignment_pair = find_best_alignment(a, b);
+    auto val_alignment = val_alignment_pair.second;
+    auto it = val_alignment.begin();
+    vector<int> alignment_arr({0});
+    for (int i = 0; i < a.size(); i ++) {
+        if(*it == i) {
+            alignment_arr.push_back((int) (it - val_alignment.begin() + 1));
+            it ++;
+        } else {
+            alignment_arr.push_back(-1);
+        }
+    }
+    assert(alignment_arr.size() == a.size() + 1);
+    return alignment_arr;
+}
+
+
 void playground() {
+
+    {
+        vector<int> a = {3, 40, 3, 40};
+        vector<int> b = {44, 44};
+        print_alignment(a, b);
+        cout << get_alignment_array(a, b) << endl;
+
+        a = {39, 40, 5, 90};
+        b = {44, 44};
+        print_alignment(a, b);
+        cout << get_alignment_array(a, b) << endl;
+
+        assert(false);
+
+    }
     {
       isl_ctx* ctx = isl_ctx_alloc();
       auto sched_wr = isl_map_read_from_str(ctx,"{ wr[root=0, i0, i1]-> [8*i0 + i1, 0]: 0<=i0<8 and 0<=i1<8}");
@@ -15145,7 +15232,7 @@ void test_glb(bool gen_config_only, bool multi_accessor=false, string dir="aha_g
 
 
   //camera pipeline variant tests
-  test_apps.push_back(camera_pipeline_extra_buf_glb());
+  //test_apps.push_back(camera_pipeline_extra_buf_glb());
   test_apps.push_back(camera_pipeline_unrolly());
   test_apps.push_back(camera_pipeline_2x2());
   test_apps.push_back(camera_pipeline_extra_buf());
@@ -15232,14 +15319,18 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   //TODO:has issue  with multiple input
   //test_apps.push_back(demosaic_complex());
   //test_apps.push_back(fft8_unroll8());
+  //
+  //fp apps
+  //test_apps.push_back(nlmeans_unroll_reorder());
+  //test_apps.push_back(nlmeans_unroll());
+  //test_apps.push_back(fp_pointwise());
+  //test_apps.push_back(fp_arith());
 
   //CGRA tests
-  test_apps.push_back(fp_pointwise());
-  test_apps.push_back(fp_arith());
+  test_apps.push_back(conv_3_3());
   test_apps.push_back(counter());
   test_apps.push_back(rom());
   test_apps.push_back(camera_pipeline_new());
-  test_apps.push_back(conv_3_3());
   test_apps.push_back(unsharp_new());
   test_apps.push_back(laplacian_pyramid());
   test_apps.push_back(laplacian_pyramid_docker());
@@ -19157,8 +19248,6 @@ void garnet_single_port_ram_schedule(CodegenOptions& options, schedule_info& sch
   sanity_check_hw_schedule(sched, prg);
   return;
 }
-
-
 void pad_to_single_depth(schedule_info& sched, op* root, prog& prg) {
   bool single_depth = all_loop_nests_same_depth(prg);
   int max_depth = max_loop_depth(prg);
@@ -19183,21 +19272,53 @@ void pad_to_single_depth(schedule_info& sched, op* root, prog& prg) {
     //prg.pretty_print();
     //assert(false);
 
+    //First pass to collect all the deepest loops loop bound
+    vector<int> depth_record(max_depth - 1, 0);
+    int div_factor = 0;
+    for (auto k : get_kernels(prg)) {
+      auto lp = prg.find_loop(k);
+      for (auto rep : lp->descendant_ops()) {
+        int depth_m = loop_depth(prg.find_loop(k));
+        if (depth_m == max_depth - 1) {
+          auto vec = loop_depth_vector(lp);
+          for (int  i = 0; i < max_depth - 1; i++ ) {
+            depth_record.at(i) += vec.at(i);
+          }
+          div_factor ++;
+          cout << " op: " << rep->name << endl;
+          cout << tab(2) << loop_depth_vector(lp) << endl;
+        }
+      }
+    }
+    for (auto & it: depth_record) {
+        it /= div_factor;
+    }
+    cout << "Final depth vec: " << depth_record << endl;
+
+    //next pass to get all the other loops' pad level
     map<string, vector<int> > pad_indexes;
     for (auto k : get_kernels(prg)) {
       auto lp = prg.find_loop(k);
       for (auto rep : lp->descendant_ops()) {
         int depth_m = loop_depth(prg.find_loop(k));
-        vector<int> inds;
-        inds.push_back(0);
-        for (int p = 0; p < max_depth - depth_m; p++) {
-          inds.push_back(-1);
-        }
-        for (int d = 1; d < depth_m + 1; d++) {
-          inds.push_back(d);
+        if (depth_m < max_depth - 1) {
+          auto vec = loop_depth_vector(lp);
+          vector<int> inds = get_alignment_array(depth_record, vec);
+          pad_indexes[rep->name] = inds;
+        } else {
+          vector<int> inds;
+          inds.push_back(0);
+          for (int d = 1; d < depth_m + 1; d++) {
+            inds.push_back(d);
+          }
+          pad_indexes[rep->name] = inds;
         }
 
-        pad_indexes[rep->name] = inds;
+        //Pad the inner loop
+        //for (int p = 0; p < max_depth - depth_m - 1; p++) {
+        //  inds.push_back(-1);
+        //}
+
       }
     }
     cout << "Pad inds..." << endl;
