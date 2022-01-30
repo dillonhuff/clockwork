@@ -27,6 +27,11 @@ prog harris_remove(); //manually edit
 prog pointwise(); //point
 prog brighten_blur(); //stencil
 prog halide_harris();
+
+prog nlmeans();
+prog nlmeans_unroll();
+prog nlmeans_small();
+prog nlmeans_unroll_reorder();
 prog conv_3_3(); //stencil
 prog conv_3_3_wide(); //stencil
 prog conv_3_3_rolled(); //stencil
