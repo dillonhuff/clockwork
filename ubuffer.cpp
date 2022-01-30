@@ -1064,6 +1064,7 @@ void UBufferImpl::remove_bank(int bank_id) {
 }
 
 void UBufferImpl::merge_banks(vector<int> banks_tobe_merged) {
+    assert(banks_tobe_merged.size() > 0);
   std::set<string> merge_inpts, merge_outpts;
   for (int bank_id: banks_tobe_merged) {
       assert(bank_writers.at(bank_id).size() == 1);
@@ -1108,10 +1109,12 @@ void UBufferImpl::conditional_merging(CodegenOptions & options, const vector<int
   vector<int> merging_banks;
   while(true) {
     //full condition
+    //cout << "Merging banks: " << merging_banks << endl;
     if(get_banks_inpts_num(merging_banks) > max_inpt ||
       get_banks_outpts_num(merging_banks) > max_outpt) {
       auto last_bank = merging_banks.back();
       merging_banks.pop_back();
+      //cout << merging_banks << endl;
       merge_banks(merging_banks);
       merging_banks.clear();
       merging_banks.push_back(last_bank);
@@ -1133,13 +1136,19 @@ void UBufferImpl::bank_merging(CodegenOptions & options) {
   //vector<vector<int>> merge_banks;
   map<int, vector<int>, decltype(comp)> merge_map(comp);
   for (auto it: bank_rddom) {
-      int bank_id = it.first;
-      //cout << "BANK ID: " << bank_id << "\n\tbank_map:" << str(it.second) << endl;
+    int bank_id = it.first;
+    string mem = get_memory_hierarchy(options, bank_id);
+    int max_inpt = options.mem_hierarchy.at(mem).get_inpt_num();
+    int max_outpt = options.mem_hierarchy.at(mem).get_outpt_num();
+    //cout << "BANK ID: " << bank_id << "\n\tbank_map:" << str(it.second) << endl;
+    if ((bank_readers.at(bank_id).size() < max_outpt) &&
+            (bank_writers.at(bank_id).size() < max_inpt)) {
       if (merge_map.count(bank_id)) {
-          merge_map[bank_id].push_back(it.first);
+        merge_map[bank_id].push_back(it.first);
       } else {
-          merge_map[bank_id] = {bank_id};
+        merge_map[bank_id] = {bank_id};
       }
+    }
   }
 
   for (auto it: merge_map) {
@@ -10578,8 +10587,8 @@ isl_map* build_buffer_impl_embarrassing_banking(UBuffer& buf, schedule_info& hwi
   //TODO: think a more systematic way to keep both delay buffer and banking
   //TODO: should move this into a separate function
   if (cur_bank_number != 0) {
-    //move the shift register back in banking
-    for (int b = 0; b < cur_bank_number; b ++) {
+    //move the shift register back in banking, from large to small
+    for (int b = cur_bank_number -1; b >= 0; b --) {
       impl.bank_readers[b + num_banks] = impl.bank_readers.at(b);
       impl.bank_readers.erase(b);
       impl.bank_writers[b + num_banks] = impl.bank_writers.at(b);
@@ -10668,23 +10677,25 @@ void generate_banks_garnet(CodegenOptions& options, UBuffer& buf, UBufferImpl& i
           //TODO potential bug for multi bank with broad casting case
           //TODO bank is not a good intermediate representation and contains too much internal data
           //     use buffer impl then
-          if ((bank_IO_pair.first.size() == 1) && (bank_IO_pair.second.size() == 1)) {
-            string inpt = pick(bank_IO_pair.first);
-            string outpt = pick(bank_IO_pair.second);
-            maybe<int> delay_info = buf.dependence_distance_max(inpt, outpt);
-            assert(delay_info.has_value());
-            auto bnk_info = buf.compute_bank_info(inpt, outpt, delay_info.get_value());
-            buf.add_bank_between(inpt, outpt, bnk_info);
+          //if ((bank_IO_pair.first.size() == 1) && (bank_IO_pair.second.size() == 1)) {
+          //  string inpt = pick(bank_IO_pair.first);
+          //  string outpt = pick(bank_IO_pair.second);
+          //  maybe<int> delay_info = buf.dependence_distance_max(inpt, outpt);
+          //  assert(delay_info.has_value());
+          //  auto bnk_info = buf.compute_bank_info(inpt, outpt, delay_info.get_value());
+          //  buf.add_bank_between(inpt, outpt, bnk_info);
 
-            //impl.add_new_bank_between({inpt}, {outpt}, to_set(rddom));
-          } else {
-            auto input_sets = bank_IO_pair.first;
-            auto output_sets = bank_IO_pair.second;
-            auto bnk_info = buf.compute_bank_info(rddom, point, input_sets, output_sets);
-            buf.add_bank_between(input_sets, output_sets, bnk_info);
+          //  //impl.add_new_bank_between({inpt}, {outpt}, to_set(rddom));
+          //} else {
+          //  auto input_sets = bank_IO_pair.first;
+          //  auto output_sets = bank_IO_pair.second;
+          //  cout << "input sets: " << input_sets << endl;
+          //  cout << "output sets: " << output_sets << endl;
+          //  auto bnk_info = buf.compute_bank_info(rddom, point, input_sets, output_sets);
+          //  buf.add_bank_between(input_sets, output_sets, bnk_info);
 
-            //impl.add_new_bank_between(input_sets, output_sets, to_set(rddom));
-          }
+          //  //impl.add_new_bank_between(input_sets, output_sets, to_set(rddom));
+          //}
         }
         //if (buf.overlap_schedule(input_sets) || buf.overlap_schedule(output_sets)) {
         //    cout << "inputs for bank: " << input_sets << endl;
@@ -10737,9 +10748,9 @@ void generate_banks_garnet(CodegenOptions& options, UBuffer& buf, UBufferImpl& i
           cout << "ADD BANK!\n Bank id: " << b << endl;
           std::set<string> input_sets = impl.bank_writers.at(b);
           std::set<string> output_sets = impl.bank_readers.at(b);
+          auto rddom = coalesce(its(to_uset(accesses_to_bank), buf.global_range()));
           auto bank_IOs = buf.port_grouping(options, impl,
-                  to_uset(accesses_to_bank),
-                  input_sets, output_sets);
+                  rddom, input_sets, output_sets);
         }
         cout << impl << endl;
     }
@@ -10752,8 +10763,8 @@ void generate_banks_garnet(CodegenOptions& options, UBuffer& buf, UBufferImpl& i
         auto outpts = buf.get_out_ports();
         std::set<string> in_port_set = std::set<string>(inpts.begin(), inpts.end());
         std::set<string> out_port_set = std::set<string>(outpts.begin(), outpts.end());
-        auto bnk_info = buf.compute_bank_info(in_port_set, out_port_set);
-        buf.add_bank_between(in_port_set, out_port_set, bnk_info);
+        //auto bnk_info = buf.compute_bank_info(in_port_set, out_port_set);
+        //buf.add_bank_between(in_port_set, out_port_set, bnk_info);
         int impl_bank = impl.add_new_bank_between(in_port_set, out_port_set, to_set(buf.global_range()));
         cout << "IO of ubuffer: " << in_port_set << out_port_set << endl;
         impl.sequentially_assign_inpt(buf.sort_pt_by_bundle(in_port_set), impl_bank);
@@ -10762,6 +10773,8 @@ void generate_banks_garnet(CodegenOptions& options, UBuffer& buf, UBufferImpl& i
     else {
 
         cout << "Use exhaustive banking! " << endl;
+
+        //This function may stuck in double buffer case
         buf.generate_banks(options);
         buf.parse_exhaustive_banking_into_impl(impl);
         cout << "After exhaustive banking:\n " << impl << endl;
