@@ -85,9 +85,9 @@ prog complex_mem_pond() {
   hcompute_kernel_pond_stencil->add_store("kernel_pond_stencil", "kernel_pond_s0_y", "kernel_pond_s0_x", "kernel_pond_s0_w_w_cgra", "kernel_pond_s0_z", "kernel_pond_s0_zz");
 
 //consuming kernel_pond.stencil
-  auto output_pond_s1_r_z = output_cgra_s0_x->add_loop("output_pond_s1_r_z", 0, 8);
-  auto output_pond_s1_r_y = output_pond_s1_r_z->add_loop("output_pond_s1_r_y", 0, 3);
-  auto output_pond_s1_r_x = output_pond_s1_r_y->add_loop("output_pond_s1_r_x", 0, 3);
+  auto output_pond_s1_r_z = output_cgra_s0_x->add_loop("output_pond_s1_r_y", 0, 3);
+  auto output_pond_s1_r_y = output_pond_s1_r_z->add_loop("output_pond_s1_r_x", 0, 3);
+  auto output_pond_s1_r_x = output_pond_s1_r_y->add_loop("output_pond_s1_r_z", 0, 8);
 
 //store is: output_pond.stencil(0, 0, 0) = ((kernel_pond.stencil(0, output_pond_s1_r_z, 0, output_pond_s1_r_x, output_pond_s1_r_y)*input_pond.stencil(0, output_pond_s1_r_z, output_pond_s1_r_x, output_pond_s1_r_y)) + ((kernel_pond.stencil(1, output_pond_s1_r_z, 0, output_pond_s1_r_x, output_pond_s1_r_y)*input_pond.stencil(1, output_pond_s1_r_z, output_pond_s1_r_x, output_pond_s1_r_y)) + ((kernel_pond.stencil(2, output_pond_s1_r_z, 0, output_pond_s1_r_x, output_pond_s1_r_y)*input_pond.stencil(2, output_pond_s1_r_z, output_pond_s1_r_x, output_pond_s1_r_y)) + (output_pond.stencil(0, 0, 0) + (kernel_pond.stencil(3, output_pond_s1_r_z, 0, output_pond_s1_r_x, output_pond_s1_r_y)*input_pond.stencil(3, output_pond_s1_r_z, output_pond_s1_r_x, output_pond_s1_r_y))))))
   auto hcompute_output_pond_stencil_1 = output_pond_s1_r_x->add_op("op_hcompute_output_pond_stencil_1");
