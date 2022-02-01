@@ -3411,6 +3411,8 @@ struct CyclicBankingImpl:  public UBufferImpl {
     CyclicBankingImpl(UBufferImpl const & impl): UBufferImpl(impl) {}
     CyclicBankingImpl(UBufferImpl const & impl, vector<int> const & cb_factor):
         UBufferImpl(impl), cyclic_banking_factor(cb_factor) {}
+    CyclicBankingImpl(UBufferImpl const & impl, std::set<int> const & cb_factor):
+        UBufferImpl(impl), cyclic_banking_factor(cb_factor.begin(), cb_factor.end()) {}
 
     int get_bank_num() const {
     int bank_num = 1;
@@ -3419,6 +3421,7 @@ struct CyclicBankingImpl:  public UBufferImpl {
     }
     return bank_num;
   }
+
 
   isl_map* get_bank_map(UBuffer& buf) const {
   //iteration domain to bank id

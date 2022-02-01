@@ -15321,6 +15321,7 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   //test_apps.push_back(fft8_unroll8());
   //
   //fp apps
+  test_apps.push_back(nlmeans_rolled());
   //test_apps.push_back(nlmeans_unroll_reorder());
   //test_apps.push_back(nlmeans_unroll());
   //test_apps.push_back(fp_pointwise());
@@ -19045,7 +19046,7 @@ void garnet_single_port_ram_schedule(CodegenOptions& options, schedule_info& sch
     //An hack on the fft schedule
     sequential_schedule(sched, root, prg);
     return;
-  } else if (is_rate_matchable(prg)) {
+  } else if (is_rate_matchable(prg) || contains(prg.name, "nlmeans")) {
     prg.pretty_print();
 
     //TODO: need another function to choose between pad bottom level or top level
@@ -19169,7 +19170,7 @@ void garnet_single_port_ram_schedule(CodegenOptions& options, schedule_info& sch
     adjust_schedule_forward(sched, prg, 0);
     //}
     //Add delay for identity stream
-    relax_delays_rate_matched(options, sched, prg);
+    //relax_delays_rate_matched(options, sched, prg);
 
     //Make input as fast as possible
     asap_input_iis(sched, prg);

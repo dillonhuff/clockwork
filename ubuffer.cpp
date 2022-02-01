@@ -1337,6 +1337,7 @@ UBuffer UBuffer::generate_ubuffer(UBufferImpl& impl, schedule_info & info, int b
       }
       usuffix ++;
     }
+    cout << buf << endl;
   buf.simplify_address_space();
   if (sr) {
 
@@ -5781,7 +5782,10 @@ isl_union_pw_qpolynomial* UBuffer::compute_dd(const std::string& read_port, cons
 
 int UBuffer::compute_dd_bound(const std::string& read_port, const std::string& write_port, bool is_max) {
   auto c = compute_dd(read_port, write_port);
-  //cout << "DD: " << str(c) << endl;
+  cout << "DD: " << str(c) << endl;
+  cout << *this << endl;
+  cout << "\tread: " << read_port << endl;
+  cout << "\twrite: " << write_port << endl;
 
   int tight;
   int* b = &tight;
@@ -9508,6 +9512,58 @@ void UBuffer::generate_banks(CodegenOptions& options) {
         return cyclic_partition_factor;
       }
 
+      //This is the cyclic partition was used in garnet mapping
+      maybe<std::set<int> > cyclic_partition(CodegenOptions& options, UBuffer& buf) {
+        vector<vector<string> > filtered_io_groups =
+          overlapping_large_io_port_groups(options, buf);
+
+        if (filtered_io_groups.size() == 0) {
+          std::set<int> empty;
+          return maybe<std::set<int> >(empty);
+        }
+
+        //get_banking factors
+        vector<int> bk_factors = buf.get_cyclic_banking_factors();
+        int bank_num = std::accumulate(
+                begin(bk_factors), end(bk_factors), 1, std::multiplies<int>());
+        std::set<int> dims;
+        for (auto g : filtered_io_groups) {
+          assert(g.size() > 0);
+
+          cout << "Error: No viable banking strategy for " << buf.name << endl;
+          cout << tab(1) << "Cannot partition group: " << endl;
+          for (auto pt : g) {
+            cout << tab(2) << pt << endl;
+            cout << tab(3) << str(buf.access_map.at(pt)) << endl;
+            cout << tab(3) << str(buf.schedule.at(pt)) << endl;
+          }
+          cout << "\tpart size:" <<bank_num << endl;
+          cout << "\tg size: " << g.size() << endl;
+          bool is_in_group = buf.is_in_pt(pick(g));
+
+          int ports = is_in_group ?
+              options.rtl_options.max_inpt : options.rtl_options.max_outpt;
+
+          if (contains(buf.name, "glb"))
+               ports = 1;
+          if (bank_num * ports < g.size()) {
+            //may need banking
+            return {};
+          }
+          for (auto it: bk_factors)
+            dims.insert(it);
+        }
+
+        cout << "FOUND CYLIC PARTITION OF "
+          << buf.name << " in " << dims.size() << " dimensions..." << endl;
+        for (auto d : dims) {
+          cout << tab(1) << d << endl;
+        }
+
+        return dims;
+      }
+
+
       //This is the embarrassing partition was used in garnet mapping
       maybe<std::set<int> > embarassing_partition(CodegenOptions& options, UBuffer& buf) {
         vector<vector<string> > filtered_io_groups =
@@ -10717,9 +10773,15 @@ void generate_banks_garnet(CodegenOptions& options, UBuffer& buf, UBufferImpl& i
         //}
       }
     }
-    else if (auto bank_impl = buf.get_cyclic_banking_implement(impl);
-                bank_impl.get_bank_num() > 1) {
-                //false) {
+    //else if (auto bank_impl = buf.get_cyclic_banking_implement(impl);
+    //            bank_impl.get_bank_num() > 1) {
+    //            //false) {
+
+    else if (auto cyclic_bank = cyclic_partition(options, buf);
+            cyclic_bank.has_value()) {
+
+        cout << "Use cyclic banking algorithm " << endl;
+        CyclicBankingImpl bank_impl(impl, cyclic_bank.get_value());
         buf.banking.partition = "cyclic";
         isl_map* bank_partition_map = bank_impl.get_bank_map(buf);
         for (int b = 0; b < bank_impl.get_bank_num(); b++) {
@@ -10748,6 +10810,10 @@ void generate_banks_garnet(CodegenOptions& options, UBuffer& buf, UBufferImpl& i
           cout << "ADD BANK!\n Bank id: " << b << endl;
           std::set<string> input_sets = impl.bank_writers.at(b);
           std::set<string> output_sets = impl.bank_readers.at(b);
+          cout << "bank impl before port group: " << impl << endl;
+        cout << "Before grouping: " << endl;
+        cout << "\tinput set: " << input_sets << endl;
+        cout << "\toutput set: " << output_sets << endl;
           auto rddom = coalesce(its(to_uset(accesses_to_bank), buf.global_range()));
           auto bank_IOs = buf.port_grouping(options, impl,
                   rddom, input_sets, output_sets);

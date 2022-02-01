@@ -613,13 +613,16 @@ void make_constant_dd(const std::string& target_op, const std::string& target_bu
   }
 }
 
+
 std::vector<string> topologically_sort(
         std::set<string> not_yet_sorted,
         map<string, std::set<string> > other_producers) {
 	std::vector<string> topologically_sorted_kernels;
 	while(not_yet_sorted.size() > 0){
+        bool add_new_kernel = false;
 		for(auto next_kernel : not_yet_sorted){
 			bool all_producers_sorted = true;
+            cout << "sorted kernel: " << topologically_sorted_kernels << endl;
 			for (auto producer : other_producers.at(next_kernel)) {
 				if(!elem(producer, topologically_sorted_kernels)) {
 					all_producers_sorted = false;
@@ -629,9 +632,16 @@ std::vector<string> topologically_sort(
 			if(all_producers_sorted){
 				topologically_sorted_kernels.push_back(next_kernel);
 				not_yet_sorted.erase(next_kernel);
+                add_new_kernel = true;
 				break;
 			}
 		}
+        if (!add_new_kernel) {
+            cout << "\tIs topologically symmetric:\n\t" << not_yet_sorted <<  endl;
+            auto kernel_picked = pick(not_yet_sorted);
+            not_yet_sorted.erase(kernel_picked);
+            topologically_sorted_kernels.push_back(kernel_picked);
+        }
 	}
     return topologically_sorted_kernels;
 }
@@ -4928,7 +4938,7 @@ int max_loop_depth(prog& prg) {
 }
 
 void dsa_writers(prog& prg) {
-  if (is_rate_matchable(prg)) {
+  if (is_rate_matchable(prg) || contains(prg.name, "nlmeans")) {
     prg.pretty_print();
     cout << "Is rate matchable" << endl;
 
