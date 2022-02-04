@@ -33,6 +33,7 @@ prog nlmeans_unroll();
 prog nlmeans_small();
 prog nlmeans_unroll_reorder();
 prog nlmeans_rolled();
+prog nlmeans_rolled_7x7();
 prog conv_3_3(); //stencil
 prog conv_3_3_wide(); //stencil
 prog conv_3_3_rolled(); //stencil
