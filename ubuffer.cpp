@@ -6395,7 +6395,11 @@ void UBuffer::generate_banks(CodegenOptions& options) {
             its(range(access_map.at(inpt)), range(access_map.at(outpt)));
 
           if (!empty(ops_overlap) && !empty(overlap)) {
-            stack_bank bank = compute_bank_info(options, inpt, outpt);
+            stack_bank bank;
+            if (options.rtl_options.use_external_controllers)
+              bank = compute_bank_info(options, inpt, outpt);
+            else
+              bank = compute_bank_info(inpt, outpt, INT_MAX);
             add_bank_between(inpt, outpt, bank);
           }
         }
@@ -9513,30 +9517,30 @@ void UBuffer::generate_banks(CodegenOptions& options) {
       }
 
       //This is the cyclic partition was used in garnet mapping
-      maybe<std::set<int> > cyclic_partition(CodegenOptions& options, UBuffer& buf) {
+      maybe<std::vector<int> > cyclic_partition(CodegenOptions& options, UBuffer& buf) {
         vector<vector<string> > filtered_io_groups =
           overlapping_large_io_port_groups(options, buf);
 
         if (filtered_io_groups.size() == 0) {
-          std::set<int> empty;
-          return maybe<std::set<int> >(empty);
+          std::vector<int> empty;
+          return maybe<std::vector<int> >(empty);
         }
 
         //get_banking factors
         vector<int> bk_factors = buf.get_cyclic_banking_factors();
         int bank_num = std::accumulate(
                 begin(bk_factors), end(bk_factors), 1, std::multiplies<int>());
-        std::set<int> dims;
+        std::vector<int> dims;
         for (auto g : filtered_io_groups) {
           assert(g.size() > 0);
 
-          cout << "Error: No viable banking strategy for " << buf.name << endl;
-          cout << tab(1) << "Cannot partition group: " << endl;
-          for (auto pt : g) {
-            cout << tab(2) << pt << endl;
-            cout << tab(3) << str(buf.access_map.at(pt)) << endl;
-            cout << tab(3) << str(buf.schedule.at(pt)) << endl;
-          }
+          //cout << "Error: No viable banking strategy for " << buf.name << endl;
+          //cout << tab(1) << "Cannot partition group: " << endl;
+          //for (auto pt : g) {
+          //  cout << tab(2) << pt << endl;
+          //  cout << tab(3) << str(buf.access_map.at(pt)) << endl;
+          //  cout << tab(3) << str(buf.schedule.at(pt)) << endl;
+          //}
           cout << "\tpart size:" <<bank_num << endl;
           cout << "\tg size: " << g.size() << endl;
           bool is_in_group = buf.is_in_pt(pick(g));
@@ -9550,9 +9554,9 @@ void UBuffer::generate_banks(CodegenOptions& options) {
             //may need banking
             return {};
           }
-          for (auto it: bk_factors)
-            dims.insert(it);
         }
+        for (auto it: bk_factors)
+          dims.push_back(it);
 
         cout << "FOUND CYLIC PARTITION OF "
           << buf.name << " in " << dims.size() << " dimensions..." << endl;
