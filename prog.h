@@ -1951,6 +1951,7 @@ void pad_bottom_level_ops_with_loops(prog& prg);
 int max_loop_depth(prog& prg);
 
 void dsa_writers(prog& prg);
+void dsa_writers_new(prog& prg);
 void dsa_readers(prog& prg);
 
 

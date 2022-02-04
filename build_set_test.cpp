@@ -15035,6 +15035,8 @@ void test_pond(string dir, bool run_verilator=true) {
   //Need to change the schedule for vectorization
   //test_apps.push_back(complex_mem_pond_input());
 
+  //fp app need pond for accumulation buffer
+  //test_apps.push_back(nlmeans_rolled_7x7());
 
   test_apps.push_back(resnet_simple());
   test_apps.push_back(resnet());
@@ -15059,7 +15061,7 @@ void test_pond(string dir, bool run_verilator=true) {
 
     break_up_multi_channel_inputs(prg);
     break_up_multi_channel_outputs(prg);
-    dsa_writers(prg);
+    dsa_writers_new(prg);
     prg.pretty_print();
     bool gen_config_only = !run_verilator;
 
@@ -15320,7 +15322,7 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   //test_apps.push_back(demosaic_complex());
   //test_apps.push_back(fft8_unroll8());
   //
-  //fp apps
+  ////fp apps
   //test_apps.push_back(nlmeans_unroll_reorder());
   //test_apps.push_back(nlmeans_unroll());
   //test_apps.push_back(fp_pointwise());
@@ -15370,7 +15372,7 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
 
     break_up_multi_channel_inputs(prg);
     break_up_multi_channel_outputs(prg);
-    dsa_writers(prg);
+    dsa_writers_new(prg);
     prg.pretty_print();
 #ifdef COREIR
     //compile_for_garnet_platonic_mem(prg);
@@ -18616,8 +18618,10 @@ void relax_delays_rate_matched(CodegenOptions& options, schedule_info& sched, pr
           } else if (equal_start_time && prod_need_index && (cons_start_time < 3)) {
               offset = 3 - cons_start_time;
           }
-          //get the max delay relaxation from all producer
-          delay_max = max(delay_max, delay_relaxation.at(prod) + offset);
+          //get the max delay relaxation from all producer,
+          //topographical sort can have close area, AKA all connected
+          if (delay_relaxation.count(prod))
+            delay_max = max(delay_max, delay_relaxation.at(prod) + offset);
         } // for each producer op
       } //for each producer kernel
     } //for each consumer op
@@ -19045,7 +19049,7 @@ void garnet_single_port_ram_schedule(CodegenOptions& options, schedule_info& sch
     //An hack on the fft schedule
     sequential_schedule(sched, root, prg);
     return;
-  } else if (is_rate_matchable(prg)) {
+  } else if (is_rate_matchable(prg) || contains(prg.name, "nlmeans")) {
     prg.pretty_print();
 
     //TODO: need another function to choose between pad bottom level or top level
