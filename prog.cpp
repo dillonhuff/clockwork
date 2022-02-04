@@ -4937,8 +4937,156 @@ int max_loop_depth(prog& prg) {
   return maxl;
 }
 
+std::set<op*> reduce_op(prog & prg) {
+    std::set<op*> reduce_op;
+    vector<string> rvars = reduce_vars(prg);
+    for (string var: rvars) {
+      op* loop = prg.find_loop(var);
+      auto lower_ops = loop->descendant_ops();
+      for (auto lower_op: lower_ops)
+        reduce_op.insert(lower_op);
+    }
+    return reduce_op;
+}
+
+//This should apply to the kernel that fully unrolled
+//
+void dsa_writers_new(prog& prg) {
+    std::set<op*> r_ops = reduce_op(prg);
+
+    std::set<string> all_buffers;
+    std::set<string> multi_write_buffers;
+    map<string, std::set<string> > producer_kernels;
+    std::set<string> reduced_kernels;
+    for (auto op : prg.all_ops()) {
+      //should not rewrite the real reduce kernel
+      if (r_ops.count(op))
+        continue;
+      auto read = op->buffers_read();
+      auto written = op->buffers_written();
+      for (auto b : intersection(read, written)) {
+        reduced_kernels.insert(b);
+        cout << "reduced kernel : " << b << endl;
+      }
+    }
+
+    for (auto k : get_kernels(prg)) {
+      for (auto b : get_produced_buffers(k, prg)) {
+        all_buffers.insert(b);
+        producer_kernels[b].insert(k);
+        cout << "insert kernel: " << k << " to producer buffer: " << b << endl;
+      }
+    }
+
+    cout << "Producer kernels..." << endl;
+    for (auto p : producer_kernels) {
+      cout << tab(1) << p.first << " -> ";
+      for (auto k : p.second) {
+        cout << k << " ";
+      }
+      cout << endl;
+      if (p.second.size() > 1) {
+        cout << tab(2) << "MULTIPLE PRODUCERS" << endl;
+      }
+    }
+    for (auto k : get_kernels(prg)) {
+      for (auto b : get_produced_buffers(k, prg)) {
+        auto producers = producer_kernels[b];
+
+        if (elem(b, reduced_kernels) && producers.size() >= 1) {
+          cout << b << " has " << producers.size() << " producers" << endl;
+          for (auto p : producers) {
+            cout << tab(1) << p << endl;
+          }
+          auto writers = find_writers(b, prg);
+          prg.pretty_print();
+          //assert(writers.size() <= 2);
+          if (writers.size() > 1) {
+            multi_write_buffers.insert(b);
+          }
+        }
+
+      }
+    }
+
+    cout << "Multi-write buffers" << endl;
+    map<string, std::set<op*> >initializers;
+    map<string, std::set<op*> > updaters;
+    for (auto b : multi_write_buffers) {
+      cout << tab(1) << b << endl;
+      auto writers = find_writers(b, prg);
+      vector<op*> ws;
+      for (auto w : writers) {
+        ws.push_back(w);
+      }
+
+      for (auto w : ws) {
+        if (w->read_addrs().size() == 0) {
+          initializers[b].insert(w);
+        } else {
+          updaters[b].insert(w);
+        }
+
+      }
+      //op* w0 = ws.at(0);
+      //op* w1 = ws.at(1);
+
+      //if (w0->read_addrs().size() == 0) {
+      //initializers[b] = w0;
+      //updaters[b] = w1;
+      //} else {
+      //initializers[b] = w1;
+      //updaters[b] = w0;
+      //}
+    }
+
+    cout << "Built initializer / update maps" << endl;
+    cout << tab(1) << "# multi_write buffers = " << multi_write_buffers.size() << endl;
+    //assert(false);
+    for (auto b : multi_write_buffers) {
+      string init_buffer = prg.un(b + "_clkwrk_dsa");
+      for (auto init : initializers[b]) {
+        init->replace_writes_to(b, init_buffer);
+      }
+      for (auto updated : updaters[b]) {
+        updated->replace_reads_from(b, init_buffer);
+      }
+      //auto init = initializers[b];
+      //assert(init != 0);
+      //auto updated = updaters[b];
+      //assert(updated != 0);
+      //cout << "Replacing writes" << endl;
+      //init->replace_writes_to(b, init_buffer);
+      //cout << "Replacing reads from " << b << " in " << updated->name << endl;
+      //updated->replace_reads_from(b, init_buffer);
+      prg.buffer_port_widths[init_buffer] = prg.buffer_port_width(b);
+    }
+
+    prg.pretty_print();
+    //assert(false);
+
+    // Split up buffers that are read at constants in one of their components
+    for (auto b : all_buffers) {
+      auto writers = find_writers(b, prg);
+      auto readers = find_readers(b, prg);
+
+      if (writers.size() > 1 && readers.size() == 0) {
+        cout << b << " has " << writers.size() << " writers and " << readers.size() << " readers" << endl;
+        assert(prg.is_output(b));
+        for (auto writer : writers) {
+          string init_buffer = prg.un(b + "_clkwrk_write_duplicate");
+          writer->replace_writes_to(b, init_buffer);
+          prg.add_output(init_buffer);
+          prg.buffer_port_widths[init_buffer] = prg.buffer_port_width(b);
+        }
+
+        prg.outs.erase(b);
+      }
+    }
+}
+
 void dsa_writers(prog& prg) {
-  if (is_rate_matchable(prg) || contains(prg.name, "nlmeans")) {
+  if (is_rate_matchable(prg)) {
     prg.pretty_print();
     cout << "Is rate matchable" << endl;
 
