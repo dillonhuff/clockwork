@@ -4,23 +4,41 @@
 #include "app.h"
 #include "rdai_collateral.h"
 
-void prog::pretty_print() {
-  cout << "program: " << name << endl;
-  cout << "Inputs..." << endl;
+void prog::pretty_print(ofstream& cust_out ) {
+  cust_out << "program: " << name << endl;
+  cust_out << "Inputs..." << endl;
   for (auto in : ins) {
-    cout << tab(1) << in << endl;
+    cust_out << tab(1) << in << endl;
   }
-  cout << "Outputs..." << endl;
+  cust_out << "Outputs..." << endl;
   for (auto in : outs) {
-    cout << tab(1) << in << endl;
+    cust_out << tab(1) << in << endl;
   }
-  cout << "buffers..." << endl;
+  cust_out << "buffers..." << endl;
   for (auto b : buffer_bounds) {
-    cout << tab(1) << b.first << bracket_list(b.second) << endl;
+    cust_out << tab(1) << b.first << bracket_list(b.second) << endl;
   }
-  cout << "operations..." << endl;
-  root->pretty_print(cout, 0);
+  cust_out << "operations..." << endl;
+  root->pretty_print(cust_out, 0);
 }
+void prog::pretty_print(ostream& cust_out ) {
+  cust_out << "program: " << name << endl;
+  cust_out << "Inputs..." << endl;
+  for (auto in : ins) {
+    cust_out << tab(1) << in << endl;
+  }
+  cust_out << "Outputs..." << endl;
+  for (auto in : outs) {
+    cust_out << tab(1) << in << endl;
+  }
+  cust_out << "buffers..." << endl;
+  for (auto b : buffer_bounds) {
+    cust_out << tab(1) << b.first << bracket_list(b.second) << endl;
+  }
+  cust_out << "operations..." << endl;
+  root->pretty_print(cust_out, 0);
+}
+
 
 std::string us(const std::string& a, const std::string& b) {
   return a + "_" + b;
@@ -5517,7 +5535,7 @@ void infer_bounds(const std::string& buf, const std::vector<int>& int_bounds, pr
       auto data_read =
         consumer_umap(op, prg);
       //cout << "op: " << endl;
-      //op->pretty_print(cout, 1);
+      //op->pretty_pint(cout, 1);
       //cout << "consumer map: " << str(map_find(op, cm)) << endl;
       assert(data_read != nullptr);
 
@@ -8412,6 +8430,27 @@ void write_out_no_dsa(op* loop, isl_set* read_data, const std::vector<int>& loop
 }
 
 void ir_node::pretty_print(std::ostream& out, int level) const {
+
+  if (is_loop()) {
+    out << tab(level) << "for (int " << name << " = " << start << "; " << name << " < " << end_exclusive << "; " << name << "++) {" << endl;
+    for (auto c : children) {
+      c->pretty_print(out, level + 1);
+    }
+    out << tab(level) << "}" << endl;
+  } else if (is_if()) {
+    out << tab(level) << "if (" << condition << ") {" << endl;
+    for (auto c : children) {
+      c->pretty_print(out, level + 1);
+    }
+    out << tab(level) << "}" << endl;
+  } else {
+    assert(is_op());
+    vector<string> args;
+    out << tab(level) << name << ": " << comma_list(produces()) << " = " << func << "(" << comma_list(consumes()) << ")" << endl;
+  }
+}
+
+void ir_node::pretty_print(std::ofstream& out, int level) const {
 
   if (is_loop()) {
     out << tab(level) << "for (int " << name << " = " << start << "; " << name << " < " << end_exclusive << "; " << name << "++) {" << endl;
