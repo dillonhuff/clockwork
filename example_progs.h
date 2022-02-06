@@ -1,6 +1,9 @@
 #pragma once
 #include "prog.h"
 
+prog fp_arith();
+prog fp_pointwise();
+
 prog fft8_unroll0();
 prog fft8_unroll2();
 prog fft8_unroll4();
@@ -24,6 +27,13 @@ prog harris_remove(); //manually edit
 prog pointwise(); //point
 prog brighten_blur(); //stencil
 prog halide_harris();
+
+prog nlmeans();
+prog nlmeans_unroll();
+prog nlmeans_small();
+prog nlmeans_unroll_reorder();
+prog nlmeans_rolled();
+prog nlmeans_rolled_7x7();
 prog conv_3_3(); //stencil
 prog conv_3_3_wide(); //stencil
 prog conv_3_3_rolled(); //stencil

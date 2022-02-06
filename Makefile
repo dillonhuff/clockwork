@@ -30,7 +30,7 @@ COREIR_INCLUDE = $(COREIR_PATH)/include
 COREIR_LIB = $(COREIR_PATH)/lib
 
 CXX_FLAGS += -I $(COREIR_INCLUDE) -D COREIR
-LINK_FLAGS += -L $(COREIR_LIB) -Wl,-rpath $(COREIR_LIB) -lcoreir -lcoreirsim -lcoreir-commonlib
+LINK_FLAGS += -L $(COREIR_LIB) -Wl,-rpath $(COREIR_LIB) -lcoreir -lcoreirsim -lcoreir-commonlib -lcoreir-float -lcoreir-float_DW
 endif
 
 ifeq ($(CGRAFLOW),1)

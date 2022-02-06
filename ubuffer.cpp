@@ -1064,6 +1064,7 @@ void UBufferImpl::remove_bank(int bank_id) {
 }
 
 void UBufferImpl::merge_banks(vector<int> banks_tobe_merged) {
+    assert(banks_tobe_merged.size() > 0);
   std::set<string> merge_inpts, merge_outpts;
   for (int bank_id: banks_tobe_merged) {
       assert(bank_writers.at(bank_id).size() == 1);
@@ -1108,10 +1109,12 @@ void UBufferImpl::conditional_merging(CodegenOptions & options, const vector<int
   vector<int> merging_banks;
   while(true) {
     //full condition
+    //cout << "Merging banks: " << merging_banks << endl;
     if(get_banks_inpts_num(merging_banks) > max_inpt ||
       get_banks_outpts_num(merging_banks) > max_outpt) {
       auto last_bank = merging_banks.back();
       merging_banks.pop_back();
+      //cout << merging_banks << endl;
       merge_banks(merging_banks);
       merging_banks.clear();
       merging_banks.push_back(last_bank);
@@ -1133,13 +1136,19 @@ void UBufferImpl::bank_merging(CodegenOptions & options) {
   //vector<vector<int>> merge_banks;
   map<int, vector<int>, decltype(comp)> merge_map(comp);
   for (auto it: bank_rddom) {
-      int bank_id = it.first;
-      //cout << "BANK ID: " << bank_id << "\n\tbank_map:" << str(it.second) << endl;
+    int bank_id = it.first;
+    string mem = get_memory_hierarchy(options, bank_id);
+    int max_inpt = options.mem_hierarchy.at(mem).get_inpt_num();
+    int max_outpt = options.mem_hierarchy.at(mem).get_outpt_num();
+    //cout << "BANK ID: " << bank_id << "\n\tbank_map:" << str(it.second) << endl;
+    if ((bank_readers.at(bank_id).size() < max_outpt) &&
+            (bank_writers.at(bank_id).size() < max_inpt)) {
       if (merge_map.count(bank_id)) {
-          merge_map[bank_id].push_back(it.first);
+        merge_map[bank_id].push_back(it.first);
       } else {
-          merge_map[bank_id] = {bank_id};
+        merge_map[bank_id] = {bank_id};
       }
+    }
   }
 
   for (auto it: merge_map) {
@@ -1328,6 +1337,7 @@ UBuffer UBuffer::generate_ubuffer(UBufferImpl& impl, schedule_info & info, int b
       }
       usuffix ++;
     }
+    cout << buf << endl;
   buf.simplify_address_space();
   if (sr) {
 
@@ -5772,7 +5782,10 @@ isl_union_pw_qpolynomial* UBuffer::compute_dd(const std::string& read_port, cons
 
 int UBuffer::compute_dd_bound(const std::string& read_port, const std::string& write_port, bool is_max) {
   auto c = compute_dd(read_port, write_port);
-  //cout << "DD: " << str(c) << endl;
+  cout << "DD: " << str(c) << endl;
+  cout << *this << endl;
+  cout << "\tread: " << read_port << endl;
+  cout << "\twrite: " << write_port << endl;
 
   int tight;
   int* b = &tight;
@@ -6382,7 +6395,11 @@ void UBuffer::generate_banks(CodegenOptions& options) {
             its(range(access_map.at(inpt)), range(access_map.at(outpt)));
 
           if (!empty(ops_overlap) && !empty(overlap)) {
-            stack_bank bank = compute_bank_info(options, inpt, outpt);
+            stack_bank bank;
+            if (options.rtl_options.use_external_controllers)
+              bank = compute_bank_info(options, inpt, outpt);
+            else
+              bank = compute_bank_info(inpt, outpt, INT_MAX);
             add_bank_between(inpt, outpt, bank);
           }
         }
@@ -9499,6 +9516,58 @@ void UBuffer::generate_banks(CodegenOptions& options) {
         return cyclic_partition_factor;
       }
 
+      //This is the cyclic partition was used in garnet mapping
+      maybe<std::vector<int> > cyclic_partition(CodegenOptions& options, UBuffer& buf) {
+        vector<vector<string> > filtered_io_groups =
+          overlapping_large_io_port_groups(options, buf);
+
+        if (filtered_io_groups.size() == 0) {
+          std::vector<int> empty;
+          return maybe<std::vector<int> >(empty);
+        }
+
+        //get_banking factors
+        vector<int> bk_factors = buf.get_cyclic_banking_factors();
+        int bank_num = std::accumulate(
+                begin(bk_factors), end(bk_factors), 1, std::multiplies<int>());
+        std::vector<int> dims;
+        for (auto g : filtered_io_groups) {
+          assert(g.size() > 0);
+
+          //cout << "Error: No viable banking strategy for " << buf.name << endl;
+          //cout << tab(1) << "Cannot partition group: " << endl;
+          //for (auto pt : g) {
+          //  cout << tab(2) << pt << endl;
+          //  cout << tab(3) << str(buf.access_map.at(pt)) << endl;
+          //  cout << tab(3) << str(buf.schedule.at(pt)) << endl;
+          //}
+          cout << "\tpart size:" <<bank_num << endl;
+          cout << "\tg size: " << g.size() << endl;
+          bool is_in_group = buf.is_in_pt(pick(g));
+
+          int ports = is_in_group ?
+              options.rtl_options.max_inpt : options.rtl_options.max_outpt;
+
+          if (contains(buf.name, "glb"))
+               ports = 1;
+          if (bank_num * ports < g.size()) {
+            //may need banking
+            return {};
+          }
+        }
+        for (auto it: bk_factors)
+          dims.push_back(it);
+
+        cout << "FOUND CYLIC PARTITION OF "
+          << buf.name << " in " << dims.size() << " dimensions..." << endl;
+        for (auto d : dims) {
+          cout << tab(1) << d << endl;
+        }
+
+        return dims;
+      }
+
+
       //This is the embarrassing partition was used in garnet mapping
       maybe<std::set<int> > embarassing_partition(CodegenOptions& options, UBuffer& buf) {
         vector<vector<string> > filtered_io_groups =
@@ -10578,8 +10647,8 @@ isl_map* build_buffer_impl_embarrassing_banking(UBuffer& buf, schedule_info& hwi
   //TODO: think a more systematic way to keep both delay buffer and banking
   //TODO: should move this into a separate function
   if (cur_bank_number != 0) {
-    //move the shift register back in banking
-    for (int b = 0; b < cur_bank_number; b ++) {
+    //move the shift register back in banking, from large to small
+    for (int b = cur_bank_number -1; b >= 0; b --) {
       impl.bank_readers[b + num_banks] = impl.bank_readers.at(b);
       impl.bank_readers.erase(b);
       impl.bank_writers[b + num_banks] = impl.bank_writers.at(b);
@@ -10668,23 +10737,25 @@ void generate_banks_garnet(CodegenOptions& options, UBuffer& buf, UBufferImpl& i
           //TODO potential bug for multi bank with broad casting case
           //TODO bank is not a good intermediate representation and contains too much internal data
           //     use buffer impl then
-          if ((bank_IO_pair.first.size() == 1) && (bank_IO_pair.second.size() == 1)) {
-            string inpt = pick(bank_IO_pair.first);
-            string outpt = pick(bank_IO_pair.second);
-            maybe<int> delay_info = buf.dependence_distance_max(inpt, outpt);
-            assert(delay_info.has_value());
-            auto bnk_info = buf.compute_bank_info(inpt, outpt, delay_info.get_value());
-            buf.add_bank_between(inpt, outpt, bnk_info);
+          //if ((bank_IO_pair.first.size() == 1) && (bank_IO_pair.second.size() == 1)) {
+          //  string inpt = pick(bank_IO_pair.first);
+          //  string outpt = pick(bank_IO_pair.second);
+          //  maybe<int> delay_info = buf.dependence_distance_max(inpt, outpt);
+          //  assert(delay_info.has_value());
+          //  auto bnk_info = buf.compute_bank_info(inpt, outpt, delay_info.get_value());
+          //  buf.add_bank_between(inpt, outpt, bnk_info);
 
-            //impl.add_new_bank_between({inpt}, {outpt}, to_set(rddom));
-          } else {
-            auto input_sets = bank_IO_pair.first;
-            auto output_sets = bank_IO_pair.second;
-            auto bnk_info = buf.compute_bank_info(rddom, point, input_sets, output_sets);
-            buf.add_bank_between(input_sets, output_sets, bnk_info);
+          //  //impl.add_new_bank_between({inpt}, {outpt}, to_set(rddom));
+          //} else {
+          //  auto input_sets = bank_IO_pair.first;
+          //  auto output_sets = bank_IO_pair.second;
+          //  cout << "input sets: " << input_sets << endl;
+          //  cout << "output sets: " << output_sets << endl;
+          //  auto bnk_info = buf.compute_bank_info(rddom, point, input_sets, output_sets);
+          //  buf.add_bank_between(input_sets, output_sets, bnk_info);
 
-            //impl.add_new_bank_between(input_sets, output_sets, to_set(rddom));
-          }
+          //  //impl.add_new_bank_between(input_sets, output_sets, to_set(rddom));
+          //}
         }
         //if (buf.overlap_schedule(input_sets) || buf.overlap_schedule(output_sets)) {
         //    cout << "inputs for bank: " << input_sets << endl;
@@ -10706,9 +10777,15 @@ void generate_banks_garnet(CodegenOptions& options, UBuffer& buf, UBufferImpl& i
         //}
       }
     }
-    else if (auto bank_impl = buf.get_cyclic_banking_implement(impl);
-                bank_impl.get_bank_num() > 1) {
-                //false) {
+    //else if (auto bank_impl = buf.get_cyclic_banking_implement(impl);
+    //            bank_impl.get_bank_num() > 1) {
+    //            //false) {
+
+    else if (auto cyclic_bank = cyclic_partition(options, buf);
+            cyclic_bank.has_value()) {
+
+        cout << "Use cyclic banking algorithm " << endl;
+        CyclicBankingImpl bank_impl(impl, cyclic_bank.get_value());
         buf.banking.partition = "cyclic";
         isl_map* bank_partition_map = bank_impl.get_bank_map(buf);
         for (int b = 0; b < bank_impl.get_bank_num(); b++) {
@@ -10737,9 +10814,13 @@ void generate_banks_garnet(CodegenOptions& options, UBuffer& buf, UBufferImpl& i
           cout << "ADD BANK!\n Bank id: " << b << endl;
           std::set<string> input_sets = impl.bank_writers.at(b);
           std::set<string> output_sets = impl.bank_readers.at(b);
+          cout << "bank impl before port group: " << impl << endl;
+        cout << "Before grouping: " << endl;
+        cout << "\tinput set: " << input_sets << endl;
+        cout << "\toutput set: " << output_sets << endl;
+          auto rddom = coalesce(its(to_uset(accesses_to_bank), buf.global_range()));
           auto bank_IOs = buf.port_grouping(options, impl,
-                  to_uset(accesses_to_bank),
-                  input_sets, output_sets);
+                  rddom, input_sets, output_sets);
         }
         cout << impl << endl;
     }
@@ -10752,8 +10833,8 @@ void generate_banks_garnet(CodegenOptions& options, UBuffer& buf, UBufferImpl& i
         auto outpts = buf.get_out_ports();
         std::set<string> in_port_set = std::set<string>(inpts.begin(), inpts.end());
         std::set<string> out_port_set = std::set<string>(outpts.begin(), outpts.end());
-        auto bnk_info = buf.compute_bank_info(in_port_set, out_port_set);
-        buf.add_bank_between(in_port_set, out_port_set, bnk_info);
+        //auto bnk_info = buf.compute_bank_info(in_port_set, out_port_set);
+        //buf.add_bank_between(in_port_set, out_port_set, bnk_info);
         int impl_bank = impl.add_new_bank_between(in_port_set, out_port_set, to_set(buf.global_range()));
         cout << "IO of ubuffer: " << in_port_set << out_port_set << endl;
         impl.sequentially_assign_inpt(buf.sort_pt_by_bundle(in_port_set), impl_bank);
@@ -10762,6 +10843,8 @@ void generate_banks_garnet(CodegenOptions& options, UBuffer& buf, UBufferImpl& i
     else {
 
         cout << "Use exhaustive banking! " << endl;
+
+        //This function may stuck in double buffer case
         buf.generate_banks(options);
         buf.parse_exhaustive_banking_into_impl(impl);
         cout << "After exhaustive banking:\n " << impl << endl;

@@ -1943,15 +1943,15 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
         int cms_in = 0, cms_out = 0;
         for (auto inpt: get_in_ports()) {
             auto am = to_map(access_map.at(inpt));
-            cout << str(am) << endl;
+            //cout << str(am) << endl;
             cms_in = std::gcd(cms_in, common_max_stride(am, addr_dim));
-            cout << "cms in: " << cms_out << endl;
+            //cout << "cms in: " << cms_out << endl;
         }
         for (auto outpt: get_out_ports()) {
             auto am = to_map(access_map.at(outpt));
-            cout << str(am) << endl;
+            //cout << str(am) << endl;
             cms_out = std::gcd(cms_out, common_max_stride(am, addr_dim));
-            cout << "cms out: " << cms_out << endl;
+            //cout << "cms out: " << cms_out << endl;
         }
         cyclic_banking_factors.at(addr_dim) = std::max(cms_in, cms_out);
       }
@@ -3284,10 +3284,30 @@ struct UBufferImpl {
 
   void sanity_check_memory_hierarchy(CodegenOptions& options, const vector<int> & banks);
 
+  int get_bank_capacity(int bank_id) const {
+    int capacity_without_circular_buf =
+        int_upper_bound(card(to_uset(bank_rddom.at(bank_id))));
+    auto bank_read_set = bank_readers.at(bank_id);
+    int shift_register_depth = -1;
+    for (string read_pt: bank_read_set) {
+        if (shift_registered_outputs.count(read_pt)) {
+            shift_register_depth = std::max(shift_register_depth,
+                    shift_registered_outputs.at(read_pt).second);
+        }
+    }
+    if ((shift_register_depth != -1)
+        && (shift_register_depth < capacity_without_circular_buf)) {
+        return shift_register_depth;
+    } else  {
+            return capacity_without_circular_buf;
+    }
+  }
+
   string get_memory_hierarchy(CodegenOptions& options, int bank_id) {
-    int capacity = int_upper_bound(card(to_uset(bank_rddom.at(bank_id))));
+    //int capacity = int_upper_bound(card(to_uset(bank_rddom.at(bank_id))));
+    int capacity = get_bank_capacity(bank_id);
     auto mem_hierarchy = options.mem_hierarchy;
-    cout << "mem hierarchy size: " << mem_hierarchy.size() << endl;
+    //cout << "mem hierarchy size: " << mem_hierarchy.size() << endl;
     if (mem_hierarchy.count("regfile") == 0)
         return "mem";
     vector<pair<string, LakeCollateral> > mem_vec(mem_hierarchy.begin(), mem_hierarchy.end());
@@ -3350,6 +3370,7 @@ struct UBufferImpl {
   int get_bank_num() const {
     return bank_readers.size();
   }
+
 
   void print_info(std::ostream& out) const {
     out << "Bank writers: " << endl;
@@ -3419,6 +3440,7 @@ struct CyclicBankingImpl:  public UBufferImpl {
     }
     return bank_num;
   }
+
 
   isl_map* get_bank_map(UBuffer& buf) const {
   //iteration domain to bank id
