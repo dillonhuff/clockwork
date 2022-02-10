@@ -4077,8 +4077,8 @@ void map_memory(CodegenOptions& options, Module* top, map<string, UBuffer> & buf
   c->runPasses({"stripglb"});
   addIOsWithGLBConfig(c, top, buffers, glb_pass);
 
-  c->addPass(new CustomFlatten);
-  c->runPasses({"customflatten"});
+  //c->addPass(new CustomFlatten);
+  //c->runPasses({"customflatten"});
 
   //Change the stencil valid signal to cgra to glb
   c->addPass(new ReplaceGLBValid(glb_pass));
