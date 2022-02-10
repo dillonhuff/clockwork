@@ -4,16 +4,6 @@
 #include "app.h"
 #include "rdai_collateral.h"
 
-std::string getLine(const std::string& str, int lineNo)
-{
-    std::string line;
-    std::istringstream stream(str);
-    while (lineNo-- >= 0)
-        std::getline(stream, line);
-    return line;
-}
-
-
 void prog::pretty_print(ofstream& cust_out ) {
   cust_out << "program: " << name << endl;
   cust_out << "Inputs..." << endl;
@@ -2755,7 +2745,6 @@ void generate_app_code_op_logic(
 
 
     ofstream a(prg.name+ "_check_codegen_c.txt");
-  a << "1" << endl;
   string code_string =
     options.code_string;
   if (options.hls_loop_codegen == HLS_LOOP_CODEGEN_CUSTOM) {
@@ -2851,9 +2840,10 @@ void generate_app_code_op_logic_catapult(
       close_synth_scope_catapult(conv_out);
     }
   }
-   ofstream a(prg.name+ "_check_codegen_catapult.txt");
-  a << "1" << endl;
-  string code_string =  options.code_string;
+
+
+  string code_string =
+    options.code_string;
   if (options.hls_loop_codegen == HLS_LOOP_CODEGEN_CUSTOM) {
     // Do nothing, leave code string
   } else if (options.hls_loop_codegen == HLS_LOOP_CODEGEN_PERFECT) {
@@ -2866,51 +2856,7 @@ void generate_app_code_op_logic_catapult(
     assert(options.hls_loop_codegen == HLS_LOOP_CODEGEN_ISL);
     code_string = codegen_c(schedmap);
   }
-  string new_code_string;
-  int i=0;
-  
-  std::string line;    
-  
-  std::istringstream stream1(code_string);
-  while (getline(stream1,  line)) {
-        a << i << " "  << line << endl;
-        std::string new_str ="";
-        if(line.find("for(") == std::string::npos && line.find("for (") == std::string::npos)
-	{
-		new_code_string += line + "\n";
-	}
-	int i = -1;
-	while(line.find("for(")!= std::string::npos || line.find("for (") != std::string::npos)
-	{
-		i += 1;
-		new_str += line;
-		getline(stream1, line);
-	}
-	if(i > -1)
-	{
-		std::string new_line;
-                  
-  		std::istringstream stream2(new_str);
-		while(i > 0)
-		{
-			getline(stream2, new_line);
-			new_code_string+= new_line + "\n";
- 			i = i-1;
-		}
-		new_code_string += "#pragma hls_pipeline_init_interval 1 \n";
-		getline(stream2, new_line);
-		new_code_string += new_line + "\n";		
-	}
-    }
 
-  
-
-  a  << code_string << endl << endl << endl; 
-  a << "#####################################" << endl; 
-  a  << new_code_string << endl << endl << endl; 
-  
-  a << "#####################################" << endl; 
-  code_string = new_code_string;
   string original_isl_code_string = code_string;
 
   code_string = "\t" + ReplaceString(code_string, "\n", "\n\t");
@@ -2921,7 +2867,6 @@ void generate_app_code_op_logic_catapult(
     code_string = regex_replace(code_string, re, "$1" + op->name + "(" + args_list + ", $2);");
   }
 
-  a  << code_string << endl << endl << endl; 
   conv_out << "#ifdef __SYNTHESIS__" << endl;
   conv_out << "#pragma HLS inline recursive" << endl;
   conv_out << "#endif // __SYNTHESIS__" << endl << endl;
@@ -2935,8 +2880,6 @@ void generate_app_code_op_logic_catapult(
 
   conv_out << code_string << endl;
 
-  a  << code_string << endl << endl << endl;
- 
   generate_driver_function_suffix_catapult(options, conv_out, buffers, prg);
 }
 

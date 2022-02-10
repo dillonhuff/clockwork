@@ -19657,6 +19657,7 @@ void coarse_pipeline_schedule(schedule_info& sched, op* root, prog& prg) {
   sanity_check_iis(sched);
 
 }
+// Issue Not sure why breaking
 
 void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
 
@@ -19669,7 +19670,9 @@ void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
 
   op* pl =
     find_coarse_grained_pipeline_loop(prg.root);
-  if (pl->name != "root") {
+  
+  assert(1<0);
+ if (pl->name != "root") {
     coarse_pipeline_schedule(sched, root, prg);
   } else {
     if (is_rate_matchable(prg)) {
@@ -19882,9 +19885,8 @@ void sanity_check_hw_schedule(schedule_info& sched, prog& prg) {
 
 void compile_cycle_accurate_hw(CodegenOptions& options, schedule_info& sched, prog& prg) {
   normalize_bounds(prg);
-
   garnet_dual_port_ram_schedule(sched, prg.root, prg);
-
+  
   auto hw_sched = its(op_times_map(sched, prg), prg.whole_iteration_domain());
 
   sanity_check_hw_schedule(sched, prg);
@@ -20735,6 +20737,9 @@ void generate_fpga_clockwork_code_catapult(prog& prg) {
       << prg.compute_unit_file << endl;
     CodegenOptions options;
     options.internal = true;
+    
+    options.set_banking_strategy_value = {"Exaustive"};
+
     generate_app_code_catapult(options, buffers, prg, sched);
 
     release(sched);
@@ -20746,6 +20751,8 @@ void generate_fpga_clockwork_code_catapult(prog& prg) {
     CodegenOptions options;
     options.internal = true;
     options.all_rams = true;
+
+    options.set_banking_strategy_value = "Exaustive";
     all_unbanked(prg, options);
     options.inner_bank_offset_mode =
       INNER_BANK_OFFSET_MULTILINEAR;
@@ -20837,7 +20844,7 @@ void cgra_backend_dillon_app(bool gen_config_only, bool multi_accessor=false, st
     prg.pretty_print();
 
     //compile_for_garnet_platonic_mem(prg);
-    compile_for_garnet_single_port_mem(prg, dir, false, gen_config_only, false, false);
+    compile_for_garnet_dual_port_mem(prg);//, dir, false, gen_config_only, false, false);
     cout << "Output name: " << prg.name << endl;
     //TODO: move to a function
     //run verilator on all the generated verilog
@@ -20946,7 +20953,7 @@ void fpga_asplos_tests_catapult() {
 
   //auto test_programs = stencil_programs();
  // auto test_programs = {gaussian(), harris(), conv_3_3(), laplacian_pyramid(), gaussian_glb(), gaussian_glb2()};
-  auto test_programs = {resnet()};
+  auto test_programs = {harris()};
   for (auto prg : test_programs) {
     cout << "==== FPGA clockwork code for " << prg.name << endl;
     break_up_multi_channel_inputs(prg);

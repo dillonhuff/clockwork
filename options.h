@@ -234,7 +234,7 @@ struct CodegenOptions {
 
   banking_strategy default_banking_strategy;
   std::map<string, banking_strategy> banking_strategies;
-
+  string set_banking_strategy_value;
   int num_pipelines;
 
   RTLOptions rtl_options;
@@ -257,7 +257,8 @@ struct CodegenOptions {
   default_banking_strategy({"exhaustive"}),
   ignore_top_level_inter_deps(false),
   num_pipelines(1),
-  slack_matching({SLACK_MATCHING_TYPE_FIXED, 500})
+  slack_matching({SLACK_MATCHING_TYPE_FIXED, 500}), 
+  set_banking_strategy_value("")
   {}
 
   void add_memory_hierarchy(const std::string& level);

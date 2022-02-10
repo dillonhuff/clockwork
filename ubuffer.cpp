@@ -4689,6 +4689,7 @@ void generate_code_prefix(CodegenOptions& options,
     UBuffer& buf) {
 
   //banking and merge pass
+
   buf.generate_banks_and_merge(options);
 
   for (auto b : buf.get_banks()) {
@@ -6550,8 +6551,10 @@ void UBuffer::generate_banks(CodegenOptions& options) {
 
   void UBuffer::generate_banks_and_merge(CodegenOptions& options) {
     generate_banks(options);
-
-
+    cout << banking.partition << endl;
+   // assert(banking.partition == "exaustive");
+    //assert(false);
+    banking.partition = "exhaustive";
     if (banking.partition == "exhaustive" || banking.partition == "cyclic") {
       bool all_small_banks = true;
       for (auto inpt : get_in_ports()) {
