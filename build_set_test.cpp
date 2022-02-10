@@ -1377,6 +1377,52 @@ void stride_conv_test() {
 }
 
 
+void rolled_conv2D_test() {
+  struct isl_ctx *ctx;
+  ctx = isl_ctx_alloc();
+
+  UBuffer buf;
+  buf.name = "conv2D_rolled";
+  buf.ctx = ctx;
+
+  buf.domain["write"] =
+    isl_set_read_from_str(ctx, "{ write[root = 0, i, j] : 0 <= i < 16 and 0<=j<16}");
+  buf.access_map["write"] =
+    rdmap(ctx, "{ write[root = 0, i, j] -> conv2D_rolled[i, j] : 0 <= i < 16 and 0<=j<16}}");
+  buf.schedule["write"] =
+    isl_union_map_read_from_str(ctx, "{ write[root = 0, i, j] -> [16*i + j] : 0 <= i < 16 and 0<=j<16}}");
+  buf.isIn["write"] = true;
+  map_insert(buf.port_bundles, string("write_bd"),  string("write"));
+
+  // Read 0 through 7
+  buf.domain["read"] =
+    isl_set_read_from_str(ctx, "{ read[root = 0, i, j, ii, jj] : 0 <= i < 12 and 0 <= j < 12 and 0 <= ii < 4 and 0 <= jj < 4}");
+  buf.access_map["read"] =
+    rdmap(ctx, "{ read[root = 0, i, j, ii, jj] -> conv2D_rolled[i + ii, j + jj] : 0 <= i < 12 and 0 <= j < 12 and 0 <= ii < 4 and 0 <= jj < 4}");
+  buf.schedule["read"] =
+    isl_union_map_read_from_str(ctx, "{ read[root = 0, i, j, ii, jj] -> [jj + 4*ii + 16*j + 256*i + 256] : 0 <= i < 12 and 0 <= j < 12 and 0 <= ii < 4 and 0 <= jj < 4}");
+  buf.isIn["read"] = false;
+  map_insert(buf.port_bundles, string("read_bd"),  string("read"));
+
+
+  map<string, UBuffer> buffers;
+  buffers.insert({"conv_rolled", buf});
+  buffer_vectorization({1}, {"conv_rolled"}, 4, buffers);
+  assert(false);
+  generate_hls_code(buf);
+
+  generate_hls_code_unit_test(buffers, buf.name);
+
+  generate_vectorization_unit_testbench(buf);
+
+  int res = cmd("clang++ -std=c++11 unit_tb_conv_rolled.cpp conv_rolled.cpp conv_rolled_vec.cpp" );
+  assert(res == 0);
+
+  res = system("./a.out");
+  assert(res == 0);
+}
+
+
 void rolled_conv_test() {
   struct isl_ctx *ctx;
   ctx = isl_ctx_alloc();
@@ -15038,15 +15084,16 @@ void test_pond(string dir, bool run_verilator=true) {
   //fp app need pond for accumulation buffer
   //test_apps.push_back(nlmeans_rolled_7x7());
 
-  test_apps.push_back(resnet_simple());
-  test_apps.push_back(resnet());
-  test_apps.push_back(three_level_pond_copy());
-  test_apps.push_back(three_level_pond_rolled());
-  test_apps.push_back(conv_1_3());
-  test_apps.push_back(conv_rolled());
-  test_apps.push_back(complex_mem_pond_rolled());
-  test_apps.push_back(complex_mem_pond());
-  test_apps.push_back(resnet_init_unroll_tile());
+  test_apps.push_back(nlmeans_simple());
+  //test_apps.push_back(resnet_simple());
+  //test_apps.push_back(resnet());
+  //test_apps.push_back(three_level_pond_copy());
+  //test_apps.push_back(three_level_pond_rolled());
+  //test_apps.push_back(conv_1_3());
+  //test_apps.push_back(conv_rolled());
+  //test_apps.push_back(complex_mem_pond_rolled());
+  //test_apps.push_back(complex_mem_pond());
+  //test_apps.push_back(resnet_init_unroll_tile());
 
   //TODO:Currently not work because of floating point, also need to check the cyclic banking condition
   //test_apps.push_back(fft8_unroll8_split());
@@ -17590,6 +17637,7 @@ void access_pattern_write_unit_tests() {
 void vectorization_unit_tests() {
   //access_pattern_write_unit_tests();
   //access_pattern_read_unit_tests();
+  rolled_conv2D_test();
   synth_id_test();
   synth_id_auto_test();
   synth_id_fetch2_test();
@@ -19173,7 +19221,7 @@ void garnet_single_port_ram_schedule(CodegenOptions& options, schedule_info& sch
     adjust_schedule_forward(sched, prg, 0);
     //}
     //Add delay for identity stream
-    relax_delays_rate_matched(options, sched, prg);
+    //relax_delays_rate_matched(options, sched, prg);
 
     //Make input as fast as possible
     asap_input_iis(sched, prg);

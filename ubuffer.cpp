@@ -1,5 +1,6 @@
 #include "ubuffer.h"
 #include "codegen.h"
+#include "app.h"
 #ifdef COREIR
 #include "cwlib.h"
 #include "coreir_backend.h"
@@ -2923,7 +2924,7 @@ string UBuffer::determine_config_mode(CodegenOptions& options, UBuffer& target_b
   //Changing the size of pond threshold
   if (contains(target_buf.name, "_glb_stencil")) {
     config_mode = "glb";
-  } else if (capacity <= 32 && multi_level_mem ) {
+  } else if ((capacity <= 32 && multi_level_mem ) || contains(target_buf.name, "non_local_means")) {
     cout << "Generate config for register file!" << endl;
     config_mode = "pond";
 
@@ -6517,6 +6518,7 @@ void UBuffer::generate_banks(CodegenOptions& options) {
         //    assert(false);
         //}
     } else {
+        assert(inpts.size() <= options.rtl_options.max_inpt);
 
         //This is used for broadcasting the output port
         //use this customized cmp to sort the pt by bundle name
@@ -6529,15 +6531,31 @@ void UBuffer::generate_banks(CodegenOptions& options) {
             outpt_partitions.insert(it);
         }
 
-        for (string inpt: inpts) {
-            for (auto it : outpt_partitions) {
-                ret.push_back(make_pair(std::set<string>({inpt}), it.second));
-                int bank = impl.add_new_bank_between({inpt}, it.second, to_set(rddom));
-                map_insert(impl.bank_inpt2writers, bank, {inpt});
-                map_insert(impl.bank_outpt2readers, bank, it.second);
+        //One bank will work
+        if (outpt_partitions.size() <= options.rtl_options.max_outpt) {
+          ret.push_back(make_pair(inpts, outpts));
+          int bank = impl.add_new_bank_between(inpts, outpts, to_set(rddom));
+          for (auto it : outpt_partitions) {
+            map_insert(impl.bank_outpt2readers, bank, it.second);
+          }
+          for (auto inpt: inpts) {
+            map_insert(impl.bank_inpt2writers, bank, {inpt});
+          }
+
+        //need to put into separate banks
+        } else {
+            for (string inpt: inpts) {
+                for (auto it : outpt_partitions) {
+                    ret.push_back(make_pair(std::set<string>({inpt}), it.second));
+                    int bank = impl.add_new_bank_between({inpt}, it.second, to_set(rddom));
+                    map_insert(impl.bank_inpt2writers, bank, {inpt});
+                    map_insert(impl.bank_outpt2readers, bank, it.second);
+                }
+
             }
         }
-    }
+        }
+
     return ret;
   }
 
@@ -8520,10 +8538,16 @@ void UBuffer::generate_banks(CodegenOptions& options) {
     cout << "rem: " << str(acc_vec_rem) << endl;
     cout << "new: " << str(acc_vec_new) << endl;
     //Go through each iteration domain point for div dimension
-    for(isl_set* s: get_domain_unmask_set(acc_vec_new, vectorized_dim, unmask_dims)){
-        cout << "\t" << str(s) << endl;
-        int origin_max = get_dim_max(range(its(acc_vec_new, s)), addr_dim);
-        int trans_max = get_dim_max(range(its(acc_vec_rem, s)), addr_dim);
+    auto new_dom_set = get_domain_unmask_set(acc_vec_new, vectorized_dim, unmask_dims);
+    auto rem_dom_set = get_domain_unmask_set(acc_vec_rem, vectorized_dim, unmask_dims);
+    assert(new_dom_set.size() == rem_dom_set.size());
+    for (auto i = 0; i < new_dom_set.size(); i ++) {
+        isl_set* s_new = new_dom_set.at(i);
+        isl_set* s_rem = rem_dom_set.at(i);
+        cout << "\tnew: " << str(s_new) << endl;
+        cout << "\trem: " << str(s_rem) << endl;
+        int origin_max = get_dim_max(range(its(acc_vec_new, s_new)), addr_dim);
+        int trans_max = get_dim_max(range(its(acc_vec_rem, s_rem)), addr_dim);
         cout << "origin max: " << str(origin_max) << endl;
         cout << "trans max: " << str(trans_max) << endl;
         ahead_step = max(ahead_step, origin_max - trans_max);
@@ -8562,6 +8586,14 @@ void UBuffer::generate_banks(CodegenOptions& options) {
     }
   }
 
+  bool check_back_to_back_access(map<int, int> & dim2denom) {
+    if (dim2denom.size() <2) {
+      return false;
+    }
+    int dim_diff = dim2denom.rbegin()->first - (std::next(dim2denom.rbegin()))->first;
+    return dim_diff <= 1;
+  }
+
   pair<isl_map*, isl_map*> get_vectorized_read_simplified(isl_map* acc_0, isl_map* sched, map<string, isl_map*> sched_record_map, int fetch_width, int addr_dim, bool is_dual_port) {
 
     isl_ctx* ctx = ::ctx(acc_0);
@@ -8579,12 +8611,47 @@ void UBuffer::generate_banks(CodegenOptions& options) {
     auto acc_vec_new = simplify_expr(dot(inv(div_trans), acc_slice));
     auto sched_vec_new = simplify_expr(dot(inv(div_trans), sched));
 
+    //We need to check the sched_vec_new,
+    //if the stripmined inner most dimension is under the outer loop,
+    //Then we do not need to pad, but there are loops between the outer loop and inner loop, we need to pad the inner most dimension
+    bool back_to_back_access = check_back_to_back_access(dim2denom);
+    int pvec_dim = get_inner_most_related_dom_dim_debug(acc_vec_new, addr_dim, fetch_width);
+    cout << "Preliminary vectorization dim: " << pvec_dim << endl;
+    vector<bool> rel_map = relation_map(acc_vec_new);
+
+    isl_map* acc_vec_after_pad = cpy(acc_vec_new);
+    bool pad_zero_iteration =false;
+    if ((!(rel_map.at(pvec_dim-1))) && (!back_to_back_access)) {
+      //Find the iteration dimension and pad 0 to 1
+      cout << str(acc_vec_new) << endl;
+      int in_dim = num_in_dims(acc_vec_new);
+      cout << in_dim << endl;
+      auto pad_acc_map = pad_to_domain_ubuf_map(acc_vec_new, pvec_dim - 1, 1);
+      pad_acc_map = add_relation_ubuf_map(pad_acc_map, pvec_dim - 1, addr_dim);
+      cout << "\tAfter padding the disappear dimension : " << str(pad_acc_map) << endl;
+      acc_vec_after_pad = simplify(pad_acc_map);
+
+      //Also need to check the II, basically double the rate
+      auto pad_sched = pad_to_domain_ubuf_map(sched_vec_new, pvec_dim - 1, 1);
+      pad_sched= add_relation_ubuf_map(pad_sched, pvec_dim - 1, 0);
+      cout <<"Before double rate: "<< str(pad_sched) << endl;
+      pad_sched = double_schedule_rate(pad_sched, pvec_dim - 1, fetch_width);
+      cout << "After double rate: "<< str(pad_sched) << endl;
+      sched_vec_new = pad_sched;
+      pad_zero_iteration = true;
+    } else {
+
+    }
+    auto acc_vec_rem = remove_div(acc_vec_after_pad, addr_dim);
+    acc_vec_rem = its(acc_vec_rem, ::domain(acc_vec_after_pad));
+
     //chances are that we have floor div in the new expression,
     //We need to remove the floor div, that this the acc_vec_rem
-    auto acc_pattern = AccessPattern(acc_vec_new, ctx);
-    auto acc_vec_rem = acc_pattern.get_access_map(ctx);
-    cout << str(get_aff(acc_vec_new)) << endl;
-    cout << str(get_aff(acc_vec_rem)) << endl;
+    //This is not a precise way to remove the floor
+    //auto acc_pattern = AccessPattern(acc_vec_new, ctx);
+    //auto acc_vec_rem = acc_pattern.get_access_map(ctx);
+    cout << "new: " << str((acc_vec_new)) << endl;
+    cout << "remove: " << str((acc_vec_rem)) << endl;
 
     //Get the vectorized dimension
     int vectorized_dim =
@@ -8648,10 +8715,12 @@ void UBuffer::generate_banks(CodegenOptions& options) {
       sched_vec_new = pad_to_domain_ubuf_map(sched_vec_new, vectorized_dim, ahead_step);
     }
     cout << "sched before adjust: " << str(sched_vec_new) << endl;
+    cout << "schedule adjust forward step: " << ahead_step << endl;
 
     //Get final schedule
     auto final_sched =
         get_sram2tb_schedule_with_check(sched_vec_new, sched_record_map, ahead_step, vectorized_dim, false);
+
     cout << "final schedule: " << str(final_sched) << endl;
     cout << "final access: " << str(acc_vec_rem) << endl;
     return make_pair(acc_vec_rem, final_sched);
@@ -9450,23 +9519,28 @@ void UBuffer::generate_banks(CodegenOptions& options) {
         vector<vector<string> > filtered_io_groups;
         for (auto& g : overlapping) {
           vector<string> ins;
-          vector<string> outs;
+          std::set<string> outs;
           for (auto pt : g) {
             if (buf.is_in_pt(pt)) {
               ins.push_back(pt);
             } else {
               assert(buf.is_out_pt(pt));
-              outs.push_back(pt);
+              outs.insert(pt);
             }
           }
+          auto out_unique_map = buf.get_unique_ports(outs);
+          vector<string> unique_outs;
+          for (auto it: out_unique_map) {
+            unique_outs.push_back(it.first);
+          }
           cout << "overlapping input:" << ins << endl;
-          cout << "overlapping output:" << outs << endl << endl;
+          cout << "overlapping output:" << unique_outs << endl << endl;
           //TODO should take conside the hardware constraint here
           if (ins.size() > 1) {
             filtered_io_groups.push_back(ins);
           }
-          if (outs.size() > 1) {
-            filtered_io_groups.push_back(outs);
+          if (unique_outs.size() > 1) {
+            filtered_io_groups.push_back(unique_outs);
           }
         }
 
@@ -10500,7 +10574,7 @@ UBufferImpl generate_optimized_memory_implementation(
 
 
     cout << "After banking optimization: " << impl << endl;
-    impl.bank_merging(options);
+    //impl.bank_merging(options);
     impl.sort_bank_port();
     cout << "After bank merging: " << impl << endl;
     return impl;
