@@ -15235,8 +15235,8 @@ void test_glb(bool gen_config_only, bool multi_accessor=false, string dir="aha_g
 
   //camera pipeline variant tests
   //test_apps.push_back(camera_pipeline_extra_buf_glb());
-  test_apps.push_back(camera_pipeline_unrolly());
   test_apps.push_back(camera_pipeline_2x2());
+  test_apps.push_back(camera_pipeline_unrolly());
   test_apps.push_back(camera_pipeline_extra_buf());
 
   //ISSCC application without unroll
@@ -15395,6 +15395,7 @@ void test_dual_port_mem(bool gen_config_only, bool multi_accessor=false, string 
   vector<prog> test_apps;
 
   //CGRA tests that pass dual port test
+  test_apps.push_back(camera_pipeline_2x2());
   test_apps.push_back(unsharp_large());
   test_apps.push_back(harris_color());
   test_apps.push_back(conv_3_3());
