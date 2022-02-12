@@ -122,6 +122,7 @@ prog unsharp_glb();
 prog unsharp_isscc();
 prog up_sample_glb();
 prog harris_color();
+prog harris_color_unroll4();
 prog harris_glb2();
 prog camera_pipeline_glb();
 
