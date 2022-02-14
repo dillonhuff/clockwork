@@ -15241,6 +15241,7 @@ void test_glb(bool gen_config_only, bool multi_accessor=false, string dir="aha_g
 
   //ISSCC application without unroll
   test_apps.push_back(harris_color());
+  test_apps.push_back(harris_color_unroll4());
   test_apps.push_back(gaussian_isscc());
   test_apps.push_back(camera_pipeline_isscc());
   test_apps.push_back(unsharp_isscc());
@@ -15344,9 +15345,11 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   test_apps.push_back(demosaic_unrolled());
   test_apps.push_back(up_sample());
   test_apps.push_back(unsharp());
+  test_apps.push_back(unsharp_large());
 
   //DNN apps
   test_apps.push_back(matmul_single());
+  test_apps.push_back(matmul_unroll2());
   test_apps.push_back(resnet_tiny());
   test_apps.push_back(resnet_simple());
   test_apps.push_back(resnet_size_test());
@@ -15395,6 +15398,7 @@ void test_dual_port_mem(bool gen_config_only, bool multi_accessor=false, string 
   vector<prog> test_apps;
 
   //CGRA tests that pass dual port test
+  //test_apps.push_back(matmul());
   test_apps.push_back(camera_pipeline_2x2());
   test_apps.push_back(unsharp_large());
   test_apps.push_back(harris_color());
@@ -19165,6 +19169,12 @@ void garnet_single_port_ram_schedule(CodegenOptions& options, schedule_info& sch
       //total_latency += op_latency(op, sched);
       scheduled.push_back(op);
     }
+    //auto init_op_sched = op_start_times_map(sched, prg);
+    //cout << "init sched: " << str(init_op_sched)  << endl;
+    //for (auto it: sched.op_offset_within_parent) {
+    //    cout << "\t" << it.first->name << ": " << it.second << endl;
+    //}
+    //assert(false);
 
     //Hack for rom, Rom need to be conservative
     //because the affine controller output on cycle of flush is undeterministic
@@ -19182,6 +19192,7 @@ void garnet_single_port_ram_schedule(CodegenOptions& options, schedule_info& sch
     cout << "Final schedule after relax: " << str(op_sched)  << endl;
     op_sched = op_end_times_map(sched, prg);
     cout << "Final end schedule after relax: " << str(op_sched)  << endl;
+    sanity_check_hw_schedule(sched, prg);
     return;
   } else if (contains(prg.name, "split")) {
     sequential_schedule(sched, root, prg);
@@ -19527,6 +19538,7 @@ void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
         buffer_dims.insert(logical_dimension(b, prg));
       }
 
+      //TODO fix this scheduler
       if (buffer_dims.size() > 1) {
         coarse_pipeline_schedule(sched, root, prg);
       } else {
@@ -19792,6 +19804,7 @@ void compile_cycle_accurate_hw(CodegenOptions& options, schedule_info& sched, pr
 
   auto hw_sched = its(op_times_map(sched, prg), prg.whole_iteration_domain());
 
+  cout << "final schedule: " << str(hw_sched) << endl;
   sanity_check_hw_schedule(sched, prg);
 
   auto buffers = build_buffers(prg, hw_sched);
@@ -20366,8 +20379,10 @@ vector<prog> isca_programs() {
   //FIXME: not work for M1 and M3
   //test_programs.push_back(three_level_pond_rolled());
 
-  test_programs.push_back(unsharp_large());
-  test_programs.push_back(harris_color());
+  test_programs.push_back(matmul_single());
+  //test_programs.push_back(camera_pipeline_2x2());
+  //test_programs.push_back(unsharp_large());
+  //test_programs.push_back(harris_color());
   //test_programs.push_back(camera_pipeline_new());
   //test_programs.push_back(gaussian());
   //test_programs.push_back(cascade());
@@ -20741,13 +20756,13 @@ void cgra_flow_tests() {
   //vector<prog> M3_test_programs{up_sample(), resnet()};
   //vector<prog> M3_test_programs{resnet()};
   //vector<prog> M3_test_programs{gaussian()};
-  vector<prog> M3_test_programs = isca_programs_m3();
-  test_codegen(M3_test_programs, compile_for_CGRA_M3_mem);
+  //vector<prog> M3_test_programs = isca_programs_m3();
+  //test_codegen(M3_test_programs, compile_for_CGRA_M3_mem);
   //assert(false);
 
   //vector<prog> M1_test_programs{resnet88_chain()};
-  //vector<prog> M1_test_programs = isca_programs();
-  //test_codegen(M1_test_programs, compile_for_CGRA_M1_mem);
+  vector<prog> M1_test_programs = isca_programs();
+  test_codegen(M1_test_programs, compile_for_CGRA_M1_mem);
 
   //auto test_programs = all_cgra_programs();
   //test_platonic_codegen(test_programs);

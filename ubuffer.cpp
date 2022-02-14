@@ -2669,7 +2669,7 @@ CoreIR::Instance* UBuffer::generate_lake_tile_instance(
     cout << "Generate stencil valid signal" << endl;
     generate_stencil_valid_config(options, bank_name);
   }
-  cout << "Add ub node with input_num = " << input_num
+  cout << "Add lake node:" << ub_ins_name << " with input_num = " << input_num
       << ", output_num = " << output_num << endl;
   if (options.pass_through_valid) {
     //modargs["config"] = CoreIR::Const::make(context, config_file);
@@ -2747,6 +2747,7 @@ string memDataoutPort(string mode, int pt_cnt) {
 //Helper function to find the last port in chaining path
 CoreIR::Wireable* findChainDataIn(CoreIR::Wireable* mem_data_out, int port_id) {
     auto last_bank =  mem_data_out->getTopParent();
+    cout << "Last bank in chain data in" << last_bank->toString() << endl;
     auto chain_in = last_bank->sel("chain_data_in_" + str(port_id));
     auto conns = getConnectWires(chain_in);
     if (conns.size() == 0) {
@@ -2808,6 +2809,7 @@ void UBuffer::wire_ubuf_IO(CodegenOptions& options,CoreIR::ModuleDef* def, map<s
             def->connect(buf->sel(memDataoutPort(config_mode, outpt_cnt)), pt2wire.at(outpt));
           } else {
             assert(conns.size() == 1);
+            cout << "pt count: " << outpt_cnt << endl;
             CoreIR::Wireable* last_dangling_chain_data_in =
               findChainDataIn(pick(conns), outpt_cnt);
             def->connect(buf->sel(memDataoutPort(config_mode, outpt_cnt)), last_dangling_chain_data_in);
@@ -9613,8 +9615,18 @@ void UBuffer::generate_banks(CodegenOptions& options) {
 
         cout << "FOUND EMBARASSING PARTITION OF "
           << buf.name << " in " << dims.size() << " dimensions..." << endl;
+        int total_banks = 1;
         for (auto d : dims) {
           cout << tab(1) << d << endl;
+          total_banks *= d;
+        }
+        cout << "Total Banks: " << total_banks << endl;
+
+        //Final check all port can fit
+        if (buf.get_all_ports().size() >
+                total_banks * (options.rtl_options.max_inpt + options.rtl_options.max_outpt)) {
+            cout << "Cannot merge port although they did not overlap" << endl;
+            return {};
         }
 
         isl_multi_aff* bank_func = embarassing_partition_function(buf, dims);
