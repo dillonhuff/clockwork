@@ -127,6 +127,7 @@ prog harris_glb2();
 prog camera_pipeline_glb();
 
 prog matmul();
+prog matmul_unroll2();
 prog matmul_single();
 prog matmul_fpga();
 
