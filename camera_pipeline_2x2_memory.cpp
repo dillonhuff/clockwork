@@ -123,93 +123,39 @@ prog camera_pipeline_2x2() {
 
 //consuming denoised$1.stencil
 ////producing b_b.stencil
-  auto b_b_s0_y_yio = prg.add_loop("b_b_s0_y_yio", 0, 49);
-  auto b_b_s0_x_x = b_b_s0_y_yio->add_loop("b_b_s0_x_x", 0, 65);
+  auto b_b_s0_y = prg.add_loop("b_b_s0_y", -1, 96);
+  auto b_b_s0_x = b_b_s0_y->add_loop("b_b_s0_x", 0, 129);
 
-//store is: b_b.stencil((b_b_s0_x_x*2), (b_b_s0_y_yio*2)) = denoised$1.stencil(((b_b_s0_x_x*4) + 2), ((b_b_s0_y_yio*4) + 1))
-  auto hcompute_b_b_stencil = b_b_s0_x_x->add_op("op_hcompute_b_b_stencil");
+//store is: b_b.stencil(b_b_s0_x, (b_b_s0_y + 1)) = denoised$1.stencil(((b_b_s0_x*2) + 2), ((b_b_s0_y*2) + 3))
+  auto hcompute_b_b_stencil = b_b_s0_x->add_op("op_hcompute_b_b_stencil");
   hcompute_b_b_stencil->add_function("hcompute_b_b_stencil");
-  hcompute_b_b_stencil->add_load("denoised_1_stencil", "((b_b_s0_y_yio*4) + 1)", "((b_b_s0_x_x*4) + 2)");
+  hcompute_b_b_stencil->add_load("denoised_1_stencil", "((b_b_s0_y*2) + 3)", "((b_b_s0_x*2) + 2)");
   prg.buffer_port_widths["b_b_stencil"] = 16;
-  hcompute_b_b_stencil->add_store("b_b_stencil", "(b_b_s0_y_yio*2)", "(b_b_s0_x_x*2)");
-
-//store is: b_b.stencil((b_b_s0_x_x*2), ((b_b_s0_y_yio*2) + 1)) = denoised$1.stencil(((b_b_s0_x_x*4) + 2), ((b_b_s0_y_yio*4) + 3))
-  auto hcompute_b_b_stencil_1 = b_b_s0_x_x->add_op("op_hcompute_b_b_stencil_1");
-  hcompute_b_b_stencil_1->add_function("hcompute_b_b_stencil_1");
-  hcompute_b_b_stencil_1->add_load("denoised_1_stencil", "((b_b_s0_y_yio*4) + 3)", "((b_b_s0_x_x*4) + 2)");
-  hcompute_b_b_stencil_1->add_store("b_b_stencil", "((b_b_s0_y_yio*2) + 1)", "(b_b_s0_x_x*2)");
-
-//store is: b_b.stencil(((b_b_s0_x_x*2) + 1), (b_b_s0_y_yio*2)) = denoised$1.stencil(((b_b_s0_x_x*4) + 4), ((b_b_s0_y_yio*4) + 1))
-  auto hcompute_b_b_stencil_2 = b_b_s0_x_x->add_op("op_hcompute_b_b_stencil_2");
-  hcompute_b_b_stencil_2->add_function("hcompute_b_b_stencil_2");
-  hcompute_b_b_stencil_2->add_load("denoised_1_stencil", "((b_b_s0_y_yio*4) + 1)", "((b_b_s0_x_x*4) + 4)");
-  hcompute_b_b_stencil_2->add_store("b_b_stencil", "(b_b_s0_y_yio*2)", "((b_b_s0_x_x*2) + 1)");
-
-//store is: b_b.stencil(((b_b_s0_x_x*2) + 1), ((b_b_s0_y_yio*2) + 1)) = denoised$1.stencil(((b_b_s0_x_x*4) + 4), ((b_b_s0_y_yio*4) + 3))
-  auto hcompute_b_b_stencil_3 = b_b_s0_x_x->add_op("op_hcompute_b_b_stencil_3");
-  hcompute_b_b_stencil_3->add_function("hcompute_b_b_stencil_3");
-  hcompute_b_b_stencil_3->add_load("denoised_1_stencil", "((b_b_s0_y_yio*4) + 3)", "((b_b_s0_x_x*4) + 4)");
-  hcompute_b_b_stencil_3->add_store("b_b_stencil", "((b_b_s0_y_yio*2) + 1)", "((b_b_s0_x_x*2) + 1)");
+  hcompute_b_b_stencil->add_store("b_b_stencil", "(b_b_s0_y + 1)", "b_b_s0_x");
 
 //consuming b_b.stencil
 ////producing g_gb.stencil
-  auto g_gb_s0_y_yio = prg.add_loop("g_gb_s0_y_yio", 0, 49);
-  auto g_gb_s0_x_x = g_gb_s0_y_yio->add_loop("g_gb_s0_x_x", 0, 65);
+  auto g_gb_s0_y = prg.add_loop("g_gb_s0_y", -1, 97);
+  auto g_gb_s0_x = g_gb_s0_y->add_loop("g_gb_s0_x", -1, 129);
 
-//store is: g_gb.stencil((g_gb_s0_x_x*2), (g_gb_s0_y_yio*2)) = denoised$1.stencil(((g_gb_s0_x_x*4) + 1), ((g_gb_s0_y_yio*4) + 1))
-  auto hcompute_g_gb_stencil = g_gb_s0_x_x->add_op("op_hcompute_g_gb_stencil");
+//store is: g_gb.stencil((g_gb_s0_x + 1), (g_gb_s0_y + 1)) = denoised$1.stencil(((g_gb_s0_x*2) + 3), ((g_gb_s0_y*2) + 3))
+  auto hcompute_g_gb_stencil = g_gb_s0_x->add_op("op_hcompute_g_gb_stencil");
   hcompute_g_gb_stencil->add_function("hcompute_g_gb_stencil");
-  hcompute_g_gb_stencil->add_load("denoised_1_stencil", "((g_gb_s0_y_yio*4) + 1)", "((g_gb_s0_x_x*4) + 1)");
+  hcompute_g_gb_stencil->add_load("denoised_1_stencil", "((g_gb_s0_y*2) + 3)", "((g_gb_s0_x*2) + 3)");
   prg.buffer_port_widths["g_gb_stencil"] = 16;
-  hcompute_g_gb_stencil->add_store("g_gb_stencil", "(g_gb_s0_y_yio*2)", "(g_gb_s0_x_x*2)");
-
-//store is: g_gb.stencil((g_gb_s0_x_x*2), ((g_gb_s0_y_yio*2) + 1)) = denoised$1.stencil(((g_gb_s0_x_x*4) + 1), ((g_gb_s0_y_yio*4) + 3))
-  auto hcompute_g_gb_stencil_1 = g_gb_s0_x_x->add_op("op_hcompute_g_gb_stencil_1");
-  hcompute_g_gb_stencil_1->add_function("hcompute_g_gb_stencil_1");
-  hcompute_g_gb_stencil_1->add_load("denoised_1_stencil", "((g_gb_s0_y_yio*4) + 3)", "((g_gb_s0_x_x*4) + 1)");
-  hcompute_g_gb_stencil_1->add_store("g_gb_stencil", "((g_gb_s0_y_yio*2) + 1)", "(g_gb_s0_x_x*2)");
-
-//store is: g_gb.stencil(((g_gb_s0_x_x*2) + 1), (g_gb_s0_y_yio*2)) = denoised$1.stencil(((g_gb_s0_x_x*4) + 3), ((g_gb_s0_y_yio*4) + 1))
-  auto hcompute_g_gb_stencil_2 = g_gb_s0_x_x->add_op("op_hcompute_g_gb_stencil_2");
-  hcompute_g_gb_stencil_2->add_function("hcompute_g_gb_stencil_2");
-  hcompute_g_gb_stencil_2->add_load("denoised_1_stencil", "((g_gb_s0_y_yio*4) + 1)", "((g_gb_s0_x_x*4) + 3)");
-  hcompute_g_gb_stencil_2->add_store("g_gb_stencil", "(g_gb_s0_y_yio*2)", "((g_gb_s0_x_x*2) + 1)");
-
-//store is: g_gb.stencil(((g_gb_s0_x_x*2) + 1), ((g_gb_s0_y_yio*2) + 1)) = denoised$1.stencil(((g_gb_s0_x_x*4) + 3), ((g_gb_s0_y_yio*4) + 3))
-  auto hcompute_g_gb_stencil_3 = g_gb_s0_x_x->add_op("op_hcompute_g_gb_stencil_3");
-  hcompute_g_gb_stencil_3->add_function("hcompute_g_gb_stencil_3");
-  hcompute_g_gb_stencil_3->add_load("denoised_1_stencil", "((g_gb_s0_y_yio*4) + 3)", "((g_gb_s0_x_x*4) + 3)");
-  hcompute_g_gb_stencil_3->add_store("g_gb_stencil", "((g_gb_s0_y_yio*2) + 1)", "((g_gb_s0_x_x*2) + 1)");
+  hcompute_g_gb_stencil->add_store("g_gb_stencil", "(g_gb_s0_y + 1)", "(g_gb_s0_x + 1)");
 
 //consuming g_gb.stencil
 ////producing g_gr.stencil
-  auto g_gr_s0_y_yio = prg.add_loop("g_gr_s0_y_yio", 0, 49);
-  auto g_gr_s0_x_x = g_gr_s0_y_yio->add_loop("g_gr_s0_x_x", 0, 65);
+  auto g_gr_s0_y = prg.add_loop("g_gr_s0_y", -1, 97);
+  auto g_gr_s0_x = g_gr_s0_y->add_loop("g_gr_s0_x", -1, 129);
 
-//store is: g_gr.stencil((g_gr_s0_x_x*2), (g_gr_s0_y_yio*2)) = denoised$1.stencil((g_gr_s0_x_x*4), (g_gr_s0_y_yio*4))
-  auto hcompute_g_gr_stencil = g_gr_s0_x_x->add_op("op_hcompute_g_gr_stencil");
+//store is: g_gr.stencil((g_gr_s0_x + 1), (g_gr_s0_y + 1)) = denoised$1.stencil(((g_gr_s0_x*2) + 2), ((g_gr_s0_y*2) + 2))
+  auto hcompute_g_gr_stencil = g_gr_s0_x->add_op("op_hcompute_g_gr_stencil");
   hcompute_g_gr_stencil->add_function("hcompute_g_gr_stencil");
-  hcompute_g_gr_stencil->add_load("denoised_1_stencil", "(g_gr_s0_y_yio*4)", "(g_gr_s0_x_x*4)");
+  hcompute_g_gr_stencil->add_load("denoised_1_stencil", "((g_gr_s0_y*2) + 2)", "((g_gr_s0_x*2) + 2)");
   prg.buffer_port_widths["g_gr_stencil"] = 16;
-  hcompute_g_gr_stencil->add_store("g_gr_stencil", "(g_gr_s0_y_yio*2)", "(g_gr_s0_x_x*2)");
-
-//store is: g_gr.stencil((g_gr_s0_x_x*2), ((g_gr_s0_y_yio*2) + 1)) = denoised$1.stencil((g_gr_s0_x_x*4), ((g_gr_s0_y_yio*4) + 2))
-  auto hcompute_g_gr_stencil_1 = g_gr_s0_x_x->add_op("op_hcompute_g_gr_stencil_1");
-  hcompute_g_gr_stencil_1->add_function("hcompute_g_gr_stencil_1");
-  hcompute_g_gr_stencil_1->add_load("denoised_1_stencil", "((g_gr_s0_y_yio*4) + 2)", "(g_gr_s0_x_x*4)");
-  hcompute_g_gr_stencil_1->add_store("g_gr_stencil", "((g_gr_s0_y_yio*2) + 1)", "(g_gr_s0_x_x*2)");
-
-//store is: g_gr.stencil(((g_gr_s0_x_x*2) + 1), (g_gr_s0_y_yio*2)) = denoised$1.stencil(((g_gr_s0_x_x*4) + 2), (g_gr_s0_y_yio*4))
-  auto hcompute_g_gr_stencil_2 = g_gr_s0_x_x->add_op("op_hcompute_g_gr_stencil_2");
-  hcompute_g_gr_stencil_2->add_function("hcompute_g_gr_stencil_2");
-  hcompute_g_gr_stencil_2->add_load("denoised_1_stencil", "(g_gr_s0_y_yio*4)", "((g_gr_s0_x_x*4) + 2)");
-  hcompute_g_gr_stencil_2->add_store("g_gr_stencil", "(g_gr_s0_y_yio*2)", "((g_gr_s0_x_x*2) + 1)");
-
-//store is: g_gr.stencil(((g_gr_s0_x_x*2) + 1), ((g_gr_s0_y_yio*2) + 1)) = denoised$1.stencil(((g_gr_s0_x_x*4) + 2), ((g_gr_s0_y_yio*4) + 2))
-  auto hcompute_g_gr_stencil_3 = g_gr_s0_x_x->add_op("op_hcompute_g_gr_stencil_3");
-  hcompute_g_gr_stencil_3->add_function("hcompute_g_gr_stencil_3");
-  hcompute_g_gr_stencil_3->add_load("denoised_1_stencil", "((g_gr_s0_y_yio*4) + 2)", "((g_gr_s0_x_x*4) + 2)");
-  hcompute_g_gr_stencil_3->add_store("g_gr_stencil", "((g_gr_s0_y_yio*2) + 1)", "((g_gr_s0_x_x*2) + 1)");
+  hcompute_g_gr_stencil->add_store("g_gr_stencil", "(g_gr_s0_y + 1)", "(g_gr_s0_x + 1)");
 
 //consuming g_gr.stencil
 ////producing g_b.stencil
@@ -295,33 +241,15 @@ prog camera_pipeline_2x2() {
 
 //consuming b_r.stencil
 ////producing r_r.stencil
-  auto r_r_s0_y_yio = prg.add_loop("r_r_s0_y_yio", 0, 49);
-  auto r_r_s0_x_x = r_r_s0_y_yio->add_loop("r_r_s0_x_x", 0, 65);
+  auto r_r_s0_y = prg.add_loop("r_r_s0_y", 0, 97);
+  auto r_r_s0_x = r_r_s0_y->add_loop("r_r_s0_x", -1, 128);
 
-//store is: r_r.stencil((r_r_s0_x_x*2), (r_r_s0_y_yio*2)) = denoised$1.stencil(((r_r_s0_x_x*4) + 1), ((r_r_s0_y_yio*4) + 2))
-  auto hcompute_r_r_stencil = r_r_s0_x_x->add_op("op_hcompute_r_r_stencil");
+//store is: r_r.stencil((r_r_s0_x + 1), r_r_s0_y) = denoised$1.stencil(((r_r_s0_x*2) + 3), ((r_r_s0_y*2) + 2))
+  auto hcompute_r_r_stencil = r_r_s0_x->add_op("op_hcompute_r_r_stencil");
   hcompute_r_r_stencil->add_function("hcompute_r_r_stencil");
-  hcompute_r_r_stencil->add_load("denoised_1_stencil", "((r_r_s0_y_yio*4) + 2)", "((r_r_s0_x_x*4) + 1)");
+  hcompute_r_r_stencil->add_load("denoised_1_stencil", "((r_r_s0_y*2) + 2)", "((r_r_s0_x*2) + 3)");
   prg.buffer_port_widths["r_r_stencil"] = 16;
-  hcompute_r_r_stencil->add_store("r_r_stencil", "(r_r_s0_y_yio*2)", "(r_r_s0_x_x*2)");
-
-//store is: r_r.stencil((r_r_s0_x_x*2), ((r_r_s0_y_yio*2) + 1)) = denoised$1.stencil(((r_r_s0_x_x*4) + 1), ((r_r_s0_y_yio*4) + 4))
-  auto hcompute_r_r_stencil_1 = r_r_s0_x_x->add_op("op_hcompute_r_r_stencil_1");
-  hcompute_r_r_stencil_1->add_function("hcompute_r_r_stencil_1");
-  hcompute_r_r_stencil_1->add_load("denoised_1_stencil", "((r_r_s0_y_yio*4) + 4)", "((r_r_s0_x_x*4) + 1)");
-  hcompute_r_r_stencil_1->add_store("r_r_stencil", "((r_r_s0_y_yio*2) + 1)", "(r_r_s0_x_x*2)");
-
-//store is: r_r.stencil(((r_r_s0_x_x*2) + 1), (r_r_s0_y_yio*2)) = denoised$1.stencil(((r_r_s0_x_x*4) + 3), ((r_r_s0_y_yio*4) + 2))
-  auto hcompute_r_r_stencil_2 = r_r_s0_x_x->add_op("op_hcompute_r_r_stencil_2");
-  hcompute_r_r_stencil_2->add_function("hcompute_r_r_stencil_2");
-  hcompute_r_r_stencil_2->add_load("denoised_1_stencil", "((r_r_s0_y_yio*4) + 2)", "((r_r_s0_x_x*4) + 3)");
-  hcompute_r_r_stencil_2->add_store("r_r_stencil", "(r_r_s0_y_yio*2)", "((r_r_s0_x_x*2) + 1)");
-
-//store is: r_r.stencil(((r_r_s0_x_x*2) + 1), ((r_r_s0_y_yio*2) + 1)) = denoised$1.stencil(((r_r_s0_x_x*4) + 3), ((r_r_s0_y_yio*4) + 4))
-  auto hcompute_r_r_stencil_3 = r_r_s0_x_x->add_op("op_hcompute_r_r_stencil_3");
-  hcompute_r_r_stencil_3->add_function("hcompute_r_r_stencil_3");
-  hcompute_r_r_stencil_3->add_load("denoised_1_stencil", "((r_r_s0_y_yio*4) + 4)", "((r_r_s0_x_x*4) + 3)");
-  hcompute_r_r_stencil_3->add_store("r_r_stencil", "((r_r_s0_y_yio*2) + 1)", "((r_r_s0_x_x*2) + 1)");
+  hcompute_r_r_stencil->add_store("r_r_stencil", "r_r_s0_y", "(r_r_s0_x + 1)");
 
 //consuming r_r.stencil
 ////producing r_b.stencil

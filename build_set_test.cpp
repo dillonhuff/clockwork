@@ -6787,13 +6787,15 @@ struct App {
     for (auto out : outputs) {
       prg.add_output(out);
     }
-
-    generate_app_code(options, buffers, prg, its(m, action_domain), domain_map);
+    //Disable codegen remove this remember
+    
+    /*generate_app_code(options, buffers, prg, its(m, action_domain), domain_map);
     generate_regression_testbench(prg);
     generate_soda_file(prg.name);
+    */
     cout << "custom application pretty print";   
- 
-  ofstream of("cp_custom.txt");
+    
+   ofstream of(name + "_custom.txt");
    prg.pretty_print(of);
   }
 
@@ -7235,7 +7237,7 @@ struct App {
 
     cfile << "// Compute unit banks..." << endl;
     std::set<string> already_seen;
-    for (auto f : sort_functions()) {
+ /*   for (auto f : sort_functions()) {
       if (producers(f).size() == 0) {
         continue;
       }
@@ -7310,7 +7312,7 @@ struct App {
         already_seen.insert(unrolled_compute_name(f));
       }
     }
-
+*/
     cfile.close();
   }
 
@@ -7379,8 +7381,8 @@ struct App {
     prg.name = name + "_opt";
     prg.compute_unit_file = prg.name + "_compute_units.h";
 
-    //populate_program(options, prg, name, outputs, m, buffers);
-     generate_compute_unit_file(prg.compute_unit_file);
+    populate_program(options, prg, name, outputs, m, buffers);
+    generate_compute_unit_file(prg.compute_unit_file);
 
 
     return prg;
@@ -9040,7 +9042,7 @@ void camera_pipeline_test(const std::string& prefix) {
   int rows = 1080;
   int cols = 1920;
   //vector<int> factors{1, 2, 4};
-  vector<int> factors{1, 16, 32};
+  vector<int> factors{1, 4, 16};
   for (int i = 0; i < (int) factors.size(); i++) {
     int unroll_factor = factors.at(i);
     //cout << tab(1) << "harris unroll factor: " << unroll_factor << endl;
@@ -9159,7 +9161,7 @@ void camera_pipeline_test_catapult(const std::string& prefix) {
   int rows = 1080;
   int cols = 1920;
   //vector<int> factors{1, 2, 4};
-  vector<int> factors{1, 16, 32};
+  vector<int> factors{1, 4, 16};
   for (int i = 0; i < (int) factors.size(); i++) {
     int unroll_factor = factors.at(i);
     //cout << tab(1) << "harris unroll factor: " << unroll_factor << endl;
@@ -11437,8 +11439,8 @@ void sobel_16_app_test(const std::string& prefix) {
 
   //int cols = 10;
   //int rows = 10;
-  //vector<int> factors{1, 2, 4, 8};
-  vector<int> factors{1, 16, 32};
+  vector<int> factors{1};//, 2, 4, 8};
+  //vector<int> factors{1};
   //for (int i = 0; i < 5; i++) {
   for (auto factor : factors) {
     int unroll_factor = factor;
@@ -11530,7 +11532,7 @@ void blur_xy_16_app_test(const std::string& prefix) {
   int rows = 1080;
 
   //vector<int> factors{1, 2, 4, 8};
-  vector<int> factors{1,2, 4, 8, 16, 32};
+  vector<int> factors{1};//,2, 4, 8, 16, 32};
   for (auto f : factors) {
     int unroll_factor = f;
     cout << tab(1) << "unroll factor: " << unroll_factor << endl;
@@ -19258,7 +19260,7 @@ void garnet_single_port_ram_schedule(CodegenOptions& options, schedule_info& sch
     //An hack on the fft schedule
     sequential_schedule(sched, root, prg);
     return;
-  } else if (is_rate_matchable(prg)) {
+  } else if (is_rate_matchable(prg)) { //Ritvik: if reduction loop is fully unrolled
     prg.pretty_print();
 
     //TODO: need another function to choose between pad bottom level or top level
@@ -19659,16 +19661,17 @@ void coarse_pipeline_schedule(schedule_info& sched, op* root, prog& prg) {
 }
 
 void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
-
   for (auto op : prg.all_ops()) {
     if (op->func != "") {
       assert(contains_key(op, sched.resource_requirements));
       assign_to_least_used_resource(op, sched);
     }
   }
+  prg.pretty_print();
 
   op* pl =
     find_coarse_grained_pipeline_loop(prg.root);
+
   if (pl->name != "root") {
     coarse_pipeline_schedule(sched, root, prg);
   } else {
@@ -19765,6 +19768,7 @@ CodegenOptions garnet_codegen_single_port_with_addrgen_options(prog& prg, string
 CodegenOptions garnet_codegen_dual_port_with_addrgen_options(prog& prg) {
   CodegenOptions options;
   options.rtl_options.use_external_controllers = true;
+  //options.rtl_options.use_prebuilt_memory = true;
   options.rtl_options.target_tile =
     TARGET_TILE_DUAL_SRAM_WITH_ADDRGEN;
   all_unbanked(prg, options);
@@ -19881,18 +19885,20 @@ void sanity_check_hw_schedule(schedule_info& sched, prog& prg) {
 }
 
 void compile_cycle_accurate_hw(CodegenOptions& options, schedule_info& sched, prog& prg) {
+  //assert(1 <0);
   normalize_bounds(prg);
-
   garnet_dual_port_ram_schedule(sched, prg.root, prg);
 
+  //assert(1< 0);
   auto hw_sched = its(op_times_map(sched, prg), prg.whole_iteration_domain());
 
   sanity_check_hw_schedule(sched, prg);
 
   auto buffers = build_buffers(prg, hw_sched);
-
+ //assert(1 < 0); 
 #ifdef COREIR
-
+  int x = 1;
+  //assert(x < 0);
   generate_coreir(options,
     buffers,
     prg,
@@ -19939,8 +19945,11 @@ void compile_for_garnet_platonic_mem(prog& prg) {
 }
 
 void compile_for_garnet_dual_port_mem(prog& prg) {
+  //assert(1<0);
   auto options = garnet_codegen_dual_port_with_addrgen_options(prg);
+  //assert(1<0);
   schedule_info sched = garnet_schedule_info(options, prg);
+  //assert(1<0);
   compile_cycle_accurate_hw(options, sched, prg);
 }
 
@@ -20147,7 +20156,8 @@ void generate_resnet_latency_experiment(prog& prg,
   dump_resnet_latency(options, sched_db, prg.root, prg, profiling_file, true/*double buffer optimization*/);
   profiling_file << endl;
 }
-
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//Joey's top
 void compile_for_garnet_single_port_mem(prog& prg,
         string dir,
         bool gen_smt_stream,
@@ -20779,36 +20789,64 @@ void fpga_asplos_tests() {
 
 void program_file_format_checker()
 { 
- //camera_pipeline_test("cp_noinit_ln1");
-  auto test_programs = {camera_pipeline_2x2()};//camera_pipeline_glb()};
+  //camera_pipeline_test("cp_noinit_ln1_fpga_case");
+  
+  //sobel_16_app_test("sbl_ln_cata");
+  //blur_xy_16_app_test("bxy_noinit_ln");
+  //gauss_pyramid_iccad_apps("gp_fpga_cata");
+  //max_pooling_test("mpr16b_32");
+
+
+
+  auto test_programs = {harris()};//camera_pipeline_glb()};
   for (auto prg : test_programs) {
-    break_up_multi_channel_inputs(prg);
-    break_up_multi_channel_outputs(prg);
-    dsa_writers(prg);
-    pad_to_single_depth(prg);
-    std::vector<string> no_opt =
-      unoptimized_result(prg);
-    ofstream of2("cp_halide.txt");
-    prg.pretty_print(of2);
+  /*  infer_bounds_and_unroll("out", {16, 16}, 4, prg);
+    infer_bounds_and_unroll("out", {16, 16}, 4, prg);
+    infer_bounds_and_unroll("out", {16, 16}, 4, prg);
+    infer_bounds_and_unroll("out", {16, 16}, 4, prg);
+    infer_bounds_and_unroll("out", {16, 16}, 4, prg);
+    infer_bounds_and_unroll("out", {16, 16}, 4, prg);
+    infer_bounds_and_unroll("out", {16, 16}, 4, prg);
+    infer_bounds_and_unroll("out", {16, 16}, 4, prg);
+    */
+  
+    ofstream of5(prg.name + "_halide.txt");
+    prg.pretty_print(of5);
+    of5 << endl << endl << endl;
+  //  break_up_multi_channel_inputs(prg);
+   // break_up_multi_channel_outputs(prg);
+   // dsa_writers(prg);
+  //  pad_to_single_depth(prg);
+ //   std::vector<string> no_opt =
+  //    unoptimized_result(prg);
+    //ofstream of2("cp_halide.txt");
+    //prg.pretty_print(of2);
  
-    generate_fpga_clockwork_code(prg);
-    generate_regression_testbench(prg);
-    ofstream of3("cp_halide2.txt");
-    prg.pretty_print(of3);
+    //generate_fpga_clockwork_code_catapult(prg);
+    //generate_regression_testbench_catapult(prg);
  
-    std::vector<std::string> opt =
-      run_regression_tb(prg);
-    compare(prg.name + " ASPLOS FPGA flow", opt, no_opt);
+    //std::vector<std::string> opt =
+     // run_regression_tb(prg);
+    //compare(prg.name + " ASPLOS FPGA flow", opt, no_opt);
     move_to_benchmarks_folder(prg.name);
     //cout << "halide_app_pretty_print"<< endl;
    
-  ofstream of4("cp_halide3.txt");
-  prg.pretty_print(of4);
+     prg.pretty_print(of5);
+     of5 << endl << endl << endl;
+     of5 << "breaking bounds and unroll" << endl << endl;
+  
+  //infer_bounds_and_unroll("hw_output_global_wrapper_stencil_clkwrk_10", {16, 16}, 4, prg);
+//hw_output_global_wrapper_stencil
+ 
+  //halide_check_rate_mismatch("hw_output_global_wrapper_stencil", {16, 16}, 4, prg);
+  
+  halide_check_rate_mismatch("hw_output_stencil", {16, 16}, 4, prg);
+ prg.pretty_print(of5);
   }
 }
 
 void cgra_backend_dillon_app(bool gen_config_only, bool multi_accessor=false, string dir="aha_garnet_design") {
-  const std::string& prefix = "cp_dillon_version_in_cgra";
+  const std::string& prefix = "dummy_cp_app_in_cgra";
   int rows = 1080;
   int cols = 1920;
   vector<int> factors{1};
@@ -20816,32 +20854,42 @@ void cgra_backend_dillon_app(bool gen_config_only, bool multi_accessor=false, st
   for (int i = 0; i < (int) factors.size(); i++) {
     int unroll_factor = factors.at(i);
     string out_name = prefix + "_" + str(unroll_factor);
-
     CodegenOptions options;
     options.internal = true;
     options.simplify_address_expressions = true;
     options.hls_loop_codegen = HLS_LOOP_CODEGEN_CUSTOM;
     options.debug_options.expect_all_linebuffers = true;
     options.num_input_epochs = 30;
-    test_apps.push_back(camera_pipeline(out_name).realize(options, out_name, cols, rows, unroll_factor));
+    auto prg_ = camera_pipeline(out_name).realize(options, out_name, cols, rows, unroll_factor);
+     //prg_.pretty_print();
+	//assert(false);
+     //sobel16(out_name).realize(options, out_name, cols, rows, unroll_factor);
+    test_apps.push_back(prg_);
+
 
     move_to_benchmarks_folder(out_name + "_opt");
   }
-
   for ( auto prg: test_apps) {
-    prg.sanity_check();
+    //prg = conv_3_3();
+    ofstream ofa1("fil_complete_1.txt");
+    ofa1 << prg.name;
+    ofa1.close();  
+ 
 
+    prg.sanity_check();
     break_up_multi_channel_inputs(prg);
     break_up_multi_channel_outputs(prg);
     dsa_writers(prg);
     prg.pretty_print();
-
+ 
+ 
     //compile_for_garnet_platonic_mem(prg);
-    compile_for_garnet_single_port_mem(prg, dir, false, gen_config_only, false, false);
+    compile_for_garnet_dual_port_mem(prg);//, dir, false, gen_config_only, false, false);
     cout << "Output name: " << prg.name << endl;
     //TODO: move to a function
     //run verilator on all the generated verilog
-    if (!gen_config_only) {
+    
+    /*if (!gen_config_only) {
       string name = prg.name;
       auto verilog_files = get_files("./" + dir + "/"+name+"/verilog/");
       verilog_files.push_back(name + ".v");
@@ -20859,10 +20907,10 @@ void cgra_backend_dillon_app(bool gen_config_only, bool multi_accessor=false, st
       //string app_type = "dualwithaddr";
       string app_type = "single_port_buffer";
       cpy_app_to_folder(app_type, prg.name);
-    }
-    ofstream ofa("fil_complete.txt");
-    ofa << "Done";
-    ofa.close();
+    }*/
+    ofstream ofa("fil_complete_2.txt");
+    ofa << "Done" << " " << prg.name;
+    ofa.close();  
  
   }
 }
@@ -21643,19 +21691,19 @@ void histogram_2d_test() {
 }
 
 void infer_bounds_tests() {
-  infer_uneven_bounds_test();
-  infer_bounds_unrolled_test();
-  infer_bounds_multiple_inputs();
-  infer_bounds_16_stage_5x5_conv_test();
-  infer_bounds_multi_5x1_stage_negative_conv_test();
-  infer_bounds_multi_5x5_stage_negative_conv_test();
-  infer_bounds_multi_stage_negative_conv_test();
-  //infer_bounds_color_downsample_test();
-  infer_bounds_multi_stage_negative_conv1d_test();
-  infer_bounds_three_stage_negative_conv_test();
+  //infer_uneven_bounds_test();
+  //infer_bounds_unrolled_test();
+  //infer_bounds_multiple_inputs();
+  //infer_bounds_16_stage_5x5_conv_test();
+  //infer_bounds_multi_5x1_stage_negative_conv_test();
+  //infer_bounds_multi_5x5_stage_negative_conv_test();
+  //infer_bounds_multi_stage_negative_conv_test();
+  infer_bounds_color_downsample_test();
+  //infer_bounds_multi_stage_negative_conv1d_test();
+  //infer_bounds_three_stage_negative_conv_test();
 
-  infer_bounds_single_stage_negative_conv_test();
-  infer_bounds_negative_conv_test();
+  //infer_bounds_single_stage_negative_conv_test();
+  //infer_bounds_negative_conv_test();
 
 
 }
@@ -22541,7 +22589,7 @@ void jac16_static_dynamic_comparison() {
 }
 
 void cp32_static_dynamic_comparison() {
-  string prefix = "cp";
+  string prefix = "dummy_static_dynamic_check_cp";
 
   int size = 1080;
   int rows = size;
@@ -22558,7 +22606,9 @@ void cp32_static_dynamic_comparison() {
 
   App jac = camera_pipeline(out_name);
   prog prg = jac.realize(options, out_name, cols, rows, 1);
-
+  ofstream a(prg.name + "_1.txt");
+  prg.pretty_print(a);
+  a << endl << " ## " << endl;
   move_to_benchmarks_folder(out_name + "_opt");
 
   prg.name = out_name + "_opt_d";
@@ -22569,12 +22619,19 @@ void cp32_static_dynamic_comparison() {
   merge_basic_block_ops(prg);
   normalize_bounds(prg);
   normalize_address_offsets(prg);
-
+ 
+  prg.pretty_print(a);
+  a << endl << " ## " << endl;
+ 
   auto fusion_groups = one_stage_per_group(prg);
   auto fresh_groups = insert_inter_group_buffers(fusion_groups, prg);
   unroll_mismatched_inner_loops(prg);
   merge_basic_block_ops(prg);
   infer_bounds_and_unroll(pick(prg.outs), {size, size}, throughput, prg);
+
+  prg.pretty_print(a);
+  a << endl << " ## " << endl;
+  a.close(); 
 
   assert(unoptimized_compiles(prg));
 
@@ -28628,25 +28685,25 @@ void gv_generation_pyramid() {
 }
 
 void dhuff_tests() {
-  test_sbl8_static_dynamic_comparison();
+ /* test_sbl8_static_dynamic_comparison();
   test_multi_kernel_pyramid_collapsing();
   test_multi_kernel_unsharp();
   test_multi_kernel_design();
   test_multi_kernel_gp();
-
+*/
   infer_bounds_tests();
-  test_app_to_prog_conversion();
+ /* test_app_to_prog_conversion();
   blurx_app_to_prog_test();
   updated_blur_static_dynamic_comparison();
-
+*/
   //gv_generation_pyramid();
 
-  test_chain_grouping();
+  //test_chain_grouping();
 
   //test_jacobi15_dynamic();
   //test_multi_kernel_llf();
 
-  test_multi_kernel_mismatched_loop_depths();
+ /* test_multi_kernel_mismatched_loop_depths();
   test_artificial_deadlock();
   upsample2d_test();
   up_stencil_down_test();
@@ -28660,7 +28717,7 @@ void dhuff_tests() {
   compute_unit_with_index_variables_test();
   downsample2d_test();
   gaussian_pyramid_test();
-
+*/
   return;
 
   heat_3d_test();
@@ -28728,6 +28785,10 @@ int main(int argc, char** argv) {
    if (cmd ==  "cgra-dillon-app-true"){
 	cgra_backend_dillon_app(true);
         return 0;
+   }
+   if(cmd == "cp_dynamic_test"){
+	cp32_static_dynamic_comparison();
+	return 0;
    }
    if (cmd ==  "cgra-dillon-app-false"){
 	cgra_backend_dillon_app(false);

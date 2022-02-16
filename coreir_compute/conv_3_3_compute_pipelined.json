@@ -1,0 +1,2777 @@
+{
+"namespaces":{
+  "global":{
+    "modules":{
+      "_U0_pt__U1":{
+        "type":["Record",[
+          ["in",["Array",16,"BitIn"]],
+          ["out",["Array",16,"Bit"]]
+        ]],
+        "connections":[
+          ["self.out","self.in"]
+        ]
+      },
+      "_U102_pt__U103":{
+        "type":["Record",[
+          ["in",["Array",16,"BitIn"]],
+          ["out",["Array",16,"Bit"]]
+        ]],
+        "connections":[
+          ["self.out","self.in"]
+        ]
+      },
+      "_U106_pt__U107":{
+        "type":["Record",[
+          ["in",["Array",16,"BitIn"]],
+          ["out",["Array",16,"Bit"]]
+        ]],
+        "connections":[
+          ["self.out","self.in"]
+        ]
+      },
+      "_U109_pt__U110":{
+        "type":["Record",[
+          ["in",["Array",16,"BitIn"]],
+          ["out",["Array",16,"Bit"]]
+        ]],
+        "connections":[
+          ["self.out","self.in"]
+        ]
+      },
+      "_U10_pt__U11":{
+        "type":["Record",[
+          ["in",["Array",16,"BitIn"]],
+          ["out",["Array",16,"Bit"]]
+        ]],
+        "connections":[
+          ["self.out","self.in"]
+        ]
+      },
+      "_U124_pt__U125":{
+        "type":["Record",[
+          ["in",["Array",16,"BitIn"]],
+          ["out",["Array",16,"Bit"]]
+        ]],
+        "connections":[
+          ["self.out","self.in"]
+        ]
+      },
+      "_U135_pt__U136":{
+        "type":["Record",[
+          ["in",["Array",16,"BitIn"]],
+          ["out",["Array",16,"Bit"]]
+        ]],
+        "connections":[
+          ["self.out","self.in"]
+        ]
+      },
+      "_U148_pt__U149":{
+        "type":["Record",[
+          ["in",["Array",16,"BitIn"]],
+          ["out",["Array",16,"Bit"]]
+        ]],
+        "connections":[
+          ["self.out","self.in"]
+        ]
+      },
+      "_U157_pt__U158":{
+        "type":["Record",[
+          ["in",["Array",16,"BitIn"]],
+          ["out",["Array",16,"Bit"]]
+        ]],
+        "connections":[
+          ["self.out","self.in"]
+        ]
+      },
+      "_U172_pt__U173":{
+        "type":["Record",[
+          ["in",["Array",16,"BitIn"]],
+          ["out",["Array",16,"Bit"]]
+        ]],
+        "connections":[
+          ["self.out","self.in"]
+        ]
+      },
+      "_U180_pt__U181":{
+        "type":["Record",[
+          ["in",["Array",16,"BitIn"]],
+          ["out",["Array",16,"Bit"]]
+        ]],
+        "connections":[
+          ["self.out","self.in"]
+        ]
+      },
+      "_U190_pt__U191":{
+        "type":["Record",[
+          ["in",["Array",16,"BitIn"]],
+          ["out",["Array",16,"Bit"]]
+        ]],
+        "connections":[
+          ["self.out","self.in"]
+        ]
+      },
+      "_U209_pt__U210":{
+        "type":["Record",[
+          ["in",["Array",16,"BitIn"]],
+          ["out",["Array",16,"Bit"]]
+        ]],
+        "connections":[
+          ["self.out","self.in"]
+        ]
+      },
+      "_U212_pt__U213":{
+        "type":["Record",[
+          ["in",["Array",16,"BitIn"]],
+          ["out",["Array",16,"Bit"]]
+        ]],
+        "connections":[
+          ["self.out","self.in"]
+        ]
+      },
+      "_U214_pt__U215":{
+        "type":["Record",[
+          ["in",["Array",16,"BitIn"]],
+          ["out",["Array",16,"Bit"]]
+        ]],
+        "connections":[
+          ["self.out","self.in"]
+        ]
+      },
+      "_U230_pt__U231":{
+        "type":["Record",[
+          ["in",["Array",16,"BitIn"]],
+          ["out",["Array",16,"Bit"]]
+        ]],
+        "connections":[
+          ["self.out","self.in"]
+        ]
+      },
+      "_U241_pt__U242":{
+        "type":["Record",[
+          ["in",["Array",16,"BitIn"]],
+          ["out",["Array",16,"Bit"]]
+        ]],
+        "connections":[
+          ["self.out","self.in"]
+        ]
+      },
+      "_U248_pt__U249":{
+        "type":["Record",[
+          ["in",["Array",16,"BitIn"]],
+          ["out",["Array",16,"Bit"]]
+        ]],
+        "connections":[
+          ["self.out","self.in"]
+        ]
+      },
+      "_U24_pt__U25":{
+        "type":["Record",[
+          ["in",["Array",16,"BitIn"]],
+          ["out",["Array",16,"Bit"]]
+        ]],
+        "connections":[
+          ["self.out","self.in"]
+        ]
+      },
+      "_U259_pt__U260":{
+        "type":["Record",[
+          ["in",["Array",16,"BitIn"]],
+          ["out",["Array",16,"Bit"]]
+        ]],
+        "connections":[
+          ["self.out","self.in"]
+        ]
+      },
+      "_U271_pt__U272":{
+        "type":["Record",[
+          ["in",["Array",16,"BitIn"]],
+          ["out",["Array",16,"Bit"]]
+        ]],
+        "connections":[
+          ["self.out","self.in"]
+        ]
+      },
+      "_U27_pt__U28":{
+        "type":["Record",[
+          ["in",["Array",16,"BitIn"]],
+          ["out",["Array",16,"Bit"]]
+        ]],
+        "connections":[
+          ["self.out","self.in"]
+        ]
+      },
+      "_U284_pt__U285":{
+        "type":["Record",[
+          ["in",["Array",16,"BitIn"]],
+          ["out",["Array",16,"Bit"]]
+        ]],
+        "connections":[
+          ["self.out","self.in"]
+        ]
+      },
+      "_U298_pt__U299":{
+        "type":["Record",[
+          ["in",["Array",16,"BitIn"]],
+          ["out",["Array",16,"Bit"]]
+        ]],
+        "connections":[
+          ["self.out","self.in"]
+        ]
+      },
+      "_U2_pt__U3":{
+        "type":["Record",[
+          ["in",["Array",16,"BitIn"]],
+          ["out",["Array",16,"Bit"]]
+        ]],
+        "connections":[
+          ["self.out","self.in"]
+        ]
+      },
+      "_U313_pt__U314":{
+        "type":["Record",[
+          ["in",["Array",16,"BitIn"]],
+          ["out",["Array",16,"Bit"]]
+        ]],
+        "connections":[
+          ["self.out","self.in"]
+        ]
+      },
+      "_U329_pt__U330":{
+        "type":["Record",[
+          ["in",["Array",16,"BitIn"]],
+          ["out",["Array",16,"Bit"]]
+        ]],
+        "connections":[
+          ["self.out","self.in"]
+        ]
+      },
+      "_U346_pt__U347":{
+        "type":["Record",[
+          ["in",["Array",16,"BitIn"]],
+          ["out",["Array",16,"Bit"]]
+        ]],
+        "connections":[
+          ["self.out","self.in"]
+        ]
+      },
+      "_U364_pt__U365":{
+        "type":["Record",[
+          ["in",["Array",16,"BitIn"]],
+          ["out",["Array",16,"Bit"]]
+        ]],
+        "connections":[
+          ["self.out","self.in"]
+        ]
+      },
+      "_U383_pt__U384":{
+        "type":["Record",[
+          ["in",["Array",16,"BitIn"]],
+          ["out",["Array",16,"Bit"]]
+        ]],
+        "connections":[
+          ["self.out","self.in"]
+        ]
+      },
+      "_U39_pt__U40":{
+        "type":["Record",[
+          ["in",["Array",16,"BitIn"]],
+          ["out",["Array",16,"Bit"]]
+        ]],
+        "connections":[
+          ["self.out","self.in"]
+        ]
+      },
+      "_U42_pt__U43":{
+        "type":["Record",[
+          ["in",["Array",16,"BitIn"]],
+          ["out",["Array",16,"Bit"]]
+        ]],
+        "connections":[
+          ["self.out","self.in"]
+        ]
+      },
+      "_U4_pt__U5":{
+        "type":["Record",[
+          ["in",["Array",16,"BitIn"]],
+          ["out",["Array",16,"Bit"]]
+        ]],
+        "connections":[
+          ["self.out","self.in"]
+        ]
+      },
+      "_U52_pt__U53":{
+        "type":["Record",[
+          ["in",["Array",16,"BitIn"]],
+          ["out",["Array",16,"Bit"]]
+        ]],
+        "connections":[
+          ["self.out","self.in"]
+        ]
+      },
+      "_U55_pt__U56":{
+        "type":["Record",[
+          ["in",["Array",16,"BitIn"]],
+          ["out",["Array",16,"Bit"]]
+        ]],
+        "connections":[
+          ["self.out","self.in"]
+        ]
+      },
+      "_U63_pt__U64":{
+        "type":["Record",[
+          ["in",["Array",16,"BitIn"]],
+          ["out",["Array",16,"Bit"]]
+        ]],
+        "connections":[
+          ["self.out","self.in"]
+        ]
+      },
+      "_U66_pt__U67":{
+        "type":["Record",[
+          ["in",["Array",16,"BitIn"]],
+          ["out",["Array",16,"Bit"]]
+        ]],
+        "connections":[
+          ["self.out","self.in"]
+        ]
+      },
+      "_U72_pt__U73":{
+        "type":["Record",[
+          ["in",["Array",16,"BitIn"]],
+          ["out",["Array",16,"Bit"]]
+        ]],
+        "connections":[
+          ["self.out","self.in"]
+        ]
+      },
+      "_U75_pt__U76":{
+        "type":["Record",[
+          ["in",["Array",16,"BitIn"]],
+          ["out",["Array",16,"Bit"]]
+        ]],
+        "connections":[
+          ["self.out","self.in"]
+        ]
+      },
+      "_U7_pt__U8":{
+        "type":["Record",[
+          ["in",["Array",16,"BitIn"]],
+          ["out",["Array",16,"Bit"]]
+        ]],
+        "connections":[
+          ["self.out","self.in"]
+        ]
+      },
+      "hcompute_conv_stencil":{
+        "type":["Record",[
+          ["out_conv_stencil",["Array",16,"Bit"]]
+        ]],
+        "instances":{
+          "const_p0__258":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0000"]}
+          }
+        },
+        "connections":[
+          ["self.out_conv_stencil","const_p0__258.out"]
+        ]
+      },
+      "hcompute_conv_stencil_1":{
+        "type":["Record",[
+          ["out_conv_stencil",["Array",16,"Bit"]],
+          ["in0_conv_stencil",["Array",1,["Array",16,"BitIn"]]],
+          ["in1_hw_input_global_wrapper_stencil",["Array",9,["Array",16,"BitIn"]]]
+        ]],
+        "instances":{
+          "add_288_312_313":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
+          },
+          "add_290_310_311":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
+          },
+          "add_292_309_310":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
+          },
+          "add_294_308_309":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
+          },
+          "add_296_307_308":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
+          },
+          "add_298_306_307":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
+          },
+          "add_300_305_306":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
+          },
+          "add_302_304_305":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
+          },
+          "add_conv_stencil_1_311_312":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
+          },
+          "const_p11__287":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h000b"]}
+          },
+          "const_p12__293":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h000c"]}
+          },
+          "const_p13__299":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h000d"]}
+          },
+          "const_p14__289":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h000e"]}
+          },
+          "const_p16__303":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0010"]}
+          },
+          "const_p17__291":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0011"]}
+          },
+          "const_p18__297":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0012"]}
+          },
+          "const_p19__301":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0013"]}
+          },
+          "const_p255__295":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0000"]}
+          },
+          "mul_hw_input_global_wrapper_stencil_1_287_288":{
+            "genref":"coreir.mul",
+            "genargs":{"width":["Int",16]}
+          },
+          "mul_hw_input_global_wrapper_stencil_2_289_290":{
+            "genref":"coreir.mul",
+            "genargs":{"width":["Int",16]}
+          },
+          "mul_hw_input_global_wrapper_stencil_3_291_292":{
+            "genref":"coreir.mul",
+            "genargs":{"width":["Int",16]}
+          },
+          "mul_hw_input_global_wrapper_stencil_4_293_294":{
+            "genref":"coreir.mul",
+            "genargs":{"width":["Int",16]}
+          },
+          "mul_hw_input_global_wrapper_stencil_5_295_296":{
+            "genref":"coreir.mul",
+            "genargs":{"width":["Int",16]}
+          },
+          "mul_hw_input_global_wrapper_stencil_6_297_298":{
+            "genref":"coreir.mul",
+            "genargs":{"width":["Int",16]}
+          },
+          "mul_hw_input_global_wrapper_stencil_7_299_300":{
+            "genref":"coreir.mul",
+            "genargs":{"width":["Int",16]}
+          },
+          "mul_hw_input_global_wrapper_stencil_8_301_302":{
+            "genref":"coreir.mul",
+            "genargs":{"width":["Int",16]}
+          },
+          "mul_hw_input_global_wrapper_stencil_9_303_304":{
+            "genref":"coreir.mul",
+            "genargs":{"width":["Int",16]}
+          }
+        },
+        "connections":[
+          ["mul_hw_input_global_wrapper_stencil_1_287_288.out","add_288_312_313.in0"],
+          ["add_conv_stencil_1_311_312.out","add_288_312_313.in1"],
+          ["self.out_conv_stencil","add_288_312_313.out"],
+          ["mul_hw_input_global_wrapper_stencil_2_289_290.out","add_290_310_311.in0"],
+          ["add_292_309_310.out","add_290_310_311.in1"],
+          ["add_conv_stencil_1_311_312.in1","add_290_310_311.out"],
+          ["mul_hw_input_global_wrapper_stencil_3_291_292.out","add_292_309_310.in0"],
+          ["add_294_308_309.out","add_292_309_310.in1"],
+          ["mul_hw_input_global_wrapper_stencil_4_293_294.out","add_294_308_309.in0"],
+          ["add_296_307_308.out","add_294_308_309.in1"],
+          ["mul_hw_input_global_wrapper_stencil_5_295_296.out","add_296_307_308.in0"],
+          ["add_298_306_307.out","add_296_307_308.in1"],
+          ["mul_hw_input_global_wrapper_stencil_6_297_298.out","add_298_306_307.in0"],
+          ["add_300_305_306.out","add_298_306_307.in1"],
+          ["mul_hw_input_global_wrapper_stencil_7_299_300.out","add_300_305_306.in0"],
+          ["add_302_304_305.out","add_300_305_306.in1"],
+          ["mul_hw_input_global_wrapper_stencil_8_301_302.out","add_302_304_305.in0"],
+          ["mul_hw_input_global_wrapper_stencil_9_303_304.out","add_302_304_305.in1"],
+          ["self.in0_conv_stencil.0","add_conv_stencil_1_311_312.in0"],
+          ["mul_hw_input_global_wrapper_stencil_1_287_288.in1","const_p11__287.out"],
+          ["mul_hw_input_global_wrapper_stencil_4_293_294.in1","const_p12__293.out"],
+          ["mul_hw_input_global_wrapper_stencil_7_299_300.in1","const_p13__299.out"],
+          ["mul_hw_input_global_wrapper_stencil_2_289_290.in1","const_p14__289.out"],
+          ["mul_hw_input_global_wrapper_stencil_9_303_304.in1","const_p16__303.out"],
+          ["mul_hw_input_global_wrapper_stencil_3_291_292.in1","const_p17__291.out"],
+          ["mul_hw_input_global_wrapper_stencil_6_297_298.in1","const_p18__297.out"],
+          ["mul_hw_input_global_wrapper_stencil_8_301_302.in1","const_p19__301.out"],
+          ["mul_hw_input_global_wrapper_stencil_5_295_296.in1","const_p255__295.out"],
+          ["self.in1_hw_input_global_wrapper_stencil.0","mul_hw_input_global_wrapper_stencil_1_287_288.in0"],
+          ["self.in1_hw_input_global_wrapper_stencil.1","mul_hw_input_global_wrapper_stencil_2_289_290.in0"],
+          ["self.in1_hw_input_global_wrapper_stencil.2","mul_hw_input_global_wrapper_stencil_3_291_292.in0"],
+          ["self.in1_hw_input_global_wrapper_stencil.3","mul_hw_input_global_wrapper_stencil_4_293_294.in0"],
+          ["self.in1_hw_input_global_wrapper_stencil.4","mul_hw_input_global_wrapper_stencil_5_295_296.in0"],
+          ["self.in1_hw_input_global_wrapper_stencil.5","mul_hw_input_global_wrapper_stencil_6_297_298.in0"],
+          ["self.in1_hw_input_global_wrapper_stencil.6","mul_hw_input_global_wrapper_stencil_7_299_300.in0"],
+          ["self.in1_hw_input_global_wrapper_stencil.7","mul_hw_input_global_wrapper_stencil_8_301_302.in0"],
+          ["self.in1_hw_input_global_wrapper_stencil.8","mul_hw_input_global_wrapper_stencil_9_303_304.in0"]
+        ]
+      },
+      "hcompute_conv_stencil_1_pipelined":{
+        "type":["Record",[
+          ["out_conv_stencil",["Array",16,"Bit"]],
+          ["in0_conv_stencil",["Array",1,["Array",16,"BitIn"]]],
+          ["in1_hw_input_global_wrapper_stencil",["Array",9,["Array",16,"BitIn"]]]
+        ]],
+        "instances":{
+          "_U10":{
+            "modref":"global._U10_pt__U11"
+          },
+          "_U100":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U101":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U102":{
+            "modref":"global._U102_pt__U103"
+          },
+          "_U104":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U105":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U106":{
+            "modref":"global._U106_pt__U107"
+          },
+          "_U108":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U109":{
+            "modref":"global._U109_pt__U110"
+          },
+          "_U111":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U112":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U113":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U114":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U115":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U116":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U117":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U118":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U119":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U12":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U120":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U121":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U122":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U123":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U124":{
+            "modref":"global._U124_pt__U125"
+          },
+          "_U126":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U127":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U128":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U129":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U13":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U130":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U131":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U132":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U133":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U134":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U135":{
+            "modref":"global._U135_pt__U136"
+          },
+          "_U137":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U138":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U139":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U14":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U140":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U141":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U142":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U143":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U144":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U145":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U146":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U147":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U148":{
+            "modref":"global._U148_pt__U149"
+          },
+          "_U15":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U150":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U151":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U152":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U153":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U154":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U155":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U156":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U157":{
+            "modref":"global._U157_pt__U158"
+          },
+          "_U159":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U16":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U160":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U161":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U162":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U163":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U164":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U165":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U166":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U167":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U168":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U169":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U17":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U170":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U171":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U172":{
+            "modref":"global._U172_pt__U173"
+          },
+          "_U174":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U175":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U176":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U177":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U178":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U179":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U18":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U180":{
+            "modref":"global._U180_pt__U181"
+          },
+          "_U182":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U183":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U184":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U185":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U186":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U187":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U188":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U189":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U19":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U190":{
+            "modref":"global._U190_pt__U191"
+          },
+          "_U192":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U193":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U194":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U195":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U196":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U197":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U198":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U199":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U20":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U200":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U201":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U202":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U203":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U204":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U205":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U206":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U207":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U208":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U209":{
+            "modref":"global._U209_pt__U210"
+          },
+          "_U21":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U211":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U212":{
+            "modref":"global._U212_pt__U213"
+          },
+          "_U214":{
+            "modref":"global._U214_pt__U215"
+          },
+          "_U216":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U217":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U218":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U219":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U22":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U220":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U221":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U222":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U223":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U224":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U225":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U226":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U227":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U228":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U229":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U23":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U230":{
+            "modref":"global._U230_pt__U231"
+          },
+          "_U232":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U233":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U234":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U235":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U236":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U237":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U238":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U239":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U24":{
+            "modref":"global._U24_pt__U25"
+          },
+          "_U240":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U241":{
+            "modref":"global._U241_pt__U242"
+          },
+          "_U243":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U244":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U245":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U246":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U247":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U248":{
+            "modref":"global._U248_pt__U249"
+          },
+          "_U250":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U251":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U252":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U253":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U254":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U255":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U256":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U257":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U258":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U259":{
+            "modref":"global._U259_pt__U260"
+          },
+          "_U26":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U261":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U262":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U263":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U264":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U265":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U266":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U267":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U268":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U269":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U27":{
+            "modref":"global._U27_pt__U28"
+          },
+          "_U270":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U271":{
+            "modref":"global._U271_pt__U272"
+          },
+          "_U273":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U274":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U275":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U276":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U277":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U278":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U279":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U280":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U281":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U282":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U283":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U284":{
+            "modref":"global._U284_pt__U285"
+          },
+          "_U286":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U287":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U288":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U289":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U29":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U290":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U291":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U292":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U293":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U294":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U295":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U296":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U297":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U298":{
+            "modref":"global._U298_pt__U299"
+          },
+          "_U30":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U300":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U301":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U302":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U303":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U304":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U305":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U306":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U307":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U308":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U309":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U31":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U310":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U311":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U312":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U313":{
+            "modref":"global._U313_pt__U314"
+          },
+          "_U315":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U316":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U317":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U318":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U319":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U32":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U320":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U321":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U322":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U323":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U324":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U325":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U326":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U327":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U328":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U329":{
+            "modref":"global._U329_pt__U330"
+          },
+          "_U33":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U331":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U332":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U333":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U334":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U335":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U336":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U337":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U338":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U339":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U34":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U340":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U341":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U342":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U343":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U344":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U345":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U346":{
+            "modref":"global._U346_pt__U347"
+          },
+          "_U348":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U349":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U35":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U350":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U351":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U352":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U353":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U354":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U355":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U356":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U357":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U358":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U359":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U36":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U360":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U361":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U362":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U363":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U364":{
+            "modref":"global._U364_pt__U365"
+          },
+          "_U366":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U367":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U368":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U369":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U37":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U370":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U371":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U372":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U373":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U374":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U375":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U376":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U377":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U378":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U379":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U38":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U380":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U381":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U382":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U39":{
+            "modref":"global._U39_pt__U40"
+          },
+          "_U4":{
+            "modref":"global._U4_pt__U5"
+          },
+          "_U41":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U42":{
+            "modref":"global._U42_pt__U43"
+          },
+          "_U44":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U45":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U46":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U47":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U48":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U49":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U50":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U51":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U52":{
+            "modref":"global._U52_pt__U53"
+          },
+          "_U54":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U55":{
+            "modref":"global._U55_pt__U56"
+          },
+          "_U57":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U58":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U59":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U6":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U60":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U61":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U62":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U63":{
+            "modref":"global._U63_pt__U64"
+          },
+          "_U65":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U66":{
+            "modref":"global._U66_pt__U67"
+          },
+          "_U68":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U69":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U7":{
+            "modref":"global._U7_pt__U8"
+          },
+          "_U70":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U71":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U72":{
+            "modref":"global._U72_pt__U73"
+          },
+          "_U74":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U75":{
+            "modref":"global._U75_pt__U76"
+          },
+          "_U77":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U78":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U79":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U80":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U81":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U82":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U83":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U84":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U85":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U86":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U87":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U88":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U89":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U9":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U90":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U91":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U92":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U93":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U94":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U95":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U96":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U97":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U98":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "_U99":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "add_288_312_313":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
+          },
+          "add_290_310_311":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
+          },
+          "add_292_309_310":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
+          },
+          "add_294_308_309":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
+          },
+          "add_296_307_308":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
+          },
+          "add_298_306_307":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
+          },
+          "add_300_305_306":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
+          },
+          "add_302_304_305":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
+          },
+          "add_conv_stencil_1_311_312":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
+          },
+          "const_p11__287":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h000b"]}
+          },
+          "const_p12__293":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h000c"]}
+          },
+          "const_p13__299":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h000d"]}
+          },
+          "const_p14__289":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h000e"]}
+          },
+          "const_p16__303":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0010"]}
+          },
+          "const_p17__291":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0011"]}
+          },
+          "const_p18__297":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0012"]}
+          },
+          "const_p19__301":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0013"]}
+          },
+          "const_p255__295":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0000"]}
+          },
+          "mul_hw_input_global_wrapper_stencil_1_287_288":{
+            "genref":"coreir.mul",
+            "genargs":{"width":["Int",16]}
+          },
+          "mul_hw_input_global_wrapper_stencil_2_289_290":{
+            "genref":"coreir.mul",
+            "genargs":{"width":["Int",16]}
+          },
+          "mul_hw_input_global_wrapper_stencil_3_291_292":{
+            "genref":"coreir.mul",
+            "genargs":{"width":["Int",16]}
+          },
+          "mul_hw_input_global_wrapper_stencil_4_293_294":{
+            "genref":"coreir.mul",
+            "genargs":{"width":["Int",16]}
+          },
+          "mul_hw_input_global_wrapper_stencil_5_295_296":{
+            "genref":"coreir.mul",
+            "genargs":{"width":["Int",16]}
+          },
+          "mul_hw_input_global_wrapper_stencil_6_297_298":{
+            "genref":"coreir.mul",
+            "genargs":{"width":["Int",16]}
+          },
+          "mul_hw_input_global_wrapper_stencil_7_299_300":{
+            "genref":"coreir.mul",
+            "genargs":{"width":["Int",16]}
+          },
+          "mul_hw_input_global_wrapper_stencil_8_301_302":{
+            "genref":"coreir.mul",
+            "genargs":{"width":["Int",16]}
+          },
+          "mul_hw_input_global_wrapper_stencil_9_303_304":{
+            "genref":"coreir.mul",
+            "genargs":{"width":["Int",16]}
+          }
+        },
+        "connections":[
+          ["_U23.out","_U10.in"],
+          ["add_292_309_310.in0","_U10.out"],
+          ["_U99.out","_U100.in"],
+          ["_U101.in","_U100.out"],
+          ["_U75.in","_U101.out"],
+          ["_U105.out","_U102.in"],
+          ["add_302_304_305.in0","_U102.out"],
+          ["mul_hw_input_global_wrapper_stencil_8_301_302.out","_U104.in"],
+          ["_U105.in","_U104.out"],
+          ["_U108.out","_U106.in"],
+          ["add_302_304_305.in1","_U106.out"],
+          ["mul_hw_input_global_wrapper_stencil_9_303_304.out","_U108.in"],
+          ["_U123.out","_U109.in"],
+          ["mul_hw_input_global_wrapper_stencil_7_299_300.in1","_U109.out"],
+          ["const_p13__299.out","_U111.in"],
+          ["_U112.in","_U111.out"],
+          ["_U113.in","_U112.out"],
+          ["_U114.in","_U113.out"],
+          ["_U115.in","_U114.out"],
+          ["_U116.in","_U115.out"],
+          ["_U117.in","_U116.out"],
+          ["_U118.in","_U117.out"],
+          ["_U119.in","_U118.out"],
+          ["_U120.in","_U119.out"],
+          ["mul_hw_input_global_wrapper_stencil_3_291_292.out","_U12.in"],
+          ["_U13.in","_U12.out"],
+          ["_U121.in","_U120.out"],
+          ["_U122.in","_U121.out"],
+          ["_U123.in","_U122.out"],
+          ["_U134.out","_U124.in"],
+          ["mul_hw_input_global_wrapper_stencil_1_287_288.in1","_U124.out"],
+          ["const_p11__287.out","_U126.in"],
+          ["_U127.in","_U126.out"],
+          ["_U128.in","_U127.out"],
+          ["_U129.in","_U128.out"],
+          ["_U130.in","_U129.out"],
+          ["_U14.in","_U13.out"],
+          ["_U131.in","_U130.out"],
+          ["_U132.in","_U131.out"],
+          ["_U133.in","_U132.out"],
+          ["_U134.in","_U133.out"],
+          ["_U147.out","_U135.in"],
+          ["mul_hw_input_global_wrapper_stencil_4_293_294.in1","_U135.out"],
+          ["const_p12__293.out","_U137.in"],
+          ["_U138.in","_U137.out"],
+          ["_U139.in","_U138.out"],
+          ["_U140.in","_U139.out"],
+          ["_U15.in","_U14.out"],
+          ["_U141.in","_U140.out"],
+          ["_U142.in","_U141.out"],
+          ["_U143.in","_U142.out"],
+          ["_U144.in","_U143.out"],
+          ["_U145.in","_U144.out"],
+          ["_U146.in","_U145.out"],
+          ["_U147.in","_U146.out"],
+          ["_U156.out","_U148.in"],
+          ["mul_hw_input_global_wrapper_stencil_2_289_290.in1","_U148.out"],
+          ["_U16.in","_U15.out"],
+          ["const_p14__289.out","_U150.in"],
+          ["_U151.in","_U150.out"],
+          ["_U152.in","_U151.out"],
+          ["_U153.in","_U152.out"],
+          ["_U154.in","_U153.out"],
+          ["_U155.in","_U154.out"],
+          ["_U156.in","_U155.out"],
+          ["_U171.out","_U157.in"],
+          ["mul_hw_input_global_wrapper_stencil_9_303_304.in1","_U157.out"],
+          ["const_p16__303.out","_U159.in"],
+          ["_U160.in","_U159.out"],
+          ["_U17.in","_U16.out"],
+          ["_U161.in","_U160.out"],
+          ["_U162.in","_U161.out"],
+          ["_U163.in","_U162.out"],
+          ["_U164.in","_U163.out"],
+          ["_U165.in","_U164.out"],
+          ["_U166.in","_U165.out"],
+          ["_U167.in","_U166.out"],
+          ["_U168.in","_U167.out"],
+          ["_U169.in","_U168.out"],
+          ["_U170.in","_U169.out"],
+          ["_U18.in","_U17.out"],
+          ["_U171.in","_U170.out"],
+          ["_U179.out","_U172.in"],
+          ["mul_hw_input_global_wrapper_stencil_3_291_292.in1","_U172.out"],
+          ["const_p17__291.out","_U174.in"],
+          ["_U175.in","_U174.out"],
+          ["_U176.in","_U175.out"],
+          ["_U177.in","_U176.out"],
+          ["_U178.in","_U177.out"],
+          ["_U179.in","_U178.out"],
+          ["_U19.in","_U18.out"],
+          ["_U189.out","_U180.in"],
+          ["mul_hw_input_global_wrapper_stencil_6_297_298.in1","_U180.out"],
+          ["const_p18__297.out","_U182.in"],
+          ["_U183.in","_U182.out"],
+          ["_U184.in","_U183.out"],
+          ["_U185.in","_U184.out"],
+          ["_U186.in","_U185.out"],
+          ["_U187.in","_U186.out"],
+          ["_U188.in","_U187.out"],
+          ["_U189.in","_U188.out"],
+          ["_U20.in","_U19.out"],
+          ["_U208.out","_U190.in"],
+          ["add_288_312_313.in0","_U190.out"],
+          ["mul_hw_input_global_wrapper_stencil_1_287_288.out","_U192.in"],
+          ["_U193.in","_U192.out"],
+          ["_U194.in","_U193.out"],
+          ["_U195.in","_U194.out"],
+          ["_U196.in","_U195.out"],
+          ["_U197.in","_U196.out"],
+          ["_U198.in","_U197.out"],
+          ["_U199.in","_U198.out"],
+          ["_U200.in","_U199.out"],
+          ["_U21.in","_U20.out"],
+          ["_U201.in","_U200.out"],
+          ["_U202.in","_U201.out"],
+          ["_U203.in","_U202.out"],
+          ["_U204.in","_U203.out"],
+          ["_U205.in","_U204.out"],
+          ["_U206.in","_U205.out"],
+          ["_U207.in","_U206.out"],
+          ["_U208.in","_U207.out"],
+          ["_U211.out","_U209.in"],
+          ["add_288_312_313.in1","_U209.out"],
+          ["_U22.in","_U21.out"],
+          ["add_conv_stencil_1_311_312.out","_U211.in"],
+          ["add_288_312_313.out","_U212.in"],
+          ["self.out_conv_stencil","_U212.out"],
+          ["_U229.out","_U214.in"],
+          ["add_290_310_311.in0","_U214.out"],
+          ["mul_hw_input_global_wrapper_stencil_2_289_290.out","_U216.in"],
+          ["_U217.in","_U216.out"],
+          ["_U218.in","_U217.out"],
+          ["_U219.in","_U218.out"],
+          ["_U220.in","_U219.out"],
+          ["_U23.in","_U22.out"],
+          ["_U221.in","_U220.out"],
+          ["_U222.in","_U221.out"],
+          ["_U223.in","_U222.out"],
+          ["_U224.in","_U223.out"],
+          ["_U225.in","_U224.out"],
+          ["_U226.in","_U225.out"],
+          ["_U227.in","_U226.out"],
+          ["_U228.in","_U227.out"],
+          ["_U229.in","_U228.out"],
+          ["_U240.out","_U230.in"],
+          ["mul_hw_input_global_wrapper_stencil_8_301_302.in1","_U230.out"],
+          ["const_p19__301.out","_U232.in"],
+          ["_U233.in","_U232.out"],
+          ["_U234.in","_U233.out"],
+          ["_U235.in","_U234.out"],
+          ["_U236.in","_U235.out"],
+          ["_U237.in","_U236.out"],
+          ["_U238.in","_U237.out"],
+          ["_U239.in","_U238.out"],
+          ["_U240.in","_U239.out"],
+          ["_U26.out","_U24.in"],
+          ["add_292_309_310.in1","_U24.out"],
+          ["_U247.out","_U241.in"],
+          ["mul_hw_input_global_wrapper_stencil_5_295_296.in1","_U241.out"],
+          ["const_p255__295.out","_U243.in"],
+          ["_U244.in","_U243.out"],
+          ["_U245.in","_U244.out"],
+          ["_U246.in","_U245.out"],
+          ["_U247.in","_U246.out"],
+          ["_U258.out","_U248.in"],
+          ["mul_hw_input_global_wrapper_stencil_1_287_288.in0","_U248.out"],
+          ["self.in1_hw_input_global_wrapper_stencil.0","_U250.in"],
+          ["_U251.in","_U250.out"],
+          ["_U252.in","_U251.out"],
+          ["_U253.in","_U252.out"],
+          ["_U254.in","_U253.out"],
+          ["_U255.in","_U254.out"],
+          ["_U256.in","_U255.out"],
+          ["_U257.in","_U256.out"],
+          ["_U258.in","_U257.out"],
+          ["_U270.out","_U259.in"],
+          ["mul_hw_input_global_wrapper_stencil_2_289_290.in0","_U259.out"],
+          ["add_294_308_309.out","_U26.in"],
+          ["self.in1_hw_input_global_wrapper_stencil.1","_U261.in"],
+          ["_U262.in","_U261.out"],
+          ["_U263.in","_U262.out"],
+          ["_U264.in","_U263.out"],
+          ["_U265.in","_U264.out"],
+          ["_U266.in","_U265.out"],
+          ["_U267.in","_U266.out"],
+          ["_U268.in","_U267.out"],
+          ["_U269.in","_U268.out"],
+          ["_U270.in","_U269.out"],
+          ["_U38.out","_U27.in"],
+          ["add_294_308_309.in0","_U27.out"],
+          ["_U283.out","_U271.in"],
+          ["mul_hw_input_global_wrapper_stencil_3_291_292.in0","_U271.out"],
+          ["self.in1_hw_input_global_wrapper_stencil.2","_U273.in"],
+          ["_U274.in","_U273.out"],
+          ["_U275.in","_U274.out"],
+          ["_U276.in","_U275.out"],
+          ["_U277.in","_U276.out"],
+          ["_U278.in","_U277.out"],
+          ["_U279.in","_U278.out"],
+          ["_U280.in","_U279.out"],
+          ["_U281.in","_U280.out"],
+          ["_U282.in","_U281.out"],
+          ["_U283.in","_U282.out"],
+          ["_U297.out","_U284.in"],
+          ["mul_hw_input_global_wrapper_stencil_4_293_294.in0","_U284.out"],
+          ["self.in1_hw_input_global_wrapper_stencil.3","_U286.in"],
+          ["_U287.in","_U286.out"],
+          ["_U288.in","_U287.out"],
+          ["_U289.in","_U288.out"],
+          ["_U290.in","_U289.out"],
+          ["mul_hw_input_global_wrapper_stencil_4_293_294.out","_U29.in"],
+          ["_U30.in","_U29.out"],
+          ["_U291.in","_U290.out"],
+          ["_U292.in","_U291.out"],
+          ["_U293.in","_U292.out"],
+          ["_U294.in","_U293.out"],
+          ["_U295.in","_U294.out"],
+          ["_U296.in","_U295.out"],
+          ["_U297.in","_U296.out"],
+          ["_U312.out","_U298.in"],
+          ["mul_hw_input_global_wrapper_stencil_5_295_296.in0","_U298.out"],
+          ["_U31.in","_U30.out"],
+          ["self.in1_hw_input_global_wrapper_stencil.4","_U300.in"],
+          ["_U301.in","_U300.out"],
+          ["_U302.in","_U301.out"],
+          ["_U303.in","_U302.out"],
+          ["_U304.in","_U303.out"],
+          ["_U305.in","_U304.out"],
+          ["_U306.in","_U305.out"],
+          ["_U307.in","_U306.out"],
+          ["_U308.in","_U307.out"],
+          ["_U309.in","_U308.out"],
+          ["_U310.in","_U309.out"],
+          ["_U32.in","_U31.out"],
+          ["_U311.in","_U310.out"],
+          ["_U312.in","_U311.out"],
+          ["_U328.out","_U313.in"],
+          ["mul_hw_input_global_wrapper_stencil_6_297_298.in0","_U313.out"],
+          ["self.in1_hw_input_global_wrapper_stencil.5","_U315.in"],
+          ["_U316.in","_U315.out"],
+          ["_U317.in","_U316.out"],
+          ["_U318.in","_U317.out"],
+          ["_U319.in","_U318.out"],
+          ["_U320.in","_U319.out"],
+          ["_U33.in","_U32.out"],
+          ["_U321.in","_U320.out"],
+          ["_U322.in","_U321.out"],
+          ["_U323.in","_U322.out"],
+          ["_U324.in","_U323.out"],
+          ["_U325.in","_U324.out"],
+          ["_U326.in","_U325.out"],
+          ["_U327.in","_U326.out"],
+          ["_U328.in","_U327.out"],
+          ["_U345.out","_U329.in"],
+          ["mul_hw_input_global_wrapper_stencil_7_299_300.in0","_U329.out"],
+          ["_U34.in","_U33.out"],
+          ["self.in1_hw_input_global_wrapper_stencil.6","_U331.in"],
+          ["_U332.in","_U331.out"],
+          ["_U333.in","_U332.out"],
+          ["_U334.in","_U333.out"],
+          ["_U335.in","_U334.out"],
+          ["_U336.in","_U335.out"],
+          ["_U337.in","_U336.out"],
+          ["_U338.in","_U337.out"],
+          ["_U339.in","_U338.out"],
+          ["_U340.in","_U339.out"],
+          ["_U35.in","_U34.out"],
+          ["_U341.in","_U340.out"],
+          ["_U342.in","_U341.out"],
+          ["_U343.in","_U342.out"],
+          ["_U344.in","_U343.out"],
+          ["_U345.in","_U344.out"],
+          ["_U363.out","_U346.in"],
+          ["mul_hw_input_global_wrapper_stencil_8_301_302.in0","_U346.out"],
+          ["self.in1_hw_input_global_wrapper_stencil.7","_U348.in"],
+          ["_U349.in","_U348.out"],
+          ["_U350.in","_U349.out"],
+          ["_U36.in","_U35.out"],
+          ["_U351.in","_U350.out"],
+          ["_U352.in","_U351.out"],
+          ["_U353.in","_U352.out"],
+          ["_U354.in","_U353.out"],
+          ["_U355.in","_U354.out"],
+          ["_U356.in","_U355.out"],
+          ["_U357.in","_U356.out"],
+          ["_U358.in","_U357.out"],
+          ["_U359.in","_U358.out"],
+          ["_U360.in","_U359.out"],
+          ["_U37.in","_U36.out"],
+          ["_U361.in","_U360.out"],
+          ["_U362.in","_U361.out"],
+          ["_U363.in","_U362.out"],
+          ["_U382.out","_U364.in"],
+          ["mul_hw_input_global_wrapper_stencil_9_303_304.in0","_U364.out"],
+          ["self.in1_hw_input_global_wrapper_stencil.8","_U366.in"],
+          ["_U367.in","_U366.out"],
+          ["_U368.in","_U367.out"],
+          ["_U369.in","_U368.out"],
+          ["_U370.in","_U369.out"],
+          ["_U38.in","_U37.out"],
+          ["_U371.in","_U370.out"],
+          ["_U372.in","_U371.out"],
+          ["_U373.in","_U372.out"],
+          ["_U374.in","_U373.out"],
+          ["_U375.in","_U374.out"],
+          ["_U376.in","_U375.out"],
+          ["_U377.in","_U376.out"],
+          ["_U378.in","_U377.out"],
+          ["_U379.in","_U378.out"],
+          ["_U380.in","_U379.out"],
+          ["_U381.in","_U380.out"],
+          ["_U382.in","_U381.out"],
+          ["_U41.out","_U39.in"],
+          ["add_294_308_309.in1","_U39.out"],
+          ["_U6.out","_U4.in"],
+          ["add_290_310_311.in1","_U4.out"],
+          ["add_296_307_308.out","_U41.in"],
+          ["_U51.out","_U42.in"],
+          ["add_296_307_308.in0","_U42.out"],
+          ["mul_hw_input_global_wrapper_stencil_5_295_296.out","_U44.in"],
+          ["_U45.in","_U44.out"],
+          ["_U46.in","_U45.out"],
+          ["_U47.in","_U46.out"],
+          ["_U48.in","_U47.out"],
+          ["_U49.in","_U48.out"],
+          ["_U50.in","_U49.out"],
+          ["_U51.in","_U50.out"],
+          ["_U54.out","_U52.in"],
+          ["add_296_307_308.in1","_U52.out"],
+          ["add_298_306_307.out","_U54.in"],
+          ["_U62.out","_U55.in"],
+          ["add_298_306_307.in0","_U55.out"],
+          ["mul_hw_input_global_wrapper_stencil_6_297_298.out","_U57.in"],
+          ["_U58.in","_U57.out"],
+          ["_U59.in","_U58.out"],
+          ["_U60.in","_U59.out"],
+          ["add_292_309_310.out","_U6.in"],
+          ["_U61.in","_U60.out"],
+          ["_U62.in","_U61.out"],
+          ["_U65.out","_U63.in"],
+          ["add_298_306_307.in1","_U63.out"],
+          ["add_300_305_306.out","_U65.in"],
+          ["_U71.out","_U66.in"],
+          ["add_300_305_306.in0","_U66.out"],
+          ["mul_hw_input_global_wrapper_stencil_7_299_300.out","_U68.in"],
+          ["_U69.in","_U68.out"],
+          ["_U70.in","_U69.out"],
+          ["_U9.out","_U7.in"],
+          ["add_conv_stencil_1_311_312.in1","_U7.out"],
+          ["_U71.in","_U70.out"],
+          ["_U74.out","_U72.in"],
+          ["add_300_305_306.in1","_U72.out"],
+          ["add_302_304_305.out","_U74.in"],
+          ["add_conv_stencil_1_311_312.in0","_U75.out"],
+          ["self.in0_conv_stencil.0","_U77.in"],
+          ["_U78.in","_U77.out"],
+          ["_U79.in","_U78.out"],
+          ["_U80.in","_U79.out"],
+          ["_U81.in","_U80.out"],
+          ["_U82.in","_U81.out"],
+          ["_U83.in","_U82.out"],
+          ["_U84.in","_U83.out"],
+          ["_U85.in","_U84.out"],
+          ["_U86.in","_U85.out"],
+          ["_U87.in","_U86.out"],
+          ["_U88.in","_U87.out"],
+          ["_U89.in","_U88.out"],
+          ["_U90.in","_U89.out"],
+          ["add_290_310_311.out","_U9.in"],
+          ["_U91.in","_U90.out"],
+          ["_U92.in","_U91.out"],
+          ["_U93.in","_U92.out"],
+          ["_U94.in","_U93.out"],
+          ["_U95.in","_U94.out"],
+          ["_U96.in","_U95.out"],
+          ["_U97.in","_U96.out"],
+          ["_U98.in","_U97.out"],
+          ["_U99.in","_U98.out"]
+        ]
+      },
+      "hcompute_conv_stencil_pipelined":{
+        "type":["Record",[
+          ["out_conv_stencil",["Array",16,"Bit"]]
+        ]],
+        "instances":{
+          "_U383":{
+            "modref":"global._U383_pt__U384"
+          },
+          "const_p0__258":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0000"]}
+          }
+        },
+        "connections":[
+          ["const_p0__258.out","_U383.in"],
+          ["self.out_conv_stencil","_U383.out"]
+        ]
+      },
+      "hcompute_hw_input_global_wrapper_stencil":{
+        "type":["Record",[
+          ["out_hw_input_global_wrapper_stencil",["Array",16,"Bit"]],
+          ["in0_hw_input_stencil",["Array",1,["Array",16,"BitIn"]]]
+        ]],
+        "connections":[
+          ["self.out_hw_input_global_wrapper_stencil","self.in0_hw_input_stencil.0"]
+        ]
+      },
+      "hcompute_hw_input_global_wrapper_stencil_pipelined":{
+        "type":["Record",[
+          ["out_hw_input_global_wrapper_stencil",["Array",16,"Bit"]],
+          ["in0_hw_input_stencil",["Array",1,["Array",16,"BitIn"]]]
+        ]],
+        "instances":{
+          "_U0":{
+            "modref":"global._U0_pt__U1"
+          }
+        },
+        "connections":[
+          ["self.in0_hw_input_stencil.0","_U0.in"],
+          ["self.out_hw_input_global_wrapper_stencil","_U0.out"]
+        ]
+      },
+      "hcompute_hw_output_stencil":{
+        "type":["Record",[
+          ["out_hw_output_stencil",["Array",16,"Bit"]],
+          ["in0_conv_stencil",["Array",1,["Array",16,"BitIn"]]]
+        ]],
+        "connections":[
+          ["self.out_hw_output_stencil","self.in0_conv_stencil.0"]
+        ]
+      },
+      "hcompute_hw_output_stencil_pipelined":{
+        "type":["Record",[
+          ["out_hw_output_stencil",["Array",16,"Bit"]],
+          ["in0_conv_stencil",["Array",1,["Array",16,"BitIn"]]]
+        ]],
+        "instances":{
+          "_U2":{
+            "modref":"global._U2_pt__U3"
+          }
+        },
+        "connections":[
+          ["self.in0_conv_stencil.0","_U2.in"],
+          ["self.out_hw_output_stencil","_U2.out"]
+        ]
+      }
+    },
+    "generators":{
+      "delay_tile":{
+        "typegen":"global.delay_tile_TG",
+        "genparams":{"delay":"Int"}
+      },
+      "raw_quad_port_memtile":{
+        "typegen":"global.raw_quad_port_memtile_TG",
+        "genparams":{"depth":"Int"}
+      },
+      "tahoe":{
+        "typegen":"global.tahoe_TG",
+        "genparams":{"depth":"Int"}
+      }
+    },
+    "typegens":{
+      "delay_tile_TG":[{"delay":"Int"},"implicit"],
+      "raw_quad_port_memtile_TG":[{"depth":"Int"},"implicit"],
+      "tahoe_TG":[{"depth":"Int"},"implicit"]
+    }
+  }
+}
+}

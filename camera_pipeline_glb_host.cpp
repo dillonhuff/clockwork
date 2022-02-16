@@ -27,11 +27,6 @@ int main(int argc, char **argv) {
   size_t op_hcompute_hw_input_global_wrapper_glb_stencil_read_pipe0_size_bytes = op_hcompute_hw_input_global_wrapper_glb_stencil_read_pipe0_BYTES_PER_PIXEL * op_hcompute_hw_input_global_wrapper_glb_stencil_read_pipe0_DATA_SIZE;
 
   total_size_bytes += op_hcompute_hw_input_global_wrapper_glb_stencil_read_pipe0_size_bytes;
-  const int op_hcompute_hw_output_global_wrapper_stencil_write_pipe0_DATA_SIZE = num_epochs*35712;
-  const int op_hcompute_hw_output_global_wrapper_stencil_write_pipe0_BYTES_PER_PIXEL = 16 / 8;
-  size_t op_hcompute_hw_output_global_wrapper_stencil_write_pipe0_size_bytes = op_hcompute_hw_output_global_wrapper_stencil_write_pipe0_BYTES_PER_PIXEL * op_hcompute_hw_output_global_wrapper_stencil_write_pipe0_DATA_SIZE;
-
-  total_size_bytes += op_hcompute_hw_output_global_wrapper_stencil_write_pipe0_size_bytes;
   const int op_hcompute_hw_output_global_wrapper_stencil_1_write_pipe0_DATA_SIZE = num_epochs*35712;
   const int op_hcompute_hw_output_global_wrapper_stencil_1_write_pipe0_BYTES_PER_PIXEL = 16 / 8;
   size_t op_hcompute_hw_output_global_wrapper_stencil_1_write_pipe0_size_bytes = op_hcompute_hw_output_global_wrapper_stencil_1_write_pipe0_BYTES_PER_PIXEL * op_hcompute_hw_output_global_wrapper_stencil_1_write_pipe0_DATA_SIZE;
@@ -42,6 +37,11 @@ int main(int argc, char **argv) {
   size_t op_hcompute_hw_output_global_wrapper_stencil_2_write_pipe0_size_bytes = op_hcompute_hw_output_global_wrapper_stencil_2_write_pipe0_BYTES_PER_PIXEL * op_hcompute_hw_output_global_wrapper_stencil_2_write_pipe0_DATA_SIZE;
 
   total_size_bytes += op_hcompute_hw_output_global_wrapper_stencil_2_write_pipe0_size_bytes;
+  const int op_hcompute_hw_output_global_wrapper_stencil_write_pipe0_DATA_SIZE = num_epochs*35712;
+  const int op_hcompute_hw_output_global_wrapper_stencil_write_pipe0_BYTES_PER_PIXEL = 16 / 8;
+  size_t op_hcompute_hw_output_global_wrapper_stencil_write_pipe0_size_bytes = op_hcompute_hw_output_global_wrapper_stencil_write_pipe0_BYTES_PER_PIXEL * op_hcompute_hw_output_global_wrapper_stencil_write_pipe0_DATA_SIZE;
+
+  total_size_bytes += op_hcompute_hw_output_global_wrapper_stencil_write_pipe0_size_bytes;
 
   cl_int err;
   cl::Context context;
@@ -77,16 +77,16 @@ int main(int argc, char **argv) {
   }
 
   input_op_hcompute_hw_input_global_wrapper_glb_stencil_read.close();
-  for (int i = 0; i < op_hcompute_hw_output_global_wrapper_stencil_write_pipe0_DATA_SIZE; i++) {
-    ((uint16_t*) (op_hcompute_hw_output_global_wrapper_stencil_write_pipe0.data()))[i] = 0;
-  }
-
   for (int i = 0; i < op_hcompute_hw_output_global_wrapper_stencil_1_write_pipe0_DATA_SIZE; i++) {
     ((uint16_t*) (op_hcompute_hw_output_global_wrapper_stencil_1_write_pipe0.data()))[i] = 0;
   }
 
   for (int i = 0; i < op_hcompute_hw_output_global_wrapper_stencil_2_write_pipe0_DATA_SIZE; i++) {
     ((uint16_t*) (op_hcompute_hw_output_global_wrapper_stencil_2_write_pipe0.data()))[i] = 0;
+  }
+
+  for (int i = 0; i < op_hcompute_hw_output_global_wrapper_stencil_write_pipe0_DATA_SIZE; i++) {
+    ((uint16_t*) (op_hcompute_hw_output_global_wrapper_stencil_write_pipe0.data()))[i] = 0;
   }
 
 #endif // __POPULATE_HOST_INPUTS__
@@ -164,12 +164,6 @@ int main(int argc, char **argv) {
   std::cout << "GB / sec    = " << gbpersec << std::endl;
   printf("Execution time = %f (sec) \n", dsduration);
 {
-    std::ofstream regression_result("op_hcompute_hw_output_global_wrapper_stencil_write_pipe0_accel_result.csv");
-    for (int i = 0; i < op_hcompute_hw_output_global_wrapper_stencil_write_pipe0_DATA_SIZE; i++) {
-      regression_result << ((uint16_t*) (op_hcompute_hw_output_global_wrapper_stencil_write_pipe0.data()))[i] << std::endl;
-    }
-}
-{
     std::ofstream regression_result("op_hcompute_hw_output_global_wrapper_stencil_1_write_pipe0_accel_result.csv");
     for (int i = 0; i < op_hcompute_hw_output_global_wrapper_stencil_1_write_pipe0_DATA_SIZE; i++) {
       regression_result << ((uint16_t*) (op_hcompute_hw_output_global_wrapper_stencil_1_write_pipe0.data()))[i] << std::endl;
@@ -179,6 +173,12 @@ int main(int argc, char **argv) {
     std::ofstream regression_result("op_hcompute_hw_output_global_wrapper_stencil_2_write_pipe0_accel_result.csv");
     for (int i = 0; i < op_hcompute_hw_output_global_wrapper_stencil_2_write_pipe0_DATA_SIZE; i++) {
       regression_result << ((uint16_t*) (op_hcompute_hw_output_global_wrapper_stencil_2_write_pipe0.data()))[i] << std::endl;
+    }
+}
+{
+    std::ofstream regression_result("op_hcompute_hw_output_global_wrapper_stencil_write_pipe0_accel_result.csv");
+    for (int i = 0; i < op_hcompute_hw_output_global_wrapper_stencil_write_pipe0_DATA_SIZE; i++) {
+      regression_result << ((uint16_t*) (op_hcompute_hw_output_global_wrapper_stencil_write_pipe0.data()))[i] << std::endl;
     }
 }
 

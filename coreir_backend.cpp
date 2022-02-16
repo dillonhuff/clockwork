@@ -1391,7 +1391,7 @@ CoreIR::Wireable* orVals(CoreIR::ModuleDef* def, CoreIR::Wireable* a, CoreIR::Wi
 
 CoreIR::Wireable* addVals(CoreIR::ModuleDef* def, CoreIR::Wireable* a, CoreIR::Wireable* b) {
   auto context = def->getContext();
-  auto ad = def->addInstance("add_all_" + def->getContext()->getUnique(), "coreir.add", {{"width", COREMK(context, 16)}});
+  auto ad = def->addInstance("add_all_" + def->getContext()->getUnique(), "coreir.ad", {{"width", COREMK(context, 16)}});
   def->connect(ad->sel("in0"), a);
   def->connect(ad->sel("in1"), b);
 
@@ -1400,7 +1400,7 @@ CoreIR::Wireable* addVals(CoreIR::ModuleDef* def, CoreIR::Wireable* a, CoreIR::W
 
 CoreIR::Wireable* addVals(CoreIR::ModuleDef* def, CoreIR::Wireable* a, CoreIR::Wireable* b, int width) {
   auto context = def->getContext();
-  auto ad = def->addInstance("add_all_" + def->getContext()->getUnique(), "coreir.add", {{"width", COREMK(context, width)}});
+  auto ad = def->addInstance("add_all_" + def->getContext()->getUnique(), "coreir.mul", {{"width", COREMK(context, width)}});
   def->connect(ad->sel("in0"), a);
   def->connect(ad->sel("in1"), b);
 
@@ -1490,7 +1490,11 @@ void generate_coreir_compute_unit(CodegenOptions& options, bool found_compute,
         CoreIR::ModuleDef* def, op* op, prog& prg, map<string, UBuffer>& buffers, schedule_info& hwinfo) {
   auto context = def->getContext();
   auto ns = context->getNamespace("global");
-
+    ofstream ojson("json_file_maker_1.txt");
+    ojson << "#################################################### " << endl;
+    ojson << found_compute << endl;
+    ojson.close();
+     
   cout << "Generating compute unit for " << op->name << endl;
 
   vector<pair<string, CoreIR::Type*> >
@@ -1538,6 +1542,11 @@ void generate_coreir_compute_unit(CodegenOptions& options, bool found_compute,
       //TODO: check the computation kernel delay
       def->connect(def->sel("self.valid_pass_in"), def->sel("self.valid_pass_out"));
     }
+    //ofstream ojson("json_file_maker_1.txt");
+    //ojson << "#################################################### " << endl;
+    //ojson << found_compute << endl;
+    //ojson.close();
+      
     if (found_compute) {
       cout << "Found compute file for " << prg.name << endl;
       Instance* halide_cu = nullptr;
@@ -1615,13 +1624,17 @@ void generate_coreir_compute_unit(CodegenOptions& options, bool found_compute,
 
     } else {
       // Generate dummy compute logic
-      cout << "generating dummy compute" << endl;
+      ofstream ojson("json_file_maker_"  + prg.name +".txt");
+      ojson << "#################################################### " << endl;
+      ojson << endl;
+      ojson << "#################################################### " << endl;
+      ojson << "generating dummy compute" << endl;
       vector<CoreIR::Wireable*> inputs;
       for (pair<string, string> bundle : incoming_bundles(op, buffers, prg)) {
         string buf_name = bundle.first;
         string bundle_name = bundle.second;
 
-        cout << tab(1) << "buf = " << buf_name << ", bundle = " << bundle_name << endl;
+        ojson << tab(1) << "buf = " << buf_name << ", bundle = " << bundle_name << endl;
 
         auto buf = dbhc::map_find(buf_name, buffers);
         int pix_width = buf.port_widths;
@@ -1640,7 +1653,8 @@ void generate_coreir_compute_unit(CodegenOptions& options, bool found_compute,
         def->connect(result, def->sel("self")->sel(pg(bundle))->sel(0));
       }
 
-      cout << "done with dummy compute" << endl;
+      ojson << "done with dummy compute" << endl;
+      ojson.close();
     }
 
     compute_unit->setDef(def);
@@ -2294,7 +2308,7 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
   ifstream cfile(compute_file);
   if (!cfile.good()) {
     cout << "No compute unit file: " << compute_file << endl;
-    assert(false);
+    //assert(false);
   }
   if (!loadFromFile(context, compute_file)) {
     found_compute = false;
@@ -2549,7 +2563,11 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
     umap* schedmap,
     CoreIR::Context* context,
     schedule_info& hwinfo) {
-
+  ofstream ojson("json_file_maker_tenp.txt");
+    ojson << "#################################################### " << endl;
+    ojson << "true" << endl;
+    ojson.close();
+     
   ofstream verilog_collateral(prg.name + "_verilog_collateral.sv");
   verilog_collateral_file = &verilog_collateral;
   vector<isl_set*> ss;
@@ -4033,7 +4051,7 @@ CoreIR::Wireable* sum_term_numerators(ModuleDef* def, isl_aff* aff, int width) {
       {{"width", CoreIR::Const::make(c, width)}},
       {{"value", CoreIR::Const::make(c, BitVector(width, v))}});
     auto m = def->addInstance(
-        "mul_d" + str(d) + "_" + context->getUnique(),
+        "mul_dddd" + str(d) + "_" + context->getUnique(),
         "coreir.mul",
         {{"width", CoreIR::Const::make(c, width)}});
     def->connect(m->sel("in0"), constant->sel("out"));

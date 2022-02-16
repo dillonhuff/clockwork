@@ -5142,11 +5142,17 @@ void ir_node::replace_variable(const std::string& var, const int val) {
 }
 
 void unroll_reduce_loops(prog& prg) {
+  
+  //ofstream url("unroll_reduce_loops.txt");
   auto rvars = reduce_vars(prg);
   cout << "Reduce vars..." << endl;
   for (auto v : rvars) {
     auto lp = prg.find_loop(v);
+     
     cout << tab(1) << v << " [" << lp->start << ", " << lp->end_exclusive << "]" << endl;
+  
+  //  url << tab(1) << v << " [" << lp->start << ", " << lp->end_exclusive << "]" << endl;
+
   }
 
   auto levels = get_variable_levels(prg);
@@ -5154,7 +5160,10 @@ void unroll_reduce_loops(prog& prg) {
       return map_find(v, levels);
       });
 
+ 
   cout << "Starting to unroll..." << endl;
+   
+ /// url << "Starting to unroll..." << endl;
   for (auto v : rvars) {
     unroll(prg, v);
     cout << "Unrolled: " << tab(1) << v << endl;
@@ -5258,7 +5267,6 @@ int nearest_larger_multiple_of(const int factor, const int val) {
 }
 vector<int> extend_bounds_to_multiple(const int factor, const std::string& buf, prog& prg) {
   assert(contains_key(buf, prg.buffer_bounds));
-
   vector<int> bounds = map_find(buf, prg.buffer_bounds);
   vector<int> new_bounds = bounds;
   new_bounds[0] = nearest_larger_multiple_of(factor, bounds[0]);
@@ -5279,6 +5287,25 @@ bool all_inputs(std::set<isl_set*>& bounds, prog& prg) {
 
 void extend_bounds_to_multiple_of(const int factor, const std::string& buf, prog& prg) {
   vector<int> int_bounds = extend_bounds_to_multiple(factor, buf, prg);
+  
+  ofstream a(prg.name+ "_bounds_check.txt"); 
+  a << factor << " ";
+  for(int i =0; i< int_bounds.size(); i++)
+  {
+	a << int_bounds[i] << " "; 
+  }
+  a << endl;
+  
+  vector<int> bounds_ = map_find(buf, prg.buffer_bounds);
+  for(int i =0; i< bounds_.size(); i++)
+  {
+	a << bounds_[i] << " "; 
+  }
+  a << endl;
+ 
+
+  a.close();
+  
   prg.buffer_bounds[buf] = int_bounds;
 
   std::vector<string> kernels = get_kernels_in_order(prg);
@@ -5470,6 +5497,8 @@ void infer_bounds(const std::string& buf, const std::vector<int>& int_bounds, pr
     for (auto k : kernels) {
       for (auto prod : get_produced_buffers(k, prg)) {
         for (auto s : bounds) {
+          	
+         cout << k << " " << prod  << " " << name(s) <<  endl;
           if (name(s) == prod) {
             next_kernel = k;
             bound_set = s;
@@ -5485,8 +5514,9 @@ void infer_bounds(const std::string& buf, const std::vector<int>& int_bounds, pr
         break;
       }
     }
+    cout << found << endl;
     assert(bound_set != nullptr);
-
+    //assert(false);
     cout << "==== Inferring bounds for buffer: " << name(bound_set) << ", produced by: " << next_kernel << endl;
 
     bounds.erase(bound_set);
@@ -5836,22 +5866,152 @@ void infer_bounds_and_unroll(const std::string& out, const std::vector<int>& bou
 
   infer_bounds(out, bounds, prg);
   prg.reset_context();
+  
+//  a << "Prog 1 " << endl; 
+//  prg.pretty_print(a);
+  
+  cout << "Ritvik_extended_bounds : " << endl << endl << endl;
 
   extend_bounds_to_multiple_of(unroll_factor, out, prg);
+
+  cout << endl << endl;
+  prg.pretty_print(); 
+  cout << endl;
   //assert(inner_loops_unrollable(out, unroll_factor, prg));
 
+ 
+//  a << "Prog 2 " << endl; 
+//  prg.pretty_print(a);
+
+
+  cout << "Ritvik_reduce_loop_unroll : " << endl << endl << endl;
   unroll_reduce_loops(prg);
+  cout << endl << endl;
+  prg.pretty_print(); 
+ cout << endl;
   //assert(inner_loops_unrollable(out, unroll_factor, prg));
 
+
+//  a << "Prog 3 " << endl; 
+//  prg.pretty_print(a);
+
+  cout << "Ritvik_ormalize_bounds : " << endl << endl << endl;
   normalize_bounds(prg);
+  cout << endl << endl;
+  prg.pretty_print(); 
+ cout << endl;
   //assert(inner_loops_unrollable(out, unroll_factor, prg));
 
+//  a << "Prog 4 " << endl; 
+//  prg.pretty_print(a);
+
+  cout << "Ritvik_merge_basic_block : " << endl << endl << endl;
   merge_basic_block_ops(prg);
+  cout << endl << endl;
+  prg.pretty_print(); 
+ cout << endl;
   //assert(inner_loops_unrollable(out, unroll_factor, prg));
 
+
+//  a << "Prog 5 " << endl; 
+//  prg.pretty_print(a);
+
+  cout << "Ritvik_Unroll_producer_matching : " << endl << endl;
   unroll_producer_matching(out, unroll_factor, prg);
+  cout << endl << endl;
+  prg.pretty_print(); 
+  cout << endl; 
+ // a << "Prog 6 " << endl; 
+ // prg.pretty_print(a);
+
+
+  cout << "Ritvik_Merge_basic_reduce_loop_unroll2 : " << endl<< endl;
   merge_basic_block_ops(prg);
+  cout << endl << endl;
+  prg.pretty_print(); 
+  cout << endl; 
+
+ // a << "Prog 7 " << endl; 
+ // prg.pretty_print(a);
+
 }
+// Under Construction
+void halide_check_rate_mismatch(const std::string& out, const std::vector<int>& bounds, const int unroll_factor, prog& prg) {
+
+  //infer_bounds(out, bounds, prg);
+  prg.reset_context();
+  
+//  a << "Prog 1 " << endl; 
+//  prg.pretty_print(a);
+  
+//  cout << "Ritvik_extended_bounds : " << endl << endl << endl;
+
+  //extend_bounds_to_multiple_of(unroll_factor, out, prg);
+
+  cout << endl << endl;
+  prg.pretty_print(); 
+  cout << endl;
+  //assert(inner_loops_unrollable(out, unroll_factor, prg));
+
+ 
+//  a << "Prog 2 " << endl; 
+//  prg.pretty_print(a);
+
+
+  cout << "Ritvik_reduce_loop_unroll : " << endl << endl << endl;
+  unroll_reduce_loops(prg);
+  cout << endl << endl;
+  prg.pretty_print(); 
+ cout << endl;
+  //assert(inner_loops_unrollable(out, unroll_factor, prg));
+
+
+//  a << "Prog 3 " << endl; 
+//  prg.pretty_print(a);
+
+  cout << "Ritvik_ormalize_bounds : " << endl << endl << endl;
+  normalize_bounds(prg);
+  cout << endl << endl;
+  prg.pretty_print(); 
+ cout << endl;
+  //assert(inner_loops_unrollable(out, unroll_factor, prg));
+
+//  a << "Prog 4 " << endl; 
+//  prg.pretty_print(a);
+
+  cout << "Ritvik_merge_basic_block : " << endl << endl << endl;
+  //merge_basic_block_ops(prg);
+  //cout << endl << endl;
+  prg.pretty_print(); 
+ cout << endl;
+  //assert(inner_loops_unrollable(out, unroll_factor, prg));
+
+
+//  a << "Prog 5 " << endl; 
+//  prg.pretty_print(a);
+
+  cout << "Ritvik_Unroll_producer_matching : " << endl << endl;
+  unroll_producer_matching(out, unroll_factor, prg);
+  cout << endl << endl;
+  prg.pretty_print(); 
+  cout << endl; 
+ // a << "Prog 6 " << endl; 
+ // prg.pretty_print(a);
+
+
+ // cout << "Ritvik_Merge_basic_reduce_loop_unroll2 : " << endl<< endl;
+ // merge_basic_block_ops(prg);
+ //cout << endl << endl;
+ // prg.pretty_print(); 
+ // cout << endl; 
+
+ // a << "Prog 7 " << endl; 
+ // prg.pretty_print(a);
+
+}
+
+
+
 
 void normalize_bounds(prog& prg) {
   auto loops = prg.all_loops();
@@ -5860,12 +6020,14 @@ void normalize_bounds(prog& prg) {
       int old_tc = l->trip_count();
       int old_start = l->start;
       int old_end = l->end_exclusive;
-
+      
       l->start = 0;
       l->end_exclusive = old_tc;
-
+      
       string replacement =
         parens(l->name + " + " + str(old_start));
+      cout << "Old " << endl << l->name << endl;
+      cout << "New " << endl << replacement << endl;
       for (auto c : l->descendant_ops()) {
         c->replace_variable(l->name, replacement);
       }
@@ -5880,12 +6042,12 @@ op* strip_mine(const int factor, const std::string& loop, prog& prg) {
 
 op* strip_mine(const int factor, op* loop, prog& prg) {
   assert(loop->is_loop());
-  assert(loop->trip_count() % factor == 0);
+  //assert(loop->trip_count() % factor == 0);
 
   cout << "strip mining loop: " << loop->name << ", start: " << loop->start << ", end exclusive: " << loop->end_exclusive << endl;
   cout << tab(1) << "trip count: " << loop->trip_count() << endl;
 
-  int original_trip_count = loop->trip_count();
+  int original_trip_count = ((int) loop->trip_count() / factor)*factor;
   int new_tc = loop->trip_count() / factor;
   cout << tab(1) << "new tc = " << new_tc << endl;
   int new_start = loop->start;
@@ -5919,16 +6081,19 @@ map<string, int> compute_unroll_factors(const std::string& buf, const int unroll
 
   prg.pretty_print();
 
-  umap* deps = pad_map(prg.validity_deps());
+  umap* deps = pad_map(prg.validity_deps()); //Padd with dimension?
   cout << "Done padding validity deps" << endl;
-  auto umaps = get_maps(deps);
+  auto umaps = get_maps(deps); // Get all maps
   vector<isl_map*> projected_deps;
   for (auto m : umaps) {
-    isl_map* projected = project_all_but(m, num_in_dims(m) - 1);
+    cout << "Projection: Domain & range = {" << domain_name(m) << " " << range_name(m)  << "} " << num_in_dims(m) << " " << num_out_dims(m) << endl;
+    isl_map* projected = project_all_but(m, num_in_dims(m) - 1); // Donno what
     projected_deps.push_back(projected);
+     cout << "Projection: Domain & range = {" << domain_name(projected) << " " << range_name(projected)  << "} " << num_in_dims(m) << " " << num_out_dims(m) << endl;
+    
   }
-  cout << "Computing qfactors..." << endl;
-  map<string, isl_val*> qfs = compute_qfactors(projected_deps);
+  cout << "Computing qfactors...  " << projected_deps.size()  <<  "   " << endl;
+  map<string, isl_val*> qfs = compute_qfactors(projected_deps);//Main step
   cout << "Got qfactors..." << endl;
   for (auto q : qfs) {
     cout << tab(1) << q.first << " -> " << str(q.second) << endl;
@@ -5957,6 +6122,7 @@ map<string, int> compute_unroll_factors(const std::string& buf, const int unroll
     assert(factor > 0);
 
     factors[loop->name] = factor;
+    cout << "Ritvik  " << tab (1)  << tab(1) << loop->name << " " << factor << endl; 
   }
 
   return factors;
@@ -5995,13 +6161,15 @@ void unroll_producer_matching(const std::string& buf, const int unroll_factor, p
   for (auto loop : inner_loops) {
     int factor = map_find(loop->name, unroll_factors);
     int tc = loop->trip_count();
+    
+    cout << factor << " " << tc << endl;
 
     if (tc % factor != 0) {
       cout << "Error: Trip count " << tc << " is not evenly divisible by " << factor << endl;
       cout << "Loop is..." << endl;
       loop->pretty_print(1);
     }
-    assert(tc % factor == 0);
+    //assert(tc % factor == 0);
     strip_mine(factor, loop, prg);
   }
 
@@ -8572,7 +8740,11 @@ op* find_coarse_grained_pipeline_loop(op* lp) {
   if (lp->children.size() == 1 && !lp->children.back()->is_loop()) {
     return lp;
   }
-  return find_coarse_grained_pipeline_loop(lp->children.back());
+   
+  auto a = lp->children.back();
+  
+  //assert(1 <0);
+  return find_coarse_grained_pipeline_loop(a);
 }
 
 void find_coarse_grained_pipeline_loops(op* lp_visit, vector<op*> & cgpl_lp,  prog& prg) {

@@ -1,11 +1,11 @@
-#ifndef __VIVADO_SYNTH__
+#ifndef __SYNTHESIS__
 #include <fstream>
 using namespace std;
 
   // Debug utility
   ofstream* global_debug_handle;
 
-#endif //__VIVADO_SYNTH__
+#endif //__SYNTHESIS__
 // compute file: cp_noinit_ln1_16_opt_compute_units.h
 #include "cp_noinit_ln1_16_opt_compute_units.h"
 
@@ -29,8 +29,8 @@ struct demosaic_demosaic_update_0_write0_merged_banks_4_cache {
 	}
 
 	inline hw_uint<16> peek_242() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f3.back();
 	}
 
@@ -41,16 +41,16 @@ struct demosaic_demosaic_update_0_write0_merged_banks_4_cache {
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 241
     f4 = f3.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 241 reading from capacity: 1
     f3.push(f2);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 1
     f2 = f0;
     // cap: 1
@@ -79,8 +79,8 @@ struct demosaic_demosaic_update_0_write1_merged_banks_4_cache {
 	}
 
 	inline hw_uint<16> peek_242() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f3.back();
 	}
 
@@ -91,16 +91,16 @@ struct demosaic_demosaic_update_0_write1_merged_banks_4_cache {
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 241
     f4 = f3.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 241 reading from capacity: 1
     f3.push(f2);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 1
     f2 = f0;
     // cap: 1
@@ -129,8 +129,8 @@ struct demosaic_demosaic_update_0_write10_merged_banks_4_cache {
 	}
 
 	inline hw_uint<16> peek_242() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f3.back();
 	}
 
@@ -141,16 +141,16 @@ struct demosaic_demosaic_update_0_write10_merged_banks_4_cache {
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 241
     f4 = f3.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 241 reading from capacity: 1
     f3.push(f2);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 1
     f2 = f0;
     // cap: 1
@@ -179,8 +179,8 @@ struct demosaic_demosaic_update_0_write11_merged_banks_4_cache {
 	}
 
 	inline hw_uint<16> peek_242() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f3.back();
 	}
 
@@ -191,16 +191,16 @@ struct demosaic_demosaic_update_0_write11_merged_banks_4_cache {
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 241
     f4 = f3.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 241 reading from capacity: 1
     f3.push(f2);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 1
     f2 = f0;
     // cap: 1
@@ -229,8 +229,8 @@ struct demosaic_demosaic_update_0_write12_merged_banks_4_cache {
 	}
 
 	inline hw_uint<16> peek_242() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f3.back();
 	}
 
@@ -241,16 +241,16 @@ struct demosaic_demosaic_update_0_write12_merged_banks_4_cache {
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 241
     f4 = f3.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 241 reading from capacity: 1
     f3.push(f2);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 1
     f2 = f0;
     // cap: 1
@@ -279,8 +279,8 @@ struct demosaic_demosaic_update_0_write13_merged_banks_4_cache {
 	}
 
 	inline hw_uint<16> peek_242() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f3.back();
 	}
 
@@ -291,16 +291,16 @@ struct demosaic_demosaic_update_0_write13_merged_banks_4_cache {
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 241
     f4 = f3.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 241 reading from capacity: 1
     f3.push(f2);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 1
     f2 = f0;
     // cap: 1
@@ -329,8 +329,8 @@ struct demosaic_demosaic_update_0_write14_merged_banks_4_cache {
 	}
 
 	inline hw_uint<16> peek_242() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f3.back();
 	}
 
@@ -341,16 +341,16 @@ struct demosaic_demosaic_update_0_write14_merged_banks_4_cache {
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 241
     f4 = f3.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 241 reading from capacity: 1
     f3.push(f2);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 1
     f2 = f0;
     // cap: 1
@@ -379,8 +379,8 @@ struct demosaic_demosaic_update_0_write15_merged_banks_4_cache {
 	}
 
 	inline hw_uint<16> peek_242() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f3.back();
 	}
 
@@ -391,16 +391,16 @@ struct demosaic_demosaic_update_0_write15_merged_banks_4_cache {
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 241
     f4 = f3.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 241 reading from capacity: 1
     f3.push(f2);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 1
     f2 = f0;
     // cap: 1
@@ -429,8 +429,8 @@ struct demosaic_demosaic_update_0_write2_merged_banks_4_cache {
 	}
 
 	inline hw_uint<16> peek_242() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f3.back();
 	}
 
@@ -441,16 +441,16 @@ struct demosaic_demosaic_update_0_write2_merged_banks_4_cache {
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 241
     f4 = f3.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 241 reading from capacity: 1
     f3.push(f2);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 1
     f2 = f0;
     // cap: 1
@@ -479,8 +479,8 @@ struct demosaic_demosaic_update_0_write3_merged_banks_4_cache {
 	}
 
 	inline hw_uint<16> peek_242() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f3.back();
 	}
 
@@ -491,16 +491,16 @@ struct demosaic_demosaic_update_0_write3_merged_banks_4_cache {
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 241
     f4 = f3.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 241 reading from capacity: 1
     f3.push(f2);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 1
     f2 = f0;
     // cap: 1
@@ -529,8 +529,8 @@ struct demosaic_demosaic_update_0_write4_merged_banks_4_cache {
 	}
 
 	inline hw_uint<16> peek_242() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f3.back();
 	}
 
@@ -541,16 +541,16 @@ struct demosaic_demosaic_update_0_write4_merged_banks_4_cache {
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 241
     f4 = f3.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 241 reading from capacity: 1
     f3.push(f2);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 1
     f2 = f0;
     // cap: 1
@@ -579,8 +579,8 @@ struct demosaic_demosaic_update_0_write5_merged_banks_4_cache {
 	}
 
 	inline hw_uint<16> peek_242() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f3.back();
 	}
 
@@ -591,16 +591,16 @@ struct demosaic_demosaic_update_0_write5_merged_banks_4_cache {
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 241
     f4 = f3.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 241 reading from capacity: 1
     f3.push(f2);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 1
     f2 = f0;
     // cap: 1
@@ -629,8 +629,8 @@ struct demosaic_demosaic_update_0_write6_merged_banks_4_cache {
 	}
 
 	inline hw_uint<16> peek_242() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f3.back();
 	}
 
@@ -641,16 +641,16 @@ struct demosaic_demosaic_update_0_write6_merged_banks_4_cache {
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 241
     f4 = f3.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 241 reading from capacity: 1
     f3.push(f2);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 1
     f2 = f0;
     // cap: 1
@@ -679,8 +679,8 @@ struct demosaic_demosaic_update_0_write7_merged_banks_4_cache {
 	}
 
 	inline hw_uint<16> peek_242() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f3.back();
 	}
 
@@ -691,16 +691,16 @@ struct demosaic_demosaic_update_0_write7_merged_banks_4_cache {
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 241
     f4 = f3.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 241 reading from capacity: 1
     f3.push(f2);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 1
     f2 = f0;
     // cap: 1
@@ -729,8 +729,8 @@ struct demosaic_demosaic_update_0_write8_merged_banks_4_cache {
 	}
 
 	inline hw_uint<16> peek_242() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f3.back();
 	}
 
@@ -741,16 +741,16 @@ struct demosaic_demosaic_update_0_write8_merged_banks_4_cache {
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 241
     f4 = f3.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 241 reading from capacity: 1
     f3.push(f2);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 1
     f2 = f0;
     // cap: 1
@@ -779,8 +779,8 @@ struct demosaic_demosaic_update_0_write9_merged_banks_4_cache {
 	}
 
 	inline hw_uint<16> peek_242() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f3.back();
 	}
 
@@ -791,16 +791,16 @@ struct demosaic_demosaic_update_0_write9_merged_banks_4_cache {
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 241
     f4 = f3.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 241 reading from capacity: 1
     f3.push(f2);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 1
     f2 = f0;
     // cap: 1
@@ -961,8 +961,8 @@ inline void demosaic_demosaic_update_0_write9_write(hw_uint<16>& demosaic_demosa
 }
 
 inline hw_uint<16> demosaic_bxb_rd0_select(demosaic_cache& demosaic, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_bxb_rd0 read pattern: { demosaic_bxb_update_0[d0, d1] -> demosaic[16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaic_bxb_update_0[d0, d1] -> [3 + d1, 3 + d0, 6] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Write schedule: { demosaic_update_0[d0, d1] -> [3 + d1, 2 + d0, 5] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
@@ -972,8 +972,8 @@ inline hw_uint<16> demosaic_bxb_rd0_select(demosaic_cache& demosaic, int d0, int
 }
 
 inline hw_uint<16> demosaic_bxb_rd1_select(demosaic_cache& demosaic, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_bxb_rd1 read pattern: { demosaic_bxb_update_0[d0, d1] -> demosaic[1 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaic_bxb_update_0[d0, d1] -> [3 + d1, 3 + d0, 6] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Write schedule: { demosaic_update_0[d0, d1] -> [3 + d1, 2 + d0, 5] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
@@ -983,8 +983,8 @@ inline hw_uint<16> demosaic_bxb_rd1_select(demosaic_cache& demosaic, int d0, int
 }
 
 inline hw_uint<16> demosaic_bxb_rd10_select(demosaic_cache& demosaic, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_bxb_rd10 read pattern: { demosaic_bxb_update_0[d0, d1] -> demosaic[4 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaic_bxb_update_0[d0, d1] -> [3 + d1, 3 + d0, 6] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Write schedule: { demosaic_update_0[d0, d1] -> [3 + d1, 2 + d0, 5] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
@@ -994,8 +994,8 @@ inline hw_uint<16> demosaic_bxb_rd10_select(demosaic_cache& demosaic, int d0, in
 }
 
 inline hw_uint<16> demosaic_bxb_rd11_select(demosaic_cache& demosaic, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_bxb_rd11 read pattern: { demosaic_bxb_update_0[d0, d1] -> demosaic[5 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaic_bxb_update_0[d0, d1] -> [3 + d1, 3 + d0, 6] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Write schedule: { demosaic_update_0[d0, d1] -> [3 + d1, 2 + d0, 5] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
@@ -1005,8 +1005,8 @@ inline hw_uint<16> demosaic_bxb_rd11_select(demosaic_cache& demosaic, int d0, in
 }
 
 inline hw_uint<16> demosaic_bxb_rd12_select(demosaic_cache& demosaic, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_bxb_rd12 read pattern: { demosaic_bxb_update_0[d0, d1] -> demosaic[4 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaic_bxb_update_0[d0, d1] -> [3 + d1, 3 + d0, 6] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Write schedule: { demosaic_update_0[d0, d1] -> [3 + d1, 2 + d0, 5] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
@@ -1016,8 +1016,8 @@ inline hw_uint<16> demosaic_bxb_rd12_select(demosaic_cache& demosaic, int d0, in
 }
 
 inline hw_uint<16> demosaic_bxb_rd13_select(demosaic_cache& demosaic, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_bxb_rd13 read pattern: { demosaic_bxb_update_0[d0, d1] -> demosaic[5 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaic_bxb_update_0[d0, d1] -> [3 + d1, 3 + d0, 6] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Write schedule: { demosaic_update_0[d0, d1] -> [3 + d1, 2 + d0, 5] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
@@ -1027,8 +1027,8 @@ inline hw_uint<16> demosaic_bxb_rd13_select(demosaic_cache& demosaic, int d0, in
 }
 
 inline hw_uint<16> demosaic_bxb_rd14_select(demosaic_cache& demosaic, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_bxb_rd14 read pattern: { demosaic_bxb_update_0[d0, d1] -> demosaic[6 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaic_bxb_update_0[d0, d1] -> [3 + d1, 3 + d0, 6] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Write schedule: { demosaic_update_0[d0, d1] -> [3 + d1, 2 + d0, 5] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
@@ -1038,8 +1038,8 @@ inline hw_uint<16> demosaic_bxb_rd14_select(demosaic_cache& demosaic, int d0, in
 }
 
 inline hw_uint<16> demosaic_bxb_rd15_select(demosaic_cache& demosaic, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_bxb_rd15 read pattern: { demosaic_bxb_update_0[d0, d1] -> demosaic[5 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaic_bxb_update_0[d0, d1] -> [3 + d1, 3 + d0, 6] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Write schedule: { demosaic_update_0[d0, d1] -> [3 + d1, 2 + d0, 5] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
@@ -1049,8 +1049,8 @@ inline hw_uint<16> demosaic_bxb_rd15_select(demosaic_cache& demosaic, int d0, in
 }
 
 inline hw_uint<16> demosaic_bxb_rd16_select(demosaic_cache& demosaic, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_bxb_rd16 read pattern: { demosaic_bxb_update_0[d0, d1] -> demosaic[6 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaic_bxb_update_0[d0, d1] -> [3 + d1, 3 + d0, 6] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Write schedule: { demosaic_update_0[d0, d1] -> [3 + d1, 2 + d0, 5] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
@@ -1060,8 +1060,8 @@ inline hw_uint<16> demosaic_bxb_rd16_select(demosaic_cache& demosaic, int d0, in
 }
 
 inline hw_uint<16> demosaic_bxb_rd17_select(demosaic_cache& demosaic, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_bxb_rd17 read pattern: { demosaic_bxb_update_0[d0, d1] -> demosaic[7 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaic_bxb_update_0[d0, d1] -> [3 + d1, 3 + d0, 6] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Write schedule: { demosaic_update_0[d0, d1] -> [3 + d1, 2 + d0, 5] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
@@ -1071,8 +1071,8 @@ inline hw_uint<16> demosaic_bxb_rd17_select(demosaic_cache& demosaic, int d0, in
 }
 
 inline hw_uint<16> demosaic_bxb_rd18_select(demosaic_cache& demosaic, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_bxb_rd18 read pattern: { demosaic_bxb_update_0[d0, d1] -> demosaic[6 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaic_bxb_update_0[d0, d1] -> [3 + d1, 3 + d0, 6] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Write schedule: { demosaic_update_0[d0, d1] -> [3 + d1, 2 + d0, 5] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
@@ -1082,8 +1082,8 @@ inline hw_uint<16> demosaic_bxb_rd18_select(demosaic_cache& demosaic, int d0, in
 }
 
 inline hw_uint<16> demosaic_bxb_rd19_select(demosaic_cache& demosaic, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_bxb_rd19 read pattern: { demosaic_bxb_update_0[d0, d1] -> demosaic[7 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaic_bxb_update_0[d0, d1] -> [3 + d1, 3 + d0, 6] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Write schedule: { demosaic_update_0[d0, d1] -> [3 + d1, 2 + d0, 5] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
@@ -1093,8 +1093,8 @@ inline hw_uint<16> demosaic_bxb_rd19_select(demosaic_cache& demosaic, int d0, in
 }
 
 inline hw_uint<16> demosaic_bxb_rd2_select(demosaic_cache& demosaic, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_bxb_rd2 read pattern: { demosaic_bxb_update_0[d0, d1] -> demosaic[2 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaic_bxb_update_0[d0, d1] -> [3 + d1, 3 + d0, 6] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Write schedule: { demosaic_update_0[d0, d1] -> [3 + d1, 2 + d0, 5] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
@@ -1104,8 +1104,8 @@ inline hw_uint<16> demosaic_bxb_rd2_select(demosaic_cache& demosaic, int d0, int
 }
 
 inline hw_uint<16> demosaic_bxb_rd20_select(demosaic_cache& demosaic, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_bxb_rd20 read pattern: { demosaic_bxb_update_0[d0, d1] -> demosaic[8 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaic_bxb_update_0[d0, d1] -> [3 + d1, 3 + d0, 6] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Write schedule: { demosaic_update_0[d0, d1] -> [3 + d1, 2 + d0, 5] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
@@ -1115,8 +1115,8 @@ inline hw_uint<16> demosaic_bxb_rd20_select(demosaic_cache& demosaic, int d0, in
 }
 
 inline hw_uint<16> demosaic_bxb_rd21_select(demosaic_cache& demosaic, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_bxb_rd21 read pattern: { demosaic_bxb_update_0[d0, d1] -> demosaic[7 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaic_bxb_update_0[d0, d1] -> [3 + d1, 3 + d0, 6] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Write schedule: { demosaic_update_0[d0, d1] -> [3 + d1, 2 + d0, 5] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
@@ -1126,8 +1126,8 @@ inline hw_uint<16> demosaic_bxb_rd21_select(demosaic_cache& demosaic, int d0, in
 }
 
 inline hw_uint<16> demosaic_bxb_rd22_select(demosaic_cache& demosaic, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_bxb_rd22 read pattern: { demosaic_bxb_update_0[d0, d1] -> demosaic[8 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaic_bxb_update_0[d0, d1] -> [3 + d1, 3 + d0, 6] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Write schedule: { demosaic_update_0[d0, d1] -> [3 + d1, 2 + d0, 5] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
@@ -1137,8 +1137,8 @@ inline hw_uint<16> demosaic_bxb_rd22_select(demosaic_cache& demosaic, int d0, in
 }
 
 inline hw_uint<16> demosaic_bxb_rd23_select(demosaic_cache& demosaic, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_bxb_rd23 read pattern: { demosaic_bxb_update_0[d0, d1] -> demosaic[9 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaic_bxb_update_0[d0, d1] -> [3 + d1, 3 + d0, 6] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Write schedule: { demosaic_update_0[d0, d1] -> [3 + d1, 2 + d0, 5] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
@@ -1148,8 +1148,8 @@ inline hw_uint<16> demosaic_bxb_rd23_select(demosaic_cache& demosaic, int d0, in
 }
 
 inline hw_uint<16> demosaic_bxb_rd24_select(demosaic_cache& demosaic, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_bxb_rd24 read pattern: { demosaic_bxb_update_0[d0, d1] -> demosaic[8 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaic_bxb_update_0[d0, d1] -> [3 + d1, 3 + d0, 6] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Write schedule: { demosaic_update_0[d0, d1] -> [3 + d1, 2 + d0, 5] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
@@ -1159,8 +1159,8 @@ inline hw_uint<16> demosaic_bxb_rd24_select(demosaic_cache& demosaic, int d0, in
 }
 
 inline hw_uint<16> demosaic_bxb_rd25_select(demosaic_cache& demosaic, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_bxb_rd25 read pattern: { demosaic_bxb_update_0[d0, d1] -> demosaic[9 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaic_bxb_update_0[d0, d1] -> [3 + d1, 3 + d0, 6] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Write schedule: { demosaic_update_0[d0, d1] -> [3 + d1, 2 + d0, 5] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
@@ -1170,8 +1170,8 @@ inline hw_uint<16> demosaic_bxb_rd25_select(demosaic_cache& demosaic, int d0, in
 }
 
 inline hw_uint<16> demosaic_bxb_rd26_select(demosaic_cache& demosaic, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_bxb_rd26 read pattern: { demosaic_bxb_update_0[d0, d1] -> demosaic[10 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaic_bxb_update_0[d0, d1] -> [3 + d1, 3 + d0, 6] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Write schedule: { demosaic_update_0[d0, d1] -> [3 + d1, 2 + d0, 5] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
@@ -1181,8 +1181,8 @@ inline hw_uint<16> demosaic_bxb_rd26_select(demosaic_cache& demosaic, int d0, in
 }
 
 inline hw_uint<16> demosaic_bxb_rd27_select(demosaic_cache& demosaic, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_bxb_rd27 read pattern: { demosaic_bxb_update_0[d0, d1] -> demosaic[9 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaic_bxb_update_0[d0, d1] -> [3 + d1, 3 + d0, 6] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Write schedule: { demosaic_update_0[d0, d1] -> [3 + d1, 2 + d0, 5] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
@@ -1192,8 +1192,8 @@ inline hw_uint<16> demosaic_bxb_rd27_select(demosaic_cache& demosaic, int d0, in
 }
 
 inline hw_uint<16> demosaic_bxb_rd28_select(demosaic_cache& demosaic, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_bxb_rd28 read pattern: { demosaic_bxb_update_0[d0, d1] -> demosaic[10 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaic_bxb_update_0[d0, d1] -> [3 + d1, 3 + d0, 6] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Write schedule: { demosaic_update_0[d0, d1] -> [3 + d1, 2 + d0, 5] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
@@ -1203,8 +1203,8 @@ inline hw_uint<16> demosaic_bxb_rd28_select(demosaic_cache& demosaic, int d0, in
 }
 
 inline hw_uint<16> demosaic_bxb_rd29_select(demosaic_cache& demosaic, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_bxb_rd29 read pattern: { demosaic_bxb_update_0[d0, d1] -> demosaic[11 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaic_bxb_update_0[d0, d1] -> [3 + d1, 3 + d0, 6] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Write schedule: { demosaic_update_0[d0, d1] -> [3 + d1, 2 + d0, 5] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
@@ -1214,8 +1214,8 @@ inline hw_uint<16> demosaic_bxb_rd29_select(demosaic_cache& demosaic, int d0, in
 }
 
 inline hw_uint<16> demosaic_bxb_rd3_select(demosaic_cache& demosaic, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_bxb_rd3 read pattern: { demosaic_bxb_update_0[d0, d1] -> demosaic[1 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaic_bxb_update_0[d0, d1] -> [3 + d1, 3 + d0, 6] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Write schedule: { demosaic_update_0[d0, d1] -> [3 + d1, 2 + d0, 5] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
@@ -1225,8 +1225,8 @@ inline hw_uint<16> demosaic_bxb_rd3_select(demosaic_cache& demosaic, int d0, int
 }
 
 inline hw_uint<16> demosaic_bxb_rd30_select(demosaic_cache& demosaic, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_bxb_rd30 read pattern: { demosaic_bxb_update_0[d0, d1] -> demosaic[10 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaic_bxb_update_0[d0, d1] -> [3 + d1, 3 + d0, 6] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Write schedule: { demosaic_update_0[d0, d1] -> [3 + d1, 2 + d0, 5] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
@@ -1236,8 +1236,8 @@ inline hw_uint<16> demosaic_bxb_rd30_select(demosaic_cache& demosaic, int d0, in
 }
 
 inline hw_uint<16> demosaic_bxb_rd31_select(demosaic_cache& demosaic, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_bxb_rd31 read pattern: { demosaic_bxb_update_0[d0, d1] -> demosaic[11 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaic_bxb_update_0[d0, d1] -> [3 + d1, 3 + d0, 6] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Write schedule: { demosaic_update_0[d0, d1] -> [3 + d1, 2 + d0, 5] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
@@ -1247,8 +1247,8 @@ inline hw_uint<16> demosaic_bxb_rd31_select(demosaic_cache& demosaic, int d0, in
 }
 
 inline hw_uint<16> demosaic_bxb_rd32_select(demosaic_cache& demosaic, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_bxb_rd32 read pattern: { demosaic_bxb_update_0[d0, d1] -> demosaic[12 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaic_bxb_update_0[d0, d1] -> [3 + d1, 3 + d0, 6] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Write schedule: { demosaic_update_0[d0, d1] -> [3 + d1, 2 + d0, 5] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
@@ -1258,8 +1258,8 @@ inline hw_uint<16> demosaic_bxb_rd32_select(demosaic_cache& demosaic, int d0, in
 }
 
 inline hw_uint<16> demosaic_bxb_rd33_select(demosaic_cache& demosaic, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_bxb_rd33 read pattern: { demosaic_bxb_update_0[d0, d1] -> demosaic[11 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaic_bxb_update_0[d0, d1] -> [3 + d1, 3 + d0, 6] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Write schedule: { demosaic_update_0[d0, d1] -> [3 + d1, 2 + d0, 5] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
@@ -1269,8 +1269,8 @@ inline hw_uint<16> demosaic_bxb_rd33_select(demosaic_cache& demosaic, int d0, in
 }
 
 inline hw_uint<16> demosaic_bxb_rd34_select(demosaic_cache& demosaic, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_bxb_rd34 read pattern: { demosaic_bxb_update_0[d0, d1] -> demosaic[12 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaic_bxb_update_0[d0, d1] -> [3 + d1, 3 + d0, 6] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Write schedule: { demosaic_update_0[d0, d1] -> [3 + d1, 2 + d0, 5] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
@@ -1280,8 +1280,8 @@ inline hw_uint<16> demosaic_bxb_rd34_select(demosaic_cache& demosaic, int d0, in
 }
 
 inline hw_uint<16> demosaic_bxb_rd35_select(demosaic_cache& demosaic, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_bxb_rd35 read pattern: { demosaic_bxb_update_0[d0, d1] -> demosaic[13 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaic_bxb_update_0[d0, d1] -> [3 + d1, 3 + d0, 6] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Write schedule: { demosaic_update_0[d0, d1] -> [3 + d1, 2 + d0, 5] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
@@ -1291,8 +1291,8 @@ inline hw_uint<16> demosaic_bxb_rd35_select(demosaic_cache& demosaic, int d0, in
 }
 
 inline hw_uint<16> demosaic_bxb_rd36_select(demosaic_cache& demosaic, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_bxb_rd36 read pattern: { demosaic_bxb_update_0[d0, d1] -> demosaic[12 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaic_bxb_update_0[d0, d1] -> [3 + d1, 3 + d0, 6] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Write schedule: { demosaic_update_0[d0, d1] -> [3 + d1, 2 + d0, 5] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
@@ -1302,8 +1302,8 @@ inline hw_uint<16> demosaic_bxb_rd36_select(demosaic_cache& demosaic, int d0, in
 }
 
 inline hw_uint<16> demosaic_bxb_rd37_select(demosaic_cache& demosaic, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_bxb_rd37 read pattern: { demosaic_bxb_update_0[d0, d1] -> demosaic[13 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaic_bxb_update_0[d0, d1] -> [3 + d1, 3 + d0, 6] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Write schedule: { demosaic_update_0[d0, d1] -> [3 + d1, 2 + d0, 5] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
@@ -1313,8 +1313,8 @@ inline hw_uint<16> demosaic_bxb_rd37_select(demosaic_cache& demosaic, int d0, in
 }
 
 inline hw_uint<16> demosaic_bxb_rd38_select(demosaic_cache& demosaic, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_bxb_rd38 read pattern: { demosaic_bxb_update_0[d0, d1] -> demosaic[14 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaic_bxb_update_0[d0, d1] -> [3 + d1, 3 + d0, 6] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Write schedule: { demosaic_update_0[d0, d1] -> [3 + d1, 2 + d0, 5] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
@@ -1324,8 +1324,8 @@ inline hw_uint<16> demosaic_bxb_rd38_select(demosaic_cache& demosaic, int d0, in
 }
 
 inline hw_uint<16> demosaic_bxb_rd39_select(demosaic_cache& demosaic, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_bxb_rd39 read pattern: { demosaic_bxb_update_0[d0, d1] -> demosaic[13 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaic_bxb_update_0[d0, d1] -> [3 + d1, 3 + d0, 6] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Write schedule: { demosaic_update_0[d0, d1] -> [3 + d1, 2 + d0, 5] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
@@ -1335,8 +1335,8 @@ inline hw_uint<16> demosaic_bxb_rd39_select(demosaic_cache& demosaic, int d0, in
 }
 
 inline hw_uint<16> demosaic_bxb_rd4_select(demosaic_cache& demosaic, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_bxb_rd4 read pattern: { demosaic_bxb_update_0[d0, d1] -> demosaic[2 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaic_bxb_update_0[d0, d1] -> [3 + d1, 3 + d0, 6] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Write schedule: { demosaic_update_0[d0, d1] -> [3 + d1, 2 + d0, 5] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
@@ -1346,8 +1346,8 @@ inline hw_uint<16> demosaic_bxb_rd4_select(demosaic_cache& demosaic, int d0, int
 }
 
 inline hw_uint<16> demosaic_bxb_rd40_select(demosaic_cache& demosaic, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_bxb_rd40 read pattern: { demosaic_bxb_update_0[d0, d1] -> demosaic[14 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaic_bxb_update_0[d0, d1] -> [3 + d1, 3 + d0, 6] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Write schedule: { demosaic_update_0[d0, d1] -> [3 + d1, 2 + d0, 5] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
@@ -1357,8 +1357,8 @@ inline hw_uint<16> demosaic_bxb_rd40_select(demosaic_cache& demosaic, int d0, in
 }
 
 inline hw_uint<16> demosaic_bxb_rd41_select(demosaic_cache& demosaic, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_bxb_rd41 read pattern: { demosaic_bxb_update_0[d0, d1] -> demosaic[15 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaic_bxb_update_0[d0, d1] -> [3 + d1, 3 + d0, 6] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Write schedule: { demosaic_update_0[d0, d1] -> [3 + d1, 2 + d0, 5] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
@@ -1368,8 +1368,8 @@ inline hw_uint<16> demosaic_bxb_rd41_select(demosaic_cache& demosaic, int d0, in
 }
 
 inline hw_uint<16> demosaic_bxb_rd42_select(demosaic_cache& demosaic, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_bxb_rd42 read pattern: { demosaic_bxb_update_0[d0, d1] -> demosaic[14 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaic_bxb_update_0[d0, d1] -> [3 + d1, 3 + d0, 6] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Write schedule: { demosaic_update_0[d0, d1] -> [3 + d1, 2 + d0, 5] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
@@ -1379,8 +1379,8 @@ inline hw_uint<16> demosaic_bxb_rd42_select(demosaic_cache& demosaic, int d0, in
 }
 
 inline hw_uint<16> demosaic_bxb_rd43_select(demosaic_cache& demosaic, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_bxb_rd43 read pattern: { demosaic_bxb_update_0[d0, d1] -> demosaic[15 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaic_bxb_update_0[d0, d1] -> [3 + d1, 3 + d0, 6] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Write schedule: { demosaic_update_0[d0, d1] -> [3 + d1, 2 + d0, 5] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
@@ -1390,8 +1390,8 @@ inline hw_uint<16> demosaic_bxb_rd43_select(demosaic_cache& demosaic, int d0, in
 }
 
 inline hw_uint<16> demosaic_bxb_rd44_select(demosaic_cache& demosaic, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_bxb_rd44 read pattern: { demosaic_bxb_update_0[d0, d1] -> demosaic[16 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaic_bxb_update_0[d0, d1] -> [3 + d1, 3 + d0, 6] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Write schedule: { demosaic_update_0[d0, d1] -> [3 + d1, 2 + d0, 5] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
@@ -1401,8 +1401,8 @@ inline hw_uint<16> demosaic_bxb_rd44_select(demosaic_cache& demosaic, int d0, in
 }
 
 inline hw_uint<16> demosaic_bxb_rd45_select(demosaic_cache& demosaic, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_bxb_rd45 read pattern: { demosaic_bxb_update_0[d0, d1] -> demosaic[15 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaic_bxb_update_0[d0, d1] -> [3 + d1, 3 + d0, 6] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Write schedule: { demosaic_update_0[d0, d1] -> [3 + d1, 2 + d0, 5] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
@@ -1412,8 +1412,8 @@ inline hw_uint<16> demosaic_bxb_rd45_select(demosaic_cache& demosaic, int d0, in
 }
 
 inline hw_uint<16> demosaic_bxb_rd46_select(demosaic_cache& demosaic, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_bxb_rd46 read pattern: { demosaic_bxb_update_0[d0, d1] -> demosaic[16 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaic_bxb_update_0[d0, d1] -> [3 + d1, 3 + d0, 6] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Write schedule: { demosaic_update_0[d0, d1] -> [3 + d1, 2 + d0, 5] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
@@ -1423,8 +1423,8 @@ inline hw_uint<16> demosaic_bxb_rd46_select(demosaic_cache& demosaic, int d0, in
 }
 
 inline hw_uint<16> demosaic_bxb_rd47_select(demosaic_cache& demosaic, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_bxb_rd47 read pattern: { demosaic_bxb_update_0[d0, d1] -> demosaic[17 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaic_bxb_update_0[d0, d1] -> [3 + d1, 3 + d0, 6] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Write schedule: { demosaic_update_0[d0, d1] -> [3 + d1, 2 + d0, 5] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
@@ -1434,8 +1434,8 @@ inline hw_uint<16> demosaic_bxb_rd47_select(demosaic_cache& demosaic, int d0, in
 }
 
 inline hw_uint<16> demosaic_bxb_rd5_select(demosaic_cache& demosaic, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_bxb_rd5 read pattern: { demosaic_bxb_update_0[d0, d1] -> demosaic[3 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaic_bxb_update_0[d0, d1] -> [3 + d1, 3 + d0, 6] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Write schedule: { demosaic_update_0[d0, d1] -> [3 + d1, 2 + d0, 5] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
@@ -1445,8 +1445,8 @@ inline hw_uint<16> demosaic_bxb_rd5_select(demosaic_cache& demosaic, int d0, int
 }
 
 inline hw_uint<16> demosaic_bxb_rd6_select(demosaic_cache& demosaic, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_bxb_rd6 read pattern: { demosaic_bxb_update_0[d0, d1] -> demosaic[2 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaic_bxb_update_0[d0, d1] -> [3 + d1, 3 + d0, 6] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Write schedule: { demosaic_update_0[d0, d1] -> [3 + d1, 2 + d0, 5] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
@@ -1456,8 +1456,8 @@ inline hw_uint<16> demosaic_bxb_rd6_select(demosaic_cache& demosaic, int d0, int
 }
 
 inline hw_uint<16> demosaic_bxb_rd7_select(demosaic_cache& demosaic, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_bxb_rd7 read pattern: { demosaic_bxb_update_0[d0, d1] -> demosaic[3 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaic_bxb_update_0[d0, d1] -> [3 + d1, 3 + d0, 6] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Write schedule: { demosaic_update_0[d0, d1] -> [3 + d1, 2 + d0, 5] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
@@ -1467,8 +1467,8 @@ inline hw_uint<16> demosaic_bxb_rd7_select(demosaic_cache& demosaic, int d0, int
 }
 
 inline hw_uint<16> demosaic_bxb_rd8_select(demosaic_cache& demosaic, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_bxb_rd8 read pattern: { demosaic_bxb_update_0[d0, d1] -> demosaic[4 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaic_bxb_update_0[d0, d1] -> [3 + d1, 3 + d0, 6] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Write schedule: { demosaic_update_0[d0, d1] -> [3 + d1, 2 + d0, 5] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
@@ -1478,8 +1478,8 @@ inline hw_uint<16> demosaic_bxb_rd8_select(demosaic_cache& demosaic, int d0, int
 }
 
 inline hw_uint<16> demosaic_bxb_rd9_select(demosaic_cache& demosaic, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_bxb_rd9 read pattern: { demosaic_bxb_update_0[d0, d1] -> demosaic[3 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaic_bxb_update_0[d0, d1] -> [3 + d1, 3 + d0, 6] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Write schedule: { demosaic_update_0[d0, d1] -> [3 + d1, 2 + d0, 5] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
@@ -1489,8 +1489,8 @@ inline hw_uint<16> demosaic_bxb_rd9_select(demosaic_cache& demosaic, int d0, int
 }
 
 inline hw_uint<16> demosaic_diff_rd0_select(demosaic_cache& demosaic, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_diff_rd0 read pattern: { demosaic_diff_update_0[d0, d1] -> demosaic[16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { demosaic_diff_update_0[d0, d1] -> [5 + d1, 3 + d0, 10] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_update_0[d0, d1] -> [3 + d1, 2 + d0, 5] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
@@ -1500,8 +1500,8 @@ inline hw_uint<16> demosaic_diff_rd0_select(demosaic_cache& demosaic, int d0, in
 }
 
 inline hw_uint<16> demosaic_diff_rd1_select(demosaic_cache& demosaic, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_diff_rd1 read pattern: { demosaic_diff_update_0[d0, d1] -> demosaic[1 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { demosaic_diff_update_0[d0, d1] -> [5 + d1, 3 + d0, 10] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_update_0[d0, d1] -> [3 + d1, 2 + d0, 5] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
@@ -1511,8 +1511,8 @@ inline hw_uint<16> demosaic_diff_rd1_select(demosaic_cache& demosaic, int d0, in
 }
 
 inline hw_uint<16> demosaic_diff_rd10_select(demosaic_cache& demosaic, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_diff_rd10 read pattern: { demosaic_diff_update_0[d0, d1] -> demosaic[10 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { demosaic_diff_update_0[d0, d1] -> [5 + d1, 3 + d0, 10] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_update_0[d0, d1] -> [3 + d1, 2 + d0, 5] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
@@ -1522,8 +1522,8 @@ inline hw_uint<16> demosaic_diff_rd10_select(demosaic_cache& demosaic, int d0, i
 }
 
 inline hw_uint<16> demosaic_diff_rd11_select(demosaic_cache& demosaic, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_diff_rd11 read pattern: { demosaic_diff_update_0[d0, d1] -> demosaic[11 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { demosaic_diff_update_0[d0, d1] -> [5 + d1, 3 + d0, 10] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_update_0[d0, d1] -> [3 + d1, 2 + d0, 5] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
@@ -1533,8 +1533,8 @@ inline hw_uint<16> demosaic_diff_rd11_select(demosaic_cache& demosaic, int d0, i
 }
 
 inline hw_uint<16> demosaic_diff_rd12_select(demosaic_cache& demosaic, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_diff_rd12 read pattern: { demosaic_diff_update_0[d0, d1] -> demosaic[12 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { demosaic_diff_update_0[d0, d1] -> [5 + d1, 3 + d0, 10] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_update_0[d0, d1] -> [3 + d1, 2 + d0, 5] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
@@ -1544,8 +1544,8 @@ inline hw_uint<16> demosaic_diff_rd12_select(demosaic_cache& demosaic, int d0, i
 }
 
 inline hw_uint<16> demosaic_diff_rd13_select(demosaic_cache& demosaic, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_diff_rd13 read pattern: { demosaic_diff_update_0[d0, d1] -> demosaic[13 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { demosaic_diff_update_0[d0, d1] -> [5 + d1, 3 + d0, 10] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_update_0[d0, d1] -> [3 + d1, 2 + d0, 5] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
@@ -1555,8 +1555,8 @@ inline hw_uint<16> demosaic_diff_rd13_select(demosaic_cache& demosaic, int d0, i
 }
 
 inline hw_uint<16> demosaic_diff_rd14_select(demosaic_cache& demosaic, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_diff_rd14 read pattern: { demosaic_diff_update_0[d0, d1] -> demosaic[14 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { demosaic_diff_update_0[d0, d1] -> [5 + d1, 3 + d0, 10] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_update_0[d0, d1] -> [3 + d1, 2 + d0, 5] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
@@ -1566,8 +1566,8 @@ inline hw_uint<16> demosaic_diff_rd14_select(demosaic_cache& demosaic, int d0, i
 }
 
 inline hw_uint<16> demosaic_diff_rd15_select(demosaic_cache& demosaic, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_diff_rd15 read pattern: { demosaic_diff_update_0[d0, d1] -> demosaic[15 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { demosaic_diff_update_0[d0, d1] -> [5 + d1, 3 + d0, 10] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_update_0[d0, d1] -> [3 + d1, 2 + d0, 5] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
@@ -1577,8 +1577,8 @@ inline hw_uint<16> demosaic_diff_rd15_select(demosaic_cache& demosaic, int d0, i
 }
 
 inline hw_uint<16> demosaic_diff_rd2_select(demosaic_cache& demosaic, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_diff_rd2 read pattern: { demosaic_diff_update_0[d0, d1] -> demosaic[2 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { demosaic_diff_update_0[d0, d1] -> [5 + d1, 3 + d0, 10] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_update_0[d0, d1] -> [3 + d1, 2 + d0, 5] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
@@ -1588,8 +1588,8 @@ inline hw_uint<16> demosaic_diff_rd2_select(demosaic_cache& demosaic, int d0, in
 }
 
 inline hw_uint<16> demosaic_diff_rd3_select(demosaic_cache& demosaic, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_diff_rd3 read pattern: { demosaic_diff_update_0[d0, d1] -> demosaic[3 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { demosaic_diff_update_0[d0, d1] -> [5 + d1, 3 + d0, 10] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_update_0[d0, d1] -> [3 + d1, 2 + d0, 5] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
@@ -1599,8 +1599,8 @@ inline hw_uint<16> demosaic_diff_rd3_select(demosaic_cache& demosaic, int d0, in
 }
 
 inline hw_uint<16> demosaic_diff_rd4_select(demosaic_cache& demosaic, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_diff_rd4 read pattern: { demosaic_diff_update_0[d0, d1] -> demosaic[4 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { demosaic_diff_update_0[d0, d1] -> [5 + d1, 3 + d0, 10] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_update_0[d0, d1] -> [3 + d1, 2 + d0, 5] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
@@ -1610,8 +1610,8 @@ inline hw_uint<16> demosaic_diff_rd4_select(demosaic_cache& demosaic, int d0, in
 }
 
 inline hw_uint<16> demosaic_diff_rd5_select(demosaic_cache& demosaic, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_diff_rd5 read pattern: { demosaic_diff_update_0[d0, d1] -> demosaic[5 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { demosaic_diff_update_0[d0, d1] -> [5 + d1, 3 + d0, 10] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_update_0[d0, d1] -> [3 + d1, 2 + d0, 5] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
@@ -1621,8 +1621,8 @@ inline hw_uint<16> demosaic_diff_rd5_select(demosaic_cache& demosaic, int d0, in
 }
 
 inline hw_uint<16> demosaic_diff_rd6_select(demosaic_cache& demosaic, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_diff_rd6 read pattern: { demosaic_diff_update_0[d0, d1] -> demosaic[6 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { demosaic_diff_update_0[d0, d1] -> [5 + d1, 3 + d0, 10] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_update_0[d0, d1] -> [3 + d1, 2 + d0, 5] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
@@ -1632,8 +1632,8 @@ inline hw_uint<16> demosaic_diff_rd6_select(demosaic_cache& demosaic, int d0, in
 }
 
 inline hw_uint<16> demosaic_diff_rd7_select(demosaic_cache& demosaic, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_diff_rd7 read pattern: { demosaic_diff_update_0[d0, d1] -> demosaic[7 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { demosaic_diff_update_0[d0, d1] -> [5 + d1, 3 + d0, 10] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_update_0[d0, d1] -> [3 + d1, 2 + d0, 5] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
@@ -1643,8 +1643,8 @@ inline hw_uint<16> demosaic_diff_rd7_select(demosaic_cache& demosaic, int d0, in
 }
 
 inline hw_uint<16> demosaic_diff_rd8_select(demosaic_cache& demosaic, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_diff_rd8 read pattern: { demosaic_diff_update_0[d0, d1] -> demosaic[8 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { demosaic_diff_update_0[d0, d1] -> [5 + d1, 3 + d0, 10] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_update_0[d0, d1] -> [3 + d1, 2 + d0, 5] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
@@ -1654,8 +1654,8 @@ inline hw_uint<16> demosaic_diff_rd8_select(demosaic_cache& demosaic, int d0, in
 }
 
 inline hw_uint<16> demosaic_diff_rd9_select(demosaic_cache& demosaic, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_diff_rd9 read pattern: { demosaic_diff_update_0[d0, d1] -> demosaic[9 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { demosaic_diff_update_0[d0, d1] -> [5 + d1, 3 + d0, 10] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_update_0[d0, d1] -> [3 + d1, 2 + d0, 5] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
@@ -2006,8 +2006,8 @@ struct demosaic_bx_demosaic_bx_update_0_write0_merged_banks_3_cache {
 	}
 
 	inline hw_uint<16> peek_119() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f1.back();
 	}
 
@@ -2016,8 +2016,8 @@ struct demosaic_bx_demosaic_bx_update_0_write0_merged_banks_3_cache {
 	}
 
 	inline hw_uint<16> peek_239() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f3.back();
 	}
 
@@ -2028,20 +2028,20 @@ struct demosaic_bx_demosaic_bx_update_0_write0_merged_banks_3_cache {
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 119
     f4 = f3.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 119 reading from capacity: 1
     f3.push(f2);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 119
     f2 = f1.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 119 reading from capacity: 1
     f1.push(f0);
     // cap: 1
@@ -2067,8 +2067,8 @@ struct demosaic_bx_demosaic_bx_update_0_write1_merged_banks_3_cache {
 	}
 
 	inline hw_uint<16> peek_119() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f1.back();
 	}
 
@@ -2077,8 +2077,8 @@ struct demosaic_bx_demosaic_bx_update_0_write1_merged_banks_3_cache {
 	}
 
 	inline hw_uint<16> peek_239() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f3.back();
 	}
 
@@ -2089,20 +2089,20 @@ struct demosaic_bx_demosaic_bx_update_0_write1_merged_banks_3_cache {
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 119
     f4 = f3.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 119 reading from capacity: 1
     f3.push(f2);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 119
     f2 = f1.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 119 reading from capacity: 1
     f1.push(f0);
     // cap: 1
@@ -2128,8 +2128,8 @@ struct demosaic_bx_demosaic_bx_update_0_write10_merged_banks_3_cache {
 	}
 
 	inline hw_uint<16> peek_119() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f1.back();
 	}
 
@@ -2138,8 +2138,8 @@ struct demosaic_bx_demosaic_bx_update_0_write10_merged_banks_3_cache {
 	}
 
 	inline hw_uint<16> peek_239() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f3.back();
 	}
 
@@ -2150,20 +2150,20 @@ struct demosaic_bx_demosaic_bx_update_0_write10_merged_banks_3_cache {
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 119
     f4 = f3.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 119 reading from capacity: 1
     f3.push(f2);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 119
     f2 = f1.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 119 reading from capacity: 1
     f1.push(f0);
     // cap: 1
@@ -2189,8 +2189,8 @@ struct demosaic_bx_demosaic_bx_update_0_write11_merged_banks_3_cache {
 	}
 
 	inline hw_uint<16> peek_119() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f1.back();
 	}
 
@@ -2199,8 +2199,8 @@ struct demosaic_bx_demosaic_bx_update_0_write11_merged_banks_3_cache {
 	}
 
 	inline hw_uint<16> peek_239() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f3.back();
 	}
 
@@ -2211,20 +2211,20 @@ struct demosaic_bx_demosaic_bx_update_0_write11_merged_banks_3_cache {
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 119
     f4 = f3.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 119 reading from capacity: 1
     f3.push(f2);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 119
     f2 = f1.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 119 reading from capacity: 1
     f1.push(f0);
     // cap: 1
@@ -2250,8 +2250,8 @@ struct demosaic_bx_demosaic_bx_update_0_write12_merged_banks_3_cache {
 	}
 
 	inline hw_uint<16> peek_119() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f1.back();
 	}
 
@@ -2260,8 +2260,8 @@ struct demosaic_bx_demosaic_bx_update_0_write12_merged_banks_3_cache {
 	}
 
 	inline hw_uint<16> peek_239() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f3.back();
 	}
 
@@ -2272,20 +2272,20 @@ struct demosaic_bx_demosaic_bx_update_0_write12_merged_banks_3_cache {
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 119
     f4 = f3.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 119 reading from capacity: 1
     f3.push(f2);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 119
     f2 = f1.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 119 reading from capacity: 1
     f1.push(f0);
     // cap: 1
@@ -2311,8 +2311,8 @@ struct demosaic_bx_demosaic_bx_update_0_write13_merged_banks_3_cache {
 	}
 
 	inline hw_uint<16> peek_119() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f1.back();
 	}
 
@@ -2321,8 +2321,8 @@ struct demosaic_bx_demosaic_bx_update_0_write13_merged_banks_3_cache {
 	}
 
 	inline hw_uint<16> peek_239() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f3.back();
 	}
 
@@ -2333,20 +2333,20 @@ struct demosaic_bx_demosaic_bx_update_0_write13_merged_banks_3_cache {
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 119
     f4 = f3.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 119 reading from capacity: 1
     f3.push(f2);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 119
     f2 = f1.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 119 reading from capacity: 1
     f1.push(f0);
     // cap: 1
@@ -2372,8 +2372,8 @@ struct demosaic_bx_demosaic_bx_update_0_write14_merged_banks_3_cache {
 	}
 
 	inline hw_uint<16> peek_119() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f1.back();
 	}
 
@@ -2382,8 +2382,8 @@ struct demosaic_bx_demosaic_bx_update_0_write14_merged_banks_3_cache {
 	}
 
 	inline hw_uint<16> peek_239() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f3.back();
 	}
 
@@ -2394,20 +2394,20 @@ struct demosaic_bx_demosaic_bx_update_0_write14_merged_banks_3_cache {
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 119
     f4 = f3.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 119 reading from capacity: 1
     f3.push(f2);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 119
     f2 = f1.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 119 reading from capacity: 1
     f1.push(f0);
     // cap: 1
@@ -2433,8 +2433,8 @@ struct demosaic_bx_demosaic_bx_update_0_write15_merged_banks_3_cache {
 	}
 
 	inline hw_uint<16> peek_119() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f1.back();
 	}
 
@@ -2443,8 +2443,8 @@ struct demosaic_bx_demosaic_bx_update_0_write15_merged_banks_3_cache {
 	}
 
 	inline hw_uint<16> peek_239() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f3.back();
 	}
 
@@ -2455,20 +2455,20 @@ struct demosaic_bx_demosaic_bx_update_0_write15_merged_banks_3_cache {
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 119
     f4 = f3.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 119 reading from capacity: 1
     f3.push(f2);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 119
     f2 = f1.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 119 reading from capacity: 1
     f1.push(f0);
     // cap: 1
@@ -2494,8 +2494,8 @@ struct demosaic_bx_demosaic_bx_update_0_write2_merged_banks_3_cache {
 	}
 
 	inline hw_uint<16> peek_119() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f1.back();
 	}
 
@@ -2504,8 +2504,8 @@ struct demosaic_bx_demosaic_bx_update_0_write2_merged_banks_3_cache {
 	}
 
 	inline hw_uint<16> peek_239() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f3.back();
 	}
 
@@ -2516,20 +2516,20 @@ struct demosaic_bx_demosaic_bx_update_0_write2_merged_banks_3_cache {
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 119
     f4 = f3.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 119 reading from capacity: 1
     f3.push(f2);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 119
     f2 = f1.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 119 reading from capacity: 1
     f1.push(f0);
     // cap: 1
@@ -2555,8 +2555,8 @@ struct demosaic_bx_demosaic_bx_update_0_write3_merged_banks_3_cache {
 	}
 
 	inline hw_uint<16> peek_119() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f1.back();
 	}
 
@@ -2565,8 +2565,8 @@ struct demosaic_bx_demosaic_bx_update_0_write3_merged_banks_3_cache {
 	}
 
 	inline hw_uint<16> peek_239() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f3.back();
 	}
 
@@ -2577,20 +2577,20 @@ struct demosaic_bx_demosaic_bx_update_0_write3_merged_banks_3_cache {
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 119
     f4 = f3.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 119 reading from capacity: 1
     f3.push(f2);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 119
     f2 = f1.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 119 reading from capacity: 1
     f1.push(f0);
     // cap: 1
@@ -2616,8 +2616,8 @@ struct demosaic_bx_demosaic_bx_update_0_write4_merged_banks_3_cache {
 	}
 
 	inline hw_uint<16> peek_119() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f1.back();
 	}
 
@@ -2626,8 +2626,8 @@ struct demosaic_bx_demosaic_bx_update_0_write4_merged_banks_3_cache {
 	}
 
 	inline hw_uint<16> peek_239() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f3.back();
 	}
 
@@ -2638,20 +2638,20 @@ struct demosaic_bx_demosaic_bx_update_0_write4_merged_banks_3_cache {
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 119
     f4 = f3.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 119 reading from capacity: 1
     f3.push(f2);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 119
     f2 = f1.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 119 reading from capacity: 1
     f1.push(f0);
     // cap: 1
@@ -2677,8 +2677,8 @@ struct demosaic_bx_demosaic_bx_update_0_write5_merged_banks_3_cache {
 	}
 
 	inline hw_uint<16> peek_119() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f1.back();
 	}
 
@@ -2687,8 +2687,8 @@ struct demosaic_bx_demosaic_bx_update_0_write5_merged_banks_3_cache {
 	}
 
 	inline hw_uint<16> peek_239() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f3.back();
 	}
 
@@ -2699,20 +2699,20 @@ struct demosaic_bx_demosaic_bx_update_0_write5_merged_banks_3_cache {
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 119
     f4 = f3.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 119 reading from capacity: 1
     f3.push(f2);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 119
     f2 = f1.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 119 reading from capacity: 1
     f1.push(f0);
     // cap: 1
@@ -2738,8 +2738,8 @@ struct demosaic_bx_demosaic_bx_update_0_write6_merged_banks_3_cache {
 	}
 
 	inline hw_uint<16> peek_119() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f1.back();
 	}
 
@@ -2748,8 +2748,8 @@ struct demosaic_bx_demosaic_bx_update_0_write6_merged_banks_3_cache {
 	}
 
 	inline hw_uint<16> peek_239() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f3.back();
 	}
 
@@ -2760,20 +2760,20 @@ struct demosaic_bx_demosaic_bx_update_0_write6_merged_banks_3_cache {
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 119
     f4 = f3.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 119 reading from capacity: 1
     f3.push(f2);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 119
     f2 = f1.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 119 reading from capacity: 1
     f1.push(f0);
     // cap: 1
@@ -2799,8 +2799,8 @@ struct demosaic_bx_demosaic_bx_update_0_write7_merged_banks_3_cache {
 	}
 
 	inline hw_uint<16> peek_119() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f1.back();
 	}
 
@@ -2809,8 +2809,8 @@ struct demosaic_bx_demosaic_bx_update_0_write7_merged_banks_3_cache {
 	}
 
 	inline hw_uint<16> peek_239() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f3.back();
 	}
 
@@ -2821,20 +2821,20 @@ struct demosaic_bx_demosaic_bx_update_0_write7_merged_banks_3_cache {
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 119
     f4 = f3.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 119 reading from capacity: 1
     f3.push(f2);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 119
     f2 = f1.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 119 reading from capacity: 1
     f1.push(f0);
     // cap: 1
@@ -2860,8 +2860,8 @@ struct demosaic_bx_demosaic_bx_update_0_write8_merged_banks_3_cache {
 	}
 
 	inline hw_uint<16> peek_119() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f1.back();
 	}
 
@@ -2870,8 +2870,8 @@ struct demosaic_bx_demosaic_bx_update_0_write8_merged_banks_3_cache {
 	}
 
 	inline hw_uint<16> peek_239() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f3.back();
 	}
 
@@ -2882,20 +2882,20 @@ struct demosaic_bx_demosaic_bx_update_0_write8_merged_banks_3_cache {
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 119
     f4 = f3.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 119 reading from capacity: 1
     f3.push(f2);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 119
     f2 = f1.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 119 reading from capacity: 1
     f1.push(f0);
     // cap: 1
@@ -2921,8 +2921,8 @@ struct demosaic_bx_demosaic_bx_update_0_write9_merged_banks_3_cache {
 	}
 
 	inline hw_uint<16> peek_119() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f1.back();
 	}
 
@@ -2931,8 +2931,8 @@ struct demosaic_bx_demosaic_bx_update_0_write9_merged_banks_3_cache {
 	}
 
 	inline hw_uint<16> peek_239() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f3.back();
 	}
 
@@ -2943,20 +2943,20 @@ struct demosaic_bx_demosaic_bx_update_0_write9_merged_banks_3_cache {
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 119
     f4 = f3.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 119 reading from capacity: 1
     f3.push(f2);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 119
     f2 = f1.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 119 reading from capacity: 1
     f1.push(f0);
     // cap: 1
@@ -3101,8 +3101,8 @@ inline void demosaic_bx_demosaic_bx_update_0_write9_write(hw_uint<16>& demosaic_
 }
 
 inline hw_uint<16> demosaic_byb_rd0_select(demosaic_bx_cache& demosaic_bx, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_byb_rd0 read pattern: { demosaic_byb_update_0[d0, d1] -> demosaic_bx[16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { demosaic_byb_update_0[d0, d1] -> [5 + d1, 3 + d0, 8] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_bx_update_0[d0, d1] -> [3 + d1, 3 + d0, 7] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
@@ -3112,8 +3112,8 @@ inline hw_uint<16> demosaic_byb_rd0_select(demosaic_bx_cache& demosaic_bx, int d
 }
 
 inline hw_uint<16> demosaic_byb_rd1_select(demosaic_bx_cache& demosaic_bx, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_byb_rd1 read pattern: { demosaic_byb_update_0[d0, d1] -> demosaic_bx[16d0, 1 + d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { demosaic_byb_update_0[d0, d1] -> [5 + d1, 3 + d0, 8] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_bx_update_0[d0, d1] -> [3 + d1, 3 + d0, 7] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
@@ -3123,8 +3123,8 @@ inline hw_uint<16> demosaic_byb_rd1_select(demosaic_bx_cache& demosaic_bx, int d
 }
 
 inline hw_uint<16> demosaic_byb_rd10_select(demosaic_bx_cache& demosaic_bx, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_byb_rd10 read pattern: { demosaic_byb_update_0[d0, d1] -> demosaic_bx[3 + 16d0, 1 + d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { demosaic_byb_update_0[d0, d1] -> [5 + d1, 3 + d0, 8] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_bx_update_0[d0, d1] -> [3 + d1, 3 + d0, 7] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
@@ -3134,8 +3134,8 @@ inline hw_uint<16> demosaic_byb_rd10_select(demosaic_bx_cache& demosaic_bx, int 
 }
 
 inline hw_uint<16> demosaic_byb_rd11_select(demosaic_bx_cache& demosaic_bx, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_byb_rd11 read pattern: { demosaic_byb_update_0[d0, d1] -> demosaic_bx[3 + 16d0, 2 + d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { demosaic_byb_update_0[d0, d1] -> [5 + d1, 3 + d0, 8] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_bx_update_0[d0, d1] -> [3 + d1, 3 + d0, 7] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
@@ -3145,8 +3145,8 @@ inline hw_uint<16> demosaic_byb_rd11_select(demosaic_bx_cache& demosaic_bx, int 
 }
 
 inline hw_uint<16> demosaic_byb_rd12_select(demosaic_bx_cache& demosaic_bx, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_byb_rd12 read pattern: { demosaic_byb_update_0[d0, d1] -> demosaic_bx[4 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { demosaic_byb_update_0[d0, d1] -> [5 + d1, 3 + d0, 8] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_bx_update_0[d0, d1] -> [3 + d1, 3 + d0, 7] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
@@ -3156,8 +3156,8 @@ inline hw_uint<16> demosaic_byb_rd12_select(demosaic_bx_cache& demosaic_bx, int 
 }
 
 inline hw_uint<16> demosaic_byb_rd13_select(demosaic_bx_cache& demosaic_bx, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_byb_rd13 read pattern: { demosaic_byb_update_0[d0, d1] -> demosaic_bx[4 + 16d0, 1 + d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { demosaic_byb_update_0[d0, d1] -> [5 + d1, 3 + d0, 8] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_bx_update_0[d0, d1] -> [3 + d1, 3 + d0, 7] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
@@ -3167,8 +3167,8 @@ inline hw_uint<16> demosaic_byb_rd13_select(demosaic_bx_cache& demosaic_bx, int 
 }
 
 inline hw_uint<16> demosaic_byb_rd14_select(demosaic_bx_cache& demosaic_bx, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_byb_rd14 read pattern: { demosaic_byb_update_0[d0, d1] -> demosaic_bx[4 + 16d0, 2 + d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { demosaic_byb_update_0[d0, d1] -> [5 + d1, 3 + d0, 8] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_bx_update_0[d0, d1] -> [3 + d1, 3 + d0, 7] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
@@ -3178,8 +3178,8 @@ inline hw_uint<16> demosaic_byb_rd14_select(demosaic_bx_cache& demosaic_bx, int 
 }
 
 inline hw_uint<16> demosaic_byb_rd15_select(demosaic_bx_cache& demosaic_bx, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_byb_rd15 read pattern: { demosaic_byb_update_0[d0, d1] -> demosaic_bx[5 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { demosaic_byb_update_0[d0, d1] -> [5 + d1, 3 + d0, 8] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_bx_update_0[d0, d1] -> [3 + d1, 3 + d0, 7] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
@@ -3189,8 +3189,8 @@ inline hw_uint<16> demosaic_byb_rd15_select(demosaic_bx_cache& demosaic_bx, int 
 }
 
 inline hw_uint<16> demosaic_byb_rd16_select(demosaic_bx_cache& demosaic_bx, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_byb_rd16 read pattern: { demosaic_byb_update_0[d0, d1] -> demosaic_bx[5 + 16d0, 1 + d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { demosaic_byb_update_0[d0, d1] -> [5 + d1, 3 + d0, 8] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_bx_update_0[d0, d1] -> [3 + d1, 3 + d0, 7] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
@@ -3200,8 +3200,8 @@ inline hw_uint<16> demosaic_byb_rd16_select(demosaic_bx_cache& demosaic_bx, int 
 }
 
 inline hw_uint<16> demosaic_byb_rd17_select(demosaic_bx_cache& demosaic_bx, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_byb_rd17 read pattern: { demosaic_byb_update_0[d0, d1] -> demosaic_bx[5 + 16d0, 2 + d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { demosaic_byb_update_0[d0, d1] -> [5 + d1, 3 + d0, 8] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_bx_update_0[d0, d1] -> [3 + d1, 3 + d0, 7] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
@@ -3211,8 +3211,8 @@ inline hw_uint<16> demosaic_byb_rd17_select(demosaic_bx_cache& demosaic_bx, int 
 }
 
 inline hw_uint<16> demosaic_byb_rd18_select(demosaic_bx_cache& demosaic_bx, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_byb_rd18 read pattern: { demosaic_byb_update_0[d0, d1] -> demosaic_bx[6 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { demosaic_byb_update_0[d0, d1] -> [5 + d1, 3 + d0, 8] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_bx_update_0[d0, d1] -> [3 + d1, 3 + d0, 7] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
@@ -3222,8 +3222,8 @@ inline hw_uint<16> demosaic_byb_rd18_select(demosaic_bx_cache& demosaic_bx, int 
 }
 
 inline hw_uint<16> demosaic_byb_rd19_select(demosaic_bx_cache& demosaic_bx, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_byb_rd19 read pattern: { demosaic_byb_update_0[d0, d1] -> demosaic_bx[6 + 16d0, 1 + d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { demosaic_byb_update_0[d0, d1] -> [5 + d1, 3 + d0, 8] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_bx_update_0[d0, d1] -> [3 + d1, 3 + d0, 7] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
@@ -3233,8 +3233,8 @@ inline hw_uint<16> demosaic_byb_rd19_select(demosaic_bx_cache& demosaic_bx, int 
 }
 
 inline hw_uint<16> demosaic_byb_rd2_select(demosaic_bx_cache& demosaic_bx, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_byb_rd2 read pattern: { demosaic_byb_update_0[d0, d1] -> demosaic_bx[16d0, 2 + d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { demosaic_byb_update_0[d0, d1] -> [5 + d1, 3 + d0, 8] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_bx_update_0[d0, d1] -> [3 + d1, 3 + d0, 7] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
@@ -3244,8 +3244,8 @@ inline hw_uint<16> demosaic_byb_rd2_select(demosaic_bx_cache& demosaic_bx, int d
 }
 
 inline hw_uint<16> demosaic_byb_rd20_select(demosaic_bx_cache& demosaic_bx, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_byb_rd20 read pattern: { demosaic_byb_update_0[d0, d1] -> demosaic_bx[6 + 16d0, 2 + d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { demosaic_byb_update_0[d0, d1] -> [5 + d1, 3 + d0, 8] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_bx_update_0[d0, d1] -> [3 + d1, 3 + d0, 7] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
@@ -3255,8 +3255,8 @@ inline hw_uint<16> demosaic_byb_rd20_select(demosaic_bx_cache& demosaic_bx, int 
 }
 
 inline hw_uint<16> demosaic_byb_rd21_select(demosaic_bx_cache& demosaic_bx, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_byb_rd21 read pattern: { demosaic_byb_update_0[d0, d1] -> demosaic_bx[7 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { demosaic_byb_update_0[d0, d1] -> [5 + d1, 3 + d0, 8] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_bx_update_0[d0, d1] -> [3 + d1, 3 + d0, 7] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
@@ -3266,8 +3266,8 @@ inline hw_uint<16> demosaic_byb_rd21_select(demosaic_bx_cache& demosaic_bx, int 
 }
 
 inline hw_uint<16> demosaic_byb_rd22_select(demosaic_bx_cache& demosaic_bx, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_byb_rd22 read pattern: { demosaic_byb_update_0[d0, d1] -> demosaic_bx[7 + 16d0, 1 + d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { demosaic_byb_update_0[d0, d1] -> [5 + d1, 3 + d0, 8] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_bx_update_0[d0, d1] -> [3 + d1, 3 + d0, 7] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
@@ -3277,8 +3277,8 @@ inline hw_uint<16> demosaic_byb_rd22_select(demosaic_bx_cache& demosaic_bx, int 
 }
 
 inline hw_uint<16> demosaic_byb_rd23_select(demosaic_bx_cache& demosaic_bx, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_byb_rd23 read pattern: { demosaic_byb_update_0[d0, d1] -> demosaic_bx[7 + 16d0, 2 + d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { demosaic_byb_update_0[d0, d1] -> [5 + d1, 3 + d0, 8] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_bx_update_0[d0, d1] -> [3 + d1, 3 + d0, 7] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
@@ -3288,8 +3288,8 @@ inline hw_uint<16> demosaic_byb_rd23_select(demosaic_bx_cache& demosaic_bx, int 
 }
 
 inline hw_uint<16> demosaic_byb_rd24_select(demosaic_bx_cache& demosaic_bx, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_byb_rd24 read pattern: { demosaic_byb_update_0[d0, d1] -> demosaic_bx[8 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { demosaic_byb_update_0[d0, d1] -> [5 + d1, 3 + d0, 8] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_bx_update_0[d0, d1] -> [3 + d1, 3 + d0, 7] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
@@ -3299,8 +3299,8 @@ inline hw_uint<16> demosaic_byb_rd24_select(demosaic_bx_cache& demosaic_bx, int 
 }
 
 inline hw_uint<16> demosaic_byb_rd25_select(demosaic_bx_cache& demosaic_bx, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_byb_rd25 read pattern: { demosaic_byb_update_0[d0, d1] -> demosaic_bx[8 + 16d0, 1 + d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { demosaic_byb_update_0[d0, d1] -> [5 + d1, 3 + d0, 8] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_bx_update_0[d0, d1] -> [3 + d1, 3 + d0, 7] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
@@ -3310,8 +3310,8 @@ inline hw_uint<16> demosaic_byb_rd25_select(demosaic_bx_cache& demosaic_bx, int 
 }
 
 inline hw_uint<16> demosaic_byb_rd26_select(demosaic_bx_cache& demosaic_bx, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_byb_rd26 read pattern: { demosaic_byb_update_0[d0, d1] -> demosaic_bx[8 + 16d0, 2 + d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { demosaic_byb_update_0[d0, d1] -> [5 + d1, 3 + d0, 8] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_bx_update_0[d0, d1] -> [3 + d1, 3 + d0, 7] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
@@ -3321,8 +3321,8 @@ inline hw_uint<16> demosaic_byb_rd26_select(demosaic_bx_cache& demosaic_bx, int 
 }
 
 inline hw_uint<16> demosaic_byb_rd27_select(demosaic_bx_cache& demosaic_bx, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_byb_rd27 read pattern: { demosaic_byb_update_0[d0, d1] -> demosaic_bx[9 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { demosaic_byb_update_0[d0, d1] -> [5 + d1, 3 + d0, 8] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_bx_update_0[d0, d1] -> [3 + d1, 3 + d0, 7] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
@@ -3332,8 +3332,8 @@ inline hw_uint<16> demosaic_byb_rd27_select(demosaic_bx_cache& demosaic_bx, int 
 }
 
 inline hw_uint<16> demosaic_byb_rd28_select(demosaic_bx_cache& demosaic_bx, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_byb_rd28 read pattern: { demosaic_byb_update_0[d0, d1] -> demosaic_bx[9 + 16d0, 1 + d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { demosaic_byb_update_0[d0, d1] -> [5 + d1, 3 + d0, 8] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_bx_update_0[d0, d1] -> [3 + d1, 3 + d0, 7] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
@@ -3343,8 +3343,8 @@ inline hw_uint<16> demosaic_byb_rd28_select(demosaic_bx_cache& demosaic_bx, int 
 }
 
 inline hw_uint<16> demosaic_byb_rd29_select(demosaic_bx_cache& demosaic_bx, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_byb_rd29 read pattern: { demosaic_byb_update_0[d0, d1] -> demosaic_bx[9 + 16d0, 2 + d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { demosaic_byb_update_0[d0, d1] -> [5 + d1, 3 + d0, 8] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_bx_update_0[d0, d1] -> [3 + d1, 3 + d0, 7] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
@@ -3354,8 +3354,8 @@ inline hw_uint<16> demosaic_byb_rd29_select(demosaic_bx_cache& demosaic_bx, int 
 }
 
 inline hw_uint<16> demosaic_byb_rd3_select(demosaic_bx_cache& demosaic_bx, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_byb_rd3 read pattern: { demosaic_byb_update_0[d0, d1] -> demosaic_bx[1 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { demosaic_byb_update_0[d0, d1] -> [5 + d1, 3 + d0, 8] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_bx_update_0[d0, d1] -> [3 + d1, 3 + d0, 7] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
@@ -3365,8 +3365,8 @@ inline hw_uint<16> demosaic_byb_rd3_select(demosaic_bx_cache& demosaic_bx, int d
 }
 
 inline hw_uint<16> demosaic_byb_rd30_select(demosaic_bx_cache& demosaic_bx, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_byb_rd30 read pattern: { demosaic_byb_update_0[d0, d1] -> demosaic_bx[10 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { demosaic_byb_update_0[d0, d1] -> [5 + d1, 3 + d0, 8] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_bx_update_0[d0, d1] -> [3 + d1, 3 + d0, 7] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
@@ -3376,8 +3376,8 @@ inline hw_uint<16> demosaic_byb_rd30_select(demosaic_bx_cache& demosaic_bx, int 
 }
 
 inline hw_uint<16> demosaic_byb_rd31_select(demosaic_bx_cache& demosaic_bx, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_byb_rd31 read pattern: { demosaic_byb_update_0[d0, d1] -> demosaic_bx[10 + 16d0, 1 + d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { demosaic_byb_update_0[d0, d1] -> [5 + d1, 3 + d0, 8] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_bx_update_0[d0, d1] -> [3 + d1, 3 + d0, 7] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
@@ -3387,8 +3387,8 @@ inline hw_uint<16> demosaic_byb_rd31_select(demosaic_bx_cache& demosaic_bx, int 
 }
 
 inline hw_uint<16> demosaic_byb_rd32_select(demosaic_bx_cache& demosaic_bx, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_byb_rd32 read pattern: { demosaic_byb_update_0[d0, d1] -> demosaic_bx[10 + 16d0, 2 + d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { demosaic_byb_update_0[d0, d1] -> [5 + d1, 3 + d0, 8] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_bx_update_0[d0, d1] -> [3 + d1, 3 + d0, 7] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
@@ -3398,8 +3398,8 @@ inline hw_uint<16> demosaic_byb_rd32_select(demosaic_bx_cache& demosaic_bx, int 
 }
 
 inline hw_uint<16> demosaic_byb_rd33_select(demosaic_bx_cache& demosaic_bx, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_byb_rd33 read pattern: { demosaic_byb_update_0[d0, d1] -> demosaic_bx[11 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { demosaic_byb_update_0[d0, d1] -> [5 + d1, 3 + d0, 8] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_bx_update_0[d0, d1] -> [3 + d1, 3 + d0, 7] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
@@ -3409,8 +3409,8 @@ inline hw_uint<16> demosaic_byb_rd33_select(demosaic_bx_cache& demosaic_bx, int 
 }
 
 inline hw_uint<16> demosaic_byb_rd34_select(demosaic_bx_cache& demosaic_bx, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_byb_rd34 read pattern: { demosaic_byb_update_0[d0, d1] -> demosaic_bx[11 + 16d0, 1 + d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { demosaic_byb_update_0[d0, d1] -> [5 + d1, 3 + d0, 8] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_bx_update_0[d0, d1] -> [3 + d1, 3 + d0, 7] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
@@ -3420,8 +3420,8 @@ inline hw_uint<16> demosaic_byb_rd34_select(demosaic_bx_cache& demosaic_bx, int 
 }
 
 inline hw_uint<16> demosaic_byb_rd35_select(demosaic_bx_cache& demosaic_bx, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_byb_rd35 read pattern: { demosaic_byb_update_0[d0, d1] -> demosaic_bx[11 + 16d0, 2 + d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { demosaic_byb_update_0[d0, d1] -> [5 + d1, 3 + d0, 8] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_bx_update_0[d0, d1] -> [3 + d1, 3 + d0, 7] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
@@ -3431,8 +3431,8 @@ inline hw_uint<16> demosaic_byb_rd35_select(demosaic_bx_cache& demosaic_bx, int 
 }
 
 inline hw_uint<16> demosaic_byb_rd36_select(demosaic_bx_cache& demosaic_bx, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_byb_rd36 read pattern: { demosaic_byb_update_0[d0, d1] -> demosaic_bx[12 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { demosaic_byb_update_0[d0, d1] -> [5 + d1, 3 + d0, 8] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_bx_update_0[d0, d1] -> [3 + d1, 3 + d0, 7] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
@@ -3442,8 +3442,8 @@ inline hw_uint<16> demosaic_byb_rd36_select(demosaic_bx_cache& demosaic_bx, int 
 }
 
 inline hw_uint<16> demosaic_byb_rd37_select(demosaic_bx_cache& demosaic_bx, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_byb_rd37 read pattern: { demosaic_byb_update_0[d0, d1] -> demosaic_bx[12 + 16d0, 1 + d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { demosaic_byb_update_0[d0, d1] -> [5 + d1, 3 + d0, 8] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_bx_update_0[d0, d1] -> [3 + d1, 3 + d0, 7] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
@@ -3453,8 +3453,8 @@ inline hw_uint<16> demosaic_byb_rd37_select(demosaic_bx_cache& demosaic_bx, int 
 }
 
 inline hw_uint<16> demosaic_byb_rd38_select(demosaic_bx_cache& demosaic_bx, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_byb_rd38 read pattern: { demosaic_byb_update_0[d0, d1] -> demosaic_bx[12 + 16d0, 2 + d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { demosaic_byb_update_0[d0, d1] -> [5 + d1, 3 + d0, 8] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_bx_update_0[d0, d1] -> [3 + d1, 3 + d0, 7] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
@@ -3464,8 +3464,8 @@ inline hw_uint<16> demosaic_byb_rd38_select(demosaic_bx_cache& demosaic_bx, int 
 }
 
 inline hw_uint<16> demosaic_byb_rd39_select(demosaic_bx_cache& demosaic_bx, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_byb_rd39 read pattern: { demosaic_byb_update_0[d0, d1] -> demosaic_bx[13 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { demosaic_byb_update_0[d0, d1] -> [5 + d1, 3 + d0, 8] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_bx_update_0[d0, d1] -> [3 + d1, 3 + d0, 7] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
@@ -3475,8 +3475,8 @@ inline hw_uint<16> demosaic_byb_rd39_select(demosaic_bx_cache& demosaic_bx, int 
 }
 
 inline hw_uint<16> demosaic_byb_rd4_select(demosaic_bx_cache& demosaic_bx, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_byb_rd4 read pattern: { demosaic_byb_update_0[d0, d1] -> demosaic_bx[1 + 16d0, 1 + d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { demosaic_byb_update_0[d0, d1] -> [5 + d1, 3 + d0, 8] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_bx_update_0[d0, d1] -> [3 + d1, 3 + d0, 7] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
@@ -3486,8 +3486,8 @@ inline hw_uint<16> demosaic_byb_rd4_select(demosaic_bx_cache& demosaic_bx, int d
 }
 
 inline hw_uint<16> demosaic_byb_rd40_select(demosaic_bx_cache& demosaic_bx, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_byb_rd40 read pattern: { demosaic_byb_update_0[d0, d1] -> demosaic_bx[13 + 16d0, 1 + d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { demosaic_byb_update_0[d0, d1] -> [5 + d1, 3 + d0, 8] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_bx_update_0[d0, d1] -> [3 + d1, 3 + d0, 7] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
@@ -3497,8 +3497,8 @@ inline hw_uint<16> demosaic_byb_rd40_select(demosaic_bx_cache& demosaic_bx, int 
 }
 
 inline hw_uint<16> demosaic_byb_rd41_select(demosaic_bx_cache& demosaic_bx, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_byb_rd41 read pattern: { demosaic_byb_update_0[d0, d1] -> demosaic_bx[13 + 16d0, 2 + d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { demosaic_byb_update_0[d0, d1] -> [5 + d1, 3 + d0, 8] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_bx_update_0[d0, d1] -> [3 + d1, 3 + d0, 7] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
@@ -3508,8 +3508,8 @@ inline hw_uint<16> demosaic_byb_rd41_select(demosaic_bx_cache& demosaic_bx, int 
 }
 
 inline hw_uint<16> demosaic_byb_rd42_select(demosaic_bx_cache& demosaic_bx, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_byb_rd42 read pattern: { demosaic_byb_update_0[d0, d1] -> demosaic_bx[14 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { demosaic_byb_update_0[d0, d1] -> [5 + d1, 3 + d0, 8] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_bx_update_0[d0, d1] -> [3 + d1, 3 + d0, 7] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
@@ -3519,8 +3519,8 @@ inline hw_uint<16> demosaic_byb_rd42_select(demosaic_bx_cache& demosaic_bx, int 
 }
 
 inline hw_uint<16> demosaic_byb_rd43_select(demosaic_bx_cache& demosaic_bx, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_byb_rd43 read pattern: { demosaic_byb_update_0[d0, d1] -> demosaic_bx[14 + 16d0, 1 + d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { demosaic_byb_update_0[d0, d1] -> [5 + d1, 3 + d0, 8] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_bx_update_0[d0, d1] -> [3 + d1, 3 + d0, 7] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
@@ -3530,8 +3530,8 @@ inline hw_uint<16> demosaic_byb_rd43_select(demosaic_bx_cache& demosaic_bx, int 
 }
 
 inline hw_uint<16> demosaic_byb_rd44_select(demosaic_bx_cache& demosaic_bx, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_byb_rd44 read pattern: { demosaic_byb_update_0[d0, d1] -> demosaic_bx[14 + 16d0, 2 + d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { demosaic_byb_update_0[d0, d1] -> [5 + d1, 3 + d0, 8] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_bx_update_0[d0, d1] -> [3 + d1, 3 + d0, 7] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
@@ -3541,8 +3541,8 @@ inline hw_uint<16> demosaic_byb_rd44_select(demosaic_bx_cache& demosaic_bx, int 
 }
 
 inline hw_uint<16> demosaic_byb_rd45_select(demosaic_bx_cache& demosaic_bx, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_byb_rd45 read pattern: { demosaic_byb_update_0[d0, d1] -> demosaic_bx[15 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { demosaic_byb_update_0[d0, d1] -> [5 + d1, 3 + d0, 8] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_bx_update_0[d0, d1] -> [3 + d1, 3 + d0, 7] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
@@ -3552,8 +3552,8 @@ inline hw_uint<16> demosaic_byb_rd45_select(demosaic_bx_cache& demosaic_bx, int 
 }
 
 inline hw_uint<16> demosaic_byb_rd46_select(demosaic_bx_cache& demosaic_bx, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_byb_rd46 read pattern: { demosaic_byb_update_0[d0, d1] -> demosaic_bx[15 + 16d0, 1 + d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { demosaic_byb_update_0[d0, d1] -> [5 + d1, 3 + d0, 8] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_bx_update_0[d0, d1] -> [3 + d1, 3 + d0, 7] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
@@ -3563,8 +3563,8 @@ inline hw_uint<16> demosaic_byb_rd46_select(demosaic_bx_cache& demosaic_bx, int 
 }
 
 inline hw_uint<16> demosaic_byb_rd47_select(demosaic_bx_cache& demosaic_bx, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_byb_rd47 read pattern: { demosaic_byb_update_0[d0, d1] -> demosaic_bx[15 + 16d0, 2 + d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { demosaic_byb_update_0[d0, d1] -> [5 + d1, 3 + d0, 8] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_bx_update_0[d0, d1] -> [3 + d1, 3 + d0, 7] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
@@ -3574,8 +3574,8 @@ inline hw_uint<16> demosaic_byb_rd47_select(demosaic_bx_cache& demosaic_bx, int 
 }
 
 inline hw_uint<16> demosaic_byb_rd5_select(demosaic_bx_cache& demosaic_bx, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_byb_rd5 read pattern: { demosaic_byb_update_0[d0, d1] -> demosaic_bx[1 + 16d0, 2 + d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { demosaic_byb_update_0[d0, d1] -> [5 + d1, 3 + d0, 8] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_bx_update_0[d0, d1] -> [3 + d1, 3 + d0, 7] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
@@ -3585,8 +3585,8 @@ inline hw_uint<16> demosaic_byb_rd5_select(demosaic_bx_cache& demosaic_bx, int d
 }
 
 inline hw_uint<16> demosaic_byb_rd6_select(demosaic_bx_cache& demosaic_bx, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_byb_rd6 read pattern: { demosaic_byb_update_0[d0, d1] -> demosaic_bx[2 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { demosaic_byb_update_0[d0, d1] -> [5 + d1, 3 + d0, 8] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_bx_update_0[d0, d1] -> [3 + d1, 3 + d0, 7] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
@@ -3596,8 +3596,8 @@ inline hw_uint<16> demosaic_byb_rd6_select(demosaic_bx_cache& demosaic_bx, int d
 }
 
 inline hw_uint<16> demosaic_byb_rd7_select(demosaic_bx_cache& demosaic_bx, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_byb_rd7 read pattern: { demosaic_byb_update_0[d0, d1] -> demosaic_bx[2 + 16d0, 1 + d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { demosaic_byb_update_0[d0, d1] -> [5 + d1, 3 + d0, 8] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_bx_update_0[d0, d1] -> [3 + d1, 3 + d0, 7] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
@@ -3607,8 +3607,8 @@ inline hw_uint<16> demosaic_byb_rd7_select(demosaic_bx_cache& demosaic_bx, int d
 }
 
 inline hw_uint<16> demosaic_byb_rd8_select(demosaic_bx_cache& demosaic_bx, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_byb_rd8 read pattern: { demosaic_byb_update_0[d0, d1] -> demosaic_bx[2 + 16d0, 2 + d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { demosaic_byb_update_0[d0, d1] -> [5 + d1, 3 + d0, 8] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_bx_update_0[d0, d1] -> [3 + d1, 3 + d0, 7] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
@@ -3618,8 +3618,8 @@ inline hw_uint<16> demosaic_byb_rd8_select(demosaic_bx_cache& demosaic_bx, int d
 }
 
 inline hw_uint<16> demosaic_byb_rd9_select(demosaic_bx_cache& demosaic_bx, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_byb_rd9 read pattern: { demosaic_byb_update_0[d0, d1] -> demosaic_bx[3 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { demosaic_byb_update_0[d0, d1] -> [5 + d1, 3 + d0, 8] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_bx_update_0[d0, d1] -> [3 + d1, 3 + d0, 7] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
@@ -3888,16 +3888,16 @@ struct demosaic_bxb_demosaic_bxb_update_0_write0_to_demosaic_bx_rd0_cache {
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -3910,16 +3910,16 @@ struct demosaic_bxb_demosaic_bxb_update_0_write1_to_demosaic_bx_rd1_cache {
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -3932,16 +3932,16 @@ struct demosaic_bxb_demosaic_bxb_update_0_write10_to_demosaic_bx_rd10_cache {
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -3954,16 +3954,16 @@ struct demosaic_bxb_demosaic_bxb_update_0_write11_to_demosaic_bx_rd11_cache {
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -3976,16 +3976,16 @@ struct demosaic_bxb_demosaic_bxb_update_0_write12_to_demosaic_bx_rd12_cache {
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -3998,16 +3998,16 @@ struct demosaic_bxb_demosaic_bxb_update_0_write13_to_demosaic_bx_rd13_cache {
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -4020,16 +4020,16 @@ struct demosaic_bxb_demosaic_bxb_update_0_write14_to_demosaic_bx_rd14_cache {
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -4042,16 +4042,16 @@ struct demosaic_bxb_demosaic_bxb_update_0_write15_to_demosaic_bx_rd15_cache {
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -4064,16 +4064,16 @@ struct demosaic_bxb_demosaic_bxb_update_0_write2_to_demosaic_bx_rd2_cache {
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -4086,16 +4086,16 @@ struct demosaic_bxb_demosaic_bxb_update_0_write3_to_demosaic_bx_rd3_cache {
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -4108,16 +4108,16 @@ struct demosaic_bxb_demosaic_bxb_update_0_write4_to_demosaic_bx_rd4_cache {
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -4130,16 +4130,16 @@ struct demosaic_bxb_demosaic_bxb_update_0_write5_to_demosaic_bx_rd5_cache {
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -4152,16 +4152,16 @@ struct demosaic_bxb_demosaic_bxb_update_0_write6_to_demosaic_bx_rd6_cache {
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -4174,16 +4174,16 @@ struct demosaic_bxb_demosaic_bxb_update_0_write7_to_demosaic_bx_rd7_cache {
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -4196,16 +4196,16 @@ struct demosaic_bxb_demosaic_bxb_update_0_write8_to_demosaic_bx_rd8_cache {
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -4218,16 +4218,16 @@ struct demosaic_bxb_demosaic_bxb_update_0_write9_to_demosaic_bx_rd9_cache {
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -4337,8 +4337,8 @@ inline void demosaic_bxb_demosaic_bxb_update_0_write9_write(hw_uint<16>& demosai
 }
 
 inline hw_uint<16> demosaic_bx_rd0_select(demosaic_bxb_cache& demosaic_bxb, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_bx_rd0 read pattern: { demosaic_bx_update_0[d0, d1] -> demosaic_bxb[16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaic_bx_update_0[d0, d1] -> [3 + d1, 3 + d0, 7] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Write schedule: { demosaic_bxb_update_0[d0, d1] -> [3 + d1, 3 + d0, 6] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
@@ -4348,8 +4348,8 @@ inline hw_uint<16> demosaic_bx_rd0_select(demosaic_bxb_cache& demosaic_bxb, int 
 }
 
 inline hw_uint<16> demosaic_bx_rd1_select(demosaic_bxb_cache& demosaic_bxb, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_bx_rd1 read pattern: { demosaic_bx_update_0[d0, d1] -> demosaic_bxb[1 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaic_bx_update_0[d0, d1] -> [3 + d1, 3 + d0, 7] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Write schedule: { demosaic_bxb_update_0[d0, d1] -> [3 + d1, 3 + d0, 6] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
@@ -4359,8 +4359,8 @@ inline hw_uint<16> demosaic_bx_rd1_select(demosaic_bxb_cache& demosaic_bxb, int 
 }
 
 inline hw_uint<16> demosaic_bx_rd10_select(demosaic_bxb_cache& demosaic_bxb, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_bx_rd10 read pattern: { demosaic_bx_update_0[d0, d1] -> demosaic_bxb[10 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaic_bx_update_0[d0, d1] -> [3 + d1, 3 + d0, 7] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Write schedule: { demosaic_bxb_update_0[d0, d1] -> [3 + d1, 3 + d0, 6] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
@@ -4370,8 +4370,8 @@ inline hw_uint<16> demosaic_bx_rd10_select(demosaic_bxb_cache& demosaic_bxb, int
 }
 
 inline hw_uint<16> demosaic_bx_rd11_select(demosaic_bxb_cache& demosaic_bxb, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_bx_rd11 read pattern: { demosaic_bx_update_0[d0, d1] -> demosaic_bxb[11 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaic_bx_update_0[d0, d1] -> [3 + d1, 3 + d0, 7] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Write schedule: { demosaic_bxb_update_0[d0, d1] -> [3 + d1, 3 + d0, 6] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
@@ -4381,8 +4381,8 @@ inline hw_uint<16> demosaic_bx_rd11_select(demosaic_bxb_cache& demosaic_bxb, int
 }
 
 inline hw_uint<16> demosaic_bx_rd12_select(demosaic_bxb_cache& demosaic_bxb, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_bx_rd12 read pattern: { demosaic_bx_update_0[d0, d1] -> demosaic_bxb[12 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaic_bx_update_0[d0, d1] -> [3 + d1, 3 + d0, 7] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Write schedule: { demosaic_bxb_update_0[d0, d1] -> [3 + d1, 3 + d0, 6] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
@@ -4392,8 +4392,8 @@ inline hw_uint<16> demosaic_bx_rd12_select(demosaic_bxb_cache& demosaic_bxb, int
 }
 
 inline hw_uint<16> demosaic_bx_rd13_select(demosaic_bxb_cache& demosaic_bxb, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_bx_rd13 read pattern: { demosaic_bx_update_0[d0, d1] -> demosaic_bxb[13 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaic_bx_update_0[d0, d1] -> [3 + d1, 3 + d0, 7] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Write schedule: { demosaic_bxb_update_0[d0, d1] -> [3 + d1, 3 + d0, 6] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
@@ -4403,8 +4403,8 @@ inline hw_uint<16> demosaic_bx_rd13_select(demosaic_bxb_cache& demosaic_bxb, int
 }
 
 inline hw_uint<16> demosaic_bx_rd14_select(demosaic_bxb_cache& demosaic_bxb, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_bx_rd14 read pattern: { demosaic_bx_update_0[d0, d1] -> demosaic_bxb[14 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaic_bx_update_0[d0, d1] -> [3 + d1, 3 + d0, 7] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Write schedule: { demosaic_bxb_update_0[d0, d1] -> [3 + d1, 3 + d0, 6] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
@@ -4414,8 +4414,8 @@ inline hw_uint<16> demosaic_bx_rd14_select(demosaic_bxb_cache& demosaic_bxb, int
 }
 
 inline hw_uint<16> demosaic_bx_rd15_select(demosaic_bxb_cache& demosaic_bxb, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_bx_rd15 read pattern: { demosaic_bx_update_0[d0, d1] -> demosaic_bxb[15 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaic_bx_update_0[d0, d1] -> [3 + d1, 3 + d0, 7] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Write schedule: { demosaic_bxb_update_0[d0, d1] -> [3 + d1, 3 + d0, 6] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
@@ -4425,8 +4425,8 @@ inline hw_uint<16> demosaic_bx_rd15_select(demosaic_bxb_cache& demosaic_bxb, int
 }
 
 inline hw_uint<16> demosaic_bx_rd2_select(demosaic_bxb_cache& demosaic_bxb, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_bx_rd2 read pattern: { demosaic_bx_update_0[d0, d1] -> demosaic_bxb[2 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaic_bx_update_0[d0, d1] -> [3 + d1, 3 + d0, 7] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Write schedule: { demosaic_bxb_update_0[d0, d1] -> [3 + d1, 3 + d0, 6] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
@@ -4436,8 +4436,8 @@ inline hw_uint<16> demosaic_bx_rd2_select(demosaic_bxb_cache& demosaic_bxb, int 
 }
 
 inline hw_uint<16> demosaic_bx_rd3_select(demosaic_bxb_cache& demosaic_bxb, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_bx_rd3 read pattern: { demosaic_bx_update_0[d0, d1] -> demosaic_bxb[3 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaic_bx_update_0[d0, d1] -> [3 + d1, 3 + d0, 7] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Write schedule: { demosaic_bxb_update_0[d0, d1] -> [3 + d1, 3 + d0, 6] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
@@ -4447,8 +4447,8 @@ inline hw_uint<16> demosaic_bx_rd3_select(demosaic_bxb_cache& demosaic_bxb, int 
 }
 
 inline hw_uint<16> demosaic_bx_rd4_select(demosaic_bxb_cache& demosaic_bxb, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_bx_rd4 read pattern: { demosaic_bx_update_0[d0, d1] -> demosaic_bxb[4 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaic_bx_update_0[d0, d1] -> [3 + d1, 3 + d0, 7] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Write schedule: { demosaic_bxb_update_0[d0, d1] -> [3 + d1, 3 + d0, 6] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
@@ -4458,8 +4458,8 @@ inline hw_uint<16> demosaic_bx_rd4_select(demosaic_bxb_cache& demosaic_bxb, int 
 }
 
 inline hw_uint<16> demosaic_bx_rd5_select(demosaic_bxb_cache& demosaic_bxb, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_bx_rd5 read pattern: { demosaic_bx_update_0[d0, d1] -> demosaic_bxb[5 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaic_bx_update_0[d0, d1] -> [3 + d1, 3 + d0, 7] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Write schedule: { demosaic_bxb_update_0[d0, d1] -> [3 + d1, 3 + d0, 6] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
@@ -4469,8 +4469,8 @@ inline hw_uint<16> demosaic_bx_rd5_select(demosaic_bxb_cache& demosaic_bxb, int 
 }
 
 inline hw_uint<16> demosaic_bx_rd6_select(demosaic_bxb_cache& demosaic_bxb, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_bx_rd6 read pattern: { demosaic_bx_update_0[d0, d1] -> demosaic_bxb[6 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaic_bx_update_0[d0, d1] -> [3 + d1, 3 + d0, 7] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Write schedule: { demosaic_bxb_update_0[d0, d1] -> [3 + d1, 3 + d0, 6] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
@@ -4480,8 +4480,8 @@ inline hw_uint<16> demosaic_bx_rd6_select(demosaic_bxb_cache& demosaic_bxb, int 
 }
 
 inline hw_uint<16> demosaic_bx_rd7_select(demosaic_bxb_cache& demosaic_bxb, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_bx_rd7 read pattern: { demosaic_bx_update_0[d0, d1] -> demosaic_bxb[7 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaic_bx_update_0[d0, d1] -> [3 + d1, 3 + d0, 7] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Write schedule: { demosaic_bxb_update_0[d0, d1] -> [3 + d1, 3 + d0, 6] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
@@ -4491,8 +4491,8 @@ inline hw_uint<16> demosaic_bx_rd7_select(demosaic_bxb_cache& demosaic_bxb, int 
 }
 
 inline hw_uint<16> demosaic_bx_rd8_select(demosaic_bxb_cache& demosaic_bxb, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_bx_rd8 read pattern: { demosaic_bx_update_0[d0, d1] -> demosaic_bxb[8 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaic_bx_update_0[d0, d1] -> [3 + d1, 3 + d0, 7] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Write schedule: { demosaic_bxb_update_0[d0, d1] -> [3 + d1, 3 + d0, 6] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
@@ -4502,8 +4502,8 @@ inline hw_uint<16> demosaic_bx_rd8_select(demosaic_bxb_cache& demosaic_bxb, int 
 }
 
 inline hw_uint<16> demosaic_bx_rd9_select(demosaic_bxb_cache& demosaic_bxb, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_bx_rd9 read pattern: { demosaic_bx_update_0[d0, d1] -> demosaic_bxb[9 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaic_bx_update_0[d0, d1] -> [3 + d1, 3 + d0, 7] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
   // Write schedule: { demosaic_bxb_update_0[d0, d1] -> [3 + d1, 3 + d0, 6] : 0 <= d0 <= 119 and 0 <= d1 <= 1081 }
@@ -4644,16 +4644,16 @@ struct demosaic_by_demosaic_by_update_0_write0_to_demosaic_diff_rd0_cache {
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -4666,16 +4666,16 @@ struct demosaic_by_demosaic_by_update_0_write1_to_demosaic_diff_rd1_cache {
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -4688,16 +4688,16 @@ struct demosaic_by_demosaic_by_update_0_write10_to_demosaic_diff_rd10_cache {
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -4710,16 +4710,16 @@ struct demosaic_by_demosaic_by_update_0_write11_to_demosaic_diff_rd11_cache {
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -4732,16 +4732,16 @@ struct demosaic_by_demosaic_by_update_0_write12_to_demosaic_diff_rd12_cache {
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -4754,16 +4754,16 @@ struct demosaic_by_demosaic_by_update_0_write13_to_demosaic_diff_rd13_cache {
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -4776,16 +4776,16 @@ struct demosaic_by_demosaic_by_update_0_write14_to_demosaic_diff_rd14_cache {
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -4798,16 +4798,16 @@ struct demosaic_by_demosaic_by_update_0_write15_to_demosaic_diff_rd15_cache {
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -4820,16 +4820,16 @@ struct demosaic_by_demosaic_by_update_0_write2_to_demosaic_diff_rd2_cache {
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -4842,16 +4842,16 @@ struct demosaic_by_demosaic_by_update_0_write3_to_demosaic_diff_rd3_cache {
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -4864,16 +4864,16 @@ struct demosaic_by_demosaic_by_update_0_write4_to_demosaic_diff_rd4_cache {
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -4886,16 +4886,16 @@ struct demosaic_by_demosaic_by_update_0_write5_to_demosaic_diff_rd5_cache {
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -4908,16 +4908,16 @@ struct demosaic_by_demosaic_by_update_0_write6_to_demosaic_diff_rd6_cache {
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -4930,16 +4930,16 @@ struct demosaic_by_demosaic_by_update_0_write7_to_demosaic_diff_rd7_cache {
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -4952,16 +4952,16 @@ struct demosaic_by_demosaic_by_update_0_write8_to_demosaic_diff_rd8_cache {
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -4974,16 +4974,16 @@ struct demosaic_by_demosaic_by_update_0_write9_to_demosaic_diff_rd9_cache {
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -5093,8 +5093,8 @@ inline void demosaic_by_demosaic_by_update_0_write9_write(hw_uint<16>& demosaic_
 }
 
 inline hw_uint<16> demosaic_diff_rd0_select(demosaic_by_cache& demosaic_by, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_diff_rd0 read pattern: { demosaic_diff_update_0[d0, d1] -> demosaic_by[16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { demosaic_diff_update_0[d0, d1] -> [5 + d1, 3 + d0, 10] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_by_update_0[d0, d1] -> [5 + d1, 3 + d0, 9] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
@@ -5104,8 +5104,8 @@ inline hw_uint<16> demosaic_diff_rd0_select(demosaic_by_cache& demosaic_by, int 
 }
 
 inline hw_uint<16> demosaic_diff_rd1_select(demosaic_by_cache& demosaic_by, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_diff_rd1 read pattern: { demosaic_diff_update_0[d0, d1] -> demosaic_by[1 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { demosaic_diff_update_0[d0, d1] -> [5 + d1, 3 + d0, 10] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_by_update_0[d0, d1] -> [5 + d1, 3 + d0, 9] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
@@ -5115,8 +5115,8 @@ inline hw_uint<16> demosaic_diff_rd1_select(demosaic_by_cache& demosaic_by, int 
 }
 
 inline hw_uint<16> demosaic_diff_rd10_select(demosaic_by_cache& demosaic_by, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_diff_rd10 read pattern: { demosaic_diff_update_0[d0, d1] -> demosaic_by[10 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { demosaic_diff_update_0[d0, d1] -> [5 + d1, 3 + d0, 10] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_by_update_0[d0, d1] -> [5 + d1, 3 + d0, 9] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
@@ -5126,8 +5126,8 @@ inline hw_uint<16> demosaic_diff_rd10_select(demosaic_by_cache& demosaic_by, int
 }
 
 inline hw_uint<16> demosaic_diff_rd11_select(demosaic_by_cache& demosaic_by, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_diff_rd11 read pattern: { demosaic_diff_update_0[d0, d1] -> demosaic_by[11 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { demosaic_diff_update_0[d0, d1] -> [5 + d1, 3 + d0, 10] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_by_update_0[d0, d1] -> [5 + d1, 3 + d0, 9] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
@@ -5137,8 +5137,8 @@ inline hw_uint<16> demosaic_diff_rd11_select(demosaic_by_cache& demosaic_by, int
 }
 
 inline hw_uint<16> demosaic_diff_rd12_select(demosaic_by_cache& demosaic_by, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_diff_rd12 read pattern: { demosaic_diff_update_0[d0, d1] -> demosaic_by[12 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { demosaic_diff_update_0[d0, d1] -> [5 + d1, 3 + d0, 10] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_by_update_0[d0, d1] -> [5 + d1, 3 + d0, 9] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
@@ -5148,8 +5148,8 @@ inline hw_uint<16> demosaic_diff_rd12_select(demosaic_by_cache& demosaic_by, int
 }
 
 inline hw_uint<16> demosaic_diff_rd13_select(demosaic_by_cache& demosaic_by, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_diff_rd13 read pattern: { demosaic_diff_update_0[d0, d1] -> demosaic_by[13 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { demosaic_diff_update_0[d0, d1] -> [5 + d1, 3 + d0, 10] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_by_update_0[d0, d1] -> [5 + d1, 3 + d0, 9] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
@@ -5159,8 +5159,8 @@ inline hw_uint<16> demosaic_diff_rd13_select(demosaic_by_cache& demosaic_by, int
 }
 
 inline hw_uint<16> demosaic_diff_rd14_select(demosaic_by_cache& demosaic_by, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_diff_rd14 read pattern: { demosaic_diff_update_0[d0, d1] -> demosaic_by[14 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { demosaic_diff_update_0[d0, d1] -> [5 + d1, 3 + d0, 10] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_by_update_0[d0, d1] -> [5 + d1, 3 + d0, 9] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
@@ -5170,8 +5170,8 @@ inline hw_uint<16> demosaic_diff_rd14_select(demosaic_by_cache& demosaic_by, int
 }
 
 inline hw_uint<16> demosaic_diff_rd15_select(demosaic_by_cache& demosaic_by, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_diff_rd15 read pattern: { demosaic_diff_update_0[d0, d1] -> demosaic_by[15 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { demosaic_diff_update_0[d0, d1] -> [5 + d1, 3 + d0, 10] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_by_update_0[d0, d1] -> [5 + d1, 3 + d0, 9] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
@@ -5181,8 +5181,8 @@ inline hw_uint<16> demosaic_diff_rd15_select(demosaic_by_cache& demosaic_by, int
 }
 
 inline hw_uint<16> demosaic_diff_rd2_select(demosaic_by_cache& demosaic_by, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_diff_rd2 read pattern: { demosaic_diff_update_0[d0, d1] -> demosaic_by[2 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { demosaic_diff_update_0[d0, d1] -> [5 + d1, 3 + d0, 10] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_by_update_0[d0, d1] -> [5 + d1, 3 + d0, 9] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
@@ -5192,8 +5192,8 @@ inline hw_uint<16> demosaic_diff_rd2_select(demosaic_by_cache& demosaic_by, int 
 }
 
 inline hw_uint<16> demosaic_diff_rd3_select(demosaic_by_cache& demosaic_by, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_diff_rd3 read pattern: { demosaic_diff_update_0[d0, d1] -> demosaic_by[3 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { demosaic_diff_update_0[d0, d1] -> [5 + d1, 3 + d0, 10] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_by_update_0[d0, d1] -> [5 + d1, 3 + d0, 9] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
@@ -5203,8 +5203,8 @@ inline hw_uint<16> demosaic_diff_rd3_select(demosaic_by_cache& demosaic_by, int 
 }
 
 inline hw_uint<16> demosaic_diff_rd4_select(demosaic_by_cache& demosaic_by, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_diff_rd4 read pattern: { demosaic_diff_update_0[d0, d1] -> demosaic_by[4 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { demosaic_diff_update_0[d0, d1] -> [5 + d1, 3 + d0, 10] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_by_update_0[d0, d1] -> [5 + d1, 3 + d0, 9] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
@@ -5214,8 +5214,8 @@ inline hw_uint<16> demosaic_diff_rd4_select(demosaic_by_cache& demosaic_by, int 
 }
 
 inline hw_uint<16> demosaic_diff_rd5_select(demosaic_by_cache& demosaic_by, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_diff_rd5 read pattern: { demosaic_diff_update_0[d0, d1] -> demosaic_by[5 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { demosaic_diff_update_0[d0, d1] -> [5 + d1, 3 + d0, 10] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_by_update_0[d0, d1] -> [5 + d1, 3 + d0, 9] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
@@ -5225,8 +5225,8 @@ inline hw_uint<16> demosaic_diff_rd5_select(demosaic_by_cache& demosaic_by, int 
 }
 
 inline hw_uint<16> demosaic_diff_rd6_select(demosaic_by_cache& demosaic_by, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_diff_rd6 read pattern: { demosaic_diff_update_0[d0, d1] -> demosaic_by[6 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { demosaic_diff_update_0[d0, d1] -> [5 + d1, 3 + d0, 10] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_by_update_0[d0, d1] -> [5 + d1, 3 + d0, 9] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
@@ -5236,8 +5236,8 @@ inline hw_uint<16> demosaic_diff_rd6_select(demosaic_by_cache& demosaic_by, int 
 }
 
 inline hw_uint<16> demosaic_diff_rd7_select(demosaic_by_cache& demosaic_by, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_diff_rd7 read pattern: { demosaic_diff_update_0[d0, d1] -> demosaic_by[7 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { demosaic_diff_update_0[d0, d1] -> [5 + d1, 3 + d0, 10] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_by_update_0[d0, d1] -> [5 + d1, 3 + d0, 9] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
@@ -5247,8 +5247,8 @@ inline hw_uint<16> demosaic_diff_rd7_select(demosaic_by_cache& demosaic_by, int 
 }
 
 inline hw_uint<16> demosaic_diff_rd8_select(demosaic_by_cache& demosaic_by, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_diff_rd8 read pattern: { demosaic_diff_update_0[d0, d1] -> demosaic_by[8 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { demosaic_diff_update_0[d0, d1] -> [5 + d1, 3 + d0, 10] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_by_update_0[d0, d1] -> [5 + d1, 3 + d0, 9] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
@@ -5258,8 +5258,8 @@ inline hw_uint<16> demosaic_diff_rd8_select(demosaic_by_cache& demosaic_by, int 
 }
 
 inline hw_uint<16> demosaic_diff_rd9_select(demosaic_by_cache& demosaic_by, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_diff_rd9 read pattern: { demosaic_diff_update_0[d0, d1] -> demosaic_by[9 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { demosaic_diff_update_0[d0, d1] -> [5 + d1, 3 + d0, 10] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_by_update_0[d0, d1] -> [5 + d1, 3 + d0, 9] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
@@ -5400,16 +5400,16 @@ struct demosaic_byb_demosaic_byb_update_0_write0_to_demosaic_by_rd0_cache {
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -5422,16 +5422,16 @@ struct demosaic_byb_demosaic_byb_update_0_write1_to_demosaic_by_rd1_cache {
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -5444,16 +5444,16 @@ struct demosaic_byb_demosaic_byb_update_0_write10_to_demosaic_by_rd10_cache {
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -5466,16 +5466,16 @@ struct demosaic_byb_demosaic_byb_update_0_write11_to_demosaic_by_rd11_cache {
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -5488,16 +5488,16 @@ struct demosaic_byb_demosaic_byb_update_0_write12_to_demosaic_by_rd12_cache {
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -5510,16 +5510,16 @@ struct demosaic_byb_demosaic_byb_update_0_write13_to_demosaic_by_rd13_cache {
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -5532,16 +5532,16 @@ struct demosaic_byb_demosaic_byb_update_0_write14_to_demosaic_by_rd14_cache {
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -5554,16 +5554,16 @@ struct demosaic_byb_demosaic_byb_update_0_write15_to_demosaic_by_rd15_cache {
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -5576,16 +5576,16 @@ struct demosaic_byb_demosaic_byb_update_0_write2_to_demosaic_by_rd2_cache {
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -5598,16 +5598,16 @@ struct demosaic_byb_demosaic_byb_update_0_write3_to_demosaic_by_rd3_cache {
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -5620,16 +5620,16 @@ struct demosaic_byb_demosaic_byb_update_0_write4_to_demosaic_by_rd4_cache {
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -5642,16 +5642,16 @@ struct demosaic_byb_demosaic_byb_update_0_write5_to_demosaic_by_rd5_cache {
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -5664,16 +5664,16 @@ struct demosaic_byb_demosaic_byb_update_0_write6_to_demosaic_by_rd6_cache {
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -5686,16 +5686,16 @@ struct demosaic_byb_demosaic_byb_update_0_write7_to_demosaic_by_rd7_cache {
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -5708,16 +5708,16 @@ struct demosaic_byb_demosaic_byb_update_0_write8_to_demosaic_by_rd8_cache {
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -5730,16 +5730,16 @@ struct demosaic_byb_demosaic_byb_update_0_write9_to_demosaic_by_rd9_cache {
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -5849,8 +5849,8 @@ inline void demosaic_byb_demosaic_byb_update_0_write9_write(hw_uint<16>& demosai
 }
 
 inline hw_uint<16> demosaic_by_rd0_select(demosaic_byb_cache& demosaic_byb, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_by_rd0 read pattern: { demosaic_by_update_0[d0, d1] -> demosaic_byb[16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { demosaic_by_update_0[d0, d1] -> [5 + d1, 3 + d0, 9] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_byb_update_0[d0, d1] -> [5 + d1, 3 + d0, 8] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
@@ -5860,8 +5860,8 @@ inline hw_uint<16> demosaic_by_rd0_select(demosaic_byb_cache& demosaic_byb, int 
 }
 
 inline hw_uint<16> demosaic_by_rd1_select(demosaic_byb_cache& demosaic_byb, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_by_rd1 read pattern: { demosaic_by_update_0[d0, d1] -> demosaic_byb[1 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { demosaic_by_update_0[d0, d1] -> [5 + d1, 3 + d0, 9] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_byb_update_0[d0, d1] -> [5 + d1, 3 + d0, 8] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
@@ -5871,8 +5871,8 @@ inline hw_uint<16> demosaic_by_rd1_select(demosaic_byb_cache& demosaic_byb, int 
 }
 
 inline hw_uint<16> demosaic_by_rd10_select(demosaic_byb_cache& demosaic_byb, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_by_rd10 read pattern: { demosaic_by_update_0[d0, d1] -> demosaic_byb[10 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { demosaic_by_update_0[d0, d1] -> [5 + d1, 3 + d0, 9] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_byb_update_0[d0, d1] -> [5 + d1, 3 + d0, 8] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
@@ -5882,8 +5882,8 @@ inline hw_uint<16> demosaic_by_rd10_select(demosaic_byb_cache& demosaic_byb, int
 }
 
 inline hw_uint<16> demosaic_by_rd11_select(demosaic_byb_cache& demosaic_byb, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_by_rd11 read pattern: { demosaic_by_update_0[d0, d1] -> demosaic_byb[11 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { demosaic_by_update_0[d0, d1] -> [5 + d1, 3 + d0, 9] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_byb_update_0[d0, d1] -> [5 + d1, 3 + d0, 8] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
@@ -5893,8 +5893,8 @@ inline hw_uint<16> demosaic_by_rd11_select(demosaic_byb_cache& demosaic_byb, int
 }
 
 inline hw_uint<16> demosaic_by_rd12_select(demosaic_byb_cache& demosaic_byb, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_by_rd12 read pattern: { demosaic_by_update_0[d0, d1] -> demosaic_byb[12 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { demosaic_by_update_0[d0, d1] -> [5 + d1, 3 + d0, 9] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_byb_update_0[d0, d1] -> [5 + d1, 3 + d0, 8] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
@@ -5904,8 +5904,8 @@ inline hw_uint<16> demosaic_by_rd12_select(demosaic_byb_cache& demosaic_byb, int
 }
 
 inline hw_uint<16> demosaic_by_rd13_select(demosaic_byb_cache& demosaic_byb, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_by_rd13 read pattern: { demosaic_by_update_0[d0, d1] -> demosaic_byb[13 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { demosaic_by_update_0[d0, d1] -> [5 + d1, 3 + d0, 9] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_byb_update_0[d0, d1] -> [5 + d1, 3 + d0, 8] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
@@ -5915,8 +5915,8 @@ inline hw_uint<16> demosaic_by_rd13_select(demosaic_byb_cache& demosaic_byb, int
 }
 
 inline hw_uint<16> demosaic_by_rd14_select(demosaic_byb_cache& demosaic_byb, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_by_rd14 read pattern: { demosaic_by_update_0[d0, d1] -> demosaic_byb[14 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { demosaic_by_update_0[d0, d1] -> [5 + d1, 3 + d0, 9] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_byb_update_0[d0, d1] -> [5 + d1, 3 + d0, 8] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
@@ -5926,8 +5926,8 @@ inline hw_uint<16> demosaic_by_rd14_select(demosaic_byb_cache& demosaic_byb, int
 }
 
 inline hw_uint<16> demosaic_by_rd15_select(demosaic_byb_cache& demosaic_byb, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_by_rd15 read pattern: { demosaic_by_update_0[d0, d1] -> demosaic_byb[15 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { demosaic_by_update_0[d0, d1] -> [5 + d1, 3 + d0, 9] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_byb_update_0[d0, d1] -> [5 + d1, 3 + d0, 8] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
@@ -5937,8 +5937,8 @@ inline hw_uint<16> demosaic_by_rd15_select(demosaic_byb_cache& demosaic_byb, int
 }
 
 inline hw_uint<16> demosaic_by_rd2_select(demosaic_byb_cache& demosaic_byb, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_by_rd2 read pattern: { demosaic_by_update_0[d0, d1] -> demosaic_byb[2 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { demosaic_by_update_0[d0, d1] -> [5 + d1, 3 + d0, 9] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_byb_update_0[d0, d1] -> [5 + d1, 3 + d0, 8] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
@@ -5948,8 +5948,8 @@ inline hw_uint<16> demosaic_by_rd2_select(demosaic_byb_cache& demosaic_byb, int 
 }
 
 inline hw_uint<16> demosaic_by_rd3_select(demosaic_byb_cache& demosaic_byb, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_by_rd3 read pattern: { demosaic_by_update_0[d0, d1] -> demosaic_byb[3 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { demosaic_by_update_0[d0, d1] -> [5 + d1, 3 + d0, 9] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_byb_update_0[d0, d1] -> [5 + d1, 3 + d0, 8] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
@@ -5959,8 +5959,8 @@ inline hw_uint<16> demosaic_by_rd3_select(demosaic_byb_cache& demosaic_byb, int 
 }
 
 inline hw_uint<16> demosaic_by_rd4_select(demosaic_byb_cache& demosaic_byb, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_by_rd4 read pattern: { demosaic_by_update_0[d0, d1] -> demosaic_byb[4 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { demosaic_by_update_0[d0, d1] -> [5 + d1, 3 + d0, 9] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_byb_update_0[d0, d1] -> [5 + d1, 3 + d0, 8] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
@@ -5970,8 +5970,8 @@ inline hw_uint<16> demosaic_by_rd4_select(demosaic_byb_cache& demosaic_byb, int 
 }
 
 inline hw_uint<16> demosaic_by_rd5_select(demosaic_byb_cache& demosaic_byb, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_by_rd5 read pattern: { demosaic_by_update_0[d0, d1] -> demosaic_byb[5 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { demosaic_by_update_0[d0, d1] -> [5 + d1, 3 + d0, 9] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_byb_update_0[d0, d1] -> [5 + d1, 3 + d0, 8] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
@@ -5981,8 +5981,8 @@ inline hw_uint<16> demosaic_by_rd5_select(demosaic_byb_cache& demosaic_byb, int 
 }
 
 inline hw_uint<16> demosaic_by_rd6_select(demosaic_byb_cache& demosaic_byb, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_by_rd6 read pattern: { demosaic_by_update_0[d0, d1] -> demosaic_byb[6 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { demosaic_by_update_0[d0, d1] -> [5 + d1, 3 + d0, 9] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_byb_update_0[d0, d1] -> [5 + d1, 3 + d0, 8] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
@@ -5992,8 +5992,8 @@ inline hw_uint<16> demosaic_by_rd6_select(demosaic_byb_cache& demosaic_byb, int 
 }
 
 inline hw_uint<16> demosaic_by_rd7_select(demosaic_byb_cache& demosaic_byb, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_by_rd7 read pattern: { demosaic_by_update_0[d0, d1] -> demosaic_byb[7 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { demosaic_by_update_0[d0, d1] -> [5 + d1, 3 + d0, 9] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_byb_update_0[d0, d1] -> [5 + d1, 3 + d0, 8] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
@@ -6003,8 +6003,8 @@ inline hw_uint<16> demosaic_by_rd7_select(demosaic_byb_cache& demosaic_byb, int 
 }
 
 inline hw_uint<16> demosaic_by_rd8_select(demosaic_byb_cache& demosaic_byb, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_by_rd8 read pattern: { demosaic_by_update_0[d0, d1] -> demosaic_byb[8 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { demosaic_by_update_0[d0, d1] -> [5 + d1, 3 + d0, 9] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_byb_update_0[d0, d1] -> [5 + d1, 3 + d0, 8] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
@@ -6014,8 +6014,8 @@ inline hw_uint<16> demosaic_by_rd8_select(demosaic_byb_cache& demosaic_byb, int 
 }
 
 inline hw_uint<16> demosaic_by_rd9_select(demosaic_byb_cache& demosaic_byb, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_by_rd9 read pattern: { demosaic_by_update_0[d0, d1] -> demosaic_byb[9 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { demosaic_by_update_0[d0, d1] -> [5 + d1, 3 + d0, 9] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_byb_update_0[d0, d1] -> [5 + d1, 3 + d0, 8] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
@@ -6156,16 +6156,16 @@ struct demosaic_diff_demosaic_diff_update_0_write0_to_cp_noinit_ln1_16_rd0_cache
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -6178,16 +6178,16 @@ struct demosaic_diff_demosaic_diff_update_0_write1_to_cp_noinit_ln1_16_rd1_cache
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -6200,16 +6200,16 @@ struct demosaic_diff_demosaic_diff_update_0_write10_to_cp_noinit_ln1_16_rd10_cac
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -6222,16 +6222,16 @@ struct demosaic_diff_demosaic_diff_update_0_write11_to_cp_noinit_ln1_16_rd11_cac
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -6244,16 +6244,16 @@ struct demosaic_diff_demosaic_diff_update_0_write12_to_cp_noinit_ln1_16_rd12_cac
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -6266,16 +6266,16 @@ struct demosaic_diff_demosaic_diff_update_0_write13_to_cp_noinit_ln1_16_rd13_cac
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -6288,16 +6288,16 @@ struct demosaic_diff_demosaic_diff_update_0_write14_to_cp_noinit_ln1_16_rd14_cac
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -6310,16 +6310,16 @@ struct demosaic_diff_demosaic_diff_update_0_write15_to_cp_noinit_ln1_16_rd15_cac
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -6332,16 +6332,16 @@ struct demosaic_diff_demosaic_diff_update_0_write2_to_cp_noinit_ln1_16_rd2_cache
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -6354,16 +6354,16 @@ struct demosaic_diff_demosaic_diff_update_0_write3_to_cp_noinit_ln1_16_rd3_cache
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -6376,16 +6376,16 @@ struct demosaic_diff_demosaic_diff_update_0_write4_to_cp_noinit_ln1_16_rd4_cache
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -6398,16 +6398,16 @@ struct demosaic_diff_demosaic_diff_update_0_write5_to_cp_noinit_ln1_16_rd5_cache
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -6420,16 +6420,16 @@ struct demosaic_diff_demosaic_diff_update_0_write6_to_cp_noinit_ln1_16_rd6_cache
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -6442,16 +6442,16 @@ struct demosaic_diff_demosaic_diff_update_0_write7_to_cp_noinit_ln1_16_rd7_cache
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -6464,16 +6464,16 @@ struct demosaic_diff_demosaic_diff_update_0_write8_to_cp_noinit_ln1_16_rd8_cache
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -6486,16 +6486,16 @@ struct demosaic_diff_demosaic_diff_update_0_write9_to_cp_noinit_ln1_16_rd9_cache
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -6605,8 +6605,8 @@ inline void demosaic_diff_demosaic_diff_update_0_write9_write(hw_uint<16>& demos
 }
 
 inline hw_uint<16> cp_noinit_ln1_16_rd0_select(demosaic_diff_cache& demosaic_diff, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // cp_noinit_ln1_16_rd0 read pattern: { cp_noinit_ln1_16_update_0[d0, d1] -> demosaic_diff[16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { cp_noinit_ln1_16_update_0[d0, d1] -> [5 + d1, 3 + d0, 11] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_diff_update_0[d0, d1] -> [5 + d1, 3 + d0, 10] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
@@ -6616,8 +6616,8 @@ inline hw_uint<16> cp_noinit_ln1_16_rd0_select(demosaic_diff_cache& demosaic_dif
 }
 
 inline hw_uint<16> cp_noinit_ln1_16_rd1_select(demosaic_diff_cache& demosaic_diff, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // cp_noinit_ln1_16_rd1 read pattern: { cp_noinit_ln1_16_update_0[d0, d1] -> demosaic_diff[1 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { cp_noinit_ln1_16_update_0[d0, d1] -> [5 + d1, 3 + d0, 11] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_diff_update_0[d0, d1] -> [5 + d1, 3 + d0, 10] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
@@ -6627,8 +6627,8 @@ inline hw_uint<16> cp_noinit_ln1_16_rd1_select(demosaic_diff_cache& demosaic_dif
 }
 
 inline hw_uint<16> cp_noinit_ln1_16_rd10_select(demosaic_diff_cache& demosaic_diff, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // cp_noinit_ln1_16_rd10 read pattern: { cp_noinit_ln1_16_update_0[d0, d1] -> demosaic_diff[10 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { cp_noinit_ln1_16_update_0[d0, d1] -> [5 + d1, 3 + d0, 11] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_diff_update_0[d0, d1] -> [5 + d1, 3 + d0, 10] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
@@ -6638,8 +6638,8 @@ inline hw_uint<16> cp_noinit_ln1_16_rd10_select(demosaic_diff_cache& demosaic_di
 }
 
 inline hw_uint<16> cp_noinit_ln1_16_rd11_select(demosaic_diff_cache& demosaic_diff, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // cp_noinit_ln1_16_rd11 read pattern: { cp_noinit_ln1_16_update_0[d0, d1] -> demosaic_diff[11 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { cp_noinit_ln1_16_update_0[d0, d1] -> [5 + d1, 3 + d0, 11] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_diff_update_0[d0, d1] -> [5 + d1, 3 + d0, 10] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
@@ -6649,8 +6649,8 @@ inline hw_uint<16> cp_noinit_ln1_16_rd11_select(demosaic_diff_cache& demosaic_di
 }
 
 inline hw_uint<16> cp_noinit_ln1_16_rd12_select(demosaic_diff_cache& demosaic_diff, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // cp_noinit_ln1_16_rd12 read pattern: { cp_noinit_ln1_16_update_0[d0, d1] -> demosaic_diff[12 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { cp_noinit_ln1_16_update_0[d0, d1] -> [5 + d1, 3 + d0, 11] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_diff_update_0[d0, d1] -> [5 + d1, 3 + d0, 10] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
@@ -6660,8 +6660,8 @@ inline hw_uint<16> cp_noinit_ln1_16_rd12_select(demosaic_diff_cache& demosaic_di
 }
 
 inline hw_uint<16> cp_noinit_ln1_16_rd13_select(demosaic_diff_cache& demosaic_diff, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // cp_noinit_ln1_16_rd13 read pattern: { cp_noinit_ln1_16_update_0[d0, d1] -> demosaic_diff[13 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { cp_noinit_ln1_16_update_0[d0, d1] -> [5 + d1, 3 + d0, 11] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_diff_update_0[d0, d1] -> [5 + d1, 3 + d0, 10] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
@@ -6671,8 +6671,8 @@ inline hw_uint<16> cp_noinit_ln1_16_rd13_select(demosaic_diff_cache& demosaic_di
 }
 
 inline hw_uint<16> cp_noinit_ln1_16_rd14_select(demosaic_diff_cache& demosaic_diff, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // cp_noinit_ln1_16_rd14 read pattern: { cp_noinit_ln1_16_update_0[d0, d1] -> demosaic_diff[14 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { cp_noinit_ln1_16_update_0[d0, d1] -> [5 + d1, 3 + d0, 11] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_diff_update_0[d0, d1] -> [5 + d1, 3 + d0, 10] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
@@ -6682,8 +6682,8 @@ inline hw_uint<16> cp_noinit_ln1_16_rd14_select(demosaic_diff_cache& demosaic_di
 }
 
 inline hw_uint<16> cp_noinit_ln1_16_rd15_select(demosaic_diff_cache& demosaic_diff, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // cp_noinit_ln1_16_rd15 read pattern: { cp_noinit_ln1_16_update_0[d0, d1] -> demosaic_diff[15 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { cp_noinit_ln1_16_update_0[d0, d1] -> [5 + d1, 3 + d0, 11] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_diff_update_0[d0, d1] -> [5 + d1, 3 + d0, 10] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
@@ -6693,8 +6693,8 @@ inline hw_uint<16> cp_noinit_ln1_16_rd15_select(demosaic_diff_cache& demosaic_di
 }
 
 inline hw_uint<16> cp_noinit_ln1_16_rd2_select(demosaic_diff_cache& demosaic_diff, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // cp_noinit_ln1_16_rd2 read pattern: { cp_noinit_ln1_16_update_0[d0, d1] -> demosaic_diff[2 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { cp_noinit_ln1_16_update_0[d0, d1] -> [5 + d1, 3 + d0, 11] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_diff_update_0[d0, d1] -> [5 + d1, 3 + d0, 10] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
@@ -6704,8 +6704,8 @@ inline hw_uint<16> cp_noinit_ln1_16_rd2_select(demosaic_diff_cache& demosaic_dif
 }
 
 inline hw_uint<16> cp_noinit_ln1_16_rd3_select(demosaic_diff_cache& demosaic_diff, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // cp_noinit_ln1_16_rd3 read pattern: { cp_noinit_ln1_16_update_0[d0, d1] -> demosaic_diff[3 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { cp_noinit_ln1_16_update_0[d0, d1] -> [5 + d1, 3 + d0, 11] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_diff_update_0[d0, d1] -> [5 + d1, 3 + d0, 10] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
@@ -6715,8 +6715,8 @@ inline hw_uint<16> cp_noinit_ln1_16_rd3_select(demosaic_diff_cache& demosaic_dif
 }
 
 inline hw_uint<16> cp_noinit_ln1_16_rd4_select(demosaic_diff_cache& demosaic_diff, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // cp_noinit_ln1_16_rd4 read pattern: { cp_noinit_ln1_16_update_0[d0, d1] -> demosaic_diff[4 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { cp_noinit_ln1_16_update_0[d0, d1] -> [5 + d1, 3 + d0, 11] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_diff_update_0[d0, d1] -> [5 + d1, 3 + d0, 10] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
@@ -6726,8 +6726,8 @@ inline hw_uint<16> cp_noinit_ln1_16_rd4_select(demosaic_diff_cache& demosaic_dif
 }
 
 inline hw_uint<16> cp_noinit_ln1_16_rd5_select(demosaic_diff_cache& demosaic_diff, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // cp_noinit_ln1_16_rd5 read pattern: { cp_noinit_ln1_16_update_0[d0, d1] -> demosaic_diff[5 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { cp_noinit_ln1_16_update_0[d0, d1] -> [5 + d1, 3 + d0, 11] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_diff_update_0[d0, d1] -> [5 + d1, 3 + d0, 10] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
@@ -6737,8 +6737,8 @@ inline hw_uint<16> cp_noinit_ln1_16_rd5_select(demosaic_diff_cache& demosaic_dif
 }
 
 inline hw_uint<16> cp_noinit_ln1_16_rd6_select(demosaic_diff_cache& demosaic_diff, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // cp_noinit_ln1_16_rd6 read pattern: { cp_noinit_ln1_16_update_0[d0, d1] -> demosaic_diff[6 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { cp_noinit_ln1_16_update_0[d0, d1] -> [5 + d1, 3 + d0, 11] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_diff_update_0[d0, d1] -> [5 + d1, 3 + d0, 10] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
@@ -6748,8 +6748,8 @@ inline hw_uint<16> cp_noinit_ln1_16_rd6_select(demosaic_diff_cache& demosaic_dif
 }
 
 inline hw_uint<16> cp_noinit_ln1_16_rd7_select(demosaic_diff_cache& demosaic_diff, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // cp_noinit_ln1_16_rd7 read pattern: { cp_noinit_ln1_16_update_0[d0, d1] -> demosaic_diff[7 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { cp_noinit_ln1_16_update_0[d0, d1] -> [5 + d1, 3 + d0, 11] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_diff_update_0[d0, d1] -> [5 + d1, 3 + d0, 10] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
@@ -6759,8 +6759,8 @@ inline hw_uint<16> cp_noinit_ln1_16_rd7_select(demosaic_diff_cache& demosaic_dif
 }
 
 inline hw_uint<16> cp_noinit_ln1_16_rd8_select(demosaic_diff_cache& demosaic_diff, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // cp_noinit_ln1_16_rd8 read pattern: { cp_noinit_ln1_16_update_0[d0, d1] -> demosaic_diff[8 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { cp_noinit_ln1_16_update_0[d0, d1] -> [5 + d1, 3 + d0, 11] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_diff_update_0[d0, d1] -> [5 + d1, 3 + d0, 10] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
@@ -6770,8 +6770,8 @@ inline hw_uint<16> cp_noinit_ln1_16_rd8_select(demosaic_diff_cache& demosaic_dif
 }
 
 inline hw_uint<16> cp_noinit_ln1_16_rd9_select(demosaic_diff_cache& demosaic_diff, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // cp_noinit_ln1_16_rd9 read pattern: { cp_noinit_ln1_16_update_0[d0, d1] -> demosaic_diff[9 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { cp_noinit_ln1_16_update_0[d0, d1] -> [5 + d1, 3 + d0, 11] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { demosaic_diff_update_0[d0, d1] -> [5 + d1, 3 + d0, 10] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
@@ -6912,16 +6912,16 @@ struct demosaicb_demosaicb_update_0_write0_to_demosaic_rd0_cache {
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -6934,16 +6934,16 @@ struct demosaicb_demosaicb_update_0_write1_to_demosaic_rd1_cache {
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -6956,16 +6956,16 @@ struct demosaicb_demosaicb_update_0_write10_to_demosaic_rd10_cache {
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -6978,16 +6978,16 @@ struct demosaicb_demosaicb_update_0_write11_to_demosaic_rd11_cache {
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -7000,16 +7000,16 @@ struct demosaicb_demosaicb_update_0_write12_to_demosaic_rd12_cache {
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -7022,16 +7022,16 @@ struct demosaicb_demosaicb_update_0_write13_to_demosaic_rd13_cache {
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -7044,16 +7044,16 @@ struct demosaicb_demosaicb_update_0_write14_to_demosaic_rd14_cache {
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -7066,16 +7066,16 @@ struct demosaicb_demosaicb_update_0_write15_to_demosaic_rd15_cache {
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -7088,16 +7088,16 @@ struct demosaicb_demosaicb_update_0_write2_to_demosaic_rd2_cache {
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -7110,16 +7110,16 @@ struct demosaicb_demosaicb_update_0_write3_to_demosaic_rd3_cache {
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -7132,16 +7132,16 @@ struct demosaicb_demosaicb_update_0_write4_to_demosaic_rd4_cache {
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -7154,16 +7154,16 @@ struct demosaicb_demosaicb_update_0_write5_to_demosaic_rd5_cache {
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -7176,16 +7176,16 @@ struct demosaicb_demosaicb_update_0_write6_to_demosaic_rd6_cache {
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -7198,16 +7198,16 @@ struct demosaicb_demosaicb_update_0_write7_to_demosaic_rd7_cache {
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -7220,16 +7220,16 @@ struct demosaicb_demosaicb_update_0_write8_to_demosaic_rd8_cache {
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -7242,16 +7242,16 @@ struct demosaicb_demosaicb_update_0_write9_to_demosaic_rd9_cache {
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -7361,8 +7361,8 @@ inline void demosaicb_demosaicb_update_0_write9_write(hw_uint<16>& demosaicb_dem
 }
 
 inline hw_uint<16> demosaic_rd0_select(demosaicb_cache& demosaicb, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_rd0 read pattern: { demosaic_update_0[d0, d1] -> demosaicb[16d0, d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaic_update_0[d0, d1] -> [3 + d1, 2 + d0, 5] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
@@ -7372,8 +7372,8 @@ inline hw_uint<16> demosaic_rd0_select(demosaicb_cache& demosaicb, int d0, int d
 }
 
 inline hw_uint<16> demosaic_rd1_select(demosaicb_cache& demosaicb, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_rd1 read pattern: { demosaic_update_0[d0, d1] -> demosaicb[1 + 16d0, d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaic_update_0[d0, d1] -> [3 + d1, 2 + d0, 5] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
@@ -7383,8 +7383,8 @@ inline hw_uint<16> demosaic_rd1_select(demosaicb_cache& demosaicb, int d0, int d
 }
 
 inline hw_uint<16> demosaic_rd10_select(demosaicb_cache& demosaicb, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_rd10 read pattern: { demosaic_update_0[d0, d1] -> demosaicb[10 + 16d0, d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaic_update_0[d0, d1] -> [3 + d1, 2 + d0, 5] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
@@ -7394,8 +7394,8 @@ inline hw_uint<16> demosaic_rd10_select(demosaicb_cache& demosaicb, int d0, int 
 }
 
 inline hw_uint<16> demosaic_rd11_select(demosaicb_cache& demosaicb, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_rd11 read pattern: { demosaic_update_0[d0, d1] -> demosaicb[11 + 16d0, d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaic_update_0[d0, d1] -> [3 + d1, 2 + d0, 5] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
@@ -7405,8 +7405,8 @@ inline hw_uint<16> demosaic_rd11_select(demosaicb_cache& demosaicb, int d0, int 
 }
 
 inline hw_uint<16> demosaic_rd12_select(demosaicb_cache& demosaicb, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_rd12 read pattern: { demosaic_update_0[d0, d1] -> demosaicb[12 + 16d0, d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaic_update_0[d0, d1] -> [3 + d1, 2 + d0, 5] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
@@ -7416,8 +7416,8 @@ inline hw_uint<16> demosaic_rd12_select(demosaicb_cache& demosaicb, int d0, int 
 }
 
 inline hw_uint<16> demosaic_rd13_select(demosaicb_cache& demosaicb, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_rd13 read pattern: { demosaic_update_0[d0, d1] -> demosaicb[13 + 16d0, d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaic_update_0[d0, d1] -> [3 + d1, 2 + d0, 5] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
@@ -7427,8 +7427,8 @@ inline hw_uint<16> demosaic_rd13_select(demosaicb_cache& demosaicb, int d0, int 
 }
 
 inline hw_uint<16> demosaic_rd14_select(demosaicb_cache& demosaicb, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_rd14 read pattern: { demosaic_update_0[d0, d1] -> demosaicb[14 + 16d0, d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaic_update_0[d0, d1] -> [3 + d1, 2 + d0, 5] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
@@ -7438,8 +7438,8 @@ inline hw_uint<16> demosaic_rd14_select(demosaicb_cache& demosaicb, int d0, int 
 }
 
 inline hw_uint<16> demosaic_rd15_select(demosaicb_cache& demosaicb, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_rd15 read pattern: { demosaic_update_0[d0, d1] -> demosaicb[15 + 16d0, d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaic_update_0[d0, d1] -> [3 + d1, 2 + d0, 5] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
@@ -7449,8 +7449,8 @@ inline hw_uint<16> demosaic_rd15_select(demosaicb_cache& demosaicb, int d0, int 
 }
 
 inline hw_uint<16> demosaic_rd2_select(demosaicb_cache& demosaicb, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_rd2 read pattern: { demosaic_update_0[d0, d1] -> demosaicb[2 + 16d0, d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaic_update_0[d0, d1] -> [3 + d1, 2 + d0, 5] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
@@ -7460,8 +7460,8 @@ inline hw_uint<16> demosaic_rd2_select(demosaicb_cache& demosaicb, int d0, int d
 }
 
 inline hw_uint<16> demosaic_rd3_select(demosaicb_cache& demosaicb, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_rd3 read pattern: { demosaic_update_0[d0, d1] -> demosaicb[3 + 16d0, d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaic_update_0[d0, d1] -> [3 + d1, 2 + d0, 5] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
@@ -7471,8 +7471,8 @@ inline hw_uint<16> demosaic_rd3_select(demosaicb_cache& demosaicb, int d0, int d
 }
 
 inline hw_uint<16> demosaic_rd4_select(demosaicb_cache& demosaicb, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_rd4 read pattern: { demosaic_update_0[d0, d1] -> demosaicb[4 + 16d0, d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaic_update_0[d0, d1] -> [3 + d1, 2 + d0, 5] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
@@ -7482,8 +7482,8 @@ inline hw_uint<16> demosaic_rd4_select(demosaicb_cache& demosaicb, int d0, int d
 }
 
 inline hw_uint<16> demosaic_rd5_select(demosaicb_cache& demosaicb, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_rd5 read pattern: { demosaic_update_0[d0, d1] -> demosaicb[5 + 16d0, d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaic_update_0[d0, d1] -> [3 + d1, 2 + d0, 5] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
@@ -7493,8 +7493,8 @@ inline hw_uint<16> demosaic_rd5_select(demosaicb_cache& demosaicb, int d0, int d
 }
 
 inline hw_uint<16> demosaic_rd6_select(demosaicb_cache& demosaicb, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_rd6 read pattern: { demosaic_update_0[d0, d1] -> demosaicb[6 + 16d0, d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaic_update_0[d0, d1] -> [3 + d1, 2 + d0, 5] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
@@ -7504,8 +7504,8 @@ inline hw_uint<16> demosaic_rd6_select(demosaicb_cache& demosaicb, int d0, int d
 }
 
 inline hw_uint<16> demosaic_rd7_select(demosaicb_cache& demosaicb, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_rd7 read pattern: { demosaic_update_0[d0, d1] -> demosaicb[7 + 16d0, d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaic_update_0[d0, d1] -> [3 + d1, 2 + d0, 5] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
@@ -7515,8 +7515,8 @@ inline hw_uint<16> demosaic_rd7_select(demosaicb_cache& demosaicb, int d0, int d
 }
 
 inline hw_uint<16> demosaic_rd8_select(demosaicb_cache& demosaicb, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_rd8 read pattern: { demosaic_update_0[d0, d1] -> demosaicb[8 + 16d0, d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaic_update_0[d0, d1] -> [3 + d1, 2 + d0, 5] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
@@ -7526,8 +7526,8 @@ inline hw_uint<16> demosaic_rd8_select(demosaicb_cache& demosaicb, int d0, int d
 }
 
 inline hw_uint<16> demosaic_rd9_select(demosaicb_cache& demosaicb, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaic_rd9 read pattern: { demosaic_update_0[d0, d1] -> demosaicb[9 + 16d0, d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaic_update_0[d0, d1] -> [3 + d1, 2 + d0, 5] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
@@ -7685,8 +7685,8 @@ struct denoise_denoise_update_0_write0_merged_banks_9_cache {
 	}
 
 	inline hw_uint<16> peek_122() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f3.back();
 	}
 
@@ -7699,8 +7699,8 @@ struct denoise_denoise_update_0_write0_merged_banks_9_cache {
 	}
 
 	inline hw_uint<16> peek_245() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f7.back();
 	}
 
@@ -7715,32 +7715,32 @@ struct denoise_denoise_update_0_write0_merged_banks_9_cache {
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 1
     f10 = f8;
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 121
     f8 = f7.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 121 reading from capacity: 1
     f7.push(f6);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 1
     f6 = f4;
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 121
     f4 = f3.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 121 reading from capacity: 1
     f3.push(f2);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 1
     f2 = f0;
     // cap: 1
@@ -7771,8 +7771,8 @@ struct denoise_denoise_update_0_write1_merged_banks_9_cache {
 	}
 
 	inline hw_uint<16> peek_123() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f3.back();
 	}
 
@@ -7781,8 +7781,8 @@ struct denoise_denoise_update_0_write1_merged_banks_9_cache {
 	}
 
 	inline hw_uint<16> peek_246() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f5.back();
 	}
 
@@ -7793,24 +7793,24 @@ struct denoise_denoise_update_0_write1_merged_banks_9_cache {
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 122
     f6 = f5.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 122 reading from capacity: 1
     f5.push(f4);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 122
     f4 = f3.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 122 reading from capacity: 1
     f3.push(f2);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 1
     f2 = f0;
     // cap: 1
@@ -7841,8 +7841,8 @@ struct denoise_denoise_update_0_write10_merged_banks_9_cache {
 	}
 
 	inline hw_uint<16> peek_123() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f3.back();
 	}
 
@@ -7851,8 +7851,8 @@ struct denoise_denoise_update_0_write10_merged_banks_9_cache {
 	}
 
 	inline hw_uint<16> peek_246() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f5.back();
 	}
 
@@ -7863,24 +7863,24 @@ struct denoise_denoise_update_0_write10_merged_banks_9_cache {
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 122
     f6 = f5.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 122 reading from capacity: 1
     f5.push(f4);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 122
     f4 = f3.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 122 reading from capacity: 1
     f3.push(f2);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 1
     f2 = f0;
     // cap: 1
@@ -7911,8 +7911,8 @@ struct denoise_denoise_update_0_write11_merged_banks_9_cache {
 	}
 
 	inline hw_uint<16> peek_123() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f3.back();
 	}
 
@@ -7921,8 +7921,8 @@ struct denoise_denoise_update_0_write11_merged_banks_9_cache {
 	}
 
 	inline hw_uint<16> peek_246() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f5.back();
 	}
 
@@ -7933,24 +7933,24 @@ struct denoise_denoise_update_0_write11_merged_banks_9_cache {
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 122
     f6 = f5.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 122 reading from capacity: 1
     f5.push(f4);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 122
     f4 = f3.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 122 reading from capacity: 1
     f3.push(f2);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 1
     f2 = f0;
     // cap: 1
@@ -7981,8 +7981,8 @@ struct denoise_denoise_update_0_write12_merged_banks_9_cache {
 	}
 
 	inline hw_uint<16> peek_123() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f3.back();
 	}
 
@@ -7991,8 +7991,8 @@ struct denoise_denoise_update_0_write12_merged_banks_9_cache {
 	}
 
 	inline hw_uint<16> peek_246() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f5.back();
 	}
 
@@ -8003,24 +8003,24 @@ struct denoise_denoise_update_0_write12_merged_banks_9_cache {
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 122
     f6 = f5.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 122 reading from capacity: 1
     f5.push(f4);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 122
     f4 = f3.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 122 reading from capacity: 1
     f3.push(f2);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 1
     f2 = f0;
     // cap: 1
@@ -8051,8 +8051,8 @@ struct denoise_denoise_update_0_write13_merged_banks_9_cache {
 	}
 
 	inline hw_uint<16> peek_123() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f3.back();
 	}
 
@@ -8061,8 +8061,8 @@ struct denoise_denoise_update_0_write13_merged_banks_9_cache {
 	}
 
 	inline hw_uint<16> peek_246() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f5.back();
 	}
 
@@ -8073,24 +8073,24 @@ struct denoise_denoise_update_0_write13_merged_banks_9_cache {
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 122
     f6 = f5.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 122 reading from capacity: 1
     f5.push(f4);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 122
     f4 = f3.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 122 reading from capacity: 1
     f3.push(f2);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 1
     f2 = f0;
     // cap: 1
@@ -8121,8 +8121,8 @@ struct denoise_denoise_update_0_write14_merged_banks_9_cache {
 	}
 
 	inline hw_uint<16> peek_123() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f3.back();
 	}
 
@@ -8131,8 +8131,8 @@ struct denoise_denoise_update_0_write14_merged_banks_9_cache {
 	}
 
 	inline hw_uint<16> peek_246() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f5.back();
 	}
 
@@ -8143,24 +8143,24 @@ struct denoise_denoise_update_0_write14_merged_banks_9_cache {
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 122
     f6 = f5.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 122 reading from capacity: 1
     f5.push(f4);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 122
     f4 = f3.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 122 reading from capacity: 1
     f3.push(f2);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 1
     f2 = f0;
     // cap: 1
@@ -8198,8 +8198,8 @@ struct denoise_denoise_update_0_write15_merged_banks_9_cache {
 	}
 
 	inline hw_uint<16> peek_123() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f5.back();
 	}
 
@@ -8212,8 +8212,8 @@ struct denoise_denoise_update_0_write15_merged_banks_9_cache {
 	}
 
 	inline hw_uint<16> peek_246() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f9.back();
 	}
 
@@ -8228,36 +8228,36 @@ struct denoise_denoise_update_0_write15_merged_banks_9_cache {
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 1
     f12 = f10;
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 121
     f10 = f9.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 121 reading from capacity: 1
     f9.push(f8);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 1
     f8 = f6;
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 121
     f6 = f5.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 121 reading from capacity: 1
     f5.push(f4);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 1
     f4 = f2;
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 1
     f2 = f0;
     // cap: 1
@@ -8288,8 +8288,8 @@ struct denoise_denoise_update_0_write2_merged_banks_9_cache {
 	}
 
 	inline hw_uint<16> peek_123() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f3.back();
 	}
 
@@ -8298,8 +8298,8 @@ struct denoise_denoise_update_0_write2_merged_banks_9_cache {
 	}
 
 	inline hw_uint<16> peek_246() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f5.back();
 	}
 
@@ -8310,24 +8310,24 @@ struct denoise_denoise_update_0_write2_merged_banks_9_cache {
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 122
     f6 = f5.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 122 reading from capacity: 1
     f5.push(f4);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 122
     f4 = f3.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 122 reading from capacity: 1
     f3.push(f2);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 1
     f2 = f0;
     // cap: 1
@@ -8358,8 +8358,8 @@ struct denoise_denoise_update_0_write3_merged_banks_9_cache {
 	}
 
 	inline hw_uint<16> peek_123() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f3.back();
 	}
 
@@ -8368,8 +8368,8 @@ struct denoise_denoise_update_0_write3_merged_banks_9_cache {
 	}
 
 	inline hw_uint<16> peek_246() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f5.back();
 	}
 
@@ -8380,24 +8380,24 @@ struct denoise_denoise_update_0_write3_merged_banks_9_cache {
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 122
     f6 = f5.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 122 reading from capacity: 1
     f5.push(f4);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 122
     f4 = f3.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 122 reading from capacity: 1
     f3.push(f2);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 1
     f2 = f0;
     // cap: 1
@@ -8428,8 +8428,8 @@ struct denoise_denoise_update_0_write4_merged_banks_9_cache {
 	}
 
 	inline hw_uint<16> peek_123() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f3.back();
 	}
 
@@ -8438,8 +8438,8 @@ struct denoise_denoise_update_0_write4_merged_banks_9_cache {
 	}
 
 	inline hw_uint<16> peek_246() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f5.back();
 	}
 
@@ -8450,24 +8450,24 @@ struct denoise_denoise_update_0_write4_merged_banks_9_cache {
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 122
     f6 = f5.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 122 reading from capacity: 1
     f5.push(f4);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 122
     f4 = f3.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 122 reading from capacity: 1
     f3.push(f2);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 1
     f2 = f0;
     // cap: 1
@@ -8498,8 +8498,8 @@ struct denoise_denoise_update_0_write5_merged_banks_9_cache {
 	}
 
 	inline hw_uint<16> peek_123() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f3.back();
 	}
 
@@ -8508,8 +8508,8 @@ struct denoise_denoise_update_0_write5_merged_banks_9_cache {
 	}
 
 	inline hw_uint<16> peek_246() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f5.back();
 	}
 
@@ -8520,24 +8520,24 @@ struct denoise_denoise_update_0_write5_merged_banks_9_cache {
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 122
     f6 = f5.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 122 reading from capacity: 1
     f5.push(f4);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 122
     f4 = f3.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 122 reading from capacity: 1
     f3.push(f2);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 1
     f2 = f0;
     // cap: 1
@@ -8568,8 +8568,8 @@ struct denoise_denoise_update_0_write6_merged_banks_9_cache {
 	}
 
 	inline hw_uint<16> peek_123() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f3.back();
 	}
 
@@ -8578,8 +8578,8 @@ struct denoise_denoise_update_0_write6_merged_banks_9_cache {
 	}
 
 	inline hw_uint<16> peek_246() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f5.back();
 	}
 
@@ -8590,24 +8590,24 @@ struct denoise_denoise_update_0_write6_merged_banks_9_cache {
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 122
     f6 = f5.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 122 reading from capacity: 1
     f5.push(f4);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 122
     f4 = f3.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 122 reading from capacity: 1
     f3.push(f2);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 1
     f2 = f0;
     // cap: 1
@@ -8638,8 +8638,8 @@ struct denoise_denoise_update_0_write7_merged_banks_9_cache {
 	}
 
 	inline hw_uint<16> peek_123() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f3.back();
 	}
 
@@ -8648,8 +8648,8 @@ struct denoise_denoise_update_0_write7_merged_banks_9_cache {
 	}
 
 	inline hw_uint<16> peek_246() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f5.back();
 	}
 
@@ -8660,24 +8660,24 @@ struct denoise_denoise_update_0_write7_merged_banks_9_cache {
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 122
     f6 = f5.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 122 reading from capacity: 1
     f5.push(f4);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 122
     f4 = f3.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 122 reading from capacity: 1
     f3.push(f2);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 1
     f2 = f0;
     // cap: 1
@@ -8708,8 +8708,8 @@ struct denoise_denoise_update_0_write8_merged_banks_9_cache {
 	}
 
 	inline hw_uint<16> peek_123() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f3.back();
 	}
 
@@ -8718,8 +8718,8 @@ struct denoise_denoise_update_0_write8_merged_banks_9_cache {
 	}
 
 	inline hw_uint<16> peek_246() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f5.back();
 	}
 
@@ -8730,24 +8730,24 @@ struct denoise_denoise_update_0_write8_merged_banks_9_cache {
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 122
     f6 = f5.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 122 reading from capacity: 1
     f5.push(f4);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 122
     f4 = f3.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 122 reading from capacity: 1
     f3.push(f2);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 1
     f2 = f0;
     // cap: 1
@@ -8778,8 +8778,8 @@ struct denoise_denoise_update_0_write9_merged_banks_9_cache {
 	}
 
 	inline hw_uint<16> peek_123() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f3.back();
 	}
 
@@ -8788,8 +8788,8 @@ struct denoise_denoise_update_0_write9_merged_banks_9_cache {
 	}
 
 	inline hw_uint<16> peek_246() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f5.back();
 	}
 
@@ -8800,24 +8800,24 @@ struct denoise_denoise_update_0_write9_merged_banks_9_cache {
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 122
     f6 = f5.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 122 reading from capacity: 1
     f5.push(f4);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 122
     f4 = f3.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 122 reading from capacity: 1
     f3.push(f2);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 1
     f2 = f0;
     // cap: 1
@@ -9058,8 +9058,8 @@ inline void denoise_denoise_update_0_write9_write(hw_uint<16>& denoise_denoise_u
 }
 
 inline hw_uint<16> demosaicb_rd0_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd0 read pattern: { demosaicb_update_0[d0, d1] -> denoise[-1 + 16d0, -1 + d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -9069,8 +9069,8 @@ inline hw_uint<16> demosaicb_rd0_select(denoise_cache& denoise, int d0, int d1, 
 }
 
 inline hw_uint<16> demosaicb_rd1_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd1 read pattern: { demosaicb_update_0[d0, d1] -> denoise[-1 + 16d0, d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -9080,8 +9080,8 @@ inline hw_uint<16> demosaicb_rd1_select(denoise_cache& denoise, int d0, int d1, 
 }
 
 inline hw_uint<16> demosaicb_rd10_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd10 read pattern: { demosaicb_update_0[d0, d1] -> denoise[16d0, d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -9091,8 +9091,8 @@ inline hw_uint<16> demosaicb_rd10_select(denoise_cache& denoise, int d0, int d1,
 }
 
 inline hw_uint<16> demosaicb_rd100_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd100 read pattern: { demosaicb_update_0[d0, d1] -> denoise[10 + 16d0, d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -9102,8 +9102,8 @@ inline hw_uint<16> demosaicb_rd100_select(denoise_cache& denoise, int d0, int d1
 }
 
 inline hw_uint<16> demosaicb_rd101_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd101 read pattern: { demosaicb_update_0[d0, d1] -> denoise[10 + 16d0, 1 + d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -9113,8 +9113,8 @@ inline hw_uint<16> demosaicb_rd101_select(denoise_cache& denoise, int d0, int d1
 }
 
 inline hw_uint<16> demosaicb_rd102_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd102 read pattern: { demosaicb_update_0[d0, d1] -> denoise[11 + 16d0, -1 + d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -9124,8 +9124,8 @@ inline hw_uint<16> demosaicb_rd102_select(denoise_cache& denoise, int d0, int d1
 }
 
 inline hw_uint<16> demosaicb_rd103_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd103 read pattern: { demosaicb_update_0[d0, d1] -> denoise[11 + 16d0, d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -9135,8 +9135,8 @@ inline hw_uint<16> demosaicb_rd103_select(denoise_cache& denoise, int d0, int d1
 }
 
 inline hw_uint<16> demosaicb_rd104_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd104 read pattern: { demosaicb_update_0[d0, d1] -> denoise[11 + 16d0, 1 + d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -9146,8 +9146,8 @@ inline hw_uint<16> demosaicb_rd104_select(denoise_cache& denoise, int d0, int d1
 }
 
 inline hw_uint<16> demosaicb_rd105_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd105 read pattern: { demosaicb_update_0[d0, d1] -> denoise[12 + 16d0, -1 + d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -9157,8 +9157,8 @@ inline hw_uint<16> demosaicb_rd105_select(denoise_cache& denoise, int d0, int d1
 }
 
 inline hw_uint<16> demosaicb_rd106_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd106 read pattern: { demosaicb_update_0[d0, d1] -> denoise[12 + 16d0, d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -9168,8 +9168,8 @@ inline hw_uint<16> demosaicb_rd106_select(denoise_cache& denoise, int d0, int d1
 }
 
 inline hw_uint<16> demosaicb_rd107_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd107 read pattern: { demosaicb_update_0[d0, d1] -> denoise[12 + 16d0, 1 + d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -9179,8 +9179,8 @@ inline hw_uint<16> demosaicb_rd107_select(denoise_cache& denoise, int d0, int d1
 }
 
 inline hw_uint<16> demosaicb_rd108_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd108 read pattern: { demosaicb_update_0[d0, d1] -> denoise[11 + 16d0, -1 + d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -9190,8 +9190,8 @@ inline hw_uint<16> demosaicb_rd108_select(denoise_cache& denoise, int d0, int d1
 }
 
 inline hw_uint<16> demosaicb_rd109_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd109 read pattern: { demosaicb_update_0[d0, d1] -> denoise[11 + 16d0, d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -9201,8 +9201,8 @@ inline hw_uint<16> demosaicb_rd109_select(denoise_cache& denoise, int d0, int d1
 }
 
 inline hw_uint<16> demosaicb_rd11_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd11 read pattern: { demosaicb_update_0[d0, d1] -> denoise[16d0, 1 + d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -9212,8 +9212,8 @@ inline hw_uint<16> demosaicb_rd11_select(denoise_cache& denoise, int d0, int d1,
 }
 
 inline hw_uint<16> demosaicb_rd110_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd110 read pattern: { demosaicb_update_0[d0, d1] -> denoise[11 + 16d0, 1 + d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -9223,8 +9223,8 @@ inline hw_uint<16> demosaicb_rd110_select(denoise_cache& denoise, int d0, int d1
 }
 
 inline hw_uint<16> demosaicb_rd111_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd111 read pattern: { demosaicb_update_0[d0, d1] -> denoise[12 + 16d0, -1 + d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -9234,8 +9234,8 @@ inline hw_uint<16> demosaicb_rd111_select(denoise_cache& denoise, int d0, int d1
 }
 
 inline hw_uint<16> demosaicb_rd112_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd112 read pattern: { demosaicb_update_0[d0, d1] -> denoise[12 + 16d0, d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -9245,8 +9245,8 @@ inline hw_uint<16> demosaicb_rd112_select(denoise_cache& denoise, int d0, int d1
 }
 
 inline hw_uint<16> demosaicb_rd113_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd113 read pattern: { demosaicb_update_0[d0, d1] -> denoise[12 + 16d0, 1 + d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -9256,8 +9256,8 @@ inline hw_uint<16> demosaicb_rd113_select(denoise_cache& denoise, int d0, int d1
 }
 
 inline hw_uint<16> demosaicb_rd114_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd114 read pattern: { demosaicb_update_0[d0, d1] -> denoise[13 + 16d0, -1 + d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -9267,8 +9267,8 @@ inline hw_uint<16> demosaicb_rd114_select(denoise_cache& denoise, int d0, int d1
 }
 
 inline hw_uint<16> demosaicb_rd115_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd115 read pattern: { demosaicb_update_0[d0, d1] -> denoise[13 + 16d0, d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -9278,8 +9278,8 @@ inline hw_uint<16> demosaicb_rd115_select(denoise_cache& denoise, int d0, int d1
 }
 
 inline hw_uint<16> demosaicb_rd116_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd116 read pattern: { demosaicb_update_0[d0, d1] -> denoise[13 + 16d0, 1 + d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -9289,8 +9289,8 @@ inline hw_uint<16> demosaicb_rd116_select(denoise_cache& denoise, int d0, int d1
 }
 
 inline hw_uint<16> demosaicb_rd117_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd117 read pattern: { demosaicb_update_0[d0, d1] -> denoise[12 + 16d0, -1 + d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -9300,8 +9300,8 @@ inline hw_uint<16> demosaicb_rd117_select(denoise_cache& denoise, int d0, int d1
 }
 
 inline hw_uint<16> demosaicb_rd118_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd118 read pattern: { demosaicb_update_0[d0, d1] -> denoise[12 + 16d0, d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -9311,8 +9311,8 @@ inline hw_uint<16> demosaicb_rd118_select(denoise_cache& denoise, int d0, int d1
 }
 
 inline hw_uint<16> demosaicb_rd119_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd119 read pattern: { demosaicb_update_0[d0, d1] -> denoise[12 + 16d0, 1 + d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -9322,8 +9322,8 @@ inline hw_uint<16> demosaicb_rd119_select(denoise_cache& denoise, int d0, int d1
 }
 
 inline hw_uint<16> demosaicb_rd12_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd12 read pattern: { demosaicb_update_0[d0, d1] -> denoise[1 + 16d0, -1 + d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -9333,8 +9333,8 @@ inline hw_uint<16> demosaicb_rd12_select(denoise_cache& denoise, int d0, int d1,
 }
 
 inline hw_uint<16> demosaicb_rd120_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd120 read pattern: { demosaicb_update_0[d0, d1] -> denoise[13 + 16d0, -1 + d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -9344,8 +9344,8 @@ inline hw_uint<16> demosaicb_rd120_select(denoise_cache& denoise, int d0, int d1
 }
 
 inline hw_uint<16> demosaicb_rd121_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd121 read pattern: { demosaicb_update_0[d0, d1] -> denoise[13 + 16d0, d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -9355,8 +9355,8 @@ inline hw_uint<16> demosaicb_rd121_select(denoise_cache& denoise, int d0, int d1
 }
 
 inline hw_uint<16> demosaicb_rd122_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd122 read pattern: { demosaicb_update_0[d0, d1] -> denoise[13 + 16d0, 1 + d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -9366,8 +9366,8 @@ inline hw_uint<16> demosaicb_rd122_select(denoise_cache& denoise, int d0, int d1
 }
 
 inline hw_uint<16> demosaicb_rd123_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd123 read pattern: { demosaicb_update_0[d0, d1] -> denoise[14 + 16d0, -1 + d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -9377,8 +9377,8 @@ inline hw_uint<16> demosaicb_rd123_select(denoise_cache& denoise, int d0, int d1
 }
 
 inline hw_uint<16> demosaicb_rd124_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd124 read pattern: { demosaicb_update_0[d0, d1] -> denoise[14 + 16d0, d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -9388,8 +9388,8 @@ inline hw_uint<16> demosaicb_rd124_select(denoise_cache& denoise, int d0, int d1
 }
 
 inline hw_uint<16> demosaicb_rd125_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd125 read pattern: { demosaicb_update_0[d0, d1] -> denoise[14 + 16d0, 1 + d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -9399,8 +9399,8 @@ inline hw_uint<16> demosaicb_rd125_select(denoise_cache& denoise, int d0, int d1
 }
 
 inline hw_uint<16> demosaicb_rd126_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd126 read pattern: { demosaicb_update_0[d0, d1] -> denoise[13 + 16d0, -1 + d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -9410,8 +9410,8 @@ inline hw_uint<16> demosaicb_rd126_select(denoise_cache& denoise, int d0, int d1
 }
 
 inline hw_uint<16> demosaicb_rd127_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd127 read pattern: { demosaicb_update_0[d0, d1] -> denoise[13 + 16d0, d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -9421,8 +9421,8 @@ inline hw_uint<16> demosaicb_rd127_select(denoise_cache& denoise, int d0, int d1
 }
 
 inline hw_uint<16> demosaicb_rd128_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd128 read pattern: { demosaicb_update_0[d0, d1] -> denoise[13 + 16d0, 1 + d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -9432,8 +9432,8 @@ inline hw_uint<16> demosaicb_rd128_select(denoise_cache& denoise, int d0, int d1
 }
 
 inline hw_uint<16> demosaicb_rd129_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd129 read pattern: { demosaicb_update_0[d0, d1] -> denoise[14 + 16d0, -1 + d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -9443,8 +9443,8 @@ inline hw_uint<16> demosaicb_rd129_select(denoise_cache& denoise, int d0, int d1
 }
 
 inline hw_uint<16> demosaicb_rd13_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd13 read pattern: { demosaicb_update_0[d0, d1] -> denoise[1 + 16d0, d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -9454,8 +9454,8 @@ inline hw_uint<16> demosaicb_rd13_select(denoise_cache& denoise, int d0, int d1,
 }
 
 inline hw_uint<16> demosaicb_rd130_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd130 read pattern: { demosaicb_update_0[d0, d1] -> denoise[14 + 16d0, d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -9465,8 +9465,8 @@ inline hw_uint<16> demosaicb_rd130_select(denoise_cache& denoise, int d0, int d1
 }
 
 inline hw_uint<16> demosaicb_rd131_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd131 read pattern: { demosaicb_update_0[d0, d1] -> denoise[14 + 16d0, 1 + d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -9476,8 +9476,8 @@ inline hw_uint<16> demosaicb_rd131_select(denoise_cache& denoise, int d0, int d1
 }
 
 inline hw_uint<16> demosaicb_rd132_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd132 read pattern: { demosaicb_update_0[d0, d1] -> denoise[15 + 16d0, -1 + d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -9487,8 +9487,8 @@ inline hw_uint<16> demosaicb_rd132_select(denoise_cache& denoise, int d0, int d1
 }
 
 inline hw_uint<16> demosaicb_rd133_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd133 read pattern: { demosaicb_update_0[d0, d1] -> denoise[15 + 16d0, d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -9498,8 +9498,8 @@ inline hw_uint<16> demosaicb_rd133_select(denoise_cache& denoise, int d0, int d1
 }
 
 inline hw_uint<16> demosaicb_rd134_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd134 read pattern: { demosaicb_update_0[d0, d1] -> denoise[15 + 16d0, 1 + d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -9509,8 +9509,8 @@ inline hw_uint<16> demosaicb_rd134_select(denoise_cache& denoise, int d0, int d1
 }
 
 inline hw_uint<16> demosaicb_rd135_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd135 read pattern: { demosaicb_update_0[d0, d1] -> denoise[14 + 16d0, -1 + d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -9520,8 +9520,8 @@ inline hw_uint<16> demosaicb_rd135_select(denoise_cache& denoise, int d0, int d1
 }
 
 inline hw_uint<16> demosaicb_rd136_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd136 read pattern: { demosaicb_update_0[d0, d1] -> denoise[14 + 16d0, d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -9531,8 +9531,8 @@ inline hw_uint<16> demosaicb_rd136_select(denoise_cache& denoise, int d0, int d1
 }
 
 inline hw_uint<16> demosaicb_rd137_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd137 read pattern: { demosaicb_update_0[d0, d1] -> denoise[14 + 16d0, 1 + d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -9542,8 +9542,8 @@ inline hw_uint<16> demosaicb_rd137_select(denoise_cache& denoise, int d0, int d1
 }
 
 inline hw_uint<16> demosaicb_rd138_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd138 read pattern: { demosaicb_update_0[d0, d1] -> denoise[15 + 16d0, -1 + d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -9553,8 +9553,8 @@ inline hw_uint<16> demosaicb_rd138_select(denoise_cache& denoise, int d0, int d1
 }
 
 inline hw_uint<16> demosaicb_rd139_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd139 read pattern: { demosaicb_update_0[d0, d1] -> denoise[15 + 16d0, d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -9564,8 +9564,8 @@ inline hw_uint<16> demosaicb_rd139_select(denoise_cache& denoise, int d0, int d1
 }
 
 inline hw_uint<16> demosaicb_rd14_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd14 read pattern: { demosaicb_update_0[d0, d1] -> denoise[1 + 16d0, 1 + d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -9575,8 +9575,8 @@ inline hw_uint<16> demosaicb_rd14_select(denoise_cache& denoise, int d0, int d1,
 }
 
 inline hw_uint<16> demosaicb_rd140_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd140 read pattern: { demosaicb_update_0[d0, d1] -> denoise[15 + 16d0, 1 + d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -9586,8 +9586,8 @@ inline hw_uint<16> demosaicb_rd140_select(denoise_cache& denoise, int d0, int d1
 }
 
 inline hw_uint<16> demosaicb_rd141_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd141 read pattern: { demosaicb_update_0[d0, d1] -> denoise[16 + 16d0, -1 + d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -9597,8 +9597,8 @@ inline hw_uint<16> demosaicb_rd141_select(denoise_cache& denoise, int d0, int d1
 }
 
 inline hw_uint<16> demosaicb_rd142_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd142 read pattern: { demosaicb_update_0[d0, d1] -> denoise[16 + 16d0, d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -9608,8 +9608,8 @@ inline hw_uint<16> demosaicb_rd142_select(denoise_cache& denoise, int d0, int d1
 }
 
 inline hw_uint<16> demosaicb_rd143_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd143 read pattern: { demosaicb_update_0[d0, d1] -> denoise[16 + 16d0, 1 + d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -9619,8 +9619,8 @@ inline hw_uint<16> demosaicb_rd143_select(denoise_cache& denoise, int d0, int d1
 }
 
 inline hw_uint<16> demosaicb_rd15_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd15 read pattern: { demosaicb_update_0[d0, d1] -> denoise[2 + 16d0, -1 + d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -9630,8 +9630,8 @@ inline hw_uint<16> demosaicb_rd15_select(denoise_cache& denoise, int d0, int d1,
 }
 
 inline hw_uint<16> demosaicb_rd16_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd16 read pattern: { demosaicb_update_0[d0, d1] -> denoise[2 + 16d0, d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -9641,8 +9641,8 @@ inline hw_uint<16> demosaicb_rd16_select(denoise_cache& denoise, int d0, int d1,
 }
 
 inline hw_uint<16> demosaicb_rd17_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd17 read pattern: { demosaicb_update_0[d0, d1] -> denoise[2 + 16d0, 1 + d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -9652,8 +9652,8 @@ inline hw_uint<16> demosaicb_rd17_select(denoise_cache& denoise, int d0, int d1,
 }
 
 inline hw_uint<16> demosaicb_rd18_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd18 read pattern: { demosaicb_update_0[d0, d1] -> denoise[1 + 16d0, -1 + d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -9663,8 +9663,8 @@ inline hw_uint<16> demosaicb_rd18_select(denoise_cache& denoise, int d0, int d1,
 }
 
 inline hw_uint<16> demosaicb_rd19_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd19 read pattern: { demosaicb_update_0[d0, d1] -> denoise[1 + 16d0, d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -9674,8 +9674,8 @@ inline hw_uint<16> demosaicb_rd19_select(denoise_cache& denoise, int d0, int d1,
 }
 
 inline hw_uint<16> demosaicb_rd2_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd2 read pattern: { demosaicb_update_0[d0, d1] -> denoise[-1 + 16d0, 1 + d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -9685,8 +9685,8 @@ inline hw_uint<16> demosaicb_rd2_select(denoise_cache& denoise, int d0, int d1, 
 }
 
 inline hw_uint<16> demosaicb_rd20_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd20 read pattern: { demosaicb_update_0[d0, d1] -> denoise[1 + 16d0, 1 + d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -9696,8 +9696,8 @@ inline hw_uint<16> demosaicb_rd20_select(denoise_cache& denoise, int d0, int d1,
 }
 
 inline hw_uint<16> demosaicb_rd21_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd21 read pattern: { demosaicb_update_0[d0, d1] -> denoise[2 + 16d0, -1 + d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -9707,8 +9707,8 @@ inline hw_uint<16> demosaicb_rd21_select(denoise_cache& denoise, int d0, int d1,
 }
 
 inline hw_uint<16> demosaicb_rd22_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd22 read pattern: { demosaicb_update_0[d0, d1] -> denoise[2 + 16d0, d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -9718,8 +9718,8 @@ inline hw_uint<16> demosaicb_rd22_select(denoise_cache& denoise, int d0, int d1,
 }
 
 inline hw_uint<16> demosaicb_rd23_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd23 read pattern: { demosaicb_update_0[d0, d1] -> denoise[2 + 16d0, 1 + d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -9729,8 +9729,8 @@ inline hw_uint<16> demosaicb_rd23_select(denoise_cache& denoise, int d0, int d1,
 }
 
 inline hw_uint<16> demosaicb_rd24_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd24 read pattern: { demosaicb_update_0[d0, d1] -> denoise[3 + 16d0, -1 + d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -9740,8 +9740,8 @@ inline hw_uint<16> demosaicb_rd24_select(denoise_cache& denoise, int d0, int d1,
 }
 
 inline hw_uint<16> demosaicb_rd25_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd25 read pattern: { demosaicb_update_0[d0, d1] -> denoise[3 + 16d0, d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -9751,8 +9751,8 @@ inline hw_uint<16> demosaicb_rd25_select(denoise_cache& denoise, int d0, int d1,
 }
 
 inline hw_uint<16> demosaicb_rd26_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd26 read pattern: { demosaicb_update_0[d0, d1] -> denoise[3 + 16d0, 1 + d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -9762,8 +9762,8 @@ inline hw_uint<16> demosaicb_rd26_select(denoise_cache& denoise, int d0, int d1,
 }
 
 inline hw_uint<16> demosaicb_rd27_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd27 read pattern: { demosaicb_update_0[d0, d1] -> denoise[2 + 16d0, -1 + d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -9773,8 +9773,8 @@ inline hw_uint<16> demosaicb_rd27_select(denoise_cache& denoise, int d0, int d1,
 }
 
 inline hw_uint<16> demosaicb_rd28_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd28 read pattern: { demosaicb_update_0[d0, d1] -> denoise[2 + 16d0, d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -9784,8 +9784,8 @@ inline hw_uint<16> demosaicb_rd28_select(denoise_cache& denoise, int d0, int d1,
 }
 
 inline hw_uint<16> demosaicb_rd29_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd29 read pattern: { demosaicb_update_0[d0, d1] -> denoise[2 + 16d0, 1 + d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -9795,8 +9795,8 @@ inline hw_uint<16> demosaicb_rd29_select(denoise_cache& denoise, int d0, int d1,
 }
 
 inline hw_uint<16> demosaicb_rd3_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd3 read pattern: { demosaicb_update_0[d0, d1] -> denoise[16d0, -1 + d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -9806,8 +9806,8 @@ inline hw_uint<16> demosaicb_rd3_select(denoise_cache& denoise, int d0, int d1, 
 }
 
 inline hw_uint<16> demosaicb_rd30_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd30 read pattern: { demosaicb_update_0[d0, d1] -> denoise[3 + 16d0, -1 + d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -9817,8 +9817,8 @@ inline hw_uint<16> demosaicb_rd30_select(denoise_cache& denoise, int d0, int d1,
 }
 
 inline hw_uint<16> demosaicb_rd31_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd31 read pattern: { demosaicb_update_0[d0, d1] -> denoise[3 + 16d0, d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -9828,8 +9828,8 @@ inline hw_uint<16> demosaicb_rd31_select(denoise_cache& denoise, int d0, int d1,
 }
 
 inline hw_uint<16> demosaicb_rd32_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd32 read pattern: { demosaicb_update_0[d0, d1] -> denoise[3 + 16d0, 1 + d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -9839,8 +9839,8 @@ inline hw_uint<16> demosaicb_rd32_select(denoise_cache& denoise, int d0, int d1,
 }
 
 inline hw_uint<16> demosaicb_rd33_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd33 read pattern: { demosaicb_update_0[d0, d1] -> denoise[4 + 16d0, -1 + d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -9850,8 +9850,8 @@ inline hw_uint<16> demosaicb_rd33_select(denoise_cache& denoise, int d0, int d1,
 }
 
 inline hw_uint<16> demosaicb_rd34_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd34 read pattern: { demosaicb_update_0[d0, d1] -> denoise[4 + 16d0, d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -9861,8 +9861,8 @@ inline hw_uint<16> demosaicb_rd34_select(denoise_cache& denoise, int d0, int d1,
 }
 
 inline hw_uint<16> demosaicb_rd35_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd35 read pattern: { demosaicb_update_0[d0, d1] -> denoise[4 + 16d0, 1 + d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -9872,8 +9872,8 @@ inline hw_uint<16> demosaicb_rd35_select(denoise_cache& denoise, int d0, int d1,
 }
 
 inline hw_uint<16> demosaicb_rd36_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd36 read pattern: { demosaicb_update_0[d0, d1] -> denoise[3 + 16d0, -1 + d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -9883,8 +9883,8 @@ inline hw_uint<16> demosaicb_rd36_select(denoise_cache& denoise, int d0, int d1,
 }
 
 inline hw_uint<16> demosaicb_rd37_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd37 read pattern: { demosaicb_update_0[d0, d1] -> denoise[3 + 16d0, d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -9894,8 +9894,8 @@ inline hw_uint<16> demosaicb_rd37_select(denoise_cache& denoise, int d0, int d1,
 }
 
 inline hw_uint<16> demosaicb_rd38_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd38 read pattern: { demosaicb_update_0[d0, d1] -> denoise[3 + 16d0, 1 + d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -9905,8 +9905,8 @@ inline hw_uint<16> demosaicb_rd38_select(denoise_cache& denoise, int d0, int d1,
 }
 
 inline hw_uint<16> demosaicb_rd39_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd39 read pattern: { demosaicb_update_0[d0, d1] -> denoise[4 + 16d0, -1 + d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -9916,8 +9916,8 @@ inline hw_uint<16> demosaicb_rd39_select(denoise_cache& denoise, int d0, int d1,
 }
 
 inline hw_uint<16> demosaicb_rd4_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd4 read pattern: { demosaicb_update_0[d0, d1] -> denoise[16d0, d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -9927,8 +9927,8 @@ inline hw_uint<16> demosaicb_rd4_select(denoise_cache& denoise, int d0, int d1, 
 }
 
 inline hw_uint<16> demosaicb_rd40_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd40 read pattern: { demosaicb_update_0[d0, d1] -> denoise[4 + 16d0, d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -9938,8 +9938,8 @@ inline hw_uint<16> demosaicb_rd40_select(denoise_cache& denoise, int d0, int d1,
 }
 
 inline hw_uint<16> demosaicb_rd41_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd41 read pattern: { demosaicb_update_0[d0, d1] -> denoise[4 + 16d0, 1 + d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -9949,8 +9949,8 @@ inline hw_uint<16> demosaicb_rd41_select(denoise_cache& denoise, int d0, int d1,
 }
 
 inline hw_uint<16> demosaicb_rd42_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd42 read pattern: { demosaicb_update_0[d0, d1] -> denoise[5 + 16d0, -1 + d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -9960,8 +9960,8 @@ inline hw_uint<16> demosaicb_rd42_select(denoise_cache& denoise, int d0, int d1,
 }
 
 inline hw_uint<16> demosaicb_rd43_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd43 read pattern: { demosaicb_update_0[d0, d1] -> denoise[5 + 16d0, d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -9971,8 +9971,8 @@ inline hw_uint<16> demosaicb_rd43_select(denoise_cache& denoise, int d0, int d1,
 }
 
 inline hw_uint<16> demosaicb_rd44_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd44 read pattern: { demosaicb_update_0[d0, d1] -> denoise[5 + 16d0, 1 + d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -9982,8 +9982,8 @@ inline hw_uint<16> demosaicb_rd44_select(denoise_cache& denoise, int d0, int d1,
 }
 
 inline hw_uint<16> demosaicb_rd45_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd45 read pattern: { demosaicb_update_0[d0, d1] -> denoise[4 + 16d0, -1 + d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -9993,8 +9993,8 @@ inline hw_uint<16> demosaicb_rd45_select(denoise_cache& denoise, int d0, int d1,
 }
 
 inline hw_uint<16> demosaicb_rd46_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd46 read pattern: { demosaicb_update_0[d0, d1] -> denoise[4 + 16d0, d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -10004,8 +10004,8 @@ inline hw_uint<16> demosaicb_rd46_select(denoise_cache& denoise, int d0, int d1,
 }
 
 inline hw_uint<16> demosaicb_rd47_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd47 read pattern: { demosaicb_update_0[d0, d1] -> denoise[4 + 16d0, 1 + d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -10015,8 +10015,8 @@ inline hw_uint<16> demosaicb_rd47_select(denoise_cache& denoise, int d0, int d1,
 }
 
 inline hw_uint<16> demosaicb_rd48_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd48 read pattern: { demosaicb_update_0[d0, d1] -> denoise[5 + 16d0, -1 + d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -10026,8 +10026,8 @@ inline hw_uint<16> demosaicb_rd48_select(denoise_cache& denoise, int d0, int d1,
 }
 
 inline hw_uint<16> demosaicb_rd49_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd49 read pattern: { demosaicb_update_0[d0, d1] -> denoise[5 + 16d0, d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -10037,8 +10037,8 @@ inline hw_uint<16> demosaicb_rd49_select(denoise_cache& denoise, int d0, int d1,
 }
 
 inline hw_uint<16> demosaicb_rd5_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd5 read pattern: { demosaicb_update_0[d0, d1] -> denoise[16d0, 1 + d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -10048,8 +10048,8 @@ inline hw_uint<16> demosaicb_rd5_select(denoise_cache& denoise, int d0, int d1, 
 }
 
 inline hw_uint<16> demosaicb_rd50_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd50 read pattern: { demosaicb_update_0[d0, d1] -> denoise[5 + 16d0, 1 + d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -10059,8 +10059,8 @@ inline hw_uint<16> demosaicb_rd50_select(denoise_cache& denoise, int d0, int d1,
 }
 
 inline hw_uint<16> demosaicb_rd51_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd51 read pattern: { demosaicb_update_0[d0, d1] -> denoise[6 + 16d0, -1 + d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -10070,8 +10070,8 @@ inline hw_uint<16> demosaicb_rd51_select(denoise_cache& denoise, int d0, int d1,
 }
 
 inline hw_uint<16> demosaicb_rd52_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd52 read pattern: { demosaicb_update_0[d0, d1] -> denoise[6 + 16d0, d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -10081,8 +10081,8 @@ inline hw_uint<16> demosaicb_rd52_select(denoise_cache& denoise, int d0, int d1,
 }
 
 inline hw_uint<16> demosaicb_rd53_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd53 read pattern: { demosaicb_update_0[d0, d1] -> denoise[6 + 16d0, 1 + d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -10092,8 +10092,8 @@ inline hw_uint<16> demosaicb_rd53_select(denoise_cache& denoise, int d0, int d1,
 }
 
 inline hw_uint<16> demosaicb_rd54_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd54 read pattern: { demosaicb_update_0[d0, d1] -> denoise[5 + 16d0, -1 + d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -10103,8 +10103,8 @@ inline hw_uint<16> demosaicb_rd54_select(denoise_cache& denoise, int d0, int d1,
 }
 
 inline hw_uint<16> demosaicb_rd55_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd55 read pattern: { demosaicb_update_0[d0, d1] -> denoise[5 + 16d0, d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -10114,8 +10114,8 @@ inline hw_uint<16> demosaicb_rd55_select(denoise_cache& denoise, int d0, int d1,
 }
 
 inline hw_uint<16> demosaicb_rd56_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd56 read pattern: { demosaicb_update_0[d0, d1] -> denoise[5 + 16d0, 1 + d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -10125,8 +10125,8 @@ inline hw_uint<16> demosaicb_rd56_select(denoise_cache& denoise, int d0, int d1,
 }
 
 inline hw_uint<16> demosaicb_rd57_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd57 read pattern: { demosaicb_update_0[d0, d1] -> denoise[6 + 16d0, -1 + d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -10136,8 +10136,8 @@ inline hw_uint<16> demosaicb_rd57_select(denoise_cache& denoise, int d0, int d1,
 }
 
 inline hw_uint<16> demosaicb_rd58_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd58 read pattern: { demosaicb_update_0[d0, d1] -> denoise[6 + 16d0, d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -10147,8 +10147,8 @@ inline hw_uint<16> demosaicb_rd58_select(denoise_cache& denoise, int d0, int d1,
 }
 
 inline hw_uint<16> demosaicb_rd59_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd59 read pattern: { demosaicb_update_0[d0, d1] -> denoise[6 + 16d0, 1 + d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -10158,8 +10158,8 @@ inline hw_uint<16> demosaicb_rd59_select(denoise_cache& denoise, int d0, int d1,
 }
 
 inline hw_uint<16> demosaicb_rd6_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd6 read pattern: { demosaicb_update_0[d0, d1] -> denoise[1 + 16d0, -1 + d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -10169,8 +10169,8 @@ inline hw_uint<16> demosaicb_rd6_select(denoise_cache& denoise, int d0, int d1, 
 }
 
 inline hw_uint<16> demosaicb_rd60_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd60 read pattern: { demosaicb_update_0[d0, d1] -> denoise[7 + 16d0, -1 + d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -10180,8 +10180,8 @@ inline hw_uint<16> demosaicb_rd60_select(denoise_cache& denoise, int d0, int d1,
 }
 
 inline hw_uint<16> demosaicb_rd61_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd61 read pattern: { demosaicb_update_0[d0, d1] -> denoise[7 + 16d0, d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -10191,8 +10191,8 @@ inline hw_uint<16> demosaicb_rd61_select(denoise_cache& denoise, int d0, int d1,
 }
 
 inline hw_uint<16> demosaicb_rd62_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd62 read pattern: { demosaicb_update_0[d0, d1] -> denoise[7 + 16d0, 1 + d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -10202,8 +10202,8 @@ inline hw_uint<16> demosaicb_rd62_select(denoise_cache& denoise, int d0, int d1,
 }
 
 inline hw_uint<16> demosaicb_rd63_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd63 read pattern: { demosaicb_update_0[d0, d1] -> denoise[6 + 16d0, -1 + d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -10213,8 +10213,8 @@ inline hw_uint<16> demosaicb_rd63_select(denoise_cache& denoise, int d0, int d1,
 }
 
 inline hw_uint<16> demosaicb_rd64_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd64 read pattern: { demosaicb_update_0[d0, d1] -> denoise[6 + 16d0, d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -10224,8 +10224,8 @@ inline hw_uint<16> demosaicb_rd64_select(denoise_cache& denoise, int d0, int d1,
 }
 
 inline hw_uint<16> demosaicb_rd65_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd65 read pattern: { demosaicb_update_0[d0, d1] -> denoise[6 + 16d0, 1 + d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -10235,8 +10235,8 @@ inline hw_uint<16> demosaicb_rd65_select(denoise_cache& denoise, int d0, int d1,
 }
 
 inline hw_uint<16> demosaicb_rd66_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd66 read pattern: { demosaicb_update_0[d0, d1] -> denoise[7 + 16d0, -1 + d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -10246,8 +10246,8 @@ inline hw_uint<16> demosaicb_rd66_select(denoise_cache& denoise, int d0, int d1,
 }
 
 inline hw_uint<16> demosaicb_rd67_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd67 read pattern: { demosaicb_update_0[d0, d1] -> denoise[7 + 16d0, d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -10257,8 +10257,8 @@ inline hw_uint<16> demosaicb_rd67_select(denoise_cache& denoise, int d0, int d1,
 }
 
 inline hw_uint<16> demosaicb_rd68_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd68 read pattern: { demosaicb_update_0[d0, d1] -> denoise[7 + 16d0, 1 + d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -10268,8 +10268,8 @@ inline hw_uint<16> demosaicb_rd68_select(denoise_cache& denoise, int d0, int d1,
 }
 
 inline hw_uint<16> demosaicb_rd69_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd69 read pattern: { demosaicb_update_0[d0, d1] -> denoise[8 + 16d0, -1 + d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -10279,8 +10279,8 @@ inline hw_uint<16> demosaicb_rd69_select(denoise_cache& denoise, int d0, int d1,
 }
 
 inline hw_uint<16> demosaicb_rd7_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd7 read pattern: { demosaicb_update_0[d0, d1] -> denoise[1 + 16d0, d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -10290,8 +10290,8 @@ inline hw_uint<16> demosaicb_rd7_select(denoise_cache& denoise, int d0, int d1, 
 }
 
 inline hw_uint<16> demosaicb_rd70_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd70 read pattern: { demosaicb_update_0[d0, d1] -> denoise[8 + 16d0, d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -10301,8 +10301,8 @@ inline hw_uint<16> demosaicb_rd70_select(denoise_cache& denoise, int d0, int d1,
 }
 
 inline hw_uint<16> demosaicb_rd71_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd71 read pattern: { demosaicb_update_0[d0, d1] -> denoise[8 + 16d0, 1 + d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -10312,8 +10312,8 @@ inline hw_uint<16> demosaicb_rd71_select(denoise_cache& denoise, int d0, int d1,
 }
 
 inline hw_uint<16> demosaicb_rd72_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd72 read pattern: { demosaicb_update_0[d0, d1] -> denoise[7 + 16d0, -1 + d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -10323,8 +10323,8 @@ inline hw_uint<16> demosaicb_rd72_select(denoise_cache& denoise, int d0, int d1,
 }
 
 inline hw_uint<16> demosaicb_rd73_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd73 read pattern: { demosaicb_update_0[d0, d1] -> denoise[7 + 16d0, d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -10334,8 +10334,8 @@ inline hw_uint<16> demosaicb_rd73_select(denoise_cache& denoise, int d0, int d1,
 }
 
 inline hw_uint<16> demosaicb_rd74_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd74 read pattern: { demosaicb_update_0[d0, d1] -> denoise[7 + 16d0, 1 + d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -10345,8 +10345,8 @@ inline hw_uint<16> demosaicb_rd74_select(denoise_cache& denoise, int d0, int d1,
 }
 
 inline hw_uint<16> demosaicb_rd75_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd75 read pattern: { demosaicb_update_0[d0, d1] -> denoise[8 + 16d0, -1 + d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -10356,8 +10356,8 @@ inline hw_uint<16> demosaicb_rd75_select(denoise_cache& denoise, int d0, int d1,
 }
 
 inline hw_uint<16> demosaicb_rd76_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd76 read pattern: { demosaicb_update_0[d0, d1] -> denoise[8 + 16d0, d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -10367,8 +10367,8 @@ inline hw_uint<16> demosaicb_rd76_select(denoise_cache& denoise, int d0, int d1,
 }
 
 inline hw_uint<16> demosaicb_rd77_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd77 read pattern: { demosaicb_update_0[d0, d1] -> denoise[8 + 16d0, 1 + d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -10378,8 +10378,8 @@ inline hw_uint<16> demosaicb_rd77_select(denoise_cache& denoise, int d0, int d1,
 }
 
 inline hw_uint<16> demosaicb_rd78_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd78 read pattern: { demosaicb_update_0[d0, d1] -> denoise[9 + 16d0, -1 + d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -10389,8 +10389,8 @@ inline hw_uint<16> demosaicb_rd78_select(denoise_cache& denoise, int d0, int d1,
 }
 
 inline hw_uint<16> demosaicb_rd79_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd79 read pattern: { demosaicb_update_0[d0, d1] -> denoise[9 + 16d0, d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -10400,8 +10400,8 @@ inline hw_uint<16> demosaicb_rd79_select(denoise_cache& denoise, int d0, int d1,
 }
 
 inline hw_uint<16> demosaicb_rd8_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd8 read pattern: { demosaicb_update_0[d0, d1] -> denoise[1 + 16d0, 1 + d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -10411,8 +10411,8 @@ inline hw_uint<16> demosaicb_rd8_select(denoise_cache& denoise, int d0, int d1, 
 }
 
 inline hw_uint<16> demosaicb_rd80_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd80 read pattern: { demosaicb_update_0[d0, d1] -> denoise[9 + 16d0, 1 + d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -10422,8 +10422,8 @@ inline hw_uint<16> demosaicb_rd80_select(denoise_cache& denoise, int d0, int d1,
 }
 
 inline hw_uint<16> demosaicb_rd81_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd81 read pattern: { demosaicb_update_0[d0, d1] -> denoise[8 + 16d0, -1 + d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -10433,8 +10433,8 @@ inline hw_uint<16> demosaicb_rd81_select(denoise_cache& denoise, int d0, int d1,
 }
 
 inline hw_uint<16> demosaicb_rd82_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd82 read pattern: { demosaicb_update_0[d0, d1] -> denoise[8 + 16d0, d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -10444,8 +10444,8 @@ inline hw_uint<16> demosaicb_rd82_select(denoise_cache& denoise, int d0, int d1,
 }
 
 inline hw_uint<16> demosaicb_rd83_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd83 read pattern: { demosaicb_update_0[d0, d1] -> denoise[8 + 16d0, 1 + d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -10455,8 +10455,8 @@ inline hw_uint<16> demosaicb_rd83_select(denoise_cache& denoise, int d0, int d1,
 }
 
 inline hw_uint<16> demosaicb_rd84_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd84 read pattern: { demosaicb_update_0[d0, d1] -> denoise[9 + 16d0, -1 + d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -10466,8 +10466,8 @@ inline hw_uint<16> demosaicb_rd84_select(denoise_cache& denoise, int d0, int d1,
 }
 
 inline hw_uint<16> demosaicb_rd85_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd85 read pattern: { demosaicb_update_0[d0, d1] -> denoise[9 + 16d0, d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -10477,8 +10477,8 @@ inline hw_uint<16> demosaicb_rd85_select(denoise_cache& denoise, int d0, int d1,
 }
 
 inline hw_uint<16> demosaicb_rd86_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd86 read pattern: { demosaicb_update_0[d0, d1] -> denoise[9 + 16d0, 1 + d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -10488,8 +10488,8 @@ inline hw_uint<16> demosaicb_rd86_select(denoise_cache& denoise, int d0, int d1,
 }
 
 inline hw_uint<16> demosaicb_rd87_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd87 read pattern: { demosaicb_update_0[d0, d1] -> denoise[10 + 16d0, -1 + d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -10499,8 +10499,8 @@ inline hw_uint<16> demosaicb_rd87_select(denoise_cache& denoise, int d0, int d1,
 }
 
 inline hw_uint<16> demosaicb_rd88_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd88 read pattern: { demosaicb_update_0[d0, d1] -> denoise[10 + 16d0, d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -10510,8 +10510,8 @@ inline hw_uint<16> demosaicb_rd88_select(denoise_cache& denoise, int d0, int d1,
 }
 
 inline hw_uint<16> demosaicb_rd89_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd89 read pattern: { demosaicb_update_0[d0, d1] -> denoise[10 + 16d0, 1 + d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -10521,8 +10521,8 @@ inline hw_uint<16> demosaicb_rd89_select(denoise_cache& denoise, int d0, int d1,
 }
 
 inline hw_uint<16> demosaicb_rd9_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd9 read pattern: { demosaicb_update_0[d0, d1] -> denoise[16d0, -1 + d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -10532,8 +10532,8 @@ inline hw_uint<16> demosaicb_rd9_select(denoise_cache& denoise, int d0, int d1, 
 }
 
 inline hw_uint<16> demosaicb_rd90_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd90 read pattern: { demosaicb_update_0[d0, d1] -> denoise[9 + 16d0, -1 + d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -10543,8 +10543,8 @@ inline hw_uint<16> demosaicb_rd90_select(denoise_cache& denoise, int d0, int d1,
 }
 
 inline hw_uint<16> demosaicb_rd91_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd91 read pattern: { demosaicb_update_0[d0, d1] -> denoise[9 + 16d0, d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -10554,8 +10554,8 @@ inline hw_uint<16> demosaicb_rd91_select(denoise_cache& denoise, int d0, int d1,
 }
 
 inline hw_uint<16> demosaicb_rd92_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd92 read pattern: { demosaicb_update_0[d0, d1] -> denoise[9 + 16d0, 1 + d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -10565,8 +10565,8 @@ inline hw_uint<16> demosaicb_rd92_select(denoise_cache& denoise, int d0, int d1,
 }
 
 inline hw_uint<16> demosaicb_rd93_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd93 read pattern: { demosaicb_update_0[d0, d1] -> denoise[10 + 16d0, -1 + d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -10576,8 +10576,8 @@ inline hw_uint<16> demosaicb_rd93_select(denoise_cache& denoise, int d0, int d1,
 }
 
 inline hw_uint<16> demosaicb_rd94_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd94 read pattern: { demosaicb_update_0[d0, d1] -> denoise[10 + 16d0, d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -10587,8 +10587,8 @@ inline hw_uint<16> demosaicb_rd94_select(denoise_cache& denoise, int d0, int d1,
 }
 
 inline hw_uint<16> demosaicb_rd95_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd95 read pattern: { demosaicb_update_0[d0, d1] -> denoise[10 + 16d0, 1 + d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -10598,8 +10598,8 @@ inline hw_uint<16> demosaicb_rd95_select(denoise_cache& denoise, int d0, int d1,
 }
 
 inline hw_uint<16> demosaicb_rd96_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd96 read pattern: { demosaicb_update_0[d0, d1] -> denoise[11 + 16d0, -1 + d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -10609,8 +10609,8 @@ inline hw_uint<16> demosaicb_rd96_select(denoise_cache& denoise, int d0, int d1,
 }
 
 inline hw_uint<16> demosaicb_rd97_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd97 read pattern: { demosaicb_update_0[d0, d1] -> denoise[11 + 16d0, d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -10620,8 +10620,8 @@ inline hw_uint<16> demosaicb_rd97_select(denoise_cache& denoise, int d0, int d1,
 }
 
 inline hw_uint<16> demosaicb_rd98_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd98 read pattern: { demosaicb_update_0[d0, d1] -> denoise[11 + 16d0, 1 + d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -10631,8 +10631,8 @@ inline hw_uint<16> demosaicb_rd98_select(denoise_cache& denoise, int d0, int d1,
 }
 
 inline hw_uint<16> demosaicb_rd99_select(denoise_cache& denoise, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // demosaicb_rd99 read pattern: { demosaicb_update_0[d0, d1] -> denoise[10 + 16d0, -1 + d1] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Read schedule : { demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
   // Write schedule: { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -11285,16 +11285,16 @@ struct denoiseb_denoiseb_update_0_write0_to_denoise_rd0_cache {
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -11307,16 +11307,16 @@ struct denoiseb_denoiseb_update_0_write1_to_denoise_rd1_cache {
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -11329,16 +11329,16 @@ struct denoiseb_denoiseb_update_0_write10_to_denoise_rd10_cache {
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -11351,16 +11351,16 @@ struct denoiseb_denoiseb_update_0_write11_to_denoise_rd11_cache {
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -11373,16 +11373,16 @@ struct denoiseb_denoiseb_update_0_write12_to_denoise_rd12_cache {
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -11395,16 +11395,16 @@ struct denoiseb_denoiseb_update_0_write13_to_denoise_rd13_cache {
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -11417,16 +11417,16 @@ struct denoiseb_denoiseb_update_0_write14_to_denoise_rd14_cache {
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -11439,16 +11439,16 @@ struct denoiseb_denoiseb_update_0_write15_to_denoise_rd15_cache {
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -11461,16 +11461,16 @@ struct denoiseb_denoiseb_update_0_write2_to_denoise_rd2_cache {
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -11483,16 +11483,16 @@ struct denoiseb_denoiseb_update_0_write3_to_denoise_rd3_cache {
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -11505,16 +11505,16 @@ struct denoiseb_denoiseb_update_0_write4_to_denoise_rd4_cache {
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -11527,16 +11527,16 @@ struct denoiseb_denoiseb_update_0_write5_to_denoise_rd5_cache {
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -11549,16 +11549,16 @@ struct denoiseb_denoiseb_update_0_write6_to_denoise_rd6_cache {
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -11571,16 +11571,16 @@ struct denoiseb_denoiseb_update_0_write7_to_denoise_rd7_cache {
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -11593,16 +11593,16 @@ struct denoiseb_denoiseb_update_0_write8_to_denoise_rd8_cache {
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -11615,16 +11615,16 @@ struct denoiseb_denoiseb_update_0_write9_to_denoise_rd9_cache {
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     return f.push(value);
   }
 
@@ -11734,8 +11734,8 @@ inline void denoiseb_denoiseb_update_0_write9_write(hw_uint<16>& denoiseb_denois
 }
 
 inline hw_uint<16> denoise_rd0_select(denoiseb_cache& denoiseb, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoise_rd0 read pattern: { denoise_update_0[d0, d1] -> denoiseb[16d0, d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -11745,8 +11745,8 @@ inline hw_uint<16> denoise_rd0_select(denoiseb_cache& denoiseb, int d0, int d1, 
 }
 
 inline hw_uint<16> denoise_rd1_select(denoiseb_cache& denoiseb, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoise_rd1 read pattern: { denoise_update_0[d0, d1] -> denoiseb[1 + 16d0, d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -11756,8 +11756,8 @@ inline hw_uint<16> denoise_rd1_select(denoiseb_cache& denoiseb, int d0, int d1, 
 }
 
 inline hw_uint<16> denoise_rd10_select(denoiseb_cache& denoiseb, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoise_rd10 read pattern: { denoise_update_0[d0, d1] -> denoiseb[10 + 16d0, d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -11767,8 +11767,8 @@ inline hw_uint<16> denoise_rd10_select(denoiseb_cache& denoiseb, int d0, int d1,
 }
 
 inline hw_uint<16> denoise_rd11_select(denoiseb_cache& denoiseb, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoise_rd11 read pattern: { denoise_update_0[d0, d1] -> denoiseb[11 + 16d0, d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -11778,8 +11778,8 @@ inline hw_uint<16> denoise_rd11_select(denoiseb_cache& denoiseb, int d0, int d1,
 }
 
 inline hw_uint<16> denoise_rd12_select(denoiseb_cache& denoiseb, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoise_rd12 read pattern: { denoise_update_0[d0, d1] -> denoiseb[12 + 16d0, d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -11789,8 +11789,8 @@ inline hw_uint<16> denoise_rd12_select(denoiseb_cache& denoiseb, int d0, int d1,
 }
 
 inline hw_uint<16> denoise_rd13_select(denoiseb_cache& denoiseb, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoise_rd13 read pattern: { denoise_update_0[d0, d1] -> denoiseb[13 + 16d0, d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -11800,8 +11800,8 @@ inline hw_uint<16> denoise_rd13_select(denoiseb_cache& denoiseb, int d0, int d1,
 }
 
 inline hw_uint<16> denoise_rd14_select(denoiseb_cache& denoiseb, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoise_rd14 read pattern: { denoise_update_0[d0, d1] -> denoiseb[14 + 16d0, d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -11811,8 +11811,8 @@ inline hw_uint<16> denoise_rd14_select(denoiseb_cache& denoiseb, int d0, int d1,
 }
 
 inline hw_uint<16> denoise_rd15_select(denoiseb_cache& denoiseb, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoise_rd15 read pattern: { denoise_update_0[d0, d1] -> denoiseb[15 + 16d0, d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -11822,8 +11822,8 @@ inline hw_uint<16> denoise_rd15_select(denoiseb_cache& denoiseb, int d0, int d1,
 }
 
 inline hw_uint<16> denoise_rd2_select(denoiseb_cache& denoiseb, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoise_rd2 read pattern: { denoise_update_0[d0, d1] -> denoiseb[2 + 16d0, d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -11833,8 +11833,8 @@ inline hw_uint<16> denoise_rd2_select(denoiseb_cache& denoiseb, int d0, int d1, 
 }
 
 inline hw_uint<16> denoise_rd3_select(denoiseb_cache& denoiseb, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoise_rd3 read pattern: { denoise_update_0[d0, d1] -> denoiseb[3 + 16d0, d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -11844,8 +11844,8 @@ inline hw_uint<16> denoise_rd3_select(denoiseb_cache& denoiseb, int d0, int d1, 
 }
 
 inline hw_uint<16> denoise_rd4_select(denoiseb_cache& denoiseb, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoise_rd4 read pattern: { denoise_update_0[d0, d1] -> denoiseb[4 + 16d0, d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -11855,8 +11855,8 @@ inline hw_uint<16> denoise_rd4_select(denoiseb_cache& denoiseb, int d0, int d1, 
 }
 
 inline hw_uint<16> denoise_rd5_select(denoiseb_cache& denoiseb, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoise_rd5 read pattern: { denoise_update_0[d0, d1] -> denoiseb[5 + 16d0, d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -11866,8 +11866,8 @@ inline hw_uint<16> denoise_rd5_select(denoiseb_cache& denoiseb, int d0, int d1, 
 }
 
 inline hw_uint<16> denoise_rd6_select(denoiseb_cache& denoiseb, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoise_rd6 read pattern: { denoise_update_0[d0, d1] -> denoiseb[6 + 16d0, d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -11877,8 +11877,8 @@ inline hw_uint<16> denoise_rd6_select(denoiseb_cache& denoiseb, int d0, int d1, 
 }
 
 inline hw_uint<16> denoise_rd7_select(denoiseb_cache& denoiseb, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoise_rd7 read pattern: { denoise_update_0[d0, d1] -> denoiseb[7 + 16d0, d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -11888,8 +11888,8 @@ inline hw_uint<16> denoise_rd7_select(denoiseb_cache& denoiseb, int d0, int d1, 
 }
 
 inline hw_uint<16> denoise_rd8_select(denoiseb_cache& denoiseb, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoise_rd8 read pattern: { denoise_update_0[d0, d1] -> denoiseb[8 + 16d0, d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -11899,8 +11899,8 @@ inline hw_uint<16> denoise_rd8_select(denoiseb_cache& denoiseb, int d0, int d1, 
 }
 
 inline hw_uint<16> denoise_rd9_select(denoiseb_cache& denoiseb, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoise_rd9 read pattern: { denoise_update_0[d0, d1] -> denoiseb[9 + 16d0, d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
@@ -12064,8 +12064,8 @@ struct raw_raw_update_0_write0_merged_banks_25_cache {
 	}
 
 	inline hw_uint<16> peek_124() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f3.back();
 	}
 
@@ -12078,8 +12078,8 @@ struct raw_raw_update_0_write0_merged_banks_25_cache {
 	}
 
 	inline hw_uint<16> peek_249() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f7.back();
 	}
 
@@ -12092,8 +12092,8 @@ struct raw_raw_update_0_write0_merged_banks_25_cache {
 	}
 
 	inline hw_uint<16> peek_374() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f11.back();
 	}
 
@@ -12106,8 +12106,8 @@ struct raw_raw_update_0_write0_merged_banks_25_cache {
 	}
 
 	inline hw_uint<16> peek_499() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f15.back();
 	}
 
@@ -12122,56 +12122,56 @@ struct raw_raw_update_0_write0_merged_banks_25_cache {
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 1
     f18 = f16;
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 123
     f16 = f15.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 123 reading from capacity: 1
     f15.push(f14);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 1
     f14 = f12;
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 123
     f12 = f11.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 123 reading from capacity: 1
     f11.push(f10);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 1
     f10 = f8;
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 123
     f8 = f7.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 123 reading from capacity: 1
     f7.push(f6);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 1
     f6 = f4;
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 123
     f4 = f3.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 123 reading from capacity: 1
     f3.push(f2);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 1
     f2 = f0;
     // cap: 1
@@ -12210,8 +12210,8 @@ struct raw_raw_update_0_write1_merged_banks_25_cache {
 	}
 
 	inline hw_uint<16> peek_124() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f3.back();
 	}
 
@@ -12224,8 +12224,8 @@ struct raw_raw_update_0_write1_merged_banks_25_cache {
 	}
 
 	inline hw_uint<16> peek_249() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f7.back();
 	}
 
@@ -12238,8 +12238,8 @@ struct raw_raw_update_0_write1_merged_banks_25_cache {
 	}
 
 	inline hw_uint<16> peek_374() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f11.back();
 	}
 
@@ -12252,8 +12252,8 @@ struct raw_raw_update_0_write1_merged_banks_25_cache {
 	}
 
 	inline hw_uint<16> peek_499() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f15.back();
 	}
 
@@ -12268,56 +12268,56 @@ struct raw_raw_update_0_write1_merged_banks_25_cache {
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 1
     f18 = f16;
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 123
     f16 = f15.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 123 reading from capacity: 1
     f15.push(f14);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 1
     f14 = f12;
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 123
     f12 = f11.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 123 reading from capacity: 1
     f11.push(f10);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 1
     f10 = f8;
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 123
     f8 = f7.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 123 reading from capacity: 1
     f7.push(f6);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 1
     f6 = f4;
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 123
     f4 = f3.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 123 reading from capacity: 1
     f3.push(f2);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 1
     f2 = f0;
     // cap: 1
@@ -12352,8 +12352,8 @@ struct raw_raw_update_0_write10_merged_banks_25_cache {
 	}
 
 	inline hw_uint<16> peek_125() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f3.back();
 	}
 
@@ -12362,8 +12362,8 @@ struct raw_raw_update_0_write10_merged_banks_25_cache {
 	}
 
 	inline hw_uint<16> peek_250() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f5.back();
 	}
 
@@ -12372,8 +12372,8 @@ struct raw_raw_update_0_write10_merged_banks_25_cache {
 	}
 
 	inline hw_uint<16> peek_375() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f7.back();
 	}
 
@@ -12382,8 +12382,8 @@ struct raw_raw_update_0_write10_merged_banks_25_cache {
 	}
 
 	inline hw_uint<16> peek_500() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f9.back();
 	}
 
@@ -12394,40 +12394,40 @@ struct raw_raw_update_0_write10_merged_banks_25_cache {
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 124
     f10 = f9.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 124 reading from capacity: 1
     f9.push(f8);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 124
     f8 = f7.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 124 reading from capacity: 1
     f7.push(f6);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 124
     f6 = f5.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 124 reading from capacity: 1
     f5.push(f4);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 124
     f4 = f3.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 124 reading from capacity: 1
     f3.push(f2);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 1
     f2 = f0;
     // cap: 1
@@ -12462,8 +12462,8 @@ struct raw_raw_update_0_write11_merged_banks_25_cache {
 	}
 
 	inline hw_uint<16> peek_125() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f3.back();
 	}
 
@@ -12472,8 +12472,8 @@ struct raw_raw_update_0_write11_merged_banks_25_cache {
 	}
 
 	inline hw_uint<16> peek_250() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f5.back();
 	}
 
@@ -12482,8 +12482,8 @@ struct raw_raw_update_0_write11_merged_banks_25_cache {
 	}
 
 	inline hw_uint<16> peek_375() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f7.back();
 	}
 
@@ -12492,8 +12492,8 @@ struct raw_raw_update_0_write11_merged_banks_25_cache {
 	}
 
 	inline hw_uint<16> peek_500() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f9.back();
 	}
 
@@ -12504,40 +12504,40 @@ struct raw_raw_update_0_write11_merged_banks_25_cache {
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 124
     f10 = f9.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 124 reading from capacity: 1
     f9.push(f8);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 124
     f8 = f7.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 124 reading from capacity: 1
     f7.push(f6);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 124
     f6 = f5.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 124 reading from capacity: 1
     f5.push(f4);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 124
     f4 = f3.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 124 reading from capacity: 1
     f3.push(f2);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 1
     f2 = f0;
     // cap: 1
@@ -12572,8 +12572,8 @@ struct raw_raw_update_0_write12_merged_banks_25_cache {
 	}
 
 	inline hw_uint<16> peek_125() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f3.back();
 	}
 
@@ -12582,8 +12582,8 @@ struct raw_raw_update_0_write12_merged_banks_25_cache {
 	}
 
 	inline hw_uint<16> peek_250() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f5.back();
 	}
 
@@ -12592,8 +12592,8 @@ struct raw_raw_update_0_write12_merged_banks_25_cache {
 	}
 
 	inline hw_uint<16> peek_375() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f7.back();
 	}
 
@@ -12602,8 +12602,8 @@ struct raw_raw_update_0_write12_merged_banks_25_cache {
 	}
 
 	inline hw_uint<16> peek_500() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f9.back();
 	}
 
@@ -12614,40 +12614,40 @@ struct raw_raw_update_0_write12_merged_banks_25_cache {
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 124
     f10 = f9.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 124 reading from capacity: 1
     f9.push(f8);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 124
     f8 = f7.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 124 reading from capacity: 1
     f7.push(f6);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 124
     f6 = f5.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 124 reading from capacity: 1
     f5.push(f4);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 124
     f4 = f3.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 124 reading from capacity: 1
     f3.push(f2);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 1
     f2 = f0;
     // cap: 1
@@ -12682,8 +12682,8 @@ struct raw_raw_update_0_write13_merged_banks_25_cache {
 	}
 
 	inline hw_uint<16> peek_125() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f3.back();
 	}
 
@@ -12692,8 +12692,8 @@ struct raw_raw_update_0_write13_merged_banks_25_cache {
 	}
 
 	inline hw_uint<16> peek_250() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f5.back();
 	}
 
@@ -12702,8 +12702,8 @@ struct raw_raw_update_0_write13_merged_banks_25_cache {
 	}
 
 	inline hw_uint<16> peek_375() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f7.back();
 	}
 
@@ -12712,8 +12712,8 @@ struct raw_raw_update_0_write13_merged_banks_25_cache {
 	}
 
 	inline hw_uint<16> peek_500() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f9.back();
 	}
 
@@ -12724,40 +12724,40 @@ struct raw_raw_update_0_write13_merged_banks_25_cache {
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 124
     f10 = f9.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 124 reading from capacity: 1
     f9.push(f8);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 124
     f8 = f7.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 124 reading from capacity: 1
     f7.push(f6);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 124
     f6 = f5.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 124 reading from capacity: 1
     f5.push(f4);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 124
     f4 = f3.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 124 reading from capacity: 1
     f3.push(f2);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 1
     f2 = f0;
     // cap: 1
@@ -12801,8 +12801,8 @@ struct raw_raw_update_0_write14_merged_banks_25_cache {
 	}
 
 	inline hw_uint<16> peek_125() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f5.back();
 	}
 
@@ -12815,8 +12815,8 @@ struct raw_raw_update_0_write14_merged_banks_25_cache {
 	}
 
 	inline hw_uint<16> peek_250() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f9.back();
 	}
 
@@ -12829,8 +12829,8 @@ struct raw_raw_update_0_write14_merged_banks_25_cache {
 	}
 
 	inline hw_uint<16> peek_375() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f13.back();
 	}
 
@@ -12843,8 +12843,8 @@ struct raw_raw_update_0_write14_merged_banks_25_cache {
 	}
 
 	inline hw_uint<16> peek_500() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f17.back();
 	}
 
@@ -12859,60 +12859,60 @@ struct raw_raw_update_0_write14_merged_banks_25_cache {
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 1
     f20 = f18;
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 123
     f18 = f17.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 123 reading from capacity: 1
     f17.push(f16);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 1
     f16 = f14;
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 123
     f14 = f13.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 123 reading from capacity: 1
     f13.push(f12);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 1
     f12 = f10;
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 123
     f10 = f9.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 123 reading from capacity: 1
     f9.push(f8);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 1
     f8 = f6;
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 123
     f6 = f5.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 123 reading from capacity: 1
     f5.push(f4);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 1
     f4 = f2;
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 1
     f2 = f0;
     // cap: 1
@@ -12956,8 +12956,8 @@ struct raw_raw_update_0_write15_merged_banks_25_cache {
 	}
 
 	inline hw_uint<16> peek_125() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f5.back();
 	}
 
@@ -12970,8 +12970,8 @@ struct raw_raw_update_0_write15_merged_banks_25_cache {
 	}
 
 	inline hw_uint<16> peek_250() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f9.back();
 	}
 
@@ -12984,8 +12984,8 @@ struct raw_raw_update_0_write15_merged_banks_25_cache {
 	}
 
 	inline hw_uint<16> peek_375() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f13.back();
 	}
 
@@ -12998,8 +12998,8 @@ struct raw_raw_update_0_write15_merged_banks_25_cache {
 	}
 
 	inline hw_uint<16> peek_500() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f17.back();
 	}
 
@@ -13014,60 +13014,60 @@ struct raw_raw_update_0_write15_merged_banks_25_cache {
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 1
     f20 = f18;
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 123
     f18 = f17.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 123 reading from capacity: 1
     f17.push(f16);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 1
     f16 = f14;
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 123
     f14 = f13.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 123 reading from capacity: 1
     f13.push(f12);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 1
     f12 = f10;
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 123
     f10 = f9.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 123 reading from capacity: 1
     f9.push(f8);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 1
     f8 = f6;
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 123
     f6 = f5.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 123 reading from capacity: 1
     f5.push(f4);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 1
     f4 = f2;
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 1
     f2 = f0;
     // cap: 1
@@ -13102,8 +13102,8 @@ struct raw_raw_update_0_write2_merged_banks_25_cache {
 	}
 
 	inline hw_uint<16> peek_125() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f3.back();
 	}
 
@@ -13112,8 +13112,8 @@ struct raw_raw_update_0_write2_merged_banks_25_cache {
 	}
 
 	inline hw_uint<16> peek_250() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f5.back();
 	}
 
@@ -13122,8 +13122,8 @@ struct raw_raw_update_0_write2_merged_banks_25_cache {
 	}
 
 	inline hw_uint<16> peek_375() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f7.back();
 	}
 
@@ -13132,8 +13132,8 @@ struct raw_raw_update_0_write2_merged_banks_25_cache {
 	}
 
 	inline hw_uint<16> peek_500() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f9.back();
 	}
 
@@ -13144,40 +13144,40 @@ struct raw_raw_update_0_write2_merged_banks_25_cache {
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 124
     f10 = f9.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 124 reading from capacity: 1
     f9.push(f8);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 124
     f8 = f7.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 124 reading from capacity: 1
     f7.push(f6);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 124
     f6 = f5.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 124 reading from capacity: 1
     f5.push(f4);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 124
     f4 = f3.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 124 reading from capacity: 1
     f3.push(f2);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 1
     f2 = f0;
     // cap: 1
@@ -13212,8 +13212,8 @@ struct raw_raw_update_0_write3_merged_banks_25_cache {
 	}
 
 	inline hw_uint<16> peek_125() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f3.back();
 	}
 
@@ -13222,8 +13222,8 @@ struct raw_raw_update_0_write3_merged_banks_25_cache {
 	}
 
 	inline hw_uint<16> peek_250() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f5.back();
 	}
 
@@ -13232,8 +13232,8 @@ struct raw_raw_update_0_write3_merged_banks_25_cache {
 	}
 
 	inline hw_uint<16> peek_375() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f7.back();
 	}
 
@@ -13242,8 +13242,8 @@ struct raw_raw_update_0_write3_merged_banks_25_cache {
 	}
 
 	inline hw_uint<16> peek_500() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f9.back();
 	}
 
@@ -13254,40 +13254,40 @@ struct raw_raw_update_0_write3_merged_banks_25_cache {
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 124
     f10 = f9.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 124 reading from capacity: 1
     f9.push(f8);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 124
     f8 = f7.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 124 reading from capacity: 1
     f7.push(f6);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 124
     f6 = f5.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 124 reading from capacity: 1
     f5.push(f4);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 124
     f4 = f3.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 124 reading from capacity: 1
     f3.push(f2);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 1
     f2 = f0;
     // cap: 1
@@ -13322,8 +13322,8 @@ struct raw_raw_update_0_write4_merged_banks_25_cache {
 	}
 
 	inline hw_uint<16> peek_125() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f3.back();
 	}
 
@@ -13332,8 +13332,8 @@ struct raw_raw_update_0_write4_merged_banks_25_cache {
 	}
 
 	inline hw_uint<16> peek_250() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f5.back();
 	}
 
@@ -13342,8 +13342,8 @@ struct raw_raw_update_0_write4_merged_banks_25_cache {
 	}
 
 	inline hw_uint<16> peek_375() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f7.back();
 	}
 
@@ -13352,8 +13352,8 @@ struct raw_raw_update_0_write4_merged_banks_25_cache {
 	}
 
 	inline hw_uint<16> peek_500() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f9.back();
 	}
 
@@ -13364,40 +13364,40 @@ struct raw_raw_update_0_write4_merged_banks_25_cache {
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 124
     f10 = f9.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 124 reading from capacity: 1
     f9.push(f8);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 124
     f8 = f7.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 124 reading from capacity: 1
     f7.push(f6);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 124
     f6 = f5.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 124 reading from capacity: 1
     f5.push(f4);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 124
     f4 = f3.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 124 reading from capacity: 1
     f3.push(f2);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 1
     f2 = f0;
     // cap: 1
@@ -13432,8 +13432,8 @@ struct raw_raw_update_0_write5_merged_banks_25_cache {
 	}
 
 	inline hw_uint<16> peek_125() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f3.back();
 	}
 
@@ -13442,8 +13442,8 @@ struct raw_raw_update_0_write5_merged_banks_25_cache {
 	}
 
 	inline hw_uint<16> peek_250() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f5.back();
 	}
 
@@ -13452,8 +13452,8 @@ struct raw_raw_update_0_write5_merged_banks_25_cache {
 	}
 
 	inline hw_uint<16> peek_375() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f7.back();
 	}
 
@@ -13462,8 +13462,8 @@ struct raw_raw_update_0_write5_merged_banks_25_cache {
 	}
 
 	inline hw_uint<16> peek_500() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f9.back();
 	}
 
@@ -13474,40 +13474,40 @@ struct raw_raw_update_0_write5_merged_banks_25_cache {
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 124
     f10 = f9.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 124 reading from capacity: 1
     f9.push(f8);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 124
     f8 = f7.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 124 reading from capacity: 1
     f7.push(f6);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 124
     f6 = f5.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 124 reading from capacity: 1
     f5.push(f4);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 124
     f4 = f3.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 124 reading from capacity: 1
     f3.push(f2);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 1
     f2 = f0;
     // cap: 1
@@ -13542,8 +13542,8 @@ struct raw_raw_update_0_write6_merged_banks_25_cache {
 	}
 
 	inline hw_uint<16> peek_125() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f3.back();
 	}
 
@@ -13552,8 +13552,8 @@ struct raw_raw_update_0_write6_merged_banks_25_cache {
 	}
 
 	inline hw_uint<16> peek_250() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f5.back();
 	}
 
@@ -13562,8 +13562,8 @@ struct raw_raw_update_0_write6_merged_banks_25_cache {
 	}
 
 	inline hw_uint<16> peek_375() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f7.back();
 	}
 
@@ -13572,8 +13572,8 @@ struct raw_raw_update_0_write6_merged_banks_25_cache {
 	}
 
 	inline hw_uint<16> peek_500() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f9.back();
 	}
 
@@ -13584,40 +13584,40 @@ struct raw_raw_update_0_write6_merged_banks_25_cache {
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 124
     f10 = f9.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 124 reading from capacity: 1
     f9.push(f8);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 124
     f8 = f7.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 124 reading from capacity: 1
     f7.push(f6);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 124
     f6 = f5.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 124 reading from capacity: 1
     f5.push(f4);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 124
     f4 = f3.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 124 reading from capacity: 1
     f3.push(f2);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 1
     f2 = f0;
     // cap: 1
@@ -13652,8 +13652,8 @@ struct raw_raw_update_0_write7_merged_banks_25_cache {
 	}
 
 	inline hw_uint<16> peek_125() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f3.back();
 	}
 
@@ -13662,8 +13662,8 @@ struct raw_raw_update_0_write7_merged_banks_25_cache {
 	}
 
 	inline hw_uint<16> peek_250() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f5.back();
 	}
 
@@ -13672,8 +13672,8 @@ struct raw_raw_update_0_write7_merged_banks_25_cache {
 	}
 
 	inline hw_uint<16> peek_375() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f7.back();
 	}
 
@@ -13682,8 +13682,8 @@ struct raw_raw_update_0_write7_merged_banks_25_cache {
 	}
 
 	inline hw_uint<16> peek_500() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f9.back();
 	}
 
@@ -13694,40 +13694,40 @@ struct raw_raw_update_0_write7_merged_banks_25_cache {
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 124
     f10 = f9.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 124 reading from capacity: 1
     f9.push(f8);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 124
     f8 = f7.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 124 reading from capacity: 1
     f7.push(f6);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 124
     f6 = f5.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 124 reading from capacity: 1
     f5.push(f4);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 124
     f4 = f3.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 124 reading from capacity: 1
     f3.push(f2);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 1
     f2 = f0;
     // cap: 1
@@ -13762,8 +13762,8 @@ struct raw_raw_update_0_write8_merged_banks_25_cache {
 	}
 
 	inline hw_uint<16> peek_125() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f3.back();
 	}
 
@@ -13772,8 +13772,8 @@ struct raw_raw_update_0_write8_merged_banks_25_cache {
 	}
 
 	inline hw_uint<16> peek_250() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f5.back();
 	}
 
@@ -13782,8 +13782,8 @@ struct raw_raw_update_0_write8_merged_banks_25_cache {
 	}
 
 	inline hw_uint<16> peek_375() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f7.back();
 	}
 
@@ -13792,8 +13792,8 @@ struct raw_raw_update_0_write8_merged_banks_25_cache {
 	}
 
 	inline hw_uint<16> peek_500() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f9.back();
 	}
 
@@ -13804,40 +13804,40 @@ struct raw_raw_update_0_write8_merged_banks_25_cache {
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 124
     f10 = f9.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 124 reading from capacity: 1
     f9.push(f8);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 124
     f8 = f7.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 124 reading from capacity: 1
     f7.push(f6);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 124
     f6 = f5.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 124 reading from capacity: 1
     f5.push(f4);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 124
     f4 = f3.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 124 reading from capacity: 1
     f3.push(f2);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 1
     f2 = f0;
     // cap: 1
@@ -13872,8 +13872,8 @@ struct raw_raw_update_0_write9_merged_banks_25_cache {
 	}
 
 	inline hw_uint<16> peek_125() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f3.back();
 	}
 
@@ -13882,8 +13882,8 @@ struct raw_raw_update_0_write9_merged_banks_25_cache {
 	}
 
 	inline hw_uint<16> peek_250() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f5.back();
 	}
 
@@ -13892,8 +13892,8 @@ struct raw_raw_update_0_write9_merged_banks_25_cache {
 	}
 
 	inline hw_uint<16> peek_375() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f7.back();
 	}
 
@@ -13902,8 +13902,8 @@ struct raw_raw_update_0_write9_merged_banks_25_cache {
 	}
 
 	inline hw_uint<16> peek_500() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
 		return f9.back();
 	}
 
@@ -13914,40 +13914,40 @@ struct raw_raw_update_0_write9_merged_banks_25_cache {
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 124
     f10 = f9.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 124 reading from capacity: 1
     f9.push(f8);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 124
     f8 = f7.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 124 reading from capacity: 1
     f7.push(f6);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 124
     f6 = f5.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 124 reading from capacity: 1
     f5.push(f4);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 124
     f4 = f3.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 124 reading from capacity: 1
     f3.push(f2);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
     // cap: 1 reading from capacity: 1
     f2 = f0;
     // cap: 1
@@ -14444,8 +14444,8 @@ inline void raw_raw_update_0_write9_write(hw_uint<16>& raw_raw_update_0_write9, 
 }
 
 inline hw_uint<16> denoiseb_rd0_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd0 read pattern: { denoiseb_update_0[d0, d1] -> raw[-2 + 16d0, -2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -14455,8 +14455,8 @@ inline hw_uint<16> denoiseb_rd0_select(raw_cache& raw, int d0, int d1, int dynam
 }
 
 inline hw_uint<16> denoiseb_rd1_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd1 read pattern: { denoiseb_update_0[d0, d1] -> raw[-2 + 16d0, -1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -14466,8 +14466,8 @@ inline hw_uint<16> denoiseb_rd1_select(raw_cache& raw, int d0, int d1, int dynam
 }
 
 inline hw_uint<16> denoiseb_rd10_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd10 read pattern: { denoiseb_update_0[d0, d1] -> raw[16d0, -2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -14477,8 +14477,8 @@ inline hw_uint<16> denoiseb_rd10_select(raw_cache& raw, int d0, int d1, int dyna
 }
 
 inline hw_uint<16> denoiseb_rd100_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd100 read pattern: { denoiseb_update_0[d0, d1] -> raw[2 + 16d0, -2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -14488,8 +14488,8 @@ inline hw_uint<16> denoiseb_rd100_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd101_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd101 read pattern: { denoiseb_update_0[d0, d1] -> raw[2 + 16d0, -1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -14499,8 +14499,8 @@ inline hw_uint<16> denoiseb_rd101_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd102_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd102 read pattern: { denoiseb_update_0[d0, d1] -> raw[2 + 16d0, d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -14510,8 +14510,8 @@ inline hw_uint<16> denoiseb_rd102_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd103_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd103 read pattern: { denoiseb_update_0[d0, d1] -> raw[2 + 16d0, 1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -14521,8 +14521,8 @@ inline hw_uint<16> denoiseb_rd103_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd104_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd104 read pattern: { denoiseb_update_0[d0, d1] -> raw[2 + 16d0, 2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -14532,8 +14532,8 @@ inline hw_uint<16> denoiseb_rd104_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd105_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd105 read pattern: { denoiseb_update_0[d0, d1] -> raw[3 + 16d0, -2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -14543,8 +14543,8 @@ inline hw_uint<16> denoiseb_rd105_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd106_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd106 read pattern: { denoiseb_update_0[d0, d1] -> raw[3 + 16d0, -1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -14554,8 +14554,8 @@ inline hw_uint<16> denoiseb_rd106_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd107_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd107 read pattern: { denoiseb_update_0[d0, d1] -> raw[3 + 16d0, d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -14565,8 +14565,8 @@ inline hw_uint<16> denoiseb_rd107_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd108_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd108 read pattern: { denoiseb_update_0[d0, d1] -> raw[3 + 16d0, 1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -14576,8 +14576,8 @@ inline hw_uint<16> denoiseb_rd108_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd109_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd109 read pattern: { denoiseb_update_0[d0, d1] -> raw[3 + 16d0, 2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -14587,8 +14587,8 @@ inline hw_uint<16> denoiseb_rd109_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd11_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd11 read pattern: { denoiseb_update_0[d0, d1] -> raw[16d0, -1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -14598,8 +14598,8 @@ inline hw_uint<16> denoiseb_rd11_select(raw_cache& raw, int d0, int d1, int dyna
 }
 
 inline hw_uint<16> denoiseb_rd110_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd110 read pattern: { denoiseb_update_0[d0, d1] -> raw[4 + 16d0, -2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -14609,8 +14609,8 @@ inline hw_uint<16> denoiseb_rd110_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd111_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd111 read pattern: { denoiseb_update_0[d0, d1] -> raw[4 + 16d0, -1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -14620,8 +14620,8 @@ inline hw_uint<16> denoiseb_rd111_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd112_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd112 read pattern: { denoiseb_update_0[d0, d1] -> raw[4 + 16d0, d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -14631,8 +14631,8 @@ inline hw_uint<16> denoiseb_rd112_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd113_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd113 read pattern: { denoiseb_update_0[d0, d1] -> raw[4 + 16d0, 1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -14642,8 +14642,8 @@ inline hw_uint<16> denoiseb_rd113_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd114_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd114 read pattern: { denoiseb_update_0[d0, d1] -> raw[4 + 16d0, 2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -14653,8 +14653,8 @@ inline hw_uint<16> denoiseb_rd114_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd115_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd115 read pattern: { denoiseb_update_0[d0, d1] -> raw[5 + 16d0, -2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -14664,8 +14664,8 @@ inline hw_uint<16> denoiseb_rd115_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd116_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd116 read pattern: { denoiseb_update_0[d0, d1] -> raw[5 + 16d0, -1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -14675,8 +14675,8 @@ inline hw_uint<16> denoiseb_rd116_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd117_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd117 read pattern: { denoiseb_update_0[d0, d1] -> raw[5 + 16d0, d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -14686,8 +14686,8 @@ inline hw_uint<16> denoiseb_rd117_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd118_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd118 read pattern: { denoiseb_update_0[d0, d1] -> raw[5 + 16d0, 1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -14697,8 +14697,8 @@ inline hw_uint<16> denoiseb_rd118_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd119_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd119 read pattern: { denoiseb_update_0[d0, d1] -> raw[5 + 16d0, 2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -14708,8 +14708,8 @@ inline hw_uint<16> denoiseb_rd119_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd12_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd12 read pattern: { denoiseb_update_0[d0, d1] -> raw[16d0, d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -14719,8 +14719,8 @@ inline hw_uint<16> denoiseb_rd12_select(raw_cache& raw, int d0, int d1, int dyna
 }
 
 inline hw_uint<16> denoiseb_rd120_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd120 read pattern: { denoiseb_update_0[d0, d1] -> raw[6 + 16d0, -2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -14730,8 +14730,8 @@ inline hw_uint<16> denoiseb_rd120_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd121_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd121 read pattern: { denoiseb_update_0[d0, d1] -> raw[6 + 16d0, -1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -14741,8 +14741,8 @@ inline hw_uint<16> denoiseb_rd121_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd122_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd122 read pattern: { denoiseb_update_0[d0, d1] -> raw[6 + 16d0, d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -14752,8 +14752,8 @@ inline hw_uint<16> denoiseb_rd122_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd123_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd123 read pattern: { denoiseb_update_0[d0, d1] -> raw[6 + 16d0, 1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -14763,8 +14763,8 @@ inline hw_uint<16> denoiseb_rd123_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd124_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd124 read pattern: { denoiseb_update_0[d0, d1] -> raw[6 + 16d0, 2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -14774,8 +14774,8 @@ inline hw_uint<16> denoiseb_rd124_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd125_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd125 read pattern: { denoiseb_update_0[d0, d1] -> raw[3 + 16d0, -2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -14785,8 +14785,8 @@ inline hw_uint<16> denoiseb_rd125_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd126_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd126 read pattern: { denoiseb_update_0[d0, d1] -> raw[3 + 16d0, -1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -14796,8 +14796,8 @@ inline hw_uint<16> denoiseb_rd126_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd127_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd127 read pattern: { denoiseb_update_0[d0, d1] -> raw[3 + 16d0, d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -14807,8 +14807,8 @@ inline hw_uint<16> denoiseb_rd127_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd128_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd128 read pattern: { denoiseb_update_0[d0, d1] -> raw[3 + 16d0, 1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -14818,8 +14818,8 @@ inline hw_uint<16> denoiseb_rd128_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd129_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd129 read pattern: { denoiseb_update_0[d0, d1] -> raw[3 + 16d0, 2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -14829,8 +14829,8 @@ inline hw_uint<16> denoiseb_rd129_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd13_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd13 read pattern: { denoiseb_update_0[d0, d1] -> raw[16d0, 1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -14840,8 +14840,8 @@ inline hw_uint<16> denoiseb_rd13_select(raw_cache& raw, int d0, int d1, int dyna
 }
 
 inline hw_uint<16> denoiseb_rd130_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd130 read pattern: { denoiseb_update_0[d0, d1] -> raw[4 + 16d0, -2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -14851,8 +14851,8 @@ inline hw_uint<16> denoiseb_rd130_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd131_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd131 read pattern: { denoiseb_update_0[d0, d1] -> raw[4 + 16d0, -1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -14862,8 +14862,8 @@ inline hw_uint<16> denoiseb_rd131_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd132_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd132 read pattern: { denoiseb_update_0[d0, d1] -> raw[4 + 16d0, d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -14873,8 +14873,8 @@ inline hw_uint<16> denoiseb_rd132_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd133_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd133 read pattern: { denoiseb_update_0[d0, d1] -> raw[4 + 16d0, 1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -14884,8 +14884,8 @@ inline hw_uint<16> denoiseb_rd133_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd134_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd134 read pattern: { denoiseb_update_0[d0, d1] -> raw[4 + 16d0, 2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -14895,8 +14895,8 @@ inline hw_uint<16> denoiseb_rd134_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd135_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd135 read pattern: { denoiseb_update_0[d0, d1] -> raw[5 + 16d0, -2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -14906,8 +14906,8 @@ inline hw_uint<16> denoiseb_rd135_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd136_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd136 read pattern: { denoiseb_update_0[d0, d1] -> raw[5 + 16d0, -1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -14917,8 +14917,8 @@ inline hw_uint<16> denoiseb_rd136_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd137_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd137 read pattern: { denoiseb_update_0[d0, d1] -> raw[5 + 16d0, d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -14928,8 +14928,8 @@ inline hw_uint<16> denoiseb_rd137_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd138_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd138 read pattern: { denoiseb_update_0[d0, d1] -> raw[5 + 16d0, 1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -14939,8 +14939,8 @@ inline hw_uint<16> denoiseb_rd138_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd139_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd139 read pattern: { denoiseb_update_0[d0, d1] -> raw[5 + 16d0, 2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -14950,8 +14950,8 @@ inline hw_uint<16> denoiseb_rd139_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd14_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd14 read pattern: { denoiseb_update_0[d0, d1] -> raw[16d0, 2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -14961,8 +14961,8 @@ inline hw_uint<16> denoiseb_rd14_select(raw_cache& raw, int d0, int d1, int dyna
 }
 
 inline hw_uint<16> denoiseb_rd140_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd140 read pattern: { denoiseb_update_0[d0, d1] -> raw[6 + 16d0, -2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -14972,8 +14972,8 @@ inline hw_uint<16> denoiseb_rd140_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd141_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd141 read pattern: { denoiseb_update_0[d0, d1] -> raw[6 + 16d0, -1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -14983,8 +14983,8 @@ inline hw_uint<16> denoiseb_rd141_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd142_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd142 read pattern: { denoiseb_update_0[d0, d1] -> raw[6 + 16d0, d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -14994,8 +14994,8 @@ inline hw_uint<16> denoiseb_rd142_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd143_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd143 read pattern: { denoiseb_update_0[d0, d1] -> raw[6 + 16d0, 1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -15005,8 +15005,8 @@ inline hw_uint<16> denoiseb_rd143_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd144_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd144 read pattern: { denoiseb_update_0[d0, d1] -> raw[6 + 16d0, 2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -15016,8 +15016,8 @@ inline hw_uint<16> denoiseb_rd144_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd145_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd145 read pattern: { denoiseb_update_0[d0, d1] -> raw[7 + 16d0, -2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -15027,8 +15027,8 @@ inline hw_uint<16> denoiseb_rd145_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd146_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd146 read pattern: { denoiseb_update_0[d0, d1] -> raw[7 + 16d0, -1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -15038,8 +15038,8 @@ inline hw_uint<16> denoiseb_rd146_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd147_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd147 read pattern: { denoiseb_update_0[d0, d1] -> raw[7 + 16d0, d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -15049,8 +15049,8 @@ inline hw_uint<16> denoiseb_rd147_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd148_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd148 read pattern: { denoiseb_update_0[d0, d1] -> raw[7 + 16d0, 1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -15060,8 +15060,8 @@ inline hw_uint<16> denoiseb_rd148_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd149_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd149 read pattern: { denoiseb_update_0[d0, d1] -> raw[7 + 16d0, 2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -15071,8 +15071,8 @@ inline hw_uint<16> denoiseb_rd149_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd15_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd15 read pattern: { denoiseb_update_0[d0, d1] -> raw[1 + 16d0, -2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -15082,8 +15082,8 @@ inline hw_uint<16> denoiseb_rd15_select(raw_cache& raw, int d0, int d1, int dyna
 }
 
 inline hw_uint<16> denoiseb_rd150_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd150 read pattern: { denoiseb_update_0[d0, d1] -> raw[4 + 16d0, -2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -15093,8 +15093,8 @@ inline hw_uint<16> denoiseb_rd150_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd151_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd151 read pattern: { denoiseb_update_0[d0, d1] -> raw[4 + 16d0, -1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -15104,8 +15104,8 @@ inline hw_uint<16> denoiseb_rd151_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd152_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd152 read pattern: { denoiseb_update_0[d0, d1] -> raw[4 + 16d0, d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -15115,8 +15115,8 @@ inline hw_uint<16> denoiseb_rd152_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd153_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd153 read pattern: { denoiseb_update_0[d0, d1] -> raw[4 + 16d0, 1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -15126,8 +15126,8 @@ inline hw_uint<16> denoiseb_rd153_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd154_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd154 read pattern: { denoiseb_update_0[d0, d1] -> raw[4 + 16d0, 2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -15137,8 +15137,8 @@ inline hw_uint<16> denoiseb_rd154_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd155_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd155 read pattern: { denoiseb_update_0[d0, d1] -> raw[5 + 16d0, -2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -15148,8 +15148,8 @@ inline hw_uint<16> denoiseb_rd155_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd156_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd156 read pattern: { denoiseb_update_0[d0, d1] -> raw[5 + 16d0, -1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -15159,8 +15159,8 @@ inline hw_uint<16> denoiseb_rd156_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd157_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd157 read pattern: { denoiseb_update_0[d0, d1] -> raw[5 + 16d0, d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -15170,8 +15170,8 @@ inline hw_uint<16> denoiseb_rd157_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd158_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd158 read pattern: { denoiseb_update_0[d0, d1] -> raw[5 + 16d0, 1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -15181,8 +15181,8 @@ inline hw_uint<16> denoiseb_rd158_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd159_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd159 read pattern: { denoiseb_update_0[d0, d1] -> raw[5 + 16d0, 2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -15192,8 +15192,8 @@ inline hw_uint<16> denoiseb_rd159_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd16_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd16 read pattern: { denoiseb_update_0[d0, d1] -> raw[1 + 16d0, -1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -15203,8 +15203,8 @@ inline hw_uint<16> denoiseb_rd16_select(raw_cache& raw, int d0, int d1, int dyna
 }
 
 inline hw_uint<16> denoiseb_rd160_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd160 read pattern: { denoiseb_update_0[d0, d1] -> raw[6 + 16d0, -2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -15214,8 +15214,8 @@ inline hw_uint<16> denoiseb_rd160_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd161_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd161 read pattern: { denoiseb_update_0[d0, d1] -> raw[6 + 16d0, -1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -15225,8 +15225,8 @@ inline hw_uint<16> denoiseb_rd161_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd162_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd162 read pattern: { denoiseb_update_0[d0, d1] -> raw[6 + 16d0, d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -15236,8 +15236,8 @@ inline hw_uint<16> denoiseb_rd162_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd163_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd163 read pattern: { denoiseb_update_0[d0, d1] -> raw[6 + 16d0, 1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -15247,8 +15247,8 @@ inline hw_uint<16> denoiseb_rd163_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd164_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd164 read pattern: { denoiseb_update_0[d0, d1] -> raw[6 + 16d0, 2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -15258,8 +15258,8 @@ inline hw_uint<16> denoiseb_rd164_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd165_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd165 read pattern: { denoiseb_update_0[d0, d1] -> raw[7 + 16d0, -2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -15269,8 +15269,8 @@ inline hw_uint<16> denoiseb_rd165_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd166_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd166 read pattern: { denoiseb_update_0[d0, d1] -> raw[7 + 16d0, -1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -15280,8 +15280,8 @@ inline hw_uint<16> denoiseb_rd166_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd167_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd167 read pattern: { denoiseb_update_0[d0, d1] -> raw[7 + 16d0, d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -15291,8 +15291,8 @@ inline hw_uint<16> denoiseb_rd167_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd168_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd168 read pattern: { denoiseb_update_0[d0, d1] -> raw[7 + 16d0, 1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -15302,8 +15302,8 @@ inline hw_uint<16> denoiseb_rd168_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd169_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd169 read pattern: { denoiseb_update_0[d0, d1] -> raw[7 + 16d0, 2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -15313,8 +15313,8 @@ inline hw_uint<16> denoiseb_rd169_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd17_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd17 read pattern: { denoiseb_update_0[d0, d1] -> raw[1 + 16d0, d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -15324,8 +15324,8 @@ inline hw_uint<16> denoiseb_rd17_select(raw_cache& raw, int d0, int d1, int dyna
 }
 
 inline hw_uint<16> denoiseb_rd170_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd170 read pattern: { denoiseb_update_0[d0, d1] -> raw[8 + 16d0, -2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -15335,8 +15335,8 @@ inline hw_uint<16> denoiseb_rd170_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd171_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd171 read pattern: { denoiseb_update_0[d0, d1] -> raw[8 + 16d0, -1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -15346,8 +15346,8 @@ inline hw_uint<16> denoiseb_rd171_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd172_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd172 read pattern: { denoiseb_update_0[d0, d1] -> raw[8 + 16d0, d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -15357,8 +15357,8 @@ inline hw_uint<16> denoiseb_rd172_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd173_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd173 read pattern: { denoiseb_update_0[d0, d1] -> raw[8 + 16d0, 1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -15368,8 +15368,8 @@ inline hw_uint<16> denoiseb_rd173_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd174_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd174 read pattern: { denoiseb_update_0[d0, d1] -> raw[8 + 16d0, 2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -15379,8 +15379,8 @@ inline hw_uint<16> denoiseb_rd174_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd175_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd175 read pattern: { denoiseb_update_0[d0, d1] -> raw[5 + 16d0, -2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -15390,8 +15390,8 @@ inline hw_uint<16> denoiseb_rd175_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd176_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd176 read pattern: { denoiseb_update_0[d0, d1] -> raw[5 + 16d0, -1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -15401,8 +15401,8 @@ inline hw_uint<16> denoiseb_rd176_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd177_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd177 read pattern: { denoiseb_update_0[d0, d1] -> raw[5 + 16d0, d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -15412,8 +15412,8 @@ inline hw_uint<16> denoiseb_rd177_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd178_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd178 read pattern: { denoiseb_update_0[d0, d1] -> raw[5 + 16d0, 1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -15423,8 +15423,8 @@ inline hw_uint<16> denoiseb_rd178_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd179_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd179 read pattern: { denoiseb_update_0[d0, d1] -> raw[5 + 16d0, 2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -15434,8 +15434,8 @@ inline hw_uint<16> denoiseb_rd179_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd18_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd18 read pattern: { denoiseb_update_0[d0, d1] -> raw[1 + 16d0, 1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -15445,8 +15445,8 @@ inline hw_uint<16> denoiseb_rd18_select(raw_cache& raw, int d0, int d1, int dyna
 }
 
 inline hw_uint<16> denoiseb_rd180_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd180 read pattern: { denoiseb_update_0[d0, d1] -> raw[6 + 16d0, -2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -15456,8 +15456,8 @@ inline hw_uint<16> denoiseb_rd180_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd181_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd181 read pattern: { denoiseb_update_0[d0, d1] -> raw[6 + 16d0, -1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -15467,8 +15467,8 @@ inline hw_uint<16> denoiseb_rd181_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd182_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd182 read pattern: { denoiseb_update_0[d0, d1] -> raw[6 + 16d0, d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -15478,8 +15478,8 @@ inline hw_uint<16> denoiseb_rd182_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd183_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd183 read pattern: { denoiseb_update_0[d0, d1] -> raw[6 + 16d0, 1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -15489,8 +15489,8 @@ inline hw_uint<16> denoiseb_rd183_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd184_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd184 read pattern: { denoiseb_update_0[d0, d1] -> raw[6 + 16d0, 2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -15500,8 +15500,8 @@ inline hw_uint<16> denoiseb_rd184_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd185_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd185 read pattern: { denoiseb_update_0[d0, d1] -> raw[7 + 16d0, -2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -15511,8 +15511,8 @@ inline hw_uint<16> denoiseb_rd185_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd186_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd186 read pattern: { denoiseb_update_0[d0, d1] -> raw[7 + 16d0, -1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -15522,8 +15522,8 @@ inline hw_uint<16> denoiseb_rd186_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd187_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd187 read pattern: { denoiseb_update_0[d0, d1] -> raw[7 + 16d0, d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -15533,8 +15533,8 @@ inline hw_uint<16> denoiseb_rd187_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd188_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd188 read pattern: { denoiseb_update_0[d0, d1] -> raw[7 + 16d0, 1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -15544,8 +15544,8 @@ inline hw_uint<16> denoiseb_rd188_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd189_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd189 read pattern: { denoiseb_update_0[d0, d1] -> raw[7 + 16d0, 2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -15555,8 +15555,8 @@ inline hw_uint<16> denoiseb_rd189_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd19_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd19 read pattern: { denoiseb_update_0[d0, d1] -> raw[1 + 16d0, 2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -15566,8 +15566,8 @@ inline hw_uint<16> denoiseb_rd19_select(raw_cache& raw, int d0, int d1, int dyna
 }
 
 inline hw_uint<16> denoiseb_rd190_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd190 read pattern: { denoiseb_update_0[d0, d1] -> raw[8 + 16d0, -2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -15577,8 +15577,8 @@ inline hw_uint<16> denoiseb_rd190_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd191_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd191 read pattern: { denoiseb_update_0[d0, d1] -> raw[8 + 16d0, -1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -15588,8 +15588,8 @@ inline hw_uint<16> denoiseb_rd191_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd192_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd192 read pattern: { denoiseb_update_0[d0, d1] -> raw[8 + 16d0, d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -15599,8 +15599,8 @@ inline hw_uint<16> denoiseb_rd192_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd193_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd193 read pattern: { denoiseb_update_0[d0, d1] -> raw[8 + 16d0, 1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -15610,8 +15610,8 @@ inline hw_uint<16> denoiseb_rd193_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd194_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd194 read pattern: { denoiseb_update_0[d0, d1] -> raw[8 + 16d0, 2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -15621,8 +15621,8 @@ inline hw_uint<16> denoiseb_rd194_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd195_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd195 read pattern: { denoiseb_update_0[d0, d1] -> raw[9 + 16d0, -2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -15632,8 +15632,8 @@ inline hw_uint<16> denoiseb_rd195_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd196_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd196 read pattern: { denoiseb_update_0[d0, d1] -> raw[9 + 16d0, -1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -15643,8 +15643,8 @@ inline hw_uint<16> denoiseb_rd196_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd197_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd197 read pattern: { denoiseb_update_0[d0, d1] -> raw[9 + 16d0, d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -15654,8 +15654,8 @@ inline hw_uint<16> denoiseb_rd197_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd198_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd198 read pattern: { denoiseb_update_0[d0, d1] -> raw[9 + 16d0, 1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -15665,8 +15665,8 @@ inline hw_uint<16> denoiseb_rd198_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd199_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd199 read pattern: { denoiseb_update_0[d0, d1] -> raw[9 + 16d0, 2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -15676,8 +15676,8 @@ inline hw_uint<16> denoiseb_rd199_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd2_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd2 read pattern: { denoiseb_update_0[d0, d1] -> raw[-2 + 16d0, d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -15687,8 +15687,8 @@ inline hw_uint<16> denoiseb_rd2_select(raw_cache& raw, int d0, int d1, int dynam
 }
 
 inline hw_uint<16> denoiseb_rd20_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd20 read pattern: { denoiseb_update_0[d0, d1] -> raw[2 + 16d0, -2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -15698,8 +15698,8 @@ inline hw_uint<16> denoiseb_rd20_select(raw_cache& raw, int d0, int d1, int dyna
 }
 
 inline hw_uint<16> denoiseb_rd200_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd200 read pattern: { denoiseb_update_0[d0, d1] -> raw[6 + 16d0, -2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -15709,8 +15709,8 @@ inline hw_uint<16> denoiseb_rd200_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd201_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd201 read pattern: { denoiseb_update_0[d0, d1] -> raw[6 + 16d0, -1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -15720,8 +15720,8 @@ inline hw_uint<16> denoiseb_rd201_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd202_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd202 read pattern: { denoiseb_update_0[d0, d1] -> raw[6 + 16d0, d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -15731,8 +15731,8 @@ inline hw_uint<16> denoiseb_rd202_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd203_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd203 read pattern: { denoiseb_update_0[d0, d1] -> raw[6 + 16d0, 1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -15742,8 +15742,8 @@ inline hw_uint<16> denoiseb_rd203_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd204_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd204 read pattern: { denoiseb_update_0[d0, d1] -> raw[6 + 16d0, 2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -15753,8 +15753,8 @@ inline hw_uint<16> denoiseb_rd204_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd205_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd205 read pattern: { denoiseb_update_0[d0, d1] -> raw[7 + 16d0, -2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -15764,8 +15764,8 @@ inline hw_uint<16> denoiseb_rd205_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd206_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd206 read pattern: { denoiseb_update_0[d0, d1] -> raw[7 + 16d0, -1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -15775,8 +15775,8 @@ inline hw_uint<16> denoiseb_rd206_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd207_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd207 read pattern: { denoiseb_update_0[d0, d1] -> raw[7 + 16d0, d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -15786,8 +15786,8 @@ inline hw_uint<16> denoiseb_rd207_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd208_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd208 read pattern: { denoiseb_update_0[d0, d1] -> raw[7 + 16d0, 1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -15797,8 +15797,8 @@ inline hw_uint<16> denoiseb_rd208_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd209_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd209 read pattern: { denoiseb_update_0[d0, d1] -> raw[7 + 16d0, 2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -15808,8 +15808,8 @@ inline hw_uint<16> denoiseb_rd209_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd21_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd21 read pattern: { denoiseb_update_0[d0, d1] -> raw[2 + 16d0, -1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -15819,8 +15819,8 @@ inline hw_uint<16> denoiseb_rd21_select(raw_cache& raw, int d0, int d1, int dyna
 }
 
 inline hw_uint<16> denoiseb_rd210_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd210 read pattern: { denoiseb_update_0[d0, d1] -> raw[8 + 16d0, -2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -15830,8 +15830,8 @@ inline hw_uint<16> denoiseb_rd210_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd211_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd211 read pattern: { denoiseb_update_0[d0, d1] -> raw[8 + 16d0, -1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -15841,8 +15841,8 @@ inline hw_uint<16> denoiseb_rd211_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd212_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd212 read pattern: { denoiseb_update_0[d0, d1] -> raw[8 + 16d0, d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -15852,8 +15852,8 @@ inline hw_uint<16> denoiseb_rd212_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd213_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd213 read pattern: { denoiseb_update_0[d0, d1] -> raw[8 + 16d0, 1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -15863,8 +15863,8 @@ inline hw_uint<16> denoiseb_rd213_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd214_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd214 read pattern: { denoiseb_update_0[d0, d1] -> raw[8 + 16d0, 2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -15874,8 +15874,8 @@ inline hw_uint<16> denoiseb_rd214_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd215_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd215 read pattern: { denoiseb_update_0[d0, d1] -> raw[9 + 16d0, -2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -15885,8 +15885,8 @@ inline hw_uint<16> denoiseb_rd215_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd216_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd216 read pattern: { denoiseb_update_0[d0, d1] -> raw[9 + 16d0, -1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -15896,8 +15896,8 @@ inline hw_uint<16> denoiseb_rd216_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd217_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd217 read pattern: { denoiseb_update_0[d0, d1] -> raw[9 + 16d0, d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -15907,8 +15907,8 @@ inline hw_uint<16> denoiseb_rd217_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd218_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd218 read pattern: { denoiseb_update_0[d0, d1] -> raw[9 + 16d0, 1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -15918,8 +15918,8 @@ inline hw_uint<16> denoiseb_rd218_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd219_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd219 read pattern: { denoiseb_update_0[d0, d1] -> raw[9 + 16d0, 2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -15929,8 +15929,8 @@ inline hw_uint<16> denoiseb_rd219_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd22_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd22 read pattern: { denoiseb_update_0[d0, d1] -> raw[2 + 16d0, d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -15940,8 +15940,8 @@ inline hw_uint<16> denoiseb_rd22_select(raw_cache& raw, int d0, int d1, int dyna
 }
 
 inline hw_uint<16> denoiseb_rd220_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd220 read pattern: { denoiseb_update_0[d0, d1] -> raw[10 + 16d0, -2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -15951,8 +15951,8 @@ inline hw_uint<16> denoiseb_rd220_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd221_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd221 read pattern: { denoiseb_update_0[d0, d1] -> raw[10 + 16d0, -1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -15962,8 +15962,8 @@ inline hw_uint<16> denoiseb_rd221_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd222_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd222 read pattern: { denoiseb_update_0[d0, d1] -> raw[10 + 16d0, d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -15973,8 +15973,8 @@ inline hw_uint<16> denoiseb_rd222_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd223_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd223 read pattern: { denoiseb_update_0[d0, d1] -> raw[10 + 16d0, 1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -15984,8 +15984,8 @@ inline hw_uint<16> denoiseb_rd223_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd224_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd224 read pattern: { denoiseb_update_0[d0, d1] -> raw[10 + 16d0, 2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -15995,8 +15995,8 @@ inline hw_uint<16> denoiseb_rd224_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd225_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd225 read pattern: { denoiseb_update_0[d0, d1] -> raw[7 + 16d0, -2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -16006,8 +16006,8 @@ inline hw_uint<16> denoiseb_rd225_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd226_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd226 read pattern: { denoiseb_update_0[d0, d1] -> raw[7 + 16d0, -1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -16017,8 +16017,8 @@ inline hw_uint<16> denoiseb_rd226_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd227_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd227 read pattern: { denoiseb_update_0[d0, d1] -> raw[7 + 16d0, d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -16028,8 +16028,8 @@ inline hw_uint<16> denoiseb_rd227_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd228_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd228 read pattern: { denoiseb_update_0[d0, d1] -> raw[7 + 16d0, 1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -16039,8 +16039,8 @@ inline hw_uint<16> denoiseb_rd228_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd229_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd229 read pattern: { denoiseb_update_0[d0, d1] -> raw[7 + 16d0, 2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -16050,8 +16050,8 @@ inline hw_uint<16> denoiseb_rd229_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd23_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd23 read pattern: { denoiseb_update_0[d0, d1] -> raw[2 + 16d0, 1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -16061,8 +16061,8 @@ inline hw_uint<16> denoiseb_rd23_select(raw_cache& raw, int d0, int d1, int dyna
 }
 
 inline hw_uint<16> denoiseb_rd230_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd230 read pattern: { denoiseb_update_0[d0, d1] -> raw[8 + 16d0, -2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -16072,8 +16072,8 @@ inline hw_uint<16> denoiseb_rd230_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd231_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd231 read pattern: { denoiseb_update_0[d0, d1] -> raw[8 + 16d0, -1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -16083,8 +16083,8 @@ inline hw_uint<16> denoiseb_rd231_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd232_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd232 read pattern: { denoiseb_update_0[d0, d1] -> raw[8 + 16d0, d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -16094,8 +16094,8 @@ inline hw_uint<16> denoiseb_rd232_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd233_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd233 read pattern: { denoiseb_update_0[d0, d1] -> raw[8 + 16d0, 1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -16105,8 +16105,8 @@ inline hw_uint<16> denoiseb_rd233_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd234_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd234 read pattern: { denoiseb_update_0[d0, d1] -> raw[8 + 16d0, 2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -16116,8 +16116,8 @@ inline hw_uint<16> denoiseb_rd234_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd235_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd235 read pattern: { denoiseb_update_0[d0, d1] -> raw[9 + 16d0, -2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -16127,8 +16127,8 @@ inline hw_uint<16> denoiseb_rd235_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd236_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd236 read pattern: { denoiseb_update_0[d0, d1] -> raw[9 + 16d0, -1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -16138,8 +16138,8 @@ inline hw_uint<16> denoiseb_rd236_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd237_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd237 read pattern: { denoiseb_update_0[d0, d1] -> raw[9 + 16d0, d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -16149,8 +16149,8 @@ inline hw_uint<16> denoiseb_rd237_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd238_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd238 read pattern: { denoiseb_update_0[d0, d1] -> raw[9 + 16d0, 1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -16160,8 +16160,8 @@ inline hw_uint<16> denoiseb_rd238_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd239_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd239 read pattern: { denoiseb_update_0[d0, d1] -> raw[9 + 16d0, 2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -16171,8 +16171,8 @@ inline hw_uint<16> denoiseb_rd239_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd24_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd24 read pattern: { denoiseb_update_0[d0, d1] -> raw[2 + 16d0, 2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -16182,8 +16182,8 @@ inline hw_uint<16> denoiseb_rd24_select(raw_cache& raw, int d0, int d1, int dyna
 }
 
 inline hw_uint<16> denoiseb_rd240_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd240 read pattern: { denoiseb_update_0[d0, d1] -> raw[10 + 16d0, -2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -16193,8 +16193,8 @@ inline hw_uint<16> denoiseb_rd240_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd241_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd241 read pattern: { denoiseb_update_0[d0, d1] -> raw[10 + 16d0, -1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -16204,8 +16204,8 @@ inline hw_uint<16> denoiseb_rd241_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd242_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd242 read pattern: { denoiseb_update_0[d0, d1] -> raw[10 + 16d0, d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -16215,8 +16215,8 @@ inline hw_uint<16> denoiseb_rd242_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd243_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd243 read pattern: { denoiseb_update_0[d0, d1] -> raw[10 + 16d0, 1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -16226,8 +16226,8 @@ inline hw_uint<16> denoiseb_rd243_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd244_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd244 read pattern: { denoiseb_update_0[d0, d1] -> raw[10 + 16d0, 2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -16237,8 +16237,8 @@ inline hw_uint<16> denoiseb_rd244_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd245_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd245 read pattern: { denoiseb_update_0[d0, d1] -> raw[11 + 16d0, -2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -16248,8 +16248,8 @@ inline hw_uint<16> denoiseb_rd245_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd246_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd246 read pattern: { denoiseb_update_0[d0, d1] -> raw[11 + 16d0, -1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -16259,8 +16259,8 @@ inline hw_uint<16> denoiseb_rd246_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd247_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd247 read pattern: { denoiseb_update_0[d0, d1] -> raw[11 + 16d0, d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -16270,8 +16270,8 @@ inline hw_uint<16> denoiseb_rd247_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd248_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd248 read pattern: { denoiseb_update_0[d0, d1] -> raw[11 + 16d0, 1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -16281,8 +16281,8 @@ inline hw_uint<16> denoiseb_rd248_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd249_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd249 read pattern: { denoiseb_update_0[d0, d1] -> raw[11 + 16d0, 2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -16292,8 +16292,8 @@ inline hw_uint<16> denoiseb_rd249_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd25_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd25 read pattern: { denoiseb_update_0[d0, d1] -> raw[-1 + 16d0, -2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -16303,8 +16303,8 @@ inline hw_uint<16> denoiseb_rd25_select(raw_cache& raw, int d0, int d1, int dyna
 }
 
 inline hw_uint<16> denoiseb_rd250_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd250 read pattern: { denoiseb_update_0[d0, d1] -> raw[8 + 16d0, -2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -16314,8 +16314,8 @@ inline hw_uint<16> denoiseb_rd250_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd251_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd251 read pattern: { denoiseb_update_0[d0, d1] -> raw[8 + 16d0, -1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -16325,8 +16325,8 @@ inline hw_uint<16> denoiseb_rd251_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd252_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd252 read pattern: { denoiseb_update_0[d0, d1] -> raw[8 + 16d0, d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -16336,8 +16336,8 @@ inline hw_uint<16> denoiseb_rd252_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd253_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd253 read pattern: { denoiseb_update_0[d0, d1] -> raw[8 + 16d0, 1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -16347,8 +16347,8 @@ inline hw_uint<16> denoiseb_rd253_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd254_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd254 read pattern: { denoiseb_update_0[d0, d1] -> raw[8 + 16d0, 2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -16358,8 +16358,8 @@ inline hw_uint<16> denoiseb_rd254_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd255_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd255 read pattern: { denoiseb_update_0[d0, d1] -> raw[9 + 16d0, -2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -16369,8 +16369,8 @@ inline hw_uint<16> denoiseb_rd255_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd256_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd256 read pattern: { denoiseb_update_0[d0, d1] -> raw[9 + 16d0, -1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -16380,8 +16380,8 @@ inline hw_uint<16> denoiseb_rd256_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd257_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd257 read pattern: { denoiseb_update_0[d0, d1] -> raw[9 + 16d0, d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -16391,8 +16391,8 @@ inline hw_uint<16> denoiseb_rd257_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd258_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd258 read pattern: { denoiseb_update_0[d0, d1] -> raw[9 + 16d0, 1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -16402,8 +16402,8 @@ inline hw_uint<16> denoiseb_rd258_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd259_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd259 read pattern: { denoiseb_update_0[d0, d1] -> raw[9 + 16d0, 2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -16413,8 +16413,8 @@ inline hw_uint<16> denoiseb_rd259_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd26_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd26 read pattern: { denoiseb_update_0[d0, d1] -> raw[-1 + 16d0, -1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -16424,8 +16424,8 @@ inline hw_uint<16> denoiseb_rd26_select(raw_cache& raw, int d0, int d1, int dyna
 }
 
 inline hw_uint<16> denoiseb_rd260_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd260 read pattern: { denoiseb_update_0[d0, d1] -> raw[10 + 16d0, -2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -16435,8 +16435,8 @@ inline hw_uint<16> denoiseb_rd260_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd261_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd261 read pattern: { denoiseb_update_0[d0, d1] -> raw[10 + 16d0, -1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -16446,8 +16446,8 @@ inline hw_uint<16> denoiseb_rd261_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd262_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd262 read pattern: { denoiseb_update_0[d0, d1] -> raw[10 + 16d0, d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -16457,8 +16457,8 @@ inline hw_uint<16> denoiseb_rd262_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd263_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd263 read pattern: { denoiseb_update_0[d0, d1] -> raw[10 + 16d0, 1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -16468,8 +16468,8 @@ inline hw_uint<16> denoiseb_rd263_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd264_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd264 read pattern: { denoiseb_update_0[d0, d1] -> raw[10 + 16d0, 2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -16479,8 +16479,8 @@ inline hw_uint<16> denoiseb_rd264_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd265_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd265 read pattern: { denoiseb_update_0[d0, d1] -> raw[11 + 16d0, -2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -16490,8 +16490,8 @@ inline hw_uint<16> denoiseb_rd265_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd266_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd266 read pattern: { denoiseb_update_0[d0, d1] -> raw[11 + 16d0, -1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -16501,8 +16501,8 @@ inline hw_uint<16> denoiseb_rd266_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd267_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd267 read pattern: { denoiseb_update_0[d0, d1] -> raw[11 + 16d0, d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -16512,8 +16512,8 @@ inline hw_uint<16> denoiseb_rd267_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd268_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd268 read pattern: { denoiseb_update_0[d0, d1] -> raw[11 + 16d0, 1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -16523,8 +16523,8 @@ inline hw_uint<16> denoiseb_rd268_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd269_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd269 read pattern: { denoiseb_update_0[d0, d1] -> raw[11 + 16d0, 2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -16534,8 +16534,8 @@ inline hw_uint<16> denoiseb_rd269_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd27_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd27 read pattern: { denoiseb_update_0[d0, d1] -> raw[-1 + 16d0, d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -16545,8 +16545,8 @@ inline hw_uint<16> denoiseb_rd27_select(raw_cache& raw, int d0, int d1, int dyna
 }
 
 inline hw_uint<16> denoiseb_rd270_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd270 read pattern: { denoiseb_update_0[d0, d1] -> raw[12 + 16d0, -2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -16556,8 +16556,8 @@ inline hw_uint<16> denoiseb_rd270_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd271_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd271 read pattern: { denoiseb_update_0[d0, d1] -> raw[12 + 16d0, -1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -16567,8 +16567,8 @@ inline hw_uint<16> denoiseb_rd271_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd272_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd272 read pattern: { denoiseb_update_0[d0, d1] -> raw[12 + 16d0, d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -16578,8 +16578,8 @@ inline hw_uint<16> denoiseb_rd272_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd273_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd273 read pattern: { denoiseb_update_0[d0, d1] -> raw[12 + 16d0, 1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -16589,8 +16589,8 @@ inline hw_uint<16> denoiseb_rd273_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd274_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd274 read pattern: { denoiseb_update_0[d0, d1] -> raw[12 + 16d0, 2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -16600,8 +16600,8 @@ inline hw_uint<16> denoiseb_rd274_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd275_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd275 read pattern: { denoiseb_update_0[d0, d1] -> raw[9 + 16d0, -2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -16611,8 +16611,8 @@ inline hw_uint<16> denoiseb_rd275_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd276_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd276 read pattern: { denoiseb_update_0[d0, d1] -> raw[9 + 16d0, -1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -16622,8 +16622,8 @@ inline hw_uint<16> denoiseb_rd276_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd277_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd277 read pattern: { denoiseb_update_0[d0, d1] -> raw[9 + 16d0, d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -16633,8 +16633,8 @@ inline hw_uint<16> denoiseb_rd277_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd278_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd278 read pattern: { denoiseb_update_0[d0, d1] -> raw[9 + 16d0, 1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -16644,8 +16644,8 @@ inline hw_uint<16> denoiseb_rd278_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd279_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd279 read pattern: { denoiseb_update_0[d0, d1] -> raw[9 + 16d0, 2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -16655,8 +16655,8 @@ inline hw_uint<16> denoiseb_rd279_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd28_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd28 read pattern: { denoiseb_update_0[d0, d1] -> raw[-1 + 16d0, 1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -16666,8 +16666,8 @@ inline hw_uint<16> denoiseb_rd28_select(raw_cache& raw, int d0, int d1, int dyna
 }
 
 inline hw_uint<16> denoiseb_rd280_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd280 read pattern: { denoiseb_update_0[d0, d1] -> raw[10 + 16d0, -2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -16677,8 +16677,8 @@ inline hw_uint<16> denoiseb_rd280_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd281_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd281 read pattern: { denoiseb_update_0[d0, d1] -> raw[10 + 16d0, -1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -16688,8 +16688,8 @@ inline hw_uint<16> denoiseb_rd281_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd282_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd282 read pattern: { denoiseb_update_0[d0, d1] -> raw[10 + 16d0, d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -16699,8 +16699,8 @@ inline hw_uint<16> denoiseb_rd282_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd283_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd283 read pattern: { denoiseb_update_0[d0, d1] -> raw[10 + 16d0, 1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -16710,8 +16710,8 @@ inline hw_uint<16> denoiseb_rd283_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd284_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd284 read pattern: { denoiseb_update_0[d0, d1] -> raw[10 + 16d0, 2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -16721,8 +16721,8 @@ inline hw_uint<16> denoiseb_rd284_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd285_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd285 read pattern: { denoiseb_update_0[d0, d1] -> raw[11 + 16d0, -2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -16732,8 +16732,8 @@ inline hw_uint<16> denoiseb_rd285_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd286_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd286 read pattern: { denoiseb_update_0[d0, d1] -> raw[11 + 16d0, -1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -16743,8 +16743,8 @@ inline hw_uint<16> denoiseb_rd286_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd287_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd287 read pattern: { denoiseb_update_0[d0, d1] -> raw[11 + 16d0, d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -16754,8 +16754,8 @@ inline hw_uint<16> denoiseb_rd287_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd288_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd288 read pattern: { denoiseb_update_0[d0, d1] -> raw[11 + 16d0, 1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -16765,8 +16765,8 @@ inline hw_uint<16> denoiseb_rd288_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd289_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd289 read pattern: { denoiseb_update_0[d0, d1] -> raw[11 + 16d0, 2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -16776,8 +16776,8 @@ inline hw_uint<16> denoiseb_rd289_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd29_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd29 read pattern: { denoiseb_update_0[d0, d1] -> raw[-1 + 16d0, 2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -16787,8 +16787,8 @@ inline hw_uint<16> denoiseb_rd29_select(raw_cache& raw, int d0, int d1, int dyna
 }
 
 inline hw_uint<16> denoiseb_rd290_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd290 read pattern: { denoiseb_update_0[d0, d1] -> raw[12 + 16d0, -2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -16798,8 +16798,8 @@ inline hw_uint<16> denoiseb_rd290_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd291_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd291 read pattern: { denoiseb_update_0[d0, d1] -> raw[12 + 16d0, -1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -16809,8 +16809,8 @@ inline hw_uint<16> denoiseb_rd291_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd292_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd292 read pattern: { denoiseb_update_0[d0, d1] -> raw[12 + 16d0, d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -16820,8 +16820,8 @@ inline hw_uint<16> denoiseb_rd292_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd293_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd293 read pattern: { denoiseb_update_0[d0, d1] -> raw[12 + 16d0, 1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -16831,8 +16831,8 @@ inline hw_uint<16> denoiseb_rd293_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd294_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd294 read pattern: { denoiseb_update_0[d0, d1] -> raw[12 + 16d0, 2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -16842,8 +16842,8 @@ inline hw_uint<16> denoiseb_rd294_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd295_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd295 read pattern: { denoiseb_update_0[d0, d1] -> raw[13 + 16d0, -2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -16853,8 +16853,8 @@ inline hw_uint<16> denoiseb_rd295_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd296_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd296 read pattern: { denoiseb_update_0[d0, d1] -> raw[13 + 16d0, -1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -16864,8 +16864,8 @@ inline hw_uint<16> denoiseb_rd296_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd297_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd297 read pattern: { denoiseb_update_0[d0, d1] -> raw[13 + 16d0, d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -16875,8 +16875,8 @@ inline hw_uint<16> denoiseb_rd297_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd298_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd298 read pattern: { denoiseb_update_0[d0, d1] -> raw[13 + 16d0, 1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -16886,8 +16886,8 @@ inline hw_uint<16> denoiseb_rd298_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd299_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd299 read pattern: { denoiseb_update_0[d0, d1] -> raw[13 + 16d0, 2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -16897,8 +16897,8 @@ inline hw_uint<16> denoiseb_rd299_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd3_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd3 read pattern: { denoiseb_update_0[d0, d1] -> raw[-2 + 16d0, 1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -16908,8 +16908,8 @@ inline hw_uint<16> denoiseb_rd3_select(raw_cache& raw, int d0, int d1, int dynam
 }
 
 inline hw_uint<16> denoiseb_rd30_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd30 read pattern: { denoiseb_update_0[d0, d1] -> raw[16d0, -2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -16919,8 +16919,8 @@ inline hw_uint<16> denoiseb_rd30_select(raw_cache& raw, int d0, int d1, int dyna
 }
 
 inline hw_uint<16> denoiseb_rd300_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd300 read pattern: { denoiseb_update_0[d0, d1] -> raw[10 + 16d0, -2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -16930,8 +16930,8 @@ inline hw_uint<16> denoiseb_rd300_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd301_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd301 read pattern: { denoiseb_update_0[d0, d1] -> raw[10 + 16d0, -1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -16941,8 +16941,8 @@ inline hw_uint<16> denoiseb_rd301_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd302_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd302 read pattern: { denoiseb_update_0[d0, d1] -> raw[10 + 16d0, d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -16952,8 +16952,8 @@ inline hw_uint<16> denoiseb_rd302_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd303_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd303 read pattern: { denoiseb_update_0[d0, d1] -> raw[10 + 16d0, 1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -16963,8 +16963,8 @@ inline hw_uint<16> denoiseb_rd303_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd304_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd304 read pattern: { denoiseb_update_0[d0, d1] -> raw[10 + 16d0, 2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -16974,8 +16974,8 @@ inline hw_uint<16> denoiseb_rd304_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd305_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd305 read pattern: { denoiseb_update_0[d0, d1] -> raw[11 + 16d0, -2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -16985,8 +16985,8 @@ inline hw_uint<16> denoiseb_rd305_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd306_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd306 read pattern: { denoiseb_update_0[d0, d1] -> raw[11 + 16d0, -1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -16996,8 +16996,8 @@ inline hw_uint<16> denoiseb_rd306_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd307_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd307 read pattern: { denoiseb_update_0[d0, d1] -> raw[11 + 16d0, d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -17007,8 +17007,8 @@ inline hw_uint<16> denoiseb_rd307_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd308_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd308 read pattern: { denoiseb_update_0[d0, d1] -> raw[11 + 16d0, 1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -17018,8 +17018,8 @@ inline hw_uint<16> denoiseb_rd308_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd309_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd309 read pattern: { denoiseb_update_0[d0, d1] -> raw[11 + 16d0, 2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -17029,8 +17029,8 @@ inline hw_uint<16> denoiseb_rd309_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd31_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd31 read pattern: { denoiseb_update_0[d0, d1] -> raw[16d0, -1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -17040,8 +17040,8 @@ inline hw_uint<16> denoiseb_rd31_select(raw_cache& raw, int d0, int d1, int dyna
 }
 
 inline hw_uint<16> denoiseb_rd310_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd310 read pattern: { denoiseb_update_0[d0, d1] -> raw[12 + 16d0, -2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -17051,8 +17051,8 @@ inline hw_uint<16> denoiseb_rd310_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd311_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd311 read pattern: { denoiseb_update_0[d0, d1] -> raw[12 + 16d0, -1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -17062,8 +17062,8 @@ inline hw_uint<16> denoiseb_rd311_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd312_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd312 read pattern: { denoiseb_update_0[d0, d1] -> raw[12 + 16d0, d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -17073,8 +17073,8 @@ inline hw_uint<16> denoiseb_rd312_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd313_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd313 read pattern: { denoiseb_update_0[d0, d1] -> raw[12 + 16d0, 1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -17084,8 +17084,8 @@ inline hw_uint<16> denoiseb_rd313_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd314_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd314 read pattern: { denoiseb_update_0[d0, d1] -> raw[12 + 16d0, 2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -17095,8 +17095,8 @@ inline hw_uint<16> denoiseb_rd314_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd315_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd315 read pattern: { denoiseb_update_0[d0, d1] -> raw[13 + 16d0, -2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -17106,8 +17106,8 @@ inline hw_uint<16> denoiseb_rd315_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd316_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd316 read pattern: { denoiseb_update_0[d0, d1] -> raw[13 + 16d0, -1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -17117,8 +17117,8 @@ inline hw_uint<16> denoiseb_rd316_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd317_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd317 read pattern: { denoiseb_update_0[d0, d1] -> raw[13 + 16d0, d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -17128,8 +17128,8 @@ inline hw_uint<16> denoiseb_rd317_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd318_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd318 read pattern: { denoiseb_update_0[d0, d1] -> raw[13 + 16d0, 1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -17139,8 +17139,8 @@ inline hw_uint<16> denoiseb_rd318_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd319_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd319 read pattern: { denoiseb_update_0[d0, d1] -> raw[13 + 16d0, 2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -17150,8 +17150,8 @@ inline hw_uint<16> denoiseb_rd319_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd32_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd32 read pattern: { denoiseb_update_0[d0, d1] -> raw[16d0, d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -17161,8 +17161,8 @@ inline hw_uint<16> denoiseb_rd32_select(raw_cache& raw, int d0, int d1, int dyna
 }
 
 inline hw_uint<16> denoiseb_rd320_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd320 read pattern: { denoiseb_update_0[d0, d1] -> raw[14 + 16d0, -2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -17172,8 +17172,8 @@ inline hw_uint<16> denoiseb_rd320_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd321_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd321 read pattern: { denoiseb_update_0[d0, d1] -> raw[14 + 16d0, -1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -17183,8 +17183,8 @@ inline hw_uint<16> denoiseb_rd321_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd322_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd322 read pattern: { denoiseb_update_0[d0, d1] -> raw[14 + 16d0, d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -17194,8 +17194,8 @@ inline hw_uint<16> denoiseb_rd322_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd323_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd323 read pattern: { denoiseb_update_0[d0, d1] -> raw[14 + 16d0, 1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -17205,8 +17205,8 @@ inline hw_uint<16> denoiseb_rd323_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd324_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd324 read pattern: { denoiseb_update_0[d0, d1] -> raw[14 + 16d0, 2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -17216,8 +17216,8 @@ inline hw_uint<16> denoiseb_rd324_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd325_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd325 read pattern: { denoiseb_update_0[d0, d1] -> raw[11 + 16d0, -2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -17227,8 +17227,8 @@ inline hw_uint<16> denoiseb_rd325_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd326_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd326 read pattern: { denoiseb_update_0[d0, d1] -> raw[11 + 16d0, -1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -17238,8 +17238,8 @@ inline hw_uint<16> denoiseb_rd326_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd327_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd327 read pattern: { denoiseb_update_0[d0, d1] -> raw[11 + 16d0, d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -17249,8 +17249,8 @@ inline hw_uint<16> denoiseb_rd327_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd328_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd328 read pattern: { denoiseb_update_0[d0, d1] -> raw[11 + 16d0, 1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -17260,8 +17260,8 @@ inline hw_uint<16> denoiseb_rd328_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd329_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd329 read pattern: { denoiseb_update_0[d0, d1] -> raw[11 + 16d0, 2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -17271,8 +17271,8 @@ inline hw_uint<16> denoiseb_rd329_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd33_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd33 read pattern: { denoiseb_update_0[d0, d1] -> raw[16d0, 1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -17282,8 +17282,8 @@ inline hw_uint<16> denoiseb_rd33_select(raw_cache& raw, int d0, int d1, int dyna
 }
 
 inline hw_uint<16> denoiseb_rd330_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd330 read pattern: { denoiseb_update_0[d0, d1] -> raw[12 + 16d0, -2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -17293,8 +17293,8 @@ inline hw_uint<16> denoiseb_rd330_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd331_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd331 read pattern: { denoiseb_update_0[d0, d1] -> raw[12 + 16d0, -1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -17304,8 +17304,8 @@ inline hw_uint<16> denoiseb_rd331_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd332_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd332 read pattern: { denoiseb_update_0[d0, d1] -> raw[12 + 16d0, d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -17315,8 +17315,8 @@ inline hw_uint<16> denoiseb_rd332_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd333_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd333 read pattern: { denoiseb_update_0[d0, d1] -> raw[12 + 16d0, 1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -17326,8 +17326,8 @@ inline hw_uint<16> denoiseb_rd333_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd334_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd334 read pattern: { denoiseb_update_0[d0, d1] -> raw[12 + 16d0, 2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -17337,8 +17337,8 @@ inline hw_uint<16> denoiseb_rd334_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd335_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd335 read pattern: { denoiseb_update_0[d0, d1] -> raw[13 + 16d0, -2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -17348,8 +17348,8 @@ inline hw_uint<16> denoiseb_rd335_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd336_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd336 read pattern: { denoiseb_update_0[d0, d1] -> raw[13 + 16d0, -1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -17359,8 +17359,8 @@ inline hw_uint<16> denoiseb_rd336_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd337_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd337 read pattern: { denoiseb_update_0[d0, d1] -> raw[13 + 16d0, d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -17370,8 +17370,8 @@ inline hw_uint<16> denoiseb_rd337_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd338_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd338 read pattern: { denoiseb_update_0[d0, d1] -> raw[13 + 16d0, 1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -17381,8 +17381,8 @@ inline hw_uint<16> denoiseb_rd338_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd339_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd339 read pattern: { denoiseb_update_0[d0, d1] -> raw[13 + 16d0, 2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -17392,8 +17392,8 @@ inline hw_uint<16> denoiseb_rd339_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd34_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd34 read pattern: { denoiseb_update_0[d0, d1] -> raw[16d0, 2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -17403,8 +17403,8 @@ inline hw_uint<16> denoiseb_rd34_select(raw_cache& raw, int d0, int d1, int dyna
 }
 
 inline hw_uint<16> denoiseb_rd340_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd340 read pattern: { denoiseb_update_0[d0, d1] -> raw[14 + 16d0, -2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -17414,8 +17414,8 @@ inline hw_uint<16> denoiseb_rd340_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd341_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd341 read pattern: { denoiseb_update_0[d0, d1] -> raw[14 + 16d0, -1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -17425,8 +17425,8 @@ inline hw_uint<16> denoiseb_rd341_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd342_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd342 read pattern: { denoiseb_update_0[d0, d1] -> raw[14 + 16d0, d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -17436,8 +17436,8 @@ inline hw_uint<16> denoiseb_rd342_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd343_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd343 read pattern: { denoiseb_update_0[d0, d1] -> raw[14 + 16d0, 1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -17447,8 +17447,8 @@ inline hw_uint<16> denoiseb_rd343_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd344_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd344 read pattern: { denoiseb_update_0[d0, d1] -> raw[14 + 16d0, 2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -17458,8 +17458,8 @@ inline hw_uint<16> denoiseb_rd344_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd345_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd345 read pattern: { denoiseb_update_0[d0, d1] -> raw[15 + 16d0, -2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -17469,8 +17469,8 @@ inline hw_uint<16> denoiseb_rd345_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd346_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd346 read pattern: { denoiseb_update_0[d0, d1] -> raw[15 + 16d0, -1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -17480,8 +17480,8 @@ inline hw_uint<16> denoiseb_rd346_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd347_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd347 read pattern: { denoiseb_update_0[d0, d1] -> raw[15 + 16d0, d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -17491,8 +17491,8 @@ inline hw_uint<16> denoiseb_rd347_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd348_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd348 read pattern: { denoiseb_update_0[d0, d1] -> raw[15 + 16d0, 1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -17502,8 +17502,8 @@ inline hw_uint<16> denoiseb_rd348_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd349_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd349 read pattern: { denoiseb_update_0[d0, d1] -> raw[15 + 16d0, 2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -17513,8 +17513,8 @@ inline hw_uint<16> denoiseb_rd349_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd35_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd35 read pattern: { denoiseb_update_0[d0, d1] -> raw[1 + 16d0, -2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -17524,8 +17524,8 @@ inline hw_uint<16> denoiseb_rd35_select(raw_cache& raw, int d0, int d1, int dyna
 }
 
 inline hw_uint<16> denoiseb_rd350_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd350 read pattern: { denoiseb_update_0[d0, d1] -> raw[12 + 16d0, -2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -17535,8 +17535,8 @@ inline hw_uint<16> denoiseb_rd350_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd351_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd351 read pattern: { denoiseb_update_0[d0, d1] -> raw[12 + 16d0, -1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -17546,8 +17546,8 @@ inline hw_uint<16> denoiseb_rd351_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd352_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd352 read pattern: { denoiseb_update_0[d0, d1] -> raw[12 + 16d0, d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -17557,8 +17557,8 @@ inline hw_uint<16> denoiseb_rd352_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd353_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd353 read pattern: { denoiseb_update_0[d0, d1] -> raw[12 + 16d0, 1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -17568,8 +17568,8 @@ inline hw_uint<16> denoiseb_rd353_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd354_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd354 read pattern: { denoiseb_update_0[d0, d1] -> raw[12 + 16d0, 2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -17579,8 +17579,8 @@ inline hw_uint<16> denoiseb_rd354_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd355_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd355 read pattern: { denoiseb_update_0[d0, d1] -> raw[13 + 16d0, -2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -17590,8 +17590,8 @@ inline hw_uint<16> denoiseb_rd355_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd356_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd356 read pattern: { denoiseb_update_0[d0, d1] -> raw[13 + 16d0, -1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -17601,8 +17601,8 @@ inline hw_uint<16> denoiseb_rd356_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd357_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd357 read pattern: { denoiseb_update_0[d0, d1] -> raw[13 + 16d0, d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -17612,8 +17612,8 @@ inline hw_uint<16> denoiseb_rd357_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd358_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd358 read pattern: { denoiseb_update_0[d0, d1] -> raw[13 + 16d0, 1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -17623,8 +17623,8 @@ inline hw_uint<16> denoiseb_rd358_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd359_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd359 read pattern: { denoiseb_update_0[d0, d1] -> raw[13 + 16d0, 2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -17634,8 +17634,8 @@ inline hw_uint<16> denoiseb_rd359_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd36_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd36 read pattern: { denoiseb_update_0[d0, d1] -> raw[1 + 16d0, -1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -17645,8 +17645,8 @@ inline hw_uint<16> denoiseb_rd36_select(raw_cache& raw, int d0, int d1, int dyna
 }
 
 inline hw_uint<16> denoiseb_rd360_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd360 read pattern: { denoiseb_update_0[d0, d1] -> raw[14 + 16d0, -2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -17656,8 +17656,8 @@ inline hw_uint<16> denoiseb_rd360_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd361_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd361 read pattern: { denoiseb_update_0[d0, d1] -> raw[14 + 16d0, -1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -17667,8 +17667,8 @@ inline hw_uint<16> denoiseb_rd361_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd362_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd362 read pattern: { denoiseb_update_0[d0, d1] -> raw[14 + 16d0, d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -17678,8 +17678,8 @@ inline hw_uint<16> denoiseb_rd362_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd363_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd363 read pattern: { denoiseb_update_0[d0, d1] -> raw[14 + 16d0, 1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -17689,8 +17689,8 @@ inline hw_uint<16> denoiseb_rd363_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd364_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd364 read pattern: { denoiseb_update_0[d0, d1] -> raw[14 + 16d0, 2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -17700,8 +17700,8 @@ inline hw_uint<16> denoiseb_rd364_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd365_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd365 read pattern: { denoiseb_update_0[d0, d1] -> raw[15 + 16d0, -2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -17711,8 +17711,8 @@ inline hw_uint<16> denoiseb_rd365_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd366_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd366 read pattern: { denoiseb_update_0[d0, d1] -> raw[15 + 16d0, -1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -17722,8 +17722,8 @@ inline hw_uint<16> denoiseb_rd366_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd367_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd367 read pattern: { denoiseb_update_0[d0, d1] -> raw[15 + 16d0, d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -17733,8 +17733,8 @@ inline hw_uint<16> denoiseb_rd367_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd368_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd368 read pattern: { denoiseb_update_0[d0, d1] -> raw[15 + 16d0, 1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -17744,8 +17744,8 @@ inline hw_uint<16> denoiseb_rd368_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd369_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd369 read pattern: { denoiseb_update_0[d0, d1] -> raw[15 + 16d0, 2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -17755,8 +17755,8 @@ inline hw_uint<16> denoiseb_rd369_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd37_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd37 read pattern: { denoiseb_update_0[d0, d1] -> raw[1 + 16d0, d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -17766,8 +17766,8 @@ inline hw_uint<16> denoiseb_rd37_select(raw_cache& raw, int d0, int d1, int dyna
 }
 
 inline hw_uint<16> denoiseb_rd370_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd370 read pattern: { denoiseb_update_0[d0, d1] -> raw[16 + 16d0, -2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -17777,8 +17777,8 @@ inline hw_uint<16> denoiseb_rd370_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd371_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd371 read pattern: { denoiseb_update_0[d0, d1] -> raw[16 + 16d0, -1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -17788,8 +17788,8 @@ inline hw_uint<16> denoiseb_rd371_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd372_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd372 read pattern: { denoiseb_update_0[d0, d1] -> raw[16 + 16d0, d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -17799,8 +17799,8 @@ inline hw_uint<16> denoiseb_rd372_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd373_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd373 read pattern: { denoiseb_update_0[d0, d1] -> raw[16 + 16d0, 1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -17810,8 +17810,8 @@ inline hw_uint<16> denoiseb_rd373_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd374_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd374 read pattern: { denoiseb_update_0[d0, d1] -> raw[16 + 16d0, 2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -17821,8 +17821,8 @@ inline hw_uint<16> denoiseb_rd374_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd375_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd375 read pattern: { denoiseb_update_0[d0, d1] -> raw[13 + 16d0, -2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -17832,8 +17832,8 @@ inline hw_uint<16> denoiseb_rd375_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd376_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd376 read pattern: { denoiseb_update_0[d0, d1] -> raw[13 + 16d0, -1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -17843,8 +17843,8 @@ inline hw_uint<16> denoiseb_rd376_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd377_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd377 read pattern: { denoiseb_update_0[d0, d1] -> raw[13 + 16d0, d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -17854,8 +17854,8 @@ inline hw_uint<16> denoiseb_rd377_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd378_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd378 read pattern: { denoiseb_update_0[d0, d1] -> raw[13 + 16d0, 1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -17865,8 +17865,8 @@ inline hw_uint<16> denoiseb_rd378_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd379_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd379 read pattern: { denoiseb_update_0[d0, d1] -> raw[13 + 16d0, 2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -17876,8 +17876,8 @@ inline hw_uint<16> denoiseb_rd379_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd38_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd38 read pattern: { denoiseb_update_0[d0, d1] -> raw[1 + 16d0, 1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -17887,8 +17887,8 @@ inline hw_uint<16> denoiseb_rd38_select(raw_cache& raw, int d0, int d1, int dyna
 }
 
 inline hw_uint<16> denoiseb_rd380_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd380 read pattern: { denoiseb_update_0[d0, d1] -> raw[14 + 16d0, -2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -17898,8 +17898,8 @@ inline hw_uint<16> denoiseb_rd380_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd381_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd381 read pattern: { denoiseb_update_0[d0, d1] -> raw[14 + 16d0, -1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -17909,8 +17909,8 @@ inline hw_uint<16> denoiseb_rd381_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd382_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd382 read pattern: { denoiseb_update_0[d0, d1] -> raw[14 + 16d0, d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -17920,8 +17920,8 @@ inline hw_uint<16> denoiseb_rd382_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd383_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd383 read pattern: { denoiseb_update_0[d0, d1] -> raw[14 + 16d0, 1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -17931,8 +17931,8 @@ inline hw_uint<16> denoiseb_rd383_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd384_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd384 read pattern: { denoiseb_update_0[d0, d1] -> raw[14 + 16d0, 2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -17942,8 +17942,8 @@ inline hw_uint<16> denoiseb_rd384_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd385_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd385 read pattern: { denoiseb_update_0[d0, d1] -> raw[15 + 16d0, -2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -17953,8 +17953,8 @@ inline hw_uint<16> denoiseb_rd385_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd386_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd386 read pattern: { denoiseb_update_0[d0, d1] -> raw[15 + 16d0, -1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -17964,8 +17964,8 @@ inline hw_uint<16> denoiseb_rd386_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd387_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd387 read pattern: { denoiseb_update_0[d0, d1] -> raw[15 + 16d0, d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -17975,8 +17975,8 @@ inline hw_uint<16> denoiseb_rd387_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd388_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd388 read pattern: { denoiseb_update_0[d0, d1] -> raw[15 + 16d0, 1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -17986,8 +17986,8 @@ inline hw_uint<16> denoiseb_rd388_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd389_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd389 read pattern: { denoiseb_update_0[d0, d1] -> raw[15 + 16d0, 2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -17997,8 +17997,8 @@ inline hw_uint<16> denoiseb_rd389_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd39_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd39 read pattern: { denoiseb_update_0[d0, d1] -> raw[1 + 16d0, 2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -18008,8 +18008,8 @@ inline hw_uint<16> denoiseb_rd39_select(raw_cache& raw, int d0, int d1, int dyna
 }
 
 inline hw_uint<16> denoiseb_rd390_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd390 read pattern: { denoiseb_update_0[d0, d1] -> raw[16 + 16d0, -2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -18019,8 +18019,8 @@ inline hw_uint<16> denoiseb_rd390_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd391_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd391 read pattern: { denoiseb_update_0[d0, d1] -> raw[16 + 16d0, -1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -18030,8 +18030,8 @@ inline hw_uint<16> denoiseb_rd391_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd392_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd392 read pattern: { denoiseb_update_0[d0, d1] -> raw[16 + 16d0, d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -18041,8 +18041,8 @@ inline hw_uint<16> denoiseb_rd392_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd393_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd393 read pattern: { denoiseb_update_0[d0, d1] -> raw[16 + 16d0, 1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -18052,8 +18052,8 @@ inline hw_uint<16> denoiseb_rd393_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd394_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd394 read pattern: { denoiseb_update_0[d0, d1] -> raw[16 + 16d0, 2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -18063,8 +18063,8 @@ inline hw_uint<16> denoiseb_rd394_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd395_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd395 read pattern: { denoiseb_update_0[d0, d1] -> raw[17 + 16d0, -2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -18074,8 +18074,8 @@ inline hw_uint<16> denoiseb_rd395_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd396_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd396 read pattern: { denoiseb_update_0[d0, d1] -> raw[17 + 16d0, -1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -18085,8 +18085,8 @@ inline hw_uint<16> denoiseb_rd396_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd397_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd397 read pattern: { denoiseb_update_0[d0, d1] -> raw[17 + 16d0, d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -18096,8 +18096,8 @@ inline hw_uint<16> denoiseb_rd397_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd398_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd398 read pattern: { denoiseb_update_0[d0, d1] -> raw[17 + 16d0, 1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -18107,8 +18107,8 @@ inline hw_uint<16> denoiseb_rd398_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd399_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd399 read pattern: { denoiseb_update_0[d0, d1] -> raw[17 + 16d0, 2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -18118,8 +18118,8 @@ inline hw_uint<16> denoiseb_rd399_select(raw_cache& raw, int d0, int d1, int dyn
 }
 
 inline hw_uint<16> denoiseb_rd4_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd4 read pattern: { denoiseb_update_0[d0, d1] -> raw[-2 + 16d0, 2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -18129,8 +18129,8 @@ inline hw_uint<16> denoiseb_rd4_select(raw_cache& raw, int d0, int d1, int dynam
 }
 
 inline hw_uint<16> denoiseb_rd40_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd40 read pattern: { denoiseb_update_0[d0, d1] -> raw[2 + 16d0, -2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -18140,8 +18140,8 @@ inline hw_uint<16> denoiseb_rd40_select(raw_cache& raw, int d0, int d1, int dyna
 }
 
 inline hw_uint<16> denoiseb_rd41_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd41 read pattern: { denoiseb_update_0[d0, d1] -> raw[2 + 16d0, -1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -18151,8 +18151,8 @@ inline hw_uint<16> denoiseb_rd41_select(raw_cache& raw, int d0, int d1, int dyna
 }
 
 inline hw_uint<16> denoiseb_rd42_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd42 read pattern: { denoiseb_update_0[d0, d1] -> raw[2 + 16d0, d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -18162,8 +18162,8 @@ inline hw_uint<16> denoiseb_rd42_select(raw_cache& raw, int d0, int d1, int dyna
 }
 
 inline hw_uint<16> denoiseb_rd43_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd43 read pattern: { denoiseb_update_0[d0, d1] -> raw[2 + 16d0, 1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -18173,8 +18173,8 @@ inline hw_uint<16> denoiseb_rd43_select(raw_cache& raw, int d0, int d1, int dyna
 }
 
 inline hw_uint<16> denoiseb_rd44_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd44 read pattern: { denoiseb_update_0[d0, d1] -> raw[2 + 16d0, 2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -18184,8 +18184,8 @@ inline hw_uint<16> denoiseb_rd44_select(raw_cache& raw, int d0, int d1, int dyna
 }
 
 inline hw_uint<16> denoiseb_rd45_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd45 read pattern: { denoiseb_update_0[d0, d1] -> raw[3 + 16d0, -2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -18195,8 +18195,8 @@ inline hw_uint<16> denoiseb_rd45_select(raw_cache& raw, int d0, int d1, int dyna
 }
 
 inline hw_uint<16> denoiseb_rd46_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd46 read pattern: { denoiseb_update_0[d0, d1] -> raw[3 + 16d0, -1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -18206,8 +18206,8 @@ inline hw_uint<16> denoiseb_rd46_select(raw_cache& raw, int d0, int d1, int dyna
 }
 
 inline hw_uint<16> denoiseb_rd47_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd47 read pattern: { denoiseb_update_0[d0, d1] -> raw[3 + 16d0, d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -18217,8 +18217,8 @@ inline hw_uint<16> denoiseb_rd47_select(raw_cache& raw, int d0, int d1, int dyna
 }
 
 inline hw_uint<16> denoiseb_rd48_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd48 read pattern: { denoiseb_update_0[d0, d1] -> raw[3 + 16d0, 1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -18228,8 +18228,8 @@ inline hw_uint<16> denoiseb_rd48_select(raw_cache& raw, int d0, int d1, int dyna
 }
 
 inline hw_uint<16> denoiseb_rd49_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd49 read pattern: { denoiseb_update_0[d0, d1] -> raw[3 + 16d0, 2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -18239,8 +18239,8 @@ inline hw_uint<16> denoiseb_rd49_select(raw_cache& raw, int d0, int d1, int dyna
 }
 
 inline hw_uint<16> denoiseb_rd5_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd5 read pattern: { denoiseb_update_0[d0, d1] -> raw[-1 + 16d0, -2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -18250,8 +18250,8 @@ inline hw_uint<16> denoiseb_rd5_select(raw_cache& raw, int d0, int d1, int dynam
 }
 
 inline hw_uint<16> denoiseb_rd50_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd50 read pattern: { denoiseb_update_0[d0, d1] -> raw[16d0, -2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -18261,8 +18261,8 @@ inline hw_uint<16> denoiseb_rd50_select(raw_cache& raw, int d0, int d1, int dyna
 }
 
 inline hw_uint<16> denoiseb_rd51_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd51 read pattern: { denoiseb_update_0[d0, d1] -> raw[16d0, -1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -18272,8 +18272,8 @@ inline hw_uint<16> denoiseb_rd51_select(raw_cache& raw, int d0, int d1, int dyna
 }
 
 inline hw_uint<16> denoiseb_rd52_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd52 read pattern: { denoiseb_update_0[d0, d1] -> raw[16d0, d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -18283,8 +18283,8 @@ inline hw_uint<16> denoiseb_rd52_select(raw_cache& raw, int d0, int d1, int dyna
 }
 
 inline hw_uint<16> denoiseb_rd53_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd53 read pattern: { denoiseb_update_0[d0, d1] -> raw[16d0, 1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -18294,8 +18294,8 @@ inline hw_uint<16> denoiseb_rd53_select(raw_cache& raw, int d0, int d1, int dyna
 }
 
 inline hw_uint<16> denoiseb_rd54_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd54 read pattern: { denoiseb_update_0[d0, d1] -> raw[16d0, 2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -18305,8 +18305,8 @@ inline hw_uint<16> denoiseb_rd54_select(raw_cache& raw, int d0, int d1, int dyna
 }
 
 inline hw_uint<16> denoiseb_rd55_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd55 read pattern: { denoiseb_update_0[d0, d1] -> raw[1 + 16d0, -2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -18316,8 +18316,8 @@ inline hw_uint<16> denoiseb_rd55_select(raw_cache& raw, int d0, int d1, int dyna
 }
 
 inline hw_uint<16> denoiseb_rd56_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd56 read pattern: { denoiseb_update_0[d0, d1] -> raw[1 + 16d0, -1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -18327,8 +18327,8 @@ inline hw_uint<16> denoiseb_rd56_select(raw_cache& raw, int d0, int d1, int dyna
 }
 
 inline hw_uint<16> denoiseb_rd57_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd57 read pattern: { denoiseb_update_0[d0, d1] -> raw[1 + 16d0, d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -18338,8 +18338,8 @@ inline hw_uint<16> denoiseb_rd57_select(raw_cache& raw, int d0, int d1, int dyna
 }
 
 inline hw_uint<16> denoiseb_rd58_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd58 read pattern: { denoiseb_update_0[d0, d1] -> raw[1 + 16d0, 1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -18349,8 +18349,8 @@ inline hw_uint<16> denoiseb_rd58_select(raw_cache& raw, int d0, int d1, int dyna
 }
 
 inline hw_uint<16> denoiseb_rd59_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd59 read pattern: { denoiseb_update_0[d0, d1] -> raw[1 + 16d0, 2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -18360,8 +18360,8 @@ inline hw_uint<16> denoiseb_rd59_select(raw_cache& raw, int d0, int d1, int dyna
 }
 
 inline hw_uint<16> denoiseb_rd6_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd6 read pattern: { denoiseb_update_0[d0, d1] -> raw[-1 + 16d0, -1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -18371,8 +18371,8 @@ inline hw_uint<16> denoiseb_rd6_select(raw_cache& raw, int d0, int d1, int dynam
 }
 
 inline hw_uint<16> denoiseb_rd60_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd60 read pattern: { denoiseb_update_0[d0, d1] -> raw[2 + 16d0, -2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -18382,8 +18382,8 @@ inline hw_uint<16> denoiseb_rd60_select(raw_cache& raw, int d0, int d1, int dyna
 }
 
 inline hw_uint<16> denoiseb_rd61_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd61 read pattern: { denoiseb_update_0[d0, d1] -> raw[2 + 16d0, -1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -18393,8 +18393,8 @@ inline hw_uint<16> denoiseb_rd61_select(raw_cache& raw, int d0, int d1, int dyna
 }
 
 inline hw_uint<16> denoiseb_rd62_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd62 read pattern: { denoiseb_update_0[d0, d1] -> raw[2 + 16d0, d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -18404,8 +18404,8 @@ inline hw_uint<16> denoiseb_rd62_select(raw_cache& raw, int d0, int d1, int dyna
 }
 
 inline hw_uint<16> denoiseb_rd63_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd63 read pattern: { denoiseb_update_0[d0, d1] -> raw[2 + 16d0, 1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -18415,8 +18415,8 @@ inline hw_uint<16> denoiseb_rd63_select(raw_cache& raw, int d0, int d1, int dyna
 }
 
 inline hw_uint<16> denoiseb_rd64_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd64 read pattern: { denoiseb_update_0[d0, d1] -> raw[2 + 16d0, 2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -18426,8 +18426,8 @@ inline hw_uint<16> denoiseb_rd64_select(raw_cache& raw, int d0, int d1, int dyna
 }
 
 inline hw_uint<16> denoiseb_rd65_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd65 read pattern: { denoiseb_update_0[d0, d1] -> raw[3 + 16d0, -2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -18437,8 +18437,8 @@ inline hw_uint<16> denoiseb_rd65_select(raw_cache& raw, int d0, int d1, int dyna
 }
 
 inline hw_uint<16> denoiseb_rd66_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd66 read pattern: { denoiseb_update_0[d0, d1] -> raw[3 + 16d0, -1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -18448,8 +18448,8 @@ inline hw_uint<16> denoiseb_rd66_select(raw_cache& raw, int d0, int d1, int dyna
 }
 
 inline hw_uint<16> denoiseb_rd67_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd67 read pattern: { denoiseb_update_0[d0, d1] -> raw[3 + 16d0, d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -18459,8 +18459,8 @@ inline hw_uint<16> denoiseb_rd67_select(raw_cache& raw, int d0, int d1, int dyna
 }
 
 inline hw_uint<16> denoiseb_rd68_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd68 read pattern: { denoiseb_update_0[d0, d1] -> raw[3 + 16d0, 1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -18470,8 +18470,8 @@ inline hw_uint<16> denoiseb_rd68_select(raw_cache& raw, int d0, int d1, int dyna
 }
 
 inline hw_uint<16> denoiseb_rd69_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd69 read pattern: { denoiseb_update_0[d0, d1] -> raw[3 + 16d0, 2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -18481,8 +18481,8 @@ inline hw_uint<16> denoiseb_rd69_select(raw_cache& raw, int d0, int d1, int dyna
 }
 
 inline hw_uint<16> denoiseb_rd7_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd7 read pattern: { denoiseb_update_0[d0, d1] -> raw[-1 + 16d0, d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -18492,8 +18492,8 @@ inline hw_uint<16> denoiseb_rd7_select(raw_cache& raw, int d0, int d1, int dynam
 }
 
 inline hw_uint<16> denoiseb_rd70_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd70 read pattern: { denoiseb_update_0[d0, d1] -> raw[4 + 16d0, -2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -18503,8 +18503,8 @@ inline hw_uint<16> denoiseb_rd70_select(raw_cache& raw, int d0, int d1, int dyna
 }
 
 inline hw_uint<16> denoiseb_rd71_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd71 read pattern: { denoiseb_update_0[d0, d1] -> raw[4 + 16d0, -1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -18514,8 +18514,8 @@ inline hw_uint<16> denoiseb_rd71_select(raw_cache& raw, int d0, int d1, int dyna
 }
 
 inline hw_uint<16> denoiseb_rd72_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd72 read pattern: { denoiseb_update_0[d0, d1] -> raw[4 + 16d0, d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -18525,8 +18525,8 @@ inline hw_uint<16> denoiseb_rd72_select(raw_cache& raw, int d0, int d1, int dyna
 }
 
 inline hw_uint<16> denoiseb_rd73_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd73 read pattern: { denoiseb_update_0[d0, d1] -> raw[4 + 16d0, 1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -18536,8 +18536,8 @@ inline hw_uint<16> denoiseb_rd73_select(raw_cache& raw, int d0, int d1, int dyna
 }
 
 inline hw_uint<16> denoiseb_rd74_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd74 read pattern: { denoiseb_update_0[d0, d1] -> raw[4 + 16d0, 2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -18547,8 +18547,8 @@ inline hw_uint<16> denoiseb_rd74_select(raw_cache& raw, int d0, int d1, int dyna
 }
 
 inline hw_uint<16> denoiseb_rd75_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd75 read pattern: { denoiseb_update_0[d0, d1] -> raw[1 + 16d0, -2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -18558,8 +18558,8 @@ inline hw_uint<16> denoiseb_rd75_select(raw_cache& raw, int d0, int d1, int dyna
 }
 
 inline hw_uint<16> denoiseb_rd76_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd76 read pattern: { denoiseb_update_0[d0, d1] -> raw[1 + 16d0, -1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -18569,8 +18569,8 @@ inline hw_uint<16> denoiseb_rd76_select(raw_cache& raw, int d0, int d1, int dyna
 }
 
 inline hw_uint<16> denoiseb_rd77_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd77 read pattern: { denoiseb_update_0[d0, d1] -> raw[1 + 16d0, d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -18580,8 +18580,8 @@ inline hw_uint<16> denoiseb_rd77_select(raw_cache& raw, int d0, int d1, int dyna
 }
 
 inline hw_uint<16> denoiseb_rd78_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd78 read pattern: { denoiseb_update_0[d0, d1] -> raw[1 + 16d0, 1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -18591,8 +18591,8 @@ inline hw_uint<16> denoiseb_rd78_select(raw_cache& raw, int d0, int d1, int dyna
 }
 
 inline hw_uint<16> denoiseb_rd79_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd79 read pattern: { denoiseb_update_0[d0, d1] -> raw[1 + 16d0, 2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -18602,8 +18602,8 @@ inline hw_uint<16> denoiseb_rd79_select(raw_cache& raw, int d0, int d1, int dyna
 }
 
 inline hw_uint<16> denoiseb_rd8_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd8 read pattern: { denoiseb_update_0[d0, d1] -> raw[-1 + 16d0, 1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -18613,8 +18613,8 @@ inline hw_uint<16> denoiseb_rd8_select(raw_cache& raw, int d0, int d1, int dynam
 }
 
 inline hw_uint<16> denoiseb_rd80_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd80 read pattern: { denoiseb_update_0[d0, d1] -> raw[2 + 16d0, -2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -18624,8 +18624,8 @@ inline hw_uint<16> denoiseb_rd80_select(raw_cache& raw, int d0, int d1, int dyna
 }
 
 inline hw_uint<16> denoiseb_rd81_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd81 read pattern: { denoiseb_update_0[d0, d1] -> raw[2 + 16d0, -1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -18635,8 +18635,8 @@ inline hw_uint<16> denoiseb_rd81_select(raw_cache& raw, int d0, int d1, int dyna
 }
 
 inline hw_uint<16> denoiseb_rd82_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd82 read pattern: { denoiseb_update_0[d0, d1] -> raw[2 + 16d0, d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -18646,8 +18646,8 @@ inline hw_uint<16> denoiseb_rd82_select(raw_cache& raw, int d0, int d1, int dyna
 }
 
 inline hw_uint<16> denoiseb_rd83_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd83 read pattern: { denoiseb_update_0[d0, d1] -> raw[2 + 16d0, 1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -18657,8 +18657,8 @@ inline hw_uint<16> denoiseb_rd83_select(raw_cache& raw, int d0, int d1, int dyna
 }
 
 inline hw_uint<16> denoiseb_rd84_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd84 read pattern: { denoiseb_update_0[d0, d1] -> raw[2 + 16d0, 2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -18668,8 +18668,8 @@ inline hw_uint<16> denoiseb_rd84_select(raw_cache& raw, int d0, int d1, int dyna
 }
 
 inline hw_uint<16> denoiseb_rd85_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd85 read pattern: { denoiseb_update_0[d0, d1] -> raw[3 + 16d0, -2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -18679,8 +18679,8 @@ inline hw_uint<16> denoiseb_rd85_select(raw_cache& raw, int d0, int d1, int dyna
 }
 
 inline hw_uint<16> denoiseb_rd86_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd86 read pattern: { denoiseb_update_0[d0, d1] -> raw[3 + 16d0, -1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -18690,8 +18690,8 @@ inline hw_uint<16> denoiseb_rd86_select(raw_cache& raw, int d0, int d1, int dyna
 }
 
 inline hw_uint<16> denoiseb_rd87_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd87 read pattern: { denoiseb_update_0[d0, d1] -> raw[3 + 16d0, d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -18701,8 +18701,8 @@ inline hw_uint<16> denoiseb_rd87_select(raw_cache& raw, int d0, int d1, int dyna
 }
 
 inline hw_uint<16> denoiseb_rd88_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd88 read pattern: { denoiseb_update_0[d0, d1] -> raw[3 + 16d0, 1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -18712,8 +18712,8 @@ inline hw_uint<16> denoiseb_rd88_select(raw_cache& raw, int d0, int d1, int dyna
 }
 
 inline hw_uint<16> denoiseb_rd89_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd89 read pattern: { denoiseb_update_0[d0, d1] -> raw[3 + 16d0, 2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -18723,8 +18723,8 @@ inline hw_uint<16> denoiseb_rd89_select(raw_cache& raw, int d0, int d1, int dyna
 }
 
 inline hw_uint<16> denoiseb_rd9_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd9 read pattern: { denoiseb_update_0[d0, d1] -> raw[-1 + 16d0, 2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -18734,8 +18734,8 @@ inline hw_uint<16> denoiseb_rd9_select(raw_cache& raw, int d0, int d1, int dynam
 }
 
 inline hw_uint<16> denoiseb_rd90_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd90 read pattern: { denoiseb_update_0[d0, d1] -> raw[4 + 16d0, -2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -18745,8 +18745,8 @@ inline hw_uint<16> denoiseb_rd90_select(raw_cache& raw, int d0, int d1, int dyna
 }
 
 inline hw_uint<16> denoiseb_rd91_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd91 read pattern: { denoiseb_update_0[d0, d1] -> raw[4 + 16d0, -1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -18756,8 +18756,8 @@ inline hw_uint<16> denoiseb_rd91_select(raw_cache& raw, int d0, int d1, int dyna
 }
 
 inline hw_uint<16> denoiseb_rd92_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd92 read pattern: { denoiseb_update_0[d0, d1] -> raw[4 + 16d0, d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -18767,8 +18767,8 @@ inline hw_uint<16> denoiseb_rd92_select(raw_cache& raw, int d0, int d1, int dyna
 }
 
 inline hw_uint<16> denoiseb_rd93_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd93 read pattern: { denoiseb_update_0[d0, d1] -> raw[4 + 16d0, 1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -18778,8 +18778,8 @@ inline hw_uint<16> denoiseb_rd93_select(raw_cache& raw, int d0, int d1, int dyna
 }
 
 inline hw_uint<16> denoiseb_rd94_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd94 read pattern: { denoiseb_update_0[d0, d1] -> raw[4 + 16d0, 2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -18789,8 +18789,8 @@ inline hw_uint<16> denoiseb_rd94_select(raw_cache& raw, int d0, int d1, int dyna
 }
 
 inline hw_uint<16> denoiseb_rd95_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd95 read pattern: { denoiseb_update_0[d0, d1] -> raw[5 + 16d0, -2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -18800,8 +18800,8 @@ inline hw_uint<16> denoiseb_rd95_select(raw_cache& raw, int d0, int d1, int dyna
 }
 
 inline hw_uint<16> denoiseb_rd96_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd96 read pattern: { denoiseb_update_0[d0, d1] -> raw[5 + 16d0, -1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -18811,8 +18811,8 @@ inline hw_uint<16> denoiseb_rd96_select(raw_cache& raw, int d0, int d1, int dyna
 }
 
 inline hw_uint<16> denoiseb_rd97_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd97 read pattern: { denoiseb_update_0[d0, d1] -> raw[5 + 16d0, d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -18822,8 +18822,8 @@ inline hw_uint<16> denoiseb_rd97_select(raw_cache& raw, int d0, int d1, int dyna
 }
 
 inline hw_uint<16> denoiseb_rd98_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd98 read pattern: { denoiseb_update_0[d0, d1] -> raw[5 + 16d0, 1 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -18833,8 +18833,8 @@ inline hw_uint<16> denoiseb_rd98_select(raw_cache& raw, int d0, int d1, int dyna
 }
 
 inline hw_uint<16> denoiseb_rd99_select(raw_cache& raw, int d0, int d1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
   // denoiseb_rd99 read pattern: { denoiseb_update_0[d0, d1] -> raw[5 + 16d0, 2 + d1] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Read schedule : { denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
   // Write schedule: { raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084 }
@@ -20508,6 +20508,24 @@ inline void raw_raw_update_0_write_bundle_write(hw_uint<256>& raw_update_0_write
 
 
 // Operation logic
+inline void denoiseb_update_0(raw_cache& raw, denoiseb_cache& denoiseb, int d0, int d1) {
+  // Dynamic address computation
+
+	// Consume: raw
+	auto raw_1_m_denoiseb_1__p___m_2_c__1_m_denoiseb_0__p___m_2_value = raw_denoiseb_update_0_read_bundle_read(raw/* source_delay */, d0, d1, 0);
+
+#ifndef __SYNTHESIS__
+#endif //__SYNTHESIS__
+
+	auto compute_result = denoiseb_generated_compute_unrolled_16(raw_1_m_denoiseb_1__p___m_2_c__1_m_denoiseb_0__p___m_2_value);
+	// Produce: denoiseb
+	denoiseb_denoiseb_update_0_write_bundle_write(/* arg names */compute_result, denoiseb, d0, d1, 0);
+
+#ifndef __SYNTHESIS__
+#endif //__SYNTHESIS__
+
+}
+
 inline void raw_update_0(HWStream<hw_uint<256> >& /* buffer_args num ports = 16 */raw_oc, raw_cache& raw, int d0, int d1) {
   // Dynamic address computation
 
@@ -20517,26 +20535,8 @@ inline void raw_update_0(HWStream<hw_uint<256> >& /* buffer_args num ports = 16 
 	// Produce: raw
 	raw_raw_update_0_write_bundle_write(/* arg names */compute_result, raw, d0, d1, 0);
 
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void denoiseb_update_0(raw_cache& raw, denoiseb_cache& denoiseb, int d0, int d1) {
-  // Dynamic address computation
-
-	// Consume: raw
-	auto raw_1_m_denoiseb_1__p___m_2_c__1_m_denoiseb_0__p___m_2_value = raw_denoiseb_update_0_read_bundle_read(raw/* source_delay */, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = denoiseb_generated_compute_unrolled_16(raw_1_m_denoiseb_1__p___m_2_c__1_m_denoiseb_0__p___m_2_value);
-	// Produce: denoiseb
-	denoiseb_denoiseb_update_0_write_bundle_write(/* arg names */compute_result, denoiseb, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifndef __SYNTHESIS__
+#endif //__SYNTHESIS__
 
 }
 
@@ -20546,15 +20546,15 @@ inline void denoise_update_0(denoiseb_cache& denoiseb, denoise_cache& denoise, i
 	// Consume: denoiseb
 	auto denoiseb_1_m_denoise_1__p__0_c__1_m_denoise_0__p__0_value = denoiseb_denoise_update_0_read_bundle_read(denoiseb/* source_delay */, d0, d1, 0);
 
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifndef __SYNTHESIS__
+#endif //__SYNTHESIS__
 
 	auto compute_result = denoise_generated_compute_unrolled_16(denoiseb_1_m_denoise_1__p__0_c__1_m_denoise_0__p__0_value);
 	// Produce: denoise
 	denoise_denoise_update_0_write_bundle_write(/* arg names */compute_result, denoise, d0, d1, 0);
 
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifndef __SYNTHESIS__
+#endif //__SYNTHESIS__
 
 }
 
@@ -20564,15 +20564,15 @@ inline void demosaicb_update_0(denoise_cache& denoise, demosaicb_cache& demosaic
 	// Consume: denoise
 	auto denoise_1_m_demosaicb_1__p___m_1_c__1_m_demosaicb_0__p___m_1_value = denoise_demosaicb_update_0_read_bundle_read(denoise/* source_delay */, d0, d1, 0);
 
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifndef __SYNTHESIS__
+#endif //__SYNTHESIS__
 
 	auto compute_result = demosaicb_generated_compute_unrolled_16(denoise_1_m_demosaicb_1__p___m_1_c__1_m_demosaicb_0__p___m_1_value);
 	// Produce: demosaicb
 	demosaicb_demosaicb_update_0_write_bundle_write(/* arg names */compute_result, demosaicb, d0, d1, 0);
 
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifndef __SYNTHESIS__
+#endif //__SYNTHESIS__
 
 }
 
@@ -20582,15 +20582,15 @@ inline void demosaic_update_0(demosaicb_cache& demosaicb, demosaic_cache& demosa
 	// Consume: demosaicb
 	auto demosaicb_1_m_demosaic_1__p__0_c__1_m_demosaic_0__p__0_value = demosaicb_demosaic_update_0_read_bundle_read(demosaicb/* source_delay */, d0, d1, 0);
 
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifndef __SYNTHESIS__
+#endif //__SYNTHESIS__
 
 	auto compute_result = demosaic_generated_compute_unrolled_16(demosaicb_1_m_demosaic_1__p__0_c__1_m_demosaic_0__p__0_value);
 	// Produce: demosaic
 	demosaic_demosaic_update_0_write_bundle_write(/* arg names */compute_result, demosaic, d0, d1, 0);
 
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifndef __SYNTHESIS__
+#endif //__SYNTHESIS__
 
 }
 
@@ -20600,15 +20600,15 @@ inline void demosaic_bxb_update_0(demosaic_cache& demosaic, demosaic_bxb_cache& 
 	// Consume: demosaic
 	auto demosaic_1_m_demosaic_bxb_1__p__0_c__1_m_demosaic_bxb_0__p__0_value = demosaic_demosaic_bxb_update_0_read_bundle_read(demosaic/* source_delay */, d0, d1, 0);
 
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifndef __SYNTHESIS__
+#endif //__SYNTHESIS__
 
 	auto compute_result = demosaic_bxb_generated_compute_unrolled_16(demosaic_1_m_demosaic_bxb_1__p__0_c__1_m_demosaic_bxb_0__p__0_value);
 	// Produce: demosaic_bxb
 	demosaic_bxb_demosaic_bxb_update_0_write_bundle_write(/* arg names */compute_result, demosaic_bxb, d0, d1, 0);
 
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifndef __SYNTHESIS__
+#endif //__SYNTHESIS__
 
 }
 
@@ -20618,15 +20618,15 @@ inline void demosaic_bx_update_0(demosaic_bxb_cache& demosaic_bxb, demosaic_bx_c
 	// Consume: demosaic_bxb
 	auto demosaic_bxb_1_m_demosaic_bx_1__p__0_c__1_m_demosaic_bx_0__p__0_value = demosaic_bxb_demosaic_bx_update_0_read_bundle_read(demosaic_bxb/* source_delay */, d0, d1, 0);
 
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifndef __SYNTHESIS__
+#endif //__SYNTHESIS__
 
 	auto compute_result = demosaic_bx_generated_compute_unrolled_16(demosaic_bxb_1_m_demosaic_bx_1__p__0_c__1_m_demosaic_bx_0__p__0_value);
 	// Produce: demosaic_bx
 	demosaic_bx_demosaic_bx_update_0_write_bundle_write(/* arg names */compute_result, demosaic_bx, d0, d1, 0);
 
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifndef __SYNTHESIS__
+#endif //__SYNTHESIS__
 
 }
 
@@ -20636,15 +20636,15 @@ inline void demosaic_byb_update_0(demosaic_bx_cache& demosaic_bx, demosaic_byb_c
 	// Consume: demosaic_bx
 	auto demosaic_bx_1_m_demosaic_byb_1__p__0_c__1_m_demosaic_byb_0__p__0_value = demosaic_bx_demosaic_byb_update_0_read_bundle_read(demosaic_bx/* source_delay */, d0, d1, 0);
 
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifndef __SYNTHESIS__
+#endif //__SYNTHESIS__
 
 	auto compute_result = demosaic_byb_generated_compute_unrolled_16(demosaic_bx_1_m_demosaic_byb_1__p__0_c__1_m_demosaic_byb_0__p__0_value);
 	// Produce: demosaic_byb
 	demosaic_byb_demosaic_byb_update_0_write_bundle_write(/* arg names */compute_result, demosaic_byb, d0, d1, 0);
 
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifndef __SYNTHESIS__
+#endif //__SYNTHESIS__
 
 }
 
@@ -20654,15 +20654,15 @@ inline void demosaic_by_update_0(demosaic_byb_cache& demosaic_byb, demosaic_by_c
 	// Consume: demosaic_byb
 	auto demosaic_byb_1_m_demosaic_by_1__p__0_c__1_m_demosaic_by_0__p__0_value = demosaic_byb_demosaic_by_update_0_read_bundle_read(demosaic_byb/* source_delay */, d0, d1, 0);
 
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifndef __SYNTHESIS__
+#endif //__SYNTHESIS__
 
 	auto compute_result = demosaic_by_generated_compute_unrolled_16(demosaic_byb_1_m_demosaic_by_1__p__0_c__1_m_demosaic_by_0__p__0_value);
 	// Produce: demosaic_by
 	demosaic_by_demosaic_by_update_0_write_bundle_write(/* arg names */compute_result, demosaic_by, d0, d1, 0);
 
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifndef __SYNTHESIS__
+#endif //__SYNTHESIS__
 
 }
 
@@ -20672,21 +20672,21 @@ inline void demosaic_diff_update_0(demosaic_cache& demosaic, demosaic_by_cache& 
 	// Consume: demosaic
 	auto demosaic_1_m_demosaic_diff_1__p__0_c__1_m_demosaic_diff_0__p__0_value = demosaic_demosaic_diff_update_0_read_bundle_read(demosaic/* source_delay */, d0, d1, 0);
 
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifndef __SYNTHESIS__
+#endif //__SYNTHESIS__
 
 	// Consume: demosaic_by
 	auto demosaic_by_1_m_demosaic_diff_1__p__0_c__1_m_demosaic_diff_0__p__0_value = demosaic_by_demosaic_diff_update_0_read_bundle_read(demosaic_by/* source_delay */, d0, d1, 0);
 
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifndef __SYNTHESIS__
+#endif //__SYNTHESIS__
 
 	auto compute_result = demosaic_diff_generated_compute_unrolled_16(demosaic_1_m_demosaic_diff_1__p__0_c__1_m_demosaic_diff_0__p__0_value, demosaic_by_1_m_demosaic_diff_1__p__0_c__1_m_demosaic_diff_0__p__0_value);
 	// Produce: demosaic_diff
 	demosaic_diff_demosaic_diff_update_0_write_bundle_write(/* arg names */compute_result, demosaic_diff, d0, d1, 0);
 
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifndef __SYNTHESIS__
+#endif //__SYNTHESIS__
 
 }
 
@@ -20696,58 +20696,58 @@ inline void cp_noinit_ln1_16_update_0(demosaic_diff_cache& demosaic_diff, HWStre
 	// Consume: demosaic_diff
 	auto demosaic_diff_1_m_cp_noinit_ln1_16_1__p__0_c__1_m_cp_noinit_ln1_16_0__p__0_value = demosaic_diff_cp_noinit_ln1_16_update_0_read_bundle_read(demosaic_diff/* source_delay */, d0, d1, 0);
 
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifndef __SYNTHESIS__
+#endif //__SYNTHESIS__
 
 	auto compute_result = cp_noinit_ln1_16_generated_compute_unrolled_16(demosaic_diff_1_m_cp_noinit_ln1_16_1__p__0_c__1_m_cp_noinit_ln1_16_0__p__0_value);
 	// Produce: cp_noinit_ln1_16
 	cp_noinit_ln1_16.write(compute_result);
 
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifndef __SYNTHESIS__
+#endif //__SYNTHESIS__
 
 }
 
 // Driver function
 void cp_noinit_ln1_16_opt(HWStream<hw_uint<256> >& /* get_args num ports = 16 */raw_oc, HWStream<hw_uint<256> >& /* get_args num ports = 16 */cp_noinit_ln1_16) {
 
-#ifndef __VIVADO_SYNTH__
+#ifndef __SYNTHESIS__
   ofstream debug_file("cp_noinit_ln1_16_opt_debug.csv");
   global_debug_handle = &debug_file;
-#endif //__VIVADO_SYNTH__
+#endif //__SYNTHESIS__
   demosaic_cache demosaic;
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYNTHESIS__
+#endif //__SYNTHESIS__
   demosaic_bx_cache demosaic_bx;
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYNTHESIS__
+#endif //__SYNTHESIS__
   demosaic_bxb_cache demosaic_bxb;
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYNTHESIS__
+#endif //__SYNTHESIS__
   demosaic_by_cache demosaic_by;
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYNTHESIS__
+#endif //__SYNTHESIS__
   demosaic_byb_cache demosaic_byb;
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYNTHESIS__
+#endif //__SYNTHESIS__
   demosaic_diff_cache demosaic_diff;
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYNTHESIS__
+#endif //__SYNTHESIS__
   demosaicb_cache demosaicb;
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYNTHESIS__
+#endif //__SYNTHESIS__
   denoise_cache denoise;
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYNTHESIS__
+#endif //__SYNTHESIS__
   denoiseb_cache denoiseb;
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
+#ifdef __SYNTHESIS__
+#endif //__SYNTHESIS__
   raw_cache raw;
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
+#ifdef __SYNTHESIS__
+#endif //__SYNTHESIS__
+#ifdef __SYNTHESIS__
 #pragma HLS inline recursive
-#endif // __VIVADO_SYNTH__
+#endif // __SYNTHESIS__
 
 // schedule: { demosaic_update_0[d0, d1] -> [3 + d1, 2 + d0, 5] : 0 <= d0 <= 120 and 0 <= d1 <= 1081; denoise_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : -1 <= d0 <= 121 and -1 <= d1 <= 1082; cp_noinit_ln1_16_update_0[d0, d1] -> [5 + d1, 3 + d0, 11] : 0 <= d0 <= 119 and 0 <= d1 <= 1079; raw_update_0[d0, d1] -> [d1, d0, 1] : -2 <= d0 <= 122 and -3 <= d1 <= 1084; demosaic_bxb_update_0[d0, d1] -> [3 + d1, 3 + d0, 6] : 0 <= d0 <= 119 and 0 <= d1 <= 1081; demosaic_bx_update_0[d0, d1] -> [3 + d1, 3 + d0, 7] : 0 <= d0 <= 119 and 0 <= d1 <= 1081; demosaicb_update_0[d0, d1] -> [3 + d1, 2 + d0, 4] : 0 <= d0 <= 120 and 0 <= d1 <= 1081; demosaic_by_update_0[d0, d1] -> [5 + d1, 3 + d0, 9] : 0 <= d0 <= 119 and 0 <= d1 <= 1079; demosaic_byb_update_0[d0, d1] -> [5 + d1, 3 + d0, 8] : 0 <= d0 <= 119 and 0 <= d1 <= 1079; demosaic_diff_update_0[d0, d1] -> [5 + d1, 3 + d0, 10] : 0 <= d0 <= 119 and 0 <= d1 <= 1079; denoiseb_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : -1 <= d0 <= 121 and -1 <= d1 <= 1082 }
 //   { demosaic_update_0[d0, d1] -> [3 + d1, 2 + d0, 5] : 0 <= d0 <= 120 and 0 <= d1 <= 1081 }
@@ -20787,11 +20787,8 @@ void cp_noinit_ln1_16_opt(HWStream<hw_uint<256> >& /* get_args num ports = 16 */
 	    // raw_oc_update_0 -> [1*d1*1*1 + 1*0,1*d0*1*1 + 1*0,1*0]
 	    // raw_update_0 -> [1*d1*1*1 + 1*0,1*d0*1*1 + 1*0,1*1]
 	for (int c0 = -3; c0 <= 1084; c0++) {
+	  #pragma hls_pipeline_init_interval 1
 	  for (int c1 = -2; c1 <= 122; c1++) {
-	
-	#ifdef __VIVADO_SYNTH__
-	#pragma HLS pipeline II=1
-	#endif // __VIVADO_SYNTH__
 	
 	    if ((-2 <= c1 && c1 <= 122) && ((c1 - 0) % 1 == 0) && (-3 <= c0 && c0 <= 1084) && ((c0 - 0) % 1 == 0)) {
 	      raw_update_0(raw_oc /* buf name */, raw, (c1 - 0) / 1, (c0 - 0) / 1);
@@ -20840,9 +20837,9 @@ void cp_noinit_ln1_16_opt(HWStream<hw_uint<256> >& /* get_args num ports = 16 */
 	  }
 	}
 	
-#ifndef __VIVADO_SYNTH__
+#ifndef __SYNTHESIS__
   debug_file.close();
-#endif //__VIVADO_SYNTH__
+#endif //__SYNTHESIS__
 }
 
 void cp_noinit_ln1_16_opt_wrapper(HWStream<hw_uint<256> >& /* get_args num ports = 16 */raw_oc, HWStream<hw_uint<256> >& /* get_args num ports = 16 */cp_noinit_ln1_16, const int num_epochs) {
@@ -20851,7 +20848,7 @@ void cp_noinit_ln1_16_opt_wrapper(HWStream<hw_uint<256> >& /* get_args num ports
     cp_noinit_ln1_16_opt(raw_oc, cp_noinit_ln1_16);
   }
 }
-#ifdef __VIVADO_SYNTH__
+#ifdef __SYNTHESIS__
   // { cp_noinit_ln1_16_update_0[root = 0, cp_noinit_ln1_16_0, cp_noinit_ln1_16_1] -> cp_noinit_ln1_16[cp_noinit_ln1_16_1, cp_noinit_ln1_16_0] : 0 <= cp_noinit_ln1_16_0 <= 1079 and 0 <= cp_noinit_ln1_16_1 <= 119 }
 const int cp_noinit_ln1_16_update_0_write_pipe0_num_transfers = 129600;
   // { raw_update_0[root = 0, raw_0, raw_1] -> raw_oc[raw_1, raw_0] : -3 <= raw_0 <= 1084 and -2 <= raw_1 <= 122 }
@@ -20900,5 +20897,5 @@ void cp_noinit_ln1_16_opt_rdai(HWStream<hw_uint<256> >& raw_update_0_read_pipe0,
 }
 
 }
-#endif //__VIVADO_SYNTH__
+#endif //__SYNTHESIS__
 

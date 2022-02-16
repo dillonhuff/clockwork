@@ -3750,6 +3750,7 @@ isl_set* project_all_but(isl_set* const dmap,
 
   if (d != 0) {
     m = isl_set_project_out(m, isl_dim_set, 0, d);
+    
   }
 
   int in_dim = num_dims(get_space(m));
@@ -4126,6 +4127,7 @@ umap* pad_map(umap* unpadded) {
 
   vector<isl_map*> padded_maps;
   for (auto s : get_maps(unpadded)) {
+    cout << "Remove this later Padding : Domain & range {" << domain_name(s) <<  " "<< range_name(s) <<"} " << max_dim << " " << num_in_dims(s) << " " << num_in_dims(s) << endl;
     isl_map* m = pad_map(s, max_dim);
     padded_maps.push_back(m);
   }

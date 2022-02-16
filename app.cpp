@@ -830,7 +830,8 @@ extract_linear_rational_approximation(isl_aff* aff_bound) {
     //cout << "div b = " << str(dkb.second) << endl;
 
     //assert(isl_val_is_zero(dkb.second));
-    assert(isl_val_is_zero(k));
+    
+    //////assert(isl_val_is_zero(k));
 
     isl_val* final_b = add(dkb.second, b);
     //cout << "final k = " << str(dkb.first) << endl;
@@ -904,7 +905,9 @@ map<string, isl_val*> compute_qfactors(map<isl_map*, vector<pair<isl_val*, isl_v
   vector<QConstraint> rate_constraints;
 
   map<string, isl_val*> obj;
+  int i =0;
   for (auto s : schedule_params) {
+    
     string consumer = domain_name(s.first);
     string producer = range_name(s.first);
 
@@ -925,10 +928,14 @@ map<string, isl_val*> compute_qfactors(map<isl_map*, vector<pair<isl_val*, isl_v
 
       obj.insert({sched_var_name(consumer), isl_val_one(ct)});
       obj.insert({sched_var_name(producer), isl_val_one(ct)});
+      cout << i << " " << str(s.first) << " " << str(sv.first) << " "<< str(sv.second) << endl;
+      cout << i << " "<< consumer << " "<< producer << endl; 
     }
+    i +=1;
   }
 
   cout << "ILP Problem: " << str(ilp.s) << endl;
+  //cout << str(schedule_params) << endl;
 
   auto pt = sample(ilp.s);
   auto opt_pt = ilp.minimize(obj);
@@ -945,6 +952,9 @@ map<string, isl_val*> compute_qfactors(map<isl_map*, vector<pair<isl_val*, isl_v
     string qp = sched_var_name(producer);
     string qc = sched_var_name(consumer);
 
+    cout << "Producer and Consumer pair: " << consumer << " " << producer << endl;
+
+    cout << "QP and QC: " << qp << " " << qc << endl;
     //qfs[qp] = mul(isl_val_int_from_si(ct, 5), ilp.value(qp));
     qfs[qp] = ilp.value(qp);
     qfs[qc] = ilp.value(qc);
