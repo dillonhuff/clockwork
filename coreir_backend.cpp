@@ -3975,19 +3975,23 @@ void analyze_post_mapped_app_M1(CodegenOptions& options, prog& prg, map<string, 
       }
     }
   }
-  int aff_ctrl_pe = 0;
+  int aff_ctrl_pe = 0, aff_ctrl_full = 0;
   for (auto it: affine_controller) {
     aff_ctrl_pe += it.second * (it.first * 2 - 3);
+    aff_ctrl_full += it.second * (it.first * 8 - 1);
   }
-  int aff_func_pe = 0;
+  int aff_func_pe = 0, aff_func_full = 0;
   for (auto it: affine_func) {
     aff_func_pe += it.second * (it.first);
+    aff_func_full += it.second * (2*it.first);
   }
   //cout << prg.name << " Post Mapping Resource Counts..." << endl;
   out << tab(2) << " affine_controller: " << affine_controller << endl;
   out << tab(2) << " affine_func: " << affine_func<< endl;
   out << tab(2) << " aff_ctrl pe: " << aff_ctrl_pe << endl;
   out << tab(2) << " aff_func pe: " << aff_func_pe << endl;
+  out << tab(2) << " aff_ctrl pe full: " << aff_ctrl_full << endl;
+  out << tab(2) << " aff_func pe full: " << aff_func_full << endl;
   out << tab(2) << " mem:  " << mem << endl;
 }
 

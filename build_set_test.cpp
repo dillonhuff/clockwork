@@ -18553,6 +18553,8 @@ void relax_delays_rate_matched(CodegenOptions& options, schedule_info& sched, pr
   cout << "Adjusting delays of " << prg.name << endl;
   map<string, int> delay_relaxation;
   int fetch_width = options.mem_hierarchy.at("mem").fetch_width;
+  if (fetch_width == 1)
+      return;
   auto start_times = its(op_times_map(sched, prg), prg.whole_iteration_domain());
   auto start_times_map = get_maps_in_map(start_times);
   auto domains = prg.domains();
@@ -19663,7 +19665,7 @@ CodegenOptions garnet_baseline_codegen_options(prog& prg) {
   CodegenOptions options;
   options.rtl_options.use_external_controllers = true;
   options.rtl_options.target_tile =
-    TARGET_TILE_DUAL_SRAM_WITH_ADDRGEN;
+    TARGET_TILE_WIDE_FETCH_WITH_ADDRGEN;
 
   if (is_rate_matchable(prg)) {
     options.inner_bank_offset_mode =
@@ -20268,6 +20270,35 @@ bool schedule_bounds_fit_controller_bitwidth(const int bitwidth, schedule_info& 
   return true;
 }
 
+void test_schedules_single_port(vector<prog>& test_programs) {
+
+  for (auto& prg : test_programs) {
+    CodegenOptions options = garnet_codegen_single_port_with_addrgen_options(prg, "");
+    options.add_memory_hierarchy("mem");
+    options.mem_hierarchy.at("mem").fetch_width = 1;
+    options.fallback_schedule = ISCA_SCHEDULE;
+    schedule_info sched =
+      garnet_schedule_info(options, prg);
+
+    garnet_single_port_ram_schedule(options, sched, prg.root, prg);
+    cout << "Checking " << prg.name << " schedule" << endl;
+    prg.pretty_print();
+
+    assert(no_violated_cycle_accurate_dependencies(sched, prg));
+    auto ss = op_start_times_map(sched, prg);
+    for (auto m : get_maps(ss)) {
+      //cout << tab(1) << str(m) << endl;
+    }
+    auto hw_sched = its(op_times_map(sched, prg), prg.whole_iteration_domain());
+    auto sched_max = lexmaxpt(range(hw_sched));
+    cout << "APP: " << prg.name  << endl;
+    cout << "\tLatency of application is: " << str((sched_max)) << endl;
+  }
+
+  //assert(false);
+}
+
+
 void test_schedules(vector<prog>& test_programs) {
 
   for (auto& prg : test_programs) {
@@ -20281,7 +20312,7 @@ void test_schedules(vector<prog>& test_programs) {
     assert(no_violated_cycle_accurate_dependencies(sched, prg));
     auto ss = op_start_times_map(sched, prg);
     for (auto m : get_maps(ss)) {
-      cout << tab(1) << str(m) << endl;
+      //cout << tab(1) << str(m) << endl;
     }
   }
 
@@ -20379,22 +20410,22 @@ vector<prog> isca_programs() {
   //FIXME: not work for M1 and M3
   //test_programs.push_back(three_level_pond_rolled());
 
+  test_programs.push_back(camera_pipeline_new());
   test_programs.push_back(matmul_single());
-  //test_programs.push_back(camera_pipeline_2x2());
-  //test_programs.push_back(unsharp_large());
-  //test_programs.push_back(harris_color());
-  //test_programs.push_back(camera_pipeline_new());
-  //test_programs.push_back(gaussian());
+  test_programs.push_back(camera_pipeline_2x2());
+  test_programs.push_back(unsharp_large());
+  test_programs.push_back(harris_color());
+  test_programs.push_back(gaussian());
   //test_programs.push_back(cascade());
   //test_programs.push_back(down_sample());
   //test_programs.push_back(harris());
   //test_programs.push_back(camera_pipeline());
-  //test_programs.push_back(up_sample());
+  test_programs.push_back(up_sample());
   //test_programs.push_back(unsharp());
   //test_programs.push_back(unsharp_new());
   //test_programs.push_back(resnet());
-  //test_programs.push_back(resnet88_chain());
-  //test_programs.push_back(mobilenet_unrolled());
+  test_programs.push_back(resnet88_chain());
+  test_programs.push_back(mobilenet_unrolled());
 
 
   return test_programs;
@@ -20810,6 +20841,22 @@ void dual_port_lake_test() {
     compile_for_garnet_dual_port_mem(prg);
     assert(false);
 
+}
+
+void test_dual_port_latency() {
+
+  vector<prog> test_programs;
+  test_programs.push_back(gaussian());
+  test_programs.push_back(harris());
+  test_programs.push_back(unsharp_large());
+  test_programs.push_back(camera_pipeline_2x2());
+  test_programs.push_back(up_sample());
+  test_programs.push_back(resnet88());
+  test_programs.push_back(mobilenet_unrolled());
+  test_programs.push_back(matmul_single());
+
+
+  test_schedules_single_port(test_programs);
 }
 
 void full_cgra_flow_tests() {
@@ -28251,14 +28298,17 @@ void unoptimized_mem_baseline() {
     isscc_programs.push_back(gaussian_isscc());
     isscc_programs.push_back(unsharp_isscc());
     isscc_programs.push_back(harris_color());
-    isscc_programs.push_back(camera_pipeline_isscc());
+    isscc_programs.push_back(camera_pipeline_2x2());
 
     for (auto prg : isscc_programs) {
+      normalize_bounds(prg);
+      dsa_writers(prg);
       auto options = garnet_baseline_codegen_options(prg);
       schedule_info sched = garnet_schedule_info(options, prg);
+      options.add_memory_hierarchy("mem");
       //compile_cycle_accurate_hw(options, sched, prg);
-      normalize_bounds(prg);
-      sequential_schedule(sched, prg.root, prg);
+      //sequential_schedule(sched, prg.root, prg);
+      garnet_single_port_ram_schedule(options, sched, prg.root, prg);
 
       auto hw_sched = its(op_times_map(sched, prg), prg.whole_iteration_domain());
       auto sched_max = lexmaxpt(range(hw_sched));
@@ -28279,7 +28329,8 @@ void unoptimized_mem_baseline() {
           int mem_tile_num_by_bank = b.second.get_banks().size();
           cout << tab(4) << "naive capacity tile number: " << mem_tile_num_by_capacity << endl;
           cout << tab(4) << "naive banking number: " << mem_tile_num_by_bank << endl;
-          total_tile += max(mem_tile_num_by_capacity, mem_tile_num_by_bank);
+          //total_tile += max(mem_tile_num_by_capacity, mem_tile_num_by_bank);
+          total_tile += mem_tile_num_by_bank;
         }
       }
       cout << tab(1) << "=== SRAM bytes for " << prg.name << ": " << total_capacity << endl;
@@ -28678,6 +28729,11 @@ int main(int argc, char** argv) {
       bool gen_config_only = false;
       bool use_multi_accessor_tile = true;
       test_dual_port_mem(gen_config_only, use_multi_accessor_tile, "aha_garnet_design_dp");
+      return 0;
+    }
+
+    if (cmd == "dp-latency") {
+      test_dual_port_latency();
       return 0;
     }
 
