@@ -1,0 +1,18 @@
+{"namespaces":{
+  "global":{
+    "modules":{
+      "Pond":{
+        "type":["Record",[
+          ["flush","BitIn"],
+          ["clk_en","BitIn"],
+          ["data_in_pond_0",["Array",16,"BitIn"]],
+          ["O0",["Array",16,"Bit"]],
+          ["O1","Bit"],
+          ["CLK",["Named","coreir.clkIn"]],
+          ["ASYNCRESET",["Named","coreir.arstIn"]]
+        ]]
+      }
+    }
+  }
+}
+}
