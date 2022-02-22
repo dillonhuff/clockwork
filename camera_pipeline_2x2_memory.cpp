@@ -148,14 +148,20 @@ prog camera_pipeline_2x2() {
 //consuming g_gb.stencil
 ////producing g_gr.stencil
   auto g_gr_s0_y = prg.add_loop("g_gr_s0_y", -1, 97);
-  auto g_gr_s0_x = g_gr_s0_y->add_loop("g_gr_s0_x", -1, 129);
+  auto g_gr_s0_x_x = g_gr_s0_y->add_loop("g_gr_s0_x_x", 0, 65);
 
-//store is: g_gr.stencil((g_gr_s0_x + 1), (g_gr_s0_y + 1)) = denoised$1.stencil(((g_gr_s0_x*2) + 2), ((g_gr_s0_y*2) + 2))
-  auto hcompute_g_gr_stencil = g_gr_s0_x->add_op("op_hcompute_g_gr_stencil");
+//store is: g_gr.stencil((g_gr_s0_x_x*2), (g_gr_s0_y + 1)) = denoised$1.stencil((g_gr_s0_x_x*4), ((g_gr_s0_y*2) + 2))
+  auto hcompute_g_gr_stencil = g_gr_s0_x_x->add_op("op_hcompute_g_gr_stencil");
   hcompute_g_gr_stencil->add_function("hcompute_g_gr_stencil");
-  hcompute_g_gr_stencil->add_load("denoised_1_stencil", "((g_gr_s0_y*2) + 2)", "((g_gr_s0_x*2) + 2)");
+  hcompute_g_gr_stencil->add_load("denoised_1_stencil", "((g_gr_s0_y*2) + 2)", "(g_gr_s0_x_x*4)");
   prg.buffer_port_widths["g_gr_stencil"] = 16;
-  hcompute_g_gr_stencil->add_store("g_gr_stencil", "(g_gr_s0_y + 1)", "(g_gr_s0_x + 1)");
+  hcompute_g_gr_stencil->add_store("g_gr_stencil", "(g_gr_s0_y + 1)", "(g_gr_s0_x_x*2)");
+
+//store is: g_gr.stencil(((g_gr_s0_x_x*2) + 1), (g_gr_s0_y + 1)) = denoised$1.stencil(((g_gr_s0_x_x*4) + 2), ((g_gr_s0_y*2) + 2))
+  auto hcompute_g_gr_stencil_1 = g_gr_s0_x_x->add_op("op_hcompute_g_gr_stencil_1");
+  hcompute_g_gr_stencil_1->add_function("hcompute_g_gr_stencil_1");
+  hcompute_g_gr_stencil_1->add_load("denoised_1_stencil", "((g_gr_s0_y*2) + 2)", "((g_gr_s0_x_x*4) + 2)");
+  hcompute_g_gr_stencil_1->add_store("g_gr_stencil", "(g_gr_s0_y + 1)", "((g_gr_s0_x_x*2) + 1)");
 
 //consuming g_gr.stencil
 ////producing g_b.stencil
@@ -745,4 +751,4 @@ prog camera_pipeline_2x2() {
 }
 
 
-// empty
+// schedule=3

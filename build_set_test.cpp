@@ -20798,7 +20798,7 @@ void program_file_format_checker()
 
 
 
-  auto test_programs = {harris()};//camera_pipeline_glb()};
+  auto test_programs = {camera_pipeline_2x2()};//camera_pipeline_glb()};
   for (auto prg : test_programs) {
   /*  infer_bounds_and_unroll("out", {16, 16}, 4, prg);
     infer_bounds_and_unroll("out", {16, 16}, 4, prg);
