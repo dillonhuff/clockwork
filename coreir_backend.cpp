@@ -1527,7 +1527,7 @@ void generate_coreir_compute_unit(CodegenOptions& options, bool found_compute,
     if (found_compute) {
       cout << "Found compute file for " << prg.name << endl;
       Instance* halide_cu = nullptr;
-      if (hwinfo.use_dse_compute) {
+      if (hwinfo.use_metamapper) {
         halide_cu = def->addInstance("inner_compute", ns->getModule(op->func));
       } else {
         if (options.rtl_options.use_pipelined_compute_units) {
@@ -2301,7 +2301,7 @@ bool load_compute_file(CodegenOptions& options,
   } else {
     compute_file = "./coreir_compute/" + prg.name + "_compute.json";
   }
-  if (hwinfo.use_dse_compute) {
+  if (hwinfo.use_metamapper) {
     compute_file = "./dse_compute/" + prg.name + "_mapped.json";
   }
   assert(compute_file != "");
@@ -2312,7 +2312,7 @@ bool load_compute_file(CodegenOptions& options,
   if (!loadFromFile(context, compute_file)) {
     found_compute = false;
     cout << "Could not load compute file for: " << prg.name << ", file name = " << compute_file << endl;
-    if (hwinfo.use_dse_compute) {
+    if (hwinfo.use_metamapper) {
       assert(false);
     }
   }
@@ -2336,7 +2336,7 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
 #else
   string compute_file = "./" + prg.name + "_compute.json";
 #endif
-  if (hwinfo.use_dse_compute) {
+  if (hwinfo.use_metamapper) {
     compute_file = dse_compute_filename;
   }
   ifstream cfile(compute_file);
@@ -2347,7 +2347,7 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
   if (!loadFromFile(context, compute_file)) {
     found_compute = false;
     cout << "Could not load compute file for: " << prg.name << ", file name = " << compute_file << endl;
-    if (hwinfo.use_dse_compute) {
+    if (hwinfo.use_metamapper) {
       assert(false);
     }
   }
@@ -2819,8 +2819,76 @@ class GetGLBConfig: public CoreIR::InstanceGraphPass {
   }
 };
 
-
 void addIOsWithGLBConfig(Context* c, Module* top, map<string, UBuffer>& buffers, GetGLBConfig* glb_metadata) {
+  ModuleDef* mdef = top->getDef();
+
+  Values aWidth({{"width",Const::make(c,16)}});
+  IOpaths iopaths;
+  getAllIOPaths(mdef->getInterface(), iopaths);
+  Instance* pt = addPassthrough(mdef->getInterface(),"_self");
+  for (auto path : iopaths.IO16) {
+    string path_name = *(path.begin()+1);
+    //TODO: this is a hacky way to parse the buf name
+    string buf_name = take_until_str(path_name, "_op");
+    auto in_buf =  buffers.at(buf_name);
+    string ioname = "io16in_" + join(++path.begin(),path.end(),string("_"));
+    auto inst = mdef->addInstance(ioname,"cgralib.IO",aWidth,{{"mode",Const::make(c,"in")}});
+    inst->getMetaData() = in_buf.config_file;
+
+    //Add the multi-tile glb informations
+    if(glb_metadata->latency != 0) {
+      cout << "INPUT GLB buf name: " << buf_name << endl;
+      string key = pick(split_at(buf_name, "_"));
+      inst->getMetaData()["glb2out_0"] = glb_metadata->glb2cgra.at(key);
+      int old_offset = inst->getMetaData()["glb2out_0"]["cycle_starting_addr"][0] ;
+      inst->getMetaData()["glb2out_0"]["cycle_starting_addr"][0] = old_offset - glb_metadata->latency;
+    }
+
+    path[0] = "in";
+    path.insert(path.begin(),"_self");
+    mdef->connect({ioname,"out"},path);
+  }
+  for (auto path : iopaths.IO16in) {
+    string path_name = *(path.begin()+1);
+    //TODO: this is a hacky way to parse the buf name
+    string buf_name = take_until_str(path_name, "_op");
+    auto out_buf =  buffers.at(buf_name);
+    string ioname = "io16_" + join(++path.begin(),path.end(),string("_"));
+    auto inst = mdef->addInstance(ioname,"cgralib.IO",aWidth,{{"mode",Const::make(c,"out")}});
+    inst->getMetaData() = out_buf.config_file;
+
+    //Add the multi-tile glb informations
+    if(glb_metadata->latency != 0) {
+      cout << "OUTPUT GLB buf_name: " << buf_name << endl;
+      string key = (split_at(buf_name, "_")).at(1);
+      inst->getMetaData()["in2glb_0"] = glb_metadata->cgra2glb.at(key);
+      //inst->getMetaData()["in2glb_0"] = glb_metadata->cgra2glb;
+      int old_offset = inst->getMetaData()["in2glb_0"]["cycle_starting_addr"][0] ;
+      inst->getMetaData()["in2glb_0"]["cycle_starting_addr"][0] = old_offset - glb_metadata->latency;
+    }
+    path[0] = "in";
+    path.insert(path.begin(),"_self");
+    mdef->connect({ioname,"in"},path);
+  }
+  for (auto path : iopaths.IO1) {
+    string ioname = "io1in_" + join(++path.begin(),path.end(),string("_"));
+    mdef->addInstance(ioname,"cgralib.BitIO",{{"mode",Const::make(c,"in")}});
+    path[0] = "in";
+    path.insert(path.begin(),"_self");
+    mdef->connect({ioname,"out"},path);
+  }
+  for (auto path : iopaths.IO1in) {
+    string ioname = "io1_" + join(++path.begin(),path.end(),string("_"));
+    mdef->addInstance(ioname,"cgralib.BitIO",{{"mode",Const::make(c,"out")}});
+    path[0] = "in";
+    path.insert(path.begin(),"_self");
+    mdef->connect({ioname,"in"},path);
+  }
+  mdef->disconnect(mdef->getInterface());
+  inlineInstance(pt);
+}
+
+void addIOsWithGLBConfigMetaMapper(Context* c, Module* top, map<string, UBuffer>& buffers, GetGLBConfig* glb_metadata) {
   ModuleDef* mdef = top->getDef();
   vector<Module*> loaded;
   if (!loadHeader(c, "io_header.json", loaded)) {c->die();}
@@ -4075,7 +4143,7 @@ void map_memory(CodegenOptions& options, Module* top, map<string, UBuffer> & buf
 
   c->addPass(new MapperPasses::StripGLB);
   c->runPasses({"stripglb"});
-  addIOsWithGLBConfig(c, top, buffers, glb_pass);
+  addIOsWithGLBConfigMetaMapper(c, top, buffers, glb_pass);
 
   //c->addPass(new CustomFlatten);
   //c->runPasses({"customflatten"});
@@ -5865,7 +5933,7 @@ void pipeline_compute_units(prog& prg, schedule_info& hwinfo) {
 
   bool found_compute = true;
   string compute_file = "./coreir_compute/" + prg.name + "_compute.json";
-  if (hwinfo.use_dse_compute) {
+  if (hwinfo.use_metamapper) {
     compute_file = hwinfo.dse_compute_filename;
     cout << "Compute file dse found" << endl;
   }

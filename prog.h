@@ -1744,7 +1744,7 @@ bool operator==(const resource_instance& a, const resource_instance& b) {
 
 struct schedule_info {
   // Miscellaneous
-  bool use_dse_compute;
+  bool use_metamapper;
   //Memory constraints
   map<op*, string> buf_write_assignment;
   map<string, string> buf2level;
