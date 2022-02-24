@@ -26,6 +26,7 @@ void preprocess_prog(prog& prg) {
 }
 
 vector<string> cgra_flow_result(prog& prg, string dir); 
+vector<string> aha_flow_result(prog& prg, string dir);
 
 void sanity_check(prog& prg, vector<string>& cpu, vector<string> & verilator_res) {
     compare("cgra_" + prg.name + "_cpu_vs_verilog_comparison", verilator_res, cpu);
