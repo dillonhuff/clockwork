@@ -3025,7 +3025,15 @@ class CustomFlatten : public CoreIR::InstanceGraphPass {
     bool changed = false;
     // int i = 0;
     for (auto inst : node.getInstanceList()) {
-       
+       Module* m = inst->getModuleRef();
+       if (m->isGenerated()) {
+         auto g = m->getGenerator();
+         if (g->getName() == "rom2") {
+	cout << "not inlining " << inst->toString() << " " << inst->toString() << endl;
+           continue;
+         }
+       }    
+cout << "inlining " << inst->toString() << endl; 
       changed |= inlineInstance(inst);
     }
     return changed;
@@ -4145,8 +4153,8 @@ void map_memory(CodegenOptions& options, Module* top, map<string, UBuffer> & buf
   c->runPasses({"stripglb"});
   addIOsWithGLBConfigMetaMapper(c, top, buffers, glb_pass);
 
-  //c->addPass(new CustomFlatten);
-  //c->runPasses({"customflatten"});
+  c->addPass(new CustomFlatten);
+  c->runPasses({"customflatten"});
 
   //Change the stencil valid signal to cgra to glb
   c->addPass(new ReplaceGLBValid(glb_pass));
