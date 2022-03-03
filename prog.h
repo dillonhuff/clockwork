@@ -1735,6 +1735,14 @@ class resource_instance {
     int number;
 };
 
+struct compute_resource {
+public:
+  int num_users = 0;
+  int resource_quantity = 0;
+  bool is_created = false;
+  string output_name;
+};
+
 static
 bool operator==(const resource_instance& a, const resource_instance& b) {
   return a.type == b.type && a.number == b.number;
@@ -1752,7 +1760,10 @@ struct schedule_info {
   //map<string, int> op_compute_unit_latencies;
 
   // Resource constraints
-  map<string, int> resource_quantities;
+  bool use_compute_share;
+  //map<string, int> resource_users;      // how many ops use this resource
+  //map<string, int> resource_quantities; // how many of each op are available
+  map<string, compute_resource> compute_resources;
   map<op*, string> resource_requirements;
 
   // Resource use info

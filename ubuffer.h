@@ -959,6 +959,8 @@ class UBuffer {
     vector<vector<int> > read_addr, write_addr;
     HWconstraints hardware;
 
+    bool use_compute_share;
+
 #ifdef COREIR
     json config_file;
 #endif

@@ -1181,6 +1181,7 @@ UBuffer UBuffer::generate_ubuffer(UBufferImpl& impl, schedule_info & info, int b
     //create ubuffer for codegen
     UBuffer buf;
     buf.name = bname;
+    buf.use_compute_share = info.use_compute_share;
     buf.ctx = ctx;
     buf.port_widths = port_widths;
     buf.coarse_grained_pipeline_loop_level = coarse_grained_pipeline_loop_level;
@@ -2488,6 +2489,7 @@ CoreIR::Instance* UBuffer::generate_pond_instance(
   return buf;
 }
 
+// create mem for compute share
 CoreIR::Instance* UBuffer::generate_lake_tile_instance(
         ModuleDef* def,
         CodegenOptions options,
@@ -2511,7 +2513,7 @@ CoreIR::Instance* UBuffer::generate_lake_tile_instance(
   CoreIR::Values modargs = {
     {"mode", CoreIR::Const::make(context, "lake")}
   };
-  if (has_stencil_valid) {
+  if (has_stencil_valid && false) {
     cout << "Generate stencil valid signal" << endl;
     generate_stencil_valid_config(options, bank_name);
   }
@@ -2546,6 +2548,11 @@ CoreIR::Instance* UBuffer::generate_lake_tile_instance(
   def->connect(buf->sel("rst_n"), clk_en_const->sel("out"));
 
   //Wire stencil valid
+  std::cout << "selecting for bank " << bank_name << " for " << ub_ins_name << std::endl;
+  bool is_first_bank = endsWith(bank_name, "_BANK_0");
+  if (has_stencil_valid && is_first_bank) {
+    def->connect(buf->sel("stencil_valid"), def->sel("self."+pick(get_out_bundles()) + "_extra_ctrl"));
+  }
   //if (options.pass_through_valid) {
   //  if (has_stencil_valid) {
   //    def->connect(buf->sel("stencil_valid"), def->sel("self."+get_bundle(pick(outpts)) + "_extra_ctrl"));
@@ -2815,7 +2822,8 @@ CoreIR::Instance* UBuffer::map_ubuffer_to_cgra(CodegenOptions& options, CoreIR::
     buf = generate_lake_tile_instance(def, options,
       ub_ins_name, target_buf.name,
       target_buf.num_in_ports(), target_buf.num_out_ports(),
-      false/*TODO: exclude stencil valid signal*/, true);
+      target_buf.use_compute_share/*TODO: exclude stencil valid signal*/, true);
+                                      //false/*TODO: exclude stencil valid signal*/, true);
 
   } else if (config_mode == "pond") {
     config_file = generate_ubuf_args(options, target_buf, "regfile");

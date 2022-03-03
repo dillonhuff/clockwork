@@ -14861,6 +14861,7 @@ void Init_PE_energy_cost(power_analysis_params& power_params)  {
 
 
 void compile_for_garnet_single_port_mem(prog & prg, string dir, bool gen_smt_stream, bool gen_config_only, bool multi_level_mem, bool use_dse_compute, bool energy_model = false);
+void compile_for_garnet_single_port_mem_with_compute_share(prog & prg, string dir, bool gen_smt_stream, bool gen_config_only, bool multi_level_mem, bool use_dse_compute);
 void compile_for_garnet_fetch2_mem(prog & prg, string dir, bool gen_smt_stream, bool gen_config_only, bool multi_level_mem, bool use_dse_compute, bool energy_model = false);
 void cpy_app_to_folder(const std::string& app_type, const std::string& prg_name);
 void generate_resnet_latency_experiment(prog& prg,
@@ -15151,6 +15152,88 @@ void test_glb(bool gen_config_only, bool multi_accessor=false, string dir="aha_g
 #endif
   }
 }
+
+void test_compute_share(bool gen_config_only, bool multi_accessor=false, string dir="aha_garnet_design") {
+  vector<prog> test_apps;
+
+  test_apps.push_back(cascaded());
+  //ISSCC application without unroll
+  //test_apps.push_back(harris_color());
+  //test_apps.push_back(gaussian_isscc());
+  //test_apps.push_back(camera_pipeline_isscc());
+  //test_apps.push_back(unsharp_isscc());
+
+  //GLB tests
+  //test_apps.push_back(unsharp_glb());
+  //test_apps.push_back(gaussian_glb2());
+  //test_apps.push_back(camera_pipeline_glb());
+  //test_apps.push_back(harris_glb2());
+  //test_apps.push_back(up_sample_glb());
+  //test_apps.push_back(gaussian_glb8());
+
+  //Dense Linear algebra
+  //test_apps.push_back(glb_channel_reduction());
+  //test_apps.push_back(matmul());
+
+  //Simplified multi-tile DNN application
+  //test_apps.push_back(resnet_init_unroll_tile());
+
+  //Too large which will go beyound the 64k counter ub
+  //test_apps.push_back(resnet5_1_full());
+  //test_apps.push_back(resnet2_x_full());
+
+  ////Sample DNN Layers
+  //test_apps.push_back(resnet1());
+  //test_apps.push_back(resnet3_1());
+  //test_apps.push_back(resnet4_x());
+  //test_apps.push_back(resnet5_1());
+  //test_apps.push_back(resnet5_x());
+  //test_apps.push_back(resnet5_x_new());
+  //test_apps.push_back(resnet5_1_new());
+  //test_apps.push_back(resnet5_1_unroll());
+  //test_apps.push_back(resnet_multi_channel());
+
+  ////Test with non double buffer, not tested with db
+  //test_apps.push_back(resnet_output_stationary_small());
+  //test_apps.push_back(resnet_output_stationary_tiny());
+
+  for ( auto prg: test_apps) {
+    prg.sanity_check();
+
+    break_up_multi_channel_inputs(prg);
+    break_up_multi_channel_outputs(prg);
+    dsa_writers(prg);
+    prg.pretty_print();
+
+#ifdef COREIR
+    //compile_for_garnet_platonic_mem(prg);
+    compile_for_garnet_single_port_mem_with_compute_share(prg, dir, false, gen_config_only, false, false);
+    cout << "Output name: " << prg.name << endl;
+    //TODO: move to a function
+    //run verilator on all the generated verilog
+    if (!gen_config_only && false) {
+      string name = prg.name;
+      auto verilog_files = get_files("./" + dir + "/"+name+"/verilog/");
+      verilog_files.push_back(name + ".v");
+      verilog_files.push_back("LakeTop_W_new.v");
+      add_default_initial_block();
+      bool extra_flag_for_lake = true;
+      auto cpu = unoptimized_result(prg);
+      int res = run_verilator_on(name, name + "_verilog_tb.cpp", verilog_files, extra_flag_for_lake);
+      assert(res == 0);
+      cmd("rm LakeTop_W_new.v");
+      cmd("rm LakeWrapper.v");
+
+      auto verilator_res = verilator_results(prg.name);
+      compare("cgra_" + prg.name + "_cpu_vs_verilog_comparison", verilator_res, cpu);
+      //string app_typssive "dualwithaddr";
+      string app_type = "single_port_buffer";
+      cpy_app_to_folder(app_type, prg.name);
+    }
+#endif
+  }
+}
+
 
 void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, string dir="aha_garnet_design") {
   vector<prog> test_apps;
@@ -18652,6 +18735,11 @@ void garnet_single_port_ram_schedule(CodegenOptions& options, schedule_info& sch
     //An hack on the fft schedule
     sequential_schedule(sched, root, prg);
     return;
+    
+  } else if (sched.use_compute_share) {
+    sequential_schedule(sched, root, prg);
+    return;
+    
   } else if (is_rate_matchable(prg)) {
     prg.pretty_print();
 
@@ -19664,6 +19752,72 @@ void compile_for_garnet_single_port_mem(prog& prg,
   }
 #endif
 }
+
+void compile_for_garnet_single_port_mem_with_compute_share(
+  prog& prg,
+  string dir,
+  bool gen_smt_stream,
+  bool config_gen_only,
+  bool multi_level_mem,
+  bool use_dse_compute) {
+
+  //make sure the loop bound and address is positive
+  normalize_bounds(prg);
+  normalize_address_offsets(prg);
+  //remove_div(prg);
+  prg.sanity_check();
+  prg.pretty_print();
+
+
+  //optimized schedule
+  cmd("mkdir -p " + dir + "/" + prg.name);
+
+  //auto iis = garnet_fuse_ii_level(prg);
+  //auto buffers_opt = build_buffers(prg, clockwork_schedule(prg));
+
+  CodegenOptions options = garnet_codegen_single_port_with_addrgen_options(prg, dir);
+  options.debug_options.traceWave = true;
+  options.add_memory_hierarchy("mem");
+  options.add_memory_hierarchy("glb");
+  if (multi_level_mem) {
+    options.add_memory_hierarchy("regfile");
+    options.rtl_options.double_buffer_optimization = false;
+    options.fallback_schedule = SEQUENTIAL_SCHEDULE;
+  }
+  options.emit_smt_stream = gen_smt_stream;
+  options.config_gen_only = config_gen_only;
+  //if (multi_sram)
+  //    options.mem_tile.multi_sram_accessor = true;
+
+  if(options.fallback_schedule == ISCA_SCHEDULE) {
+    loop_perfection(prg);
+    cout << "After Loop Perfection" << endl;
+    prg.pretty_print();
+  }
+
+  schedule_info sched = garnet_schedule_info(options, prg, use_dse_compute);
+  sched.use_compute_share = true;
+  garnet_single_port_ram_schedule(options, sched, prg.root, prg);
+  auto sched_map = op_times_map(sched, prg);
+  auto hw_sched = its(sched_map,
+          prg.whole_iteration_domain());
+  cout << "result schedule: " << str(hw_sched) << endl;
+  auto buffers_opt = build_buffers(prg, hw_sched);
+  auto sched_max = lexmaxpt(range(hw_sched));
+  cout << "Latency of application is: " << str((sched_max)) << endl;
+
+  tag_coarse_grained_loop_to_ubuf(buffers_opt, prg);
+  //FIXME: put into separate pass for power analysis
+
+#ifdef COREIR
+  generate_garnet_coreir(buffers_opt, prg, options, sched, use_dse_compute);
+  if (!options.config_gen_only) {
+    generate_garnet_verilog_top(options, prg.name);
+    generate_garnet_verilator_tb(options, prg, hw_sched, buffers_opt);
+  }
+#endif
+}
+
 
 bool schedule_bounds_fit_controller_bitwidth(const int bitwidth, schedule_info& sched, prog& prg) {
   int max_val = pow(2, bitwidth);
@@ -28094,6 +28248,13 @@ int main(int argc, char** argv) {
       return 0;
     }
 
+    if (cmd == "compute-share") {
+      bool use_multi_accessor_tile = true;
+      bool gen_config_only = true;
+      test_compute_share(gen_config_only, use_multi_accessor_tile, "aha_garnet_design_new");
+      return 0;
+    }
+    
     if (cmd == "lake-exp") {
       bool use_multi_accessor_tile = true;
       bool gen_config_only = true;

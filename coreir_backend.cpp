@@ -823,6 +823,7 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
 }
 
 CoreIR::Module* generate_coreir(CodegenOptions& options, CoreIR::Context* context, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
+  std::cout << "doing the other generate coreir" << std::endl;
   auto ns = context->getNamespace("global");
 
   vector<pair<string, CoreIR::Type*> >
@@ -1491,7 +1492,10 @@ void generate_coreir_compute_unit(CodegenOptions& options, bool found_compute,
   auto context = def->getContext();
   auto ns = context->getNamespace("global");
 
-  cout << "Generating compute unit for " << op->name << endl;
+  cout << "Generating compute unit for " << op->name << " called " << op->func << endl;
+  if (op->name != "op_" + op->func) {
+    return;
+  }
 
   vector<pair<string, CoreIR::Type*> >
     ub_field{{"clk", context->Named("coreir.clkIn")}};
@@ -1584,7 +1588,7 @@ void generate_coreir_compute_unit(CodegenOptions& options, bool found_compute,
         assert(found);
       }
 
-      cout << "More than oune outgoing bundle" << endl;
+      cout << "More than one outgoing bundle" << endl;
       for (pair<string, string> bundle : outgoing_bundles(op, buffers, prg)) {
         auto buf = dbhc::map_find(bundle.first, buffers);
         bool found = false;
@@ -2278,6 +2282,7 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
     umap* schedmap,
     CoreIR::Context* context,
     schedule_info& hwinfo) {
+  std::cout << "generate coreir without control" << std::endl;
 
   Module* ub = coreir_moduledef(options, buffers, prg, schedmap, context, hwinfo);
 
@@ -2354,6 +2359,7 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
       //Generate the memory module
       auto ub_mod = generate_coreir_without_ctrl(options, context, buf.second, impl, hwinfo);
       def->addInstance(buf.second.name, ub_mod);
+      std::cout << "created memory called " << buf.second.name << std::endl;
       //TODO: add reset connection for garnet mapping
       //cout << "connected reset for " << buf.first << buf.second.name <<  endl;
       def->connect(def->sel(buf.first + ".reset"), def->sel("self.reset"));
@@ -2386,8 +2392,81 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
   //TODO Clean the logic here
   for (auto op : ops_dft) {
     cout << "Visit op: " << op->name << endl;
+    //cout << "op uses func " << op->func << endl;
+    auto num_users = hwinfo.compute_resources[op->func].num_users;
+    cout << "op uses func " << op->func << " with " << num_users << " users" << endl;
+    //if (num_users > 1) {
+    //if (op->name != "op_" + op->func) {
+    if (num_users > 1) {
+      if (hwinfo.compute_resources[op->func].is_created) {
+        std::cout << "Skipping creation of op " << op->name << " since already created. There are num_users=" << num_users << std::endl;
+
+        // broadcast the output connection
+        for (pair<string, string> bundle : outgoing_bundles(op, buffers, prg)) {
+          string buf_name = bundle.first;
+          string bundle_name = bundle.second;
+          std::cout << "connecting created output: " << buf_name + "." + bundle_name << " to " << hwinfo.compute_resources[op->func].output_name << std::endl;
+          def->connect(buf_name + "." + bundle_name, hwinfo.compute_resources[op->func].output_name);
+        }
+
+        // connect the inputs to existing muxes
+        int bundle_idx = 0;
+        for (pair<string, string> bundle : incoming_bundles(op, buffers, prg)) {
+          string buf_name = bundle.first;
+          string bundle_name = bundle.second;
+          //string mux_name = op->func + "_" + buf_name + "_mux";
+          string mux_name = op->func + "_bundle" + std::to_string(bundle_idx) + "_mux";
+          bundle_idx += 1;
+          string in_port = ".in.data." + std::to_string(hwinfo.resource_assignment[op].number);
+          std::cout << "connecting mux input " << mux_name + in_port << " to " << buf_name + "." + bundle_name << std::endl;
+          def->connect(mux_name + in_port, buf_name + "." + bundle_name);
+          //def->connect(buf_name + "." + bundle_name, op->name + "." + pg(buf_name, bundle_name));
+        }
+        continue;
+      } else {
+        // First user of this kernel
+        hwinfo.compute_resources[op->func].is_created = true;
+        std::cout << "Created the compute kernel " << op->func << std::endl;
+
+        // Create the stencil_valid for the memory.
+        auto stencil_valid_inst = generate_coreir_op_controller(options, def, op, sched_maps, hwinfo);
+        auto valid_name = stencil_valid_inst->getInstname();
+        std::cout << "Created stencil valid for " << valid_name << std::endl;
+        
+        // connect muxes to inputs of this kernel
+        int bundle_idx = 0;
+        for (pair<string, string> bundle : incoming_bundles(op, buffers, prg)) {
+          string buf_name = bundle.first;
+          string bundle_name = bundle.second;
+          std::cout << "connecting " << buf_name << " w/ bundle: " << bundle_name << std::endl;
+
+          // create the mux
+          //string mux_name = op->func + "_" + buf_name + "_mux";
+          string mux_name = op->func + "_bundle" + std::to_string(bundle_idx) + "_mux";
+          bundle_idx += 1;
+          assert(def->getInstances().count(op->name));
+          const auto instance_map = def->getInstances();
+          const auto type = instance_map.at(op->name)->sel(pg(buf_name, bundle_name))->getType();
+          const auto aType = Const::make(context, type);
+          //def->addInstance(mux_name, "commonlib.mux2_bundle", {{"type", aType}});
+          const auto aN = Const::make(context, num_users);
+          def->addInstance(mux_name, "commonlib.muxn_onehot", {{"type", aType}, {"N", aN}});
+          std::cout << "Created mux called " << mux_name << std::endl;
+
+          // wire up the mux
+          string in_port = ".in.data." + std::to_string(hwinfo.resource_assignment[op].number);
+          string sel_port = ".in.sel." + std::to_string(hwinfo.resource_assignment[op].number);
+          std::cout << "connecting mux input (first): " << mux_name + in_port << " to " << buf_name + "." + bundle_name << std::endl;
+          def->connect(mux_name + in_port, buf_name + "." + bundle_name);
+          //def->connect(mux_name + sel_port, buf_name + "." + bundle_name + "_extra_ctrl");
+          def->connect(mux_name + sel_port, valid_name + ".stencil_valid");
+          def->connect(mux_name + ".out", op->name + "." + pg(buf_name, bundle_name));
+        }
+      }
+    }
+    
     vector<string> surrounding = surrounding_vars(op, prg);
-    //Genertea op controller for the op need index varibale
+    //Generate op controller for the op need index varibale
     if (op->index_variables_needed_by_compute.size() > 0) {
       generate_coreir_op_controller(options, def, op, sched_maps, hwinfo);
     }
@@ -2408,6 +2487,7 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
 
       if (prg.is_output(buf_name)) {
         def->connect("self." + pg(buf_name, bundle_name), op->name + "." + pg(buf_name, bundle_name));
+        std::cout << "connecting outgoing output bundle " << "self." + pg(buf_name, bundle_name) << " to " << op->name + "." + pg(buf_name, bundle_name) << std::endl;
         if (options.pass_through_valid) {
             //def->connect("self." + pg(buf_name, bundle_name) + "_valid", op->name + ".valid_pass_out");
             //need_pass_valid = true;
@@ -2423,7 +2503,10 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
                 write_start_wire(def, op->name));
         }
       } else {
+        std::cout << "connecting outgoing bundle " << buf_name + "." + bundle_name << " to " << op->name + "." + pg(buf_name, bundle_name) << std::endl;
+        hwinfo.compute_resources[op->func].output_name = op->name + "." + pg(buf_name, bundle_name);
         def->connect(buf_name + "." + bundle_name, op->name + "." + pg(buf_name, bundle_name));
+        
         /*def->connect(def->sel(buf_name + "." + bundle_name + "_wen"),
             write_start_wire(def, op->name));
         def->connect(def->sel(buf_name + "." + bundle_name + "_ctrl_vars"),
@@ -2449,6 +2532,8 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
         }
       }
 
+      auto num_users = hwinfo.compute_resources[op->func].num_users;
+      if (num_users == 1) {
       if (prg.is_input(buf_name)) {
 
         //create the op controller for input will remove for garnet test
@@ -2474,7 +2559,12 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
         //def->connect(def->sel(input_bus)->sel(0),
         //    def->sel(op->name + "." + pg(buf_name, bundle_name))->sel(0));
       } else {
+        std::cout << "connecting incoming bundle " << buf_name + "." + bundle_name << " to " << op->name + "." + pg(buf_name, bundle_name) << std::endl;
+        
+        //auto num_users = hwinfo.compute_resources[op->func].num_users;
+        //if (num_users == 1) {
         def->connect(buf_name + "." + bundle_name, op->name + "." + pg(buf_name, bundle_name));
+          //}
 
         //wire the stencil valid from last buffer to the next one
         if (options.pass_through_valid) {
@@ -2497,6 +2587,7 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
         //    read_start_wire(def, op->name));
         //def->connect(def->sel(buf_name + "." + bundle_name + "_ctrl_vars"),
         //    read_start_control_vars(def, op->name));
+      }
       }
     }
   }
@@ -2550,6 +2641,7 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
     umap* schedmap,
     CoreIR::Context* context,
     schedule_info& hwinfo) {
+  std::cout << "generate coreir for file with lots" << std::endl;
 
   ofstream verilog_collateral(prg.name + "_verilog_collateral.sv");
   verilog_collateral_file = &verilog_collateral;
@@ -3798,6 +3890,7 @@ void generate_coreir(CodegenOptions& options,
     prog& prg,
     umap* schedmap,
     schedule_info& hwinfo) {
+  std::cout << "running top level generate coreir" << std::endl;
 
   CoreIR::Context* context = CoreIR::newContext();
   CoreIRLoadLibrary_commonlib(context);
@@ -5084,6 +5177,7 @@ void pipeline_compute_units(prog& prg, schedule_info& hwinfo) {
   add_tahoe_memory_generator(context);
   auto c = context;
 
+  std::cout << "pipeline compute units" << std::endl;
 
   bool found_compute = true;
   string compute_file = "./coreir_compute/" + prg.name + "_compute.json";
@@ -5201,14 +5295,24 @@ void pipeline_compute_units(prog& prg, schedule_info& hwinfo) {
         }
       }
 
+      std::cout << "doing module " << mod->getName() << std::endl;
+      hwinfo.resource_assignment[op] =
+        resource_instance({mod->getName(), hwinfo.compute_resources[mod->getName()].num_users});
+      hwinfo.compute_resources[mod->getName()].num_users += 1;
+      if (hwinfo.compute_resources[mod->getName()].num_users > 1) {
+        std::cout << "Multiple users of " << mod->getName() << "!!!" << std::endl;
+        continue;
+      }
       auto mod_tp = mod->getType();
       auto copy = ns->newModuleDecl(mod->getName() + "_pipelined", mod_tp);
       auto copy_def = copy->newModuleDef();
       map<Instance*, Instance*> instance_map;
       for (auto inst : instances) {
+        std::cout << "adding new instance called " << inst->getInstname() << std::endl;
         instance_map[inst] = copy_def->addInstance(inst, inst->getInstname());
       }
 
+      std::cout << "now pipelining"<< std::endl;
       for (auto c : mod->getDef()->getConnections()) {
         Wireable* base0 = base(c.first);
         Wireable* base1 = base(c.second);

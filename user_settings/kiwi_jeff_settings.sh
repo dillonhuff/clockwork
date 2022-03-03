@@ -4,7 +4,9 @@ export OPT_PATH=/nobackup/setter/h2h/hwbuffer/clockwork/include
 export OPT_LIB_PATH=/nobackup/setter/h2h/hwbuffer/clockwork/lib
 
 export COREIR_PATH=/nobackup/setter/h2h/hwbuffer/coreir
-export CLKWRK_PATH=/nobackup/setter/h2h/hwbuffer/clockwork
+export LAKE_PATH=/nobackup/setter/h2h/hwbuffer/lake
+export CLKWRK_PATH=/nobackup/setter/h2h/hwbuffer/clockwork_sharing
+export LD_LIBRARY_PATH=$CLKWRK_PATH/lib
 
 #export CXX=clang++
 export CXX=g++-7
