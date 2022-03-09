@@ -4602,7 +4602,7 @@ vector<isl_set*> get_domain_unmask_set(isl_map* m, int vec_dim, vector<int> unma
     vector<string> var_mask;
     for (int i = 0; i < dim; i++) {
         if (i <= vec_dim && !elem(i, unmask_dims)) {
-            var_mask.push_back("i" + str(i) + "=" + str(get_dim_max(dom, i)));
+            var_mask.push_back("i" + str(i) + "=" + str(get_dim_min(dom, i)));
         } else {
             var_mask.push_back("i" + str(i));
         }

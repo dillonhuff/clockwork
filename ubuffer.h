@@ -355,6 +355,180 @@ class AccessPattern {
         return ret;
       }
 
+      //A dimension that project out should be captured in the next level memory
+      isl_map* get_access_map_and_decouple_reuse(isl_ctx* ctx, int dim_id, std::set<int> proj_dim) {
+          vector<string> var_list(var_dim-1);
+          for (auto itr: name2idx) {
+              if (itr.first == "const")
+                  continue;
+              var_list[itr.second-1] = itr.first;
+          }
+          var_list[0] = "root=0";
+          auto vars = sep_list(var_list, "[", "]", "," );
+          vector<string> nd_expr;
+          for (size_t row_cnt = 0; row_cnt < access_matrix.size(); row_cnt ++) {
+              auto row = access_matrix[row_cnt];
+              vector<string> sum_list;
+              for(auto itr = row.begin() + 1; itr != row.end(); itr ++) {
+                  //skip const.
+                  int item = *itr;
+                  int cnt = itr - row.begin() - 1;
+                  if (item == 0)
+                      continue;
+                  //all dimension above the vectorization dimension should be factor out
+                  if (row_cnt < dim_id) {
+                    nd_expr.push_back(get_expr(item, cnt, var_list));
+                  }
+                  else {
+                    if(proj_dim.count(cnt)) {
+                      cout << "\t push var in decouple dimension: " << cnt << get_expr(item, cnt, var_list) << endl;
+                      nd_expr.push_back(get_expr(item, cnt, var_list));
+                    } else {
+                      sum_list.push_back(get_expr(item, cnt, var_list));
+                    }
+                  }
+              }
+              if (row_cnt >= dim_id) {
+                //only add const offset when it inside the vectorize dimension const
+                if (sum_list.size() == 0 || (row.front() != 0)) {
+                  sum_list.push_back(std::to_string(row.front()));
+                }
+                nd_expr.push_back(sep_list(sum_list, "", "", "+"));
+              }
+              else {
+                  if (sum_list.size() == 0 || (row.front() != 0))
+                  //TODO: check the following expr may work
+                  //if ( row.front() != 0)
+                      nd_expr.push_back(std::to_string(row.front()));
+              }
+          }
+          string nd_expr_str = sep_list(nd_expr, "[", "]", ", ");
+          cout << "access map expr:" << nd_expr_str << endl;
+          auto access_map = isl_map_read_from_str(ctx, string("{ " + op_name + vars + " -> " + buf_name  + nd_expr_str + "}").c_str());
+          auto domain = get_domain(ctx);
+          cout << "domain: " << str(domain) << "\naccess map: " << str(access_map) << endl;
+          return its(access_map, domain);
+      }
+
+      //A dimension that project out should be captured in the next level memory
+      isl_map* get_access_map_and_decouple_reuse(isl_ctx* ctx, int dim_id, int vec_dim, std::set<int> proj_dim) {
+          vector<string> var_list(var_dim-1);
+          for (auto itr: name2idx) {
+              if (itr.first == "const")
+                  continue;
+              var_list[itr.second-1] = itr.first;
+          }
+          var_list[0] = "root=0";
+          auto vars = sep_list(var_list, "[", "]", "," );
+          vector<string> nd_expr;
+          for (size_t row_cnt = 0; row_cnt < access_matrix.size(); row_cnt ++) {
+              auto row = access_matrix[row_cnt];
+              vector<string> sum_list;
+              for(auto itr = row.begin() + 1; itr != row.end(); itr ++) {
+                  //skip const.
+                  int item = *itr;
+                  int cnt = itr - row.begin() - 1;
+                  if (item == 0)
+                      continue;
+                  //all dimension above the vectorization dimension should be factor out
+                  if (row_cnt < dim_id) {
+                    nd_expr.push_back(get_expr(item, cnt, var_list));
+                  }
+                  else {
+                    if (cnt >= vec_dim) {
+                      sum_list.push_back(get_expr(item, cnt, var_list));
+                    } else if(proj_dim.count(cnt)) {
+                      cout << "\t push var in accumulate list: " << cnt << get_expr(item, cnt, var_list) << endl;
+                      sum_list.push_back(get_expr(item, cnt, var_list));
+                    } else {
+                      nd_expr.push_back(get_expr(item, cnt, var_list));
+                    }
+                  }
+              }
+              if (row_cnt >= dim_id) {
+                //only add const offset when it inside the vectorize dimension const
+                if (sum_list.size() == 0 || (row.front() != 0)) {
+                  sum_list.push_back(std::to_string(row.front()));
+                }
+                nd_expr.push_back(sep_list(sum_list, "", "", "+"));
+              }
+              else {
+                  if (sum_list.size() == 0 || (row.front() != 0))
+                  //TODO: check the following expr may work
+                  //if ( row.front() != 0)
+                      nd_expr.push_back(std::to_string(row.front()));
+              }
+          }
+          string nd_expr_str = sep_list(nd_expr, "[", "]", ", ");
+          cout << "access map expr:" << nd_expr_str << endl;
+          auto access_map = isl_map_read_from_str(ctx, string("{ " + op_name + vars + " -> " + buf_name  + nd_expr_str + "}").c_str());
+          auto domain = get_domain(ctx);
+          cout << "domain: " << str(domain) << "\naccess map: " << str(access_map) << endl;
+          return its(access_map, domain);
+      }
+
+      isl_map* get_access_map_and_decouple_reuse(isl_ctx* ctx, int dim_id, int vec_dim) {
+          vector<string> var_list(var_dim-1);
+          for (auto itr: name2idx) {
+              if (itr.first == "const")
+                  continue;
+              var_list[itr.second-1] = itr.first;
+          }
+          var_list[0] = "root=0";
+          auto vars = sep_list(var_list, "[", "]", "," );
+          vector<string> nd_expr;
+          for (size_t row_cnt = 0; row_cnt < access_matrix.size(); row_cnt ++) {
+              auto row = access_matrix[row_cnt];
+              vector<string> sum_list;
+              for(auto itr = row.begin() + 1; itr != row.end(); itr ++) {
+                  //skip const.
+                  int item = *itr;
+                  int cnt = itr - row.begin() - 1;
+                  if (item == 0)
+                      continue;
+                  if (row_cnt < dim_id) {
+                    nd_expr.push_back(get_expr(item, cnt, var_list));
+                  }
+                  else {
+                    if (cnt  < vec_dim) {
+                        nd_expr.push_back(get_expr(item, cnt, var_list));
+                    } else {
+                      sum_list.push_back(get_expr(item, cnt, var_list));
+                    }
+                  }
+              }
+              if (row_cnt >= dim_id) {
+                //only add const offset when it inside the vectorize dimension const
+                if (sum_list.size() == 0 || (row.front() != 0)) {
+                  sum_list.push_back(std::to_string(row.front()));
+                }
+                nd_expr.push_back(sep_list(sum_list, "", "", "+"));
+              }
+              else {
+                  if (sum_list.size() == 0 || (row.front() != 0))
+                  //TODO: check the following expr may work
+                  //if ( row.front() != 0)
+                      nd_expr.push_back(std::to_string(row.front()));
+              }
+          }
+          ////auto tb_pad = get_reaccess_dim_non_vectorized(dim_id);
+          //auto tb_pad = get_non_inner_most_reaccess_dim();
+          //cout << "tb pad dim: " << tb_pad << endl;
+          //for (auto cnt: tb_pad) {
+          //    if (cnt == 0)
+          //      continue;
+          //    auto it = nd_expr.begin();
+          //    //get_expr(stride, id, all the var)
+          //    nd_expr.insert(it, get_expr(1, cnt, var_list));
+          //}
+          string nd_expr_str = sep_list(nd_expr, "[", "]", ", ");
+          cout << "access map expr:" << nd_expr_str << endl;
+          auto access_map = isl_map_read_from_str(ctx, string("{ " + op_name + vars + " -> " + buf_name  + nd_expr_str + "}").c_str());
+          auto domain = get_domain(ctx);
+          cout << "domain: " << str(domain) << "\naccess map: " << str(access_map) << endl;
+          return its(access_map, domain);
+      }
+
       isl_map* get_access_map_and_decouple_reuse(isl_ctx* ctx, int dim_id, bool rm_const=false) {
           vector<string> var_list(var_dim-1);
           for (auto itr: name2idx) {
@@ -2629,6 +2803,19 @@ void tighten_address_space() {
         return cap;
     }
 
+    void remove_redundant_dim() {
+        for (auto pt: get_all_ports()) {
+            auto am = to_map(access_map.at(pt));
+            am = remove_irrelevant_in_dim(am);
+            access_map.at(pt) = to_umap(am);
+            domain.at(pt) = ::domain(am);
+
+            auto sched = to_map(schedule.at(pt));
+            sched = remove_irrelevant_in_dim(sched);
+            schedule.at(pt) = to_umap(sched);
+        }
+    }
+
     umap* pad_dom_buf2op(AccessPattern , umap* , int);
 
     isl_map* pad_dom_sched(AccessPattern , isl_map* , int);
@@ -2948,7 +3135,7 @@ vector<string> buffer_vectorization(vector<string> buf_name_vec, int dim_id, int
 //helper function for the new vectorization pass
 pair<isl_map*, isl_map*> get_vectorized_write(isl_map* acc_0, isl_map* sched, map<string, isl_map*> sched_record_map, int fetch_width, int addr_dim, int agg_cnt=0);
 pair<isl_map*, isl_map*> get_vectorized_read(isl_map* acc_0, isl_map* sched, map<string, isl_map*> sched_record_map, int fetch_width, int addr_dim, bool is_dual_port = false);
-pair<isl_map*, isl_map*> get_vectorized_read_simplified(isl_map* acc_0, isl_map* sched, map<string, isl_map*> sched_record_map, int fetch_width, int addr_dim, bool is_dual_port = false);
+pair<isl_map*, isl_map*> get_vectorized_read_simplified(isl_map* acc_0, isl_map* sched, map<string, isl_map*> sched_record_map, int fetch_width, int addr_dim, int& vectorized_dim,  bool is_dual_port = false);
 //Helper function to get schedule
 isl_map* get_sram2tb_schedule_with_check(isl_map* out_sched, map<string, isl_map*> sched_map, int ahead_step, int vectorize_loop_dim, bool is_dual_port);
 
