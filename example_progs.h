@@ -34,6 +34,8 @@ prog nlmeans_small();
 prog nlmeans_unroll_reorder();
 prog nlmeans_rolled_int();
 prog nlmeans_simple();
+prog nlmeans_simple_trunc();
+prog nlmeans_simple_blur();
 prog nlmeans_rolled_7x7();
 prog conv_3_3(); //stencil
 prog conv_3_3_wide(); //stencil
@@ -54,6 +56,8 @@ prog camera_pipeline(); //stencil
 prog camera_pipeline_new(); //stencil
 prog camera_pipeline_isscc(); //stencil
 prog camera_pipeline_2x2(); //compute demosaic directly from denoised
+prog camera_pipeline_2x2_unroll(); //compute demosaic directly from denoised
+prog camera_pipeline_2x2_unrollx(); //compute demosaic directly from denoised
 prog camera_pipeline_unrolly(); //stencil
 prog camera_pipeline_extra_buf(); //stencil
 

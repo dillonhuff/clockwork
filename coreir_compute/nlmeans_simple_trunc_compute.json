@@ -212,6 +212,15 @@
           ["self.out_hw_input_global_wrapper_stencil","self.in0_hw_input_stencil.0"]
         ]
       },
+      "hcompute_d_stencil_2":{
+        "type":["Record",[
+          ["out_d_stencil_out",["Array",16,"Bit"]],
+          ["in0_d_stencil",["Array",1,["Array",16,"BitIn"]]]
+        ]],
+        "connections":[
+          ["self.out_d_stencil_out","self.in0_d_stencil.0"]
+        ]
+      },
       "hcompute_hw_output_stencil":{
         "type":["Record",[
           ["out_hw_output_stencil",["Array",16,"Bit"]],
