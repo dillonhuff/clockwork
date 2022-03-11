@@ -3785,7 +3785,7 @@ if (cnst->getModuleRef()->getName() == "Pond") {
 
   config_file["config"] = config;
 
-  std::set<string> routable_ports = {"data_in_pond_0"};
+  std::set<string> routable_ports = {"data_in_pond"};
 
   std::vector<string> routable_outputs = {"O0", "O1"};
 
@@ -3888,9 +3888,9 @@ bool RegfileReplaceMetaMapper(Instance* cnst) {
   config_file["num_outputs"] = num_outputs;
   config_file["width"] = width;
 
-  std::set<string> routable_ports = {"flush", "data_in_pond_0"};
+  std::set<string> routable_ports = {"flush", "data_in_pond"};
 
-  std::vector<string> routable_outputs = {"data_out_pond_0", "valid_out_pond"};
+  std::vector<string> routable_outputs = {"data_out_pond", "valid_out_pond"};
 
 
   auto pt = addPassthrough(cnst, cnst->getInstname()+"_tmp");
