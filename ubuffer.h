@@ -1054,6 +1054,7 @@ struct MemConnSch {
 
 //TODO put this into separate header
 struct UBufferImpl;
+struct GarnetImpl;
 struct EmbarrassingBankingImpl;
 struct CyclicBankingImpl;
 struct dgraph;
@@ -2900,6 +2901,7 @@ void tighten_address_space() {
 
     //kernel function for generate coreir
     void generate_coreir(CodegenOptions& options, UBufferImpl& impl, CoreIR::ModuleDef* def, schedule_info& info, bool with_ctrl=true);
+    void generate_coreir_refactor(CodegenOptions& options, UBufferImpl& impl, CoreIR::ModuleDef* def, schedule_info& info, bool with_ctrl=true);
 
     //helper function for sreg generation
     void generate_sreg_and_wire(CodegenOptions& options, UBufferImpl& impl, CoreIR::ModuleDef* def, map<string, CoreIR::Wireable*> & pt2wire);
@@ -2907,6 +2909,7 @@ void tighten_address_space() {
     void wire_ubuf_IO(CodegenOptions& options, CoreIR::ModuleDef* def, map<string, CoreIR::Wireable*> & pt2wire, CoreIR::Instance* buf, UBufferImpl & impl, schedule_info& info, int bank_id, bool with_ctrl);
     //Helper function for generate cgra mem instance
     CoreIR::Instance* map_ubuffer_to_cgra(CodegenOptions& options, CoreIR::ModuleDef* def, UBuffer& target_buf, string config_mode);
+    CoreIR::Instance* map_ubuffer_to_cgra(CodegenOptions& options, CoreIR::ModuleDef* def, GarnetImpl& hw_impl);
     //Helper function for generate pond instance
 
     //optimization pass for accumulation register insert
@@ -3105,6 +3108,9 @@ void emit_lake_address_stream2file(CodegenOptions& options, map<string, UBuffer>
 void emit_lake_address_stream2file_new(CodegenOptions &options, map<string, UBuffer> buffers_opt, string dir);
 lakeStream emit_top_address_stream(string fname, vector<int> read_cycle, vector<int> write_cycle,
         vector<vector<int> > read_addr, vector<vector<int> > write_addr, int input_width, int output_width);
+
+void lower_to_garnet_implementation(CodegenOptions& options,
+        UBuffer& buf, UBufferImpl& impl, schedule_info& info);
 
 int compute_max_dd(UBuffer& buf, const string& inpt);
 
@@ -3339,6 +3345,19 @@ struct dgraph {
   }
 };
 
+struct GarnetImpl {
+  string config_mode;
+  UBuffer target_buf;
+  map<string, UBuffer> sub_component; //if we do vectorization
+
+  bool insert_shift_register = false;
+  UBuffer accum_reg;
+  string reduce_PE_inpt, reduce_PE_outpt;
+
+  bool substract_glb_latency;
+  bool decouple_ctrl;
+  isl_map* cgpl_schedule;
+};
 
 struct UBufferImpl {
 
@@ -3351,6 +3370,8 @@ struct UBufferImpl {
 
   //input selection(TODO: did not support this feature)
   map<int, vector<std::set<string>> > bank_inpt2writers;
+
+  map<int, GarnetImpl> lowering_info;
 
   map<string, std::set<int>> outpt_to_bank; //output chaining
   map<string, std::set<int>> inpt_to_bank; //input broadcasting
