@@ -2426,6 +2426,8 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
 
       lower_to_garnet_implementation(options, buf.second, impl, hwinfo);
 
+      impl.bank_merging_and_rewrite(options);
+
       //Generate the memory module
       auto ub_mod = generate_coreir_without_ctrl(options, context, buf.second, impl, hwinfo);
       def->addInstance(buf.second.name, ub_mod);

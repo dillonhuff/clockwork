@@ -15171,7 +15171,7 @@ void test_pond(string dir, bool run_verilator=true) {
   //test_apps.push_back(nlmeans_rolled_7x7());
 
   //test_apps.push_back(nlmeans_simple_blur());
-  test_apps.push_back(nlmeans_simple());
+  //test_apps.push_back(nlmeans_simple());
   test_apps.push_back(resnet_simple());
   test_apps.push_back(resnet());
   test_apps.push_back(three_level_pond_copy());
@@ -15373,41 +15373,41 @@ void test_glb(bool gen_config_only, bool multi_accessor=false, string dir="aha_g
   //test_apps.push_back(camera_pipeline_2x2());
   //test_apps.push_back(camera_pipeline_extra_buf());
 
-  //ISSCC application without unroll
-  test_apps.push_back(harris_color());
-  test_apps.push_back(gaussian_isscc());
-  test_apps.push_back(camera_pipeline_isscc());
-  test_apps.push_back(unsharp_isscc());
+  ////ISSCC application without unroll
+  //test_apps.push_back(harris_color());
+  //test_apps.push_back(gaussian_isscc());
+  //test_apps.push_back(camera_pipeline_isscc());
+  //test_apps.push_back(unsharp_isscc());
 
-  //GLB tests
-  test_apps.push_back(unsharp_glb());
-  test_apps.push_back(gaussian_glb2());
-  test_apps.push_back(camera_pipeline_glb());
-  test_apps.push_back(harris_glb2());
-  test_apps.push_back(up_sample_glb());
-  test_apps.push_back(gaussian_glb8());
+  ////GLB tests
+  //test_apps.push_back(unsharp_glb());
+  //test_apps.push_back(gaussian_glb2());
+  //test_apps.push_back(camera_pipeline_glb());
+  //test_apps.push_back(harris_glb2());
+  //test_apps.push_back(up_sample_glb());
+  //test_apps.push_back(gaussian_glb8());
 
-  //Dense Linear algebra
-  test_apps.push_back(glb_channel_reduction());
-  test_apps.push_back(matmul());
+  ////Dense Linear algebra
+  //test_apps.push_back(glb_channel_reduction());
+  //test_apps.push_back(matmul());
 
-  //Simplified multi-tile DNN application
-  test_apps.push_back(resnet_init_unroll_tile());
+  ////Simplified multi-tile DNN application
+  //test_apps.push_back(resnet_init_unroll_tile());
 
-  //Too large which will go beyound the 64k counter ub
-  //test_apps.push_back(resnet5_1_full());
-  //test_apps.push_back(resnet2_x_full());
+  ////Too large which will go beyound the 64k counter ub
+  ////test_apps.push_back(resnet5_1_full());
+  ////test_apps.push_back(resnet2_x_full());
 
-  //For debug the 7x7 layer
-  test_apps.push_back(resnet_last());
+  ////For debug the 7x7 layer
+  //test_apps.push_back(resnet_last());
 
-  //Sample DNN Layers
-  //test_apps.push_back(resnet1_docker());
-  test_apps.push_back(resnet1());
-  test_apps.push_back(resnet_1x1());
-  test_apps.push_back(resnet3_1());
-  test_apps.push_back(resnet4_x());
-  test_apps.push_back(resnet5_1());
+  ////Sample DNN Layers
+  ////test_apps.push_back(resnet1_docker());
+  //test_apps.push_back(resnet1());
+  //test_apps.push_back(resnet_1x1());
+  //test_apps.push_back(resnet3_1());
+  //test_apps.push_back(resnet4_x());
+  //test_apps.push_back(resnet5_1());
   test_apps.push_back(resnet5_x());
   test_apps.push_back(resnet5_x_new());
   test_apps.push_back(resnet5_1_new());
@@ -15481,7 +15481,7 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   test_apps.push_back(laplacian_pyramid());
   test_apps.push_back(laplacian_pyramid_docker());
 
-  ////DNN apps
+  //DNN apps
   test_apps.push_back(matmul_single());
   test_apps.push_back(resnet_tiny());
   test_apps.push_back(resnet_simple());

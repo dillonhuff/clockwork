@@ -1207,6 +1207,46 @@ class UBuffer {
         return pt_vec;
     }
 
+    void sequentially_rename_output_domain_suffix(int starting_idx) {
+      int outbd_cnt = starting_idx;
+      for (string outbd: get_out_bundles()) {
+          for (string pt: port_bundles.at(outbd)) {
+              auto dom = domain.at(pt);
+              string dom_name = ::name(dom);
+              vector<string> substr =
+                  split_at(dom_name, "_");
+              substr.pop_back();
+              substr.push_back(str(outbd_cnt));
+              string new_name = sep_list(substr, "", "", "_");
+              domain.at(pt) = set_name(dom, new_name);
+              schedule.at(pt) = set_domain_name(schedule.at(pt), new_name);
+              access_map.at(pt) = set_domain_name(access_map.at(pt), new_name);
+          }
+          outbd_cnt ++;
+      }
+
+    }
+
+    void sequentially_rename_input_domain_suffix(int starting_idx) {
+      int inbd_cnt = starting_idx;
+      for (string inbd: get_in_bundles()) {
+          for (string pt: port_bundles.at(inbd)) {
+              auto dom = domain.at(pt);
+              string dom_name = ::name(dom);
+              vector<string> substr =
+                  split_at(dom_name, "_");
+              substr.pop_back();
+              substr.push_back(str(inbd_cnt));
+              string new_name = sep_list(substr, "", "", "_");
+              domain.at(pt) = set_name(dom, new_name);
+              schedule.at(pt) = set_domain_name(schedule.at(pt), new_name);
+              access_map.at(pt) = set_domain_name(access_map.at(pt), new_name);
+          }
+          inbd_cnt ++;
+      }
+
+    }
+
     size_t get_wr_cycle() {
         auto pt_vec = get_bd_in_ports();
         return pt_vec.size() / hardware.in_port_width;
@@ -2338,6 +2378,7 @@ void tighten_address_space() {
 
     isl_union_map* global_schedule() const {
       umap* s = isl_union_map_read_from_str(ctx, "{ }");
+      //umap* s = (pick(schedule).second);
       for (auto other : schedule) {
         s = unn(s, (cpy(other.second)));
       }
@@ -2703,6 +2744,23 @@ void tighten_address_space() {
         isl_map* buf_map = isl_map_read_from_str(ctx, string("{" + name + vars + " -> " + new_buf_name + vars + "}").c_str());
         cout <<"origin: " << str(origin_map) <<", transform: " << str(buf_map) << endl;
         return to_map(dot(origin_map, buf_map));
+    }
+
+    void remap_access_to_new_buffer_name(string new_name) {
+        for (auto it: access_map) {
+            access_map.at(it.first) =
+                to_umap(set_range_name(to_map(it.second), new_name));
+        }
+        name = new_name;
+    }
+
+    map<string, umap*> get_stmt2sched() const {
+        map<string, umap*> ret;
+        for (auto it: schedule) {
+            auto sched = it.second;
+            ret[domain_name(sched)] = sched;
+        }
+        return ret;
     }
 
     map<string, std::set<string> > get_stmt2bd() const {
@@ -3143,7 +3201,7 @@ pair<isl_map*, isl_map*> get_vectorized_write(isl_map* acc_0, isl_map* sched, ma
 pair<isl_map*, isl_map*> get_vectorized_read(isl_map* acc_0, isl_map* sched, map<string, isl_map*> sched_record_map, int fetch_width, int addr_dim, bool is_dual_port = false);
 pair<isl_map*, isl_map*> get_vectorized_read_simplified(isl_map* acc_0, isl_map* sched, map<string, isl_map*> sched_record_map, int fetch_width, int addr_dim, int& vectorized_dim,  bool is_dual_port = false);
 //Helper function to get schedule
-isl_map* get_sram2tb_schedule_with_check(isl_map* out_sched, map<string, isl_map*> sched_map, int ahead_step, int vectorize_loop_dim, bool is_dual_port);
+isl_map* get_sram2tb_schedule_with_check(isl_map* out_sched, map<string, isl_map*> sched_map, int ahead_step, int vectorize_loop_dim, int offset, bool is_dual_port);
 
 
 
@@ -3382,9 +3440,17 @@ struct UBufferImpl {
   vector<pair<string,pair<string,int>>> shift_registered_outputs_to_outputs;
 
   int get_new_bank_id() {
-    return bank_rddom.size();
+    //Get the max bank id, nothing inside will return 0
+    int max_id = -1;
+    for (auto it: bank_rddom) {
+      max_id = std::max(max_id, it.first);
+    }
+    return max_id + 1;
   }
 
+  string get_buf_name() {
+    return ::name(pick(bank_rddom).second);
+  }
 
   void sequentially_assign_inpt(vector<string> inpts, int b) {
     vector<std::set<string>> partition;
@@ -3486,8 +3552,10 @@ struct UBufferImpl {
   //Banking merging related function
   void remove_bank(int bank_id);
   void merge_banks(vector<int> banks_tobe_merged);
+  void merge_banks_and_rewrite(vector<int> & banks_tobe_merged);
   void conditional_merging(CodegenOptions & options, const vector<int> & banks_tobe_merged);
   void bank_merging(CodegenOptions & options);
+  void bank_merging_and_rewrite(CodegenOptions & options);
   void sort_bank_port();
 
   void sanity_check_memory_hierarchy(CodegenOptions& options, const vector<int> & banks);
@@ -3702,6 +3770,7 @@ map<string, pair<string, int> > determine_shift_reg_map(
     UBuffer& buf,
     schedule_info& hwinfo);
 
+bool violate_deps(isl_map* temp_sched, map<string, isl_map*> sched_map);
 dgraph build_in_to_out_shift_register_graph(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_info& hwinfo);
 dgraph build_shift_registers(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_info& hwinfo);
 UBufferImpl port_group2bank(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_info& hwinfo);
