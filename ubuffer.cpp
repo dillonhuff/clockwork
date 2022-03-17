@@ -1331,6 +1331,21 @@ void UBufferImpl::conditional_merging(CodegenOptions & options, const vector<int
     }
   }
 }
+int get_sram_read_rate(GarnetImpl & hw_impl) {
+    UBuffer sram;
+    for (auto it: hw_impl.sub_component) {
+        if (contains(it.first, "sram")) {
+            sram = it.second;
+            break;
+        }
+    }
+    auto outpt = pick(sram.get_out_ports());
+    umap* out_sched = sram.schedule.at(outpt);
+    int out_fetch_ii = get_vector_fetch_loop_ii(out_sched);
+    cout << "out_fetch_ii: " << out_fetch_ii << endl;
+    return out_fetch_ii;
+}
+
 
 //New bank merging after vectorization
 void UBufferImpl::bank_merging_and_rewrite(CodegenOptions & options) {
@@ -1365,6 +1380,9 @@ void UBufferImpl::bank_merging_and_rewrite(CodegenOptions & options) {
 
     //TODO: check the rate less than 1 / 4 cycle otherwise cannot merge
     //check_rate_
+    if (get_sram_read_rate(lowering_info.at(bank_id)) < options.mem_hierarchy.at("mem").fetch_width) {
+        continue;
+    }
 
     if ((bank_readers.at(bank_id).size() < max_outpt) &&
             (bank_writers.at(bank_id).size() < max_inpt)) {
