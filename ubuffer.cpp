@@ -3,6 +3,7 @@
 #include "app.h"
 #ifdef COREIR
 #include "cwlib.h"
+#include "cgralib.h"
 #include "coreir_backend.h"
 #include "lake_target.h"
 
