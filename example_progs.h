@@ -126,10 +126,12 @@ prog unsharp_glb();
 prog unsharp_isscc();
 prog up_sample_glb();
 prog harris_color();
+prog harris_color_unroll4();
 prog harris_glb2();
 prog camera_pipeline_glb();
 
 prog matmul();
+prog matmul_unroll2();
 prog matmul_single();
 prog matmul_fpga();
 

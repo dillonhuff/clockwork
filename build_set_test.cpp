@@ -13238,7 +13238,7 @@ void run_verilator_tb(const std::string& name) {
 void generate_verilog_tb(const std::string& name) {
 
     cmd("echo $LD_LIBRARY_PATH");
-  int to_verilog_res = cmd("${COREIR_PATH}/bin/coreir --inline --load_libs commonlib,cwlib --input " + name + ".json --output " + name + ".v -p \"rungenerators; wireclocks-clk; deletedeadinstances; add-dummy-inputs\"");
+  int to_verilog_res = cmd("${COREIR_PATH}/bin/coreir --inline --load_libs commonlib,cwlib --input " + name + ".json --output " + name + ".v -p \"rungenerators; wireclocks-clk; wireclocks-arst; deletedeadinstances; add-dummy-inputs\"");
   assert(to_verilog_res == 0);
 }
 
@@ -13246,7 +13246,7 @@ void generate_verilog_tb(const std::string& name) {
 void generate_garnet_verilog_top(CodegenOptions& options, const std::string& name) {
 
     cmd("echo $LD_LIBRARY_PATH");
-  int to_verilog_res = cmd("${COREIR_PATH}/bin/coreir --inline --load_libs float,float_DW,commonlib,cwlib,cgralib --input " + options.dir  + "/"+name +".json --output " + name + ".v -p \"rungenerators; wireclocks-clk; deletedeadinstances; add-dummy-inputs\"");
+    int to_verilog_res = cmd("${COREIR_PATH}/bin/coreir --inline --load_libs float,float_DW,commonlib,cwlib,cgralib --input " + options.dir  + "/"+name +".json --output " + name + ".v -p \"rungenerators; wireclocks-clk; wireclocks-arst; deletedeadinstances; add-dummy-inputs\"");
   assert(to_verilog_res == 0);
 
   //run verilator on all the generated verilog
@@ -13263,7 +13263,7 @@ void generate_cgra_tb(std::map<string, UBuffer> buffers_opt, prog prg, CodegenOp
   CoreIRLoadLibrary_commonlib(context);
   CoreIRLoadLibrary_cwlib(context);
   schedule_info hwinfo;
-  hwinfo.use_dse_compute = false;
+  hwinfo.use_metamapper = false;
   opt.rtl_options.use_prebuilt_memory = true;
   opt.rtl_options.use_external_controllers = false;
   auto sched = global_schedule_from_buffers(buffers_opt);
@@ -13271,18 +13271,21 @@ void generate_cgra_tb(std::map<string, UBuffer> buffers_opt, prog prg, CodegenOp
   generate_verilog_tb(prg.name);
 }
 
-void generate_garnet_coreir(std::map<string, UBuffer> buffers_opt, prog prg, CodegenOptions& opt, schedule_info& hwinfo, bool use_dse_compute=false) {
+void generate_garnet_coreir(std::map<string, UBuffer> buffers_opt, prog prg, CodegenOptions& opt, schedule_info& hwinfo, bool use_metamapper, string dse_compute_filename) {
   CoreIR::Context* context = CoreIR::newContext();
   CoreIRLoadLibrary_commonlib(context);
   CoreIRLoadLibrary_cwlib(context);
   //schedule_info hwinfo;
-  hwinfo.use_dse_compute = use_dse_compute;
+  hwinfo.use_metamapper = use_metamapper;
 
   //TODO: add lake memory tile configuration here
 
-  auto sched = global_schedule_from_buffers(buffers_opt);
-  generate_coreir(opt, buffers_opt, prg, sched, hwinfo);
-
+  umap* sched = global_schedule_from_buffers(buffers_opt);
+  if (use_metamapper) {
+    generate_coreir_without_ctrl(opt, buffers_opt, prg, sched, hwinfo, dse_compute_filename);
+  } else {
+    generate_coreir(opt, buffers_opt, prg, sched, hwinfo);
+  }
   //cmd("mv " + prg.name + ".v " + opt.dir + "verilog");
 }
 #endif
@@ -15115,20 +15118,21 @@ void Init_PE_energy_cost(power_analysis_params& power_params)  {
 }
 
 
-void compile_for_garnet_single_port_mem(prog & prg, string dir, bool gen_smt_stream, bool gen_config_only, bool multi_level_mem, bool use_dse_compute, bool energy_model = false);
-void compile_for_garnet_fetch2_mem(prog & prg, string dir, bool gen_smt_stream, bool gen_config_only, bool multi_level_mem, bool use_dse_compute, bool energy_model = false);
+void compile_for_garnet_single_port_mem(prog & prg, string dir, bool gen_smt_stream, bool gen_config_only,bool multi_level_mem, bool use_metamapper, string dse_compute_filename, bool energy_model = false);
+void compile_for_garnet_fetch2_mem(prog & prg, string dir, bool gen_smt_stream, bool gen_config_only, bool multi_level_mem, bool use_metampper, bool energy_model = false);
 void compile_for_garnet_dual_port_mem(prog& prg,
         string dir,
         bool gen_smt_stream,
         bool config_gen_only,
         bool multi_level_mem,
-        bool use_dse_compute,
+        bool use_metamapper,
+        string dse_compute_filename,
         bool energy_model =false);
 void cpy_app_to_folder(const std::string& app_type, const std::string& prg_name);
 void generate_resnet_latency_experiment(prog& prg,
         ofstream& profiling_file,
         string dir,
-        bool use_dse_compute = false);
+        bool use_metamapper = false);
 
 void verilator_regression_test(prog& prg, vector<string>& collateral_files, string app_type) {
 
@@ -15203,8 +15207,10 @@ void test_pond(string dir, bool run_verilator=true) {
     compile_for_garnet_single_port_mem(prg, dir,
             false, /*generate smt stream*/
             gen_config_only,/*gen_config_only*/
-            true, /*multi level hierarchy*/
-            false/*use dse compute*/);
+            true, /*multi level hierarchy*/        
+            false, /*for metamapper*/
+            "",
+            false);
     //generate_regression_testbench(prg);
 
     cout << "Output name: " << prg.name << endl;
@@ -15247,7 +15253,7 @@ void test_energy_model(string dir) {
     auto cpu = unoptimized_result(prg);
 
     //compile_for_garnet_platonic_mem(prg);
-    compile_for_garnet_single_port_mem(prg, dir, false, gen_config_only, false, false, true);
+    compile_for_garnet_single_port_mem(prg, dir, false, gen_config_only, false, false, "", true);
     generate_regression_testbench(prg);
 
     cout << "Output name: " << prg.name << endl;
@@ -15369,12 +15375,13 @@ void test_glb(bool gen_config_only, bool multi_accessor=false, string dir="aha_g
 
   //camera pipeline variant tests
   //test_apps.push_back(camera_pipeline_extra_buf_glb());
-  test_apps.push_back(camera_pipeline_unrolly());
   test_apps.push_back(camera_pipeline_2x2());
+  test_apps.push_back(camera_pipeline_unrolly());
   test_apps.push_back(camera_pipeline_extra_buf());
 
   //ISSCC application without unroll
   test_apps.push_back(harris_color());
+  test_apps.push_back(harris_color_unroll4());
   test_apps.push_back(gaussian_isscc());
   test_apps.push_back(camera_pipeline_isscc());
   test_apps.push_back(unsharp_isscc());
@@ -15434,7 +15441,7 @@ void test_glb(bool gen_config_only, bool multi_accessor=false, string dir="aha_g
 
 #ifdef COREIR
     //compile_for_garnet_platonic_mem(prg);
-    compile_for_garnet_single_port_mem(prg, dir, false, gen_config_only, false, false);
+    compile_for_garnet_single_port_mem(prg, dir, false, gen_config_only, false, false, "", false);
     cout << "Output name: " << prg.name << endl;
     //TODO: move to a function
     //run verilator on all the generated verilog
@@ -15470,6 +15477,7 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   test_apps.push_back(rom());
   test_apps.push_back(camera_pipeline_new());
   test_apps.push_back(unsharp_new());
+  test_apps.push_back(unsharp_large());
   test_apps.push_back(unsharp());
   test_apps.push_back(gaussian());
   test_apps.push_back(cascade());
@@ -15483,6 +15491,7 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
 
   //DNN apps
   test_apps.push_back(matmul_single());
+  test_apps.push_back(matmul_unroll2());
   test_apps.push_back(resnet_tiny());
   test_apps.push_back(resnet_simple());
   test_apps.push_back(resnet_size_test());
@@ -15512,7 +15521,7 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
     prg.pretty_print();
 #ifdef COREIR
     //compile_for_garnet_platonic_mem(prg);
-    compile_for_garnet_single_port_mem(prg, dir, false, gen_config_only, false, false);
+    compile_for_garnet_single_port_mem(prg, dir, false, gen_config_only, false, false, "", false);
     cout << "Output name: " << prg.name << endl;
     //run verilator on all the generated verilog
     if (!gen_config_only) {
@@ -15531,6 +15540,8 @@ void test_dual_port_mem(bool gen_config_only, bool multi_accessor=false, string 
   vector<prog> test_apps;
 
   //CGRA tests that pass dual port test
+  //test_apps.push_back(matmul());
+  test_apps.push_back(camera_pipeline_2x2());
   test_apps.push_back(unsharp_large());
   test_apps.push_back(harris_color());
   test_apps.push_back(conv_3_3());
@@ -15582,7 +15593,7 @@ void test_dual_port_mem(bool gen_config_only, bool multi_accessor=false, string 
     prg.pretty_print();
 #ifdef COREIR
     //compile_for_garnet_platonic_mem(prg);
-    compile_for_garnet_dual_port_mem(prg, dir, false, gen_config_only, false, false);
+    compile_for_garnet_dual_port_mem(prg, dir, false, gen_config_only, false, false, "", false);
     cout << "Output name: " << prg.name << endl;
     //run verilator on all the generated verilog
     if (!gen_config_only) {
@@ -18351,6 +18362,7 @@ void relax_iis_for_vectorization(schedule_info& sched, prog& prg) {
   }
 }
 
+
 void adjust_coarse_grained_loop_delays_sequentially_without_opt(schedule_info& sched, prog& prg) {
   int d = 0;
   map<string, int> coarse_pipeline_II;
@@ -18699,6 +18711,8 @@ void relax_delays_rate_matched(CodegenOptions& options, schedule_info& sched, pr
   cout << "Adjusting delays of " << prg.name << endl;
   map<string, int> delay_relaxation;
   int fetch_width = options.mem_hierarchy.at("mem").fetch_width;
+  if (fetch_width == 1)
+      return;
   auto start_times = its(op_times_map(sched, prg), prg.whole_iteration_domain());
   auto start_times_map = get_maps_in_map(start_times);
   auto domains = prg.domains();
@@ -19187,6 +19201,7 @@ void dump_resnet_latency(CodegenOptions& options, schedule_info& sched, op* root
   } else if(options.fallback_schedule == ISCA_SCHEDULE) {
     coarse_grained_pipeline_optimization(sched, prg);
     adjust_coarse_grained_loop_delays_sequentially_without_opt(sched, prg);
+    align_glb_load_start_cycle(sched, prg);
     tighten_coarse_grained_iis(sched, prg);
     adjust_outer_delays_sequentially(sched, prg);
 
@@ -19328,6 +19343,12 @@ void garnet_single_port_ram_schedule(CodegenOptions& options, schedule_info& sch
       //total_latency += op_latency(op, sched);
       scheduled.push_back(op);
     }
+    //auto init_op_sched = op_start_times_map(sched, prg);
+    //cout << "init sched: " << str(init_op_sched)  << endl;
+    //for (auto it: sched.op_offset_within_parent) {
+    //    cout << "\t" << it.first->name << ": " << it.second << endl;
+    //}
+    //assert(false);
 
     adjust_schedule_forward(sched, prg, 0);
 
@@ -19340,6 +19361,7 @@ void garnet_single_port_ram_schedule(CodegenOptions& options, schedule_info& sch
     cout << "Final schedule after relax: " << str(op_sched)  << endl;
     op_sched = op_end_times_map(sched, prg);
     cout << "Final end schedule after relax: " << str(op_sched)  << endl;
+    sanity_check_hw_schedule(sched, prg);
     return;
   } else if (contains(prg.name, "split")) {
     sequential_schedule(sched, root, prg);
@@ -19685,6 +19707,7 @@ void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
         buffer_dims.insert(logical_dimension(b, prg));
       }
 
+      //TODO fix this scheduler
       if (buffer_dims.size() > 1) {
         coarse_pipeline_schedule(sched, root, prg);
       } else {
@@ -19698,9 +19721,54 @@ void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
   sanity_check_iis(sched);
 }
 
-schedule_info garnet_schedule_info(CodegenOptions& options, prog& prg, bool use_dse_compute=false) {
+schedule_info garnet_schedule_info(CodegenOptions& options, prog& prg, bool use_metamapper=false, string dse_compute_filename="") {
   schedule_info sched;
-  sched.use_dse_compute = use_dse_compute;
+  sched.use_metamapper = use_metamapper;
+  sched.dse_compute_filename = dse_compute_filename;
+
+  if (use_metamapper) {
+    json kernel_latencies;
+    std::ifstream kernel_latencies_file(prg.name + "_compute_kernel_latencies.json", std::ifstream::binary);
+    kernel_latencies_file >> kernel_latencies;
+
+    for (auto op : prg.all_ops()) {
+      if (op->func != "") {
+        sched.resource_requirements[op] = op->func;
+      }
+      cout << op->func << endl;
+      if (kernel_latencies[op->func] == NULL || kernel_latencies[op->func] == "null") {
+        sched.compute_unit_latencies[op->func] = 0;
+      } else {
+        sched.compute_unit_latencies[op->func] = kernel_latencies[op->func];
+        cout << "KERNEL LATENCY " <<  op->func << " : " << kernel_latencies[op->func] << endl;
+      }
+
+
+    for (auto b: op->buffers_written()) {
+      //assign a write
+      sched.assign_memory_write_resource(options, op, b);
+    }
+
+
+      for (auto b : op->buffers_referenced()) {
+        if (!prg.is_boundary(b)) {
+          sched.buffer_load_latencies[b] = buffer_load_latency(options);
+          sched.buffer_store_latencies[b] = buffer_store_latency(options);
+        } else {
+          sched.buffer_load_latencies[b] = 0;
+          sched.buffer_store_latencies[b] = 0;
+        }
+      auto pmap = prg.producer_map(b);
+      cout << "\tBuffer <" << b << "> \n\tproducer map: "<< str(pmap)
+          << "\n\tcapacity: " << logical_capacity(b, prg) << endl <<
+          "\thierarchy level: " << options.get_hierarchy_level(logical_capacity(b, prg)) << endl;
+      sched.buf2level[b] = options.get_hierarchy_level(logical_capacity(b, prg));
+
+      }
+    }
+    cout << sched.compute_unit_latencies << endl;
+  } else {
+
   for (auto op : prg.all_ops()) {
     if (op->func != "") {
       sched.resource_requirements[op] = op->func;
@@ -19733,6 +19801,7 @@ schedule_info garnet_schedule_info(CodegenOptions& options, prog& prg, bool use_
       sched.buf2level[b] = options.get_hierarchy_level(logical_capacity(b, prg));
     }
   }
+  }
   cout << sched.compute_unit_latencies << endl;
 
   for (auto op : prg.all_ops()) {
@@ -19750,6 +19819,7 @@ schedule_info garnet_schedule_info(CodegenOptions& options, prog& prg, bool use_
 #endif
   return sched;
 }
+
 
 CodegenOptions garnet_codegen_single_port_with_addrgen_options(prog& prg, string dir) {
   CodegenOptions options;
@@ -19809,7 +19879,7 @@ CodegenOptions garnet_baseline_codegen_options(prog& prg) {
   CodegenOptions options;
   options.rtl_options.use_external_controllers = true;
   options.rtl_options.target_tile =
-    TARGET_TILE_DUAL_SRAM_WITH_ADDRGEN;
+    TARGET_TILE_WIDE_FETCH_WITH_ADDRGEN;
 
   if (is_rate_matchable(prg)) {
     options.inner_bank_offset_mode =
@@ -19950,6 +20020,7 @@ void compile_cycle_accurate_hw(CodegenOptions& options, schedule_info& sched, pr
 
   auto hw_sched = its(op_times_map(sched, prg), prg.whole_iteration_domain());
 
+  cout << "final schedule: " << str(hw_sched) << endl;
   sanity_check_hw_schedule(sched, prg);
 
   auto buffers = build_buffers(prg, hw_sched);
@@ -20117,7 +20188,7 @@ void compile_for_garnet_fetch2_mem(prog& prg,
         bool gen_smt_stream,
         bool config_gen_only,
         bool multi_level_mem,
-        bool use_dse_compute,
+        bool use_metamapper,
         bool energy_model) {
 
   //make sure the loop bound and address is positive
@@ -20142,7 +20213,7 @@ void compile_for_garnet_fetch2_mem(prog& prg,
   options.config_gen_only = config_gen_only;
   //if (multi_sram)
   //    options.mem_tile.multi_sram_accessor = true;
-  schedule_info sched = garnet_schedule_info(options, prg, use_dse_compute);
+  schedule_info sched = garnet_schedule_info(options, prg, use_metamapper);
   garnet_single_port_ram_schedule(options, sched, prg.root, prg);
   auto sched_map = op_times_map(sched, prg);
   auto hw_sched = its(sched_map,
@@ -20172,7 +20243,7 @@ void compile_for_garnet_fetch2_mem(prog& prg,
 
 
 #ifdef COREIR
-  generate_garnet_coreir(buffers_opt, prg, options, sched, use_dse_compute);
+  generate_garnet_coreir(buffers_opt, prg, options, sched, use_metamapper, "");
   if (!options.config_gen_only) {
     generate_garnet_verilog_top(options, prg.name);
     generate_garnet_verilator_tb(options, prg, hw_sched, buffers_opt);
@@ -20183,7 +20254,7 @@ void compile_for_garnet_fetch2_mem(prog& prg,
 void generate_resnet_latency_experiment(prog& prg,
         ofstream& profiling_file,
         string dir,
-        bool use_dse_compute) {
+        bool use_metamapper) {
 
   //make sure the loop bound and address is positive
   normalize_bounds(prg);
@@ -20204,11 +20275,11 @@ void generate_resnet_latency_experiment(prog& prg,
   options.add_memory_hierarchy("glb");
   profiling_file << prg.name << ", ";
 
-  schedule_info sched = garnet_schedule_info(options, prg, use_dse_compute);
+  schedule_info sched = garnet_schedule_info(options, prg, use_metamapper);
   dump_resnet_latency(options, sched, prg.root, prg, profiling_file, false);
   profiling_file << ", ";
 
-  schedule_info sched_db_vanilla = garnet_schedule_info(options, prg, use_dse_compute);
+  schedule_info sched_db_vanilla = garnet_schedule_info(options, prg, use_metamapper);
   options.fallback_schedule = VANILLA_DB_SCHEDULE;
   dump_resnet_latency(options, sched_db_vanilla, prg.root, prg, profiling_file, false);
   profiling_file << ", ";
@@ -20219,7 +20290,7 @@ void generate_resnet_latency_experiment(prog& prg,
   //profiling_file << ", ";
 
   options.fallback_schedule = ISCA_SCHEDULE;
-  schedule_info sched_db_loop_perfect = garnet_schedule_info(options, prg, use_dse_compute);
+  schedule_info sched_db_loop_perfect = garnet_schedule_info(options, prg, use_metamapper);
   dump_resnet_latency(options, sched_db_loop_perfect, prg.root, prg, profiling_file, true);
   profiling_file << endl;
 }
@@ -20230,7 +20301,8 @@ void compile_for_garnet_dual_port_mem(prog& prg,
         bool gen_smt_stream,
         bool config_gen_only,
         bool multi_level_mem,
-        bool use_dse_compute,
+        bool use_metamapper,
+        string dse_compute_filename,
         bool energy_model) {
 
   //make sure the loop bound and address is positive
@@ -20246,7 +20318,6 @@ void compile_for_garnet_dual_port_mem(prog& prg,
 
   //auto iis = garnet_fuse_ii_level(prg);
   //auto buffers_opt = build_buffers(prg, clockwork_schedule(prg));
-
   CodegenOptions options = garnet_codegen_dual_port_with_addrgen_options(prg, dir);
   options.debug_options.traceWave = true;
   options.add_memory_hierarchy("mem");
@@ -20268,7 +20339,7 @@ void compile_for_garnet_dual_port_mem(prog& prg,
     prg.pretty_print();
   }
 
-  schedule_info sched = garnet_schedule_info(options, prg, use_dse_compute);
+  schedule_info sched = garnet_schedule_info(options, prg, use_metamapper);
   garnet_single_port_ram_schedule(options, sched, prg.root, prg);
   auto sched_map = op_times_map(sched, prg);
   auto hw_sched = its(sched_map,
@@ -20297,7 +20368,7 @@ void compile_for_garnet_dual_port_mem(prog& prg,
   }
 
 #ifdef COREIR
-  generate_garnet_coreir(buffers_opt, prg, options, sched, use_dse_compute);
+  generate_garnet_coreir(buffers_opt, prg, options, sched, use_metamapper, dse_compute_filename);  
   if (!options.config_gen_only) {
     generate_garnet_verilog_top(options, prg.name);
     generate_garnet_verilator_tb(options, prg, hw_sched, buffers_opt);
@@ -20310,7 +20381,8 @@ void compile_for_garnet_single_port_mem(prog& prg,
         bool gen_smt_stream,
         bool config_gen_only,
         bool multi_level_mem,
-        bool use_dse_compute,
+        bool use_metamapper,
+        string dse_compute_filename,
         bool energy_model) {
 
   //make sure the loop bound and address is positive
@@ -20326,7 +20398,6 @@ void compile_for_garnet_single_port_mem(prog& prg,
 
   //auto iis = garnet_fuse_ii_level(prg);
   //auto buffers_opt = build_buffers(prg, clockwork_schedule(prg));
-
   CodegenOptions options = garnet_codegen_single_port_with_addrgen_options(prg, dir);
   options.debug_options.traceWave = true;
   options.add_memory_hierarchy("mem");
@@ -20336,6 +20407,7 @@ void compile_for_garnet_single_port_mem(prog& prg,
     //options.rtl_options.double_buffer_optimization = false;
     //options.fallback_schedule = SEQUENTIAL_SCHEDULE;
   }
+  options.rtl_options.double_buffer_optimization = true;
   options.emit_smt_stream = gen_smt_stream;
   options.config_gen_only = config_gen_only;
   //if (multi_sram)
@@ -20347,7 +20419,7 @@ void compile_for_garnet_single_port_mem(prog& prg,
     prg.pretty_print();
   }
 
-  schedule_info sched = garnet_schedule_info(options, prg, use_dse_compute);
+  schedule_info sched = garnet_schedule_info(options, prg, use_metamapper);
   garnet_single_port_ram_schedule(options, sched, prg.root, prg);
   auto sched_map = op_times_map(sched, prg);
   auto hw_sched = its(sched_map,
@@ -20376,7 +20448,7 @@ void compile_for_garnet_single_port_mem(prog& prg,
   }
 
 #ifdef COREIR
-  generate_garnet_coreir(buffers_opt, prg, options, sched, use_dse_compute);
+  generate_garnet_coreir(buffers_opt, prg, options, sched, use_metamapper, dse_compute_filename);  
   if (!options.config_gen_only) {
     generate_garnet_verilog_top(options, prg.name);
     generate_garnet_verilator_tb(options, prg, hw_sched, buffers_opt);
@@ -20413,6 +20485,35 @@ bool schedule_bounds_fit_controller_bitwidth(const int bitwidth, schedule_info& 
   return true;
 }
 
+void test_schedules_single_port(vector<prog>& test_programs) {
+
+  for (auto& prg : test_programs) {
+    CodegenOptions options = garnet_codegen_single_port_with_addrgen_options(prg, "");
+    options.add_memory_hierarchy("mem");
+    options.mem_hierarchy.at("mem").fetch_width = 1;
+    options.fallback_schedule = ISCA_SCHEDULE;
+    schedule_info sched =
+      garnet_schedule_info(options, prg);
+
+    garnet_single_port_ram_schedule(options, sched, prg.root, prg);
+    cout << "Checking " << prg.name << " schedule" << endl;
+    prg.pretty_print();
+
+    assert(no_violated_cycle_accurate_dependencies(sched, prg));
+    auto ss = op_start_times_map(sched, prg);
+    for (auto m : get_maps(ss)) {
+      //cout << tab(1) << str(m) << endl;
+    }
+    auto hw_sched = its(op_times_map(sched, prg), prg.whole_iteration_domain());
+    auto sched_max = lexmaxpt(range(hw_sched));
+    cout << "APP: " << prg.name  << endl;
+    cout << "\tLatency of application is: " << str((sched_max)) << endl;
+  }
+
+  //assert(false);
+}
+
+
 void test_schedules(vector<prog>& test_programs) {
 
   for (auto& prg : test_programs) {
@@ -20426,7 +20527,7 @@ void test_schedules(vector<prog>& test_programs) {
     assert(no_violated_cycle_accurate_dependencies(sched, prg));
     auto ss = op_start_times_map(sched, prg);
     for (auto m : get_maps(ss)) {
-      cout << tab(1) << str(m) << endl;
+      //cout << tab(1) << str(m) << endl;
     }
   }
 
@@ -20524,20 +20625,22 @@ vector<prog> isca_programs() {
   //FIXME: not work for M1 and M3
   //test_programs.push_back(three_level_pond_rolled());
 
+  test_programs.push_back(camera_pipeline_new());
+  test_programs.push_back(matmul_single());
+  test_programs.push_back(camera_pipeline_2x2());
   test_programs.push_back(unsharp_large());
   test_programs.push_back(harris_color());
-  //test_programs.push_back(camera_pipeline_new());
-  //test_programs.push_back(gaussian());
+  test_programs.push_back(gaussian());
   //test_programs.push_back(cascade());
   //test_programs.push_back(down_sample());
   //test_programs.push_back(harris());
   //test_programs.push_back(camera_pipeline());
-  //test_programs.push_back(up_sample());
+  test_programs.push_back(up_sample());
   //test_programs.push_back(unsharp());
   //test_programs.push_back(unsharp_new());
   //test_programs.push_back(resnet());
-  //test_programs.push_back(resnet88_chain());
-  //test_programs.push_back(mobilenet_unrolled());
+  test_programs.push_back(resnet88_chain());
+  test_programs.push_back(mobilenet_unrolled());
 
 
   return test_programs;
@@ -20899,13 +21002,13 @@ void cgra_flow_tests() {
   //vector<prog> M3_test_programs{up_sample(), resnet()};
   //vector<prog> M3_test_programs{resnet()};
   //vector<prog> M3_test_programs{gaussian()};
-  vector<prog> M3_test_programs = isca_programs_m3();
-  test_codegen(M3_test_programs, compile_for_CGRA_M3_mem);
+  //vector<prog> M3_test_programs = isca_programs_m3();
+  //test_codegen(M3_test_programs, compile_for_CGRA_M3_mem);
   //assert(false);
 
   //vector<prog> M1_test_programs{resnet88_chain()};
-  //vector<prog> M1_test_programs = isca_programs();
-  //test_codegen(M1_test_programs, compile_for_CGRA_M1_mem);
+  vector<prog> M1_test_programs = isca_programs();
+  test_codegen(M1_test_programs, compile_for_CGRA_M1_mem);
 
   //auto test_programs = all_cgra_programs();
   //test_platonic_codegen(test_programs);
@@ -20953,6 +21056,22 @@ void dual_port_lake_test() {
     compile_for_garnet_dual_port_mem(prg);
     assert(false);
 
+}
+
+void test_dual_port_latency() {
+
+  vector<prog> test_programs;
+  test_programs.push_back(gaussian());
+  test_programs.push_back(harris());
+  test_programs.push_back(unsharp_large());
+  test_programs.push_back(camera_pipeline_2x2());
+  test_programs.push_back(up_sample());
+  test_programs.push_back(resnet88());
+  test_programs.push_back(mobilenet_unrolled());
+  test_programs.push_back(matmul_single());
+
+
+  test_schedules_single_port(test_programs);
 }
 
 void full_cgra_flow_tests() {
@@ -28394,14 +28513,17 @@ void unoptimized_mem_baseline() {
     isscc_programs.push_back(gaussian_isscc());
     isscc_programs.push_back(unsharp_isscc());
     isscc_programs.push_back(harris_color());
-    isscc_programs.push_back(camera_pipeline_isscc());
+    isscc_programs.push_back(camera_pipeline_2x2());
 
     for (auto prg : isscc_programs) {
+      normalize_bounds(prg);
+      dsa_writers(prg);
       auto options = garnet_baseline_codegen_options(prg);
       schedule_info sched = garnet_schedule_info(options, prg);
+      options.add_memory_hierarchy("mem");
       //compile_cycle_accurate_hw(options, sched, prg);
-      normalize_bounds(prg);
-      sequential_schedule(sched, prg.root, prg);
+      //sequential_schedule(sched, prg.root, prg);
+      garnet_single_port_ram_schedule(options, sched, prg.root, prg);
 
       auto hw_sched = its(op_times_map(sched, prg), prg.whole_iteration_domain());
       auto sched_max = lexmaxpt(range(hw_sched));
@@ -28422,7 +28544,8 @@ void unoptimized_mem_baseline() {
           int mem_tile_num_by_bank = b.second.get_banks().size();
           cout << tab(4) << "naive capacity tile number: " << mem_tile_num_by_capacity << endl;
           cout << tab(4) << "naive banking number: " << mem_tile_num_by_bank << endl;
-          total_tile += max(mem_tile_num_by_capacity, mem_tile_num_by_bank);
+          //total_tile += max(mem_tile_num_by_capacity, mem_tile_num_by_bank);
+          total_tile += mem_tile_num_by_bank;
         }
       }
       cout << tab(1) << "=== SRAM bytes for " << prg.name << ": " << total_capacity << endl;
@@ -28747,6 +28870,7 @@ int main(int argc, char** argv) {
       return 0;
     }
 
+
     if (cmd == "dse-flow") {
       dse_flow_tests();
       return 0;
@@ -28821,6 +28945,11 @@ int main(int argc, char** argv) {
       bool gen_config_only = false;
       bool use_multi_accessor_tile = true;
       test_dual_port_mem(gen_config_only, use_multi_accessor_tile, "aha_garnet_design_dp");
+      return 0;
+    }
+
+    if (cmd == "dp-latency") {
+      test_dual_port_latency();
       return 0;
     }
 
