@@ -30,6 +30,11 @@ hw_uint<16> hcompute_d_stencil() {
   return _679;
 }
 
+hw_uint<16> hcompute_d_stencil_2(hw_uint<16>& hw_input_stencil) {
+  int16_t _hw_input_stencil_2 = (int16_t) (hw_input_stencil.extract<0, 15>());
+  return _hw_input_stencil_2;
+}
+
 //store is: d.stencil((d_s1_dx + 2), (d_s1_dy + 2), (d_s1_x + 2), (d_s1_y + 2)) = (((hw_input_global_wrapper.stencil(0, (d_s1_x + 4), (d_s1_y + 4)) - hw_input_global_wrapper.stencil(0, ((d_s1_dx + d_s1_x) + 4), ((d_s1_dy + d_s1_y) + 4)))*(hw_input_global_wrapper.stencil(0, (d_s1_x + 4), (d_s1_y + 4)) - hw_input_global_wrapper.stencil(0, ((d_s1_dx + d_s1_x) + 4), ((d_s1_dy + d_s1_y) + 4)))) + (d.stencil((d_s1_dx + 2), (d_s1_dy + 2), (d_s1_x + 2), (d_s1_y + 2)) + (((hw_input_global_wrapper.stencil(2, (d_s1_x + 4), (d_s1_y + 4)) - hw_input_global_wrapper.stencil(2, ((d_s1_dx + d_s1_x) + 4), ((d_s1_dy + d_s1_y) + 4)))*(hw_input_global_wrapper.stencil(2, (d_s1_x + 4), (d_s1_y + 4)) - hw_input_global_wrapper.stencil(2, ((d_s1_dx + d_s1_x) + 4), ((d_s1_dy + d_s1_y) + 4)))) + ((hw_input_global_wrapper.stencil(1, (d_s1_x + 4), (d_s1_y + 4)) - hw_input_global_wrapper.stencil(1, ((d_s1_dx + d_s1_x) + 4), ((d_s1_dy + d_s1_y) + 4)))*(hw_input_global_wrapper.stencil(1, (d_s1_x + 4), (d_s1_y + 4)) - hw_input_global_wrapper.stencil(1, ((d_s1_dx + d_s1_x) + 4), ((d_s1_dy + d_s1_y) + 4)))))))
 hw_uint<16> hcompute_d_stencil_1(hw_uint<16>& d_stencil, hw_uint<96>& hw_input_global_wrapper_stencil) {
   int16_t _d_stencil_1 = (int16_t) (d_stencil.extract<0, 15>());
@@ -105,13 +110,13 @@ hw_uint<16> hcompute_non_local_means_div_stencil() {
 
 //store is: non_local_means_div.stencil(non_local_means_div_s1_x, non_local_means_div_s1_y) = (non_local_means_div.stencil(non_local_means_div_s1_x, non_local_means_div_s1_y) + (blur_d.stencil((non_local_means_div_s1_s_dom_x + 2), (non_local_means_div_s1_s_dom_y + 2), non_local_means_div_s1_x, non_local_means_div_s1_y)/(int16)16))
 hw_uint<16> hcompute_non_local_means_div_stencil_1(hw_uint<16>& blur_d_stencil, hw_uint<16>& non_local_means_div_stencil) {
-  uint16_t _blur_d_stencil_2 = (uint16_t) (blur_d_stencil.extract<0, 15>());
+  int16_t _blur_d_stencil_2 = (int16_t) (blur_d_stencil.extract<0, 15>());
 
   int16_t _non_local_means_div_stencil_1 = (int16_t) (non_local_means_div_stencil.extract<0, 15>());
 
   int16_t _789 = (int16_t)(4);
-  uint16_t _790 = _blur_d_stencil_2 >> _789;
-  int16_t _791 = _non_local_means_div_stencil_1 + (int16_t)_790;
+  int16_t _790 = _blur_d_stencil_2 >> _789;
+  int16_t _791 = _non_local_means_div_stencil_1 + _790;
   return _791;
 }
 
@@ -135,45 +140,45 @@ hw_uint<16> hcompute_non_local_means_sum_stencil_2() {
 
 //store is: non_local_means_sum.stencil(non_local_means_sum_s1_x, non_local_means_sum_s1_y, 0) = (non_local_means_sum.stencil(non_local_means_sum_s1_x, non_local_means_sum_s1_y, 0) + (hw_input_global_wrapper.stencil(0, ((non_local_means_sum_s1_s_dom_x + non_local_means_sum_s1_x) + 4), ((non_local_means_sum_s1_s_dom_y + non_local_means_sum_s1_y) + 4))*(blur_d.stencil((non_local_means_sum_s1_s_dom_x + 2), (non_local_means_sum_s1_s_dom_y + 2), non_local_means_sum_s1_x, non_local_means_sum_s1_y)/(int16)16)))
 hw_uint<16> hcompute_non_local_means_sum_stencil_3(hw_uint<16>& blur_d_stencil, hw_uint<16>& hw_input_global_wrapper_stencil, hw_uint<16>& non_local_means_sum_stencil) {
-  uint16_t _blur_d_stencil_3 = (uint16_t) (blur_d_stencil.extract<0, 15>());
+  int16_t _blur_d_stencil_3 = (int16_t) (blur_d_stencil.extract<0, 15>());
 
   int16_t _hw_input_global_wrapper_stencil_7 = (int16_t) (hw_input_global_wrapper_stencil.extract<0, 15>());
 
   int16_t _non_local_means_sum_stencil_1 = (int16_t) (non_local_means_sum_stencil.extract<0, 15>());
 
   int16_t _811 = (int16_t)(4);
-  uint16_t _812 = _blur_d_stencil_3 >> _811;
-  int16_t _813 = _hw_input_global_wrapper_stencil_7 * (int16_t)_812;
+  int16_t _812 = _blur_d_stencil_3 >> _811;
+  int16_t _813 = _hw_input_global_wrapper_stencil_7 * _812;
   int16_t _814 = _non_local_means_sum_stencil_1 + _813;
   return _814;
 }
 
 //store is: non_local_means_sum.stencil(non_local_means_sum_s1_x_1, non_local_means_sum_s1_y_1, 1) = (non_local_means_sum.stencil(non_local_means_sum_s1_x_1, non_local_means_sum_s1_y_1, 1) + (hw_input_global_wrapper.stencil(1, ((non_local_means_sum_s1_s_dom_x_1 + non_local_means_sum_s1_x_1) + 4), ((non_local_means_sum_s1_s_dom_y_1 + non_local_means_sum_s1_y_1) + 4))*(blur_d.stencil((non_local_means_sum_s1_s_dom_x_1 + 2), (non_local_means_sum_s1_s_dom_y_1 + 2), non_local_means_sum_s1_x_1, non_local_means_sum_s1_y_1)/(int16)16)))
 hw_uint<16> hcompute_non_local_means_sum_stencil_4(hw_uint<16>& blur_d_stencil, hw_uint<16>& hw_input_global_wrapper_stencil, hw_uint<16>& non_local_means_sum_stencil) {
-  uint16_t _blur_d_stencil_4 = (uint16_t) (blur_d_stencil.extract<0, 15>());
+  int16_t _blur_d_stencil_4 = (int16_t) (blur_d_stencil.extract<0, 15>());
 
   int16_t _hw_input_global_wrapper_stencil_8 = (int16_t) (hw_input_global_wrapper_stencil.extract<0, 15>());
 
   int16_t _non_local_means_sum_stencil_2 = (int16_t) (non_local_means_sum_stencil.extract<0, 15>());
 
   int16_t _832 = (int16_t)(4);
-  uint16_t _833 = _blur_d_stencil_4 >> _832;
-  int16_t _834 = _hw_input_global_wrapper_stencil_8 * (int16_t)_833;
+  int16_t _833 = _blur_d_stencil_4 >> _832;
+  int16_t _834 = _hw_input_global_wrapper_stencil_8 * _833;
   int16_t _835 = _non_local_means_sum_stencil_2 + _834;
   return _835;
 }
 
 //store is: non_local_means_sum.stencil(non_local_means_sum_s1_x_2, non_local_means_sum_s1_y_2, 2) = (non_local_means_sum.stencil(non_local_means_sum_s1_x_2, non_local_means_sum_s1_y_2, 2) + (hw_input_global_wrapper.stencil(2, ((non_local_means_sum_s1_s_dom_x_2 + non_local_means_sum_s1_x_2) + 4), ((non_local_means_sum_s1_s_dom_y_2 + non_local_means_sum_s1_y_2) + 4))*(blur_d.stencil((non_local_means_sum_s1_s_dom_x_2 + 2), (non_local_means_sum_s1_s_dom_y_2 + 2), non_local_means_sum_s1_x_2, non_local_means_sum_s1_y_2)/(int16)16)))
 hw_uint<16> hcompute_non_local_means_sum_stencil_5(hw_uint<16>& blur_d_stencil, hw_uint<16>& hw_input_global_wrapper_stencil, hw_uint<16>& non_local_means_sum_stencil) {
-  uint16_t _blur_d_stencil_5 = (uint16_t) (blur_d_stencil.extract<0, 15>());
+  int16_t _blur_d_stencil_5 = (int16_t) (blur_d_stencil.extract<0, 15>());
 
   int16_t _hw_input_global_wrapper_stencil_9 = (int16_t) (hw_input_global_wrapper_stencil.extract<0, 15>());
 
   int16_t _non_local_means_sum_stencil_3 = (int16_t) (non_local_means_sum_stencil.extract<0, 15>());
 
   int16_t _853 = (int16_t)(4);
-  uint16_t _854 = _blur_d_stencil_5 >> _853;
-  int16_t _855 = _hw_input_global_wrapper_stencil_9 * (int16_t)_854;
+  int16_t _854 = _blur_d_stencil_5 >> _853;
+  int16_t _855 = _hw_input_global_wrapper_stencil_9 * _854;
   int16_t _856 = _non_local_means_sum_stencil_3 + _855;
   return _856;
 }

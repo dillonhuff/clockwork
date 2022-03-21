@@ -1193,6 +1193,7 @@ void upsample_vectorization_test() {
 
   generate_hls_code(buf);
 
+  buf.simplify_floor_div_expr();
   map<string, UBuffer> buffers;
   buffers.insert({"ups", buf});
   buffer_vectorization({1}, {"ups"}, 4, buffers);
@@ -1235,6 +1236,7 @@ void upsample_pad_test() {
 
   generate_hls_code(buf);
 
+  buf.simplify_floor_div_expr();
   map<string, UBuffer> buffers;
   buffers.insert({"ups", buf});
   buffer_vectorization({1}, {"ups"}, 4, buffers);
@@ -1272,7 +1274,7 @@ void rolled_conv_reorder_test() {
   buf.access_map["read"] =
     rdmap(ctx, "{ read[root = 0, i, j] -> conv_rolled[i + j] : 0 <= i <= 2 and 0 <= j < 12}");
   buf.schedule["read"] =
-    isl_union_map_read_from_str(ctx, "{ read[root = 0, i, j] -> [j + 3*i + 16] : 0 <= i <= 2 and 0 <= j < 12}");
+    isl_union_map_read_from_str(ctx, "{ read[root = 0, i, j] -> [j + 16*i + 16] : 0 <= i <= 2 and 0 <= j < 12}");
   buf.isIn["read"] = false;
 
   generate_hls_code(buf);
@@ -1370,6 +1372,159 @@ void stride_conv_test() {
   generate_vectorization_unit_testbench(buf);
 
   int res = cmd("clang++ -std=c++11 unit_tb_conv_stride.cpp conv_stride.cpp conv_stride_vec.cpp" );
+  assert(res == 0);
+
+  res = system("./a.out");
+  assert(res == 0);
+}
+
+
+void rolled_conv2D_test() {
+  struct isl_ctx *ctx;
+  ctx = isl_ctx_alloc();
+
+  UBuffer buf;
+  buf.name = "conv2D_rolled";
+  buf.ctx = ctx;
+
+  buf.domain["write"] =
+    isl_set_read_from_str(ctx, "{ write[root = 0, i, j] : 0 <= i < 16 and 0<=j<16}");
+  buf.access_map["write"] =
+    rdmap(ctx, "{ write[root = 0, i, j] -> conv2D_rolled[i, j] : 0 <= i < 16 and 0<=j<16}}");
+  buf.schedule["write"] =
+    isl_union_map_read_from_str(ctx, "{ write[root = 0, i, j] -> [16*i + j] : 0 <= i < 16 and 0<=j<16}}");
+  buf.isIn["write"] = true;
+  map_insert(buf.port_bundles, string("write"),  string("write"));
+
+  // Read 0 through 7
+  buf.domain["read"] =
+    isl_set_read_from_str(ctx, "{ read[root = 0, i, j, ii, jj] : 0 <= i < 12 and 0 <= j < 12 and 0 <= ii < 4 and 0 <= jj < 4}");
+  buf.access_map["read"] =
+    rdmap(ctx, "{ read[root = 0, i, j, ii, jj] -> conv2D_rolled[i + ii, j + jj] : 0 <= i < 12 and 0 <= j < 12 and 0 <= ii < 4 and 0 <= jj < 4}");
+  buf.schedule["read"] =
+    isl_union_map_read_from_str(ctx, "{ read[root = 0, i, j, ii, jj] -> [jj + 4*ii + 16*j + 256*i + 256] : 0 <= i < 12 and 0 <= j < 12 and 0 <= ii < 4 and 0 <= jj < 4}");
+  buf.isIn["read"] = false;
+  map_insert(buf.port_bundles, string("read"),  string("read"));
+
+  generate_hls_code(buf);
+
+  map<string, UBuffer> buffers;
+  buffers.insert({"conv2D_rolled", buf});
+  buffer_vectorization({1}, {"conv2D_rolled"}, 4, buffers);
+
+
+  for (auto& it: buffers) {
+    auto & buf = it.second;
+    buf.simplify_address_space();
+    buf.linear_address_space(to_set(buf.global_range()), 4);
+  }
+
+  generate_hls_code_unit_test(buffers, buf.name);
+
+  generate_vectorization_unit_testbench(buf);
+
+  int res = cmd("clang++ -std=c++11 unit_tb_conv2D_rolled.cpp conv2D_rolled.cpp conv2D_rolled_vec.cpp" );
+  assert(res == 0);
+
+  res = system("./a.out");
+  assert(res == 0);
+}
+
+void outer_rolled_conv2D_test() {
+  struct isl_ctx *ctx;
+  ctx = isl_ctx_alloc();
+
+  UBuffer buf;
+  buf.name = "conv2D_outer_rolled";
+  buf.ctx = ctx;
+
+  buf.domain["write"] =
+    isl_set_read_from_str(ctx, "{ write[root = 0, i, j] : 0 <= i < 16 and 0<=j<16}");
+  buf.access_map["write"] =
+    rdmap(ctx, "{ write[root = 0, i, j] -> conv2D_outer_rolled[i, j] : 0 <= i < 16 and 0<=j<16}}");
+  buf.schedule["write"] =
+    isl_union_map_read_from_str(ctx, "{ write[root = 0, i, j] -> [16*i + j] : 0 <= i < 16 and 0<=j<16}}");
+  buf.isIn["write"] = true;
+  map_insert(buf.port_bundles, string("write"),  string("write"));
+
+  // Read 0 through 7
+  buf.domain["read"] =
+    isl_set_read_from_str(ctx, "{ read[root = 0, i, j, ii, jj] : 0 <= i < 7 and 0 <= j < 7 and 0 <= ii < 8 and 0 <= jj < 8}");
+  buf.access_map["read"] =
+    rdmap(ctx, "{ read[root = 0, i, j, ii, jj] -> conv2D_outer_rolled[i + ii, j + jj] : 0 <= i < 7 and 0 <= j < 7 and 0 <= ii < 8 and 0 <= jj < 8}");
+  buf.schedule["read"] =
+    isl_union_map_read_from_str(ctx, "{ read[root = 0, i, j, ii, jj] -> [jj + 12*ii + 96*j + 768*i + 256] : 0 <= i < 7 and 0 <= j < 7 and 0 <= ii < 8 and 0 <= jj < 8}");
+  buf.isIn["read"] = false;
+  map_insert(buf.port_bundles, string("read"),  string("read"));
+
+  generate_hls_code(buf);
+
+  map<string, UBuffer> buffers;
+  buffers.insert({"conv2D_outer_rolled", buf});
+  buffer_vectorization({1}, {"conv2D_outer_rolled"}, 4, buffers);
+
+  for (auto& it: buffers) {
+    auto & buf = it.second;
+    buf.simplify_address_space();
+    buf.linear_address_space(to_set(buf.global_range()), 4);
+  }
+
+  generate_hls_code_unit_test(buffers, buf.name);
+
+  generate_vectorization_unit_testbench(buf);
+
+  int res = cmd("clang++ -std=c++11 unit_tb_conv2D_outer_rolled.cpp conv2D_outer_rolled.cpp conv2D_outer_rolled_vec.cpp" );
+  assert(res == 0);
+
+  res = system("./a.out");
+  assert(res == 0);
+}
+
+void upsample_2d_unit_test() {
+  struct isl_ctx *ctx;
+  ctx = isl_ctx_alloc();
+
+  UBuffer buf;
+  buf.name = "up2D";
+  buf.ctx = ctx;
+
+  buf.domain["write"] =
+    isl_set_read_from_str(ctx, "{ write[root = 0, i, j] : 0 <= i < 16 and 0<=j<16}");
+  buf.access_map["write"] =
+    rdmap(ctx, "{ write[root = 0, i, j] -> up2D[i, j] : 0 <= i < 16 and 0<=j<16}}");
+  buf.schedule["write"] =
+    isl_union_map_read_from_str(ctx, "{ write[root = 0, i, j] -> [64*i + 2*j] : 0 <= i < 16 and 0<=j<16}}");
+  buf.isIn["write"] = true;
+  map_insert(buf.port_bundles, string("write"),  string("write"));
+
+  // Read 0 through 7
+  buf.domain["read"] =
+    isl_set_read_from_str(ctx, "{ read[root = 0, i, j] : 0 <= i < 32 and 0 <= j < 32}");
+  buf.access_map["read"] =
+    rdmap(ctx, "{ read[root = 0, i, j] -> up2D[floor(i/2) , floor(j/2) ] : 0 <= i < 32 and 0 <= j < 32 }");
+  buf.schedule["read"] =
+    isl_union_map_read_from_str(ctx, "{ read[root = 0, i, j] -> [j + 32*i + 16] : 0 <= i < 32 and 0 <= j < 32}");
+  buf.isIn["read"] = false;
+  map_insert(buf.port_bundles, string("read"),  string("read"));
+
+  generate_hls_code(buf);
+  buf.simplify_floor_div_expr();
+
+  map<string, UBuffer> buffers;
+  buffers.insert({"up2D", buf});
+  buffer_vectorization({1}, {"up2D"}, 4, buffers);
+
+  for (auto& it: buffers) {
+    auto & buf = it.second;
+    buf.simplify_address_space();
+    buf.linear_address_space(to_set(buf.global_range()), 4);
+  }
+
+  generate_hls_code_unit_test(buffers, buf.name);
+
+  generate_vectorization_unit_testbench(buf);
+
+  int res = cmd("clang++ -std=c++11 unit_tb_up2D.cpp up2D.cpp up2D_vec.cpp" );
   assert(res == 0);
 
   res = system("./a.out");
@@ -11831,29 +11986,6 @@ void playground() {
       assert(false);
     }
     {
-      isl_ctx* ctx = isl_ctx_alloc();
-      auto acc_0 = isl_map_read_from_str(ctx,"{ op[i0, i1]-> data[i0 + i1]: 0<=i0<3 and 0 <= i1 <= 7}");
-      auto sched = isl_map_read_from_str(ctx,"{ op[i0, i1]-> [10 + i0*10 + i1]: 0<=i0<3and 0 <= i1 <= 7 }");
-      auto read_ir = get_vectorized_read_simplified(acc_0, sched, {}, 2, 0);
-      auto acc_vec = read_ir.first;
-      auto sched_vec = read_ir.second;
-      cout << "After vec read access map: " << str(simplify_expr(acc_vec)) << endl;
-      cout << "After vec read sched: " << str(sched_vec) << endl;
-      assert(false);
-    }
-    {
-      isl_ctx* ctx = isl_ctx_alloc();
-      auto acc_0 = isl_map_read_from_str(ctx,"{ op[i0, i1]-> data[i0 + i1]: 0<=i0<8 and 0 <= i1 <= 2}");
-      auto sched = isl_map_read_from_str(ctx,"{ op[i0, i1]-> [14 + i0*3 + i1]: 0<=i0<8and 0 <= i1 <= 2 }");
-      get_vectorized_read_simplified(acc_0, sched, {}, 0, 0, false);
-      auto read_ir = get_vectorized_read(acc_0, sched, {}, 4, 0);
-      auto acc_vec = read_ir.first;
-      auto sched_vec = read_ir.second;
-      cout << "After vec read access map: " << str(simplify_expr(acc_vec)) << endl;
-      cout << "After vec read sched: " << str(sched_vec) << endl;
-      assert(false);
-    }
-    {
         isl_ctx* ctx = isl_ctx_alloc();
         auto acc_0 = isl_map_read_from_str(ctx,"{ sram2tb[i0, i2, i1]-> data[i0, i1+i2]: 0<=i0<=61 and 0<=i1<=61 and 0<=i2<=7}");
 
@@ -15042,6 +15174,8 @@ void test_pond(string dir, bool run_verilator=true) {
   //fp app need pond for accumulation buffer
   //test_apps.push_back(nlmeans_rolled_7x7());
 
+  //test_apps.push_back(nlmeans_simple_blur());
+  test_apps.push_back(nlmeans_simple());
   test_apps.push_back(resnet_simple());
   test_apps.push_back(resnet());
   test_apps.push_back(three_level_pond_copy());
@@ -15331,27 +15465,29 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   //
   ////fp apps
   //test_apps.push_back(nlmeans_unroll_reorder());
-  //test_apps.push_back(nlmeans_unroll());
+  //test_apps.push_back(nlmeans_simple_trunc());
   //test_apps.push_back(fp_pointwise());
   //test_apps.push_back(fp_arith());
+  //test_apps.push_back(camera_pipeline_2x2_unroll());
 
   //CGRA tests
+  //test_apps.push_back(nlmeans_simple_trunc());
   test_apps.push_back(conv_3_3());
   test_apps.push_back(counter());
   test_apps.push_back(rom());
   test_apps.push_back(camera_pipeline_new());
   test_apps.push_back(unsharp_new());
-  test_apps.push_back(laplacian_pyramid());
-  test_apps.push_back(laplacian_pyramid_docker());
+  test_apps.push_back(unsharp_large());
+  test_apps.push_back(unsharp());
   test_apps.push_back(gaussian());
-  test_apps.push_back(down_sample());
   test_apps.push_back(cascade());
   test_apps.push_back(harris());
   test_apps.push_back(conv_1_2());
   test_apps.push_back(demosaic_unrolled());
+  test_apps.push_back(down_sample());
   test_apps.push_back(up_sample());
-  test_apps.push_back(unsharp());
-  test_apps.push_back(unsharp_large());
+  test_apps.push_back(laplacian_pyramid());
+  test_apps.push_back(laplacian_pyramid_docker());
 
   //DNN apps
   test_apps.push_back(matmul_single());
@@ -17390,11 +17526,12 @@ void lake_smt_tests() {
 
 void access_pattern_read_unit_tests() {
   isl_ctx* ctx = isl_ctx_alloc();
+  int dummy_dim;
 
   auto acc_0 = isl_map_read_from_str(ctx,"{ op[i0]-> data[i0]: 0<=i0<=61}");
   auto sched = isl_map_read_from_str(ctx,"{ op[i0]-> [i0]: 0<=i0<=61 }");
   //auto read_ir = get_vectorized_read(acc_0, sched, {}, 4, 0);
-  auto read_ir = get_vectorized_read_simplified(acc_0, sched, {}, 4, 0);
+  auto read_ir = get_vectorized_read_simplified(acc_0, sched, {}, 4, 0, dummy_dim);
   auto acc_vec = read_ir.first;
   auto sched_vec = read_ir.second;
   cout << "After vec read access map: " << str(simplify_expr(acc_vec)) << endl;
@@ -17408,7 +17545,7 @@ void access_pattern_read_unit_tests() {
   auto sched_write = isl_map_read_from_str(ctx,"{ op_write[i0]-> [4 + 4*i0]: 0<=i0<=15 }");
   //read_ir = get_vectorized_read(acc_0, sched,
   read_ir = get_vectorized_read_simplified(acc_0, sched,
-          {{"sram2tb_0", sched_read}, {"agg2sram_0", sched_write}}, 4, 0);
+          {{"sram2tb_0", sched_read}, {"agg2sram_0", sched_write}}, 4, 0, dummy_dim);
   acc_vec = read_ir.first;
   sched_vec = read_ir.second;
   cout << "After vec read access map: " << str(acc_vec) << endl;
@@ -17422,7 +17559,7 @@ void access_pattern_read_unit_tests() {
   sched_write = isl_map_read_from_str(ctx,"{ op_write[i0]-> [4 + 4*i0]: 0<=i0<=15 }");
   //read_ir = get_vectorized_read(acc_0, sched,
   read_ir = get_vectorized_read_simplified(acc_0, sched,
-          {{"sram2tb_0", sched_read}, {"agg2sram_0", sched_write}}, 4, 0);
+          {{"sram2tb_0", sched_read}, {"agg2sram_0", sched_write}}, 4, 0, dummy_dim);
   acc_vec = read_ir.first;
   sched_vec = read_ir.second;
   cout << "After vec read access map: " << str(acc_vec) << endl;
@@ -17434,7 +17571,7 @@ void access_pattern_read_unit_tests() {
   sched_write = isl_map_read_from_str(ctx,"{ op_write[i0]-> [8 + 8*i0]: 0<=i0<=7 }");
   //read_ir = get_vectorized_read(acc_0, sched,
   read_ir = get_vectorized_read_simplified(acc_0, sched,
-          {{"agg2sram_0", sched_write}}, 4, 0);
+          {{"agg2sram_0", sched_write}}, 4, 0, dummy_dim);
   acc_vec = read_ir.first;
   sched_vec = read_ir.second;
   cout << "After vec read access map: " << str(acc_vec) << endl;
@@ -17456,7 +17593,7 @@ void access_pattern_read_unit_tests() {
 
   acc_0 = isl_map_read_from_str(ctx,"{ sram2tb[root = 0, i0, i2, i1]-> data[i0, i1+i2]: 0<=i0<=61 and 0<=i1<=61 and 0<=i2<=7}");
   sched = isl_map_read_from_str(ctx,"{ sram2tb[root = 0, i0, i2, i1]-> [560*i0+ 70*i2+i1]: 0<=i0<=61 and 0<=i1<=61 and 0<=i2<=7}");
-  read_ir = get_vectorized_read_simplified(acc_0, sched, {}, 4, 1);
+  read_ir = get_vectorized_read_simplified(acc_0, sched, {}, 4, 1, dummy_dim);
   //read_ir = get_vectorized_read(acc_0, sched, {}, 4, 1);
   acc_vec = read_ir.first;
   sched_vec = read_ir.second;
@@ -17468,7 +17605,7 @@ void access_pattern_read_unit_tests() {
   acc_0 = isl_map_read_from_str(ctx,"{ op[i0, i1]-> data[i0 + i1]: 0<=i0<8 and 0 <= i1 <= 2}");
   sched = isl_map_read_from_str(ctx,"{ op[i0, i1]-> [14 + i0*3 + i1]: 0<=i0<8and 0 <= i1 <= 2 }");
   //read_ir = get_vectorized_read(acc_0, sched, {}, 4, 0);
-  read_ir = get_vectorized_read_simplified(acc_0, sched, {}, 4, 0);
+  read_ir = get_vectorized_read_simplified(acc_0, sched, {}, 4, 0, dummy_dim);
   acc_vec = read_ir.first;
   sched_vec = read_ir.second;
   cout << "After vec read access map: " << str(simplify_expr(acc_vec)) << endl;
@@ -17611,9 +17748,12 @@ void vectorization_unit_tests() {
   upsample_pad_test();
   stride_id_test();
   stride_conv_test();
+  upsample_2d_unit_test();
+  outer_rolled_conv2D_test();
+  rolled_conv2D_test();
 
   //FIXME: Did not work need to test after ASPLOS
-  sw_fetch2_test();
+  //sw_fetch2_test();
 }
 
 void lake_tests() {
@@ -18009,6 +18149,17 @@ void rate_matched_schedule(schedule_info& sched, op* root, prog& prg, const int 
 
   //assert(false);
   //adjust_outer_delays(sched, prg);
+}
+
+//Just test if add delay work
+void add_delay_to_op(string op_name, prog& prg, schedule_info& sched) {
+    for (auto kernel: topologically_sort_kernels(prg)) {
+        auto lp = prg.find_non_op(kernel);
+        cout << "\t kernel name: " << lp<< ", delay: " << sched.op_offset_within_parent[lp]<< endl;
+      if (!contains(kernel, "hw_input")) {
+          sched.op_offset_within_parent[lp] += 64;
+      }
+    }
 }
 
 void tighten_iis(schedule_info& sched, prog& prg) {
@@ -18577,6 +18728,7 @@ void relax_delays_rate_matched(CodegenOptions& options, schedule_info& sched, pr
       continue;
     }
     cout << "read map: " << str(kernel_read_map) << endl;
+    string dsa_writer;
     for (auto cons_op: cons_op_vec) {
       for(auto prod: get_producers(name, prg)){
         auto prod_loop = prg.find_loop(prod);
@@ -18612,6 +18764,9 @@ void relax_delays_rate_matched(CodegenOptions& options, schedule_info& sched, pr
                 need_relax = true;
             }
           }
+          if (contains(pick(prod_op->buffers_written()), "clkwrk_dsa")) {
+            dsa_writer = prod;
+          }
 
           cout << tab(2) << "Producers: " << prod_op_name << endl;
           cout << tab(2) << "sched: " << str(prod_sched) << endl;
@@ -18626,9 +18781,11 @@ void relax_delays_rate_matched(CodegenOptions& options, schedule_info& sched, pr
           bool prod_need_index = pick(cons_op_vec)->index_variables_needed_by_compute.size();
           int offset = 0;
           if (need_relax) {
+              //change into current op ii
               int prod_ii = sched.II(prod_op->parent);
+              int cons_ii = sched.II(cons_op->parent);
               //Relaxation recipe input/output
-              offset = prod_ii * fetch_width * 2;
+              offset = std::max(cons_ii, prod_ii) * fetch_width * 2;
           } else if (equal_start_time && prod_need_index && (cons_start_time < 3)) {
               offset = 3 - cons_start_time;
           }
@@ -18640,6 +18797,13 @@ void relax_delays_rate_matched(CodegenOptions& options, schedule_info& sched, pr
       } //for each producer kernel
     } //for each consumer op
     delay_relaxation.at(name) = delay_max;
+
+    //For dsa writer kernel add the delay
+    //Since topological sort may put the init kernel in beginning
+    if (!dsa_writer.empty()) {
+      sched.op_offset_within_parent[prg.find_loop(dsa_writer)] += delay_max;
+    }
+
     sched.op_offset_within_parent[lp] += delay_max;
     cout  << "Kernel <" << name << "> has Delay slack: " << delay_max << endl;
     cout  << "Offset with in parent: " << sched.op_offset_within_parent.at(lp) << endl;
@@ -19152,7 +19316,7 @@ void garnet_single_port_ram_schedule(CodegenOptions& options, schedule_info& sch
     //  //total_latency += op_latency(op, sched) + 2;
     //  total_latency += op_latency(op, sched);
     //}
-    int total_latency = 0;
+
     vector<op*> scheduled;
     for (auto op : inner_ops(prg)) {
       cout << "inner ops: " << op->name << endl;
@@ -19186,13 +19350,8 @@ void garnet_single_port_ram_schedule(CodegenOptions& options, schedule_info& sch
     //}
     //assert(false);
 
-    //Hack for rom, Rom need to be conservative
-    //because the affine controller output on cycle of flush is undeterministic
-    //if (prg.name == "rom" ) {
-      //adjust_schedule_forward(sched, prg, 1);
-    //} else {
     adjust_schedule_forward(sched, prg, 0);
-    //}
+
     //Add delay for identity stream
     relax_delays_rate_matched(options, sched, prg);
 

@@ -401,7 +401,16 @@ isl_map* get_domain_trans_with_reaccess_mask(isl_set* dom, int pos, int fetch_wi
 isl_set* get_domain_trans_sched_domain(isl_set* dom, int pos, int fetch_width);
 isl_set* get_domain_trans_sched_domain(isl_map* dom, int pos, int fetch_width);
 
+
+
 isl_map* get_div_trans(isl_map* am, map<int, int> split_dims);
+
+isl_map* remove_div(isl_map* m, int out_dim);
+
+
+isl_aff* remove_div(isl_aff*);
+pair<isl_val*, isl_val*> extract_linear_rational_approximation(isl_aff*);
+pair<isl_val*, isl_val*> extract_div_free_linear_rational_approximation(isl_aff*);
 
 isl_map* get_set_slice(isl_set* dom, int pos, int fetch_width);
 isl_map* get_set_slice(isl_set* dom, int pos, int offset, int fetch_width);
@@ -447,6 +456,7 @@ isl_map* retrive_map_domain_with_dim(isl_map*, isl_set*);
 
 isl_map* get_domain_ii_transform(isl_ctx* ctx, isl_set* const s, int ii);
 isl_map* get_shift_map(isl_map* s);
+isl_map* double_schedule_rate(isl_map* m, int in_dim, int fetch_width);
 isl_map* delay_schedule_inner_most(isl_map* s, int delay);
 isl_map* set_schedule_delay(isl_map* m, int delay);
 isl_map* delay_schedule_domain_dim(isl_map* s, int dom_dim, int delay);
@@ -469,6 +479,7 @@ int get_pad_remainder(isl_map*, int, int);
 isl_map* reset_domain_coeff(isl_map* m, int dom_dim_id, int val);
 isl_map* pad_to_domain_map(isl_map* s, int depth);
 isl_map* pad_to_domain_ubuf_map(isl_map* s, int dom_dim_id, int depth);
+isl_map* add_relation_ubuf_map(isl_map* m, int dom_dim_id, int range_dim_id);
 isl_map* pad_to_domain_left_ubuf_map(isl_map* m, int dom_dim_id, int shift_depth);
 isl_map* pad_to_domain_begin_ubuf_map(isl_map* m, int dom_dim_id, int shift_depth);
 isl_map* shift_domain_map(isl_map* s, vector<int> shift_depth);
