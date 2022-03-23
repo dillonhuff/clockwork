@@ -7044,7 +7044,7 @@ void UBuffer::generate_banks(CodegenOptions& options) {
       for (auto outpt : get_out_ports()) {
         cout << "Generating banks for port: " << outpt << " on buffer " << name << endl;
         cout << tab(1) << "access map: " << str(access_map.at(outpt)) << endl;
-        cout << endl << endl << *this << endl << endl;
+        //cout << endl << endl << *this << endl << endl;
         umap* reads_to_sources = get_lexmax_events(outpt);
         cout << tab(1) << "lexmax events: " << str(reads_to_sources) << endl;
         uset* producers_for_outpt = range(reads_to_sources);
@@ -7056,6 +7056,10 @@ void UBuffer::generate_banks(CodegenOptions& options) {
           auto ops_overlap = its(write_ops, producers_for_outpt);
           auto overlap =
             its(range(access_map.at(inpt)), range(access_map.at(outpt)));
+
+          cout << "\tinpt: " << inpt << endl;
+          cout << "\toverlap: " << str(overlap) << endl;
+          cout << "\toverlap ops: " << str(ops_overlap) << endl;
 
           if (!empty(ops_overlap) && !empty(overlap)) {
             stack_bank bank;
@@ -10421,13 +10425,15 @@ bool pad_range_one_vec_dim(map<int, int> & dim2denom,
           //}
           cout << "\tpart size:" <<bank_num << endl;
           cout << "\tg size: " << g.size() << endl;
-          bool is_in_group = buf.is_in_pt(pick(g));
 
-          int ports = is_in_group ?
+          //TODO: fix this, now Consider multiport only for accumulation buffer
+          int ports = 1;
+          if (buf.has_update_op()) {
+            bool is_in_group = buf.is_in_pt(pick(g));
+            ports = is_in_group ?
               options.rtl_options.max_inpt : options.rtl_options.max_outpt;
 
-          if (contains(buf.name, "glb"))
-               ports = 1;
+          }
           if (bank_num * ports < g.size()) {
             //may need banking
             return {};
@@ -10470,13 +10476,16 @@ bool pad_range_one_vec_dim(map<int, int> & dim2denom,
           }
           cout << "\tpart size:" <<parts.size() << endl;
           cout << "\tg size: " << g.size() << endl;
-          bool is_in_group = buf.is_in_pt(pick(g));
 
-          int ports = is_in_group ?
+          //TODO: fix this, now Consider multiport only for accumulation buffer
+          int ports = 1;
+          if (buf.has_update_op()) {
+            bool is_in_group = buf.is_in_pt(pick(g));
+            ports = is_in_group ?
               options.rtl_options.max_inpt : options.rtl_options.max_outpt;
 
-          if (contains(buf.name, "glb"))
-               ports = 1;
+          }
+
           if (parts.size() * ports < g.size()) {
             //may need banking
             return {};

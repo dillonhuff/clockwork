@@ -15207,7 +15207,7 @@ void test_pond(string dir, bool run_verilator=true) {
     compile_for_garnet_single_port_mem(prg, dir,
             false, /*generate smt stream*/
             gen_config_only,/*gen_config_only*/
-            true, /*multi level hierarchy*/        
+            true, /*multi level hierarchy*/
             false, /*for metamapper*/
             "",
             false);
@@ -15471,7 +15471,7 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   //test_apps.push_back(camera_pipeline_2x2_unroll());
 
   //CGRA tests
-  //test_apps.push_back(nlmeans_simple_trunc());
+  test_apps.push_back(nlmeans_simple_trunc());
   test_apps.push_back(conv_3_3());
   test_apps.push_back(counter());
   test_apps.push_back(rom());
@@ -15490,10 +15490,10 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   test_apps.push_back(laplacian_pyramid_docker());
 
   //DNN apps
-  test_apps.push_back(matmul_single());
-  test_apps.push_back(matmul_unroll2());
   test_apps.push_back(resnet_tiny());
   test_apps.push_back(resnet_simple());
+  test_apps.push_back(matmul_single());
+  test_apps.push_back(matmul_unroll2());
   test_apps.push_back(resnet_size_test());
   test_apps.push_back(resnet());
 
@@ -20368,7 +20368,7 @@ void compile_for_garnet_dual_port_mem(prog& prg,
   }
 
 #ifdef COREIR
-  generate_garnet_coreir(buffers_opt, prg, options, sched, use_metamapper, dse_compute_filename);  
+  generate_garnet_coreir(buffers_opt, prg, options, sched, use_metamapper, dse_compute_filename);
   if (!options.config_gen_only) {
     generate_garnet_verilog_top(options, prg.name);
     generate_garnet_verilator_tb(options, prg, hw_sched, buffers_opt);
@@ -20448,7 +20448,7 @@ void compile_for_garnet_single_port_mem(prog& prg,
   }
 
 #ifdef COREIR
-  generate_garnet_coreir(buffers_opt, prg, options, sched, use_metamapper, dse_compute_filename);  
+  generate_garnet_coreir(buffers_opt, prg, options, sched, use_metamapper, dse_compute_filename);
   if (!options.config_gen_only) {
     generate_garnet_verilog_top(options, prg.name);
     generate_garnet_verilator_tb(options, prg, hw_sched, buffers_opt);

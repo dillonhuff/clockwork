@@ -2774,6 +2774,24 @@ void tighten_address_space() {
       return stmt2bd;
     }
 
+    bool has_update_op() const {
+      map<string, std::set<string> > stmt2bd = get_stmt2bd();
+      for (auto it: stmt2bd) {
+        int in_bd = 0, out_bd = 0;
+        for (string bd: it.second) {
+            if (is_input_bundle(bd)) {
+                in_bd ++;
+            } else if (is_output_bundle(bd)) {
+                out_bd ++;
+            }
+
+        }
+        if (in_bd && out_bd)
+            return true;
+      }
+      return false;
+    }
+
     bool is_update_op(string op_name) const {
       //update stmt has 2 bundles
       auto stmt2bd = get_stmt2bd();
