@@ -6293,14 +6293,15 @@ umap* UBuffer::get_lexmax_events(const std::string& outpt) const {
   //cout << "\tafter: " << str(after) << endl;
 
   src_map = its(src_map, after);
-  //cout << "\tsrc map after its after: " << str(src_map) << endl;
+  cout << "\tsrc map after its after: " << str(src_map) << endl;
   src_map = lexmax(src_map);
-  //cout << "\tsrc map final: " << str(src_map) << endl;
+  cout << "\tsrc map final: " << str(src_map) << endl;
 
-  auto time_to_event = inv(sched);
+  auto time_to_event = inv(global_in_schedule_with_guard());
 
+  auto lmm = lexmax(dot(src_map, sched));
   auto lex_max_events =
-    dot(lexmax(dot(src_map, sched)), time_to_event);
+    its(src_map, ::domain(lmm));
 
   release(time_to_event);
   release(src_map);

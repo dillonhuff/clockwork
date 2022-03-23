@@ -2405,6 +2405,16 @@ void tighten_address_space() {
       return s;
     }
 
+    isl_union_map* global_in_schedule_with_guard() const {
+      umap* s = isl_union_map_read_from_str(ctx, "{ }");
+      for (auto other : schedule) {
+        if (isIn.at(other.first)) {
+          s = unn(s, (schedule_guard(cpy(other.second), false)));
+        }
+      }
+      return s;
+    }
+
     isl_union_map* producer_map() {
       umap* s = isl_union_map_read_from_str(ctx, "{ }");
       for (auto pt: get_in_ports()) {
