@@ -3692,8 +3692,10 @@ bool MemtileReplaceMetaMapper(Instance* cnst) {
 
   std::vector<string> routable_outputs = {"data_out_1", "empty", "stencil_valid", "full", "data_out_0", "sram_ready_out", "valid_out", "config_data_out_1", "config_data_out_0"};
 
+  std::vector<string> routable_renamed_outputs = {"output_width_16_num_0", "output_width_16_num_1", "output_width_1_num_1", "output_width_1_num_2", "output_width_1_num_3", "config_data_out_0", "config_data_out_1", "output_width_1_num_0"};
+
   vector<Module*> loaded;
-  if (!loadHeader(c, "memtile_header.json", loaded)) {c->die();}
+  if (!loadHeader(c, "mem_header.json", loaded)) {c->die();}
 
   Instance* buf = def->addInstance(cnst->getInstname()+"_garnet", (Module*)loaded[0]);
 
@@ -3701,21 +3703,26 @@ bool MemtileReplaceMetaMapper(Instance* cnst) {
 
   Module* cnst_mod_ref = cnst->getModuleRef();
   auto pt = addPassthrough(cnst, cnst->getInstname()+"_tmp");
-
+  
   vector<string> cnst_ports = cnst_mod_ref->getType()->getFields();
 
+  string map_name = "";
+
   for (auto cnst_port : cnst_ports) {
-    if (routable_ports.count(cnst_port) > 0) {
-      cout << "Connecting cnst_port: " << cnst_port << endl;
-      def->connect(pt->sel("in")->sel(cnst_port), buf->sel(cnst_port));
-    } else {
-      auto index = find(routable_outputs.begin(), routable_outputs.end(), cnst_port);
-      if (index != routable_outputs.end()){
-        int port_index = index - routable_outputs.begin();
-        cout << "Connecting output cnst_port: " << cnst_port << endl;
-        def->connect(buf->sel("O" + std::to_string(port_index)), pt->sel("in")->sel(cnst_port));
+    if (lake_port_map.count(cnst_port)) {
+      if (routable_ports.count(cnst_port) > 0) {
+        cout << "Connecting cnst_port: " << cnst_port << endl;
+        def->connect(pt->sel("in")->sel(cnst_port), buf->sel(lake_port_map.at(cnst_port)));
       } else {
-        cout << "Not Connecting cnst_port: " << cnst_port << endl;
+      	map_name = lake_port_map.at(cnst_port);
+      	auto index = find(routable_renamed_outputs.begin(), routable_renamed_outputs.end(), map_name);
+      	if (index != routable_renamed_outputs.end()){
+          int port_index = index - routable_renamed_outputs.begin();
+          cout << "Connecting output cnst_port: " << cnst_port << " to " << "O" << std::to_string(port_index) << endl;
+          def->connect(buf->sel("O" + std::to_string(port_index)), pt->sel("in")->sel(cnst_port));
+      	} else {
+          cout << "Not Connecting cnst_port: " << cnst_port << endl;
+      	}
       }
     }
   }
@@ -4004,7 +4011,7 @@ bool RomReplaceMetaMapper(Instance* cnst) {
   config_file["init"] = cnst->getModArgs().at("init")->get<Json>();
 
   vector<Module*> loaded;
-  if (!loadHeader(c, "memtile_header.json", loaded)) {c->die();}
+  if (!loadHeader(c, "mem_header.json", loaded)) {c->die();}
 
   Instance* buf = def->addInstance(cnst->getInstname()+"_garnet", (Module*)loaded[0]);
 
@@ -4016,13 +4023,13 @@ bool RomReplaceMetaMapper(Instance* cnst) {
   // vector<string> cnst_ports = cnst_mod_ref->getType()->getFields();
 
   cout << "Wiring raddr" << endl;
-  def->connect(pt->sel("in")->sel("raddr"), buf->sel("addr_in_0"));
+  def->connect(pt->sel("in")->sel("raddr"), buf->sel(lake_port_map.at("addr_in_0")));
 
   cout << "Wiring ren" << endl;
-  def->connect(pt->sel("in")->sel("ren"), buf->sel("ren_in_0"));
+  def->connect(pt->sel("in")->sel("ren"), buf->sel(lake_port_map.at("ren_in_0")));
 
   cout << "Wiring rdata" << endl;
-  def->connect(buf->sel("O4"), pt->sel("in")->sel("rdata"));
+  def->connect(buf->sel("O4"), pt->sel("in")->sel(lake_port_map.at("data_out_0")));
 
   def->removeInstance(cnst);
   inlineInstance(pt);
