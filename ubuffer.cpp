@@ -3194,12 +3194,16 @@ void UBuffer::generate_sreg_and_wire(CodegenOptions& options, UBufferImpl& impl,
       last_out = wire;
     else {
       auto conns = getConnectWires(wire);
+      //cout << "src: " << src << endl;
+      //for (auto conn: conns) {
+      //    cout << conn->toString() << endl;
+      //}
       assert(conns.size() == 1);
       last_out = pick(conns);
     }
     //CoreIR::Wireable* final_out = pt2wire.at(dst);
 
-    cout << *this << endl;
+    //cout << *this << endl;
     CoreIR::Wireable* final_out = def->sel("self." + container_bundle(dst) + "." + str(bundle_offset(dst)));
     for (size_t i = 0; i < delay; i ++) {
       auto reg = def->addInstance("d_reg_"+context->getUnique(), "mantle.reg",
@@ -3209,6 +3213,54 @@ void UBuffer::generate_sreg_and_wire(CodegenOptions& options, UBufferImpl& impl,
       last_out = reg->sel("out");
     }
     def->connect(last_out, final_out);
+  }
+}
+
+//Take the fanin structure and generate the wiring
+void UBuffer::generate_fanin_connection(CodegenOptions& options, UBufferImpl& impl, CoreIR::ModuleDef* def, map<string, CoreIR::Wireable*> & pt2wire){
+  auto context = def->getContext();
+  for (auto it: impl.fanin_outputs) {
+    map<string, CoreIR::Wireable*> output_map;
+    for (auto in_delay: it.second) {
+      string src = in_delay.first;
+      int delay = in_delay.second;
+      CoreIR::Wireable* last_out =
+          pt2wire.at(src);
+      for (size_t i = 0; i < delay; i ++) {
+        auto reg = def->addInstance("d_reg_"+context->getUnique(), "mantle.reg",
+            {{"width", CoreIR::Const::make(context, port_widths)},
+            {"has_en", CoreIR::Const::make(context, false)}});
+        def->connect(reg->sel("in"), last_out);
+        last_out = reg->sel("out");
+      }
+      output_map[src] = last_out;
+    }
+    string outpt = it.first;
+
+    auto mux_output = pt2wire.at(outpt);
+    for (auto src: output_map) {
+
+      //Add a pass through for the mux output
+      Instance* dataout_pth = addPassthrough(
+            mux_output, "dataout_pt_" + context->getUnique());
+      //Creating the input selection logic
+      isl_aff* sched_aff = get_aff(to_map(schedule.at(src.first)));
+      cout << "pt schedule: " << str(sched_aff) << endl;
+      auto mux_ctrl = affine_controller_use_lake_tile(
+              options, def, context, domain.at(src.first),
+              sched_aff, "dataout_pt_mux_ctrl_" + context->getUnique());
+      generate_lake_tile_verilog(options, mux_ctrl);
+      //create a mux
+      auto next_val = def->addInstance(
+              def->getContext()->getUnique() + "_mux",
+              "coreir.mux",
+              {{"width", CoreIR::Const::make(context, this->port_widths)}});
+      def->connect(dataout_pth->sel("out"), next_val->sel("out"));
+      def->connect(src.second, next_val->sel("in1"));
+      def->connect(op_control_wires(mux_ctrl), next_val->sel("sel"));
+      inlineInstance(dataout_pth);
+      mux_output = next_val->sel("in0");
+    }
   }
 }
 
@@ -3929,6 +3981,8 @@ void UBuffer::generate_coreir_refactor(CodegenOptions& options,
 
   //Generate the shift register connection
   generate_sreg_and_wire(options, impl, def, pt2wire);
+
+  generate_fanin_connection(options, impl, def, pt2wire);
 
 }
 
@@ -10952,6 +11006,13 @@ bool pad_range_one_vec_dim(map<int, int> & dim2denom,
             out << tab(4) << e.first << " -> (" << dg.weight(e.first, dst) << ") " << dst << endl;
           }
         }
+
+        for (auto e : dg.out_edges) {
+          out << "Fanin Group: "<< tab(2) << e.first << endl;
+          for (auto src: e.second) {
+            out << tab(4) << src << " -> (" << dg.weight(src, e.first) << ") " << e.first << endl;
+          }
+        }
         return out;
       }
 
@@ -11000,7 +11061,7 @@ vector<int> analyze_memory_demands(prog& prg, UBuffer& buf, schedule_info& hwinf
 
   cout << buf << endl;
 
-  map<string,pair<string,int>> shift_registered_outputs = determine_shift_reg_map(prg, buf, hwinfo);
+  map<string, vector<pair<string,int>>> shift_registered_outputs = determine_shift_reg_map_new(prg, buf, hwinfo);
   vector<pair<string,pair<string,int>>> shift_registered_outputs_to_outputs = determine_output_shift_reg_map(prg, buf,hwinfo);
   std::set<string> sr_ports;
   for (auto port : shift_registered_outputs) {
@@ -11018,7 +11079,8 @@ vector<int> analyze_memory_demands(prog& prg, UBuffer& buf, schedule_info& hwinf
     cout << "In prg: " << prg.name << " a buffer is not a shift register!" << endl;
     cout << "Shift registered in -> out..." << endl;
     for (auto e : shift_registered_outputs) {
-      cout << tab(1) << e.first << " -> " << e.second.second << endl;
+      for (auto pt_delay_pair: e.second)
+        cout << tab(1) << e.first << " -> " << pt_delay_pair.second<< endl;
     }
     //assert(false);
     //auto eb = embarassing_partition(reduced, hwinfo);
@@ -11188,13 +11250,15 @@ vector<pair<string, pair<string, int> >> determine_output_shift_reg_map(
   return shift_registered_outputs;
 }
 
-map<string, pair<string, int> > determine_shift_reg_map(
+map<string, pair<string, int> >  determine_shift_reg_map(
         prog& prg,
     UBuffer& buf,
     schedule_info& hwinfo)
 {
   auto sc = buf.global_schedule();
   bool any_reduce_ops_on_buffer = false;
+
+  //from output port to a vector of input port delay pair
   map<string, pair<string, int> > shift_registered_outputs;
   for (auto op : prg.all_ops()) {
     if (elem(buf.name, op->buffers_read()) && elem(buf.name, op->buffers_written())) {
@@ -11223,7 +11287,7 @@ map<string, pair<string, int> > determine_shift_reg_map(
 
         cout << "write_op write: " << written << endl;
         cout << "write_op read: " << write_op->buffers_read() << endl;
-        prg.pretty_print();
+        //prg.pretty_print();
         auto read_op_rolled_reduce_bufs = intersection(read, written);
         auto write_op_rolled_reduce_bufs =
             intersection(write_op->buffers_read(), write_op->buffers_written());
@@ -11247,7 +11311,77 @@ map<string, pair<string, int> > determine_shift_reg_map(
               cout << "Error: Negative dependence distance: " << dd_raw << endl;
             }
             assert(dd_raw >= 0);
-            shift_registered_outputs[outpt] = {inpt, dd_raw};
+            shift_registered_outputs[ outpt] = {inpt, dd_raw};
+          }
+        }
+      }
+    }
+  }
+  return shift_registered_outputs;
+}
+
+map<string, vector<pair<string, int> > > determine_shift_reg_map_new(
+        prog& prg,
+    UBuffer& buf,
+    schedule_info& hwinfo)
+{
+  auto sc = buf.global_schedule();
+  bool any_reduce_ops_on_buffer = false;
+
+  //from output port to a vector of input port delay pair
+  map<string, vector<pair<string, int> > > shift_registered_outputs;
+  for (auto op : prg.all_ops()) {
+    if (elem(buf.name, op->buffers_read()) && elem(buf.name, op->buffers_written())) {
+    //if (intersection(op->buffers_read(), op->buffers_written()).size() != 0) {
+      any_reduce_ops_on_buffer = true;
+      break;
+    }
+  }
+
+  if (!any_reduce_ops_on_buffer) {
+    cout << "==== No reduce ops on this buffer" << endl;
+    for (auto outpt : buf.get_out_ports()) {
+      for (auto inpt : buf.get_in_ports()) {
+        string reader_name = domain_name(pick(get_maps(buf.access_map.at(outpt))));
+        op* read_op = prg.find_op(reader_name);
+
+        auto read = read_op->buffers_read();
+        auto written = read_op->buffers_written();
+
+        string writer_name = domain_name(pick(get_maps(buf.access_map.at(inpt))));
+        cout << "Writer name: " << writer_name << endl;
+        op* write_op = prg.find_op(writer_name);
+
+        cout << "read_op read: " << read << endl;
+        cout << "read_op write: " << read_op->buffers_written() << endl;
+
+        cout << "write_op write: " << written << endl;
+        cout << "write_op read: " << write_op->buffers_read() << endl;
+        //prg.pretty_print();
+        auto read_op_rolled_reduce_bufs = intersection(read, written);
+        auto write_op_rolled_reduce_bufs =
+            intersection(write_op->buffers_read(), write_op->buffers_written());
+
+        // Dont shift register rolled-reduces
+        // If it's not rolled reduce on the buffer trying to optimize, it's fine
+        if (read_op_rolled_reduce_bufs.count(buf.name) == 0 &&
+            write_op_rolled_reduce_bufs.count(buf.name) == 0) {
+            cout << "Calculate DDs for creating shift registers." << endl;
+          auto dd =
+            dependence_distance_singleton(buf, inpt, outpt, sc);
+          if (dd.has_value()) {
+            int dd_raw = dd.get_value();
+            dd_raw -= hwinfo.compute_latency(write_op);
+            if (write_op->buffers_read().size() > 0) {
+              dd_raw -= hwinfo.load_latency(pick(write_op->buffers_read()));
+            }
+            dd_raw += hwinfo.load_latency(buf.name);
+
+            if (!(dd_raw >= 0)) {
+              cout << "Error: Negative dependence distance: " << dd_raw << endl;
+            }
+            assert(dd_raw >= 0);
+            map_insert(shift_registered_outputs, outpt, {inpt, dd_raw});
           }
         }
       }
@@ -11259,11 +11393,28 @@ map<string, pair<string, int> > determine_shift_reg_map(
 
 
 dgraph build_in_to_out_shift_register_graph(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
-  map<string,pair<string,int>> shift_registered_outputs = determine_shift_reg_map(prg, buf, hwinfo);
+  map<string, vector<pair<string,int>>> shift_registered_outputs = determine_shift_reg_map_new(prg, buf, hwinfo);
 
   dgraph dg;
+  bool fanin_node = false;
   for (auto pt : shift_registered_outputs) {
-    dg.add_edge(pt.second.first, pt.first, pt.second.second);
+    string outpt = pt.first;
+    if (pt.second.size() > 1) {
+        //handle this case specially
+      for (auto pt_delay_pair: pt.second) {
+        string inpt = pt_delay_pair.first;
+        int delay = pt_delay_pair.second;
+        dg.add_fanin_edge(inpt, outpt, delay);
+      }
+      fanin_node = true;
+    } else {
+      for (auto pt_delay_pair: pt.second) {
+        string inpt = pt_delay_pair.first;
+        int delay = pt_delay_pair.second;
+        dg.add_edge(inpt, outpt, delay);
+      }
+
+    }
   }
 
   cout << "DG: ..." << endl;
@@ -11344,15 +11495,38 @@ void create_subbranch(const std::string& out_pt, dgraph& sr_graph, UBuffer& buf,
 dgraph build_shift_registers(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
   dgraph shift_registers = build_in_to_out_shift_register_graph(options, prg, buf, hwinfo);
 
-  cout << "Shift registers..." << endl;
+  cout << "Naive Shift registers..." << endl;
   cout << shift_registers << endl;
+  //cout << buf << endl;
 
   dgraph dg;
+  for (auto it: shift_registers.fanin_edges) {
+    string dst = it.first;
+    cout << tab(2) << "get dst: " << it.first << endl;
+    for (auto src: it.second) {
+      int delay = shift_registers.weight(src, dst);
+      dg.add_fanin_edge(src, dst, delay);
+      cout << tab(4) << "src: " << src << ", weight = " << delay << endl;
+    }
+  }
+  //dg.fanin_edges = shift_registers.fanin_edges;
+  //for (auto it: dg.fanin_edges) {
+  //    cout << tab(2) << "get dst: " << it.first << endl;
+  //  string dst = it.first;
+  //  for (auto src: it.second) {
+  //      cout << tab(4) << "src: " << src << ", weight = " << shift_registers.weights.at({src, dst});
+  //    dg.weights[{src, dst}] = shift_registers.weights.at({src, dst});
+  //  }
+  //}
   if (!shift_registers.has_nodes()) {
     return dg;
   }
   for (auto inpt : buf.get_in_ports()) {
+    cout << "inpt: " << inpt << endl;
     vector<pair<string, int> > vals;
+    //chances are that we only have fanin input in shift register and give up.
+    if (!shift_registers.out_edges.count(inpt))
+      continue;
     for (auto v : shift_registers.out_edges.at(inpt)) {
       vals.push_back({v, shift_registers.weight(inpt, v)});
     }
@@ -11361,6 +11535,7 @@ dgraph build_shift_registers(CodegenOptions& options, prog& prg, UBuffer& buf, s
       cout << tab(1) << v.first << " -(" << v.second << ")-> " << v.second << endl;
     }
 
+    //TODO use option.threshold, this is the place to separate shift reg and row buffer
     vector<vector<pair<string, int> > > reg_chains;
     split_by(vals, reg_chains, [](const pair<string, int>& a, const pair<string, int>& b) {
         return abs(a.second - b.second) < 20;
@@ -11489,17 +11664,35 @@ void lower_to_garnet_implementation(CodegenOptions& options,
 UBufferImpl port_group2bank(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
     UBufferImpl impl;
 
-    int in_port_width = options.rtl_options.max_inpt;
-    int out_port_width = options.rtl_options.max_outpt;
+    //int in_port_width = options.rtl_options.max_inpt;
+    //int out_port_width = options.rtl_options.max_outpt;
     auto sr_graph = build_shift_registers(options, prg, buf, hwinfo);
 
     if (!sr_graph.has_nodes())
       return impl;
+    for (auto it: sr_graph.fanin_edges) {
+        for (auto src: it.second) {
+            cout << "dst: " << it.first << endl;
+            cout << "src: " << src << endl;
+            int delay = sr_graph.weights.at({src, it.first});
+            if (delay < options.merge_threshold) {
+                impl.add_fanin_info(src, it.first, delay);
+            } else {
+                //TODO: add support for row buffer
+                assert(false);
+            }
+        }
+    }
 
     //Currently only group output port
     //TODO: support input port grouping in the future
     for (auto src: buf.get_in_ports()) {
         vector<pair<string, int> > out_delays;
+
+        //chances are that we have only fanin
+        if (sr_graph.out_edges.count(src) == 0)
+            continue;
+
         for (auto dst: sr_graph.out_edges.at(src)) {
             cout << "edge: " << src << "=>" << dst << ", w=" << sr_graph.weight(src, dst) << endl;
             out_delays.push_back({dst, sr_graph.weight(src, dst)});

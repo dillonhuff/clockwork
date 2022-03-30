@@ -2991,6 +2991,7 @@ void tighten_address_space() {
 
     //helper function for sreg generation
     void generate_sreg_and_wire(CodegenOptions& options, UBufferImpl& impl, CoreIR::ModuleDef* def, map<string, CoreIR::Wireable*> & pt2wire);
+    void generate_fanin_connection(CodegenOptions& options, UBufferImpl& impl, CoreIR::ModuleDef* def, map<string, CoreIR::Wireable*> & pt2wire);
     //helper function for wire IO connection
     void wire_ubuf_IO(CodegenOptions& options, CoreIR::ModuleDef* def, map<string, CoreIR::Wireable*> & pt2wire, CoreIR::Instance* buf, UBufferImpl & impl, schedule_info& info, int bank_id, bool with_ctrl);
     //Helper function for generate cgra mem instance
@@ -3351,6 +3352,7 @@ UBuffer delete_ports(std::set<string>& sr_ports, UBuffer& buf);
 
 struct dgraph {
   std::set<string> nodes;
+  map<string, std::set<string> > fanin_edges;
   map<string, std::set<string> > out_edges;
   map<pair<string, string>, int> weights;
 
@@ -3359,6 +3361,14 @@ struct dgraph {
     nodes.insert(src);
     out_edges[src].insert(dst);
     weights[{src, dst}] = weight;
+  }
+
+  void add_fanin_edge(const std::string& src, const std::string& dst, const int weight) {
+    nodes.insert(dst);
+    nodes.insert(src);
+    fanin_edges[dst].insert(src);
+    weights[{src, dst}] = weight;
+    cout << "Add weight from " << src << "->" << dst << ": " << weight << endl;
   }
 
   int weight(const std::string& src, const std::string& dst) {
@@ -3465,6 +3475,7 @@ struct UBufferImpl {
   //Shift register data
   map<string, int> shift_depth;
   map<string,pair<string,int>> shift_registered_outputs;
+  map<string,vector<pair<string,int>>> fanin_outputs;
   vector<pair<string,pair<string,int>>> shift_registered_outputs_to_outputs;
 
   int get_new_bank_id() {
@@ -3544,6 +3555,10 @@ struct UBufferImpl {
       shift_registered_outputs_to_outputs.push_back(
               {outpt, {inpt, delay}}
               );
+  }
+
+  void add_fanin_info(const string& inpt, const string& outpt, const int& delay) {
+      map_insert(fanin_outputs, outpt, {inpt, delay});
   }
 
   void add_i2o_info(const string& inpt, const string& outpt, const int& delay) {
@@ -3641,6 +3656,14 @@ struct UBufferImpl {
 
     for (auto it: shift_registered_outputs) {
       outpts.insert(it.first);
+    }
+
+    for (auto it: fanin_outputs) {
+      outpts.insert(it.first);
+      cout << tab(2) << it.first << " has fanin: " << endl;
+      for (auto p : it.second) {
+          cout << tab(4) << p.first << "->" << p.second << endl;
+      }
     }
 
     return outpts;
@@ -3794,6 +3817,12 @@ vector<pair<string, pair<string, int> >> determine_output_shift_reg_map(
     schedule_info& hwinfo);
 
 map<string, pair<string, int> > determine_shift_reg_map(
+        prog& prg,
+    UBuffer& buf,
+    schedule_info& hwinfo);
+
+//This method consider multiple input port feed into one output
+map<string, vector<pair<string, int> > > determine_shift_reg_map_new(
         prog& prg,
     UBuffer& buf,
     schedule_info& hwinfo);

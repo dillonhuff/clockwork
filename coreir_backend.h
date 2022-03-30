@@ -65,7 +65,7 @@ void generate_coreir(CodegenOptions& options,
     map<string, UBuffer>& buffers,
     prog& prg,
     umap* schedmap,
-    schedule_info& hwinfo); 
+    schedule_info& hwinfo);
 
 void generate_coreir_without_ctrl(CodegenOptions& options,
     map<string, UBuffer>& buffers,
@@ -92,16 +92,6 @@ CoreIR::Wireable* delay_array(CoreIR::ModuleDef* def,
     CoreIR::Wireable* input,
     int elem_width,
     int num_elems);
-
-map<string, pair<string, int> > determine_shift_reg_map(
-        prog& prg,
-    UBuffer& buf,
-    schedule_info& hwinfo);
-
-vector<pair<string, pair<string, int> >> determine_output_shift_reg_map(
-        prog& prg,
-    UBuffer& buf,
-    schedule_info& hwinfo);
 
 
 dgraph build_shift_register_graph(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_info& hwinfo);

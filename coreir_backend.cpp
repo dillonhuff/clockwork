@@ -2909,7 +2909,7 @@ void addIOsWithGLBConfigMetaMapper(Context* c, Module* top, map<string, UBuffer>
     string buf_name = take_until_str(path_name, "_op");
     auto in_buf =  buffers.at(buf_name);
     string ioname = "io16in_" + join(++path.begin(),path.end(),string("_"));
- 
+
     auto inst = mdef->addInstance(ioname,(Module*)loaded[0],{{"mode",Const::make(c,"in")}});
 
 
@@ -2923,7 +2923,7 @@ void addIOsWithGLBConfigMetaMapper(Context* c, Module* top, map<string, UBuffer>
       int old_offset = inst->getMetaData()["glb2out_0"]["cycle_starting_addr"][0] ;
       inst->getMetaData()["glb2out_0"]["cycle_starting_addr"][0] = old_offset - glb_metadata->latency;
     }
-  
+
     mdef->connect(path, {ioname,"in"});
 
     path[0] = "in";
@@ -2936,9 +2936,9 @@ void addIOsWithGLBConfigMetaMapper(Context* c, Module* top, map<string, UBuffer>
     string buf_name = take_until_str(path_name, "_op");
     auto out_buf =  buffers.at(buf_name);
     string ioname = "io16_" + join(++path.begin(),path.end(),string("_"));
-    
+
     auto inst = mdef->addInstance(ioname,(Module*)loaded[0],{{"mode",Const::make(c,"out")}});
-  
+
     inst->getMetaData() = out_buf.config_file;
 
     //Add the multi-tile glb informations
@@ -2950,7 +2950,7 @@ void addIOsWithGLBConfigMetaMapper(Context* c, Module* top, map<string, UBuffer>
       int old_offset = inst->getMetaData()["in2glb_0"]["cycle_starting_addr"][0] ;
       inst->getMetaData()["in2glb_0"]["cycle_starting_addr"][0] = old_offset - glb_metadata->latency;
     }
-    
+
     mdef->connect(path, {ioname,"out"});
     path[0] = "in";
     path.insert(path.begin(),"_self");
@@ -2958,7 +2958,7 @@ void addIOsWithGLBConfigMetaMapper(Context* c, Module* top, map<string, UBuffer>
   }
   for (auto path : iopaths.IO1) {
     string ioname = "io1in_" + join(++path.begin(),path.end(),string("_"));
-    
+
     mdef->addInstance(ioname,(Module*)loaded_bit[0],{{"mode",Const::make(c,"in")}});
     mdef->connect(path, {ioname,"in"});
     path[0] = "in";
@@ -2967,7 +2967,7 @@ void addIOsWithGLBConfigMetaMapper(Context* c, Module* top, map<string, UBuffer>
   }
   for (auto path : iopaths.IO1in) {
     string ioname = "io1_" + join(++path.begin(),path.end(),string("_"));
-    
+
     mdef->addInstance(ioname,(Module*)loaded_bit[0],{{"mode",Const::make(c,"out")}});
     mdef->connect(path, {ioname,"out"});
     path[0] = "in";
@@ -3036,8 +3036,8 @@ class CustomFlatten : public CoreIR::InstanceGraphPass {
 	cout << "not inlining " << inst->toString() << " " << inst->toString() << endl;
            continue;
          }
-       }    
-cout << "inlining " << inst->toString() << endl; 
+       }
+cout << "inlining " << inst->toString() << endl;
       changed |= inlineInstance(inst);
     }
     return changed;
@@ -3702,7 +3702,7 @@ bool MemtileReplaceMetaMapper(Instance* cnst) {
       }
     }
   }
-  
+
   def->removeInstance(cnst);
   inlineInstance(pt);
   inlineInstance(buf);
@@ -3725,7 +3725,7 @@ class PondSubstituteMetaMapper: public CoreIR::InstancePass {
   public :
     Module* topm;
     //static std::string ID;
-    
+
     PondSubstituteMetaMapper(Module* top) : InstancePass("pondsubstitutemetamapper", "add global.pond schedules") {topm = top;}
     //void setVisitorInfo() override;
 
@@ -3806,7 +3806,7 @@ if (cnst->getModuleRef()->getName() == "Pond") {
   Module* cnst_mod_ref = cnst->getModuleRef();
 
   vector<string> cnst_ports = cnst_mod_ref->getType()->getFields();
- 
+
   for (auto cnst_port : cnst_ports) {
     if (routable_ports.count(cnst_port) > 0) {
       cout << "Connecting cnst_port: " << cnst_port << endl;
@@ -3823,10 +3823,10 @@ if (cnst->getModuleRef()->getName() == "Pond") {
     }
   }
 
-  
+
 
   ModuleDef* mdef = topm->getDef();
-  
+
   if (def == mdef) {
     def->connect(buf->sel("flush"), mdef->sel("io1in_reset.out"));
   }
@@ -3835,7 +3835,7 @@ if (cnst->getModuleRef()->getName() == "Pond") {
   inlineInstance(pt);
   inlineInstance(buf);
 
- 
+
   return true;
 }
 return false;
@@ -3991,7 +3991,7 @@ bool RomReplaceMetaMapper(Instance* cnst) {
 
   Instance* buf = def->addInstance(cnst->getInstname()+"_garnet", (Module*)loaded[0]);
 
-  buf->setMetaData(config_file); 
+  buf->setMetaData(config_file);
 
   Module* cnst_mod_ref = cnst->getModuleRef();
   auto pt = addPassthrough(cnst, cnst->getInstname()+"_tmp");
@@ -4060,7 +4060,7 @@ bool PeReplaceMetaMapper(Instance* cnst) {
   Module* cnst_mod_ref = cnst->getModuleRef();
   auto pt = addPassthrough(cnst, cnst->getInstname()+"_tmp");
   def->connect(pt->sel("in"), buf);
-  
+
   def->removeInstance(cnst);
   inlineInstance(pt);
   inlineInstance(buf);
@@ -4140,7 +4140,7 @@ void map_memory(CodegenOptions& options, Module* top, map<string, UBuffer> & buf
   auto c = top->getContext();
   //LoadDefinition_cgralib(c);
   disconnect_input_enable(c, top);
-  
+
    //GLB passes
   c->addPass(new ReplaceCoarseGrainedAffCtrl);
   c->runPasses({"replacecoarsegrainedaffctrl"});
@@ -4656,7 +4656,7 @@ void generate_coreir_without_ctrl(CodegenOptions& options,
     map<string, UBuffer>& buffers,
     prog& prg,
     umap* schedmap,
-    schedule_info& hwinfo, 
+    schedule_info& hwinfo,
     string dse_compute_filename) {
 
 
@@ -4672,16 +4672,16 @@ void generate_coreir_without_ctrl(CodegenOptions& options,
   auto c = context;
 
   CoreIR::Module* prg_mod;
- 
+
   prg_mod = generate_coreir_without_ctrl(options, buffers, prg, schedmap, context, hwinfo, dse_compute_filename);
 
-  
+
   auto ns = context->getNamespace("global");
   if(!saveToFile(ns, options.dir + prg.name + ".json", prg_mod)) {
     cout << "Could not save ubuffer coreir" << endl;
     context->die();
   }
-  
+
   map_memory(options, prg_mod, buffers, true);
 
 
@@ -4710,7 +4710,7 @@ void generate_coreir_without_ctrl(CodegenOptions& options,
     cout << "Could not save ubuffer coreir" << endl;
     context->die();
   }
-  
+
   deleteContext(context);
 }
 
