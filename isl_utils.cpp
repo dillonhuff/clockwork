@@ -5345,24 +5345,32 @@ extract_linear_rational_approximation(isl_aff* aff_bound) {
     assert(div_dims == 1);
 
     isl_val* k = isl_aff_get_coefficient_val(aff_bound, isl_dim_in, 0);
+    isl_val* k_div = isl_aff_get_coefficient_val(aff_bound, isl_dim_div, 0);
     isl_val* b = isl_aff_get_constant_val(aff_bound);
+    cout << "aff k = " << str(k) << endl;
+    cout << "aff k_div = " << str(k_div) << endl;
+    cout << "aff b = " << str(b) << endl;
 
     isl_aff* div_expr = isl_aff_get_div(aff_bound, 0);
-    //cout << "Div: " << str(div_expr) << endl;
+    cout << "Div: " << str(div_expr) << endl;
     auto dkb = extract_div_free_linear_rational_approximation(div_expr);
-    //cout << "div k = " << str(dkb.first) << endl;
-    //cout << "div b = " << str(dkb.second) << endl;
+    cout << "div k = " << str(dkb.first) << endl;
+    cout << "div b = " << str(dkb.second) << endl;
 
     //assert(isl_val_is_zero(dkb.second));
-    assert(isl_val_is_zero(k));
 
-    isl_val* final_b = add(dkb.second, b);
-    //cout << "final k = " << str(dkb.first) << endl;
-    //cout << "final b = " << str(final_b) << endl;
+    isl_val* final_b = add(mul(dkb.second, k_div), b);
+    isl_val* final_k = add(mul(dkb.first, k_div), k);
+    cout << "final k = " << str(final_k) << endl;
+    cout << "final b = " << str(final_b) << endl;
+    //assert(isl_val_is_zero(k));
 
-    //assert(false);
-
-    return {dkb.first, final_b};
+    assert(k_div != 0);
+    if (k_div > 0) {
+        return {final_k, final_b};
+    } else {
+        return {final_k, add(one(ctx(final_b)), final_b)};
+    }
   }
 }
 
