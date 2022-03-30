@@ -168,6 +168,58 @@ struct ir_node {
     return end_exclusive - start;
   }
 
+  void add_var_suffix_to_writes(const std::string& suffix, vector<string> & loop_var) {
+    for (auto& b : produce_locs) {
+        //buffer, piecese loc
+        for (auto& p : b.second) {
+            //condition, address expr
+            cout << "orgin expr: " << p.second << endl;
+            auto expr_list = split_at(p.second, ",");
+            vector<string> new_expr_list;
+            for (auto expr: expr_list) {
+              cout << "\t"<< expr << endl;
+              string new_expr = expr;
+              for (auto var: loop_var) {
+                if (contains(expr, var)) {
+                  new_expr = ReplaceString(expr, var, var + suffix);
+                  cout << "\tnew expr: " << new_expr << endl;
+                }
+              }
+              new_expr_list.push_back(new_expr);
+            }
+            p.second = sep_list(new_expr_list, "", "", ",");
+                cout << "new expr list: " << p.second << endl;
+        }
+
+    }
+  }
+
+  void add_var_suffix_to_reads(const std::string& suffix, vector<string> & loop_var) {
+    for (auto& b : consume_locs_pair) {
+        //buffer, piecese loc
+        for (auto& p : b.second) {
+            //condition, address expr
+            cout << "orgin expr: " << p.second << endl;
+            auto expr_list = split_at(p.second, ",");
+            vector<string> new_expr_list;
+            for (auto expr: expr_list) {
+              cout << "\t"<< expr << endl;
+              string new_expr = expr;
+              for (auto var: loop_var) {
+                if (contains(expr, var)) {
+                  new_expr = ReplaceString(expr, var, var + suffix);
+                  cout << "\tnew expr: " << new_expr << endl;
+                }
+              }
+              new_expr_list.push_back(new_expr);
+            }
+            p.second = sep_list(new_expr_list, "", "", ",");
+                cout << "new expr list: " << p.second << endl;
+        }
+
+    }
+  }
+
   void add_prefix_to_writes(const std::string& prefix,
       const std::string& buf) {
     for (auto& b : produce_locs) {
@@ -321,6 +373,12 @@ struct ir_node {
 
   void index_variable_prefetch_cycle(const int v) {
     index_variables_prefetch_cycle = v;
+  }
+
+  void add_index_var_suffix(const std::string & suffix) {
+    for (auto & compute_var : index_variables_needed_by_compute) {
+      compute_var += suffix;
+    }
   }
 
   map<op*, Box> get_domain_boxes() {
@@ -481,6 +539,7 @@ struct ir_node {
     op* sr = container_child(source);
     assert(sr != nullptr);
 
+    cout << sr->name << endl;
     cout << "Before inserting " << name << " we have " << children.size() << " children" << endl;
 
     auto lp = new op();
@@ -1942,6 +2001,9 @@ bool no_violated_buf_write_port_assignments(CodegenOptions& options, schedule_in
 bool schedule_bounds_fit_controller_bitwidth(const int bitwidth, schedule_info& sched, prog& prg);
 
 void adjust_inner_iis(schedule_info& sched, prog& prg);
+
+void loop_split(prog& prg);
+void perfect_loop_split(op*, prog& );
 
 void pad_top_level_ops_with_loops(prog& prg);
 void pad_bottom_level_ops_with_loops(prog& prg);

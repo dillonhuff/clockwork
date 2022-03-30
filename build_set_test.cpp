@@ -11922,6 +11922,13 @@ vector<int> get_alignment_array(vector<int>& a, vector<int>& b) {
 
 
 void playground() {
+    {
+        prog app = camera_pipeline_2x2_unroll();
+        app.pretty_print();
+        loop_split(app);
+        app.pretty_print();
+        assert(false);
+    }
 
     {
         vector<int> a = {3, 40, 3, 40};
@@ -15374,10 +15381,12 @@ void test_glb(bool gen_config_only, bool multi_accessor=false, string dir="aha_g
 
 
   //camera pipeline variant tests
+  test_apps.push_back(camera_pipeline_2x2_unroll());
+  //Still not work need to add a fanin pass support delay row buffer
   //test_apps.push_back(camera_pipeline_extra_buf_glb());
-  test_apps.push_back(camera_pipeline_2x2());
-  test_apps.push_back(camera_pipeline_unrolly());
   test_apps.push_back(camera_pipeline_extra_buf());
+  test_apps.push_back(camera_pipeline_unrolly());
+  test_apps.push_back(camera_pipeline_2x2());
 
   //ISSCC application without unroll
   test_apps.push_back(harris_color());
@@ -15427,9 +15436,9 @@ void test_glb(bool gen_config_only, bool multi_accessor=false, string dir="aha_g
   test_apps.push_back(resnet5_x_unroll());
   test_apps.push_back(resnet5_x_unroll_mic());
 
-  ////Test with non double buffer, not tested with db
-  //test_apps.push_back(resnet_output_stationary_small());
-  //test_apps.push_back(resnet_output_stationary_tiny());
+  //Test with non double buffer, not tested with db
+  test_apps.push_back(resnet_output_stationary_small());
+  test_apps.push_back(resnet_output_stationary_tiny());
 
   for ( auto prg: test_apps) {
     prg.sanity_check();
@@ -19231,6 +19240,8 @@ void garnet_single_port_ram_schedule(CodegenOptions& options, schedule_info& sch
   } else if (is_rate_matchable(prg) || contains(prg.name, "nlmeans")) {
     prg.pretty_print();
 
+    loop_split(prg);
+    prg.sanity_check();
     //TODO: need another function to choose between pad bottom level or top level
     //pad_bottom_level_ops_with_loops(prg);
     pad_to_single_depth(sched, root, prg);
@@ -19350,6 +19361,8 @@ void garnet_single_port_ram_schedule(CodegenOptions& options, schedule_info& sch
     //}
     //assert(false);
 
+    auto op_sched = op_start_times_map(sched, prg);
+    cout << "orginal schedule before relax: " << str(op_sched)  << endl;
     adjust_schedule_forward(sched, prg, 0);
 
     //Add delay for identity stream
@@ -19357,7 +19370,7 @@ void garnet_single_port_ram_schedule(CodegenOptions& options, schedule_info& sch
 
     //Make input as fast as possible
     asap_input_iis(sched, prg);
-    auto op_sched = op_start_times_map(sched, prg);
+    op_sched = op_start_times_map(sched, prg);
     cout << "Final schedule after relax: " << str(op_sched)  << endl;
     op_sched = op_end_times_map(sched, prg);
     cout << "Final end schedule after relax: " << str(op_sched)  << endl;

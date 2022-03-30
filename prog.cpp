@@ -4329,6 +4329,23 @@ op* find_coarse_grained_pipeline_loop(op* lp) {
   return find_coarse_grained_pipeline_loop(lp->children.back());
 }
 
+void find_split_inner_perfect_loop(op* lp_visit, vector<op*> & cgpl_lp,  prog& prg) {
+  //this is the new cgpl loop finding function
+  //we traverse the AST in post order
+  //If a loop with more than one children
+  //Then this is a cgpli loop node.
+  //
+  //Post order visit guarantee that descendant is ahead of its ancestor
+
+  for (auto child: lp_visit->children) {
+    find_split_inner_perfect_loop(child, cgpl_lp, prg);
+  }
+  if ((lp_visit->children).size() > 1 && is_inner_loop(lp_visit)) {
+    if (lp_visit != prg.root)
+      cgpl_lp.push_back(lp_visit);
+  }
+}
+
 void find_coarse_grained_pipeline_loops(op* lp_visit, vector<op*> & cgpl_lp,  prog& prg) {
   //this is the new cgpl loop finding function
   //we traverse the AST in post order
@@ -4916,6 +4933,76 @@ void move_node(op* node_to_be_moved, op* dst, prog& prg) {
   dst->children.push_back(node_to_be_moved);
   node_to_be_moved->parent = dst;
 }
+
+
+void loop_split(prog& prg) {
+  vector<op*> cgpl_lp;
+  find_split_inner_perfect_loop(prg.root, cgpl_lp, prg);
+  for (auto lp: cgpl_lp) {
+      cout << tab(4) << lp->name << endl;
+    perfect_loop_split(lp, prg);
+  }
+}
+
+void remove_loop(op* lp) {
+    auto p = lp->parent;
+    vector<op*> new_children;
+    for (auto c: p->children) {
+        if( c != lp) {
+            new_children.push_back(c);
+        }
+    }
+    p->children = new_children;
+}
+
+bool share_index_var(vector<op*> & children) {
+    std::set<string> shared_vars;
+    for(auto child: children) {
+        for (auto idx: child->index_variables_needed_by_compute) {
+            if (shared_vars.count(idx)) {
+                return true;
+            } else {
+                shared_vars.insert(idx);
+            }
+        }
+    }
+    return false;
+}
+
+//Before we calling this function, we have check lp is a perfect loop nest
+void perfect_loop_split(op* lp, prog& prg) {
+    //lp is the loop level that has multiple children,
+    //we will duplicate the loop level from lp to root and add each child into the splitted loop nest
+    int child_cnt = 0;
+    op* outtest_lp = prg.root->container_child(lp);
+    auto child_list = lp->children;
+
+    //Cannot split loop if they share index variable
+    if (share_index_var(child_list))
+        return;
+    for (op* child: child_list) {
+        //Get surrounding loops from root to leave
+        cout << "\tVisiting child: " << child->name << endl;
+        vector<string> surrounding_loops = surrounding_vars(child, prg);
+        vector<op*> loop_nest = surrounding_vars_ops(child, prg);
+        loop_nest.erase(loop_nest.begin());
+
+        auto new_lp = prg.root->add_loop_before(outtest_lp,
+                outtest_lp->name + "_split_"+str(child_cnt),
+                outtest_lp->start, outtest_lp->end_exclusive);
+        for (auto it = loop_nest.begin()+1; it != loop_nest.end(); it ++) {
+            new_lp = new_lp->add_loop((*it)->name + "_split_" + str(child_cnt),
+                    (*it)->start, (*it)->end_exclusive);
+        }
+        move_node(child, new_lp, prg);
+        child->add_var_suffix_to_writes("_split_" + str(child_cnt), surrounding_loops);
+        child->add_var_suffix_to_reads("_split_" + str(child_cnt), surrounding_loops);
+        child_cnt ++;
+    }
+    cout << "container child: " << prg.root->container_child(lp)->name << endl;
+    remove_loop(outtest_lp);
+}
+
 
 void pad_bottom_level_ops_with_loops(prog& prg) {
   int max_depth = max_loop_depth(prg);
