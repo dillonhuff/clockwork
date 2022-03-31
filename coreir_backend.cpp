@@ -4029,7 +4029,7 @@ bool RomReplaceMetaMapper(Instance* cnst) {
   def->connect(pt->sel("in")->sel("ren"), buf->sel(lake_port_map.at("ren_in_0")));
 
   cout << "Wiring rdata" << endl;
-  def->connect(buf->sel("O4"), pt->sel("in")->sel(lake_port_map.at("data_out_0")));
+  def->connect(buf->sel("O0"), pt->sel("in")->sel("rdata"));
 
   def->removeInstance(cnst);
   inlineInstance(pt);
