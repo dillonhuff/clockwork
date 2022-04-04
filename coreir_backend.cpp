@@ -6295,31 +6295,34 @@ void instantiate_Buffet_shift_register(const std::string& long_name, const int o
     *verilog_collateral_file << tab(1) << "logic [" + str(data_width) + ":0] temp [" + str(out_num ) + ":0];" << endl;
     *verilog_collateral_file << tab(1) << "reg [16:0] counter;" << endl << endl;;
     *verilog_collateral_file << tab(1) << "reg valid_delay;" << endl << endl;;
+    *verilog_collateral_file << tab(1) << "wire full;" << endl << endl;;
     *verilog_collateral_file << tab(1) << "integer i;" << endl << endl;;
 
     *verilog_collateral_file << tab(1) << "always @(posedge clk or negedge rst_n) begin" << endl;
     *verilog_collateral_file << tab(2) << "if(!rst_n) begin" << endl;
     *verilog_collateral_file << tab(3) << "counter <= 16'd0;" << endl;
-    *verilog_collateral_file << tab(2) << "end else if(valid_in && ready_out) begin" << endl;
+    *verilog_collateral_file << tab(2) << "end else if(valid_in && (~(full && (~ready_out)))) begin" << endl;
     *verilog_collateral_file << tab(3) << "temp[0] <= in_data;" << endl;
     *verilog_collateral_file << tab(3) << "for (i = 1; i < " + str(out_num+1) + "; i ++)" << endl;
     *verilog_collateral_file << tab(4) << "temp[i] <=  temp[i - 1];" << endl;
     *verilog_collateral_file << tab(3) << "if (counter == 16'd" + str(row_size) + ")" << endl;
-    *verilog_collateral_file << tab(4) << "counter <= 16'd0;" << endl;
+    *verilog_collateral_file << tab(4) << "counter <= 16'd1;" << endl;
     *verilog_collateral_file << tab(3) << "else" << endl;
     *verilog_collateral_file << tab(4) << "counter <= counter + 1;" << endl;
     *verilog_collateral_file << tab(2) << "end" << endl << endl;
 
     //Add one cycle delay to the shift register
-    *verilog_collateral_file << tab(2) << "valid_out <= valid_delay;" << endl << endl;
+    //*verilog_collateral_file << tab(2) << "valid_out <= valid_delay;" << endl << endl;
 
     *verilog_collateral_file << tab(1) << "end" << endl << endl;
 
     *verilog_collateral_file << tab(1) << "assign out_data = temp;" << endl;
-    *verilog_collateral_file << tab(1) << "assign ready_in = ready_out;" << endl;
+    *verilog_collateral_file << tab(1) << "assign ready_in = full ? ready_out : 1'd1;" << endl;
+    *verilog_collateral_file << tab(1) << "assign full = counter > " << out_num <<";" << endl;
 
     //TODO: should we modify the valid in shift register?
-    *verilog_collateral_file << tab(1) << "assign valid_delay = valid_in && (counter >= "+ str(out_num) + ");" << endl;
+    //*verilog_collateral_file << tab(1) << "assign valid_delay = valid_in && (counter >= "+ str(out_num) + ");" << endl;
+    *verilog_collateral_file << tab(1) << "assign valid_out= full;" << endl;
     //*verilog_collateral_file << tab(1) << "assign valid_out = valid_delay;" << endl;
     *verilog_collateral_file << tab(1) << "endmodule" << endl;
 }
@@ -6558,7 +6561,7 @@ std::set<string> generate_buffet_shift_registers(CodegenOptions& options, CoreIR
     }
     def->connect(sr->sel("ready_out"), andList(def, ready_and_wire));
 
-    instantiate_Buffet_shift_register(sr->getModuleRef()->getLongName(), sr_depth, innermost_dim + sr_depth);
+    instantiate_Buffet_shift_register(sr->getModuleRef()->getLongName(), sr_depth, innermost_dim);
 
     delete_ports.insert(buffet_outpt);
 
