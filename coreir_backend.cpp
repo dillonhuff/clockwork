@@ -1598,7 +1598,8 @@ CoreIR::Instance* generate_ready_join(CoreIR::ModuleDef* def, op* compute_op) {
   return ready_join;
 }
 
-//This flow control assume producer can generate valid data even if the consumer is not ready
+//This flow control assume producer can generate valid data
+//even if the consumer is not ready
 //It just hold the data
 CoreIR::Module* generate_flow_control_v2(CoreIR::Context* context, int in_num, int out_num) {
   auto ns = context->getNamespace("global");
@@ -1641,7 +1642,7 @@ CoreIR::Module* generate_flow_control_v2(CoreIR::Context* context, int in_num, i
     vector<CoreIR::Wireable*> valid_except_me;
     for (int j = 0; j < in_num; j ++) {
       if (j != i) {
-        valid_except_me.push_back(def->sel("self.valid_in_" + str(i)));
+        valid_except_me.push_back(def->sel("self.valid_in_" + str(j)));
       }
     }
     auto other_valid = andList(def, valid_except_me);
@@ -1779,7 +1780,7 @@ void generate_coreir_compute_unit(CodegenOptions& options, bool found_compute,
 
       //Add the ready valid control circuit
       //NOTE: out going bundle get the output of compute unit input of buffer
-      auto ctrl_mod = generate_flow_control(def->getContext(), out_bd_size, in_bd_size);
+      auto ctrl_mod = generate_flow_control_v2(def->getContext(), out_bd_size, in_bd_size);
       auto fork_join_ctrl = def->addInstance(op->name + "_flow_ctrl", ctrl_mod);
 
       int count = 0;
@@ -6579,7 +6580,7 @@ void generate_Buffet_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, pro
   for (auto out_bd: orig_buf.get_out_bundles()) {
     //FIXME: may have problem when we have multiple port
     //need a bundle to pt flow control unit
-    auto ctrl_mod = generate_flow_control(def->getContext(), orig_buf.lanes_in_bundle(out_bd), 1);
+    auto ctrl_mod = generate_flow_control_v2(def->getContext(), orig_buf.lanes_in_bundle(out_bd), 1);
     auto fork_join_ctrl = def->addInstance(out_bd + "_flow_ctrl", ctrl_mod);
     int count = 0;
     for (auto out : orig_buf.port_bundles.at(out_bd)) {
