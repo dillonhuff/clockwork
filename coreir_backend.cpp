@@ -3728,6 +3728,7 @@ bool MemtileReplaceMetaMapper(Instance* cnst) {
       if (routable_ports.count(cnst_port) > 0) {
         cout << "Connecting cnst_port: " << cnst_port << endl;
         def->connect(pt->sel("in")->sel(cnst_port), buf->sel(cnst_port));
+      }
     }
   }
   
