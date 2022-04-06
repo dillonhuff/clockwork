@@ -22,7 +22,7 @@ static std::map<std::string, std::string> lake_port_map =
     {"valid_out_0", "output_width_1_num_0"},
     {"valid_out_1", "output_width_1_num_1"},
     {"stencil_valid", "output_width_1_num_3"},
-    {"addr_in_0", "input_width_16_num_1"},
+    {"addr_in_0", "input_width_16_num_2"},
     {"ren_in_0", "output_width_1_num_0"},
     {"wen_in_0", "output_width_1_num_1"}
   };
