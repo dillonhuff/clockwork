@@ -2405,6 +2405,16 @@ void tighten_address_space() {
       return s;
     }
 
+    isl_union_map* global_in_schedule_with_guard() const {
+      umap* s = isl_union_map_read_from_str(ctx, "{ }");
+      for (auto other : schedule) {
+        if (isIn.at(other.first)) {
+          s = unn(s, (schedule_guard(cpy(other.second), false)));
+        }
+      }
+      return s;
+    }
+
     isl_union_map* producer_map() {
       umap* s = isl_union_map_read_from_str(ctx, "{ }");
       for (auto pt: get_in_ports()) {
@@ -2772,6 +2782,24 @@ void tighten_address_space() {
         stmt2bd[stmt_name].insert(bd);
       }
       return stmt2bd;
+    }
+
+    bool has_update_op() const {
+      map<string, std::set<string> > stmt2bd = get_stmt2bd();
+      for (auto it: stmt2bd) {
+        int in_bd = 0, out_bd = 0;
+        for (string bd: it.second) {
+            if (is_input_bundle(bd)) {
+                in_bd ++;
+            } else if (is_output_bundle(bd)) {
+                out_bd ++;
+            }
+
+        }
+        if (in_bd && out_bd)
+            return true;
+      }
+      return false;
     }
 
     bool is_update_op(string op_name) const {

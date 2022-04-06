@@ -2967,7 +2967,7 @@ CoreIR::Instance* UBuffer::generate_lake_tile_instance(
     cout << "Generate stencil valid signal" << endl;
     generate_stencil_valid_config(options, bank_name);
   }
-  cout << "Add ub node with input_num = " << input_num
+  cout << "Add lake node:" << ub_ins_name << " with input_num = " << input_num
       << ", output_num = " << output_num << endl;
   if (options.pass_through_valid) {
     //modargs["config"] = CoreIR::Const::make(context, config_file);
@@ -3045,6 +3045,7 @@ string memDataoutPort(string mode, int pt_cnt) {
 //Helper function to find the last port in chaining path
 CoreIR::Wireable* findChainDataIn(CoreIR::Wireable* mem_data_out, int port_id) {
     auto last_bank =  mem_data_out->getTopParent();
+    cout << "Last bank in chain data in" << last_bank->toString() << endl;
     auto chain_in = last_bank->sel("chain_data_in_" + str(port_id));
     auto conns = getConnectWires(chain_in);
     if (conns.size() == 0) {
@@ -3106,6 +3107,7 @@ void UBuffer::wire_ubuf_IO(CodegenOptions& options,CoreIR::ModuleDef* def, map<s
             def->connect(buf->sel(memDataoutPort(config_mode, outpt_cnt)), pt2wire.at(outpt));
           } else {
             assert(conns.size() == 1);
+            cout << "pt count: " << outpt_cnt << endl;
             CoreIR::Wireable* last_dangling_chain_data_in =
               findChainDataIn(pick(conns), outpt_cnt);
             def->connect(buf->sel(memDataoutPort(config_mode, outpt_cnt)), last_dangling_chain_data_in);
@@ -6292,14 +6294,15 @@ umap* UBuffer::get_lexmax_events(const std::string& outpt) const {
   //cout << "\tafter: " << str(after) << endl;
 
   src_map = its(src_map, after);
-  //cout << "\tsrc map after its after: " << str(src_map) << endl;
+  cout << "\tsrc map after its after: " << str(src_map) << endl;
   src_map = lexmax(src_map);
-  //cout << "\tsrc map final: " << str(src_map) << endl;
+  cout << "\tsrc map final: " << str(src_map) << endl;
 
-  auto time_to_event = inv(sched);
+  auto time_to_event = inv(global_in_schedule_with_guard());
 
+  auto lmm = lexmax(dot(src_map, sched));
   auto lex_max_events =
-    dot(lexmax(dot(src_map, sched)), time_to_event);
+    its(src_map, ::domain(lmm));
 
   release(time_to_event);
   release(src_map);
@@ -7043,7 +7046,7 @@ void UBuffer::generate_banks(CodegenOptions& options) {
       for (auto outpt : get_out_ports()) {
         cout << "Generating banks for port: " << outpt << " on buffer " << name << endl;
         cout << tab(1) << "access map: " << str(access_map.at(outpt)) << endl;
-        cout << endl << endl << *this << endl << endl;
+        //cout << endl << endl << *this << endl << endl;
         umap* reads_to_sources = get_lexmax_events(outpt);
         cout << tab(1) << "lexmax events: " << str(reads_to_sources) << endl;
         uset* producers_for_outpt = range(reads_to_sources);
@@ -7055,6 +7058,10 @@ void UBuffer::generate_banks(CodegenOptions& options) {
           auto ops_overlap = its(write_ops, producers_for_outpt);
           auto overlap =
             its(range(access_map.at(inpt)), range(access_map.at(outpt)));
+
+          cout << "\tinpt: " << inpt << endl;
+          cout << "\toverlap: " << str(overlap) << endl;
+          cout << "\toverlap ops: " << str(ops_overlap) << endl;
 
           if (!empty(ops_overlap) && !empty(overlap)) {
             stack_bank bank;
@@ -10420,13 +10427,15 @@ bool pad_range_one_vec_dim(map<int, int> & dim2denom,
           //}
           cout << "\tpart size:" <<bank_num << endl;
           cout << "\tg size: " << g.size() << endl;
-          bool is_in_group = buf.is_in_pt(pick(g));
 
-          int ports = is_in_group ?
+          //TODO: fix this, now Consider multiport only for accumulation buffer
+          int ports = 1;
+          if (buf.has_update_op()) {
+            bool is_in_group = buf.is_in_pt(pick(g));
+            ports = is_in_group ?
               options.rtl_options.max_inpt : options.rtl_options.max_outpt;
 
-          if (contains(buf.name, "glb"))
-               ports = 1;
+          }
           if (bank_num * ports < g.size()) {
             //may need banking
             return {};
@@ -10469,13 +10478,16 @@ bool pad_range_one_vec_dim(map<int, int> & dim2denom,
           }
           cout << "\tpart size:" <<parts.size() << endl;
           cout << "\tg size: " << g.size() << endl;
-          bool is_in_group = buf.is_in_pt(pick(g));
 
-          int ports = is_in_group ?
+          //TODO: fix this, now Consider multiport only for accumulation buffer
+          int ports = 1;
+          if (buf.has_update_op()) {
+            bool is_in_group = buf.is_in_pt(pick(g));
+            ports = is_in_group ?
               options.rtl_options.max_inpt : options.rtl_options.max_outpt;
 
-          if (contains(buf.name, "glb"))
-               ports = 1;
+          }
+
           if (parts.size() * ports < g.size()) {
             //may need banking
             return {};
@@ -10490,8 +10502,18 @@ bool pad_range_one_vec_dim(map<int, int> & dim2denom,
 
         cout << "FOUND EMBARASSING PARTITION OF "
           << buf.name << " in " << dims.size() << " dimensions..." << endl;
+        int total_banks = 1;
         for (auto d : dims) {
           cout << tab(1) << d << endl;
+          total_banks *= d;
+        }
+        cout << "Total Banks: " << total_banks << endl;
+
+        //Final check all port can fit
+        if (buf.get_all_ports().size() >
+                total_banks * (options.rtl_options.max_inpt + options.rtl_options.max_outpt)) {
+            cout << "Cannot merge port although they did not overlap" << endl;
+            return {};
         }
 
         isl_multi_aff* bank_func = embarassing_partition_function(buf, dims);
