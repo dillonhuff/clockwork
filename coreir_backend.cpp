@@ -3082,6 +3082,30 @@ class SubstructGLBLatency: public CoreIR::InstanceGraphPass {
   }
 };
 
+class RemoveFlush: public CoreIR::InstancePass {
+    public:
+RemoveFlush(): InstancePass(
+            "removeflush",
+            "Remove flush wiring for garnet mapping"
+            ) {}
+bool runOnInstance(Instance* inst) {
+    //define the pass here
+    if (inst->getModuleRef()->isGenerated()) {
+      if (inst->getModuleRef()->getGenerator()->getName() == "Mem_amber" &&
+              inst->canSel("flush")) {
+         auto def= inst->getContainer();
+         def->disconnect(inst->sel("flush"));
+         return true;
+      } else {
+        return false;
+      }
+    } else {
+      return false;
+    }
+}
+
+};
+
 class ReplaceGLBValid: public CoreIR::InstancePass {
     public:
     json valid_config;
@@ -4192,6 +4216,8 @@ void map_memory(CodegenOptions& options, Module* top, map<string, UBuffer> & buf
   //Change the stencil valid signal to cgra to glb
   c->addPass(new ReplaceGLBValid(glb_pass));
   c->runPasses({"replaceglbvalid"});
+  c->addPass(new RemoveFlush());
+  c->runPasses({"removeflush"});
   if (garnet_syntax_trans) {
     c->addPass(new SubstructGLBLatency(glb_pass->latency));
     c->runPasses({"substractglblatency"});
@@ -4299,6 +4325,8 @@ void garnet_map_module(CodegenOptions& options, Module* top, map<string, UBuffer
   //Change the stencil valid signal to cgra to glb
   c->addPass(new ReplaceGLBValid(glb_pass));
   c->runPasses({"replaceglbvalid"});
+  c->addPass(new RemoveFlush());
+  c->runPasses({"removeflush"});
   if (garnet_syntax_trans) {
 
     c->addPass(new MapperPasses::MemInitCopy);
