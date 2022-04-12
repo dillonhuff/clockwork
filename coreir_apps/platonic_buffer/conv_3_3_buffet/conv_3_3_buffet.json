@@ -1,4 +1,4 @@
-{"top":"global.conv_1_2",
+{"top":"global.conv_3_3_buffet",
 "namespaces":{
   "global":{
     "modules":{
@@ -28,7 +28,7 @@
           "coeff_1_U122":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
-            "modargs":{"value":[["BitVector",16],"16'h003f"]}
+            "modargs":{"value":[["BitVector",16],"16'h003e"]}
           },
           "coeff_2_U124":{
             "genref":"coreir.const",
@@ -162,7 +162,7 @@
           "coeff_1_U137":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
-            "modargs":{"value":[["BitVector",16],"16'h003f"]}
+            "modargs":{"value":[["BitVector",16],"16'h003e"]}
           },
           "coeff_2_U139":{
             "genref":"coreir.const",
@@ -203,138 +203,406 @@
           ["self.d.2","mul_d2__U140.in1"]
         ]
       },
-      "aff__U152":{
+      "aff__U229":{
         "type":["Record",[
           ["out",["Array",16,"Bit"]],
           ["d",["Array",3,["Array",16,"BitIn"]]]
         ]],
         "instances":{
-          "add_all__U160":{
+          "add_all__U237":{
             "genref":"coreir.add",
             "genargs":{"width":["Int",16]}
           },
-          "add_all__U161":{
+          "add_all__U238":{
             "genref":"coreir.add",
             "genargs":{"width":["Int",16]}
           },
-          "add_all__U162":{
+          "add_all__U239":{
             "genref":"coreir.add",
             "genargs":{"width":["Int",16]}
           },
-          "coeff_0_U153":{
+          "coeff_0_U230":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0100"]}
+          },
+          "coeff_1_U232":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0040"]}
+          },
+          "coeff_2_U234":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0001"]}
+          },
+          "const_term_U236":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0000"]}
+          },
+          "mul_d0__U231":{
+            "genref":"coreir.mul",
+            "genargs":{"width":["Int",16]}
+          },
+          "mul_d1__U233":{
+            "genref":"coreir.mul",
+            "genargs":{"width":["Int",16]}
+          },
+          "mul_d2__U235":{
+            "genref":"coreir.mul",
+            "genargs":{"width":["Int",16]}
+          }
+        },
+        "connections":[
+          ["mul_d0__U231.out","add_all__U237.in0"],
+          ["mul_d1__U233.out","add_all__U237.in1"],
+          ["add_all__U238.in0","add_all__U237.out"],
+          ["mul_d2__U235.out","add_all__U238.in1"],
+          ["add_all__U239.in0","add_all__U238.out"],
+          ["const_term_U236.out","add_all__U239.in1"],
+          ["self.out","add_all__U239.out"],
+          ["mul_d0__U231.in0","coeff_0_U230.out"],
+          ["mul_d1__U233.in0","coeff_1_U232.out"],
+          ["mul_d2__U235.in0","coeff_2_U234.out"],
+          ["self.d.0","mul_d0__U231.in1"],
+          ["self.d.1","mul_d1__U233.in1"],
+          ["self.d.2","mul_d2__U235.in1"]
+        ]
+      },
+      "aff__U248":{
+        "type":["Record",[
+          ["out",["Array",16,"Bit"]],
+          ["d",["Array",3,["Array",16,"BitIn"]]]
+        ]],
+        "instances":{
+          "add_all__U256":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
+          },
+          "add_all__U257":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
+          },
+          "add_all__U258":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
+          },
+          "coeff_0_U249":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0000"]}
+          },
+          "coeff_1_U251":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0040"]}
+          },
+          "coeff_2_U253":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0001"]}
+          },
+          "const_term_U255":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0040"]}
+          },
+          "mul_d0__U250":{
+            "genref":"coreir.mul",
+            "genargs":{"width":["Int",16]}
+          },
+          "mul_d1__U252":{
+            "genref":"coreir.mul",
+            "genargs":{"width":["Int",16]}
+          },
+          "mul_d2__U254":{
+            "genref":"coreir.mul",
+            "genargs":{"width":["Int",16]}
+          }
+        },
+        "connections":[
+          ["mul_d0__U250.out","add_all__U256.in0"],
+          ["mul_d1__U252.out","add_all__U256.in1"],
+          ["add_all__U257.in0","add_all__U256.out"],
+          ["mul_d2__U254.out","add_all__U257.in1"],
+          ["add_all__U258.in0","add_all__U257.out"],
+          ["const_term_U255.out","add_all__U258.in1"],
+          ["self.out","add_all__U258.out"],
+          ["mul_d0__U250.in0","coeff_0_U249.out"],
+          ["mul_d1__U252.in0","coeff_1_U251.out"],
+          ["mul_d2__U254.in0","coeff_2_U253.out"],
+          ["self.d.0","mul_d0__U250.in1"],
+          ["self.d.1","mul_d1__U252.in1"],
+          ["self.d.2","mul_d2__U254.in1"]
+        ]
+      },
+      "aff__U265":{
+        "type":["Record",[
+          ["out",["Array",16,"Bit"]],
+          ["d",["Array",3,["Array",16,"BitIn"]]]
+        ]],
+        "instances":{
+          "add_all__U273":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
+          },
+          "add_all__U274":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
+          },
+          "add_all__U275":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
+          },
+          "coeff_0_U266":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0100"]}
+          },
+          "coeff_1_U268":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0040"]}
+          },
+          "coeff_2_U270":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0001"]}
+          },
+          "const_term_U272":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0000"]}
+          },
+          "mul_d0__U267":{
+            "genref":"coreir.mul",
+            "genargs":{"width":["Int",16]}
+          },
+          "mul_d1__U269":{
+            "genref":"coreir.mul",
+            "genargs":{"width":["Int",16]}
+          },
+          "mul_d2__U271":{
+            "genref":"coreir.mul",
+            "genargs":{"width":["Int",16]}
+          }
+        },
+        "connections":[
+          ["mul_d0__U267.out","add_all__U273.in0"],
+          ["mul_d1__U269.out","add_all__U273.in1"],
+          ["add_all__U274.in0","add_all__U273.out"],
+          ["mul_d2__U271.out","add_all__U274.in1"],
+          ["add_all__U275.in0","add_all__U274.out"],
+          ["const_term_U272.out","add_all__U275.in1"],
+          ["self.out","add_all__U275.out"],
+          ["mul_d0__U267.in0","coeff_0_U266.out"],
+          ["mul_d1__U269.in0","coeff_1_U268.out"],
+          ["mul_d2__U271.in0","coeff_2_U270.out"],
+          ["self.d.0","mul_d0__U267.in1"],
+          ["self.d.1","mul_d1__U269.in1"],
+          ["self.d.2","mul_d2__U271.in1"]
+        ]
+      },
+      "aff__U284":{
+        "type":["Record",[
+          ["out",["Array",16,"Bit"]],
+          ["d",["Array",3,["Array",16,"BitIn"]]]
+        ]],
+        "instances":{
+          "add_all__U292":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
+          },
+          "add_all__U293":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
+          },
+          "add_all__U294":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
+          },
+          "coeff_0_U285":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0000"]}
+          },
+          "coeff_1_U287":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0040"]}
+          },
+          "coeff_2_U289":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0001"]}
+          },
+          "const_term_U291":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
             "modargs":{"value":[["BitVector",16],"16'h0080"]}
           },
-          "coeff_1_U155":{
-            "genref":"coreir.const",
-            "genargs":{"width":["Int",16]},
-            "modargs":{"value":[["BitVector",16],"16'h0040"]}
-          },
-          "coeff_2_U157":{
-            "genref":"coreir.const",
-            "genargs":{"width":["Int",16]},
-            "modargs":{"value":[["BitVector",16],"16'h0001"]}
-          },
-          "const_term_U159":{
-            "genref":"coreir.const",
-            "genargs":{"width":["Int",16]},
-            "modargs":{"value":[["BitVector",16],"16'h0000"]}
-          },
-          "mul_d0__U154":{
+          "mul_d0__U286":{
             "genref":"coreir.mul",
             "genargs":{"width":["Int",16]}
           },
-          "mul_d1__U156":{
+          "mul_d1__U288":{
             "genref":"coreir.mul",
             "genargs":{"width":["Int",16]}
           },
-          "mul_d2__U158":{
+          "mul_d2__U290":{
             "genref":"coreir.mul",
             "genargs":{"width":["Int",16]}
           }
         },
         "connections":[
-          ["mul_d0__U154.out","add_all__U160.in0"],
-          ["mul_d1__U156.out","add_all__U160.in1"],
-          ["add_all__U161.in0","add_all__U160.out"],
-          ["mul_d2__U158.out","add_all__U161.in1"],
-          ["add_all__U162.in0","add_all__U161.out"],
-          ["const_term_U159.out","add_all__U162.in1"],
-          ["self.out","add_all__U162.out"],
-          ["mul_d0__U154.in0","coeff_0_U153.out"],
-          ["mul_d1__U156.in0","coeff_1_U155.out"],
-          ["mul_d2__U158.in0","coeff_2_U157.out"],
-          ["self.d.0","mul_d0__U154.in1"],
-          ["self.d.1","mul_d1__U156.in1"],
-          ["self.d.2","mul_d2__U158.in1"]
+          ["mul_d0__U286.out","add_all__U292.in0"],
+          ["mul_d1__U288.out","add_all__U292.in1"],
+          ["add_all__U293.in0","add_all__U292.out"],
+          ["mul_d2__U290.out","add_all__U293.in1"],
+          ["add_all__U294.in0","add_all__U293.out"],
+          ["const_term_U291.out","add_all__U294.in1"],
+          ["self.out","add_all__U294.out"],
+          ["mul_d0__U286.in0","coeff_0_U285.out"],
+          ["mul_d1__U288.in0","coeff_1_U287.out"],
+          ["mul_d2__U290.in0","coeff_2_U289.out"],
+          ["self.d.0","mul_d0__U286.in1"],
+          ["self.d.1","mul_d1__U288.in1"],
+          ["self.d.2","mul_d2__U290.in1"]
         ]
       },
-      "aff__U171":{
+      "aff__U301":{
         "type":["Record",[
           ["out",["Array",16,"Bit"]],
           ["d",["Array",3,["Array",16,"BitIn"]]]
         ]],
         "instances":{
-          "add_all__U179":{
+          "add_all__U309":{
             "genref":"coreir.add",
             "genargs":{"width":["Int",16]}
           },
-          "add_all__U180":{
+          "add_all__U310":{
             "genref":"coreir.add",
             "genargs":{"width":["Int",16]}
           },
-          "add_all__U181":{
+          "add_all__U311":{
             "genref":"coreir.add",
             "genargs":{"width":["Int",16]}
           },
-          "coeff_0_U172":{
+          "coeff_0_U302":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
-            "modargs":{"value":[["BitVector",16],"16'h0000"]}
+            "modargs":{"value":[["BitVector",16],"16'h0100"]}
           },
-          "coeff_1_U174":{
+          "coeff_1_U304":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
             "modargs":{"value":[["BitVector",16],"16'h0040"]}
           },
-          "coeff_2_U176":{
+          "coeff_2_U306":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
             "modargs":{"value":[["BitVector",16],"16'h0001"]}
           },
-          "const_term_U178":{
+          "const_term_U308":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
             "modargs":{"value":[["BitVector",16],"16'h0000"]}
           },
-          "mul_d0__U173":{
+          "mul_d0__U303":{
             "genref":"coreir.mul",
             "genargs":{"width":["Int",16]}
           },
-          "mul_d1__U175":{
+          "mul_d1__U305":{
             "genref":"coreir.mul",
             "genargs":{"width":["Int",16]}
           },
-          "mul_d2__U177":{
+          "mul_d2__U307":{
             "genref":"coreir.mul",
             "genargs":{"width":["Int",16]}
           }
         },
         "connections":[
-          ["mul_d0__U173.out","add_all__U179.in0"],
-          ["mul_d1__U175.out","add_all__U179.in1"],
-          ["add_all__U180.in0","add_all__U179.out"],
-          ["mul_d2__U177.out","add_all__U180.in1"],
-          ["add_all__U181.in0","add_all__U180.out"],
-          ["const_term_U178.out","add_all__U181.in1"],
-          ["self.out","add_all__U181.out"],
-          ["mul_d0__U173.in0","coeff_0_U172.out"],
-          ["mul_d1__U175.in0","coeff_1_U174.out"],
-          ["mul_d2__U177.in0","coeff_2_U176.out"],
-          ["self.d.0","mul_d0__U173.in1"],
-          ["self.d.1","mul_d1__U175.in1"],
-          ["self.d.2","mul_d2__U177.in1"]
+          ["mul_d0__U303.out","add_all__U309.in0"],
+          ["mul_d1__U305.out","add_all__U309.in1"],
+          ["add_all__U310.in0","add_all__U309.out"],
+          ["mul_d2__U307.out","add_all__U310.in1"],
+          ["add_all__U311.in0","add_all__U310.out"],
+          ["const_term_U308.out","add_all__U311.in1"],
+          ["self.out","add_all__U311.out"],
+          ["mul_d0__U303.in0","coeff_0_U302.out"],
+          ["mul_d1__U305.in0","coeff_1_U304.out"],
+          ["mul_d2__U307.in0","coeff_2_U306.out"],
+          ["self.d.0","mul_d0__U303.in1"],
+          ["self.d.1","mul_d1__U305.in1"],
+          ["self.d.2","mul_d2__U307.in1"]
+        ]
+      },
+      "aff__U320":{
+        "type":["Record",[
+          ["out",["Array",16,"Bit"]],
+          ["d",["Array",3,["Array",16,"BitIn"]]]
+        ]],
+        "instances":{
+          "add_all__U328":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
+          },
+          "add_all__U329":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
+          },
+          "add_all__U330":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
+          },
+          "coeff_0_U321":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0000"]}
+          },
+          "coeff_1_U323":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0040"]}
+          },
+          "coeff_2_U325":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0001"]}
+          },
+          "const_term_U327":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0000"]}
+          },
+          "mul_d0__U322":{
+            "genref":"coreir.mul",
+            "genargs":{"width":["Int",16]}
+          },
+          "mul_d1__U324":{
+            "genref":"coreir.mul",
+            "genargs":{"width":["Int",16]}
+          },
+          "mul_d2__U326":{
+            "genref":"coreir.mul",
+            "genargs":{"width":["Int",16]}
+          }
+        },
+        "connections":[
+          ["mul_d0__U322.out","add_all__U328.in0"],
+          ["mul_d1__U324.out","add_all__U328.in1"],
+          ["add_all__U329.in0","add_all__U328.out"],
+          ["mul_d2__U326.out","add_all__U329.in1"],
+          ["add_all__U330.in0","add_all__U329.out"],
+          ["const_term_U327.out","add_all__U330.in1"],
+          ["self.out","add_all__U330.out"],
+          ["mul_d0__U322.in0","coeff_0_U321.out"],
+          ["mul_d1__U324.in0","coeff_1_U323.out"],
+          ["mul_d2__U326.in0","coeff_2_U325.out"],
+          ["self.d.0","mul_d0__U322.in1"],
+          ["self.d.1","mul_d1__U324.in1"],
+          ["self.d.2","mul_d2__U326.in1"]
         ]
       },
       "aff__U39":{
@@ -373,7 +641,7 @@
           "const_term_U46":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
-            "modargs":{"value":[["BitVector",16],"16'h0003"]}
+            "modargs":{"value":[["BitVector",16],"16'h0084"]}
           },
           "mul_d0__U41":{
             "genref":"coreir.mul",
@@ -440,7 +708,7 @@
           "const_term_U72":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
-            "modargs":{"value":[["BitVector",16],"16'h0004"]}
+            "modargs":{"value":[["BitVector",16],"16'h0085"]}
           },
           "mul_d0__U67":{
             "genref":"coreir.mul",
@@ -507,7 +775,7 @@
           "const_term_U98":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
-            "modargs":{"value":[["BitVector",16],"16'h0005"]}
+            "modargs":{"value":[["BitVector",16],"16'h0086"]}
           },
           "mul_d0__U93":{
             "genref":"coreir.mul",
@@ -625,7 +893,7 @@
           "d_1_max":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
-            "modargs":{"value":[["BitVector",16],"16'h0001"]}
+            "modargs":{"value":[["BitVector",16],"16'h0003"]}
           },
           "d_1_min":{
             "genref":"coreir.const",
@@ -763,7 +1031,7 @@
           ["self.ready","readyInvert.in"]
         ]
       },
-      "affine_controller__U151":{
+      "affine_controller__U228":{
         "type":["Record",[
           ["clk",["Named","coreir.clkIn"]],
           ["valid","Bit"],
@@ -771,23 +1039,23 @@
           ["ready","BitIn"]
         ]],
         "instances":{
-          "_U163":{
+          "_U240":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
             "modargs":{"value":[["BitVector",16],"16'h0001"]}
           },
-          "_U164":{
+          "_U241":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
             "modargs":{"value":[["BitVector",16],"16'h0000"]}
           },
           "affine_func":{
-            "modref":"global.aff__U152"
+            "modref":"global.aff__U229"
           },
-          "and_all__U165":{
+          "and_all__U242":{
             "modref":"corebit.and"
           },
-          "and_all__U166":{
+          "and_all__U243":{
             "modref":"corebit.and"
           },
           "cmp_time":{
@@ -799,10 +1067,10 @@
             "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
             "modargs":{"init":[["BitVector",16],"16'h0000"]}
           },
-          "d_0_am__U167":{
+          "d_0_am__U244":{
             "modref":"corebit.and"
           },
-          "d_0_am__U168":{
+          "d_0_am__U245":{
             "modref":"corebit.and"
           },
           "d_0_at_max":{
@@ -836,7 +1104,7 @@
             "genargs":{"has_clr":["Bool",false], "has_en":["Bool",true], "has_rst":["Bool",false], "width":["Int",16]},
             "modargs":{"init":[["BitVector",16],"16'h0000"]}
           },
-          "d_1_am__U169":{
+          "d_1_am__U246":{
             "modref":"corebit.and"
           },
           "d_1_at_max":{
@@ -850,7 +1118,7 @@
           "d_1_max":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
-            "modargs":{"value":[["BitVector",16],"16'h0001"]}
+            "modargs":{"value":[["BitVector",16],"16'h0003"]}
           },
           "d_1_min":{
             "genref":"coreir.const",
@@ -922,34 +1190,34 @@
           }
         },
         "connections":[
-          ["d_0_inc.in1","_U163.out"],
-          ["d_1_inc.in1","_U163.out"],
-          ["d_2_inc.in1","_U163.out"],
-          ["inc_time_value.in0","_U163.out"],
-          ["cmp_time.in1","_U164.out"],
-          ["inc_time_value.in1","_U164.out"],
+          ["d_0_inc.in1","_U240.out"],
+          ["d_1_inc.in1","_U240.out"],
+          ["d_2_inc.in1","_U240.out"],
+          ["inc_time_value.in0","_U240.out"],
+          ["cmp_time.in1","_U241.out"],
+          ["inc_time_value.in1","_U241.out"],
           ["d_0_reg.out","affine_func.d.0"],
           ["d_1_reg.out","affine_func.d.1"],
           ["d_2_reg.out","affine_func.d.2"],
           ["time_diff.in0","affine_func.out"],
-          ["cmp_time.out","and_all__U165.in0"],
-          ["readyInvert.out","and_all__U165.in1"],
-          ["inc_time_value.sel","and_all__U165.out"],
-          ["cmp_time.out","and_all__U166.in0"],
-          ["self.ready","and_all__U166.in1"],
-          ["d_0_reg.en","and_all__U166.out"],
-          ["d_1_reg.en","and_all__U166.out"],
-          ["d_2_reg.en","and_all__U166.out"],
-          ["self.valid","and_all__U166.out"],
+          ["cmp_time.out","and_all__U242.in0"],
+          ["readyInvert.out","and_all__U242.in1"],
+          ["inc_time_value.sel","and_all__U242.out"],
+          ["cmp_time.out","and_all__U243.in0"],
+          ["self.ready","and_all__U243.in1"],
+          ["d_0_reg.en","and_all__U243.out"],
+          ["d_1_reg.en","and_all__U243.out"],
+          ["d_2_reg.en","and_all__U243.out"],
+          ["self.valid","and_all__U243.out"],
           ["time_diff.out","cmp_time.in0"],
           ["inc_time.out","cycle_time.in"],
           ["inc_time.in0","cycle_time.out"],
           ["time_diff.in1","cycle_time.out"],
-          ["true.out","d_0_am__U167.in0"],
-          ["d_1_at_max.out","d_0_am__U167.in1"],
-          ["d_0_am__U168.in0","d_0_am__U167.out"],
-          ["d_2_at_max.out","d_0_am__U168.in1"],
-          ["d_0_next_value.sel","d_0_am__U168.out"],
+          ["true.out","d_0_am__U244.in0"],
+          ["d_1_at_max.out","d_0_am__U244.in1"],
+          ["d_0_am__U245.in0","d_0_am__U244.out"],
+          ["d_2_at_max.out","d_0_am__U245.in1"],
+          ["d_0_next_value.sel","d_0_am__U245.out"],
           ["d_0_reg.out","d_0_at_max.in0"],
           ["d_0_max.out","d_0_at_max.in1"],
           ["d_0_next_value_at_max.sel","d_0_at_max.out"],
@@ -960,9 +1228,459 @@
           ["d_0_next_value_at_max.out","d_0_next_value.in1"],
           ["d_0_reg.in","d_0_next_value.out"],
           ["self.d.0","d_0_reg.out"],
-          ["true.out","d_1_am__U169.in0"],
-          ["d_2_at_max.out","d_1_am__U169.in1"],
-          ["d_1_next_value.sel","d_1_am__U169.out"],
+          ["true.out","d_1_am__U246.in0"],
+          ["d_2_at_max.out","d_1_am__U246.in1"],
+          ["d_1_next_value.sel","d_1_am__U246.out"],
+          ["d_1_reg.out","d_1_at_max.in0"],
+          ["d_1_max.out","d_1_at_max.in1"],
+          ["d_1_next_value_at_max.sel","d_1_at_max.out"],
+          ["d_1_reg.out","d_1_inc.in0"],
+          ["d_1_next_value_at_max.in0","d_1_inc.out"],
+          ["d_1_next_value_at_max.in1","d_1_min.out"],
+          ["d_1_reg.out","d_1_next_value.in0"],
+          ["d_1_next_value_at_max.out","d_1_next_value.in1"],
+          ["d_1_reg.in","d_1_next_value.out"],
+          ["self.d.1","d_1_reg.out"],
+          ["d_2_reg.out","d_2_at_max.in0"],
+          ["d_2_max.out","d_2_at_max.in1"],
+          ["d_2_next_value_at_max.sel","d_2_at_max.out"],
+          ["d_2_reg.out","d_2_inc.in0"],
+          ["d_2_next_value_at_max.in0","d_2_inc.out"],
+          ["d_2_next_value_at_max.in1","d_2_min.out"],
+          ["d_2_reg.out","d_2_next_value.in0"],
+          ["d_2_next_value_at_max.out","d_2_next_value.in1"],
+          ["d_2_reg.in","d_2_next_value.out"],
+          ["true.out","d_2_next_value.sel"],
+          ["self.d.2","d_2_reg.out"],
+          ["inc_time_value.out","inc_time.in1"],
+          ["self.ready","readyInvert.in"]
+        ]
+      },
+      "affine_controller__U264":{
+        "type":["Record",[
+          ["clk",["Named","coreir.clkIn"]],
+          ["valid","Bit"],
+          ["d",["Array",3,["Array",16,"Bit"]]],
+          ["ready","BitIn"]
+        ]],
+        "instances":{
+          "_U276":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0001"]}
+          },
+          "_U277":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0000"]}
+          },
+          "affine_func":{
+            "modref":"global.aff__U265"
+          },
+          "and_all__U278":{
+            "modref":"corebit.and"
+          },
+          "and_all__U279":{
+            "modref":"corebit.and"
+          },
+          "cmp_time":{
+            "genref":"coreir.eq",
+            "genargs":{"width":["Int",16]}
+          },
+          "cycle_time":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "d_0_am__U280":{
+            "modref":"corebit.and"
+          },
+          "d_0_am__U281":{
+            "modref":"corebit.and"
+          },
+          "d_0_at_max":{
+            "genref":"coreir.eq",
+            "genargs":{"width":["Int",16]}
+          },
+          "d_0_inc":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
+          },
+          "d_0_max":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0000"]}
+          },
+          "d_0_min":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0000"]}
+          },
+          "d_0_next_value":{
+            "genref":"coreir.mux",
+            "genargs":{"width":["Int",16]}
+          },
+          "d_0_next_value_at_max":{
+            "genref":"coreir.mux",
+            "genargs":{"width":["Int",16]}
+          },
+          "d_0_reg":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",true], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "d_1_am__U282":{
+            "modref":"corebit.and"
+          },
+          "d_1_at_max":{
+            "genref":"coreir.eq",
+            "genargs":{"width":["Int",16]}
+          },
+          "d_1_inc":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
+          },
+          "d_1_max":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0003"]}
+          },
+          "d_1_min":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0000"]}
+          },
+          "d_1_next_value":{
+            "genref":"coreir.mux",
+            "genargs":{"width":["Int",16]}
+          },
+          "d_1_next_value_at_max":{
+            "genref":"coreir.mux",
+            "genargs":{"width":["Int",16]}
+          },
+          "d_1_reg":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",true], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "d_2_at_max":{
+            "genref":"coreir.eq",
+            "genargs":{"width":["Int",16]}
+          },
+          "d_2_inc":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
+          },
+          "d_2_max":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h003f"]}
+          },
+          "d_2_min":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0000"]}
+          },
+          "d_2_next_value":{
+            "genref":"coreir.mux",
+            "genargs":{"width":["Int",16]}
+          },
+          "d_2_next_value_at_max":{
+            "genref":"coreir.mux",
+            "genargs":{"width":["Int",16]}
+          },
+          "d_2_reg":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",true], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "inc_time":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
+          },
+          "inc_time_value":{
+            "genref":"coreir.mux",
+            "genargs":{"width":["Int",16]}
+          },
+          "readyInvert":{
+            "modref":"corebit.not"
+          },
+          "time_diff":{
+            "genref":"coreir.sub",
+            "genargs":{"width":["Int",16]}
+          },
+          "true":{
+            "modref":"corebit.const",
+            "modargs":{"value":["Bool",true]}
+          }
+        },
+        "connections":[
+          ["d_0_inc.in1","_U276.out"],
+          ["d_1_inc.in1","_U276.out"],
+          ["d_2_inc.in1","_U276.out"],
+          ["inc_time_value.in0","_U276.out"],
+          ["cmp_time.in1","_U277.out"],
+          ["inc_time_value.in1","_U277.out"],
+          ["d_0_reg.out","affine_func.d.0"],
+          ["d_1_reg.out","affine_func.d.1"],
+          ["d_2_reg.out","affine_func.d.2"],
+          ["time_diff.in0","affine_func.out"],
+          ["cmp_time.out","and_all__U278.in0"],
+          ["readyInvert.out","and_all__U278.in1"],
+          ["inc_time_value.sel","and_all__U278.out"],
+          ["cmp_time.out","and_all__U279.in0"],
+          ["self.ready","and_all__U279.in1"],
+          ["d_0_reg.en","and_all__U279.out"],
+          ["d_1_reg.en","and_all__U279.out"],
+          ["d_2_reg.en","and_all__U279.out"],
+          ["self.valid","and_all__U279.out"],
+          ["time_diff.out","cmp_time.in0"],
+          ["inc_time.out","cycle_time.in"],
+          ["inc_time.in0","cycle_time.out"],
+          ["time_diff.in1","cycle_time.out"],
+          ["true.out","d_0_am__U280.in0"],
+          ["d_1_at_max.out","d_0_am__U280.in1"],
+          ["d_0_am__U281.in0","d_0_am__U280.out"],
+          ["d_2_at_max.out","d_0_am__U281.in1"],
+          ["d_0_next_value.sel","d_0_am__U281.out"],
+          ["d_0_reg.out","d_0_at_max.in0"],
+          ["d_0_max.out","d_0_at_max.in1"],
+          ["d_0_next_value_at_max.sel","d_0_at_max.out"],
+          ["d_0_reg.out","d_0_inc.in0"],
+          ["d_0_next_value_at_max.in0","d_0_inc.out"],
+          ["d_0_next_value_at_max.in1","d_0_min.out"],
+          ["d_0_reg.out","d_0_next_value.in0"],
+          ["d_0_next_value_at_max.out","d_0_next_value.in1"],
+          ["d_0_reg.in","d_0_next_value.out"],
+          ["self.d.0","d_0_reg.out"],
+          ["true.out","d_1_am__U282.in0"],
+          ["d_2_at_max.out","d_1_am__U282.in1"],
+          ["d_1_next_value.sel","d_1_am__U282.out"],
+          ["d_1_reg.out","d_1_at_max.in0"],
+          ["d_1_max.out","d_1_at_max.in1"],
+          ["d_1_next_value_at_max.sel","d_1_at_max.out"],
+          ["d_1_reg.out","d_1_inc.in0"],
+          ["d_1_next_value_at_max.in0","d_1_inc.out"],
+          ["d_1_next_value_at_max.in1","d_1_min.out"],
+          ["d_1_reg.out","d_1_next_value.in0"],
+          ["d_1_next_value_at_max.out","d_1_next_value.in1"],
+          ["d_1_reg.in","d_1_next_value.out"],
+          ["self.d.1","d_1_reg.out"],
+          ["d_2_reg.out","d_2_at_max.in0"],
+          ["d_2_max.out","d_2_at_max.in1"],
+          ["d_2_next_value_at_max.sel","d_2_at_max.out"],
+          ["d_2_reg.out","d_2_inc.in0"],
+          ["d_2_next_value_at_max.in0","d_2_inc.out"],
+          ["d_2_next_value_at_max.in1","d_2_min.out"],
+          ["d_2_reg.out","d_2_next_value.in0"],
+          ["d_2_next_value_at_max.out","d_2_next_value.in1"],
+          ["d_2_reg.in","d_2_next_value.out"],
+          ["true.out","d_2_next_value.sel"],
+          ["self.d.2","d_2_reg.out"],
+          ["inc_time_value.out","inc_time.in1"],
+          ["self.ready","readyInvert.in"]
+        ]
+      },
+      "affine_controller__U300":{
+        "type":["Record",[
+          ["clk",["Named","coreir.clkIn"]],
+          ["valid","Bit"],
+          ["d",["Array",3,["Array",16,"Bit"]]],
+          ["ready","BitIn"]
+        ]],
+        "instances":{
+          "_U312":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0001"]}
+          },
+          "_U313":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0000"]}
+          },
+          "affine_func":{
+            "modref":"global.aff__U301"
+          },
+          "and_all__U314":{
+            "modref":"corebit.and"
+          },
+          "and_all__U315":{
+            "modref":"corebit.and"
+          },
+          "cmp_time":{
+            "genref":"coreir.eq",
+            "genargs":{"width":["Int",16]}
+          },
+          "cycle_time":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "d_0_am__U316":{
+            "modref":"corebit.and"
+          },
+          "d_0_am__U317":{
+            "modref":"corebit.and"
+          },
+          "d_0_at_max":{
+            "genref":"coreir.eq",
+            "genargs":{"width":["Int",16]}
+          },
+          "d_0_inc":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
+          },
+          "d_0_max":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0000"]}
+          },
+          "d_0_min":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0000"]}
+          },
+          "d_0_next_value":{
+            "genref":"coreir.mux",
+            "genargs":{"width":["Int",16]}
+          },
+          "d_0_next_value_at_max":{
+            "genref":"coreir.mux",
+            "genargs":{"width":["Int",16]}
+          },
+          "d_0_reg":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",true], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "d_1_am__U318":{
+            "modref":"corebit.and"
+          },
+          "d_1_at_max":{
+            "genref":"coreir.eq",
+            "genargs":{"width":["Int",16]}
+          },
+          "d_1_inc":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
+          },
+          "d_1_max":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0003"]}
+          },
+          "d_1_min":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0000"]}
+          },
+          "d_1_next_value":{
+            "genref":"coreir.mux",
+            "genargs":{"width":["Int",16]}
+          },
+          "d_1_next_value_at_max":{
+            "genref":"coreir.mux",
+            "genargs":{"width":["Int",16]}
+          },
+          "d_1_reg":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",true], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "d_2_at_max":{
+            "genref":"coreir.eq",
+            "genargs":{"width":["Int",16]}
+          },
+          "d_2_inc":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
+          },
+          "d_2_max":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h003f"]}
+          },
+          "d_2_min":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0000"]}
+          },
+          "d_2_next_value":{
+            "genref":"coreir.mux",
+            "genargs":{"width":["Int",16]}
+          },
+          "d_2_next_value_at_max":{
+            "genref":"coreir.mux",
+            "genargs":{"width":["Int",16]}
+          },
+          "d_2_reg":{
+            "genref":"mantle.reg",
+            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",true], "has_rst":["Bool",false], "width":["Int",16]},
+            "modargs":{"init":[["BitVector",16],"16'h0000"]}
+          },
+          "inc_time":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
+          },
+          "inc_time_value":{
+            "genref":"coreir.mux",
+            "genargs":{"width":["Int",16]}
+          },
+          "readyInvert":{
+            "modref":"corebit.not"
+          },
+          "time_diff":{
+            "genref":"coreir.sub",
+            "genargs":{"width":["Int",16]}
+          },
+          "true":{
+            "modref":"corebit.const",
+            "modargs":{"value":["Bool",true]}
+          }
+        },
+        "connections":[
+          ["d_0_inc.in1","_U312.out"],
+          ["d_1_inc.in1","_U312.out"],
+          ["d_2_inc.in1","_U312.out"],
+          ["inc_time_value.in0","_U312.out"],
+          ["cmp_time.in1","_U313.out"],
+          ["inc_time_value.in1","_U313.out"],
+          ["d_0_reg.out","affine_func.d.0"],
+          ["d_1_reg.out","affine_func.d.1"],
+          ["d_2_reg.out","affine_func.d.2"],
+          ["time_diff.in0","affine_func.out"],
+          ["cmp_time.out","and_all__U314.in0"],
+          ["readyInvert.out","and_all__U314.in1"],
+          ["inc_time_value.sel","and_all__U314.out"],
+          ["cmp_time.out","and_all__U315.in0"],
+          ["self.ready","and_all__U315.in1"],
+          ["d_0_reg.en","and_all__U315.out"],
+          ["d_1_reg.en","and_all__U315.out"],
+          ["d_2_reg.en","and_all__U315.out"],
+          ["self.valid","and_all__U315.out"],
+          ["time_diff.out","cmp_time.in0"],
+          ["inc_time.out","cycle_time.in"],
+          ["inc_time.in0","cycle_time.out"],
+          ["time_diff.in1","cycle_time.out"],
+          ["true.out","d_0_am__U316.in0"],
+          ["d_1_at_max.out","d_0_am__U316.in1"],
+          ["d_0_am__U317.in0","d_0_am__U316.out"],
+          ["d_2_at_max.out","d_0_am__U317.in1"],
+          ["d_0_next_value.sel","d_0_am__U317.out"],
+          ["d_0_reg.out","d_0_at_max.in0"],
+          ["d_0_max.out","d_0_at_max.in1"],
+          ["d_0_next_value_at_max.sel","d_0_at_max.out"],
+          ["d_0_reg.out","d_0_inc.in0"],
+          ["d_0_next_value_at_max.in0","d_0_inc.out"],
+          ["d_0_next_value_at_max.in1","d_0_min.out"],
+          ["d_0_reg.out","d_0_next_value.in0"],
+          ["d_0_next_value_at_max.out","d_0_next_value.in1"],
+          ["d_0_reg.in","d_0_next_value.out"],
+          ["self.d.0","d_0_reg.out"],
+          ["true.out","d_1_am__U318.in0"],
+          ["d_2_at_max.out","d_1_am__U318.in1"],
+          ["d_1_next_value.sel","d_1_am__U318.out"],
           ["d_1_reg.out","d_1_at_max.in0"],
           ["d_1_max.out","d_1_at_max.in1"],
           ["d_1_next_value_at_max.sel","d_1_at_max.out"],
@@ -1106,7 +1824,7 @@
           "d_2_max":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
-            "modargs":{"value":[["BitVector",16],"16'h003e"]}
+            "modargs":{"value":[["BitVector",16],"16'h003d"]}
           },
           "d_2_min":{
             "genref":"coreir.const",
@@ -1331,7 +2049,7 @@
           "d_2_max":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
-            "modargs":{"value":[["BitVector",16],"16'h003e"]}
+            "modargs":{"value":[["BitVector",16],"16'h003d"]}
           },
           "d_2_min":{
             "genref":"coreir.const",
@@ -1556,7 +2274,7 @@
           "d_2_max":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
-            "modargs":{"value":[["BitVector",16],"16'h003e"]}
+            "modargs":{"value":[["BitVector",16],"16'h003d"]}
           },
           "d_2_min":{
             "genref":"coreir.const",
@@ -1663,7 +2381,7 @@
           ["self.ready","readyInvert.in"]
         ]
       },
-      "conv_1_2":{
+      "conv_3_3_buffet":{
         "type":["Record",[
           ["clk",["Named","coreir.clkIn"]],
           ["rst_n","BitIn"],
@@ -2071,7 +2789,7 @@
           ["conv_stencil_clkwrk_dsa0_op_hcompute_conv_stencil_1_read",["Array",1,["Array",16,"BitIn"]]],
           ["conv_stencil_clkwrk_dsa0_op_hcompute_conv_stencil_1_read_ready","Bit"],
           ["conv_stencil_clkwrk_dsa0_op_hcompute_conv_stencil_1_read_valid","BitIn"],
-          ["hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_read",["Array",2,["Array",16,"BitIn"]]],
+          ["hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_read",["Array",9,["Array",16,"BitIn"]]],
           ["hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_read_ready","Bit"],
           ["hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_read_valid","BitIn"],
           ["conv_stencil_op_hcompute_conv_stencil_1_write",["Array",1,["Array",16,"Bit"]]],
@@ -2090,6 +2808,13 @@
           ["self.conv_stencil_clkwrk_dsa0_op_hcompute_conv_stencil_1_read.0","inner_compute.in0_conv_stencil.0"],
           ["self.hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_read.0","inner_compute.in1_hw_input_global_wrapper_stencil.0"],
           ["self.hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_read.1","inner_compute.in1_hw_input_global_wrapper_stencil.1"],
+          ["self.hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_read.2","inner_compute.in1_hw_input_global_wrapper_stencil.2"],
+          ["self.hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_read.3","inner_compute.in1_hw_input_global_wrapper_stencil.3"],
+          ["self.hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_read.4","inner_compute.in1_hw_input_global_wrapper_stencil.4"],
+          ["self.hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_read.5","inner_compute.in1_hw_input_global_wrapper_stencil.5"],
+          ["self.hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_read.6","inner_compute.in1_hw_input_global_wrapper_stencil.6"],
+          ["self.hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_read.7","inner_compute.in1_hw_input_global_wrapper_stencil.7"],
+          ["self.hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_read.8","inner_compute.in1_hw_input_global_wrapper_stencil.8"],
           ["self.conv_stencil_op_hcompute_conv_stencil_1_write.0","inner_compute.out_conv_stencil"],
           ["self.conv_stencil_clkwrk_dsa0_op_hcompute_conv_stencil_1_read_ready","op_hcompute_conv_stencil_1_flow_ctrl.ready_in_0"],
           ["self.hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_read_ready","op_hcompute_conv_stencil_1_flow_ctrl.ready_in_1"],
@@ -2228,6 +2953,20 @@
           ["ready_in_0","Bit"],
           ["valid_in_1","BitIn"],
           ["ready_in_1","Bit"],
+          ["valid_in_2","BitIn"],
+          ["ready_in_2","Bit"],
+          ["valid_in_3","BitIn"],
+          ["ready_in_3","Bit"],
+          ["valid_in_4","BitIn"],
+          ["ready_in_4","Bit"],
+          ["valid_in_5","BitIn"],
+          ["ready_in_5","Bit"],
+          ["valid_in_6","BitIn"],
+          ["ready_in_6","Bit"],
+          ["valid_in_7","BitIn"],
+          ["ready_in_7","Bit"],
+          ["valid_in_8","BitIn"],
+          ["ready_in_8","Bit"],
           ["valid_out_0","Bit"],
           ["ready_out_0","BitIn"]
         ]],
@@ -2240,18 +2979,410 @@
           },
           "and_all__U149":{
             "modref":"corebit.and"
+          },
+          "and_all__U150":{
+            "modref":"corebit.and"
+          },
+          "and_all__U151":{
+            "modref":"corebit.and"
+          },
+          "and_all__U152":{
+            "modref":"corebit.and"
+          },
+          "and_all__U153":{
+            "modref":"corebit.and"
+          },
+          "and_all__U154":{
+            "modref":"corebit.and"
+          },
+          "and_all__U155":{
+            "modref":"corebit.and"
+          },
+          "and_all__U156":{
+            "modref":"corebit.and"
+          },
+          "and_all__U157":{
+            "modref":"corebit.and"
+          },
+          "and_all__U158":{
+            "modref":"corebit.and"
+          },
+          "and_all__U159":{
+            "modref":"corebit.and"
+          },
+          "and_all__U160":{
+            "modref":"corebit.and"
+          },
+          "and_all__U161":{
+            "modref":"corebit.and"
+          },
+          "and_all__U162":{
+            "modref":"corebit.and"
+          },
+          "and_all__U163":{
+            "modref":"corebit.and"
+          },
+          "and_all__U164":{
+            "modref":"corebit.and"
+          },
+          "and_all__U165":{
+            "modref":"corebit.and"
+          },
+          "and_all__U166":{
+            "modref":"corebit.and"
+          },
+          "and_all__U167":{
+            "modref":"corebit.and"
+          },
+          "and_all__U168":{
+            "modref":"corebit.and"
+          },
+          "and_all__U169":{
+            "modref":"corebit.and"
+          },
+          "and_all__U170":{
+            "modref":"corebit.and"
+          },
+          "and_all__U171":{
+            "modref":"corebit.and"
+          },
+          "and_all__U172":{
+            "modref":"corebit.and"
+          },
+          "and_all__U173":{
+            "modref":"corebit.and"
+          },
+          "and_all__U174":{
+            "modref":"corebit.and"
+          },
+          "and_all__U175":{
+            "modref":"corebit.and"
+          },
+          "and_all__U176":{
+            "modref":"corebit.and"
+          },
+          "and_all__U177":{
+            "modref":"corebit.and"
+          },
+          "and_all__U178":{
+            "modref":"corebit.and"
+          },
+          "and_all__U179":{
+            "modref":"corebit.and"
+          },
+          "and_all__U180":{
+            "modref":"corebit.and"
+          },
+          "and_all__U181":{
+            "modref":"corebit.and"
+          },
+          "and_all__U182":{
+            "modref":"corebit.and"
+          },
+          "and_all__U183":{
+            "modref":"corebit.and"
+          },
+          "and_all__U184":{
+            "modref":"corebit.and"
+          },
+          "and_all__U185":{
+            "modref":"corebit.and"
+          },
+          "and_all__U186":{
+            "modref":"corebit.and"
+          },
+          "and_all__U187":{
+            "modref":"corebit.and"
+          },
+          "and_all__U188":{
+            "modref":"corebit.and"
+          },
+          "and_all__U189":{
+            "modref":"corebit.and"
+          },
+          "and_all__U190":{
+            "modref":"corebit.and"
+          },
+          "and_all__U191":{
+            "modref":"corebit.and"
+          },
+          "and_all__U192":{
+            "modref":"corebit.and"
+          },
+          "and_all__U193":{
+            "modref":"corebit.and"
+          },
+          "and_all__U194":{
+            "modref":"corebit.and"
+          },
+          "and_all__U195":{
+            "modref":"corebit.and"
+          },
+          "and_all__U196":{
+            "modref":"corebit.and"
+          },
+          "and_all__U197":{
+            "modref":"corebit.and"
+          },
+          "and_all__U198":{
+            "modref":"corebit.and"
+          },
+          "and_all__U199":{
+            "modref":"corebit.and"
+          },
+          "and_all__U200":{
+            "modref":"corebit.and"
+          },
+          "and_all__U201":{
+            "modref":"corebit.and"
+          },
+          "and_all__U202":{
+            "modref":"corebit.and"
+          },
+          "and_all__U203":{
+            "modref":"corebit.and"
+          },
+          "and_all__U204":{
+            "modref":"corebit.and"
+          },
+          "and_all__U205":{
+            "modref":"corebit.and"
+          },
+          "and_all__U206":{
+            "modref":"corebit.and"
+          },
+          "and_all__U207":{
+            "modref":"corebit.and"
+          },
+          "and_all__U208":{
+            "modref":"corebit.and"
+          },
+          "and_all__U209":{
+            "modref":"corebit.and"
+          },
+          "and_all__U210":{
+            "modref":"corebit.and"
+          },
+          "and_all__U211":{
+            "modref":"corebit.and"
+          },
+          "and_all__U212":{
+            "modref":"corebit.and"
+          },
+          "and_all__U213":{
+            "modref":"corebit.and"
+          },
+          "and_all__U214":{
+            "modref":"corebit.and"
+          },
+          "and_all__U215":{
+            "modref":"corebit.and"
+          },
+          "and_all__U216":{
+            "modref":"corebit.and"
+          },
+          "and_all__U217":{
+            "modref":"corebit.and"
+          },
+          "and_all__U218":{
+            "modref":"corebit.and"
+          },
+          "and_all__U219":{
+            "modref":"corebit.and"
+          },
+          "and_all__U220":{
+            "modref":"corebit.and"
+          },
+          "and_all__U221":{
+            "modref":"corebit.and"
+          },
+          "and_all__U222":{
+            "modref":"corebit.and"
+          },
+          "and_all__U223":{
+            "modref":"corebit.and"
+          },
+          "and_all__U224":{
+            "modref":"corebit.and"
+          },
+          "and_all__U225":{
+            "modref":"corebit.and"
+          },
+          "and_all__U226":{
+            "modref":"corebit.and"
           }
         },
         "connections":[
           ["self.valid_in_0","and_all__U147.in0"],
           ["self.valid_in_1","and_all__U147.in1"],
-          ["self.valid_out_0","and_all__U147.out"],
-          ["self.valid_in_1","and_all__U148.in0"],
-          ["self.ready_out_0","and_all__U148.in1"],
-          ["self.ready_in_0","and_all__U148.out"],
-          ["self.valid_in_0","and_all__U149.in0"],
-          ["self.ready_out_0","and_all__U149.in1"],
-          ["self.ready_in_1","and_all__U149.out"]
+          ["and_all__U148.in0","and_all__U147.out"],
+          ["self.valid_in_2","and_all__U148.in1"],
+          ["and_all__U149.in0","and_all__U148.out"],
+          ["self.valid_in_3","and_all__U149.in1"],
+          ["and_all__U150.in0","and_all__U149.out"],
+          ["self.valid_in_4","and_all__U150.in1"],
+          ["and_all__U151.in0","and_all__U150.out"],
+          ["self.valid_in_5","and_all__U151.in1"],
+          ["and_all__U152.in0","and_all__U151.out"],
+          ["self.valid_in_6","and_all__U152.in1"],
+          ["and_all__U153.in0","and_all__U152.out"],
+          ["self.valid_in_7","and_all__U153.in1"],
+          ["and_all__U154.in0","and_all__U153.out"],
+          ["self.valid_in_8","and_all__U154.in1"],
+          ["self.valid_out_0","and_all__U154.out"],
+          ["self.valid_in_1","and_all__U155.in0"],
+          ["self.valid_in_2","and_all__U155.in1"],
+          ["and_all__U156.in0","and_all__U155.out"],
+          ["self.valid_in_3","and_all__U156.in1"],
+          ["and_all__U157.in0","and_all__U156.out"],
+          ["self.valid_in_4","and_all__U157.in1"],
+          ["and_all__U158.in0","and_all__U157.out"],
+          ["self.valid_in_5","and_all__U158.in1"],
+          ["and_all__U159.in0","and_all__U158.out"],
+          ["self.valid_in_6","and_all__U159.in1"],
+          ["and_all__U160.in0","and_all__U159.out"],
+          ["self.valid_in_7","and_all__U160.in1"],
+          ["and_all__U161.in0","and_all__U160.out"],
+          ["self.valid_in_8","and_all__U161.in1"],
+          ["and_all__U162.in0","and_all__U161.out"],
+          ["self.ready_out_0","and_all__U162.in1"],
+          ["self.ready_in_0","and_all__U162.out"],
+          ["self.valid_in_0","and_all__U163.in0"],
+          ["self.valid_in_2","and_all__U163.in1"],
+          ["and_all__U164.in0","and_all__U163.out"],
+          ["self.valid_in_3","and_all__U164.in1"],
+          ["and_all__U165.in0","and_all__U164.out"],
+          ["self.valid_in_4","and_all__U165.in1"],
+          ["and_all__U166.in0","and_all__U165.out"],
+          ["self.valid_in_5","and_all__U166.in1"],
+          ["and_all__U167.in0","and_all__U166.out"],
+          ["self.valid_in_6","and_all__U167.in1"],
+          ["and_all__U168.in0","and_all__U167.out"],
+          ["self.valid_in_7","and_all__U168.in1"],
+          ["and_all__U169.in0","and_all__U168.out"],
+          ["self.valid_in_8","and_all__U169.in1"],
+          ["and_all__U170.in0","and_all__U169.out"],
+          ["self.ready_out_0","and_all__U170.in1"],
+          ["self.ready_in_1","and_all__U170.out"],
+          ["self.valid_in_0","and_all__U171.in0"],
+          ["self.valid_in_1","and_all__U171.in1"],
+          ["and_all__U172.in0","and_all__U171.out"],
+          ["self.valid_in_3","and_all__U172.in1"],
+          ["and_all__U173.in0","and_all__U172.out"],
+          ["self.valid_in_4","and_all__U173.in1"],
+          ["and_all__U174.in0","and_all__U173.out"],
+          ["self.valid_in_5","and_all__U174.in1"],
+          ["and_all__U175.in0","and_all__U174.out"],
+          ["self.valid_in_6","and_all__U175.in1"],
+          ["and_all__U176.in0","and_all__U175.out"],
+          ["self.valid_in_7","and_all__U176.in1"],
+          ["and_all__U177.in0","and_all__U176.out"],
+          ["self.valid_in_8","and_all__U177.in1"],
+          ["and_all__U178.in0","and_all__U177.out"],
+          ["self.ready_out_0","and_all__U178.in1"],
+          ["self.ready_in_2","and_all__U178.out"],
+          ["self.valid_in_0","and_all__U179.in0"],
+          ["self.valid_in_1","and_all__U179.in1"],
+          ["and_all__U180.in0","and_all__U179.out"],
+          ["self.valid_in_2","and_all__U180.in1"],
+          ["and_all__U181.in0","and_all__U180.out"],
+          ["self.valid_in_4","and_all__U181.in1"],
+          ["and_all__U182.in0","and_all__U181.out"],
+          ["self.valid_in_5","and_all__U182.in1"],
+          ["and_all__U183.in0","and_all__U182.out"],
+          ["self.valid_in_6","and_all__U183.in1"],
+          ["and_all__U184.in0","and_all__U183.out"],
+          ["self.valid_in_7","and_all__U184.in1"],
+          ["and_all__U185.in0","and_all__U184.out"],
+          ["self.valid_in_8","and_all__U185.in1"],
+          ["and_all__U186.in0","and_all__U185.out"],
+          ["self.ready_out_0","and_all__U186.in1"],
+          ["self.ready_in_3","and_all__U186.out"],
+          ["self.valid_in_0","and_all__U187.in0"],
+          ["self.valid_in_1","and_all__U187.in1"],
+          ["and_all__U188.in0","and_all__U187.out"],
+          ["self.valid_in_2","and_all__U188.in1"],
+          ["and_all__U189.in0","and_all__U188.out"],
+          ["self.valid_in_3","and_all__U189.in1"],
+          ["and_all__U190.in0","and_all__U189.out"],
+          ["self.valid_in_5","and_all__U190.in1"],
+          ["and_all__U191.in0","and_all__U190.out"],
+          ["self.valid_in_6","and_all__U191.in1"],
+          ["and_all__U192.in0","and_all__U191.out"],
+          ["self.valid_in_7","and_all__U192.in1"],
+          ["and_all__U193.in0","and_all__U192.out"],
+          ["self.valid_in_8","and_all__U193.in1"],
+          ["and_all__U194.in0","and_all__U193.out"],
+          ["self.ready_out_0","and_all__U194.in1"],
+          ["self.ready_in_4","and_all__U194.out"],
+          ["self.valid_in_0","and_all__U195.in0"],
+          ["self.valid_in_1","and_all__U195.in1"],
+          ["and_all__U196.in0","and_all__U195.out"],
+          ["self.valid_in_2","and_all__U196.in1"],
+          ["and_all__U197.in0","and_all__U196.out"],
+          ["self.valid_in_3","and_all__U197.in1"],
+          ["and_all__U198.in0","and_all__U197.out"],
+          ["self.valid_in_4","and_all__U198.in1"],
+          ["and_all__U199.in0","and_all__U198.out"],
+          ["self.valid_in_6","and_all__U199.in1"],
+          ["and_all__U200.in0","and_all__U199.out"],
+          ["self.valid_in_7","and_all__U200.in1"],
+          ["and_all__U201.in0","and_all__U200.out"],
+          ["self.valid_in_8","and_all__U201.in1"],
+          ["and_all__U202.in0","and_all__U201.out"],
+          ["self.ready_out_0","and_all__U202.in1"],
+          ["self.ready_in_5","and_all__U202.out"],
+          ["self.valid_in_0","and_all__U203.in0"],
+          ["self.valid_in_1","and_all__U203.in1"],
+          ["and_all__U204.in0","and_all__U203.out"],
+          ["self.valid_in_2","and_all__U204.in1"],
+          ["and_all__U205.in0","and_all__U204.out"],
+          ["self.valid_in_3","and_all__U205.in1"],
+          ["and_all__U206.in0","and_all__U205.out"],
+          ["self.valid_in_4","and_all__U206.in1"],
+          ["and_all__U207.in0","and_all__U206.out"],
+          ["self.valid_in_5","and_all__U207.in1"],
+          ["and_all__U208.in0","and_all__U207.out"],
+          ["self.valid_in_7","and_all__U208.in1"],
+          ["and_all__U209.in0","and_all__U208.out"],
+          ["self.valid_in_8","and_all__U209.in1"],
+          ["and_all__U210.in0","and_all__U209.out"],
+          ["self.ready_out_0","and_all__U210.in1"],
+          ["self.ready_in_6","and_all__U210.out"],
+          ["self.valid_in_0","and_all__U211.in0"],
+          ["self.valid_in_1","and_all__U211.in1"],
+          ["and_all__U212.in0","and_all__U211.out"],
+          ["self.valid_in_2","and_all__U212.in1"],
+          ["and_all__U213.in0","and_all__U212.out"],
+          ["self.valid_in_3","and_all__U213.in1"],
+          ["and_all__U214.in0","and_all__U213.out"],
+          ["self.valid_in_4","and_all__U214.in1"],
+          ["and_all__U215.in0","and_all__U214.out"],
+          ["self.valid_in_5","and_all__U215.in1"],
+          ["and_all__U216.in0","and_all__U215.out"],
+          ["self.valid_in_6","and_all__U216.in1"],
+          ["and_all__U217.in0","and_all__U216.out"],
+          ["self.valid_in_8","and_all__U217.in1"],
+          ["and_all__U218.in0","and_all__U217.out"],
+          ["self.ready_out_0","and_all__U218.in1"],
+          ["self.ready_in_7","and_all__U218.out"],
+          ["self.valid_in_0","and_all__U219.in0"],
+          ["self.valid_in_1","and_all__U219.in1"],
+          ["and_all__U220.in0","and_all__U219.out"],
+          ["self.valid_in_2","and_all__U220.in1"],
+          ["and_all__U221.in0","and_all__U220.out"],
+          ["self.valid_in_3","and_all__U221.in1"],
+          ["and_all__U222.in0","and_all__U221.out"],
+          ["self.valid_in_4","and_all__U222.in1"],
+          ["and_all__U223.in0","and_all__U222.out"],
+          ["self.valid_in_5","and_all__U223.in1"],
+          ["and_all__U224.in0","and_all__U223.out"],
+          ["self.valid_in_6","and_all__U224.in1"],
+          ["and_all__U225.in0","and_all__U224.out"],
+          ["self.valid_in_7","and_all__U225.in1"],
+          ["and_all__U226.in0","and_all__U225.out"],
+          ["self.ready_out_0","and_all__U226.in1"],
+          ["self.ready_in_8","and_all__U226.out"]
         ]
       },
       "flow_ctrl__U3":{
@@ -2343,35 +3474,165 @@
         "type":["Record",[
           ["out_conv_stencil",["Array",16,"Bit"]],
           ["in0_conv_stencil",["Array",1,["Array",16,"BitIn"]]],
-          ["in1_hw_input_global_wrapper_stencil",["Array",2,["Array",16,"BitIn"]]]
+          ["in1_hw_input_global_wrapper_stencil",["Array",9,["Array",16,"BitIn"]]]
         ]],
         "instances":{
-          "add_conv_stencil_1_265_266":{
+          "add_288_312_313":{
             "genref":"coreir.add",
             "genargs":{"width":["Int",16]}
           },
-          "add_hw_input_global_wrapper_stencil_1_266_267":{
+          "add_290_310_311":{
             "genref":"coreir.add",
             "genargs":{"width":["Int",16]}
           },
-          "const_p3__264":{
+          "add_292_309_310":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
+          },
+          "add_294_308_309":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
+          },
+          "add_296_307_308":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
+          },
+          "add_298_306_307":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
+          },
+          "add_300_305_306":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
+          },
+          "add_302_304_305":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
+          },
+          "add_conv_stencil_1_311_312":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
+          },
+          "const_p11__287":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
-            "modargs":{"value":[["BitVector",16],"16'h0003"]}
+            "modargs":{"value":[["BitVector",16],"16'h000b"]}
           },
-          "mul_hw_input_global_wrapper_stencil_2_264_265":{
+          "const_p12__293":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h000c"]}
+          },
+          "const_p13__299":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h000d"]}
+          },
+          "const_p14__289":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h000e"]}
+          },
+          "const_p16__303":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0010"]}
+          },
+          "const_p17__291":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0011"]}
+          },
+          "const_p18__297":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0012"]}
+          },
+          "const_p19__301":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0013"]}
+          },
+          "const_p255__295":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0000"]}
+          },
+          "mul_hw_input_global_wrapper_stencil_1_287_288":{
+            "genref":"coreir.mul",
+            "genargs":{"width":["Int",16]}
+          },
+          "mul_hw_input_global_wrapper_stencil_2_289_290":{
+            "genref":"coreir.mul",
+            "genargs":{"width":["Int",16]}
+          },
+          "mul_hw_input_global_wrapper_stencil_3_291_292":{
+            "genref":"coreir.mul",
+            "genargs":{"width":["Int",16]}
+          },
+          "mul_hw_input_global_wrapper_stencil_4_293_294":{
+            "genref":"coreir.mul",
+            "genargs":{"width":["Int",16]}
+          },
+          "mul_hw_input_global_wrapper_stencil_5_295_296":{
+            "genref":"coreir.mul",
+            "genargs":{"width":["Int",16]}
+          },
+          "mul_hw_input_global_wrapper_stencil_6_297_298":{
+            "genref":"coreir.mul",
+            "genargs":{"width":["Int",16]}
+          },
+          "mul_hw_input_global_wrapper_stencil_7_299_300":{
+            "genref":"coreir.mul",
+            "genargs":{"width":["Int",16]}
+          },
+          "mul_hw_input_global_wrapper_stencil_8_301_302":{
+            "genref":"coreir.mul",
+            "genargs":{"width":["Int",16]}
+          },
+          "mul_hw_input_global_wrapper_stencil_9_303_304":{
             "genref":"coreir.mul",
             "genargs":{"width":["Int",16]}
           }
         },
         "connections":[
-          ["self.in0_conv_stencil.0","add_conv_stencil_1_265_266.in0"],
-          ["mul_hw_input_global_wrapper_stencil_2_264_265.out","add_conv_stencil_1_265_266.in1"],
-          ["add_hw_input_global_wrapper_stencil_1_266_267.in1","add_conv_stencil_1_265_266.out"],
-          ["self.in1_hw_input_global_wrapper_stencil.0","add_hw_input_global_wrapper_stencil_1_266_267.in0"],
-          ["self.out_conv_stencil","add_hw_input_global_wrapper_stencil_1_266_267.out"],
-          ["mul_hw_input_global_wrapper_stencil_2_264_265.in1","const_p3__264.out"],
-          ["self.in1_hw_input_global_wrapper_stencil.1","mul_hw_input_global_wrapper_stencil_2_264_265.in0"]
+          ["mul_hw_input_global_wrapper_stencil_1_287_288.out","add_288_312_313.in0"],
+          ["add_conv_stencil_1_311_312.out","add_288_312_313.in1"],
+          ["self.out_conv_stencil","add_288_312_313.out"],
+          ["mul_hw_input_global_wrapper_stencil_2_289_290.out","add_290_310_311.in0"],
+          ["add_292_309_310.out","add_290_310_311.in1"],
+          ["add_conv_stencil_1_311_312.in1","add_290_310_311.out"],
+          ["mul_hw_input_global_wrapper_stencil_3_291_292.out","add_292_309_310.in0"],
+          ["add_294_308_309.out","add_292_309_310.in1"],
+          ["mul_hw_input_global_wrapper_stencil_4_293_294.out","add_294_308_309.in0"],
+          ["add_296_307_308.out","add_294_308_309.in1"],
+          ["mul_hw_input_global_wrapper_stencil_5_295_296.out","add_296_307_308.in0"],
+          ["add_298_306_307.out","add_296_307_308.in1"],
+          ["mul_hw_input_global_wrapper_stencil_6_297_298.out","add_298_306_307.in0"],
+          ["add_300_305_306.out","add_298_306_307.in1"],
+          ["mul_hw_input_global_wrapper_stencil_7_299_300.out","add_300_305_306.in0"],
+          ["add_302_304_305.out","add_300_305_306.in1"],
+          ["mul_hw_input_global_wrapper_stencil_8_301_302.out","add_302_304_305.in0"],
+          ["mul_hw_input_global_wrapper_stencil_9_303_304.out","add_302_304_305.in1"],
+          ["self.in0_conv_stencil.0","add_conv_stencil_1_311_312.in0"],
+          ["mul_hw_input_global_wrapper_stencil_1_287_288.in1","const_p11__287.out"],
+          ["mul_hw_input_global_wrapper_stencil_4_293_294.in1","const_p12__293.out"],
+          ["mul_hw_input_global_wrapper_stencil_7_299_300.in1","const_p13__299.out"],
+          ["mul_hw_input_global_wrapper_stencil_2_289_290.in1","const_p14__289.out"],
+          ["mul_hw_input_global_wrapper_stencil_9_303_304.in1","const_p16__303.out"],
+          ["mul_hw_input_global_wrapper_stencil_3_291_292.in1","const_p17__291.out"],
+          ["mul_hw_input_global_wrapper_stencil_6_297_298.in1","const_p18__297.out"],
+          ["mul_hw_input_global_wrapper_stencil_8_301_302.in1","const_p19__301.out"],
+          ["mul_hw_input_global_wrapper_stencil_5_295_296.in1","const_p255__295.out"],
+          ["self.in1_hw_input_global_wrapper_stencil.0","mul_hw_input_global_wrapper_stencil_1_287_288.in0"],
+          ["self.in1_hw_input_global_wrapper_stencil.1","mul_hw_input_global_wrapper_stencil_2_289_290.in0"],
+          ["self.in1_hw_input_global_wrapper_stencil.2","mul_hw_input_global_wrapper_stencil_3_291_292.in0"],
+          ["self.in1_hw_input_global_wrapper_stencil.3","mul_hw_input_global_wrapper_stencil_4_293_294.in0"],
+          ["self.in1_hw_input_global_wrapper_stencil.4","mul_hw_input_global_wrapper_stencil_5_295_296.in0"],
+          ["self.in1_hw_input_global_wrapper_stencil.5","mul_hw_input_global_wrapper_stencil_6_297_298.in0"],
+          ["self.in1_hw_input_global_wrapper_stencil.6","mul_hw_input_global_wrapper_stencil_7_299_300.in0"],
+          ["self.in1_hw_input_global_wrapper_stencil.7","mul_hw_input_global_wrapper_stencil_8_301_302.in0"],
+          ["self.in1_hw_input_global_wrapper_stencil.8","mul_hw_input_global_wrapper_stencil_9_303_304.in0"]
         ]
       },
       "hcompute_hw_input_global_wrapper_stencil":{
@@ -2402,7 +3663,7 @@
           ["op_hcompute_conv_stencil_1_read_rready","Bit"],
           ["op_hcompute_conv_stencil_1_read_data_ready","BitIn"],
           ["op_hcompute_conv_stencil_1_read_data_valid","Bit"],
-          ["op_hcompute_conv_stencil_1_read",["Array",2,["Array",16,"Bit"]]],
+          ["op_hcompute_conv_stencil_1_read",["Array",9,["Array",16,"Bit"]]],
           ["op_hcompute_hw_input_global_wrapper_stencil_write_wen","BitIn"],
           ["op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars",["Array",3,["Array",16,"BitIn"]]],
           ["op_hcompute_hw_input_global_wrapper_stencil_write",["Array",1,["Array",16,"BitIn"]]],
@@ -2410,11 +3671,116 @@
           ["op_hcompute_hw_input_global_wrapper_stencil_write_data_valid","BitIn"]
         ]],
         "instances":{
-          "and_all__U184":{
+          "and_all__U261":{
             "modref":"corebit.and"
           },
-          "ctrl__U170":{
-            "modref":"global.affine_controller__U151"
+          "and_all__U262":{
+            "modref":"corebit.and"
+          },
+          "and_all__U297":{
+            "modref":"corebit.and"
+          },
+          "and_all__U298":{
+            "modref":"corebit.and"
+          },
+          "and_all__U333":{
+            "modref":"corebit.and"
+          },
+          "and_all__U334":{
+            "modref":"corebit.and"
+          },
+          "and_all__U335":{
+            "modref":"corebit.and"
+          },
+          "and_all__U336":{
+            "modref":"corebit.and"
+          },
+          "ctrl__U247":{
+            "modref":"global.affine_controller__U228"
+          },
+          "ctrl__U283":{
+            "modref":"global.affine_controller__U264"
+          },
+          "ctrl__U319":{
+            "modref":"global.affine_controller__U300"
+          },
+          "hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_10_net":{
+            "genref":"coreir.wire",
+            "genargs":{"width":["Int",16]}
+          },
+          "hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_10_ready_net":{
+            "modref":"corebit.wire"
+          },
+          "hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_10_valid_net":{
+            "modref":"corebit.wire"
+          },
+          "hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_11_net":{
+            "genref":"coreir.wire",
+            "genargs":{"width":["Int",16]}
+          },
+          "hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_11_ready_net":{
+            "modref":"corebit.wire"
+          },
+          "hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_11_sr":{
+            "genref":"cgralib.SIPO_reg",
+            "genargs":{"data_width":["Int",16], "depth":["Int",2]}
+          },
+          "hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_11_sr_net":{
+            "genref":"coreir.wire",
+            "genargs":{"width":["Int",16]}
+          },
+          "hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_11_sr_ready_net":{
+            "modref":"corebit.wire"
+          },
+          "hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_11_sr_valid_net":{
+            "modref":"corebit.wire"
+          },
+          "hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_11_valid_net":{
+            "modref":"corebit.wire"
+          },
+          "hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_12_net":{
+            "genref":"coreir.wire",
+            "genargs":{"width":["Int",16]}
+          },
+          "hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_12_ready_net":{
+            "modref":"corebit.wire"
+          },
+          "hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_12_valid_net":{
+            "modref":"corebit.wire"
+          },
+          "hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_13_net":{
+            "genref":"coreir.wire",
+            "genargs":{"width":["Int",16]}
+          },
+          "hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_13_ready_net":{
+            "modref":"corebit.wire"
+          },
+          "hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_13_sr":{
+            "genref":"cgralib.SIPO_reg",
+            "genargs":{"data_width":["Int",16], "depth":["Int",2]}
+          },
+          "hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_13_sr_net":{
+            "genref":"coreir.wire",
+            "genargs":{"width":["Int",16]}
+          },
+          "hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_13_sr_ready_net":{
+            "modref":"corebit.wire"
+          },
+          "hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_13_sr_valid_net":{
+            "modref":"corebit.wire"
+          },
+          "hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_13_valid_net":{
+            "modref":"corebit.wire"
+          },
+          "hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_14_net":{
+            "genref":"coreir.wire",
+            "genargs":{"width":["Int",16]}
+          },
+          "hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_14_ready_net":{
+            "modref":"corebit.wire"
+          },
+          "hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_14_valid_net":{
+            "modref":"corebit.wire"
           },
           "hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_6_net":{
             "genref":"coreir.wire",
@@ -2433,25 +3799,51 @@
           "hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_7_ready_net":{
             "modref":"corebit.wire"
           },
-          "hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_7_sr":{
-            "genref":"cgralib.SIPO_reg",
-            "genargs":{"data_width":["Int",16], "depth":["Int",1]}
-          },
-          "hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_7_sr_net":{
-            "genref":"coreir.wire",
-            "genargs":{"width":["Int",16]}
-          },
-          "hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_7_sr_ready_net":{
-            "modref":"corebit.wire"
-          },
-          "hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_7_sr_valid_net":{
-            "modref":"corebit.wire"
-          },
           "hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_7_valid_net":{
             "modref":"corebit.wire"
           },
-          "inner_bank_offsethw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2_U182":{
-            "modref":"global.aff__U171"
+          "hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_8_net":{
+            "genref":"coreir.wire",
+            "genargs":{"width":["Int",16]}
+          },
+          "hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_8_ready_net":{
+            "modref":"corebit.wire"
+          },
+          "hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_8_sr":{
+            "genref":"cgralib.SIPO_reg",
+            "genargs":{"data_width":["Int",16], "depth":["Int",2]}
+          },
+          "hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_8_sr_net":{
+            "genref":"coreir.wire",
+            "genargs":{"width":["Int",16]}
+          },
+          "hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_8_sr_ready_net":{
+            "modref":"corebit.wire"
+          },
+          "hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_8_sr_valid_net":{
+            "modref":"corebit.wire"
+          },
+          "hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_8_valid_net":{
+            "modref":"corebit.wire"
+          },
+          "hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_9_net":{
+            "genref":"coreir.wire",
+            "genargs":{"width":["Int",16]}
+          },
+          "hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_9_ready_net":{
+            "modref":"corebit.wire"
+          },
+          "hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_9_valid_net":{
+            "modref":"corebit.wire"
+          },
+          "inner_bank_offsethw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2_U259":{
+            "modref":"global.aff__U248"
+          },
+          "inner_bank_offsethw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2_U295":{
+            "modref":"global.aff__U284"
+          },
+          "inner_bank_offsethw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2_U331":{
+            "modref":"global.aff__U320"
           },
           "one_cst":{
             "modref":"corebit.const",
@@ -2460,48 +3852,145 @@
           "op_hcompute_conv_stencil_1_read_flow_ctrl":{
             "modref":"global.flow_ctrl__U146"
           },
-          "row_buf_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_7":{
+          "row_buf_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_11":{
             "genref":"cgralib.Buffet",
-            "genargs":{"ID":["String","hw_input_global_wrapper_stencil_sr__U150"], "data_width":["Int",16], "idx_width":["Int",16]}
+            "genargs":{"ID":["String","hw_input_global_wrapper_stencil_sr__U227"], "data_width":["Int",16], "idx_width":["Int",16]}
           },
-          "zero_cst_U183":{
+          "row_buf_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_13":{
+            "genref":"cgralib.Buffet",
+            "genargs":{"ID":["String","hw_input_global_wrapper_stencil_sr__U263"], "data_width":["Int",16], "idx_width":["Int",16]}
+          },
+          "row_buf_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_8":{
+            "genref":"cgralib.Buffet",
+            "genargs":{"ID":["String","hw_input_global_wrapper_stencil_sr__U299"], "data_width":["Int",16], "idx_width":["Int",16]}
+          },
+          "zero_cst_U260":{
+            "modref":"corebit.const",
+            "modargs":{"value":["Bool",false]}
+          },
+          "zero_cst_U296":{
+            "modref":"corebit.const",
+            "modargs":{"value":["Bool",false]}
+          },
+          "zero_cst_U332":{
             "modref":"corebit.const",
             "modargs":{"value":["Bool",false]}
           }
         },
         "connections":[
-          ["hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_6_ready_net.out","and_all__U184.in0"],
-          ["hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_7_ready_net.out","and_all__U184.in1"],
-          ["hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_7_sr.ready_out","and_all__U184.out"],
-          ["inner_bank_offsethw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2_U182.d","ctrl__U170.d"],
-          ["row_buf_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_7.read_idx_ready","ctrl__U170.ready"],
-          ["row_buf_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_7.read_idx_valid","ctrl__U170.valid"],
-          ["hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_7_sr.out_data.1","hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_6_net.in"],
+          ["hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_9_ready_net.out","and_all__U261.in0"],
+          ["hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_11_ready_net.out","and_all__U261.in1"],
+          ["and_all__U262.in0","and_all__U261.out"],
+          ["hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_10_ready_net.out","and_all__U262.in1"],
+          ["hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_11_sr.ready_out","and_all__U262.out"],
+          ["hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_13_ready_net.out","and_all__U297.in0"],
+          ["hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_12_ready_net.out","and_all__U297.in1"],
+          ["and_all__U298.in0","and_all__U297.out"],
+          ["hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_14_ready_net.out","and_all__U298.in1"],
+          ["hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_13_sr.ready_out","and_all__U298.out"],
+          ["hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_6_ready_net.out","and_all__U333.in0"],
+          ["hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_8_ready_net.out","and_all__U333.in1"],
+          ["and_all__U334.in0","and_all__U333.out"],
+          ["hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_7_ready_net.out","and_all__U334.in1"],
+          ["hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_8_sr.ready_out","and_all__U334.out"],
+          ["row_buf_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_11.push_data_ready","and_all__U335.in0"],
+          ["row_buf_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_13.push_data_ready","and_all__U335.in1"],
+          ["and_all__U336.in0","and_all__U335.out"],
+          ["row_buf_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_8.push_data_ready","and_all__U336.in1"],
+          ["self.op_hcompute_hw_input_global_wrapper_stencil_write_data_ready","and_all__U336.out"],
+          ["inner_bank_offsethw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2_U259.d","ctrl__U247.d"],
+          ["row_buf_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_11.read_idx_ready","ctrl__U247.ready"],
+          ["row_buf_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_11.read_idx_valid","ctrl__U247.valid"],
+          ["inner_bank_offsethw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2_U295.d","ctrl__U283.d"],
+          ["row_buf_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_13.read_idx_ready","ctrl__U283.ready"],
+          ["row_buf_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_13.read_idx_valid","ctrl__U283.valid"],
+          ["inner_bank_offsethw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2_U331.d","ctrl__U319.d"],
+          ["row_buf_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_8.read_idx_ready","ctrl__U319.ready"],
+          ["row_buf_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_8.read_idx_valid","ctrl__U319.valid"],
+          ["hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_11_sr.out_data.1","hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_10_net.in"],
+          ["self.op_hcompute_conv_stencil_1_read.4","hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_10_net.out"],
+          ["op_hcompute_conv_stencil_1_read_flow_ctrl.ready_in_4","hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_10_ready_net.in"],
+          ["hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_11_sr.valid_out","hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_10_valid_net.in"],
+          ["op_hcompute_conv_stencil_1_read_flow_ctrl.valid_in_4","hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_10_valid_net.out"],
+          ["hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_11_sr.out_data.0","hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_11_net.in"],
+          ["self.op_hcompute_conv_stencil_1_read.5","hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_11_net.out"],
+          ["op_hcompute_conv_stencil_1_read_flow_ctrl.ready_in_5","hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_11_ready_net.in"],
+          ["hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_11_sr_net.out","hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_11_sr.in_data"],
+          ["hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_9_net.in","hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_11_sr.out_data.2"],
+          ["hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_11_sr_ready_net.in","hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_11_sr.ready_in"],
+          ["self.rst_n","hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_11_sr.rst_n"],
+          ["hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_11_sr_valid_net.out","hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_11_sr.valid_in"],
+          ["hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_11_valid_net.in","hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_11_sr.valid_out"],
+          ["hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_9_valid_net.in","hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_11_sr.valid_out"],
+          ["row_buf_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_11.read_data","hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_11_sr_net.in"],
+          ["row_buf_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_11.read_data_ready","hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_11_sr_ready_net.out"],
+          ["row_buf_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_11.read_data_valid","hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_11_sr_valid_net.in"],
+          ["op_hcompute_conv_stencil_1_read_flow_ctrl.valid_in_5","hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_11_valid_net.out"],
+          ["hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_13_sr.out_data.2","hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_12_net.in"],
+          ["self.op_hcompute_conv_stencil_1_read.6","hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_12_net.out"],
+          ["op_hcompute_conv_stencil_1_read_flow_ctrl.ready_in_6","hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_12_ready_net.in"],
+          ["hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_13_sr.valid_out","hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_12_valid_net.in"],
+          ["op_hcompute_conv_stencil_1_read_flow_ctrl.valid_in_6","hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_12_valid_net.out"],
+          ["hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_13_sr.out_data.0","hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_13_net.in"],
+          ["self.op_hcompute_conv_stencil_1_read.7","hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_13_net.out"],
+          ["op_hcompute_conv_stencil_1_read_flow_ctrl.ready_in_7","hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_13_ready_net.in"],
+          ["hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_13_sr_net.out","hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_13_sr.in_data"],
+          ["hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_14_net.in","hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_13_sr.out_data.1"],
+          ["hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_13_sr_ready_net.in","hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_13_sr.ready_in"],
+          ["self.rst_n","hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_13_sr.rst_n"],
+          ["hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_13_sr_valid_net.out","hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_13_sr.valid_in"],
+          ["hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_13_valid_net.in","hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_13_sr.valid_out"],
+          ["hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_14_valid_net.in","hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_13_sr.valid_out"],
+          ["row_buf_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_13.read_data","hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_13_sr_net.in"],
+          ["row_buf_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_13.read_data_ready","hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_13_sr_ready_net.out"],
+          ["row_buf_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_13.read_data_valid","hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_13_sr_valid_net.in"],
+          ["op_hcompute_conv_stencil_1_read_flow_ctrl.valid_in_7","hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_13_valid_net.out"],
+          ["self.op_hcompute_conv_stencil_1_read.8","hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_14_net.out"],
+          ["op_hcompute_conv_stencil_1_read_flow_ctrl.ready_in_8","hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_14_ready_net.in"],
+          ["op_hcompute_conv_stencil_1_read_flow_ctrl.valid_in_8","hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_14_valid_net.out"],
+          ["hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_8_sr.out_data.2","hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_6_net.in"],
           ["self.op_hcompute_conv_stencil_1_read.0","hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_6_net.out"],
           ["op_hcompute_conv_stencil_1_read_flow_ctrl.ready_in_0","hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_6_ready_net.in"],
-          ["hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_7_sr.valid_out","hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_6_valid_net.in"],
+          ["hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_8_sr.valid_out","hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_6_valid_net.in"],
           ["op_hcompute_conv_stencil_1_read_flow_ctrl.valid_in_0","hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_6_valid_net.out"],
-          ["hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_7_sr.out_data.0","hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_7_net.in"],
+          ["hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_8_sr.out_data.1","hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_7_net.in"],
           ["self.op_hcompute_conv_stencil_1_read.1","hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_7_net.out"],
           ["op_hcompute_conv_stencil_1_read_flow_ctrl.ready_in_1","hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_7_ready_net.in"],
-          ["hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_7_sr_net.out","hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_7_sr.in_data"],
-          ["hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_7_sr_ready_net.in","hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_7_sr.ready_in"],
-          ["self.rst_n","hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_7_sr.rst_n"],
-          ["hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_7_sr_valid_net.out","hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_7_sr.valid_in"],
-          ["hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_7_valid_net.in","hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_7_sr.valid_out"],
-          ["row_buf_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_7.read_data","hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_7_sr_net.in"],
-          ["row_buf_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_7.read_data_ready","hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_7_sr_ready_net.out"],
-          ["row_buf_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_7.read_data_valid","hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_7_sr_valid_net.in"],
+          ["hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_8_sr.valid_out","hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_7_valid_net.in"],
           ["op_hcompute_conv_stencil_1_read_flow_ctrl.valid_in_1","hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_7_valid_net.out"],
-          ["row_buf_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_7.read_idx","inner_bank_offsethw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2_U182.out"],
+          ["hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_8_sr.out_data.0","hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_8_net.in"],
+          ["self.op_hcompute_conv_stencil_1_read.2","hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_8_net.out"],
+          ["op_hcompute_conv_stencil_1_read_flow_ctrl.ready_in_2","hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_8_ready_net.in"],
+          ["hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_8_sr_net.out","hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_8_sr.in_data"],
+          ["hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_8_sr_ready_net.in","hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_8_sr.ready_in"],
+          ["self.rst_n","hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_8_sr.rst_n"],
+          ["hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_8_sr_valid_net.out","hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_8_sr.valid_in"],
+          ["hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_8_valid_net.in","hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_8_sr.valid_out"],
+          ["row_buf_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_8.read_data","hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_8_sr_net.in"],
+          ["row_buf_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_8.read_data_ready","hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_8_sr_ready_net.out"],
+          ["row_buf_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_8.read_data_valid","hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_8_sr_valid_net.in"],
+          ["op_hcompute_conv_stencil_1_read_flow_ctrl.valid_in_2","hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_8_valid_net.out"],
+          ["self.op_hcompute_conv_stencil_1_read.3","hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_9_net.out"],
+          ["op_hcompute_conv_stencil_1_read_flow_ctrl.ready_in_3","hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_9_ready_net.in"],
+          ["op_hcompute_conv_stencil_1_read_flow_ctrl.valid_in_3","hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_9_valid_net.out"],
+          ["row_buf_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_11.read_idx","inner_bank_offsethw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2_U259.out"],
+          ["row_buf_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_13.read_idx","inner_bank_offsethw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2_U295.out"],
+          ["row_buf_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_8.read_idx","inner_bank_offsethw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2_U331.out"],
           ["self.op_hcompute_conv_stencil_1_read_rready","one_cst.out"],
           ["self.op_hcompute_conv_stencil_1_read_data_ready","op_hcompute_conv_stencil_1_read_flow_ctrl.ready_out_0"],
           ["self.op_hcompute_conv_stencil_1_read_data_valid","op_hcompute_conv_stencil_1_read_flow_ctrl.valid_out_0"],
-          ["self.rst_n","row_buf_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_7.nreset_i"],
-          ["self.op_hcompute_hw_input_global_wrapper_stencil_write.0","row_buf_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_7.push_data"],
-          ["self.op_hcompute_hw_input_global_wrapper_stencil_write_data_ready","row_buf_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_7.push_data_ready"],
-          ["self.op_hcompute_hw_input_global_wrapper_stencil_write_data_valid","row_buf_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_7.push_data_valid"],
-          ["zero_cst_U183.out","row_buf_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_7.read_will_update"]
+          ["self.rst_n","row_buf_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_11.nreset_i"],
+          ["self.op_hcompute_hw_input_global_wrapper_stencil_write.0","row_buf_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_11.push_data"],
+          ["self.op_hcompute_hw_input_global_wrapper_stencil_write_data_valid","row_buf_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_11.push_data_valid"],
+          ["zero_cst_U260.out","row_buf_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_11.read_will_update"],
+          ["self.rst_n","row_buf_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_13.nreset_i"],
+          ["self.op_hcompute_hw_input_global_wrapper_stencil_write.0","row_buf_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_13.push_data"],
+          ["self.op_hcompute_hw_input_global_wrapper_stencil_write_data_valid","row_buf_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_13.push_data_valid"],
+          ["zero_cst_U296.out","row_buf_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_13.read_will_update"],
+          ["self.rst_n","row_buf_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_8.nreset_i"],
+          ["self.op_hcompute_hw_input_global_wrapper_stencil_write.0","row_buf_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_8.push_data"],
+          ["self.op_hcompute_hw_input_global_wrapper_stencil_write_data_valid","row_buf_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_8.push_data_valid"],
+          ["zero_cst_U332.out","row_buf_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_8.read_will_update"]
         ]
       },
       "op_hcompute_conv_stencil_1_exe_start_control_vars_pt__U87":{
@@ -2761,13 +4250,13 @@
           ["ready_out","Bit"]
         ]],
         "instances":{
-          "and_all__U185":{
+          "and_all__U337":{
             "modref":"corebit.const",
             "modargs":{"value":["Bool",true]}
           }
         },
         "connections":[
-          ["self.ready_out","and_all__U185.out"]
+          ["self.ready_out","and_all__U337.out"]
         ]
       },
       "ready_and_mod_op_hcompute_conv_stencil_1":{
@@ -2777,14 +4266,14 @@
           ["ready_out","Bit"]
         ]],
         "instances":{
-          "and_all__U186":{
+          "and_all__U338":{
             "modref":"corebit.and"
           }
         },
         "connections":[
-          ["self.ready_in_conv_stencil_clkwrk_dsa0","and_all__U186.in0"],
-          ["self.ready_in_hw_input_global_wrapper_stencil","and_all__U186.in1"],
-          ["self.ready_out","and_all__U186.out"]
+          ["self.ready_in_conv_stencil_clkwrk_dsa0","and_all__U338.in0"],
+          ["self.ready_in_hw_input_global_wrapper_stencil","and_all__U338.in1"],
+          ["self.ready_out","and_all__U338.out"]
         ]
       },
       "ready_and_mod_op_hcompute_hw_input_global_wrapper_stencil":{
