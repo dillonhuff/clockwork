@@ -400,10 +400,10 @@ prog gaussian_glb() {
   return prg;
 }
 
-prog gaussian() {
+prog gaussian_() {
   prog prg;
   prg.compute_unit_file = "gaussian_compute.h";
-  prg.name = "gaussian";
+  prg.name = "gaussian_";
 
 // Stencil<uint16_t, 64, 64> &hw_input_stencil = arg_0;
   prg.add_input("hw_input_stencil");

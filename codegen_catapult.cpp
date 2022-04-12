@@ -1,12 +1,23 @@
 //#include "codegen.h"
 #include "codegen_catapult.h"
 
-
-void generate_catapult_tcl(std::string& name, bool is_halide_app) {
+void generate_catapult_tcl(std::string& name, bool is_halide_app, buffer_list& buffer_list) {
   ofstream of(name + "_catapult_hls.tcl");
+//if(buff_list != nullptr)
+  //{
+	  //of << "Dummy " << endl;
+	 //map<string, int> list = buffer_list;//->return_all_buffers();
+	 map<string, int> list = buffer_list.return_all_buffers();
+	// for(auto i : list)
+	 //{
+	//	 of << i.first << " " << i.second << endl;
+	// }
+	// of << "End dummy " << endl << endl;
+
+ // }
   of << "project new"<< endl;
-  of << "solution file add ./our_code/regression_tb_"<< name << ".tcl -exclude true" << endl;
-  of << "solution file add ./our_code/"<< name <<".cpp -exclude false" << endl;
+  of << "solution file add ./regression_tb_"<< name << ".cpp -exclude true" << endl;
+  of << "solution file add ./"<< name <<".cpp -exclude false" << endl;
   of << "options set Flows/NCSim/NC_ROOT /cad/cadence/XCELIUMMAIN_20.09.007_lnx86" << endl;
   of << "options set Input/CppStandard c++14" << endl;
   of << "options set Flows/SCVerify/USE_NCSIM true" << endl;
@@ -21,11 +32,15 @@ void generate_catapult_tcl(std::string& name, bool is_halide_app) {
   of << "go assembly"<< endl;
   //of << "directive set /" << name << "for:for -PIPELINE_INIT_INTERVAL 1" << endl;
   of << "go architect" << endl;
-  if(is_halide_app ==true)
-	of << "ignore_memory_precedences -from *read_mem(hw_input_global_wrapper_global_wrapper_stencil.*merged_banks_9.f*.vals.val:rsc.@) -to *write_mem(hw_input_global_wrapper_global_wrapper_stencil.*merged_banks_9.f*.vals.val:rsc.@)" << endl;
+//  if(is_halide_app ==true)
+//	of << "ignore_memory_precedences -from *return.hw_uint*read_mem(hw_input_global_wrapper_global_wrapper_stencil.merged_banks_9.f*.vals.val:rsc.@) -to *push:write_mem(hw_input_global_wrapper_global_wrapper_stencil.*merged_banks_9.f*.vals.val:rsc.@)" << endl;
 
-  if(is_halide_app ==false)
-	of << "ignore_memory_precedences -from *read_mem(input.input*.vals.val:rsc.@) -to *write_mem(input.input*.vals.val:rsc.@)" << endl;
+//  if(is_halide_app ==false)
+//	of << "ignore_memory_precedences -from *read_mem(input.input*.vals.val:rsc.@) -to *write_mem(input.input*.vals.val:rsc.@)" << endl;
+  if(name.find("resnet___") == std::string::npos && name.find("mobilenet") == std::string::npos && name.find("Resnet___") == std::string::npos && name.find("Mobilenet") == std::string::npos )
+  	for(auto i: list)
+		if(i.second > 4)
+	  		of << "ignore_memory_precedences -from *read_mem(*" << i.first << ".vals.val:rsc.@) -to "<< "*write_mem(*" << i.first << ".vals.val:rsc.@)" << endl;
  
   of << "go allocate" << endl;
 

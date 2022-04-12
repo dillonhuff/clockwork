@@ -1,7 +1,7 @@
 #include "example_progs.h"
 
 
-prog harris() {
+prog harris_() {
   prog prg;
   prg.compute_unit_file = "harris_compute.h";
   prg.name = "harris";
@@ -702,7 +702,7 @@ prog harris_glb2() {
   return prg;
 }
 
-prog harris_color() {
+prog harris_color_() {
   prog prg;
   prg.compute_unit_file = "harris_color_compute.h";
   prg.name = "harris_color";

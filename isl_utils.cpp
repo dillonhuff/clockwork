@@ -1224,6 +1224,7 @@ std::string codegen_c(isl_constraint* const bset) {
   regex eqsign(" = ");
   gp = regex_replace(gp, eqsign, " == ");
   //assert(false);
+  cout << gp << endl;
   return "(" + gp + ")";
 }
 

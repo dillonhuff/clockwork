@@ -969,301 +969,795 @@ inline hw_uint<16> hw_input_global_wrapper_glb_stencil_op_hcompute_hw_input_glob
 	return result;
 }
 
-struct hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1_20_merged_banks_9_cache {
-	// RAM Box: {[0, 197], [1, 257]}
+struct hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_22_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_4_67_cache {
+	// RAM Box: {[0, 195], [0, 252]}
 	// Capacity: 137
-	// # of read delays: 3
-  // 0, 68, 136
-	hw_uint<16> f0;
-	fifo<hw_uint<16>, 67> f1;
-	hw_uint<16> f2;
-	fifo<hw_uint<16>, 67> f3;
-	hw_uint<16> f4;
-
-
-	inline hw_uint<16> peek_0() {
-		return f0;
-	}
-
-	inline hw_uint<16> peek_67() {
+	// # of read delays: 2
+  // 0, 136
+	fifo<hw_uint<16>, 137> f;
+	inline hw_uint<16> peek(const int offset) {
 #ifdef __SYTHESIS__
 #endif //__SYNTHESIS__
-		return f1.back();
-	}
-
-	inline hw_uint<16> peek_68() {
-		return f2;
-	}
-
-	inline hw_uint<16> peek_135() {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
-		return f3.back();
-	}
-
-	inline hw_uint<16> peek_136() {
-		return f4;
-	}
+    return f.peek(136 - offset);
+  }
 
 
 
 	inline void push(const hw_uint<16> value) {
 #ifdef __SYTHESIS__
 #endif //__SYNTHESIS__
-    // cap: 1 reading from capacity: 67
-    f4 = f3.back();
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
-    // cap: 67 reading from capacity: 1
-    f3.push(f2);
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
-    // cap: 1 reading from capacity: 67
-    f2 = f1.back();
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
-    // cap: 67 reading from capacity: 1
-    f1.push(f0);
-    // cap: 1
-    f0 = value;
-	}
+    return f.push(value);
+  }
 
 };
 
-struct hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_22_merged_banks_9_cache {
-	// RAM Box: {[0, 197], [0, 256]}
+struct hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1_20_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_4_68_cache {
+	// RAM Box: {[0, 195], [1, 253]}
 	// Capacity: 137
-	// # of read delays: 3
-  // 0, 68, 136
-	hw_uint<16> f0;
-	fifo<hw_uint<16>, 67> f1;
-	hw_uint<16> f2;
-	fifo<hw_uint<16>, 67> f3;
-	hw_uint<16> f4;
-
-
-	inline hw_uint<16> peek_0() {
-		return f0;
-	}
-
-	inline hw_uint<16> peek_67() {
+	// # of read delays: 2
+  // 0, 136
+	fifo<hw_uint<16>, 137> f;
+	inline hw_uint<16> peek(const int offset) {
 #ifdef __SYTHESIS__
 #endif //__SYNTHESIS__
-		return f1.back();
-	}
-
-	inline hw_uint<16> peek_68() {
-		return f2;
-	}
-
-	inline hw_uint<16> peek_135() {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
-		return f3.back();
-	}
-
-	inline hw_uint<16> peek_136() {
-		return f4;
-	}
+    return f.peek(136 - offset);
+  }
 
 
 
 	inline void push(const hw_uint<16> value) {
 #ifdef __SYTHESIS__
 #endif //__SYNTHESIS__
-    // cap: 1 reading from capacity: 67
-    f4 = f3.back();
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
-    // cap: 67 reading from capacity: 1
-    f3.push(f2);
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
-    // cap: 1 reading from capacity: 67
-    f2 = f1.back();
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
-    // cap: 67 reading from capacity: 1
-    f1.push(f0);
-    // cap: 1
-    f0 = value;
-	}
+    return f.push(value);
+  }
 
 };
 
-struct hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2_18_merged_banks_9_cache {
-	// RAM Box: {[0, 197], [2, 254]}
-	// Capacity: 138
-	// # of read delays: 6
-  // 0, 1, 68, 69, 136, 137
-	hw_uint<16> f0;
-	hw_uint<16> f2;
-	fifo<hw_uint<16>, 66> f3;
-	hw_uint<16> f4;
-	hw_uint<16> f6;
-	fifo<hw_uint<16>, 66> f7;
-	hw_uint<16> f8;
-	hw_uint<16> f10;
-
-
-	inline hw_uint<16> peek_0() {
-		return f0;
-	}
-
-	inline hw_uint<16> peek_1() {
-		return f2;
-	}
-
-	inline hw_uint<16> peek_67() {
+struct hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2_18_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_4_69_cache {
+	// RAM Box: {[0, 195], [2, 254]}
+	// Capacity: 137
+	// # of read delays: 2
+  // 0, 136
+	fifo<hw_uint<16>, 137> f;
+	inline hw_uint<16> peek(const int offset) {
 #ifdef __SYTHESIS__
 #endif //__SYNTHESIS__
-		return f3.back();
-	}
-
-	inline hw_uint<16> peek_68() {
-		return f4;
-	}
-
-	inline hw_uint<16> peek_69() {
-		return f6;
-	}
-
-	inline hw_uint<16> peek_135() {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
-		return f7.back();
-	}
-
-	inline hw_uint<16> peek_136() {
-		return f8;
-	}
-
-	inline hw_uint<16> peek_137() {
-		return f10;
-	}
+    return f.peek(136 - offset);
+  }
 
 
 
 	inline void push(const hw_uint<16> value) {
 #ifdef __SYTHESIS__
 #endif //__SYNTHESIS__
-    // cap: 1 reading from capacity: 1
-    f10 = f8;
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
-    // cap: 1 reading from capacity: 66
-    f8 = f7.back();
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
-    // cap: 66 reading from capacity: 1
-    f7.push(f6);
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
-    // cap: 1 reading from capacity: 1
-    f6 = f4;
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
-    // cap: 1 reading from capacity: 66
-    f4 = f3.back();
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
-    // cap: 66 reading from capacity: 1
-    f3.push(f2);
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
-    // cap: 1 reading from capacity: 1
-    f2 = f0;
-    // cap: 1
-    f0 = value;
-	}
+    return f.push(value);
+  }
 
 };
 
-struct hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3_16_merged_banks_9_cache {
-	// RAM Box: {[0, 197], [3, 255]}
-	// Capacity: 138
-	// # of read delays: 6
-  // 0, 1, 68, 69, 136, 137
-	hw_uint<16> f0;
-	hw_uint<16> f2;
-	fifo<hw_uint<16>, 66> f3;
-	hw_uint<16> f4;
-	hw_uint<16> f6;
-	fifo<hw_uint<16>, 66> f7;
-	hw_uint<16> f8;
-	hw_uint<16> f10;
-
-
-	inline hw_uint<16> peek_0() {
-		return f0;
-	}
-
-	inline hw_uint<16> peek_1() {
-		return f2;
-	}
-
-	inline hw_uint<16> peek_67() {
+struct hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_22_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_4_70_cache {
+	// RAM Box: {[1, 196], [0, 252]}
+	// Capacity: 69
+	// # of read delays: 2
+  // 0, 68
+	fifo<hw_uint<16>, 69> f;
+	inline hw_uint<16> peek(const int offset) {
 #ifdef __SYTHESIS__
 #endif //__SYNTHESIS__
-		return f3.back();
-	}
-
-	inline hw_uint<16> peek_68() {
-		return f4;
-	}
-
-	inline hw_uint<16> peek_69() {
-		return f6;
-	}
-
-	inline hw_uint<16> peek_135() {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
-		return f7.back();
-	}
-
-	inline hw_uint<16> peek_136() {
-		return f8;
-	}
-
-	inline hw_uint<16> peek_137() {
-		return f10;
-	}
+    return f.peek(68 - offset);
+  }
 
 
 
 	inline void push(const hw_uint<16> value) {
 #ifdef __SYTHESIS__
 #endif //__SYNTHESIS__
-    // cap: 1 reading from capacity: 1
-    f10 = f8;
+    return f.push(value);
+  }
+
+};
+
+struct hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1_20_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_4_71_cache {
+	// RAM Box: {[1, 196], [1, 253]}
+	// Capacity: 69
+	// # of read delays: 2
+  // 0, 68
+	fifo<hw_uint<16>, 69> f;
+	inline hw_uint<16> peek(const int offset) {
 #ifdef __SYTHESIS__
 #endif //__SYNTHESIS__
-    // cap: 1 reading from capacity: 66
-    f8 = f7.back();
+    return f.peek(68 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
 #ifdef __SYTHESIS__
 #endif //__SYNTHESIS__
-    // cap: 66 reading from capacity: 1
-    f7.push(f6);
+    return f.push(value);
+  }
+
+};
+
+struct hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2_18_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_4_72_cache {
+	// RAM Box: {[1, 196], [2, 254]}
+	// Capacity: 69
+	// # of read delays: 2
+  // 0, 68
+	fifo<hw_uint<16>, 69> f;
+	inline hw_uint<16> peek(const int offset) {
 #ifdef __SYTHESIS__
 #endif //__SYNTHESIS__
-    // cap: 1 reading from capacity: 1
-    f6 = f4;
+    return f.peek(68 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
 #ifdef __SYTHESIS__
 #endif //__SYNTHESIS__
-    // cap: 1 reading from capacity: 66
-    f4 = f3.back();
+    return f.push(value);
+  }
+
+};
+
+struct hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_22_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_4_73_cache {
+	// RAM Box: {[2, 197], [0, 252]}
+	// Capacity: 1
+	// # of read delays: 2
+  // 0, 0
+	fifo<hw_uint<16>, 1> f;
+	inline hw_uint<16> peek(const int offset) {
 #ifdef __SYTHESIS__
 #endif //__SYNTHESIS__
-    // cap: 66 reading from capacity: 1
-    f3.push(f2);
+    return f.peek(0 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
 #ifdef __SYTHESIS__
 #endif //__SYNTHESIS__
-    // cap: 1 reading from capacity: 1
-    f2 = f0;
-    // cap: 1
-    f0 = value;
-	}
+    return f.push(value);
+  }
+
+};
+
+struct hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2_18_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_4_74_cache {
+	// RAM Box: {[2, 197], [2, 254]}
+	// Capacity: 1
+	// # of read delays: 2
+  // 0, 0
+	fifo<hw_uint<16>, 1> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
+    return f.peek(0 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
+    return f.push(value);
+  }
+
+};
+
+struct hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1_20_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_4_75_cache {
+	// RAM Box: {[2, 197], [1, 253]}
+	// Capacity: 1
+	// # of read delays: 2
+  // 0, 0
+	fifo<hw_uint<16>, 1> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
+    return f.peek(0 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
+    return f.push(value);
+  }
+
+};
+
+struct hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1_20_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_5_56_cache {
+	// RAM Box: {[0, 195], [1, 253]}
+	// Capacity: 137
+	// # of read delays: 2
+  // 0, 136
+	fifo<hw_uint<16>, 137> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
+    return f.peek(136 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
+    return f.push(value);
+  }
+
+};
+
+struct hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2_18_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_5_57_cache {
+	// RAM Box: {[0, 195], [2, 254]}
+	// Capacity: 137
+	// # of read delays: 2
+  // 0, 136
+	fifo<hw_uint<16>, 137> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
+    return f.peek(136 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
+    return f.push(value);
+  }
+
+};
+
+struct hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3_16_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_5_58_cache {
+	// RAM Box: {[0, 195], [3, 255]}
+	// Capacity: 137
+	// # of read delays: 2
+  // 0, 136
+	fifo<hw_uint<16>, 137> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
+    return f.peek(136 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
+    return f.push(value);
+  }
+
+};
+
+struct hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1_20_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_5_59_cache {
+	// RAM Box: {[1, 196], [1, 253]}
+	// Capacity: 69
+	// # of read delays: 2
+  // 0, 68
+	fifo<hw_uint<16>, 69> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
+    return f.peek(68 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
+    return f.push(value);
+  }
+
+};
+
+struct hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2_18_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_5_60_cache {
+	// RAM Box: {[1, 196], [2, 254]}
+	// Capacity: 69
+	// # of read delays: 2
+  // 0, 68
+	fifo<hw_uint<16>, 69> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
+    return f.peek(68 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
+    return f.push(value);
+  }
+
+};
+
+struct hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3_16_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_5_61_cache {
+	// RAM Box: {[1, 196], [3, 255]}
+	// Capacity: 69
+	// # of read delays: 2
+  // 0, 68
+	fifo<hw_uint<16>, 69> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
+    return f.peek(68 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
+    return f.push(value);
+  }
+
+};
+
+struct hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1_20_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_5_62_cache {
+	// RAM Box: {[2, 197], [1, 253]}
+	// Capacity: 1
+	// # of read delays: 2
+  // 0, 0
+	fifo<hw_uint<16>, 1> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
+    return f.peek(0 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
+    return f.push(value);
+  }
+
+};
+
+struct hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3_16_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_5_63_cache {
+	// RAM Box: {[2, 197], [3, 255]}
+	// Capacity: 1
+	// # of read delays: 2
+  // 0, 0
+	fifo<hw_uint<16>, 1> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
+    return f.peek(0 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
+    return f.push(value);
+  }
+
+};
+
+struct hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2_18_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_5_64_cache {
+	// RAM Box: {[2, 197], [2, 254]}
+	// Capacity: 1
+	// # of read delays: 2
+  // 0, 0
+	fifo<hw_uint<16>, 1> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
+    return f.peek(0 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
+    return f.push(value);
+  }
+
+};
+
+struct hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2_18_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_6_45_cache {
+	// RAM Box: {[0, 195], [2, 254]}
+	// Capacity: 138
+	// # of read delays: 2
+  // 0, 137
+	fifo<hw_uint<16>, 138> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
+    return f.peek(137 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
+    return f.push(value);
+  }
+
+};
+
+struct hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3_16_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_6_46_cache {
+	// RAM Box: {[0, 195], [3, 255]}
+	// Capacity: 138
+	// # of read delays: 2
+  // 0, 137
+	fifo<hw_uint<16>, 138> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
+    return f.peek(137 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
+    return f.push(value);
+  }
+
+};
+
+struct hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_22_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_6_47_cache {
+	// RAM Box: {[0, 195], [4, 256]}
+	// Capacity: 137
+	// # of read delays: 2
+  // 0, 136
+	fifo<hw_uint<16>, 137> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
+    return f.peek(136 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
+    return f.push(value);
+  }
+
+};
+
+struct hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2_18_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_6_48_cache {
+	// RAM Box: {[1, 196], [2, 254]}
+	// Capacity: 70
+	// # of read delays: 2
+  // 0, 69
+	fifo<hw_uint<16>, 70> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
+    return f.peek(69 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
+    return f.push(value);
+  }
+
+};
+
+struct hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3_16_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_6_49_cache {
+	// RAM Box: {[1, 196], [3, 255]}
+	// Capacity: 70
+	// # of read delays: 2
+  // 0, 69
+	fifo<hw_uint<16>, 70> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
+    return f.peek(69 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
+    return f.push(value);
+  }
+
+};
+
+struct hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_22_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_6_50_cache {
+	// RAM Box: {[1, 196], [4, 256]}
+	// Capacity: 69
+	// # of read delays: 2
+  // 0, 68
+	fifo<hw_uint<16>, 69> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
+    return f.peek(68 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
+    return f.push(value);
+  }
+
+};
+
+struct hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2_18_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_6_51_cache {
+	// RAM Box: {[2, 197], [2, 254]}
+	// Capacity: 2
+	// # of read delays: 2
+  // 0, 1
+	fifo<hw_uint<16>, 2> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
+    return f.peek(1 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
+    return f.push(value);
+  }
+
+};
+
+struct hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_22_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_6_52_cache {
+	// RAM Box: {[2, 197], [4, 256]}
+	// Capacity: 1
+	// # of read delays: 2
+  // 0, 0
+	fifo<hw_uint<16>, 1> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
+    return f.peek(0 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
+    return f.push(value);
+  }
+
+};
+
+struct hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3_16_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_6_53_cache {
+	// RAM Box: {[2, 197], [3, 255]}
+	// Capacity: 2
+	// # of read delays: 2
+  // 0, 1
+	fifo<hw_uint<16>, 2> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
+    return f.peek(1 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
+    return f.push(value);
+  }
+
+};
+
+struct hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3_16_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_7_34_cache {
+	// RAM Box: {[0, 195], [3, 255]}
+	// Capacity: 138
+	// # of read delays: 2
+  // 0, 137
+	fifo<hw_uint<16>, 138> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
+    return f.peek(137 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
+    return f.push(value);
+  }
+
+};
+
+struct hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_22_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_7_35_cache {
+	// RAM Box: {[0, 195], [4, 256]}
+	// Capacity: 137
+	// # of read delays: 2
+  // 0, 136
+	fifo<hw_uint<16>, 137> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
+    return f.peek(136 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
+    return f.push(value);
+  }
+
+};
+
+struct hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1_20_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_7_36_cache {
+	// RAM Box: {[0, 195], [5, 257]}
+	// Capacity: 137
+	// # of read delays: 2
+  // 0, 136
+	fifo<hw_uint<16>, 137> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
+    return f.peek(136 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
+    return f.push(value);
+  }
+
+};
+
+struct hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3_16_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_7_37_cache {
+	// RAM Box: {[1, 196], [3, 255]}
+	// Capacity: 70
+	// # of read delays: 2
+  // 0, 69
+	fifo<hw_uint<16>, 70> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
+    return f.peek(69 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
+    return f.push(value);
+  }
+
+};
+
+struct hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_22_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_7_38_cache {
+	// RAM Box: {[1, 196], [4, 256]}
+	// Capacity: 69
+	// # of read delays: 2
+  // 0, 68
+	fifo<hw_uint<16>, 69> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
+    return f.peek(68 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
+    return f.push(value);
+  }
+
+};
+
+struct hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1_20_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_7_39_cache {
+	// RAM Box: {[1, 196], [5, 257]}
+	// Capacity: 69
+	// # of read delays: 2
+  // 0, 68
+	fifo<hw_uint<16>, 69> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
+    return f.peek(68 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
+    return f.push(value);
+  }
+
+};
+
+struct hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3_16_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_7_40_cache {
+	// RAM Box: {[2, 197], [3, 255]}
+	// Capacity: 2
+	// # of read delays: 2
+  // 0, 1
+	fifo<hw_uint<16>, 2> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
+    return f.peek(1 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
+    return f.push(value);
+  }
+
+};
+
+struct hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1_20_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_7_41_cache {
+	// RAM Box: {[2, 197], [5, 257]}
+	// Capacity: 1
+	// # of read delays: 2
+  // 0, 0
+	fifo<hw_uint<16>, 1> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
+    return f.peek(0 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
+    return f.push(value);
+  }
+
+};
+
+struct hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_22_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_7_42_cache {
+	// RAM Box: {[2, 197], [4, 256]}
+	// Capacity: 1
+	// # of read delays: 2
+  // 0, 0
+	fifo<hw_uint<16>, 1> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
+    return f.peek(0 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __SYTHESIS__
+#endif //__SYNTHESIS__
+    return f.push(value);
+  }
 
 };
 
@@ -1305,29 +1799,93 @@ struct hw_input_global_wrapper_global_wrapper_stencil_cache {
     // { op_hcompute_blur_unnormalized_stencil_7[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> hw_input_global_wrapper_global_wrapper_stencil[2 + blur_unnormalized_s1_y, 3 + 4blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 195 and 0 <= blur_unnormalized_s1_x_x <= 63 }
     // { op_hcompute_blur_unnormalized_stencil_7[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> hw_input_global_wrapper_global_wrapper_stencil[2 + blur_unnormalized_s1_y, 5 + 4blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 195 and 0 <= blur_unnormalized_s1_x_x <= 63 }
     // { op_hcompute_blur_unnormalized_stencil_7[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> hw_input_global_wrapper_global_wrapper_stencil[2 + blur_unnormalized_s1_y, 4 + 4blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 195 and 0 <= blur_unnormalized_s1_x_x <= 63 }
-  // # of banks: 4
-  hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1_20_merged_banks_9_cache hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1_20_merged_banks_9;
-  hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_22_merged_banks_9_cache hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_22_merged_banks_9;
-  hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2_18_merged_banks_9_cache hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2_18_merged_banks_9;
-  hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3_16_merged_banks_9_cache hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3_16_merged_banks_9;
+  // # of banks: 36
+  hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_22_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_4_67_cache hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_22_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_4_67;
+  hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1_20_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_4_68_cache hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1_20_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_4_68;
+  hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2_18_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_4_69_cache hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2_18_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_4_69;
+  hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_22_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_4_70_cache hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_22_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_4_70;
+  hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1_20_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_4_71_cache hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1_20_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_4_71;
+  hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2_18_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_4_72_cache hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2_18_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_4_72;
+  hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_22_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_4_73_cache hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_22_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_4_73;
+  hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2_18_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_4_74_cache hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2_18_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_4_74;
+  hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1_20_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_4_75_cache hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1_20_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_4_75;
+  hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1_20_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_5_56_cache hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1_20_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_5_56;
+  hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2_18_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_5_57_cache hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2_18_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_5_57;
+  hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3_16_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_5_58_cache hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3_16_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_5_58;
+  hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1_20_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_5_59_cache hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1_20_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_5_59;
+  hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2_18_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_5_60_cache hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2_18_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_5_60;
+  hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3_16_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_5_61_cache hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3_16_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_5_61;
+  hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1_20_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_5_62_cache hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1_20_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_5_62;
+  hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3_16_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_5_63_cache hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3_16_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_5_63;
+  hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2_18_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_5_64_cache hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2_18_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_5_64;
+  hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2_18_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_6_45_cache hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2_18_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_6_45;
+  hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3_16_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_6_46_cache hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3_16_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_6_46;
+  hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_22_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_6_47_cache hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_22_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_6_47;
+  hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2_18_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_6_48_cache hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2_18_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_6_48;
+  hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3_16_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_6_49_cache hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3_16_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_6_49;
+  hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_22_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_6_50_cache hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_22_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_6_50;
+  hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2_18_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_6_51_cache hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2_18_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_6_51;
+  hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_22_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_6_52_cache hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_22_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_6_52;
+  hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3_16_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_6_53_cache hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3_16_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_6_53;
+  hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3_16_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_7_34_cache hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3_16_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_7_34;
+  hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_22_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_7_35_cache hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_22_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_7_35;
+  hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1_20_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_7_36_cache hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1_20_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_7_36;
+  hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3_16_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_7_37_cache hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3_16_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_7_37;
+  hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_22_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_7_38_cache hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_22_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_7_38;
+  hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1_20_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_7_39_cache hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1_20_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_7_39;
+  hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3_16_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_7_40_cache hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3_16_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_7_40;
+  hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1_20_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_7_41_cache hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1_20_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_7_41;
+  hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_22_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_7_42_cache hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_22_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_7_42;
 };
 
 
 
 inline void hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1_20_write(hw_uint<16>& hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1_20, hw_input_global_wrapper_global_wrapper_stencil_cache& hw_input_global_wrapper_global_wrapper_stencil, int root, int hw_input_global_wrapper_global_wrapper_s0_y, int hw_input_global_wrapper_global_wrapper_s0_x_x, int dynamic_address) {
-  hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1_20_merged_banks_9.push(hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1_20);
+  hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1_20_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_4_68.push(hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1_20);
+  hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1_20_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_4_71.push(hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1_20);
+  hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1_20_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_4_75.push(hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1_20);
+  hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1_20_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_5_56.push(hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1_20);
+  hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1_20_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_5_59.push(hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1_20);
+  hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1_20_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_5_62.push(hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1_20);
+  hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1_20_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_7_36.push(hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1_20);
+  hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1_20_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_7_39.push(hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1_20);
+  hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1_20_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_7_41.push(hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1_20);
 }
 
 inline void hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_22_write(hw_uint<16>& hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_22, hw_input_global_wrapper_global_wrapper_stencil_cache& hw_input_global_wrapper_global_wrapper_stencil, int root, int hw_input_global_wrapper_global_wrapper_s0_y, int hw_input_global_wrapper_global_wrapper_s0_x_x, int dynamic_address) {
-  hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_22_merged_banks_9.push(hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_22);
+  hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_22_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_4_67.push(hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_22);
+  hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_22_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_4_70.push(hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_22);
+  hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_22_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_4_73.push(hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_22);
+  hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_22_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_6_47.push(hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_22);
+  hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_22_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_6_50.push(hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_22);
+  hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_22_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_6_52.push(hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_22);
+  hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_22_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_7_35.push(hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_22);
+  hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_22_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_7_38.push(hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_22);
+  hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_22_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_7_42.push(hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_22);
 }
 
 inline void hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2_18_write(hw_uint<16>& hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2_18, hw_input_global_wrapper_global_wrapper_stencil_cache& hw_input_global_wrapper_global_wrapper_stencil, int root, int hw_input_global_wrapper_global_wrapper_s0_y, int hw_input_global_wrapper_global_wrapper_s0_x_x, int dynamic_address) {
-  hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2_18_merged_banks_9.push(hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2_18);
+  hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2_18_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_4_69.push(hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2_18);
+  hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2_18_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_4_72.push(hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2_18);
+  hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2_18_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_4_74.push(hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2_18);
+  hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2_18_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_5_57.push(hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2_18);
+  hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2_18_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_5_60.push(hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2_18);
+  hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2_18_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_5_64.push(hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2_18);
+  hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2_18_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_6_45.push(hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2_18);
+  hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2_18_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_6_48.push(hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2_18);
+  hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2_18_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_6_51.push(hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2_18);
 }
 
 inline void hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3_16_write(hw_uint<16>& hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3_16, hw_input_global_wrapper_global_wrapper_stencil_cache& hw_input_global_wrapper_global_wrapper_stencil, int root, int hw_input_global_wrapper_global_wrapper_s0_y, int hw_input_global_wrapper_global_wrapper_s0_x_x, int dynamic_address) {
-  hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3_16_merged_banks_9.push(hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3_16);
+  hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3_16_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_5_58.push(hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3_16);
+  hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3_16_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_5_61.push(hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3_16);
+  hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3_16_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_5_63.push(hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3_16);
+  hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3_16_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_6_46.push(hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3_16);
+  hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3_16_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_6_49.push(hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3_16);
+  hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3_16_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_6_53.push(hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3_16);
+  hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3_16_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_7_34.push(hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3_16);
+  hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3_16_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_7_37.push(hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3_16);
+  hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3_16_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_7_40.push(hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3_16);
 }
 
 inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_4_67_select(hw_input_global_wrapper_global_wrapper_stencil_cache& hw_input_global_wrapper_global_wrapper_stencil, int root, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x_x, int dynamic_address) {
@@ -1336,7 +1894,7 @@ inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_bl
   // hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_4_67 read pattern: { op_hcompute_blur_unnormalized_stencil_4[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> hw_input_global_wrapper_global_wrapper_stencil[blur_unnormalized_s1_y, 4blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 195 and 0 <= blur_unnormalized_s1_x_x <= 63 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_4[d0 = 0, d1, d2] -> [0, 2 + d1, d2, 12] : 0 <= d1 <= 195 and 0 <= d2 <= 63 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil[d0 = 0, d1, d2] -> [0, d1, d2, 4] : 0 <= d1 <= 197 and 0 <= d2 <= 67 }
-  auto value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_22 = hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_22_merged_banks_9.peek_136();
+  auto value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_22 = hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_22_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_4_67.peek(/* one reader or all rams */ 136);
   return value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_22;
   return 0;
 }
@@ -1347,7 +1905,7 @@ inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_bl
   // hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_4_68 read pattern: { op_hcompute_blur_unnormalized_stencil_4[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> hw_input_global_wrapper_global_wrapper_stencil[blur_unnormalized_s1_y, 1 + 4blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 195 and 0 <= blur_unnormalized_s1_x_x <= 63 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_4[d0 = 0, d1, d2] -> [0, 2 + d1, d2, 12] : 0 <= d1 <= 195 and 0 <= d2 <= 63 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1[d0 = 0, d1, d2] -> [0, d1, d2, 5] : 0 <= d1 <= 197 and 0 <= d2 <= 67 }
-  auto value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1_20 = hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1_20_merged_banks_9.peek_136();
+  auto value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1_20 = hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1_20_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_4_68.peek(/* one reader or all rams */ 136);
   return value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1_20;
   return 0;
 }
@@ -1358,7 +1916,7 @@ inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_bl
   // hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_4_69 read pattern: { op_hcompute_blur_unnormalized_stencil_4[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> hw_input_global_wrapper_global_wrapper_stencil[blur_unnormalized_s1_y, 2 + 4blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 195 and 0 <= blur_unnormalized_s1_x_x <= 63 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_4[d0 = 0, d1, d2] -> [0, 2 + d1, d2, 12] : 0 <= d1 <= 195 and 0 <= d2 <= 63 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2[d0 = 0, d1, d2] -> [0, d1, d2, 6] : 0 <= d1 <= 197 and 0 <= d2 <= 67 }
-  auto value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2_18 = hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2_18_merged_banks_9.peek_136();
+  auto value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2_18 = hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2_18_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_4_69.peek(/* one reader or all rams */ 136);
   return value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2_18;
   return 0;
 }
@@ -1369,7 +1927,7 @@ inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_bl
   // hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_4_70 read pattern: { op_hcompute_blur_unnormalized_stencil_4[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> hw_input_global_wrapper_global_wrapper_stencil[1 + blur_unnormalized_s1_y, 4blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 195 and 0 <= blur_unnormalized_s1_x_x <= 63 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_4[d0 = 0, d1, d2] -> [0, 2 + d1, d2, 12] : 0 <= d1 <= 195 and 0 <= d2 <= 63 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil[d0 = 0, d1, d2] -> [0, d1, d2, 4] : 0 <= d1 <= 197 and 0 <= d2 <= 67 }
-  auto value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_22 = hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_22_merged_banks_9.peek_68();
+  auto value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_22 = hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_22_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_4_70.peek(/* one reader or all rams */ 68);
   return value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_22;
   return 0;
 }
@@ -1380,7 +1938,7 @@ inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_bl
   // hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_4_71 read pattern: { op_hcompute_blur_unnormalized_stencil_4[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> hw_input_global_wrapper_global_wrapper_stencil[1 + blur_unnormalized_s1_y, 1 + 4blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 195 and 0 <= blur_unnormalized_s1_x_x <= 63 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_4[d0 = 0, d1, d2] -> [0, 2 + d1, d2, 12] : 0 <= d1 <= 195 and 0 <= d2 <= 63 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1[d0 = 0, d1, d2] -> [0, d1, d2, 5] : 0 <= d1 <= 197 and 0 <= d2 <= 67 }
-  auto value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1_20 = hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1_20_merged_banks_9.peek_68();
+  auto value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1_20 = hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1_20_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_4_71.peek(/* one reader or all rams */ 68);
   return value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1_20;
   return 0;
 }
@@ -1391,7 +1949,7 @@ inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_bl
   // hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_4_72 read pattern: { op_hcompute_blur_unnormalized_stencil_4[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> hw_input_global_wrapper_global_wrapper_stencil[1 + blur_unnormalized_s1_y, 2 + 4blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 195 and 0 <= blur_unnormalized_s1_x_x <= 63 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_4[d0 = 0, d1, d2] -> [0, 2 + d1, d2, 12] : 0 <= d1 <= 195 and 0 <= d2 <= 63 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2[d0 = 0, d1, d2] -> [0, d1, d2, 6] : 0 <= d1 <= 197 and 0 <= d2 <= 67 }
-  auto value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2_18 = hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2_18_merged_banks_9.peek_68();
+  auto value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2_18 = hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2_18_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_4_72.peek(/* one reader or all rams */ 68);
   return value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2_18;
   return 0;
 }
@@ -1402,7 +1960,7 @@ inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_bl
   // hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_4_73 read pattern: { op_hcompute_blur_unnormalized_stencil_4[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> hw_input_global_wrapper_global_wrapper_stencil[2 + blur_unnormalized_s1_y, 4blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 195 and 0 <= blur_unnormalized_s1_x_x <= 63 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_4[d0 = 0, d1, d2] -> [0, 2 + d1, d2, 12] : 0 <= d1 <= 195 and 0 <= d2 <= 63 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil[d0 = 0, d1, d2] -> [0, d1, d2, 4] : 0 <= d1 <= 197 and 0 <= d2 <= 67 }
-  auto value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_22 = hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_22_merged_banks_9.peek_0();
+  auto value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_22 = hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_22_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_4_73.peek(/* one reader or all rams */ 0);
   return value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_22;
   return 0;
 }
@@ -1413,7 +1971,7 @@ inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_bl
   // hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_4_74 read pattern: { op_hcompute_blur_unnormalized_stencil_4[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> hw_input_global_wrapper_global_wrapper_stencil[2 + blur_unnormalized_s1_y, 2 + 4blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 195 and 0 <= blur_unnormalized_s1_x_x <= 63 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_4[d0 = 0, d1, d2] -> [0, 2 + d1, d2, 12] : 0 <= d1 <= 195 and 0 <= d2 <= 63 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2[d0 = 0, d1, d2] -> [0, d1, d2, 6] : 0 <= d1 <= 197 and 0 <= d2 <= 67 }
-  auto value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2_18 = hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2_18_merged_banks_9.peek_0();
+  auto value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2_18 = hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2_18_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_4_74.peek(/* one reader or all rams */ 0);
   return value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2_18;
   return 0;
 }
@@ -1424,7 +1982,7 @@ inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_bl
   // hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_4_75 read pattern: { op_hcompute_blur_unnormalized_stencil_4[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> hw_input_global_wrapper_global_wrapper_stencil[2 + blur_unnormalized_s1_y, 1 + 4blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 195 and 0 <= blur_unnormalized_s1_x_x <= 63 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_4[d0 = 0, d1, d2] -> [0, 2 + d1, d2, 12] : 0 <= d1 <= 195 and 0 <= d2 <= 63 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1[d0 = 0, d1, d2] -> [0, d1, d2, 5] : 0 <= d1 <= 197 and 0 <= d2 <= 67 }
-  auto value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1_20 = hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1_20_merged_banks_9.peek_0();
+  auto value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1_20 = hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1_20_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_4_75.peek(/* one reader or all rams */ 0);
   return value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1_20;
   return 0;
 }
@@ -1435,7 +1993,7 @@ inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_bl
   // hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_5_56 read pattern: { op_hcompute_blur_unnormalized_stencil_5[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> hw_input_global_wrapper_global_wrapper_stencil[blur_unnormalized_s1_y, 1 + 4blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 195 and 0 <= blur_unnormalized_s1_x_x <= 63 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_5[d0 = 0, d1, d2] -> [0, 2 + d1, d2, 13] : 0 <= d1 <= 195 and 0 <= d2 <= 63 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1[d0 = 0, d1, d2] -> [0, d1, d2, 5] : 0 <= d1 <= 197 and 0 <= d2 <= 67 }
-  auto value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1_20 = hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1_20_merged_banks_9.peek_136();
+  auto value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1_20 = hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1_20_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_5_56.peek(/* one reader or all rams */ 136);
   return value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1_20;
   return 0;
 }
@@ -1446,7 +2004,7 @@ inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_bl
   // hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_5_57 read pattern: { op_hcompute_blur_unnormalized_stencil_5[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> hw_input_global_wrapper_global_wrapper_stencil[blur_unnormalized_s1_y, 2 + 4blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 195 and 0 <= blur_unnormalized_s1_x_x <= 63 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_5[d0 = 0, d1, d2] -> [0, 2 + d1, d2, 13] : 0 <= d1 <= 195 and 0 <= d2 <= 63 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2[d0 = 0, d1, d2] -> [0, d1, d2, 6] : 0 <= d1 <= 197 and 0 <= d2 <= 67 }
-  auto value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2_18 = hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2_18_merged_banks_9.peek_136();
+  auto value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2_18 = hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2_18_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_5_57.peek(/* one reader or all rams */ 136);
   return value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2_18;
   return 0;
 }
@@ -1457,7 +2015,7 @@ inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_bl
   // hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_5_58 read pattern: { op_hcompute_blur_unnormalized_stencil_5[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> hw_input_global_wrapper_global_wrapper_stencil[blur_unnormalized_s1_y, 3 + 4blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 195 and 0 <= blur_unnormalized_s1_x_x <= 63 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_5[d0 = 0, d1, d2] -> [0, 2 + d1, d2, 13] : 0 <= d1 <= 195 and 0 <= d2 <= 63 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3[d0 = 0, d1, d2] -> [0, d1, d2, 7] : 0 <= d1 <= 197 and 0 <= d2 <= 67 }
-  auto value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3_16 = hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3_16_merged_banks_9.peek_136();
+  auto value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3_16 = hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3_16_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_5_58.peek(/* one reader or all rams */ 136);
   return value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3_16;
   return 0;
 }
@@ -1468,7 +2026,7 @@ inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_bl
   // hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_5_59 read pattern: { op_hcompute_blur_unnormalized_stencil_5[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> hw_input_global_wrapper_global_wrapper_stencil[1 + blur_unnormalized_s1_y, 1 + 4blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 195 and 0 <= blur_unnormalized_s1_x_x <= 63 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_5[d0 = 0, d1, d2] -> [0, 2 + d1, d2, 13] : 0 <= d1 <= 195 and 0 <= d2 <= 63 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1[d0 = 0, d1, d2] -> [0, d1, d2, 5] : 0 <= d1 <= 197 and 0 <= d2 <= 67 }
-  auto value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1_20 = hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1_20_merged_banks_9.peek_68();
+  auto value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1_20 = hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1_20_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_5_59.peek(/* one reader or all rams */ 68);
   return value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1_20;
   return 0;
 }
@@ -1479,7 +2037,7 @@ inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_bl
   // hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_5_60 read pattern: { op_hcompute_blur_unnormalized_stencil_5[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> hw_input_global_wrapper_global_wrapper_stencil[1 + blur_unnormalized_s1_y, 2 + 4blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 195 and 0 <= blur_unnormalized_s1_x_x <= 63 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_5[d0 = 0, d1, d2] -> [0, 2 + d1, d2, 13] : 0 <= d1 <= 195 and 0 <= d2 <= 63 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2[d0 = 0, d1, d2] -> [0, d1, d2, 6] : 0 <= d1 <= 197 and 0 <= d2 <= 67 }
-  auto value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2_18 = hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2_18_merged_banks_9.peek_68();
+  auto value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2_18 = hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2_18_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_5_60.peek(/* one reader or all rams */ 68);
   return value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2_18;
   return 0;
 }
@@ -1490,7 +2048,7 @@ inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_bl
   // hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_5_61 read pattern: { op_hcompute_blur_unnormalized_stencil_5[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> hw_input_global_wrapper_global_wrapper_stencil[1 + blur_unnormalized_s1_y, 3 + 4blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 195 and 0 <= blur_unnormalized_s1_x_x <= 63 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_5[d0 = 0, d1, d2] -> [0, 2 + d1, d2, 13] : 0 <= d1 <= 195 and 0 <= d2 <= 63 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3[d0 = 0, d1, d2] -> [0, d1, d2, 7] : 0 <= d1 <= 197 and 0 <= d2 <= 67 }
-  auto value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3_16 = hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3_16_merged_banks_9.peek_68();
+  auto value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3_16 = hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3_16_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_5_61.peek(/* one reader or all rams */ 68);
   return value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3_16;
   return 0;
 }
@@ -1501,7 +2059,7 @@ inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_bl
   // hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_5_62 read pattern: { op_hcompute_blur_unnormalized_stencil_5[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> hw_input_global_wrapper_global_wrapper_stencil[2 + blur_unnormalized_s1_y, 1 + 4blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 195 and 0 <= blur_unnormalized_s1_x_x <= 63 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_5[d0 = 0, d1, d2] -> [0, 2 + d1, d2, 13] : 0 <= d1 <= 195 and 0 <= d2 <= 63 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1[d0 = 0, d1, d2] -> [0, d1, d2, 5] : 0 <= d1 <= 197 and 0 <= d2 <= 67 }
-  auto value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1_20 = hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1_20_merged_banks_9.peek_0();
+  auto value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1_20 = hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1_20_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_5_62.peek(/* one reader or all rams */ 0);
   return value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1_20;
   return 0;
 }
@@ -1512,7 +2070,7 @@ inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_bl
   // hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_5_63 read pattern: { op_hcompute_blur_unnormalized_stencil_5[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> hw_input_global_wrapper_global_wrapper_stencil[2 + blur_unnormalized_s1_y, 3 + 4blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 195 and 0 <= blur_unnormalized_s1_x_x <= 63 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_5[d0 = 0, d1, d2] -> [0, 2 + d1, d2, 13] : 0 <= d1 <= 195 and 0 <= d2 <= 63 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3[d0 = 0, d1, d2] -> [0, d1, d2, 7] : 0 <= d1 <= 197 and 0 <= d2 <= 67 }
-  auto value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3_16 = hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3_16_merged_banks_9.peek_0();
+  auto value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3_16 = hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3_16_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_5_63.peek(/* one reader or all rams */ 0);
   return value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3_16;
   return 0;
 }
@@ -1523,7 +2081,7 @@ inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_bl
   // hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_5_64 read pattern: { op_hcompute_blur_unnormalized_stencil_5[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> hw_input_global_wrapper_global_wrapper_stencil[2 + blur_unnormalized_s1_y, 2 + 4blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 195 and 0 <= blur_unnormalized_s1_x_x <= 63 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_5[d0 = 0, d1, d2] -> [0, 2 + d1, d2, 13] : 0 <= d1 <= 195 and 0 <= d2 <= 63 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2[d0 = 0, d1, d2] -> [0, d1, d2, 6] : 0 <= d1 <= 197 and 0 <= d2 <= 67 }
-  auto value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2_18 = hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2_18_merged_banks_9.peek_0();
+  auto value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2_18 = hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2_18_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_5_64.peek(/* one reader or all rams */ 0);
   return value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2_18;
   return 0;
 }
@@ -1534,7 +2092,7 @@ inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_bl
   // hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_6_45 read pattern: { op_hcompute_blur_unnormalized_stencil_6[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> hw_input_global_wrapper_global_wrapper_stencil[blur_unnormalized_s1_y, 2 + 4blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 195 and 0 <= blur_unnormalized_s1_x_x <= 63 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_6[d0 = 0, d1, d2] -> [0, 2 + d1, 1 + d2, 14] : 0 <= d1 <= 195 and 0 <= d2 <= 63 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2[d0 = 0, d1, d2] -> [0, d1, d2, 6] : 0 <= d1 <= 197 and 0 <= d2 <= 67 }
-  auto value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2_18 = hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2_18_merged_banks_9.peek_137();
+  auto value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2_18 = hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2_18_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_6_45.peek(/* one reader or all rams */ 137);
   return value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2_18;
   return 0;
 }
@@ -1545,7 +2103,7 @@ inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_bl
   // hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_6_46 read pattern: { op_hcompute_blur_unnormalized_stencil_6[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> hw_input_global_wrapper_global_wrapper_stencil[blur_unnormalized_s1_y, 3 + 4blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 195 and 0 <= blur_unnormalized_s1_x_x <= 63 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_6[d0 = 0, d1, d2] -> [0, 2 + d1, 1 + d2, 14] : 0 <= d1 <= 195 and 0 <= d2 <= 63 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3[d0 = 0, d1, d2] -> [0, d1, d2, 7] : 0 <= d1 <= 197 and 0 <= d2 <= 67 }
-  auto value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3_16 = hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3_16_merged_banks_9.peek_137();
+  auto value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3_16 = hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3_16_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_6_46.peek(/* one reader or all rams */ 137);
   return value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3_16;
   return 0;
 }
@@ -1556,7 +2114,7 @@ inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_bl
   // hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_6_47 read pattern: { op_hcompute_blur_unnormalized_stencil_6[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> hw_input_global_wrapper_global_wrapper_stencil[blur_unnormalized_s1_y, 4 + 4blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 195 and 0 <= blur_unnormalized_s1_x_x <= 63 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_6[d0 = 0, d1, d2] -> [0, 2 + d1, 1 + d2, 14] : 0 <= d1 <= 195 and 0 <= d2 <= 63 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil[d0 = 0, d1, d2] -> [0, d1, d2, 4] : 0 <= d1 <= 197 and 0 <= d2 <= 67 }
-  auto value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_22 = hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_22_merged_banks_9.peek_136();
+  auto value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_22 = hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_22_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_6_47.peek(/* one reader or all rams */ 136);
   return value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_22;
   return 0;
 }
@@ -1567,7 +2125,7 @@ inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_bl
   // hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_6_48 read pattern: { op_hcompute_blur_unnormalized_stencil_6[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> hw_input_global_wrapper_global_wrapper_stencil[1 + blur_unnormalized_s1_y, 2 + 4blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 195 and 0 <= blur_unnormalized_s1_x_x <= 63 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_6[d0 = 0, d1, d2] -> [0, 2 + d1, 1 + d2, 14] : 0 <= d1 <= 195 and 0 <= d2 <= 63 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2[d0 = 0, d1, d2] -> [0, d1, d2, 6] : 0 <= d1 <= 197 and 0 <= d2 <= 67 }
-  auto value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2_18 = hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2_18_merged_banks_9.peek_69();
+  auto value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2_18 = hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2_18_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_6_48.peek(/* one reader or all rams */ 69);
   return value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2_18;
   return 0;
 }
@@ -1578,7 +2136,7 @@ inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_bl
   // hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_6_49 read pattern: { op_hcompute_blur_unnormalized_stencil_6[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> hw_input_global_wrapper_global_wrapper_stencil[1 + blur_unnormalized_s1_y, 3 + 4blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 195 and 0 <= blur_unnormalized_s1_x_x <= 63 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_6[d0 = 0, d1, d2] -> [0, 2 + d1, 1 + d2, 14] : 0 <= d1 <= 195 and 0 <= d2 <= 63 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3[d0 = 0, d1, d2] -> [0, d1, d2, 7] : 0 <= d1 <= 197 and 0 <= d2 <= 67 }
-  auto value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3_16 = hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3_16_merged_banks_9.peek_69();
+  auto value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3_16 = hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3_16_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_6_49.peek(/* one reader or all rams */ 69);
   return value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3_16;
   return 0;
 }
@@ -1589,7 +2147,7 @@ inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_bl
   // hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_6_50 read pattern: { op_hcompute_blur_unnormalized_stencil_6[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> hw_input_global_wrapper_global_wrapper_stencil[1 + blur_unnormalized_s1_y, 4 + 4blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 195 and 0 <= blur_unnormalized_s1_x_x <= 63 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_6[d0 = 0, d1, d2] -> [0, 2 + d1, 1 + d2, 14] : 0 <= d1 <= 195 and 0 <= d2 <= 63 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil[d0 = 0, d1, d2] -> [0, d1, d2, 4] : 0 <= d1 <= 197 and 0 <= d2 <= 67 }
-  auto value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_22 = hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_22_merged_banks_9.peek_68();
+  auto value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_22 = hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_22_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_6_50.peek(/* one reader or all rams */ 68);
   return value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_22;
   return 0;
 }
@@ -1600,7 +2158,7 @@ inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_bl
   // hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_6_51 read pattern: { op_hcompute_blur_unnormalized_stencil_6[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> hw_input_global_wrapper_global_wrapper_stencil[2 + blur_unnormalized_s1_y, 2 + 4blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 195 and 0 <= blur_unnormalized_s1_x_x <= 63 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_6[d0 = 0, d1, d2] -> [0, 2 + d1, 1 + d2, 14] : 0 <= d1 <= 195 and 0 <= d2 <= 63 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2[d0 = 0, d1, d2] -> [0, d1, d2, 6] : 0 <= d1 <= 197 and 0 <= d2 <= 67 }
-  auto value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2_18 = hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2_18_merged_banks_9.peek_1();
+  auto value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2_18 = hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2_18_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_6_51.peek(/* one reader or all rams */ 1);
   return value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2_18;
   return 0;
 }
@@ -1611,7 +2169,7 @@ inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_bl
   // hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_6_52 read pattern: { op_hcompute_blur_unnormalized_stencil_6[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> hw_input_global_wrapper_global_wrapper_stencil[2 + blur_unnormalized_s1_y, 4 + 4blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 195 and 0 <= blur_unnormalized_s1_x_x <= 63 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_6[d0 = 0, d1, d2] -> [0, 2 + d1, 1 + d2, 14] : 0 <= d1 <= 195 and 0 <= d2 <= 63 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil[d0 = 0, d1, d2] -> [0, d1, d2, 4] : 0 <= d1 <= 197 and 0 <= d2 <= 67 }
-  auto value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_22 = hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_22_merged_banks_9.peek_0();
+  auto value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_22 = hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_22_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_6_52.peek(/* one reader or all rams */ 0);
   return value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_22;
   return 0;
 }
@@ -1622,7 +2180,7 @@ inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_bl
   // hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_6_53 read pattern: { op_hcompute_blur_unnormalized_stencil_6[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> hw_input_global_wrapper_global_wrapper_stencil[2 + blur_unnormalized_s1_y, 3 + 4blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 195 and 0 <= blur_unnormalized_s1_x_x <= 63 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_6[d0 = 0, d1, d2] -> [0, 2 + d1, 1 + d2, 14] : 0 <= d1 <= 195 and 0 <= d2 <= 63 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3[d0 = 0, d1, d2] -> [0, d1, d2, 7] : 0 <= d1 <= 197 and 0 <= d2 <= 67 }
-  auto value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3_16 = hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3_16_merged_banks_9.peek_1();
+  auto value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3_16 = hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3_16_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_6_53.peek(/* one reader or all rams */ 1);
   return value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3_16;
   return 0;
 }
@@ -1633,7 +2191,7 @@ inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_bl
   // hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_7_34 read pattern: { op_hcompute_blur_unnormalized_stencil_7[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> hw_input_global_wrapper_global_wrapper_stencil[blur_unnormalized_s1_y, 3 + 4blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 195 and 0 <= blur_unnormalized_s1_x_x <= 63 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_7[d0 = 0, d1, d2] -> [0, 2 + d1, 1 + d2, 15] : 0 <= d1 <= 195 and 0 <= d2 <= 63 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3[d0 = 0, d1, d2] -> [0, d1, d2, 7] : 0 <= d1 <= 197 and 0 <= d2 <= 67 }
-  auto value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3_16 = hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3_16_merged_banks_9.peek_137();
+  auto value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3_16 = hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3_16_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_7_34.peek(/* one reader or all rams */ 137);
   return value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3_16;
   return 0;
 }
@@ -1644,7 +2202,7 @@ inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_bl
   // hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_7_35 read pattern: { op_hcompute_blur_unnormalized_stencil_7[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> hw_input_global_wrapper_global_wrapper_stencil[blur_unnormalized_s1_y, 4 + 4blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 195 and 0 <= blur_unnormalized_s1_x_x <= 63 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_7[d0 = 0, d1, d2] -> [0, 2 + d1, 1 + d2, 15] : 0 <= d1 <= 195 and 0 <= d2 <= 63 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil[d0 = 0, d1, d2] -> [0, d1, d2, 4] : 0 <= d1 <= 197 and 0 <= d2 <= 67 }
-  auto value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_22 = hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_22_merged_banks_9.peek_136();
+  auto value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_22 = hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_22_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_7_35.peek(/* one reader or all rams */ 136);
   return value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_22;
   return 0;
 }
@@ -1655,7 +2213,7 @@ inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_bl
   // hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_7_36 read pattern: { op_hcompute_blur_unnormalized_stencil_7[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> hw_input_global_wrapper_global_wrapper_stencil[blur_unnormalized_s1_y, 5 + 4blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 195 and 0 <= blur_unnormalized_s1_x_x <= 63 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_7[d0 = 0, d1, d2] -> [0, 2 + d1, 1 + d2, 15] : 0 <= d1 <= 195 and 0 <= d2 <= 63 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1[d0 = 0, d1, d2] -> [0, d1, d2, 5] : 0 <= d1 <= 197 and 0 <= d2 <= 67 }
-  auto value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1_20 = hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1_20_merged_banks_9.peek_136();
+  auto value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1_20 = hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1_20_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_7_36.peek(/* one reader or all rams */ 136);
   return value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1_20;
   return 0;
 }
@@ -1666,7 +2224,7 @@ inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_bl
   // hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_7_37 read pattern: { op_hcompute_blur_unnormalized_stencil_7[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> hw_input_global_wrapper_global_wrapper_stencil[1 + blur_unnormalized_s1_y, 3 + 4blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 195 and 0 <= blur_unnormalized_s1_x_x <= 63 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_7[d0 = 0, d1, d2] -> [0, 2 + d1, 1 + d2, 15] : 0 <= d1 <= 195 and 0 <= d2 <= 63 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3[d0 = 0, d1, d2] -> [0, d1, d2, 7] : 0 <= d1 <= 197 and 0 <= d2 <= 67 }
-  auto value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3_16 = hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3_16_merged_banks_9.peek_69();
+  auto value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3_16 = hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3_16_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_7_37.peek(/* one reader or all rams */ 69);
   return value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3_16;
   return 0;
 }
@@ -1677,7 +2235,7 @@ inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_bl
   // hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_7_38 read pattern: { op_hcompute_blur_unnormalized_stencil_7[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> hw_input_global_wrapper_global_wrapper_stencil[1 + blur_unnormalized_s1_y, 4 + 4blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 195 and 0 <= blur_unnormalized_s1_x_x <= 63 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_7[d0 = 0, d1, d2] -> [0, 2 + d1, 1 + d2, 15] : 0 <= d1 <= 195 and 0 <= d2 <= 63 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil[d0 = 0, d1, d2] -> [0, d1, d2, 4] : 0 <= d1 <= 197 and 0 <= d2 <= 67 }
-  auto value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_22 = hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_22_merged_banks_9.peek_68();
+  auto value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_22 = hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_22_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_7_38.peek(/* one reader or all rams */ 68);
   return value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_22;
   return 0;
 }
@@ -1688,7 +2246,7 @@ inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_bl
   // hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_7_39 read pattern: { op_hcompute_blur_unnormalized_stencil_7[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> hw_input_global_wrapper_global_wrapper_stencil[1 + blur_unnormalized_s1_y, 5 + 4blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 195 and 0 <= blur_unnormalized_s1_x_x <= 63 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_7[d0 = 0, d1, d2] -> [0, 2 + d1, 1 + d2, 15] : 0 <= d1 <= 195 and 0 <= d2 <= 63 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1[d0 = 0, d1, d2] -> [0, d1, d2, 5] : 0 <= d1 <= 197 and 0 <= d2 <= 67 }
-  auto value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1_20 = hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1_20_merged_banks_9.peek_68();
+  auto value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1_20 = hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1_20_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_7_39.peek(/* one reader or all rams */ 68);
   return value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1_20;
   return 0;
 }
@@ -1699,7 +2257,7 @@ inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_bl
   // hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_7_40 read pattern: { op_hcompute_blur_unnormalized_stencil_7[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> hw_input_global_wrapper_global_wrapper_stencil[2 + blur_unnormalized_s1_y, 3 + 4blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 195 and 0 <= blur_unnormalized_s1_x_x <= 63 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_7[d0 = 0, d1, d2] -> [0, 2 + d1, 1 + d2, 15] : 0 <= d1 <= 195 and 0 <= d2 <= 63 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3[d0 = 0, d1, d2] -> [0, d1, d2, 7] : 0 <= d1 <= 197 and 0 <= d2 <= 67 }
-  auto value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3_16 = hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3_16_merged_banks_9.peek_1();
+  auto value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3_16 = hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3_16_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_7_40.peek(/* one reader or all rams */ 1);
   return value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3_16;
   return 0;
 }
@@ -1710,7 +2268,7 @@ inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_bl
   // hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_7_41 read pattern: { op_hcompute_blur_unnormalized_stencil_7[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> hw_input_global_wrapper_global_wrapper_stencil[2 + blur_unnormalized_s1_y, 5 + 4blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 195 and 0 <= blur_unnormalized_s1_x_x <= 63 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_7[d0 = 0, d1, d2] -> [0, 2 + d1, 1 + d2, 15] : 0 <= d1 <= 195 and 0 <= d2 <= 63 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1[d0 = 0, d1, d2] -> [0, d1, d2, 5] : 0 <= d1 <= 197 and 0 <= d2 <= 67 }
-  auto value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1_20 = hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1_20_merged_banks_9.peek_0();
+  auto value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1_20 = hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1_20_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_7_41.peek(/* one reader or all rams */ 0);
   return value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1_20;
   return 0;
 }
@@ -1721,7 +2279,7 @@ inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_bl
   // hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_7_42 read pattern: { op_hcompute_blur_unnormalized_stencil_7[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> hw_input_global_wrapper_global_wrapper_stencil[2 + blur_unnormalized_s1_y, 4 + 4blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 195 and 0 <= blur_unnormalized_s1_x_x <= 63 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_7[d0 = 0, d1, d2] -> [0, 2 + d1, 1 + d2, 15] : 0 <= d1 <= 195 and 0 <= d2 <= 63 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil[d0 = 0, d1, d2] -> [0, d1, d2, 4] : 0 <= d1 <= 197 and 0 <= d2 <= 67 }
-  auto value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_22 = hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_22_merged_banks_9.peek_0();
+  auto value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_22 = hw_input_global_wrapper_global_wrapper_stencil.hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_22_to_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_7_42.peek(/* one reader or all rams */ 0);
   return value_hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_22;
   return 0;
 }
@@ -2171,7 +2729,7 @@ inline void hw_output_stencil_op_hcompute_hw_output_stencil_write_bundle_write(h
 	hw_output_stencil_op_hcompute_hw_output_stencil_6_write(hw_output_stencil_op_hcompute_hw_output_stencil_6_res, hw_output_stencil, root, hw_output_s0_y_yi, hw_output_s0_x_xi_xi, dynamic_address);
 }
 
-// Total re-use buffer capacity: 8736 bits
+// Total re-use buffer capacity: 39312 bits
 
 
 // Operation logic
@@ -2688,221 +3246,3 @@ void gaussian_glb(HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */
   hw_output_stencil_cache hw_output_stencil;
 #ifdef __SYNTHESIS__
 #endif //__SYNTHESIS__
-#ifdef __SYNTHESIS__
-#pragma HLS inline recursive
-#endif // __SYNTHESIS__
-
-// schedule: { op_hcompute_blur_unnormalized_stencil[d0 = 0, d1, d2] -> [0, 2 + d1, d2, 8] : 0 <= d1 <= 195 and 0 <= d2 <= 63; op_hcompute_blur_unnormalized_stencil_2[d0 = 0, d1, d2] -> [0, 2 + d1, 1 + d2, 10] : 0 <= d1 <= 195 and 0 <= d2 <= 63; op_hcompute_hw_output_global_wrapper_glb_stencil[d0 = 0, d1, d2] -> [0, 2 + d1, d2, 24] : 0 <= d1 <= 195 and 0 <= d2 <= 63; op_hcompute_blur_unnormalized_stencil_7[d0 = 0, d1, d2] -> [0, 2 + d1, 1 + d2, 15] : 0 <= d1 <= 195 and 0 <= d2 <= 63; op_hcompute_blur_stencil[d0 = 0, d1, d2] -> [0, 2 + d1, d2, 16] : 0 <= d1 <= 195 and 0 <= d2 <= 63; op_hcompute_blur_unnormalized_stencil_6[d0 = 0, d1, d2] -> [0, 2 + d1, 1 + d2, 14] : 0 <= d1 <= 195 and 0 <= d2 <= 63; op_hcompute_hw_output_stencil[d0 = 0, d1, d2] -> [0, 2 + d1, d2, 20] : 0 <= d1 <= 195 and 0 <= d2 <= 63; op_hcompute_hw_output_global_wrapper_glb_stencil_2[d0 = 0, d1, d2] -> [0, 2 + d1, 1 + d2, 26] : 0 <= d1 <= 195 and 0 <= d2 <= 63; op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1[d0 = 0, d1, d2] -> [0, d1, d2, 5] : 0 <= d1 <= 197 and 0 <= d2 <= 67; op_hcompute_hw_output_stencil_3[d0 = 0, d1, d2] -> [0, 2 + d1, 1 + d2, 23] : 0 <= d1 <= 195 and 0 <= d2 <= 63; op_hcompute_hw_input_global_wrapper_glb_stencil_1[d0 = 0, d1, d2] -> [0, d1, d2, 1] : 0 <= d1 <= 197 and 0 <= d2 <= 67; op_hcompute_hw_output_global_wrapper_glb_stencil_3[d0 = 0, d1, d2] -> [0, 2 + d1, 1 + d2, 27] : 0 <= d1 <= 195 and 0 <= d2 <= 63; op_hcompute_hw_output_stencil_2[d0 = 0, d1, d2] -> [0, 2 + d1, 1 + d2, 22] : 0 <= d1 <= 195 and 0 <= d2 <= 63; op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3[d0 = 0, d1, d2] -> [0, d1, d2, 7] : 0 <= d1 <= 197 and 0 <= d2 <= 67; op_hcompute_hw_output_global_wrapper_glb_stencil_1[d0 = 0, d1, d2] -> [0, 2 + d1, d2, 25] : 0 <= d1 <= 195 and 0 <= d2 <= 63; op_hcompute_blur_stencil_3[d0 = 0, d1, d2] -> [0, 2 + d1, 1 + d2, 19] : 0 <= d1 <= 195 and 0 <= d2 <= 63; op_hcompute_hw_output_stencil_1[d0 = 0, d1, d2] -> [0, 2 + d1, d2, 21] : 0 <= d1 <= 195 and 0 <= d2 <= 63; op_hcompute_hw_input_global_wrapper_glb_stencil[d0 = 0, d1, d2] -> [0, d1, d2, 0] : 0 <= d1 <= 197 and 0 <= d2 <= 67; op_hcompute_hw_input_global_wrapper_glb_stencil_3[d0 = 0, d1, d2] -> [0, d1, d2, 3] : 0 <= d1 <= 197 and 0 <= d2 <= 67; op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2[d0 = 0, d1, d2] -> [0, d1, d2, 6] : 0 <= d1 <= 197 and 0 <= d2 <= 67; op_hcompute_blur_stencil_1[d0 = 0, d1, d2] -> [0, 2 + d1, d2, 17] : 0 <= d1 <= 195 and 0 <= d2 <= 63; op_hcompute_blur_unnormalized_stencil_5[d0 = 0, d1, d2] -> [0, 2 + d1, d2, 13] : 0 <= d1 <= 195 and 0 <= d2 <= 63; op_hcompute_blur_stencil_2[d0 = 0, d1, d2] -> [0, 2 + d1, 1 + d2, 18] : 0 <= d1 <= 195 and 0 <= d2 <= 63; op_hcompute_blur_unnormalized_stencil_4[d0 = 0, d1, d2] -> [0, 2 + d1, d2, 12] : 0 <= d1 <= 195 and 0 <= d2 <= 63; op_hcompute_blur_unnormalized_stencil_3[d0 = 0, d1, d2] -> [0, 2 + d1, 1 + d2, 11] : 0 <= d1 <= 195 and 0 <= d2 <= 63; op_hcompute_blur_unnormalized_stencil_1[d0 = 0, d1, d2] -> [0, 2 + d1, d2, 9] : 0 <= d1 <= 195 and 0 <= d2 <= 63; op_hcompute_hw_input_global_wrapper_global_wrapper_stencil[d0 = 0, d1, d2] -> [0, d1, d2, 4] : 0 <= d1 <= 197 and 0 <= d2 <= 67; op_hcompute_hw_input_global_wrapper_glb_stencil_2[d0 = 0, d1, d2] -> [0, d1, d2, 2] : 0 <= d1 <= 197 and 0 <= d2 <= 67 }
-//   { op_hcompute_blur_unnormalized_stencil[d0 = 0, d1, d2] -> [0, 2 + d1, d2, 8] : 0 <= d1 <= 195 and 0 <= d2 <= 63 }
-// Condition for op_hcompute_blur_unnormalized_stencil(((((-8 + 1*i3)) == 0) && (((1*i0)) == 0) && (((-2 + 1*i1)) >= 0) && (((197 + -1*i1)) >= 0) && (((1*i2)) >= 0) && (((63 + -1*i2)) >= 0)))
-//   { op_hcompute_blur_unnormalized_stencil_2[d0 = 0, d1, d2] -> [0, 2 + d1, 1 + d2, 10] : 0 <= d1 <= 195 and 0 <= d2 <= 63 }
-// Condition for op_hcompute_blur_unnormalized_stencil_2(((((-10 + 1*i3)) == 0) && (((1*i0)) == 0) && (((-2 + 1*i1)) >= 0) && (((197 + -1*i1)) >= 0) && (((-1 + 1*i2)) >= 0) && (((64 + -1*i2)) >= 0)))
-//   { op_hcompute_hw_output_global_wrapper_glb_stencil[d0 = 0, d1, d2] -> [0, 2 + d1, d2, 24] : 0 <= d1 <= 195 and 0 <= d2 <= 63 }
-// Condition for op_hcompute_hw_output_global_wrapper_glb_stencil(((((-24 + 1*i3)) == 0) && (((1*i0)) == 0) && (((-2 + 1*i1)) >= 0) && (((197 + -1*i1)) >= 0) && (((1*i2)) >= 0) && (((63 + -1*i2)) >= 0)))
-//   { op_hcompute_blur_unnormalized_stencil_7[d0 = 0, d1, d2] -> [0, 2 + d1, 1 + d2, 15] : 0 <= d1 <= 195 and 0 <= d2 <= 63 }
-// Condition for op_hcompute_blur_unnormalized_stencil_7(((((-15 + 1*i3)) == 0) && (((1*i0)) == 0) && (((-2 + 1*i1)) >= 0) && (((197 + -1*i1)) >= 0) && (((-1 + 1*i2)) >= 0) && (((64 + -1*i2)) >= 0)))
-//   { op_hcompute_blur_stencil[d0 = 0, d1, d2] -> [0, 2 + d1, d2, 16] : 0 <= d1 <= 195 and 0 <= d2 <= 63 }
-// Condition for op_hcompute_blur_stencil(((((-16 + 1*i3)) == 0) && (((1*i0)) == 0) && (((-2 + 1*i1)) >= 0) && (((197 + -1*i1)) >= 0) && (((1*i2)) >= 0) && (((63 + -1*i2)) >= 0)))
-//   { op_hcompute_blur_unnormalized_stencil_6[d0 = 0, d1, d2] -> [0, 2 + d1, 1 + d2, 14] : 0 <= d1 <= 195 and 0 <= d2 <= 63 }
-// Condition for op_hcompute_blur_unnormalized_stencil_6(((((-14 + 1*i3)) == 0) && (((1*i0)) == 0) && (((-2 + 1*i1)) >= 0) && (((197 + -1*i1)) >= 0) && (((-1 + 1*i2)) >= 0) && (((64 + -1*i2)) >= 0)))
-//   { op_hcompute_hw_output_stencil[d0 = 0, d1, d2] -> [0, 2 + d1, d2, 20] : 0 <= d1 <= 195 and 0 <= d2 <= 63 }
-// Condition for op_hcompute_hw_output_stencil(((((-20 + 1*i3)) == 0) && (((1*i0)) == 0) && (((-2 + 1*i1)) >= 0) && (((197 + -1*i1)) >= 0) && (((1*i2)) >= 0) && (((63 + -1*i2)) >= 0)))
-//   { op_hcompute_hw_output_global_wrapper_glb_stencil_2[d0 = 0, d1, d2] -> [0, 2 + d1, 1 + d2, 26] : 0 <= d1 <= 195 and 0 <= d2 <= 63 }
-// Condition for op_hcompute_hw_output_global_wrapper_glb_stencil_2(((((-26 + 1*i3)) == 0) && (((1*i0)) == 0) && (((-2 + 1*i1)) >= 0) && (((197 + -1*i1)) >= 0) && (((-1 + 1*i2)) >= 0) && (((64 + -1*i2)) >= 0)))
-//   { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1[d0 = 0, d1, d2] -> [0, d1, d2, 5] : 0 <= d1 <= 197 and 0 <= d2 <= 67 }
-// Condition for op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1(((((-5 + 1*i3)) == 0) && (((1*i0)) == 0) && (((1*i1)) >= 0) && (((197 + -1*i1)) >= 0) && (((1*i2)) >= 0) && (((67 + -1*i2)) >= 0)))
-//   { op_hcompute_hw_output_stencil_3[d0 = 0, d1, d2] -> [0, 2 + d1, 1 + d2, 23] : 0 <= d1 <= 195 and 0 <= d2 <= 63 }
-// Condition for op_hcompute_hw_output_stencil_3(((((-23 + 1*i3)) == 0) && (((1*i0)) == 0) && (((-2 + 1*i1)) >= 0) && (((197 + -1*i1)) >= 0) && (((-1 + 1*i2)) >= 0) && (((64 + -1*i2)) >= 0)))
-//   { op_hcompute_hw_input_global_wrapper_glb_stencil_1[d0 = 0, d1, d2] -> [0, d1, d2, 1] : 0 <= d1 <= 197 and 0 <= d2 <= 67 }
-// Condition for op_hcompute_hw_input_global_wrapper_glb_stencil_1(((((-1 + 1*i3)) == 0) && (((1*i0)) == 0) && (((1*i1)) >= 0) && (((197 + -1*i1)) >= 0) && (((1*i2)) >= 0) && (((67 + -1*i2)) >= 0)))
-//   { op_hcompute_hw_output_global_wrapper_glb_stencil_3[d0 = 0, d1, d2] -> [0, 2 + d1, 1 + d2, 27] : 0 <= d1 <= 195 and 0 <= d2 <= 63 }
-// Condition for op_hcompute_hw_output_global_wrapper_glb_stencil_3(((((-27 + 1*i3)) == 0) && (((1*i0)) == 0) && (((-2 + 1*i1)) >= 0) && (((197 + -1*i1)) >= 0) && (((-1 + 1*i2)) >= 0) && (((64 + -1*i2)) >= 0)))
-//   { op_hcompute_hw_output_stencil_2[d0 = 0, d1, d2] -> [0, 2 + d1, 1 + d2, 22] : 0 <= d1 <= 195 and 0 <= d2 <= 63 }
-// Condition for op_hcompute_hw_output_stencil_2(((((-22 + 1*i3)) == 0) && (((1*i0)) == 0) && (((-2 + 1*i1)) >= 0) && (((197 + -1*i1)) >= 0) && (((-1 + 1*i2)) >= 0) && (((64 + -1*i2)) >= 0)))
-//   { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3[d0 = 0, d1, d2] -> [0, d1, d2, 7] : 0 <= d1 <= 197 and 0 <= d2 <= 67 }
-// Condition for op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3(((((-7 + 1*i3)) == 0) && (((1*i0)) == 0) && (((1*i1)) >= 0) && (((197 + -1*i1)) >= 0) && (((1*i2)) >= 0) && (((67 + -1*i2)) >= 0)))
-//   { op_hcompute_hw_output_global_wrapper_glb_stencil_1[d0 = 0, d1, d2] -> [0, 2 + d1, d2, 25] : 0 <= d1 <= 195 and 0 <= d2 <= 63 }
-// Condition for op_hcompute_hw_output_global_wrapper_glb_stencil_1(((((-25 + 1*i3)) == 0) && (((1*i0)) == 0) && (((-2 + 1*i1)) >= 0) && (((197 + -1*i1)) >= 0) && (((1*i2)) >= 0) && (((63 + -1*i2)) >= 0)))
-//   { op_hcompute_blur_stencil_3[d0 = 0, d1, d2] -> [0, 2 + d1, 1 + d2, 19] : 0 <= d1 <= 195 and 0 <= d2 <= 63 }
-// Condition for op_hcompute_blur_stencil_3(((((-19 + 1*i3)) == 0) && (((1*i0)) == 0) && (((-2 + 1*i1)) >= 0) && (((197 + -1*i1)) >= 0) && (((-1 + 1*i2)) >= 0) && (((64 + -1*i2)) >= 0)))
-//   { op_hcompute_hw_output_stencil_1[d0 = 0, d1, d2] -> [0, 2 + d1, d2, 21] : 0 <= d1 <= 195 and 0 <= d2 <= 63 }
-// Condition for op_hcompute_hw_output_stencil_1(((((-21 + 1*i3)) == 0) && (((1*i0)) == 0) && (((-2 + 1*i1)) >= 0) && (((197 + -1*i1)) >= 0) && (((1*i2)) >= 0) && (((63 + -1*i2)) >= 0)))
-//   { op_hcompute_hw_input_global_wrapper_glb_stencil[d0 = 0, d1, d2] -> [0, d1, d2, 0] : 0 <= d1 <= 197 and 0 <= d2 <= 67 }
-// Condition for op_hcompute_hw_input_global_wrapper_glb_stencil(((((1*i3)) == 0) && (((1*i0)) == 0) && (((1*i1)) >= 0) && (((197 + -1*i1)) >= 0) && (((1*i2)) >= 0) && (((67 + -1*i2)) >= 0)))
-//   { op_hcompute_hw_input_global_wrapper_glb_stencil_3[d0 = 0, d1, d2] -> [0, d1, d2, 3] : 0 <= d1 <= 197 and 0 <= d2 <= 67 }
-// Condition for op_hcompute_hw_input_global_wrapper_glb_stencil_3(((((-3 + 1*i3)) == 0) && (((1*i0)) == 0) && (((1*i1)) >= 0) && (((197 + -1*i1)) >= 0) && (((1*i2)) >= 0) && (((67 + -1*i2)) >= 0)))
-//   { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2[d0 = 0, d1, d2] -> [0, d1, d2, 6] : 0 <= d1 <= 197 and 0 <= d2 <= 67 }
-// Condition for op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2(((((-6 + 1*i3)) == 0) && (((1*i0)) == 0) && (((1*i1)) >= 0) && (((197 + -1*i1)) >= 0) && (((1*i2)) >= 0) && (((67 + -1*i2)) >= 0)))
-//   { op_hcompute_blur_stencil_1[d0 = 0, d1, d2] -> [0, 2 + d1, d2, 17] : 0 <= d1 <= 195 and 0 <= d2 <= 63 }
-// Condition for op_hcompute_blur_stencil_1(((((-17 + 1*i3)) == 0) && (((1*i0)) == 0) && (((-2 + 1*i1)) >= 0) && (((197 + -1*i1)) >= 0) && (((1*i2)) >= 0) && (((63 + -1*i2)) >= 0)))
-//   { op_hcompute_blur_unnormalized_stencil_5[d0 = 0, d1, d2] -> [0, 2 + d1, d2, 13] : 0 <= d1 <= 195 and 0 <= d2 <= 63 }
-// Condition for op_hcompute_blur_unnormalized_stencil_5(((((-13 + 1*i3)) == 0) && (((1*i0)) == 0) && (((-2 + 1*i1)) >= 0) && (((197 + -1*i1)) >= 0) && (((1*i2)) >= 0) && (((63 + -1*i2)) >= 0)))
-//   { op_hcompute_blur_stencil_2[d0 = 0, d1, d2] -> [0, 2 + d1, 1 + d2, 18] : 0 <= d1 <= 195 and 0 <= d2 <= 63 }
-// Condition for op_hcompute_blur_stencil_2(((((-18 + 1*i3)) == 0) && (((1*i0)) == 0) && (((-2 + 1*i1)) >= 0) && (((197 + -1*i1)) >= 0) && (((-1 + 1*i2)) >= 0) && (((64 + -1*i2)) >= 0)))
-//   { op_hcompute_blur_unnormalized_stencil_4[d0 = 0, d1, d2] -> [0, 2 + d1, d2, 12] : 0 <= d1 <= 195 and 0 <= d2 <= 63 }
-// Condition for op_hcompute_blur_unnormalized_stencil_4(((((-12 + 1*i3)) == 0) && (((1*i0)) == 0) && (((-2 + 1*i1)) >= 0) && (((197 + -1*i1)) >= 0) && (((1*i2)) >= 0) && (((63 + -1*i2)) >= 0)))
-//   { op_hcompute_blur_unnormalized_stencil_3[d0 = 0, d1, d2] -> [0, 2 + d1, 1 + d2, 11] : 0 <= d1 <= 195 and 0 <= d2 <= 63 }
-// Condition for op_hcompute_blur_unnormalized_stencil_3(((((-11 + 1*i3)) == 0) && (((1*i0)) == 0) && (((-2 + 1*i1)) >= 0) && (((197 + -1*i1)) >= 0) && (((-1 + 1*i2)) >= 0) && (((64 + -1*i2)) >= 0)))
-//   { op_hcompute_blur_unnormalized_stencil_1[d0 = 0, d1, d2] -> [0, 2 + d1, d2, 9] : 0 <= d1 <= 195 and 0 <= d2 <= 63 }
-// Condition for op_hcompute_blur_unnormalized_stencil_1(((((-9 + 1*i3)) == 0) && (((1*i0)) == 0) && (((-2 + 1*i1)) >= 0) && (((197 + -1*i1)) >= 0) && (((1*i2)) >= 0) && (((63 + -1*i2)) >= 0)))
-//   { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil[d0 = 0, d1, d2] -> [0, d1, d2, 4] : 0 <= d1 <= 197 and 0 <= d2 <= 67 }
-// Condition for op_hcompute_hw_input_global_wrapper_global_wrapper_stencil(((((-4 + 1*i3)) == 0) && (((1*i0)) == 0) && (((1*i1)) >= 0) && (((197 + -1*i1)) >= 0) && (((1*i2)) >= 0) && (((67 + -1*i2)) >= 0)))
-//   { op_hcompute_hw_input_global_wrapper_glb_stencil_2[d0 = 0, d1, d2] -> [0, d1, d2, 2] : 0 <= d1 <= 197 and 0 <= d2 <= 67 }
-// Condition for op_hcompute_hw_input_global_wrapper_glb_stencil_2(((((-2 + 1*i3)) == 0) && (((1*i0)) == 0) && (((1*i1)) >= 0) && (((197 + -1*i1)) >= 0) && (((1*i2)) >= 0) && (((67 + -1*i2)) >= 0)))
-
-	for (int c1 = 0; c1 <= 197; c1 += 1)
-	  for (int c2 = 0; c2 <= 67; c2 += 1) {
-	    op_hcompute_hw_input_global_wrapper_glb_stencil(hw_input_stencil_clkwrk_0 /* buf name */, hw_input_global_wrapper_glb_stencil, 0, c1, c2);
-	    op_hcompute_hw_input_global_wrapper_glb_stencil_1(hw_input_stencil_clkwrk_1 /* buf name */, hw_input_global_wrapper_glb_stencil, 0, c1, c2);
-	    op_hcompute_hw_input_global_wrapper_glb_stencil_2(hw_input_stencil_clkwrk_2 /* buf name */, hw_input_global_wrapper_glb_stencil, 0, c1, c2);
-	    op_hcompute_hw_input_global_wrapper_glb_stencil_3(hw_input_stencil_clkwrk_3 /* buf name */, hw_input_global_wrapper_glb_stencil, 0, c1, c2);
-	    op_hcompute_hw_input_global_wrapper_global_wrapper_stencil(hw_input_global_wrapper_glb_stencil /* buf name */, hw_input_global_wrapper_global_wrapper_stencil, 0, c1, c2);
-	    op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1(hw_input_global_wrapper_glb_stencil /* buf name */, hw_input_global_wrapper_global_wrapper_stencil, 0, c1, c2);
-	    op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2(hw_input_global_wrapper_glb_stencil /* buf name */, hw_input_global_wrapper_global_wrapper_stencil, 0, c1, c2);
-	    op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3(hw_input_global_wrapper_glb_stencil /* buf name */, hw_input_global_wrapper_global_wrapper_stencil, 0, c1, c2);
-	    if (c1 >= 2 && c2 <= 63) {
-	      op_hcompute_blur_unnormalized_stencil(blur_unnormalized_stencil_clkwrk_dsa8, 0, c1 - 2, c2);
-	      op_hcompute_blur_unnormalized_stencil_1(blur_unnormalized_stencil_clkwrk_dsa8, 0, c1 - 2, c2);
-	    }
-	    if (c1 >= 2 && c2 >= 1 && c2 <= 64) {
-	      op_hcompute_blur_unnormalized_stencil_2(blur_unnormalized_stencil_clkwrk_dsa8, 0, c1 - 2, c2 - 1);
-	      op_hcompute_blur_unnormalized_stencil_3(blur_unnormalized_stencil_clkwrk_dsa8, 0, c1 - 2, c2 - 1);
-	    }
-	    if (c1 >= 2 && c2 <= 63) {
-	      op_hcompute_blur_unnormalized_stencil_4(blur_unnormalized_stencil_clkwrk_dsa8 /* buf name */, hw_input_global_wrapper_global_wrapper_stencil /* buf name */, blur_unnormalized_stencil, 0, c1 - 2, c2);
-	      op_hcompute_blur_unnormalized_stencil_5(blur_unnormalized_stencil_clkwrk_dsa8 /* buf name */, hw_input_global_wrapper_global_wrapper_stencil /* buf name */, blur_unnormalized_stencil, 0, c1 - 2, c2);
-	    }
-	    if (c1 >= 2 && c2 >= 1 && c2 <= 64) {
-	      op_hcompute_blur_unnormalized_stencil_6(blur_unnormalized_stencil_clkwrk_dsa8 /* buf name */, hw_input_global_wrapper_global_wrapper_stencil /* buf name */, blur_unnormalized_stencil, 0, c1 - 2, c2 - 1);
-	      op_hcompute_blur_unnormalized_stencil_7(blur_unnormalized_stencil_clkwrk_dsa8 /* buf name */, hw_input_global_wrapper_global_wrapper_stencil /* buf name */, blur_unnormalized_stencil, 0, c1 - 2, c2 - 1);
-	    }
-	    if (c1 >= 2 && c2 <= 63) {
-	      op_hcompute_blur_stencil(blur_unnormalized_stencil /* buf name */, blur_stencil, 0, c1 - 2, c2);
-	      op_hcompute_blur_stencil_1(blur_unnormalized_stencil /* buf name */, blur_stencil, 0, c1 - 2, c2);
-	    }
-	    if (c1 >= 2 && c2 >= 1 && c2 <= 64) {
-	      op_hcompute_blur_stencil_2(blur_unnormalized_stencil /* buf name */, blur_stencil, 0, c1 - 2, c2 - 1);
-	      op_hcompute_blur_stencil_3(blur_unnormalized_stencil /* buf name */, blur_stencil, 0, c1 - 2, c2 - 1);
-	    }
-	    if (c1 >= 2 && c2 <= 63) {
-	      op_hcompute_hw_output_stencil(blur_stencil /* buf name */, hw_output_stencil, 0, c1 - 2, c2);
-	      op_hcompute_hw_output_stencil_1(blur_stencil /* buf name */, hw_output_stencil, 0, c1 - 2, c2);
-	    }
-	    if (c1 >= 2 && c2 >= 1 && c2 <= 64) {
-	      op_hcompute_hw_output_stencil_2(blur_stencil /* buf name */, hw_output_stencil, 0, c1 - 2, c2 - 1);
-	      op_hcompute_hw_output_stencil_3(blur_stencil /* buf name */, hw_output_stencil, 0, c1 - 2, c2 - 1);
-	    }
-	    if (c1 >= 2 && c2 <= 63) {
-	      op_hcompute_hw_output_global_wrapper_glb_stencil(hw_output_stencil /* buf name */, hw_output_global_wrapper_glb_stencil_clkwrk_4, 0, c1 - 2, c2);
-	      op_hcompute_hw_output_global_wrapper_glb_stencil_1(hw_output_stencil /* buf name */, hw_output_global_wrapper_glb_stencil_clkwrk_5, 0, c1 - 2, c2);
-	    }
-	    if (c1 >= 2 && c2 >= 1 && c2 <= 64) {
-	      op_hcompute_hw_output_global_wrapper_glb_stencil_2(hw_output_stencil /* buf name */, hw_output_global_wrapper_glb_stencil_clkwrk_6, 0, c1 - 2, c2 - 1);
-	      op_hcompute_hw_output_global_wrapper_glb_stencil_3(hw_output_stencil /* buf name */, hw_output_global_wrapper_glb_stencil_clkwrk_7, 0, c1 - 2, c2 - 1);
-	    }
-	  }
-	
-#ifndef __SYNTHESIS__
-  debug_file.close();
-#endif //__SYNTHESIS__
-}
-
-void gaussian_glb_wrapper(HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */hw_input_stencil_clkwrk_0, HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */hw_input_stencil_clkwrk_1, HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */hw_input_stencil_clkwrk_2, HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */hw_input_stencil_clkwrk_3, HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */hw_output_global_wrapper_glb_stencil_clkwrk_4, HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */hw_output_global_wrapper_glb_stencil_clkwrk_5, HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */hw_output_global_wrapper_glb_stencil_clkwrk_6, HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */hw_output_global_wrapper_glb_stencil_clkwrk_7, const int num_epochs) {
-
-  for (int epoch = 0; epoch < num_epochs; epoch++) {
-    gaussian_glb(hw_input_stencil_clkwrk_0, hw_input_stencil_clkwrk_1, hw_input_stencil_clkwrk_2, hw_input_stencil_clkwrk_3, hw_output_global_wrapper_glb_stencil_clkwrk_4, hw_output_global_wrapper_glb_stencil_clkwrk_5, hw_output_global_wrapper_glb_stencil_clkwrk_6, hw_output_global_wrapper_glb_stencil_clkwrk_7);
-  }
-}
-#ifdef __SYNTHESIS__
-  // { op_hcompute_hw_input_global_wrapper_glb_stencil[root = 0, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x_x] -> hw_input_stencil_clkwrk_0[hw_input_global_wrapper_s0_y, 4hw_input_global_wrapper_s0_x_x] : 0 <= hw_input_global_wrapper_s0_y <= 197 and 0 <= hw_input_global_wrapper_s0_x_x <= 67 }
-const int op_hcompute_hw_input_global_wrapper_glb_stencil_read_pipe0_num_transfers = 13464;
-  // { op_hcompute_hw_input_global_wrapper_glb_stencil_1[root = 0, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x_x] -> hw_input_stencil_clkwrk_1[hw_input_global_wrapper_s0_y, 1 + 4hw_input_global_wrapper_s0_x_x] : 0 <= hw_input_global_wrapper_s0_y <= 197 and 0 <= hw_input_global_wrapper_s0_x_x <= 67 }
-const int op_hcompute_hw_input_global_wrapper_glb_stencil_1_read_pipe0_num_transfers = 13464;
-  // { op_hcompute_hw_input_global_wrapper_glb_stencil_2[root = 0, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x_x] -> hw_input_stencil_clkwrk_2[hw_input_global_wrapper_s0_y, 2 + 4hw_input_global_wrapper_s0_x_x] : 0 <= hw_input_global_wrapper_s0_y <= 197 and 0 <= hw_input_global_wrapper_s0_x_x <= 67 }
-const int op_hcompute_hw_input_global_wrapper_glb_stencil_2_read_pipe0_num_transfers = 13464;
-  // { op_hcompute_hw_input_global_wrapper_glb_stencil_3[root = 0, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x_x] -> hw_input_stencil_clkwrk_3[hw_input_global_wrapper_s0_y, 3 + 4hw_input_global_wrapper_s0_x_x] : 0 <= hw_input_global_wrapper_s0_y <= 197 and 0 <= hw_input_global_wrapper_s0_x_x <= 67 }
-const int op_hcompute_hw_input_global_wrapper_glb_stencil_3_read_pipe0_num_transfers = 13464;
-  // { op_hcompute_hw_output_global_wrapper_glb_stencil[root = 0, hw_output_global_wrapper_s0_y_yi, hw_output_global_wrapper_s0_x_xi_xi] -> hw_output_global_wrapper_glb_stencil_clkwrk_4[hw_output_global_wrapper_s0_y_yi, 4hw_output_global_wrapper_s0_x_xi_xi] : 0 <= hw_output_global_wrapper_s0_y_yi <= 195 and 0 <= hw_output_global_wrapper_s0_x_xi_xi <= 63 }
-const int op_hcompute_hw_output_global_wrapper_glb_stencil_write_pipe0_num_transfers = 12544;
-  // { op_hcompute_hw_output_global_wrapper_glb_stencil_1[root = 0, hw_output_global_wrapper_s0_y_yi, hw_output_global_wrapper_s0_x_xi_xi] -> hw_output_global_wrapper_glb_stencil_clkwrk_5[hw_output_global_wrapper_s0_y_yi, 1 + 4hw_output_global_wrapper_s0_x_xi_xi] : 0 <= hw_output_global_wrapper_s0_y_yi <= 195 and 0 <= hw_output_global_wrapper_s0_x_xi_xi <= 63 }
-const int op_hcompute_hw_output_global_wrapper_glb_stencil_1_write_pipe0_num_transfers = 12544;
-  // { op_hcompute_hw_output_global_wrapper_glb_stencil_2[root = 0, hw_output_global_wrapper_s0_y_yi, hw_output_global_wrapper_s0_x_xi_xi] -> hw_output_global_wrapper_glb_stencil_clkwrk_6[hw_output_global_wrapper_s0_y_yi, 2 + 4hw_output_global_wrapper_s0_x_xi_xi] : 0 <= hw_output_global_wrapper_s0_y_yi <= 195 and 0 <= hw_output_global_wrapper_s0_x_xi_xi <= 63 }
-const int op_hcompute_hw_output_global_wrapper_glb_stencil_2_write_pipe0_num_transfers = 12544;
-  // { op_hcompute_hw_output_global_wrapper_glb_stencil_3[root = 0, hw_output_global_wrapper_s0_y_yi, hw_output_global_wrapper_s0_x_xi_xi] -> hw_output_global_wrapper_glb_stencil_clkwrk_7[hw_output_global_wrapper_s0_y_yi, 3 + 4hw_output_global_wrapper_s0_x_xi_xi] : 0 <= hw_output_global_wrapper_s0_y_yi <= 195 and 0 <= hw_output_global_wrapper_s0_x_xi_xi <= 63 }
-const int op_hcompute_hw_output_global_wrapper_glb_stencil_3_write_pipe0_num_transfers = 12544;
-
-
-extern "C" {
-
-void gaussian_glb_accel(hw_uint<16>* op_hcompute_hw_input_global_wrapper_glb_stencil_read_pipe0, hw_uint<16>* op_hcompute_hw_input_global_wrapper_glb_stencil_1_read_pipe0, hw_uint<16>* op_hcompute_hw_input_global_wrapper_glb_stencil_2_read_pipe0, hw_uint<16>* op_hcompute_hw_input_global_wrapper_glb_stencil_3_read_pipe0, hw_uint<16>* op_hcompute_hw_output_global_wrapper_glb_stencil_write_pipe0, hw_uint<16>* op_hcompute_hw_output_global_wrapper_glb_stencil_1_write_pipe0, hw_uint<16>* op_hcompute_hw_output_global_wrapper_glb_stencil_2_write_pipe0, hw_uint<16>* op_hcompute_hw_output_global_wrapper_glb_stencil_3_write_pipe0, const int size) { 
-#pragma HLS dataflow
-#pragma HLS INTERFACE m_axi port = op_hcompute_hw_input_global_wrapper_glb_stencil_read_pipe0 offset = slave depth = 65536 bundle = gmem0
-#pragma HLS INTERFACE m_axi port = op_hcompute_hw_input_global_wrapper_glb_stencil_1_read_pipe0 offset = slave depth = 65536 bundle = gmem1
-#pragma HLS INTERFACE m_axi port = op_hcompute_hw_input_global_wrapper_glb_stencil_2_read_pipe0 offset = slave depth = 65536 bundle = gmem2
-#pragma HLS INTERFACE m_axi port = op_hcompute_hw_input_global_wrapper_glb_stencil_3_read_pipe0 offset = slave depth = 65536 bundle = gmem3
-#pragma HLS INTERFACE m_axi port = op_hcompute_hw_output_global_wrapper_glb_stencil_write_pipe0 offset = slave depth = 65536 bundle = gmem3
-#pragma HLS INTERFACE m_axi port = op_hcompute_hw_output_global_wrapper_glb_stencil_1_write_pipe0 offset = slave depth = 65536 bundle = gmem3
-#pragma HLS INTERFACE m_axi port = op_hcompute_hw_output_global_wrapper_glb_stencil_2_write_pipe0 offset = slave depth = 65536 bundle = gmem3
-#pragma HLS INTERFACE m_axi port = op_hcompute_hw_output_global_wrapper_glb_stencil_3_write_pipe0 offset = slave depth = 65536 bundle = gmem3
-
-#pragma HLS INTERFACE s_axilite port = op_hcompute_hw_input_global_wrapper_glb_stencil_read_pipe0 bundle = control
-#pragma HLS INTERFACE s_axilite port = op_hcompute_hw_input_global_wrapper_glb_stencil_1_read_pipe0 bundle = control
-#pragma HLS INTERFACE s_axilite port = op_hcompute_hw_input_global_wrapper_glb_stencil_2_read_pipe0 bundle = control
-#pragma HLS INTERFACE s_axilite port = op_hcompute_hw_input_global_wrapper_glb_stencil_3_read_pipe0 bundle = control
-#pragma HLS INTERFACE s_axilite port = op_hcompute_hw_output_global_wrapper_glb_stencil_write_pipe0 bundle = control
-#pragma HLS INTERFACE s_axilite port = op_hcompute_hw_output_global_wrapper_glb_stencil_1_write_pipe0 bundle = control
-#pragma HLS INTERFACE s_axilite port = op_hcompute_hw_output_global_wrapper_glb_stencil_2_write_pipe0 bundle = control
-#pragma HLS INTERFACE s_axilite port = op_hcompute_hw_output_global_wrapper_glb_stencil_3_write_pipe0 bundle = control
-#pragma HLS INTERFACE s_axilite port = size bundle = control
-#pragma HLS INTERFACE s_axilite port = return bundle = control
-
-
-  // Pipeline # 0
-  static HWStream<hw_uint<16> > op_hcompute_hw_input_global_wrapper_glb_stencil_read_pipe0_channel;
-  static HWStream<hw_uint<16> > op_hcompute_hw_input_global_wrapper_glb_stencil_1_read_pipe0_channel;
-  static HWStream<hw_uint<16> > op_hcompute_hw_input_global_wrapper_glb_stencil_2_read_pipe0_channel;
-  static HWStream<hw_uint<16> > op_hcompute_hw_input_global_wrapper_glb_stencil_3_read_pipe0_channel;
-  static HWStream<hw_uint<16> > op_hcompute_hw_output_global_wrapper_glb_stencil_write_pipe0_channel;
-  static HWStream<hw_uint<16> > op_hcompute_hw_output_global_wrapper_glb_stencil_1_write_pipe0_channel;
-  static HWStream<hw_uint<16> > op_hcompute_hw_output_global_wrapper_glb_stencil_2_write_pipe0_channel;
-  static HWStream<hw_uint<16> > op_hcompute_hw_output_global_wrapper_glb_stencil_3_write_pipe0_channel;
-
-  burst_read<16>(op_hcompute_hw_input_global_wrapper_glb_stencil_read_pipe0, op_hcompute_hw_input_global_wrapper_glb_stencil_read_pipe0_channel, op_hcompute_hw_input_global_wrapper_glb_stencil_read_pipe0_num_transfers*size);
-  burst_read<16>(op_hcompute_hw_input_global_wrapper_glb_stencil_1_read_pipe0, op_hcompute_hw_input_global_wrapper_glb_stencil_1_read_pipe0_channel, op_hcompute_hw_input_global_wrapper_glb_stencil_1_read_pipe0_num_transfers*size);
-  burst_read<16>(op_hcompute_hw_input_global_wrapper_glb_stencil_2_read_pipe0, op_hcompute_hw_input_global_wrapper_glb_stencil_2_read_pipe0_channel, op_hcompute_hw_input_global_wrapper_glb_stencil_2_read_pipe0_num_transfers*size);
-  burst_read<16>(op_hcompute_hw_input_global_wrapper_glb_stencil_3_read_pipe0, op_hcompute_hw_input_global_wrapper_glb_stencil_3_read_pipe0_channel, op_hcompute_hw_input_global_wrapper_glb_stencil_3_read_pipe0_num_transfers*size);
-
-  gaussian_glb_wrapper(op_hcompute_hw_input_global_wrapper_glb_stencil_read_pipe0_channel, op_hcompute_hw_input_global_wrapper_glb_stencil_1_read_pipe0_channel, op_hcompute_hw_input_global_wrapper_glb_stencil_2_read_pipe0_channel, op_hcompute_hw_input_global_wrapper_glb_stencil_3_read_pipe0_channel, op_hcompute_hw_output_global_wrapper_glb_stencil_write_pipe0_channel, op_hcompute_hw_output_global_wrapper_glb_stencil_1_write_pipe0_channel, op_hcompute_hw_output_global_wrapper_glb_stencil_2_write_pipe0_channel, op_hcompute_hw_output_global_wrapper_glb_stencil_3_write_pipe0_channel, size);
-
-  burst_write<16>(op_hcompute_hw_output_global_wrapper_glb_stencil_write_pipe0, op_hcompute_hw_output_global_wrapper_glb_stencil_write_pipe0_channel, op_hcompute_hw_output_global_wrapper_glb_stencil_write_pipe0_num_transfers*size);
-  burst_write<16>(op_hcompute_hw_output_global_wrapper_glb_stencil_1_write_pipe0, op_hcompute_hw_output_global_wrapper_glb_stencil_1_write_pipe0_channel, op_hcompute_hw_output_global_wrapper_glb_stencil_1_write_pipe0_num_transfers*size);
-  burst_write<16>(op_hcompute_hw_output_global_wrapper_glb_stencil_2_write_pipe0, op_hcompute_hw_output_global_wrapper_glb_stencil_2_write_pipe0_channel, op_hcompute_hw_output_global_wrapper_glb_stencil_2_write_pipe0_num_transfers*size);
-  burst_write<16>(op_hcompute_hw_output_global_wrapper_glb_stencil_3_write_pipe0, op_hcompute_hw_output_global_wrapper_glb_stencil_3_write_pipe0_channel, op_hcompute_hw_output_global_wrapper_glb_stencil_3_write_pipe0_num_transfers*size);
-}
-
-}
-extern "C" {
-
-void gaussian_glb_rdai(HWStream<hw_uint<16> >& op_hcompute_hw_input_global_wrapper_glb_stencil_read_pipe0, HWStream<hw_uint<16> >& op_hcompute_hw_input_global_wrapper_glb_stencil_1_read_pipe0, HWStream<hw_uint<16> >& op_hcompute_hw_input_global_wrapper_glb_stencil_2_read_pipe0, HWStream<hw_uint<16> >& op_hcompute_hw_input_global_wrapper_glb_stencil_3_read_pipe0, HWStream<hw_uint<16> >&  op_hcompute_hw_output_global_wrapper_glb_stencil_write_pipe0, HWStream<hw_uint<16> >&  op_hcompute_hw_output_global_wrapper_glb_stencil_1_write_pipe0, HWStream<hw_uint<16> >&  op_hcompute_hw_output_global_wrapper_glb_stencil_2_write_pipe0, HWStream<hw_uint<16> >&  op_hcompute_hw_output_global_wrapper_glb_stencil_3_write_pipe0) { 
-#pragma HLS dataflow
-#pragma HLS INTERFACE axis register port = op_hcompute_hw_input_global_wrapper_glb_stencil_read_pipe0
-#pragma HLS INTERFACE axis register port = op_hcompute_hw_input_global_wrapper_glb_stencil_1_read_pipe0
-#pragma HLS INTERFACE axis register port = op_hcompute_hw_input_global_wrapper_glb_stencil_2_read_pipe0
-#pragma HLS INTERFACE axis register port = op_hcompute_hw_input_global_wrapper_glb_stencil_3_read_pipe0
-#pragma HLS INTERFACE axis register port = op_hcompute_hw_output_global_wrapper_glb_stencil_write_pipe0
-#pragma HLS INTERFACE axis register port = op_hcompute_hw_output_global_wrapper_glb_stencil_1_write_pipe0
-#pragma HLS INTERFACE axis register port = op_hcompute_hw_output_global_wrapper_glb_stencil_2_write_pipe0
-#pragma HLS INTERFACE axis register port = op_hcompute_hw_output_global_wrapper_glb_stencil_3_write_pipe0
-
-#pragma HLS INTERFACE ap_ctrl_none port = return
-
-
-  // Pipeline # 0
-
-  gaussian_glb(op_hcompute_hw_input_global_wrapper_glb_stencil_read_pipe0, op_hcompute_hw_input_global_wrapper_glb_stencil_1_read_pipe0, op_hcompute_hw_input_global_wrapper_glb_stencil_2_read_pipe0, op_hcompute_hw_input_global_wrapper_glb_stencil_3_read_pipe0, op_hcompute_hw_output_global_wrapper_glb_stencil_write_pipe0, op_hcompute_hw_output_global_wrapper_glb_stencil_1_write_pipe0, op_hcompute_hw_output_global_wrapper_glb_stencil_2_write_pipe0, op_hcompute_hw_output_global_wrapper_glb_stencil_3_write_pipe0);
-
-}
-
-}
-#endif //__SYNTHESIS__
-

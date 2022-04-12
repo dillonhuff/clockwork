@@ -1,9 +1,9 @@
 #include "prog.h"
 #include "codegen.h"
-#include "codegen_catapult.h"
 #include "app.h"
 #include "rdai_collateral.h"
 
+#include "codegen_catapult.h"
 std::string getLine(const std::string& str, int lineNo)
 {
     std::string line;
@@ -2593,7 +2593,8 @@ void generate_app_collateral_catapult(CodegenOptions& options,
     ostream& conv_out,
     map<string, UBuffer>& buffers,
     prog& prg,
-    umap* schedmap) {
+    umap* schedmap, 
+    buffer_list& buffer_list) {
 
   open_synth_scope_catapult(conv_out);
   generate_xilinx_accel_wrapper(options, conv_out, buffers, prg);
@@ -2604,7 +2605,7 @@ void generate_app_collateral_catapult(CodegenOptions& options,
 
   // Collateral generation
   generate_vivado_tcl(prg.name);
-  generate_catapult_tcl(prg.name, false);
+  generate_catapult_tcl(prg.name, false, buffer_list);
   generate_sw_bmp_test_harness(buffers, prg);
   generate_app_code_header_catapult(buffers, prg);
   generate_soda_tb(options, buffers, prg);
@@ -2694,16 +2695,17 @@ void generate_buffer_code_catapult(
     CodegenOptions& options,
     ostream& conv_out,
     map<string, UBuffer>& buffers,
-    prog& prg) {
+    prog& prg, buffer_list& buffer_list) {
 
   for (auto& b : buffers) {
     if (!prg.is_boundary(b.first)) {
-      generate_hls_code_catapult(options, conv_out, b.second);
+      generate_hls_code_catapult(options, conv_out, b.second, buffer_list);
     }
   }
 
   int capacity = 0;
   for (auto& b : buffers) {
+    cout << "check ritvik "  << b.first <<  " " << buffer_capacity(b.second) << endl;
     if (!prg.is_boundary(b.first)) {
       capacity += buffer_capacity(b.second);
     }
@@ -2814,6 +2816,93 @@ void generate_app_code_op_logic(
  
   generate_driver_function_suffix(options, conv_out, buffers, prg);
 }
+//Ritvik
+vector<string> seperate_loop_nests(string app, ostream& a)
+{
+	vector<string> tokens;
+	vector<string> loop_nests;
+	string::size_type pos = 0;
+	string::size_type prev = 0;
+	while ((pos = app.find('\n', prev)) != std::string::npos) 
+	{
+		tokens.push_back(app.substr(prev, pos - prev) + "\n");
+		prev = pos + 1;
+	}
+	tokens.push_back(app.substr(prev) + "\n");
+
+	string loop_nest = "";
+	for(int i =0; i< tokens.size(); i++)
+	{
+		if((i > 0 && tokens[i-1].find("for") == string::npos && tokens[i].find("for") != string::npos) || i== tokens.size() -1)
+		{
+			if(i==tokens.size()-1)
+				loop_nest += tokens[i];
+			loop_nests.push_back(loop_nest);
+			loop_nest = "";
+		}
+		loop_nest += tokens[i];
+	}
+	a << "LOOP NESTS: " << endl;
+	for(int i =0; i< loop_nests.size(); i++)
+	{
+		a << loop_nests[i] << endl<< endl;
+	}
+	return loop_nests;
+}
+
+string generate_pipelined_loop_nests(vector<string> loop_nests, ostream& a)
+{
+	string pipelined_loops;
+	for(auto code_string : loop_nests)
+  	{
+		int loop_depth =0;
+		string new_code_string;
+		std::string line;    
+  		std::istringstream stream1(code_string);
+
+	  	while (getline(stream1,  line)) {
+        		// a << i << " "  << line << endl;
+        		std::string new_str ="";
+	        	if(line.find("for(") == std::string::npos && line.find("for (") == std::string::npos)
+			{
+				new_code_string += line + "\n";
+			}
+			int i = -1;
+			while(line.find("for(")!= std::string::npos || line.find("for (") != std::string::npos)
+			{
+				i += 1;
+				new_str += line + "\n";
+				getline(stream1, line);
+			}
+			if(i > -1)
+			{
+				std::string new_line; 
+	  			std::istringstream stream2(new_str);
+				
+				while(i > 0)
+				{
+					getline(stream2, new_line);
+					new_code_string+= new_line + "{ \n";
+		 			i = i-1;
+					loop_depth += 1;
+				}
+				new_code_string += tab(loop_depth) + "#pragma hls_pipeline_init_interval 1 \n";
+				getline(stream2, new_line);
+				new_code_string += new_line + " \n";
+				new_code_string += line +"\n"; 		
+			}
+		}
+		pipelined_loops += new_code_string;
+		for(int j=0; j< loop_depth; j++)
+			pipelined_loops += tab(loop_depth - j-1) + "} \n";
+
+	}
+	a << "PIPELINED " << endl;
+	a << pipelined_loops;
+	return pipelined_loops;
+}
+
+
 // New Addition Ritvik
 void generate_app_code_op_logic_catapult(
     CodegenOptions& options,
@@ -2866,14 +2955,16 @@ void generate_app_code_op_logic_catapult(
     assert(options.hls_loop_codegen == HLS_LOOP_CODEGEN_ISL);
     code_string = codegen_c(schedmap);
   }
+
   string new_code_string;
   int i=0;
   
   std::string line;    
   
   std::istringstream stream1(code_string);
+  
   while (getline(stream1,  line)) {
-        a << i << " "  << line << endl;
+        // a << i << " "  << line << endl;
         std::string new_str ="";
         if(line.find("for(") == std::string::npos && line.find("for (") == std::string::npos)
 	{
@@ -2883,7 +2974,7 @@ void generate_app_code_op_logic_catapult(
 	while(line.find("for(")!= std::string::npos || line.find("for (") != std::string::npos)
 	{
 		i += 1;
-		new_str += line;
+		new_str += line + "\n";
 		getline(stream1, line);
 	}
 	if(i > -1)
@@ -2894,23 +2985,27 @@ void generate_app_code_op_logic_catapult(
 		while(i > 0)
 		{
 			getline(stream2, new_line);
-			new_code_string+= new_line + "\n";
+			new_code_string+= new_line + "{ \n";
  			i = i-1;
 		}
 		new_code_string += "#pragma hls_pipeline_init_interval 1 \n";
 		getline(stream2, new_line);
-		new_code_string += new_line + "\n";		
+		new_code_string += new_line + " \n";
+		new_code_string += line +"\n"; 		
 	}
     }
 
   
-
+  vector<string> temp = seperate_loop_nests(code_string, a);
+  string adapted_loop_nests = generate_pipelined_loop_nests(temp, a);
   a  << code_string << endl << endl << endl; 
   a << "#####################################" << endl; 
-  a  << new_code_string << endl << endl << endl; 
-  
+
+  new_code_string += "\n } \n";
+  a  << new_code_string << endl << endl << endl;  
   a << "#####################################" << endl; 
-  code_string = new_code_string;
+  //assert(0);
+	  code_string = adapted_loop_nests; //new_code_string;
   string original_isl_code_string = code_string;
 
   code_string = "\t" + ReplaceString(code_string, "\n", "\n\t");
@@ -2973,13 +3068,14 @@ void generate_app_code_body_catapult(
     map<string, UBuffer>& buffers,
     prog& prg,
     umap* schedmap,
-    map<string, isl_set*>& domain_map) {
+    map<string, isl_set*>& domain_map, 
+    buffer_list& buffer_list) {
 
   generate_buffer_code_catapult(
     options,
     conv_out,
     buffers,
-    prg);
+    prg, buffer_list);
 
   cout << "Prog: " << prg.name << endl;
 
@@ -3035,12 +3131,15 @@ void generate_app_code_catapult(CodegenOptions& options,
   ofstream conv_out(prg.name + ".cpp");
   generate_app_prefix_catapult(options, conv_out, prg);
 
+  //buffer_list* buffer_l; 
+  buffer_list buffer_list;
   generate_app_code_body_catapult(options,
       conv_out,
       buffers,
       prg,
       schedmap,
-      domain_map);
+      domain_map, 
+      buffer_list);
 
   generate_app_epoch_wrapper(options,
       conv_out,
@@ -3053,7 +3152,7 @@ void generate_app_code_catapult(CodegenOptions& options,
       conv_out,
       buffers,
       prg,
-      schedmap);
+      schedmap, buffer_list);
 
   conv_out.close();
 }
@@ -7293,6 +7392,10 @@ bool all_loop_nests_same_depth(prog& prg) {
   for (auto op : ops) {
     depths.insert(surrounding_vars(op, prg).size());
   }
+  cout << "Check depths ";
+  	
+  for(auto i: depths)
+  	cout  << i;
   return depths.size() == 1;
 }
 

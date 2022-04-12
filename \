@@ -20660,14 +20660,9 @@ void generate_fpga_clockwork_code(prog& prg) {
     CodegenOptions options;
     options.internal = true;
     options.all_rams = true;
-    options.set_banking_strategy_value = "Exaustive";
     all_unbanked(prg, options);
     options.inner_bank_offset_mode =
       INNER_BANK_OFFSET_MULTILINEAR;
- 
-
-//    options.inner_bank_offset_mode =
- //     INNER_BANK_OFFSET_MULTILINEAR;
     generate_app_code(options, buffers, prg, sched);
   }
 }
@@ -20742,8 +20737,6 @@ void generate_fpga_clockwork_code_catapult(prog& prg) {
       << prg.compute_unit_file << endl;
     CodegenOptions options;
     options.internal = true;
-    
-
     generate_app_code_catapult(options, buffers, prg, sched);
 
     release(sched);
@@ -20755,6 +20748,7 @@ void generate_fpga_clockwork_code_catapult(prog& prg) {
     CodegenOptions options;
     options.internal = true;
     options.all_rams = true;
+
     options.set_banking_strategy_value = "Exaustive";
     all_unbanked(prg, options);
     options.inner_bank_offset_mode =
@@ -20767,13 +20761,13 @@ void generate_fpga_clockwork_code_catapult(prog& prg) {
 void fpga_asplos_tests() {
 
   //auto test_programs = stencil_programs();
-  auto test_programs = {resnet_output_stationary()};
+  auto test_programs = {camera_pipeline_2x2()};
   for (auto prg : test_programs) {
     cout << "==== FPGA clockwork code for " << prg.name << endl;
     break_up_multi_channel_inputs(prg);
     break_up_multi_channel_outputs(prg);
     dsa_writers(prg);
-    //pad_to_single_depth(prg);
+    pad_to_single_depth(prg);
     std::vector<string> no_opt =
       unoptimized_result(prg);
 
@@ -20783,7 +20777,6 @@ void fpga_asplos_tests() {
     std::vector<std::string> opt =
       run_regression_tb(prg);
     compare(prg.name + " ASPLOS FPGA flow", opt, no_opt);
-
     move_to_benchmarks_folder(prg.name);
   }
 }
@@ -20957,13 +20950,13 @@ void fpga_asplos_tests_catapult() {
 
   //auto test_programs = stencil_programs();
  // auto test_programs = {gaussian(), harris(), conv_3_3(), laplacian_pyramid(), gaussian_glb(), gaussian_glb2()};
-  auto test_programs = {resnet_output_stationary(), mobilenet()};//_output_stationary()};//, camera_pipeline_2x2(), harris_color()};
+  auto test_programs = {harris_color()};//camera_pipeline_2x2(), gaussian(), harris_color()};//, camera_pipeline_2x2(), harris_color()};
   for (auto prg : test_programs) {
     cout << "==== FPGA clockwork code for " << prg.name << endl;
     break_up_multi_channel_inputs(prg);
     break_up_multi_channel_outputs(prg);
     dsa_writers(prg);
-    //pad_to_single_depth(prg);
+    pad_to_single_depth(prg);
 //    std::vector<string> no_opt =
  //     unoptimized_result(prg);
 

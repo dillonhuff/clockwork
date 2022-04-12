@@ -1,5 +1,7 @@
 #include "ubuffer.h"
 #include "codegen.h"
+
+#include "codegen_catapult.h"
 #ifdef COREIR
 #include "cwlib.h"
 #include "coreir_backend.h"
@@ -316,7 +318,7 @@ vector<string> generate_multilinear_address_components(const std::string& pt, ba
   return addr_vec_out;
 }
 
-string generate_multilinear_ram_addr(const std::string& pt, bank& bnk, UBuffer& buf) {
+string generate_multilinear_ram_addr_with_select(const std::string& pt, bank& bnk, UBuffer& buf, std::ostream& out) {
   vector<int> lengths;
   vector<int> mins;
   for (int i = 0; i < buf.logical_dimension(); i++) {
@@ -326,6 +328,7 @@ string generate_multilinear_ram_addr(const std::string& pt, bank& bnk, UBuffer& 
     auto max = to_int(lexmaxval(s));
     int length = max - min + 1;
     lengths.push_back(length);
+    cout << "Buffer lengths " << bnk.name << " " << length << endl;
   }
 
   isl_map* m = to_map(buf.access_map.at(pt));
@@ -336,25 +339,111 @@ string generate_multilinear_ram_addr(const std::string& pt, bank& bnk, UBuffer& 
   vector<string> domains;
   vector<string> offsets;
   for (auto piece : pieces) {
+    cout << "Buffer piece " << endl;
+	//piece.first->pretty_print();
     vector<string> addr_vec;
     isl_multi_aff* ma = piece.second;
     for (int d = 0; d < isl_multi_aff_dim(ma, isl_dim_set); d++) {
       isl_aff* aff = isl_multi_aff_get_aff(ma, d);
+      //aff->print() 
+      cout << d << "end: " << isl_multi_aff_dim(ma, isl_dim_set) << endl;
       addr_vec.push_back(codegen_c(aff));
     }
 
     vector<string> addr_vec_out;
     for (int i = 0; i < buf.logical_dimension(); i++) {
+      cout << "Debug selection logic " << endl;
+      //if(mins.at(i) > to_int(lexmaxval(s))-to_int(lexminval(s)) + 1)
+
+      auto s = project_all_but(to_set(bnk.rddom), i);
+      if(addr_vec.at(i).size() > 6)
+      out << tab(1) <<  "if(" << addr_vec.at(i) << ">= " << str(mins.at(i))<<  " && "<<  addr_vec.at(i) << "< " <<  mins.at(i)+ to_int(lexmaxval(s))-to_int(lexminval(s)) + 1 << ")" << endl;
       string item = addr_vec.at(i) + " - " + str(mins.at(i));
+	      
+      cout << addr_vec.at(i) << "end: " << isl_multi_aff_dim(ma, isl_dim_set) << endl;
       addr_vec_out.push_back(item);
     }
 
     //string addr = sep_list(addr_vec_out, "", "", " + ");
     string addr = sep_list(addr_vec_out, "", "", ", ");
     offsets.push_back(addr);
-    domains.push_back(codegen_c(piece.first));
+    auto a = codegen_c(piece.first);
+    domains.push_back(a);
+    cout << "Offset " << addr << " Domains " << a << endl << endl;
+  }
+  cout << "Debug statement ";
+  assert(offsets.size() == 1);
+  return offsets.at(0);
+
+  //assert(offsets.size() > 0);
+  //assert(domains.size() == offsets.size());
+
+  //string base = offsets.at(0);
+  //for (int d = 1; d < offsets.size(); d++) {
+    //base = parens(parens(domains.at(d)) + " ? " + offsets.at(d) + " : " + base);
+  //}
+
+  //return base;
+}
+
+
+
+
+
+string generate_multilinear_ram_addr(const std::string& pt, bank& bnk, UBuffer& buf) {
+  vector<int> lengths;
+  vector<int> mins;
+  for (int i = 0; i < buf.logical_dimension(); i++) {
+    auto s = project_all_but(to_set(bnk.rddom), i);
+    auto min = to_int(lexminval(s));
+    mins.push_back(min);
+    auto max = to_int(lexmaxval(s));
+    int length = max - min + 1;
+    lengths.push_back(length);
+    cout << "Buffer lengths " << bnk.name << " " << length << endl;
   }
 
+  isl_map* m = to_map(buf.access_map.at(pt));
+
+  auto svec = isl_pw_multi_aff_from_map(m);
+  vector<pair<isl_set*, isl_multi_aff*> > pieces =
+    get_pieces(svec);
+  vector<string> domains;
+  vector<string> offsets;
+  for (auto piece : pieces) {
+    cout << "Buffer piece " << endl;
+	//piece.first->pretty_print();
+    vector<string> addr_vec;
+    isl_multi_aff* ma = piece.second;
+    for (int d = 0; d < isl_multi_aff_dim(ma, isl_dim_set); d++) {
+      isl_aff* aff = isl_multi_aff_get_aff(ma, d);
+      //aff->print() 
+      cout << d << "end: " << isl_multi_aff_dim(ma, isl_dim_set) << endl;
+      addr_vec.push_back(codegen_c(aff));
+    }
+
+    vector<string> addr_vec_out;
+    for (int i = 0; i < buf.logical_dimension(); i++) {
+      cout << "Debug selection logic " << endl;
+      //if(mins.at(i) > to_int(lexmaxval(s))-to_int(lexminval(s)) + 1)
+
+      auto s = project_all_but(to_set(bnk.rddom), i);
+      if(addr_vec.at(i).size() > 5)
+      cout << tab(1) <<  "if" << addr_vec.at(i) << ">= " << str(mins.at(i))<<  " && "<<  addr_vec.at(i) << "< " << to_int(lexmaxval(s))-to_int(lexminval(s)) + 1 << ")" << endl;
+      string item = addr_vec.at(i) + " - " + str(mins.at(i));
+	      
+      cout << addr_vec.at(i) << "end: " << isl_multi_aff_dim(ma, isl_dim_set) << endl;
+      addr_vec_out.push_back(item);
+    }
+
+    //string addr = sep_list(addr_vec_out, "", "", " + ");
+    string addr = sep_list(addr_vec_out, "", "", ", ");
+    offsets.push_back(addr);
+    auto a = codegen_c(piece.first);
+    domains.push_back(a);
+    cout << "Offset " << addr << " Domains " << a << endl << endl;
+  }
+  cout << "Debug statement ";
   assert(offsets.size() == 1);
   return offsets.at(0);
 
@@ -631,6 +720,7 @@ void generate_bank(CodegenOptions& options,
     assert(bank.tp == INNER_BANK_OFFSET_STACK);
 
     out << "\t// Capacity: " << maxdelay + 1 << endl;
+    
     out << "\t// # of read delays: " << read_delays.size() << endl;
     out << tab(1) << "// " << comma_list(read_delays) << endl;
 
@@ -714,7 +804,7 @@ void generate_bank(CodegenOptions& options,
 // New Addition Ritvik
 void generate_bank_catapult(CodegenOptions& options,
     std::ostream& out,
-    stack_bank& bank) {
+    stack_bank& bank, buffer_list& buffer_list, string buffer_name) {
 
   auto name = bank.name;
   auto pt_type_string = bank.pt_type_string;
@@ -735,13 +825,17 @@ void generate_bank_catapult(CodegenOptions& options,
     assert(bank.tp == INNER_BANK_OFFSET_STACK);
 
     out << "\t// Capacity: " << maxdelay + 1 << endl;
+   
+//    cout << "Ritvik check buffer sizes " <<  name << " "  << maxdelay + 1 << endl; 
     out << "\t// # of read delays: " << read_delays.size() << endl;
     out << tab(1) << "// " << comma_list(read_delays) << endl;
 
     read_delays = sort_unique(read_delays);
-
+    cout << "Ritvik check buffer sizes " <<  name << " "  << maxdelay + 1 << endl;  
     if (num_readers == 1 || options.all_rams) {
       int partition_capacity = 1 + maxdelay;
+      
+      cout << "\tRitvik fifo1<" << pt_type_string << ", " << partition_capacity << "> f" << endl;
       out << "\tfifo<" << pt_type_string << ", " << partition_capacity << "> f" << ";" << endl;
       out << "\tinline " + pt_type_string + " peek(const int offset) {" << endl;
       ignore_inter_deps_catapult(out, "f");
@@ -769,7 +863,10 @@ void generate_bank_catapult(CodegenOptions& options,
         auto partition_capacity = p.second;
         //out << "\t// Parition [" << current.first << ", " << next.first << ") capacity = " << partition_capacity << endl;
         if (partition_capacity > 1) {
-          out << "\tfifo<" << pt_type_string << ", " << partition_capacity << "> " << p.first << ";" << endl;
+	buffer_list.add_element(name + "." + p.first, partition_capacity);
+		//insert(pair<string, int>(name+"___"+ p.first+ "___" + to_string(partition_capacity), maxdelay));//add_element(name+ "___" + p.first, maxdelay);
+	//cout << "\tRitvik fifo2<" << pt_type_string << ", " << partition_capacity << "> " << p.first  << endl;
+    	out << "\tfifo<" << pt_type_string << ", " << partition_capacity << "> " << p.first << ";" << endl;
         } else {
           out << "\t" << pt_type_string << " " << p.first << ";" << endl;
         }
@@ -4717,13 +4814,13 @@ void generate_code_prefix(CodegenOptions& options,
 //New Addition Ritvik
 void generate_code_prefix_catapult(CodegenOptions& options,
     std::ostream& out,
-    UBuffer& buf) {
+    UBuffer& buf, buffer_list& buffer_list) {
 
   //banking and merge pass
   buf.generate_banks_and_merge(options);
 
   for (auto b : buf.get_banks()) {
-    generate_bank_catapult(options, out, b);
+    generate_bank_catapult(options, out, b, buffer_list, buf.name);
   }
 
   out << "struct " << buf.name << "_cache {" << endl;
@@ -4901,6 +4998,89 @@ string delay_string(CodegenOptions& options,
 
   return buf.name + "." + value_str;
 }
+void generate_broadcast_select(CodegenOptions& options, std::ostream& out, const string& inpt, UBuffer& buf) {
+  vector<string> args;
+  args.push_back(buf.port_type_string(inpt) + "& " + inpt);
+  args.push_back(buf.name + "_cache& " + buf.name);
+  concat(args, dimension_var_decls(inpt, buf));
+  args.push_back("int dynamic_address");
+  string var_args = comma_list(dimension_var_args(inpt, buf));
+
+  out << "inline void " << inpt << "_write(";
+  out << comma_list(args) << ") {" << endl;
+
+  if (buf.banking.partition != "cyclic") {
+    //Different ram type, different address
+    for (auto sb : buf.receiver_banks(inpt)) {
+      if (sb.tp == INNER_BANK_OFFSET_STACK) {
+        out << tab(1) << buf.name << "." << sb.name << ".push(" << inpt << ");" << endl;
+      } else if (sb.tp == INNER_BANK_OFFSET_LINEAR) {
+        string linear_addr = buf.generate_linearize_ram_addr(inpt, sb);
+        cout <<"Input port:" << inpt << ", Get ram string: " << linear_addr << endl;
+        if (!elem(inpt, buf.dynamic_ports)) {
+          out << tab(1) << buf.name << "." << sb.name << ".write(" << inpt <<
+            ", " << linear_addr << ");" << endl;
+        } else {
+          out << tab(1) << buf.name << "." << sb.name << ".write(" << inpt <<
+            ", " << "dynamic_address" << ");" << endl;
+        }
+      } else {
+        assert(sb.tp == INNER_BANK_OFFSET_MULTILINEAR);
+	cout << "Input =  "<<  inpt<< " " << sb.name <<endl;
+        string linear_addr = generate_multilinear_ram_addr_with_select(inpt, sb, buf, out);
+	cout << "Buffer Selection lodic string " << linear_addr << endl;
+        //if(buf.logical_dimension() ==4)
+//	{
+//		out << tab(1) << if  
+//	}	
+        out << tab(2) << buf.name << "." << sb.name << ".write(" << inpt << ", " << linear_addr << ");" << endl;
+
+      }
+    }
+  } else {
+    auto bank_function = bank_map(buf.ctx, buf.name, buf.banking);
+    auto acc_umap = map_find(inpt, buf.access_map);
+    auto acc_map = to_map(acc_umap);
+    auto writes = range(acc_map);
+    cout << "writes = " << str(writes) << endl;
+    auto lt = its(its_range(isl_map_lex_lt(get_space(writes)), writes), writes);
+    cout << "lt     = " << str(lt) << endl;
+    auto next_write = simplify(lexmin(lt));
+    cout << "next w = " << str(next_write) << endl;
+    cout << "diff   = " << str(isl_map_deltas_map(cpy(next_write))) << endl;
+    auto banks_to_next_reads = dot(inv(bank_function), next_write);
+    cout << "banks to next reads = " << str(banks_to_next_reads) << endl;
+    auto next_bank = dot(dot(inv(bank_function), next_write), bank_function);
+    cout << "next bank = " << str(next_bank) << endl;
+    cout << "next bcar = " << str(card(next_bank)) << endl;
+    auto bank_delta = isl_map_deltas_map(cpy(next_bank));
+    cout << "nb delta  = " << str(bank_delta) << endl;
+
+    // TODO: Replace with actual bank computation
+    for (auto sb : buf.get_banks()) {
+      if (sb.tp == INNER_BANK_OFFSET_STACK) {
+        out << tab(1) << buf.name << "." << sb.name << ".push(" << inpt << ");" << endl;
+      } else if (sb.tp == INNER_BANK_OFFSET_LINEAR) {
+        //string linear_addr = buf.generate_linearize_ram_addr(inpt);
+        string linear_addr = buf.generate_linearize_ram_addr(inpt, sb);
+        cout <<"Input port:" << inpt << ", Get ram string: " << linear_addr << endl;
+        if (!elem(inpt, buf.dynamic_ports)) {
+          out << tab(1) << buf.name << "." << sb.name << ".write(" << inpt <<
+            ", " << linear_addr << ");" << endl;
+        } else {
+          out << tab(1) << buf.name << "." << sb.name << ".write(" << inpt <<
+            ", " << "dynamic_address" << ");" << endl;
+        }
+      } else {
+        assert(false);
+      }
+    }
+  }
+
+  out << "}" << endl << endl;
+
+}
+
 
 void generate_broadcast(CodegenOptions& options, std::ostream& out, const string& inpt, UBuffer& buf) {
   vector<string> args;
@@ -5079,7 +5259,7 @@ void generate_select(CodegenOptions& options, std::ostream& out, const string& o
 //New Addition Ritvik
 void generate_select_catapult(CodegenOptions& options, std::ostream& out, const string& outpt, UBuffer& buf) {
   generate_select_decl_catapult(options, out, outpt, buf);
-
+  cout << "generate select decl done " << endl;
   out << tab(1) << "// " << outpt << " read pattern: " << str(buf.access_map.at(outpt)) << endl;
 
   if (buf.banking.partition == "register_file" || buf.banking.partition == "none") {
@@ -5239,21 +5419,21 @@ void generate_hls_code(CodegenOptions& options, std::ostream& out, UBuffer& buf)
   generate_code_prefix(options, out, buf);
 
   for (auto inpt : buf.get_in_ports()) {
-    generate_broadcast(options, out, inpt, buf);
-  }
+	    generate_broadcast_select(options, out, inpt, buf);
+	  }
 
-  for (auto outpt : buf.get_out_ports()) {
-    generate_select(options, out, outpt, buf);
+	  for (auto outpt : buf.get_out_ports()) {
+	    generate_select(options, out, outpt, buf);
   }
 
   generate_bundles(options, out, buf);
 }
 //New Addition Ritvik
-void generate_hls_code_catapult(CodegenOptions& options, std::ostream& out, UBuffer& buf) {
-  generate_code_prefix_catapult(options, out, buf);
+void generate_hls_code_catapult(CodegenOptions& options, std::ostream& out, UBuffer& buf, buffer_list& buffer_list) {
+  generate_code_prefix_catapult(options, out, buf, buffer_list);
 
   for (auto inpt : buf.get_in_ports()) {
-    generate_broadcast(options, out, inpt, buf);
+    generate_broadcast_select(options, out, inpt, buf);
   }
 
   for (auto outpt : buf.get_out_ports()) {
@@ -6554,7 +6734,7 @@ void UBuffer::generate_banks(CodegenOptions& options) {
     cout << banking.partition << endl;
    // assert(banking.partition == "exaustive");
     //assert(false);
-    banking.partition = "exhaustive";
+    //banking.partition = "exhaustive";
     if (banking.partition == "exhaustive" || banking.partition == "cyclic") {
       bool all_small_banks = true;
       for (auto inpt : get_in_ports()) {

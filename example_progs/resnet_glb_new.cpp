@@ -345,7 +345,7 @@ prog resnet_output_stationary_tiny() {
   return prg;
 }
 
-prog resnet_output_stationary() {
+prog resnet_output_stationary_() {
   prog prg;
   prg.compute_unit_file = "resnet_output_stationary_compute.h";
   prg.name = "resnet_output_stationary";

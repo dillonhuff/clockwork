@@ -1,9 +1,9 @@
 #include "example_progs.h"
 
-prog unsharp() {
+prog unsharp_() {
   prog prg;
   prg.compute_unit_file = "unsharp_compute.h";
-  prg.name = "unsharp";
+  prg.name = "unsharp_";
 
 // Stencil<uint16_t, 3, 64, 64> &hw_input_stencil = arg_0;
   prg.add_input("hw_input_stencil");
