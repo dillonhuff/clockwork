@@ -3350,6 +3350,15 @@ struct UBufferImpl {
     return false;
   }
 
+  int max_row_depth(string inpt) const {
+      int max_depth = 0;
+      for (auto it: shift_registered_outputs) {
+          if (it.second.first == inpt)
+            max_depth = std::max(max_depth, it.second.second);
+      }
+      return max_depth;
+  }
+
   bool is_shift_register_output(string output) const {
     std::set<string> outpts = get_sr_outpts();
     return outpts.count(output);

@@ -6266,12 +6266,12 @@ void M1_sanity_check_port_counts(const UBufferImpl& impl) {
 
 void dump_Buffet_definition() {
     int data_width = 16;
-    int ctrl_width = 8;
+    int ctrl_width = 10;
 
     ofstream buffet_collateral_file("buffet_defines.v");
     buffet_collateral_file << "`define IDX_WIDTH" << tab(4) << ctrl_width << endl;
     buffet_collateral_file << "`define DATA_WIDTH" << tab(4) << data_width << endl;
-    buffet_collateral_file << "`define SIZE" << tab(4) <<"2 **" << data_width << "-1" << endl;
+    buffet_collateral_file << "`define SIZE" << tab(4) <<"2 **" << ctrl_width << "-1" << endl;
     buffet_collateral_file << "`define SEPARATE_WRITE_PORTS    1" << endl;
     buffet_collateral_file << "`define SUPPORTS_UPDATE         1" << endl;
     buffet_collateral_file << "`define READREQ_FIFO_DEPTH      8" << endl;
@@ -6511,7 +6511,7 @@ std::set<string> generate_buffet_shift_registers(CodegenOptions& options, CoreIR
     auto dom = buf.domain.at(buffet_inpt);
     auto linear_aff = get_aff(linear_address_map_lake(cpy(dom)));
     CoreIR::Instance* rowbuf_dom_iterator = affine_controller(options, def, dom, linear_aff);
-    auto rowbuf_rd_agen = build_inner_bank_offset(buffet_inpt, buf, impl, def);
+    auto rowbuf_rd_agen = build_inner_bank_offset(buffet_inpt, buffet_outpt, buf, impl, def);
 
     //Wire the iteration domain counter
     def->connect(rowbuf_rd_agen->sel("d"), rowbuf_dom_iterator->sel("d"));
@@ -6524,7 +6524,7 @@ std::set<string> generate_buffet_shift_registers(CodegenOptions& options, CoreIR
     def->connect(rowbuf_dom_iterator->sel("valid"), row_buf->sel("read_idx_valid"));
 
     //This port will never update
-    Select* zero = def->addInstance("zero_cst", "corebit.const",
+    Select* zero = def->addInstance("zero_cst" + c->getUnique(), "corebit.const",
             {{"value", COREMK(c, false)}})->sel("out");
     def->connect(row_buf->sel("read_will_update"), zero);
 
@@ -7311,6 +7311,30 @@ CoreIR::Instance* build_inner_bank_offset(const std::string& reader, UBuffer& bu
 
   auto addr_expr_aff = get_aff(inner_bank_acc_map);
   cout << "addrgen for " << reader << ": " << str(addr_expr_aff) << endl;
+
+  auto c = def->getContext();
+
+  auto aff_gen_mod = coreir_for_aff(c, addr_expr_aff);
+
+  auto agen = def->addInstance("inner_bank_offset" + reader + c->getUnique(), aff_gen_mod);
+  return agen;
+}
+
+CoreIR::Instance* build_inner_bank_offset(const std::string& reader, const std::string& shift_pt, UBuffer& buf, const EmbarrassingBankingImpl& impl, CoreIR::ModuleDef* def) {
+  auto inner_bank_acc_map = get_inner_bank_access_map(reader, buf, impl);
+
+  auto addr_expr_aff = get_aff(inner_bank_acc_map);
+
+  assert(impl.is_shift_register_output(shift_pt));
+  int depth = impl.shift_registered_outputs.at(shift_pt).second;
+  impl.print_info(std::cout);
+  cout << "shift reg depth: " << depth<< endl;
+
+  int max_depth = impl.max_row_depth(reader);
+
+  addr_expr_aff = add(addr_expr_aff, max_depth - depth);
+
+  cout << "addrgen for " << shift_pt<< ": " << str(addr_expr_aff) << endl;
 
   auto c = def->getContext();
 
