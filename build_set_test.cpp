@@ -20029,7 +20029,7 @@ void buffet_tests() {
   buffet_test_programs.push_back(resnet_tiny());
   buffet_test_programs.push_back(matmul_tiny());
   buffet_test_programs.push_back(conv_1_2());
-  //buffet_test_programs.push_back(conv_3_3());
+  buffet_test_programs.push_back(conv_3_3_buffet());
   test_buffet_codegen(buffet_test_programs);
 }
 
