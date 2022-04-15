@@ -3837,8 +3837,8 @@ if (cnst->getModuleRef()->getName() == "Pond") {
   regfile2out_0["read_data_starting_addr"] = {0};
   regfile2out_0["read_data_stride"] = {1};
 
-  config["in2regfile"] = in2regfile_0;
-  config["regfile2out"] = regfile2out_0;
+  config["in2regfile_0"] = in2regfile_0;
+  config["regfile2out_0"] = regfile2out_0;
 
   config_file["config"] = config;
 
