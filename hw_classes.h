@@ -64,7 +64,7 @@ class fifo {
     int read_addr;
 
 #ifdef __VIVADO_SYNTH__
-    T vals[Depth];
+    T vals[Depth+1];
 #else
     T* vals;
 #endif // __VIVADO_SYNTH__
@@ -72,8 +72,8 @@ class fifo {
     fifo() : read_addr(0), write_addr(0) {
 #ifdef __VIVADO_SYNTH__
 #else
-      vals = (T*)malloc(sizeof(T)*Depth);
-      for (int i = 0; i < Depth; i++) {
+      vals = (T*)malloc(sizeof(T)*(Depth+1));
+      for (int i = 0; i < Depth+1; i++) {
         vals[i] = 0;
       }
 #endif // __VIVADO_SYNTH__
@@ -112,13 +112,13 @@ class fifo {
 //#ifdef __VIVADO_SYNTH__
 //#pragma HLS dependence array inter false
 //#endif //__VIVADO_SYNTH__
-      int addr = write_addr + Depth;
-      if (addr >= Depth) {
+      int addr = write_addr + 1;//Depth;
+      if (addr >= Depth+1) {
         // Wrap around
-        int rem = (addr - Depth);
+        int rem = (addr - Depth-1);
         addr = rem;
       }
-      assert(addr < Depth);
+      assert(addr < Depth+1);
       return vals[addr];
     }
 
@@ -126,9 +126,9 @@ class fifo {
 //#ifdef __VIVADO_SYNTH__
 //#pragma HLS dependence array inter false
 //#endif //__VIVADO_SYNTH__
-      assert(write_addr < Depth);
+      assert(write_addr < Depth+1);
       vals[write_addr] = val;
-      write_addr = MOD_INC(write_addr, Depth);
+      write_addr = MOD_INC(write_addr, Depth+1);
     }
 };
 
