@@ -4,20 +4,18 @@
 #include <deque>
 #include <cmath>
 #include <stdint.h>
-#include "ac_channel.h"
-#include <ac_int.h>
 
-#ifdef __SYNTHESIS__
-//#ifdef __VIVADO_SYNTH__
+#ifdef __VIVADO_SYNTH__
 
 // WARNING: Enabling this flag (AP_INT_MAX_W)
 // can make Vivado HLS take a *very* long
 // time even for tiny designs. Avoid it
 // unless absolutely necessary.
-//#define AP_INT_MAX_W 32768
+//#define AP_INT_MAX_W 16384
+#include "ap_int.h"
 
-//include "ap_int.h"
-//#include "hls_stream.h"
+#include "hls_stream.h"
+
 #else
 
 #include "static_quad_value_bit_vector.h"
@@ -64,18 +62,18 @@ class fifo {
 
     int write_addr;
     int read_addr;
-#ifdef __SYNTHESIS__
-    T vals[Depth+3];
+
+#ifdef __VIVADO_SYNTH__
+    T vals[Depth+1];
 #else
     T* vals;
 #endif // __VIVADO_SYNTH__
 
     fifo() : read_addr(0), write_addr(0) {
-#ifdef __SYNTHESIS__
-//#ifdef __VIVADO_SYNTH__
+#ifdef __VIVADO_SYNTH__
 #else
-      vals = (T*)malloc(sizeof(T)*(Depth+3);
-      for (int i = 0; i < Depth+3; i++) {
+      vals = (T*)malloc(sizeof(T)*(Depth+1));
+      for (int i = 0; i < Depth; i++) {
         vals[i] = 0;
       }
 #endif // __VIVADO_SYNTH__
@@ -85,36 +83,58 @@ class fifo {
     }
 
     T peek(int offset) {
+//#ifdef __VIVADO_SYNTH__
+//#pragma HLS dependence array inter false
+//#endif //__VIVADO_SYNTH__
 
-      int addr = write_addr+ offset +3;// + Depth + offset;
-      if (addr >= Depth+3) {
+      assert(offset >= 0);
+      //cout << "Getting offset from top: " << offset << endl;
+      //int top_addr = (write_addr + Depth) % Depth;
+      //cout << "\t" << "Top at: " << top_addr << endl;
+      // Note: This works
+      //return vals[(write_addr + Depth + offset) % Depth];
+
+      int addr = write_addr + 1 + offset;
+      if (addr >= Depth+1) {
         // Wrap around
-        int rem = (addr - Depth-3);
+        int rem = (addr - Depth-1);
         addr = rem;
       }
-      if (addr >= Depth+3) {
-        int rem = (addr - Depth-3);
+      if (addr >= Depth+1) {
+        int rem = (addr - Depth-1);
         addr = rem;
       }
+      assert(addr < Depth+1);
+      assert(addr >= 0);
       return vals[addr];
     }
 
     T back() {
-      int addr = write_addr + 3;
-      if (addr >= Depth+3) {
+//#ifdef __VIVADO_SYNTH__
+//#pragma HLS dependence array inter false
+//#endif //__VIVADO_SYNTH__
+      int addr = write_addr + 1;
+      if (addr >= Depth+1) {
         // Wrap around
-        int rem = (addr - Depth-3);
+        int rem = (addr - Depth-1);
         addr = rem;
       }
-      //assert(addr < Depth);
+      assert(addr < Depth+1);
+      assert(addr >= 0);
       return vals[addr];
     }
 
     void push(const T& val) {
+//#ifdef __VIVADO_SYNTH__
+//#pragma HLS dependence array inter false
+//#endif //__VIVADO_SYNTH__
+      assert(write_addr < Depth+1);
       vals[write_addr] = val;
-      write_addr = MOD_INC(write_addr, Depth+3);
+      write_addr = MOD_INC(write_addr, Depth+1);
     }
 };
+
+
 
 template<int Depth>
 class delay_sr {
@@ -131,10 +151,13 @@ class delay_sr {
     int peek(const int offset) {
       int addr = read_addr - offset;
       if (addr < 0) {
+        // Wrap around
         int rem = offset - read_addr;
         addr = Depth - rem;
       }
       int val = vals[addr];
+      //abs(read_addr - offset) % Depth];
+      //cout << "Reading data " << val << " at offset: " << offset << endl;
       return val;
     }
 
@@ -143,6 +166,9 @@ class delay_sr {
       vals[write_addr] = val;
       read_addr = write_addr;
       write_addr = MOD_INC(write_addr, Depth);
+      //cout << "------------------------------" << endl;
+      //cout << "After write read_addr  = " << read_addr << endl;
+      //cout << "After write write_addr = " << write_addr<< endl;
     }
 };
 
@@ -183,9 +209,8 @@ class hw_uint {
         return extract<width*index, width*(index + 1) - 1>();
       }
 
-//#ifdef __SYNTHESIS__
-//#ifdef __VIVADO_SYNTH__
-    ac_int<Len> val;  //Was ap_int and also issue with hls::stream
+#ifdef __VIVADO_SYNTH__
+    ap_uint<Len> val;
 
     hw_uint(const hw_uint<Len>& v) : val(v.val) {}
     hw_uint(const int v) : val(v) {}
@@ -195,9 +220,9 @@ class hw_uint {
     template<int S, int E_inclusive>
     hw_uint<E_inclusive - S + 1> extract() const {
       hw_uint<E_inclusive - S + 1> extr;
-      #pragma hls_unroll yes
       for (int i = S; i < E_inclusive + 1; i++) {
-        //assert(i < Len);
+#pragma HLS unroll
+        assert(i < Len);
         extr.val[i - S] = val[i];
       }
       return extr;
@@ -206,9 +231,9 @@ class hw_uint {
     int to_int() const {
       return val;
     }
-    
+
     operator int() const { return to_int(); }
-/*
+
 #else
 
     bsim::static_quad_value_bit_vector<Len> val;
@@ -224,7 +249,7 @@ class hw_uint {
     hw_uint<E_inclusive - S + 1> extract() const {
       hw_uint<E_inclusive - S + 1> extr;
       for (int i = S; i < E_inclusive + 1; i++) {
-        //assert(i < Len);
+        assert(i < Len);
         extr.val.set(i - S, val.get(i));
       }
       return extr;
@@ -236,11 +261,10 @@ class hw_uint {
 
     operator int() const { return to_int(); }
 
-#endif // __VIVADO_SYNTH__*/
+#endif // __VIVADO_SYNTH__
 };
 
-#ifndef __SYNTHESIS__
-//#ifndef __VIVADO_SYNTH__
+#ifndef __VIVADO_SYNTH__
 template<int Len>
 std::ostream& operator<<(std::ostream& out, hw_uint<Len>& v) {
   out << v.val;
@@ -250,71 +274,66 @@ std::ostream& operator<<(std::ostream& out, hw_uint<Len>& v) {
 
 template<int Len>
 hw_uint<Len> operator*(const hw_uint<Len>& a, const hw_uint<Len>& b) {
-//#ifdef __SYNTHESIS__
-//#ifdef __VIVADO_SYNTH__
+#ifdef __VIVADO_SYNTH__
   hw_uint<Len> v;
   v.val = a.val * b.val;
   return v;
-//#else
-//  hw_uint<Len> res;
-//  res.val = bsim::mul_general_width_bv(a.val, b.val);
-//  return res;
-//#endif
+#else
+  hw_uint<Len> res;
+  res.val = bsim::mul_general_width_bv(a.val, b.val);
+  return res;
+#endif
 }
 
 template<int Len>
 hw_uint<Len> operator/(const hw_uint<Len>& a, const hw_uint<Len>& b) {
-//#ifdef __SYNTHESIS__
-//#ifdef __VIVADO_SYNTH__
+#ifdef __VIVADO_SYNTH__
   hw_uint<Len> v;
   v.val = a.val / b.val;
   return v;
-//#else
-//  hw_uint<Len> res;
+#else
+  hw_uint<Len> res;
   // TODO: Fix this!!!
-//  res.val = bsim::add_general_width_bv(a.val, b.val);
-//  return res;
-//#endif
+  res.val = bsim::add_general_width_bv(a.val, b.val);
+  return res;
+#endif
 }
 
 template<int Len>
 bool operator==(const hw_uint<Len>& a, const hw_uint<Len>& b) {
-//#ifdef __SYNTHESIS__
-//#ifdef __VIVADO_SYNTH__
+#ifdef __VIVADO_SYNTH__
   return a.val == b.val;
-//#else
+#else
   //hw_uint<Len> res;
   //res.val = a.val == b.val;
-//  return a.val == b.val;
-//#endif
+  return a.val == b.val;
+#endif
 }
 
 template<int Len>
 hw_uint<Len> operator-(const hw_uint<Len>& a, const hw_uint<Len>& b) {
-//#ifdef __SYNTHESIS__
-//#ifdef __VIVADO_SYNTH__
+#ifdef __VIVADO_SYNTH__
   hw_uint<Len> v;
   v.val = a.val - b.val;
   return v;
-//#else
-//  hw_uint<Len> res;
-//  res.val = bsim::sub_general_width_bv(a.val, b.val);
-//  return res;
-//#endif
+#else
+  hw_uint<Len> res;
+  res.val = bsim::sub_general_width_bv(a.val, b.val);
+  return res;
+#endif
 }
 
 template<int Len>
 hw_uint<Len> operator+(const hw_uint<Len>& a, const hw_uint<Len>& b) {
-//#ifdef __SYNTHESIS__
-//#ifdef __VIVADO_SYNTH__
+#ifdef __VIVADO_SYNTH__
   hw_uint<Len> v;
   v.val = a.val + b.val;
   return v;
-//#else
-//  hw_uint<Len> res;
-//  res.val = bsim::add_general_width_bv(a.val, b.val);
-//  return res;
-//#endif
+#else
+  hw_uint<Len> res;
+  res.val = bsim::add_general_width_bv(a.val, b.val);
+  return res;
+#endif
 }
 
 //template<int offset, int Len>
@@ -334,15 +353,24 @@ hw_uint<Len> operator+(const hw_uint<Len>& a, const hw_uint<Len>& b) {
 
 template<int offset, int Len, int OtherLen>
 void set_at(hw_uint<Len>& i, const hw_uint<OtherLen>& value) {
-      #pragma hls_unroll yes
+#ifdef __VIVADO_SYNTH__
   for (int v = offset; v < offset + OtherLen; v++) {
+#pragma HLS unroll
     i.val[v] = value.val[v - offset];
   }
+#else
+  //assert(false);
+  for (int v = offset; v < offset + OtherLen; v++) {
+    i.val.set(v, value.val.get(v - offset));
+  }
+#endif
 }
 
 template<int offset, int Len>
-static void set_at(int& i, const int value) {
-#ifdef __SYNTHESIS__
+static
+//inline
+void set_at(int& i, const int value) {
+#ifdef __VIVADO_SYNTH__
 
   *(&i) = value;
 #else
@@ -356,10 +384,9 @@ template<typename T>
 class HWStream {
   public:
 
-//#ifdef __SYNTHESIS__
-//#ifdef __VIVADO_SYNTH__
+#ifdef __VIVADO_SYNTH__
 
-    ac_channel<T> values;
+    hls::stream<T> values;
 
     void write(const T& v) {
       return values.write(v);
@@ -372,11 +399,9 @@ class HWStream {
     bool is_empty() {
       return values.empty();
     }
-    int num_waiting() const {
-      return values.size();
-    }
 
-/*
+#else
+
 
     std::string name;
     int reads, writes;
@@ -403,7 +428,7 @@ class HWStream {
         std::cout << "\tReads : " << reads << endl;
         std::cout << "\tWrites: " << writes << endl;
       }
-      //(values.size() > 0);
+      assert(values.size() > 0);
       T b = values.back();
       values.pop_back();
       reads++;
@@ -412,7 +437,6 @@ class HWStream {
 
 
 #endif // __VIVADO_SYNTH__
-*/
 };
 
 template<int T>
@@ -435,9 +459,8 @@ void burst_read(hw_uint<burst_width>* input,
     const int num_transfers) {
 
   hw_uint<burst_width> burst_reg;
-  #pragma hls_pipeline_init_interval 1
   for (int i = 0; i < num_transfers; i++) {
-    //#pragma HLS pipeline II=1
+    #pragma HLS pipeline II=1
     burst_reg = input[i];
     v.write(burst_reg);
   }
@@ -449,9 +472,9 @@ void burst_write(hw_uint<burst_width>* output,
     const int num_transfers) {
 
   hw_uint<burst_width> burst_reg;
-  #pragma hls_pipeline_init_interval 1 
+
   for (int i = 0; i < num_transfers; i++) {
-    //#pragma HLS pipeline II=1
+    #pragma HLS pipeline II=1
     burst_reg = v.read();
     output[i] = burst_reg;
   }

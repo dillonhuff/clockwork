@@ -64,7 +64,7 @@ class fifo {
     int read_addr;
 
 #ifdef __VIVADO_SYNTH__
-    T vals[Depth+1];
+    T vals[Depth+3];
 #else
     T* vals;
 #endif // __VIVADO_SYNTH__
@@ -72,8 +72,8 @@ class fifo {
     fifo() : read_addr(0), write_addr(0) {
 #ifdef __VIVADO_SYNTH__
 #else
-      vals = (T*)malloc(sizeof(T)*(Depth+1));
-      for (int i = 0; i < Depth+1; i++) {
+      vals = (T*)malloc(sizeof(T)*(Depth+3));
+      for (int i = 0; i < Depth; i++) {
         vals[i] = 0;
       }
 #endif // __VIVADO_SYNTH__
@@ -94,17 +94,18 @@ class fifo {
       // Note: This works
       //return vals[(write_addr + Depth + offset) % Depth];
 
-      int addr = write_addr + Depth + offset;
-      if (addr >= Depth) {
+      int addr = write_addr + 3 + offset;
+      if (addr >= Depth+3) {
         // Wrap around
-        int rem = (addr - Depth);
+        int rem = (addr - Depth-3);
         addr = rem;
       }
-      if (addr >= Depth) {
-        int rem = (addr - Depth);
+      if (addr >= Depth+3) {
+        int rem = (addr - Depth-3);
         addr = rem;
       }
-      assert(addr < Depth);
+      assert(addr < Depth+3);
+      assert(addr >= 0);
       return vals[addr];
     }
 
@@ -112,13 +113,14 @@ class fifo {
 //#ifdef __VIVADO_SYNTH__
 //#pragma HLS dependence array inter false
 //#endif //__VIVADO_SYNTH__
-      int addr = write_addr + 1;//Depth;
-      if (addr >= Depth+1) {
+      int addr = write_addr + 3;
+      if (addr >= Depth+3) {
         // Wrap around
-        int rem = (addr - Depth-1);
+        int rem = (addr - Depth-3);
         addr = rem;
       }
-      assert(addr < Depth+1);
+      assert(addr < Depth+3);
+      assert(addr >= 0);
       return vals[addr];
     }
 
@@ -126,11 +128,13 @@ class fifo {
 //#ifdef __VIVADO_SYNTH__
 //#pragma HLS dependence array inter false
 //#endif //__VIVADO_SYNTH__
-      assert(write_addr < Depth+1);
+      assert(write_addr < Depth+3);
       vals[write_addr] = val;
-      write_addr = MOD_INC(write_addr, Depth+1);
+      write_addr = MOD_INC(write_addr, Depth+3);
     }
 };
+
+
 
 template<int Depth>
 class delay_sr {

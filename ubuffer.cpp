@@ -755,7 +755,8 @@ void generate_bank(CodegenOptions& options,
         auto partition_capacity = p.second;
         //out << "\t// Parition [" << current.first << ", " << next.first << ") capacity = " << partition_capacity << endl;
         if (partition_capacity > 1) {
-          out << "\tfifo<" << pt_type_string << ", " << partition_capacity << "> " << p.first << ";" << endl;
+          
+	  out << "\tfifo<" << pt_type_string << ", " << partition_capacity << "> " << p.first << ";" << endl;
         } else {
           out << "\t" << pt_type_string << " " << p.first << ";" << endl;
         }

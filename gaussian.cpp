@@ -1,11 +1,11 @@
-#ifndef __SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
 #include <fstream>
 using namespace std;
 
   // Debug utility
   ofstream* global_debug_handle;
 
-#endif //__SYNTHESIS__
+#endif //__VIVADO_SYNTH__
 // compute file: gaussian_compute.h
 #include "gaussian_compute.h"
 
@@ -16,16 +16,16 @@ struct blur_stencil_op_hcompute_blur_stencil_10_232_to_blur_stencil_op_hcompute_
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.push(value);
   }
 
@@ -38,16 +38,16 @@ struct blur_stencil_op_hcompute_blur_stencil_11_230_to_blur_stencil_op_hcompute_
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.push(value);
   }
 
@@ -60,16 +60,16 @@ struct blur_stencil_op_hcompute_blur_stencil_12_228_to_blur_stencil_op_hcompute_
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.push(value);
   }
 
@@ -82,16 +82,16 @@ struct blur_stencil_op_hcompute_blur_stencil_13_226_to_blur_stencil_op_hcompute_
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.push(value);
   }
 
@@ -104,16 +104,16 @@ struct blur_stencil_op_hcompute_blur_stencil_1_234_to_blur_stencil_op_hcompute_h
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.push(value);
   }
 
@@ -126,16 +126,16 @@ struct blur_stencil_op_hcompute_blur_stencil_236_to_blur_stencil_op_hcompute_hw_
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.push(value);
   }
 
@@ -148,16 +148,16 @@ struct blur_stencil_op_hcompute_blur_stencil_2_224_to_blur_stencil_op_hcompute_h
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.push(value);
   }
 
@@ -170,16 +170,16 @@ struct blur_stencil_op_hcompute_blur_stencil_3_222_to_blur_stencil_op_hcompute_h
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.push(value);
   }
 
@@ -192,16 +192,16 @@ struct blur_stencil_op_hcompute_blur_stencil_4_220_to_blur_stencil_op_hcompute_h
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.push(value);
   }
 
@@ -214,16 +214,16 @@ struct blur_stencil_op_hcompute_blur_stencil_5_218_to_blur_stencil_op_hcompute_h
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.push(value);
   }
 
@@ -236,16 +236,16 @@ struct blur_stencil_op_hcompute_blur_stencil_6_216_to_blur_stencil_op_hcompute_h
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.push(value);
   }
 
@@ -258,16 +258,16 @@ struct blur_stencil_op_hcompute_blur_stencil_7_214_to_blur_stencil_op_hcompute_h
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.push(value);
   }
 
@@ -280,16 +280,16 @@ struct blur_stencil_op_hcompute_blur_stencil_8_212_to_blur_stencil_op_hcompute_h
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.push(value);
   }
 
@@ -302,16 +302,16 @@ struct blur_stencil_op_hcompute_blur_stencil_9_210_to_blur_stencil_op_hcompute_h
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.push(value);
   }
 
@@ -409,8 +409,8 @@ inline void blur_stencil_op_hcompute_blur_stencil_9_210_write(hw_uint<16>& blur_
 }
 
 inline hw_uint<16> blur_stencil_op_hcompute_hw_output_stencil_10_23_select(blur_stencil_cache& blur_stencil, int root, int hw_output_s0_y_yii, int hw_output_s0_x_xii_xii, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // blur_stencil_op_hcompute_hw_output_stencil_10_23 read pattern: { op_hcompute_hw_output_stencil_10[root = 0, hw_output_s0_y_yii, hw_output_s0_x_xii_xii] -> blur_stencil[hw_output_s0_y_yii, 10 + 14hw_output_s0_x_xii_xii] : 0 <= hw_output_s0_y_yii <= 61 and 0 <= hw_output_s0_x_xii_xii <= 3 }
   // Read schedule : { op_hcompute_hw_output_stencil_10[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 80] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_blur_stencil_10[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 66] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
@@ -420,8 +420,8 @@ inline hw_uint<16> blur_stencil_op_hcompute_hw_output_stencil_10_23_select(blur_
 }
 
 inline hw_uint<16> blur_stencil_op_hcompute_hw_output_stencil_11_21_select(blur_stencil_cache& blur_stencil, int root, int hw_output_s0_y_yii, int hw_output_s0_x_xii_xii, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // blur_stencil_op_hcompute_hw_output_stencil_11_21 read pattern: { op_hcompute_hw_output_stencil_11[root = 0, hw_output_s0_y_yii, hw_output_s0_x_xii_xii] -> blur_stencil[hw_output_s0_y_yii, 11 + 14hw_output_s0_x_xii_xii] : 0 <= hw_output_s0_y_yii <= 61 and 0 <= hw_output_s0_x_xii_xii <= 3 }
   // Read schedule : { op_hcompute_hw_output_stencil_11[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 81] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_blur_stencil_11[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 67] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
@@ -431,8 +431,8 @@ inline hw_uint<16> blur_stencil_op_hcompute_hw_output_stencil_11_21_select(blur_
 }
 
 inline hw_uint<16> blur_stencil_op_hcompute_hw_output_stencil_12_19_select(blur_stencil_cache& blur_stencil, int root, int hw_output_s0_y_yii, int hw_output_s0_x_xii_xii, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // blur_stencil_op_hcompute_hw_output_stencil_12_19 read pattern: { op_hcompute_hw_output_stencil_12[root = 0, hw_output_s0_y_yii, hw_output_s0_x_xii_xii] -> blur_stencil[hw_output_s0_y_yii, 12 + 14hw_output_s0_x_xii_xii] : 0 <= hw_output_s0_y_yii <= 61 and 0 <= hw_output_s0_x_xii_xii <= 3 }
   // Read schedule : { op_hcompute_hw_output_stencil_12[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 82] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_blur_stencil_12[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 68] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
@@ -442,8 +442,8 @@ inline hw_uint<16> blur_stencil_op_hcompute_hw_output_stencil_12_19_select(blur_
 }
 
 inline hw_uint<16> blur_stencil_op_hcompute_hw_output_stencil_13_17_select(blur_stencil_cache& blur_stencil, int root, int hw_output_s0_y_yii, int hw_output_s0_x_xii_xii, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // blur_stencil_op_hcompute_hw_output_stencil_13_17 read pattern: { op_hcompute_hw_output_stencil_13[root = 0, hw_output_s0_y_yii, hw_output_s0_x_xii_xii] -> blur_stencil[hw_output_s0_y_yii, 13 + 14hw_output_s0_x_xii_xii] : 0 <= hw_output_s0_y_yii <= 61 and 0 <= hw_output_s0_x_xii_xii <= 3 }
   // Read schedule : { op_hcompute_hw_output_stencil_13[d0 = 0, d1, d2] -> [0, 1 + d1, 1 + d2, 83] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_blur_stencil_13[d0 = 0, d1, d2] -> [0, 1 + d1, 1 + d2, 69] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
@@ -453,8 +453,8 @@ inline hw_uint<16> blur_stencil_op_hcompute_hw_output_stencil_13_17_select(blur_
 }
 
 inline hw_uint<16> blur_stencil_op_hcompute_hw_output_stencil_1_25_select(blur_stencil_cache& blur_stencil, int root, int hw_output_s0_y_yii, int hw_output_s0_x_xii_xii, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // blur_stencil_op_hcompute_hw_output_stencil_1_25 read pattern: { op_hcompute_hw_output_stencil_1[root = 0, hw_output_s0_y_yii, hw_output_s0_x_xii_xii] -> blur_stencil[hw_output_s0_y_yii, 1 + 14hw_output_s0_x_xii_xii] : 0 <= hw_output_s0_y_yii <= 61 and 0 <= hw_output_s0_x_xii_xii <= 3 }
   // Read schedule : { op_hcompute_hw_output_stencil_1[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 71] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_blur_stencil_1[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 57] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
@@ -464,8 +464,8 @@ inline hw_uint<16> blur_stencil_op_hcompute_hw_output_stencil_1_25_select(blur_s
 }
 
 inline hw_uint<16> blur_stencil_op_hcompute_hw_output_stencil_27_select(blur_stencil_cache& blur_stencil, int root, int hw_output_s0_y_yii, int hw_output_s0_x_xii_xii, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // blur_stencil_op_hcompute_hw_output_stencil_27 read pattern: { op_hcompute_hw_output_stencil[root = 0, hw_output_s0_y_yii, hw_output_s0_x_xii_xii] -> blur_stencil[hw_output_s0_y_yii, 14hw_output_s0_x_xii_xii] : 0 <= hw_output_s0_y_yii <= 61 and 0 <= hw_output_s0_x_xii_xii <= 3 }
   // Read schedule : { op_hcompute_hw_output_stencil[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 70] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_blur_stencil[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 56] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
@@ -475,8 +475,8 @@ inline hw_uint<16> blur_stencil_op_hcompute_hw_output_stencil_27_select(blur_ste
 }
 
 inline hw_uint<16> blur_stencil_op_hcompute_hw_output_stencil_2_15_select(blur_stencil_cache& blur_stencil, int root, int hw_output_s0_y_yii, int hw_output_s0_x_xii_xii, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // blur_stencil_op_hcompute_hw_output_stencil_2_15 read pattern: { op_hcompute_hw_output_stencil_2[root = 0, hw_output_s0_y_yii, hw_output_s0_x_xii_xii] -> blur_stencil[hw_output_s0_y_yii, 2 + 14hw_output_s0_x_xii_xii] : 0 <= hw_output_s0_y_yii <= 61 and 0 <= hw_output_s0_x_xii_xii <= 3 }
   // Read schedule : { op_hcompute_hw_output_stencil_2[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 72] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_blur_stencil_2[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 58] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
@@ -486,8 +486,8 @@ inline hw_uint<16> blur_stencil_op_hcompute_hw_output_stencil_2_15_select(blur_s
 }
 
 inline hw_uint<16> blur_stencil_op_hcompute_hw_output_stencil_3_13_select(blur_stencil_cache& blur_stencil, int root, int hw_output_s0_y_yii, int hw_output_s0_x_xii_xii, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // blur_stencil_op_hcompute_hw_output_stencil_3_13 read pattern: { op_hcompute_hw_output_stencil_3[root = 0, hw_output_s0_y_yii, hw_output_s0_x_xii_xii] -> blur_stencil[hw_output_s0_y_yii, 3 + 14hw_output_s0_x_xii_xii] : 0 <= hw_output_s0_y_yii <= 61 and 0 <= hw_output_s0_x_xii_xii <= 3 }
   // Read schedule : { op_hcompute_hw_output_stencil_3[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 73] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_blur_stencil_3[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 59] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
@@ -497,8 +497,8 @@ inline hw_uint<16> blur_stencil_op_hcompute_hw_output_stencil_3_13_select(blur_s
 }
 
 inline hw_uint<16> blur_stencil_op_hcompute_hw_output_stencil_4_11_select(blur_stencil_cache& blur_stencil, int root, int hw_output_s0_y_yii, int hw_output_s0_x_xii_xii, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // blur_stencil_op_hcompute_hw_output_stencil_4_11 read pattern: { op_hcompute_hw_output_stencil_4[root = 0, hw_output_s0_y_yii, hw_output_s0_x_xii_xii] -> blur_stencil[hw_output_s0_y_yii, 4 + 14hw_output_s0_x_xii_xii] : 0 <= hw_output_s0_y_yii <= 61 and 0 <= hw_output_s0_x_xii_xii <= 3 }
   // Read schedule : { op_hcompute_hw_output_stencil_4[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 74] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_blur_stencil_4[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 60] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
@@ -508,8 +508,8 @@ inline hw_uint<16> blur_stencil_op_hcompute_hw_output_stencil_4_11_select(blur_s
 }
 
 inline hw_uint<16> blur_stencil_op_hcompute_hw_output_stencil_5_9_select(blur_stencil_cache& blur_stencil, int root, int hw_output_s0_y_yii, int hw_output_s0_x_xii_xii, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // blur_stencil_op_hcompute_hw_output_stencil_5_9 read pattern: { op_hcompute_hw_output_stencil_5[root = 0, hw_output_s0_y_yii, hw_output_s0_x_xii_xii] -> blur_stencil[hw_output_s0_y_yii, 5 + 14hw_output_s0_x_xii_xii] : 0 <= hw_output_s0_y_yii <= 61 and 0 <= hw_output_s0_x_xii_xii <= 3 }
   // Read schedule : { op_hcompute_hw_output_stencil_5[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 75] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_blur_stencil_5[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 61] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
@@ -519,8 +519,8 @@ inline hw_uint<16> blur_stencil_op_hcompute_hw_output_stencil_5_9_select(blur_st
 }
 
 inline hw_uint<16> blur_stencil_op_hcompute_hw_output_stencil_6_7_select(blur_stencil_cache& blur_stencil, int root, int hw_output_s0_y_yii, int hw_output_s0_x_xii_xii, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // blur_stencil_op_hcompute_hw_output_stencil_6_7 read pattern: { op_hcompute_hw_output_stencil_6[root = 0, hw_output_s0_y_yii, hw_output_s0_x_xii_xii] -> blur_stencil[hw_output_s0_y_yii, 6 + 14hw_output_s0_x_xii_xii] : 0 <= hw_output_s0_y_yii <= 61 and 0 <= hw_output_s0_x_xii_xii <= 3 }
   // Read schedule : { op_hcompute_hw_output_stencil_6[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 76] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_blur_stencil_6[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 62] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
@@ -530,8 +530,8 @@ inline hw_uint<16> blur_stencil_op_hcompute_hw_output_stencil_6_7_select(blur_st
 }
 
 inline hw_uint<16> blur_stencil_op_hcompute_hw_output_stencil_7_5_select(blur_stencil_cache& blur_stencil, int root, int hw_output_s0_y_yii, int hw_output_s0_x_xii_xii, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // blur_stencil_op_hcompute_hw_output_stencil_7_5 read pattern: { op_hcompute_hw_output_stencil_7[root = 0, hw_output_s0_y_yii, hw_output_s0_x_xii_xii] -> blur_stencil[hw_output_s0_y_yii, 7 + 14hw_output_s0_x_xii_xii] : 0 <= hw_output_s0_y_yii <= 61 and 0 <= hw_output_s0_x_xii_xii <= 3 }
   // Read schedule : { op_hcompute_hw_output_stencil_7[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 77] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_blur_stencil_7[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 63] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
@@ -541,8 +541,8 @@ inline hw_uint<16> blur_stencil_op_hcompute_hw_output_stencil_7_5_select(blur_st
 }
 
 inline hw_uint<16> blur_stencil_op_hcompute_hw_output_stencil_8_3_select(blur_stencil_cache& blur_stencil, int root, int hw_output_s0_y_yii, int hw_output_s0_x_xii_xii, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // blur_stencil_op_hcompute_hw_output_stencil_8_3 read pattern: { op_hcompute_hw_output_stencil_8[root = 0, hw_output_s0_y_yii, hw_output_s0_x_xii_xii] -> blur_stencil[hw_output_s0_y_yii, 8 + 14hw_output_s0_x_xii_xii] : 0 <= hw_output_s0_y_yii <= 61 and 0 <= hw_output_s0_x_xii_xii <= 3 }
   // Read schedule : { op_hcompute_hw_output_stencil_8[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 78] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_blur_stencil_8[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 64] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
@@ -552,8 +552,8 @@ inline hw_uint<16> blur_stencil_op_hcompute_hw_output_stencil_8_3_select(blur_st
 }
 
 inline hw_uint<16> blur_stencil_op_hcompute_hw_output_stencil_9_1_select(blur_stencil_cache& blur_stencil, int root, int hw_output_s0_y_yii, int hw_output_s0_x_xii_xii, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // blur_stencil_op_hcompute_hw_output_stencil_9_1 read pattern: { op_hcompute_hw_output_stencil_9[root = 0, hw_output_s0_y_yii, hw_output_s0_x_xii_xii] -> blur_stencil[hw_output_s0_y_yii, 9 + 14hw_output_s0_x_xii_xii] : 0 <= hw_output_s0_y_yii <= 61 and 0 <= hw_output_s0_x_xii_xii <= 3 }
   // Read schedule : { op_hcompute_hw_output_stencil_9[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 79] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_blur_stencil_9[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 65] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
@@ -836,16 +836,16 @@ struct blur_unnormalized_stencil_op_hcompute_blur_unnormalized_stencil_24_137_to
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.push(value);
   }
 
@@ -858,16 +858,16 @@ struct blur_unnormalized_stencil_op_hcompute_blur_unnormalized_stencil_25_131_to
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.push(value);
   }
 
@@ -880,16 +880,16 @@ struct blur_unnormalized_stencil_op_hcompute_blur_unnormalized_stencil_26_125_to
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.push(value);
   }
 
@@ -902,16 +902,16 @@ struct blur_unnormalized_stencil_op_hcompute_blur_unnormalized_stencil_27_119_to
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.push(value);
   }
 
@@ -924,16 +924,16 @@ struct blur_unnormalized_stencil_op_hcompute_blur_unnormalized_stencil_15_192_to
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.push(value);
   }
 
@@ -946,16 +946,16 @@ struct blur_unnormalized_stencil_op_hcompute_blur_unnormalized_stencil_14_198_to
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.push(value);
   }
 
@@ -968,16 +968,16 @@ struct blur_unnormalized_stencil_op_hcompute_blur_unnormalized_stencil_16_186_to
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.push(value);
   }
 
@@ -990,16 +990,16 @@ struct blur_unnormalized_stencil_op_hcompute_blur_unnormalized_stencil_17_180_to
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.push(value);
   }
 
@@ -1012,16 +1012,16 @@ struct blur_unnormalized_stencil_op_hcompute_blur_unnormalized_stencil_18_174_to
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.push(value);
   }
 
@@ -1034,16 +1034,16 @@ struct blur_unnormalized_stencil_op_hcompute_blur_unnormalized_stencil_19_168_to
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.push(value);
   }
 
@@ -1056,16 +1056,16 @@ struct blur_unnormalized_stencil_op_hcompute_blur_unnormalized_stencil_20_161_to
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.push(value);
   }
 
@@ -1078,16 +1078,16 @@ struct blur_unnormalized_stencil_op_hcompute_blur_unnormalized_stencil_21_155_to
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.push(value);
   }
 
@@ -1100,16 +1100,16 @@ struct blur_unnormalized_stencil_op_hcompute_blur_unnormalized_stencil_22_149_to
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.push(value);
   }
 
@@ -1122,16 +1122,16 @@ struct blur_unnormalized_stencil_op_hcompute_blur_unnormalized_stencil_23_143_to
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.push(value);
   }
 
@@ -1229,8 +1229,8 @@ inline void blur_unnormalized_stencil_op_hcompute_blur_unnormalized_stencil_27_1
 }
 
 inline hw_uint<16> blur_unnormalized_stencil_op_hcompute_blur_stencil_10_233_select(blur_unnormalized_stencil_cache& blur_unnormalized_stencil, int root, int blur_s0_y, int blur_s0_x_x, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // blur_unnormalized_stencil_op_hcompute_blur_stencil_10_233 read pattern: { op_hcompute_blur_stencil_10[root = 0, blur_s0_y, blur_s0_x_x] -> blur_unnormalized_stencil[blur_s0_y, 10 + 14blur_s0_x_x] : 0 <= blur_s0_y <= 61 and 0 <= blur_s0_x_x <= 3 }
   // Read schedule : { op_hcompute_blur_stencil_10[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 66] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_blur_unnormalized_stencil_24[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 52] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
@@ -1240,8 +1240,8 @@ inline hw_uint<16> blur_unnormalized_stencil_op_hcompute_blur_stencil_10_233_sel
 }
 
 inline hw_uint<16> blur_unnormalized_stencil_op_hcompute_blur_stencil_11_231_select(blur_unnormalized_stencil_cache& blur_unnormalized_stencil, int root, int blur_s0_y, int blur_s0_x_x, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // blur_unnormalized_stencil_op_hcompute_blur_stencil_11_231 read pattern: { op_hcompute_blur_stencil_11[root = 0, blur_s0_y, blur_s0_x_x] -> blur_unnormalized_stencil[blur_s0_y, 11 + 14blur_s0_x_x] : 0 <= blur_s0_y <= 61 and 0 <= blur_s0_x_x <= 3 }
   // Read schedule : { op_hcompute_blur_stencil_11[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 67] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_blur_unnormalized_stencil_25[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 53] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
@@ -1251,8 +1251,8 @@ inline hw_uint<16> blur_unnormalized_stencil_op_hcompute_blur_stencil_11_231_sel
 }
 
 inline hw_uint<16> blur_unnormalized_stencil_op_hcompute_blur_stencil_12_229_select(blur_unnormalized_stencil_cache& blur_unnormalized_stencil, int root, int blur_s0_y, int blur_s0_x_x, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // blur_unnormalized_stencil_op_hcompute_blur_stencil_12_229 read pattern: { op_hcompute_blur_stencil_12[root = 0, blur_s0_y, blur_s0_x_x] -> blur_unnormalized_stencil[blur_s0_y, 12 + 14blur_s0_x_x] : 0 <= blur_s0_y <= 61 and 0 <= blur_s0_x_x <= 3 }
   // Read schedule : { op_hcompute_blur_stencil_12[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 68] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_blur_unnormalized_stencil_26[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 54] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
@@ -1262,8 +1262,8 @@ inline hw_uint<16> blur_unnormalized_stencil_op_hcompute_blur_stencil_12_229_sel
 }
 
 inline hw_uint<16> blur_unnormalized_stencil_op_hcompute_blur_stencil_13_227_select(blur_unnormalized_stencil_cache& blur_unnormalized_stencil, int root, int blur_s0_y, int blur_s0_x_x, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // blur_unnormalized_stencil_op_hcompute_blur_stencil_13_227 read pattern: { op_hcompute_blur_stencil_13[root = 0, blur_s0_y, blur_s0_x_x] -> blur_unnormalized_stencil[blur_s0_y, 13 + 14blur_s0_x_x] : 0 <= blur_s0_y <= 61 and 0 <= blur_s0_x_x <= 3 }
   // Read schedule : { op_hcompute_blur_stencil_13[d0 = 0, d1, d2] -> [0, 1 + d1, 1 + d2, 69] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_blur_unnormalized_stencil_27[d0 = 0, d1, d2] -> [0, 1 + d1, 1 + d2, 55] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
@@ -1273,8 +1273,8 @@ inline hw_uint<16> blur_unnormalized_stencil_op_hcompute_blur_stencil_13_227_sel
 }
 
 inline hw_uint<16> blur_unnormalized_stencil_op_hcompute_blur_stencil_1_235_select(blur_unnormalized_stencil_cache& blur_unnormalized_stencil, int root, int blur_s0_y, int blur_s0_x_x, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // blur_unnormalized_stencil_op_hcompute_blur_stencil_1_235 read pattern: { op_hcompute_blur_stencil_1[root = 0, blur_s0_y, blur_s0_x_x] -> blur_unnormalized_stencil[blur_s0_y, 1 + 14blur_s0_x_x] : 0 <= blur_s0_y <= 61 and 0 <= blur_s0_x_x <= 3 }
   // Read schedule : { op_hcompute_blur_stencil_1[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 57] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_blur_unnormalized_stencil_15[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 43] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
@@ -1284,8 +1284,8 @@ inline hw_uint<16> blur_unnormalized_stencil_op_hcompute_blur_stencil_1_235_sele
 }
 
 inline hw_uint<16> blur_unnormalized_stencil_op_hcompute_blur_stencil_237_select(blur_unnormalized_stencil_cache& blur_unnormalized_stencil, int root, int blur_s0_y, int blur_s0_x_x, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // blur_unnormalized_stencil_op_hcompute_blur_stencil_237 read pattern: { op_hcompute_blur_stencil[root = 0, blur_s0_y, blur_s0_x_x] -> blur_unnormalized_stencil[blur_s0_y, 14blur_s0_x_x] : 0 <= blur_s0_y <= 61 and 0 <= blur_s0_x_x <= 3 }
   // Read schedule : { op_hcompute_blur_stencil[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 56] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_blur_unnormalized_stencil_14[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 42] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
@@ -1295,8 +1295,8 @@ inline hw_uint<16> blur_unnormalized_stencil_op_hcompute_blur_stencil_237_select
 }
 
 inline hw_uint<16> blur_unnormalized_stencil_op_hcompute_blur_stencil_2_225_select(blur_unnormalized_stencil_cache& blur_unnormalized_stencil, int root, int blur_s0_y, int blur_s0_x_x, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // blur_unnormalized_stencil_op_hcompute_blur_stencil_2_225 read pattern: { op_hcompute_blur_stencil_2[root = 0, blur_s0_y, blur_s0_x_x] -> blur_unnormalized_stencil[blur_s0_y, 2 + 14blur_s0_x_x] : 0 <= blur_s0_y <= 61 and 0 <= blur_s0_x_x <= 3 }
   // Read schedule : { op_hcompute_blur_stencil_2[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 58] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_blur_unnormalized_stencil_16[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 44] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
@@ -1306,8 +1306,8 @@ inline hw_uint<16> blur_unnormalized_stencil_op_hcompute_blur_stencil_2_225_sele
 }
 
 inline hw_uint<16> blur_unnormalized_stencil_op_hcompute_blur_stencil_3_223_select(blur_unnormalized_stencil_cache& blur_unnormalized_stencil, int root, int blur_s0_y, int blur_s0_x_x, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // blur_unnormalized_stencil_op_hcompute_blur_stencil_3_223 read pattern: { op_hcompute_blur_stencil_3[root = 0, blur_s0_y, blur_s0_x_x] -> blur_unnormalized_stencil[blur_s0_y, 3 + 14blur_s0_x_x] : 0 <= blur_s0_y <= 61 and 0 <= blur_s0_x_x <= 3 }
   // Read schedule : { op_hcompute_blur_stencil_3[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 59] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_blur_unnormalized_stencil_17[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 45] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
@@ -1317,8 +1317,8 @@ inline hw_uint<16> blur_unnormalized_stencil_op_hcompute_blur_stencil_3_223_sele
 }
 
 inline hw_uint<16> blur_unnormalized_stencil_op_hcompute_blur_stencil_4_221_select(blur_unnormalized_stencil_cache& blur_unnormalized_stencil, int root, int blur_s0_y, int blur_s0_x_x, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // blur_unnormalized_stencil_op_hcompute_blur_stencil_4_221 read pattern: { op_hcompute_blur_stencil_4[root = 0, blur_s0_y, blur_s0_x_x] -> blur_unnormalized_stencil[blur_s0_y, 4 + 14blur_s0_x_x] : 0 <= blur_s0_y <= 61 and 0 <= blur_s0_x_x <= 3 }
   // Read schedule : { op_hcompute_blur_stencil_4[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 60] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_blur_unnormalized_stencil_18[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 46] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
@@ -1328,8 +1328,8 @@ inline hw_uint<16> blur_unnormalized_stencil_op_hcompute_blur_stencil_4_221_sele
 }
 
 inline hw_uint<16> blur_unnormalized_stencil_op_hcompute_blur_stencil_5_219_select(blur_unnormalized_stencil_cache& blur_unnormalized_stencil, int root, int blur_s0_y, int blur_s0_x_x, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // blur_unnormalized_stencil_op_hcompute_blur_stencil_5_219 read pattern: { op_hcompute_blur_stencil_5[root = 0, blur_s0_y, blur_s0_x_x] -> blur_unnormalized_stencil[blur_s0_y, 5 + 14blur_s0_x_x] : 0 <= blur_s0_y <= 61 and 0 <= blur_s0_x_x <= 3 }
   // Read schedule : { op_hcompute_blur_stencil_5[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 61] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_blur_unnormalized_stencil_19[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 47] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
@@ -1339,8 +1339,8 @@ inline hw_uint<16> blur_unnormalized_stencil_op_hcompute_blur_stencil_5_219_sele
 }
 
 inline hw_uint<16> blur_unnormalized_stencil_op_hcompute_blur_stencil_6_217_select(blur_unnormalized_stencil_cache& blur_unnormalized_stencil, int root, int blur_s0_y, int blur_s0_x_x, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // blur_unnormalized_stencil_op_hcompute_blur_stencil_6_217 read pattern: { op_hcompute_blur_stencil_6[root = 0, blur_s0_y, blur_s0_x_x] -> blur_unnormalized_stencil[blur_s0_y, 6 + 14blur_s0_x_x] : 0 <= blur_s0_y <= 61 and 0 <= blur_s0_x_x <= 3 }
   // Read schedule : { op_hcompute_blur_stencil_6[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 62] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_blur_unnormalized_stencil_20[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 48] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
@@ -1350,8 +1350,8 @@ inline hw_uint<16> blur_unnormalized_stencil_op_hcompute_blur_stencil_6_217_sele
 }
 
 inline hw_uint<16> blur_unnormalized_stencil_op_hcompute_blur_stencil_7_215_select(blur_unnormalized_stencil_cache& blur_unnormalized_stencil, int root, int blur_s0_y, int blur_s0_x_x, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // blur_unnormalized_stencil_op_hcompute_blur_stencil_7_215 read pattern: { op_hcompute_blur_stencil_7[root = 0, blur_s0_y, blur_s0_x_x] -> blur_unnormalized_stencil[blur_s0_y, 7 + 14blur_s0_x_x] : 0 <= blur_s0_y <= 61 and 0 <= blur_s0_x_x <= 3 }
   // Read schedule : { op_hcompute_blur_stencil_7[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 63] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_blur_unnormalized_stencil_21[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 49] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
@@ -1361,8 +1361,8 @@ inline hw_uint<16> blur_unnormalized_stencil_op_hcompute_blur_stencil_7_215_sele
 }
 
 inline hw_uint<16> blur_unnormalized_stencil_op_hcompute_blur_stencil_8_213_select(blur_unnormalized_stencil_cache& blur_unnormalized_stencil, int root, int blur_s0_y, int blur_s0_x_x, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // blur_unnormalized_stencil_op_hcompute_blur_stencil_8_213 read pattern: { op_hcompute_blur_stencil_8[root = 0, blur_s0_y, blur_s0_x_x] -> blur_unnormalized_stencil[blur_s0_y, 8 + 14blur_s0_x_x] : 0 <= blur_s0_y <= 61 and 0 <= blur_s0_x_x <= 3 }
   // Read schedule : { op_hcompute_blur_stencil_8[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 64] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_blur_unnormalized_stencil_22[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 50] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
@@ -1372,8 +1372,8 @@ inline hw_uint<16> blur_unnormalized_stencil_op_hcompute_blur_stencil_8_213_sele
 }
 
 inline hw_uint<16> blur_unnormalized_stencil_op_hcompute_blur_stencil_9_211_select(blur_unnormalized_stencil_cache& blur_unnormalized_stencil, int root, int blur_s0_y, int blur_s0_x_x, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // blur_unnormalized_stencil_op_hcompute_blur_stencil_9_211 read pattern: { op_hcompute_blur_stencil_9[root = 0, blur_s0_y, blur_s0_x_x] -> blur_unnormalized_stencil[blur_s0_y, 9 + 14blur_s0_x_x] : 0 <= blur_s0_y <= 61 and 0 <= blur_s0_x_x <= 3 }
   // Read schedule : { op_hcompute_blur_stencil_9[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 65] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_blur_unnormalized_stencil_23[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 51] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
@@ -1656,16 +1656,16 @@ struct blur_unnormalized_stencil_clkwrk_dsa28_op_hcompute_blur_unnormalized_sten
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.push(value);
   }
 
@@ -1678,16 +1678,16 @@ struct blur_unnormalized_stencil_clkwrk_dsa28_op_hcompute_blur_unnormalized_sten
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.push(value);
   }
 
@@ -1700,16 +1700,16 @@ struct blur_unnormalized_stencil_clkwrk_dsa28_op_hcompute_blur_unnormalized_sten
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.push(value);
   }
 
@@ -1722,16 +1722,16 @@ struct blur_unnormalized_stencil_clkwrk_dsa28_op_hcompute_blur_unnormalized_sten
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.push(value);
   }
 
@@ -1744,16 +1744,16 @@ struct blur_unnormalized_stencil_clkwrk_dsa28_op_hcompute_blur_unnormalized_sten
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.push(value);
   }
 
@@ -1766,16 +1766,16 @@ struct blur_unnormalized_stencil_clkwrk_dsa28_op_hcompute_blur_unnormalized_sten
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.push(value);
   }
 
@@ -1788,16 +1788,16 @@ struct blur_unnormalized_stencil_clkwrk_dsa28_op_hcompute_blur_unnormalized_sten
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.push(value);
   }
 
@@ -1810,16 +1810,16 @@ struct blur_unnormalized_stencil_clkwrk_dsa28_op_hcompute_blur_unnormalized_sten
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.push(value);
   }
 
@@ -1832,16 +1832,16 @@ struct blur_unnormalized_stencil_clkwrk_dsa28_op_hcompute_blur_unnormalized_sten
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.push(value);
   }
 
@@ -1854,16 +1854,16 @@ struct blur_unnormalized_stencil_clkwrk_dsa28_op_hcompute_blur_unnormalized_sten
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.push(value);
   }
 
@@ -1876,16 +1876,16 @@ struct blur_unnormalized_stencil_clkwrk_dsa28_op_hcompute_blur_unnormalized_sten
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.push(value);
   }
 
@@ -1898,16 +1898,16 @@ struct blur_unnormalized_stencil_clkwrk_dsa28_op_hcompute_blur_unnormalized_sten
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.push(value);
   }
 
@@ -1920,16 +1920,16 @@ struct blur_unnormalized_stencil_clkwrk_dsa28_op_hcompute_blur_unnormalized_sten
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.push(value);
   }
 
@@ -1942,16 +1942,16 @@ struct blur_unnormalized_stencil_clkwrk_dsa28_op_hcompute_blur_unnormalized_sten
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.push(value);
   }
 
@@ -2049,8 +2049,8 @@ inline void blur_unnormalized_stencil_clkwrk_dsa28_op_hcompute_blur_unnormalized
 }
 
 inline hw_uint<16> blur_unnormalized_stencil_clkwrk_dsa28_op_hcompute_blur_unnormalized_stencil_14_199_select(blur_unnormalized_stencil_clkwrk_dsa28_cache& blur_unnormalized_stencil_clkwrk_dsa28, int root, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x_x, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // blur_unnormalized_stencil_clkwrk_dsa28_op_hcompute_blur_unnormalized_stencil_14_199 read pattern: { op_hcompute_blur_unnormalized_stencil_14[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> blur_unnormalized_stencil_clkwrk_dsa28[blur_unnormalized_s1_y, 14blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x_x <= 3 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_14[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 42] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_blur_unnormalized_stencil[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 28] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
@@ -2060,8 +2060,8 @@ inline hw_uint<16> blur_unnormalized_stencil_clkwrk_dsa28_op_hcompute_blur_unnor
 }
 
 inline hw_uint<16> blur_unnormalized_stencil_clkwrk_dsa28_op_hcompute_blur_unnormalized_stencil_15_193_select(blur_unnormalized_stencil_clkwrk_dsa28_cache& blur_unnormalized_stencil_clkwrk_dsa28, int root, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x_x, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // blur_unnormalized_stencil_clkwrk_dsa28_op_hcompute_blur_unnormalized_stencil_15_193 read pattern: { op_hcompute_blur_unnormalized_stencil_15[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> blur_unnormalized_stencil_clkwrk_dsa28[blur_unnormalized_s1_y, 1 + 14blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x_x <= 3 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_15[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 43] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_blur_unnormalized_stencil_1[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 29] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
@@ -2071,8 +2071,8 @@ inline hw_uint<16> blur_unnormalized_stencil_clkwrk_dsa28_op_hcompute_blur_unnor
 }
 
 inline hw_uint<16> blur_unnormalized_stencil_clkwrk_dsa28_op_hcompute_blur_unnormalized_stencil_16_187_select(blur_unnormalized_stencil_clkwrk_dsa28_cache& blur_unnormalized_stencil_clkwrk_dsa28, int root, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x_x, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // blur_unnormalized_stencil_clkwrk_dsa28_op_hcompute_blur_unnormalized_stencil_16_187 read pattern: { op_hcompute_blur_unnormalized_stencil_16[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> blur_unnormalized_stencil_clkwrk_dsa28[blur_unnormalized_s1_y, 2 + 14blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x_x <= 3 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_16[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 44] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_blur_unnormalized_stencil_2[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 30] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
@@ -2082,8 +2082,8 @@ inline hw_uint<16> blur_unnormalized_stencil_clkwrk_dsa28_op_hcompute_blur_unnor
 }
 
 inline hw_uint<16> blur_unnormalized_stencil_clkwrk_dsa28_op_hcompute_blur_unnormalized_stencil_17_181_select(blur_unnormalized_stencil_clkwrk_dsa28_cache& blur_unnormalized_stencil_clkwrk_dsa28, int root, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x_x, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // blur_unnormalized_stencil_clkwrk_dsa28_op_hcompute_blur_unnormalized_stencil_17_181 read pattern: { op_hcompute_blur_unnormalized_stencil_17[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> blur_unnormalized_stencil_clkwrk_dsa28[blur_unnormalized_s1_y, 3 + 14blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x_x <= 3 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_17[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 45] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_blur_unnormalized_stencil_3[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 31] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
@@ -2093,8 +2093,8 @@ inline hw_uint<16> blur_unnormalized_stencil_clkwrk_dsa28_op_hcompute_blur_unnor
 }
 
 inline hw_uint<16> blur_unnormalized_stencil_clkwrk_dsa28_op_hcompute_blur_unnormalized_stencil_18_175_select(blur_unnormalized_stencil_clkwrk_dsa28_cache& blur_unnormalized_stencil_clkwrk_dsa28, int root, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x_x, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // blur_unnormalized_stencil_clkwrk_dsa28_op_hcompute_blur_unnormalized_stencil_18_175 read pattern: { op_hcompute_blur_unnormalized_stencil_18[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> blur_unnormalized_stencil_clkwrk_dsa28[blur_unnormalized_s1_y, 4 + 14blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x_x <= 3 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_18[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 46] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_blur_unnormalized_stencil_4[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 32] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
@@ -2104,8 +2104,8 @@ inline hw_uint<16> blur_unnormalized_stencil_clkwrk_dsa28_op_hcompute_blur_unnor
 }
 
 inline hw_uint<16> blur_unnormalized_stencil_clkwrk_dsa28_op_hcompute_blur_unnormalized_stencil_19_169_select(blur_unnormalized_stencil_clkwrk_dsa28_cache& blur_unnormalized_stencil_clkwrk_dsa28, int root, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x_x, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // blur_unnormalized_stencil_clkwrk_dsa28_op_hcompute_blur_unnormalized_stencil_19_169 read pattern: { op_hcompute_blur_unnormalized_stencil_19[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> blur_unnormalized_stencil_clkwrk_dsa28[blur_unnormalized_s1_y, 5 + 14blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x_x <= 3 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_19[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 47] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_blur_unnormalized_stencil_5[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 33] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
@@ -2115,8 +2115,8 @@ inline hw_uint<16> blur_unnormalized_stencil_clkwrk_dsa28_op_hcompute_blur_unnor
 }
 
 inline hw_uint<16> blur_unnormalized_stencil_clkwrk_dsa28_op_hcompute_blur_unnormalized_stencil_20_162_select(blur_unnormalized_stencil_clkwrk_dsa28_cache& blur_unnormalized_stencil_clkwrk_dsa28, int root, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x_x, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // blur_unnormalized_stencil_clkwrk_dsa28_op_hcompute_blur_unnormalized_stencil_20_162 read pattern: { op_hcompute_blur_unnormalized_stencil_20[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> blur_unnormalized_stencil_clkwrk_dsa28[blur_unnormalized_s1_y, 6 + 14blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x_x <= 3 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_20[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 48] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_blur_unnormalized_stencil_6[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 34] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
@@ -2126,8 +2126,8 @@ inline hw_uint<16> blur_unnormalized_stencil_clkwrk_dsa28_op_hcompute_blur_unnor
 }
 
 inline hw_uint<16> blur_unnormalized_stencil_clkwrk_dsa28_op_hcompute_blur_unnormalized_stencil_21_156_select(blur_unnormalized_stencil_clkwrk_dsa28_cache& blur_unnormalized_stencil_clkwrk_dsa28, int root, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x_x, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // blur_unnormalized_stencil_clkwrk_dsa28_op_hcompute_blur_unnormalized_stencil_21_156 read pattern: { op_hcompute_blur_unnormalized_stencil_21[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> blur_unnormalized_stencil_clkwrk_dsa28[blur_unnormalized_s1_y, 7 + 14blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x_x <= 3 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_21[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 49] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_blur_unnormalized_stencil_7[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 35] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
@@ -2137,8 +2137,8 @@ inline hw_uint<16> blur_unnormalized_stencil_clkwrk_dsa28_op_hcompute_blur_unnor
 }
 
 inline hw_uint<16> blur_unnormalized_stencil_clkwrk_dsa28_op_hcompute_blur_unnormalized_stencil_22_150_select(blur_unnormalized_stencil_clkwrk_dsa28_cache& blur_unnormalized_stencil_clkwrk_dsa28, int root, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x_x, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // blur_unnormalized_stencil_clkwrk_dsa28_op_hcompute_blur_unnormalized_stencil_22_150 read pattern: { op_hcompute_blur_unnormalized_stencil_22[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> blur_unnormalized_stencil_clkwrk_dsa28[blur_unnormalized_s1_y, 8 + 14blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x_x <= 3 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_22[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 50] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_blur_unnormalized_stencil_8[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 36] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
@@ -2148,8 +2148,8 @@ inline hw_uint<16> blur_unnormalized_stencil_clkwrk_dsa28_op_hcompute_blur_unnor
 }
 
 inline hw_uint<16> blur_unnormalized_stencil_clkwrk_dsa28_op_hcompute_blur_unnormalized_stencil_23_144_select(blur_unnormalized_stencil_clkwrk_dsa28_cache& blur_unnormalized_stencil_clkwrk_dsa28, int root, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x_x, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // blur_unnormalized_stencil_clkwrk_dsa28_op_hcompute_blur_unnormalized_stencil_23_144 read pattern: { op_hcompute_blur_unnormalized_stencil_23[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> blur_unnormalized_stencil_clkwrk_dsa28[blur_unnormalized_s1_y, 9 + 14blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x_x <= 3 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_23[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 51] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_blur_unnormalized_stencil_9[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 37] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
@@ -2159,8 +2159,8 @@ inline hw_uint<16> blur_unnormalized_stencil_clkwrk_dsa28_op_hcompute_blur_unnor
 }
 
 inline hw_uint<16> blur_unnormalized_stencil_clkwrk_dsa28_op_hcompute_blur_unnormalized_stencil_24_138_select(blur_unnormalized_stencil_clkwrk_dsa28_cache& blur_unnormalized_stencil_clkwrk_dsa28, int root, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x_x, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // blur_unnormalized_stencil_clkwrk_dsa28_op_hcompute_blur_unnormalized_stencil_24_138 read pattern: { op_hcompute_blur_unnormalized_stencil_24[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> blur_unnormalized_stencil_clkwrk_dsa28[blur_unnormalized_s1_y, 10 + 14blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x_x <= 3 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_24[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 52] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_blur_unnormalized_stencil_10[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 38] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
@@ -2170,8 +2170,8 @@ inline hw_uint<16> blur_unnormalized_stencil_clkwrk_dsa28_op_hcompute_blur_unnor
 }
 
 inline hw_uint<16> blur_unnormalized_stencil_clkwrk_dsa28_op_hcompute_blur_unnormalized_stencil_25_132_select(blur_unnormalized_stencil_clkwrk_dsa28_cache& blur_unnormalized_stencil_clkwrk_dsa28, int root, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x_x, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // blur_unnormalized_stencil_clkwrk_dsa28_op_hcompute_blur_unnormalized_stencil_25_132 read pattern: { op_hcompute_blur_unnormalized_stencil_25[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> blur_unnormalized_stencil_clkwrk_dsa28[blur_unnormalized_s1_y, 11 + 14blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x_x <= 3 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_25[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 53] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_blur_unnormalized_stencil_11[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 39] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
@@ -2181,8 +2181,8 @@ inline hw_uint<16> blur_unnormalized_stencil_clkwrk_dsa28_op_hcompute_blur_unnor
 }
 
 inline hw_uint<16> blur_unnormalized_stencil_clkwrk_dsa28_op_hcompute_blur_unnormalized_stencil_26_126_select(blur_unnormalized_stencil_clkwrk_dsa28_cache& blur_unnormalized_stencil_clkwrk_dsa28, int root, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x_x, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // blur_unnormalized_stencil_clkwrk_dsa28_op_hcompute_blur_unnormalized_stencil_26_126 read pattern: { op_hcompute_blur_unnormalized_stencil_26[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> blur_unnormalized_stencil_clkwrk_dsa28[blur_unnormalized_s1_y, 12 + 14blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x_x <= 3 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_26[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 54] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_blur_unnormalized_stencil_12[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 40] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
@@ -2192,8 +2192,8 @@ inline hw_uint<16> blur_unnormalized_stencil_clkwrk_dsa28_op_hcompute_blur_unnor
 }
 
 inline hw_uint<16> blur_unnormalized_stencil_clkwrk_dsa28_op_hcompute_blur_unnormalized_stencil_27_120_select(blur_unnormalized_stencil_clkwrk_dsa28_cache& blur_unnormalized_stencil_clkwrk_dsa28, int root, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x_x, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // blur_unnormalized_stencil_clkwrk_dsa28_op_hcompute_blur_unnormalized_stencil_27_120 read pattern: { op_hcompute_blur_unnormalized_stencil_27[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> blur_unnormalized_stencil_clkwrk_dsa28[blur_unnormalized_s1_y, 13 + 14blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x_x <= 3 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_27[d0 = 0, d1, d2] -> [0, 1 + d1, 1 + d2, 55] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_blur_unnormalized_stencil_13[d0 = 0, d1, d2] -> [0, 1 + d1, 1 + d2, 41] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
@@ -2476,16 +2476,16 @@ struct hw_input_global_wrapper_glb_stencil_op_hcompute_hw_input_global_wrapper_g
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.push(value);
   }
 
@@ -2498,16 +2498,16 @@ struct hw_input_global_wrapper_glb_stencil_op_hcompute_hw_input_global_wrapper_g
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.push(value);
   }
 
@@ -2520,16 +2520,16 @@ struct hw_input_global_wrapper_glb_stencil_op_hcompute_hw_input_global_wrapper_g
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.push(value);
   }
 
@@ -2542,16 +2542,16 @@ struct hw_input_global_wrapper_glb_stencil_op_hcompute_hw_input_global_wrapper_g
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.push(value);
   }
 
@@ -2564,16 +2564,16 @@ struct hw_input_global_wrapper_glb_stencil_op_hcompute_hw_input_global_wrapper_g
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.push(value);
   }
 
@@ -2586,16 +2586,16 @@ struct hw_input_global_wrapper_glb_stencil_op_hcompute_hw_input_global_wrapper_g
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.push(value);
   }
 
@@ -2608,16 +2608,16 @@ struct hw_input_global_wrapper_glb_stencil_op_hcompute_hw_input_global_wrapper_g
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.push(value);
   }
 
@@ -2630,16 +2630,16 @@ struct hw_input_global_wrapper_glb_stencil_op_hcompute_hw_input_global_wrapper_g
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.push(value);
   }
 
@@ -2652,16 +2652,16 @@ struct hw_input_global_wrapper_glb_stencil_op_hcompute_hw_input_global_wrapper_g
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.push(value);
   }
 
@@ -2674,16 +2674,16 @@ struct hw_input_global_wrapper_glb_stencil_op_hcompute_hw_input_global_wrapper_g
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.push(value);
   }
 
@@ -2696,16 +2696,16 @@ struct hw_input_global_wrapper_glb_stencil_op_hcompute_hw_input_global_wrapper_g
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.push(value);
   }
 
@@ -2718,16 +2718,16 @@ struct hw_input_global_wrapper_glb_stencil_op_hcompute_hw_input_global_wrapper_g
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.push(value);
   }
 
@@ -2740,16 +2740,16 @@ struct hw_input_global_wrapper_glb_stencil_op_hcompute_hw_input_global_wrapper_g
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.push(value);
   }
 
@@ -2762,16 +2762,16 @@ struct hw_input_global_wrapper_glb_stencil_op_hcompute_hw_input_global_wrapper_g
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.push(value);
   }
 
@@ -2869,8 +2869,8 @@ inline void hw_input_global_wrapper_glb_stencil_op_hcompute_hw_input_global_wrap
 }
 
 inline hw_uint<16> hw_input_global_wrapper_glb_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_10_79_select(hw_input_global_wrapper_glb_stencil_cache& hw_input_global_wrapper_glb_stencil, int root, int hw_input_global_wrapper_global_wrapper_s0_y, int hw_input_global_wrapper_global_wrapper_s0_x_x, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_glb_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_10_79 read pattern: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_10[root = 0, hw_input_global_wrapper_global_wrapper_s0_y, hw_input_global_wrapper_global_wrapper_s0_x_x] -> hw_input_global_wrapper_glb_stencil[hw_input_global_wrapper_global_wrapper_s0_y, 10 + 14hw_input_global_wrapper_global_wrapper_s0_x_x] : 0 <= hw_input_global_wrapper_global_wrapper_s0_y <= 62 and 0 <= hw_input_global_wrapper_global_wrapper_s0_x_x <= 4 }
   // Read schedule : { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_10[d0 = 0, d1, d2] -> [0, d1, d2, 24] : 0 <= d1 <= 62 and 0 <= d2 <= 4 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_glb_stencil_10[d0 = 0, d1, d2] -> [0, d1, d2, 10] : 0 <= d1 <= 62 and 0 <= d2 <= 4 }
@@ -2880,8 +2880,8 @@ inline hw_uint<16> hw_input_global_wrapper_glb_stencil_op_hcompute_hw_input_glob
 }
 
 inline hw_uint<16> hw_input_global_wrapper_glb_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_11_77_select(hw_input_global_wrapper_glb_stencil_cache& hw_input_global_wrapper_glb_stencil, int root, int hw_input_global_wrapper_global_wrapper_s0_y, int hw_input_global_wrapper_global_wrapper_s0_x_x, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_glb_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_11_77 read pattern: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_11[root = 0, hw_input_global_wrapper_global_wrapper_s0_y, hw_input_global_wrapper_global_wrapper_s0_x_x] -> hw_input_global_wrapper_glb_stencil[hw_input_global_wrapper_global_wrapper_s0_y, 11 + 14hw_input_global_wrapper_global_wrapper_s0_x_x] : 0 <= hw_input_global_wrapper_global_wrapper_s0_y <= 62 and 0 <= hw_input_global_wrapper_global_wrapper_s0_x_x <= 4 }
   // Read schedule : { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_11[d0 = 0, d1, d2] -> [0, d1, d2, 25] : 0 <= d1 <= 62 and 0 <= d2 <= 4 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_glb_stencil_11[d0 = 0, d1, d2] -> [0, d1, d2, 11] : 0 <= d1 <= 62 and 0 <= d2 <= 4 }
@@ -2891,8 +2891,8 @@ inline hw_uint<16> hw_input_global_wrapper_glb_stencil_op_hcompute_hw_input_glob
 }
 
 inline hw_uint<16> hw_input_global_wrapper_glb_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_12_75_select(hw_input_global_wrapper_glb_stencil_cache& hw_input_global_wrapper_glb_stencil, int root, int hw_input_global_wrapper_global_wrapper_s0_y, int hw_input_global_wrapper_global_wrapper_s0_x_x, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_glb_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_12_75 read pattern: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_12[root = 0, hw_input_global_wrapper_global_wrapper_s0_y, hw_input_global_wrapper_global_wrapper_s0_x_x] -> hw_input_global_wrapper_glb_stencil[hw_input_global_wrapper_global_wrapper_s0_y, 12 + 14hw_input_global_wrapper_global_wrapper_s0_x_x] : 0 <= hw_input_global_wrapper_global_wrapper_s0_y <= 62 and 0 <= hw_input_global_wrapper_global_wrapper_s0_x_x <= 4 }
   // Read schedule : { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_12[d0 = 0, d1, d2] -> [0, d1, d2, 26] : 0 <= d1 <= 62 and 0 <= d2 <= 4 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_glb_stencil_12[d0 = 0, d1, d2] -> [0, d1, d2, 12] : 0 <= d1 <= 62 and 0 <= d2 <= 4 }
@@ -2902,8 +2902,8 @@ inline hw_uint<16> hw_input_global_wrapper_glb_stencil_op_hcompute_hw_input_glob
 }
 
 inline hw_uint<16> hw_input_global_wrapper_glb_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_13_73_select(hw_input_global_wrapper_glb_stencil_cache& hw_input_global_wrapper_glb_stencil, int root, int hw_input_global_wrapper_global_wrapper_s0_y, int hw_input_global_wrapper_global_wrapper_s0_x_x, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_glb_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_13_73 read pattern: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_13[root = 0, hw_input_global_wrapper_global_wrapper_s0_y, hw_input_global_wrapper_global_wrapper_s0_x_x] -> hw_input_global_wrapper_glb_stencil[hw_input_global_wrapper_global_wrapper_s0_y, 13 + 14hw_input_global_wrapper_global_wrapper_s0_x_x] : 0 <= hw_input_global_wrapper_global_wrapper_s0_y <= 62 and 0 <= hw_input_global_wrapper_global_wrapper_s0_x_x <= 4 }
   // Read schedule : { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_13[d0 = 0, d1, d2] -> [0, d1, d2, 27] : 0 <= d1 <= 62 and 0 <= d2 <= 4 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_glb_stencil_13[d0 = 0, d1, d2] -> [0, d1, d2, 13] : 0 <= d1 <= 62 and 0 <= d2 <= 4 }
@@ -2913,8 +2913,8 @@ inline hw_uint<16> hw_input_global_wrapper_glb_stencil_op_hcompute_hw_input_glob
 }
 
 inline hw_uint<16> hw_input_global_wrapper_glb_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1_81_select(hw_input_global_wrapper_glb_stencil_cache& hw_input_global_wrapper_glb_stencil, int root, int hw_input_global_wrapper_global_wrapper_s0_y, int hw_input_global_wrapper_global_wrapper_s0_x_x, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_glb_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1_81 read pattern: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1[root = 0, hw_input_global_wrapper_global_wrapper_s0_y, hw_input_global_wrapper_global_wrapper_s0_x_x] -> hw_input_global_wrapper_glb_stencil[hw_input_global_wrapper_global_wrapper_s0_y, 1 + 14hw_input_global_wrapper_global_wrapper_s0_x_x] : 0 <= hw_input_global_wrapper_global_wrapper_s0_y <= 62 and 0 <= hw_input_global_wrapper_global_wrapper_s0_x_x <= 4 }
   // Read schedule : { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1[d0 = 0, d1, d2] -> [0, d1, d2, 15] : 0 <= d1 <= 62 and 0 <= d2 <= 4 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_glb_stencil_1[d0 = 0, d1, d2] -> [0, d1, d2, 1] : 0 <= d1 <= 62 and 0 <= d2 <= 4 }
@@ -2924,8 +2924,8 @@ inline hw_uint<16> hw_input_global_wrapper_glb_stencil_op_hcompute_hw_input_glob
 }
 
 inline hw_uint<16> hw_input_global_wrapper_glb_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2_71_select(hw_input_global_wrapper_glb_stencil_cache& hw_input_global_wrapper_glb_stencil, int root, int hw_input_global_wrapper_global_wrapper_s0_y, int hw_input_global_wrapper_global_wrapper_s0_x_x, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_glb_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2_71 read pattern: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2[root = 0, hw_input_global_wrapper_global_wrapper_s0_y, hw_input_global_wrapper_global_wrapper_s0_x_x] -> hw_input_global_wrapper_glb_stencil[hw_input_global_wrapper_global_wrapper_s0_y, 2 + 14hw_input_global_wrapper_global_wrapper_s0_x_x] : 0 <= hw_input_global_wrapper_global_wrapper_s0_y <= 62 and 0 <= hw_input_global_wrapper_global_wrapper_s0_x_x <= 4 }
   // Read schedule : { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2[d0 = 0, d1, d2] -> [0, d1, d2, 16] : 0 <= d1 <= 62 and 0 <= d2 <= 4 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_glb_stencil_2[d0 = 0, d1, d2] -> [0, d1, d2, 2] : 0 <= d1 <= 62 and 0 <= d2 <= 4 }
@@ -2935,8 +2935,8 @@ inline hw_uint<16> hw_input_global_wrapper_glb_stencil_op_hcompute_hw_input_glob
 }
 
 inline hw_uint<16> hw_input_global_wrapper_glb_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3_69_select(hw_input_global_wrapper_glb_stencil_cache& hw_input_global_wrapper_glb_stencil, int root, int hw_input_global_wrapper_global_wrapper_s0_y, int hw_input_global_wrapper_global_wrapper_s0_x_x, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_glb_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3_69 read pattern: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3[root = 0, hw_input_global_wrapper_global_wrapper_s0_y, hw_input_global_wrapper_global_wrapper_s0_x_x] -> hw_input_global_wrapper_glb_stencil[hw_input_global_wrapper_global_wrapper_s0_y, 3 + 14hw_input_global_wrapper_global_wrapper_s0_x_x] : 0 <= hw_input_global_wrapper_global_wrapper_s0_y <= 62 and 0 <= hw_input_global_wrapper_global_wrapper_s0_x_x <= 4 }
   // Read schedule : { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3[d0 = 0, d1, d2] -> [0, d1, d2, 17] : 0 <= d1 <= 62 and 0 <= d2 <= 4 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_glb_stencil_3[d0 = 0, d1, d2] -> [0, d1, d2, 3] : 0 <= d1 <= 62 and 0 <= d2 <= 4 }
@@ -2946,8 +2946,8 @@ inline hw_uint<16> hw_input_global_wrapper_glb_stencil_op_hcompute_hw_input_glob
 }
 
 inline hw_uint<16> hw_input_global_wrapper_glb_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_4_67_select(hw_input_global_wrapper_glb_stencil_cache& hw_input_global_wrapper_glb_stencil, int root, int hw_input_global_wrapper_global_wrapper_s0_y, int hw_input_global_wrapper_global_wrapper_s0_x_x, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_glb_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_4_67 read pattern: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_4[root = 0, hw_input_global_wrapper_global_wrapper_s0_y, hw_input_global_wrapper_global_wrapper_s0_x_x] -> hw_input_global_wrapper_glb_stencil[hw_input_global_wrapper_global_wrapper_s0_y, 4 + 14hw_input_global_wrapper_global_wrapper_s0_x_x] : 0 <= hw_input_global_wrapper_global_wrapper_s0_y <= 62 and 0 <= hw_input_global_wrapper_global_wrapper_s0_x_x <= 4 }
   // Read schedule : { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_4[d0 = 0, d1, d2] -> [0, d1, d2, 18] : 0 <= d1 <= 62 and 0 <= d2 <= 4 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_glb_stencil_4[d0 = 0, d1, d2] -> [0, d1, d2, 4] : 0 <= d1 <= 62 and 0 <= d2 <= 4 }
@@ -2957,8 +2957,8 @@ inline hw_uint<16> hw_input_global_wrapper_glb_stencil_op_hcompute_hw_input_glob
 }
 
 inline hw_uint<16> hw_input_global_wrapper_glb_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_5_65_select(hw_input_global_wrapper_glb_stencil_cache& hw_input_global_wrapper_glb_stencil, int root, int hw_input_global_wrapper_global_wrapper_s0_y, int hw_input_global_wrapper_global_wrapper_s0_x_x, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_glb_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_5_65 read pattern: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_5[root = 0, hw_input_global_wrapper_global_wrapper_s0_y, hw_input_global_wrapper_global_wrapper_s0_x_x] -> hw_input_global_wrapper_glb_stencil[hw_input_global_wrapper_global_wrapper_s0_y, 5 + 14hw_input_global_wrapper_global_wrapper_s0_x_x] : 0 <= hw_input_global_wrapper_global_wrapper_s0_y <= 62 and 0 <= hw_input_global_wrapper_global_wrapper_s0_x_x <= 4 }
   // Read schedule : { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_5[d0 = 0, d1, d2] -> [0, d1, d2, 19] : 0 <= d1 <= 62 and 0 <= d2 <= 4 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_glb_stencil_5[d0 = 0, d1, d2] -> [0, d1, d2, 5] : 0 <= d1 <= 62 and 0 <= d2 <= 4 }
@@ -2968,8 +2968,8 @@ inline hw_uint<16> hw_input_global_wrapper_glb_stencil_op_hcompute_hw_input_glob
 }
 
 inline hw_uint<16> hw_input_global_wrapper_glb_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_6_63_select(hw_input_global_wrapper_glb_stencil_cache& hw_input_global_wrapper_glb_stencil, int root, int hw_input_global_wrapper_global_wrapper_s0_y, int hw_input_global_wrapper_global_wrapper_s0_x_x, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_glb_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_6_63 read pattern: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_6[root = 0, hw_input_global_wrapper_global_wrapper_s0_y, hw_input_global_wrapper_global_wrapper_s0_x_x] -> hw_input_global_wrapper_glb_stencil[hw_input_global_wrapper_global_wrapper_s0_y, 6 + 14hw_input_global_wrapper_global_wrapper_s0_x_x] : 0 <= hw_input_global_wrapper_global_wrapper_s0_y <= 62 and 0 <= hw_input_global_wrapper_global_wrapper_s0_x_x <= 4 }
   // Read schedule : { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_6[d0 = 0, d1, d2] -> [0, d1, d2, 20] : 0 <= d1 <= 62 and 0 <= d2 <= 4 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_glb_stencil_6[d0 = 0, d1, d2] -> [0, d1, d2, 6] : 0 <= d1 <= 62 and 0 <= d2 <= 4 }
@@ -2979,8 +2979,8 @@ inline hw_uint<16> hw_input_global_wrapper_glb_stencil_op_hcompute_hw_input_glob
 }
 
 inline hw_uint<16> hw_input_global_wrapper_glb_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_7_61_select(hw_input_global_wrapper_glb_stencil_cache& hw_input_global_wrapper_glb_stencil, int root, int hw_input_global_wrapper_global_wrapper_s0_y, int hw_input_global_wrapper_global_wrapper_s0_x_x, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_glb_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_7_61 read pattern: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_7[root = 0, hw_input_global_wrapper_global_wrapper_s0_y, hw_input_global_wrapper_global_wrapper_s0_x_x] -> hw_input_global_wrapper_glb_stencil[hw_input_global_wrapper_global_wrapper_s0_y, 7 + 14hw_input_global_wrapper_global_wrapper_s0_x_x] : 0 <= hw_input_global_wrapper_global_wrapper_s0_y <= 62 and 0 <= hw_input_global_wrapper_global_wrapper_s0_x_x <= 4 }
   // Read schedule : { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_7[d0 = 0, d1, d2] -> [0, d1, d2, 21] : 0 <= d1 <= 62 and 0 <= d2 <= 4 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_glb_stencil_7[d0 = 0, d1, d2] -> [0, d1, d2, 7] : 0 <= d1 <= 62 and 0 <= d2 <= 4 }
@@ -2990,8 +2990,8 @@ inline hw_uint<16> hw_input_global_wrapper_glb_stencil_op_hcompute_hw_input_glob
 }
 
 inline hw_uint<16> hw_input_global_wrapper_glb_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_83_select(hw_input_global_wrapper_glb_stencil_cache& hw_input_global_wrapper_glb_stencil, int root, int hw_input_global_wrapper_global_wrapper_s0_y, int hw_input_global_wrapper_global_wrapper_s0_x_x, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_glb_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_83 read pattern: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil[root = 0, hw_input_global_wrapper_global_wrapper_s0_y, hw_input_global_wrapper_global_wrapper_s0_x_x] -> hw_input_global_wrapper_glb_stencil[hw_input_global_wrapper_global_wrapper_s0_y, 14hw_input_global_wrapper_global_wrapper_s0_x_x] : 0 <= hw_input_global_wrapper_global_wrapper_s0_y <= 62 and 0 <= hw_input_global_wrapper_global_wrapper_s0_x_x <= 4 }
   // Read schedule : { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil[d0 = 0, d1, d2] -> [0, d1, d2, 14] : 0 <= d1 <= 62 and 0 <= d2 <= 4 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_glb_stencil[d0 = 0, d1, d2] -> [0, d1, d2, 0] : 0 <= d1 <= 62 and 0 <= d2 <= 4 }
@@ -3001,8 +3001,8 @@ inline hw_uint<16> hw_input_global_wrapper_glb_stencil_op_hcompute_hw_input_glob
 }
 
 inline hw_uint<16> hw_input_global_wrapper_glb_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_8_59_select(hw_input_global_wrapper_glb_stencil_cache& hw_input_global_wrapper_glb_stencil, int root, int hw_input_global_wrapper_global_wrapper_s0_y, int hw_input_global_wrapper_global_wrapper_s0_x_x, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_glb_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_8_59 read pattern: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_8[root = 0, hw_input_global_wrapper_global_wrapper_s0_y, hw_input_global_wrapper_global_wrapper_s0_x_x] -> hw_input_global_wrapper_glb_stencil[hw_input_global_wrapper_global_wrapper_s0_y, 8 + 14hw_input_global_wrapper_global_wrapper_s0_x_x] : 0 <= hw_input_global_wrapper_global_wrapper_s0_y <= 62 and 0 <= hw_input_global_wrapper_global_wrapper_s0_x_x <= 4 }
   // Read schedule : { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_8[d0 = 0, d1, d2] -> [0, d1, d2, 22] : 0 <= d1 <= 62 and 0 <= d2 <= 4 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_glb_stencil_8[d0 = 0, d1, d2] -> [0, d1, d2, 8] : 0 <= d1 <= 62 and 0 <= d2 <= 4 }
@@ -3012,8 +3012,8 @@ inline hw_uint<16> hw_input_global_wrapper_glb_stencil_op_hcompute_hw_input_glob
 }
 
 inline hw_uint<16> hw_input_global_wrapper_glb_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_9_57_select(hw_input_global_wrapper_glb_stencil_cache& hw_input_global_wrapper_glb_stencil, int root, int hw_input_global_wrapper_global_wrapper_s0_y, int hw_input_global_wrapper_global_wrapper_s0_x_x, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_glb_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_9_57 read pattern: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_9[root = 0, hw_input_global_wrapper_global_wrapper_s0_y, hw_input_global_wrapper_global_wrapper_s0_x_x] -> hw_input_global_wrapper_glb_stencil[hw_input_global_wrapper_global_wrapper_s0_y, 9 + 14hw_input_global_wrapper_global_wrapper_s0_x_x] : 0 <= hw_input_global_wrapper_global_wrapper_s0_y <= 62 and 0 <= hw_input_global_wrapper_global_wrapper_s0_x_x <= 4 }
   // Read schedule : { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_9[d0 = 0, d1, d2] -> [0, d1, d2, 23] : 0 <= d1 <= 62 and 0 <= d2 <= 4 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_glb_stencil_9[d0 = 0, d1, d2] -> [0, d1, d2, 9] : 0 <= d1 <= 62 and 0 <= d2 <= 4 }
@@ -3304,8 +3304,8 @@ struct hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_globa
 	}
 
 	inline hw_uint<16> peek_4() {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 		return f1.back();
 	}
 
@@ -3316,12 +3316,12 @@ struct hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_globa
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     // cap: 1 reading from capacity: 4
     f2 = f1.back();
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     // cap: 4 reading from capacity: 1
     f1.push(f0);
     // cap: 1
@@ -3345,8 +3345,8 @@ struct hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_globa
 	}
 
 	inline hw_uint<16> peek_4() {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 		return f1.back();
 	}
 
@@ -3357,12 +3357,12 @@ struct hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_globa
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     // cap: 1 reading from capacity: 4
     f2 = f1.back();
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     // cap: 4 reading from capacity: 1
     f1.push(f0);
     // cap: 1
@@ -3386,8 +3386,8 @@ struct hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_globa
 	}
 
 	inline hw_uint<16> peek_4() {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 		return f1.back();
 	}
 
@@ -3398,12 +3398,12 @@ struct hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_globa
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     // cap: 1 reading from capacity: 4
     f2 = f1.back();
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     // cap: 4 reading from capacity: 1
     f1.push(f0);
     // cap: 1
@@ -3433,8 +3433,8 @@ struct hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_globa
 	}
 
 	inline hw_uint<16> peek_4() {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 		return f3.back();
 	}
 
@@ -3449,20 +3449,20 @@ struct hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_globa
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     // cap: 1 reading from capacity: 1
     f6 = f4;
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     // cap: 1 reading from capacity: 3
     f4 = f3.back();
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     // cap: 3 reading from capacity: 1
     f3.push(f2);
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     // cap: 1 reading from capacity: 1
     f2 = f0;
     // cap: 1
@@ -3486,8 +3486,8 @@ struct hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_globa
 	}
 
 	inline hw_uint<16> peek_4() {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 		return f1.back();
 	}
 
@@ -3498,12 +3498,12 @@ struct hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_globa
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     // cap: 1 reading from capacity: 4
     f2 = f1.back();
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     // cap: 4 reading from capacity: 1
     f1.push(f0);
     // cap: 1
@@ -3527,8 +3527,8 @@ struct hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_globa
 	}
 
 	inline hw_uint<16> peek_4() {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 		return f1.back();
 	}
 
@@ -3539,12 +3539,12 @@ struct hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_globa
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     // cap: 1 reading from capacity: 4
     f2 = f1.back();
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     // cap: 4 reading from capacity: 1
     f1.push(f0);
     // cap: 1
@@ -3568,8 +3568,8 @@ struct hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_globa
 	}
 
 	inline hw_uint<16> peek_4() {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 		return f1.back();
 	}
 
@@ -3580,12 +3580,12 @@ struct hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_globa
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     // cap: 1 reading from capacity: 4
     f2 = f1.back();
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     // cap: 4 reading from capacity: 1
     f1.push(f0);
     // cap: 1
@@ -3609,8 +3609,8 @@ struct hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_globa
 	}
 
 	inline hw_uint<16> peek_4() {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 		return f1.back();
 	}
 
@@ -3621,12 +3621,12 @@ struct hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_globa
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     // cap: 1 reading from capacity: 4
     f2 = f1.back();
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     // cap: 4 reading from capacity: 1
     f1.push(f0);
     // cap: 1
@@ -3650,8 +3650,8 @@ struct hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_globa
 	}
 
 	inline hw_uint<16> peek_4() {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 		return f1.back();
 	}
 
@@ -3662,12 +3662,12 @@ struct hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_globa
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     // cap: 1 reading from capacity: 4
     f2 = f1.back();
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     // cap: 4 reading from capacity: 1
     f1.push(f0);
     // cap: 1
@@ -3691,8 +3691,8 @@ struct hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_globa
 	}
 
 	inline hw_uint<16> peek_4() {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 		return f1.back();
 	}
 
@@ -3703,12 +3703,12 @@ struct hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_globa
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     // cap: 1 reading from capacity: 4
     f2 = f1.back();
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     // cap: 4 reading from capacity: 1
     f1.push(f0);
     // cap: 1
@@ -3732,8 +3732,8 @@ struct hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_globa
 	}
 
 	inline hw_uint<16> peek_4() {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 		return f1.back();
 	}
 
@@ -3744,12 +3744,12 @@ struct hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_globa
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     // cap: 1 reading from capacity: 4
     f2 = f1.back();
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     // cap: 4 reading from capacity: 1
     f1.push(f0);
     // cap: 1
@@ -3773,8 +3773,8 @@ struct hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_globa
 	}
 
 	inline hw_uint<16> peek_4() {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 		return f1.back();
 	}
 
@@ -3785,12 +3785,12 @@ struct hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_globa
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     // cap: 1 reading from capacity: 4
     f2 = f1.back();
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     // cap: 4 reading from capacity: 1
     f1.push(f0);
     // cap: 1
@@ -3814,8 +3814,8 @@ struct hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_globa
 	}
 
 	inline hw_uint<16> peek_4() {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 		return f1.back();
 	}
 
@@ -3826,12 +3826,12 @@ struct hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_globa
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     // cap: 1 reading from capacity: 4
     f2 = f1.back();
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     // cap: 4 reading from capacity: 1
     f1.push(f0);
     // cap: 1
@@ -3855,8 +3855,8 @@ struct hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_globa
 	}
 
 	inline hw_uint<16> peek_4() {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 		return f1.back();
 	}
 
@@ -3867,12 +3867,12 @@ struct hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_globa
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     // cap: 1 reading from capacity: 4
     f2 = f1.back();
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     // cap: 4 reading from capacity: 1
     f1.push(f0);
     // cap: 1
@@ -4015,8 +4015,8 @@ inline void hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_
 }
 
 inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_14_200_select(hw_input_global_wrapper_global_wrapper_stencil_cache& hw_input_global_wrapper_global_wrapper_stencil, int root, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x_x, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_14_200 read pattern: { op_hcompute_blur_unnormalized_stencil_14[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> hw_input_global_wrapper_global_wrapper_stencil[blur_unnormalized_s1_y, 14blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x_x <= 3 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_14[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 42] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil[d0 = 0, d1, d2] -> [0, d1, d2, 14] : 0 <= d1 <= 62 and 0 <= d2 <= 4 }
@@ -4026,8 +4026,8 @@ inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_bl
 }
 
 inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_14_201_select(hw_input_global_wrapper_global_wrapper_stencil_cache& hw_input_global_wrapper_global_wrapper_stencil, int root, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x_x, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_14_201 read pattern: { op_hcompute_blur_unnormalized_stencil_14[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> hw_input_global_wrapper_global_wrapper_stencil[blur_unnormalized_s1_y, 1 + 14blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x_x <= 3 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_14[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 42] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1[d0 = 0, d1, d2] -> [0, d1, d2, 15] : 0 <= d1 <= 62 and 0 <= d2 <= 4 }
@@ -4037,8 +4037,8 @@ inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_bl
 }
 
 inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_14_202_select(hw_input_global_wrapper_global_wrapper_stencil_cache& hw_input_global_wrapper_global_wrapper_stencil, int root, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x_x, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_14_202 read pattern: { op_hcompute_blur_unnormalized_stencil_14[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> hw_input_global_wrapper_global_wrapper_stencil[1 + blur_unnormalized_s1_y, 1 + 14blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x_x <= 3 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_14[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 42] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1[d0 = 0, d1, d2] -> [0, d1, d2, 15] : 0 <= d1 <= 62 and 0 <= d2 <= 4 }
@@ -4048,8 +4048,8 @@ inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_bl
 }
 
 inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_14_203_select(hw_input_global_wrapper_global_wrapper_stencil_cache& hw_input_global_wrapper_global_wrapper_stencil, int root, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x_x, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_14_203 read pattern: { op_hcompute_blur_unnormalized_stencil_14[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> hw_input_global_wrapper_global_wrapper_stencil[1 + blur_unnormalized_s1_y, 14blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x_x <= 3 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_14[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 42] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil[d0 = 0, d1, d2] -> [0, d1, d2, 14] : 0 <= d1 <= 62 and 0 <= d2 <= 4 }
@@ -4059,8 +4059,8 @@ inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_bl
 }
 
 inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_15_194_select(hw_input_global_wrapper_global_wrapper_stencil_cache& hw_input_global_wrapper_global_wrapper_stencil, int root, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x_x, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_15_194 read pattern: { op_hcompute_blur_unnormalized_stencil_15[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> hw_input_global_wrapper_global_wrapper_stencil[blur_unnormalized_s1_y, 1 + 14blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x_x <= 3 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_15[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 43] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1[d0 = 0, d1, d2] -> [0, d1, d2, 15] : 0 <= d1 <= 62 and 0 <= d2 <= 4 }
@@ -4070,8 +4070,8 @@ inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_bl
 }
 
 inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_15_195_select(hw_input_global_wrapper_global_wrapper_stencil_cache& hw_input_global_wrapper_global_wrapper_stencil, int root, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x_x, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_15_195 read pattern: { op_hcompute_blur_unnormalized_stencil_15[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> hw_input_global_wrapper_global_wrapper_stencil[blur_unnormalized_s1_y, 2 + 14blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x_x <= 3 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_15[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 43] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2[d0 = 0, d1, d2] -> [0, d1, d2, 16] : 0 <= d1 <= 62 and 0 <= d2 <= 4 }
@@ -4081,8 +4081,8 @@ inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_bl
 }
 
 inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_15_196_select(hw_input_global_wrapper_global_wrapper_stencil_cache& hw_input_global_wrapper_global_wrapper_stencil, int root, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x_x, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_15_196 read pattern: { op_hcompute_blur_unnormalized_stencil_15[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> hw_input_global_wrapper_global_wrapper_stencil[1 + blur_unnormalized_s1_y, 2 + 14blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x_x <= 3 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_15[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 43] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2[d0 = 0, d1, d2] -> [0, d1, d2, 16] : 0 <= d1 <= 62 and 0 <= d2 <= 4 }
@@ -4092,8 +4092,8 @@ inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_bl
 }
 
 inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_15_197_select(hw_input_global_wrapper_global_wrapper_stencil_cache& hw_input_global_wrapper_global_wrapper_stencil, int root, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x_x, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_15_197 read pattern: { op_hcompute_blur_unnormalized_stencil_15[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> hw_input_global_wrapper_global_wrapper_stencil[1 + blur_unnormalized_s1_y, 1 + 14blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x_x <= 3 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_15[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 43] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1[d0 = 0, d1, d2] -> [0, d1, d2, 15] : 0 <= d1 <= 62 and 0 <= d2 <= 4 }
@@ -4103,8 +4103,8 @@ inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_bl
 }
 
 inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_16_188_select(hw_input_global_wrapper_global_wrapper_stencil_cache& hw_input_global_wrapper_global_wrapper_stencil, int root, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x_x, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_16_188 read pattern: { op_hcompute_blur_unnormalized_stencil_16[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> hw_input_global_wrapper_global_wrapper_stencil[blur_unnormalized_s1_y, 3 + 14blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x_x <= 3 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_16[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 44] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3[d0 = 0, d1, d2] -> [0, d1, d2, 17] : 0 <= d1 <= 62 and 0 <= d2 <= 4 }
@@ -4114,8 +4114,8 @@ inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_bl
 }
 
 inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_16_189_select(hw_input_global_wrapper_global_wrapper_stencil_cache& hw_input_global_wrapper_global_wrapper_stencil, int root, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x_x, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_16_189 read pattern: { op_hcompute_blur_unnormalized_stencil_16[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> hw_input_global_wrapper_global_wrapper_stencil[1 + blur_unnormalized_s1_y, 3 + 14blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x_x <= 3 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_16[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 44] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3[d0 = 0, d1, d2] -> [0, d1, d2, 17] : 0 <= d1 <= 62 and 0 <= d2 <= 4 }
@@ -4125,8 +4125,8 @@ inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_bl
 }
 
 inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_16_190_select(hw_input_global_wrapper_global_wrapper_stencil_cache& hw_input_global_wrapper_global_wrapper_stencil, int root, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x_x, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_16_190 read pattern: { op_hcompute_blur_unnormalized_stencil_16[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> hw_input_global_wrapper_global_wrapper_stencil[1 + blur_unnormalized_s1_y, 2 + 14blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x_x <= 3 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_16[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 44] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2[d0 = 0, d1, d2] -> [0, d1, d2, 16] : 0 <= d1 <= 62 and 0 <= d2 <= 4 }
@@ -4136,8 +4136,8 @@ inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_bl
 }
 
 inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_16_191_select(hw_input_global_wrapper_global_wrapper_stencil_cache& hw_input_global_wrapper_global_wrapper_stencil, int root, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x_x, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_16_191 read pattern: { op_hcompute_blur_unnormalized_stencil_16[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> hw_input_global_wrapper_global_wrapper_stencil[blur_unnormalized_s1_y, 2 + 14blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x_x <= 3 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_16[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 44] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2[d0 = 0, d1, d2] -> [0, d1, d2, 16] : 0 <= d1 <= 62 and 0 <= d2 <= 4 }
@@ -4147,8 +4147,8 @@ inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_bl
 }
 
 inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_17_182_select(hw_input_global_wrapper_global_wrapper_stencil_cache& hw_input_global_wrapper_global_wrapper_stencil, int root, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x_x, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_17_182 read pattern: { op_hcompute_blur_unnormalized_stencil_17[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> hw_input_global_wrapper_global_wrapper_stencil[blur_unnormalized_s1_y, 3 + 14blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x_x <= 3 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_17[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 45] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3[d0 = 0, d1, d2] -> [0, d1, d2, 17] : 0 <= d1 <= 62 and 0 <= d2 <= 4 }
@@ -4158,8 +4158,8 @@ inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_bl
 }
 
 inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_17_183_select(hw_input_global_wrapper_global_wrapper_stencil_cache& hw_input_global_wrapper_global_wrapper_stencil, int root, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x_x, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_17_183 read pattern: { op_hcompute_blur_unnormalized_stencil_17[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> hw_input_global_wrapper_global_wrapper_stencil[blur_unnormalized_s1_y, 4 + 14blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x_x <= 3 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_17[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 45] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_4[d0 = 0, d1, d2] -> [0, d1, d2, 18] : 0 <= d1 <= 62 and 0 <= d2 <= 4 }
@@ -4169,8 +4169,8 @@ inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_bl
 }
 
 inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_17_184_select(hw_input_global_wrapper_global_wrapper_stencil_cache& hw_input_global_wrapper_global_wrapper_stencil, int root, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x_x, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_17_184 read pattern: { op_hcompute_blur_unnormalized_stencil_17[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> hw_input_global_wrapper_global_wrapper_stencil[1 + blur_unnormalized_s1_y, 4 + 14blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x_x <= 3 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_17[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 45] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_4[d0 = 0, d1, d2] -> [0, d1, d2, 18] : 0 <= d1 <= 62 and 0 <= d2 <= 4 }
@@ -4180,8 +4180,8 @@ inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_bl
 }
 
 inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_17_185_select(hw_input_global_wrapper_global_wrapper_stencil_cache& hw_input_global_wrapper_global_wrapper_stencil, int root, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x_x, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_17_185 read pattern: { op_hcompute_blur_unnormalized_stencil_17[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> hw_input_global_wrapper_global_wrapper_stencil[1 + blur_unnormalized_s1_y, 3 + 14blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x_x <= 3 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_17[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 45] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3[d0 = 0, d1, d2] -> [0, d1, d2, 17] : 0 <= d1 <= 62 and 0 <= d2 <= 4 }
@@ -4191,8 +4191,8 @@ inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_bl
 }
 
 inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_18_176_select(hw_input_global_wrapper_global_wrapper_stencil_cache& hw_input_global_wrapper_global_wrapper_stencil, int root, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x_x, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_18_176 read pattern: { op_hcompute_blur_unnormalized_stencil_18[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> hw_input_global_wrapper_global_wrapper_stencil[blur_unnormalized_s1_y, 4 + 14blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x_x <= 3 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_18[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 46] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_4[d0 = 0, d1, d2] -> [0, d1, d2, 18] : 0 <= d1 <= 62 and 0 <= d2 <= 4 }
@@ -4202,8 +4202,8 @@ inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_bl
 }
 
 inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_18_177_select(hw_input_global_wrapper_global_wrapper_stencil_cache& hw_input_global_wrapper_global_wrapper_stencil, int root, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x_x, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_18_177 read pattern: { op_hcompute_blur_unnormalized_stencil_18[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> hw_input_global_wrapper_global_wrapper_stencil[blur_unnormalized_s1_y, 5 + 14blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x_x <= 3 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_18[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 46] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_5[d0 = 0, d1, d2] -> [0, d1, d2, 19] : 0 <= d1 <= 62 and 0 <= d2 <= 4 }
@@ -4213,8 +4213,8 @@ inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_bl
 }
 
 inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_18_178_select(hw_input_global_wrapper_global_wrapper_stencil_cache& hw_input_global_wrapper_global_wrapper_stencil, int root, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x_x, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_18_178 read pattern: { op_hcompute_blur_unnormalized_stencil_18[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> hw_input_global_wrapper_global_wrapper_stencil[1 + blur_unnormalized_s1_y, 5 + 14blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x_x <= 3 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_18[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 46] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_5[d0 = 0, d1, d2] -> [0, d1, d2, 19] : 0 <= d1 <= 62 and 0 <= d2 <= 4 }
@@ -4224,8 +4224,8 @@ inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_bl
 }
 
 inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_18_179_select(hw_input_global_wrapper_global_wrapper_stencil_cache& hw_input_global_wrapper_global_wrapper_stencil, int root, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x_x, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_18_179 read pattern: { op_hcompute_blur_unnormalized_stencil_18[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> hw_input_global_wrapper_global_wrapper_stencil[1 + blur_unnormalized_s1_y, 4 + 14blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x_x <= 3 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_18[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 46] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_4[d0 = 0, d1, d2] -> [0, d1, d2, 18] : 0 <= d1 <= 62 and 0 <= d2 <= 4 }
@@ -4235,8 +4235,8 @@ inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_bl
 }
 
 inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_19_170_select(hw_input_global_wrapper_global_wrapper_stencil_cache& hw_input_global_wrapper_global_wrapper_stencil, int root, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x_x, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_19_170 read pattern: { op_hcompute_blur_unnormalized_stencil_19[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> hw_input_global_wrapper_global_wrapper_stencil[blur_unnormalized_s1_y, 5 + 14blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x_x <= 3 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_19[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 47] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_5[d0 = 0, d1, d2] -> [0, d1, d2, 19] : 0 <= d1 <= 62 and 0 <= d2 <= 4 }
@@ -4246,8 +4246,8 @@ inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_bl
 }
 
 inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_19_171_select(hw_input_global_wrapper_global_wrapper_stencil_cache& hw_input_global_wrapper_global_wrapper_stencil, int root, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x_x, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_19_171 read pattern: { op_hcompute_blur_unnormalized_stencil_19[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> hw_input_global_wrapper_global_wrapper_stencil[blur_unnormalized_s1_y, 6 + 14blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x_x <= 3 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_19[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 47] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_6[d0 = 0, d1, d2] -> [0, d1, d2, 20] : 0 <= d1 <= 62 and 0 <= d2 <= 4 }
@@ -4257,8 +4257,8 @@ inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_bl
 }
 
 inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_19_172_select(hw_input_global_wrapper_global_wrapper_stencil_cache& hw_input_global_wrapper_global_wrapper_stencil, int root, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x_x, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_19_172 read pattern: { op_hcompute_blur_unnormalized_stencil_19[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> hw_input_global_wrapper_global_wrapper_stencil[1 + blur_unnormalized_s1_y, 6 + 14blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x_x <= 3 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_19[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 47] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_6[d0 = 0, d1, d2] -> [0, d1, d2, 20] : 0 <= d1 <= 62 and 0 <= d2 <= 4 }
@@ -4268,8 +4268,8 @@ inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_bl
 }
 
 inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_19_173_select(hw_input_global_wrapper_global_wrapper_stencil_cache& hw_input_global_wrapper_global_wrapper_stencil, int root, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x_x, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_19_173 read pattern: { op_hcompute_blur_unnormalized_stencil_19[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> hw_input_global_wrapper_global_wrapper_stencil[1 + blur_unnormalized_s1_y, 5 + 14blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x_x <= 3 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_19[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 47] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_5[d0 = 0, d1, d2] -> [0, d1, d2, 19] : 0 <= d1 <= 62 and 0 <= d2 <= 4 }
@@ -4279,8 +4279,8 @@ inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_bl
 }
 
 inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_20_163_select(hw_input_global_wrapper_global_wrapper_stencil_cache& hw_input_global_wrapper_global_wrapper_stencil, int root, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x_x, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_20_163 read pattern: { op_hcompute_blur_unnormalized_stencil_20[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> hw_input_global_wrapper_global_wrapper_stencil[blur_unnormalized_s1_y, 6 + 14blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x_x <= 3 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_20[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 48] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_6[d0 = 0, d1, d2] -> [0, d1, d2, 20] : 0 <= d1 <= 62 and 0 <= d2 <= 4 }
@@ -4290,8 +4290,8 @@ inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_bl
 }
 
 inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_20_164_select(hw_input_global_wrapper_global_wrapper_stencil_cache& hw_input_global_wrapper_global_wrapper_stencil, int root, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x_x, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_20_164 read pattern: { op_hcompute_blur_unnormalized_stencil_20[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> hw_input_global_wrapper_global_wrapper_stencil[blur_unnormalized_s1_y, 7 + 14blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x_x <= 3 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_20[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 48] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_7[d0 = 0, d1, d2] -> [0, d1, d2, 21] : 0 <= d1 <= 62 and 0 <= d2 <= 4 }
@@ -4301,8 +4301,8 @@ inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_bl
 }
 
 inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_20_165_select(hw_input_global_wrapper_global_wrapper_stencil_cache& hw_input_global_wrapper_global_wrapper_stencil, int root, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x_x, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_20_165 read pattern: { op_hcompute_blur_unnormalized_stencil_20[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> hw_input_global_wrapper_global_wrapper_stencil[1 + blur_unnormalized_s1_y, 7 + 14blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x_x <= 3 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_20[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 48] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_7[d0 = 0, d1, d2] -> [0, d1, d2, 21] : 0 <= d1 <= 62 and 0 <= d2 <= 4 }
@@ -4312,8 +4312,8 @@ inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_bl
 }
 
 inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_20_166_select(hw_input_global_wrapper_global_wrapper_stencil_cache& hw_input_global_wrapper_global_wrapper_stencil, int root, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x_x, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_20_166 read pattern: { op_hcompute_blur_unnormalized_stencil_20[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> hw_input_global_wrapper_global_wrapper_stencil[1 + blur_unnormalized_s1_y, 6 + 14blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x_x <= 3 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_20[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 48] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_6[d0 = 0, d1, d2] -> [0, d1, d2, 20] : 0 <= d1 <= 62 and 0 <= d2 <= 4 }
@@ -4323,8 +4323,8 @@ inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_bl
 }
 
 inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_21_157_select(hw_input_global_wrapper_global_wrapper_stencil_cache& hw_input_global_wrapper_global_wrapper_stencil, int root, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x_x, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_21_157 read pattern: { op_hcompute_blur_unnormalized_stencil_21[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> hw_input_global_wrapper_global_wrapper_stencil[blur_unnormalized_s1_y, 7 + 14blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x_x <= 3 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_21[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 49] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_7[d0 = 0, d1, d2] -> [0, d1, d2, 21] : 0 <= d1 <= 62 and 0 <= d2 <= 4 }
@@ -4334,8 +4334,8 @@ inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_bl
 }
 
 inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_21_158_select(hw_input_global_wrapper_global_wrapper_stencil_cache& hw_input_global_wrapper_global_wrapper_stencil, int root, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x_x, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_21_158 read pattern: { op_hcompute_blur_unnormalized_stencil_21[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> hw_input_global_wrapper_global_wrapper_stencil[blur_unnormalized_s1_y, 8 + 14blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x_x <= 3 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_21[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 49] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_8[d0 = 0, d1, d2] -> [0, d1, d2, 22] : 0 <= d1 <= 62 and 0 <= d2 <= 4 }
@@ -4345,8 +4345,8 @@ inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_bl
 }
 
 inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_21_159_select(hw_input_global_wrapper_global_wrapper_stencil_cache& hw_input_global_wrapper_global_wrapper_stencil, int root, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x_x, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_21_159 read pattern: { op_hcompute_blur_unnormalized_stencil_21[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> hw_input_global_wrapper_global_wrapper_stencil[1 + blur_unnormalized_s1_y, 8 + 14blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x_x <= 3 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_21[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 49] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_8[d0 = 0, d1, d2] -> [0, d1, d2, 22] : 0 <= d1 <= 62 and 0 <= d2 <= 4 }
@@ -4356,8 +4356,8 @@ inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_bl
 }
 
 inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_21_160_select(hw_input_global_wrapper_global_wrapper_stencil_cache& hw_input_global_wrapper_global_wrapper_stencil, int root, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x_x, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_21_160 read pattern: { op_hcompute_blur_unnormalized_stencil_21[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> hw_input_global_wrapper_global_wrapper_stencil[1 + blur_unnormalized_s1_y, 7 + 14blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x_x <= 3 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_21[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 49] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_7[d0 = 0, d1, d2] -> [0, d1, d2, 21] : 0 <= d1 <= 62 and 0 <= d2 <= 4 }
@@ -4367,8 +4367,8 @@ inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_bl
 }
 
 inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_22_151_select(hw_input_global_wrapper_global_wrapper_stencil_cache& hw_input_global_wrapper_global_wrapper_stencil, int root, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x_x, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_22_151 read pattern: { op_hcompute_blur_unnormalized_stencil_22[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> hw_input_global_wrapper_global_wrapper_stencil[blur_unnormalized_s1_y, 8 + 14blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x_x <= 3 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_22[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 50] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_8[d0 = 0, d1, d2] -> [0, d1, d2, 22] : 0 <= d1 <= 62 and 0 <= d2 <= 4 }
@@ -4378,8 +4378,8 @@ inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_bl
 }
 
 inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_22_152_select(hw_input_global_wrapper_global_wrapper_stencil_cache& hw_input_global_wrapper_global_wrapper_stencil, int root, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x_x, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_22_152 read pattern: { op_hcompute_blur_unnormalized_stencil_22[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> hw_input_global_wrapper_global_wrapper_stencil[blur_unnormalized_s1_y, 9 + 14blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x_x <= 3 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_22[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 50] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_9[d0 = 0, d1, d2] -> [0, d1, d2, 23] : 0 <= d1 <= 62 and 0 <= d2 <= 4 }
@@ -4389,8 +4389,8 @@ inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_bl
 }
 
 inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_22_153_select(hw_input_global_wrapper_global_wrapper_stencil_cache& hw_input_global_wrapper_global_wrapper_stencil, int root, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x_x, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_22_153 read pattern: { op_hcompute_blur_unnormalized_stencil_22[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> hw_input_global_wrapper_global_wrapper_stencil[1 + blur_unnormalized_s1_y, 9 + 14blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x_x <= 3 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_22[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 50] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_9[d0 = 0, d1, d2] -> [0, d1, d2, 23] : 0 <= d1 <= 62 and 0 <= d2 <= 4 }
@@ -4400,8 +4400,8 @@ inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_bl
 }
 
 inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_22_154_select(hw_input_global_wrapper_global_wrapper_stencil_cache& hw_input_global_wrapper_global_wrapper_stencil, int root, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x_x, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_22_154 read pattern: { op_hcompute_blur_unnormalized_stencil_22[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> hw_input_global_wrapper_global_wrapper_stencil[1 + blur_unnormalized_s1_y, 8 + 14blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x_x <= 3 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_22[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 50] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_8[d0 = 0, d1, d2] -> [0, d1, d2, 22] : 0 <= d1 <= 62 and 0 <= d2 <= 4 }
@@ -4411,8 +4411,8 @@ inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_bl
 }
 
 inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_23_145_select(hw_input_global_wrapper_global_wrapper_stencil_cache& hw_input_global_wrapper_global_wrapper_stencil, int root, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x_x, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_23_145 read pattern: { op_hcompute_blur_unnormalized_stencil_23[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> hw_input_global_wrapper_global_wrapper_stencil[blur_unnormalized_s1_y, 9 + 14blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x_x <= 3 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_23[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 51] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_9[d0 = 0, d1, d2] -> [0, d1, d2, 23] : 0 <= d1 <= 62 and 0 <= d2 <= 4 }
@@ -4422,8 +4422,8 @@ inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_bl
 }
 
 inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_23_146_select(hw_input_global_wrapper_global_wrapper_stencil_cache& hw_input_global_wrapper_global_wrapper_stencil, int root, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x_x, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_23_146 read pattern: { op_hcompute_blur_unnormalized_stencil_23[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> hw_input_global_wrapper_global_wrapper_stencil[blur_unnormalized_s1_y, 10 + 14blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x_x <= 3 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_23[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 51] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_10[d0 = 0, d1, d2] -> [0, d1, d2, 24] : 0 <= d1 <= 62 and 0 <= d2 <= 4 }
@@ -4433,8 +4433,8 @@ inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_bl
 }
 
 inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_23_147_select(hw_input_global_wrapper_global_wrapper_stencil_cache& hw_input_global_wrapper_global_wrapper_stencil, int root, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x_x, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_23_147 read pattern: { op_hcompute_blur_unnormalized_stencil_23[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> hw_input_global_wrapper_global_wrapper_stencil[1 + blur_unnormalized_s1_y, 10 + 14blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x_x <= 3 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_23[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 51] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_10[d0 = 0, d1, d2] -> [0, d1, d2, 24] : 0 <= d1 <= 62 and 0 <= d2 <= 4 }
@@ -4444,8 +4444,8 @@ inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_bl
 }
 
 inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_23_148_select(hw_input_global_wrapper_global_wrapper_stencil_cache& hw_input_global_wrapper_global_wrapper_stencil, int root, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x_x, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_23_148 read pattern: { op_hcompute_blur_unnormalized_stencil_23[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> hw_input_global_wrapper_global_wrapper_stencil[1 + blur_unnormalized_s1_y, 9 + 14blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x_x <= 3 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_23[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 51] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_9[d0 = 0, d1, d2] -> [0, d1, d2, 23] : 0 <= d1 <= 62 and 0 <= d2 <= 4 }
@@ -4455,8 +4455,8 @@ inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_bl
 }
 
 inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_24_139_select(hw_input_global_wrapper_global_wrapper_stencil_cache& hw_input_global_wrapper_global_wrapper_stencil, int root, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x_x, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_24_139 read pattern: { op_hcompute_blur_unnormalized_stencil_24[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> hw_input_global_wrapper_global_wrapper_stencil[blur_unnormalized_s1_y, 10 + 14blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x_x <= 3 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_24[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 52] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_10[d0 = 0, d1, d2] -> [0, d1, d2, 24] : 0 <= d1 <= 62 and 0 <= d2 <= 4 }
@@ -4466,8 +4466,8 @@ inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_bl
 }
 
 inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_24_140_select(hw_input_global_wrapper_global_wrapper_stencil_cache& hw_input_global_wrapper_global_wrapper_stencil, int root, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x_x, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_24_140 read pattern: { op_hcompute_blur_unnormalized_stencil_24[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> hw_input_global_wrapper_global_wrapper_stencil[blur_unnormalized_s1_y, 11 + 14blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x_x <= 3 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_24[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 52] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_11[d0 = 0, d1, d2] -> [0, d1, d2, 25] : 0 <= d1 <= 62 and 0 <= d2 <= 4 }
@@ -4477,8 +4477,8 @@ inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_bl
 }
 
 inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_24_141_select(hw_input_global_wrapper_global_wrapper_stencil_cache& hw_input_global_wrapper_global_wrapper_stencil, int root, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x_x, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_24_141 read pattern: { op_hcompute_blur_unnormalized_stencil_24[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> hw_input_global_wrapper_global_wrapper_stencil[1 + blur_unnormalized_s1_y, 11 + 14blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x_x <= 3 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_24[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 52] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_11[d0 = 0, d1, d2] -> [0, d1, d2, 25] : 0 <= d1 <= 62 and 0 <= d2 <= 4 }
@@ -4488,8 +4488,8 @@ inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_bl
 }
 
 inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_24_142_select(hw_input_global_wrapper_global_wrapper_stencil_cache& hw_input_global_wrapper_global_wrapper_stencil, int root, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x_x, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_24_142 read pattern: { op_hcompute_blur_unnormalized_stencil_24[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> hw_input_global_wrapper_global_wrapper_stencil[1 + blur_unnormalized_s1_y, 10 + 14blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x_x <= 3 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_24[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 52] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_10[d0 = 0, d1, d2] -> [0, d1, d2, 24] : 0 <= d1 <= 62 and 0 <= d2 <= 4 }
@@ -4499,8 +4499,8 @@ inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_bl
 }
 
 inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_25_133_select(hw_input_global_wrapper_global_wrapper_stencil_cache& hw_input_global_wrapper_global_wrapper_stencil, int root, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x_x, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_25_133 read pattern: { op_hcompute_blur_unnormalized_stencil_25[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> hw_input_global_wrapper_global_wrapper_stencil[blur_unnormalized_s1_y, 11 + 14blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x_x <= 3 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_25[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 53] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_11[d0 = 0, d1, d2] -> [0, d1, d2, 25] : 0 <= d1 <= 62 and 0 <= d2 <= 4 }
@@ -4510,8 +4510,8 @@ inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_bl
 }
 
 inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_25_134_select(hw_input_global_wrapper_global_wrapper_stencil_cache& hw_input_global_wrapper_global_wrapper_stencil, int root, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x_x, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_25_134 read pattern: { op_hcompute_blur_unnormalized_stencil_25[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> hw_input_global_wrapper_global_wrapper_stencil[blur_unnormalized_s1_y, 12 + 14blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x_x <= 3 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_25[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 53] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_12[d0 = 0, d1, d2] -> [0, d1, d2, 26] : 0 <= d1 <= 62 and 0 <= d2 <= 4 }
@@ -4521,8 +4521,8 @@ inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_bl
 }
 
 inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_25_135_select(hw_input_global_wrapper_global_wrapper_stencil_cache& hw_input_global_wrapper_global_wrapper_stencil, int root, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x_x, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_25_135 read pattern: { op_hcompute_blur_unnormalized_stencil_25[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> hw_input_global_wrapper_global_wrapper_stencil[1 + blur_unnormalized_s1_y, 12 + 14blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x_x <= 3 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_25[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 53] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_12[d0 = 0, d1, d2] -> [0, d1, d2, 26] : 0 <= d1 <= 62 and 0 <= d2 <= 4 }
@@ -4532,8 +4532,8 @@ inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_bl
 }
 
 inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_25_136_select(hw_input_global_wrapper_global_wrapper_stencil_cache& hw_input_global_wrapper_global_wrapper_stencil, int root, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x_x, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_25_136 read pattern: { op_hcompute_blur_unnormalized_stencil_25[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> hw_input_global_wrapper_global_wrapper_stencil[1 + blur_unnormalized_s1_y, 11 + 14blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x_x <= 3 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_25[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 53] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_11[d0 = 0, d1, d2] -> [0, d1, d2, 25] : 0 <= d1 <= 62 and 0 <= d2 <= 4 }
@@ -4543,8 +4543,8 @@ inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_bl
 }
 
 inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_26_127_select(hw_input_global_wrapper_global_wrapper_stencil_cache& hw_input_global_wrapper_global_wrapper_stencil, int root, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x_x, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_26_127 read pattern: { op_hcompute_blur_unnormalized_stencil_26[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> hw_input_global_wrapper_global_wrapper_stencil[blur_unnormalized_s1_y, 12 + 14blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x_x <= 3 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_26[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 54] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_12[d0 = 0, d1, d2] -> [0, d1, d2, 26] : 0 <= d1 <= 62 and 0 <= d2 <= 4 }
@@ -4554,8 +4554,8 @@ inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_bl
 }
 
 inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_26_128_select(hw_input_global_wrapper_global_wrapper_stencil_cache& hw_input_global_wrapper_global_wrapper_stencil, int root, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x_x, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_26_128 read pattern: { op_hcompute_blur_unnormalized_stencil_26[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> hw_input_global_wrapper_global_wrapper_stencil[blur_unnormalized_s1_y, 13 + 14blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x_x <= 3 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_26[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 54] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_13[d0 = 0, d1, d2] -> [0, d1, d2, 27] : 0 <= d1 <= 62 and 0 <= d2 <= 4 }
@@ -4565,8 +4565,8 @@ inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_bl
 }
 
 inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_26_129_select(hw_input_global_wrapper_global_wrapper_stencil_cache& hw_input_global_wrapper_global_wrapper_stencil, int root, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x_x, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_26_129 read pattern: { op_hcompute_blur_unnormalized_stencil_26[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> hw_input_global_wrapper_global_wrapper_stencil[1 + blur_unnormalized_s1_y, 13 + 14blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x_x <= 3 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_26[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 54] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_13[d0 = 0, d1, d2] -> [0, d1, d2, 27] : 0 <= d1 <= 62 and 0 <= d2 <= 4 }
@@ -4576,8 +4576,8 @@ inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_bl
 }
 
 inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_26_130_select(hw_input_global_wrapper_global_wrapper_stencil_cache& hw_input_global_wrapper_global_wrapper_stencil, int root, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x_x, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_26_130 read pattern: { op_hcompute_blur_unnormalized_stencil_26[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> hw_input_global_wrapper_global_wrapper_stencil[1 + blur_unnormalized_s1_y, 12 + 14blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x_x <= 3 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_26[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 54] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_12[d0 = 0, d1, d2] -> [0, d1, d2, 26] : 0 <= d1 <= 62 and 0 <= d2 <= 4 }
@@ -4587,8 +4587,8 @@ inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_bl
 }
 
 inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_27_121_select(hw_input_global_wrapper_global_wrapper_stencil_cache& hw_input_global_wrapper_global_wrapper_stencil, int root, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x_x, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_27_121 read pattern: { op_hcompute_blur_unnormalized_stencil_27[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> hw_input_global_wrapper_global_wrapper_stencil[blur_unnormalized_s1_y, 13 + 14blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x_x <= 3 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_27[d0 = 0, d1, d2] -> [0, 1 + d1, 1 + d2, 55] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_13[d0 = 0, d1, d2] -> [0, d1, d2, 27] : 0 <= d1 <= 62 and 0 <= d2 <= 4 }
@@ -4598,8 +4598,8 @@ inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_bl
 }
 
 inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_27_122_select(hw_input_global_wrapper_global_wrapper_stencil_cache& hw_input_global_wrapper_global_wrapper_stencil, int root, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x_x, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_27_122 read pattern: { op_hcompute_blur_unnormalized_stencil_27[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> hw_input_global_wrapper_global_wrapper_stencil[blur_unnormalized_s1_y, 14 + 14blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x_x <= 3 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_27[d0 = 0, d1, d2] -> [0, 1 + d1, 1 + d2, 55] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil[d0 = 0, d1, d2] -> [0, d1, d2, 14] : 0 <= d1 <= 62 and 0 <= d2 <= 4 }
@@ -4609,8 +4609,8 @@ inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_bl
 }
 
 inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_27_123_select(hw_input_global_wrapper_global_wrapper_stencil_cache& hw_input_global_wrapper_global_wrapper_stencil, int root, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x_x, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_27_123 read pattern: { op_hcompute_blur_unnormalized_stencil_27[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> hw_input_global_wrapper_global_wrapper_stencil[1 + blur_unnormalized_s1_y, 14 + 14blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x_x <= 3 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_27[d0 = 0, d1, d2] -> [0, 1 + d1, 1 + d2, 55] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil[d0 = 0, d1, d2] -> [0, d1, d2, 14] : 0 <= d1 <= 62 and 0 <= d2 <= 4 }
@@ -4620,8 +4620,8 @@ inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_bl
 }
 
 inline hw_uint<16> hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_27_124_select(hw_input_global_wrapper_global_wrapper_stencil_cache& hw_input_global_wrapper_global_wrapper_stencil, int root, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x_x, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_27_124 read pattern: { op_hcompute_blur_unnormalized_stencil_27[root = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x] -> hw_input_global_wrapper_global_wrapper_stencil[1 + blur_unnormalized_s1_y, 13 + 14blur_unnormalized_s1_x_x] : 0 <= blur_unnormalized_s1_y <= 61 and 0 <= blur_unnormalized_s1_x_x <= 3 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_27[d0 = 0, d1, d2] -> [0, 1 + d1, 1 + d2, 55] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_13[d0 = 0, d1, d2] -> [0, d1, d2, 27] : 0 <= d1 <= 62 and 0 <= d2 <= 4 }
@@ -5072,16 +5072,16 @@ struct hw_output_stencil_op_hcompute_hw_output_stencil_10_22_to_hw_output_stenci
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.push(value);
   }
 
@@ -5094,16 +5094,16 @@ struct hw_output_stencil_op_hcompute_hw_output_stencil_11_20_to_hw_output_stenci
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.push(value);
   }
 
@@ -5116,16 +5116,16 @@ struct hw_output_stencil_op_hcompute_hw_output_stencil_12_18_to_hw_output_stenci
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.push(value);
   }
 
@@ -5138,16 +5138,16 @@ struct hw_output_stencil_op_hcompute_hw_output_stencil_13_16_to_hw_output_stenci
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.push(value);
   }
 
@@ -5160,16 +5160,16 @@ struct hw_output_stencil_op_hcompute_hw_output_stencil_1_24_to_hw_output_stencil
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.push(value);
   }
 
@@ -5182,16 +5182,16 @@ struct hw_output_stencil_op_hcompute_hw_output_stencil_2_14_to_hw_output_stencil
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.push(value);
   }
 
@@ -5204,16 +5204,16 @@ struct hw_output_stencil_op_hcompute_hw_output_stencil_3_12_to_hw_output_stencil
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.push(value);
   }
 
@@ -5226,16 +5226,16 @@ struct hw_output_stencil_op_hcompute_hw_output_stencil_4_10_to_hw_output_stencil
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.push(value);
   }
 
@@ -5248,16 +5248,16 @@ struct hw_output_stencil_op_hcompute_hw_output_stencil_26_to_hw_output_stencil_o
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.push(value);
   }
 
@@ -5270,16 +5270,16 @@ struct hw_output_stencil_op_hcompute_hw_output_stencil_5_8_to_hw_output_stencil_
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.push(value);
   }
 
@@ -5292,16 +5292,16 @@ struct hw_output_stencil_op_hcompute_hw_output_stencil_6_6_to_hw_output_stencil_
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.push(value);
   }
 
@@ -5314,16 +5314,16 @@ struct hw_output_stencil_op_hcompute_hw_output_stencil_7_4_to_hw_output_stencil_
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.push(value);
   }
 
@@ -5336,16 +5336,16 @@ struct hw_output_stencil_op_hcompute_hw_output_stencil_8_2_to_hw_output_stencil_
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.push(value);
   }
 
@@ -5358,16 +5358,16 @@ struct hw_output_stencil_op_hcompute_hw_output_stencil_9_0_to_hw_output_stencil_
   // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.peek(0 - offset);
   }
 
 
 
 	inline void push(const hw_uint<16> value) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
     return f.push(value);
   }
 
@@ -5465,8 +5465,8 @@ inline void hw_output_stencil_op_hcompute_hw_output_stencil_9_0_write(hw_uint<16
 }
 
 inline hw_uint<16> hw_output_stencil_op_hcompute_hw_output_global_wrapper_glb_stencil_10_51_select(hw_output_stencil_cache& hw_output_stencil, int root, int hw_output_global_wrapper_s0_y_yi, int hw_output_global_wrapper_s0_x_xi_xi, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // hw_output_stencil_op_hcompute_hw_output_global_wrapper_glb_stencil_10_51 read pattern: { op_hcompute_hw_output_global_wrapper_glb_stencil_10[root = 0, hw_output_global_wrapper_s0_y_yi, hw_output_global_wrapper_s0_x_xi_xi] -> hw_output_stencil[hw_output_global_wrapper_s0_y_yi, 10 + 14hw_output_global_wrapper_s0_x_xi_xi] : 0 <= hw_output_global_wrapper_s0_y_yi <= 61 and 0 <= hw_output_global_wrapper_s0_x_xi_xi <= 3 }
   // Read schedule : { op_hcompute_hw_output_global_wrapper_glb_stencil_10[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 94] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_hw_output_stencil_10[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 80] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
@@ -5476,8 +5476,8 @@ inline hw_uint<16> hw_output_stencil_op_hcompute_hw_output_global_wrapper_glb_st
 }
 
 inline hw_uint<16> hw_output_stencil_op_hcompute_hw_output_global_wrapper_glb_stencil_11_49_select(hw_output_stencil_cache& hw_output_stencil, int root, int hw_output_global_wrapper_s0_y_yi, int hw_output_global_wrapper_s0_x_xi_xi, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // hw_output_stencil_op_hcompute_hw_output_global_wrapper_glb_stencil_11_49 read pattern: { op_hcompute_hw_output_global_wrapper_glb_stencil_11[root = 0, hw_output_global_wrapper_s0_y_yi, hw_output_global_wrapper_s0_x_xi_xi] -> hw_output_stencil[hw_output_global_wrapper_s0_y_yi, 11 + 14hw_output_global_wrapper_s0_x_xi_xi] : 0 <= hw_output_global_wrapper_s0_y_yi <= 61 and 0 <= hw_output_global_wrapper_s0_x_xi_xi <= 3 }
   // Read schedule : { op_hcompute_hw_output_global_wrapper_glb_stencil_11[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 95] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_hw_output_stencil_11[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 81] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
@@ -5487,8 +5487,8 @@ inline hw_uint<16> hw_output_stencil_op_hcompute_hw_output_global_wrapper_glb_st
 }
 
 inline hw_uint<16> hw_output_stencil_op_hcompute_hw_output_global_wrapper_glb_stencil_12_47_select(hw_output_stencil_cache& hw_output_stencil, int root, int hw_output_global_wrapper_s0_y_yi, int hw_output_global_wrapper_s0_x_xi_xi, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // hw_output_stencil_op_hcompute_hw_output_global_wrapper_glb_stencil_12_47 read pattern: { op_hcompute_hw_output_global_wrapper_glb_stencil_12[root = 0, hw_output_global_wrapper_s0_y_yi, hw_output_global_wrapper_s0_x_xi_xi] -> hw_output_stencil[hw_output_global_wrapper_s0_y_yi, 12 + 14hw_output_global_wrapper_s0_x_xi_xi] : 0 <= hw_output_global_wrapper_s0_y_yi <= 61 and 0 <= hw_output_global_wrapper_s0_x_xi_xi <= 3 }
   // Read schedule : { op_hcompute_hw_output_global_wrapper_glb_stencil_12[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 96] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_hw_output_stencil_12[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 82] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
@@ -5498,8 +5498,8 @@ inline hw_uint<16> hw_output_stencil_op_hcompute_hw_output_global_wrapper_glb_st
 }
 
 inline hw_uint<16> hw_output_stencil_op_hcompute_hw_output_global_wrapper_glb_stencil_13_45_select(hw_output_stencil_cache& hw_output_stencil, int root, int hw_output_global_wrapper_s0_y_yi, int hw_output_global_wrapper_s0_x_xi_xi, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // hw_output_stencil_op_hcompute_hw_output_global_wrapper_glb_stencil_13_45 read pattern: { op_hcompute_hw_output_global_wrapper_glb_stencil_13[root = 0, hw_output_global_wrapper_s0_y_yi, hw_output_global_wrapper_s0_x_xi_xi] -> hw_output_stencil[hw_output_global_wrapper_s0_y_yi, 13 + 14hw_output_global_wrapper_s0_x_xi_xi] : 0 <= hw_output_global_wrapper_s0_y_yi <= 61 and 0 <= hw_output_global_wrapper_s0_x_xi_xi <= 3 }
   // Read schedule : { op_hcompute_hw_output_global_wrapper_glb_stencil_13[d0 = 0, d1, d2] -> [0, 1 + d1, 1 + d2, 97] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_hw_output_stencil_13[d0 = 0, d1, d2] -> [0, 1 + d1, 1 + d2, 83] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
@@ -5509,8 +5509,8 @@ inline hw_uint<16> hw_output_stencil_op_hcompute_hw_output_global_wrapper_glb_st
 }
 
 inline hw_uint<16> hw_output_stencil_op_hcompute_hw_output_global_wrapper_glb_stencil_1_53_select(hw_output_stencil_cache& hw_output_stencil, int root, int hw_output_global_wrapper_s0_y_yi, int hw_output_global_wrapper_s0_x_xi_xi, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // hw_output_stencil_op_hcompute_hw_output_global_wrapper_glb_stencil_1_53 read pattern: { op_hcompute_hw_output_global_wrapper_glb_stencil_1[root = 0, hw_output_global_wrapper_s0_y_yi, hw_output_global_wrapper_s0_x_xi_xi] -> hw_output_stencil[hw_output_global_wrapper_s0_y_yi, 1 + 14hw_output_global_wrapper_s0_x_xi_xi] : 0 <= hw_output_global_wrapper_s0_y_yi <= 61 and 0 <= hw_output_global_wrapper_s0_x_xi_xi <= 3 }
   // Read schedule : { op_hcompute_hw_output_global_wrapper_glb_stencil_1[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 85] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_hw_output_stencil_1[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 71] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
@@ -5520,8 +5520,8 @@ inline hw_uint<16> hw_output_stencil_op_hcompute_hw_output_global_wrapper_glb_st
 }
 
 inline hw_uint<16> hw_output_stencil_op_hcompute_hw_output_global_wrapper_glb_stencil_2_43_select(hw_output_stencil_cache& hw_output_stencil, int root, int hw_output_global_wrapper_s0_y_yi, int hw_output_global_wrapper_s0_x_xi_xi, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // hw_output_stencil_op_hcompute_hw_output_global_wrapper_glb_stencil_2_43 read pattern: { op_hcompute_hw_output_global_wrapper_glb_stencil_2[root = 0, hw_output_global_wrapper_s0_y_yi, hw_output_global_wrapper_s0_x_xi_xi] -> hw_output_stencil[hw_output_global_wrapper_s0_y_yi, 2 + 14hw_output_global_wrapper_s0_x_xi_xi] : 0 <= hw_output_global_wrapper_s0_y_yi <= 61 and 0 <= hw_output_global_wrapper_s0_x_xi_xi <= 3 }
   // Read schedule : { op_hcompute_hw_output_global_wrapper_glb_stencil_2[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 86] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_hw_output_stencil_2[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 72] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
@@ -5531,8 +5531,8 @@ inline hw_uint<16> hw_output_stencil_op_hcompute_hw_output_global_wrapper_glb_st
 }
 
 inline hw_uint<16> hw_output_stencil_op_hcompute_hw_output_global_wrapper_glb_stencil_3_41_select(hw_output_stencil_cache& hw_output_stencil, int root, int hw_output_global_wrapper_s0_y_yi, int hw_output_global_wrapper_s0_x_xi_xi, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // hw_output_stencil_op_hcompute_hw_output_global_wrapper_glb_stencil_3_41 read pattern: { op_hcompute_hw_output_global_wrapper_glb_stencil_3[root = 0, hw_output_global_wrapper_s0_y_yi, hw_output_global_wrapper_s0_x_xi_xi] -> hw_output_stencil[hw_output_global_wrapper_s0_y_yi, 3 + 14hw_output_global_wrapper_s0_x_xi_xi] : 0 <= hw_output_global_wrapper_s0_y_yi <= 61 and 0 <= hw_output_global_wrapper_s0_x_xi_xi <= 3 }
   // Read schedule : { op_hcompute_hw_output_global_wrapper_glb_stencil_3[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 87] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_hw_output_stencil_3[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 73] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
@@ -5542,8 +5542,8 @@ inline hw_uint<16> hw_output_stencil_op_hcompute_hw_output_global_wrapper_glb_st
 }
 
 inline hw_uint<16> hw_output_stencil_op_hcompute_hw_output_global_wrapper_glb_stencil_4_39_select(hw_output_stencil_cache& hw_output_stencil, int root, int hw_output_global_wrapper_s0_y_yi, int hw_output_global_wrapper_s0_x_xi_xi, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // hw_output_stencil_op_hcompute_hw_output_global_wrapper_glb_stencil_4_39 read pattern: { op_hcompute_hw_output_global_wrapper_glb_stencil_4[root = 0, hw_output_global_wrapper_s0_y_yi, hw_output_global_wrapper_s0_x_xi_xi] -> hw_output_stencil[hw_output_global_wrapper_s0_y_yi, 4 + 14hw_output_global_wrapper_s0_x_xi_xi] : 0 <= hw_output_global_wrapper_s0_y_yi <= 61 and 0 <= hw_output_global_wrapper_s0_x_xi_xi <= 3 }
   // Read schedule : { op_hcompute_hw_output_global_wrapper_glb_stencil_4[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 88] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_hw_output_stencil_4[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 74] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
@@ -5553,8 +5553,8 @@ inline hw_uint<16> hw_output_stencil_op_hcompute_hw_output_global_wrapper_glb_st
 }
 
 inline hw_uint<16> hw_output_stencil_op_hcompute_hw_output_global_wrapper_glb_stencil_55_select(hw_output_stencil_cache& hw_output_stencil, int root, int hw_output_global_wrapper_s0_y_yi, int hw_output_global_wrapper_s0_x_xi_xi, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // hw_output_stencil_op_hcompute_hw_output_global_wrapper_glb_stencil_55 read pattern: { op_hcompute_hw_output_global_wrapper_glb_stencil[root = 0, hw_output_global_wrapper_s0_y_yi, hw_output_global_wrapper_s0_x_xi_xi] -> hw_output_stencil[hw_output_global_wrapper_s0_y_yi, 14hw_output_global_wrapper_s0_x_xi_xi] : 0 <= hw_output_global_wrapper_s0_y_yi <= 61 and 0 <= hw_output_global_wrapper_s0_x_xi_xi <= 3 }
   // Read schedule : { op_hcompute_hw_output_global_wrapper_glb_stencil[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 84] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_hw_output_stencil[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 70] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
@@ -5564,8 +5564,8 @@ inline hw_uint<16> hw_output_stencil_op_hcompute_hw_output_global_wrapper_glb_st
 }
 
 inline hw_uint<16> hw_output_stencil_op_hcompute_hw_output_global_wrapper_glb_stencil_5_37_select(hw_output_stencil_cache& hw_output_stencil, int root, int hw_output_global_wrapper_s0_y_yi, int hw_output_global_wrapper_s0_x_xi_xi, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // hw_output_stencil_op_hcompute_hw_output_global_wrapper_glb_stencil_5_37 read pattern: { op_hcompute_hw_output_global_wrapper_glb_stencil_5[root = 0, hw_output_global_wrapper_s0_y_yi, hw_output_global_wrapper_s0_x_xi_xi] -> hw_output_stencil[hw_output_global_wrapper_s0_y_yi, 5 + 14hw_output_global_wrapper_s0_x_xi_xi] : 0 <= hw_output_global_wrapper_s0_y_yi <= 61 and 0 <= hw_output_global_wrapper_s0_x_xi_xi <= 3 }
   // Read schedule : { op_hcompute_hw_output_global_wrapper_glb_stencil_5[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 89] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_hw_output_stencil_5[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 75] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
@@ -5575,8 +5575,8 @@ inline hw_uint<16> hw_output_stencil_op_hcompute_hw_output_global_wrapper_glb_st
 }
 
 inline hw_uint<16> hw_output_stencil_op_hcompute_hw_output_global_wrapper_glb_stencil_6_35_select(hw_output_stencil_cache& hw_output_stencil, int root, int hw_output_global_wrapper_s0_y_yi, int hw_output_global_wrapper_s0_x_xi_xi, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // hw_output_stencil_op_hcompute_hw_output_global_wrapper_glb_stencil_6_35 read pattern: { op_hcompute_hw_output_global_wrapper_glb_stencil_6[root = 0, hw_output_global_wrapper_s0_y_yi, hw_output_global_wrapper_s0_x_xi_xi] -> hw_output_stencil[hw_output_global_wrapper_s0_y_yi, 6 + 14hw_output_global_wrapper_s0_x_xi_xi] : 0 <= hw_output_global_wrapper_s0_y_yi <= 61 and 0 <= hw_output_global_wrapper_s0_x_xi_xi <= 3 }
   // Read schedule : { op_hcompute_hw_output_global_wrapper_glb_stencil_6[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 90] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_hw_output_stencil_6[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 76] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
@@ -5586,8 +5586,8 @@ inline hw_uint<16> hw_output_stencil_op_hcompute_hw_output_global_wrapper_glb_st
 }
 
 inline hw_uint<16> hw_output_stencil_op_hcompute_hw_output_global_wrapper_glb_stencil_7_33_select(hw_output_stencil_cache& hw_output_stencil, int root, int hw_output_global_wrapper_s0_y_yi, int hw_output_global_wrapper_s0_x_xi_xi, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // hw_output_stencil_op_hcompute_hw_output_global_wrapper_glb_stencil_7_33 read pattern: { op_hcompute_hw_output_global_wrapper_glb_stencil_7[root = 0, hw_output_global_wrapper_s0_y_yi, hw_output_global_wrapper_s0_x_xi_xi] -> hw_output_stencil[hw_output_global_wrapper_s0_y_yi, 7 + 14hw_output_global_wrapper_s0_x_xi_xi] : 0 <= hw_output_global_wrapper_s0_y_yi <= 61 and 0 <= hw_output_global_wrapper_s0_x_xi_xi <= 3 }
   // Read schedule : { op_hcompute_hw_output_global_wrapper_glb_stencil_7[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 91] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_hw_output_stencil_7[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 77] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
@@ -5597,8 +5597,8 @@ inline hw_uint<16> hw_output_stencil_op_hcompute_hw_output_global_wrapper_glb_st
 }
 
 inline hw_uint<16> hw_output_stencil_op_hcompute_hw_output_global_wrapper_glb_stencil_8_31_select(hw_output_stencil_cache& hw_output_stencil, int root, int hw_output_global_wrapper_s0_y_yi, int hw_output_global_wrapper_s0_x_xi_xi, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // hw_output_stencil_op_hcompute_hw_output_global_wrapper_glb_stencil_8_31 read pattern: { op_hcompute_hw_output_global_wrapper_glb_stencil_8[root = 0, hw_output_global_wrapper_s0_y_yi, hw_output_global_wrapper_s0_x_xi_xi] -> hw_output_stencil[hw_output_global_wrapper_s0_y_yi, 8 + 14hw_output_global_wrapper_s0_x_xi_xi] : 0 <= hw_output_global_wrapper_s0_y_yi <= 61 and 0 <= hw_output_global_wrapper_s0_x_xi_xi <= 3 }
   // Read schedule : { op_hcompute_hw_output_global_wrapper_glb_stencil_8[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 92] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_hw_output_stencil_8[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 78] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
@@ -5608,8 +5608,8 @@ inline hw_uint<16> hw_output_stencil_op_hcompute_hw_output_global_wrapper_glb_st
 }
 
 inline hw_uint<16> hw_output_stencil_op_hcompute_hw_output_global_wrapper_glb_stencil_9_29_select(hw_output_stencil_cache& hw_output_stencil, int root, int hw_output_global_wrapper_s0_y_yi, int hw_output_global_wrapper_s0_x_xi_xi, int dynamic_address) {
-#ifdef __SYTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   // hw_output_stencil_op_hcompute_hw_output_global_wrapper_glb_stencil_9_29 read pattern: { op_hcompute_hw_output_global_wrapper_glb_stencil_9[root = 0, hw_output_global_wrapper_s0_y_yi, hw_output_global_wrapper_s0_x_xi_xi] -> hw_output_stencil[hw_output_global_wrapper_s0_y_yi, 9 + 14hw_output_global_wrapper_s0_x_xi_xi] : 0 <= hw_output_global_wrapper_s0_y_yi <= 61 and 0 <= hw_output_global_wrapper_s0_x_xi_xi <= 3 }
   // Read schedule : { op_hcompute_hw_output_global_wrapper_glb_stencil_9[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 93] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
   // Write schedule: { op_hcompute_hw_output_stencil_9[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 79] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
@@ -5898,8 +5898,8 @@ inline void op_hcompute_hw_input_global_wrapper_glb_stencil(HWStream<hw_uint<16>
 	// Produce: hw_input_global_wrapper_glb_stencil
 	hw_input_global_wrapper_glb_stencil_op_hcompute_hw_input_global_wrapper_glb_stencil_write_bundle_write(/* arg names */compute_result, hw_input_global_wrapper_glb_stencil, root, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 }
 
@@ -5912,8 +5912,8 @@ inline void op_hcompute_hw_input_global_wrapper_glb_stencil_1(HWStream<hw_uint<1
 	// Produce: hw_input_global_wrapper_glb_stencil
 	hw_input_global_wrapper_glb_stencil_op_hcompute_hw_input_global_wrapper_glb_stencil_1_write_bundle_write(/* arg names */compute_result, hw_input_global_wrapper_glb_stencil, root, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 }
 
@@ -5926,8 +5926,8 @@ inline void op_hcompute_hw_input_global_wrapper_glb_stencil_2(HWStream<hw_uint<1
 	// Produce: hw_input_global_wrapper_glb_stencil
 	hw_input_global_wrapper_glb_stencil_op_hcompute_hw_input_global_wrapper_glb_stencil_2_write_bundle_write(/* arg names */compute_result, hw_input_global_wrapper_glb_stencil, root, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 }
 
@@ -5940,8 +5940,8 @@ inline void op_hcompute_hw_input_global_wrapper_glb_stencil_3(HWStream<hw_uint<1
 	// Produce: hw_input_global_wrapper_glb_stencil
 	hw_input_global_wrapper_glb_stencil_op_hcompute_hw_input_global_wrapper_glb_stencil_3_write_bundle_write(/* arg names */compute_result, hw_input_global_wrapper_glb_stencil, root, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 }
 
@@ -5954,8 +5954,8 @@ inline void op_hcompute_hw_input_global_wrapper_glb_stencil_4(HWStream<hw_uint<1
 	// Produce: hw_input_global_wrapper_glb_stencil
 	hw_input_global_wrapper_glb_stencil_op_hcompute_hw_input_global_wrapper_glb_stencil_4_write_bundle_write(/* arg names */compute_result, hw_input_global_wrapper_glb_stencil, root, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 }
 
@@ -5968,8 +5968,8 @@ inline void op_hcompute_hw_input_global_wrapper_glb_stencil_5(HWStream<hw_uint<1
 	// Produce: hw_input_global_wrapper_glb_stencil
 	hw_input_global_wrapper_glb_stencil_op_hcompute_hw_input_global_wrapper_glb_stencil_5_write_bundle_write(/* arg names */compute_result, hw_input_global_wrapper_glb_stencil, root, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 }
 
@@ -5982,8 +5982,8 @@ inline void op_hcompute_hw_input_global_wrapper_glb_stencil_6(HWStream<hw_uint<1
 	// Produce: hw_input_global_wrapper_glb_stencil
 	hw_input_global_wrapper_glb_stencil_op_hcompute_hw_input_global_wrapper_glb_stencil_6_write_bundle_write(/* arg names */compute_result, hw_input_global_wrapper_glb_stencil, root, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 }
 
@@ -5996,8 +5996,8 @@ inline void op_hcompute_hw_input_global_wrapper_glb_stencil_7(HWStream<hw_uint<1
 	// Produce: hw_input_global_wrapper_glb_stencil
 	hw_input_global_wrapper_glb_stencil_op_hcompute_hw_input_global_wrapper_glb_stencil_7_write_bundle_write(/* arg names */compute_result, hw_input_global_wrapper_glb_stencil, root, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 }
 
@@ -6010,8 +6010,8 @@ inline void op_hcompute_hw_input_global_wrapper_glb_stencil_8(HWStream<hw_uint<1
 	// Produce: hw_input_global_wrapper_glb_stencil
 	hw_input_global_wrapper_glb_stencil_op_hcompute_hw_input_global_wrapper_glb_stencil_8_write_bundle_write(/* arg names */compute_result, hw_input_global_wrapper_glb_stencil, root, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 }
 
@@ -6024,8 +6024,8 @@ inline void op_hcompute_hw_input_global_wrapper_glb_stencil_9(HWStream<hw_uint<1
 	// Produce: hw_input_global_wrapper_glb_stencil
 	hw_input_global_wrapper_glb_stencil_op_hcompute_hw_input_global_wrapper_glb_stencil_9_write_bundle_write(/* arg names */compute_result, hw_input_global_wrapper_glb_stencil, root, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 }
 
@@ -6038,8 +6038,8 @@ inline void op_hcompute_hw_input_global_wrapper_glb_stencil_10(HWStream<hw_uint<
 	// Produce: hw_input_global_wrapper_glb_stencil
 	hw_input_global_wrapper_glb_stencil_op_hcompute_hw_input_global_wrapper_glb_stencil_10_write_bundle_write(/* arg names */compute_result, hw_input_global_wrapper_glb_stencil, root, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 }
 
@@ -6052,8 +6052,8 @@ inline void op_hcompute_hw_input_global_wrapper_glb_stencil_11(HWStream<hw_uint<
 	// Produce: hw_input_global_wrapper_glb_stencil
 	hw_input_global_wrapper_glb_stencil_op_hcompute_hw_input_global_wrapper_glb_stencil_11_write_bundle_write(/* arg names */compute_result, hw_input_global_wrapper_glb_stencil, root, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 }
 
@@ -6066,8 +6066,8 @@ inline void op_hcompute_hw_input_global_wrapper_glb_stencil_12(HWStream<hw_uint<
 	// Produce: hw_input_global_wrapper_glb_stencil
 	hw_input_global_wrapper_glb_stencil_op_hcompute_hw_input_global_wrapper_glb_stencil_12_write_bundle_write(/* arg names */compute_result, hw_input_global_wrapper_glb_stencil, root, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 }
 
@@ -6080,8 +6080,8 @@ inline void op_hcompute_hw_input_global_wrapper_glb_stencil_13(HWStream<hw_uint<
 	// Produce: hw_input_global_wrapper_glb_stencil
 	hw_input_global_wrapper_glb_stencil_op_hcompute_hw_input_global_wrapper_glb_stencil_13_write_bundle_write(/* arg names */compute_result, hw_input_global_wrapper_glb_stencil, root, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 }
 
@@ -6091,15 +6091,15 @@ inline void op_hcompute_hw_input_global_wrapper_global_wrapper_stencil(hw_input_
 	// Consume: hw_input_global_wrapper_glb_stencil
 	auto hw_input_global_wrapper_glb_stencil_hw_input_global_wrapper_global_wrapper_s0_y_c___lp_hw_input_global_wrapper_global_wrapper_s0_x_x_m_14_rp__value = hw_input_global_wrapper_glb_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_read_bundle_read(hw_input_global_wrapper_glb_stencil/* source_delay */, root, hw_input_global_wrapper_global_wrapper_s0_y, hw_input_global_wrapper_global_wrapper_s0_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 	auto compute_result = hcompute_hw_input_global_wrapper_global_wrapper_stencil(hw_input_global_wrapper_glb_stencil_hw_input_global_wrapper_global_wrapper_s0_y_c___lp_hw_input_global_wrapper_global_wrapper_s0_x_x_m_14_rp__value);
 	// Produce: hw_input_global_wrapper_global_wrapper_stencil
 	hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_write_bundle_write(/* arg names */compute_result, hw_input_global_wrapper_global_wrapper_stencil, root, hw_input_global_wrapper_global_wrapper_s0_y, hw_input_global_wrapper_global_wrapper_s0_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 }
 
@@ -6109,15 +6109,15 @@ inline void op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1(hw_inpu
 	// Consume: hw_input_global_wrapper_glb_stencil
 	auto hw_input_global_wrapper_glb_stencil_hw_input_global_wrapper_global_wrapper_s0_y_c___lp__lp_hw_input_global_wrapper_global_wrapper_s0_x_x_m_14_rp___p__1_rp__value = hw_input_global_wrapper_glb_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1_read_bundle_read(hw_input_global_wrapper_glb_stencil/* source_delay */, root, hw_input_global_wrapper_global_wrapper_s0_y, hw_input_global_wrapper_global_wrapper_s0_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 	auto compute_result = hcompute_hw_input_global_wrapper_global_wrapper_stencil_1(hw_input_global_wrapper_glb_stencil_hw_input_global_wrapper_global_wrapper_s0_y_c___lp__lp_hw_input_global_wrapper_global_wrapper_s0_x_x_m_14_rp___p__1_rp__value);
 	// Produce: hw_input_global_wrapper_global_wrapper_stencil
 	hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1_write_bundle_write(/* arg names */compute_result, hw_input_global_wrapper_global_wrapper_stencil, root, hw_input_global_wrapper_global_wrapper_s0_y, hw_input_global_wrapper_global_wrapper_s0_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 }
 
@@ -6127,15 +6127,15 @@ inline void op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2(hw_inpu
 	// Consume: hw_input_global_wrapper_glb_stencil
 	auto hw_input_global_wrapper_glb_stencil_hw_input_global_wrapper_global_wrapper_s0_y_c___lp__lp_hw_input_global_wrapper_global_wrapper_s0_x_x_m_14_rp___p__2_rp__value = hw_input_global_wrapper_glb_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2_read_bundle_read(hw_input_global_wrapper_glb_stencil/* source_delay */, root, hw_input_global_wrapper_global_wrapper_s0_y, hw_input_global_wrapper_global_wrapper_s0_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 	auto compute_result = hcompute_hw_input_global_wrapper_global_wrapper_stencil_2(hw_input_global_wrapper_glb_stencil_hw_input_global_wrapper_global_wrapper_s0_y_c___lp__lp_hw_input_global_wrapper_global_wrapper_s0_x_x_m_14_rp___p__2_rp__value);
 	// Produce: hw_input_global_wrapper_global_wrapper_stencil
 	hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2_write_bundle_write(/* arg names */compute_result, hw_input_global_wrapper_global_wrapper_stencil, root, hw_input_global_wrapper_global_wrapper_s0_y, hw_input_global_wrapper_global_wrapper_s0_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 }
 
@@ -6145,15 +6145,15 @@ inline void op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3(hw_inpu
 	// Consume: hw_input_global_wrapper_glb_stencil
 	auto hw_input_global_wrapper_glb_stencil_hw_input_global_wrapper_global_wrapper_s0_y_c___lp__lp_hw_input_global_wrapper_global_wrapper_s0_x_x_m_14_rp___p__3_rp__value = hw_input_global_wrapper_glb_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3_read_bundle_read(hw_input_global_wrapper_glb_stencil/* source_delay */, root, hw_input_global_wrapper_global_wrapper_s0_y, hw_input_global_wrapper_global_wrapper_s0_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 	auto compute_result = hcompute_hw_input_global_wrapper_global_wrapper_stencil_3(hw_input_global_wrapper_glb_stencil_hw_input_global_wrapper_global_wrapper_s0_y_c___lp__lp_hw_input_global_wrapper_global_wrapper_s0_x_x_m_14_rp___p__3_rp__value);
 	// Produce: hw_input_global_wrapper_global_wrapper_stencil
 	hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3_write_bundle_write(/* arg names */compute_result, hw_input_global_wrapper_global_wrapper_stencil, root, hw_input_global_wrapper_global_wrapper_s0_y, hw_input_global_wrapper_global_wrapper_s0_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 }
 
@@ -6163,15 +6163,15 @@ inline void op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_4(hw_inpu
 	// Consume: hw_input_global_wrapper_glb_stencil
 	auto hw_input_global_wrapper_glb_stencil_hw_input_global_wrapper_global_wrapper_s0_y_c___lp__lp_hw_input_global_wrapper_global_wrapper_s0_x_x_m_14_rp___p__4_rp__value = hw_input_global_wrapper_glb_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_4_read_bundle_read(hw_input_global_wrapper_glb_stencil/* source_delay */, root, hw_input_global_wrapper_global_wrapper_s0_y, hw_input_global_wrapper_global_wrapper_s0_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 	auto compute_result = hcompute_hw_input_global_wrapper_global_wrapper_stencil_4(hw_input_global_wrapper_glb_stencil_hw_input_global_wrapper_global_wrapper_s0_y_c___lp__lp_hw_input_global_wrapper_global_wrapper_s0_x_x_m_14_rp___p__4_rp__value);
 	// Produce: hw_input_global_wrapper_global_wrapper_stencil
 	hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_4_write_bundle_write(/* arg names */compute_result, hw_input_global_wrapper_global_wrapper_stencil, root, hw_input_global_wrapper_global_wrapper_s0_y, hw_input_global_wrapper_global_wrapper_s0_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 }
 
@@ -6181,15 +6181,15 @@ inline void op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_5(hw_inpu
 	// Consume: hw_input_global_wrapper_glb_stencil
 	auto hw_input_global_wrapper_glb_stencil_hw_input_global_wrapper_global_wrapper_s0_y_c___lp__lp_hw_input_global_wrapper_global_wrapper_s0_x_x_m_14_rp___p__5_rp__value = hw_input_global_wrapper_glb_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_5_read_bundle_read(hw_input_global_wrapper_glb_stencil/* source_delay */, root, hw_input_global_wrapper_global_wrapper_s0_y, hw_input_global_wrapper_global_wrapper_s0_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 	auto compute_result = hcompute_hw_input_global_wrapper_global_wrapper_stencil_5(hw_input_global_wrapper_glb_stencil_hw_input_global_wrapper_global_wrapper_s0_y_c___lp__lp_hw_input_global_wrapper_global_wrapper_s0_x_x_m_14_rp___p__5_rp__value);
 	// Produce: hw_input_global_wrapper_global_wrapper_stencil
 	hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_5_write_bundle_write(/* arg names */compute_result, hw_input_global_wrapper_global_wrapper_stencil, root, hw_input_global_wrapper_global_wrapper_s0_y, hw_input_global_wrapper_global_wrapper_s0_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 }
 
@@ -6199,15 +6199,15 @@ inline void op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_6(hw_inpu
 	// Consume: hw_input_global_wrapper_glb_stencil
 	auto hw_input_global_wrapper_glb_stencil_hw_input_global_wrapper_global_wrapper_s0_y_c___lp__lp_hw_input_global_wrapper_global_wrapper_s0_x_x_m_14_rp___p__6_rp__value = hw_input_global_wrapper_glb_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_6_read_bundle_read(hw_input_global_wrapper_glb_stencil/* source_delay */, root, hw_input_global_wrapper_global_wrapper_s0_y, hw_input_global_wrapper_global_wrapper_s0_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 	auto compute_result = hcompute_hw_input_global_wrapper_global_wrapper_stencil_6(hw_input_global_wrapper_glb_stencil_hw_input_global_wrapper_global_wrapper_s0_y_c___lp__lp_hw_input_global_wrapper_global_wrapper_s0_x_x_m_14_rp___p__6_rp__value);
 	// Produce: hw_input_global_wrapper_global_wrapper_stencil
 	hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_6_write_bundle_write(/* arg names */compute_result, hw_input_global_wrapper_global_wrapper_stencil, root, hw_input_global_wrapper_global_wrapper_s0_y, hw_input_global_wrapper_global_wrapper_s0_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 }
 
@@ -6217,15 +6217,15 @@ inline void op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_7(hw_inpu
 	// Consume: hw_input_global_wrapper_glb_stencil
 	auto hw_input_global_wrapper_glb_stencil_hw_input_global_wrapper_global_wrapper_s0_y_c___lp__lp_hw_input_global_wrapper_global_wrapper_s0_x_x_m_14_rp___p__7_rp__value = hw_input_global_wrapper_glb_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_7_read_bundle_read(hw_input_global_wrapper_glb_stencil/* source_delay */, root, hw_input_global_wrapper_global_wrapper_s0_y, hw_input_global_wrapper_global_wrapper_s0_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 	auto compute_result = hcompute_hw_input_global_wrapper_global_wrapper_stencil_7(hw_input_global_wrapper_glb_stencil_hw_input_global_wrapper_global_wrapper_s0_y_c___lp__lp_hw_input_global_wrapper_global_wrapper_s0_x_x_m_14_rp___p__7_rp__value);
 	// Produce: hw_input_global_wrapper_global_wrapper_stencil
 	hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_7_write_bundle_write(/* arg names */compute_result, hw_input_global_wrapper_global_wrapper_stencil, root, hw_input_global_wrapper_global_wrapper_s0_y, hw_input_global_wrapper_global_wrapper_s0_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 }
 
@@ -6235,15 +6235,15 @@ inline void op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_8(hw_inpu
 	// Consume: hw_input_global_wrapper_glb_stencil
 	auto hw_input_global_wrapper_glb_stencil_hw_input_global_wrapper_global_wrapper_s0_y_c___lp__lp_hw_input_global_wrapper_global_wrapper_s0_x_x_m_14_rp___p__8_rp__value = hw_input_global_wrapper_glb_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_8_read_bundle_read(hw_input_global_wrapper_glb_stencil/* source_delay */, root, hw_input_global_wrapper_global_wrapper_s0_y, hw_input_global_wrapper_global_wrapper_s0_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 	auto compute_result = hcompute_hw_input_global_wrapper_global_wrapper_stencil_8(hw_input_global_wrapper_glb_stencil_hw_input_global_wrapper_global_wrapper_s0_y_c___lp__lp_hw_input_global_wrapper_global_wrapper_s0_x_x_m_14_rp___p__8_rp__value);
 	// Produce: hw_input_global_wrapper_global_wrapper_stencil
 	hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_8_write_bundle_write(/* arg names */compute_result, hw_input_global_wrapper_global_wrapper_stencil, root, hw_input_global_wrapper_global_wrapper_s0_y, hw_input_global_wrapper_global_wrapper_s0_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 }
 
@@ -6253,15 +6253,15 @@ inline void op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_9(hw_inpu
 	// Consume: hw_input_global_wrapper_glb_stencil
 	auto hw_input_global_wrapper_glb_stencil_hw_input_global_wrapper_global_wrapper_s0_y_c___lp__lp_hw_input_global_wrapper_global_wrapper_s0_x_x_m_14_rp___p__9_rp__value = hw_input_global_wrapper_glb_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_9_read_bundle_read(hw_input_global_wrapper_glb_stencil/* source_delay */, root, hw_input_global_wrapper_global_wrapper_s0_y, hw_input_global_wrapper_global_wrapper_s0_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 	auto compute_result = hcompute_hw_input_global_wrapper_global_wrapper_stencil_9(hw_input_global_wrapper_glb_stencil_hw_input_global_wrapper_global_wrapper_s0_y_c___lp__lp_hw_input_global_wrapper_global_wrapper_s0_x_x_m_14_rp___p__9_rp__value);
 	// Produce: hw_input_global_wrapper_global_wrapper_stencil
 	hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_9_write_bundle_write(/* arg names */compute_result, hw_input_global_wrapper_global_wrapper_stencil, root, hw_input_global_wrapper_global_wrapper_s0_y, hw_input_global_wrapper_global_wrapper_s0_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 }
 
@@ -6271,15 +6271,15 @@ inline void op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_10(hw_inp
 	// Consume: hw_input_global_wrapper_glb_stencil
 	auto hw_input_global_wrapper_glb_stencil_hw_input_global_wrapper_global_wrapper_s0_y_c___lp__lp_hw_input_global_wrapper_global_wrapper_s0_x_x_m_14_rp___p__10_rp__value = hw_input_global_wrapper_glb_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_10_read_bundle_read(hw_input_global_wrapper_glb_stencil/* source_delay */, root, hw_input_global_wrapper_global_wrapper_s0_y, hw_input_global_wrapper_global_wrapper_s0_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 	auto compute_result = hcompute_hw_input_global_wrapper_global_wrapper_stencil_10(hw_input_global_wrapper_glb_stencil_hw_input_global_wrapper_global_wrapper_s0_y_c___lp__lp_hw_input_global_wrapper_global_wrapper_s0_x_x_m_14_rp___p__10_rp__value);
 	// Produce: hw_input_global_wrapper_global_wrapper_stencil
 	hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_10_write_bundle_write(/* arg names */compute_result, hw_input_global_wrapper_global_wrapper_stencil, root, hw_input_global_wrapper_global_wrapper_s0_y, hw_input_global_wrapper_global_wrapper_s0_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 }
 
@@ -6289,15 +6289,15 @@ inline void op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_11(hw_inp
 	// Consume: hw_input_global_wrapper_glb_stencil
 	auto hw_input_global_wrapper_glb_stencil_hw_input_global_wrapper_global_wrapper_s0_y_c___lp__lp_hw_input_global_wrapper_global_wrapper_s0_x_x_m_14_rp___p__11_rp__value = hw_input_global_wrapper_glb_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_11_read_bundle_read(hw_input_global_wrapper_glb_stencil/* source_delay */, root, hw_input_global_wrapper_global_wrapper_s0_y, hw_input_global_wrapper_global_wrapper_s0_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 	auto compute_result = hcompute_hw_input_global_wrapper_global_wrapper_stencil_11(hw_input_global_wrapper_glb_stencil_hw_input_global_wrapper_global_wrapper_s0_y_c___lp__lp_hw_input_global_wrapper_global_wrapper_s0_x_x_m_14_rp___p__11_rp__value);
 	// Produce: hw_input_global_wrapper_global_wrapper_stencil
 	hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_11_write_bundle_write(/* arg names */compute_result, hw_input_global_wrapper_global_wrapper_stencil, root, hw_input_global_wrapper_global_wrapper_s0_y, hw_input_global_wrapper_global_wrapper_s0_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 }
 
@@ -6307,15 +6307,15 @@ inline void op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_12(hw_inp
 	// Consume: hw_input_global_wrapper_glb_stencil
 	auto hw_input_global_wrapper_glb_stencil_hw_input_global_wrapper_global_wrapper_s0_y_c___lp__lp_hw_input_global_wrapper_global_wrapper_s0_x_x_m_14_rp___p__12_rp__value = hw_input_global_wrapper_glb_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_12_read_bundle_read(hw_input_global_wrapper_glb_stencil/* source_delay */, root, hw_input_global_wrapper_global_wrapper_s0_y, hw_input_global_wrapper_global_wrapper_s0_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 	auto compute_result = hcompute_hw_input_global_wrapper_global_wrapper_stencil_12(hw_input_global_wrapper_glb_stencil_hw_input_global_wrapper_global_wrapper_s0_y_c___lp__lp_hw_input_global_wrapper_global_wrapper_s0_x_x_m_14_rp___p__12_rp__value);
 	// Produce: hw_input_global_wrapper_global_wrapper_stencil
 	hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_12_write_bundle_write(/* arg names */compute_result, hw_input_global_wrapper_global_wrapper_stencil, root, hw_input_global_wrapper_global_wrapper_s0_y, hw_input_global_wrapper_global_wrapper_s0_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 }
 
@@ -6325,15 +6325,15 @@ inline void op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_13(hw_inp
 	// Consume: hw_input_global_wrapper_glb_stencil
 	auto hw_input_global_wrapper_glb_stencil_hw_input_global_wrapper_global_wrapper_s0_y_c___lp__lp_hw_input_global_wrapper_global_wrapper_s0_x_x_m_14_rp___p__13_rp__value = hw_input_global_wrapper_glb_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_13_read_bundle_read(hw_input_global_wrapper_glb_stencil/* source_delay */, root, hw_input_global_wrapper_global_wrapper_s0_y, hw_input_global_wrapper_global_wrapper_s0_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 	auto compute_result = hcompute_hw_input_global_wrapper_global_wrapper_stencil_13(hw_input_global_wrapper_glb_stencil_hw_input_global_wrapper_global_wrapper_s0_y_c___lp__lp_hw_input_global_wrapper_global_wrapper_s0_x_x_m_14_rp___p__13_rp__value);
 	// Produce: hw_input_global_wrapper_global_wrapper_stencil
 	hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_13_write_bundle_write(/* arg names */compute_result, hw_input_global_wrapper_global_wrapper_stencil, root, hw_input_global_wrapper_global_wrapper_s0_y, hw_input_global_wrapper_global_wrapper_s0_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 }
 
@@ -6344,8 +6344,8 @@ inline void op_hcompute_blur_unnormalized_stencil(blur_unnormalized_stencil_clkw
 	// Produce: blur_unnormalized_stencil_clkwrk_dsa28
 	blur_unnormalized_stencil_clkwrk_dsa28_op_hcompute_blur_unnormalized_stencil_write_bundle_write(/* arg names */compute_result, blur_unnormalized_stencil_clkwrk_dsa28, root, blur_unnormalized_s0_y, blur_unnormalized_s0_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 }
 
@@ -6356,8 +6356,8 @@ inline void op_hcompute_blur_unnormalized_stencil_1(blur_unnormalized_stencil_cl
 	// Produce: blur_unnormalized_stencil_clkwrk_dsa28
 	blur_unnormalized_stencil_clkwrk_dsa28_op_hcompute_blur_unnormalized_stencil_1_write_bundle_write(/* arg names */compute_result, blur_unnormalized_stencil_clkwrk_dsa28, root, blur_unnormalized_s0_y, blur_unnormalized_s0_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 }
 
@@ -6368,8 +6368,8 @@ inline void op_hcompute_blur_unnormalized_stencil_2(blur_unnormalized_stencil_cl
 	// Produce: blur_unnormalized_stencil_clkwrk_dsa28
 	blur_unnormalized_stencil_clkwrk_dsa28_op_hcompute_blur_unnormalized_stencil_2_write_bundle_write(/* arg names */compute_result, blur_unnormalized_stencil_clkwrk_dsa28, root, blur_unnormalized_s0_y, blur_unnormalized_s0_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 }
 
@@ -6380,8 +6380,8 @@ inline void op_hcompute_blur_unnormalized_stencil_3(blur_unnormalized_stencil_cl
 	// Produce: blur_unnormalized_stencil_clkwrk_dsa28
 	blur_unnormalized_stencil_clkwrk_dsa28_op_hcompute_blur_unnormalized_stencil_3_write_bundle_write(/* arg names */compute_result, blur_unnormalized_stencil_clkwrk_dsa28, root, blur_unnormalized_s0_y, blur_unnormalized_s0_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 }
 
@@ -6392,8 +6392,8 @@ inline void op_hcompute_blur_unnormalized_stencil_4(blur_unnormalized_stencil_cl
 	// Produce: blur_unnormalized_stencil_clkwrk_dsa28
 	blur_unnormalized_stencil_clkwrk_dsa28_op_hcompute_blur_unnormalized_stencil_4_write_bundle_write(/* arg names */compute_result, blur_unnormalized_stencil_clkwrk_dsa28, root, blur_unnormalized_s0_y, blur_unnormalized_s0_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 }
 
@@ -6404,8 +6404,8 @@ inline void op_hcompute_blur_unnormalized_stencil_5(blur_unnormalized_stencil_cl
 	// Produce: blur_unnormalized_stencil_clkwrk_dsa28
 	blur_unnormalized_stencil_clkwrk_dsa28_op_hcompute_blur_unnormalized_stencil_5_write_bundle_write(/* arg names */compute_result, blur_unnormalized_stencil_clkwrk_dsa28, root, blur_unnormalized_s0_y, blur_unnormalized_s0_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 }
 
@@ -6416,8 +6416,8 @@ inline void op_hcompute_blur_unnormalized_stencil_6(blur_unnormalized_stencil_cl
 	// Produce: blur_unnormalized_stencil_clkwrk_dsa28
 	blur_unnormalized_stencil_clkwrk_dsa28_op_hcompute_blur_unnormalized_stencil_6_write_bundle_write(/* arg names */compute_result, blur_unnormalized_stencil_clkwrk_dsa28, root, blur_unnormalized_s0_y, blur_unnormalized_s0_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 }
 
@@ -6428,8 +6428,8 @@ inline void op_hcompute_blur_unnormalized_stencil_7(blur_unnormalized_stencil_cl
 	// Produce: blur_unnormalized_stencil_clkwrk_dsa28
 	blur_unnormalized_stencil_clkwrk_dsa28_op_hcompute_blur_unnormalized_stencil_7_write_bundle_write(/* arg names */compute_result, blur_unnormalized_stencil_clkwrk_dsa28, root, blur_unnormalized_s0_y, blur_unnormalized_s0_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 }
 
@@ -6440,8 +6440,8 @@ inline void op_hcompute_blur_unnormalized_stencil_8(blur_unnormalized_stencil_cl
 	// Produce: blur_unnormalized_stencil_clkwrk_dsa28
 	blur_unnormalized_stencil_clkwrk_dsa28_op_hcompute_blur_unnormalized_stencil_8_write_bundle_write(/* arg names */compute_result, blur_unnormalized_stencil_clkwrk_dsa28, root, blur_unnormalized_s0_y, blur_unnormalized_s0_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 }
 
@@ -6452,8 +6452,8 @@ inline void op_hcompute_blur_unnormalized_stencil_9(blur_unnormalized_stencil_cl
 	// Produce: blur_unnormalized_stencil_clkwrk_dsa28
 	blur_unnormalized_stencil_clkwrk_dsa28_op_hcompute_blur_unnormalized_stencil_9_write_bundle_write(/* arg names */compute_result, blur_unnormalized_stencil_clkwrk_dsa28, root, blur_unnormalized_s0_y, blur_unnormalized_s0_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 }
 
@@ -6464,8 +6464,8 @@ inline void op_hcompute_blur_unnormalized_stencil_10(blur_unnormalized_stencil_c
 	// Produce: blur_unnormalized_stencil_clkwrk_dsa28
 	blur_unnormalized_stencil_clkwrk_dsa28_op_hcompute_blur_unnormalized_stencil_10_write_bundle_write(/* arg names */compute_result, blur_unnormalized_stencil_clkwrk_dsa28, root, blur_unnormalized_s0_y, blur_unnormalized_s0_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 }
 
@@ -6476,8 +6476,8 @@ inline void op_hcompute_blur_unnormalized_stencil_11(blur_unnormalized_stencil_c
 	// Produce: blur_unnormalized_stencil_clkwrk_dsa28
 	blur_unnormalized_stencil_clkwrk_dsa28_op_hcompute_blur_unnormalized_stencil_11_write_bundle_write(/* arg names */compute_result, blur_unnormalized_stencil_clkwrk_dsa28, root, blur_unnormalized_s0_y, blur_unnormalized_s0_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 }
 
@@ -6488,8 +6488,8 @@ inline void op_hcompute_blur_unnormalized_stencil_12(blur_unnormalized_stencil_c
 	// Produce: blur_unnormalized_stencil_clkwrk_dsa28
 	blur_unnormalized_stencil_clkwrk_dsa28_op_hcompute_blur_unnormalized_stencil_12_write_bundle_write(/* arg names */compute_result, blur_unnormalized_stencil_clkwrk_dsa28, root, blur_unnormalized_s0_y, blur_unnormalized_s0_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 }
 
@@ -6500,8 +6500,8 @@ inline void op_hcompute_blur_unnormalized_stencil_13(blur_unnormalized_stencil_c
 	// Produce: blur_unnormalized_stencil_clkwrk_dsa28
 	blur_unnormalized_stencil_clkwrk_dsa28_op_hcompute_blur_unnormalized_stencil_13_write_bundle_write(/* arg names */compute_result, blur_unnormalized_stencil_clkwrk_dsa28, root, blur_unnormalized_s0_y, blur_unnormalized_s0_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 }
 
@@ -6511,21 +6511,21 @@ inline void op_hcompute_blur_unnormalized_stencil_14(blur_unnormalized_stencil_c
 	// Consume: blur_unnormalized_stencil_clkwrk_dsa28
 	auto blur_unnormalized_stencil_clkwrk_dsa28_blur_unnormalized_s1_y_c___lp_blur_unnormalized_s1_x_x_m_14_rp__value = blur_unnormalized_stencil_clkwrk_dsa28_op_hcompute_blur_unnormalized_stencil_14_read_bundle_read(blur_unnormalized_stencil_clkwrk_dsa28/* source_delay */, root, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 	// Consume: hw_input_global_wrapper_global_wrapper_stencil
 	auto hw_input_global_wrapper_global_wrapper_stencil_blur_unnormalized_s1_y_c___lp_blur_unnormalized_s1_x_x_m_14_rp__value = hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_14_read_bundle_read(hw_input_global_wrapper_global_wrapper_stencil/* source_delay */, root, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 	auto compute_result = hcompute_blur_unnormalized_stencil_14(blur_unnormalized_stencil_clkwrk_dsa28_blur_unnormalized_s1_y_c___lp_blur_unnormalized_s1_x_x_m_14_rp__value, hw_input_global_wrapper_global_wrapper_stencil_blur_unnormalized_s1_y_c___lp_blur_unnormalized_s1_x_x_m_14_rp__value);
 	// Produce: blur_unnormalized_stencil
 	blur_unnormalized_stencil_op_hcompute_blur_unnormalized_stencil_14_write_bundle_write(/* arg names */compute_result, blur_unnormalized_stencil, root, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 }
 
@@ -6535,21 +6535,21 @@ inline void op_hcompute_blur_unnormalized_stencil_15(blur_unnormalized_stencil_c
 	// Consume: blur_unnormalized_stencil_clkwrk_dsa28
 	auto blur_unnormalized_stencil_clkwrk_dsa28_blur_unnormalized_s1_y_c___lp__lp_blur_unnormalized_s1_x_x_m_14_rp___p__1_rp__value = blur_unnormalized_stencil_clkwrk_dsa28_op_hcompute_blur_unnormalized_stencil_15_read_bundle_read(blur_unnormalized_stencil_clkwrk_dsa28/* source_delay */, root, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 	// Consume: hw_input_global_wrapper_global_wrapper_stencil
 	auto hw_input_global_wrapper_global_wrapper_stencil_blur_unnormalized_s1_y_c___lp__lp_blur_unnormalized_s1_x_x_m_14_rp___p__1_rp__value = hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_15_read_bundle_read(hw_input_global_wrapper_global_wrapper_stencil/* source_delay */, root, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 	auto compute_result = hcompute_blur_unnormalized_stencil_15(blur_unnormalized_stencil_clkwrk_dsa28_blur_unnormalized_s1_y_c___lp__lp_blur_unnormalized_s1_x_x_m_14_rp___p__1_rp__value, hw_input_global_wrapper_global_wrapper_stencil_blur_unnormalized_s1_y_c___lp__lp_blur_unnormalized_s1_x_x_m_14_rp___p__1_rp__value);
 	// Produce: blur_unnormalized_stencil
 	blur_unnormalized_stencil_op_hcompute_blur_unnormalized_stencil_15_write_bundle_write(/* arg names */compute_result, blur_unnormalized_stencil, root, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 }
 
@@ -6559,21 +6559,21 @@ inline void op_hcompute_blur_unnormalized_stencil_16(blur_unnormalized_stencil_c
 	// Consume: blur_unnormalized_stencil_clkwrk_dsa28
 	auto blur_unnormalized_stencil_clkwrk_dsa28_blur_unnormalized_s1_y_c___lp__lp_blur_unnormalized_s1_x_x_m_14_rp___p__2_rp__value = blur_unnormalized_stencil_clkwrk_dsa28_op_hcompute_blur_unnormalized_stencil_16_read_bundle_read(blur_unnormalized_stencil_clkwrk_dsa28/* source_delay */, root, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 	// Consume: hw_input_global_wrapper_global_wrapper_stencil
 	auto hw_input_global_wrapper_global_wrapper_stencil_blur_unnormalized_s1_y_c___lp__lp_blur_unnormalized_s1_x_x_m_14_rp___p__3_rp__value = hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_16_read_bundle_read(hw_input_global_wrapper_global_wrapper_stencil/* source_delay */, root, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 	auto compute_result = hcompute_blur_unnormalized_stencil_16(blur_unnormalized_stencil_clkwrk_dsa28_blur_unnormalized_s1_y_c___lp__lp_blur_unnormalized_s1_x_x_m_14_rp___p__2_rp__value, hw_input_global_wrapper_global_wrapper_stencil_blur_unnormalized_s1_y_c___lp__lp_blur_unnormalized_s1_x_x_m_14_rp___p__3_rp__value);
 	// Produce: blur_unnormalized_stencil
 	blur_unnormalized_stencil_op_hcompute_blur_unnormalized_stencil_16_write_bundle_write(/* arg names */compute_result, blur_unnormalized_stencil, root, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 }
 
@@ -6583,21 +6583,21 @@ inline void op_hcompute_blur_unnormalized_stencil_17(blur_unnormalized_stencil_c
 	// Consume: blur_unnormalized_stencil_clkwrk_dsa28
 	auto blur_unnormalized_stencil_clkwrk_dsa28_blur_unnormalized_s1_y_c___lp__lp_blur_unnormalized_s1_x_x_m_14_rp___p__3_rp__value = blur_unnormalized_stencil_clkwrk_dsa28_op_hcompute_blur_unnormalized_stencil_17_read_bundle_read(blur_unnormalized_stencil_clkwrk_dsa28/* source_delay */, root, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 	// Consume: hw_input_global_wrapper_global_wrapper_stencil
 	auto hw_input_global_wrapper_global_wrapper_stencil_blur_unnormalized_s1_y_c___lp__lp_blur_unnormalized_s1_x_x_m_14_rp___p__3_rp__value = hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_17_read_bundle_read(hw_input_global_wrapper_global_wrapper_stencil/* source_delay */, root, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 	auto compute_result = hcompute_blur_unnormalized_stencil_17(blur_unnormalized_stencil_clkwrk_dsa28_blur_unnormalized_s1_y_c___lp__lp_blur_unnormalized_s1_x_x_m_14_rp___p__3_rp__value, hw_input_global_wrapper_global_wrapper_stencil_blur_unnormalized_s1_y_c___lp__lp_blur_unnormalized_s1_x_x_m_14_rp___p__3_rp__value);
 	// Produce: blur_unnormalized_stencil
 	blur_unnormalized_stencil_op_hcompute_blur_unnormalized_stencil_17_write_bundle_write(/* arg names */compute_result, blur_unnormalized_stencil, root, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 }
 
@@ -6607,21 +6607,21 @@ inline void op_hcompute_blur_unnormalized_stencil_18(blur_unnormalized_stencil_c
 	// Consume: blur_unnormalized_stencil_clkwrk_dsa28
 	auto blur_unnormalized_stencil_clkwrk_dsa28_blur_unnormalized_s1_y_c___lp__lp_blur_unnormalized_s1_x_x_m_14_rp___p__4_rp__value = blur_unnormalized_stencil_clkwrk_dsa28_op_hcompute_blur_unnormalized_stencil_18_read_bundle_read(blur_unnormalized_stencil_clkwrk_dsa28/* source_delay */, root, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 	// Consume: hw_input_global_wrapper_global_wrapper_stencil
 	auto hw_input_global_wrapper_global_wrapper_stencil_blur_unnormalized_s1_y_c___lp__lp_blur_unnormalized_s1_x_x_m_14_rp___p__4_rp__value = hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_18_read_bundle_read(hw_input_global_wrapper_global_wrapper_stencil/* source_delay */, root, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 	auto compute_result = hcompute_blur_unnormalized_stencil_18(blur_unnormalized_stencil_clkwrk_dsa28_blur_unnormalized_s1_y_c___lp__lp_blur_unnormalized_s1_x_x_m_14_rp___p__4_rp__value, hw_input_global_wrapper_global_wrapper_stencil_blur_unnormalized_s1_y_c___lp__lp_blur_unnormalized_s1_x_x_m_14_rp___p__4_rp__value);
 	// Produce: blur_unnormalized_stencil
 	blur_unnormalized_stencil_op_hcompute_blur_unnormalized_stencil_18_write_bundle_write(/* arg names */compute_result, blur_unnormalized_stencil, root, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 }
 
@@ -6631,21 +6631,21 @@ inline void op_hcompute_blur_unnormalized_stencil_19(blur_unnormalized_stencil_c
 	// Consume: blur_unnormalized_stencil_clkwrk_dsa28
 	auto blur_unnormalized_stencil_clkwrk_dsa28_blur_unnormalized_s1_y_c___lp__lp_blur_unnormalized_s1_x_x_m_14_rp___p__5_rp__value = blur_unnormalized_stencil_clkwrk_dsa28_op_hcompute_blur_unnormalized_stencil_19_read_bundle_read(blur_unnormalized_stencil_clkwrk_dsa28/* source_delay */, root, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 	// Consume: hw_input_global_wrapper_global_wrapper_stencil
 	auto hw_input_global_wrapper_global_wrapper_stencil_blur_unnormalized_s1_y_c___lp__lp_blur_unnormalized_s1_x_x_m_14_rp___p__5_rp__value = hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_19_read_bundle_read(hw_input_global_wrapper_global_wrapper_stencil/* source_delay */, root, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 	auto compute_result = hcompute_blur_unnormalized_stencil_19(blur_unnormalized_stencil_clkwrk_dsa28_blur_unnormalized_s1_y_c___lp__lp_blur_unnormalized_s1_x_x_m_14_rp___p__5_rp__value, hw_input_global_wrapper_global_wrapper_stencil_blur_unnormalized_s1_y_c___lp__lp_blur_unnormalized_s1_x_x_m_14_rp___p__5_rp__value);
 	// Produce: blur_unnormalized_stencil
 	blur_unnormalized_stencil_op_hcompute_blur_unnormalized_stencil_19_write_bundle_write(/* arg names */compute_result, blur_unnormalized_stencil, root, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 }
 
@@ -6655,21 +6655,21 @@ inline void op_hcompute_blur_unnormalized_stencil_20(blur_unnormalized_stencil_c
 	// Consume: blur_unnormalized_stencil_clkwrk_dsa28
 	auto blur_unnormalized_stencil_clkwrk_dsa28_blur_unnormalized_s1_y_c___lp__lp_blur_unnormalized_s1_x_x_m_14_rp___p__6_rp__value = blur_unnormalized_stencil_clkwrk_dsa28_op_hcompute_blur_unnormalized_stencil_20_read_bundle_read(blur_unnormalized_stencil_clkwrk_dsa28/* source_delay */, root, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 	// Consume: hw_input_global_wrapper_global_wrapper_stencil
 	auto hw_input_global_wrapper_global_wrapper_stencil_blur_unnormalized_s1_y_c___lp__lp_blur_unnormalized_s1_x_x_m_14_rp___p__6_rp__value = hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_20_read_bundle_read(hw_input_global_wrapper_global_wrapper_stencil/* source_delay */, root, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 	auto compute_result = hcompute_blur_unnormalized_stencil_20(blur_unnormalized_stencil_clkwrk_dsa28_blur_unnormalized_s1_y_c___lp__lp_blur_unnormalized_s1_x_x_m_14_rp___p__6_rp__value, hw_input_global_wrapper_global_wrapper_stencil_blur_unnormalized_s1_y_c___lp__lp_blur_unnormalized_s1_x_x_m_14_rp___p__6_rp__value);
 	// Produce: blur_unnormalized_stencil
 	blur_unnormalized_stencil_op_hcompute_blur_unnormalized_stencil_20_write_bundle_write(/* arg names */compute_result, blur_unnormalized_stencil, root, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 }
 
@@ -6679,21 +6679,21 @@ inline void op_hcompute_blur_unnormalized_stencil_21(blur_unnormalized_stencil_c
 	// Consume: blur_unnormalized_stencil_clkwrk_dsa28
 	auto blur_unnormalized_stencil_clkwrk_dsa28_blur_unnormalized_s1_y_c___lp__lp_blur_unnormalized_s1_x_x_m_14_rp___p__7_rp__value = blur_unnormalized_stencil_clkwrk_dsa28_op_hcompute_blur_unnormalized_stencil_21_read_bundle_read(blur_unnormalized_stencil_clkwrk_dsa28/* source_delay */, root, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 	// Consume: hw_input_global_wrapper_global_wrapper_stencil
 	auto hw_input_global_wrapper_global_wrapper_stencil_blur_unnormalized_s1_y_c___lp__lp_blur_unnormalized_s1_x_x_m_14_rp___p__7_rp__value = hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_21_read_bundle_read(hw_input_global_wrapper_global_wrapper_stencil/* source_delay */, root, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 	auto compute_result = hcompute_blur_unnormalized_stencil_21(blur_unnormalized_stencil_clkwrk_dsa28_blur_unnormalized_s1_y_c___lp__lp_blur_unnormalized_s1_x_x_m_14_rp___p__7_rp__value, hw_input_global_wrapper_global_wrapper_stencil_blur_unnormalized_s1_y_c___lp__lp_blur_unnormalized_s1_x_x_m_14_rp___p__7_rp__value);
 	// Produce: blur_unnormalized_stencil
 	blur_unnormalized_stencil_op_hcompute_blur_unnormalized_stencil_21_write_bundle_write(/* arg names */compute_result, blur_unnormalized_stencil, root, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 }
 
@@ -6703,21 +6703,21 @@ inline void op_hcompute_blur_unnormalized_stencil_22(blur_unnormalized_stencil_c
 	// Consume: blur_unnormalized_stencil_clkwrk_dsa28
 	auto blur_unnormalized_stencil_clkwrk_dsa28_blur_unnormalized_s1_y_c___lp__lp_blur_unnormalized_s1_x_x_m_14_rp___p__8_rp__value = blur_unnormalized_stencil_clkwrk_dsa28_op_hcompute_blur_unnormalized_stencil_22_read_bundle_read(blur_unnormalized_stencil_clkwrk_dsa28/* source_delay */, root, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 	// Consume: hw_input_global_wrapper_global_wrapper_stencil
 	auto hw_input_global_wrapper_global_wrapper_stencil_blur_unnormalized_s1_y_c___lp__lp_blur_unnormalized_s1_x_x_m_14_rp___p__8_rp__value = hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_22_read_bundle_read(hw_input_global_wrapper_global_wrapper_stencil/* source_delay */, root, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 	auto compute_result = hcompute_blur_unnormalized_stencil_22(blur_unnormalized_stencil_clkwrk_dsa28_blur_unnormalized_s1_y_c___lp__lp_blur_unnormalized_s1_x_x_m_14_rp___p__8_rp__value, hw_input_global_wrapper_global_wrapper_stencil_blur_unnormalized_s1_y_c___lp__lp_blur_unnormalized_s1_x_x_m_14_rp___p__8_rp__value);
 	// Produce: blur_unnormalized_stencil
 	blur_unnormalized_stencil_op_hcompute_blur_unnormalized_stencil_22_write_bundle_write(/* arg names */compute_result, blur_unnormalized_stencil, root, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 }
 
@@ -6727,21 +6727,21 @@ inline void op_hcompute_blur_unnormalized_stencil_23(blur_unnormalized_stencil_c
 	// Consume: blur_unnormalized_stencil_clkwrk_dsa28
 	auto blur_unnormalized_stencil_clkwrk_dsa28_blur_unnormalized_s1_y_c___lp__lp_blur_unnormalized_s1_x_x_m_14_rp___p__9_rp__value = blur_unnormalized_stencil_clkwrk_dsa28_op_hcompute_blur_unnormalized_stencil_23_read_bundle_read(blur_unnormalized_stencil_clkwrk_dsa28/* source_delay */, root, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 	// Consume: hw_input_global_wrapper_global_wrapper_stencil
 	auto hw_input_global_wrapper_global_wrapper_stencil_blur_unnormalized_s1_y_c___lp__lp_blur_unnormalized_s1_x_x_m_14_rp___p__9_rp__value = hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_23_read_bundle_read(hw_input_global_wrapper_global_wrapper_stencil/* source_delay */, root, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 	auto compute_result = hcompute_blur_unnormalized_stencil_23(blur_unnormalized_stencil_clkwrk_dsa28_blur_unnormalized_s1_y_c___lp__lp_blur_unnormalized_s1_x_x_m_14_rp___p__9_rp__value, hw_input_global_wrapper_global_wrapper_stencil_blur_unnormalized_s1_y_c___lp__lp_blur_unnormalized_s1_x_x_m_14_rp___p__9_rp__value);
 	// Produce: blur_unnormalized_stencil
 	blur_unnormalized_stencil_op_hcompute_blur_unnormalized_stencil_23_write_bundle_write(/* arg names */compute_result, blur_unnormalized_stencil, root, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 }
 
@@ -6751,21 +6751,21 @@ inline void op_hcompute_blur_unnormalized_stencil_24(blur_unnormalized_stencil_c
 	// Consume: blur_unnormalized_stencil_clkwrk_dsa28
 	auto blur_unnormalized_stencil_clkwrk_dsa28_blur_unnormalized_s1_y_c___lp__lp_blur_unnormalized_s1_x_x_m_14_rp___p__10_rp__value = blur_unnormalized_stencil_clkwrk_dsa28_op_hcompute_blur_unnormalized_stencil_24_read_bundle_read(blur_unnormalized_stencil_clkwrk_dsa28/* source_delay */, root, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 	// Consume: hw_input_global_wrapper_global_wrapper_stencil
 	auto hw_input_global_wrapper_global_wrapper_stencil_blur_unnormalized_s1_y_c___lp__lp_blur_unnormalized_s1_x_x_m_14_rp___p__10_rp__value = hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_24_read_bundle_read(hw_input_global_wrapper_global_wrapper_stencil/* source_delay */, root, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 	auto compute_result = hcompute_blur_unnormalized_stencil_24(blur_unnormalized_stencil_clkwrk_dsa28_blur_unnormalized_s1_y_c___lp__lp_blur_unnormalized_s1_x_x_m_14_rp___p__10_rp__value, hw_input_global_wrapper_global_wrapper_stencil_blur_unnormalized_s1_y_c___lp__lp_blur_unnormalized_s1_x_x_m_14_rp___p__10_rp__value);
 	// Produce: blur_unnormalized_stencil
 	blur_unnormalized_stencil_op_hcompute_blur_unnormalized_stencil_24_write_bundle_write(/* arg names */compute_result, blur_unnormalized_stencil, root, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 }
 
@@ -6775,21 +6775,21 @@ inline void op_hcompute_blur_unnormalized_stencil_25(blur_unnormalized_stencil_c
 	// Consume: blur_unnormalized_stencil_clkwrk_dsa28
 	auto blur_unnormalized_stencil_clkwrk_dsa28_blur_unnormalized_s1_y_c___lp__lp_blur_unnormalized_s1_x_x_m_14_rp___p__11_rp__value = blur_unnormalized_stencil_clkwrk_dsa28_op_hcompute_blur_unnormalized_stencil_25_read_bundle_read(blur_unnormalized_stencil_clkwrk_dsa28/* source_delay */, root, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 	// Consume: hw_input_global_wrapper_global_wrapper_stencil
 	auto hw_input_global_wrapper_global_wrapper_stencil_blur_unnormalized_s1_y_c___lp__lp_blur_unnormalized_s1_x_x_m_14_rp___p__11_rp__value = hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_25_read_bundle_read(hw_input_global_wrapper_global_wrapper_stencil/* source_delay */, root, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 	auto compute_result = hcompute_blur_unnormalized_stencil_25(blur_unnormalized_stencil_clkwrk_dsa28_blur_unnormalized_s1_y_c___lp__lp_blur_unnormalized_s1_x_x_m_14_rp___p__11_rp__value, hw_input_global_wrapper_global_wrapper_stencil_blur_unnormalized_s1_y_c___lp__lp_blur_unnormalized_s1_x_x_m_14_rp___p__11_rp__value);
 	// Produce: blur_unnormalized_stencil
 	blur_unnormalized_stencil_op_hcompute_blur_unnormalized_stencil_25_write_bundle_write(/* arg names */compute_result, blur_unnormalized_stencil, root, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 }
 
@@ -6799,21 +6799,21 @@ inline void op_hcompute_blur_unnormalized_stencil_26(blur_unnormalized_stencil_c
 	// Consume: blur_unnormalized_stencil_clkwrk_dsa28
 	auto blur_unnormalized_stencil_clkwrk_dsa28_blur_unnormalized_s1_y_c___lp__lp_blur_unnormalized_s1_x_x_m_14_rp___p__12_rp__value = blur_unnormalized_stencil_clkwrk_dsa28_op_hcompute_blur_unnormalized_stencil_26_read_bundle_read(blur_unnormalized_stencil_clkwrk_dsa28/* source_delay */, root, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 	// Consume: hw_input_global_wrapper_global_wrapper_stencil
 	auto hw_input_global_wrapper_global_wrapper_stencil_blur_unnormalized_s1_y_c___lp__lp_blur_unnormalized_s1_x_x_m_14_rp___p__12_rp__value = hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_26_read_bundle_read(hw_input_global_wrapper_global_wrapper_stencil/* source_delay */, root, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 	auto compute_result = hcompute_blur_unnormalized_stencil_26(blur_unnormalized_stencil_clkwrk_dsa28_blur_unnormalized_s1_y_c___lp__lp_blur_unnormalized_s1_x_x_m_14_rp___p__12_rp__value, hw_input_global_wrapper_global_wrapper_stencil_blur_unnormalized_s1_y_c___lp__lp_blur_unnormalized_s1_x_x_m_14_rp___p__12_rp__value);
 	// Produce: blur_unnormalized_stencil
 	blur_unnormalized_stencil_op_hcompute_blur_unnormalized_stencil_26_write_bundle_write(/* arg names */compute_result, blur_unnormalized_stencil, root, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 }
 
@@ -6823,21 +6823,21 @@ inline void op_hcompute_blur_unnormalized_stencil_27(blur_unnormalized_stencil_c
 	// Consume: blur_unnormalized_stencil_clkwrk_dsa28
 	auto blur_unnormalized_stencil_clkwrk_dsa28_blur_unnormalized_s1_y_c___lp__lp_blur_unnormalized_s1_x_x_m_14_rp___p__13_rp__value = blur_unnormalized_stencil_clkwrk_dsa28_op_hcompute_blur_unnormalized_stencil_27_read_bundle_read(blur_unnormalized_stencil_clkwrk_dsa28/* source_delay */, root, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 	// Consume: hw_input_global_wrapper_global_wrapper_stencil
 	auto hw_input_global_wrapper_global_wrapper_stencil_blur_unnormalized_s1_y_c___lp__lp_blur_unnormalized_s1_x_x_m_14_rp___p__13_rp__value = hw_input_global_wrapper_global_wrapper_stencil_op_hcompute_blur_unnormalized_stencil_27_read_bundle_read(hw_input_global_wrapper_global_wrapper_stencil/* source_delay */, root, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 	auto compute_result = hcompute_blur_unnormalized_stencil_27(blur_unnormalized_stencil_clkwrk_dsa28_blur_unnormalized_s1_y_c___lp__lp_blur_unnormalized_s1_x_x_m_14_rp___p__13_rp__value, hw_input_global_wrapper_global_wrapper_stencil_blur_unnormalized_s1_y_c___lp__lp_blur_unnormalized_s1_x_x_m_14_rp___p__13_rp__value);
 	// Produce: blur_unnormalized_stencil
 	blur_unnormalized_stencil_op_hcompute_blur_unnormalized_stencil_27_write_bundle_write(/* arg names */compute_result, blur_unnormalized_stencil, root, blur_unnormalized_s1_y, blur_unnormalized_s1_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 }
 
@@ -6847,15 +6847,15 @@ inline void op_hcompute_blur_stencil(blur_unnormalized_stencil_cache& blur_unnor
 	// Consume: blur_unnormalized_stencil
 	auto blur_unnormalized_stencil_blur_s0_y_c___lp_blur_s0_x_x_m_14_rp__value = blur_unnormalized_stencil_op_hcompute_blur_stencil_read_bundle_read(blur_unnormalized_stencil/* source_delay */, root, blur_s0_y, blur_s0_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 	auto compute_result = hcompute_blur_stencil(blur_unnormalized_stencil_blur_s0_y_c___lp_blur_s0_x_x_m_14_rp__value);
 	// Produce: blur_stencil
 	blur_stencil_op_hcompute_blur_stencil_write_bundle_write(/* arg names */compute_result, blur_stencil, root, blur_s0_y, blur_s0_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 }
 
@@ -6865,15 +6865,15 @@ inline void op_hcompute_blur_stencil_1(blur_unnormalized_stencil_cache& blur_unn
 	// Consume: blur_unnormalized_stencil
 	auto blur_unnormalized_stencil_blur_s0_y_c___lp__lp_blur_s0_x_x_m_14_rp___p__1_rp__value = blur_unnormalized_stencil_op_hcompute_blur_stencil_1_read_bundle_read(blur_unnormalized_stencil/* source_delay */, root, blur_s0_y, blur_s0_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 	auto compute_result = hcompute_blur_stencil_1(blur_unnormalized_stencil_blur_s0_y_c___lp__lp_blur_s0_x_x_m_14_rp___p__1_rp__value);
 	// Produce: blur_stencil
 	blur_stencil_op_hcompute_blur_stencil_1_write_bundle_write(/* arg names */compute_result, blur_stencil, root, blur_s0_y, blur_s0_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 }
 
@@ -6883,15 +6883,15 @@ inline void op_hcompute_blur_stencil_2(blur_unnormalized_stencil_cache& blur_unn
 	// Consume: blur_unnormalized_stencil
 	auto blur_unnormalized_stencil_blur_s0_y_c___lp__lp_blur_s0_x_x_m_14_rp___p__2_rp__value = blur_unnormalized_stencil_op_hcompute_blur_stencil_2_read_bundle_read(blur_unnormalized_stencil/* source_delay */, root, blur_s0_y, blur_s0_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 	auto compute_result = hcompute_blur_stencil_2(blur_unnormalized_stencil_blur_s0_y_c___lp__lp_blur_s0_x_x_m_14_rp___p__2_rp__value);
 	// Produce: blur_stencil
 	blur_stencil_op_hcompute_blur_stencil_2_write_bundle_write(/* arg names */compute_result, blur_stencil, root, blur_s0_y, blur_s0_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 }
 
@@ -6901,15 +6901,15 @@ inline void op_hcompute_blur_stencil_3(blur_unnormalized_stencil_cache& blur_unn
 	// Consume: blur_unnormalized_stencil
 	auto blur_unnormalized_stencil_blur_s0_y_c___lp__lp_blur_s0_x_x_m_14_rp___p__3_rp__value = blur_unnormalized_stencil_op_hcompute_blur_stencil_3_read_bundle_read(blur_unnormalized_stencil/* source_delay */, root, blur_s0_y, blur_s0_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 	auto compute_result = hcompute_blur_stencil_3(blur_unnormalized_stencil_blur_s0_y_c___lp__lp_blur_s0_x_x_m_14_rp___p__3_rp__value);
 	// Produce: blur_stencil
 	blur_stencil_op_hcompute_blur_stencil_3_write_bundle_write(/* arg names */compute_result, blur_stencil, root, blur_s0_y, blur_s0_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 }
 
@@ -6919,15 +6919,15 @@ inline void op_hcompute_blur_stencil_4(blur_unnormalized_stencil_cache& blur_unn
 	// Consume: blur_unnormalized_stencil
 	auto blur_unnormalized_stencil_blur_s0_y_c___lp__lp_blur_s0_x_x_m_14_rp___p__4_rp__value = blur_unnormalized_stencil_op_hcompute_blur_stencil_4_read_bundle_read(blur_unnormalized_stencil/* source_delay */, root, blur_s0_y, blur_s0_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 	auto compute_result = hcompute_blur_stencil_4(blur_unnormalized_stencil_blur_s0_y_c___lp__lp_blur_s0_x_x_m_14_rp___p__4_rp__value);
 	// Produce: blur_stencil
 	blur_stencil_op_hcompute_blur_stencil_4_write_bundle_write(/* arg names */compute_result, blur_stencil, root, blur_s0_y, blur_s0_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 }
 
@@ -6937,15 +6937,15 @@ inline void op_hcompute_blur_stencil_5(blur_unnormalized_stencil_cache& blur_unn
 	// Consume: blur_unnormalized_stencil
 	auto blur_unnormalized_stencil_blur_s0_y_c___lp__lp_blur_s0_x_x_m_14_rp___p__5_rp__value = blur_unnormalized_stencil_op_hcompute_blur_stencil_5_read_bundle_read(blur_unnormalized_stencil/* source_delay */, root, blur_s0_y, blur_s0_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 	auto compute_result = hcompute_blur_stencil_5(blur_unnormalized_stencil_blur_s0_y_c___lp__lp_blur_s0_x_x_m_14_rp___p__5_rp__value);
 	// Produce: blur_stencil
 	blur_stencil_op_hcompute_blur_stencil_5_write_bundle_write(/* arg names */compute_result, blur_stencil, root, blur_s0_y, blur_s0_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 }
 
@@ -6955,15 +6955,15 @@ inline void op_hcompute_blur_stencil_6(blur_unnormalized_stencil_cache& blur_unn
 	// Consume: blur_unnormalized_stencil
 	auto blur_unnormalized_stencil_blur_s0_y_c___lp__lp_blur_s0_x_x_m_14_rp___p__6_rp__value = blur_unnormalized_stencil_op_hcompute_blur_stencil_6_read_bundle_read(blur_unnormalized_stencil/* source_delay */, root, blur_s0_y, blur_s0_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 	auto compute_result = hcompute_blur_stencil_6(blur_unnormalized_stencil_blur_s0_y_c___lp__lp_blur_s0_x_x_m_14_rp___p__6_rp__value);
 	// Produce: blur_stencil
 	blur_stencil_op_hcompute_blur_stencil_6_write_bundle_write(/* arg names */compute_result, blur_stencil, root, blur_s0_y, blur_s0_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 }
 
@@ -6973,15 +6973,15 @@ inline void op_hcompute_blur_stencil_7(blur_unnormalized_stencil_cache& blur_unn
 	// Consume: blur_unnormalized_stencil
 	auto blur_unnormalized_stencil_blur_s0_y_c___lp__lp_blur_s0_x_x_m_14_rp___p__7_rp__value = blur_unnormalized_stencil_op_hcompute_blur_stencil_7_read_bundle_read(blur_unnormalized_stencil/* source_delay */, root, blur_s0_y, blur_s0_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 	auto compute_result = hcompute_blur_stencil_7(blur_unnormalized_stencil_blur_s0_y_c___lp__lp_blur_s0_x_x_m_14_rp___p__7_rp__value);
 	// Produce: blur_stencil
 	blur_stencil_op_hcompute_blur_stencil_7_write_bundle_write(/* arg names */compute_result, blur_stencil, root, blur_s0_y, blur_s0_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 }
 
@@ -6991,15 +6991,15 @@ inline void op_hcompute_blur_stencil_8(blur_unnormalized_stencil_cache& blur_unn
 	// Consume: blur_unnormalized_stencil
 	auto blur_unnormalized_stencil_blur_s0_y_c___lp__lp_blur_s0_x_x_m_14_rp___p__8_rp__value = blur_unnormalized_stencil_op_hcompute_blur_stencil_8_read_bundle_read(blur_unnormalized_stencil/* source_delay */, root, blur_s0_y, blur_s0_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 	auto compute_result = hcompute_blur_stencil_8(blur_unnormalized_stencil_blur_s0_y_c___lp__lp_blur_s0_x_x_m_14_rp___p__8_rp__value);
 	// Produce: blur_stencil
 	blur_stencil_op_hcompute_blur_stencil_8_write_bundle_write(/* arg names */compute_result, blur_stencil, root, blur_s0_y, blur_s0_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 }
 
@@ -7009,15 +7009,15 @@ inline void op_hcompute_blur_stencil_9(blur_unnormalized_stencil_cache& blur_unn
 	// Consume: blur_unnormalized_stencil
 	auto blur_unnormalized_stencil_blur_s0_y_c___lp__lp_blur_s0_x_x_m_14_rp___p__9_rp__value = blur_unnormalized_stencil_op_hcompute_blur_stencil_9_read_bundle_read(blur_unnormalized_stencil/* source_delay */, root, blur_s0_y, blur_s0_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 	auto compute_result = hcompute_blur_stencil_9(blur_unnormalized_stencil_blur_s0_y_c___lp__lp_blur_s0_x_x_m_14_rp___p__9_rp__value);
 	// Produce: blur_stencil
 	blur_stencil_op_hcompute_blur_stencil_9_write_bundle_write(/* arg names */compute_result, blur_stencil, root, blur_s0_y, blur_s0_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 }
 
@@ -7027,15 +7027,15 @@ inline void op_hcompute_blur_stencil_10(blur_unnormalized_stencil_cache& blur_un
 	// Consume: blur_unnormalized_stencil
 	auto blur_unnormalized_stencil_blur_s0_y_c___lp__lp_blur_s0_x_x_m_14_rp___p__10_rp__value = blur_unnormalized_stencil_op_hcompute_blur_stencil_10_read_bundle_read(blur_unnormalized_stencil/* source_delay */, root, blur_s0_y, blur_s0_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 	auto compute_result = hcompute_blur_stencil_10(blur_unnormalized_stencil_blur_s0_y_c___lp__lp_blur_s0_x_x_m_14_rp___p__10_rp__value);
 	// Produce: blur_stencil
 	blur_stencil_op_hcompute_blur_stencil_10_write_bundle_write(/* arg names */compute_result, blur_stencil, root, blur_s0_y, blur_s0_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 }
 
@@ -7045,15 +7045,15 @@ inline void op_hcompute_blur_stencil_11(blur_unnormalized_stencil_cache& blur_un
 	// Consume: blur_unnormalized_stencil
 	auto blur_unnormalized_stencil_blur_s0_y_c___lp__lp_blur_s0_x_x_m_14_rp___p__11_rp__value = blur_unnormalized_stencil_op_hcompute_blur_stencil_11_read_bundle_read(blur_unnormalized_stencil/* source_delay */, root, blur_s0_y, blur_s0_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 	auto compute_result = hcompute_blur_stencil_11(blur_unnormalized_stencil_blur_s0_y_c___lp__lp_blur_s0_x_x_m_14_rp___p__11_rp__value);
 	// Produce: blur_stencil
 	blur_stencil_op_hcompute_blur_stencil_11_write_bundle_write(/* arg names */compute_result, blur_stencil, root, blur_s0_y, blur_s0_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 }
 
@@ -7063,15 +7063,15 @@ inline void op_hcompute_blur_stencil_12(blur_unnormalized_stencil_cache& blur_un
 	// Consume: blur_unnormalized_stencil
 	auto blur_unnormalized_stencil_blur_s0_y_c___lp__lp_blur_s0_x_x_m_14_rp___p__12_rp__value = blur_unnormalized_stencil_op_hcompute_blur_stencil_12_read_bundle_read(blur_unnormalized_stencil/* source_delay */, root, blur_s0_y, blur_s0_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 	auto compute_result = hcompute_blur_stencil_12(blur_unnormalized_stencil_blur_s0_y_c___lp__lp_blur_s0_x_x_m_14_rp___p__12_rp__value);
 	// Produce: blur_stencil
 	blur_stencil_op_hcompute_blur_stencil_12_write_bundle_write(/* arg names */compute_result, blur_stencil, root, blur_s0_y, blur_s0_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 }
 
@@ -7081,15 +7081,15 @@ inline void op_hcompute_blur_stencil_13(blur_unnormalized_stencil_cache& blur_un
 	// Consume: blur_unnormalized_stencil
 	auto blur_unnormalized_stencil_blur_s0_y_c___lp__lp_blur_s0_x_x_m_14_rp___p__13_rp__value = blur_unnormalized_stencil_op_hcompute_blur_stencil_13_read_bundle_read(blur_unnormalized_stencil/* source_delay */, root, blur_s0_y, blur_s0_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 	auto compute_result = hcompute_blur_stencil_13(blur_unnormalized_stencil_blur_s0_y_c___lp__lp_blur_s0_x_x_m_14_rp___p__13_rp__value);
 	// Produce: blur_stencil
 	blur_stencil_op_hcompute_blur_stencil_13_write_bundle_write(/* arg names */compute_result, blur_stencil, root, blur_s0_y, blur_s0_x_x, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 }
 
@@ -7099,15 +7099,15 @@ inline void op_hcompute_hw_output_stencil(blur_stencil_cache& blur_stencil, hw_o
 	// Consume: blur_stencil
 	auto blur_stencil_hw_output_s0_y_yii_c___lp_hw_output_s0_x_xii_xii_m_14_rp__value = blur_stencil_op_hcompute_hw_output_stencil_read_bundle_read(blur_stencil/* source_delay */, root, hw_output_s0_y_yii, hw_output_s0_x_xii_xii, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 	auto compute_result = hcompute_hw_output_stencil(blur_stencil_hw_output_s0_y_yii_c___lp_hw_output_s0_x_xii_xii_m_14_rp__value);
 	// Produce: hw_output_stencil
 	hw_output_stencil_op_hcompute_hw_output_stencil_write_bundle_write(/* arg names */compute_result, hw_output_stencil, root, hw_output_s0_y_yii, hw_output_s0_x_xii_xii, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 }
 
@@ -7117,15 +7117,15 @@ inline void op_hcompute_hw_output_stencil_1(blur_stencil_cache& blur_stencil, hw
 	// Consume: blur_stencil
 	auto blur_stencil_hw_output_s0_y_yii_c___lp__lp_hw_output_s0_x_xii_xii_m_14_rp___p__1_rp__value = blur_stencil_op_hcompute_hw_output_stencil_1_read_bundle_read(blur_stencil/* source_delay */, root, hw_output_s0_y_yii, hw_output_s0_x_xii_xii, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 	auto compute_result = hcompute_hw_output_stencil_1(blur_stencil_hw_output_s0_y_yii_c___lp__lp_hw_output_s0_x_xii_xii_m_14_rp___p__1_rp__value);
 	// Produce: hw_output_stencil
 	hw_output_stencil_op_hcompute_hw_output_stencil_1_write_bundle_write(/* arg names */compute_result, hw_output_stencil, root, hw_output_s0_y_yii, hw_output_s0_x_xii_xii, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 }
 
@@ -7135,15 +7135,15 @@ inline void op_hcompute_hw_output_stencil_2(blur_stencil_cache& blur_stencil, hw
 	// Consume: blur_stencil
 	auto blur_stencil_hw_output_s0_y_yii_c___lp__lp_hw_output_s0_x_xii_xii_m_14_rp___p__2_rp__value = blur_stencil_op_hcompute_hw_output_stencil_2_read_bundle_read(blur_stencil/* source_delay */, root, hw_output_s0_y_yii, hw_output_s0_x_xii_xii, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 	auto compute_result = hcompute_hw_output_stencil_2(blur_stencil_hw_output_s0_y_yii_c___lp__lp_hw_output_s0_x_xii_xii_m_14_rp___p__2_rp__value);
 	// Produce: hw_output_stencil
 	hw_output_stencil_op_hcompute_hw_output_stencil_2_write_bundle_write(/* arg names */compute_result, hw_output_stencil, root, hw_output_s0_y_yii, hw_output_s0_x_xii_xii, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 }
 
@@ -7153,15 +7153,15 @@ inline void op_hcompute_hw_output_stencil_3(blur_stencil_cache& blur_stencil, hw
 	// Consume: blur_stencil
 	auto blur_stencil_hw_output_s0_y_yii_c___lp__lp_hw_output_s0_x_xii_xii_m_14_rp___p__3_rp__value = blur_stencil_op_hcompute_hw_output_stencil_3_read_bundle_read(blur_stencil/* source_delay */, root, hw_output_s0_y_yii, hw_output_s0_x_xii_xii, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 	auto compute_result = hcompute_hw_output_stencil_3(blur_stencil_hw_output_s0_y_yii_c___lp__lp_hw_output_s0_x_xii_xii_m_14_rp___p__3_rp__value);
 	// Produce: hw_output_stencil
 	hw_output_stencil_op_hcompute_hw_output_stencil_3_write_bundle_write(/* arg names */compute_result, hw_output_stencil, root, hw_output_s0_y_yii, hw_output_s0_x_xii_xii, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 }
 
@@ -7171,15 +7171,15 @@ inline void op_hcompute_hw_output_stencil_4(blur_stencil_cache& blur_stencil, hw
 	// Consume: blur_stencil
 	auto blur_stencil_hw_output_s0_y_yii_c___lp__lp_hw_output_s0_x_xii_xii_m_14_rp___p__4_rp__value = blur_stencil_op_hcompute_hw_output_stencil_4_read_bundle_read(blur_stencil/* source_delay */, root, hw_output_s0_y_yii, hw_output_s0_x_xii_xii, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 	auto compute_result = hcompute_hw_output_stencil_4(blur_stencil_hw_output_s0_y_yii_c___lp__lp_hw_output_s0_x_xii_xii_m_14_rp___p__4_rp__value);
 	// Produce: hw_output_stencil
 	hw_output_stencil_op_hcompute_hw_output_stencil_4_write_bundle_write(/* arg names */compute_result, hw_output_stencil, root, hw_output_s0_y_yii, hw_output_s0_x_xii_xii, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 }
 
@@ -7189,15 +7189,15 @@ inline void op_hcompute_hw_output_stencil_5(blur_stencil_cache& blur_stencil, hw
 	// Consume: blur_stencil
 	auto blur_stencil_hw_output_s0_y_yii_c___lp__lp_hw_output_s0_x_xii_xii_m_14_rp___p__5_rp__value = blur_stencil_op_hcompute_hw_output_stencil_5_read_bundle_read(blur_stencil/* source_delay */, root, hw_output_s0_y_yii, hw_output_s0_x_xii_xii, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 	auto compute_result = hcompute_hw_output_stencil_5(blur_stencil_hw_output_s0_y_yii_c___lp__lp_hw_output_s0_x_xii_xii_m_14_rp___p__5_rp__value);
 	// Produce: hw_output_stencil
 	hw_output_stencil_op_hcompute_hw_output_stencil_5_write_bundle_write(/* arg names */compute_result, hw_output_stencil, root, hw_output_s0_y_yii, hw_output_s0_x_xii_xii, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 }
 
@@ -7207,15 +7207,15 @@ inline void op_hcompute_hw_output_stencil_6(blur_stencil_cache& blur_stencil, hw
 	// Consume: blur_stencil
 	auto blur_stencil_hw_output_s0_y_yii_c___lp__lp_hw_output_s0_x_xii_xii_m_14_rp___p__6_rp__value = blur_stencil_op_hcompute_hw_output_stencil_6_read_bundle_read(blur_stencil/* source_delay */, root, hw_output_s0_y_yii, hw_output_s0_x_xii_xii, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 	auto compute_result = hcompute_hw_output_stencil_6(blur_stencil_hw_output_s0_y_yii_c___lp__lp_hw_output_s0_x_xii_xii_m_14_rp___p__6_rp__value);
 	// Produce: hw_output_stencil
 	hw_output_stencil_op_hcompute_hw_output_stencil_6_write_bundle_write(/* arg names */compute_result, hw_output_stencil, root, hw_output_s0_y_yii, hw_output_s0_x_xii_xii, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 }
 
@@ -7225,15 +7225,15 @@ inline void op_hcompute_hw_output_stencil_7(blur_stencil_cache& blur_stencil, hw
 	// Consume: blur_stencil
 	auto blur_stencil_hw_output_s0_y_yii_c___lp__lp_hw_output_s0_x_xii_xii_m_14_rp___p__7_rp__value = blur_stencil_op_hcompute_hw_output_stencil_7_read_bundle_read(blur_stencil/* source_delay */, root, hw_output_s0_y_yii, hw_output_s0_x_xii_xii, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 	auto compute_result = hcompute_hw_output_stencil_7(blur_stencil_hw_output_s0_y_yii_c___lp__lp_hw_output_s0_x_xii_xii_m_14_rp___p__7_rp__value);
 	// Produce: hw_output_stencil
 	hw_output_stencil_op_hcompute_hw_output_stencil_7_write_bundle_write(/* arg names */compute_result, hw_output_stencil, root, hw_output_s0_y_yii, hw_output_s0_x_xii_xii, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 }
 
@@ -7243,15 +7243,15 @@ inline void op_hcompute_hw_output_stencil_8(blur_stencil_cache& blur_stencil, hw
 	// Consume: blur_stencil
 	auto blur_stencil_hw_output_s0_y_yii_c___lp__lp_hw_output_s0_x_xii_xii_m_14_rp___p__8_rp__value = blur_stencil_op_hcompute_hw_output_stencil_8_read_bundle_read(blur_stencil/* source_delay */, root, hw_output_s0_y_yii, hw_output_s0_x_xii_xii, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 	auto compute_result = hcompute_hw_output_stencil_8(blur_stencil_hw_output_s0_y_yii_c___lp__lp_hw_output_s0_x_xii_xii_m_14_rp___p__8_rp__value);
 	// Produce: hw_output_stencil
 	hw_output_stencil_op_hcompute_hw_output_stencil_8_write_bundle_write(/* arg names */compute_result, hw_output_stencil, root, hw_output_s0_y_yii, hw_output_s0_x_xii_xii, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 }
 
@@ -7261,15 +7261,15 @@ inline void op_hcompute_hw_output_stencil_9(blur_stencil_cache& blur_stencil, hw
 	// Consume: blur_stencil
 	auto blur_stencil_hw_output_s0_y_yii_c___lp__lp_hw_output_s0_x_xii_xii_m_14_rp___p__9_rp__value = blur_stencil_op_hcompute_hw_output_stencil_9_read_bundle_read(blur_stencil/* source_delay */, root, hw_output_s0_y_yii, hw_output_s0_x_xii_xii, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 	auto compute_result = hcompute_hw_output_stencil_9(blur_stencil_hw_output_s0_y_yii_c___lp__lp_hw_output_s0_x_xii_xii_m_14_rp___p__9_rp__value);
 	// Produce: hw_output_stencil
 	hw_output_stencil_op_hcompute_hw_output_stencil_9_write_bundle_write(/* arg names */compute_result, hw_output_stencil, root, hw_output_s0_y_yii, hw_output_s0_x_xii_xii, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 }
 
@@ -7279,15 +7279,15 @@ inline void op_hcompute_hw_output_stencil_10(blur_stencil_cache& blur_stencil, h
 	// Consume: blur_stencil
 	auto blur_stencil_hw_output_s0_y_yii_c___lp__lp_hw_output_s0_x_xii_xii_m_14_rp___p__10_rp__value = blur_stencil_op_hcompute_hw_output_stencil_10_read_bundle_read(blur_stencil/* source_delay */, root, hw_output_s0_y_yii, hw_output_s0_x_xii_xii, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 	auto compute_result = hcompute_hw_output_stencil_10(blur_stencil_hw_output_s0_y_yii_c___lp__lp_hw_output_s0_x_xii_xii_m_14_rp___p__10_rp__value);
 	// Produce: hw_output_stencil
 	hw_output_stencil_op_hcompute_hw_output_stencil_10_write_bundle_write(/* arg names */compute_result, hw_output_stencil, root, hw_output_s0_y_yii, hw_output_s0_x_xii_xii, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 }
 
@@ -7297,15 +7297,15 @@ inline void op_hcompute_hw_output_stencil_11(blur_stencil_cache& blur_stencil, h
 	// Consume: blur_stencil
 	auto blur_stencil_hw_output_s0_y_yii_c___lp__lp_hw_output_s0_x_xii_xii_m_14_rp___p__11_rp__value = blur_stencil_op_hcompute_hw_output_stencil_11_read_bundle_read(blur_stencil/* source_delay */, root, hw_output_s0_y_yii, hw_output_s0_x_xii_xii, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 	auto compute_result = hcompute_hw_output_stencil_11(blur_stencil_hw_output_s0_y_yii_c___lp__lp_hw_output_s0_x_xii_xii_m_14_rp___p__11_rp__value);
 	// Produce: hw_output_stencil
 	hw_output_stencil_op_hcompute_hw_output_stencil_11_write_bundle_write(/* arg names */compute_result, hw_output_stencil, root, hw_output_s0_y_yii, hw_output_s0_x_xii_xii, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 }
 
@@ -7315,15 +7315,15 @@ inline void op_hcompute_hw_output_stencil_12(blur_stencil_cache& blur_stencil, h
 	// Consume: blur_stencil
 	auto blur_stencil_hw_output_s0_y_yii_c___lp__lp_hw_output_s0_x_xii_xii_m_14_rp___p__12_rp__value = blur_stencil_op_hcompute_hw_output_stencil_12_read_bundle_read(blur_stencil/* source_delay */, root, hw_output_s0_y_yii, hw_output_s0_x_xii_xii, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 	auto compute_result = hcompute_hw_output_stencil_12(blur_stencil_hw_output_s0_y_yii_c___lp__lp_hw_output_s0_x_xii_xii_m_14_rp___p__12_rp__value);
 	// Produce: hw_output_stencil
 	hw_output_stencil_op_hcompute_hw_output_stencil_12_write_bundle_write(/* arg names */compute_result, hw_output_stencil, root, hw_output_s0_y_yii, hw_output_s0_x_xii_xii, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 }
 
@@ -7333,15 +7333,15 @@ inline void op_hcompute_hw_output_stencil_13(blur_stencil_cache& blur_stencil, h
 	// Consume: blur_stencil
 	auto blur_stencil_hw_output_s0_y_yii_c___lp__lp_hw_output_s0_x_xii_xii_m_14_rp___p__13_rp__value = blur_stencil_op_hcompute_hw_output_stencil_13_read_bundle_read(blur_stencil/* source_delay */, root, hw_output_s0_y_yii, hw_output_s0_x_xii_xii, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 	auto compute_result = hcompute_hw_output_stencil_13(blur_stencil_hw_output_s0_y_yii_c___lp__lp_hw_output_s0_x_xii_xii_m_14_rp___p__13_rp__value);
 	// Produce: hw_output_stencil
 	hw_output_stencil_op_hcompute_hw_output_stencil_13_write_bundle_write(/* arg names */compute_result, hw_output_stencil, root, hw_output_s0_y_yii, hw_output_s0_x_xii_xii, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 }
 
@@ -7351,15 +7351,15 @@ inline void op_hcompute_hw_output_global_wrapper_glb_stencil(hw_output_stencil_c
 	// Consume: hw_output_stencil
 	auto hw_output_stencil_hw_output_global_wrapper_s0_y_yi_c___lp_hw_output_global_wrapper_s0_x_xi_xi_m_14_rp__value = hw_output_stencil_op_hcompute_hw_output_global_wrapper_glb_stencil_read_bundle_read(hw_output_stencil/* source_delay */, root, hw_output_global_wrapper_s0_y_yi, hw_output_global_wrapper_s0_x_xi_xi, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 	auto compute_result = hcompute_hw_output_global_wrapper_glb_stencil(hw_output_stencil_hw_output_global_wrapper_s0_y_yi_c___lp_hw_output_global_wrapper_s0_x_xi_xi_m_14_rp__value);
 	// Produce: hw_output_global_wrapper_glb_stencil_clkwrk_14
 	hw_output_global_wrapper_glb_stencil_clkwrk_14.write(compute_result);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 }
 
@@ -7369,15 +7369,15 @@ inline void op_hcompute_hw_output_global_wrapper_glb_stencil_1(hw_output_stencil
 	// Consume: hw_output_stencil
 	auto hw_output_stencil_hw_output_global_wrapper_s0_y_yi_c___lp__lp_hw_output_global_wrapper_s0_x_xi_xi_m_14_rp___p__1_rp__value = hw_output_stencil_op_hcompute_hw_output_global_wrapper_glb_stencil_1_read_bundle_read(hw_output_stencil/* source_delay */, root, hw_output_global_wrapper_s0_y_yi, hw_output_global_wrapper_s0_x_xi_xi, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 	auto compute_result = hcompute_hw_output_global_wrapper_glb_stencil_1(hw_output_stencil_hw_output_global_wrapper_s0_y_yi_c___lp__lp_hw_output_global_wrapper_s0_x_xi_xi_m_14_rp___p__1_rp__value);
 	// Produce: hw_output_global_wrapper_glb_stencil_clkwrk_15
 	hw_output_global_wrapper_glb_stencil_clkwrk_15.write(compute_result);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 }
 
@@ -7387,15 +7387,15 @@ inline void op_hcompute_hw_output_global_wrapper_glb_stencil_2(hw_output_stencil
 	// Consume: hw_output_stencil
 	auto hw_output_stencil_hw_output_global_wrapper_s0_y_yi_c___lp__lp_hw_output_global_wrapper_s0_x_xi_xi_m_14_rp___p__2_rp__value = hw_output_stencil_op_hcompute_hw_output_global_wrapper_glb_stencil_2_read_bundle_read(hw_output_stencil/* source_delay */, root, hw_output_global_wrapper_s0_y_yi, hw_output_global_wrapper_s0_x_xi_xi, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 	auto compute_result = hcompute_hw_output_global_wrapper_glb_stencil_2(hw_output_stencil_hw_output_global_wrapper_s0_y_yi_c___lp__lp_hw_output_global_wrapper_s0_x_xi_xi_m_14_rp___p__2_rp__value);
 	// Produce: hw_output_global_wrapper_glb_stencil_clkwrk_16
 	hw_output_global_wrapper_glb_stencil_clkwrk_16.write(compute_result);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 }
 
@@ -7405,15 +7405,15 @@ inline void op_hcompute_hw_output_global_wrapper_glb_stencil_3(hw_output_stencil
 	// Consume: hw_output_stencil
 	auto hw_output_stencil_hw_output_global_wrapper_s0_y_yi_c___lp__lp_hw_output_global_wrapper_s0_x_xi_xi_m_14_rp___p__3_rp__value = hw_output_stencil_op_hcompute_hw_output_global_wrapper_glb_stencil_3_read_bundle_read(hw_output_stencil/* source_delay */, root, hw_output_global_wrapper_s0_y_yi, hw_output_global_wrapper_s0_x_xi_xi, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 	auto compute_result = hcompute_hw_output_global_wrapper_glb_stencil_3(hw_output_stencil_hw_output_global_wrapper_s0_y_yi_c___lp__lp_hw_output_global_wrapper_s0_x_xi_xi_m_14_rp___p__3_rp__value);
 	// Produce: hw_output_global_wrapper_glb_stencil_clkwrk_17
 	hw_output_global_wrapper_glb_stencil_clkwrk_17.write(compute_result);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 }
 
@@ -7423,15 +7423,15 @@ inline void op_hcompute_hw_output_global_wrapper_glb_stencil_4(hw_output_stencil
 	// Consume: hw_output_stencil
 	auto hw_output_stencil_hw_output_global_wrapper_s0_y_yi_c___lp__lp_hw_output_global_wrapper_s0_x_xi_xi_m_14_rp___p__4_rp__value = hw_output_stencil_op_hcompute_hw_output_global_wrapper_glb_stencil_4_read_bundle_read(hw_output_stencil/* source_delay */, root, hw_output_global_wrapper_s0_y_yi, hw_output_global_wrapper_s0_x_xi_xi, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 	auto compute_result = hcompute_hw_output_global_wrapper_glb_stencil_4(hw_output_stencil_hw_output_global_wrapper_s0_y_yi_c___lp__lp_hw_output_global_wrapper_s0_x_xi_xi_m_14_rp___p__4_rp__value);
 	// Produce: hw_output_global_wrapper_glb_stencil_clkwrk_18
 	hw_output_global_wrapper_glb_stencil_clkwrk_18.write(compute_result);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 }
 
@@ -7441,15 +7441,15 @@ inline void op_hcompute_hw_output_global_wrapper_glb_stencil_5(hw_output_stencil
 	// Consume: hw_output_stencil
 	auto hw_output_stencil_hw_output_global_wrapper_s0_y_yi_c___lp__lp_hw_output_global_wrapper_s0_x_xi_xi_m_14_rp___p__5_rp__value = hw_output_stencil_op_hcompute_hw_output_global_wrapper_glb_stencil_5_read_bundle_read(hw_output_stencil/* source_delay */, root, hw_output_global_wrapper_s0_y_yi, hw_output_global_wrapper_s0_x_xi_xi, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 	auto compute_result = hcompute_hw_output_global_wrapper_glb_stencil_5(hw_output_stencil_hw_output_global_wrapper_s0_y_yi_c___lp__lp_hw_output_global_wrapper_s0_x_xi_xi_m_14_rp___p__5_rp__value);
 	// Produce: hw_output_global_wrapper_glb_stencil_clkwrk_19
 	hw_output_global_wrapper_glb_stencil_clkwrk_19.write(compute_result);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 }
 
@@ -7459,15 +7459,15 @@ inline void op_hcompute_hw_output_global_wrapper_glb_stencil_6(hw_output_stencil
 	// Consume: hw_output_stencil
 	auto hw_output_stencil_hw_output_global_wrapper_s0_y_yi_c___lp__lp_hw_output_global_wrapper_s0_x_xi_xi_m_14_rp___p__6_rp__value = hw_output_stencil_op_hcompute_hw_output_global_wrapper_glb_stencil_6_read_bundle_read(hw_output_stencil/* source_delay */, root, hw_output_global_wrapper_s0_y_yi, hw_output_global_wrapper_s0_x_xi_xi, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 	auto compute_result = hcompute_hw_output_global_wrapper_glb_stencil_6(hw_output_stencil_hw_output_global_wrapper_s0_y_yi_c___lp__lp_hw_output_global_wrapper_s0_x_xi_xi_m_14_rp___p__6_rp__value);
 	// Produce: hw_output_global_wrapper_glb_stencil_clkwrk_20
 	hw_output_global_wrapper_glb_stencil_clkwrk_20.write(compute_result);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 }
 
@@ -7477,15 +7477,15 @@ inline void op_hcompute_hw_output_global_wrapper_glb_stencil_7(hw_output_stencil
 	// Consume: hw_output_stencil
 	auto hw_output_stencil_hw_output_global_wrapper_s0_y_yi_c___lp__lp_hw_output_global_wrapper_s0_x_xi_xi_m_14_rp___p__7_rp__value = hw_output_stencil_op_hcompute_hw_output_global_wrapper_glb_stencil_7_read_bundle_read(hw_output_stencil/* source_delay */, root, hw_output_global_wrapper_s0_y_yi, hw_output_global_wrapper_s0_x_xi_xi, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 	auto compute_result = hcompute_hw_output_global_wrapper_glb_stencil_7(hw_output_stencil_hw_output_global_wrapper_s0_y_yi_c___lp__lp_hw_output_global_wrapper_s0_x_xi_xi_m_14_rp___p__7_rp__value);
 	// Produce: hw_output_global_wrapper_glb_stencil_clkwrk_21
 	hw_output_global_wrapper_glb_stencil_clkwrk_21.write(compute_result);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 }
 
@@ -7495,15 +7495,15 @@ inline void op_hcompute_hw_output_global_wrapper_glb_stencil_8(hw_output_stencil
 	// Consume: hw_output_stencil
 	auto hw_output_stencil_hw_output_global_wrapper_s0_y_yi_c___lp__lp_hw_output_global_wrapper_s0_x_xi_xi_m_14_rp___p__8_rp__value = hw_output_stencil_op_hcompute_hw_output_global_wrapper_glb_stencil_8_read_bundle_read(hw_output_stencil/* source_delay */, root, hw_output_global_wrapper_s0_y_yi, hw_output_global_wrapper_s0_x_xi_xi, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 	auto compute_result = hcompute_hw_output_global_wrapper_glb_stencil_8(hw_output_stencil_hw_output_global_wrapper_s0_y_yi_c___lp__lp_hw_output_global_wrapper_s0_x_xi_xi_m_14_rp___p__8_rp__value);
 	// Produce: hw_output_global_wrapper_glb_stencil_clkwrk_22
 	hw_output_global_wrapper_glb_stencil_clkwrk_22.write(compute_result);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 }
 
@@ -7513,15 +7513,15 @@ inline void op_hcompute_hw_output_global_wrapper_glb_stencil_9(hw_output_stencil
 	// Consume: hw_output_stencil
 	auto hw_output_stencil_hw_output_global_wrapper_s0_y_yi_c___lp__lp_hw_output_global_wrapper_s0_x_xi_xi_m_14_rp___p__9_rp__value = hw_output_stencil_op_hcompute_hw_output_global_wrapper_glb_stencil_9_read_bundle_read(hw_output_stencil/* source_delay */, root, hw_output_global_wrapper_s0_y_yi, hw_output_global_wrapper_s0_x_xi_xi, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 	auto compute_result = hcompute_hw_output_global_wrapper_glb_stencil_9(hw_output_stencil_hw_output_global_wrapper_s0_y_yi_c___lp__lp_hw_output_global_wrapper_s0_x_xi_xi_m_14_rp___p__9_rp__value);
 	// Produce: hw_output_global_wrapper_glb_stencil_clkwrk_23
 	hw_output_global_wrapper_glb_stencil_clkwrk_23.write(compute_result);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 }
 
@@ -7531,15 +7531,15 @@ inline void op_hcompute_hw_output_global_wrapper_glb_stencil_10(hw_output_stenci
 	// Consume: hw_output_stencil
 	auto hw_output_stencil_hw_output_global_wrapper_s0_y_yi_c___lp__lp_hw_output_global_wrapper_s0_x_xi_xi_m_14_rp___p__10_rp__value = hw_output_stencil_op_hcompute_hw_output_global_wrapper_glb_stencil_10_read_bundle_read(hw_output_stencil/* source_delay */, root, hw_output_global_wrapper_s0_y_yi, hw_output_global_wrapper_s0_x_xi_xi, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 	auto compute_result = hcompute_hw_output_global_wrapper_glb_stencil_10(hw_output_stencil_hw_output_global_wrapper_s0_y_yi_c___lp__lp_hw_output_global_wrapper_s0_x_xi_xi_m_14_rp___p__10_rp__value);
 	// Produce: hw_output_global_wrapper_glb_stencil_clkwrk_24
 	hw_output_global_wrapper_glb_stencil_clkwrk_24.write(compute_result);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 }
 
@@ -7549,15 +7549,15 @@ inline void op_hcompute_hw_output_global_wrapper_glb_stencil_11(hw_output_stenci
 	// Consume: hw_output_stencil
 	auto hw_output_stencil_hw_output_global_wrapper_s0_y_yi_c___lp__lp_hw_output_global_wrapper_s0_x_xi_xi_m_14_rp___p__11_rp__value = hw_output_stencil_op_hcompute_hw_output_global_wrapper_glb_stencil_11_read_bundle_read(hw_output_stencil/* source_delay */, root, hw_output_global_wrapper_s0_y_yi, hw_output_global_wrapper_s0_x_xi_xi, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 	auto compute_result = hcompute_hw_output_global_wrapper_glb_stencil_11(hw_output_stencil_hw_output_global_wrapper_s0_y_yi_c___lp__lp_hw_output_global_wrapper_s0_x_xi_xi_m_14_rp___p__11_rp__value);
 	// Produce: hw_output_global_wrapper_glb_stencil_clkwrk_25
 	hw_output_global_wrapper_glb_stencil_clkwrk_25.write(compute_result);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 }
 
@@ -7567,15 +7567,15 @@ inline void op_hcompute_hw_output_global_wrapper_glb_stencil_12(hw_output_stenci
 	// Consume: hw_output_stencil
 	auto hw_output_stencil_hw_output_global_wrapper_s0_y_yi_c___lp__lp_hw_output_global_wrapper_s0_x_xi_xi_m_14_rp___p__12_rp__value = hw_output_stencil_op_hcompute_hw_output_global_wrapper_glb_stencil_12_read_bundle_read(hw_output_stencil/* source_delay */, root, hw_output_global_wrapper_s0_y_yi, hw_output_global_wrapper_s0_x_xi_xi, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 	auto compute_result = hcompute_hw_output_global_wrapper_glb_stencil_12(hw_output_stencil_hw_output_global_wrapper_s0_y_yi_c___lp__lp_hw_output_global_wrapper_s0_x_xi_xi_m_14_rp___p__12_rp__value);
 	// Produce: hw_output_global_wrapper_glb_stencil_clkwrk_26
 	hw_output_global_wrapper_glb_stencil_clkwrk_26.write(compute_result);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 }
 
@@ -7585,46 +7585,46 @@ inline void op_hcompute_hw_output_global_wrapper_glb_stencil_13(hw_output_stenci
 	// Consume: hw_output_stencil
 	auto hw_output_stencil_hw_output_global_wrapper_s0_y_yi_c___lp__lp_hw_output_global_wrapper_s0_x_xi_xi_m_14_rp___p__13_rp__value = hw_output_stencil_op_hcompute_hw_output_global_wrapper_glb_stencil_13_read_bundle_read(hw_output_stencil/* source_delay */, root, hw_output_global_wrapper_s0_y_yi, hw_output_global_wrapper_s0_x_xi_xi, 0);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 	auto compute_result = hcompute_hw_output_global_wrapper_glb_stencil_13(hw_output_stencil_hw_output_global_wrapper_s0_y_yi_c___lp__lp_hw_output_global_wrapper_s0_x_xi_xi_m_14_rp___p__13_rp__value);
 	// Produce: hw_output_global_wrapper_glb_stencil_clkwrk_27
 	hw_output_global_wrapper_glb_stencil_clkwrk_27.write(compute_result);
 
-#ifndef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
 
 }
 
 // Driver function
 void gaussian(HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */hw_input_stencil_clkwrk_0, HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */hw_input_stencil_clkwrk_1, HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */hw_input_stencil_clkwrk_10, HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */hw_input_stencil_clkwrk_11, HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */hw_input_stencil_clkwrk_12, HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */hw_input_stencil_clkwrk_13, HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */hw_input_stencil_clkwrk_2, HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */hw_input_stencil_clkwrk_3, HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */hw_input_stencil_clkwrk_4, HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */hw_input_stencil_clkwrk_5, HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */hw_input_stencil_clkwrk_6, HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */hw_input_stencil_clkwrk_7, HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */hw_input_stencil_clkwrk_8, HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */hw_input_stencil_clkwrk_9, HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */hw_output_global_wrapper_glb_stencil_clkwrk_14, HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */hw_output_global_wrapper_glb_stencil_clkwrk_15, HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */hw_output_global_wrapper_glb_stencil_clkwrk_16, HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */hw_output_global_wrapper_glb_stencil_clkwrk_17, HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */hw_output_global_wrapper_glb_stencil_clkwrk_18, HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */hw_output_global_wrapper_glb_stencil_clkwrk_19, HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */hw_output_global_wrapper_glb_stencil_clkwrk_20, HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */hw_output_global_wrapper_glb_stencil_clkwrk_21, HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */hw_output_global_wrapper_glb_stencil_clkwrk_22, HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */hw_output_global_wrapper_glb_stencil_clkwrk_23, HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */hw_output_global_wrapper_glb_stencil_clkwrk_24, HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */hw_output_global_wrapper_glb_stencil_clkwrk_25, HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */hw_output_global_wrapper_glb_stencil_clkwrk_26, HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */hw_output_global_wrapper_glb_stencil_clkwrk_27) {
 
-#ifndef __SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
   ofstream debug_file("gaussian_debug.csv");
   global_debug_handle = &debug_file;
-#endif //__SYNTHESIS__
+#endif //__VIVADO_SYNTH__
   blur_stencil_cache blur_stencil;
-#ifdef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   blur_unnormalized_stencil_cache blur_unnormalized_stencil;
-#ifdef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   blur_unnormalized_stencil_clkwrk_dsa28_cache blur_unnormalized_stencil_clkwrk_dsa28;
-#ifdef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   hw_input_global_wrapper_glb_stencil_cache hw_input_global_wrapper_glb_stencil;
-#ifdef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   hw_input_global_wrapper_global_wrapper_stencil_cache hw_input_global_wrapper_global_wrapper_stencil;
-#ifdef __SYNTHESIS__
-#endif //__SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   hw_output_stencil_cache hw_output_stencil;
-#ifdef __SYNTHESIS__
-#endif //__SYNTHESIS__
-#ifdef __SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+#ifdef __VIVADO_SYNTH__
 #pragma HLS inline recursive
-#endif // __SYNTHESIS__
+#endif // __VIVADO_SYNTH__
 
 // schedule: { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_8[d0 = 0, d1, d2] -> [0, d1, d2, 22] : 0 <= d1 <= 62 and 0 <= d2 <= 4; op_hcompute_blur_unnormalized_stencil_5[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 33] : 0 <= d1 <= 61 and 0 <= d2 <= 3; op_hcompute_blur_stencil_4[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 60] : 0 <= d1 <= 61 and 0 <= d2 <= 3; op_hcompute_hw_output_global_wrapper_glb_stencil_7[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 91] : 0 <= d1 <= 61 and 0 <= d2 <= 3; op_hcompute_hw_output_global_wrapper_glb_stencil_1[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 85] : 0 <= d1 <= 61 and 0 <= d2 <= 3; op_hcompute_hw_output_stencil_5[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 75] : 0 <= d1 <= 61 and 0 <= d2 <= 3; op_hcompute_blur_unnormalized_stencil_6[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 34] : 0 <= d1 <= 61 and 0 <= d2 <= 3; op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_10[d0 = 0, d1, d2] -> [0, d1, d2, 24] : 0 <= d1 <= 62 and 0 <= d2 <= 4; op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_11[d0 = 0, d1, d2] -> [0, d1, d2, 25] : 0 <= d1 <= 62 and 0 <= d2 <= 4; op_hcompute_blur_unnormalized_stencil_14[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 42] : 0 <= d1 <= 61 and 0 <= d2 <= 3; op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_12[d0 = 0, d1, d2] -> [0, d1, d2, 26] : 0 <= d1 <= 62 and 0 <= d2 <= 4; op_hcompute_hw_input_global_wrapper_glb_stencil_8[d0 = 0, d1, d2] -> [0, d1, d2, 8] : 0 <= d1 <= 62 and 0 <= d2 <= 4; op_hcompute_hw_output_global_wrapper_glb_stencil[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 84] : 0 <= d1 <= 61 and 0 <= d2 <= 3; op_hcompute_blur_unnormalized_stencil_3[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 31] : 0 <= d1 <= 61 and 0 <= d2 <= 3; op_hcompute_blur_stencil_10[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 66] : 0 <= d1 <= 61 and 0 <= d2 <= 3; op_hcompute_hw_output_stencil_7[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 77] : 0 <= d1 <= 61 and 0 <= d2 <= 3; op_hcompute_hw_output_global_wrapper_glb_stencil_8[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 92] : 0 <= d1 <= 61 and 0 <= d2 <= 3; op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_7[d0 = 0, d1, d2] -> [0, d1, d2, 21] : 0 <= d1 <= 62 and 0 <= d2 <= 4; op_hcompute_hw_output_stencil_4[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 74] : 0 <= d1 <= 61 and 0 <= d2 <= 3; op_hcompute_blur_unnormalized_stencil_21[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 49] : 0 <= d1 <= 61 and 0 <= d2 <= 3; op_hcompute_blur_unnormalized_stencil_16[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 44] : 0 <= d1 <= 61 and 0 <= d2 <= 3; op_hcompute_blur_stencil_1[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 57] : 0 <= d1 <= 61 and 0 <= d2 <= 3; op_hcompute_blur_stencil_13[d0 = 0, d1, d2] -> [0, 1 + d1, 1 + d2, 69] : 0 <= d1 <= 61 and 0 <= d2 <= 3; op_hcompute_hw_input_global_wrapper_glb_stencil_5[d0 = 0, d1, d2] -> [0, d1, d2, 5] : 0 <= d1 <= 62 and 0 <= d2 <= 4; op_hcompute_hw_output_global_wrapper_glb_stencil_6[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 90] : 0 <= d1 <= 61 and 0 <= d2 <= 3; op_hcompute_hw_output_global_wrapper_glb_stencil_4[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 88] : 0 <= d1 <= 61 and 0 <= d2 <= 3; op_hcompute_hw_output_stencil_8[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 78] : 0 <= d1 <= 61 and 0 <= d2 <= 3; op_hcompute_blur_stencil_3[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 59] : 0 <= d1 <= 61 and 0 <= d2 <= 3; op_hcompute_hw_output_stencil[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 70] : 0 <= d1 <= 61 and 0 <= d2 <= 3; op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_5[d0 = 0, d1, d2] -> [0, d1, d2, 19] : 0 <= d1 <= 62 and 0 <= d2 <= 4; op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_4[d0 = 0, d1, d2] -> [0, d1, d2, 18] : 0 <= d1 <= 62 and 0 <= d2 <= 4; op_hcompute_hw_output_stencil_10[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 80] : 0 <= d1 <= 61 and 0 <= d2 <= 3; op_hcompute_hw_output_stencil_9[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 79] : 0 <= d1 <= 61 and 0 <= d2 <= 3; op_hcompute_hw_output_global_wrapper_glb_stencil_2[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 86] : 0 <= d1 <= 61 and 0 <= d2 <= 3; op_hcompute_blur_unnormalized_stencil[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 28] : 0 <= d1 <= 61 and 0 <= d2 <= 3; op_hcompute_blur_stencil_9[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 65] : 0 <= d1 <= 61 and 0 <= d2 <= 3; op_hcompute_blur_unnormalized_stencil_9[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 37] : 0 <= d1 <= 61 and 0 <= d2 <= 3; op_hcompute_blur_stencil_8[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 64] : 0 <= d1 <= 61 and 0 <= d2 <= 3; op_hcompute_blur_unnormalized_stencil_2[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 30] : 0 <= d1 <= 61 and 0 <= d2 <= 3; op_hcompute_hw_input_global_wrapper_glb_stencil_11[d0 = 0, d1, d2] -> [0, d1, d2, 11] : 0 <= d1 <= 62 and 0 <= d2 <= 4; op_hcompute_hw_input_global_wrapper_global_wrapper_stencil[d0 = 0, d1, d2] -> [0, d1, d2, 14] : 0 <= d1 <= 62 and 0 <= d2 <= 4; op_hcompute_blur_unnormalized_stencil_27[d0 = 0, d1, d2] -> [0, 1 + d1, 1 + d2, 55] : 0 <= d1 <= 61 and 0 <= d2 <= 3; op_hcompute_hw_input_global_wrapper_glb_stencil_7[d0 = 0, d1, d2] -> [0, d1, d2, 7] : 0 <= d1 <= 62 and 0 <= d2 <= 4; op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_1[d0 = 0, d1, d2] -> [0, d1, d2, 15] : 0 <= d1 <= 62 and 0 <= d2 <= 4; op_hcompute_blur_unnormalized_stencil_8[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 36] : 0 <= d1 <= 61 and 0 <= d2 <= 3; op_hcompute_blur_stencil_12[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 68] : 0 <= d1 <= 61 and 0 <= d2 <= 3; op_hcompute_hw_input_global_wrapper_glb_stencil_2[d0 = 0, d1, d2] -> [0, d1, d2, 2] : 0 <= d1 <= 62 and 0 <= d2 <= 4; op_hcompute_blur_unnormalized_stencil_20[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 48] : 0 <= d1 <= 61 and 0 <= d2 <= 3; op_hcompute_hw_input_global_wrapper_glb_stencil_9[d0 = 0, d1, d2] -> [0, d1, d2, 9] : 0 <= d1 <= 62 and 0 <= d2 <= 4; op_hcompute_blur_stencil_7[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 63] : 0 <= d1 <= 61 and 0 <= d2 <= 3; op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_6[d0 = 0, d1, d2] -> [0, d1, d2, 20] : 0 <= d1 <= 62 and 0 <= d2 <= 4; op_hcompute_blur_unnormalized_stencil_12[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 40] : 0 <= d1 <= 61 and 0 <= d2 <= 3; op_hcompute_hw_input_global_wrapper_glb_stencil_13[d0 = 0, d1, d2] -> [0, d1, d2, 13] : 0 <= d1 <= 62 and 0 <= d2 <= 4; op_hcompute_blur_unnormalized_stencil_18[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 46] : 0 <= d1 <= 61 and 0 <= d2 <= 3; op_hcompute_hw_output_global_wrapper_glb_stencil_9[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 93] : 0 <= d1 <= 61 and 0 <= d2 <= 3; op_hcompute_blur_unnormalized_stencil_4[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 32] : 0 <= d1 <= 61 and 0 <= d2 <= 3; op_hcompute_blur_unnormalized_stencil_1[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 29] : 0 <= d1 <= 61 and 0 <= d2 <= 3; op_hcompute_blur_stencil_5[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 61] : 0 <= d1 <= 61 and 0 <= d2 <= 3; op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_13[d0 = 0, d1, d2] -> [0, d1, d2, 27] : 0 <= d1 <= 62 and 0 <= d2 <= 4; op_hcompute_hw_input_global_wrapper_glb_stencil_4[d0 = 0, d1, d2] -> [0, d1, d2, 4] : 0 <= d1 <= 62 and 0 <= d2 <= 4; op_hcompute_blur_stencil_6[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 62] : 0 <= d1 <= 61 and 0 <= d2 <= 3; op_hcompute_blur_unnormalized_stencil_7[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 35] : 0 <= d1 <= 61 and 0 <= d2 <= 3; op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_2[d0 = 0, d1, d2] -> [0, d1, d2, 16] : 0 <= d1 <= 62 and 0 <= d2 <= 4; op_hcompute_hw_output_global_wrapper_glb_stencil_5[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 89] : 0 <= d1 <= 61 and 0 <= d2 <= 3; op_hcompute_blur_stencil_11[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 67] : 0 <= d1 <= 61 and 0 <= d2 <= 3; op_hcompute_blur_unnormalized_stencil_15[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 43] : 0 <= d1 <= 61 and 0 <= d2 <= 3; op_hcompute_hw_output_global_wrapper_glb_stencil_3[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 87] : 0 <= d1 <= 61 and 0 <= d2 <= 3; op_hcompute_hw_input_global_wrapper_glb_stencil[d0 = 0, d1, d2] -> [0, d1, d2, 0] : 0 <= d1 <= 62 and 0 <= d2 <= 4; op_hcompute_hw_input_global_wrapper_glb_stencil_12[d0 = 0, d1, d2] -> [0, d1, d2, 12] : 0 <= d1 <= 62 and 0 <= d2 <= 4; op_hcompute_hw_output_stencil_11[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 81] : 0 <= d1 <= 61 and 0 <= d2 <= 3; op_hcompute_hw_output_stencil_3[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 73] : 0 <= d1 <= 61 and 0 <= d2 <= 3; op_hcompute_hw_output_stencil_12[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 82] : 0 <= d1 <= 61 and 0 <= d2 <= 3; op_hcompute_blur_stencil_2[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 58] : 0 <= d1 <= 61 and 0 <= d2 <= 3; op_hcompute_hw_output_stencil_6[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 76] : 0 <= d1 <= 61 and 0 <= d2 <= 3; op_hcompute_blur_unnormalized_stencil_17[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 45] : 0 <= d1 <= 61 and 0 <= d2 <= 3; op_hcompute_hw_output_global_wrapper_glb_stencil_11[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 95] : 0 <= d1 <= 61 and 0 <= d2 <= 3; op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_9[d0 = 0, d1, d2] -> [0, d1, d2, 23] : 0 <= d1 <= 62 and 0 <= d2 <= 4; op_hcompute_hw_output_global_wrapper_glb_stencil_10[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 94] : 0 <= d1 <= 61 and 0 <= d2 <= 3; op_hcompute_hw_input_global_wrapper_glb_stencil_6[d0 = 0, d1, d2] -> [0, d1, d2, 6] : 0 <= d1 <= 62 and 0 <= d2 <= 4; op_hcompute_hw_output_stencil_13[d0 = 0, d1, d2] -> [0, 1 + d1, 1 + d2, 83] : 0 <= d1 <= 61 and 0 <= d2 <= 3; op_hcompute_hw_input_global_wrapper_glb_stencil_3[d0 = 0, d1, d2] -> [0, d1, d2, 3] : 0 <= d1 <= 62 and 0 <= d2 <= 4; op_hcompute_blur_unnormalized_stencil_19[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 47] : 0 <= d1 <= 61 and 0 <= d2 <= 3; op_hcompute_blur_unnormalized_stencil_10[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 38] : 0 <= d1 <= 61 and 0 <= d2 <= 3; op_hcompute_hw_output_stencil_2[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 72] : 0 <= d1 <= 61 and 0 <= d2 <= 3; op_hcompute_hw_output_stencil_1[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 71] : 0 <= d1 <= 61 and 0 <= d2 <= 3; op_hcompute_hw_input_global_wrapper_glb_stencil_1[d0 = 0, d1, d2] -> [0, d1, d2, 1] : 0 <= d1 <= 62 and 0 <= d2 <= 4; op_hcompute_blur_unnormalized_stencil_11[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 39] : 0 <= d1 <= 61 and 0 <= d2 <= 3; op_hcompute_blur_unnormalized_stencil_24[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 52] : 0 <= d1 <= 61 and 0 <= d2 <= 3; op_hcompute_hw_output_global_wrapper_glb_stencil_13[d0 = 0, d1, d2] -> [0, 1 + d1, 1 + d2, 97] : 0 <= d1 <= 61 and 0 <= d2 <= 3; op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_3[d0 = 0, d1, d2] -> [0, d1, d2, 17] : 0 <= d1 <= 62 and 0 <= d2 <= 4; op_hcompute_blur_unnormalized_stencil_13[d0 = 0, d1, d2] -> [0, 1 + d1, 1 + d2, 41] : 0 <= d1 <= 61 and 0 <= d2 <= 3; op_hcompute_hw_input_global_wrapper_glb_stencil_10[d0 = 0, d1, d2] -> [0, d1, d2, 10] : 0 <= d1 <= 62 and 0 <= d2 <= 4; op_hcompute_blur_unnormalized_stencil_22[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 50] : 0 <= d1 <= 61 and 0 <= d2 <= 3; op_hcompute_blur_unnormalized_stencil_25[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 53] : 0 <= d1 <= 61 and 0 <= d2 <= 3; op_hcompute_blur_unnormalized_stencil_26[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 54] : 0 <= d1 <= 61 and 0 <= d2 <= 3; op_hcompute_hw_output_global_wrapper_glb_stencil_12[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 96] : 0 <= d1 <= 61 and 0 <= d2 <= 3; op_hcompute_blur_unnormalized_stencil_23[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 51] : 0 <= d1 <= 61 and 0 <= d2 <= 3; op_hcompute_blur_stencil[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 56] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
 //   { op_hcompute_hw_input_global_wrapper_global_wrapper_stencil_8[d0 = 0, d1, d2] -> [0, d1, d2, 22] : 0 <= d1 <= 62 and 0 <= d2 <= 4 }
@@ -7824,9 +7824,8 @@ void gaussian(HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */hw_i
 //   { op_hcompute_blur_stencil[d0 = 0, d1, d2] -> [0, 1 + d1, d2, 56] : 0 <= d1 <= 61 and 0 <= d2 <= 3 }
 // Condition for op_hcompute_blur_stencil(((((-56 + 1*i3)) == 0) && (((1*i0)) == 0) && (((-1 + 1*i1)) >= 0) && (((62 + -1*i1)) >= 0) && (((1*i2)) >= 0) && (((3 + -1*i2)) >= 0)))
 
-	for (int c1 = 0; c1 <= 62; c1 += 1){ 
-	#pragma hls_pipeline_init_interval 1 
-	  for (int c2 = 0; c2 <= 4; c2 += 1) { 
+	for (int c1 = 0; c1 <= 62; c1 += 1)
+	  for (int c2 = 0; c2 <= 4; c2 += 1) {
 	    op_hcompute_hw_input_global_wrapper_glb_stencil(hw_input_stencil_clkwrk_0 /* buf name */, hw_input_global_wrapper_glb_stencil, 0, c1, c2);
 	    op_hcompute_hw_input_global_wrapper_glb_stencil_1(hw_input_stencil_clkwrk_1 /* buf name */, hw_input_global_wrapper_glb_stencil, 0, c1, c2);
 	    op_hcompute_hw_input_global_wrapper_glb_stencil_2(hw_input_stencil_clkwrk_2 /* buf name */, hw_input_global_wrapper_glb_stencil, 0, c1, c2);
@@ -7942,11 +7941,9 @@ void gaussian(HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */hw_i
 	      op_hcompute_hw_output_global_wrapper_glb_stencil_13(hw_output_stencil /* buf name */, hw_output_global_wrapper_glb_stencil_clkwrk_27, 0, c1 - 1, c2 - 1);
 	  }
 	
-	 } 
-	
-#ifndef __SYNTHESIS__
+#ifndef __VIVADO_SYNTH__
   debug_file.close();
-#endif //__SYNTHESIS__
+#endif //__VIVADO_SYNTH__
 }
 
 void gaussian_wrapper(HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */hw_input_stencil_clkwrk_0, HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */hw_input_stencil_clkwrk_1, HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */hw_input_stencil_clkwrk_10, HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */hw_input_stencil_clkwrk_11, HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */hw_input_stencil_clkwrk_12, HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */hw_input_stencil_clkwrk_13, HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */hw_input_stencil_clkwrk_2, HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */hw_input_stencil_clkwrk_3, HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */hw_input_stencil_clkwrk_4, HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */hw_input_stencil_clkwrk_5, HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */hw_input_stencil_clkwrk_6, HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */hw_input_stencil_clkwrk_7, HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */hw_input_stencil_clkwrk_8, HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */hw_input_stencil_clkwrk_9, HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */hw_output_global_wrapper_glb_stencil_clkwrk_14, HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */hw_output_global_wrapper_glb_stencil_clkwrk_15, HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */hw_output_global_wrapper_glb_stencil_clkwrk_16, HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */hw_output_global_wrapper_glb_stencil_clkwrk_17, HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */hw_output_global_wrapper_glb_stencil_clkwrk_18, HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */hw_output_global_wrapper_glb_stencil_clkwrk_19, HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */hw_output_global_wrapper_glb_stencil_clkwrk_20, HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */hw_output_global_wrapper_glb_stencil_clkwrk_21, HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */hw_output_global_wrapper_glb_stencil_clkwrk_22, HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */hw_output_global_wrapper_glb_stencil_clkwrk_23, HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */hw_output_global_wrapper_glb_stencil_clkwrk_24, HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */hw_output_global_wrapper_glb_stencil_clkwrk_25, HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */hw_output_global_wrapper_glb_stencil_clkwrk_26, HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */hw_output_global_wrapper_glb_stencil_clkwrk_27, const int num_epochs) {
@@ -7955,7 +7952,7 @@ void gaussian_wrapper(HWStream<hw_uint<16> >& /* no bundle get_args num ports = 
     gaussian(hw_input_stencil_clkwrk_0, hw_input_stencil_clkwrk_1, hw_input_stencil_clkwrk_10, hw_input_stencil_clkwrk_11, hw_input_stencil_clkwrk_12, hw_input_stencil_clkwrk_13, hw_input_stencil_clkwrk_2, hw_input_stencil_clkwrk_3, hw_input_stencil_clkwrk_4, hw_input_stencil_clkwrk_5, hw_input_stencil_clkwrk_6, hw_input_stencil_clkwrk_7, hw_input_stencil_clkwrk_8, hw_input_stencil_clkwrk_9, hw_output_global_wrapper_glb_stencil_clkwrk_14, hw_output_global_wrapper_glb_stencil_clkwrk_15, hw_output_global_wrapper_glb_stencil_clkwrk_16, hw_output_global_wrapper_glb_stencil_clkwrk_17, hw_output_global_wrapper_glb_stencil_clkwrk_18, hw_output_global_wrapper_glb_stencil_clkwrk_19, hw_output_global_wrapper_glb_stencil_clkwrk_20, hw_output_global_wrapper_glb_stencil_clkwrk_21, hw_output_global_wrapper_glb_stencil_clkwrk_22, hw_output_global_wrapper_glb_stencil_clkwrk_23, hw_output_global_wrapper_glb_stencil_clkwrk_24, hw_output_global_wrapper_glb_stencil_clkwrk_25, hw_output_global_wrapper_glb_stencil_clkwrk_26, hw_output_global_wrapper_glb_stencil_clkwrk_27);
   }
 }
-#ifdef __SYNTHESIS__
+#ifdef __VIVADO_SYNTH__
   // { op_hcompute_hw_input_global_wrapper_glb_stencil[root = 0, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x_x] -> hw_input_stencil_clkwrk_0[hw_input_global_wrapper_s0_y, 14hw_input_global_wrapper_s0_x_x] : 0 <= hw_input_global_wrapper_s0_y <= 62 and 0 <= hw_input_global_wrapper_s0_x_x <= 4 }
 const int op_hcompute_hw_input_global_wrapper_glb_stencil_read_pipe0_num_transfers = 315;
   // { op_hcompute_hw_input_global_wrapper_glb_stencil_1[root = 0, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x_x] -> hw_input_stencil_clkwrk_1[hw_input_global_wrapper_s0_y, 1 + 14hw_input_global_wrapper_s0_x_x] : 0 <= hw_input_global_wrapper_s0_y <= 62 and 0 <= hw_input_global_wrapper_s0_x_x <= 4 }
@@ -8186,5 +8183,5 @@ void gaussian_rdai(HWStream<hw_uint<16> >& op_hcompute_hw_input_global_wrapper_g
 }
 
 }
-#endif //__SYNTHESIS__
+#endif //__VIVADO_SYNTH__
 
