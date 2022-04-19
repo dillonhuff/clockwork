@@ -3880,9 +3880,9 @@ if (cnst->getModuleRef()->getName() == "Pond") {
 
   ModuleDef* mdef = topm->getDef();
 
-  if (def == mdef) {
-    def->connect(buf->sel("flush"), mdef->sel("io1in_reset.out"));
-  }
+  //if (def == mdef) {
+  //  def->connect(buf->sel("flush"), mdef->sel("io1in_reset.out"));
+  //}
 
   def->removeInstance(cnst);
   inlineInstance(pt);
