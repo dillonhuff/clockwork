@@ -6330,7 +6330,7 @@ void instantiate_Buffet_shift_register(const std::string& long_name, const int o
 void instantiate_Buffet_verilog_wrapper(const std::string& long_name) {
     assert(verilog_collateral_file != nullptr);
     int data_width = 16;
-    int ctrl_width = 8;
+    int ctrl_width = 10;
 
     vector<string> port_decls = {};
     port_decls.push_back("input clk");
@@ -6353,7 +6353,7 @@ void instantiate_Buffet_verilog_wrapper(const std::string& long_name) {
       port_decls.push_back("output read_data_valid" );
       port_decls.push_back("input read_data_ready");
 
-      port_decls.push_back("input [" + str(ctrl_width) + ":0] read_idx");
+      port_decls.push_back("input [" + str(data_width) + ":0] read_idx");
       port_decls.push_back("input read_idx_valid" );
 
       port_decls.push_back("output read_idx_ready");

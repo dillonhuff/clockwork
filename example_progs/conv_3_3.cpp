@@ -73,7 +73,7 @@ prog conv_3_3_buffet() {
   prg.buffer_port_widths["hw_output_stencil"] = 16;
 
 ////producing hw_input_global_wrapper.stencil
-  auto hw_input_global_wrapper_s0_y = prg.add_loop("hw_input_global_wrapper_s0_y", 0, 4);
+  auto hw_input_global_wrapper_s0_y = prg.add_loop("hw_input_global_wrapper_s0_y", 0, 64);
   auto hw_input_global_wrapper_s0_x = hw_input_global_wrapper_s0_y->add_loop("hw_input_global_wrapper_s0_x", 0, 64);
 
 //store is: hw_input_global_wrapper.stencil(hw_input_global_wrapper_s0_x, hw_input_global_wrapper_s0_y) = hw_input.stencil(hw_input_global_wrapper_s0_x, hw_input_global_wrapper_s0_y)
@@ -84,7 +84,7 @@ prog conv_3_3_buffet() {
   hcompute_hw_input_global_wrapper_stencil->add_store("hw_input_global_wrapper_stencil", "hw_input_global_wrapper_s0_y", "hw_input_global_wrapper_s0_x");
 
 //consuming hw_input_global_wrapper.stencil
-  auto hw_output_s0_y_yi = prg.add_loop("hw_output_s0_y_yi", 0, 2);
+  auto hw_output_s0_y_yi = prg.add_loop("hw_output_s0_y_yi", 0, 62);
   auto hw_output_s0_x_xi = hw_output_s0_y_yi->add_loop("hw_output_s0_x_xi", 0, 62);
 ////producing conv.stencil
 
