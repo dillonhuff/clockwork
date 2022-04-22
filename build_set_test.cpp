@@ -19181,6 +19181,7 @@ void compile_cycle_accurate_hw(CodegenOptions& options, schedule_info& sched, pr
 
 void compile_buffet_hw(CodegenOptions& options, schedule_info& sched, prog& prg) {
   normalize_bounds(prg);
+  normalize_address_offsets(prg);
 
   buffet_schedule(sched, prg.root, prg);
 
@@ -20030,7 +20031,8 @@ void buffet_tests() {
   buffet_test_programs.push_back(matmul_tiny());
   buffet_test_programs.push_back(conv_1_2());
   buffet_test_programs.push_back(conv_3_3_buffet());
-  //buffet_test_programs.push_back(cascade());
+  buffet_test_programs.push_back(cascade());
+  //buffet_test_programs.push_back(harris());
   test_buffet_codegen(buffet_test_programs);
 }
 

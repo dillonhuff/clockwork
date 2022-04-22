@@ -6294,22 +6294,31 @@ void instantiate_Buffet_shift_register(const std::string& long_name, const int o
     *verilog_collateral_file << "module " << long_name <<" ("<< sep_list(port_decls,"","",",\n") <<"); "<< endl;
     *verilog_collateral_file << tab(1) << "logic [" + str(data_width) + ":0] temp [" + str(out_num ) + ":0];" << endl;
     *verilog_collateral_file << tab(1) << "reg [16:0] counter;" << endl << endl;;
-    *verilog_collateral_file << tab(1) << "reg valid_delay;" << endl << endl;;
+    *verilog_collateral_file << tab(1) << "reg data_pushed;" << endl << endl;;
     *verilog_collateral_file << tab(1) << "wire full;" << endl << endl;;
     *verilog_collateral_file << tab(1) << "integer i;" << endl << endl;;
 
     *verilog_collateral_file << tab(1) << "always @(posedge clk or negedge rst_n) begin" << endl;
     *verilog_collateral_file << tab(2) << "if(!rst_n) begin" << endl;
     *verilog_collateral_file << tab(3) << "counter <= 16'd0;" << endl;
-    *verilog_collateral_file << tab(2) << "end else if(valid_in && (~(full && (~ready_out)))) begin" << endl;
+    *verilog_collateral_file << tab(3) << "data_pushed <= 1'd0;" << endl;
+
+    *verilog_collateral_file << tab(2) << "end else if(valid_in && ready_in) begin" << endl;
     *verilog_collateral_file << tab(3) << "temp[0] <= in_data;" << endl;
+    *verilog_collateral_file << tab(3) << "data_pushed <= 1'd1;" << endl;
     *verilog_collateral_file << tab(3) << "for (i = 1; i < " + str(out_num+1) + "; i ++)" << endl;
     *verilog_collateral_file << tab(4) << "temp[i] <=  temp[i - 1];" << endl;
     *verilog_collateral_file << tab(3) << "if (counter == 16'd" + str(row_size) + ")" << endl;
     *verilog_collateral_file << tab(4) << "counter <= 16'd1;" << endl;
     *verilog_collateral_file << tab(3) << "else" << endl;
     *verilog_collateral_file << tab(4) << "counter <= counter + 1;" << endl;
-    *verilog_collateral_file << tab(2) << "end" << endl << endl;
+    *verilog_collateral_file << tab(2) << "end" << endl;
+    *verilog_collateral_file << tab(2) << "else begin " << endl;
+    *verilog_collateral_file << tab(3) << "if (ready_out & valid_out) begin"  << endl;
+    *verilog_collateral_file << tab(4) << "data_pushed <= 1'd0; "<< endl;
+    *verilog_collateral_file << tab(3) << "end if (counter == 16'd" + str(row_size) + ")" << endl;
+    *verilog_collateral_file << tab(4) << "counter <= 16'd0;" << endl;
+    *verilog_collateral_file << tab(3) << "end" << endl;
 
     //Add one cycle delay to the shift register
     //*verilog_collateral_file << tab(2) << "valid_out <= valid_delay;" << endl << endl;
@@ -6322,7 +6331,8 @@ void instantiate_Buffet_shift_register(const std::string& long_name, const int o
 
     //TODO: should we modify the valid in shift register?
     //*verilog_collateral_file << tab(1) << "assign valid_delay = valid_in && (counter >= "+ str(out_num) + ");" << endl;
-    *verilog_collateral_file << tab(1) << "assign valid_out= full;" << endl;
+    //*verilog_collateral_file << tab(1) << "assign valid_out= full & !((counter == 16'd" +str(row_size) + ") & !valid_delay);" << endl;
+    *verilog_collateral_file << tab(1) << "assign valid_out= full && data_pushed;" << endl;
     //*verilog_collateral_file << tab(1) << "assign valid_out = valid_delay;" << endl;
     *verilog_collateral_file << tab(1) << "endmodule" << endl;
 }
@@ -6509,7 +6519,8 @@ std::set<string> generate_buffet_shift_registers(CodegenOptions& options, CoreIR
     auto acc_map_inner_bank = get_inner_bank_access_map(buffet_inpt, buf, impl);
     assert(check_contigous_access(acc_map_inner_bank));
     auto dom = buf.domain.at(buffet_inpt);
-    auto linear_aff = get_aff(linear_address_map_lake(cpy(dom)));
+    //auto linear_aff = get_aff(linear_address_map_lake(cpy(dom)));
+    auto linear_aff = get_aff(buf.schedule.at(buffet_inpt));
     CoreIR::Instance* rowbuf_dom_iterator = affine_controller(options, def, dom, linear_aff);
     auto rowbuf_rd_agen = build_inner_bank_offset(buffet_inpt, buffet_outpt, buf, impl, def);
 
@@ -6537,7 +6548,7 @@ std::set<string> generate_buffet_shift_registers(CodegenOptions& options, CoreIR
 
     //Add buffet shift register module
     Values sr_params{{"data_width", COREMK(c, 16)},
-    {"depth", COREMK(c, sr_depth)}};
+    {"depth", COREMK(c, sr_depth)}, {"ID", COREMK(c, c->getUnique())}};
 
     CoreIR::Instance * sr = def->addInstance(buffet_outpt + "_sr", "cgralib.SIPO_reg", sr_params);
 
@@ -7329,10 +7340,22 @@ CoreIR::Instance* build_inner_bank_offset(const std::string& reader, const std::
   int depth = impl.shift_registered_outputs.at(shift_pt).second;
   impl.print_info(std::cout);
   cout << "shift reg depth: " << depth<< endl;
+  auto write_sched = to_map(buf.schedule.at(reader));
+  auto read_start_cycle = to_set(lexminpt(range(buf.schedule.at(shift_pt))));
+  cout << "write schedule: " << str(buf.schedule.at(reader)) << endl;
+  cout << "read schedule: " << str(buf.schedule.at(shift_pt)) << endl;
+  auto write_delay = linear_schedule(write_sched, {1}, depth, false);
+  cout << "write delay schedule: " << str(write_delay) << endl;
+  auto write_delay_its = its_range(write_delay, read_start_cycle);
+  auto start_addr = its(inner_bank_acc_map, domain(write_delay_its));
+  cout << "start_addr: " << str(start_addr) << endl;
 
-  int max_depth = impl.max_row_depth(reader);
+  int start_addr_int = int_const_coeff(get_aff(start_addr));
 
-  addr_expr_aff = add(addr_expr_aff, max_depth - depth);
+  //int max_depth = impl.max_row_depth(reader);
+
+  if (start_addr_int > 2)
+    addr_expr_aff = add(addr_expr_aff, start_addr_int-2);
 
   cout << "addrgen for " << shift_pt<< ": " << str(addr_expr_aff) << endl;
 

@@ -259,7 +259,8 @@ CoreIR::Namespace* CoreIRLoadLibrary_cgralib(Context* c) {
   // cgralib.sreg
    Params cgralibsregparams = Params({
         {"depth", c->Int()},
-        {"data_width", c->Int()}
+        {"data_width", c->Int()},
+        {"ID", c->String()} // by default 8
     });
 
   cgralib->newTypeGen(
@@ -291,6 +292,7 @@ CoreIR::Namespace* CoreIRLoadLibrary_cgralib(Context* c) {
   auto cgralib_sreg_gen = cgralib->newGeneratorDecl("SIPO_reg", cgralib->getTypeGen("cgralib_sreg_type"), cgralibsregparams);
   cgralib_sreg_gen->addDefaultGenArgs({{"depth", Const::make(c, 1)}});
   cgralib_sreg_gen->addDefaultGenArgs({{"data_width", Const::make(c, 16)}});
+  cgralib_buffet_gen->addDefaultGenArgs({{"ID", Const::make(c, "")}});
 
   auto CGRALibSregModParamFun = [](Context* c,Values genargs) -> std::pair<Params,Values> {
     Params p; //params
