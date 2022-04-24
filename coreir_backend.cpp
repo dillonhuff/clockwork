@@ -6464,7 +6464,7 @@ std::set<string> generate_buffet_shift_registers(CodegenOptions& options, CoreIR
         return delete_ports;
   CoreIR::Context* c = def->getContext();
   auto impl = port_group2bank(options, prg, buf, hwinfo);
-  cout << impl.shift_depth << endl;
+  cout << "SR row buf depth: " << impl.shift_depth << endl;
 
   //Save all the ready wires, and later and them together to wire the input valid
   map<string, vector<CoreIR::Wireable*>> pt2ready;
@@ -6522,7 +6522,19 @@ std::set<string> generate_buffet_shift_registers(CodegenOptions& options, CoreIR
     //auto linear_aff = get_aff(linear_address_map_lake(cpy(dom)));
     auto linear_aff = get_aff(buf.schedule.at(buffet_inpt));
     CoreIR::Instance* rowbuf_dom_iterator = affine_controller(options, def, dom, linear_aff);
-    auto rowbuf_rd_agen = build_inner_bank_offset(buffet_inpt, buffet_outpt, buf, impl, def);
+
+    //Generate the shift register connect to the port
+    cout << "Getting buffet outpt delay: " << buffet_outpt << endl;
+    //int sr_depth = impl.shift_depth.at(buffet_outpt);
+    //
+    //All buffet shift register has the same depth
+    //In buffet the row buffer agen always be the last node of shift register
+    int sr_depth = impl.max_shift_depth();
+    int sr_depth_adjust = sr_depth;
+    auto rowbuf_rd_agen = build_inner_bank_offset(buffet_inpt, buffet_outpt, buf, impl, def, sr_depth_adjust);
+
+    //Chances are that we need to shift the addr
+    sr_depth_adjust = sr_depth - sr_depth_adjust;
 
     //Wire the iteration domain counter
     def->connect(rowbuf_rd_agen->sel("d"), rowbuf_dom_iterator->sel("d"));
@@ -6539,8 +6551,6 @@ std::set<string> generate_buffet_shift_registers(CodegenOptions& options, CoreIR
             {{"value", COREMK(c, false)}})->sel("out");
     def->connect(row_buf->sel("read_will_update"), zero);
 
-    //Generate the shift register connect to the port
-    int sr_depth = impl.shift_depth.at(buffet_outpt);
     int num_dim = num_dims(dom);
     int innermost_dim = get_domain_range(dom, num_dim - 1);
     cout << "inner most dim: " << innermost_dim << endl;
@@ -6565,7 +6575,7 @@ std::set<string> generate_buffet_shift_registers(CodegenOptions& options, CoreIR
     vector<CoreIR::Wireable*> ready_and_wire;
     for (auto it: delay_map) {
       string pt = it.first;
-      def->connect(def->sel( pt + "_net.in"), sr->sel("out_data")->sel(str(it.second)));
+      def->connect(def->sel( pt + "_net.in"), sr->sel("out_data")->sel(str(it.second + sr_depth_adjust)));
       def->connect(def->sel( pt + "_valid_net.in"), sr->sel("valid_out"));
       ready_and_wire.push_back(def->sel( pt + "_ready_net.out"));
       delete_ports.insert(pt);
@@ -7331,7 +7341,7 @@ CoreIR::Instance* build_inner_bank_offset(const std::string& reader, UBuffer& bu
   return agen;
 }
 
-CoreIR::Instance* build_inner_bank_offset(const std::string& reader, const std::string& shift_pt, UBuffer& buf, const EmbarrassingBankingImpl& impl, CoreIR::ModuleDef* def) {
+CoreIR::Instance* build_inner_bank_offset(const std::string& reader, const std::string& shift_pt, UBuffer& buf, const EmbarrassingBankingImpl& impl, CoreIR::ModuleDef* def, int& sr_depth) {
   auto inner_bank_acc_map = get_inner_bank_access_map(reader, buf, impl);
 
   auto addr_expr_aff = get_aff(inner_bank_acc_map);
@@ -7353,9 +7363,10 @@ CoreIR::Instance* build_inner_bank_offset(const std::string& reader, const std::
   int start_addr_int = int_const_coeff(get_aff(start_addr));
 
   //int max_depth = impl.max_row_depth(reader);
+  if (start_addr_int < sr_depth)
+    sr_depth = start_addr_int;
 
-  if (start_addr_int > 2)
-    addr_expr_aff = add(addr_expr_aff, start_addr_int-2);
+  addr_expr_aff = add(addr_expr_aff, start_addr_int - sr_depth);
 
   cout << "addrgen for " << shift_pt<< ": " << str(addr_expr_aff) << endl;
 

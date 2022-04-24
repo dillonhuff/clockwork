@@ -3187,6 +3187,15 @@ struct UBufferImpl {
   }
 
 
+  int max_shift_depth() const {
+    int max_d = 0;
+    std::for_each(shift_depth.begin(), shift_depth.end(), [&max_d](const auto& it) {
+            max_d = std::max(max_d, it.second);
+    });
+    return max_d;
+  }
+
+
   void sequentially_assign_inpt(vector<string> inpts, int b) {
     vector<std::set<string>> partition;
     for (string inpt: inpts) {

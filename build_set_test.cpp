@@ -19754,7 +19754,7 @@ void test_buffet_codegen(vector<prog>& test_programs) {
     run_verilator_tb_buffet(prg.name);
     auto verilator_res = verilator_results(prg.name);
     compare("cgra_" + prg.name + "_cpu_vs_verilog_comparison", verilator_res, cpu);
-    string app_type = "platonic_buffer";
+    string app_type = "buffet";
     cpy_app_to_folder(app_type, prg.name);
   }
 }
@@ -20032,7 +20032,8 @@ void buffet_tests() {
   buffet_test_programs.push_back(conv_1_2());
   buffet_test_programs.push_back(conv_3_3_buffet());
   buffet_test_programs.push_back(cascade());
-  //buffet_test_programs.push_back(harris());
+  buffet_test_programs.push_back(conv_unit_test());
+  buffet_test_programs.push_back(harris());
   test_buffet_codegen(buffet_test_programs);
 }
 

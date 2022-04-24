@@ -8111,7 +8111,7 @@ UBufferImpl port_group2bank(CodegenOptions& options, prog& prg, UBuffer& buf, sc
 
             //Rewrite the ubuffer prepare for vectorization
             int depth = sr_graph.max_delay_to_leaf(pt_name);
-            if (depth > 0) {
+            //if (depth > 0) {
                 //Only save this meta data in shift register impl
                 impl.shift_depth[pt_name] = depth;
 
@@ -8120,7 +8120,7 @@ UBufferImpl port_group2bank(CodegenOptions& options, prog& prg, UBuffer& buf, sc
                 //auto new_access_map = outpt_info.first;
                 //auto new_sched = outpt_info.second;
                 //buf.replace_pt(pt_name, new_access_map, new_sched);
-            }
+            //}
 
             if (pt_delay_pair.second <= options.merge_threshold) {
                 //add new sr only chain

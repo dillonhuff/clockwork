@@ -277,7 +277,7 @@ CoreIR::Instance* build_bank_selector(const std::string& reader, UBuffer& buf, c
 //Helper function for get inner bank offset
 isl_map* get_inner_bank_access_map(const std::string& reader, UBuffer & buf, const EmbarrassingBankingImpl& impl);
 CoreIR::Instance* build_inner_bank_offset(const std::string& reader, UBuffer& buf, const EmbarrassingBankingImpl& impl, CoreIR::ModuleDef* def);
-CoreIR::Instance* build_inner_bank_offset(const std::string& reader, const std::string& shift_pt, UBuffer& buf, const EmbarrassingBankingImpl& impl, CoreIR::ModuleDef* def);
+CoreIR::Instance* build_inner_bank_offset(const std::string& reader, const std::string& shift_pt, UBuffer& buf, const EmbarrassingBankingImpl& impl, CoreIR::ModuleDef* def, int& sr_depth);
 
 std::set<string> generate_M1_shift_registers(CodegenOptions& options, CoreIR::ModuleDef* def, prog& prg, UBuffer& buf, schedule_info& hwinfo);
 void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& prg, UBuffer& orig_buf, schedule_info& hwinfo);
