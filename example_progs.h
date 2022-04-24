@@ -28,6 +28,7 @@ prog brighten_blur_paper(); //stencil
 prog halide_harris();
 prog conv_3_3(); //stencil
 prog conv_3_3_buffet(); //stencil
+prog conv_unit_test(); //stencil
 prog conv_3_3_wide(); //stencil
 prog conv_3_3_rolled(); //stencil
 prog conv_1_2(); //stencil
