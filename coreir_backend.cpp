@@ -845,7 +845,7 @@ CoreIR::Module* generate_coreir(CodegenOptions& options, CoreIR::Context* contex
         ub_field.push_back(make_pair(name + "_ctrl_vars", context->BitIn()->Arr(CONTROLPATH_WIDTH)->Arr(control_dimension)));
       }
       ub_field.push_back(make_pair(name, context->BitIn()->Arr(pt_width)->Arr(bd_width)));
-      if (options.rtl_options.use_external_controllers) {
+      if (options.rtl_options.has_ready) {
         ub_field.push_back(make_pair(name + "_data_ready", context->Bit()));
         ub_field.push_back(make_pair(name + "_data_valid", context->BitIn()));
       }
@@ -2930,7 +2930,9 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
 
 
     //Create a AND module for all the read_idx_read, make sure we could send the correct idx in
-    auto ready_join = generate_ready_join(def, op);
+    CoreIR::Instance* ready_join;
+    if (options.rtl_options.has_ready)
+      ready_join = generate_ready_join(def, op);
 
     for (pair<string, string> bundle : incoming_bundles(op, buffers, prg)) {
       string buf_name = bundle.first;
@@ -6713,7 +6715,16 @@ void generate_Buffet_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, pro
       if (buf.is_in_pt(pt)) {
         auto adjusted_buf = write_latency_adjusted_buffer(options, prg, buf, hwinfo);
         auto acc_map_inner_bank = get_inner_bank_access_map(pt, adjusted_buf, impl);
+
         string op_name = buf.get_op(pt);
+
+        //Broad cast this bank into multiple buffet
+        if (impl.inpt_to_bank[pt].size() > 1) {
+          auto bank_sel = build_bank_selector(pt, adjusted_buf, impl, def);
+          def->connect(bank_sel->sel("d"),
+            control_vars(def, pt, adjusted_buf));
+          ubuffer_port_bank_selectors[pt] = delay_by(def, bank_sel->sel("out"), 0);
+        }
 
         if (buf.is_update_op(op_name)) {
           auto agen = build_inner_bank_offset(pt, adjusted_buf, impl, def);
@@ -6722,8 +6733,13 @@ void generate_Buffet_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, pro
           ubuffer_port_agens[pt] = agen;
 
         } else {
-          assert(check_contigous_access(acc_map_inner_bank));
-
+          for (int b = 0; b < num_banks; b++) {
+            isl_set* enable_set_inter_bank = get_inter_bank_enable_set(pt, adjusted_buf, impl, b);
+            cout << str(enable_set_inter_bank) << endl;
+            auto amap_in_bank = its(acc_map_inner_bank, enable_set_inter_bank);
+            cout << "Inner bank access map: " << str(amap_in_bank) << endl;
+            assert(check_contigous_access(amap_in_bank));
+          }
         }
 
         //DO not generated agen , only check access pattern is linear
@@ -6732,14 +6748,6 @@ void generate_Buffet_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, pro
         //    control_vars(def, pt, adjusted_buf));
         //ubuffer_port_agens[pt] = agen;
 
-        //Broad cast this bank into multiple buffet
-        if (impl.inpt_to_bank[pt].size() > 1) {
-          assert(false);
-          //auto bank_sel = build_bank_selector(pt, adjusted_buf, impl, def);
-          //def->connect(bank_sel->sel("d"),
-          //    control_vars(def, pt, adjusted_buf));
-          //ubuffer_port_bank_selectors[pt] = delay_by(def, bank_sel->sel("out"), 0);
-        }
       } else {
         auto agen = build_inner_bank_offset(pt, buf, impl, def);
         def->connect(agen->sel("d"),
@@ -6747,6 +6755,7 @@ void generate_Buffet_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, pro
         ubuffer_port_agens[pt] = agen;
 
         if (impl.outpt_to_bank[pt].size() > 1) {
+            cout << "Need output pt bank select, AKA chaining. " << endl;
           assert(false);
           //auto bank_sel = build_bank_selector(pt, buf, impl, def);
           //def->connect(bank_sel->sel("d"),
@@ -6934,17 +6943,20 @@ void generate_Buffet_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, pro
         auto adjusted_buf = write_latency_adjusted_buffer(options, prg, buf, hwinfo);
         //auto agen = ubuffer_port_agens[pt];
 
-        Wireable* enable = nullptr;
-        if (inpt_to_bank[pt].size() > 1) {
-          cout << "NOT IMPLEMENT YET! " << endl;
-          assert(false);
-          //enable =
-          //  andList(def, {control_en(def, pt, adjusted_buf), eqConst(def, ubuffer_port_bank_selectors[pt], b)});
-        } else {
-          enable =
-            control_en(def, pt, adjusted_buf);
-        }
-        assert(enable != nullptr);
+        //Wireable* enable = nullptr;
+        //if (inpt_to_bank[pt].size() > 1) {
+        //  cout << "NOT IMPLEMENT YET! " << endl;
+        //  assert(false);
+        //  //enable =
+        //  //  andList(def, {control_en(def, pt, adjusted_buf), eqConst(def, ubuffer_port_bank_selectors[pt], b)});
+        //} else {
+        //  enable =
+        //    control_en(def, pt, adjusted_buf);
+        //}
+        //assert(enable != nullptr);
+        Wireable* enable = create_bank_enable(pt, b, def,
+                inpt_to_bank, ubuffer_port_bank_selectors,
+                options, prg, buf, hwinfo);
 
         string op_name = buf.get_op(pt);
         if (buf.is_update_op(op_name)) {
@@ -7201,20 +7213,11 @@ void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
       int count = 0;
       for(auto pt : bank_writers[b])
       {
+        Wireable* enable = create_bank_enable(pt, b, def,
+                inpt_to_bank, ubuffer_port_bank_selectors,
+                options, prg, buf, hwinfo);
 
-        auto adjusted_buf = write_latency_adjusted_buffer(options, prg, buf, hwinfo);
         auto agen = ubuffer_port_agens[pt];
-
-        Wireable* enable = nullptr;
-        if (inpt_to_bank[pt].size() > 1) {
-          enable =
-            andList(def, {control_en(def, pt, adjusted_buf), eqConst(def, ubuffer_port_bank_selectors[pt], b)});
-        } else {
-          enable =
-            control_en(def, pt, adjusted_buf);
-        }
-        assert(enable != nullptr);
-
         def->connect(agen->sel("out"), currbank->sel("write_addr_" + str(count)));
         def->connect(currbank->sel("wen_" + str(count)),
             enable);
@@ -7229,6 +7232,23 @@ void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
   }
 
 
+}
+Wireable* create_bank_enable(string& pt, int bank, CoreIR::ModuleDef* def,
+        map<string, std::set<int> > & inpt_to_bank,
+        map<string, Wireable*> ubuffer_port_bank_selectors,
+        CodegenOptions& options, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
+
+    Wireable* enable = nullptr;
+    auto adjusted_buf = write_latency_adjusted_buffer(options, prg, buf, hwinfo);
+    if (inpt_to_bank[pt].size() > 1) {
+      enable =
+        andList(def, {control_en(def, pt, adjusted_buf), eqConst(def, ubuffer_port_bank_selectors[pt], bank)});
+    } else {
+      enable =
+        control_en(def, pt, adjusted_buf);
+    }
+    assert(enable != nullptr);
+    return enable;
 }
 
 isl_aff* bank_offset_aff(const std::string& reader, UBuffer& buf, const EmbarrassingBankingImpl& impl) {
@@ -7253,7 +7273,8 @@ isl_aff* bank_offset_aff(const std::string& reader, UBuffer& buf, const Embarras
   return addr_expr_aff;
 }
 
-CoreIR::Instance* build_bank_selector(const std::string& reader, UBuffer& buf, const EmbarrassingBankingImpl& impl, CoreIR::ModuleDef* def) {
+
+isl_aff* inter_bank_offset_aff(const std::string& reader, UBuffer& buf, const EmbarrassingBankingImpl& impl) {
   int bank_stride = 1;
   vector<string> dvs;
   vector<string> coeffs;
@@ -7269,11 +7290,26 @@ CoreIR::Instance* build_bank_selector(const std::string& reader, UBuffer& buf, c
   string bank_func = curlies(buf.name + bracket_list(dvs) + " -> Bank[" + sep_list(coeffs, "", "", " + ") + "]");
   auto bank_map = isl_map_read_from_str(buf.ctx, bank_func.c_str());
 
-  auto c = def->getContext();
 
   auto acc_map = to_map(buf.access_map.at(reader));
 
   auto addr_expr_aff = get_aff(dot(acc_map, bank_map));
+  return addr_expr_aff;
+}
+
+isl_set* get_inter_bank_enable_set(const std::string& reader, UBuffer& buf, const EmbarrassingBankingImpl& impl, int bankID) {
+  isl_aff* addr_expr_aff = inter_bank_offset_aff(reader, buf, impl);
+  isl_map* addr_expr_map = to_map(addr_expr_aff);
+  string bank_str = "{[" + str(bankID) + "]}";
+  isl_set* this_bank = isl_set_read_from_str(ctx(addr_expr_map), bank_str.c_str());
+  cout << "map: " << str(addr_expr_map) << endl;
+  cout << "set: " << str(this_bank) << endl;
+  return domain(its_range(addr_expr_map, this_bank));
+}
+
+CoreIR::Instance* build_bank_selector(const std::string& reader, UBuffer& buf, const EmbarrassingBankingImpl& impl, CoreIR::ModuleDef* def) {
+  auto addr_expr_aff = inter_bank_offset_aff(reader, buf, impl);
+  auto c = def->getContext();
   auto aff_gen_mod = coreir_for_aff(c, addr_expr_aff);
   auto agen = def->addInstance("bank_selector_" + reader + c->getUnique(), aff_gen_mod);
   return agen;

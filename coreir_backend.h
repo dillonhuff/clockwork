@@ -289,7 +289,14 @@ void M1_sanity_check_port_counts(const UBufferImpl& impl);
 
 CoreIR::Module* affine_controller_def(CoreIR::Context* context, isl_set* dom, isl_aff* aff);
 
+CoreIR::Wireable* create_bank_enable(string& pt, int bank, CoreIR::ModuleDef* def,
+        map<string, std::set<int> > & inpt_to_bank,
+        map<string, CoreIR::Wireable*> ubuffer_port_bank_selectors,
+        CodegenOptions& options, prog& prg, UBuffer& buf, schedule_info& hwinfo);
+
 isl_aff* inner_bank_offset_aff(const std::string& reader, UBuffer& buf, const EmbarrassingBankingImpl& impl);
+isl_aff* inter_bank_offset_aff(const std::string& reader, UBuffer& buf, const EmbarrassingBankingImpl& impl);
+isl_set* get_inter_bank_enable_set(const std::string& reader, UBuffer& buf, const EmbarrassingBankingImpl& impl, int bankID);
 
 isl_aff* bank_offset_aff(const std::string& reader, UBuffer& buf, const EmbarrassingBankingImpl& impl);
 
