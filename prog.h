@@ -1684,7 +1684,8 @@ void extend_bounds_to_multiple_of(const int factor, const std::string& buf, prog
 
 
 void infer_bounds_and_unroll(const std::string& out, const std::vector<int>& bounds, const int unroll_factor, prog& prg);
-
+void halide_check_rate_mismatch(const std::string& out, const std::vector<int>& bounds, const int unroll_factor, prog& prg);
+void rate_checking_pass(const std::string& buf, const int unroll_factor, prog& prg);
 void unroll_producer_matching(const std::string& buf, const int unroll_factor, prog& prg);
 
 op* strip_mine(const int factor, op* loop, prog& prg);

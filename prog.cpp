@@ -2076,6 +2076,39 @@ void infer_bounds_and_unroll(const std::string& out, const std::vector<int>& bou
   merge_basic_block_ops(prg);
 }
 
+void halide_check_rate_mismatch(const std::string& out, const std::vector<int>& bounds, const int unroll_factor, prog& prg) {
+
+	        prg.reset_context();
+		        prg.pretty_print();
+			        cout << endl;
+
+				        cout << "Ritvik_reduce_loop_unroll : " << endl << endl << endl;
+					        unroll_reduce_loops(prg);
+						        cout << endl << endl;
+							        prg.pretty_print();
+								        cout << endl;
+
+									        cout << "Ritvik_ormalize_bounds : " << endl << endl << endl;
+										        normalize_bounds(prg);
+											        cout << endl << endl;
+												        prg.pretty_print();
+													        cout << endl;
+
+														        cout << "Ritvik_merge_basic_block : " << endl << endl << endl;
+															        prg.pretty_print();
+																        cout << endl;
+
+																	        cout << "Ritvik_Unroll_producer_matching : " << endl << endl;
+																		        rate_checking_pass(out, unroll_factor, prg);
+																			        cout << endl << endl;
+																				        prg.pretty_print();
+																					        cout << endl;
+
+}
+
+
+
+
 void normalize_bounds(prog& prg) {
   auto loops = prg.all_loops();
   for (auto l : loops) {
@@ -2184,6 +2217,52 @@ map<string, int> compute_unroll_factors(const std::string& buf, const int unroll
 
   return factors;
 }
+void rate_checking_pass(const std::string& buf, const int unroll_factor, prog& prg) {
+	        prg.pretty_print();
+		        umap* deps = pad_map(prg.validity_deps()); //Padd with dimension?
+
+			        cout << "Done padding validity deps" << endl;
+				        auto umaps = get_maps(deps); // Get all maps
+					        vector<isl_map*> projected_deps;
+						        for (auto m : umaps) {
+								                cout << "Projection: Domain & range = {" << domain_name(m) << " " << range_name(m)  << "} " << num_in_dims(m) << " " << num_out_dims(m) << endl;
+										                isl_map* projected = project_all_but(m, num_in_dims(m) - 1); // Donno what
+												                projected_deps.push_back(projected);
+														                cout << "Projection: Domain & range = {" << domain_name(projected) << " " << range_name(projected)  << "} " << num_in_dims(m) << " " << num_out_dims(m) << endl;
+
+																        }
+
+							        cout << "Computing qfactors...  " << projected_deps.size()  <<  "   " << endl;
+								        map<string, isl_val*> qfs = compute_qfactors(projected_deps);//Main step
+									        cout << "Got qfactors..." << endl;
+										        int temp_standard = 1;
+											        int flag = 0;
+												        for (auto q : qfs) {
+														                int temp = std::stoi(str(q.second));
+																                if(temp != temp_standard)
+																			                {
+																						                        if(flag ==0)
+																										                                flag = 1;
+
+
+																									                        if(flag ==1)
+																													                        {
+																																	                                cout << "WARNING: THE GIVEN APPLICATION IS NOT RATE MATCHED, APPLICATION WILL UNDERUTILIZE HARDWARE" << endl;
+																																					                                flag= -1;
+																																									                        }
+																												                        cout << q.first << " is too much unrolled by a factor of " << (int) temp/temp_standard << endl;
+																															                }
+																		        }
+													        if(flag == flag) // fpag = -1
+															        {
+																	                cout << "LOCAL ITERATION INTERVAL OF ALL LOOPS IS" << endl;
+																			                for (auto q : qfs) {
+																						                        cout << tab(1) << q.first << " -> " << str(q.second) << endl;
+																									                }
+																					        }
+}
+
+
 
 bool inner_loops_unrollable(const std::string& buf, const int unroll_factor, prog& prg) {
   std::set<op*> inner_loops = get_inner_loops(prg);

@@ -19239,7 +19239,7 @@ void garnet_single_port_ram_schedule(CodegenOptions& options, schedule_info& sch
     return;
   } else if (is_rate_matchable(prg) || contains(prg.name, "nlmeans")) {
     prg.pretty_print();
-
+    halide_check_rate_mismatch("", {16, 16}, 4, prg);
     loop_split(prg);
     prg.sanity_check();
     //TODO: need another function to choose between pad bottom level or top level
