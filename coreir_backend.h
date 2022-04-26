@@ -58,6 +58,12 @@ std::string controller_name(const std::string& n) {
 }
 
 static inline
+std::string ID_controller_name(const std::string& n) {
+  return n + "_ID_controller";
+}
+
+
+static inline
 CoreIR::Wireable* exe_start_control_vars(CoreIR::ModuleDef* def, const std::string& opname) {
   return def->sel(exe_start_control_vars_name(opname))->sel("out");
 }
@@ -271,6 +277,7 @@ CoreIR::Wireable* control_en(CoreIR::ModuleDef* def, const std::string& reader, 
 
 //Towards ready valid
 CoreIR::Wireable* control_ready(CoreIR::ModuleDef* def, const std::string& reader, UBuffer& buf);
+CoreIR::Wireable* control_ready_by_bundle(CoreIR::ModuleDef* def, const std::string& reader, UBuffer& buf);
 
 CoreIR::Instance* build_bank_selector(const std::string& reader, UBuffer& buf, const EmbarrassingBankingImpl& impl, CoreIR::ModuleDef* def);
 
@@ -288,6 +295,7 @@ void instantiate_M1_verilog(const std::string& long_name, const int b, const UBu
 void M1_sanity_check_port_counts(const UBufferImpl& impl);
 
 CoreIR::Module* affine_controller_def(CoreIR::Context* context, isl_set* dom, isl_aff* aff);
+CoreIR::Wireable* create_ctrl_select(CoreIR::ModuleDef* def, vector<CoreIR::Wireable*> & conds, vector<CoreIR::Wireable*>& vals);
 
 CoreIR::Wireable* create_bank_enable(string& pt, int bank, CoreIR::ModuleDef* def,
         map<string, std::set<int> > & inpt_to_bank,

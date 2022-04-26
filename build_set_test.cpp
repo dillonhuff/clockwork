@@ -19642,12 +19642,13 @@ vector<prog> isca_programs() {
   //test_programs.push_back(up_sample());
   //test_programs.push_back(unsharp());
   //test_programs.push_back(three_level_pond_rolled());
-  test_programs.push_back(camera_pipeline());
-  test_programs.push_back(gaussian());
-  test_programs.push_back(mobilenet_unrolled());
-  test_programs.push_back(resnet());
-  test_programs.push_back(cascade());
-  test_programs.push_back(down_sample());
+  //test_programs.push_back(camera_pipeline());
+  //test_programs.push_back(gaussian());
+  //test_programs.push_back(mobilenet_unrolled());
+  //test_programs.push_back(resnet());
+  //test_programs.push_back(cascade());
+  //test_programs.push_back(down_sample());
+  test_programs.push_back(resnet88());
 
   return test_programs;
 }
@@ -20040,27 +20041,27 @@ void buffet_tests() {
 
 void cgra_flow_tests() {
 
-  vector<prog> M3_test_programs = isca_programs();
+  //vector<prog> M3_test_programs = isca_programs();
 
-  //vector<prog> bram_test_programs{pointwise(), gaussian(), harris(), resnet()};
-  vector<prog> bram_test_programs{resnet88()};
-  //vector<prog> bram_test_programs{pointwise()};
-  test_codegen(bram_test_programs, compile_for_FPGA_BRAM_mem);
+  ////vector<prog> bram_test_programs{pointwise(), gaussian(), harris(), resnet()};
+  //vector<prog> bram_test_programs{resnet88()};
+  ////vector<prog> bram_test_programs{pointwise()};
+  //test_codegen(bram_test_programs, compile_for_FPGA_BRAM_mem);
 
-  //vector<prog> M3_test_programs = harris_variants();
-  //vector<prog> M3_test_programs{up_sample(), resnet()};
-  //vector<prog> M3_test_programs{resnet()};
-  //vector<prog> M3_test_programs{gaussian()};
-  test_codegen(M3_test_programs, compile_for_CGRA_M3_mem);
+  ////vector<prog> M3_test_programs = harris_variants();
+  ////vector<prog> M3_test_programs{up_sample(), resnet()};
+  ////vector<prog> M3_test_programs{resnet()};
+  ////vector<prog> M3_test_programs{gaussian()};
+  //test_codegen(M3_test_programs, compile_for_CGRA_M3_mem);
   //assert(false);
 
   vector<prog> M1_test_programs = isca_programs();
   //vector<prog> M1_test_programs{gaussian()};
   test_codegen(M1_test_programs, compile_for_CGRA_M1_mem);
 
-  auto test_programs =
-    all_cgra_programs();
-  test_platonic_codegen(test_programs);
+  //auto test_programs =
+  //  all_cgra_programs();
+  //test_platonic_codegen(test_programs);
 
 
 

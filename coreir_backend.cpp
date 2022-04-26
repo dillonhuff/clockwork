@@ -4549,6 +4549,109 @@ CoreIR::Module* coreir_for_set(CoreIR::Context* context, isl_set* dom) {
   return m;
 }
 
+//Input valid, output a high dimensional iteration domain
+CoreIR::Module* iterDom_controller(CodegenOptions& options, CoreIR::Context* context, isl_set* dom, int width) {
+
+    cout << tab(1) << "dom = " << str(dom) << endl;
+
+  auto ns = context->getNamespace("global");
+  auto c = context;
+
+  vector<pair<string, CoreIR::Type*> >
+    ub_field{{"clk", c->Named("coreir.clkIn")},
+      {"enable", c->BitIn()}};
+
+  int dims = num_dims(dom);
+  ub_field.push_back({"d", context->Bit()->Arr(width)->Arr(dims)});
+  if (options.rtl_options.use_prebuilt_memory) {
+    ub_field.push_back({"rst_n", c->BitIn()});
+  }
+  CoreIR::RecordType* utp = context->Record(ub_field);
+  auto m = ns->newModuleDecl("iterdom_controller_" + context->getUnique(), utp);
+  auto def = m->newModuleDef();
+
+  auto one = def->addInstance(context->getUnique(),
+      "coreir.const",
+      {{"width", CoreIR::Const::make(c, width)}},
+      {{"value", CoreIR::Const::make(c, BitVector(width, 1))}});
+  auto zero = def->addInstance(context->getUnique(),
+      "coreir.const",
+      {{"width", CoreIR::Const::make(c, width)}},
+      {{"value", CoreIR::Const::make(c, BitVector(width, 0))}});
+  auto tinc = def->addInstance("true",
+    "corebit.const",
+    {{"value", CoreIR::Const::make(c, true)}});
+
+
+  vector<CoreIR::Instance*> domain_regs;
+  vector<CoreIR::Wireable*> domain_at_max;
+  for (int d = 0; d < num_dims(dom); d++) {
+    Values reg_genargs({{"width", CoreIR::Const::make(context, width)},
+      {"has_en", CoreIR::Const::make(context, true)}});
+    if (options.rtl_options.use_prebuilt_memory)
+      reg_genargs.insert({"has_clr", CoreIR::Const::make(context, true)});
+    auto dom_reg = def->addInstance("d_" + str(d) + "_reg",
+        "mantle.reg", reg_genargs);
+    domain_regs.push_back(dom_reg);
+    def->connect(def->sel("self")->sel("d")->sel(d), domain_regs.back()->sel("out"));
+    if (options.rtl_options.use_prebuilt_memory)
+      def->connect(def->sel("self")->sel("rst_n"), domain_regs.back()->sel("clr"));
+    //def->connect(aff_func->sel("d")->sel(d), domain_regs.back()->sel("out"));
+    //def->connect(cmp->sel("out"), domain_regs.back()->sel("en"));
+    def->connect(tinc->sel("out"), domain_regs.back()->sel("en"));
+
+    int max_pt = to_int(lexmaxval(project_all_but(dom, d)));
+    cout << "controller max point for dimension " << d << " = " << max_pt << endl;
+    auto max_const = def->addInstance("d_" + str(d) + "_max",
+      "coreir.const",
+      {{"width", CoreIR::Const::make(c, width)}},
+      {{"value", CoreIR::Const::make(c, BitVector(width, max_pt))}});
+
+    auto atmax =
+      def->addInstance("d_" + str(d) + "_at_max", "coreir.eq", {{"width", CoreIR::Const::make(c, width)}});
+    def->connect(atmax->sel("in0"), dom_reg->sel("out"));
+    def->connect(atmax->sel("in1"), max_const->sel("out"));
+    domain_at_max.push_back(atmax->sel("out"));
+  }
+
+  for (int d = 0; d < num_dims(dom); d++) {
+    string df = "d_" + str(d);
+    auto inc = def->addInstance(df + "_inc", "coreir.add", {{"width", CoreIR::Const::make(c, width)}});
+    def->connect(inc->sel("in0"), domain_regs.at(d)->sel("out"));
+    def->connect(inc->sel("in1"), one->sel("out"));
+    int min_pt = to_int(lexminval(project_all_but(dom, d)));
+    auto min_const = def->addInstance("d_" + str(d) + "_min",
+      "coreir.const",
+      {{"width", CoreIR::Const::make(c, width)}},
+      {{"value", CoreIR::Const::make(c, BitVector(width, min_pt))}});
+
+    CoreIR::Wireable* smaller_dims_at_max = def->sel("self.enable");
+    for (int de = d + 1; de < num_dims(dom); de++) {
+      auto de_atmax = def->addInstance(df + "_am_" + context->getUnique(), "corebit.and");
+      def->connect(de_atmax->sel("in0"), smaller_dims_at_max);
+      def->connect(de_atmax->sel("in1"), domain_at_max.at(de));
+      smaller_dims_at_max = de_atmax->sel("out");
+    }
+
+    auto next_val_atmax =
+      def->addInstance(df + "_next_value_at_max", "coreir.mux", {{"width", CoreIR::Const::make(c, width)}});
+    def->connect(next_val_atmax->sel("sel"), domain_at_max.at(d));
+    def->connect(next_val_atmax->sel("in0"), inc->sel("out"));
+    def->connect(next_val_atmax->sel("in1"), min_const->sel("out"));
+
+    auto next_val = def->addInstance(df + "_next_value", "coreir.mux", {{"width", CoreIR::Const::make(c, width)}});
+    def->connect(next_val->sel("sel"), smaller_dims_at_max);
+    def->connect(next_val->sel("in0"), domain_regs.at(d)->sel("out"));
+    //def->connect(next_val->sel("in1"), inc->sel("out"));
+    def->connect(next_val->sel("in1"), next_val_atmax->sel("out"));
+    def->connect(next_val->sel("out"), domain_regs.at(d)->sel("in"));
+  }
+
+
+  m->setDef(def);
+  return m;
+}
+
 CoreIR::Module* affine_controller_def(CoreIR::Context* context, isl_set* dom, isl_aff* aff) {
   cout << tab(1) << "dom = " << str(dom) << endl;
 
@@ -6709,6 +6812,7 @@ void generate_Buffet_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, pro
     }
 
     map<string, Instance*> ubuffer_port_agens;
+    map<string, Instance*> ubuffer_port_ID_ctrl;
     map<string, Wireable*> ubuffer_port_bank_selectors;
     map<int, Wireable*> ubuffer_read_selector;
     for (auto pt : buf.get_all_ports()) {
@@ -6720,9 +6824,12 @@ void generate_Buffet_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, pro
 
         //Broad cast this bank into multiple buffet
         if (impl.inpt_to_bank[pt].size() > 1) {
+          auto pt_iterdom_ctrl = iterDom_controller(options, def->getContext(), buf.domain.at(pt), 16);
+
+          auto ID_ctrl = def->addInstance(ID_controller_name(pt), pt_iterdom_ctrl);
+          ubuffer_port_ID_ctrl[pt] = ID_ctrl;
           auto bank_sel = build_bank_selector(pt, adjusted_buf, impl, def);
-          def->connect(bank_sel->sel("d"),
-            control_vars(def, pt, adjusted_buf));
+          def->connect(bank_sel->sel("d"), ID_ctrl->sel("d"));
           ubuffer_port_bank_selectors[pt] = delay_by(def, bank_sel->sel("out"), 0);
         }
 
@@ -6801,6 +6908,7 @@ void generate_Buffet_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, pro
     map<string, std::vector<Wireable*> > ubuffer_ports_to_bank_wires,
         ubuffer_ports_to_bank_ready, ubuffer_ports_to_bank_valid;
     map<string, std::vector<Wireable*> > ubuffer_ports_to_bank_condition_wires;
+    map<string, std::vector<Wireable*> > op2idx_ready;
 
     for (int b = 0; b < num_banks; b++) {
       auto currbank = bank_map[b];
@@ -6835,8 +6943,9 @@ void generate_Buffet_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, pro
           auto agen = ubuffer_port_agens[pt];
           agen2ctrl.push_back({agen->sel("out"), control_wire});
           read_idx_valid_wires.push_back(control_wire);
-          def->connect(currbank->sel("read_idx_ready"),
-              control_ready(def, pt, buf));
+          CoreIR::map_insert(op2idx_ready, buf.get_bundle(pt), (CoreIR::Wireable*) currbank->sel("read_idx_ready"));
+          //def->connect(currbank->sel("read_idx_ready"),
+          //    control_ready(def, pt, buf));
         }
       } else {
         assert(read_map.size() == 1);
@@ -6846,8 +6955,9 @@ void generate_Buffet_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, pro
         agen2ctrl.push_back({agen->sel("out"), control_wire});
         read_idx_valid_wires.push_back(control_wire);
 
-        def->connect(currbank->sel("read_idx_ready"),
-            control_ready(def, pt, buf));
+        //def->connect(currbank->sel("read_idx_ready"),
+        //    control_ready(def, pt, buf));
+        CoreIR::map_insert(op2idx_ready, buf.get_bundle(pt),  (Wireable*)currbank->sel("read_idx_ready"));
 
         def->connect(currbank->sel("read_will_update"), zero);
 
@@ -6900,6 +7010,10 @@ void generate_Buffet_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, pro
         }
       }
     }
+    //Wire the ready wire
+    for (auto it: op2idx_ready)
+      def->connect(control_ready_by_bundle(def, it.first, buf), andList(def, it.second));
+
 
     for (auto conn : ubuffer_ports_to_bank_wires) {
       vector<Wireable*> conds = ubuffer_ports_to_bank_condition_wires[conn.first];
@@ -6934,6 +7048,8 @@ void generate_Buffet_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, pro
       */
       }
     }
+    map<string, vector<Wireable*> > ready_wire_map;
+    map<string, vector<Wireable*> > cond_map;
 
     for (int b = 0; b < num_banks; b++) {
       auto currbank = bank_map[b];
@@ -6994,19 +7110,31 @@ void generate_Buffet_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, pro
             def->connect(currbank->sel("push_data_valid"),
                     control_en(def, pt, buf));
           } else {
-            def->connect(currbank->sel("push_data_valid"),
+            if (ubuffer_port_ID_ctrl.count(pt)) {
+              def->connect(currbank->sel("push_data_valid"), enable);
+            } else {
+              def->connect(currbank->sel("push_data_valid"),
                     def->sel("self." + buf.container_bundle(pt) + "_data_valid"));
+            }
 
           }
-          def->connect(currbank->sel("push_data_ready"),
-                  def->sel("self." + buf.container_bundle(pt) + "_data_ready"));
 
+          //if (ubuffer_port_ID_ctrl.count(pt)) {
+          Wireable* ready_wire = currbank->sel("push_data_ready");
+          CoreIR::map_insert(ready_wire_map, pt, ready_wire);
+          CoreIR::map_insert(cond_map, pt, enable);
+
+          //} else {
+            //no input broadcast
+            //def->connect(currbank->sel("push_data_ready"),
+            //        def->sel("self." + buf.container_bundle(pt) + "_data_ready"));
+
+          //}
+          //connect push data directly
           def->connect(
               currbank->sel("push_data"),
               def->sel("self." + buf.container_bundle(pt) + "." + str(buf.bundle_offset(pt))));
-
         }
-
         count++;
       }
 
@@ -7016,6 +7144,21 @@ void generate_Buffet_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, pro
         def->connect(currbank->sel("update_data"),
         def->sel("self." + buf.container_bundle(pt) + "." + str(buf.bundle_offset(pt))));
         def->connect(currbank->sel("update_data_valid"), zero);
+      }
+    }
+
+    //Second pass wire the ready port
+    for (auto it: ready_wire_map) {
+      string pt = it.first;
+      Wireable* in_ready = create_ctrl_select(def, cond_map.at(pt), it.second);
+      def->connect(def->sel("self." + buf.container_bundle(pt) + "_data_ready"), in_ready);
+
+      //Write bank port selector
+      if (ubuffer_port_ID_ctrl.count(pt) ) {
+
+        auto ID_enable = andList(def,
+                {in_ready, def->sel("self." + buf.container_bundle(pt) + "_data_valid")});
+        def->connect(ubuffer_port_ID_ctrl.at(pt)->sel("enable"), ID_enable);
       }
     }
   }
@@ -7242,9 +7385,23 @@ void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
     }
 
   }
-
-
 }
+
+Wireable* create_ctrl_select(CoreIR::ModuleDef* def, vector<Wireable*> & conds, vector<Wireable*>& vals) {
+
+    CoreIR::Wireable* out_wire = vals.at(0);
+    auto c = def->getContext();
+    for (auto i = 1; i < conds.size(); i ++ ) {
+      auto mux = def->addInstance("chain_mux" + c->getUnique(),
+              "corebit.mux");
+      def->connect(out_wire, mux->sel("in0"));
+      def->connect(vals[i], mux->sel("in1"));
+      def->connect(conds[i], mux->sel("sel"));
+      out_wire = mux->sel("out");
+    }
+    return out_wire;
+}
+
 Wireable* create_bank_enable(string& pt, int bank, CoreIR::ModuleDef* def,
         map<string, std::set<int> > & inpt_to_bank,
         map<string, Wireable*> ubuffer_port_bank_selectors,
@@ -7477,6 +7634,16 @@ CoreIR::Wireable* control_ready(CoreIR::ModuleDef* def, const std::string& reade
       assert(false);
   }
 }
+
+CoreIR::Wireable* control_ready_by_bundle(CoreIR::ModuleDef* def, const std::string& bd_name, UBuffer& buf) {
+    //FIXME: possible bug update op may point to output bundle
+  if (!buf.is_input_bundle(bd_name)) {
+    return def->sel("self." + bd_name + "_rready");
+  } else {
+      assert(false);
+  }
+}
+
 
 double PE_energy_cost_instance_model(power_analysis_params& power_params, power_analysis_info& power_stats, prog& prg) {
   cout << "Computing Instance level PE energy cost for " << prg.name << endl;

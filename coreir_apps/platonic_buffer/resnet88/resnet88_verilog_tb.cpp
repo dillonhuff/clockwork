@@ -188,54 +188,54 @@ int main() {
       cout << "send me data!" << endl;
       *(dut.hw_kernel_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_read) = (int) hw_kernel_stencil.read();
     }
-  hw_output_stencil_clkwrk_10_op_hcompute_hw_output_stencil_2_write_valid_count += dut.hw_output_stencil_clkwrk_10_op_hcompute_hw_output_stencil_2_write_valid;
-  if (dut.hw_output_stencil_clkwrk_10_op_hcompute_hw_output_stencil_2_write_valid) {
-    cout << "Got data: " << (int) *(dut.hw_output_stencil_clkwrk_10_op_hcompute_hw_output_stencil_2_write) << endl;
-    hw_uint<16> val((int) *(dut.hw_output_stencil_clkwrk_10_op_hcompute_hw_output_stencil_2_write));
-    hw_output_stencil_clkwrk_10.write(val);
-  }
-  hw_output_stencil_clkwrk_11_op_hcompute_hw_output_stencil_3_write_valid_count += dut.hw_output_stencil_clkwrk_11_op_hcompute_hw_output_stencil_3_write_valid;
-  if (dut.hw_output_stencil_clkwrk_11_op_hcompute_hw_output_stencil_3_write_valid) {
-    cout << "Got data: " << (int) *(dut.hw_output_stencil_clkwrk_11_op_hcompute_hw_output_stencil_3_write) << endl;
-    hw_uint<16> val((int) *(dut.hw_output_stencil_clkwrk_11_op_hcompute_hw_output_stencil_3_write));
-    hw_output_stencil_clkwrk_11.write(val);
-  }
-  hw_output_stencil_clkwrk_12_op_hcompute_hw_output_stencil_4_write_valid_count += dut.hw_output_stencil_clkwrk_12_op_hcompute_hw_output_stencil_4_write_valid;
-  if (dut.hw_output_stencil_clkwrk_12_op_hcompute_hw_output_stencil_4_write_valid) {
-    cout << "Got data: " << (int) *(dut.hw_output_stencil_clkwrk_12_op_hcompute_hw_output_stencil_4_write) << endl;
-    hw_uint<16> val((int) *(dut.hw_output_stencil_clkwrk_12_op_hcompute_hw_output_stencil_4_write));
-    hw_output_stencil_clkwrk_12.write(val);
-  }
-  hw_output_stencil_clkwrk_13_op_hcompute_hw_output_stencil_5_write_valid_count += dut.hw_output_stencil_clkwrk_13_op_hcompute_hw_output_stencil_5_write_valid;
-  if (dut.hw_output_stencil_clkwrk_13_op_hcompute_hw_output_stencil_5_write_valid) {
-    cout << "Got data: " << (int) *(dut.hw_output_stencil_clkwrk_13_op_hcompute_hw_output_stencil_5_write) << endl;
-    hw_uint<16> val((int) *(dut.hw_output_stencil_clkwrk_13_op_hcompute_hw_output_stencil_5_write));
-    hw_output_stencil_clkwrk_13.write(val);
-  }
-  hw_output_stencil_clkwrk_14_op_hcompute_hw_output_stencil_6_write_valid_count += dut.hw_output_stencil_clkwrk_14_op_hcompute_hw_output_stencil_6_write_valid;
-  if (dut.hw_output_stencil_clkwrk_14_op_hcompute_hw_output_stencil_6_write_valid) {
-    cout << "Got data: " << (int) *(dut.hw_output_stencil_clkwrk_14_op_hcompute_hw_output_stencil_6_write) << endl;
-    hw_uint<16> val((int) *(dut.hw_output_stencil_clkwrk_14_op_hcompute_hw_output_stencil_6_write));
-    hw_output_stencil_clkwrk_14.write(val);
-  }
-  hw_output_stencil_clkwrk_15_op_hcompute_hw_output_stencil_7_write_valid_count += dut.hw_output_stencil_clkwrk_15_op_hcompute_hw_output_stencil_7_write_valid;
-  if (dut.hw_output_stencil_clkwrk_15_op_hcompute_hw_output_stencil_7_write_valid) {
-    cout << "Got data: " << (int) *(dut.hw_output_stencil_clkwrk_15_op_hcompute_hw_output_stencil_7_write) << endl;
-    hw_uint<16> val((int) *(dut.hw_output_stencil_clkwrk_15_op_hcompute_hw_output_stencil_7_write));
-    hw_output_stencil_clkwrk_15.write(val);
-  }
-  hw_output_stencil_clkwrk_8_op_hcompute_hw_output_stencil_write_valid_count += dut.hw_output_stencil_clkwrk_8_op_hcompute_hw_output_stencil_write_valid;
-  if (dut.hw_output_stencil_clkwrk_8_op_hcompute_hw_output_stencil_write_valid) {
-    cout << "Got data: " << (int) *(dut.hw_output_stencil_clkwrk_8_op_hcompute_hw_output_stencil_write) << endl;
-    hw_uint<16> val((int) *(dut.hw_output_stencil_clkwrk_8_op_hcompute_hw_output_stencil_write));
-    hw_output_stencil_clkwrk_8.write(val);
-  }
-  hw_output_stencil_clkwrk_9_op_hcompute_hw_output_stencil_1_write_valid_count += dut.hw_output_stencil_clkwrk_9_op_hcompute_hw_output_stencil_1_write_valid;
-  if (dut.hw_output_stencil_clkwrk_9_op_hcompute_hw_output_stencil_1_write_valid) {
-    cout << "Got data: " << (int) *(dut.hw_output_stencil_clkwrk_9_op_hcompute_hw_output_stencil_1_write) << endl;
-    hw_uint<16> val((int) *(dut.hw_output_stencil_clkwrk_9_op_hcompute_hw_output_stencil_1_write));
-    hw_output_stencil_clkwrk_9.write(val);
-  }
+    hw_output_stencil_clkwrk_10_op_hcompute_hw_output_stencil_2_write_valid_count += dut.hw_output_stencil_clkwrk_10_op_hcompute_hw_output_stencil_2_write_valid;
+    if (dut.hw_output_stencil_clkwrk_10_op_hcompute_hw_output_stencil_2_write_valid) {
+      cout << "Got data: " << (int) *(dut.hw_output_stencil_clkwrk_10_op_hcompute_hw_output_stencil_2_write) << endl;
+      hw_uint<16> val((int) *(dut.hw_output_stencil_clkwrk_10_op_hcompute_hw_output_stencil_2_write));
+      hw_output_stencil_clkwrk_10.write(val);
+    }
+    hw_output_stencil_clkwrk_11_op_hcompute_hw_output_stencil_3_write_valid_count += dut.hw_output_stencil_clkwrk_11_op_hcompute_hw_output_stencil_3_write_valid;
+    if (dut.hw_output_stencil_clkwrk_11_op_hcompute_hw_output_stencil_3_write_valid) {
+      cout << "Got data: " << (int) *(dut.hw_output_stencil_clkwrk_11_op_hcompute_hw_output_stencil_3_write) << endl;
+      hw_uint<16> val((int) *(dut.hw_output_stencil_clkwrk_11_op_hcompute_hw_output_stencil_3_write));
+      hw_output_stencil_clkwrk_11.write(val);
+    }
+    hw_output_stencil_clkwrk_12_op_hcompute_hw_output_stencil_4_write_valid_count += dut.hw_output_stencil_clkwrk_12_op_hcompute_hw_output_stencil_4_write_valid;
+    if (dut.hw_output_stencil_clkwrk_12_op_hcompute_hw_output_stencil_4_write_valid) {
+      cout << "Got data: " << (int) *(dut.hw_output_stencil_clkwrk_12_op_hcompute_hw_output_stencil_4_write) << endl;
+      hw_uint<16> val((int) *(dut.hw_output_stencil_clkwrk_12_op_hcompute_hw_output_stencil_4_write));
+      hw_output_stencil_clkwrk_12.write(val);
+    }
+    hw_output_stencil_clkwrk_13_op_hcompute_hw_output_stencil_5_write_valid_count += dut.hw_output_stencil_clkwrk_13_op_hcompute_hw_output_stencil_5_write_valid;
+    if (dut.hw_output_stencil_clkwrk_13_op_hcompute_hw_output_stencil_5_write_valid) {
+      cout << "Got data: " << (int) *(dut.hw_output_stencil_clkwrk_13_op_hcompute_hw_output_stencil_5_write) << endl;
+      hw_uint<16> val((int) *(dut.hw_output_stencil_clkwrk_13_op_hcompute_hw_output_stencil_5_write));
+      hw_output_stencil_clkwrk_13.write(val);
+    }
+    hw_output_stencil_clkwrk_14_op_hcompute_hw_output_stencil_6_write_valid_count += dut.hw_output_stencil_clkwrk_14_op_hcompute_hw_output_stencil_6_write_valid;
+    if (dut.hw_output_stencil_clkwrk_14_op_hcompute_hw_output_stencil_6_write_valid) {
+      cout << "Got data: " << (int) *(dut.hw_output_stencil_clkwrk_14_op_hcompute_hw_output_stencil_6_write) << endl;
+      hw_uint<16> val((int) *(dut.hw_output_stencil_clkwrk_14_op_hcompute_hw_output_stencil_6_write));
+      hw_output_stencil_clkwrk_14.write(val);
+    }
+    hw_output_stencil_clkwrk_15_op_hcompute_hw_output_stencil_7_write_valid_count += dut.hw_output_stencil_clkwrk_15_op_hcompute_hw_output_stencil_7_write_valid;
+    if (dut.hw_output_stencil_clkwrk_15_op_hcompute_hw_output_stencil_7_write_valid) {
+      cout << "Got data: " << (int) *(dut.hw_output_stencil_clkwrk_15_op_hcompute_hw_output_stencil_7_write) << endl;
+      hw_uint<16> val((int) *(dut.hw_output_stencil_clkwrk_15_op_hcompute_hw_output_stencil_7_write));
+      hw_output_stencil_clkwrk_15.write(val);
+    }
+    hw_output_stencil_clkwrk_8_op_hcompute_hw_output_stencil_write_valid_count += dut.hw_output_stencil_clkwrk_8_op_hcompute_hw_output_stencil_write_valid;
+    if (dut.hw_output_stencil_clkwrk_8_op_hcompute_hw_output_stencil_write_valid) {
+      cout << "Got data: " << (int) *(dut.hw_output_stencil_clkwrk_8_op_hcompute_hw_output_stencil_write) << endl;
+      hw_uint<16> val((int) *(dut.hw_output_stencil_clkwrk_8_op_hcompute_hw_output_stencil_write));
+      hw_output_stencil_clkwrk_8.write(val);
+    }
+    hw_output_stencil_clkwrk_9_op_hcompute_hw_output_stencil_1_write_valid_count += dut.hw_output_stencil_clkwrk_9_op_hcompute_hw_output_stencil_1_write_valid;
+    if (dut.hw_output_stencil_clkwrk_9_op_hcompute_hw_output_stencil_1_write_valid) {
+      cout << "Got data: " << (int) *(dut.hw_output_stencil_clkwrk_9_op_hcompute_hw_output_stencil_1_write) << endl;
+      hw_uint<16> val((int) *(dut.hw_output_stencil_clkwrk_9_op_hcompute_hw_output_stencil_1_write));
+      hw_output_stencil_clkwrk_9.write(val);
+    }
     dut.clk = 0;
     dut.eval();
     dut.clk = 1;
