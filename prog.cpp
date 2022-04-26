@@ -613,13 +613,16 @@ void make_constant_dd(const std::string& target_op, const std::string& target_bu
   }
 }
 
+
 std::vector<string> topologically_sort(
         std::set<string> not_yet_sorted,
         map<string, std::set<string> > other_producers) {
 	std::vector<string> topologically_sorted_kernels;
 	while(not_yet_sorted.size() > 0){
+        bool add_new_kernel = false;
 		for(auto next_kernel : not_yet_sorted){
 			bool all_producers_sorted = true;
+            cout << "sorted kernel: " << topologically_sorted_kernels << endl;
 			for (auto producer : other_producers.at(next_kernel)) {
 				if(!elem(producer, topologically_sorted_kernels)) {
 					all_producers_sorted = false;
@@ -629,9 +632,16 @@ std::vector<string> topologically_sort(
 			if(all_producers_sorted){
 				topologically_sorted_kernels.push_back(next_kernel);
 				not_yet_sorted.erase(next_kernel);
+                add_new_kernel = true;
 				break;
 			}
 		}
+        if (!add_new_kernel) {
+            cout << "\tIs topologically symmetric:\n\t" << not_yet_sorted <<  endl;
+            auto kernel_picked = pick(not_yet_sorted);
+            not_yet_sorted.erase(kernel_picked);
+            topologically_sorted_kernels.push_back(kernel_picked);
+        }
 	}
     return topologically_sorted_kernels;
 }
@@ -2066,6 +2076,39 @@ void infer_bounds_and_unroll(const std::string& out, const std::vector<int>& bou
   merge_basic_block_ops(prg);
 }
 
+void halide_check_rate_mismatch(const std::string& out, const std::vector<int>& bounds, const int unroll_factor, prog& prg) {
+
+	        prg.reset_context();
+		        prg.pretty_print();
+			        cout << endl;
+
+				        cout << "Ritvik_reduce_loop_unroll : " << endl << endl << endl;
+					        unroll_reduce_loops(prg);
+						        cout << endl << endl;
+							        prg.pretty_print();
+								        cout << endl;
+
+									        cout << "Ritvik_ormalize_bounds : " << endl << endl << endl;
+										        normalize_bounds(prg);
+											        cout << endl << endl;
+												        prg.pretty_print();
+													        cout << endl;
+
+														        cout << "Ritvik_merge_basic_block : " << endl << endl << endl;
+															        prg.pretty_print();
+																        cout << endl;
+
+																	        cout << "Ritvik_Unroll_producer_matching : " << endl << endl;
+																		        rate_checking_pass(out, unroll_factor, prg);
+																			        cout << endl << endl;
+																				        prg.pretty_print();
+																					        cout << endl;
+
+}
+
+
+
+
 void normalize_bounds(prog& prg) {
   auto loops = prg.all_loops();
   for (auto l : loops) {
@@ -2174,6 +2217,52 @@ map<string, int> compute_unroll_factors(const std::string& buf, const int unroll
 
   return factors;
 }
+void rate_checking_pass(const std::string& buf, const int unroll_factor, prog& prg) {
+	        prg.pretty_print();
+		        umap* deps = pad_map(prg.validity_deps()); //Padd with dimension?
+
+			        cout << "Done padding validity deps" << endl;
+				        auto umaps = get_maps(deps); // Get all maps
+					        vector<isl_map*> projected_deps;
+						        for (auto m : umaps) {
+								                cout << "Projection: Domain & range = {" << domain_name(m) << " " << range_name(m)  << "} " << num_in_dims(m) << " " << num_out_dims(m) << endl;
+										                isl_map* projected = project_all_but(m, num_in_dims(m) - 1); // Donno what
+												                projected_deps.push_back(projected);
+														                cout << "Projection: Domain & range = {" << domain_name(projected) << " " << range_name(projected)  << "} " << num_in_dims(m) << " " << num_out_dims(m) << endl;
+
+																        }
+
+							        cout << "Computing qfactors...  " << projected_deps.size()  <<  "   " << endl;
+								        map<string, isl_val*> qfs = compute_qfactors(projected_deps);//Main step
+									        cout << "Got qfactors..." << endl;
+										        int temp_standard = 1;
+											        int flag = 0;
+												        for (auto q : qfs) {
+														                int temp = std::stoi(str(q.second));
+																                if(temp != temp_standard)
+																			                {
+																						                        if(flag ==0)
+																										                                flag = 1;
+
+
+																									                        if(flag ==1)
+																													                        {
+																																	                                cout << "WARNING: THE GIVEN APPLICATION IS NOT RATE MATCHED, APPLICATION WILL UNDERUTILIZE HARDWARE" << endl;
+																																					                                flag= -1;
+																																									                        }
+																												                        cout << q.first << " is too much unrolled by a factor of " << (int) temp/temp_standard << endl;
+																															                }
+																		        }
+													        if(flag == flag) // fpag = -1
+															        {
+																	                cout << "LOCAL ITERATION INTERVAL OF ALL LOOPS IS" << endl;
+																			                for (auto q : qfs) {
+																						                        cout << tab(1) << q.first << " -> " << str(q.second) << endl;
+																									                }
+																					        }
+}
+
+
 
 bool inner_loops_unrollable(const std::string& buf, const int unroll_factor, prog& prg) {
   std::set<op*> inner_loops = get_inner_loops(prg);
@@ -2960,6 +3049,21 @@ int loop_depth(op* op) {
 
 }
 
+vector<int> loop_depth_vector(op* op) {
+  if( op->is_loop()){
+    int depth = op->trip_count();
+
+    vector<int> vec = loop_depth_vector(pick(op->children));
+    vec.insert(vec.begin(), depth);
+    return vec;
+  } else if (op->is_if()) {
+    vector<int> vec = loop_depth_vector(pick(op->children));
+    return vec;
+  } else {
+    return {};
+  }
+}
+
 bool all_loop_nests_same_depth(prog& prg) {
   auto ops = prg.all_ops();
 
@@ -3414,10 +3518,10 @@ bool is_op_scheduled(op* op, schedule_info& sched, prog& prg) {
     //return has_latency && has_ii && has_offset;
     return has_ii && has_offset;
   }
-
   //return has_latency && has_offset;
   return has_offset;
 }
+
 
 bool share_resource(const std::string& op0, const std::string& op1, schedule_info& sched) {
   resource_instance i0;
@@ -3458,6 +3562,60 @@ bool no_violated_resource_assignments(schedule_info& sched, prog& prg) {
   return true;
 }
 
+bool share_buf_write_port(const std::string& op0, const std::string& op1, schedule_info& sched, prog& prg) {
+  string buf0, buf1;
+  for (auto r : sched.buf_write_assignment) {
+    if (r.first->name == op0) {
+      buf0 = r.second;
+    }
+  }
+  for (auto r : sched.buf_write_assignment) {
+    if (r.first->name == op1) {
+      buf1 = r.second;
+    }
+  }
+  if (buf0 == buf1) {
+    //Check if those two op can partition
+    umap* pmap0 = producer_umap(prg.find_op(op0), prg);
+    umap* pmap1 = producer_umap(prg.find_op(op1), prg);
+    cout << "buf " << buf0 << endl;
+    bool is_pond =
+      sched.buf2level.at(buf0) == "regfile";
+    return is_pond && !empty(its(range(pmap0), range(pmap1)));
+  } else {
+    return false;
+  }
+}
+
+bool no_violated_buf_write_port_assignments(CodegenOptions& options, schedule_info& sched, prog& prg) {
+  auto sched_exprs =
+    its(op_times_map(sched, prg), prg.whole_iteration_domain());
+  //cout << "Times: " << str(sched_exprs) << endl;
+  for (auto op0 : get_maps(sched_exprs)) {
+    for (auto op1 : get_maps(sched_exprs)) {
+      string name0 = domain_name(op0);
+      string name1 = domain_name(op1);
+        cout << "name0: " << name0 << endl;
+        cout << "name1: " << name1 << endl;
+
+      if (name0 != name1 && share_buf_write_port(name0, name1, sched, prg)) {
+        auto times = range(op0);
+        auto times1 = range(op1);
+        auto overlap = its(times, times1);
+        cout << "name0: " << name0 << endl;
+        cout << "name1: " << name1 << endl;
+        cout << "overlap: " << str(overlap) << endl;
+        if (!empty(overlap)) {
+          cout << tab(1) << name0 << " and " << name1 << " use the same resource" << endl;
+          cout << tab(2) << "Overlap: " << str(overlap) << endl;
+          return false;
+        }
+      }
+    }
+  }
+  return true;
+
+}
 
 
 void ir_node::replace_writes_to(const std::string& source_buf, const std::string& replacement) {
@@ -4250,6 +4408,23 @@ op* find_coarse_grained_pipeline_loop(op* lp) {
   return find_coarse_grained_pipeline_loop(lp->children.back());
 }
 
+void find_split_inner_perfect_loop(op* lp_visit, vector<op*> & cgpl_lp,  prog& prg) {
+  //this is the new cgpl loop finding function
+  //we traverse the AST in post order
+  //If a loop with more than one children
+  //Then this is a cgpli loop node.
+  //
+  //Post order visit guarantee that descendant is ahead of its ancestor
+
+  for (auto child: lp_visit->children) {
+    find_split_inner_perfect_loop(child, cgpl_lp, prg);
+  }
+  if ((lp_visit->children).size() > 1 && is_inner_loop(lp_visit)) {
+    if (lp_visit != prg.root)
+      cgpl_lp.push_back(lp_visit);
+  }
+}
+
 void find_coarse_grained_pipeline_loops(op* lp_visit, vector<op*> & cgpl_lp,  prog& prg) {
   //this is the new cgpl loop finding function
   //we traverse the AST in post order
@@ -4388,6 +4563,52 @@ void loop_perfection(prog& prg) {
   }
 }
 
+void loop_perfection_without_glb_op(op* target_lp, op* inner_most_cgpl_lp, prog& prg) {
+  //pc id is the location of loop child that will subsume all the other children
+  int pc_id = -1;
+  int child_count = 0;
+  for (auto child: target_lp->children) {
+    if (!is_perfect(child, prg)) {
+        //Can only has one child exist
+        assert(pc_id == -1);
+        pc_id = child_count;
+    }
+    child_count ++;
+  }
+  assert(pc_id != -1);
+  for (int i = pc_id-1; i >= 0; i --) {
+    op* move_op = target_lp->children.at(i);
+    auto name = move_op->name;
+    if (contains(name, "glb"))
+        continue;
+    cout << "\tADD Prelogue op: " << name << endl;
+    add_prelogue_op(move_op, target_lp->children.at(pc_id), inner_most_cgpl_lp);
+    //Move one loop inside need to decrease the index
+    pc_id --;
+  }
+  cout << "pc id: " << pc_id << endl;
+  cout << "kernel need to be consider: " << target_lp->children << endl;
+  for (int i = pc_id+1; i < target_lp->children.size(); i ++) {
+    op* move_op = target_lp->children.at(i);
+    auto name = move_op->name;
+    cout << "\tepilogue op: " << name << endl;
+    add_epilogue_op(move_op, target_lp->children.at(pc_id), inner_most_cgpl_lp);
+  }
+}
+
+void loop_perfection_with_root_op(prog& prg) {
+  vector<op*> cgpl_lps;
+  find_coarse_grained_pipeline_loops(prg.root, cgpl_lps, prg);
+  if (cgpl_lps.size() == 0)
+    return;
+  cgpl_lps.push_back(prg.root);
+  op* inner_most_cgpl_lp = cgpl_lps.front();
+  for(auto it = cgpl_lps.begin() + 1; it != cgpl_lps.end(); it ++) {
+    //Move the ir node under *it into the inner most coarse grained pipeline loop
+    loop_perfection_without_glb_op(*it, inner_most_cgpl_lp, prg);
+  }
+}
+
 bool single_coarse_pipeline_loop_nests(prog& prg) {
   vector<op*> cgpl_lps;
   find_coarse_grained_pipeline_loops(prg.root, cgpl_lps, prg);
@@ -4454,6 +4675,18 @@ int logical_dimension(const std::string& buf, prog& prg) {
   } else {
     return num_out_dims(consumer_map(prg.root, buf, prg));
   }
+}
+
+int logical_capacity(const std::string& buf, prog& prg) {
+
+  uset* addr_range;
+  if (!prg.is_input(buf)) {
+    addr_range = range(prg.producer_map(buf));
+  } else {
+    addr_range = range(prg.consumer_map(buf));
+  }
+  auto range_card = card(addr_range);
+  return int_upper_bound(range_card);
 }
 
 vector<op*> fully_scheduled_nodes(schedule_info& sched, prog& prg)  {
@@ -4606,6 +4839,52 @@ int op_latency(op* op, schedule_info& hwinfo) {
   return total_latency;
 }
 
+
+//Binary search the smallest outer delay
+void adjust_outer_delays_exhaustively(schedule_info& sched, prog& prg, int glb_load_latency) {
+  auto deps = cycle_accurate_deps(prg);
+  cout << "Adjusting delays of " << prg.name << endl;
+  //for (auto lp : prg.root->children) {
+  //  string name = lp->name;
+  for (auto name : topologically_sort_kernels(prg)) {
+    auto lp = prg.find_loop(name);
+    cout << "Adjusting delay of " << lp->name << endl;
+
+    int earliest_possible_delay = 0;
+    int latest_legal_delay =
+      map_find(lp, sched.op_offset_within_parent);
+
+    int current_delay = latest_legal_delay;
+
+    assert(latest_legal_delay >= earliest_possible_delay);
+    while (latest_legal_delay - earliest_possible_delay > 0) {
+      assert(latest_legal_delay >= earliest_possible_delay);
+      int try_delay = (latest_legal_delay + earliest_possible_delay) / 2;
+      sched.op_offset_within_parent[lp] = try_delay;
+      if (no_violated_cycle_accurate_dependencies(deps, sched, prg)) {
+        latest_legal_delay = try_delay;
+      } else {
+        earliest_possible_delay = try_delay + 1;
+      }
+      cout << "Earliest legal: " << earliest_possible_delay << endl;
+      cout << "Latest legal  : " << latest_legal_delay << endl;
+    }
+
+    if (!contains(name, "glb_s0"))
+        latest_legal_delay = std::max(latest_legal_delay, glb_load_latency);
+    if (contains(name, "hw_output")){
+        //FIXME: override GLB output latency with sequential schedule
+        latest_legal_delay = 0;
+        for (string prod: get_producers(name, prg)) {
+            op* prod_op = prg.find_loop(prod);
+            latest_legal_delay = std::max(latest_legal_delay,
+                    sched.total_latency(prod_op) + sched.op_offset_within_parent.at(prod_op));
+        }
+    }
+    sched.op_offset_within_parent[lp] = latest_legal_delay;
+  }
+}
+
 void adjust_outer_delays(schedule_info& sched, prog& prg) {
   auto deps = cycle_accurate_deps(prg);
   cout << "Adjusting delays of " << prg.name << endl;
@@ -4734,6 +5013,76 @@ void move_node(op* node_to_be_moved, op* dst, prog& prg) {
   node_to_be_moved->parent = dst;
 }
 
+
+void loop_split(prog& prg) {
+  vector<op*> cgpl_lp;
+  find_split_inner_perfect_loop(prg.root, cgpl_lp, prg);
+  for (auto lp: cgpl_lp) {
+      cout << tab(4) << lp->name << endl;
+    perfect_loop_split(lp, prg);
+  }
+}
+
+void remove_loop(op* lp) {
+    auto p = lp->parent;
+    vector<op*> new_children;
+    for (auto c: p->children) {
+        if( c != lp) {
+            new_children.push_back(c);
+        }
+    }
+    p->children = new_children;
+}
+
+bool share_index_var(vector<op*> & children) {
+    std::set<string> shared_vars;
+    for(auto child: children) {
+        for (auto idx: child->index_variables_needed_by_compute) {
+            if (shared_vars.count(idx)) {
+                return true;
+            } else {
+                shared_vars.insert(idx);
+            }
+        }
+    }
+    return false;
+}
+
+//Before we calling this function, we have check lp is a perfect loop nest
+void perfect_loop_split(op* lp, prog& prg) {
+    //lp is the loop level that has multiple children,
+    //we will duplicate the loop level from lp to root and add each child into the splitted loop nest
+    int child_cnt = 0;
+    op* outtest_lp = prg.root->container_child(lp);
+    auto child_list = lp->children;
+
+    //Cannot split loop if they share index variable
+    if (share_index_var(child_list))
+        return;
+    for (op* child: child_list) {
+        //Get surrounding loops from root to leave
+        cout << "\tVisiting child: " << child->name << endl;
+        vector<string> surrounding_loops = surrounding_vars(child, prg);
+        vector<op*> loop_nest = surrounding_vars_ops(child, prg);
+        loop_nest.erase(loop_nest.begin());
+
+        auto new_lp = prg.root->add_loop_before(outtest_lp,
+                outtest_lp->name + "_split_"+str(child_cnt),
+                outtest_lp->start, outtest_lp->end_exclusive);
+        for (auto it = loop_nest.begin()+1; it != loop_nest.end(); it ++) {
+            new_lp = new_lp->add_loop((*it)->name + "_split_" + str(child_cnt),
+                    (*it)->start, (*it)->end_exclusive);
+        }
+        move_node(child, new_lp, prg);
+        child->add_var_suffix_to_writes("_split_" + str(child_cnt), surrounding_loops);
+        child->add_var_suffix_to_reads("_split_" + str(child_cnt), surrounding_loops);
+        child_cnt ++;
+    }
+    cout << "container child: " << prg.root->container_child(lp)->name << endl;
+    remove_loop(outtest_lp);
+}
+
+
 void pad_bottom_level_ops_with_loops(prog& prg) {
   int max_depth = max_loop_depth(prg);
   for (auto c : prg.all_ops()) {
@@ -4756,6 +5105,154 @@ int max_loop_depth(prog& prg) {
     maxl = max(l, maxl);
   }
   return maxl;
+}
+
+std::set<op*> reduce_op(prog & prg) {
+    std::set<op*> reduce_op;
+    vector<string> rvars = reduce_vars(prg);
+    for (string var: rvars) {
+      op* loop = prg.find_loop(var);
+      auto lower_ops = loop->descendant_ops();
+      for (auto lower_op: lower_ops)
+        reduce_op.insert(lower_op);
+    }
+    return reduce_op;
+}
+
+//This should apply to the kernel that fully unrolled
+//
+void dsa_writers_new(prog& prg) {
+    std::set<op*> r_ops = reduce_op(prg);
+
+    std::set<string> all_buffers;
+    std::set<string> multi_write_buffers;
+    map<string, std::set<string> > producer_kernels;
+    std::set<string> reduced_kernels;
+    for (auto op : prg.all_ops()) {
+      //should not rewrite the real reduce kernel
+      if (r_ops.count(op))
+        continue;
+      auto read = op->buffers_read();
+      auto written = op->buffers_written();
+      for (auto b : intersection(read, written)) {
+        reduced_kernels.insert(b);
+        cout << "reduced kernel : " << b << endl;
+      }
+    }
+
+    for (auto k : get_kernels(prg)) {
+      for (auto b : get_produced_buffers(k, prg)) {
+        all_buffers.insert(b);
+        producer_kernels[b].insert(k);
+        cout << "insert kernel: " << k << " to producer buffer: " << b << endl;
+      }
+    }
+
+    cout << "Producer kernels..." << endl;
+    for (auto p : producer_kernels) {
+      cout << tab(1) << p.first << " -> ";
+      for (auto k : p.second) {
+        cout << k << " ";
+      }
+      cout << endl;
+      if (p.second.size() > 1) {
+        cout << tab(2) << "MULTIPLE PRODUCERS" << endl;
+      }
+    }
+    for (auto k : get_kernels(prg)) {
+      for (auto b : get_produced_buffers(k, prg)) {
+        auto producers = producer_kernels[b];
+
+        if (elem(b, reduced_kernels) && producers.size() >= 1) {
+          cout << b << " has " << producers.size() << " producers" << endl;
+          for (auto p : producers) {
+            cout << tab(1) << p << endl;
+          }
+          auto writers = find_writers(b, prg);
+          prg.pretty_print();
+          //assert(writers.size() <= 2);
+          if (writers.size() > 1) {
+            multi_write_buffers.insert(b);
+          }
+        }
+
+      }
+    }
+
+    cout << "Multi-write buffers" << endl;
+    map<string, std::set<op*> >initializers;
+    map<string, std::set<op*> > updaters;
+    for (auto b : multi_write_buffers) {
+      cout << tab(1) << b << endl;
+      auto writers = find_writers(b, prg);
+      vector<op*> ws;
+      for (auto w : writers) {
+        ws.push_back(w);
+      }
+
+      for (auto w : ws) {
+        if (w->read_addrs().size() == 0) {
+          initializers[b].insert(w);
+        } else {
+          updaters[b].insert(w);
+        }
+
+      }
+      //op* w0 = ws.at(0);
+      //op* w1 = ws.at(1);
+
+      //if (w0->read_addrs().size() == 0) {
+      //initializers[b] = w0;
+      //updaters[b] = w1;
+      //} else {
+      //initializers[b] = w1;
+      //updaters[b] = w0;
+      //}
+    }
+
+    cout << "Built initializer / update maps" << endl;
+    cout << tab(1) << "# multi_write buffers = " << multi_write_buffers.size() << endl;
+    //assert(false);
+    for (auto b : multi_write_buffers) {
+      string init_buffer = prg.un(b + "_clkwrk_dsa");
+      for (auto init : initializers[b]) {
+        init->replace_writes_to(b, init_buffer);
+      }
+      for (auto updated : updaters[b]) {
+        updated->replace_reads_from(b, init_buffer);
+      }
+      //auto init = initializers[b];
+      //assert(init != 0);
+      //auto updated = updaters[b];
+      //assert(updated != 0);
+      //cout << "Replacing writes" << endl;
+      //init->replace_writes_to(b, init_buffer);
+      //cout << "Replacing reads from " << b << " in " << updated->name << endl;
+      //updated->replace_reads_from(b, init_buffer);
+      prg.buffer_port_widths[init_buffer] = prg.buffer_port_width(b);
+    }
+
+    prg.pretty_print();
+    //assert(false);
+
+    // Split up buffers that are read at constants in one of their components
+    for (auto b : all_buffers) {
+      auto writers = find_writers(b, prg);
+      auto readers = find_readers(b, prg);
+
+      if (writers.size() > 1 && readers.size() == 0) {
+        cout << b << " has " << writers.size() << " writers and " << readers.size() << " readers" << endl;
+        assert(prg.is_output(b));
+        for (auto writer : writers) {
+          string init_buffer = prg.un(b + "_clkwrk_write_duplicate");
+          writer->replace_writes_to(b, init_buffer);
+          prg.add_output(init_buffer);
+          prg.buffer_port_widths[init_buffer] = prg.buffer_port_width(b);
+        }
+
+        prg.outs.erase(b);
+      }
+    }
 }
 
 void dsa_writers(prog& prg) {

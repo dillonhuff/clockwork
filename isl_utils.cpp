@@ -1786,7 +1786,9 @@ isl_union_set* simplify(uset* const m) {
 }
 
 isl_map* simplify(isl_map* const m) {
-  return isl_map_remove_redundancies(cpy(m));
+  auto tmp = isl_map_remove_redundancies(cpy(m));
+  isl_map_detect_equalities(tmp);
+  return tmp;
 }
 
 isl_set* simplify(isl_set* const m) {
@@ -1887,7 +1889,9 @@ int common_max_stride(isl_map* const m, int out_dim) {
     //Skip root start from 1
     for (int in_dim=1; in_dim < num_in_dims(m); in_dim++){
         int s = stride_in_dim(m, in_dim, out_dim);
-        if (s > 0)
+        int domain_range = get_domain_range(::domain(m), in_dim);
+        // only count the stride with domain range large than 1
+        if ((s > 0) && (domain_range > 1))
           cms = std::gcd(cms, s);
     }
     return cms;
@@ -2514,6 +2518,41 @@ isl_map* delay_schedule_inner_most(isl_map* m, int delay) {
   return isl_map_from_basic_map(b_ret);
 }
 
+isl_map* double_schedule_rate(isl_map* m, int in_dim, int fetch_width) {
+    cout << "schedule before double the rate: " << str(m) << endl;
+  auto c_vec = constraints(m);
+  int new_stride = -1;
+  for (auto & c: c_vec) {
+    bool involve = isl_constraint_involves_dims(c, isl_dim_in, in_dim-1, 1);
+    if (involve && isl_constraint_is_equality(c)) {
+      int upper_stride = -to_int(isl_constraint_get_coefficient_val(c, isl_dim_in, in_dim - 1));
+      new_stride = upper_stride / 2;
+      if(new_stride < fetch_width/2) {
+          cout << "rate after double: " << new_stride << endl;
+          cout << "ERROR: rate is too high, need to relax the inner loop ii, or change halide schedule" <<endl
+              <<"since there are too many refetch for this access pattern." << endl;
+          assert(false);
+      }
+    }
+  }
+  for (auto & c: c_vec) {
+    bool involve = isl_constraint_involves_dims(c, isl_dim_in, in_dim, 1);
+    if (involve && isl_constraint_is_equality(c)) {
+      c = isl_constraint_set_coefficient_si(c, isl_dim_in, in_dim, -new_stride);
+    }
+  }
+  auto b_ret = isl_basic_map_universe(get_space(m));
+  for (auto c: c_vec) {
+      b_ret = isl_basic_map_add_constraint(b_ret, c);
+  }
+  string dname = domain_name(m);
+  auto ct = ctx(m);
+  b_ret =
+      isl_basic_map_set_tuple_id(b_ret, isl_dim_in, id(ct, dname));
+
+  return isl_map_from_basic_map(b_ret);
+}
+
 isl_map* set_schedule_delay(isl_map* m, int delay) {
   auto c_vec = constraints(m);
   for (auto & c: c_vec) {
@@ -2645,6 +2684,7 @@ isl_map* set_in_dim_to_val(isl_map* m, int in_dim, int val) {
 }
 
 isl_map* remove_in_dims(isl_map* m, vector<int> remove_dims) {
+    //cout << "map need to remove in dim: " << str(m) << endl;
     std::sort(remove_dims.begin(), remove_dims.end(), std::greater<int>());
     auto tmp = cpy(m);
     for (int dim: remove_dims) {
@@ -2791,9 +2831,31 @@ isl_map* pad_to_domain_left_ubuf_map(isl_map* m, int dom_dim_id, int depth) {
   return isl_map_from_basic_map(b_ret);
 }
 
+isl_map* add_relation_ubuf_map(isl_map* m, int dom_dim_id, int range_dim_id) {
+
+  auto c_vec = constraints(m);
+  auto rel_map = relation_map(m);
+  assert(rel_map.at(dom_dim_id) == false);
+  auto b_ret = isl_basic_map_universe(get_space(m));
+  for (auto & c: c_vec) {
+    bool involve;
+    involve =  isl_constraint_involves_dims(c, isl_dim_out, range_dim_id, 1);
+    if (involve) {
+      int stride = to_int(isl_constraint_get_coefficient_val(c, isl_dim_out, range_dim_id));
+      c = isl_constraint_set_coefficient_si(c, isl_dim_in, dom_dim_id, -stride);
+    }
+  }
+  for (auto c: c_vec) {
+      b_ret = isl_basic_map_add_constraint(b_ret, c);
+  }
+
+  return isl_map_from_basic_map(b_ret);
+}
+
 isl_map* pad_to_domain_ubuf_map(isl_map* m, int dom_dim_id, int depth) {
 
   auto c_vec = constraints(m);
+  vector<isl_constraint*> new_cons;
   for (auto & c: c_vec) {
 
     bool involve;
@@ -2803,17 +2865,35 @@ isl_map* pad_to_domain_ubuf_map(isl_map* m, int dom_dim_id, int depth) {
     if (involve) {
       auto val = isl_val_get_num_si(isl_constraint_get_constant_val(c));
       if (isl_constraint_is_equality(c)) {
-          //c = isl_constraint_set_constant_si(c, val + depth);
+          bool involve_range = false;
+          for (int i = 0; i < get_out_dim(m); i ++) {
+            involve_range = involve_range || isl_constraint_involves_dims(c, isl_dim_out, i, 1);
+          }
+
+          if (involve_range) {
+              new_cons.push_back(c);
+              continue;
+          }
+          auto c_min = isl_constraint_alloc_inequality(get_local_space(c));
+          c_min = isl_constraint_set_constant_si(c_min, val);
+          c_min = isl_constraint_set_coefficient_si(c_min, isl_dim_in, dom_dim_id, 1);
+          auto c_max = isl_constraint_alloc_inequality(get_local_space(c));
+          c_max = isl_constraint_set_constant_si(c_max, val+1);
+          c_max = isl_constraint_set_coefficient_si(c_max, isl_dim_in, dom_dim_id, -1);
+          new_cons.push_back(c_max);
+          new_cons.push_back(c_min);
       } else {
         if (isl_constraint_is_upper_bound(c, isl_dim_in, dom_dim_id))
           c = isl_constraint_set_constant_si(c , val+depth);
+        new_cons.push_back(c);
       }
+    } else {
+        new_cons.push_back(c);
     }
   }
   auto b_ret = isl_basic_map_universe(get_space(m));
-  for (auto c: c_vec) {
+  for (auto c: new_cons)
       b_ret = isl_basic_map_add_constraint(b_ret, c);
-  }
 
   return isl_map_from_basic_map(b_ret);
 }
@@ -3243,7 +3323,9 @@ isl_map* add_more_dim_to_map_with_stride(isl_map* const um, int in_dim, int out_
 
     //pad the space for the original constraints
     for (auto c : c_vec) {
+        //cout << "\tconstraints before padding: " << str(c) << endl;
         auto tmp = pad_dim_to_constraint_domain(c, in_dim, out_dim, stride);
+        //cout << "\tconstraints after padding: " << str(tmp) << endl;
         new_c.push_back(tmp);
     }
 
@@ -3261,6 +3343,7 @@ isl_map* add_more_dim_to_map_with_stride(isl_map* const um, int in_dim, int out_
     auto ret = isl_basic_map_universe(sp);
     for (auto c : new_c) {
         ret = isl_basic_map_add_constraint(ret, c);
+        //cout << "new map in construction: " << str(ret) << endl;
     }
 
     auto ret_m = isl_map_from_basic_map(ret);
@@ -4297,6 +4380,46 @@ vector<pair<int, int>> get_all_domain_merge_dims(isl_map* m) {
     return ret;
 }
 
+map<int, int> get_all_domain_pad_dims(isl_map* sched, isl_map* acc) {
+    int sched_in_dims = num_in_dims(sched);
+    int acc_in_dims = num_in_dims(acc);
+    assert(sched_in_dims == acc_in_dims);
+
+    map<int, int> dim2pad;
+    if (acc_in_dims < 3)
+        return dim2pad;
+
+    //skip the root loop
+    for (int dim = 2; dim < acc_in_dims; dim ++) {
+        int sched_dom_range = get_dim_extent(domain(sched), dim);
+        int acc_dom_range = get_dim_extent(domain(acc), dim);
+        int sched_stride = stride_in_dim(sched, dim);
+        int acc_stride = stride_in_dim(acc, dim);
+        int sched_up_level_stride = stride_in_dim(sched, dim-1);
+        int acc_up_level_stride = stride_in_dim(acc, dim-1);
+        cout << tab(1)<< "Dim: " << dim << endl;
+        cout << tab(2)<< "Schedule dom range: " << sched_dom_range
+            << ", current_level_stride : "<< sched_stride
+            << ", up_level_stride : "<< sched_up_level_stride
+            << endl;
+        cout << tab(2)<< "Address dom range: " << acc_dom_range
+            << ", current_level_stride : "<< acc_stride
+            << ", up_level_stride : "<< acc_up_level_stride
+            << endl;
+        //TODO: why span range = 0 cannot be merged?
+        if ((sched_dom_range*sched_stride != sched_up_level_stride))// && (span_range != 0))
+        {
+            int pad = sched_up_level_stride / sched_stride - sched_dom_range;
+            cout << "Find dim: " << dim << " pad = "<<pad <<endl;
+            //assert(pad != 0);
+            if ((acc_dom_range + pad) * acc_stride == acc_up_level_stride){
+                dim2pad[dim] = pad;
+            }
+        }
+    }
+    return dim2pad;
+}
+
 
 isl_map* merge_domain_dim(isl_map* m) {
     auto mm = cpy(m);
@@ -5107,6 +5230,150 @@ isl_aff* flatten(const std::vector<int>& bank_factors, isl_multi_aff* ma, isl_se
   return flat;
   //return isl_aff_floor(div(flat, 2));
 }
+
+pair<isl_val*, isl_val*>
+extract_div_free_linear_rational_approximation(isl_aff* aff_bound) {
+  int in_dims = num_in_dims(aff_bound);
+  int out_dims = num_out_dims(aff_bound);
+  int div_dims = num_div_dims(aff_bound);
+
+  //cout << "in_dims  = " << in_dims << endl;
+  //cout << "out_dims = " << out_dims << endl;
+  //cout << "div_dims = " << div_dims << endl;
+
+  assert(in_dims == 1);
+  assert(out_dims == 1);
+  //assert(div_dims == 0);
+
+  for (int i = 0; i < div_dims; i++) {
+    auto dc = isl_aff_get_coefficient_val(aff_bound, isl_dim_div, i);
+    assert(isl_val_is_zero(dc));
+  }
+
+  isl_val* b = isl_aff_get_constant_val(aff_bound);
+  isl_val* k = isl_aff_get_coefficient_val(aff_bound, isl_dim_in, 0);
+  //cout << "b = " << str(b) << endl;
+  //cout << "k = " << str(k) << endl;
+
+  return {k, b};
+}
+
+isl_aff* remove_div(isl_aff* aff_bound) {
+  cout << "Extracting linear rational approximation for multi-in-dim affine: " << str(aff_bound) << endl;
+
+  int in_dims = num_in_dims(aff_bound);
+  int out_dims = num_out_dims(aff_bound);
+  int div_dims = num_div_dims(aff_bound);
+
+  //cout << "in_dims  = " << in_dims << endl;
+  //cout << "out_dims = " << out_dims << endl;
+  //cout << "div_dims = " << div_dims << endl;
+
+  //assert(in_dims == 1);
+  assert(out_dims == 1);
+  //cout << "div dims = " << div_dims << endl;
+
+  if (div_dims == 0) {
+    return aff_bound;
+  } else {
+    //cout << "Getting div bound for: " << str(aff_bound) << endl;
+    //cout << "Div exprs..." << endl;
+    for (int i = 0; i < div_dims; i++) {
+      auto dexpr = isl_aff_get_div(aff_bound, i);
+      cout << tab(1) << str(dexpr) << endl;
+    }
+    assert(div_dims == 1);
+
+    //set div coefficient to 0
+    isl_aff* aff_rem_div = cpy(aff_bound);
+    aff_rem_div = isl_aff_set_coefficient_si(aff_rem_div, isl_dim_div, 0, 0);
+
+    return aff_rem_div;
+  }
+}
+
+isl_map* remove_div(isl_map* m, int out_dim) {
+    auto aff_vec = get_aff_vec(m);
+    isl_aff_list* list = isl_aff_list_alloc(ctx(m), aff_vec.size());
+    for (int  i = 0; i < aff_vec.size(); i ++) {
+        auto aff = aff_vec.at(i);
+        if (i == out_dim) {
+            auto aff_rem = remove_div(aff);
+            cout << "after removal: " <<  str(aff_rem) << endl;
+            list = isl_aff_list_add(list, isl_aff_copy(aff_rem));
+        } else {
+            list = isl_aff_list_add(list, isl_aff_copy(aff));
+        }
+    }
+    auto map_rem = to_map(isl_basic_map_from_aff_list(get_space(domain(m)), list));
+    map_rem = isl_map_set_tuple_id(map_rem, isl_dim_out, id(ctx(m), range_name(m)));
+
+    return map_rem;
+}
+
+pair<isl_val*, isl_val*>
+extract_linear_rational_approximation(isl_aff* aff_bound) {
+  cout << "Extracting linear rational approximation: " << str(aff_bound) << endl;
+
+  int in_dims = num_in_dims(aff_bound);
+  int out_dims = num_out_dims(aff_bound);
+  int div_dims = num_div_dims(aff_bound);
+
+  //cout << "in_dims  = " << in_dims << endl;
+  //cout << "out_dims = " << out_dims << endl;
+  //cout << "div_dims = " << div_dims << endl;
+
+  assert(in_dims == 1);
+  assert(out_dims == 1);
+  //cout << "div dims = " << div_dims << endl;
+
+  if (div_dims == 0) {
+    auto dkb = extract_div_free_linear_rational_approximation(aff_bound);
+    auto k = dkb.first;
+    auto b = dkb.second;
+    //cout << "b = " << str(b) << endl;
+    //cout << "k = " << str(k) << endl;
+
+    return {k, b};
+  } else {
+    //cout << "Getting div bound for: " << str(aff_bound) << endl;
+    //cout << "Div exprs..." << endl;
+    for (int i = 0; i < div_dims; i++) {
+      auto dexpr = isl_aff_get_div(aff_bound, i);
+      //cout << tab(1) << str(dexpr) << endl;
+    }
+    assert(div_dims == 1);
+
+    isl_val* k = isl_aff_get_coefficient_val(aff_bound, isl_dim_in, 0);
+    isl_val* k_div = isl_aff_get_coefficient_val(aff_bound, isl_dim_div, 0);
+    isl_val* b = isl_aff_get_constant_val(aff_bound);
+    cout << "aff k = " << str(k) << endl;
+    cout << "aff k_div = " << str(k_div) << endl;
+    cout << "aff b = " << str(b) << endl;
+
+    isl_aff* div_expr = isl_aff_get_div(aff_bound, 0);
+    cout << "Div: " << str(div_expr) << endl;
+    auto dkb = extract_div_free_linear_rational_approximation(div_expr);
+    cout << "div k = " << str(dkb.first) << endl;
+    cout << "div b = " << str(dkb.second) << endl;
+
+    //assert(isl_val_is_zero(dkb.second));
+
+    isl_val* final_b = add(mul(dkb.second, k_div), b);
+    isl_val* final_k = add(mul(dkb.first, k_div), k);
+    cout << "final k = " << str(final_k) << endl;
+    cout << "final b = " << str(final_b) << endl;
+    //assert(isl_val_is_zero(k));
+
+    assert(k_div != 0);
+    if (k_div > 0) {
+        return {final_k, final_b};
+    } else {
+        return {final_k, add(one(ctx(final_b)), final_b)};
+    }
+  }
+}
+
 
 
 isl_map* cyclic_function(isl_ctx* ctx, const std::string& name, const std::vector<int>& bank_factors) {

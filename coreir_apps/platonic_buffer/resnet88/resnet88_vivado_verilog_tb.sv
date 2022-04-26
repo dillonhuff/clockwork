@@ -5,20 +5,20 @@ module resnet88_tb;
   logic flush;
 
 
-  logic hw_input_stencil_clkwrk_0_op_hcompute_hw_input_global_wrapper_stencil_read_en;
-  logic [15:0] hw_input_stencil_clkwrk_0_op_hcompute_hw_input_global_wrapper_stencil_read [0 :0];
-  logic hw_input_stencil_clkwrk_1_op_hcompute_hw_input_global_wrapper_stencil_1_read_en;
-  logic [15:0] hw_input_stencil_clkwrk_1_op_hcompute_hw_input_global_wrapper_stencil_1_read [0 :0];
-  logic hw_input_stencil_clkwrk_2_op_hcompute_hw_input_global_wrapper_stencil_2_read_en;
-  logic [15:0] hw_input_stencil_clkwrk_2_op_hcompute_hw_input_global_wrapper_stencil_2_read [0 :0];
-  logic hw_input_stencil_clkwrk_3_op_hcompute_hw_input_global_wrapper_stencil_3_read_en;
-  logic [15:0] hw_input_stencil_clkwrk_3_op_hcompute_hw_input_global_wrapper_stencil_3_read [0 :0];
-  logic hw_input_stencil_clkwrk_4_op_hcompute_hw_input_global_wrapper_stencil_4_read_en;
-  logic [15:0] hw_input_stencil_clkwrk_4_op_hcompute_hw_input_global_wrapper_stencil_4_read [0 :0];
-  logic hw_input_stencil_clkwrk_5_op_hcompute_hw_input_global_wrapper_stencil_5_read_en;
-  logic [15:0] hw_input_stencil_clkwrk_5_op_hcompute_hw_input_global_wrapper_stencil_5_read [0 :0];
-  logic hw_input_stencil_clkwrk_6_op_hcompute_hw_input_global_wrapper_stencil_6_read_en;
-  logic [15:0] hw_input_stencil_clkwrk_6_op_hcompute_hw_input_global_wrapper_stencil_6_read [0 :0];
+  logic hw_input_stencil_clkwrk_0_op_hcompute_hw_input_global_wrapper_stencil_4_read_en;
+  logic [15:0] hw_input_stencil_clkwrk_0_op_hcompute_hw_input_global_wrapper_stencil_4_read [0 :0];
+  logic hw_input_stencil_clkwrk_1_op_hcompute_hw_input_global_wrapper_stencil_5_read_en;
+  logic [15:0] hw_input_stencil_clkwrk_1_op_hcompute_hw_input_global_wrapper_stencil_5_read [0 :0];
+  logic hw_input_stencil_clkwrk_2_op_hcompute_hw_input_global_wrapper_stencil_6_read_en;
+  logic [15:0] hw_input_stencil_clkwrk_2_op_hcompute_hw_input_global_wrapper_stencil_6_read [0 :0];
+  logic hw_input_stencil_clkwrk_3_op_hcompute_hw_input_global_wrapper_stencil_1_read_en;
+  logic [15:0] hw_input_stencil_clkwrk_3_op_hcompute_hw_input_global_wrapper_stencil_1_read [0 :0];
+  logic hw_input_stencil_clkwrk_4_op_hcompute_hw_input_global_wrapper_stencil_3_read_en;
+  logic [15:0] hw_input_stencil_clkwrk_4_op_hcompute_hw_input_global_wrapper_stencil_3_read [0 :0];
+  logic hw_input_stencil_clkwrk_5_op_hcompute_hw_input_global_wrapper_stencil_2_read_en;
+  logic [15:0] hw_input_stencil_clkwrk_5_op_hcompute_hw_input_global_wrapper_stencil_2_read [0 :0];
+  logic hw_input_stencil_clkwrk_6_op_hcompute_hw_input_global_wrapper_stencil_read_en;
+  logic [15:0] hw_input_stencil_clkwrk_6_op_hcompute_hw_input_global_wrapper_stencil_read [0 :0];
   logic hw_input_stencil_clkwrk_7_op_hcompute_hw_input_global_wrapper_stencil_7_read_en;
   logic [15:0] hw_input_stencil_clkwrk_7_op_hcompute_hw_input_global_wrapper_stencil_7_read [0 :0];
   logic hw_kernel_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_read_en;
@@ -44,20 +44,20 @@ resnet88 dut(
 	.clk(clk),
 	.flush(flush),
 	.rst_n(rst),
-	.hw_input_stencil_clkwrk_0_op_hcompute_hw_input_global_wrapper_stencil_read_en(hw_input_stencil_clkwrk_0_op_hcompute_hw_input_global_wrapper_stencil_read_en),
-	.hw_input_stencil_clkwrk_0_op_hcompute_hw_input_global_wrapper_stencil_read(hw_input_stencil_clkwrk_0_op_hcompute_hw_input_global_wrapper_stencil_read),
-	.hw_input_stencil_clkwrk_1_op_hcompute_hw_input_global_wrapper_stencil_1_read_en(hw_input_stencil_clkwrk_1_op_hcompute_hw_input_global_wrapper_stencil_1_read_en),
-	.hw_input_stencil_clkwrk_1_op_hcompute_hw_input_global_wrapper_stencil_1_read(hw_input_stencil_clkwrk_1_op_hcompute_hw_input_global_wrapper_stencil_1_read),
-	.hw_input_stencil_clkwrk_2_op_hcompute_hw_input_global_wrapper_stencil_2_read_en(hw_input_stencil_clkwrk_2_op_hcompute_hw_input_global_wrapper_stencil_2_read_en),
-	.hw_input_stencil_clkwrk_2_op_hcompute_hw_input_global_wrapper_stencil_2_read(hw_input_stencil_clkwrk_2_op_hcompute_hw_input_global_wrapper_stencil_2_read),
-	.hw_input_stencil_clkwrk_3_op_hcompute_hw_input_global_wrapper_stencil_3_read_en(hw_input_stencil_clkwrk_3_op_hcompute_hw_input_global_wrapper_stencil_3_read_en),
-	.hw_input_stencil_clkwrk_3_op_hcompute_hw_input_global_wrapper_stencil_3_read(hw_input_stencil_clkwrk_3_op_hcompute_hw_input_global_wrapper_stencil_3_read),
-	.hw_input_stencil_clkwrk_4_op_hcompute_hw_input_global_wrapper_stencil_4_read_en(hw_input_stencil_clkwrk_4_op_hcompute_hw_input_global_wrapper_stencil_4_read_en),
-	.hw_input_stencil_clkwrk_4_op_hcompute_hw_input_global_wrapper_stencil_4_read(hw_input_stencil_clkwrk_4_op_hcompute_hw_input_global_wrapper_stencil_4_read),
-	.hw_input_stencil_clkwrk_5_op_hcompute_hw_input_global_wrapper_stencil_5_read_en(hw_input_stencil_clkwrk_5_op_hcompute_hw_input_global_wrapper_stencil_5_read_en),
-	.hw_input_stencil_clkwrk_5_op_hcompute_hw_input_global_wrapper_stencil_5_read(hw_input_stencil_clkwrk_5_op_hcompute_hw_input_global_wrapper_stencil_5_read),
-	.hw_input_stencil_clkwrk_6_op_hcompute_hw_input_global_wrapper_stencil_6_read_en(hw_input_stencil_clkwrk_6_op_hcompute_hw_input_global_wrapper_stencil_6_read_en),
-	.hw_input_stencil_clkwrk_6_op_hcompute_hw_input_global_wrapper_stencil_6_read(hw_input_stencil_clkwrk_6_op_hcompute_hw_input_global_wrapper_stencil_6_read),
+	.hw_input_stencil_clkwrk_0_op_hcompute_hw_input_global_wrapper_stencil_4_read_en(hw_input_stencil_clkwrk_0_op_hcompute_hw_input_global_wrapper_stencil_4_read_en),
+	.hw_input_stencil_clkwrk_0_op_hcompute_hw_input_global_wrapper_stencil_4_read(hw_input_stencil_clkwrk_0_op_hcompute_hw_input_global_wrapper_stencil_4_read),
+	.hw_input_stencil_clkwrk_1_op_hcompute_hw_input_global_wrapper_stencil_5_read_en(hw_input_stencil_clkwrk_1_op_hcompute_hw_input_global_wrapper_stencil_5_read_en),
+	.hw_input_stencil_clkwrk_1_op_hcompute_hw_input_global_wrapper_stencil_5_read(hw_input_stencil_clkwrk_1_op_hcompute_hw_input_global_wrapper_stencil_5_read),
+	.hw_input_stencil_clkwrk_2_op_hcompute_hw_input_global_wrapper_stencil_6_read_en(hw_input_stencil_clkwrk_2_op_hcompute_hw_input_global_wrapper_stencil_6_read_en),
+	.hw_input_stencil_clkwrk_2_op_hcompute_hw_input_global_wrapper_stencil_6_read(hw_input_stencil_clkwrk_2_op_hcompute_hw_input_global_wrapper_stencil_6_read),
+	.hw_input_stencil_clkwrk_3_op_hcompute_hw_input_global_wrapper_stencil_1_read_en(hw_input_stencil_clkwrk_3_op_hcompute_hw_input_global_wrapper_stencil_1_read_en),
+	.hw_input_stencil_clkwrk_3_op_hcompute_hw_input_global_wrapper_stencil_1_read(hw_input_stencil_clkwrk_3_op_hcompute_hw_input_global_wrapper_stencil_1_read),
+	.hw_input_stencil_clkwrk_4_op_hcompute_hw_input_global_wrapper_stencil_3_read_en(hw_input_stencil_clkwrk_4_op_hcompute_hw_input_global_wrapper_stencil_3_read_en),
+	.hw_input_stencil_clkwrk_4_op_hcompute_hw_input_global_wrapper_stencil_3_read(hw_input_stencil_clkwrk_4_op_hcompute_hw_input_global_wrapper_stencil_3_read),
+	.hw_input_stencil_clkwrk_5_op_hcompute_hw_input_global_wrapper_stencil_2_read_en(hw_input_stencil_clkwrk_5_op_hcompute_hw_input_global_wrapper_stencil_2_read_en),
+	.hw_input_stencil_clkwrk_5_op_hcompute_hw_input_global_wrapper_stencil_2_read(hw_input_stencil_clkwrk_5_op_hcompute_hw_input_global_wrapper_stencil_2_read),
+	.hw_input_stencil_clkwrk_6_op_hcompute_hw_input_global_wrapper_stencil_read_en(hw_input_stencil_clkwrk_6_op_hcompute_hw_input_global_wrapper_stencil_read_en),
+	.hw_input_stencil_clkwrk_6_op_hcompute_hw_input_global_wrapper_stencil_read(hw_input_stencil_clkwrk_6_op_hcompute_hw_input_global_wrapper_stencil_read),
 	.hw_input_stencil_clkwrk_7_op_hcompute_hw_input_global_wrapper_stencil_7_read_en(hw_input_stencil_clkwrk_7_op_hcompute_hw_input_global_wrapper_stencil_7_read_en),
 	.hw_input_stencil_clkwrk_7_op_hcompute_hw_input_global_wrapper_stencil_7_read(hw_input_stencil_clkwrk_7_op_hcompute_hw_input_global_wrapper_stencil_7_read),
 	.hw_kernel_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_read_en(hw_kernel_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_read_en),
@@ -83,13 +83,13 @@ resnet88 dut(
 clk = 0;
 rst = 0;
 flush = 0;
-      hw_input_stencil_clkwrk_0_op_hcompute_hw_input_global_wrapper_stencil_read[0] = 0;
-      hw_input_stencil_clkwrk_1_op_hcompute_hw_input_global_wrapper_stencil_1_read[0] = 0;
-      hw_input_stencil_clkwrk_2_op_hcompute_hw_input_global_wrapper_stencil_2_read[0] = 0;
-      hw_input_stencil_clkwrk_3_op_hcompute_hw_input_global_wrapper_stencil_3_read[0] = 0;
-      hw_input_stencil_clkwrk_4_op_hcompute_hw_input_global_wrapper_stencil_4_read[0] = 0;
-      hw_input_stencil_clkwrk_5_op_hcompute_hw_input_global_wrapper_stencil_5_read[0] = 0;
-      hw_input_stencil_clkwrk_6_op_hcompute_hw_input_global_wrapper_stencil_6_read[0] = 0;
+      hw_input_stencil_clkwrk_0_op_hcompute_hw_input_global_wrapper_stencil_4_read[0] = 0;
+      hw_input_stencil_clkwrk_1_op_hcompute_hw_input_global_wrapper_stencil_5_read[0] = 0;
+      hw_input_stencil_clkwrk_2_op_hcompute_hw_input_global_wrapper_stencil_6_read[0] = 0;
+      hw_input_stencil_clkwrk_3_op_hcompute_hw_input_global_wrapper_stencil_1_read[0] = 0;
+      hw_input_stencil_clkwrk_4_op_hcompute_hw_input_global_wrapper_stencil_3_read[0] = 0;
+      hw_input_stencil_clkwrk_5_op_hcompute_hw_input_global_wrapper_stencil_2_read[0] = 0;
+      hw_input_stencil_clkwrk_6_op_hcompute_hw_input_global_wrapper_stencil_read[0] = 0;
       hw_input_stencil_clkwrk_7_op_hcompute_hw_input_global_wrapper_stencil_7_read[0] = 0;
       hw_kernel_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_read[0] = 0;
   end
@@ -104,26 +104,26 @@ end
 
 
   always @(negedge clk) begin
-    if (hw_input_stencil_clkwrk_0_op_hcompute_hw_input_global_wrapper_stencil_read_en) begin
-      hw_input_stencil_clkwrk_0_op_hcompute_hw_input_global_wrapper_stencil_read[0] <= hw_input_stencil_clkwrk_0_op_hcompute_hw_input_global_wrapper_stencil_read[0] + 1;
+    if (hw_input_stencil_clkwrk_0_op_hcompute_hw_input_global_wrapper_stencil_4_read_en) begin
+      hw_input_stencil_clkwrk_0_op_hcompute_hw_input_global_wrapper_stencil_4_read[0] <= hw_input_stencil_clkwrk_0_op_hcompute_hw_input_global_wrapper_stencil_4_read[0] + 1;
     end
-    if (hw_input_stencil_clkwrk_1_op_hcompute_hw_input_global_wrapper_stencil_1_read_en) begin
-      hw_input_stencil_clkwrk_1_op_hcompute_hw_input_global_wrapper_stencil_1_read[0] <= hw_input_stencil_clkwrk_1_op_hcompute_hw_input_global_wrapper_stencil_1_read[0] + 1;
+    if (hw_input_stencil_clkwrk_1_op_hcompute_hw_input_global_wrapper_stencil_5_read_en) begin
+      hw_input_stencil_clkwrk_1_op_hcompute_hw_input_global_wrapper_stencil_5_read[0] <= hw_input_stencil_clkwrk_1_op_hcompute_hw_input_global_wrapper_stencil_5_read[0] + 1;
     end
-    if (hw_input_stencil_clkwrk_2_op_hcompute_hw_input_global_wrapper_stencil_2_read_en) begin
-      hw_input_stencil_clkwrk_2_op_hcompute_hw_input_global_wrapper_stencil_2_read[0] <= hw_input_stencil_clkwrk_2_op_hcompute_hw_input_global_wrapper_stencil_2_read[0] + 1;
+    if (hw_input_stencil_clkwrk_2_op_hcompute_hw_input_global_wrapper_stencil_6_read_en) begin
+      hw_input_stencil_clkwrk_2_op_hcompute_hw_input_global_wrapper_stencil_6_read[0] <= hw_input_stencil_clkwrk_2_op_hcompute_hw_input_global_wrapper_stencil_6_read[0] + 1;
     end
-    if (hw_input_stencil_clkwrk_3_op_hcompute_hw_input_global_wrapper_stencil_3_read_en) begin
-      hw_input_stencil_clkwrk_3_op_hcompute_hw_input_global_wrapper_stencil_3_read[0] <= hw_input_stencil_clkwrk_3_op_hcompute_hw_input_global_wrapper_stencil_3_read[0] + 1;
+    if (hw_input_stencil_clkwrk_3_op_hcompute_hw_input_global_wrapper_stencil_1_read_en) begin
+      hw_input_stencil_clkwrk_3_op_hcompute_hw_input_global_wrapper_stencil_1_read[0] <= hw_input_stencil_clkwrk_3_op_hcompute_hw_input_global_wrapper_stencil_1_read[0] + 1;
     end
-    if (hw_input_stencil_clkwrk_4_op_hcompute_hw_input_global_wrapper_stencil_4_read_en) begin
-      hw_input_stencil_clkwrk_4_op_hcompute_hw_input_global_wrapper_stencil_4_read[0] <= hw_input_stencil_clkwrk_4_op_hcompute_hw_input_global_wrapper_stencil_4_read[0] + 1;
+    if (hw_input_stencil_clkwrk_4_op_hcompute_hw_input_global_wrapper_stencil_3_read_en) begin
+      hw_input_stencil_clkwrk_4_op_hcompute_hw_input_global_wrapper_stencil_3_read[0] <= hw_input_stencil_clkwrk_4_op_hcompute_hw_input_global_wrapper_stencil_3_read[0] + 1;
     end
-    if (hw_input_stencil_clkwrk_5_op_hcompute_hw_input_global_wrapper_stencil_5_read_en) begin
-      hw_input_stencil_clkwrk_5_op_hcompute_hw_input_global_wrapper_stencil_5_read[0] <= hw_input_stencil_clkwrk_5_op_hcompute_hw_input_global_wrapper_stencil_5_read[0] + 1;
+    if (hw_input_stencil_clkwrk_5_op_hcompute_hw_input_global_wrapper_stencil_2_read_en) begin
+      hw_input_stencil_clkwrk_5_op_hcompute_hw_input_global_wrapper_stencil_2_read[0] <= hw_input_stencil_clkwrk_5_op_hcompute_hw_input_global_wrapper_stencil_2_read[0] + 1;
     end
-    if (hw_input_stencil_clkwrk_6_op_hcompute_hw_input_global_wrapper_stencil_6_read_en) begin
-      hw_input_stencil_clkwrk_6_op_hcompute_hw_input_global_wrapper_stencil_6_read[0] <= hw_input_stencil_clkwrk_6_op_hcompute_hw_input_global_wrapper_stencil_6_read[0] + 1;
+    if (hw_input_stencil_clkwrk_6_op_hcompute_hw_input_global_wrapper_stencil_read_en) begin
+      hw_input_stencil_clkwrk_6_op_hcompute_hw_input_global_wrapper_stencil_read[0] <= hw_input_stencil_clkwrk_6_op_hcompute_hw_input_global_wrapper_stencil_read[0] + 1;
     end
     if (hw_input_stencil_clkwrk_7_op_hcompute_hw_input_global_wrapper_stencil_7_read_en) begin
       hw_input_stencil_clkwrk_7_op_hcompute_hw_input_global_wrapper_stencil_7_read[0] <= hw_input_stencil_clkwrk_7_op_hcompute_hw_input_global_wrapper_stencil_7_read[0] + 1;

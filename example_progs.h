@@ -1,6 +1,9 @@
 #pragma once
 #include "prog.h"
 
+prog fp_arith();
+prog fp_pointwise();
+
 prog fft8_unroll0();
 prog fft8_unroll2();
 prog fft8_unroll4();
@@ -16,6 +19,7 @@ prog strided_conv();
 prog accumulation(); //reduce
 prog unsharp();
 prog unsharp_new();
+prog unsharp_large();
 prog cascade(); //stencil
 prog gaussian(); //stencil
 prog harris(); //stencil
@@ -23,6 +27,16 @@ prog harris_remove(); //manually edit
 prog pointwise(); //point
 prog brighten_blur(); //stencil
 prog halide_harris();
+
+prog nlmeans();
+prog nlmeans_unroll();
+prog nlmeans_small();
+prog nlmeans_unroll_reorder();
+prog nlmeans_rolled_int();
+prog nlmeans_simple();
+prog nlmeans_simple_trunc();
+prog nlmeans_simple_blur();
+prog nlmeans_rolled_7x7();
 prog conv_3_3(); //stencil
 prog conv_3_3_wide(); //stencil
 prog conv_3_3_rolled(); //stencil
@@ -33,11 +47,23 @@ prog unet_conv_3_3(); //reduce
 prog resnet(); //reduce
 prog resnet_simple(); //for regfile debug
 prog resnet_tiny(); //for regfile debug
+prog resnet_size_test(); //for schedule debug
 prog resnet_multi_tiny(); //for regfile debug
 //prog mini_conv_halide_fixed();
+
+//all camera pipeline variants
 prog camera_pipeline(); //stencil
 prog camera_pipeline_new(); //stencil
 prog camera_pipeline_isscc(); //stencil
+prog camera_pipeline_2x2(); //compute demosaic directly from denoised
+prog camera_pipeline_2x2_unroll(); //compute demosaic directly from denoised
+prog camera_pipeline_2x2_unrollx(); //compute demosaic directly from denoised
+prog camera_pipeline_unrolly(); //stencil
+prog camera_pipeline_extra_buf(); //stencil
+
+//This doesn't work in scheduler
+prog camera_pipeline_extra_buf_glb(); //stencil
+
 //prog camera_pipeline_new_trunc(); //stencil
 //prog camera_pipeline_trunc(); //stencil
 prog up_sample();
@@ -100,10 +126,12 @@ prog unsharp_glb();
 prog unsharp_isscc();
 prog up_sample_glb();
 prog harris_color();
+prog harris_color_unroll4();
 prog harris_glb2();
 prog camera_pipeline_glb();
 
 prog matmul();
+prog matmul_unroll2();
 prog matmul_single();
 prog matmul_fpga();
 
@@ -113,13 +141,19 @@ prog resnet_output_stationary_i8();
 prog resnet_init_unroll();
 prog resnet_init_unroll_tile();
 prog resnet3_1();
+prog resnet_1x1();
 prog resnet1();
+prog resnet1_docker();
 prog resnet4_x();
 prog resnet3_x_tiny();
 prog resnet5_x();
 prog resnet5_1();
 prog resnet5_1_new();
 prog resnet5_1_unroll();
+prog resnet5_x_unroll();
+prog resnet5_x_unroll_mic();
+prog resnet5_glb_unroll();
+prog resnet5_1_unroll_cyclic();
 prog resnet5_x_new();
 prog resnet_multi_channel();
 
@@ -140,6 +174,7 @@ prog resnet3_x_full();
 prog resnet3_1_full();
 prog resnet2_x_full();
 prog resnet1_full();
+prog resnet_last();
 
 //pond resnet test
 prog complex_mem_pond_rolled();

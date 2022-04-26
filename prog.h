@@ -168,6 +168,58 @@ struct ir_node {
     return end_exclusive - start;
   }
 
+  void add_var_suffix_to_writes(const std::string& suffix, vector<string> & loop_var) {
+    for (auto& b : produce_locs) {
+        //buffer, piecese loc
+        for (auto& p : b.second) {
+            //condition, address expr
+            cout << "orgin expr: " << p.second << endl;
+            auto expr_list = split_at(p.second, ",");
+            vector<string> new_expr_list;
+            for (auto expr: expr_list) {
+              cout << "\t"<< expr << endl;
+              string new_expr = expr;
+              for (auto var: loop_var) {
+                if (contains(expr, var)) {
+                  new_expr = ReplaceString(expr, var, var + suffix);
+                  cout << "\tnew expr: " << new_expr << endl;
+                }
+              }
+              new_expr_list.push_back(new_expr);
+            }
+            p.second = sep_list(new_expr_list, "", "", ",");
+                cout << "new expr list: " << p.second << endl;
+        }
+
+    }
+  }
+
+  void add_var_suffix_to_reads(const std::string& suffix, vector<string> & loop_var) {
+    for (auto& b : consume_locs_pair) {
+        //buffer, piecese loc
+        for (auto& p : b.second) {
+            //condition, address expr
+            cout << "orgin expr: " << p.second << endl;
+            auto expr_list = split_at(p.second, ",");
+            vector<string> new_expr_list;
+            for (auto expr: expr_list) {
+              cout << "\t"<< expr << endl;
+              string new_expr = expr;
+              for (auto var: loop_var) {
+                if (contains(expr, var)) {
+                  new_expr = ReplaceString(expr, var, var + suffix);
+                  cout << "\tnew expr: " << new_expr << endl;
+                }
+              }
+              new_expr_list.push_back(new_expr);
+            }
+            p.second = sep_list(new_expr_list, "", "", ",");
+                cout << "new expr list: " << p.second << endl;
+        }
+
+    }
+  }
+
   void add_prefix_to_writes(const std::string& prefix,
       const std::string& buf) {
     for (auto& b : produce_locs) {
@@ -321,6 +373,12 @@ struct ir_node {
 
   void index_variable_prefetch_cycle(const int v) {
     index_variables_prefetch_cycle = v;
+  }
+
+  void add_index_var_suffix(const std::string & suffix) {
+    for (auto & compute_var : index_variables_needed_by_compute) {
+      compute_var += suffix;
+    }
   }
 
   map<op*, Box> get_domain_boxes() {
@@ -481,6 +539,7 @@ struct ir_node {
     op* sr = container_child(source);
     assert(sr != nullptr);
 
+    cout << sr->name << endl;
     cout << "Before inserting " << name << " we have " << children.size() << " children" << endl;
 
     auto lp = new op();
@@ -1294,13 +1353,13 @@ struct prog {
     root->populate_iter_vars(ivars, act);
 
     //Check what's all the domain
-    for (auto it: idoms) {
-        cout << "OP name: " << it.first->name << endl;
-        cout << "dom bd: " << it.second << endl << endl;
-    }
+    //for (auto it: idoms) {
+    //    cout << "OP name: " << it.first->name << endl;
+    //    cout << "dom bd: " << it.second << endl << endl;
+    //}
 
     for (auto op : vecs) {
-      cout << op.first->name << endl;
+      //cout << op.first->name << endl;
       auto iters = map_find(op.first, ivars);
       auto vars = sep_list(iters, "[", "]", ", ");
 
@@ -1625,7 +1684,8 @@ void extend_bounds_to_multiple_of(const int factor, const std::string& buf, prog
 
 
 void infer_bounds_and_unroll(const std::string& out, const std::vector<int>& bounds, const int unroll_factor, prog& prg);
-
+void halide_check_rate_mismatch(const std::string& out, const std::vector<int>& bounds, const int unroll_factor, prog& prg);
+void rate_checking_pass(const std::string& buf, const int unroll_factor, prog& prg);
 void unroll_producer_matching(const std::string& buf, const int unroll_factor, prog& prg);
 
 op* strip_mine(const int factor, op* loop, prog& prg);
@@ -1698,6 +1758,8 @@ umap* consumer_umap(op* loop, prog& prg);
 isl_map* consumer_map(op* loop, const std::string& b, prog& prg);
 isl_map* producer_map(op* loop, const std::string& b, prog& prg);
 
+int logical_capacity(const std::string& buf, prog& prg);
+
 umap* read_at(const std::string& level, const std::string& buffer, prog& prg);
 umap* read_at(const std::string& level, prog& prg);
 
@@ -1742,8 +1804,11 @@ bool operator==(const resource_instance& a, const resource_instance& b) {
 
 struct schedule_info {
   // Miscellaneous
-  bool use_dse_compute;
-
+  bool use_metamapper;
+  //Memory constraints
+  map<op*, string> buf_write_assignment;
+  map<string, string> buf2level;
+  string dse_compute_filename;
   // Schedule constraints
   map<string, int> buffer_load_latencies;
   map<string, int> buffer_store_latencies;
@@ -1793,6 +1858,19 @@ struct schedule_info {
     return last_delay;
   }
 
+  int starting_delay_to_leaf(op* op) {
+    if (!op->is_loop()) {
+      return offset_in_parent(op);
+    } else {
+      int min_delay = INT_MAX;
+      for (auto c: op->children) {
+        min_delay = std::min(min_delay, starting_delay_to_leaf(c));
+      }
+      return offset_in_parent(op) + min_delay;
+
+    }
+  }
+
   //Above the Coarse grained loop, the II will follow the db update delay
   //We do not need to wait for the latency, since we have N buffer
   int doublebuffer_update_delay(op* op) {
@@ -1826,6 +1904,11 @@ struct schedule_info {
     return map_find(op->name, loop_iis);
   }
 
+  void assign_memory_write_resource(CodegenOptions& options, op* op_, string buf) {
+    buf_write_assignment[op_] = buf;
+  }
+
+
 };
 
 std::set<string> all_buffers(prog& prg);
@@ -1837,6 +1920,7 @@ int num_read_ports(const std::string& b, prog& prg);
 bool is_rate_matchable(prog& prg);
 
 int loop_depth(op* op);
+vector<int> loop_depth_vector(op* op);
 bool all_loop_nests_same_depth(prog& prg);
 
 bool is_perfect(op* loop, prog& prg);
@@ -1887,6 +1971,7 @@ op* find_coarse_grained_pipeline_loop(op* lp, prog& prg);
 void find_coarse_grained_pipeline_loops(op* lp, vector<op*> & cgpl_lps, prog& prg);
 
 void loop_perfection(prog& prg);
+void loop_perfection_with_root_op(prog& prg);
 void sanity_check_iis(schedule_info& sched);
 
 int logical_dimension(const std::string& buf, prog& prg);
@@ -1905,16 +1990,21 @@ bool all_ops_scheduled(schedule_info& sched, prog& prg);
 int op_latency(op* op, schedule_info& hwinfo);
 
 void adjust_outer_delays(schedule_info& sched, prog& prg);
+void adjust_outer_delays_exhaustively(schedule_info& sched, prog& prg, int glb_load_latency);
 
 void adjust_outer_pipeline_delays(schedule_info& sched, prog& prg);
 
 bool no_violated_cycle_accurate_dependencies(schedule_info& sched, prog& prg);
 bool sw_schedule_respects_deps(umap* schedule, umap* deps);
 bool no_violated_dependencies(umap* schedule, umap* deps);
+bool no_violated_buf_write_port_assignments(CodegenOptions& options, schedule_info& sched, prog& prg);
 
 bool schedule_bounds_fit_controller_bitwidth(const int bitwidth, schedule_info& sched, prog& prg);
 
 void adjust_inner_iis(schedule_info& sched, prog& prg);
+
+void loop_split(prog& prg);
+void perfect_loop_split(op*, prog& );
 
 void pad_top_level_ops_with_loops(prog& prg);
 void pad_bottom_level_ops_with_loops(prog& prg);
@@ -1922,6 +2012,7 @@ void pad_bottom_level_ops_with_loops(prog& prg);
 int max_loop_depth(prog& prg);
 
 void dsa_writers(prog& prg);
+void dsa_writers_new(prog& prg);
 void dsa_readers(prog& prg);
 
 

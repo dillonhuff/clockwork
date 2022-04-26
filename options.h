@@ -50,8 +50,8 @@ enum ScheduleAlgorithm {
 
 enum DNNScheduleAlgorithm {
     ASPLOS_SCHEDULE, //An over optimized schedule which will be refactored
-    ISCA_SCHEDULE, //new schedule with refactor
     VANILLA_DB_SCHEDULE,
+    ISCA_SCHEDULE, //new schedule with refactor
     SEQUENTIAL_SCHEDULE
 };
 
@@ -105,12 +105,19 @@ struct RTLOptions {
     hls_clock_target_Hz(250000000) {}
 };
 
+
 struct LakeCollateral {
     std::unordered_map<string, int> word_width;
     std::unordered_map<string, int> bank_num;
     std::unordered_map<string, int> capacity;
     std::unordered_map<string, int> in_port_width;
     std::unordered_map<string, int> out_port_width;
+    std::unordered_map<string, string> read_port;
+    std::unordered_map<string, string> write_port;
+
+    //Single port means read write share the same physical port
+    std::unordered_map<string, bool> single_port;
+    std::set<string> controller_name; //use for identify the controller name in configuration
     int fetch_width;
     int max_chaining;
     int iteration_level;
@@ -119,21 +126,27 @@ struct LakeCollateral {
     bool dual_port_sram;
     bool wire_chain_en;
 
+    LakeCollateral() {}
+
     //TODO: use the collateral kavya generated
-    LakeCollateral(string level = "mem"):
-        fetch_width(4),
+    LakeCollateral(string level):
         max_chaining(4),
         iteration_level(6),
         counter_ub(65535),
         multi_sram_accessor(true),
         dual_port_sram(false),
-        wire_chain_en(true),
-        word_width({{"agg", 1}, {"sram", 4}, {"tb", 1}}),
-        in_port_width({{"agg", 1}, {"sram", 4}, {"tb", 4}}),
-        out_port_width({{"agg", 4}, {"sram", 4}, {"tb", 1}}),
-        bank_num({{"agg", 2}, {"sram", 1}, {"tb", 2}}),
-        capacity({{"agg", 16}, {"sram", 512}, {"tb", 16}}) {
-            if (level == "regfile") {
+        wire_chain_en(false) {
+            if (level == "mem") {
+                fetch_width = 4;
+                max_chaining = 4;
+                iteration_level = 6;
+                capacity = {{"agg", 16}, {"sram", 512}, {"tb", 16}};
+                in_port_width = {{"agg", 1}, {"sram", 4}, {"tb", 4}};
+                out_port_width = {{"agg", 4}, {"sram", 4}, {"tb", 1}};
+                word_width = {{"agg", 1}, {"sram", 4}, {"tb", 1}};
+                controller_name = {"agg", "sram", "tb"};
+                bank_num = {{"agg", 2}, {"sram", 1}, {"tb", 2}};
+            } else if (level == "regfile") {
                 fetch_width = 1;
                 max_chaining = 1;
                 word_width = {{"regfile", 1}};
@@ -141,6 +154,7 @@ struct LakeCollateral {
                 out_port_width = {{"regfile", 1}};
                 bank_num = {{"regfile", 1}};
                 capacity = {{"regfile", 32}};
+                controller_name = {"regfile"};
                 iteration_level = 3;
 
             } else if (level == "glb") {
@@ -151,11 +165,155 @@ struct LakeCollateral {
                 out_port_width = {{"glb", 1}};
                 bank_num = {{"glb", 1}};
                 capacity = {{"glb", 131072}};
+                controller_name = {"glb"};
             } else if (level != "mem") {
                 cout << "\t\tERROR: Memory component not identified" << endl;
                 assert(false);
             }
+    }
+
+    void add_memory_component(string name, bool is_single_port) {
+      controller_name.insert(name);
+      single_port.insert({name, is_single_port});
+      bank_num.insert({name, 1});
+    };
+
+    void add_read_port(string name, int port_width) {
+      assert(controller_name.count(name));
+      assert(out_port_width.count(name) == 0);
+      out_port_width.insert({name, port_width});
+    }
+
+    void add_write_port(string name, int port_width) {
+      assert(controller_name.count(name));
+      assert(in_port_width.count(name) == 0);
+      in_port_width.insert({name, port_width});
+    }
+
+    void make_duplication(string name, int num) {
+      assert(controller_name.count(name));
+      assert(bank_num.at(name) == 1);
+      bank_num.insert({name, num});
+    }
+
+    void set_capacity(string name, int size) {
+      assert(controller_name.count(name));
+      assert(bank_num.at(name) == 1);
+      capacity.insert({name, size});
+    }
+
+    void infer_word_width() {
+        for (auto mem: controller_name) {
+            int width =
+                std::gcd(in_port_width.at(mem), out_port_width.at(mem));
+            word_width.insert({mem, width});
         }
+    }
+
+    void wire_together(string prod, string cons) {
+        read_port[prod] = cons;
+        write_port[cons] = prod;
+    }
+
+
+    void set_fetch_width(int a){
+	fetch_width = a;
+    }
+    void set_max_chaining(int a){
+	max_chaining= a;
+    }
+    void set_iteration_level(int a){
+	iteration_level = a;
+    }
+    void set_counter_ub(int a){
+	counter_ub = a;
+    }
+
+    void set_multi_sram_accessor(bool a){
+	multi_sram_accessor = a;
+    }
+    void set_dual_port_sram(bool a){
+	dual_port_sram = a;
+    }
+    void set_wire_chain_en(bool a){
+	wire_chain_en = a;
+    }
+
+    void set_word_width(std::unordered_map<string, int> a){
+	word_width = a;
+    }
+
+    void set_capacity(std::unordered_map<string, int> a){
+	capacity = a;
+    }
+    void set_in_port_width(std::unordered_map<string, int> a){
+	in_port_width = a;
+    }
+    void set_out_port_width(std::unordered_map<string, int> a){
+	out_port_width = a;
+    }
+    void set_controller_name(std::set<string> a){
+	controller_name = a;
+    }
+
+
+    void print_points(){
+        cout << " # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #  # # # # # # ## 3  ## # # 3 3 #  3 # # 3 3  # #  # # # #  # # # # # #  # # # # # # # # # # # # # # # # # # # # # # " << endl;
+//	  cout << " # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #  # # # # # # ## 3  ## # # 3 3 #  3 # # 3 3  # #  # # # #  # # # # # #  # # # # # # # # # # # # # # # # # # # # # # " << endl;
+//	  cout << " # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #  # # # # # # ## 3  ## # # 3 3 #  3 # # 3 3  # #  # # # #  # # # # # #  # # # # # # # # # # # # # # # # # # # # # # " << endl;
+	cout << tab(2) << "fetch-width " << fetch_width << endl;
+	cout << tab(2) << "max-chaining " << max_chaining << endl;
+	cout << tab(2) << "iteration-level " << iteration_level << endl;
+	cout << tab(2) << "counter-ub " << counter_ub << endl;
+	cout << tab(2) << "multi-sram-accessor " << multi_sram_accessor << endl;
+	cout << tab(2) << "dual-port-sram " << dual_port_sram << endl;
+	cout << tab(2) << "wire-chain-en " << wire_chain_en << endl;
+    cout << "=======================================" << endl;
+	cout << tab(2) << "word-width " << endl;
+	for(auto i: word_width)
+		cout << tab(4) << i.first << " " << i.second << endl;
+	cout << tab(2) << "capacity " << endl;
+	for(auto i: capacity)
+		cout << tab(4) << i.first << " " << i.second << endl;
+	cout << tab(2) <<  "in-port-width " << endl;
+	for(auto i: in_port_width)
+		cout << tab(4) << i.first << " " << i.second << endl;
+	cout << tab(2) << "out-port-width " << endl;
+	for(auto i: out_port_width)
+		cout << tab(4) << i.first << " " << i.second << endl;
+	cout << tab(2) << "controller-name " << endl;
+  	for(auto i: controller_name)
+		cout << tab(4) << i  << " " << endl;
+    }
+
+    void print_points(string a){
+	ofstream fout(a);
+ 	fout << "fetch-width " << fetch_width << endl;
+	fout << "max-chaining " << max_chaining << endl;
+	fout << "iteration-level " << iteration_level << endl;
+	fout << "counter-ub " << counter_ub << endl;
+	fout << "multi-sram-accessor " << multi_sram_accessor << endl;
+	fout << "dual-port-sram " << dual_port_sram << endl;
+	fout << "wire-chain-en " << wire_chain_en << endl;
+	fout << "word-width " << endl;
+	for(auto i: word_width)
+		fout << i.first << " " << i.second << endl;
+	fout << "capacity " << endl;
+	for(auto i: capacity)
+		fout << i.first << " " << i.second << endl;
+	fout << "in-port-width " << endl;
+	for(auto i: in_port_width)
+		fout << i.first << " " << i.second << endl;
+	fout << "out-port-width " << endl;
+	for(auto i: out_port_width)
+		fout << i.first << " " << i.second << endl;
+	fout << "controller-name "  << endl;
+  	for(auto i: controller_name)
+		fout << i <<  endl;
+        fout.close();
+    }
+
+
     void set_config_fetch2() {
        fetch_width = 2;
        max_chaining = 4;
@@ -166,6 +324,18 @@ struct LakeCollateral {
        out_port_width = {{"agg", 2}, {"sram", 2}, {"tb", 1}};
        bank_num = {{"agg", 2}, {"sram", 1}, {"tb", 2}};
        capacity = {{"agg", 8}, {"sram", 512}, {"tb", 8}};
+    }
+
+    void set_config_dp() {
+      fetch_width = 1;
+      dual_port_sram = true;
+      wire_chain_en = false;
+      word_width = {{"mem", 1}};
+      in_port_width = {{"mem", 1}};
+      out_port_width = {{"mem", 1}};
+      bank_num = {{"mem", 1}};
+      capacity = {{"mem", 512}};
+      controller_name = {"regfile"};
     }
 
     int get_max_capacity() const {
@@ -200,6 +370,7 @@ struct LakeCollateral {
             return bank_num.at("tb");
         }
     }
+
 };
 
 enum HLSLoopCodegen {
@@ -274,6 +445,7 @@ struct CodegenOptions {
   void add_memory_hierarchy(const std::string& level);
 
   banking_strategy get_banking_strategy(const std::string& buffer);
+  string get_hierarchy_level(int capacity);
 
 };
 
@@ -296,3 +468,5 @@ struct mem_access_cnt {
   map<string, map<string, int> > write_cnt;
 };
 
+LakeCollateral create_single_port_wide_fetch_memory(int fetch_width, int capacity, int SIPO_num);
+LakeCollateral create_dual_port_memory(int capacity);

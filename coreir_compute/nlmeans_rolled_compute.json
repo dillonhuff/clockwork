@@ -1,0 +1,605 @@
+{
+"namespaces":{
+  "global":{
+    "modules":{
+      "hcompute_blur_d_stencil":{
+        "type":["Record",[
+          ["out_blur_d_stencil",["Array",16,"Bit"]]
+        ]],
+        "instances":{
+          "fconst0__970":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0000"]},
+            "metadata":{"float_value":"Equivalent float = 0.000000"}
+          }
+        },
+        "connections":[
+          ["self.out_blur_d_stencil","fconst0__970.out"]
+        ]
+      },
+      "hcompute_blur_d_stencil_1":{
+        "type":["Record",[
+          ["out_blur_d_stencil",["Array",16,"Bit"]],
+          ["in0_blur_d_stencil",["Array",1,["Array",16,"BitIn"]]],
+          ["in1_blur_d_y_stencil",["Array",4,["Array",16,"BitIn"]]]
+        ]],
+        "instances":{
+          "dwfp_add_blur_d_stencil_1_blur_d_y_stencil_5_978":{
+            "genref":"float_DW.fp_add",
+            "genargs":{"exp_width":["Int",8], "ieee_compliance":["Bool",false], "sig_width":["Int",7]}
+          },
+          "dwfp_add_blur_d_y_stencil_2_980_981":{
+            "genref":"float_DW.fp_add",
+            "genargs":{"exp_width":["Int",8], "ieee_compliance":["Bool",false], "sig_width":["Int",7]}
+          },
+          "dwfp_add_blur_d_y_stencil_3_979_980":{
+            "genref":"float_DW.fp_add",
+            "genargs":{"exp_width":["Int",8], "ieee_compliance":["Bool",false], "sig_width":["Int",7]}
+          },
+          "dwfp_add_blur_d_y_stencil_4_978_979":{
+            "genref":"float_DW.fp_add",
+            "genargs":{"exp_width":["Int",8], "ieee_compliance":["Bool",false], "sig_width":["Int",7]}
+          }
+        },
+        "connections":[
+          ["self.in0_blur_d_stencil.0","dwfp_add_blur_d_stencil_1_blur_d_y_stencil_5_978.a"],
+          ["self.in1_blur_d_y_stencil.3","dwfp_add_blur_d_stencil_1_blur_d_y_stencil_5_978.b"],
+          ["dwfp_add_blur_d_y_stencil_4_978_979.b","dwfp_add_blur_d_stencil_1_blur_d_y_stencil_5_978.z"],
+          ["self.in1_blur_d_y_stencil.0","dwfp_add_blur_d_y_stencil_2_980_981.a"],
+          ["dwfp_add_blur_d_y_stencil_3_979_980.z","dwfp_add_blur_d_y_stencil_2_980_981.b"],
+          ["self.out_blur_d_stencil","dwfp_add_blur_d_y_stencil_2_980_981.z"],
+          ["self.in1_blur_d_y_stencil.1","dwfp_add_blur_d_y_stencil_3_979_980.a"],
+          ["dwfp_add_blur_d_y_stencil_4_978_979.z","dwfp_add_blur_d_y_stencil_3_979_980.b"],
+          ["self.in1_blur_d_y_stencil.2","dwfp_add_blur_d_y_stencil_4_978_979.a"]
+        ]
+      },
+      "hcompute_blur_d_y_stencil":{
+        "type":["Record",[
+          ["out_blur_d_y_stencil",["Array",16,"Bit"]]
+        ]],
+        "instances":{
+          "fconst0__941":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0000"]},
+            "metadata":{"float_value":"Equivalent float = 0.000000"}
+          }
+        },
+        "connections":[
+          ["self.out_blur_d_y_stencil","fconst0__941.out"]
+        ]
+      },
+      "hcompute_blur_d_y_stencil_1":{
+        "type":["Record",[
+          ["out_blur_d_y_stencil",["Array",16,"Bit"]],
+          ["in0_blur_d_y_stencil",["Array",1,["Array",16,"BitIn"]]],
+          ["in1_d_stencil",["Array",4,["Array",16,"BitIn"]]]
+        ]],
+        "instances":{
+          "dwfp_add_blur_d_y_stencil_1_d_stencil_5_950":{
+            "genref":"float_DW.fp_add",
+            "genargs":{"exp_width":["Int",8], "ieee_compliance":["Bool",false], "sig_width":["Int",7]}
+          },
+          "dwfp_add_d_stencil_2_952_953":{
+            "genref":"float_DW.fp_add",
+            "genargs":{"exp_width":["Int",8], "ieee_compliance":["Bool",false], "sig_width":["Int",7]}
+          },
+          "dwfp_add_d_stencil_3_951_952":{
+            "genref":"float_DW.fp_add",
+            "genargs":{"exp_width":["Int",8], "ieee_compliance":["Bool",false], "sig_width":["Int",7]}
+          },
+          "dwfp_add_d_stencil_4_950_951":{
+            "genref":"float_DW.fp_add",
+            "genargs":{"exp_width":["Int",8], "ieee_compliance":["Bool",false], "sig_width":["Int",7]}
+          }
+        },
+        "connections":[
+          ["self.in0_blur_d_y_stencil.0","dwfp_add_blur_d_y_stencil_1_d_stencil_5_950.a"],
+          ["self.in1_d_stencil.3","dwfp_add_blur_d_y_stencil_1_d_stencil_5_950.b"],
+          ["dwfp_add_d_stencil_4_950_951.b","dwfp_add_blur_d_y_stencil_1_d_stencil_5_950.z"],
+          ["self.in1_d_stencil.0","dwfp_add_d_stencil_2_952_953.a"],
+          ["dwfp_add_d_stencil_3_951_952.z","dwfp_add_d_stencil_2_952_953.b"],
+          ["self.out_blur_d_y_stencil","dwfp_add_d_stencil_2_952_953.z"],
+          ["self.in1_d_stencil.1","dwfp_add_d_stencil_3_951_952.a"],
+          ["dwfp_add_d_stencil_4_950_951.z","dwfp_add_d_stencil_3_951_952.b"],
+          ["self.in1_d_stencil.2","dwfp_add_d_stencil_4_950_951.a"]
+        ]
+      },
+      "hcompute_d_stencil":{
+        "type":["Record",[
+          ["out_d_stencil",["Array",16,"Bit"]]
+        ]],
+        "instances":{
+          "fconst0__890":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0000"]},
+            "metadata":{"float_value":"Equivalent float = 0.000000"}
+          }
+        },
+        "connections":[
+          ["self.out_d_stencil","fconst0__890.out"]
+        ]
+      },
+      "hcompute_d_stencil_1":{
+        "type":["Record",[
+          ["out_d_stencil",["Array",16,"Bit"]],
+          ["in0_d_stencil",["Array",1,["Array",16,"BitIn"]]],
+          ["in1_hw_input_global_wrapper_stencil",["Array",6,["Array",16,"BitIn"]]]
+        ]],
+        "instances":{
+          "dwfp_add_906_912_913":{
+            "genref":"float_DW.fp_add",
+            "genargs":{"exp_width":["Int",8], "ieee_compliance":["Bool",false], "sig_width":["Int",7]}
+          },
+          "dwfp_add_908_911_912":{
+            "genref":"float_DW.fp_add",
+            "genargs":{"exp_width":["Int",8], "ieee_compliance":["Bool",false], "sig_width":["Int",7]}
+          },
+          "dwfp_add_d_stencil_1_910_911":{
+            "genref":"float_DW.fp_add",
+            "genargs":{"exp_width":["Int",8], "ieee_compliance":["Bool",false], "sig_width":["Int",7]}
+          },
+          "dwfp_mul_905_905_906":{
+            "genref":"float_DW.fp_mul",
+            "genargs":{"exp_width":["Int",8], "ieee_compliance":["Bool",false], "sig_width":["Int",7]}
+          },
+          "dwfp_mul_907_907_908":{
+            "genref":"float_DW.fp_mul",
+            "genargs":{"exp_width":["Int",8], "ieee_compliance":["Bool",false], "sig_width":["Int",7]}
+          },
+          "dwfp_mul_909_909_910":{
+            "genref":"float_DW.fp_mul",
+            "genargs":{"exp_width":["Int",8], "ieee_compliance":["Bool",false], "sig_width":["Int",7]}
+          },
+          "fsub_hw_input_global_wrapper_stencil_1_hw_input_global_wrapper_stencil_2_905":{
+            "genref":"float.sub",
+            "genargs":{"exp_bits":["Int",8], "frac_bits":["Int",7]}
+          },
+          "fsub_hw_input_global_wrapper_stencil_3_hw_input_global_wrapper_stencil_4_907":{
+            "genref":"float.sub",
+            "genargs":{"exp_bits":["Int",8], "frac_bits":["Int",7]}
+          },
+          "fsub_hw_input_global_wrapper_stencil_5_hw_input_global_wrapper_stencil_6_909":{
+            "genref":"float.sub",
+            "genargs":{"exp_bits":["Int",8], "frac_bits":["Int",7]}
+          }
+        },
+        "connections":[
+          ["dwfp_mul_905_905_906.z","dwfp_add_906_912_913.a"],
+          ["dwfp_add_908_911_912.z","dwfp_add_906_912_913.b"],
+          ["self.out_d_stencil","dwfp_add_906_912_913.z"],
+          ["dwfp_mul_907_907_908.z","dwfp_add_908_911_912.a"],
+          ["dwfp_add_d_stencil_1_910_911.z","dwfp_add_908_911_912.b"],
+          ["self.in0_d_stencil.0","dwfp_add_d_stencil_1_910_911.a"],
+          ["dwfp_mul_909_909_910.z","dwfp_add_d_stencil_1_910_911.b"],
+          ["fsub_hw_input_global_wrapper_stencil_1_hw_input_global_wrapper_stencil_2_905.out","dwfp_mul_905_905_906.a"],
+          ["fsub_hw_input_global_wrapper_stencil_1_hw_input_global_wrapper_stencil_2_905.out","dwfp_mul_905_905_906.b"],
+          ["fsub_hw_input_global_wrapper_stencil_3_hw_input_global_wrapper_stencil_4_907.out","dwfp_mul_907_907_908.a"],
+          ["fsub_hw_input_global_wrapper_stencil_3_hw_input_global_wrapper_stencil_4_907.out","dwfp_mul_907_907_908.b"],
+          ["fsub_hw_input_global_wrapper_stencil_5_hw_input_global_wrapper_stencil_6_909.out","dwfp_mul_909_909_910.a"],
+          ["fsub_hw_input_global_wrapper_stencil_5_hw_input_global_wrapper_stencil_6_909.out","dwfp_mul_909_909_910.b"],
+          ["self.in1_hw_input_global_wrapper_stencil.0","fsub_hw_input_global_wrapper_stencil_1_hw_input_global_wrapper_stencil_2_905.in0"],
+          ["self.in1_hw_input_global_wrapper_stencil.1","fsub_hw_input_global_wrapper_stencil_1_hw_input_global_wrapper_stencil_2_905.in1"],
+          ["self.in1_hw_input_global_wrapper_stencil.2","fsub_hw_input_global_wrapper_stencil_3_hw_input_global_wrapper_stencil_4_907.in0"],
+          ["self.in1_hw_input_global_wrapper_stencil.3","fsub_hw_input_global_wrapper_stencil_3_hw_input_global_wrapper_stencil_4_907.in1"],
+          ["self.in1_hw_input_global_wrapper_stencil.4","fsub_hw_input_global_wrapper_stencil_5_hw_input_global_wrapper_stencil_6_909.in0"],
+          ["self.in1_hw_input_global_wrapper_stencil.5","fsub_hw_input_global_wrapper_stencil_5_hw_input_global_wrapper_stencil_6_909.in1"]
+        ]
+      },
+      "hcompute_hw_input_global_wrapper_stencil":{
+        "type":["Record",[
+          ["out_hw_input_global_wrapper_stencil",["Array",16,"Bit"]],
+          ["in0_hw_input_stencil",["Array",1,["Array",16,"BitIn"]]]
+        ]],
+        "connections":[
+          ["self.out_hw_input_global_wrapper_stencil","self.in0_hw_input_stencil.0"]
+        ]
+      },
+      "hcompute_hw_input_global_wrapper_stencil_1":{
+        "type":["Record",[
+          ["out_hw_input_global_wrapper_stencil",["Array",16,"Bit"]],
+          ["in0_hw_input_stencil",["Array",1,["Array",16,"BitIn"]]]
+        ]],
+        "connections":[
+          ["self.out_hw_input_global_wrapper_stencil","self.in0_hw_input_stencil.0"]
+        ]
+      },
+      "hcompute_hw_input_global_wrapper_stencil_2":{
+        "type":["Record",[
+          ["out_hw_input_global_wrapper_stencil",["Array",16,"Bit"]],
+          ["in0_hw_input_stencil",["Array",1,["Array",16,"BitIn"]]]
+        ]],
+        "connections":[
+          ["self.out_hw_input_global_wrapper_stencil","self.in0_hw_input_stencil.0"]
+        ]
+      },
+      "hcompute_hw_output_stencil":{
+        "type":["Record",[
+          ["out_hw_output_stencil",["Array",16,"Bit"]],
+          ["in0_non_local_means_sum_stencil",["Array",2,["Array",16,"BitIn"]]]
+        ]],
+        "instances":{
+          "dwfp_mul_1107_1108_1109":{
+            "genref":"float_DW.fp_mul",
+            "genargs":{"exp_width":["Int",8], "ieee_compliance":["Bool",false], "sig_width":["Int",7]}
+          },
+          "fconst0__1106":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0000"]},
+            "metadata":{"float_value":"Equivalent float = 0.000000"}
+          },
+          "fconst1__1104":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h3f80"]},
+            "metadata":{"float_value":"Equivalent float = 1.000000"}
+          },
+          "fconst255__1108":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h437f"]},
+            "metadata":{"float_value":"Equivalent float = 255.000000"}
+          },
+          "fdiv_non_local_means_sum_stencil_5_non_local_means_sum_stencil_6_1103":{
+            "genref":"float.div",
+            "genargs":{"exp_bits":["Int",8], "frac_bits":["Int",7]}
+          },
+          "fmax_1105_1106_1107":{
+            "genref":"float.max",
+            "genargs":{"exp_bits":["Int",8], "frac_bits":["Int",7]}
+          },
+          "fmin_1103_1104_1105":{
+            "genref":"float.min",
+            "genargs":{"exp_bits":["Int",8], "frac_bits":["Int",7]}
+          }
+        },
+        "connections":[
+          ["fmax_1105_1106_1107.out","dwfp_mul_1107_1108_1109.a"],
+          ["fconst255__1108.out","dwfp_mul_1107_1108_1109.b"],
+          ["self.out_hw_output_stencil","dwfp_mul_1107_1108_1109.z"],
+          ["fmax_1105_1106_1107.in1","fconst0__1106.out"],
+          ["fmin_1103_1104_1105.in1","fconst1__1104.out"],
+          ["self.in0_non_local_means_sum_stencil.0","fdiv_non_local_means_sum_stencil_5_non_local_means_sum_stencil_6_1103.in0"],
+          ["self.in0_non_local_means_sum_stencil.1","fdiv_non_local_means_sum_stencil_5_non_local_means_sum_stencil_6_1103.in1"],
+          ["fmin_1103_1104_1105.in0","fdiv_non_local_means_sum_stencil_5_non_local_means_sum_stencil_6_1103.out"],
+          ["fmin_1103_1104_1105.out","fmax_1105_1106_1107.in0"]
+        ]
+      },
+      "hcompute_hw_output_stencil_1":{
+        "type":["Record",[
+          ["out_hw_output_stencil",["Array",16,"Bit"]],
+          ["in0_non_local_means_sum_stencil",["Array",2,["Array",16,"BitIn"]]]
+        ]],
+        "instances":{
+          "dwfp_mul_1130_1131_1132":{
+            "genref":"float_DW.fp_mul",
+            "genargs":{"exp_width":["Int",8], "ieee_compliance":["Bool",false], "sig_width":["Int",7]}
+          },
+          "fconst0__1129":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0000"]},
+            "metadata":{"float_value":"Equivalent float = 0.000000"}
+          },
+          "fconst1__1127":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h3f80"]},
+            "metadata":{"float_value":"Equivalent float = 1.000000"}
+          },
+          "fconst255__1131":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h437f"]},
+            "metadata":{"float_value":"Equivalent float = 255.000000"}
+          },
+          "fdiv_non_local_means_sum_stencil_7_non_local_means_sum_stencil_8_1126":{
+            "genref":"float.div",
+            "genargs":{"exp_bits":["Int",8], "frac_bits":["Int",7]}
+          },
+          "fmax_1128_1129_1130":{
+            "genref":"float.max",
+            "genargs":{"exp_bits":["Int",8], "frac_bits":["Int",7]}
+          },
+          "fmin_1126_1127_1128":{
+            "genref":"float.min",
+            "genargs":{"exp_bits":["Int",8], "frac_bits":["Int",7]}
+          }
+        },
+        "connections":[
+          ["fmax_1128_1129_1130.out","dwfp_mul_1130_1131_1132.a"],
+          ["fconst255__1131.out","dwfp_mul_1130_1131_1132.b"],
+          ["self.out_hw_output_stencil","dwfp_mul_1130_1131_1132.z"],
+          ["fmax_1128_1129_1130.in1","fconst0__1129.out"],
+          ["fmin_1126_1127_1128.in1","fconst1__1127.out"],
+          ["self.in0_non_local_means_sum_stencil.0","fdiv_non_local_means_sum_stencil_7_non_local_means_sum_stencil_8_1126.in0"],
+          ["self.in0_non_local_means_sum_stencil.1","fdiv_non_local_means_sum_stencil_7_non_local_means_sum_stencil_8_1126.in1"],
+          ["fmin_1126_1127_1128.in0","fdiv_non_local_means_sum_stencil_7_non_local_means_sum_stencil_8_1126.out"],
+          ["fmin_1126_1127_1128.out","fmax_1128_1129_1130.in0"]
+        ]
+      },
+      "hcompute_hw_output_stencil_2":{
+        "type":["Record",[
+          ["out_hw_output_stencil",["Array",16,"Bit"]],
+          ["in0_non_local_means_sum_stencil",["Array",2,["Array",16,"BitIn"]]]
+        ]],
+        "instances":{
+          "dwfp_mul_1153_1154_1155":{
+            "genref":"float_DW.fp_mul",
+            "genargs":{"exp_width":["Int",8], "ieee_compliance":["Bool",false], "sig_width":["Int",7]}
+          },
+          "fconst0__1152":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0000"]},
+            "metadata":{"float_value":"Equivalent float = 0.000000"}
+          },
+          "fconst1__1150":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h3f80"]},
+            "metadata":{"float_value":"Equivalent float = 1.000000"}
+          },
+          "fconst255__1154":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h437f"]},
+            "metadata":{"float_value":"Equivalent float = 255.000000"}
+          },
+          "fdiv_non_local_means_sum_stencil_9_non_local_means_sum_stencil_10_1149":{
+            "genref":"float.div",
+            "genargs":{"exp_bits":["Int",8], "frac_bits":["Int",7]}
+          },
+          "fmax_1151_1152_1153":{
+            "genref":"float.max",
+            "genargs":{"exp_bits":["Int",8], "frac_bits":["Int",7]}
+          },
+          "fmin_1149_1150_1151":{
+            "genref":"float.min",
+            "genargs":{"exp_bits":["Int",8], "frac_bits":["Int",7]}
+          }
+        },
+        "connections":[
+          ["fmax_1151_1152_1153.out","dwfp_mul_1153_1154_1155.a"],
+          ["fconst255__1154.out","dwfp_mul_1153_1154_1155.b"],
+          ["self.out_hw_output_stencil","dwfp_mul_1153_1154_1155.z"],
+          ["fmax_1151_1152_1153.in1","fconst0__1152.out"],
+          ["fmin_1149_1150_1151.in1","fconst1__1150.out"],
+          ["self.in0_non_local_means_sum_stencil.1","fdiv_non_local_means_sum_stencil_9_non_local_means_sum_stencil_10_1149.in0"],
+          ["self.in0_non_local_means_sum_stencil.0","fdiv_non_local_means_sum_stencil_9_non_local_means_sum_stencil_10_1149.in1"],
+          ["fmin_1149_1150_1151.in0","fdiv_non_local_means_sum_stencil_9_non_local_means_sum_stencil_10_1149.out"],
+          ["fmin_1149_1150_1151.out","fmax_1151_1152_1153.in0"]
+        ]
+      },
+      "hcompute_non_local_means_sum_stencil":{
+        "type":["Record",[
+          ["out_non_local_means_sum_stencil",["Array",16,"Bit"]]
+        ]],
+        "instances":{
+          "fconst0__997":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0000"]},
+            "metadata":{"float_value":"Equivalent float = 0.000000"}
+          }
+        },
+        "connections":[
+          ["self.out_non_local_means_sum_stencil","fconst0__997.out"]
+        ]
+      },
+      "hcompute_non_local_means_sum_stencil_1":{
+        "type":["Record",[
+          ["out_non_local_means_sum_stencil",["Array",16,"Bit"]]
+        ]],
+        "instances":{
+          "fconst0__1000":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0000"]},
+            "metadata":{"float_value":"Equivalent float = 0.000000"}
+          }
+        },
+        "connections":[
+          ["self.out_non_local_means_sum_stencil","fconst0__1000.out"]
+        ]
+      },
+      "hcompute_non_local_means_sum_stencil_2":{
+        "type":["Record",[
+          ["out_non_local_means_sum_stencil",["Array",16,"Bit"]]
+        ]],
+        "instances":{
+          "fconst0__1003":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0000"]},
+            "metadata":{"float_value":"Equivalent float = 0.000000"}
+          }
+        },
+        "connections":[
+          ["self.out_non_local_means_sum_stencil","fconst0__1003.out"]
+        ]
+      },
+      "hcompute_non_local_means_sum_stencil_3":{
+        "type":["Record",[
+          ["out_non_local_means_sum_stencil",["Array",16,"Bit"]]
+        ]],
+        "instances":{
+          "fconst0__1006":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0000"]},
+            "metadata":{"float_value":"Equivalent float = 0.000000"}
+          }
+        },
+        "connections":[
+          ["self.out_non_local_means_sum_stencil","fconst0__1006.out"]
+        ]
+      },
+      "hcompute_non_local_means_sum_stencil_4":{
+        "type":["Record",[
+          ["out_non_local_means_sum_stencil",["Array",16,"Bit"]],
+          ["in0_blur_d_stencil",["Array",1,["Array",16,"BitIn"]]],
+          ["in1_hw_input_global_wrapper_stencil",["Array",1,["Array",16,"BitIn"]]],
+          ["in2_non_local_means_sum_stencil",["Array",1,["Array",16,"BitIn"]]]
+        ]],
+        "instances":{
+          "dwfp_add_non_local_means_sum_stencil_1_1016_1017":{
+            "genref":"float_DW.fp_add",
+            "genargs":{"exp_width":["Int",8], "ieee_compliance":["Bool",false], "sig_width":["Int",7]}
+          },
+          "dwfp_mul_1015_hw_input_global_wrapper_stencil_7_1016":{
+            "genref":"float_DW.fp_mul",
+            "genargs":{"exp_width":["Int",8], "ieee_compliance":["Bool",false], "sig_width":["Int",7]}
+          },
+          "dwfp_mul_blur_d_stencil_2_1013_1014":{
+            "genref":"float_DW.fp_mul",
+            "genargs":{"exp_width":["Int",8], "ieee_compliance":["Bool",false], "sig_width":["Int",7]}
+          },
+          "fconst-1__1013":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'hbfb5"]},
+            "metadata":{"float_value":"Equivalent float = -1.414062"}
+          },
+          "fexp_1014":{
+            "genref":"float.exp",
+            "genargs":{"exp_bits":["Int",8], "frac_bits":["Int",7]}
+          }
+        },
+        "connections":[
+          ["self.in2_non_local_means_sum_stencil.0","dwfp_add_non_local_means_sum_stencil_1_1016_1017.a"],
+          ["dwfp_mul_1015_hw_input_global_wrapper_stencil_7_1016.z","dwfp_add_non_local_means_sum_stencil_1_1016_1017.b"],
+          ["self.out_non_local_means_sum_stencil","dwfp_add_non_local_means_sum_stencil_1_1016_1017.z"],
+          ["fexp_1014.out","dwfp_mul_1015_hw_input_global_wrapper_stencil_7_1016.a"],
+          ["self.in1_hw_input_global_wrapper_stencil.0","dwfp_mul_1015_hw_input_global_wrapper_stencil_7_1016.b"],
+          ["self.in0_blur_d_stencil.0","dwfp_mul_blur_d_stencil_2_1013_1014.a"],
+          ["fconst-1__1013.out","dwfp_mul_blur_d_stencil_2_1013_1014.b"],
+          ["fexp_1014.in","dwfp_mul_blur_d_stencil_2_1013_1014.z"]
+        ]
+      },
+      "hcompute_non_local_means_sum_stencil_5":{
+        "type":["Record",[
+          ["out_non_local_means_sum_stencil",["Array",16,"Bit"]],
+          ["in0_blur_d_stencil",["Array",1,["Array",16,"BitIn"]]],
+          ["in1_hw_input_global_wrapper_stencil",["Array",1,["Array",16,"BitIn"]]],
+          ["in2_non_local_means_sum_stencil",["Array",1,["Array",16,"BitIn"]]]
+        ]],
+        "instances":{
+          "dwfp_add_non_local_means_sum_stencil_2_1040_1041":{
+            "genref":"float_DW.fp_add",
+            "genargs":{"exp_width":["Int",8], "ieee_compliance":["Bool",false], "sig_width":["Int",7]}
+          },
+          "dwfp_mul_1039_hw_input_global_wrapper_stencil_8_1040":{
+            "genref":"float_DW.fp_mul",
+            "genargs":{"exp_width":["Int",8], "ieee_compliance":["Bool",false], "sig_width":["Int",7]}
+          },
+          "dwfp_mul_blur_d_stencil_3_1037_1038":{
+            "genref":"float_DW.fp_mul",
+            "genargs":{"exp_width":["Int",8], "ieee_compliance":["Bool",false], "sig_width":["Int",7]}
+          },
+          "fconst-1__1037":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'hbfb5"]},
+            "metadata":{"float_value":"Equivalent float = -1.414062"}
+          },
+          "fexp_1038":{
+            "genref":"float.exp",
+            "genargs":{"exp_bits":["Int",8], "frac_bits":["Int",7]}
+          }
+        },
+        "connections":[
+          ["self.in2_non_local_means_sum_stencil.0","dwfp_add_non_local_means_sum_stencil_2_1040_1041.a"],
+          ["dwfp_mul_1039_hw_input_global_wrapper_stencil_8_1040.z","dwfp_add_non_local_means_sum_stencil_2_1040_1041.b"],
+          ["self.out_non_local_means_sum_stencil","dwfp_add_non_local_means_sum_stencil_2_1040_1041.z"],
+          ["fexp_1038.out","dwfp_mul_1039_hw_input_global_wrapper_stencil_8_1040.a"],
+          ["self.in1_hw_input_global_wrapper_stencil.0","dwfp_mul_1039_hw_input_global_wrapper_stencil_8_1040.b"],
+          ["self.in0_blur_d_stencil.0","dwfp_mul_blur_d_stencil_3_1037_1038.a"],
+          ["fconst-1__1037.out","dwfp_mul_blur_d_stencil_3_1037_1038.b"],
+          ["fexp_1038.in","dwfp_mul_blur_d_stencil_3_1037_1038.z"]
+        ]
+      },
+      "hcompute_non_local_means_sum_stencil_6":{
+        "type":["Record",[
+          ["out_non_local_means_sum_stencil",["Array",16,"Bit"]],
+          ["in0_blur_d_stencil",["Array",1,["Array",16,"BitIn"]]],
+          ["in1_hw_input_global_wrapper_stencil",["Array",1,["Array",16,"BitIn"]]],
+          ["in2_non_local_means_sum_stencil",["Array",1,["Array",16,"BitIn"]]]
+        ]],
+        "instances":{
+          "dwfp_add_non_local_means_sum_stencil_3_1064_1065":{
+            "genref":"float_DW.fp_add",
+            "genargs":{"exp_width":["Int",8], "ieee_compliance":["Bool",false], "sig_width":["Int",7]}
+          },
+          "dwfp_mul_1063_hw_input_global_wrapper_stencil_9_1064":{
+            "genref":"float_DW.fp_mul",
+            "genargs":{"exp_width":["Int",8], "ieee_compliance":["Bool",false], "sig_width":["Int",7]}
+          },
+          "dwfp_mul_blur_d_stencil_4_1061_1062":{
+            "genref":"float_DW.fp_mul",
+            "genargs":{"exp_width":["Int",8], "ieee_compliance":["Bool",false], "sig_width":["Int",7]}
+          },
+          "fconst-1__1061":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'hbfb5"]},
+            "metadata":{"float_value":"Equivalent float = -1.414062"}
+          },
+          "fexp_1062":{
+            "genref":"float.exp",
+            "genargs":{"exp_bits":["Int",8], "frac_bits":["Int",7]}
+          }
+        },
+        "connections":[
+          ["self.in2_non_local_means_sum_stencil.0","dwfp_add_non_local_means_sum_stencil_3_1064_1065.a"],
+          ["dwfp_mul_1063_hw_input_global_wrapper_stencil_9_1064.z","dwfp_add_non_local_means_sum_stencil_3_1064_1065.b"],
+          ["self.out_non_local_means_sum_stencil","dwfp_add_non_local_means_sum_stencil_3_1064_1065.z"],
+          ["fexp_1062.out","dwfp_mul_1063_hw_input_global_wrapper_stencil_9_1064.a"],
+          ["self.in1_hw_input_global_wrapper_stencil.0","dwfp_mul_1063_hw_input_global_wrapper_stencil_9_1064.b"],
+          ["self.in0_blur_d_stencil.0","dwfp_mul_blur_d_stencil_4_1061_1062.a"],
+          ["fconst-1__1061.out","dwfp_mul_blur_d_stencil_4_1061_1062.b"],
+          ["fexp_1062.in","dwfp_mul_blur_d_stencil_4_1061_1062.z"]
+        ]
+      },
+      "hcompute_non_local_means_sum_stencil_7":{
+        "type":["Record",[
+          ["out_non_local_means_sum_stencil",["Array",16,"Bit"]],
+          ["in0_blur_d_stencil",["Array",1,["Array",16,"BitIn"]]],
+          ["in1_non_local_means_sum_stencil",["Array",1,["Array",16,"BitIn"]]]
+        ]],
+        "instances":{
+          "dwfp_add_non_local_means_sum_stencil_4_1086_1087":{
+            "genref":"float_DW.fp_add",
+            "genargs":{"exp_width":["Int",8], "ieee_compliance":["Bool",false], "sig_width":["Int",7]}
+          },
+          "dwfp_mul_blur_d_stencil_5_1084_1085":{
+            "genref":"float_DW.fp_mul",
+            "genargs":{"exp_width":["Int",8], "ieee_compliance":["Bool",false], "sig_width":["Int",7]}
+          },
+          "fconst-1__1084":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'hbfb5"]},
+            "metadata":{"float_value":"Equivalent float = -1.414062"}
+          },
+          "fexp_1085":{
+            "genref":"float.exp",
+            "genargs":{"exp_bits":["Int",8], "frac_bits":["Int",7]}
+          }
+        },
+        "connections":[
+          ["self.in1_non_local_means_sum_stencil.0","dwfp_add_non_local_means_sum_stencil_4_1086_1087.a"],
+          ["fexp_1085.out","dwfp_add_non_local_means_sum_stencil_4_1086_1087.b"],
+          ["self.out_non_local_means_sum_stencil","dwfp_add_non_local_means_sum_stencil_4_1086_1087.z"],
+          ["self.in0_blur_d_stencil.0","dwfp_mul_blur_d_stencil_5_1084_1085.a"],
+          ["fconst-1__1084.out","dwfp_mul_blur_d_stencil_5_1084_1085.b"],
+          ["fexp_1085.in","dwfp_mul_blur_d_stencil_5_1084_1085.z"]
+        ]
+      }
+    }
+  }
+}
+}

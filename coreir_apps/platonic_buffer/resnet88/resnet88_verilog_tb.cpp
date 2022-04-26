@@ -26,9 +26,9 @@ int main() {
 
   // Loading input data
   srand(1);
-  // cmap    : { op_hcompute_hw_input_global_wrapper_stencil[root = 0, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x] -> hw_input_stencil_clkwrk_0[hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x, 0] : 0 <= hw_input_global_wrapper_s0_y <= 29 and 0 <= hw_input_global_wrapper_s0_x <= 29 }
-  // read map: { hw_input_stencil_clkwrk_0[i0, i1, 0] -> op_hcompute_hw_input_global_wrapper_stencil[root = 0, hw_input_global_wrapper_s0_y = i0, hw_input_global_wrapper_s0_x = i1] : 0 <= i0 <= 29 and 0 <= i1 <= 29 }
-  // rng     : { op_hcompute_hw_input_global_wrapper_stencil[root = 0, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x] : 0 <= hw_input_global_wrapper_s0_y <= 29 and 0 <= hw_input_global_wrapper_s0_x <= 29 }
+  // cmap    : { op_hcompute_hw_input_global_wrapper_stencil_4[root = 0, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x] -> hw_input_stencil_clkwrk_0[hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x, 4] : 0 <= hw_input_global_wrapper_s0_y <= 29 and 0 <= hw_input_global_wrapper_s0_x <= 29 }
+  // read map: { hw_input_stencil_clkwrk_0[i0, i1, 4] -> op_hcompute_hw_input_global_wrapper_stencil_4[root = 0, hw_input_global_wrapper_s0_y = i0, hw_input_global_wrapper_s0_x = i1] : 0 <= i0 <= 29 and 0 <= i1 <= 29 }
+  // rng     : { op_hcompute_hw_input_global_wrapper_stencil_4[root = 0, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x] : 0 <= hw_input_global_wrapper_s0_y <= 29 and 0 <= hw_input_global_wrapper_s0_x <= 29 }
   // rng card: { 900 }
   for (int i = 0; i < 900; i++) {
     hw_uint<16 > value;
@@ -36,9 +36,9 @@ int main() {
     hw_input_stencil_clkwrk_0.write(value);
   }
 
-  // cmap    : { op_hcompute_hw_input_global_wrapper_stencil_1[root = 0, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x] -> hw_input_stencil_clkwrk_1[hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x, 1] : 0 <= hw_input_global_wrapper_s0_y <= 29 and 0 <= hw_input_global_wrapper_s0_x <= 29 }
-  // read map: { hw_input_stencil_clkwrk_1[i0, i1, 1] -> op_hcompute_hw_input_global_wrapper_stencil_1[root = 0, hw_input_global_wrapper_s0_y = i0, hw_input_global_wrapper_s0_x = i1] : 0 <= i0 <= 29 and 0 <= i1 <= 29 }
-  // rng     : { op_hcompute_hw_input_global_wrapper_stencil_1[root = 0, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x] : 0 <= hw_input_global_wrapper_s0_y <= 29 and 0 <= hw_input_global_wrapper_s0_x <= 29 }
+  // cmap    : { op_hcompute_hw_input_global_wrapper_stencil_5[root = 0, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x] -> hw_input_stencil_clkwrk_1[hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x, 5] : 0 <= hw_input_global_wrapper_s0_y <= 29 and 0 <= hw_input_global_wrapper_s0_x <= 29 }
+  // read map: { hw_input_stencil_clkwrk_1[i0, i1, 5] -> op_hcompute_hw_input_global_wrapper_stencil_5[root = 0, hw_input_global_wrapper_s0_y = i0, hw_input_global_wrapper_s0_x = i1] : 0 <= i0 <= 29 and 0 <= i1 <= 29 }
+  // rng     : { op_hcompute_hw_input_global_wrapper_stencil_5[root = 0, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x] : 0 <= hw_input_global_wrapper_s0_y <= 29 and 0 <= hw_input_global_wrapper_s0_x <= 29 }
   // rng card: { 900 }
   for (int i = 0; i < 900; i++) {
     hw_uint<16 > value;
@@ -46,9 +46,9 @@ int main() {
     hw_input_stencil_clkwrk_1.write(value);
   }
 
-  // cmap    : { op_hcompute_hw_input_global_wrapper_stencil_2[root = 0, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x] -> hw_input_stencil_clkwrk_2[hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x, 2] : 0 <= hw_input_global_wrapper_s0_y <= 29 and 0 <= hw_input_global_wrapper_s0_x <= 29 }
-  // read map: { hw_input_stencil_clkwrk_2[i0, i1, 2] -> op_hcompute_hw_input_global_wrapper_stencil_2[root = 0, hw_input_global_wrapper_s0_y = i0, hw_input_global_wrapper_s0_x = i1] : 0 <= i0 <= 29 and 0 <= i1 <= 29 }
-  // rng     : { op_hcompute_hw_input_global_wrapper_stencil_2[root = 0, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x] : 0 <= hw_input_global_wrapper_s0_y <= 29 and 0 <= hw_input_global_wrapper_s0_x <= 29 }
+  // cmap    : { op_hcompute_hw_input_global_wrapper_stencil_6[root = 0, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x] -> hw_input_stencil_clkwrk_2[hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x, 6] : 0 <= hw_input_global_wrapper_s0_y <= 29 and 0 <= hw_input_global_wrapper_s0_x <= 29 }
+  // read map: { hw_input_stencil_clkwrk_2[i0, i1, 6] -> op_hcompute_hw_input_global_wrapper_stencil_6[root = 0, hw_input_global_wrapper_s0_y = i0, hw_input_global_wrapper_s0_x = i1] : 0 <= i0 <= 29 and 0 <= i1 <= 29 }
+  // rng     : { op_hcompute_hw_input_global_wrapper_stencil_6[root = 0, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x] : 0 <= hw_input_global_wrapper_s0_y <= 29 and 0 <= hw_input_global_wrapper_s0_x <= 29 }
   // rng card: { 900 }
   for (int i = 0; i < 900; i++) {
     hw_uint<16 > value;
@@ -56,9 +56,9 @@ int main() {
     hw_input_stencil_clkwrk_2.write(value);
   }
 
-  // cmap    : { op_hcompute_hw_input_global_wrapper_stencil_3[root = 0, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x] -> hw_input_stencil_clkwrk_3[hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x, 3] : 0 <= hw_input_global_wrapper_s0_y <= 29 and 0 <= hw_input_global_wrapper_s0_x <= 29 }
-  // read map: { hw_input_stencil_clkwrk_3[i0, i1, 3] -> op_hcompute_hw_input_global_wrapper_stencil_3[root = 0, hw_input_global_wrapper_s0_y = i0, hw_input_global_wrapper_s0_x = i1] : 0 <= i0 <= 29 and 0 <= i1 <= 29 }
-  // rng     : { op_hcompute_hw_input_global_wrapper_stencil_3[root = 0, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x] : 0 <= hw_input_global_wrapper_s0_y <= 29 and 0 <= hw_input_global_wrapper_s0_x <= 29 }
+  // cmap    : { op_hcompute_hw_input_global_wrapper_stencil_1[root = 0, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x] -> hw_input_stencil_clkwrk_3[hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x, 1] : 0 <= hw_input_global_wrapper_s0_y <= 29 and 0 <= hw_input_global_wrapper_s0_x <= 29 }
+  // read map: { hw_input_stencil_clkwrk_3[i0, i1, 1] -> op_hcompute_hw_input_global_wrapper_stencil_1[root = 0, hw_input_global_wrapper_s0_y = i0, hw_input_global_wrapper_s0_x = i1] : 0 <= i0 <= 29 and 0 <= i1 <= 29 }
+  // rng     : { op_hcompute_hw_input_global_wrapper_stencil_1[root = 0, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x] : 0 <= hw_input_global_wrapper_s0_y <= 29 and 0 <= hw_input_global_wrapper_s0_x <= 29 }
   // rng card: { 900 }
   for (int i = 0; i < 900; i++) {
     hw_uint<16 > value;
@@ -66,9 +66,9 @@ int main() {
     hw_input_stencil_clkwrk_3.write(value);
   }
 
-  // cmap    : { op_hcompute_hw_input_global_wrapper_stencil_4[root = 0, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x] -> hw_input_stencil_clkwrk_4[hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x, 4] : 0 <= hw_input_global_wrapper_s0_y <= 29 and 0 <= hw_input_global_wrapper_s0_x <= 29 }
-  // read map: { hw_input_stencil_clkwrk_4[i0, i1, 4] -> op_hcompute_hw_input_global_wrapper_stencil_4[root = 0, hw_input_global_wrapper_s0_y = i0, hw_input_global_wrapper_s0_x = i1] : 0 <= i0 <= 29 and 0 <= i1 <= 29 }
-  // rng     : { op_hcompute_hw_input_global_wrapper_stencil_4[root = 0, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x] : 0 <= hw_input_global_wrapper_s0_y <= 29 and 0 <= hw_input_global_wrapper_s0_x <= 29 }
+  // cmap    : { op_hcompute_hw_input_global_wrapper_stencil_3[root = 0, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x] -> hw_input_stencil_clkwrk_4[hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x, 3] : 0 <= hw_input_global_wrapper_s0_y <= 29 and 0 <= hw_input_global_wrapper_s0_x <= 29 }
+  // read map: { hw_input_stencil_clkwrk_4[i0, i1, 3] -> op_hcompute_hw_input_global_wrapper_stencil_3[root = 0, hw_input_global_wrapper_s0_y = i0, hw_input_global_wrapper_s0_x = i1] : 0 <= i0 <= 29 and 0 <= i1 <= 29 }
+  // rng     : { op_hcompute_hw_input_global_wrapper_stencil_3[root = 0, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x] : 0 <= hw_input_global_wrapper_s0_y <= 29 and 0 <= hw_input_global_wrapper_s0_x <= 29 }
   // rng card: { 900 }
   for (int i = 0; i < 900; i++) {
     hw_uint<16 > value;
@@ -76,9 +76,9 @@ int main() {
     hw_input_stencil_clkwrk_4.write(value);
   }
 
-  // cmap    : { op_hcompute_hw_input_global_wrapper_stencil_5[root = 0, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x] -> hw_input_stencil_clkwrk_5[hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x, 5] : 0 <= hw_input_global_wrapper_s0_y <= 29 and 0 <= hw_input_global_wrapper_s0_x <= 29 }
-  // read map: { hw_input_stencil_clkwrk_5[i0, i1, 5] -> op_hcompute_hw_input_global_wrapper_stencil_5[root = 0, hw_input_global_wrapper_s0_y = i0, hw_input_global_wrapper_s0_x = i1] : 0 <= i0 <= 29 and 0 <= i1 <= 29 }
-  // rng     : { op_hcompute_hw_input_global_wrapper_stencil_5[root = 0, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x] : 0 <= hw_input_global_wrapper_s0_y <= 29 and 0 <= hw_input_global_wrapper_s0_x <= 29 }
+  // cmap    : { op_hcompute_hw_input_global_wrapper_stencil_2[root = 0, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x] -> hw_input_stencil_clkwrk_5[hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x, 2] : 0 <= hw_input_global_wrapper_s0_y <= 29 and 0 <= hw_input_global_wrapper_s0_x <= 29 }
+  // read map: { hw_input_stencil_clkwrk_5[i0, i1, 2] -> op_hcompute_hw_input_global_wrapper_stencil_2[root = 0, hw_input_global_wrapper_s0_y = i0, hw_input_global_wrapper_s0_x = i1] : 0 <= i0 <= 29 and 0 <= i1 <= 29 }
+  // rng     : { op_hcompute_hw_input_global_wrapper_stencil_2[root = 0, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x] : 0 <= hw_input_global_wrapper_s0_y <= 29 and 0 <= hw_input_global_wrapper_s0_x <= 29 }
   // rng card: { 900 }
   for (int i = 0; i < 900; i++) {
     hw_uint<16 > value;
@@ -86,9 +86,9 @@ int main() {
     hw_input_stencil_clkwrk_5.write(value);
   }
 
-  // cmap    : { op_hcompute_hw_input_global_wrapper_stencil_6[root = 0, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x] -> hw_input_stencil_clkwrk_6[hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x, 6] : 0 <= hw_input_global_wrapper_s0_y <= 29 and 0 <= hw_input_global_wrapper_s0_x <= 29 }
-  // read map: { hw_input_stencil_clkwrk_6[i0, i1, 6] -> op_hcompute_hw_input_global_wrapper_stencil_6[root = 0, hw_input_global_wrapper_s0_y = i0, hw_input_global_wrapper_s0_x = i1] : 0 <= i0 <= 29 and 0 <= i1 <= 29 }
-  // rng     : { op_hcompute_hw_input_global_wrapper_stencil_6[root = 0, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x] : 0 <= hw_input_global_wrapper_s0_y <= 29 and 0 <= hw_input_global_wrapper_s0_x <= 29 }
+  // cmap    : { op_hcompute_hw_input_global_wrapper_stencil[root = 0, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x] -> hw_input_stencil_clkwrk_6[hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x, 0] : 0 <= hw_input_global_wrapper_s0_y <= 29 and 0 <= hw_input_global_wrapper_s0_x <= 29 }
+  // read map: { hw_input_stencil_clkwrk_6[i0, i1, 0] -> op_hcompute_hw_input_global_wrapper_stencil[root = 0, hw_input_global_wrapper_s0_y = i0, hw_input_global_wrapper_s0_x = i1] : 0 <= i0 <= 29 and 0 <= i1 <= 29 }
+  // rng     : { op_hcompute_hw_input_global_wrapper_stencil[root = 0, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x] : 0 <= hw_input_global_wrapper_s0_y <= 29 and 0 <= hw_input_global_wrapper_s0_x <= 29 }
   // rng card: { 900 }
   for (int i = 0; i < 900; i++) {
     hw_uint<16 > value;
@@ -131,13 +131,13 @@ int main() {
   dut.flush = 0;
   dut.clk = 0;
   dut.eval();
-  *(dut.hw_input_stencil_clkwrk_0_op_hcompute_hw_input_global_wrapper_stencil_read) = 0;
-  *(dut.hw_input_stencil_clkwrk_1_op_hcompute_hw_input_global_wrapper_stencil_1_read) = 0;
-  *(dut.hw_input_stencil_clkwrk_2_op_hcompute_hw_input_global_wrapper_stencil_2_read) = 0;
-  *(dut.hw_input_stencil_clkwrk_3_op_hcompute_hw_input_global_wrapper_stencil_3_read) = 0;
-  *(dut.hw_input_stencil_clkwrk_4_op_hcompute_hw_input_global_wrapper_stencil_4_read) = 0;
-  *(dut.hw_input_stencil_clkwrk_5_op_hcompute_hw_input_global_wrapper_stencil_5_read) = 0;
-  *(dut.hw_input_stencil_clkwrk_6_op_hcompute_hw_input_global_wrapper_stencil_6_read) = 0;
+  *(dut.hw_input_stencil_clkwrk_0_op_hcompute_hw_input_global_wrapper_stencil_4_read) = 0;
+  *(dut.hw_input_stencil_clkwrk_1_op_hcompute_hw_input_global_wrapper_stencil_5_read) = 0;
+  *(dut.hw_input_stencil_clkwrk_2_op_hcompute_hw_input_global_wrapper_stencil_6_read) = 0;
+  *(dut.hw_input_stencil_clkwrk_3_op_hcompute_hw_input_global_wrapper_stencil_1_read) = 0;
+  *(dut.hw_input_stencil_clkwrk_4_op_hcompute_hw_input_global_wrapper_stencil_3_read) = 0;
+  *(dut.hw_input_stencil_clkwrk_5_op_hcompute_hw_input_global_wrapper_stencil_2_read) = 0;
+  *(dut.hw_input_stencil_clkwrk_6_op_hcompute_hw_input_global_wrapper_stencil_read) = 0;
   *(dut.hw_input_stencil_clkwrk_7_op_hcompute_hw_input_global_wrapper_stencil_7_read) = 0;
   *(dut.hw_kernel_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_read) = 0;
   int hw_output_stencil_clkwrk_10_op_hcompute_hw_output_stencil_2_write_valid_count = 0;
@@ -152,33 +152,33 @@ int main() {
   dut.eval();
   for (int t = 0; t < (int) pow(2, 16); t++) {
     cout << "t = " << t << endl;
-    if (dut.hw_input_stencil_clkwrk_0_op_hcompute_hw_input_global_wrapper_stencil_read_en) {
+    if (dut.hw_input_stencil_clkwrk_0_op_hcompute_hw_input_global_wrapper_stencil_4_read_en) {
       cout << "send me data!" << endl;
-      *(dut.hw_input_stencil_clkwrk_0_op_hcompute_hw_input_global_wrapper_stencil_read) = (int) hw_input_stencil_clkwrk_0.read();
+      *(dut.hw_input_stencil_clkwrk_0_op_hcompute_hw_input_global_wrapper_stencil_4_read) = (int) hw_input_stencil_clkwrk_0.read();
     }
-    if (dut.hw_input_stencil_clkwrk_1_op_hcompute_hw_input_global_wrapper_stencil_1_read_en) {
+    if (dut.hw_input_stencil_clkwrk_1_op_hcompute_hw_input_global_wrapper_stencil_5_read_en) {
       cout << "send me data!" << endl;
-      *(dut.hw_input_stencil_clkwrk_1_op_hcompute_hw_input_global_wrapper_stencil_1_read) = (int) hw_input_stencil_clkwrk_1.read();
+      *(dut.hw_input_stencil_clkwrk_1_op_hcompute_hw_input_global_wrapper_stencil_5_read) = (int) hw_input_stencil_clkwrk_1.read();
     }
-    if (dut.hw_input_stencil_clkwrk_2_op_hcompute_hw_input_global_wrapper_stencil_2_read_en) {
+    if (dut.hw_input_stencil_clkwrk_2_op_hcompute_hw_input_global_wrapper_stencil_6_read_en) {
       cout << "send me data!" << endl;
-      *(dut.hw_input_stencil_clkwrk_2_op_hcompute_hw_input_global_wrapper_stencil_2_read) = (int) hw_input_stencil_clkwrk_2.read();
+      *(dut.hw_input_stencil_clkwrk_2_op_hcompute_hw_input_global_wrapper_stencil_6_read) = (int) hw_input_stencil_clkwrk_2.read();
     }
-    if (dut.hw_input_stencil_clkwrk_3_op_hcompute_hw_input_global_wrapper_stencil_3_read_en) {
+    if (dut.hw_input_stencil_clkwrk_3_op_hcompute_hw_input_global_wrapper_stencil_1_read_en) {
       cout << "send me data!" << endl;
-      *(dut.hw_input_stencil_clkwrk_3_op_hcompute_hw_input_global_wrapper_stencil_3_read) = (int) hw_input_stencil_clkwrk_3.read();
+      *(dut.hw_input_stencil_clkwrk_3_op_hcompute_hw_input_global_wrapper_stencil_1_read) = (int) hw_input_stencil_clkwrk_3.read();
     }
-    if (dut.hw_input_stencil_clkwrk_4_op_hcompute_hw_input_global_wrapper_stencil_4_read_en) {
+    if (dut.hw_input_stencil_clkwrk_4_op_hcompute_hw_input_global_wrapper_stencil_3_read_en) {
       cout << "send me data!" << endl;
-      *(dut.hw_input_stencil_clkwrk_4_op_hcompute_hw_input_global_wrapper_stencil_4_read) = (int) hw_input_stencil_clkwrk_4.read();
+      *(dut.hw_input_stencil_clkwrk_4_op_hcompute_hw_input_global_wrapper_stencil_3_read) = (int) hw_input_stencil_clkwrk_4.read();
     }
-    if (dut.hw_input_stencil_clkwrk_5_op_hcompute_hw_input_global_wrapper_stencil_5_read_en) {
+    if (dut.hw_input_stencil_clkwrk_5_op_hcompute_hw_input_global_wrapper_stencil_2_read_en) {
       cout << "send me data!" << endl;
-      *(dut.hw_input_stencil_clkwrk_5_op_hcompute_hw_input_global_wrapper_stencil_5_read) = (int) hw_input_stencil_clkwrk_5.read();
+      *(dut.hw_input_stencil_clkwrk_5_op_hcompute_hw_input_global_wrapper_stencil_2_read) = (int) hw_input_stencil_clkwrk_5.read();
     }
-    if (dut.hw_input_stencil_clkwrk_6_op_hcompute_hw_input_global_wrapper_stencil_6_read_en) {
+    if (dut.hw_input_stencil_clkwrk_6_op_hcompute_hw_input_global_wrapper_stencil_read_en) {
       cout << "send me data!" << endl;
-      *(dut.hw_input_stencil_clkwrk_6_op_hcompute_hw_input_global_wrapper_stencil_6_read) = (int) hw_input_stencil_clkwrk_6.read();
+      *(dut.hw_input_stencil_clkwrk_6_op_hcompute_hw_input_global_wrapper_stencil_read) = (int) hw_input_stencil_clkwrk_6.read();
     }
     if (dut.hw_input_stencil_clkwrk_7_op_hcompute_hw_input_global_wrapper_stencil_7_read_en) {
       cout << "send me data!" << endl;
