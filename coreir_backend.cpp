@@ -3825,7 +3825,7 @@ if (cnst->getModuleRef()->getName() == "Pond") {
   in2regfile_0["cycle_starting_addr"] = {0};
   in2regfile_0["cycle_stride"] = {1};
   in2regfile_0["dimensionality"] = 1;
-  in2regfile_0["extent"] = {4096};
+  in2regfile_0["extent"] = {8096};
   in2regfile_0["write_data_starting_addr"] = {0};
   in2regfile_0["write_data_stride"] = {1};
 
@@ -3833,7 +3833,7 @@ if (cnst->getModuleRef()->getName() == "Pond") {
   regfile2out_0["cycle_starting_addr"] = {1};
   regfile2out_0["cycle_stride"] = {1};
   regfile2out_0["dimensionality"] = 1;
-  regfile2out_0["extent"] = {4096};
+  regfile2out_0["extent"] = {8096};
   regfile2out_0["read_data_starting_addr"] = {0};
   regfile2out_0["read_data_stride"] = {1};
 
