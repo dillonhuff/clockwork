@@ -18871,9 +18871,12 @@ void coarse_pipeline_schedule(schedule_info& sched, op* root, prog& prg) {
   cout << "Adjusting outer pipeline delays" << endl;
   sanity_check_iis(sched);
 
-  adjust_outer_pipeline_delays(sched, prg);
+  //adjust_outer_pipeline_delays(sched, prg);
+  adjust_outer_delays_sequentially(sched, prg);
 
   cout << "Done Adjusting outer pipeline delays" << endl;
+  auto op_sched = op_start_times_map(sched, prg);
+  cout << "\tFinal schedule : " << str(op_sched)  << endl;
   sanity_check_iis(sched);
 
 }
@@ -18946,7 +18949,7 @@ void buffet_schedule(schedule_info& sched, op* root, prog& prg) {
   if (is_rate_matchable(prg)) {
     cycle_accurate_clockwork_schedule(sched, root, prg);
   } else {
-    sequential_schedule(sched, root, prg);
+    coarse_pipeline_schedule(sched, root, prg);
   }
 
   sanity_check_iis(sched);
@@ -19183,6 +19186,7 @@ void compile_buffet_hw(CodegenOptions& options, schedule_info& sched, prog& prg)
   normalize_bounds(prg);
   normalize_address_offsets(prg);
 
+  //garnet_dual_port_ram_schedule(sched, prg.root, prg);
   buffet_schedule(sched, prg.root, prg);
 
   auto hw_sched = its(op_times_map(sched, prg), prg.whole_iteration_domain());
@@ -19639,15 +19643,16 @@ vector<prog> isca_programs() {
   //test_programs.back().pretty_print();
 
   //FIXME: not work for M1 and M3
-  //test_programs.push_back(up_sample());
   //test_programs.push_back(unsharp());
   //test_programs.push_back(three_level_pond_rolled());
-  //test_programs.push_back(camera_pipeline());
-  //test_programs.push_back(gaussian());
-  //test_programs.push_back(mobilenet_unrolled());
-  //test_programs.push_back(resnet());
-  //test_programs.push_back(cascade());
-  //test_programs.push_back(down_sample());
+
+  test_programs.push_back(up_sample());
+  test_programs.push_back(camera_pipeline());
+  test_programs.push_back(gaussian());
+  test_programs.push_back(mobilenet_unrolled());
+  test_programs.push_back(resnet());
+  test_programs.push_back(cascade());
+  test_programs.push_back(down_sample());
   test_programs.push_back(resnet88());
 
   return test_programs;
@@ -20025,8 +20030,9 @@ void fpga_asplos_tests() {
 void buffet_tests() {
   //vector<prog> buffet_test_programs = {pointwise_conv()};
   vector<prog> buffet_test_programs;
-  buffet_test_programs.push_back(bank_test());
   buffet_test_programs.push_back(pointwise_conv());
+  buffet_test_programs.push_back(resnet88());
+  buffet_test_programs.push_back(bank_test());
   buffet_test_programs.push_back(conv_unit_test());
   buffet_test_programs.push_back(up_sample());
   buffet_test_programs.push_back(accumulation_simple());
@@ -20066,8 +20072,8 @@ void cgra_flow_tests() {
 
 
 
-  vector<prog> sram_test_programs{pointwise(), camera_pipeline(), resnet()};
-  test_codegen(sram_test_programs, compile_for_generic_SRAM_mem);
+  //vector<prog> sram_test_programs{pointwise(), camera_pipeline(), resnet()};
+  //test_codegen(sram_test_programs, compile_for_generic_SRAM_mem);
 
 }
 

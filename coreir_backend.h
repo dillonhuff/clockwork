@@ -192,7 +192,6 @@ vector<pair<string, pair<string, int> >> determine_output_shift_reg_map(
     schedule_info& hwinfo);
 
 
-dgraph build_shift_register_graph(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_info& hwinfo);
 
 //CoreIR::Namespace* CoreIRLoadLibrary_cgralib(CoreIR::Context* c);
 

@@ -583,6 +583,7 @@ pair<EmbarrassingBankingImpl, isl_map*> build_buffer_impl(prog& prg, UBuffer& bu
   if (embarassing_banking.get_value().size() == buf.logical_dimension()) {
     cout << buf.name << " is really a register file" << endl;
   }
+  cout << buf << endl;
 
   impl.partition_dims = embarassing_banking.get_value();
   auto bank_map = build_buffer_impl_embarrassing_banking(buf, hwinfo, impl);
@@ -5846,46 +5847,6 @@ int generate_compute_unit_regression_tb(op* op, prog& prg) {
   return verilator_run;
 }
 
-dgraph build_shift_register_graph(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
-  map<string,pair<string,int>> shift_registered_outputs = determine_shift_reg_map(prg, buf, hwinfo);
-  vector<pair<string,pair<string,int>>> shift_registered_outputs_to_outputs = determine_output_shift_reg_map(prg, buf, hwinfo);
-
-  cout << "out -> out srs: " << shift_registered_outputs_to_outputs.size() << endl;
-
-  dgraph dg;
-  for (auto pt : shift_registered_outputs) {
-    dg.add_edge(pt.second.first, pt.first, pt.second.second);
-  }
-  for (auto pt : shift_registered_outputs_to_outputs) {
-    dg.add_edge(pt.second.first, pt.first, pt.second.second);
-  }
-
-  // Compute the transitive closer of ins -> outs
-  for (auto pt0 : shift_registered_outputs) {
-    for (auto pt1 : shift_registered_outputs) {
-      string dst0 = pt0.first;
-      string dst1 = pt1.first;
-
-      string src0 = pt0.second.first;
-      string src1 = pt1.second.first;
-
-      int dst0_delay = pt0.second.second;
-      int dst1_delay = pt1.second.second;
-
-      if (src0 == src1) {
-        if (dst0 != dst1 && dst0_delay < dst1_delay) {
-          dg.add_edge(dst0, dst1, dst1_delay - dst0_delay);
-        }
-
-      }
-    }
-  }
-
-  cout << "DG: ..." << endl;
-  cout << dg << endl;
-  return dg;
-}
-
 
 dgraph build_shift_registers_io(CodegenOptions& options, CoreIR::ModuleDef* def, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
   dgraph dg = build_shift_register_graph(options, prg, buf, hwinfo);
@@ -6283,6 +6244,64 @@ void instantiate_one_to_one_sreg(CodegenOptions& options, ModuleDef* def, UBuffe
         def->sel(dst + "_net.in"),
         delayed_src);
 
+}
+
+std::set<string> generate_buffet_output_pt_sharing(CodegenOptions& options, CoreIR::ModuleDef* def, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
+
+  dgraph shift_registers = build_out_to_out_shift_register_graph(options, prg, buf, hwinfo);
+
+  auto c = def->getContext();
+
+  cout << shift_registers << endl;
+
+  std::set<string> done_outpt;
+  //int num_ram_tiles = 0;
+
+  //Save the map from src outpt to all the ready of data read
+  map<string, vector<CoreIR::Wireable*> > broadcast_ready_map;
+  for (auto w : shift_registers.weights) {
+
+    string src = w.first.first;
+    string dst = w.first.second;
+    int delay = w.second;
+    assert(delay == 0);
+
+    //instantiate_one_to_one_sreg(options, def, buf, prg, hwinfo, src, dst, delay);
+
+    assert(buf.is_out_pt(src));
+    Wireable* src_wire = def->sel(src + "_net.out");
+    Wireable* valid_src_wire = def->sel(src + "_valid_net.out");
+    Wireable* delayed_src = delay_by(def, "data_bc" + c->getUnique(), src_wire, delay);
+    Wireable* delayed_valid = delay_by(def, "valid_bc" + c->getUnique(), valid_src_wire, delay);
+
+    assert(delayed_src != nullptr);
+    def->connect(
+        def->sel(dst + "_net.in"),
+        delayed_src);
+    def->connect(
+        def->sel(dst + "_valid_net.in"),
+        delayed_valid);
+
+    dbhc::map_insert(broadcast_ready_map, src, def->sel(dst+ "_ready_net.out"));
+
+    done_outpt.insert(dst);
+  }
+
+  //Second pass the and all port
+  for (auto it: broadcast_ready_map) {
+    string src_bc = it.first;
+    auto and_ready_list = it.second;
+    and_ready_list.push_back(def->sel(src_bc + "_ready_net.out"));
+    auto w = def->addInstance(src_bc + "_ready_bc_net", "corebit.wire");
+    def->connect(w->sel("in"), andList(def, and_ready_list));
+  }
+  cout << "Done port" << endl;
+  cout << done_outpt << endl;
+  //if (done_outpt.size()) {
+  //}
+
+  //cout << "### finished shift registers Used " << num_ram_tiles << " in SR for " << buf.name << endl;
+  return done_outpt;
 }
 
 std::set<string> generate_M1_shift_registers(CodegenOptions& options, CoreIR::ModuleDef* def, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
@@ -6706,6 +6725,8 @@ std::set<string> generate_buffet_shift_registers(CodegenOptions& options, CoreIR
 void generate_Buffet_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& prg, UBuffer& orig_buf, schedule_info& hwinfo) {
 
   CoreIR::Context* c = def->getContext();
+
+  //Create out bundle to output port flow control
   for (auto out_bd: orig_buf.get_out_bundles()) {
     //FIXME: may have problem when we have multiple port
     //need a bundle to pt flow control unit
@@ -6742,10 +6763,22 @@ void generate_Buffet_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, pro
 
 
   std::set<string> done_outpt = generate_buffet_shift_registers(options, def, prg, orig_buf, hwinfo);
+  Select* one = def->addInstance("one_cst", "corebit.const", {{"value", COREMK(c, true)}})->sel("out");
+
+  //TODO this is a hack actually we did not use the read port ready port any more
+  //Only when you try to share pt from two bundles
+  for (auto pt: done_outpt){
+    if (!connected(control_ready(def, pt, orig_buf))) {
+      def->connect(one,
+        control_ready(def, pt, orig_buf));
+    }
+  }
 
   UBuffer buf = delete_ports(done_outpt, orig_buf);
 
-  Select* one = def->addInstance("one_cst", "corebit.const", {{"value", COREMK(c, true)}})->sel("out");
+  //Apply out_to_out port sharing
+  done_outpt = generate_buffet_output_pt_sharing(options, def, prg, buf, hwinfo);
+  buf = delete_ports(done_outpt, buf);
 
   //TODO this is a hack actually we did not use the read port ready port any more
   for (auto pt: done_outpt){
@@ -6840,9 +6873,10 @@ void generate_Buffet_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, pro
           ubuffer_port_agens[pt] = agen;
 
         } else {
-          for (int b = 0; b < num_banks; b++) {
+          for (int b :impl.inpt_to_bank[pt]) {
+         // for (int b = 0; b < num_banks; b++) {
             isl_set* enable_set_inter_bank = get_inter_bank_enable_set(pt, adjusted_buf, impl, b);
-            cout << str(enable_set_inter_bank) << endl;
+            cout << "Inner bank set: " << str(enable_set_inter_bank) << endl;
             auto amap_in_bank = its(acc_map_inner_bank, enable_set_inter_bank);
             cout << "Inner bank access map: " << str(amap_in_bank) << endl;
             assert(check_contigous_access(amap_in_bank));
@@ -6908,7 +6942,7 @@ void generate_Buffet_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, pro
     map<string, std::vector<Wireable*> > ubuffer_ports_to_bank_wires,
         ubuffer_ports_to_bank_ready, ubuffer_ports_to_bank_valid;
     map<string, std::vector<Wireable*> > ubuffer_ports_to_bank_condition_wires;
-    map<string, std::vector<Wireable*> > op2idx_ready;
+    map<string, std::vector<Wireable*> > bd2idx_ready;
 
     for (int b = 0; b < num_banks; b++) {
       auto currbank = bank_map[b];
@@ -6943,7 +6977,7 @@ void generate_Buffet_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, pro
           auto agen = ubuffer_port_agens[pt];
           agen2ctrl.push_back({agen->sel("out"), control_wire});
           read_idx_valid_wires.push_back(control_wire);
-          CoreIR::map_insert(op2idx_ready, buf.get_bundle(pt), (CoreIR::Wireable*) currbank->sel("read_idx_ready"));
+          CoreIR::map_insert(bd2idx_ready, buf.get_bundle(pt), (CoreIR::Wireable*) currbank->sel("read_idx_ready"));
           //def->connect(currbank->sel("read_idx_ready"),
           //    control_ready(def, pt, buf));
         }
@@ -6957,7 +6991,7 @@ void generate_Buffet_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, pro
 
         //def->connect(currbank->sel("read_idx_ready"),
         //    control_ready(def, pt, buf));
-        CoreIR::map_insert(op2idx_ready, buf.get_bundle(pt),  (Wireable*)currbank->sel("read_idx_ready"));
+        CoreIR::map_insert(bd2idx_ready, buf.get_bundle(pt),  (Wireable*)currbank->sel("read_idx_ready"));
 
         def->connect(currbank->sel("read_will_update"), zero);
 
@@ -7011,7 +7045,7 @@ void generate_Buffet_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, pro
       }
     }
     //Wire the ready wire
-    for (auto it: op2idx_ready)
+    for (auto it: bd2idx_ready)
       def->connect(control_ready_by_bundle(def, it.first, buf), andList(def, it.second));
 
 
@@ -7025,7 +7059,12 @@ void generate_Buffet_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, pro
         vector<Wireable*> ready_ports = ubuffer_ports_to_bank_ready.at(conn.first);
         def->connect(def->sel(conn.first + "_net.in"), pick(conn.second));
         def->connect(def->sel(conn.first + "_valid_net.in"), pick(valid_ports));
-        def->connect(def->sel(conn.first + "_ready_net.out"), pick(ready_ports));
+        //Need to handle the output port ready for broad cast
+        if (connected(def->sel(conn.first + "_ready_net.out"))) {
+          def->connect(def->sel(conn.first + "_ready_bc_net.out"), pick(ready_ports));
+        } else {
+          def->connect(def->sel(conn.first + "_ready_net.out"), pick(ready_ports));
+        }
       } else {
         assert(false);
         /*TODO not implement this
@@ -7150,7 +7189,11 @@ void generate_Buffet_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, pro
     //Second pass wire the ready port
     for (auto it: ready_wire_map) {
       string pt = it.first;
-      Wireable* in_ready = create_ctrl_select(def, cond_map.at(pt), it.second);
+      //And all ready
+      Wireable* in_ready = andList(def, it.second);
+
+      //Get rid of the complex select logic
+      //Wireable* in_ready = create_ctrl_select(def, cond_map.at(pt), it.second);
       def->connect(def->sel("self." + buf.container_bundle(pt) + "_data_ready"), in_ready);
 
       //Write bank port selector
@@ -7458,9 +7501,11 @@ isl_aff* inter_bank_offset_aff(const std::string& reader, UBuffer& buf, const Em
   coeffs.push_back("0");
   string bank_func = curlies(buf.name + bracket_list(dvs) + " -> Bank[" + sep_list(coeffs, "", "", " + ") + "]");
   auto bank_map = isl_map_read_from_str(buf.ctx, bank_func.c_str());
+  cout << "bank map: " << str(bank_map) << endl;
 
 
   auto acc_map = to_map(buf.access_map.at(reader));
+  cout << "acc_map: " << str(acc_map) << endl;
 
   auto addr_expr_aff = get_aff(dot(acc_map, bank_map));
   return addr_expr_aff;
