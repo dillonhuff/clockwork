@@ -7977,6 +7977,70 @@ vector<pair<string, pair<string, int> >> determine_output_shift_reg_map(
 }
 
 
+dgraph build_shift_register_graph(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
+  map<string,pair<string,int>> shift_registered_outputs = determine_shift_reg_map(prg, buf, hwinfo);
+  vector<pair<string,pair<string,int>>> shift_registered_outputs_to_outputs = determine_output_shift_reg_map(prg, buf, hwinfo);
+
+  cout << "out -> out srs: " << shift_registered_outputs_to_outputs.size() << endl;
+
+  dgraph dg;
+  for (auto pt : shift_registered_outputs) {
+    dg.add_edge(pt.second.first, pt.first, pt.second.second);
+  }
+  for (auto pt : shift_registered_outputs_to_outputs) {
+    dg.add_edge(pt.second.first, pt.first, pt.second.second);
+  }
+
+  // Compute the transitive closer of ins -> outs
+  for (auto pt0 : shift_registered_outputs) {
+    for (auto pt1 : shift_registered_outputs) {
+      string dst0 = pt0.first;
+      string dst1 = pt1.first;
+
+      string src0 = pt0.second.first;
+      string src1 = pt1.second.first;
+
+      int dst0_delay = pt0.second.second;
+      int dst1_delay = pt1.second.second;
+
+      if (src0 == src1) {
+        if (dst0 != dst1 && dst0_delay < dst1_delay) {
+          dg.add_edge(dst0, dst1, dst1_delay - dst0_delay);
+        }
+
+      }
+    }
+  }
+
+  cout << "DG: ..." << endl;
+  cout << dg << endl;
+  return dg;
+}
+
+dgraph build_out_to_out_shift_register_graph(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
+  vector<pair<string,pair<string,int>>> shift_registered_outputs_to_outputs = determine_output_shift_reg_map(prg, buf, hwinfo);
+
+  cout << "out -> out srs: " << shift_registered_outputs_to_outputs.size() << endl;
+
+  dgraph dg, shift_registers;
+  for (auto pt : shift_registered_outputs_to_outputs) {
+    dg.add_edge(pt.second.first, pt.first, pt.second.second);
+  }
+
+  for (auto e : dg.out_edges) {
+    string src = e.first;
+    for (auto dst : e.second) {
+      if (!dbhc::elem(dst, shift_registers.nodes)) {
+        shift_registers.add_edge(src, dst, dg.weight(src, dst));
+      }
+    }
+  }
+
+  cout << "Final out to out shift regs: ..." << endl;
+  cout << shift_registers << endl;
+  return shift_registers;
+}
+
 dgraph build_in_to_out_shift_register_graph(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
   map<string,pair<string,int>> shift_registered_outputs = determine_shift_reg_map(prg, buf, hwinfo);
 
@@ -8045,8 +8109,7 @@ dgraph build_shift_registers(CodegenOptions& options, prog& prg, UBuffer& buf, s
       //cout << endl;
     }
   }
-  cout << dg << endl;
-  //assert(false);
+  cout << "\n\nDelay graph:" << dg << endl;
 
   return dg;
 }

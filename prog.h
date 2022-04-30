@@ -1868,6 +1868,8 @@ map<string, pair<string, int> > determine_shift_reg_map(
     UBuffer& buf,
     schedule_info& hwinfo);
 
+dgraph build_out_to_out_shift_register_graph(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_info& hwinfo);
+dgraph build_shift_register_graph(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_info& hwinfo);
 dgraph build_in_to_out_shift_register_graph(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_info& hwinfo);
 dgraph build_shift_registers(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_info& hwinfo);
 UBufferImpl port_group2bank(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_info& hwinfo);
