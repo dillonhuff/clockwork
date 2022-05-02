@@ -14,19 +14,19 @@
   // sched max: { [4099] }
 module cgralib_Buffet__IDconv_stencil_0__data_width16__idx_width16 (input clk,
 input nreset_i,
-input [16:0] push_data,
+input [15:0] push_data,
 input push_data_valid,
 output push_data_ready,
-input [16:0] update_data,
+input [15:0] update_data,
 input update_data_valid,
 output reg update_data_ready,
 output update_idx_ready,
 input update_idx_valid,
-input [10:0] update_idx,
-output [16:0] read_data,
+input [9:0] update_idx,
+output [15:0] read_data,
 output read_data_valid,
 input read_data_ready,
-input [16:0] read_idx,
+input [15:0] read_idx,
 input read_idx_valid,
 output read_idx_ready,
 input read_will_update); 
@@ -58,19 +58,19 @@ endmodule
 
 module cgralib_Buffet__IDconv_stencil_clkwrk_dsa0_0__data_width16__idx_width16 (input clk,
 input nreset_i,
-input [16:0] push_data,
+input [15:0] push_data,
 input push_data_valid,
 output push_data_ready,
-input [16:0] update_data,
+input [15:0] update_data,
 input update_data_valid,
 output reg update_data_ready,
 output update_idx_ready,
 input update_idx_valid,
-input [10:0] update_idx,
-output [16:0] read_data,
+input [9:0] update_idx,
+output [15:0] read_data,
 output read_data_valid,
 input read_data_ready,
-input [16:0] read_idx,
+input [15:0] read_idx,
 input read_idx_valid,
 output read_idx_ready,
 input read_will_update); 
@@ -102,19 +102,19 @@ endmodule
 
 module cgralib_Buffet__IDhw_input_global_wrapper_stencil_sr__U227__data_width16__idx_width16 (input clk,
 input nreset_i,
-input [16:0] push_data,
+input [15:0] push_data,
 input push_data_valid,
 output push_data_ready,
-input [16:0] update_data,
+input [15:0] update_data,
 input update_data_valid,
 output reg update_data_ready,
 output update_idx_ready,
 input update_idx_valid,
-input [10:0] update_idx,
-output [16:0] read_data,
+input [9:0] update_idx,
+output [15:0] read_data,
 output read_data_valid,
 input read_data_ready,
-input [16:0] read_idx,
+input [15:0] read_idx,
 input read_idx_valid,
 output read_idx_ready,
 input read_will_update); 
@@ -153,7 +153,7 @@ input ready_out,
 input [15:0] in_data,
 output [15:0] out_data  [2: 0] ); 
   logic [15:0] temp [2:0];
-  reg [16:0] counter;
+  reg [15:0] counter;
 
   reg data_pushed;
 
@@ -190,19 +190,19 @@ output [15:0] out_data  [2: 0] );
   endmodule
 module cgralib_Buffet__IDhw_input_global_wrapper_stencil_sr__U264__data_width16__idx_width16 (input clk,
 input nreset_i,
-input [16:0] push_data,
+input [15:0] push_data,
 input push_data_valid,
 output push_data_ready,
-input [16:0] update_data,
+input [15:0] update_data,
 input update_data_valid,
 output reg update_data_ready,
 output update_idx_ready,
 input update_idx_valid,
-input [10:0] update_idx,
-output [16:0] read_data,
+input [9:0] update_idx,
+output [15:0] read_data,
 output read_data_valid,
 input read_data_ready,
-input [16:0] read_idx,
+input [15:0] read_idx,
 input read_idx_valid,
 output read_idx_ready,
 input read_will_update); 
@@ -241,7 +241,7 @@ input ready_out,
 input [15:0] in_data,
 output [15:0] out_data  [2: 0] ); 
   logic [15:0] temp [2:0];
-  reg [16:0] counter;
+  reg [15:0] counter;
 
   reg data_pushed;
 
@@ -278,19 +278,19 @@ output [15:0] out_data  [2: 0] );
   endmodule
 module cgralib_Buffet__IDhw_input_global_wrapper_stencil_sr__U301__data_width16__idx_width16 (input clk,
 input nreset_i,
-input [16:0] push_data,
+input [15:0] push_data,
 input push_data_valid,
 output push_data_ready,
-input [16:0] update_data,
+input [15:0] update_data,
 input update_data_valid,
 output reg update_data_ready,
 output update_idx_ready,
 input update_idx_valid,
-input [10:0] update_idx,
-output [16:0] read_data,
+input [9:0] update_idx,
+output [15:0] read_data,
 output read_data_valid,
 input read_data_ready,
-input [16:0] read_idx,
+input [15:0] read_idx,
 input read_idx_valid,
 output read_idx_ready,
 input read_will_update); 
@@ -329,7 +329,7 @@ input ready_out,
 input [15:0] in_data,
 output [15:0] out_data  [2: 0] ); 
   logic [15:0] temp [2:0];
-  reg [16:0] counter;
+  reg [15:0] counter;
 
   reg data_pushed;
 

@@ -6417,7 +6417,7 @@ void instantiate_Buffet_shift_register(const std::string& long_name, const int o
 
     *verilog_collateral_file << "module " << long_name <<" ("<< sep_list(port_decls,"","",",\n") <<"); "<< endl;
     *verilog_collateral_file << tab(1) << "logic [" + str(data_width) + ":0] temp [" + str(out_num ) + ":0];" << endl;
-    *verilog_collateral_file << tab(1) << "reg [16:0] counter;" << endl << endl;;
+    *verilog_collateral_file << tab(1) << "reg [15:0] counter;" << endl << endl;;
     *verilog_collateral_file << tab(1) << "reg data_pushed;" << endl << endl;;
     *verilog_collateral_file << tab(1) << "wire full;" << endl << endl;;
     *verilog_collateral_file << tab(1) << "integer i;" << endl << endl;;
@@ -6471,23 +6471,23 @@ void instantiate_Buffet_verilog_wrapper(const std::string& long_name) {
     port_decls.push_back("input nreset_i");
 
     {
-      port_decls.push_back("input ["+str(data_width) + ":0] push_data");
+      port_decls.push_back("input ["+str(data_width-1) + ":0] push_data");
       port_decls.push_back("input push_data_valid" );
       port_decls.push_back("output push_data_ready");
 
-      port_decls.push_back("input ["+str(data_width) + ":0] update_data");
+      port_decls.push_back("input ["+str(data_width-1) + ":0] update_data");
       port_decls.push_back("input update_data_valid" );
       port_decls.push_back("output reg update_data_ready");
       port_decls.push_back("output update_idx_ready");
       port_decls.push_back("input update_idx_valid");
-      port_decls.push_back("input [" + str(ctrl_width) + ":0] update_idx");
+      port_decls.push_back("input [" + str(ctrl_width-1) + ":0] update_idx");
     }
     {
-      port_decls.push_back("output [" + str(data_width) + ":0] read_data");
+      port_decls.push_back("output [" + str(data_width-1) + ":0] read_data");
       port_decls.push_back("output read_data_valid" );
       port_decls.push_back("input read_data_ready");
 
-      port_decls.push_back("input [" + str(data_width) + ":0] read_idx");
+      port_decls.push_back("input [" + str(data_width-1) + ":0] read_idx");
       port_decls.push_back("input read_idx_valid" );
 
       port_decls.push_back("output read_idx_ready");
