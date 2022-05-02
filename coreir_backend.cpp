@@ -6897,12 +6897,12 @@ void generate_Buffet_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, pro
 
         if (impl.outpt_to_bank[pt].size() > 1) {
             cout << "Need output pt bank select, AKA chaining. " << endl;
-          assert(false);
-          //auto bank_sel = build_bank_selector(pt, buf, impl, def);
-          //def->connect(bank_sel->sel("d"),
-          //    control_vars(def, pt, buf));
-          //const int READ_LATENCY = 1;
-          //ubuffer_port_bank_selectors[pt] = delay_by(def, bank_sel->sel("out"), READ_LATENCY);
+            cout << "PT: " << pt << "drain from BANK: " << impl.outpt_to_bank[pt] << endl;
+          auto bank_sel = build_bank_selector(pt, buf, impl, def);
+          def->connect(bank_sel->sel("d"),
+              control_vars(def, pt, buf));
+          const int READ_LATENCY = 0;
+          ubuffer_port_bank_selectors[pt] = delay_by(def, bank_sel->sel("out"), READ_LATENCY);
         }
       }
     }
@@ -6944,6 +6944,22 @@ void generate_Buffet_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, pro
     map<string, std::vector<Wireable*> > ubuffer_ports_to_bank_condition_wires;
     map<string, std::vector<Wireable*> > bd2idx_ready;
 
+    //Move this forward, in ready valid bank condition wire will be used in read idx generation
+    for (int b = 0; b < num_banks; b ++) {
+      for(auto pt : bank_readers[b])
+      {
+        if (impl.outpt_to_bank[pt].size() > 1) {
+          //this is the condition wire to select the address
+          ubuffer_ports_to_bank_condition_wires[pt].push_back(eqConst(def, ubuffer_port_bank_selectors[pt], b));
+        } else {
+          ubuffer_ports_to_bank_condition_wires[pt].push_back(one);
+        }
+      }
+    }
+    for (int b = 0; b < num_banks; b ++)
+      for(auto pt : bank_readers[b])
+        cout << "pt: " << pt << ", cond map size: " << ubuffer_ports_to_bank_condition_wires.at(pt).size() << endl;
+
     for (int b = 0; b < num_banks; b++) {
       auto currbank = bank_map[b];
 
@@ -6960,6 +6976,7 @@ void generate_Buffet_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, pro
         }
       }
 
+
       vector<CoreIR::Wireable*> read_idx_valid_wires;
       vector<pair<Wireable*, Wireable*>> agen2ctrl;
       //This logic is hardcoded for Buffet
@@ -6974,6 +6991,11 @@ void generate_Buffet_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, pro
 
         for (auto pt: bank_readers[b]) {
           auto control_wire = control_en(def, pt, buf);
+          if (ubuffer_ports_to_bank_condition_wires.at(pt).size() > 1)
+          {
+            control_wire = andList(def,
+                  {control_en(def, pt, buf), ubuffer_ports_to_bank_condition_wires.at(pt).at(b)});
+          }
           auto agen = ubuffer_port_agens[pt];
           agen2ctrl.push_back({agen->sel("out"), control_wire});
           read_idx_valid_wires.push_back(control_wire);
@@ -6985,6 +7007,12 @@ void generate_Buffet_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, pro
         assert(read_map.size() == 1);
         auto pt = read_map["read"];
         auto control_wire = control_en(def, pt, buf);
+        if (ubuffer_ports_to_bank_condition_wires.at(pt).size() > 1)
+        {
+          control_wire = andList(def,
+                {control_en(def, pt, buf), ubuffer_ports_to_bank_condition_wires.at(pt).at(b)});
+
+        }
         auto agen = ubuffer_port_agens[pt];
         agen2ctrl.push_back({agen->sel("out"), control_wire});
         read_idx_valid_wires.push_back(control_wire);
@@ -7035,13 +7063,6 @@ void generate_Buffet_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, pro
         //ubuffer_ports_to_bank_ready[pt].push_back(currbank->sel("read_data_ready"));
         ubuffer_ports_to_bank_valid[pt].push_back(read_fork->sel("valid_out_" + pt));
         ubuffer_ports_to_bank_ready[pt].push_back(read_fork->sel("ready_in_" + pt));
-
-        if (impl.outpt_to_bank[pt].size() > 1) {
-          assert(false);
-          ubuffer_ports_to_bank_condition_wires[pt].push_back(eqConst(def, ubuffer_port_bank_selectors[pt], b));
-        } else {
-          ubuffer_ports_to_bank_condition_wires[pt].push_back(one);
-        }
       }
     }
     //Wire the ready wire
@@ -7066,25 +7087,46 @@ void generate_Buffet_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, pro
           def->connect(def->sel(conn.first + "_ready_net.out"), pick(ready_ports));
         }
       } else {
-        assert(false);
-        /*TODO not implement this
-        assert(conds.size() == 3);
+        cout << "NEED to wire buffer output to the port output" << endl;
+
+        //Right now can only drain from all banks
+        assert(conds.size() == num_banks);
+
+        vector<Wireable*> valid_ports = ubuffer_ports_to_bank_valid.at(conn.first);
+        vector<Wireable*> ready_ports = ubuffer_ports_to_bank_ready.at(conn.first);
+
+
+        string pt = conn.first;
+        auto pt_iterdom_ctrl = iterDom_controller(options, def->getContext(), buf.domain.at(pt), 16);
+
+        auto ID_ctrl = def->addInstance(ID_controller_name(pt), pt_iterdom_ctrl);
+
+        //Or all the valid
+        Wireable* valid_out = orList(def, valid_ports);
+        def->connect(def->sel(pt+ "_valid_net.in"), valid_out);
+        auto ID_enable = andList(def,
+                {valid_out, def->sel("self." + buf.container_bundle(pt) + "_data_ready")});
+        def->connect(ID_ctrl->sel("enable"), ID_enable);
+        auto bank_sel = build_bank_selector(pt, buf, impl, def);
+        def->connect(bank_sel->sel("d"), ID_ctrl->sel("d"));
+
         Wireable* out = def->sel(conn.first + "_net.in");
+        CoreIR::Wireable* out_wire = vals.at(0);
+        for (auto i = 0; i < conds.size(); i ++ ) {
+          //create the banks selector
+          auto bank_ready = eqConst(def, bank_sel->sel("out"), i);
+          def->connect(ready_ports.at(i), bank_ready);
 
-        auto snd_mux =
-          def->addInstance("chain_mux" + c->getUnique(), "coreir.mux", {{"width", CoreIR::Const::make(c, 16)}});
-        def->connect(snd_mux->sel("in0"), vals[1]);
-        def->connect(snd_mux->sel("in1"), vals[2]);
-        def->connect(snd_mux->sel("sel"), conds[2]);
-
-        auto last_mux =
-          def->addInstance("chain_mux" + c->getUnique(), "coreir.mux", {{"width", CoreIR::Const::make(c, 16)}});
-        def->connect(last_mux->sel("in0"), snd_mux->sel("out"));
-        def->connect(last_mux->sel("in1"), vals[0]);
-        def->connect(last_mux->sel("sel"), conds[0]);
-
-        def->connect(last_mux->sel("out"), out);
-      */
+          if (i > 0) {
+            auto mux = def->addInstance("chain_mux" + c->getUnique(),
+                    "coreir.mux", {{"width", CoreIR::Const::make(c, 16)}});
+            def->connect(out_wire, mux->sel("in0"));
+            def->connect(vals[i], mux->sel("in1"));
+            def->connect(andList(def, {bank_ready, valid_ports.at(i)}), mux->sel("sel"));
+            out_wire = mux->sel("out");
+          }
+        }
+        def->connect(out_wire, out);
       }
     }
     map<string, vector<Wireable*> > ready_wire_map;

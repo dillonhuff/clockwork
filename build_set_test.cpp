@@ -20030,6 +20030,7 @@ void fpga_asplos_tests() {
 void buffet_tests() {
   //vector<prog> buffet_test_programs = {pointwise_conv()};
   vector<prog> buffet_test_programs;
+  buffet_test_programs.push_back(resnet());
   buffet_test_programs.push_back(pointwise_conv());
   buffet_test_programs.push_back(resnet88());
   buffet_test_programs.push_back(bank_test());
