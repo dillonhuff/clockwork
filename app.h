@@ -1098,6 +1098,8 @@ struct ilp_builder {
 
   isl_ctx* ctx;
   isl_basic_set* s;
+
+  //variable name to dimension
   map<string, int> variable_positions;
   bool solved;
   isl_point* solution_point;

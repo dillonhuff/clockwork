@@ -15392,6 +15392,7 @@ void test_glb(bool gen_config_only, bool multi_accessor=false, string dir="aha_g
   test_apps.push_back(harris_color());
   test_apps.push_back(harris_color_unroll4());
   test_apps.push_back(gaussian_isscc());
+  test_apps.push_back(gaussian_unroll14());
   test_apps.push_back(camera_pipeline_isscc());
   test_apps.push_back(unsharp_isscc());
 
@@ -15550,25 +15551,31 @@ void test_dual_port_mem(bool gen_config_only, bool multi_accessor=false, string 
 
   //CGRA tests that pass dual port test
   //test_apps.push_back(matmul());
-  test_apps.push_back(camera_pipeline_2x2());
-  test_apps.push_back(unsharp_large());
-  test_apps.push_back(harris_color());
-  test_apps.push_back(conv_3_3());
-  test_apps.push_back(gaussian());
-  test_apps.push_back(cascade());
-  test_apps.push_back(harris());
-  test_apps.push_back(down_sample());
-  test_apps.push_back(unsharp());
-  test_apps.push_back(unsharp_new());
-  test_apps.push_back(counter());
-  test_apps.push_back(rom());
-  test_apps.push_back(conv_1_2());
-  test_apps.push_back(demosaic_unrolled());
-  test_apps.push_back(up_sample());
-  test_apps.push_back(camera_pipeline_new());
+  //test_apps.push_back(camera_pipeline_2x2());
+
+  //working
+  //test_apps.push_back(conv_1_2());
+  //test_apps.push_back(conv_3_3());
+  //test_apps.push_back(gaussian());
+  //test_apps.push_back(cascade());
+  //test_apps.push_back(rom());
+  //test_apps.push_back(harris());
+  //test_apps.push_back(down_sample());
+  //test_apps.push_back(unsharp());
+
+  //Need to update the counter
+  //test_apps.push_back(counter());
+  //test_apps.push_back(camera_pipeline_new());
+  //
+  //has pond port
+  //test_apps.push_back(demosaic_unrolled());
+  //test_apps.push_back(up_sample());
+  //test_apps.push_back(laplacian_pyramid_docker());
+  //test_apps.push_back(laplacian_pyramid());
+  //test_apps.push_back(unsharp_new());
+  //test_apps.push_back(unsharp_large());
+  //test_apps.push_back(harris_color());
   test_apps.push_back(resnet88());
-  test_apps.push_back(laplacian_pyramid_docker());
-  test_apps.push_back(laplacian_pyramid());
 
   //////DNN apps
   ////Not working
@@ -15607,10 +15614,10 @@ void test_dual_port_mem(bool gen_config_only, bool multi_accessor=false, string 
     //run verilator on all the generated verilog
     if (!gen_config_only) {
       vector<string> verilog_files;;
-      verilog_files.push_back("PondTop_flat.v");
-      verilog_files.push_back("pondtop_new.sv");
-      verilog_files.push_back("pond_module_wrappers.v");
-      add_default_initial_block("pondtop", "endmodule   // sram_dp__0");
+      verilog_files.push_back("LakeTop_flat.v");
+      verilog_files.push_back("laketop_new.sv");
+      verilog_files.push_back("lake_module_wrappers.v");
+      add_default_initial_block("laketop", "endmodule   // sram_dp__0");
       verilator_regression_test(prg, verilog_files, "dual_port_buffer");
     }
 #endif
@@ -18720,8 +18727,8 @@ void relax_delays_rate_matched(CodegenOptions& options, schedule_info& sched, pr
   cout << "Adjusting delays of " << prg.name << endl;
   map<string, int> delay_relaxation;
   int fetch_width = options.mem_hierarchy.at("mem").fetch_width;
-  if (fetch_width == 1)
-      return;
+  //if (fetch_width == 1)
+  //    return;
   auto start_times = its(op_times_map(sched, prg), prg.whole_iteration_domain());
   auto start_times_map = get_maps_in_map(start_times);
   auto domains = prg.domains();
@@ -19863,7 +19870,7 @@ CodegenOptions garnet_codegen_single_port_with_addrgen_options(prog& prg, string
 
 CodegenOptions garnet_codegen_dual_port_with_addrgen_options(prog& prg, string dir) {
   CodegenOptions options;
-  options.rtl_options.target_tile = TARGET_TILE_WIDE_FETCH_WITH_ADDRGEN;
+  options.rtl_options.target_tile = TARGET_TILE_SINGLE_FETCH_WITH_ADDRGEN;
   options.conditional_merge = true;
   options.fallback_schedule = ISCA_SCHEDULE;
   options.merge_threshold = 10;

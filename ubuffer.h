@@ -2986,7 +2986,7 @@ void tighten_address_space() {
     //CoreIR::Module* affine_controller(CoreIR::Context* context, isl_set* dom, isl_aff* aff);
 
     //kernel function for generate coreir
-    void generate_coreir(CodegenOptions& options, UBufferImpl& impl, CoreIR::ModuleDef* def, schedule_info& info, bool with_ctrl=true);
+    //void generate_coreir(CodegenOptions& options, UBufferImpl& impl, CoreIR::ModuleDef* def, schedule_info& info, bool with_ctrl=true);
     void generate_coreir_refactor(CodegenOptions& options, UBufferImpl& impl, CoreIR::ModuleDef* def, schedule_info& info, bool with_ctrl=true);
 
     //helper function for sreg generation
@@ -2995,7 +2995,7 @@ void tighten_address_space() {
     //helper function for wire IO connection
     void wire_ubuf_IO(CodegenOptions& options, CoreIR::ModuleDef* def, map<string, CoreIR::Wireable*> & pt2wire, CoreIR::Instance* buf, UBufferImpl & impl, schedule_info& info, int bank_id, bool with_ctrl);
     //Helper function for generate cgra mem instance
-    CoreIR::Instance* map_ubuffer_to_cgra(CodegenOptions& options, CoreIR::ModuleDef* def, UBuffer& target_buf, string config_mode);
+    //CoreIR::Instance* map_ubuffer_to_cgra(CodegenOptions& options, CoreIR::ModuleDef* def, UBuffer& target_buf, string config_mode);
     CoreIR::Instance* map_ubuffer_to_cgra(CodegenOptions& options, CoreIR::ModuleDef* def, GarnetImpl& hw_impl);
     //Helper function for generate pond instance
 
@@ -3018,9 +3018,9 @@ void tighten_address_space() {
     CoreIR::Instance* generate_lake_tile_instance(
         CoreIR::ModuleDef* def,
         CodegenOptions options,
-        string ub_ins_name, string bk_name,
+        string ub_ins_name, string mode,
         size_t input_num, size_t output_num,
-        bool has_stencil_valid, bool has_flush);
+        bool has_flush);
 
     CoreIR::Instance* generate_pond_instance(
         CoreIR::ModuleDef* def,

@@ -1662,7 +1662,7 @@ CoreIR::Wireable* op_control_wires(Instance* ctrl) {
     if (mode == "lake") {
         return ctrl->sel("stencil_valid");
     } else if (mode == "lake_dp") {
-        return ctrl->sel("valid_out_pond");
+        return ctrl->sel("stencil_valid");
     } else {
         cout << "Config mode: " << mode << "Not implemented" << endl;
         assert(false);
@@ -1882,6 +1882,15 @@ void run_lake_dp_verilog_codegen(CodegenOptions& options, string v_name, string 
   //cmd("mv LakeWrapper_"+v_name+".v " + options.dir + "verilog");
 }
 
+void run_lake_dp_verilog_codegen_new(CodegenOptions& options, string v_name, string ub_ins_name) {
+  ASSERT(getenv("LAKE_PATH"), "Define env var $LAKE_PATH which is the /PathTo/lake");
+  int res_lake = cmd("python $LAKE_PATH/lake/utils/wrapper.py -c " + options.dir + "lake_collateral/" + ub_ins_name +
+          "/config.json -s -wmn "+ v_name + " -wfn lake_module_wrappers.v  -a -v -dp -ii 6 -oi 6 -rd 1 -d 2048 -mw 16");
+  assert(res_lake == 0);
+  //cmd("mkdir -p "+options.dir+"verilog");
+  //cmd("mv LakeWrapper_"+v_name+".v " + options.dir + "verilog");
+}
+
 void run_pond_verilog_codegen(CodegenOptions& options, string v_name, string ub_ins_name) {
   //cmd("export LAKE_CONTROLLERS=$PWD");
   ASSERT(getenv("LAKE_PATH"), "Define env var $LAKE_PATH which is the /PathTo/lake");
@@ -1983,7 +1992,8 @@ void generate_lake_tile_verilog(CodegenOptions& options, Instance* buf) {
   if (config_mode == "lake")
       run_lake_verilog_codegen(options, v_name, ub_ins_name);
   else if (config_mode == "lake_dp")
-      run_lake_dp_verilog_codegen(options, v_name, ub_ins_name);
+      //run_lake_dp_verilog_codegen(options, v_name, ub_ins_name);
+      run_lake_dp_verilog_codegen_new(options, v_name, ub_ins_name);
   else if (config_mode == "pond")
       run_pond_verilog_codegen(options, v_name, ub_ins_name);
   else {
@@ -3703,7 +3713,7 @@ bool MemtileReplaceMetaMapper(Instance* cnst) {
 
   Module* cnst_mod_ref = cnst->getModuleRef();
   auto pt = addPassthrough(cnst, cnst->getInstname()+"_tmp");
-  
+
   vector<string> cnst_ports = cnst_mod_ref->getType()->getFields();
 
   string map_name = "";
