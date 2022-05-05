@@ -6390,12 +6390,13 @@ void M1_sanity_check_port_counts(const UBufferImpl& impl) {
 
 void dump_Buffet_definition() {
     int data_width = 16;
-    int ctrl_width = 10;
+    int ctrl_width = 16;
 
     ofstream buffet_collateral_file("buffet_defines.v");
     buffet_collateral_file << "`define IDX_WIDTH" << tab(4) << ctrl_width << endl;
     buffet_collateral_file << "`define DATA_WIDTH" << tab(4) << data_width << endl;
-    buffet_collateral_file << "`define SIZE" << tab(4) <<"2 **" << ctrl_width << "-1" << endl;
+    buffet_collateral_file << "`define SIZE" << tab(4) <<"2 **" << 10 << "-1" << endl;
+    buffet_collateral_file << "`define USE_GF_MACRO            1" << endl;
     buffet_collateral_file << "`define SEPARATE_WRITE_PORTS    1" << endl;
     buffet_collateral_file << "`define SUPPORTS_UPDATE         1" << endl;
     buffet_collateral_file << "`define READREQ_FIFO_DEPTH      8" << endl;
@@ -6480,7 +6481,7 @@ void instantiate_Buffet_verilog_wrapper(const std::string& long_name) {
       port_decls.push_back("output reg update_data_ready");
       port_decls.push_back("output update_idx_ready");
       port_decls.push_back("input update_idx_valid");
-      port_decls.push_back("input [" + str(ctrl_width-1) + ":0] update_idx");
+      port_decls.push_back("input [" + str(data_width-1) + ":0] update_idx");
     }
     {
       port_decls.push_back("output [" + str(data_width-1) + ":0] read_data");

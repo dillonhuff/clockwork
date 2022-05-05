@@ -20031,6 +20031,7 @@ void buffet_tests() {
   //vector<prog> buffet_test_programs = {pointwise_conv()};
   vector<prog> buffet_test_programs;
   buffet_test_programs.push_back(resnet());
+  buffet_test_programs.push_back(conv_3_3_buffet());
   buffet_test_programs.push_back(pointwise_conv());
   buffet_test_programs.push_back(resnet88());
   buffet_test_programs.push_back(bank_test());
@@ -20040,7 +20041,6 @@ void buffet_tests() {
   buffet_test_programs.push_back(resnet_tiny());
   buffet_test_programs.push_back(matmul_tiny());
   buffet_test_programs.push_back(conv_1_2());
-  buffet_test_programs.push_back(conv_3_3_buffet());
   buffet_test_programs.push_back(cascade());
   buffet_test_programs.push_back(harris());
   test_buffet_codegen(buffet_test_programs);
