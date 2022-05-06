@@ -2617,6 +2617,60 @@ CoreIR::Instance* generate_pond_instance(
   return buf;
 }
 
+CoreIR::Instance* generate_lake_tile_instance(
+        ModuleDef* def,
+        CodegenOptions& options, json& config_file,
+        string ub_ins_name, string mode,
+        size_t port_widths, size_t input_num, size_t output_num,
+        bool has_flush) {
+
+  auto context = def->getContext();
+  bool has_chain_en = options.mem_hierarchy.at("mem").wire_chain_en;
+  CoreIR::Instance* buf;
+  CoreIR::Values genargs = {
+    {"width", CoreIR::Const::make(context, port_widths)},
+    {"num_inputs", CoreIR::Const::make(context, input_num)},
+    {"num_outputs", CoreIR::Const::make(context, output_num)},
+    {"has_chain_en",
+        CoreIR::Const::make(context, has_chain_en && (mode == "lake"))},
+    {"has_stencil_valid", CoreIR::Const::make(context, true)},
+    {"ID", CoreIR::Const::make(context, context->getUnique())},
+    {"has_flush",  CoreIR::Const::make(context, has_flush)},
+    {"use_prebuilt_mem", CoreIR::Const::make(context, options.rtl_options.use_prebuilt_memory)}
+  };
+  CoreIR::Values modargs = {
+    {"mode", CoreIR::Const::make(context, mode)}
+  };
+  cout << "Add lake node:" << ub_ins_name << " with input_num = " << input_num
+      << ", output_num = " << output_num << endl;
+  if (options.pass_through_valid) {
+    //modargs["config"] = CoreIR::Const::make(context, config_file);
+    auto* g = context->getGenerator("cgralib.Mem_amber");
+    //auto* generatedModule = g->getModule(genargs);
+    //g->getMetaData()["verilog_name"] =
+    //  "lake_"+genargs.at("ID")->get<string>();
+    buf = def->addInstance(ub_ins_name, "cgralib.Mem_amber", genargs);
+    buf->getMetaData()["config"] = config_file;
+    buf->getMetaData()["mode"] = string(mode);
+    //buf->getModuleRef()->getMetaData()["verilog_name"] = "lake_"+genargs.at("ID")->get<string>();
+    //buf->getMetaData()["verilog_name"] = "lake_"+genargs.at("ID")->get<string>();
+  } else {
+    assert(false);
+    //TODO: remove cwlib in the future
+    //genargs["config"] = CoreIR::Const::make(context, config_file);
+    //buf = def->addInstance(ub_ins_name, "cwlib.Mem", genargs, modargs);
+  }
+
+  auto clk_en_const = def->addInstance(ub_ins_name+"_clk_en_const", "corebit.const",
+          {{"value", CoreIR::Const::make(context, true)}});
+
+  def->connect(buf->sel("clk"), def->sel("self.clk"));
+  def->connect(buf->sel("clk_en"), clk_en_const->sel("out"));
+  def->connect(buf->sel("rst_n"), clk_en_const->sel("out"));
+
+  return buf;
+}
+
 CoreIR::Module* affine_controller_use_lake_tile_counter(
         CodegenOptions& options,
         CoreIR::Context* context,
@@ -2655,14 +2709,18 @@ CoreIR::Module* affine_controller_use_lake_tile_counter(
     const_args,
     const_configargs);
   def->connect(const_inst->sel("out"), def->sel("self")->sel("d")->sel(0));
+  auto stencil_valid = generate_accessor_config_from_aff_expr(dom, aff);
 
+  aff = sub(aff, buffer_load_latency(options));
   //Loop through all the domain dimension, skip the root
   for (int dim = 1; dim < num_dims(dom); dim ++) {
     json config_file;
-
     bool has_stencil_valid = false;
-    if (dim == 1)
+    if (dim == 1) {
+      add_lake_config(config_file, stencil_valid, num_in_dims(aff), "stencil_valid");
       has_stencil_valid = true;
+    }
+
     CoreIR::Instance* buf;
     CoreIR::Values genargs = {
       {"width", CoreIR::Const::make(context, 16)},
@@ -2676,10 +2734,6 @@ CoreIR::Module* affine_controller_use_lake_tile_counter(
     };
 
     //Add stencil valid for the first dimension
-    if (has_stencil_valid) {
-      auto stencil_valid = generate_accessor_config_from_aff_expr(dom, aff);
-      add_lake_config(config_file, stencil_valid, num_in_dims(aff), "stencil_valid");
-    }
 
 
     auto mem = options.mem_hierarchy.at("mem");
@@ -2687,6 +2741,7 @@ CoreIR::Module* affine_controller_use_lake_tile_counter(
     //generate tb address
     auto index_addr = project_all_out_but(cpy(addr), dim);
     cout << "Index address: " << str(index_addr) << endl;
+
 
     if (mem.fetch_width > 1) {
       //generate tb accessor
@@ -2796,14 +2851,18 @@ CoreIR::Module* affine_controller_use_lake_tile_counter(
       //TODO: this is a temporary fix for lake counter, need to move to the root level
       //buf->getMetaData()["init"] = v;
       config_file["init"] = v;
-      auto dp_buf_for_counter = generate_pond_instance(def, options, ub_ins_name + "_counter_" + str(dim),
-              "rst_n", "lake_dp", config_file, 1, 1);
+      //auto dp_buf_for_counter = generate_lake_instance(def, options, ub_ins_name + "_counter_" + str(dim),
+              //"rst_n", "lake_dp", config_file, 1, 1);
+
+      auto dp_buf_for_counter = generate_lake_tile_instance(def, options, config_file,
+              ub_ins_name + "_counter_" + str(dim), "lake_dp", 16, 1, 1, true/*has flush*/);
+      def->connect(dp_buf_for_counter->sel("flush"), def->sel("self.rst_n"));
 
       //Wire the output data
-      def->connect(dp_buf_for_counter->sel("data_out_pond_0"), def->sel("self")->sel("d")->sel(dim));
+      def->connect(dp_buf_for_counter->sel("data_out_0"), def->sel("self")->sel("d")->sel(dim));
       generate_lake_tile_verilog(options, dp_buf_for_counter);
       if (has_stencil_valid) {
-        def->connect(dp_buf_for_counter->sel("valid_out_pond"), def->sel("self.valid"));
+        def->connect(dp_buf_for_counter->sel("stencil_valid"), def->sel("self.valid"));
       }
 
     }
@@ -11016,7 +11075,7 @@ bool pad_range_one_vec_dim(map<int, int> & dim2denom,
           }
         }
 
-        for (auto e : dg.out_edges) {
+        for (auto e : dg.fanin_edges) {
           out << "Fanin Group: "<< tab(2) << e.first << endl;
           for (auto src: e.second) {
             out << tab(4) << src << " -> (" << dg.weight(src, e.first) << ") " << e.first << endl;
@@ -11380,11 +11439,15 @@ map<string, vector<pair<string, int> > > determine_shift_reg_map_new(
             dependence_distance_singleton(buf, inpt, outpt, sc);
           if (dd.has_value()) {
             int dd_raw = dd.get_value();
+            cout << "dd raw: " << dd_raw << endl;
             dd_raw -= hwinfo.compute_latency(write_op);
-            if (write_op->buffers_read().size() > 0) {
-              dd_raw -= hwinfo.load_latency(pick(write_op->buffers_read()));
-            }
-            dd_raw += hwinfo.load_latency(buf.name);
+            //if (write_op->buffers_read().size() > 0) {
+            //  dd_raw -= hwinfo.load_latency(pick(write_op->buffers_read()));
+            //  cout << "dd_raw: " << dd_raw << endl;
+            //}
+            //TODO: possible bugs dd should have load latency we just set the controller with cycle earlier
+            //dd_raw += hwinfo.load_latency(buf.name);
+            cout << "Final dd raw: " << dd_raw << endl;
 
             if (!(dd_raw >= 0)) {
               cout << "Error: Negative dependence distance: " << dd_raw << endl;

@@ -15554,27 +15554,23 @@ void test_dual_port_mem(bool gen_config_only, bool multi_accessor=false, string 
   //test_apps.push_back(camera_pipeline_2x2());
 
   //working
-  //test_apps.push_back(conv_1_2());
-  //test_apps.push_back(conv_3_3());
-  //test_apps.push_back(gaussian());
-  //test_apps.push_back(cascade());
-  //test_apps.push_back(rom());
-  //test_apps.push_back(harris());
-  //test_apps.push_back(down_sample());
-  //test_apps.push_back(unsharp());
-
-  //Need to update the counter
-  //test_apps.push_back(counter());
-  //test_apps.push_back(camera_pipeline_new());
-  //
-  //has pond port
-  //test_apps.push_back(demosaic_unrolled());
-  //test_apps.push_back(up_sample());
-  //test_apps.push_back(laplacian_pyramid_docker());
-  //test_apps.push_back(laplacian_pyramid());
-  //test_apps.push_back(unsharp_new());
-  //test_apps.push_back(unsharp_large());
-  //test_apps.push_back(harris_color());
+  test_apps.push_back(conv_1_2());
+  test_apps.push_back(up_sample());
+  test_apps.push_back(conv_3_3());
+  test_apps.push_back(gaussian());
+  test_apps.push_back(cascade());
+  test_apps.push_back(rom());
+  test_apps.push_back(harris());
+  test_apps.push_back(down_sample());
+  test_apps.push_back(unsharp());
+  test_apps.push_back(counter());
+  test_apps.push_back(demosaic_unrolled());
+  test_apps.push_back(camera_pipeline_new());
+  test_apps.push_back(laplacian_pyramid_docker());
+  test_apps.push_back(laplacian_pyramid());
+  test_apps.push_back(unsharp_new());
+  test_apps.push_back(unsharp_large());
+  test_apps.push_back(harris_color());
   test_apps.push_back(resnet88());
 
   //////DNN apps
@@ -20361,6 +20357,7 @@ void compile_for_garnet_dual_port_mem(prog& prg,
 
   schedule_info sched = garnet_schedule_info(options, prg, use_metamapper);
   garnet_single_port_ram_schedule(options, sched, prg.root, prg);
+  //adjust_schedule_forward(sched, prg, 1);
   auto sched_map = op_times_map(sched, prg);
   auto hw_sched = its(sched_map,
           prg.whole_iteration_domain());
@@ -20644,9 +20641,9 @@ vector<prog> isca_programs() {
 
   //FIXME: not work for M1 and M3
   //test_programs.push_back(three_level_pond_rolled());
+  test_programs.push_back(matmul_single());
 
   test_programs.push_back(camera_pipeline_new());
-  test_programs.push_back(matmul_single());
   test_programs.push_back(camera_pipeline_2x2());
   test_programs.push_back(unsharp_large());
   test_programs.push_back(harris_color());

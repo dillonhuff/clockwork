@@ -1686,6 +1686,8 @@ void connect_op_control_wires(CodegenOptions& options, ModuleDef* def, op* op, s
     Wireable* op_start_loop_vars = controller->sel("d");
     if (!options.rtl_options.use_external_controllers) {
         def->connect(controller->sel("rst_n"), def->sel("self.reset"));
+        //It use memory tile to generate counter, set the control signal has already include latency
+        read_latency = 0;
     }
 
     cout << "Delaying read" << endl;
@@ -1713,12 +1715,12 @@ void connect_op_control_wires(CodegenOptions& options, ModuleDef* def, op* op, s
       delay_by(def, read_start_name(op->name), op_start_wire, 0);
     cout << "Delaying exe" << endl;
     Wireable* exe_start_wire =
-      delay_by(def, exe_start_name(op->name), op_start_wire, read_latency);
+      delay_by(def, exe_start_name(op->name), op_start_wire, 0);
     cout << "Delaying writes" << endl;
     //op latency has been taken into the stencil valid signal
     Wireable* write_start_wire =
       //delay_by(def, write_start_name(op->name), op_start_wire, read_latency + op_latency);
-      delay_by(def, write_start_name(op->name), op_start_wire, read_latency);
+      delay_by(def, write_start_name(op->name), op_start_wire, 0);
   }
 
   //auto c = def->getContext();
