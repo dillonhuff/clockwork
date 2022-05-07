@@ -2129,6 +2129,59 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> &
     map<string, isl_map*>  op2sched;
     map<string, vector<umap*>> op2write_map, op2read_map;
     auto mem = options.mem_hierarchy.at("mem");
+    cout << "agg2sram_opt debug start " << endl;
+    map<string, std::pair<int, int>> agg2sram_cfg_map;
+    map<string, std::pair<int, int>> agg2sram_extent_stride_map;
+
+    for (auto it: rewrite_buffer) {
+      //check it is sram
+      if (contains(it.first, "sram")) {
+        auto buf = it.second;
+        auto stmt2bd_map = buf.get_stmt2bd_after_vec();
+
+        for (auto map_it: stmt2bd_map) {
+          cout << map_it.first << ": " << map_it.second << endl;
+          if (map_it.second.size() > 1){
+            cout << "found shared with size: " << map_it.second.size() << endl;
+            assert (map_it.second.size() == 2);
+            // find the delay
+            int ctrl_number = 6; // other than 0 or 1
+            string agg2sram_domain_name;
+            int sched_diff = 0;
+            bool both_read = false; // checks if we 2 read controllers
+            for (auto bd_and_ctrl_number : map_it.second){
+              string bd_name = bd_and_ctrl_number.first;
+              if (contains(bd_name, "write")){
+                string port_name = pick(buf.port_bundles.at(bd_name));
+                agg2sram_domain_name = domain_name(buf.schedule.at(port_name));
+                // assumes each port of the bundle has the same schedule
+                auto sched_aff = get_aff(buf.schedule.at(port_name));//stride in dim
+                sched_diff += to_int(const_coeff(sched_aff));
+                cout << "write " << port_name << ": +" << to_int(const_coeff(sched_aff)) << endl;
+                cout << str(sched_aff) << endl;
+                cout << "sched domain name 2" << domain_name(buf.schedule.at(port_name)) << endl;
+              }
+              else{
+                if (ctrl_number != 6) both_read = true;
+                ctrl_number = bd_and_ctrl_number.second;
+                string port_name = pick(buf.port_bundles.at(bd_name));
+                // assumes each port of the bundle has the same schedule
+                auto sched_aff = get_aff(buf.schedule.at(port_name));
+                sched_diff -= to_int(const_coeff(sched_aff));
+                cout << "read " << port_name << ": -" << to_int(const_coeff(sched_aff)) << endl;
+                cout << str(sched_aff) << endl;
+              }
+            }
+            if (!both_read){
+              sched_diff--; // convert to 0-index for RTL
+              agg2sram_cfg_map[agg2sram_domain_name] = make_pair(sched_diff, ctrl_number);
+              cout << "agg2sram sched delay " << sched_diff << " ctrl number: " << ctrl_number << endl;
+              assert(sched_diff > 0);
+            }
+          }
+        }
+      }
+    }
 
     for (auto it: rewrite_buffer) {
         auto ubuf = it.second;
@@ -2138,6 +2191,21 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> &
             cout << "sched: " << str(m) << endl;
             m = remove_irrelevant_in_dim(m);
             op2sched[op_name] = m;
+            if (contains(op_name, "in2agg")){
+              vector<string> op_name_decouple = split_at(op_name, "_");
+              assert(op_name_decouple.size() > 2);
+              vector<string> op_name_simplify(op_name_decouple.begin(), op_name_decouple.end()-2);
+              string ctrl_name = "_agg2sram_" + op_name_decouple.back();
+              string op_name_agg2sram = sep_list(op_name_simplify, "", ctrl_name, "_");
+              auto sched_aff = get_aff(m);
+              auto sched_dom = ::domain(m);
+              int stride_0 = to_int(get_coeff(sched_aff, ::num_dims(sched_dom) - 1));
+              auto ds = project_all_but(sched_dom, ::num_dims(sched_dom) - 1);
+              int extent_0 = to_int(lexmaxval(ds)) - to_int(lexminval(ds)) + 1;
+              // delay = (4 - extent_0 % 4) * cycle_stride_0
+              agg2sram_extent_stride_map[op_name_agg2sram] = make_pair(extent_0, stride_0);
+              cout << "op_name: " << op_name_agg2sram << ", extent_0: " << extent_0 << ", stride_0: " << stride_0 << endl;
+            }
         }
         auto out_acc_umap = ubuf.producer_map();
         for (auto out_acc_map: get_maps(out_acc_umap)) {
@@ -2191,6 +2259,32 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> &
           isl_map* opt_sched = isl_map_read_from_str(ctx, "{}");
           ConfigMap config_info;
           if (op2write_map.count(op_name) > 0) {
+            // add agg2sram_opt config register
+            if(agg2sram_cfg_map.count(op_name)) {
+              int delay = agg2sram_cfg_map[op_name].first;
+              int ctrl_number = agg2sram_cfg_map[op_name].second;
+              if (ctrl_number == 0) 
+                config_info["mode"] = {2};
+              else if (ctrl_number == 1)
+                config_info["mode"] = {3};
+              config_info["agg_read_padding"] = {0};
+              config_info["delay"] = {delay};
+              cout << "adding new agg2sram opt cfg for: " << op_name << ": delay" << delay << ", ctrl_number" << ctrl_number << endl;
+            }
+            else if (contains(op_name, "agg2sram")) {
+              assert(agg2sram_extent_stride_map.count(op_name));
+              int in2agg_extent_0 = agg2sram_extent_stride_map[op_name].first;
+              int in2agg_stride_0 = agg2sram_extent_stride_map[op_name].second;
+              int agg2sram_read_padding;
+              if (in2agg_extent_0 == 1 && in2agg_stride_0 == 0) // corner case, and dim = 1
+                agg2sram_read_padding = 1;
+              else
+                agg2sram_read_padding = (in2agg_extent_0 % 4 == 0) ? 0 : (4 - in2agg_extent_0 % 4) * in2agg_stride_0 + 1;
+              config_info["mode"] = {0};
+              config_info["agg_read_padding"] = {agg2sram_read_padding};
+              config_info["delay"] = {0};
+              cout << "adding new agg2sram opt cfg for: " << op_name << ": mode 0, agg_read_padding " << agg2sram_read_padding << ", delay 0. " << endl;
+            }
             isl_map* opt_access_map =
                 add_config_with_dom_dim_merge(config_info, opt_sched, op2write_map.at(op_name), sched);
             ConfigMap addressor =
@@ -2211,6 +2305,32 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> &
           auto dom = ::domain(sched);
           auto config_info = generate_accessor_config_from_aff_expr(dom, aff);
           if(op2write_map.count(op_name)) {
+              // add agg2sram_opt config register
+              if(agg2sram_cfg_map.count(op_name)) {
+                int delay = agg2sram_cfg_map[op_name].first;
+                int ctrl_number = agg2sram_cfg_map[op_name].second;
+                if (ctrl_number == 0) 
+                  config_info["mode"] = {2};
+                else if (ctrl_number == 1)
+                  config_info["mode"] = {3};
+                config_info["agg_read_padding"] = {0};
+                config_info["delay"] = {delay};
+                cout << "adding new agg2sram opt cfg for: " << op_name << ": mode " << config_info["mode"] << "agg_read_padding 0, delay " << delay << endl;
+              }
+              else if (contains(op_name, "agg2sram")) {
+                assert(agg2sram_extent_stride_map.count(op_name));
+                int in2agg_extent_0 = agg2sram_extent_stride_map[op_name].first;
+                int in2agg_stride_0 = agg2sram_extent_stride_map[op_name].second;
+                int agg2sram_read_padding;
+                if (in2agg_extent_0 == 1 && in2agg_stride_0 == 0) // corner case, and dim = 1
+                  agg2sram_read_padding = 1;
+                else
+                  agg2sram_read_padding = (in2agg_extent_0 % 4 == 0) ? 0 : (4 - in2agg_extent_0 % 4) * in2agg_stride_0 + 1;
+                config_info["mode"] = {0};
+                config_info["agg_read_padding"] = {agg2sram_read_padding};
+                config_info["delay"] = {0};
+                cout << "adding new agg2sram opt cfg for: " << op_name << ": mode 0, agg_read_padding " << agg2sram_read_padding << ", delay 0. " << endl;
+              }
               for (auto acc_map : op2write_map.at(op_name)) {
                   ConfigMap addressor =
                       generate_addressor_config_from_access_map(acc_map, mem, false/*is write*/);
@@ -9083,7 +9203,7 @@ void UBuffer::generate_banks(CodegenOptions& options) {
         agg2sram_sched = set_domain_name(agg2sram_sched, domain_name(sched) + "_agg2sram_0");
         auto sram2tb_sched = to_map(add(aff, 4));
         sram2tb_sched = its(sram2tb_sched, in_dom);
-        sram2tb_sched = set_domain_name(sram2tb_sched, domain_name(sched) + "_sram2tb_0");
+        sram2tb_sched = set_domain_name(sram2tb_sched, domain_name(sched) + "_single_pixel_sram2tb_0");
         cout << "\tinput pt schedule: " << str(aff) << endl;
         cout << "\tagg2sram schedule: " << str(agg2sram_sched) << endl;
         cout << "\tsram2tb schedule: " << str(sram2tb_sched) << endl;
@@ -9113,8 +9233,8 @@ void UBuffer::generate_banks(CodegenOptions& options) {
           auto new_am = its(to_map(constant_aff(am_aff, i)), in_dom);
           auto new_am_sram= set_range_name(cpy(new_am), range_name(am) + "_sram");
           auto new_am_tb = set_range_name(cpy(new_am), range_name(am) + "_0_tb");
-          new_am_tb = set_domain_name(new_am_tb, domain_name(am) + "_sram2tb_0");
-          new_am_sram = set_domain_name(new_am_sram, domain_name(am) + "_sram2tb_0");
+          new_am_tb = set_domain_name(new_am_tb, domain_name(am) + "_single_pixel_sram2tb_0");
+          new_am_sram = set_domain_name(new_am_sram, domain_name(am) + "_single_pixel_sram2tb_0");
           cout << "\t\t rewrite agg am: " << str(new_am) << endl;
           outpt_vec_am.push_back(new_am_tb);
           outpt_sram_am.push_back(new_am_sram);

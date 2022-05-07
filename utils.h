@@ -11,9 +11,9 @@ using namespace dbhc;
 using namespace std;
 
 
-template <typename T>
+template <typename A, typename B>
 static inline
-std::ostream& operator<< (std::ostream& out, const std::pair<T, T>& v) {
+std::ostream& operator<< (std::ostream& out, const std::pair<A, B>& v) {
     out << "{" << v.first << ", " << v.second << "} ";
     return out;
 }
