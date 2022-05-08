@@ -20641,7 +20641,7 @@ vector<prog> isca_programs() {
 
   //FIXME: not work for M1 and M3
   //test_programs.push_back(three_level_pond_rolled());
-  test_programs.push_back(matmul_single());
+  test_programs.push_back(matmul_single_m1());
 
   test_programs.push_back(camera_pipeline_new());
   test_programs.push_back(camera_pipeline_2x2());
