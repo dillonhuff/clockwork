@@ -3082,6 +3082,30 @@ class SubstructGLBLatency: public CoreIR::InstanceGraphPass {
   }
 };
 
+class RemoveFlush: public CoreIR::InstancePass {
+    public:
+RemoveFlush(): InstancePass(
+            "removeflush",
+            "Remove flush wiring for garnet mapping"
+            ) {}
+bool runOnInstance(Instance* inst) {
+    //define the pass here
+    if (inst->getModuleRef()->isGenerated()) {
+      if (inst->getModuleRef()->getGenerator()->getName() == "Mem_amber" &&
+              inst->canSel("flush")) {
+         auto def= inst->getContainer();
+         def->disconnect(inst->sel("flush"));
+         return true;
+      } else {
+        return false;
+      }
+    } else {
+      return false;
+    }
+}
+
+};
+
 class ReplaceGLBValid: public CoreIR::InstancePass {
     public:
     json valid_config;
@@ -3801,7 +3825,7 @@ if (cnst->getModuleRef()->getName() == "Pond") {
   in2regfile_0["cycle_starting_addr"] = {0};
   in2regfile_0["cycle_stride"] = {1};
   in2regfile_0["dimensionality"] = 1;
-  in2regfile_0["extent"] = {4096};
+  in2regfile_0["extent"] = {8096};
   in2regfile_0["write_data_starting_addr"] = {0};
   in2regfile_0["write_data_stride"] = {1};
 
@@ -3809,12 +3833,12 @@ if (cnst->getModuleRef()->getName() == "Pond") {
   regfile2out_0["cycle_starting_addr"] = {1};
   regfile2out_0["cycle_stride"] = {1};
   regfile2out_0["dimensionality"] = 1;
-  regfile2out_0["extent"] = {4096};
+  regfile2out_0["extent"] = {8096};
   regfile2out_0["read_data_starting_addr"] = {0};
   regfile2out_0["read_data_stride"] = {1};
 
-  config["in2regfile"] = in2regfile_0;
-  config["regfile2out"] = regfile2out_0;
+  config["in2regfile_0"] = in2regfile_0;
+  config["regfile2out_0"] = regfile2out_0;
 
   config_file["config"] = config;
 
@@ -3856,9 +3880,9 @@ if (cnst->getModuleRef()->getName() == "Pond") {
 
   ModuleDef* mdef = topm->getDef();
 
-  if (def == mdef) {
-    def->connect(buf->sel("flush"), mdef->sel("io1in_reset.out"));
-  }
+  //if (def == mdef) {
+  //  def->connect(buf->sel("flush"), mdef->sel("io1in_reset.out"));
+  //}
 
   def->removeInstance(cnst);
   inlineInstance(pt);
@@ -4192,6 +4216,8 @@ void map_memory(CodegenOptions& options, Module* top, map<string, UBuffer> & buf
   //Change the stencil valid signal to cgra to glb
   c->addPass(new ReplaceGLBValid(glb_pass));
   c->runPasses({"replaceglbvalid"});
+  c->addPass(new RemoveFlush());
+  c->runPasses({"removeflush"});
   if (garnet_syntax_trans) {
     c->addPass(new SubstructGLBLatency(glb_pass->latency));
     c->runPasses({"substractglblatency"});
@@ -4299,6 +4325,8 @@ void garnet_map_module(CodegenOptions& options, Module* top, map<string, UBuffer
   //Change the stencil valid signal to cgra to glb
   c->addPass(new ReplaceGLBValid(glb_pass));
   c->runPasses({"replaceglbvalid"});
+  c->addPass(new RemoveFlush());
+  c->runPasses({"removeflush"});
   if (garnet_syntax_trans) {
 
     c->addPass(new MapperPasses::MemInitCopy);

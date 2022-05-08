@@ -1037,8 +1037,8 @@ struct MemConnSch {
         dim ++;
     }
     dimensionality -= remove_dims.size();
-    if (dimensionality == 0)
-        dimensionality = 1;
+    // if (dimensionality == 0)
+    //     dimensionality = 1;
     std::reverse(begin(remove_dims), end(remove_dims));
     for (auto rem_dim: remove_dims) {
         for (auto& it: vals) {
@@ -2780,6 +2780,27 @@ void tighten_address_space() {
         auto sched = it.second;
         string stmt_name = domain_name(sched);
         stmt2bd[stmt_name].insert(bd);
+      }
+      return stmt2bd;
+    }
+
+    map<string, std::set<std::pair<string, int>>> get_stmt2bd_after_vec() const {
+      map<string, std::set<std::pair<string, int>>> stmt2bd;
+      for (auto it: schedule) {
+        cout << "for each schedule: " << endl;
+        string bd = get_bundle(it.first);
+        cout << "bundle: " << bd << endl;
+        auto sched = it.second;
+        cout << "sched: " << it.first << " " << str(sched) << endl;
+        string stmt_name = domain_name(sched);
+        cout << "domain name of sched: " << stmt_name << endl;
+        vector<string> stmt_name_decouple = split_at(stmt_name, "_");
+        assert(stmt_name_decouple.size() > 2);
+        vector<string> stmt_name_simplify(stmt_name_decouple.begin(),
+        stmt_name_decouple.end()-2);
+        string stmt_name_before_vec = sep_list(stmt_name_simplify, "", "", "_");
+        cout << "stmt_name_before_vec: " << stmt_name_before_vec << " after vec " << *(stmt_name_decouple.end()-1) << endl;
+        stmt2bd[stmt_name_before_vec].insert(make_pair(bd, safe_stoi(stmt_name_decouple.back())));
       }
       return stmt2bd;
     }
