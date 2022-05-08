@@ -20757,7 +20757,7 @@ vector<prog> isca_programs() {
   //Scheduler has some issue, not support cyclic banking
   //test_programs.push_back(matmul_single());
 
-  //test_programs.push_back(matmul_fpga());
+  test_programs.push_back(matmul_single_m1());
   test_programs.push_back(camera_pipeline());
   test_programs.push_back(camera_pipeline_new());
   test_programs.push_back(camera_pipeline_2x2());
