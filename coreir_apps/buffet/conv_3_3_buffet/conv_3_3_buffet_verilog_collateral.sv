@@ -100,7 +100,7 @@ input read_will_update);
   );
 endmodule
 
-module cgralib_Buffet__IDhw_input_global_wrapper_stencil_sr__U227__data_width16__idx_width16 (input clk,
+module cgralib_Buffet__IDhw_input_global_wrapper_stencil_sr__U245__data_width16__idx_width16 (input clk,
 input nreset_i,
 input [15:0] push_data,
 input push_data_valid,
@@ -144,7 +144,7 @@ input read_will_update);
   );
 endmodule
 
-module cgralib_SIPO_reg__ID_U261__data_width16__depth2 (input clk,
+module cgralib_SIPO_reg__ID_U285__data_width16__depth2 (input clk,
 input rst_n,
 input valid_in,
 output ready_in,
@@ -188,7 +188,7 @@ output [15:0] out_data  [2: 0] );
   assign full = counter > 2;
   assign valid_out= full && data_pushed;
   endmodule
-module cgralib_Buffet__IDhw_input_global_wrapper_stencil_sr__U264__data_width16__idx_width16 (input clk,
+module cgralib_Buffet__IDhw_input_global_wrapper_stencil_sr__U288__data_width16__idx_width16 (input clk,
 input nreset_i,
 input [15:0] push_data,
 input push_data_valid,
@@ -232,7 +232,7 @@ input read_will_update);
   );
 endmodule
 
-module cgralib_SIPO_reg__ID_U298__data_width16__depth2 (input clk,
+module cgralib_SIPO_reg__ID_U328__data_width16__depth2 (input clk,
 input rst_n,
 input valid_in,
 output ready_in,
@@ -276,7 +276,7 @@ output [15:0] out_data  [2: 0] );
   assign full = counter > 2;
   assign valid_out= full && data_pushed;
   endmodule
-module cgralib_Buffet__IDhw_input_global_wrapper_stencil_sr__U301__data_width16__idx_width16 (input clk,
+module cgralib_Buffet__IDhw_input_global_wrapper_stencil_sr__U331__data_width16__idx_width16 (input clk,
 input nreset_i,
 input [15:0] push_data,
 input push_data_valid,
@@ -320,7 +320,7 @@ input read_will_update);
   );
 endmodule
 
-module cgralib_SIPO_reg__ID_U335__data_width16__depth2 (input clk,
+module cgralib_SIPO_reg__ID_U371__data_width16__depth2 (input clk,
 input rst_n,
 input valid_in,
 output ready_in,

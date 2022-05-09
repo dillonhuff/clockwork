@@ -1418,6 +1418,21 @@ CoreIR::Wireable* mkConst(CoreIR::ModuleDef* def, const int width, const int val
   return one->sel("out");
 }
 
+CoreIR::Wireable* mkConstReg(CoreIR::ModuleDef* def, const int width, const int val) {
+  auto context = def->getContext();
+  auto c = def->getContext();
+  auto r = def->addInstance(
+      "coeff" + c->getUnique(),
+      "mantle.reg",
+      {{"width", CoreIR::Const::make(c, width)}, {"has_en", CoreIR::Const::make(c, false)}});
+  auto one = def->addInstance(context->getUnique(),
+      "coreir.const",
+      {{"width", CoreIR::Const::make(c, width)}},
+      {{"value", CoreIR::Const::make(c, BitVector(width, val))}});
+  def->connect(r->sel("in"), one->sel("out"));
+  return r->sel("out");
+}
+
 
 CoreIR::Wireable* addList(CoreIR::ModuleDef* def, const std::vector<CoreIR::Wireable*>& vals, int width) {
   if (vals.size() == 0) {
@@ -4341,16 +4356,17 @@ CoreIR::Wireable* sum_term_numerators(ModuleDef* def, isl_aff* aff, int width) {
     cout << "raw coeff: " << str(rcoeff) << endl;
     //int v = to_int(get_coeff(aff, d));
     //cout << "coeff: " << v << endl;
-    auto constant = def->addInstance(
-        "coeff_" + str(d) + context->getUnique(),
-        "coreir.const",
-      {{"width", CoreIR::Const::make(c, width)}},
-      {{"value", CoreIR::Const::make(c, BitVector(width, v))}});
+   // auto constant = def->addInstance(
+   //     "coeff_" + str(d) + context->getUnique(),
+   //     "coreir.const",
+   //   {{"width", CoreIR::Const::make(c, width)}},
+   //   {{"value", CoreIR::Const::make(c, BitVector(width, v))}});
     auto m = def->addInstance(
         "mul_d" + str(d) + "_" + context->getUnique(),
         "coreir.mul",
         {{"width", CoreIR::Const::make(c, width)}});
-    def->connect(m->sel("in0"), constant->sel("out"));
+    //def->connect(m->sel("in0"), constant->sel("out"));
+    def->connect(m->sel("in0"), mkConstReg(def, width, v));
     def->connect(m->sel("in1"), def->sel("self")->sel("d")->sel(d));
     terms.push_back(m->sel("out"));
   }
@@ -4368,6 +4384,7 @@ CoreIR::Wireable* sum_term_numerators(ModuleDef* def, isl_aff* aff, int width) {
       {{"width", CoreIR::Const::make(c, width)}},
       {{"value", CoreIR::Const::make(c, BitVector(width, v))}});
   terms.push_back(constant->sel("out"));
+  //terms.push_back(mkConstReg(def, width, v));
   auto out = addList(def, terms, width);
   return out;
 }
@@ -4381,6 +4398,18 @@ CoreIR::Wireable* mul(ModuleDef* def, CoreIR::Wireable* a, const int val) {
       {{"width", CoreIR::Const::make(c, width)}});
   def->connect(m->sel("in0"), a);
   def->connect(m->sel("in1"), mkConst(def, width, val));
+  return m->sel("out");
+}
+
+CoreIR::Wireable* mulReg(ModuleDef* def, CoreIR::Wireable* a, const int val) {
+  auto c = def->getContext();
+  int width = wire_width(a);
+  auto m = def->addInstance(
+      "mul_" + c->getUnique(),
+      "coreir.mul",
+      {{"width", CoreIR::Const::make(c, width)}});
+  def->connect(m->sel("in0"), a);
+  def->connect(m->sel("in1"), mkConstReg(def, width, val));
   return m->sel("out");
 }
 
@@ -6396,7 +6425,7 @@ void dump_Buffet_definition() {
     buffet_collateral_file << "`define IDX_WIDTH" << tab(4) << ctrl_width << endl;
     buffet_collateral_file << "`define DATA_WIDTH" << tab(4) << data_width << endl;
     buffet_collateral_file << "`define SIZE" << tab(4) <<"2 **" << 10 << "-1" << endl;
-    buffet_collateral_file << "`define USE_GF_MACRO            1" << endl;
+    buffet_collateral_file << "`define USE_GF_MACRO            0" << endl;
     buffet_collateral_file << "`define SEPARATE_WRITE_PORTS    1" << endl;
     buffet_collateral_file << "`define SUPPORTS_UPDATE         1" << endl;
     buffet_collateral_file << "`define READREQ_FIFO_DEPTH      8" << endl;
