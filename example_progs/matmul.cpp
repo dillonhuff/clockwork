@@ -41,7 +41,7 @@ prog matmul_unroll2() {
 //consuming hw_kernel_global_wrapper.stencil
 ////producing mul.stencil
   auto mul_s0_y = prg.add_loop("mul_s0_y", 0, 32);
-  auto mul_s0_x_x = mul_s0_y->add_loop("mul_s0_x_x", 0, 32);
+  auto mul_s0_x_x = mul_s0_y->add_loop("mul_s0_x_x", 0, 16);
 
 //store is: mul.stencil((mul_s0_x_x*2), mul_s0_y) = (int16)0
   auto hcompute_mul_stencil = mul_s0_x_x->add_op("op_hcompute_mul_stencil");
@@ -54,8 +54,8 @@ prog matmul_unroll2() {
   hcompute_mul_stencil_1->add_function("hcompute_mul_stencil_1");
   hcompute_mul_stencil_1->add_store("mul_stencil", "mul_s0_y", "((mul_s0_x_x*2) + 1)");
   auto mul_s1_y = prg.add_loop("mul_s1_y", 0, 32);
-  auto mul_s1_r_x_rxo = mul_s1_y->add_loop("mul_s1_r_x_rxo", 0, 32);
-  auto mul_s1_x_xo = mul_s1_r_x_rxo->add_loop("mul_s1_x_xo", 0, 32);
+  auto mul_s1_r_x_rxo = mul_s1_y->add_loop("mul_s1_r_x_rxo", 0, 16);
+  auto mul_s1_x_xo = mul_s1_r_x_rxo->add_loop("mul_s1_x_xo", 0, 16);
 
 //store is: mul.stencil((mul_s1_x_xo*2), mul_s1_y) = ((hw_input_global_wrapper.stencil((mul_s1_r_x_rxo*2), mul_s1_y)*hw_kernel_global_wrapper.stencil((mul_s1_x_xo*2), (mul_s1_r_x_rxo*2))) + (mul.stencil((mul_s1_x_xo*2), mul_s1_y) + (hw_input_global_wrapper.stencil(((mul_s1_r_x_rxo*2) + 1), mul_s1_y)*hw_kernel_global_wrapper.stencil((mul_s1_x_xo*2), ((mul_s1_r_x_rxo*2) + 1)))))
   auto hcompute_mul_stencil_2 = mul_s1_x_xo->add_op("op_hcompute_mul_stencil_2");
